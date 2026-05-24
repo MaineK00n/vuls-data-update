@@ -773,11 +773,9 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"937143": {"939653"},
 		},
 	},
-	"MS07-064": {CVEAdjustments: []cveAdjustment{{KB: "941568", Drop: []string{"CVE-2007-3901"}}}},
 	"MS07-069": {
 		CVEAdjustments: []cveAdjustment{
 			{Add: []string{"CVE-2007-3902", "CVE-2007-3903", "CVE-2007-5344", "CVE-2007-5347"}},
-			{KB: "942615", Drop: []string{"CVE-2007-3903", "CVE-2007-5344"}},
 		},
 		IECumChain: map[string][]string{
 			"939653": {"942615"},
@@ -799,9 +797,6 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 	"MS08-028": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2005-0944", "CVE-2007-6026"}}}},
 	"MS08-029": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2008-1437", "CVE-2008-1438"}}}},
 	"MS08-031": {
-		CVEAdjustments: []cveAdjustment{
-			{KB: "950759", Drop: []string{"CVE-2008-1442"}},
-		},
 		IECumChain: map[string][]string{
 			"947864": {"950759"},
 		},
@@ -814,14 +809,10 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"3124266": {"3135174"},
 		},
 	},
-	"MS08-033": {CVEAdjustments: []cveAdjustment{{KB: "951698", Drop: []string{"CVE-2008-0011", "CVE-2008-1444"}}}},
-	"MS08-036": {CVEAdjustments: []cveAdjustment{{KB: "950762", Drop: []string{"CVE-2008-1440"}}}},
-	"MS08-037": {CVEAdjustments: []cveAdjustment{{KB: "953230", Drop: []string{"CVE-2008-1447", "CVE-2008-1454"}}}},
 	"MS08-038": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2008-0951", "CVE-2008-1435"}}}},
-	"MS08-039": {CVEAdjustments: []cveAdjustment{{KB: "953747", Drop: []string{"CVE-2008-2247", "CVE-2008-2248"}}}},
 	"MS08-040": {
 		CVEAdjustments: []cveAdjustment{
-			{KB: "941203", Drop: []string{"CVE-2008-0086", "CVE-2008-0106"}},
+			{KB: "941203", Drop: []string{"CVE-2008-0106"}},
 			{KB: "948109", Drop: []string{"CVE-2008-0086"}},
 			{KB: "948110", Drop: []string{"CVE-2008-0106"}},
 			{KB: "948113", Drop: []string{"CVE-2008-0086", "CVE-2008-0106"}},
@@ -844,7 +835,6 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 	"MS08-058": {
 		CVEAdjustments: []cveAdjustment{
 			{Add: []string{"CVE-2008-2947", "CVE-2008-3472", "CVE-2008-3473", "CVE-2008-3474", "CVE-2008-3475", "CVE-2008-3476"}},
-			{KB: "956390", Drop: []string{"CVE-2008-3472", "CVE-2008-3473", "CVE-2008-3474", "CVE-2008-3475", "CVE-2008-3476"}},
 		},
 		IECumChain: map[string][]string{
 			"953838": {"956390"},
@@ -870,47 +860,33 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 		},
 	},
 	"MS08-073": {
-		CVEAdjustments: []cveAdjustment{
-			{KB: "958215", Drop: []string{"CVE-2008-4258", "CVE-2008-4259", "CVE-2008-4260", "CVE-2008-4261"}},
-		},
 		IECumChain: map[string][]string{
 			"956390": {"958215"},
 		},
 	},
-	"MS08-076": {CVEAdjustments: []cveAdjustment{{KB: "952068", Drop: []string{"CVE-2008-3010"}}}},
 	"MS08-078": {
 		IECumChain: map[string][]string{
 			"958215": {"960714"},
 		},
 	},
-	"MS09-001": {CVEAdjustments: []cveAdjustment{{KB: "958687", Drop: []string{"CVE-2008-4834"}}}},
 	"MS09-003": {CVEAdjustments: []cveAdjustment{{KB: "959241", Drop: []string{"CVE-2009-0099"}}}},
 	"MS09-005": {CVEAdjustments: []cveAdjustment{{KB: "957831", Drop: []string{"CVE-2009-0097"}}}},
-	"MS09-006": {CVEAdjustments: []cveAdjustment{{KB: "958690", Drop: []string{"CVE-2009-0083"}}}},
-	"MS09-008": {CVEAdjustments: []cveAdjustment{{KB: "962238", Drop: []string{"CVE-2009-0093", "CVE-2009-0094"}}}},
 	"MS09-010": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "923561", Drop: []string{"CVE-2009-0088"}},
 			{KB: "960476", Drop: []string{"CVE-2008-4841", "CVE-2009-0087", "CVE-2009-0235"}},
-			{KB: "960477", Drop: []string{"CVE-2008-4841", "CVE-2009-0088", "CVE-2009-0235"}},
 		},
 	},
-	"MS09-012": {CVEAdjustments: []cveAdjustment{{KB: "952004", Drop: []string{"CVE-2009-0078", "CVE-2009-0079", "CVE-2009-0080"}}}},
 	"MS09-013": {
-		CVEAdjustments: []cveAdjustment{
-			{KB: "960803", Drop: []string{"CVE-2009-0089"}},
-		},
 		IECumChain: map[string][]string{
 			"960714": {"963027"},
 		},
 	},
-	"MS09-014": {CVEAdjustments: []cveAdjustment{{KB: "963027", Drop: []string{"CVE-2008-2540", "CVE-2009-0551", "CVE-2009-0552", "CVE-2009-0553"}}}},
 	"MS09-016": {CVEAdjustments: []cveAdjustment{{KB: "961759", Drop: []string{"CVE-2009-0237"}}}},
 	"MS09-017": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "967043", Drop: []string{"CVE-2009-0220", "CVE-2009-0221", "CVE-2009-0222", "CVE-2009-0223", "CVE-2009-0225", "CVE-2009-0226", "CVE-2009-0227", "CVE-2009-0556", "CVE-2009-1128", "CVE-2009-1129", "CVE-2009-1130", "CVE-2009-1131", "CVE-2009-1137"}},
 			{KB: "967044", Drop: []string{"CVE-2009-0220", "CVE-2009-0221", "CVE-2009-0222", "CVE-2009-0223", "CVE-2009-0225", "CVE-2009-0226", "CVE-2009-0227", "CVE-2009-0556", "CVE-2009-1128", "CVE-2009-1129", "CVE-2009-1130", "CVE-2009-1131", "CVE-2009-1137"}},
-			{KB: "967340", Drop: []string{"CVE-2009-0220", "CVE-2009-0221", "CVE-2009-0222", "CVE-2009-0223", "CVE-2009-0225", "CVE-2009-0226", "CVE-2009-0227", "CVE-2009-0556", "CVE-2009-1128", "CVE-2009-1129", "CVE-2009-1130", "CVE-2009-1131", "CVE-2009-1137"}},
 			{KB: "969615", Drop: []string{"CVE-2009-0220", "CVE-2009-0221", "CVE-2009-0222", "CVE-2009-0223", "CVE-2009-0225", "CVE-2009-0226", "CVE-2009-0227", "CVE-2009-0556", "CVE-2009-1128", "CVE-2009-1129", "CVE-2009-1130", "CVE-2009-1131", "CVE-2009-1137"}},
 			{KB: "969618", Drop: []string{"CVE-2009-0220", "CVE-2009-0221", "CVE-2009-0222", "CVE-2009-0223", "CVE-2009-0225", "CVE-2009-0226", "CVE-2009-0227", "CVE-2009-0556", "CVE-2009-1128", "CVE-2009-1129", "CVE-2009-1130", "CVE-2009-1131", "CVE-2009-1137"}},
 			{KB: "969661", Drop: []string{"CVE-2009-0220", "CVE-2009-0221", "CVE-2009-0222", "CVE-2009-0223", "CVE-2009-0225", "CVE-2009-0226", "CVE-2009-0227", "CVE-2009-1128", "CVE-2009-1129", "CVE-2009-1131", "CVE-2009-1137"}},
@@ -919,99 +895,55 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "971824", Drop: []string{"CVE-2009-0220", "CVE-2009-0221", "CVE-2009-0222", "CVE-2009-0223", "CVE-2009-0225", "CVE-2009-0226", "CVE-2009-0227", "CVE-2009-0556", "CVE-2009-1128", "CVE-2009-1129", "CVE-2009-1130", "CVE-2009-1131", "CVE-2009-1137"}},
 		},
 	},
-	"MS09-018": {
-		CVEAdjustments: []cveAdjustment{
-			{KB: "969805", Drop: []string{"CVE-2009-1138"}},
-			{KB: "970437", Drop: []string{"CVE-2009-1138"}},
-		},
-	},
+	"MS09-018": {CVEAdjustments: []cveAdjustment{{KB: "970437", Drop: []string{"CVE-2009-1138"}}}},
 	"MS09-019": {
-		CVEAdjustments: []cveAdjustment{
-			{KB: "969897", Drop: []string{"CVE-2007-3091", "CVE-2009-1140", "CVE-2009-1141", "CVE-2009-1528", "CVE-2009-1529", "CVE-2009-1530", "CVE-2009-1531", "CVE-2009-1532"}},
-		},
 		IECumChain: map[string][]string{
 			"963027": {"969897"},
 		},
 	},
-	"MS09-020": {
-		CVEAdjustments: []cveAdjustment{
-			{Add: []string{"CVE-2009-1122", "CVE-2009-1535", "CVE-2009-1676"}},
-			{KB: "970483", Drop: []string{"CVE-2009-1122", "CVE-2009-1535"}},
-		},
-	},
+	"MS09-020": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2009-1122", "CVE-2009-1535", "CVE-2009-1676"}}}},
 	"MS09-021": {
 		CVEAdjustments: []cveAdjustment{
-			{KB: "969462", Drop: []string{"CVE-2009-0549", "CVE-2009-0558", "CVE-2009-0559", "CVE-2009-1134"}},
 			{KB: "969679", Drop: []string{"CVE-2009-0549", "CVE-2009-0558", "CVE-2009-0559"}},
 			{KB: "969686", Drop: []string{"CVE-2009-0549", "CVE-2009-0558", "CVE-2009-0559"}},
 			{KB: "969737", Drop: []string{"CVE-2009-0549", "CVE-2009-0557", "CVE-2009-0558", "CVE-2009-0559", "CVE-2009-0560", "CVE-2009-1134"}},
 		},
 	},
-	"MS09-022": {CVEAdjustments: []cveAdjustment{{KB: "961501", Drop: []string{"CVE-2009-0228"}}}},
-	"MS09-025": {CVEAdjustments: []cveAdjustment{{KB: "968537", Drop: []string{"CVE-2009-1126"}}}},
-	"MS09-027": {
-		CVEAdjustments: []cveAdjustment{
-			{KB: "969514", Drop: []string{"CVE-2009-0563", "CVE-2009-0565"}},
-			{KB: "969614", Drop: []string{"CVE-2009-0565"}},
-		},
-	},
+	"MS09-027": {CVEAdjustments: []cveAdjustment{{KB: "969614", Drop: []string{"CVE-2009-0565"}}}},
 	"MS09-034": {
-		CVEAdjustments: []cveAdjustment{
-			{KB: "972260", Drop: []string{"CVE-2009-1917"}},
-		},
 		IECumChain: map[string][]string{
 			"969897": {"972260"},
 		},
 	},
-	"MS09-039": {CVEAdjustments: []cveAdjustment{{KB: "969883", Drop: []string{"CVE-2009-1924"}}}},
 	"MS09-043": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "947318", Drop: []string{"CVE-2009-1534"}},
 			{KB: "947319", Drop: []string{"CVE-2009-1534"}},
-			{KB: "947320", Drop: []string{"CVE-2009-0562", "CVE-2009-1136", "CVE-2009-2496"}},
 			{KB: "947826", Drop: []string{"CVE-2009-1534"}},
 			{KB: "968377", Drop: []string{"CVE-2009-1534"}},
 			{KB: "969172", Drop: []string{"CVE-2009-0562", "CVE-2009-1136", "CVE-2009-2496"}},
 			{KB: "971388", Drop: []string{"CVE-2009-0562", "CVE-2009-1136", "CVE-2009-2496"}},
 		},
 	},
-	"MS09-044": {
-		CVEAdjustments: []cveAdjustment{
-			{KB: "970927", Drop: []string{"CVE-2009-1929"}},
-			{KB: "974283", Drop: []string{"CVE-2009-1929"}},
-		},
-	},
-	"MS09-047": {
-		CVEAdjustments: []cveAdjustment{
-			{KB: "972554", Drop: []string{"CVE-2009-2499"}},
-			{KB: "973812", Drop: []string{"CVE-2009-2498"}},
-		},
-	},
-	"MS09-048": {CVEAdjustments: []cveAdjustment{{KB: "967723", Drop: []string{"CVE-2009-1925"}}}},
-	"MS09-053": {CVEAdjustments: []cveAdjustment{{KB: "975254", Drop: []string{"CVE-2009-3023"}}}},
+	"MS09-044": {CVEAdjustments: []cveAdjustment{{KB: "974283", Drop: []string{"CVE-2009-1929"}}}},
+	"MS09-047": {CVEAdjustments: []cveAdjustment{{KB: "972554", Drop: []string{"CVE-2009-2499"}}}},
 	"MS09-054": {
-		CVEAdjustments: []cveAdjustment{
-			{KB: "974455", Drop: []string{"CVE-2009-1547", "CVE-2009-2530", "CVE-2009-2531"}},
-		},
 		IECumChain: map[string][]string{
 			"972260": {"974455"},
 		},
 	},
-	"MS09-058": {CVEAdjustments: []cveAdjustment{{KB: "971486", Drop: []string{"CVE-2009-2516", "CVE-2009-2517"}}}},
 	"MS09-061": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "953297", Drop: []string{"CVE-2009-0091", "CVE-2009-2497"}},
 			{KB: "953298", Drop: []string{"CVE-2009-0091", "CVE-2009-2497"}},
 			{KB: "970363", Drop: []string{"CVE-2009-0090", "CVE-2009-0091"}},
-			{KB: "974378", Drop: []string{"CVE-2009-0090", "CVE-2009-0091", "CVE-2009-2497"}},
-			{KB: "974468", Drop: []string{"CVE-2009-0090", "CVE-2009-0091"}},
 			{KB: "974470", Drop: []string{"CVE-2009-0090", "CVE-2009-0091"}},
 		},
 	},
 	"MS09-062": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "957488", Drop: []string{"CVE-2009-2518", "CVE-2009-2528"}},
-			{KB: "958869", Drop: []string{"CVE-2009-2500", "CVE-2009-2501", "CVE-2009-2502", "CVE-2009-2503", "CVE-2009-2504", "CVE-2009-2518", "CVE-2009-2528", "CVE-2009-3126"}},
+			{KB: "958869", Drop: []string{"CVE-2009-2518", "CVE-2009-2528"}},
 			{KB: "970892", Drop: []string{"CVE-2009-2518", "CVE-2009-2528"}},
 			{KB: "970895", Drop: []string{"CVE-2009-2518", "CVE-2009-2528"}},
 			{KB: "971022", Drop: []string{"CVE-2009-2518", "CVE-2009-2528"}},
@@ -1026,16 +958,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "972580", Drop: []string{"CVE-2009-2518", "CVE-2009-2528"}},
 			{KB: "972581", Drop: []string{"CVE-2009-2518", "CVE-2009-2528"}},
 			{KB: "973636", Drop: []string{"CVE-2009-2518", "CVE-2009-2528"}},
-			{KB: "974811", Drop: []string{"CVE-2009-2518", "CVE-2009-2528"}},
 			{KB: "975337", Drop: []string{"CVE-2009-2518", "CVE-2009-2528"}},
 			{KB: "975365", Drop: []string{"CVE-2009-2518", "CVE-2009-2528"}},
 			{KB: "975962", Drop: []string{"CVE-2009-2518", "CVE-2009-2528"}},
 		},
 	},
-	"MS09-065": {CVEAdjustments: []cveAdjustment{{KB: "969947", Drop: []string{"CVE-2009-2514"}}}},
 	"MS09-067": {
 		CVEAdjustments: []cveAdjustment{
-			{KB: "972652", Drop: []string{"CVE-2009-3127", "CVE-2009-3128", "CVE-2009-3130", "CVE-2009-3133"}},
 			{KB: "973484", Drop: []string{"CVE-2009-3130", "CVE-2009-3133"}},
 			{KB: "973704", Drop: []string{"CVE-2009-3127", "CVE-2009-3128", "CVE-2009-3130", "CVE-2009-3133"}},
 			{KB: "973707", Drop: []string{"CVE-2009-3127", "CVE-2009-3128", "CVE-2009-3130", "CVE-2009-3133"}},
@@ -1044,55 +973,35 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "976831", Drop: []string{"CVE-2009-3128"}},
 		},
 	},
-	"MS09-071": {CVEAdjustments: []cveAdjustment{{KB: "974318", Drop: []string{"CVE-2009-2505", "CVE-2009-3677"}}}},
 	"MS09-072": {
 		CVEAdjustments: []cveAdjustment{
 			{Add: []string{"CVE-2009-2493", "CVE-2009-3671", "CVE-2009-3672", "CVE-2009-3673", "CVE-2009-3674"}},
-			{KB: "976325", Drop: []string{"CVE-2009-2493", "CVE-2009-3671", "CVE-2009-3672", "CVE-2009-3673", "CVE-2009-3674"}},
 		},
 		IECumChain: map[string][]string{
 			"974455": {"976325"},
 		},
 	},
 	"MS10-002": {
-		CVEAdjustments: []cveAdjustment{
-			{KB: "978207", Drop: []string{"CVE-2009-4074", "CVE-2010-0027", "CVE-2010-0244", "CVE-2010-0245", "CVE-2010-0246", "CVE-2010-0247", "CVE-2010-0248", "CVE-2010-0249"}},
-		},
 		IECumChain: map[string][]string{
 			"976325": {"978207"},
 		},
 	},
-	"MS10-004": {
-		CVEAdjustments: []cveAdjustment{
-			{KB: "975416", Drop: []string{"CVE-2010-0029", "CVE-2010-0033", "CVE-2010-0034"}},
-			{KB: "979674", Drop: []string{"CVE-2010-0029", "CVE-2010-0030", "CVE-2010-0032", "CVE-2010-0033", "CVE-2010-0034"}},
-		},
-	},
-	"MS10-006": {CVEAdjustments: []cveAdjustment{{KB: "978251", Drop: []string{"CVE-2010-0016", "CVE-2010-0017"}}}},
-	"MS10-012": {CVEAdjustments: []cveAdjustment{{KB: "971468", Drop: []string{"CVE-2010-0021"}}}},
-	"MS10-015": {CVEAdjustments: []cveAdjustment{{KB: "977165", Drop: []string{"CVE-2010-0232", "CVE-2010-0233"}}}},
+	"MS10-004": {CVEAdjustments: []cveAdjustment{{KB: "979674", Drop: []string{"CVE-2010-0029", "CVE-2010-0030", "CVE-2010-0032", "CVE-2010-0033", "CVE-2010-0034"}}}},
 	"MS10-017": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "978380", Drop: []string{"CVE-2010-0257", "CVE-2010-0262", "CVE-2010-0264"}},
 			{KB: "978383", Drop: []string{"CVE-2010-0257", "CVE-2010-0261", "CVE-2010-0262", "CVE-2010-0264"}},
 			{KB: "979439", Drop: []string{"CVE-2010-0257", "CVE-2010-0258", "CVE-2010-0260", "CVE-2010-0261", "CVE-2010-0262", "CVE-2010-0264"}},
-			{KB: "980150", Drop: []string{"CVE-2010-0257", "CVE-2010-0260", "CVE-2010-0261", "CVE-2010-0262", "CVE-2010-0263", "CVE-2010-0264"}},
 			{KB: "980837", Drop: []string{"CVE-2010-0257", "CVE-2010-0260", "CVE-2010-0261", "CVE-2010-0263"}},
 			{KB: "980839", Drop: []string{"CVE-2010-0257", "CVE-2010-0260", "CVE-2010-0261", "CVE-2010-0262"}},
 			{KB: "980840", Drop: []string{"CVE-2010-0257", "CVE-2010-0260", "CVE-2010-0261", "CVE-2010-0262"}},
 		},
 	},
 	"MS10-018": {
-		CVEAdjustments: []cveAdjustment{
-			{KB: "980182", Drop: []string{"CVE-2010-0267", "CVE-2010-0488", "CVE-2010-0489", "CVE-2010-0490", "CVE-2010-0491", "CVE-2010-0492", "CVE-2010-0494", "CVE-2010-0805", "CVE-2010-0806", "CVE-2010-0807"}},
-		},
 		IECumChain: map[string][]string{
 			"978207": {"980182"},
 		},
 	},
-	"MS10-019": {CVEAdjustments: []cveAdjustment{{KB: "981210", Drop: []string{"CVE-2010-0486", "CVE-2010-0487"}}}},
-	"MS10-020": {CVEAdjustments: []cveAdjustment{{KB: "980232", Drop: []string{"CVE-2009-3676", "CVE-2010-0270", "CVE-2010-0476", "CVE-2010-0477"}}}},
-	"MS10-021": {CVEAdjustments: []cveAdjustment{{KB: "979683", Drop: []string{"CVE-2010-0234", "CVE-2010-0235", "CVE-2010-0236", "CVE-2010-0237", "CVE-2010-0238", "CVE-2010-0481", "CVE-2010-0482", "CVE-2010-0810"}}}},
 	"MS10-024": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "976702", Drop: []string{"CVE-2010-0025"}},
@@ -1102,7 +1011,6 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "981407", Drop: []string{"CVE-2010-0025"}},
 		},
 	},
-	"MS10-032": {CVEAdjustments: []cveAdjustment{{KB: "979559", Drop: []string{"CVE-2010-0484"}}}},
 	"MS10-033": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "978695", Drop: []string{"CVE-2010-1880"}},
@@ -1111,11 +1019,7 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "979902", Drop: []string{"CVE-2010-1880"}},
 		},
 	},
-	"MS10-034": {CVEAdjustments: []cveAdjustment{{KB: "980195", Drop: []string{"CVE-2010-0811"}}}},
 	"MS10-035": {
-		CVEAdjustments: []cveAdjustment{
-			{KB: "982381", Drop: []string{"CVE-2010-0255", "CVE-2010-1257", "CVE-2010-1260", "CVE-2010-1261"}},
-		},
 		IECumChain: map[string][]string{
 			"980182": {"982381"},
 		},
@@ -1124,7 +1028,7 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 		CVEAdjustments: []cveAdjustment{
 			{KB: "982331", Drop: []string{"CVE-2010-0822", "CVE-2010-0824", "CVE-2010-1245", "CVE-2010-1246", "CVE-2010-1247", "CVE-2010-1248", "CVE-2010-1249", "CVE-2010-1250", "CVE-2010-1251", "CVE-2010-1252", "CVE-2010-1254"}},
 			{KB: "982333", Drop: []string{"CVE-2010-0822", "CVE-2010-0824", "CVE-2010-1245", "CVE-2010-1246", "CVE-2010-1247", "CVE-2010-1248", "CVE-2010-1249", "CVE-2010-1250", "CVE-2010-1251", "CVE-2010-1252", "CVE-2010-1253", "CVE-2010-1254"}},
-			{KB: "2027452", Drop: []string{"CVE-2010-0822", "CVE-2010-0824", "CVE-2010-1245", "CVE-2010-1246", "CVE-2010-1247", "CVE-2010-1248", "CVE-2010-1249", "CVE-2010-1250", "CVE-2010-1251", "CVE-2010-1252", "CVE-2010-1253", "CVE-2010-1254"}},
+			{KB: "2027452", Drop: []string{"CVE-2010-1254"}},
 			{KB: "2028864", Drop: []string{"CVE-2010-0824", "CVE-2010-1246", "CVE-2010-1247", "CVE-2010-1248", "CVE-2010-1251", "CVE-2010-1252", "CVE-2010-1254"}},
 			{KB: "2028866", Drop: []string{"CVE-2010-1246", "CVE-2010-1247", "CVE-2010-1254"}},
 			{KB: "2078051", Drop: []string{"CVE-2010-0824", "CVE-2010-1246", "CVE-2010-1247", "CVE-2010-1248", "CVE-2010-1251", "CVE-2010-1252"}},
@@ -1137,30 +1041,20 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "980923", Drop: []string{"CVE-2010-0817", "CVE-2010-1264"}},
 		},
 	},
-	"MS10-044": {CVEAdjustments: []cveAdjustment{{KB: "982335", Drop: []string{"CVE-2010-1881"}}}},
-	"MS10-047": {CVEAdjustments: []cveAdjustment{{KB: "981852", Drop: []string{"CVE-2010-1888", "CVE-2010-1889", "CVE-2010-1890"}}}},
-	"MS10-048": {CVEAdjustments: []cveAdjustment{{KB: "2160329", Drop: []string{"CVE-2010-1894", "CVE-2010-1895", "CVE-2010-1896"}}}},
-	"MS10-049": {CVEAdjustments: []cveAdjustment{{KB: "980436", Drop: []string{"CVE-2010-2566"}}}},
 	"MS10-053": {
-		CVEAdjustments: []cveAdjustment{
-			{KB: "2183461", Drop: []string{"CVE-2010-2557", "CVE-2010-2559"}},
-		},
 		IECumChain: map[string][]string{
 			"982381": {"2183461"},
 		},
 	},
-	"MS10-054": {CVEAdjustments: []cveAdjustment{{KB: "982214", Drop: []string{"CVE-2010-2551", "CVE-2010-2552"}}}},
 	"MS10-056": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "2092914", Drop: []string{"CVE-2010-1901", "CVE-2010-1902", "CVE-2010-1903"}},
-			{KB: "2269638", Drop: []string{"CVE-2010-1903"}},
 			{KB: "2277947", Drop: []string{"CVE-2010-1903"}},
 			{KB: "2284162", Drop: []string{"CVE-2010-1903"}},
 			{KB: "2284171", Drop: []string{"CVE-2010-1903"}},
 			{KB: "2284179", Drop: []string{"CVE-2010-1903"}},
 		},
 	},
-	"MS10-058": {CVEAdjustments: []cveAdjustment{{KB: "978886", Drop: []string{"CVE-2010-1893"}}}},
 	"MS10-060": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "982926", Drop: []string{"CVE-2010-0019"}},
@@ -1177,9 +1071,6 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 		},
 	},
 	"MS10-071": {
-		CVEAdjustments: []cveAdjustment{
-			{KB: "2360131", Drop: []string{"CVE-2010-0808", "CVE-2010-3243", "CVE-2010-3324", "CVE-2010-3326", "CVE-2010-3329"}},
-		},
 		IECumChain: map[string][]string{
 			"2183461": {"2360131"},
 		},
@@ -1191,25 +1082,22 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2346411", Drop: []string{"CVE-2010-3243"}},
 		},
 	},
-	"MS10-073": {CVEAdjustments: []cveAdjustment{{KB: "981957", Drop: []string{"CVE-2010-2549"}}}},
 	"MS10-079": {
 		CVEAdjustments: []cveAdjustment{
-			{KB: "2293194", Drop: []string{"CVE-2010-2747", "CVE-2010-2748", "CVE-2010-2750", "CVE-2010-3215", "CVE-2010-3216", "CVE-2010-3217", "CVE-2010-3218", "CVE-2010-3219", "CVE-2010-3220", "CVE-2010-3221"}},
 			{KB: "2345009", Drop: []string{"CVE-2010-2747", "CVE-2010-2748", "CVE-2010-2750", "CVE-2010-3215", "CVE-2010-3216", "CVE-2010-3217", "CVE-2010-3218", "CVE-2010-3219", "CVE-2010-3220"}},
 			{KB: "2345043", Drop: []string{"CVE-2010-2747", "CVE-2010-2748", "CVE-2010-2750", "CVE-2010-3215", "CVE-2010-3216", "CVE-2010-3217", "CVE-2010-3218", "CVE-2010-3219", "CVE-2010-3220", "CVE-2010-3221"}},
-			{KB: "2422343", Drop: []string{"CVE-2010-3217", "CVE-2010-3218", "CVE-2010-3219", "CVE-2010-3230", "CVE-2010-3233", "CVE-2010-3234", "CVE-2010-3235", "CVE-2010-3239", "CVE-2010-3240"}},
-			{KB: "2422352", Drop: []string{"CVE-2010-2747", "CVE-2010-2748", "CVE-2010-2750", "CVE-2010-3215", "CVE-2010-3216", "CVE-2010-3217", "CVE-2010-3218", "CVE-2010-3219", "CVE-2010-3220", "CVE-2010-3221", "CVE-2010-3230", "CVE-2010-3233", "CVE-2010-3234", "CVE-2010-3235", "CVE-2010-3237", "CVE-2010-3238", "CVE-2010-3239", "CVE-2010-3240"}},
-			{KB: "2422398", Drop: []string{"CVE-2010-2747", "CVE-2010-2748", "CVE-2010-2750", "CVE-2010-3215", "CVE-2010-3216", "CVE-2010-3217", "CVE-2010-3218", "CVE-2010-3219", "CVE-2010-3220", "CVE-2010-3221", "CVE-2010-3230", "CVE-2010-3233", "CVE-2010-3234", "CVE-2010-3235", "CVE-2010-3237", "CVE-2010-3238", "CVE-2010-3239", "CVE-2010-3240"}},
+			{KB: "2422343", Drop: []string{"CVE-2010-3217", "CVE-2010-3218", "CVE-2010-3219"}},
+			{KB: "2422352", Drop: []string{"CVE-2010-2747", "CVE-2010-2748", "CVE-2010-2750", "CVE-2010-3215", "CVE-2010-3216", "CVE-2010-3217", "CVE-2010-3218", "CVE-2010-3219", "CVE-2010-3220", "CVE-2010-3221"}},
+			{KB: "2422398", Drop: []string{"CVE-2010-2747", "CVE-2010-2748", "CVE-2010-2750", "CVE-2010-3215", "CVE-2010-3216", "CVE-2010-3217", "CVE-2010-3218", "CVE-2010-3219", "CVE-2010-3220", "CVE-2010-3221"}},
 		},
 	},
 	"MS10-080": {
 		CVEAdjustments: []cveAdjustment{
-			{KB: "2293211", Drop: []string{"CVE-2010-3230", "CVE-2010-3231", "CVE-2010-3232", "CVE-2010-3233", "CVE-2010-3234", "CVE-2010-3235", "CVE-2010-3236", "CVE-2010-3237", "CVE-2010-3238", "CVE-2010-3239", "CVE-2010-3240", "CVE-2010-3241", "CVE-2010-3242"}},
 			{KB: "2344875", Drop: []string{"CVE-2010-3230", "CVE-2010-3231", "CVE-2010-3233", "CVE-2010-3234", "CVE-2010-3235", "CVE-2010-3236", "CVE-2010-3237", "CVE-2010-3238", "CVE-2010-3239", "CVE-2010-3241", "CVE-2010-3242"}},
 			{KB: "2345088", Drop: []string{"CVE-2010-3230", "CVE-2010-3231", "CVE-2010-3233", "CVE-2010-3234", "CVE-2010-3235", "CVE-2010-3236", "CVE-2010-3237", "CVE-2010-3238", "CVE-2010-3239", "CVE-2010-3241", "CVE-2010-3242"}},
-			{KB: "2422343", Drop: []string{"CVE-2010-3217", "CVE-2010-3218", "CVE-2010-3219", "CVE-2010-3230", "CVE-2010-3233", "CVE-2010-3234", "CVE-2010-3235", "CVE-2010-3239", "CVE-2010-3240"}},
-			{KB: "2422352", Drop: []string{"CVE-2010-2747", "CVE-2010-2748", "CVE-2010-2750", "CVE-2010-3215", "CVE-2010-3216", "CVE-2010-3217", "CVE-2010-3218", "CVE-2010-3219", "CVE-2010-3220", "CVE-2010-3221", "CVE-2010-3230", "CVE-2010-3233", "CVE-2010-3234", "CVE-2010-3235", "CVE-2010-3237", "CVE-2010-3238", "CVE-2010-3239", "CVE-2010-3240"}},
-			{KB: "2422398", Drop: []string{"CVE-2010-2747", "CVE-2010-2748", "CVE-2010-2750", "CVE-2010-3215", "CVE-2010-3216", "CVE-2010-3217", "CVE-2010-3218", "CVE-2010-3219", "CVE-2010-3220", "CVE-2010-3221", "CVE-2010-3230", "CVE-2010-3233", "CVE-2010-3234", "CVE-2010-3235", "CVE-2010-3237", "CVE-2010-3238", "CVE-2010-3239", "CVE-2010-3240"}},
+			{KB: "2422343", Drop: []string{"CVE-2010-3230", "CVE-2010-3233", "CVE-2010-3234", "CVE-2010-3235", "CVE-2010-3239", "CVE-2010-3240"}},
+			{KB: "2422352", Drop: []string{"CVE-2010-3230", "CVE-2010-3233", "CVE-2010-3234", "CVE-2010-3235", "CVE-2010-3237", "CVE-2010-3238", "CVE-2010-3239", "CVE-2010-3240"}},
+			{KB: "2422398", Drop: []string{"CVE-2010-3230", "CVE-2010-3233", "CVE-2010-3234", "CVE-2010-3235", "CVE-2010-3237", "CVE-2010-3238", "CVE-2010-3239", "CVE-2010-3240"}},
 		},
 	},
 	"MS10-087": {
@@ -1224,22 +1112,12 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2476512", Drop: []string{"CVE-2010-2573", "CVE-2010-3337"}},
 		},
 	},
-	"MS10-088": {
-		CVEAdjustments: []cveAdjustment{
-			{KB: "2293386", Drop: []string{"CVE-2010-2572"}},
-			{KB: "2413381", Drop: []string{"CVE-2010-2572"}},
-		},
-	},
+	"MS10-088": {CVEAdjustments: []cveAdjustment{{KB: "2413381", Drop: []string{"CVE-2010-2572"}}}},
 	"MS10-090": {
-		CVEAdjustments: []cveAdjustment{
-			{KB: "2416400", Drop: []string{"CVE-2010-3340", "CVE-2010-3345"}},
-		},
 		IECumChain: map[string][]string{
 			"2360131": {"2416400"},
 		},
 	},
-	"MS10-098": {CVEAdjustments: []cveAdjustment{{KB: "2436673", Drop: []string{"CVE-2010-3941", "CVE-2010-3944"}}}},
-	"MS10-103": {CVEAdjustments: []cveAdjustment{{KB: "2292970", Drop: []string{"CVE-2010-2569", "CVE-2010-2571", "CVE-2010-3954", "CVE-2010-3955"}}}},
 	"MS10-105": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "2288931", Drop: []string{"CVE-2010-3946", "CVE-2010-3947", "CVE-2010-3949", "CVE-2010-3950"}},
@@ -1249,31 +1127,32 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 		},
 	},
 	"MS11-003": {
-		CVEAdjustments: []cveAdjustment{
-			{KB: "2482017", Drop: []string{"CVE-2011-0038"}},
-		},
 		IECumChain: map[string][]string{
 			"2416400": {"2482017"},
 		},
 	},
-	"MS11-011": {CVEAdjustments: []cveAdjustment{{KB: "2393802", Drop: []string{"CVE-2011-0045"}}}},
-	"MS11-012": {CVEAdjustments: []cveAdjustment{{KB: "2479628", Drop: []string{"CVE-2011-0087"}}}},
 	"MS11-013": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "2425227", Drop: []string{"CVE-2011-0043"}},
 			{KB: "2478971", Drop: []string{"CVE-2011-0091"}},
 		},
 	},
-	"MS11-015": {
-		CVEAdjustments: []cveAdjustment{
-			{KB: "2479943", Drop: []string{"CVE-2011-0032", "CVE-2011-0042"}},
-			{KB: "2502898", Drop: []string{"CVE-2011-0032"}},
-		},
-	},
+	// MS11-015: legacy bulletinArchiveKBNotApplicable entry for KB2479943
+	// dropped both CVE-2011-0032 and CVE-2011-0042 as if KB-uniformly NA,
+	// but the per-CVE matrix table actually has both CVEs APPLICABLE for
+	// the Vista / Windows 7 / Server 2008 R2 rows that share KB2479943 —
+	// only XP rows are NA for CVE-2011-0032, and only Server 2008 R2 is
+	// NA for CVE-2011-0042 (per-product, not per-KB). Filtering at the
+	// KB grain dropped every CVE from every row, leaving the bulletin
+	// without any vulnerability entries and surfacing "MS11-015" as a
+	// synthetic cveID in scannedCves on Server 2008 R2. The KB2479943
+	// KB-Drop is removed here; KB2502898 is retained because it is
+	// genuinely KB-uniformly NA per the same matrix (XP MCE 2005 SP3
+	// row only). Ideal fix is per-product Component-Drop entries
+	// (3 entries per the current generator output) — deferred since the
+	// same staleness affects many other bulletins.
+	"MS11-015": {CVEAdjustments: []cveAdjustment{{KB: "2502898", Drop: []string{"CVE-2011-0032"}}}},
 	"MS11-018": {
-		CVEAdjustments: []cveAdjustment{
-			{KB: "2497640", Drop: []string{"CVE-2011-0094", "CVE-2011-1245"}},
-		},
 		IECumChain: map[string][]string{
 			"2482017": {"2497640"},
 		},
@@ -1282,38 +1161,28 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 		CVEAdjustments: []cveAdjustment{
 			{KB: "2466156", Drop: []string{"CVE-2011-0101", "CVE-2011-0103", "CVE-2011-0104", "CVE-2011-0105", "CVE-2011-0979", "CVE-2011-0980"}},
 			{KB: "2466158", Drop: []string{"CVE-2011-0101", "CVE-2011-0103", "CVE-2011-0104", "CVE-2011-0105", "CVE-2011-0980"}},
-			{KB: "2489279", Drop: []string{"CVE-2011-0101", "CVE-2011-0103", "CVE-2011-0104", "CVE-2011-0105", "CVE-2011-0978", "CVE-2011-0980"}},
-			{KB: "2505924", Drop: []string{"CVE-2011-0101", "CVE-2011-0107"}},
-			{KB: "2505927", Drop: []string{"CVE-2011-0101", "CVE-2011-0107", "CVE-2011-0978"}},
-			{KB: "2505935", Drop: []string{"CVE-2011-0101", "CVE-2011-0107", "CVE-2011-0978"}},
-			{KB: "2525412", Drop: []string{"CVE-2011-0097", "CVE-2011-0098", "CVE-2011-0101", "CVE-2011-0103", "CVE-2011-0104", "CVE-2011-0105", "CVE-2011-0976", "CVE-2011-0978", "CVE-2011-0980"}},
+			{KB: "2505924", Drop: []string{"CVE-2011-0101"}},
+			{KB: "2505927", Drop: []string{"CVE-2011-0101", "CVE-2011-0978"}},
+			{KB: "2505935", Drop: []string{"CVE-2011-0101", "CVE-2011-0978"}},
+			{KB: "2525412", Drop: []string{"CVE-2011-0097", "CVE-2011-0098", "CVE-2011-0101", "CVE-2011-0103", "CVE-2011-0104", "CVE-2011-0105", "CVE-2011-0978", "CVE-2011-0980"}},
 		},
 	},
 	"MS11-022": {
 		CVEAdjustments: []cveAdjustment{
-			{KB: "2489283", Drop: []string{"CVE-2011-0655", "CVE-2011-0976"}},
 			{KB: "2519984", Drop: []string{"CVE-2011-0976"}},
-			{KB: "2525412", Drop: []string{"CVE-2011-0097", "CVE-2011-0098", "CVE-2011-0101", "CVE-2011-0103", "CVE-2011-0104", "CVE-2011-0105", "CVE-2011-0976", "CVE-2011-0978", "CVE-2011-0980"}},
+			{KB: "2525412", Drop: []string{"CVE-2011-0976"}},
 		},
 	},
 	"MS11-023": {
 		CVEAdjustments: []cveAdjustment{
-			{KB: "2505924", Drop: []string{"CVE-2011-0101", "CVE-2011-0107"}},
-			{KB: "2505927", Drop: []string{"CVE-2011-0101", "CVE-2011-0107", "CVE-2011-0978"}},
-			{KB: "2505935", Drop: []string{"CVE-2011-0101", "CVE-2011-0107", "CVE-2011-0978"}},
+			{KB: "2505924", Drop: []string{"CVE-2011-0107"}},
+			{KB: "2505927", Drop: []string{"CVE-2011-0107"}},
+			{KB: "2505935", Drop: []string{"CVE-2011-0107"}},
 		},
 	},
-	"MS11-027": {CVEAdjustments: []cveAdjustment{{KB: "2508272", Drop: []string{"CVE-2010-0811", "CVE-2010-3973", "CVE-2011-1243"}}}},
-	"MS11-036": {
-		CVEAdjustments: []cveAdjustment{
-			{KB: "2540162", Drop: []string{"CVE-2011-1270"}},
-			{KB: "2545814", Drop: []string{"CVE-2011-1270"}},
-		},
-	},
-	"MS11-042": {CVEAdjustments: []cveAdjustment{{KB: "2535512", Drop: []string{"CVE-2011-1868"}}}},
+	"MS11-036": {CVEAdjustments: []cveAdjustment{{KB: "2540162", Drop: []string{"CVE-2011-1270"}}}},
 	"MS11-045": {
 		CVEAdjustments: []cveAdjustment{
-			{KB: "2537146", Drop: []string{"CVE-2011-1272", "CVE-2011-1274", "CVE-2011-1275", "CVE-2011-1276", "CVE-2011-1277", "CVE-2011-1278", "CVE-2011-1279"}},
 			{KB: "2541012", Drop: []string{"CVE-2011-1275", "CVE-2011-1277", "CVE-2011-1278", "CVE-2011-1279"}},
 			{KB: "2541015", Drop: []string{"CVE-2011-1275", "CVE-2011-1277", "CVE-2011-1278", "CVE-2011-1279"}},
 			{KB: "2555784", Drop: []string{"CVE-2011-1272", "CVE-2011-1274", "CVE-2011-1276", "CVE-2011-1277", "CVE-2011-1278", "CVE-2011-1279"}},
@@ -1325,25 +1194,18 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 	"MS11-050": {
 		CVEAdjustments: []cveAdjustment{
 			{Add: []string{"CVE-2011-1246", "CVE-2011-1250", "CVE-2011-1251", "CVE-2011-1252", "CVE-2011-1254", "CVE-2011-1255", "CVE-2011-1256", "CVE-2011-1258", "CVE-2011-1260", "CVE-2011-1261", "CVE-2011-1262", "CVE-2011-1346"}},
-			{KB: "2530548", Drop: []string{"CVE-2011-1246", "CVE-2011-1251", "CVE-2011-1252", "CVE-2011-1254", "CVE-2011-1255", "CVE-2011-1256", "CVE-2011-1258", "CVE-2011-1260", "CVE-2011-1262"}},
 		},
 		IECumChain: map[string][]string{
 			"2497640": {"2530548"},
 		},
 	},
-	"MS11-054": {CVEAdjustments: []cveAdjustment{{KB: "2555917", Drop: []string{"CVE-2011-1877", "CVE-2011-1886", "CVE-2011-1887", "CVE-2011-1888"}}}},
 	// (MS08-032 / CVE-2007-0675 omitted: the archive markdown at
 	// ms08-032.md is mis-mapped — its content is actually MS16-011's — so
 	// the absence-in-markdown signal cannot distinguish typo from real
 	// attribution. CVE-2007-0675 is a real ActiveX vulnerability addressed
 	// by the MS08-032 Cumulative ActiveX Kill Bit update.)
 	// MS11-056: off-by-one of CVE-2011-1284 — remap (1284 not in xlsx).
-	"MS11-056": {
-		CVEAdjustments: []cveAdjustment{
-			{KB: "2507938", Drop: []string{"CVE-2011-1283", "CVE-2011-1870"}},
-			{Remap: map[string]string{"CVE-2011-1285": "CVE-2011-1284"}},
-		},
-	},
+	"MS11-056": {CVEAdjustments: []cveAdjustment{{Remap: map[string]string{"CVE-2011-1285": "CVE-2011-1284"}}}},
 	// MS11-057 includes CVE-2011-1347 because the bulletin's update FAQ
 	// states "this update addresses a Protected Mode bypass issue,
 	// publicly disclosed". The CVE is not in the main vulnerability
@@ -1351,15 +1213,12 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 	"MS11-057": {
 		CVEAdjustments: []cveAdjustment{
 			{Add: []string{"CVE-2011-1257", "CVE-2011-1347", "CVE-2011-1960", "CVE-2011-1961", "CVE-2011-1962", "CVE-2011-1963", "CVE-2011-1964", "CVE-2011-2383"}},
-			{KB: "2559049", Drop: []string{"CVE-2011-1257", "CVE-2011-1963"}},
 		},
 		IECumChain: map[string][]string{
 			"2530548": {"2559049"},
 		},
 	},
-	"MS11-058": {CVEAdjustments: []cveAdjustment{{KB: "2562485", Drop: []string{"CVE-2011-1966"}}}},
 	"MS11-060": {CVEAdjustments: []cveAdjustment{{KB: "2560978", Drop: []string{"CVE-2011-1979"}}}},
-	"MS11-064": {CVEAdjustments: []cveAdjustment{{KB: "2563894", Drop: []string{"CVE-2011-1965"}}}},
 	"MS11-072": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "2553074", Drop: []string{"CVE-2011-1986"}},
@@ -1367,7 +1226,6 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2553089", Drop: []string{"CVE-2011-1986"}},
 			{KB: "2553091", Drop: []string{"CVE-2011-1986", "CVE-2011-1988", "CVE-2011-1990"}},
 			{KB: "2553093", Drop: []string{"CVE-2011-1986", "CVE-2011-1987", "CVE-2011-1988"}},
-			{KB: "2587505", Drop: []string{"CVE-2011-1986", "CVE-2011-1987", "CVE-2011-1988", "CVE-2011-1990"}},
 			{KB: "2598781", Drop: []string{"CVE-2011-1986", "CVE-2011-1990"}},
 			{KB: "2598782", Drop: []string{"CVE-2011-1986", "CVE-2011-1990"}},
 			{KB: "2598783", Drop: []string{"CVE-2011-1986", "CVE-2011-1988", "CVE-2011-1990"}},
@@ -1382,7 +1240,6 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 	},
 	"MS11-074": {
 		CVEAdjustments: []cveAdjustment{
-			{KB: "2451858", Drop: []string{"CVE-2011-0653", "CVE-2011-1890", "CVE-2011-1891", "CVE-2011-1892", "CVE-2011-1893"}},
 			{KB: "2493987", Drop: []string{"CVE-2011-0653", "CVE-2011-1890"}},
 			{KB: "2494007", Drop: []string{"CVE-2011-0653", "CVE-2011-1252", "CVE-2011-1890", "CVE-2011-1891", "CVE-2011-1892"}},
 			{KB: "2508965", Drop: []string{"CVE-2011-0653", "CVE-2011-1890", "CVE-2011-1891", "CVE-2011-1893"}},
@@ -1394,27 +1251,16 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2566449", Drop: []string{"CVE-2011-0653", "CVE-2011-1252", "CVE-2011-1890", "CVE-2011-1891", "CVE-2011-1893"}},
 		},
 	},
-	"MS11-077": {CVEAdjustments: []cveAdjustment{{KB: "2567053", Drop: []string{"CVE-2011-2002"}}}},
 	"MS11-081": {
-		CVEAdjustments: []cveAdjustment{
-			{KB: "2586448", Drop: []string{"CVE-2011-1996", "CVE-2011-1997", "CVE-2011-1998", "CVE-2011-1999"}},
-		},
 		IECumChain: map[string][]string{
 			"2559049": {"2586448"},
 		},
 	},
-	"MS11-090": {CVEAdjustments: []cveAdjustment{{KB: "2618451", Drop: []string{"CVE-2011-3397"}}}},
-	"MS11-091": {
-		CVEAdjustments: []cveAdjustment{
-			{Add: []string{"CVE-2011-1508", "CVE-2011-3410", "CVE-2011-3411", "CVE-2011-3412"}},
-			{KB: "2607702", Drop: []string{"CVE-2011-3411"}},
-		},
-	},
+	"MS11-091": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2011-1508", "CVE-2011-3410", "CVE-2011-3411", "CVE-2011-3412"}}}},
 	"MS11-094": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "2596843", Drop: []string{"CVE-2011-3396"}},
 			{KB: "2596912", Drop: []string{"CVE-2011-3396"}},
-			{KB: "2639142", Drop: []string{"CVE-2011-3413"}},
 			{KB: "2644354", Drop: []string{"CVE-2011-3396"}},
 		},
 	},
@@ -1424,7 +1270,6 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 	"MS11-099": {
 		CVEAdjustments: []cveAdjustment{
 			{Add: []string{"CVE-2011-1992", "CVE-2011-2019", "CVE-2011-3389", "CVE-2011-3404"}},
-			{KB: "2618444", Drop: []string{"CVE-2011-1992", "CVE-2011-2019"}},
 			{Remap: map[string]string{"CVE-2011-3403": "CVE-2011-3404"}},
 		},
 		IECumChain: map[string][]string{
@@ -1434,33 +1279,17 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 	"MS11-100": {
 		CVEAdjustments: []cveAdjustment{
 			{Add: []string{"CVE-2011-3414", "CVE-2011-3415", "CVE-2011-3416", "CVE-2011-3417", "CVE-2012-0160", "CVE-2012-0161"}},
-			{KB: "2638420", Drop: []string{"CVE-2011-3415"}},
 			{KB: "2656353", Drop: []string{"CVE-2011-3415"}},
 			{KB: "2656358", Drop: []string{"CVE-2011-3415"}},
 		},
 	},
-	"MS12-004": {CVEAdjustments: []cveAdjustment{{KB: "2636391", Drop: []string{"CVE-2012-0003"}}}},
-	"MS12-009": {CVEAdjustments: []cveAdjustment{{KB: "2645640", Drop: []string{"CVE-2012-0148", "CVE-2012-0149"}}}},
 	"MS12-010": {
-		CVEAdjustments: []cveAdjustment{
-			{KB: "2647516", Drop: []string{"CVE-2012-0011", "CVE-2012-0012", "CVE-2012-0155"}},
-		},
 		IECumChain: map[string][]string{
 			"2618444": {"2647516"},
 		},
 	},
-	"MS12-011": {CVEAdjustments: []cveAdjustment{{KB: "2663841", Drop: []string{"CVE-2012-0017"}}}},
-	"MS12-016": {
-		CVEAdjustments: []cveAdjustment{
-			{KB: "2651026", Drop: []string{"CVE-2012-0015"}},
-			{KB: "2668562", Drop: []string{"CVE-2012-0015"}},
-		},
-	},
-	"MS12-020": {CVEAdjustments: []cveAdjustment{{KB: "2621440", Drop: []string{"CVE-2012-0152"}}}},
+	"MS12-016": {CVEAdjustments: []cveAdjustment{{KB: "2668562", Drop: []string{"CVE-2012-0015"}}}},
 	"MS12-023": {
-		CVEAdjustments: []cveAdjustment{
-			{KB: "2675157", Drop: []string{"CVE-2012-0169", "CVE-2012-0170", "CVE-2012-0172"}},
-		},
 		IECumChain: map[string][]string{
 			"2647516": {"2675157"},
 		},
@@ -1471,24 +1300,19 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2596842", Drop: []string{"CVE-2012-0143"}},
 			{KB: "2597162", Drop: []string{"CVE-2012-0143"}},
 			{KB: "2597969", Drop: []string{"CVE-2012-0143"}},
-			{KB: "2663830", Drop: []string{"CVE-2012-0143", "CVE-2012-0185"}},
 			{KB: "2665346", Drop: []string{"CVE-2012-0141", "CVE-2012-0185"}},
 			{KB: "2665351", Drop: []string{"CVE-2012-0142", "CVE-2012-0143", "CVE-2012-0185"}},
 		},
 	},
-	"MS12-032": {CVEAdjustments: []cveAdjustment{{KB: "2688338", Drop: []string{"CVE-2012-0179"}}}},
 	"MS12-034": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "2589337", Drop: []string{"CVE-2012-0162", "CVE-2012-0164", "CVE-2012-0167", "CVE-2012-0176", "CVE-2012-0180", "CVE-2012-0181", "CVE-2012-1848"}},
 			{KB: "2598253", Drop: []string{"CVE-2012-0162", "CVE-2012-0164", "CVE-2012-0176", "CVE-2012-0180", "CVE-2012-0181", "CVE-2012-1848"}},
 			{KB: "2636927", Drop: []string{"CVE-2012-0162", "CVE-2012-0164", "CVE-2012-0165", "CVE-2012-0167", "CVE-2012-0176", "CVE-2012-0180", "CVE-2012-0181", "CVE-2012-1848"}},
-			{KB: "2690729", Drop: []string{"CVE-2012-0162", "CVE-2012-0164", "CVE-2012-0165", "CVE-2012-0167", "CVE-2012-0176", "CVE-2012-0180", "CVE-2012-0181", "CVE-2012-1848"}},
+			{KB: "2690729", Drop: []string{"CVE-2012-0162", "CVE-2012-0164", "CVE-2012-0165", "CVE-2012-0167", "CVE-2012-0180", "CVE-2012-0181", "CVE-2012-1848"}},
 		},
 	},
 	"MS12-037": {
-		CVEAdjustments: []cveAdjustment{
-			{KB: "2699988", Drop: []string{"CVE-2012-1523", "CVE-2012-1858", "CVE-2012-1873", "CVE-2012-1874", "CVE-2012-1875", "CVE-2012-1881"}},
-		},
 		IECumChain: map[string][]string{
 			"2675157": {"2699988"},
 		},
@@ -1500,7 +1324,6 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2708980", Drop: []string{"CVE-2011-3402", "CVE-2012-0159", "CVE-2012-1849"}},
 		},
 	},
-	"MS12-041": {CVEAdjustments: []cveAdjustment{{KB: "2709162", Drop: []string{"CVE-2012-1868"}}}},
 	"MS12-042": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "2707511", Drop: []string{"CVE-2012-0217"}},
@@ -1518,14 +1341,10 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2589325", Drop: []string{"CVE-2012-1859", "CVE-2012-1860", "CVE-2012-1861", "CVE-2012-1862", "CVE-2012-1863"}},
 			{KB: "2596666", Drop: []string{"CVE-2012-1859", "CVE-2012-1860", "CVE-2012-1861", "CVE-2012-1862", "CVE-2012-1863"}},
 			{KB: "2598239", Drop: []string{"CVE-2012-1862", "CVE-2012-1863"}},
-			{KB: "2695502", Drop: []string{"CVE-2012-1859", "CVE-2012-1860", "CVE-2012-1861", "CVE-2012-1862", "CVE-2012-1863"}},
 			{KB: "2760604", Drop: []string{"CVE-2012-1858", "CVE-2012-1859", "CVE-2012-1860", "CVE-2012-1861", "CVE-2012-1862"}},
 		},
 	},
 	"MS12-052": {
-		CVEAdjustments: []cveAdjustment{
-			{KB: "2722913", Drop: []string{"CVE-2012-1526", "CVE-2012-2523"}},
-		},
 		IECumChain: map[string][]string{
 			"2699988": {"2722913"},
 			"2719177": {"2722913"},
@@ -1559,9 +1378,6 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 		},
 	},
 	"MS12-063": {
-		CVEAdjustments: []cveAdjustment{
-			{KB: "2744842", Drop: []string{"CVE-2012-1529", "CVE-2012-2546", "CVE-2012-2548", "CVE-2012-2557"}},
-		},
 		IECumChain: map[string][]string{
 			"2722913": {"2744842"},
 		},
@@ -1571,7 +1387,6 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2687314", Drop: []string{"CVE-2012-0182"}},
 			{KB: "2687401", Drop: []string{"CVE-2012-0182"}},
 			{KB: "2687485", Drop: []string{"CVE-2012-0182"}},
-			{KB: "2742319", Drop: []string{"CVE-2012-0182"}},
 		},
 	},
 	"MS12-071": {
@@ -1579,12 +1394,7 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2744842": {"2761451"},
 		},
 	},
-	"MS12-073": {
-		CVEAdjustments: []cveAdjustment{
-			{KB: "2716513", Drop: []string{"CVE-2012-2531"}},
-			{KB: "2733829", Drop: []string{"CVE-2012-2531", "CVE-2012-2532"}},
-		},
-	},
+	"MS12-073": {CVEAdjustments: []cveAdjustment{{KB: "2716513", Drop: []string{"CVE-2012-2531"}}}},
 	"MS12-074": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "2698023", Drop: []string{"CVE-2012-1896", "CVE-2012-4776", "CVE-2012-4777"}},
@@ -1606,33 +1416,22 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Microsoft .NET Framework 3.5 on Windows Server 2012", Drop: []string{"CVE-2012-1895"}},
 		},
 	},
-	"MS12-075": {CVEAdjustments: []cveAdjustment{{KB: "2761226", Drop: []string{"CVE-2012-2530", "CVE-2012-2553"}}}},
 	"MS12-076": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "2687311", Drop: []string{"CVE-2012-1887"}},
 			{KB: "2687313", Drop: []string{"CVE-2012-1885", "CVE-2012-1887"}},
-			{KB: "2720184", Drop: []string{"CVE-2012-2543"}},
 			{KB: "2764047", Drop: []string{"CVE-2012-1886"}},
 			{KB: "2764048", Drop: []string{"CVE-2012-1886", "CVE-2012-2543"}},
 		},
 	},
 	"MS12-077": {
-		CVEAdjustments: []cveAdjustment{
-			{KB: "2761465", Drop: []string{"CVE-2012-4782", "CVE-2012-4787"}},
-		},
 		IECumChain: map[string][]string{
 			"2744842": {"2761465"},
 			"2761451": {"2761465"},
 		},
 	},
 	"MS12-080": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2012-3214", "CVE-2012-3217", "CVE-2012-4791"}}}},
-	"MS13-002": {
-		CVEAdjustments: []cveAdjustment{
-			{KB: "2757638", Drop: []string{"CVE-2013-0006", "CVE-2013-0007"}},
-			{KB: "2758694", Drop: []string{"CVE-2013-0006"}},
-			{KB: "2758696", Drop: []string{"CVE-2013-0006"}},
-		},
-	},
+	"MS13-002": {CVEAdjustments: []cveAdjustment{{KB: "2758694", Drop: []string{"CVE-2013-0006"}}}},
 	"MS13-004": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "2742597", Drop: []string{"CVE-2013-0003"}},
@@ -1654,19 +1453,12 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 		},
 	},
 	"MS13-009": {
-		CVEAdjustments: []cveAdjustment{
-			{KB: "2792100", Drop: []string{"CVE-2013-0015", "CVE-2013-0018", "CVE-2013-0019", "CVE-2013-0020", "CVE-2013-0022", "CVE-2013-0023", "CVE-2013-0024", "CVE-2013-0025", "CVE-2013-0026", "CVE-2013-0028", "CVE-2013-0029"}},
-		},
 		IECumChain: map[string][]string{
 			"2761465": {"2792100"},
 			"2799329": {"2792100"},
 		},
 	},
-	"MS13-016": {CVEAdjustments: []cveAdjustment{{KB: "2778344", Drop: []string{"CVE-2013-1250", "CVE-2013-1251", "CVE-2013-1252", "CVE-2013-1253", "CVE-2013-1254", "CVE-2013-1255", "CVE-2013-1256", "CVE-2013-1257", "CVE-2013-1258", "CVE-2013-1259", "CVE-2013-1260", "CVE-2013-1261", "CVE-2013-1262", "CVE-2013-1263", "CVE-2013-1264", "CVE-2013-1265", "CVE-2013-1266", "CVE-2013-1267", "CVE-2013-1268", "CVE-2013-1269", "CVE-2013-1270", "CVE-2013-1271", "CVE-2013-1272", "CVE-2013-1273", "CVE-2013-1274", "CVE-2013-1275", "CVE-2013-1276", "CVE-2013-1277"}}}},
 	"MS13-021": {
-		CVEAdjustments: []cveAdjustment{
-			{KB: "2809289", Drop: []string{"CVE-2013-0091", "CVE-2013-1288"}},
-		},
 		Supersedes: map[string]supersedesAdjust{
 			"2797052": {Add: []string{"2809289"}},
 		},
@@ -1686,9 +1478,6 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 		},
 	},
 	"MS13-031": {
-		CVEAdjustments: []cveAdjustment{
-			{KB: "2813170", Drop: []string{"CVE-2013-1284"}},
-		},
 		Supersedes: map[string]supersedesAdjust{
 			"2620712": {Add: []string{"2813170"}},
 		},
@@ -1704,12 +1493,11 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2646524": {Add: []string{"2820917"}},
 		},
 	},
-	"MS13-036": {CVEAdjustments: []cveAdjustment{{KB: "2808735", Drop: []string{"CVE-2013-1291", "CVE-2013-1292", "CVE-2013-1293"}}}},
+	"MS13-036": {CVEAdjustments: []cveAdjustment{{KB: "2808735", Drop: []string{"CVE-2013-1293"}}}},
 	// MS13-037: off-by-one of CVE-2013-1312 — drop, 1312 already in xlsx.
 	// CVE-2013-1313 appears in MS13-020's markdown.
 	"MS13-037": {
 		CVEAdjustments: []cveAdjustment{
-			{KB: "2829530", Drop: []string{"CVE-2013-0811", "CVE-2013-1297", "CVE-2013-1306", "CVE-2013-1307", "CVE-2013-1310", "CVE-2013-1311", "CVE-2013-1312", "CVE-2013-3140"}},
 			{Remap: map[string]string{"CVE-2013-1313": ""}},
 		},
 		IECumChain: map[string][]string{
@@ -1730,7 +1518,6 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2804584", Drop: []string{"CVE-2013-1337"}},
 		},
 	},
-	"MS13-042": {CVEAdjustments: []cveAdjustment{{KB: "2830397", Drop: []string{"CVE-2013-1316", "CVE-2013-1317", "CVE-2013-1318", "CVE-2013-1319", "CVE-2013-1320", "CVE-2013-1321", "CVE-2013-1322", "CVE-2013-1323", "CVE-2013-1327", "CVE-2013-1329"}}}},
 	"MS13-046": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "2829361", Drop: []string{"CVE-2013-1332"}},
@@ -1761,9 +1548,6 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 		},
 	},
 	"MS13-047": {
-		CVEAdjustments: []cveAdjustment{
-			{KB: "2838727", Drop: []string{"CVE-2013-3110", "CVE-2013-3111", "CVE-2013-3114", "CVE-2013-3116", "CVE-2013-3117", "CVE-2013-3118", "CVE-2013-3119", "CVE-2013-3120", "CVE-2013-3122", "CVE-2013-3123", "CVE-2013-3124", "CVE-2013-3125", "CVE-2013-3126", "CVE-2013-3141"}},
-		},
 		Supersedes: map[string]supersedesAdjust{
 			"2847204": {Add: []string{"2838727"}},
 		},
@@ -1812,9 +1596,6 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 		},
 	},
 	"MS13-053": {
-		CVEAdjustments: []cveAdjustment{
-			{KB: "2850851", Drop: []string{"CVE-2013-3167", "CVE-2013-3172", "CVE-2013-3660"}},
-		},
 		Supersedes: map[string]supersedesAdjust{
 			"2808735": {Add: []string{"2850851"}},
 		},
@@ -1828,9 +1609,6 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 		},
 	},
 	"MS13-055": {
-		CVEAdjustments: []cveAdjustment{
-			{KB: "2846071", Drop: []string{"CVE-2013-3115", "CVE-2013-3143", "CVE-2013-3144", "CVE-2013-3145", "CVE-2013-3146", "CVE-2013-3147", "CVE-2013-3149", "CVE-2013-3150", "CVE-2013-3151", "CVE-2013-3152", "CVE-2013-3161", "CVE-2013-3162", "CVE-2013-3163", "CVE-2013-3164", "CVE-2013-3846"}},
-		},
 		IECumChain: map[string][]string{
 			"2838727": {"2846071"},
 		},
@@ -1840,7 +1618,6 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 	"MS13-059": {
 		CVEAdjustments: []cveAdjustment{
 			{Add: []string{"CVE-2013-3184", "CVE-2013-3186", "CVE-2013-3187", "CVE-2013-3188", "CVE-2013-3189", "CVE-2013-3190", "CVE-2013-3191", "CVE-2013-3192", "CVE-2013-3193", "CVE-2013-3194", "CVE-2013-3199"}},
-			{KB: "2862772", Drop: []string{"CVE-2013-3184", "CVE-2013-3186", "CVE-2013-3187", "CVE-2013-3188", "CVE-2013-3189", "CVE-2013-3190", "CVE-2013-3191", "CVE-2013-3193", "CVE-2013-3194"}},
 			{Remap: map[string]string{"CVE-2013-3181": ""}},
 		},
 		IECumChain: map[string][]string{
@@ -1866,7 +1643,6 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 	"MS13-063": {
 		CVEAdjustments: []cveAdjustment{
 			{Add: []string{"CVE-2013-2556", "CVE-2013-3196", "CVE-2013-3197", "CVE-2013-3198"}},
-			{KB: "2859537", Drop: []string{"CVE-2013-2556", "CVE-2013-3196", "CVE-2013-3197", "CVE-2013-3198"}},
 		},
 		Supersedes: map[string]supersedesAdjust{
 			"2644615": {Add: []string{"2859537"}},
@@ -1878,14 +1654,24 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2553408", Drop: []string{"CVE-2013-1315", "CVE-2013-3180", "CVE-2013-3847", "CVE-2013-3848", "CVE-2013-3849", "CVE-2013-3857", "CVE-2013-3858"}},
 			{KB: "2760589", Drop: []string{"CVE-2013-1330", "CVE-2013-3180", "CVE-2013-3847", "CVE-2013-3848", "CVE-2013-3849", "CVE-2013-3857", "CVE-2013-3858"}},
 			{KB: "2760595", Drop: []string{"CVE-2013-3180", "CVE-2013-3847", "CVE-2013-3848", "CVE-2013-3849", "CVE-2013-3857", "CVE-2013-3858"}},
-			{KB: "2760755", Drop: []string{"CVE-2013-3180", "CVE-2013-3847", "CVE-2013-3848", "CVE-2013-3849", "CVE-2013-3858"}},
-			{KB: "2834052", Drop: []string{"CVE-2013-1315", "CVE-2013-1330", "CVE-2013-3179", "CVE-2013-3180", "CVE-2013-3847", "CVE-2013-3848", "CVE-2013-3849", "CVE-2013-3857", "CVE-2013-3858"}},
+			{KB: "2760755", Drop: []string{"CVE-2013-3180"}},
 		},
 	},
+	// MS13-069: legacy bulletinArchiveKBNotApplicable entry for KB2870699
+	// dropped all 10 CVEs as if KB-uniformly NA, but the current
+	// gen_static_map.py output has zero KB-keyed NA entries for this
+	// bulletin (all narrowing is per-(product, component) in the
+	// markdown's per-CVE IE matrix table). The legacy entry filtered
+	// every CVE from every xlsx row of KB2870699, leaving the bulletin
+	// without vulnerability entries and surfacing "MS13-069" as a
+	// synthetic cveID in scannedCves on Server 2008. The KB2870699
+	// KB-Drop is removed here. IECumChain is retained as-is.
+	// Ideal fix is 41 per-(IE, OS) Component-Drop entries (per the
+	// current generator output) plus a normalizeArchiveComponentKey
+	// special-case that constructs combined "IE X for/in Windows Y"
+	// keys — deferred since the same staleness affects many other
+	// IE Cumulative bulletins.
 	"MS13-069": {
-		CVEAdjustments: []cveAdjustment{
-			{KB: "2870699", Drop: []string{"CVE-2013-3201", "CVE-2013-3202", "CVE-2013-3203", "CVE-2013-3204", "CVE-2013-3205", "CVE-2013-3206", "CVE-2013-3207", "CVE-2013-3208", "CVE-2013-3209", "CVE-2013-3845"}},
-		},
 		IECumChain: map[string][]string{
 			"2862772": {"2870699"},
 		},
@@ -1898,7 +1684,6 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2760823", Drop: []string{"CVE-2013-3160", "CVE-2013-3853", "CVE-2013-3854", "CVE-2013-3856"}},
 			{KB: "2817474", Drop: []string{"CVE-2013-3847", "CVE-2013-3848", "CVE-2013-3849", "CVE-2013-3850", "CVE-2013-3852", "CVE-2013-3853", "CVE-2013-3854", "CVE-2013-3855", "CVE-2013-3856", "CVE-2013-3857", "CVE-2013-3858"}},
 			{KB: "2817683", Drop: []string{"CVE-2013-3853", "CVE-2013-3854"}},
-			{KB: "2845537", Drop: []string{"CVE-2013-3160", "CVE-2013-3847", "CVE-2013-3848", "CVE-2013-3849", "CVE-2013-3851", "CVE-2013-3852", "CVE-2013-3853", "CVE-2013-3854", "CVE-2013-3855", "CVE-2013-3856", "CVE-2013-3858"}},
 		},
 	},
 	"MS13-073": {
@@ -1908,12 +1693,7 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2877813", Drop: []string{"CVE-2013-3158", "CVE-2013-3159"}},
 		},
 	},
-	"MS13-076": {
-		CVEAdjustments: []cveAdjustment{
-			{Add: []string{"CVE-2013-1341", "CVE-2013-1342", "CVE-2013-1343", "CVE-2013-1344", "CVE-2013-3864", "CVE-2013-3865", "CVE-2013-3866"}},
-			{KB: "2876315", Drop: []string{"CVE-2013-1341"}},
-		},
-	},
+	"MS13-076": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2013-1341", "CVE-2013-1342", "CVE-2013-1343", "CVE-2013-1344", "CVE-2013-3864", "CVE-2013-3865", "CVE-2013-3866"}}}},
 	"MS13-077": {
 		Supersedes: map[string]supersedesAdjust{
 			"2859537": {Add: []string{"2872339", "3033395"}},
@@ -1921,7 +1701,6 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 	},
 	"MS13-080": {
 		CVEAdjustments: []cveAdjustment{
-			{KB: "2879017", Drop: []string{"CVE-2013-3872", "CVE-2013-3873", "CVE-2013-3874", "CVE-2013-3875", "CVE-2013-3882", "CVE-2013-3885", "CVE-2013-3886"}},
 			{KB: "2884101", Drop: []string{"CVE-2013-3872", "CVE-2013-3873", "CVE-2013-3874", "CVE-2013-3875", "CVE-2013-3882", "CVE-2013-3885", "CVE-2013-3886"}},
 		},
 		IECumChain: map[string][]string{
@@ -1983,7 +1762,6 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2863253", Drop: []string{"CVE-2013-3128"}},
 		},
 	},
-	"MS13-084": {CVEAdjustments: []cveAdjustment{{KB: "2885089", Drop: []string{"CVE-2013-3889", "CVE-2013-3895"}}}},
 	"MS13-085": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "2760585", Drop: []string{"CVE-2013-3890"}},
@@ -2004,19 +1782,12 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 		},
 	},
 	"MS13-088": {
-		CVEAdjustments: []cveAdjustment{
-			{KB: "2888505", Drop: []string{"CVE-2013-3871", "CVE-2013-3908", "CVE-2013-3909", "CVE-2013-3910", "CVE-2013-3911", "CVE-2013-3912", "CVE-2013-3914", "CVE-2013-3916"}},
-		},
 		IECumChain: map[string][]string{
 			"2879017": {"2888505"},
 			"2884101": {"2888505"},
 		},
 	},
-	"MS13-091": {CVEAdjustments: []cveAdjustment{{KB: "2885093", Drop: []string{"CVE-2013-0082", "CVE-2013-1324", "CVE-2013-1325"}}}},
 	"MS13-097": {
-		CVEAdjustments: []cveAdjustment{
-			{KB: "2898785", Drop: []string{"CVE-2013-5045", "CVE-2013-5046", "CVE-2013-5049", "CVE-2013-5051", "CVE-2013-5052"}},
-		},
 		IECumChain: map[string][]string{
 			"2888505": {"2898785"},
 		},
@@ -2035,12 +1806,7 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2866475": {Add: []string{"2880833"}},
 		},
 	},
-	"MS14-001": {
-		CVEAdjustments: []cveAdjustment{
-			{KB: "2863867", Drop: []string{"CVE-2014-0259"}},
-			{KB: "2916605", Drop: []string{"CVE-2014-0258", "CVE-2014-0259"}},
-		},
-	},
+	"MS14-001": {CVEAdjustments: []cveAdjustment{{KB: "2863867", Drop: []string{"CVE-2014-0259"}}}},
 	"MS14-009": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "2898855", Drop: []string{"CVE-2014-0253", "CVE-2014-0295"}},
@@ -2105,7 +1871,6 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2878236", Drop: []string{"CVE-2014-1758"}},
 			{KB: "2878304", Drop: []string{"CVE-2014-1757", "CVE-2014-1758"}},
 			{KB: "2939132", Drop: []string{"CVE-2014-1757", "CVE-2014-1758"}},
-			{KB: "2949660", Drop: []string{"CVE-2014-1757", "CVE-2014-1758"}},
 		},
 		Supersedes: map[string]supersedesAdjust{
 			"2837615": {Add: []string{"2878236"}},
@@ -2141,7 +1906,6 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2863829", Drop: []string{"CVE-2014-1813"}},
 			{KB: "2863836", Drop: []string{"CVE-2014-1754", "CVE-2014-1813"}},
 			{KB: "2863854", Drop: []string{"CVE-2014-1813"}},
-			{KB: "2952166", Drop: []string{"CVE-2014-1754", "CVE-2014-1813"}},
 		},
 	},
 	"MS14-023": {
@@ -2205,7 +1969,6 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2977315", Drop: []string{"CVE-2014-4061"}},
 			{KB: "2977320", Drop: []string{"CVE-2014-1820"}},
 			{KB: "2977321", Drop: []string{"CVE-2014-1820"}},
-			{KB: "2977326", Drop: []string{"CVE-2014-1820"}},
 		},
 		Supersedes: map[string]supersedesAdjust{
 			"2716435": {Add: []string{"2977322"}},
@@ -2352,16 +2115,10 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2899518", Drop: []string{"CVE-2014-6356"}},
 			{KB: "2899581", Drop: []string{"CVE-2014-6356"}},
 			{KB: "2920729", Drop: []string{"CVE-2014-6356"}},
-			{KB: "3017301", Drop: []string{"CVE-2014-6356", "CVE-2014-6357"}},
 			{KB: "3018888", Drop: []string{"CVE-2014-6356"}},
 		},
 	},
-	"MS14-083": {
-		CVEAdjustments: []cveAdjustment{
-			{KB: "2920791", Drop: []string{"CVE-2014-6361", "CVE-2015-0064", "CVE-2015-0065"}},
-			{KB: "3017347", Drop: []string{"CVE-2014-6360"}},
-		},
-	},
+	"MS14-083": {CVEAdjustments: []cveAdjustment{{KB: "2920791", Drop: []string{"CVE-2014-6361"}}}},
 	"MS14-084": {
 		Supersedes: map[string]supersedesAdjust{
 			"2909210": {Override: []string{"3012176"}},
@@ -2396,7 +2153,7 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 		CVEAdjustments: []cveAdjustment{
 			{KB: "2920753", Drop: []string{"CVE-2015-0064", "CVE-2015-0065"}},
 			{KB: "2920788", Drop: []string{"CVE-2015-0064", "CVE-2015-0065"}},
-			{KB: "2920791", Drop: []string{"CVE-2014-6361", "CVE-2015-0064", "CVE-2015-0065"}},
+			{KB: "2920791", Drop: []string{"CVE-2015-0064", "CVE-2015-0065"}},
 			{KB: "2920810", Drop: []string{"CVE-2015-0063", "CVE-2015-0065"}},
 			{KB: "2956058", Drop: []string{"CVE-2015-0063", "CVE-2015-0065"}},
 			{KB: "2956066", Drop: []string{"CVE-2015-0063", "CVE-2015-0065"}},
@@ -2452,7 +2209,6 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2956188", Drop: []string{"CVE-2015-0085", "CVE-2015-0097", "CVE-2015-1633", "CVE-2015-1636"}},
 			{KB: "2956189", Drop: []string{"CVE-2015-0086", "CVE-2015-0097", "CVE-2015-1633", "CVE-2015-1636"}},
 			{KB: "2984939", Drop: []string{"CVE-2015-0086", "CVE-2015-0097", "CVE-2015-1633", "CVE-2015-1636"}},
-			{KB: "3038999", Drop: []string{"CVE-2015-0086", "CVE-2015-0097", "CVE-2015-1633", "CVE-2015-1636"}},
 		},
 		Supersedes: map[string]supersedesAdjust{
 			"2956058": {Override: []string{"2956138"}},
@@ -2477,7 +2233,7 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2965215", Drop: []string{"CVE-2015-1639", "CVE-2015-1649", "CVE-2015-1651"}},
 			{KB: "2965236", Drop: []string{"CVE-2015-1639", "CVE-2015-1651"}},
 			{KB: "2965289", Drop: []string{"CVE-2015-1639", "CVE-2015-1641"}},
-			{KB: "3048019", Drop: []string{"CVE-2015-1639", "CVE-2015-1649", "CVE-2015-1650", "CVE-2015-1651"}},
+			{KB: "3048019", Drop: []string{"CVE-2015-1639"}},
 			{KB: "3051737", Drop: []string{"CVE-2015-1641", "CVE-2015-1649", "CVE-2015-1650", "CVE-2015-1651"}},
 			{KB: "3055707", Drop: []string{"CVE-2015-1639", "CVE-2015-1641", "CVE-2015-1649", "CVE-2015-1650", "CVE-2015-1651"}},
 		},
@@ -2498,7 +2254,6 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 		CVEAdjustments: []cveAdjustment{
 			{Add: []string{"CVE-2015-1640", "CVE-2015-1653"}},
 			{KB: "2965219", Drop: []string{"CVE-2015-1640"}},
-			{KB: "3052044", Drop: []string{"CVE-2015-1640", "CVE-2015-1653"}},
 			{Remap: map[string]string{"CVE-2015-16453": ""}},
 		},
 	},
@@ -2597,7 +2352,6 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "3050941", Drop: []string{"CVE-2015-1684"}},
 			{KB: "3050945", Drop: []string{"CVE-2015-1684"}},
 			{KB: "3050946", Drop: []string{"CVE-2015-1684"}},
-			{KB: "3057263", Drop: []string{"CVE-2015-1684", "CVE-2015-1686"}},
 		},
 	},
 	"MS15-055": {
@@ -2664,7 +2418,6 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "3054968", Drop: []string{"CVE-2015-2377", "CVE-2015-2378", "CVE-2015-2379", "CVE-2015-2380", "CVE-2015-2415", "CVE-2015-2424"}},
 			{KB: "3054971", Drop: []string{"CVE-2015-2375", "CVE-2015-2376", "CVE-2015-2377", "CVE-2015-2378", "CVE-2015-2415", "CVE-2015-2424"}},
 			{KB: "3054999", Drop: []string{"CVE-2015-2375", "CVE-2015-2376", "CVE-2015-2377", "CVE-2015-2378", "CVE-2015-2379", "CVE-2015-2380", "CVE-2015-2415"}},
-			{KB: "3072620", Drop: []string{"CVE-2015-2375", "CVE-2015-2376", "CVE-2015-2377", "CVE-2015-2378", "CVE-2015-2379", "CVE-2015-2380", "CVE-2015-2415", "CVE-2015-2424"}},
 		},
 	},
 	"MS15-072": {
@@ -2770,7 +2523,7 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 	},
 	"MS15-097": {
 		CVEAdjustments: []cveAdjustment{
-			{KB: "3081455", Drop: []string{"CVE-2015-2510", "CVE-2015-2525"}},
+			{KB: "3081455", Drop: []string{"CVE-2015-2510"}},
 			{KB: "3087039", Drop: []string{"CVE-2015-2508", "CVE-2015-2510"}},
 			{KB: "3087135", Drop: []string{"CVE-2015-2506", "CVE-2015-2507", "CVE-2015-2508", "CVE-2015-2511", "CVE-2015-2512", "CVE-2015-2517", "CVE-2015-2518", "CVE-2015-2527", "CVE-2015-2529", "CVE-2015-2546"}},
 			{Component: "Windows 7 for 32-bit Systems Service Pack 1", Drop: []string{"CVE-2015-2527", "CVE-2015-2529"}},
@@ -2795,7 +2548,7 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 	"MS15-099": {
 		CVEAdjustments: []cveAdjustment{
 			{Add: []string{"CVE-2015-2520", "CVE-2015-2521", "CVE-2015-2522", "CVE-2015-2523", "CVE-2015-2545"}},
-			{KB: "2920693", Drop: []string{"CVE-2015-2520", "CVE-2015-2521", "CVE-2015-2545", "CVE-2015-2557"}},
+			{KB: "2920693", Drop: []string{"CVE-2015-2520", "CVE-2015-2521", "CVE-2015-2545"}},
 			{KB: "3054993", Drop: []string{"CVE-2015-2545"}},
 			{KB: "3054995", Drop: []string{"CVE-2015-2545"}},
 			{KB: "3085502", Drop: []string{"CVE-2015-2520", "CVE-2015-2521", "CVE-2015-2545"}},
@@ -2809,10 +2562,9 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "3088502", Drop: []string{"CVE-2015-2521", "CVE-2015-2545"}},
 		},
 	},
-	"MS15-101": {CVEAdjustments: []cveAdjustment{{KB: "3089662", Drop: []string{"CVE-2015-2526"}}}},
 	"MS15-102": {
 		CVEAdjustments: []cveAdjustment{
-			{KB: "3081455", Drop: []string{"CVE-2015-2510", "CVE-2015-2525"}},
+			{KB: "3081455", Drop: []string{"CVE-2015-2525"}},
 			{KB: "3082089", Drop: []string{"CVE-2015-2525"}},
 			{KB: "3084135", Drop: []string{"CVE-2015-2524", "CVE-2015-2528"}},
 		},
@@ -2852,7 +2604,7 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Add: []string{"CVE-2015-2555", "CVE-2015-2556", "CVE-2015-2557", "CVE-2015-2558", "CVE-2015-6037", "CVE-2015-6039"}},
 			{KB: "2553405", Drop: []string{"CVE-2015-6037", "CVE-2015-6039"}},
 			{KB: "2596670", Drop: []string{"CVE-2015-6037", "CVE-2015-6039"}},
-			{KB: "2920693", Drop: []string{"CVE-2015-2520", "CVE-2015-2521", "CVE-2015-2545", "CVE-2015-2557"}},
+			{KB: "2920693", Drop: []string{"CVE-2015-2557"}},
 			{KB: "3054994", Drop: []string{"CVE-2015-2555", "CVE-2015-6037"}},
 			{KB: "3085514", Drop: []string{"CVE-2015-2555", "CVE-2015-2558"}},
 			{KB: "3085520", Drop: []string{"CVE-2015-2555", "CVE-2015-2558"}},
@@ -2962,9 +2714,6 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 		},
 	},
 	"MS15-118": {
-		CVEAdjustments: []cveAdjustment{
-			{KB: "3104507", Drop: []string{"CVE-2015-6099", "CVE-2015-6115"}},
-		},
 		Supersedes: map[string]supersedesAdjust{
 			"2901128": {Add: []string{"3098779"}},
 		},
@@ -2995,9 +2744,8 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 	},
 	"MS15-128": {
 		CVEAdjustments: []cveAdjustment{
-			{KB: "3109094", Drop: []string{"CVE-2015-6175"}},
-			{KB: "3116869", Drop: []string{"CVE-2015-6106", "CVE-2015-6128"}},
-			{KB: "3116900", Drop: []string{"CVE-2015-6106", "CVE-2015-6108", "CVE-2015-6128", "CVE-2015-6175"}},
+			{KB: "3116869", Drop: []string{"CVE-2015-6106"}},
+			{KB: "3116900", Drop: []string{"CVE-2015-6106", "CVE-2015-6108"}},
 			{Component: "Windows 7 for 32-bit Systems Service Pack 1", Drop: []string{"CVE-2015-6106"}},
 			{Component: "Windows 7 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2015-6106"}},
 			{Component: "Windows 8 for 32-bit Systems", Drop: []string{"CVE-2015-6106"}},
@@ -3038,14 +2786,14 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 	},
 	"MS15-132": {
 		CVEAdjustments: []cveAdjustment{
-			{KB: "3116869", Drop: []string{"CVE-2015-6106", "CVE-2015-6128"}},
-			{KB: "3116900", Drop: []string{"CVE-2015-6106", "CVE-2015-6108", "CVE-2015-6128", "CVE-2015-6175"}},
+			{KB: "3116869", Drop: []string{"CVE-2015-6128"}},
+			{KB: "3116900", Drop: []string{"CVE-2015-6128"}},
 		},
 	},
 	"MS15-135": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "3109094", Drop: []string{"CVE-2015-6175"}},
-			{KB: "3116900", Drop: []string{"CVE-2015-6106", "CVE-2015-6108", "CVE-2015-6128", "CVE-2015-6175"}},
+			{KB: "3116900", Drop: []string{"CVE-2015-6175"}},
 		},
 	},
 	"MS16-001": {
@@ -3104,8 +2852,8 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 		CVEAdjustments: []cveAdjustment{
 			{KB: "3124000", Drop: []string{"CVE-2016-0008"}},
 			{KB: "3124001", Drop: []string{"CVE-2016-0009"}},
-			{KB: "3124263", Drop: []string{"CVE-2016-0009", "CVE-2016-0020"}},
-			{KB: "3124266", Drop: []string{"CVE-2016-0009", "CVE-2016-0020"}},
+			{KB: "3124263", Drop: []string{"CVE-2016-0009"}},
+			{KB: "3124266", Drop: []string{"CVE-2016-0009"}},
 		},
 	},
 	"MS16-007": {
@@ -3115,8 +2863,8 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "3110329", Drop: []string{"CVE-2016-0014", "CVE-2016-0015", "CVE-2016-0018", "CVE-2016-0019", "CVE-2016-0020"}},
 			{KB: "3121461", Drop: []string{"CVE-2016-0014", "CVE-2016-0015", "CVE-2016-0016", "CVE-2016-0019", "CVE-2016-0020"}},
 			{KB: "3121918", Drop: []string{"CVE-2016-0015", "CVE-2016-0016", "CVE-2016-0018", "CVE-2016-0019", "CVE-2016-0020"}},
-			{KB: "3124263", Drop: []string{"CVE-2016-0009", "CVE-2016-0020"}},
-			{KB: "3124266", Drop: []string{"CVE-2016-0009", "CVE-2016-0020"}},
+			{KB: "3124263", Drop: []string{"CVE-2016-0020"}},
+			{KB: "3124266", Drop: []string{"CVE-2016-0020"}},
 		},
 	},
 	"MS16-009": {
@@ -3318,19 +3066,14 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"3148198": {"3154070"},
 		},
 	},
-	"MS16-053": {
-		CVEAdjustments: []cveAdjustment{
-			{KB: "3156764", Drop: []string{"CVE-2016-0187"}},
-			{KB: "3158991", Drop: []string{"CVE-2016-0187"}},
-		},
-	},
+	"MS16-053": {CVEAdjustments: []cveAdjustment{{KB: "3158991", Drop: []string{"CVE-2016-0187"}}}},
 	"MS16-054": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "2984938", Drop: []string{"CVE-2016-0126", "CVE-2016-0183", "CVE-2016-0198"}},
 			{KB: "2984943", Drop: []string{"CVE-2016-0126", "CVE-2016-0183", "CVE-2016-0198"}},
 			{KB: "3054984", Drop: []string{"CVE-2016-0126", "CVE-2016-0183", "CVE-2016-0198"}},
 			{KB: "3101520", Drop: []string{"CVE-2016-0126", "CVE-2016-0183", "CVE-2016-0198"}},
-			{KB: "3114893", Drop: []string{"CVE-2016-0126", "CVE-2016-0140", "CVE-2016-0198", "CVE-2016-3315", "CVE-2016-3316", "CVE-2016-3317", "CVE-2016-3318"}},
+			{KB: "3114893", Drop: []string{"CVE-2016-0126", "CVE-2016-0140", "CVE-2016-0198"}},
 			{KB: "3115016", Drop: []string{"CVE-2016-0140", "CVE-2016-0183", "CVE-2016-0198"}},
 			{KB: "3115025", Drop: []string{"CVE-2016-0126", "CVE-2016-0140", "CVE-2016-0183"}},
 			{KB: "3115094", Drop: []string{"CVE-2016-0126", "CVE-2016-0140", "CVE-2016-0183"}},
@@ -3341,9 +3084,9 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "3115123", Drop: []string{"CVE-2016-0126", "CVE-2016-0140"}},
 			{KB: "3115132", Drop: []string{"CVE-2016-0126", "CVE-2016-0140", "CVE-2016-0183"}},
 			{KB: "3115464", Drop: []string{"CVE-2016-0126", "CVE-2016-0140", "CVE-2016-0198"}},
-			{KB: "3115465", Drop: []string{"CVE-2016-0126", "CVE-2016-0140", "CVE-2016-0198", "CVE-2016-3313", "CVE-2016-3315", "CVE-2016-3316", "CVE-2016-3318"}},
-			{KB: "3115479", Drop: []string{"CVE-2016-0126", "CVE-2016-0140", "CVE-2016-0198", "CVE-2016-3315", "CVE-2016-3316", "CVE-2016-3317", "CVE-2016-3318"}},
-			{KB: "3115480", Drop: []string{"CVE-2016-0126", "CVE-2016-0140", "CVE-2016-0198", "CVE-2016-3313", "CVE-2016-3315", "CVE-2016-3316", "CVE-2016-3318"}},
+			{KB: "3115465", Drop: []string{"CVE-2016-0126", "CVE-2016-0140", "CVE-2016-0198"}},
+			{KB: "3115479", Drop: []string{"CVE-2016-0126", "CVE-2016-0140", "CVE-2016-0198"}},
+			{KB: "3115480", Drop: []string{"CVE-2016-0126", "CVE-2016-0140", "CVE-2016-0198"}},
 			{KB: "3155776", Drop: []string{"CVE-2016-0126", "CVE-2016-0140", "CVE-2016-0183"}},
 			{KB: "3155777", Drop: []string{"CVE-2016-0126", "CVE-2016-0140", "CVE-2016-0183"}},
 		},
@@ -3419,11 +3162,7 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 	// it NA, so the legacy global lookup propagated the filter to
 	// MS16-068's rows too. Restated here explicitly under MS16-068's
 	// own amendments to preserve the filter under per-bulletin scope.
-	"MS16-068": {
-		CVEAdjustments: []cveAdjustment{
-			{KB: "3163017", Drop: []string{"CVE-2016-3215"}},
-		},
-	},
+	"MS16-068": {CVEAdjustments: []cveAdjustment{{KB: "3163017", Drop: []string{"CVE-2016-3215"}}}},
 	"MS16-070": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "2596915", Drop: []string{"CVE-2016-0025", "CVE-2016-3233", "CVE-2016-3234"}},
@@ -3473,7 +3212,7 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 	"MS16-073": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "3161664", Drop: []string{"CVE-2016-3232"}},
-			{KB: "3163017", Drop: []string{"CVE-2016-3215", "CVE-2016-3232"}},
+			{KB: "3163017", Drop: []string{"CVE-2016-3232"}},
 			{KB: "3163018", Drop: []string{"CVE-2016-3232"}},
 			{KB: "3164294", Drop: []string{"CVE-2016-3218", "CVE-2016-3221"}},
 		},
@@ -3494,7 +3233,7 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Remap: map[string]string{"CVE-2015-6016": "CVE-2015-6015"}},
 		},
 	},
-	"MS16-080": {CVEAdjustments: []cveAdjustment{{KB: "3163017", Drop: []string{"CVE-2016-3215", "CVE-2016-3232"}}}},
+	"MS16-080": {CVEAdjustments: []cveAdjustment{{KB: "3163017", Drop: []string{"CVE-2016-3215"}}}},
 	"MS16-083": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2016-4121", "CVE-2016-4122", "CVE-2016-4123", "CVE-2016-4124", "CVE-2016-4125", "CVE-2016-4126", "CVE-2016-4127", "CVE-2016-4128", "CVE-2016-4129", "CVE-2016-4130", "CVE-2016-4131", "CVE-2016-4132", "CVE-2016-4133", "CVE-2016-4134", "CVE-2016-4135", "CVE-2016-4136", "CVE-2016-4137", "CVE-2016-4138", "CVE-2016-4139", "CVE-2016-4140", "CVE-2016-4141", "CVE-2016-4142", "CVE-2016-4143", "CVE-2016-4144", "CVE-2016-4145", "CVE-2016-4146", "CVE-2016-4147", "CVE-2016-4148", "CVE-2016-4149", "CVE-2016-4150", "CVE-2016-4151", "CVE-2016-4152", "CVE-2016-4153", "CVE-2016-4154", "CVE-2016-4155", "CVE-2016-4156", "CVE-2016-4166", "CVE-2016-4171"}}}},
 	// MS16-084: Microsoft retracted CVE-2016-3276 in the V1.1 (2017-03-17)
 	// revision — "Removed CVE-2016-3276 ... because IE 9/10/11 are not
@@ -3609,18 +3348,18 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "3114456", Drop: []string{"CVE-2016-3313", "CVE-2016-3316", "CVE-2016-3317", "CVE-2016-3318"}},
 			{KB: "3114869", Drop: []string{"CVE-2016-3315", "CVE-2016-3316", "CVE-2016-3317", "CVE-2016-3318"}},
 			{KB: "3114885", Drop: []string{"CVE-2016-3313", "CVE-2016-3316", "CVE-2016-3317", "CVE-2016-3318"}},
-			{KB: "3114893", Drop: []string{"CVE-2016-0126", "CVE-2016-0140", "CVE-2016-0198", "CVE-2016-3315", "CVE-2016-3316", "CVE-2016-3317", "CVE-2016-3318"}},
+			{KB: "3114893", Drop: []string{"CVE-2016-3315", "CVE-2016-3316", "CVE-2016-3317", "CVE-2016-3318"}},
 			{KB: "3115256", Drop: []string{"CVE-2016-3313", "CVE-2016-3316", "CVE-2016-3317", "CVE-2016-3318"}},
 			{KB: "3115415", Drop: []string{"CVE-2016-3315", "CVE-2016-3316", "CVE-2016-3317", "CVE-2016-3318"}},
 			{KB: "3115419", Drop: []string{"CVE-2016-3313", "CVE-2016-3316", "CVE-2016-3317", "CVE-2016-3318"}},
 			{KB: "3115427", Drop: []string{"CVE-2016-3315", "CVE-2016-3316", "CVE-2016-3317", "CVE-2016-3318"}},
 			{KB: "3115439", Drop: []string{"CVE-2016-3313", "CVE-2016-3315", "CVE-2016-3317", "CVE-2016-3318"}},
 			{KB: "3115449", Drop: []string{"CVE-2016-3313", "CVE-2016-3315", "CVE-2016-3317", "CVE-2016-3318"}},
-			{KB: "3115465", Drop: []string{"CVE-2016-0126", "CVE-2016-0140", "CVE-2016-0198", "CVE-2016-3313", "CVE-2016-3315", "CVE-2016-3316", "CVE-2016-3318"}},
+			{KB: "3115465", Drop: []string{"CVE-2016-3313", "CVE-2016-3315", "CVE-2016-3316", "CVE-2016-3318"}},
 			{KB: "3115468", Drop: []string{"CVE-2016-3313", "CVE-2016-3315", "CVE-2016-3316", "CVE-2016-3318"}},
 			{KB: "3115471", Drop: []string{"CVE-2016-3313", "CVE-2016-3315", "CVE-2016-3316", "CVE-2016-3318"}},
-			{KB: "3115479", Drop: []string{"CVE-2016-0126", "CVE-2016-0140", "CVE-2016-0198", "CVE-2016-3315", "CVE-2016-3316", "CVE-2016-3317", "CVE-2016-3318"}},
-			{KB: "3115480", Drop: []string{"CVE-2016-0126", "CVE-2016-0140", "CVE-2016-0198", "CVE-2016-3313", "CVE-2016-3315", "CVE-2016-3316", "CVE-2016-3318"}},
+			{KB: "3115479", Drop: []string{"CVE-2016-3315", "CVE-2016-3316", "CVE-2016-3317", "CVE-2016-3318"}},
+			{KB: "3115480", Drop: []string{"CVE-2016-3313", "CVE-2016-3315", "CVE-2016-3316", "CVE-2016-3318"}},
 			{KB: "3179162", Drop: []string{"CVE-2016-3313", "CVE-2016-3315", "CVE-2016-3316", "CVE-2016-3318"}},
 			{KB: "3179163", Drop: []string{"CVE-2016-3318"}},
 			{Component: "Microsoft OneNote 2016 for Mac", Drop: []string{"CVE-2016-3313", "CVE-2016-3316", "CVE-2016-3317"}},
@@ -3637,12 +3376,12 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 		CVEAdjustments: []cveAdjustment{
 			{KB: "3167679", Drop: []string{"CVE-2016-3300"}},
 			{KB: "3177108", Drop: []string{"CVE-2016-3237"}},
-			{KB: "3185330", Drop: []string{"CVE-2016-0073", "CVE-2016-0075", "CVE-2016-0079", "CVE-2016-3300", "CVE-2016-3341"}},
-			{KB: "3185331", Drop: []string{"CVE-2016-0079", "CVE-2016-3300"}},
-			{KB: "3185332", Drop: []string{"CVE-2016-0079", "CVE-2016-3300"}},
-			{KB: "3192391", Drop: []string{"CVE-2016-0073", "CVE-2016-0075", "CVE-2016-0079", "CVE-2016-3300", "CVE-2016-3341"}},
-			{KB: "3192392", Drop: []string{"CVE-2016-0079", "CVE-2016-3300"}},
-			{KB: "3192393", Drop: []string{"CVE-2016-0079", "CVE-2016-3300"}},
+			{KB: "3185330", Drop: []string{"CVE-2016-3300"}},
+			{KB: "3185331", Drop: []string{"CVE-2016-3300"}},
+			{KB: "3185332", Drop: []string{"CVE-2016-3300"}},
+			{KB: "3192391", Drop: []string{"CVE-2016-3300"}},
+			{KB: "3192392", Drop: []string{"CVE-2016-3300"}},
+			{KB: "3192393", Drop: []string{"CVE-2016-3300"}},
 			{KB: "3192440", Drop: []string{"CVE-2016-3300"}},
 			{KB: "3192441", Drop: []string{"CVE-2016-3300"}},
 			{KB: "3194798", Drop: []string{"CVE-2016-3300"}},
@@ -3677,10 +3416,10 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 	"MS16-105": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2016-3247", "CVE-2016-3291", "CVE-2016-3294", "CVE-2016-3295", "CVE-2016-3297", "CVE-2016-3325", "CVE-2016-3330", "CVE-2016-3350", "CVE-2016-3351", "CVE-2016-3370", "CVE-2016-3374", "CVE-2016-3377"}}}},
 	"MS16-106": {
 		CVEAdjustments: []cveAdjustment{
-			{KB: "3185611", Drop: []string{"CVE-2016-3356", "CVE-2016-3372"}},
-			{KB: "3185614", Drop: []string{"CVE-2016-3356", "CVE-2016-3372"}},
+			{KB: "3185611", Drop: []string{"CVE-2016-3356"}},
+			{KB: "3185614", Drop: []string{"CVE-2016-3356"}},
 			{KB: "3185911", Drop: []string{"CVE-2016-3356"}},
-			{KB: "3189866", Drop: []string{"CVE-2016-3349", "CVE-2016-3369", "CVE-2016-3372"}},
+			{KB: "3189866", Drop: []string{"CVE-2016-3349"}},
 			{Component: "Windows 7 for 32-bit Systems Service Pack 1", Drop: []string{"CVE-2016-3349"}},
 			{Component: "Windows 7 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2016-3349"}},
 			{Component: "Windows Server 2008 R2 for Itanium-based Systems Service Pack 1", Drop: []string{"CVE-2016-3349"}},
@@ -3713,7 +3452,7 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "3115467", Drop: []string{"CVE-2016-0137", "CVE-2016-0141", "CVE-2016-3357", "CVE-2016-3358", "CVE-2016-3359", "CVE-2016-3361", "CVE-2016-3362", "CVE-2016-3363", "CVE-2016-3364", "CVE-2016-3365", "CVE-2016-3366", "CVE-2016-3381"}},
 			{KB: "3115472", Drop: []string{"CVE-2016-3358", "CVE-2016-3362", "CVE-2016-3365"}},
 			{KB: "3115487", Drop: []string{"CVE-2016-0137", "CVE-2016-0141", "CVE-2016-3357", "CVE-2016-3358", "CVE-2016-3359", "CVE-2016-3361", "CVE-2016-3362", "CVE-2016-3363", "CVE-2016-3364", "CVE-2016-3365", "CVE-2016-3366", "CVE-2016-3381"}},
-			{KB: "3118268", Drop: []string{"CVE-2016-0137", "CVE-2016-3357", "CVE-2016-3358", "CVE-2016-3359", "CVE-2016-3360", "CVE-2016-3361", "CVE-2016-3362", "CVE-2016-3363", "CVE-2016-3364", "CVE-2016-3365", "CVE-2016-3366", "CVE-2016-3381"}},
+			{KB: "3118268", Drop: []string{"CVE-2016-3358", "CVE-2016-3359", "CVE-2016-3360", "CVE-2016-3361", "CVE-2016-3362", "CVE-2016-3363", "CVE-2016-3364", "CVE-2016-3365", "CVE-2016-3366", "CVE-2016-3381"}},
 			{KB: "3118270", Drop: []string{"CVE-2016-3358", "CVE-2016-3362", "CVE-2016-3365"}},
 			{KB: "3118280", Drop: []string{"CVE-2016-0137", "CVE-2016-0141", "CVE-2016-3357", "CVE-2016-3358", "CVE-2016-3359", "CVE-2016-3360", "CVE-2016-3361", "CVE-2016-3362", "CVE-2016-3363", "CVE-2016-3364", "CVE-2016-3365", "CVE-2016-3381"}},
 			{KB: "3118284", Drop: []string{"CVE-2016-0137", "CVE-2016-0141", "CVE-2016-3357", "CVE-2016-3359", "CVE-2016-3360", "CVE-2016-3361", "CVE-2016-3364", "CVE-2016-3366"}},
@@ -3766,14 +3505,14 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 		CVEAdjustments: []cveAdjustment{
 			{KB: "3184471", Drop: []string{"CVE-2016-3346", "CVE-2016-3352", "CVE-2016-3369"}},
 			{KB: "3187754", Drop: []string{"CVE-2016-3346", "CVE-2016-3368", "CVE-2016-3369"}},
-			{KB: "3189866", Drop: []string{"CVE-2016-3349", "CVE-2016-3369", "CVE-2016-3372"}},
+			{KB: "3189866", Drop: []string{"CVE-2016-3369"}},
 		},
 	},
 	"MS16-111": {
 		CVEAdjustments: []cveAdjustment{
-			{KB: "3185611", Drop: []string{"CVE-2016-3356", "CVE-2016-3372"}},
-			{KB: "3185614", Drop: []string{"CVE-2016-3356", "CVE-2016-3372"}},
-			{KB: "3189866", Drop: []string{"CVE-2016-3349", "CVE-2016-3369", "CVE-2016-3372"}},
+			{KB: "3185611", Drop: []string{"CVE-2016-3372"}},
+			{KB: "3185614", Drop: []string{"CVE-2016-3372"}},
+			{KB: "3189866", Drop: []string{"CVE-2016-3372"}},
 			{KB: "4025342", Drop: []string{"CVE-2016-3306", "CVE-2016-3371", "CVE-2016-3372", "CVE-2016-3373"}},
 			{Component: "Windows 7 for 32-bit Systems Service Pack 1", Drop: []string{"CVE-2016-3372"}},
 			{Component: "Windows 7 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2016-3372"}},
@@ -3825,20 +3564,20 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 		CVEAdjustments: []cveAdjustment{
 			{Add: []string{"CVE-2016-3266", "CVE-2016-3341", "CVE-2016-3376", "CVE-2016-7185", "CVE-2016-7191", "CVE-2016-7211"}},
 			{KB: "3183431", Drop: []string{"CVE-2016-3266", "CVE-2016-3341", "CVE-2016-3376", "CVE-2016-7211"}},
-			{KB: "3185330", Drop: []string{"CVE-2016-0073", "CVE-2016-0075", "CVE-2016-0079", "CVE-2016-3300", "CVE-2016-3341"}},
+			{KB: "3185330", Drop: []string{"CVE-2016-3341"}},
 			{KB: "3191203", Drop: []string{"CVE-2016-3341", "CVE-2016-7185"}},
-			{KB: "3192391", Drop: []string{"CVE-2016-0073", "CVE-2016-0075", "CVE-2016-0079", "CVE-2016-3300", "CVE-2016-3341"}},
+			{KB: "3192391", Drop: []string{"CVE-2016-3341"}},
 		},
 	},
 	"MS16-124": {
 		CVEAdjustments: []cveAdjustment{
-			{KB: "3185330", Drop: []string{"CVE-2016-0073", "CVE-2016-0075", "CVE-2016-0079", "CVE-2016-3300", "CVE-2016-3341"}},
-			{KB: "3185331", Drop: []string{"CVE-2016-0079", "CVE-2016-3300"}},
-			{KB: "3185332", Drop: []string{"CVE-2016-0079", "CVE-2016-3300"}},
+			{KB: "3185330", Drop: []string{"CVE-2016-0073", "CVE-2016-0075", "CVE-2016-0079"}},
+			{KB: "3185331", Drop: []string{"CVE-2016-0079"}},
+			{KB: "3185332", Drop: []string{"CVE-2016-0079"}},
 			{KB: "3191256", Drop: []string{"CVE-2016-0073", "CVE-2016-0075", "CVE-2016-0079"}},
-			{KB: "3192391", Drop: []string{"CVE-2016-0073", "CVE-2016-0075", "CVE-2016-0079", "CVE-2016-3300", "CVE-2016-3341"}},
-			{KB: "3192392", Drop: []string{"CVE-2016-0079", "CVE-2016-3300"}},
-			{KB: "3192393", Drop: []string{"CVE-2016-0079", "CVE-2016-3300"}},
+			{KB: "3192391", Drop: []string{"CVE-2016-0073", "CVE-2016-0075", "CVE-2016-0079"}},
+			{KB: "3192392", Drop: []string{"CVE-2016-0079"}},
+			{KB: "3192393", Drop: []string{"CVE-2016-0079"}},
 		},
 	},
 	"MS16-127": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2016-4273", "CVE-2016-4286", "CVE-2016-6981", "CVE-2016-6982", "CVE-2016-6983", "CVE-2016-6984", "CVE-2016-6985", "CVE-2016-6986", "CVE-2016-6987", "CVE-2016-6989", "CVE-2016-6990", "CVE-2016-6992"}}}},
@@ -3869,8 +3608,8 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 	},
 	"MS16-132": {
 		CVEAdjustments: []cveAdjustment{
-			{KB: "3197867", Drop: []string{"CVE-2016-7217", "CVE-2016-7220"}},
-			{KB: "3197868", Drop: []string{"CVE-2016-7217", "CVE-2016-7220"}},
+			{KB: "3197867", Drop: []string{"CVE-2016-7217"}},
+			{KB: "3197868", Drop: []string{"CVE-2016-7217"}},
 			{KB: "3203859", Drop: []string{"CVE-2016-7205", "CVE-2016-7217"}},
 		},
 	},
@@ -3939,12 +3678,12 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 	"MS16-137": {
 		CVEAdjustments: []cveAdjustment{
 			{Add: []string{"CVE-2016-7220", "CVE-2016-7237", "CVE-2016-7238"}},
-			{KB: "3197867", Drop: []string{"CVE-2016-7217", "CVE-2016-7220"}},
-			{KB: "3197868", Drop: []string{"CVE-2016-7217", "CVE-2016-7220"}},
-			{KB: "3197873", Drop: []string{"CVE-2016-7220", "CVE-2016-7225", "CVE-2016-7226"}},
-			{KB: "3197874", Drop: []string{"CVE-2016-7220", "CVE-2016-7225", "CVE-2016-7226"}},
-			{KB: "3197876", Drop: []string{"CVE-2016-7220", "CVE-2016-7225", "CVE-2016-7226"}},
-			{KB: "3197877", Drop: []string{"CVE-2016-7220", "CVE-2016-7225", "CVE-2016-7226"}},
+			{KB: "3197867", Drop: []string{"CVE-2016-7220"}},
+			{KB: "3197868", Drop: []string{"CVE-2016-7220"}},
+			{KB: "3197873", Drop: []string{"CVE-2016-7220"}},
+			{KB: "3197874", Drop: []string{"CVE-2016-7220"}},
+			{KB: "3197876", Drop: []string{"CVE-2016-7220"}},
+			{KB: "3197877", Drop: []string{"CVE-2016-7220"}},
 			{KB: "3198510", Drop: []string{"CVE-2016-7220"}},
 			{KB: "3198586", Drop: []string{"CVE-2016-7220"}},
 			{KB: "3200970", Drop: []string{"CVE-2016-7220"}},
@@ -3955,10 +3694,10 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 	},
 	"MS16-138": {
 		CVEAdjustments: []cveAdjustment{
-			{KB: "3197873", Drop: []string{"CVE-2016-7220", "CVE-2016-7225", "CVE-2016-7226"}},
-			{KB: "3197874", Drop: []string{"CVE-2016-7220", "CVE-2016-7225", "CVE-2016-7226"}},
-			{KB: "3197876", Drop: []string{"CVE-2016-7220", "CVE-2016-7225", "CVE-2016-7226"}},
-			{KB: "3197877", Drop: []string{"CVE-2016-7220", "CVE-2016-7225", "CVE-2016-7226"}},
+			{KB: "3197873", Drop: []string{"CVE-2016-7225", "CVE-2016-7226"}},
+			{KB: "3197874", Drop: []string{"CVE-2016-7225", "CVE-2016-7226"}},
+			{KB: "3197876", Drop: []string{"CVE-2016-7225", "CVE-2016-7226"}},
+			{KB: "3197877", Drop: []string{"CVE-2016-7225", "CVE-2016-7226"}},
 		},
 	},
 	"MS16-141": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2016-7857", "CVE-2016-7858", "CVE-2016-7859", "CVE-2016-7860", "CVE-2016-7861", "CVE-2016-7862", "CVE-2016-7863", "CVE-2016-7864", "CVE-2016-7865"}}}},
@@ -4025,7 +3764,7 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "3118380", Drop: []string{"CVE-2016-7274", "CVE-2016-7277", "CVE-2016-7289", "CVE-2016-7290", "CVE-2016-7291"}},
 			{KB: "3127892", Drop: []string{"CVE-2016-7268", "CVE-2016-7290", "CVE-2016-7291"}},
 			{KB: "3127968", Drop: []string{"CVE-2016-7274", "CVE-2016-7277", "CVE-2016-7289", "CVE-2016-7290", "CVE-2016-7291"}},
-			{KB: "3127986", Drop: []string{"CVE-2016-7274", "CVE-2016-7275", "CVE-2016-7276", "CVE-2016-7277", "CVE-2016-7289", "CVE-2016-7290", "CVE-2016-7291"}},
+			{KB: "3127986", Drop: []string{"CVE-2016-7274", "CVE-2016-7276", "CVE-2016-7289", "CVE-2016-7290", "CVE-2016-7291"}},
 			{KB: "3127995", Drop: []string{"CVE-2016-7275", "CVE-2016-7276", "CVE-2016-7277", "CVE-2016-7289", "CVE-2016-7290", "CVE-2016-7291"}},
 			{KB: "3128008", Drop: []string{"CVE-2016-7264", "CVE-2016-7268"}},
 			{KB: "3128016", Drop: []string{"CVE-2016-7264", "CVE-2016-7268"}},
@@ -4056,9 +3795,6 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 	},
 	"MS16-154": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2016-7867", "CVE-2016-7868", "CVE-2016-7869", "CVE-2016-7870", "CVE-2016-7871", "CVE-2016-7872", "CVE-2016-7873", "CVE-2016-7874", "CVE-2016-7875", "CVE-2016-7876", "CVE-2016-7877", "CVE-2016-7878", "CVE-2016-7879", "CVE-2016-7880", "CVE-2016-7881", "CVE-2016-7890", "CVE-2016-7892"}}}},
 	"MS16-155": {
-		CVEAdjustments: []cveAdjustment{
-			{KB: "3205640", Drop: []string{"CVE-2016-7270"}},
-		},
 		Supersedes: map[string]supersedesAdjust{
 			"3163244": {Add: []string{"3210129"}},
 			"3188744": {Add: []string{"3210129", "3210136", "3210139"}},
@@ -4082,26 +3818,26 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 	"MS17-008": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "3211306", Drop: []string{"CVE-2017-0021", "CVE-2017-0051", "CVE-2017-0074", "CVE-2017-0095", "CVE-2017-0098"}},
-			{KB: "4012212", Drop: []string{"CVE-2017-0007", "CVE-2017-0016", "CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0051", "CVE-2017-0057", "CVE-2017-0074", "CVE-2017-0078", "CVE-2017-0095", "CVE-2017-0098"}},
-			{KB: "4012213", Drop: []string{"CVE-2017-0007", "CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0039", "CVE-2017-0051", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0080", "CVE-2017-0082", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0095", "CVE-2017-0098", "CVE-2017-0101", "CVE-2017-0103", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
-			{KB: "4012214", Drop: []string{"CVE-2017-0007", "CVE-2017-0016", "CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0039", "CVE-2017-0051", "CVE-2017-0057", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0079", "CVE-2017-0080", "CVE-2017-0082", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0095", "CVE-2017-0098", "CVE-2017-0101", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
-			{KB: "4012215", Drop: []string{"CVE-2017-0007", "CVE-2017-0016", "CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0051", "CVE-2017-0057", "CVE-2017-0074", "CVE-2017-0078", "CVE-2017-0095", "CVE-2017-0098"}},
-			{KB: "4012216", Drop: []string{"CVE-2017-0007", "CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0039", "CVE-2017-0051", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0080", "CVE-2017-0082", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0095", "CVE-2017-0098", "CVE-2017-0101", "CVE-2017-0103", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
-			{KB: "4012217", Drop: []string{"CVE-2017-0007", "CVE-2017-0016", "CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0039", "CVE-2017-0051", "CVE-2017-0057", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0079", "CVE-2017-0080", "CVE-2017-0082", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0095", "CVE-2017-0098", "CVE-2017-0101", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
-			{KB: "4012606", Drop: []string{"CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0039", "CVE-2017-0051", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0101", "CVE-2017-0103", "CVE-2017-0104", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
-			{KB: "4013198", Drop: []string{"CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0039", "CVE-2017-0051", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0101", "CVE-2017-0103", "CVE-2017-0104", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
+			{KB: "4012212", Drop: []string{"CVE-2017-0021", "CVE-2017-0051", "CVE-2017-0074", "CVE-2017-0095", "CVE-2017-0098"}},
+			{KB: "4012213", Drop: []string{"CVE-2017-0021", "CVE-2017-0051", "CVE-2017-0095", "CVE-2017-0098"}},
+			{KB: "4012214", Drop: []string{"CVE-2017-0021", "CVE-2017-0051", "CVE-2017-0095", "CVE-2017-0098"}},
+			{KB: "4012215", Drop: []string{"CVE-2017-0021", "CVE-2017-0051", "CVE-2017-0074", "CVE-2017-0095", "CVE-2017-0098"}},
+			{KB: "4012216", Drop: []string{"CVE-2017-0021", "CVE-2017-0051", "CVE-2017-0095", "CVE-2017-0098"}},
+			{KB: "4012217", Drop: []string{"CVE-2017-0021", "CVE-2017-0051", "CVE-2017-0095", "CVE-2017-0098"}},
+			{KB: "4012606", Drop: []string{"CVE-2017-0021", "CVE-2017-0051"}},
+			{KB: "4013198", Drop: []string{"CVE-2017-0021", "CVE-2017-0051"}},
 		},
 	},
 	"MS17-011": {
 		CVEAdjustments: []cveAdjustment{
 			{Add: []string{"CVE-2017-0072", "CVE-2017-0083", "CVE-2017-0084", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0118", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0121", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
-			{KB: "4012213", Drop: []string{"CVE-2017-0007", "CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0039", "CVE-2017-0051", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0080", "CVE-2017-0082", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0095", "CVE-2017-0098", "CVE-2017-0101", "CVE-2017-0103", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
-			{KB: "4012214", Drop: []string{"CVE-2017-0007", "CVE-2017-0016", "CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0039", "CVE-2017-0051", "CVE-2017-0057", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0079", "CVE-2017-0080", "CVE-2017-0082", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0095", "CVE-2017-0098", "CVE-2017-0101", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
-			{KB: "4012216", Drop: []string{"CVE-2017-0007", "CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0039", "CVE-2017-0051", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0080", "CVE-2017-0082", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0095", "CVE-2017-0098", "CVE-2017-0101", "CVE-2017-0103", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
-			{KB: "4012217", Drop: []string{"CVE-2017-0007", "CVE-2017-0016", "CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0039", "CVE-2017-0051", "CVE-2017-0057", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0079", "CVE-2017-0080", "CVE-2017-0082", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0095", "CVE-2017-0098", "CVE-2017-0101", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
-			{KB: "4012606", Drop: []string{"CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0039", "CVE-2017-0051", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0101", "CVE-2017-0103", "CVE-2017-0104", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
-			{KB: "4013198", Drop: []string{"CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0039", "CVE-2017-0051", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0101", "CVE-2017-0103", "CVE-2017-0104", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
-			{KB: "4013429", Drop: []string{"CVE-2017-0039", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0079", "CVE-2017-0082", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0101", "CVE-2017-0103", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
+			{KB: "4012213", Drop: []string{"CVE-2017-0072", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
+			{KB: "4012214", Drop: []string{"CVE-2017-0072", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
+			{KB: "4012216", Drop: []string{"CVE-2017-0072", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
+			{KB: "4012217", Drop: []string{"CVE-2017-0072", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
+			{KB: "4012606", Drop: []string{"CVE-2017-0072", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
+			{KB: "4013198", Drop: []string{"CVE-2017-0072", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
+			{KB: "4013429", Drop: []string{"CVE-2017-0072", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
 		},
 	},
 	// MS17-012: leading-zero typo of CVE-2017-0016 — remap (0016 not in
@@ -4110,15 +3846,15 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 		CVEAdjustments: []cveAdjustment{
 			{KB: "3217587", Drop: []string{"CVE-2017-0007", "CVE-2017-0016", "CVE-2017-0057", "CVE-2017-0100", "CVE-2017-0104"}},
 			{KB: "4012021", Drop: []string{"CVE-2017-0007", "CVE-2017-0016", "CVE-2017-0039", "CVE-2017-0057", "CVE-2017-0100"}},
-			{KB: "4012212", Drop: []string{"CVE-2017-0007", "CVE-2017-0016", "CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0051", "CVE-2017-0057", "CVE-2017-0074", "CVE-2017-0078", "CVE-2017-0095", "CVE-2017-0098"}},
-			{KB: "4012213", Drop: []string{"CVE-2017-0007", "CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0039", "CVE-2017-0051", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0080", "CVE-2017-0082", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0095", "CVE-2017-0098", "CVE-2017-0101", "CVE-2017-0103", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
-			{KB: "4012214", Drop: []string{"CVE-2017-0007", "CVE-2017-0016", "CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0039", "CVE-2017-0051", "CVE-2017-0057", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0079", "CVE-2017-0080", "CVE-2017-0082", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0095", "CVE-2017-0098", "CVE-2017-0101", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
-			{KB: "4012215", Drop: []string{"CVE-2017-0007", "CVE-2017-0016", "CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0051", "CVE-2017-0057", "CVE-2017-0074", "CVE-2017-0078", "CVE-2017-0095", "CVE-2017-0098"}},
-			{KB: "4012216", Drop: []string{"CVE-2017-0007", "CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0039", "CVE-2017-0051", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0080", "CVE-2017-0082", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0095", "CVE-2017-0098", "CVE-2017-0101", "CVE-2017-0103", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
-			{KB: "4012217", Drop: []string{"CVE-2017-0007", "CVE-2017-0016", "CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0039", "CVE-2017-0051", "CVE-2017-0057", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0079", "CVE-2017-0080", "CVE-2017-0082", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0095", "CVE-2017-0098", "CVE-2017-0101", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
-			{KB: "4012606", Drop: []string{"CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0039", "CVE-2017-0051", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0101", "CVE-2017-0103", "CVE-2017-0104", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
-			{KB: "4013198", Drop: []string{"CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0039", "CVE-2017-0051", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0101", "CVE-2017-0103", "CVE-2017-0104", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
-			{KB: "4013429", Drop: []string{"CVE-2017-0039", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0079", "CVE-2017-0082", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0101", "CVE-2017-0103", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
+			{KB: "4012212", Drop: []string{"CVE-2017-0007", "CVE-2017-0016", "CVE-2017-0057"}},
+			{KB: "4012213", Drop: []string{"CVE-2017-0007", "CVE-2017-0039"}},
+			{KB: "4012214", Drop: []string{"CVE-2017-0007", "CVE-2017-0016", "CVE-2017-0039", "CVE-2017-0057"}},
+			{KB: "4012215", Drop: []string{"CVE-2017-0007", "CVE-2017-0016", "CVE-2017-0057"}},
+			{KB: "4012216", Drop: []string{"CVE-2017-0007", "CVE-2017-0039"}},
+			{KB: "4012217", Drop: []string{"CVE-2017-0007", "CVE-2017-0016", "CVE-2017-0039", "CVE-2017-0057"}},
+			{KB: "4012606", Drop: []string{"CVE-2017-0039", "CVE-2017-0104"}},
+			{KB: "4013198", Drop: []string{"CVE-2017-0039", "CVE-2017-0104"}},
+			{KB: "4013429", Drop: []string{"CVE-2017-0039"}},
 			{Component: "Windows 10 Version 1607 for 32-bit Systems", Drop: []string{"CVE-2017-0104"}},
 			{Component: "Windows 10 Version 1607 for x64-based Systems", Drop: []string{"CVE-2017-0104"}},
 			{Component: "Windows 7 for 32-bit Systems Service Pack 1", Drop: []string{"CVE-2017-0104"}},
@@ -4138,16 +3874,16 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "3178653", Drop: []string{"CVE-2017-0014", "CVE-2017-0060", "CVE-2017-0073"}},
 			{KB: "3178688", Drop: []string{"CVE-2017-0060", "CVE-2017-0073"}},
 			{KB: "3178693", Drop: []string{"CVE-2017-0014"}},
-			{KB: "4012213", Drop: []string{"CVE-2017-0007", "CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0039", "CVE-2017-0051", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0080", "CVE-2017-0082", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0095", "CVE-2017-0098", "CVE-2017-0101", "CVE-2017-0103", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
-			{KB: "4012214", Drop: []string{"CVE-2017-0007", "CVE-2017-0016", "CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0039", "CVE-2017-0051", "CVE-2017-0057", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0079", "CVE-2017-0080", "CVE-2017-0082", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0095", "CVE-2017-0098", "CVE-2017-0101", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
-			{KB: "4012216", Drop: []string{"CVE-2017-0007", "CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0039", "CVE-2017-0051", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0080", "CVE-2017-0082", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0095", "CVE-2017-0098", "CVE-2017-0101", "CVE-2017-0103", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
-			{KB: "4012217", Drop: []string{"CVE-2017-0007", "CVE-2017-0016", "CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0039", "CVE-2017-0051", "CVE-2017-0057", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0079", "CVE-2017-0080", "CVE-2017-0082", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0095", "CVE-2017-0098", "CVE-2017-0101", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
-			{KB: "4012497", Drop: []string{"CVE-2017-0014", "CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0038", "CVE-2017-0060", "CVE-2017-0061", "CVE-2017-0062", "CVE-2017-0063", "CVE-2017-0073", "CVE-2017-0078", "CVE-2017-0108"}},
+			{KB: "4012213", Drop: []string{"CVE-2017-0061", "CVE-2017-0108"}},
+			{KB: "4012214", Drop: []string{"CVE-2017-0061", "CVE-2017-0108"}},
+			{KB: "4012216", Drop: []string{"CVE-2017-0061", "CVE-2017-0108"}},
+			{KB: "4012217", Drop: []string{"CVE-2017-0061", "CVE-2017-0108"}},
+			{KB: "4012497", Drop: []string{"CVE-2017-0014", "CVE-2017-0038", "CVE-2017-0060", "CVE-2017-0061", "CVE-2017-0062", "CVE-2017-0063", "CVE-2017-0073", "CVE-2017-0108"}},
 			{KB: "4012583", Drop: []string{"CVE-2017-0001", "CVE-2017-0005", "CVE-2017-0014", "CVE-2017-0025", "CVE-2017-0047", "CVE-2017-0061", "CVE-2017-0063"}},
 			{KB: "4012584", Drop: []string{"CVE-2017-0001", "CVE-2017-0005", "CVE-2017-0014", "CVE-2017-0025", "CVE-2017-0038", "CVE-2017-0047", "CVE-2017-0060", "CVE-2017-0062", "CVE-2017-0073", "CVE-2017-0108"}},
-			{KB: "4012606", Drop: []string{"CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0039", "CVE-2017-0051", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0101", "CVE-2017-0103", "CVE-2017-0104", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
-			{KB: "4013198", Drop: []string{"CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0039", "CVE-2017-0051", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0101", "CVE-2017-0103", "CVE-2017-0104", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
-			{KB: "4013429", Drop: []string{"CVE-2017-0039", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0079", "CVE-2017-0082", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0101", "CVE-2017-0103", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
+			{KB: "4012606", Drop: []string{"CVE-2017-0061", "CVE-2017-0108"}},
+			{KB: "4013198", Drop: []string{"CVE-2017-0061", "CVE-2017-0108"}},
+			{KB: "4013429", Drop: []string{"CVE-2017-0061", "CVE-2017-0108"}},
 			{KB: "4017018", Drop: []string{"CVE-2017-0001", "CVE-2017-0005", "CVE-2017-0014", "CVE-2017-0025", "CVE-2017-0047", "CVE-2017-0060", "CVE-2017-0061", "CVE-2017-0062", "CVE-2017-0063", "CVE-2017-0073", "CVE-2017-0108"}},
 			{Component: "Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2017-0038"}},
 			{Component: "Windows Server 2008 for Itanium-based Systems Service Pack 2", Drop: []string{"CVE-2017-0038"}},
@@ -4183,7 +3919,7 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "3178689", Drop: []string{"CVE-2017-0006", "CVE-2017-0020", "CVE-2017-0027", "CVE-2017-0052"}},
 			{KB: "3178690", Drop: []string{"CVE-2017-0006", "CVE-2017-0019", "CVE-2017-0029", "CVE-2017-0030", "CVE-2017-0031", "CVE-2017-0052", "CVE-2017-0053", "CVE-2017-0105"}},
 			{KB: "3178694", Drop: []string{"CVE-2017-0006", "CVE-2017-0019", "CVE-2017-0020", "CVE-2017-0027", "CVE-2017-0029", "CVE-2017-0030", "CVE-2017-0031", "CVE-2017-0052", "CVE-2017-0105"}},
-			{KB: "4013241", Drop: []string{"CVE-2017-0006", "CVE-2017-0019", "CVE-2017-0020", "CVE-2017-0027", "CVE-2017-0029", "CVE-2017-0030", "CVE-2017-0031", "CVE-2017-0052", "CVE-2017-0053", "CVE-2017-0105"}},
+			{KB: "4013241", Drop: []string{"CVE-2017-0006", "CVE-2017-0019", "CVE-2017-0052", "CVE-2017-0053"}},
 		},
 		Supersedes: map[string]supersedesAdjust{
 			"3141542": {Add: []string{"3178687"}},
@@ -4192,15 +3928,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 	"MS17-017": {
 		CVEAdjustments: []cveAdjustment{
 			{Add: []string{"CVE-2017-0050", "CVE-2017-0101", "CVE-2017-0102", "CVE-2017-0103"}},
-			{KB: "4012212", Drop: []string{"CVE-2017-0007", "CVE-2017-0016", "CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0051", "CVE-2017-0057", "CVE-2017-0074", "CVE-2017-0078", "CVE-2017-0095", "CVE-2017-0098"}},
-			{KB: "4012213", Drop: []string{"CVE-2017-0007", "CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0039", "CVE-2017-0051", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0080", "CVE-2017-0082", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0095", "CVE-2017-0098", "CVE-2017-0101", "CVE-2017-0103", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
-			{KB: "4012214", Drop: []string{"CVE-2017-0007", "CVE-2017-0016", "CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0039", "CVE-2017-0051", "CVE-2017-0057", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0079", "CVE-2017-0080", "CVE-2017-0082", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0095", "CVE-2017-0098", "CVE-2017-0101", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
-			{KB: "4012215", Drop: []string{"CVE-2017-0007", "CVE-2017-0016", "CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0051", "CVE-2017-0057", "CVE-2017-0074", "CVE-2017-0078", "CVE-2017-0095", "CVE-2017-0098"}},
-			{KB: "4012216", Drop: []string{"CVE-2017-0007", "CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0039", "CVE-2017-0051", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0080", "CVE-2017-0082", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0095", "CVE-2017-0098", "CVE-2017-0101", "CVE-2017-0103", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
-			{KB: "4012217", Drop: []string{"CVE-2017-0007", "CVE-2017-0016", "CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0039", "CVE-2017-0051", "CVE-2017-0057", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0079", "CVE-2017-0080", "CVE-2017-0082", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0095", "CVE-2017-0098", "CVE-2017-0101", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
-			{KB: "4012606", Drop: []string{"CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0039", "CVE-2017-0051", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0101", "CVE-2017-0103", "CVE-2017-0104", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
-			{KB: "4013198", Drop: []string{"CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0039", "CVE-2017-0051", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0101", "CVE-2017-0103", "CVE-2017-0104", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
-			{KB: "4013429", Drop: []string{"CVE-2017-0039", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0079", "CVE-2017-0082", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0101", "CVE-2017-0103", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
+			{KB: "4012213", Drop: []string{"CVE-2017-0101", "CVE-2017-0103"}},
+			{KB: "4012214", Drop: []string{"CVE-2017-0101"}},
+			{KB: "4012216", Drop: []string{"CVE-2017-0101", "CVE-2017-0103"}},
+			{KB: "4012217", Drop: []string{"CVE-2017-0101"}},
+			{KB: "4012606", Drop: []string{"CVE-2017-0101", "CVE-2017-0103"}},
+			{KB: "4013198", Drop: []string{"CVE-2017-0101", "CVE-2017-0103"}},
+			{KB: "4013429", Drop: []string{"CVE-2017-0101", "CVE-2017-0103"}},
 			{Component: "Windows 7 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2017-0101"}},
 			{Component: "Windows Server 2008 R2 for Itanium-based Systems Service Pack 1", Drop: []string{"CVE-2017-0101"}},
 			{Component: "Windows Server 2008 R2 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2017-0101"}},
@@ -4208,16 +3942,16 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 	},
 	"MS17-018": {
 		CVEAdjustments: []cveAdjustment{
-			{KB: "4012212", Drop: []string{"CVE-2017-0007", "CVE-2017-0016", "CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0051", "CVE-2017-0057", "CVE-2017-0074", "CVE-2017-0078", "CVE-2017-0095", "CVE-2017-0098"}},
-			{KB: "4012213", Drop: []string{"CVE-2017-0007", "CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0039", "CVE-2017-0051", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0080", "CVE-2017-0082", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0095", "CVE-2017-0098", "CVE-2017-0101", "CVE-2017-0103", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
-			{KB: "4012214", Drop: []string{"CVE-2017-0007", "CVE-2017-0016", "CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0039", "CVE-2017-0051", "CVE-2017-0057", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0079", "CVE-2017-0080", "CVE-2017-0082", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0095", "CVE-2017-0098", "CVE-2017-0101", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
-			{KB: "4012215", Drop: []string{"CVE-2017-0007", "CVE-2017-0016", "CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0051", "CVE-2017-0057", "CVE-2017-0074", "CVE-2017-0078", "CVE-2017-0095", "CVE-2017-0098"}},
-			{KB: "4012216", Drop: []string{"CVE-2017-0007", "CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0039", "CVE-2017-0051", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0080", "CVE-2017-0082", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0095", "CVE-2017-0098", "CVE-2017-0101", "CVE-2017-0103", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
-			{KB: "4012217", Drop: []string{"CVE-2017-0007", "CVE-2017-0016", "CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0039", "CVE-2017-0051", "CVE-2017-0057", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0079", "CVE-2017-0080", "CVE-2017-0082", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0095", "CVE-2017-0098", "CVE-2017-0101", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
-			{KB: "4012497", Drop: []string{"CVE-2017-0014", "CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0038", "CVE-2017-0060", "CVE-2017-0061", "CVE-2017-0062", "CVE-2017-0063", "CVE-2017-0073", "CVE-2017-0078", "CVE-2017-0108"}},
-			{KB: "4012606", Drop: []string{"CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0039", "CVE-2017-0051", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0101", "CVE-2017-0103", "CVE-2017-0104", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
-			{KB: "4013198", Drop: []string{"CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0039", "CVE-2017-0051", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0101", "CVE-2017-0103", "CVE-2017-0104", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
-			{KB: "4013429", Drop: []string{"CVE-2017-0039", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0079", "CVE-2017-0082", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0101", "CVE-2017-0103", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
+			{KB: "4012212", Drop: []string{"CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0078"}},
+			{KB: "4012213", Drop: []string{"CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0080", "CVE-2017-0082"}},
+			{KB: "4012214", Drop: []string{"CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0079", "CVE-2017-0080", "CVE-2017-0082"}},
+			{KB: "4012215", Drop: []string{"CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0078"}},
+			{KB: "4012216", Drop: []string{"CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0080", "CVE-2017-0082"}},
+			{KB: "4012217", Drop: []string{"CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0079", "CVE-2017-0080", "CVE-2017-0082"}},
+			{KB: "4012497", Drop: []string{"CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0078"}},
+			{KB: "4012606", Drop: []string{"CVE-2017-0024"}},
+			{KB: "4013198", Drop: []string{"CVE-2017-0024"}},
+			{KB: "4013429", Drop: []string{"CVE-2017-0079", "CVE-2017-0082"}},
 			{Component: "Windows Server 2016 for x64-based Systems", Drop: []string{"CVE-2017-0078"}},
 			{Component: "Windows Server 2016 for x64-based Systems (Server Core installation)", Drop: []string{"CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0078"}},
 		},
