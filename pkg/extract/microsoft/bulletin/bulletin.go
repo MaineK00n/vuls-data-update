@@ -448,14 +448,30 @@ func normalizeArchiveComponentKey(bulletinID, affectedProduct, affectedComponent
 	// (RowSplits field) — see that record's doc comment.
 	case "MS08-033", "MS08-036", "MS08-037", "MS08-039",
 		"MS09-001", "MS09-006", "MS09-008", "MS09-010", "MS09-012", "MS09-013", "MS09-022", "MS09-025", "MS09-039", "MS09-043", "MS09-044", "MS09-048", "MS09-058", "MS09-062", "MS09-065", "MS09-071",
-		"MS10-006", "MS10-012", "MS10-015", "MS10-020", "MS10-021", "MS10-032", "MS10-034", "MS10-047", "MS10-048", "MS10-049", "MS10-054", "MS10-058", "MS10-073", "MS10-079", "MS10-088", "MS10-098",
-		"MS11-011", "MS11-012", "MS11-015", "MS11-027", "MS11-036", "MS11-042", "MS11-054", "MS11-056", "MS11-058", "MS11-064", "MS11-074", "MS11-077", "MS11-090",
+		"MS10-006", "MS10-012", "MS10-015", "MS10-020", "MS10-021", "MS10-032", "MS10-034", "MS10-047", "MS10-048", "MS10-049", "MS10-054", "MS10-058", "MS10-073", "MS10-088", "MS10-098",
+		"MS11-011", "MS11-012", "MS11-015", "MS11-027", "MS11-042", "MS11-054", "MS11-056", "MS11-058", "MS11-064", "MS11-074", "MS11-077", "MS11-090",
 		"MS12-004", "MS12-009", "MS12-020", "MS12-032", "MS12-041", "MS12-050", "MS12-054", "MS12-074", "MS12-075",
-		"MS13-016", "MS13-031", "MS13-036", "MS13-046", "MS13-063", "MS13-067", "MS13-076", "MS13-081", "MS13-091", "MS13-101",
+		"MS13-016", "MS13-031", "MS13-036", "MS13-046", "MS13-063", "MS13-076", "MS13-081", "MS13-091", "MS13-101",
 		"MS14-028", "MS14-044",
-		"MS15-023", "MS15-025", "MS15-064", "MS15-070", "MS15-073", "MS15-097", "MS15-101", "MS15-103", "MS15-111", "MS15-118", "MS15-128",
-		"MS16-010", "MS16-014", "MS16-015", "MS16-045", "MS16-062", "MS16-067", "MS16-088", "MS16-090", "MS16-097", "MS16-099", "MS16-106", "MS16-107", "MS16-108", "MS16-111", "MS16-133", "MS16-135", "MS16-148",
+		"MS15-023", "MS15-025", "MS15-064", "MS15-073", "MS15-097", "MS15-101", "MS15-103", "MS15-111", "MS15-118", "MS15-128",
+		"MS16-010", "MS16-014", "MS16-045", "MS16-062", "MS16-067", "MS16-090", "MS16-097", "MS16-106", "MS16-108", "MS16-111", "MS16-133", "MS16-135", "MS16-148",
 		"MS17-012", "MS17-013", "MS17-014", "MS17-017", "MS17-018":
+		return product
+	// Office app mixed-shape bulletins: some xlsx rows carry the app
+	// identity (e.g. "Microsoft Word 2007") in affected_component while
+	// other rows for the same bulletin are OS-level with component empty.
+	// Return component when set so Format B Component-Drop keys keyed by
+	// the Office app name match; fall back to product for the OS rows.
+	case "MS10-019", "MS10-079", "MS10-080", "MS10-103",
+		"MS11-021", "MS11-022", "MS11-036", "MS11-045", "MS11-072", "MS11-091", "MS11-094",
+		"MS12-030", "MS12-064", "MS12-076",
+		"MS13-042", "MS13-067", "MS13-072",
+		"MS14-001", "MS14-083",
+		"MS15-036", "MS15-070", "MS15-116",
+		"MS16-004", "MS16-015", "MS16-088", "MS16-099", "MS16-107":
+		if component != "" {
+			return component
+		}
 		return product
 	// Pre-MS14 IE Cumulative bulletins: markdown column-header labels
 	// combine the IE version and OS into a single string (e.g.
@@ -819,6 +835,19 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"937143": {"939653"},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS07-064 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS07-064.
+	//   - DirectX 10.0 on Windows Vista
+	//   - DirectX 10.0 on Windows Vista x64 Edition
+	//   - DirectX 9.0 on Microsoft Windows 2000 Service Pack 4
+	//   - DirectX 9.0 on Windows Server 2003 Service Pack 1 and Windows Server 2003 Service Pack 2
+	//   - DirectX 9.0 on Windows Server 2003 with SP1 for Itanium-based Systems and Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - DirectX 9.0 on Windows Server 2003 x64 Edition and Windows Server 2003 x64 Edition Service Pack 2
+	//   - DirectX 9.0 on Windows XP Professional x64 Edition and Windows XP Professional x64 Edition Service Pack 2
+	//   - DirectX 9.0 on Windows XP Service Pack 2
 	"MS07-069": {
 		CVEAdjustments: []cveAdjustment{
 			{Add: []string{"CVE-2007-3902", "CVE-2007-3903", "CVE-2007-5344", "CVE-2007-5347"}},
@@ -859,6 +888,19 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"3124266": {"3135174"},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS08-033 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS08-033.
+	//   - Microsoft Windows 2000 Service Pack 4 with DirectX 7.0
+	//   - Microsoft Windows 2000 Service Pack 4 with DirectX 9.0, DirectX 9.0a, DirectX 9.0b, or DirectX 9.0c
+	//   - Windows Server 2003 with SP1 for Itanium-based Systems and Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Windows Server 2008 for 32-bit Systems
+	//   - Windows Server 2008 for Itanium-based Systems
+	//   - Windows Server 2008 for x64-based Systems
+	//   - Windows Vista and Windows Vista Service Pack 1
+	//   - Windows Vista x64 Edition and Windows Vista x64 Edition Service Pack 1
 	"MS08-033": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Microsoft Windows Server 2003 Service Pack 1", Drop: []string{"CVE-2008-1444"}},
@@ -871,6 +913,12 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Microsoft Windows XP Service Pack 3", Drop: []string{"CVE-2008-1444"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS08-036 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS08-036.
+	//   - Windows Server 2008 for Itanium-based Systems
 	"MS08-036": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Windows Server 2008 for 32-bit Systems", Drop: []string{"CVE-2008-1440"}},
@@ -899,6 +947,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Microsoft Exchange Server 2007 Service Pack 1", Drop: []string{"CVE-2008-2247"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS08-040 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS08-040.
+	//   - Windows Internal Database (WYukon) Service Pack 2
+	//   - Windows Internal Database (WYukon) x64 Edition Service Pack 2
 	"MS08-040": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "941203", Drop: []string{"CVE-2008-0106"}},
@@ -921,6 +976,14 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "956343", Drop: []string{"CVE-2008-0120", "CVE-2008-0121"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS08-058 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS08-058.
+	//   - Internet Explorer 7 for Windows Server 2003 with SP1 for Itanium-based Systems and Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 in Windows Server 2008 for Itanium-based Systems
+	//   - Internet Explorer 7 in Windows Vista x64 Edition and Internet Explorer 7 in Windows Vista x64 Edition Service Pack 1
 	"MS08-058": {
 		CVEAdjustments: []cveAdjustment{
 			{Add: []string{"CVE-2008-2947", "CVE-2008-3472", "CVE-2008-3473", "CVE-2008-3474", "CVE-2008-3475", "CVE-2008-3476"}},
@@ -960,6 +1023,16 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "958393", Drop: []string{"CVE-2008-4252", "CVE-2008-4253", "CVE-2008-4254"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS08-073 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS08-073.
+	//   - Internet Explorer 6 for Windows Server 2003 with SP1 for Itanium-based Systems and Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 for Windows Server 2003 with SP1 for Itanium-based Systems and Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 in Windows Server 2008 for Itanium-based Systems
+	//   - Internet Explorer 7 in Windows Vista and Internet Explorer 7 in Windows Vista Service Pack 1
+	//   - Internet Explorer 7 in Windows Vista x64 Edition and Internet Explorer 7 in Windows Vista x64 Edition Service Pack 1
 	"MS08-073": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 5.01 Service Pack 4 for Windows 2000 Service Pack 4", Drop: []string{"CVE-2008-4259", "CVE-2008-4260"}},
@@ -989,11 +1062,24 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"956390": {"958215"},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS08-076 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS08-076.
+	//   - Windows Media Services 2008 on Windows Server 2008 for 32-bit Systems and Windows Server 2008 for 32-bit Systems Service Pack 2
+	//   - Windows Media Services 2008 on Windows Server 2008 for x64-based Systems and Windows Server 2008 for x64-based Systems Service Pack 2
 	"MS08-078": {
 		IECumChain: map[string][]string{
 			"958215": {"960714"},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS09-001 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS09-001.
+	//   - Windows Server 2008 for Itanium-based Systems
 	"MS09-001": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Windows Server 2008 for 32-bit Systems", Drop: []string{"CVE-2008-4834"}},
@@ -1006,6 +1092,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 	},
 	"MS09-003": {CVEAdjustments: []cveAdjustment{{KB: "959241", Drop: []string{"CVE-2009-0099"}}}},
 	"MS09-005": {CVEAdjustments: []cveAdjustment{{KB: "957831", Drop: []string{"CVE-2009-0097"}}}},
+	// TODO: gen_static_map.py emitted these Format B labels for MS09-006 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS09-006.
+	//   - Windows Server 2003 with SP1 for Itanium-based Systems and Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Windows Server 2008 for Itanium-based Systems
 	"MS09-006": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Microsoft Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2009-0083"}},
@@ -1025,6 +1118,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Windows Server 2008 for x64-based Systems", Drop: []string{"CVE-2009-0093", "CVE-2009-0094"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS09-010 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS09-010.
+	//   - Microsoft Office Word 2000 Service Pack 3
+	//   - Microsoft Office Word 2002 Service Pack 3
 	"MS09-010": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "923561", Drop: []string{"CVE-2009-0088"}},
@@ -1033,6 +1133,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Microsoft Windows XP Service Pack 3", Drop: []string{"CVE-2008-4841", "CVE-2009-0088"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS09-012 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS09-012.
+	//   - Windows Server 2003 with SP1 for Itanium-based Systems and Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Windows Server 2008 for Itanium-based Systems
 	"MS09-012": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Microsoft Windows 2000 Service Pack 4", Drop: []string{"CVE-2009-0078", "CVE-2009-0079", "CVE-2009-0080"}},
@@ -1052,6 +1159,12 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Windows Vista x64 Edition Service Pack 1", Drop: []string{"CVE-2009-0079"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS09-013 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS09-013.
+	//   - Windows Server 2008 for Itanium-based Systems
 	"MS09-013": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Windows Server 2008 for 32-bit Systems", Drop: []string{"CVE-2009-0089"}},
@@ -1063,6 +1176,14 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"960714": {"963027"},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS09-014 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS09-014.
+	//   - Internet Explorer 6 for Windows Server 2003 with SP1 for Itanium-based Systems and Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 for Windows Server 2003 with SP1 for Itanium-based Systems and Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 in Windows Server 2008 for Itanium-based Systems
 	"MS09-014": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 5.01 Service Pack 4 for Windows 2000 Service Pack 4", Drop: []string{"CVE-2008-2540", "CVE-2009-0551", "CVE-2009-0553"}},
@@ -1092,6 +1213,16 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 		},
 	},
 	"MS09-016": {CVEAdjustments: []cveAdjustment{{KB: "961759", Drop: []string{"CVE-2009-0237"}}}},
+	// TODO: gen_static_map.py emitted these Format B labels for MS09-017 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS09-017.
+	//   - Microsoft Office PowerPoint 2000 Service Pack 3
+	//   - Microsoft Office PowerPoint 2002 Service Pack 3
+	//   - Microsoft Office PowerPoint 2003 Service Pack 3
+	//   - Microsoft Office PowerPoint 2007 Service Pack 1
+	//   - Microsoft Office PowerPoint 2007 Service Pack 2
 	"MS09-017": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "967043", Drop: []string{"CVE-2009-0220", "CVE-2009-0221", "CVE-2009-0222", "CVE-2009-0223", "CVE-2009-0225", "CVE-2009-0226", "CVE-2009-0227", "CVE-2009-0556", "CVE-2009-1128", "CVE-2009-1129", "CVE-2009-1130", "CVE-2009-1131", "CVE-2009-1137"}},
@@ -1104,7 +1235,27 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "971824", Drop: []string{"CVE-2009-0220", "CVE-2009-0221", "CVE-2009-0222", "CVE-2009-0223", "CVE-2009-0225", "CVE-2009-0226", "CVE-2009-0227", "CVE-2009-0556", "CVE-2009-1128", "CVE-2009-1129", "CVE-2009-1130", "CVE-2009-1131", "CVE-2009-1137"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS09-018 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS09-018.
+	//   - Active Directory on Windows Server 2003 Service Pack 2
+	//   - Active Directory on Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Active Directory on Windows Server 2003 x64 Edition Service Pack 2
 	"MS09-018": {CVEAdjustments: []cveAdjustment{{KB: "970437", Drop: []string{"CVE-2009-1138"}}}},
+	// TODO: gen_static_map.py emitted these Format B labels for MS09-019 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS09-019.
+	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 in Windows Server 2008 for Itanium-based Systems and Windows Server 2008 for Itanium-based Systems Service Pack 2
+	//   - Internet Explorer 7 in Windows Vista x64 Edition, Windows Vista x64 Edition Service Pack 1, and Windows Vista x64 Edition Service Pack 2
+	//   - Internet Explorer 7 in Windows Vista, Windows Vista Service Pack 1, and and Windows Vista Service Pack 2
+	//   - Internet Explorer 8 in Windows Vista x64 Edition, Windows Vista x64 Edition Service Pack 1, and Windows Vista x64 Edition Service Pack 2
+	//   - Internet Explorer 8 in Windows Vista, Windows Vista Service Pack 1, and and Windows Vista Service Pack 2
 	"MS09-019": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 5.01 Service Pack 4 for Windows 2000 Service Pack 4", Drop: []string{"CVE-2007-3091", "CVE-2009-1141", "CVE-2009-1528", "CVE-2009-1529", "CVE-2009-1530", "CVE-2009-1531", "CVE-2009-1532"}},
@@ -1139,7 +1290,31 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"963027": {"969897"},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS09-020 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS09-020.
+	//   - Microsoft Internet Information Services (IIS) 5.0 on Microsoft Windows 2000 Service Pack 4
+	//   - Microsoft Internet Information Services (IIS) 5.1 on Windows XP Professional Service Pack 2 and Windows XP Professional Service Pack 3
+	//   - Microsoft Internet Information Services (IIS) 6.0 on Windows Server 2003 Service Pack 2
+	//   - Microsoft Internet Information Services (IIS) 6.0 on Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Microsoft Internet Information Services (IIS) 6.0 on Windows Server 2003 x64 Edition Service Pack 2
+	//   - Microsoft Internet Information Services (IIS) 6.0 on Windows XP Professional x64 Edition Service Pack 2
 	"MS09-020": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2009-1122", "CVE-2009-1535", "CVE-2009-1676"}}}},
+	// TODO: gen_static_map.py emitted these Format B labels for MS09-021 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS09-021.
+	//   - Microsoft Office Excel 2000 Service Pack 3
+	//   - Microsoft Office Excel 2002 Service Pack 3
+	//   - Microsoft Office Excel 2003 Service Pack 3
+	//   - Microsoft Office Excel 2007 Service Pack 1
+	//   - Microsoft Office Excel 2007 Service Pack 2
+	//   - Microsoft Office Open XML File Converter for MAC
+	//   - Microsoft Office for Mac 2004
+	//   - Microsoft Office for Mac 2008
 	"MS09-021": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "969679", Drop: []string{"CVE-2009-0549", "CVE-2009-0558", "CVE-2009-0559"}},
@@ -1147,6 +1322,15 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "969737", Drop: []string{"CVE-2009-0549", "CVE-2009-0557", "CVE-2009-0558", "CVE-2009-0559", "CVE-2009-0560", "CVE-2009-1134"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS09-022 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS09-022.
+	//   - Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Windows Server 2008 for Itanium-based Systems and Windows Server 2008 for Itanium-based Systems Service Pack 2
+	//   - Windows Vista x64 Edition, Windows Vista x64 Edition Service Pack 1, and Windows Vista x64 Edition Service Pack 2
+	//   - Windows Vista, Windows Vista Service Pack 1, and Windows Vista Service Pack 2
 	"MS09-022": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Microsoft Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2009-0228"}},
@@ -1160,6 +1344,14 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2009-0228"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS09-025 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS09-025.
+	//   - Windows Server 2008 for Itanium-based Systems and Windows Server 2008 for Itanium-based Systems Service Pack 2
+	//   - Windows Vista x64 Edition, Windows Vista x64 Edition Service Pack 1, and Windows Vista x64 Edition Service Pack 2
+	//   - Windows Vista, Windows Vista Service Pack 1, and Windows Vista Service Pack 2
 	"MS09-025": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Windows Server 2008 for 32-bit Systems", Drop: []string{"CVE-2009-1126"}},
@@ -1168,6 +1360,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2009-1126"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS09-027 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS09-027.
+	//   - Microsoft Office Word 2000 Service Pack 3
+	//   - Microsoft Office Word 2003 Service Pack 3
 	"MS09-027": {CVEAdjustments: []cveAdjustment{{KB: "969614", Drop: []string{"CVE-2009-0565"}}}},
 	"MS09-034": {
 		CVEAdjustments: []cveAdjustment{
@@ -1177,6 +1376,12 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"969897": {"972260"},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS09-039 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS09-039.
+	//   - Windows Server 2003 with SP2 for Itanium-based Systems
 	"MS09-039": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Microsoft Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2009-1924"}},
@@ -1194,6 +1399,12 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Microsoft Office 2000 Web Components Service Pack 3", Drop: []string{"CVE-2009-0562", "CVE-2009-1136", "CVE-2009-2496"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS09-044 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS09-044.
+	//   - Windows Server 2003 with SP2 for Itanium-based Systems
 	"MS09-044": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "974283", Drop: []string{"CVE-2009-1929"}},
@@ -1207,7 +1418,22 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Windows Vista x64 Edition", Drop: []string{"CVE-2009-1929"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS09-047 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS09-047.
+	//   - Microsoft Media Foundation on Windows Server 2008 for 32-bit Systems and Windows Server 2008 for 32-bit Systems Service Pack 2
+	//   - Microsoft Media Foundation on Windows Server 2008 for x64-based Systems and Windows Server 2008 for x64-based Systems Service Pack 2
+	//   - Microsoft Media Foundation on Windows Vista x64 Edition, Windows Vista x64 Edition Service Pack 1, and Windows Vista x64 Edition Service Pack 2
+	//   - Microsoft Media Foundation on Windows Vista, Windows Vista Service Pack 1, and Windows Vista Service Pack 2
 	"MS09-047": {CVEAdjustments: []cveAdjustment{{KB: "972554", Drop: []string{"CVE-2009-2499"}}}},
+	// TODO: gen_static_map.py emitted these Format B labels for MS09-048 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS09-048.
+	//   - Windows Server 2003 with SP2 for Itanium-based Systems
 	"MS09-048": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Microsoft Windows 2000 Service Pack 4", Drop: []string{"CVE-2009-1925"}},
@@ -1218,6 +1444,24 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Microsoft Windows XP Service Pack 3", Drop: []string{"CVE-2009-1925"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS09-053 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS09-053.
+	//   - Microsoft Internet Information Services 7.0 on Windows Server 2008 for 32-bit Systems and Windows Server 2008 for 32-bit Systems Service Pack 2
+	//   - Microsoft Internet Information Services 7.0 on Windows Server 2008 for Itanium-based Systems and Windows Server 2008 for Itanium-based Systems Service Pack 2
+	//   - Microsoft Internet Information Services 7.0 on Windows Server 2008 for x64-based bit Systems and Windows Server 2008 for x64-based Systems Service Pack 2
+	//   - Microsoft Internet Information Services 7.0 on Windows Vista x64 Edition, Windows Vista x64 Edition Service Pack 1, and Windows Vista x64 Edition Service Pack 2
+	//   - Microsoft Internet Information Services 7.0 on Windows Vista, Windows Vista Service Pack 1, and Windows Vista Service Pack 2
+	// TODO: gen_static_map.py emitted these Format B labels for MS09-054 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS09-054.
+	//   - Internet Explorer 8 in Windows Server 2008 R2 for Itanium-based Systems
+	//   - Internet Explorer 8 in Windows Vista x64 Edition, Windows Vista x64 Edition Service Pack 1, and Windows Vista x64 Edition Service Pack 2
+	//   - Internet Explorer 8 in Windows Vista, Windows Vista Service Pack 1, and Windows Vista Service Pack 2
 	"MS09-054": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 5.01 Service Pack 4 for Windows 2000 Service Pack 4", Drop: []string{"CVE-2009-2530", "CVE-2009-2531"}},
@@ -1240,6 +1484,14 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"972260": {"974455"},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS09-058 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS09-058.
+	//   - Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Windows Server 2008 for Itanium-based Systems
+	//   - Windows Server 2008 for Itanium-based Systems Service Pack 2
 	"MS09-058": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Microsoft Windows 2000 Service Pack 4", Drop: []string{"CVE-2009-2517"}},
@@ -1259,6 +1511,44 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2009-2516", "CVE-2009-2517"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS09-061 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS09-061.
+	//   - Microsoft .NET Framework 1.0 Service Pack 3 on Windows XP Tablet Edition 2005 Service Pack 2, Windows XP Tablet Edition 2005 Service Pack 3, Windows XP Media Center Edition 2005 Service Pack 2, and Windows XP Media Center Edition 2005 Service Pack 3
+	//   - Microsoft .NET Framework 1.1 Service Pack 1 when installed on Windows Server 2003 Itanium-based Edition Service Pack 2
+	//   - Microsoft .NET Framework 1.1 Service Pack 1 when installed on Windows XP Service Pack 2 and Windows XP Service Pack 3
+	//   - Microsoft .NET Framework 2.0 Service Pack 2 on Microsoft Windows 2000 Service Pack 4
+	//   - Microsoft .NET Framework 2.0 Service Pack 2 on Windows Server 2003 SP2 for Itanium-based Systems
+	//   - Microsoft .NET Framework 2.0 Service Pack 2 on Windows Server 2003 Service Pack 2
+	//   - Microsoft .NET Framework 2.0 Service Pack 2 on Windows Server 2003 x64 Edition Service Pack 2
+	//   - Microsoft .NET Framework 2.0 Service Pack 2 on Windows XP Professional x64 Edition Service Pack 2
+	//   - Microsoft .NET Framework 2.0 Service Pack 2 on Windows XP Service Pack 2 and Windows XP Service Pack 3
+	//   - Microsoft .NET Framework 2.0 Service Pack 2 when installed on Windows Server 2008 for 32-bit Systems
+	//   - Microsoft .NET Framework 2.0 Service Pack 2 when installed on Windows Server 2008 for Itanium-based Systems
+	//   - Microsoft .NET Framework 2.0 Service Pack 2 when installed on Windows Server 2008 for x64-based Systems
+	//   - Microsoft .NET Framework 2.0 Service Pack 2 when installed on Windows Vista and Windows Vista Service Pack 1
+	//   - Microsoft .NET Framework 2.0 Service Pack 2 when installed on Windows Vista x64 Edition and Windows Vista x64 Edition Service Pack 1
+	//   - Microsoft .NET Framework 2.0 on Windows Vista
+	//   - Microsoft .NET Framework 2.0 on Windows Vista x64 Edition
+	//   - Microsoft .NET Framework 3.5 Service Pack 1 when installed on Windows Server 2003 SP2 for Itanium-based Systems
+	//   - Microsoft .NET Framework 3.5 Service Pack 1 when installed on Windows Server 2003 Service Pack 2
+	//   - Microsoft .NET Framework 3.5 Service Pack 1 when installed on Windows Server 2003 x64 Edition Service Pack 2
+	//   - Microsoft .NET Framework 3.5 Service Pack 1 when installed on Windows Server 2008 for 32-bit Systems
+	//   - Microsoft .NET Framework 3.5 Service Pack 1 when installed on Windows Server 2008 for Itanium-based Systems
+	//   - Microsoft .NET Framework 3.5 Service Pack 1 when installed on Windows Server 2008 for x64-based Systems
+	//   - Microsoft .NET Framework 3.5 Service Pack 1 when installed on Windows Vista and Windows Vista Service Pack 1
+	//   - Microsoft .NET Framework 3.5 Service Pack 1 when installed on Windows Vista x64 Edition and Windows Vista x64 Edition Service Pack 1
+	//   - Microsoft .NET Framework 3.5 Service Pack 1 when installed on Windows XP Professional x64 Edition Service Pack 2
+	//   - Microsoft .NET Framework 3.5 Service Pack 1 when installed on Windows XP Service Pack 2 and Windows XP Service Pack 3
+	//   - Microsoft .NET Framework 3.5 when installed on Windows Server 2003 SP2 for Itanium-based Systems
+	//   - Microsoft .NET Framework 3.5 when installed on Windows Server 2003 Service Pack 2
+	//   - Microsoft .NET Framework 3.5 when installed on Windows Server 2003 x64 Edition Service Pack 2
+	//   - Microsoft .NET Framework 3.5 when installed on Windows Vista
+	//   - Microsoft .NET Framework 3.5 when installed on Windows Vista x64 Edition
+	//   - Microsoft .NET Framework 3.5 when installed on Windows XP Professional x64 Edition Service Pack 2
+	//   - Microsoft .NET Framework 3.5 when installed on Windows XP Service Pack 2 and Windows XP Service Pack 3
 	"MS09-061": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "953297", Drop: []string{"CVE-2009-0091", "CVE-2009-2497"}},
@@ -1267,6 +1557,15 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "974470", Drop: []string{"CVE-2009-0090", "CVE-2009-0091"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS09-062 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS09-062.
+	//   - Microsoft Internet Explorer 6 Service Pack 1 when installed on Microsoft Windows 2000 Service Pack 4
+	//   - Microsoft Office Project 2002 Service Pack 1
+	//   - Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Windows Server 2008 for Itanium-based Systems
 	"MS09-062": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "957488", Drop: []string{"CVE-2009-2518", "CVE-2009-2528"}},
@@ -1299,6 +1598,14 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Windows Vista x64 Edition Service Pack 1", Drop: []string{"CVE-2009-2500", "CVE-2009-2501", "CVE-2009-2502", "CVE-2009-2503", "CVE-2009-3126"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS09-065 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS09-065.
+	//   - Windows Server 2008 for Itanium-based Systems and Windows Server 2008 for Itanium-based Systems Service Pack 2
+	//   - Windows Vista x64 Edition, Windows Vista x64 Edition Service Pack 1, and Windows Vista x64 Edition Service Pack 2
+	//   - Windows Vista, Windows Vista Service Pack 1, and Windows Vista Service Pack 2
 	"MS09-065": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Windows Server 2008 for 32-bit Systems", Drop: []string{"CVE-2009-2514"}},
@@ -1307,6 +1614,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2009-2514"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS09-067 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS09-067.
+	//   - Microsoft Office Excel 2003 Service Pack 3
+	//   - Microsoft Office Excel 2007 Service Pack 1 and Microsoft Office Excel 2007 Service Pack 2
 	"MS09-067": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "973484", Drop: []string{"CVE-2009-3130", "CVE-2009-3133"}},
@@ -1317,6 +1631,14 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "976831", Drop: []string{"CVE-2009-3128"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS09-071 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS09-071.
+	//   - Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Windows Server 2008 for Itanium-based Systems
+	//   - Windows Server 2008 for Itanium-based Systems Service Pack 2
 	"MS09-071": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Microsoft Windows 2000 Service Pack 4", Drop: []string{"CVE-2009-2505"}},
@@ -1337,6 +1659,19 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2009-3677"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS09-072 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS09-072.
+	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 in Windows Server 2008 for Itanium-based Systems and Windows Server 2008 for Itanium-based Systems Service Pack 2
+	//   - Internet Explorer 7 in Windows Vista x64 Edition, Windows Vista x64 Edition Service Pack 1, and Windows Vista x64 Edition Service Pack 2
+	//   - Internet Explorer 7 in Windows Vista, Windows Vista Service Pack 1, and Windows Vista Service Pack 2
+	//   - Internet Explorer 8 in Windows Server 2008 R2 for Itanium-based Systems
+	//   - Internet Explorer 8 in Windows Vista x64 Edition, Windows Vista x64 Edition Service Pack 1, and Windows Vista x64 Edition Service Pack 2
+	//   - Internet Explorer 8 in Windows Vista, Windows Vista Service Pack 1, and Windows Vista Service Pack 2
 	"MS09-072": {
 		CVEAdjustments: []cveAdjustment{
 			{Add: []string{"CVE-2009-2493", "CVE-2009-3671", "CVE-2009-3672", "CVE-2009-3673", "CVE-2009-3674"}},
@@ -1377,6 +1712,19 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"974455": {"976325"},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS10-002 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS10-002.
+	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 in Windows Server 2008 for Itanium-based Systems and Windows Server 2008 for Itanium-based Systems Service Pack 2
+	//   - Internet Explorer 7 in Windows Vista x64 Edition, Windows Vista x64 Edition Service Pack 1, and Windows Vista x64 Edition Service Pack 2
+	//   - Internet Explorer 7 in Windows Vista, Windows Vista Service Pack 1, and Windows Vista Service Pack 2
+	//   - Internet Explorer 8 in Windows Server 2008 R2 for Itanium-based Systems
+	//   - Internet Explorer 8 in Windows Vista x64 Edition, Windows Vista x64 Edition Service Pack 1, and Windows Vista x64 Edition Service Pack 2
+	//   - Internet Explorer 8 in Windows Vista, Windows Vista Service Pack 1, and Windows Vista Service Pack 2
 	"MS10-002": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 5.01 Service Pack 4 for Windows 2000 Service Pack 4", Drop: []string{"CVE-2009-4074", "CVE-2010-0244", "CVE-2010-0245", "CVE-2010-0246", "CVE-2010-0248", "CVE-2010-0249"}},
@@ -1416,7 +1764,24 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"976325": {"978207"},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS10-004 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS10-004.
+	//   - Microsoft Office PowerPoint 2002 Service Pack 3
+	//   - Microsoft Office PowerPoint 2003 Service Pack 3
 	"MS10-004": {CVEAdjustments: []cveAdjustment{{KB: "979674", Drop: []string{"CVE-2010-0029", "CVE-2010-0030", "CVE-2010-0032", "CVE-2010-0033", "CVE-2010-0034"}}}},
+	// TODO: gen_static_map.py emitted these Format B labels for MS10-006 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS10-006.
+	//   - Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Windows Server 2008 R2 for Itanium-based Systems
+	//   - Windows Server 2008 for Itanium-based Systems and Windows Server 2008 for Itanium-based Systems Service Pack 2
+	//   - Windows Vista x64 Edition, Windows Vista x64 Edition Service Pack 1, and Windows Vista x64 Edition Service Pack 2
+	//   - Windows Vista, Windows Vista Service Pack 1, and Windows Vista Service Pack 2
 	"MS10-006": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Microsoft Windows 2000 Service Pack 4", Drop: []string{"CVE-2010-0017"}},
@@ -1434,6 +1799,12 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2010-0016"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS10-012 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS10-012.
+	//   - Windows Server 2003 with SP2 for Itanium-based Systems
 	"MS10-012": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Microsoft Windows 2000 Service Pack 4", Drop: []string{"CVE-2010-0021"}},
@@ -1444,6 +1815,14 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Microsoft Windows XP Service Pack 3", Drop: []string{"CVE-2010-0021"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS10-015 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS10-015.
+	//   - Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Windows Server 2008 for Itanium-based Systems and Windows Server 2008 for Itanium-based Systems Service Pack 2
+	//   - Windows Vista x64 Edition, Windows Vista x64 Edition Service Pack 1, and Windows Vista x64 Edition Service Pack 2
 	"MS10-015": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Microsoft Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2010-0232"}},
@@ -1453,6 +1832,14 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2010-0232"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS10-017 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS10-017.
+	//   - Microsoft Office Excel 2002 Service Pack 3
+	//   - Microsoft Office Excel 2003 Service Pack 3
+	//   - Microsoft Office Excel 2007 Service Pack 1 and Microsoft Office Excel 2007 Service Pack 2
 	"MS10-017": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "978380", Drop: []string{"CVE-2010-0257", "CVE-2010-0262", "CVE-2010-0264"}},
@@ -1463,6 +1850,19 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "980840", Drop: []string{"CVE-2010-0257", "CVE-2010-0260", "CVE-2010-0261", "CVE-2010-0262"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS10-018 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS10-018.
+	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 in Windows Server 2008 for Itanium-based Systems and Windows Server 2008 for Itanium-based Systems Service Pack 2
+	//   - Internet Explorer 7 in Windows Vista x64 Edition, Windows Vista x64 Edition Service Pack 1, and Windows Vista x64 Edition Service Pack 2
+	//   - Internet Explorer 7 in Windows Vista, Windows Vista Service Pack 1, and Windows Vista Service Pack 2
+	//   - Internet Explorer 8 in Windows Server 2008 R2 for Itanium-based Systems
+	//   - Internet Explorer 8 in Windows Vista x64 Edition, Windows Vista x64 Edition Service Pack 1, and Windows Vista x64 Edition Service Pack 2
+	//   - Internet Explorer 8 in Windows Vista, Windows Vista Service Pack 1, and Windows Vista Service Pack 2
 	"MS10-018": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 5.01 Service Pack 4 for Windows 2000 Service Pack 4", Drop: []string{"CVE-2010-0267", "CVE-2010-0490", "CVE-2010-0492", "CVE-2010-0494", "CVE-2010-0806", "CVE-2010-0807"}},
@@ -1502,6 +1902,25 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"978207": {"980182"},
 		},
 	},
+	"MS10-019": {
+		CVEAdjustments: []cveAdjustment{
+			{Component: "Authenticode Signature Verification 5.1", Drop: []string{"CVE-2010-0487"}},
+			{Component: "Authenticode Signature Verification 6.0", Drop: []string{"CVE-2010-0487"}},
+			{Component: "Authenticode Signature Verification 6.1", Drop: []string{"CVE-2010-0487"}},
+			{Component: "Cabinet File Viewer Shell Extension 5.1", Drop: []string{"CVE-2010-0486"}},
+			{Component: "Cabinet File Viewer Shell Extension 6.0", Drop: []string{"CVE-2010-0486"}},
+			{Component: "Cabinet File Viewer Shell Extension 6.1", Drop: []string{"CVE-2010-0486"}},
+		},
+	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS10-020 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS10-020.
+	//   - Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Windows Server 2008 for Itanium-based Systems and Windows Server 2008 for Itanium-based Systems Service Pack 2
+	//   - Windows Vista x64 Edition, Windows Vista x64 Edition Service Pack 1, and Windows Vista x64 Edition Service Pack 2
+	//   - Windows Vista, Windows Vista Service Pack 1, and Windows Vista Service Pack 2
 	"MS10-020": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Microsoft Windows 2000 Service Pack 4", Drop: []string{"CVE-2009-3676", "CVE-2010-0270", "CVE-2010-0476", "CVE-2010-0477"}},
@@ -1516,6 +1935,14 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2009-3676", "CVE-2010-0270", "CVE-2010-0477"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS10-021 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS10-021.
+	//   - Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Windows Server 2008 R2 for Itanium-based Systems
+	//   - Windows Server 2008 for Itanium-based Systems and Windows Server 2008 for Itanium-based Systems Service Pack 2
 	"MS10-021": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Microsoft Windows 2000 Service Pack 4", Drop: []string{"CVE-2010-0481", "CVE-2010-0482", "CVE-2010-0810"}},
@@ -1548,6 +1975,12 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "981407", Drop: []string{"CVE-2010-0025"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS10-032 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS10-032.
+	//   - Windows Server 2008 R2 for Itanium-based Systems
 	"MS10-032": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Windows 7 for 32-bit Systems", Drop: []string{"CVE-2010-0484"}},
@@ -1563,7 +1996,22 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "979902", Drop: []string{"CVE-2010-1880"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS10-034 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS10-034.
+	//   - Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Windows Server 2008 for Itanium-based Systems and Windows Server 2008 for Itanium-based Systems Service Pack 2
 	"MS10-034": {CVEAdjustments: []cveAdjustment{{Component: "Microsoft Windows 2000 Service Pack 4", Drop: []string{"CVE-2010-0811"}}}},
+	// TODO: gen_static_map.py emitted these Format B labels for MS10-035 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS10-035.
+	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 in Windows Server 2008 for Itanium-based Systems and Windows Server 2008 for Itanium-based Systems Service Pack 2
 	"MS10-035": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 6 Service Pack 1 for Windows 2000 Service Pack 4", Drop: []string{"CVE-2010-0255", "CVE-2010-1257", "CVE-2010-1260", "CVE-2010-1261"}},
@@ -1590,6 +2038,14 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"980182": {"982381"},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS10-038 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS10-038.
+	//   - Microsoft Office Excel 2003 Service Pack 3
+	//   - Microsoft Office Excel 2007 Service Pack 1
+	//   - Microsoft Office Excel 2007 Service Pack 2
 	"MS10-038": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "982331", Drop: []string{"CVE-2010-0822", "CVE-2010-0824", "CVE-2010-1245", "CVE-2010-1246", "CVE-2010-1247", "CVE-2010-1248", "CVE-2010-1249", "CVE-2010-1250", "CVE-2010-1251", "CVE-2010-1252", "CVE-2010-1254"}},
@@ -1607,6 +2063,19 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "980923", Drop: []string{"CVE-2010-0817", "CVE-2010-1264"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS10-044 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS10-044.
+	//   - Microsoft Office Access 2007 Service Pack 1 and Microsoft Office Access 2007 Service Pack 2
+	// TODO: gen_static_map.py emitted these Format B labels for MS10-047 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS10-047.
+	//   - Windows Server 2008 R2 for Itanium-based Systems
+	//   - Windows Server 2008 for Itanium-based Systems and Windows Server 2008 for Itanium-based Systems Service Pack 2
 	"MS10-047": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Microsoft Windows XP Service Pack 3", Drop: []string{"CVE-2010-1889", "CVE-2010-1890"}},
@@ -1623,6 +2092,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2010-1888"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS10-048 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS10-048.
+	//   - Windows Server 2008 R2 for Itanium-based Systems
+	//   - Windows Server 2008 for Itanium-based Systems and Windows Server 2008 for Itanium-based Systems Service Pack 2
 	"MS10-048": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Windows 7 for 32-bit Systems", Drop: []string{"CVE-2010-1894", "CVE-2010-1895", "CVE-2010-1896"}},
@@ -1638,6 +2114,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2010-1894", "CVE-2010-1895"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS10-049 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS10-049.
+	//   - Windows Server 2008 R2 for Itanium-based Systems
+	//   - Windows Server 2008 for Itanium-based Systems and Windows Server 2008 for Itanium-based Systems Service Pack 2
 	"MS10-049": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Windows 7 for 32-bit Systems", Drop: []string{"CVE-2010-2566"}},
@@ -1653,6 +2136,16 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2010-2566"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS10-053 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS10-053.
+	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 in Windows Server 2008 for Itanium-based Systems and Windows Server 2008 for Itanium-based Systems Service Pack 2
+	//   - Internet Explorer 8 in Vista Service Pack 1 and Windows Vista Service Pack 2
+	//   - Internet Explorer 8 in Windows Server 2008 R2 for Itanium-based Systems
 	"MS10-053": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 6 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2010-2559"}},
@@ -1690,6 +2183,12 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"982381": {"2183461"},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS10-054 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS10-054.
+	//   - Windows Server 2003 with SP2 for Itanium-based Systems
 	"MS10-054": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Microsoft Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2010-2551", "CVE-2010-2552"}},
@@ -1698,6 +2197,12 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Microsoft Windows XP Service Pack 3", Drop: []string{"CVE-2010-2551", "CVE-2010-2552"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS10-056 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS10-056.
+	//   - Microsoft Office Word 2007 Service Pack 2
 	"MS10-056": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "2092914", Drop: []string{"CVE-2010-1901", "CVE-2010-1902", "CVE-2010-1903"}},
@@ -1707,6 +2212,12 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2284179", Drop: []string{"CVE-2010-1903"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS10-058 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS10-058.
+	//   - Windows Server 2008 for Itanium-based Systems Service Pack 2
 	"MS10-058": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2010-1893"}},
@@ -1730,6 +2241,16 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2290570", Drop: []string{"CVE-2010-1899", "CVE-2010-2730"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS10-071 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS10-071.
+	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 in Windows Server 2008 for Itanium-based Systems and Windows Server 2008 for Itanium-based Systems Service Pack 2
+	//   - Internet Explorer 8 in Vista Service Pack 1 and Windows Vista Service Pack 2
+	//   - Internet Explorer 8 in Windows Server 2008 R2 for Itanium-based Systems
 	"MS10-071": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 6 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2010-3243", "CVE-2010-3324", "CVE-2010-3329"}},
@@ -1774,6 +2295,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2346411", Drop: []string{"CVE-2010-3243"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS10-073 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS10-073.
+	//   - Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Windows Server 2008 R2 for Itanium-based Systems
 	"MS10-073": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Microsoft Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2010-2549"}},
@@ -1785,6 +2313,12 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Windows Server 2008 R2 for x64-based Systems", Drop: []string{"CVE-2010-2549"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS10-079 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS10-079.
+	//   - Microsoft Word Web App
 	"MS10-079": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "2345009", Drop: []string{"CVE-2010-2747", "CVE-2010-2748", "CVE-2010-2750", "CVE-2010-3215", "CVE-2010-3216", "CVE-2010-3217", "CVE-2010-3218", "CVE-2010-3219", "CVE-2010-3220"}},
@@ -1793,6 +2327,10 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2422352", Drop: []string{"CVE-2010-2747", "CVE-2010-2748", "CVE-2010-2750", "CVE-2010-3215", "CVE-2010-3216", "CVE-2010-3217", "CVE-2010-3218", "CVE-2010-3219", "CVE-2010-3220", "CVE-2010-3221"}},
 			{KB: "2422398", Drop: []string{"CVE-2010-2747", "CVE-2010-2748", "CVE-2010-2750", "CVE-2010-3215", "CVE-2010-3216", "CVE-2010-3217", "CVE-2010-3218", "CVE-2010-3219", "CVE-2010-3220", "CVE-2010-3221"}},
 			{Component: "Microsoft Office Web Apps 2010", Drop: []string{"CVE-2010-2747", "CVE-2010-2748", "CVE-2010-2750", "CVE-2010-3215", "CVE-2010-3216", "CVE-2010-3217", "CVE-2010-3218", "CVE-2010-3219", "CVE-2010-3220", "CVE-2010-3221"}},
+			{Component: "Microsoft Word 2003 Service Pack 3", Drop: []string{"CVE-2010-2747", "CVE-2010-2748", "CVE-2010-2750", "CVE-2010-3215", "CVE-2010-3216", "CVE-2010-3217", "CVE-2010-3218", "CVE-2010-3219", "CVE-2010-3220"}},
+			{Component: "Microsoft Word 2007 Service Pack 2", Drop: []string{"CVE-2010-2747", "CVE-2010-2748", "CVE-2010-2750", "CVE-2010-3215", "CVE-2010-3216", "CVE-2010-3217", "CVE-2010-3218", "CVE-2010-3219", "CVE-2010-3220", "CVE-2010-3221"}},
+			{Component: "Microsoft Word 2010 (32-bit editions)", Drop: []string{"CVE-2010-2747", "CVE-2010-2748", "CVE-2010-2750", "CVE-2010-3215", "CVE-2010-3216", "CVE-2010-3217", "CVE-2010-3218", "CVE-2010-3219", "CVE-2010-3220", "CVE-2010-3221"}},
+			{Component: "Microsoft Word 2010 (64-bit editions)", Drop: []string{"CVE-2010-2747", "CVE-2010-2748", "CVE-2010-2750", "CVE-2010-3215", "CVE-2010-3216", "CVE-2010-3217", "CVE-2010-3218", "CVE-2010-3219", "CVE-2010-3220", "CVE-2010-3221"}},
 		},
 	},
 	"MS10-080": {
@@ -1802,6 +2340,9 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2422343", Drop: []string{"CVE-2010-3230", "CVE-2010-3233", "CVE-2010-3234", "CVE-2010-3235", "CVE-2010-3239", "CVE-2010-3240"}},
 			{KB: "2422352", Drop: []string{"CVE-2010-3230", "CVE-2010-3233", "CVE-2010-3234", "CVE-2010-3235", "CVE-2010-3237", "CVE-2010-3238", "CVE-2010-3239", "CVE-2010-3240"}},
 			{KB: "2422398", Drop: []string{"CVE-2010-3230", "CVE-2010-3233", "CVE-2010-3234", "CVE-2010-3235", "CVE-2010-3237", "CVE-2010-3238", "CVE-2010-3239", "CVE-2010-3240"}},
+			{Component: "Microsoft Excel 2002 Service Pack 3", Drop: []string{"CVE-2010-3232"}},
+			{Component: "Microsoft Excel 2003 Service Pack 3", Drop: []string{"CVE-2010-3230", "CVE-2010-3231", "CVE-2010-3234", "CVE-2010-3235", "CVE-2010-3237", "CVE-2010-3239", "CVE-2010-3240", "CVE-2010-3241", "CVE-2010-3242"}},
+			{Component: "Microsoft Excel 2007 Service Pack 2", Drop: []string{"CVE-2010-3230", "CVE-2010-3231", "CVE-2010-3233", "CVE-2010-3234", "CVE-2010-3235", "CVE-2010-3236", "CVE-2010-3237", "CVE-2010-3238", "CVE-2010-3239", "CVE-2010-3241", "CVE-2010-3242"}},
 		},
 	},
 	"MS10-087": {
@@ -1822,6 +2363,16 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Microsoft Office 2004 for Mac", Drop: []string{"CVE-2010-2572"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS10-090 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS10-090.
+	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 in Windows Server 2008 for Itanium-based Systems and Windows Server 2008 for Itanium-based Systems Service Pack 2
+	//   - Internet Explorer 8 in Vista Service Pack 1 and Windows Vista Service Pack 2
+	//   - Internet Explorer 8 in Windows Server 2008 R2 for Itanium-based Systems
 	"MS10-090": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 6 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2010-3345"}},
@@ -1859,6 +2410,14 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2360131": {"2416400"},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS10-098 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS10-098.
+	//   - Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Windows Server 2008 R2 for Itanium-based Systems
+	//   - Windows Server 2008 for Itanium-based Systems and Windows Server 2008 for Itanium-based Systems Service Pack 2
 	"MS10-098": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Microsoft Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2010-3944"}},
@@ -1877,6 +2436,14 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2010-3944"}},
 		},
 	},
+	"MS10-103": {
+		CVEAdjustments: []cveAdjustment{
+			{Component: "Microsoft Publisher 2003 Service Pack 3", Drop: []string{"CVE-2010-3955"}},
+			{Component: "Microsoft Publisher 2007 Service Pack 2", Drop: []string{"CVE-2010-2571", "CVE-2010-3954", "CVE-2010-3955"}},
+			{Component: "Microsoft Publisher 2010 (32-bit editions)", Drop: []string{"CVE-2010-2569", "CVE-2010-2571", "CVE-2010-3955"}},
+			{Component: "Microsoft Publisher 2010 (64-bit editions)", Drop: []string{"CVE-2010-2569", "CVE-2010-2571", "CVE-2010-3955"}},
+		},
+	},
 	"MS10-105": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "2288931", Drop: []string{"CVE-2010-3946", "CVE-2010-3947", "CVE-2010-3949", "CVE-2010-3950"}},
@@ -1885,6 +2452,14 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2431831", Drop: []string{"CVE-2010-3945", "CVE-2010-3946", "CVE-2010-3949", "CVE-2010-3951", "CVE-2010-3952"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS11-003 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS11-003.
+	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 in Windows Server 2008 for Itanium-based Systems and Windows Server 2008 for Itanium-based Systems Service Pack 2
 	"MS11-003": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 6 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2011-0038"}},
@@ -1908,6 +2483,14 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2416400": {"2482017"},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS11-011 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS11-011.
+	//   - Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Windows Server 2008 R2 for Itanium-based Systems
+	//   - Windows Server 2008 for Itanium-based Systems and Windows Server 2008 for Itanium-based Systems Service Pack 2
 	"MS11-011": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Microsoft Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2011-0045"}},
@@ -1926,6 +2509,12 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2011-0045"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS11-012 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS11-012.
+	//   - Windows Server 2008 R2 for Itanium-based Systems and Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
 	"MS11-012": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Windows 7 for 32-bit Systems", Drop: []string{"CVE-2011-0087"}},
@@ -1972,6 +2561,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Windows Server 2008 R2 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2011-0042"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS11-018 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS11-018.
+	//   - Internet Explorer 8 in Vista Service Pack 1 and Windows Vista Service Pack 2
+	//   - Internet Explorer 8 in Windows Server 2008 R2 for Itanium-based Systems and Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
 	"MS11-018": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 8 for Windows 7 for 32-bit Systems", Drop: []string{"CVE-2011-0094", "CVE-2011-1245"}},
@@ -1996,6 +2592,12 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2482017": {"2497640"},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS11-021 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS11-021.
+	//   - Microsoft Excel (64-bit editions)
 	"MS11-021": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "2466156", Drop: []string{"CVE-2011-0101", "CVE-2011-0103", "CVE-2011-0104", "CVE-2011-0105", "CVE-2011-0979", "CVE-2011-0980"}},
@@ -2004,12 +2606,25 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2505927", Drop: []string{"CVE-2011-0101", "CVE-2011-0978"}},
 			{KB: "2505935", Drop: []string{"CVE-2011-0101", "CVE-2011-0978"}},
 			{KB: "2525412", Drop: []string{"CVE-2011-0097", "CVE-2011-0098", "CVE-2011-0101", "CVE-2011-0103", "CVE-2011-0104", "CVE-2011-0105", "CVE-2011-0978", "CVE-2011-0980"}},
+			{Component: "Microsoft Excel 2003 Service Pack 3", Drop: []string{"CVE-2011-0101", "CVE-2011-0105"}},
+			{Component: "Microsoft Excel 2007 Service Pack 2", Drop: []string{"CVE-2011-0101", "CVE-2011-0103", "CVE-2011-0104", "CVE-2011-0105", "CVE-2011-0980"}},
+			{Component: "Microsoft Excel 2010 (32-bit editions)", Drop: []string{"CVE-2011-0101", "CVE-2011-0103", "CVE-2011-0104", "CVE-2011-0105", "CVE-2011-0978", "CVE-2011-0980"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS11-022 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS11-022.
+	//   - Microsoft PowerPoint Web App
 	"MS11-022": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "2519984", Drop: []string{"CVE-2011-0976"}},
 			{KB: "2525412", Drop: []string{"CVE-2011-0976"}},
+			{Component: "Microsoft PowerPoint 2002 Service Pack 3", Drop: []string{"CVE-2011-0655"}},
+			{Component: "Microsoft PowerPoint 2003 Service Pack 3", Drop: []string{"CVE-2011-0655"}},
+			{Component: "Microsoft PowerPoint 2010 (32-bit editions)", Drop: []string{"CVE-2011-0976"}},
+			{Component: "Microsoft PowerPoint 2010 (64-bit editions)", Drop: []string{"CVE-2011-0976"}},
 		},
 	},
 	"MS11-023": {
@@ -2019,6 +2634,14 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2505935", Drop: []string{"CVE-2011-0107"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS11-027 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS11-027.
+	//   - Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Windows Server 2008 R2 for Itanium-based Systems and Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
+	//   - Windows Server 2008 for Itanium-based Systems and Windows Server 2008 for Itanium-based Systems Service Pack 2
 	"MS11-027": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Microsoft Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2010-3973", "CVE-2011-1243"}},
@@ -2044,9 +2667,17 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2540162", Drop: []string{"CVE-2011-1270"}},
 			{Component: "Microsoft Office 2004 for Mac", Drop: []string{"CVE-2011-1270"}},
 			{Component: "Microsoft Office 2008 for Mac", Drop: []string{"CVE-2011-1270"}},
+			{Component: "Microsoft PowerPoint 2007 Service Pack 2", Drop: []string{"CVE-2011-1270"}},
 			{Component: "Open XML File Format Converter for Mac", Drop: []string{"CVE-2011-1270"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS11-042 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS11-042.
+	//   - Windows Server 2008 R2 for Itanium-based Systems
+	//   - Windows Server 2008 for Itanium-based Systems and Windows Server 2008 for Itanium-based Systems Service Pack 2
 	"MS11-042": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Windows 7 for 32-bit Systems", Drop: []string{"CVE-2011-1868"}},
@@ -2070,8 +2701,20 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2555785", Drop: []string{"CVE-2011-1278"}},
 			{KB: "2555786", Drop: []string{"CVE-2011-1277"}},
 			{KB: "2555787", Drop: []string{"CVE-2011-1278"}},
+			{Component: "Microsoft Excel 2003 Service Pack 3", Drop: []string{"CVE-2011-1275", "CVE-2011-1277", "CVE-2011-1278"}},
+			{Component: "Microsoft Excel 2007 Service Pack 2", Drop: []string{"CVE-2011-1275", "CVE-2011-1277", "CVE-2011-1278", "CVE-2011-1279"}},
+			{Component: "Microsoft Excel 2010 (32-bit editions)", Drop: []string{"CVE-2011-1272", "CVE-2011-1274", "CVE-2011-1275", "CVE-2011-1276", "CVE-2011-1277", "CVE-2011-1278", "CVE-2011-1279"}},
+			{Component: "Microsoft Excel 2010 (64-bit editions)", Drop: []string{"CVE-2011-1272", "CVE-2011-1274", "CVE-2011-1275", "CVE-2011-1276", "CVE-2011-1277", "CVE-2011-1278", "CVE-2011-1279"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS11-050 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS11-050.
+	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 in Windows Server 2008 for Itanium-based Systems and Windows Server 2008 for Itanium-based Systems Service Pack 2
 	"MS11-050": {
 		CVEAdjustments: []cveAdjustment{
 			{Add: []string{"CVE-2011-1246", "CVE-2011-1250", "CVE-2011-1251", "CVE-2011-1252", "CVE-2011-1254", "CVE-2011-1255", "CVE-2011-1256", "CVE-2011-1258", "CVE-2011-1260", "CVE-2011-1261", "CVE-2011-1262", "CVE-2011-1346"}},
@@ -2106,6 +2749,14 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2497640": {"2530548"},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS11-054 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS11-054.
+	//   - Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Windows Server 2008 R2 for Itanium-based Systems and Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
+	//   - Windows Server 2008 for Itanium-based Systems and Windows Server 2008 for Itanium-based Systems Service Pack 2
 	"MS11-054": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Microsoft Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2011-1877", "CVE-2011-1886", "CVE-2011-1887", "CVE-2011-1888"}},
@@ -2134,6 +2785,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 	// attribution. CVE-2007-0675 is a real ActiveX vulnerability addressed
 	// by the MS08-032 Cumulative ActiveX Kill Bit update.)
 	// MS11-056: off-by-one of CVE-2011-1284 — remap (1284 not in xlsx).
+	// TODO: gen_static_map.py emitted these Format B labels for MS11-056 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS11-056.
+	//   - Windows Server 2008 R2 for Itanium-based Systems and Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
+	//   - Windows Server 2008 for Itanium-based Systems and Windows Server 2008 for Itanium-based Systems Service Pack 2
 	"MS11-056": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Windows 7 for 32-bit Systems", Drop: []string{"CVE-2011-1283", "CVE-2011-1870"}},
@@ -2157,6 +2815,12 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 	// states "this update addresses a Protected Mode bypass issue,
 	// publicly disclosed". The CVE is not in the main vulnerability
 	// table but the update explicitly addresses it.
+	// TODO: gen_static_map.py emitted these Format B labels for MS11-057 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS11-057.
+	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
 	"MS11-057": {
 		CVEAdjustments: []cveAdjustment{
 			{Add: []string{"CVE-2011-1257", "CVE-2011-1347", "CVE-2011-1960", "CVE-2011-1961", "CVE-2011-1962", "CVE-2011-1963", "CVE-2011-1964", "CVE-2011-2383"}},
@@ -2179,6 +2843,12 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2530548": {"2559049"},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS11-058 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS11-058.
+	//   - Windows Server 2003 with SP2 for Itanium-based Systems
 	"MS11-058": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Microsoft Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2011-1966"}},
@@ -2186,6 +2856,12 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 		},
 	},
 	"MS11-060": {CVEAdjustments: []cveAdjustment{{KB: "2560978", Drop: []string{"CVE-2011-1979"}}}},
+	// TODO: gen_static_map.py emitted these Format B labels for MS11-064 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS11-064.
+	//   - Windows Server 2008 for Itanium-based Systems Service Pack 2
 	"MS11-064": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2011-1965"}},
@@ -2194,6 +2870,14 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2011-1965"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS11-072 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS11-072.
+	//   - Excel Services installed on Microsoft Office SharePoint Server 2010 and Excel Services installed on Microsoft Office SharePoint Server 2010 Service Pack 1
+	//   - Microsoft Excel 2010 and Microsoft Excel 2010 Service Pack 1 (32-bit editions)
+	//   - Microsoft Excel 2010 and Microsoft Excel 2010 Service Pack 1 (64-bit editions)
 	"MS11-072": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "2553074", Drop: []string{"CVE-2011-1986"}},
@@ -2205,6 +2889,10 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2598782", Drop: []string{"CVE-2011-1986", "CVE-2011-1990"}},
 			{KB: "2598783", Drop: []string{"CVE-2011-1986", "CVE-2011-1988", "CVE-2011-1990"}},
 			{KB: "2598785", Drop: []string{"CVE-2011-1986", "CVE-2011-1990"}},
+			{Component: "Microsoft Excel 2003 Service Pack 3", Drop: []string{"CVE-2011-1990"}},
+			{Component: "Microsoft Excel 2007 Service Pack 2", Drop: []string{"CVE-2011-1986"}},
+			{Component: "Microsoft Excel Web App 2010", Drop: []string{"CVE-2011-1986", "CVE-2011-1987", "CVE-2011-1988", "CVE-2011-1990"}},
+			{Component: "Microsoft Excel Web App 2010 Service Pack 1", Drop: []string{"CVE-2011-1986", "CVE-2011-1987", "CVE-2011-1988", "CVE-2011-1990"}},
 		},
 	},
 	"MS11-073": {
@@ -2213,6 +2901,15 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2584066", Drop: []string{"CVE-2011-1980"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS11-074 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS11-074.
+	//   - Microsoft Office SharePoint Server 2007 Service Pack 2 (32-bit editions)
+	//   - Microsoft Office SharePoint Server 2007 Service Pack 2 (64-bit editions)
+	//   - Microsoft Office SharePoint Server 2010
+	//   - Microsoft Office SharePoint Server 2010 Service Pack 1
 	"MS11-074": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "2493987", Drop: []string{"CVE-2011-0653", "CVE-2011-1890"}},
@@ -2227,6 +2924,12 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Microsoft SharePoint Foundation 2010 Service Pack 1", Drop: []string{"CVE-2011-0653", "CVE-2011-1890", "CVE-2011-1892", "CVE-2011-1893"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS11-077 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS11-077.
+	//   - Windows Server 2003 with SP2 for Itanium-based Systems
 	"MS11-077": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Microsoft Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2011-2002"}},
@@ -2235,6 +2938,15 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Microsoft Windows XP Service Pack 3", Drop: []string{"CVE-2011-2002"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS11-081 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS11-081.
+	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 Windows Server 2008 for Itanium-based Systems Service Pack 2
+	//   - Internet Explorer 7 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 8 in Windows Server 2008 R2 for Itanium-based Systems and Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
 	"MS11-081": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 6 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2011-1998", "CVE-2011-1999"}},
@@ -2278,6 +2990,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2559049": {"2586448"},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS11-090 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS11-090.
+	//   - Windows Server 2008 R2 for Itanium-based Systems and Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
+	//   - Windows Server 2008 for Itanium-based Systems Service Pack 2
 	"MS11-090": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Windows 7 for 32-bit Systems", Drop: []string{"CVE-2011-3397"}},
@@ -2292,17 +3011,34 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2011-3397"}},
 		},
 	},
-	"MS11-091": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2011-1508", "CVE-2011-3410", "CVE-2011-3411", "CVE-2011-3412"}}}},
+	"MS11-091": {
+		CVEAdjustments: []cveAdjustment{
+			{Add: []string{"CVE-2011-1508", "CVE-2011-3410", "CVE-2011-3411", "CVE-2011-3412"}},
+			{Component: "Microsoft Publisher 2007 Service Pack 2", Drop: []string{"CVE-2011-3411"}},
+			{Component: "Microsoft Publisher 2007 Service Pack 3", Drop: []string{"CVE-2011-3411"}},
+		},
+	},
 	"MS11-094": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "2596843", Drop: []string{"CVE-2011-3396"}},
 			{KB: "2596912", Drop: []string{"CVE-2011-3396"}},
 			{KB: "2644354", Drop: []string{"CVE-2011-3396"}},
+			{Component: "Microsoft PowerPoint 2010 (32-bit editions)", Drop: []string{"CVE-2011-3413"}},
+			{Component: "Microsoft PowerPoint 2010 (64-bit editions)", Drop: []string{"CVE-2011-3413"}},
 		},
 	},
 	"MS11-096": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2011-1986", "CVE-2011-1987", "CVE-2011-3403"}}}},
 	// MS11-099: off-by-one of CVE-2011-3404 — remap (3404 not in xlsx).
 	// CVE-2011-3403 itself appears in MS11-096's markdown.
+	// TODO: gen_static_map.py emitted these Format B labels for MS11-099 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS11-099.
+	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 in Windows Server 2008 for Itanium-based Systems Service Pack 2
+	//   - Internet Explorer 8 in Windows Server 2008 R2 for Itanium-based Systems and Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
 	"MS11-099": {
 		CVEAdjustments: []cveAdjustment{
 			{Add: []string{"CVE-2011-1992", "CVE-2011-2019", "CVE-2011-3389", "CVE-2011-3404"}},
@@ -2348,6 +3084,12 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2586448": {"2618444"},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS11-100 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS11-100.
+	//   - Microsoft .NET Framework 1.1 Service Pack 1 when installed on Windows Server 2003 Itanium-based Edition Service Pack 2
 	"MS11-100": {
 		CVEAdjustments: []cveAdjustment{
 			{Add: []string{"CVE-2011-3414", "CVE-2011-3415", "CVE-2011-3416", "CVE-2011-3417", "CVE-2012-0160", "CVE-2012-0161"}},
@@ -2355,6 +3097,14 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2656358", Drop: []string{"CVE-2011-3415"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS12-004 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS12-004.
+	//   - Windows Media Center TV Pack for Windows Vista (32-bit editions)
+	//   - Windows Media Center TV Pack for Windows Vista (64-bit editions)
+	//   - Windows Server 2008 R2 for Itanium-based Systems and Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
 	"MS12-004": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Windows 7 for 32-bit Systems", Drop: []string{"CVE-2012-0003"}},
@@ -2365,6 +3115,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Windows Server 2008 R2 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2012-0003"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS12-009 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS12-009.
+	//   - Windows Server 2008 R2 for Itanium-based Systems and Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
+	//   - Windows Server 2008 for Itanium-based Systems Service Pack 2
 	"MS12-009": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Microsoft Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2012-0148"}},
@@ -2377,6 +3134,15 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2012-0149"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS12-010 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS12-010.
+	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 Windows Server 2008 for Itanium-based Systems Service Pack 2
+	//   - Internet Explorer 7 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 8 in Windows Server 2008 R2 for Itanium-based Systems and Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
 	"MS12-010": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 6 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2012-0011", "CVE-2012-0012", "CVE-2012-0155"}},
@@ -2410,7 +3176,42 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2618444": {"2647516"},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS12-011 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS12-011.
+	//   - Microsoft Office SharePoint Server 2010 and Microsoft Office SharePoint Server 2010 Service Pack 1
+	// TODO: gen_static_map.py emitted these Format B labels for MS12-016 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS12-016.
+	//   - Microsoft .NET Framework 4 when installed on Windows 7 for 32-bit Systems and Windows 7 for 32-bit Systems Service Pack 1
+	//   - Microsoft .NET Framework 4 when installed on Windows 7 for x64-based Systems and Windows 7 for x64-based Systems Service Pack 1
+	//   - Microsoft .NET Framework 4 when installed on Windows Server 2003 Service Pack 2
+	//   - Microsoft .NET Framework 4 when installed on Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Microsoft .NET Framework 4 when installed on Windows Server 2003 x64 Edition Service Pack 2
+	//   - Microsoft .NET Framework 4 when installed on Windows Server 2008 R2 for Itanium-based Systems and Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
+	//   - Microsoft .NET Framework 4 when installed on Windows Server 2008 R2 for x64-based Systems
+	//   - Microsoft .NET Framework 4 when installed on Windows Server 2008 R2 for x64-based Systems Service Pack 1
+	//   - Microsoft .NET Framework 4 when installed on Windows Server 2008 for 32-bit Systems Service Pack 2
+	//   - Microsoft .NET Framework 4 when installed on Windows Server 2008 for Itanium-based Systems Service Pack 2
+	//   - Microsoft .NET Framework 4 when installed on Windows Server 2008 for x64-based Systems Service Pack 2
+	//   - Microsoft .NET Framework 4 when installed on Windows Vista Service Pack 2
+	//   - Microsoft .NET Framework 4 when installed on Windows Vista x64 Edition Service Pack 2
+	//   - Microsoft .NET Framework 4 when installed on Windows XP Professional x64 Edition Service Pack 2
+	//   - Microsoft .NET Framework 4 when installed on Windows XP Service Pack 3
+	//   - Microsoft Silverlight 4 when installed on all releases of Microsoft Windows clients
+	//   - Microsoft Silverlight 4 when installed on all releases of Microsoft Windows servers
 	"MS12-016": {CVEAdjustments: []cveAdjustment{{KB: "2668562", Drop: []string{"CVE-2012-0015"}}}},
+	// TODO: gen_static_map.py emitted these Format B labels for MS12-020 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS12-020.
+	//   - Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Windows Server 2008 for Itanium-based Systems Service Pack 2
 	"MS12-020": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Microsoft Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2012-0152"}},
@@ -2423,6 +3224,16 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2012-0152"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS12-023 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS12-023.
+	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 Windows Server 2008 for Itanium-based Systems Service Pack 2
+	//   - Internet Explorer 7 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 8 in Windows Server 2008 R2 for Itanium-based Systems
+	//   - Internet Explorer 8 in Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
 	"MS12-023": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 6 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2012-0169"}},
@@ -2466,6 +3277,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2647516": {"2675157"},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS12-030 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS12-030.
+	//   - Microsoft Excel 2010 (64-bit editions)
+	//   - Microsoft Excel 2010 Service Pack 1 (64-bit editions)
 	"MS12-030": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "2553371", Drop: []string{"CVE-2012-0143"}},
@@ -2474,8 +3292,19 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2597969", Drop: []string{"CVE-2012-0143"}},
 			{KB: "2665346", Drop: []string{"CVE-2012-0141", "CVE-2012-0185"}},
 			{KB: "2665351", Drop: []string{"CVE-2012-0142", "CVE-2012-0143", "CVE-2012-0185"}},
+			{Component: "Microsoft Excel 2003 Service Pack 3", Drop: []string{"CVE-2012-0185"}},
+			{Component: "Microsoft Excel 2007 Service Pack 2", Drop: []string{"CVE-2012-0143"}},
+			{Component: "Microsoft Excel 2007 Service Pack 3", Drop: []string{"CVE-2012-0143"}},
+			{Component: "Microsoft Excel 2010 (32-bit editions)", Drop: []string{"CVE-2012-0143"}},
+			{Component: "Microsoft Excel 2010 Service Pack 1 (32-bit editions)", Drop: []string{"CVE-2012-0143"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS12-032 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS12-032.
+	//   - Windows Server 2008 for Itanium-based Systems Service Pack 2
 	"MS12-032": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2012-0179"}},
@@ -2484,6 +3313,12 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2012-0179"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS12-034 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS12-034.
+	//   - Microsoft Silverlight 4 when installed on Mac
 	"MS12-034": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "2589337", Drop: []string{"CVE-2012-0162", "CVE-2012-0164", "CVE-2012-0167", "CVE-2012-0176", "CVE-2012-0180", "CVE-2012-0181", "CVE-2012-1848"}},
@@ -2492,6 +3327,14 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2690729", Drop: []string{"CVE-2012-0162", "CVE-2012-0164", "CVE-2012-0165", "CVE-2012-0167", "CVE-2012-0180", "CVE-2012-0181", "CVE-2012-1848"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS12-037 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS12-037.
+	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 Windows Server 2008 for Itanium-based Systems Service Pack 2
+	//   - Internet Explorer 7 for Windows Server 2003 with SP2 for Itanium-based Systems
 	"MS12-037": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 6 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2012-1858", "CVE-2012-1873", "CVE-2012-1874", "CVE-2012-1875", "CVE-2012-1881"}},
@@ -2528,6 +3371,15 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2708980", Drop: []string{"CVE-2011-3402", "CVE-2012-0159", "CVE-2012-1849"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS12-041 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS12-041.
+	//   - Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Windows Server 2008 R2 for Itanium-based Systems
+	//   - Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
+	//   - Windows Server 2008 for Itanium-based Systems Service Pack 2
 	"MS12-041": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Microsoft Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2012-1868"}},
@@ -2556,6 +3408,17 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2699988": {"2719177"},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS12-050 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS12-050.
+	//   - Microsoft Office SharePoint Server 2007 Service Pack 2 (32-bit editions)
+	//   - Microsoft Office SharePoint Server 2007 Service Pack 2 (64-bit editions)
+	//   - Microsoft Office SharePoint Server 2007 Service Pack 3 (32-bit editions)
+	//   - Microsoft Office SharePoint Server 2007 Service Pack 3 (64-bit editions)
+	//   - Microsoft Windows SharePoint Services 3.0 Service Pack 2 (32-bit versions)
+	//   - Microsoft Windows SharePoint Services 3.0 Service Pack 2 (64-bit versions)
 	"MS12-050": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "2553431", Drop: []string{"CVE-2012-1859", "CVE-2012-1860", "CVE-2012-1861", "CVE-2012-1862", "CVE-2012-1863"}},
@@ -2569,6 +3432,16 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Microsoft SharePoint Server 2010 Service Pack 1", Drop: []string{"CVE-2012-1862", "CVE-2012-1863"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS12-052 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS12-052.
+	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 Windows Server 2008 for Itanium-based Systems Service Pack 2
+	//   - Internet Explorer 7 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 8 in Windows Server 2008 R2 for Itanium-based Systems
+	//   - Internet Explorer 8 in Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
 	"MS12-052": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 6 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2012-2523"}},
@@ -2613,6 +3486,15 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2719177": {"2722913"},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS12-054 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS12-054.
+	//   - Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Windows Server 2008 R2 for Itanium-based Systems
+	//   - Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
+	//   - Windows Server 2008 for Itanium-based Systems Service Pack 2
 	"MS12-054": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "2705219", Drop: []string{"CVE-2012-1851"}},
@@ -2657,6 +3539,16 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2012-1853"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS12-063 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS12-063.
+	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 Windows Server 2008 for Itanium-based Systems Service Pack 2
+	//   - Internet Explorer 7 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 8 in Windows Server 2008 R2 for Itanium-based Systems
+	//   - Internet Explorer 8 in Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
 	"MS12-063": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 6 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2012-1529", "CVE-2012-2546", "CVE-2012-2548"}},
@@ -2700,11 +3592,20 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2722913": {"2744842"},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS12-064 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS12-064.
+	//   - Word Automation Services on Microsoft SharePoint Server 2010
 	"MS12-064": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "2687314", Drop: []string{"CVE-2012-0182"}},
 			{KB: "2687401", Drop: []string{"CVE-2012-0182"}},
 			{KB: "2687485", Drop: []string{"CVE-2012-0182"}},
+			{Component: "Microsoft Word 2003 Service Pack 3", Drop: []string{"CVE-2012-0182"}},
+			{Component: "Microsoft Word 2010 Service Pack 1 (32-bit editions)", Drop: []string{"CVE-2012-0182"}},
+			{Component: "Microsoft Word 2010 Service Pack 1 (64-bit editions)", Drop: []string{"CVE-2012-0182"}},
 		},
 	},
 	"MS12-071": {
@@ -2712,7 +3613,36 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2744842": {"2761451"},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS12-073 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS12-073.
+	//   - Microsoft FTP Service 7.5 for IIS 7.0 when installed on Windows Server 2008 for 32-bit Systems Service Pack 2
+	//   - Microsoft FTP Service 7.5 for IIS 7.0 when installed on Windows Server 2008 for 32-bit Systems Service Pack 2 (Server Core installation)
+	//   - Microsoft FTP Service 7.5 for IIS 7.0 when installed on Windows Server 2008 for x64-based Systems Service Pack 2
+	//   - Microsoft FTP Service 7.5 for IIS 7.0 when installed on Windows Server 2008 for x64-based Systems Service Pack 2 (Server Core installation)
+	//   - Microsoft FTP Service 7.5 for IIS 7.0 when installed on Windows Vista Service Pack 2
+	//   - Microsoft FTP Service 7.5 for IIS 7.0 when installed on Windows Vista x64 Edition Service Pack 2
+	//   - Microsoft Internet Information Services 7.5 on Windows 7 for 32-bit Systems
+	//   - Microsoft Internet Information Services 7.5 on Windows 7 for 32-bit Systems Service Pack 1
+	//   - Microsoft Internet Information Services 7.5 on Windows 7 for x64-based Systems
+	//   - Microsoft Internet Information Services 7.5 on Windows 7 for x64-based Systems Service Pack 1
+	//   - Microsoft Internet Information Services 7.5 on Windows Server 2008 R2 for Itanium-based Systems
+	//   - Microsoft Internet Information Services 7.5 on Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
+	//   - Microsoft Internet Information Services 7.5 on Windows Server 2008 R2 for x64-based Systems
+	//   - Microsoft Internet Information Services 7.5 on Windows Server 2008 R2 for x64-based Systems (Server Core installation)
+	//   - Microsoft Internet Information Services 7.5 on Windows Server 2008 R2 for x64-based Systems Service Pack 1
+	//   - Microsoft Internet Information Services 7.5 on Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)
 	"MS12-073": {CVEAdjustments: []cveAdjustment{{KB: "2716513", Drop: []string{"CVE-2012-2531"}}}},
+	// TODO: gen_static_map.py emitted these Format B labels for MS12-074 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS12-074.
+	//   - Microsoft .NET Framework 3.5 on Windows 8 for 32-bit Systems
+	//   - Microsoft .NET Framework 3.5 on Windows 8 for x64-based Systems
+	//   - Microsoft .NET Framework 3.5 on Windows Server 2012
 	"MS12-074": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "2698023", Drop: []string{"CVE-2012-1896", "CVE-2012-4776", "CVE-2012-4777"}},
@@ -2734,6 +3664,16 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Microsoft .NET Framework 3.5 on Windows Server 2012", Drop: []string{"CVE-2012-1895"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS12-075 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS12-075.
+	//   - Windows 8 for 64-bit Systems
+	//   - Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Windows Server 2008 R2 for Itanium-based Systems
+	//   - Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
+	//   - Windows Server 2008 for Itanium-based Systems Service Pack 2
 	"MS12-075": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Microsoft Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2012-2553"}},
@@ -2759,8 +3699,19 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2687313", Drop: []string{"CVE-2012-1885", "CVE-2012-1887"}},
 			{KB: "2764047", Drop: []string{"CVE-2012-1886"}},
 			{KB: "2764048", Drop: []string{"CVE-2012-1886", "CVE-2012-2543"}},
+			{Component: "Microsoft Excel 2003 Service Pack 3", Drop: []string{"CVE-2012-2543"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS12-077 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS12-077.
+	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 Windows Server 2008 for Itanium-based Systems Service Pack 2
+	//   - Internet Explorer 7 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 8 in Windows Server 2008 R2 for Itanium-based Systems
+	//   - Internet Explorer 8 in Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
 	"MS12-077": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 6 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2012-4782", "CVE-2012-4787"}},
@@ -2796,6 +3747,38 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 		},
 	},
 	"MS12-080": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2012-3214", "CVE-2012-3217", "CVE-2012-4791"}}}},
+	// TODO: gen_static_map.py emitted these Format B labels for MS13-002 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS13-002.
+	//   - Microsoft XML Core Services 3.0 on Windows 7 for x64-based Systems
+	//   - Microsoft XML Core Services 3.0 on Windows 7 for x64-based Systems Service Pack 1
+	//   - Microsoft XML Core Services 3.0 on Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Microsoft XML Core Services 3.0 on Windows Server 2003 x64 Edition Service Pack 2
+	//   - Microsoft XML Core Services 3.0 on Windows Server 2008 R2 for Itanium-based Systems
+	//   - Microsoft XML Core Services 3.0 on Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
+	//   - Microsoft XML Core Services 3.0 on Windows Server 2008 R2 for x64-based Systems
+	//   - Microsoft XML Core Services 3.0 on Windows Server 2008 R2 for x64-based Systems Service Pack 1
+	//   - Microsoft XML Core Services 3.0 on Windows Server 2008 for Itanium-based Systems Service Pack 2
+	//   - Microsoft XML Core Services 3.0 on Windows Server 2008 for x64-based Systems Service Pack 2
+	//   - Microsoft XML Core Services 3.0 on Windows Vista x64 Edition Service Pack 2
+	//   - Microsoft XML Core Services 3.0 on Windows XP Professional x64 Edition Service Pack 2
+	//   - Microsoft XML Core Services 3.0 when installed on Windows 8 for 64-bit Systems
+	//   - Microsoft XML Core Services 3.0 when installed on Windows Server 2008 R2 for x64-based Systems (Server Core installation)
+	//   - Microsoft XML Core Services 3.0 when installed on Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)
+	//   - Microsoft XML Core Services 3.0 when installed on Windows Server 2008 for x64-based Systems Service Pack 2 (Server Core installation)
+	//   - Microsoft XML Core Services 3.0 when installed on Windows Server 2012
+	//   - Microsoft XML Core Services 3.0 when installed on Windows Server 2012 (Server Core installation)
+	//   - Microsoft XML Core Services 6.0 on Windows 7 for 32-bit Systems
+	//   - Microsoft XML Core Services 6.0 on Windows 7 for 32-bit Systems Service Pack 1
+	//   - Microsoft XML Core Services 6.0 on Windows Server 2003 Service Pack 2
+	//   - Microsoft XML Core Services 6.0 on Windows Server 2008 for 32-bit Systems Service Pack 2
+	//   - Microsoft XML Core Services 6.0 on Windows Server 2008 for 32-bit Systems Service Pack 2 (Server Core installation)
+	//   - Microsoft XML Core Services 6.0 on Windows Vista Service Pack 2
+	//   - Microsoft XML Core Services 6.0 on Windows XP Service Pack 3
+	//   - Microsoft XML Core Services 6.0 when installed on Windows 8 for 32-bit Systems
+	//   - Microsoft XML Core Services 6.0 when installed on Windows RT
 	"MS13-002": {CVEAdjustments: []cveAdjustment{{KB: "2758694", Drop: []string{"CVE-2013-0006"}}}},
 	"MS13-004": {
 		CVEAdjustments: []cveAdjustment{
@@ -2817,6 +3800,17 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2761465": {"2799329"},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS13-009 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS13-009.
+	//   - Internet Explorer 10 in Windows 8 for 64-bit Systems
+	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 Windows Server 2008 for Itanium-based Systems Service Pack 2
+	//   - Internet Explorer 7 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 8 in Windows Server 2008 R2 for Itanium-based Systems
+	//   - Internet Explorer 8 in Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
 	"MS13-009": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 6 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2013-0019", "CVE-2013-0020", "CVE-2013-0022", "CVE-2013-0023", "CVE-2013-0024", "CVE-2013-0025", "CVE-2013-0026"}},
@@ -2864,6 +3858,12 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2799329": {"2792100"},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS13-016 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS13-016.
+	//   - Windows 8 for 64-bit Systems
 	"MS13-016": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Windows 8 for 32-bit Systems", Drop: []string{"CVE-2013-1250", "CVE-2013-1251", "CVE-2013-1252", "CVE-2013-1253", "CVE-2013-1254", "CVE-2013-1255", "CVE-2013-1256", "CVE-2013-1257", "CVE-2013-1258", "CVE-2013-1259", "CVE-2013-1260", "CVE-2013-1261", "CVE-2013-1262", "CVE-2013-1263", "CVE-2013-1264", "CVE-2013-1265", "CVE-2013-1266", "CVE-2013-1267", "CVE-2013-1268", "CVE-2013-1269", "CVE-2013-1270", "CVE-2013-1271", "CVE-2013-1272", "CVE-2013-1273", "CVE-2013-1274", "CVE-2013-1275", "CVE-2013-1276", "CVE-2013-1277"}},
@@ -2872,6 +3872,15 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Windows Server 2012 (Server Core installation)", Drop: []string{"CVE-2013-1250", "CVE-2013-1251", "CVE-2013-1252", "CVE-2013-1253", "CVE-2013-1254", "CVE-2013-1255", "CVE-2013-1256", "CVE-2013-1257", "CVE-2013-1258", "CVE-2013-1259", "CVE-2013-1260", "CVE-2013-1261", "CVE-2013-1262", "CVE-2013-1263", "CVE-2013-1264", "CVE-2013-1265", "CVE-2013-1266", "CVE-2013-1267", "CVE-2013-1268", "CVE-2013-1269", "CVE-2013-1270", "CVE-2013-1271", "CVE-2013-1272", "CVE-2013-1273", "CVE-2013-1274", "CVE-2013-1275", "CVE-2013-1276", "CVE-2013-1277"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS13-021 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS13-021.
+	//   - Internet Explorer 10 in Windows 8 for 64-bit Systems
+	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 Windows Server 2008 for Itanium-based Systems Service Pack 2
+	//   - Internet Explorer 7 for Windows Server 2003 with SP2 for Itanium-based Systems
 	"MS13-021": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 6 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2013-0091", "CVE-2013-1288"}},
@@ -2918,6 +3927,15 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2809289": {"2817183"},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS13-031 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS13-031.
+	//   - Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Windows Server 2008 R2 for Itanium-based Systems
+	//   - Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
+	//   - Windows Server 2008 for Itanium-based Systems Service Pack 2
 	"MS13-031": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Microsoft Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2013-1284"}},
@@ -2954,6 +3972,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2646524": {Add: []string{"2820917"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS13-036 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS13-036.
+	//   - Windows 8 for 64-bit Systems
+	//   - Windows Server 2003 with SP2 for Itanium-based Systems
 	"MS13-036": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "2808735", Drop: []string{"CVE-2013-1293"}},
@@ -2968,6 +3993,16 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 	},
 	// MS13-037: off-by-one of CVE-2013-1312 — drop, 1312 already in xlsx.
 	// CVE-2013-1313 appears in MS13-020's markdown.
+	// TODO: gen_static_map.py emitted these Format B labels for MS13-037 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS13-037.
+	//   - Internet Explorer 10 for Windows 8 for 64-bit Systems
+	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 Windows Server 2008 for Itanium-based Systems Service Pack 2
+	//   - Internet Explorer 7 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 8 in Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
 	"MS13-037": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 6 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2013-0811", "CVE-2013-1306", "CVE-2013-1307", "CVE-2013-1311", "CVE-2013-1312", "CVE-2013-3140"}},
@@ -3026,6 +4061,38 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2804584", Drop: []string{"CVE-2013-1337"}},
 		},
 	},
+	"MS13-042": {
+		CVEAdjustments: []cveAdjustment{
+			{Component: "Microsoft Publisher 2007 Service Pack 3", Drop: []string{"CVE-2013-1316", "CVE-2013-1317", "CVE-2013-1318", "CVE-2013-1319", "CVE-2013-1320", "CVE-2013-1321", "CVE-2013-1322", "CVE-2013-1323", "CVE-2013-1327", "CVE-2013-1329"}},
+			{Component: "Microsoft Publisher 2010 Service Pack 1 (32-bit editions)", Drop: []string{"CVE-2013-1316", "CVE-2013-1317", "CVE-2013-1318", "CVE-2013-1319", "CVE-2013-1320", "CVE-2013-1321", "CVE-2013-1322", "CVE-2013-1323", "CVE-2013-1327", "CVE-2013-1329"}},
+			{Component: "Microsoft Publisher 2010 Service Pack 1 (64-bit editions)", Drop: []string{"CVE-2013-1316", "CVE-2013-1317", "CVE-2013-1318", "CVE-2013-1319", "CVE-2013-1320", "CVE-2013-1321", "CVE-2013-1322", "CVE-2013-1323", "CVE-2013-1327", "CVE-2013-1329"}},
+		},
+	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS13-046 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS13-046.
+	//   - Windows 8 for 32-bit Systems (ntoskrnl.exe)
+	//   - Windows 8 for 64-bit Systems (ntoskrnl.exe)
+	//   - Windows RT (ntoskrnl.exe)
+	//   - Windows Server 2003 Service Pack 2 (Win32k.sys)
+	//   - Windows Server 2003 with SP2 for Itanium-based Systems (Win32k.sys)
+	//   - Windows Server 2003 x64 Edition Service Pack 2 (Win32k.sys)
+	//   - Windows Server 2008 R2 for Itanium-based Systems Service Pack 1 (Win32k.sys)
+	//   - Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation) (Win32k.sys)
+	//   - Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Win32k.sys)
+	//   - Windows Server 2008 for 32-bit Systems Service Pack 2 (Server Core installation) (Win32k.sys)
+	//   - Windows Server 2008 for 32-bit Systems Service Pack 2 (Win32k.sys)
+	//   - Windows Server 2008 for Itanium-based Systems Service Pack 2 (Win32k.sys)
+	//   - Windows Server 2008 for x64-based Systems Service Pack 2 (Server Core installation) (Win32k.sys)
+	//   - Windows Server 2008 for x64-based Systems Service Pack 2 (Win32k.sys)
+	//   - Windows Server 2012 (Server Core installation) (ntoskrnl.exe)
+	//   - Windows Server 2012 (ntoskrnl.exe)
+	//   - Windows Vista Service Pack 2 (Win32k.sys)
+	//   - Windows Vista x64 Edition Service Pack 2 (Win32k.sys)
+	//   - Windows XP Professional x64 Edition Service Pack 2 (Win32k.sys)
+	//   - Windows XP Service Pack 3 (Win32k.sys)
 	"MS13-046": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "2829361", Drop: []string{"CVE-2013-1332"}},
@@ -3055,6 +4122,16 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2813170": {Add: []string{"2829361"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS13-047 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS13-047.
+	//   - Internet Explorer 10 for Windows 8 for 64-bit Systems
+	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 Windows Server 2008 for Itanium-based Systems Service Pack 2
+	//   - Internet Explorer 7 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 8 in Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
 	"MS13-047": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 6 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2013-3110", "CVE-2013-3111", "CVE-2013-3114", "CVE-2013-3116", "CVE-2013-3117", "CVE-2013-3118", "CVE-2013-3119", "CVE-2013-3120", "CVE-2013-3122", "CVE-2013-3123", "CVE-2013-3124", "CVE-2013-3125", "CVE-2013-3126", "CVE-2013-3141"}},
@@ -3141,6 +4218,16 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2698035": {Add: []string{"2833951"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS13-053 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS13-053.
+	//   - Windows 8 for 32-bit Systems (win32k.sys)
+	//   - Windows 8 for 64-bit Systems (win32k.sys)
+	//   - Windows RT(win32k.sys)
+	//   - Windows Server 2012 (Server Core installation) (win32k.sys)
+	//   - Windows Server 2012 (win32k.sys)
 	"MS13-053": {
 		Supersedes: map[string]supersedesAdjust{
 			"2808735": {Add: []string{"2850851"}},
@@ -3154,6 +4241,16 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2827752": {Add: []string{"2843163"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS13-055 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS13-055.
+	//   - Internet Explorer 10 for Windows 8 for 64-bit Systems
+	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 Windows Server 2008 for Itanium-based Systems Service Pack 2
+	//   - Internet Explorer 7 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 8 in Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
 	"MS13-055": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 6 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2013-3115", "CVE-2013-3143", "CVE-2013-3144", "CVE-2013-3145", "CVE-2013-3146", "CVE-2013-3149", "CVE-2013-3150", "CVE-2013-3151", "CVE-2013-3152", "CVE-2013-3161", "CVE-2013-3162", "CVE-2013-3163", "CVE-2013-3164", "CVE-2013-3846"}},
@@ -3199,6 +4296,16 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 	},
 	// MS13-059: off-by-3 of CVE-2013-3184 — drop, 3184 already in xlsx.
 	// CVE-2013-3181 appears in MS13-060's markdown.
+	// TODO: gen_static_map.py emitted these Format B labels for MS13-059 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS13-059.
+	//   - Internet Explorer 10 for Windows 8 for 64-bit Systems
+	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 Windows Server 2008 for Itanium-based Systems Service Pack 2
+	//   - Internet Explorer 7 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 8 in Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
 	"MS13-059": {
 		CVEAdjustments: []cveAdjustment{
 			{Add: []string{"CVE-2013-3184", "CVE-2013-3186", "CVE-2013-3187", "CVE-2013-3188", "CVE-2013-3189", "CVE-2013-3190", "CVE-2013-3191", "CVE-2013-3192", "CVE-2013-3193", "CVE-2013-3194", "CVE-2013-3199"}},
@@ -3253,6 +4360,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2360937": {Add: []string{"2849470"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS13-063 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS13-063.
+	//   - Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
+	//   - Windows Server 2008 for Itanium-based Systems Service Pack 2
 	"MS13-063": {
 		CVEAdjustments: []cveAdjustment{
 			{Add: []string{"CVE-2013-2556", "CVE-2013-3196", "CVE-2013-3197", "CVE-2013-3198"}},
@@ -3271,14 +4385,24 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2790113": {Add: []string{"2859537"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS13-067 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS13-067.
+	//   - Word Automation Services on Microsoft SharePoint Server 2010 Service Pack 2
 	"MS13-067": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "2553408", Drop: []string{"CVE-2013-1315", "CVE-2013-3180", "CVE-2013-3847", "CVE-2013-3848", "CVE-2013-3849", "CVE-2013-3857", "CVE-2013-3858"}},
 			{KB: "2760589", Drop: []string{"CVE-2013-1330", "CVE-2013-3180", "CVE-2013-3847", "CVE-2013-3848", "CVE-2013-3849", "CVE-2013-3857", "CVE-2013-3858"}},
 			{KB: "2760595", Drop: []string{"CVE-2013-3180", "CVE-2013-3847", "CVE-2013-3848", "CVE-2013-3849", "CVE-2013-3857", "CVE-2013-3858"}},
 			{KB: "2760755", Drop: []string{"CVE-2013-3180"}},
+			{Component: "Microsoft Excel Web App 2010 Service Pack 1", Drop: []string{"CVE-2013-3847", "CVE-2013-3848", "CVE-2013-3849", "CVE-2013-3857", "CVE-2013-3858"}},
+			{Component: "Microsoft Excel Web App 2010 Service Pack 2", Drop: []string{"CVE-2013-3847", "CVE-2013-3848", "CVE-2013-3849", "CVE-2013-3857", "CVE-2013-3858"}},
 			{Component: "Microsoft Office Web Apps Server 2013", Drop: []string{"CVE-2013-1315", "CVE-2013-3847", "CVE-2013-3848", "CVE-2013-3849", "CVE-2013-3857", "CVE-2013-3858"}},
 			{Component: "Microsoft SharePoint Portal Server 2003 Service Pack 3", Drop: []string{"CVE-2013-3179"}},
+			{Component: "Microsoft Windows SharePoint Services 2.0", Drop: []string{"CVE-2013-3179"}},
+			{Component: "Microsoft Word Web App 2010 Service Pack 2", Drop: []string{"CVE-2013-3847", "CVE-2013-3848", "CVE-2013-3849", "CVE-2013-3858"}},
 		},
 	},
 	// MS13-069: legacy bulletinArchiveKBNotApplicable entry for KB2870699
@@ -3295,6 +4419,16 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 	// special-case that constructs combined "IE X for/in Windows Y"
 	// keys — deferred since the same staleness affects many other
 	// IE Cumulative bulletins.
+	// TODO: gen_static_map.py emitted these Format B labels for MS13-069 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS13-069.
+	//   - Internet Explorer 10 for Windows 8 for 64-bit Systems
+	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 Windows Server 2008 for Itanium-based Systems Service Pack 2
+	//   - Internet Explorer 7 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 8 in Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
 	"MS13-069": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 6 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2013-3201", "CVE-2013-3202", "CVE-2013-3203", "CVE-2013-3204", "CVE-2013-3206", "CVE-2013-3207", "CVE-2013-3208", "CVE-2013-3209", "CVE-2013-3845"}},
@@ -3346,6 +4480,12 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2760823", Drop: []string{"CVE-2013-3160", "CVE-2013-3853", "CVE-2013-3854", "CVE-2013-3856"}},
 			{KB: "2817474", Drop: []string{"CVE-2013-3847", "CVE-2013-3848", "CVE-2013-3849", "CVE-2013-3850", "CVE-2013-3852", "CVE-2013-3853", "CVE-2013-3854", "CVE-2013-3855", "CVE-2013-3856", "CVE-2013-3857", "CVE-2013-3858"}},
 			{KB: "2817683", Drop: []string{"CVE-2013-3853", "CVE-2013-3854"}},
+			{Component: "Microsoft Word 2003 Service Pack 3", Drop: []string{"CVE-2013-3853", "CVE-2013-3854"}},
+			{Component: "Microsoft Word 2007 Service Pack 3", Drop: []string{"CVE-2013-3856"}},
+			{Component: "Microsoft Word 2010 Service Pack 1 (32-bit editions)", Drop: []string{"CVE-2013-3160", "CVE-2013-3851", "CVE-2013-3853", "CVE-2013-3854", "CVE-2013-3855", "CVE-2013-3856"}},
+			{Component: "Microsoft Word 2010 Service Pack 1 (64-bit editions)", Drop: []string{"CVE-2013-3160", "CVE-2013-3851", "CVE-2013-3853", "CVE-2013-3854", "CVE-2013-3855", "CVE-2013-3856"}},
+			{Component: "Microsoft Word 2010 Service Pack 2 (32-bit editions)", Drop: []string{"CVE-2013-3160", "CVE-2013-3847", "CVE-2013-3848", "CVE-2013-3849", "CVE-2013-3851", "CVE-2013-3852", "CVE-2013-3853", "CVE-2013-3854", "CVE-2013-3855", "CVE-2013-3856", "CVE-2013-3858"}},
+			{Component: "Microsoft Word 2010 Service Pack 2 (64-bit editions)", Drop: []string{"CVE-2013-3160", "CVE-2013-3847", "CVE-2013-3848", "CVE-2013-3849", "CVE-2013-3851", "CVE-2013-3852", "CVE-2013-3853", "CVE-2013-3854", "CVE-2013-3855", "CVE-2013-3856", "CVE-2013-3858"}},
 		},
 	},
 	"MS13-073": {
@@ -3368,6 +4508,16 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2859537": {Add: []string{"2872339", "3033395"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS13-080 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS13-080.
+	//   - Internet Explorer 10 for Windows 8 for 64-bit Systems
+	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 Windows Server 2008 for Itanium-based Systems Service Pack 2
+	//   - Internet Explorer 7 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 8 in Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
 	"MS13-080": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "2884101", Drop: []string{"CVE-2013-3872", "CVE-2013-3873", "CVE-2013-3874", "CVE-2013-3875", "CVE-2013-3882", "CVE-2013-3885", "CVE-2013-3886"}},
@@ -3412,6 +4562,15 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2870699": {"2879017"},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS13-081 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS13-081.
+	//   - Windows 8 for 64-bit Systems
+	//   - Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
+	//   - Windows Server 2008 for Itanium-based Systems Service Pack 2
 	"MS13-081": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "2847311", Drop: []string{"CVE-2013-3200", "CVE-2013-3879", "CVE-2013-3880", "CVE-2013-3881", "CVE-2013-3888", "CVE-2013-3894"}},
@@ -3484,6 +4643,12 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2863253", Drop: []string{"CVE-2013-3128"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS13-084 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS13-084.
+	//   - Microsoft SharePoint Server 2013
 	"MS13-085": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "2760585", Drop: []string{"CVE-2013-3890"}},
@@ -3503,6 +4668,17 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2827330", Drop: []string{"CVE-2013-3891"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS13-088 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS13-088.
+	//   - Internet Explorer 11 for Windows 8.1 for 32-bit Systems
+	//   - Internet Explorer 11 for Windows 8.1 for x64-based Systems
+	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 Windows Server 2008 for Itanium-based Systems Service Pack 2
+	//   - Internet Explorer 7 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 8 in Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
 	"MS13-088": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 6 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2013-3911", "CVE-2013-3912", "CVE-2013-3914", "CVE-2013-3916"}},
@@ -3561,6 +4737,17 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Microsoft Office 2013 RT", Drop: []string{"CVE-2013-0082", "CVE-2013-1325"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS13-097 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS13-097.
+	//   - Internet Explorer 11 for Windows 8.1 for 32-bit Systems
+	//   - Internet Explorer 11 for Windows 8.1 for x64-based Systems
+	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 Windows Server 2008 for Itanium-based Systems Service Pack 2
+	//   - Internet Explorer 7 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 8 in Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
 	"MS13-097": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 6 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2013-5045", "CVE-2013-5046", "CVE-2013-5051", "CVE-2013-5052"}},
@@ -3610,6 +4797,17 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2888505": {"2898785"},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS13-101 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS13-101.
+	//   - Windows 8.1 for 32-bit Systems
+	//   - Windows 8.1 for x64-based Systems
+	//   - Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
+	//   - Windows Server 2008 for Itanium-based Systems Service Pack 2
+	//   - Windows Server 2012 (server core installation)
 	"MS13-101": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "2887069", Drop: []string{"CVE-2013-3899", "CVE-2013-3902", "CVE-2013-3903", "CVE-2013-5058"}},
@@ -3645,7 +4843,19 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2866475": {Add: []string{"2880833"}},
 		},
 	},
-	"MS14-001": {CVEAdjustments: []cveAdjustment{{KB: "2863867", Drop: []string{"CVE-2014-0259"}}}},
+	"MS14-001": {
+		CVEAdjustments: []cveAdjustment{
+			{KB: "2863867", Drop: []string{"CVE-2014-0259"}},
+			{Component: "Microsoft Word 2003 Service Pack 3", Drop: []string{"CVE-2014-0259"}},
+			{Component: "Microsoft Word 2010 Service Pack 1 (32-bit editions)", Drop: []string{"CVE-2014-0258", "CVE-2014-0259"}},
+			{Component: "Microsoft Word 2010 Service Pack 1 (64-bit editions)", Drop: []string{"CVE-2014-0258", "CVE-2014-0259"}},
+			{Component: "Microsoft Word 2010 Service Pack 2 (32-bit editions)", Drop: []string{"CVE-2014-0258", "CVE-2014-0259"}},
+			{Component: "Microsoft Word 2010 Service Pack 2 (64-bit editions)", Drop: []string{"CVE-2014-0258", "CVE-2014-0259"}},
+			{Component: "Microsoft Word 2013 (32-bit editions)", Drop: []string{"CVE-2014-0258", "CVE-2014-0259"}},
+			{Component: "Microsoft Word 2013 (64-bit editions)", Drop: []string{"CVE-2014-0258", "CVE-2014-0259"}},
+			{Component: "Microsoft Word 2013 RT", Drop: []string{"CVE-2014-0258", "CVE-2014-0259"}},
+		},
+	},
 	"MS14-009": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "2898855", Drop: []string{"CVE-2014-0253", "CVE-2014-0295"}},
@@ -3677,6 +4887,17 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2911502", Drop: []string{"CVE-2014-0253", "CVE-2014-0257"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS14-010 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS14-010.
+	//   - Internet Explorer 10
+	//   - Internet Explorer 11
+	//   - Internet Explorer 6
+	//   - Internet Explorer 7
+	//   - Internet Explorer 8
+	//   - Internet Explorer 9
 	"MS14-010": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 6", Drop: []string{"CVE-2014-0267", "CVE-2014-0268", "CVE-2014-0270", "CVE-2014-0272", "CVE-2014-0273", "CVE-2014-0274", "CVE-2014-0276", "CVE-2014-0277", "CVE-2014-0278", "CVE-2014-0279", "CVE-2014-0281", "CVE-2014-0283", "CVE-2014-0284", "CVE-2014-0287", "CVE-2014-0288", "CVE-2014-0289", "CVE-2014-0290", "CVE-2014-0293"}},
@@ -3690,6 +4911,17 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2898785": {"2909921"},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS14-012 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS14-012.
+	//   - Internet Explorer 10
+	//   - Internet Explorer 11
+	//   - Internet Explorer 6
+	//   - Internet Explorer 7
+	//   - Internet Explorer 8
+	//   - Internet Explorer 9
 	"MS14-012": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 6", Drop: []string{"CVE-2014-0297", "CVE-2014-0298", "CVE-2014-0304", "CVE-2014-0306", "CVE-2014-0307", "CVE-2014-0308", "CVE-2014-0309", "CVE-2014-0312", "CVE-2014-0313", "CVE-2014-0314", "CVE-2014-0321", "CVE-2014-0322", "CVE-2014-0324", "CVE-2014-4112"}},
@@ -3717,6 +4949,17 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2889496": {Add: []string{"2939132"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS14-018 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS14-018.
+	//   - Internet Explorer 10
+	//   - Internet Explorer 11
+	//   - Internet Explorer 6
+	//   - Internet Explorer 7
+	//   - Internet Explorer 8
+	//   - Internet Explorer 9
 	"MS14-018": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 6", Drop: []string{"CVE-2014-0325", "CVE-2014-1751", "CVE-2014-1755", "CVE-2014-1760"}},
@@ -3755,6 +4998,12 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2880463", Drop: []string{"CVE-2014-1808"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS14-028 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS14-028.
+	//   - Windows Server 2012 R2 (Server Core installation)
 	"MS14-028": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "2962073", Drop: []string{"CVE-2014-0256"}},
@@ -3772,6 +5021,17 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2964444": {"2953522"},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS14-035 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS14-035.
+	//   - Internet Explorer 10
+	//   - Internet Explorer 11
+	//   - Internet Explorer 6
+	//   - Internet Explorer 7
+	//   - Internet Explorer 8
+	//   - Internet Explorer 9
 	"MS14-035": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 6", Drop: []string{"CVE-2014-1764", "CVE-2014-1766", "CVE-2014-1769", "CVE-2014-1772", "CVE-2014-1773", "CVE-2014-1774", "CVE-2014-1777", "CVE-2014-1778", "CVE-2014-1780", "CVE-2014-1781", "CVE-2014-1782", "CVE-2014-1783", "CVE-2014-1784", "CVE-2014-1785", "CVE-2014-1786", "CVE-2014-1788", "CVE-2014-1789", "CVE-2014-1790", "CVE-2014-1791", "CVE-2014-1792", "CVE-2014-1794", "CVE-2014-1795", "CVE-2014-1797", "CVE-2014-1800", "CVE-2014-1802", "CVE-2014-1804", "CVE-2014-1805", "CVE-2014-2753", "CVE-2014-2754", "CVE-2014-2755", "CVE-2014-2756", "CVE-2014-2758", "CVE-2014-2759", "CVE-2014-2760", "CVE-2014-2761", "CVE-2014-2763", "CVE-2014-2764", "CVE-2014-2765", "CVE-2014-2766", "CVE-2014-2769", "CVE-2014-2770", "CVE-2014-2771", "CVE-2014-2772", "CVE-2014-2775", "CVE-2014-2776", "CVE-2014-2777", "CVE-2014-2782"}},
@@ -3790,6 +5050,17 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2961851": {"2957689"},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS14-037 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS14-037.
+	//   - Internet Explorer 10
+	//   - Internet Explorer 11
+	//   - Internet Explorer 6
+	//   - Internet Explorer 7
+	//   - Internet Explorer 8
+	//   - Internet Explorer 9
 	"MS14-037": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 6", Drop: []string{"CVE-2014-1763", "CVE-2014-2783", "CVE-2014-2785", "CVE-2014-2786", "CVE-2014-2787", "CVE-2014-2789", "CVE-2014-2790", "CVE-2014-2791", "CVE-2014-2792", "CVE-2014-2795", "CVE-2014-2798", "CVE-2014-2801", "CVE-2014-2802", "CVE-2014-2803", "CVE-2014-2804", "CVE-2014-2806", "CVE-2014-2813", "CVE-2014-4066"}},
@@ -3831,6 +5102,17 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 	},
 	// MS14-051: off-by-3 of CVE-2014-2796 — drop, 2796 already in xlsx.
 	// CVE-2014-2799 appears in MS14-052's markdown.
+	// TODO: gen_static_map.py emitted these Format B labels for MS14-051 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS14-051.
+	//   - Internet Explorer 10
+	//   - Internet Explorer 11
+	//   - Internet Explorer 6
+	//   - Internet Explorer 7
+	//   - Internet Explorer 8
+	//   - Internet Explorer 9
 	"MS14-051": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 6", Drop: []string{"CVE-2014-2784", "CVE-2014-2796", "CVE-2014-2808", "CVE-2014-2810", "CVE-2014-2811", "CVE-2014-2818", "CVE-2014-2819", "CVE-2014-2821", "CVE-2014-2822", "CVE-2014-2823", "CVE-2014-2824", "CVE-2014-2825", "CVE-2014-4050", "CVE-2014-4051", "CVE-2014-4052", "CVE-2014-4055", "CVE-2014-4056", "CVE-2014-4057", "CVE-2014-4058", "CVE-2014-4067", "CVE-2014-4145", "CVE-2014-6354", "CVE-2014-8985"}},
@@ -3849,6 +5131,17 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2963952": {"2976627"},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS14-052 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS14-052.
+	//   - Internet Explorer 10
+	//   - Internet Explorer 11
+	//   - Internet Explorer 6
+	//   - Internet Explorer 7
+	//   - Internet Explorer 8
+	//   - Internet Explorer 9
 	"MS14-052": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 6", Drop: []string{"CVE-2014-4080", "CVE-2014-4084", "CVE-2014-4087", "CVE-2014-4089", "CVE-2014-4091", "CVE-2014-4092", "CVE-2014-4093", "CVE-2014-4095", "CVE-2014-4096", "CVE-2014-4098", "CVE-2014-4099", "CVE-2014-4101", "CVE-2014-4102"}},
@@ -3876,6 +5169,17 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2992965", Drop: []string{"CVE-2014-4070", "CVE-2014-4071"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS14-056 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS14-056.
+	//   - Internet Explorer 10
+	//   - Internet Explorer 11
+	//   - Internet Explorer 6
+	//   - Internet Explorer 7
+	//   - Internet Explorer 8
+	//   - Internet Explorer 9
 	"MS14-056": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 6", Drop: []string{"CVE-2014-4123", "CVE-2014-4124", "CVE-2014-4126", "CVE-2014-4129", "CVE-2014-4130", "CVE-2014-4132", "CVE-2014-4138", "CVE-2014-4140", "CVE-2014-4141"}},
@@ -3920,6 +5224,17 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 		},
 	},
 	"MS14-064": {CVEAdjustments: []cveAdjustment{{KB: "3006226", Drop: []string{"CVE-2014-6352"}}}},
+	// TODO: gen_static_map.py emitted these Format B labels for MS14-065 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS14-065.
+	//   - Internet Explorer 10
+	//   - Internet Explorer 11
+	//   - Internet Explorer 6
+	//   - Internet Explorer 7
+	//   - Internet Explorer 8
+	//   - Internet Explorer 9
 	"MS14-065": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 6", Drop: []string{"CVE-2014-6323", "CVE-2014-6337", "CVE-2014-6339", "CVE-2014-6342", "CVE-2014-6343", "CVE-2014-6344", "CVE-2014-6345", "CVE-2014-6346", "CVE-2014-6347", "CVE-2014-6348", "CVE-2014-6349", "CVE-2014-6350", "CVE-2014-6351"}},
@@ -3941,6 +5256,17 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2996150", Drop: []string{"CVE-2014-6325", "CVE-2014-6326", "CVE-2014-6336"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS14-080 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS14-080.
+	//   - Internet Explorer 10
+	//   - Internet Explorer 11
+	//   - Internet Explorer 6
+	//   - Internet Explorer 7
+	//   - Internet Explorer 8
+	//   - Internet Explorer 9
 	"MS14-080": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 6", Drop: []string{"CVE-2014-6327", "CVE-2014-6328", "CVE-2014-6329", "CVE-2014-6330", "CVE-2014-6363", "CVE-2014-6365", "CVE-2014-6368", "CVE-2014-6369", "CVE-2014-6373", "CVE-2014-6375", "CVE-2014-6376"}},
@@ -3963,7 +5289,17 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "3018888", Drop: []string{"CVE-2014-6356"}},
 		},
 	},
-	"MS14-083": {CVEAdjustments: []cveAdjustment{{KB: "2920791", Drop: []string{"CVE-2014-6361"}}}},
+	"MS14-083": {
+		CVEAdjustments: []cveAdjustment{
+			{KB: "2920791", Drop: []string{"CVE-2014-6361"}},
+			{Component: "Microsoft Excel 2013 (32-bit editions)", Drop: []string{"CVE-2014-6360"}},
+			{Component: "Microsoft Excel 2013 (64-bit editions)", Drop: []string{"CVE-2014-6360"}},
+			{Component: "Microsoft Excel 2013 RT", Drop: []string{"CVE-2014-6360"}},
+			{Component: "Microsoft Excel 2013 RT Service Pack 1", Drop: []string{"CVE-2014-6360"}},
+			{Component: "Microsoft Excel 2013 Service Pack 1 (32-bit editions)", Drop: []string{"CVE-2014-6360"}},
+			{Component: "Microsoft Excel 2013 Service Pack 1 (64-bit editions)", Drop: []string{"CVE-2014-6360"}},
+		},
+	},
 	"MS14-084": {
 		Supersedes: map[string]supersedesAdjust{
 			"2909210": {Override: []string{"3012176"}},
@@ -3971,6 +5307,17 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2909213": {Override: []string{"3012168"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS15-009 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS15-009.
+	//   - Internet Explorer 10
+	//   - Internet Explorer 11
+	//   - Internet Explorer 6
+	//   - Internet Explorer 7
+	//   - Internet Explorer 8
+	//   - Internet Explorer 9
 	"MS15-009": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 6", Drop: []string{"CVE-2014-8967", "CVE-2015-0018", "CVE-2015-0019", "CVE-2015-0023", "CVE-2015-0025", "CVE-2015-0027", "CVE-2015-0028", "CVE-2015-0035", "CVE-2015-0037", "CVE-2015-0038", "CVE-2015-0039", "CVE-2015-0040", "CVE-2015-0042", "CVE-2015-0043", "CVE-2015-0044", "CVE-2015-0046", "CVE-2015-0048", "CVE-2015-0049", "CVE-2015-0050", "CVE-2015-0051", "CVE-2015-0052", "CVE-2015-0054", "CVE-2015-0055", "CVE-2015-0066", "CVE-2015-0068", "CVE-2015-0069", "CVE-2015-0071"}},
@@ -4018,6 +5365,17 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2956097": {"2956098"},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS15-018 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS15-018.
+	//   - Internet Explorer 10
+	//   - Internet Explorer 11
+	//   - Internet Explorer 6
+	//   - Internet Explorer 7
+	//   - Internet Explorer 8
+	//   - Internet Explorer 9
 	"MS15-018": {
 		CVEAdjustments: []cveAdjustment{
 			{Add: []string{"CVE-2015-0032", "CVE-2015-0056", "CVE-2015-0072", "CVE-2015-0099", "CVE-2015-0100", "CVE-2015-1622", "CVE-2015-1623", "CVE-2015-1624", "CVE-2015-1625", "CVE-2015-1626", "CVE-2015-1627", "CVE-2015-1634"}},
@@ -4059,6 +5417,14 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2956058": {Override: []string{"2956138"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS15-023 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS15-023.
+	//   - Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
+	//   - Windows Server 2008 for Itanium-based Systems Service Pack 2
 	"MS15-023": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Microsoft Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2015-0078"}},
@@ -4075,6 +5441,14 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2015-0078"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS15-025 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS15-025.
+	//   - Windows 8.1 for 32-bit Systems
+	//   - Windows 8.1 for x64-based Systems
+	//   - Windows Server 2012 R2 (Server Core installation)
 	"MS15-025": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "3038680", Drop: []string{"CVE-2015-0073"}},
@@ -4087,6 +5461,17 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Windows Server 2012 R2", Drop: []string{"CVE-2015-0075"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS15-032 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS15-032.
+	//   - Internet Explorer 10
+	//   - Internet Explorer 11
+	//   - Internet Explorer 6
+	//   - Internet Explorer 7
+	//   - Internet Explorer 8
+	//   - Internet Explorer 9
 	"MS15-032": {
 		CVEAdjustments: []cveAdjustment{
 			{Add: []string{"CVE-2014-6374", "CVE-2015-1652", "CVE-2015-1657", "CVE-2015-1659", "CVE-2015-1660", "CVE-2015-1661", "CVE-2015-1662", "CVE-2015-1665", "CVE-2015-1666", "CVE-2015-1667", "CVE-2015-1668"}},
@@ -4126,6 +5511,9 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 		CVEAdjustments: []cveAdjustment{
 			{Add: []string{"CVE-2015-1640", "CVE-2015-1653"}},
 			{KB: "2965219", Drop: []string{"CVE-2015-1640"}},
+			{Component: "Microsoft Project Server 2010 Service Pack 2", Drop: []string{"CVE-2015-1653"}},
+			{Component: "Microsoft Project Server 2013 Service Pack 1", Drop: []string{"CVE-2015-1653"}},
+			{Component: "Microsoft SharePoint Foundation 2013 Service Pack 1", Drop: []string{"CVE-2015-1640"}},
 			{Remap: map[string]string{"CVE-2015-16453": ""}},
 		},
 	},
@@ -4135,6 +5523,17 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "3049576", Drop: []string{"CVE-2015-1643"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS15-043 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS15-043.
+	//   - Internet Explorer 10
+	//   - Internet Explorer 11
+	//   - Internet Explorer 6
+	//   - Internet Explorer 7
+	//   - Internet Explorer 8
+	//   - Internet Explorer 9
 	"MS15-043": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 6", Drop: []string{"CVE-2015-1658", "CVE-2015-1684", "CVE-2015-1685", "CVE-2015-1686", "CVE-2015-1688", "CVE-2015-1689", "CVE-2015-1691", "CVE-2015-1692", "CVE-2015-1705", "CVE-2015-1706", "CVE-2015-1708", "CVE-2015-1709", "CVE-2015-1711", "CVE-2015-1712", "CVE-2015-1713", "CVE-2015-1714", "CVE-2015-1717", "CVE-2015-1718"}},
@@ -4219,6 +5618,26 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2863239": {Add: []string{"3035488"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS15-053 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS15-053.
+	//   - JScript and VBScript 5.7 on Windows Vista x64 Edition Service Pack 2
+	//   - VBScript 5.6 on Windows Server 2003 Service Pack 2
+	//   - VBScript 5.6 on Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - VBScript 5.6 on Windows Server 2003 x64 Edition Service Pack 2
+	//   - VBScript 5.7 on Windows Server 2003 Service Pack 2
+	//   - VBScript 5.7 on Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - VBScript 5.7 on Windows Server 2003 x64 Edition Service Pack 2
+	//   - VBScript 5.7 on Windows Server 2008 for 32-bit Systems Service Pack 2
+	//   - VBScript 5.7 on Windows Server 2008 for 32-bit Systems Service Pack 2 (Server Core installation)
+	//   - VBScript 5.7 on Windows Server 2008 for Itanium-based Systems Service Pack 2
+	//   - VBScript 5.7 on Windows Server 2008 for x64-based Systems Service Pack 2
+	//   - VBScript 5.7 on Windows Server 2008 for x64-based Systems Service Pack 2 (Server Core installation)
+	//   - VBScript 5.7 on Windows Vista Service Pack 2
+	//   - VBScript 5.7 on Windows Vista x64 Edition Service Pack 2
+	//   - VBScript 5.8 on Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)
 	"MS15-053": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "3050941", Drop: []string{"CVE-2015-1684"}},
@@ -4231,6 +5650,17 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"3050514": {Add: []string{"3061518"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS15-056 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS15-056.
+	//   - Internet Explorer 10
+	//   - Internet Explorer 11
+	//   - Internet Explorer 6
+	//   - Internet Explorer 7
+	//   - Internet Explorer 8
+	//   - Internet Explorer 9
 	"MS15-056": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 6", Drop: []string{"CVE-2015-1730", "CVE-2015-1731", "CVE-2015-1732", "CVE-2015-1736", "CVE-2015-1737", "CVE-2015-1739", "CVE-2015-1741", "CVE-2015-1742", "CVE-2015-1743", "CVE-2015-1747", "CVE-2015-1748", "CVE-2015-1750", "CVE-2015-1751", "CVE-2015-1752", "CVE-2015-1753", "CVE-2015-1754", "CVE-2015-1755", "CVE-2015-1765"}},
@@ -4258,6 +5688,17 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 		},
 	},
 	"MS15-064": {CVEAdjustments: []cveAdjustment{{Component: "Microsoft Exchange Server 2013 Service Pack 1", Drop: []string{"CVE-2015-2359"}}}},
+	// TODO: gen_static_map.py emitted these Format B labels for MS15-065 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS15-065.
+	//   - Internet Explorer 10
+	//   - Internet Explorer 11
+	//   - Internet Explorer 6
+	//   - Internet Explorer 7
+	//   - Internet Explorer 8
+	//   - Internet Explorer 9
 	"MS15-065": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 6", Drop: []string{"CVE-2015-1729", "CVE-2015-1733", "CVE-2015-1738", "CVE-2015-1767", "CVE-2015-2383", "CVE-2015-2384", "CVE-2015-2388", "CVE-2015-2389", "CVE-2015-2391", "CVE-2015-2398", "CVE-2015-2401", "CVE-2015-2402", "CVE-2015-2403", "CVE-2015-2408", "CVE-2015-2411", "CVE-2015-2412", "CVE-2015-2414", "CVE-2015-2419", "CVE-2015-2425"}},
@@ -4291,7 +5732,20 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "3054968", Drop: []string{"CVE-2015-2377", "CVE-2015-2378", "CVE-2015-2379", "CVE-2015-2380", "CVE-2015-2415", "CVE-2015-2424"}},
 			{KB: "3054971", Drop: []string{"CVE-2015-2375", "CVE-2015-2376", "CVE-2015-2377", "CVE-2015-2378", "CVE-2015-2415", "CVE-2015-2424"}},
 			{KB: "3054999", Drop: []string{"CVE-2015-2375", "CVE-2015-2376", "CVE-2015-2377", "CVE-2015-2378", "CVE-2015-2379", "CVE-2015-2380", "CVE-2015-2415"}},
+			{Component: "Microsoft Excel 2007 Service Pack 3", Drop: []string{"CVE-2015-2375", "CVE-2015-2379", "CVE-2015-2380", "CVE-2015-2424"}},
+			{Component: "Microsoft Excel 2010 Service Pack 2 (32-bit editions)", Drop: []string{"CVE-2015-2379", "CVE-2015-2380", "CVE-2015-2424"}},
+			{Component: "Microsoft Excel 2010 Service Pack 2 (64-bit editions)", Drop: []string{"CVE-2015-2379", "CVE-2015-2380", "CVE-2015-2424"}},
+			{Component: "Microsoft Excel 2013 RT Service Pack 1", Drop: []string{"CVE-2015-2378", "CVE-2015-2379", "CVE-2015-2380", "CVE-2015-2424"}},
+			{Component: "Microsoft Excel 2013 Service Pack 1 (32-bit editions)", Drop: []string{"CVE-2015-2378", "CVE-2015-2379", "CVE-2015-2380", "CVE-2015-2424"}},
+			{Component: "Microsoft Excel 2013 Service Pack 1 (64-bit editions)", Drop: []string{"CVE-2015-2378", "CVE-2015-2379", "CVE-2015-2380", "CVE-2015-2424"}},
 			{Component: "Microsoft Office for Mac 2011", Drop: []string{"CVE-2015-2375", "CVE-2015-2377", "CVE-2015-2378", "CVE-2015-2380", "CVE-2015-2415", "CVE-2015-2424"}},
+			{Component: "Microsoft PowerPoint 2013 RT Service Pack 1", Drop: []string{"CVE-2015-2375", "CVE-2015-2376", "CVE-2015-2377", "CVE-2015-2378", "CVE-2015-2379", "CVE-2015-2380", "CVE-2015-2415"}},
+			{Component: "Microsoft Word 2007 Service Pack 3", Drop: []string{"CVE-2015-2375", "CVE-2015-2376", "CVE-2015-2377", "CVE-2015-2378", "CVE-2015-2415"}},
+			{Component: "Microsoft Word 2010 Service Pack 2 (32-bit editions)", Drop: []string{"CVE-2015-2375", "CVE-2015-2376", "CVE-2015-2377", "CVE-2015-2378", "CVE-2015-2415"}},
+			{Component: "Microsoft Word 2010 Service Pack 2 (64-bit editions)", Drop: []string{"CVE-2015-2375", "CVE-2015-2376", "CVE-2015-2377", "CVE-2015-2378", "CVE-2015-2415"}},
+			{Component: "Microsoft Word 2013 RT Service Pack 1", Drop: []string{"CVE-2015-2375", "CVE-2015-2376", "CVE-2015-2377", "CVE-2015-2378", "CVE-2015-2415", "CVE-2015-2424"}},
+			{Component: "Microsoft Word 2013 Service Pack 1 (32-bit editions)", Drop: []string{"CVE-2015-2375", "CVE-2015-2376", "CVE-2015-2377", "CVE-2015-2378", "CVE-2015-2415"}},
+			{Component: "Microsoft Word 2013 Service Pack 1 (64-bit editions)", Drop: []string{"CVE-2015-2375", "CVE-2015-2376", "CVE-2015-2377", "CVE-2015-2378", "CVE-2015-2415"}},
 		},
 	},
 	"MS15-072": {
@@ -4299,6 +5753,17 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2965155": {Add: []string{"3069392"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS15-073 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS15-073.
+	//   - Windows 8.1 for 32-bit Systems
+	//   - Windows 8.1 for x64-based Systems
+	//   - Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
+	//   - Windows Server 2008 for Itanium-based Systems Service Pack 2
+	//   - Windows Server 2012 R2 (Server Core installation)
 	"MS15-073": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Microsoft Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2015-2366", "CVE-2015-2381", "CVE-2015-2382"}},
@@ -4319,6 +5784,17 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2015-2366", "CVE-2015-2381", "CVE-2015-2382"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS15-079 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS15-079.
+	//   - Internet Explorer 10
+	//   - Internet Explorer 11
+	//   - Internet Explorer 11 on Windows 10
+	//   - Internet Explorer 7
+	//   - Internet Explorer 8
+	//   - Internet Explorer 9
 	"MS15-079": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 7", Drop: []string{"CVE-2015-2442", "CVE-2015-2443", "CVE-2015-2444", "CVE-2015-2445", "CVE-2015-2446", "CVE-2015-2447", "CVE-2015-2448", "CVE-2015-2450", "CVE-2015-2451"}},
@@ -4383,6 +5859,34 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "3075221", Drop: []string{"CVE-2015-2473"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS15-084 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS15-084.
+	//   - Microsoft XML Core Services 5.0 on Microsoft Office 2007 Service Pack 3
+	//   - Microsoft XML Core Services 5.0 on Windows Server 2008 for 32-bit Systems Service Pack 2
+	//   - Microsoft XML Core Services 6.0 on Windows 7 for 32-bit Systems Service Pack 1
+	//   - Microsoft XML Core Services 6.0 on Windows 7 for x64-based Systems Service Pack 1
+	//   - Microsoft XML Core Services 6.0 on Windows 8 for 32-bit Systems
+	//   - Microsoft XML Core Services 6.0 on Windows 8 for x64-based Systems
+	//   - Microsoft XML Core Services 6.0 on Windows 8.1 for 32-bit Systems
+	//   - Microsoft XML Core Services 6.0 on Windows 8.1 for x64-based Systems
+	//   - Microsoft XML Core Services 6.0 on Windows RT
+	//   - Microsoft XML Core Services 6.0 on Windows RT 8.1
+	//   - Microsoft XML Core Services 6.0 on Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
+	//   - Microsoft XML Core Services 6.0 on Windows Server 2008 R2 for x64-based Systems Service Pack 1
+	//   - Microsoft XML Core Services 6.0 on Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)
+	//   - Microsoft XML Core Services 6.0 on Windows Server 2008 for 32-bit Systems Service Pack 2
+	//   - Microsoft XML Core Services 6.0 on Windows Server 2008 for 32-bit Systems Service Pack 2 (Server Core installation)
+	//   - Microsoft XML Core Services 6.0 on Windows Server 2008 for Itanium-based Systems Service Pack 2
+	//   - Microsoft XML Core Services 6.0 on Windows Server 2008 for x64-based Systems Service Pack 2
+	//   - Microsoft XML Core Services 6.0 on Windows Server 2008 for x64-based Systems Service Pack 2 (Server Core installation)
+	//   - Microsoft XML Core Services 6.0 on Windows Server 2012
+	//   - Microsoft XML Core Services 6.0 on Windows Server 2012 (Server Core installation)
+	//   - Microsoft XML Core Services 6.0 on Windows Server 2012 R2
+	//   - Microsoft XML Core Services 6.0 on Windows Server 2012 R2 (Server Core installation)
+	//   - Microsoft XML Core Services 6.0 on Windows Vista x64 Edition Service Pack 2
 	"MS15-091": {
 		Supersedes: map[string]supersedesAdjust{
 			"3081444": {Override: []string{"3081455"}},
@@ -4393,6 +5897,17 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"3078071": {"3087985"},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS15-094 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS15-094.
+	//   - Internet Explorer 10
+	//   - Internet Explorer 11
+	//   - Internet Explorer 11 on Windows 10
+	//   - Internet Explorer 7
+	//   - Internet Explorer 8
+	//   - Internet Explorer 9
 	"MS15-094": {
 		CVEAdjustments: []cveAdjustment{
 			{Add: []string{"CVE-2015-2483", "CVE-2015-2484", "CVE-2015-2485", "CVE-2015-2486", "CVE-2015-2487", "CVE-2015-2489", "CVE-2015-2490", "CVE-2015-2491", "CVE-2015-2492", "CVE-2015-2493", "CVE-2015-2494", "CVE-2015-2496", "CVE-2015-2498", "CVE-2015-2499", "CVE-2015-2500", "CVE-2015-2501", "CVE-2015-2541", "CVE-2015-2542"}},
@@ -4415,6 +5930,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"3081444": {Add: []string{"3081455"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS15-097 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS15-097.
+	//   - Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
+	//   - Windows Server 2008 for Itanium-based Systems Service Pack 2
 	"MS15-097": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "3081455", Drop: []string{"CVE-2015-2510"}},
@@ -4471,6 +5993,16 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "3088502", Drop: []string{"CVE-2015-2521", "CVE-2015-2545"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS15-101 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS15-101.
+	//   - Windows 8.1 for 32-bit Systems
+	//   - Windows 8.1 for x64-based Systems
+	//   - Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
+	//   - Windows Server 2008 for Itanium-based Systems Service Pack 2
+	//   - Windows Server 2012 R2 (Server Core installation)
 	"MS15-101": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Windows 10 for 32-bit Systems", Drop: []string{"CVE-2015-2526"}},
@@ -4506,6 +6038,17 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 		},
 	},
 	"MS15-104": {CVEAdjustments: []cveAdjustment{{KB: "3061064", Drop: []string{"CVE-2015-2532"}}}},
+	// TODO: gen_static_map.py emitted these Format B labels for MS15-106 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS15-106.
+	//   - Internet Explorer 10
+	//   - Internet Explorer 11
+	//   - Internet Explorer 11 on Windows 10
+	//   - Internet Explorer 7
+	//   - Internet Explorer 8
+	//   - Internet Explorer 9
 	"MS15-106": {
 		CVEAdjustments: []cveAdjustment{
 			{Add: []string{"CVE-2015-2482", "CVE-2015-6042", "CVE-2015-6044", "CVE-2015-6045", "CVE-2015-6046", "CVE-2015-6047", "CVE-2015-6048", "CVE-2015-6049", "CVE-2015-6050", "CVE-2015-6051", "CVE-2015-6052", "CVE-2015-6053", "CVE-2015-6055", "CVE-2015-6056", "CVE-2015-6059", "CVE-2015-6184"}},
@@ -4553,6 +6096,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "3097266", Drop: []string{"CVE-2015-2557"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS15-111 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS15-111.
+	//   - Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
+	//   - Windows Server 2008 for Itanium-based Systems Service Pack 2
 	"MS15-111": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Windows 7 for 32-bit Systems Service Pack 1", Drop: []string{"CVE-2015-2552", "CVE-2015-2554"}},
@@ -4567,6 +6117,17 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2015-2552", "CVE-2015-2554"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS15-112 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS15-112.
+	//   - Internet Explorer 10
+	//   - Internet Explorer 11
+	//   - Internet Explorer 11 on Windows 10
+	//   - Internet Explorer 7
+	//   - Internet Explorer 8
+	//   - Internet Explorer 9
 	"MS15-112": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 7", Drop: []string{"CVE-2015-2427", "CVE-2015-6064", "CVE-2015-6065", "CVE-2015-6068", "CVE-2015-6069", "CVE-2015-6072", "CVE-2015-6073", "CVE-2015-6075", "CVE-2015-6077", "CVE-2015-6078", "CVE-2015-6079", "CVE-2015-6080", "CVE-2015-6081", "CVE-2015-6082", "CVE-2015-6084", "CVE-2015-6085", "CVE-2015-6086", "CVE-2015-6088", "CVE-2015-6089"}},
@@ -4644,6 +6205,8 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "3101564", Drop: []string{"CVE-2015-2503", "CVE-2015-6038", "CVE-2015-6093", "CVE-2015-6094", "CVE-2015-6123"}},
 			{KB: "3102924", Drop: []string{"CVE-2015-2503", "CVE-2015-6091", "CVE-2015-6092", "CVE-2015-6093"}},
 			{KB: "3102925", Drop: []string{"CVE-2015-2503", "CVE-2015-6091", "CVE-2015-6092", "CVE-2015-6093"}},
+			{Component: "Microsoft Word 2013 Service Pack 1 (32-bit editions)", Drop: []string{"CVE-2015-6093"}},
+			{Component: "Microsoft Word 2013 Service Pack 1 (64-bit editions)", Drop: []string{"CVE-2015-6093"}},
 		},
 		Supersedes: map[string]supersedesAdjust{
 			"2553147": {Override: []string{"3101526"}},
@@ -4658,6 +6221,16 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"3085583": {Override: []string{"3054793", "3101371"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS15-118 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS15-118.
+	//   - Windows 8.1 for 32-bit Systems
+	//   - Windows 8.1 for x64-based Systems
+	//   - Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
+	//   - Windows Server 2008 for Itanium-based Systems Service Pack 2
+	//   - Windows Server 2012 R2 (Server Core installation)
 	"MS15-118": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Windows 10 for 32-bit Systems", Drop: []string{"CVE-2015-6099", "CVE-2015-6115"}},
@@ -4687,6 +6260,17 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2973408": {Add: []string{"3092601"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS15-124 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS15-124.
+	//   - Internet Explorer 10
+	//   - Internet Explorer 11
+	//   - Internet Explorer 11 on Windows 10
+	//   - Internet Explorer 7
+	//   - Internet Explorer 8
+	//   - Internet Explorer 9
 	"MS15-124": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 7", Drop: []string{"CVE-2015-6083", "CVE-2015-6134", "CVE-2015-6135", "CVE-2015-6136", "CVE-2015-6138", "CVE-2015-6139", "CVE-2015-6140", "CVE-2015-6141", "CVE-2015-6142", "CVE-2015-6143", "CVE-2015-6144", "CVE-2015-6147", "CVE-2015-6148", "CVE-2015-6149", "CVE-2015-6151", "CVE-2015-6152", "CVE-2015-6153", "CVE-2015-6155", "CVE-2015-6156", "CVE-2015-6157", "CVE-2015-6158", "CVE-2015-6159", "CVE-2015-6160", "CVE-2015-6162", "CVE-2015-6164"}},
@@ -4706,6 +6290,15 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"3105213": {"3116869"},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS15-128 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS15-128.
+	//   - Windows 8.1 for 32-bit Systems
+	//   - Windows 8.1 for x64-based Systems
+	//   - Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
+	//   - Windows Server 2012 R2 (Server Core installation)
 	"MS15-128": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "3116869", Drop: []string{"CVE-2015-6106"}},
@@ -4771,6 +6364,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "3116900", Drop: []string{"CVE-2015-6175"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS16-001 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS16-001.
+	//   - Internet Explorer 7
+	//   - Internet Explorer 8
 	"MS16-001": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 7", Drop: []string{"CVE-2016-0002", "CVE-2016-0005"}},
@@ -4821,6 +6421,10 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "3114569", Drop: []string{"CVE-2015-0012", "CVE-2016-0012", "CVE-2016-0035"}},
 			{KB: "3133699", Drop: []string{"CVE-2015-0012", "CVE-2016-0012"}},
 			{KB: "3133711", Drop: []string{"CVE-2015-0012", "CVE-2016-0012"}},
+			{Component: "Microsoft PowerPoint 2016 for Mac", Drop: []string{"CVE-2016-0035"}},
+			{Component: "Microsoft PowerPoint for Mac 2011", Drop: []string{"CVE-2016-0035"}},
+			{Component: "Microsoft Word 2016 for Mac", Drop: []string{"CVE-2016-0035"}},
+			{Component: "Microsoft Word for Mac 2011", Drop: []string{"CVE-2016-0035"}},
 		},
 	},
 	"MS16-005": {
@@ -4842,6 +6446,15 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "3124266", Drop: []string{"CVE-2016-0020"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS16-009 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS16-009.
+	//   - Internet Explorer 10
+	//   - Internet Explorer 11
+	//   - Internet Explorer 11 on Windows 10
+	//   - Internet Explorer 9
 	"MS16-009": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 9", Drop: []string{"CVE-2016-0041", "CVE-2016-0062", "CVE-2016-0064"}},
@@ -4860,6 +6473,15 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Microsoft Exchange Server 2013 Service Pack 1", Drop: []string{"CVE-2016-0029", "CVE-2016-0031"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS16-014 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS16-014.
+	//   - Windows 8.1 for 32-bit Systems
+	//   - Windows 8.1 for x64-based Systems
+	//   - Windows Server 2008 for Itanium-based Systems Service Pack 2
+	//   - Windows Server 2012 R2 (Server Core installation)
 	"MS16-014": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "3126041", Drop: []string{"CVE-2016-0040", "CVE-2016-0041", "CVE-2016-0044"}},
@@ -4938,6 +6560,15 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 		},
 	},
 	"MS16-022": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2016-0964", "CVE-2016-0965", "CVE-2016-0966", "CVE-2016-0967", "CVE-2016-0968", "CVE-2016-0969", "CVE-2016-0970", "CVE-2016-0971", "CVE-2016-0972", "CVE-2016-0973", "CVE-2016-0974", "CVE-2016-0975", "CVE-2016-0976", "CVE-2016-0977", "CVE-2016-0978", "CVE-2016-0979", "CVE-2016-0980", "CVE-2016-0981", "CVE-2016-0982", "CVE-2016-0983", "CVE-2016-0984", "CVE-2016-0985"}}}},
+	// TODO: gen_static_map.py emitted these Format B labels for MS16-023 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS16-023.
+	//   - Internet Explorer 10
+	//   - Internet Explorer 11
+	//   - Internet Explorer 11 on Windows 10
+	//   - Internet Explorer 9
 	"MS16-023": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 9", Drop: []string{"CVE-2016-0102", "CVE-2016-0103", "CVE-2016-0104", "CVE-2016-0106", "CVE-2016-0108", "CVE-2016-0109", "CVE-2016-0110", "CVE-2016-0114"}},
@@ -4990,6 +6621,15 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 		},
 	},
 	"MS16-036": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2015-8652", "CVE-2015-8655", "CVE-2015-8658", "CVE-2016-0960", "CVE-2016-0961", "CVE-2016-0962", "CVE-2016-0963", "CVE-2016-0986", "CVE-2016-0987", "CVE-2016-0988", "CVE-2016-0989", "CVE-2016-0990", "CVE-2016-0991", "CVE-2016-0993", "CVE-2016-0994", "CVE-2016-0995", "CVE-2016-0996", "CVE-2016-1001", "CVE-2016-1005", "CVE-2016-1010"}}}},
+	// TODO: gen_static_map.py emitted these Format B labels for MS16-037 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS16-037.
+	//   - Internet Explorer 10
+	//   - Internet Explorer 11
+	//   - Internet Explorer 11 on Windows 10
+	//   - Internet Explorer 9
 	"MS16-037": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 9", Drop: []string{"CVE-2016-0160", "CVE-2016-0164", "CVE-2016-0166"}},
@@ -5045,6 +6685,14 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 		},
 	},
 	"MS16-050": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2016-1006", "CVE-2016-1011", "CVE-2016-1012", "CVE-2016-1013", "CVE-2016-1014", "CVE-2016-1015", "CVE-2016-1016", "CVE-2016-1017", "CVE-2016-1018", "CVE-2016-1019"}}}},
+	// TODO: gen_static_map.py emitted these Format B labels for MS16-051 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS16-051.
+	//   - Internet Explorer 10
+	//   - Internet Explorer 11
+	//   - Internet Explorer 9
 	"MS16-051": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 9", Drop: []string{"CVE-2016-0188", "CVE-2016-0194"}},
@@ -5060,6 +6708,12 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"3148198": {"3154070"},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS16-053 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS16-053.
+	//   - VBScript 5.7 on Windows Server 2008 for 32-bit Systems Service Pack 2
 	"MS16-053": {CVEAdjustments: []cveAdjustment{{KB: "3158991", Drop: []string{"CVE-2016-0187"}}}},
 	"MS16-054": {
 		CVEAdjustments: []cveAdjustment{
@@ -5114,6 +6768,12 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"982666": {Add: []string{"3141083"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS16-062 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS16-062.
+	//   - Windows Server 2008 for Itanium-based Systems Service Pack 2
 	"MS16-062": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "3153199", Drop: []string{"CVE-2016-0176", "CVE-2016-0197"}},
@@ -5133,6 +6793,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2016-0176"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS16-063 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS16-063.
+	//   - Internet Explorer 10
+	//   - Internet Explorer 9
 	"MS16-063": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 9", Drop: []string{"CVE-2016-3202", "CVE-2016-3210"}},
@@ -5145,6 +6812,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 		},
 	},
 	"MS16-064": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2016-1096", "CVE-2016-1097", "CVE-2016-1098", "CVE-2016-1099", "CVE-2016-1100", "CVE-2016-1101", "CVE-2016-1102", "CVE-2016-1103", "CVE-2016-1104", "CVE-2016-1105", "CVE-2016-1106", "CVE-2016-1107", "CVE-2016-1108", "CVE-2016-1109", "CVE-2016-1110", "CVE-2016-4108", "CVE-2016-4109", "CVE-2016-4110", "CVE-2016-4111", "CVE-2016-4112", "CVE-2016-4113", "CVE-2016-4114", "CVE-2016-4115", "CVE-2016-4116", "CVE-2016-4117"}}}},
+	// TODO: gen_static_map.py emitted these Format B labels for MS16-067 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS16-067.
+	//   - Windows 8.1 for 32-bit Systems
+	//   - Windows 8.1 for x64-based Systems
 	"MS16-067": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Windows 8.1 for 32-bit Systems", Drop: []string{"CVE-2016-0190"}},
@@ -5239,6 +6913,14 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 	// MS16-084: Microsoft retracted CVE-2016-3276 in the V1.1 (2017-03-17)
 	// revision — "Removed CVE-2016-3276 ... because IE 9/10/11 are not
 	// affected." Drop, no correction.
+	// TODO: gen_static_map.py emitted these Format B labels for MS16-084 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS16-084.
+	//   - Internet Explorer 10
+	//   - Internet Explorer 11 on Windows 10
+	//   - Internet Explorer 9
 	"MS16-084": {
 		CVEAdjustments: []cveAdjustment{
 			{Add: []string{"CVE-2016-3204", "CVE-2016-3240", "CVE-2016-3241", "CVE-2016-3242", "CVE-2016-3243", "CVE-2016-3245", "CVE-2016-3248", "CVE-2016-3259", "CVE-2016-3260", "CVE-2016-3261", "CVE-2016-3264", "CVE-2016-3273", "CVE-2016-3274", "CVE-2016-3277"}},
@@ -5284,6 +6966,16 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Microsoft Word for Mac 2011", Drop: []string{"CVE-2016-3284"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS16-090 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS16-090.
+	//   - Windows 8.1 for 32-bit Systems
+	//   - Windows 8.1 for x64-based Systems
+	//   - Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
+	//   - Windows Server 2008 for Itanium-based Systems Service Pack 2
+	//   - Windows Server 2012 R2 (Server Core installation)
 	"MS16-090": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Windows 7 for 32-bit Systems Service Pack 1", Drop: []string{"CVE-2016-3250"}},
@@ -5324,6 +7016,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 		},
 	},
 	"MS16-093": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2016-4173", "CVE-2016-4174", "CVE-2016-4175", "CVE-2016-4176", "CVE-2016-4177", "CVE-2016-4178", "CVE-2016-4179", "CVE-2016-4182", "CVE-2016-4185", "CVE-2016-4188", "CVE-2016-4222", "CVE-2016-4223", "CVE-2016-4224", "CVE-2016-4225", "CVE-2016-4226", "CVE-2016-4227", "CVE-2016-4228", "CVE-2016-4229", "CVE-2016-4230", "CVE-2016-4231", "CVE-2016-4232", "CVE-2016-4247", "CVE-2016-4248", "CVE-2016-4249"}}}},
+	// TODO: gen_static_map.py emitted these Format B labels for MS16-095 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS16-095.
+	//   - Internet Explorer 10
+	//   - Internet Explorer 9
 	"MS16-095": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 9", Drop: []string{"CVE-2016-3288", "CVE-2016-3289", "CVE-2016-3290", "CVE-2016-3321", "CVE-2016-3322"}},
@@ -5360,6 +7059,12 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Windows Server 2012 R2 (Server Core installation)", Drop: []string{"CVE-2016-3303", "CVE-2016-3304"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS16-099 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS16-099.
+	//   - Microsoft OneNote 2016 for Mac
 	"MS16-099": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "3114340", Drop: []string{"CVE-2016-3313", "CVE-2016-3315", "CVE-2016-3316", "CVE-2016-3317"}},
@@ -5426,6 +7131,14 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"3157569": {Add: []string{"3175887"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS16-104 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS16-104.
+	//   - Internet Explorer 10
+	//   - Internet Explorer 11
+	//   - Internet Explorer 9
 	"MS16-104": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 9", Drop: []string{"CVE-2016-3247", "CVE-2016-3291", "CVE-2016-3292", "CVE-2016-3295", "CVE-2016-3325"}},
@@ -5578,6 +7291,15 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 		},
 	},
 	"MS16-117": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2016-4271", "CVE-2016-4272", "CVE-2016-4274", "CVE-2016-4275", "CVE-2016-4276", "CVE-2016-4277", "CVE-2016-4278", "CVE-2016-4279", "CVE-2016-4280", "CVE-2016-4281", "CVE-2016-4282", "CVE-2016-4283", "CVE-2016-4284", "CVE-2016-4285", "CVE-2016-4287", "CVE-2016-6921", "CVE-2016-6922", "CVE-2016-6923", "CVE-2016-6924", "CVE-2016-6925", "CVE-2016-6926", "CVE-2016-6927", "CVE-2016-6929", "CVE-2016-6930", "CVE-2016-6931", "CVE-2016-6932"}}}},
+	// TODO: gen_static_map.py emitted these Format B labels for MS16-118 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS16-118.
+	//   - Internet Explorer 10
+	//   - Internet Explorer 11
+	//   - Internet Explorer 11 on Windows 10
+	//   - Internet Explorer 9
 	"MS16-118": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 9", Drop: []string{"CVE-2016-3331", "CVE-2016-3383", "CVE-2016-3387", "CVE-2016-3388", "CVE-2016-3390"}},
@@ -5759,6 +7481,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 		},
 	},
 	"MS16-141": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2016-7857", "CVE-2016-7858", "CVE-2016-7859", "CVE-2016-7860", "CVE-2016-7861", "CVE-2016-7862", "CVE-2016-7863", "CVE-2016-7864", "CVE-2016-7865"}}}},
+	// TODO: gen_static_map.py emitted these Format B labels for MS16-142 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS16-142.
+	//   - Internet Explorer 10
+	//   - Internet Explorer 9
 	"MS16-142": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 9", Drop: []string{"CVE-2016-7196", "CVE-2016-7241"}},
@@ -5774,6 +7503,14 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 		},
 	},
 	// MS16-144: no candidate in markdown — drop.
+	// TODO: gen_static_map.py emitted these Format B labels for MS16-144 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS16-144.
+	//   - Internet Explorer 10
+	//   - Internet Explorer 11 on Windows 10
+	//   - Internet Explorer 9
 	"MS16-144": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 9", Drop: []string{"CVE-2016-7281", "CVE-2016-7284", "CVE-2016-7287"}},
@@ -5871,6 +7608,14 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 		},
 	},
 	"MS17-005": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2017-2982", "CVE-2017-2984", "CVE-2017-2985", "CVE-2017-2986", "CVE-2017-2987", "CVE-2017-2988", "CVE-2017-2990", "CVE-2017-2991", "CVE-2017-2992", "CVE-2017-2993", "CVE-2017-2994", "CVE-2017-2995", "CVE-2017-2996"}}}},
+	// TODO: gen_static_map.py emitted these Format B labels for MS17-006 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS17-006.
+	//   - Internet Explorer 10
+	//   - Internet Explorer 11
+	//   - Internet Explorer 9
 	"MS17-006": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 9", Drop: []string{"CVE-2017-0012", "CVE-2017-0018", "CVE-2017-0033", "CVE-2017-0037", "CVE-2017-0049", "CVE-2017-0154"}},
@@ -6026,6 +7771,12 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Windows Server 2008 R2 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2017-0101"}},
 		},
 	},
+	// TODO: gen_static_map.py emitted these Format B labels for MS17-018 but they could not be mapped
+	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
+	// the labels combine features+OS in non-standard forms or use SP-less variants that
+	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
+	// already) extend normalizeArchiveComponentKey for MS17-018.
+	//   - Windows Server 2016 for x64-based Systems(Server Core installation)
 	"MS17-018": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "4012212", Drop: []string{"CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0078"}},
