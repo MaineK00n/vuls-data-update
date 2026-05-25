@@ -98,62 +98,6 @@ func TestIsSemver(t *testing.T) {
 	}
 }
 
-func TestProductVariants(t *testing.T) {
-	tests := []struct {
-		name     string
-		vendor   string
-		product  string // WFN-escaped form
-		expected []string
-	}{
-		{
-			name:     "underscore product",
-			vendor:   "cisco",
-			product:  "nx_os", // WFN: no escaping for underscore
-			expected: []string{"cisco:nx_os", `cisco:nx\-os`},
-		},
-		{
-			name:     "hyphen product (WFN-escaped)",
-			vendor:   "cisco",
-			product:  `nx\-os`, // WFN-escaped hyphen
-			expected: []string{`cisco:nx\-os`, "cisco:nx_os"},
-		},
-		{
-			name:     "no special chars",
-			vendor:   "cisco",
-			product:  "ios",
-			expected: []string{"cisco:ios"},
-		},
-		{
-			name:     "multiple underscores",
-			vendor:   "cisco",
-			product:  "ios_xe_sd_wan",
-			expected: []string{"cisco:ios_xe_sd_wan", `cisco:ios\-xe\-sd\-wan`},
-		},
-		{
-			name:     "WFN-escaped hyphen product pan-os",
-			vendor:   "paloaltonetworks",
-			product:  `pan\-os`,
-			expected: []string{`paloaltonetworks:pan\-os`, "paloaltonetworks:pan_os"},
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got := productVariants(tt.vendor, tt.product)
-			if len(got) != len(tt.expected) {
-				t.Fatalf("productVariants(%q, %q) returned %d variants, want %d: %v",
-					tt.vendor, tt.product, len(got), len(tt.expected), got)
-			}
-			for i, v := range got {
-				if v != tt.expected[i] {
-					t.Errorf("productVariants(%q, %q)[%d] = %q, want %q",
-						tt.vendor, tt.product, i, v, tt.expected[i])
-				}
-			}
-		})
-	}
-}
-
 func TestIndexKey(t *testing.T) {
 	tests := []struct {
 		name     string

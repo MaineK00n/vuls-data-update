@@ -87,7 +87,7 @@ import (
 	nvdFeedCPEMATCHv1 "github.com/MaineK00n/vuls-data-update/pkg/extract/nvd/feed/cpematch/v1"
 	nvdFeedCPEMATCHv2 "github.com/MaineK00n/vuls-data-update/pkg/extract/nvd/feed/cpematch/v2"
 	nvdFeedCVEv1 "github.com/MaineK00n/vuls-data-update/pkg/extract/nvd/feed/cve/v1"
-	nvdFeedCVEv2 "github.com/MaineK00n/vuls-data-update/pkg/extract/nvd/feed/v2"
+	nvdFeedCVEv2 "github.com/MaineK00n/vuls-data-update/pkg/extract/nvd/feed/cve/v2"
 	oracleLinux "github.com/MaineK00n/vuls-data-update/pkg/extract/oracle/linux"
 	ossFuzzOSV "github.com/MaineK00n/vuls-data-update/pkg/extract/oss-fuzz/osv"
 	perlDB "github.com/MaineK00n/vuls-data-update/pkg/extract/perl/db"
