@@ -4267,14 +4267,24 @@ func lookupAmendment(bulletinID string) bulletinArchiveAmendment {
 // would still collapse them on output, but the intermediate string is
 // avoided.
 func applyCVEAdditions(rows []bulletin.Bulletin) []bulletin.Bulletin {
-	for i, row := range rows {
-		ad := lookupAmendment(row.BulletinID)
+	// The Add adjustments are bulletin-scoped (empty KB and Component), so a
+	// bulletin's additions are identical across all of its rows. Derive them
+	// once per bulletin rather than rescanning CVEAdjustments for every row.
+	additions := make(map[string][]string)
+	for id, ad := range bulletinArchiveAmendments {
 		var adds []string
 		for _, adj := range ad.CVEAdjustments {
 			if adj.KB == "" && adj.Component == "" && len(adj.Add) > 0 {
 				adds = append(adds, adj.Add...)
 			}
 		}
+		if len(adds) > 0 {
+			additions[strings.ToUpper(id)] = adds
+		}
+	}
+
+	for i, row := range rows {
+		adds := additions[strings.ToUpper(row.BulletinID)]
 		if len(adds) == 0 {
 			continue
 		}
