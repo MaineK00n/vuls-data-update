@@ -4560,10 +4560,11 @@ var bulletinArchiveCVECorrections = map[string]map[string]string{
 //     map is the committed snapshot of the generator's output.
 //
 // At extract time the listed CVEs are unioned into row.CVEs for every row of the
-// bulletin (idempotent if the xlsx already happens to carry the CVE). Per-(KB, CVE)
-// applicability continues to be enforced by bulletinArchiveKBNotApplicable after the
-// union, so the map can safely list every CVE the markdown mentions; the NA filter
-// drops the per-row entries that the matrix table marks Not applicable.
+// bulletin (idempotent if the xlsx already happens to carry the CVE). The map holds
+// only curated CVE tokens: the authoritative markdown list for all-empty bulletins,
+// and the post-review harvest for partial-xlsx bulletins. Per-(KB, CVE) applicability
+// continues to be enforced by bulletinArchiveKBNotApplicable after the union; the NA
+// filter drops per-row entries that the matrix table marks Not applicable.
 //
 // Symmetric to bulletinArchiveCVECorrections, which fixes wrong tokens already
 // present in the xlsx (typo / drop), this map adds tokens that the xlsx omits.
