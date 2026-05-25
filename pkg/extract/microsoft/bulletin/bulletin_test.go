@@ -400,8 +400,8 @@ func Test_normalizeArchiveComponentKey(t *testing.T) {
 			want: "Microsoft Project 2000",
 		},
 		// MS06-060 is intentionally absent from normalizeArchiveComponentKey
-		// — its NA cells are captured by KB-keyed entries in
-		// bulletinArchiveKBNotApplicable (KB923088/923089/923090/924998/924999),
+		// — its NA cells are captured by KB-scoped Drop entries in
+		// bulletinArchiveAmendments (KB923088/923089/923090/924998/924999),
 		// not via component-keyed narrowing. Verify the default branch returns
 		// "" so the row passes through to the KB-keyed filter.
 		{
@@ -459,10 +459,11 @@ func Test_normalizeArchiveComponentKey(t *testing.T) {
 		},
 		// Mixed-applicability bulletins return the whitespace-normalized
 		// affected_product as the inner key, so the filter looks the xlsx
-		// label up in bulletinArchiveComponentNotApplicable after the same
-		// whitespace normalization (strings.Fields/Join collapse). Verify
-		// that the dispatch returns the product string (not empty) for a few
-		// representative bulletins across MS12-, MS15-, MS16-, and MS17-.
+		// label up against the Component-scoped Drop entries in
+		// bulletinArchiveAmendments after the same whitespace normalization
+		// (strings.Fields/Join collapse). Verify that the dispatch returns the
+		// product string (not empty) for a few representative bulletins across
+		// MS12-, MS15-, MS16-, and MS17-.
 		{
 			name: "MS16-106 mixed-applicability: returns affected_product (Win Server 2008 SP2)",
 			args: args{bulletinID: "MS16-106", product: "Windows Server 2008 for 32-bit Systems Service Pack 2", component: ""},
@@ -498,14 +499,14 @@ func Test_normalizeArchiveComponentKey(t *testing.T) {
 	}
 }
 
-// TestBulletinArchiveNotApplicable verifies known entries in the two static
-// maps used to correct Excel's lossy per-CVE attribution. Both maps are
-// regenerated from the frozen Bulletin archive markdown corpus (1554
-// bulletins, retired April 2017), so any regression in their structure
-// (e.g., a generator change dropping a recognized header label, or
-// stripping a CVE attribution) should fail this test. End-to-end coverage
-// that the filter actually drops the over-attributed CVEs is provided by
-// the MS14-010 golden test.
+// TestBulletinArchiveNotApplicable verifies known KB-scoped and
+// Component-scoped Drop entries in bulletinArchiveAmendments, used to correct
+// Excel's lossy per-CVE attribution. The amendments are regenerated from the
+// frozen Bulletin archive markdown corpus (1554 bulletins, retired April
+// 2017), so any regression in their structure (e.g., a generator change
+// dropping a recognized header label, or stripping a CVE attribution) should
+// fail this test. End-to-end coverage that the filter actually drops the
+// over-attributed CVEs is provided by the MS14-010 golden test.
 func TestBulletinArchiveNotApplicable(t *testing.T) {
 	t.Run("KB-keyed", func(t *testing.T) {
 		tests := []struct {
@@ -596,10 +597,10 @@ func TestBulletinArchiveNotApplicable(t *testing.T) {
 		}
 	})
 	t.Run("Per-bulletin inner-key", func(t *testing.T) {
-		// bulletinArchiveComponentNotApplicable's inner key has three flavors
-		// (see the map's doc comment): IE/Edge vocabulary keys, MS06-* column
-		// header strings, and whitespace-normalized affected_product strings
-		// for the mixed-applicability bulletins. This subtest covers all three.
+		// The Component-scoped Drop entries' inner key has three flavors:
+		// IE/Edge vocabulary keys, MS06-* column header strings, and
+		// whitespace-normalized affected_product strings for the
+		// mixed-applicability bulletins. This subtest covers all three.
 		tests := []struct {
 			name       string
 			bulletinID string
@@ -638,7 +639,7 @@ func TestBulletinArchiveNotApplicable(t *testing.T) {
 				innerKey:   "Microsoft Project 2000",
 				cve:        "CVE-2006-0033",
 			},
-			// MS06-060 NA cells are encoded in bulletinArchiveKBNotApplicable
+			// MS06-060 NA cells are encoded as KB-scoped Drop entries
 			// (KB-keyed), not here. See the corresponding KB-keyed test cases.
 			{
 				name:       "MS06-078 WMP 6.4 NA for CVE-2006-6134",
@@ -695,11 +696,11 @@ func TestBulletinArchiveNotApplicable(t *testing.T) {
 			// MS15-128 / KB3116869 / CVE-2015-6108 is "Not applicable" in the
 			// OS-level table but "Critical Remote Code Execution" in the same
 			// bulletin's component-level table, with the same xlsx
-			// affected_product label for both. A static (bulletin, component)
-			// NA map cannot disambiguate at this grain. This case is now
-			// handled by bulletinArchiveComponentReattribution, which splits
-			// the OS-only xlsx row into an OS-only row + a synthesized
-			// "OS + .NET Framework 3.5" row carrying CVE-2015-6108.
+			// affected_product label for both. A (bulletin, component) NA
+			// Drop entry cannot disambiguate at this grain. This case is now
+			// handled by the bulletin's RowSplits in bulletinArchiveAmendments,
+			// which splits the OS-only xlsx row into an OS-only row + a
+			// synthesized "OS + .NET Framework 3.5" row carrying CVE-2015-6108.
 		}
 		for _, tt := range tests {
 			t.Run(tt.name, func(t *testing.T) {
