@@ -4253,10 +4253,9 @@ func lookupAmendment(bulletinID string) bulletinArchiveAmendment {
 // bulletinArchiveAmendments record into each row's CVEs string. Used
 // for bulletins where BulletinSearch.xlsx left the cves cell empty
 // across every row despite the markdown documenting CVE attributions
-// (or partially empty — only some xlsx rows carry CVEs). Per-(KB, CVE)
-// NA precision is enforced afterwards by bulletinArchiveKBNotApplicable,
-// so this map can safely list every CVE the markdown attributes to a
-// bulletin.
+// (or partially empty — only some xlsx rows carry CVEs). The record
+// holds only curated CVE tokens; per-(KB, CVE) NA precision is enforced
+// afterwards via KB-scoped Drop entries within the same amendments record.
 //
 // Idempotent: CVEs already present in row.CVEs are not duplicated. The
 // comparison is case-insensitive to align with parseCVEs, which
@@ -4457,9 +4456,8 @@ func (e extractor) extract(rows []bulletin.Bulletin) ([]dataTypes.Data, []micros
 		// every row of that bulletin. The archive markdown's per-cell "Not
 		// applicable" markers narrow this back to the authoritative per-(KB,
 		// CVE) and per-(bulletin, component, CVE) attribution — drawn from
-		// bulletinArchiveKBNotApplicable (KB-keyed; below) and the
-		// bulletin's bulletinArchiveAmendments record (per-bulletin
-		// Component-keyed Drop adjustments). The amendments record also
+		// KB-scoped and Component-scoped Drop entries within the bulletin's
+		// bulletinArchiveAmendments record. The amendments record also
 		// carries per-bulletin Remap adjustments for xlsx CVE tokens that
 		// are absent from the bulletin's markdown body (year-typos,
 		// off-by-one suffixes, retracted CVEs, etc.).
