@@ -8,7 +8,6 @@ import (
 	"maps"
 	"os"
 	"path/filepath"
-	"regexp"
 	"slices"
 	"strings"
 	"time"
@@ -187,7 +186,19 @@ func Extract(args string, opts ...Option) error {
 	return nil
 }
 
-var dateLocalePrefix = regexp.MustCompile(`^\[\$-[0-9a-fA-F]+\]`)
+// stripDateLocalePrefix removes the Excel locale/format-code prefix that some
+// BulletinSearch.xlsx date_posted cells carry, e.g. "[$-100009]1/12/2016". The
+// prefix is always "[$-" + a code + "]" with the real date following; the
+// frozen corpus uses one code per month ("[$-10009]".."[$-120009]"), so
+// stripping through the closing "]" handles every case.
+func stripDateLocalePrefix(s string) string {
+	if rest, ok := strings.CutPrefix(s, "[$-"); ok {
+		if _, after, found := strings.Cut(rest, "]"); found {
+			return after
+		}
+	}
+	return s
+}
 
 // parseCVEs parses CVE identifiers from the raw cves field.
 // The raw data is historical and frozen, so all anomalous patterns are enumerated explicitly.
@@ -496,12 +507,6 @@ func normalizeArchiveComponentKey(bulletinID, affectedProduct, affectedComponent
 	}
 }
 
-// ieCumStripVersionDotZero strips the ".0" minor-version suffix from
-// "Internet Explorer X.0" identifiers (so xlsx-form "Internet Explorer 6.0"
-// matches the markdown-form "Internet Explorer 6" used in archive markdown
-// labels). Leaves multi-digit minor versions like "Internet Explorer 5.01" alone.
-var ieCumStripVersionDotZero = regexp.MustCompile(`Internet Explorer (\d+)\.0(\s|$)`)
-
 // ieCumCombinedKey returns the canonical "Internet Explorer X (Service Pack Y) for OS"
 // key form used by pre-MS14 IE Cumulative bulletins' Component-Drop entries.
 // The markdown column-header labels for these bulletins combine the IE
@@ -517,13 +522,21 @@ func ieCumCombinedKey(component, product string) string {
 	}
 	ie := strings.TrimPrefix(component, "Microsoft ")
 	ie = strings.TrimPrefix(ie, "Windows ")
-	if !strings.HasPrefix(ie, "Internet Explorer ") {
+	const iePrefix = "Internet Explorer "
+	if !strings.HasPrefix(ie, iePrefix) {
 		return ""
 	}
-	ie = ieCumStripVersionDotZero.ReplaceAllString(ie, "Internet Explorer ${1}${2}")
-	ie = strings.TrimSpace(ie)
+	// Strip the ".0" minor version so xlsx-form "Internet Explorer 6.0" matches
+	// the markdown-form "Internet Explorer 6". TrimSuffix removes only an exact
+	// trailing ".0" on the version token, leaving multi-digit minors
+	// ("Internet Explorer 5.01", "5.5") intact.
+	ver, rest, _ := strings.Cut(ie[len(iePrefix):], " ")
+	ver = strings.TrimSuffix(ver, ".0")
 	os := strings.TrimPrefix(product, "Microsoft ")
-	return ie + " for " + os
+	if rest != "" {
+		return fmt.Sprintf("%s%s %s for %s", iePrefix, ver, rest, os)
+	}
+	return fmt.Sprintf("%s%s for %s", iePrefix, ver, os)
 }
 
 // ieEdgeComponentKey maps an (IE/Edge identity, OS) tuple to the shared
@@ -8462,7 +8475,7 @@ func (e extractor) extract(rows []bulletin.Bulletin) ([]dataTypes.Data, []micros
 				Source: "security@microsoft.com",
 				URL:    fmt.Sprintf("https://learn.microsoft.com/en-us/security-updates/securitybulletins/20%s/%s", rootID[2:4], strings.ToLower(string(rootID))),
 			}},
-			Published: utiltime.Parse([]string{"1/2/2006", "01/02/2006", "01-02-06", "2006-01-02"}, dateLocalePrefix.ReplaceAllString(row.DatePosted, "")),
+			Published: utiltime.Parse([]string{"1/2/2006", "01/02/2006", "01-02-06", "2006-01-02"}, stripDateLocalePrefix(row.DatePosted)),
 			Optional: func() map[string]any {
 				if row.BulletinImpact != "" {
 					return map[string]any{"impact": row.BulletinImpact}
