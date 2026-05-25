@@ -572,6 +572,53 @@ var bulletinArchiveComponentReattribution = map[string]map[string][]componentRea
 	},
 }
 
+// applyCVEAdditions unions per-bulletin CVE tokens from
+// bulletinArchiveCVEAdditions into each row's CVEs string. Used for
+// bulletins where BulletinSearch.xlsx left the cves cell empty across
+// every row despite the markdown documenting CVE attributions; see the
+// map's doc comment for the rationale and ordering vs. per-(KB, CVE) NA
+// filtering.
+//
+// Idempotent: CVEs already present in row.CVEs are not duplicated. The
+// comparison is case-insensitive to align with parseCVEs, which
+// explicitly recognises the lowercase "cve-..." prefix as a historical
+// xlsx anomaly and canonicalises it to uppercase downstream. Without
+// the case fold here, an "applyCVEAdditions" pass against a row whose
+// xlsx cell already contains "cve-XXXX-YYYY" would append a duplicate
+// "CVE-XXXX-YYYY" entry — the row-level dedup loop later in extract()
+// would still collapse them on output, but the intermediate string is
+// avoided.
+func applyCVEAdditions(rows []bulletin.Bulletin) []bulletin.Bulletin {
+	for i, row := range rows {
+		adds := bulletinArchiveCVEAdditions[strings.ToUpper(row.BulletinID)]
+		if len(adds) == 0 {
+			continue
+		}
+		existing := make(map[string]struct{})
+		for token := range strings.SplitSeq(row.CVEs, ",") {
+			if t := strings.TrimSpace(token); t != "" {
+				existing[strings.ToUpper(t)] = struct{}{}
+			}
+		}
+		toAppend := make([]string, 0, len(adds))
+		for _, cve := range adds {
+			if _, ok := existing[strings.ToUpper(cve)]; ok {
+				continue
+			}
+			toAppend = append(toAppend, cve)
+		}
+		if len(toAppend) == 0 {
+			continue
+		}
+		if row.CVEs == "" {
+			rows[i].CVEs = strings.Join(toAppend, ",")
+		} else {
+			rows[i].CVEs = row.CVEs + "," + strings.Join(toAppend, ",")
+		}
+	}
+	return rows
+}
+
 // applyComponentReattributions returns a copy of rows expanded by
 // bulletinArchiveComponentReattribution. For each row whose
 // (bulletin_id, component_kb) matches an entry, the matching CVEs are
@@ -679,7 +726,7 @@ func (e extractor) extract(rows []bulletin.Bulletin) ([]dataTypes.Data, []micros
 	kbProducts := make(map[string]map[string]struct{})
 	kbSupersededBy := make(map[string]map[string]struct{}) // old KBID → set of new KBIDs
 
-	for _, row := range applyComponentReattributions(rows) {
+	for _, row := range applyComponentReattributions(applyCVEAdditions(rows)) {
 		if row.AffectedProduct == "" {
 			switch strings.ToUpper(row.BulletinID) {
 			case "MS01-002", "MS01-050":
@@ -4496,4 +4543,39 @@ var bulletinArchiveCVECorrections = map[string]map[string]string{
 	// MS17-012: leading-zero typo of CVE-2017-0016 — remap (0016 not in
 	// xlsx; the xlsx cell carries "CVE-2017-00016" with an extra zero).
 	"MS17-012": {"CVE-2017-00016": "CVE-2017-0016"},
+}
+
+// bulletinArchiveCVEAdditions fills in CVE tokens that BulletinSearch.xlsx
+// leaves off a bulletin's rows but the bulletin's archive markdown documents.
+// Microsoft occasionally publishes a bulletin without populating the xlsx cves
+// cell (the listed bulletins are all-empty across every xlsx row); the markdown
+// then carries the authoritative CVE list. Symmetric to bulletinArchiveCVECorrections,
+// which fixes wrong tokens already present in the xlsx.
+//
+// At extract time the listed CVEs are unioned into row.CVEs for every row of the
+// bulletin (idempotent if the xlsx already happens to carry the CVE). Per-(KB, CVE)
+// applicability continues to be enforced by bulletinArchiveKBNotApplicable after the
+// union, so the map can safely list every CVE the markdown mentions; the NA filter
+// drops the per-row entries that the matrix table marks Not applicable.
+var bulletinArchiveCVEAdditions = map[string][]string{
+	"MS02-019": {"CVE-2002-0153"},
+	"MS02-038": {"CVE-2002-0644", "CVE-2002-0645"},
+	"MS06-007": {"CVE-2006-0021"},
+	"MS08-059": {"CVE-2008-3466"},
+	"MS16-022": {"CVE-2016-0964", "CVE-2016-0965", "CVE-2016-0966", "CVE-2016-0967", "CVE-2016-0968", "CVE-2016-0969", "CVE-2016-0970", "CVE-2016-0971", "CVE-2016-0972", "CVE-2016-0973", "CVE-2016-0974", "CVE-2016-0975", "CVE-2016-0976", "CVE-2016-0977", "CVE-2016-0978", "CVE-2016-0979", "CVE-2016-0980", "CVE-2016-0981", "CVE-2016-0982", "CVE-2016-0983", "CVE-2016-0984", "CVE-2016-0985"},
+	"MS16-036": {"CVE-2015-8652", "CVE-2015-8655", "CVE-2015-8658", "CVE-2016-0960", "CVE-2016-0961", "CVE-2016-0962", "CVE-2016-0963", "CVE-2016-0986", "CVE-2016-0987", "CVE-2016-0988", "CVE-2016-0989", "CVE-2016-0990", "CVE-2016-0991", "CVE-2016-0993", "CVE-2016-0994", "CVE-2016-0995", "CVE-2016-0996", "CVE-2016-1001", "CVE-2016-1005", "CVE-2016-1010"},
+	"MS16-050": {"CVE-2016-1006", "CVE-2016-1011", "CVE-2016-1012", "CVE-2016-1013", "CVE-2016-1014", "CVE-2016-1015", "CVE-2016-1016", "CVE-2016-1017", "CVE-2016-1018", "CVE-2016-1019"},
+	"MS16-064": {"CVE-2016-1096", "CVE-2016-1097", "CVE-2016-1098", "CVE-2016-1099", "CVE-2016-1100", "CVE-2016-1101", "CVE-2016-1102", "CVE-2016-1103", "CVE-2016-1104", "CVE-2016-1105", "CVE-2016-1106", "CVE-2016-1107", "CVE-2016-1108", "CVE-2016-1109", "CVE-2016-1110", "CVE-2016-4108", "CVE-2016-4109", "CVE-2016-4110", "CVE-2016-4111", "CVE-2016-4112", "CVE-2016-4113", "CVE-2016-4114", "CVE-2016-4115", "CVE-2016-4116", "CVE-2016-4117"},
+	"MS16-083": {"CVE-2016-4121", "CVE-2016-4122", "CVE-2016-4123", "CVE-2016-4124", "CVE-2016-4125", "CVE-2016-4126", "CVE-2016-4127", "CVE-2016-4128", "CVE-2016-4129", "CVE-2016-4130", "CVE-2016-4131", "CVE-2016-4132", "CVE-2016-4133", "CVE-2016-4134", "CVE-2016-4135", "CVE-2016-4136", "CVE-2016-4137", "CVE-2016-4138", "CVE-2016-4139", "CVE-2016-4140", "CVE-2016-4141", "CVE-2016-4142", "CVE-2016-4143", "CVE-2016-4144", "CVE-2016-4145", "CVE-2016-4146", "CVE-2016-4147", "CVE-2016-4148", "CVE-2016-4149", "CVE-2016-4150", "CVE-2016-4151", "CVE-2016-4152", "CVE-2016-4153", "CVE-2016-4154", "CVE-2016-4155", "CVE-2016-4156", "CVE-2016-4166", "CVE-2016-4171"},
+	"MS16-093": {"CVE-2016-4173", "CVE-2016-4174", "CVE-2016-4175", "CVE-2016-4176", "CVE-2016-4177", "CVE-2016-4178", "CVE-2016-4179", "CVE-2016-4182", "CVE-2016-4185", "CVE-2016-4188", "CVE-2016-4222", "CVE-2016-4223", "CVE-2016-4224", "CVE-2016-4225", "CVE-2016-4226", "CVE-2016-4227", "CVE-2016-4228", "CVE-2016-4229", "CVE-2016-4230", "CVE-2016-4231", "CVE-2016-4232", "CVE-2016-4247", "CVE-2016-4248", "CVE-2016-4249"},
+	"MS16-105": {"CVE-2016-3247", "CVE-2016-3291", "CVE-2016-3294", "CVE-2016-3295", "CVE-2016-3297", "CVE-2016-3325", "CVE-2016-3330", "CVE-2016-3350", "CVE-2016-3351", "CVE-2016-3370", "CVE-2016-3374", "CVE-2016-3377"},
+	"MS16-117": {"CVE-2016-4271", "CVE-2016-4272", "CVE-2016-4274", "CVE-2016-4275", "CVE-2016-4276", "CVE-2016-4277", "CVE-2016-4278", "CVE-2016-4279", "CVE-2016-4280", "CVE-2016-4281", "CVE-2016-4282", "CVE-2016-4283", "CVE-2016-4284", "CVE-2016-4285", "CVE-2016-4287", "CVE-2016-6921", "CVE-2016-6922", "CVE-2016-6923", "CVE-2016-6924", "CVE-2016-6925", "CVE-2016-6926", "CVE-2016-6927", "CVE-2016-6929", "CVE-2016-6930", "CVE-2016-6931", "CVE-2016-6932"},
+	"MS16-127": {"CVE-2016-4273", "CVE-2016-4286", "CVE-2016-6981", "CVE-2016-6982", "CVE-2016-6983", "CVE-2016-6984", "CVE-2016-6985", "CVE-2016-6986", "CVE-2016-6987", "CVE-2016-6989", "CVE-2016-6990", "CVE-2016-6992"},
+	"MS16-128": {"CVE-2016-7855"},
+	"MS16-137": {"CVE-2016-7220", "CVE-2016-7237", "CVE-2016-7238"},
+	"MS16-141": {"CVE-2016-7857", "CVE-2016-7858", "CVE-2016-7859", "CVE-2016-7860", "CVE-2016-7861", "CVE-2016-7862", "CVE-2016-7863", "CVE-2016-7864", "CVE-2016-7865"},
+	"MS16-154": {"CVE-2016-7867", "CVE-2016-7868", "CVE-2016-7869", "CVE-2016-7870", "CVE-2016-7871", "CVE-2016-7872", "CVE-2016-7873", "CVE-2016-7874", "CVE-2016-7875", "CVE-2016-7876", "CVE-2016-7877", "CVE-2016-7878", "CVE-2016-7879", "CVE-2016-7880", "CVE-2016-7881", "CVE-2016-7890", "CVE-2016-7892"},
+	"MS17-003": {"CVE-2017-2925", "CVE-2017-2926", "CVE-2017-2927", "CVE-2017-2928", "CVE-2017-2930", "CVE-2017-2931", "CVE-2017-2932", "CVE-2017-2933", "CVE-2017-2934", "CVE-2017-2935", "CVE-2017-2936", "CVE-2017-2937"},
+	"MS17-005": {"CVE-2017-2982", "CVE-2017-2984", "CVE-2017-2985", "CVE-2017-2986", "CVE-2017-2987", "CVE-2017-2988", "CVE-2017-2990", "CVE-2017-2991", "CVE-2017-2992", "CVE-2017-2993", "CVE-2017-2994", "CVE-2017-2995", "CVE-2017-2996"},
+	"MS17-023": {"CVE-2017-2997", "CVE-2017-2998", "CVE-2017-2999", "CVE-2017-3000", "CVE-2017-3001", "CVE-2017-3002", "CVE-2017-3003"},
 }

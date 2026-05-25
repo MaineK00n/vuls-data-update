@@ -11,4 +11,6 @@ var (
 	BulletinArchiveCVECorrections         = bulletinArchiveCVECorrections
 	BulletinArchiveComponentReattribution = bulletinArchiveComponentReattribution
 	ApplyComponentReattributions          = applyComponentReattributions
+	BulletinArchiveCVEAdditions           = bulletinArchiveCVEAdditions
+	ApplyCVEAdditions                     = applyCVEAdditions
 )

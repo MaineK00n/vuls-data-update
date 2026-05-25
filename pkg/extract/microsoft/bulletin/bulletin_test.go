@@ -830,3 +830,91 @@ func TestApplyComponentReattributions(t *testing.T) {
 		})
 	}
 }
+
+func TestApplyCVEAdditions(t *testing.T) {
+	tests := []struct {
+		name string
+		in   []fetch.Bulletin
+		want []fetch.Bulletin
+	}{
+		{
+			name: "row without a bulletin entry is passed through unchanged",
+			in: []fetch.Bulletin{
+				{BulletinID: "MS15-097", ComponentKB: "3087039", CVEs: "CVE-2015-2506,CVE-2015-2507"},
+			},
+			want: []fetch.Bulletin{
+				{BulletinID: "MS15-097", ComponentKB: "3087039", CVEs: "CVE-2015-2506,CVE-2015-2507"},
+			},
+		},
+		{
+			name: "MS16-137 empty cves is filled with the bulletin's CVE set",
+			in: []fetch.Bulletin{
+				{BulletinID: "MS16-137", ComponentKB: "3198585", CVEs: ""},
+			},
+			want: []fetch.Bulletin{
+				{BulletinID: "MS16-137", ComponentKB: "3198585", CVEs: "CVE-2016-7220,CVE-2016-7237,CVE-2016-7238"},
+			},
+		},
+		{
+			name: "idempotent: CVEs already present in row.CVEs are not duplicated",
+			in: []fetch.Bulletin{
+				{BulletinID: "MS16-137", ComponentKB: "3198585", CVEs: "CVE-2016-7220"},
+			},
+			want: []fetch.Bulletin{
+				{BulletinID: "MS16-137", ComponentKB: "3198585", CVEs: "CVE-2016-7220,CVE-2016-7237,CVE-2016-7238"},
+			},
+		},
+		{
+			name: "lowercase bulletin_id matches the dispatch case-insensitively",
+			in: []fetch.Bulletin{
+				{BulletinID: "ms16-137", ComponentKB: "3198510", CVEs: ""},
+			},
+			want: []fetch.Bulletin{
+				{BulletinID: "ms16-137", ComponentKB: "3198510", CVEs: "CVE-2016-7220,CVE-2016-7237,CVE-2016-7238"},
+			},
+		},
+		{
+			name: "MS17-023 Flash Player CVEs added to empty cves row",
+			in: []fetch.Bulletin{
+				{BulletinID: "MS17-023", ComponentKB: "4014329", CVEs: ""},
+			},
+			want: []fetch.Bulletin{
+				{BulletinID: "MS17-023", ComponentKB: "4014329", CVEs: "CVE-2017-2997,CVE-2017-2998,CVE-2017-2999,CVE-2017-3000,CVE-2017-3001,CVE-2017-3002,CVE-2017-3003"},
+			},
+		},
+		{
+			// parseCVEs explicitly canonicalises the lowercase "cve-" prefix
+			// as a historical xlsx anomaly, so applyCVEAdditions must treat
+			// lowercase row tokens as already-present and not append a
+			// duplicate uppercase entry. The original lowercase token is
+			// preserved verbatim; parseCVEs canonicalises it downstream.
+			name: "idempotent: lowercase CVE token in row matches case-insensitively",
+			in: []fetch.Bulletin{
+				{BulletinID: "MS16-137", ComponentKB: "3198585", CVEs: "cve-2016-7220"},
+			},
+			want: []fetch.Bulletin{
+				{BulletinID: "MS16-137", ComponentKB: "3198585", CVEs: "cve-2016-7220,CVE-2016-7237,CVE-2016-7238"},
+			},
+		},
+		{
+			// Whitespace around comma-separated tokens is allowed in xlsx
+			// and TrimSpace'd before comparison; verify the dedup still
+			// catches an existing token surrounded by extra whitespace.
+			name: "idempotent: surrounding whitespace on existing token does not produce duplicate",
+			in: []fetch.Bulletin{
+				{BulletinID: "MS16-137", ComponentKB: "3198585", CVEs: "  CVE-2016-7220  "},
+			},
+			want: []fetch.Bulletin{
+				{BulletinID: "MS16-137", ComponentKB: "3198585", CVEs: "  CVE-2016-7220  ,CVE-2016-7237,CVE-2016-7238"},
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := bulletin.ApplyCVEAdditions(tt.in)
+			if diff := cmp.Diff(tt.want, got); diff != "" {
+				t.Errorf("ApplyCVEAdditions() mismatch (-want +got):\n%s", diff)
+			}
+		})
+	}
+}
