@@ -154,10 +154,12 @@ func Test_productName(t *testing.T) {
 	}
 }
 
-// TestIECumChainEdges verifies known edges in the static ieCumChainEdges map.
-// The map is exhaustively generated from the frozen Bulletin corpus, so any
-// regression in its structure (e.g., missing edges across the Nov 2016 MS16-142
-// gap that A1 was specifically designed to bridge) should fail this test.
+// TestIECumChainEdges verifies known IE Cumulative chain edges in the
+// per-bulletin amendments. Edges are aggregated globally at extract time
+// (across all bulletins' IECumChain maps), bridging the Nov 2016 MS16-142
+// gap that the chain-merge loop specifically targets. Verification scans
+// every bulletin's IECumChain for the (oldKB → newKB) edge — accurate
+// owner attribution is best-effort and not required for the chain walk.
 func TestIECumChainEdges(t *testing.T) {
 	tests := []struct {
 		name    string
@@ -192,68 +194,83 @@ func TestIECumChainEdges(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			news, ok := bulletin.IECumChainEdges[tt.oldKBID]
-			if !ok {
-				t.Fatalf("ieCumChainEdges has no entry for KB%s", tt.oldKBID)
+			found := false
+			for _, ad := range bulletin.BulletinArchiveAmendments {
+				if news, ok := ad.IECumChain[tt.oldKBID]; ok {
+					if slices.Contains(news, tt.newKBID) {
+						found = true
+						break
+					}
+				}
 			}
-			if !slices.Contains(news, tt.newKBID) {
-				t.Errorf("ieCumChainEdges[%q] = %v, want to contain %q", tt.oldKBID, news, tt.newKBID)
+			if !found {
+				t.Errorf("no bulletinArchiveAmendments[*].IECumChain contains edge %q → %q", tt.oldKBID, tt.newKBID)
 			}
 		})
 	}
 }
 
-// TestBulletinArchiveSupersedes verifies known edges in the static
-// bulletinArchiveSupersedes map. The map captures supersedes that the frozen
-// BulletinSearch.xlsx omits but the Microsoft Learn bulletin archive records,
-// so any regression in its structure should fail this test.
+// TestBulletinArchiveSupersedes verifies known supersedes Add edges in the
+// per-bulletin amendments. Each bulletin's Supersedes[oldKB].Add lists the
+// new KBs that supersede oldKB (recovered from the bulletin's archive
+// markdown where BulletinSearch.xlsx omits the edge).
 func TestBulletinArchiveSupersedes(t *testing.T) {
 	tests := []struct {
-		name    string
-		oldKBID string
-		newKBID string
+		name       string
+		bulletinID string
+		oldKBID    string
+		newKBID    string
 	}{
 		{
-			name:    "MS13-054 Lync 2010 Attendee user install: 2827751 → 2843162 (Excel attributed Lync admin KB instead)",
-			oldKBID: "2827751",
-			newKBID: "2843162",
+			name:       "MS13-054 Lync 2010 Attendee user install: 2827751 → 2843162 (Excel attributed Lync admin KB instead)",
+			bulletinID: "MS13-054",
+			oldKBID:    "2827751",
+			newKBID:    "2843162",
 		},
 		{
-			name:    "MS13-054 Lync 2010 Attendee admin install: 2827752 → 2843163",
-			oldKBID: "2827752",
-			newKBID: "2843163",
+			name:       "MS13-054 Lync 2010 Attendee admin install: 2827752 → 2843163",
+			bulletinID: "MS13-054",
+			oldKBID:    "2827752",
+			newKBID:    "2843163",
 		},
 		{
-			name:    "MS14-029 IE Win Server: 2936068 → 2953522 (Excel missed)",
-			oldKBID: "2936068",
-			newKBID: "2953522",
+			name:       "MS14-029 IE Win Server: 2936068 → 2953522 (Excel missed)",
+			bulletinID: "MS14-029",
+			oldKBID:    "2936068",
+			newKBID:    "2953522",
 		},
 		{
-			name:    "MS14-035 IE Cum May → Jun via 2957689 → 2962872 (chain continuation Excel split)",
-			oldKBID: "2957689",
-			newKBID: "2962872",
+			name:       "MS14-037 IE 8 (Vista SP2) / IE 11 (Win7 SP1) IE Cum chain: 2957689 → 2962872",
+			bulletinID: "MS14-037",
+			oldKBID:    "2957689",
+			newKBID:    "2962872",
 		},
 		{
-			name:    "MS16-144 IE 9 Cumulative (Vista SP2): 3197655 → 3203621",
-			oldKBID: "3197655",
-			newKBID: "3203621",
+			name:       "MS16-144 IE 9 Cumulative (Vista SP2): 3197655 → 3203621",
+			bulletinID: "MS16-144",
+			oldKBID:    "3197655",
+			newKBID:    "3203621",
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			news, ok := bulletin.BulletinArchiveSupersedes[tt.oldKBID]
+			ad, ok := bulletin.BulletinArchiveAmendments[tt.bulletinID]
 			if !ok {
-				t.Fatalf("bulletinArchiveSupersedes has no entry for KB%s", tt.oldKBID)
+				t.Fatalf("bulletinArchiveAmendments has no entry for %s", tt.bulletinID)
 			}
-			if !slices.Contains(news, tt.newKBID) {
-				t.Errorf("bulletinArchiveSupersedes[%q] = %v, want to contain %q", tt.oldKBID, news, tt.newKBID)
+			adj, ok := ad.Supersedes[tt.oldKBID]
+			if !ok {
+				t.Fatalf("bulletinArchiveAmendments[%q].Supersedes has no entry for KB%s", tt.bulletinID, tt.oldKBID)
+			}
+			if !slices.Contains(adj.Add, tt.newKBID) {
+				t.Errorf("bulletinArchiveAmendments[%q].Supersedes[%q].Add = %v, want to contain %q", tt.bulletinID, tt.oldKBID, adj.Add, tt.newKBID)
 			}
 		})
 	}
 }
 
-// TestBulletinArchiveSupersedesOverride verifies known entries in the static
-// bulletinArchiveSupersedesOverride map. These are KB pairs where the frozen
+// TestBulletinArchiveSupersedesOverride verifies known supersedes Override
+// edges in the per-bulletin amendments. These are KB pairs where the frozen
 // BulletinSearch.xlsx Supersedes column attributes the supersedes to the
 // wrong component_kb (Excel mis-attribution); the Microsoft Learn archive
 // records a different ancestry. Each test asserts that the override would
@@ -263,50 +280,58 @@ func TestBulletinArchiveSupersedes(t *testing.T) {
 // MS13-054 fixture (testdata/fixtures/13/MS13-054.json): its two rows are
 // the Lync 2010 Attendee user/admin install components (KB2843162/2843163)
 // whose Excel-cited supersedes (MS13-041[2827750]) is dropped by this
-// override map and whose correct supersedes (KB2827751/2827752) is then
-// added by bulletinArchiveSupersedes. The TestExtract golden run asserts
-// the resulting microsoftkb files contain only the corrected edges and
-// that KB2827750 does not surface (no remaining inbound edges).
+// override and whose correct supersedes (KB2827751/2827752) is then added
+// by the same bulletin's Supersedes Add edges.
 func TestBulletinArchiveSupersedesOverride(t *testing.T) {
 	tests := []struct {
-		name    string
-		newKBID string
-		oldKBID string
+		name       string
+		bulletinID string
+		newKBID    string
+		oldKBID    string
 	}{
 		{
-			name:    "MS13-054 Lync 2010 Attendee user install (2843162): drop wrong edge from KB2827750 (which actually fixes the 64-bit pkg)",
-			newKBID: "2843162",
-			oldKBID: "2827750",
+			name:       "MS13-054 Lync 2010 Attendee user install (2843162): drop wrong edge from KB2827750 (which actually fixes the 64-bit pkg)",
+			bulletinID: "MS13-054",
+			newKBID:    "2843162",
+			oldKBID:    "2827750",
 		},
 		{
-			name:    "MS13-054 Lync 2010 Attendee admin install (2843163): drop wrong edge from KB2827750",
-			newKBID: "2843163",
-			oldKBID: "2827750",
+			name:       "MS13-054 Lync 2010 Attendee admin install (2843163): drop wrong edge from KB2827750",
+			bulletinID: "MS13-054",
+			newKBID:    "2843163",
+			oldKBID:    "2827750",
 		},
 		{
-			name:    "MS15-062 ADFS (3062577): drop self-supersedes (Excel claims KB3062577 supersedes itself)",
-			newKBID: "3062577",
-			oldKBID: "3062577",
+			name:       "MS15-062 ADFS (3062577): drop self-supersedes (Excel claims KB3062577 supersedes itself)",
+			bulletinID: "MS15-062",
+			newKBID:    "3062577",
+			oldKBID:    "3062577",
 		},
 		{
-			name:    "MS16-054 Word 2016 (3115094): drop wrong edge from KB3142577 (Excel cited a later unrelated KB)",
-			newKBID: "3115094",
-			oldKBID: "3142577",
+			name:       "MS16-054 Word 2016 (3115094): drop wrong edge from KB3142577 (Excel cited a later unrelated KB)",
+			bulletinID: "MS16-054",
+			newKBID:    "3115094",
+			oldKBID:    "3142577",
 		},
 		{
-			name:    "MS16-054 Word 2016 (3115094): drop wrong edge from KB3154208",
-			newKBID: "3115094",
-			oldKBID: "3154208",
+			name:       "MS16-054 Word 2016 (3115094): drop wrong edge from KB3154208",
+			bulletinID: "MS16-054",
+			newKBID:    "3115094",
+			oldKBID:    "3154208",
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			olds, ok := bulletin.BulletinArchiveSupersedesOverride[tt.newKBID]
+			ad, ok := bulletin.BulletinArchiveAmendments[tt.bulletinID]
 			if !ok {
-				t.Fatalf("bulletinArchiveSupersedesOverride has no entry for KB%s", tt.newKBID)
+				t.Fatalf("bulletinArchiveAmendments has no entry for %s", tt.bulletinID)
 			}
-			if !slices.Contains(olds, tt.oldKBID) {
-				t.Errorf("bulletinArchiveSupersedesOverride[%q] = %v, want to contain %q", tt.newKBID, olds, tt.oldKBID)
+			adj, ok := ad.Supersedes[tt.oldKBID]
+			if !ok {
+				t.Fatalf("bulletinArchiveAmendments[%q].Supersedes has no entry for KB%s", tt.bulletinID, tt.oldKBID)
+			}
+			if !slices.Contains(adj.Override, tt.newKBID) {
+				t.Errorf("bulletinArchiveAmendments[%q].Supersedes[%q].Override = %v, want to contain %q", tt.bulletinID, tt.oldKBID, adj.Override, tt.newKBID)
 			}
 		})
 	}
@@ -375,8 +400,8 @@ func Test_normalizeArchiveComponentKey(t *testing.T) {
 			want: "Microsoft Project 2000",
 		},
 		// MS06-060 is intentionally absent from normalizeArchiveComponentKey
-		// — its NA cells are captured by KB-keyed entries in
-		// bulletinArchiveKBNotApplicable (KB923088/923089/923090/924998/924999),
+		// — its NA cells are captured by KB-scoped Drop entries in
+		// bulletinArchiveAmendments (KB923088/923089/923090/924998/924999),
 		// not via component-keyed narrowing. Verify the default branch returns
 		// "" so the row passes through to the KB-keyed filter.
 		{
@@ -434,10 +459,11 @@ func Test_normalizeArchiveComponentKey(t *testing.T) {
 		},
 		// Mixed-applicability bulletins return the whitespace-normalized
 		// affected_product as the inner key, so the filter looks the xlsx
-		// label up in bulletinArchiveComponentNotApplicable after the same
-		// whitespace normalization (strings.Fields/Join collapse). Verify
-		// that the dispatch returns the product string (not empty) for a few
-		// representative bulletins across MS12-, MS15-, MS16-, and MS17-.
+		// label up against the Component-scoped Drop entries in
+		// bulletinArchiveAmendments after the same whitespace normalization
+		// (strings.Fields/Join collapse). Verify that the dispatch returns the
+		// product string (not empty) for a few representative bulletins across
+		// MS12-, MS15-, MS16-, and MS17-.
 		{
 			name: "MS16-106 mixed-applicability: returns affected_product (Win Server 2008 SP2)",
 			args: args{bulletinID: "MS16-106", product: "Windows Server 2008 for 32-bit Systems Service Pack 2", component: ""},
@@ -473,28 +499,31 @@ func Test_normalizeArchiveComponentKey(t *testing.T) {
 	}
 }
 
-// TestBulletinArchiveNotApplicable verifies known entries in the two static
-// maps used to correct Excel's lossy per-CVE attribution. Both maps are
-// regenerated from the frozen Bulletin archive markdown corpus (1554
-// bulletins, retired April 2017), so any regression in their structure
-// (e.g., a generator change dropping a recognized header label, or
-// stripping a CVE attribution) should fail this test. End-to-end coverage
-// that the filter actually drops the over-attributed CVEs is provided by
-// the MS14-010 golden test.
+// TestBulletinArchiveNotApplicable verifies known KB-scoped and
+// Component-scoped Drop entries in bulletinArchiveAmendments, used to correct
+// Excel's lossy per-CVE attribution. The amendments are regenerated from the
+// frozen Bulletin archive markdown corpus (1554 bulletins, retired April
+// 2017), so any regression in their structure (e.g., a generator change
+// dropping a recognized header label, or stripping a CVE attribution) should
+// fail this test. End-to-end coverage that the filter actually drops the
+// over-attributed CVEs is provided by the MS14-010 golden test.
 func TestBulletinArchiveNotApplicable(t *testing.T) {
 	t.Run("KB-keyed", func(t *testing.T) {
 		tests := []struct {
 			name        string
+			bulletinID  string
 			componentKB string
 			cve         string
 		}{
 			{
 				name:        "MS16-007 KB3108664 NA for CVE-2016-0019 (per-CVE columns under \"Operating System\" header)",
+				bulletinID:  "MS16-007",
 				componentKB: "3108664",
 				cve:         "CVE-2016-0019",
 			},
 			{
 				name:        "MS13-040 KB2804576 (.NET 4) NA for CVE-2013-1337 (under \"Affected Software\" header)",
+				bulletinID:  "MS13-040",
 				componentKB: "2804576",
 				cve:         "CVE-2013-1337",
 			},
@@ -504,57 +533,74 @@ func TestBulletinArchiveNotApplicable(t *testing.T) {
 			// NA cell drops CVE-2006-4693 from all four rows simultaneously.
 			{
 				name:        "MS06-060 KB923089 (Word 2002 SP3 + Works Suite 2004/2005/2006) NA for CVE-2006-4693",
+				bulletinID:  "MS06-060",
 				componentKB: "923089",
 				cve:         "CVE-2006-4693",
 			},
 			{
 				name:        "MS06-060 KB924998 (Office v. X for Mac) NA for CVE-2006-3651 (Word for Mac column)",
+				bulletinID:  "MS06-060",
 				componentKB: "924998",
 				cve:         "CVE-2006-3651",
 			},
 			{
 				name:        "MS06-060 KB924999 (Word 2004 for Mac) NA for CVE-2006-4534 (Word for Mac column)",
+				bulletinID:  "MS06-060",
 				componentKB: "924999",
 				cve:         "CVE-2006-4534",
 			},
 			{
 				name:        "MS13-004 KB2742613 (.NET 4.5) NA for CVE-2013-0001 (explicit \"Not applicable\" cell; KB appears as \"(KB2742613)\" — covered by extended regex)",
+				bulletinID:  "MS13-004",
 				componentKB: "2742613",
 				cve:         "CVE-2013-0001",
 			},
 			{
 				name:        "MS16-106 KB3185911 NA for CVE-2016-3356 (markdown uses \"Not applicable\" — uniformly NA across all 19 xlsx rows of this shared KB)",
+				bulletinID:  "MS16-106",
 				componentKB: "3185911",
 				cve:         "CVE-2016-3356",
 			},
 			{
 				name:        "MS16-106 KB3189866 (Windows 10 Version 1607) NA for CVE-2016-3349 (markdown uses \"Not affected\" — exercises the legacy-marker predicate; uniformly NA across both xlsx rows of this shared KB)",
+				bulletinID:  "MS16-106",
 				componentKB: "3189866",
 				cve:         "CVE-2016-3349",
 			},
 			{
 				name:        "MS16-107 KB3185852 (Microsoft Visio 2016) NA for CVE-2016-3357 (multi-table-KB bulletin where per-(KB, CVE) is single-table and uniformly NA — newly reachable after the per-(KB, CVE) classification fix)",
+				bulletinID:  "MS16-107",
 				componentKB: "3185852",
 				cve:         "CVE-2016-3357",
 			},
 		}
 		for _, tt := range tests {
 			t.Run(tt.name, func(t *testing.T) {
-				cves, ok := bulletin.BulletinArchiveKBNotApplicable[tt.componentKB]
+				ad, ok := bulletin.BulletinArchiveAmendments[tt.bulletinID]
 				if !ok {
-					t.Fatalf("bulletinArchiveKBNotApplicable has no entry for KB%s", tt.componentKB)
+					t.Fatalf("bulletinArchiveAmendments has no entry for %s", tt.bulletinID)
 				}
-				if !slices.Contains(cves, tt.cve) {
-					t.Errorf("bulletinArchiveKBNotApplicable[%q] = %v, want to contain %q", tt.componentKB, cves, tt.cve)
+				found := false
+				for _, adj := range ad.CVEAdjustments {
+					if adj.KB != tt.componentKB {
+						continue
+					}
+					if slices.Contains(adj.Drop, tt.cve) {
+						found = true
+						break
+					}
+				}
+				if !found {
+					t.Errorf("bulletinArchiveAmendments[%q] CVEAdjustments has no KB=%q Drop %q", tt.bulletinID, tt.componentKB, tt.cve)
 				}
 			})
 		}
 	})
 	t.Run("Per-bulletin inner-key", func(t *testing.T) {
-		// bulletinArchiveComponentNotApplicable's inner key has three flavors
-		// (see the map's doc comment): IE/Edge vocabulary keys, MS06-* column
-		// header strings, and whitespace-normalized affected_product strings
-		// for the mixed-applicability bulletins. This subtest covers all three.
+		// The Component-scoped Drop entries' inner key has three flavors:
+		// IE/Edge vocabulary keys, MS06-* column header strings, and
+		// whitespace-normalized affected_product strings for the
+		// mixed-applicability bulletins. This subtest covers all three.
 		tests := []struct {
 			name       string
 			bulletinID string
@@ -593,7 +639,7 @@ func TestBulletinArchiveNotApplicable(t *testing.T) {
 				innerKey:   "Microsoft Project 2000",
 				cve:        "CVE-2006-0033",
 			},
-			// MS06-060 NA cells are encoded in bulletinArchiveKBNotApplicable
+			// MS06-060 NA cells are encoded as KB-scoped Drop entries
 			// (KB-keyed), not here. See the corresponding KB-keyed test cases.
 			{
 				name:       "MS06-078 WMP 6.4 NA for CVE-2006-6134",
@@ -650,35 +696,41 @@ func TestBulletinArchiveNotApplicable(t *testing.T) {
 			// MS15-128 / KB3116869 / CVE-2015-6108 is "Not applicable" in the
 			// OS-level table but "Critical Remote Code Execution" in the same
 			// bulletin's component-level table, with the same xlsx
-			// affected_product label for both. A static (bulletin, component)
-			// NA map cannot disambiguate at this grain. This case is now
-			// handled by bulletinArchiveComponentReattribution, which splits
-			// the OS-only xlsx row into an OS-only row + a synthesized
-			// "OS + .NET Framework 3.5" row carrying CVE-2015-6108.
+			// affected_product label for both. A (bulletin, component) NA
+			// Drop entry cannot disambiguate at this grain. This case is now
+			// handled by the bulletin's RowSplits in bulletinArchiveAmendments,
+			// which splits the OS-only xlsx row into an OS-only row + a
+			// synthesized "OS + .NET Framework 3.5" row carrying CVE-2015-6108.
 		}
 		for _, tt := range tests {
 			t.Run(tt.name, func(t *testing.T) {
-				perKey, ok := bulletin.BulletinArchiveComponentNotApplicable[tt.bulletinID]
+				ad, ok := bulletin.BulletinArchiveAmendments[tt.bulletinID]
 				if !ok {
-					t.Fatalf("bulletinArchiveComponentNotApplicable has no entry for %s", tt.bulletinID)
+					t.Fatalf("bulletinArchiveAmendments has no entry for %s", tt.bulletinID)
 				}
-				cves, ok := perKey[tt.innerKey]
-				if !ok {
-					t.Fatalf("bulletinArchiveComponentNotApplicable[%q][%q] missing", tt.bulletinID, tt.innerKey)
+				found := false
+				for _, adj := range ad.CVEAdjustments {
+					if adj.Component != tt.innerKey {
+						continue
+					}
+					if slices.Contains(adj.Drop, tt.cve) {
+						found = true
+						break
+					}
 				}
-				if !slices.Contains(cves, tt.cve) {
-					t.Errorf("bulletinArchiveComponentNotApplicable[%q][%q] = %v, want to contain %q", tt.bulletinID, tt.innerKey, cves, tt.cve)
+				if !found {
+					t.Errorf("bulletinArchiveAmendments[%q] CVEAdjustments has no Drop %q for component %q", tt.bulletinID, tt.cve, tt.innerKey)
 				}
 			})
 		}
 	})
 }
 
-// TestBulletinArchiveCVECorrections verifies known entries in the static
-// bulletinArchiveCVECorrections map. The map captures per-bulletin
-// BulletinSearch.xlsx CVE tokens that do not appear in the bulletin's
-// archive markdown, mapped either to a remapped canonical CVE (non-empty
-// fix) or to a drop action (empty fix). Both branches are exercised below.
+// TestBulletinArchiveCVECorrections verifies known CVE token remap/drop
+// entries in bulletinArchiveAmendments. Each per-bulletin CVEAdjustments
+// list may carry a Remap map keyed by the xlsx CVE token; a non-empty
+// value remaps to a canonical CVE, an empty value drops the token.
+// Both branches are exercised below.
 func TestBulletinArchiveCVECorrections(t *testing.T) {
 	tests := []struct {
 		name       string
@@ -730,19 +782,27 @@ func TestBulletinArchiveCVECorrections(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			perBulletin, ok := bulletin.BulletinArchiveCVECorrections[tt.bulletinID]
+			ad, ok := bulletin.BulletinArchiveAmendments[tt.bulletinID]
 			if !ok {
 				if tt.wantOK {
-					t.Fatalf("bulletinArchiveCVECorrections has no entry for %s", tt.bulletinID)
+					t.Fatalf("bulletinArchiveAmendments has no entry for %s", tt.bulletinID)
 				}
 				return
 			}
-			fix, ok := perBulletin[tt.token]
-			if ok != tt.wantOK {
-				t.Errorf("bulletinArchiveCVECorrections[%q][%q] ok = %v, want %v", tt.bulletinID, tt.token, ok, tt.wantOK)
+			var fix string
+			found := false
+			for _, adj := range ad.CVEAdjustments {
+				if v, ok := adj.Remap[tt.token]; ok {
+					fix = v
+					found = true
+					break
+				}
+			}
+			if found != tt.wantOK {
+				t.Errorf("bulletinArchiveAmendments[%q] Remap[%q] ok = %v, want %v", tt.bulletinID, tt.token, found, tt.wantOK)
 			}
 			if fix != tt.wantFix {
-				t.Errorf("bulletinArchiveCVECorrections[%q][%q] = %q, want %q", tt.bulletinID, tt.token, fix, tt.wantFix)
+				t.Errorf("bulletinArchiveAmendments[%q] Remap[%q] = %q, want %q", tt.bulletinID, tt.token, fix, tt.wantFix)
 			}
 		})
 	}

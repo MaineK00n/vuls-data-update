@@ -1,16 +1,9 @@
 package bulletin
 
 var (
-	ProductName                           = productName
-	IECumChainEdges                       = ieCumChainEdges
-	BulletinArchiveSupersedes             = bulletinArchiveSupersedes
-	BulletinArchiveSupersedesOverride     = bulletinArchiveSupersedesOverride
-	NormalizeArchiveComponentKey          = normalizeArchiveComponentKey
-	BulletinArchiveKBNotApplicable        = bulletinArchiveKBNotApplicable
-	BulletinArchiveComponentNotApplicable = bulletinArchiveComponentNotApplicable
-	BulletinArchiveCVECorrections         = bulletinArchiveCVECorrections
-	BulletinArchiveComponentReattribution = bulletinArchiveComponentReattribution
-	ApplyComponentReattributions          = applyComponentReattributions
-	BulletinArchiveCVEAdditions           = bulletinArchiveCVEAdditions
-	ApplyCVEAdditions                     = applyCVEAdditions
+	ProductName                  = productName
+	NormalizeArchiveComponentKey = normalizeArchiveComponentKey
+	BulletinArchiveAmendments    = bulletinArchiveAmendments
+	ApplyComponentReattributions = applyComponentReattributions
+	ApplyCVEAdditions            = applyCVEAdditions
 )
