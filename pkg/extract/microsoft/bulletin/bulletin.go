@@ -600,10 +600,17 @@ type rowSplit struct {
 	CVEs      []string
 }
 
-// supersedesAdjust amends the supersedes edges for a single KB.
-// Add: superseded-by KBs to union into the global kbSupersededBy[KB] set.
-// Override: superseded-by KBs that BulletinSearch.xlsx incorrectly
-// attributes to this KB and should be removed from kbSupersededBy[KB].
+// supersedesAdjust amends the supersedes edges for a single old KB — the
+// Supersedes map key is always that old KB, and both fields list new KBs
+// (the KBs that supersede it), i.e. members of the kbSupersededBy[oldKB] set:
+//   - Add:      new KBs to union into kbSupersededBy[oldKB] — edges the
+//     bulletin's archive markdown documents but BulletinSearch.xlsx omits.
+//   - Override: new KBs to remove from kbSupersededBy[oldKB] — edges
+//     BulletinSearch.xlsx incorrectly attributes to oldKB.
+//
+// Keeping the outer key consistently the old KB (rather than keying Override
+// by the new KB) means one record reads as "for this old KB, add these
+// superseders and drop those".
 type supersedesAdjust struct {
 	Add      []string
 	Override []string
@@ -1689,7 +1696,7 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 	"MS13-032": {
 		Supersedes: map[string]supersedesAdjust{
 			"2621146": {Add: []string{"2772930"}},
-			"2772930": {Override: []string{"2626416"}},
+			"2626416": {Override: []string{"2772930"}},
 		},
 	},
 	"MS13-033": {
@@ -1814,11 +1821,10 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 	},
 	"MS13-054": {
 		Supersedes: map[string]supersedesAdjust{
-			"2817480": {Override: []string{"2598253"}},
+			"2598253": {Override: []string{"2817480"}},
+			"2827750": {Override: []string{"2843162", "2843163"}},
 			"2827751": {Add: []string{"2843162"}},
 			"2827752": {Add: []string{"2843163"}},
-			"2843162": {Override: []string{"2827750"}},
-			"2843163": {Override: []string{"2827750"}},
 		},
 	},
 	"MS13-055": {
@@ -2358,9 +2364,9 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 	},
 	"MS14-084": {
 		Supersedes: map[string]supersedesAdjust{
-			"3012168": {Override: []string{"2909213"}},
-			"3012172": {Override: []string{"2909212"}},
-			"3012176": {Override: []string{"2909210"}},
+			"2909210": {Override: []string{"3012176"}},
+			"2909212": {Override: []string{"3012172"}},
+			"2909213": {Override: []string{"3012168"}},
 		},
 	},
 	"MS15-009": {
@@ -2373,7 +2379,7 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Internet Explorer 11", Drop: []string{"CVE-2014-8967", "CVE-2015-0019", "CVE-2015-0021", "CVE-2015-0023", "CVE-2015-0025", "CVE-2015-0028", "CVE-2015-0029", "CVE-2015-0044", "CVE-2015-0045", "CVE-2015-0048", "CVE-2015-0049", "CVE-2015-0050", "CVE-2015-0051", "CVE-2015-0053", "CVE-2015-0067"}},
 		},
 		Supersedes: map[string]supersedesAdjust{
-			"3021952": {Override: []string{"3012176"}},
+			"3012176": {Override: []string{"3021952"}},
 			"3029449": {Add: []string{"3021952"}},
 		},
 		IECumChain: map[string][]string{
@@ -2449,7 +2455,7 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "3038999", Drop: []string{"CVE-2015-0086", "CVE-2015-0097", "CVE-2015-1633", "CVE-2015-1636"}},
 		},
 		Supersedes: map[string]supersedesAdjust{
-			"2956138": {Override: []string{"2956058"}},
+			"2956058": {Override: []string{"2956138"}},
 		},
 	},
 	"MS15-025": {CVEAdjustments: []cveAdjustment{{KB: "3038680", Drop: []string{"CVE-2015-0073"}}}},
@@ -2732,7 +2738,7 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 	},
 	"MS15-091": {
 		Supersedes: map[string]supersedesAdjust{
-			"3081455": {Override: []string{"3081444"}},
+			"3081444": {Override: []string{"3081455"}},
 		},
 	},
 	"MS15-093": {
@@ -2751,7 +2757,7 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Internet Explorer 11 on Windows 10", Drop: []string{"CVE-2015-2483", "CVE-2015-2487", "CVE-2015-2490", "CVE-2015-2491", "CVE-2015-2493", "CVE-2015-2500", "CVE-2015-2501", "CVE-2015-2541"}},
 		},
 		Supersedes: map[string]supersedesAdjust{
-			"3087038": {Override: []string{"3081444"}},
+			"3081444": {Override: []string{"3087038"}},
 		},
 		IECumChain: map[string][]string{
 			"3087985": {"3087038"},
@@ -2828,7 +2834,7 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Internet Explorer 11 on Windows 10", Drop: []string{"CVE-2015-6042", "CVE-2015-6044", "CVE-2015-6048", "CVE-2015-6050", "CVE-2015-6051"}},
 		},
 		Supersedes: map[string]supersedesAdjust{
-			"3097617": {Override: []string{"3081455"}},
+			"3081455": {Override: []string{"3097617"}},
 		},
 		IECumChain: map[string][]string{
 			"3081444": {"3097617"},
@@ -2874,7 +2880,8 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Internet Explorer 11 on Windows 10", Drop: []string{"CVE-2015-2427", "CVE-2015-6082"}},
 		},
 		Supersedes: map[string]supersedesAdjust{
-			"3105213": {Override: []string{"3096448", "3097617"}},
+			"3096448": {Override: []string{"3105213"}},
+			"3097617": {Override: []string{"3105213"}},
 		},
 		IECumChain: map[string][]string{
 			"3093983": {"3100773"},
@@ -2942,18 +2949,16 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "3102925", Drop: []string{"CVE-2015-2503", "CVE-2015-6091", "CVE-2015-6092", "CVE-2015-6093"}},
 		},
 		Supersedes: map[string]supersedesAdjust{
-			"2899516": {Override: []string{"2553428"}},
-			"2965313": {Override: []string{"3085514"}},
-			"3054793": {Override: []string{"3085583"}},
-			"3085584": {Override: []string{"2956151"}},
-			"3085614": {Override: []string{"3055033"}},
-			"3101360": {Override: []string{"2687413", "3055030"}},
-			"3101370": {Override: []string{"3054929", "3055029"}},
-			"3101371": {Override: []string{"3085583"}},
-			"3101499": {Override: []string{"2956151"}},
-			"3101506": {Override: []string{"3055029"}},
-			"3101512": {Override: []string{"3055030"}},
-			"3101526": {Override: []string{"2553147"}},
+			"2553147": {Override: []string{"3101526"}},
+			"2553428": {Override: []string{"2899516"}},
+			"2687413": {Override: []string{"3101360"}},
+			"2956151": {Override: []string{"3085584", "3101499"}},
+			"3054929": {Override: []string{"3101370"}},
+			"3055029": {Override: []string{"3101370", "3101506"}},
+			"3055030": {Override: []string{"3101360", "3101512"}},
+			"3055033": {Override: []string{"3085614"}},
+			"3085514": {Override: []string{"2965313"}},
+			"3085583": {Override: []string{"3054793", "3101371"}},
 		},
 	},
 	"MS15-118": {
@@ -2979,8 +2984,8 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Internet Explorer 11 on Windows 10", Drop: []string{"CVE-2015-6134", "CVE-2015-6141", "CVE-2015-6143", "CVE-2015-6145", "CVE-2015-6146", "CVE-2015-6147", "CVE-2015-6149", "CVE-2015-6150", "CVE-2015-6152", "CVE-2015-6162", "CVE-2015-6164"}},
 		},
 		Supersedes: map[string]supersedesAdjust{
-			"3116869": {Override: []string{"3105213"}},
-			"3116900": {Override: []string{"3105211"}},
+			"3105211": {Override: []string{"3116900"}},
+			"3105213": {Override: []string{"3116869"}},
 		},
 		IECumChain: map[string][]string{
 			"3100773": {"3104002"},
@@ -3049,8 +3054,8 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Internet Explorer 8", Drop: []string{"CVE-2016-0005"}},
 		},
 		Supersedes: map[string]supersedesAdjust{
-			"3124263": {Override: []string{"3116900"}},
-			"3124266": {Override: []string{"3116869"}},
+			"3116869": {Override: []string{"3124266"}},
+			"3116900": {Override: []string{"3124263"}},
 		},
 		IECumChain: map[string][]string{
 			"3104002": {"3124275"},
@@ -3149,7 +3154,7 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2016-0042", "CVE-2016-0049"}},
 		},
 		Supersedes: map[string]supersedesAdjust{
-			"3126041": {Override: []string{"3121918"}},
+			"3121918": {Override: []string{"3126041"}},
 		},
 	},
 	"MS16-015": {
@@ -3184,7 +3189,7 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Microsoft Word for Mac 2011", Drop: []string{"CVE-2016-0054"}},
 		},
 		Supersedes: map[string]supersedesAdjust{
-			"3137721": {Override: []string{"3133699"}},
+			"3133699": {Override: []string{"3137721"}},
 		},
 	},
 	"MS16-018": {
@@ -3241,7 +3246,7 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 	},
 	"MS16-035": {
 		Supersedes: map[string]supersedesAdjust{
-			"3135988": {Override: []string{"3099862"}},
+			"3099862": {Override: []string{"3135988"}},
 		},
 	},
 	"MS16-036": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2015-8652", "CVE-2015-8655", "CVE-2015-8658", "CVE-2016-0960", "CVE-2016-0961", "CVE-2016-0962", "CVE-2016-0963", "CVE-2016-0986", "CVE-2016-0987", "CVE-2016-0988", "CVE-2016-0989", "CVE-2016-0990", "CVE-2016-0991", "CVE-2016-0993", "CVE-2016-0994", "CVE-2016-0995", "CVE-2016-0996", "CVE-2016-1001", "CVE-2016-1005", "CVE-2016-1010"}}}},
@@ -3345,30 +3350,19 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 		Supersedes: map[string]supersedesAdjust{
 			"2760585": {Add: []string{"2984943"}},
 			"2760591": {Add: []string{"2984938"}},
-			"2984938": {Override: []string{"3114983"}},
-			"2984943": {Override: []string{"3114990"}},
-			"3054841": {Add: []string{"3101520"}},
-			"3054848": {Add: []string{"3054984"}},
-			"3054984": {Override: []string{"3054841"}},
-			"3101520": {Override: []string{"3114993"}},
-			"3114486": {Add: []string{"3115016"}},
-			"3114855": {Add: []string{"3115094"}},
-			"3114982": {Add: []string{"3115115"}},
-			"3114983": {Add: []string{"3115116"}},
-			"3114987": {Add: []string{"3115132"}},
-			"3114990": {Add: []string{"3115121"}},
-			"3114993": {Add: []string{"3115123"}},
-			"3115016": {Override: []string{"3114937"}},
-			"3115025": {Override: []string{"3114486"}},
-			"3115094": {Override: []string{"3142577", "3154208"}},
-			"3115103": {Override: []string{"3114855"}},
-			"3115116": {Override: []string{"3114990"}},
-			"3115121": {Override: []string{"3054848"}},
+			"3054841": {Add: []string{"3101520"}, Override: []string{"3054984"}},
+			"3054848": {Add: []string{"3054984"}, Override: []string{"3115121"}},
+			"3114486": {Add: []string{"3115016"}, Override: []string{"3115025"}},
+			"3114855": {Add: []string{"3115094"}, Override: []string{"3115103"}},
+			"3114937": {Override: []string{"3115016"}},
+			"3114982": {Add: []string{"3115115"}, Override: []string{"3155776"}},
+			"3114983": {Add: []string{"3115116"}, Override: []string{"2984938"}},
+			"3114987": {Add: []string{"3115132"}, Override: []string{"3155777"}},
+			"3114990": {Add: []string{"3115121"}, Override: []string{"2984943", "3115116"}},
+			"3114993": {Add: []string{"3115123"}, Override: []string{"3101520"}},
 			"3115309": {Add: []string{"3115464"}},
-			"3142577": {Add: []string{"3155777"}},
-			"3154208": {Add: []string{"3155776"}},
-			"3155776": {Override: []string{"3114982"}},
-			"3155777": {Override: []string{"3114987"}},
+			"3142577": {Add: []string{"3155777"}, Override: []string{"3115094"}},
+			"3154208": {Add: []string{"3155776"}, Override: []string{"3115094"}},
 		},
 	},
 	"MS16-055": {
@@ -3454,35 +3448,26 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "3165798", Drop: []string{"CVE-2016-3233", "CVE-2016-3234", "CVE-2016-3235"}},
 		},
 		Supersedes: map[string]supersedesAdjust{
-			"2596915": {Override: []string{"2687505"}},
-			"3114421": {Add: []string{"3114740"}},
+			"2687505": {Override: []string{"2596915"}},
+			"3114402": {Override: []string{"3115130"}},
+			"3114421": {Add: []string{"3114740"}, Override: []string{"3115107"}},
+			"3114489": {Override: []string{"3115243"}},
+			"3114511": {Override: []string{"3115144"}},
 			"3114527": {Add: []string{"3115144"}},
-			"3114740": {Override: []string{"3115116"}},
-			"3114872": {Override: []string{"3115123"}},
+			"3114888": {Override: []string{"3115170", "3115198"}},
 			"3114892": {Add: []string{"3115107"}},
-			"3114895": {Add: []string{"3115111"}},
+			"3114895": {Add: []string{"3115111"}, Override: []string{"3165798"}},
 			"3114927": {Add: []string{"3115014"}},
 			"3114934": {Add: []string{"3115170"}},
-			"3115014": {Override: []string{"3115121"}},
-			"3115020": {Override: []string{"3115025"}},
-			"3115041": {Override: []string{"3115094"}},
-			"3115107": {Override: []string{"3114421"}},
-			"3115111": {Override: []string{"3115115"}},
-			"3115115": {Add: []string{"3115194"}},
-			"3115116": {Add: []string{"3115195"}},
+			"3115025": {Override: []string{"3115020"}},
+			"3115094": {Override: []string{"3115041"}},
+			"3115115": {Add: []string{"3115194"}, Override: []string{"3115111"}},
+			"3115116": {Add: []string{"3115195"}, Override: []string{"3114740", "3115196"}},
 			"3115117": {Add: []string{"3115196"}},
+			"3115121": {Override: []string{"3115014", "3115195", "3115244"}},
+			"3115123": {Override: []string{"3114872"}},
 			"3115124": {Add: []string{"3115244"}},
-			"3115130": {Override: []string{"3114402"}},
-			"3115132": {Add: []string{"3115187"}},
-			"3115144": {Override: []string{"3114511"}},
-			"3115170": {Override: []string{"3114888"}},
-			"3115194": {Override: []string{"3115132"}},
-			"3115195": {Override: []string{"3115121"}},
-			"3115196": {Override: []string{"3115116"}},
-			"3115198": {Override: []string{"3114888"}},
-			"3115243": {Override: []string{"3114489"}},
-			"3115244": {Override: []string{"3115121"}},
-			"3165798": {Override: []string{"3114895"}},
+			"3115132": {Add: []string{"3115187"}, Override: []string{"3115194"}},
 		},
 	},
 	"MS16-073": {
@@ -3754,12 +3739,11 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Microsoft Word 2016 for Mac", Drop: []string{"CVE-2016-3358", "CVE-2016-3360", "CVE-2016-3366"}},
 		},
 		Supersedes: map[string]supersedesAdjust{
+			"3115118": {Override: []string{"3115487", "3118280"}},
 			"3115254": {Add: []string{"3115487"}},
-			"3115487": {Override: []string{"3115118"}},
-			"3118268": {Override: []string{"3115262"}},
-			"3118280": {Override: []string{"3115118"}},
-			"3118284": {Override: []string{"3115452"}},
-			"3118292": {Override: []string{"3115272"}},
+			"3115262": {Override: []string{"3118268"}},
+			"3115272": {Override: []string{"3118292"}},
+			"3115452": {Override: []string{"3118284"}},
 		},
 	},
 	// MS16-108 covers the Oracle Outside In Libraries Vulnerabilities
@@ -3868,8 +3852,8 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 	},
 	"MS16-130": {
 		Supersedes: map[string]supersedesAdjust{
-			"3193418": {Override: []string{"3033889"}},
-			"3196718": {Override: []string{"3184122"}},
+			"3033889": {Override: []string{"3193418"}},
+			"3184122": {Override: []string{"3196718"}},
 		},
 		IECumChain: map[string][]string{
 			"3185319": {"3197867", "3197876"},
@@ -3880,7 +3864,7 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 	},
 	"MS16-131": {
 		Supersedes: map[string]supersedesAdjust{
-			"3198218": {Override: []string{"3190847"}},
+			"3190847": {Override: []string{"3198218"}},
 		},
 	},
 	"MS16-132": {
@@ -3924,7 +3908,7 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Microsoft Word for Mac 2011", Drop: []string{"CVE-2016-7213", "CVE-2016-7228", "CVE-2016-7229", "CVE-2016-7231", "CVE-2016-7236"}},
 		},
 		Supersedes: map[string]supersedesAdjust{
-			"3198798": {Override: []string{"3118307"}},
+			"3118307": {Override: []string{"3198798"}},
 		},
 	},
 	"MS16-134": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2016-0026", "CVE-2016-3332", "CVE-2016-3333", "CVE-2016-3334", "CVE-2016-3335", "CVE-2016-3338", "CVE-2016-3340", "CVE-2016-3342", "CVE-2016-3343", "CVE-2016-7184"}}}},
@@ -3939,8 +3923,8 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2016-7255"}},
 		},
 		Supersedes: map[string]supersedesAdjust{
+			"3177725": {Override: []string{"3194371"}},
 			"3184122": {Add: []string{"3194371"}},
-			"3194371": {Override: []string{"3177725"}},
 		},
 	},
 	"MS16-136": {
@@ -3966,7 +3950,7 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "3200970", Drop: []string{"CVE-2016-7220"}},
 		},
 		Supersedes: map[string]supersedesAdjust{
-			"3198510": {Override: []string{"3081320"}},
+			"3081320": {Override: []string{"3198510"}},
 		},
 	},
 	"MS16-138": {
@@ -4175,7 +4159,7 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 		},
 		Supersedes: map[string]supersedesAdjust{
 			"2889841": {Add: []string{"3178688"}},
-			"3178688": {Override: []string{"3115131"}},
+			"3115131": {Override: []string{"3178688"}},
 		},
 	},
 	"MS17-014": {
@@ -4708,8 +4692,8 @@ func (e extractor) extract(rows []bulletin.Bulletin) ([]dataTypes.Data, []micros
 		}
 	}
 	for _, ad := range bulletinArchiveAmendments {
-		for newKBID, adj := range ad.Supersedes {
-			for _, oldKBID := range adj.Override {
+		for oldKBID, adj := range ad.Supersedes {
+			for _, newKBID := range adj.Override {
 				news, ok := kbSupersededBy[oldKBID]
 				if !ok {
 					continue

@@ -326,12 +326,12 @@ func TestBulletinArchiveSupersedesOverride(t *testing.T) {
 			if !ok {
 				t.Fatalf("bulletinArchiveAmendments has no entry for %s", tt.bulletinID)
 			}
-			adj, ok := ad.Supersedes[tt.newKBID]
+			adj, ok := ad.Supersedes[tt.oldKBID]
 			if !ok {
-				t.Fatalf("bulletinArchiveAmendments[%q].Supersedes has no entry for KB%s", tt.bulletinID, tt.newKBID)
+				t.Fatalf("bulletinArchiveAmendments[%q].Supersedes has no entry for KB%s", tt.bulletinID, tt.oldKBID)
 			}
-			if !slices.Contains(adj.Override, tt.oldKBID) {
-				t.Errorf("bulletinArchiveAmendments[%q].Supersedes[%q].Override = %v, want to contain %q", tt.bulletinID, tt.newKBID, adj.Override, tt.oldKBID)
+			if !slices.Contains(adj.Override, tt.newKBID) {
+				t.Errorf("bulletinArchiveAmendments[%q].Supersedes[%q].Override = %v, want to contain %q", tt.bulletinID, tt.oldKBID, adj.Override, tt.newKBID)
 			}
 		})
 	}
