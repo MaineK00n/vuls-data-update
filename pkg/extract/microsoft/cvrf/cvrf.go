@@ -98,6 +98,26 @@ type extractor struct {
 	r        *utiljson.JSONReader
 }
 
+// cvrfExcludedIDs lists vulnerability IDs (the cvrf.Vulnerability.CVE value)
+// that Microsoft published but that must not be extracted: malformed or
+// explicitly-deprecated entries whose ID is not a usable CVE identifier. The
+// advisory text of these flags them as unusable (e.g. a duplicate placeholder
+// titled "... do not use this one"), so extracting them would surface a bogus,
+// uncorrelatable vulnerability ID. Matching entries are skipped in extract()
+// before any processing, so they contribute neither data nor KB aggregation.
+var cvrfExcludedIDs = map[string]struct{}{
+	"CVE-2023-38039 mariner - do not use this one": {},
+	// "-M" duplicates: Microsoft re-published these open-source component CVEs
+	// — already extracted under their canonical CVE IDs — with a CBL-Mariner /
+	// Azure Linux-only product set and a malformed "-M" ID. After the
+	// CBL-Mariner / Azure Linux product skip they yield zero detection
+	// segments, so keeping them only adds a bogus, uncorrelatable CVE ID.
+	"CVE-2022-2601-M":    {},
+	"CVE-2022-3775-M":    {},
+	"CVE-2023-32002 - M": {},
+	"CVE-2024-0132-M":    {},
+}
+
 func Extract(args string, opts ...Option) error {
 	options := &options{
 		dir: filepath.Join(util.CacheDir(), "extract", "microsoft", "cvrf"),
@@ -244,6 +264,9 @@ func (e extractor) extract(c cvrf.CVRF) ([]dataTypes.Data, []microsoftkbTypes.KB
 	kbm := make(map[string]microsoftkbTypes.KB)
 
 	for _, v := range c.Vulnerability {
+		if _, ok := cvrfExcludedIDs[v.CVE]; ok {
+			continue
+		}
 		var description string
 		for _, note := range v.Notes.Note {
 			if note.Type == "Description" && strings.TrimSpace(note.Text) != "" {
@@ -331,13 +354,14 @@ func collectBranch(b cvrf.Branch, m map[string]string) {
 }
 
 type productInfo struct {
-	status        string
-	severity      string
-	impact        string
-	exploitStatus string
-	cvss          *severityTypes.Severity
-	mitigations   []remediationTypes.Remediation
-	workarounds   []remediationTypes.Remediation
+	status         string
+	severity       string
+	impact         string
+	exploitStatus  string
+	exploitability string
+	cvss           *severityTypes.Severity
+	mitigations    []remediationTypes.Remediation
+	workarounds    []remediationTypes.Remediation
 }
 
 func buildProductInfoMap(v cvrf.Vulnerability) (map[string]productInfo, error) {
@@ -347,8 +371,9 @@ func buildProductInfoMap(v cvrf.Vulnerability) (map[string]productInfo, error) {
 		pi.status = v.ProductStatuses.Status.Type
 		productInfoMap[pid] = pi
 	}
+	var exploitability string
 	for _, t := range v.Threats.Threat {
-		if t.ProductID == "" || t.Description == "" {
+		if t.Description == "" {
 			continue
 		}
 		pi := productInfoMap[t.ProductID]
@@ -358,11 +383,31 @@ func buildProductInfoMap(v cvrf.Vulnerability) (map[string]productInfo, error) {
 		case "Impact":
 			pi.impact = t.Description
 		case "Exploit Status":
-			pi.exploitStatus = t.Description
+			// Newer CVRF documents attach the MSRC exploitability assessment
+			// ("Publicly Disclosed:...;Exploited:...;...") as an advisory-level
+			// "Exploit Status" threat with no ProductID; it applies to the whole
+			// CVE and is set on every product after the loop. The older
+			// per-product form (with a ProductID) is stored on that product.
+			if t.ProductID == "" {
+				exploitability = t.Description
+			} else {
+				pi.exploitStatus = t.Description
+			}
 		default:
 			return nil, errors.Errorf("unexpected threat type. expected: %q, actual: %q", []string{"Severity", "Impact", "Exploit Status"}, t.Type)
 		}
-		productInfoMap[t.ProductID] = pi
+		// Advisory-level threats (no ProductID) carry no per-product state to
+		// persist; the exploitability captured above is applied to all products
+		// below.
+		if t.ProductID != "" {
+			productInfoMap[t.ProductID] = pi
+		}
+	}
+	if exploitability != "" {
+		for pid, pi := range productInfoMap {
+			pi.exploitability = exploitability
+			productInfoMap[pid] = pi
+		}
 	}
 	for _, s := range v.CVSSScoreSets.ScoreSet {
 		if s.Vector == "" || s.ProductID == "" {
@@ -502,6 +547,16 @@ func buildVulnerabilities(v cvrf.Vulnerability, c cvrf.CVRF, products map[string
 			References:  refs,
 			Published:   published,
 			Modified:    modified,
+			// exploitability is CVE-scoped, so carry it onto the synthesized
+			// override segment too; per-product impact / exploit_status do not apply.
+			Optional: func() map[string]any {
+				for _, t := range v.Threats.Threat {
+					if t.Type == "Exploit Status" && t.ProductID == "" && t.Description != "" {
+						return map[string]any{"exploitability": t.Description}
+					}
+				}
+				return nil
+			}(),
 		}
 		vulns = appendOrMergeSegment(vulns,
 			vulnerabilityTypes.Vulnerability{
@@ -526,6 +581,20 @@ func buildVulnerabilities(v cvrf.Vulnerability, c cvrf.CVRF, products map[string
 				References:  refs,
 				Published:   published,
 				Modified:    modified,
+				// The exploitability assessment is advisory-scoped (a product-less
+				// "Exploit Status" threat), so surface it even when the CVE produces
+				// no per-product entry — otherwise it would be dropped, including for
+				// CVEs with no affected products at all. Read it straight from the
+				// threats so it survives an empty productInfoMap; the per-product
+				// impact / exploit_status do not apply here.
+				Optional: func() map[string]any {
+					for _, t := range v.Threats.Threat {
+						if t.Type == "Exploit Status" && t.ProductID == "" && t.Description != "" {
+							return map[string]any{"exploitability": t.Description}
+						}
+					}
+					return nil
+				}(),
 			},
 		})
 	}
@@ -604,6 +673,16 @@ func buildAdvisories(v cvrf.Vulnerability, c cvrf.CVRF, products map[string]stri
 			References:  refs,
 			Published:   published,
 			Modified:    modified,
+			// exploitability is CVE-scoped, so carry it onto the synthesized
+			// override segment too; per-product impact / exploit_status do not apply.
+			Optional: func() map[string]any {
+				for _, t := range v.Threats.Threat {
+					if t.Type == "Exploit Status" && t.ProductID == "" && t.Description != "" {
+						return map[string]any{"exploitability": t.Description}
+					}
+				}
+				return nil
+			}(),
 		}
 		advisories = appendOrMergeSegment(advisories,
 			advisoryTypes.Advisory{
@@ -628,6 +707,16 @@ func buildAdvisories(v cvrf.Vulnerability, c cvrf.CVRF, products map[string]stri
 				References:  refs,
 				Published:   published,
 				Modified:    modified,
+				// Advisory-scoped exploitability survives even with no per-product
+				// entry (see buildVulnerabilities); per-product fields do not apply.
+				Optional: func() map[string]any {
+					for _, t := range v.Threats.Threat {
+						if t.Type == "Exploit Status" && t.ProductID == "" && t.Description != "" {
+							return map[string]any{"exploitability": t.Description}
+						}
+					}
+					return nil
+				}(),
 			},
 		})
 	}
@@ -675,12 +764,29 @@ func buildOptional(pi productInfo) map[string]any {
 	if pi.exploitStatus != "" {
 		m["exploit_status"] = pi.exploitStatus
 	}
+	if pi.exploitability != "" {
+		m["exploitability"] = pi.exploitability
+	}
 	if len(m) == 0 {
 		return nil
 	}
 	return m
 }
 
+// appendOrMergeSegment appends newItem, or — when an existing item compares
+// equal (compare returns 0) — unions newItem's Segments into it and keeps the
+// existing item's Content as-is.
+//
+// Note that vulnerabilityContentTypes.Compare / advisoryContentTypes.Compare
+// deliberately ignore Content.Optional, so two items differing only in Optional
+// compare equal and the incoming item's Optional is dropped on merge. This is
+// safe for the "exploitability" carry only because every path that builds
+// Content for a given CVE derives the same value: the per-product path via
+// pi.exploitability (broadcast across products in buildProductInfoMap) and the
+// missing-product override / product-independent fallback paths by reading the
+// product-less "Exploit Status" threat directly. If those reads are ever
+// allowed to diverge — or another advisory-scoped Optional key is added with
+// different values per path — the differing value would be lost here silently.
 func appendOrMergeSegment[T any](
 	items []T,
 	newItem T,
