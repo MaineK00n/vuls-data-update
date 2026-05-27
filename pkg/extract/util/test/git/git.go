@@ -130,8 +130,8 @@ func Populate(dir, datapath string) (string, error) {
 			return "", errors.Wrapf(err, "cp -r %s/* %s", filepath.Join(datapath, c.Path), filepath.Join(dir, filepath.Base(datapath)))
 		}
 
-		if err := w.AddGlob("*"); err != nil {
-			return "", errors.Wrap(err, "git add *")
+		if err := w.AddWithOptions(&git.AddOptions{All: true}); err != nil {
+			return "", errors.Wrap(err, "git add -A")
 		}
 
 		if _, err := w.Commit(c.Msg, &git.CommitOptions{
