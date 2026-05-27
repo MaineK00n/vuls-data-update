@@ -456,6 +456,17 @@ func (e extractor) nodeToCriteria(n cveTypes.Node) (criteriaTypes.Criteria, erro
 			} else {
 				cns = slices.Grow(cns, len(ns))
 				for _, n := range ns {
+					// Skip cpematch entries whose version is ANY/NA (or
+					// empty): these are meta markers, not concrete
+					// versions the parent range was meant to enumerate.
+					// Without this skip, Strategy E would inject NA-
+					// version criteria for every ranged match whose
+					// cpematch happens to include `-`, producing spurious
+					// VendorProductMatch hits for any scanned CPE with the
+					// same vendor:product.
+					if !concreteVersion(n) {
+						continue
+					}
 					if rangeType == rangeTypes.RangeTypeSEMVER && coveredBySemverRange(n, match) {
 						continue
 					}
@@ -470,6 +481,24 @@ func (e extractor) nodeToCriteria(n cveTypes.Node) (criteriaTypes.Criteria, erro
 		})
 	}
 	return ca, nil
+}
+
+// concreteVersion reports whether a CPE 2.3 FS string's version attribute
+// names an actual version, not a meta marker (ANY=`*`, NA=`-`, or empty).
+// wfn.GetString returns logical names ("ANY"/"NA") rather than bound
+// forms — compare against both for safety.
+func concreteVersion(cpeName string) bool {
+	wfn, err := naming.UnbindFS(cpeName)
+	if err != nil {
+		return false
+	}
+	ver := unescapeWFN(wfn.GetString(common.AttributeVersion))
+	switch ver {
+	case "", "*", "-", "ANY", "NA":
+		return false
+	default:
+		return true
+	}
 }
 
 // exactCriterion builds an exact-match version criterion for a single
@@ -507,8 +536,12 @@ func coveredBySemverRange(n string, match cveTypes.CPEMatch) bool {
 		return false
 	}
 	// GetString returns WFN-escaped form; unescape for version parsing.
+	// wfn.GetString returns logical-name "ANY" / "NA" for `*` / `-`, not the
+	// bound forms. Match on the logical names (plus the bound forms and an
+	// empty string for defensive coverage) so cpematch entries with no
+	// concrete version are correctly skipped from Strategy E expansion.
 	ver := unescapeWFN(wfn.GetString(common.AttributeVersion))
-	if ver == "" || ver == "*" || ver == "-" {
+	if ver == "" || ver == "*" || ver == "-" || ver == "ANY" || ver == "NA" {
 		return true // not a concrete version; nothing to add
 	}
 	sv, err := version.NewSemver(ver)
