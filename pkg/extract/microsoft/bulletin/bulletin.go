@@ -8,7 +8,6 @@ import (
 	"maps"
 	"os"
 	"path/filepath"
-	"regexp"
 	"slices"
 	"strings"
 	"time"
@@ -187,7 +186,19 @@ func Extract(args string, opts ...Option) error {
 	return nil
 }
 
-var dateLocalePrefix = regexp.MustCompile(`^\[\$-[0-9a-fA-F]+\]`)
+// stripDateLocalePrefix removes the Excel locale/format-code prefix that some
+// BulletinSearch.xlsx date_posted cells carry, e.g. "[$-100009]1/12/2016". The
+// prefix is always "[$-" + a code + "]" with the real date following; the
+// frozen corpus uses one code per month ("[$-10009]".."[$-120009]"), so
+// stripping through the closing "]" handles every case.
+func stripDateLocalePrefix(s string) string {
+	if rest, ok := strings.CutPrefix(s, "[$-"); ok {
+		if _, after, found := strings.Cut(rest, "]"); found {
+			return after
+		}
+	}
+	return s
+}
 
 // parseCVEs parses CVE identifiers from the raw cves field.
 // The raw data is historical and frozen, so all anomalous patterns are enumerated explicitly.
@@ -446,14 +457,46 @@ func normalizeArchiveComponentKey(bulletinID, affectedProduct, affectedComponent
 	// NA state. The one such pair across the corpus (MS15-128 /
 	// KB3116869 / CVE-2015-6108) is recovered by bulletinArchiveAmendments
 	// (RowSplits field) — see that record's doc comment.
-	case "MS12-054", "MS12-074",
-		"MS13-046", "MS13-081",
-		"MS15-097", "MS15-128",
-		"MS16-014", "MS16-015", "MS16-045", "MS16-062", "MS16-067", "MS16-088",
-		"MS16-090", "MS16-097", "MS16-099", "MS16-106", "MS16-107", "MS16-108", "MS16-111",
-		"MS16-133", "MS16-135", "MS16-148",
-		"MS17-012", "MS17-013", "MS17-017", "MS17-018":
+	case "MS08-033", "MS08-036", "MS08-037", "MS08-039",
+		"MS09-001", "MS09-006", "MS09-008", "MS09-010", "MS09-012", "MS09-013", "MS09-022", "MS09-025", "MS09-039", "MS09-043", "MS09-044", "MS09-048", "MS09-058", "MS09-062", "MS09-065", "MS09-071",
+		"MS10-006", "MS10-012", "MS10-015", "MS10-020", "MS10-021", "MS10-032", "MS10-034", "MS10-047", "MS10-048", "MS10-049", "MS10-054", "MS10-058", "MS10-073", "MS10-088", "MS10-098",
+		"MS11-011", "MS11-012", "MS11-015", "MS11-027", "MS11-042", "MS11-054", "MS11-056", "MS11-058", "MS11-064", "MS11-074", "MS11-077", "MS11-090",
+		"MS12-004", "MS12-009", "MS12-020", "MS12-032", "MS12-041", "MS12-050", "MS12-054", "MS12-074", "MS12-075",
+		"MS13-016", "MS13-031", "MS13-036", "MS13-046", "MS13-063", "MS13-076", "MS13-081", "MS13-091", "MS13-101",
+		"MS14-028", "MS14-044",
+		"MS15-023", "MS15-025", "MS15-064", "MS15-073", "MS15-097", "MS15-101", "MS15-103", "MS15-111", "MS15-118", "MS15-128",
+		"MS16-010", "MS16-014", "MS16-045", "MS16-062", "MS16-067", "MS16-090", "MS16-097", "MS16-106", "MS16-108", "MS16-111", "MS16-133", "MS16-135", "MS16-148",
+		"MS17-012", "MS17-013", "MS17-014", "MS17-017", "MS17-018":
 		return product
+	// Office app mixed-shape bulletins: some xlsx rows carry the app
+	// identity (e.g. "Microsoft Word 2007") in affected_component while
+	// other rows for the same bulletin are OS-level with component empty.
+	// Return component when set so per-product Component-Drop keys keyed by
+	// the Office app name match; fall back to product for the OS rows.
+	case "MS10-019", "MS10-079", "MS10-080", "MS10-103",
+		"MS11-021", "MS11-022", "MS11-036", "MS11-045", "MS11-072", "MS11-091", "MS11-094",
+		"MS12-030", "MS12-064", "MS12-076",
+		"MS13-042", "MS13-067", "MS13-072",
+		"MS14-001", "MS14-083",
+		"MS15-036", "MS15-070", "MS15-116",
+		"MS16-004", "MS16-015", "MS16-088", "MS16-099", "MS16-107":
+		if component != "" {
+			return component
+		}
+		return product
+	// Pre-MS14 IE Cumulative bulletins: markdown column-header labels
+	// combine the IE version and OS into a single string (e.g.
+	// "Internet Explorer 6 for Windows XP Service Pack 3"). Use the
+	// ieCumCombinedKey helper to construct the matching canonical
+	// "IE_X for OS" key from the xlsx (component, product) pair.
+	case "MS07-069",
+		"MS08-031", "MS08-058", "MS08-073",
+		"MS09-014", "MS09-019", "MS09-034", "MS09-054", "MS09-072",
+		"MS10-002", "MS10-018", "MS10-035", "MS10-053", "MS10-071", "MS10-090",
+		"MS11-003", "MS11-018", "MS11-050", "MS11-057", "MS11-081", "MS11-099",
+		"MS12-010", "MS12-023", "MS12-037", "MS12-052", "MS12-063", "MS12-077",
+		"MS13-009", "MS13-021", "MS13-037", "MS13-047", "MS13-055", "MS13-059", "MS13-069", "MS13-080", "MS13-088", "MS13-097":
+		return ieCumCombinedKey(component, product)
 	default:
 		// MS14-* through MS16-* IE Cumulative layout: IE identity in
 		// affected_component, OS in affected_product.
@@ -462,6 +505,38 @@ func normalizeArchiveComponentKey(bulletinID, affectedProduct, affectedComponent
 		}
 		return ""
 	}
+}
+
+// ieCumCombinedKey returns the canonical "Internet Explorer X (Service Pack Y) for OS"
+// key form used by pre-MS14 IE Cumulative bulletins' Component-Drop entries.
+// The markdown column-header labels for these bulletins combine the IE
+// version and the OS into one column (e.g. "Internet Explorer 6 for
+// Windows XP Service Pack 3"), with various connector words ("for", "on",
+// "in", "when installed on") in the upstream markdown. Component-Drop
+// keys store the connector as " for " uniformly; this function constructs
+// the matching key from the xlsx row's (affected_component, affected_product)
+// pair.
+func ieCumCombinedKey(component, product string) string {
+	if component == "" || product == "" {
+		return ""
+	}
+	ie := strings.TrimPrefix(component, "Microsoft ")
+	ie = strings.TrimPrefix(ie, "Windows ")
+	const iePrefix = "Internet Explorer "
+	if !strings.HasPrefix(ie, iePrefix) {
+		return ""
+	}
+	// Strip the ".0" minor version so xlsx-form "Internet Explorer 6.0" matches
+	// the markdown-form "Internet Explorer 6". TrimSuffix removes only an exact
+	// trailing ".0" on the version token, leaving multi-digit minors
+	// ("Internet Explorer 5.01", "5.5") intact.
+	ver, rest, _ := strings.Cut(ie[len(iePrefix):], " ")
+	ver = strings.TrimSuffix(ver, ".0")
+	os := strings.TrimPrefix(product, "Microsoft ")
+	if rest != "" {
+		return fmt.Sprintf("%s%s %s for %s", iePrefix, ver, rest, os)
+	}
+	return fmt.Sprintf("%s%s for %s", iePrefix, ver, os)
 }
 
 // ieEdgeComponentKey maps an (IE/Edge identity, OS) tuple to the shared
@@ -773,11 +848,25 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"937143": {"939653"},
 		},
 	},
-	"MS07-064": {CVEAdjustments: []cveAdjustment{{KB: "941568", Drop: []string{"CVE-2007-3901"}}}},
+	// TODO: the per-product NA entries below come from MS07-064's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS07-064.
+	//   - DirectX 10.0 on Windows Vista
+	//   - DirectX 10.0 on Windows Vista x64 Edition
+	//   - DirectX 9.0 on Microsoft Windows 2000 Service Pack 4
+	//   - DirectX 9.0 on Windows Server 2003 Service Pack 1 and Windows Server 2003 Service Pack 2
+	//   - DirectX 9.0 on Windows Server 2003 with SP1 for Itanium-based Systems and Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - DirectX 9.0 on Windows Server 2003 x64 Edition and Windows Server 2003 x64 Edition Service Pack 2
+	//   - DirectX 9.0 on Windows XP Professional x64 Edition and Windows XP Professional x64 Edition Service Pack 2
+	//   - DirectX 9.0 on Windows XP Service Pack 2
 	"MS07-069": {
 		CVEAdjustments: []cveAdjustment{
 			{Add: []string{"CVE-2007-3902", "CVE-2007-3903", "CVE-2007-5344", "CVE-2007-5347"}},
-			{KB: "942615", Drop: []string{"CVE-2007-3903", "CVE-2007-5344"}},
+			{Component: "Internet Explorer 5.01 Service Pack 4 for Windows 2000 Service Pack 4", Drop: []string{"CVE-2007-3903", "CVE-2007-5344"}},
 		},
 		IECumChain: map[string][]string{
 			"939653": {"942615"},
@@ -800,7 +889,7 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 	"MS08-029": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2008-1437", "CVE-2008-1438"}}}},
 	"MS08-031": {
 		CVEAdjustments: []cveAdjustment{
-			{KB: "950759", Drop: []string{"CVE-2008-1442"}},
+			{Component: "Internet Explorer 5.01 Service Pack 4 for Windows 2000 Service Pack 4", Drop: []string{"CVE-2008-1442"}},
 		},
 		IECumChain: map[string][]string{
 			"947864": {"950759"},
@@ -814,14 +903,81 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"3124266": {"3135174"},
 		},
 	},
-	"MS08-033": {CVEAdjustments: []cveAdjustment{{KB: "951698", Drop: []string{"CVE-2008-0011", "CVE-2008-1444"}}}},
-	"MS08-036": {CVEAdjustments: []cveAdjustment{{KB: "950762", Drop: []string{"CVE-2008-1440"}}}},
-	"MS08-037": {CVEAdjustments: []cveAdjustment{{KB: "953230", Drop: []string{"CVE-2008-1447", "CVE-2008-1454"}}}},
+	// TODO: the per-product NA entries below come from MS08-033's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS08-033.
+	//   - Microsoft Windows 2000 Service Pack 4 with DirectX 7.0
+	//   - Microsoft Windows 2000 Service Pack 4 with DirectX 9.0, DirectX 9.0a, DirectX 9.0b, or DirectX 9.0c
+	//   - Windows Server 2003 with SP1 for Itanium-based Systems and Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Windows Server 2008 for 32-bit Systems
+	//   - Windows Server 2008 for Itanium-based Systems
+	//   - Windows Server 2008 for x64-based Systems
+	//   - Windows Vista and Windows Vista Service Pack 1
+	//   - Windows Vista x64 Edition and Windows Vista x64 Edition Service Pack 1
+	"MS08-033": {
+		CVEAdjustments: []cveAdjustment{
+			{Component: "Microsoft Windows Server 2003 Service Pack 1", Drop: []string{"CVE-2008-1444"}},
+			{Component: "Microsoft Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2008-1444"}},
+			{Component: "Microsoft Windows Server 2003 x64 Edition", Drop: []string{"CVE-2008-1444"}},
+			{Component: "Microsoft Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2008-1444"}},
+			{Component: "Microsoft Windows XP Professional x64 Edition", Drop: []string{"CVE-2008-1444"}},
+			{Component: "Microsoft Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2008-1444"}},
+			{Component: "Microsoft Windows XP Service Pack 2", Drop: []string{"CVE-2008-1444"}},
+			{Component: "Microsoft Windows XP Service Pack 3", Drop: []string{"CVE-2008-1444"}},
+		},
+	},
+	// TODO: the per-product NA entries below come from MS08-036's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS08-036.
+	//   - Windows Server 2008 for Itanium-based Systems
+	"MS08-036": {
+		CVEAdjustments: []cveAdjustment{
+			{Component: "Windows Server 2008 for 32-bit Systems", Drop: []string{"CVE-2008-1440"}},
+			{Component: "Windows Server 2008 for x64-based Systems", Drop: []string{"CVE-2008-1440"}},
+			{Component: "Windows Vista", Drop: []string{"CVE-2008-1440"}},
+			{Component: "Windows Vista Service Pack 1", Drop: []string{"CVE-2008-1440"}},
+			{Component: "Windows Vista x64 Edition", Drop: []string{"CVE-2008-1440"}},
+			{Component: "Windows Vista x64 Edition Service Pack 1", Drop: []string{"CVE-2008-1440"}},
+		},
+	},
+	"MS08-037": {
+		CVEAdjustments: []cveAdjustment{
+			{Component: "Microsoft Windows XP Professional x64 Edition", Drop: []string{"CVE-2008-1454"}},
+			{Component: "Microsoft Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2008-1454"}},
+			{Component: "Microsoft Windows XP Service Pack 2", Drop: []string{"CVE-2008-1454"}},
+			{Component: "Microsoft Windows XP Service Pack 3", Drop: []string{"CVE-2008-1454"}},
+			{Component: "Windows Server 2008 for 32-bit Systems", Drop: []string{"CVE-2008-1447"}},
+			{Component: "Windows Server 2008 for x64-based Systems", Drop: []string{"CVE-2008-1447"}},
+		},
+	},
 	"MS08-038": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2008-0951", "CVE-2008-1435"}}}},
-	"MS08-039": {CVEAdjustments: []cveAdjustment{{KB: "953747", Drop: []string{"CVE-2008-2247", "CVE-2008-2248"}}}},
+	"MS08-039": {
+		CVEAdjustments: []cveAdjustment{
+			{Component: "Microsoft Exchange Server 2003 Service Pack 2", Drop: []string{"CVE-2008-2248"}},
+			{Component: "Microsoft Exchange Server 2007", Drop: []string{"CVE-2008-2247"}},
+			{Component: "Microsoft Exchange Server 2007 Service Pack 1", Drop: []string{"CVE-2008-2247"}},
+		},
+	},
+	// TODO: the per-product NA entries below come from MS08-040's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS08-040.
+	//   - Windows Internal Database (WYukon) Service Pack 2
+	//   - Windows Internal Database (WYukon) x64 Edition Service Pack 2
 	"MS08-040": {
 		CVEAdjustments: []cveAdjustment{
-			{KB: "941203", Drop: []string{"CVE-2008-0086", "CVE-2008-0106"}},
+			{KB: "941203", Drop: []string{"CVE-2008-0106"}},
 			{KB: "948109", Drop: []string{"CVE-2008-0086"}},
 			{KB: "948110", Drop: []string{"CVE-2008-0106"}},
 			{KB: "948113", Drop: []string{"CVE-2008-0086", "CVE-2008-0106"}},
@@ -841,10 +997,31 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "956343", Drop: []string{"CVE-2008-0120", "CVE-2008-0121"}},
 		},
 	},
+	// TODO: the per-product NA entries below come from MS08-058's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS08-058.
+	//   - Internet Explorer 7 for Windows Server 2003 with SP1 for Itanium-based Systems and Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 in Windows Server 2008 for Itanium-based Systems
+	//   - Internet Explorer 7 in Windows Vista x64 Edition and Internet Explorer 7 in Windows Vista x64 Edition Service Pack 1
 	"MS08-058": {
 		CVEAdjustments: []cveAdjustment{
 			{Add: []string{"CVE-2008-2947", "CVE-2008-3472", "CVE-2008-3473", "CVE-2008-3474", "CVE-2008-3475", "CVE-2008-3476"}},
-			{KB: "956390", Drop: []string{"CVE-2008-3472", "CVE-2008-3473", "CVE-2008-3474", "CVE-2008-3475", "CVE-2008-3476"}},
+			{Component: "Internet Explorer 5.01 Service Pack 4 for Windows 2000 Service Pack 4", Drop: []string{"CVE-2008-3472", "CVE-2008-3473", "CVE-2008-3474", "CVE-2008-3475"}},
+			{Component: "Internet Explorer 7 for Windows Server 2003 Service Pack 1", Drop: []string{"CVE-2008-3475", "CVE-2008-3476"}},
+			{Component: "Internet Explorer 7 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2008-3475", "CVE-2008-3476"}},
+			{Component: "Internet Explorer 7 for Windows Server 2003 x64 Edition", Drop: []string{"CVE-2008-3475", "CVE-2008-3476"}},
+			{Component: "Internet Explorer 7 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2008-3475", "CVE-2008-3476"}},
+			{Component: "Internet Explorer 7 for Windows Server 2008 for 32-bit Systems", Drop: []string{"CVE-2008-3475", "CVE-2008-3476"}},
+			{Component: "Internet Explorer 7 for Windows Server 2008 for x64-based Systems", Drop: []string{"CVE-2008-3475", "CVE-2008-3476"}},
+			{Component: "Internet Explorer 7 for Windows Vista x64 Edition", Drop: []string{"CVE-2008-3475", "CVE-2008-3476"}},
+			{Component: "Internet Explorer 7 for Windows XP Professional x64 Edition", Drop: []string{"CVE-2008-3475", "CVE-2008-3476"}},
+			{Component: "Internet Explorer 7 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2008-3475", "CVE-2008-3476"}},
+			{Component: "Internet Explorer 7 for Windows XP Service Pack 2", Drop: []string{"CVE-2008-3475", "CVE-2008-3476"}},
+			{Component: "Internet Explorer 7 for Windows XP Service Pack 3", Drop: []string{"CVE-2008-3475", "CVE-2008-3476"}},
 		},
 		IECumChain: map[string][]string{
 			"953838": {"956390"},
@@ -869,48 +1046,228 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "958393", Drop: []string{"CVE-2008-4252", "CVE-2008-4253", "CVE-2008-4254"}},
 		},
 	},
+	// TODO: the per-product NA entries below come from MS08-073's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS08-073.
+	//   - Internet Explorer 6 for Windows Server 2003 with SP1 for Itanium-based Systems and Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 for Windows Server 2003 with SP1 for Itanium-based Systems and Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 in Windows Server 2008 for Itanium-based Systems
+	//   - Internet Explorer 7 in Windows Vista and Internet Explorer 7 in Windows Vista Service Pack 1
+	//   - Internet Explorer 7 in Windows Vista x64 Edition and Internet Explorer 7 in Windows Vista x64 Edition Service Pack 1
 	"MS08-073": {
 		CVEAdjustments: []cveAdjustment{
-			{KB: "958215", Drop: []string{"CVE-2008-4258", "CVE-2008-4259", "CVE-2008-4260", "CVE-2008-4261"}},
+			{Component: "Internet Explorer 5.01 Service Pack 4 for Windows 2000 Service Pack 4", Drop: []string{"CVE-2008-4259", "CVE-2008-4260"}},
+			{Component: "Internet Explorer 6 Service Pack 1 for Windows 2000 Service Pack 4", Drop: []string{"CVE-2008-4259", "CVE-2008-4260"}},
+			{Component: "Internet Explorer 6 for Windows Server 2003 Service Pack 1", Drop: []string{"CVE-2008-4258", "CVE-2008-4259", "CVE-2008-4260"}},
+			{Component: "Internet Explorer 6 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2008-4258", "CVE-2008-4259", "CVE-2008-4260"}},
+			{Component: "Internet Explorer 6 for Windows Server 2003 x64 Edition", Drop: []string{"CVE-2008-4258", "CVE-2008-4259", "CVE-2008-4260"}},
+			{Component: "Internet Explorer 6 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2008-4258", "CVE-2008-4259", "CVE-2008-4260"}},
+			{Component: "Internet Explorer 6 for Windows XP Professional x64 Edition", Drop: []string{"CVE-2008-4258", "CVE-2008-4259", "CVE-2008-4260"}},
+			{Component: "Internet Explorer 6 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2008-4258", "CVE-2008-4259", "CVE-2008-4260"}},
+			{Component: "Internet Explorer 6 for Windows XP Service Pack 2", Drop: []string{"CVE-2008-4258", "CVE-2008-4259", "CVE-2008-4260"}},
+			{Component: "Internet Explorer 6 for Windows XP Service Pack 3", Drop: []string{"CVE-2008-4258", "CVE-2008-4259", "CVE-2008-4260"}},
+			{Component: "Internet Explorer 7 for Windows Server 2003 Service Pack 1", Drop: []string{"CVE-2008-4258", "CVE-2008-4261"}},
+			{Component: "Internet Explorer 7 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2008-4258", "CVE-2008-4261"}},
+			{Component: "Internet Explorer 7 for Windows Server 2003 x64 Edition", Drop: []string{"CVE-2008-4258", "CVE-2008-4261"}},
+			{Component: "Internet Explorer 7 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2008-4258", "CVE-2008-4261"}},
+			{Component: "Internet Explorer 7 for Windows Server 2008 for 32-bit Systems", Drop: []string{"CVE-2008-4258", "CVE-2008-4261"}},
+			{Component: "Internet Explorer 7 for Windows Server 2008 for x64-based Systems", Drop: []string{"CVE-2008-4258", "CVE-2008-4261"}},
+			{Component: "Internet Explorer 7 for Windows Vista", Drop: []string{"CVE-2008-4258", "CVE-2008-4261"}},
+			{Component: "Internet Explorer 7 for Windows Vista x64 Edition", Drop: []string{"CVE-2008-4258", "CVE-2008-4261"}},
+			{Component: "Internet Explorer 7 for Windows XP Professional x64 Edition", Drop: []string{"CVE-2008-4258", "CVE-2008-4261"}},
+			{Component: "Internet Explorer 7 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2008-4258", "CVE-2008-4261"}},
+			{Component: "Internet Explorer 7 for Windows XP Service Pack 2", Drop: []string{"CVE-2008-4258", "CVE-2008-4261"}},
+			{Component: "Internet Explorer 7 for Windows XP Service Pack 3", Drop: []string{"CVE-2008-4258", "CVE-2008-4261"}},
 		},
 		IECumChain: map[string][]string{
 			"956390": {"958215"},
 		},
 	},
-	"MS08-076": {CVEAdjustments: []cveAdjustment{{KB: "952068", Drop: []string{"CVE-2008-3010"}}}},
+	// TODO: the per-product NA entries below come from MS08-076's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS08-076.
+	//   - Windows Media Services 2008 on Windows Server 2008 for 32-bit Systems and Windows Server 2008 for 32-bit Systems Service Pack 2
+	//   - Windows Media Services 2008 on Windows Server 2008 for x64-based Systems and Windows Server 2008 for x64-based Systems Service Pack 2
 	"MS08-078": {
 		IECumChain: map[string][]string{
 			"958215": {"960714"},
 		},
 	},
-	"MS09-001": {CVEAdjustments: []cveAdjustment{{KB: "958687", Drop: []string{"CVE-2008-4834"}}}},
+	// TODO: the per-product NA entries below come from MS09-001's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS09-001.
+	//   - Windows Server 2008 for Itanium-based Systems
+	"MS09-001": {
+		CVEAdjustments: []cveAdjustment{
+			{Component: "Windows Server 2008 for 32-bit Systems", Drop: []string{"CVE-2008-4834"}},
+			{Component: "Windows Server 2008 for x64-based Systems", Drop: []string{"CVE-2008-4834"}},
+			{Component: "Windows Vista", Drop: []string{"CVE-2008-4834"}},
+			{Component: "Windows Vista Service Pack 1", Drop: []string{"CVE-2008-4834"}},
+			{Component: "Windows Vista x64 Edition", Drop: []string{"CVE-2008-4834"}},
+			{Component: "Windows Vista x64 Edition Service Pack 1", Drop: []string{"CVE-2008-4834"}},
+		},
+	},
 	"MS09-003": {CVEAdjustments: []cveAdjustment{{KB: "959241", Drop: []string{"CVE-2009-0099"}}}},
 	"MS09-005": {CVEAdjustments: []cveAdjustment{{KB: "957831", Drop: []string{"CVE-2009-0097"}}}},
-	"MS09-006": {CVEAdjustments: []cveAdjustment{{KB: "958690", Drop: []string{"CVE-2009-0083"}}}},
-	"MS09-008": {CVEAdjustments: []cveAdjustment{{KB: "962238", Drop: []string{"CVE-2009-0093", "CVE-2009-0094"}}}},
+	// TODO: the per-product NA entries below come from MS09-006's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS09-006.
+	//   - Windows Server 2003 with SP1 for Itanium-based Systems and Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Windows Server 2008 for Itanium-based Systems
+	"MS09-006": {
+		CVEAdjustments: []cveAdjustment{
+			{Component: "Microsoft Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2009-0083"}},
+			{Component: "Microsoft Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2009-0083"}},
+			{Component: "Microsoft Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2009-0083"}},
+			{Component: "Windows Server 2008 for 32-bit Systems", Drop: []string{"CVE-2009-0083"}},
+			{Component: "Windows Server 2008 for x64-based Systems", Drop: []string{"CVE-2009-0083"}},
+			{Component: "Windows Vista", Drop: []string{"CVE-2009-0083"}},
+			{Component: "Windows Vista Service Pack 1", Drop: []string{"CVE-2009-0083"}},
+			{Component: "Windows Vista x64 Edition", Drop: []string{"CVE-2009-0083"}},
+			{Component: "Windows Vista x64 Edition Service Pack 1", Drop: []string{"CVE-2009-0083"}},
+		},
+	},
+	"MS09-008": {
+		CVEAdjustments: []cveAdjustment{
+			{Component: "Windows Server 2008 for 32-bit Systems", Drop: []string{"CVE-2009-0093", "CVE-2009-0094"}},
+			{Component: "Windows Server 2008 for x64-based Systems", Drop: []string{"CVE-2009-0093", "CVE-2009-0094"}},
+		},
+	},
+	// TODO: the per-product NA entries below come from MS09-010's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS09-010.
+	//   - Microsoft Office Word 2000 Service Pack 3
+	//   - Microsoft Office Word 2002 Service Pack 3
 	"MS09-010": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "923561", Drop: []string{"CVE-2009-0088"}},
 			{KB: "960476", Drop: []string{"CVE-2008-4841", "CVE-2009-0087", "CVE-2009-0235"}},
-			{KB: "960477", Drop: []string{"CVE-2008-4841", "CVE-2009-0088", "CVE-2009-0235"}},
+			{Component: "Microsoft Windows XP Service Pack 2", Drop: []string{"CVE-2009-0088"}},
+			{Component: "Microsoft Windows XP Service Pack 3", Drop: []string{"CVE-2008-4841", "CVE-2009-0088"}},
 		},
 	},
-	"MS09-012": {CVEAdjustments: []cveAdjustment{{KB: "952004", Drop: []string{"CVE-2009-0078", "CVE-2009-0079", "CVE-2009-0080"}}}},
+	// TODO: the per-product NA entries below come from MS09-012's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS09-012.
+	//   - Windows Server 2003 with SP1 for Itanium-based Systems and Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Windows Server 2008 for Itanium-based Systems
+	"MS09-012": {
+		CVEAdjustments: []cveAdjustment{
+			{Component: "Microsoft Windows 2000 Service Pack 4", Drop: []string{"CVE-2009-0078", "CVE-2009-0079", "CVE-2009-0080"}},
+			{Component: "Microsoft Windows Server 2003 Service Pack 1", Drop: []string{"CVE-2009-0080"}},
+			{Component: "Microsoft Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2009-0080"}},
+			{Component: "Microsoft Windows Server 2003 x64 Edition", Drop: []string{"CVE-2009-0080"}},
+			{Component: "Microsoft Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2009-0080"}},
+			{Component: "Microsoft Windows XP Professional x64 Edition", Drop: []string{"CVE-2009-0080"}},
+			{Component: "Microsoft Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2009-0080"}},
+			{Component: "Microsoft Windows XP Service Pack 2", Drop: []string{"CVE-2009-0080"}},
+			{Component: "Microsoft Windows XP Service Pack 3", Drop: []string{"CVE-2009-0080"}},
+			{Component: "Windows Server 2008 for 32-bit Systems", Drop: []string{"CVE-2009-0079"}},
+			{Component: "Windows Server 2008 for x64-based Systems", Drop: []string{"CVE-2009-0079"}},
+			{Component: "Windows Vista", Drop: []string{"CVE-2009-0079"}},
+			{Component: "Windows Vista Service Pack 1", Drop: []string{"CVE-2009-0079"}},
+			{Component: "Windows Vista x64 Edition", Drop: []string{"CVE-2009-0079"}},
+			{Component: "Windows Vista x64 Edition Service Pack 1", Drop: []string{"CVE-2009-0079"}},
+		},
+	},
+	// TODO: the per-product NA entries below come from MS09-013's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS09-013.
+	//   - Windows Server 2008 for Itanium-based Systems
 	"MS09-013": {
 		CVEAdjustments: []cveAdjustment{
-			{KB: "960803", Drop: []string{"CVE-2009-0089"}},
+			{Component: "Windows Server 2008 for 32-bit Systems", Drop: []string{"CVE-2009-0089"}},
+			{Component: "Windows Server 2008 for x64-based Systems", Drop: []string{"CVE-2009-0089"}},
+			{Component: "Windows Vista Service Pack 1", Drop: []string{"CVE-2009-0089"}},
+			{Component: "Windows Vista x64 Edition Service Pack 1", Drop: []string{"CVE-2009-0089"}},
 		},
 		IECumChain: map[string][]string{
 			"960714": {"963027"},
 		},
 	},
-	"MS09-014": {CVEAdjustments: []cveAdjustment{{KB: "963027", Drop: []string{"CVE-2008-2540", "CVE-2009-0551", "CVE-2009-0552", "CVE-2009-0553"}}}},
+	// TODO: the per-product NA entries below come from MS09-014's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS09-014.
+	//   - Internet Explorer 6 for Windows Server 2003 with SP1 for Itanium-based Systems and Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 for Windows Server 2003 with SP1 for Itanium-based Systems and Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 in Windows Server 2008 for Itanium-based Systems
+	"MS09-014": {
+		CVEAdjustments: []cveAdjustment{
+			{Component: "Internet Explorer 5.01 Service Pack 4 for Windows 2000 Service Pack 4", Drop: []string{"CVE-2008-2540", "CVE-2009-0551", "CVE-2009-0553"}},
+			{Component: "Internet Explorer 6 Service Pack 1 for Windows 2000 Service Pack 4", Drop: []string{"CVE-2008-2540"}},
+			{Component: "Internet Explorer 6 for Windows Server 2003 Service Pack 1", Drop: []string{"CVE-2008-2540"}},
+			{Component: "Internet Explorer 6 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2008-2540"}},
+			{Component: "Internet Explorer 6 for Windows Server 2003 x64 Edition", Drop: []string{"CVE-2008-2540"}},
+			{Component: "Internet Explorer 6 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2008-2540"}},
+			{Component: "Internet Explorer 6 for Windows XP Professional x64 Edition", Drop: []string{"CVE-2008-2540"}},
+			{Component: "Internet Explorer 6 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2008-2540"}},
+			{Component: "Internet Explorer 6 for Windows XP Service Pack 2", Drop: []string{"CVE-2008-2540"}},
+			{Component: "Internet Explorer 6 for Windows XP Service Pack 3", Drop: []string{"CVE-2008-2540"}},
+			{Component: "Internet Explorer 7 for Windows Server 2003 Service Pack 1", Drop: []string{"CVE-2008-2540", "CVE-2009-0552"}},
+			{Component: "Internet Explorer 7 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2008-2540", "CVE-2009-0552"}},
+			{Component: "Internet Explorer 7 for Windows Server 2003 x64 Edition", Drop: []string{"CVE-2008-2540", "CVE-2009-0552"}},
+			{Component: "Internet Explorer 7 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2008-2540", "CVE-2009-0552"}},
+			{Component: "Internet Explorer 7 for Windows Server 2008 for 32-bit Systems", Drop: []string{"CVE-2008-2540", "CVE-2009-0552"}},
+			{Component: "Internet Explorer 7 for Windows Server 2008 for x64-based Systems", Drop: []string{"CVE-2008-2540", "CVE-2009-0552"}},
+			{Component: "Internet Explorer 7 for Windows Vista", Drop: []string{"CVE-2008-2540", "CVE-2009-0552"}},
+			{Component: "Internet Explorer 7 for Windows Vista Service Pack 1", Drop: []string{"CVE-2008-2540", "CVE-2009-0552"}},
+			{Component: "Internet Explorer 7 for Windows Vista x64 Edition", Drop: []string{"CVE-2008-2540", "CVE-2009-0552"}},
+			{Component: "Internet Explorer 7 for Windows Vista x64 Edition Service Pack 1", Drop: []string{"CVE-2008-2540", "CVE-2009-0552"}},
+			{Component: "Internet Explorer 7 for Windows XP Professional x64 Edition", Drop: []string{"CVE-2009-0552"}},
+			{Component: "Internet Explorer 7 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2009-0552"}},
+			{Component: "Internet Explorer 7 for Windows XP Service Pack 2", Drop: []string{"CVE-2009-0552"}},
+			{Component: "Internet Explorer 7 for Windows XP Service Pack 3", Drop: []string{"CVE-2009-0552"}},
+		},
+	},
 	"MS09-016": {CVEAdjustments: []cveAdjustment{{KB: "961759", Drop: []string{"CVE-2009-0237"}}}},
+	// TODO: the per-product NA entries below come from MS09-017's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS09-017.
+	//   - Microsoft Office PowerPoint 2000 Service Pack 3
+	//   - Microsoft Office PowerPoint 2002 Service Pack 3
+	//   - Microsoft Office PowerPoint 2003 Service Pack 3
+	//   - Microsoft Office PowerPoint 2007 Service Pack 1
+	//   - Microsoft Office PowerPoint 2007 Service Pack 2
 	"MS09-017": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "967043", Drop: []string{"CVE-2009-0220", "CVE-2009-0221", "CVE-2009-0222", "CVE-2009-0223", "CVE-2009-0225", "CVE-2009-0226", "CVE-2009-0227", "CVE-2009-0556", "CVE-2009-1128", "CVE-2009-1129", "CVE-2009-1130", "CVE-2009-1131", "CVE-2009-1137"}},
 			{KB: "967044", Drop: []string{"CVE-2009-0220", "CVE-2009-0221", "CVE-2009-0222", "CVE-2009-0223", "CVE-2009-0225", "CVE-2009-0226", "CVE-2009-0227", "CVE-2009-0556", "CVE-2009-1128", "CVE-2009-1129", "CVE-2009-1130", "CVE-2009-1131", "CVE-2009-1137"}},
-			{KB: "967340", Drop: []string{"CVE-2009-0220", "CVE-2009-0221", "CVE-2009-0222", "CVE-2009-0223", "CVE-2009-0225", "CVE-2009-0226", "CVE-2009-0227", "CVE-2009-0556", "CVE-2009-1128", "CVE-2009-1129", "CVE-2009-1130", "CVE-2009-1131", "CVE-2009-1137"}},
 			{KB: "969615", Drop: []string{"CVE-2009-0220", "CVE-2009-0221", "CVE-2009-0222", "CVE-2009-0223", "CVE-2009-0225", "CVE-2009-0226", "CVE-2009-0227", "CVE-2009-0556", "CVE-2009-1128", "CVE-2009-1129", "CVE-2009-1130", "CVE-2009-1131", "CVE-2009-1137"}},
 			{KB: "969618", Drop: []string{"CVE-2009-0220", "CVE-2009-0221", "CVE-2009-0222", "CVE-2009-0223", "CVE-2009-0225", "CVE-2009-0226", "CVE-2009-0227", "CVE-2009-0556", "CVE-2009-1128", "CVE-2009-1129", "CVE-2009-1130", "CVE-2009-1131", "CVE-2009-1137"}},
 			{KB: "969661", Drop: []string{"CVE-2009-0220", "CVE-2009-0221", "CVE-2009-0222", "CVE-2009-0223", "CVE-2009-0225", "CVE-2009-0226", "CVE-2009-0227", "CVE-2009-1128", "CVE-2009-1129", "CVE-2009-1131", "CVE-2009-1137"}},
@@ -919,99 +1276,373 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "971824", Drop: []string{"CVE-2009-0220", "CVE-2009-0221", "CVE-2009-0222", "CVE-2009-0223", "CVE-2009-0225", "CVE-2009-0226", "CVE-2009-0227", "CVE-2009-0556", "CVE-2009-1128", "CVE-2009-1129", "CVE-2009-1130", "CVE-2009-1131", "CVE-2009-1137"}},
 		},
 	},
-	"MS09-018": {
-		CVEAdjustments: []cveAdjustment{
-			{KB: "969805", Drop: []string{"CVE-2009-1138"}},
-			{KB: "970437", Drop: []string{"CVE-2009-1138"}},
-		},
-	},
+	// TODO: the per-product NA entries below come from MS09-018's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS09-018.
+	//   - Active Directory on Windows Server 2003 Service Pack 2
+	//   - Active Directory on Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Active Directory on Windows Server 2003 x64 Edition Service Pack 2
+	"MS09-018": {CVEAdjustments: []cveAdjustment{{KB: "970437", Drop: []string{"CVE-2009-1138"}}}},
+	// TODO: the per-product NA entries below come from MS09-019's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS09-019.
+	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 in Windows Server 2008 for Itanium-based Systems and Windows Server 2008 for Itanium-based Systems Service Pack 2
+	//   - Internet Explorer 7 in Windows Vista x64 Edition, Windows Vista x64 Edition Service Pack 1, and Windows Vista x64 Edition Service Pack 2
+	//   - Internet Explorer 7 in Windows Vista, Windows Vista Service Pack 1, and and Windows Vista Service Pack 2
+	//   - Internet Explorer 8 in Windows Vista x64 Edition, Windows Vista x64 Edition Service Pack 1, and Windows Vista x64 Edition Service Pack 2
+	//   - Internet Explorer 8 in Windows Vista, Windows Vista Service Pack 1, and and Windows Vista Service Pack 2
 	"MS09-019": {
 		CVEAdjustments: []cveAdjustment{
-			{KB: "969897", Drop: []string{"CVE-2007-3091", "CVE-2009-1140", "CVE-2009-1141", "CVE-2009-1528", "CVE-2009-1529", "CVE-2009-1530", "CVE-2009-1531", "CVE-2009-1532"}},
+			{Component: "Internet Explorer 5.01 Service Pack 4 for Windows 2000 Service Pack 4", Drop: []string{"CVE-2007-3091", "CVE-2009-1141", "CVE-2009-1528", "CVE-2009-1529", "CVE-2009-1530", "CVE-2009-1531", "CVE-2009-1532"}},
+			{Component: "Internet Explorer 6 Service Pack 1 for Windows 2000 Service Pack 4", Drop: []string{"CVE-2009-1141", "CVE-2009-1528", "CVE-2009-1529", "CVE-2009-1530", "CVE-2009-1531", "CVE-2009-1532"}},
+			{Component: "Internet Explorer 6 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2009-1529", "CVE-2009-1530", "CVE-2009-1531", "CVE-2009-1532"}},
+			{Component: "Internet Explorer 6 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2009-1529", "CVE-2009-1530", "CVE-2009-1531", "CVE-2009-1532"}},
+			{Component: "Internet Explorer 6 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2009-1529", "CVE-2009-1530", "CVE-2009-1531", "CVE-2009-1532"}},
+			{Component: "Internet Explorer 6 for Windows XP Service Pack 2", Drop: []string{"CVE-2009-1529", "CVE-2009-1530", "CVE-2009-1531", "CVE-2009-1532"}},
+			{Component: "Internet Explorer 6 for Windows XP Service Pack 3", Drop: []string{"CVE-2009-1529", "CVE-2009-1530", "CVE-2009-1531", "CVE-2009-1532"}},
+			{Component: "Internet Explorer 7 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2009-1141", "CVE-2009-1532"}},
+			{Component: "Internet Explorer 7 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2009-1141", "CVE-2009-1532"}},
+			{Component: "Internet Explorer 7 for Windows Server 2008 for 32-bit Systems", Drop: []string{"CVE-2009-1141", "CVE-2009-1532"}},
+			{Component: "Internet Explorer 7 for Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2009-1141", "CVE-2009-1532"}},
+			{Component: "Internet Explorer 7 for Windows Server 2008 for x64-based Systems", Drop: []string{"CVE-2009-1141", "CVE-2009-1532"}},
+			{Component: "Internet Explorer 7 for Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2009-1141", "CVE-2009-1532"}},
+			{Component: "Internet Explorer 7 for Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2009-1141", "CVE-2009-1532"}},
+			{Component: "Internet Explorer 7 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2009-1141", "CVE-2009-1532"}},
+			{Component: "Internet Explorer 7 for Windows XP Service Pack 2", Drop: []string{"CVE-2009-1141", "CVE-2009-1532"}},
+			{Component: "Internet Explorer 7 for Windows XP Service Pack 3", Drop: []string{"CVE-2009-1141", "CVE-2009-1532"}},
+			{Component: "Internet Explorer 8 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2007-3091", "CVE-2009-1140", "CVE-2009-1141", "CVE-2009-1528", "CVE-2009-1529", "CVE-2009-1530", "CVE-2009-1531"}},
+			{Component: "Internet Explorer 8 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2007-3091", "CVE-2009-1140", "CVE-2009-1141", "CVE-2009-1528", "CVE-2009-1529", "CVE-2009-1530", "CVE-2009-1531"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 for 32-bit Systems", Drop: []string{"CVE-2007-3091", "CVE-2009-1140", "CVE-2009-1141", "CVE-2009-1528", "CVE-2009-1529", "CVE-2009-1530", "CVE-2009-1531"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2007-3091", "CVE-2009-1140", "CVE-2009-1141", "CVE-2009-1528", "CVE-2009-1529", "CVE-2009-1530", "CVE-2009-1531"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 for x64-based Systems", Drop: []string{"CVE-2007-3091", "CVE-2009-1140", "CVE-2009-1141", "CVE-2009-1528", "CVE-2009-1529", "CVE-2009-1530", "CVE-2009-1531"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2007-3091", "CVE-2009-1140", "CVE-2009-1141", "CVE-2009-1528", "CVE-2009-1529", "CVE-2009-1530", "CVE-2009-1531"}},
+			{Component: "Internet Explorer 8 for Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2007-3091", "CVE-2009-1140", "CVE-2009-1141", "CVE-2009-1528", "CVE-2009-1529", "CVE-2009-1530", "CVE-2009-1531"}},
+			{Component: "Internet Explorer 8 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2007-3091", "CVE-2009-1140", "CVE-2009-1141", "CVE-2009-1528", "CVE-2009-1529", "CVE-2009-1530", "CVE-2009-1531"}},
+			{Component: "Internet Explorer 8 for Windows XP Service Pack 2", Drop: []string{"CVE-2007-3091", "CVE-2009-1140", "CVE-2009-1141", "CVE-2009-1528", "CVE-2009-1529", "CVE-2009-1530", "CVE-2009-1531"}},
+			{Component: "Internet Explorer 8 for Windows XP Service Pack 3", Drop: []string{"CVE-2007-3091", "CVE-2009-1140", "CVE-2009-1141", "CVE-2009-1528", "CVE-2009-1529", "CVE-2009-1530", "CVE-2009-1531"}},
 		},
 		IECumChain: map[string][]string{
 			"963027": {"969897"},
 		},
 	},
-	"MS09-020": {
-		CVEAdjustments: []cveAdjustment{
-			{Add: []string{"CVE-2009-1122", "CVE-2009-1535", "CVE-2009-1676"}},
-			{KB: "970483", Drop: []string{"CVE-2009-1122", "CVE-2009-1535"}},
-		},
-	},
+	// TODO: the per-product NA entries below come from MS09-020's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS09-020.
+	//   - Microsoft Internet Information Services (IIS) 5.0 on Microsoft Windows 2000 Service Pack 4
+	//   - Microsoft Internet Information Services (IIS) 5.1 on Windows XP Professional Service Pack 2 and Windows XP Professional Service Pack 3
+	//   - Microsoft Internet Information Services (IIS) 6.0 on Windows Server 2003 Service Pack 2
+	//   - Microsoft Internet Information Services (IIS) 6.0 on Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Microsoft Internet Information Services (IIS) 6.0 on Windows Server 2003 x64 Edition Service Pack 2
+	//   - Microsoft Internet Information Services (IIS) 6.0 on Windows XP Professional x64 Edition Service Pack 2
+	"MS09-020": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2009-1122", "CVE-2009-1535", "CVE-2009-1676"}}}},
+	// TODO: the per-product NA entries below come from MS09-021's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS09-021.
+	//   - Microsoft Office Excel 2000 Service Pack 3
+	//   - Microsoft Office Excel 2002 Service Pack 3
+	//   - Microsoft Office Excel 2003 Service Pack 3
+	//   - Microsoft Office Excel 2007 Service Pack 1
+	//   - Microsoft Office Excel 2007 Service Pack 2
+	//   - Microsoft Office Open XML File Converter for MAC
+	//   - Microsoft Office for Mac 2004
+	//   - Microsoft Office for Mac 2008
 	"MS09-021": {
 		CVEAdjustments: []cveAdjustment{
-			{KB: "969462", Drop: []string{"CVE-2009-0549", "CVE-2009-0558", "CVE-2009-0559", "CVE-2009-1134"}},
 			{KB: "969679", Drop: []string{"CVE-2009-0549", "CVE-2009-0558", "CVE-2009-0559"}},
 			{KB: "969686", Drop: []string{"CVE-2009-0549", "CVE-2009-0558", "CVE-2009-0559"}},
 			{KB: "969737", Drop: []string{"CVE-2009-0549", "CVE-2009-0557", "CVE-2009-0558", "CVE-2009-0559", "CVE-2009-0560", "CVE-2009-1134"}},
 		},
 	},
-	"MS09-022": {CVEAdjustments: []cveAdjustment{{KB: "961501", Drop: []string{"CVE-2009-0228"}}}},
-	"MS09-025": {CVEAdjustments: []cveAdjustment{{KB: "968537", Drop: []string{"CVE-2009-1126"}}}},
-	"MS09-027": {
+	// TODO: the per-product NA entries below come from MS09-022's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS09-022.
+	//   - Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Windows Server 2008 for Itanium-based Systems and Windows Server 2008 for Itanium-based Systems Service Pack 2
+	//   - Windows Vista x64 Edition, Windows Vista x64 Edition Service Pack 1, and Windows Vista x64 Edition Service Pack 2
+	//   - Windows Vista, Windows Vista Service Pack 1, and Windows Vista Service Pack 2
+	"MS09-022": {
 		CVEAdjustments: []cveAdjustment{
-			{KB: "969514", Drop: []string{"CVE-2009-0563", "CVE-2009-0565"}},
-			{KB: "969614", Drop: []string{"CVE-2009-0565"}},
+			{Component: "Microsoft Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2009-0228"}},
+			{Component: "Microsoft Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2009-0228"}},
+			{Component: "Microsoft Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2009-0228"}},
+			{Component: "Microsoft Windows XP Service Pack 2", Drop: []string{"CVE-2009-0228"}},
+			{Component: "Microsoft Windows XP Service Pack 3", Drop: []string{"CVE-2009-0228"}},
+			{Component: "Windows Server 2008 for 32-bit Systems", Drop: []string{"CVE-2009-0228"}},
+			{Component: "Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2009-0228"}},
+			{Component: "Windows Server 2008 for x64-based Systems", Drop: []string{"CVE-2009-0228"}},
+			{Component: "Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2009-0228"}},
 		},
 	},
+	// TODO: the per-product NA entries below come from MS09-025's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS09-025.
+	//   - Windows Server 2008 for Itanium-based Systems and Windows Server 2008 for Itanium-based Systems Service Pack 2
+	//   - Windows Vista x64 Edition, Windows Vista x64 Edition Service Pack 1, and Windows Vista x64 Edition Service Pack 2
+	//   - Windows Vista, Windows Vista Service Pack 1, and Windows Vista Service Pack 2
+	"MS09-025": {
+		CVEAdjustments: []cveAdjustment{
+			{Component: "Windows Server 2008 for 32-bit Systems", Drop: []string{"CVE-2009-1126"}},
+			{Component: "Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2009-1126"}},
+			{Component: "Windows Server 2008 for x64-based Systems", Drop: []string{"CVE-2009-1126"}},
+			{Component: "Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2009-1126"}},
+		},
+	},
+	// TODO: the per-product NA entries below come from MS09-027's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS09-027.
+	//   - Microsoft Office Word 2000 Service Pack 3
+	//   - Microsoft Office Word 2003 Service Pack 3
+	"MS09-027": {CVEAdjustments: []cveAdjustment{{KB: "969614", Drop: []string{"CVE-2009-0565"}}}},
 	"MS09-034": {
 		CVEAdjustments: []cveAdjustment{
-			{KB: "972260", Drop: []string{"CVE-2009-1917"}},
+			{Component: "Internet Explorer 5.01 Service Pack 4 for Windows 2000 Service Pack 4", Drop: []string{"CVE-2009-1917"}},
 		},
 		IECumChain: map[string][]string{
 			"969897": {"972260"},
 		},
 	},
-	"MS09-039": {CVEAdjustments: []cveAdjustment{{KB: "969883", Drop: []string{"CVE-2009-1924"}}}},
+	// TODO: the per-product NA entries below come from MS09-039's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS09-039.
+	//   - Windows Server 2003 with SP2 for Itanium-based Systems
+	"MS09-039": {
+		CVEAdjustments: []cveAdjustment{
+			{Component: "Microsoft Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2009-1924"}},
+			{Component: "Microsoft Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2009-1924"}},
+		},
+	},
 	"MS09-043": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "947318", Drop: []string{"CVE-2009-1534"}},
 			{KB: "947319", Drop: []string{"CVE-2009-1534"}},
-			{KB: "947320", Drop: []string{"CVE-2009-0562", "CVE-2009-1136", "CVE-2009-2496"}},
 			{KB: "947826", Drop: []string{"CVE-2009-1534"}},
 			{KB: "968377", Drop: []string{"CVE-2009-1534"}},
 			{KB: "969172", Drop: []string{"CVE-2009-0562", "CVE-2009-1136", "CVE-2009-2496"}},
 			{KB: "971388", Drop: []string{"CVE-2009-0562", "CVE-2009-1136", "CVE-2009-2496"}},
+			{Component: "Microsoft Office 2000 Web Components Service Pack 3", Drop: []string{"CVE-2009-0562", "CVE-2009-1136", "CVE-2009-2496"}},
 		},
 	},
+	// TODO: the per-product NA entries below come from MS09-044's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS09-044.
+	//   - Windows Server 2003 with SP2 for Itanium-based Systems
 	"MS09-044": {
 		CVEAdjustments: []cveAdjustment{
-			{KB: "970927", Drop: []string{"CVE-2009-1929"}},
 			{KB: "974283", Drop: []string{"CVE-2009-1929"}},
+			{Component: "Microsoft Windows 2000 Service Pack 4", Drop: []string{"CVE-2009-1929"}},
+			{Component: "Microsoft Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2009-1929"}},
+			{Component: "Microsoft Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2009-1929"}},
+			{Component: "Microsoft Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2009-1929"}},
+			{Component: "Microsoft Windows XP Service Pack 2", Drop: []string{"CVE-2009-1929"}},
+			{Component: "Microsoft Windows XP Service Pack 3", Drop: []string{"CVE-2009-1929"}},
+			{Component: "Windows Vista", Drop: []string{"CVE-2009-1929"}},
+			{Component: "Windows Vista x64 Edition", Drop: []string{"CVE-2009-1929"}},
 		},
 	},
-	"MS09-047": {
+	// TODO: the per-product NA entries below come from MS09-047's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS09-047.
+	//   - Microsoft Media Foundation on Windows Server 2008 for 32-bit Systems and Windows Server 2008 for 32-bit Systems Service Pack 2
+	//   - Microsoft Media Foundation on Windows Server 2008 for x64-based Systems and Windows Server 2008 for x64-based Systems Service Pack 2
+	//   - Microsoft Media Foundation on Windows Vista x64 Edition, Windows Vista x64 Edition Service Pack 1, and Windows Vista x64 Edition Service Pack 2
+	//   - Microsoft Media Foundation on Windows Vista, Windows Vista Service Pack 1, and Windows Vista Service Pack 2
+	"MS09-047": {CVEAdjustments: []cveAdjustment{{KB: "972554", Drop: []string{"CVE-2009-2499"}}}},
+	// TODO: the per-product NA entries below come from MS09-048's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS09-048.
+	//   - Windows Server 2003 with SP2 for Itanium-based Systems
+	"MS09-048": {
 		CVEAdjustments: []cveAdjustment{
-			{KB: "972554", Drop: []string{"CVE-2009-2499"}},
-			{KB: "973812", Drop: []string{"CVE-2009-2498"}},
+			{Component: "Microsoft Windows 2000 Service Pack 4", Drop: []string{"CVE-2009-1925"}},
+			{Component: "Microsoft Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2009-1925"}},
+			{Component: "Microsoft Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2009-1925"}},
+			{Component: "Microsoft Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2009-1925"}},
+			{Component: "Microsoft Windows XP Service Pack 2", Drop: []string{"CVE-2009-1925"}},
+			{Component: "Microsoft Windows XP Service Pack 3", Drop: []string{"CVE-2009-1925"}},
 		},
 	},
-	"MS09-048": {CVEAdjustments: []cveAdjustment{{KB: "967723", Drop: []string{"CVE-2009-1925"}}}},
-	"MS09-053": {CVEAdjustments: []cveAdjustment{{KB: "975254", Drop: []string{"CVE-2009-3023"}}}},
+	// TODO: the per-product NA entries below come from MS09-053's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS09-053.
+	//   - Microsoft Internet Information Services 7.0 on Windows Server 2008 for 32-bit Systems and Windows Server 2008 for 32-bit Systems Service Pack 2
+	//   - Microsoft Internet Information Services 7.0 on Windows Server 2008 for Itanium-based Systems and Windows Server 2008 for Itanium-based Systems Service Pack 2
+	//   - Microsoft Internet Information Services 7.0 on Windows Server 2008 for x64-based bit Systems and Windows Server 2008 for x64-based Systems Service Pack 2
+	//   - Microsoft Internet Information Services 7.0 on Windows Vista x64 Edition, Windows Vista x64 Edition Service Pack 1, and Windows Vista x64 Edition Service Pack 2
+	//   - Microsoft Internet Information Services 7.0 on Windows Vista, Windows Vista Service Pack 1, and Windows Vista Service Pack 2
+	// TODO: the per-product NA entries below come from MS09-054's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS09-054.
+	//   - Internet Explorer 8 in Windows Server 2008 R2 for Itanium-based Systems
+	//   - Internet Explorer 8 in Windows Vista x64 Edition, Windows Vista x64 Edition Service Pack 1, and Windows Vista x64 Edition Service Pack 2
+	//   - Internet Explorer 8 in Windows Vista, Windows Vista Service Pack 1, and Windows Vista Service Pack 2
 	"MS09-054": {
 		CVEAdjustments: []cveAdjustment{
-			{KB: "974455", Drop: []string{"CVE-2009-1547", "CVE-2009-2530", "CVE-2009-2531"}},
+			{Component: "Internet Explorer 5.01 Service Pack 4 for Windows 2000 Service Pack 4", Drop: []string{"CVE-2009-2530", "CVE-2009-2531"}},
+			{Component: "Internet Explorer 8 for Windows 7 for 32-bit Systems", Drop: []string{"CVE-2009-1547"}},
+			{Component: "Internet Explorer 8 for Windows 7 for x64-based Systems", Drop: []string{"CVE-2009-1547"}},
+			{Component: "Internet Explorer 8 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2009-1547"}},
+			{Component: "Internet Explorer 8 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2009-1547"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 R2 for x64-based Systems", Drop: []string{"CVE-2009-1547"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 for 32-bit Systems", Drop: []string{"CVE-2009-1547"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2009-1547"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 for x64-based Systems", Drop: []string{"CVE-2009-1547"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2009-1547"}},
+			{Component: "Internet Explorer 8 for Windows Vista Service Pack 2", Drop: []string{"CVE-2009-1547"}},
+			{Component: "Internet Explorer 8 for Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2009-1547"}},
+			{Component: "Internet Explorer 8 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2009-1547"}},
+			{Component: "Internet Explorer 8 for Windows XP Service Pack 2", Drop: []string{"CVE-2009-1547"}},
+			{Component: "Internet Explorer 8 for Windows XP Service Pack 3", Drop: []string{"CVE-2009-1547"}},
 		},
 		IECumChain: map[string][]string{
 			"972260": {"974455"},
 		},
 	},
-	"MS09-058": {CVEAdjustments: []cveAdjustment{{KB: "971486", Drop: []string{"CVE-2009-2516", "CVE-2009-2517"}}}},
+	// TODO: the per-product NA entries below come from MS09-058's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS09-058.
+	//   - Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Windows Server 2008 for Itanium-based Systems
+	//   - Windows Server 2008 for Itanium-based Systems Service Pack 2
+	"MS09-058": {
+		CVEAdjustments: []cveAdjustment{
+			{Component: "Microsoft Windows 2000 Service Pack 4", Drop: []string{"CVE-2009-2517"}},
+			{Component: "Microsoft Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2009-2517"}},
+			{Component: "Microsoft Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2009-2517"}},
+			{Component: "Microsoft Windows XP Service Pack 2", Drop: []string{"CVE-2009-2517"}},
+			{Component: "Microsoft Windows XP Service Pack 3", Drop: []string{"CVE-2009-2517"}},
+			{Component: "Windows Server 2008 for 32-bit Systems", Drop: []string{"CVE-2009-2517"}},
+			{Component: "Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2009-2516", "CVE-2009-2517"}},
+			{Component: "Windows Server 2008 for x64-based Systems", Drop: []string{"CVE-2009-2517"}},
+			{Component: "Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2009-2516", "CVE-2009-2517"}},
+			{Component: "Windows Vista", Drop: []string{"CVE-2009-2517"}},
+			{Component: "Windows Vista Service Pack 1", Drop: []string{"CVE-2009-2517"}},
+			{Component: "Windows Vista Service Pack 2", Drop: []string{"CVE-2009-2516", "CVE-2009-2517"}},
+			{Component: "Windows Vista x64 Edition", Drop: []string{"CVE-2009-2517"}},
+			{Component: "Windows Vista x64 Edition Service Pack 1", Drop: []string{"CVE-2009-2517"}},
+			{Component: "Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2009-2516", "CVE-2009-2517"}},
+		},
+	},
+	// TODO: the per-product NA entries below come from MS09-061's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS09-061.
+	//   - Microsoft .NET Framework 1.0 Service Pack 3 on Windows XP Tablet Edition 2005 Service Pack 2, Windows XP Tablet Edition 2005 Service Pack 3, Windows XP Media Center Edition 2005 Service Pack 2, and Windows XP Media Center Edition 2005 Service Pack 3
+	//   - Microsoft .NET Framework 1.1 Service Pack 1 when installed on Windows Server 2003 Itanium-based Edition Service Pack 2
+	//   - Microsoft .NET Framework 1.1 Service Pack 1 when installed on Windows XP Service Pack 2 and Windows XP Service Pack 3
+	//   - Microsoft .NET Framework 2.0 Service Pack 2 on Microsoft Windows 2000 Service Pack 4
+	//   - Microsoft .NET Framework 2.0 Service Pack 2 on Windows Server 2003 SP2 for Itanium-based Systems
+	//   - Microsoft .NET Framework 2.0 Service Pack 2 on Windows Server 2003 Service Pack 2
+	//   - Microsoft .NET Framework 2.0 Service Pack 2 on Windows Server 2003 x64 Edition Service Pack 2
+	//   - Microsoft .NET Framework 2.0 Service Pack 2 on Windows XP Professional x64 Edition Service Pack 2
+	//   - Microsoft .NET Framework 2.0 Service Pack 2 on Windows XP Service Pack 2 and Windows XP Service Pack 3
+	//   - Microsoft .NET Framework 2.0 Service Pack 2 when installed on Windows Server 2008 for 32-bit Systems
+	//   - Microsoft .NET Framework 2.0 Service Pack 2 when installed on Windows Server 2008 for Itanium-based Systems
+	//   - Microsoft .NET Framework 2.0 Service Pack 2 when installed on Windows Server 2008 for x64-based Systems
+	//   - Microsoft .NET Framework 2.0 Service Pack 2 when installed on Windows Vista and Windows Vista Service Pack 1
+	//   - Microsoft .NET Framework 2.0 Service Pack 2 when installed on Windows Vista x64 Edition and Windows Vista x64 Edition Service Pack 1
+	//   - Microsoft .NET Framework 2.0 on Windows Vista
+	//   - Microsoft .NET Framework 2.0 on Windows Vista x64 Edition
+	//   - Microsoft .NET Framework 3.5 Service Pack 1 when installed on Windows Server 2003 SP2 for Itanium-based Systems
+	//   - Microsoft .NET Framework 3.5 Service Pack 1 when installed on Windows Server 2003 Service Pack 2
+	//   - Microsoft .NET Framework 3.5 Service Pack 1 when installed on Windows Server 2003 x64 Edition Service Pack 2
+	//   - Microsoft .NET Framework 3.5 Service Pack 1 when installed on Windows Server 2008 for 32-bit Systems
+	//   - Microsoft .NET Framework 3.5 Service Pack 1 when installed on Windows Server 2008 for Itanium-based Systems
+	//   - Microsoft .NET Framework 3.5 Service Pack 1 when installed on Windows Server 2008 for x64-based Systems
+	//   - Microsoft .NET Framework 3.5 Service Pack 1 when installed on Windows Vista and Windows Vista Service Pack 1
+	//   - Microsoft .NET Framework 3.5 Service Pack 1 when installed on Windows Vista x64 Edition and Windows Vista x64 Edition Service Pack 1
+	//   - Microsoft .NET Framework 3.5 Service Pack 1 when installed on Windows XP Professional x64 Edition Service Pack 2
+	//   - Microsoft .NET Framework 3.5 Service Pack 1 when installed on Windows XP Service Pack 2 and Windows XP Service Pack 3
+	//   - Microsoft .NET Framework 3.5 when installed on Windows Server 2003 SP2 for Itanium-based Systems
+	//   - Microsoft .NET Framework 3.5 when installed on Windows Server 2003 Service Pack 2
+	//   - Microsoft .NET Framework 3.5 when installed on Windows Server 2003 x64 Edition Service Pack 2
+	//   - Microsoft .NET Framework 3.5 when installed on Windows Vista
+	//   - Microsoft .NET Framework 3.5 when installed on Windows Vista x64 Edition
+	//   - Microsoft .NET Framework 3.5 when installed on Windows XP Professional x64 Edition Service Pack 2
+	//   - Microsoft .NET Framework 3.5 when installed on Windows XP Service Pack 2 and Windows XP Service Pack 3
 	"MS09-061": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "953297", Drop: []string{"CVE-2009-0091", "CVE-2009-2497"}},
 			{KB: "953298", Drop: []string{"CVE-2009-0091", "CVE-2009-2497"}},
 			{KB: "970363", Drop: []string{"CVE-2009-0090", "CVE-2009-0091"}},
-			{KB: "974378", Drop: []string{"CVE-2009-0090", "CVE-2009-0091", "CVE-2009-2497"}},
-			{KB: "974468", Drop: []string{"CVE-2009-0090", "CVE-2009-0091"}},
 			{KB: "974470", Drop: []string{"CVE-2009-0090", "CVE-2009-0091"}},
 		},
 	},
+	// TODO: the per-product NA entries below come from MS09-062's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS09-062.
+	//   - Microsoft Internet Explorer 6 Service Pack 1 when installed on Microsoft Windows 2000 Service Pack 4
+	//   - Microsoft Office Project 2002 Service Pack 1
+	//   - Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Windows Server 2008 for Itanium-based Systems
 	"MS09-062": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "957488", Drop: []string{"CVE-2009-2518", "CVE-2009-2528"}},
-			{KB: "958869", Drop: []string{"CVE-2009-2500", "CVE-2009-2501", "CVE-2009-2502", "CVE-2009-2503", "CVE-2009-2504", "CVE-2009-2518", "CVE-2009-2528", "CVE-2009-3126"}},
+			{KB: "958869", Drop: []string{"CVE-2009-2518", "CVE-2009-2528"}},
 			{KB: "970892", Drop: []string{"CVE-2009-2518", "CVE-2009-2528"}},
 			{KB: "970895", Drop: []string{"CVE-2009-2518", "CVE-2009-2528"}},
 			{KB: "971022", Drop: []string{"CVE-2009-2518", "CVE-2009-2528"}},
@@ -1026,16 +1657,49 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "972580", Drop: []string{"CVE-2009-2518", "CVE-2009-2528"}},
 			{KB: "972581", Drop: []string{"CVE-2009-2518", "CVE-2009-2528"}},
 			{KB: "973636", Drop: []string{"CVE-2009-2518", "CVE-2009-2528"}},
-			{KB: "974811", Drop: []string{"CVE-2009-2518", "CVE-2009-2528"}},
 			{KB: "975337", Drop: []string{"CVE-2009-2518", "CVE-2009-2528"}},
 			{KB: "975365", Drop: []string{"CVE-2009-2518", "CVE-2009-2528"}},
 			{KB: "975962", Drop: []string{"CVE-2009-2518", "CVE-2009-2528"}},
+			{Component: "Microsoft Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2009-2500", "CVE-2009-2501", "CVE-2009-2502", "CVE-2009-3126"}},
+			{Component: "Microsoft Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2009-2500", "CVE-2009-2501", "CVE-2009-2502", "CVE-2009-3126"}},
+			{Component: "Microsoft Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2009-2500", "CVE-2009-2501", "CVE-2009-2502", "CVE-2009-3126"}},
+			{Component: "Windows Server 2008 for 32-bit Systems", Drop: []string{"CVE-2009-2500", "CVE-2009-2501", "CVE-2009-2502", "CVE-2009-2503", "CVE-2009-3126"}},
+			{Component: "Windows Server 2008 for x64-based Systems", Drop: []string{"CVE-2009-2500", "CVE-2009-2501", "CVE-2009-2502", "CVE-2009-2503", "CVE-2009-3126"}},
+			{Component: "Windows Vista", Drop: []string{"CVE-2009-2500", "CVE-2009-2501", "CVE-2009-2502", "CVE-2009-2503", "CVE-2009-3126"}},
+			{Component: "Windows Vista Service Pack 1", Drop: []string{"CVE-2009-2500", "CVE-2009-2501", "CVE-2009-2502", "CVE-2009-2503", "CVE-2009-3126"}},
+			{Component: "Windows Vista x64 Edition", Drop: []string{"CVE-2009-2500", "CVE-2009-2501", "CVE-2009-2502", "CVE-2009-2503", "CVE-2009-3126"}},
+			{Component: "Windows Vista x64 Edition Service Pack 1", Drop: []string{"CVE-2009-2500", "CVE-2009-2501", "CVE-2009-2502", "CVE-2009-2503", "CVE-2009-3126"}},
 		},
 	},
-	"MS09-065": {CVEAdjustments: []cveAdjustment{{KB: "969947", Drop: []string{"CVE-2009-2514"}}}},
+	// TODO: the per-product NA entries below come from MS09-065's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS09-065.
+	//   - Windows Server 2008 for Itanium-based Systems and Windows Server 2008 for Itanium-based Systems Service Pack 2
+	//   - Windows Vista x64 Edition, Windows Vista x64 Edition Service Pack 1, and Windows Vista x64 Edition Service Pack 2
+	//   - Windows Vista, Windows Vista Service Pack 1, and Windows Vista Service Pack 2
+	"MS09-065": {
+		CVEAdjustments: []cveAdjustment{
+			{Component: "Windows Server 2008 for 32-bit Systems", Drop: []string{"CVE-2009-2514"}},
+			{Component: "Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2009-2514"}},
+			{Component: "Windows Server 2008 for x64-based Systems", Drop: []string{"CVE-2009-2514"}},
+			{Component: "Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2009-2514"}},
+		},
+	},
+	// TODO: the per-product NA entries below come from MS09-067's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS09-067.
+	//   - Microsoft Office Excel 2003 Service Pack 3
+	//   - Microsoft Office Excel 2007 Service Pack 1 and Microsoft Office Excel 2007 Service Pack 2
 	"MS09-067": {
 		CVEAdjustments: []cveAdjustment{
-			{KB: "972652", Drop: []string{"CVE-2009-3127", "CVE-2009-3128", "CVE-2009-3130", "CVE-2009-3133"}},
 			{KB: "973484", Drop: []string{"CVE-2009-3130", "CVE-2009-3133"}},
 			{KB: "973704", Drop: []string{"CVE-2009-3127", "CVE-2009-3128", "CVE-2009-3130", "CVE-2009-3133"}},
 			{KB: "973707", Drop: []string{"CVE-2009-3127", "CVE-2009-3128", "CVE-2009-3130", "CVE-2009-3133"}},
@@ -1044,55 +1708,363 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "976831", Drop: []string{"CVE-2009-3128"}},
 		},
 	},
-	"MS09-071": {CVEAdjustments: []cveAdjustment{{KB: "974318", Drop: []string{"CVE-2009-2505", "CVE-2009-3677"}}}},
+	// TODO: the per-product NA entries below come from MS09-071's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS09-071.
+	//   - Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Windows Server 2008 for Itanium-based Systems
+	//   - Windows Server 2008 for Itanium-based Systems Service Pack 2
+	"MS09-071": {
+		CVEAdjustments: []cveAdjustment{
+			{Component: "Microsoft Windows 2000 Service Pack 4", Drop: []string{"CVE-2009-2505"}},
+			{Component: "Microsoft Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2009-2505"}},
+			{Component: "Microsoft Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2009-2505"}},
+			{Component: "Microsoft Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2009-2505"}},
+			{Component: "Microsoft Windows XP Service Pack 2", Drop: []string{"CVE-2009-2505"}},
+			{Component: "Microsoft Windows XP Service Pack 3", Drop: []string{"CVE-2009-2505"}},
+			{Component: "Windows Server 2008 for 32-bit Systems", Drop: []string{"CVE-2009-2505"}},
+			{Component: "Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2009-3677"}},
+			{Component: "Windows Server 2008 for x64-based Systems", Drop: []string{"CVE-2009-2505"}},
+			{Component: "Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2009-3677"}},
+			{Component: "Windows Vista", Drop: []string{"CVE-2009-2505"}},
+			{Component: "Windows Vista Service Pack 1", Drop: []string{"CVE-2009-2505"}},
+			{Component: "Windows Vista Service Pack 2", Drop: []string{"CVE-2009-3677"}},
+			{Component: "Windows Vista x64 Edition", Drop: []string{"CVE-2009-2505"}},
+			{Component: "Windows Vista x64 Edition Service Pack 1", Drop: []string{"CVE-2009-2505"}},
+			{Component: "Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2009-3677"}},
+		},
+	},
+	// TODO: the per-product NA entries below come from MS09-072's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS09-072.
+	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 in Windows Server 2008 for Itanium-based Systems and Windows Server 2008 for Itanium-based Systems Service Pack 2
+	//   - Internet Explorer 7 in Windows Vista x64 Edition, Windows Vista x64 Edition Service Pack 1, and Windows Vista x64 Edition Service Pack 2
+	//   - Internet Explorer 7 in Windows Vista, Windows Vista Service Pack 1, and Windows Vista Service Pack 2
+	//   - Internet Explorer 8 in Windows Server 2008 R2 for Itanium-based Systems
+	//   - Internet Explorer 8 in Windows Vista x64 Edition, Windows Vista x64 Edition Service Pack 1, and Windows Vista x64 Edition Service Pack 2
+	//   - Internet Explorer 8 in Windows Vista, Windows Vista Service Pack 1, and Windows Vista Service Pack 2
 	"MS09-072": {
 		CVEAdjustments: []cveAdjustment{
 			{Add: []string{"CVE-2009-2493", "CVE-2009-3671", "CVE-2009-3672", "CVE-2009-3673", "CVE-2009-3674"}},
-			{KB: "976325", Drop: []string{"CVE-2009-2493", "CVE-2009-3671", "CVE-2009-3672", "CVE-2009-3673", "CVE-2009-3674"}},
+			{Component: "Internet Explorer 5.01 Service Pack 4 for Windows 2000 Service Pack 4", Drop: []string{"CVE-2009-3671", "CVE-2009-3672", "CVE-2009-3673", "CVE-2009-3674"}},
+			{Component: "Internet Explorer 6 Service Pack 1 for Windows 2000 Service Pack 4", Drop: []string{"CVE-2009-3671", "CVE-2009-3673", "CVE-2009-3674"}},
+			{Component: "Internet Explorer 6 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2009-3671", "CVE-2009-3673", "CVE-2009-3674"}},
+			{Component: "Internet Explorer 6 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2009-3671", "CVE-2009-3673", "CVE-2009-3674"}},
+			{Component: "Internet Explorer 6 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2009-3671", "CVE-2009-3673", "CVE-2009-3674"}},
+			{Component: "Internet Explorer 6 for Windows XP Service Pack 2", Drop: []string{"CVE-2009-3671", "CVE-2009-3673", "CVE-2009-3674"}},
+			{Component: "Internet Explorer 6 for Windows XP Service Pack 3", Drop: []string{"CVE-2009-3671", "CVE-2009-3673", "CVE-2009-3674"}},
+			{Component: "Internet Explorer 7 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2009-2493", "CVE-2009-3671", "CVE-2009-3674"}},
+			{Component: "Internet Explorer 7 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2009-2493", "CVE-2009-3671", "CVE-2009-3674"}},
+			{Component: "Internet Explorer 7 for Windows Server 2008 for 32-bit Systems", Drop: []string{"CVE-2009-2493", "CVE-2009-3671", "CVE-2009-3674"}},
+			{Component: "Internet Explorer 7 for Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2009-2493", "CVE-2009-3671", "CVE-2009-3674"}},
+			{Component: "Internet Explorer 7 for Windows Server 2008 for x64-based Systems", Drop: []string{"CVE-2009-2493", "CVE-2009-3671", "CVE-2009-3674"}},
+			{Component: "Internet Explorer 7 for Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2009-2493", "CVE-2009-3671", "CVE-2009-3674"}},
+			{Component: "Internet Explorer 7 for Windows Vista Service Pack 2", Drop: []string{"CVE-2009-2493", "CVE-2009-3671", "CVE-2009-3674"}},
+			{Component: "Internet Explorer 7 for Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2009-2493", "CVE-2009-3671", "CVE-2009-3674"}},
+			{Component: "Internet Explorer 7 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2009-2493", "CVE-2009-3671", "CVE-2009-3674"}},
+			{Component: "Internet Explorer 7 for Windows XP Service Pack 2", Drop: []string{"CVE-2009-2493", "CVE-2009-3671", "CVE-2009-3674"}},
+			{Component: "Internet Explorer 7 for Windows XP Service Pack 3", Drop: []string{"CVE-2009-2493", "CVE-2009-3671", "CVE-2009-3674"}},
+			{Component: "Internet Explorer 8 for Windows 7 for 32-bit Systems", Drop: []string{"CVE-2009-2493", "CVE-2009-3672"}},
+			{Component: "Internet Explorer 8 for Windows 7 for x64-based Systems", Drop: []string{"CVE-2009-2493", "CVE-2009-3672"}},
+			{Component: "Internet Explorer 8 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2009-2493", "CVE-2009-3672"}},
+			{Component: "Internet Explorer 8 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2009-2493", "CVE-2009-3672"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 R2 for x64-based Systems", Drop: []string{"CVE-2009-2493", "CVE-2009-3672"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 for 32-bit Systems", Drop: []string{"CVE-2009-2493", "CVE-2009-3672"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2009-2493", "CVE-2009-3672"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 for x64-based Systems", Drop: []string{"CVE-2009-2493", "CVE-2009-3672"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2009-2493", "CVE-2009-3672"}},
+			{Component: "Internet Explorer 8 for Windows Vista Service Pack 2", Drop: []string{"CVE-2009-2493", "CVE-2009-3672"}},
+			{Component: "Internet Explorer 8 for Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2009-2493", "CVE-2009-3672"}},
+			{Component: "Internet Explorer 8 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2009-2493", "CVE-2009-3672"}},
+			{Component: "Internet Explorer 8 for Windows XP Service Pack 2", Drop: []string{"CVE-2009-2493", "CVE-2009-3672"}},
+			{Component: "Internet Explorer 8 for Windows XP Service Pack 3", Drop: []string{"CVE-2009-2493", "CVE-2009-3672"}},
 		},
 		IECumChain: map[string][]string{
 			"974455": {"976325"},
 		},
 	},
+	// TODO: the per-product NA entries below come from MS10-002's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS10-002.
+	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 in Windows Server 2008 for Itanium-based Systems and Windows Server 2008 for Itanium-based Systems Service Pack 2
+	//   - Internet Explorer 7 in Windows Vista x64 Edition, Windows Vista x64 Edition Service Pack 1, and Windows Vista x64 Edition Service Pack 2
+	//   - Internet Explorer 7 in Windows Vista, Windows Vista Service Pack 1, and Windows Vista Service Pack 2
+	//   - Internet Explorer 8 in Windows Server 2008 R2 for Itanium-based Systems
+	//   - Internet Explorer 8 in Windows Vista x64 Edition, Windows Vista x64 Edition Service Pack 1, and Windows Vista x64 Edition Service Pack 2
+	//   - Internet Explorer 8 in Windows Vista, Windows Vista Service Pack 1, and Windows Vista Service Pack 2
 	"MS10-002": {
 		CVEAdjustments: []cveAdjustment{
-			{KB: "978207", Drop: []string{"CVE-2009-4074", "CVE-2010-0027", "CVE-2010-0244", "CVE-2010-0245", "CVE-2010-0246", "CVE-2010-0247", "CVE-2010-0248", "CVE-2010-0249"}},
+			{Component: "Internet Explorer 5.01 Service Pack 4 for Windows 2000 Service Pack 4", Drop: []string{"CVE-2009-4074", "CVE-2010-0244", "CVE-2010-0245", "CVE-2010-0246", "CVE-2010-0248", "CVE-2010-0249"}},
+			{Component: "Internet Explorer 6 Service Pack 1 for Windows 2000 Service Pack 4", Drop: []string{"CVE-2009-4074", "CVE-2010-0245", "CVE-2010-0246"}},
+			{Component: "Internet Explorer 6 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2009-4074", "CVE-2010-0027", "CVE-2010-0245", "CVE-2010-0246"}},
+			{Component: "Internet Explorer 6 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2009-4074", "CVE-2010-0027", "CVE-2010-0245", "CVE-2010-0246"}},
+			{Component: "Internet Explorer 6 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2009-4074", "CVE-2010-0027", "CVE-2010-0245", "CVE-2010-0246"}},
+			{Component: "Internet Explorer 6 for Windows XP Service Pack 2", Drop: []string{"CVE-2009-4074", "CVE-2010-0245", "CVE-2010-0246"}},
+			{Component: "Internet Explorer 6 for Windows XP Service Pack 3", Drop: []string{"CVE-2009-4074", "CVE-2010-0027", "CVE-2010-0245", "CVE-2010-0246"}},
+			{Component: "Internet Explorer 7 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2009-4074", "CVE-2010-0245", "CVE-2010-0246", "CVE-2010-0247"}},
+			{Component: "Internet Explorer 7 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2009-4074", "CVE-2010-0245", "CVE-2010-0246", "CVE-2010-0247"}},
+			{Component: "Internet Explorer 7 for Windows Server 2008 for 32-bit Systems", Drop: []string{"CVE-2009-4074", "CVE-2010-0245", "CVE-2010-0246", "CVE-2010-0247"}},
+			{Component: "Internet Explorer 7 for Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2009-4074", "CVE-2010-0245", "CVE-2010-0246", "CVE-2010-0247"}},
+			{Component: "Internet Explorer 7 for Windows Server 2008 for x64-based Systems", Drop: []string{"CVE-2009-4074", "CVE-2010-0245", "CVE-2010-0246", "CVE-2010-0247"}},
+			{Component: "Internet Explorer 7 for Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2009-4074", "CVE-2010-0245", "CVE-2010-0246", "CVE-2010-0247"}},
+			{Component: "Internet Explorer 7 for Windows Vista Service Pack 2", Drop: []string{"CVE-2009-4074", "CVE-2010-0245", "CVE-2010-0246", "CVE-2010-0247"}},
+			{Component: "Internet Explorer 7 for Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2009-4074", "CVE-2010-0245", "CVE-2010-0246", "CVE-2010-0247"}},
+			{Component: "Internet Explorer 7 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2009-4074", "CVE-2010-0245", "CVE-2010-0246", "CVE-2010-0247"}},
+			{Component: "Internet Explorer 7 for Windows XP Service Pack 2", Drop: []string{"CVE-2009-4074", "CVE-2010-0245", "CVE-2010-0246", "CVE-2010-0247"}},
+			{Component: "Internet Explorer 7 for Windows XP Service Pack 3", Drop: []string{"CVE-2009-4074", "CVE-2010-0245", "CVE-2010-0246", "CVE-2010-0247"}},
+			{Component: "Internet Explorer 8 for Windows 7 for 32-bit Systems", Drop: []string{"CVE-2010-0247"}},
+			{Component: "Internet Explorer 8 for Windows 7 for x64-based Systems", Drop: []string{"CVE-2010-0247"}},
+			{Component: "Internet Explorer 8 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2010-0247"}},
+			{Component: "Internet Explorer 8 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2010-0247"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 R2 for x64-based Systems", Drop: []string{"CVE-2010-0247"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 for 32-bit Systems", Drop: []string{"CVE-2010-0247"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2010-0247"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 for x64-based Systems", Drop: []string{"CVE-2010-0247"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2010-0247"}},
+			{Component: "Internet Explorer 8 for Windows Vista Service Pack 2", Drop: []string{"CVE-2010-0247"}},
+			{Component: "Internet Explorer 8 for Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2010-0247"}},
+			{Component: "Internet Explorer 8 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2010-0247"}},
+			{Component: "Internet Explorer 8 for Windows XP Service Pack 2", Drop: []string{"CVE-2010-0247"}},
+			{Component: "Internet Explorer 8 for Windows XP Service Pack 3", Drop: []string{"CVE-2010-0247"}},
 		},
 		IECumChain: map[string][]string{
 			"976325": {"978207"},
 		},
 	},
-	"MS10-004": {
+	// TODO: the per-product NA entries below come from MS10-004's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS10-004.
+	//   - Microsoft Office PowerPoint 2002 Service Pack 3
+	//   - Microsoft Office PowerPoint 2003 Service Pack 3
+	"MS10-004": {CVEAdjustments: []cveAdjustment{{KB: "979674", Drop: []string{"CVE-2010-0029", "CVE-2010-0030", "CVE-2010-0032", "CVE-2010-0033", "CVE-2010-0034"}}}},
+	// TODO: the per-product NA entries below come from MS10-006's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS10-006.
+	//   - Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Windows Server 2008 R2 for Itanium-based Systems
+	//   - Windows Server 2008 for Itanium-based Systems and Windows Server 2008 for Itanium-based Systems Service Pack 2
+	//   - Windows Vista x64 Edition, Windows Vista x64 Edition Service Pack 1, and Windows Vista x64 Edition Service Pack 2
+	//   - Windows Vista, Windows Vista Service Pack 1, and Windows Vista Service Pack 2
+	"MS10-006": {
 		CVEAdjustments: []cveAdjustment{
-			{KB: "975416", Drop: []string{"CVE-2010-0029", "CVE-2010-0033", "CVE-2010-0034"}},
-			{KB: "979674", Drop: []string{"CVE-2010-0029", "CVE-2010-0030", "CVE-2010-0032", "CVE-2010-0033", "CVE-2010-0034"}},
+			{Component: "Microsoft Windows 2000 Service Pack 4", Drop: []string{"CVE-2010-0017"}},
+			{Component: "Microsoft Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2010-0017"}},
+			{Component: "Microsoft Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2010-0017"}},
+			{Component: "Microsoft Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2010-0017"}},
+			{Component: "Microsoft Windows XP Service Pack 2", Drop: []string{"CVE-2010-0017"}},
+			{Component: "Microsoft Windows XP Service Pack 3", Drop: []string{"CVE-2010-0017"}},
+			{Component: "Windows 7 for 32-bit Systems", Drop: []string{"CVE-2010-0016"}},
+			{Component: "Windows 7 for x64-based Systems", Drop: []string{"CVE-2010-0016"}},
+			{Component: "Windows Server 2008 R2 for x64-based Systems", Drop: []string{"CVE-2010-0016"}},
+			{Component: "Windows Server 2008 for 32-bit Systems", Drop: []string{"CVE-2010-0016"}},
+			{Component: "Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2010-0016"}},
+			{Component: "Windows Server 2008 for x64-based Systems", Drop: []string{"CVE-2010-0016"}},
+			{Component: "Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2010-0016"}},
 		},
 	},
-	"MS10-006": {CVEAdjustments: []cveAdjustment{{KB: "978251", Drop: []string{"CVE-2010-0016", "CVE-2010-0017"}}}},
-	"MS10-012": {CVEAdjustments: []cveAdjustment{{KB: "971468", Drop: []string{"CVE-2010-0021"}}}},
-	"MS10-015": {CVEAdjustments: []cveAdjustment{{KB: "977165", Drop: []string{"CVE-2010-0232", "CVE-2010-0233"}}}},
+	// TODO: the per-product NA entries below come from MS10-012's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS10-012.
+	//   - Windows Server 2003 with SP2 for Itanium-based Systems
+	"MS10-012": {
+		CVEAdjustments: []cveAdjustment{
+			{Component: "Microsoft Windows 2000 Service Pack 4", Drop: []string{"CVE-2010-0021"}},
+			{Component: "Microsoft Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2010-0021"}},
+			{Component: "Microsoft Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2010-0021"}},
+			{Component: "Microsoft Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2010-0021"}},
+			{Component: "Microsoft Windows XP Service Pack 2", Drop: []string{"CVE-2010-0021"}},
+			{Component: "Microsoft Windows XP Service Pack 3", Drop: []string{"CVE-2010-0021"}},
+		},
+	},
+	// TODO: the per-product NA entries below come from MS10-015's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS10-015.
+	//   - Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Windows Server 2008 for Itanium-based Systems and Windows Server 2008 for Itanium-based Systems Service Pack 2
+	//   - Windows Vista x64 Edition, Windows Vista x64 Edition Service Pack 1, and Windows Vista x64 Edition Service Pack 2
+	"MS10-015": {
+		CVEAdjustments: []cveAdjustment{
+			{Component: "Microsoft Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2010-0232"}},
+			{Component: "Microsoft Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2010-0232"}},
+			{Component: "Windows 7 for 32-bit Systems", Drop: []string{"CVE-2010-0233"}},
+			{Component: "Windows Server 2008 for x64-based Systems", Drop: []string{"CVE-2010-0232"}},
+			{Component: "Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2010-0232"}},
+		},
+	},
+	// TODO: the per-product NA entries below come from MS10-017's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS10-017.
+	//   - Microsoft Office Excel 2002 Service Pack 3
+	//   - Microsoft Office Excel 2003 Service Pack 3
+	//   - Microsoft Office Excel 2007 Service Pack 1 and Microsoft Office Excel 2007 Service Pack 2
 	"MS10-017": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "978380", Drop: []string{"CVE-2010-0257", "CVE-2010-0262", "CVE-2010-0264"}},
 			{KB: "978383", Drop: []string{"CVE-2010-0257", "CVE-2010-0261", "CVE-2010-0262", "CVE-2010-0264"}},
 			{KB: "979439", Drop: []string{"CVE-2010-0257", "CVE-2010-0258", "CVE-2010-0260", "CVE-2010-0261", "CVE-2010-0262", "CVE-2010-0264"}},
-			{KB: "980150", Drop: []string{"CVE-2010-0257", "CVE-2010-0260", "CVE-2010-0261", "CVE-2010-0262", "CVE-2010-0263", "CVE-2010-0264"}},
 			{KB: "980837", Drop: []string{"CVE-2010-0257", "CVE-2010-0260", "CVE-2010-0261", "CVE-2010-0263"}},
 			{KB: "980839", Drop: []string{"CVE-2010-0257", "CVE-2010-0260", "CVE-2010-0261", "CVE-2010-0262"}},
 			{KB: "980840", Drop: []string{"CVE-2010-0257", "CVE-2010-0260", "CVE-2010-0261", "CVE-2010-0262"}},
 		},
 	},
+	// TODO: the per-product NA entries below come from MS10-018's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS10-018.
+	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 in Windows Server 2008 for Itanium-based Systems and Windows Server 2008 for Itanium-based Systems Service Pack 2
+	//   - Internet Explorer 7 in Windows Vista x64 Edition, Windows Vista x64 Edition Service Pack 1, and Windows Vista x64 Edition Service Pack 2
+	//   - Internet Explorer 7 in Windows Vista, Windows Vista Service Pack 1, and Windows Vista Service Pack 2
+	//   - Internet Explorer 8 in Windows Server 2008 R2 for Itanium-based Systems
+	//   - Internet Explorer 8 in Windows Vista x64 Edition, Windows Vista x64 Edition Service Pack 1, and Windows Vista x64 Edition Service Pack 2
+	//   - Internet Explorer 8 in Windows Vista, Windows Vista Service Pack 1, and Windows Vista Service Pack 2
 	"MS10-018": {
 		CVEAdjustments: []cveAdjustment{
-			{KB: "980182", Drop: []string{"CVE-2010-0267", "CVE-2010-0488", "CVE-2010-0489", "CVE-2010-0490", "CVE-2010-0491", "CVE-2010-0492", "CVE-2010-0494", "CVE-2010-0805", "CVE-2010-0806", "CVE-2010-0807"}},
+			{Component: "Internet Explorer 5.01 Service Pack 4 for Windows 2000 Service Pack 4", Drop: []string{"CVE-2010-0267", "CVE-2010-0490", "CVE-2010-0492", "CVE-2010-0494", "CVE-2010-0806", "CVE-2010-0807"}},
+			{Component: "Internet Explorer 6 Service Pack 1 for Windows 2000 Service Pack 4", Drop: []string{"CVE-2010-0492", "CVE-2010-0807"}},
+			{Component: "Internet Explorer 6 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2010-0492", "CVE-2010-0805", "CVE-2010-0807"}},
+			{Component: "Internet Explorer 6 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2010-0492", "CVE-2010-0805", "CVE-2010-0807"}},
+			{Component: "Internet Explorer 6 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2010-0492", "CVE-2010-0807"}},
+			{Component: "Internet Explorer 6 for Windows XP Service Pack 2", Drop: []string{"CVE-2010-0492", "CVE-2010-0807"}},
+			{Component: "Internet Explorer 6 for Windows XP Service Pack 3", Drop: []string{"CVE-2010-0492", "CVE-2010-0807"}},
+			{Component: "Internet Explorer 7 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2010-0491", "CVE-2010-0492", "CVE-2010-0805"}},
+			{Component: "Internet Explorer 7 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2010-0491", "CVE-2010-0492", "CVE-2010-0805"}},
+			{Component: "Internet Explorer 7 for Windows Server 2008 for 32-bit Systems", Drop: []string{"CVE-2010-0491", "CVE-2010-0492", "CVE-2010-0805"}},
+			{Component: "Internet Explorer 7 for Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2010-0491", "CVE-2010-0492", "CVE-2010-0805"}},
+			{Component: "Internet Explorer 7 for Windows Server 2008 for x64-based Systems", Drop: []string{"CVE-2010-0491", "CVE-2010-0492", "CVE-2010-0805"}},
+			{Component: "Internet Explorer 7 for Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2010-0491", "CVE-2010-0492", "CVE-2010-0805"}},
+			{Component: "Internet Explorer 7 for Windows Vista Service Pack 2", Drop: []string{"CVE-2010-0491", "CVE-2010-0492", "CVE-2010-0805"}},
+			{Component: "Internet Explorer 7 for Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2010-0491", "CVE-2010-0492", "CVE-2010-0805"}},
+			{Component: "Internet Explorer 7 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2010-0491", "CVE-2010-0492", "CVE-2010-0805"}},
+			{Component: "Internet Explorer 7 for Windows XP Service Pack 2", Drop: []string{"CVE-2010-0491", "CVE-2010-0492", "CVE-2010-0805"}},
+			{Component: "Internet Explorer 7 for Windows XP Service Pack 3", Drop: []string{"CVE-2010-0491", "CVE-2010-0492", "CVE-2010-0805"}},
+			{Component: "Internet Explorer 8 for Windows 7 for 32-bit Systems", Drop: []string{"CVE-2010-0267", "CVE-2010-0488", "CVE-2010-0489", "CVE-2010-0491", "CVE-2010-0805", "CVE-2010-0806", "CVE-2010-0807"}},
+			{Component: "Internet Explorer 8 for Windows 7 for x64-based Systems", Drop: []string{"CVE-2010-0267", "CVE-2010-0488", "CVE-2010-0489", "CVE-2010-0491", "CVE-2010-0805", "CVE-2010-0806", "CVE-2010-0807"}},
+			{Component: "Internet Explorer 8 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2010-0267", "CVE-2010-0488", "CVE-2010-0489", "CVE-2010-0491", "CVE-2010-0805", "CVE-2010-0806", "CVE-2010-0807"}},
+			{Component: "Internet Explorer 8 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2010-0267", "CVE-2010-0488", "CVE-2010-0489", "CVE-2010-0491", "CVE-2010-0805", "CVE-2010-0806", "CVE-2010-0807"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 R2 for x64-based Systems", Drop: []string{"CVE-2010-0267", "CVE-2010-0488", "CVE-2010-0489", "CVE-2010-0491", "CVE-2010-0805", "CVE-2010-0806", "CVE-2010-0807"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 for 32-bit Systems", Drop: []string{"CVE-2010-0267", "CVE-2010-0488", "CVE-2010-0489", "CVE-2010-0491", "CVE-2010-0805", "CVE-2010-0806", "CVE-2010-0807"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2010-0267", "CVE-2010-0488", "CVE-2010-0489", "CVE-2010-0491", "CVE-2010-0805", "CVE-2010-0806", "CVE-2010-0807"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 for x64-based Systems", Drop: []string{"CVE-2010-0267", "CVE-2010-0488", "CVE-2010-0489", "CVE-2010-0491", "CVE-2010-0805", "CVE-2010-0806", "CVE-2010-0807"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2010-0267", "CVE-2010-0488", "CVE-2010-0489", "CVE-2010-0491", "CVE-2010-0805", "CVE-2010-0806", "CVE-2010-0807"}},
+			{Component: "Internet Explorer 8 for Windows Vista Service Pack 2", Drop: []string{"CVE-2010-0267", "CVE-2010-0488", "CVE-2010-0489", "CVE-2010-0491", "CVE-2010-0805", "CVE-2010-0806", "CVE-2010-0807"}},
+			{Component: "Internet Explorer 8 for Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2010-0267", "CVE-2010-0488", "CVE-2010-0489", "CVE-2010-0491", "CVE-2010-0805", "CVE-2010-0806", "CVE-2010-0807"}},
+			{Component: "Internet Explorer 8 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2010-0267", "CVE-2010-0488", "CVE-2010-0489", "CVE-2010-0491", "CVE-2010-0805", "CVE-2010-0806", "CVE-2010-0807"}},
+			{Component: "Internet Explorer 8 for Windows XP Service Pack 2", Drop: []string{"CVE-2010-0267", "CVE-2010-0488", "CVE-2010-0489", "CVE-2010-0491", "CVE-2010-0805", "CVE-2010-0806", "CVE-2010-0807"}},
+			{Component: "Internet Explorer 8 for Windows XP Service Pack 3", Drop: []string{"CVE-2010-0267", "CVE-2010-0488", "CVE-2010-0489", "CVE-2010-0491", "CVE-2010-0805", "CVE-2010-0806", "CVE-2010-0807"}},
 		},
 		IECumChain: map[string][]string{
 			"978207": {"980182"},
 		},
 	},
-	"MS10-019": {CVEAdjustments: []cveAdjustment{{KB: "981210", Drop: []string{"CVE-2010-0486", "CVE-2010-0487"}}}},
-	"MS10-020": {CVEAdjustments: []cveAdjustment{{KB: "980232", Drop: []string{"CVE-2009-3676", "CVE-2010-0270", "CVE-2010-0476", "CVE-2010-0477"}}}},
-	"MS10-021": {CVEAdjustments: []cveAdjustment{{KB: "979683", Drop: []string{"CVE-2010-0234", "CVE-2010-0235", "CVE-2010-0236", "CVE-2010-0237", "CVE-2010-0238", "CVE-2010-0481", "CVE-2010-0482", "CVE-2010-0810"}}}},
+	"MS10-019": {
+		CVEAdjustments: []cveAdjustment{
+			{Component: "Authenticode Signature Verification 5.1", Drop: []string{"CVE-2010-0487"}},
+			{Component: "Authenticode Signature Verification 6.0", Drop: []string{"CVE-2010-0487"}},
+			{Component: "Authenticode Signature Verification 6.1", Drop: []string{"CVE-2010-0487"}},
+			{Component: "Cabinet File Viewer Shell Extension 5.1", Drop: []string{"CVE-2010-0486"}},
+			{Component: "Cabinet File Viewer Shell Extension 6.0", Drop: []string{"CVE-2010-0486"}},
+			{Component: "Cabinet File Viewer Shell Extension 6.1", Drop: []string{"CVE-2010-0486"}},
+		},
+	},
+	// TODO: the per-product NA entries below come from MS10-020's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS10-020.
+	//   - Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Windows Server 2008 for Itanium-based Systems and Windows Server 2008 for Itanium-based Systems Service Pack 2
+	//   - Windows Vista x64 Edition, Windows Vista x64 Edition Service Pack 1, and Windows Vista x64 Edition Service Pack 2
+	//   - Windows Vista, Windows Vista Service Pack 1, and Windows Vista Service Pack 2
+	"MS10-020": {
+		CVEAdjustments: []cveAdjustment{
+			{Component: "Microsoft Windows 2000 Service Pack 4", Drop: []string{"CVE-2009-3676", "CVE-2010-0270", "CVE-2010-0476", "CVE-2010-0477"}},
+			{Component: "Microsoft Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2009-3676", "CVE-2010-0270", "CVE-2010-0477"}},
+			{Component: "Microsoft Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2009-3676", "CVE-2010-0270", "CVE-2010-0477"}},
+			{Component: "Microsoft Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2009-3676", "CVE-2010-0270", "CVE-2010-0476", "CVE-2010-0477"}},
+			{Component: "Microsoft Windows XP Service Pack 2", Drop: []string{"CVE-2009-3676", "CVE-2010-0270", "CVE-2010-0476", "CVE-2010-0477"}},
+			{Component: "Microsoft Windows XP Service Pack 3", Drop: []string{"CVE-2009-3676", "CVE-2010-0270", "CVE-2010-0476", "CVE-2010-0477"}},
+			{Component: "Windows Server 2008 for 32-bit Systems", Drop: []string{"CVE-2009-3676", "CVE-2010-0270", "CVE-2010-0477"}},
+			{Component: "Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2009-3676", "CVE-2010-0270", "CVE-2010-0477"}},
+			{Component: "Windows Server 2008 for x64-based Systems", Drop: []string{"CVE-2009-3676", "CVE-2010-0270", "CVE-2010-0477"}},
+			{Component: "Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2009-3676", "CVE-2010-0270", "CVE-2010-0477"}},
+		},
+	},
+	// TODO: the per-product NA entries below come from MS10-021's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS10-021.
+	//   - Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Windows Server 2008 R2 for Itanium-based Systems
+	//   - Windows Server 2008 for Itanium-based Systems and Windows Server 2008 for Itanium-based Systems Service Pack 2
+	"MS10-021": {
+		CVEAdjustments: []cveAdjustment{
+			{Component: "Microsoft Windows 2000 Service Pack 4", Drop: []string{"CVE-2010-0481", "CVE-2010-0482", "CVE-2010-0810"}},
+			{Component: "Microsoft Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2010-0237", "CVE-2010-0481", "CVE-2010-0482", "CVE-2010-0810"}},
+			{Component: "Microsoft Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2010-0237", "CVE-2010-0481", "CVE-2010-0482", "CVE-2010-0810"}},
+			{Component: "Microsoft Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2010-0237", "CVE-2010-0481", "CVE-2010-0482", "CVE-2010-0810"}},
+			{Component: "Microsoft Windows XP Service Pack 2", Drop: []string{"CVE-2010-0481", "CVE-2010-0482", "CVE-2010-0810"}},
+			{Component: "Microsoft Windows XP Service Pack 3", Drop: []string{"CVE-2010-0481", "CVE-2010-0482", "CVE-2010-0810"}},
+			{Component: "Windows 7 for 32-bit Systems", Drop: []string{"CVE-2010-0234", "CVE-2010-0235", "CVE-2010-0236", "CVE-2010-0237", "CVE-2010-0238", "CVE-2010-0810"}},
+			{Component: "Windows 7 for x64-based Systems", Drop: []string{"CVE-2010-0234", "CVE-2010-0235", "CVE-2010-0236", "CVE-2010-0237", "CVE-2010-0238", "CVE-2010-0810"}},
+			{Component: "Windows Server 2008 R2 for x64-based Systems", Drop: []string{"CVE-2010-0234", "CVE-2010-0235", "CVE-2010-0236", "CVE-2010-0237", "CVE-2010-0238", "CVE-2010-0810"}},
+			{Component: "Windows Server 2008 for 32-bit Systems", Drop: []string{"CVE-2010-0235", "CVE-2010-0236", "CVE-2010-0237", "CVE-2010-0238", "CVE-2010-0482"}},
+			{Component: "Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2010-0235", "CVE-2010-0236", "CVE-2010-0237", "CVE-2010-0238", "CVE-2010-0482"}},
+			{Component: "Windows Server 2008 for x64-based Systems", Drop: []string{"CVE-2010-0235", "CVE-2010-0236", "CVE-2010-0237", "CVE-2010-0238", "CVE-2010-0482"}},
+			{Component: "Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2010-0235", "CVE-2010-0236", "CVE-2010-0237", "CVE-2010-0238", "CVE-2010-0482"}},
+			{Component: "Windows Vista", Drop: []string{"CVE-2010-0237", "CVE-2010-0482"}},
+			{Component: "Windows Vista Service Pack 1", Drop: []string{"CVE-2010-0235", "CVE-2010-0236", "CVE-2010-0237", "CVE-2010-0238", "CVE-2010-0482"}},
+			{Component: "Windows Vista Service Pack 2", Drop: []string{"CVE-2010-0235", "CVE-2010-0236", "CVE-2010-0237", "CVE-2010-0238", "CVE-2010-0482"}},
+			{Component: "Windows Vista x64 Edition", Drop: []string{"CVE-2010-0237", "CVE-2010-0482"}},
+			{Component: "Windows Vista x64 Edition Service Pack 1", Drop: []string{"CVE-2010-0235", "CVE-2010-0236", "CVE-2010-0237", "CVE-2010-0238", "CVE-2010-0482"}},
+			{Component: "Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2010-0235", "CVE-2010-0236", "CVE-2010-0237", "CVE-2010-0238", "CVE-2010-0482"}},
+		},
+	},
 	"MS10-024": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "976702", Drop: []string{"CVE-2010-0025"}},
@@ -1102,7 +2074,21 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "981407", Drop: []string{"CVE-2010-0025"}},
 		},
 	},
-	"MS10-032": {CVEAdjustments: []cveAdjustment{{KB: "979559", Drop: []string{"CVE-2010-0484"}}}},
+	// TODO: the per-product NA entries below come from MS10-032's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS10-032.
+	//   - Windows Server 2008 R2 for Itanium-based Systems
+	"MS10-032": {
+		CVEAdjustments: []cveAdjustment{
+			{Component: "Windows 7 for 32-bit Systems", Drop: []string{"CVE-2010-0484"}},
+			{Component: "Windows 7 for x64-based Systems", Drop: []string{"CVE-2010-0484"}},
+			{Component: "Windows Server 2008 R2 for x64-based Systems", Drop: []string{"CVE-2010-0484"}},
+		},
+	},
 	"MS10-033": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "978695", Drop: []string{"CVE-2010-1880"}},
@@ -1111,20 +2097,67 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "979902", Drop: []string{"CVE-2010-1880"}},
 		},
 	},
-	"MS10-034": {CVEAdjustments: []cveAdjustment{{KB: "980195", Drop: []string{"CVE-2010-0811"}}}},
+	// TODO: the per-product NA entries below come from MS10-034's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS10-034.
+	//   - Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Windows Server 2008 for Itanium-based Systems and Windows Server 2008 for Itanium-based Systems Service Pack 2
+	"MS10-034": {CVEAdjustments: []cveAdjustment{{Component: "Microsoft Windows 2000 Service Pack 4", Drop: []string{"CVE-2010-0811"}}}},
+	// TODO: the per-product NA entries below come from MS10-035's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS10-035.
+	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 in Windows Server 2008 for Itanium-based Systems and Windows Server 2008 for Itanium-based Systems Service Pack 2
 	"MS10-035": {
 		CVEAdjustments: []cveAdjustment{
-			{KB: "982381", Drop: []string{"CVE-2010-0255", "CVE-2010-1257", "CVE-2010-1260", "CVE-2010-1261"}},
+			{Component: "Internet Explorer 6 Service Pack 1 for Windows 2000 Service Pack 4", Drop: []string{"CVE-2010-0255", "CVE-2010-1257", "CVE-2010-1260", "CVE-2010-1261"}},
+			{Component: "Internet Explorer 6 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2010-0255", "CVE-2010-1257", "CVE-2010-1260", "CVE-2010-1261"}},
+			{Component: "Internet Explorer 6 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2010-0255", "CVE-2010-1257", "CVE-2010-1260", "CVE-2010-1261"}},
+			{Component: "Internet Explorer 6 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2010-0255", "CVE-2010-1257", "CVE-2010-1260", "CVE-2010-1261"}},
+			{Component: "Internet Explorer 6 for Windows XP Service Pack 2", Drop: []string{"CVE-2010-0255", "CVE-2010-1257", "CVE-2010-1260", "CVE-2010-1261"}},
+			{Component: "Internet Explorer 6 for Windows XP Service Pack 3", Drop: []string{"CVE-2010-0255", "CVE-2010-1257", "CVE-2010-1260", "CVE-2010-1261"}},
+			{Component: "Internet Explorer 7 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2010-1257", "CVE-2010-1260", "CVE-2010-1261"}},
+			{Component: "Internet Explorer 7 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2010-1257", "CVE-2010-1260", "CVE-2010-1261"}},
+			{Component: "Internet Explorer 7 for Windows Server 2008 for 32-bit Systems", Drop: []string{"CVE-2010-1257", "CVE-2010-1260", "CVE-2010-1261"}},
+			{Component: "Internet Explorer 7 for Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2010-1257", "CVE-2010-1260", "CVE-2010-1261"}},
+			{Component: "Internet Explorer 7 for Windows Server 2008 for x64-based Systems", Drop: []string{"CVE-2010-1257", "CVE-2010-1260", "CVE-2010-1261"}},
+			{Component: "Internet Explorer 7 for Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2010-1257", "CVE-2010-1260", "CVE-2010-1261"}},
+			{Component: "Internet Explorer 7 for Windows Vista Service Pack 1", Drop: []string{"CVE-2010-1257", "CVE-2010-1260", "CVE-2010-1261"}},
+			{Component: "Internet Explorer 7 for Windows Vista Service Pack 2", Drop: []string{"CVE-2010-1257", "CVE-2010-1260", "CVE-2010-1261"}},
+			{Component: "Internet Explorer 7 for Windows Vista x64 Edition Service Pack 1", Drop: []string{"CVE-2010-1257", "CVE-2010-1260", "CVE-2010-1261"}},
+			{Component: "Internet Explorer 7 for Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2010-1257", "CVE-2010-1260", "CVE-2010-1261"}},
+			{Component: "Internet Explorer 7 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2010-1257", "CVE-2010-1260", "CVE-2010-1261"}},
+			{Component: "Internet Explorer 7 for Windows XP Service Pack 2", Drop: []string{"CVE-2010-1257", "CVE-2010-1260", "CVE-2010-1261"}},
+			{Component: "Internet Explorer 7 for Windows XP Service Pack 3", Drop: []string{"CVE-2010-1257", "CVE-2010-1260", "CVE-2010-1261"}},
 		},
 		IECumChain: map[string][]string{
 			"980182": {"982381"},
 		},
 	},
+	// TODO: the per-product NA entries below come from MS10-038's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS10-038.
+	//   - Microsoft Office Excel 2003 Service Pack 3
+	//   - Microsoft Office Excel 2007 Service Pack 1
+	//   - Microsoft Office Excel 2007 Service Pack 2
 	"MS10-038": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "982331", Drop: []string{"CVE-2010-0822", "CVE-2010-0824", "CVE-2010-1245", "CVE-2010-1246", "CVE-2010-1247", "CVE-2010-1248", "CVE-2010-1249", "CVE-2010-1250", "CVE-2010-1251", "CVE-2010-1252", "CVE-2010-1254"}},
 			{KB: "982333", Drop: []string{"CVE-2010-0822", "CVE-2010-0824", "CVE-2010-1245", "CVE-2010-1246", "CVE-2010-1247", "CVE-2010-1248", "CVE-2010-1249", "CVE-2010-1250", "CVE-2010-1251", "CVE-2010-1252", "CVE-2010-1253", "CVE-2010-1254"}},
-			{KB: "2027452", Drop: []string{"CVE-2010-0822", "CVE-2010-0824", "CVE-2010-1245", "CVE-2010-1246", "CVE-2010-1247", "CVE-2010-1248", "CVE-2010-1249", "CVE-2010-1250", "CVE-2010-1251", "CVE-2010-1252", "CVE-2010-1253", "CVE-2010-1254"}},
+			{KB: "2027452", Drop: []string{"CVE-2010-1254"}},
 			{KB: "2028864", Drop: []string{"CVE-2010-0824", "CVE-2010-1246", "CVE-2010-1247", "CVE-2010-1248", "CVE-2010-1251", "CVE-2010-1252", "CVE-2010-1254"}},
 			{KB: "2028866", Drop: []string{"CVE-2010-1246", "CVE-2010-1247", "CVE-2010-1254"}},
 			{KB: "2078051", Drop: []string{"CVE-2010-0824", "CVE-2010-1246", "CVE-2010-1247", "CVE-2010-1248", "CVE-2010-1251", "CVE-2010-1252"}},
@@ -1137,30 +2170,185 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "980923", Drop: []string{"CVE-2010-0817", "CVE-2010-1264"}},
 		},
 	},
-	"MS10-044": {CVEAdjustments: []cveAdjustment{{KB: "982335", Drop: []string{"CVE-2010-1881"}}}},
-	"MS10-047": {CVEAdjustments: []cveAdjustment{{KB: "981852", Drop: []string{"CVE-2010-1888", "CVE-2010-1889", "CVE-2010-1890"}}}},
-	"MS10-048": {CVEAdjustments: []cveAdjustment{{KB: "2160329", Drop: []string{"CVE-2010-1894", "CVE-2010-1895", "CVE-2010-1896"}}}},
-	"MS10-049": {CVEAdjustments: []cveAdjustment{{KB: "980436", Drop: []string{"CVE-2010-2566"}}}},
+	// TODO: the per-product NA entries below come from MS10-044's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS10-044.
+	//   - Microsoft Office Access 2007 Service Pack 1 and Microsoft Office Access 2007 Service Pack 2
+	// TODO: the per-product NA entries below come from MS10-047's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS10-047.
+	//   - Windows Server 2008 R2 for Itanium-based Systems
+	//   - Windows Server 2008 for Itanium-based Systems and Windows Server 2008 for Itanium-based Systems Service Pack 2
+	"MS10-047": {
+		CVEAdjustments: []cveAdjustment{
+			{Component: "Microsoft Windows XP Service Pack 3", Drop: []string{"CVE-2010-1889", "CVE-2010-1890"}},
+			{Component: "Windows 7 for 32-bit Systems", Drop: []string{"CVE-2010-1888", "CVE-2010-1889"}},
+			{Component: "Windows 7 for x64-based Systems", Drop: []string{"CVE-2010-1888", "CVE-2010-1889"}},
+			{Component: "Windows Server 2008 R2 for x64-based Systems", Drop: []string{"CVE-2010-1888", "CVE-2010-1889"}},
+			{Component: "Windows Server 2008 for 32-bit Systems", Drop: []string{"CVE-2010-1888"}},
+			{Component: "Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2010-1888"}},
+			{Component: "Windows Server 2008 for x64-based Systems", Drop: []string{"CVE-2010-1888"}},
+			{Component: "Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2010-1888"}},
+			{Component: "Windows Vista Service Pack 1", Drop: []string{"CVE-2010-1888"}},
+			{Component: "Windows Vista Service Pack 2", Drop: []string{"CVE-2010-1888"}},
+			{Component: "Windows Vista x64 Edition Service Pack 1", Drop: []string{"CVE-2010-1888"}},
+			{Component: "Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2010-1888"}},
+		},
+	},
+	// TODO: the per-product NA entries below come from MS10-048's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS10-048.
+	//   - Windows Server 2008 R2 for Itanium-based Systems
+	//   - Windows Server 2008 for Itanium-based Systems and Windows Server 2008 for Itanium-based Systems Service Pack 2
+	"MS10-048": {
+		CVEAdjustments: []cveAdjustment{
+			{Component: "Windows 7 for 32-bit Systems", Drop: []string{"CVE-2010-1894", "CVE-2010-1895", "CVE-2010-1896"}},
+			{Component: "Windows 7 for x64-based Systems", Drop: []string{"CVE-2010-1894", "CVE-2010-1895", "CVE-2010-1896"}},
+			{Component: "Windows Server 2008 R2 for x64-based Systems", Drop: []string{"CVE-2010-1894", "CVE-2010-1895", "CVE-2010-1896"}},
+			{Component: "Windows Server 2008 for 32-bit Systems", Drop: []string{"CVE-2010-1894", "CVE-2010-1895"}},
+			{Component: "Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2010-1894", "CVE-2010-1895"}},
+			{Component: "Windows Server 2008 for x64-based Systems", Drop: []string{"CVE-2010-1894", "CVE-2010-1895"}},
+			{Component: "Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2010-1894", "CVE-2010-1895"}},
+			{Component: "Windows Vista Service Pack 1", Drop: []string{"CVE-2010-1894", "CVE-2010-1895"}},
+			{Component: "Windows Vista Service Pack 2", Drop: []string{"CVE-2010-1894", "CVE-2010-1895"}},
+			{Component: "Windows Vista x64 Edition Service Pack 1", Drop: []string{"CVE-2010-1894", "CVE-2010-1895"}},
+			{Component: "Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2010-1894", "CVE-2010-1895"}},
+		},
+	},
+	// TODO: the per-product NA entries below come from MS10-049's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS10-049.
+	//   - Windows Server 2008 R2 for Itanium-based Systems
+	//   - Windows Server 2008 for Itanium-based Systems and Windows Server 2008 for Itanium-based Systems Service Pack 2
+	"MS10-049": {
+		CVEAdjustments: []cveAdjustment{
+			{Component: "Windows 7 for 32-bit Systems", Drop: []string{"CVE-2010-2566"}},
+			{Component: "Windows 7 for x64-based Systems", Drop: []string{"CVE-2010-2566"}},
+			{Component: "Windows Server 2008 R2 for x64-based Systems", Drop: []string{"CVE-2010-2566"}},
+			{Component: "Windows Server 2008 for 32-bit Systems", Drop: []string{"CVE-2010-2566"}},
+			{Component: "Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2010-2566"}},
+			{Component: "Windows Server 2008 for x64-based Systems", Drop: []string{"CVE-2010-2566"}},
+			{Component: "Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2010-2566"}},
+			{Component: "Windows Vista Service Pack 1", Drop: []string{"CVE-2010-2566"}},
+			{Component: "Windows Vista Service Pack 2", Drop: []string{"CVE-2010-2566"}},
+			{Component: "Windows Vista x64 Edition Service Pack 1", Drop: []string{"CVE-2010-2566"}},
+			{Component: "Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2010-2566"}},
+		},
+	},
+	// TODO: the per-product NA entries below come from MS10-053's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS10-053.
+	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 in Windows Server 2008 for Itanium-based Systems and Windows Server 2008 for Itanium-based Systems Service Pack 2
+	//   - Internet Explorer 8 in Vista Service Pack 1 and Windows Vista Service Pack 2
+	//   - Internet Explorer 8 in Windows Server 2008 R2 for Itanium-based Systems
 	"MS10-053": {
 		CVEAdjustments: []cveAdjustment{
-			{KB: "2183461", Drop: []string{"CVE-2010-2557", "CVE-2010-2559"}},
+			{Component: "Internet Explorer 6 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2010-2559"}},
+			{Component: "Internet Explorer 6 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2010-2559"}},
+			{Component: "Internet Explorer 6 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2010-2559"}},
+			{Component: "Internet Explorer 6 for Windows XP Service Pack 3", Drop: []string{"CVE-2010-2559"}},
+			{Component: "Internet Explorer 7 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2010-2557", "CVE-2010-2559"}},
+			{Component: "Internet Explorer 7 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2010-2557", "CVE-2010-2559"}},
+			{Component: "Internet Explorer 7 for Windows Server 2008 for 32-bit Systems", Drop: []string{"CVE-2010-2557", "CVE-2010-2559"}},
+			{Component: "Internet Explorer 7 for Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2010-2557", "CVE-2010-2559"}},
+			{Component: "Internet Explorer 7 for Windows Server 2008 for x64-based Systems", Drop: []string{"CVE-2010-2557", "CVE-2010-2559"}},
+			{Component: "Internet Explorer 7 for Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2010-2557", "CVE-2010-2559"}},
+			{Component: "Internet Explorer 7 for Windows Vista Service Pack 1", Drop: []string{"CVE-2010-2557", "CVE-2010-2559"}},
+			{Component: "Internet Explorer 7 for Windows Vista Service Pack 2", Drop: []string{"CVE-2010-2557", "CVE-2010-2559"}},
+			{Component: "Internet Explorer 7 for Windows Vista x64 Edition Service Pack 1", Drop: []string{"CVE-2010-2557", "CVE-2010-2559"}},
+			{Component: "Internet Explorer 7 for Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2010-2557", "CVE-2010-2559"}},
+			{Component: "Internet Explorer 7 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2010-2557", "CVE-2010-2559"}},
+			{Component: "Internet Explorer 7 for Windows XP Service Pack 3", Drop: []string{"CVE-2010-2557", "CVE-2010-2559"}},
+			{Component: "Internet Explorer 8 for Windows 7 for 32-bit Systems", Drop: []string{"CVE-2010-2557"}},
+			{Component: "Internet Explorer 8 for Windows 7 for x64-based Systems", Drop: []string{"CVE-2010-2557"}},
+			{Component: "Internet Explorer 8 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2010-2557"}},
+			{Component: "Internet Explorer 8 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2010-2557"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 R2 for x64-based Systems", Drop: []string{"CVE-2010-2557"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 for 32-bit Systems", Drop: []string{"CVE-2010-2557"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2010-2557"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 for x64-based Systems", Drop: []string{"CVE-2010-2557"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2010-2557"}},
+			{Component: "Internet Explorer 8 for Windows Vista Service Pack 2", Drop: []string{"CVE-2010-2557"}},
+			{Component: "Internet Explorer 8 for Windows Vista x64 Edition Service Pack 1", Drop: []string{"CVE-2010-2557"}},
+			{Component: "Internet Explorer 8 for Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2010-2557"}},
+			{Component: "Internet Explorer 8 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2010-2557"}},
+			{Component: "Internet Explorer 8 for Windows XP Service Pack 3", Drop: []string{"CVE-2010-2557"}},
 		},
 		IECumChain: map[string][]string{
 			"982381": {"2183461"},
 		},
 	},
-	"MS10-054": {CVEAdjustments: []cveAdjustment{{KB: "982214", Drop: []string{"CVE-2010-2551", "CVE-2010-2552"}}}},
+	// TODO: the per-product NA entries below come from MS10-054's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS10-054.
+	//   - Windows Server 2003 with SP2 for Itanium-based Systems
+	"MS10-054": {
+		CVEAdjustments: []cveAdjustment{
+			{Component: "Microsoft Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2010-2551", "CVE-2010-2552"}},
+			{Component: "Microsoft Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2010-2551", "CVE-2010-2552"}},
+			{Component: "Microsoft Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2010-2551", "CVE-2010-2552"}},
+			{Component: "Microsoft Windows XP Service Pack 3", Drop: []string{"CVE-2010-2551", "CVE-2010-2552"}},
+		},
+	},
+	// TODO: the per-product NA entries below come from MS10-056's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS10-056.
+	//   - Microsoft Office Word 2007 Service Pack 2
 	"MS10-056": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "2092914", Drop: []string{"CVE-2010-1901", "CVE-2010-1902", "CVE-2010-1903"}},
-			{KB: "2269638", Drop: []string{"CVE-2010-1903"}},
 			{KB: "2277947", Drop: []string{"CVE-2010-1903"}},
 			{KB: "2284162", Drop: []string{"CVE-2010-1903"}},
 			{KB: "2284171", Drop: []string{"CVE-2010-1903"}},
 			{KB: "2284179", Drop: []string{"CVE-2010-1903"}},
 		},
 	},
-	"MS10-058": {CVEAdjustments: []cveAdjustment{{KB: "978886", Drop: []string{"CVE-2010-1893"}}}},
+	// TODO: the per-product NA entries below come from MS10-058's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS10-058.
+	//   - Windows Server 2008 for Itanium-based Systems Service Pack 2
+	"MS10-058": {
+		CVEAdjustments: []cveAdjustment{
+			{Component: "Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2010-1893"}},
+			{Component: "Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2010-1893"}},
+			{Component: "Windows Vista Service Pack 2", Drop: []string{"CVE-2010-1893"}},
+			{Component: "Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2010-1893"}},
+		},
+	},
 	"MS10-060": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "982926", Drop: []string{"CVE-2010-0019"}},
@@ -1176,9 +2364,50 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2290570", Drop: []string{"CVE-2010-1899", "CVE-2010-2730"}},
 		},
 	},
+	// TODO: the per-product NA entries below come from MS10-071's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS10-071.
+	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 in Windows Server 2008 for Itanium-based Systems and Windows Server 2008 for Itanium-based Systems Service Pack 2
+	//   - Internet Explorer 8 in Vista Service Pack 1 and Windows Vista Service Pack 2
+	//   - Internet Explorer 8 in Windows Server 2008 R2 for Itanium-based Systems
 	"MS10-071": {
 		CVEAdjustments: []cveAdjustment{
-			{KB: "2360131", Drop: []string{"CVE-2010-0808", "CVE-2010-3243", "CVE-2010-3324", "CVE-2010-3326", "CVE-2010-3329"}},
+			{Component: "Internet Explorer 6 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2010-3243", "CVE-2010-3324", "CVE-2010-3329"}},
+			{Component: "Internet Explorer 6 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2010-3243", "CVE-2010-3324", "CVE-2010-3329"}},
+			{Component: "Internet Explorer 6 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2010-3243", "CVE-2010-3324", "CVE-2010-3329"}},
+			{Component: "Internet Explorer 6 for Windows XP Service Pack 3", Drop: []string{"CVE-2010-3243", "CVE-2010-3324", "CVE-2010-3329"}},
+			{Component: "Internet Explorer 7 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2010-3243", "CVE-2010-3324", "CVE-2010-3326"}},
+			{Component: "Internet Explorer 7 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2010-3243", "CVE-2010-3324", "CVE-2010-3326"}},
+			{Component: "Internet Explorer 7 for Windows Server 2008 for 32-bit Systems", Drop: []string{"CVE-2010-3243", "CVE-2010-3324", "CVE-2010-3326"}},
+			{Component: "Internet Explorer 7 for Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2010-3243", "CVE-2010-3324", "CVE-2010-3326"}},
+			{Component: "Internet Explorer 7 for Windows Server 2008 for x64-based Systems", Drop: []string{"CVE-2010-3243", "CVE-2010-3324", "CVE-2010-3326"}},
+			{Component: "Internet Explorer 7 for Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2010-3243", "CVE-2010-3324", "CVE-2010-3326"}},
+			{Component: "Internet Explorer 7 for Windows Vista Service Pack 1", Drop: []string{"CVE-2010-3243", "CVE-2010-3324", "CVE-2010-3326"}},
+			{Component: "Internet Explorer 7 for Windows Vista Service Pack 2", Drop: []string{"CVE-2010-3243", "CVE-2010-3324", "CVE-2010-3326"}},
+			{Component: "Internet Explorer 7 for Windows Vista x64 Edition Service Pack 1", Drop: []string{"CVE-2010-3243", "CVE-2010-3324", "CVE-2010-3326"}},
+			{Component: "Internet Explorer 7 for Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2010-3243", "CVE-2010-3324", "CVE-2010-3326"}},
+			{Component: "Internet Explorer 7 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2010-3243", "CVE-2010-3324", "CVE-2010-3326"}},
+			{Component: "Internet Explorer 7 for Windows XP Service Pack 3", Drop: []string{"CVE-2010-3243", "CVE-2010-3324", "CVE-2010-3326"}},
+			{Component: "Internet Explorer 8 for Windows 7 for 32-bit Systems", Drop: []string{"CVE-2010-0808", "CVE-2010-3326"}},
+			{Component: "Internet Explorer 8 for Windows 7 for x64-based Systems", Drop: []string{"CVE-2010-0808", "CVE-2010-3326"}},
+			{Component: "Internet Explorer 8 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2010-0808", "CVE-2010-3326"}},
+			{Component: "Internet Explorer 8 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2010-0808", "CVE-2010-3326"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 R2 for x64-based Systems", Drop: []string{"CVE-2010-0808", "CVE-2010-3326"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 for 32-bit Systems", Drop: []string{"CVE-2010-0808", "CVE-2010-3326"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2010-0808", "CVE-2010-3326"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 for x64-based Systems", Drop: []string{"CVE-2010-0808", "CVE-2010-3326"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2010-0808", "CVE-2010-3326"}},
+			{Component: "Internet Explorer 8 for Windows Vista Service Pack 2", Drop: []string{"CVE-2010-0808", "CVE-2010-3326"}},
+			{Component: "Internet Explorer 8 for Windows Vista x64 Edition Service Pack 1", Drop: []string{"CVE-2010-0808", "CVE-2010-3326"}},
+			{Component: "Internet Explorer 8 for Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2010-0808", "CVE-2010-3326"}},
+			{Component: "Internet Explorer 8 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2010-0808", "CVE-2010-3326"}},
+			{Component: "Internet Explorer 8 for Windows XP Service Pack 3", Drop: []string{"CVE-2010-0808", "CVE-2010-3326"}},
 		},
 		IECumChain: map[string][]string{
 			"2183461": {"2360131"},
@@ -1191,25 +2420,58 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2346411", Drop: []string{"CVE-2010-3243"}},
 		},
 	},
-	"MS10-073": {CVEAdjustments: []cveAdjustment{{KB: "981957", Drop: []string{"CVE-2010-2549"}}}},
+	// TODO: the per-product NA entries below come from MS10-073's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS10-073.
+	//   - Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Windows Server 2008 R2 for Itanium-based Systems
+	"MS10-073": {
+		CVEAdjustments: []cveAdjustment{
+			{Component: "Microsoft Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2010-2549"}},
+			{Component: "Microsoft Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2010-2549"}},
+			{Component: "Microsoft Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2010-2549"}},
+			{Component: "Microsoft Windows XP Service Pack 3", Drop: []string{"CVE-2010-2549"}},
+			{Component: "Windows 7 for 32-bit Systems", Drop: []string{"CVE-2010-2549"}},
+			{Component: "Windows 7 for x64-based Systems", Drop: []string{"CVE-2010-2549"}},
+			{Component: "Windows Server 2008 R2 for x64-based Systems", Drop: []string{"CVE-2010-2549"}},
+		},
+	},
+	// TODO: the per-product NA entries below come from MS10-079's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS10-079.
+	//   - Microsoft Word Web App
 	"MS10-079": {
 		CVEAdjustments: []cveAdjustment{
-			{KB: "2293194", Drop: []string{"CVE-2010-2747", "CVE-2010-2748", "CVE-2010-2750", "CVE-2010-3215", "CVE-2010-3216", "CVE-2010-3217", "CVE-2010-3218", "CVE-2010-3219", "CVE-2010-3220", "CVE-2010-3221"}},
 			{KB: "2345009", Drop: []string{"CVE-2010-2747", "CVE-2010-2748", "CVE-2010-2750", "CVE-2010-3215", "CVE-2010-3216", "CVE-2010-3217", "CVE-2010-3218", "CVE-2010-3219", "CVE-2010-3220"}},
 			{KB: "2345043", Drop: []string{"CVE-2010-2747", "CVE-2010-2748", "CVE-2010-2750", "CVE-2010-3215", "CVE-2010-3216", "CVE-2010-3217", "CVE-2010-3218", "CVE-2010-3219", "CVE-2010-3220", "CVE-2010-3221"}},
-			{KB: "2422343", Drop: []string{"CVE-2010-3217", "CVE-2010-3218", "CVE-2010-3219", "CVE-2010-3230", "CVE-2010-3233", "CVE-2010-3234", "CVE-2010-3235", "CVE-2010-3239", "CVE-2010-3240"}},
-			{KB: "2422352", Drop: []string{"CVE-2010-2747", "CVE-2010-2748", "CVE-2010-2750", "CVE-2010-3215", "CVE-2010-3216", "CVE-2010-3217", "CVE-2010-3218", "CVE-2010-3219", "CVE-2010-3220", "CVE-2010-3221", "CVE-2010-3230", "CVE-2010-3233", "CVE-2010-3234", "CVE-2010-3235", "CVE-2010-3237", "CVE-2010-3238", "CVE-2010-3239", "CVE-2010-3240"}},
-			{KB: "2422398", Drop: []string{"CVE-2010-2747", "CVE-2010-2748", "CVE-2010-2750", "CVE-2010-3215", "CVE-2010-3216", "CVE-2010-3217", "CVE-2010-3218", "CVE-2010-3219", "CVE-2010-3220", "CVE-2010-3221", "CVE-2010-3230", "CVE-2010-3233", "CVE-2010-3234", "CVE-2010-3235", "CVE-2010-3237", "CVE-2010-3238", "CVE-2010-3239", "CVE-2010-3240"}},
+			{KB: "2422343", Drop: []string{"CVE-2010-3217", "CVE-2010-3218", "CVE-2010-3219"}},
+			{KB: "2422352", Drop: []string{"CVE-2010-2747", "CVE-2010-2748", "CVE-2010-2750", "CVE-2010-3215", "CVE-2010-3216", "CVE-2010-3217", "CVE-2010-3218", "CVE-2010-3219", "CVE-2010-3220", "CVE-2010-3221"}},
+			{KB: "2422398", Drop: []string{"CVE-2010-2747", "CVE-2010-2748", "CVE-2010-2750", "CVE-2010-3215", "CVE-2010-3216", "CVE-2010-3217", "CVE-2010-3218", "CVE-2010-3219", "CVE-2010-3220", "CVE-2010-3221"}},
+			{Component: "Microsoft Office Web Apps 2010", Drop: []string{"CVE-2010-2747", "CVE-2010-2748", "CVE-2010-2750", "CVE-2010-3215", "CVE-2010-3216", "CVE-2010-3217", "CVE-2010-3218", "CVE-2010-3219", "CVE-2010-3220", "CVE-2010-3221"}},
+			{Component: "Microsoft Word 2003 Service Pack 3", Drop: []string{"CVE-2010-2747", "CVE-2010-2748", "CVE-2010-2750", "CVE-2010-3215", "CVE-2010-3216", "CVE-2010-3217", "CVE-2010-3218", "CVE-2010-3219", "CVE-2010-3220"}},
+			{Component: "Microsoft Word 2007 Service Pack 2", Drop: []string{"CVE-2010-2747", "CVE-2010-2748", "CVE-2010-2750", "CVE-2010-3215", "CVE-2010-3216", "CVE-2010-3217", "CVE-2010-3218", "CVE-2010-3219", "CVE-2010-3220", "CVE-2010-3221"}},
+			{Component: "Microsoft Word 2010 (32-bit editions)", Drop: []string{"CVE-2010-2747", "CVE-2010-2748", "CVE-2010-2750", "CVE-2010-3215", "CVE-2010-3216", "CVE-2010-3217", "CVE-2010-3218", "CVE-2010-3219", "CVE-2010-3220", "CVE-2010-3221"}},
+			{Component: "Microsoft Word 2010 (64-bit editions)", Drop: []string{"CVE-2010-2747", "CVE-2010-2748", "CVE-2010-2750", "CVE-2010-3215", "CVE-2010-3216", "CVE-2010-3217", "CVE-2010-3218", "CVE-2010-3219", "CVE-2010-3220", "CVE-2010-3221"}},
 		},
 	},
 	"MS10-080": {
 		CVEAdjustments: []cveAdjustment{
-			{KB: "2293211", Drop: []string{"CVE-2010-3230", "CVE-2010-3231", "CVE-2010-3232", "CVE-2010-3233", "CVE-2010-3234", "CVE-2010-3235", "CVE-2010-3236", "CVE-2010-3237", "CVE-2010-3238", "CVE-2010-3239", "CVE-2010-3240", "CVE-2010-3241", "CVE-2010-3242"}},
 			{KB: "2344875", Drop: []string{"CVE-2010-3230", "CVE-2010-3231", "CVE-2010-3233", "CVE-2010-3234", "CVE-2010-3235", "CVE-2010-3236", "CVE-2010-3237", "CVE-2010-3238", "CVE-2010-3239", "CVE-2010-3241", "CVE-2010-3242"}},
 			{KB: "2345088", Drop: []string{"CVE-2010-3230", "CVE-2010-3231", "CVE-2010-3233", "CVE-2010-3234", "CVE-2010-3235", "CVE-2010-3236", "CVE-2010-3237", "CVE-2010-3238", "CVE-2010-3239", "CVE-2010-3241", "CVE-2010-3242"}},
-			{KB: "2422343", Drop: []string{"CVE-2010-3217", "CVE-2010-3218", "CVE-2010-3219", "CVE-2010-3230", "CVE-2010-3233", "CVE-2010-3234", "CVE-2010-3235", "CVE-2010-3239", "CVE-2010-3240"}},
-			{KB: "2422352", Drop: []string{"CVE-2010-2747", "CVE-2010-2748", "CVE-2010-2750", "CVE-2010-3215", "CVE-2010-3216", "CVE-2010-3217", "CVE-2010-3218", "CVE-2010-3219", "CVE-2010-3220", "CVE-2010-3221", "CVE-2010-3230", "CVE-2010-3233", "CVE-2010-3234", "CVE-2010-3235", "CVE-2010-3237", "CVE-2010-3238", "CVE-2010-3239", "CVE-2010-3240"}},
-			{KB: "2422398", Drop: []string{"CVE-2010-2747", "CVE-2010-2748", "CVE-2010-2750", "CVE-2010-3215", "CVE-2010-3216", "CVE-2010-3217", "CVE-2010-3218", "CVE-2010-3219", "CVE-2010-3220", "CVE-2010-3221", "CVE-2010-3230", "CVE-2010-3233", "CVE-2010-3234", "CVE-2010-3235", "CVE-2010-3237", "CVE-2010-3238", "CVE-2010-3239", "CVE-2010-3240"}},
+			{KB: "2422343", Drop: []string{"CVE-2010-3230", "CVE-2010-3233", "CVE-2010-3234", "CVE-2010-3235", "CVE-2010-3239", "CVE-2010-3240"}},
+			{KB: "2422352", Drop: []string{"CVE-2010-3230", "CVE-2010-3233", "CVE-2010-3234", "CVE-2010-3235", "CVE-2010-3237", "CVE-2010-3238", "CVE-2010-3239", "CVE-2010-3240"}},
+			{KB: "2422398", Drop: []string{"CVE-2010-3230", "CVE-2010-3233", "CVE-2010-3234", "CVE-2010-3235", "CVE-2010-3237", "CVE-2010-3238", "CVE-2010-3239", "CVE-2010-3240"}},
+			{Component: "Microsoft Excel 2002 Service Pack 3", Drop: []string{"CVE-2010-3232"}},
+			{Component: "Microsoft Excel 2003 Service Pack 3", Drop: []string{"CVE-2010-3230", "CVE-2010-3231", "CVE-2010-3234", "CVE-2010-3235", "CVE-2010-3237", "CVE-2010-3239", "CVE-2010-3240", "CVE-2010-3241", "CVE-2010-3242"}},
+			{Component: "Microsoft Excel 2007 Service Pack 2", Drop: []string{"CVE-2010-3230", "CVE-2010-3231", "CVE-2010-3233", "CVE-2010-3234", "CVE-2010-3235", "CVE-2010-3236", "CVE-2010-3237", "CVE-2010-3238", "CVE-2010-3239", "CVE-2010-3241", "CVE-2010-3242"}},
 		},
 	},
 	"MS10-087": {
@@ -1226,20 +2488,95 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 	},
 	"MS10-088": {
 		CVEAdjustments: []cveAdjustment{
-			{KB: "2293386", Drop: []string{"CVE-2010-2572"}},
 			{KB: "2413381", Drop: []string{"CVE-2010-2572"}},
+			{Component: "Microsoft Office 2004 for Mac", Drop: []string{"CVE-2010-2572"}},
 		},
 	},
+	// TODO: the per-product NA entries below come from MS10-090's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS10-090.
+	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 in Windows Server 2008 for Itanium-based Systems and Windows Server 2008 for Itanium-based Systems Service Pack 2
+	//   - Internet Explorer 8 in Vista Service Pack 1 and Windows Vista Service Pack 2
+	//   - Internet Explorer 8 in Windows Server 2008 R2 for Itanium-based Systems
 	"MS10-090": {
 		CVEAdjustments: []cveAdjustment{
-			{KB: "2416400", Drop: []string{"CVE-2010-3340", "CVE-2010-3345"}},
+			{Component: "Internet Explorer 6 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2010-3345"}},
+			{Component: "Internet Explorer 6 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2010-3345"}},
+			{Component: "Internet Explorer 6 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2010-3345"}},
+			{Component: "Internet Explorer 6 for Windows XP Service Pack 3", Drop: []string{"CVE-2010-3345"}},
+			{Component: "Internet Explorer 7 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2010-3345"}},
+			{Component: "Internet Explorer 7 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2010-3345"}},
+			{Component: "Internet Explorer 7 for Windows Server 2008 for 32-bit Systems", Drop: []string{"CVE-2010-3345"}},
+			{Component: "Internet Explorer 7 for Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2010-3345"}},
+			{Component: "Internet Explorer 7 for Windows Server 2008 for x64-based Systems", Drop: []string{"CVE-2010-3345"}},
+			{Component: "Internet Explorer 7 for Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2010-3345"}},
+			{Component: "Internet Explorer 7 for Windows Vista Service Pack 1", Drop: []string{"CVE-2010-3345"}},
+			{Component: "Internet Explorer 7 for Windows Vista Service Pack 2", Drop: []string{"CVE-2010-3345"}},
+			{Component: "Internet Explorer 7 for Windows Vista x64 Edition Service Pack 1", Drop: []string{"CVE-2010-3345"}},
+			{Component: "Internet Explorer 7 for Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2010-3345"}},
+			{Component: "Internet Explorer 7 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2010-3345"}},
+			{Component: "Internet Explorer 7 for Windows XP Service Pack 3", Drop: []string{"CVE-2010-3345"}},
+			{Component: "Internet Explorer 8 for Windows 7 for 32-bit Systems", Drop: []string{"CVE-2010-3340"}},
+			{Component: "Internet Explorer 8 for Windows 7 for x64-based Systems", Drop: []string{"CVE-2010-3340"}},
+			{Component: "Internet Explorer 8 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2010-3340"}},
+			{Component: "Internet Explorer 8 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2010-3340"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 R2 for x64-based Systems", Drop: []string{"CVE-2010-3340"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 for 32-bit Systems", Drop: []string{"CVE-2010-3340"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2010-3340"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 for x64-based Systems", Drop: []string{"CVE-2010-3340"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2010-3340"}},
+			{Component: "Internet Explorer 8 for Windows Vista Service Pack 2", Drop: []string{"CVE-2010-3340"}},
+			{Component: "Internet Explorer 8 for Windows Vista x64 Edition Service Pack 1", Drop: []string{"CVE-2010-3340"}},
+			{Component: "Internet Explorer 8 for Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2010-3340"}},
+			{Component: "Internet Explorer 8 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2010-3340"}},
+			{Component: "Internet Explorer 8 for Windows XP Service Pack 3", Drop: []string{"CVE-2010-3340"}},
 		},
 		IECumChain: map[string][]string{
 			"2360131": {"2416400"},
 		},
 	},
-	"MS10-098": {CVEAdjustments: []cveAdjustment{{KB: "2436673", Drop: []string{"CVE-2010-3941", "CVE-2010-3944"}}}},
-	"MS10-103": {CVEAdjustments: []cveAdjustment{{KB: "2292970", Drop: []string{"CVE-2010-2569", "CVE-2010-2571", "CVE-2010-3954", "CVE-2010-3955"}}}},
+	// TODO: the per-product NA entries below come from MS10-098's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS10-098.
+	//   - Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Windows Server 2008 R2 for Itanium-based Systems
+	//   - Windows Server 2008 for Itanium-based Systems and Windows Server 2008 for Itanium-based Systems Service Pack 2
+	"MS10-098": {
+		CVEAdjustments: []cveAdjustment{
+			{Component: "Microsoft Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2010-3944"}},
+			{Component: "Microsoft Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2010-3944"}},
+			{Component: "Microsoft Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2010-3944"}},
+			{Component: "Microsoft Windows XP Service Pack 3", Drop: []string{"CVE-2010-3944"}},
+			{Component: "Windows 7 for x64-based Systems", Drop: []string{"CVE-2010-3941"}},
+			{Component: "Windows Server 2008 R2 for x64-based Systems", Drop: []string{"CVE-2010-3941"}},
+			{Component: "Windows Server 2008 for 32-bit Systems", Drop: []string{"CVE-2010-3944"}},
+			{Component: "Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2010-3944"}},
+			{Component: "Windows Server 2008 for x64-based Systems", Drop: []string{"CVE-2010-3944"}},
+			{Component: "Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2010-3944"}},
+			{Component: "Windows Vista Service Pack 1", Drop: []string{"CVE-2010-3944"}},
+			{Component: "Windows Vista Service Pack 2", Drop: []string{"CVE-2010-3944"}},
+			{Component: "Windows Vista x64 Edition Service Pack 1", Drop: []string{"CVE-2010-3944"}},
+			{Component: "Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2010-3944"}},
+		},
+	},
+	"MS10-103": {
+		CVEAdjustments: []cveAdjustment{
+			{Component: "Microsoft Publisher 2003 Service Pack 3", Drop: []string{"CVE-2010-3955"}},
+			{Component: "Microsoft Publisher 2007 Service Pack 2", Drop: []string{"CVE-2010-2571", "CVE-2010-3954", "CVE-2010-3955"}},
+			{Component: "Microsoft Publisher 2010 (32-bit editions)", Drop: []string{"CVE-2010-2569", "CVE-2010-2571", "CVE-2010-3955"}},
+			{Component: "Microsoft Publisher 2010 (64-bit editions)", Drop: []string{"CVE-2010-2569", "CVE-2010-2571", "CVE-2010-3955"}},
+		},
+	},
 	"MS10-105": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "2288931", Drop: []string{"CVE-2010-3946", "CVE-2010-3947", "CVE-2010-3949", "CVE-2010-3950"}},
@@ -1248,99 +2585,384 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2431831", Drop: []string{"CVE-2010-3945", "CVE-2010-3946", "CVE-2010-3949", "CVE-2010-3951", "CVE-2010-3952"}},
 		},
 	},
+	// TODO: the per-product NA entries below come from MS11-003's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS11-003.
+	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 in Windows Server 2008 for Itanium-based Systems and Windows Server 2008 for Itanium-based Systems Service Pack 2
 	"MS11-003": {
 		CVEAdjustments: []cveAdjustment{
-			{KB: "2482017", Drop: []string{"CVE-2011-0038"}},
+			{Component: "Internet Explorer 6 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2011-0038"}},
+			{Component: "Internet Explorer 6 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2011-0038"}},
+			{Component: "Internet Explorer 6 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2011-0038"}},
+			{Component: "Internet Explorer 6 for Windows XP Service Pack 3", Drop: []string{"CVE-2011-0038"}},
+			{Component: "Internet Explorer 7 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2011-0038"}},
+			{Component: "Internet Explorer 7 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2011-0038"}},
+			{Component: "Internet Explorer 7 for Windows Server 2008 for 32-bit Systems", Drop: []string{"CVE-2011-0038"}},
+			{Component: "Internet Explorer 7 for Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2011-0038"}},
+			{Component: "Internet Explorer 7 for Windows Server 2008 for x64-based Systems", Drop: []string{"CVE-2011-0038"}},
+			{Component: "Internet Explorer 7 for Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2011-0038"}},
+			{Component: "Internet Explorer 7 for Windows Vista Service Pack 1", Drop: []string{"CVE-2011-0038"}},
+			{Component: "Internet Explorer 7 for Windows Vista Service Pack 2", Drop: []string{"CVE-2011-0038"}},
+			{Component: "Internet Explorer 7 for Windows Vista x64 Edition Service Pack 1", Drop: []string{"CVE-2011-0038"}},
+			{Component: "Internet Explorer 7 for Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2011-0038"}},
+			{Component: "Internet Explorer 7 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2011-0038"}},
+			{Component: "Internet Explorer 7 for Windows XP Service Pack 3", Drop: []string{"CVE-2011-0038"}},
 		},
 		IECumChain: map[string][]string{
 			"2416400": {"2482017"},
 		},
 	},
-	"MS11-011": {CVEAdjustments: []cveAdjustment{{KB: "2393802", Drop: []string{"CVE-2011-0045"}}}},
-	"MS11-012": {CVEAdjustments: []cveAdjustment{{KB: "2479628", Drop: []string{"CVE-2011-0087"}}}},
+	// TODO: the per-product NA entries below come from MS11-011's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS11-011.
+	//   - Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Windows Server 2008 R2 for Itanium-based Systems
+	//   - Windows Server 2008 for Itanium-based Systems and Windows Server 2008 for Itanium-based Systems Service Pack 2
+	"MS11-011": {
+		CVEAdjustments: []cveAdjustment{
+			{Component: "Microsoft Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2011-0045"}},
+			{Component: "Microsoft Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2011-0045"}},
+			{Component: "Microsoft Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2011-0045"}},
+			{Component: "Windows 7 for 32-bit Systems", Drop: []string{"CVE-2011-0045"}},
+			{Component: "Windows 7 for x64-based Systems", Drop: []string{"CVE-2011-0045"}},
+			{Component: "Windows Server 2008 R2 for x64-based Systems", Drop: []string{"CVE-2011-0045"}},
+			{Component: "Windows Server 2008 for 32-bit Systems", Drop: []string{"CVE-2011-0045"}},
+			{Component: "Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2011-0045"}},
+			{Component: "Windows Server 2008 for x64-based Systems", Drop: []string{"CVE-2011-0045"}},
+			{Component: "Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2011-0045"}},
+			{Component: "Windows Vista Service Pack 1", Drop: []string{"CVE-2011-0045"}},
+			{Component: "Windows Vista Service Pack 2", Drop: []string{"CVE-2011-0045"}},
+			{Component: "Windows Vista x64 Edition Service Pack 1", Drop: []string{"CVE-2011-0045"}},
+			{Component: "Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2011-0045"}},
+		},
+	},
+	// TODO: the per-product NA entries below come from MS11-012's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS11-012.
+	//   - Windows Server 2008 R2 for Itanium-based Systems and Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
+	"MS11-012": {
+		CVEAdjustments: []cveAdjustment{
+			{Component: "Windows 7 for 32-bit Systems", Drop: []string{"CVE-2011-0087"}},
+			{Component: "Windows 7 for 32-bit Systems Service Pack 1", Drop: []string{"CVE-2011-0087"}},
+			{Component: "Windows 7 for x64-based Systems", Drop: []string{"CVE-2011-0087"}},
+			{Component: "Windows 7 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2011-0087"}},
+			{Component: "Windows Server 2008 R2 for x64-based Systems", Drop: []string{"CVE-2011-0087"}},
+			{Component: "Windows Server 2008 R2 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2011-0087"}},
+		},
+	},
 	"MS11-013": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "2425227", Drop: []string{"CVE-2011-0043"}},
 			{KB: "2478971", Drop: []string{"CVE-2011-0091"}},
 		},
 	},
+	// MS11-015: legacy bulletinArchiveKBNotApplicable entry for KB2479943
+	// dropped both CVE-2011-0032 and CVE-2011-0042 as if KB-uniformly NA,
+	// but the per-CVE matrix table actually has both CVEs APPLICABLE for
+	// the Vista / Windows 7 / Server 2008 R2 rows that share KB2479943 —
+	// only XP rows are NA for CVE-2011-0032, and only Server 2008 R2 is
+	// NA for CVE-2011-0042 (per-product, not per-KB). Filtering at the
+	// KB grain dropped every CVE from every row, leaving the bulletin
+	// without any vulnerability entries and surfacing "MS11-015" as a
+	// synthetic cveID in scannedCves on Server 2008 R2. The KB2479943
+	// KB-Drop is removed here; KB2502898 is retained because it is
+	// genuinely KB-uniformly NA per the same matrix (XP MCE 2005 SP3
+	// row only). Ideal fix is per-product Component-Drop entries
+	// (3 entries per the current generator output) — deferred since the
+	// same staleness affects many other bulletins.
+	// MS11-015: per-product Component-Drop entries derived from MS11-015's
+	// archive markdown matrix table. The markdown's per-CVE matrix
+	// table marks CVE-2011-0032 NA on Microsoft Windows XP rows and
+	// CVE-2011-0042 NA on Windows Server 2008 R2 rows. Component-Drop
+	// keys use the xlsx affected_product form (with "Microsoft "
+	// prefix where xlsx carries it) to match normalizeArchiveComponentKey
+	// — MS11-015 is in the normalize switch returning `product`.
 	"MS11-015": {
 		CVEAdjustments: []cveAdjustment{
-			{KB: "2479943", Drop: []string{"CVE-2011-0032", "CVE-2011-0042"}},
 			{KB: "2502898", Drop: []string{"CVE-2011-0032"}},
+			{Component: "Microsoft Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2011-0032"}},
+			{Component: "Microsoft Windows XP Service Pack 3", Drop: []string{"CVE-2011-0032"}},
+			{Component: "Windows Server 2008 R2 for x64-based Systems", Drop: []string{"CVE-2011-0042"}},
+			{Component: "Windows Server 2008 R2 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2011-0042"}},
 		},
 	},
+	// TODO: the per-product NA entries below come from MS11-018's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS11-018.
+	//   - Internet Explorer 8 in Vista Service Pack 1 and Windows Vista Service Pack 2
+	//   - Internet Explorer 8 in Windows Server 2008 R2 for Itanium-based Systems and Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
 	"MS11-018": {
 		CVEAdjustments: []cveAdjustment{
-			{KB: "2497640", Drop: []string{"CVE-2011-0094", "CVE-2011-1245"}},
+			{Component: "Internet Explorer 8 for Windows 7 for 32-bit Systems", Drop: []string{"CVE-2011-0094", "CVE-2011-1245"}},
+			{Component: "Internet Explorer 8 for Windows 7 for 32-bit Systems Service Pack 1", Drop: []string{"CVE-2011-0094", "CVE-2011-1245"}},
+			{Component: "Internet Explorer 8 for Windows 7 for x64-based Systems", Drop: []string{"CVE-2011-0094", "CVE-2011-1245"}},
+			{Component: "Internet Explorer 8 for Windows 7 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2011-0094", "CVE-2011-1245"}},
+			{Component: "Internet Explorer 8 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2011-0094", "CVE-2011-1245"}},
+			{Component: "Internet Explorer 8 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2011-0094", "CVE-2011-1245"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 R2 for x64-based Systems", Drop: []string{"CVE-2011-0094", "CVE-2011-1245"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 R2 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2011-0094", "CVE-2011-1245"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 for 32-bit Systems", Drop: []string{"CVE-2011-0094", "CVE-2011-1245"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2011-0094", "CVE-2011-1245"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 for x64-based Systems", Drop: []string{"CVE-2011-0094", "CVE-2011-1245"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2011-0094", "CVE-2011-1245"}},
+			{Component: "Internet Explorer 8 for Windows Vista Service Pack 2", Drop: []string{"CVE-2011-0094", "CVE-2011-1245"}},
+			{Component: "Internet Explorer 8 for Windows Vista x64 Edition Service Pack 1", Drop: []string{"CVE-2011-0094", "CVE-2011-1245"}},
+			{Component: "Internet Explorer 8 for Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2011-0094", "CVE-2011-1245"}},
+			{Component: "Internet Explorer 8 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2011-0094", "CVE-2011-1245"}},
+			{Component: "Internet Explorer 8 for Windows XP Service Pack 3", Drop: []string{"CVE-2011-0094", "CVE-2011-1245"}},
 		},
 		IECumChain: map[string][]string{
 			"2482017": {"2497640"},
 		},
 	},
+	// TODO: the per-product NA entries below come from MS11-021's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS11-021.
+	//   - Microsoft Excel (64-bit editions)
 	"MS11-021": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "2466156", Drop: []string{"CVE-2011-0101", "CVE-2011-0103", "CVE-2011-0104", "CVE-2011-0105", "CVE-2011-0979", "CVE-2011-0980"}},
 			{KB: "2466158", Drop: []string{"CVE-2011-0101", "CVE-2011-0103", "CVE-2011-0104", "CVE-2011-0105", "CVE-2011-0980"}},
-			{KB: "2489279", Drop: []string{"CVE-2011-0101", "CVE-2011-0103", "CVE-2011-0104", "CVE-2011-0105", "CVE-2011-0978", "CVE-2011-0980"}},
-			{KB: "2505924", Drop: []string{"CVE-2011-0101", "CVE-2011-0107"}},
-			{KB: "2505927", Drop: []string{"CVE-2011-0101", "CVE-2011-0107", "CVE-2011-0978"}},
-			{KB: "2505935", Drop: []string{"CVE-2011-0101", "CVE-2011-0107", "CVE-2011-0978"}},
-			{KB: "2525412", Drop: []string{"CVE-2011-0097", "CVE-2011-0098", "CVE-2011-0101", "CVE-2011-0103", "CVE-2011-0104", "CVE-2011-0105", "CVE-2011-0976", "CVE-2011-0978", "CVE-2011-0980"}},
+			{KB: "2505924", Drop: []string{"CVE-2011-0101"}},
+			{KB: "2505927", Drop: []string{"CVE-2011-0101", "CVE-2011-0978"}},
+			{KB: "2505935", Drop: []string{"CVE-2011-0101", "CVE-2011-0978"}},
+			{KB: "2525412", Drop: []string{"CVE-2011-0097", "CVE-2011-0098", "CVE-2011-0101", "CVE-2011-0103", "CVE-2011-0104", "CVE-2011-0105", "CVE-2011-0978", "CVE-2011-0980"}},
+			{Component: "Microsoft Excel 2003 Service Pack 3", Drop: []string{"CVE-2011-0101", "CVE-2011-0105"}},
+			{Component: "Microsoft Excel 2007 Service Pack 2", Drop: []string{"CVE-2011-0101", "CVE-2011-0103", "CVE-2011-0104", "CVE-2011-0105", "CVE-2011-0980"}},
+			{Component: "Microsoft Excel 2010 (32-bit editions)", Drop: []string{"CVE-2011-0101", "CVE-2011-0103", "CVE-2011-0104", "CVE-2011-0105", "CVE-2011-0978", "CVE-2011-0980"}},
 		},
 	},
+	// TODO: the per-product NA entries below come from MS11-022's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS11-022.
+	//   - Microsoft PowerPoint Web App
 	"MS11-022": {
 		CVEAdjustments: []cveAdjustment{
-			{KB: "2489283", Drop: []string{"CVE-2011-0655", "CVE-2011-0976"}},
 			{KB: "2519984", Drop: []string{"CVE-2011-0976"}},
-			{KB: "2525412", Drop: []string{"CVE-2011-0097", "CVE-2011-0098", "CVE-2011-0101", "CVE-2011-0103", "CVE-2011-0104", "CVE-2011-0105", "CVE-2011-0976", "CVE-2011-0978", "CVE-2011-0980"}},
+			{KB: "2525412", Drop: []string{"CVE-2011-0976"}},
+			{Component: "Microsoft PowerPoint 2002 Service Pack 3", Drop: []string{"CVE-2011-0655"}},
+			{Component: "Microsoft PowerPoint 2003 Service Pack 3", Drop: []string{"CVE-2011-0655"}},
+			{Component: "Microsoft PowerPoint 2010 (32-bit editions)", Drop: []string{"CVE-2011-0976"}},
+			{Component: "Microsoft PowerPoint 2010 (64-bit editions)", Drop: []string{"CVE-2011-0976"}},
 		},
 	},
 	"MS11-023": {
 		CVEAdjustments: []cveAdjustment{
-			{KB: "2505924", Drop: []string{"CVE-2011-0101", "CVE-2011-0107"}},
-			{KB: "2505927", Drop: []string{"CVE-2011-0101", "CVE-2011-0107", "CVE-2011-0978"}},
-			{KB: "2505935", Drop: []string{"CVE-2011-0101", "CVE-2011-0107", "CVE-2011-0978"}},
+			{KB: "2505924", Drop: []string{"CVE-2011-0107"}},
+			{KB: "2505927", Drop: []string{"CVE-2011-0107"}},
+			{KB: "2505935", Drop: []string{"CVE-2011-0107"}},
 		},
 	},
-	"MS11-027": {CVEAdjustments: []cveAdjustment{{KB: "2508272", Drop: []string{"CVE-2010-0811", "CVE-2010-3973", "CVE-2011-1243"}}}},
+	// TODO: the per-product NA entries below come from MS11-027's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS11-027.
+	//   - Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Windows Server 2008 R2 for Itanium-based Systems and Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
+	//   - Windows Server 2008 for Itanium-based Systems and Windows Server 2008 for Itanium-based Systems Service Pack 2
+	"MS11-027": {
+		CVEAdjustments: []cveAdjustment{
+			{Component: "Microsoft Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2010-3973", "CVE-2011-1243"}},
+			{Component: "Microsoft Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2010-3973", "CVE-2011-1243"}},
+			{Component: "Windows 7 for 32-bit Systems", Drop: []string{"CVE-2010-3973", "CVE-2011-1243"}},
+			{Component: "Windows 7 for 32-bit Systems Service Pack 1", Drop: []string{"CVE-2010-3973", "CVE-2011-1243"}},
+			{Component: "Windows 7 for x64-based Systems", Drop: []string{"CVE-2010-3973", "CVE-2011-1243"}},
+			{Component: "Windows 7 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2010-3973", "CVE-2011-1243"}},
+			{Component: "Windows Server 2008 R2 for x64-based Systems", Drop: []string{"CVE-2010-3973", "CVE-2011-1243"}},
+			{Component: "Windows Server 2008 R2 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2010-3973", "CVE-2011-1243"}},
+			{Component: "Windows Server 2008 for 32-bit Systems", Drop: []string{"CVE-2010-3973", "CVE-2011-1243"}},
+			{Component: "Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2010-3973", "CVE-2011-1243"}},
+			{Component: "Windows Server 2008 for x64-based Systems", Drop: []string{"CVE-2010-3973", "CVE-2011-1243"}},
+			{Component: "Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2010-3973", "CVE-2011-1243"}},
+			{Component: "Windows Vista Service Pack 1", Drop: []string{"CVE-2010-3973", "CVE-2011-1243"}},
+			{Component: "Windows Vista Service Pack 2", Drop: []string{"CVE-2010-3973", "CVE-2011-1243"}},
+			{Component: "Windows Vista x64 Edition Service Pack 1", Drop: []string{"CVE-2010-3973", "CVE-2011-1243"}},
+			{Component: "Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2010-3973", "CVE-2011-1243"}},
+		},
+	},
 	"MS11-036": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "2540162", Drop: []string{"CVE-2011-1270"}},
-			{KB: "2545814", Drop: []string{"CVE-2011-1270"}},
+			{Component: "Microsoft Office 2004 for Mac", Drop: []string{"CVE-2011-1270"}},
+			{Component: "Microsoft Office 2008 for Mac", Drop: []string{"CVE-2011-1270"}},
+			{Component: "Microsoft PowerPoint 2007 Service Pack 2", Drop: []string{"CVE-2011-1270"}},
+			{Component: "Open XML File Format Converter for Mac", Drop: []string{"CVE-2011-1270"}},
 		},
 	},
-	"MS11-042": {CVEAdjustments: []cveAdjustment{{KB: "2535512", Drop: []string{"CVE-2011-1868"}}}},
+	// TODO: the per-product NA entries below come from MS11-042's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS11-042.
+	//   - Windows Server 2008 R2 for Itanium-based Systems
+	//   - Windows Server 2008 for Itanium-based Systems and Windows Server 2008 for Itanium-based Systems Service Pack 2
+	"MS11-042": {
+		CVEAdjustments: []cveAdjustment{
+			{Component: "Windows 7 for 32-bit Systems", Drop: []string{"CVE-2011-1868"}},
+			{Component: "Windows 7 for x64-based Systems", Drop: []string{"CVE-2011-1868"}},
+			{Component: "Windows Server 2008 R2 for x64-based Systems", Drop: []string{"CVE-2011-1868"}},
+			{Component: "Windows Server 2008 for 32-bit Systems", Drop: []string{"CVE-2011-1868"}},
+			{Component: "Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2011-1868"}},
+			{Component: "Windows Server 2008 for x64-based Systems", Drop: []string{"CVE-2011-1868"}},
+			{Component: "Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2011-1868"}},
+			{Component: "Windows Vista Service Pack 1", Drop: []string{"CVE-2011-1868"}},
+			{Component: "Windows Vista Service Pack 2", Drop: []string{"CVE-2011-1868"}},
+			{Component: "Windows Vista x64 Edition Service Pack 1", Drop: []string{"CVE-2011-1868"}},
+			{Component: "Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2011-1868"}},
+		},
+	},
 	"MS11-045": {
 		CVEAdjustments: []cveAdjustment{
-			{KB: "2537146", Drop: []string{"CVE-2011-1272", "CVE-2011-1274", "CVE-2011-1275", "CVE-2011-1276", "CVE-2011-1277", "CVE-2011-1278", "CVE-2011-1279"}},
 			{KB: "2541012", Drop: []string{"CVE-2011-1275", "CVE-2011-1277", "CVE-2011-1278", "CVE-2011-1279"}},
 			{KB: "2541015", Drop: []string{"CVE-2011-1275", "CVE-2011-1277", "CVE-2011-1278", "CVE-2011-1279"}},
 			{KB: "2555784", Drop: []string{"CVE-2011-1272", "CVE-2011-1274", "CVE-2011-1276", "CVE-2011-1277", "CVE-2011-1278", "CVE-2011-1279"}},
 			{KB: "2555785", Drop: []string{"CVE-2011-1278"}},
 			{KB: "2555786", Drop: []string{"CVE-2011-1277"}},
 			{KB: "2555787", Drop: []string{"CVE-2011-1278"}},
+			{Component: "Microsoft Excel 2003 Service Pack 3", Drop: []string{"CVE-2011-1275", "CVE-2011-1277", "CVE-2011-1278"}},
+			{Component: "Microsoft Excel 2007 Service Pack 2", Drop: []string{"CVE-2011-1275", "CVE-2011-1277", "CVE-2011-1278", "CVE-2011-1279"}},
+			{Component: "Microsoft Excel 2010 (32-bit editions)", Drop: []string{"CVE-2011-1272", "CVE-2011-1274", "CVE-2011-1275", "CVE-2011-1276", "CVE-2011-1277", "CVE-2011-1278", "CVE-2011-1279"}},
+			{Component: "Microsoft Excel 2010 (64-bit editions)", Drop: []string{"CVE-2011-1272", "CVE-2011-1274", "CVE-2011-1275", "CVE-2011-1276", "CVE-2011-1277", "CVE-2011-1278", "CVE-2011-1279"}},
 		},
 	},
+	// TODO: the per-product NA entries below come from MS11-050's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS11-050.
+	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 in Windows Server 2008 for Itanium-based Systems and Windows Server 2008 for Itanium-based Systems Service Pack 2
 	"MS11-050": {
 		CVEAdjustments: []cveAdjustment{
 			{Add: []string{"CVE-2011-1246", "CVE-2011-1250", "CVE-2011-1251", "CVE-2011-1252", "CVE-2011-1254", "CVE-2011-1255", "CVE-2011-1256", "CVE-2011-1258", "CVE-2011-1260", "CVE-2011-1261", "CVE-2011-1262", "CVE-2011-1346"}},
-			{KB: "2530548", Drop: []string{"CVE-2011-1246", "CVE-2011-1251", "CVE-2011-1252", "CVE-2011-1254", "CVE-2011-1255", "CVE-2011-1256", "CVE-2011-1258", "CVE-2011-1260", "CVE-2011-1262"}},
+			{Component: "Internet Explorer 6 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2011-1246", "CVE-2011-1251", "CVE-2011-1252", "CVE-2011-1260", "CVE-2011-1262"}},
+			{Component: "Internet Explorer 6 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2011-1246", "CVE-2011-1251", "CVE-2011-1252", "CVE-2011-1260", "CVE-2011-1262"}},
+			{Component: "Internet Explorer 6 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2011-1246", "CVE-2011-1251", "CVE-2011-1252", "CVE-2011-1260", "CVE-2011-1262"}},
+			{Component: "Internet Explorer 6 for Windows XP Service Pack 3", Drop: []string{"CVE-2011-1246", "CVE-2011-1251", "CVE-2011-1252", "CVE-2011-1260", "CVE-2011-1262"}},
+			{Component: "Internet Explorer 7 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2011-1246", "CVE-2011-1251", "CVE-2011-1260"}},
+			{Component: "Internet Explorer 7 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2011-1246", "CVE-2011-1251", "CVE-2011-1260"}},
+			{Component: "Internet Explorer 7 for Windows Server 2008 for 32-bit Systems", Drop: []string{"CVE-2011-1246", "CVE-2011-1251", "CVE-2011-1260"}},
+			{Component: "Internet Explorer 7 for Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2011-1246", "CVE-2011-1251", "CVE-2011-1260"}},
+			{Component: "Internet Explorer 7 for Windows Server 2008 for x64-based Systems", Drop: []string{"CVE-2011-1246", "CVE-2011-1251", "CVE-2011-1260"}},
+			{Component: "Internet Explorer 7 for Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2011-1246", "CVE-2011-1251", "CVE-2011-1260"}},
+			{Component: "Internet Explorer 7 for Windows Vista Service Pack 1", Drop: []string{"CVE-2011-1246", "CVE-2011-1251", "CVE-2011-1260"}},
+			{Component: "Internet Explorer 7 for Windows Vista Service Pack 2", Drop: []string{"CVE-2011-1246", "CVE-2011-1251", "CVE-2011-1260"}},
+			{Component: "Internet Explorer 7 for Windows Vista x64 Edition Service Pack 1", Drop: []string{"CVE-2011-1246", "CVE-2011-1251", "CVE-2011-1260"}},
+			{Component: "Internet Explorer 7 for Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2011-1246", "CVE-2011-1251", "CVE-2011-1260"}},
+			{Component: "Internet Explorer 7 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2011-1246", "CVE-2011-1251", "CVE-2011-1260"}},
+			{Component: "Internet Explorer 7 for Windows XP Service Pack 3", Drop: []string{"CVE-2011-1246", "CVE-2011-1251", "CVE-2011-1260"}},
+			{Component: "Internet Explorer 9 for Windows 7 for 32-bit Systems", Drop: []string{"CVE-2011-1246", "CVE-2011-1251", "CVE-2011-1252", "CVE-2011-1254", "CVE-2011-1255", "CVE-2011-1256", "CVE-2011-1258"}},
+			{Component: "Internet Explorer 9 for Windows 7 for 32-bit Systems Service Pack 1", Drop: []string{"CVE-2011-1246", "CVE-2011-1251", "CVE-2011-1252", "CVE-2011-1254", "CVE-2011-1255", "CVE-2011-1256", "CVE-2011-1258"}},
+			{Component: "Internet Explorer 9 for Windows 7 for x64-based Systems", Drop: []string{"CVE-2011-1246", "CVE-2011-1251", "CVE-2011-1252", "CVE-2011-1254", "CVE-2011-1255", "CVE-2011-1256", "CVE-2011-1258"}},
+			{Component: "Internet Explorer 9 for Windows 7 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2011-1246", "CVE-2011-1251", "CVE-2011-1252", "CVE-2011-1254", "CVE-2011-1255", "CVE-2011-1256", "CVE-2011-1258"}},
+			{Component: "Internet Explorer 9 for Windows Server 2008 R2 for x64-based Systems", Drop: []string{"CVE-2011-1246", "CVE-2011-1251", "CVE-2011-1252", "CVE-2011-1254", "CVE-2011-1255", "CVE-2011-1256", "CVE-2011-1258"}},
+			{Component: "Internet Explorer 9 for Windows Server 2008 R2 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2011-1246", "CVE-2011-1251", "CVE-2011-1252", "CVE-2011-1254", "CVE-2011-1255", "CVE-2011-1256", "CVE-2011-1258"}},
+			{Component: "Internet Explorer 9 for Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2011-1246", "CVE-2011-1251", "CVE-2011-1252", "CVE-2011-1254", "CVE-2011-1255", "CVE-2011-1256", "CVE-2011-1258"}},
+			{Component: "Internet Explorer 9 for Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2011-1246", "CVE-2011-1251", "CVE-2011-1252", "CVE-2011-1254", "CVE-2011-1255", "CVE-2011-1256", "CVE-2011-1258"}},
+			{Component: "Internet Explorer 9 for Windows Vista Service Pack 2", Drop: []string{"CVE-2011-1246", "CVE-2011-1251", "CVE-2011-1252", "CVE-2011-1254", "CVE-2011-1255", "CVE-2011-1256", "CVE-2011-1258"}},
+			{Component: "Internet Explorer 9 for Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2011-1246", "CVE-2011-1251", "CVE-2011-1252", "CVE-2011-1254", "CVE-2011-1255", "CVE-2011-1256", "CVE-2011-1258"}},
 		},
 		IECumChain: map[string][]string{
 			"2497640": {"2530548"},
 		},
 	},
-	"MS11-054": {CVEAdjustments: []cveAdjustment{{KB: "2555917", Drop: []string{"CVE-2011-1877", "CVE-2011-1886", "CVE-2011-1887", "CVE-2011-1888"}}}},
+	// TODO: the per-product NA entries below come from MS11-054's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS11-054.
+	//   - Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Windows Server 2008 R2 for Itanium-based Systems and Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
+	//   - Windows Server 2008 for Itanium-based Systems and Windows Server 2008 for Itanium-based Systems Service Pack 2
+	"MS11-054": {
+		CVEAdjustments: []cveAdjustment{
+			{Component: "Microsoft Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2011-1877", "CVE-2011-1886", "CVE-2011-1887", "CVE-2011-1888"}},
+			{Component: "Microsoft Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2011-1877", "CVE-2011-1886", "CVE-2011-1887", "CVE-2011-1888"}},
+			{Component: "Microsoft Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2011-1877", "CVE-2011-1886", "CVE-2011-1887", "CVE-2011-1888"}},
+			{Component: "Microsoft Windows XP Service Pack 3", Drop: []string{"CVE-2011-1877", "CVE-2011-1887", "CVE-2011-1888"}},
+			{Component: "Windows 7 for 32-bit Systems", Drop: []string{"CVE-2011-1886"}},
+			{Component: "Windows 7 for 32-bit Systems Service Pack 1", Drop: []string{"CVE-2011-1886"}},
+			{Component: "Windows 7 for x64-based Systems", Drop: []string{"CVE-2011-1886"}},
+			{Component: "Windows 7 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2011-1886"}},
+			{Component: "Windows Server 2008 R2 for x64-based Systems", Drop: []string{"CVE-2011-1886"}},
+			{Component: "Windows Server 2008 R2 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2011-1886"}},
+			{Component: "Windows Server 2008 for 32-bit Systems", Drop: []string{"CVE-2011-1886"}},
+			{Component: "Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2011-1886"}},
+			{Component: "Windows Server 2008 for x64-based Systems", Drop: []string{"CVE-2011-1886"}},
+			{Component: "Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2011-1886"}},
+			{Component: "Windows Vista Service Pack 1", Drop: []string{"CVE-2011-1886"}},
+			{Component: "Windows Vista Service Pack 2", Drop: []string{"CVE-2011-1886"}},
+			{Component: "Windows Vista x64 Edition Service Pack 1", Drop: []string{"CVE-2011-1886"}},
+			{Component: "Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2011-1886"}},
+		},
+	},
 	// (MS08-032 / CVE-2007-0675 omitted: the archive markdown at
 	// ms08-032.md is mis-mapped — its content is actually MS16-011's — so
 	// the absence-in-markdown signal cannot distinguish typo from real
 	// attribution. CVE-2007-0675 is a real ActiveX vulnerability addressed
 	// by the MS08-032 Cumulative ActiveX Kill Bit update.)
 	// MS11-056: off-by-one of CVE-2011-1284 — remap (1284 not in xlsx).
+	// TODO: the per-product NA entries below come from MS11-056's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS11-056.
+	//   - Windows Server 2008 R2 for Itanium-based Systems and Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
+	//   - Windows Server 2008 for Itanium-based Systems and Windows Server 2008 for Itanium-based Systems Service Pack 2
 	"MS11-056": {
 		CVEAdjustments: []cveAdjustment{
-			{KB: "2507938", Drop: []string{"CVE-2011-1283", "CVE-2011-1870"}},
+			{Component: "Windows 7 for 32-bit Systems", Drop: []string{"CVE-2011-1283", "CVE-2011-1870"}},
+			{Component: "Windows 7 for 32-bit Systems Service Pack 1", Drop: []string{"CVE-2011-1283", "CVE-2011-1870"}},
+			{Component: "Windows 7 for x64-based Systems", Drop: []string{"CVE-2011-1283", "CVE-2011-1870"}},
+			{Component: "Windows 7 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2011-1283", "CVE-2011-1870"}},
+			{Component: "Windows Server 2008 R2 for x64-based Systems", Drop: []string{"CVE-2011-1283", "CVE-2011-1870"}},
+			{Component: "Windows Server 2008 R2 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2011-1283", "CVE-2011-1870"}},
+			{Component: "Windows Server 2008 for 32-bit Systems", Drop: []string{"CVE-2011-1870"}},
+			{Component: "Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2011-1870"}},
+			{Component: "Windows Server 2008 for x64-based Systems", Drop: []string{"CVE-2011-1870"}},
+			{Component: "Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2011-1870"}},
+			{Component: "Windows Vista Service Pack 1", Drop: []string{"CVE-2011-1870"}},
+			{Component: "Windows Vista Service Pack 2", Drop: []string{"CVE-2011-1870"}},
+			{Component: "Windows Vista x64 Edition Service Pack 1", Drop: []string{"CVE-2011-1870"}},
+			{Component: "Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2011-1870"}},
 			{Remap: map[string]string{"CVE-2011-1285": "CVE-2011-1284"}},
 		},
 	},
@@ -1348,18 +2970,77 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 	// states "this update addresses a Protected Mode bypass issue,
 	// publicly disclosed". The CVE is not in the main vulnerability
 	// table but the update explicitly addresses it.
+	// TODO: the per-product NA entries below come from MS11-057's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS11-057.
+	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
 	"MS11-057": {
 		CVEAdjustments: []cveAdjustment{
 			{Add: []string{"CVE-2011-1257", "CVE-2011-1347", "CVE-2011-1960", "CVE-2011-1961", "CVE-2011-1962", "CVE-2011-1963", "CVE-2011-1964", "CVE-2011-2383"}},
-			{KB: "2559049", Drop: []string{"CVE-2011-1257", "CVE-2011-1963"}},
+			{Component: "Internet Explorer 6 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2011-1963"}},
+			{Component: "Internet Explorer 6 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2011-1963"}},
+			{Component: "Internet Explorer 6 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2011-1963"}},
+			{Component: "Internet Explorer 6 for Windows XP Service Pack 3", Drop: []string{"CVE-2011-1963"}},
+			{Component: "Internet Explorer 9 for Windows 7 for 32-bit Systems", Drop: []string{"CVE-2011-1257"}},
+			{Component: "Internet Explorer 9 for Windows 7 for 32-bit Systems Service Pack 1", Drop: []string{"CVE-2011-1257"}},
+			{Component: "Internet Explorer 9 for Windows 7 for x64-based Systems", Drop: []string{"CVE-2011-1257"}},
+			{Component: "Internet Explorer 9 for Windows 7 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2011-1257"}},
+			{Component: "Internet Explorer 9 for Windows Server 2008 R2 for x64-based Systems", Drop: []string{"CVE-2011-1257"}},
+			{Component: "Internet Explorer 9 for Windows Server 2008 R2 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2011-1257"}},
+			{Component: "Internet Explorer 9 for Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2011-1257"}},
+			{Component: "Internet Explorer 9 for Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2011-1257"}},
+			{Component: "Internet Explorer 9 for Windows Vista Service Pack 2", Drop: []string{"CVE-2011-1257"}},
+			{Component: "Internet Explorer 9 for Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2011-1257"}},
 		},
 		IECumChain: map[string][]string{
 			"2530548": {"2559049"},
 		},
 	},
-	"MS11-058": {CVEAdjustments: []cveAdjustment{{KB: "2562485", Drop: []string{"CVE-2011-1966"}}}},
+	// TODO: the per-product NA entries below come from MS11-058's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS11-058.
+	//   - Windows Server 2003 with SP2 for Itanium-based Systems
+	"MS11-058": {
+		CVEAdjustments: []cveAdjustment{
+			{Component: "Microsoft Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2011-1966"}},
+			{Component: "Microsoft Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2011-1966"}},
+		},
+	},
 	"MS11-060": {CVEAdjustments: []cveAdjustment{{KB: "2560978", Drop: []string{"CVE-2011-1979"}}}},
-	"MS11-064": {CVEAdjustments: []cveAdjustment{{KB: "2563894", Drop: []string{"CVE-2011-1965"}}}},
+	// TODO: the per-product NA entries below come from MS11-064's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS11-064.
+	//   - Windows Server 2008 for Itanium-based Systems Service Pack 2
+	"MS11-064": {
+		CVEAdjustments: []cveAdjustment{
+			{Component: "Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2011-1965"}},
+			{Component: "Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2011-1965"}},
+			{Component: "Windows Vista Service Pack 2", Drop: []string{"CVE-2011-1965"}},
+			{Component: "Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2011-1965"}},
+		},
+	},
+	// TODO: the per-product NA entries below come from MS11-072's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS11-072.
+	//   - Excel Services installed on Microsoft Office SharePoint Server 2010 and Excel Services installed on Microsoft Office SharePoint Server 2010 Service Pack 1
+	//   - Microsoft Excel 2010 and Microsoft Excel 2010 Service Pack 1 (32-bit editions)
+	//   - Microsoft Excel 2010 and Microsoft Excel 2010 Service Pack 1 (64-bit editions)
 	"MS11-072": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "2553074", Drop: []string{"CVE-2011-1986"}},
@@ -1367,11 +3048,14 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2553089", Drop: []string{"CVE-2011-1986"}},
 			{KB: "2553091", Drop: []string{"CVE-2011-1986", "CVE-2011-1988", "CVE-2011-1990"}},
 			{KB: "2553093", Drop: []string{"CVE-2011-1986", "CVE-2011-1987", "CVE-2011-1988"}},
-			{KB: "2587505", Drop: []string{"CVE-2011-1986", "CVE-2011-1987", "CVE-2011-1988", "CVE-2011-1990"}},
 			{KB: "2598781", Drop: []string{"CVE-2011-1986", "CVE-2011-1990"}},
 			{KB: "2598782", Drop: []string{"CVE-2011-1986", "CVE-2011-1990"}},
 			{KB: "2598783", Drop: []string{"CVE-2011-1986", "CVE-2011-1988", "CVE-2011-1990"}},
 			{KB: "2598785", Drop: []string{"CVE-2011-1986", "CVE-2011-1990"}},
+			{Component: "Microsoft Excel 2003 Service Pack 3", Drop: []string{"CVE-2011-1990"}},
+			{Component: "Microsoft Excel 2007 Service Pack 2", Drop: []string{"CVE-2011-1986"}},
+			{Component: "Microsoft Excel Web App 2010", Drop: []string{"CVE-2011-1986", "CVE-2011-1987", "CVE-2011-1988", "CVE-2011-1990"}},
+			{Component: "Microsoft Excel Web App 2010 Service Pack 1", Drop: []string{"CVE-2011-1986", "CVE-2011-1987", "CVE-2011-1988", "CVE-2011-1990"}},
 		},
 	},
 	"MS11-073": {
@@ -1380,9 +3064,19 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2584066", Drop: []string{"CVE-2011-1980"}},
 		},
 	},
+	// TODO: the per-product NA entries below come from MS11-074's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS11-074.
+	//   - Microsoft Office SharePoint Server 2007 Service Pack 2 (32-bit editions)
+	//   - Microsoft Office SharePoint Server 2007 Service Pack 2 (64-bit editions)
+	//   - Microsoft Office SharePoint Server 2010
+	//   - Microsoft Office SharePoint Server 2010 Service Pack 1
 	"MS11-074": {
 		CVEAdjustments: []cveAdjustment{
-			{KB: "2451858", Drop: []string{"CVE-2011-0653", "CVE-2011-1890", "CVE-2011-1891", "CVE-2011-1892", "CVE-2011-1893"}},
 			{KB: "2493987", Drop: []string{"CVE-2011-0653", "CVE-2011-1890"}},
 			{KB: "2494007", Drop: []string{"CVE-2011-0653", "CVE-2011-1252", "CVE-2011-1890", "CVE-2011-1891", "CVE-2011-1892"}},
 			{KB: "2508965", Drop: []string{"CVE-2011-0653", "CVE-2011-1890", "CVE-2011-1891", "CVE-2011-1893"}},
@@ -1392,102 +3086,476 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2553005", Drop: []string{"CVE-2011-0653", "CVE-2011-1252", "CVE-2011-1890", "CVE-2011-1891", "CVE-2011-1893"}},
 			{KB: "2566445", Drop: []string{"CVE-2011-0653", "CVE-2011-1252", "CVE-2011-1890", "CVE-2011-1891", "CVE-2011-1893"}},
 			{KB: "2566449", Drop: []string{"CVE-2011-0653", "CVE-2011-1252", "CVE-2011-1890", "CVE-2011-1891", "CVE-2011-1893"}},
+			{Component: "Microsoft SharePoint Foundation 2010 Service Pack 1", Drop: []string{"CVE-2011-0653", "CVE-2011-1890", "CVE-2011-1892", "CVE-2011-1893"}},
 		},
 	},
-	"MS11-077": {CVEAdjustments: []cveAdjustment{{KB: "2567053", Drop: []string{"CVE-2011-2002"}}}},
+	// TODO: the per-product NA entries below come from MS11-077's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS11-077.
+	//   - Windows Server 2003 with SP2 for Itanium-based Systems
+	"MS11-077": {
+		CVEAdjustments: []cveAdjustment{
+			{Component: "Microsoft Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2011-2002"}},
+			{Component: "Microsoft Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2011-2002"}},
+			{Component: "Microsoft Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2011-2002"}},
+			{Component: "Microsoft Windows XP Service Pack 3", Drop: []string{"CVE-2011-2002"}},
+		},
+	},
+	// TODO: the per-product NA entries below come from MS11-081's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS11-081.
+	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 Windows Server 2008 for Itanium-based Systems Service Pack 2
+	//   - Internet Explorer 7 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 8 in Windows Server 2008 R2 for Itanium-based Systems and Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
 	"MS11-081": {
 		CVEAdjustments: []cveAdjustment{
-			{KB: "2586448", Drop: []string{"CVE-2011-1996", "CVE-2011-1997", "CVE-2011-1998", "CVE-2011-1999"}},
+			{Component: "Internet Explorer 6 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2011-1998", "CVE-2011-1999"}},
+			{Component: "Internet Explorer 6 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2011-1998", "CVE-2011-1999"}},
+			{Component: "Internet Explorer 6 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2011-1998", "CVE-2011-1999"}},
+			{Component: "Internet Explorer 6 for Windows XP Service Pack 3", Drop: []string{"CVE-2011-1998", "CVE-2011-1999"}},
+			{Component: "Internet Explorer 7 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2011-1997", "CVE-2011-1998", "CVE-2011-1999"}},
+			{Component: "Internet Explorer 7 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2011-1997", "CVE-2011-1998", "CVE-2011-1999"}},
+			{Component: "Internet Explorer 7 for Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2011-1997", "CVE-2011-1998", "CVE-2011-1999"}},
+			{Component: "Internet Explorer 7 for Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2011-1997", "CVE-2011-1998", "CVE-2011-1999"}},
+			{Component: "Internet Explorer 7 for Windows Vista Service Pack 2", Drop: []string{"CVE-2011-1997", "CVE-2011-1998", "CVE-2011-1999"}},
+			{Component: "Internet Explorer 7 for Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2011-1997", "CVE-2011-1998", "CVE-2011-1999"}},
+			{Component: "Internet Explorer 7 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2011-1997", "CVE-2011-1998", "CVE-2011-1999"}},
+			{Component: "Internet Explorer 7 for Windows XP Service Pack 3", Drop: []string{"CVE-2011-1997", "CVE-2011-1998", "CVE-2011-1999"}},
+			{Component: "Internet Explorer 8 for Windows 7 for 32-bit Systems", Drop: []string{"CVE-2011-1997", "CVE-2011-1998"}},
+			{Component: "Internet Explorer 8 for Windows 7 for 32-bit Systems Service Pack 1", Drop: []string{"CVE-2011-1997", "CVE-2011-1998"}},
+			{Component: "Internet Explorer 8 for Windows 7 for x64-based Systems", Drop: []string{"CVE-2011-1997", "CVE-2011-1998"}},
+			{Component: "Internet Explorer 8 for Windows 7 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2011-1997", "CVE-2011-1998"}},
+			{Component: "Internet Explorer 8 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2011-1997", "CVE-2011-1998"}},
+			{Component: "Internet Explorer 8 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2011-1997", "CVE-2011-1998"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 R2 for x64-based Systems", Drop: []string{"CVE-2011-1997", "CVE-2011-1998"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 R2 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2011-1997", "CVE-2011-1998"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2011-1997", "CVE-2011-1998"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2011-1997", "CVE-2011-1998"}},
+			{Component: "Internet Explorer 8 for Windows Vista Service Pack 2", Drop: []string{"CVE-2011-1997", "CVE-2011-1998"}},
+			{Component: "Internet Explorer 8 for Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2011-1997", "CVE-2011-1998"}},
+			{Component: "Internet Explorer 8 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2011-1997", "CVE-2011-1998"}},
+			{Component: "Internet Explorer 8 for Windows XP Service Pack 3", Drop: []string{"CVE-2011-1997", "CVE-2011-1998"}},
+			{Component: "Internet Explorer 9 for Windows 7 for 32-bit Systems", Drop: []string{"CVE-2011-1996", "CVE-2011-1997", "CVE-2011-1999"}},
+			{Component: "Internet Explorer 9 for Windows 7 for 32-bit Systems Service Pack 1", Drop: []string{"CVE-2011-1996", "CVE-2011-1997", "CVE-2011-1999"}},
+			{Component: "Internet Explorer 9 for Windows 7 for x64-based Systems", Drop: []string{"CVE-2011-1996", "CVE-2011-1997", "CVE-2011-1999"}},
+			{Component: "Internet Explorer 9 for Windows 7 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2011-1996", "CVE-2011-1997", "CVE-2011-1999"}},
+			{Component: "Internet Explorer 9 for Windows Server 2008 R2 for x64-based Systems", Drop: []string{"CVE-2011-1996", "CVE-2011-1997", "CVE-2011-1999"}},
+			{Component: "Internet Explorer 9 for Windows Server 2008 R2 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2011-1996", "CVE-2011-1997", "CVE-2011-1999"}},
+			{Component: "Internet Explorer 9 for Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2011-1996", "CVE-2011-1997", "CVE-2011-1999"}},
+			{Component: "Internet Explorer 9 for Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2011-1996", "CVE-2011-1997", "CVE-2011-1999"}},
+			{Component: "Internet Explorer 9 for Windows Vista Service Pack 2", Drop: []string{"CVE-2011-1996", "CVE-2011-1997", "CVE-2011-1999"}},
+			{Component: "Internet Explorer 9 for Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2011-1996", "CVE-2011-1997", "CVE-2011-1999"}},
 		},
 		IECumChain: map[string][]string{
 			"2559049": {"2586448"},
 		},
 	},
-	"MS11-090": {CVEAdjustments: []cveAdjustment{{KB: "2618451", Drop: []string{"CVE-2011-3397"}}}},
+	// TODO: the per-product NA entries below come from MS11-090's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS11-090.
+	//   - Windows Server 2008 R2 for Itanium-based Systems and Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
+	//   - Windows Server 2008 for Itanium-based Systems Service Pack 2
+	"MS11-090": {
+		CVEAdjustments: []cveAdjustment{
+			{Component: "Windows 7 for 32-bit Systems", Drop: []string{"CVE-2011-3397"}},
+			{Component: "Windows 7 for 32-bit Systems Service Pack 1", Drop: []string{"CVE-2011-3397"}},
+			{Component: "Windows 7 for x64-based Systems", Drop: []string{"CVE-2011-3397"}},
+			{Component: "Windows 7 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2011-3397"}},
+			{Component: "Windows Server 2008 R2 for x64-based Systems", Drop: []string{"CVE-2011-3397"}},
+			{Component: "Windows Server 2008 R2 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2011-3397"}},
+			{Component: "Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2011-3397"}},
+			{Component: "Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2011-3397"}},
+			{Component: "Windows Vista Service Pack 2", Drop: []string{"CVE-2011-3397"}},
+			{Component: "Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2011-3397"}},
+		},
+	},
 	"MS11-091": {
 		CVEAdjustments: []cveAdjustment{
 			{Add: []string{"CVE-2011-1508", "CVE-2011-3410", "CVE-2011-3411", "CVE-2011-3412"}},
-			{KB: "2607702", Drop: []string{"CVE-2011-3411"}},
+			{Component: "Microsoft Publisher 2007 Service Pack 2", Drop: []string{"CVE-2011-3411"}},
+			{Component: "Microsoft Publisher 2007 Service Pack 3", Drop: []string{"CVE-2011-3411"}},
 		},
 	},
 	"MS11-094": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "2596843", Drop: []string{"CVE-2011-3396"}},
 			{KB: "2596912", Drop: []string{"CVE-2011-3396"}},
-			{KB: "2639142", Drop: []string{"CVE-2011-3413"}},
 			{KB: "2644354", Drop: []string{"CVE-2011-3396"}},
+			{Component: "Microsoft PowerPoint 2010 (32-bit editions)", Drop: []string{"CVE-2011-3413"}},
+			{Component: "Microsoft PowerPoint 2010 (64-bit editions)", Drop: []string{"CVE-2011-3413"}},
 		},
 	},
 	"MS11-096": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2011-1986", "CVE-2011-1987", "CVE-2011-3403"}}}},
 	// MS11-099: off-by-one of CVE-2011-3404 — remap (3404 not in xlsx).
 	// CVE-2011-3403 itself appears in MS11-096's markdown.
+	// TODO: the per-product NA entries below come from MS11-099's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS11-099.
+	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 in Windows Server 2008 for Itanium-based Systems Service Pack 2
+	//   - Internet Explorer 8 in Windows Server 2008 R2 for Itanium-based Systems and Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
 	"MS11-099": {
 		CVEAdjustments: []cveAdjustment{
 			{Add: []string{"CVE-2011-1992", "CVE-2011-2019", "CVE-2011-3389", "CVE-2011-3404"}},
-			{KB: "2618444", Drop: []string{"CVE-2011-1992", "CVE-2011-2019"}},
+			{Component: "Internet Explorer 6 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2011-1992", "CVE-2011-2019"}},
+			{Component: "Internet Explorer 6 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2011-1992", "CVE-2011-2019"}},
+			{Component: "Internet Explorer 6 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2011-1992", "CVE-2011-2019"}},
+			{Component: "Internet Explorer 6 for Windows XP Service Pack 3", Drop: []string{"CVE-2011-1992", "CVE-2011-2019"}},
+			{Component: "Internet Explorer 7 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2011-1992", "CVE-2011-2019"}},
+			{Component: "Internet Explorer 7 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2011-1992", "CVE-2011-2019"}},
+			{Component: "Internet Explorer 7 for Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2011-1992", "CVE-2011-2019"}},
+			{Component: "Internet Explorer 7 for Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2011-1992", "CVE-2011-2019"}},
+			{Component: "Internet Explorer 7 for Windows Vista Service Pack 2", Drop: []string{"CVE-2011-1992", "CVE-2011-2019"}},
+			{Component: "Internet Explorer 7 for Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2011-1992", "CVE-2011-2019"}},
+			{Component: "Internet Explorer 7 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2011-1992", "CVE-2011-2019"}},
+			{Component: "Internet Explorer 7 for Windows XP Service Pack 3", Drop: []string{"CVE-2011-1992", "CVE-2011-2019"}},
+			{Component: "Internet Explorer 8 for Windows 7 for 32-bit Systems", Drop: []string{"CVE-2011-2019"}},
+			{Component: "Internet Explorer 8 for Windows 7 for 32-bit Systems Service Pack 1", Drop: []string{"CVE-2011-2019"}},
+			{Component: "Internet Explorer 8 for Windows 7 for x64-based Systems", Drop: []string{"CVE-2011-2019"}},
+			{Component: "Internet Explorer 8 for Windows 7 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2011-2019"}},
+			{Component: "Internet Explorer 8 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2011-2019"}},
+			{Component: "Internet Explorer 8 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2011-2019"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 R2 for x64-based Systems", Drop: []string{"CVE-2011-2019"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 R2 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2011-2019"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2011-2019"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2011-2019"}},
+			{Component: "Internet Explorer 8 for Windows Vista Service Pack 2", Drop: []string{"CVE-2011-2019"}},
+			{Component: "Internet Explorer 8 for Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2011-2019"}},
+			{Component: "Internet Explorer 8 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2011-2019"}},
+			{Component: "Internet Explorer 8 for Windows XP Service Pack 3", Drop: []string{"CVE-2011-2019"}},
+			{Component: "Internet Explorer 9 for Windows 7 for 32-bit Systems", Drop: []string{"CVE-2011-1992"}},
+			{Component: "Internet Explorer 9 for Windows 7 for 32-bit Systems Service Pack 1", Drop: []string{"CVE-2011-1992"}},
+			{Component: "Internet Explorer 9 for Windows 7 for x64-based Systems", Drop: []string{"CVE-2011-1992"}},
+			{Component: "Internet Explorer 9 for Windows 7 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2011-1992"}},
+			{Component: "Internet Explorer 9 for Windows Server 2008 R2 for x64-based Systems", Drop: []string{"CVE-2011-1992"}},
+			{Component: "Internet Explorer 9 for Windows Server 2008 R2 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2011-1992"}},
+			{Component: "Internet Explorer 9 for Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2011-1992", "CVE-2011-2019"}},
+			{Component: "Internet Explorer 9 for Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2011-1992", "CVE-2011-2019"}},
+			{Component: "Internet Explorer 9 for Windows Vista Service Pack 2", Drop: []string{"CVE-2011-1992", "CVE-2011-2019"}},
+			{Component: "Internet Explorer 9 for Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2011-1992", "CVE-2011-2019"}},
 			{Remap: map[string]string{"CVE-2011-3403": "CVE-2011-3404"}},
 		},
 		IECumChain: map[string][]string{
 			"2586448": {"2618444"},
 		},
 	},
+	// TODO: the per-product NA entries below come from MS11-100's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS11-100.
+	//   - Microsoft .NET Framework 1.1 Service Pack 1 when installed on Windows Server 2003 Itanium-based Edition Service Pack 2
 	"MS11-100": {
 		CVEAdjustments: []cveAdjustment{
 			{Add: []string{"CVE-2011-3414", "CVE-2011-3415", "CVE-2011-3416", "CVE-2011-3417", "CVE-2012-0160", "CVE-2012-0161"}},
-			{KB: "2638420", Drop: []string{"CVE-2011-3415"}},
 			{KB: "2656353", Drop: []string{"CVE-2011-3415"}},
 			{KB: "2656358", Drop: []string{"CVE-2011-3415"}},
 		},
 	},
-	"MS12-004": {CVEAdjustments: []cveAdjustment{{KB: "2636391", Drop: []string{"CVE-2012-0003"}}}},
-	"MS12-009": {CVEAdjustments: []cveAdjustment{{KB: "2645640", Drop: []string{"CVE-2012-0148", "CVE-2012-0149"}}}},
+	// TODO: the per-product NA entries below come from MS12-004's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS12-004.
+	//   - Windows Media Center TV Pack for Windows Vista (32-bit editions)
+	//   - Windows Media Center TV Pack for Windows Vista (64-bit editions)
+	//   - Windows Server 2008 R2 for Itanium-based Systems and Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
+	"MS12-004": {
+		CVEAdjustments: []cveAdjustment{
+			{Component: "Windows 7 for 32-bit Systems", Drop: []string{"CVE-2012-0003"}},
+			{Component: "Windows 7 for 32-bit Systems Service Pack 1", Drop: []string{"CVE-2012-0003"}},
+			{Component: "Windows 7 for x64-based Systems", Drop: []string{"CVE-2012-0003"}},
+			{Component: "Windows 7 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2012-0003"}},
+			{Component: "Windows Server 2008 R2 for x64-based Systems", Drop: []string{"CVE-2012-0003"}},
+			{Component: "Windows Server 2008 R2 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2012-0003"}},
+		},
+	},
+	// TODO: the per-product NA entries below come from MS12-009's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS12-009.
+	//   - Windows Server 2008 R2 for Itanium-based Systems and Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
+	//   - Windows Server 2008 for Itanium-based Systems Service Pack 2
+	"MS12-009": {
+		CVEAdjustments: []cveAdjustment{
+			{Component: "Microsoft Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2012-0148"}},
+			{Component: "Microsoft Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2012-0149"}},
+			{Component: "Windows 7 for x64-based Systems", Drop: []string{"CVE-2012-0149"}},
+			{Component: "Windows 7 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2012-0149"}},
+			{Component: "Windows Server 2008 R2 for x64-based Systems", Drop: []string{"CVE-2012-0149"}},
+			{Component: "Windows Server 2008 R2 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2012-0149"}},
+			{Component: "Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2012-0149"}},
+			{Component: "Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2012-0149"}},
+		},
+	},
+	// TODO: the per-product NA entries below come from MS12-010's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS12-010.
+	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 Windows Server 2008 for Itanium-based Systems Service Pack 2
+	//   - Internet Explorer 7 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 8 in Windows Server 2008 R2 for Itanium-based Systems and Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
 	"MS12-010": {
 		CVEAdjustments: []cveAdjustment{
-			{KB: "2647516", Drop: []string{"CVE-2012-0011", "CVE-2012-0012", "CVE-2012-0155"}},
+			{Component: "Internet Explorer 6 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2012-0011", "CVE-2012-0012", "CVE-2012-0155"}},
+			{Component: "Internet Explorer 6 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2012-0011", "CVE-2012-0012", "CVE-2012-0155"}},
+			{Component: "Internet Explorer 6 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2012-0011", "CVE-2012-0012", "CVE-2012-0155"}},
+			{Component: "Internet Explorer 6 for Windows XP Service Pack 3", Drop: []string{"CVE-2012-0011", "CVE-2012-0012", "CVE-2012-0155"}},
+			{Component: "Internet Explorer 7 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2012-0012", "CVE-2012-0155"}},
+			{Component: "Internet Explorer 7 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2012-0012", "CVE-2012-0155"}},
+			{Component: "Internet Explorer 7 for Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2012-0012", "CVE-2012-0155"}},
+			{Component: "Internet Explorer 7 for Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2012-0012", "CVE-2012-0155"}},
+			{Component: "Internet Explorer 7 for Windows Vista Service Pack 2", Drop: []string{"CVE-2012-0012", "CVE-2012-0155"}},
+			{Component: "Internet Explorer 7 for Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2012-0012", "CVE-2012-0155"}},
+			{Component: "Internet Explorer 7 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2012-0012", "CVE-2012-0155"}},
+			{Component: "Internet Explorer 7 for Windows XP Service Pack 3", Drop: []string{"CVE-2012-0012", "CVE-2012-0155"}},
+			{Component: "Internet Explorer 8 for Windows 7 for 32-bit Systems", Drop: []string{"CVE-2012-0012", "CVE-2012-0155"}},
+			{Component: "Internet Explorer 8 for Windows 7 for 32-bit Systems Service Pack 1", Drop: []string{"CVE-2012-0012", "CVE-2012-0155"}},
+			{Component: "Internet Explorer 8 for Windows 7 for x64-based Systems", Drop: []string{"CVE-2012-0012", "CVE-2012-0155"}},
+			{Component: "Internet Explorer 8 for Windows 7 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2012-0012", "CVE-2012-0155"}},
+			{Component: "Internet Explorer 8 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2012-0012", "CVE-2012-0155"}},
+			{Component: "Internet Explorer 8 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2012-0012", "CVE-2012-0155"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 R2 for x64-based Systems", Drop: []string{"CVE-2012-0012", "CVE-2012-0155"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 R2 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2012-0012", "CVE-2012-0155"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2012-0012", "CVE-2012-0155"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2012-0012", "CVE-2012-0155"}},
+			{Component: "Internet Explorer 8 for Windows Vista Service Pack 2", Drop: []string{"CVE-2012-0012", "CVE-2012-0155"}},
+			{Component: "Internet Explorer 8 for Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2012-0012", "CVE-2012-0155"}},
+			{Component: "Internet Explorer 8 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2012-0012", "CVE-2012-0155"}},
+			{Component: "Internet Explorer 8 for Windows XP Service Pack 3", Drop: []string{"CVE-2012-0012", "CVE-2012-0155"}},
 		},
 		IECumChain: map[string][]string{
 			"2618444": {"2647516"},
 		},
 	},
-	"MS12-011": {CVEAdjustments: []cveAdjustment{{KB: "2663841", Drop: []string{"CVE-2012-0017"}}}},
-	"MS12-016": {
+	// TODO: the per-product NA entries below come from MS12-011's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS12-011.
+	//   - Microsoft Office SharePoint Server 2010 and Microsoft Office SharePoint Server 2010 Service Pack 1
+	// TODO: the per-product NA entries below come from MS12-016's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS12-016.
+	//   - Microsoft .NET Framework 4 when installed on Windows 7 for 32-bit Systems and Windows 7 for 32-bit Systems Service Pack 1
+	//   - Microsoft .NET Framework 4 when installed on Windows 7 for x64-based Systems and Windows 7 for x64-based Systems Service Pack 1
+	//   - Microsoft .NET Framework 4 when installed on Windows Server 2003 Service Pack 2
+	//   - Microsoft .NET Framework 4 when installed on Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Microsoft .NET Framework 4 when installed on Windows Server 2003 x64 Edition Service Pack 2
+	//   - Microsoft .NET Framework 4 when installed on Windows Server 2008 R2 for Itanium-based Systems and Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
+	//   - Microsoft .NET Framework 4 when installed on Windows Server 2008 R2 for x64-based Systems
+	//   - Microsoft .NET Framework 4 when installed on Windows Server 2008 R2 for x64-based Systems Service Pack 1
+	//   - Microsoft .NET Framework 4 when installed on Windows Server 2008 for 32-bit Systems Service Pack 2
+	//   - Microsoft .NET Framework 4 when installed on Windows Server 2008 for Itanium-based Systems Service Pack 2
+	//   - Microsoft .NET Framework 4 when installed on Windows Server 2008 for x64-based Systems Service Pack 2
+	//   - Microsoft .NET Framework 4 when installed on Windows Vista Service Pack 2
+	//   - Microsoft .NET Framework 4 when installed on Windows Vista x64 Edition Service Pack 2
+	//   - Microsoft .NET Framework 4 when installed on Windows XP Professional x64 Edition Service Pack 2
+	//   - Microsoft .NET Framework 4 when installed on Windows XP Service Pack 3
+	//   - Microsoft Silverlight 4 when installed on all releases of Microsoft Windows clients
+	//   - Microsoft Silverlight 4 when installed on all releases of Microsoft Windows servers
+	"MS12-016": {CVEAdjustments: []cveAdjustment{{KB: "2668562", Drop: []string{"CVE-2012-0015"}}}},
+	// TODO: the per-product NA entries below come from MS12-020's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS12-020.
+	//   - Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Windows Server 2008 for Itanium-based Systems Service Pack 2
+	"MS12-020": {
 		CVEAdjustments: []cveAdjustment{
-			{KB: "2651026", Drop: []string{"CVE-2012-0015"}},
-			{KB: "2668562", Drop: []string{"CVE-2012-0015"}},
+			{Component: "Microsoft Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2012-0152"}},
+			{Component: "Microsoft Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2012-0152"}},
+			{Component: "Microsoft Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2012-0152"}},
+			{Component: "Microsoft Windows XP Service Pack 3", Drop: []string{"CVE-2012-0152"}},
+			{Component: "Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2012-0152"}},
+			{Component: "Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2012-0152"}},
+			{Component: "Windows Vista Service Pack 2", Drop: []string{"CVE-2012-0152"}},
+			{Component: "Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2012-0152"}},
 		},
 	},
-	"MS12-020": {CVEAdjustments: []cveAdjustment{{KB: "2621440", Drop: []string{"CVE-2012-0152"}}}},
+	// TODO: the per-product NA entries below come from MS12-023's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS12-023.
+	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 Windows Server 2008 for Itanium-based Systems Service Pack 2
+	//   - Internet Explorer 7 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 8 in Windows Server 2008 R2 for Itanium-based Systems
+	//   - Internet Explorer 8 in Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
 	"MS12-023": {
 		CVEAdjustments: []cveAdjustment{
-			{KB: "2675157", Drop: []string{"CVE-2012-0169", "CVE-2012-0170", "CVE-2012-0172"}},
+			{Component: "Internet Explorer 6 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2012-0169"}},
+			{Component: "Internet Explorer 6 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2012-0169"}},
+			{Component: "Internet Explorer 6 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2012-0169"}},
+			{Component: "Internet Explorer 6 for Windows XP Service Pack 3", Drop: []string{"CVE-2012-0169"}},
+			{Component: "Internet Explorer 7 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2012-0169"}},
+			{Component: "Internet Explorer 7 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2012-0169"}},
+			{Component: "Internet Explorer 7 for Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2012-0169"}},
+			{Component: "Internet Explorer 7 for Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2012-0169"}},
+			{Component: "Internet Explorer 7 for Windows Vista Service Pack 2", Drop: []string{"CVE-2012-0169"}},
+			{Component: "Internet Explorer 7 for Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2012-0169"}},
+			{Component: "Internet Explorer 7 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2012-0169"}},
+			{Component: "Internet Explorer 7 for Windows XP Service Pack 3", Drop: []string{"CVE-2012-0169"}},
+			{Component: "Internet Explorer 8 for Windows 7 for 32-bit Systems", Drop: []string{"CVE-2012-0169", "CVE-2012-0170"}},
+			{Component: "Internet Explorer 8 for Windows 7 for 32-bit Systems Service Pack 1", Drop: []string{"CVE-2012-0169", "CVE-2012-0170"}},
+			{Component: "Internet Explorer 8 for Windows 7 for x64-based Systems", Drop: []string{"CVE-2012-0169", "CVE-2012-0170"}},
+			{Component: "Internet Explorer 8 for Windows 7 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2012-0169", "CVE-2012-0170"}},
+			{Component: "Internet Explorer 8 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2012-0169", "CVE-2012-0170"}},
+			{Component: "Internet Explorer 8 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2012-0169", "CVE-2012-0170"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 R2 for x64-based Systems", Drop: []string{"CVE-2012-0169", "CVE-2012-0170"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 R2 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2012-0169", "CVE-2012-0170"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2012-0169", "CVE-2012-0170"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2012-0169", "CVE-2012-0170"}},
+			{Component: "Internet Explorer 8 for Windows Vista Service Pack 2", Drop: []string{"CVE-2012-0169", "CVE-2012-0170"}},
+			{Component: "Internet Explorer 8 for Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2012-0169", "CVE-2012-0170"}},
+			{Component: "Internet Explorer 8 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2012-0169", "CVE-2012-0170"}},
+			{Component: "Internet Explorer 8 for Windows XP Service Pack 3", Drop: []string{"CVE-2012-0169", "CVE-2012-0170"}},
+			{Component: "Internet Explorer 9 for Windows 7 for 32-bit Systems", Drop: []string{"CVE-2012-0170", "CVE-2012-0172"}},
+			{Component: "Internet Explorer 9 for Windows 7 for 32-bit Systems Service Pack 1", Drop: []string{"CVE-2012-0170", "CVE-2012-0172"}},
+			{Component: "Internet Explorer 9 for Windows 7 for x64-based Systems", Drop: []string{"CVE-2012-0170", "CVE-2012-0172"}},
+			{Component: "Internet Explorer 9 for Windows 7 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2012-0170", "CVE-2012-0172"}},
+			{Component: "Internet Explorer 9 for Windows Server 2008 R2 for x64-based Systems", Drop: []string{"CVE-2012-0170", "CVE-2012-0172"}},
+			{Component: "Internet Explorer 9 for Windows Server 2008 R2 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2012-0170", "CVE-2012-0172"}},
+			{Component: "Internet Explorer 9 for Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2012-0170", "CVE-2012-0172"}},
+			{Component: "Internet Explorer 9 for Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2012-0170", "CVE-2012-0172"}},
+			{Component: "Internet Explorer 9 for Windows Vista Service Pack 2", Drop: []string{"CVE-2012-0170", "CVE-2012-0172"}},
+			{Component: "Internet Explorer 9 for Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2012-0170", "CVE-2012-0172"}},
 		},
 		IECumChain: map[string][]string{
 			"2647516": {"2675157"},
 		},
 	},
+	// TODO: the per-product NA entries below come from MS12-030's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS12-030.
+	//   - Microsoft Excel 2010 (64-bit editions)
+	//   - Microsoft Excel 2010 Service Pack 1 (64-bit editions)
 	"MS12-030": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "2553371", Drop: []string{"CVE-2012-0143"}},
 			{KB: "2596842", Drop: []string{"CVE-2012-0143"}},
 			{KB: "2597162", Drop: []string{"CVE-2012-0143"}},
 			{KB: "2597969", Drop: []string{"CVE-2012-0143"}},
-			{KB: "2663830", Drop: []string{"CVE-2012-0143", "CVE-2012-0185"}},
 			{KB: "2665346", Drop: []string{"CVE-2012-0141", "CVE-2012-0185"}},
 			{KB: "2665351", Drop: []string{"CVE-2012-0142", "CVE-2012-0143", "CVE-2012-0185"}},
+			{Component: "Microsoft Excel 2003 Service Pack 3", Drop: []string{"CVE-2012-0185"}},
+			{Component: "Microsoft Excel 2007 Service Pack 2", Drop: []string{"CVE-2012-0143"}},
+			{Component: "Microsoft Excel 2007 Service Pack 3", Drop: []string{"CVE-2012-0143"}},
+			{Component: "Microsoft Excel 2010 (32-bit editions)", Drop: []string{"CVE-2012-0143"}},
+			{Component: "Microsoft Excel 2010 Service Pack 1 (32-bit editions)", Drop: []string{"CVE-2012-0143"}},
 		},
 	},
-	"MS12-032": {CVEAdjustments: []cveAdjustment{{KB: "2688338", Drop: []string{"CVE-2012-0179"}}}},
+	// TODO: the per-product NA entries below come from MS12-032's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS12-032.
+	//   - Windows Server 2008 for Itanium-based Systems Service Pack 2
+	"MS12-032": {
+		CVEAdjustments: []cveAdjustment{
+			{Component: "Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2012-0179"}},
+			{Component: "Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2012-0179"}},
+			{Component: "Windows Vista Service Pack 2", Drop: []string{"CVE-2012-0179"}},
+			{Component: "Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2012-0179"}},
+		},
+	},
+	// TODO: the per-product NA entries below come from MS12-034's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS12-034.
+	//   - Microsoft Silverlight 4 when installed on Mac
 	"MS12-034": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "2589337", Drop: []string{"CVE-2012-0162", "CVE-2012-0164", "CVE-2012-0167", "CVE-2012-0176", "CVE-2012-0180", "CVE-2012-0181", "CVE-2012-1848"}},
 			{KB: "2598253", Drop: []string{"CVE-2012-0162", "CVE-2012-0164", "CVE-2012-0176", "CVE-2012-0180", "CVE-2012-0181", "CVE-2012-1848"}},
 			{KB: "2636927", Drop: []string{"CVE-2012-0162", "CVE-2012-0164", "CVE-2012-0165", "CVE-2012-0167", "CVE-2012-0176", "CVE-2012-0180", "CVE-2012-0181", "CVE-2012-1848"}},
-			{KB: "2690729", Drop: []string{"CVE-2012-0162", "CVE-2012-0164", "CVE-2012-0165", "CVE-2012-0167", "CVE-2012-0176", "CVE-2012-0180", "CVE-2012-0181", "CVE-2012-1848"}},
+			{KB: "2690729", Drop: []string{"CVE-2012-0162", "CVE-2012-0164", "CVE-2012-0165", "CVE-2012-0167", "CVE-2012-0180", "CVE-2012-0181", "CVE-2012-1848"}},
 		},
 	},
+	// TODO: the per-product NA entries below come from MS12-037's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS12-037.
+	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 Windows Server 2008 for Itanium-based Systems Service Pack 2
+	//   - Internet Explorer 7 for Windows Server 2003 with SP2 for Itanium-based Systems
 	"MS12-037": {
 		CVEAdjustments: []cveAdjustment{
-			{KB: "2699988", Drop: []string{"CVE-2012-1523", "CVE-2012-1858", "CVE-2012-1873", "CVE-2012-1874", "CVE-2012-1875", "CVE-2012-1881"}},
+			{Component: "Internet Explorer 6 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2012-1858", "CVE-2012-1873", "CVE-2012-1874", "CVE-2012-1875", "CVE-2012-1881"}},
+			{Component: "Internet Explorer 6 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2012-1858", "CVE-2012-1873", "CVE-2012-1874", "CVE-2012-1875", "CVE-2012-1881"}},
+			{Component: "Internet Explorer 6 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2012-1858", "CVE-2012-1873", "CVE-2012-1874", "CVE-2012-1875", "CVE-2012-1881"}},
+			{Component: "Internet Explorer 6 for Windows XP Service Pack 3", Drop: []string{"CVE-2012-1858", "CVE-2012-1873", "CVE-2012-1874", "CVE-2012-1875", "CVE-2012-1881"}},
+			{Component: "Internet Explorer 7 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2012-1858", "CVE-2012-1874", "CVE-2012-1875", "CVE-2012-1881"}},
+			{Component: "Internet Explorer 7 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2012-1858", "CVE-2012-1874", "CVE-2012-1875", "CVE-2012-1881"}},
+			{Component: "Internet Explorer 7 for Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2012-1858", "CVE-2012-1874", "CVE-2012-1875", "CVE-2012-1881"}},
+			{Component: "Internet Explorer 7 for Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2012-1858", "CVE-2012-1874", "CVE-2012-1875", "CVE-2012-1881"}},
+			{Component: "Internet Explorer 7 for Windows Vista Service Pack 2", Drop: []string{"CVE-2012-1858", "CVE-2012-1874", "CVE-2012-1875", "CVE-2012-1881"}},
+			{Component: "Internet Explorer 7 for Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2012-1858", "CVE-2012-1874", "CVE-2012-1875", "CVE-2012-1881"}},
+			{Component: "Internet Explorer 7 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2012-1858", "CVE-2012-1874", "CVE-2012-1875", "CVE-2012-1881"}},
+			{Component: "Internet Explorer 7 for Windows XP Service Pack 3", Drop: []string{"CVE-2012-1858", "CVE-2012-1874", "CVE-2012-1875", "CVE-2012-1881"}},
+			{Component: "Internet Explorer 9 for Windows 7 for 32-bit Systems", Drop: []string{"CVE-2012-1523", "CVE-2012-1875"}},
+			{Component: "Internet Explorer 9 for Windows 7 for 32-bit Systems Service Pack 1", Drop: []string{"CVE-2012-1523", "CVE-2012-1875"}},
+			{Component: "Internet Explorer 9 for Windows 7 for x64-based Systems", Drop: []string{"CVE-2012-1523", "CVE-2012-1875"}},
+			{Component: "Internet Explorer 9 for Windows 7 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2012-1523", "CVE-2012-1875"}},
+			{Component: "Internet Explorer 9 for Windows Server 2008 R2 for x64-based Systems", Drop: []string{"CVE-2012-1523", "CVE-2012-1875"}},
+			{Component: "Internet Explorer 9 for Windows Server 2008 R2 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2012-1523", "CVE-2012-1875"}},
+			{Component: "Internet Explorer 9 for Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2012-1523", "CVE-2012-1875"}},
+			{Component: "Internet Explorer 9 for Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2012-1523", "CVE-2012-1875"}},
+			{Component: "Internet Explorer 9 for Windows Vista Service Pack 2", Drop: []string{"CVE-2012-1523", "CVE-2012-1875"}},
+			{Component: "Internet Explorer 9 for Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2012-1523", "CVE-2012-1875"}},
 		},
 		IECumChain: map[string][]string{
 			"2675157": {"2699988"},
@@ -1500,7 +3568,34 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2708980", Drop: []string{"CVE-2011-3402", "CVE-2012-0159", "CVE-2012-1849"}},
 		},
 	},
-	"MS12-041": {CVEAdjustments: []cveAdjustment{{KB: "2709162", Drop: []string{"CVE-2012-1868"}}}},
+	// TODO: the per-product NA entries below come from MS12-041's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS12-041.
+	//   - Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Windows Server 2008 R2 for Itanium-based Systems
+	//   - Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
+	//   - Windows Server 2008 for Itanium-based Systems Service Pack 2
+	"MS12-041": {
+		CVEAdjustments: []cveAdjustment{
+			{Component: "Microsoft Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2012-1868"}},
+			{Component: "Microsoft Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2012-1868"}},
+			{Component: "Microsoft Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2012-1868"}},
+			{Component: "Windows 7 for 32-bit Systems", Drop: []string{"CVE-2012-1868"}},
+			{Component: "Windows 7 for 32-bit Systems Service Pack 1", Drop: []string{"CVE-2012-1868"}},
+			{Component: "Windows 7 for x64-based Systems", Drop: []string{"CVE-2012-1868"}},
+			{Component: "Windows 7 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2012-1868"}},
+			{Component: "Windows Server 2008 R2 for x64-based Systems", Drop: []string{"CVE-2012-1868"}},
+			{Component: "Windows Server 2008 R2 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2012-1868"}},
+			{Component: "Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2012-1868"}},
+			{Component: "Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2012-1868"}},
+			{Component: "Windows Vista Service Pack 2", Drop: []string{"CVE-2012-1868"}},
+			{Component: "Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2012-1868"}},
+		},
+	},
 	"MS12-042": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "2707511", Drop: []string{"CVE-2012-0217"}},
@@ -1512,32 +3607,113 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2699988": {"2719177"},
 		},
 	},
+	// TODO: the per-product NA entries below come from MS12-050's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS12-050.
+	//   - Microsoft Office SharePoint Server 2007 Service Pack 2 (32-bit editions)
+	//   - Microsoft Office SharePoint Server 2007 Service Pack 2 (64-bit editions)
+	//   - Microsoft Office SharePoint Server 2007 Service Pack 3 (32-bit editions)
+	//   - Microsoft Office SharePoint Server 2007 Service Pack 3 (64-bit editions)
+	//   - Microsoft Windows SharePoint Services 3.0 Service Pack 2 (32-bit versions)
+	//   - Microsoft Windows SharePoint Services 3.0 Service Pack 2 (64-bit versions)
 	"MS12-050": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "2553431", Drop: []string{"CVE-2012-1859", "CVE-2012-1860", "CVE-2012-1861", "CVE-2012-1862", "CVE-2012-1863"}},
 			{KB: "2589325", Drop: []string{"CVE-2012-1859", "CVE-2012-1860", "CVE-2012-1861", "CVE-2012-1862", "CVE-2012-1863"}},
 			{KB: "2596666", Drop: []string{"CVE-2012-1859", "CVE-2012-1860", "CVE-2012-1861", "CVE-2012-1862", "CVE-2012-1863"}},
 			{KB: "2598239", Drop: []string{"CVE-2012-1862", "CVE-2012-1863"}},
-			{KB: "2695502", Drop: []string{"CVE-2012-1859", "CVE-2012-1860", "CVE-2012-1861", "CVE-2012-1862", "CVE-2012-1863"}},
 			{KB: "2760604", Drop: []string{"CVE-2012-1858", "CVE-2012-1859", "CVE-2012-1860", "CVE-2012-1861", "CVE-2012-1862"}},
+			{Component: "Microsoft SharePoint Foundation 2010", Drop: []string{"CVE-2012-1860", "CVE-2012-1862"}},
+			{Component: "Microsoft SharePoint Foundation 2010 Service Pack 1", Drop: []string{"CVE-2012-1860", "CVE-2012-1862"}},
+			{Component: "Microsoft SharePoint Server 2010", Drop: []string{"CVE-2012-1862", "CVE-2012-1863"}},
+			{Component: "Microsoft SharePoint Server 2010 Service Pack 1", Drop: []string{"CVE-2012-1862", "CVE-2012-1863"}},
 		},
 	},
+	// TODO: the per-product NA entries below come from MS12-052's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS12-052.
+	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 Windows Server 2008 for Itanium-based Systems Service Pack 2
+	//   - Internet Explorer 7 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 8 in Windows Server 2008 R2 for Itanium-based Systems
+	//   - Internet Explorer 8 in Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
 	"MS12-052": {
 		CVEAdjustments: []cveAdjustment{
-			{KB: "2722913", Drop: []string{"CVE-2012-1526", "CVE-2012-2523"}},
+			{Component: "Internet Explorer 6 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2012-2523"}},
+			{Component: "Internet Explorer 6 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2012-2523"}},
+			{Component: "Internet Explorer 6 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2012-2523"}},
+			{Component: "Internet Explorer 6 for Windows XP Service Pack 3", Drop: []string{"CVE-2012-2523"}},
+			{Component: "Internet Explorer 7 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2012-2523"}},
+			{Component: "Internet Explorer 7 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2012-2523"}},
+			{Component: "Internet Explorer 7 for Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2012-2523"}},
+			{Component: "Internet Explorer 7 for Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2012-2523"}},
+			{Component: "Internet Explorer 7 for Windows Vista Service Pack 2", Drop: []string{"CVE-2012-2523"}},
+			{Component: "Internet Explorer 7 for Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2012-2523"}},
+			{Component: "Internet Explorer 7 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2012-2523"}},
+			{Component: "Internet Explorer 7 for Windows XP Service Pack 3", Drop: []string{"CVE-2012-2523"}},
+			{Component: "Internet Explorer 8 for Windows 7 for 32-bit Systems", Drop: []string{"CVE-2012-1526", "CVE-2012-2523"}},
+			{Component: "Internet Explorer 8 for Windows 7 for 32-bit Systems Service Pack 1", Drop: []string{"CVE-2012-1526", "CVE-2012-2523"}},
+			{Component: "Internet Explorer 8 for Windows 7 for x64-based Systems", Drop: []string{"CVE-2012-1526"}},
+			{Component: "Internet Explorer 8 for Windows 7 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2012-1526"}},
+			{Component: "Internet Explorer 8 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2012-1526", "CVE-2012-2523"}},
+			{Component: "Internet Explorer 8 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2012-1526"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 R2 for x64-based Systems", Drop: []string{"CVE-2012-1526"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 R2 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2012-1526"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2012-1526", "CVE-2012-2523"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2012-1526"}},
+			{Component: "Internet Explorer 8 for Windows Vista Service Pack 2", Drop: []string{"CVE-2012-1526", "CVE-2012-2523"}},
+			{Component: "Internet Explorer 8 for Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2012-1526"}},
+			{Component: "Internet Explorer 8 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2012-1526"}},
+			{Component: "Internet Explorer 8 for Windows XP Service Pack 3", Drop: []string{"CVE-2012-1526", "CVE-2012-2523"}},
+			{Component: "Internet Explorer 9 for Windows 7 for 32-bit Systems", Drop: []string{"CVE-2012-1526", "CVE-2012-2523"}},
+			{Component: "Internet Explorer 9 for Windows 7 for 32-bit Systems Service Pack 1", Drop: []string{"CVE-2012-1526", "CVE-2012-2523"}},
+			{Component: "Internet Explorer 9 for Windows 7 for x64-based Systems", Drop: []string{"CVE-2012-1526"}},
+			{Component: "Internet Explorer 9 for Windows 7 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2012-1526"}},
+			{Component: "Internet Explorer 9 for Windows Server 2008 R2 for x64-based Systems", Drop: []string{"CVE-2012-1526"}},
+			{Component: "Internet Explorer 9 for Windows Server 2008 R2 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2012-1526"}},
+			{Component: "Internet Explorer 9 for Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2012-1526", "CVE-2012-2523"}},
+			{Component: "Internet Explorer 9 for Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2012-1526"}},
+			{Component: "Internet Explorer 9 for Windows Vista Service Pack 2", Drop: []string{"CVE-2012-1526", "CVE-2012-2523"}},
+			{Component: "Internet Explorer 9 for Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2012-1526"}},
 		},
 		IECumChain: map[string][]string{
 			"2699988": {"2722913"},
 			"2719177": {"2722913"},
 		},
 	},
+	// TODO: the per-product NA entries below come from MS12-054's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS12-054.
+	//   - Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Windows Server 2008 R2 for Itanium-based Systems
+	//   - Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
+	//   - Windows Server 2008 for Itanium-based Systems Service Pack 2
 	"MS12-054": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "2705219", Drop: []string{"CVE-2012-1851"}},
 			{KB: "2712808", Drop: []string{"CVE-2012-1850", "CVE-2012-1852", "CVE-2012-1853"}},
+			{Component: "Microsoft Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2012-1852", "CVE-2012-1853"}},
+			{Component: "Microsoft Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2012-1852", "CVE-2012-1853"}},
+			{Component: "Microsoft Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2012-1853"}},
+			{Component: "Windows 7 for 32-bit Systems", Drop: []string{"CVE-2012-1852", "CVE-2012-1853"}},
 			{Component: "Windows 7 for 32-bit Systems", Drop: []string{"CVE-2012-1852", "CVE-2012-1853"}},
 			{Component: "Windows 7 for 32-bit Systems Service Pack 1", Drop: []string{"CVE-2012-1852", "CVE-2012-1853"}},
+			{Component: "Windows 7 for 32-bit Systems Service Pack 1", Drop: []string{"CVE-2012-1852", "CVE-2012-1853"}},
 			{Component: "Windows 7 for x64-based Systems", Drop: []string{"CVE-2012-1852", "CVE-2012-1853"}},
+			{Component: "Windows 7 for x64-based Systems", Drop: []string{"CVE-2012-1852", "CVE-2012-1853"}},
+			{Component: "Windows 7 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2012-1852", "CVE-2012-1853"}},
 			{Component: "Windows 7 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2012-1852", "CVE-2012-1853"}},
 			{Component: "Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2012-1852", "CVE-2012-1853"}},
 			{Component: "Windows Server 2003 with SP2 for Itanium-based Systems", Drop: []string{"CVE-2012-1852", "CVE-2012-1853"}},
@@ -1545,33 +3721,100 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Windows Server 2008 R2 for Itanium-based Systems", Drop: []string{"CVE-2012-1852", "CVE-2012-1853"}},
 			{Component: "Windows Server 2008 R2 for Itanium-based Systems Service Pack 1", Drop: []string{"CVE-2012-1852", "CVE-2012-1853"}},
 			{Component: "Windows Server 2008 R2 for x64-based Systems", Drop: []string{"CVE-2012-1852", "CVE-2012-1853"}},
+			{Component: "Windows Server 2008 R2 for x64-based Systems", Drop: []string{"CVE-2012-1852", "CVE-2012-1853"}},
+			{Component: "Windows Server 2008 R2 for x64-based Systems (Server Core installation)", Drop: []string{"CVE-2012-1852", "CVE-2012-1853"}},
 			{Component: "Windows Server 2008 R2 for x64-based Systems (Server Core installation)", Drop: []string{"CVE-2012-1852", "CVE-2012-1853"}},
 			{Component: "Windows Server 2008 R2 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2012-1852", "CVE-2012-1853"}},
+			{Component: "Windows Server 2008 R2 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2012-1852", "CVE-2012-1853"}},
+			{Component: "Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)", Drop: []string{"CVE-2012-1852", "CVE-2012-1853"}},
 			{Component: "Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)", Drop: []string{"CVE-2012-1852", "CVE-2012-1853"}},
 			{Component: "Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2012-1852", "CVE-2012-1853"}},
+			{Component: "Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2012-1852", "CVE-2012-1853"}},
+			{Component: "Windows Server 2008 for 32-bit Systems Service Pack 2 (Server Core installation)", Drop: []string{"CVE-2012-1852", "CVE-2012-1853"}},
 			{Component: "Windows Server 2008 for 32-bit Systems Service Pack 2 (Server Core installation)", Drop: []string{"CVE-2012-1852", "CVE-2012-1853"}},
 			{Component: "Windows Server 2008 for Itanium-based Systems Service Pack 2", Drop: []string{"CVE-2012-1852", "CVE-2012-1853"}},
 			{Component: "Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2012-1852", "CVE-2012-1853"}},
+			{Component: "Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2012-1852", "CVE-2012-1853"}},
+			{Component: "Windows Server 2008 for x64-based Systems Service Pack 2 (Server Core installation)", Drop: []string{"CVE-2012-1852", "CVE-2012-1853"}},
 			{Component: "Windows Server 2008 for x64-based Systems Service Pack 2 (Server Core installation)", Drop: []string{"CVE-2012-1852", "CVE-2012-1853"}},
 			{Component: "Windows Vista Service Pack 2", Drop: []string{"CVE-2012-1852", "CVE-2012-1853"}},
+			{Component: "Windows Vista Service Pack 2", Drop: []string{"CVE-2012-1852", "CVE-2012-1853"}},
+			{Component: "Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2012-1852", "CVE-2012-1853"}},
 			{Component: "Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2012-1852", "CVE-2012-1853"}},
 			{Component: "Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2012-1853"}},
 		},
 	},
+	// TODO: the per-product NA entries below come from MS12-063's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS12-063.
+	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 Windows Server 2008 for Itanium-based Systems Service Pack 2
+	//   - Internet Explorer 7 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 8 in Windows Server 2008 R2 for Itanium-based Systems
+	//   - Internet Explorer 8 in Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
 	"MS12-063": {
 		CVEAdjustments: []cveAdjustment{
-			{KB: "2744842", Drop: []string{"CVE-2012-1529", "CVE-2012-2546", "CVE-2012-2548", "CVE-2012-2557"}},
+			{Component: "Internet Explorer 6 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2012-1529", "CVE-2012-2546", "CVE-2012-2548"}},
+			{Component: "Internet Explorer 6 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2012-1529", "CVE-2012-2546", "CVE-2012-2548"}},
+			{Component: "Internet Explorer 6 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2012-1529", "CVE-2012-2546", "CVE-2012-2548"}},
+			{Component: "Internet Explorer 6 for Windows XP Service Pack 3", Drop: []string{"CVE-2012-1529", "CVE-2012-2546", "CVE-2012-2548"}},
+			{Component: "Internet Explorer 7 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2012-1529", "CVE-2012-2546", "CVE-2012-2548"}},
+			{Component: "Internet Explorer 7 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2012-1529", "CVE-2012-2546", "CVE-2012-2548"}},
+			{Component: "Internet Explorer 7 for Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2012-1529", "CVE-2012-2546", "CVE-2012-2548"}},
+			{Component: "Internet Explorer 7 for Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2012-1529", "CVE-2012-2546", "CVE-2012-2548"}},
+			{Component: "Internet Explorer 7 for Windows Vista Service Pack 2", Drop: []string{"CVE-2012-1529", "CVE-2012-2546", "CVE-2012-2548"}},
+			{Component: "Internet Explorer 7 for Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2012-1529", "CVE-2012-2546", "CVE-2012-2548"}},
+			{Component: "Internet Explorer 7 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2012-1529", "CVE-2012-2546", "CVE-2012-2548"}},
+			{Component: "Internet Explorer 7 for Windows XP Service Pack 3", Drop: []string{"CVE-2012-1529", "CVE-2012-2546", "CVE-2012-2548"}},
+			{Component: "Internet Explorer 8 for Windows 7 for 32-bit Systems", Drop: []string{"CVE-2012-2546", "CVE-2012-2548"}},
+			{Component: "Internet Explorer 8 for Windows 7 for 32-bit Systems Service Pack 1", Drop: []string{"CVE-2012-2546", "CVE-2012-2548"}},
+			{Component: "Internet Explorer 8 for Windows 7 for x64-based Systems", Drop: []string{"CVE-2012-2546", "CVE-2012-2548"}},
+			{Component: "Internet Explorer 8 for Windows 7 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2012-2546", "CVE-2012-2548"}},
+			{Component: "Internet Explorer 8 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2012-2546", "CVE-2012-2548"}},
+			{Component: "Internet Explorer 8 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2012-2546", "CVE-2012-2548"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 R2 for x64-based Systems", Drop: []string{"CVE-2012-2546", "CVE-2012-2548"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 R2 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2012-2546", "CVE-2012-2548"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2012-2546", "CVE-2012-2548"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2012-2546", "CVE-2012-2548"}},
+			{Component: "Internet Explorer 8 for Windows Vista Service Pack 2", Drop: []string{"CVE-2012-2546", "CVE-2012-2548"}},
+			{Component: "Internet Explorer 8 for Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2012-2546", "CVE-2012-2548"}},
+			{Component: "Internet Explorer 8 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2012-2546", "CVE-2012-2548"}},
+			{Component: "Internet Explorer 8 for Windows XP Service Pack 3", Drop: []string{"CVE-2012-2546", "CVE-2012-2548"}},
+			{Component: "Internet Explorer 9 for Windows 7 for 32-bit Systems", Drop: []string{"CVE-2012-2557"}},
+			{Component: "Internet Explorer 9 for Windows 7 for 32-bit Systems Service Pack 1", Drop: []string{"CVE-2012-2557"}},
+			{Component: "Internet Explorer 9 for Windows 7 for x64-based Systems", Drop: []string{"CVE-2012-2557"}},
+			{Component: "Internet Explorer 9 for Windows 7 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2012-2557"}},
+			{Component: "Internet Explorer 9 for Windows Server 2008 R2 for x64-based Systems", Drop: []string{"CVE-2012-2557"}},
+			{Component: "Internet Explorer 9 for Windows Server 2008 R2 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2012-2557"}},
+			{Component: "Internet Explorer 9 for Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2012-2557"}},
+			{Component: "Internet Explorer 9 for Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2012-2557"}},
+			{Component: "Internet Explorer 9 for Windows Vista Service Pack 2", Drop: []string{"CVE-2012-2557"}},
+			{Component: "Internet Explorer 9 for Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2012-2557"}},
 		},
 		IECumChain: map[string][]string{
 			"2722913": {"2744842"},
 		},
 	},
+	// TODO: the per-product NA entries below come from MS12-064's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS12-064.
+	//   - Word Automation Services on Microsoft SharePoint Server 2010
 	"MS12-064": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "2687314", Drop: []string{"CVE-2012-0182"}},
 			{KB: "2687401", Drop: []string{"CVE-2012-0182"}},
 			{KB: "2687485", Drop: []string{"CVE-2012-0182"}},
-			{KB: "2742319", Drop: []string{"CVE-2012-0182"}},
+			{Component: "Microsoft Word 2003 Service Pack 3", Drop: []string{"CVE-2012-0182"}},
+			{Component: "Microsoft Word 2010 Service Pack 1 (32-bit editions)", Drop: []string{"CVE-2012-0182"}},
+			{Component: "Microsoft Word 2010 Service Pack 1 (64-bit editions)", Drop: []string{"CVE-2012-0182"}},
 		},
 	},
 	"MS12-071": {
@@ -1579,12 +3822,40 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2744842": {"2761451"},
 		},
 	},
-	"MS12-073": {
-		CVEAdjustments: []cveAdjustment{
-			{KB: "2716513", Drop: []string{"CVE-2012-2531"}},
-			{KB: "2733829", Drop: []string{"CVE-2012-2531", "CVE-2012-2532"}},
-		},
-	},
+	// TODO: the per-product NA entries below come from MS12-073's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS12-073.
+	//   - Microsoft FTP Service 7.5 for IIS 7.0 when installed on Windows Server 2008 for 32-bit Systems Service Pack 2
+	//   - Microsoft FTP Service 7.5 for IIS 7.0 when installed on Windows Server 2008 for 32-bit Systems Service Pack 2 (Server Core installation)
+	//   - Microsoft FTP Service 7.5 for IIS 7.0 when installed on Windows Server 2008 for x64-based Systems Service Pack 2
+	//   - Microsoft FTP Service 7.5 for IIS 7.0 when installed on Windows Server 2008 for x64-based Systems Service Pack 2 (Server Core installation)
+	//   - Microsoft FTP Service 7.5 for IIS 7.0 when installed on Windows Vista Service Pack 2
+	//   - Microsoft FTP Service 7.5 for IIS 7.0 when installed on Windows Vista x64 Edition Service Pack 2
+	//   - Microsoft Internet Information Services 7.5 on Windows 7 for 32-bit Systems
+	//   - Microsoft Internet Information Services 7.5 on Windows 7 for 32-bit Systems Service Pack 1
+	//   - Microsoft Internet Information Services 7.5 on Windows 7 for x64-based Systems
+	//   - Microsoft Internet Information Services 7.5 on Windows 7 for x64-based Systems Service Pack 1
+	//   - Microsoft Internet Information Services 7.5 on Windows Server 2008 R2 for Itanium-based Systems
+	//   - Microsoft Internet Information Services 7.5 on Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
+	//   - Microsoft Internet Information Services 7.5 on Windows Server 2008 R2 for x64-based Systems
+	//   - Microsoft Internet Information Services 7.5 on Windows Server 2008 R2 for x64-based Systems (Server Core installation)
+	//   - Microsoft Internet Information Services 7.5 on Windows Server 2008 R2 for x64-based Systems Service Pack 1
+	//   - Microsoft Internet Information Services 7.5 on Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)
+	"MS12-073": {CVEAdjustments: []cveAdjustment{{KB: "2716513", Drop: []string{"CVE-2012-2531"}}}},
+	// TODO: the per-product NA entries below come from MS12-074's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS12-074.
+	//   - Microsoft .NET Framework 3.5 on Windows 8 for 32-bit Systems
+	//   - Microsoft .NET Framework 3.5 on Windows 8 for x64-based Systems
+	//   - Microsoft .NET Framework 3.5 on Windows Server 2012
 	"MS12-074": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "2698023", Drop: []string{"CVE-2012-1896", "CVE-2012-4776", "CVE-2012-4777"}},
@@ -1606,19 +3877,86 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Microsoft .NET Framework 3.5 on Windows Server 2012", Drop: []string{"CVE-2012-1895"}},
 		},
 	},
-	"MS12-075": {CVEAdjustments: []cveAdjustment{{KB: "2761226", Drop: []string{"CVE-2012-2530", "CVE-2012-2553"}}}},
+	// TODO: the per-product NA entries below come from MS12-075's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS12-075.
+	//   - Windows 8 for 64-bit Systems
+	//   - Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Windows Server 2008 R2 for Itanium-based Systems
+	//   - Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
+	//   - Windows Server 2008 for Itanium-based Systems Service Pack 2
+	"MS12-075": {
+		CVEAdjustments: []cveAdjustment{
+			{Component: "Microsoft Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2012-2553"}},
+			{Component: "Microsoft Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2012-2553"}},
+			{Component: "Windows 7 for x64-based Systems", Drop: []string{"CVE-2012-2553"}},
+			{Component: "Windows 7 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2012-2553"}},
+			{Component: "Windows 8 for 32-bit Systems", Drop: []string{"CVE-2012-2530", "CVE-2012-2553"}},
+			{Component: "Windows RT", Drop: []string{"CVE-2012-2530", "CVE-2012-2553"}},
+			{Component: "Windows Server 2008 R2 for x64-based Systems", Drop: []string{"CVE-2012-2553"}},
+			{Component: "Windows Server 2008 R2 for x64-based Systems (Server Core installation)", Drop: []string{"CVE-2012-2553"}},
+			{Component: "Windows Server 2008 R2 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2012-2553"}},
+			{Component: "Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)", Drop: []string{"CVE-2012-2553"}},
+			{Component: "Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2012-2553"}},
+			{Component: "Windows Server 2008 for x64-based Systems Service Pack 2 (Server Core installation)", Drop: []string{"CVE-2012-2553"}},
+			{Component: "Windows Server 2012", Drop: []string{"CVE-2012-2530", "CVE-2012-2553"}},
+			{Component: "Windows Server 2012 (Server Core installation)", Drop: []string{"CVE-2012-2530", "CVE-2012-2553"}},
+			{Component: "Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2012-2553"}},
+		},
+	},
 	"MS12-076": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "2687311", Drop: []string{"CVE-2012-1887"}},
 			{KB: "2687313", Drop: []string{"CVE-2012-1885", "CVE-2012-1887"}},
-			{KB: "2720184", Drop: []string{"CVE-2012-2543"}},
 			{KB: "2764047", Drop: []string{"CVE-2012-1886"}},
 			{KB: "2764048", Drop: []string{"CVE-2012-1886", "CVE-2012-2543"}},
+			{Component: "Microsoft Excel 2003 Service Pack 3", Drop: []string{"CVE-2012-2543"}},
 		},
 	},
+	// TODO: the per-product NA entries below come from MS12-077's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS12-077.
+	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 Windows Server 2008 for Itanium-based Systems Service Pack 2
+	//   - Internet Explorer 7 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 8 in Windows Server 2008 R2 for Itanium-based Systems
+	//   - Internet Explorer 8 in Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
 	"MS12-077": {
 		CVEAdjustments: []cveAdjustment{
-			{KB: "2761465", Drop: []string{"CVE-2012-4782", "CVE-2012-4787"}},
+			{Component: "Internet Explorer 6 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2012-4782", "CVE-2012-4787"}},
+			{Component: "Internet Explorer 6 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2012-4782", "CVE-2012-4787"}},
+			{Component: "Internet Explorer 6 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2012-4782", "CVE-2012-4787"}},
+			{Component: "Internet Explorer 6 for Windows XP Service Pack 3", Drop: []string{"CVE-2012-4782", "CVE-2012-4787"}},
+			{Component: "Internet Explorer 7 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2012-4782", "CVE-2012-4787"}},
+			{Component: "Internet Explorer 7 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2012-4782", "CVE-2012-4787"}},
+			{Component: "Internet Explorer 7 for Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2012-4782", "CVE-2012-4787"}},
+			{Component: "Internet Explorer 7 for Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2012-4782", "CVE-2012-4787"}},
+			{Component: "Internet Explorer 7 for Windows Vista Service Pack 2", Drop: []string{"CVE-2012-4782", "CVE-2012-4787"}},
+			{Component: "Internet Explorer 7 for Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2012-4782", "CVE-2012-4787"}},
+			{Component: "Internet Explorer 7 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2012-4782", "CVE-2012-4787"}},
+			{Component: "Internet Explorer 7 for Windows XP Service Pack 3", Drop: []string{"CVE-2012-4782", "CVE-2012-4787"}},
+			{Component: "Internet Explorer 8 for Windows 7 for 32-bit Systems", Drop: []string{"CVE-2012-4782", "CVE-2012-4787"}},
+			{Component: "Internet Explorer 8 for Windows 7 for 32-bit Systems Service Pack 1", Drop: []string{"CVE-2012-4782", "CVE-2012-4787"}},
+			{Component: "Internet Explorer 8 for Windows 7 for x64-based Systems", Drop: []string{"CVE-2012-4782", "CVE-2012-4787"}},
+			{Component: "Internet Explorer 8 for Windows 7 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2012-4782", "CVE-2012-4787"}},
+			{Component: "Internet Explorer 8 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2012-4782", "CVE-2012-4787"}},
+			{Component: "Internet Explorer 8 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2012-4782", "CVE-2012-4787"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 R2 for x64-based Systems", Drop: []string{"CVE-2012-4782", "CVE-2012-4787"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 R2 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2012-4782", "CVE-2012-4787"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2012-4782", "CVE-2012-4787"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2012-4782", "CVE-2012-4787"}},
+			{Component: "Internet Explorer 8 for Windows Vista Service Pack 2", Drop: []string{"CVE-2012-4782", "CVE-2012-4787"}},
+			{Component: "Internet Explorer 8 for Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2012-4782", "CVE-2012-4787"}},
+			{Component: "Internet Explorer 8 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2012-4782", "CVE-2012-4787"}},
+			{Component: "Internet Explorer 8 for Windows XP Service Pack 3", Drop: []string{"CVE-2012-4782", "CVE-2012-4787"}},
 		},
 		IECumChain: map[string][]string{
 			"2744842": {"2761465"},
@@ -1626,13 +3964,41 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 		},
 	},
 	"MS12-080": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2012-3214", "CVE-2012-3217", "CVE-2012-4791"}}}},
-	"MS13-002": {
-		CVEAdjustments: []cveAdjustment{
-			{KB: "2757638", Drop: []string{"CVE-2013-0006", "CVE-2013-0007"}},
-			{KB: "2758694", Drop: []string{"CVE-2013-0006"}},
-			{KB: "2758696", Drop: []string{"CVE-2013-0006"}},
-		},
-	},
+	// TODO: the per-product NA entries below come from MS13-002's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS13-002.
+	//   - Microsoft XML Core Services 3.0 on Windows 7 for x64-based Systems
+	//   - Microsoft XML Core Services 3.0 on Windows 7 for x64-based Systems Service Pack 1
+	//   - Microsoft XML Core Services 3.0 on Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Microsoft XML Core Services 3.0 on Windows Server 2003 x64 Edition Service Pack 2
+	//   - Microsoft XML Core Services 3.0 on Windows Server 2008 R2 for Itanium-based Systems
+	//   - Microsoft XML Core Services 3.0 on Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
+	//   - Microsoft XML Core Services 3.0 on Windows Server 2008 R2 for x64-based Systems
+	//   - Microsoft XML Core Services 3.0 on Windows Server 2008 R2 for x64-based Systems Service Pack 1
+	//   - Microsoft XML Core Services 3.0 on Windows Server 2008 for Itanium-based Systems Service Pack 2
+	//   - Microsoft XML Core Services 3.0 on Windows Server 2008 for x64-based Systems Service Pack 2
+	//   - Microsoft XML Core Services 3.0 on Windows Vista x64 Edition Service Pack 2
+	//   - Microsoft XML Core Services 3.0 on Windows XP Professional x64 Edition Service Pack 2
+	//   - Microsoft XML Core Services 3.0 when installed on Windows 8 for 64-bit Systems
+	//   - Microsoft XML Core Services 3.0 when installed on Windows Server 2008 R2 for x64-based Systems (Server Core installation)
+	//   - Microsoft XML Core Services 3.0 when installed on Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)
+	//   - Microsoft XML Core Services 3.0 when installed on Windows Server 2008 for x64-based Systems Service Pack 2 (Server Core installation)
+	//   - Microsoft XML Core Services 3.0 when installed on Windows Server 2012
+	//   - Microsoft XML Core Services 3.0 when installed on Windows Server 2012 (Server Core installation)
+	//   - Microsoft XML Core Services 6.0 on Windows 7 for 32-bit Systems
+	//   - Microsoft XML Core Services 6.0 on Windows 7 for 32-bit Systems Service Pack 1
+	//   - Microsoft XML Core Services 6.0 on Windows Server 2003 Service Pack 2
+	//   - Microsoft XML Core Services 6.0 on Windows Server 2008 for 32-bit Systems Service Pack 2
+	//   - Microsoft XML Core Services 6.0 on Windows Server 2008 for 32-bit Systems Service Pack 2 (Server Core installation)
+	//   - Microsoft XML Core Services 6.0 on Windows Vista Service Pack 2
+	//   - Microsoft XML Core Services 6.0 on Windows XP Service Pack 3
+	//   - Microsoft XML Core Services 6.0 when installed on Windows 8 for 32-bit Systems
+	//   - Microsoft XML Core Services 6.0 when installed on Windows RT
+	"MS13-002": {CVEAdjustments: []cveAdjustment{{KB: "2758694", Drop: []string{"CVE-2013-0006"}}}},
 	"MS13-004": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "2742597", Drop: []string{"CVE-2013-0003"}},
@@ -1653,19 +4019,120 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2761465": {"2799329"},
 		},
 	},
+	// TODO: the per-product NA entries below come from MS13-009's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS13-009.
+	//   - Internet Explorer 10 in Windows 8 for 64-bit Systems
+	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 Windows Server 2008 for Itanium-based Systems Service Pack 2
+	//   - Internet Explorer 7 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 8 in Windows Server 2008 R2 for Itanium-based Systems
+	//   - Internet Explorer 8 in Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
 	"MS13-009": {
 		CVEAdjustments: []cveAdjustment{
-			{KB: "2792100", Drop: []string{"CVE-2013-0015", "CVE-2013-0018", "CVE-2013-0019", "CVE-2013-0020", "CVE-2013-0022", "CVE-2013-0023", "CVE-2013-0024", "CVE-2013-0025", "CVE-2013-0026", "CVE-2013-0028", "CVE-2013-0029"}},
+			{Component: "Internet Explorer 6 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2013-0019", "CVE-2013-0020", "CVE-2013-0022", "CVE-2013-0023", "CVE-2013-0024", "CVE-2013-0025", "CVE-2013-0026"}},
+			{Component: "Internet Explorer 6 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2013-0019", "CVE-2013-0020", "CVE-2013-0022", "CVE-2013-0023", "CVE-2013-0024", "CVE-2013-0025", "CVE-2013-0026"}},
+			{Component: "Internet Explorer 6 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2013-0019", "CVE-2013-0020", "CVE-2013-0022", "CVE-2013-0023", "CVE-2013-0024", "CVE-2013-0025", "CVE-2013-0026"}},
+			{Component: "Internet Explorer 6 for Windows XP Service Pack 3", Drop: []string{"CVE-2013-0019", "CVE-2013-0020", "CVE-2013-0022", "CVE-2013-0023", "CVE-2013-0024", "CVE-2013-0025", "CVE-2013-0026"}},
+			{Component: "Internet Explorer 7 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2013-0020", "CVE-2013-0022", "CVE-2013-0023", "CVE-2013-0024", "CVE-2013-0025", "CVE-2013-0026"}},
+			{Component: "Internet Explorer 7 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2013-0020", "CVE-2013-0022", "CVE-2013-0023", "CVE-2013-0024", "CVE-2013-0025", "CVE-2013-0026"}},
+			{Component: "Internet Explorer 7 for Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2013-0020", "CVE-2013-0022", "CVE-2013-0023", "CVE-2013-0024", "CVE-2013-0025", "CVE-2013-0026"}},
+			{Component: "Internet Explorer 7 for Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2013-0020", "CVE-2013-0022", "CVE-2013-0023", "CVE-2013-0024", "CVE-2013-0025", "CVE-2013-0026"}},
+			{Component: "Internet Explorer 7 for Windows Vista Service Pack 2", Drop: []string{"CVE-2013-0020", "CVE-2013-0022", "CVE-2013-0023", "CVE-2013-0024", "CVE-2013-0025", "CVE-2013-0026"}},
+			{Component: "Internet Explorer 7 for Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2013-0020", "CVE-2013-0022", "CVE-2013-0023", "CVE-2013-0024", "CVE-2013-0025", "CVE-2013-0026"}},
+			{Component: "Internet Explorer 7 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2013-0020", "CVE-2013-0022", "CVE-2013-0023", "CVE-2013-0024", "CVE-2013-0025", "CVE-2013-0026"}},
+			{Component: "Internet Explorer 7 for Windows XP Service Pack 3", Drop: []string{"CVE-2013-0020", "CVE-2013-0022", "CVE-2013-0023", "CVE-2013-0024", "CVE-2013-0025", "CVE-2013-0026"}},
+			{Component: "Internet Explorer 8 for Windows 7 for 32-bit Systems", Drop: []string{"CVE-2013-0020", "CVE-2013-0022", "CVE-2013-0023", "CVE-2013-0026"}},
+			{Component: "Internet Explorer 8 for Windows 7 for 32-bit Systems Service Pack 1", Drop: []string{"CVE-2013-0020", "CVE-2013-0022", "CVE-2013-0023", "CVE-2013-0026"}},
+			{Component: "Internet Explorer 8 for Windows 7 for x64-based Systems", Drop: []string{"CVE-2013-0020", "CVE-2013-0022", "CVE-2013-0023", "CVE-2013-0026"}},
+			{Component: "Internet Explorer 8 for Windows 7 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2013-0020", "CVE-2013-0022", "CVE-2013-0023", "CVE-2013-0026"}},
+			{Component: "Internet Explorer 8 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2013-0020", "CVE-2013-0022", "CVE-2013-0023", "CVE-2013-0026"}},
+			{Component: "Internet Explorer 8 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2013-0020", "CVE-2013-0022", "CVE-2013-0023", "CVE-2013-0026"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 R2 for x64-based Systems", Drop: []string{"CVE-2013-0020", "CVE-2013-0022", "CVE-2013-0023", "CVE-2013-0026"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 R2 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2013-0020", "CVE-2013-0022", "CVE-2013-0023", "CVE-2013-0026"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2013-0020", "CVE-2013-0022", "CVE-2013-0023", "CVE-2013-0026"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2013-0020", "CVE-2013-0022", "CVE-2013-0023", "CVE-2013-0026"}},
+			{Component: "Internet Explorer 8 for Windows Vista Service Pack 2", Drop: []string{"CVE-2013-0020", "CVE-2013-0022", "CVE-2013-0023", "CVE-2013-0026"}},
+			{Component: "Internet Explorer 8 for Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2013-0020", "CVE-2013-0022", "CVE-2013-0023", "CVE-2013-0026"}},
+			{Component: "Internet Explorer 8 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2013-0020", "CVE-2013-0022", "CVE-2013-0023", "CVE-2013-0026"}},
+			{Component: "Internet Explorer 8 for Windows XP Service Pack 3", Drop: []string{"CVE-2013-0020", "CVE-2013-0022", "CVE-2013-0023", "CVE-2013-0026"}},
+			{Component: "Internet Explorer 9 for Windows 7 for 32-bit Systems", Drop: []string{"CVE-2013-0025"}},
+			{Component: "Internet Explorer 9 for Windows 7 for 32-bit Systems Service Pack 1", Drop: []string{"CVE-2013-0025"}},
+			{Component: "Internet Explorer 9 for Windows 7 for x64-based Systems", Drop: []string{"CVE-2013-0025"}},
+			{Component: "Internet Explorer 9 for Windows 7 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2013-0025"}},
+			{Component: "Internet Explorer 9 for Windows Server 2008 R2 for x64-based Systems", Drop: []string{"CVE-2013-0025"}},
+			{Component: "Internet Explorer 9 for Windows Server 2008 R2 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2013-0025"}},
+			{Component: "Internet Explorer 9 for Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2013-0025"}},
+			{Component: "Internet Explorer 9 for Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2013-0025"}},
+			{Component: "Internet Explorer 9 for Windows Vista Service Pack 2", Drop: []string{"CVE-2013-0025"}},
+			{Component: "Internet Explorer 9 for Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2013-0025"}},
+			{Component: "Internet Explorer 10 for Windows 8 for 32-bit Systems", Drop: []string{"CVE-2013-0015", "CVE-2013-0018", "CVE-2013-0020", "CVE-2013-0024", "CVE-2013-0025", "CVE-2013-0026", "CVE-2013-0028", "CVE-2013-0029"}},
+			{Component: "Internet Explorer 10 for Windows RT", Drop: []string{"CVE-2013-0015", "CVE-2013-0018", "CVE-2013-0020", "CVE-2013-0024", "CVE-2013-0025", "CVE-2013-0026", "CVE-2013-0028", "CVE-2013-0029"}},
+			{Component: "Internet Explorer 10 for Windows Server 2012", Drop: []string{"CVE-2013-0015", "CVE-2013-0018", "CVE-2013-0020", "CVE-2013-0024", "CVE-2013-0025", "CVE-2013-0026", "CVE-2013-0028", "CVE-2013-0029"}},
 		},
 		IECumChain: map[string][]string{
 			"2761465": {"2792100"},
 			"2799329": {"2792100"},
 		},
 	},
-	"MS13-016": {CVEAdjustments: []cveAdjustment{{KB: "2778344", Drop: []string{"CVE-2013-1250", "CVE-2013-1251", "CVE-2013-1252", "CVE-2013-1253", "CVE-2013-1254", "CVE-2013-1255", "CVE-2013-1256", "CVE-2013-1257", "CVE-2013-1258", "CVE-2013-1259", "CVE-2013-1260", "CVE-2013-1261", "CVE-2013-1262", "CVE-2013-1263", "CVE-2013-1264", "CVE-2013-1265", "CVE-2013-1266", "CVE-2013-1267", "CVE-2013-1268", "CVE-2013-1269", "CVE-2013-1270", "CVE-2013-1271", "CVE-2013-1272", "CVE-2013-1273", "CVE-2013-1274", "CVE-2013-1275", "CVE-2013-1276", "CVE-2013-1277"}}}},
+	// TODO: the per-product NA entries below come from MS13-016's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS13-016.
+	//   - Windows 8 for 64-bit Systems
+	"MS13-016": {
+		CVEAdjustments: []cveAdjustment{
+			{Component: "Windows 8 for 32-bit Systems", Drop: []string{"CVE-2013-1250", "CVE-2013-1251", "CVE-2013-1252", "CVE-2013-1253", "CVE-2013-1254", "CVE-2013-1255", "CVE-2013-1256", "CVE-2013-1257", "CVE-2013-1258", "CVE-2013-1259", "CVE-2013-1260", "CVE-2013-1261", "CVE-2013-1262", "CVE-2013-1263", "CVE-2013-1264", "CVE-2013-1265", "CVE-2013-1266", "CVE-2013-1267", "CVE-2013-1268", "CVE-2013-1269", "CVE-2013-1270", "CVE-2013-1271", "CVE-2013-1272", "CVE-2013-1273", "CVE-2013-1274", "CVE-2013-1275", "CVE-2013-1276", "CVE-2013-1277"}},
+			{Component: "Windows RT", Drop: []string{"CVE-2013-1250", "CVE-2013-1251", "CVE-2013-1252", "CVE-2013-1253", "CVE-2013-1254", "CVE-2013-1255", "CVE-2013-1256", "CVE-2013-1257", "CVE-2013-1258", "CVE-2013-1259", "CVE-2013-1260", "CVE-2013-1261", "CVE-2013-1262", "CVE-2013-1263", "CVE-2013-1264", "CVE-2013-1265", "CVE-2013-1266", "CVE-2013-1267", "CVE-2013-1268", "CVE-2013-1269", "CVE-2013-1270", "CVE-2013-1271", "CVE-2013-1272", "CVE-2013-1273", "CVE-2013-1274", "CVE-2013-1275", "CVE-2013-1276", "CVE-2013-1277"}},
+			{Component: "Windows Server 2012", Drop: []string{"CVE-2013-1250", "CVE-2013-1251", "CVE-2013-1252", "CVE-2013-1253", "CVE-2013-1254", "CVE-2013-1255", "CVE-2013-1256", "CVE-2013-1257", "CVE-2013-1258", "CVE-2013-1259", "CVE-2013-1260", "CVE-2013-1261", "CVE-2013-1262", "CVE-2013-1263", "CVE-2013-1264", "CVE-2013-1265", "CVE-2013-1266", "CVE-2013-1267", "CVE-2013-1268", "CVE-2013-1269", "CVE-2013-1270", "CVE-2013-1271", "CVE-2013-1272", "CVE-2013-1273", "CVE-2013-1274", "CVE-2013-1275", "CVE-2013-1276", "CVE-2013-1277"}},
+			{Component: "Windows Server 2012 (Server Core installation)", Drop: []string{"CVE-2013-1250", "CVE-2013-1251", "CVE-2013-1252", "CVE-2013-1253", "CVE-2013-1254", "CVE-2013-1255", "CVE-2013-1256", "CVE-2013-1257", "CVE-2013-1258", "CVE-2013-1259", "CVE-2013-1260", "CVE-2013-1261", "CVE-2013-1262", "CVE-2013-1263", "CVE-2013-1264", "CVE-2013-1265", "CVE-2013-1266", "CVE-2013-1267", "CVE-2013-1268", "CVE-2013-1269", "CVE-2013-1270", "CVE-2013-1271", "CVE-2013-1272", "CVE-2013-1273", "CVE-2013-1274", "CVE-2013-1275", "CVE-2013-1276", "CVE-2013-1277"}},
+		},
+	},
+	// TODO: the per-product NA entries below come from MS13-021's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS13-021.
+	//   - Internet Explorer 10 in Windows 8 for 64-bit Systems
+	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 Windows Server 2008 for Itanium-based Systems Service Pack 2
+	//   - Internet Explorer 7 for Windows Server 2003 with SP2 for Itanium-based Systems
 	"MS13-021": {
 		CVEAdjustments: []cveAdjustment{
-			{KB: "2809289", Drop: []string{"CVE-2013-0091", "CVE-2013-1288"}},
+			{Component: "Internet Explorer 6 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2013-0091", "CVE-2013-1288"}},
+			{Component: "Internet Explorer 6 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2013-0091", "CVE-2013-1288"}},
+			{Component: "Internet Explorer 6 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2013-0091", "CVE-2013-1288"}},
+			{Component: "Internet Explorer 6 for Windows XP Service Pack 3", Drop: []string{"CVE-2013-0091", "CVE-2013-1288"}},
+			{Component: "Internet Explorer 7 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2013-0091", "CVE-2013-1288"}},
+			{Component: "Internet Explorer 7 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2013-0091", "CVE-2013-1288"}},
+			{Component: "Internet Explorer 7 for Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2013-0091", "CVE-2013-1288"}},
+			{Component: "Internet Explorer 7 for Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2013-0091", "CVE-2013-1288"}},
+			{Component: "Internet Explorer 7 for Windows Vista Service Pack 2", Drop: []string{"CVE-2013-0091", "CVE-2013-1288"}},
+			{Component: "Internet Explorer 7 for Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2013-0091", "CVE-2013-1288"}},
+			{Component: "Internet Explorer 7 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2013-0091", "CVE-2013-1288"}},
+			{Component: "Internet Explorer 7 for Windows XP Service Pack 3", Drop: []string{"CVE-2013-0091", "CVE-2013-1288"}},
+			{Component: "Internet Explorer 9 for Windows 7 for 32-bit Systems", Drop: []string{"CVE-2013-0091", "CVE-2013-1288"}},
+			{Component: "Internet Explorer 9 for Windows 7 for 32-bit Systems Service Pack 1", Drop: []string{"CVE-2013-0091", "CVE-2013-1288"}},
+			{Component: "Internet Explorer 9 for Windows 7 for x64-based Systems", Drop: []string{"CVE-2013-0091", "CVE-2013-1288"}},
+			{Component: "Internet Explorer 9 for Windows 7 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2013-0091", "CVE-2013-1288"}},
+			{Component: "Internet Explorer 9 for Windows Server 2008 R2 for x64-based Systems", Drop: []string{"CVE-2013-0091", "CVE-2013-1288"}},
+			{Component: "Internet Explorer 9 for Windows Server 2008 R2 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2013-0091", "CVE-2013-1288"}},
+			{Component: "Internet Explorer 9 for Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2013-0091", "CVE-2013-1288"}},
+			{Component: "Internet Explorer 9 for Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2013-0091", "CVE-2013-1288"}},
+			{Component: "Internet Explorer 9 for Windows Vista Service Pack 2", Drop: []string{"CVE-2013-0091", "CVE-2013-1288"}},
+			{Component: "Internet Explorer 9 for Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2013-0091", "CVE-2013-1288"}},
+			{Component: "Internet Explorer 10 for Windows 8 for 32-bit Systems", Drop: []string{"CVE-2013-0091", "CVE-2013-1288"}},
+			{Component: "Internet Explorer 10 for Windows RT", Drop: []string{"CVE-2013-0091", "CVE-2013-1288"}},
+			{Component: "Internet Explorer 10 for Windows Server 2012", Drop: []string{"CVE-2013-0091", "CVE-2013-1288"}},
 		},
 		Supersedes: map[string]supersedesAdjust{
 			"2797052": {Add: []string{"2809289"}},
@@ -1685,9 +4152,37 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2809289": {"2817183"},
 		},
 	},
+	// TODO: the per-product NA entries below come from MS13-031's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS13-031.
+	//   - Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Windows Server 2008 R2 for Itanium-based Systems
+	//   - Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
+	//   - Windows Server 2008 for Itanium-based Systems Service Pack 2
 	"MS13-031": {
 		CVEAdjustments: []cveAdjustment{
-			{KB: "2813170", Drop: []string{"CVE-2013-1284"}},
+			{Component: "Microsoft Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2013-1284"}},
+			{Component: "Microsoft Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2013-1284"}},
+			{Component: "Microsoft Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2013-1284"}},
+			{Component: "Microsoft Windows XP Service Pack 3", Drop: []string{"CVE-2013-1284"}},
+			{Component: "Windows 7 for 32-bit Systems", Drop: []string{"CVE-2013-1284"}},
+			{Component: "Windows 7 for 32-bit Systems Service Pack 1", Drop: []string{"CVE-2013-1284"}},
+			{Component: "Windows 7 for x64-based Systems", Drop: []string{"CVE-2013-1284"}},
+			{Component: "Windows 7 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2013-1284"}},
+			{Component: "Windows Server 2008 R2 for x64-based Systems", Drop: []string{"CVE-2013-1284"}},
+			{Component: "Windows Server 2008 R2 for x64-based Systems (Server Core installation)", Drop: []string{"CVE-2013-1284"}},
+			{Component: "Windows Server 2008 R2 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2013-1284"}},
+			{Component: "Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)", Drop: []string{"CVE-2013-1284"}},
+			{Component: "Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2013-1284"}},
+			{Component: "Windows Server 2008 for 32-bit Systems Service Pack 2 (Server Core installation)", Drop: []string{"CVE-2013-1284"}},
+			{Component: "Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2013-1284"}},
+			{Component: "Windows Server 2008 for x64-based Systems Service Pack 2 (Server Core installation)", Drop: []string{"CVE-2013-1284"}},
+			{Component: "Windows Vista Service Pack 2", Drop: []string{"CVE-2013-1284"}},
+			{Component: "Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2013-1284"}},
 		},
 		Supersedes: map[string]supersedesAdjust{
 			"2620712": {Add: []string{"2813170"}},
@@ -1704,12 +4199,79 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2646524": {Add: []string{"2820917"}},
 		},
 	},
-	"MS13-036": {CVEAdjustments: []cveAdjustment{{KB: "2808735", Drop: []string{"CVE-2013-1291", "CVE-2013-1292", "CVE-2013-1293"}}}},
+	// TODO: the per-product NA entries below come from MS13-036's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS13-036.
+	//   - Windows 8 for 64-bit Systems
+	//   - Windows Server 2003 with SP2 for Itanium-based Systems
+	"MS13-036": {
+		CVEAdjustments: []cveAdjustment{
+			{KB: "2808735", Drop: []string{"CVE-2013-1293"}},
+			{Component: "Microsoft Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2013-1292"}},
+			{Component: "Microsoft Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2013-1291", "CVE-2013-1292"}},
+			{Component: "Microsoft Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2013-1291", "CVE-2013-1292"}},
+			{Component: "Microsoft Windows XP Service Pack 3", Drop: []string{"CVE-2013-1292"}},
+			{Component: "Windows RT", Drop: []string{"CVE-2013-1291"}},
+			{Component: "Windows Server 2012", Drop: []string{"CVE-2013-1291"}},
+			{Component: "Windows Server 2012 (Server Core installation)", Drop: []string{"CVE-2013-1291"}},
+		},
+	},
 	// MS13-037: off-by-one of CVE-2013-1312 — drop, 1312 already in xlsx.
 	// CVE-2013-1313 appears in MS13-020's markdown.
+	// TODO: the per-product NA entries below come from MS13-037's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS13-037.
+	//   - Internet Explorer 10 for Windows 8 for 64-bit Systems
+	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 Windows Server 2008 for Itanium-based Systems Service Pack 2
+	//   - Internet Explorer 7 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 8 in Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
 	"MS13-037": {
 		CVEAdjustments: []cveAdjustment{
-			{KB: "2829530", Drop: []string{"CVE-2013-0811", "CVE-2013-1297", "CVE-2013-1306", "CVE-2013-1307", "CVE-2013-1310", "CVE-2013-1311", "CVE-2013-1312", "CVE-2013-3140"}},
+			{Component: "Internet Explorer 6 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2013-0811", "CVE-2013-1306", "CVE-2013-1307", "CVE-2013-1311", "CVE-2013-1312", "CVE-2013-3140"}},
+			{Component: "Internet Explorer 6 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2013-0811", "CVE-2013-1306", "CVE-2013-1307", "CVE-2013-1311", "CVE-2013-1312", "CVE-2013-3140"}},
+			{Component: "Internet Explorer 6 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2013-0811", "CVE-2013-1306", "CVE-2013-1307", "CVE-2013-1311", "CVE-2013-1312", "CVE-2013-3140"}},
+			{Component: "Internet Explorer 6 for Windows XP Service Pack 3", Drop: []string{"CVE-2013-0811", "CVE-2013-1306", "CVE-2013-1307", "CVE-2013-1311", "CVE-2013-1312", "CVE-2013-3140"}},
+			{Component: "Internet Explorer 7 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2013-0811", "CVE-2013-1306", "CVE-2013-1307", "CVE-2013-1311", "CVE-2013-1312", "CVE-2013-3140"}},
+			{Component: "Internet Explorer 7 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2013-0811", "CVE-2013-1306", "CVE-2013-1307", "CVE-2013-1311", "CVE-2013-1312", "CVE-2013-3140"}},
+			{Component: "Internet Explorer 7 for Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2013-0811", "CVE-2013-1306", "CVE-2013-1307", "CVE-2013-1311", "CVE-2013-1312", "CVE-2013-3140"}},
+			{Component: "Internet Explorer 7 for Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2013-0811", "CVE-2013-1306", "CVE-2013-1307", "CVE-2013-1311", "CVE-2013-1312", "CVE-2013-3140"}},
+			{Component: "Internet Explorer 7 for Windows Vista Service Pack 2", Drop: []string{"CVE-2013-0811", "CVE-2013-1306", "CVE-2013-1307", "CVE-2013-1311", "CVE-2013-1312", "CVE-2013-3140"}},
+			{Component: "Internet Explorer 7 for Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2013-0811", "CVE-2013-1306", "CVE-2013-1307", "CVE-2013-1311", "CVE-2013-1312", "CVE-2013-3140"}},
+			{Component: "Internet Explorer 7 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2013-0811", "CVE-2013-1306", "CVE-2013-1307", "CVE-2013-1311", "CVE-2013-1312", "CVE-2013-3140"}},
+			{Component: "Internet Explorer 7 for Windows XP Service Pack 3", Drop: []string{"CVE-2013-0811", "CVE-2013-1306", "CVE-2013-1307", "CVE-2013-1311", "CVE-2013-1312", "CVE-2013-3140"}},
+			{Component: "Internet Explorer 8 for Windows 7 for 32-bit Systems Service Pack 1", Drop: []string{"CVE-2013-1306", "CVE-2013-1310", "CVE-2013-1312", "CVE-2013-3140"}},
+			{Component: "Internet Explorer 8 for Windows 7 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2013-1306", "CVE-2013-1310", "CVE-2013-1312", "CVE-2013-3140"}},
+			{Component: "Internet Explorer 8 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2013-1306", "CVE-2013-1310", "CVE-2013-1312", "CVE-2013-3140"}},
+			{Component: "Internet Explorer 8 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2013-1306", "CVE-2013-1310", "CVE-2013-1312", "CVE-2013-3140"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 R2 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2013-1306", "CVE-2013-1310", "CVE-2013-1312", "CVE-2013-3140"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2013-1306", "CVE-2013-1310", "CVE-2013-1312", "CVE-2013-3140"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2013-1306", "CVE-2013-1310", "CVE-2013-1312", "CVE-2013-3140"}},
+			{Component: "Internet Explorer 8 for Windows Vista Service Pack 2", Drop: []string{"CVE-2013-1306", "CVE-2013-1310", "CVE-2013-1312", "CVE-2013-3140"}},
+			{Component: "Internet Explorer 8 for Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2013-1306", "CVE-2013-1310", "CVE-2013-1312", "CVE-2013-3140"}},
+			{Component: "Internet Explorer 8 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2013-1306", "CVE-2013-1310", "CVE-2013-1312", "CVE-2013-3140"}},
+			{Component: "Internet Explorer 8 for Windows XP Service Pack 3", Drop: []string{"CVE-2013-1306", "CVE-2013-1310", "CVE-2013-1312", "CVE-2013-3140"}},
+			{Component: "Internet Explorer 9 for Windows 7 for 32-bit Systems Service Pack 1", Drop: []string{"CVE-2013-1297", "CVE-2013-1310", "CVE-2013-1311"}},
+			{Component: "Internet Explorer 9 for Windows 7 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2013-1297", "CVE-2013-1310", "CVE-2013-1311"}},
+			{Component: "Internet Explorer 9 for Windows Server 2008 R2 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2013-1297", "CVE-2013-1310", "CVE-2013-1311"}},
+			{Component: "Internet Explorer 9 for Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2013-1297", "CVE-2013-1310", "CVE-2013-1311"}},
+			{Component: "Internet Explorer 9 for Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2013-1297", "CVE-2013-1310", "CVE-2013-1311"}},
+			{Component: "Internet Explorer 9 for Windows Vista Service Pack 2", Drop: []string{"CVE-2013-1297", "CVE-2013-1310", "CVE-2013-1311"}},
+			{Component: "Internet Explorer 9 for Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2013-1297", "CVE-2013-1310", "CVE-2013-1311"}},
+			{Component: "Internet Explorer 10 for Windows 7 for 32-bit Systems Service Pack 1", Drop: []string{"CVE-2013-0811", "CVE-2013-1297", "CVE-2013-1306", "CVE-2013-1307", "CVE-2013-1310", "CVE-2013-1311", "CVE-2013-3140"}},
+			{Component: "Internet Explorer 10 for Windows 7 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2013-0811", "CVE-2013-1297", "CVE-2013-1306", "CVE-2013-1307", "CVE-2013-1310", "CVE-2013-1311", "CVE-2013-3140"}},
+			{Component: "Internet Explorer 10 for Windows 8 for 32-bit Systems", Drop: []string{"CVE-2013-0811", "CVE-2013-1297", "CVE-2013-1306", "CVE-2013-1307", "CVE-2013-1310", "CVE-2013-1311", "CVE-2013-3140"}},
+			{Component: "Internet Explorer 10 for Windows RT", Drop: []string{"CVE-2013-0811", "CVE-2013-1297", "CVE-2013-1306", "CVE-2013-1307", "CVE-2013-1310", "CVE-2013-1311", "CVE-2013-3140"}},
+			{Component: "Internet Explorer 10 for Windows Server 2008 R2 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2013-0811", "CVE-2013-1297", "CVE-2013-1306", "CVE-2013-1307", "CVE-2013-1310", "CVE-2013-1311", "CVE-2013-3140"}},
+			{Component: "Internet Explorer 10 for Windows Server 2012", Drop: []string{"CVE-2013-0811", "CVE-2013-1297", "CVE-2013-1306", "CVE-2013-1307", "CVE-2013-1310", "CVE-2013-1311", "CVE-2013-3140"}},
 			{Remap: map[string]string{"CVE-2013-1313": ""}},
 		},
 		IECumChain: map[string][]string{
@@ -1730,7 +4292,40 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2804584", Drop: []string{"CVE-2013-1337"}},
 		},
 	},
-	"MS13-042": {CVEAdjustments: []cveAdjustment{{KB: "2830397", Drop: []string{"CVE-2013-1316", "CVE-2013-1317", "CVE-2013-1318", "CVE-2013-1319", "CVE-2013-1320", "CVE-2013-1321", "CVE-2013-1322", "CVE-2013-1323", "CVE-2013-1327", "CVE-2013-1329"}}}},
+	"MS13-042": {
+		CVEAdjustments: []cveAdjustment{
+			{Component: "Microsoft Publisher 2007 Service Pack 3", Drop: []string{"CVE-2013-1316", "CVE-2013-1317", "CVE-2013-1318", "CVE-2013-1319", "CVE-2013-1320", "CVE-2013-1321", "CVE-2013-1322", "CVE-2013-1323", "CVE-2013-1327", "CVE-2013-1329"}},
+			{Component: "Microsoft Publisher 2010 Service Pack 1 (32-bit editions)", Drop: []string{"CVE-2013-1316", "CVE-2013-1317", "CVE-2013-1318", "CVE-2013-1319", "CVE-2013-1320", "CVE-2013-1321", "CVE-2013-1322", "CVE-2013-1323", "CVE-2013-1327", "CVE-2013-1329"}},
+			{Component: "Microsoft Publisher 2010 Service Pack 1 (64-bit editions)", Drop: []string{"CVE-2013-1316", "CVE-2013-1317", "CVE-2013-1318", "CVE-2013-1319", "CVE-2013-1320", "CVE-2013-1321", "CVE-2013-1322", "CVE-2013-1323", "CVE-2013-1327", "CVE-2013-1329"}},
+		},
+	},
+	// TODO: the per-product NA entries below come from MS13-046's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS13-046.
+	//   - Windows 8 for 32-bit Systems (ntoskrnl.exe)
+	//   - Windows 8 for 64-bit Systems (ntoskrnl.exe)
+	//   - Windows RT (ntoskrnl.exe)
+	//   - Windows Server 2003 Service Pack 2 (Win32k.sys)
+	//   - Windows Server 2003 with SP2 for Itanium-based Systems (Win32k.sys)
+	//   - Windows Server 2003 x64 Edition Service Pack 2 (Win32k.sys)
+	//   - Windows Server 2008 R2 for Itanium-based Systems Service Pack 1 (Win32k.sys)
+	//   - Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation) (Win32k.sys)
+	//   - Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Win32k.sys)
+	//   - Windows Server 2008 for 32-bit Systems Service Pack 2 (Server Core installation) (Win32k.sys)
+	//   - Windows Server 2008 for 32-bit Systems Service Pack 2 (Win32k.sys)
+	//   - Windows Server 2008 for Itanium-based Systems Service Pack 2 (Win32k.sys)
+	//   - Windows Server 2008 for x64-based Systems Service Pack 2 (Server Core installation) (Win32k.sys)
+	//   - Windows Server 2008 for x64-based Systems Service Pack 2 (Win32k.sys)
+	//   - Windows Server 2012 (Server Core installation) (ntoskrnl.exe)
+	//   - Windows Server 2012 (ntoskrnl.exe)
+	//   - Windows Vista Service Pack 2 (Win32k.sys)
+	//   - Windows Vista x64 Edition Service Pack 2 (Win32k.sys)
+	//   - Windows XP Professional x64 Edition Service Pack 2 (Win32k.sys)
+	//   - Windows XP Service Pack 3 (Win32k.sys)
 	"MS13-046": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "2829361", Drop: []string{"CVE-2013-1332"}},
@@ -1760,9 +4355,56 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2813170": {Add: []string{"2829361"}},
 		},
 	},
+	// TODO: the per-product NA entries below come from MS13-047's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS13-047.
+	//   - Internet Explorer 10 for Windows 8 for 64-bit Systems
+	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 Windows Server 2008 for Itanium-based Systems Service Pack 2
+	//   - Internet Explorer 7 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 8 in Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
 	"MS13-047": {
 		CVEAdjustments: []cveAdjustment{
-			{KB: "2838727", Drop: []string{"CVE-2013-3110", "CVE-2013-3111", "CVE-2013-3114", "CVE-2013-3116", "CVE-2013-3117", "CVE-2013-3118", "CVE-2013-3119", "CVE-2013-3120", "CVE-2013-3122", "CVE-2013-3123", "CVE-2013-3124", "CVE-2013-3125", "CVE-2013-3126", "CVE-2013-3141"}},
+			{Component: "Internet Explorer 6 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2013-3110", "CVE-2013-3111", "CVE-2013-3114", "CVE-2013-3116", "CVE-2013-3117", "CVE-2013-3118", "CVE-2013-3119", "CVE-2013-3120", "CVE-2013-3122", "CVE-2013-3123", "CVE-2013-3124", "CVE-2013-3125", "CVE-2013-3126", "CVE-2013-3141"}},
+			{Component: "Internet Explorer 6 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2013-3110", "CVE-2013-3111", "CVE-2013-3114", "CVE-2013-3116", "CVE-2013-3117", "CVE-2013-3118", "CVE-2013-3119", "CVE-2013-3120", "CVE-2013-3122", "CVE-2013-3123", "CVE-2013-3124", "CVE-2013-3125", "CVE-2013-3126", "CVE-2013-3141"}},
+			{Component: "Internet Explorer 6 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2013-3110", "CVE-2013-3111", "CVE-2013-3114", "CVE-2013-3116", "CVE-2013-3117", "CVE-2013-3118", "CVE-2013-3119", "CVE-2013-3120", "CVE-2013-3122", "CVE-2013-3123", "CVE-2013-3124", "CVE-2013-3125", "CVE-2013-3126", "CVE-2013-3141"}},
+			{Component: "Internet Explorer 6 for Windows XP Service Pack 3", Drop: []string{"CVE-2013-3110", "CVE-2013-3111", "CVE-2013-3114", "CVE-2013-3116", "CVE-2013-3117", "CVE-2013-3118", "CVE-2013-3119", "CVE-2013-3120", "CVE-2013-3122", "CVE-2013-3123", "CVE-2013-3124", "CVE-2013-3125", "CVE-2013-3126", "CVE-2013-3141"}},
+			{Component: "Internet Explorer 7 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2013-3110", "CVE-2013-3111", "CVE-2013-3114", "CVE-2013-3117", "CVE-2013-3118", "CVE-2013-3119", "CVE-2013-3120", "CVE-2013-3122", "CVE-2013-3123", "CVE-2013-3124", "CVE-2013-3125", "CVE-2013-3126", "CVE-2013-3141"}},
+			{Component: "Internet Explorer 7 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2013-3110", "CVE-2013-3111", "CVE-2013-3114", "CVE-2013-3117", "CVE-2013-3118", "CVE-2013-3119", "CVE-2013-3120", "CVE-2013-3122", "CVE-2013-3123", "CVE-2013-3124", "CVE-2013-3125", "CVE-2013-3126", "CVE-2013-3141"}},
+			{Component: "Internet Explorer 7 for Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2013-3110", "CVE-2013-3111", "CVE-2013-3114", "CVE-2013-3117", "CVE-2013-3118", "CVE-2013-3119", "CVE-2013-3120", "CVE-2013-3122", "CVE-2013-3123", "CVE-2013-3124", "CVE-2013-3125", "CVE-2013-3126", "CVE-2013-3141"}},
+			{Component: "Internet Explorer 7 for Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2013-3110", "CVE-2013-3111", "CVE-2013-3114", "CVE-2013-3117", "CVE-2013-3118", "CVE-2013-3119", "CVE-2013-3120", "CVE-2013-3122", "CVE-2013-3123", "CVE-2013-3124", "CVE-2013-3125", "CVE-2013-3126", "CVE-2013-3141"}},
+			{Component: "Internet Explorer 7 for Windows Vista Service Pack 2", Drop: []string{"CVE-2013-3110", "CVE-2013-3111", "CVE-2013-3114", "CVE-2013-3117", "CVE-2013-3118", "CVE-2013-3119", "CVE-2013-3120", "CVE-2013-3122", "CVE-2013-3123", "CVE-2013-3124", "CVE-2013-3125", "CVE-2013-3126", "CVE-2013-3141"}},
+			{Component: "Internet Explorer 7 for Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2013-3110", "CVE-2013-3111", "CVE-2013-3114", "CVE-2013-3117", "CVE-2013-3118", "CVE-2013-3119", "CVE-2013-3120", "CVE-2013-3122", "CVE-2013-3123", "CVE-2013-3124", "CVE-2013-3125", "CVE-2013-3126", "CVE-2013-3141"}},
+			{Component: "Internet Explorer 7 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2013-3110", "CVE-2013-3111", "CVE-2013-3114", "CVE-2013-3117", "CVE-2013-3118", "CVE-2013-3119", "CVE-2013-3120", "CVE-2013-3122", "CVE-2013-3123", "CVE-2013-3124", "CVE-2013-3125", "CVE-2013-3126", "CVE-2013-3141"}},
+			{Component: "Internet Explorer 7 for Windows XP Service Pack 3", Drop: []string{"CVE-2013-3110", "CVE-2013-3111", "CVE-2013-3114", "CVE-2013-3117", "CVE-2013-3118", "CVE-2013-3119", "CVE-2013-3120", "CVE-2013-3122", "CVE-2013-3123", "CVE-2013-3124", "CVE-2013-3125", "CVE-2013-3126", "CVE-2013-3141"}},
+			{Component: "Internet Explorer 8 for Windows 7 for 32-bit Systems Service Pack 1", Drop: []string{"CVE-2013-3114", "CVE-2013-3117", "CVE-2013-3118", "CVE-2013-3119", "CVE-2013-3120", "CVE-2013-3122", "CVE-2013-3124", "CVE-2013-3125", "CVE-2013-3126"}},
+			{Component: "Internet Explorer 8 for Windows 7 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2013-3114", "CVE-2013-3117", "CVE-2013-3118", "CVE-2013-3119", "CVE-2013-3120", "CVE-2013-3122", "CVE-2013-3124", "CVE-2013-3125", "CVE-2013-3126"}},
+			{Component: "Internet Explorer 8 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2013-3114", "CVE-2013-3117", "CVE-2013-3118", "CVE-2013-3119", "CVE-2013-3120", "CVE-2013-3122", "CVE-2013-3124", "CVE-2013-3125", "CVE-2013-3126"}},
+			{Component: "Internet Explorer 8 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2013-3114", "CVE-2013-3117", "CVE-2013-3118", "CVE-2013-3119", "CVE-2013-3120", "CVE-2013-3122", "CVE-2013-3124", "CVE-2013-3125", "CVE-2013-3126"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 R2 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2013-3114", "CVE-2013-3117", "CVE-2013-3118", "CVE-2013-3119", "CVE-2013-3120", "CVE-2013-3122", "CVE-2013-3124", "CVE-2013-3125", "CVE-2013-3126"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2013-3114", "CVE-2013-3117", "CVE-2013-3118", "CVE-2013-3119", "CVE-2013-3120", "CVE-2013-3122", "CVE-2013-3124", "CVE-2013-3125", "CVE-2013-3126"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2013-3114", "CVE-2013-3117", "CVE-2013-3118", "CVE-2013-3119", "CVE-2013-3120", "CVE-2013-3122", "CVE-2013-3124", "CVE-2013-3125", "CVE-2013-3126"}},
+			{Component: "Internet Explorer 8 for Windows Vista Service Pack 2", Drop: []string{"CVE-2013-3114", "CVE-2013-3117", "CVE-2013-3118", "CVE-2013-3119", "CVE-2013-3120", "CVE-2013-3122", "CVE-2013-3124", "CVE-2013-3125", "CVE-2013-3126"}},
+			{Component: "Internet Explorer 8 for Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2013-3114", "CVE-2013-3117", "CVE-2013-3118", "CVE-2013-3119", "CVE-2013-3120", "CVE-2013-3122", "CVE-2013-3124", "CVE-2013-3125", "CVE-2013-3126"}},
+			{Component: "Internet Explorer 8 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2013-3114", "CVE-2013-3117", "CVE-2013-3118", "CVE-2013-3119", "CVE-2013-3120", "CVE-2013-3122", "CVE-2013-3124", "CVE-2013-3125", "CVE-2013-3126"}},
+			{Component: "Internet Explorer 8 for Windows XP Service Pack 3", Drop: []string{"CVE-2013-3114", "CVE-2013-3117", "CVE-2013-3118", "CVE-2013-3119", "CVE-2013-3120", "CVE-2013-3122", "CVE-2013-3124", "CVE-2013-3125", "CVE-2013-3126"}},
+			{Component: "Internet Explorer 9 for Windows 7 for 32-bit Systems Service Pack 1", Drop: []string{"CVE-2013-3118", "CVE-2013-3120", "CVE-2013-3125"}},
+			{Component: "Internet Explorer 9 for Windows 7 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2013-3118", "CVE-2013-3120", "CVE-2013-3125"}},
+			{Component: "Internet Explorer 9 for Windows Server 2008 R2 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2013-3118", "CVE-2013-3120", "CVE-2013-3125"}},
+			{Component: "Internet Explorer 9 for Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2013-3118", "CVE-2013-3120", "CVE-2013-3125"}},
+			{Component: "Internet Explorer 9 for Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2013-3118", "CVE-2013-3120", "CVE-2013-3125"}},
+			{Component: "Internet Explorer 9 for Windows Vista Service Pack 2", Drop: []string{"CVE-2013-3118", "CVE-2013-3120", "CVE-2013-3125"}},
+			{Component: "Internet Explorer 9 for Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2013-3118", "CVE-2013-3120", "CVE-2013-3125"}},
+			{Component: "Internet Explorer 10 for Windows 7 for 32-bit Systems Service Pack 1", Drop: []string{"CVE-2013-3110", "CVE-2013-3116", "CVE-2013-3117", "CVE-2013-3122", "CVE-2013-3124", "CVE-2013-3141"}},
+			{Component: "Internet Explorer 10 for Windows 7 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2013-3110", "CVE-2013-3116", "CVE-2013-3117", "CVE-2013-3122", "CVE-2013-3124", "CVE-2013-3141"}},
+			{Component: "Internet Explorer 10 for Windows 8 for 32-bit Systems", Drop: []string{"CVE-2013-3110", "CVE-2013-3116", "CVE-2013-3117", "CVE-2013-3122", "CVE-2013-3124", "CVE-2013-3141"}},
+			{Component: "Internet Explorer 10 for Windows RT", Drop: []string{"CVE-2013-3110", "CVE-2013-3116", "CVE-2013-3117", "CVE-2013-3122", "CVE-2013-3124", "CVE-2013-3141"}},
+			{Component: "Internet Explorer 10 for Windows Server 2008 R2 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2013-3110", "CVE-2013-3116", "CVE-2013-3117", "CVE-2013-3122", "CVE-2013-3124", "CVE-2013-3141"}},
+			{Component: "Internet Explorer 10 for Windows Server 2012", Drop: []string{"CVE-2013-3110", "CVE-2013-3116", "CVE-2013-3117", "CVE-2013-3122", "CVE-2013-3124", "CVE-2013-3141"}},
 		},
 		Supersedes: map[string]supersedesAdjust{
 			"2847204": {Add: []string{"2838727"}},
@@ -1811,10 +4453,19 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2698035": {Add: []string{"2833951"}},
 		},
 	},
+	// TODO: the per-product NA entries below come from MS13-053's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS13-053.
+	//   - Windows 8 for 32-bit Systems (win32k.sys)
+	//   - Windows 8 for 64-bit Systems (win32k.sys)
+	//   - Windows RT(win32k.sys)
+	//   - Windows Server 2012 (Server Core installation) (win32k.sys)
+	//   - Windows Server 2012 (win32k.sys)
 	"MS13-053": {
-		CVEAdjustments: []cveAdjustment{
-			{KB: "2850851", Drop: []string{"CVE-2013-3167", "CVE-2013-3172", "CVE-2013-3660"}},
-		},
 		Supersedes: map[string]supersedesAdjust{
 			"2808735": {Add: []string{"2850851"}},
 		},
@@ -1827,9 +4478,56 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2827752": {Add: []string{"2843163"}},
 		},
 	},
+	// TODO: the per-product NA entries below come from MS13-055's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS13-055.
+	//   - Internet Explorer 10 for Windows 8 for 64-bit Systems
+	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 Windows Server 2008 for Itanium-based Systems Service Pack 2
+	//   - Internet Explorer 7 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 8 in Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
 	"MS13-055": {
 		CVEAdjustments: []cveAdjustment{
-			{KB: "2846071", Drop: []string{"CVE-2013-3115", "CVE-2013-3143", "CVE-2013-3144", "CVE-2013-3145", "CVE-2013-3146", "CVE-2013-3147", "CVE-2013-3149", "CVE-2013-3150", "CVE-2013-3151", "CVE-2013-3152", "CVE-2013-3161", "CVE-2013-3162", "CVE-2013-3163", "CVE-2013-3164", "CVE-2013-3846"}},
+			{Component: "Internet Explorer 6 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2013-3115", "CVE-2013-3143", "CVE-2013-3144", "CVE-2013-3145", "CVE-2013-3146", "CVE-2013-3149", "CVE-2013-3150", "CVE-2013-3151", "CVE-2013-3152", "CVE-2013-3161", "CVE-2013-3162", "CVE-2013-3163", "CVE-2013-3164", "CVE-2013-3846"}},
+			{Component: "Internet Explorer 6 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2013-3115", "CVE-2013-3143", "CVE-2013-3144", "CVE-2013-3145", "CVE-2013-3146", "CVE-2013-3149", "CVE-2013-3150", "CVE-2013-3151", "CVE-2013-3152", "CVE-2013-3161", "CVE-2013-3162", "CVE-2013-3163", "CVE-2013-3164", "CVE-2013-3846"}},
+			{Component: "Internet Explorer 6 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2013-3115", "CVE-2013-3143", "CVE-2013-3144", "CVE-2013-3145", "CVE-2013-3146", "CVE-2013-3149", "CVE-2013-3150", "CVE-2013-3151", "CVE-2013-3152", "CVE-2013-3161", "CVE-2013-3162", "CVE-2013-3163", "CVE-2013-3164", "CVE-2013-3846"}},
+			{Component: "Internet Explorer 6 for Windows XP Service Pack 3", Drop: []string{"CVE-2013-3115", "CVE-2013-3143", "CVE-2013-3144", "CVE-2013-3145", "CVE-2013-3146", "CVE-2013-3149", "CVE-2013-3150", "CVE-2013-3151", "CVE-2013-3152", "CVE-2013-3161", "CVE-2013-3162", "CVE-2013-3163", "CVE-2013-3164", "CVE-2013-3846"}},
+			{Component: "Internet Explorer 7 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2013-3143", "CVE-2013-3144", "CVE-2013-3145", "CVE-2013-3146", "CVE-2013-3150", "CVE-2013-3151", "CVE-2013-3152", "CVE-2013-3161", "CVE-2013-3163", "CVE-2013-3164", "CVE-2013-3846"}},
+			{Component: "Internet Explorer 7 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2013-3143", "CVE-2013-3144", "CVE-2013-3145", "CVE-2013-3146", "CVE-2013-3150", "CVE-2013-3151", "CVE-2013-3152", "CVE-2013-3161", "CVE-2013-3163", "CVE-2013-3164", "CVE-2013-3846"}},
+			{Component: "Internet Explorer 7 for Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2013-3143", "CVE-2013-3144", "CVE-2013-3145", "CVE-2013-3146", "CVE-2013-3150", "CVE-2013-3151", "CVE-2013-3152", "CVE-2013-3161", "CVE-2013-3163", "CVE-2013-3164", "CVE-2013-3846"}},
+			{Component: "Internet Explorer 7 for Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2013-3143", "CVE-2013-3144", "CVE-2013-3145", "CVE-2013-3146", "CVE-2013-3150", "CVE-2013-3151", "CVE-2013-3152", "CVE-2013-3161", "CVE-2013-3163", "CVE-2013-3164", "CVE-2013-3846"}},
+			{Component: "Internet Explorer 7 for Windows Vista Service Pack 2", Drop: []string{"CVE-2013-3143", "CVE-2013-3144", "CVE-2013-3145", "CVE-2013-3146", "CVE-2013-3150", "CVE-2013-3151", "CVE-2013-3152", "CVE-2013-3161", "CVE-2013-3163", "CVE-2013-3164", "CVE-2013-3846"}},
+			{Component: "Internet Explorer 7 for Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2013-3143", "CVE-2013-3144", "CVE-2013-3145", "CVE-2013-3146", "CVE-2013-3150", "CVE-2013-3151", "CVE-2013-3152", "CVE-2013-3161", "CVE-2013-3163", "CVE-2013-3164", "CVE-2013-3846"}},
+			{Component: "Internet Explorer 7 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2013-3143", "CVE-2013-3144", "CVE-2013-3145", "CVE-2013-3146", "CVE-2013-3150", "CVE-2013-3151", "CVE-2013-3152", "CVE-2013-3161", "CVE-2013-3163", "CVE-2013-3164", "CVE-2013-3846"}},
+			{Component: "Internet Explorer 7 for Windows XP Service Pack 3", Drop: []string{"CVE-2013-3143", "CVE-2013-3144", "CVE-2013-3145", "CVE-2013-3146", "CVE-2013-3150", "CVE-2013-3151", "CVE-2013-3152", "CVE-2013-3161", "CVE-2013-3163", "CVE-2013-3164", "CVE-2013-3846"}},
+			{Component: "Internet Explorer 8 for Windows 7 for 32-bit Systems Service Pack 1", Drop: []string{"CVE-2013-3143", "CVE-2013-3145", "CVE-2013-3146", "CVE-2013-3150", "CVE-2013-3152", "CVE-2013-3161", "CVE-2013-3846"}},
+			{Component: "Internet Explorer 8 for Windows 7 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2013-3143", "CVE-2013-3145", "CVE-2013-3146", "CVE-2013-3150", "CVE-2013-3152", "CVE-2013-3161", "CVE-2013-3846"}},
+			{Component: "Internet Explorer 8 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2013-3143", "CVE-2013-3145", "CVE-2013-3146", "CVE-2013-3150", "CVE-2013-3152", "CVE-2013-3161", "CVE-2013-3846"}},
+			{Component: "Internet Explorer 8 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2013-3143", "CVE-2013-3145", "CVE-2013-3146", "CVE-2013-3150", "CVE-2013-3152", "CVE-2013-3161", "CVE-2013-3846"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 R2 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2013-3143", "CVE-2013-3145", "CVE-2013-3146", "CVE-2013-3150", "CVE-2013-3152", "CVE-2013-3161", "CVE-2013-3846"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2013-3143", "CVE-2013-3145", "CVE-2013-3146", "CVE-2013-3150", "CVE-2013-3152", "CVE-2013-3161", "CVE-2013-3846"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2013-3143", "CVE-2013-3145", "CVE-2013-3146", "CVE-2013-3150", "CVE-2013-3152", "CVE-2013-3161", "CVE-2013-3846"}},
+			{Component: "Internet Explorer 8 for Windows Vista Service Pack 2", Drop: []string{"CVE-2013-3143", "CVE-2013-3145", "CVE-2013-3146", "CVE-2013-3150", "CVE-2013-3152", "CVE-2013-3161", "CVE-2013-3846"}},
+			{Component: "Internet Explorer 8 for Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2013-3143", "CVE-2013-3145", "CVE-2013-3146", "CVE-2013-3150", "CVE-2013-3152", "CVE-2013-3161", "CVE-2013-3846"}},
+			{Component: "Internet Explorer 8 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2013-3143", "CVE-2013-3145", "CVE-2013-3146", "CVE-2013-3150", "CVE-2013-3152", "CVE-2013-3161", "CVE-2013-3846"}},
+			{Component: "Internet Explorer 8 for Windows XP Service Pack 3", Drop: []string{"CVE-2013-3143", "CVE-2013-3145", "CVE-2013-3146", "CVE-2013-3150", "CVE-2013-3152", "CVE-2013-3161", "CVE-2013-3846"}},
+			{Component: "Internet Explorer 9 for Windows 7 for 32-bit Systems Service Pack 1", Drop: []string{"CVE-2013-3146", "CVE-2013-3149", "CVE-2013-3152", "CVE-2013-3164"}},
+			{Component: "Internet Explorer 9 for Windows 7 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2013-3146", "CVE-2013-3149", "CVE-2013-3152", "CVE-2013-3164"}},
+			{Component: "Internet Explorer 9 for Windows Server 2008 R2 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2013-3146", "CVE-2013-3149", "CVE-2013-3152", "CVE-2013-3164"}},
+			{Component: "Internet Explorer 9 for Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2013-3146", "CVE-2013-3149", "CVE-2013-3152", "CVE-2013-3164"}},
+			{Component: "Internet Explorer 9 for Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2013-3146", "CVE-2013-3149", "CVE-2013-3152", "CVE-2013-3164"}},
+			{Component: "Internet Explorer 9 for Windows Vista Service Pack 2", Drop: []string{"CVE-2013-3146", "CVE-2013-3149", "CVE-2013-3152", "CVE-2013-3164"}},
+			{Component: "Internet Explorer 9 for Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2013-3146", "CVE-2013-3149", "CVE-2013-3152", "CVE-2013-3164"}},
+			{Component: "Internet Explorer 10 for Windows 7 for 32-bit Systems Service Pack 1", Drop: []string{"CVE-2013-3145", "CVE-2013-3147", "CVE-2013-3149", "CVE-2013-3150", "CVE-2013-3164"}},
+			{Component: "Internet Explorer 10 for Windows 7 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2013-3145", "CVE-2013-3147", "CVE-2013-3149", "CVE-2013-3150", "CVE-2013-3164"}},
+			{Component: "Internet Explorer 10 for Windows 8 for 32-bit Systems", Drop: []string{"CVE-2013-3145", "CVE-2013-3147", "CVE-2013-3149", "CVE-2013-3150", "CVE-2013-3164"}},
+			{Component: "Internet Explorer 10 for Windows RT", Drop: []string{"CVE-2013-3145", "CVE-2013-3147", "CVE-2013-3149", "CVE-2013-3150", "CVE-2013-3164"}},
+			{Component: "Internet Explorer 10 for Windows Server 2008 R2 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2013-3145", "CVE-2013-3147", "CVE-2013-3149", "CVE-2013-3150", "CVE-2013-3164"}},
+			{Component: "Internet Explorer 10 for Windows Server 2012", Drop: []string{"CVE-2013-3145", "CVE-2013-3147", "CVE-2013-3149", "CVE-2013-3150", "CVE-2013-3164"}},
 		},
 		IECumChain: map[string][]string{
 			"2838727": {"2846071"},
@@ -1837,10 +4535,50 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 	},
 	// MS13-059: off-by-3 of CVE-2013-3184 — drop, 3184 already in xlsx.
 	// CVE-2013-3181 appears in MS13-060's markdown.
+	// TODO: the per-product NA entries below come from MS13-059's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS13-059.
+	//   - Internet Explorer 10 for Windows 8 for 64-bit Systems
+	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 Windows Server 2008 for Itanium-based Systems Service Pack 2
+	//   - Internet Explorer 7 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 8 in Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
 	"MS13-059": {
 		CVEAdjustments: []cveAdjustment{
 			{Add: []string{"CVE-2013-3184", "CVE-2013-3186", "CVE-2013-3187", "CVE-2013-3188", "CVE-2013-3189", "CVE-2013-3190", "CVE-2013-3191", "CVE-2013-3192", "CVE-2013-3193", "CVE-2013-3194", "CVE-2013-3199"}},
-			{KB: "2862772", Drop: []string{"CVE-2013-3184", "CVE-2013-3186", "CVE-2013-3187", "CVE-2013-3188", "CVE-2013-3189", "CVE-2013-3190", "CVE-2013-3191", "CVE-2013-3193", "CVE-2013-3194"}},
+			{Component: "Internet Explorer 6 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2013-3184", "CVE-2013-3186", "CVE-2013-3187", "CVE-2013-3188", "CVE-2013-3189", "CVE-2013-3190", "CVE-2013-3191", "CVE-2013-3193", "CVE-2013-3194"}},
+			{Component: "Internet Explorer 6 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2013-3184", "CVE-2013-3186", "CVE-2013-3187", "CVE-2013-3188", "CVE-2013-3189", "CVE-2013-3190", "CVE-2013-3191", "CVE-2013-3193", "CVE-2013-3194"}},
+			{Component: "Internet Explorer 6 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2013-3184", "CVE-2013-3186", "CVE-2013-3187", "CVE-2013-3188", "CVE-2013-3189", "CVE-2013-3190", "CVE-2013-3191", "CVE-2013-3193", "CVE-2013-3194"}},
+			{Component: "Internet Explorer 6 for Windows XP Service Pack 3", Drop: []string{"CVE-2013-3184", "CVE-2013-3186", "CVE-2013-3187", "CVE-2013-3188", "CVE-2013-3189", "CVE-2013-3190", "CVE-2013-3191", "CVE-2013-3193", "CVE-2013-3194"}},
+			{Component: "Internet Explorer 7 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2013-3186", "CVE-2013-3187", "CVE-2013-3188", "CVE-2013-3189", "CVE-2013-3190", "CVE-2013-3191", "CVE-2013-3193", "CVE-2013-3194"}},
+			{Component: "Internet Explorer 7 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2013-3186", "CVE-2013-3187", "CVE-2013-3188", "CVE-2013-3189", "CVE-2013-3190", "CVE-2013-3191", "CVE-2013-3193", "CVE-2013-3194"}},
+			{Component: "Internet Explorer 7 for Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2013-3187", "CVE-2013-3188", "CVE-2013-3189", "CVE-2013-3190", "CVE-2013-3191", "CVE-2013-3193", "CVE-2013-3194"}},
+			{Component: "Internet Explorer 7 for Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2013-3187", "CVE-2013-3188", "CVE-2013-3189", "CVE-2013-3190", "CVE-2013-3191", "CVE-2013-3193", "CVE-2013-3194"}},
+			{Component: "Internet Explorer 7 for Windows Vista Service Pack 2", Drop: []string{"CVE-2013-3187", "CVE-2013-3188", "CVE-2013-3189", "CVE-2013-3190", "CVE-2013-3191", "CVE-2013-3193", "CVE-2013-3194"}},
+			{Component: "Internet Explorer 7 for Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2013-3187", "CVE-2013-3188", "CVE-2013-3189", "CVE-2013-3190", "CVE-2013-3191", "CVE-2013-3193", "CVE-2013-3194"}},
+			{Component: "Internet Explorer 7 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2013-3186", "CVE-2013-3187", "CVE-2013-3188", "CVE-2013-3189", "CVE-2013-3190", "CVE-2013-3191", "CVE-2013-3193", "CVE-2013-3194"}},
+			{Component: "Internet Explorer 7 for Windows XP Service Pack 3", Drop: []string{"CVE-2013-3186", "CVE-2013-3187", "CVE-2013-3188", "CVE-2013-3189", "CVE-2013-3190", "CVE-2013-3191", "CVE-2013-3193", "CVE-2013-3194"}},
+			{Component: "Internet Explorer 8 for Windows 7 for 32-bit Systems Service Pack 1", Drop: []string{"CVE-2013-3187", "CVE-2013-3191", "CVE-2013-3193", "CVE-2013-3194"}},
+			{Component: "Internet Explorer 8 for Windows 7 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2013-3187", "CVE-2013-3191", "CVE-2013-3193", "CVE-2013-3194"}},
+			{Component: "Internet Explorer 8 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2013-3186", "CVE-2013-3187", "CVE-2013-3191", "CVE-2013-3193", "CVE-2013-3194"}},
+			{Component: "Internet Explorer 8 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2013-3186", "CVE-2013-3187", "CVE-2013-3191", "CVE-2013-3193", "CVE-2013-3194"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 R2 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2013-3187", "CVE-2013-3191", "CVE-2013-3193", "CVE-2013-3194"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2013-3187", "CVE-2013-3191", "CVE-2013-3193", "CVE-2013-3194"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2013-3187", "CVE-2013-3191", "CVE-2013-3193", "CVE-2013-3194"}},
+			{Component: "Internet Explorer 8 for Windows Vista Service Pack 2", Drop: []string{"CVE-2013-3187", "CVE-2013-3191", "CVE-2013-3193", "CVE-2013-3194"}},
+			{Component: "Internet Explorer 8 for Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2013-3187", "CVE-2013-3191", "CVE-2013-3193", "CVE-2013-3194"}},
+			{Component: "Internet Explorer 8 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2013-3186", "CVE-2013-3187", "CVE-2013-3191", "CVE-2013-3193", "CVE-2013-3194"}},
+			{Component: "Internet Explorer 8 for Windows XP Service Pack 3", Drop: []string{"CVE-2013-3186", "CVE-2013-3187", "CVE-2013-3191", "CVE-2013-3193", "CVE-2013-3194"}},
+			{Component: "Internet Explorer 10 for Windows 7 for 32-bit Systems Service Pack 1", Drop: []string{"CVE-2013-3188", "CVE-2013-3189", "CVE-2013-3194"}},
+			{Component: "Internet Explorer 10 for Windows 7 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2013-3188", "CVE-2013-3189", "CVE-2013-3194"}},
+			{Component: "Internet Explorer 10 for Windows 8 for 32-bit Systems", Drop: []string{"CVE-2013-3188", "CVE-2013-3189", "CVE-2013-3194"}},
+			{Component: "Internet Explorer 10 for Windows RT", Drop: []string{"CVE-2013-3188", "CVE-2013-3189", "CVE-2013-3194"}},
+			{Component: "Internet Explorer 10 for Windows Server 2008 R2 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2013-3188", "CVE-2013-3189", "CVE-2013-3194"}},
+			{Component: "Internet Explorer 10 for Windows Server 2012", Drop: []string{"CVE-2013-3188", "CVE-2013-3189", "CVE-2013-3194"}},
 			{Remap: map[string]string{"CVE-2013-3181": ""}},
 		},
 		IECumChain: map[string][]string{
@@ -1863,28 +4601,119 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2360937": {Add: []string{"2849470"}},
 		},
 	},
+	// TODO: the per-product NA entries below come from MS13-063's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS13-063.
+	//   - Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
+	//   - Windows Server 2008 for Itanium-based Systems Service Pack 2
 	"MS13-063": {
 		CVEAdjustments: []cveAdjustment{
 			{Add: []string{"CVE-2013-2556", "CVE-2013-3196", "CVE-2013-3197", "CVE-2013-3198"}},
-			{KB: "2859537", Drop: []string{"CVE-2013-2556", "CVE-2013-3196", "CVE-2013-3197", "CVE-2013-3198"}},
+			{Component: "Microsoft Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2013-2556"}},
+			{Component: "Microsoft Windows XP Service Pack 3", Drop: []string{"CVE-2013-2556"}},
+			{Component: "Windows 7 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2013-3196", "CVE-2013-3197", "CVE-2013-3198"}},
+			{Component: "Windows 8 for 32-bit Systems", Drop: []string{"CVE-2013-2556"}},
+			{Component: "Windows Server 2008 R2 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2013-3196", "CVE-2013-3197", "CVE-2013-3198"}},
+			{Component: "Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)", Drop: []string{"CVE-2013-3196", "CVE-2013-3197", "CVE-2013-3198"}},
+			{Component: "Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2013-3196", "CVE-2013-3197", "CVE-2013-3198"}},
+			{Component: "Windows Server 2008 for x64-based Systems Service Pack 2 (Server Core installation)", Drop: []string{"CVE-2013-3196", "CVE-2013-3197", "CVE-2013-3198"}},
+			{Component: "Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2013-3196", "CVE-2013-3197", "CVE-2013-3198"}},
 		},
 		Supersedes: map[string]supersedesAdjust{
 			"2644615": {Add: []string{"2859537"}},
 			"2790113": {Add: []string{"2859537"}},
 		},
 	},
+	// TODO: the per-product NA entries below come from MS13-067's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS13-067.
+	//   - Word Automation Services on Microsoft SharePoint Server 2010 Service Pack 2
 	"MS13-067": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "2553408", Drop: []string{"CVE-2013-1315", "CVE-2013-3180", "CVE-2013-3847", "CVE-2013-3848", "CVE-2013-3849", "CVE-2013-3857", "CVE-2013-3858"}},
 			{KB: "2760589", Drop: []string{"CVE-2013-1330", "CVE-2013-3180", "CVE-2013-3847", "CVE-2013-3848", "CVE-2013-3849", "CVE-2013-3857", "CVE-2013-3858"}},
 			{KB: "2760595", Drop: []string{"CVE-2013-3180", "CVE-2013-3847", "CVE-2013-3848", "CVE-2013-3849", "CVE-2013-3857", "CVE-2013-3858"}},
-			{KB: "2760755", Drop: []string{"CVE-2013-3180", "CVE-2013-3847", "CVE-2013-3848", "CVE-2013-3849", "CVE-2013-3858"}},
-			{KB: "2834052", Drop: []string{"CVE-2013-1315", "CVE-2013-1330", "CVE-2013-3179", "CVE-2013-3180", "CVE-2013-3847", "CVE-2013-3848", "CVE-2013-3849", "CVE-2013-3857", "CVE-2013-3858"}},
+			{KB: "2760755", Drop: []string{"CVE-2013-3180"}},
+			{Component: "Microsoft Excel Web App 2010 Service Pack 1", Drop: []string{"CVE-2013-3847", "CVE-2013-3848", "CVE-2013-3849", "CVE-2013-3857", "CVE-2013-3858"}},
+			{Component: "Microsoft Excel Web App 2010 Service Pack 2", Drop: []string{"CVE-2013-3847", "CVE-2013-3848", "CVE-2013-3849", "CVE-2013-3857", "CVE-2013-3858"}},
+			{Component: "Microsoft Office Web Apps Server 2013", Drop: []string{"CVE-2013-1315", "CVE-2013-3847", "CVE-2013-3848", "CVE-2013-3849", "CVE-2013-3857", "CVE-2013-3858"}},
+			{Component: "Microsoft SharePoint Portal Server 2003 Service Pack 3", Drop: []string{"CVE-2013-3179"}},
+			{Component: "Microsoft Windows SharePoint Services 2.0", Drop: []string{"CVE-2013-3179"}},
+			{Component: "Microsoft Word Web App 2010 Service Pack 2", Drop: []string{"CVE-2013-3847", "CVE-2013-3848", "CVE-2013-3849", "CVE-2013-3858"}},
 		},
 	},
+	// MS13-069: legacy bulletinArchiveKBNotApplicable entry for KB2870699
+	// dropped all 10 CVEs as if KB-uniformly NA, but MS13-069's archive
+	// markdown matrix table has zero KB-keyed NA entries for this
+	// bulletin (all narrowing is per-(product, component) in the
+	// markdown's per-CVE IE matrix table). The legacy entry filtered
+	// every CVE from every xlsx row of KB2870699, leaving the bulletin
+	// without vulnerability entries and surfacing "MS13-069" as a
+	// synthetic cveID in scannedCves on Server 2008. The KB2870699
+	// KB-Drop is removed here. IECumChain is retained as-is.
+	// Ideal fix is 41 per-(IE, OS) Component-Drop entries (per the
+	// archive markdown matrix table) plus a normalizeArchiveComponentKey
+	// special-case that constructs combined "IE X for/in Windows Y"
+	// keys — deferred since the same staleness affects many other
+	// IE Cumulative bulletins.
+	// TODO: the per-product NA entries below come from MS13-069's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS13-069.
+	//   - Internet Explorer 10 for Windows 8 for 64-bit Systems
+	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 Windows Server 2008 for Itanium-based Systems Service Pack 2
+	//   - Internet Explorer 7 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 8 in Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
 	"MS13-069": {
 		CVEAdjustments: []cveAdjustment{
-			{KB: "2870699", Drop: []string{"CVE-2013-3201", "CVE-2013-3202", "CVE-2013-3203", "CVE-2013-3204", "CVE-2013-3205", "CVE-2013-3206", "CVE-2013-3207", "CVE-2013-3208", "CVE-2013-3209", "CVE-2013-3845"}},
+			{Component: "Internet Explorer 6 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2013-3201", "CVE-2013-3202", "CVE-2013-3203", "CVE-2013-3204", "CVE-2013-3206", "CVE-2013-3207", "CVE-2013-3208", "CVE-2013-3209", "CVE-2013-3845"}},
+			{Component: "Internet Explorer 6 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2013-3201", "CVE-2013-3202", "CVE-2013-3203", "CVE-2013-3204", "CVE-2013-3206", "CVE-2013-3207", "CVE-2013-3208", "CVE-2013-3209", "CVE-2013-3845"}},
+			{Component: "Internet Explorer 6 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2013-3201", "CVE-2013-3202", "CVE-2013-3203", "CVE-2013-3204", "CVE-2013-3206", "CVE-2013-3207", "CVE-2013-3208", "CVE-2013-3209", "CVE-2013-3845"}},
+			{Component: "Internet Explorer 6 for Windows XP Service Pack 3", Drop: []string{"CVE-2013-3201", "CVE-2013-3202", "CVE-2013-3203", "CVE-2013-3204", "CVE-2013-3206", "CVE-2013-3207", "CVE-2013-3208", "CVE-2013-3209", "CVE-2013-3845"}},
+			{Component: "Internet Explorer 7 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2013-3201", "CVE-2013-3202", "CVE-2013-3203", "CVE-2013-3206", "CVE-2013-3207", "CVE-2013-3208", "CVE-2013-3209", "CVE-2013-3845"}},
+			{Component: "Internet Explorer 7 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2013-3201", "CVE-2013-3202", "CVE-2013-3203", "CVE-2013-3206", "CVE-2013-3207", "CVE-2013-3208", "CVE-2013-3209", "CVE-2013-3845"}},
+			{Component: "Internet Explorer 7 for Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2013-3201", "CVE-2013-3202", "CVE-2013-3203", "CVE-2013-3206", "CVE-2013-3207", "CVE-2013-3208", "CVE-2013-3209", "CVE-2013-3845"}},
+			{Component: "Internet Explorer 7 for Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2013-3201", "CVE-2013-3202", "CVE-2013-3203", "CVE-2013-3206", "CVE-2013-3207", "CVE-2013-3208", "CVE-2013-3209", "CVE-2013-3845"}},
+			{Component: "Internet Explorer 7 for Windows Vista Service Pack 2", Drop: []string{"CVE-2013-3201", "CVE-2013-3202", "CVE-2013-3203", "CVE-2013-3206", "CVE-2013-3207", "CVE-2013-3208", "CVE-2013-3209", "CVE-2013-3845"}},
+			{Component: "Internet Explorer 7 for Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2013-3201", "CVE-2013-3202", "CVE-2013-3203", "CVE-2013-3206", "CVE-2013-3207", "CVE-2013-3208", "CVE-2013-3209", "CVE-2013-3845"}},
+			{Component: "Internet Explorer 7 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2013-3201", "CVE-2013-3202", "CVE-2013-3203", "CVE-2013-3206", "CVE-2013-3207", "CVE-2013-3208", "CVE-2013-3209", "CVE-2013-3845"}},
+			{Component: "Internet Explorer 7 for Windows XP Service Pack 3", Drop: []string{"CVE-2013-3201", "CVE-2013-3202", "CVE-2013-3203", "CVE-2013-3206", "CVE-2013-3207", "CVE-2013-3208", "CVE-2013-3209", "CVE-2013-3845"}},
+			{Component: "Internet Explorer 8 for Windows 7 for 32-bit Systems Service Pack 1", Drop: []string{"CVE-2013-3201", "CVE-2013-3202", "CVE-2013-3203", "CVE-2013-3206", "CVE-2013-3207", "CVE-2013-3209"}},
+			{Component: "Internet Explorer 8 for Windows 7 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2013-3201", "CVE-2013-3202", "CVE-2013-3203", "CVE-2013-3206", "CVE-2013-3207", "CVE-2013-3209"}},
+			{Component: "Internet Explorer 8 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2013-3201", "CVE-2013-3202", "CVE-2013-3203", "CVE-2013-3206", "CVE-2013-3207", "CVE-2013-3209"}},
+			{Component: "Internet Explorer 8 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2013-3201", "CVE-2013-3202", "CVE-2013-3203", "CVE-2013-3206", "CVE-2013-3207", "CVE-2013-3209"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 R2 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2013-3201", "CVE-2013-3202", "CVE-2013-3203", "CVE-2013-3206", "CVE-2013-3207", "CVE-2013-3209"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2013-3201", "CVE-2013-3202", "CVE-2013-3203", "CVE-2013-3206", "CVE-2013-3207", "CVE-2013-3209"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2013-3201", "CVE-2013-3202", "CVE-2013-3203", "CVE-2013-3206", "CVE-2013-3207", "CVE-2013-3209"}},
+			{Component: "Internet Explorer 8 for Windows Vista Service Pack 2", Drop: []string{"CVE-2013-3201", "CVE-2013-3202", "CVE-2013-3203", "CVE-2013-3206", "CVE-2013-3207", "CVE-2013-3209"}},
+			{Component: "Internet Explorer 8 for Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2013-3201", "CVE-2013-3202", "CVE-2013-3203", "CVE-2013-3206", "CVE-2013-3207", "CVE-2013-3209"}},
+			{Component: "Internet Explorer 8 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2013-3201", "CVE-2013-3202", "CVE-2013-3203", "CVE-2013-3206", "CVE-2013-3207", "CVE-2013-3209"}},
+			{Component: "Internet Explorer 8 for Windows XP Service Pack 3", Drop: []string{"CVE-2013-3201", "CVE-2013-3202", "CVE-2013-3203", "CVE-2013-3206", "CVE-2013-3207", "CVE-2013-3209"}},
+			{Component: "Internet Explorer 9 for Windows 7 for 32-bit Systems Service Pack 1", Drop: []string{"CVE-2013-3202", "CVE-2013-3205"}},
+			{Component: "Internet Explorer 9 for Windows 7 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2013-3202", "CVE-2013-3205"}},
+			{Component: "Internet Explorer 9 for Windows Server 2008 R2 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2013-3202", "CVE-2013-3205"}},
+			{Component: "Internet Explorer 9 for Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2013-3202", "CVE-2013-3205"}},
+			{Component: "Internet Explorer 9 for Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2013-3202", "CVE-2013-3205"}},
+			{Component: "Internet Explorer 9 for Windows Vista Service Pack 2", Drop: []string{"CVE-2013-3202", "CVE-2013-3205"}},
+			{Component: "Internet Explorer 9 for Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2013-3202", "CVE-2013-3205"}},
+			{Component: "Internet Explorer 10 for Windows 7 for 32-bit Systems Service Pack 1", Drop: []string{"CVE-2013-3205", "CVE-2013-3845"}},
+			{Component: "Internet Explorer 10 for Windows 7 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2013-3205", "CVE-2013-3845"}},
+			{Component: "Internet Explorer 10 for Windows 8 for 32-bit Systems", Drop: []string{"CVE-2013-3205", "CVE-2013-3845"}},
+			{Component: "Internet Explorer 10 for Windows RT", Drop: []string{"CVE-2013-3205", "CVE-2013-3845"}},
+			{Component: "Internet Explorer 10 for Windows Server 2008 R2 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2013-3205", "CVE-2013-3845"}},
+			{Component: "Internet Explorer 10 for Windows Server 2012", Drop: []string{"CVE-2013-3205", "CVE-2013-3845"}},
 		},
 		IECumChain: map[string][]string{
 			"2862772": {"2870699"},
@@ -1898,7 +4727,12 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2760823", Drop: []string{"CVE-2013-3160", "CVE-2013-3853", "CVE-2013-3854", "CVE-2013-3856"}},
 			{KB: "2817474", Drop: []string{"CVE-2013-3847", "CVE-2013-3848", "CVE-2013-3849", "CVE-2013-3850", "CVE-2013-3852", "CVE-2013-3853", "CVE-2013-3854", "CVE-2013-3855", "CVE-2013-3856", "CVE-2013-3857", "CVE-2013-3858"}},
 			{KB: "2817683", Drop: []string{"CVE-2013-3853", "CVE-2013-3854"}},
-			{KB: "2845537", Drop: []string{"CVE-2013-3160", "CVE-2013-3847", "CVE-2013-3848", "CVE-2013-3849", "CVE-2013-3851", "CVE-2013-3852", "CVE-2013-3853", "CVE-2013-3854", "CVE-2013-3855", "CVE-2013-3856", "CVE-2013-3858"}},
+			{Component: "Microsoft Word 2003 Service Pack 3", Drop: []string{"CVE-2013-3853", "CVE-2013-3854"}},
+			{Component: "Microsoft Word 2007 Service Pack 3", Drop: []string{"CVE-2013-3856"}},
+			{Component: "Microsoft Word 2010 Service Pack 1 (32-bit editions)", Drop: []string{"CVE-2013-3160", "CVE-2013-3851", "CVE-2013-3853", "CVE-2013-3854", "CVE-2013-3855", "CVE-2013-3856"}},
+			{Component: "Microsoft Word 2010 Service Pack 1 (64-bit editions)", Drop: []string{"CVE-2013-3160", "CVE-2013-3851", "CVE-2013-3853", "CVE-2013-3854", "CVE-2013-3855", "CVE-2013-3856"}},
+			{Component: "Microsoft Word 2010 Service Pack 2 (32-bit editions)", Drop: []string{"CVE-2013-3160", "CVE-2013-3847", "CVE-2013-3848", "CVE-2013-3849", "CVE-2013-3851", "CVE-2013-3852", "CVE-2013-3853", "CVE-2013-3854", "CVE-2013-3855", "CVE-2013-3856", "CVE-2013-3858"}},
+			{Component: "Microsoft Word 2010 Service Pack 2 (64-bit editions)", Drop: []string{"CVE-2013-3160", "CVE-2013-3847", "CVE-2013-3848", "CVE-2013-3849", "CVE-2013-3851", "CVE-2013-3852", "CVE-2013-3853", "CVE-2013-3854", "CVE-2013-3855", "CVE-2013-3856", "CVE-2013-3858"}},
 		},
 	},
 	"MS13-073": {
@@ -1911,7 +4745,9 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 	"MS13-076": {
 		CVEAdjustments: []cveAdjustment{
 			{Add: []string{"CVE-2013-1341", "CVE-2013-1342", "CVE-2013-1343", "CVE-2013-1344", "CVE-2013-3864", "CVE-2013-3865", "CVE-2013-3866"}},
-			{KB: "2876315", Drop: []string{"CVE-2013-1341"}},
+			{Component: "Windows RT", Drop: []string{"CVE-2013-1341"}},
+			{Component: "Windows Server 2012", Drop: []string{"CVE-2013-1341"}},
+			{Component: "Windows Server 2012 (Server Core installation)", Drop: []string{"CVE-2013-1341"}},
 		},
 	},
 	"MS13-077": {
@@ -1919,15 +4755,73 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2859537": {Add: []string{"2872339", "3033395"}},
 		},
 	},
+	// TODO: the per-product NA entries below come from MS13-080's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS13-080.
+	//   - Internet Explorer 10 for Windows 8 for 64-bit Systems
+	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 Windows Server 2008 for Itanium-based Systems Service Pack 2
+	//   - Internet Explorer 7 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 8 in Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
 	"MS13-080": {
 		CVEAdjustments: []cveAdjustment{
-			{KB: "2879017", Drop: []string{"CVE-2013-3872", "CVE-2013-3873", "CVE-2013-3874", "CVE-2013-3875", "CVE-2013-3882", "CVE-2013-3885", "CVE-2013-3886"}},
 			{KB: "2884101", Drop: []string{"CVE-2013-3872", "CVE-2013-3873", "CVE-2013-3874", "CVE-2013-3875", "CVE-2013-3882", "CVE-2013-3885", "CVE-2013-3886"}},
+			{Component: "Internet Explorer 6 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2013-3872", "CVE-2013-3873", "CVE-2013-3874", "CVE-2013-3875", "CVE-2013-3882", "CVE-2013-3885", "CVE-2013-3886"}},
+			{Component: "Internet Explorer 6 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2013-3872", "CVE-2013-3873", "CVE-2013-3874", "CVE-2013-3875", "CVE-2013-3882", "CVE-2013-3885", "CVE-2013-3886"}},
+			{Component: "Internet Explorer 6 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2013-3872", "CVE-2013-3873", "CVE-2013-3874", "CVE-2013-3875", "CVE-2013-3882", "CVE-2013-3885", "CVE-2013-3886"}},
+			{Component: "Internet Explorer 6 for Windows XP Service Pack 3", Drop: []string{"CVE-2013-3872", "CVE-2013-3873", "CVE-2013-3874", "CVE-2013-3875", "CVE-2013-3882", "CVE-2013-3885", "CVE-2013-3886"}},
+			{Component: "Internet Explorer 7 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2013-3872", "CVE-2013-3873", "CVE-2013-3874", "CVE-2013-3875", "CVE-2013-3882", "CVE-2013-3885", "CVE-2013-3886"}},
+			{Component: "Internet Explorer 7 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2013-3872", "CVE-2013-3873", "CVE-2013-3874", "CVE-2013-3875", "CVE-2013-3882", "CVE-2013-3885", "CVE-2013-3886"}},
+			{Component: "Internet Explorer 7 for Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2013-3872", "CVE-2013-3873", "CVE-2013-3874", "CVE-2013-3875", "CVE-2013-3882", "CVE-2013-3885", "CVE-2013-3886"}},
+			{Component: "Internet Explorer 7 for Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2013-3872", "CVE-2013-3873", "CVE-2013-3874", "CVE-2013-3875", "CVE-2013-3882", "CVE-2013-3885", "CVE-2013-3886"}},
+			{Component: "Internet Explorer 7 for Windows Vista Service Pack 2", Drop: []string{"CVE-2013-3872", "CVE-2013-3873", "CVE-2013-3874", "CVE-2013-3875", "CVE-2013-3882", "CVE-2013-3885", "CVE-2013-3886"}},
+			{Component: "Internet Explorer 7 for Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2013-3872", "CVE-2013-3873", "CVE-2013-3874", "CVE-2013-3875", "CVE-2013-3882", "CVE-2013-3885", "CVE-2013-3886"}},
+			{Component: "Internet Explorer 7 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2013-3872", "CVE-2013-3873", "CVE-2013-3874", "CVE-2013-3875", "CVE-2013-3882", "CVE-2013-3885", "CVE-2013-3886"}},
+			{Component: "Internet Explorer 7 for Windows XP Service Pack 3", Drop: []string{"CVE-2013-3872", "CVE-2013-3873", "CVE-2013-3874", "CVE-2013-3875", "CVE-2013-3882", "CVE-2013-3885", "CVE-2013-3886"}},
+			{Component: "Internet Explorer 8 for Windows 7 for 32-bit Systems Service Pack 1", Drop: []string{"CVE-2013-3872", "CVE-2013-3873", "CVE-2013-3874", "CVE-2013-3882", "CVE-2013-3885", "CVE-2013-3886"}},
+			{Component: "Internet Explorer 8 for Windows 7 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2013-3872", "CVE-2013-3873", "CVE-2013-3874", "CVE-2013-3882", "CVE-2013-3885", "CVE-2013-3886"}},
+			{Component: "Internet Explorer 8 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2013-3872", "CVE-2013-3873", "CVE-2013-3874", "CVE-2013-3882", "CVE-2013-3885", "CVE-2013-3886"}},
+			{Component: "Internet Explorer 8 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2013-3872", "CVE-2013-3873", "CVE-2013-3874", "CVE-2013-3882", "CVE-2013-3885", "CVE-2013-3886"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 R2 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2013-3872", "CVE-2013-3873", "CVE-2013-3874", "CVE-2013-3882", "CVE-2013-3885", "CVE-2013-3886"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2013-3872", "CVE-2013-3873", "CVE-2013-3874", "CVE-2013-3882", "CVE-2013-3885", "CVE-2013-3886"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2013-3872", "CVE-2013-3873", "CVE-2013-3874", "CVE-2013-3882", "CVE-2013-3885", "CVE-2013-3886"}},
+			{Component: "Internet Explorer 8 for Windows Vista Service Pack 2", Drop: []string{"CVE-2013-3872", "CVE-2013-3873", "CVE-2013-3874", "CVE-2013-3882", "CVE-2013-3885", "CVE-2013-3886"}},
+			{Component: "Internet Explorer 8 for Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2013-3872", "CVE-2013-3873", "CVE-2013-3874", "CVE-2013-3882", "CVE-2013-3885", "CVE-2013-3886"}},
+			{Component: "Internet Explorer 8 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2013-3872", "CVE-2013-3873", "CVE-2013-3874", "CVE-2013-3882", "CVE-2013-3885", "CVE-2013-3886"}},
+			{Component: "Internet Explorer 8 for Windows XP Service Pack 3", Drop: []string{"CVE-2013-3872", "CVE-2013-3873", "CVE-2013-3874", "CVE-2013-3882", "CVE-2013-3885", "CVE-2013-3886"}},
+			{Component: "Internet Explorer 9 for Windows 7 for 32-bit Systems Service Pack 1", Drop: []string{"CVE-2013-3872", "CVE-2013-3873", "CVE-2013-3882", "CVE-2013-3885"}},
+			{Component: "Internet Explorer 9 for Windows 7 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2013-3872", "CVE-2013-3873", "CVE-2013-3882", "CVE-2013-3885"}},
+			{Component: "Internet Explorer 9 for Windows Server 2008 R2 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2013-3872", "CVE-2013-3873", "CVE-2013-3882", "CVE-2013-3885"}},
+			{Component: "Internet Explorer 9 for Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2013-3872", "CVE-2013-3873", "CVE-2013-3882", "CVE-2013-3885"}},
+			{Component: "Internet Explorer 9 for Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2013-3872", "CVE-2013-3873", "CVE-2013-3882", "CVE-2013-3885"}},
+			{Component: "Internet Explorer 9 for Windows Vista Service Pack 2", Drop: []string{"CVE-2013-3872", "CVE-2013-3873", "CVE-2013-3882", "CVE-2013-3885"}},
+			{Component: "Internet Explorer 9 for Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2013-3872", "CVE-2013-3873", "CVE-2013-3882", "CVE-2013-3885"}},
+			{Component: "Internet Explorer 10 for Windows 7 for 32-bit Systems Service Pack 1", Drop: []string{"CVE-2013-3874", "CVE-2013-3875"}},
+			{Component: "Internet Explorer 10 for Windows 7 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2013-3874", "CVE-2013-3875"}},
+			{Component: "Internet Explorer 10 for Windows 8 for 32-bit Systems", Drop: []string{"CVE-2013-3874", "CVE-2013-3875"}},
+			{Component: "Internet Explorer 10 for Windows RT", Drop: []string{"CVE-2013-3874", "CVE-2013-3875"}},
+			{Component: "Internet Explorer 10 for Windows Server 2008 R2 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2013-3874", "CVE-2013-3875"}},
+			{Component: "Internet Explorer 10 for Windows Server 2012", Drop: []string{"CVE-2013-3874", "CVE-2013-3875"}},
 		},
 		IECumChain: map[string][]string{
 			"2870699": {"2879017"},
 		},
 	},
+	// TODO: the per-product NA entries below come from MS13-081's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS13-081.
+	//   - Windows 8 for 64-bit Systems
+	//   - Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
+	//   - Windows Server 2008 for Itanium-based Systems Service Pack 2
 	"MS13-081": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "2847311", Drop: []string{"CVE-2013-3200", "CVE-2013-3879", "CVE-2013-3880", "CVE-2013-3881", "CVE-2013-3888", "CVE-2013-3894"}},
@@ -1940,24 +4834,41 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2876284", Drop: []string{"CVE-2013-3128", "CVE-2013-3200", "CVE-2013-3879", "CVE-2013-3880", "CVE-2013-3881", "CVE-2013-3894"}},
 			{KB: "2883150", Drop: []string{"CVE-2013-3128", "CVE-2013-3200", "CVE-2013-3888"}},
 			{KB: "2884256", Drop: []string{"CVE-2013-3128", "CVE-2013-3879", "CVE-2013-3880", "CVE-2013-3881", "CVE-2013-3888", "CVE-2013-3894"}},
+			{Component: "Microsoft Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2013-3880", "CVE-2013-3881"}},
+			{Component: "Microsoft Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2013-3880", "CVE-2013-3881"}},
+			{Component: "Microsoft Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2013-3880", "CVE-2013-3881"}},
+			{Component: "Microsoft Windows XP Service Pack 3", Drop: []string{"CVE-2013-3880", "CVE-2013-3881"}},
+			{Component: "Windows 7 for 32-bit Systems Service Pack 1", Drop: []string{"CVE-2013-3880"}},
 			{Component: "Windows 7 for 32-bit Systems Service Pack 1", Drop: []string{"CVE-2013-3880"}},
 			{Component: "Windows 7 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2013-3880"}},
+			{Component: "Windows 7 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2013-3880"}},
+			{Component: "Windows 8 for 32-bit Systems", Drop: []string{"CVE-2013-3881"}},
 			{Component: "Windows 8 for 32-bit Systems", Drop: []string{"CVE-2013-3881"}},
 			{Component: "Windows 8 for 64-bit Systems", Drop: []string{"CVE-2013-3881"}},
+			{Component: "Windows RT", Drop: []string{"CVE-2013-3881"}},
 			{Component: "Windows RT", Drop: []string{"CVE-2013-3881"}},
 			{Component: "Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2013-3880", "CVE-2013-3881"}},
 			{Component: "Windows Server 2003 with SP2 for Itanium-based Systems", Drop: []string{"CVE-2013-3880", "CVE-2013-3881"}},
 			{Component: "Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2013-3880", "CVE-2013-3881"}},
 			{Component: "Windows Server 2008 R2 for Itanium-based Systems Service Pack 1", Drop: []string{"CVE-2013-3880"}},
 			{Component: "Windows Server 2008 R2 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2013-3880"}},
+			{Component: "Windows Server 2008 R2 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2013-3880"}},
+			{Component: "Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)", Drop: []string{"CVE-2013-3880"}},
 			{Component: "Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)", Drop: []string{"CVE-2013-3880"}},
 			{Component: "Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2013-3880", "CVE-2013-3881"}},
+			{Component: "Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2013-3880", "CVE-2013-3881"}},
+			{Component: "Windows Server 2008 for 32-bit Systems Service Pack 2 (Server Core installation)", Drop: []string{"CVE-2013-3880", "CVE-2013-3881"}},
 			{Component: "Windows Server 2008 for 32-bit Systems Service Pack 2 (Server Core installation)", Drop: []string{"CVE-2013-3880", "CVE-2013-3881"}},
 			{Component: "Windows Server 2008 for Itanium-based Systems Service Pack 2", Drop: []string{"CVE-2013-3880", "CVE-2013-3881"}},
 			{Component: "Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2013-3880", "CVE-2013-3881"}},
+			{Component: "Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2013-3880", "CVE-2013-3881"}},
+			{Component: "Windows Server 2012", Drop: []string{"CVE-2013-3881"}},
 			{Component: "Windows Server 2012", Drop: []string{"CVE-2013-3881"}},
 			{Component: "Windows Server 2012 (Server Core installation)", Drop: []string{"CVE-2013-3881"}},
+			{Component: "Windows Server 2012 (Server Core installation)", Drop: []string{"CVE-2013-3881"}},
 			{Component: "Windows Vista Service Pack 2", Drop: []string{"CVE-2013-3880", "CVE-2013-3881"}},
+			{Component: "Windows Vista Service Pack 2", Drop: []string{"CVE-2013-3880", "CVE-2013-3881"}},
+			{Component: "Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2013-3880", "CVE-2013-3881"}},
 			{Component: "Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2013-3880", "CVE-2013-3881"}},
 			{Component: "Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2013-3880", "CVE-2013-3881"}},
 			{Component: "Windows XP Service Pack 3", Drop: []string{"CVE-2013-3880", "CVE-2013-3881"}},
@@ -1983,7 +4894,14 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2863253", Drop: []string{"CVE-2013-3128"}},
 		},
 	},
-	"MS13-084": {CVEAdjustments: []cveAdjustment{{KB: "2885089", Drop: []string{"CVE-2013-3889", "CVE-2013-3895"}}}},
+	// TODO: the per-product NA entries below come from MS13-084's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS13-084.
+	//   - Microsoft SharePoint Server 2013
 	"MS13-085": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "2760585", Drop: []string{"CVE-2013-3890"}},
@@ -2003,28 +4921,177 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2827330", Drop: []string{"CVE-2013-3891"}},
 		},
 	},
+	// TODO: the per-product NA entries below come from MS13-088's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS13-088.
+	//   - Internet Explorer 11 for Windows 8.1 for 32-bit Systems
+	//   - Internet Explorer 11 for Windows 8.1 for x64-based Systems
+	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 Windows Server 2008 for Itanium-based Systems Service Pack 2
+	//   - Internet Explorer 7 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 8 in Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
 	"MS13-088": {
 		CVEAdjustments: []cveAdjustment{
-			{KB: "2888505", Drop: []string{"CVE-2013-3871", "CVE-2013-3908", "CVE-2013-3909", "CVE-2013-3910", "CVE-2013-3911", "CVE-2013-3912", "CVE-2013-3914", "CVE-2013-3916"}},
+			{Component: "Internet Explorer 6 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2013-3911", "CVE-2013-3912", "CVE-2013-3914", "CVE-2013-3916"}},
+			{Component: "Internet Explorer 6 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2013-3911", "CVE-2013-3912", "CVE-2013-3914", "CVE-2013-3916"}},
+			{Component: "Internet Explorer 6 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2013-3911", "CVE-2013-3912", "CVE-2013-3914", "CVE-2013-3916"}},
+			{Component: "Internet Explorer 6 for Windows XP Service Pack 3", Drop: []string{"CVE-2013-3911", "CVE-2013-3912", "CVE-2013-3914", "CVE-2013-3916"}},
+			{Component: "Internet Explorer 7 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2013-3911", "CVE-2013-3912", "CVE-2013-3914", "CVE-2013-3916"}},
+			{Component: "Internet Explorer 7 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2013-3911", "CVE-2013-3912", "CVE-2013-3914", "CVE-2013-3916"}},
+			{Component: "Internet Explorer 7 for Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2013-3911", "CVE-2013-3912", "CVE-2013-3914", "CVE-2013-3916"}},
+			{Component: "Internet Explorer 7 for Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2013-3911", "CVE-2013-3912", "CVE-2013-3914", "CVE-2013-3916"}},
+			{Component: "Internet Explorer 7 for Windows Vista Service Pack 2", Drop: []string{"CVE-2013-3911", "CVE-2013-3912", "CVE-2013-3914", "CVE-2013-3916"}},
+			{Component: "Internet Explorer 7 for Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2013-3911", "CVE-2013-3912", "CVE-2013-3914", "CVE-2013-3916"}},
+			{Component: "Internet Explorer 7 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2013-3911", "CVE-2013-3912", "CVE-2013-3914", "CVE-2013-3916"}},
+			{Component: "Internet Explorer 7 for Windows XP Service Pack 3", Drop: []string{"CVE-2013-3911", "CVE-2013-3912", "CVE-2013-3914", "CVE-2013-3916"}},
+			{Component: "Internet Explorer 8 for Windows 7 for 32-bit Systems Service Pack 1", Drop: []string{"CVE-2013-3911", "CVE-2013-3914"}},
+			{Component: "Internet Explorer 8 for Windows 7 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2013-3911", "CVE-2013-3914"}},
+			{Component: "Internet Explorer 8 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2013-3911", "CVE-2013-3914"}},
+			{Component: "Internet Explorer 8 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2013-3911", "CVE-2013-3914"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 R2 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2013-3911", "CVE-2013-3914"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2013-3911", "CVE-2013-3914"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2013-3911", "CVE-2013-3914"}},
+			{Component: "Internet Explorer 8 for Windows Vista Service Pack 2", Drop: []string{"CVE-2013-3911", "CVE-2013-3914"}},
+			{Component: "Internet Explorer 8 for Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2013-3911", "CVE-2013-3914"}},
+			{Component: "Internet Explorer 8 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2013-3911", "CVE-2013-3914"}},
+			{Component: "Internet Explorer 8 for Windows XP Service Pack 3", Drop: []string{"CVE-2013-3911", "CVE-2013-3914"}},
+			{Component: "Internet Explorer 9 for Windows 7 for 32-bit Systems Service Pack 1", Drop: []string{"CVE-2013-3909"}},
+			{Component: "Internet Explorer 9 for Windows 7 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2013-3909"}},
+			{Component: "Internet Explorer 9 for Windows Server 2008 R2 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2013-3909"}},
+			{Component: "Internet Explorer 9 for Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2013-3909"}},
+			{Component: "Internet Explorer 9 for Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2013-3909"}},
+			{Component: "Internet Explorer 9 for Windows Vista Service Pack 2", Drop: []string{"CVE-2013-3909"}},
+			{Component: "Internet Explorer 9 for Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2013-3909"}},
+			{Component: "Internet Explorer 10 for Windows 7 for 32-bit Systems Service Pack 1", Drop: []string{"CVE-2013-3909", "CVE-2013-3910"}},
+			{Component: "Internet Explorer 10 for Windows 7 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2013-3909", "CVE-2013-3910"}},
+			{Component: "Internet Explorer 10 for Windows 8 for 32-bit Systems", Drop: []string{"CVE-2013-3909", "CVE-2013-3910"}},
+			{Component: "Internet Explorer 10 for Windows 8 for x64-based Systems", Drop: []string{"CVE-2013-3909", "CVE-2013-3910"}},
+			{Component: "Internet Explorer 10 for Windows RT", Drop: []string{"CVE-2013-3909", "CVE-2013-3910"}},
+			{Component: "Internet Explorer 10 for Windows Server 2008 R2 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2013-3909", "CVE-2013-3910"}},
+			{Component: "Internet Explorer 10 for Windows Server 2012", Drop: []string{"CVE-2013-3909", "CVE-2013-3910"}},
+			{Component: "Internet Explorer 11 for Windows RT 8.1", Drop: []string{"CVE-2013-3871", "CVE-2013-3908", "CVE-2013-3909", "CVE-2013-3910", "CVE-2013-3911"}},
+			{Component: "Internet Explorer 11 for Windows Server 2012 R2", Drop: []string{"CVE-2013-3871", "CVE-2013-3908", "CVE-2013-3909", "CVE-2013-3910", "CVE-2013-3911"}},
 		},
 		IECumChain: map[string][]string{
 			"2879017": {"2888505"},
 			"2884101": {"2888505"},
 		},
 	},
-	"MS13-091": {CVEAdjustments: []cveAdjustment{{KB: "2885093", Drop: []string{"CVE-2013-0082", "CVE-2013-1324", "CVE-2013-1325"}}}},
+	"MS13-091": {
+		CVEAdjustments: []cveAdjustment{
+			{Component: "Microsoft Office 2010 Service Pack 1 (32-bit editions)", Drop: []string{"CVE-2013-0082", "CVE-2013-1325"}},
+			{Component: "Microsoft Office 2010 Service Pack 1 (64-bit editions)", Drop: []string{"CVE-2013-0082", "CVE-2013-1325"}},
+			{Component: "Microsoft Office 2010 Service Pack 2 (32-bit editions)", Drop: []string{"CVE-2013-0082", "CVE-2013-1324", "CVE-2013-1325"}},
+			{Component: "Microsoft Office 2010 Service Pack 2 (64-bit editions)", Drop: []string{"CVE-2013-0082", "CVE-2013-1324", "CVE-2013-1325"}},
+			{Component: "Microsoft Office 2013 (32-bit editions)", Drop: []string{"CVE-2013-0082", "CVE-2013-1325"}},
+			{Component: "Microsoft Office 2013 (64-bit editions)", Drop: []string{"CVE-2013-0082", "CVE-2013-1325"}},
+			{Component: "Microsoft Office 2013 RT", Drop: []string{"CVE-2013-0082", "CVE-2013-1325"}},
+		},
+	},
+	// TODO: the per-product NA entries below come from MS13-097's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS13-097.
+	//   - Internet Explorer 11 for Windows 8.1 for 32-bit Systems
+	//   - Internet Explorer 11 for Windows 8.1 for x64-based Systems
+	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 7 Windows Server 2008 for Itanium-based Systems Service Pack 2
+	//   - Internet Explorer 7 for Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Internet Explorer 8 in Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
 	"MS13-097": {
 		CVEAdjustments: []cveAdjustment{
-			{KB: "2898785", Drop: []string{"CVE-2013-5045", "CVE-2013-5046", "CVE-2013-5049", "CVE-2013-5051", "CVE-2013-5052"}},
+			{Component: "Internet Explorer 6 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2013-5045", "CVE-2013-5046", "CVE-2013-5051", "CVE-2013-5052"}},
+			{Component: "Internet Explorer 6 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2013-5045", "CVE-2013-5046", "CVE-2013-5051", "CVE-2013-5052"}},
+			{Component: "Internet Explorer 6 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2013-5045", "CVE-2013-5046", "CVE-2013-5051", "CVE-2013-5052"}},
+			{Component: "Internet Explorer 6 for Windows XP Service Pack 3", Drop: []string{"CVE-2013-5045", "CVE-2013-5046", "CVE-2013-5051", "CVE-2013-5052"}},
+			{Component: "Internet Explorer 7 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2013-5045", "CVE-2013-5051"}},
+			{Component: "Internet Explorer 7 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2013-5045", "CVE-2013-5051"}},
+			{Component: "Internet Explorer 7 for Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2013-5045", "CVE-2013-5051"}},
+			{Component: "Internet Explorer 7 for Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2013-5045", "CVE-2013-5051"}},
+			{Component: "Internet Explorer 7 for Windows Vista Service Pack 2", Drop: []string{"CVE-2013-5045", "CVE-2013-5051"}},
+			{Component: "Internet Explorer 7 for Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2013-5045", "CVE-2013-5051"}},
+			{Component: "Internet Explorer 7 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2013-5045", "CVE-2013-5051"}},
+			{Component: "Internet Explorer 7 for Windows XP Service Pack 3", Drop: []string{"CVE-2013-5045", "CVE-2013-5051"}},
+			{Component: "Internet Explorer 8 for Windows 7 for 32-bit Systems Service Pack 1", Drop: []string{"CVE-2013-5045", "CVE-2013-5051", "CVE-2013-5052"}},
+			{Component: "Internet Explorer 8 for Windows 7 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2013-5045", "CVE-2013-5051", "CVE-2013-5052"}},
+			{Component: "Internet Explorer 8 for Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2013-5045", "CVE-2013-5051", "CVE-2013-5052"}},
+			{Component: "Internet Explorer 8 for Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2013-5045", "CVE-2013-5051", "CVE-2013-5052"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 R2 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2013-5045", "CVE-2013-5051", "CVE-2013-5052"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2013-5045", "CVE-2013-5051", "CVE-2013-5052"}},
+			{Component: "Internet Explorer 8 for Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2013-5045", "CVE-2013-5051", "CVE-2013-5052"}},
+			{Component: "Internet Explorer 8 for Windows Vista Service Pack 2", Drop: []string{"CVE-2013-5045", "CVE-2013-5051", "CVE-2013-5052"}},
+			{Component: "Internet Explorer 8 for Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2013-5045", "CVE-2013-5051", "CVE-2013-5052"}},
+			{Component: "Internet Explorer 8 for Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2013-5045", "CVE-2013-5051", "CVE-2013-5052"}},
+			{Component: "Internet Explorer 8 for Windows XP Service Pack 3", Drop: []string{"CVE-2013-5045", "CVE-2013-5051", "CVE-2013-5052"}},
+			{Component: "Internet Explorer 9 for Windows 7 for 32-bit Systems Service Pack 1", Drop: []string{"CVE-2013-5045", "CVE-2013-5051", "CVE-2013-5052"}},
+			{Component: "Internet Explorer 9 for Windows 7 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2013-5045", "CVE-2013-5051", "CVE-2013-5052"}},
+			{Component: "Internet Explorer 9 for Windows Server 2008 R2 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2013-5045", "CVE-2013-5051", "CVE-2013-5052"}},
+			{Component: "Internet Explorer 9 for Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2013-5045", "CVE-2013-5051", "CVE-2013-5052"}},
+			{Component: "Internet Explorer 9 for Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2013-5045", "CVE-2013-5051", "CVE-2013-5052"}},
+			{Component: "Internet Explorer 9 for Windows Vista Service Pack 2", Drop: []string{"CVE-2013-5045", "CVE-2013-5051", "CVE-2013-5052"}},
+			{Component: "Internet Explorer 9 for Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2013-5045", "CVE-2013-5051", "CVE-2013-5052"}},
+			{Component: "Internet Explorer 10 for Windows 7 for 32-bit Systems Service Pack 1", Drop: []string{"CVE-2013-5049", "CVE-2013-5052"}},
+			{Component: "Internet Explorer 10 for Windows 7 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2013-5049", "CVE-2013-5052"}},
+			{Component: "Internet Explorer 10 for Windows 8 for 32-bit Systems", Drop: []string{"CVE-2013-5049", "CVE-2013-5052"}},
+			{Component: "Internet Explorer 10 for Windows 8 for x64-based Systems", Drop: []string{"CVE-2013-5049", "CVE-2013-5052"}},
+			{Component: "Internet Explorer 10 for Windows RT", Drop: []string{"CVE-2013-5049", "CVE-2013-5052"}},
+			{Component: "Internet Explorer 10 for Windows Server 2008 R2 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2013-5049", "CVE-2013-5052"}},
+			{Component: "Internet Explorer 10 for Windows Server 2012", Drop: []string{"CVE-2013-5049", "CVE-2013-5052"}},
+			{Component: "Internet Explorer 11 for Windows 7 for 32-bit Systems Service Pack 1", Drop: []string{"CVE-2013-5049", "CVE-2013-5052"}},
+			{Component: "Internet Explorer 11 for Windows 7 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2013-5049", "CVE-2013-5052"}},
+			{Component: "Internet Explorer 11 for Windows RT 8.1", Drop: []string{"CVE-2013-5049", "CVE-2013-5052"}},
+			{Component: "Internet Explorer 11 for Windows Server 2008 R2 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2013-5049", "CVE-2013-5052"}},
+			{Component: "Internet Explorer 11 for Windows Server 2012 R2", Drop: []string{"CVE-2013-5049", "CVE-2013-5052"}},
 		},
 		IECumChain: map[string][]string{
 			"2888505": {"2898785"},
 		},
 	},
+	// TODO: the per-product NA entries below come from MS13-101's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS13-101.
+	//   - Windows 8.1 for 32-bit Systems
+	//   - Windows 8.1 for x64-based Systems
+	//   - Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
+	//   - Windows Server 2008 for Itanium-based Systems Service Pack 2
+	//   - Windows Server 2012 (server core installation)
 	"MS13-101": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "2887069", Drop: []string{"CVE-2013-3899", "CVE-2013-3902", "CVE-2013-3903", "CVE-2013-5058"}},
 			{KB: "2893984", Drop: []string{"CVE-2013-3907"}},
+			{Component: "Microsoft Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2013-3902", "CVE-2013-3903"}},
+			{Component: "Microsoft Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2013-3902", "CVE-2013-3903"}},
+			{Component: "Microsoft Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2013-3902", "CVE-2013-3903"}},
+			{Component: "Microsoft Windows XP Service Pack 3", Drop: []string{"CVE-2013-3902", "CVE-2013-3903"}},
+			{Component: "Windows 7 for 32-bit Systems Service Pack 1", Drop: []string{"CVE-2013-3899", "CVE-2013-3903"}},
+			{Component: "Windows 7 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2013-3899", "CVE-2013-3903"}},
+			{Component: "Windows 8 for 32-bit Systems", Drop: []string{"CVE-2013-3899", "CVE-2013-3902"}},
+			{Component: "Windows 8 for x64-based Systems", Drop: []string{"CVE-2013-3899", "CVE-2013-3902"}},
+			{Component: "Windows RT", Drop: []string{"CVE-2013-3899", "CVE-2013-3902", "CVE-2013-5058"}},
+			{Component: "Windows RT 8.1", Drop: []string{"CVE-2013-3899", "CVE-2013-3902", "CVE-2013-5058"}},
+			{Component: "Windows Server 2008 R2 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2013-3899", "CVE-2013-3903"}},
+			{Component: "Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)", Drop: []string{"CVE-2013-3899", "CVE-2013-3903"}},
+			{Component: "Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2013-3899", "CVE-2013-3902", "CVE-2013-3903"}},
+			{Component: "Windows Server 2008 for 32-bit Systems Service Pack 2 (Server Core installation)", Drop: []string{"CVE-2013-3899", "CVE-2013-3902", "CVE-2013-3903"}},
+			{Component: "Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2013-3899", "CVE-2013-3902", "CVE-2013-3903"}},
+			{Component: "Windows Server 2008 for x64-based Systems Service Pack 2 (Server Core installation)", Drop: []string{"CVE-2013-3899", "CVE-2013-3902", "CVE-2013-3903"}},
+			{Component: "Windows Server 2012", Drop: []string{"CVE-2013-3899", "CVE-2013-3902"}},
+			{Component: "Windows Server 2012 R2", Drop: []string{"CVE-2013-3899", "CVE-2013-3902"}},
+			{Component: "Windows Server 2012 R2 (server core installation)", Drop: []string{"CVE-2013-3899", "CVE-2013-3902"}},
+			{Component: "Windows Vista Service Pack 2", Drop: []string{"CVE-2013-3899", "CVE-2013-3902", "CVE-2013-3903"}},
+			{Component: "Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2013-3899", "CVE-2013-3902", "CVE-2013-3903"}},
 		},
 	},
 	"MS13-105": {
@@ -2038,7 +5105,14 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 	"MS14-001": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "2863867", Drop: []string{"CVE-2014-0259"}},
-			{KB: "2916605", Drop: []string{"CVE-2014-0258", "CVE-2014-0259"}},
+			{Component: "Microsoft Word 2003 Service Pack 3", Drop: []string{"CVE-2014-0259"}},
+			{Component: "Microsoft Word 2010 Service Pack 1 (32-bit editions)", Drop: []string{"CVE-2014-0258", "CVE-2014-0259"}},
+			{Component: "Microsoft Word 2010 Service Pack 1 (64-bit editions)", Drop: []string{"CVE-2014-0258", "CVE-2014-0259"}},
+			{Component: "Microsoft Word 2010 Service Pack 2 (32-bit editions)", Drop: []string{"CVE-2014-0258", "CVE-2014-0259"}},
+			{Component: "Microsoft Word 2010 Service Pack 2 (64-bit editions)", Drop: []string{"CVE-2014-0258", "CVE-2014-0259"}},
+			{Component: "Microsoft Word 2013 (32-bit editions)", Drop: []string{"CVE-2014-0258", "CVE-2014-0259"}},
+			{Component: "Microsoft Word 2013 (64-bit editions)", Drop: []string{"CVE-2014-0258", "CVE-2014-0259"}},
+			{Component: "Microsoft Word 2013 RT", Drop: []string{"CVE-2014-0258", "CVE-2014-0259"}},
 		},
 	},
 	"MS14-009": {
@@ -2072,6 +5146,19 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2911502", Drop: []string{"CVE-2014-0253", "CVE-2014-0257"}},
 		},
 	},
+	// TODO: the per-product NA entries below come from MS14-010's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS14-010.
+	//   - Internet Explorer 10
+	//   - Internet Explorer 11
+	//   - Internet Explorer 6
+	//   - Internet Explorer 7
+	//   - Internet Explorer 8
+	//   - Internet Explorer 9
 	"MS14-010": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 6", Drop: []string{"CVE-2014-0267", "CVE-2014-0268", "CVE-2014-0270", "CVE-2014-0272", "CVE-2014-0273", "CVE-2014-0274", "CVE-2014-0276", "CVE-2014-0277", "CVE-2014-0278", "CVE-2014-0279", "CVE-2014-0281", "CVE-2014-0283", "CVE-2014-0284", "CVE-2014-0287", "CVE-2014-0288", "CVE-2014-0289", "CVE-2014-0290", "CVE-2014-0293"}},
@@ -2085,6 +5172,19 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2898785": {"2909921"},
 		},
 	},
+	// TODO: the per-product NA entries below come from MS14-012's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS14-012.
+	//   - Internet Explorer 10
+	//   - Internet Explorer 11
+	//   - Internet Explorer 6
+	//   - Internet Explorer 7
+	//   - Internet Explorer 8
+	//   - Internet Explorer 9
 	"MS14-012": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 6", Drop: []string{"CVE-2014-0297", "CVE-2014-0298", "CVE-2014-0304", "CVE-2014-0306", "CVE-2014-0307", "CVE-2014-0308", "CVE-2014-0309", "CVE-2014-0312", "CVE-2014-0313", "CVE-2014-0314", "CVE-2014-0321", "CVE-2014-0322", "CVE-2014-0324", "CVE-2014-4112"}},
@@ -2105,7 +5205,6 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2878236", Drop: []string{"CVE-2014-1758"}},
 			{KB: "2878304", Drop: []string{"CVE-2014-1757", "CVE-2014-1758"}},
 			{KB: "2939132", Drop: []string{"CVE-2014-1757", "CVE-2014-1758"}},
-			{KB: "2949660", Drop: []string{"CVE-2014-1757", "CVE-2014-1758"}},
 		},
 		Supersedes: map[string]supersedesAdjust{
 			"2837615": {Add: []string{"2878236"}},
@@ -2113,6 +5212,19 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2889496": {Add: []string{"2939132"}},
 		},
 	},
+	// TODO: the per-product NA entries below come from MS14-018's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS14-018.
+	//   - Internet Explorer 10
+	//   - Internet Explorer 11
+	//   - Internet Explorer 6
+	//   - Internet Explorer 7
+	//   - Internet Explorer 8
+	//   - Internet Explorer 9
 	"MS14-018": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 6", Drop: []string{"CVE-2014-0325", "CVE-2014-1751", "CVE-2014-1755", "CVE-2014-1760"}},
@@ -2141,7 +5253,6 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2863829", Drop: []string{"CVE-2014-1813"}},
 			{KB: "2863836", Drop: []string{"CVE-2014-1754", "CVE-2014-1813"}},
 			{KB: "2863854", Drop: []string{"CVE-2014-1813"}},
-			{KB: "2952166", Drop: []string{"CVE-2014-1754", "CVE-2014-1813"}},
 		},
 	},
 	"MS14-023": {
@@ -2152,7 +5263,20 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2880463", Drop: []string{"CVE-2014-1808"}},
 		},
 	},
-	"MS14-028": {CVEAdjustments: []cveAdjustment{{KB: "2962073", Drop: []string{"CVE-2014-0256"}}}},
+	// TODO: the per-product NA entries below come from MS14-028's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS14-028.
+	//   - Windows Server 2012 R2 (Server Core installation)
+	"MS14-028": {
+		CVEAdjustments: []cveAdjustment{
+			{KB: "2962073", Drop: []string{"CVE-2014-0256"}},
+			{Component: "Windows Server 2012 R2", Drop: []string{"CVE-2014-0256"}},
+		},
+	},
 	"MS14-029": {
 		Supersedes: map[string]supersedesAdjust{
 			"2936068": {Add: []string{"2953522", "2961851"}},
@@ -2164,6 +5288,19 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2964444": {"2953522"},
 		},
 	},
+	// TODO: the per-product NA entries below come from MS14-035's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS14-035.
+	//   - Internet Explorer 10
+	//   - Internet Explorer 11
+	//   - Internet Explorer 6
+	//   - Internet Explorer 7
+	//   - Internet Explorer 8
+	//   - Internet Explorer 9
 	"MS14-035": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 6", Drop: []string{"CVE-2014-1764", "CVE-2014-1766", "CVE-2014-1769", "CVE-2014-1772", "CVE-2014-1773", "CVE-2014-1774", "CVE-2014-1777", "CVE-2014-1778", "CVE-2014-1780", "CVE-2014-1781", "CVE-2014-1782", "CVE-2014-1783", "CVE-2014-1784", "CVE-2014-1785", "CVE-2014-1786", "CVE-2014-1788", "CVE-2014-1789", "CVE-2014-1790", "CVE-2014-1791", "CVE-2014-1792", "CVE-2014-1794", "CVE-2014-1795", "CVE-2014-1797", "CVE-2014-1800", "CVE-2014-1802", "CVE-2014-1804", "CVE-2014-1805", "CVE-2014-2753", "CVE-2014-2754", "CVE-2014-2755", "CVE-2014-2756", "CVE-2014-2758", "CVE-2014-2759", "CVE-2014-2760", "CVE-2014-2761", "CVE-2014-2763", "CVE-2014-2764", "CVE-2014-2765", "CVE-2014-2766", "CVE-2014-2769", "CVE-2014-2770", "CVE-2014-2771", "CVE-2014-2772", "CVE-2014-2775", "CVE-2014-2776", "CVE-2014-2777", "CVE-2014-2782"}},
@@ -2182,6 +5319,19 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2961851": {"2957689"},
 		},
 	},
+	// TODO: the per-product NA entries below come from MS14-037's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS14-037.
+	//   - Internet Explorer 10
+	//   - Internet Explorer 11
+	//   - Internet Explorer 6
+	//   - Internet Explorer 7
+	//   - Internet Explorer 8
+	//   - Internet Explorer 9
 	"MS14-037": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 6", Drop: []string{"CVE-2014-1763", "CVE-2014-2783", "CVE-2014-2785", "CVE-2014-2786", "CVE-2014-2787", "CVE-2014-2789", "CVE-2014-2790", "CVE-2014-2791", "CVE-2014-2792", "CVE-2014-2795", "CVE-2014-2798", "CVE-2014-2801", "CVE-2014-2802", "CVE-2014-2803", "CVE-2014-2804", "CVE-2014-2806", "CVE-2014-2813", "CVE-2014-4066"}},
@@ -2205,7 +5355,7 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2977315", Drop: []string{"CVE-2014-4061"}},
 			{KB: "2977320", Drop: []string{"CVE-2014-1820"}},
 			{KB: "2977321", Drop: []string{"CVE-2014-1820"}},
-			{KB: "2977326", Drop: []string{"CVE-2014-1820"}},
+			{Component: "Microsoft SQL Server 2012 for 32-bit Systems Service Pack 1", Drop: []string{"CVE-2014-1820"}},
 		},
 		Supersedes: map[string]supersedesAdjust{
 			"2716435": {Add: []string{"2977322"}},
@@ -2223,6 +5373,19 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 	},
 	// MS14-051: off-by-3 of CVE-2014-2796 — drop, 2796 already in xlsx.
 	// CVE-2014-2799 appears in MS14-052's markdown.
+	// TODO: the per-product NA entries below come from MS14-051's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS14-051.
+	//   - Internet Explorer 10
+	//   - Internet Explorer 11
+	//   - Internet Explorer 6
+	//   - Internet Explorer 7
+	//   - Internet Explorer 8
+	//   - Internet Explorer 9
 	"MS14-051": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 6", Drop: []string{"CVE-2014-2784", "CVE-2014-2796", "CVE-2014-2808", "CVE-2014-2810", "CVE-2014-2811", "CVE-2014-2818", "CVE-2014-2819", "CVE-2014-2821", "CVE-2014-2822", "CVE-2014-2823", "CVE-2014-2824", "CVE-2014-2825", "CVE-2014-4050", "CVE-2014-4051", "CVE-2014-4052", "CVE-2014-4055", "CVE-2014-4056", "CVE-2014-4057", "CVE-2014-4058", "CVE-2014-4067", "CVE-2014-4145", "CVE-2014-6354", "CVE-2014-8985"}},
@@ -2241,6 +5404,19 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2963952": {"2976627"},
 		},
 	},
+	// TODO: the per-product NA entries below come from MS14-052's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS14-052.
+	//   - Internet Explorer 10
+	//   - Internet Explorer 11
+	//   - Internet Explorer 6
+	//   - Internet Explorer 7
+	//   - Internet Explorer 8
+	//   - Internet Explorer 9
 	"MS14-052": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 6", Drop: []string{"CVE-2014-4080", "CVE-2014-4084", "CVE-2014-4087", "CVE-2014-4089", "CVE-2014-4091", "CVE-2014-4092", "CVE-2014-4093", "CVE-2014-4095", "CVE-2014-4096", "CVE-2014-4098", "CVE-2014-4099", "CVE-2014-4101", "CVE-2014-4102"}},
@@ -2268,6 +5444,19 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2992965", Drop: []string{"CVE-2014-4070", "CVE-2014-4071"}},
 		},
 	},
+	// TODO: the per-product NA entries below come from MS14-056's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS14-056.
+	//   - Internet Explorer 10
+	//   - Internet Explorer 11
+	//   - Internet Explorer 6
+	//   - Internet Explorer 7
+	//   - Internet Explorer 8
+	//   - Internet Explorer 9
 	"MS14-056": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 6", Drop: []string{"CVE-2014-4123", "CVE-2014-4124", "CVE-2014-4126", "CVE-2014-4129", "CVE-2014-4130", "CVE-2014-4132", "CVE-2014-4138", "CVE-2014-4140", "CVE-2014-4141"}},
@@ -2312,6 +5501,19 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 		},
 	},
 	"MS14-064": {CVEAdjustments: []cveAdjustment{{KB: "3006226", Drop: []string{"CVE-2014-6352"}}}},
+	// TODO: the per-product NA entries below come from MS14-065's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS14-065.
+	//   - Internet Explorer 10
+	//   - Internet Explorer 11
+	//   - Internet Explorer 6
+	//   - Internet Explorer 7
+	//   - Internet Explorer 8
+	//   - Internet Explorer 9
 	"MS14-065": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 6", Drop: []string{"CVE-2014-6323", "CVE-2014-6337", "CVE-2014-6339", "CVE-2014-6342", "CVE-2014-6343", "CVE-2014-6344", "CVE-2014-6345", "CVE-2014-6346", "CVE-2014-6347", "CVE-2014-6348", "CVE-2014-6349", "CVE-2014-6350", "CVE-2014-6351"}},
@@ -2333,6 +5535,19 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2996150", Drop: []string{"CVE-2014-6325", "CVE-2014-6326", "CVE-2014-6336"}},
 		},
 	},
+	// TODO: the per-product NA entries below come from MS14-080's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS14-080.
+	//   - Internet Explorer 10
+	//   - Internet Explorer 11
+	//   - Internet Explorer 6
+	//   - Internet Explorer 7
+	//   - Internet Explorer 8
+	//   - Internet Explorer 9
 	"MS14-080": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 6", Drop: []string{"CVE-2014-6327", "CVE-2014-6328", "CVE-2014-6329", "CVE-2014-6330", "CVE-2014-6363", "CVE-2014-6365", "CVE-2014-6368", "CVE-2014-6369", "CVE-2014-6373", "CVE-2014-6375", "CVE-2014-6376"}},
@@ -2352,14 +5567,18 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2899518", Drop: []string{"CVE-2014-6356"}},
 			{KB: "2899581", Drop: []string{"CVE-2014-6356"}},
 			{KB: "2920729", Drop: []string{"CVE-2014-6356"}},
-			{KB: "3017301", Drop: []string{"CVE-2014-6356", "CVE-2014-6357"}},
 			{KB: "3018888", Drop: []string{"CVE-2014-6356"}},
 		},
 	},
 	"MS14-083": {
 		CVEAdjustments: []cveAdjustment{
-			{KB: "2920791", Drop: []string{"CVE-2014-6361", "CVE-2015-0064", "CVE-2015-0065"}},
-			{KB: "3017347", Drop: []string{"CVE-2014-6360"}},
+			{KB: "2920791", Drop: []string{"CVE-2014-6361"}},
+			{Component: "Microsoft Excel 2013 (32-bit editions)", Drop: []string{"CVE-2014-6360"}},
+			{Component: "Microsoft Excel 2013 (64-bit editions)", Drop: []string{"CVE-2014-6360"}},
+			{Component: "Microsoft Excel 2013 RT", Drop: []string{"CVE-2014-6360"}},
+			{Component: "Microsoft Excel 2013 RT Service Pack 1", Drop: []string{"CVE-2014-6360"}},
+			{Component: "Microsoft Excel 2013 Service Pack 1 (32-bit editions)", Drop: []string{"CVE-2014-6360"}},
+			{Component: "Microsoft Excel 2013 Service Pack 1 (64-bit editions)", Drop: []string{"CVE-2014-6360"}},
 		},
 	},
 	"MS14-084": {
@@ -2369,6 +5588,19 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2909213": {Override: []string{"3012168"}},
 		},
 	},
+	// TODO: the per-product NA entries below come from MS15-009's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS15-009.
+	//   - Internet Explorer 10
+	//   - Internet Explorer 11
+	//   - Internet Explorer 6
+	//   - Internet Explorer 7
+	//   - Internet Explorer 8
+	//   - Internet Explorer 9
 	"MS15-009": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 6", Drop: []string{"CVE-2014-8967", "CVE-2015-0018", "CVE-2015-0019", "CVE-2015-0023", "CVE-2015-0025", "CVE-2015-0027", "CVE-2015-0028", "CVE-2015-0035", "CVE-2015-0037", "CVE-2015-0038", "CVE-2015-0039", "CVE-2015-0040", "CVE-2015-0042", "CVE-2015-0043", "CVE-2015-0044", "CVE-2015-0046", "CVE-2015-0048", "CVE-2015-0049", "CVE-2015-0050", "CVE-2015-0051", "CVE-2015-0052", "CVE-2015-0054", "CVE-2015-0055", "CVE-2015-0066", "CVE-2015-0068", "CVE-2015-0069", "CVE-2015-0071"}},
@@ -2396,7 +5628,7 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 		CVEAdjustments: []cveAdjustment{
 			{KB: "2920753", Drop: []string{"CVE-2015-0064", "CVE-2015-0065"}},
 			{KB: "2920788", Drop: []string{"CVE-2015-0064", "CVE-2015-0065"}},
-			{KB: "2920791", Drop: []string{"CVE-2014-6361", "CVE-2015-0064", "CVE-2015-0065"}},
+			{KB: "2920791", Drop: []string{"CVE-2015-0064", "CVE-2015-0065"}},
 			{KB: "2920810", Drop: []string{"CVE-2015-0063", "CVE-2015-0065"}},
 			{KB: "2956058", Drop: []string{"CVE-2015-0063", "CVE-2015-0065"}},
 			{KB: "2956066", Drop: []string{"CVE-2015-0063", "CVE-2015-0065"}},
@@ -2416,6 +5648,19 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2956097": {"2956098"},
 		},
 	},
+	// TODO: the per-product NA entries below come from MS15-018's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS15-018.
+	//   - Internet Explorer 10
+	//   - Internet Explorer 11
+	//   - Internet Explorer 6
+	//   - Internet Explorer 7
+	//   - Internet Explorer 8
+	//   - Internet Explorer 9
 	"MS15-018": {
 		CVEAdjustments: []cveAdjustment{
 			{Add: []string{"CVE-2015-0032", "CVE-2015-0056", "CVE-2015-0072", "CVE-2015-0099", "CVE-2015-0100", "CVE-2015-1622", "CVE-2015-1623", "CVE-2015-1624", "CVE-2015-1625", "CVE-2015-1626", "CVE-2015-1627", "CVE-2015-1634"}},
@@ -2452,13 +5697,72 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2956188", Drop: []string{"CVE-2015-0085", "CVE-2015-0097", "CVE-2015-1633", "CVE-2015-1636"}},
 			{KB: "2956189", Drop: []string{"CVE-2015-0086", "CVE-2015-0097", "CVE-2015-1633", "CVE-2015-1636"}},
 			{KB: "2984939", Drop: []string{"CVE-2015-0086", "CVE-2015-0097", "CVE-2015-1633", "CVE-2015-1636"}},
-			{KB: "3038999", Drop: []string{"CVE-2015-0086", "CVE-2015-0097", "CVE-2015-1633", "CVE-2015-1636"}},
 		},
 		Supersedes: map[string]supersedesAdjust{
 			"2956058": {Override: []string{"2956138"}},
 		},
 	},
-	"MS15-025": {CVEAdjustments: []cveAdjustment{{KB: "3038680", Drop: []string{"CVE-2015-0073"}}}},
+	// TODO: the per-product NA entries below come from MS15-023's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS15-023.
+	//   - Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
+	//   - Windows Server 2008 for Itanium-based Systems Service Pack 2
+	"MS15-023": {
+		CVEAdjustments: []cveAdjustment{
+			{Component: "Microsoft Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2015-0078"}},
+			{Component: "Microsoft Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2015-0078"}},
+			{Component: "Windows 7 for 32-bit Systems Service Pack 1", Drop: []string{"CVE-2015-0078"}},
+			{Component: "Windows 7 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2015-0078"}},
+			{Component: "Windows Server 2008 R2 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2015-0078"}},
+			{Component: "Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)", Drop: []string{"CVE-2015-0078"}},
+			{Component: "Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2015-0078"}},
+			{Component: "Windows Server 2008 for 32-bit Systems Service Pack 2 (Server Core installation)", Drop: []string{"CVE-2015-0078"}},
+			{Component: "Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2015-0078"}},
+			{Component: "Windows Server 2008 for x64-based Systems Service Pack 2 (Server Core installation)", Drop: []string{"CVE-2015-0078"}},
+			{Component: "Windows Vista Service Pack 2", Drop: []string{"CVE-2015-0078"}},
+			{Component: "Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2015-0078"}},
+		},
+	},
+	// TODO: the per-product NA entries below come from MS15-025's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS15-025.
+	//   - Windows 8.1 for 32-bit Systems
+	//   - Windows 8.1 for x64-based Systems
+	//   - Windows Server 2012 R2 (Server Core installation)
+	"MS15-025": {
+		CVEAdjustments: []cveAdjustment{
+			{KB: "3038680", Drop: []string{"CVE-2015-0073"}},
+			{Component: "Windows 8 for 32-bit Systems", Drop: []string{"CVE-2015-0075"}},
+			{Component: "Windows 8 for x64-based Systems", Drop: []string{"CVE-2015-0075"}},
+			{Component: "Windows RT", Drop: []string{"CVE-2015-0075"}},
+			{Component: "Windows RT 8.1", Drop: []string{"CVE-2015-0075"}},
+			{Component: "Windows Server 2012", Drop: []string{"CVE-2015-0075"}},
+			{Component: "Windows Server 2012 (Server Core installation)", Drop: []string{"CVE-2015-0075"}},
+			{Component: "Windows Server 2012 R2", Drop: []string{"CVE-2015-0075"}},
+		},
+	},
+	// TODO: the per-product NA entries below come from MS15-032's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS15-032.
+	//   - Internet Explorer 10
+	//   - Internet Explorer 11
+	//   - Internet Explorer 6
+	//   - Internet Explorer 7
+	//   - Internet Explorer 8
+	//   - Internet Explorer 9
 	"MS15-032": {
 		CVEAdjustments: []cveAdjustment{
 			{Add: []string{"CVE-2014-6374", "CVE-2015-1652", "CVE-2015-1657", "CVE-2015-1659", "CVE-2015-1660", "CVE-2015-1661", "CVE-2015-1662", "CVE-2015-1665", "CVE-2015-1666", "CVE-2015-1667", "CVE-2015-1668"}},
@@ -2477,7 +5781,7 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2965215", Drop: []string{"CVE-2015-1639", "CVE-2015-1649", "CVE-2015-1651"}},
 			{KB: "2965236", Drop: []string{"CVE-2015-1639", "CVE-2015-1651"}},
 			{KB: "2965289", Drop: []string{"CVE-2015-1639", "CVE-2015-1641"}},
-			{KB: "3048019", Drop: []string{"CVE-2015-1639", "CVE-2015-1649", "CVE-2015-1650", "CVE-2015-1651"}},
+			{KB: "3048019", Drop: []string{"CVE-2015-1639"}},
 			{KB: "3051737", Drop: []string{"CVE-2015-1641", "CVE-2015-1649", "CVE-2015-1650", "CVE-2015-1651"}},
 			{KB: "3055707", Drop: []string{"CVE-2015-1639", "CVE-2015-1641", "CVE-2015-1649", "CVE-2015-1650", "CVE-2015-1651"}},
 		},
@@ -2498,7 +5802,9 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 		CVEAdjustments: []cveAdjustment{
 			{Add: []string{"CVE-2015-1640", "CVE-2015-1653"}},
 			{KB: "2965219", Drop: []string{"CVE-2015-1640"}},
-			{KB: "3052044", Drop: []string{"CVE-2015-1640", "CVE-2015-1653"}},
+			{Component: "Microsoft Project Server 2010 Service Pack 2", Drop: []string{"CVE-2015-1653"}},
+			{Component: "Microsoft Project Server 2013 Service Pack 1", Drop: []string{"CVE-2015-1653"}},
+			{Component: "Microsoft SharePoint Foundation 2013 Service Pack 1", Drop: []string{"CVE-2015-1640"}},
 			{Remap: map[string]string{"CVE-2015-16453": ""}},
 		},
 	},
@@ -2508,6 +5814,19 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "3049576", Drop: []string{"CVE-2015-1643"}},
 		},
 	},
+	// TODO: the per-product NA entries below come from MS15-043's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS15-043.
+	//   - Internet Explorer 10
+	//   - Internet Explorer 11
+	//   - Internet Explorer 6
+	//   - Internet Explorer 7
+	//   - Internet Explorer 8
+	//   - Internet Explorer 9
 	"MS15-043": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 6", Drop: []string{"CVE-2015-1658", "CVE-2015-1684", "CVE-2015-1685", "CVE-2015-1686", "CVE-2015-1688", "CVE-2015-1689", "CVE-2015-1691", "CVE-2015-1692", "CVE-2015-1705", "CVE-2015-1706", "CVE-2015-1708", "CVE-2015-1709", "CVE-2015-1711", "CVE-2015-1712", "CVE-2015-1713", "CVE-2015-1714", "CVE-2015-1717", "CVE-2015-1718"}},
@@ -2592,12 +5911,33 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2863239": {Add: []string{"3035488"}},
 		},
 	},
+	// TODO: the per-product NA entries below come from MS15-053's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS15-053.
+	//   - JScript and VBScript 5.7 on Windows Vista x64 Edition Service Pack 2
+	//   - VBScript 5.6 on Windows Server 2003 Service Pack 2
+	//   - VBScript 5.6 on Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - VBScript 5.6 on Windows Server 2003 x64 Edition Service Pack 2
+	//   - VBScript 5.7 on Windows Server 2003 Service Pack 2
+	//   - VBScript 5.7 on Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - VBScript 5.7 on Windows Server 2003 x64 Edition Service Pack 2
+	//   - VBScript 5.7 on Windows Server 2008 for 32-bit Systems Service Pack 2
+	//   - VBScript 5.7 on Windows Server 2008 for 32-bit Systems Service Pack 2 (Server Core installation)
+	//   - VBScript 5.7 on Windows Server 2008 for Itanium-based Systems Service Pack 2
+	//   - VBScript 5.7 on Windows Server 2008 for x64-based Systems Service Pack 2
+	//   - VBScript 5.7 on Windows Server 2008 for x64-based Systems Service Pack 2 (Server Core installation)
+	//   - VBScript 5.7 on Windows Vista Service Pack 2
+	//   - VBScript 5.7 on Windows Vista x64 Edition Service Pack 2
+	//   - VBScript 5.8 on Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)
 	"MS15-053": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "3050941", Drop: []string{"CVE-2015-1684"}},
 			{KB: "3050945", Drop: []string{"CVE-2015-1684"}},
 			{KB: "3050946", Drop: []string{"CVE-2015-1684"}},
-			{KB: "3057263", Drop: []string{"CVE-2015-1684", "CVE-2015-1686"}},
 		},
 	},
 	"MS15-055": {
@@ -2605,6 +5945,19 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"3050514": {Add: []string{"3061518"}},
 		},
 	},
+	// TODO: the per-product NA entries below come from MS15-056's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS15-056.
+	//   - Internet Explorer 10
+	//   - Internet Explorer 11
+	//   - Internet Explorer 6
+	//   - Internet Explorer 7
+	//   - Internet Explorer 8
+	//   - Internet Explorer 9
 	"MS15-056": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 6", Drop: []string{"CVE-2015-1730", "CVE-2015-1731", "CVE-2015-1732", "CVE-2015-1736", "CVE-2015-1737", "CVE-2015-1739", "CVE-2015-1741", "CVE-2015-1742", "CVE-2015-1743", "CVE-2015-1747", "CVE-2015-1748", "CVE-2015-1750", "CVE-2015-1751", "CVE-2015-1752", "CVE-2015-1753", "CVE-2015-1754", "CVE-2015-1755", "CVE-2015-1765"}},
@@ -2631,6 +5984,20 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"3062577": {Override: []string{"3062577"}},
 		},
 	},
+	"MS15-064": {CVEAdjustments: []cveAdjustment{{Component: "Microsoft Exchange Server 2013 Service Pack 1", Drop: []string{"CVE-2015-2359"}}}},
+	// TODO: the per-product NA entries below come from MS15-065's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS15-065.
+	//   - Internet Explorer 10
+	//   - Internet Explorer 11
+	//   - Internet Explorer 6
+	//   - Internet Explorer 7
+	//   - Internet Explorer 8
+	//   - Internet Explorer 9
 	"MS15-065": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 6", Drop: []string{"CVE-2015-1729", "CVE-2015-1733", "CVE-2015-1738", "CVE-2015-1767", "CVE-2015-2383", "CVE-2015-2384", "CVE-2015-2388", "CVE-2015-2389", "CVE-2015-2391", "CVE-2015-2398", "CVE-2015-2401", "CVE-2015-2402", "CVE-2015-2403", "CVE-2015-2408", "CVE-2015-2411", "CVE-2015-2412", "CVE-2015-2414", "CVE-2015-2419", "CVE-2015-2425"}},
@@ -2664,7 +6031,20 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "3054968", Drop: []string{"CVE-2015-2377", "CVE-2015-2378", "CVE-2015-2379", "CVE-2015-2380", "CVE-2015-2415", "CVE-2015-2424"}},
 			{KB: "3054971", Drop: []string{"CVE-2015-2375", "CVE-2015-2376", "CVE-2015-2377", "CVE-2015-2378", "CVE-2015-2415", "CVE-2015-2424"}},
 			{KB: "3054999", Drop: []string{"CVE-2015-2375", "CVE-2015-2376", "CVE-2015-2377", "CVE-2015-2378", "CVE-2015-2379", "CVE-2015-2380", "CVE-2015-2415"}},
-			{KB: "3072620", Drop: []string{"CVE-2015-2375", "CVE-2015-2376", "CVE-2015-2377", "CVE-2015-2378", "CVE-2015-2379", "CVE-2015-2380", "CVE-2015-2415", "CVE-2015-2424"}},
+			{Component: "Microsoft Excel 2007 Service Pack 3", Drop: []string{"CVE-2015-2375", "CVE-2015-2379", "CVE-2015-2380", "CVE-2015-2424"}},
+			{Component: "Microsoft Excel 2010 Service Pack 2 (32-bit editions)", Drop: []string{"CVE-2015-2379", "CVE-2015-2380", "CVE-2015-2424"}},
+			{Component: "Microsoft Excel 2010 Service Pack 2 (64-bit editions)", Drop: []string{"CVE-2015-2379", "CVE-2015-2380", "CVE-2015-2424"}},
+			{Component: "Microsoft Excel 2013 RT Service Pack 1", Drop: []string{"CVE-2015-2378", "CVE-2015-2379", "CVE-2015-2380", "CVE-2015-2424"}},
+			{Component: "Microsoft Excel 2013 Service Pack 1 (32-bit editions)", Drop: []string{"CVE-2015-2378", "CVE-2015-2379", "CVE-2015-2380", "CVE-2015-2424"}},
+			{Component: "Microsoft Excel 2013 Service Pack 1 (64-bit editions)", Drop: []string{"CVE-2015-2378", "CVE-2015-2379", "CVE-2015-2380", "CVE-2015-2424"}},
+			{Component: "Microsoft Office for Mac 2011", Drop: []string{"CVE-2015-2375", "CVE-2015-2377", "CVE-2015-2378", "CVE-2015-2380", "CVE-2015-2415", "CVE-2015-2424"}},
+			{Component: "Microsoft PowerPoint 2013 RT Service Pack 1", Drop: []string{"CVE-2015-2375", "CVE-2015-2376", "CVE-2015-2377", "CVE-2015-2378", "CVE-2015-2379", "CVE-2015-2380", "CVE-2015-2415"}},
+			{Component: "Microsoft Word 2007 Service Pack 3", Drop: []string{"CVE-2015-2375", "CVE-2015-2376", "CVE-2015-2377", "CVE-2015-2378", "CVE-2015-2415"}},
+			{Component: "Microsoft Word 2010 Service Pack 2 (32-bit editions)", Drop: []string{"CVE-2015-2375", "CVE-2015-2376", "CVE-2015-2377", "CVE-2015-2378", "CVE-2015-2415"}},
+			{Component: "Microsoft Word 2010 Service Pack 2 (64-bit editions)", Drop: []string{"CVE-2015-2375", "CVE-2015-2376", "CVE-2015-2377", "CVE-2015-2378", "CVE-2015-2415"}},
+			{Component: "Microsoft Word 2013 RT Service Pack 1", Drop: []string{"CVE-2015-2375", "CVE-2015-2376", "CVE-2015-2377", "CVE-2015-2378", "CVE-2015-2415", "CVE-2015-2424"}},
+			{Component: "Microsoft Word 2013 Service Pack 1 (32-bit editions)", Drop: []string{"CVE-2015-2375", "CVE-2015-2376", "CVE-2015-2377", "CVE-2015-2378", "CVE-2015-2415"}},
+			{Component: "Microsoft Word 2013 Service Pack 1 (64-bit editions)", Drop: []string{"CVE-2015-2375", "CVE-2015-2376", "CVE-2015-2377", "CVE-2015-2378", "CVE-2015-2415"}},
 		},
 	},
 	"MS15-072": {
@@ -2672,6 +6052,52 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2965155": {Add: []string{"3069392"}},
 		},
 	},
+	// TODO: the per-product NA entries below come from MS15-073's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS15-073.
+	//   - Windows 8.1 for 32-bit Systems
+	//   - Windows 8.1 for x64-based Systems
+	//   - Windows Server 2003 with SP2 for Itanium-based Systems
+	//   - Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
+	//   - Windows Server 2008 for Itanium-based Systems Service Pack 2
+	//   - Windows Server 2012 R2 (Server Core installation)
+	"MS15-073": {
+		CVEAdjustments: []cveAdjustment{
+			{Component: "Microsoft Windows Server 2003 Service Pack 2", Drop: []string{"CVE-2015-2366", "CVE-2015-2381", "CVE-2015-2382"}},
+			{Component: "Microsoft Windows Server 2003 x64 Edition Service Pack 2", Drop: []string{"CVE-2015-2366", "CVE-2015-2381", "CVE-2015-2382"}},
+			{Component: "Windows 7 for 32-bit Systems Service Pack 1", Drop: []string{"CVE-2015-2381", "CVE-2015-2382"}},
+			{Component: "Windows 7 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2015-2381", "CVE-2015-2382"}},
+			{Component: "Windows RT 8.1", Drop: []string{"CVE-2015-2363"}},
+			{Component: "Windows Server 2003 R2 Service Pack 2", Drop: []string{"CVE-2015-2366", "CVE-2015-2381", "CVE-2015-2382"}},
+			{Component: "Windows Server 2003 R2 x64 Edition Service Pack 2", Drop: []string{"CVE-2015-2366", "CVE-2015-2381", "CVE-2015-2382"}},
+			{Component: "Windows Server 2008 R2 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2015-2381", "CVE-2015-2382"}},
+			{Component: "Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)", Drop: []string{"CVE-2015-2381", "CVE-2015-2382"}},
+			{Component: "Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2015-2366", "CVE-2015-2381", "CVE-2015-2382"}},
+			{Component: "Windows Server 2008 for 32-bit Systems Service Pack 2 (Server Core installation)", Drop: []string{"CVE-2015-2366", "CVE-2015-2381", "CVE-2015-2382"}},
+			{Component: "Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2015-2366", "CVE-2015-2381", "CVE-2015-2382"}},
+			{Component: "Windows Server 2008 for x64-based Systems Service Pack 2 (Server Core installation)", Drop: []string{"CVE-2015-2366", "CVE-2015-2381", "CVE-2015-2382"}},
+			{Component: "Windows Server 2012 R2", Drop: []string{"CVE-2015-2363"}},
+			{Component: "Windows Vista Service Pack 2", Drop: []string{"CVE-2015-2366", "CVE-2015-2381", "CVE-2015-2382"}},
+			{Component: "Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2015-2366", "CVE-2015-2381", "CVE-2015-2382"}},
+		},
+	},
+	// TODO: the per-product NA entries below come from MS15-079's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS15-079.
+	//   - Internet Explorer 10
+	//   - Internet Explorer 11
+	//   - Internet Explorer 11 on Windows 10
+	//   - Internet Explorer 7
+	//   - Internet Explorer 8
+	//   - Internet Explorer 9
 	"MS15-079": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 7", Drop: []string{"CVE-2015-2442", "CVE-2015-2443", "CVE-2015-2444", "CVE-2015-2445", "CVE-2015-2446", "CVE-2015-2447", "CVE-2015-2448", "CVE-2015-2450", "CVE-2015-2451"}},
@@ -2736,6 +6162,36 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "3075221", Drop: []string{"CVE-2015-2473"}},
 		},
 	},
+	// TODO: the per-product NA entries below come from MS15-084's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS15-084.
+	//   - Microsoft XML Core Services 5.0 on Microsoft Office 2007 Service Pack 3
+	//   - Microsoft XML Core Services 5.0 on Windows Server 2008 for 32-bit Systems Service Pack 2
+	//   - Microsoft XML Core Services 6.0 on Windows 7 for 32-bit Systems Service Pack 1
+	//   - Microsoft XML Core Services 6.0 on Windows 7 for x64-based Systems Service Pack 1
+	//   - Microsoft XML Core Services 6.0 on Windows 8 for 32-bit Systems
+	//   - Microsoft XML Core Services 6.0 on Windows 8 for x64-based Systems
+	//   - Microsoft XML Core Services 6.0 on Windows 8.1 for 32-bit Systems
+	//   - Microsoft XML Core Services 6.0 on Windows 8.1 for x64-based Systems
+	//   - Microsoft XML Core Services 6.0 on Windows RT
+	//   - Microsoft XML Core Services 6.0 on Windows RT 8.1
+	//   - Microsoft XML Core Services 6.0 on Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
+	//   - Microsoft XML Core Services 6.0 on Windows Server 2008 R2 for x64-based Systems Service Pack 1
+	//   - Microsoft XML Core Services 6.0 on Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)
+	//   - Microsoft XML Core Services 6.0 on Windows Server 2008 for 32-bit Systems Service Pack 2
+	//   - Microsoft XML Core Services 6.0 on Windows Server 2008 for 32-bit Systems Service Pack 2 (Server Core installation)
+	//   - Microsoft XML Core Services 6.0 on Windows Server 2008 for Itanium-based Systems Service Pack 2
+	//   - Microsoft XML Core Services 6.0 on Windows Server 2008 for x64-based Systems Service Pack 2
+	//   - Microsoft XML Core Services 6.0 on Windows Server 2008 for x64-based Systems Service Pack 2 (Server Core installation)
+	//   - Microsoft XML Core Services 6.0 on Windows Server 2012
+	//   - Microsoft XML Core Services 6.0 on Windows Server 2012 (Server Core installation)
+	//   - Microsoft XML Core Services 6.0 on Windows Server 2012 R2
+	//   - Microsoft XML Core Services 6.0 on Windows Server 2012 R2 (Server Core installation)
+	//   - Microsoft XML Core Services 6.0 on Windows Vista x64 Edition Service Pack 2
 	"MS15-091": {
 		Supersedes: map[string]supersedesAdjust{
 			"3081444": {Override: []string{"3081455"}},
@@ -2746,6 +6202,19 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"3078071": {"3087985"},
 		},
 	},
+	// TODO: the per-product NA entries below come from MS15-094's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS15-094.
+	//   - Internet Explorer 10
+	//   - Internet Explorer 11
+	//   - Internet Explorer 11 on Windows 10
+	//   - Internet Explorer 7
+	//   - Internet Explorer 8
+	//   - Internet Explorer 9
 	"MS15-094": {
 		CVEAdjustments: []cveAdjustment{
 			{Add: []string{"CVE-2015-2483", "CVE-2015-2484", "CVE-2015-2485", "CVE-2015-2486", "CVE-2015-2487", "CVE-2015-2489", "CVE-2015-2490", "CVE-2015-2491", "CVE-2015-2492", "CVE-2015-2493", "CVE-2015-2494", "CVE-2015-2496", "CVE-2015-2498", "CVE-2015-2499", "CVE-2015-2500", "CVE-2015-2501", "CVE-2015-2541", "CVE-2015-2542"}},
@@ -2768,34 +6237,58 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"3081444": {Add: []string{"3081455"}},
 		},
 	},
+	// TODO: the per-product NA entries below come from MS15-097's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS15-097.
+	//   - Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
+	//   - Windows Server 2008 for Itanium-based Systems Service Pack 2
 	"MS15-097": {
 		CVEAdjustments: []cveAdjustment{
-			{KB: "3081455", Drop: []string{"CVE-2015-2510", "CVE-2015-2525"}},
+			{KB: "3081455", Drop: []string{"CVE-2015-2510"}},
 			{KB: "3087039", Drop: []string{"CVE-2015-2508", "CVE-2015-2510"}},
 			{KB: "3087135", Drop: []string{"CVE-2015-2506", "CVE-2015-2507", "CVE-2015-2508", "CVE-2015-2511", "CVE-2015-2512", "CVE-2015-2517", "CVE-2015-2518", "CVE-2015-2527", "CVE-2015-2529", "CVE-2015-2546"}},
 			{Component: "Windows 7 for 32-bit Systems Service Pack 1", Drop: []string{"CVE-2015-2527", "CVE-2015-2529"}},
+			{Component: "Windows 7 for 32-bit Systems Service Pack 1", Drop: []string{"CVE-2015-2527", "CVE-2015-2529"}},
+			{Component: "Windows 7 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2015-2527", "CVE-2015-2529"}},
 			{Component: "Windows 7 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2015-2527", "CVE-2015-2529"}},
 			{Component: "Windows 8 for 32-bit Systems", Drop: []string{"CVE-2015-2529"}},
+			{Component: "Windows 8 for 32-bit Systems", Drop: []string{"CVE-2015-2529"}},
 			{Component: "Windows 8 for x64-based Systems", Drop: []string{"CVE-2015-2529"}},
+			{Component: "Windows 8 for x64-based Systems", Drop: []string{"CVE-2015-2529"}},
+			{Component: "Windows RT", Drop: []string{"CVE-2015-2529"}},
 			{Component: "Windows RT", Drop: []string{"CVE-2015-2529"}},
 			{Component: "Windows Server 2008 R2 for Itanium-based Systems Service Pack 1", Drop: []string{"CVE-2015-2527", "CVE-2015-2529"}},
 			{Component: "Windows Server 2008 R2 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2015-2527", "CVE-2015-2529"}},
+			{Component: "Windows Server 2008 R2 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2015-2527", "CVE-2015-2529"}},
+			{Component: "Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)", Drop: []string{"CVE-2015-2527", "CVE-2015-2529"}},
 			{Component: "Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)", Drop: []string{"CVE-2015-2527", "CVE-2015-2529"}},
 			{Component: "Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2015-2527", "CVE-2015-2529"}},
+			{Component: "Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2015-2527", "CVE-2015-2529"}},
+			{Component: "Windows Server 2008 for 32-bit Systems Service Pack 2 (Server Core installation)", Drop: []string{"CVE-2015-2527", "CVE-2015-2529"}},
 			{Component: "Windows Server 2008 for 32-bit Systems Service Pack 2 (Server Core installation)", Drop: []string{"CVE-2015-2527", "CVE-2015-2529"}},
 			{Component: "Windows Server 2008 for Itanium-based Systems Service Pack 2", Drop: []string{"CVE-2015-2527", "CVE-2015-2529"}},
 			{Component: "Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2015-2527", "CVE-2015-2529"}},
+			{Component: "Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2015-2527", "CVE-2015-2529"}},
+			{Component: "Windows Server 2008 for x64-based Systems Service Pack 2 (Server Core installation)", Drop: []string{"CVE-2015-2527", "CVE-2015-2529"}},
 			{Component: "Windows Server 2008 for x64-based Systems Service Pack 2 (Server Core installation)", Drop: []string{"CVE-2015-2527", "CVE-2015-2529"}},
 			{Component: "Windows Server 2012", Drop: []string{"CVE-2015-2529"}},
+			{Component: "Windows Server 2012", Drop: []string{"CVE-2015-2529"}},
+			{Component: "Windows Server 2012 (Server Core installation)", Drop: []string{"CVE-2015-2529"}},
 			{Component: "Windows Server 2012 (Server Core installation)", Drop: []string{"CVE-2015-2529"}},
 			{Component: "Windows Vista Service Pack 2", Drop: []string{"CVE-2015-2527", "CVE-2015-2529"}},
+			{Component: "Windows Vista Service Pack 2", Drop: []string{"CVE-2015-2527", "CVE-2015-2529"}},
+			{Component: "Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2015-2527", "CVE-2015-2529"}},
 			{Component: "Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2015-2527", "CVE-2015-2529"}},
 		},
 	},
 	"MS15-099": {
 		CVEAdjustments: []cveAdjustment{
 			{Add: []string{"CVE-2015-2520", "CVE-2015-2521", "CVE-2015-2522", "CVE-2015-2523", "CVE-2015-2545"}},
-			{KB: "2920693", Drop: []string{"CVE-2015-2520", "CVE-2015-2521", "CVE-2015-2545", "CVE-2015-2557"}},
+			{KB: "2920693", Drop: []string{"CVE-2015-2520", "CVE-2015-2521", "CVE-2015-2545"}},
 			{KB: "3054993", Drop: []string{"CVE-2015-2545"}},
 			{KB: "3054995", Drop: []string{"CVE-2015-2545"}},
 			{KB: "3085502", Drop: []string{"CVE-2015-2520", "CVE-2015-2521", "CVE-2015-2545"}},
@@ -2809,20 +6302,66 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "3088502", Drop: []string{"CVE-2015-2521", "CVE-2015-2545"}},
 		},
 	},
-	"MS15-101": {CVEAdjustments: []cveAdjustment{{KB: "3089662", Drop: []string{"CVE-2015-2526"}}}},
+	// TODO: the per-product NA entries below come from MS15-101's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS15-101.
+	//   - Windows 8.1 for 32-bit Systems
+	//   - Windows 8.1 for x64-based Systems
+	//   - Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
+	//   - Windows Server 2008 for Itanium-based Systems Service Pack 2
+	//   - Windows Server 2012 R2 (Server Core installation)
+	"MS15-101": {
+		CVEAdjustments: []cveAdjustment{
+			{Component: "Windows 10 for 32-bit Systems", Drop: []string{"CVE-2015-2526"}},
+			{Component: "Windows 10 for x64-based Systems", Drop: []string{"CVE-2015-2526"}},
+			{Component: "Windows 7 for 32-bit Systems Service Pack 1", Drop: []string{"CVE-2015-2526"}},
+			{Component: "Windows 7 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2015-2526"}},
+			{Component: "Windows 8 for 32-bit Systems", Drop: []string{"CVE-2015-2526"}},
+			{Component: "Windows 8 for x64-based Systems", Drop: []string{"CVE-2015-2526"}},
+			{Component: "Windows Server 2008 R2 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2015-2526"}},
+			{Component: "Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)", Drop: []string{"CVE-2015-2526"}},
+			{Component: "Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2015-2526"}},
+			{Component: "Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2015-2526"}},
+			{Component: "Windows Server 2012", Drop: []string{"CVE-2015-2526"}},
+			{Component: "Windows Server 2012 (Server Core installation)", Drop: []string{"CVE-2015-2526"}},
+			{Component: "Windows Server 2012 R2", Drop: []string{"CVE-2015-2526"}},
+			{Component: "Windows Vista Service Pack 2", Drop: []string{"CVE-2015-2526"}},
+			{Component: "Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2015-2526"}},
+		},
+	},
 	"MS15-102": {
 		CVEAdjustments: []cveAdjustment{
-			{KB: "3081455", Drop: []string{"CVE-2015-2510", "CVE-2015-2525"}},
+			{KB: "3081455", Drop: []string{"CVE-2015-2525"}},
 			{KB: "3082089", Drop: []string{"CVE-2015-2525"}},
 			{KB: "3084135", Drop: []string{"CVE-2015-2524", "CVE-2015-2528"}},
 		},
 	},
 	"MS15-103": {
+		CVEAdjustments: []cveAdjustment{
+			{Component: "Microsoft Exchange Server 2013 Service Pack 1", Drop: []string{"CVE-2015-2543"}},
+		},
 		Supersedes: map[string]supersedesAdjust{
 			"3062157": {Add: []string{"3087126"}},
 		},
 	},
 	"MS15-104": {CVEAdjustments: []cveAdjustment{{KB: "3061064", Drop: []string{"CVE-2015-2532"}}}},
+	// TODO: the per-product NA entries below come from MS15-106's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS15-106.
+	//   - Internet Explorer 10
+	//   - Internet Explorer 11
+	//   - Internet Explorer 11 on Windows 10
+	//   - Internet Explorer 7
+	//   - Internet Explorer 8
+	//   - Internet Explorer 9
 	"MS15-106": {
 		CVEAdjustments: []cveAdjustment{
 			{Add: []string{"CVE-2015-2482", "CVE-2015-6042", "CVE-2015-6044", "CVE-2015-6045", "CVE-2015-6046", "CVE-2015-6047", "CVE-2015-6048", "CVE-2015-6049", "CVE-2015-6050", "CVE-2015-6051", "CVE-2015-6052", "CVE-2015-6053", "CVE-2015-6055", "CVE-2015-6056", "CVE-2015-6059", "CVE-2015-6184"}},
@@ -2852,7 +6391,7 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Add: []string{"CVE-2015-2555", "CVE-2015-2556", "CVE-2015-2557", "CVE-2015-2558", "CVE-2015-6037", "CVE-2015-6039"}},
 			{KB: "2553405", Drop: []string{"CVE-2015-6037", "CVE-2015-6039"}},
 			{KB: "2596670", Drop: []string{"CVE-2015-6037", "CVE-2015-6039"}},
-			{KB: "2920693", Drop: []string{"CVE-2015-2520", "CVE-2015-2521", "CVE-2015-2545", "CVE-2015-2557"}},
+			{KB: "2920693", Drop: []string{"CVE-2015-2557"}},
 			{KB: "3054994", Drop: []string{"CVE-2015-2555", "CVE-2015-6037"}},
 			{KB: "3085514", Drop: []string{"CVE-2015-2555", "CVE-2015-2558"}},
 			{KB: "3085520", Drop: []string{"CVE-2015-2555", "CVE-2015-2558"}},
@@ -2870,6 +6409,42 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "3097266", Drop: []string{"CVE-2015-2557"}},
 		},
 	},
+	// TODO: the per-product NA entries below come from MS15-111's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS15-111.
+	//   - Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
+	//   - Windows Server 2008 for Itanium-based Systems Service Pack 2
+	"MS15-111": {
+		CVEAdjustments: []cveAdjustment{
+			{Component: "Windows 7 for 32-bit Systems Service Pack 1", Drop: []string{"CVE-2015-2552", "CVE-2015-2554"}},
+			{Component: "Windows 7 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2015-2552", "CVE-2015-2554"}},
+			{Component: "Windows Server 2008 R2 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2015-2552", "CVE-2015-2554"}},
+			{Component: "Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)", Drop: []string{"CVE-2015-2552", "CVE-2015-2554"}},
+			{Component: "Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2015-2552", "CVE-2015-2554"}},
+			{Component: "Windows Server 2008 for 32-bit Systems Service Pack 2 (Server Core installation)", Drop: []string{"CVE-2015-2552", "CVE-2015-2554"}},
+			{Component: "Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2015-2552", "CVE-2015-2554"}},
+			{Component: "Windows Server 2008 for x64-based Systems Service Pack 2 (Server Core installation)", Drop: []string{"CVE-2015-2552", "CVE-2015-2554"}},
+			{Component: "Windows Vista Service Pack 2", Drop: []string{"CVE-2015-2552", "CVE-2015-2554"}},
+			{Component: "Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2015-2552", "CVE-2015-2554"}},
+		},
+	},
+	// TODO: the per-product NA entries below come from MS15-112's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS15-112.
+	//   - Internet Explorer 10
+	//   - Internet Explorer 11
+	//   - Internet Explorer 11 on Windows 10
+	//   - Internet Explorer 7
+	//   - Internet Explorer 8
+	//   - Internet Explorer 9
 	"MS15-112": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 7", Drop: []string{"CVE-2015-2427", "CVE-2015-6064", "CVE-2015-6065", "CVE-2015-6068", "CVE-2015-6069", "CVE-2015-6072", "CVE-2015-6073", "CVE-2015-6075", "CVE-2015-6077", "CVE-2015-6078", "CVE-2015-6079", "CVE-2015-6080", "CVE-2015-6081", "CVE-2015-6082", "CVE-2015-6084", "CVE-2015-6085", "CVE-2015-6086", "CVE-2015-6088", "CVE-2015-6089"}},
@@ -2947,6 +6522,8 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "3101564", Drop: []string{"CVE-2015-2503", "CVE-2015-6038", "CVE-2015-6093", "CVE-2015-6094", "CVE-2015-6123"}},
 			{KB: "3102924", Drop: []string{"CVE-2015-2503", "CVE-2015-6091", "CVE-2015-6092", "CVE-2015-6093"}},
 			{KB: "3102925", Drop: []string{"CVE-2015-2503", "CVE-2015-6091", "CVE-2015-6092", "CVE-2015-6093"}},
+			{Component: "Microsoft Word 2013 Service Pack 1 (32-bit editions)", Drop: []string{"CVE-2015-6093"}},
+			{Component: "Microsoft Word 2013 Service Pack 1 (64-bit editions)", Drop: []string{"CVE-2015-6093"}},
 		},
 		Supersedes: map[string]supersedesAdjust{
 			"2553147": {Override: []string{"3101526"}},
@@ -2961,9 +6538,37 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"3085583": {Override: []string{"3054793", "3101371"}},
 		},
 	},
+	// TODO: the per-product NA entries below come from MS15-118's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS15-118.
+	//   - Windows 8.1 for 32-bit Systems
+	//   - Windows 8.1 for x64-based Systems
+	//   - Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
+	//   - Windows Server 2008 for Itanium-based Systems Service Pack 2
+	//   - Windows Server 2012 R2 (Server Core installation)
 	"MS15-118": {
 		CVEAdjustments: []cveAdjustment{
-			{KB: "3104507", Drop: []string{"CVE-2015-6099", "CVE-2015-6115"}},
+			{Component: "Windows 10 for 32-bit Systems", Drop: []string{"CVE-2015-6099", "CVE-2015-6115"}},
+			{Component: "Windows 10 for x64-based Systems", Drop: []string{"CVE-2015-6099", "CVE-2015-6115"}},
+			{Component: "Windows 7 for 32-bit Systems Service Pack 1", Drop: []string{"CVE-2015-6099", "CVE-2015-6115"}},
+			{Component: "Windows 7 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2015-6099", "CVE-2015-6115"}},
+			{Component: "Windows 8 for 32-bit Systems", Drop: []string{"CVE-2015-6099", "CVE-2015-6115"}},
+			{Component: "Windows 8 for x64-based Systems", Drop: []string{"CVE-2015-6099", "CVE-2015-6115"}},
+			{Component: "Windows RT", Drop: []string{"CVE-2015-6115"}},
+			{Component: "Windows RT 8.1", Drop: []string{"CVE-2015-6115"}},
+			{Component: "Windows Server 2008 R2 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2015-6099", "CVE-2015-6115"}},
+			{Component: "Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)", Drop: []string{"CVE-2015-6099", "CVE-2015-6115"}},
+			{Component: "Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2015-6099", "CVE-2015-6115"}},
+			{Component: "Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2015-6099", "CVE-2015-6115"}},
+			{Component: "Windows Server 2012", Drop: []string{"CVE-2015-6099", "CVE-2015-6115"}},
+			{Component: "Windows Server 2012 (Server Core installation)", Drop: []string{"CVE-2015-6099", "CVE-2015-6115"}},
+			{Component: "Windows Server 2012 R2", Drop: []string{"CVE-2015-6099", "CVE-2015-6115"}},
+			{Component: "Windows Vista Service Pack 2", Drop: []string{"CVE-2015-6099", "CVE-2015-6115"}},
+			{Component: "Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2015-6099", "CVE-2015-6115"}},
 		},
 		Supersedes: map[string]supersedesAdjust{
 			"2901128": {Add: []string{"3098779"}},
@@ -2974,6 +6579,19 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2973408": {Add: []string{"3092601"}},
 		},
 	},
+	// TODO: the per-product NA entries below come from MS15-124's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS15-124.
+	//   - Internet Explorer 10
+	//   - Internet Explorer 11
+	//   - Internet Explorer 11 on Windows 10
+	//   - Internet Explorer 7
+	//   - Internet Explorer 8
+	//   - Internet Explorer 9
 	"MS15-124": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 7", Drop: []string{"CVE-2015-6083", "CVE-2015-6134", "CVE-2015-6135", "CVE-2015-6136", "CVE-2015-6138", "CVE-2015-6139", "CVE-2015-6140", "CVE-2015-6141", "CVE-2015-6142", "CVE-2015-6143", "CVE-2015-6144", "CVE-2015-6147", "CVE-2015-6148", "CVE-2015-6149", "CVE-2015-6151", "CVE-2015-6152", "CVE-2015-6153", "CVE-2015-6155", "CVE-2015-6156", "CVE-2015-6157", "CVE-2015-6158", "CVE-2015-6159", "CVE-2015-6160", "CVE-2015-6162", "CVE-2015-6164"}},
@@ -2993,24 +6611,45 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"3105213": {"3116869"},
 		},
 	},
+	// TODO: the per-product NA entries below come from MS15-128's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS15-128.
+	//   - Windows 8.1 for 32-bit Systems
+	//   - Windows 8.1 for x64-based Systems
+	//   - Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
+	//   - Windows Server 2012 R2 (Server Core installation)
 	"MS15-128": {
 		CVEAdjustments: []cveAdjustment{
-			{KB: "3109094", Drop: []string{"CVE-2015-6175"}},
-			{KB: "3116869", Drop: []string{"CVE-2015-6106", "CVE-2015-6128"}},
-			{KB: "3116900", Drop: []string{"CVE-2015-6106", "CVE-2015-6108", "CVE-2015-6128", "CVE-2015-6175"}},
+			{KB: "3116869", Drop: []string{"CVE-2015-6106"}},
+			{KB: "3116900", Drop: []string{"CVE-2015-6106", "CVE-2015-6108"}},
+			{Component: "Windows 7 for 32-bit Systems Service Pack 1", Drop: []string{"CVE-2015-6106"}},
 			{Component: "Windows 7 for 32-bit Systems Service Pack 1", Drop: []string{"CVE-2015-6106"}},
 			{Component: "Windows 7 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2015-6106"}},
+			{Component: "Windows 7 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2015-6106"}},
 			{Component: "Windows 8 for 32-bit Systems", Drop: []string{"CVE-2015-6106"}},
+			{Component: "Windows 8 for 32-bit Systems", Drop: []string{"CVE-2015-6106"}},
+			{Component: "Windows 8 for x64-based Systems", Drop: []string{"CVE-2015-6106"}},
 			{Component: "Windows 8 for x64-based Systems", Drop: []string{"CVE-2015-6106"}},
 			{Component: "Windows 8.1 for 32-bit Systems", Drop: []string{"CVE-2015-6106"}},
 			{Component: "Windows 8.1 for x64-based Systems", Drop: []string{"CVE-2015-6106"}},
 			{Component: "Windows RT", Drop: []string{"CVE-2015-6106"}},
+			{Component: "Windows RT", Drop: []string{"CVE-2015-6106"}},
+			{Component: "Windows RT 8.1", Drop: []string{"CVE-2015-6106"}},
 			{Component: "Windows RT 8.1", Drop: []string{"CVE-2015-6106"}},
 			{Component: "Windows Server 2008 R2 for Itanium-based Systems Service Pack 1", Drop: []string{"CVE-2015-6106"}},
 			{Component: "Windows Server 2008 R2 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2015-6106"}},
+			{Component: "Windows Server 2008 R2 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2015-6106"}},
+			{Component: "Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)", Drop: []string{"CVE-2015-6106"}},
 			{Component: "Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)", Drop: []string{"CVE-2015-6106"}},
 			{Component: "Windows Server 2012", Drop: []string{"CVE-2015-6106"}},
+			{Component: "Windows Server 2012", Drop: []string{"CVE-2015-6106"}},
 			{Component: "Windows Server 2012 (Server Core installation)", Drop: []string{"CVE-2015-6106"}},
+			{Component: "Windows Server 2012 (Server Core installation)", Drop: []string{"CVE-2015-6106"}},
+			{Component: "Windows Server 2012 R2", Drop: []string{"CVE-2015-6106"}},
 			{Component: "Windows Server 2012 R2", Drop: []string{"CVE-2015-6106"}},
 			{Component: "Windows Server 2012 R2 (Server Core installation)", Drop: []string{"CVE-2015-6106"}},
 		},
@@ -3038,16 +6677,25 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 	},
 	"MS15-132": {
 		CVEAdjustments: []cveAdjustment{
-			{KB: "3116869", Drop: []string{"CVE-2015-6106", "CVE-2015-6128"}},
-			{KB: "3116900", Drop: []string{"CVE-2015-6106", "CVE-2015-6108", "CVE-2015-6128", "CVE-2015-6175"}},
+			{KB: "3116869", Drop: []string{"CVE-2015-6128"}},
+			{KB: "3116900", Drop: []string{"CVE-2015-6128"}},
 		},
 	},
 	"MS15-135": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "3109094", Drop: []string{"CVE-2015-6175"}},
-			{KB: "3116900", Drop: []string{"CVE-2015-6106", "CVE-2015-6108", "CVE-2015-6128", "CVE-2015-6175"}},
+			{KB: "3116900", Drop: []string{"CVE-2015-6175"}},
 		},
 	},
+	// TODO: the per-product NA entries below come from MS16-001's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS16-001.
+	//   - Internet Explorer 7
+	//   - Internet Explorer 8
 	"MS16-001": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 7", Drop: []string{"CVE-2016-0002", "CVE-2016-0005"}},
@@ -3098,14 +6746,18 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "3114569", Drop: []string{"CVE-2015-0012", "CVE-2016-0012", "CVE-2016-0035"}},
 			{KB: "3133699", Drop: []string{"CVE-2015-0012", "CVE-2016-0012"}},
 			{KB: "3133711", Drop: []string{"CVE-2015-0012", "CVE-2016-0012"}},
+			{Component: "Microsoft PowerPoint 2016 for Mac", Drop: []string{"CVE-2016-0035"}},
+			{Component: "Microsoft PowerPoint for Mac 2011", Drop: []string{"CVE-2016-0035"}},
+			{Component: "Microsoft Word 2016 for Mac", Drop: []string{"CVE-2016-0035"}},
+			{Component: "Microsoft Word for Mac 2011", Drop: []string{"CVE-2016-0035"}},
 		},
 	},
 	"MS16-005": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "3124000", Drop: []string{"CVE-2016-0008"}},
 			{KB: "3124001", Drop: []string{"CVE-2016-0009"}},
-			{KB: "3124263", Drop: []string{"CVE-2016-0009", "CVE-2016-0020"}},
-			{KB: "3124266", Drop: []string{"CVE-2016-0009", "CVE-2016-0020"}},
+			{KB: "3124263", Drop: []string{"CVE-2016-0009"}},
+			{KB: "3124266", Drop: []string{"CVE-2016-0009"}},
 		},
 	},
 	"MS16-007": {
@@ -3115,10 +6767,21 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "3110329", Drop: []string{"CVE-2016-0014", "CVE-2016-0015", "CVE-2016-0018", "CVE-2016-0019", "CVE-2016-0020"}},
 			{KB: "3121461", Drop: []string{"CVE-2016-0014", "CVE-2016-0015", "CVE-2016-0016", "CVE-2016-0019", "CVE-2016-0020"}},
 			{KB: "3121918", Drop: []string{"CVE-2016-0015", "CVE-2016-0016", "CVE-2016-0018", "CVE-2016-0019", "CVE-2016-0020"}},
-			{KB: "3124263", Drop: []string{"CVE-2016-0009", "CVE-2016-0020"}},
-			{KB: "3124266", Drop: []string{"CVE-2016-0009", "CVE-2016-0020"}},
+			{KB: "3124263", Drop: []string{"CVE-2016-0020"}},
+			{KB: "3124266", Drop: []string{"CVE-2016-0020"}},
 		},
 	},
+	// TODO: the per-product NA entries below come from MS16-009's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS16-009.
+	//   - Internet Explorer 10
+	//   - Internet Explorer 11
+	//   - Internet Explorer 11 on Windows 10
+	//   - Internet Explorer 9
 	"MS16-009": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 9", Drop: []string{"CVE-2016-0041", "CVE-2016-0062", "CVE-2016-0064"}},
@@ -3130,6 +6793,24 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"3124275": {"3134814"},
 		},
 	},
+	"MS16-010": {
+		CVEAdjustments: []cveAdjustment{
+			{Component: "Microsoft Exchange Server 2013 Cumulative Update 10", Drop: []string{"CVE-2016-0029", "CVE-2016-0031"}},
+			{Component: "Microsoft Exchange Server 2013 Cumulative Update 11", Drop: []string{"CVE-2016-0029", "CVE-2016-0030", "CVE-2016-0031"}},
+			{Component: "Microsoft Exchange Server 2013 Service Pack 1", Drop: []string{"CVE-2016-0029", "CVE-2016-0031"}},
+		},
+	},
+	// TODO: the per-product NA entries below come from MS16-014's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS16-014.
+	//   - Windows 8.1 for 32-bit Systems
+	//   - Windows 8.1 for x64-based Systems
+	//   - Windows Server 2008 for Itanium-based Systems Service Pack 2
+	//   - Windows Server 2012 R2 (Server Core installation)
 	"MS16-014": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "3126041", Drop: []string{"CVE-2016-0040", "CVE-2016-0041", "CVE-2016-0044"}},
@@ -3141,16 +6822,26 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Windows 8.1 for 32-bit Systems", Drop: []string{"CVE-2016-0040", "CVE-2016-0049"}},
 			{Component: "Windows 8.1 for x64-based Systems", Drop: []string{"CVE-2016-0040", "CVE-2016-0049"}},
 			{Component: "Windows RT 8.1", Drop: []string{"CVE-2016-0040", "CVE-2016-0049"}},
+			{Component: "Windows RT 8.1", Drop: []string{"CVE-2016-0040", "CVE-2016-0049"}},
 			{Component: "Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2016-0042", "CVE-2016-0049"}},
+			{Component: "Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2016-0042", "CVE-2016-0049"}},
+			{Component: "Windows Server 2008 for 32-bit Systems Service Pack 2 (Server Core installation)", Drop: []string{"CVE-2016-0042", "CVE-2016-0049"}},
 			{Component: "Windows Server 2008 for 32-bit Systems Service Pack 2 (Server Core installation)", Drop: []string{"CVE-2016-0042", "CVE-2016-0049"}},
 			{Component: "Windows Server 2008 for Itanium-based Systems Service Pack 2", Drop: []string{"CVE-2016-0042", "CVE-2016-0049"}},
 			{Component: "Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2016-0042", "CVE-2016-0049"}},
+			{Component: "Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2016-0042", "CVE-2016-0049"}},
+			{Component: "Windows Server 2008 for x64-based Systems Service Pack 2 (Server Core installation)", Drop: []string{"CVE-2016-0042", "CVE-2016-0049"}},
 			{Component: "Windows Server 2008 for x64-based Systems Service Pack 2 (Server Core installation)", Drop: []string{"CVE-2016-0042", "CVE-2016-0049"}},
 			{Component: "Windows Server 2012", Drop: []string{"CVE-2016-0040"}},
+			{Component: "Windows Server 2012", Drop: []string{"CVE-2016-0040"}},
 			{Component: "Windows Server 2012 (Server Core installation)", Drop: []string{"CVE-2016-0040"}},
+			{Component: "Windows Server 2012 (Server Core installation)", Drop: []string{"CVE-2016-0040"}},
+			{Component: "Windows Server 2012 R2", Drop: []string{"CVE-2016-0040", "CVE-2016-0049"}},
 			{Component: "Windows Server 2012 R2", Drop: []string{"CVE-2016-0040", "CVE-2016-0049"}},
 			{Component: "Windows Server 2012 R2 (Server Core installation)", Drop: []string{"CVE-2016-0040", "CVE-2016-0049"}},
 			{Component: "Windows Vista Service Pack 2", Drop: []string{"CVE-2016-0042", "CVE-2016-0049"}},
+			{Component: "Windows Vista Service Pack 2", Drop: []string{"CVE-2016-0042", "CVE-2016-0049"}},
+			{Component: "Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2016-0042", "CVE-2016-0049"}},
 			{Component: "Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2016-0042", "CVE-2016-0049"}},
 		},
 		Supersedes: map[string]supersedesAdjust{
@@ -3198,6 +6889,17 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 		},
 	},
 	"MS16-022": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2016-0964", "CVE-2016-0965", "CVE-2016-0966", "CVE-2016-0967", "CVE-2016-0968", "CVE-2016-0969", "CVE-2016-0970", "CVE-2016-0971", "CVE-2016-0972", "CVE-2016-0973", "CVE-2016-0974", "CVE-2016-0975", "CVE-2016-0976", "CVE-2016-0977", "CVE-2016-0978", "CVE-2016-0979", "CVE-2016-0980", "CVE-2016-0981", "CVE-2016-0982", "CVE-2016-0983", "CVE-2016-0984", "CVE-2016-0985"}}}},
+	// TODO: the per-product NA entries below come from MS16-023's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS16-023.
+	//   - Internet Explorer 10
+	//   - Internet Explorer 11
+	//   - Internet Explorer 11 on Windows 10
+	//   - Internet Explorer 9
 	"MS16-023": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 9", Drop: []string{"CVE-2016-0102", "CVE-2016-0103", "CVE-2016-0104", "CVE-2016-0106", "CVE-2016-0108", "CVE-2016-0109", "CVE-2016-0110", "CVE-2016-0114"}},
@@ -3250,6 +6952,17 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 		},
 	},
 	"MS16-036": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2015-8652", "CVE-2015-8655", "CVE-2015-8658", "CVE-2016-0960", "CVE-2016-0961", "CVE-2016-0962", "CVE-2016-0963", "CVE-2016-0986", "CVE-2016-0987", "CVE-2016-0988", "CVE-2016-0989", "CVE-2016-0990", "CVE-2016-0991", "CVE-2016-0993", "CVE-2016-0994", "CVE-2016-0995", "CVE-2016-0996", "CVE-2016-1001", "CVE-2016-1005", "CVE-2016-1010"}}}},
+	// TODO: the per-product NA entries below come from MS16-037's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS16-037.
+	//   - Internet Explorer 10
+	//   - Internet Explorer 11
+	//   - Internet Explorer 11 on Windows 10
+	//   - Internet Explorer 9
 	"MS16-037": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 9", Drop: []string{"CVE-2016-0160", "CVE-2016-0164", "CVE-2016-0166"}},
@@ -3299,10 +7012,22 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 	"MS16-045": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Windows Server 2012", Drop: []string{"CVE-2016-0090"}},
+			{Component: "Windows Server 2012", Drop: []string{"CVE-2016-0090"}},
+			{Component: "Windows Server 2012 (Server Core installation)", Drop: []string{"CVE-2016-0090"}},
 			{Component: "Windows Server 2012 (Server Core installation)", Drop: []string{"CVE-2016-0090"}},
 		},
 	},
 	"MS16-050": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2016-1006", "CVE-2016-1011", "CVE-2016-1012", "CVE-2016-1013", "CVE-2016-1014", "CVE-2016-1015", "CVE-2016-1016", "CVE-2016-1017", "CVE-2016-1018", "CVE-2016-1019"}}}},
+	// TODO: the per-product NA entries below come from MS16-051's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS16-051.
+	//   - Internet Explorer 10
+	//   - Internet Explorer 11
+	//   - Internet Explorer 9
 	"MS16-051": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 9", Drop: []string{"CVE-2016-0188", "CVE-2016-0194"}},
@@ -3318,19 +7043,22 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"3148198": {"3154070"},
 		},
 	},
-	"MS16-053": {
-		CVEAdjustments: []cveAdjustment{
-			{KB: "3156764", Drop: []string{"CVE-2016-0187"}},
-			{KB: "3158991", Drop: []string{"CVE-2016-0187"}},
-		},
-	},
+	// TODO: the per-product NA entries below come from MS16-053's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS16-053.
+	//   - VBScript 5.7 on Windows Server 2008 for 32-bit Systems Service Pack 2
+	"MS16-053": {CVEAdjustments: []cveAdjustment{{KB: "3158991", Drop: []string{"CVE-2016-0187"}}}},
 	"MS16-054": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "2984938", Drop: []string{"CVE-2016-0126", "CVE-2016-0183", "CVE-2016-0198"}},
 			{KB: "2984943", Drop: []string{"CVE-2016-0126", "CVE-2016-0183", "CVE-2016-0198"}},
 			{KB: "3054984", Drop: []string{"CVE-2016-0126", "CVE-2016-0183", "CVE-2016-0198"}},
 			{KB: "3101520", Drop: []string{"CVE-2016-0126", "CVE-2016-0183", "CVE-2016-0198"}},
-			{KB: "3114893", Drop: []string{"CVE-2016-0126", "CVE-2016-0140", "CVE-2016-0198", "CVE-2016-3315", "CVE-2016-3316", "CVE-2016-3317", "CVE-2016-3318"}},
+			{KB: "3114893", Drop: []string{"CVE-2016-0126", "CVE-2016-0140", "CVE-2016-0198"}},
 			{KB: "3115016", Drop: []string{"CVE-2016-0140", "CVE-2016-0183", "CVE-2016-0198"}},
 			{KB: "3115025", Drop: []string{"CVE-2016-0126", "CVE-2016-0140", "CVE-2016-0183"}},
 			{KB: "3115094", Drop: []string{"CVE-2016-0126", "CVE-2016-0140", "CVE-2016-0183"}},
@@ -3341,9 +7069,9 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "3115123", Drop: []string{"CVE-2016-0126", "CVE-2016-0140"}},
 			{KB: "3115132", Drop: []string{"CVE-2016-0126", "CVE-2016-0140", "CVE-2016-0183"}},
 			{KB: "3115464", Drop: []string{"CVE-2016-0126", "CVE-2016-0140", "CVE-2016-0198"}},
-			{KB: "3115465", Drop: []string{"CVE-2016-0126", "CVE-2016-0140", "CVE-2016-0198", "CVE-2016-3313", "CVE-2016-3315", "CVE-2016-3316", "CVE-2016-3318"}},
-			{KB: "3115479", Drop: []string{"CVE-2016-0126", "CVE-2016-0140", "CVE-2016-0198", "CVE-2016-3315", "CVE-2016-3316", "CVE-2016-3317", "CVE-2016-3318"}},
-			{KB: "3115480", Drop: []string{"CVE-2016-0126", "CVE-2016-0140", "CVE-2016-0198", "CVE-2016-3313", "CVE-2016-3315", "CVE-2016-3316", "CVE-2016-3318"}},
+			{KB: "3115465", Drop: []string{"CVE-2016-0126", "CVE-2016-0140", "CVE-2016-0198"}},
+			{KB: "3115479", Drop: []string{"CVE-2016-0126", "CVE-2016-0140", "CVE-2016-0198"}},
+			{KB: "3115480", Drop: []string{"CVE-2016-0126", "CVE-2016-0140", "CVE-2016-0198"}},
 			{KB: "3155776", Drop: []string{"CVE-2016-0126", "CVE-2016-0140", "CVE-2016-0183"}},
 			{KB: "3155777", Drop: []string{"CVE-2016-0126", "CVE-2016-0140", "CVE-2016-0183"}},
 		},
@@ -3377,19 +7105,42 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"982666": {Add: []string{"3141083"}},
 		},
 	},
+	// TODO: the per-product NA entries below come from MS16-062's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS16-062.
+	//   - Windows Server 2008 for Itanium-based Systems Service Pack 2
 	"MS16-062": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "3153199", Drop: []string{"CVE-2016-0176", "CVE-2016-0197"}},
 			{KB: "3156017", Drop: []string{"CVE-2016-0171", "CVE-2016-0173", "CVE-2016-0174", "CVE-2016-0175", "CVE-2016-0196"}},
 			{Component: "Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2016-0176"}},
+			{Component: "Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2016-0176"}},
+			{Component: "Windows Server 2008 for 32-bit Systems Service Pack 2 (Server Core installation)", Drop: []string{"CVE-2016-0176"}},
 			{Component: "Windows Server 2008 for 32-bit Systems Service Pack 2 (Server Core installation)", Drop: []string{"CVE-2016-0176"}},
 			{Component: "Windows Server 2008 for Itanium-based Systems Service Pack 2", Drop: []string{"CVE-2016-0176"}},
 			{Component: "Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2016-0176"}},
+			{Component: "Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2016-0176"}},
+			{Component: "Windows Server 2008 for x64-based Systems Service Pack 2 (Server Core installation)", Drop: []string{"CVE-2016-0176"}},
 			{Component: "Windows Server 2008 for x64-based Systems Service Pack 2 (Server Core installation)", Drop: []string{"CVE-2016-0176"}},
 			{Component: "Windows Vista Service Pack 2", Drop: []string{"CVE-2016-0176"}},
+			{Component: "Windows Vista Service Pack 2", Drop: []string{"CVE-2016-0176"}},
+			{Component: "Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2016-0176"}},
 			{Component: "Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2016-0176"}},
 		},
 	},
+	// TODO: the per-product NA entries below come from MS16-063's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS16-063.
+	//   - Internet Explorer 10
+	//   - Internet Explorer 9
 	"MS16-063": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 9", Drop: []string{"CVE-2016-3202", "CVE-2016-3210"}},
@@ -3402,28 +7153,34 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 		},
 	},
 	"MS16-064": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2016-1096", "CVE-2016-1097", "CVE-2016-1098", "CVE-2016-1099", "CVE-2016-1100", "CVE-2016-1101", "CVE-2016-1102", "CVE-2016-1103", "CVE-2016-1104", "CVE-2016-1105", "CVE-2016-1106", "CVE-2016-1107", "CVE-2016-1108", "CVE-2016-1109", "CVE-2016-1110", "CVE-2016-4108", "CVE-2016-4109", "CVE-2016-4110", "CVE-2016-4111", "CVE-2016-4112", "CVE-2016-4113", "CVE-2016-4114", "CVE-2016-4115", "CVE-2016-4116", "CVE-2016-4117"}}}},
+	// TODO: the per-product NA entries below come from MS16-067's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS16-067.
+	//   - Windows 8.1 for 32-bit Systems
+	//   - Windows 8.1 for x64-based Systems
 	"MS16-067": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Windows 8.1 for 32-bit Systems", Drop: []string{"CVE-2016-0190"}},
 			{Component: "Windows 8.1 for x64-based Systems", Drop: []string{"CVE-2016-0190"}},
+			{Component: "Windows RT 8.1", Drop: []string{"CVE-2016-0190"}},
 			{Component: "Windows RT 8.1", Drop: []string{"CVE-2016-0190"}},
 		},
 	},
 	// MS16-068's CVE summary table documents CVE-2016-3215 as
 	// "Critical / RCE (Only Windows 10 Version 1511 is affected)" in
 	// natural-language narrowing rather than a per-CVE matrix table —
-	// so gen_static_map.py's Format A parser, which looks for explicit
-	// "Not applicable" cells, did not surface this NA. The same xlsx
-	// row of KB3163017 (Win 10 RTM Edge cumulative) appears in both
-	// MS16-073 and MS16-080 where the per-CVE matrix tables *do* mark
-	// it NA, so the legacy global lookup propagated the filter to
+	// so the derivation of KB-keyed NA from the archive markdown, which
+	// looks for explicit "Not applicable" cells, did not surface this NA.
+	// The same xlsx row of KB3163017 (Win 10 RTM Edge cumulative) appears
+	// in both MS16-073 and MS16-080 where the per-CVE matrix tables *do*
+	// mark it NA, so the legacy global lookup propagated the filter to
 	// MS16-068's rows too. Restated here explicitly under MS16-068's
 	// own amendments to preserve the filter under per-bulletin scope.
-	"MS16-068": {
-		CVEAdjustments: []cveAdjustment{
-			{KB: "3163017", Drop: []string{"CVE-2016-3215"}},
-		},
-	},
+	"MS16-068": {CVEAdjustments: []cveAdjustment{{KB: "3163017", Drop: []string{"CVE-2016-3215"}}}},
 	"MS16-070": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "2596915", Drop: []string{"CVE-2016-0025", "CVE-2016-3233", "CVE-2016-3234"}},
@@ -3473,7 +7230,7 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 	"MS16-073": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "3161664", Drop: []string{"CVE-2016-3232"}},
-			{KB: "3163017", Drop: []string{"CVE-2016-3215", "CVE-2016-3232"}},
+			{KB: "3163017", Drop: []string{"CVE-2016-3232"}},
 			{KB: "3163018", Drop: []string{"CVE-2016-3232"}},
 			{KB: "3164294", Drop: []string{"CVE-2016-3218", "CVE-2016-3221"}},
 		},
@@ -3494,11 +7251,21 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Remap: map[string]string{"CVE-2015-6016": "CVE-2015-6015"}},
 		},
 	},
-	"MS16-080": {CVEAdjustments: []cveAdjustment{{KB: "3163017", Drop: []string{"CVE-2016-3215", "CVE-2016-3232"}}}},
+	"MS16-080": {CVEAdjustments: []cveAdjustment{{KB: "3163017", Drop: []string{"CVE-2016-3215"}}}},
 	"MS16-083": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2016-4121", "CVE-2016-4122", "CVE-2016-4123", "CVE-2016-4124", "CVE-2016-4125", "CVE-2016-4126", "CVE-2016-4127", "CVE-2016-4128", "CVE-2016-4129", "CVE-2016-4130", "CVE-2016-4131", "CVE-2016-4132", "CVE-2016-4133", "CVE-2016-4134", "CVE-2016-4135", "CVE-2016-4136", "CVE-2016-4137", "CVE-2016-4138", "CVE-2016-4139", "CVE-2016-4140", "CVE-2016-4141", "CVE-2016-4142", "CVE-2016-4143", "CVE-2016-4144", "CVE-2016-4145", "CVE-2016-4146", "CVE-2016-4147", "CVE-2016-4148", "CVE-2016-4149", "CVE-2016-4150", "CVE-2016-4151", "CVE-2016-4152", "CVE-2016-4153", "CVE-2016-4154", "CVE-2016-4155", "CVE-2016-4156", "CVE-2016-4166", "CVE-2016-4171"}}}},
 	// MS16-084: Microsoft retracted CVE-2016-3276 in the V1.1 (2017-03-17)
 	// revision — "Removed CVE-2016-3276 ... because IE 9/10/11 are not
 	// affected." Drop, no correction.
+	// TODO: the per-product NA entries below come from MS16-084's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS16-084.
+	//   - Internet Explorer 10
+	//   - Internet Explorer 11 on Windows 10
+	//   - Internet Explorer 9
 	"MS16-084": {
 		CVEAdjustments: []cveAdjustment{
 			{Add: []string{"CVE-2016-3204", "CVE-2016-3240", "CVE-2016-3241", "CVE-2016-3242", "CVE-2016-3243", "CVE-2016-3245", "CVE-2016-3248", "CVE-2016-3259", "CVE-2016-3260", "CVE-2016-3261", "CVE-2016-3264", "CVE-2016-3273", "CVE-2016-3274", "CVE-2016-3277"}},
@@ -3544,24 +7311,48 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Microsoft Word for Mac 2011", Drop: []string{"CVE-2016-3284"}},
 		},
 	},
+	// TODO: the per-product NA entries below come from MS16-090's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS16-090.
+	//   - Windows 8.1 for 32-bit Systems
+	//   - Windows 8.1 for x64-based Systems
+	//   - Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
+	//   - Windows Server 2008 for Itanium-based Systems Service Pack 2
+	//   - Windows Server 2012 R2 (Server Core installation)
 	"MS16-090": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Windows 7 for 32-bit Systems Service Pack 1", Drop: []string{"CVE-2016-3250"}},
+			{Component: "Windows 7 for 32-bit Systems Service Pack 1", Drop: []string{"CVE-2016-3250"}},
+			{Component: "Windows 7 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2016-3250"}},
 			{Component: "Windows 7 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2016-3250"}},
 			{Component: "Windows 8.1 for 32-bit Systems", Drop: []string{"CVE-2016-3250"}},
 			{Component: "Windows 8.1 for x64-based Systems", Drop: []string{"CVE-2016-3250"}},
 			{Component: "Windows RT 8.1", Drop: []string{"CVE-2016-3250"}},
+			{Component: "Windows RT 8.1", Drop: []string{"CVE-2016-3250"}},
 			{Component: "Windows Server 2008 R2 for Itanium-based Systems Service Pack 1", Drop: []string{"CVE-2016-3250"}},
 			{Component: "Windows Server 2008 R2 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2016-3250"}},
+			{Component: "Windows Server 2008 R2 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2016-3250"}},
+			{Component: "Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)", Drop: []string{"CVE-2016-3250"}},
 			{Component: "Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)", Drop: []string{"CVE-2016-3250"}},
 			{Component: "Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2016-3250"}},
+			{Component: "Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2016-3250"}},
+			{Component: "Windows Server 2008 for 32-bit Systems Service Pack 2 (Server Core installation)", Drop: []string{"CVE-2016-3250"}},
 			{Component: "Windows Server 2008 for 32-bit Systems Service Pack 2 (Server Core installation)", Drop: []string{"CVE-2016-3250"}},
 			{Component: "Windows Server 2008 for Itanium-based Systems Service Pack 2", Drop: []string{"CVE-2016-3250"}},
 			{Component: "Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2016-3250"}},
+			{Component: "Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2016-3250"}},
 			{Component: "Windows Server 2008 for x64-based Systems Service Pack 2 (Server Core installation)", Drop: []string{"CVE-2016-3250"}},
+			{Component: "Windows Server 2008 for x64-based Systems Service Pack 2 (Server Core installation)", Drop: []string{"CVE-2016-3250"}},
+			{Component: "Windows Server 2012 R2", Drop: []string{"CVE-2016-3250"}},
 			{Component: "Windows Server 2012 R2", Drop: []string{"CVE-2016-3250"}},
 			{Component: "Windows Server 2012 R2 (Server Core installation)", Drop: []string{"CVE-2016-3250"}},
 			{Component: "Windows Vista Service Pack 2", Drop: []string{"CVE-2016-3250"}},
+			{Component: "Windows Vista Service Pack 2", Drop: []string{"CVE-2016-3250"}},
+			{Component: "Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2016-3250"}},
 			{Component: "Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2016-3250"}},
 		},
 	},
@@ -3572,6 +7363,15 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 		},
 	},
 	"MS16-093": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2016-4173", "CVE-2016-4174", "CVE-2016-4175", "CVE-2016-4176", "CVE-2016-4177", "CVE-2016-4178", "CVE-2016-4179", "CVE-2016-4182", "CVE-2016-4185", "CVE-2016-4188", "CVE-2016-4222", "CVE-2016-4223", "CVE-2016-4224", "CVE-2016-4225", "CVE-2016-4226", "CVE-2016-4227", "CVE-2016-4228", "CVE-2016-4229", "CVE-2016-4230", "CVE-2016-4231", "CVE-2016-4232", "CVE-2016-4247", "CVE-2016-4248", "CVE-2016-4249"}}}},
+	// TODO: the per-product NA entries below come from MS16-095's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS16-095.
+	//   - Internet Explorer 10
+	//   - Internet Explorer 9
 	"MS16-095": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 9", Drop: []string{"CVE-2016-3288", "CVE-2016-3289", "CVE-2016-3290", "CVE-2016-3321", "CVE-2016-3322"}},
@@ -3593,14 +7393,29 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "3176493", Drop: []string{"CVE-2016-3303", "CVE-2016-3304"}},
 			{KB: "3176495", Drop: []string{"CVE-2016-3303", "CVE-2016-3304"}},
 			{Component: "Windows 8.1 for 32-bit Systems", Drop: []string{"CVE-2016-3303", "CVE-2016-3304"}},
+			{Component: "Windows 8.1 for 32-bit Systems", Drop: []string{"CVE-2016-3303", "CVE-2016-3304"}},
+			{Component: "Windows 8.1 for x64-based Systems", Drop: []string{"CVE-2016-3303", "CVE-2016-3304"}},
 			{Component: "Windows 8.1 for x64-based Systems", Drop: []string{"CVE-2016-3303", "CVE-2016-3304"}},
 			{Component: "Windows RT 8.1", Drop: []string{"CVE-2016-3303", "CVE-2016-3304"}},
+			{Component: "Windows RT 8.1", Drop: []string{"CVE-2016-3303", "CVE-2016-3304"}},
+			{Component: "Windows Server 2012", Drop: []string{"CVE-2016-3303", "CVE-2016-3304"}},
 			{Component: "Windows Server 2012", Drop: []string{"CVE-2016-3303", "CVE-2016-3304"}},
 			{Component: "Windows Server 2012 (Server Core installation)", Drop: []string{"CVE-2016-3303", "CVE-2016-3304"}},
+			{Component: "Windows Server 2012 (Server Core installation)", Drop: []string{"CVE-2016-3303", "CVE-2016-3304"}},
 			{Component: "Windows Server 2012 R2", Drop: []string{"CVE-2016-3303", "CVE-2016-3304"}},
+			{Component: "Windows Server 2012 R2", Drop: []string{"CVE-2016-3303", "CVE-2016-3304"}},
+			{Component: "Windows Server 2012 R2 (Server Core installation)", Drop: []string{"CVE-2016-3303", "CVE-2016-3304"}},
 			{Component: "Windows Server 2012 R2 (Server Core installation)", Drop: []string{"CVE-2016-3303", "CVE-2016-3304"}},
 		},
 	},
+	// TODO: the per-product NA entries below come from MS16-099's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS16-099.
+	//   - Microsoft OneNote 2016 for Mac
 	"MS16-099": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "3114340", Drop: []string{"CVE-2016-3313", "CVE-2016-3315", "CVE-2016-3316", "CVE-2016-3317"}},
@@ -3609,18 +7424,18 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "3114456", Drop: []string{"CVE-2016-3313", "CVE-2016-3316", "CVE-2016-3317", "CVE-2016-3318"}},
 			{KB: "3114869", Drop: []string{"CVE-2016-3315", "CVE-2016-3316", "CVE-2016-3317", "CVE-2016-3318"}},
 			{KB: "3114885", Drop: []string{"CVE-2016-3313", "CVE-2016-3316", "CVE-2016-3317", "CVE-2016-3318"}},
-			{KB: "3114893", Drop: []string{"CVE-2016-0126", "CVE-2016-0140", "CVE-2016-0198", "CVE-2016-3315", "CVE-2016-3316", "CVE-2016-3317", "CVE-2016-3318"}},
+			{KB: "3114893", Drop: []string{"CVE-2016-3315", "CVE-2016-3316", "CVE-2016-3317", "CVE-2016-3318"}},
 			{KB: "3115256", Drop: []string{"CVE-2016-3313", "CVE-2016-3316", "CVE-2016-3317", "CVE-2016-3318"}},
 			{KB: "3115415", Drop: []string{"CVE-2016-3315", "CVE-2016-3316", "CVE-2016-3317", "CVE-2016-3318"}},
 			{KB: "3115419", Drop: []string{"CVE-2016-3313", "CVE-2016-3316", "CVE-2016-3317", "CVE-2016-3318"}},
 			{KB: "3115427", Drop: []string{"CVE-2016-3315", "CVE-2016-3316", "CVE-2016-3317", "CVE-2016-3318"}},
 			{KB: "3115439", Drop: []string{"CVE-2016-3313", "CVE-2016-3315", "CVE-2016-3317", "CVE-2016-3318"}},
 			{KB: "3115449", Drop: []string{"CVE-2016-3313", "CVE-2016-3315", "CVE-2016-3317", "CVE-2016-3318"}},
-			{KB: "3115465", Drop: []string{"CVE-2016-0126", "CVE-2016-0140", "CVE-2016-0198", "CVE-2016-3313", "CVE-2016-3315", "CVE-2016-3316", "CVE-2016-3318"}},
+			{KB: "3115465", Drop: []string{"CVE-2016-3313", "CVE-2016-3315", "CVE-2016-3316", "CVE-2016-3318"}},
 			{KB: "3115468", Drop: []string{"CVE-2016-3313", "CVE-2016-3315", "CVE-2016-3316", "CVE-2016-3318"}},
 			{KB: "3115471", Drop: []string{"CVE-2016-3313", "CVE-2016-3315", "CVE-2016-3316", "CVE-2016-3318"}},
-			{KB: "3115479", Drop: []string{"CVE-2016-0126", "CVE-2016-0140", "CVE-2016-0198", "CVE-2016-3315", "CVE-2016-3316", "CVE-2016-3317", "CVE-2016-3318"}},
-			{KB: "3115480", Drop: []string{"CVE-2016-0126", "CVE-2016-0140", "CVE-2016-0198", "CVE-2016-3313", "CVE-2016-3315", "CVE-2016-3316", "CVE-2016-3318"}},
+			{KB: "3115479", Drop: []string{"CVE-2016-3315", "CVE-2016-3316", "CVE-2016-3317", "CVE-2016-3318"}},
+			{KB: "3115480", Drop: []string{"CVE-2016-3313", "CVE-2016-3315", "CVE-2016-3316", "CVE-2016-3318"}},
 			{KB: "3179162", Drop: []string{"CVE-2016-3313", "CVE-2016-3315", "CVE-2016-3316", "CVE-2016-3318"}},
 			{KB: "3179163", Drop: []string{"CVE-2016-3318"}},
 			{Component: "Microsoft OneNote 2016 for Mac", Drop: []string{"CVE-2016-3313", "CVE-2016-3316", "CVE-2016-3317"}},
@@ -3637,12 +7452,12 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 		CVEAdjustments: []cveAdjustment{
 			{KB: "3167679", Drop: []string{"CVE-2016-3300"}},
 			{KB: "3177108", Drop: []string{"CVE-2016-3237"}},
-			{KB: "3185330", Drop: []string{"CVE-2016-0073", "CVE-2016-0075", "CVE-2016-0079", "CVE-2016-3300", "CVE-2016-3341"}},
-			{KB: "3185331", Drop: []string{"CVE-2016-0079", "CVE-2016-3300"}},
-			{KB: "3185332", Drop: []string{"CVE-2016-0079", "CVE-2016-3300"}},
-			{KB: "3192391", Drop: []string{"CVE-2016-0073", "CVE-2016-0075", "CVE-2016-0079", "CVE-2016-3300", "CVE-2016-3341"}},
-			{KB: "3192392", Drop: []string{"CVE-2016-0079", "CVE-2016-3300"}},
-			{KB: "3192393", Drop: []string{"CVE-2016-0079", "CVE-2016-3300"}},
+			{KB: "3185330", Drop: []string{"CVE-2016-3300"}},
+			{KB: "3185331", Drop: []string{"CVE-2016-3300"}},
+			{KB: "3185332", Drop: []string{"CVE-2016-3300"}},
+			{KB: "3192391", Drop: []string{"CVE-2016-3300"}},
+			{KB: "3192392", Drop: []string{"CVE-2016-3300"}},
+			{KB: "3192393", Drop: []string{"CVE-2016-3300"}},
 			{KB: "3192440", Drop: []string{"CVE-2016-3300"}},
 			{KB: "3192441", Drop: []string{"CVE-2016-3300"}},
 			{KB: "3194798", Drop: []string{"CVE-2016-3300"}},
@@ -3667,6 +7482,16 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"3157569": {Add: []string{"3175887"}},
 		},
 	},
+	// TODO: the per-product NA entries below come from MS16-104's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS16-104.
+	//   - Internet Explorer 10
+	//   - Internet Explorer 11
+	//   - Internet Explorer 9
 	"MS16-104": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 9", Drop: []string{"CVE-2016-3247", "CVE-2016-3291", "CVE-2016-3292", "CVE-2016-3295", "CVE-2016-3325"}},
@@ -3677,21 +7502,33 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 	"MS16-105": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2016-3247", "CVE-2016-3291", "CVE-2016-3294", "CVE-2016-3295", "CVE-2016-3297", "CVE-2016-3325", "CVE-2016-3330", "CVE-2016-3350", "CVE-2016-3351", "CVE-2016-3370", "CVE-2016-3374", "CVE-2016-3377"}}}},
 	"MS16-106": {
 		CVEAdjustments: []cveAdjustment{
-			{KB: "3185611", Drop: []string{"CVE-2016-3356", "CVE-2016-3372"}},
-			{KB: "3185614", Drop: []string{"CVE-2016-3356", "CVE-2016-3372"}},
+			{KB: "3185611", Drop: []string{"CVE-2016-3356"}},
+			{KB: "3185614", Drop: []string{"CVE-2016-3356"}},
 			{KB: "3185911", Drop: []string{"CVE-2016-3356"}},
-			{KB: "3189866", Drop: []string{"CVE-2016-3349", "CVE-2016-3369", "CVE-2016-3372"}},
+			{KB: "3189866", Drop: []string{"CVE-2016-3349"}},
+			{Component: "Windows 7 for 32-bit Systems Service Pack 1", Drop: []string{"CVE-2016-3349"}},
 			{Component: "Windows 7 for 32-bit Systems Service Pack 1", Drop: []string{"CVE-2016-3349"}},
 			{Component: "Windows 7 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2016-3349"}},
+			{Component: "Windows 7 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2016-3349"}},
+			{Component: "Windows Server 2008 R2 for Itanium-based Systems Service Pack 1", Drop: []string{"CVE-2016-3349"}},
 			{Component: "Windows Server 2008 R2 for Itanium-based Systems Service Pack 1", Drop: []string{"CVE-2016-3349"}},
 			{Component: "Windows Server 2008 R2 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2016-3349"}},
+			{Component: "Windows Server 2008 R2 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2016-3349"}},
+			{Component: "Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)", Drop: []string{"CVE-2016-3349"}},
 			{Component: "Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)", Drop: []string{"CVE-2016-3349"}},
 			{Component: "Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2016-3349"}},
+			{Component: "Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2016-3349"}},
+			{Component: "Windows Server 2008 for 32-bit Systems Service Pack 2 (Server Core installation)", Drop: []string{"CVE-2016-3349"}},
 			{Component: "Windows Server 2008 for 32-bit Systems Service Pack 2 (Server Core installation)", Drop: []string{"CVE-2016-3349"}},
 			{Component: "Windows Server 2008 for Itanium-based Systems Service Pack 2", Drop: []string{"CVE-2016-3349"}},
+			{Component: "Windows Server 2008 for Itanium-based Systems Service Pack 2", Drop: []string{"CVE-2016-3349"}},
+			{Component: "Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2016-3349"}},
 			{Component: "Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2016-3349"}},
 			{Component: "Windows Server 2008 for x64-based Systems Service Pack 2 (Server Core installation)", Drop: []string{"CVE-2016-3349"}},
+			{Component: "Windows Server 2008 for x64-based Systems Service Pack 2 (Server Core installation)", Drop: []string{"CVE-2016-3349"}},
 			{Component: "Windows Vista Service Pack 2", Drop: []string{"CVE-2016-3349"}},
+			{Component: "Windows Vista Service Pack 2", Drop: []string{"CVE-2016-3349"}},
+			{Component: "Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2016-3349"}},
 			{Component: "Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2016-3349"}},
 		},
 	},
@@ -3713,7 +7550,7 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "3115467", Drop: []string{"CVE-2016-0137", "CVE-2016-0141", "CVE-2016-3357", "CVE-2016-3358", "CVE-2016-3359", "CVE-2016-3361", "CVE-2016-3362", "CVE-2016-3363", "CVE-2016-3364", "CVE-2016-3365", "CVE-2016-3366", "CVE-2016-3381"}},
 			{KB: "3115472", Drop: []string{"CVE-2016-3358", "CVE-2016-3362", "CVE-2016-3365"}},
 			{KB: "3115487", Drop: []string{"CVE-2016-0137", "CVE-2016-0141", "CVE-2016-3357", "CVE-2016-3358", "CVE-2016-3359", "CVE-2016-3361", "CVE-2016-3362", "CVE-2016-3363", "CVE-2016-3364", "CVE-2016-3365", "CVE-2016-3366", "CVE-2016-3381"}},
-			{KB: "3118268", Drop: []string{"CVE-2016-0137", "CVE-2016-3357", "CVE-2016-3358", "CVE-2016-3359", "CVE-2016-3360", "CVE-2016-3361", "CVE-2016-3362", "CVE-2016-3363", "CVE-2016-3364", "CVE-2016-3365", "CVE-2016-3366", "CVE-2016-3381"}},
+			{KB: "3118268", Drop: []string{"CVE-2016-3358", "CVE-2016-3359", "CVE-2016-3360", "CVE-2016-3361", "CVE-2016-3362", "CVE-2016-3363", "CVE-2016-3364", "CVE-2016-3365", "CVE-2016-3366", "CVE-2016-3381"}},
 			{KB: "3118270", Drop: []string{"CVE-2016-3358", "CVE-2016-3362", "CVE-2016-3365"}},
 			{KB: "3118280", Drop: []string{"CVE-2016-0137", "CVE-2016-0141", "CVE-2016-3357", "CVE-2016-3358", "CVE-2016-3359", "CVE-2016-3360", "CVE-2016-3361", "CVE-2016-3362", "CVE-2016-3363", "CVE-2016-3364", "CVE-2016-3365", "CVE-2016-3381"}},
 			{KB: "3118284", Drop: []string{"CVE-2016-0137", "CVE-2016-0141", "CVE-2016-3357", "CVE-2016-3359", "CVE-2016-3360", "CVE-2016-3361", "CVE-2016-3364", "CVE-2016-3366"}},
@@ -3733,6 +7570,8 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Microsoft Excel 2016 for Mac", Drop: []string{"CVE-2016-3357", "CVE-2016-3360", "CVE-2016-3366"}},
 			{Component: "Microsoft Office 2013 RT Service Pack 1", Drop: []string{"CVE-2016-0137", "CVE-2016-0141"}},
 			{Component: "Microsoft Office 2013 Service Pack 1 (32-bit editions)", Drop: []string{"CVE-2016-0137", "CVE-2016-0141", "CVE-2016-3357"}},
+			{Component: "Microsoft Office 2013 Service Pack 1 (32-bit editions)", Drop: []string{"CVE-2016-0137", "CVE-2016-0141", "CVE-2016-3357"}},
+			{Component: "Microsoft Office 2013 Service Pack 1 (64-bit editions)", Drop: []string{"CVE-2016-0137", "CVE-2016-0141", "CVE-2016-3357"}},
 			{Component: "Microsoft Office 2013 Service Pack 1 (64-bit editions)", Drop: []string{"CVE-2016-0137", "CVE-2016-0141", "CVE-2016-3357"}},
 			{Component: "Microsoft Outlook 2016 for Mac", Drop: []string{"CVE-2016-3357", "CVE-2016-3358", "CVE-2016-3360"}},
 			{Component: "Microsoft PowerPoint 2016 for Mac", Drop: []string{"CVE-2016-3357", "CVE-2016-3358", "CVE-2016-3366"}},
@@ -3758,7 +7597,10 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "3184711", Drop: []string{"CVE-2016-3378", "CVE-2016-3379"}},
 			{KB: "3184728", Drop: []string{"CVE-2016-3378", "CVE-2016-3379"}},
 			{Component: "Microsoft Exchange Server 2013 Cumulative Update 12", Drop: []string{"CVE-2016-3379"}},
+			{Component: "Microsoft Exchange Server 2013 Cumulative Update 12", Drop: []string{"CVE-2016-3379"}},
 			{Component: "Microsoft Exchange Server 2013 Cumulative Update 13", Drop: []string{"CVE-2016-3379"}},
+			{Component: "Microsoft Exchange Server 2013 Cumulative Update 13", Drop: []string{"CVE-2016-3379"}},
+			{Component: "Microsoft Exchange Server 2013 Service Pack 1", Drop: []string{"CVE-2016-3379"}},
 			{Component: "Microsoft Exchange Server 2013 Service Pack 1", Drop: []string{"CVE-2016-3379"}},
 		},
 	},
@@ -3766,30 +7608,53 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 		CVEAdjustments: []cveAdjustment{
 			{KB: "3184471", Drop: []string{"CVE-2016-3346", "CVE-2016-3352", "CVE-2016-3369"}},
 			{KB: "3187754", Drop: []string{"CVE-2016-3346", "CVE-2016-3368", "CVE-2016-3369"}},
-			{KB: "3189866", Drop: []string{"CVE-2016-3349", "CVE-2016-3369", "CVE-2016-3372"}},
+			{KB: "3189866", Drop: []string{"CVE-2016-3369"}},
 		},
 	},
 	"MS16-111": {
 		CVEAdjustments: []cveAdjustment{
-			{KB: "3185611", Drop: []string{"CVE-2016-3356", "CVE-2016-3372"}},
-			{KB: "3185614", Drop: []string{"CVE-2016-3356", "CVE-2016-3372"}},
-			{KB: "3189866", Drop: []string{"CVE-2016-3349", "CVE-2016-3369", "CVE-2016-3372"}},
+			{KB: "3185611", Drop: []string{"CVE-2016-3372"}},
+			{KB: "3185614", Drop: []string{"CVE-2016-3372"}},
+			{KB: "3189866", Drop: []string{"CVE-2016-3372"}},
 			{KB: "4025342", Drop: []string{"CVE-2016-3306", "CVE-2016-3371", "CVE-2016-3372", "CVE-2016-3373"}},
 			{Component: "Windows 7 for 32-bit Systems Service Pack 1", Drop: []string{"CVE-2016-3372"}},
+			{Component: "Windows 7 for 32-bit Systems Service Pack 1", Drop: []string{"CVE-2016-3372"}},
+			{Component: "Windows 7 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2016-3372"}},
 			{Component: "Windows 7 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2016-3372"}},
 			{Component: "Windows 8.1 for 32-bit Systems", Drop: []string{"CVE-2016-3372"}},
+			{Component: "Windows 8.1 for 32-bit Systems", Drop: []string{"CVE-2016-3372"}},
+			{Component: "Windows 8.1 for x64-based Systems", Drop: []string{"CVE-2016-3372"}},
 			{Component: "Windows 8.1 for x64-based Systems", Drop: []string{"CVE-2016-3372"}},
 			{Component: "Windows RT 8.1", Drop: []string{"CVE-2016-3372"}},
+			{Component: "Windows RT 8.1", Drop: []string{"CVE-2016-3372"}},
+			{Component: "Windows Server 2008 R2 for Itanium-based Systems Service Pack 1", Drop: []string{"CVE-2016-3372"}},
 			{Component: "Windows Server 2008 R2 for Itanium-based Systems Service Pack 1", Drop: []string{"CVE-2016-3372"}},
 			{Component: "Windows Server 2008 R2 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2016-3372"}},
+			{Component: "Windows Server 2008 R2 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2016-3372"}},
+			{Component: "Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)", Drop: []string{"CVE-2016-3372"}},
 			{Component: "Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)", Drop: []string{"CVE-2016-3372"}},
 			{Component: "Windows Server 2012", Drop: []string{"CVE-2016-3372"}},
+			{Component: "Windows Server 2012", Drop: []string{"CVE-2016-3372"}},
+			{Component: "Windows Server 2012 (Server Core installation)", Drop: []string{"CVE-2016-3372"}},
 			{Component: "Windows Server 2012 (Server Core installation)", Drop: []string{"CVE-2016-3372"}},
 			{Component: "Windows Server 2012 R2", Drop: []string{"CVE-2016-3372"}},
+			{Component: "Windows Server 2012 R2", Drop: []string{"CVE-2016-3372"}},
+			{Component: "Windows Server 2012 R2 (Server Core installation)", Drop: []string{"CVE-2016-3372"}},
 			{Component: "Windows Server 2012 R2 (Server Core installation)", Drop: []string{"CVE-2016-3372"}},
 		},
 	},
 	"MS16-117": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2016-4271", "CVE-2016-4272", "CVE-2016-4274", "CVE-2016-4275", "CVE-2016-4276", "CVE-2016-4277", "CVE-2016-4278", "CVE-2016-4279", "CVE-2016-4280", "CVE-2016-4281", "CVE-2016-4282", "CVE-2016-4283", "CVE-2016-4284", "CVE-2016-4285", "CVE-2016-4287", "CVE-2016-6921", "CVE-2016-6922", "CVE-2016-6923", "CVE-2016-6924", "CVE-2016-6925", "CVE-2016-6926", "CVE-2016-6927", "CVE-2016-6929", "CVE-2016-6930", "CVE-2016-6931", "CVE-2016-6932"}}}},
+	// TODO: the per-product NA entries below come from MS16-118's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS16-118.
+	//   - Internet Explorer 10
+	//   - Internet Explorer 11
+	//   - Internet Explorer 11 on Windows 10
+	//   - Internet Explorer 9
 	"MS16-118": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 9", Drop: []string{"CVE-2016-3331", "CVE-2016-3383", "CVE-2016-3387", "CVE-2016-3388", "CVE-2016-3390"}},
@@ -3825,20 +7690,20 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 		CVEAdjustments: []cveAdjustment{
 			{Add: []string{"CVE-2016-3266", "CVE-2016-3341", "CVE-2016-3376", "CVE-2016-7185", "CVE-2016-7191", "CVE-2016-7211"}},
 			{KB: "3183431", Drop: []string{"CVE-2016-3266", "CVE-2016-3341", "CVE-2016-3376", "CVE-2016-7211"}},
-			{KB: "3185330", Drop: []string{"CVE-2016-0073", "CVE-2016-0075", "CVE-2016-0079", "CVE-2016-3300", "CVE-2016-3341"}},
+			{KB: "3185330", Drop: []string{"CVE-2016-3341"}},
 			{KB: "3191203", Drop: []string{"CVE-2016-3341", "CVE-2016-7185"}},
-			{KB: "3192391", Drop: []string{"CVE-2016-0073", "CVE-2016-0075", "CVE-2016-0079", "CVE-2016-3300", "CVE-2016-3341"}},
+			{KB: "3192391", Drop: []string{"CVE-2016-3341"}},
 		},
 	},
 	"MS16-124": {
 		CVEAdjustments: []cveAdjustment{
-			{KB: "3185330", Drop: []string{"CVE-2016-0073", "CVE-2016-0075", "CVE-2016-0079", "CVE-2016-3300", "CVE-2016-3341"}},
-			{KB: "3185331", Drop: []string{"CVE-2016-0079", "CVE-2016-3300"}},
-			{KB: "3185332", Drop: []string{"CVE-2016-0079", "CVE-2016-3300"}},
+			{KB: "3185330", Drop: []string{"CVE-2016-0073", "CVE-2016-0075", "CVE-2016-0079"}},
+			{KB: "3185331", Drop: []string{"CVE-2016-0079"}},
+			{KB: "3185332", Drop: []string{"CVE-2016-0079"}},
 			{KB: "3191256", Drop: []string{"CVE-2016-0073", "CVE-2016-0075", "CVE-2016-0079"}},
-			{KB: "3192391", Drop: []string{"CVE-2016-0073", "CVE-2016-0075", "CVE-2016-0079", "CVE-2016-3300", "CVE-2016-3341"}},
-			{KB: "3192392", Drop: []string{"CVE-2016-0079", "CVE-2016-3300"}},
-			{KB: "3192393", Drop: []string{"CVE-2016-0079", "CVE-2016-3300"}},
+			{KB: "3192391", Drop: []string{"CVE-2016-0073", "CVE-2016-0075", "CVE-2016-0079"}},
+			{KB: "3192392", Drop: []string{"CVE-2016-0079"}},
+			{KB: "3192393", Drop: []string{"CVE-2016-0079"}},
 		},
 	},
 	"MS16-127": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2016-4273", "CVE-2016-4286", "CVE-2016-6981", "CVE-2016-6982", "CVE-2016-6983", "CVE-2016-6984", "CVE-2016-6985", "CVE-2016-6986", "CVE-2016-6987", "CVE-2016-6989", "CVE-2016-6990", "CVE-2016-6992"}}}},
@@ -3869,8 +7734,8 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 	},
 	"MS16-132": {
 		CVEAdjustments: []cveAdjustment{
-			{KB: "3197867", Drop: []string{"CVE-2016-7217", "CVE-2016-7220"}},
-			{KB: "3197868", Drop: []string{"CVE-2016-7217", "CVE-2016-7220"}},
+			{KB: "3197867", Drop: []string{"CVE-2016-7217"}},
+			{KB: "3197868", Drop: []string{"CVE-2016-7217"}},
 			{KB: "3203859", Drop: []string{"CVE-2016-7205", "CVE-2016-7217"}},
 		},
 	},
@@ -3903,8 +7768,12 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "3198798", Drop: []string{"CVE-2016-7230", "CVE-2016-7231", "CVE-2016-7232", "CVE-2016-7233", "CVE-2016-7235", "CVE-2016-7244", "CVE-2016-7245"}},
 			{KB: "3198807", Drop: []string{"CVE-2016-7230", "CVE-2016-7244", "CVE-2016-7245"}},
 			{Component: "Microsoft Excel 2016 for Mac", Drop: []string{"CVE-2016-7234"}},
+			{Component: "Microsoft Excel 2016 for Mac", Drop: []string{"CVE-2016-7234"}},
+			{Component: "Microsoft Excel for Mac 2011", Drop: []string{"CVE-2016-7232"}},
 			{Component: "Microsoft Excel for Mac 2011", Drop: []string{"CVE-2016-7232"}},
 			{Component: "Microsoft Word 2016 for Mac", Drop: []string{"CVE-2016-7236"}},
+			{Component: "Microsoft Word 2016 for Mac", Drop: []string{"CVE-2016-7236"}},
+			{Component: "Microsoft Word for Mac 2011", Drop: []string{"CVE-2016-7213", "CVE-2016-7228", "CVE-2016-7229", "CVE-2016-7231", "CVE-2016-7236"}},
 			{Component: "Microsoft Word for Mac 2011", Drop: []string{"CVE-2016-7213", "CVE-2016-7228", "CVE-2016-7229", "CVE-2016-7231", "CVE-2016-7236"}},
 		},
 		Supersedes: map[string]supersedesAdjust{
@@ -3917,9 +7786,14 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "3194371", Drop: []string{"CVE-2016-7214", "CVE-2016-7215", "CVE-2016-7246"}},
 			{KB: "3198234", Drop: []string{"CVE-2016-7218", "CVE-2016-7246"}},
 			{Component: "Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2016-7255"}},
+			{Component: "Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2016-7255"}},
+			{Component: "Windows Server 2008 for Itanium-based Systems Service Pack 2", Drop: []string{"CVE-2016-7255"}},
 			{Component: "Windows Server 2008 for Itanium-based Systems Service Pack 2", Drop: []string{"CVE-2016-7255"}},
 			{Component: "Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2016-7255"}},
+			{Component: "Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2016-7255"}},
 			{Component: "Windows Vista Service Pack 2", Drop: []string{"CVE-2016-7255"}},
+			{Component: "Windows Vista Service Pack 2", Drop: []string{"CVE-2016-7255"}},
+			{Component: "Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2016-7255"}},
 			{Component: "Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2016-7255"}},
 		},
 		Supersedes: map[string]supersedesAdjust{
@@ -3939,12 +7813,12 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 	"MS16-137": {
 		CVEAdjustments: []cveAdjustment{
 			{Add: []string{"CVE-2016-7220", "CVE-2016-7237", "CVE-2016-7238"}},
-			{KB: "3197867", Drop: []string{"CVE-2016-7217", "CVE-2016-7220"}},
-			{KB: "3197868", Drop: []string{"CVE-2016-7217", "CVE-2016-7220"}},
-			{KB: "3197873", Drop: []string{"CVE-2016-7220", "CVE-2016-7225", "CVE-2016-7226"}},
-			{KB: "3197874", Drop: []string{"CVE-2016-7220", "CVE-2016-7225", "CVE-2016-7226"}},
-			{KB: "3197876", Drop: []string{"CVE-2016-7220", "CVE-2016-7225", "CVE-2016-7226"}},
-			{KB: "3197877", Drop: []string{"CVE-2016-7220", "CVE-2016-7225", "CVE-2016-7226"}},
+			{KB: "3197867", Drop: []string{"CVE-2016-7220"}},
+			{KB: "3197868", Drop: []string{"CVE-2016-7220"}},
+			{KB: "3197873", Drop: []string{"CVE-2016-7220"}},
+			{KB: "3197874", Drop: []string{"CVE-2016-7220"}},
+			{KB: "3197876", Drop: []string{"CVE-2016-7220"}},
+			{KB: "3197877", Drop: []string{"CVE-2016-7220"}},
 			{KB: "3198510", Drop: []string{"CVE-2016-7220"}},
 			{KB: "3198586", Drop: []string{"CVE-2016-7220"}},
 			{KB: "3200970", Drop: []string{"CVE-2016-7220"}},
@@ -3955,13 +7829,22 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 	},
 	"MS16-138": {
 		CVEAdjustments: []cveAdjustment{
-			{KB: "3197873", Drop: []string{"CVE-2016-7220", "CVE-2016-7225", "CVE-2016-7226"}},
-			{KB: "3197874", Drop: []string{"CVE-2016-7220", "CVE-2016-7225", "CVE-2016-7226"}},
-			{KB: "3197876", Drop: []string{"CVE-2016-7220", "CVE-2016-7225", "CVE-2016-7226"}},
-			{KB: "3197877", Drop: []string{"CVE-2016-7220", "CVE-2016-7225", "CVE-2016-7226"}},
+			{KB: "3197873", Drop: []string{"CVE-2016-7225", "CVE-2016-7226"}},
+			{KB: "3197874", Drop: []string{"CVE-2016-7225", "CVE-2016-7226"}},
+			{KB: "3197876", Drop: []string{"CVE-2016-7225", "CVE-2016-7226"}},
+			{KB: "3197877", Drop: []string{"CVE-2016-7225", "CVE-2016-7226"}},
 		},
 	},
 	"MS16-141": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2016-7857", "CVE-2016-7858", "CVE-2016-7859", "CVE-2016-7860", "CVE-2016-7861", "CVE-2016-7862", "CVE-2016-7863", "CVE-2016-7864", "CVE-2016-7865"}}}},
+	// TODO: the per-product NA entries below come from MS16-142's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS16-142.
+	//   - Internet Explorer 10
+	//   - Internet Explorer 9
 	"MS16-142": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 9", Drop: []string{"CVE-2016-7196", "CVE-2016-7241"}},
@@ -3977,6 +7860,16 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 		},
 	},
 	// MS16-144: no candidate in markdown — drop.
+	// TODO: the per-product NA entries below come from MS16-144's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS16-144.
+	//   - Internet Explorer 10
+	//   - Internet Explorer 11 on Windows 10
+	//   - Internet Explorer 9
 	"MS16-144": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 9", Drop: []string{"CVE-2016-7281", "CVE-2016-7284", "CVE-2016-7287"}},
@@ -4025,7 +7918,7 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "3118380", Drop: []string{"CVE-2016-7274", "CVE-2016-7277", "CVE-2016-7289", "CVE-2016-7290", "CVE-2016-7291"}},
 			{KB: "3127892", Drop: []string{"CVE-2016-7268", "CVE-2016-7290", "CVE-2016-7291"}},
 			{KB: "3127968", Drop: []string{"CVE-2016-7274", "CVE-2016-7277", "CVE-2016-7289", "CVE-2016-7290", "CVE-2016-7291"}},
-			{KB: "3127986", Drop: []string{"CVE-2016-7274", "CVE-2016-7275", "CVE-2016-7276", "CVE-2016-7277", "CVE-2016-7289", "CVE-2016-7290", "CVE-2016-7291"}},
+			{KB: "3127986", Drop: []string{"CVE-2016-7274", "CVE-2016-7276", "CVE-2016-7289", "CVE-2016-7290", "CVE-2016-7291"}},
 			{KB: "3127995", Drop: []string{"CVE-2016-7275", "CVE-2016-7276", "CVE-2016-7277", "CVE-2016-7289", "CVE-2016-7290", "CVE-2016-7291"}},
 			{KB: "3128008", Drop: []string{"CVE-2016-7264", "CVE-2016-7268"}},
 			{KB: "3128016", Drop: []string{"CVE-2016-7264", "CVE-2016-7268"}},
@@ -4047,18 +7940,21 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "3198808", Drop: []string{"CVE-2016-7266", "CVE-2016-7300"}},
 			{KB: "3204068", Drop: []string{"CVE-2016-7263", "CVE-2016-7264", "CVE-2016-7266", "CVE-2016-7268"}},
 			{Component: "Microsoft Excel 2016 for Mac", Drop: []string{"CVE-2016-7257", "CVE-2016-7274"}},
+			{Component: "Microsoft Excel 2016 for Mac", Drop: []string{"CVE-2016-7257", "CVE-2016-7274"}},
+			{Component: "Microsoft Excel for Mac 2011", Drop: []string{"CVE-2016-7268"}},
 			{Component: "Microsoft Excel for Mac 2011", Drop: []string{"CVE-2016-7268"}},
 			{Component: "Microsoft Office 2016 (32-bit edition)", Drop: []string{"CVE-2016-7275", "CVE-2016-7277"}},
+			{Component: "Microsoft Office 2016 (32-bit edition)", Drop: []string{"CVE-2016-7275", "CVE-2016-7277"}},
+			{Component: "Microsoft Office 2016 (64-bit edition)", Drop: []string{"CVE-2016-7275", "CVE-2016-7277"}},
 			{Component: "Microsoft Office 2016 (64-bit edition)", Drop: []string{"CVE-2016-7275", "CVE-2016-7277"}},
 			{Component: "Microsoft Office for Mac 2011", Drop: []string{"CVE-2016-7290", "CVE-2016-7291"}},
+			{Component: "Microsoft Office for Mac 2011", Drop: []string{"CVE-2016-7290", "CVE-2016-7291"}},
+			{Component: "Microsoft Word for Mac 2011", Drop: []string{"CVE-2016-7257", "CVE-2016-7263", "CVE-2016-7264", "CVE-2016-7274", "CVE-2016-7276"}},
 			{Component: "Microsoft Word for Mac 2011", Drop: []string{"CVE-2016-7257", "CVE-2016-7263", "CVE-2016-7264", "CVE-2016-7274", "CVE-2016-7276"}},
 		},
 	},
 	"MS16-154": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2016-7867", "CVE-2016-7868", "CVE-2016-7869", "CVE-2016-7870", "CVE-2016-7871", "CVE-2016-7872", "CVE-2016-7873", "CVE-2016-7874", "CVE-2016-7875", "CVE-2016-7876", "CVE-2016-7877", "CVE-2016-7878", "CVE-2016-7879", "CVE-2016-7880", "CVE-2016-7881", "CVE-2016-7890", "CVE-2016-7892"}}}},
 	"MS16-155": {
-		CVEAdjustments: []cveAdjustment{
-			{KB: "3205640", Drop: []string{"CVE-2016-7270"}},
-		},
 		Supersedes: map[string]supersedesAdjust{
 			"3163244": {Add: []string{"3210129"}},
 			"3188744": {Add: []string{"3210129", "3210136", "3210139"}},
@@ -4071,6 +7967,16 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 		},
 	},
 	"MS17-005": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2017-2982", "CVE-2017-2984", "CVE-2017-2985", "CVE-2017-2986", "CVE-2017-2987", "CVE-2017-2988", "CVE-2017-2990", "CVE-2017-2991", "CVE-2017-2992", "CVE-2017-2993", "CVE-2017-2994", "CVE-2017-2995", "CVE-2017-2996"}}}},
+	// TODO: the per-product NA entries below come from MS17-006's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS17-006.
+	//   - Internet Explorer 10
+	//   - Internet Explorer 11
+	//   - Internet Explorer 9
 	"MS17-006": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 9", Drop: []string{"CVE-2017-0012", "CVE-2017-0018", "CVE-2017-0033", "CVE-2017-0037", "CVE-2017-0049", "CVE-2017-0154"}},
@@ -4082,26 +7988,26 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 	"MS17-008": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "3211306", Drop: []string{"CVE-2017-0021", "CVE-2017-0051", "CVE-2017-0074", "CVE-2017-0095", "CVE-2017-0098"}},
-			{KB: "4012212", Drop: []string{"CVE-2017-0007", "CVE-2017-0016", "CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0051", "CVE-2017-0057", "CVE-2017-0074", "CVE-2017-0078", "CVE-2017-0095", "CVE-2017-0098"}},
-			{KB: "4012213", Drop: []string{"CVE-2017-0007", "CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0039", "CVE-2017-0051", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0080", "CVE-2017-0082", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0095", "CVE-2017-0098", "CVE-2017-0101", "CVE-2017-0103", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
-			{KB: "4012214", Drop: []string{"CVE-2017-0007", "CVE-2017-0016", "CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0039", "CVE-2017-0051", "CVE-2017-0057", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0079", "CVE-2017-0080", "CVE-2017-0082", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0095", "CVE-2017-0098", "CVE-2017-0101", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
-			{KB: "4012215", Drop: []string{"CVE-2017-0007", "CVE-2017-0016", "CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0051", "CVE-2017-0057", "CVE-2017-0074", "CVE-2017-0078", "CVE-2017-0095", "CVE-2017-0098"}},
-			{KB: "4012216", Drop: []string{"CVE-2017-0007", "CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0039", "CVE-2017-0051", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0080", "CVE-2017-0082", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0095", "CVE-2017-0098", "CVE-2017-0101", "CVE-2017-0103", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
-			{KB: "4012217", Drop: []string{"CVE-2017-0007", "CVE-2017-0016", "CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0039", "CVE-2017-0051", "CVE-2017-0057", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0079", "CVE-2017-0080", "CVE-2017-0082", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0095", "CVE-2017-0098", "CVE-2017-0101", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
-			{KB: "4012606", Drop: []string{"CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0039", "CVE-2017-0051", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0101", "CVE-2017-0103", "CVE-2017-0104", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
-			{KB: "4013198", Drop: []string{"CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0039", "CVE-2017-0051", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0101", "CVE-2017-0103", "CVE-2017-0104", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
+			{KB: "4012212", Drop: []string{"CVE-2017-0021", "CVE-2017-0051", "CVE-2017-0074", "CVE-2017-0095", "CVE-2017-0098"}},
+			{KB: "4012213", Drop: []string{"CVE-2017-0021", "CVE-2017-0051", "CVE-2017-0095", "CVE-2017-0098"}},
+			{KB: "4012214", Drop: []string{"CVE-2017-0021", "CVE-2017-0051", "CVE-2017-0095", "CVE-2017-0098"}},
+			{KB: "4012215", Drop: []string{"CVE-2017-0021", "CVE-2017-0051", "CVE-2017-0074", "CVE-2017-0095", "CVE-2017-0098"}},
+			{KB: "4012216", Drop: []string{"CVE-2017-0021", "CVE-2017-0051", "CVE-2017-0095", "CVE-2017-0098"}},
+			{KB: "4012217", Drop: []string{"CVE-2017-0021", "CVE-2017-0051", "CVE-2017-0095", "CVE-2017-0098"}},
+			{KB: "4012606", Drop: []string{"CVE-2017-0021", "CVE-2017-0051"}},
+			{KB: "4013198", Drop: []string{"CVE-2017-0021", "CVE-2017-0051"}},
 		},
 	},
 	"MS17-011": {
 		CVEAdjustments: []cveAdjustment{
 			{Add: []string{"CVE-2017-0072", "CVE-2017-0083", "CVE-2017-0084", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0118", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0121", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
-			{KB: "4012213", Drop: []string{"CVE-2017-0007", "CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0039", "CVE-2017-0051", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0080", "CVE-2017-0082", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0095", "CVE-2017-0098", "CVE-2017-0101", "CVE-2017-0103", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
-			{KB: "4012214", Drop: []string{"CVE-2017-0007", "CVE-2017-0016", "CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0039", "CVE-2017-0051", "CVE-2017-0057", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0079", "CVE-2017-0080", "CVE-2017-0082", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0095", "CVE-2017-0098", "CVE-2017-0101", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
-			{KB: "4012216", Drop: []string{"CVE-2017-0007", "CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0039", "CVE-2017-0051", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0080", "CVE-2017-0082", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0095", "CVE-2017-0098", "CVE-2017-0101", "CVE-2017-0103", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
-			{KB: "4012217", Drop: []string{"CVE-2017-0007", "CVE-2017-0016", "CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0039", "CVE-2017-0051", "CVE-2017-0057", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0079", "CVE-2017-0080", "CVE-2017-0082", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0095", "CVE-2017-0098", "CVE-2017-0101", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
-			{KB: "4012606", Drop: []string{"CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0039", "CVE-2017-0051", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0101", "CVE-2017-0103", "CVE-2017-0104", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
-			{KB: "4013198", Drop: []string{"CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0039", "CVE-2017-0051", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0101", "CVE-2017-0103", "CVE-2017-0104", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
-			{KB: "4013429", Drop: []string{"CVE-2017-0039", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0079", "CVE-2017-0082", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0101", "CVE-2017-0103", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
+			{KB: "4012213", Drop: []string{"CVE-2017-0072", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
+			{KB: "4012214", Drop: []string{"CVE-2017-0072", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
+			{KB: "4012216", Drop: []string{"CVE-2017-0072", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
+			{KB: "4012217", Drop: []string{"CVE-2017-0072", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
+			{KB: "4012606", Drop: []string{"CVE-2017-0072", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
+			{KB: "4013198", Drop: []string{"CVE-2017-0072", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
+			{KB: "4013429", Drop: []string{"CVE-2017-0072", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
 		},
 	},
 	// MS17-012: leading-zero typo of CVE-2017-0016 — remap (0016 not in
@@ -4110,22 +8016,30 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 		CVEAdjustments: []cveAdjustment{
 			{KB: "3217587", Drop: []string{"CVE-2017-0007", "CVE-2017-0016", "CVE-2017-0057", "CVE-2017-0100", "CVE-2017-0104"}},
 			{KB: "4012021", Drop: []string{"CVE-2017-0007", "CVE-2017-0016", "CVE-2017-0039", "CVE-2017-0057", "CVE-2017-0100"}},
-			{KB: "4012212", Drop: []string{"CVE-2017-0007", "CVE-2017-0016", "CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0051", "CVE-2017-0057", "CVE-2017-0074", "CVE-2017-0078", "CVE-2017-0095", "CVE-2017-0098"}},
-			{KB: "4012213", Drop: []string{"CVE-2017-0007", "CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0039", "CVE-2017-0051", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0080", "CVE-2017-0082", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0095", "CVE-2017-0098", "CVE-2017-0101", "CVE-2017-0103", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
-			{KB: "4012214", Drop: []string{"CVE-2017-0007", "CVE-2017-0016", "CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0039", "CVE-2017-0051", "CVE-2017-0057", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0079", "CVE-2017-0080", "CVE-2017-0082", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0095", "CVE-2017-0098", "CVE-2017-0101", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
-			{KB: "4012215", Drop: []string{"CVE-2017-0007", "CVE-2017-0016", "CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0051", "CVE-2017-0057", "CVE-2017-0074", "CVE-2017-0078", "CVE-2017-0095", "CVE-2017-0098"}},
-			{KB: "4012216", Drop: []string{"CVE-2017-0007", "CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0039", "CVE-2017-0051", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0080", "CVE-2017-0082", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0095", "CVE-2017-0098", "CVE-2017-0101", "CVE-2017-0103", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
-			{KB: "4012217", Drop: []string{"CVE-2017-0007", "CVE-2017-0016", "CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0039", "CVE-2017-0051", "CVE-2017-0057", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0079", "CVE-2017-0080", "CVE-2017-0082", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0095", "CVE-2017-0098", "CVE-2017-0101", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
-			{KB: "4012606", Drop: []string{"CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0039", "CVE-2017-0051", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0101", "CVE-2017-0103", "CVE-2017-0104", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
-			{KB: "4013198", Drop: []string{"CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0039", "CVE-2017-0051", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0101", "CVE-2017-0103", "CVE-2017-0104", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
-			{KB: "4013429", Drop: []string{"CVE-2017-0039", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0079", "CVE-2017-0082", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0101", "CVE-2017-0103", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
+			{KB: "4012212", Drop: []string{"CVE-2017-0007", "CVE-2017-0016", "CVE-2017-0057"}},
+			{KB: "4012213", Drop: []string{"CVE-2017-0007", "CVE-2017-0039"}},
+			{KB: "4012214", Drop: []string{"CVE-2017-0007", "CVE-2017-0016", "CVE-2017-0039", "CVE-2017-0057"}},
+			{KB: "4012215", Drop: []string{"CVE-2017-0007", "CVE-2017-0016", "CVE-2017-0057"}},
+			{KB: "4012216", Drop: []string{"CVE-2017-0007", "CVE-2017-0039"}},
+			{KB: "4012217", Drop: []string{"CVE-2017-0007", "CVE-2017-0016", "CVE-2017-0039", "CVE-2017-0057"}},
+			{KB: "4012606", Drop: []string{"CVE-2017-0039", "CVE-2017-0104"}},
+			{KB: "4013198", Drop: []string{"CVE-2017-0039", "CVE-2017-0104"}},
+			{KB: "4013429", Drop: []string{"CVE-2017-0039"}},
+			{Component: "Windows 10 Version 1607 for 32-bit Systems", Drop: []string{"CVE-2017-0104"}},
 			{Component: "Windows 10 Version 1607 for 32-bit Systems", Drop: []string{"CVE-2017-0104"}},
 			{Component: "Windows 10 Version 1607 for x64-based Systems", Drop: []string{"CVE-2017-0104"}},
+			{Component: "Windows 10 Version 1607 for x64-based Systems", Drop: []string{"CVE-2017-0104"}},
+			{Component: "Windows 7 for 32-bit Systems Service Pack 1", Drop: []string{"CVE-2017-0104"}},
 			{Component: "Windows 7 for 32-bit Systems Service Pack 1", Drop: []string{"CVE-2017-0104"}},
 			{Component: "Windows 7 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2017-0104"}},
+			{Component: "Windows 7 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2017-0104"}},
+			{Component: "Windows 8.1 for 32-bit Systems", Drop: []string{"CVE-2017-0104"}},
 			{Component: "Windows 8.1 for 32-bit Systems", Drop: []string{"CVE-2017-0104"}},
 			{Component: "Windows 8.1 for x64-based Systems", Drop: []string{"CVE-2017-0104"}},
+			{Component: "Windows 8.1 for x64-based Systems", Drop: []string{"CVE-2017-0104"}},
 			{Component: "Windows RT 8.1", Drop: []string{"CVE-2017-0104"}},
+			{Component: "Windows RT 8.1", Drop: []string{"CVE-2017-0104"}},
+			{Component: "Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)", Drop: []string{"CVE-2017-0104"}},
 			{Component: "Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)", Drop: []string{"CVE-2017-0104"}},
 			{Remap: map[string]string{"CVE-2017-00016": "CVE-2017-0016"}},
 		},
@@ -4138,23 +8052,30 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "3178653", Drop: []string{"CVE-2017-0014", "CVE-2017-0060", "CVE-2017-0073"}},
 			{KB: "3178688", Drop: []string{"CVE-2017-0060", "CVE-2017-0073"}},
 			{KB: "3178693", Drop: []string{"CVE-2017-0014"}},
-			{KB: "4012213", Drop: []string{"CVE-2017-0007", "CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0039", "CVE-2017-0051", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0080", "CVE-2017-0082", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0095", "CVE-2017-0098", "CVE-2017-0101", "CVE-2017-0103", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
-			{KB: "4012214", Drop: []string{"CVE-2017-0007", "CVE-2017-0016", "CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0039", "CVE-2017-0051", "CVE-2017-0057", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0079", "CVE-2017-0080", "CVE-2017-0082", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0095", "CVE-2017-0098", "CVE-2017-0101", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
-			{KB: "4012216", Drop: []string{"CVE-2017-0007", "CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0039", "CVE-2017-0051", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0080", "CVE-2017-0082", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0095", "CVE-2017-0098", "CVE-2017-0101", "CVE-2017-0103", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
-			{KB: "4012217", Drop: []string{"CVE-2017-0007", "CVE-2017-0016", "CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0039", "CVE-2017-0051", "CVE-2017-0057", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0079", "CVE-2017-0080", "CVE-2017-0082", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0095", "CVE-2017-0098", "CVE-2017-0101", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
-			{KB: "4012497", Drop: []string{"CVE-2017-0014", "CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0038", "CVE-2017-0060", "CVE-2017-0061", "CVE-2017-0062", "CVE-2017-0063", "CVE-2017-0073", "CVE-2017-0078", "CVE-2017-0108"}},
+			{KB: "4012213", Drop: []string{"CVE-2017-0061", "CVE-2017-0108"}},
+			{KB: "4012214", Drop: []string{"CVE-2017-0061", "CVE-2017-0108"}},
+			{KB: "4012216", Drop: []string{"CVE-2017-0061", "CVE-2017-0108"}},
+			{KB: "4012217", Drop: []string{"CVE-2017-0061", "CVE-2017-0108"}},
+			{KB: "4012497", Drop: []string{"CVE-2017-0014", "CVE-2017-0038", "CVE-2017-0060", "CVE-2017-0061", "CVE-2017-0062", "CVE-2017-0063", "CVE-2017-0073", "CVE-2017-0108"}},
 			{KB: "4012583", Drop: []string{"CVE-2017-0001", "CVE-2017-0005", "CVE-2017-0014", "CVE-2017-0025", "CVE-2017-0047", "CVE-2017-0061", "CVE-2017-0063"}},
 			{KB: "4012584", Drop: []string{"CVE-2017-0001", "CVE-2017-0005", "CVE-2017-0014", "CVE-2017-0025", "CVE-2017-0038", "CVE-2017-0047", "CVE-2017-0060", "CVE-2017-0062", "CVE-2017-0073", "CVE-2017-0108"}},
-			{KB: "4012606", Drop: []string{"CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0039", "CVE-2017-0051", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0101", "CVE-2017-0103", "CVE-2017-0104", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
-			{KB: "4013198", Drop: []string{"CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0039", "CVE-2017-0051", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0101", "CVE-2017-0103", "CVE-2017-0104", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
-			{KB: "4013429", Drop: []string{"CVE-2017-0039", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0079", "CVE-2017-0082", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0101", "CVE-2017-0103", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
+			{KB: "4012606", Drop: []string{"CVE-2017-0061", "CVE-2017-0108"}},
+			{KB: "4013198", Drop: []string{"CVE-2017-0061", "CVE-2017-0108"}},
+			{KB: "4013429", Drop: []string{"CVE-2017-0061", "CVE-2017-0108"}},
 			{KB: "4017018", Drop: []string{"CVE-2017-0001", "CVE-2017-0005", "CVE-2017-0014", "CVE-2017-0025", "CVE-2017-0047", "CVE-2017-0060", "CVE-2017-0061", "CVE-2017-0062", "CVE-2017-0063", "CVE-2017-0073", "CVE-2017-0108"}},
 			{Component: "Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2017-0038"}},
+			{Component: "Windows Server 2008 for 32-bit Systems Service Pack 2", Drop: []string{"CVE-2017-0038"}},
+			{Component: "Windows Server 2008 for Itanium-based Systems Service Pack 2", Drop: []string{"CVE-2017-0038"}},
 			{Component: "Windows Server 2008 for Itanium-based Systems Service Pack 2", Drop: []string{"CVE-2017-0038"}},
 			{Component: "Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2017-0038"}},
+			{Component: "Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2017-0038"}},
+			{Component: "Windows Server 2012 (Server Core installation)", Drop: []string{"CVE-2017-0063"}},
 			{Component: "Windows Server 2012 (Server Core installation)", Drop: []string{"CVE-2017-0063"}},
 			{Component: "Windows Server 2016 for x64-based Systems", Drop: []string{"CVE-2017-0038"}},
+			{Component: "Windows Server 2016 for x64-based Systems", Drop: []string{"CVE-2017-0038"}},
 			{Component: "Windows Vista Service Pack 2", Drop: []string{"CVE-2017-0038"}},
+			{Component: "Windows Vista Service Pack 2", Drop: []string{"CVE-2017-0038"}},
+			{Component: "Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2017-0038"}},
 			{Component: "Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2017-0038"}},
 		},
 		Supersedes: map[string]supersedesAdjust{
@@ -4183,7 +8104,11 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "3178689", Drop: []string{"CVE-2017-0006", "CVE-2017-0020", "CVE-2017-0027", "CVE-2017-0052"}},
 			{KB: "3178690", Drop: []string{"CVE-2017-0006", "CVE-2017-0019", "CVE-2017-0029", "CVE-2017-0030", "CVE-2017-0031", "CVE-2017-0052", "CVE-2017-0053", "CVE-2017-0105"}},
 			{KB: "3178694", Drop: []string{"CVE-2017-0006", "CVE-2017-0019", "CVE-2017-0020", "CVE-2017-0027", "CVE-2017-0029", "CVE-2017-0030", "CVE-2017-0031", "CVE-2017-0052", "CVE-2017-0105"}},
-			{KB: "4013241", Drop: []string{"CVE-2017-0006", "CVE-2017-0019", "CVE-2017-0020", "CVE-2017-0027", "CVE-2017-0029", "CVE-2017-0030", "CVE-2017-0031", "CVE-2017-0052", "CVE-2017-0053", "CVE-2017-0105"}},
+			{KB: "4013241", Drop: []string{"CVE-2017-0006", "CVE-2017-0019", "CVE-2017-0052", "CVE-2017-0053"}},
+			{Component: "Microsoft Excel 2016 for Mac", Drop: []string{"CVE-2017-0029", "CVE-2017-0030", "CVE-2017-0031", "CVE-2017-0105"}},
+			{Component: "Microsoft Excel for Mac 2011", Drop: []string{"CVE-2017-0020", "CVE-2017-0027", "CVE-2017-0029", "CVE-2017-0030", "CVE-2017-0031", "CVE-2017-0105"}},
+			{Component: "Microsoft Office 2016 for Mac", Drop: []string{"CVE-2017-0020", "CVE-2017-0027", "CVE-2017-0030", "CVE-2017-0031", "CVE-2017-0105"}},
+			{Component: "Microsoft Word for Mac 2011", Drop: []string{"CVE-2017-0020", "CVE-2017-0027", "CVE-2017-0029", "CVE-2017-0030", "CVE-2017-0031", "CVE-2017-0105"}},
 		},
 		Supersedes: map[string]supersedesAdjust{
 			"3141542": {Add: []string{"3178687"}},
@@ -4192,32 +8117,42 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 	"MS17-017": {
 		CVEAdjustments: []cveAdjustment{
 			{Add: []string{"CVE-2017-0050", "CVE-2017-0101", "CVE-2017-0102", "CVE-2017-0103"}},
-			{KB: "4012212", Drop: []string{"CVE-2017-0007", "CVE-2017-0016", "CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0051", "CVE-2017-0057", "CVE-2017-0074", "CVE-2017-0078", "CVE-2017-0095", "CVE-2017-0098"}},
-			{KB: "4012213", Drop: []string{"CVE-2017-0007", "CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0039", "CVE-2017-0051", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0080", "CVE-2017-0082", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0095", "CVE-2017-0098", "CVE-2017-0101", "CVE-2017-0103", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
-			{KB: "4012214", Drop: []string{"CVE-2017-0007", "CVE-2017-0016", "CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0039", "CVE-2017-0051", "CVE-2017-0057", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0079", "CVE-2017-0080", "CVE-2017-0082", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0095", "CVE-2017-0098", "CVE-2017-0101", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
-			{KB: "4012215", Drop: []string{"CVE-2017-0007", "CVE-2017-0016", "CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0051", "CVE-2017-0057", "CVE-2017-0074", "CVE-2017-0078", "CVE-2017-0095", "CVE-2017-0098"}},
-			{KB: "4012216", Drop: []string{"CVE-2017-0007", "CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0039", "CVE-2017-0051", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0080", "CVE-2017-0082", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0095", "CVE-2017-0098", "CVE-2017-0101", "CVE-2017-0103", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
-			{KB: "4012217", Drop: []string{"CVE-2017-0007", "CVE-2017-0016", "CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0039", "CVE-2017-0051", "CVE-2017-0057", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0079", "CVE-2017-0080", "CVE-2017-0082", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0095", "CVE-2017-0098", "CVE-2017-0101", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
-			{KB: "4012606", Drop: []string{"CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0039", "CVE-2017-0051", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0101", "CVE-2017-0103", "CVE-2017-0104", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
-			{KB: "4013198", Drop: []string{"CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0039", "CVE-2017-0051", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0101", "CVE-2017-0103", "CVE-2017-0104", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
-			{KB: "4013429", Drop: []string{"CVE-2017-0039", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0079", "CVE-2017-0082", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0101", "CVE-2017-0103", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
+			{KB: "4012213", Drop: []string{"CVE-2017-0101", "CVE-2017-0103"}},
+			{KB: "4012214", Drop: []string{"CVE-2017-0101"}},
+			{KB: "4012216", Drop: []string{"CVE-2017-0101", "CVE-2017-0103"}},
+			{KB: "4012217", Drop: []string{"CVE-2017-0101"}},
+			{KB: "4012606", Drop: []string{"CVE-2017-0101", "CVE-2017-0103"}},
+			{KB: "4013198", Drop: []string{"CVE-2017-0101", "CVE-2017-0103"}},
+			{KB: "4013429", Drop: []string{"CVE-2017-0101", "CVE-2017-0103"}},
+			{Component: "Windows 7 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2017-0101"}},
 			{Component: "Windows 7 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2017-0101"}},
 			{Component: "Windows Server 2008 R2 for Itanium-based Systems Service Pack 1", Drop: []string{"CVE-2017-0101"}},
+			{Component: "Windows Server 2008 R2 for Itanium-based Systems Service Pack 1", Drop: []string{"CVE-2017-0101"}},
+			{Component: "Windows Server 2008 R2 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2017-0101"}},
 			{Component: "Windows Server 2008 R2 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2017-0101"}},
 		},
 	},
+	// TODO: the per-product NA entries below come from MS17-018's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS17-018.
+	//   - Windows Server 2016 for x64-based Systems(Server Core installation)
 	"MS17-018": {
 		CVEAdjustments: []cveAdjustment{
-			{KB: "4012212", Drop: []string{"CVE-2017-0007", "CVE-2017-0016", "CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0051", "CVE-2017-0057", "CVE-2017-0074", "CVE-2017-0078", "CVE-2017-0095", "CVE-2017-0098"}},
-			{KB: "4012213", Drop: []string{"CVE-2017-0007", "CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0039", "CVE-2017-0051", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0080", "CVE-2017-0082", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0095", "CVE-2017-0098", "CVE-2017-0101", "CVE-2017-0103", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
-			{KB: "4012214", Drop: []string{"CVE-2017-0007", "CVE-2017-0016", "CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0039", "CVE-2017-0051", "CVE-2017-0057", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0079", "CVE-2017-0080", "CVE-2017-0082", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0095", "CVE-2017-0098", "CVE-2017-0101", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
-			{KB: "4012215", Drop: []string{"CVE-2017-0007", "CVE-2017-0016", "CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0051", "CVE-2017-0057", "CVE-2017-0074", "CVE-2017-0078", "CVE-2017-0095", "CVE-2017-0098"}},
-			{KB: "4012216", Drop: []string{"CVE-2017-0007", "CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0039", "CVE-2017-0051", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0080", "CVE-2017-0082", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0095", "CVE-2017-0098", "CVE-2017-0101", "CVE-2017-0103", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
-			{KB: "4012217", Drop: []string{"CVE-2017-0007", "CVE-2017-0016", "CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0039", "CVE-2017-0051", "CVE-2017-0057", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0079", "CVE-2017-0080", "CVE-2017-0082", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0095", "CVE-2017-0098", "CVE-2017-0101", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
-			{KB: "4012497", Drop: []string{"CVE-2017-0014", "CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0038", "CVE-2017-0060", "CVE-2017-0061", "CVE-2017-0062", "CVE-2017-0063", "CVE-2017-0073", "CVE-2017-0078", "CVE-2017-0108"}},
-			{KB: "4012606", Drop: []string{"CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0039", "CVE-2017-0051", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0101", "CVE-2017-0103", "CVE-2017-0104", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
-			{KB: "4013198", Drop: []string{"CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0039", "CVE-2017-0051", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0101", "CVE-2017-0103", "CVE-2017-0104", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
-			{KB: "4013429", Drop: []string{"CVE-2017-0039", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0079", "CVE-2017-0082", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0101", "CVE-2017-0103", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}},
+			{KB: "4012212", Drop: []string{"CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0078"}},
+			{KB: "4012213", Drop: []string{"CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0080", "CVE-2017-0082"}},
+			{KB: "4012214", Drop: []string{"CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0079", "CVE-2017-0080", "CVE-2017-0082"}},
+			{KB: "4012215", Drop: []string{"CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0078"}},
+			{KB: "4012216", Drop: []string{"CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0080", "CVE-2017-0082"}},
+			{KB: "4012217", Drop: []string{"CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0079", "CVE-2017-0080", "CVE-2017-0082"}},
+			{KB: "4012497", Drop: []string{"CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0078"}},
+			{KB: "4012606", Drop: []string{"CVE-2017-0024"}},
+			{KB: "4013198", Drop: []string{"CVE-2017-0024"}},
+			{KB: "4013429", Drop: []string{"CVE-2017-0079", "CVE-2017-0082"}},
+			{Component: "Windows Server 2016 for x64-based Systems", Drop: []string{"CVE-2017-0078"}},
 			{Component: "Windows Server 2016 for x64-based Systems", Drop: []string{"CVE-2017-0078"}},
 			{Component: "Windows Server 2016 for x64-based Systems (Server Core installation)", Drop: []string{"CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0078"}},
 		},
@@ -4540,7 +8475,7 @@ func (e extractor) extract(rows []bulletin.Bulletin) ([]dataTypes.Data, []micros
 				Source: "security@microsoft.com",
 				URL:    fmt.Sprintf("https://learn.microsoft.com/en-us/security-updates/securitybulletins/20%s/%s", rootID[2:4], strings.ToLower(string(rootID))),
 			}},
-			Published: utiltime.Parse([]string{"1/2/2006", "01/02/2006", "01-02-06", "2006-01-02"}, dateLocalePrefix.ReplaceAllString(row.DatePosted, "")),
+			Published: utiltime.Parse([]string{"1/2/2006", "01/02/2006", "01-02-06", "2006-01-02"}, stripDateLocalePrefix(row.DatePosted)),
 			Optional: func() map[string]any {
 				if row.BulletinImpact != "" {
 					return map[string]any{"impact": row.BulletinImpact}
