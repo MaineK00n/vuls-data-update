@@ -16,7 +16,7 @@ import (
 	"context"
 	"fmt"
 	"io/fs"
-	"log"
+	"log/slog"
 	"path/filepath"
 	"runtime"
 	"slices"
@@ -26,6 +26,7 @@ import (
 	"github.com/knqyf263/go-cpe/common"
 	"github.com/knqyf263/go-cpe/naming"
 	"github.com/pkg/errors"
+
 	"golang.org/x/sync/errgroup"
 
 	dataTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data"
@@ -116,7 +117,7 @@ func Extract(cveDir, cpematchDir string, opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Printf("[INFO] Extract NVD Feed v2 CVE")
+	slog.Info("Extract NVD Feed v2 CVE")
 
 	cpematchIndex, err := buildCpematchIndex(cpematchDir)
 	if err != nil {
@@ -124,7 +125,11 @@ func Extract(cveDir, cpematchDir string, opts ...Option) error {
 	}
 
 	g, ctx := errgroup.WithContext(context.Background())
-	g.SetLimit(options.concurrency)
+	// +1 for the producer goroutine below: counting it inside the
+	// limited group with limit==concurrency==1 would deadlock (producer
+	// occupies the only slot; no worker can start to drain reqChan).
+	// Matches the pattern in extract/microsoft/msuc and extract/debian/tracker/salsa.
+	g.SetLimit(1 + options.concurrency)
 
 	reqChan := make(chan string)
 	g.Go(func() error {
@@ -452,7 +457,7 @@ func (e extractor) nodeToCriteria(n cveTypes.Node) (criteriaTypes.Criteria, erro
 		if hasRange {
 			ns, err := e.cpeNamesFromCpematch(match.MatchCriteriaID)
 			if err != nil {
-				log.Printf("[WARN] cpematch lookup failed for %s (criteria=%s): %v", match.MatchCriteriaID, match.Criteria, err)
+				slog.Warn("cpematch lookup failed", "matchCriteriaID", match.MatchCriteriaID, "criteria", match.Criteria, "err", err)
 			} else {
 				cns = slices.Grow(cns, len(ns))
 				for _, n := range ns {

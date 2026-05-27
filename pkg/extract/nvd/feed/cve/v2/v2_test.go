@@ -52,8 +52,16 @@ func TestExtract(t *testing.T) {
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)
+				return
 			case err == nil && tt.hasError:
 				t.Error("expected error has not occurred")
+				return
+			case err != nil && tt.hasError:
+				// Expected error path: skip golden diff because the
+				// extractor may have produced partial / no output, and
+				// any filesystem difference here is unrelated to the
+				// expected-error assertion.
+				return
 			}
 
 			ep, err := filepath.Abs(tt.golden)
