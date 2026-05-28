@@ -44,6 +44,19 @@ func TestExtract(t *testing.T) {
 			cpematchDir: "./testdata/fixtures/exact-match/vuls-data-raw-nvd-feed-cpematch-v2",
 			golden:      "./testdata/golden/exact-match",
 		},
+		{
+			// AND configuration with mixed vulnerable flags: one child node
+			// carries vulnerable=true (the firmware that's affected), the
+			// other carries vulnerable=false (the hardware guard — the
+			// firmware is only vulnerable when running on this hardware).
+			// Verifies that the extractor preserves both branches under
+			// the AND criteria so a detector can enforce both before
+			// reporting a hit.
+			name:        "and-vulnerable-mixed",
+			cveDir:      "./testdata/fixtures/and-vulnerable-mixed/vuls-data-raw-nvd-feed-cve-v2",
+			cpematchDir: "./testdata/fixtures/and-vulnerable-mixed/vuls-data-raw-nvd-feed-cpematch-v2",
+			golden:      "./testdata/golden/and-vulnerable-mixed",
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
