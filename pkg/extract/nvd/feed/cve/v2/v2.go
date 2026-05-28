@@ -6,8 +6,7 @@
 //     the cpematch feed. Unknown (non-semver) ranges add every expanded
 //     version as an exact-match criterion; SEMVER ranges add only the
 //     versions the range criterion cannot cover — non-semver versions and
-//     the rare semver version that falls outside the range (Strategy E, see
-//     docs/nvd-extract-strategy.md).
+//     the rare semver version that falls outside the range.
 //   - cpematch files are located via a matchCriteriaId → path index built
 //     once by walking the cpematch feed directory.
 package v2
@@ -381,7 +380,7 @@ func (e extractor) configurationToCriteria(config cveTypes.Config) (criteriaType
 	case "OR", "":
 		ca.Operator = criteriaTypes.CriteriaOperatorTypeOR
 	default:
-		return criteriaTypes.Criteria{}, errors.Errorf("invalid configuration operator: %s", config.Operator)
+		return criteriaTypes.Criteria{}, errors.Errorf("unexpected configuration operator. expected: %q, actual: %q", []string{"AND", "OR", ""}, config.Operator)
 	}
 
 	ca.Criterias = make([]criteriaTypes.Criteria, 0, len(config.Nodes))
@@ -403,7 +402,7 @@ func (e extractor) nodeToCriteria(n cveTypes.Node) (criteriaTypes.Criteria, erro
 	case "OR":
 		ca.Operator = criteriaTypes.CriteriaOperatorTypeOR
 	default:
-		return criteriaTypes.Criteria{}, errors.Errorf("invalid node operator: %s", n.Operator)
+		return criteriaTypes.Criteria{}, errors.Errorf("unexpected node operator. expected: %q, actual: %q", []string{"AND", "OR"}, n.Operator)
 	}
 
 	ca.Criterias = make([]criteriaTypes.Criteria, 0, len(n.CPEMatch))
@@ -450,15 +449,14 @@ func (e extractor) nodeToCriteria(n cveTypes.Node) (criteriaTypes.Criteria, erro
 
 		cns := []criterionTypes.Criterion{cn}
 
-		// Strategy E: a ranged match keeps its range criterion above and, in
-		// addition, expands the cpematch feed into exact-match criteria.
-		//   - Unknown range: the range cannot be evaluated at detection time,
-		//     so every expanded version is added.
+		// A ranged match keeps its range criterion above and, in addition,
+		// expands the cpematch feed into exact-match criteria.
+		//   - Unknown range: the range cannot be evaluated at detection
+		//     time, so every expanded version is added.
 		//   - SEMVER range: the range criterion already covers every
-		//     semver-parseable version inside the range; only the versions it
-		//     cannot cover (non-semver, or the rare semver version outside the
-		//     range) need an explicit exact-match criterion.
-		// See docs/nvd-extract-strategy.md.
+		//     semver-parseable version inside the range; only the versions
+		//     it cannot cover (non-semver, or the rare semver version
+		//     outside the range) need an explicit exact-match criterion.
 		if hasRange {
 			ns, err := e.cpeNamesFromCpematch(match.MatchCriteriaID)
 			if err != nil {
@@ -469,11 +467,11 @@ func (e extractor) nodeToCriteria(n cveTypes.Node) (criteriaTypes.Criteria, erro
 					// Skip cpematch entries whose version is ANY/NA (or
 					// empty): these are meta markers, not concrete
 					// versions the parent range was meant to enumerate.
-					// Without this skip, Strategy E would inject NA-
-					// version criteria for every ranged match whose
-					// cpematch happens to include `-`, producing spurious
-					// VendorProductMatch hits for any scanned CPE with the
-					// same vendor:product.
+					// Without this skip we would inject NA-version
+					// criteria for every ranged match whose cpematch
+					// happens to include `-`, producing spurious
+					// vendor:product-only hits at detection time for any
+					// scanned CPE that shares the vendor and product.
 					if !concreteVersion(n) {
 						continue
 					}
@@ -538,8 +536,8 @@ func exactCriterion(cpeName string, vulnerable bool) criterionTypes.Criterion {
 // false, n needs an explicit exact-match criterion because the range
 // criterion cannot match it: either the version is non-semver, or it is the
 // rare semver version that NVD lists yet which falls outside the declared
-// range (~0.017% of cases — segment-count or pre-release ordering quirks in
-// NVD data; see docs/nvd-extract-verification.md V5).
+// range (a tiny fraction of cases — segment-count or pre-release ordering
+// quirks in NVD data).
 func coveredBySemverRange(n string, match cveTypes.CPEMatch) bool {
 	wfn, err := naming.UnbindFS(n)
 	if err != nil {
@@ -549,7 +547,7 @@ func coveredBySemverRange(n string, match cveTypes.CPEMatch) bool {
 	// wfn.GetString returns logical-name "ANY" / "NA" for `*` / `-`, not the
 	// bound forms. Match on the logical names (plus the bound forms and an
 	// empty string for defensive coverage) so cpematch entries with no
-	// concrete version are correctly skipped from Strategy E expansion.
+	// concrete version are correctly skipped from cpematch expansion.
 	ver := unescapeWFN(wfn.GetString(common.AttributeVersion))
 	if ver == "" || ver == "*" || ver == "-" || ver == "ANY" || ver == "NA" {
 		return true // not a concrete version; nothing to add
@@ -603,11 +601,12 @@ func versionInRange(v *version.Version, match cveTypes.CPEMatch) bool {
 }
 
 // buildCpematchIndex walks the cpematch feed directory and maps each
-// matchCriteriaId (the JSON file's basename) to its file path. NVD stores
-// cpematch files in FNV-hashed subdirectories keyed by vendor:product, but
-// the CVE feed and the cpematch feed disagree on some product spellings
-// (e.g. nx-os vs nx_os), so that hash is not reproducible from the CVE side.
-// Indexing by matchCriteriaId sidesteps the problem entirely.
+// matchCriteriaId (the JSON file's basename) to its file path. The raw
+// cpematch fetch layout stores files in FNV-hashed subdirectories keyed
+// by vendor:product, but the CVE feed and the cpematch feed disagree on
+// some product spellings (e.g. nx-os vs nx_os), so that hash is not
+// reproducible from the CVE side. Indexing by matchCriteriaId sidesteps
+// the problem entirely.
 func buildCpematchIndex(cpematchDir string) (map[string]string, error) {
 	index := make(map[string]string)
 	if err := filepath.WalkDir(cpematchDir, func(path string, d fs.DirEntry, err error) error {
