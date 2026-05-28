@@ -126,7 +126,13 @@ func Extract(cveDir, cpematchDir string, opts ...Option) error {
 				return err
 			}
 
-			if d.IsDir() || filepath.Ext(path) != ".json" {
+			if d.IsDir() {
+				if d.Name() == ".git" {
+					return filepath.SkipDir
+				}
+				return nil
+			}
+			if filepath.Ext(path) != ".json" {
 				return nil
 			}
 
@@ -461,20 +467,50 @@ func (e extractor) nodeToCriteria(n cveTypes.Node) (criteriaTypes.Criteria, erro
 				slog.Warn("cpematch lookup failed", "matchCriteriaID", match.MatchCriteriaID, "criteria", match.Criteria, "err", err)
 			} else {
 				cns = slices.Grow(cns, len(ns))
+				// Pre-parse range bounds once per match instead of
+				// re-parsing them inside the per-entry coverage check.
+				// boundsOK=false only when a SEMVER endpoint somehow
+				// fails to parse here despite decideRangeType having
+				// already validated it; in that case we fall back to
+				// emitting all concrete entries as exact criteria.
+				var (
+					bounds   semverBounds
+					boundsOK bool
+				)
+				if rangeType == rangeTypes.RangeTypeSEMVER {
+					bounds, boundsOK = parseSemverBounds(match)
+				}
 				for _, n := range ns {
-					// Skip cpematch entries whose version is ANY/NA (or
-					// empty): these are meta markers, not concrete
-					// versions the parent range was meant to enumerate.
-					// Without this skip we would inject NA-version
-					// criteria for every ranged match whose cpematch
-					// happens to include `-`, producing spurious
-					// vendor:product-only hits at detection time for any
-					// scanned CPE that shares the vendor and product.
-					if !concreteVersion(n) {
+					wfn, err := naming.UnbindFS(n)
+					if err != nil {
 						continue
 					}
-					if rangeType == rangeTypes.RangeTypeSEMVER && coveredBySemverRange(n, match) {
+					ver := unescapeWFN(wfn.GetString(common.AttributeVersion))
+					// Skip cpematch entries whose version is ANY/NA (or
+					// empty): meta markers, not concrete versions the
+					// parent range was meant to enumerate. Without this
+					// skip we would inject NA-version criteria for every
+					// ranged match whose cpematch happens to include `-`,
+					// producing spurious vendor:product-only hits at
+					// detection time for any scanned CPE that shares the
+					// vendor and product. wfn.GetString returns logical
+					// names "ANY"/"NA" for `*`/`-`; compare against both
+					// for safety.
+					switch ver {
+					case "", "*", "-", "ANY", "NA":
 						continue
+					}
+					// SEMVER range: skip if the entry's version is
+					// semver-parseable and falls inside the range — the
+					// range criterion above already covers it. Non-semver
+					// or out-of-range entries need an explicit exact
+					// criterion (the latter accounts for a tiny fraction
+					// of cases — segment-count or pre-release ordering
+					// quirks in NVD data).
+					if boundsOK {
+						if sv, err := version.NewSemver(ver); err == nil && versionInBounds(sv, bounds) {
+							continue
+						}
 					}
 					cns = append(cns, exactCriterion(n, match.Vulnerable))
 				}
@@ -487,24 +523,6 @@ func (e extractor) nodeToCriteria(n cveTypes.Node) (criteriaTypes.Criteria, erro
 		})
 	}
 	return ca, nil
-}
-
-// concreteVersion reports whether a CPE 2.3 FS string's version attribute
-// names an actual version, not a meta marker (ANY=`*`, NA=`-`, or empty).
-// wfn.GetString returns logical names ("ANY"/"NA") rather than bound
-// forms — compare against both for safety.
-func concreteVersion(cpeName string) bool {
-	wfn, err := naming.UnbindFS(cpeName)
-	if err != nil {
-		return false
-	}
-	ver := unescapeWFN(wfn.GetString(common.AttributeVersion))
-	switch ver {
-	case "", "*", "-", "ANY", "NA":
-		return false
-	default:
-		return true
-	}
 }
 
 // exactCriterion builds an exact-match version criterion for a single
@@ -528,72 +546,59 @@ func exactCriterion(cpeName string, vulnerable bool) criterionTypes.Criterion {
 	}
 }
 
-// coveredBySemverRange reports whether the expanded cpematch CPE name n is
-// already covered by a SEMVER range criterion — i.e. it carries a concrete,
-// semver-parseable version that lies within match's range. When it returns
-// false, n needs an explicit exact-match criterion because the range
-// criterion cannot match it: either the version is non-semver, or it is the
-// rare semver version that NVD lists yet which falls outside the declared
-// range (a tiny fraction of cases — segment-count or pre-release ordering
-// quirks in NVD data).
-func coveredBySemverRange(n string, match cveTypes.CPEMatch) bool {
-	wfn, err := naming.UnbindFS(n)
-	if err != nil {
-		return false
-	}
-	// GetString returns WFN-escaped form; unescape for version parsing.
-	// wfn.GetString returns logical-name "ANY" / "NA" for `*` / `-`, not the
-	// bound forms. Match on the logical names (plus the bound forms and an
-	// empty string for defensive coverage) so cpematch entries with no
-	// concrete version are correctly skipped from cpematch expansion.
-	ver := unescapeWFN(wfn.GetString(common.AttributeVersion))
-	if ver == "" || ver == "*" || ver == "-" || ver == "ANY" || ver == "NA" {
-		return true // not a concrete version; nothing to add
-	}
-	sv, err := version.NewSemver(ver)
-	if err != nil {
-		return false
-	}
-	return versionInRange(sv, match)
+// semverBounds is the pre-parsed form of a CPEMatch's four range
+// endpoints. Caller parses once per match and reuses across every
+// cpematch entry expanded from that match.
+type semverBounds struct {
+	geInc *version.Version // versionStartIncluding (>=)
+	gtExc *version.Version // versionStartExcluding (>)
+	leInc *version.Version // versionEndIncluding   (<=)
+	ltExc *version.Version // versionEndExcluding   (<)
 }
 
-// versionInRange checks if the given semver falls within the range.
-func versionInRange(v *version.Version, match cveTypes.CPEMatch) bool {
-	if match.VersionStartIncluding != "" {
-		bound, err := version.NewSemver(match.VersionStartIncluding)
-		if err != nil {
-			return false
+// parseSemverBounds parses the four range endpoints in match. Returns
+// ok=false if any non-empty endpoint fails to parse — caller falls back
+// to treating every cpematch entry as out-of-range.
+func parseSemverBounds(match cveTypes.CPEMatch) (semverBounds, bool) {
+	parse := func(s string) (*version.Version, bool) {
+		if s == "" {
+			return nil, true
 		}
-		if v.LessThan(bound) {
-			return false
-		}
+		v, err := version.NewSemver(s)
+		return v, err == nil
 	}
-	if match.VersionStartExcluding != "" {
-		bound, err := version.NewSemver(match.VersionStartExcluding)
-		if err != nil {
-			return false
-		}
-		if !v.GreaterThan(bound) {
-			return false
-		}
+	var (
+		b  semverBounds
+		ok bool
+	)
+	if b.geInc, ok = parse(match.VersionStartIncluding); !ok {
+		return semverBounds{}, false
 	}
-	if match.VersionEndIncluding != "" {
-		bound, err := version.NewSemver(match.VersionEndIncluding)
-		if err != nil {
-			return false
-		}
-		if v.GreaterThan(bound) {
-			return false
-		}
+	if b.gtExc, ok = parse(match.VersionStartExcluding); !ok {
+		return semverBounds{}, false
 	}
-	if match.VersionEndExcluding != "" {
-		bound, err := version.NewSemver(match.VersionEndExcluding)
-		if err != nil {
-			return false
-		}
-		if !v.LessThan(bound) {
-			return false
-		}
+	if b.leInc, ok = parse(match.VersionEndIncluding); !ok {
+		return semverBounds{}, false
+	}
+	if b.ltExc, ok = parse(match.VersionEndExcluding); !ok {
+		return semverBounds{}, false
+	}
+	return b, true
+}
+
+// versionInBounds reports whether v satisfies the pre-parsed range.
+func versionInBounds(v *version.Version, b semverBounds) bool {
+	if b.geInc != nil && v.LessThan(b.geInc) {
+		return false
+	}
+	if b.gtExc != nil && !v.GreaterThan(b.gtExc) {
+		return false
+	}
+	if b.leInc != nil && v.GreaterThan(b.leInc) {
+		return false
+	}
+	if b.ltExc != nil && !v.LessThan(b.ltExc) {
+		return false
 	}
 	return true
 }
@@ -611,7 +616,13 @@ func buildCpematchIndex(cpematchDir string) (map[string]string, error) {
 		if err != nil {
 			return err
 		}
-		if d.IsDir() || filepath.Ext(path) != ".json" {
+		if d.IsDir() {
+			if d.Name() == ".git" {
+				return filepath.SkipDir
+			}
+			return nil
+		}
+		if filepath.Ext(path) != ".json" {
 			return nil
 		}
 		index[strings.TrimSuffix(d.Name(), ".json")] = path
