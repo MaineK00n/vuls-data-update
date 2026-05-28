@@ -20,11 +20,10 @@ type CWE struct {
 	Status                string                                  `json:"status,omitempty"`
 	Description           string                                  `json:"description,omitempty"`
 	ExtendedDescription   string                                  `json:"extended_description,omitempty"`
-	ModesOfIntroduction   []string                                `json:"modes_of_introduction,omitempty"`
+	ModesOfIntroduction   []string                                `json:"modes_of_introduction,omitempty"` // Phase names only
 	LikelihoodOfExploit   string                                  `json:"likelihood_of_exploit,omitempty"`
 	RelatedWeaknesses     []relatedweaknessTypes.RelatedWeakness  `json:"related_weaknesses,omitempty"`
 	RelatedAttackPatterns []string                                `json:"related_attack_patterns,omitempty"` // "CAPEC-*"
-	ObservedCVEs          []string                                `json:"observed_cves,omitempty"`
 	Platforms             []string                                `json:"platforms,omitempty"`
 	References            []referenceTypes.Reference              `json:"references,omitempty"`
 	DataSource            sourceTypes.Source                      `json:"data_source,omitzero"`
@@ -33,7 +32,6 @@ type CWE struct {
 func (c *CWE) Sort() {
 	slices.Sort(c.ModesOfIntroduction)
 	slices.Sort(c.RelatedAttackPatterns)
-	slices.Sort(c.ObservedCVEs)
 	slices.Sort(c.Platforms)
 	slices.SortFunc(c.RelatedWeaknesses, relatedweaknessTypes.Compare)
 	slices.SortFunc(c.References, referenceTypes.Compare)
@@ -52,7 +50,6 @@ func Compare(x, y CWE) int {
 		cmp.Compare(x.LikelihoodOfExploit, y.LikelihoodOfExploit),
 		slices.Compare(x.ModesOfIntroduction, y.ModesOfIntroduction),
 		slices.Compare(x.RelatedAttackPatterns, y.RelatedAttackPatterns),
-		slices.Compare(x.ObservedCVEs, y.ObservedCVEs),
 		slices.Compare(x.Platforms, y.Platforms),
 		slices.CompareFunc(x.RelatedWeaknesses, y.RelatedWeaknesses, relatedweaknessTypes.Compare),
 		slices.CompareFunc(x.References, y.References, referenceTypes.Compare),

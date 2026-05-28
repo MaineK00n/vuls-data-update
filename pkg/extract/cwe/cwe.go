@@ -107,12 +107,6 @@ func extractWeakness(path, args, outDir string) error {
 	}
 
 	id := normalizeID(w.ID)
-	observedCVEs := make([]string, 0, len(w.ObservedExamples))
-	for _, oe := range w.ObservedExamples {
-		if strings.HasPrefix(oe.Reference, "CVE-") {
-			observedCVEs = append(observedCVEs, oe.Reference)
-		}
-	}
 	relatedAttack := make([]string, 0, len(w.RelatedAttackPatterns))
 	for _, p := range w.RelatedAttackPatterns {
 		if p == "" {
@@ -150,7 +144,6 @@ func extractWeakness(path, args, outDir string) error {
 		LikelihoodOfExploit:   w.LikelihoodOfExploit,
 		RelatedWeaknesses:     rws,
 		RelatedAttackPatterns: relatedAttack,
-		ObservedCVEs:          observedCVEs,
 		Platforms:             platforms,
 		References:            refs,
 		DataSource: sourceTypes.Source{
