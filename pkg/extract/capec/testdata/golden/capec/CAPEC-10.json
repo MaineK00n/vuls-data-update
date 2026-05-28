@@ -41,6 +41,11 @@
 			"Modify Data"
 		]
 	},
+	"example_instances": [
+		"\n               <xhtml:p>A buffer overflow in sccw allows local users to gain root access via the $HOME environmental variable. See also: CVE-1999-0906</xhtml:p>\n            ",
+		"\n               <xhtml:p>A buffer overflow in the rlogin program involves its consumption of the $TERM environmental variable. See also: CVE-1999-0046</xhtml:p>\n            "
+	],
+	"execution_flow": "<h2> Execution Flow </h2><div><h3>Explore</h3><ol><li> <p> <b>Identify target application: </b>The adversary identifies a target application or program to perform the buffer overflow on. In this attack the adversary looks for an application that loads the content of an environment variable into a buffer.</p></li></ol></div><div><h3>Experiment</h3><ol><li> <p> <b>Find injection vector: </b>The adversary identifies an injection vector to deliver the excessive content to the targeted application's buffer.</p></li><table><tbody><tr><th>Techniques</th></tr><tr><td>Change the values of environment variables thought to be used by the application to contain excessive data. If the program is loading the value of the environment variable into a buffer, this could cause a crash and an attack vector will be found.</td></tr></tbody></table><li> <p> <b>Craft overflow content: </b>The adversary crafts the content to be injected. If the intent is to simply cause the software to crash, the content need only consist of an excessive quantity of random data. If the intent is to leverage the overflow for execution of arbitrary code, the adversary crafts the payload in such a way that the overwritten return address is replaced with one of the adversary's choosing.</p></li><table><tbody><tr><th>Techniques</th></tr><tr><td>Create malicious shellcode that will execute when the program execution is returned to it.</td></tr><tr><td>Use a NOP-sled in the overflow content to more easily \"slide\" into the malicious code. This is done so that the exact return address need not be correct, only in the range of all of the NOPs</td></tr></tbody></table></ol></div><div><h3>Exploit</h3><ol><li> <p> <b>Overflow the buffer: </b>Using the injection vector, the adversary injects the crafted overflow content into the buffer.</p></li></ol></div>",
 	"related_cwes": [
 		"CWE-118",
 		"CWE-119",

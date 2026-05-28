@@ -25,6 +25,8 @@ type CAPEC struct {
 	SkillsRequired      map[string]string          `json:"skills_required,omitempty"` // keyed by level (High/Medium/Low)
 	ResourcesRequired   []string                   `json:"resources_required,omitempty"`
 	Consequences        map[string][]string        `json:"consequences,omitempty"`
+	ExampleInstances    []string                   `json:"example_instances,omitempty"`
+	ExecutionFlow       string                     `json:"execution_flow,omitempty"`
 	RelatedCWEs         []string                   `json:"related_cwes,omitempty"`    // "CWE-*"
 	RelatedAttacks      []string                   `json:"related_attacks,omitempty"` // ATT&CK Technique IDs ("T*")
 	ChildOf             []string                   `json:"child_of,omitempty"`        // "CAPEC-*"
@@ -43,6 +45,7 @@ func (c *CAPEC) Sort() {
 	slices.Sort(c.Domains)
 	slices.Sort(c.Prerequisites)
 	slices.Sort(c.ResourcesRequired)
+	slices.Sort(c.ExampleInstances)
 	slices.Sort(c.RelatedCWEs)
 	slices.Sort(c.RelatedAttacks)
 	slices.Sort(c.ChildOf)

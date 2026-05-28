@@ -184,6 +184,10 @@ func convert(id string, c capec.Capec, uuidToCapec map[string]string, raws []str
 	if c.XCapecVersion != nil {
 		version = *c.XCapecVersion
 	}
+	execFlow := ""
+	if c.XCapecExecutionFlow != nil {
+		execFlow = *c.XCapecExecutionFlow
+	}
 	skills := make(map[string]string)
 	if c.XCapecSkillsRequired != nil {
 		if c.XCapecSkillsRequired.High != nil {
@@ -211,6 +215,8 @@ func convert(id string, c capec.Capec, uuidToCapec map[string]string, raws []str
 		SkillsRequired:      skills,
 		ResourcesRequired:   append([]string(nil), c.XCapecResourcesRequired...),
 		Consequences:        cloneStringSliceMap(c.XCapecConsequences),
+		ExampleInstances:    append([]string(nil), c.XCapecExampleInstances...),
+		ExecutionFlow:       execFlow,
 		RelatedCWEs:         relatedCWEs,
 		RelatedAttacks:      relatedAttacks,
 		ChildOf:             resolveUUIDs(c.XCapecChildOfRefs, uuidToCapec),
@@ -226,7 +232,7 @@ func convert(id string, c capec.Capec, uuidToCapec map[string]string, raws []str
 			}
 			return *c.Modified
 		}(),
-		References:          refs,
+		References: refs,
 		DataSource: sourceTypes.Source{
 			ID:   sourceTypes.CAPEC,
 			Raws: raws,

@@ -29,6 +29,11 @@
 			"Gain Privileges"
 		]
 	},
+	"example_instances": [
+		"A user sets their password to \"123\" or intentionally leaves their password blank. If the system does not have password strength enforcement against a sound password policy, this password may be admitted. Passwords like these two examples are two simple and common passwords that are easily able to be guessed by the adversary.",
+		"Cisco 2700 Series Wireless Location Appliances (version 2.1.34.0 and earlier) have a default administrator username \"root\" with a password \"password\". This allows remote attackers to easily obtain administrative privileges. See also: CVE-2006-5288",
+		"In April 2019, adversaries attacked several popular IoT devices (a VOIP phone, an office printer, and a video decoder) across multiple customer locations. An investigation conducted by the Microsoft Security Resposne Center (MSRC) discovered that these devices were used to gain initial access to corporate networks. In two of the cases, the passwords for the devices were deployed without changing the default manufacturer’s passwords and in the third instance the latest security update had not been applied to the device. [REF-572]"
+	],
 	"related_cwes": [
 		"CWE-262",
 		"CWE-263",
