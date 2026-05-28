@@ -23,7 +23,7 @@ const (
 	AndroidOSV                 SourceID = "android-osv"
 	AnolisOVAL                 SourceID = "anolis-oval"
 	Arch                       SourceID = "arch"
-	Attack                     SourceID = "attack"
+	MitreATTACK                SourceID = "mitre-attack"
 	AzureOVAL                  SourceID = "azure-oval"
 	BitnamiOSV                 SourceID = "bitnami-osv"
 	CargoDB                    SourceID = "cargo-db"

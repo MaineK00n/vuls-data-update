@@ -1,0 +1,42 @@
+{
+	"id": "S9991",
+	"kind": "software",
+	"name": "TestTool",
+	"description": "Test tool fixture.",
+	"domains": [
+		"enterprise-attack"
+	],
+	"deprecated": false,
+	"revoked": false,
+	"version": "1.0",
+	"modified": "2024-01-01T00:00:00Z",
+	"software": {
+		"type": "tool",
+		"aliases": [
+			"TestTool"
+		],
+		"platforms": [
+			"Windows"
+		],
+		"techniques_used": [
+			{
+				"id": "T1195",
+				"description": "TestTool uses Supply Chain Compromise."
+			}
+		]
+	},
+	"references": [
+		{
+			"source": "mitre-attack",
+			"url": "https://attack.mitre.org/software/S9991"
+		}
+	],
+	"data_source": {
+		"id": "mitre-attack",
+		"raws": [
+			"fixtures/enterprise/relationship/relationship--00000000-0000-0000-0000-000000000103.json",
+			"fixtures/enterprise/tool/tool--00000000-0000-0000-0000-000000000003.json",
+			"fixtures/mobile/attack-pattern/attack-pattern--3f18edba-28f4-4bb9-82c3-8aa60dcac5f7.json"
+		]
+	}
+}

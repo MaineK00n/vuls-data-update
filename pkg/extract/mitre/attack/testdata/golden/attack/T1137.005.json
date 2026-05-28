@@ -1,0 +1,63 @@
+{
+	"id": "T1137.005",
+	"kind": "technique",
+	"name": "Outlook Rules",
+	"description": "Adversaries may abuse Microsoft Outlook rules to obtain persistence on a compromised system. Outlook rules allow a user to define automated behavior to manage email messages. A benign rule might, for example, automatically move an email to a particular folder in Outlook if it contains specific words from a specific sender. Malicious Outlook rules can be created that can trigger code execution when an adversary sends a specifically crafted email to that user.(Citation: SilentBreak Outlook Rules)\n\nOnce malicious rules have been added to the user’s mailbox, they will be loaded when Outlook is started. Malicious rules will execute when an adversary sends a specifically crafted email to the user.(Citation: SilentBreak Outlook Rules)",
+	"domains": [
+		"enterprise-attack"
+	],
+	"deprecated": false,
+	"revoked": false,
+	"version": "1.1",
+	"modified": "2022-04-25T14:00:00.188Z",
+	"technique": {
+		"platforms": [
+			"Office 365",
+			"Windows"
+		],
+		"tactics": [
+			"persistence"
+		],
+		"is_subtechnique": true,
+		"detection": "Microsoft has released a PowerShell script to safely gather mail forwarding rules and custom forms in your mail environment as well as steps to interpret the output.(Citation: Microsoft Detect Outlook Forms) This PowerShell script is ineffective in gathering rules with modified `PRPR_RULE_MSG_NAME` and `PR_RULE_MSG_PROVIDER` properties caused by adversaries using a Microsoft Exchange Server Messaging API Editor (MAPI Editor), so only examination with the Exchange Administration tool MFCMapi can reveal these mail forwarding rules.(Citation: Pfammatter - Hidden Inbox Rules) SensePost, whose tool [Ruler](https://attack.mitre.org/software/S0358) can be used to carry out malicious rules, forms, and Home Page attacks, has released a tool to detect Ruler usage.(Citation: SensePost NotRuler)\n\nCollect process execution information including process IDs (PID) and parent process IDs (PPID) and look for abnormal chains of activity resulting from Office processes. Non-standard process execution trees may also indicate suspicious or malicious behavior.",
+		"data_sources": [
+			"Application Log: Application Log Content",
+			"Command: Command Execution",
+			"Process: Process Creation"
+		],
+		"permissions_required": [
+			"Administrator",
+			"User"
+		],
+		"network_requirements": false,
+		"remote_support": false
+	},
+	"references": [
+		{
+			"source": "Microsoft Detect Outlook Forms",
+			"url": "https://docs.microsoft.com/en-us/office365/securitycompliance/detect-and-remediate-outlook-rules-forms-attack"
+		},
+		{
+			"source": "Pfammatter - Hidden Inbox Rules",
+			"url": "https://blog.compass-security.com/2018/09/hidden-inbox-rules-in-microsoft-exchange/"
+		},
+		{
+			"source": "SensePost NotRuler",
+			"url": "https://github.com/sensepost/notruler"
+		},
+		{
+			"source": "SilentBreak Outlook Rules",
+			"url": "https://silentbreaksecurity.com/malicious-outlook-rules/"
+		},
+		{
+			"source": "mitre-attack",
+			"url": "https://attack.mitre.org/techniques/T1137/005"
+		}
+	],
+	"data_source": {
+		"id": "mitre-attack",
+		"raws": [
+			"fixtures/enterprise/attack-pattern/attack-pattern--3d1b9d7e-3921-4d25-845a-7d9f15c0da44.json"
+		]
+	}
+}

@@ -1,0 +1,92 @@
+{
+	"id": "T1021.005",
+	"kind": "technique",
+	"name": "VNC",
+	"description": "Adversaries may use [Valid Accounts](https://attack.mitre.org/techniques/T1078) to remotely control machines using Virtual Network Computing (VNC).  VNC is a platform-independent desktop sharing system that uses the RFB (“remote framebuffer”) protocol to enable users to remotely control another computer’s display by relaying the screen, mouse, and keyboard inputs over the network.(Citation: The Remote Framebuffer Protocol)\n\nVNC differs from [Remote Desktop Protocol](https://attack.mitre.org/techniques/T1021/001) as VNC is screen-sharing software rather than resource-sharing software. By default, VNC uses the system's authentication, but it can be configured to use credentials specific to VNC.(Citation: MacOS VNC software for Remote Desktop)(Citation: VNC Authentication)\n\nAdversaries may abuse VNC to perform malicious actions as the logged-on user such as opening documents, downloading files, and running arbitrary commands. An adversary could use VNC to remotely control and monitor a system to collect data and information to pivot to other systems within the network. Specific VNC libraries/implementations have also been susceptible to brute force attacks and memory usage exploitation.(Citation: Hijacking VNC)(Citation: macOS root VNC login without authentication)(Citation: VNC Vulnerabilities)(Citation: Offensive Security VNC Authentication Check)(Citation: Attacking VNC Servers PentestLab)(Citation: Havana authentication bug)",
+	"domains": [
+		"enterprise-attack"
+	],
+	"deprecated": false,
+	"revoked": false,
+	"version": "1.1",
+	"modified": "2023-05-09T14:00:00.188Z",
+	"technique": {
+		"platforms": [
+			"Linux",
+			"Windows",
+			"macOS"
+		],
+		"tactics": [
+			"lateral-movement"
+		],
+		"is_subtechnique": true,
+		"detection": "Use of VNC may be legitimate depending on the environment and how it’s used. Other factors, such as access patterns and activity that occurs after a remote login, may indicate suspicious or malicious behavior using VNC.\n\nOn macOS systems <code>log show --predicate 'process = \"screensharingd\" and eventMessage contains \"Authentication:\"'</code> can be used to review incoming VNC connection attempts for suspicious activity.(Citation: Apple Unified Log Analysis Remote Login and Screen Sharing)\n\nMonitor for use of built-in debugging environment variables (such as those containing credentials or other sensitive information) as well as test/default users on VNC servers, as these can leave openings for adversaries to abuse.(Citation: Gnome Remote Desktop grd-settings)(Citation: Gnome Remote Desktop gschema)",
+		"data_sources": [
+			"Logon Session: Logon Session Creation",
+			"Network Traffic: Network Connection Creation",
+			"Process: Process Creation"
+		],
+		"network_requirements": false,
+		"remote_support": false
+	},
+	"references": [
+		{
+			"source": "Apple Unified Log Analysis Remote Login and Screen Sharing",
+			"url": "https://sarah-edwards-xzkc.squarespace.com/blog/2020/4/30/analysis-of-apple-unified-logs-quarantine-edition-entry-6-working-from-home-remote-logins"
+		},
+		{
+			"source": "Attacking VNC Servers PentestLab",
+			"url": "https://pentestlab.blog/2012/10/30/attacking-vnc-servers/"
+		},
+		{
+			"source": "Gnome Remote Desktop grd-settings",
+			"url": "https://gitlab.gnome.org/GNOME/gnome-remote-desktop/-/blob/9aa9181e/src/grd-settings.c#L207"
+		},
+		{
+			"source": "Gnome Remote Desktop gschema",
+			"url": "https://gitlab.gnome.org/GNOME/gnome-remote-desktop/-/blob/9aa9181e/src/org.gnome.desktop.remote-desktop.gschema.xml.in"
+		},
+		{
+			"source": "Havana authentication bug",
+			"url": "http://lists.openstack.org/pipermail/openstack/2013-December/004138.html"
+		},
+		{
+			"source": "Hijacking VNC",
+			"url": "https://int0x33.medium.com/day-70-hijacking-vnc-enum-brute-access-and-crack-d3d18a4601cc"
+		},
+		{
+			"source": "MacOS VNC software for Remote Desktop",
+			"url": "https://support.apple.com/guide/remote-desktop/set-up-a-computer-running-vnc-software-apdbed09830/mac"
+		},
+		{
+			"source": "Offensive Security VNC Authentication Check",
+			"url": "https://www.offensive-security.com/metasploit-unleashed/vnc-authentication/"
+		},
+		{
+			"source": "The Remote Framebuffer Protocol",
+			"url": "https://datatracker.ietf.org/doc/html/rfc6143#section-7.2.2"
+		},
+		{
+			"source": "VNC Authentication",
+			"url": "https://help.realvnc.com/hc/en-us/articles/360002250097-Setting-up-System-Authentication"
+		},
+		{
+			"source": "VNC Vulnerabilities",
+			"url": "https://www.bleepingcomputer.com/news/security/dozens-of-vnc-vulnerabilities-found-in-linux-windows-solutions/"
+		},
+		{
+			"source": "macOS root VNC login without authentication",
+			"url": "https://www.tenable.com/blog/detecting-macos-high-sierra-root-account-without-authentication"
+		},
+		{
+			"source": "mitre-attack",
+			"url": "https://attack.mitre.org/techniques/T1021/005"
+		}
+	],
+	"data_source": {
+		"id": "mitre-attack",
+		"raws": [
+			"fixtures/enterprise/attack-pattern/attack-pattern--01327cde-66c4-4123-bf34-5f258d59457b.json"
+		]
+	}
+}

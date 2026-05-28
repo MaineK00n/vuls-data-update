@@ -1,0 +1,32 @@
+{
+	"id": "M9990",
+	"kind": "mitigation",
+	"name": "TestMitigation",
+	"description": "Test mitigation fixture.",
+	"domains": [
+		"enterprise-attack"
+	],
+	"deprecated": false,
+	"revoked": false,
+	"version": "1.0",
+	"modified": "2024-01-01T00:00:00Z",
+	"mitigation": {
+		"techniques_mitigated": [
+			"T1195"
+		]
+	},
+	"references": [
+		{
+			"source": "mitre-attack",
+			"url": "https://attack.mitre.org/mitigations/M9990"
+		}
+	],
+	"data_source": {
+		"id": "mitre-attack",
+		"raws": [
+			"fixtures/enterprise/course-of-action/course-of-action--00000000-0000-0000-0000-000000000005.json",
+			"fixtures/enterprise/relationship/relationship--00000000-0000-0000-0000-000000000107.json",
+			"fixtures/mobile/attack-pattern/attack-pattern--3f18edba-28f4-4bb9-82c3-8aa60dcac5f7.json"
+		]
+	}
+}

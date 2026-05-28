@@ -1,0 +1,77 @@
+{
+	"id": "T1562",
+	"kind": "technique",
+	"name": "Impair Defenses",
+	"description": "Adversaries may maliciously modify components of a victim environment in order to hinder or disable defensive mechanisms. This not only involves impairing preventative defenses, such as firewalls and anti-virus, but also detection capabilities that defenders can use to audit activity and identify malicious behavior. This may also span both native defenses as well as supplemental capabilities installed by users and administrators.\n\nAdversaries may also impair routine operations that contribute to defensive hygiene, such as blocking users from logging out of a computer or stopping it from being shut down. These restrictions can further enable malicious operations as well as the continued propagation of incidents.(Citation: Emotet shutdown)\n\nAdversaries could also target event aggregation and analysis mechanisms, or otherwise disrupt these procedures by altering other system components.",
+	"domains": [
+		"enterprise-attack"
+	],
+	"deprecated": false,
+	"revoked": false,
+	"version": "1.5",
+	"modified": "2023-10-20T16:43:53.391Z",
+	"technique": {
+		"platforms": [
+			"Containers",
+			"IaaS",
+			"Linux",
+			"Network",
+			"Office 365",
+			"Windows",
+			"macOS"
+		],
+		"tactics": [
+			"defense-evasion"
+		],
+		"is_subtechnique": false,
+		"detection": "Monitor processes and command-line arguments to see if security tools or logging services are killed or stop running. Monitor Registry edits for modifications to services and startup programs that correspond to security tools.  Lack of log events may be suspicious.\n\nMonitor environment variables and APIs that can be leveraged to disable security measures.",
+		"data_sources": [
+			"Cloud Service: Cloud Service Disable",
+			"Cloud Service: Cloud Service Modification",
+			"Command: Command Execution",
+			"Driver: Driver Load",
+			"File: File Deletion",
+			"File: File Modification",
+			"Firewall: Firewall Disable",
+			"Firewall: Firewall Rule Modification",
+			"Process: OS API Execution",
+			"Process: Process Creation",
+			"Process: Process Modification",
+			"Process: Process Termination",
+			"Script: Script Execution",
+			"Sensor Health: Host Status",
+			"Service: Service Metadata",
+			"User Account: User Account Modification",
+			"Windows Registry: Windows Registry Key Deletion",
+			"Windows Registry: Windows Registry Key Modification"
+		],
+		"defense_bypassed": [
+			"Anti-virus",
+			"Digital Certificate Validation",
+			"File monitoring",
+			"Firewall",
+			"Host forensic analysis",
+			"Host intrusion prevention systems",
+			"Log analysis",
+			"Signature-based detection"
+		],
+		"network_requirements": false,
+		"remote_support": false
+	},
+	"references": [
+		{
+			"source": "Emotet shutdown",
+			"url": "https://thedfirreport.com/2022/11/28/emotet-strikes-again-lnk-file-leads-to-domain-wide-ransomware/"
+		},
+		{
+			"source": "mitre-attack",
+			"url": "https://attack.mitre.org/techniques/T1562"
+		}
+	],
+	"data_source": {
+		"id": "mitre-attack",
+		"raws": [
+			"fixtures/enterprise/attack-pattern/attack-pattern--3d333250-30e4-4a82-9edc-756c68afc529.json"
+		]
+	}
+}

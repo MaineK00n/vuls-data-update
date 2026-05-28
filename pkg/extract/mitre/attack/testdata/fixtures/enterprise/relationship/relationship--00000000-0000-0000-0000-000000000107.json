@@ -1,0 +1,12 @@
+{
+	"type": "relationship",
+	"id": "relationship--00000000-0000-0000-0000-000000000107",
+	"spec_version": "2.1",
+	"created": "2024-01-01T00:00:00.000Z",
+	"modified": "2024-01-01T00:00:00.000Z",
+	"relationship_type": "mitigates",
+	"source_ref": "course-of-action--00000000-0000-0000-0000-000000000005",
+	"target_ref": "attack-pattern--3f18edba-28f4-4bb9-82c3-8aa60dcac5f7",
+	"x_mitre_attack_spec_version": "3.0.0",
+	"x_mitre_domains": ["enterprise-attack"]
+}

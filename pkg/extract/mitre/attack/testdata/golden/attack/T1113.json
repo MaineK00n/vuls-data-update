@@ -1,0 +1,51 @@
+{
+	"id": "T1113",
+	"kind": "technique",
+	"name": "Screen Capture",
+	"description": "Adversaries may attempt to take screen captures of the desktop to gather information over the course of an operation. Screen capturing functionality may be included as a feature of a remote access tool used in post-compromise operations. Taking a screenshot is also typically possible through native utilities or API calls, such as <code>CopyFromScreen</code>, <code>xwd</code>, or <code>screencapture</code>.(Citation: CopyFromScreen .NET)(Citation: Antiquated Mac Malware)\n",
+	"domains": [
+		"enterprise-attack"
+	],
+	"deprecated": false,
+	"revoked": false,
+	"version": "1.1",
+	"modified": "2023-03-30T21:01:39.967Z",
+	"technique": {
+		"platforms": [
+			"Linux",
+			"Windows",
+			"macOS"
+		],
+		"tactics": [
+			"collection"
+		],
+		"is_subtechnique": false,
+		"detection": "Monitoring for screen capture behavior will depend on the method used to obtain data from the operating system and write output files. Detection methods could include collecting information from unusual processes using API calls used to obtain image data, and monitoring for image files written to disk. The sensor data may need to be correlated with other events to identify malicious activity, depending on the legitimacy of this behavior within a given network environment.",
+		"data_sources": [
+			"Command: Command Execution",
+			"Process: OS API Execution"
+		],
+		"network_requirements": false,
+		"remote_support": false
+	},
+	"references": [
+		{
+			"source": "Antiquated Mac Malware",
+			"url": "https://blog.malwarebytes.com/threat-analysis/2017/01/new-mac-backdoor-using-antiquated-code/"
+		},
+		{
+			"source": "CopyFromScreen .NET",
+			"url": "https://docs.microsoft.com/en-us/dotnet/api/system.drawing.graphics.copyfromscreen?view=netframework-4.8"
+		},
+		{
+			"source": "mitre-attack",
+			"url": "https://attack.mitre.org/techniques/T1113"
+		}
+	],
+	"data_source": {
+		"id": "mitre-attack",
+		"raws": [
+			"fixtures/enterprise/attack-pattern/attack-pattern--0259baeb-9f63-4c69-bf10-eb038c390688.json"
+		]
+	}
+}

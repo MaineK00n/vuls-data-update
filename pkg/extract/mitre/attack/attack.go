@@ -1,0 +1,964 @@
+package attack
+
+import (
+	"fmt"
+	"io/fs"
+	"log/slog"
+	"path/filepath"
+	"slices"
+	"strings"
+	"time"
+
+	"github.com/pkg/errors"
+
+	attackTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/attack"
+	analyticTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/attack/analytic"
+	assetTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/attack/asset"
+	campaignTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/attack/campaign"
+	datacomponentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/attack/datacomponent"
+	datasourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/attack/datasource"
+	detectionstrategyTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/attack/detectionstrategy"
+	groupTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/attack/group"
+	mitigationTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/attack/mitigation"
+	procedureTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/attack/procedure"
+	softwareTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/attack/software"
+	tacticTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/attack/tactic"
+	techniqueTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/attack/technique"
+	techniqueusedTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/attack/techniqueused"
+	referenceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/reference"
+	stixdatasourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/datasource"
+	repositoryTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/datasource/repository"
+	sourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/source"
+	"github.com/MaineK00n/vuls-data-update/pkg/extract/util"
+	utilgit "github.com/MaineK00n/vuls-data-update/pkg/extract/util/git"
+	utiljson "github.com/MaineK00n/vuls-data-update/pkg/extract/util/json"
+	attack "github.com/MaineK00n/vuls-data-update/pkg/fetch/mitre/attack"
+)
+
+type options struct {
+	dir string
+}
+
+type Option interface {
+	apply(*options)
+}
+
+type dirOption string
+
+func (d dirOption) apply(opts *options) {
+	opts.dir = string(d)
+}
+
+func WithDir(dir string) Option {
+	return dirOption(dir)
+}
+
+// primaryEntry collects everything we know about one ATT&CK primary
+// object (any of the 11 kinds): the external ID, the kind, the parsed
+// STIX struct (concrete type stored in raw via type assertion), and a
+// JSONReader accumulating every raw file path contributing to this record.
+type primaryEntry struct {
+	extID  string
+	kind   attackTypes.Kind
+	raw    any
+	reader *utiljson.JSONReader
+}
+
+// rels holds the relationship-derived data, keyed by primary external ID.
+// All forward and reverse fields populated here become reference IDs in
+// the canonical record (db search merges across records).
+type rels struct {
+	// technique-related (forward + reverse subtechnique-of)
+	subParent    map[string]string   // technique extID → parent technique extID
+	subChildren  map[string][]string // technique extID → subtechnique extIDs (reverse of Parent)
+	techTactics  map[string][]string // technique extID → tactic shortnames (TacticRefs + KillChainPhases consolidated downstream)
+	techAssets   map[string][]string // technique extID → asset extIDs (from "targets")
+	techStrategy map[string][]string // technique extID → DetectionStrategy extIDs (from "detects" reverse)
+	techMit      map[string][]string // technique extID → mitigation extIDs
+	techProcs    map[string][]procedureTypes.Procedure
+	// mitigation reverse
+	mitTechniques map[string][]string // mitigation extID → technique extIDs (reverse of mitigates)
+	// group
+	groupTechUsed  map[string][]techniqueusedTypes.TechniqueUsed
+	groupSoftUsed  map[string][]string
+	groupCampaigns map[string][]string // group extID → campaign extIDs (reverse of attributed-to)
+	// software
+	softTechUsed  map[string][]techniqueusedTypes.TechniqueUsed
+	softGroupsUse map[string][]string
+	softCampaigns map[string][]string // software extID → campaign extIDs (reverse of uses)
+	// campaign
+	campTechUsed   map[string][]techniqueusedTypes.TechniqueUsed
+	campSoftUsed   map[string][]string
+	campGroupsAttr map[string][]string
+	// tactic reverse
+	tacticTechniques map[string][]string // tactic shortname → technique extIDs (reverse)
+	// asset
+	assetTechniques map[string][]string // asset extID → technique extIDs (from "targets" reverse)
+	// detection-strategy
+	strategyTechniques map[string][]string // strategy extID → technique extIDs (from "detects")
+	strategyAnalytics  map[string][]string // strategy extID → analytic extIDs (from x_mitre_analytic_refs)
+	// analytic reverse
+	analyticStrategy map[string]string // analytic extID → owning strategy extID
+	// data-source / data-component
+	dsComponents map[string][]string // data-source extID → data-component extIDs (reverse of x_mitre_data_source_ref)
+	dcSource     map[string]string   // data-component extID → data-source extID
+}
+
+func newRels() rels {
+	return rels{
+		subParent:          make(map[string]string),
+		subChildren:        make(map[string][]string),
+		techTactics:        make(map[string][]string),
+		techAssets:         make(map[string][]string),
+		techStrategy:       make(map[string][]string),
+		techMit:            make(map[string][]string),
+		techProcs:          make(map[string][]procedureTypes.Procedure),
+		mitTechniques:      make(map[string][]string),
+		groupTechUsed:      make(map[string][]techniqueusedTypes.TechniqueUsed),
+		groupSoftUsed:      make(map[string][]string),
+		groupCampaigns:     make(map[string][]string),
+		softTechUsed:       make(map[string][]techniqueusedTypes.TechniqueUsed),
+		softGroupsUse:      make(map[string][]string),
+		softCampaigns:      make(map[string][]string),
+		campTechUsed:       make(map[string][]techniqueusedTypes.TechniqueUsed),
+		campSoftUsed:       make(map[string][]string),
+		campGroupsAttr:     make(map[string][]string),
+		tacticTechniques:   make(map[string][]string),
+		assetTechniques:    make(map[string][]string),
+		strategyTechniques: make(map[string][]string),
+		strategyAnalytics:  make(map[string][]string),
+		analyticStrategy:   make(map[string]string),
+		dsComponents:       make(map[string][]string),
+		dcSource:           make(map[string]string),
+	}
+}
+
+func Extract(args string, opts ...Option) error {
+	options := &options{
+		dir: filepath.Join(util.CacheDir(), "extract", "mitre", "attack"),
+	}
+
+	for _, o := range opts {
+		o.apply(options)
+	}
+
+	if err := util.RemoveAll(options.dir); err != nil {
+		return errors.Wrapf(err, "remove %s", options.dir)
+	}
+
+	slog.Info("Extract MITRE ATT&CK")
+
+	entries := make(map[string]*primaryEntry) // extID → entry
+	uuidToExt := make(map[string]string)      // STIX UUID → ATT&CK external ID
+	uuidKind := make(map[string]attackTypes.Kind)
+	uuidToPath := make(map[string]string) // STIX UUID → absolute path
+
+	// Pass 1: walk every STIX file, build entries for primary kinds.
+	if err := filepath.WalkDir(args, func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		if d.IsDir() {
+			if d.Name() == ".git" {
+				return filepath.SkipDir
+			}
+			return nil
+		}
+		if filepath.Ext(path) != ".json" {
+			return nil
+		}
+		rel, err := filepath.Rel(args, path)
+		if err != nil {
+			return errors.Wrapf(err, "rel %s", path)
+		}
+		parts := strings.Split(rel, string(filepath.Separator))
+		if len(parts) < 3 {
+			return nil
+		}
+		stixType := parts[1]
+
+		switch stixType {
+		case "attack-pattern":
+			r := utiljson.NewJSONReader()
+			var o attack.AttackPattern
+			if err := r.Read(path, args, &o); err != nil {
+				return errors.Wrapf(err, "read json %s", path)
+			}
+			registerPrimary(o.ExternalReferences, o.ID, path, attackTypes.KindTechnique, &o, r, entries, uuidToExt, uuidKind, uuidToPath)
+		case "x-mitre-tactic":
+			r := utiljson.NewJSONReader()
+			var o attack.XMitreTactic
+			if err := r.Read(path, args, &o); err != nil {
+				return errors.Wrapf(err, "read json %s", path)
+			}
+			registerPrimary(o.ExternalReferences, o.ID, path, attackTypes.KindTactic, &o, r, entries, uuidToExt, uuidKind, uuidToPath)
+		case "course-of-action":
+			r := utiljson.NewJSONReader()
+			var o attack.CourseOfAction
+			if err := r.Read(path, args, &o); err != nil {
+				return errors.Wrapf(err, "read json %s", path)
+			}
+			registerPrimary(o.ExternalReferences, o.ID, path, attackTypes.KindMitigation, &o, r, entries, uuidToExt, uuidKind, uuidToPath)
+		case "intrusion-set":
+			r := utiljson.NewJSONReader()
+			var o attack.IntrusionSet
+			if err := r.Read(path, args, &o); err != nil {
+				return errors.Wrapf(err, "read json %s", path)
+			}
+			registerPrimary(o.ExternalReferences, o.ID, path, attackTypes.KindGroup, &o, r, entries, uuidToExt, uuidKind, uuidToPath)
+		case "malware":
+			r := utiljson.NewJSONReader()
+			var o attack.Malware
+			if err := r.Read(path, args, &o); err != nil {
+				return errors.Wrapf(err, "read json %s", path)
+			}
+			registerPrimary(o.ExternalReferences, o.ID, path, attackTypes.KindSoftware, &o, r, entries, uuidToExt, uuidKind, uuidToPath)
+		case "tool":
+			r := utiljson.NewJSONReader()
+			var o attack.Tool
+			if err := r.Read(path, args, &o); err != nil {
+				return errors.Wrapf(err, "read json %s", path)
+			}
+			registerPrimary(o.ExternalReferences, o.ID, path, attackTypes.KindSoftware, &o, r, entries, uuidToExt, uuidKind, uuidToPath)
+		case "campaign":
+			r := utiljson.NewJSONReader()
+			var o attack.Campaign
+			if err := r.Read(path, args, &o); err != nil {
+				return errors.Wrapf(err, "read json %s", path)
+			}
+			registerPrimary(o.ExternalReferences, o.ID, path, attackTypes.KindCampaign, &o, r, entries, uuidToExt, uuidKind, uuidToPath)
+		case "x-mitre-asset":
+			r := utiljson.NewJSONReader()
+			var o attack.XMitreAsset
+			if err := r.Read(path, args, &o); err != nil {
+				return errors.Wrapf(err, "read json %s", path)
+			}
+			registerPrimary(o.ExternalReferences, o.ID, path, attackTypes.KindAsset, &o, r, entries, uuidToExt, uuidKind, uuidToPath)
+		case "x-mitre-detection-strategy":
+			r := utiljson.NewJSONReader()
+			var o attack.XMitreDetectionStrategy
+			if err := r.Read(path, args, &o); err != nil {
+				return errors.Wrapf(err, "read json %s", path)
+			}
+			registerPrimary(o.ExternalReferences, o.ID, path, attackTypes.KindDetectStrategy, &o, r, entries, uuidToExt, uuidKind, uuidToPath)
+		case "x-mitre-analytic":
+			r := utiljson.NewJSONReader()
+			var o attack.XMitreAnalytic
+			if err := r.Read(path, args, &o); err != nil {
+				return errors.Wrapf(err, "read json %s", path)
+			}
+			registerPrimary(o.ExternalReferences, o.ID, path, attackTypes.KindAnalytic, &o, r, entries, uuidToExt, uuidKind, uuidToPath)
+		case "x-mitre-data-source":
+			r := utiljson.NewJSONReader()
+			var o attack.XMitreDataSource
+			if err := r.Read(path, args, &o); err != nil {
+				return errors.Wrapf(err, "read json %s", path)
+			}
+			registerPrimary(o.ExternalReferences, o.ID, path, attackTypes.KindDataSource, &o, r, entries, uuidToExt, uuidKind, uuidToPath)
+		case "x-mitre-data-component":
+			r := utiljson.NewJSONReader()
+			var o attack.XMitreDataComponent
+			if err := r.Read(path, args, &o); err != nil {
+				return errors.Wrapf(err, "read json %s", path)
+			}
+			registerPrimary(o.ExternalReferences, o.ID, path, attackTypes.KindDataComponent, &o, r, entries, uuidToExt, uuidKind, uuidToPath)
+		case "relationship":
+			// Pass 2 handles relationship files.
+		default:
+			// identity, marking-definition, x-mitre-collection, x-mitre-matrix — not extracted.
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrapf(err, "walk %s", args)
+	}
+
+	idx := newRels()
+
+	// Pass 1.5: resolve UUID-based refs that aren't covered by relationships.
+	//
+	//   - Technique.TacticRefs → tactic shortname (and build tactic → techniques reverse)
+	//   - DetectionStrategy.x_mitre_analytic_refs → analytic extIDs (forward + reverse)
+	//   - DataComponent.x_mitre_data_source_ref → data-source extID (forward + reverse)
+	//
+	// Each reference Read also registers the cross-ref path against the
+	// owning entry's reader for provenance.
+	for _, entry := range entries {
+		switch entry.kind {
+		case attackTypes.KindTechnique:
+			ap := entry.raw.(*attack.AttackPattern)
+			// KillChainPhases shortnames (inline) → also reverse to tactic.Techniques
+			for _, kc := range ap.KillChainPhases {
+				if kc.KillChainName == "mitre-attack" || kc.KillChainName == "mitre-ics-attack" || kc.KillChainName == "mitre-mobile-attack" {
+					idx.techTactics[entry.extID] = append(idx.techTactics[entry.extID], kc.PhaseName)
+					idx.tacticTechniques[kc.PhaseName] = append(idx.tacticTechniques[kc.PhaseName], entry.extID)
+				}
+			}
+			// TacticRefs → x-mitre-tactic file → shortname
+			for _, tr := range ap.TacticRefs {
+				tacticPath, ok := uuidToPath[tr]
+				if !ok {
+					continue
+				}
+				var t attack.XMitreTactic
+				if err := entry.reader.Read(tacticPath, args, &t); err != nil {
+					return errors.Wrapf(err, "read tactic %s", tacticPath)
+				}
+				if t.XMitreShortname != nil {
+					idx.techTactics[entry.extID] = append(idx.techTactics[entry.extID], *t.XMitreShortname)
+					idx.tacticTechniques[*t.XMitreShortname] = append(idx.tacticTechniques[*t.XMitreShortname], entry.extID)
+				}
+			}
+		case attackTypes.KindDetectStrategy:
+			ds := entry.raw.(*attack.XMitreDetectionStrategy)
+			for _, ar := range ds.XMitreAnalyticRefs {
+				anExt, ok := uuidToExt[ar]
+				if !ok {
+					continue
+				}
+				idx.strategyAnalytics[entry.extID] = append(idx.strategyAnalytics[entry.extID], anExt)
+				idx.analyticStrategy[anExt] = entry.extID
+				if anPath, ok := uuidToPath[ar]; ok {
+					if err := entry.reader.Read(anPath, args, new(attack.XMitreAnalytic)); err != nil {
+						return errors.Wrapf(err, "read analytic %s", anPath)
+					}
+				}
+			}
+		case attackTypes.KindDataComponent:
+			dc := entry.raw.(*attack.XMitreDataComponent)
+			if dc.XMitreDataSourceRef != nil {
+				if dsExt, ok := uuidToExt[*dc.XMitreDataSourceRef]; ok {
+					idx.dcSource[entry.extID] = dsExt
+					idx.dsComponents[dsExt] = append(idx.dsComponents[dsExt], entry.extID)
+					if dsPath, ok := uuidToPath[*dc.XMitreDataSourceRef]; ok {
+						if err := entry.reader.Read(dsPath, args, new(attack.XMitreDataSource)); err != nil {
+							return errors.Wrapf(err, "read data-source %s", dsPath)
+						}
+					}
+				}
+			}
+		}
+	}
+
+	// Pass 2: walk relationship files, attribute paths and update idx.
+	if err := filepath.WalkDir(args, func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		if d.IsDir() {
+			if d.Name() == ".git" {
+				return filepath.SkipDir
+			}
+			return nil
+		}
+		if filepath.Ext(path) != ".json" {
+			return nil
+		}
+		rel, err := filepath.Rel(args, path)
+		if err != nil {
+			return errors.Wrapf(err, "rel %s", path)
+		}
+		parts := strings.Split(rel, string(filepath.Separator))
+		if len(parts) < 3 || parts[1] != "relationship" {
+			return nil
+		}
+
+		var r attack.Relationship
+		if err := utiljson.NewJSONReader().Read(path, args, &r); err != nil {
+			return errors.Wrapf(err, "read json %s", path)
+		}
+		if r.RelationshipType == "" || r.SourceRef == "" || r.TargetRef == "" {
+			return nil
+		}
+
+		src, tgt := r.SourceRef, r.TargetRef
+		srcKind, tgtKind := uuidKind[src], uuidKind[tgt]
+		srcExt, tgtExt := uuidToExt[src], uuidToExt[tgt]
+		desc := ""
+		if r.Description != nil {
+			desc = *r.Description
+		}
+
+		switch r.RelationshipType {
+		case "subtechnique-of":
+			if srcEntry, ok := entries[srcExt]; ok && tgtExt != "" {
+				if err := attachRel(srcEntry, path, args); err != nil {
+					return err
+				}
+				if err := attachCrossRef(srcEntry, uuidToPath[tgt], "attack-pattern", args); err != nil {
+					return err
+				}
+				idx.subParent[srcExt] = tgtExt
+			}
+			// Reverse: parent gets list of children
+			if tgtEntry, ok := entries[tgtExt]; ok && srcExt != "" {
+				if err := attachRel(tgtEntry, path, args); err != nil {
+					return err
+				}
+				if err := attachCrossRef(tgtEntry, uuidToPath[src], "attack-pattern", args); err != nil {
+					return err
+				}
+				idx.subChildren[tgtExt] = append(idx.subChildren[tgtExt], srcExt)
+			}
+		case "mitigates":
+			if tgtEntry, ok := entries[tgtExt]; ok && srcExt != "" {
+				if err := attachRel(tgtEntry, path, args); err != nil {
+					return err
+				}
+				if err := attachCrossRef(tgtEntry, uuidToPath[src], "course-of-action", args); err != nil {
+					return err
+				}
+				idx.techMit[tgtExt] = append(idx.techMit[tgtExt], srcExt)
+			}
+			// Reverse: mitigation gets list of techniques it addresses
+			if srcEntry, ok := entries[srcExt]; ok && tgtExt != "" {
+				if err := attachRel(srcEntry, path, args); err != nil {
+					return err
+				}
+				if err := attachCrossRef(srcEntry, uuidToPath[tgt], "attack-pattern", args); err != nil {
+					return err
+				}
+				idx.mitTechniques[srcExt] = append(idx.mitTechniques[srcExt], tgtExt)
+			}
+		case "uses":
+			if srcExt == "" || tgtExt == "" {
+				return nil
+			}
+			switch {
+			case srcKind == attackTypes.KindGroup && tgtKind == attackTypes.KindTechnique:
+				if srcEntry, ok := entries[srcExt]; ok {
+					if err := attachRel(srcEntry, path, args); err != nil {
+						return err
+					}
+					if err := attachCrossRef(srcEntry, uuidToPath[tgt], "attack-pattern", args); err != nil {
+						return err
+					}
+					idx.groupTechUsed[srcExt] = append(idx.groupTechUsed[srcExt], techniqueusedTypes.TechniqueUsed{ID: tgtExt, Description: desc})
+				}
+				if tgtEntry, ok := entries[tgtExt]; ok {
+					if err := attachRel(tgtEntry, path, args); err != nil {
+						return err
+					}
+					if err := attachCrossRef(tgtEntry, uuidToPath[src], "intrusion-set", args); err != nil {
+						return err
+					}
+					idx.techProcs[tgtExt] = append(idx.techProcs[tgtExt], procedureTypes.Procedure{AttackerID: srcExt, Description: desc})
+				}
+			case srcKind == attackTypes.KindGroup && tgtKind == attackTypes.KindSoftware:
+				if srcEntry, ok := entries[srcExt]; ok {
+					if err := attachRel(srcEntry, path, args); err != nil {
+						return err
+					}
+					if err := attachCrossRef(srcEntry, uuidToPath[tgt], stixTypeFromUUID(tgt), args); err != nil {
+						return err
+					}
+					idx.groupSoftUsed[srcExt] = append(idx.groupSoftUsed[srcExt], tgtExt)
+				}
+				if tgtEntry, ok := entries[tgtExt]; ok {
+					if err := attachRel(tgtEntry, path, args); err != nil {
+						return err
+					}
+					if err := attachCrossRef(tgtEntry, uuidToPath[src], "intrusion-set", args); err != nil {
+						return err
+					}
+					idx.softGroupsUse[tgtExt] = append(idx.softGroupsUse[tgtExt], srcExt)
+				}
+			case srcKind == attackTypes.KindSoftware && tgtKind == attackTypes.KindTechnique:
+				if srcEntry, ok := entries[srcExt]; ok {
+					if err := attachRel(srcEntry, path, args); err != nil {
+						return err
+					}
+					if err := attachCrossRef(srcEntry, uuidToPath[tgt], "attack-pattern", args); err != nil {
+						return err
+					}
+					idx.softTechUsed[srcExt] = append(idx.softTechUsed[srcExt], techniqueusedTypes.TechniqueUsed{ID: tgtExt, Description: desc})
+				}
+				if tgtEntry, ok := entries[tgtExt]; ok {
+					if err := attachRel(tgtEntry, path, args); err != nil {
+						return err
+					}
+					if err := attachCrossRef(tgtEntry, uuidToPath[src], stixTypeFromUUID(src), args); err != nil {
+						return err
+					}
+					idx.techProcs[tgtExt] = append(idx.techProcs[tgtExt], procedureTypes.Procedure{AttackerID: srcExt, Description: desc})
+				}
+			case srcKind == attackTypes.KindCampaign && tgtKind == attackTypes.KindTechnique:
+				if srcEntry, ok := entries[srcExt]; ok {
+					if err := attachRel(srcEntry, path, args); err != nil {
+						return err
+					}
+					if err := attachCrossRef(srcEntry, uuidToPath[tgt], "attack-pattern", args); err != nil {
+						return err
+					}
+					idx.campTechUsed[srcExt] = append(idx.campTechUsed[srcExt], techniqueusedTypes.TechniqueUsed{ID: tgtExt, Description: desc})
+				}
+				if tgtEntry, ok := entries[tgtExt]; ok {
+					if err := attachRel(tgtEntry, path, args); err != nil {
+						return err
+					}
+					if err := attachCrossRef(tgtEntry, uuidToPath[src], "campaign", args); err != nil {
+						return err
+					}
+					idx.techProcs[tgtExt] = append(idx.techProcs[tgtExt], procedureTypes.Procedure{AttackerID: srcExt, Description: desc})
+				}
+			case srcKind == attackTypes.KindCampaign && tgtKind == attackTypes.KindSoftware:
+				if srcEntry, ok := entries[srcExt]; ok {
+					if err := attachRel(srcEntry, path, args); err != nil {
+						return err
+					}
+					if err := attachCrossRef(srcEntry, uuidToPath[tgt], stixTypeFromUUID(tgt), args); err != nil {
+						return err
+					}
+					idx.campSoftUsed[srcExt] = append(idx.campSoftUsed[srcExt], tgtExt)
+				}
+				// Reverse: software gets list of campaigns using it
+				if tgtEntry, ok := entries[tgtExt]; ok {
+					if err := attachRel(tgtEntry, path, args); err != nil {
+						return err
+					}
+					if err := attachCrossRef(tgtEntry, uuidToPath[src], "campaign", args); err != nil {
+						return err
+					}
+					idx.softCampaigns[tgtExt] = append(idx.softCampaigns[tgtExt], srcExt)
+				}
+			}
+		case "attributed-to":
+			if srcKind == attackTypes.KindCampaign && tgtKind == attackTypes.KindGroup && srcExt != "" && tgtExt != "" {
+				if srcEntry, ok := entries[srcExt]; ok {
+					if err := attachRel(srcEntry, path, args); err != nil {
+						return err
+					}
+					if err := attachCrossRef(srcEntry, uuidToPath[tgt], "intrusion-set", args); err != nil {
+						return err
+					}
+					idx.campGroupsAttr[srcExt] = append(idx.campGroupsAttr[srcExt], tgtExt)
+				}
+				// Reverse: group gets list of campaigns attributing to it
+				if tgtEntry, ok := entries[tgtExt]; ok {
+					if err := attachRel(tgtEntry, path, args); err != nil {
+						return err
+					}
+					if err := attachCrossRef(tgtEntry, uuidToPath[src], "campaign", args); err != nil {
+						return err
+					}
+					idx.groupCampaigns[tgtExt] = append(idx.groupCampaigns[tgtExt], srcExt)
+				}
+			}
+		case "targets":
+			// attack-pattern --targets--> x-mitre-asset
+			if srcKind == attackTypes.KindTechnique && tgtKind == attackTypes.KindAsset && srcExt != "" && tgtExt != "" {
+				if srcEntry, ok := entries[srcExt]; ok {
+					if err := attachRel(srcEntry, path, args); err != nil {
+						return err
+					}
+					if err := attachCrossRef(srcEntry, uuidToPath[tgt], "x-mitre-asset", args); err != nil {
+						return err
+					}
+					idx.techAssets[srcExt] = append(idx.techAssets[srcExt], tgtExt)
+				}
+				if tgtEntry, ok := entries[tgtExt]; ok {
+					if err := attachRel(tgtEntry, path, args); err != nil {
+						return err
+					}
+					if err := attachCrossRef(tgtEntry, uuidToPath[src], "attack-pattern", args); err != nil {
+						return err
+					}
+					idx.assetTechniques[tgtExt] = append(idx.assetTechniques[tgtExt], srcExt)
+				}
+			}
+		case "detects":
+			// x-mitre-detection-strategy --detects--> attack-pattern
+			if srcKind == attackTypes.KindDetectStrategy && tgtKind == attackTypes.KindTechnique && srcExt != "" && tgtExt != "" {
+				if srcEntry, ok := entries[srcExt]; ok {
+					if err := attachRel(srcEntry, path, args); err != nil {
+						return err
+					}
+					if err := attachCrossRef(srcEntry, uuidToPath[tgt], "attack-pattern", args); err != nil {
+						return err
+					}
+					idx.strategyTechniques[srcExt] = append(idx.strategyTechniques[srcExt], tgtExt)
+				}
+				if tgtEntry, ok := entries[tgtExt]; ok {
+					if err := attachRel(tgtEntry, path, args); err != nil {
+						return err
+					}
+					if err := attachCrossRef(tgtEntry, uuidToPath[src], "x-mitre-detection-strategy", args); err != nil {
+						return err
+					}
+					idx.techStrategy[tgtExt] = append(idx.techStrategy[tgtExt], srcExt)
+				}
+			}
+		case "revoked-by":
+			// Captured by the boolean Revoked field already; skip rel-level handling.
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrapf(err, "walk %s", args)
+	}
+
+	// Pass 3: convert each primary entry to the canonical record and emit.
+	for _, entry := range entries {
+		extracted := convert(entry, idx)
+		outPath := filepath.Join(options.dir, "attack", fmt.Sprintf("%s.json", entry.extID))
+		if err := util.Write(outPath, extracted, true); err != nil {
+			return errors.Wrapf(err, "write %s", outPath)
+		}
+	}
+
+	if err := util.Write(filepath.Join(options.dir, "datasource.json"), stixdatasourceTypes.DataSource{
+		ID:   sourceTypes.MitreATTACK,
+		Name: new("MITRE ATT&CK"),
+		Raw: func() []repositoryTypes.Repository {
+			r, _ := utilgit.GetDataSourceRepository(args)
+			if r == nil {
+				return nil
+			}
+			return []repositoryTypes.Repository{*r}
+		}(),
+		Extracted: func() *repositoryTypes.Repository {
+			if u, err := utilgit.GetOrigin(options.dir); err == nil {
+				return &repositoryTypes.Repository{URL: u}
+			}
+			return nil
+		}(),
+	}, false); err != nil {
+		return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "datasource.json"))
+	}
+
+	return nil
+}
+
+func registerPrimary(refs []attack.ExternalReference, id, path string, kind attackTypes.Kind, raw any, r *utiljson.JSONReader, entries map[string]*primaryEntry, uuidToExt map[string]string, uuidKind map[string]attackTypes.Kind, uuidToPath map[string]string) {
+	extID := externalID(refs, "mitre-attack")
+	if extID == "" {
+		return
+	}
+	uuidToPath[id] = path
+	uuidToExt[id] = extID
+	uuidKind[id] = kind
+	if _, exists := entries[extID]; !exists {
+		entries[extID] = &primaryEntry{extID: extID, kind: kind, raw: raw, reader: r}
+	}
+}
+
+func attachRel(entry *primaryEntry, relPath, args string) error {
+	if err := entry.reader.Read(relPath, args, new(attack.Relationship)); err != nil {
+		return errors.Wrapf(err, "register relationship %s", relPath)
+	}
+	return nil
+}
+
+func attachCrossRef(entry *primaryEntry, crossPath, stixType, args string) error {
+	if crossPath == "" {
+		return nil
+	}
+	switch stixType {
+	case "attack-pattern":
+		return entry.reader.Read(crossPath, args, new(attack.AttackPattern))
+	case "intrusion-set":
+		return entry.reader.Read(crossPath, args, new(attack.IntrusionSet))
+	case "malware":
+		return entry.reader.Read(crossPath, args, new(attack.Malware))
+	case "tool":
+		return entry.reader.Read(crossPath, args, new(attack.Tool))
+	case "course-of-action":
+		return entry.reader.Read(crossPath, args, new(attack.CourseOfAction))
+	case "campaign":
+		return entry.reader.Read(crossPath, args, new(attack.Campaign))
+	case "x-mitre-tactic":
+		return entry.reader.Read(crossPath, args, new(attack.XMitreTactic))
+	case "x-mitre-asset":
+		return entry.reader.Read(crossPath, args, new(attack.XMitreAsset))
+	case "x-mitre-detection-strategy":
+		return entry.reader.Read(crossPath, args, new(attack.XMitreDetectionStrategy))
+	case "x-mitre-analytic":
+		return entry.reader.Read(crossPath, args, new(attack.XMitreAnalytic))
+	case "x-mitre-data-source":
+		return entry.reader.Read(crossPath, args, new(attack.XMitreDataSource))
+	case "x-mitre-data-component":
+		return entry.reader.Read(crossPath, args, new(attack.XMitreDataComponent))
+	}
+	return nil
+}
+
+func stixTypeFromUUID(uuid string) string {
+	if idx := strings.Index(uuid, "--"); idx > 0 {
+		return uuid[:idx]
+	}
+	return ""
+}
+
+func convert(entry *primaryEntry, idx rels) attackTypes.Attack {
+	c := commonFromRaw(entry.raw)
+
+	refs := make([]referenceTypes.Reference, 0, len(c.externalReferences))
+	for _, er := range c.externalReferences {
+		if er.URL == nil || *er.URL == "" {
+			continue
+		}
+		refs = append(refs, referenceTypes.Reference{
+			Source: er.SourceName,
+			URL:    *er.URL,
+		})
+	}
+
+	a := attackTypes.Attack{
+		ID:          entry.extID,
+		Kind:        entry.kind,
+		Name:        c.name,
+		Description: c.description,
+		Domains:     slices.Clone(c.domains),
+		Deprecated:  c.deprecated,
+		Revoked:     c.revoked,
+		Version:     c.version,
+		Modified:    c.modified,
+		References:  refs,
+		DataSource: sourceTypes.Source{
+			ID:   sourceTypes.MitreATTACK,
+			Raws: entry.reader.Paths(),
+		},
+	}
+
+	switch entry.kind {
+	case attackTypes.KindTechnique:
+		a.Technique = buildTechnique(entry.raw.(*attack.AttackPattern), entry.extID, idx)
+	case attackTypes.KindTactic:
+		t := entry.raw.(*attack.XMitreTactic)
+		shortname := ""
+		if t.XMitreShortname != nil {
+			shortname = *t.XMitreShortname
+		}
+		a.Tactic = tacticTypes.Tactic{
+			Shortname:  shortname,
+			Techniques: idx.tacticTechniques[shortname],
+		}
+	case attackTypes.KindMitigation:
+		a.Mitigation = mitigationTypes.Mitigation{
+			TechniquesMitigated: idx.mitTechniques[entry.extID],
+		}
+	case attackTypes.KindGroup:
+		is := entry.raw.(*attack.IntrusionSet)
+		a.Group = groupTypes.Group{
+			Aliases:             mergeAliases(is.Aliases, is.XMitreAliases),
+			TechniquesUsed:      idx.groupTechUsed[entry.extID],
+			SoftwaresUsed:       idx.groupSoftUsed[entry.extID],
+			CampaignsAttributed: idx.groupCampaigns[entry.extID],
+		}
+	case attackTypes.KindSoftware:
+		var aliases, xAliases, platforms []string
+		var stixType string
+		switch s := entry.raw.(type) {
+		case *attack.Malware:
+			stixType = "malware"
+			aliases = s.Aliases
+			xAliases = s.XMitreAliases
+			platforms = s.XMitrePlatforms
+		case *attack.Tool:
+			stixType = "tool"
+			aliases = s.Aliases
+			xAliases = s.XMitreAliases
+			platforms = s.XMitrePlatforms
+		}
+		a.Software = softwareTypes.Software{
+			Type:           stixType,
+			Aliases:        mergeAliases(aliases, xAliases),
+			Platforms:      slices.Clone(platforms),
+			TechniquesUsed: idx.softTechUsed[entry.extID],
+			GroupsUsing:    idx.softGroupsUse[entry.extID],
+			CampaignsUsing: idx.softCampaigns[entry.extID],
+		}
+	case attackTypes.KindCampaign:
+		camp := entry.raw.(*attack.Campaign)
+		a.Campaign = campaignTypes.Campaign{
+			Aliases: mergeAliases(camp.Aliases, nil),
+			FirstSeen: func() time.Time {
+				if camp.FirstSeen == nil {
+					return time.Time{}
+				}
+				return *camp.FirstSeen
+			}(),
+			LastSeen: func() time.Time {
+				if camp.LastSeen == nil {
+					return time.Time{}
+				}
+				return *camp.LastSeen
+			}(),
+			TechniquesUsed:   idx.campTechUsed[entry.extID],
+			GroupsAttributed: idx.campGroupsAttr[entry.extID],
+			SoftwaresUsed:    idx.campSoftUsed[entry.extID],
+		}
+	case attackTypes.KindAsset:
+		as := entry.raw.(*attack.XMitreAsset)
+		related := make([]assetTypes.RelatedAsset, 0, len(as.XMitreRelatedAssets))
+		for _, ra := range as.XMitreRelatedAssets {
+			related = append(related, assetTypes.RelatedAsset{
+				Name:        ra.Name,
+				Description: ra.Description,
+				Sectors:     slices.Clone(ra.RelatedAssetSectors),
+			})
+		}
+		a.Asset = assetTypes.Asset{
+			Platforms:           slices.Clone(as.XMitrePlatforms),
+			Sectors:             slices.Clone(as.XMitreSectors),
+			RelatedAssets:       related,
+			TechniquesTargeting: idx.assetTechniques[entry.extID],
+		}
+	case attackTypes.KindDetectStrategy:
+		a.DetectionStrategy = detectionstrategyTypes.DetectionStrategy{
+			Analytics:          idx.strategyAnalytics[entry.extID],
+			TechniquesDetected: idx.strategyTechniques[entry.extID],
+		}
+	case attackTypes.KindDataSource:
+		ds := entry.raw.(*attack.XMitreDataSource)
+		a.AttackDataSource = datasourceTypes.DataSource{
+			Platforms:        slices.Clone(ds.XMitrePlatforms),
+			CollectionLayers: slices.Clone(ds.XMitreCollectionLayers),
+			DataComponents:   idx.dsComponents[entry.extID],
+		}
+	case attackTypes.KindDataComponent:
+		dc := entry.raw.(*attack.XMitreDataComponent)
+		logs := make([]datacomponentTypes.LogSource, 0, len(dc.XMitreLogSources))
+		for _, ls := range dc.XMitreLogSources {
+			logs = append(logs, datacomponentTypes.LogSource{Name: ls.Name, Channel: ls.Channel})
+		}
+		a.DataComponent = datacomponentTypes.DataComponent{
+			DataSource: idx.dcSource[entry.extID],
+			LogSources: logs,
+		}
+	case attackTypes.KindAnalytic:
+		an := entry.raw.(*attack.XMitreAnalytic)
+		lrefs := make([]analyticTypes.LogSourceReference, 0, len(an.XMitreLogSourceReferences))
+		for _, lr := range an.XMitreLogSourceReferences {
+			dcExt := ""
+			// keep raw UUID if not resolvable; otherwise resolve to DC ext ID
+			// (resolution handled below via separate map lookup if available)
+			_ = dcExt
+			lrefs = append(lrefs, analyticTypes.LogSourceReference{
+				DataComponent: lr.XMitreDataComponentRef,
+				Name:          lr.Name,
+				Channel:       lr.Channel,
+			})
+		}
+		mes := make([]analyticTypes.MutableElement, 0, len(an.XMitreMutableElements))
+		for _, me := range an.XMitreMutableElements {
+			mes = append(mes, analyticTypes.MutableElement{Field: me.Field, Description: me.Description})
+		}
+		a.Analytic = analyticTypes.Analytic{
+			DetectionStrategy:   idx.analyticStrategy[entry.extID],
+			Platforms:           slices.Clone(an.XMitrePlatforms),
+			LogSourceReferences: lrefs,
+			MutableElements:     mes,
+		}
+	}
+
+	return a
+}
+
+type commonFields struct {
+	name               string
+	description        string
+	domains            []string
+	deprecated         bool
+	revoked            bool
+	version            string
+	modified           time.Time
+	externalReferences []attack.ExternalReference
+}
+
+func commonFromRaw(raw any) commonFields {
+	switch o := raw.(type) {
+	case *attack.AttackPattern:
+		return commonFields{derefString(o.Name), derefString(o.Description), o.XMitreDomains, derefBool(o.XMitreDeprecated), derefBool(o.Revoked), derefString(o.XMitreVersion), o.Modified, o.ExternalReferences}
+	case *attack.XMitreTactic:
+		return commonFields{derefString(o.Name), derefString(o.Description), o.XMitreDomains, derefBool(o.XMitreDeprecated), derefBool(o.Revoked), derefString(o.XMitreVersion), o.Modified, o.ExternalReferences}
+	case *attack.CourseOfAction:
+		return commonFields{derefString(o.Name), derefString(o.Description), o.XMitreDomains, derefBool(o.XMitreDeprecated), derefBool(o.Revoked), derefString(o.XMitreVersion), o.Modified, o.ExternalReferences}
+	case *attack.IntrusionSet:
+		return commonFields{derefString(o.Name), derefString(o.Description), o.XMitreDomains, derefBool(o.XMitreDeprecated), derefBool(o.Revoked), derefString(o.XMitreVersion), o.Modified, o.ExternalReferences}
+	case *attack.Malware:
+		return commonFields{derefString(o.Name), derefString(o.Description), o.XMitreDomains, derefBool(o.XMitreDeprecated), derefBool(o.Revoked), derefString(o.XMitreVersion), o.Modified, o.ExternalReferences}
+	case *attack.Tool:
+		return commonFields{derefString(o.Name), derefString(o.Description), o.XMitreDomains, derefBool(o.XMitreDeprecated), derefBool(o.Revoked), derefString(o.XMitreVersion), o.Modified, o.ExternalReferences}
+	case *attack.Campaign:
+		return commonFields{derefString(o.Name), derefString(o.Description), o.XMitreDomains, derefBool(o.XMitreDeprecated), derefBool(o.Revoked), derefString(o.XMitreVersion), o.Modified, o.ExternalReferences}
+	case *attack.XMitreAsset:
+		return commonFields{derefString(o.Name), derefString(o.Description), o.XMitreDomains, derefBool(o.XMitreDeprecated), derefBool(o.Revoked), derefString(o.XMitreVersion), o.Modified, o.ExternalReferences}
+	case *attack.XMitreDetectionStrategy:
+		return commonFields{derefString(o.Name), "", o.XMitreDomains, derefBool(o.XMitreDeprecated), derefBool(o.Revoked), derefString(o.XMitreVersion), o.Modified, o.ExternalReferences}
+	case *attack.XMitreAnalytic:
+		return commonFields{derefString(o.Name), derefString(o.Description), o.XMitreDomains, derefBool(o.XMitreDeprecated), derefBool(o.Revoked), derefString(o.XMitreVersion), o.Modified, o.ExternalReferences}
+	case *attack.XMitreDataSource:
+		return commonFields{derefString(o.Name), derefString(o.Description), o.XMitreDomains, derefBool(o.XMitreDeprecated), derefBool(o.Revoked), derefString(o.XMitreVersion), o.Modified, o.ExternalReferences}
+	case *attack.XMitreDataComponent:
+		return commonFields{derefString(o.Name), derefString(o.Description), o.XMitreDomains, derefBool(o.XMitreDeprecated), derefBool(o.Revoked), derefString(o.XMitreVersion), o.Modified, o.ExternalReferences}
+	}
+	return commonFields{}
+}
+
+func buildTechnique(ap *attack.AttackPattern, extID string, idx rels) techniqueTypes.Technique {
+	isSub := derefBool(ap.XMitreIsSubtechnique)
+	parent := ""
+	if isSub {
+		parent = idx.subParent[extID]
+	}
+
+	return techniqueTypes.Technique{
+		Platforms:            slices.Clone(ap.XMitrePlatforms),
+		Tactics:              idx.techTactics[extID],
+		IsSubtechnique:       isSub,
+		Parent:               parent,
+		Detection:            derefString(ap.XMitreDetection),
+		DataSources:          slices.Clone(ap.XMitreDataSources),
+		Mitigations:          idx.techMit[extID],
+		Procedures:           idx.techProcs[extID],
+		PermissionsRequired:  slices.Clone(ap.XMitrePermissionsRequired),
+		EffectivePermissions: slices.Clone(ap.XMitreEffectivePermissions),
+		DefenseBypassed:      slices.Clone(ap.XMitreDefenseBypassed),
+		ImpactType:           slices.Clone(ap.XMitreImpactType),
+		NetworkRequirements:  derefBool(ap.XMitreNetworkRequirements),
+		RemoteSupport:        derefBool(ap.XMitreRemoteSupport),
+		Subtechniques:        idx.subChildren[extID],
+		AssetsTargeted:       idx.techAssets[extID],
+		DetectionStrategies:  idx.techStrategy[extID],
+	}
+}
+
+func mergeAliases(stixAliases, mitreAliases []string) []string {
+	seen := make(map[string]struct{}, len(stixAliases)+len(mitreAliases))
+	out := make([]string, 0, len(stixAliases)+len(mitreAliases))
+	for _, group := range [][]string{stixAliases, mitreAliases} {
+		for _, a := range group {
+			if a == "" {
+				continue
+			}
+			if _, ok := seen[a]; ok {
+				continue
+			}
+			seen[a] = struct{}{}
+			out = append(out, a)
+		}
+	}
+	return out
+}
+
+func externalID(refs []attack.ExternalReference, sourceName string) string {
+	for _, r := range refs {
+		if r.SourceName == sourceName && r.ExternalID != nil {
+			return *r.ExternalID
+		}
+	}
+	return ""
+}
+
+func derefString(p *string) string {
+	if p == nil {
+		return ""
+	}
+	return *p
+}
+
+func derefBool(p *bool) bool {
+	if p == nil {
+		return false
+	}
+	return *p
+}
