@@ -1,14 +1,3 @@
-// Package v2 extracts NVD Feed v2 CVE data with cpematch expansion.
-//
-// Key differences from the api/cve extractor:
-//   - Index keys use part:vendor:product:version format (ANY for wildcard).
-//   - Ranged CPE matches keep their range criterion and additionally expand
-//     the cpematch feed. Unknown (non-semver) ranges add every expanded
-//     version as an exact-match criterion; SEMVER ranges add only the
-//     versions the range criterion cannot cover — non-semver versions and
-//     the rare semver version that falls outside the range.
-//   - cpematch files are located via a matchCriteriaId → path index built
-//     once by walking the cpematch feed directory.
 package v2
 
 import (
@@ -25,7 +14,6 @@ import (
 	"github.com/knqyf263/go-cpe/common"
 	"github.com/knqyf263/go-cpe/naming"
 	"github.com/pkg/errors"
-
 	"golang.org/x/sync/errgroup"
 
 	dataTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data"
@@ -116,7 +104,7 @@ func Extract(cveDir, cpematchDir string, opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	slog.Info("Extract NVD CVE Feed 2.0")
+	slog.Info("Extract NVD Feed CVE v2")
 
 	cpematchIndex, err := buildCpematchIndex(cpematchDir)
 	if err != nil {
@@ -171,7 +159,7 @@ func Extract(cveDir, cpematchDir string, opts ...Option) error {
 
 	if err := util.Write(filepath.Join(options.dir, "datasource.json"), datasourceTypes.DataSource{
 		ID:   sourceTypes.NVDFeedCVEv2,
-		Name: new("NVD Feed v2 CVE"),
+		Name: new("NVD Feed CVE v2"),
 		Raw: func() []repositoryTypes.Repository {
 			var res []repositoryTypes.Repository
 			cveGit, _ := utilgit.GetDataSourceRepository(cveDir)
@@ -370,7 +358,7 @@ func (e extractor) buildData(fetched cveTypes.CVE) (dataTypes.Data, error) {
 
 func (e extractor) configurationToCriteria(config cveTypes.Config) (criteriaTypes.Criteria, error) {
 	if config.Negate {
-		return criteriaTypes.Criteria{}, errors.New("negate in Config is not implemented")
+		return criteriaTypes.Criteria{}, errors.Errorf("Configuration.Negate=true is not implemented")
 	}
 
 	ca := criteriaTypes.Criteria{}
@@ -460,6 +448,16 @@ func (e extractor) nodeToCriteria(n cveTypes.Node) (criteriaTypes.Criteria, erro
 		if hasRange {
 			ns, err := e.cpeNamesFromCpematch(match.MatchCriteriaID)
 			if err != nil {
+				// WARN, not fatal: the CVE feed and the cpematch feed
+				// are two independent repositories. They are pulled in
+				// separate steps and cannot be snapshotted atomically,
+				// so a matchCriteriaId can legitimately exist in the
+				// newer CVE snapshot while the cpematch snapshot is
+				// still slightly behind (or vice versa). Refreshing
+				// both feeds and re-running the extract usually clears
+				// the warning. Continue without the expanded criteria —
+				// the range criterion above is still emitted, so
+				// detection is only degraded for non-semver versions.
 				slog.Warn("cpematch lookup failed", "matchCriteriaID", match.MatchCriteriaID, "criteria", match.Criteria, "err", err)
 			} else {
 				cns = slices.Grow(cns, len(ns))
@@ -655,27 +653,6 @@ func decideRangeType(match cveTypes.CPEMatch) rangeTypes.RangeType {
 		}
 	}
 	return rangeTypes.RangeTypeSEMVER
-}
-
-// IndexKey returns the index key for a CPE formatted string
-// in the format "part:vendor:product:version".
-// For version=* (ANY), returns "ANY".
-func IndexKey(cpe string) (string, error) {
-	wfn, err := naming.UnbindFS(cpe)
-	if err != nil {
-		return "", errors.Wrapf(err, "unbind CPE %q", cpe)
-	}
-
-	part := wfn.GetString(common.AttributePart)
-	vendor := unescapeWFN(wfn.GetString(common.AttributeVendor))
-	product := unescapeWFN(wfn.GetString(common.AttributeProduct))
-	ver := unescapeWFN(wfn.GetString(common.AttributeVersion))
-
-	if ver == "" || ver == "*" {
-		ver = "ANY"
-	}
-
-	return fmt.Sprintf("%s:%s:%s:%s", part, vendor, product, ver), nil
 }
 
 // unescapeWFN removes WFN backslash escaping from attribute values.
