@@ -6,18 +6,32 @@
 	"domains": [
 		"enterprise-attack"
 	],
-	"platforms": [
-		"Office 365",
-		"Windows"
-	],
-	"tactics": [
-		"persistence"
-	],
-	"is_subtechnique": true,
 	"deprecated": false,
 	"revoked": false,
 	"version": "1.1",
 	"modified": "2022-04-25T14:00:00.188Z",
+	"technique": {
+		"platforms": [
+			"Office 365",
+			"Windows"
+		],
+		"tactics": [
+			"persistence"
+		],
+		"is_subtechnique": true,
+		"detection": "Microsoft has released a PowerShell script to safely gather mail forwarding rules and custom forms in your mail environment as well as steps to interpret the output.(Citation: Microsoft Detect Outlook Forms) This PowerShell script is ineffective in gathering rules with modified `PRPR_RULE_MSG_NAME` and `PR_RULE_MSG_PROVIDER` properties caused by adversaries using a Microsoft Exchange Server Messaging API Editor (MAPI Editor), so only examination with the Exchange Administration tool MFCMapi can reveal these mail forwarding rules.(Citation: Pfammatter - Hidden Inbox Rules) SensePost, whose tool [Ruler](https://attack.mitre.org/software/S0358) can be used to carry out malicious rules, forms, and Home Page attacks, has released a tool to detect Ruler usage.(Citation: SensePost NotRuler)\n\nCollect process execution information including process IDs (PID) and parent process IDs (PPID) and look for abnormal chains of activity resulting from Office processes. Non-standard process execution trees may also indicate suspicious or malicious behavior.",
+		"data_sources": [
+			"Application Log: Application Log Content",
+			"Command: Command Execution",
+			"Process: Process Creation"
+		],
+		"permissions_required": [
+			"Administrator",
+			"User"
+		],
+		"network_requirements": false,
+		"remote_support": false
+	},
 	"references": [
 		{
 			"source": "Microsoft Detect Outlook Forms",
@@ -61,6 +75,18 @@
 			"fixtures/enterprise/attack-pattern/attack-pattern--40597f16-0963-4249-bf4c-ac93b7fb9807.json",
 			"fixtures/enterprise/attack-pattern/attack-pattern--4061e78c-1284-44b4-9116-73e4ac3912f7.json",
 			"fixtures/enterprise/attack-pattern/attack-pattern--8cdeb020-e31e-4f88-a582-f53dcfbda819.json",
+			"fixtures/enterprise/campaign/campaign--00000000-0000-0000-0000-000000000004.json",
+			"fixtures/enterprise/course-of-action/course-of-action--00000000-0000-0000-0000-000000000005.json",
+			"fixtures/enterprise/intrusion-set/intrusion-set--00000000-0000-0000-0000-000000000001.json",
+			"fixtures/enterprise/malware/malware--00000000-0000-0000-0000-000000000002.json",
+			"fixtures/enterprise/relationship/relationship--00000000-0000-0000-0000-000000000100.json",
+			"fixtures/enterprise/relationship/relationship--00000000-0000-0000-0000-000000000101.json",
+			"fixtures/enterprise/relationship/relationship--00000000-0000-0000-0000-000000000102.json",
+			"fixtures/enterprise/relationship/relationship--00000000-0000-0000-0000-000000000103.json",
+			"fixtures/enterprise/relationship/relationship--00000000-0000-0000-0000-000000000104.json",
+			"fixtures/enterprise/relationship/relationship--00000000-0000-0000-0000-000000000105.json",
+			"fixtures/enterprise/relationship/relationship--00000000-0000-0000-0000-000000000106.json",
+			"fixtures/enterprise/relationship/relationship--00000000-0000-0000-0000-000000000107.json",
 			"fixtures/enterprise/relationship/relationship--9b30cb8a-fc4b-44c1-ad5e-b71e430e1a8c.json",
 			"fixtures/enterprise/relationship/relationship--9c354df4-9cbf-4de9-bbed-4d59ca7d4d24.json",
 			"fixtures/enterprise/relationship/relationship--9da92f82-172d-4375-9bcd-f148bfe13418.json",
@@ -78,7 +104,9 @@
 			"fixtures/enterprise/relationship/relationship--ded85906-e996-45cd-ae64-82adc22397e3.json",
 			"fixtures/enterprise/relationship/relationship--f93060a3-7c58-444f-a45e-1386c289cee6.json",
 			"fixtures/enterprise/relationship/relationship--f946b4f9-a18e-4a1e-856c-2c215f78f8be.json",
+			"fixtures/enterprise/tool/tool--00000000-0000-0000-0000-000000000003.json",
 			"fixtures/enterprise/x-mitre-collection/x-mitre-collection--1f5f1533-f617-4ca8-9ab4-6a02367fa019.json",
+			"fixtures/enterprise/x-mitre-tactic/x-mitre-tactic--00000000-0000-0000-0000-000000000006.json",
 			"fixtures/ics/attack-pattern/attack-pattern--0042a9f5-f053-4769-b3ef-9ad018dfa298.json",
 			"fixtures/ics/attack-pattern/attack-pattern--005a06c6-14bf-4118-afa0-ebcd8aebb0c9.json",
 			"fixtures/ics/attack-pattern/attack-pattern--005cc321-08ce-4d17-b1ea-cb5275926520.json",

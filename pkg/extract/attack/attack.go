@@ -11,6 +11,13 @@ import (
 	"github.com/pkg/errors"
 
 	attackTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/attack"
+	campaignTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/attack/campaign"
+	groupTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/attack/group"
+	procedureTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/attack/procedure"
+	softwareTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/attack/software"
+	tacticTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/attack/tactic"
+	techniqueTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/attack/technique"
+	techniqueusedTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/attack/techniqueused"
 	referenceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/reference"
 	datasourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/datasource"
 	repositoryTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/datasource/repository"
@@ -45,6 +52,20 @@ func WithDir(dir string) Option {
 // compatible supersets). We use attack.Enterprise as the canonical form.
 type stixObject = attack.Enterprise
 
+// rels holds the relationship-derived maps populated in Pass 2.
+type rels struct {
+	subParent                map[string]string                              // technique UUID → parent technique UUID
+	techMitigations          map[string][]string                            // technique UUID → mitigation UUIDs
+	techProcedures           map[string][]procedureTypes.Procedure          // technique UUID → procedures
+	groupTechniquesUsed      map[string][]techniqueusedTypes.TechniqueUsed  // group UUID → techniques used
+	groupSoftwaresUsed       map[string][]string                            // group UUID → software ext IDs
+	softwareTechniquesUsed   map[string][]techniqueusedTypes.TechniqueUsed  // software UUID → techniques used
+	softwareGroupsUsing      map[string][]string                            // software UUID → group ext IDs
+	campaignTechniquesUsed   map[string][]techniqueusedTypes.TechniqueUsed  // campaign UUID → techniques used
+	campaignSoftwaresUsed    map[string][]string                            // campaign UUID → software ext IDs
+	campaignGroupsAttributed map[string][]string                            // campaign UUID → group ext IDs
+}
+
 func Extract(args string, opts ...Option) error {
 	options := &options{
 		dir: filepath.Join(util.CacheDir(), "extract", "mitre", "attack"),
@@ -60,11 +81,11 @@ func Extract(args string, opts ...Option) error {
 
 	slog.Info("Extract MITRE ATT&CK")
 
-	// Pass 1: load every object, build UUID→ExternalID index for techniques and tactics.
+	// Pass 1: load every object, build UUID→ExternalID and UUID→Kind indexes.
 	uuidToExt := make(map[string]string)
+	uuidKind := make(map[string]attackTypes.Kind)
 	tacticShortname := make(map[string]string) // tactic UUID → shortname
 	objects := make([]stixObject, 0)
-	readerPaths := make(map[string][]string) // keyed by UUID of primary record (attack-pattern, tactic, course-of-action)
 	r := utiljson.NewJSONReader()
 
 	if err := filepath.WalkDir(args, func(path string, d fs.DirEntry, err error) error {
@@ -90,58 +111,41 @@ func Extract(args string, opts ...Option) error {
 		}
 		objects = append(objects, o)
 
-		switch o.Type {
-		case "attack-pattern", "x-mitre-tactic", "course-of-action":
-			if ext := externalID(o.ExternalReferences, "mitre-attack"); ext != "" {
-				uuidToExt[o.ID] = ext
-				readerPaths[o.ID] = []string{rel}
-			}
-			if o.Type == "x-mitre-tactic" && o.XMitreShortname != nil {
-				tacticShortname[o.ID] = *o.XMitreShortname
-			}
-		default:
-			// other STIX object types (relationship / malware / tool / identity / etc.)
-			// are loaded into `objects` but contribute no primary record here.
+		kind, ok := kindOf(o.Type)
+		if !ok {
+			return nil
+		}
+		if ext := externalID(o.ExternalReferences, "mitre-attack"); ext != "" {
+			uuidToExt[o.ID] = ext
+			uuidKind[o.ID] = kind
+		}
+		if o.Type == "x-mitre-tactic" && o.XMitreShortname != nil {
+			tacticShortname[o.ID] = *o.XMitreShortname
 		}
 		return nil
 	}); err != nil {
 		return errors.Wrapf(err, "walk %s", args)
 	}
 
-	// Pass 2: build subtechnique parent map from relationship objects.
-	subParent := make(map[string]string) // child UUID → parent UUID
-	for _, o := range objects {
-		if o.Type != "relationship" {
-			continue
-		}
-		if o.RelationshipType == nil || *o.RelationshipType != "subtechnique-of" {
-			continue
-		}
-		if o.SourceRef == nil || o.TargetRef == nil {
-			continue
-		}
-		subParent[*o.SourceRef] = *o.TargetRef
-	}
+	// Pass 2: process relationship objects.
+	relIndex := buildRels(objects, uuidToExt, uuidKind)
 
-	// Pass 3: emit one Attack record per attack-pattern / x-mitre-tactic / course-of-action.
+	// Pass 3: emit one Attack record per primary object.
 	raws := r.Paths()
 	emitted := make(map[string]bool) // external ID
 	for _, o := range objects {
-		kind, ok := kindOf(o.Type)
+		kind, ok := uuidKind[o.ID]
 		if !ok {
 			continue
 		}
 		extID := uuidToExt[o.ID]
-		if extID == "" {
-			continue
-		}
 		if emitted[extID] {
-			// de-dup across domains (same technique may appear in enterprise and ics)
+			// de-dup across domains (same object may appear in enterprise and ics)
 			continue
 		}
 		emitted[extID] = true
 
-		extracted := convert(kind, extID, o, uuidToExt, tacticShortname, subParent, raws)
+		extracted := convert(kind, extID, o, uuidToExt, tacticShortname, relIndex, raws)
 		outPath := filepath.Join(options.dir, "attack", fmt.Sprintf("%s.json", extID))
 		if err := util.Write(outPath, extracted, true); err != nil {
 			return errors.Wrapf(err, "write %s", outPath)
@@ -171,13 +175,80 @@ func Extract(args string, opts ...Option) error {
 	return nil
 }
 
+func buildRels(objects []stixObject, uuidToExt map[string]string, uuidKind map[string]attackTypes.Kind) rels {
+	idx := rels{
+		subParent:                make(map[string]string),
+		techMitigations:          make(map[string][]string),
+		techProcedures:           make(map[string][]procedureTypes.Procedure),
+		groupTechniquesUsed:      make(map[string][]techniqueusedTypes.TechniqueUsed),
+		groupSoftwaresUsed:       make(map[string][]string),
+		softwareTechniquesUsed:   make(map[string][]techniqueusedTypes.TechniqueUsed),
+		softwareGroupsUsing:      make(map[string][]string),
+		campaignTechniquesUsed:   make(map[string][]techniqueusedTypes.TechniqueUsed),
+		campaignSoftwaresUsed:    make(map[string][]string),
+		campaignGroupsAttributed: make(map[string][]string),
+	}
+	for _, o := range objects {
+		if o.Type != "relationship" {
+			continue
+		}
+		if o.RelationshipType == nil || o.SourceRef == nil || o.TargetRef == nil {
+			continue
+		}
+		src, tgt := *o.SourceRef, *o.TargetRef
+		desc := ""
+		if o.Description != nil {
+			desc = *o.Description
+		}
+
+		switch *o.RelationshipType {
+		case "subtechnique-of":
+			idx.subParent[src] = tgt
+		case "mitigates":
+			idx.techMitigations[tgt] = append(idx.techMitigations[tgt], src)
+		case "uses":
+			srcKind, tgtKind := uuidKind[src], uuidKind[tgt]
+			srcExt, tgtExt := uuidToExt[src], uuidToExt[tgt]
+			if srcExt == "" || tgtExt == "" {
+				continue
+			}
+			switch {
+			case srcKind == attackTypes.KindGroup && tgtKind == attackTypes.KindTechnique:
+				idx.groupTechniquesUsed[src] = append(idx.groupTechniquesUsed[src], techniqueusedTypes.TechniqueUsed{ID: tgtExt, Description: desc})
+				idx.techProcedures[tgt] = append(idx.techProcedures[tgt], procedureTypes.Procedure{AttackerID: srcExt, Description: desc})
+			case srcKind == attackTypes.KindGroup && tgtKind == attackTypes.KindSoftware:
+				idx.groupSoftwaresUsed[src] = append(idx.groupSoftwaresUsed[src], tgtExt)
+				idx.softwareGroupsUsing[tgt] = append(idx.softwareGroupsUsing[tgt], srcExt)
+			case srcKind == attackTypes.KindSoftware && tgtKind == attackTypes.KindTechnique:
+				idx.softwareTechniquesUsed[src] = append(idx.softwareTechniquesUsed[src], techniqueusedTypes.TechniqueUsed{ID: tgtExt, Description: desc})
+				idx.techProcedures[tgt] = append(idx.techProcedures[tgt], procedureTypes.Procedure{AttackerID: srcExt, Description: desc})
+			case srcKind == attackTypes.KindCampaign && tgtKind == attackTypes.KindTechnique:
+				idx.campaignTechniquesUsed[src] = append(idx.campaignTechniquesUsed[src], techniqueusedTypes.TechniqueUsed{ID: tgtExt, Description: desc})
+				idx.techProcedures[tgt] = append(idx.techProcedures[tgt], procedureTypes.Procedure{AttackerID: srcExt, Description: desc})
+			case srcKind == attackTypes.KindCampaign && tgtKind == attackTypes.KindSoftware:
+				idx.campaignSoftwaresUsed[src] = append(idx.campaignSoftwaresUsed[src], tgtExt)
+			}
+		case "attributed-to":
+			srcKind, tgtKind := uuidKind[src], uuidKind[tgt]
+			tgtExt := uuidToExt[tgt]
+			if tgtExt == "" {
+				continue
+			}
+			if srcKind == attackTypes.KindCampaign && tgtKind == attackTypes.KindGroup {
+				idx.campaignGroupsAttributed[src] = append(idx.campaignGroupsAttributed[src], tgtExt)
+			}
+		}
+	}
+	return idx
+}
+
 func convert(
 	kind attackTypes.Kind,
 	extID string,
 	o stixObject,
 	uuidToExt map[string]string,
 	tacticShortname map[string]string,
-	subParent map[string]string,
+	idx rels,
 	raws []string,
 ) attackTypes.Attack {
 	name := ""
@@ -192,14 +263,6 @@ func convert(
 	if o.XMitreVersion != nil {
 		version = *o.XMitreVersion
 	}
-	shortname := ""
-	if o.XMitreShortname != nil {
-		shortname = *o.XMitreShortname
-	}
-	isSub := false
-	if o.XMitreIsSubtechnique != nil {
-		isSub = *o.XMitreIsSubtechnique
-	}
 	deprecated := false
 	if o.XMitreDeprecated != nil {
 		deprecated = *o.XMitreDeprecated
@@ -208,28 +271,6 @@ func convert(
 	if o.Revoked != nil {
 		revoked = *o.Revoked
 	}
-
-	parent := ""
-	if isSub {
-		if pu, ok := subParent[o.ID]; ok {
-			parent = uuidToExt[pu]
-		}
-	}
-
-	tactics := make([]string, 0, len(o.KillChainPhases)+len(o.TacticRefs))
-	for _, kc := range o.KillChainPhases {
-		if kc.KillChainName == "mitre-attack" || kc.KillChainName == "mitre-ics-attack" || kc.KillChainName == "mitre-mobile-attack" {
-			tactics = append(tactics, kc.PhaseName)
-		}
-	}
-	for _, tr := range o.TacticRefs {
-		if sn, ok := tacticShortname[tr]; ok {
-			tactics = append(tactics, sn)
-		}
-	}
-
-	platforms := append([]string(nil), o.XMitrePlatforms...)
-	domains := append([]string(nil), o.XMitreDomains...)
 
 	refs := make([]referenceTypes.Reference, 0)
 	for _, er := range o.ExternalReferences {
@@ -246,32 +287,162 @@ func convert(
 		})
 	}
 
-	return attackTypes.Attack{
-		ID:             extID,
-		Kind:           kind,
-		Name:           name,
-		Description:    desc,
-		Domains:        domains,
-		Platforms:      platforms,
-		Tactics:        tactics,
-		Shortname:      shortname,
-		IsSubtechnique: isSub,
-		Parent:         parent,
-		Deprecated:     deprecated,
-		Revoked:        revoked,
-		Version:        version,
+	a := attackTypes.Attack{
+		ID:          extID,
+		Kind:        kind,
+		Name:        name,
+		Description: desc,
+		Domains:     append([]string(nil), o.XMitreDomains...),
+		Deprecated:  deprecated,
+		Revoked:     revoked,
+		Version:     version,
 		Modified: func() time.Time {
 			if o.Modified == nil {
 				return time.Time{}
 			}
 			return *o.Modified
 		}(),
-		References:     refs,
+		References: refs,
 		DataSource: sourceTypes.Source{
 			ID:   sourceTypes.Attack,
 			Raws: raws,
 		},
 	}
+
+	switch kind {
+	case attackTypes.KindTechnique:
+		a.Technique = buildTechnique(o, uuidToExt, tacticShortname, idx)
+	case attackTypes.KindTactic:
+		shortname := ""
+		if o.XMitreShortname != nil {
+			shortname = *o.XMitreShortname
+		}
+		a.Tactic = tacticTypes.Tactic{Shortname: shortname}
+	case attackTypes.KindGroup:
+		a.Group = groupTypes.Group{
+			Aliases:        attackerAliases(o),
+			TechniquesUsed: idx.groupTechniquesUsed[o.ID],
+			SoftwaresUsed:  idx.groupSoftwaresUsed[o.ID],
+		}
+	case attackTypes.KindSoftware:
+		a.Software = softwareTypes.Software{
+			Type:           o.Type, // "malware" | "tool"
+			Aliases:        attackerAliases(o),
+			Platforms:      append([]string(nil), o.XMitrePlatforms...),
+			TechniquesUsed: idx.softwareTechniquesUsed[o.ID],
+			GroupsUsing:    idx.softwareGroupsUsing[o.ID],
+		}
+	case attackTypes.KindCampaign:
+		a.Campaign = campaignTypes.Campaign{
+			Aliases: attackerAliases(o),
+			FirstSeen: func() time.Time {
+				if o.FirstSeen == nil {
+					return time.Time{}
+				}
+				return *o.FirstSeen
+			}(),
+			LastSeen: func() time.Time {
+				if o.LastSeen == nil {
+					return time.Time{}
+				}
+				return *o.LastSeen
+			}(),
+			TechniquesUsed:   idx.campaignTechniquesUsed[o.ID],
+			GroupsAttributed: idx.campaignGroupsAttributed[o.ID],
+			SoftwaresUsed:    idx.campaignSoftwaresUsed[o.ID],
+		}
+	}
+
+	return a
+}
+
+func buildTechnique(o stixObject, uuidToExt map[string]string, tacticShortname map[string]string, idx rels) techniqueTypes.Technique {
+	isSub := false
+	if o.XMitreIsSubtechnique != nil {
+		isSub = *o.XMitreIsSubtechnique
+	}
+	parent := ""
+	if isSub {
+		if pu, ok := idx.subParent[o.ID]; ok {
+			parent = uuidToExt[pu]
+		}
+	}
+	detection := ""
+	if o.XMitreDetection != nil {
+		detection = *o.XMitreDetection
+	}
+	networkReq := false
+	if o.XMitreNetworkRequirements != nil {
+		networkReq = *o.XMitreNetworkRequirements
+	}
+	remoteSupport := false
+	if o.XMitreRemoteSupport != nil {
+		remoteSupport = *o.XMitreRemoteSupport
+	}
+
+	mitigations := make([]string, 0, len(idx.techMitigations[o.ID]))
+	for _, mu := range idx.techMitigations[o.ID] {
+		if ext, ok := uuidToExt[mu]; ok {
+			mitigations = append(mitigations, ext)
+		}
+	}
+
+	tactics := make([]string, 0, len(o.KillChainPhases)+len(o.TacticRefs))
+	for _, kc := range o.KillChainPhases {
+		if kc.KillChainName == "mitre-attack" || kc.KillChainName == "mitre-ics-attack" || kc.KillChainName == "mitre-mobile-attack" {
+			tactics = append(tactics, kc.PhaseName)
+		}
+	}
+	for _, tr := range o.TacticRefs {
+		if sn, ok := tacticShortname[tr]; ok {
+			tactics = append(tactics, sn)
+		}
+	}
+
+	return techniqueTypes.Technique{
+		Platforms:            append([]string(nil), o.XMitrePlatforms...),
+		Tactics:              tactics,
+		IsSubtechnique:       isSub,
+		Parent:               parent,
+		Detection:            detection,
+		DataSources:          append([]string(nil), o.XMitreDataSources...),
+		Mitigations:          mitigations,
+		Procedures:           idx.techProcedures[o.ID],
+		PermissionsRequired:  append([]string(nil), o.XMitrePermissionsRequired...),
+		EffectivePermissions: append([]string(nil), o.XMitreEffectivePermissions...),
+		DefenseBypassed:      append([]string(nil), o.XMitreDefenseBypassed...),
+		ImpactType:           append([]string(nil), o.XMitreImpactType...),
+		NetworkRequirements:  networkReq,
+		RemoteSupport:        remoteSupport,
+	}
+}
+
+// attackerAliases collects unique aliases for Group/Software/Campaign objects,
+// merging STIX `aliases` and Mitre `x_mitre_aliases`.
+func attackerAliases(o stixObject) []string {
+	seen := make(map[string]struct{}, len(o.Aliases)+len(o.XMitreAliases))
+	out := make([]string, 0, len(o.Aliases)+len(o.XMitreAliases))
+	for _, a := range o.Aliases {
+		if a == "" {
+			continue
+		}
+		if _, ok := seen[a]; ok {
+			continue
+		}
+		seen[a] = struct{}{}
+		out = append(out, a)
+	}
+	for _, a := range o.XMitreAliases {
+		if a == "" {
+			continue
+		}
+		if _, ok := seen[a]; ok {
+			continue
+		}
+		seen[a] = struct{}{}
+		out = append(out, a)
+	}
+	return out
 }
 
 func kindOf(stixType string) (attackTypes.Kind, bool) {
@@ -282,6 +453,12 @@ func kindOf(stixType string) (attackTypes.Kind, bool) {
 		return attackTypes.KindTactic, true
 	case "course-of-action":
 		return attackTypes.KindMitigation, true
+	case "intrusion-set":
+		return attackTypes.KindGroup, true
+	case "malware", "tool":
+		return attackTypes.KindSoftware, true
+	case "campaign":
+		return attackTypes.KindCampaign, true
 	default:
 		return "", false
 	}
@@ -300,4 +477,3 @@ func externalID(refs []struct {
 	}
 	return ""
 }
-

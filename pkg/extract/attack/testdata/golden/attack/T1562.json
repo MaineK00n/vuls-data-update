@@ -6,23 +6,58 @@
 	"domains": [
 		"enterprise-attack"
 	],
-	"platforms": [
-		"Containers",
-		"IaaS",
-		"Linux",
-		"Network",
-		"Office 365",
-		"Windows",
-		"macOS"
-	],
-	"tactics": [
-		"defense-evasion"
-	],
-	"is_subtechnique": false,
 	"deprecated": false,
 	"revoked": false,
 	"version": "1.5",
 	"modified": "2023-10-20T16:43:53.391Z",
+	"technique": {
+		"platforms": [
+			"Containers",
+			"IaaS",
+			"Linux",
+			"Network",
+			"Office 365",
+			"Windows",
+			"macOS"
+		],
+		"tactics": [
+			"defense-evasion"
+		],
+		"is_subtechnique": false,
+		"detection": "Monitor processes and command-line arguments to see if security tools or logging services are killed or stop running. Monitor Registry edits for modifications to services and startup programs that correspond to security tools.  Lack of log events may be suspicious.\n\nMonitor environment variables and APIs that can be leveraged to disable security measures.",
+		"data_sources": [
+			"Cloud Service: Cloud Service Disable",
+			"Cloud Service: Cloud Service Modification",
+			"Command: Command Execution",
+			"Driver: Driver Load",
+			"File: File Deletion",
+			"File: File Modification",
+			"Firewall: Firewall Disable",
+			"Firewall: Firewall Rule Modification",
+			"Process: OS API Execution",
+			"Process: Process Creation",
+			"Process: Process Modification",
+			"Process: Process Termination",
+			"Script: Script Execution",
+			"Sensor Health: Host Status",
+			"Service: Service Metadata",
+			"User Account: User Account Modification",
+			"Windows Registry: Windows Registry Key Deletion",
+			"Windows Registry: Windows Registry Key Modification"
+		],
+		"defense_bypassed": [
+			"Anti-virus",
+			"Digital Certificate Validation",
+			"File monitoring",
+			"Firewall",
+			"Host forensic analysis",
+			"Host intrusion prevention systems",
+			"Log analysis",
+			"Signature-based detection"
+		],
+		"network_requirements": false,
+		"remote_support": false
+	},
 	"references": [
 		{
 			"source": "Emotet shutdown",
@@ -54,6 +89,18 @@
 			"fixtures/enterprise/attack-pattern/attack-pattern--40597f16-0963-4249-bf4c-ac93b7fb9807.json",
 			"fixtures/enterprise/attack-pattern/attack-pattern--4061e78c-1284-44b4-9116-73e4ac3912f7.json",
 			"fixtures/enterprise/attack-pattern/attack-pattern--8cdeb020-e31e-4f88-a582-f53dcfbda819.json",
+			"fixtures/enterprise/campaign/campaign--00000000-0000-0000-0000-000000000004.json",
+			"fixtures/enterprise/course-of-action/course-of-action--00000000-0000-0000-0000-000000000005.json",
+			"fixtures/enterprise/intrusion-set/intrusion-set--00000000-0000-0000-0000-000000000001.json",
+			"fixtures/enterprise/malware/malware--00000000-0000-0000-0000-000000000002.json",
+			"fixtures/enterprise/relationship/relationship--00000000-0000-0000-0000-000000000100.json",
+			"fixtures/enterprise/relationship/relationship--00000000-0000-0000-0000-000000000101.json",
+			"fixtures/enterprise/relationship/relationship--00000000-0000-0000-0000-000000000102.json",
+			"fixtures/enterprise/relationship/relationship--00000000-0000-0000-0000-000000000103.json",
+			"fixtures/enterprise/relationship/relationship--00000000-0000-0000-0000-000000000104.json",
+			"fixtures/enterprise/relationship/relationship--00000000-0000-0000-0000-000000000105.json",
+			"fixtures/enterprise/relationship/relationship--00000000-0000-0000-0000-000000000106.json",
+			"fixtures/enterprise/relationship/relationship--00000000-0000-0000-0000-000000000107.json",
 			"fixtures/enterprise/relationship/relationship--9b30cb8a-fc4b-44c1-ad5e-b71e430e1a8c.json",
 			"fixtures/enterprise/relationship/relationship--9c354df4-9cbf-4de9-bbed-4d59ca7d4d24.json",
 			"fixtures/enterprise/relationship/relationship--9da92f82-172d-4375-9bcd-f148bfe13418.json",
@@ -71,7 +118,9 @@
 			"fixtures/enterprise/relationship/relationship--ded85906-e996-45cd-ae64-82adc22397e3.json",
 			"fixtures/enterprise/relationship/relationship--f93060a3-7c58-444f-a45e-1386c289cee6.json",
 			"fixtures/enterprise/relationship/relationship--f946b4f9-a18e-4a1e-856c-2c215f78f8be.json",
+			"fixtures/enterprise/tool/tool--00000000-0000-0000-0000-000000000003.json",
 			"fixtures/enterprise/x-mitre-collection/x-mitre-collection--1f5f1533-f617-4ca8-9ab4-6a02367fa019.json",
+			"fixtures/enterprise/x-mitre-tactic/x-mitre-tactic--00000000-0000-0000-0000-000000000006.json",
 			"fixtures/ics/attack-pattern/attack-pattern--0042a9f5-f053-4769-b3ef-9ad018dfa298.json",
 			"fixtures/ics/attack-pattern/attack-pattern--005a06c6-14bf-4118-afa0-ebcd8aebb0c9.json",
 			"fixtures/ics/attack-pattern/attack-pattern--005cc321-08ce-4d17-b1ea-cb5275926520.json",

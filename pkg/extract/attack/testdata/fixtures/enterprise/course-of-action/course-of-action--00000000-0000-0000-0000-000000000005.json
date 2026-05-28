@@ -1,0 +1,19 @@
+{
+	"type": "course-of-action",
+	"id": "course-of-action--00000000-0000-0000-0000-000000000005",
+	"spec_version": "2.1",
+	"created": "2024-01-01T00:00:00.000Z",
+	"modified": "2024-01-01T00:00:00.000Z",
+	"name": "TestMitigation",
+	"description": "Test mitigation fixture.",
+	"x_mitre_version": "1.0",
+	"x_mitre_domains": ["enterprise-attack"],
+	"x_mitre_attack_spec_version": "3.0.0",
+	"external_references": [
+		{
+			"source_name": "mitre-attack",
+			"external_id": "M9990",
+			"url": "https://attack.mitre.org/mitigations/M9990"
+		}
+	]
+}
