@@ -29,9 +29,6 @@
 	],
 	"spec_version": "2.1",
 	"x_capec_abstraction": "Standard",
-	"x_capec_child_of_refs": [
-		"attack-pattern--2351ee64-dd85-4bc3-bb43-aaa2ca5c1228"
-	],
 	"x_capec_domains": [
 		"Software"
 	],
