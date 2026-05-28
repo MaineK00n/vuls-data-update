@@ -105,7 +105,7 @@ type extractor struct {
 // and producing extracted detection data.
 func Extract(cveDir, cpematchDir string, opts ...Option) error {
 	options := &options{
-		dir:         filepath.Join(util.CacheDir(), "extract", "nvd", "feed-v2", "cve"),
+		dir:         filepath.Join(util.CacheDir(), "extract", "nvd", "feed", "cve", "v2"),
 		concurrency: runtime.NumCPU(),
 	}
 
@@ -117,7 +117,7 @@ func Extract(cveDir, cpematchDir string, opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	slog.Info("Extract NVD Feed v2 CVE")
+	slog.Info("Extract NVD CVE Feed 2.0")
 
 	cpematchIndex, err := buildCpematchIndex(cpematchDir)
 	if err != nil {
@@ -218,8 +218,13 @@ func extract(cvePath, cveDir, cpematchDir string, cpematchIndex map[string]strin
 		return errors.Wrapf(err, "buildData %s", cvePath)
 	}
 
-	if err := util.Write(filepath.Join(e.outputDir, "data", filepath.Base(filepath.Dir(cvePath)), fmt.Sprintf("%s.json", data.ID)), data, true); err != nil {
-		return errors.Wrapf(err, "write %s", filepath.Join(e.outputDir, "data", filepath.Base(filepath.Dir(cvePath)), fmt.Sprintf("%s.json", data.ID)))
+	splitted, err := util.Split(string(data.ID), "-", "-")
+	if err != nil {
+		return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "CVE-yyyy-\\d+", data.ID)
+	}
+
+	if err := util.Write(filepath.Join(e.outputDir, "data", splitted[1], fmt.Sprintf("%s.json", data.ID)), data, true); err != nil {
+		return errors.Wrapf(err, "write %s", filepath.Join(e.outputDir, "data", splitted[1], fmt.Sprintf("%s.json", data.ID)))
 	}
 	return nil
 }
