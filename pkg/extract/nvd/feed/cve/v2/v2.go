@@ -99,6 +99,13 @@ func Extract(cveDir, cpematchDir string, opts ...Option) error {
 	for _, o := range opts {
 		o.apply(options)
 	}
+	// Clamp non-positive concurrency to 1: the producer goroutine sends
+	// into reqChan and needs at least one worker draining it, otherwise
+	// g.SetLimit(1+concurrency) either deadlocks (concurrency==0, no
+	// worker started) or panics (negative limit).
+	if options.concurrency < 1 {
+		options.concurrency = 1
+	}
 
 	if err := util.RemoveAll(options.dir); err != nil {
 		return errors.Wrapf(err, "remove %s", options.dir)
@@ -160,7 +167,7 @@ func Extract(cveDir, cpematchDir string, opts ...Option) error {
 	}
 
 	if err := g.Wait(); err != nil {
-		return errors.Wrapf(err, "wait for walk")
+		return errors.Wrapf(err, "wait for extraction")
 	}
 
 	if err := util.Write(filepath.Join(options.dir, "datasource.json"), datasourceTypes.DataSource{
@@ -389,6 +396,9 @@ func (e extractor) configurationToCriteria(config cveTypes.Config) (criteriaType
 }
 
 func (e extractor) nodeToCriteria(n cveTypes.Node) (criteriaTypes.Criteria, error) {
+	if n.Negate {
+		return criteriaTypes.Criteria{}, errors.Errorf("Node.Negate=true is not implemented")
+	}
 	ca := criteriaTypes.Criteria{}
 	switch n.Operator {
 	case "AND":
@@ -454,17 +464,28 @@ func (e extractor) nodeToCriteria(n cveTypes.Node) (criteriaTypes.Criteria, erro
 		if hasRange {
 			ns, err := e.cpeNamesFromCpematch(match.MatchCriteriaID)
 			if err != nil {
-				// WARN, not fatal: the CVE feed and the cpematch feed
-				// are two independent repositories. They are pulled in
-				// separate steps and cannot be snapshotted atomically,
-				// so a matchCriteriaId can legitimately exist in the
-				// newer CVE snapshot while the cpematch snapshot is
-				// still slightly behind (or vice versa). Refreshing
-				// both feeds and re-running the extract usually clears
-				// the warning. Continue without the expanded criteria —
-				// the range criterion above is still emitted, so
-				// detection is only degraded for non-semver versions.
-				slog.Warn("cpematch lookup failed", "matchCriteriaID", match.MatchCriteriaID, "criteria", match.Criteria, "err", err)
+				// Lookup failures are non-fatal because the CVE feed
+				// and the cpematch feed are two independent repositories
+				// that cannot be snapshotted atomically: a freshly added
+				// matchCriteriaId can legitimately exist in the CVE
+				// snapshot while the cpematch snapshot is still slightly
+				// behind. Refreshing both feeds usually clears the log.
+				//
+				// Severity depends on the range type:
+				//   - SEMVER: WARN. The range criterion above still
+				//     evaluates against semver-parseable versions, so
+				//     detection only loses the non-semver versions the
+				//     cpematch would have enumerated.
+				//   - Unknown: ERROR. The range criterion cannot be
+				//     evaluated at detection time (compare errors are
+				//     swallowed), and we have no exact criteria to fall
+				//     back on, so this CVE+match is fully undetectable
+				//     until the cpematch snapshot catches up.
+				if rangeType == rangeTypes.RangeTypeUnknown {
+					slog.Error("cpematch lookup failed for unknown range; CVE undetectable for this match until cpematch snapshot catches up", "matchCriteriaID", match.MatchCriteriaID, "criteria", match.Criteria, "err", err)
+				} else {
+					slog.Warn("cpematch lookup failed", "matchCriteriaID", match.MatchCriteriaID, "criteria", match.Criteria, "err", err)
+				}
 			} else {
 				cns = slices.Grow(cns, len(ns))
 				// Pre-parse range bounds once per match instead of
