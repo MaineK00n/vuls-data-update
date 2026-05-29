@@ -504,6 +504,13 @@ func (e extractor) nodeToCriteria(n cveTypes.Node) (criteriaTypes.Criteria, erro
 				for _, n := range ns {
 					wfn, err := naming.UnbindFS(n)
 					if err != nil {
+						// Surface invalid CPE entries rather than
+						// silently dropping them — without this it is
+						// hard to explain a missing exact-match
+						// criterion downstream. Logged at WARN with
+						// the parent matchCriteriaId so the upstream
+						// data issue can be located.
+						slog.Warn("invalid CPE in cpematch expansion; skipping", "matchCriteriaID", match.MatchCriteriaID, "cpeName", n, "err", err)
 						continue
 					}
 					ver := unescapeWFN(wfn.GetString(common.AttributeVersion))
