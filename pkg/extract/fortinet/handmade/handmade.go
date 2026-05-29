@@ -47,6 +47,9 @@ func Extract(args string, opts ...Option) error {
 		}
 
 		if d.IsDir() {
+			if d.Name() == ".git" {
+				return filepath.SkipDir
+			}
 			return nil
 		}
 

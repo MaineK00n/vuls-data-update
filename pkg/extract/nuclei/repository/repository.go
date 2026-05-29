@@ -143,7 +143,14 @@ func extract(args string) (map[string]dataTypes.Data, error) {
 			return err
 		}
 
-		if d.IsDir() || filepath.Ext(path) != ".json" {
+		if d.IsDir() {
+			if d.Name() == ".git" {
+				return filepath.SkipDir
+			}
+			return nil
+		}
+
+		if filepath.Ext(path) != ".json" {
 			return nil
 		}
 

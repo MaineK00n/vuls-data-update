@@ -82,7 +82,7 @@ func Extract(args string, opts ...Option) error {
 		return errors.Wrapf(err, "read dir %s", args)
 	}
 	for _, entry := range entries {
-		if !entry.IsDir() {
+		if !entry.IsDir() || entry.Name() == ".git" {
 			continue
 		}
 
