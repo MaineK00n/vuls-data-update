@@ -1,0 +1,127 @@
+{
+	"id": "CWE-1007",
+	"kind": "weakness",
+	"name": "Insufficient Visual Distinction of Homoglyphs Presented to User",
+	"status": "Incomplete",
+	"description": "The software displays information or identifiers to a user, but the display mechanism does not make it easy for the user to distinguish between visually similar or identical glyphs (homoglyphs), which may cause the user to misinterpret a glyph and perform an unintended, insecure action.",
+	"weakness": {
+		"abstraction": "Base",
+		"structure": "Simple",
+		"diagram": "cwe-1007.png",
+		"extended_description": "\n            <xhtml:p>Some glyphs, pictures, or icons can be semantically distinct to a program, while appearing very similar or identical to a human user. These are referred to as homoglyphs. For example, the lowercase \"l\" (ell) and uppercase \"I\" (eye) have different character codes, but these characters can be displayed in exactly the same way to a user, depending on the font. This can also occur between different character sets. For example, the Latin capital letter \"A\" and the Greek capital letter \"Α\" (Alpha) are treated as distinct by programs, but may be displayed in exactly the same way to a user. Accent marks may also cause letters to appear very similar, such as the Latin capital letter grave mark \"À\" and its equivalent \"À\" with the acute accent.</xhtml:p>\n            <xhtml:p>Adversaries can exploit this visual similarity for attacks such as phishing, e.g. by providing a link to an attacker-controlled hostname that looks like a hostname that the victim trusts. In a different use of homoglyphs, an adversary may create a back door username that is visually similar to the username of a regular user, which then makes it more difficult for a system administrator to detect the malicious username while reviewing logs.</xhtml:p>\n         ",
+		"likelihood_of_exploit": "Medium",
+		"modes_of_introduction": [
+			{
+				"phase": "Architecture and Design",
+				"notes": [
+					"This weakness may occur when characters from various character sets are allowed to be interchanged within a URL, username, email address, etc. without any notification to the user or underlying system being used."
+				]
+			},
+			{
+				"phase": "Implementation"
+			}
+		],
+		"related_weaknesses": [
+			{
+				"nature": "ChildOf",
+				"cweid": "CWE-451",
+				"view_id": "CWE-1000",
+				"ordinal": "Primary"
+			}
+		],
+		"weakness_ordinalities": [
+			{
+				"ordinality": "Resultant"
+			}
+		],
+		"applicable_platforms": [
+			{
+				"type": "language",
+				"class": "Language-Independent",
+				"prevalence": "Undetermined"
+			},
+			{
+				"type": "technology",
+				"class": "Web Based",
+				"prevalence": "Sometimes"
+			}
+		],
+		"alternate_terms": [
+			{
+				"term": "Homograph Attack",
+				"description": "\"Homograph\" is often used as a synonym of \"homoglyph\" by researchers, but according to Wikipedia, a homograph is a word that has multiple, distinct meanings."
+			}
+		],
+		"common_consequences": [
+			{
+				"scope": [
+					"Confidentiality",
+					"Integrity"
+				],
+				"impact": [
+					"Other"
+				],
+				"note": "An attacker may ultimately redirect a user to a malicious website, by deceiving the user into believing the URL they are accessing is a trusted domain. However, the attack can also be used to forge log entries by using homoglyphs in usernames. Homoglyph manipulations are often the first step towards executing advanced attacks such as stealing a user's credentials, Cross-Site Scripting (XSS), or log forgery. If an attacker redirects a user to a malicious site, the attacker can mimic a trusted domain to steal account credentials and perform actions on behalf of the user, without the user's knowledge. Similarly, an attacker could create a username for a website that contains homoglyph characters, making it difficult for an admin to review logs and determine which users performed which actions."
+			}
+		],
+		"potential_mitigations": [
+			{
+				"phases": [
+					"Implementation"
+				],
+				"descriptions": [
+					"\n                  <xhtml:p>Use a browser that displays Punycode for IDNs in the URL and status bars, or which color code various scripts in URLs.</xhtml:p>\n                  <xhtml:p>Due to the prominence of homoglyph attacks, several browsers now help safeguard against this attack via the use of Punycode. For example, Mozilla Firefox and Google Chrome will display IDNs as Punycode if top-level domains do not restrict which characters can be used in domain names or if labels mix scripts for different languages.</xhtml:p>\n               "
+				]
+			},
+			{
+				"phases": [
+					"Implementation"
+				],
+				"descriptions": [
+					"\n                  <xhtml:p>Use an email client that has strict filters and prevents messages that mix character sets to end up in a user's inbox.</xhtml:p>\n                  <xhtml:p>Certain email clients such as Google's GMail prevent the use of non-Latin characters in email addresses or in links contained within emails. This helps prevent homoglyph attacks by flagging these emails and redirecting them to a user's spam folder.</xhtml:p>\n               "
+				]
+			}
+		],
+		"demonstrative_examples": [
+			{
+				"text": "\n               <Intro_Text>The following displays an example of how creating usernames containing homoglyphs can lead to log forgery.</Intro_Text>\n               <Body_Text>Assume an adversary visits a legitimate, trusted domain and creates the account \"admin\" where the 'a' and 'i' characters are Cyrillic characters instead of the expected ACII. Any actions the adversary performs will be saved to the log file and look like they came from a legitimate administrator account.</Body_Text>\n               <Example_Code Nature=\"result\">\n                  <xhtml:div>123.123.123.123 аdmіn [17/Jul/2017:09:05:49 -0400] \"GET /example/users/userlist HTTP/1.1\" 401 12846<xhtml:br/>123.123.123.123 аdmіn [17/Jul/2017:09:06:51 -0400] \"GET /example/users/userlist HTTP/1.1\" 200 4523<xhtml:br/>123.123.123.123 аdmіn [17/Jul/2017:09:10:02 -0400] \"GET /example/users/editusers HTTP/1.1\" 200 6291<xhtml:br/>123.123.123.123 аdmіn [17/Jul/2017:09:10:02 -0400] \"GET /example/users/editusers HTTP/1.1\" 200 6291<xhtml:br/>123.123.123.123 аdmіn [17/Jul/2017:09:10:02 -0400] \"GET /example/users/editusers HTTP/1.1\" 200 6291<xhtml:br/>123.123.123.123 аdmіn [17/Jul/2017:09:10:02 -0400] \"GET /example/users/editusers HTTP/1.1\" 200 6291</xhtml:div>\n               </Example_Code>\n               <Body_Text>However, upon closer inspection, the account that generated these log entries is \"&amp;#x0430;dm&amp;#x0456;n\". This makes it more difficult to determine which actions were performed by the adversary and which actions were executed by the legitimate \"admin\" account.</Body_Text>\n            "
+			},
+			{
+				"text": "\n               <Intro_Text>The following looks like a simple, trusted URL that a user may frequently access.</Intro_Text>\n               <Example_Code Nature=\"attack\">\n                  <xhtml:div>http://www.еxаmрlе.соm</xhtml:div>\n               </Example_Code>\n               <Body_Text>However, the URL above is comprised of Cyrillic characters that look identical to the expected ASCII characters. This results in most users not being able to distinguish between the two and assuming that the above URL is trusted and safe. The \"e\" is actually the \"CYRILLIC SMALL LETTER IE\" which is represented in HTML as the character &amp;#x0435, while the \"a\" is actually the \"CYRILLIC SMALL LETTER A\" which is represented in HTML as the character &amp;#x0430.  The \"p\", \"c\", and \"o\" are also Cyrillic characters in this example. Viewing the source reveals a URL of \"http://www.&amp;#x0435;x&amp;#x0430;m&amp;#x0440;l&amp;#x0435;.&amp;#x0441;&amp;#x043e;m\". An adversary can utilize this approach to perform an attack such as a phishing attack in order to drive traffic to a malicious website.</Body_Text>\n            "
+			}
+		],
+		"detection_methods": [
+			{
+				"method": "Manual Dynamic Analysis",
+				"description": "If utilizing user accounts, attempt to submit a username that contains homoglyphs. Similarly, check to see if links containing homoglyphs can be sent via email, web browsers, or other mechanisms.",
+				"effectiveness": "Moderate"
+			}
+		],
+		"mapping_notes": {
+			"usage": "Allowed",
+			"rationale": "This CWE entry is at the right level of abstraction.",
+			"comments": "Use this CWE for homoglyph-related weaknesses.",
+			"reasons": [
+				{
+					"type": "Acceptable-Use"
+				}
+			]
+		}
+	},
+	"references": [
+		{
+			"source": "cwe.mitre.org",
+			"url": "http://ro.ecu.edu.au/cgi/viewcontent.cgi?article=1174&context=ecuworks2012"
+		},
+		{
+			"source": "cwe.mitre.org",
+			"url": "https://www.microsoftpressstore.com/store/writing-secure-code-9780735617223"
+		}
+	],
+	"data_source": {
+		"id": "mitre-cwe",
+		"raws": [
+			"fixtures/weakness/1007.json"
+		]
+	}
+}
