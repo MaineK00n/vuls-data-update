@@ -591,10 +591,10 @@ func exactCriterion(cpeName string, vulnerable bool) criterionTypes.Criterion {
 // endpoints. Caller parses once per match and reuses across every
 // cpematch entry expanded from that match.
 type semverBounds struct {
-	geInc *version.Version // versionStartIncluding (>=)
-	gtExc *version.Version // versionStartExcluding (>)
-	leInc *version.Version // versionEndIncluding   (<=)
-	ltExc *version.Version // versionEndExcluding   (<)
+	ge *version.Version // versionStartIncluding (>=)
+	gt *version.Version // versionStartExcluding (>)
+	le *version.Version // versionEndIncluding   (<=)
+	lt *version.Version // versionEndExcluding   (<)
 }
 
 // parseSemverBounds parses the four range endpoints in match. Returns
@@ -612,16 +612,16 @@ func parseSemverBounds(match cveTypes.CPEMatch) (semverBounds, bool) {
 		b  semverBounds
 		ok bool
 	)
-	if b.geInc, ok = parse(match.VersionStartIncluding); !ok {
+	if b.ge, ok = parse(match.VersionStartIncluding); !ok {
 		return semverBounds{}, false
 	}
-	if b.gtExc, ok = parse(match.VersionStartExcluding); !ok {
+	if b.gt, ok = parse(match.VersionStartExcluding); !ok {
 		return semverBounds{}, false
 	}
-	if b.leInc, ok = parse(match.VersionEndIncluding); !ok {
+	if b.le, ok = parse(match.VersionEndIncluding); !ok {
 		return semverBounds{}, false
 	}
-	if b.ltExc, ok = parse(match.VersionEndExcluding); !ok {
+	if b.lt, ok = parse(match.VersionEndExcluding); !ok {
 		return semverBounds{}, false
 	}
 	return b, true
@@ -629,16 +629,16 @@ func parseSemverBounds(match cveTypes.CPEMatch) (semverBounds, bool) {
 
 // versionInBounds reports whether v satisfies the pre-parsed range.
 func versionInBounds(v *version.Version, b semverBounds) bool {
-	if b.geInc != nil && v.LessThan(b.geInc) {
+	if b.ge != nil && v.LessThan(b.ge) {
 		return false
 	}
-	if b.gtExc != nil && !v.GreaterThan(b.gtExc) {
+	if b.gt != nil && !v.GreaterThan(b.gt) {
 		return false
 	}
-	if b.leInc != nil && v.GreaterThan(b.leInc) {
+	if b.le != nil && v.GreaterThan(b.le) {
 		return false
 	}
-	if b.ltExc != nil && !v.LessThan(b.ltExc) {
+	if b.lt != nil && !v.LessThan(b.lt) {
 		return false
 	}
 	return true
