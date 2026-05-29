@@ -9,40 +9,51 @@ import (
 )
 
 func TestExtract(t *testing.T) {
-	tests := []struct {
-		name        string
+	type args struct {
 		cveDir      string
 		cpematchDir string
-		golden      string
-		hasError    bool
+	}
+	tests := []struct {
+		name     string
+		args     args
+		golden   string
+		hasError bool
 	}{
 		{
-			name:        "semver-range",
-			cveDir:      "./testdata/fixtures/semver-range/vuls-data-raw-nvd-feed-cve-v2",
-			cpematchDir: "./testdata/fixtures/semver-range/vuls-data-raw-nvd-feed-cpematch-v2",
-			golden:      "./testdata/golden/semver-range",
+			name: "semver-range",
+			args: args{
+				cveDir:      "./testdata/fixtures/semver-range/vuls-data-raw-nvd-feed-cve-v2",
+				cpematchDir: "./testdata/fixtures/semver-range/vuls-data-raw-nvd-feed-cpematch-v2",
+			},
+			golden: "./testdata/golden/semver-range",
 		},
 		{
 			// SEMVER range whose cpematch mixes semver and non-semver versions:
 			// only the non-semver versions are added as exact-match criteria;
 			// semver versions inside the range stay covered by the range
 			// criterion alone.
-			name:        "semver-range-mixed",
-			cveDir:      "./testdata/fixtures/semver-range-mixed/vuls-data-raw-nvd-feed-cve-v2",
-			cpematchDir: "./testdata/fixtures/semver-range-mixed/vuls-data-raw-nvd-feed-cpematch-v2",
-			golden:      "./testdata/golden/semver-range-mixed",
+			name: "semver-range-mixed",
+			args: args{
+				cveDir:      "./testdata/fixtures/semver-range-mixed/vuls-data-raw-nvd-feed-cve-v2",
+				cpematchDir: "./testdata/fixtures/semver-range-mixed/vuls-data-raw-nvd-feed-cpematch-v2",
+			},
+			golden: "./testdata/golden/semver-range-mixed",
 		},
 		{
-			name:        "non-semver-range",
-			cveDir:      "./testdata/fixtures/non-semver-range/vuls-data-raw-nvd-feed-cve-v2",
-			cpematchDir: "./testdata/fixtures/non-semver-range/vuls-data-raw-nvd-feed-cpematch-v2",
-			golden:      "./testdata/golden/non-semver-range",
+			name: "non-semver-range",
+			args: args{
+				cveDir:      "./testdata/fixtures/non-semver-range/vuls-data-raw-nvd-feed-cve-v2",
+				cpematchDir: "./testdata/fixtures/non-semver-range/vuls-data-raw-nvd-feed-cpematch-v2",
+			},
+			golden: "./testdata/golden/non-semver-range",
 		},
 		{
-			name:        "exact-match",
-			cveDir:      "./testdata/fixtures/exact-match/vuls-data-raw-nvd-feed-cve-v2",
-			cpematchDir: "./testdata/fixtures/exact-match/vuls-data-raw-nvd-feed-cpematch-v2",
-			golden:      "./testdata/golden/exact-match",
+			name: "exact-match",
+			args: args{
+				cveDir:      "./testdata/fixtures/exact-match/vuls-data-raw-nvd-feed-cve-v2",
+				cpematchDir: "./testdata/fixtures/exact-match/vuls-data-raw-nvd-feed-cpematch-v2",
+			},
+			golden: "./testdata/golden/exact-match",
 		},
 		{
 			// AND configuration with mixed vulnerable flags: one child node
@@ -52,16 +63,68 @@ func TestExtract(t *testing.T) {
 			// Verifies that the extractor preserves both branches under
 			// the AND criteria so a detector can enforce both before
 			// reporting a hit.
-			name:        "and-vulnerable-mixed",
-			cveDir:      "./testdata/fixtures/and-vulnerable-mixed/vuls-data-raw-nvd-feed-cve-v2",
-			cpematchDir: "./testdata/fixtures/and-vulnerable-mixed/vuls-data-raw-nvd-feed-cpematch-v2",
-			golden:      "./testdata/golden/and-vulnerable-mixed",
+			name: "and-vulnerable-mixed",
+			args: args{
+				cveDir:      "./testdata/fixtures/and-vulnerable-mixed/vuls-data-raw-nvd-feed-cve-v2",
+				cpematchDir: "./testdata/fixtures/and-vulnerable-mixed/vuls-data-raw-nvd-feed-cpematch-v2",
+			},
+			golden: "./testdata/golden/and-vulnerable-mixed",
+		},
+		{
+			// SEMVER range whose matchCriteriaId is absent from the
+			// cpematch dir (the two feeds cannot be snapshotted
+			// atomically). The extractor must log slog.Warn, drop the
+			// cpematch expansion, and still emit the range criterion so
+			// detection of semver-parseable versions is preserved.
+			name: "cpematch-missing-semver",
+			args: args{
+				cveDir:      "./testdata/fixtures/cpematch-missing-semver/vuls-data-raw-nvd-feed-cve-v2",
+				cpematchDir: "./testdata/fixtures/cpematch-missing-semver/vuls-data-raw-nvd-feed-cpematch-v2",
+			},
+			golden: "./testdata/golden/cpematch-missing-semver",
+		},
+		{
+			// Unknown range (non-semver endpoint) whose matchCriteriaId
+			// is absent from the cpematch dir. The range criterion alone
+			// cannot match anything at detection time and we have no
+			// exact fallback, so the extractor must log slog.Error to
+			// make the loss visible — but still continue so the rest of
+			// the extract finishes.
+			name: "cpematch-missing-unknown",
+			args: args{
+				cveDir:      "./testdata/fixtures/cpematch-missing-unknown/vuls-data-raw-nvd-feed-cve-v2",
+				cpematchDir: "./testdata/fixtures/cpematch-missing-unknown/vuls-data-raw-nvd-feed-cpematch-v2",
+			},
+			golden: "./testdata/golden/cpematch-missing-unknown",
+		},
+		{
+			// Configuration.Negate=true is not implemented. The extractor
+			// must return an explicit error rather than silently emit
+			// non-negated criteria, which would invert detection
+			// semantics.
+			name: "config-negate",
+			args: args{
+				cveDir:      "./testdata/fixtures/config-negate/vuls-data-raw-nvd-feed-cve-v2",
+				cpematchDir: "./testdata/fixtures/config-negate/vuls-data-raw-nvd-feed-cpematch-v2",
+			},
+			hasError: true,
+		},
+		{
+			// Node.Negate=true is not implemented. Symmetric with the
+			// Configuration.Negate case — the extractor must reject
+			// negated nodes explicitly.
+			name: "node-negate",
+			args: args{
+				cveDir:      "./testdata/fixtures/node-negate/vuls-data-raw-nvd-feed-cve-v2",
+				cpematchDir: "./testdata/fixtures/node-negate/vuls-data-raw-nvd-feed-cpematch-v2",
+			},
+			hasError: true,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			dir := t.TempDir()
-			err := v2.Extract(tt.cveDir, tt.cpematchDir, v2.WithDir(dir))
+			err := v2.Extract(tt.args.cveDir, tt.args.cpematchDir, v2.WithDir(dir))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)
