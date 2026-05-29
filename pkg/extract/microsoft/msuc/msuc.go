@@ -119,6 +119,9 @@ func buildUpdateIDMap(root string) (map[string]string, error) {
 		}
 
 		if d.IsDir() {
+			if d.Name() == ".git" {
+				return filepath.SkipDir
+			}
 			return nil
 		}
 
@@ -172,6 +175,9 @@ func (o options) extract(root string, updateIDMap map[string]string) error {
 			}
 
 			if d.IsDir() {
+				if d.Name() == ".git" {
+					return filepath.SkipDir
+				}
 				return nil
 			}
 
