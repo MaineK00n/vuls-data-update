@@ -348,6 +348,16 @@ func (e extractor) buildData(fetched cveTypes.CVE) (dataTypes.Data, error) {
 							URL:    fmt.Sprintf("https://nvd.nist.gov/vuln/detail/%s", fetched.ID),
 						})
 						for _, r := range fetched.References {
+							// TODO: propagate r.Tags ("Patch",
+							// "Vendor Advisory", "Exploit",
+							// "Mitigation", "Broken Link", …) once
+							// types/data/reference.Reference grows a
+							// Tags []string field. Downstream consumers
+							// (vuls0 Exploit/Mitigation derivation) rely
+							// on these tags; the omission here matches
+							// the api/cve sibling and is intentional
+							// only because the schema does not yet
+							// carry the field.
 							refs = append(refs, referenceTypes.Reference{
 								Source: r.Source,
 								URL:    r.URL,
@@ -554,7 +564,10 @@ func (e extractor) nodeToCriteria(n cveTypes.Node) (criteriaTypes.Criteria, erro
 }
 
 // exactCriterion builds an exact-match version criterion for a single
-// expanded cpematch CPE name.
+// expanded cpematch CPE name. The caller is responsible for validating
+// cpeName beforehand (e.g. via naming.UnbindFS); this constructor takes
+// the string as-is so it can be reused from a hot loop without paying
+// for re-validation on every call.
 func exactCriterion(cpeName string, vulnerable bool) criterionTypes.Criterion {
 	return criterionTypes.Criterion{
 		Type: criterionTypes.CriterionTypeVersion,
