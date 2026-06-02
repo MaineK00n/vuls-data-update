@@ -190,4 +190,3 @@ func (o options) fetchArchive(client *utilhttp.Client, name string) error {
 
 	return nil
 }
-

@@ -411,10 +411,11 @@ var monthlyTrackTitleRE = regexp.MustCompile(`^(\d{4})-(\d{2}) (Security Only Qu
 // Server 2012 R2 / Win 8.1 era KBs. The month appears as an English name
 // BEFORE the year (e.g. "April, 2017 ..."), so the capture order differs from
 // monthlyTrackTitleRE:
-//   m[1] = month name (e.g. "April")     -- vs. m[1] = year ("2017") in modern
-//   m[2] = year       (e.g. "2017")      -- vs. m[2] = month ("04") in modern
-//   m[3] = track                         -- same as modern
-//   m[4] = product                       -- same as modern
+//
+//	m[1] = month name (e.g. "April")     -- vs. m[1] = year ("2017") in modern
+//	m[2] = year       (e.g. "2017")      -- vs. m[2] = month ("04") in modern
+//	m[3] = track                         -- same as modern
+//	m[4] = product                       -- same as modern
 //
 // Whitespace is intentionally strict (a single ASCII space at every
 // boundary). In a snapshot of the production raw MSUC corpus taken
