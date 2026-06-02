@@ -82,5 +82,21 @@
 			"taxonomy_name": "PLOVER",
 			"entry_name": "(UI) User Interface Errors"
 		}
-	]
+	],
+	"mapping_notes": {
+		"usage": "Prohibited",
+		"rationale": "Categories are not appropriate for mapping.",
+		"comments": "Map to a specific Weakness instead.",
+		"reasons": [
+			{
+				"type": "Category"
+			}
+		],
+		"suggestions": [
+			{
+				"cweid": "1007",
+				"comment": "Use CWE-1007 for homoglyph issues."
+			}
+		]
+	}
 }

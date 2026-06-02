@@ -157,7 +157,6 @@ func NewCmdExtract() *cobra.Command {
 		newCmdCISAKEV(),
 		newCmdComposerGHSA(), newCmdComposerGLSA(), newCmdComposerOSV(), newCmdComposerDB(),
 		newCmdConanGLSA(),
-		newCmdCWE(),
 		newCmdDebianOVAL(), newCmdDebianSecurityTrackerAPI(), newCmdDebianSecurityTrackerSalsa(), newCmdDebianOSV(),
 		newCmdEOL(),
 		newCmdENISAKEV(),
@@ -176,7 +175,7 @@ func NewCmdExtract() *cobra.Command {
 		newCmdLinuxOSV(),
 		newCmdMavenGHSA(), newCmdMavenGLSA(), newCmdMavenOSV(),
 		newCmdMicrosoftBulletin(), newCmdMicrosoftCVRF(), newCmdMicrosoftMSUC(), newCmdMicrosoftWSUSSCN2(),
-		newCmdMitreCVRF(), newCmdMitreV4(), newCmdMitreV5(),
+		newCmdMitreCVRF(), newCmdMitreCWE(), newCmdMitreV4(), newCmdMitreV5(),
 		newCmdMSF(),
 		newCmdNetBSD(),
 		newCmdNpmGHSA(), newCmdNpmGLSA(), newCmdNpmOSV(), newCmdNpmDB(),
@@ -718,31 +717,6 @@ func newCmdConanGLSA() *cobra.Command {
 		RunE: func(_ *cobra.Command, args []string) error {
 			if err := conanGLSA.Extract(args[0], conanGLSA.WithDir(options.dir)); err != nil {
 				return errors.Wrap(err, "failed to extract conan glsa")
-			}
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
-
-	return cmd
-}
-
-func newCmdCWE() *cobra.Command {
-	options := &base{
-		dir: filepath.Join(util.CacheDir(), "extract", "cwe"),
-	}
-
-	cmd := &cobra.Command{
-		Use:   "cwe-capec-attack <Raw CWE Repository PATH>",
-		Short: "Extract CWE data source",
-		Example: heredoc.Doc(`
-			$ vuls-data-update extract cwe vuls-data-raw-cwe
-		`),
-		Args: cobra.ExactArgs(1),
-		RunE: func(_ *cobra.Command, args []string) error {
-			if err := cwe.Extract(args[0], cwe.WithDir(options.dir)); err != nil {
-				return errors.Wrap(err, "failed to extract cwe")
 			}
 			return nil
 		},
@@ -1700,6 +1674,31 @@ func newCmdMitreCVRF() *cobra.Command {
 		RunE: func(_ *cobra.Command, args []string) error {
 			if err := mitreCVRF.Extract(args[0], mitreCVRF.WithDir(options.dir)); err != nil {
 				return errors.Wrap(err, "failed to extract mitre cvrf")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
+
+	return cmd
+}
+
+func newCmdMitreCWE() *cobra.Command {
+	options := &base{
+		dir: filepath.Join(util.CacheDir(), "extract", "mitre", "cwe"),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "mitre-cwe <Raw MITRE CWE Repository PATH>",
+		Short: "Extract MITRE CWE data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update extract mitre-cwe vuls-data-raw-mitre-cwe
+		`),
+		Args: cobra.ExactArgs(1),
+		RunE: func(_ *cobra.Command, args []string) error {
+			if err := cwe.Extract(args[0], cwe.WithDir(options.dir)); err != nil {
+				return errors.Wrap(err, "failed to extract mitre cwe")
 			}
 			return nil
 		},

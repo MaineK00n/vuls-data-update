@@ -1,0 +1,208 @@
+{
+	"id": "CWE-699",
+	"kind": "view",
+	"name": "Software Development",
+	"status": "Draft",
+	"description": "This view organizes weaknesses around concepts that are frequently used or encountered in software development. This includes all aspects of the software development lifecycle including both architecture and implementation. Accordingly, this view can align closely with the perspectives of architects, developers, educators, and assessment vendors. It provides a variety of categories that are intended to simplify navigation, browsing, and mapping.",
+	"view": {
+		"type": "Graph",
+		"audience": [
+			{
+				"type": "Educators",
+				"description": "Educators use this view to teach future developers about the types of mistakes that are commonly made within specific parts of a codebase."
+			},
+			{
+				"type": "Software Developers",
+				"description": "Software developers (including architects, designers, coders, and testers) use this view to better understand potential mistakes that can be made in specific areas of their software application. The use of concepts that developers are familiar with makes it easier to navigate this view, and filtering by Modes of Introduction can enable focus on a specific phase of the development lifecycle."
+			}
+		],
+		"members": [
+			{
+				"cweid": "CWE-1006",
+				"view_id": "CWE-699"
+			},
+			{
+				"cweid": "CWE-1210",
+				"view_id": "CWE-699"
+			},
+			{
+				"cweid": "CWE-1211",
+				"view_id": "CWE-699"
+			},
+			{
+				"cweid": "CWE-1212",
+				"view_id": "CWE-699"
+			},
+			{
+				"cweid": "CWE-1213",
+				"view_id": "CWE-699"
+			},
+			{
+				"cweid": "CWE-1214",
+				"view_id": "CWE-699"
+			},
+			{
+				"cweid": "CWE-1215",
+				"view_id": "CWE-699"
+			},
+			{
+				"cweid": "CWE-1216",
+				"view_id": "CWE-699"
+			},
+			{
+				"cweid": "CWE-1217",
+				"view_id": "CWE-699"
+			},
+			{
+				"cweid": "CWE-1218",
+				"view_id": "CWE-699"
+			},
+			{
+				"cweid": "CWE-1219",
+				"view_id": "CWE-699"
+			},
+			{
+				"cweid": "CWE-1225",
+				"view_id": "CWE-699"
+			},
+			{
+				"cweid": "CWE-1226",
+				"view_id": "CWE-699"
+			},
+			{
+				"cweid": "CWE-1227",
+				"view_id": "CWE-699"
+			},
+			{
+				"cweid": "CWE-1228",
+				"view_id": "CWE-699"
+			},
+			{
+				"cweid": "CWE-133",
+				"view_id": "CWE-699"
+			},
+			{
+				"cweid": "CWE-136",
+				"view_id": "CWE-699"
+			},
+			{
+				"cweid": "CWE-137",
+				"view_id": "CWE-699"
+			},
+			{
+				"cweid": "CWE-189",
+				"view_id": "CWE-699"
+			},
+			{
+				"cweid": "CWE-19",
+				"view_id": "CWE-699"
+			},
+			{
+				"cweid": "CWE-199",
+				"view_id": "CWE-699"
+			},
+			{
+				"cweid": "CWE-255",
+				"view_id": "CWE-699"
+			},
+			{
+				"cweid": "CWE-265",
+				"view_id": "CWE-699"
+			},
+			{
+				"cweid": "CWE-275",
+				"view_id": "CWE-699"
+			},
+			{
+				"cweid": "CWE-310",
+				"view_id": "CWE-699"
+			},
+			{
+				"cweid": "CWE-320",
+				"view_id": "CWE-699"
+			},
+			{
+				"cweid": "CWE-355",
+				"view_id": "CWE-699"
+			},
+			{
+				"cweid": "CWE-371",
+				"view_id": "CWE-699"
+			},
+			{
+				"cweid": "CWE-387",
+				"view_id": "CWE-699"
+			},
+			{
+				"cweid": "CWE-389",
+				"view_id": "CWE-699"
+			},
+			{
+				"cweid": "CWE-399",
+				"view_id": "CWE-699"
+			},
+			{
+				"cweid": "CWE-411",
+				"view_id": "CWE-699"
+			},
+			{
+				"cweid": "CWE-417",
+				"view_id": "CWE-699"
+			},
+			{
+				"cweid": "CWE-429",
+				"view_id": "CWE-699"
+			},
+			{
+				"cweid": "CWE-438",
+				"view_id": "CWE-699"
+			},
+			{
+				"cweid": "CWE-452",
+				"view_id": "CWE-699"
+			},
+			{
+				"cweid": "CWE-465",
+				"view_id": "CWE-699"
+			},
+			{
+				"cweid": "CWE-557",
+				"view_id": "CWE-699"
+			},
+			{
+				"cweid": "CWE-569",
+				"view_id": "CWE-699"
+			},
+			{
+				"cweid": "CWE-840",
+				"view_id": "CWE-699"
+			}
+		],
+		"notes": [
+			{
+				"type": "Other",
+				"text": "The top level categories in this view represent commonly understood areas/terms within software development, and are meant to aid the user in identifying potential related weaknesses. It is possible for the same weakness to exist within multiple different categories."
+			},
+			{
+				"type": "Other",
+				"text": "This view attempts to present weaknesses in a simple and intuitive way. As such it targets a single level of abstraction. It is important to realize that not every CWE will be represented in this view. High-level class weaknesses and low-level variant weaknesses are mostly ignored. However, by exploring the weaknesses that are included, and following the defined relationships, one can find these higher and lower level weaknesses."
+			}
+		],
+		"mapping_notes": {
+			"usage": "Prohibited",
+			"rationale": "Views are organizational structures, not mappable weaknesses.",
+			"comments": "Choose a Weakness from this View.",
+			"reasons": [
+				{
+					"type": "View"
+				}
+			]
+		}
+	},
+	"data_source": {
+		"id": "mitre-cwe",
+		"raws": [
+			"fixtures/view/699.json"
+		]
+	}
+}

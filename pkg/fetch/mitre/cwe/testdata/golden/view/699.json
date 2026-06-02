@@ -236,5 +236,15 @@
 				"date": "2020-02-24"
 			}
 		]
+	},
+	"mapping_notes": {
+		"usage": "Prohibited",
+		"rationale": "Views are organizational structures, not mappable weaknesses.",
+		"comments": "Choose a Weakness from this View.",
+		"reasons": [
+			{
+				"type": "View"
+			}
+		]
 	}
 }
