@@ -12,9 +12,9 @@ import (
 	"github.com/google/go-cmp/cmp/cmpopts"
 	"github.com/pkg/errors"
 
-	sourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/source"
 	microsoftkbTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/microsoftkb"
 	microsoftkbUpdateTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/microsoftkb/update"
+	sourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/source"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/util"
 )

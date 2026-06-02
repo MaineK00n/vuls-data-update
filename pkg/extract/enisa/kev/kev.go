@@ -9,9 +9,9 @@ import (
 
 	"github.com/pkg/errors"
 
+	dataTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data"
 	advisoryTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/advisory"
 	advisoryContentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/advisory/content"
-	dataTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data"
 	cweTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/cwe"
 	kevTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/kev"
 	enisaTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/kev/enisa"

@@ -9,7 +9,7 @@ import (
 )
 
 type VulnCheck struct {
-	XDB                  []xdbTypes.XDB                                  `json:"xdb,omitempty"`
+	XDB                  []xdbTypes.XDB                                   `json:"xdb,omitempty"`
 	ReportedExploitation []reportedExploitationTypes.ReportedExploitation `json:"reported_exploitation,omitempty"`
 }
 
