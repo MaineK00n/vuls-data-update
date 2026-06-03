@@ -150,6 +150,16 @@ func TestCriterion_Accept(t *testing.T) {
 			want: false,
 		},
 		{
+			name: "pattern specific version, query different specific version: CPE attr disjoint (Range never consulted)",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:3.0.0:*:*:*:*:*:*:*",
+				Range:      &cpecRangeTypes.Range{Type: cpecRangeTypes.RangeTypeSEMVER, LessThan: "2.0.0"},
+			},
+			args: args{query: cpecTypes.Query{CPE: "cpe:2.3:a:vendor:product:2.0.0:*:*:*:*:*:*:*"}},
+			want: false,
+		},
+		{
 			name: "pattern specific version with range, query version ANY",
 			fields: fields{
 				Vulnerable: true,
