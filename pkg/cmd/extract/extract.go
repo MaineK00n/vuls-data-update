@@ -29,7 +29,6 @@ import (
 	composerGLSA "github.com/MaineK00n/vuls-data-update/pkg/extract/composer/glsa"
 	composerOSV "github.com/MaineK00n/vuls-data-update/pkg/extract/composer/osv"
 	conanGLSA "github.com/MaineK00n/vuls-data-update/pkg/extract/conan/glsa"
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/cwe"
 	debianOSV "github.com/MaineK00n/vuls-data-update/pkg/extract/debian/osv"
 	debianOVAL "github.com/MaineK00n/vuls-data-update/pkg/extract/debian/oval"
 	debianSecurityTrackerAPI "github.com/MaineK00n/vuls-data-update/pkg/extract/debian/tracker/api"
@@ -68,6 +67,7 @@ import (
 	microsoftMSUC "github.com/MaineK00n/vuls-data-update/pkg/extract/microsoft/msuc"
 	microsoftWSUSSCN2 "github.com/MaineK00n/vuls-data-update/pkg/extract/microsoft/wsusscn2"
 	mitreCVRF "github.com/MaineK00n/vuls-data-update/pkg/extract/mitre/cvrf"
+	mitreCWE "github.com/MaineK00n/vuls-data-update/pkg/extract/mitre/cwe"
 	mitreV4 "github.com/MaineK00n/vuls-data-update/pkg/extract/mitre/v4"
 	mitreV5 "github.com/MaineK00n/vuls-data-update/pkg/extract/mitre/v5"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/msf"
@@ -1697,7 +1697,7 @@ func newCmdMitreCWE() *cobra.Command {
 		`),
 		Args: cobra.ExactArgs(1),
 		RunE: func(_ *cobra.Command, args []string) error {
-			if err := cwe.Extract(args[0], cwe.WithDir(options.dir)); err != nil {
+			if err := mitreCWE.Extract(args[0], mitreCWE.WithDir(options.dir)); err != nil {
 				return errors.Wrap(err, "failed to extract mitre cwe")
 			}
 			return nil
