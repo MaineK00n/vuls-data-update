@@ -10,9 +10,11 @@ import (
 )
 
 // RangeType selects the version comparator used by Accept. Extractors must
-// set it explicitly — the zero value marshals as "unknown" and Accept refuses
-// to evaluate (returns false) so a forgotten Type produces a safe non-match
-// rather than a silent false positive.
+// set it explicitly — Accept on a zero (unset) or Unknown Type refuses to
+// evaluate (returns false), so a forgotten Type produces a safe non-match
+// rather than a silent false positive. The `type` JSON tag carries
+// `omitempty`, so a zero value is omitted from output rather than written
+// as "unknown"; an explicitly-set Unknown is serialized as "unknown".
 //
 // Independent from versioncriterion/affected/range.RangeType: only types
 // meaningful for CPE-side matching belong here. Add new comparators (e.g.

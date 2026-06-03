@@ -17,11 +17,12 @@ type CPE string
 
 // Criterion represents a CPE-only detection criterion.
 //   - CPE: the criterion's canonical CPE string (wildcards permitted)
-//   - Range: optional semver range narrowing the version match
+//   - Range: optional version range narrowing the match (comparator selected
+//     by Range.Type — semver / loose version / etc.)
 //   - CPEMatches: optional list of concrete CPE strings that the criterion
 //     also covers — used for entries that fall OUTSIDE Range (e.g. NVD listed
-//     versions that don't satisfy the semver bounds) or that Range cannot
-//     evaluate at all (non-semver versions)
+//     versions that don't satisfy the bounds) or that Range cannot evaluate
+//     at all (RangeTypeUnknown / non-parseable versions)
 //   - Vulnerable: a tag for downstream consumers (e.g. to distinguish the
 //     vulnerable side from a hardware guard under AND); NOT consulted by
 //     Accept (consistent with versioncriterion.Criterion.Accept)
