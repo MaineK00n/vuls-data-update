@@ -403,6 +403,14 @@ func (e extractor) nodeToCriteria(n cveTypes.Node) (criteriaTypes.Criteria, erro
 						return nil
 					}
 					return &cpecRangeTypes.Range{
+						Type: func() cpecRangeTypes.RangeType {
+							switch rangeType {
+							case rangeTypes.RangeTypeSEMVER:
+								return cpecRangeTypes.RangeTypeSEMVER
+							default:
+								return cpecRangeTypes.RangeTypeUnknown
+							}
+						}(),
 						GreaterEqual: match.VersionStartIncluding,
 						GreaterThan:  match.VersionStartExcluding,
 						LessEqual:    match.VersionEndIncluding,
