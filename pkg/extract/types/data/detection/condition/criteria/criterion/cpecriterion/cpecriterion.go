@@ -29,13 +29,18 @@ type CPE string
 //
 // Detection semantics (see Accept):
 //
-//	CPE-attr-match AND (
-//	    c.version=="NA"                       // NA short-circuit (ignores narrowing)
-//	    OR (Range==nil AND CPEMatches==nil)   // no narrowing
-//	    OR query-version is ANY/NA            // no concrete version to compare
+//	(CPE-attr-match AND (
+//	    c.version=="NA"                          // NA short-circuit (ignores narrowing)
+//	    OR (Range==nil AND len(CPEMatches)==0)   // no narrowing
+//	    OR query-version is ANY/NA               // no concrete version to compare
 //	    OR Range matches
-//	    OR any CPEMatches[i] attr-match
-//	)
+//	))
+//	OR any CPEMatches[i] attr-match              // also tried when main CPE is disjoint
+//
+// The CPEMatches loop is consulted both as a fallback after a failed Range
+// evaluation (out-of-range exceptions) AND independently when the main CPE
+// is disjoint from the query (defensive — covers edition-divergence cases
+// in source data).
 //
 // Range and CPEMatches are NOT mutually exclusive: both can be populated and
 // their effective predicate is OR'd. This matches the NVD ranged-cpeMatch
