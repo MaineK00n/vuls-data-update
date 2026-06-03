@@ -109,16 +109,10 @@
 						"operator": "OR",
 						"criterions": [
 							{
-								"type": "version",
-								"version": {
+								"type": "cpe",
+								"cpe": {
 									"vulnerable": true,
-									"fix_status": {
-										"class": "unknown"
-									},
-									"package": {
-										"type": "cpe",
-										"cpe": "cpe:2.3:a:misc:ruby-git_ruby-git:*:*:*:*:*:*:*:*"
-									}
+									"cpe": "cpe:2.3:a:misc:ruby-git_ruby-git:*:*:*:*:*:*:*:*"
 								}
 							}
 						]

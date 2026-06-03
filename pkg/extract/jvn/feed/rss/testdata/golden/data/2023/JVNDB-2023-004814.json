@@ -84,16 +84,10 @@
 						"operator": "OR",
 						"criterions": [
 							{
-								"type": "version",
-								"version": {
+								"type": "cpe",
+								"cpe": {
 									"vulnerable": true,
-									"fix_status": {
-										"class": "unknown"
-									},
-									"package": {
-										"type": "cpe",
-										"cpe": "cpe:2.3:a:resumebuilder:resume_builder:*:*:*:*:*:*:*:*"
-									}
+									"cpe": "cpe:2.3:a:resumebuilder:resume_builder:*:*:*:*:*:*:*:*"
 								}
 							}
 						]

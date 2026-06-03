@@ -5,7 +5,6 @@ import (
 
 	packageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package"
 	binaryTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package/binary"
-	cpeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package/cpe"
 	languageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package/language"
 	sourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package/source"
 )
@@ -15,7 +14,6 @@ func TestPackage_Sort(t *testing.T) {
 		Type     packageTypes.PackageType
 		Binary   *binaryTypes.Package
 		Source   *sourceTypes.Package
-		CPE      *cpeTypes.CPE
 		Language *languageTypes.Package
 	}
 	tests := []struct {
@@ -30,7 +28,6 @@ func TestPackage_Sort(t *testing.T) {
 				Type:     tt.fields.Type,
 				Binary:   tt.fields.Binary,
 				Source:   tt.fields.Source,
-				CPE:      tt.fields.CPE,
 				Language: tt.fields.Language,
 			}
 			p.Sort()
@@ -64,7 +61,6 @@ func TestPackage_Accept(t *testing.T) {
 		Type     packageTypes.PackageType
 		Binary   *binaryTypes.Package
 		Source   *sourceTypes.Package
-		CPE      *cpeTypes.CPE
 		Language *languageTypes.Package
 	}
 	type args struct {
@@ -107,19 +103,6 @@ func TestPackage_Accept(t *testing.T) {
 			want: true,
 		},
 		{
-			name: "cpe",
-			fields: fields{
-				Type: packageTypes.PackageTypeCPE,
-				CPE:  new(cpeTypes.CPE("cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*")),
-			},
-			args: args{
-				query: packageTypes.Query{
-					CPE: new(cpeTypes.Query("cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*")),
-				},
-			},
-			want: true,
-		},
-		{
 			name: "language",
 			fields: fields{
 				Type:     packageTypes.PackageTypeLanguage,
@@ -144,7 +127,6 @@ func TestPackage_Accept(t *testing.T) {
 				Type:     tt.fields.Type,
 				Binary:   tt.fields.Binary,
 				Source:   tt.fields.Source,
-				CPE:      tt.fields.CPE,
 				Language: tt.fields.Language,
 			}
 			got, err := p.Accept(tt.args.query, tt.args.repositories)

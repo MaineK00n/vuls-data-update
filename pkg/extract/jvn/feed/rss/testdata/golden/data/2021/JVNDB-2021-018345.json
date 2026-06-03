@@ -97,16 +97,10 @@
 						"operator": "OR",
 						"criterions": [
 							{
-								"type": "version",
-								"version": {
+								"type": "cpe",
+								"cpe": {
 									"vulnerable": true,
-									"fix_status": {
-										"class": "unknown"
-									},
-									"package": {
-										"type": "cpe",
-										"cpe": "cpe:2.3:o:google:android:*:*:*:*:*:*:*:*"
-									}
+									"cpe": "cpe:2.3:o:google:android:*:*:*:*:*:*:*:*"
 								}
 							}
 						]
