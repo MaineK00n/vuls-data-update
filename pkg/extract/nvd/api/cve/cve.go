@@ -21,8 +21,8 @@ import (
 	conditionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition"
 	criteriaTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria"
 	criterionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion"
-	cpecTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/cpecriterion"
-	cpecRangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/cpecriterion/range"
+	ccTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/cpecriterion"
+	ccRangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/cpecriterion/range"
 	rangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/affected/range"
 	segmentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment"
 	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment/ecosystem"
@@ -383,35 +383,35 @@ func (e extractor) nodeToCriteria(n cveTypes.Node) (criteriaTypes.Criteria, erro
 		}
 		rangeType := decideRangeType(match)
 
-		var cpeMatches []cpecTypes.CPE
+		var cpeMatches []ccTypes.CPE
 		if rangeType == rangeTypes.RangeTypeUnknown {
 			ns, err := e.cpeNamesFromCpematch(wfn, match.MatchCriteriaID)
 			if err != nil {
 				return criteriaTypes.Criteria{}, errors.Wrapf(err, "cpe names from cpematch. match criteria: %s", match.Criteria)
 			}
-			cpeMatches = make([]cpecTypes.CPE, 0, len(ns))
+			cpeMatches = make([]ccTypes.CPE, 0, len(ns))
 			for _, n := range ns {
-				cpeMatches = append(cpeMatches, cpecTypes.CPE(n))
+				cpeMatches = append(cpeMatches, ccTypes.CPE(n))
 			}
 		}
 
 		cn := criterionTypes.Criterion{
 			Type: criterionTypes.CriterionTypeCPE,
-			CPE: &cpecTypes.Criterion{
+			CPE: &ccTypes.Criterion{
 				Vulnerable: match.Vulnerable,
-				CPE:        cpecTypes.CPE(match.Criteria),
-				Range: func() *cpecRangeTypes.Range {
+				CPE:        ccTypes.CPE(match.Criteria),
+				Range: func() *ccRangeTypes.Range {
 					if match.VersionStartIncluding == "" && match.VersionStartExcluding == "" &&
 						match.VersionEndIncluding == "" && match.VersionEndExcluding == "" {
 						return nil
 					}
-					return &cpecRangeTypes.Range{
-						Type: func() cpecRangeTypes.RangeType {
+					return &ccRangeTypes.Range{
+						Type: func() ccRangeTypes.RangeType {
 							switch rangeType {
 							case rangeTypes.RangeTypeSEMVER:
-								return cpecRangeTypes.RangeTypeSEMVER
+								return ccRangeTypes.RangeTypeSEMVER
 							default:
-								return cpecRangeTypes.RangeTypeUnknown
+								return ccRangeTypes.RangeTypeUnknown
 							}
 						}(),
 						GreaterEqual: match.VersionStartIncluding,

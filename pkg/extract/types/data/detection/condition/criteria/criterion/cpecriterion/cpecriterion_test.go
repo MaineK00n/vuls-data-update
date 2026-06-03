@@ -3,19 +3,19 @@ package cpecriterion_test
 import (
 	"testing"
 
-	cpecTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/cpecriterion"
-	cpecRangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/cpecriterion/range"
+	ccTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/cpecriterion"
+	ccRangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/cpecriterion/range"
 )
 
 func TestCriterion_Accept(t *testing.T) {
 	type fields struct {
 		Vulnerable bool
-		CPE        cpecTypes.CPE
-		CPEMatches []cpecTypes.CPE
-		Range      *cpecRangeTypes.Range
+		CPE        ccTypes.CPE
+		CPEMatches []ccTypes.CPE
+		Range      *ccRangeTypes.Range
 	}
 	type args struct {
-		query cpecTypes.Query
+		query ccTypes.Query
 	}
 	tests := []struct {
 		name    string
@@ -29,9 +29,9 @@ func TestCriterion_Accept(t *testing.T) {
 			fields: fields{
 				Vulnerable: true,
 				CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
-				Range:      &cpecRangeTypes.Range{Type: cpecRangeTypes.RangeTypeSEMVER, LessThan: "0.0.2"},
+				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeSEMVER, LessThan: "0.0.2"},
 			},
-			args: args{query: cpecTypes.Query{CPE: "cpe:2.3:a:vendor:product:0.0.1:*:*:*:*:*:*:*"}},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:0.0.1:*:*:*:*:*:*:*"}},
 			want: true,
 		},
 		{
@@ -39,9 +39,9 @@ func TestCriterion_Accept(t *testing.T) {
 			fields: fields{
 				Vulnerable: true,
 				CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:wordpress:*:*",
-				Range:      &cpecRangeTypes.Range{Type: cpecRangeTypes.RangeTypeSEMVER, LessThan: "2.0.8"},
+				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeSEMVER, LessThan: "2.0.8"},
 			},
-			args: args{query: cpecTypes.Query{CPE: "cpe:2.3:a:vendor:product:1.5:*:*:*:*:*:*:*"}},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:1.5:*:*:*:*:*:*:*"}},
 			want: true,
 		},
 		{
@@ -50,7 +50,7 @@ func TestCriterion_Accept(t *testing.T) {
 				Vulnerable: true,
 				CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:wordpress:*:*",
 			},
-			args: args{query: cpecTypes.Query{CPE: "cpe:2.3:a:vendor:product:1.5:*:*:*:*:node.js:*:*"}},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:1.5:*:*:*:*:node.js:*:*"}},
 			want: false,
 		},
 		{
@@ -59,7 +59,7 @@ func TestCriterion_Accept(t *testing.T) {
 				Vulnerable: true,
 				CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
 			},
-			args: args{query: cpecTypes.Query{CPE: "cpe:2.3:o:vendor:product:1.0:*:*:*:*:*:*:*"}},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:o:vendor:product:1.0:*:*:*:*:*:*:*"}},
 			want: false,
 		},
 		{
@@ -67,9 +67,9 @@ func TestCriterion_Accept(t *testing.T) {
 			fields: fields{
 				Vulnerable: true,
 				CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
-				Range:      &cpecRangeTypes.Range{Type: cpecRangeTypes.RangeTypeSEMVER, LessThan: "0.0.2"},
+				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeSEMVER, LessThan: "0.0.2"},
 			},
-			args: args{query: cpecTypes.Query{CPE: "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*"}},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*"}},
 			want: true,
 		},
 		{
@@ -78,7 +78,7 @@ func TestCriterion_Accept(t *testing.T) {
 				Vulnerable: true,
 				CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
 			},
-			args: args{query: cpecTypes.Query{CPE: "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*"}},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*"}},
 			want: true,
 		},
 		{
@@ -87,7 +87,7 @@ func TestCriterion_Accept(t *testing.T) {
 				Vulnerable: true,
 				CPE:        "cpe:2.3:a:vendor:product:1.0:*:*:*:*:*:*:*",
 			},
-			args: args{query: cpecTypes.Query{CPE: "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*"}},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*"}},
 			want: true,
 		},
 		{
@@ -95,9 +95,9 @@ func TestCriterion_Accept(t *testing.T) {
 			fields: fields{
 				Vulnerable: true,
 				CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
-				Range:      &cpecRangeTypes.Range{Type: cpecRangeTypes.RangeTypeSEMVER, LessThan: "1.0.0"},
+				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeSEMVER, LessThan: "1.0.0"},
 			},
-			args: args{query: cpecTypes.Query{CPE: "cpe:2.3:a:vendor:product:-:*:*:*:*:*:*:*"}},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:-:*:*:*:*:*:*:*"}},
 			want: true,
 		},
 		{
@@ -105,9 +105,9 @@ func TestCriterion_Accept(t *testing.T) {
 			fields: fields{
 				Vulnerable: true,
 				CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
-				Range:      &cpecRangeTypes.Range{Type: cpecRangeTypes.RangeTypeSEMVER, LessThan: "0.0.2"},
+				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeSEMVER, LessThan: "0.0.2"},
 			},
-			args: args{query: cpecTypes.Query{CPE: "cpe:2.3:a:vendor:product:1.0.0:*:*:*:*:*:*:*"}},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:1.0.0:*:*:*:*:*:*:*"}},
 			want: false,
 		},
 		{
@@ -116,7 +116,7 @@ func TestCriterion_Accept(t *testing.T) {
 				Vulnerable: true,
 				CPE:        "cpe:2.3:a:vendor:product:-:*:*:*:*:*:*:*",
 			},
-			args: args{query: cpecTypes.Query{CPE: "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*"}},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*"}},
 			want: true,
 		},
 		{
@@ -124,9 +124,9 @@ func TestCriterion_Accept(t *testing.T) {
 			fields: fields{
 				Vulnerable: true,
 				CPE:        "cpe:2.3:a:vendor:product:-:*:*:*:*:*:*:*",
-				Range:      &cpecRangeTypes.Range{Type: cpecRangeTypes.RangeTypeSEMVER, LessThan: "0.0.2"},
+				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeSEMVER, LessThan: "0.0.2"},
 			},
-			args: args{query: cpecTypes.Query{CPE: "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*"}},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*"}},
 			want: true,
 		},
 		{
@@ -134,9 +134,9 @@ func TestCriterion_Accept(t *testing.T) {
 			fields: fields{
 				Vulnerable: true,
 				CPE:        "cpe:2.3:a:vendor:product:1.0.0:*:*:*:*:*:*:*",
-				Range:      &cpecRangeTypes.Range{Type: cpecRangeTypes.RangeTypeSEMVER, LessThan: "2.0.0"},
+				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeSEMVER, LessThan: "2.0.0"},
 			},
-			args: args{query: cpecTypes.Query{CPE: "cpe:2.3:a:vendor:product:1.0.0:*:*:*:*:*:*:*"}},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:1.0.0:*:*:*:*:*:*:*"}},
 			want: true,
 		},
 		{
@@ -144,9 +144,9 @@ func TestCriterion_Accept(t *testing.T) {
 			fields: fields{
 				Vulnerable: true,
 				CPE:        "cpe:2.3:a:vendor:product:3.0.0:*:*:*:*:*:*:*",
-				Range:      &cpecRangeTypes.Range{Type: cpecRangeTypes.RangeTypeSEMVER, LessThan: "2.0.0"},
+				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeSEMVER, LessThan: "2.0.0"},
 			},
-			args: args{query: cpecTypes.Query{CPE: "cpe:2.3:a:vendor:product:3.0.0:*:*:*:*:*:*:*"}},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:3.0.0:*:*:*:*:*:*:*"}},
 			want: false,
 		},
 		{
@@ -154,9 +154,9 @@ func TestCriterion_Accept(t *testing.T) {
 			fields: fields{
 				Vulnerable: true,
 				CPE:        "cpe:2.3:a:vendor:product:3.0.0:*:*:*:*:*:*:*",
-				Range:      &cpecRangeTypes.Range{Type: cpecRangeTypes.RangeTypeSEMVER, LessThan: "2.0.0"},
+				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeSEMVER, LessThan: "2.0.0"},
 			},
-			args: args{query: cpecTypes.Query{CPE: "cpe:2.3:a:vendor:product:2.0.0:*:*:*:*:*:*:*"}},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:2.0.0:*:*:*:*:*:*:*"}},
 			want: false,
 		},
 		{
@@ -164,9 +164,9 @@ func TestCriterion_Accept(t *testing.T) {
 			fields: fields{
 				Vulnerable: true,
 				CPE:        "cpe:2.3:a:vendor:product:1.0:*:*:*:*:*:*:*",
-				Range:      &cpecRangeTypes.Range{Type: cpecRangeTypes.RangeTypeSEMVER, LessThan: "2.0.0"},
+				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeSEMVER, LessThan: "2.0.0"},
 			},
-			args: args{query: cpecTypes.Query{CPE: "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*"}},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*"}},
 			want: true,
 		},
 		{
@@ -174,9 +174,9 @@ func TestCriterion_Accept(t *testing.T) {
 			fields: fields{
 				Vulnerable: true,
 				CPE:        "cpe:2.3:a:vendor:product:3.0.0:*:*:*:*:*:*:*",
-				Range:      &cpecRangeTypes.Range{Type: cpecRangeTypes.RangeTypeSEMVER, LessThan: "2.0.0"},
+				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeSEMVER, LessThan: "2.0.0"},
 			},
-			args: args{query: cpecTypes.Query{CPE: "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*"}},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*"}},
 			want: true,
 		},
 		{
@@ -184,9 +184,9 @@ func TestCriterion_Accept(t *testing.T) {
 			fields: fields{
 				Vulnerable: true,
 				CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
-				Range:      &cpecRangeTypes.Range{Type: cpecRangeTypes.RangeTypeSEMVER, GreaterEqual: "1.0.0", LessThan: "2.0.0"},
+				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeSEMVER, GreaterEqual: "1.0.0", LessThan: "2.0.0"},
 			},
-			args: args{query: cpecTypes.Query{CPE: "cpe:2.3:a:vendor:product:1.5.0:*:*:*:*:*:*:*"}},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:1.5.0:*:*:*:*:*:*:*"}},
 			want: true,
 		},
 		{
@@ -194,9 +194,9 @@ func TestCriterion_Accept(t *testing.T) {
 			fields: fields{
 				Vulnerable: true,
 				CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
-				Range:      &cpecRangeTypes.Range{Type: cpecRangeTypes.RangeTypeSEMVER, GreaterEqual: "1.0.0", LessThan: "2.0.0"},
+				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeSEMVER, GreaterEqual: "1.0.0", LessThan: "2.0.0"},
 			},
-			args: args{query: cpecTypes.Query{CPE: "cpe:2.3:a:vendor:product:0.9.0:*:*:*:*:*:*:*"}},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:0.9.0:*:*:*:*:*:*:*"}},
 			want: false,
 		},
 		{
@@ -204,12 +204,12 @@ func TestCriterion_Accept(t *testing.T) {
 			fields: fields{
 				Vulnerable: true,
 				CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
-				CPEMatches: []cpecTypes.CPE{
+				CPEMatches: []ccTypes.CPE{
 					"cpe:2.3:a:vendor:product:15.4\\(2\\)t1:*:*:*:*:*:*:*",
 					"cpe:2.3:a:vendor:product:15.4\\(3\\)m:*:*:*:*:*:*:*",
 				},
 			},
-			args: args{query: cpecTypes.Query{CPE: "cpe:2.3:a:other:product:1.0:*:*:*:*:*:*:*"}},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:other:product:1.0:*:*:*:*:*:*:*"}},
 			want: false,
 		},
 		{
@@ -217,11 +217,11 @@ func TestCriterion_Accept(t *testing.T) {
 			fields: fields{
 				Vulnerable: true,
 				CPE:        "cpe:2.3:a:vendor:productX:*:*:*:*:*:*:*:*",
-				CPEMatches: []cpecTypes.CPE{
+				CPEMatches: []ccTypes.CPE{
 					"cpe:2.3:a:vendor:productY:15.4\\(2\\)t1:*:*:*:*:*:*:*",
 				},
 			},
-			args: args{query: cpecTypes.Query{CPE: "cpe:2.3:a:vendor:productY:15.4\\(2\\)t1:*:*:*:*:*:*:*"}},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:productY:15.4\\(2\\)t1:*:*:*:*:*:*:*"}},
 			want: true,
 		},
 		{
@@ -229,9 +229,9 @@ func TestCriterion_Accept(t *testing.T) {
 			fields: fields{
 				Vulnerable: true,
 				CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
-				Range:      &cpecRangeTypes.Range{Type: cpecRangeTypes.RangeTypeSEMVER, LessThan: "2.0.0"},
+				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeSEMVER, LessThan: "2.0.0"},
 			},
-			args: args{query: cpecTypes.Query{CPE: "cpe:2.3:a:vendor:product:15.4\\(2\\)t1:*:*:*:*:*:*:*"}},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:15.4\\(2\\)t1:*:*:*:*:*:*:*"}},
 			want: false,
 		},
 		{
@@ -239,10 +239,10 @@ func TestCriterion_Accept(t *testing.T) {
 			fields: fields{
 				Vulnerable: true,
 				CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
-				Range:      &cpecRangeTypes.Range{Type: cpecRangeTypes.RangeTypeSEMVER, LessThan: "2.0.0"},
-				CPEMatches: []cpecTypes.CPE{"cpe:2.3:a:vendor:product:3.5.0:*:*:*:*:*:*:*"},
+				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeSEMVER, LessThan: "2.0.0"},
+				CPEMatches: []ccTypes.CPE{"cpe:2.3:a:vendor:product:3.5.0:*:*:*:*:*:*:*"},
 			},
-			args: args{query: cpecTypes.Query{CPE: "cpe:2.3:a:vendor:product:3.5.0:*:*:*:*:*:*:*"}},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:3.5.0:*:*:*:*:*:*:*"}},
 			want: true,
 		},
 		{
@@ -250,10 +250,10 @@ func TestCriterion_Accept(t *testing.T) {
 			fields: fields{
 				Vulnerable: true,
 				CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
-				Range:      &cpecRangeTypes.Range{Type: cpecRangeTypes.RangeTypeSEMVER, LessThan: "2.0.0"},
-				CPEMatches: []cpecTypes.CPE{"cpe:2.3:a:vendor:product:3.5.0:*:*:*:*:*:*:*"},
+				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeSEMVER, LessThan: "2.0.0"},
+				CPEMatches: []ccTypes.CPE{"cpe:2.3:a:vendor:product:3.5.0:*:*:*:*:*:*:*"},
 			},
-			args: args{query: cpecTypes.Query{CPE: "cpe:2.3:a:vendor:product:1.5.0:*:*:*:*:*:*:*"}},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:1.5.0:*:*:*:*:*:*:*"}},
 			want: true,
 		},
 		{
@@ -261,10 +261,10 @@ func TestCriterion_Accept(t *testing.T) {
 			fields: fields{
 				Vulnerable: true,
 				CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
-				Range:      &cpecRangeTypes.Range{Type: cpecRangeTypes.RangeTypeSEMVER, LessThan: "2.0.0"},
-				CPEMatches: []cpecTypes.CPE{"cpe:2.3:a:vendor:product:3.5.0:*:*:*:*:*:*:*"},
+				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeSEMVER, LessThan: "2.0.0"},
+				CPEMatches: []ccTypes.CPE{"cpe:2.3:a:vendor:product:3.5.0:*:*:*:*:*:*:*"},
 			},
-			args: args{query: cpecTypes.Query{CPE: "cpe:2.3:a:vendor:product:5.0.0:*:*:*:*:*:*:*"}},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:5.0.0:*:*:*:*:*:*:*"}},
 			want: false,
 		},
 		{
@@ -273,7 +273,7 @@ func TestCriterion_Accept(t *testing.T) {
 				Vulnerable: true,
 				CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
 			},
-			args: args{query: cpecTypes.Query{CPE: "cpe:2.3:a:vendor:product:0.0.1:*:*:*:*:*:*:*"}},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:0.0.1:*:*:*:*:*:*:*"}},
 			want: true,
 		},
 		{
@@ -282,7 +282,7 @@ func TestCriterion_Accept(t *testing.T) {
 				Vulnerable: true,
 				CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
 			},
-			args: args{query: cpecTypes.Query{CPE: "cpe:2.3:a:other:product:0.0.1:*:*:*:*:*:*:*"}},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:other:product:0.0.1:*:*:*:*:*:*:*"}},
 			want: false,
 		},
 		{
@@ -291,7 +291,7 @@ func TestCriterion_Accept(t *testing.T) {
 				Vulnerable: true,
 				CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
 			},
-			args: args{query: cpecTypes.Query{CPE: "cpe:2.3:a:vendor:other:0.0.1:*:*:*:*:*:*:*"}},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:other:0.0.1:*:*:*:*:*:*:*"}},
 			want: false,
 		},
 		{
@@ -300,7 +300,7 @@ func TestCriterion_Accept(t *testing.T) {
 				Vulnerable: true,
 				CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:wordpress:*:*",
 			},
-			args: args{query: cpecTypes.Query{CPE: "cpe:2.3:a:vendor:product:1.0:*:*:*:*:wordpress:*:*"}},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:1.0:*:*:*:*:wordpress:*:*"}},
 			want: true,
 		},
 		{
@@ -309,7 +309,7 @@ func TestCriterion_Accept(t *testing.T) {
 				Vulnerable: true,
 				CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:enterprise:*:*:*",
 			},
-			args: args{query: cpecTypes.Query{CPE: "cpe:2.3:a:vendor:product:1.0:*:*:*:*:*:*:*"}},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:1.0:*:*:*:*:*:*:*"}},
 			want: true,
 		},
 		{
@@ -317,16 +317,16 @@ func TestCriterion_Accept(t *testing.T) {
 			fields: fields{
 				Vulnerable: true,
 				CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
-				Range:      &cpecRangeTypes.Range{Type: cpecRangeTypes.RangeTypeUnknown, LessThan: "15.4(3)m"},
-				CPEMatches: []cpecTypes.CPE{"cpe:2.3:a:vendor:product:15.4\\(2\\)t1:*:*:*:*:*:*:*"},
+				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeUnknown, LessThan: "15.4(3)m"},
+				CPEMatches: []ccTypes.CPE{"cpe:2.3:a:vendor:product:15.4\\(2\\)t1:*:*:*:*:*:*:*"},
 			},
-			args: args{query: cpecTypes.Query{CPE: "cpe:2.3:a:vendor:product:15.4\\(2\\)t1:*:*:*:*:*:*:*"}},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:15.4\\(2\\)t1:*:*:*:*:*:*:*"}},
 			want: true,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			c := cpecTypes.Criterion{
+			c := ccTypes.Criterion{
 				Vulnerable: tt.fields.Vulnerable,
 				CPE:        tt.fields.CPE,
 				CPEMatches: tt.fields.CPEMatches,

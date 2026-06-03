@@ -8,7 +8,7 @@ import (
 
 	"github.com/pkg/errors"
 
-	cpecTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/cpecriterion"
+	ccTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/cpecriterion"
 	kbcTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/kbcriterion"
 	necTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/noneexistcriterion"
 	vcTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion"
@@ -101,11 +101,11 @@ func (t *CriterionType) UnmarshalJSON(data []byte) error {
 }
 
 type Criterion struct {
-	Type      CriterionType        `json:"type,omitempty"`
-	Version   *vcTypes.Criterion   `json:"version,omitempty"`
-	NoneExist *necTypes.Criterion  `json:"none_exist,omitempty"`
-	KB        *kbcTypes.Criterion  `json:"kb,omitempty"`
-	CPE       *cpecTypes.Criterion `json:"cpe,omitempty"`
+	Type      CriterionType       `json:"type,omitempty"`
+	Version   *vcTypes.Criterion  `json:"version,omitempty"`
+	NoneExist *necTypes.Criterion `json:"none_exist,omitempty"`
+	KB        *kbcTypes.Criterion `json:"kb,omitempty"`
+	CPE       *ccTypes.Criterion  `json:"cpe,omitempty"`
 }
 
 func (c *Criterion) Sort() {
@@ -177,7 +177,7 @@ func Compare(x, y Criterion) int {
 				case x.CPE != nil && y.CPE == nil:
 					return +1
 				default:
-					return cpecTypes.Compare(*x.CPE, *y.CPE)
+					return ccTypes.Compare(*x.CPE, *y.CPE)
 				}
 			default:
 				return 0
@@ -190,7 +190,7 @@ type Query struct {
 	Version   []vcTypes.Query
 	NoneExist *necTypes.Query
 	KB        *kbcTypes.Query
-	CPE       []cpecTypes.Query
+	CPE       []ccTypes.Query
 }
 
 func (c Criterion) Contains(query Query, repositories []string) (bool, error) {

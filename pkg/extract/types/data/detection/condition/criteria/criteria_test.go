@@ -15,7 +15,7 @@ import (
 	affectedrangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/affected/range"
 	vcPackageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package"
 	vcBinaryPackageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package/binary"
-	cpecTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/cpecriterion"
+	ccTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/cpecriterion"
 	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment/ecosystem"
 )
 
@@ -247,7 +247,7 @@ func TestCriteria_Contains(t *testing.T) {
 					},
 					{
 						Type: criterionTypes.CriterionTypeCPE,
-						CPE: &cpecTypes.Criterion{
+						CPE: &ccTypes.Criterion{
 							Vulnerable: true,
 							CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
 						},
@@ -256,7 +256,7 @@ func TestCriteria_Contains(t *testing.T) {
 			},
 			args: args{
 				query: criterionTypes.Query{
-					CPE: []cpecTypes.Query{{CPE: "cpe:2.3:a:vendor:product:0.0.0:*:*:*:*:*:*:*"}},
+					CPE: []ccTypes.Query{{CPE: "cpe:2.3:a:vendor:product:0.0.0:*:*:*:*:*:*:*"}},
 				},
 			},
 			want: true,
@@ -696,7 +696,7 @@ func TestCriteria_Accept(t *testing.T) {
 					},
 					{
 						Type: criterionTypes.CriterionTypeCPE,
-						CPE: &cpecTypes.Criterion{
+						CPE: &ccTypes.Criterion{
 							Vulnerable: true,
 							CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
 						},
@@ -705,7 +705,7 @@ func TestCriteria_Accept(t *testing.T) {
 			},
 			args: args{
 				query: criterionTypes.Query{
-					CPE: []cpecTypes.Query{{CPE: "cpe:2.3:a:vendor:product:0.0.0:*:*:*:*:*:*:*"}},
+					CPE: []ccTypes.Query{{CPE: "cpe:2.3:a:vendor:product:0.0.0:*:*:*:*:*:*:*"}},
 				},
 			},
 			want: criteriaTypes.FilteredCriteria{
@@ -728,7 +728,7 @@ func TestCriteria_Accept(t *testing.T) {
 					{
 						Criterion: criterionTypes.Criterion{
 							Type: criterionTypes.CriterionTypeCPE,
-							CPE: &cpecTypes.Criterion{
+							CPE: &ccTypes.Criterion{
 								Vulnerable: true,
 								CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
 							},
@@ -2107,7 +2107,7 @@ func TestFilteredCriteria_Affected(t *testing.T) {
 					{
 						Criterion: criterionTypes.Criterion{
 							Type: criterionTypes.CriterionTypeCPE,
-							CPE: &cpecTypes.Criterion{
+							CPE: &ccTypes.Criterion{
 								Vulnerable: true,
 								CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
 							},
@@ -2140,7 +2140,7 @@ func TestFilteredCriteria_Affected(t *testing.T) {
 					{
 						Criterion: criterionTypes.Criterion{
 							Type: criterionTypes.CriterionTypeCPE,
-							CPE: &cpecTypes.Criterion{
+							CPE: &ccTypes.Criterion{
 								Vulnerable: true,
 								CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
 							},
