@@ -18,7 +18,6 @@ import (
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/arch"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/attack"
 	bitnamiOSV "github.com/MaineK00n/vuls-data-update/pkg/extract/bitnami/osv"
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/capec"
 	cargoDB "github.com/MaineK00n/vuls-data-update/pkg/extract/cargo/db"
 	cargoGHSA "github.com/MaineK00n/vuls-data-update/pkg/extract/cargo/ghsa"
 	cargoOSV "github.com/MaineK00n/vuls-data-update/pkg/extract/cargo/osv"
@@ -66,6 +65,7 @@ import (
 	microsoftCVRF "github.com/MaineK00n/vuls-data-update/pkg/extract/microsoft/cvrf"
 	microsoftMSUC "github.com/MaineK00n/vuls-data-update/pkg/extract/microsoft/msuc"
 	microsoftWSUSSCN2 "github.com/MaineK00n/vuls-data-update/pkg/extract/microsoft/wsusscn2"
+	mitreCAPEC "github.com/MaineK00n/vuls-data-update/pkg/extract/mitre/capec"
 	mitreCVRF "github.com/MaineK00n/vuls-data-update/pkg/extract/mitre/cvrf"
 	mitreCWE "github.com/MaineK00n/vuls-data-update/pkg/extract/mitre/cwe"
 	mitreV4 "github.com/MaineK00n/vuls-data-update/pkg/extract/mitre/v4"
@@ -151,7 +151,6 @@ func NewCmdExtract() *cobra.Command {
 		newCmdArch(),
 		newCmdAttack(),
 		newCmdBitnamiOSV(),
-		newCmdCapec(),
 		newCmdCargoGHSA(), newCmdCargoOSV(), newCmdCargoDB(),
 		newCmdChainguardOSV(),
 		newCmdCISAKEV(),
@@ -175,7 +174,7 @@ func NewCmdExtract() *cobra.Command {
 		newCmdLinuxOSV(),
 		newCmdMavenGHSA(), newCmdMavenGLSA(), newCmdMavenOSV(),
 		newCmdMicrosoftBulletin(), newCmdMicrosoftCVRF(), newCmdMicrosoftMSUC(), newCmdMicrosoftWSUSSCN2(),
-		newCmdMitreCVRF(), newCmdMitreCWE(), newCmdMitreV4(), newCmdMitreV5(),
+		newCmdMitreCAPEC(), newCmdMitreCVRF(), newCmdMitreCWE(), newCmdMitreV4(), newCmdMitreV5(),
 		newCmdMSF(),
 		newCmdNetBSD(),
 		newCmdNpmGHSA(), newCmdNpmGLSA(), newCmdNpmOSV(), newCmdNpmDB(),
@@ -442,31 +441,6 @@ func newCmdBitnamiOSV() *cobra.Command {
 		RunE: func(_ *cobra.Command, args []string) error {
 			if err := bitnamiOSV.Extract(args[0], bitnamiOSV.WithDir(options.dir)); err != nil {
 				return errors.Wrap(err, "failed to extract bitnami osv")
-			}
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
-
-	return cmd
-}
-
-func newCmdCapec() *cobra.Command {
-	options := &base{
-		dir: filepath.Join(util.CacheDir(), "extract", "capec"),
-	}
-
-	cmd := &cobra.Command{
-		Use:   "capec <Raw Capec Repository PATH>",
-		Short: "Extract Capec data source",
-		Example: heredoc.Doc(`
-			$ vuls-data-update extract capec vuls-data-raw-capec
-		`),
-		Args: cobra.ExactArgs(1),
-		RunE: func(_ *cobra.Command, args []string) error {
-			if err := capec.Extract(args[0], capec.WithDir(options.dir)); err != nil {
-				return errors.Wrap(err, "failed to extract capec")
 			}
 			return nil
 		},
@@ -1649,6 +1623,31 @@ func newCmdMicrosoftWSUSSCN2() *cobra.Command {
 		RunE: func(_ *cobra.Command, args []string) error {
 			if err := microsoftWSUSSCN2.Extract(args[0], microsoftWSUSSCN2.WithDir(options.dir)); err != nil {
 				return errors.Wrap(err, "failed to extract microsoft wsusscn2")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
+
+	return cmd
+}
+
+func newCmdMitreCAPEC() *cobra.Command {
+	options := &base{
+		dir: filepath.Join(util.CacheDir(), "extract", "mitre", "capec"),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "mitre-capec <Raw MITRE CAPEC Repository PATH>",
+		Short: "Extract MITRE CAPEC data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update extract mitre-capec vuls-data-raw-mitre-capec
+		`),
+		Args: cobra.ExactArgs(1),
+		RunE: func(_ *cobra.Command, args []string) error {
+			if err := mitreCAPEC.Extract(args[0], mitreCAPEC.WithDir(options.dir)); err != nil {
+				return errors.Wrap(err, "failed to extract mitre capec")
 			}
 			return nil
 		},

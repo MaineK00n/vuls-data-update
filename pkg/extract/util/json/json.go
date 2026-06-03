@@ -52,8 +52,8 @@ func (j *JSONReader) Read(path, prefix string, v any) error {
 }
 
 // Paths returns a path slice accumulated by Read() calls.
-// Returned pathes is the string after the basename of prefixes.
-// Resulting slices has no duplication even if multiple Read() calls with the same path.
+// Returned paths are the strings after the basename of prefixes.
+// The resulting slice has no duplicates even if multiple Read() calls used the same path.
 func (j JSONReader) Paths() []string {
 	return slices.Collect(maps.Keys(j.paths))
 }

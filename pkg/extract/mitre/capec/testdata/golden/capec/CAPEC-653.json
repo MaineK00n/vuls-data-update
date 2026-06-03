@@ -1,0 +1,83 @@
+{
+	"id": "CAPEC-653",
+	"name": "Use of Known Operating System Credentials",
+	"description": "An adversary guesses or obtains (i.e. steals or purchases) legitimate operating system credentials (e.g. userID/password) to achieve authentication and to perform authorized actions on the system, under the guise of an authenticated user or service. This applies to any Operating System.",
+	"extended_description": "\n            <xhtml:p>This attack can be extremely harmful when the operating system credentials used are for a root or admin user. Once an adversary gains access using credentials with elevated privileges, they are free to alter important system files which can effect other users who may use the system or other users on the system's network.</xhtml:p>\n         ",
+	"abstraction": "Standard",
+	"status": "Draft",
+	"likelihood_of_attack": "High",
+	"typical_severity": "High",
+	"domains": [
+		"Software"
+	],
+	"prerequisites": [
+		"The adversary possesses a list of known user accounts and corresponding passwords that may exist on the target.",
+		"The system/application does not have a sound password policy that is being enforced.",
+		"The system/application does not implement an effective password throttling mechanism.",
+		"The system/application uses one factor password-based authentication, SSO, and/or cloud-based authentication."
+	],
+	"skills_required": {
+		"low": "Once an adversary obtains a known credential, leveraging it is trivial."
+	},
+	"resources_required": [
+		"A custom script that leverages a credential list to launch an attack.",
+		"A list of known credentials for the targeted domain."
+	],
+	"consequences": {
+		"Access_Control": [
+			"Gain Privileges"
+		],
+		"Authentication": [
+			"Gain Privileges"
+		],
+		"Authorization": [
+			"Read Data"
+		],
+		"Confidentiality": [
+			"Gain Privileges",
+			"Read Data"
+		],
+		"Integrity": [
+			"Modify Data"
+		]
+	},
+	"example_instances": [
+		"Adversaries exploited the Zoom video conferencing application during the 2020 COVID-19 pandemic to exfiltrate Windows domain credentials from a target system. The attack entailed sending Universal Naming Convention (UNC) paths within the Zoom chat window of an unprotected Zoom call. If the victim clicked on the link, their Windows usernames and the corresponding Net-NTLM-v2 hashes were sent to the address contained in the link. The adversary was then able to infiltrate and laterally move within the Windows domain by passing the acquired credentials to shared network resources. This further provided adversaries with access to Outlook servers and network storage devices. [REF-575]",
+		"Mimikatz, a post-exploitation Windows credential harvester, can be used to gather and exploit Windows credentials. This malware has been used in several known cyberattacks, such as the Petya Ransomeware attacks. [REF-576]"
+	],
+	"execution_flow": "<h2> Execution Flow </h2><div><h3>Explore</h3><ol><li> <p> <b>Acquire known operating system credentials: </b>The adversary must obtain known operating system credentials in order to access the target system, application, or service within the domain.</p></li><table><tbody><tr><th>Techniques</th></tr><tr><td>An adversary purchases breached operating system username/password combinations or leaked hashed passwords from the dark web.</td></tr><tr><td>An adversary leverages a key logger or phishing attack to steal user credentials as they are provided.</td></tr><tr><td>An adversary conducts a sniffing attack to steal operating system credentials as they are transmitted.</td></tr><tr><td>An adversary gains access to a system/files and exfiltrates password hashes.</td></tr><tr><td>An adversary examines outward-facing configuration and properties files to discover hardcoded credentials.</td></tr></tbody></table></ol></div><div><h3>Experiment</h3><ol><li> <p> <b>Attempt authentication: </b>Try each operating system credential against various systems, applications, and services within the domain until the target grants access.</p></li><table><tbody><tr><th>Techniques</th></tr><tr><td>Manually or automatically enter each credential through the target's interface.</td></tr></tbody></table></ol></div><div><h3>Exploit</h3><ol><li> <p> <b>Impersonate: </b>An adversary can use successful experiments or authentications to impersonate an authorized user or system, or to laterally move within the network</p></li><li> <p> <b>Spoofing: </b>Malicious data can be injected into the target system or into other systems on the network. The adversary can also pose as a legitimate user to perform social engineering attacks.</p></li><li> <p> <b>Data Exfiltration: </b>The adversary can obtain sensitive data contained within system files or application configuration.</p></li></ol></div>",
+	"related_cwes": [
+		"CWE-262",
+		"CWE-263",
+		"CWE-307",
+		"CWE-308",
+		"CWE-309",
+		"CWE-522",
+		"CWE-654"
+	],
+	"can_follow": [
+		"CAPEC-70"
+	],
+	"version": "3.9",
+	"modified": "2022-09-29T00:00:00Z",
+	"references": [
+		{
+			"source": "capec.mitre.org",
+			"url": "https://arstechnica.com/information-technology/2020/04/unpatched-zoom-bug-lets-attackers-steal-windows-credentials-with-no-warning/"
+		},
+		{
+			"source": "capec.mitre.org",
+			"url": "https://blog.stealthbits.com/how-attackers-are-stealing-your-credentials-with-mimikatz/"
+		},
+		{
+			"source": "capec.mitre.org",
+			"url": "https://capec.mitre.org/data/definitions/653.html"
+		}
+	],
+	"data_source": {
+		"id": "mitre-capec",
+		"raws": [
+			"fixtures/attack-pattern/attack-pattern--2618d0a4-06d0-4bde-8271-2df61ed8297a.json"
+		]
+	}
+}
