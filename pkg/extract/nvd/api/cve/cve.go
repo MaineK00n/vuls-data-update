@@ -8,7 +8,6 @@ import (
 	"log/slog"
 	"path/filepath"
 	"runtime"
-	"slices"
 
 	"github.com/hashicorp/go-version"
 	"github.com/knqyf263/go-cpe/common"
@@ -383,6 +382,16 @@ func (e extractor) nodeToCriteria(n cveTypes.Node) (criteriaTypes.Criteria, erro
 			return criteriaTypes.Criteria{}, errors.Wrapf(err, "invalid format. CPE: %s", match.Criteria)
 		}
 		rangeType := decideRangeType(match)
+
+		var cpeMatches []string
+		if rangeType == rangeTypes.RangeTypeUnknown {
+			ns, err := e.cpeNamesFromCpematch(wfn, match.MatchCriteriaID)
+			if err != nil {
+				return criteriaTypes.Criteria{}, errors.Wrapf(err, "cpe names from cpematch. match criteria: %s", match.Criteria)
+			}
+			cpeMatches = ns
+		}
+
 		cn := criterionTypes.Criterion{
 			Type: criterionTypes.CriterionTypeCPE,
 			CPE: &cpecTypes.Criterion{
@@ -400,31 +409,13 @@ func (e extractor) nodeToCriteria(n cveTypes.Node) (criteriaTypes.Criteria, erro
 						LessThan:     match.VersionEndExcluding,
 					}
 				}(),
+				CPEMatches: cpeMatches,
 			},
-		}
-
-		cns := []criterionTypes.Criterion{cn}
-		if rangeType == rangeTypes.RangeTypeUnknown {
-			ns, err := e.cpeNamesFromCpematch(wfn, match.MatchCriteriaID)
-			if err != nil {
-				return criteriaTypes.Criteria{}, errors.Wrapf(err, "cpe names from cpematch. match criteria: %s", match.Criteria)
-			}
-
-			cns = slices.Grow(cns, 1+len(ns))
-			for _, n := range ns {
-				cns = append(cns, criterionTypes.Criterion{
-					Type: criterionTypes.CriterionTypeCPE,
-					CPE: &cpecTypes.Criterion{
-						Vulnerable: match.Vulnerable,
-						CPE:        cpecTypes.CPE(n),
-					},
-				})
-			}
 		}
 
 		ca.Criterias = append(ca.Criterias, criteriaTypes.Criteria{
 			Operator:   criteriaTypes.CriteriaOperatorTypeOR,
-			Criterions: cns,
+			Criterions: []criterionTypes.Criterion{cn},
 		})
 	}
 	return ca, nil
