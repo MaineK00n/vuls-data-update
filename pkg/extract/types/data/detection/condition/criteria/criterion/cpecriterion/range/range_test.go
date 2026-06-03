@@ -16,7 +16,59 @@ func TestCompare(t *testing.T) {
 		args args
 		want int
 	}{
-		// TODO: Add test cases.
+		{
+			name: "both empty",
+			args: args{x: cpecRangeTypes.Range{}, y: cpecRangeTypes.Range{}},
+			want: 0,
+		},
+		{
+			name: "identical",
+			args: args{
+				x: cpecRangeTypes.Range{GreaterEqual: "1.0.0", LessThan: "2.0.0"},
+				y: cpecRangeTypes.Range{GreaterEqual: "1.0.0", LessThan: "2.0.0"},
+			},
+			want: 0,
+		},
+		{
+			name: "ge smaller wins (lex)",
+			args: args{
+				x: cpecRangeTypes.Range{GreaterEqual: "1.0.0"},
+				y: cpecRangeTypes.Range{GreaterEqual: "2.0.0"},
+			},
+			want: -1,
+		},
+		{
+			name: "ge larger wins (lex)",
+			args: args{
+				x: cpecRangeTypes.Range{GreaterEqual: "2.0.0"},
+				y: cpecRangeTypes.Range{GreaterEqual: "1.0.0"},
+			},
+			want: +1,
+		},
+		{
+			name: "ge equal, gt empty < gt non-empty",
+			args: args{
+				x: cpecRangeTypes.Range{GreaterEqual: "1.0.0"},
+				y: cpecRangeTypes.Range{GreaterEqual: "1.0.0", GreaterThan: "1.5.0"},
+			},
+			want: -1,
+		},
+		{
+			name: "ge/gt equal, lt differs",
+			args: args{
+				x: cpecRangeTypes.Range{GreaterEqual: "1.0.0", LessThan: "2.0.0"},
+				y: cpecRangeTypes.Range{GreaterEqual: "1.0.0", LessThan: "3.0.0"},
+			},
+			want: -1,
+		},
+		{
+			name: "ge/gt/le equal, lt differs (last field of cmp.Or chain)",
+			args: args{
+				x: cpecRangeTypes.Range{LessEqual: "2.0.0", LessThan: "3.0.0"},
+				y: cpecRangeTypes.Range{LessEqual: "2.0.0", LessThan: "2.5.0"},
+			},
+			want: +1,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
