@@ -133,6 +133,13 @@ func (r Range) Accept(v string) (bool, error) {
 }
 
 func (r Range) acceptWith(v string, parse func(string) (*version.Version, error)) (bool, error) {
+	// No bounds → no narrowing. Short-circuit before parsing v so an empty
+	// Range with an unparseable query still returns true (treat empty
+	// constraints as "accept anything").
+	if r.GreaterEqual == "" && r.GreaterThan == "" && r.LessEqual == "" && r.LessThan == "" {
+		return true, nil
+	}
+
 	qv, err := parse(v)
 	if err != nil {
 		return false, nil

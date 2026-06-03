@@ -88,6 +88,7 @@ func TestRange_Accept(t *testing.T) {
 		wantErr bool
 	}{
 		{name: "empty range matches anything", r: cpecRangeTypes.Range{Type: cpecRangeTypes.RangeTypeSEMVER}, v: "1.0.0", want: true},
+		{name: "empty range matches even unparseable v", r: cpecRangeTypes.Range{Type: cpecRangeTypes.RangeTypeSEMVER}, v: "not-a-semver", want: true},
 		{name: "ge inclusive lower, equal", r: cpecRangeTypes.Range{Type: cpecRangeTypes.RangeTypeSEMVER, GreaterEqual: "1.0.0"}, v: "1.0.0", want: true},
 		{name: "ge inclusive lower, below", r: cpecRangeTypes.Range{Type: cpecRangeTypes.RangeTypeSEMVER, GreaterEqual: "1.0.0"}, v: "0.9.9", want: false},
 		{name: "gt exclusive lower, equal rejected", r: cpecRangeTypes.Range{Type: cpecRangeTypes.RangeTypeSEMVER, GreaterThan: "1.0.0"}, v: "1.0.0", want: false},
