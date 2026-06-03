@@ -48,7 +48,7 @@ type Criterion struct {
 	Vulnerable bool              `json:"vulnerable,omitempty"`
 	CPE        CPE               `json:"cpe,omitempty"`
 	Range      *rangeTypes.Range `json:"range,omitempty"`
-	CPEMatches []string          `json:"cpe_matches,omitempty"`
+	CPEMatches []CPE             `json:"cpe_matches,omitempty"`
 }
 
 func (c *Criterion) Sort() {
@@ -133,9 +133,9 @@ func (c Criterion) Accept(query Query) (bool, error) {
 	// nor Range accepted (out-of-Range exceptions), or (b) main CPE was
 	// disjoint (defensive — covers edition-divergence cases in source data).
 	for _, m := range c.CPEMatches {
-		mWFN, err := naming.UnbindFS(m)
+		mWFN, err := naming.UnbindFS(string(m))
 		if err != nil {
-			return false, errors.Wrapf(err, "unbind %q to WFN", m)
+			return false, errors.Wrapf(err, "unbind %q to WFN", string(m))
 		}
 		if !matching.IsDisjoint(qWFN, mWFN) {
 			return true, nil

@@ -11,7 +11,7 @@ func TestCriterion_Accept(t *testing.T) {
 	type fields struct {
 		Vulnerable bool
 		CPE        cpecTypes.CPE
-		CPEMatches []string
+		CPEMatches []cpecTypes.CPE
 		Range      *cpecRangeTypes.Range
 	}
 	type args struct {
@@ -194,7 +194,7 @@ func TestCriterion_Accept(t *testing.T) {
 			fields: fields{
 				Vulnerable: true,
 				CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
-				CPEMatches: []string{
+				CPEMatches: []cpecTypes.CPE{
 					"cpe:2.3:a:vendor:product:15.4\\(2\\)t1:*:*:*:*:*:*:*",
 					"cpe:2.3:a:vendor:product:15.4\\(3\\)m:*:*:*:*:*:*:*",
 				},
@@ -207,7 +207,7 @@ func TestCriterion_Accept(t *testing.T) {
 			fields: fields{
 				Vulnerable: true,
 				CPE:        "cpe:2.3:a:vendor:productX:*:*:*:*:*:*:*:*",
-				CPEMatches: []string{
+				CPEMatches: []cpecTypes.CPE{
 					"cpe:2.3:a:vendor:productY:15.4\\(2\\)t1:*:*:*:*:*:*:*",
 				},
 			},
@@ -230,7 +230,7 @@ func TestCriterion_Accept(t *testing.T) {
 				Vulnerable: true,
 				CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
 				Range:      &cpecRangeTypes.Range{Type: cpecRangeTypes.RangeTypeSEMVER, LessThan: "2.0.0"},
-				CPEMatches: []string{"cpe:2.3:a:vendor:product:3.5.0:*:*:*:*:*:*:*"},
+				CPEMatches: []cpecTypes.CPE{"cpe:2.3:a:vendor:product:3.5.0:*:*:*:*:*:*:*"},
 			},
 			args: args{query: cpecTypes.Query{CPE: "cpe:2.3:a:vendor:product:3.5.0:*:*:*:*:*:*:*"}},
 			want: true,
@@ -241,7 +241,7 @@ func TestCriterion_Accept(t *testing.T) {
 				Vulnerable: true,
 				CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
 				Range:      &cpecRangeTypes.Range{Type: cpecRangeTypes.RangeTypeSEMVER, LessThan: "2.0.0"},
-				CPEMatches: []string{"cpe:2.3:a:vendor:product:3.5.0:*:*:*:*:*:*:*"},
+				CPEMatches: []cpecTypes.CPE{"cpe:2.3:a:vendor:product:3.5.0:*:*:*:*:*:*:*"},
 			},
 			args: args{query: cpecTypes.Query{CPE: "cpe:2.3:a:vendor:product:1.5.0:*:*:*:*:*:*:*"}},
 			want: true,
@@ -252,7 +252,7 @@ func TestCriterion_Accept(t *testing.T) {
 				Vulnerable: true,
 				CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
 				Range:      &cpecRangeTypes.Range{Type: cpecRangeTypes.RangeTypeSEMVER, LessThan: "2.0.0"},
-				CPEMatches: []string{"cpe:2.3:a:vendor:product:3.5.0:*:*:*:*:*:*:*"},
+				CPEMatches: []cpecTypes.CPE{"cpe:2.3:a:vendor:product:3.5.0:*:*:*:*:*:*:*"},
 			},
 			args: args{query: cpecTypes.Query{CPE: "cpe:2.3:a:vendor:product:5.0.0:*:*:*:*:*:*:*"}},
 			want: false,
@@ -263,7 +263,7 @@ func TestCriterion_Accept(t *testing.T) {
 				Vulnerable: true,
 				CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
 				Range:      &cpecRangeTypes.Range{Type: cpecRangeTypes.RangeTypeUnknown, LessThan: "15.4(3)m"},
-				CPEMatches: []string{"cpe:2.3:a:vendor:product:15.4\\(2\\)t1:*:*:*:*:*:*:*"},
+				CPEMatches: []cpecTypes.CPE{"cpe:2.3:a:vendor:product:15.4\\(2\\)t1:*:*:*:*:*:*:*"},
 			},
 			args: args{query: cpecTypes.Query{CPE: "cpe:2.3:a:vendor:product:15.4\\(2\\)t1:*:*:*:*:*:*:*"}},
 			want: true,

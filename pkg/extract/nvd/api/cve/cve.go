@@ -383,13 +383,16 @@ func (e extractor) nodeToCriteria(n cveTypes.Node) (criteriaTypes.Criteria, erro
 		}
 		rangeType := decideRangeType(match)
 
-		var cpeMatches []string
+		var cpeMatches []cpecTypes.CPE
 		if rangeType == rangeTypes.RangeTypeUnknown {
 			ns, err := e.cpeNamesFromCpematch(wfn, match.MatchCriteriaID)
 			if err != nil {
 				return criteriaTypes.Criteria{}, errors.Wrapf(err, "cpe names from cpematch. match criteria: %s", match.Criteria)
 			}
-			cpeMatches = ns
+			cpeMatches = make([]cpecTypes.CPE, 0, len(ns))
+			for _, n := range ns {
+				cpeMatches = append(cpeMatches, cpecTypes.CPE(n))
+			}
 		}
 
 		cn := criterionTypes.Criterion{
