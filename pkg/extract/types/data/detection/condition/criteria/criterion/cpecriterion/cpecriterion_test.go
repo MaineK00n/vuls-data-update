@@ -258,6 +258,51 @@ func TestCriterion_Accept(t *testing.T) {
 			want: false,
 		},
 		{
+			name: "accept (no narrowing): wildcard pattern matches concrete query",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
+			},
+			args: args{query: cpecTypes.Query{CPE: "cpe:2.3:a:vendor:product:0.0.1:*:*:*:*:*:*:*"}},
+			want: true,
+		},
+		{
+			name: "different vendor",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
+			},
+			args: args{query: cpecTypes.Query{CPE: "cpe:2.3:a:other:product:0.0.1:*:*:*:*:*:*:*"}},
+			want: false,
+		},
+		{
+			name: "different product",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
+			},
+			args: args{query: cpecTypes.Query{CPE: "cpe:2.3:a:vendor:other:0.0.1:*:*:*:*:*:*:*"}},
+			want: false,
+		},
+		{
+			name: "pattern has target_sw, query has same target_sw",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:wordpress:*:*",
+			},
+			args: args{query: cpecTypes.Query{CPE: "cpe:2.3:a:vendor:product:1.0:*:*:*:*:wordpress:*:*"}},
+			want: true,
+		},
+		{
+			name: "pattern has sw_edition, query has wildcard",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:enterprise:*:*:*",
+			},
+			args: args{query: cpecTypes.Query{CPE: "cpe:2.3:a:vendor:product:1.0:*:*:*:*:*:*:*"}},
+			want: true,
+		},
+		{
 			name: "non-semver Range stored as-is, CPEMatches covers all enumerated versions",
 			fields: fields{
 				Vulnerable: true,
