@@ -1,6 +1,7 @@
 package cpecriterionrange_test
 
 import (
+	stderrors "errors"
 	"testing"
 
 	ccRangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/cpecriterion/range"
@@ -196,11 +197,16 @@ func TestRange_Accept(t *testing.T) {
 			want: false,
 		},
 		{
-			name:    "unparseable bound surfaces error",
-			r:       ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeSEMVER, LessThan: "not-a-semver"},
-			v:       "1.0.0",
-			want:    false,
-			wantErr: true,
+			name: "unparseable bound is swallowed as graceful non-match (CompareError classified)",
+			r:    ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeSEMVER, LessThan: "not-a-semver"},
+			v:    "1.0.0",
+			want: false,
+		},
+		{
+			name: "empty range with Type=Unknown returns false",
+			r:    ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeUnknown},
+			v:    "1.0.0",
+			want: false,
 		},
 	}
 	for _, tt := range tests {
@@ -214,5 +220,55 @@ func TestRange_Accept(t *testing.T) {
 				t.Errorf("Accept() = %v, want %v", got, tt.want)
 			}
 		})
+	}
+}
+
+func TestRangeType_Compare(t *testing.T) {
+	tests := []struct {
+		name           string
+		t              ccRangeTypes.RangeType
+		v1, v2         string
+		want           int
+		wantCompareErr bool // expect *CompareError-wrapped failure (parse / unknown type)
+		wantOtherErr   bool // expect a non-CompareError (e.g. unsupported type)
+	}{
+		{name: "semver: v1 < v2", t: ccRangeTypes.RangeTypeSEMVER, v1: "1.0.0", v2: "2.0.0", want: -1},
+		{name: "semver: equal", t: ccRangeTypes.RangeTypeSEMVER, v1: "1.0.0", v2: "1.0.0", want: 0},
+		{name: "semver: v1 > v2", t: ccRangeTypes.RangeTypeSEMVER, v1: "2.0.0", v2: "1.0.0", want: 1},
+		{name: "semver: v1 unparseable → CompareError", t: ccRangeTypes.RangeTypeSEMVER, v1: "not-a-semver", v2: "1.0.0", wantCompareErr: true},
+		{name: "semver: v2 unparseable → CompareError", t: ccRangeTypes.RangeTypeSEMVER, v1: "1.0.0", v2: "not-a-semver", wantCompareErr: true},
+		{name: "version (loose): 4-segment v1 < v2", t: ccRangeTypes.RangeTypeVersion, v1: "9.16.19.0", v2: "9.16.20.0", want: -1},
+		{name: "version (loose): v1 unparseable → CompareError", t: ccRangeTypes.RangeTypeVersion, v1: "x.y.z.w.q", v2: "1.0", wantCompareErr: true},
+		{name: "Unknown → CompareError wrapping ErrRangeTypeUnknown", t: ccRangeTypes.RangeTypeUnknown, v1: "1.0.0", v2: "2.0.0", wantCompareErr: true},
+		{name: "unset (zero) RangeType collapses to Unknown → CompareError", t: ccRangeTypes.RangeType(0), v1: "1.0.0", v2: "2.0.0", wantCompareErr: true},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := tt.t.Compare(tt.v1, tt.v2)
+			isCompareErr := false
+			if err != nil {
+				_, isCompareErr = stderrors.AsType[*ccRangeTypes.CompareError](err)
+			}
+			switch {
+			case tt.wantCompareErr && !isCompareErr:
+				t.Errorf("Compare() error = %v, want *CompareError", err)
+			case tt.wantOtherErr && (err == nil || isCompareErr):
+				t.Errorf("Compare() error = %v, want non-CompareError", err)
+			case !tt.wantCompareErr && !tt.wantOtherErr && err != nil:
+				t.Errorf("Compare() unexpected error: %v", err)
+			case err == nil && got != tt.want:
+				t.Errorf("Compare() = %d, want %d", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestErrRangeTypeUnknown_Wrapped(t *testing.T) {
+	_, err := ccRangeTypes.RangeTypeUnknown.Compare("1.0.0", "2.0.0")
+	if err == nil {
+		t.Fatal("expected error")
+	}
+	if !stderrors.Is(err, ccRangeTypes.ErrRangeTypeUnknown) {
+		t.Errorf("expected ErrRangeTypeUnknown via errors.Is; got %v", err)
 	}
 }
