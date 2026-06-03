@@ -22,12 +22,13 @@ type CPE string
 //     also covers — used for entries that fall OUTSIDE Range (e.g. NVD listed
 //     versions that don't satisfy the semver bounds) or that Range cannot
 //     evaluate at all (non-semver versions)
-//   - Vulnerable: whether this criterion marks the vulnerable side (false is
-//     used for hardware guards under AND configurations)
+//   - Vulnerable: a tag for downstream consumers (e.g. to distinguish the
+//     vulnerable side from a hardware guard under AND); NOT consulted by
+//     Accept (consistent with versioncriterion.Criterion.Accept)
 //
 // Detection semantics (see Accept):
 //
-//	Vulnerable AND CPE-attr-match AND (
+//	CPE-attr-match AND (
 //	    c.version=="NA"                       // NA short-circuit (ignores narrowing)
 //	    OR (Range==nil AND CPEMatches==nil)   // no narrowing
 //	    OR query-version is ANY/NA            // no concrete version to compare
