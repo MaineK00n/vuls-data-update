@@ -7,6 +7,7 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/go-version"
+	"github.com/pkg/errors"
 )
 
 // RangeType selects the version comparator used by Accept. Extractors must
@@ -114,10 +115,15 @@ func Compare(x, y Range) int {
 }
 
 // Accept returns true when v satisfies every non-empty bound on r, parsing
-// both r's bounds and v with the comparator selected by r.Type. An
-// unparseable version (bound or query) is treated as "out of range" without
-// an error so callers can still try alternative detection paths (e.g.
-// CPEMatches enumeration).
+// both r's bounds and v with the comparator selected by r.Type. The query v
+// is runtime input (typically a CPE version attribute from a scan target),
+// so a parse failure on v is treated as "out of range" without an error.
+// The bound strings (GreaterEqual / GreaterThan / LessEqual / LessThan), in
+// contrast, are produced by extractors that validate parseability at
+// extract time when they set r.Type — a parse failure on a bound therefore
+// indicates a data-invariant violation (corrupted extracted data, wrong
+// Type, or an extractor bug) and is surfaced as an error rather than
+// silently masked as a non-match.
 //
 // Unknown (or unset) Type returns (false, nil) — the data lacked enough
 // information to evaluate.
@@ -142,13 +148,14 @@ func (r Range) acceptWith(v string, parse func(string) (*version.Version, error)
 
 	qv, err := parse(v)
 	if err != nil {
+		// Runtime input — graceful non-match.
 		return false, nil
 	}
 
 	if r.GreaterEqual != "" {
 		bv, err := parse(r.GreaterEqual)
 		if err != nil {
-			return false, nil
+			return false, errors.Wrapf(err, "parse bound ge %q", r.GreaterEqual)
 		}
 		if qv.Compare(bv) < 0 {
 			return false, nil
@@ -157,7 +164,7 @@ func (r Range) acceptWith(v string, parse func(string) (*version.Version, error)
 	if r.GreaterThan != "" {
 		bv, err := parse(r.GreaterThan)
 		if err != nil {
-			return false, nil
+			return false, errors.Wrapf(err, "parse bound gt %q", r.GreaterThan)
 		}
 		if qv.Compare(bv) <= 0 {
 			return false, nil
@@ -166,7 +173,7 @@ func (r Range) acceptWith(v string, parse func(string) (*version.Version, error)
 	if r.LessEqual != "" {
 		bv, err := parse(r.LessEqual)
 		if err != nil {
-			return false, nil
+			return false, errors.Wrapf(err, "parse bound le %q", r.LessEqual)
 		}
 		if qv.Compare(bv) > 0 {
 			return false, nil
@@ -175,7 +182,7 @@ func (r Range) acceptWith(v string, parse func(string) (*version.Version, error)
 	if r.LessThan != "" {
 		bv, err := parse(r.LessThan)
 		if err != nil {
-			return false, nil
+			return false, errors.Wrapf(err, "parse bound lt %q", r.LessThan)
 		}
 		if qv.Compare(bv) >= 0 {
 			return false, nil

@@ -105,6 +105,7 @@ func TestRange_Accept(t *testing.T) {
 		{name: "Version (loose) rejects above bound", r: cpecRangeTypes.Range{Type: cpecRangeTypes.RangeTypeVersion, LessThan: "9.16.20.0"}, v: "9.16.21.0", want: false},
 		{name: "Unknown type never matches", r: cpecRangeTypes.Range{Type: cpecRangeTypes.RangeTypeUnknown, LessThan: "2.0.0"}, v: "1.0.0", want: false},
 		{name: "unset type (zero) treated as unknown", r: cpecRangeTypes.Range{LessThan: "2.0.0"}, v: "1.0.0", want: false},
+		{name: "unparseable bound surfaces error", r: cpecRangeTypes.Range{Type: cpecRangeTypes.RangeTypeSEMVER, LessThan: "not-a-semver"}, v: "1.0.0", want: false, wantErr: true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
