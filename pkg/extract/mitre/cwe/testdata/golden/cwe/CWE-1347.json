@@ -1,0 +1,27 @@
+{
+	"id": "CWE-1347",
+	"kind": "category",
+	"name": "OWASP Top Ten 2021 Category A03:2021 - Injection",
+	"status": "Incomplete",
+	"description": "Weaknesses in this category are related to the A03 category in the OWASP Top Ten 2021.",
+	"category": {
+		"members": [
+			{
+				"cweid": "CWE-79",
+				"view_id": "CWE-1344"
+			}
+		]
+	},
+	"references": [
+		{
+			"source": "cwe.mitre.org",
+			"url": "https://cwe.mitre.org/data/definitions/1347.html"
+		}
+	],
+	"data_source": {
+		"id": "mitre-cwe",
+		"raws": [
+			"fixtures/category/1347.json"
+		]
+	}
+}

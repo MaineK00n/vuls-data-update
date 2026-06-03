@@ -1,0 +1,44 @@
+{
+	"id": "CWE-1435",
+	"kind": "view",
+	"name": "Weaknesses in the 2025 CWE Top 25 Most Dangerous Software Weaknesses",
+	"status": "Draft",
+	"description": "CWE entries in this view are listed in the 2025 CWE Top 25 Most Dangerous Software Weaknesses.",
+	"view": {
+		"type": "Graph",
+		"members": [
+			{
+				"cweid": "CWE-352",
+				"view_id": "CWE-1435"
+			},
+			{
+				"cweid": "CWE-787",
+				"view_id": "CWE-1435"
+			},
+			{
+				"cweid": "CWE-79",
+				"view_id": "CWE-1435"
+			},
+			{
+				"cweid": "CWE-862",
+				"view_id": "CWE-1435"
+			},
+			{
+				"cweid": "CWE-89",
+				"view_id": "CWE-1435"
+			}
+		]
+	},
+	"references": [
+		{
+			"source": "cwe.mitre.org",
+			"url": "https://cwe.mitre.org/data/definitions/1435.html"
+		}
+	],
+	"data_source": {
+		"id": "mitre-cwe",
+		"raws": [
+			"fixtures/view/1435.json"
+		]
+	}
+}

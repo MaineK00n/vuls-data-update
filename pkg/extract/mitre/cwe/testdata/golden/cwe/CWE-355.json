@@ -76,6 +76,12 @@
 			]
 		}
 	},
+	"references": [
+		{
+			"source": "cwe.mitre.org",
+			"url": "https://cwe.mitre.org/data/definitions/355.html"
+		}
+	],
 	"data_source": {
 		"id": "mitre-cwe",
 		"raws": [

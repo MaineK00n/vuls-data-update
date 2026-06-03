@@ -14,6 +14,7 @@ import (
 	detectionmethodTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/cwe/weakness/detectionmethod"
 	modeofintroductionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/cwe/weakness/modeofintroduction"
 	potentialmitigationTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/cwe/weakness/potentialmitigation"
+	rankingTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/cwe/weakness/ranking"
 	relatedweaknessTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/cwe/weakness/relatedweakness"
 	weaknessordinalityTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/cwe/weakness/weaknessordinality"
 )
@@ -39,6 +40,7 @@ type Weakness struct {
 	DetectionMethods      []detectionmethodTypes.DetectionMethod           `json:"detection_methods,omitempty"`
 	TaxonomyMappings      []taxonomymappingTypes.TaxonomyMapping           `json:"taxonomy_mappings,omitempty"`
 	Notes                 []noteTypes.Note                                 `json:"notes,omitempty"`
+	Rankings              []rankingTypes.Ranking                           `json:"rankings,omitempty"` // CWE Top 25 / OWASP / CWE-SANS placements, derived from ranking lists
 	MappingNotes          mappingnotesTypes.MappingNotes                   `json:"mapping_notes,omitzero"`
 }
 
@@ -67,6 +69,7 @@ func (w *Weakness) Sort() {
 	slices.SortFunc(w.DetectionMethods, detectionmethodTypes.Compare)
 	slices.SortFunc(w.TaxonomyMappings, taxonomymappingTypes.Compare)
 	slices.SortFunc(w.Notes, noteTypes.Compare)
+	slices.SortFunc(w.Rankings, rankingTypes.Compare)
 	w.MappingNotes.Sort()
 }
 
@@ -92,6 +95,7 @@ func Compare(x, y Weakness) int {
 		slices.CompareFunc(x.DetectionMethods, y.DetectionMethods, detectionmethodTypes.Compare),
 		slices.CompareFunc(x.TaxonomyMappings, y.TaxonomyMappings, taxonomymappingTypes.Compare),
 		slices.CompareFunc(x.Notes, y.Notes, noteTypes.Compare),
+		slices.CompareFunc(x.Rankings, y.Rankings, rankingTypes.Compare),
 		mappingnotesTypes.Compare(x.MappingNotes, y.MappingNotes),
 	)
 }

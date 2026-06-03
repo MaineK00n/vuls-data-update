@@ -1,0 +1,12 @@
+{
+	"id": "1440",
+	"name": "OWASP Top Ten 2025 Category A05:2025 - Injection",
+	"status": "Incomplete",
+	"summary": "Weaknesses in this category are related to the A05 category in the OWASP Top Ten 2025.",
+	"relationships": [
+		{
+			"cweid": "79",
+			"view_id": "1450"
+		}
+	]
+}

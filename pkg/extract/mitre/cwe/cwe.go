@@ -6,6 +6,9 @@ import (
 	"log/slog"
 	"path/filepath"
 	"slices"
+	"strconv"
+	"strings"
+	"unicode"
 
 	"github.com/pkg/errors"
 
@@ -27,6 +30,7 @@ import (
 	detectionmethodTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/cwe/weakness/detectionmethod"
 	modeofintroductionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/cwe/weakness/modeofintroduction"
 	potentialmitigationTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/cwe/weakness/potentialmitigation"
+	rankingTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/cwe/weakness/ranking"
 	relatedweaknessTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/cwe/weakness/relatedweakness"
 	weaknessordinalityTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/cwe/weakness/weaknessordinality"
 	referenceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/reference"
@@ -71,6 +75,14 @@ func Extract(args string, opts ...Option) error {
 	}
 
 	slog.Info("Extract MITRE CWE")
+	// Derive ranking placements (CWE Top 25 / OWASP Top Ten / CWE/SANS Top 25)
+	// up front, keyed by ranked weakness CWE ID, so each weakness can carry its
+	// placements as it is extracted below.
+	rankings, err := buildRankings(args)
+	if err != nil {
+		return errors.Wrapf(err, "build rankings from %s", args)
+	}
+
 	if err := filepath.WalkDir(args, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
@@ -88,7 +100,7 @@ func Extract(args string, opts ...Option) error {
 		kind := filepath.Base(filepath.Dir(path))
 		switch kind {
 		case "weakness":
-			return extractWeakness(path, args, options.dir)
+			return extractWeakness(path, args, options.dir, rankings)
 		case "category":
 			return extractCategory(path, args, options.dir)
 		case "view":
@@ -123,15 +135,135 @@ func Extract(args string, opts ...Option) error {
 	return nil
 }
 
-func extractWeakness(path, args, outDir string) error {
+// owaspCategoryRank returns the rank of an OWASP Top Ten "A0N" category from its
+// name (e.g. 3 from "OWASP Top Ten 2021 Category A03:2021 - Injection"). OWASP
+// views only ever contain "A0N" tier categories, so a name not in that form is
+// reported as an error rather than skipped. Both the modern "A03:YYYY" and older
+// "A6 - ..." spellings are handled.
+func owaspCategoryRank(name string) (int, error) {
+	before, after, found := strings.Cut(name, " Category A")
+	if !found || !strings.HasPrefix(before, "OWASP Top Ten ") {
+		return 0, errors.Errorf("unexpected OWASP category name. expected: %q, actual: %q", "OWASP Top Ten <year> Category A<N> ...", name)
+	}
+	// after begins with the tier number ("03:2021 - ..." / "6 - ..."); its
+	// leading run of digits, up to the first non-digit, is the rank.
+	end := strings.IndexFunc(after, func(r rune) bool { return !unicode.IsDigit(r) })
+	if end < 0 {
+		end = len(after)
+	}
+	rank, err := strconv.Atoi(after[:end])
+	if err != nil {
+		return 0, errors.Wrapf(err, "parse rank from OWASP category name %q", name)
+	}
+	return rank, nil
+}
+
+// rankingIndex holds, keyed by ranked weakness CWE ID (e.g. "CWE-79"), the
+// placements to attach to each weakness and the ranking-list raw files those
+// placements derive from.
+type rankingIndex struct {
+	placements map[string][]rankingTypes.Ranking
+	rawPaths   map[string][]string
+}
+
+// buildRankings scans the ranking lists and returns a rankingIndex. Two list
+// shapes are recognized:
+//   - the "CWE Top 25" and "CWE/SANS Top 25" views, whose flat rank and
+//     (HTML-only) score come from the supplemental data; the catalog view
+//     supplies only the list name;
+//   - the OWASP Top Ten views, whose member "A0N" categories carry the rank and
+//     whose member weaknesses inherit it.
+//
+// The raw path of every view/category actually read is recorded against each
+// ranked weakness so the placement's provenance lands in the weakness's Raws.
+func buildRankings(args string) (rankingIndex, error) {
+	idx := rankingIndex{
+		placements: make(map[string][]rankingTypes.Ranking),
+		rawPaths:   make(map[string][]string),
+	}
+	add := func(cweID string, r rankingTypes.Ranking, raws ...string) {
+		idx.placements[cweID] = append(idx.placements[cweID], r)
+		idx.rawPaths[cweID] = append(idx.rawPaths[cweID], raws...)
+	}
+	if err := filepath.WalkDir(filepath.Join(args, "view"), func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		if d.IsDir() || filepath.Ext(path) != ".json" {
+			return nil
+		}
+
+		vr := utiljson.NewJSONReader()
+		var v cwe.View
+		if err := vr.Read(path, args, &v); err != nil {
+			return errors.Wrapf(err, "read json %s", path)
+		}
+		viewID := fmt.Sprintf("CWE-%s", v.ID)
+		viewRaw := vr.Paths()[0]
+		switch {
+		case strings.Contains(v.Name, "CWE Top 25 Most Dangerous Software"),
+			strings.Contains(v.Name, "CWE/SANS Top 25"):
+			// The flat rank and the (HTML-only) score come from the supplemental
+			// data, in rank order; the catalog view supplies only the list name.
+			// A matched view with no supplemental data is an error, not a
+			// silently empty ranking.
+			entries, ok := supplementalRankings[viewID]
+			if !ok {
+				return errors.Errorf("no supplemental ranking data for %q (%s)", v.Name, viewID)
+			}
+			for i, e := range entries {
+				add(e.cwe, rankingTypes.Ranking{
+					ViewID:   viewID,
+					ViewName: v.Name,
+					Rank:     i + 1,
+					Score:    e.score,
+				}, viewRaw)
+			}
+		case strings.Contains(v.Name, "OWASP Top Ten"):
+			// Members are the "A0N" tier categories; read each on demand for its
+			// rank (the A number) and the weaknesses that inherit it.
+			for _, m := range v.Members {
+				categoryPath := filepath.Join(args, "category", fmt.Sprintf("%s.json", m.CWEID))
+				cr := utiljson.NewJSONReader()
+				var c cwe.Category
+				if err := cr.Read(categoryPath, args, &c); err != nil {
+					return errors.Wrapf(err, "read json %s", categoryPath)
+				}
+				rank, err := owaspCategoryRank(c.Name)
+				if err != nil {
+					return errors.Wrapf(err, "rank %s", categoryPath)
+				}
+				categoryID := fmt.Sprintf("CWE-%s", c.ID)
+				catRaw := cr.Paths()[0]
+				for _, wm := range c.Relationships {
+					add(fmt.Sprintf("CWE-%s", wm.CWEID), rankingTypes.Ranking{
+						ViewID:       viewID,
+						ViewName:     v.Name,
+						CategoryID:   categoryID,
+						CategoryName: c.Name,
+						Rank:         rank,
+					}, viewRaw, catRaw)
+				}
+			}
+		}
+		return nil
+	}); err != nil {
+		return rankingIndex{}, errors.Wrapf(err, "walk %s", filepath.Join(args, "view"))
+	}
+	return idx, nil
+}
+
+func extractWeakness(path, args, outDir string, rankings rankingIndex) error {
 	r := utiljson.NewJSONReader()
 	var w cwe.Weakness
 	if err := r.Read(path, args, &w); err != nil {
 		return errors.Wrapf(err, "read json %s", path)
 	}
 
+	cweID := fmt.Sprintf("CWE-%s", w.ID)
+
 	extracted := cweTypes.CWE{
-		ID:          fmt.Sprintf("CWE-%s", w.ID),
+		ID:          cweID,
 		Kind:        "weakness",
 		Name:        w.Name,
 		Status:      w.Status,
@@ -281,11 +413,12 @@ func extractWeakness(path, args, outDir string) error {
 			}(),
 			Notes:        collectNotes(w.Notes),
 			MappingNotes: convertMappingNotes(w.MappingNotes),
+			Rankings:     slices.Clone(rankings.placements[cweID]),
 		},
-		References: extractReferences(w.References),
+		References: extractReferences(w.ID, w.References),
 		DataSource: sourceTypes.Source{
 			ID:   sourceTypes.MitreCWE,
-			Raws: r.Paths(),
+			Raws: util.Unique(slices.Concat(r.Paths(), rankings.rawPaths[cweID])),
 		},
 	}
 
@@ -334,7 +467,7 @@ func extractCategory(path, args, outDir string) error {
 			Notes:        collectNotes(c.Notes),
 			MappingNotes: convertMappingNotes(c.MappingNotes),
 		},
-		References: extractReferences(c.References),
+		References: extractReferences(c.ID, c.References),
 		DataSource: sourceTypes.Source{
 			ID:   sourceTypes.MitreCWE,
 			Raws: r.Paths(),
@@ -385,7 +518,7 @@ func extractView(path, args, outDir string) error {
 			Notes:        collectNotes(v.Notes),
 			MappingNotes: convertMappingNotes(v.MappingNotes),
 		},
-		References: extractReferences(v.References),
+		References: extractReferences(v.ID, v.References),
 		DataSource: sourceTypes.Source{
 			ID:   sourceTypes.MitreCWE,
 			Raws: r.Paths(),
@@ -398,8 +531,17 @@ func extractView(path, args, outDir string) error {
 	return nil
 }
 
-func extractReferences(refs []cwe.Reference) []referenceTypes.Reference {
-	out := make([]referenceTypes.Reference, 0, len(refs))
+// extractReferences returns the CWE entry's own definition-page URL together
+// with its External_References. id is the bare numeric CWE ID (e.g. "1007").
+// The definition-page URL is always included so every entry self-references its
+// canonical page, mirroring how the NVD extractor adds the vuln/detail link.
+// The returned order is not significant; util.Write sorts references on output.
+func extractReferences(id string, refs []cwe.Reference) []referenceTypes.Reference {
+	out := make([]referenceTypes.Reference, 0, len(refs)+1)
+	out = append(out, referenceTypes.Reference{
+		Source: "cwe.mitre.org",
+		URL:    fmt.Sprintf("https://cwe.mitre.org/data/definitions/%s.html", id),
+	})
 	for _, r := range refs {
 		if r.URL == "" {
 			continue

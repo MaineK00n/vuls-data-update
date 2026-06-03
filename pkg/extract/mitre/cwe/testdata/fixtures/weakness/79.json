@@ -1,0 +1,9 @@
+{
+	"id": "79",
+	"name": "Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')",
+	"abstraction": "Base",
+	"structure": "Simple",
+	"status": "Stable",
+	"diagram": "/data/images/CWE-79-Diagram.png",
+	"description": "The product does not neutralize or incorrectly neutralizes user-controllable input before it is placed in output that is used as a web page that is served to other users."
+}

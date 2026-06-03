@@ -199,6 +199,12 @@
 			]
 		}
 	},
+	"references": [
+		{
+			"source": "cwe.mitre.org",
+			"url": "https://cwe.mitre.org/data/definitions/699.html"
+		}
+	],
 	"data_source": {
 		"id": "mitre-cwe",
 		"raws": [

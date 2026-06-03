@@ -1,0 +1,12 @@
+{
+	"id": "1347",
+	"name": "OWASP Top Ten 2021 Category A03:2021 - Injection",
+	"status": "Incomplete",
+	"summary": "Weaknesses in this category are related to the A03 category in the OWASP Top Ten 2021.",
+	"relationships": [
+		{
+			"cweid": "79",
+			"view_id": "1344"
+		}
+	]
+}

@@ -1,0 +1,40 @@
+{
+	"id": "CWE-900",
+	"kind": "view",
+	"name": "Weaknesses in the 2011 CWE/SANS Top 25 Most Dangerous Software Errors",
+	"status": "Obsolete",
+	"description": "CWE entries in this view are listed in the 2011 CWE/SANS Top 25 Most Dangerous Software Errors.",
+	"view": {
+		"type": "Graph",
+		"members": [
+			{
+				"cweid": "CWE-864",
+				"view_id": "CWE-900"
+			},
+			{
+				"cweid": "CWE-865",
+				"view_id": "CWE-900"
+			},
+			{
+				"cweid": "CWE-866",
+				"view_id": "CWE-900"
+			},
+			{
+				"cweid": "CWE-867",
+				"view_id": "CWE-900"
+			}
+		]
+	},
+	"references": [
+		{
+			"source": "cwe.mitre.org",
+			"url": "https://cwe.mitre.org/data/definitions/900.html"
+		}
+	],
+	"data_source": {
+		"id": "mitre-cwe",
+		"raws": [
+			"fixtures/view/900.json"
+		]
+	}
+}
