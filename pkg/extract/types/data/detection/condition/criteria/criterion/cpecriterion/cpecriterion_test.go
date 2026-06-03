@@ -11,8 +11,8 @@ func TestCriterion_Accept(t *testing.T) {
 	type fields struct {
 		Vulnerable bool
 		CPE        ccTypes.CPE
-		CPEMatches []ccTypes.CPE
 		Range      *ccRangeTypes.Range
+		CPEMatches []ccTypes.CPE
 	}
 	type args struct {
 		query ccTypes.Query
@@ -329,8 +329,8 @@ func TestCriterion_Accept(t *testing.T) {
 			c := ccTypes.Criterion{
 				Vulnerable: tt.fields.Vulnerable,
 				CPE:        tt.fields.CPE,
-				CPEMatches: tt.fields.CPEMatches,
 				Range:      tt.fields.Range,
+				CPEMatches: tt.fields.CPEMatches,
 			}
 			got, err := c.Accept(tt.args.query)
 			if (err != nil) != tt.wantErr {
