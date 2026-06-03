@@ -200,7 +200,7 @@ func TestCriterion_Accept(t *testing.T) {
 			want: false,
 		},
 		{
-			name: "cpe_matches: query matches one entry, main CPE disjoint",
+			name: "cpe_matches: main CPE and every CPEMatches entry disjoint from query → false",
 			fields: fields{
 				Vulnerable: true,
 				CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
