@@ -110,37 +110,6 @@ type rels struct {
 	tacticShortnameToID map[string]string
 }
 
-func newRels() rels {
-	return rels{
-		subParent:          make(map[string]string),
-		subChildren:        make(map[string][]string),
-		techTactics:        make(map[string][]string),
-		techAssets:         make(map[string][]relatedrefTypes.RelatedRef),
-		techStrategy:       make(map[string][]relatedrefTypes.RelatedRef),
-		techMit:            make(map[string][]relatedrefTypes.RelatedRef),
-		techProcs:          make(map[string][]procedureTypes.Procedure),
-		mitTechniques:      make(map[string][]relatedrefTypes.RelatedRef),
-		groupTechUsed:      make(map[string][]techniqueusedTypes.TechniqueUsed),
-		groupSoftUsed:      make(map[string][]relatedrefTypes.RelatedRef),
-		groupCampaigns:     make(map[string][]relatedrefTypes.RelatedRef),
-		softTechUsed:       make(map[string][]techniqueusedTypes.TechniqueUsed),
-		softGroupsUse:      make(map[string][]relatedrefTypes.RelatedRef),
-		softCampaigns:      make(map[string][]relatedrefTypes.RelatedRef),
-		campTechUsed:       make(map[string][]techniqueusedTypes.TechniqueUsed),
-		campSoftUsed:       make(map[string][]relatedrefTypes.RelatedRef),
-		campGroupsAttr:     make(map[string][]relatedrefTypes.RelatedRef),
-		tacticTechniques:   make(map[string][]string),
-		assetTechniques:    make(map[string][]relatedrefTypes.RelatedRef),
-		strategyTechniques: make(map[string][]relatedrefTypes.RelatedRef),
-		strategyAnalytics:  make(map[string][]string),
-		analyticStrategy:   make(map[string]string),
-		dsComponents:       make(map[string][]string),
-		dcSource:           make(map[string]string),
-
-		tacticShortnameToID: make(map[string]string),
-	}
-}
-
 func Extract(args string, opts ...Option) error {
 	options := &options{
 		dir: filepath.Join(util.CacheDir(), "extract", "mitre", "attack"),
@@ -280,7 +249,34 @@ func Extract(args string, opts ...Option) error {
 		return errors.Wrapf(err, "walk %s", args)
 	}
 
-	idx := newRels()
+	idx := rels{
+		subParent:          make(map[string]string),
+		subChildren:        make(map[string][]string),
+		techTactics:        make(map[string][]string),
+		techAssets:         make(map[string][]relatedrefTypes.RelatedRef),
+		techStrategy:       make(map[string][]relatedrefTypes.RelatedRef),
+		techMit:            make(map[string][]relatedrefTypes.RelatedRef),
+		techProcs:          make(map[string][]procedureTypes.Procedure),
+		mitTechniques:      make(map[string][]relatedrefTypes.RelatedRef),
+		groupTechUsed:      make(map[string][]techniqueusedTypes.TechniqueUsed),
+		groupSoftUsed:      make(map[string][]relatedrefTypes.RelatedRef),
+		groupCampaigns:     make(map[string][]relatedrefTypes.RelatedRef),
+		softTechUsed:       make(map[string][]techniqueusedTypes.TechniqueUsed),
+		softGroupsUse:      make(map[string][]relatedrefTypes.RelatedRef),
+		softCampaigns:      make(map[string][]relatedrefTypes.RelatedRef),
+		campTechUsed:       make(map[string][]techniqueusedTypes.TechniqueUsed),
+		campSoftUsed:       make(map[string][]relatedrefTypes.RelatedRef),
+		campGroupsAttr:     make(map[string][]relatedrefTypes.RelatedRef),
+		tacticTechniques:   make(map[string][]string),
+		assetTechniques:    make(map[string][]relatedrefTypes.RelatedRef),
+		strategyTechniques: make(map[string][]relatedrefTypes.RelatedRef),
+		strategyAnalytics:  make(map[string][]string),
+		analyticStrategy:   make(map[string]string),
+		dsComponents:       make(map[string][]string),
+		dcSource:           make(map[string]string),
+
+		tacticShortnameToID: make(map[string]string),
+	}
 
 	// Index Tactic shortnames → external IDs once so Pass 3 can fill
 	// TacticRef.ID when a Technique lists its tactics by shortname.
