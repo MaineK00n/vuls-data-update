@@ -304,7 +304,8 @@ func Extract(args string, opts ...Option) error {
 			ap := entry.raw.(*attack.AttackPattern)
 			// KillChainPhases shortnames (inline) → also reverse to tactic.Techniques
 			for _, kc := range ap.KillChainPhases {
-				if kc.KillChainName == "mitre-attack" || kc.KillChainName == "mitre-ics-attack" || kc.KillChainName == "mitre-mobile-attack" {
+				switch kc.KillChainName {
+				case "mitre-attack", "mitre-ics-attack", "mitre-mobile-attack":
 					idx.techTactics[entry.extID] = append(idx.techTactics[entry.extID], kc.PhaseName)
 					idx.tacticTechniques[kc.PhaseName] = append(idx.tacticTechniques[kc.PhaseName], entry.extID)
 				}
