@@ -238,7 +238,7 @@ func Extract(args string, opts ...Option) error {
 			// and matrix layout objects carry no per-record content
 			// that the ATT&CK web UI surfaces from a single ID query.
 		default:
-			slog.Warn("skipped unknown STIX type", "type", peek.Type, "path", path)
+			return errors.Errorf("unexpected STIX type. expected: %q, actual: %q", []string{"attack-pattern", "x-mitre-tactic", "course-of-action", "intrusion-set", "malware", "tool", "campaign", "x-mitre-asset", "x-mitre-detection-strategy", "x-mitre-analytic", "x-mitre-data-source", "x-mitre-data-component", "relationship", "identity", "marking-definition", "x-mitre-collection", "x-mitre-matrix"}, peek.Type)
 		}
 		return nil
 	}); err != nil {
