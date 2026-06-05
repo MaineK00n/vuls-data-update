@@ -6,11 +6,12 @@ import (
 
 	procedureTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/attack/procedure"
 	relatedrefTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/attack/relatedref"
+	tacticrefTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/attack/tacticref"
 )
 
 type Technique struct {
 	Platforms            []string                       `json:"platforms,omitempty"`
-	Tactics              []string                       `json:"tactics,omitempty"` // tactic shortnames (e.g. "initial-access")
+	Tactics              []tacticrefTypes.TacticRef     `json:"tactics,omitempty"` // tactic shortname + Tactic ID (e.g., "credential-access" / "TA0006")
 	IsSubtechnique       bool                           `json:"is_subtechnique,omitempty"`
 	Parent               string                         `json:"parent,omitempty"` // Subtechnique parent Technique ID
 	Detection            string                         `json:"detection,omitempty"`
@@ -30,23 +31,35 @@ type Technique struct {
 
 func (t *Technique) Sort() {
 	slices.Sort(t.Platforms)
-	slices.Sort(t.Tactics)
+	slices.SortFunc(t.Tactics, tacticrefTypes.Compare)
 	slices.Sort(t.DataSources)
+	for i := range t.Mitigations {
+		(&t.Mitigations[i]).Sort()
+	}
 	slices.SortFunc(t.Mitigations, relatedrefTypes.Compare)
 	slices.Sort(t.PermissionsRequired)
 	slices.Sort(t.EffectivePermissions)
 	slices.Sort(t.DefenseBypassed)
 	slices.Sort(t.ImpactType)
 	slices.Sort(t.Subtechniques)
+	for i := range t.AssetsTargeted {
+		(&t.AssetsTargeted[i]).Sort()
+	}
 	slices.SortFunc(t.AssetsTargeted, relatedrefTypes.Compare)
+	for i := range t.DetectionStrategies {
+		(&t.DetectionStrategies[i]).Sort()
+	}
 	slices.SortFunc(t.DetectionStrategies, relatedrefTypes.Compare)
+	for i := range t.Procedures {
+		(&t.Procedures[i]).Sort()
+	}
 	slices.SortFunc(t.Procedures, procedureTypes.Compare)
 }
 
 func Compare(x, y Technique) int {
 	return cmp.Or(
 		slices.Compare(x.Platforms, y.Platforms),
-		slices.Compare(x.Tactics, y.Tactics),
+		slices.CompareFunc(x.Tactics, y.Tactics, tacticrefTypes.Compare),
 		func() int {
 			switch {
 			case !x.IsSubtechnique && y.IsSubtechnique:

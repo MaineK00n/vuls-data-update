@@ -23,6 +23,7 @@ import (
 	procedureTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/attack/procedure"
 	relatedrefTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/attack/relatedref"
 	softwareTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/attack/software"
+	tacticrefTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/attack/tacticref"
 	tacticTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/attack/tactic"
 	techniqueTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/attack/technique"
 	techniqueusedTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/attack/techniqueused"
@@ -72,7 +73,7 @@ type rels struct {
 	// technique-related (forward + reverse subtechnique-of)
 	subParent    map[string]string                       // technique extID → parent technique extID
 	subChildren  map[string][]string                     // technique extID → subtechnique extIDs (reverse of Parent)
-	techTactics  map[string][]string                     // technique extID → tactic shortnames (TacticRefs + KillChainPhases consolidated downstream)
+	techTactics  map[string][]string                     // technique extID → tactic shortnames (Tactic ID is resolved at convert-time via tacticShortnameToID)
 	techAssets   map[string][]relatedrefTypes.RelatedRef // technique extID → asset extIDs + per-edge desc (from "targets")
 	techStrategy map[string][]relatedrefTypes.RelatedRef // technique extID → DetectionStrategy extIDs + per-edge desc (from "detects" reverse)
 	techMit      map[string][]relatedrefTypes.RelatedRef // technique extID → mitigation extIDs + per-edge desc (from "mitigates" reverse)
@@ -81,16 +82,16 @@ type rels struct {
 	mitTechniques map[string][]relatedrefTypes.RelatedRef // mitigation extID → technique extIDs + per-edge desc (forward of mitigates)
 	// group
 	groupTechUsed  map[string][]techniqueusedTypes.TechniqueUsed
-	groupSoftUsed  map[string][]string
-	groupCampaigns map[string][]string // group extID → campaign extIDs (reverse of attributed-to)
+	groupSoftUsed  map[string][]relatedrefTypes.RelatedRef // group extID → software extIDs + per-edge desc/refs (forward of uses G→S)
+	groupCampaigns map[string][]relatedrefTypes.RelatedRef // group extID → campaign extIDs + per-edge desc/refs (reverse of attributed-to)
 	// software
 	softTechUsed  map[string][]techniqueusedTypes.TechniqueUsed
-	softGroupsUse map[string][]string
-	softCampaigns map[string][]string // software extID → campaign extIDs (reverse of uses)
+	softGroupsUse map[string][]relatedrefTypes.RelatedRef // software extID → group extIDs + per-edge desc/refs (reverse of uses G→S)
+	softCampaigns map[string][]relatedrefTypes.RelatedRef // software extID → campaign extIDs + per-edge desc/refs (reverse of uses C→S)
 	// campaign
 	campTechUsed   map[string][]techniqueusedTypes.TechniqueUsed
-	campSoftUsed   map[string][]string
-	campGroupsAttr map[string][]string
+	campSoftUsed   map[string][]relatedrefTypes.RelatedRef // campaign extID → software extIDs + per-edge desc/refs (forward of uses C→S)
+	campGroupsAttr map[string][]relatedrefTypes.RelatedRef // campaign extID → group extIDs + per-edge desc/refs (forward of attributed-to)
 	// tactic reverse
 	tacticTechniques map[string][]string // tactic shortname → technique extIDs (reverse)
 	// asset
@@ -103,6 +104,10 @@ type rels struct {
 	// data-source / data-component
 	dsComponents map[string][]string // data-source extID → data-component extIDs (reverse of x_mitre_data_source_ref)
 	dcSource     map[string]string   // data-component extID → data-source extID
+
+	// shortname → Tactic external ID, used to fill TacticRef.ID when a
+	// Technique lists its tactic shortnames.
+	tacticShortnameToID map[string]string
 }
 
 func newRels() rels {
@@ -116,14 +121,14 @@ func newRels() rels {
 		techProcs:          make(map[string][]procedureTypes.Procedure),
 		mitTechniques:      make(map[string][]relatedrefTypes.RelatedRef),
 		groupTechUsed:      make(map[string][]techniqueusedTypes.TechniqueUsed),
-		groupSoftUsed:      make(map[string][]string),
-		groupCampaigns:     make(map[string][]string),
+		groupSoftUsed:      make(map[string][]relatedrefTypes.RelatedRef),
+		groupCampaigns:     make(map[string][]relatedrefTypes.RelatedRef),
 		softTechUsed:       make(map[string][]techniqueusedTypes.TechniqueUsed),
-		softGroupsUse:      make(map[string][]string),
-		softCampaigns:      make(map[string][]string),
+		softGroupsUse:      make(map[string][]relatedrefTypes.RelatedRef),
+		softCampaigns:      make(map[string][]relatedrefTypes.RelatedRef),
 		campTechUsed:       make(map[string][]techniqueusedTypes.TechniqueUsed),
-		campSoftUsed:       make(map[string][]string),
-		campGroupsAttr:     make(map[string][]string),
+		campSoftUsed:       make(map[string][]relatedrefTypes.RelatedRef),
+		campGroupsAttr:     make(map[string][]relatedrefTypes.RelatedRef),
 		tacticTechniques:   make(map[string][]string),
 		assetTechniques:    make(map[string][]relatedrefTypes.RelatedRef),
 		strategyTechniques: make(map[string][]relatedrefTypes.RelatedRef),
@@ -131,6 +136,8 @@ func newRels() rels {
 		analyticStrategy:   make(map[string]string),
 		dsComponents:       make(map[string][]string),
 		dcSource:           make(map[string]string),
+
+		tacticShortnameToID: make(map[string]string),
 	}
 }
 
@@ -275,6 +282,18 @@ func Extract(args string, opts ...Option) error {
 
 	idx := newRels()
 
+	// Index Tactic shortnames → external IDs once so Pass 3 can fill
+	// TacticRef.ID when a Technique lists its tactics by shortname.
+	for _, entry := range entries {
+		if entry.kind != attackTypes.KindTactic {
+			continue
+		}
+		t := entry.raw.(*attack.XMitreTactic)
+		if t.XMitreShortname != nil && *t.XMitreShortname != "" {
+			idx.tacticShortnameToID[*t.XMitreShortname] = entry.extID
+		}
+	}
+
 	// Pass 1.5: resolve UUID-based refs that aren't covered by relationships.
 	//
 	//   - Technique.TacticRefs → tactic shortname (and build tactic → techniques reverse)
@@ -378,6 +397,7 @@ func Extract(args string, opts ...Option) error {
 		if r.Description != nil {
 			desc = *r.Description
 		}
+		refs := toReferences(r.ExternalReferences)
 
 		switch r.RelationshipType {
 		case "subtechnique-of":
@@ -408,7 +428,7 @@ func Extract(args string, opts ...Option) error {
 				if err := attachCrossRef(tgtEntry, uuidToPath[src], "course-of-action", args); err != nil {
 					return err
 				}
-				idx.techMit[tgtExt] = append(idx.techMit[tgtExt], relatedrefTypes.RelatedRef{ID: srcExt, Description: desc})
+				idx.techMit[tgtExt] = append(idx.techMit[tgtExt], relatedrefTypes.RelatedRef{ID: srcExt, Description: desc, References: refs})
 			}
 			// Reverse: mitigation gets list of techniques it addresses
 			if srcEntry, ok := entries[srcExt]; ok && tgtExt != "" {
@@ -418,7 +438,7 @@ func Extract(args string, opts ...Option) error {
 				if err := attachCrossRef(srcEntry, uuidToPath[tgt], "attack-pattern", args); err != nil {
 					return err
 				}
-				idx.mitTechniques[srcExt] = append(idx.mitTechniques[srcExt], relatedrefTypes.RelatedRef{ID: tgtExt, Description: desc})
+				idx.mitTechniques[srcExt] = append(idx.mitTechniques[srcExt], relatedrefTypes.RelatedRef{ID: tgtExt, Description: desc, References: refs})
 			}
 		case "uses":
 			if srcExt == "" || tgtExt == "" {
@@ -433,7 +453,7 @@ func Extract(args string, opts ...Option) error {
 					if err := attachCrossRef(srcEntry, uuidToPath[tgt], "attack-pattern", args); err != nil {
 						return err
 					}
-					idx.groupTechUsed[srcExt] = append(idx.groupTechUsed[srcExt], techniqueusedTypes.TechniqueUsed{ID: tgtExt, Description: desc})
+					idx.groupTechUsed[srcExt] = append(idx.groupTechUsed[srcExt], techniqueusedTypes.TechniqueUsed{ID: tgtExt, Description: desc, References: refs})
 				}
 				if tgtEntry, ok := entries[tgtExt]; ok {
 					if err := attachRel(tgtEntry, path, args); err != nil {
@@ -442,7 +462,7 @@ func Extract(args string, opts ...Option) error {
 					if err := attachCrossRef(tgtEntry, uuidToPath[src], "intrusion-set", args); err != nil {
 						return err
 					}
-					idx.techProcs[tgtExt] = append(idx.techProcs[tgtExt], procedureTypes.Procedure{AttackerID: srcExt, Description: desc})
+					idx.techProcs[tgtExt] = append(idx.techProcs[tgtExt], procedureTypes.Procedure{AttackerID: srcExt, Description: desc, References: refs})
 				}
 			case srcKind == attackTypes.KindGroup && tgtKind == attackTypes.KindSoftware:
 				if srcEntry, ok := entries[srcExt]; ok {
@@ -452,7 +472,7 @@ func Extract(args string, opts ...Option) error {
 					if err := attachCrossRef(srcEntry, uuidToPath[tgt], stixTypeFromUUID(tgt), args); err != nil {
 						return err
 					}
-					idx.groupSoftUsed[srcExt] = append(idx.groupSoftUsed[srcExt], tgtExt)
+					idx.groupSoftUsed[srcExt] = append(idx.groupSoftUsed[srcExt], relatedrefTypes.RelatedRef{ID: tgtExt, Description: desc, References: refs})
 				}
 				if tgtEntry, ok := entries[tgtExt]; ok {
 					if err := attachRel(tgtEntry, path, args); err != nil {
@@ -461,7 +481,7 @@ func Extract(args string, opts ...Option) error {
 					if err := attachCrossRef(tgtEntry, uuidToPath[src], "intrusion-set", args); err != nil {
 						return err
 					}
-					idx.softGroupsUse[tgtExt] = append(idx.softGroupsUse[tgtExt], srcExt)
+					idx.softGroupsUse[tgtExt] = append(idx.softGroupsUse[tgtExt], relatedrefTypes.RelatedRef{ID: srcExt, Description: desc, References: refs})
 				}
 			case srcKind == attackTypes.KindSoftware && tgtKind == attackTypes.KindTechnique:
 				if srcEntry, ok := entries[srcExt]; ok {
@@ -471,7 +491,7 @@ func Extract(args string, opts ...Option) error {
 					if err := attachCrossRef(srcEntry, uuidToPath[tgt], "attack-pattern", args); err != nil {
 						return err
 					}
-					idx.softTechUsed[srcExt] = append(idx.softTechUsed[srcExt], techniqueusedTypes.TechniqueUsed{ID: tgtExt, Description: desc})
+					idx.softTechUsed[srcExt] = append(idx.softTechUsed[srcExt], techniqueusedTypes.TechniqueUsed{ID: tgtExt, Description: desc, References: refs})
 				}
 				if tgtEntry, ok := entries[tgtExt]; ok {
 					if err := attachRel(tgtEntry, path, args); err != nil {
@@ -480,7 +500,7 @@ func Extract(args string, opts ...Option) error {
 					if err := attachCrossRef(tgtEntry, uuidToPath[src], stixTypeFromUUID(src), args); err != nil {
 						return err
 					}
-					idx.techProcs[tgtExt] = append(idx.techProcs[tgtExt], procedureTypes.Procedure{AttackerID: srcExt, Description: desc})
+					idx.techProcs[tgtExt] = append(idx.techProcs[tgtExt], procedureTypes.Procedure{AttackerID: srcExt, Description: desc, References: refs})
 				}
 			case srcKind == attackTypes.KindCampaign && tgtKind == attackTypes.KindTechnique:
 				if srcEntry, ok := entries[srcExt]; ok {
@@ -490,7 +510,7 @@ func Extract(args string, opts ...Option) error {
 					if err := attachCrossRef(srcEntry, uuidToPath[tgt], "attack-pattern", args); err != nil {
 						return err
 					}
-					idx.campTechUsed[srcExt] = append(idx.campTechUsed[srcExt], techniqueusedTypes.TechniqueUsed{ID: tgtExt, Description: desc})
+					idx.campTechUsed[srcExt] = append(idx.campTechUsed[srcExt], techniqueusedTypes.TechniqueUsed{ID: tgtExt, Description: desc, References: refs})
 				}
 				if tgtEntry, ok := entries[tgtExt]; ok {
 					if err := attachRel(tgtEntry, path, args); err != nil {
@@ -499,7 +519,7 @@ func Extract(args string, opts ...Option) error {
 					if err := attachCrossRef(tgtEntry, uuidToPath[src], "campaign", args); err != nil {
 						return err
 					}
-					idx.techProcs[tgtExt] = append(idx.techProcs[tgtExt], procedureTypes.Procedure{AttackerID: srcExt, Description: desc})
+					idx.techProcs[tgtExt] = append(idx.techProcs[tgtExt], procedureTypes.Procedure{AttackerID: srcExt, Description: desc, References: refs})
 				}
 			case srcKind == attackTypes.KindCampaign && tgtKind == attackTypes.KindSoftware:
 				if srcEntry, ok := entries[srcExt]; ok {
@@ -509,7 +529,7 @@ func Extract(args string, opts ...Option) error {
 					if err := attachCrossRef(srcEntry, uuidToPath[tgt], stixTypeFromUUID(tgt), args); err != nil {
 						return err
 					}
-					idx.campSoftUsed[srcExt] = append(idx.campSoftUsed[srcExt], tgtExt)
+					idx.campSoftUsed[srcExt] = append(idx.campSoftUsed[srcExt], relatedrefTypes.RelatedRef{ID: tgtExt, Description: desc, References: refs})
 				}
 				// Reverse: software gets list of campaigns using it
 				if tgtEntry, ok := entries[tgtExt]; ok {
@@ -519,7 +539,7 @@ func Extract(args string, opts ...Option) error {
 					if err := attachCrossRef(tgtEntry, uuidToPath[src], "campaign", args); err != nil {
 						return err
 					}
-					idx.softCampaigns[tgtExt] = append(idx.softCampaigns[tgtExt], srcExt)
+					idx.softCampaigns[tgtExt] = append(idx.softCampaigns[tgtExt], relatedrefTypes.RelatedRef{ID: srcExt, Description: desc, References: refs})
 				}
 			}
 		case "attributed-to":
@@ -531,7 +551,7 @@ func Extract(args string, opts ...Option) error {
 					if err := attachCrossRef(srcEntry, uuidToPath[tgt], "intrusion-set", args); err != nil {
 						return err
 					}
-					idx.campGroupsAttr[srcExt] = append(idx.campGroupsAttr[srcExt], tgtExt)
+					idx.campGroupsAttr[srcExt] = append(idx.campGroupsAttr[srcExt], relatedrefTypes.RelatedRef{ID: tgtExt, Description: desc, References: refs})
 				}
 				// Reverse: group gets list of campaigns attributing to it
 				if tgtEntry, ok := entries[tgtExt]; ok {
@@ -541,7 +561,7 @@ func Extract(args string, opts ...Option) error {
 					if err := attachCrossRef(tgtEntry, uuidToPath[src], "campaign", args); err != nil {
 						return err
 					}
-					idx.groupCampaigns[tgtExt] = append(idx.groupCampaigns[tgtExt], srcExt)
+					idx.groupCampaigns[tgtExt] = append(idx.groupCampaigns[tgtExt], relatedrefTypes.RelatedRef{ID: srcExt, Description: desc, References: refs})
 				}
 			}
 		case "targets":
@@ -554,7 +574,7 @@ func Extract(args string, opts ...Option) error {
 					if err := attachCrossRef(srcEntry, uuidToPath[tgt], "x-mitre-asset", args); err != nil {
 						return err
 					}
-					idx.techAssets[srcExt] = append(idx.techAssets[srcExt], relatedrefTypes.RelatedRef{ID: tgtExt, Description: desc})
+					idx.techAssets[srcExt] = append(idx.techAssets[srcExt], relatedrefTypes.RelatedRef{ID: tgtExt, Description: desc, References: refs})
 				}
 				if tgtEntry, ok := entries[tgtExt]; ok {
 					if err := attachRel(tgtEntry, path, args); err != nil {
@@ -563,7 +583,7 @@ func Extract(args string, opts ...Option) error {
 					if err := attachCrossRef(tgtEntry, uuidToPath[src], "attack-pattern", args); err != nil {
 						return err
 					}
-					idx.assetTechniques[tgtExt] = append(idx.assetTechniques[tgtExt], relatedrefTypes.RelatedRef{ID: srcExt, Description: desc})
+					idx.assetTechniques[tgtExt] = append(idx.assetTechniques[tgtExt], relatedrefTypes.RelatedRef{ID: srcExt, Description: desc, References: refs})
 				}
 			}
 		case "detects":
@@ -576,7 +596,7 @@ func Extract(args string, opts ...Option) error {
 					if err := attachCrossRef(srcEntry, uuidToPath[tgt], "attack-pattern", args); err != nil {
 						return err
 					}
-					idx.strategyTechniques[srcExt] = append(idx.strategyTechniques[srcExt], relatedrefTypes.RelatedRef{ID: tgtExt, Description: desc})
+					idx.strategyTechniques[srcExt] = append(idx.strategyTechniques[srcExt], relatedrefTypes.RelatedRef{ID: tgtExt, Description: desc, References: refs})
 				}
 				if tgtEntry, ok := entries[tgtExt]; ok {
 					if err := attachRel(tgtEntry, path, args); err != nil {
@@ -585,7 +605,7 @@ func Extract(args string, opts ...Option) error {
 					if err := attachCrossRef(tgtEntry, uuidToPath[src], "x-mitre-detection-strategy", args); err != nil {
 						return err
 					}
-					idx.techStrategy[tgtExt] = append(idx.techStrategy[tgtExt], relatedrefTypes.RelatedRef{ID: srcExt, Description: desc})
+					idx.techStrategy[tgtExt] = append(idx.techStrategy[tgtExt], relatedrefTypes.RelatedRef{ID: srcExt, Description: desc, References: refs})
 				}
 			}
 		case "revoked-by":
@@ -711,6 +731,7 @@ func convert(entry *primaryEntry, idx rels) attackTypes.Attack {
 		Deprecated:  c.deprecated,
 		Revoked:     c.revoked,
 		Version:     c.version,
+		Created:     c.created,
 		Modified:    c.modified,
 		References:  refs,
 		DataSource: sourceTypes.Source{
@@ -854,6 +875,29 @@ func convert(entry *primaryEntry, idx rels) attackTypes.Attack {
 	return a
 }
 
+// toReferences converts a STIX external_references slice to the
+// canonical reference list, skipping entries without a URL (those tend
+// to be ATT&CK ID stubs already represented by the ID field).
+func toReferences(ers []attack.ExternalReference) []referenceTypes.Reference {
+	if len(ers) == 0 {
+		return nil
+	}
+	out := make([]referenceTypes.Reference, 0, len(ers))
+	for _, er := range ers {
+		if er.URL == nil {
+			continue
+		}
+		out = append(out, referenceTypes.Reference{
+			Source: er.SourceName,
+			URL:    *er.URL,
+		})
+	}
+	if len(out) == 0 {
+		return nil
+	}
+	return out
+}
+
 type commonFields struct {
 	name               string
 	description        string
@@ -861,6 +905,7 @@ type commonFields struct {
 	deprecated         bool
 	revoked            bool
 	version            string
+	created            time.Time
 	modified           time.Time
 	externalReferences []attack.ExternalReference
 }
@@ -868,29 +913,29 @@ type commonFields struct {
 func commonFromRaw(raw any) commonFields {
 	switch o := raw.(type) {
 	case *attack.AttackPattern:
-		return commonFields{derefString(o.Name), derefString(o.Description), o.XMitreDomains, derefBool(o.XMitreDeprecated), derefBool(o.Revoked), derefString(o.XMitreVersion), o.Modified, o.ExternalReferences}
+		return commonFields{derefString(o.Name), derefString(o.Description), o.XMitreDomains, derefBool(o.XMitreDeprecated), derefBool(o.Revoked), derefString(o.XMitreVersion), o.Created, o.Modified, o.ExternalReferences}
 	case *attack.XMitreTactic:
-		return commonFields{derefString(o.Name), derefString(o.Description), o.XMitreDomains, derefBool(o.XMitreDeprecated), derefBool(o.Revoked), derefString(o.XMitreVersion), o.Modified, o.ExternalReferences}
+		return commonFields{derefString(o.Name), derefString(o.Description), o.XMitreDomains, derefBool(o.XMitreDeprecated), derefBool(o.Revoked), derefString(o.XMitreVersion), o.Created, o.Modified, o.ExternalReferences}
 	case *attack.CourseOfAction:
-		return commonFields{derefString(o.Name), derefString(o.Description), o.XMitreDomains, derefBool(o.XMitreDeprecated), derefBool(o.Revoked), derefString(o.XMitreVersion), o.Modified, o.ExternalReferences}
+		return commonFields{derefString(o.Name), derefString(o.Description), o.XMitreDomains, derefBool(o.XMitreDeprecated), derefBool(o.Revoked), derefString(o.XMitreVersion), o.Created, o.Modified, o.ExternalReferences}
 	case *attack.IntrusionSet:
-		return commonFields{derefString(o.Name), derefString(o.Description), o.XMitreDomains, derefBool(o.XMitreDeprecated), derefBool(o.Revoked), derefString(o.XMitreVersion), o.Modified, o.ExternalReferences}
+		return commonFields{derefString(o.Name), derefString(o.Description), o.XMitreDomains, derefBool(o.XMitreDeprecated), derefBool(o.Revoked), derefString(o.XMitreVersion), o.Created, o.Modified, o.ExternalReferences}
 	case *attack.Malware:
-		return commonFields{derefString(o.Name), derefString(o.Description), o.XMitreDomains, derefBool(o.XMitreDeprecated), derefBool(o.Revoked), derefString(o.XMitreVersion), o.Modified, o.ExternalReferences}
+		return commonFields{derefString(o.Name), derefString(o.Description), o.XMitreDomains, derefBool(o.XMitreDeprecated), derefBool(o.Revoked), derefString(o.XMitreVersion), o.Created, o.Modified, o.ExternalReferences}
 	case *attack.Tool:
-		return commonFields{derefString(o.Name), derefString(o.Description), o.XMitreDomains, derefBool(o.XMitreDeprecated), derefBool(o.Revoked), derefString(o.XMitreVersion), o.Modified, o.ExternalReferences}
+		return commonFields{derefString(o.Name), derefString(o.Description), o.XMitreDomains, derefBool(o.XMitreDeprecated), derefBool(o.Revoked), derefString(o.XMitreVersion), o.Created, o.Modified, o.ExternalReferences}
 	case *attack.Campaign:
-		return commonFields{derefString(o.Name), derefString(o.Description), o.XMitreDomains, derefBool(o.XMitreDeprecated), derefBool(o.Revoked), derefString(o.XMitreVersion), o.Modified, o.ExternalReferences}
+		return commonFields{derefString(o.Name), derefString(o.Description), o.XMitreDomains, derefBool(o.XMitreDeprecated), derefBool(o.Revoked), derefString(o.XMitreVersion), o.Created, o.Modified, o.ExternalReferences}
 	case *attack.XMitreAsset:
-		return commonFields{derefString(o.Name), derefString(o.Description), o.XMitreDomains, derefBool(o.XMitreDeprecated), derefBool(o.Revoked), derefString(o.XMitreVersion), o.Modified, o.ExternalReferences}
+		return commonFields{derefString(o.Name), derefString(o.Description), o.XMitreDomains, derefBool(o.XMitreDeprecated), derefBool(o.Revoked), derefString(o.XMitreVersion), o.Created, o.Modified, o.ExternalReferences}
 	case *attack.XMitreDetectionStrategy:
-		return commonFields{derefString(o.Name), "", o.XMitreDomains, derefBool(o.XMitreDeprecated), derefBool(o.Revoked), derefString(o.XMitreVersion), o.Modified, o.ExternalReferences}
+		return commonFields{derefString(o.Name), "", o.XMitreDomains, derefBool(o.XMitreDeprecated), derefBool(o.Revoked), derefString(o.XMitreVersion), o.Created, o.Modified, o.ExternalReferences}
 	case *attack.XMitreAnalytic:
-		return commonFields{derefString(o.Name), derefString(o.Description), o.XMitreDomains, derefBool(o.XMitreDeprecated), derefBool(o.Revoked), derefString(o.XMitreVersion), o.Modified, o.ExternalReferences}
+		return commonFields{derefString(o.Name), derefString(o.Description), o.XMitreDomains, derefBool(o.XMitreDeprecated), derefBool(o.Revoked), derefString(o.XMitreVersion), o.Created, o.Modified, o.ExternalReferences}
 	case *attack.XMitreDataSource:
-		return commonFields{derefString(o.Name), derefString(o.Description), o.XMitreDomains, derefBool(o.XMitreDeprecated), derefBool(o.Revoked), derefString(o.XMitreVersion), o.Modified, o.ExternalReferences}
+		return commonFields{derefString(o.Name), derefString(o.Description), o.XMitreDomains, derefBool(o.XMitreDeprecated), derefBool(o.Revoked), derefString(o.XMitreVersion), o.Created, o.Modified, o.ExternalReferences}
 	case *attack.XMitreDataComponent:
-		return commonFields{derefString(o.Name), derefString(o.Description), o.XMitreDomains, derefBool(o.XMitreDeprecated), derefBool(o.Revoked), derefString(o.XMitreVersion), o.Modified, o.ExternalReferences}
+		return commonFields{derefString(o.Name), derefString(o.Description), o.XMitreDomains, derefBool(o.XMitreDeprecated), derefBool(o.Revoked), derefString(o.XMitreVersion), o.Created, o.Modified, o.ExternalReferences}
 	}
 	return commonFields{}
 }
@@ -902,9 +947,17 @@ func buildTechnique(ap *attack.AttackPattern, extID string, idx rels) techniqueT
 		parent = idx.subParent[extID]
 	}
 
+	tactics := make([]tacticrefTypes.TacticRef, 0, len(idx.techTactics[extID]))
+	for _, sn := range idx.techTactics[extID] {
+		tactics = append(tactics, tacticrefTypes.TacticRef{
+			Shortname: sn,
+			ID:        idx.tacticShortnameToID[sn],
+		})
+	}
+
 	return techniqueTypes.Technique{
 		Platforms:            slices.Clone(ap.XMitrePlatforms),
-		Tactics:              idx.techTactics[extID],
+		Tactics:              tactics,
 		IsSubtechnique:       isSub,
 		Parent:               parent,
 		Detection:            derefString(ap.XMitreDetection),

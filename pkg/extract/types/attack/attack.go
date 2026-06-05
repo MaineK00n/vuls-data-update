@@ -55,6 +55,7 @@ type Attack struct {
 	Deprecated  bool      `json:"deprecated,omitempty"`
 	Revoked     bool      `json:"revoked,omitempty"`
 	Version     string    `json:"version,omitempty"`
+	Created     time.Time `json:"created,omitzero"`
 	Modified    time.Time `json:"modified,omitzero"`
 
 	Technique         techniqueTypes.Technique                 `json:"technique,omitzero"`
@@ -128,6 +129,7 @@ func Compare(x, y Attack) int {
 		datacomponentTypes.Compare(x.DataComponent, y.DataComponent),
 		analyticTypes.Compare(x.Analytic, y.Analytic),
 		cmp.Compare(x.Version, y.Version),
+		x.Created.Compare(y.Created),
 		x.Modified.Compare(y.Modified),
 		slices.CompareFunc(x.References, y.References, referenceTypes.Compare),
 		sourceTypes.Compare(x.DataSource, y.DataSource),

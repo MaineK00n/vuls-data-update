@@ -26,6 +26,9 @@ type RelatedAsset struct {
 func (a *Asset) Sort() {
 	slices.Sort(a.Platforms)
 	slices.Sort(a.Sectors)
+	for i := range a.TechniquesTargeting {
+		(&a.TechniquesTargeting[i]).Sort()
+	}
 	slices.SortFunc(a.TechniquesTargeting, relatedrefTypes.Compare)
 	for i := range a.RelatedAssets {
 		slices.Sort(a.RelatedAssets[i].Sectors)

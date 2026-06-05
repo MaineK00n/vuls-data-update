@@ -9,6 +9,7 @@
 	"deprecated": false,
 	"revoked": false,
 	"version": "1.1",
+	"created": "2020-02-11T18:28:44.95Z",
 	"modified": "2023-05-09T14:00:00.188Z",
 	"technique": {
 		"platforms": [
@@ -17,7 +18,9 @@
 			"macOS"
 		],
 		"tactics": [
-			"lateral-movement"
+			{
+				"shortname": "lateral-movement"
+			}
 		],
 		"is_subtechnique": true,
 		"detection": "Use of VNC may be legitimate depending on the environment and how it’s used. Other factors, such as access patterns and activity that occurs after a remote login, may indicate suspicious or malicious behavior using VNC.\n\nOn macOS systems <code>log show --predicate 'process = \"screensharingd\" and eventMessage contains \"Authentication:\"'</code> can be used to review incoming VNC connection attempts for suspicious activity.(Citation: Apple Unified Log Analysis Remote Login and Screen Sharing)\n\nMonitor for use of built-in debugging environment variables (such as those containing credentials or other sensitive information) as well as test/default users on VNC servers, as these can leave openings for adversaries to abuse.(Citation: Gnome Remote Desktop grd-settings)(Citation: Gnome Remote Desktop gschema)",

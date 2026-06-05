@@ -9,6 +9,7 @@
 	"deprecated": false,
 	"revoked": true,
 	"version": "1.0",
+	"created": "2017-05-31T21:30:54.176Z",
 	"modified": "2022-04-25T14:00:00.188Z",
 	"technique": {
 		"platforms": [
@@ -17,7 +18,9 @@
 			"macOS"
 		],
 		"tactics": [
-			"defense-evasion"
+			{
+				"shortname": "defense-evasion"
+			}
 		],
 		"is_subtechnique": false,
 		"detection": "The first detection of a malicious tool may trigger an anti-virus or other security tool alert. Similar events may also occur at the boundary through network IDS, email scanning appliance, etc. The initial detection should be treated as an indication of a potentially more invasive intrusion. The alerting system should be thoroughly investigated beyond that initial alert for activity that was not detected. Adversaries may continue with an operation, assuming that individual events like an anti-virus detect will not be investigated or that an analyst will not be able to conclusively link that event to other activity occurring on the network.",

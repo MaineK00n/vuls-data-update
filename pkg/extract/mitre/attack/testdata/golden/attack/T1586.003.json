@@ -9,13 +9,16 @@
 	"deprecated": false,
 	"revoked": false,
 	"version": "1.0",
+	"created": "2022-05-27T14:30:01.904Z",
 	"modified": "2022-10-21T14:21:57.991Z",
 	"technique": {
 		"platforms": [
 			"PRE"
 		],
 		"tactics": [
-			"resource-development"
+			{
+				"shortname": "resource-development"
+			}
 		],
 		"is_subtechnique": true,
 		"detection": "Much of this activity will take place outside the visibility of the target organization, making detection of this behavior difficult. Detection efforts may be focused on related stages of the adversary lifecycle, such as during exfiltration (ex: [Transfer Data to Cloud Account](https://attack.mitre.org/techniques/T1537)).",

@@ -9,6 +9,7 @@
 	"deprecated": false,
 	"revoked": false,
 	"version": "1.5",
+	"created": "2018-04-18T17:59:24.739Z",
 	"modified": "2023-10-31T14:00:00.188Z",
 	"technique": {
 		"platforms": [
@@ -17,7 +18,9 @@
 			"macOS"
 		],
 		"tactics": [
-			"initial-access"
+			{
+				"shortname": "initial-access"
+			}
 		],
 		"is_subtechnique": false,
 		"detection": "Use verification of distributed binaries through hash checking or other integrity checking mechanisms. Scan downloads for malicious signatures and attempt to test software and updates prior to deployment while taking note of potential suspicious activity. Perform physical inspection of hardware to look for potential tampering.",
@@ -28,7 +31,13 @@
 		"mitigations": [
 			{
 				"id": "M9990",
-				"description": "Mitigate T1195 by validating supply-chain integrity end-to-end."
+				"description": "Mitigate T1195 by validating supply-chain integrity end-to-end.",
+				"references": [
+					{
+						"source": "Supply Chain Risk Mgmt Guide 2023",
+						"url": "https://example.test/supply-chain-risk-mgmt-2023"
+					}
+				]
 			}
 		],
 		"procedures": [

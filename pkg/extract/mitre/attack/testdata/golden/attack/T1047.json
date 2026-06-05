@@ -9,13 +9,16 @@
 	"deprecated": false,
 	"revoked": false,
 	"version": "1.4",
+	"created": "2017-05-31T21:30:44.329Z",
 	"modified": "2023-07-24T20:38:58.283Z",
 	"technique": {
 		"platforms": [
 			"Windows"
 		],
 		"tactics": [
-			"execution"
+			{
+				"shortname": "execution"
+			}
 		],
 		"is_subtechnique": false,
 		"detection": "Monitor network traffic for WMI connections; the use of WMI in environments that do not typically use WMI may be suspect. Perform process monitoring to capture command-line arguments of \"wmic\" and detect commands that are used to perform remote behavior. (Citation: FireEye WMI 2015)",

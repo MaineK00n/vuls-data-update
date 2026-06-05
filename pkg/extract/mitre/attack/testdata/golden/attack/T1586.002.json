@@ -9,13 +9,16 @@
 	"deprecated": false,
 	"revoked": false,
 	"version": "1.1",
+	"created": "2020-10-01T01:20:53.104Z",
 	"modified": "2023-04-11T01:07:48.218Z",
 	"technique": {
 		"platforms": [
 			"PRE"
 		],
 		"tactics": [
-			"resource-development"
+			{
+				"shortname": "resource-development"
+			}
 		],
 		"is_subtechnique": true,
 		"detection": "Much of this activity will take place outside the visibility of the target organization, making detection of this behavior difficult. Detection efforts may be focused on related stages of the adversary lifecycle, such as during Initial Access (ex: [Phishing](https://attack.mitre.org/techniques/T1566)).",

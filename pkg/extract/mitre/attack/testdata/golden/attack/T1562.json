@@ -9,6 +9,7 @@
 	"deprecated": false,
 	"revoked": false,
 	"version": "1.5",
+	"created": "2020-02-21T20:22:13.47Z",
 	"modified": "2023-10-20T16:43:53.391Z",
 	"technique": {
 		"platforms": [
@@ -21,7 +22,9 @@
 			"macOS"
 		],
 		"tactics": [
-			"defense-evasion"
+			{
+				"shortname": "defense-evasion"
+			}
 		],
 		"is_subtechnique": false,
 		"detection": "Monitor processes and command-line arguments to see if security tools or logging services are killed or stop running. Monitor Registry edits for modifications to services and startup programs that correspond to security tools.  Lack of log events may be suspicious.\n\nMonitor environment variables and APIs that can be leveraged to disable security measures.",

@@ -9,6 +9,7 @@
 	"deprecated": false,
 	"revoked": false,
 	"version": "1.0",
+	"created": "2022-09-30T21:18:41.93Z",
 	"modified": "2022-11-08T14:00:00.188Z",
 	"technique": {
 		"platforms": [
@@ -17,9 +18,15 @@
 			"macOS"
 		],
 		"tactics": [
-			"command-and-control",
-			"defense-evasion",
-			"persistence"
+			{
+				"shortname": "command-and-control"
+			},
+			{
+				"shortname": "defense-evasion"
+			},
+			{
+				"shortname": "persistence"
+			}
 		],
 		"is_subtechnique": true,
 		"detection": "Identify running processes with raw sockets. Ensure processes listed have a need for an open raw socket and are in accordance with enterprise policy.(Citation: crowdstrike bpf socket filters)",

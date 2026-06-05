@@ -9,6 +9,7 @@
 	"deprecated": false,
 	"revoked": false,
 	"version": "2.4",
+	"created": "2018-04-18T17:59:24.739Z",
 	"modified": "2023-04-14T22:18:39.19Z",
 	"technique": {
 		"platforms": [
@@ -20,7 +21,9 @@
 			"macOS"
 		],
 		"tactics": [
-			"initial-access"
+			{
+				"shortname": "initial-access"
+			}
 		],
 		"is_subtechnique": false,
 		"detection": "Monitor application logs for abnormal behavior that may indicate attempted or successful exploitation. Use deep packet inspection to look for artifacts of common exploit traffic, such as SQL injection. Web Application Firewalls may detect improper inputs attempting exploitation.",

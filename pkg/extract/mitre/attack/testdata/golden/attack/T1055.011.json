@@ -9,14 +9,19 @@
 	"deprecated": false,
 	"revoked": false,
 	"version": "1.0",
+	"created": "2020-01-14T17:18:32.126Z",
 	"modified": "2022-04-25T14:00:00.188Z",
 	"technique": {
 		"platforms": [
 			"Windows"
 		],
 		"tactics": [
-			"defense-evasion",
-			"privilege-escalation"
+			{
+				"shortname": "defense-evasion"
+			},
+			{
+				"shortname": "privilege-escalation"
+			}
 		],
 		"is_subtechnique": true,
 		"detection": "Monitor for API calls related to enumerating and manipulating EWM such as GetWindowLong (Citation: Microsoft GetWindowLong function) and SetWindowLong (Citation: Microsoft SetWindowLong function). Malware associated with this technique have also used SendNotifyMessage (Citation: Microsoft SendNotifyMessage function) to trigger the associated window procedure and eventual malicious injection. (Citation: Elastic Process Injection July 2017)",

@@ -9,6 +9,7 @@
 	"deprecated": false,
 	"revoked": false,
 	"version": "1.0",
+	"created": "2024-01-01T00:00:00Z",
 	"modified": "2024-01-01T00:00:00Z",
 	"campaign": {
 		"aliases": [
@@ -24,10 +25,14 @@
 			}
 		],
 		"groups_attributed": [
-			"G9990"
+			{
+				"id": "G9990"
+			}
 		],
 		"softwares_used": [
-			"S9990"
+			{
+				"id": "S9990"
+			}
 		]
 	},
 	"references": [

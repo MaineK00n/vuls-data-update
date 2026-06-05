@@ -13,6 +13,9 @@ type Mitigation struct {
 }
 
 func (m *Mitigation) Sort() {
+	for i := range m.TechniquesMitigated {
+		(&m.TechniquesMitigated[i]).Sort()
+	}
 	slices.SortFunc(m.TechniquesMitigated, relatedrefTypes.Compare)
 }
 

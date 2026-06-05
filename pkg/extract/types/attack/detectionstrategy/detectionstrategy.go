@@ -16,6 +16,9 @@ type DetectionStrategy struct {
 
 func (d *DetectionStrategy) Sort() {
 	slices.Sort(d.Analytics)
+	for i := range d.TechniquesDetected {
+		(&d.TechniquesDetected[i]).Sort()
+	}
 	slices.SortFunc(d.TechniquesDetected, relatedrefTypes.Compare)
 }
 

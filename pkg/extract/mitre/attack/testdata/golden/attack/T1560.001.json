@@ -9,6 +9,7 @@
 	"deprecated": false,
 	"revoked": false,
 	"version": "1.3",
+	"created": "2020-02-20T21:01:25.428Z",
 	"modified": "2023-09-15T19:02:53.995Z",
 	"technique": {
 		"platforms": [
@@ -17,7 +18,9 @@
 			"macOS"
 		],
 		"tactics": [
-			"collection"
+			{
+				"shortname": "collection"
+			}
 		],
 		"is_subtechnique": true,
 		"detection": "Common utilities that may be present on the system or brought in by an adversary may be detectable through process monitoring and monitoring for command-line arguments for known archival utilities. This may yield a significant number of benign events, depending on how systems in the environment are typically used.\n\nConsider detecting writing of files with extensions and/or headers associated with compressed or encrypted file types. Detection efforts may focus on follow-on exfiltration activity, where compressed or encrypted files can be detected in transit with a network intrusion detection or data loss prevention system analyzing file headers.(Citation: Wikipedia File Header Signatures)",

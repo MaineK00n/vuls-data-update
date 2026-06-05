@@ -9,6 +9,7 @@
 	"deprecated": false,
 	"revoked": false,
 	"version": "1.1",
+	"created": "2020-02-11T18:48:28.456Z",
 	"modified": "2023-09-30T20:16:41.759Z",
 	"technique": {
 		"platforms": [
@@ -18,7 +19,9 @@
 			"macOS"
 		],
 		"tactics": [
-			"credential-access"
+			{
+				"shortname": "credential-access"
+			}
 		],
 		"is_subtechnique": false,
 		"detection": "Monitor system calls, file read events, and processes for suspicious activity that could indicate searching for a password  or other activity related to performing keyword searches (e.g. password, pwd, login, store, secure, credentials, etc.) in process memory for credentials. File read events should be monitored surrounding known password storage applications.",

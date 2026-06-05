@@ -9,12 +9,19 @@
 	"deprecated": false,
 	"revoked": false,
 	"version": "1.0",
+	"created": "2024-01-01T00:00:00Z",
 	"modified": "2024-01-01T00:00:00Z",
 	"mitigation": {
 		"techniques_mitigated": [
 			{
 				"id": "T1195",
-				"description": "Mitigate T1195 by validating supply-chain integrity end-to-end."
+				"description": "Mitigate T1195 by validating supply-chain integrity end-to-end.",
+				"references": [
+					{
+						"source": "Supply Chain Risk Mgmt Guide 2023",
+						"url": "https://example.test/supply-chain-risk-mgmt-2023"
+					}
+				]
 			}
 		]
 	},

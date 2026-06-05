@@ -9,6 +9,7 @@
 	"deprecated": false,
 	"revoked": true,
 	"version": "1.1",
+	"created": "2017-12-14T16:46:06.044Z",
 	"modified": "2023-10-15T20:24:13.473Z",
 	"technique": {
 		"platforms": [
@@ -16,7 +17,9 @@
 			"macOS"
 		],
 		"tactics": [
-			"persistence"
+			{
+				"shortname": "persistence"
+			}
 		],
 		"is_subtechnique": false,
 		"detection": "While users may customize their shell profile files, there are only certain types of commands that typically appear in these files. Monitor for abnormal commands such as execution of unknown programs, opening network sockets, or reaching out across the network when user profiles are loaded during the login process.\n\nMonitor for changes to /ect/profile and /etc/profile.d, these files should only be modified by system administrators. MacOS users can leverage Apple’s Security Endpoint Framework using the ES_EVENT_TYPE_NOTIFY_WRITE function for monitoring these specific files. \n",

@@ -9,6 +9,7 @@
 	"deprecated": false,
 	"revoked": false,
 	"version": "2.2",
+	"created": "2018-04-18T17:59:24.739Z",
 	"modified": "2023-09-28T16:23:51.194Z",
 	"technique": {
 		"platforms": [
@@ -17,7 +18,9 @@
 			"macOS"
 		],
 		"tactics": [
-			"command-and-control"
+			{
+				"shortname": "command-and-control"
+			}
 		],
 		"is_subtechnique": false,
 		"detection": "Monitor for applications and processes related to remote admin tools. Correlate activity with other suspicious behavior that may reduce false positives if these tools are used by legitimate users and administrators.\n\nAnalyze network data for uncommon data flows (e.g., a client sending significantly more data than it receives from a server). Processes utilizing the network that do not normally have network communication or have never been seen before are suspicious. Analyze packet contents to detect application layer protocols that do not follow the expected protocol for the port that is being used.\n\n[Domain Fronting](https://attack.mitre.org/techniques/T1090/004) may be used in conjunction to avoid defenses. Adversaries will likely need to deploy and/or install these remote tools to compromised systems. It may be possible to detect or prevent the installation of these tools with host-based solutions.",

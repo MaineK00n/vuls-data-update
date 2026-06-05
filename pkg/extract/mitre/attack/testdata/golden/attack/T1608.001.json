@@ -9,13 +9,16 @@
 	"deprecated": false,
 	"revoked": false,
 	"version": "1.2",
+	"created": "2021-03-17T20:09:13.222Z",
 	"modified": "2023-04-11T23:22:49.534Z",
 	"technique": {
 		"platforms": [
 			"PRE"
 		],
 		"tactics": [
-			"resource-development"
+			{
+				"shortname": "resource-development"
+			}
 		],
 		"is_subtechnique": true,
 		"detection": "If infrastructure or patterns in malware have been previously identified, internet scanning may uncover when an adversary has staged malware to make it accessible for targeting.\n\nMuch of this activity will take place outside the visibility of the target organization, making detection of this behavior difficult. Detection efforts may be focused on post-compromise phases of the adversary lifecycle, such as [User Execution](https://attack.mitre.org/techniques/T1204) or [Ingress Tool Transfer](https://attack.mitre.org/techniques/T1105).",
