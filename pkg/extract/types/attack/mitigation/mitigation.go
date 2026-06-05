@@ -1,17 +1,21 @@
 package mitigation
 
-import "slices"
+import (
+	"slices"
+
+	relatedrefTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/attack/relatedref"
+)
 
 // Mitigation represents the kind-specific fields for an ATT&CK Mitigation
 // (STIX course-of-action).
 type Mitigation struct {
-	TechniquesMitigated []string `json:"techniques_mitigated,omitempty"` // Technique IDs ("T*")
+	TechniquesMitigated []relatedrefTypes.RelatedRef `json:"techniques_mitigated,omitempty"` // Technique IDs ("T*") + per-edge "Use" description from mitigates rel
 }
 
 func (m *Mitigation) Sort() {
-	slices.Sort(m.TechniquesMitigated)
+	slices.SortFunc(m.TechniquesMitigated, relatedrefTypes.Compare)
 }
 
 func Compare(x, y Mitigation) int {
-	return slices.Compare(x.TechniquesMitigated, y.TechniquesMitigated)
+	return slices.CompareFunc(x.TechniquesMitigated, y.TechniquesMitigated, relatedrefTypes.Compare)
 }

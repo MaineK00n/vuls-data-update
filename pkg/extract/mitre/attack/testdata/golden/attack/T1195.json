@@ -26,7 +26,10 @@
 			"Sensor Health: Host Status"
 		],
 		"mitigations": [
-			"M9990"
+			{
+				"id": "M9990",
+				"description": "Mitigate T1195 by validating supply-chain integrity end-to-end."
+			}
 		],
 		"procedures": [
 			{

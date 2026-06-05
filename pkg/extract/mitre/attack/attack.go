@@ -21,6 +21,7 @@ import (
 	groupTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/attack/group"
 	mitigationTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/attack/mitigation"
 	procedureTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/attack/procedure"
+	relatedrefTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/attack/relatedref"
 	softwareTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/attack/software"
 	tacticTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/attack/tactic"
 	techniqueTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/attack/technique"
@@ -69,15 +70,15 @@ type primaryEntry struct {
 // the canonical record (db search merges across records).
 type rels struct {
 	// technique-related (forward + reverse subtechnique-of)
-	subParent    map[string]string   // technique extID → parent technique extID
-	subChildren  map[string][]string // technique extID → subtechnique extIDs (reverse of Parent)
-	techTactics  map[string][]string // technique extID → tactic shortnames (TacticRefs + KillChainPhases consolidated downstream)
-	techAssets   map[string][]string // technique extID → asset extIDs (from "targets")
-	techStrategy map[string][]string // technique extID → DetectionStrategy extIDs (from "detects" reverse)
-	techMit      map[string][]string // technique extID → mitigation extIDs
+	subParent    map[string]string                       // technique extID → parent technique extID
+	subChildren  map[string][]string                     // technique extID → subtechnique extIDs (reverse of Parent)
+	techTactics  map[string][]string                     // technique extID → tactic shortnames (TacticRefs + KillChainPhases consolidated downstream)
+	techAssets   map[string][]relatedrefTypes.RelatedRef // technique extID → asset extIDs + per-edge desc (from "targets")
+	techStrategy map[string][]relatedrefTypes.RelatedRef // technique extID → DetectionStrategy extIDs + per-edge desc (from "detects" reverse)
+	techMit      map[string][]relatedrefTypes.RelatedRef // technique extID → mitigation extIDs + per-edge desc (from "mitigates" reverse)
 	techProcs    map[string][]procedureTypes.Procedure
 	// mitigation reverse
-	mitTechniques map[string][]string // mitigation extID → technique extIDs (reverse of mitigates)
+	mitTechniques map[string][]relatedrefTypes.RelatedRef // mitigation extID → technique extIDs + per-edge desc (forward of mitigates)
 	// group
 	groupTechUsed  map[string][]techniqueusedTypes.TechniqueUsed
 	groupSoftUsed  map[string][]string
@@ -93,9 +94,9 @@ type rels struct {
 	// tactic reverse
 	tacticTechniques map[string][]string // tactic shortname → technique extIDs (reverse)
 	// asset
-	assetTechniques map[string][]string // asset extID → technique extIDs (from "targets" reverse)
+	assetTechniques map[string][]relatedrefTypes.RelatedRef // asset extID → technique extIDs + per-edge desc (from "targets" reverse)
 	// detection-strategy
-	strategyTechniques map[string][]string // strategy extID → technique extIDs (from "detects")
+	strategyTechniques map[string][]relatedrefTypes.RelatedRef // strategy extID → technique extIDs + per-edge desc (from "detects")
 	strategyAnalytics  map[string][]string // strategy extID → analytic extIDs (from x_mitre_analytic_refs)
 	// analytic reverse
 	analyticStrategy map[string]string // analytic extID → owning strategy extID
@@ -109,11 +110,11 @@ func newRels() rels {
 		subParent:          make(map[string]string),
 		subChildren:        make(map[string][]string),
 		techTactics:        make(map[string][]string),
-		techAssets:         make(map[string][]string),
-		techStrategy:       make(map[string][]string),
-		techMit:            make(map[string][]string),
+		techAssets:         make(map[string][]relatedrefTypes.RelatedRef),
+		techStrategy:       make(map[string][]relatedrefTypes.RelatedRef),
+		techMit:            make(map[string][]relatedrefTypes.RelatedRef),
 		techProcs:          make(map[string][]procedureTypes.Procedure),
-		mitTechniques:      make(map[string][]string),
+		mitTechniques:      make(map[string][]relatedrefTypes.RelatedRef),
 		groupTechUsed:      make(map[string][]techniqueusedTypes.TechniqueUsed),
 		groupSoftUsed:      make(map[string][]string),
 		groupCampaigns:     make(map[string][]string),
@@ -124,8 +125,8 @@ func newRels() rels {
 		campSoftUsed:       make(map[string][]string),
 		campGroupsAttr:     make(map[string][]string),
 		tacticTechniques:   make(map[string][]string),
-		assetTechniques:    make(map[string][]string),
-		strategyTechniques: make(map[string][]string),
+		assetTechniques:    make(map[string][]relatedrefTypes.RelatedRef),
+		strategyTechniques: make(map[string][]relatedrefTypes.RelatedRef),
 		strategyAnalytics:  make(map[string][]string),
 		analyticStrategy:   make(map[string]string),
 		dsComponents:       make(map[string][]string),
@@ -407,7 +408,7 @@ func Extract(args string, opts ...Option) error {
 				if err := attachCrossRef(tgtEntry, uuidToPath[src], "course-of-action", args); err != nil {
 					return err
 				}
-				idx.techMit[tgtExt] = append(idx.techMit[tgtExt], srcExt)
+				idx.techMit[tgtExt] = append(idx.techMit[tgtExt], relatedrefTypes.RelatedRef{ID: srcExt, Description: desc})
 			}
 			// Reverse: mitigation gets list of techniques it addresses
 			if srcEntry, ok := entries[srcExt]; ok && tgtExt != "" {
@@ -417,7 +418,7 @@ func Extract(args string, opts ...Option) error {
 				if err := attachCrossRef(srcEntry, uuidToPath[tgt], "attack-pattern", args); err != nil {
 					return err
 				}
-				idx.mitTechniques[srcExt] = append(idx.mitTechniques[srcExt], tgtExt)
+				idx.mitTechniques[srcExt] = append(idx.mitTechniques[srcExt], relatedrefTypes.RelatedRef{ID: tgtExt, Description: desc})
 			}
 		case "uses":
 			if srcExt == "" || tgtExt == "" {
@@ -553,7 +554,7 @@ func Extract(args string, opts ...Option) error {
 					if err := attachCrossRef(srcEntry, uuidToPath[tgt], "x-mitre-asset", args); err != nil {
 						return err
 					}
-					idx.techAssets[srcExt] = append(idx.techAssets[srcExt], tgtExt)
+					idx.techAssets[srcExt] = append(idx.techAssets[srcExt], relatedrefTypes.RelatedRef{ID: tgtExt, Description: desc})
 				}
 				if tgtEntry, ok := entries[tgtExt]; ok {
 					if err := attachRel(tgtEntry, path, args); err != nil {
@@ -562,7 +563,7 @@ func Extract(args string, opts ...Option) error {
 					if err := attachCrossRef(tgtEntry, uuidToPath[src], "attack-pattern", args); err != nil {
 						return err
 					}
-					idx.assetTechniques[tgtExt] = append(idx.assetTechniques[tgtExt], srcExt)
+					idx.assetTechniques[tgtExt] = append(idx.assetTechniques[tgtExt], relatedrefTypes.RelatedRef{ID: srcExt, Description: desc})
 				}
 			}
 		case "detects":
@@ -575,7 +576,7 @@ func Extract(args string, opts ...Option) error {
 					if err := attachCrossRef(srcEntry, uuidToPath[tgt], "attack-pattern", args); err != nil {
 						return err
 					}
-					idx.strategyTechniques[srcExt] = append(idx.strategyTechniques[srcExt], tgtExt)
+					idx.strategyTechniques[srcExt] = append(idx.strategyTechniques[srcExt], relatedrefTypes.RelatedRef{ID: tgtExt, Description: desc})
 				}
 				if tgtEntry, ok := entries[tgtExt]; ok {
 					if err := attachRel(tgtEntry, path, args); err != nil {
@@ -584,7 +585,7 @@ func Extract(args string, opts ...Option) error {
 					if err := attachCrossRef(tgtEntry, uuidToPath[src], "x-mitre-detection-strategy", args); err != nil {
 						return err
 					}
-					idx.techStrategy[tgtExt] = append(idx.techStrategy[tgtExt], srcExt)
+					idx.techStrategy[tgtExt] = append(idx.techStrategy[tgtExt], relatedrefTypes.RelatedRef{ID: srcExt, Description: desc})
 				}
 			}
 		case "revoked-by":

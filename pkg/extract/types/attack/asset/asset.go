@@ -3,15 +3,17 @@ package asset
 import (
 	"cmp"
 	"slices"
+
+	relatedrefTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/attack/relatedref"
 )
 
 // Asset represents the kind-specific fields for an ATT&CK Asset
 // (STIX x-mitre-asset, ICS only).
 type Asset struct {
-	Platforms           []string       `json:"platforms,omitempty"`
-	Sectors             []string       `json:"sectors,omitempty"`
-	RelatedAssets       []RelatedAsset `json:"related_assets,omitempty"`
-	TechniquesTargeting []string       `json:"techniques_targeting,omitempty"` // Technique IDs ("T*")
+	Platforms           []string                     `json:"platforms,omitempty"`
+	Sectors             []string                     `json:"sectors,omitempty"`
+	RelatedAssets       []RelatedAsset               `json:"related_assets,omitempty"`
+	TechniquesTargeting []relatedrefTypes.RelatedRef `json:"techniques_targeting,omitempty"` // Technique IDs ("T*") + per-edge description from "targets" rel
 }
 
 // RelatedAsset is an embedded entry inside Asset.RelatedAssets.
@@ -24,7 +26,7 @@ type RelatedAsset struct {
 func (a *Asset) Sort() {
 	slices.Sort(a.Platforms)
 	slices.Sort(a.Sectors)
-	slices.Sort(a.TechniquesTargeting)
+	slices.SortFunc(a.TechniquesTargeting, relatedrefTypes.Compare)
 	for i := range a.RelatedAssets {
 		slices.Sort(a.RelatedAssets[i].Sectors)
 	}
@@ -36,7 +38,7 @@ func Compare(x, y Asset) int {
 		slices.Compare(x.Platforms, y.Platforms),
 		slices.Compare(x.Sectors, y.Sectors),
 		slices.CompareFunc(x.RelatedAssets, y.RelatedAssets, CompareRelatedAsset),
-		slices.Compare(x.TechniquesTargeting, y.TechniquesTargeting),
+		slices.CompareFunc(x.TechniquesTargeting, y.TechniquesTargeting, relatedrefTypes.Compare),
 	)
 }
 

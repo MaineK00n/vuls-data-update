@@ -12,7 +12,10 @@
 	"modified": "2024-01-01T00:00:00Z",
 	"mitigation": {
 		"techniques_mitigated": [
-			"T1195"
+			{
+				"id": "T1195",
+				"description": "Mitigate T1195 by validating supply-chain integrity end-to-end."
+			}
 		]
 	},
 	"references": [
