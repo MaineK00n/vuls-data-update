@@ -397,7 +397,10 @@ func Extract(args string, opts ...Option) error {
 
 			switch r.RelationshipType {
 			case "subtechnique-of":
-				if srcEntry, ok := entries[srcExt]; ok && tgtExt != "" {
+				// Forward: subtechnique points at a single parent
+				// technique (the only edge whose forward projection
+				// isn't a slice; handled inline).
+				if srcEntry := entries[srcExt]; srcEntry != nil && tgtExt != "" {
 					if err := attachRel(srcEntry, path, args); err != nil {
 						return err
 					}
@@ -406,35 +409,18 @@ func Extract(args string, opts ...Option) error {
 					}
 					idx.subParent[srcExt] = tgtExt
 				}
-				// Reverse: parent gets list of children
-				if tgtEntry, ok := entries[tgtExt]; ok && srcExt != "" {
-					if err := attachRel(tgtEntry, path, args); err != nil {
-						return err
-					}
-					if err := attachCrossRef(tgtEntry, uuidToPath[src], "attack-pattern", args); err != nil {
-						return err
-					}
-					idx.subChildren[tgtExt] = append(idx.subChildren[tgtExt], srcExt)
+				// Reverse: parent gets list of children.
+				if err := recordEdge(idx.subChildren, tgtExt, srcExt, entries[tgtExt], path, args, uuidToPath[src], "attack-pattern", srcExt); err != nil {
+					return err
 				}
 			case "mitigates":
-				if tgtEntry, ok := entries[tgtExt]; ok && srcExt != "" {
-					if err := attachRel(tgtEntry, path, args); err != nil {
-						return err
-					}
-					if err := attachCrossRef(tgtEntry, uuidToPath[src], "course-of-action", args); err != nil {
-						return err
-					}
-					idx.techMit[tgtExt] = append(idx.techMit[tgtExt], relatedrefTypes.RelatedRef{ID: srcExt, Description: desc, References: refs})
+				if err := recordEdge(idx.techMit, tgtExt, srcExt, entries[tgtExt], path, args, uuidToPath[src], "course-of-action",
+					relatedrefTypes.RelatedRef{ID: srcExt, Description: desc, References: refs}); err != nil {
+					return err
 				}
-				// Reverse: mitigation gets list of techniques it addresses
-				if srcEntry, ok := entries[srcExt]; ok && tgtExt != "" {
-					if err := attachRel(srcEntry, path, args); err != nil {
-						return err
-					}
-					if err := attachCrossRef(srcEntry, uuidToPath[tgt], "attack-pattern", args); err != nil {
-						return err
-					}
-					idx.mitTechniques[srcExt] = append(idx.mitTechniques[srcExt], relatedrefTypes.RelatedRef{ID: tgtExt, Description: desc, References: refs})
+				if err := recordEdge(idx.mitTechniques, srcExt, tgtExt, entries[srcExt], path, args, uuidToPath[tgt], "attack-pattern",
+					relatedrefTypes.RelatedRef{ID: tgtExt, Description: desc, References: refs}); err != nil {
+					return err
 				}
 			case "uses":
 				if srcExt == "" || tgtExt == "" {
@@ -442,167 +428,88 @@ func Extract(args string, opts ...Option) error {
 				}
 				switch {
 				case srcKind == attackTypes.KindGroup && tgtKind == attackTypes.KindTechnique:
-					if srcEntry, ok := entries[srcExt]; ok {
-						if err := attachRel(srcEntry, path, args); err != nil {
-							return err
-						}
-						if err := attachCrossRef(srcEntry, uuidToPath[tgt], "attack-pattern", args); err != nil {
-							return err
-						}
-						idx.groupTechUsed[srcExt] = append(idx.groupTechUsed[srcExt], techniqueusedTypes.TechniqueUsed{ID: tgtExt, Description: desc, References: refs})
+					if err := recordEdge(idx.groupTechUsed, srcExt, tgtExt, entries[srcExt], path, args, uuidToPath[tgt], "attack-pattern",
+						techniqueusedTypes.TechniqueUsed{ID: tgtExt, Description: desc, References: refs}); err != nil {
+						return err
 					}
-					if tgtEntry, ok := entries[tgtExt]; ok {
-						if err := attachRel(tgtEntry, path, args); err != nil {
-							return err
-						}
-						if err := attachCrossRef(tgtEntry, uuidToPath[src], "intrusion-set", args); err != nil {
-							return err
-						}
-						idx.techProcs[tgtExt] = append(idx.techProcs[tgtExt], procedureTypes.Procedure{AttackerID: srcExt, Description: desc, References: refs})
+					if err := recordEdge(idx.techProcs, tgtExt, srcExt, entries[tgtExt], path, args, uuidToPath[src], "intrusion-set",
+						procedureTypes.Procedure{AttackerID: srcExt, Description: desc, References: refs}); err != nil {
+						return err
 					}
 				case srcKind == attackTypes.KindGroup && tgtKind == attackTypes.KindSoftware:
-					if srcEntry, ok := entries[srcExt]; ok {
-						if err := attachRel(srcEntry, path, args); err != nil {
-							return err
-						}
-						if err := attachCrossRef(srcEntry, uuidToPath[tgt], stixTypeFromUUID(tgt), args); err != nil {
-							return err
-						}
-						idx.groupSoftUsed[srcExt] = append(idx.groupSoftUsed[srcExt], relatedrefTypes.RelatedRef{ID: tgtExt, Description: desc, References: refs})
+					if err := recordEdge(idx.groupSoftUsed, srcExt, tgtExt, entries[srcExt], path, args, uuidToPath[tgt], stixTypeFromUUID(tgt),
+						relatedrefTypes.RelatedRef{ID: tgtExt, Description: desc, References: refs}); err != nil {
+						return err
 					}
-					if tgtEntry, ok := entries[tgtExt]; ok {
-						if err := attachRel(tgtEntry, path, args); err != nil {
-							return err
-						}
-						if err := attachCrossRef(tgtEntry, uuidToPath[src], "intrusion-set", args); err != nil {
-							return err
-						}
-						idx.softGroupsUse[tgtExt] = append(idx.softGroupsUse[tgtExt], relatedrefTypes.RelatedRef{ID: srcExt, Description: desc, References: refs})
+					if err := recordEdge(idx.softGroupsUse, tgtExt, srcExt, entries[tgtExt], path, args, uuidToPath[src], "intrusion-set",
+						relatedrefTypes.RelatedRef{ID: srcExt, Description: desc, References: refs}); err != nil {
+						return err
 					}
 				case srcKind == attackTypes.KindSoftware && tgtKind == attackTypes.KindTechnique:
-					if srcEntry, ok := entries[srcExt]; ok {
-						if err := attachRel(srcEntry, path, args); err != nil {
-							return err
-						}
-						if err := attachCrossRef(srcEntry, uuidToPath[tgt], "attack-pattern", args); err != nil {
-							return err
-						}
-						idx.softTechUsed[srcExt] = append(idx.softTechUsed[srcExt], techniqueusedTypes.TechniqueUsed{ID: tgtExt, Description: desc, References: refs})
+					if err := recordEdge(idx.softTechUsed, srcExt, tgtExt, entries[srcExt], path, args, uuidToPath[tgt], "attack-pattern",
+						techniqueusedTypes.TechniqueUsed{ID: tgtExt, Description: desc, References: refs}); err != nil {
+						return err
 					}
-					if tgtEntry, ok := entries[tgtExt]; ok {
-						if err := attachRel(tgtEntry, path, args); err != nil {
-							return err
-						}
-						if err := attachCrossRef(tgtEntry, uuidToPath[src], stixTypeFromUUID(src), args); err != nil {
-							return err
-						}
-						idx.techProcs[tgtExt] = append(idx.techProcs[tgtExt], procedureTypes.Procedure{AttackerID: srcExt, Description: desc, References: refs})
+					if err := recordEdge(idx.techProcs, tgtExt, srcExt, entries[tgtExt], path, args, uuidToPath[src], stixTypeFromUUID(src),
+						procedureTypes.Procedure{AttackerID: srcExt, Description: desc, References: refs}); err != nil {
+						return err
 					}
 				case srcKind == attackTypes.KindCampaign && tgtKind == attackTypes.KindTechnique:
-					if srcEntry, ok := entries[srcExt]; ok {
-						if err := attachRel(srcEntry, path, args); err != nil {
-							return err
-						}
-						if err := attachCrossRef(srcEntry, uuidToPath[tgt], "attack-pattern", args); err != nil {
-							return err
-						}
-						idx.campTechUsed[srcExt] = append(idx.campTechUsed[srcExt], techniqueusedTypes.TechniqueUsed{ID: tgtExt, Description: desc, References: refs})
+					if err := recordEdge(idx.campTechUsed, srcExt, tgtExt, entries[srcExt], path, args, uuidToPath[tgt], "attack-pattern",
+						techniqueusedTypes.TechniqueUsed{ID: tgtExt, Description: desc, References: refs}); err != nil {
+						return err
 					}
-					if tgtEntry, ok := entries[tgtExt]; ok {
-						if err := attachRel(tgtEntry, path, args); err != nil {
-							return err
-						}
-						if err := attachCrossRef(tgtEntry, uuidToPath[src], "campaign", args); err != nil {
-							return err
-						}
-						idx.techProcs[tgtExt] = append(idx.techProcs[tgtExt], procedureTypes.Procedure{AttackerID: srcExt, Description: desc, References: refs})
+					if err := recordEdge(idx.techProcs, tgtExt, srcExt, entries[tgtExt], path, args, uuidToPath[src], "campaign",
+						procedureTypes.Procedure{AttackerID: srcExt, Description: desc, References: refs}); err != nil {
+						return err
 					}
 				case srcKind == attackTypes.KindCampaign && tgtKind == attackTypes.KindSoftware:
-					if srcEntry, ok := entries[srcExt]; ok {
-						if err := attachRel(srcEntry, path, args); err != nil {
-							return err
-						}
-						if err := attachCrossRef(srcEntry, uuidToPath[tgt], stixTypeFromUUID(tgt), args); err != nil {
-							return err
-						}
-						idx.campSoftUsed[srcExt] = append(idx.campSoftUsed[srcExt], relatedrefTypes.RelatedRef{ID: tgtExt, Description: desc, References: refs})
+					if err := recordEdge(idx.campSoftUsed, srcExt, tgtExt, entries[srcExt], path, args, uuidToPath[tgt], stixTypeFromUUID(tgt),
+						relatedrefTypes.RelatedRef{ID: tgtExt, Description: desc, References: refs}); err != nil {
+						return err
 					}
-					// Reverse: software gets list of campaigns using it
-					if tgtEntry, ok := entries[tgtExt]; ok {
-						if err := attachRel(tgtEntry, path, args); err != nil {
-							return err
-						}
-						if err := attachCrossRef(tgtEntry, uuidToPath[src], "campaign", args); err != nil {
-							return err
-						}
-						idx.softCampaigns[tgtExt] = append(idx.softCampaigns[tgtExt], relatedrefTypes.RelatedRef{ID: srcExt, Description: desc, References: refs})
+					if err := recordEdge(idx.softCampaigns, tgtExt, srcExt, entries[tgtExt], path, args, uuidToPath[src], "campaign",
+						relatedrefTypes.RelatedRef{ID: srcExt, Description: desc, References: refs}); err != nil {
+						return err
 					}
 				}
 			case "attributed-to":
-				if srcKind == attackTypes.KindCampaign && tgtKind == attackTypes.KindGroup && srcExt != "" && tgtExt != "" {
-					if srcEntry, ok := entries[srcExt]; ok {
-						if err := attachRel(srcEntry, path, args); err != nil {
-							return err
-						}
-						if err := attachCrossRef(srcEntry, uuidToPath[tgt], "intrusion-set", args); err != nil {
-							return err
-						}
-						idx.campGroupsAttr[srcExt] = append(idx.campGroupsAttr[srcExt], relatedrefTypes.RelatedRef{ID: tgtExt, Description: desc, References: refs})
-					}
-					// Reverse: group gets list of campaigns attributing to it
-					if tgtEntry, ok := entries[tgtExt]; ok {
-						if err := attachRel(tgtEntry, path, args); err != nil {
-							return err
-						}
-						if err := attachCrossRef(tgtEntry, uuidToPath[src], "campaign", args); err != nil {
-							return err
-						}
-						idx.groupCampaigns[tgtExt] = append(idx.groupCampaigns[tgtExt], relatedrefTypes.RelatedRef{ID: srcExt, Description: desc, References: refs})
-					}
+				if srcKind != attackTypes.KindCampaign || tgtKind != attackTypes.KindGroup || srcExt == "" || tgtExt == "" {
+					break
+				}
+				if err := recordEdge(idx.campGroupsAttr, srcExt, tgtExt, entries[srcExt], path, args, uuidToPath[tgt], "intrusion-set",
+					relatedrefTypes.RelatedRef{ID: tgtExt, Description: desc, References: refs}); err != nil {
+					return err
+				}
+				if err := recordEdge(idx.groupCampaigns, tgtExt, srcExt, entries[tgtExt], path, args, uuidToPath[src], "campaign",
+					relatedrefTypes.RelatedRef{ID: srcExt, Description: desc, References: refs}); err != nil {
+					return err
 				}
 			case "targets":
 				// attack-pattern --targets--> x-mitre-asset
-				if srcKind == attackTypes.KindTechnique && tgtKind == attackTypes.KindAsset && srcExt != "" && tgtExt != "" {
-					if srcEntry, ok := entries[srcExt]; ok {
-						if err := attachRel(srcEntry, path, args); err != nil {
-							return err
-						}
-						if err := attachCrossRef(srcEntry, uuidToPath[tgt], "x-mitre-asset", args); err != nil {
-							return err
-						}
-						idx.techAssets[srcExt] = append(idx.techAssets[srcExt], relatedrefTypes.RelatedRef{ID: tgtExt, Description: desc, References: refs})
-					}
-					if tgtEntry, ok := entries[tgtExt]; ok {
-						if err := attachRel(tgtEntry, path, args); err != nil {
-							return err
-						}
-						if err := attachCrossRef(tgtEntry, uuidToPath[src], "attack-pattern", args); err != nil {
-							return err
-						}
-						idx.assetTechniques[tgtExt] = append(idx.assetTechniques[tgtExt], relatedrefTypes.RelatedRef{ID: srcExt, Description: desc, References: refs})
-					}
+				if srcKind != attackTypes.KindTechnique || tgtKind != attackTypes.KindAsset || srcExt == "" || tgtExt == "" {
+					break
+				}
+				if err := recordEdge(idx.techAssets, srcExt, tgtExt, entries[srcExt], path, args, uuidToPath[tgt], "x-mitre-asset",
+					relatedrefTypes.RelatedRef{ID: tgtExt, Description: desc, References: refs}); err != nil {
+					return err
+				}
+				if err := recordEdge(idx.assetTechniques, tgtExt, srcExt, entries[tgtExt], path, args, uuidToPath[src], "attack-pattern",
+					relatedrefTypes.RelatedRef{ID: srcExt, Description: desc, References: refs}); err != nil {
+					return err
 				}
 			case "detects":
 				// x-mitre-detection-strategy --detects--> attack-pattern
-				if srcKind == attackTypes.KindDetectStrategy && tgtKind == attackTypes.KindTechnique && srcExt != "" && tgtExt != "" {
-					if srcEntry, ok := entries[srcExt]; ok {
-						if err := attachRel(srcEntry, path, args); err != nil {
-							return err
-						}
-						if err := attachCrossRef(srcEntry, uuidToPath[tgt], "attack-pattern", args); err != nil {
-							return err
-						}
-						idx.strategyTechniques[srcExt] = append(idx.strategyTechniques[srcExt], relatedrefTypes.RelatedRef{ID: tgtExt, Description: desc, References: refs})
-					}
-					if tgtEntry, ok := entries[tgtExt]; ok {
-						if err := attachRel(tgtEntry, path, args); err != nil {
-							return err
-						}
-						if err := attachCrossRef(tgtEntry, uuidToPath[src], "x-mitre-detection-strategy", args); err != nil {
-							return err
-						}
-						idx.techStrategy[tgtExt] = append(idx.techStrategy[tgtExt], relatedrefTypes.RelatedRef{ID: srcExt, Description: desc, References: refs})
-					}
+				if srcKind != attackTypes.KindDetectStrategy || tgtKind != attackTypes.KindTechnique || srcExt == "" || tgtExt == "" {
+					break
+				}
+				if err := recordEdge(idx.strategyTechniques, srcExt, tgtExt, entries[srcExt], path, args, uuidToPath[tgt], "attack-pattern",
+					relatedrefTypes.RelatedRef{ID: tgtExt, Description: desc, References: refs}); err != nil {
+					return err
+				}
+				if err := recordEdge(idx.techStrategy, tgtExt, srcExt, entries[tgtExt], path, args, uuidToPath[src], "x-mitre-detection-strategy",
+					relatedrefTypes.RelatedRef{ID: srcExt, Description: desc, References: refs}); err != nil {
+					return err
 				}
 			case "revoked-by":
 				// Captured by the boolean Revoked field already; skip rel-level handling.
@@ -695,6 +602,27 @@ func attachCrossRef(entry *primaryEntry, crossPath, stixType, args string) error
 	return nil
 }
 
+// recordEdge attaches the relationship file + other-side STIX file to
+// the owning entry's reader for provenance, then appends item into
+// m[key]. A nil entry or empty other is a no-op so callers can apply
+// the forward and reverse directions of a relationship symmetrically
+// without an outer ok-check; entry is looked up by the caller via
+// entries[key] and may legitimately be missing when the rel points at
+// a STIX object outside the bundled dataset.
+func recordEdge[T any](m map[string][]T, key, other string, entry *primaryEntry, relPath, args, otherPath, otherStixType string, item T) error {
+	if entry == nil || other == "" {
+		return nil
+	}
+	if err := attachRel(entry, relPath, args); err != nil {
+		return err
+	}
+	if err := attachCrossRef(entry, otherPath, otherStixType, args); err != nil {
+		return err
+	}
+	m[key] = append(m[key], item)
+	return nil
+}
+
 func stixTypeFromUUID(uuid string) string {
 	if idx := strings.Index(uuid, "--"); idx > 0 {
 		return uuid[:idx]
@@ -738,132 +666,25 @@ func convert(entry *primaryEntry, idx rels) attackTypes.Attack {
 	case attackTypes.KindTechnique:
 		a.Technique = buildTechnique(entry.raw.(*attack.AttackPattern), entry.extID, idx)
 	case attackTypes.KindTactic:
-		t := entry.raw.(*attack.XMitreTactic)
-		shortname := ""
-		if t.XMitreShortname != nil {
-			shortname = *t.XMitreShortname
-		}
-		a.Tactic = tacticTypes.Tactic{
-			Shortname:  shortname,
-			Techniques: idx.tacticTechniques[shortname],
-		}
+		a.Tactic = buildTactic(entry.raw.(*attack.XMitreTactic), idx)
 	case attackTypes.KindMitigation:
-		a.Mitigation = mitigationTypes.Mitigation{
-			TechniquesMitigated: idx.mitTechniques[entry.extID],
-		}
+		a.Mitigation = buildMitigation(entry.extID, idx)
 	case attackTypes.KindGroup:
-		is := entry.raw.(*attack.IntrusionSet)
-		a.Group = groupTypes.Group{
-			Aliases:             mergeAliases(is.Aliases, is.XMitreAliases),
-			TechniquesUsed:      idx.groupTechUsed[entry.extID],
-			SoftwaresUsed:       idx.groupSoftUsed[entry.extID],
-			CampaignsAttributed: idx.groupCampaigns[entry.extID],
-		}
+		a.Group = buildGroup(entry.raw.(*attack.IntrusionSet), entry.extID, idx)
 	case attackTypes.KindSoftware:
-		var aliases, xAliases, platforms []string
-		var stixType string
-		switch s := entry.raw.(type) {
-		case *attack.Malware:
-			stixType = "malware"
-			aliases = s.Aliases
-			xAliases = s.XMitreAliases
-			platforms = s.XMitrePlatforms
-		case *attack.Tool:
-			stixType = "tool"
-			aliases = s.Aliases
-			xAliases = s.XMitreAliases
-			platforms = s.XMitrePlatforms
-		}
-		a.Software = softwareTypes.Software{
-			Type:           stixType,
-			Aliases:        mergeAliases(aliases, xAliases),
-			Platforms:      slices.Clone(platforms),
-			TechniquesUsed: idx.softTechUsed[entry.extID],
-			GroupsUsing:    idx.softGroupsUse[entry.extID],
-			CampaignsUsing: idx.softCampaigns[entry.extID],
-		}
+		a.Software = buildSoftware(entry.raw, entry.extID, idx)
 	case attackTypes.KindCampaign:
-		camp := entry.raw.(*attack.Campaign)
-		a.Campaign = campaignTypes.Campaign{
-			Aliases: mergeAliases(camp.Aliases, nil),
-			FirstSeen: func() time.Time {
-				if camp.FirstSeen == nil {
-					return time.Time{}
-				}
-				return *camp.FirstSeen
-			}(),
-			LastSeen: func() time.Time {
-				if camp.LastSeen == nil {
-					return time.Time{}
-				}
-				return *camp.LastSeen
-			}(),
-			TechniquesUsed:   idx.campTechUsed[entry.extID],
-			GroupsAttributed: idx.campGroupsAttr[entry.extID],
-			SoftwaresUsed:    idx.campSoftUsed[entry.extID],
-		}
+		a.Campaign = buildCampaign(entry.raw.(*attack.Campaign), entry.extID, idx)
 	case attackTypes.KindAsset:
-		as := entry.raw.(*attack.XMitreAsset)
-		related := make([]assetTypes.RelatedAsset, 0, len(as.XMitreRelatedAssets))
-		for _, ra := range as.XMitreRelatedAssets {
-			related = append(related, assetTypes.RelatedAsset{
-				Name:        ra.Name,
-				Description: ra.Description,
-				Sectors:     slices.Clone(ra.RelatedAssetSectors),
-			})
-		}
-		a.Asset = assetTypes.Asset{
-			Platforms:           slices.Clone(as.XMitrePlatforms),
-			Sectors:             slices.Clone(as.XMitreSectors),
-			RelatedAssets:       related,
-			TechniquesTargeting: idx.assetTechniques[entry.extID],
-		}
+		a.Asset = buildAsset(entry.raw.(*attack.XMitreAsset), entry.extID, idx)
 	case attackTypes.KindDetectStrategy:
-		a.DetectionStrategy = detectionstrategyTypes.DetectionStrategy{
-			Analytics:          idx.strategyAnalytics[entry.extID],
-			TechniquesDetected: idx.strategyTechniques[entry.extID],
-		}
+		a.DetectionStrategy = buildDetectionStrategy(entry.extID, idx)
 	case attackTypes.KindDataSource:
-		ds := entry.raw.(*attack.XMitreDataSource)
-		a.AttackDataSource = datasourceTypes.DataSource{
-			Platforms:        slices.Clone(ds.XMitrePlatforms),
-			CollectionLayers: slices.Clone(ds.XMitreCollectionLayers),
-			DataComponents:   idx.dsComponents[entry.extID],
-		}
+		a.AttackDataSource = buildAttackDataSource(entry.raw.(*attack.XMitreDataSource), entry.extID, idx)
 	case attackTypes.KindDataComponent:
-		dc := entry.raw.(*attack.XMitreDataComponent)
-		logs := make([]datacomponentTypes.LogSource, 0, len(dc.XMitreLogSources))
-		for _, ls := range dc.XMitreLogSources {
-			logs = append(logs, datacomponentTypes.LogSource{Name: ls.Name, Channel: ls.Channel})
-		}
-		a.DataComponent = datacomponentTypes.DataComponent{
-			DataSource: idx.dcSource[entry.extID],
-			LogSources: logs,
-		}
+		a.DataComponent = buildDataComponent(entry.raw.(*attack.XMitreDataComponent), entry.extID, idx)
 	case attackTypes.KindAnalytic:
-		an := entry.raw.(*attack.XMitreAnalytic)
-		lrefs := make([]analyticTypes.LogSourceReference, 0, len(an.XMitreLogSourceReferences))
-		for _, lr := range an.XMitreLogSourceReferences {
-			dcExt := ""
-			// keep raw UUID if not resolvable; otherwise resolve to DC ext ID
-			// (resolution handled below via separate map lookup if available)
-			_ = dcExt
-			lrefs = append(lrefs, analyticTypes.LogSourceReference{
-				DataComponent: lr.XMitreDataComponentRef,
-				Name:          lr.Name,
-				Channel:       lr.Channel,
-			})
-		}
-		mes := make([]analyticTypes.MutableElement, 0, len(an.XMitreMutableElements))
-		for _, me := range an.XMitreMutableElements {
-			mes = append(mes, analyticTypes.MutableElement{Field: me.Field, Description: me.Description})
-		}
-		a.Analytic = analyticTypes.Analytic{
-			DetectionStrategy:   idx.analyticStrategy[entry.extID],
-			Platforms:           slices.Clone(an.XMitrePlatforms),
-			LogSourceReferences: lrefs,
-			MutableElements:     mes,
-		}
+		a.Analytic = buildAnalytic(entry.raw.(*attack.XMitreAnalytic), entry.extID, idx)
 	}
 
 	return a
@@ -968,6 +789,136 @@ func buildTechnique(ap *attack.AttackPattern, extID string, idx rels) techniqueT
 		AssetsTargeted:       idx.techAssets[extID],
 		DetectionStrategies:  idx.techStrategy[extID],
 	}
+}
+
+func buildTactic(t *attack.XMitreTactic, idx rels) tacticTypes.Tactic {
+	shortname := derefString(t.XMitreShortname)
+	return tacticTypes.Tactic{
+		Shortname:  shortname,
+		Techniques: idx.tacticTechniques[shortname],
+	}
+}
+
+func buildMitigation(extID string, idx rels) mitigationTypes.Mitigation {
+	return mitigationTypes.Mitigation{
+		TechniquesMitigated: idx.mitTechniques[extID],
+	}
+}
+
+func buildGroup(is *attack.IntrusionSet, extID string, idx rels) groupTypes.Group {
+	return groupTypes.Group{
+		Aliases:             mergeAliases(is.Aliases, is.XMitreAliases),
+		TechniquesUsed:      idx.groupTechUsed[extID],
+		SoftwaresUsed:       idx.groupSoftUsed[extID],
+		CampaignsAttributed: idx.groupCampaigns[extID],
+	}
+}
+
+func buildSoftware(raw any, extID string, idx rels) softwareTypes.Software {
+	var aliases, xAliases, platforms []string
+	var stixType string
+	switch s := raw.(type) {
+	case *attack.Malware:
+		stixType = "malware"
+		aliases = s.Aliases
+		xAliases = s.XMitreAliases
+		platforms = s.XMitrePlatforms
+	case *attack.Tool:
+		stixType = "tool"
+		aliases = s.Aliases
+		xAliases = s.XMitreAliases
+		platforms = s.XMitrePlatforms
+	}
+	return softwareTypes.Software{
+		Type:           stixType,
+		Aliases:        mergeAliases(aliases, xAliases),
+		Platforms:      slices.Clone(platforms),
+		TechniquesUsed: idx.softTechUsed[extID],
+		GroupsUsing:    idx.softGroupsUse[extID],
+		CampaignsUsing: idx.softCampaigns[extID],
+	}
+}
+
+func buildCampaign(camp *attack.Campaign, extID string, idx rels) campaignTypes.Campaign {
+	return campaignTypes.Campaign{
+		Aliases:          mergeAliases(camp.Aliases, nil),
+		FirstSeen:        derefTime(camp.FirstSeen),
+		LastSeen:         derefTime(camp.LastSeen),
+		TechniquesUsed:   idx.campTechUsed[extID],
+		GroupsAttributed: idx.campGroupsAttr[extID],
+		SoftwaresUsed:    idx.campSoftUsed[extID],
+	}
+}
+
+func buildAsset(as *attack.XMitreAsset, extID string, idx rels) assetTypes.Asset {
+	related := make([]assetTypes.RelatedAsset, 0, len(as.XMitreRelatedAssets))
+	for _, ra := range as.XMitreRelatedAssets {
+		related = append(related, assetTypes.RelatedAsset{
+			Name:        ra.Name,
+			Description: ra.Description,
+			Sectors:     slices.Clone(ra.RelatedAssetSectors),
+		})
+	}
+	return assetTypes.Asset{
+		Platforms:           slices.Clone(as.XMitrePlatforms),
+		Sectors:             slices.Clone(as.XMitreSectors),
+		RelatedAssets:       related,
+		TechniquesTargeting: idx.assetTechniques[extID],
+	}
+}
+
+func buildDetectionStrategy(extID string, idx rels) detectionstrategyTypes.DetectionStrategy {
+	return detectionstrategyTypes.DetectionStrategy{
+		Analytics:          idx.strategyAnalytics[extID],
+		TechniquesDetected: idx.strategyTechniques[extID],
+	}
+}
+
+func buildAttackDataSource(ds *attack.XMitreDataSource, extID string, idx rels) datasourceTypes.DataSource {
+	return datasourceTypes.DataSource{
+		Platforms:        slices.Clone(ds.XMitrePlatforms),
+		CollectionLayers: slices.Clone(ds.XMitreCollectionLayers),
+		DataComponents:   idx.dsComponents[extID],
+	}
+}
+
+func buildDataComponent(dc *attack.XMitreDataComponent, extID string, idx rels) datacomponentTypes.DataComponent {
+	logs := make([]datacomponentTypes.LogSource, 0, len(dc.XMitreLogSources))
+	for _, ls := range dc.XMitreLogSources {
+		logs = append(logs, datacomponentTypes.LogSource{Name: ls.Name, Channel: ls.Channel})
+	}
+	return datacomponentTypes.DataComponent{
+		DataSource: idx.dcSource[extID],
+		LogSources: logs,
+	}
+}
+
+func buildAnalytic(an *attack.XMitreAnalytic, extID string, idx rels) analyticTypes.Analytic {
+	lrefs := make([]analyticTypes.LogSourceReference, 0, len(an.XMitreLogSourceReferences))
+	for _, lr := range an.XMitreLogSourceReferences {
+		lrefs = append(lrefs, analyticTypes.LogSourceReference{
+			DataComponent: lr.XMitreDataComponentRef,
+			Name:          lr.Name,
+			Channel:       lr.Channel,
+		})
+	}
+	mes := make([]analyticTypes.MutableElement, 0, len(an.XMitreMutableElements))
+	for _, me := range an.XMitreMutableElements {
+		mes = append(mes, analyticTypes.MutableElement{Field: me.Field, Description: me.Description})
+	}
+	return analyticTypes.Analytic{
+		DetectionStrategy:   idx.analyticStrategy[extID],
+		Platforms:           slices.Clone(an.XMitrePlatforms),
+		LogSourceReferences: lrefs,
+		MutableElements:     mes,
+	}
+}
+
+func derefTime(p *time.Time) time.Time {
+	if p == nil {
+		return time.Time{}
+	}
+	return *p
 }
 
 func mergeAliases(stixAliases, mitreAliases []string) []string {
