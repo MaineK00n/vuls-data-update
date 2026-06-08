@@ -426,14 +426,6 @@ func (e extractor) nodeToCriteria(n cveTypes.Node) (criteriaTypes.Criteria, erro
 
 		rangeType := decideRangeType(match)
 
-		// A ranged match keeps its range narrowing on the parent CPE and,
-		// in addition, expands the cpematch feed into CPEMatches entries:
-		//   - Unknown range: the range cannot be evaluated at detection
-		//     time, so every expanded version is added.
-		//   - SEMVER range: the range already covers every semver-parseable
-		//     version inside it; only versions Range cannot cover
-		//     (non-semver, or the rare semver version outside the range)
-		//     need to appear in CPEMatches.
 		cpeMatches, err := e.buildCPEMatches(match, rangeType)
 		if err != nil {
 			return criteriaTypes.Criteria{}, errors.Wrapf(err, "build cpe matches. matchCriteriaID: %s, criteria: %s", match.MatchCriteriaID, match.Criteria)
@@ -582,9 +574,18 @@ func (e extractor) cpeNamesFromCpematch(matchCriteriaId string) ([]string, error
 }
 
 // buildCPEMatches expands the cpematch feed entries for one CPEMatch into
-// the list that should populate cpecriterion.Criterion.CPEMatches. Returns
-// (nil, nil) when match has no version range — the caller can invoke this
-// unconditionally per CPEMatch.
+// the list that should populate cpecriterion.Criterion.CPEMatches. The
+// criterion's Range still narrows by version on the parent CPE; this list
+// supplements Range with the versions Range cannot cover:
+//
+//   - Unknown range: Range cannot be evaluated at detection time, so every
+//     concrete cpematch entry is added.
+//   - SEMVER range: Range already covers every semver-parseable version
+//     inside it, so only the entries Range misses (non-semver, or the rare
+//     semver version outside the range) are added.
+//   - No range: returns (nil, nil) — Range is absent, nothing needs to be
+//     enumerated, so the caller can invoke this unconditionally per
+//     CPEMatch.
 //
 // Lookup failures happen when the CVE feed and the cpematch feed have not
 // been snapshotted atomically: a freshly added matchCriteriaId can exist in
