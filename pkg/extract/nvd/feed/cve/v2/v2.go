@@ -434,13 +434,9 @@ func (e extractor) nodeToCriteria(n cveTypes.Node) (criteriaTypes.Criteria, erro
 		//     version inside it; only versions Range cannot cover
 		//     (non-semver, or the rare semver version outside the range)
 		//     need to appear in CPEMatches.
-		var cpeMatches []ccTypes.CPE
-		if hasRange {
-			var err error
-			cpeMatches, err = e.buildCPEMatches(match, rangeType)
-			if err != nil {
-				return criteriaTypes.Criteria{}, err
-			}
+		cpeMatches, err := e.buildCPEMatches(match, rangeType)
+		if err != nil {
+			return criteriaTypes.Criteria{}, errors.Wrapf(err, "build cpe matches. matchCriteriaID: %s, criteria: %s", match.MatchCriteriaID, match.Criteria)
 		}
 
 		cn := criterionTypes.Criterion{
@@ -585,11 +581,10 @@ func (e extractor) cpeNamesFromCpematch(matchCriteriaId string) ([]string, error
 	return ns, nil
 }
 
-// buildCPEMatches expands the cpematch feed entries for one ranged CPEMatch
-// into the list that should populate cpecriterion.Criterion.CPEMatches.
-// Caller is responsible for only invoking this when match has a non-empty
-// range (caller-side hasRange check); calling on a no-range match is wasted
-// work but otherwise harmless.
+// buildCPEMatches expands the cpematch feed entries for one CPEMatch into
+// the list that should populate cpecriterion.Criterion.CPEMatches. Returns
+// (nil, nil) when match has no version range — the caller can invoke this
+// unconditionally per CPEMatch.
 //
 // Lookup failures happen when the CVE feed and the cpematch feed have not
 // been snapshotted atomically: a freshly added matchCriteriaId can exist in
@@ -606,10 +601,15 @@ func (e extractor) cpeNamesFromCpematch(matchCriteriaId string) ([]string, error
 //     undetectable. Refuse to emit a broken criterion — caller fails the
 //     extract and the operator refreshes the cpematch snapshot.
 func (e extractor) buildCPEMatches(match cveTypes.CPEMatch, rangeType ccRangeTypes.RangeType) ([]ccTypes.CPE, error) {
+	if match.VersionStartIncluding == "" && match.VersionStartExcluding == "" &&
+		match.VersionEndIncluding == "" && match.VersionEndExcluding == "" {
+		return nil, nil
+	}
+
 	ns, err := e.cpeNamesFromCpematch(match.MatchCriteriaID)
 	if err != nil {
 		if rangeType == ccRangeTypes.RangeTypeUnknown {
-			return nil, errors.Wrapf(err, "cpematch lookup failed for unknown range; matchCriteriaID=%s criteria=%s", match.MatchCriteriaID, match.Criteria)
+			return nil, errors.Wrap(err, "cpematch lookup failed for unknown range")
 		}
 		slog.Warn("cpematch lookup failed", "matchCriteriaID", match.MatchCriteriaID, "criteria", match.Criteria, "err", err)
 		return nil, nil
