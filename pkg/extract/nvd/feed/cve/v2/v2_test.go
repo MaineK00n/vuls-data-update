@@ -99,10 +99,10 @@ func TestExtract(t *testing.T) {
 			hasError: true,
 		},
 		{
-			// Configuration.Negate=true is not implemented. The extractor
-			// must return an explicit error rather than silently emit
-			// non-negated criteria, which would invert detection
-			// semantics.
+			// negate=true on a configuration object is not implemented.
+			// The extractor must return an explicit error rather than
+			// silently emit non-negated criteria, which would invert
+			// detection semantics.
 			name: "config-negate",
 			args: args{
 				cveDir:      "./testdata/fixtures/config-negate/vuls-data-raw-nvd-feed-cve-v2",
@@ -111,9 +111,9 @@ func TestExtract(t *testing.T) {
 			hasError: true,
 		},
 		{
-			// Node.Negate=true is not implemented. Symmetric with the
-			// Configuration.Negate case — the extractor must reject
-			// negated nodes explicitly.
+			// negate=true on a node object is not implemented. Symmetric
+			// with the configuration-negate case — the extractor must
+			// reject negated nodes explicitly.
 			name: "node-negate",
 			args: args{
 				cveDir:      "./testdata/fixtures/node-negate/vuls-data-raw-nvd-feed-cve-v2",

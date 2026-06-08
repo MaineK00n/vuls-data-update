@@ -377,7 +377,7 @@ func (e extractor) buildData(fetched cveTypes.CVE) (dataTypes.Data, error) {
 
 func (e extractor) configurationToCriteria(config cveTypes.Config) (criteriaTypes.Criteria, error) {
 	if config.Negate {
-		return criteriaTypes.Criteria{}, errors.Errorf("Configuration.Negate=true is not implemented")
+		return criteriaTypes.Criteria{}, errors.Errorf("negate=true on configuration is not implemented")
 	}
 
 	ca := criteriaTypes.Criteria{}
@@ -403,7 +403,7 @@ func (e extractor) configurationToCriteria(config cveTypes.Config) (criteriaType
 
 func (e extractor) nodeToCriteria(n cveTypes.Node) (criteriaTypes.Criteria, error) {
 	if n.Negate {
-		return criteriaTypes.Criteria{}, errors.Errorf("Node.Negate=true is not implemented")
+		return criteriaTypes.Criteria{}, errors.Errorf("negate=true on node is not implemented")
 	}
 	ca := criteriaTypes.Criteria{}
 	switch n.Operator {
