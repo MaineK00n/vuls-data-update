@@ -8,6 +8,7 @@ import (
 
 	"github.com/pkg/errors"
 
+	ccTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/cpecriterion"
 	kbcTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/kbcriterion"
 	necTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/noneexistcriterion"
 	vcTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion"
@@ -20,6 +21,7 @@ const (
 	CriterionTypeVersion
 	CriterionTypeNoneExist
 	CriterionTypeKB
+	CriterionTypeCPE
 
 	CriterionTypeUnknown
 )
@@ -32,6 +34,8 @@ func (t CriterionType) String() string {
 		return "none-exist"
 	case CriterionTypeKB:
 		return "kb"
+	case CriterionTypeCPE:
+		return "cpe"
 	default:
 		return "unknown"
 	}
@@ -57,6 +61,8 @@ func (t *CriterionType) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		*t = CriterionTypeNoneExist
 	case "kb":
 		*t = CriterionTypeKB
+	case "cpe":
+		*t = CriterionTypeCPE
 	case "unknown":
 		*t = CriterionTypeUnknown
 	default:
@@ -83,6 +89,8 @@ func (t *CriterionType) UnmarshalJSON(data []byte) error {
 		ct = CriterionTypeNoneExist
 	case "kb":
 		ct = CriterionTypeKB
+	case "cpe":
+		ct = CriterionTypeCPE
 	case "unknown":
 		ct = CriterionTypeUnknown
 	default:
@@ -97,6 +105,7 @@ type Criterion struct {
 	Version   *vcTypes.Criterion  `json:"version,omitempty"`
 	NoneExist *necTypes.Criterion `json:"none_exist,omitempty"`
 	KB        *kbcTypes.Criterion `json:"kb,omitempty"`
+	CPE       *ccTypes.Criterion  `json:"cpe,omitempty"`
 }
 
 func (c *Criterion) Sort() {
@@ -112,6 +121,10 @@ func (c *Criterion) Sort() {
 	case CriterionTypeKB:
 		if c.KB != nil {
 			c.KB.Sort()
+		}
+	case CriterionTypeCPE:
+		if c.CPE != nil {
+			c.CPE.Sort()
 		}
 	default:
 	}
@@ -155,6 +168,17 @@ func Compare(x, y Criterion) int {
 				default:
 					return kbcTypes.Compare(*x.KB, *y.KB)
 				}
+			case CriterionTypeCPE:
+				switch {
+				case x.CPE == nil && y.CPE == nil:
+					return 0
+				case x.CPE == nil && y.CPE != nil:
+					return -1
+				case x.CPE != nil && y.CPE == nil:
+					return +1
+				default:
+					return ccTypes.Compare(*x.CPE, *y.CPE)
+				}
 			default:
 				return 0
 			}
@@ -166,6 +190,7 @@ type Query struct {
 	Version   []vcTypes.Query
 	NoneExist *necTypes.Query
 	KB        *kbcTypes.Query
+	CPE       []ccTypes.Query
 }
 
 func (c Criterion) Contains(query Query, repositories []string) (bool, error) {
@@ -214,8 +239,26 @@ func (c Criterion) Contains(query Query, repositories []string) (bool, error) {
 			return false, errors.Wrap(err, "kb criterion accept")
 		}
 		return byCovered || byUnapplied, nil
+	case CriterionTypeCPE:
+		if c.CPE == nil {
+			return false, errors.New("criterion is not set for cpe criterion")
+		}
+		if len(query.CPE) == 0 {
+			return false, nil
+		}
+
+		for _, q := range query.CPE {
+			isAccepted, err := c.CPE.Accept(q)
+			if err != nil {
+				return false, errors.Wrap(err, "cpe criterion accept")
+			}
+			if isAccepted {
+				return true, nil
+			}
+		}
+		return false, nil
 	default:
-		return false, errors.Errorf("unexpected criterion type. expected: %q, actual: %q", []CriterionType{CriterionTypeVersion, CriterionTypeNoneExist, CriterionTypeKB}, c.Type)
+		return false, errors.Errorf("unexpected criterion type. expected: %q, actual: %q", []CriterionType{CriterionTypeVersion, CriterionTypeNoneExist, CriterionTypeKB, CriterionTypeCPE}, c.Type)
 	}
 }
 
@@ -237,6 +280,7 @@ type AcceptQueries struct {
 	Version   []int `json:"version,omitempty"`
 	NoneExist bool  `json:"none_exist,omitempty"`
 	KB        KB    `json:"kb,omitzero"`
+	CPE       []int `json:"cpe,omitempty"`
 }
 
 func (c Criterion) Accept(query Query, repositories []string) (FilteredCriterion, error) {
@@ -295,8 +339,30 @@ func (c Criterion) Accept(query Query, repositories []string) (FilteredCriterion
 			Criterion: c,
 			Accepts:   AcceptQueries{KB: KB{Covered: byCovered, Unapplied: byUnapplied}},
 		}, nil
+	case CriterionTypeCPE:
+		if c.CPE == nil {
+			return FilteredCriterion{}, errors.New("criterion is not set for cpe criterion")
+		}
+		if len(query.CPE) == 0 {
+			return FilteredCriterion{Criterion: c, Accepts: AcceptQueries{}}, nil
+		}
+
+		var is []int
+		for i, q := range query.CPE {
+			isAccepted, err := c.CPE.Accept(q)
+			if err != nil {
+				return FilteredCriterion{}, errors.Wrap(err, "cpe criterion accept")
+			}
+			if isAccepted {
+				is = append(is, i)
+			}
+		}
+		return FilteredCriterion{
+			Criterion: c,
+			Accepts:   AcceptQueries{CPE: is},
+		}, nil
 	default:
-		return FilteredCriterion{}, errors.Errorf("unexpected criterion type. expected: %q, actual: %q", []CriterionType{CriterionTypeVersion, CriterionTypeNoneExist, CriterionTypeKB}, c.Type)
+		return FilteredCriterion{}, errors.Errorf("unexpected criterion type. expected: %q, actual: %q", []CriterionType{CriterionTypeVersion, CriterionTypeNoneExist, CriterionTypeKB, CriterionTypeCPE}, c.Type)
 	}
 }
 
@@ -308,7 +374,9 @@ func (fc FilteredCriterion) Affected() (bool, error) {
 		return fc.Accepts.NoneExist, nil
 	case CriterionTypeKB:
 		return fc.Accepts.KB.Covered || fc.Accepts.KB.Unapplied, nil
+	case CriterionTypeCPE:
+		return len(fc.Accepts.CPE) > 0, nil
 	default:
-		return false, errors.Errorf("unexpected criterion type. expected: %q, actual: %q", []CriterionType{CriterionTypeVersion, CriterionTypeNoneExist, CriterionTypeKB}, fc.Criterion.Type)
+		return false, errors.Errorf("unexpected criterion type. expected: %q, actual: %q", []CriterionType{CriterionTypeVersion, CriterionTypeNoneExist, CriterionTypeKB, CriterionTypeCPE}, fc.Criterion.Type)
 	}
 }

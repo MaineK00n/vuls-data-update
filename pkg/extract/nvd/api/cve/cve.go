@@ -8,7 +8,6 @@ import (
 	"log/slog"
 	"path/filepath"
 	"runtime"
-	"slices"
 
 	"github.com/hashicorp/go-version"
 	"github.com/knqyf263/go-cpe/common"
@@ -22,12 +21,9 @@ import (
 	conditionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition"
 	criteriaTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria"
 	criterionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion"
-	vcTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion"
-	affectedTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/affected"
+	ccTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/cpecriterion"
+	ccRangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/cpecriterion/range"
 	rangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/affected/range"
-	fixstatusTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/fixstatus"
-	criterionpackageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package"
-	cpePackageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package/cpe"
 	segmentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment"
 	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment/ecosystem"
 	referenceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/reference"
@@ -386,70 +382,51 @@ func (e extractor) nodeToCriteria(n cveTypes.Node) (criteriaTypes.Criteria, erro
 			return criteriaTypes.Criteria{}, errors.Wrapf(err, "invalid format. CPE: %s", match.Criteria)
 		}
 		rangeType := decideRangeType(match)
-		cn := criterionTypes.Criterion{
-			Type: criterionTypes.CriterionTypeVersion,
-			Version: &vcTypes.Criterion{
-				Vulnerable: match.Vulnerable,
-				FixStatus: func() *fixstatusTypes.FixStatus {
-					if match.Vulnerable {
-						return &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown}
-					}
-					return nil
-				}(),
-				Package: criterionpackageTypes.Package{
-					Type: criterionpackageTypes.PackageTypeCPE,
-					CPE:  new(cpePackageTypes.CPE(match.Criteria)),
-				},
-				Affected: func() *affectedTypes.Affected {
-					if match.VersionStartIncluding == "" && match.VersionStartExcluding == "" &&
-						match.VersionEndIncluding == "" && match.VersionEndExcluding == "" {
-						return nil
-					}
-					a := affectedTypes.Affected{
-						Type: rangeType,
-						Range: []rangeTypes.Range{{
-							GreaterEqual: match.VersionStartIncluding,
-							GreaterThan:  match.VersionStartExcluding,
-							LessEqual:    match.VersionEndIncluding,
-							LessThan:     match.VersionEndExcluding,
-						}},
-					}
-					return &a
-				}(),
-			},
-		}
 
-		cns := []criterionTypes.Criterion{cn}
+		var cpeMatches []ccTypes.CPE
 		if rangeType == rangeTypes.RangeTypeUnknown {
 			ns, err := e.cpeNamesFromCpematch(wfn, match.MatchCriteriaID)
 			if err != nil {
 				return criteriaTypes.Criteria{}, errors.Wrapf(err, "cpe names from cpematch. match criteria: %s", match.Criteria)
 			}
-
-			cns = slices.Grow(cns, 1+len(ns))
+			cpeMatches = make([]ccTypes.CPE, 0, len(ns))
 			for _, n := range ns {
-				cns = append(cns, criterionTypes.Criterion{
-					Type: criterionTypes.CriterionTypeVersion,
-					Version: &vcTypes.Criterion{
-						Vulnerable: match.Vulnerable,
-						FixStatus: func() *fixstatusTypes.FixStatus {
-							if match.Vulnerable {
-								return &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown}
-							}
-							return nil
-						}(),
-						Package: criterionpackageTypes.Package{
-							Type: criterionpackageTypes.PackageTypeCPE,
-							CPE:  new(cpePackageTypes.CPE(n)),
-						},
-					},
-				})
+				cpeMatches = append(cpeMatches, ccTypes.CPE(n))
 			}
+		}
+
+		cn := criterionTypes.Criterion{
+			Type: criterionTypes.CriterionTypeCPE,
+			CPE: &ccTypes.Criterion{
+				Vulnerable: match.Vulnerable,
+				CPE:        ccTypes.CPE(match.Criteria),
+				Range: func() *ccRangeTypes.Range {
+					if match.VersionStartIncluding == "" && match.VersionStartExcluding == "" &&
+						match.VersionEndIncluding == "" && match.VersionEndExcluding == "" {
+						return nil
+					}
+					return &ccRangeTypes.Range{
+						Type: func() ccRangeTypes.RangeType {
+							switch rangeType {
+							case rangeTypes.RangeTypeSEMVER:
+								return ccRangeTypes.RangeTypeSEMVER
+							default:
+								return ccRangeTypes.RangeTypeUnknown
+							}
+						}(),
+						GreaterEqual: match.VersionStartIncluding,
+						GreaterThan:  match.VersionStartExcluding,
+						LessEqual:    match.VersionEndIncluding,
+						LessThan:     match.VersionEndExcluding,
+					}
+				}(),
+				CPEMatches: cpeMatches,
+			},
 		}
 
 		ca.Criterias = append(ca.Criterias, criteriaTypes.Criteria{
 			Operator:   criteriaTypes.CriteriaOperatorTypeOR,
-			Criterions: cns,
+			Criterions: []criterionTypes.Criterion{cn},
 		})
 	}
 	return ca, nil

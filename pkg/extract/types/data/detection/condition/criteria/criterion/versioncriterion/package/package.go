@@ -9,7 +9,6 @@ import (
 	"github.com/pkg/errors"
 
 	binaryTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package/binary"
-	cpeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package/cpe"
 	languageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package/language"
 	sourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package/source"
 )
@@ -20,7 +19,6 @@ const (
 	_ PackageType = iota
 	PackageTypeBinary
 	PackageTypeSource
-	PackageTypeCPE
 	PackageTypeLanguage
 
 	PackageTypeUnknown
@@ -32,8 +30,6 @@ func (t PackageType) String() string {
 		return "binary"
 	case PackageTypeSource:
 		return "source"
-	case PackageTypeCPE:
-		return "cpe"
 	case PackageTypeLanguage:
 		return "language"
 	default:
@@ -59,8 +55,6 @@ func (t *PackageType) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		*t = PackageTypeBinary
 	case "source":
 		*t = PackageTypeSource
-	case "cpe":
-		*t = PackageTypeCPE
 	case "language":
 		*t = PackageTypeLanguage
 	case "unknown":
@@ -87,8 +81,6 @@ func (t *PackageType) UnmarshalJSON(data []byte) error {
 		pt = PackageTypeBinary
 	case "source":
 		pt = PackageTypeSource
-	case "cpe":
-		pt = PackageTypeCPE
 	case "language":
 		pt = PackageTypeLanguage
 	case "unknown":
@@ -104,7 +96,6 @@ type Package struct {
 	Type     PackageType            `json:"type,omitempty"`
 	Binary   *binaryTypes.Package   `json:"binary,omitempty"`
 	Source   *sourceTypes.Package   `json:"source,omitempty"`
-	CPE      *cpeTypes.CPE          `json:"cpe,omitempty"`
 	Language *languageTypes.Package `json:"language,omitempty"`
 }
 
@@ -114,7 +105,6 @@ func (p *Package) Sort() {
 		p.Binary.Sort()
 	case PackageTypeSource:
 		p.Source.Sort()
-	case PackageTypeCPE:
 	case PackageTypeLanguage:
 		p.Language.Sort()
 	default:
@@ -148,17 +138,6 @@ func Compare(x, y Package) int {
 				default:
 					return sourceTypes.Compare(*x.Source, *y.Source)
 				}
-			case PackageTypeCPE:
-				switch {
-				case x.CPE == nil && y.CPE == nil:
-					return 0
-				case x.CPE == nil && y.CPE != nil:
-					return -1
-				case x.CPE != nil && y.CPE == nil:
-					return +1
-				default:
-					return cmp.Compare(*x.CPE, *y.CPE)
-				}
 			case PackageTypeLanguage:
 				switch {
 				case x.Language == nil && y.Language == nil:
@@ -180,7 +159,6 @@ func Compare(x, y Package) int {
 type Query struct {
 	Binary   *binaryTypes.Query
 	Source   *sourceTypes.Query
-	CPE      *cpeTypes.Query
 	Language *languageTypes.Query
 }
 
@@ -204,15 +182,6 @@ func (p Package) Accept(query Query, repositories []string) (bool, error) {
 			return false, errors.Wrap(err, "source package accept")
 		}
 		return isAccepted, nil
-	case PackageTypeCPE:
-		if query.CPE == nil {
-			return false, errors.New("query is not set for CPE")
-		}
-		isAccepted, err := p.CPE.Accept(*query.CPE)
-		if err != nil {
-			return false, errors.Wrap(err, "cpe accept")
-		}
-		return isAccepted, nil
 	case PackageTypeLanguage:
 		if query.Language == nil {
 			return false, errors.New("query is not set for Language Package")
@@ -223,6 +192,6 @@ func (p Package) Accept(query Query, repositories []string) (bool, error) {
 		}
 		return isAccepted, nil
 	default:
-		return false, errors.Errorf("unexpected package type. expected: %q, actual: %q", []PackageType{PackageTypeBinary, PackageTypeSource, PackageTypeCPE, PackageTypeLanguage}, p.Type)
+		return false, errors.Errorf("unexpected package type. expected: %q, actual: %q", []PackageType{PackageTypeBinary, PackageTypeSource, PackageTypeLanguage}, p.Type)
 	}
 }

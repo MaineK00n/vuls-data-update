@@ -15,7 +15,7 @@ import (
 	affectedrangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/affected/range"
 	vcPackageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package"
 	vcBinaryPackageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package/binary"
-	cpeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package/cpe"
+	ccTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/cpecriterion"
 	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment/ecosystem"
 )
 
@@ -246,22 +246,17 @@ func TestCriteria_Contains(t *testing.T) {
 						},
 					},
 					{
-						Type: criterionTypes.CriterionTypeVersion,
-						Version: &vcTypes.Criterion{
+						Type: criterionTypes.CriterionTypeCPE,
+						CPE: &ccTypes.Criterion{
 							Vulnerable: true,
-							Package: vcPackageTypes.Package{
-								Type: vcPackageTypes.PackageTypeCPE,
-								CPE:  new(cpeTypes.CPE("cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*")),
-							},
+							CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
 						},
 					},
 				},
 			},
 			args: args{
 				query: criterionTypes.Query{
-					Version: []vcTypes.Query{{
-						CPE: new("cpe:2.3:a:vendor:product:0.0.0:*:*:*:*:*:*:*"),
-					}},
+					CPE: []ccTypes.Query{{CPE: "cpe:2.3:a:vendor:product:0.0.0:*:*:*:*:*:*:*"}},
 				},
 			},
 			want: true,
@@ -700,22 +695,17 @@ func TestCriteria_Accept(t *testing.T) {
 						},
 					},
 					{
-						Type: criterionTypes.CriterionTypeVersion,
-						Version: &vcTypes.Criterion{
+						Type: criterionTypes.CriterionTypeCPE,
+						CPE: &ccTypes.Criterion{
 							Vulnerable: true,
-							Package: vcPackageTypes.Package{
-								Type: vcPackageTypes.PackageTypeCPE,
-								CPE:  new(cpeTypes.CPE("cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*")),
-							},
+							CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
 						},
 					},
 				},
 			},
 			args: args{
 				query: criterionTypes.Query{
-					Version: []vcTypes.Query{{
-						CPE: new("cpe:2.3:a:vendor:product:0.0.0:*:*:*:*:*:*:*"),
-					}},
+					CPE: []ccTypes.Query{{CPE: "cpe:2.3:a:vendor:product:0.0.0:*:*:*:*:*:*:*"}},
 				},
 			},
 			want: criteriaTypes.FilteredCriteria{
@@ -737,16 +727,13 @@ func TestCriteria_Accept(t *testing.T) {
 					},
 					{
 						Criterion: criterionTypes.Criterion{
-							Type: criterionTypes.CriterionTypeVersion,
-							Version: &vcTypes.Criterion{
+							Type: criterionTypes.CriterionTypeCPE,
+							CPE: &ccTypes.Criterion{
 								Vulnerable: true,
-								Package: vcPackageTypes.Package{
-									Type: vcPackageTypes.PackageTypeCPE,
-									CPE:  new(cpeTypes.CPE("cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*")),
-								},
+								CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
 							},
 						},
-						Accepts: criterionTypes.AcceptQueries{Version: []int{0}},
+						Accepts: criterionTypes.AcceptQueries{CPE: []int{0}},
 					},
 				},
 			},
@@ -2119,16 +2106,13 @@ func TestFilteredCriteria_Affected(t *testing.T) {
 					},
 					{
 						Criterion: criterionTypes.Criterion{
-							Type: criterionTypes.CriterionTypeVersion,
-							Version: &vcTypes.Criterion{
+							Type: criterionTypes.CriterionTypeCPE,
+							CPE: &ccTypes.Criterion{
 								Vulnerable: true,
-								Package: vcPackageTypes.Package{
-									Type: vcPackageTypes.PackageTypeCPE,
-									CPE:  new(cpeTypes.CPE("cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*")),
-								},
+								CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
 							},
 						},
-						Accepts: criterionTypes.AcceptQueries{Version: []int{0}},
+						Accepts: criterionTypes.AcceptQueries{CPE: []int{0}},
 					},
 				},
 			},
@@ -2155,16 +2139,13 @@ func TestFilteredCriteria_Affected(t *testing.T) {
 					},
 					{
 						Criterion: criterionTypes.Criterion{
-							Type: criterionTypes.CriterionTypeVersion,
-							Version: &vcTypes.Criterion{
+							Type: criterionTypes.CriterionTypeCPE,
+							CPE: &ccTypes.Criterion{
 								Vulnerable: true,
-								Package: vcPackageTypes.Package{
-									Type: vcPackageTypes.PackageTypeCPE,
-									CPE:  new(cpeTypes.CPE("cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*")),
-								},
+								CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
 							},
 						},
-						Accepts: criterionTypes.AcceptQueries{Version: []int{0}},
+						Accepts: criterionTypes.AcceptQueries{CPE: []int{0}},
 					},
 				},
 			},
