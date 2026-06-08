@@ -11,8 +11,10 @@ import (
 func TestCriterion_Accept(t *testing.T) {
 	type fields struct {
 		Vulnerable bool
+		FixStatus  *fixstatusTypes.FixStatus
 		CPE        ccTypes.CPE
 		Range      *ccRangeTypes.Range
+		Fixed      []ccTypes.CPE
 		CPEMatches []ccTypes.CPE
 	}
 	type args struct {
@@ -314,6 +316,35 @@ func TestCriterion_Accept(t *testing.T) {
 			want: true,
 		},
 		{
+			name: "FixStatus + Fixed are metadata: in-range query still accepted",
+			fields: fields{
+				Vulnerable: true,
+				FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed, Vendor: "vendor"},
+				CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
+				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeSEMVER, LessThan: "2.0.0"},
+				Fixed: []ccTypes.CPE{
+					"cpe:2.3:a:vendor:product:2.0.0:*:*:*:*:*:*:*",
+					"cpe:2.3:a:vendor:product:2.0.1:*:*:*:*:*:*:*",
+				},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:1.5.0:*:*:*:*:*:*:*"}},
+			want: true,
+		},
+		{
+			name: "FixStatus + Fixed are metadata: query matching a Fixed entry is still rejected if Range excludes it",
+			fields: fields{
+				Vulnerable: true,
+				FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed, Vendor: "vendor"},
+				CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
+				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeSEMVER, LessThan: "2.0.0"},
+				Fixed: []ccTypes.CPE{
+					"cpe:2.3:a:vendor:product:2.0.0:*:*:*:*:*:*:*",
+				},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:2.0.0:*:*:*:*:*:*:*"}},
+			want: false,
+		},
+		{
 			name: "non-semver Range stored as-is, CPEMatches covers all enumerated versions",
 			fields: fields{
 				Vulnerable: true,
@@ -329,8 +360,10 @@ func TestCriterion_Accept(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			c := ccTypes.Criterion{
 				Vulnerable: tt.fields.Vulnerable,
+				FixStatus:  tt.fields.FixStatus,
 				CPE:        tt.fields.CPE,
 				Range:      tt.fields.Range,
+				Fixed:      tt.fields.Fixed,
 				CPEMatches: tt.fields.CPEMatches,
 			}
 			got, err := c.Accept(tt.args.query)
@@ -345,38 +378,4 @@ func TestCriterion_Accept(t *testing.T) {
 	}
 }
 
-// TestCriterion_Accept_IgnoresMetadata verifies that FixStatus and Fixed are
-// metadata-only fields — populating them must NOT change the detection
-// verdict, consistent with versioncriterion.Criterion.Accept where the same
-// fields are also reporting-only.
-func TestCriterion_Accept_IgnoresMetadata(t *testing.T) {
-	base := ccTypes.Criterion{
-		Vulnerable: true,
-		CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
-		Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeSEMVER, LessThan: "2.0.0"},
-	}
-	withMetadata := base
-	withMetadata.FixStatus = &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed, Vendor: "vendor"}
-	withMetadata.Fixed = []ccTypes.CPE{
-		"cpe:2.3:a:vendor:product:2.0.0:*:*:*:*:*:*:*",
-		"cpe:2.3:a:vendor:product:2.0.1:*:*:*:*:*:*:*",
-	}
-
-	q := ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:1.5.0:*:*:*:*:*:*:*"}
-
-	gotBase, err := base.Accept(q)
-	if err != nil {
-		t.Fatalf("base Accept unexpected error: %v", err)
-	}
-	gotWith, err := withMetadata.Accept(q)
-	if err != nil {
-		t.Fatalf("withMetadata Accept unexpected error: %v", err)
-	}
-	if gotBase != gotWith {
-		t.Errorf("FixStatus/Fixed must not influence Accept: base=%v, withMetadata=%v", gotBase, gotWith)
-	}
-	if !gotBase {
-		t.Errorf("sanity check failed: expected in-range query to be accepted")
-	}
-}
 
