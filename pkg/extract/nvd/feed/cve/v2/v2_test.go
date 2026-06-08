@@ -85,17 +85,18 @@ func TestExtract(t *testing.T) {
 		},
 		{
 			// Unknown range (non-semver endpoint) whose matchCriteriaId
-			// is absent from the cpematch dir. The range criterion alone
-			// cannot match anything at detection time and we have no
-			// exact fallback, so the extractor must log slog.Error to
-			// make the loss visible — but still continue so the rest of
-			// the extract finishes.
+			// is absent from the cpematch dir. The Range alone cannot
+			// be evaluated at detection time and we have no CPEMatches
+			// fallback, so the extractor must fail rather than emit a
+			// criterion that would be silently undetectable. The
+			// operator is expected to refresh the cpematch snapshot
+			// and re-run.
 			name: "cpematch-missing-unknown",
 			args: args{
 				cveDir:      "./testdata/fixtures/cpematch-missing-unknown/vuls-data-raw-nvd-feed-cve-v2",
 				cpematchDir: "./testdata/fixtures/cpematch-missing-unknown/vuls-data-raw-nvd-feed-cpematch-v2",
 			},
-			golden: "./testdata/golden/cpematch-missing-unknown",
+			hasError: true,
 		},
 		{
 			// Configuration.Negate=true is not implemented. The extractor
