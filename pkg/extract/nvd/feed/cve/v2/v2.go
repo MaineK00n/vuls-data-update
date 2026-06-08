@@ -486,11 +486,11 @@ func (e extractor) nodeToCriteria(n cveTypes.Node) (criteriaTypes.Criteria, erro
 						slog.Warn("invalid CPE in cpematch expansion; skipping", "matchCriteriaID", match.MatchCriteriaID, "cpeName", n, "err", err)
 						continue
 					}
-					// Skip cpematch entries whose version is ANY/NA (or
-					// empty): meta markers, not concrete versions the
-					// parent range was meant to enumerate. Without this
-					// skip we would inject NA-version entries for every
-					// ranged match whose cpematch happens to include `-`,
+					// Skip cpematch entries whose version is ANY or NA —
+					// meta markers, not concrete versions the parent
+					// range was meant to enumerate. Without this skip we
+					// would inject NA-version entries for every ranged
+					// match whose cpematch happens to include `-`,
 					// producing spurious vendor:product-only hits at
 					// detection time for any scanned CPE that shares the
 					// vendor and product. wfn.GetString returns the
@@ -501,7 +501,7 @@ func (e extractor) nodeToCriteria(n cveTypes.Node) (criteriaTypes.Criteria, erro
 					// indistinguishable from the wildcard markers.
 					verRaw := wfn.GetString(common.AttributeVersion)
 					switch verRaw {
-					case "", "ANY", "NA":
+					case "ANY", "NA":
 						continue
 					}
 					ver := unescapeWFN(verRaw)
