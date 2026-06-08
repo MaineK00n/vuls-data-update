@@ -11,21 +11,30 @@ import (
 	"github.com/pkg/errors"
 
 	rangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/cpecriterion/range"
+	fixstatusTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/fixstatus"
 )
 
 type CPE string
 
 // Criterion represents a CPE-only detection criterion.
+//   - Vulnerable: a tag for downstream consumers (e.g. to distinguish the
+//     vulnerable side from a hardware guard under AND); NOT consulted by
+//     Accept (consistent with versioncriterion.Criterion.Accept)
+//   - FixStatus: optional fix-state metadata mirroring
+//     versioncriterion.Criterion.FixStatus; tag for downstream consumers
+//     (e.g. reporting), NOT consulted by Accept
 //   - CPE: the criterion's canonical CPE string (wildcards permitted)
 //   - Range: optional version range narrowing the match (comparator selected
 //     by Range.Type — semver / loose version / etc.)
+//   - Fixed: optional enumeration of concrete fixed-version CPE strings,
+//     mirroring versioncriterion/affected.Affected.Fixed. Carried for
+//     remediation reporting on sources (e.g. cisco-csaf) where the fixed
+//     set is independent of any affected-range upper bound; NOT consulted
+//     by Accept
 //   - CPEMatches: optional list of concrete CPE strings that the criterion
 //     also covers — used for entries that fall OUTSIDE Range (e.g. NVD listed
 //     versions that don't satisfy the bounds) or that Range cannot evaluate
 //     at all (RangeTypeUnknown / non-parseable versions)
-//   - Vulnerable: a tag for downstream consumers (e.g. to distinguish the
-//     vulnerable side from a hardware guard under AND); NOT consulted by
-//     Accept (consistent with versioncriterion.Criterion.Accept)
 //
 // Detection semantics (see Accept):
 //
@@ -47,16 +56,20 @@ type CPE string
 // pattern where semver-evaluable bounds go in Range and out-of-range (or
 // non-semver) enumerated CPEs go in CPEMatches.
 //
-// Notably absent from versioncriterion: FixStatus (no fix-state semantics on
-// CPE), Package union (CPE is the only kind), Affected nesting (range is flat).
+// Notably absent from versioncriterion: Package union (CPE is the only
+// kind) and Affected nesting (range is flat — Fixed lives directly on the
+// criterion rather than wrapped in an Affected struct).
 type Criterion struct {
-	Vulnerable bool              `json:"vulnerable,omitempty"`
-	CPE        CPE               `json:"cpe,omitempty"`
-	Range      *rangeTypes.Range `json:"range,omitempty"`
-	CPEMatches []CPE             `json:"cpe_matches,omitempty"`
+	Vulnerable bool                      `json:"vulnerable,omitempty"`
+	FixStatus  *fixstatusTypes.FixStatus `json:"fix_status,omitempty"`
+	CPE        CPE                       `json:"cpe,omitempty"`
+	Range      *rangeTypes.Range         `json:"range,omitempty"`
+	Fixed      []CPE                     `json:"fixed,omitempty"`
+	CPEMatches []CPE                     `json:"cpe_matches,omitempty"`
 }
 
 func (c *Criterion) Sort() {
+	slices.Sort(c.Fixed)
 	slices.Sort(c.CPEMatches)
 }
 
@@ -72,6 +85,18 @@ func Compare(x, y Criterion) int {
 				return 0
 			}
 		}(),
+		func() int {
+			switch {
+			case x.FixStatus == nil && y.FixStatus == nil:
+				return 0
+			case x.FixStatus == nil && y.FixStatus != nil:
+				return -1
+			case x.FixStatus != nil && y.FixStatus == nil:
+				return +1
+			default:
+				return fixstatusTypes.Compare(*x.FixStatus, *y.FixStatus)
+			}
+		}(),
 		cmp.Compare(x.CPE, y.CPE),
 		func() int {
 			switch {
@@ -85,6 +110,7 @@ func Compare(x, y Criterion) int {
 				return rangeTypes.Compare(*x.Range, *y.Range)
 			}
 		}(),
+		slices.Compare(x.Fixed, y.Fixed),
 		slices.Compare(x.CPEMatches, y.CPEMatches),
 	)
 }

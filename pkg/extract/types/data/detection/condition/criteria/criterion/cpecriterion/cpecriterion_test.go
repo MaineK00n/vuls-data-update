@@ -5,6 +5,7 @@ import (
 
 	ccTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/cpecriterion"
 	ccRangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/cpecriterion/range"
+	fixstatusTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/fixstatus"
 )
 
 func TestCriterion_Accept(t *testing.T) {
@@ -341,6 +342,41 @@ func TestCriterion_Accept(t *testing.T) {
 				t.Errorf("Accept() = %v, want %v", got, tt.want)
 			}
 		})
+	}
+}
+
+// TestCriterion_Accept_IgnoresMetadata verifies that FixStatus and Fixed are
+// metadata-only fields — populating them must NOT change the detection
+// verdict, consistent with versioncriterion.Criterion.Accept where the same
+// fields are also reporting-only.
+func TestCriterion_Accept_IgnoresMetadata(t *testing.T) {
+	base := ccTypes.Criterion{
+		Vulnerable: true,
+		CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
+		Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeSEMVER, LessThan: "2.0.0"},
+	}
+	withMetadata := base
+	withMetadata.FixStatus = &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed, Vendor: "vendor"}
+	withMetadata.Fixed = []ccTypes.CPE{
+		"cpe:2.3:a:vendor:product:2.0.0:*:*:*:*:*:*:*",
+		"cpe:2.3:a:vendor:product:2.0.1:*:*:*:*:*:*:*",
+	}
+
+	q := ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:1.5.0:*:*:*:*:*:*:*"}
+
+	gotBase, err := base.Accept(q)
+	if err != nil {
+		t.Fatalf("base Accept unexpected error: %v", err)
+	}
+	gotWith, err := withMetadata.Accept(q)
+	if err != nil {
+		t.Fatalf("withMetadata Accept unexpected error: %v", err)
+	}
+	if gotBase != gotWith {
+		t.Errorf("FixStatus/Fixed must not influence Accept: base=%v, withMetadata=%v", gotBase, gotWith)
+	}
+	if !gotBase {
+		t.Errorf("sanity check failed: expected in-range query to be accepted")
 	}
 }
 
