@@ -428,7 +428,7 @@ func (e extractor) nodeToCriteria(n cveTypes.Node) (criteriaTypes.Criteria, erro
 
 		cpeMatches, err := e.buildCPEMatches(match, rangeType)
 		if err != nil {
-			return criteriaTypes.Criteria{}, errors.Wrapf(err, "build cpe matches. matchCriteriaID: %s, criteria: %s", match.MatchCriteriaID, match.Criteria)
+			return criteriaTypes.Criteria{}, errors.Wrap(err, "build cpe matches")
 		}
 
 		cn := criterionTypes.Criterion{
@@ -610,8 +610,9 @@ func (e extractor) buildCPEMatches(match cveTypes.CPEMatch, rangeType ccRangeTyp
 	ns, err := e.cpeNamesFromCpematch(match.MatchCriteriaID)
 	if err != nil {
 		if rangeType == ccRangeTypes.RangeTypeUnknown {
-			return nil, errors.Wrap(err, "cpematch lookup failed for unknown range")
+			return nil, errors.Wrapf(err, "cpematch lookup failed for unknown range. matchCriteriaID: %s, criteria: %s", match.MatchCriteriaID, match.Criteria)
 		}
+
 		slog.Warn("cpematch lookup failed", "matchCriteriaID", match.MatchCriteriaID, "criteria", match.Criteria, "err", err)
 		return nil, nil
 	}
