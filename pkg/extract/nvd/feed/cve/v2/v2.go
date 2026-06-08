@@ -421,9 +421,6 @@ func (e extractor) nodeToCriteria(n cveTypes.Node) (criteriaTypes.Criteria, erro
 			return criteriaTypes.Criteria{}, errors.Wrapf(err, "invalid format. CPE: %s", match.Criteria)
 		}
 
-		hasRange := match.VersionStartIncluding != "" || match.VersionStartExcluding != "" ||
-			match.VersionEndIncluding != "" || match.VersionEndExcluding != ""
-
 		rangeType := decideRangeType(match)
 
 		cpeMatches, err := e.buildCPEMatches(match, rangeType)
@@ -443,7 +440,8 @@ func (e extractor) nodeToCriteria(n cveTypes.Node) (criteriaTypes.Criteria, erro
 				}(),
 				CPE: ccTypes.CPE(match.Criteria),
 				Range: func() *ccRangeTypes.Range {
-					if !hasRange {
+					if match.VersionStartIncluding == "" && match.VersionStartExcluding == "" &&
+						match.VersionEndIncluding == "" && match.VersionEndExcluding == "" {
 						return nil
 					}
 					return &ccRangeTypes.Range{
@@ -610,7 +608,7 @@ func (e extractor) buildCPEMatches(match cveTypes.CPEMatch, rangeType ccRangeTyp
 	ns, err := e.cpeNamesFromCpematch(match.MatchCriteriaID)
 	if err != nil {
 		if rangeType == ccRangeTypes.RangeTypeUnknown {
-			return nil, errors.Wrapf(err, "cpematch lookup failed for unknown range. matchCriteriaID: %s, criteria: %s", match.MatchCriteriaID, match.Criteria)
+			return nil, errors.Wrapf(err, "cpe names from cpematch lookup failed for unknown range. matchCriteriaID: %s, criteria: %s", match.MatchCriteriaID, match.Criteria)
 		}
 
 		slog.Warn("cpematch lookup failed", "matchCriteriaID", match.MatchCriteriaID, "criteria", match.Criteria, "err", err)
