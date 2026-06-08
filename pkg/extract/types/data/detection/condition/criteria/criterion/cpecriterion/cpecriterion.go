@@ -26,11 +26,13 @@ type CPE string
 //   - CPE: the criterion's canonical CPE string (wildcards permitted)
 //   - Range: optional version range narrowing the match (comparator selected
 //     by Range.Type — semver / loose version / etc.)
-//   - Fixed: optional enumeration of concrete fixed-version CPE strings,
-//     mirroring versioncriterion/affected.Affected.Fixed. Carried for
-//     remediation reporting on sources (e.g. cisco-csaf) where the fixed
-//     set is independent of any affected-range upper bound; NOT consulted
-//     by Accept
+//   - Fixed: optional enumeration of fixed-version strings (scoped to the
+//     criterion's CPE — typically extractors partition by product family
+//     so the criterion CPE pins vendor/product and Fixed lists only the
+//     versions). Mirrors versioncriterion/affected.Affected.Fixed exactly.
+//     Carried for remediation reporting on sources (e.g. cisco-csaf) where
+//     the fixed set is independent of any affected-range upper bound; NOT
+//     consulted by Accept
 //   - CPEMatches: optional list of concrete CPE strings that the criterion
 //     also covers — used for entries that fall OUTSIDE Range (e.g. NVD listed
 //     versions that don't satisfy the bounds) or that Range cannot evaluate
@@ -64,7 +66,7 @@ type Criterion struct {
 	FixStatus  *fixstatusTypes.FixStatus `json:"fix_status,omitempty"`
 	CPE        CPE                       `json:"cpe,omitempty"`
 	Range      *rangeTypes.Range         `json:"range,omitempty"`
-	Fixed      []CPE                     `json:"fixed,omitempty"`
+	Fixed      []string                  `json:"fixed,omitempty"`
 	CPEMatches []CPE                     `json:"cpe_matches,omitempty"`
 }
 

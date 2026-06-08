@@ -14,7 +14,7 @@ func TestCriterion_Accept(t *testing.T) {
 		FixStatus  *fixstatusTypes.FixStatus
 		CPE        ccTypes.CPE
 		Range      *ccRangeTypes.Range
-		Fixed      []ccTypes.CPE
+		Fixed      []string
 		CPEMatches []ccTypes.CPE
 	}
 	type args struct {
@@ -322,10 +322,7 @@ func TestCriterion_Accept(t *testing.T) {
 				FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed, Vendor: "vendor"},
 				CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
 				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeSEMVER, LessThan: "2.0.0"},
-				Fixed: []ccTypes.CPE{
-					"cpe:2.3:a:vendor:product:2.0.0:*:*:*:*:*:*:*",
-					"cpe:2.3:a:vendor:product:2.0.1:*:*:*:*:*:*:*",
-				},
+				Fixed:      []string{"2.0.0", "2.0.1"},
 			},
 			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:1.5.0:*:*:*:*:*:*:*"}},
 			want: true,
@@ -337,9 +334,7 @@ func TestCriterion_Accept(t *testing.T) {
 				FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed, Vendor: "vendor"},
 				CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
 				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeSEMVER, LessThan: "2.0.0"},
-				Fixed: []ccTypes.CPE{
-					"cpe:2.3:a:vendor:product:2.0.0:*:*:*:*:*:*:*",
-				},
+				Fixed:      []string{"2.0.0"},
 			},
 			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:2.0.0:*:*:*:*:*:*:*"}},
 			want: false,
