@@ -14,8 +14,8 @@ func TestCriterion_Accept(t *testing.T) {
 		FixStatus  *fixstatusTypes.FixStatus
 		CPE        ccTypes.CPE
 		Range      *ccRangeTypes.Range
-		Fixed      []string
 		CPEMatches []ccTypes.CPE
+		Fixed      []string
 	}
 	type args struct {
 		query ccTypes.Query
@@ -358,8 +358,8 @@ func TestCriterion_Accept(t *testing.T) {
 				FixStatus:  tt.fields.FixStatus,
 				CPE:        tt.fields.CPE,
 				Range:      tt.fields.Range,
-				Fixed:      tt.fields.Fixed,
 				CPEMatches: tt.fields.CPEMatches,
+				Fixed:      tt.fields.Fixed,
 			}
 			got, err := c.Accept(tt.args.query)
 			if (err != nil) != tt.wantErr {

@@ -23,9 +23,20 @@ type CPE string
 //   - FixStatus: optional fix-state metadata mirroring
 //     versioncriterion.Criterion.FixStatus; tag for downstream consumers
 //     (e.g. reporting), NOT consulted by Accept
+//
+// The affected set is described by three contiguous fields — CPE narrows by
+// WFN attribute equality, Range narrows by version, and CPEMatches enumerates
+// concrete CPEs that fall outside or beyond what Range can express:
 //   - CPE: the criterion's canonical CPE string (wildcards permitted)
 //   - Range: optional version range narrowing the match (comparator selected
 //     by Range.Type — semver / loose version / etc.)
+//   - CPEMatches: optional list of concrete CPE strings that the criterion
+//     also covers — used for entries that fall OUTSIDE Range (e.g. NVD listed
+//     versions that don't satisfy the bounds) or that Range cannot evaluate
+//     at all (RangeTypeUnknown / non-parseable versions)
+//
+// Fixed lives at the end as a separate concern (which versions fix the
+// vulnerability), kept off the affected path:
 //   - Fixed: optional enumeration of fixed-version strings (scoped to the
 //     criterion's CPE — typically extractors partition by product family
 //     so the criterion CPE pins vendor/product and Fixed lists only the
@@ -33,10 +44,6 @@ type CPE string
 //     Carried for remediation reporting on sources (e.g. cisco-csaf) where
 //     the fixed set is independent of any affected-range upper bound; NOT
 //     consulted by Accept
-//   - CPEMatches: optional list of concrete CPE strings that the criterion
-//     also covers — used for entries that fall OUTSIDE Range (e.g. NVD listed
-//     versions that don't satisfy the bounds) or that Range cannot evaluate
-//     at all (RangeTypeUnknown / non-parseable versions)
 //
 // Detection semantics (see Accept):
 //
@@ -66,13 +73,13 @@ type Criterion struct {
 	FixStatus  *fixstatusTypes.FixStatus `json:"fix_status,omitempty"`
 	CPE        CPE                       `json:"cpe,omitempty"`
 	Range      *rangeTypes.Range         `json:"range,omitempty"`
-	Fixed      []string                  `json:"fixed,omitempty"`
 	CPEMatches []CPE                     `json:"cpe_matches,omitempty"`
+	Fixed      []string                  `json:"fixed,omitempty"`
 }
 
 func (c *Criterion) Sort() {
-	slices.Sort(c.Fixed)
 	slices.Sort(c.CPEMatches)
+	slices.Sort(c.Fixed)
 }
 
 func Compare(x, y Criterion) int {
@@ -112,8 +119,8 @@ func Compare(x, y Criterion) int {
 				return rangeTypes.Compare(*x.Range, *y.Range)
 			}
 		}(),
-		slices.Compare(x.Fixed, y.Fixed),
 		slices.Compare(x.CPEMatches, y.CPEMatches),
+		slices.Compare(x.Fixed, y.Fixed),
 	)
 }
 
