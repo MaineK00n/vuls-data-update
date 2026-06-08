@@ -7,7 +7,6 @@ import (
 	"log/slog"
 	"path/filepath"
 	"runtime"
-	"slices"
 	"strings"
 
 	"github.com/hashicorp/go-version"
@@ -22,12 +21,10 @@ import (
 	conditionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition"
 	criteriaTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria"
 	criterionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion"
-	vcTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion"
-	affectedTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/affected"
+	ccTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/cpecriterion"
+	ccRangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/cpecriterion/range"
 	rangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/affected/range"
 	fixstatusTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/fixstatus"
-	criterionpackageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package"
-	cpePackageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package/cpe"
 	segmentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment"
 	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment/ecosystem"
 	referenceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/reference"
@@ -430,47 +427,15 @@ func (e extractor) nodeToCriteria(n cveTypes.Node) (criteriaTypes.Criteria, erro
 
 		rangeType := decideRangeType(match)
 
-		cn := criterionTypes.Criterion{
-			Type: criterionTypes.CriterionTypeVersion,
-			Version: &vcTypes.Criterion{
-				Vulnerable: match.Vulnerable,
-				FixStatus: func() *fixstatusTypes.FixStatus {
-					if match.Vulnerable {
-						return &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown}
-					}
-					return nil
-				}(),
-				Package: criterionpackageTypes.Package{
-					Type: criterionpackageTypes.PackageTypeCPE,
-					CPE:  new(cpePackageTypes.CPE(match.Criteria)),
-				},
-				Affected: func() *affectedTypes.Affected {
-					if !hasRange {
-						return nil
-					}
-					return &affectedTypes.Affected{
-						Type: rangeType,
-						Range: []rangeTypes.Range{{
-							GreaterEqual: match.VersionStartIncluding,
-							GreaterThan:  match.VersionStartExcluding,
-							LessEqual:    match.VersionEndIncluding,
-							LessThan:     match.VersionEndExcluding,
-						}},
-					}
-				}(),
-			},
-		}
-
-		cns := []criterionTypes.Criterion{cn}
-
-		// A ranged match keeps its range criterion above and, in addition,
-		// expands the cpematch feed into exact-match criteria.
+		// A ranged match keeps its range narrowing on the parent CPE and,
+		// in addition, expands the cpematch feed into CPEMatches entries:
 		//   - Unknown range: the range cannot be evaluated at detection
 		//     time, so every expanded version is added.
-		//   - SEMVER range: the range criterion already covers every
-		//     semver-parseable version inside the range; only the versions
-		//     it cannot cover (non-semver, or the rare semver version
-		//     outside the range) need an explicit exact-match criterion.
+		//   - SEMVER range: the range already covers every semver-parseable
+		//     version inside it; only versions Range cannot cover
+		//     (non-semver, or the rare semver version outside the range)
+		//     need to appear in CPEMatches.
+		var cpeMatches []ccTypes.CPE
 		if hasRange {
 			ns, err := e.cpeNamesFromCpematch(match.MatchCriteriaID)
 			if err != nil {
@@ -482,28 +447,28 @@ func (e extractor) nodeToCriteria(n cveTypes.Node) (criteriaTypes.Criteria, erro
 				// behind. Refreshing both feeds usually clears the log.
 				//
 				// Severity depends on the range type:
-				//   - SEMVER: WARN. The range criterion above still
-				//     evaluates against semver-parseable versions, so
-				//     detection only loses the non-semver versions the
-				//     cpematch would have enumerated.
-				//   - Unknown: ERROR. The range criterion cannot be
-				//     evaluated at detection time (compare errors are
-				//     swallowed), and we have no exact criteria to fall
-				//     back on, so this CVE+match is fully undetectable
-				//     until the cpematch snapshot catches up.
+				//   - SEMVER: WARN. The Range still evaluates against
+				//     semver-parseable versions, so detection only loses
+				//     the non-semver versions the cpematch would have
+				//     enumerated.
+				//   - Unknown: ERROR. The Range cannot be evaluated at
+				//     detection time (compare errors are swallowed), and
+				//     we have no CPEMatches to fall back on, so this
+				//     CVE+match is fully undetectable until the cpematch
+				//     snapshot catches up.
 				if rangeType == rangeTypes.RangeTypeUnknown {
 					slog.Error("cpematch lookup failed for unknown range; CVE undetectable for this match until cpematch snapshot catches up", "matchCriteriaID", match.MatchCriteriaID, "criteria", match.Criteria, "err", err)
 				} else {
 					slog.Warn("cpematch lookup failed", "matchCriteriaID", match.MatchCriteriaID, "criteria", match.Criteria, "err", err)
 				}
 			} else {
-				cns = slices.Grow(cns, len(ns))
+				cpeMatches = make([]ccTypes.CPE, 0, len(ns))
 				// Pre-parse range bounds once per match instead of
 				// re-parsing them inside the per-entry coverage check.
 				// boundsOK=false only when a SEMVER endpoint somehow
 				// fails to parse here despite decideRangeType having
 				// already validated it; in that case we fall back to
-				// emitting all concrete entries as exact criteria.
+				// emitting all concrete entries.
 				var (
 					bounds   semverBounds
 					boundsOK bool
@@ -516,10 +481,10 @@ func (e extractor) nodeToCriteria(n cveTypes.Node) (criteriaTypes.Criteria, erro
 					if err != nil {
 						// Surface invalid CPE entries rather than
 						// silently dropping them — without this it is
-						// hard to explain a missing exact-match
-						// criterion downstream. Logged at WARN with
-						// the parent matchCriteriaId so the upstream
-						// data issue can be located.
+						// hard to explain a missing CPEMatches entry
+						// downstream. Logged at WARN with the parent
+						// matchCriteriaId so the upstream data issue
+						// can be located.
 						slog.Warn("invalid CPE in cpematch expansion; skipping", "matchCriteriaID", match.MatchCriteriaID, "cpeName", n, "err", err)
 						continue
 					}
@@ -527,7 +492,7 @@ func (e extractor) nodeToCriteria(n cveTypes.Node) (criteriaTypes.Criteria, erro
 					// Skip cpematch entries whose version is ANY/NA (or
 					// empty): meta markers, not concrete versions the
 					// parent range was meant to enumerate. Without this
-					// skip we would inject NA-version criteria for every
+					// skip we would inject NA-version entries for every
 					// ranged match whose cpematch happens to include `-`,
 					// producing spurious vendor:product-only hits at
 					// detection time for any scanned CPE that shares the
@@ -540,51 +505,60 @@ func (e extractor) nodeToCriteria(n cveTypes.Node) (criteriaTypes.Criteria, erro
 					}
 					// SEMVER range: skip if the entry's version is
 					// semver-parseable and falls inside the range — the
-					// range criterion above already covers it. Non-semver
-					// or out-of-range entries need an explicit exact
-					// criterion (the latter accounts for a tiny fraction
-					// of cases — segment-count or pre-release ordering
-					// quirks in NVD data).
+					// Range already covers it. Non-semver or out-of-range
+					// entries need to appear in CPEMatches (the latter
+					// accounts for a tiny fraction of cases — segment-count
+					// or pre-release ordering quirks in NVD data).
 					if boundsOK {
 						if sv, err := version.NewSemver(ver); err == nil && versionInBounds(sv, bounds) {
 							continue
 						}
 					}
-					cns = append(cns, exactCriterion(n, match.Vulnerable))
+					cpeMatches = append(cpeMatches, ccTypes.CPE(n))
 				}
 			}
 		}
 
+		cn := criterionTypes.Criterion{
+			Type: criterionTypes.CriterionTypeCPE,
+			CPE: &ccTypes.Criterion{
+				Vulnerable: match.Vulnerable,
+				FixStatus: func() *fixstatusTypes.FixStatus {
+					if match.Vulnerable {
+						return &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown}
+					}
+					return nil
+				}(),
+				CPE: ccTypes.CPE(match.Criteria),
+				Range: func() *ccRangeTypes.Range {
+					if !hasRange {
+						return nil
+					}
+					return &ccRangeTypes.Range{
+						Type: func() ccRangeTypes.RangeType {
+							switch rangeType {
+							case rangeTypes.RangeTypeSEMVER:
+								return ccRangeTypes.RangeTypeSEMVER
+							default:
+								return ccRangeTypes.RangeTypeUnknown
+							}
+						}(),
+						GreaterEqual: match.VersionStartIncluding,
+						GreaterThan:  match.VersionStartExcluding,
+						LessEqual:    match.VersionEndIncluding,
+						LessThan:     match.VersionEndExcluding,
+					}
+				}(),
+				CPEMatches: cpeMatches,
+			},
+		}
+
 		ca.Criterias = append(ca.Criterias, criteriaTypes.Criteria{
 			Operator:   criteriaTypes.CriteriaOperatorTypeOR,
-			Criterions: cns,
+			Criterions: []criterionTypes.Criterion{cn},
 		})
 	}
 	return ca, nil
-}
-
-// exactCriterion builds an exact-match version criterion for a single
-// expanded cpematch CPE name. The caller is responsible for validating
-// cpeName beforehand (e.g. via naming.UnbindFS); this constructor takes
-// the string as-is so it can be reused from a hot loop without paying
-// for re-validation on every call.
-func exactCriterion(cpeName string, vulnerable bool) criterionTypes.Criterion {
-	return criterionTypes.Criterion{
-		Type: criterionTypes.CriterionTypeVersion,
-		Version: &vcTypes.Criterion{
-			Vulnerable: vulnerable,
-			FixStatus: func() *fixstatusTypes.FixStatus {
-				if vulnerable {
-					return &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown}
-				}
-				return nil
-			}(),
-			Package: criterionpackageTypes.Package{
-				Type: criterionpackageTypes.PackageTypeCPE,
-				CPE:  new(cpePackageTypes.CPE(cpeName)),
-			},
-		},
-	}
 }
 
 // semverBounds is the pre-parsed form of a CPEMatch's four range
