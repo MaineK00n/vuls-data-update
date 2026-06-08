@@ -1,0 +1,28 @@
+{
+	"id": "CWE-1450",
+	"kind": "view",
+	"name": "Weaknesses in OWASP Top Ten RC1 (2025)",
+	"status": "Incomplete",
+	"description": "CWE entries in this view (graph) are associated with the first release candidate (RC1) of the OWASP Top Ten, as released in 2025.",
+	"view": {
+		"type": "Graph",
+		"members": [
+			{
+				"cweid": "CWE-1440",
+				"view_id": "CWE-1450"
+			}
+		]
+	},
+	"references": [
+		{
+			"source": "cwe.mitre.org",
+			"url": "https://cwe.mitre.org/data/definitions/1450.html"
+		}
+	],
+	"data_source": {
+		"id": "mitre-cwe",
+		"raws": [
+			"fixtures/view/1450.json"
+		]
+	}
+}

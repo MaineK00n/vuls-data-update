@@ -1,0 +1,25 @@
+{
+	"id": "900",
+	"name": "Weaknesses in the 2011 CWE/SANS Top 25 Most Dangerous Software Errors",
+	"type": "Graph",
+	"status": "Obsolete",
+	"objective": "CWE entries in this view are listed in the 2011 CWE/SANS Top 25 Most Dangerous Software Errors.",
+	"members": [
+		{
+			"cweid": "864",
+			"view_id": "900"
+		},
+		{
+			"cweid": "865",
+			"view_id": "900"
+		},
+		{
+			"cweid": "866",
+			"view_id": "900"
+		},
+		{
+			"cweid": "867",
+			"view_id": "900"
+		}
+	]
+}

@@ -115,6 +115,10 @@
 		},
 		{
 			"source": "cwe.mitre.org",
+			"url": "https://cwe.mitre.org/data/definitions/1007.html"
+		},
+		{
+			"source": "cwe.mitre.org",
 			"url": "https://www.microsoftpressstore.com/store/writing-secure-code-9780735617223"
 		}
 	],

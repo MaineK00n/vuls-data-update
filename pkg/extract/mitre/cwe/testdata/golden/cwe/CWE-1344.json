@@ -1,0 +1,28 @@
+{
+	"id": "CWE-1344",
+	"kind": "view",
+	"name": "Weaknesses in OWASP Top Ten (2021)",
+	"status": "Incomplete",
+	"description": "CWE entries in this view (graph) are associated with the OWASP Top Ten, as released in 2021.",
+	"view": {
+		"type": "Graph",
+		"members": [
+			{
+				"cweid": "CWE-1347",
+				"view_id": "CWE-1344"
+			}
+		]
+	},
+	"references": [
+		{
+			"source": "cwe.mitre.org",
+			"url": "https://cwe.mitre.org/data/definitions/1344.html"
+		}
+	],
+	"data_source": {
+		"id": "mitre-cwe",
+		"raws": [
+			"fixtures/view/1344.json"
+		]
+	}
+}

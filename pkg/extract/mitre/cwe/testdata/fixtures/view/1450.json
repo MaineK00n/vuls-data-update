@@ -1,0 +1,13 @@
+{
+	"id": "1450",
+	"name": "Weaknesses in OWASP Top Ten RC1 (2025)",
+	"type": "Graph",
+	"status": "Incomplete",
+	"objective": "CWE entries in this view (graph) are associated with the first release candidate (RC1) of the OWASP Top Ten, as released in 2025.",
+	"members": [
+		{
+			"cweid": "1440",
+			"view_id": "1450"
+		}
+	]
+}

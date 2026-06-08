@@ -1,0 +1,27 @@
+{
+	"id": "CWE-1440",
+	"kind": "category",
+	"name": "OWASP Top Ten 2025 Category A05:2025 - Injection",
+	"status": "Incomplete",
+	"description": "Weaknesses in this category are related to the A05 category in the OWASP Top Ten 2025.",
+	"category": {
+		"members": [
+			{
+				"cweid": "CWE-79",
+				"view_id": "CWE-1450"
+			}
+		]
+	},
+	"references": [
+		{
+			"source": "cwe.mitre.org",
+			"url": "https://cwe.mitre.org/data/definitions/1440.html"
+		}
+	],
+	"data_source": {
+		"id": "mitre-cwe",
+		"raws": [
+			"fixtures/category/1440.json"
+		]
+	}
+}
