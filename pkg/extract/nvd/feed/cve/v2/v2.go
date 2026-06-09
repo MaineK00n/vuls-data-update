@@ -641,10 +641,13 @@ func (e extractor) cpeNamesFromCpematch(matchCriteriaId string) ([]string, error
 func (e extractor) buildCPEMatches(match cveTypes.CPEMatch) ([]ccTypes.CPE, ccRangeTypes.RangeType, error) {
 	if match.VersionStartIncluding == "" && match.VersionStartExcluding == "" &&
 		match.VersionEndIncluding == "" && match.VersionEndExcluding == "" {
-		// No range: nothing to classify or enumerate. The caller emits no
-		// Range, so the returned type is unused — SEMVER is an arbitrary
-		// harmless default.
-		return nil, ccRangeTypes.RangeTypeSEMVER, nil
+		// No range: nothing to classify or enumerate, and the caller emits no
+		// Range for this match, so the returned type is never used. Return
+		// Unknown as the safe sentinel — if a future caller did stamp it on a
+		// Range, an Unknown range with no CPEMatches fails closed (nothing
+		// matches), whereas an empty SEMVER range could be read as unbounded
+		// and over-match.
+		return nil, ccRangeTypes.RangeTypeUnknown, nil
 	}
 
 	// One parse of the four endpoints decides both the range type the caller
