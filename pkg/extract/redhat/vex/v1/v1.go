@@ -380,8 +380,21 @@ func walkProductTree(pt v1.ProductTree, c2r map[string][]string) (map[v1.Product
 								p.arch = m["arch"]
 							default:
 								ss := strings.Split(rpmmod, ":")
-								if len(ss) < 4 {
+								if len(ss) < 2 {
 									return nil, errors.Errorf("unexpected purl format. expected: %q, actual: %q", "pkg:rpm/redhat/<name>@<version>?arch=<arch>(&epoch=<epoch>)&rpmmod=<<module>:<stream>:<version>:<context>(:<arch>)>", fpn.ProductIdentificationHelper.PURL)
+								}
+								// Some RedHat CSAF entries (e.g. the redhat-ds
+								// module in CVE-2026-11611) carry a versioned
+								// package whose rpmmod is truncated to
+								// "<module>:<stream>", dropping the
+								// ":<version>:<context>" NSVCA suffix that the
+								// same module normally includes. Only
+								// module:stream feeds modularitylabel, so the
+								// extracted output is identical either way —
+								// warn so the upstream truncation stays visible
+								// without aborting the whole extract.
+								if len(ss) < 4 {
+									slog.Warn("rpmmod is missing the version:context suffix", slog.String("purl", fpn.ProductIdentificationHelper.PURL))
 								}
 								p.modularitylabel = fmt.Sprintf("%s:%s", ss[0], ss[1])
 								p.name = instance.Name
