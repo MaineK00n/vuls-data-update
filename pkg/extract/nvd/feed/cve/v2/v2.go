@@ -354,12 +354,12 @@ func (e extractor) buildData(fetched cveTypes.CVE) (dataTypes.Data, error) {
 						}
 						return cs
 					}(),
-					// NVD tags each reference with a classification; the
-					// only two vuls0 derives detection-relevant content
-					// from are "Exploit" and "Mitigation" (see
-					// vuls/models.ConvertNvdToModel). Lift those into the
-					// existing Exploit / Mitigations slots and drop the
-					// rest ("Vendor Advisory", "Patch", "Broken Link", …).
+					// NVD tags each reference with a classification. vuls0
+					// derives detection-relevant content from just two of
+					// those tags — "Exploit" and "Mitigation" (see
+					// vuls/models.ConvertNvdToModel). Lift those two into the
+					// existing Exploit / Mitigations slots and drop the rest
+					// ("Vendor Advisory", "Patch", "Broken Link", …).
 					Mitigations: func() []remediationTypes.Remediation {
 						var ms []remediationTypes.Remediation
 						for _, r := range fetched.References {
