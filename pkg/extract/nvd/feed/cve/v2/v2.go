@@ -653,14 +653,16 @@ func (e extractor) buildCPEMatches(match cveTypes.CPEMatch, rangeType ccRangeTyp
 	}
 
 	// Pre-parse range bounds once per match instead of re-parsing them
-	// inside the per-entry coverage check below. boundsOK is true only for
-	// a SEMVER range whose endpoints parse. It stays false for an Unknown
-	// range (the common case — parseSemverBounds is never called) and for
-	// the rare SEMVER range whose endpoint fails to parse despite
-	// decideRangeType having validated it. When boundsOK is false the
-	// per-entry skip is bypassed and every concrete entry is emitted —
-	// exactly what an Unknown range needs, since its Range cannot be
-	// evaluated at detection time.
+	// inside the per-entry coverage check below. parseSemverBounds is
+	// called only for a SEMVER range, and since it re-parses the very
+	// endpoints decideRangeType already validated with the same
+	// version.NewSemver, it cannot fail there — boundsOK is true for every
+	// SEMVER range and the !boundsOK path is a defensive fallback only
+	// (guards against decideRangeType and parseSemverBounds drifting apart).
+	// For an Unknown range parseSemverBounds is never called, so boundsOK
+	// stays false, the per-entry skip below is bypassed, and every concrete
+	// entry is emitted — exactly what an Unknown range needs, since its
+	// Range cannot be evaluated at detection time.
 	var (
 		bounds   semverBounds
 		boundsOK bool
