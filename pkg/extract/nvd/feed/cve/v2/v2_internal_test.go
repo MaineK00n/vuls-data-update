@@ -5,6 +5,7 @@ import (
 
 	"github.com/hashicorp/go-version"
 
+	ccRangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/cpecriterion/range"
 	cveTypes "github.com/MaineK00n/vuls-data-update/pkg/fetch/nvd/feed/cve/v2"
 )
 
@@ -17,7 +18,7 @@ func mustSemver(t *testing.T, s string) *version.Version {
 	return v
 }
 
-func TestParseSemverBounds(t *testing.T) {
+func TestParseRange(t *testing.T) {
 	// boundsStr collapses semverBounds into comparable endpoint strings
 	// ("" for nil) so the table can assert without comparing *version.Version.
 	type boundsStr struct{ ge, gt, le, lt string }
@@ -32,50 +33,50 @@ func TestParseSemverBounds(t *testing.T) {
 	}
 
 	tests := []struct {
-		name   string
-		match  cveTypes.CPEMatch
-		want   boundsStr
-		wantOK bool
+		name     string
+		match    cveTypes.CPEMatch
+		want     boundsStr
+		wantType ccRangeTypes.RangeType
 	}{
 		{
-			name:   "all empty",
-			match:  cveTypes.CPEMatch{},
-			want:   boundsStr{},
-			wantOK: true,
+			name:     "all empty",
+			match:    cveTypes.CPEMatch{},
+			want:     boundsStr{},
+			wantType: ccRangeTypes.RangeTypeSEMVER,
 		},
 		{
-			name:   "ge and lt",
-			match:  cveTypes.CPEMatch{VersionStartIncluding: "1.0.0", VersionEndExcluding: "2.0.0"},
-			want:   boundsStr{ge: "1.0.0", lt: "2.0.0"},
-			wantOK: true,
+			name:     "ge and lt",
+			match:    cveTypes.CPEMatch{VersionStartIncluding: "1.0.0", VersionEndExcluding: "2.0.0"},
+			want:     boundsStr{ge: "1.0.0", lt: "2.0.0"},
+			wantType: ccRangeTypes.RangeTypeSEMVER,
 		},
 		{
-			name:   "gt and le",
-			match:  cveTypes.CPEMatch{VersionStartExcluding: "1.0.0", VersionEndIncluding: "2.0.0"},
-			want:   boundsStr{gt: "1.0.0", le: "2.0.0"},
-			wantOK: true,
+			name:     "gt and le",
+			match:    cveTypes.CPEMatch{VersionStartExcluding: "1.0.0", VersionEndIncluding: "2.0.0"},
+			want:     boundsStr{gt: "1.0.0", le: "2.0.0"},
+			wantType: ccRangeTypes.RangeTypeSEMVER,
 		},
 		{
-			name:   "non-semver start downgrades to not-ok",
-			match:  cveTypes.CPEMatch{VersionStartIncluding: "15.1(4)m3", VersionEndExcluding: "2.0.0"},
-			want:   boundsStr{},
-			wantOK: false,
+			name:     "non-semver start downgrades to unknown",
+			match:    cveTypes.CPEMatch{VersionStartIncluding: "15.1(4)m3", VersionEndExcluding: "2.0.0"},
+			want:     boundsStr{},
+			wantType: ccRangeTypes.RangeTypeUnknown,
 		},
 		{
-			name:   "non-semver end downgrades to not-ok",
-			match:  cveTypes.CPEMatch{VersionEndExcluding: "21.4r3"},
-			want:   boundsStr{},
-			wantOK: false,
+			name:     "non-semver end downgrades to unknown",
+			match:    cveTypes.CPEMatch{VersionEndExcluding: "21.4r3"},
+			want:     boundsStr{},
+			wantType: ccRangeTypes.RangeTypeUnknown,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, ok := parseSemverBounds(tt.match)
-			if ok != tt.wantOK {
-				t.Fatalf("parseSemverBounds() ok = %v, want %v", ok, tt.wantOK)
+			got, gotType := parseRange(tt.match)
+			if gotType != tt.wantType {
+				t.Fatalf("parseRange() type = %v, want %v", gotType, tt.wantType)
 			}
 			if gotStr := str(got); gotStr != tt.want {
-				t.Errorf("parseSemverBounds() bounds = %+v, want %+v", gotStr, tt.want)
+				t.Errorf("parseRange() bounds = %+v, want %+v", gotStr, tt.want)
 			}
 		})
 	}

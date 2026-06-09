@@ -509,10 +509,13 @@ type semverBounds struct {
 	lt *version.Version // versionEndExcluding   (<)
 }
 
-// parseSemverBounds parses the four range endpoints in match. Returns
-// ok=false if any non-empty endpoint fails to parse — caller falls back
-// to treating every cpematch entry as out-of-range.
-func parseSemverBounds(match cveTypes.CPEMatch) (semverBounds, bool) {
+// parseRange parses match's four range endpoints and classifies the range in
+// a single pass. When every non-empty endpoint parses as semver it returns the
+// bounds and RangeTypeSEMVER; if any fails, the range is RangeTypeUnknown and
+// the returned bounds are unusable (the caller must consult bounds only for a
+// SEMVER range). This parse is the whole range classification — there is no
+// separate decideRangeType step.
+func parseRange(match cveTypes.CPEMatch) (semverBounds, ccRangeTypes.RangeType) {
 	parse := func(s string) (*version.Version, bool) {
 		if s == "" {
 			return nil, true
@@ -525,18 +528,18 @@ func parseSemverBounds(match cveTypes.CPEMatch) (semverBounds, bool) {
 		ok bool
 	)
 	if b.ge, ok = parse(match.VersionStartIncluding); !ok {
-		return semverBounds{}, false
+		return semverBounds{}, ccRangeTypes.RangeTypeUnknown
 	}
 	if b.gt, ok = parse(match.VersionStartExcluding); !ok {
-		return semverBounds{}, false
+		return semverBounds{}, ccRangeTypes.RangeTypeUnknown
 	}
 	if b.le, ok = parse(match.VersionEndIncluding); !ok {
-		return semverBounds{}, false
+		return semverBounds{}, ccRangeTypes.RangeTypeUnknown
 	}
 	if b.lt, ok = parse(match.VersionEndExcluding); !ok {
-		return semverBounds{}, false
+		return semverBounds{}, ccRangeTypes.RangeTypeUnknown
 	}
-	return b, true
+	return b, ccRangeTypes.RangeTypeSEMVER
 }
 
 // versionInBounds reports whether v satisfies the pre-parsed range.
@@ -650,21 +653,16 @@ func (e extractor) buildCPEMatches(match cveTypes.CPEMatch) ([]ccTypes.CPE, ccRa
 		return nil, ccRangeTypes.RangeTypeUnknown, nil
 	}
 
-	// One parse of the four endpoints decides both the range type the caller
-	// stamps on the criterion and the bounds the per-entry coverage check
-	// reuses: when every endpoint parses as semver the range is SEMVER with
-	// usable bounds, otherwise it is Unknown and bounds are unusable. (This
-	// is the classification that used to live in a separate decideRangeType
-	// pass in the caller — the same version.NewSemver work, done once here.)
-	bounds, semver := parseSemverBounds(match)
-	rangeType := ccRangeTypes.RangeTypeUnknown
-	if semver {
-		rangeType = ccRangeTypes.RangeTypeSEMVER
-	}
+	// One parse of the four endpoints yields both the bounds the per-entry
+	// coverage check reuses and the range type the caller stamps on the
+	// criterion. This is the whole range classification — the same
+	// version.NewSemver work that used to live in a separate decideRangeType
+	// pass in the caller, done once here.
+	bounds, rangeType := parseRange(match)
 
 	ns, err := e.cpeNamesFromCpematch(match.MatchCriteriaID)
 	if err != nil {
-		if !semver {
+		if rangeType == ccRangeTypes.RangeTypeUnknown {
 			return nil, rangeType, errors.Wrapf(err, "cpe names from cpematch lookup failed for unknown range. matchCriteriaID: %s, criteria: %s", match.MatchCriteriaID, match.Criteria)
 		}
 
@@ -705,7 +703,7 @@ func (e extractor) buildCPEMatches(match cveTypes.CPEMatch) ([]ccTypes.CPE, ccRa
 		// or out-of-range entries need to appear in CPEMatches (the latter
 		// accounts for a tiny fraction of cases — segment-count or
 		// pre-release ordering quirks in NVD data).
-		if semver {
+		if rangeType == ccRangeTypes.RangeTypeSEMVER {
 			if sv, err := version.NewSemver(ver); err == nil && versionInBounds(sv, bounds) {
 				continue
 			}
