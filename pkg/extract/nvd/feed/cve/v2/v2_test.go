@@ -124,6 +124,18 @@ func TestExtract(t *testing.T) {
 			hasError: true,
 		},
 		{
+			// The CVE ID carries path-traversal characters in its year
+			// segment ("CVE-2024/../../x-0001"). data.ID is used to build
+			// the output path, so the extractor must reject a malformed ID
+			// rather than let it escape outputDir via filepath.Join.
+			name: "malformed-id",
+			args: args{
+				cveDir:      "./testdata/fixtures/malformed-id/vuls-data-raw-nvd-feed-cve-v2",
+				cpematchDir: "./testdata/fixtures/malformed-id/vuls-data-raw-nvd-feed-cpematch-v2",
+			},
+			hasError: true,
+		},
+		{
 			// negate=true on a node object is not implemented. Symmetric
 			// with the configuration-negate case — the extractor must
 			// reject negated nodes explicitly.

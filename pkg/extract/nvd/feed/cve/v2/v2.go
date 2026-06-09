@@ -6,6 +6,7 @@ import (
 	"io/fs"
 	"log/slog"
 	"path/filepath"
+	"regexp"
 	"runtime"
 	"slices"
 	"strings"
@@ -47,6 +48,15 @@ import (
 	cpematchTypes "github.com/MaineK00n/vuls-data-update/pkg/fetch/nvd/feed/cpematch/v2"
 	cveTypes "github.com/MaineK00n/vuls-data-update/pkg/fetch/nvd/feed/cve/v2"
 )
+
+// cveIDPattern guards the CVE ID before it is used to build the output
+// path. data.ID flows from the (external) NVD feed JSON into
+// filepath.Join below; an unvalidated ID such as "CVE-2024/../../x-1"
+// would survive util.Split and traverse outside outputDir. Anchoring on
+// the full CVE-YYYY-N+ shape keeps both the year directory and the
+// filename inside the tree. Serial is \d{4,} (CVE serials can exceed 4
+// digits).
+var cveIDPattern = regexp.MustCompile(`^CVE-[0-9]{4}-[0-9]{4,}$`)
 
 type options struct {
 	dir         string
@@ -215,6 +225,10 @@ func extract(cvePath, cveDir, cpematchDir string, cpematchIndex map[string]strin
 	data, err := e.buildData(fetched)
 	if err != nil {
 		return errors.Wrapf(err, "buildData %s", cvePath)
+	}
+
+	if !cveIDPattern.MatchString(string(data.ID)) {
+		return errors.Errorf("unexpected ID format. expected: %q, actual: %q", "CVE-\\d{4}-\\d{4,}", data.ID)
 	}
 
 	splitted, err := util.Split(string(data.ID), "-", "-")
