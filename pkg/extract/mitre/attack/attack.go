@@ -150,22 +150,29 @@ func Extract(args string, opts ...Option) error {
 		// Dispatch on the STIX `type` field, not on the directory name.
 		// MITRE's repo happens to bucket files into <type>/ subdirs but
 		// that's a convention; the authoritative kind discriminator is
-		// the JSON object itself. Peek directly from bytes so skipped
-		// types (relationship, identity, marking-definition, ...) don't
-		// allocate a JSONReader; the keep-this-record branches build
-		// their own reader for path provenance.
-		b, err := os.ReadFile(path)
+		// the JSON object itself. Peek with a plain os.Open + decode so
+		// skipped types (relationship, identity, marking-definition,
+		// ...) don't allocate a JSONReader; the keep-this-record
+		// branches build their own reader for path provenance.
+		peek, err := func() (string, error) {
+			f, err := os.Open(path)
+			if err != nil {
+				return "", errors.Wrapf(err, "open %s", path)
+			}
+			defer f.Close()
+			var t struct {
+				Type string `json:"type"`
+			}
+			if err := json.UnmarshalRead(f, &t); err != nil {
+				return "", errors.Wrapf(err, "decode %s", path)
+			}
+			return t.Type, nil
+		}()
 		if err != nil {
-			return errors.Wrapf(err, "read %s", path)
-		}
-		var peek struct {
-			Type string `json:"type"`
-		}
-		if err := json.Unmarshal(b, &peek); err != nil {
-			return errors.Wrapf(err, "decode %s", path)
+			return err
 		}
 
-		switch peek.Type {
+		switch peek {
 		case "attack-pattern":
 			r := utiljson.NewJSONReader()
 			var o attack.AttackPattern
@@ -257,7 +264,7 @@ func Extract(args string, opts ...Option) error {
 			// and matrix layout objects carry no per-record content
 			// that the ATT&CK web UI surfaces from a single ID query.
 		default:
-			return errors.Errorf("unexpected STIX type. expected: %q, actual: %q", []string{"attack-pattern", "x-mitre-tactic", "course-of-action", "intrusion-set", "malware", "tool", "campaign", "x-mitre-asset", "x-mitre-detection-strategy", "x-mitre-analytic", "x-mitre-data-source", "x-mitre-data-component", "relationship", "identity", "marking-definition", "x-mitre-collection", "x-mitre-matrix"}, peek.Type)
+			return errors.Errorf("unexpected STIX type. expected: %q, actual: %q", []string{"attack-pattern", "x-mitre-tactic", "course-of-action", "intrusion-set", "malware", "tool", "campaign", "x-mitre-asset", "x-mitre-detection-strategy", "x-mitre-analytic", "x-mitre-data-source", "x-mitre-data-component", "relationship", "identity", "marking-definition", "x-mitre-collection", "x-mitre-matrix"}, peek)
 		}
 		return nil
 	}); err != nil {
