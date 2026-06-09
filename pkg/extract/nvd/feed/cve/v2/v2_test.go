@@ -29,9 +29,9 @@ func TestExtract(t *testing.T) {
 		},
 		{
 			// SEMVER range whose cpematch mixes semver and non-semver versions:
-			// only the non-semver versions are added as exact-match criteria;
-			// semver versions inside the range stay covered by the range
-			// criterion alone.
+			// only the non-semver versions are carried in the cpe_matches field
+			// of the single CPE criterion; semver versions inside the range stay
+			// covered by the criterion's range alone.
 			name: "semver-range-mixed",
 			args: args{
 				cveDir:      "./testdata/fixtures/semver-range-mixed/vuls-data-raw-nvd-feed-cve-v2",
