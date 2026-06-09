@@ -5,7 +5,6 @@ import (
 
 	"github.com/hashicorp/go-version"
 
-	ccRangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/cpecriterion/range"
 	cveTypes "github.com/MaineK00n/vuls-data-update/pkg/fetch/nvd/feed/cve/v2"
 )
 
@@ -148,37 +147,6 @@ func TestVersionInBounds(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := versionInBounds(mustSemver(t, tt.v), tt.setup(t)); got != tt.want {
 				t.Errorf("versionInBounds(%q) = %v, want %v", tt.v, got, tt.want)
-			}
-		})
-	}
-}
-
-func TestDecideRangeType(t *testing.T) {
-	tests := []struct {
-		name  string
-		match cveTypes.CPEMatch
-		want  ccRangeTypes.RangeType
-	}{
-		{
-			name:  "no endpoints is semver",
-			match: cveTypes.CPEMatch{},
-			want:  ccRangeTypes.RangeTypeSEMVER,
-		},
-		{
-			name:  "all semver endpoints",
-			match: cveTypes.CPEMatch{VersionStartIncluding: "1.0.0", VersionEndExcluding: "2.0.0"},
-			want:  ccRangeTypes.RangeTypeSEMVER,
-		},
-		{
-			name:  "one non-semver endpoint downgrades to unknown",
-			match: cveTypes.CPEMatch{VersionStartIncluding: "1.0.0", VersionEndExcluding: "9.8(4)15"},
-			want:  ccRangeTypes.RangeTypeUnknown,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := decideRangeType(tt.match); got != tt.want {
-				t.Errorf("decideRangeType() = %v, want %v", got, tt.want)
 			}
 		})
 	}
