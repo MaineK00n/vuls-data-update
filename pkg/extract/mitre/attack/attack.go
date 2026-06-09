@@ -1,6 +1,7 @@
 package attack
 
 import (
+	"encoding/json/v2"
 	"fmt"
 	"io/fs"
 	"log/slog"
@@ -149,83 +150,101 @@ func Extract(args string, opts ...Option) error {
 		// Dispatch on the STIX `type` field, not on the directory name.
 		// MITRE's repo happens to bucket files into <type>/ subdirs but
 		// that's a convention; the authoritative kind discriminator is
-		// the JSON object itself.
-		r := utiljson.NewJSONReader()
+		// the JSON object itself. Peek directly from bytes so skipped
+		// types (relationship, identity, marking-definition, ...) don't
+		// allocate a JSONReader; the keep-this-record branches build
+		// their own reader for path provenance.
+		b, err := os.ReadFile(path)
+		if err != nil {
+			return errors.Wrapf(err, "read %s", path)
+		}
 		var peek struct {
 			Type string `json:"type"`
 		}
-		if err := r.Read(path, args, &peek); err != nil {
-			return errors.Wrapf(err, "read json %s", path)
+		if err := json.Unmarshal(b, &peek); err != nil {
+			return errors.Wrapf(err, "decode %s", path)
 		}
 
 		switch peek.Type {
 		case "attack-pattern":
+			r := utiljson.NewJSONReader()
 			var o attack.AttackPattern
 			if err := r.Read(path, args, &o); err != nil {
 				return errors.Wrapf(err, "read json %s", path)
 			}
 			registerPrimary(o.ExternalReferences, o.ID, path, attackTypes.KindTechnique, &o, r, entries, uuidToExt, uuidKind, uuidToPath)
 		case "x-mitre-tactic":
+			r := utiljson.NewJSONReader()
 			var o attack.XMitreTactic
 			if err := r.Read(path, args, &o); err != nil {
 				return errors.Wrapf(err, "read json %s", path)
 			}
 			registerPrimary(o.ExternalReferences, o.ID, path, attackTypes.KindTactic, &o, r, entries, uuidToExt, uuidKind, uuidToPath)
 		case "course-of-action":
+			r := utiljson.NewJSONReader()
 			var o attack.CourseOfAction
 			if err := r.Read(path, args, &o); err != nil {
 				return errors.Wrapf(err, "read json %s", path)
 			}
 			registerPrimary(o.ExternalReferences, o.ID, path, attackTypes.KindMitigation, &o, r, entries, uuidToExt, uuidKind, uuidToPath)
 		case "intrusion-set":
+			r := utiljson.NewJSONReader()
 			var o attack.IntrusionSet
 			if err := r.Read(path, args, &o); err != nil {
 				return errors.Wrapf(err, "read json %s", path)
 			}
 			registerPrimary(o.ExternalReferences, o.ID, path, attackTypes.KindGroup, &o, r, entries, uuidToExt, uuidKind, uuidToPath)
 		case "malware":
+			r := utiljson.NewJSONReader()
 			var o attack.Malware
 			if err := r.Read(path, args, &o); err != nil {
 				return errors.Wrapf(err, "read json %s", path)
 			}
 			registerPrimary(o.ExternalReferences, o.ID, path, attackTypes.KindSoftware, &o, r, entries, uuidToExt, uuidKind, uuidToPath)
 		case "tool":
+			r := utiljson.NewJSONReader()
 			var o attack.Tool
 			if err := r.Read(path, args, &o); err != nil {
 				return errors.Wrapf(err, "read json %s", path)
 			}
 			registerPrimary(o.ExternalReferences, o.ID, path, attackTypes.KindSoftware, &o, r, entries, uuidToExt, uuidKind, uuidToPath)
 		case "campaign":
+			r := utiljson.NewJSONReader()
 			var o attack.Campaign
 			if err := r.Read(path, args, &o); err != nil {
 				return errors.Wrapf(err, "read json %s", path)
 			}
 			registerPrimary(o.ExternalReferences, o.ID, path, attackTypes.KindCampaign, &o, r, entries, uuidToExt, uuidKind, uuidToPath)
 		case "x-mitre-asset":
+			r := utiljson.NewJSONReader()
 			var o attack.XMitreAsset
 			if err := r.Read(path, args, &o); err != nil {
 				return errors.Wrapf(err, "read json %s", path)
 			}
 			registerPrimary(o.ExternalReferences, o.ID, path, attackTypes.KindAsset, &o, r, entries, uuidToExt, uuidKind, uuidToPath)
 		case "x-mitre-detection-strategy":
+			r := utiljson.NewJSONReader()
 			var o attack.XMitreDetectionStrategy
 			if err := r.Read(path, args, &o); err != nil {
 				return errors.Wrapf(err, "read json %s", path)
 			}
 			registerPrimary(o.ExternalReferences, o.ID, path, attackTypes.KindDetectStrategy, &o, r, entries, uuidToExt, uuidKind, uuidToPath)
 		case "x-mitre-analytic":
+			r := utiljson.NewJSONReader()
 			var o attack.XMitreAnalytic
 			if err := r.Read(path, args, &o); err != nil {
 				return errors.Wrapf(err, "read json %s", path)
 			}
 			registerPrimary(o.ExternalReferences, o.ID, path, attackTypes.KindAnalytic, &o, r, entries, uuidToExt, uuidKind, uuidToPath)
 		case "x-mitre-data-source":
+			r := utiljson.NewJSONReader()
 			var o attack.XMitreDataSource
 			if err := r.Read(path, args, &o); err != nil {
 				return errors.Wrapf(err, "read json %s", path)
 			}
 			registerPrimary(o.ExternalReferences, o.ID, path, attackTypes.KindDataSource, &o, r, entries, uuidToExt, uuidKind, uuidToPath)
 		case "x-mitre-data-component":
+			r := utiljson.NewJSONReader()
 			var o attack.XMitreDataComponent
 			if err := r.Read(path, args, &o); err != nil {
 				return errors.Wrapf(err, "read json %s", path)
