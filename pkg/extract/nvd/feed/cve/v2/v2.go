@@ -513,8 +513,7 @@ type semverBounds struct {
 // a single pass. When every non-empty endpoint parses as semver it returns the
 // bounds and RangeTypeSEMVER; if any fails, the range is RangeTypeUnknown and
 // the returned bounds are unusable (the caller must consult bounds only for a
-// SEMVER range). This parse is the whole range classification — there is no
-// separate decideRangeType step.
+// SEMVER range). This single parse is the whole range classification.
 func parseRange(match cveTypes.CPEMatch) (semverBounds, ccRangeTypes.RangeType) {
 	parse := func(s string) (*version.Version, bool) {
 		if s == "" {
@@ -655,9 +654,7 @@ func (e extractor) buildCPEMatches(match cveTypes.CPEMatch) ([]ccTypes.CPE, ccRa
 
 	// One parse of the four endpoints yields both the bounds the per-entry
 	// coverage check reuses and the range type the caller stamps on the
-	// criterion. This is the whole range classification — the same
-	// version.NewSemver work that used to live in a separate decideRangeType
-	// pass in the caller, done once here.
+	// criterion — the whole range classification, done once.
 	bounds, rangeType := parseRange(match)
 
 	ns, err := e.cpeNamesFromCpematch(match.MatchCriteriaID)
