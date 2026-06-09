@@ -169,7 +169,7 @@ func Extract(args string, opts ...Option) error {
 			return t.Type, nil
 		}()
 		if err != nil {
-			return err
+			return errors.Wrapf(err, "peek stix type %s", path)
 		}
 
 		switch peek {
