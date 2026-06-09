@@ -56,6 +56,19 @@ func TestExtract(t *testing.T) {
 			golden: "./testdata/golden/exact-match",
 		},
 		{
+			// References carry NVD tags. The "Exploit" tag is lifted into
+			// an Exploit entry (URL in Link) and the "Mitigation" tag into
+			// a Mitigation entry (URL in Description); all other tags
+			// ("Vendor Advisory", "Third Party Advisory", …) are dropped,
+			// the reference itself being preserved untagged.
+			name: "reference-tags",
+			args: args{
+				cveDir:      "./testdata/fixtures/reference-tags/vuls-data-raw-nvd-feed-cve-v2",
+				cpematchDir: "./testdata/fixtures/reference-tags/vuls-data-raw-nvd-feed-cpematch-v2",
+			},
+			golden: "./testdata/golden/reference-tags",
+		},
+		{
 			// AND configuration with mixed vulnerable flags: one child node
 			// carries vulnerable=true (the firmware that's affected), the
 			// other carries vulnerable=false (the hardware guard — the

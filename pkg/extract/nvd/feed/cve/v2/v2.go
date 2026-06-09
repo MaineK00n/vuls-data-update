@@ -7,6 +7,7 @@ import (
 	"log/slog"
 	"path/filepath"
 	"runtime"
+	"slices"
 	"strings"
 
 	"github.com/hashicorp/go-version"
@@ -26,7 +27,9 @@ import (
 	fixstatusTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/fixstatus"
 	segmentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment"
 	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment/ecosystem"
+	exploitTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/exploit"
 	referenceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/reference"
+	remediationTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/remediation"
 	severityTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity"
 	v2Types "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity/cvss/v2"
 	v30Types "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity/cvss/v30"
@@ -337,6 +340,36 @@ func (e extractor) buildData(fetched cveTypes.CVE) (dataTypes.Data, error) {
 						}
 						return cs
 					}(),
+					// NVD tags each reference with a classification; the
+					// only two vuls0 derives detection-relevant content
+					// from are "Exploit" and "Mitigation" (see
+					// vuls/models.ConvertNvdToModel). Lift those into the
+					// existing Exploit / Mitigations slots and drop the
+					// rest ("Vendor Advisory", "Patch", "Broken Link", …).
+					Mitigations: func() []remediationTypes.Remediation {
+						var ms []remediationTypes.Remediation
+						for _, r := range fetched.References {
+							if slices.Contains(r.Tags, "Mitigation") {
+								ms = append(ms, remediationTypes.Remediation{
+									Source:      "nvd.nist.gov",
+									Description: r.URL,
+								})
+							}
+						}
+						return ms
+					}(),
+					Exploit: func() []exploitTypes.Exploit {
+						var es []exploitTypes.Exploit
+						for _, r := range fetched.References {
+							if slices.Contains(r.Tags, "Exploit") {
+								es = append(es, exploitTypes.Exploit{
+									Source: "nvd.nist.gov",
+									Link:   r.URL,
+								})
+							}
+						}
+						return es
+					}(),
 					References: func() []referenceTypes.Reference {
 						refs := make([]referenceTypes.Reference, 0, 1+len(fetched.References))
 						refs = append(refs, referenceTypes.Reference{
@@ -344,16 +377,6 @@ func (e extractor) buildData(fetched cveTypes.CVE) (dataTypes.Data, error) {
 							URL:    fmt.Sprintf("https://nvd.nist.gov/vuln/detail/%s", fetched.ID),
 						})
 						for _, r := range fetched.References {
-							// TODO: propagate r.Tags ("Patch",
-							// "Vendor Advisory", "Exploit",
-							// "Mitigation", "Broken Link", …) once
-							// types/data/reference.Reference grows a
-							// Tags []string field. Downstream consumers
-							// (vuls0 Exploit/Mitigation derivation) rely
-							// on these tags; the omission here matches
-							// the api/cve sibling and is intentional
-							// only because the schema does not yet
-							// carry the field.
 							refs = append(refs, referenceTypes.Reference{
 								Source: r.Source,
 								URL:    r.URL,
