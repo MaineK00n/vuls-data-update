@@ -393,6 +393,7 @@ func walkProductTree(pt v1.ProductTree, c2r map[string][]string) (map[v1.Product
 								// extracted output is identical either way —
 								// warn so the upstream truncation stays visible
 								// without aborting the whole extract.
+								// Reported upstream: https://redhat.atlassian.net/browse/SECDATA-1295
 								if len(ss) < 4 {
 									slog.Warn("rpmmod is missing the version:context suffix", slog.String("purl", fpn.ProductIdentificationHelper.PURL))
 								}
