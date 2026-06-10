@@ -100,7 +100,7 @@ func Extract(args string, opts ...Option) error {
 		if _, err := time.Parse("2006", splitted[1]); err != nil {
 			return errors.Errorf("unexpected EUVD ID format. expected: %q, actual: %q", "EUVD-yyyy-\\d{4,}", fetched.ID)
 		}
-		if splitted[2] == "" || strings.Trim(splitted[2], "0123456789") != "" {
+		if len(splitted[2]) < 4 || strings.Trim(splitted[2], "0123456789") != "" {
 			return errors.Errorf("unexpected EUVD ID format. expected: %q, actual: %q", "EUVD-yyyy-\\d{4,}", fetched.ID)
 		}
 		if err := util.Write(filepath.Join(options.dir, "data", splitted[1], fmt.Sprintf("%s.json", extracted.ID)), extracted, true); err != nil {
@@ -198,6 +198,7 @@ func extract(fetched list.Item, raws []string) (dataTypes.Data, error) {
 				References: func() []referenceTypes.Reference {
 					var rs []referenceTypes.Reference
 					for r := range strings.SplitSeq(fetched.References, "\n") {
+						r = strings.TrimSpace(r)
 						if r == "" {
 							continue
 						}
@@ -215,6 +216,7 @@ func extract(fetched list.Item, raws []string) (dataTypes.Data, error) {
 		Vulnerabilities: func() []vulnerabilityTypes.Vulnerability {
 			var vs []vulnerabilityTypes.Vulnerability
 			for a := range strings.SplitSeq(fetched.Aliases, "\n") {
+				a = strings.TrimSpace(a)
 				if !strings.HasPrefix(a, "CVE-") {
 					continue
 				}
