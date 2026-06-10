@@ -57,17 +57,6 @@ func WithDir(dir string) Option {
 	return dirOption(dir)
 }
 
-// primaryEntry collects everything we know about one ATT&CK primary
-// object (any of the 11 kinds): the external ID, the kind, the parsed
-// STIX struct (concrete type stored in raw via type assertion), and a
-// JSONReader accumulating every raw file path contributing to this record.
-type primaryEntry struct {
-	extID  string
-	kind   attackTypes.Kind
-	raw    any
-	reader *utiljson.JSONReader
-}
-
 // stixTypeToKind maps a STIX `type` discriminator to the ATT&CK Kind
 // for the primary records the extractor keeps. Treating dispatch as
 // data (vs. a 12-arm switch) lets discoverPrimaries reject any STIX
@@ -96,64 +85,6 @@ var stixTypesNotExtracted = map[string]bool{
 	"marking-definition": true,
 	"x-mitre-collection": true,
 	"x-mitre-matrix":     true,
-}
-
-// bidirRelatedEdges holds the forward and reverse projections of a
-// STIX relationship whose both sides are []RelatedRef. Used for the
-// four symmetric relations (mitigates, targets, detects,
-// attributed-to). The `uses` relation can't share this shape because
-// its sub-flavors mix RelatedRef / TechniqueUsed / Procedure values.
-type bidirRelatedEdges struct {
-	fwd map[string][]relatedrefTypes.RelatedRef
-	rev map[string][]relatedrefTypes.RelatedRef
-}
-
-func newBidirRelatedEdges() bidirRelatedEdges {
-	return bidirRelatedEdges{
-		fwd: make(map[string][]relatedrefTypes.RelatedRef),
-		rev: make(map[string][]relatedrefTypes.RelatedRef),
-	}
-}
-
-// rels holds the relationship-derived data, keyed by primary external
-// ID. Field names follow <ownerKind><OutputFieldName> so callers can
-// see at a glance which kind owns the map and which Attack record
-// field the slice feeds; symmetric forward+reverse relations live in a
-// bidirRelatedEdges so the pair is named once.
-type rels struct {
-	// Technique-owned slices.
-	techniqueParent        map[string]string                     // T → parent T extID (subtechnique-of forward, single)
-	techniqueSubtechniques map[string][]string                   // T → child T extIDs (subtechnique-of reverse)
-	techniqueTactics       map[string][]string                   // T → tactic shortnames (TA ID resolved at convert via tacticShortnameToID)
-	techniqueProcedures    map[string][]procedureTypes.Procedure // T → G/S/C attacker procedures (reverse of all "uses" → T flavors)
-
-	// "uses" relation (asymmetric flavors that can't share a bidir struct).
-	groupTechniquesUsed    map[string][]techniqueusedTypes.TechniqueUsed // G → T (forward of uses G→T)
-	softwareTechniquesUsed map[string][]techniqueusedTypes.TechniqueUsed // S → T (forward of uses S→T)
-	campaignTechniquesUsed map[string][]techniqueusedTypes.TechniqueUsed // C → T (forward of uses C→T)
-	groupSoftwaresUsed     map[string][]relatedrefTypes.RelatedRef       // G → S (forward of uses G→S)
-	softwareGroupsUsing    map[string][]relatedrefTypes.RelatedRef       // S → G (reverse of uses G→S)
-	campaignSoftwaresUsed  map[string][]relatedrefTypes.RelatedRef       // C → S (forward of uses C→S)
-	softwareCampaignsUsing map[string][]relatedrefTypes.RelatedRef       // S → C (reverse of uses C→S)
-
-	// Symmetric bidirectional []RelatedRef relations.
-	mitigates    bidirRelatedEdges // fwd: M → T; rev: T → M
-	targets      bidirRelatedEdges // fwd: T → A; rev: A → T
-	detects      bidirRelatedEdges // fwd: DET → T; rev: T → DET
-	attributedTo bidirRelatedEdges // fwd: C → G; rev: G → C
-
-	// Tactic-owned reverse map (shortname → techniques).
-	tacticTechniques map[string][]string
-
-	// Pass-1.5 structural references resolved before Pass 2.
-	detectionStrategyAnalytics map[string][]string // DET → analytic extIDs (x_mitre_analytic_refs)
-	analyticDetectionStrategy  map[string]string   // analytic → owning DET extID (reverse)
-	dataSourceComponents       map[string][]string // DS → data-component extIDs (reverse of x_mitre_data_source_ref)
-	dataComponentSource        map[string]string   // DC → owning DS extID
-
-	// shortname → Tactic external ID, used to fill TacticRef.ID when a
-	// Technique lists its tactic shortnames.
-	tacticShortnameToID map[string]string
 }
 
 func Extract(args string, opts ...Option) error {
@@ -394,58 +325,70 @@ func Extract(args string, opts ...Option) error {
 			domainSeen[d] = true
 		}
 
-		// Per-entry rels: only this extID's slots get populated, but
-		// the existing convert/build* helpers expect a `rels` so we
-		// allocate one and fan the kind-specific accumulators back into
-		// its maps.
-		idx := rels{
-			techniqueParent:            make(map[string]string),
-			techniqueSubtechniques:     make(map[string][]string),
-			techniqueTactics:           make(map[string][]string),
-			techniqueProcedures:        make(map[string][]procedureTypes.Procedure),
-			groupTechniquesUsed:        make(map[string][]techniqueusedTypes.TechniqueUsed),
-			softwareTechniquesUsed:     make(map[string][]techniqueusedTypes.TechniqueUsed),
-			campaignTechniquesUsed:     make(map[string][]techniqueusedTypes.TechniqueUsed),
-			groupSoftwaresUsed:         make(map[string][]relatedrefTypes.RelatedRef),
-			softwareGroupsUsing:        make(map[string][]relatedrefTypes.RelatedRef),
-			campaignSoftwaresUsed:      make(map[string][]relatedrefTypes.RelatedRef),
-			softwareCampaignsUsing:     make(map[string][]relatedrefTypes.RelatedRef),
-			mitigates:                  newBidirRelatedEdges(),
-			targets:                    newBidirRelatedEdges(),
-			detects:                    newBidirRelatedEdges(),
-			attributedTo:               newBidirRelatedEdges(),
-			tacticTechniques:           make(map[string][]string),
-			detectionStrategyAnalytics: make(map[string][]string),
-			analyticDetectionStrategy:  make(map[string]string),
-			dataSourceComponents:       make(map[string][]string),
-			dataComponentSource:        make(map[string]string),
-			tacticShortnameToID:        tacticShortnameToID,
-		}
+		// Per-kind accumulators. Only the slots for the entry's own
+		// kind get populated below; every other field stays zero so the
+		// final Attack struct literal sees just the natural defaults.
+		var (
+			techniqueParent              string
+			techniqueSubtechniques       []string
+			techniqueTacticShortnames    []string
+			techniqueProcedures          []procedureTypes.Procedure
+			techniqueMitigations         []relatedrefTypes.RelatedRef
+			techniqueAssetsTargeted      []relatedrefTypes.RelatedRef
+			techniqueDetectionStrategies []relatedrefTypes.RelatedRef
 
-		// Pre-fill the forward cross-refs from this entry's own peek.
+			mitigationTechniquesMitigated []relatedrefTypes.RelatedRef
+
+			groupTechniquesUsed      []techniqueusedTypes.TechniqueUsed
+			groupSoftwaresUsed       []relatedrefTypes.RelatedRef
+			groupCampaignsAttributed []relatedrefTypes.RelatedRef
+
+			softwareTechniquesUsed []techniqueusedTypes.TechniqueUsed
+			softwareGroupsUsing    []relatedrefTypes.RelatedRef
+			softwareCampaignsUsing []relatedrefTypes.RelatedRef
+
+			campaignTechniquesUsed   []techniqueusedTypes.TechniqueUsed
+			campaignGroupsAttributed []relatedrefTypes.RelatedRef
+			campaignSoftwaresUsed    []relatedrefTypes.RelatedRef
+
+			tacticTechniques []string
+
+			assetTechniquesTargeting []relatedrefTypes.RelatedRef
+
+			detStrategyAnalytics          []string
+			detStrategyTechniquesDetected []relatedrefTypes.RelatedRef
+
+			analyticDetectionStrategy string
+
+			dataSourceComponents []string
+			dataComponentSource  string
+		)
+
+		// Forward cross-refs come from the entry's own peek and never
+		// need another file to be opened.
 		switch kind {
 		case attackTypes.KindTechnique:
 			for _, kc := range ownPeek.KillChainPhases {
 				switch kc.KillChainName {
 				case "mitre-attack", "mitre-ics-attack", "mitre-mobile-attack":
-					idx.techniqueTactics[extID] = append(idx.techniqueTactics[extID], kc.PhaseName)
+					techniqueTacticShortnames = append(techniqueTacticShortnames, kc.PhaseName)
 				}
 			}
 			for _, tr := range ownPeek.TacticRefs {
 				if sn, ok := tacticUUIDToShortname[tr]; ok {
-					idx.techniqueTactics[extID] = append(idx.techniqueTactics[extID], sn)
+					techniqueTacticShortnames = append(techniqueTacticShortnames, sn)
 				}
 			}
 		case attackTypes.KindDetectStrategy:
 			for _, ar := range ownPeek.XMitreAnalyticRefs {
 				if anExt, ok := uuidToExt[ar]; ok {
-					idx.detectionStrategyAnalytics[extID] = append(idx.detectionStrategyAnalytics[extID], anExt)
+					detStrategyAnalytics = append(detStrategyAnalytics, anExt)
 				}
 			}
 		case attackTypes.KindDataComponent:
 			if ownPeek.XMitreDataSourceRef != nil {
 				if dsExt, ok := uuidToExt[*ownPeek.XMitreDataSourceRef]; ok {
-					idx.dataComponentSource[extID] = dsExt
+					dataComponentSource = dsExt
 				}
 			}
 		}
@@ -457,34 +400,31 @@ func Extract(args string, opts ...Option) error {
 			}
 			seenFile[path] = true
 
-			// Self primary file (or a cross-domain copy of it).
 			if selfSet[path] {
 				if raw == nil {
-					var err error
-					raw, err = readConcrete(stixType, path, args, r)
+					rr, err := readConcrete(stixType, path, args, r)
 					if err != nil {
 						return err
 					}
-				} else {
-					if err := attachRead(stixType, path, args, r); err != nil {
-						return errors.Wrapf(err, "attach self %s for %s", path, extID)
-					}
-					// Union x_mitre_domains from this bundle copy.
-					p, err := peekPrimary(path)
-					if err != nil {
-						return errors.Wrapf(err, "peek %s", path)
-					}
-					for _, d := range p.XMitreDomains {
-						if !domainSeen[d] {
-							domainSeen[d] = true
-							domains = append(domains, d)
-						}
+					raw = rr
+					continue
+				}
+				if err := attachRead(stixType, path, args, r); err != nil {
+					return errors.Wrapf(err, "attach self %s for %s", path, extID)
+				}
+				p, err := peekPrimary(path)
+				if err != nil {
+					return errors.Wrapf(err, "peek %s", path)
+				}
+				for _, d := range p.XMitreDomains {
+					if !domainSeen[d] {
+						domainSeen[d] = true
+						domains = append(domains, d)
 					}
 				}
 				continue
 			}
 
-			// Peek to classify: relationship vs other-side primary.
 			fp, err := peekPrimary(path)
 			if err != nil {
 				return errors.Wrapf(err, "peek %s", path)
@@ -500,13 +440,109 @@ func Extract(args string, opts ...Option) error {
 				if err := attachRead("relationship", path, args, r); err != nil {
 					return errors.Wrapf(err, "attach relationship %s for %s", path, extID)
 				}
-				populateRelEdge(extID, kind, &rel, uuidToExt, uuidKind, &idx)
+				srcExt := uuidToExt[rel.SourceRef]
+				tgtExt := uuidToExt[rel.TargetRef]
+				srcKind := uuidKind[rel.SourceRef]
+				tgtKind := uuidKind[rel.TargetRef]
+				desc := ""
+				if rel.Description != nil {
+					desc = *rel.Description
+				}
+				refs := toReferences(rel.ExternalReferences)
+
+				switch rel.RelationshipType {
+				case "subtechnique-of":
+					if kind != attackTypes.KindTechnique {
+						break
+					}
+					if extID == srcExt && tgtExt != "" {
+						techniqueParent = tgtExt
+					}
+					if extID == tgtExt && srcExt != "" {
+						techniqueSubtechniques = append(techniqueSubtechniques, srcExt)
+					}
+				case "mitigates":
+					if extID == srcExt && tgtExt != "" && kind == attackTypes.KindMitigation {
+						mitigationTechniquesMitigated = append(mitigationTechniquesMitigated, relatedrefTypes.RelatedRef{ID: tgtExt, Description: desc, References: refs})
+					}
+					if extID == tgtExt && srcExt != "" && kind == attackTypes.KindTechnique {
+						techniqueMitigations = append(techniqueMitigations, relatedrefTypes.RelatedRef{ID: srcExt, Description: desc, References: refs})
+					}
+				case "uses":
+					if srcExt == "" || tgtExt == "" {
+						break
+					}
+					switch {
+					case srcKind == attackTypes.KindGroup && tgtKind == attackTypes.KindTechnique:
+						if extID == srcExt && kind == attackTypes.KindGroup {
+							groupTechniquesUsed = append(groupTechniquesUsed, techniqueusedTypes.TechniqueUsed{ID: tgtExt, Description: desc, References: refs})
+						}
+						if extID == tgtExt && kind == attackTypes.KindTechnique {
+							techniqueProcedures = append(techniqueProcedures, procedureTypes.Procedure{AttackerID: srcExt, Description: desc, References: refs})
+						}
+					case srcKind == attackTypes.KindGroup && tgtKind == attackTypes.KindSoftware:
+						if extID == srcExt && kind == attackTypes.KindGroup {
+							groupSoftwaresUsed = append(groupSoftwaresUsed, relatedrefTypes.RelatedRef{ID: tgtExt, Description: desc, References: refs})
+						}
+						if extID == tgtExt && kind == attackTypes.KindSoftware {
+							softwareGroupsUsing = append(softwareGroupsUsing, relatedrefTypes.RelatedRef{ID: srcExt, Description: desc, References: refs})
+						}
+					case srcKind == attackTypes.KindSoftware && tgtKind == attackTypes.KindTechnique:
+						if extID == srcExt && kind == attackTypes.KindSoftware {
+							softwareTechniquesUsed = append(softwareTechniquesUsed, techniqueusedTypes.TechniqueUsed{ID: tgtExt, Description: desc, References: refs})
+						}
+						if extID == tgtExt && kind == attackTypes.KindTechnique {
+							techniqueProcedures = append(techniqueProcedures, procedureTypes.Procedure{AttackerID: srcExt, Description: desc, References: refs})
+						}
+					case srcKind == attackTypes.KindCampaign && tgtKind == attackTypes.KindTechnique:
+						if extID == srcExt && kind == attackTypes.KindCampaign {
+							campaignTechniquesUsed = append(campaignTechniquesUsed, techniqueusedTypes.TechniqueUsed{ID: tgtExt, Description: desc, References: refs})
+						}
+						if extID == tgtExt && kind == attackTypes.KindTechnique {
+							techniqueProcedures = append(techniqueProcedures, procedureTypes.Procedure{AttackerID: srcExt, Description: desc, References: refs})
+						}
+					case srcKind == attackTypes.KindCampaign && tgtKind == attackTypes.KindSoftware:
+						if extID == srcExt && kind == attackTypes.KindCampaign {
+							campaignSoftwaresUsed = append(campaignSoftwaresUsed, relatedrefTypes.RelatedRef{ID: tgtExt, Description: desc, References: refs})
+						}
+						if extID == tgtExt && kind == attackTypes.KindSoftware {
+							softwareCampaignsUsing = append(softwareCampaignsUsing, relatedrefTypes.RelatedRef{ID: srcExt, Description: desc, References: refs})
+						}
+					}
+				case "attributed-to":
+					if srcKind != attackTypes.KindCampaign || tgtKind != attackTypes.KindGroup || srcExt == "" || tgtExt == "" {
+						break
+					}
+					if extID == srcExt && kind == attackTypes.KindCampaign {
+						campaignGroupsAttributed = append(campaignGroupsAttributed, relatedrefTypes.RelatedRef{ID: tgtExt, Description: desc, References: refs})
+					}
+					if extID == tgtExt && kind == attackTypes.KindGroup {
+						groupCampaignsAttributed = append(groupCampaignsAttributed, relatedrefTypes.RelatedRef{ID: srcExt, Description: desc, References: refs})
+					}
+				case "targets":
+					if srcKind != attackTypes.KindTechnique || tgtKind != attackTypes.KindAsset || srcExt == "" || tgtExt == "" {
+						break
+					}
+					if extID == srcExt && kind == attackTypes.KindTechnique {
+						techniqueAssetsTargeted = append(techniqueAssetsTargeted, relatedrefTypes.RelatedRef{ID: tgtExt, Description: desc, References: refs})
+					}
+					if extID == tgtExt && kind == attackTypes.KindAsset {
+						assetTechniquesTargeting = append(assetTechniquesTargeting, relatedrefTypes.RelatedRef{ID: srcExt, Description: desc, References: refs})
+					}
+				case "detects":
+					if srcKind != attackTypes.KindDetectStrategy || tgtKind != attackTypes.KindTechnique || srcExt == "" || tgtExt == "" {
+						break
+					}
+					if extID == srcExt && kind == attackTypes.KindDetectStrategy {
+						detStrategyTechniquesDetected = append(detStrategyTechniquesDetected, relatedrefTypes.RelatedRef{ID: tgtExt, Description: desc, References: refs})
+					}
+					if extID == tgtExt && kind == attackTypes.KindTechnique {
+						techniqueDetectionStrategies = append(techniqueDetectionStrategies, relatedrefTypes.RelatedRef{ID: srcExt, Description: desc, References: refs})
+					}
+				}
 				continue
 			}
 
-			// Other-side primary file pulled in by cross-ref or
-			// relationship's other side. Use the file's STIX type for
-			// the read dispatch.
 			if err := attachRead(fp.Type, path, args, r); err != nil {
 				return errors.Wrapf(err, "attach %s for %s", path, extID)
 			}
@@ -514,17 +550,195 @@ func Extract(args string, opts ...Option) error {
 			if otherExt == "" {
 				continue
 			}
-			populateCrossRefReverse(extID, kind, otherExt, kindByExtID[otherExt], &idx)
+			otherKind := kindByExtID[otherExt]
+			switch kind {
+			case attackTypes.KindTactic:
+				if otherKind == attackTypes.KindTechnique {
+					tacticTechniques = append(tacticTechniques, otherExt)
+				}
+			case attackTypes.KindAnalytic:
+				if otherKind == attackTypes.KindDetectStrategy {
+					analyticDetectionStrategy = otherExt
+				}
+			case attackTypes.KindDataSource:
+				if otherKind == attackTypes.KindDataComponent {
+					dataSourceComponents = append(dataSourceComponents, otherExt)
+				}
+			}
 		}
 
 		if raw == nil {
-			// No primary file made it through — shouldn't happen if
-			// Stage 1a wired everything correctly, but skip gracefully.
 			continue
 		}
-		entry := primaryEntry{extID: extID, kind: kind, raw: raw, reader: r}
-		extracted := convert(&entry, idx)
-		extracted.Domains = slices.Clone(domains)
+
+		c := commonFromRaw(raw)
+		extRefs := make([]referenceTypes.Reference, 0, len(c.externalReferences))
+		for _, er := range c.externalReferences {
+			if er.URL == nil || *er.URL == "" {
+				continue
+			}
+			extRefs = append(extRefs, referenceTypes.Reference{Source: er.SourceName, URL: *er.URL})
+		}
+		extracted := attackTypes.Attack{
+			ID:          extID,
+			Kind:        kind,
+			Name:        c.name,
+			Description: c.description,
+			Domains:     slices.Clone(domains),
+			Deprecated:  c.deprecated,
+			Revoked:     c.revoked,
+			Version:     c.version,
+			Created:     c.created,
+			Modified:    c.modified,
+			References:  extRefs,
+			DataSource: sourceTypes.Source{
+				ID:   sourceTypes.MitreATTACK,
+				Raws: r.Paths(),
+			},
+		}
+
+		switch kind {
+		case attackTypes.KindTechnique:
+			ap := raw.(*attack.AttackPattern)
+			isSub := derefBool(ap.XMitreIsSubtechnique)
+			parent := ""
+			if isSub {
+				parent = techniqueParent
+			}
+			tactics := make([]tacticrefTypes.TacticRef, 0, len(techniqueTacticShortnames))
+			for _, sn := range techniqueTacticShortnames {
+				tactics = append(tactics, tacticrefTypes.TacticRef{Shortname: sn, ID: tacticShortnameToID[sn]})
+			}
+			extracted.Technique = techniqueTypes.Technique{
+				Platforms:            slices.Clone(ap.XMitrePlatforms),
+				Tactics:              tactics,
+				IsSubtechnique:       isSub,
+				Parent:               parent,
+				Detection:            derefString(ap.XMitreDetection),
+				DataSources:          slices.Clone(ap.XMitreDataSources),
+				Mitigations:          techniqueMitigations,
+				Procedures:           techniqueProcedures,
+				PermissionsRequired:  slices.Clone(ap.XMitrePermissionsRequired),
+				EffectivePermissions: slices.Clone(ap.XMitreEffectivePermissions),
+				DefenseBypassed:      slices.Clone(ap.XMitreDefenseBypassed),
+				ImpactType:           slices.Clone(ap.XMitreImpactType),
+				NetworkRequirements:  derefBool(ap.XMitreNetworkRequirements),
+				RemoteSupport:        derefBool(ap.XMitreRemoteSupport),
+				Subtechniques:        techniqueSubtechniques,
+				AssetsTargeted:       techniqueAssetsTargeted,
+				DetectionStrategies:  techniqueDetectionStrategies,
+			}
+		case attackTypes.KindTactic:
+			t := raw.(*attack.XMitreTactic)
+			extracted.Tactic = tacticTypes.Tactic{
+				Shortname:  derefString(t.XMitreShortname),
+				Techniques: tacticTechniques,
+			}
+		case attackTypes.KindMitigation:
+			extracted.Mitigation = mitigationTypes.Mitigation{
+				TechniquesMitigated: mitigationTechniquesMitigated,
+			}
+		case attackTypes.KindGroup:
+			is := raw.(*attack.IntrusionSet)
+			extracted.Group = groupTypes.Group{
+				Aliases:             mergeAliases(is.Aliases, is.XMitreAliases),
+				TechniquesUsed:      groupTechniquesUsed,
+				SoftwaresUsed:       groupSoftwaresUsed,
+				CampaignsAttributed: groupCampaignsAttributed,
+			}
+		case attackTypes.KindSoftware:
+			var aliases, xAliases, platforms []string
+			var stixT string
+			switch s := raw.(type) {
+			case *attack.Malware:
+				stixT = "malware"
+				aliases = s.Aliases
+				xAliases = s.XMitreAliases
+				platforms = s.XMitrePlatforms
+			case *attack.Tool:
+				stixT = "tool"
+				aliases = s.Aliases
+				xAliases = s.XMitreAliases
+				platforms = s.XMitrePlatforms
+			}
+			extracted.Software = softwareTypes.Software{
+				Type:           stixT,
+				Aliases:        mergeAliases(aliases, xAliases),
+				Platforms:      slices.Clone(platforms),
+				TechniquesUsed: softwareTechniquesUsed,
+				GroupsUsing:    softwareGroupsUsing,
+				CampaignsUsing: softwareCampaignsUsing,
+			}
+		case attackTypes.KindCampaign:
+			camp := raw.(*attack.Campaign)
+			extracted.Campaign = campaignTypes.Campaign{
+				Aliases:          mergeAliases(camp.Aliases, nil),
+				FirstSeen:        derefTime(camp.FirstSeen),
+				LastSeen:         derefTime(camp.LastSeen),
+				TechniquesUsed:   campaignTechniquesUsed,
+				GroupsAttributed: campaignGroupsAttributed,
+				SoftwaresUsed:    campaignSoftwaresUsed,
+			}
+		case attackTypes.KindAsset:
+			as := raw.(*attack.XMitreAsset)
+			related := make([]assetTypes.RelatedAsset, 0, len(as.XMitreRelatedAssets))
+			for _, ra := range as.XMitreRelatedAssets {
+				related = append(related, assetTypes.RelatedAsset{
+					Name:        ra.Name,
+					Description: ra.Description,
+					Sectors:     slices.Clone(ra.RelatedAssetSectors),
+				})
+			}
+			extracted.Asset = assetTypes.Asset{
+				Platforms:           slices.Clone(as.XMitrePlatforms),
+				Sectors:             slices.Clone(as.XMitreSectors),
+				RelatedAssets:       related,
+				TechniquesTargeting: assetTechniquesTargeting,
+			}
+		case attackTypes.KindDetectStrategy:
+			extracted.DetectionStrategy = detectionstrategyTypes.DetectionStrategy{
+				Analytics:          detStrategyAnalytics,
+				TechniquesDetected: detStrategyTechniquesDetected,
+			}
+		case attackTypes.KindDataSource:
+			ds := raw.(*attack.XMitreDataSource)
+			extracted.AttackDataSource = datasourceTypes.DataSource{
+				Platforms:        slices.Clone(ds.XMitrePlatforms),
+				CollectionLayers: slices.Clone(ds.XMitreCollectionLayers),
+				DataComponents:   dataSourceComponents,
+			}
+		case attackTypes.KindDataComponent:
+			dc := raw.(*attack.XMitreDataComponent)
+			logs := make([]datacomponentTypes.LogSource, 0, len(dc.XMitreLogSources))
+			for _, ls := range dc.XMitreLogSources {
+				logs = append(logs, datacomponentTypes.LogSource{Name: ls.Name, Channel: ls.Channel})
+			}
+			extracted.DataComponent = datacomponentTypes.DataComponent{
+				DataSource: dataComponentSource,
+				LogSources: logs,
+			}
+		case attackTypes.KindAnalytic:
+			an := raw.(*attack.XMitreAnalytic)
+			lrefs := make([]analyticTypes.LogSourceReference, 0, len(an.XMitreLogSourceReferences))
+			for _, lr := range an.XMitreLogSourceReferences {
+				lrefs = append(lrefs, analyticTypes.LogSourceReference{
+					DataComponent: lr.XMitreDataComponentRef,
+					Name:          lr.Name,
+					Channel:       lr.Channel,
+				})
+			}
+			mes := make([]analyticTypes.MutableElement, 0, len(an.XMitreMutableElements))
+			for _, me := range an.XMitreMutableElements {
+				mes = append(mes, analyticTypes.MutableElement{Field: me.Field, Description: me.Description})
+			}
+			extracted.Analytic = analyticTypes.Analytic{
+				DetectionStrategy:   analyticDetectionStrategy,
+				Platforms:           slices.Clone(an.XMitrePlatforms),
+				LogSourceReferences: lrefs,
+				MutableElements:     mes,
+			}
+		}
+
 		outPath := filepath.Join(options.dir, "attack", fmt.Sprintf("%s.json", extID))
 		if err := util.Write(outPath, extracted, true); err != nil {
 			return errors.Wrapf(err, "write %s", outPath)
@@ -778,208 +992,12 @@ func decodeRelationship(path string) (attack.Relationship, error) {
 	return r, nil
 }
 
-// populateRelEdge fills the per-entry rels slot corresponding to this
-// extID's role (src or tgt) in the given relationship. Called once per
-// relationship file in Stage 2; the entry's kind drives which slot is
-// populated. Unknown relationship_type / kind combos are silently
-// dropped — Stage 1c only routes files to relevant entries, so this
-// path simply matches what Stage 1 already chose.
-func populateRelEdge(extID string, kind attackTypes.Kind, rel *attack.Relationship, uuidToExt map[string]string, uuidKind map[string]attackTypes.Kind, idx *rels) {
-	srcExt := uuidToExt[rel.SourceRef]
-	tgtExt := uuidToExt[rel.TargetRef]
-	srcKind := uuidKind[rel.SourceRef]
-	tgtKind := uuidKind[rel.TargetRef]
-	desc := ""
-	if rel.Description != nil {
-		desc = *rel.Description
+
+func derefTime(p *time.Time) time.Time {
+	if p == nil {
+		return time.Time{}
 	}
-	refs := toReferences(rel.ExternalReferences)
-
-	switch rel.RelationshipType {
-	case "subtechnique-of":
-		if kind != attackTypes.KindTechnique {
-			return
-		}
-		if extID == srcExt && tgtExt != "" {
-			idx.techniqueParent[extID] = tgtExt
-		}
-		if extID == tgtExt && srcExt != "" {
-			idx.techniqueSubtechniques[extID] = append(idx.techniqueSubtechniques[extID], srcExt)
-		}
-	case "mitigates":
-		if extID == srcExt && tgtExt != "" && kind == attackTypes.KindMitigation {
-			idx.mitigates.fwd[extID] = append(idx.mitigates.fwd[extID], relatedrefTypes.RelatedRef{ID: tgtExt, Description: desc, References: refs})
-		}
-		if extID == tgtExt && srcExt != "" && kind == attackTypes.KindTechnique {
-			idx.mitigates.rev[extID] = append(idx.mitigates.rev[extID], relatedrefTypes.RelatedRef{ID: srcExt, Description: desc, References: refs})
-		}
-	case "uses":
-		if srcExt == "" || tgtExt == "" {
-			return
-		}
-		switch {
-		case srcKind == attackTypes.KindGroup && tgtKind == attackTypes.KindTechnique:
-			if extID == srcExt && kind == attackTypes.KindGroup {
-				idx.groupTechniquesUsed[extID] = append(idx.groupTechniquesUsed[extID], techniqueusedTypes.TechniqueUsed{ID: tgtExt, Description: desc, References: refs})
-			}
-			if extID == tgtExt && kind == attackTypes.KindTechnique {
-				idx.techniqueProcedures[extID] = append(idx.techniqueProcedures[extID], procedureTypes.Procedure{AttackerID: srcExt, Description: desc, References: refs})
-			}
-		case srcKind == attackTypes.KindGroup && tgtKind == attackTypes.KindSoftware:
-			if extID == srcExt && kind == attackTypes.KindGroup {
-				idx.groupSoftwaresUsed[extID] = append(idx.groupSoftwaresUsed[extID], relatedrefTypes.RelatedRef{ID: tgtExt, Description: desc, References: refs})
-			}
-			if extID == tgtExt && kind == attackTypes.KindSoftware {
-				idx.softwareGroupsUsing[extID] = append(idx.softwareGroupsUsing[extID], relatedrefTypes.RelatedRef{ID: srcExt, Description: desc, References: refs})
-			}
-		case srcKind == attackTypes.KindSoftware && tgtKind == attackTypes.KindTechnique:
-			if extID == srcExt && kind == attackTypes.KindSoftware {
-				idx.softwareTechniquesUsed[extID] = append(idx.softwareTechniquesUsed[extID], techniqueusedTypes.TechniqueUsed{ID: tgtExt, Description: desc, References: refs})
-			}
-			if extID == tgtExt && kind == attackTypes.KindTechnique {
-				idx.techniqueProcedures[extID] = append(idx.techniqueProcedures[extID], procedureTypes.Procedure{AttackerID: srcExt, Description: desc, References: refs})
-			}
-		case srcKind == attackTypes.KindCampaign && tgtKind == attackTypes.KindTechnique:
-			if extID == srcExt && kind == attackTypes.KindCampaign {
-				idx.campaignTechniquesUsed[extID] = append(idx.campaignTechniquesUsed[extID], techniqueusedTypes.TechniqueUsed{ID: tgtExt, Description: desc, References: refs})
-			}
-			if extID == tgtExt && kind == attackTypes.KindTechnique {
-				idx.techniqueProcedures[extID] = append(idx.techniqueProcedures[extID], procedureTypes.Procedure{AttackerID: srcExt, Description: desc, References: refs})
-			}
-		case srcKind == attackTypes.KindCampaign && tgtKind == attackTypes.KindSoftware:
-			if extID == srcExt && kind == attackTypes.KindCampaign {
-				idx.campaignSoftwaresUsed[extID] = append(idx.campaignSoftwaresUsed[extID], relatedrefTypes.RelatedRef{ID: tgtExt, Description: desc, References: refs})
-			}
-			if extID == tgtExt && kind == attackTypes.KindSoftware {
-				idx.softwareCampaignsUsing[extID] = append(idx.softwareCampaignsUsing[extID], relatedrefTypes.RelatedRef{ID: srcExt, Description: desc, References: refs})
-			}
-		}
-	case "attributed-to":
-		if srcKind != attackTypes.KindCampaign || tgtKind != attackTypes.KindGroup || srcExt == "" || tgtExt == "" {
-			return
-		}
-		if extID == srcExt && kind == attackTypes.KindCampaign {
-			idx.attributedTo.fwd[extID] = append(idx.attributedTo.fwd[extID], relatedrefTypes.RelatedRef{ID: tgtExt, Description: desc, References: refs})
-		}
-		if extID == tgtExt && kind == attackTypes.KindGroup {
-			idx.attributedTo.rev[extID] = append(idx.attributedTo.rev[extID], relatedrefTypes.RelatedRef{ID: srcExt, Description: desc, References: refs})
-		}
-	case "targets":
-		if srcKind != attackTypes.KindTechnique || tgtKind != attackTypes.KindAsset || srcExt == "" || tgtExt == "" {
-			return
-		}
-		if extID == srcExt && kind == attackTypes.KindTechnique {
-			idx.targets.fwd[extID] = append(idx.targets.fwd[extID], relatedrefTypes.RelatedRef{ID: tgtExt, Description: desc, References: refs})
-		}
-		if extID == tgtExt && kind == attackTypes.KindAsset {
-			idx.targets.rev[extID] = append(idx.targets.rev[extID], relatedrefTypes.RelatedRef{ID: srcExt, Description: desc, References: refs})
-		}
-	case "detects":
-		if srcKind != attackTypes.KindDetectStrategy || tgtKind != attackTypes.KindTechnique || srcExt == "" || tgtExt == "" {
-			return
-		}
-		if extID == srcExt && kind == attackTypes.KindDetectStrategy {
-			idx.detects.fwd[extID] = append(idx.detects.fwd[extID], relatedrefTypes.RelatedRef{ID: tgtExt, Description: desc, References: refs})
-		}
-		if extID == tgtExt && kind == attackTypes.KindTechnique {
-			idx.detects.rev[extID] = append(idx.detects.rev[extID], relatedrefTypes.RelatedRef{ID: srcExt, Description: desc, References: refs})
-		}
-	}
-}
-
-// populateCrossRefReverse fills the reverse-direction cross-ref slot
-// when Stage 2 sees another primary's file in this entry's list. The
-// forward direction (Technique.Tactics from its own TacticRefs, etc.)
-// is handled inline from the entry's own peek.
-func populateCrossRefReverse(extID string, kind attackTypes.Kind, otherExt string, otherKind attackTypes.Kind, idx *rels) {
-	switch kind {
-	case attackTypes.KindTactic:
-		// Other side is a Technique that lists this Tactic via
-		// KillChainPhases or TacticRefs.
-		if otherKind != attackTypes.KindTechnique {
-			return
-		}
-		idx.tacticTechniques[extID] = append(idx.tacticTechniques[extID], otherExt)
-	case attackTypes.KindAnalytic:
-		// Other side is the DetectionStrategy that owns this Analytic.
-		if otherKind != attackTypes.KindDetectStrategy {
-			return
-		}
-		idx.analyticDetectionStrategy[extID] = otherExt
-	case attackTypes.KindDataSource:
-		// Other side is a DataComponent that names this DataSource.
-		if otherKind != attackTypes.KindDataComponent {
-			return
-		}
-		idx.dataSourceComponents[extID] = append(idx.dataSourceComponents[extID], otherExt)
-	}
-}
-
-func stixTypeFromUUID(uuid string) string {
-	if idx := strings.Index(uuid, "--"); idx > 0 {
-		return uuid[:idx]
-	}
-	return ""
-}
-
-func convert(entry *primaryEntry, idx rels) attackTypes.Attack {
-	c := commonFromRaw(entry.raw)
-
-	refs := make([]referenceTypes.Reference, 0, len(c.externalReferences))
-	for _, er := range c.externalReferences {
-		if er.URL == nil || *er.URL == "" {
-			continue
-		}
-		refs = append(refs, referenceTypes.Reference{
-			Source: er.SourceName,
-			URL:    *er.URL,
-		})
-	}
-
-	a := attackTypes.Attack{
-		ID:          entry.extID,
-		Kind:        entry.kind,
-		Name:        c.name,
-		Description: c.description,
-		Domains:     slices.Clone(c.domains),
-		Deprecated:  c.deprecated,
-		Revoked:     c.revoked,
-		Version:     c.version,
-		Created:     c.created,
-		Modified:    c.modified,
-		References:  refs,
-		DataSource: sourceTypes.Source{
-			ID:   sourceTypes.MitreATTACK,
-			Raws: entry.reader.Paths(),
-		},
-	}
-
-	switch entry.kind {
-	case attackTypes.KindTechnique:
-		a.Technique = buildTechnique(entry.raw.(*attack.AttackPattern), entry.extID, idx)
-	case attackTypes.KindTactic:
-		a.Tactic = buildTactic(entry.raw.(*attack.XMitreTactic), idx)
-	case attackTypes.KindMitigation:
-		a.Mitigation = buildMitigation(entry.extID, idx)
-	case attackTypes.KindGroup:
-		a.Group = buildGroup(entry.raw.(*attack.IntrusionSet), entry.extID, idx)
-	case attackTypes.KindSoftware:
-		a.Software = buildSoftware(entry.raw, entry.extID, idx)
-	case attackTypes.KindCampaign:
-		a.Campaign = buildCampaign(entry.raw.(*attack.Campaign), entry.extID, idx)
-	case attackTypes.KindAsset:
-		a.Asset = buildAsset(entry.raw.(*attack.XMitreAsset), entry.extID, idx)
-	case attackTypes.KindDetectStrategy:
-		a.DetectionStrategy = buildDetectionStrategy(entry.extID, idx)
-	case attackTypes.KindDataSource:
-		a.AttackDataSource = buildAttackDataSource(entry.raw.(*attack.XMitreDataSource), entry.extID, idx)
-	case attackTypes.KindDataComponent:
-		a.DataComponent = buildDataComponent(entry.raw.(*attack.XMitreDataComponent), entry.extID, idx)
-	case attackTypes.KindAnalytic:
-		a.Analytic = buildAnalytic(entry.raw.(*attack.XMitreAnalytic), entry.extID, idx)
-	}
-
-	return a
+	return *p
 }
 
 // toReferences converts a STIX external_references slice to the
@@ -1005,6 +1023,9 @@ func toReferences(ers []attack.ExternalReference) []referenceTypes.Reference {
 	return out
 }
 
+// commonFields are the STIX object fields every ATT&CK primary kind
+// shares — Stage 2 reads them via commonFromRaw and copies into the
+// canonical Attack header.
 type commonFields struct {
 	name               string
 	description        string
@@ -1045,172 +1066,6 @@ func commonFromRaw(raw any) commonFields {
 		return commonFields{derefString(o.Name), derefString(o.Description), o.XMitreDomains, derefBool(o.XMitreDeprecated), derefBool(o.Revoked), derefString(o.XMitreVersion), o.Created, o.Modified, o.ExternalReferences}
 	}
 	return commonFields{}
-}
-
-func buildTechnique(ap *attack.AttackPattern, extID string, idx rels) techniqueTypes.Technique {
-	isSub := derefBool(ap.XMitreIsSubtechnique)
-	parent := ""
-	if isSub {
-		parent = idx.techniqueParent[extID]
-	}
-
-	tactics := make([]tacticrefTypes.TacticRef, 0, len(idx.techniqueTactics[extID]))
-	for _, sn := range idx.techniqueTactics[extID] {
-		tactics = append(tactics, tacticrefTypes.TacticRef{
-			Shortname: sn,
-			ID:        idx.tacticShortnameToID[sn],
-		})
-	}
-
-	return techniqueTypes.Technique{
-		Platforms:            slices.Clone(ap.XMitrePlatforms),
-		Tactics:              tactics,
-		IsSubtechnique:       isSub,
-		Parent:               parent,
-		Detection:            derefString(ap.XMitreDetection),
-		DataSources:          slices.Clone(ap.XMitreDataSources),
-		Mitigations:          idx.mitigates.rev[extID],
-		Procedures:           idx.techniqueProcedures[extID],
-		PermissionsRequired:  slices.Clone(ap.XMitrePermissionsRequired),
-		EffectivePermissions: slices.Clone(ap.XMitreEffectivePermissions),
-		DefenseBypassed:      slices.Clone(ap.XMitreDefenseBypassed),
-		ImpactType:           slices.Clone(ap.XMitreImpactType),
-		NetworkRequirements:  derefBool(ap.XMitreNetworkRequirements),
-		RemoteSupport:        derefBool(ap.XMitreRemoteSupport),
-		Subtechniques:        idx.techniqueSubtechniques[extID],
-		AssetsTargeted:       idx.targets.fwd[extID],
-		DetectionStrategies:  idx.detects.rev[extID],
-	}
-}
-
-func buildTactic(t *attack.XMitreTactic, idx rels) tacticTypes.Tactic {
-	shortname := derefString(t.XMitreShortname)
-	return tacticTypes.Tactic{
-		Shortname:  shortname,
-		Techniques: idx.tacticTechniques[shortname],
-	}
-}
-
-func buildMitigation(extID string, idx rels) mitigationTypes.Mitigation {
-	return mitigationTypes.Mitigation{
-		TechniquesMitigated: idx.mitigates.fwd[extID],
-	}
-}
-
-func buildGroup(is *attack.IntrusionSet, extID string, idx rels) groupTypes.Group {
-	return groupTypes.Group{
-		Aliases:             mergeAliases(is.Aliases, is.XMitreAliases),
-		TechniquesUsed:      idx.groupTechniquesUsed[extID],
-		SoftwaresUsed:       idx.groupSoftwaresUsed[extID],
-		CampaignsAttributed: idx.attributedTo.rev[extID],
-	}
-}
-
-func buildSoftware(raw any, extID string, idx rels) softwareTypes.Software {
-	var aliases, xAliases, platforms []string
-	var stixType string
-	switch s := raw.(type) {
-	case *attack.Malware:
-		stixType = "malware"
-		aliases = s.Aliases
-		xAliases = s.XMitreAliases
-		platforms = s.XMitrePlatforms
-	case *attack.Tool:
-		stixType = "tool"
-		aliases = s.Aliases
-		xAliases = s.XMitreAliases
-		platforms = s.XMitrePlatforms
-	}
-	return softwareTypes.Software{
-		Type:           stixType,
-		Aliases:        mergeAliases(aliases, xAliases),
-		Platforms:      slices.Clone(platforms),
-		TechniquesUsed: idx.softwareTechniquesUsed[extID],
-		GroupsUsing:    idx.softwareGroupsUsing[extID],
-		CampaignsUsing: idx.softwareCampaignsUsing[extID],
-	}
-}
-
-func buildCampaign(camp *attack.Campaign, extID string, idx rels) campaignTypes.Campaign {
-	return campaignTypes.Campaign{
-		Aliases:          mergeAliases(camp.Aliases, nil),
-		FirstSeen:        derefTime(camp.FirstSeen),
-		LastSeen:         derefTime(camp.LastSeen),
-		TechniquesUsed:   idx.campaignTechniquesUsed[extID],
-		GroupsAttributed: idx.attributedTo.fwd[extID],
-		SoftwaresUsed:    idx.campaignSoftwaresUsed[extID],
-	}
-}
-
-func buildAsset(as *attack.XMitreAsset, extID string, idx rels) assetTypes.Asset {
-	related := make([]assetTypes.RelatedAsset, 0, len(as.XMitreRelatedAssets))
-	for _, ra := range as.XMitreRelatedAssets {
-		related = append(related, assetTypes.RelatedAsset{
-			Name:        ra.Name,
-			Description: ra.Description,
-			Sectors:     slices.Clone(ra.RelatedAssetSectors),
-		})
-	}
-	return assetTypes.Asset{
-		Platforms:           slices.Clone(as.XMitrePlatforms),
-		Sectors:             slices.Clone(as.XMitreSectors),
-		RelatedAssets:       related,
-		TechniquesTargeting: idx.targets.rev[extID],
-	}
-}
-
-func buildDetectionStrategy(extID string, idx rels) detectionstrategyTypes.DetectionStrategy {
-	return detectionstrategyTypes.DetectionStrategy{
-		Analytics:          idx.detectionStrategyAnalytics[extID],
-		TechniquesDetected: idx.detects.fwd[extID],
-	}
-}
-
-func buildAttackDataSource(ds *attack.XMitreDataSource, extID string, idx rels) datasourceTypes.DataSource {
-	return datasourceTypes.DataSource{
-		Platforms:        slices.Clone(ds.XMitrePlatforms),
-		CollectionLayers: slices.Clone(ds.XMitreCollectionLayers),
-		DataComponents:   idx.dataSourceComponents[extID],
-	}
-}
-
-func buildDataComponent(dc *attack.XMitreDataComponent, extID string, idx rels) datacomponentTypes.DataComponent {
-	logs := make([]datacomponentTypes.LogSource, 0, len(dc.XMitreLogSources))
-	for _, ls := range dc.XMitreLogSources {
-		logs = append(logs, datacomponentTypes.LogSource{Name: ls.Name, Channel: ls.Channel})
-	}
-	return datacomponentTypes.DataComponent{
-		DataSource: idx.dataComponentSource[extID],
-		LogSources: logs,
-	}
-}
-
-func buildAnalytic(an *attack.XMitreAnalytic, extID string, idx rels) analyticTypes.Analytic {
-	lrefs := make([]analyticTypes.LogSourceReference, 0, len(an.XMitreLogSourceReferences))
-	for _, lr := range an.XMitreLogSourceReferences {
-		lrefs = append(lrefs, analyticTypes.LogSourceReference{
-			DataComponent: lr.XMitreDataComponentRef,
-			Name:          lr.Name,
-			Channel:       lr.Channel,
-		})
-	}
-	mes := make([]analyticTypes.MutableElement, 0, len(an.XMitreMutableElements))
-	for _, me := range an.XMitreMutableElements {
-		mes = append(mes, analyticTypes.MutableElement{Field: me.Field, Description: me.Description})
-	}
-	return analyticTypes.Analytic{
-		DetectionStrategy:   idx.analyticDetectionStrategy[extID],
-		Platforms:           slices.Clone(an.XMitrePlatforms),
-		LogSourceReferences: lrefs,
-		MutableElements:     mes,
-	}
-}
-
-func derefTime(p *time.Time) time.Time {
-	if p == nil {
-		return time.Time{}
-	}
-	return *p
 }
 
 func mergeAliases(stixAliases, mitreAliases []string) []string {
