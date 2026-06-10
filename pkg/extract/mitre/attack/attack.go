@@ -825,26 +825,18 @@ type stixPeek struct {
 	// are inlined at the parent level (json:",inline"), matching STIX's
 	// flat schema while keeping Stage 1/2 access sites obvious about
 	// which Kind they're touching.
-	Tactic         stixPeekTactic         `json:",inline"`
-	Technique      stixPeekTechnique      `json:",inline"`
-	DetectStrategy stixPeekDetectStrategy `json:",inline"`
-	DataComponent  stixPeekDataComponent  `json:",inline"`
-}
-
-type stixPeekTactic struct {
-	XMitreShortname string `json:"x_mitre_shortname,omitempty"`
-}
-
-type stixPeekTechnique struct {
-	KillChainPhases []attack.KillChainPhase `json:"kill_chain_phases,omitempty"`
-}
-
-type stixPeekDetectStrategy struct {
-	XMitreAnalyticRefs []string `json:"x_mitre_analytic_refs,omitempty"`
-}
-
-type stixPeekDataComponent struct {
-	XMitreDataSourceRef *string `json:"x_mitre_data_source_ref,omitempty"`
+	Tactic struct {
+		XMitreShortname string `json:"x_mitre_shortname,omitempty"`
+	} `json:",inline"`
+	Technique struct {
+		KillChainPhases []attack.KillChainPhase `json:"kill_chain_phases,omitempty"`
+	} `json:",inline"`
+	DetectStrategy struct {
+		XMitreAnalyticRefs []string `json:"x_mitre_analytic_refs,omitempty"`
+	} `json:",inline"`
+	DataComponent struct {
+		XMitreDataSourceRef *string `json:"x_mitre_data_source_ref,omitempty"`
+	} `json:",inline"`
 }
 
 // bundleInfo carries the ATT&CK bundle identity for a file: its
