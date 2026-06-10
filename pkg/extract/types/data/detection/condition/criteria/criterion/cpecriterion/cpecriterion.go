@@ -128,21 +128,6 @@ type Query struct {
 	CPE string
 }
 
-// cpeAttrs enumerates every CPE 2.3 WFN attribute checked by concretelyDisjoint.
-var cpeAttrs = []string{
-	common.AttributePart,
-	common.AttributeVendor,
-	common.AttributeProduct,
-	common.AttributeVersion,
-	common.AttributeUpdate,
-	common.AttributeEdition,
-	common.AttributeLanguage,
-	common.AttributeSwEdition,
-	common.AttributeTargetSw,
-	common.AttributeTargetHw,
-	common.AttributeOther,
-}
-
 // concretelyDisjoint reports whether two WFNs disagree byte-wise on any
 // concrete (non-ANY/NA) attribute. It exists to work around an upstream
 // go-cpe matching bug: matching.IsDisjoint returns false (and
@@ -163,7 +148,19 @@ var cpeAttrs = []string{
 // against future go-cpe regressions; wildcard / ANY / NA values fall
 // through unchanged so legitimate broad-criterion matches still hit.
 func concretelyDisjoint(qWFN, cWFN common.WellFormedName) bool {
-	for _, a := range cpeAttrs {
+	for _, a := range []string{
+		common.AttributePart,
+		common.AttributeVendor,
+		common.AttributeProduct,
+		common.AttributeVersion,
+		common.AttributeUpdate,
+		common.AttributeEdition,
+		common.AttributeLanguage,
+		common.AttributeSwEdition,
+		common.AttributeTargetSw,
+		common.AttributeTargetHw,
+		common.AttributeOther,
+	} {
 		qv := qWFN.GetString(a)
 		cv := cWFN.GetString(a)
 		if qv == "ANY" || qv == "NA" || cv == "ANY" || cv == "NA" {
