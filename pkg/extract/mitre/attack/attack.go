@@ -87,6 +87,27 @@ var stixTypesNotExtracted = map[string]bool{
 	"x-mitre-matrix":     true,
 }
 
+// entryInfo carries every per-ext-ID detail Stage 2 needs to build one
+// canonical record. Stage 1 populates a single map[extID]*entryInfo
+// instead of five parallel maps.
+type entryInfo struct {
+	kind     attackTypes.Kind
+	stixType string
+	peek     stixPeek // first-occurrence peek, used to project own cross-ref fields in Stage 2
+	paths    []string // every bundle copy of this ext-ID's primary file
+	files    []string // every file Stage 2 has to open: primary + cross-domain copies + relationship + cross-ref targets
+}
+
+// uuidInfo collapses the three UUID-keyed lookups Stage 1c does when
+// resolving a relationship's src / tgt UUIDs. The zero value is a
+// "not in the extract set" answer (ext == ""), matching the old
+// missing-key semantics.
+type uuidInfo struct {
+	ext  string
+	kind attackTypes.Kind
+	path string
+}
+
 func Extract(args string, opts ...Option) error {
 	options := &options{
 		dir: filepath.Join(util.CacheDir(), "extract", "mitre", "attack"),
@@ -103,21 +124,15 @@ func Extract(args string, opts ...Option) error {
 	slog.Info("Extract MITRE ATT&CK")
 
 	// Stage 1 builds the file list each ext-ID needs to produce its
-	// canonical record and the few global maps Stage 2 has to consult
-	// while parsing relationships. Nothing else crosses the
-	// Stage 1 ↔ Stage 2 boundary.
-	uuidToExt := make(map[string]string) // STIX UUID → ATT&CK external ID
-	kindByExtID := make(map[string]attackTypes.Kind)
-	stixTypeByExtID := make(map[string]string)
-	peekByExtID := make(map[string]stixPeek) // first-occurrence peek, used for own cross-ref fields in Stage 2
+	// canonical record (entries) plus the UUID lookup Stage 1c needs
+	// to resolve relationships (uuids). The two Tactic shortname maps
+	// stay separate because they're keyed by something other than
+	// extID / UUID. Nothing else crosses the Stage 1 ↔ Stage 2
+	// boundary.
+	entries := make(map[string]*entryInfo)
+	uuids := make(map[string]uuidInfo)
 	tacticShortnameToID := make(map[string]string)
 	tacticUUIDToShortname := make(map[string]string)
-	filesByExtID := make(map[string][]string)
-
-	// Stage 1-internal helpers.
-	uuidKind := make(map[string]attackTypes.Kind)
-	uuidToPath := make(map[string]string)
-	pathsByExtID := make(map[string][]string) // every bundle copy's file path, fanned out at Stage 1b/1c
 
 	// Stage 1a: walk every STIX file, peek the extended discriminator
 	// envelope, apply the distribution-artifact filter, and register
@@ -166,20 +181,18 @@ func Extract(args string, opts ...Option) error {
 		if !slices.Contains(peek.XMitreDomains, bundleDomain) {
 			return nil
 		}
-		uuidToExt[peek.ID] = extID
-		uuidKind[peek.ID] = kind
-		uuidToPath[peek.ID] = path
-		if _, exists := peekByExtID[extID]; !exists {
-			peekByExtID[extID] = peek
-			kindByExtID[extID] = kind
-			stixTypeByExtID[extID] = peek.Type
+		uuids[peek.ID] = uuidInfo{ext: extID, kind: kind, path: path}
+		e, ok := entries[extID]
+		if !ok {
+			e = &entryInfo{kind: kind, stixType: peek.Type, peek: peek}
+			entries[extID] = e
 		}
+		e.paths = append(e.paths, path)
+		e.files = append(e.files, path)
 		if kind == attackTypes.KindTactic && peek.XMitreShortname != nil && *peek.XMitreShortname != "" {
 			tacticShortnameToID[*peek.XMitreShortname] = extID
 			tacticUUIDToShortname[peek.ID] = *peek.XMitreShortname
 		}
-		pathsByExtID[extID] = append(pathsByExtID[extID], path)
-		filesByExtID[extID] = append(filesByExtID[extID], path)
 		return nil
 	}); err != nil {
 		return errors.Wrapf(err, "walk %s", args)
@@ -188,22 +201,21 @@ func Extract(args string, opts ...Option) error {
 	// Stage 1b: per-extID, link the files Stage 2 will need to build
 	// the cross-ref fields. Forward refs (e.g. Technique → Tactic via
 	// TacticRefs / KillChainPhases) and reverse refs (Tactic →
-	// Techniques) both surface as file membership in filesByExtID, so
-	// Stage 2 doesn't need a global edge index to know which files to
-	// open.
-	for extID := range kindByExtID {
-		peek := peekByExtID[extID]
-		switch kindByExtID[extID] {
+	// Techniques) both surface as file membership in entries[id].files,
+	// so Stage 2 doesn't need a global edge index to know which files
+	// to open.
+	for _, e := range entries {
+		switch e.kind {
 		case attackTypes.KindTechnique:
 			// KillChainPhases name the Tactic by its shortname; resolve
 			// to the Tactic's ext-ID so we can add the Technique to that
 			// Tactic's file list (for Tactic.Techniques reverse).
-			for _, kc := range peek.KillChainPhases {
+			for _, kc := range e.peek.KillChainPhases {
 				switch kc.KillChainName {
 				case "mitre-attack", "mitre-ics-attack", "mitre-mobile-attack":
 					if tacticExt, ok := tacticShortnameToID[kc.PhaseName]; ok {
-						for _, p := range pathsByExtID[extID] {
-							filesByExtID[tacticExt] = append(filesByExtID[tacticExt], p)
+						if tac, ok := entries[tacticExt]; ok {
+							tac.files = append(tac.files, e.paths...)
 						}
 					}
 				}
@@ -211,45 +223,45 @@ func Extract(args string, opts ...Option) error {
 			// TacticRefs point at Tactic UUIDs; pull the Tactic file in
 			// for provenance + technique.Tactics ID resolution, and
 			// pull the Technique's file into the Tactic for reverse.
-			for _, tr := range peek.TacticRefs {
-				tacticExt, ok := uuidToExt[tr]
+			for _, tr := range e.peek.TacticRefs {
+				u, ok := uuids[tr]
 				if !ok {
 					continue
 				}
-				for _, p := range pathsByExtID[tacticExt] {
-					filesByExtID[extID] = append(filesByExtID[extID], p)
+				tac, ok := entries[u.ext]
+				if !ok {
+					continue
 				}
-				for _, p := range pathsByExtID[extID] {
-					filesByExtID[tacticExt] = append(filesByExtID[tacticExt], p)
-				}
+				e.files = append(e.files, tac.paths...)
+				tac.files = append(tac.files, e.paths...)
 			}
 		case attackTypes.KindDetectStrategy:
-			for _, ar := range peek.XMitreAnalyticRefs {
-				anExt, ok := uuidToExt[ar]
+			for _, ar := range e.peek.XMitreAnalyticRefs {
+				u, ok := uuids[ar]
 				if !ok {
 					continue
 				}
-				for _, p := range pathsByExtID[anExt] {
-					filesByExtID[extID] = append(filesByExtID[extID], p)
+				an, ok := entries[u.ext]
+				if !ok {
+					continue
 				}
-				for _, p := range pathsByExtID[extID] {
-					filesByExtID[anExt] = append(filesByExtID[anExt], p)
-				}
+				e.files = append(e.files, an.paths...)
+				an.files = append(an.files, e.paths...)
 			}
 		case attackTypes.KindDataComponent:
-			if peek.XMitreDataSourceRef == nil {
+			if e.peek.XMitreDataSourceRef == nil {
 				continue
 			}
-			dsExt, ok := uuidToExt[*peek.XMitreDataSourceRef]
+			u, ok := uuids[*e.peek.XMitreDataSourceRef]
 			if !ok {
 				continue
 			}
-			for _, p := range pathsByExtID[dsExt] {
-				filesByExtID[extID] = append(filesByExtID[extID], p)
+			ds, ok := entries[u.ext]
+			if !ok {
+				continue
 			}
-			for _, p := range pathsByExtID[extID] {
-				filesByExtID[dsExt] = append(filesByExtID[dsExt], p)
-			}
+			e.files = append(e.files, ds.paths...)
+			ds.files = append(ds.files, e.paths...)
 		}
 	}
 
@@ -265,14 +277,14 @@ func Extract(args string, opts ...Option) error {
 			continue
 		}
 		relDir := filepath.Join(args, dom.Name(), "relationship")
-		entries, err := os.ReadDir(relDir)
+		relFiles, err := os.ReadDir(relDir)
 		if err != nil {
 			if errors.Is(err, fs.ErrNotExist) {
 				continue
 			}
 			return errors.Wrapf(err, "read %s", relDir)
 		}
-		for _, f := range entries {
+		for _, f := range relFiles {
 			if f.IsDir() || filepath.Ext(f.Name()) != ".json" {
 				continue
 			}
@@ -284,18 +296,18 @@ func Extract(args string, opts ...Option) error {
 			if r.RelationshipType == "" || r.SourceRef == "" || r.TargetRef == "" {
 				continue
 			}
-			srcExt := uuidToExt[r.SourceRef]
-			tgtExt := uuidToExt[r.TargetRef]
-			if srcExt != "" {
-				filesByExtID[srcExt] = append(filesByExtID[srcExt], path)
-				for _, p := range pathsByExtID[tgtExt] {
-					filesByExtID[srcExt] = append(filesByExtID[srcExt], p)
+			src := entries[uuids[r.SourceRef].ext]
+			tgt := entries[uuids[r.TargetRef].ext]
+			if src != nil {
+				src.files = append(src.files, path)
+				if tgt != nil {
+					src.files = append(src.files, tgt.paths...)
 				}
 			}
-			if tgtExt != "" {
-				filesByExtID[tgtExt] = append(filesByExtID[tgtExt], path)
-				for _, p := range pathsByExtID[srcExt] {
-					filesByExtID[tgtExt] = append(filesByExtID[tgtExt], p)
+			if tgt != nil {
+				tgt.files = append(tgt.files, path)
+				if src != nil {
+					tgt.files = append(tgt.files, src.paths...)
 				}
 			}
 		}
@@ -307,13 +319,13 @@ func Extract(args string, opts ...Option) error {
 	// content, or another primary's file pulled in by cross-ref. The
 	// per-entry rels struct accumulates the kind-specific fields and
 	// is then handed to convert() unchanged.
-	for extID, files := range filesByExtID {
-		kind := kindByExtID[extID]
-		stixType := stixTypeByExtID[extID]
-		ownPeek := peekByExtID[extID]
-		selfPaths := pathsByExtID[extID]
-		selfSet := make(map[string]bool, len(selfPaths))
-		for _, p := range selfPaths {
+	for extID, e := range entries {
+		kind := e.kind
+		stixType := e.stixType
+		ownPeek := e.peek
+		files := e.files
+		selfSet := make(map[string]bool, len(e.paths))
+		for _, p := range e.paths {
 			selfSet[p] = true
 		}
 
@@ -381,14 +393,14 @@ func Extract(args string, opts ...Option) error {
 			}
 		case attackTypes.KindDetectStrategy:
 			for _, ar := range ownPeek.XMitreAnalyticRefs {
-				if anExt, ok := uuidToExt[ar]; ok {
-					detStrategyAnalytics = append(detStrategyAnalytics, anExt)
+				if u, ok := uuids[ar]; ok {
+					detStrategyAnalytics = append(detStrategyAnalytics, u.ext)
 				}
 			}
 		case attackTypes.KindDataComponent:
 			if ownPeek.XMitreDataSourceRef != nil {
-				if dsExt, ok := uuidToExt[*ownPeek.XMitreDataSourceRef]; ok {
-					dataComponentSource = dsExt
+				if u, ok := uuids[*ownPeek.XMitreDataSourceRef]; ok {
+					dataComponentSource = u.ext
 				}
 			}
 		}
@@ -440,10 +452,12 @@ func Extract(args string, opts ...Option) error {
 				if err := attachRead("relationship", path, args, r); err != nil {
 					return errors.Wrapf(err, "attach relationship %s for %s", path, extID)
 				}
-				srcExt := uuidToExt[rel.SourceRef]
-				tgtExt := uuidToExt[rel.TargetRef]
-				srcKind := uuidKind[rel.SourceRef]
-				tgtKind := uuidKind[rel.TargetRef]
+				srcU := uuids[rel.SourceRef]
+				tgtU := uuids[rel.TargetRef]
+				srcExt := srcU.ext
+				tgtExt := tgtU.ext
+				srcKind := srcU.kind
+				tgtKind := tgtU.kind
 				desc := ""
 				if rel.Description != nil {
 					desc = *rel.Description
@@ -550,7 +564,10 @@ func Extract(args string, opts ...Option) error {
 			if otherExt == "" {
 				continue
 			}
-			otherKind := kindByExtID[otherExt]
+			var otherKind attackTypes.Kind
+			if oe, ok := entries[otherExt]; ok {
+				otherKind = oe.kind
+			}
 			switch kind {
 			case attackTypes.KindTactic:
 				if otherKind == attackTypes.KindTechnique {
