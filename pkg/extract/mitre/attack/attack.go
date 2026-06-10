@@ -157,7 +157,14 @@ func Extract(args string, opts ...Option) error {
 		case "x-mitre-data-component":
 			kind = attackTypes.KindDataComponent
 		default:
-			return errors.Errorf("unexpected STIX type. expected: %q, actual: %q", knownStixTypes, peek.Type)
+			return errors.Errorf("unexpected STIX type. expected: %q, actual: %q", []string{
+				"attack-pattern", "x-mitre-tactic", "course-of-action",
+				"intrusion-set", "malware", "tool", "campaign",
+				"x-mitre-asset", "x-mitre-detection-strategy", "x-mitre-analytic",
+				"x-mitre-data-source", "x-mitre-data-component",
+				"relationship",
+				"identity", "marking-definition", "x-mitre-collection", "x-mitre-matrix",
+			}, peek.Type)
 		}
 		extID := externalID(peek.ExternalReferences, "mitre-attack")
 		if extID == "" {
@@ -819,18 +826,6 @@ type stixPeek struct {
 
 	// DataComponent only.
 	XMitreDataSourceRef *string `json:"x_mitre_data_source_ref,omitempty"`
-}
-
-// knownStixTypes is the sorted list of STIX types the extractor knows
-// how to handle (either extract or intentionally skip). Used as the
-// "expected" set in unknown-type errors so CI surfaces the right hint.
-var knownStixTypes = []string{
-	"attack-pattern", "x-mitre-tactic", "course-of-action",
-	"intrusion-set", "malware", "tool", "campaign",
-	"x-mitre-asset", "x-mitre-detection-strategy", "x-mitre-analytic",
-	"x-mitre-data-source", "x-mitre-data-component",
-	"relationship",
-	"identity", "marking-definition", "x-mitre-collection", "x-mitre-matrix",
 }
 
 // bundleDomainOf returns the ATT&CK domain string ("enterprise-attack"
