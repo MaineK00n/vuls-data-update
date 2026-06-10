@@ -25,8 +25,8 @@ import (
 	procedureTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/attack/procedure"
 	relatedrefTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/attack/relatedref"
 	softwareTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/attack/software"
-	tacticrefTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/attack/tacticref"
 	tacticTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/attack/tactic"
+	tacticrefTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/attack/tacticref"
 	techniqueTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/attack/technique"
 	techniqueusedTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/attack/techniqueused"
 	referenceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/reference"
@@ -179,13 +179,15 @@ func Extract(args string, opts ...Option) error {
 			return nil
 		}
 		extID := externalID(peek.ExternalReferences, "mitre-attack")
-		if extID == "" && (peek.Revoked || peek.XMitreDeprecated) && b.sourceName != "mitre-attack" {
+		if extID == "" && (peek.Revoked || peek.XMitreDeprecated) {
 			// Deprecated / revoked records from before the
 			// source_name unification still ship with the bundle's
 			// legacy source_name (mitre-ics-attack /
 			// mitre-mobile-attack) and never got migrated. Fall
 			// back so we surface their canonical ATT&CK IDs
-			// (T0xxx, etc.).
+			// (T0xxx, etc.). Enterprise's b.sourceName is already
+			// mitre-attack, so the second call is a harmless
+			// no-op there.
 			extID = externalID(peek.ExternalReferences, b.sourceName)
 		}
 		if extID == "" {
@@ -202,6 +204,7 @@ func Extract(args string, opts ...Option) error {
 		e.paths = append(e.paths, path)
 		e.files = append(e.files, path)
 		entries[extID] = e
+
 		return nil
 	}); err != nil {
 		return errors.Wrapf(err, "walk %s", args)
@@ -1054,7 +1057,6 @@ func decodeRelationship(path string) (attack.Relationship, error) {
 	}
 	return r, nil
 }
-
 
 func derefTime(p *time.Time) time.Time {
 	if p == nil {
