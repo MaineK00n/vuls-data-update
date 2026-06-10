@@ -278,12 +278,8 @@ func Extract(args string, opts ...Option) error {
 	// bundleOf already hard-codes that set, so iterating an explicit
 	// list keeps Stage 1a and Stage 1c in sync.
 	for _, dom := range []string{"enterprise", "ics", "mobile"} {
-		relDir := filepath.Join(args, dom, "relationship")
-		if err := filepath.WalkDir(relDir, func(path string, d fs.DirEntry, err error) error {
+		if err := filepath.WalkDir(filepath.Join(args, dom, "relationship"), func(path string, d fs.DirEntry, err error) error {
 			if err != nil {
-				if errors.Is(err, fs.ErrNotExist) {
-					return nil
-				}
 				return err
 			}
 			if d.IsDir() || filepath.Ext(path) != ".json" {
@@ -316,7 +312,7 @@ func Extract(args string, opts ...Option) error {
 			}
 			return nil
 		}); err != nil {
-			return errors.Wrapf(err, "walk %s", relDir)
+			return errors.Wrapf(err, "walk %s", filepath.Join(args, dom, "relationship"))
 		}
 	}
 
