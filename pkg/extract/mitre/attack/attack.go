@@ -282,36 +282,36 @@ func Extract(args string, opts ...Option) error {
 			if err != nil {
 				return err
 			}
+
 			if d.IsDir() || filepath.Ext(path) != ".json" {
 				return nil
 			}
+
 			f, err := os.Open(path)
 			if err != nil {
 				return errors.Wrapf(err, "open %s", path)
 			}
 			defer f.Close()
+
 			var r attack.Relationship
 			if err := json.UnmarshalRead(f, &r); err != nil {
 				return errors.Wrapf(err, "decode %s", path)
 			}
+
 			srcExt := uuids[r.SourceRef].ext
 			tgtExt := uuids[r.TargetRef].ext
 			src, srcOK := entries[srcExt]
 			tgt, tgtOK := entries[tgtExt]
-			if srcOK {
-				src.files = append(src.files, path)
-				if tgtOK {
-					src.files = append(src.files, tgt.paths...)
-				}
-				entries[srcExt] = src
+			if !srcOK || !tgtOK {
+				return errors.Errorf("relationship %s references unindexed UUID (src=%s, tgt=%s)", path, r.SourceRef, r.TargetRef)
 			}
-			if tgtOK {
-				tgt.files = append(tgt.files, path)
-				if srcOK {
-					tgt.files = append(tgt.files, src.paths...)
-				}
-				entries[tgtExt] = tgt
-			}
+			src.files = append(src.files, path)
+			src.files = append(src.files, tgt.paths...)
+			tgt.files = append(tgt.files, path)
+			tgt.files = append(tgt.files, src.paths...)
+			entries[srcExt] = src
+			entries[tgtExt] = tgt
+
 			return nil
 		}); err != nil {
 			return errors.Wrapf(err, "walk %s", filepath.Join(args, dom, "relationship"))
@@ -482,23 +482,20 @@ func Extract(args string, opts ...Option) error {
 					if kind != attackTypes.KindTechnique {
 						break
 					}
-					if extID == srcExt && tgtExt != "" {
+					if extID == srcExt {
 						techniqueParent = tgtExt
 					}
-					if extID == tgtExt && srcExt != "" {
+					if extID == tgtExt {
 						techniqueSubtechniques = append(techniqueSubtechniques, srcExt)
 					}
 				case "mitigates":
-					if extID == srcExt && tgtExt != "" && kind == attackTypes.KindMitigation {
+					if extID == srcExt && kind == attackTypes.KindMitigation {
 						mitigationTechniquesMitigated = append(mitigationTechniquesMitigated, relatedrefTypes.RelatedRef{ID: tgtExt, Description: desc, References: refs})
 					}
-					if extID == tgtExt && srcExt != "" && kind == attackTypes.KindTechnique {
+					if extID == tgtExt && kind == attackTypes.KindTechnique {
 						techniqueMitigations = append(techniqueMitigations, relatedrefTypes.RelatedRef{ID: srcExt, Description: desc, References: refs})
 					}
 				case "uses":
-					if srcExt == "" || tgtExt == "" {
-						break
-					}
 					switch {
 					case srcKind == attackTypes.KindGroup && tgtKind == attackTypes.KindTechnique:
 						if extID == srcExt && kind == attackTypes.KindGroup {
@@ -537,7 +534,7 @@ func Extract(args string, opts ...Option) error {
 						}
 					}
 				case "attributed-to":
-					if srcKind != attackTypes.KindCampaign || tgtKind != attackTypes.KindGroup || srcExt == "" || tgtExt == "" {
+					if srcKind != attackTypes.KindCampaign || tgtKind != attackTypes.KindGroup {
 						break
 					}
 					if extID == srcExt && kind == attackTypes.KindCampaign {
@@ -547,7 +544,7 @@ func Extract(args string, opts ...Option) error {
 						groupCampaignsAttributed = append(groupCampaignsAttributed, relatedrefTypes.RelatedRef{ID: srcExt, Description: desc, References: refs})
 					}
 				case "targets":
-					if srcKind != attackTypes.KindTechnique || tgtKind != attackTypes.KindAsset || srcExt == "" || tgtExt == "" {
+					if srcKind != attackTypes.KindTechnique || tgtKind != attackTypes.KindAsset {
 						break
 					}
 					if extID == srcExt && kind == attackTypes.KindTechnique {
@@ -557,7 +554,7 @@ func Extract(args string, opts ...Option) error {
 						assetTechniquesTargeting = append(assetTechniquesTargeting, relatedrefTypes.RelatedRef{ID: srcExt, Description: desc, References: refs})
 					}
 				case "detects":
-					if srcKind != attackTypes.KindDetectStrategy || tgtKind != attackTypes.KindTechnique || srcExt == "" || tgtExt == "" {
+					if srcKind != attackTypes.KindDetectStrategy || tgtKind != attackTypes.KindTechnique {
 						break
 					}
 					if extID == srcExt && kind == attackTypes.KindDetectStrategy {
