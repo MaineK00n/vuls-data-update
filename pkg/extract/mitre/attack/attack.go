@@ -93,37 +93,6 @@ func Extract(args string, opts ...Option) error {
 
 	slog.Info("Extract MITRE ATT&CK")
 
-	// stixTypeToKind maps a STIX `type` discriminator to the ATT&CK
-	// Kind for the primary records the extractor keeps. Treating
-	// dispatch as data (vs. a 12-arm switch) lets the Stage 1a walk
-	// reject any STIX type we haven't taught the extractor in one
-	// place.
-	stixTypeToKind := map[string]attackTypes.Kind{
-		"attack-pattern":             attackTypes.KindTechnique,
-		"x-mitre-tactic":             attackTypes.KindTactic,
-		"course-of-action":           attackTypes.KindMitigation,
-		"intrusion-set":              attackTypes.KindGroup,
-		"malware":                    attackTypes.KindSoftware,
-		"tool":                       attackTypes.KindSoftware,
-		"campaign":                   attackTypes.KindCampaign,
-		"x-mitre-asset":              attackTypes.KindAsset,
-		"x-mitre-detection-strategy": attackTypes.KindDetectStrategy,
-		"x-mitre-analytic":           attackTypes.KindAnalytic,
-		"x-mitre-data-source":        attackTypes.KindDataSource,
-		"x-mitre-data-component":     attackTypes.KindDataComponent,
-	}
-
-	// stixTypesNotExtracted are STIX types intentionally skipped during
-	// discovery — bundle / provenance metadata and matrix layout objects
-	// that carry no per-record content the ATT&CK web UI surfaces from
-	// a single ID query.
-	stixTypesNotExtracted := map[string]bool{
-		"identity":           true,
-		"marking-definition": true,
-		"x-mitre-collection": true,
-		"x-mitre-matrix":     true,
-	}
-
 	// Stage 1 builds the file list each ext-ID needs to produce its
 	// canonical record (entries) plus the UUID lookup Stage 1c needs
 	// to resolve relationships (uuids). Nothing else crosses the
@@ -154,13 +123,40 @@ func Extract(args string, opts ...Option) error {
 		if err != nil {
 			return errors.Wrapf(err, "peek %s", path)
 		}
-		// Relationships are handled in Stage 1c. The four
-		// not-extracted STIX kinds simply leave no trace.
-		if peek.Type == "relationship" || stixTypesNotExtracted[peek.Type] {
+		// Relationships are handled in Stage 1c; identity /
+		// marking-definition / x-mitre-collection / x-mitre-matrix
+		// carry no per-record content surfaced by ATT&CK web pages
+		// and simply leave no trace. Everything else dispatches to
+		// the Kind we project this STIX type onto; an unknown type
+		// is a CI failure so the extractor catches MITRE schema
+		// drift.
+		var kind attackTypes.Kind
+		switch peek.Type {
+		case "relationship", "identity", "marking-definition", "x-mitre-collection", "x-mitre-matrix":
 			return nil
-		}
-		kind, ok := stixTypeToKind[peek.Type]
-		if !ok {
+		case "attack-pattern":
+			kind = attackTypes.KindTechnique
+		case "x-mitre-tactic":
+			kind = attackTypes.KindTactic
+		case "course-of-action":
+			kind = attackTypes.KindMitigation
+		case "intrusion-set":
+			kind = attackTypes.KindGroup
+		case "malware", "tool":
+			kind = attackTypes.KindSoftware
+		case "campaign":
+			kind = attackTypes.KindCampaign
+		case "x-mitre-asset":
+			kind = attackTypes.KindAsset
+		case "x-mitre-detection-strategy":
+			kind = attackTypes.KindDetectStrategy
+		case "x-mitre-analytic":
+			kind = attackTypes.KindAnalytic
+		case "x-mitre-data-source":
+			kind = attackTypes.KindDataSource
+		case "x-mitre-data-component":
+			kind = attackTypes.KindDataComponent
+		default:
 			return errors.Errorf("unexpected STIX type. expected: %q, actual: %q", knownStixTypes, peek.Type)
 		}
 		extID := externalID(peek.ExternalReferences, "mitre-attack")
@@ -994,8 +990,8 @@ func readConcrete(stixType, path, args string, r *utiljson.JSONReader) (any, err
 		}
 		return &o, nil
 	}
-	// Unreachable when callers honour Stage 1's stixTypeToKind filter,
-	// but defensive in case the dispatcher and the table drift.
+	// Unreachable when callers honour Stage 1's type-switch filter,
+	// but defensive in case the two dispatchers drift apart.
 	return nil, errors.Errorf("unexpected STIX type for readConcrete: %q", stixType)
 }
 
