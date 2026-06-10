@@ -325,10 +325,6 @@ func Extract(args string, opts ...Option) error {
 	// per-entry rels struct accumulates the kind-specific fields and
 	// is then handed to convert() unchanged.
 	for extID, e := range entries {
-		kind := e.kind
-		stixType := e.stixType
-		ownPeek := e.peek
-		files := e.files
 		selfSet := make(map[string]bool, len(e.paths))
 		for _, p := range e.paths {
 			selfSet[p] = true
@@ -336,7 +332,7 @@ func Extract(args string, opts ...Option) error {
 
 		r := utiljson.NewJSONReader()
 		var raw any
-		domains := slices.Clone(ownPeek.XMitreDomains)
+		domains := slices.Clone(e.peek.XMitreDomains)
 		domainSeen := make(map[string]bool, len(domains))
 		for _, d := range domains {
 			domainSeen[d] = true
@@ -385,9 +381,9 @@ func Extract(args string, opts ...Option) error {
 		// references resolve to shortname+ID by reading sibling entries
 		// directly, so no precomputed shortname/UUID lookup tables are
 		// needed.
-		switch kind {
+		switch e.kind {
 		case attackTypes.KindTechnique:
-			for _, kc := range ownPeek.Technique.KillChainPhases {
+			for _, kc := range e.peek.Technique.KillChainPhases {
 				switch kc.KillChainName {
 				case "mitre-attack", "mitre-ics-attack", "mitre-mobile-attack":
 					tacticExt := ""
@@ -402,21 +398,21 @@ func Extract(args string, opts ...Option) error {
 				}
 			}
 		case attackTypes.KindDetectStrategy:
-			for _, ar := range ownPeek.DetectStrategy.XMitreAnalyticRefs {
+			for _, ar := range e.peek.DetectStrategy.XMitreAnalyticRefs {
 				if u, ok := uuids[ar]; ok {
 					detStrategyAnalytics = append(detStrategyAnalytics, u.ext)
 				}
 			}
 		case attackTypes.KindDataComponent:
-			if ownPeek.DataComponent.XMitreDataSourceRef != nil {
-				if u, ok := uuids[*ownPeek.DataComponent.XMitreDataSourceRef]; ok {
+			if e.peek.DataComponent.XMitreDataSourceRef != nil {
+				if u, ok := uuids[*e.peek.DataComponent.XMitreDataSourceRef]; ok {
 					dataComponentSource = u.ext
 				}
 			}
 		}
 
-		seenFile := make(map[string]bool, len(files))
-		for _, path := range files {
+		seenFile := make(map[string]bool, len(e.files))
+		for _, path := range e.files {
 			if seenFile[path] {
 				continue
 			}
@@ -424,14 +420,14 @@ func Extract(args string, opts ...Option) error {
 
 			if selfSet[path] {
 				if raw == nil {
-					rr, err := readConcrete(stixType, path, args, r)
+					rr, err := readConcrete(e.stixType, path, args, r)
 					if err != nil {
 						return err
 					}
 					raw = rr
 					continue
 				}
-				if err := attachRead(stixType, path, args, r); err != nil {
+				if err := attachRead(e.stixType, path, args, r); err != nil {
 					return errors.Wrapf(err, "attach self %s for %s", path, extID)
 				}
 				p, err := peekPrimary(path)
@@ -479,7 +475,7 @@ func Extract(args string, opts ...Option) error {
 
 				switch rel.RelationshipType {
 				case "subtechnique-of":
-					if kind != attackTypes.KindTechnique {
+					if e.kind != attackTypes.KindTechnique {
 						break
 					}
 					if extID == srcExt {
@@ -489,47 +485,47 @@ func Extract(args string, opts ...Option) error {
 						techniqueSubtechniques = append(techniqueSubtechniques, srcExt)
 					}
 				case "mitigates":
-					if extID == srcExt && kind == attackTypes.KindMitigation {
+					if extID == srcExt && e.kind == attackTypes.KindMitigation {
 						mitigationTechniquesMitigated = append(mitigationTechniquesMitigated, relatedrefTypes.RelatedRef{ID: tgtExt, Description: desc, References: refs})
 					}
-					if extID == tgtExt && kind == attackTypes.KindTechnique {
+					if extID == tgtExt && e.kind == attackTypes.KindTechnique {
 						techniqueMitigations = append(techniqueMitigations, relatedrefTypes.RelatedRef{ID: srcExt, Description: desc, References: refs})
 					}
 				case "uses":
 					switch {
 					case srcKind == attackTypes.KindGroup && tgtKind == attackTypes.KindTechnique:
-						if extID == srcExt && kind == attackTypes.KindGroup {
+						if extID == srcExt && e.kind == attackTypes.KindGroup {
 							groupTechniquesUsed = append(groupTechniquesUsed, techniqueusedTypes.TechniqueUsed{ID: tgtExt, Description: desc, References: refs})
 						}
-						if extID == tgtExt && kind == attackTypes.KindTechnique {
+						if extID == tgtExt && e.kind == attackTypes.KindTechnique {
 							techniqueProcedures = append(techniqueProcedures, procedureTypes.Procedure{AttackerID: srcExt, Description: desc, References: refs})
 						}
 					case srcKind == attackTypes.KindGroup && tgtKind == attackTypes.KindSoftware:
-						if extID == srcExt && kind == attackTypes.KindGroup {
+						if extID == srcExt && e.kind == attackTypes.KindGroup {
 							groupSoftwaresUsed = append(groupSoftwaresUsed, relatedrefTypes.RelatedRef{ID: tgtExt, Description: desc, References: refs})
 						}
-						if extID == tgtExt && kind == attackTypes.KindSoftware {
+						if extID == tgtExt && e.kind == attackTypes.KindSoftware {
 							softwareGroupsUsing = append(softwareGroupsUsing, relatedrefTypes.RelatedRef{ID: srcExt, Description: desc, References: refs})
 						}
 					case srcKind == attackTypes.KindSoftware && tgtKind == attackTypes.KindTechnique:
-						if extID == srcExt && kind == attackTypes.KindSoftware {
+						if extID == srcExt && e.kind == attackTypes.KindSoftware {
 							softwareTechniquesUsed = append(softwareTechniquesUsed, techniqueusedTypes.TechniqueUsed{ID: tgtExt, Description: desc, References: refs})
 						}
-						if extID == tgtExt && kind == attackTypes.KindTechnique {
+						if extID == tgtExt && e.kind == attackTypes.KindTechnique {
 							techniqueProcedures = append(techniqueProcedures, procedureTypes.Procedure{AttackerID: srcExt, Description: desc, References: refs})
 						}
 					case srcKind == attackTypes.KindCampaign && tgtKind == attackTypes.KindTechnique:
-						if extID == srcExt && kind == attackTypes.KindCampaign {
+						if extID == srcExt && e.kind == attackTypes.KindCampaign {
 							campaignTechniquesUsed = append(campaignTechniquesUsed, techniqueusedTypes.TechniqueUsed{ID: tgtExt, Description: desc, References: refs})
 						}
-						if extID == tgtExt && kind == attackTypes.KindTechnique {
+						if extID == tgtExt && e.kind == attackTypes.KindTechnique {
 							techniqueProcedures = append(techniqueProcedures, procedureTypes.Procedure{AttackerID: srcExt, Description: desc, References: refs})
 						}
 					case srcKind == attackTypes.KindCampaign && tgtKind == attackTypes.KindSoftware:
-						if extID == srcExt && kind == attackTypes.KindCampaign {
+						if extID == srcExt && e.kind == attackTypes.KindCampaign {
 							campaignSoftwaresUsed = append(campaignSoftwaresUsed, relatedrefTypes.RelatedRef{ID: tgtExt, Description: desc, References: refs})
 						}
-						if extID == tgtExt && kind == attackTypes.KindSoftware {
+						if extID == tgtExt && e.kind == attackTypes.KindSoftware {
 							softwareCampaignsUsing = append(softwareCampaignsUsing, relatedrefTypes.RelatedRef{ID: srcExt, Description: desc, References: refs})
 						}
 					}
@@ -537,30 +533,30 @@ func Extract(args string, opts ...Option) error {
 					if srcKind != attackTypes.KindCampaign || tgtKind != attackTypes.KindGroup {
 						break
 					}
-					if extID == srcExt && kind == attackTypes.KindCampaign {
+					if extID == srcExt && e.kind == attackTypes.KindCampaign {
 						campaignGroupsAttributed = append(campaignGroupsAttributed, relatedrefTypes.RelatedRef{ID: tgtExt, Description: desc, References: refs})
 					}
-					if extID == tgtExt && kind == attackTypes.KindGroup {
+					if extID == tgtExt && e.kind == attackTypes.KindGroup {
 						groupCampaignsAttributed = append(groupCampaignsAttributed, relatedrefTypes.RelatedRef{ID: srcExt, Description: desc, References: refs})
 					}
 				case "targets":
 					if srcKind != attackTypes.KindTechnique || tgtKind != attackTypes.KindAsset {
 						break
 					}
-					if extID == srcExt && kind == attackTypes.KindTechnique {
+					if extID == srcExt && e.kind == attackTypes.KindTechnique {
 						techniqueAssetsTargeted = append(techniqueAssetsTargeted, relatedrefTypes.RelatedRef{ID: tgtExt, Description: desc, References: refs})
 					}
-					if extID == tgtExt && kind == attackTypes.KindAsset {
+					if extID == tgtExt && e.kind == attackTypes.KindAsset {
 						assetTechniquesTargeting = append(assetTechniquesTargeting, relatedrefTypes.RelatedRef{ID: srcExt, Description: desc, References: refs})
 					}
 				case "detects":
 					if srcKind != attackTypes.KindDetectStrategy || tgtKind != attackTypes.KindTechnique {
 						break
 					}
-					if extID == srcExt && kind == attackTypes.KindDetectStrategy {
+					if extID == srcExt && e.kind == attackTypes.KindDetectStrategy {
 						detStrategyTechniquesDetected = append(detStrategyTechniquesDetected, relatedrefTypes.RelatedRef{ID: tgtExt, Description: desc, References: refs})
 					}
-					if extID == tgtExt && kind == attackTypes.KindTechnique {
+					if extID == tgtExt && e.kind == attackTypes.KindTechnique {
 						techniqueDetectionStrategies = append(techniqueDetectionStrategies, relatedrefTypes.RelatedRef{ID: srcExt, Description: desc, References: refs})
 					}
 				}
@@ -578,7 +574,7 @@ func Extract(args string, opts ...Option) error {
 				return errors.Errorf("file %s (id %s) was not indexed in Stage 1 but is referenced from %s", path, fp.ID, extID)
 			}
 			otherKind := entries[otherExt].kind
-			switch kind {
+			switch e.kind {
 			case attackTypes.KindTactic:
 				if otherKind == attackTypes.KindTechnique {
 					tacticTechniques = append(tacticTechniques, otherExt)
@@ -608,7 +604,7 @@ func Extract(args string, opts ...Option) error {
 		}
 		extracted := attackTypes.Attack{
 			ID:          extID,
-			Kind:        kind,
+			Kind:        e.kind,
 			Name:        c.name,
 			Description: c.description,
 			Domains:     slices.Clone(domains),
@@ -624,7 +620,7 @@ func Extract(args string, opts ...Option) error {
 			},
 		}
 
-		switch kind {
+		switch e.kind {
 		case attackTypes.KindTechnique:
 			ap := raw.(*attack.AttackPattern)
 			isSub := derefBool(ap.XMitreIsSubtechnique)
