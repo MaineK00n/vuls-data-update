@@ -32,6 +32,7 @@ import (
 	debianOVAL "github.com/MaineK00n/vuls-data-update/pkg/extract/debian/oval"
 	debianSecurityTrackerAPI "github.com/MaineK00n/vuls-data-update/pkg/extract/debian/tracker/api"
 	debianSecurityTrackerSalsa "github.com/MaineK00n/vuls-data-update/pkg/extract/debian/tracker/salsa"
+	enisaEUVDList "github.com/MaineK00n/vuls-data-update/pkg/extract/enisa/euvd/list"
 	enisaKEV "github.com/MaineK00n/vuls-data-update/pkg/extract/enisa/kev"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/eol"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/epss"
@@ -158,6 +159,7 @@ func NewCmdExtract() *cobra.Command {
 		newCmdConanGLSA(),
 		newCmdDebianOVAL(), newCmdDebianSecurityTrackerAPI(), newCmdDebianSecurityTrackerSalsa(), newCmdDebianOSV(),
 		newCmdEOL(),
+		newCmdENISAEUVDList(),
 		newCmdENISAKEV(),
 		newCmdEPSS(),
 		newCmdErlangGHSA(), newCmdErlangOSV(),
@@ -823,6 +825,31 @@ func newCmdEOL() *cobra.Command {
 		RunE: func(_ *cobra.Command, _ []string) error {
 			if err := eol.Extract(eol.WithDir(options.dir)); err != nil {
 				return errors.Wrap(err, "failed to extract eol")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
+
+	return cmd
+}
+
+func newCmdENISAEUVDList() *cobra.Command {
+	options := &base{
+		dir: filepath.Join(util.CacheDir(), "extract", "enisa", "euvd", "list"),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "enisa-euvd-list <Raw ENISA EUVD List Repository PATH>",
+		Short: "Extract ENISA EUVD List data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update extract enisa-euvd-list vuls-data-raw-enisa-euvd-list
+		`),
+		Args: cobra.ExactArgs(1),
+		RunE: func(_ *cobra.Command, args []string) error {
+			if err := enisaEUVDList.Extract(args[0], enisaEUVDList.WithDir(options.dir)); err != nil {
+				return errors.Wrap(err, "failed to extract enisa euvd list")
 			}
 			return nil
 		},

@@ -1,0 +1,47 @@
+{
+	"id": "EUVD-1999-0530",
+	"advisories": [
+		{
+			"content": {
+				"id": "EUVD-1999-0530",
+				"description": "A DNS server allows zone transfers.",
+				"severity": [
+					{
+						"type": "cvss_v2",
+						"source": "euvd.enisa.europa.eu",
+						"cvss_v2": {
+							"vector": "AV:N/AC:L/Au:N/C:N/I:N/A:N",
+							"base_score": 0,
+							"nvd_base_severity": "LOW",
+							"temporal_score": 0,
+							"nvd_temporal_severity": "LOW",
+							"environmental_score": 0,
+							"nvd_environmental_severity": "LOW"
+						}
+					}
+				],
+				"references": [
+					{
+						"source": "euvd.enisa.europa.eu",
+						"url": "https://www.cve.org/CVERecord?id=CVE-1999-0532"
+					}
+				],
+				"published": "2000-02-04T05:00:00Z",
+				"modified": "2025-03-17T15:03:26Z"
+			}
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-1999-0532"
+			}
+		}
+	],
+	"data_source": {
+		"id": "enisa-euvd-list",
+		"raws": [
+			"fixtures/1999/EUVD-1999-0530.json"
+		]
+	}
+}

@@ -48,6 +48,7 @@ const (
 	EndoflifeDateAPI           SourceID = "endoflife-date-api"
 	EndoflifeDateProducts      SourceID = "endoflife-date-products"
 	EOL                        SourceID = "eol"
+	ENISAEUVDList              SourceID = "enisa-euvd-list"
 	ENISAKEV                   SourceID = "enisa-kev"
 	EPSS                       SourceID = "epss"
 	ErlangGHSA                 SourceID = "erlang-ghsa"

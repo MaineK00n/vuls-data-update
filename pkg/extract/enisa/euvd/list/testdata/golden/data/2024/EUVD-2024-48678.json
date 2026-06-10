@@ -1,0 +1,47 @@
+{
+	"id": "EUVD-2024-48678",
+	"advisories": [
+		{
+			"content": {
+				"id": "EUVD-2024-48678",
+				"description": "Improper Check for Unusual or Exceptional Conditions vulnerability in Webroot SecureAnywhere - Web Shield on Windows, ARM, 64 bit, 32 bit (wrURL.Dll modules) allows Functionality Misuse.This issue affects SecureAnywhere - Web Shield: before 2.1.2.3.",
+				"severity": [
+					{
+						"type": "cvss_v2",
+						"source": "euvd.enisa.europa.eu",
+						"cvss_v2": {
+							"vector": "AV:L/AC:L/Au:S/C:C/I:N/A:C",
+							"base_score": 6.2,
+							"nvd_base_severity": "MEDIUM",
+							"temporal_score": 6.2,
+							"nvd_temporal_severity": "MEDIUM",
+							"environmental_score": 6.2,
+							"nvd_environmental_severity": "MEDIUM"
+						}
+					}
+				],
+				"references": [
+					{
+						"source": "euvd.enisa.europa.eu",
+						"url": "https://answers.webroot.com/Webroot/ukp.aspx?pid=12&app=vw&vw=1&login=1&json=1&solutionid=4275"
+					}
+				],
+				"published": "2024-10-03T17:05:33Z",
+				"modified": "2024-10-03T17:46:18Z"
+			}
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-2024-7826"
+			}
+		}
+	],
+	"data_source": {
+		"id": "enisa-euvd-list",
+		"raws": [
+			"fixtures/2024/EUVD-2024-48678.json"
+		]
+	}
+}

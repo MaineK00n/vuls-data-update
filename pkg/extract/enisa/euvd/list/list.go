@@ -1,0 +1,234 @@
+package list
+
+import (
+	"fmt"
+	"io/fs"
+	"log/slog"
+	"path/filepath"
+	"strings"
+	"time"
+
+	"github.com/pkg/errors"
+
+	dataTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data"
+	advisoryTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/advisory"
+	advisoryContentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/advisory/content"
+	referenceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/reference"
+	severityTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity"
+	v2Types "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity/cvss/v2"
+	v30Types "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity/cvss/v30"
+	v31Types "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity/cvss/v31"
+	v40Types "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity/cvss/v40"
+	vulnerabilityTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/vulnerability"
+	vulnerabilityContentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/vulnerability/content"
+	datasourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/datasource"
+	repositoryTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/datasource/repository"
+	sourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/source"
+	"github.com/MaineK00n/vuls-data-update/pkg/extract/util"
+	utilgit "github.com/MaineK00n/vuls-data-update/pkg/extract/util/git"
+	utiljson "github.com/MaineK00n/vuls-data-update/pkg/extract/util/json"
+	utiltime "github.com/MaineK00n/vuls-data-update/pkg/extract/util/time"
+	"github.com/MaineK00n/vuls-data-update/pkg/fetch/enisa/euvd/list"
+)
+
+type options struct {
+	dir string
+}
+
+type Option interface {
+	apply(*options)
+}
+
+type dirOption string
+
+func (d dirOption) apply(opts *options) {
+	opts.dir = string(d)
+}
+
+func WithDir(dir string) Option {
+	return dirOption(dir)
+}
+
+func Extract(args string, opts ...Option) error {
+	options := &options{
+		dir: filepath.Join(util.CacheDir(), "extract", "enisa", "euvd", "list"),
+	}
+
+	for _, o := range opts {
+		o.apply(options)
+	}
+
+	if err := util.RemoveAll(options.dir); err != nil {
+		return errors.Wrapf(err, "remove %s", options.dir)
+	}
+
+	slog.Info("Extract European Union Vulnerability Database(EUVD) List")
+	if err := filepath.WalkDir(args, func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+
+		if d.IsDir() {
+			if d.Name() == ".git" {
+				return filepath.SkipDir
+			}
+			return nil
+		}
+
+		if filepath.Ext(path) != ".json" {
+			return nil
+		}
+
+		r := utiljson.NewJSONReader()
+		var fetched list.Item
+		if err := r.Read(path, args, &fetched); err != nil {
+			return errors.Wrapf(err, "read json %s", path)
+		}
+
+		extracted := extract(fetched, r.Paths())
+
+		splitted, err := util.Split(fetched.ID, "-", "-")
+		if err != nil {
+			return errors.Errorf("unexpected EUVD ID format. expected: %q, actual: %q", "EUVD-yyyy-\\d{4,}", fetched.ID)
+		}
+		if _, err := time.Parse("2006", splitted[1]); err != nil {
+			return errors.Errorf("unexpected EUVD ID format. expected: %q, actual: %q", "EUVD-yyyy-\\d{4,}", fetched.ID)
+		}
+		if err := util.Write(filepath.Join(options.dir, "data", splitted[1], fmt.Sprintf("%s.json", extracted.ID)), extracted, true); err != nil {
+			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "data", splitted[1], fmt.Sprintf("%s.json", extracted.ID)))
+		}
+
+		return nil
+	}); err != nil {
+		return errors.Wrapf(err, "walk %s", args)
+	}
+
+	if err := util.Write(filepath.Join(options.dir, "datasource.json"), datasourceTypes.DataSource{
+		ID:   sourceTypes.ENISAEUVDList,
+		Name: new("European Union Vulnerability Database(EUVD) List"),
+		Raw: func() []repositoryTypes.Repository {
+			r, _ := utilgit.GetDataSourceRepository(args)
+			if r == nil {
+				return nil
+			}
+			return []repositoryTypes.Repository{*r}
+		}(),
+		Extracted: func() *repositoryTypes.Repository {
+			if u, err := utilgit.GetOrigin(options.dir); err == nil {
+				return &repositoryTypes.Repository{
+					URL: u,
+				}
+			}
+			return nil
+		}(),
+	}, false); err != nil {
+		return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "datasource.json"))
+	}
+
+	return nil
+}
+
+func extract(fetched list.Item, raws []string) dataTypes.Data {
+	return dataTypes.Data{
+		ID: dataTypes.RootID(fetched.ID),
+		Advisories: []advisoryTypes.Advisory{{
+			Content: advisoryContentTypes.Content{
+				ID:          advisoryContentTypes.AdvisoryID(fetched.ID),
+				Description: fetched.Description,
+				Severity: func() []severityTypes.Severity {
+					switch {
+					case fetched.BaseScoreVector == "":
+						return nil
+					case strings.HasPrefix(fetched.BaseScoreVector, "CVSS:3.0/"):
+						v30, err := v30Types.Parse(fetched.BaseScoreVector)
+						if err != nil {
+							slog.Warn("unexpected CVSS v3.0 vector", slog.String("id", fetched.ID), slog.String("vector", fetched.BaseScoreVector))
+							return nil
+						}
+						return []severityTypes.Severity{{
+							Type:    severityTypes.SeverityTypeCVSSv30,
+							Source:  "euvd.enisa.europa.eu",
+							CVSSv30: v30,
+						}}
+					case strings.HasPrefix(fetched.BaseScoreVector, "CVSS:3.1/"):
+						v31, err := v31Types.Parse(fetched.BaseScoreVector)
+						if err != nil {
+							slog.Warn("unexpected CVSS v3.1 vector", slog.String("id", fetched.ID), slog.String("vector", fetched.BaseScoreVector))
+							return nil
+						}
+						return []severityTypes.Severity{{
+							Type:    severityTypes.SeverityTypeCVSSv31,
+							Source:  "euvd.enisa.europa.eu",
+							CVSSv31: v31,
+						}}
+					case strings.HasPrefix(fetched.BaseScoreVector, "CVSS:4.0/"):
+						v40, err := v40Types.Parse(fetched.BaseScoreVector)
+						if err != nil {
+							slog.Warn("unexpected CVSS v4.0 vector", slog.String("id", fetched.ID), slog.String("vector", fetched.BaseScoreVector))
+							return nil
+						}
+						return []severityTypes.Severity{{
+							Type:    severityTypes.SeverityTypeCVSSv40,
+							Source:  "euvd.enisa.europa.eu",
+							CVSSv40: v40,
+						}}
+					default:
+						v2, err := v2Types.Parse(fetched.BaseScoreVector)
+						if err != nil {
+							slog.Warn("unexpected CVSS vector", slog.String("id", fetched.ID), slog.String("vector", fetched.BaseScoreVector))
+							return nil
+						}
+						return []severityTypes.Severity{{
+							Type:   severityTypes.SeverityTypeCVSSv2,
+							Source: "euvd.enisa.europa.eu",
+							CVSSv2: v2,
+						}}
+					}
+				}(),
+				References: func() []referenceTypes.Reference {
+					var rs []referenceTypes.Reference
+					for r := range strings.SplitSeq(fetched.References, "\n") {
+						if r == "" {
+							continue
+						}
+						rs = append(rs, referenceTypes.Reference{
+							Source: "euvd.enisa.europa.eu",
+							URL:    r,
+						})
+					}
+					return rs
+				}(),
+				Published: func() *time.Time {
+					if fetched.DatePublished == "" {
+						return nil
+					}
+					return utiltime.Parse([]string{"Jan 2, 2006, 3:04:05 PM"}, fetched.DatePublished)
+				}(),
+				Modified: func() *time.Time {
+					if fetched.DateUpdated == "" {
+						return nil
+					}
+					return utiltime.Parse([]string{"Jan 2, 2006, 3:04:05 PM"}, fetched.DateUpdated)
+				}(),
+			},
+		}},
+		Vulnerabilities: func() []vulnerabilityTypes.Vulnerability {
+			var vs []vulnerabilityTypes.Vulnerability
+			for a := range strings.SplitSeq(fetched.Aliases, "\n") {
+				if !strings.HasPrefix(a, "CVE-") {
+					continue
+				}
+				vs = append(vs, vulnerabilityTypes.Vulnerability{
+					Content: vulnerabilityContentTypes.Content{
+						ID: vulnerabilityContentTypes.VulnerabilityID(a),
+					},
+				})
+			}
+			return vs
+		}(),
+		DataSource: sourceTypes.Source{
+			ID:   sourceTypes.ENISAEUVDList,
+			Raws: raws,
+		},
+	}
+}

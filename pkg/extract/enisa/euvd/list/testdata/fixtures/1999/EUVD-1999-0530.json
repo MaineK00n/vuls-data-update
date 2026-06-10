@@ -1,0 +1,31 @@
+{
+	"id": "EUVD-1999-0530",
+	"enisaUuid": "dc3a7a8a-6089-3533-aa0f-ccedf7995e53",
+	"description": "A DNS server allows zone transfers.",
+	"datePublished": "Feb 4, 2000, 5:00:00 AM",
+	"dateUpdated": "Mar 17, 2025, 3:03:26 PM",
+	"baseScore": 0,
+	"baseScoreVersion": "",
+	"baseScoreVector": "AV:N/AC:L/Au:N/C:N/I:N/A:N",
+	"references": "https://www.cve.org/CVERecord?id=CVE-1999-0532\n",
+	"aliases": "GHSA-926f-mjrv-g5m6\nCVE-1999-0532\n",
+	"assigner": "mitre",
+	"epss": 72.95,
+	"enisaIdProduct": [
+		{
+			"id": "7821e150-8223-3e56-8847-acfe40851a97",
+			"product": {
+				"name": "n/a"
+			},
+			"product_version": "n/a"
+		}
+	],
+	"enisaIdVendor": [
+		{
+			"id": "6bfa95a4-409b-3d17-b8d8-398e47ca9d0d",
+			"vendor": {
+				"name": "n/a"
+			}
+		}
+	]
+}

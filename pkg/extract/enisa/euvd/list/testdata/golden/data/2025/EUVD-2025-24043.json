@@ -1,0 +1,25 @@
+{
+	"id": "EUVD-2025-24043",
+	"advisories": [
+		{
+			"content": {
+				"id": "EUVD-2025-24043",
+				"description": "** REJECT ** DO NOT USE THIS CANDIDATE NUMBER. ConsultIDs: none. Reason: This candidate was withdrawn by its CNA. Further investigation showed that it was not a security issue. Notes: This affects a legitimate feature. The cause of the issue is an insecure database configuration established by the user.",
+				"modified": "2025-08-09T04:52:57Z"
+			}
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-2025-8771"
+			}
+		}
+	],
+	"data_source": {
+		"id": "enisa-euvd-list",
+		"raws": [
+			"fixtures/2025/EUVD-2025-24043.json"
+		]
+	}
+}

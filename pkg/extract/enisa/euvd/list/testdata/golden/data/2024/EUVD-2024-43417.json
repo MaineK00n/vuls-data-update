@@ -1,0 +1,47 @@
+{
+	"id": "EUVD-2024-43417",
+	"advisories": [
+		{
+			"content": {
+				"id": "EUVD-2024-43417",
+				"description": "Local privilege escalation due to DLL hijacking vulnerability. The following products are affected: Acronis Cyber Files (Windows) before build 9.0.0x24.",
+				"severity": [
+					{
+						"type": "cvss_v30",
+						"source": "euvd.enisa.europa.eu",
+						"cvss_v30": {
+							"vector": "CVSS:3.0/AV:L/AC:L/PR:L/UI:R/S:U/C:H/I:H/A:H",
+							"base_score": 7.3,
+							"base_severity": "HIGH",
+							"temporal_score": 7.3,
+							"temporal_severity": "HIGH",
+							"environmental_score": 7.3,
+							"environmental_severity": "HIGH"
+						}
+					}
+				],
+				"references": [
+					{
+						"source": "euvd.enisa.europa.eu",
+						"url": "https://security-advisory.acronis.com/advisories/SEC-5845"
+					}
+				],
+				"published": "2024-10-17T09:49:16Z",
+				"modified": "2024-10-17T14:37:50Z"
+			}
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-2024-49390"
+			}
+		}
+	],
+	"data_source": {
+		"id": "enisa-euvd-list",
+		"raws": [
+			"fixtures/2024/EUVD-2024-43417.json"
+		]
+	}
+}

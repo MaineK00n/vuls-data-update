@@ -1,0 +1,16 @@
+{
+	"id": "EUVD-2025-24043",
+	"enisaUuid": "12ee47df-1c56-3c46-ac36-edd4eccd27ad",
+	"description": "** REJECT ** DO NOT USE THIS CANDIDATE NUMBER. ConsultIDs: none. Reason: This candidate was withdrawn by its CNA. Further investigation showed that it was not a security issue. Notes: This affects a legitimate feature. The cause of the issue is an insecure database configuration established by the user.",
+	"datePublished": "",
+	"dateUpdated": "Aug 9, 2025, 4:52:57 AM",
+	"baseScore": 0,
+	"baseScoreVersion": "",
+	"baseScoreVector": "",
+	"references": "",
+	"aliases": "CVE-2025-8771\n",
+	"assigner": "VulDB",
+	"epss": 0,
+	"enisaIdProduct": [],
+	"enisaIdVendor": []
+}

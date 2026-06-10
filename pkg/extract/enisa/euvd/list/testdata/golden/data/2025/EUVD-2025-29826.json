@@ -1,0 +1,59 @@
+{
+	"id": "EUVD-2025-29826",
+	"advisories": [
+		{
+			"content": {
+				"id": "EUVD-2025-29826",
+				"description": "A security flaw has been discovered in PHPGurukul User Management System 1.0. This affects an unknown function of the file /login.php. Performing manipulation of the argument emailid results in sql injection. The attack can be initiated remotely. The exploit has been released to the public and may be exploited.",
+				"severity": [
+					{
+						"type": "cvss_v40",
+						"source": "euvd.enisa.europa.eu",
+						"cvss_v40": {
+							"vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:L/VI:L/VA:L/SC:N/SI:N/SA:N/E:P",
+							"score": 5.5,
+							"severity": "MEDIUM"
+						}
+					}
+				],
+				"references": [
+					{
+						"source": "euvd.enisa.europa.eu",
+						"url": "https://github.com/CSentinel/CVE/issues/3"
+					},
+					{
+						"source": "euvd.enisa.europa.eu",
+						"url": "https://phpgurukul.com/"
+					},
+					{
+						"source": "euvd.enisa.europa.eu",
+						"url": "https://vuldb.com/?ctiid.324652"
+					},
+					{
+						"source": "euvd.enisa.europa.eu",
+						"url": "https://vuldb.com/?id.324652"
+					},
+					{
+						"source": "euvd.enisa.europa.eu",
+						"url": "https://vuldb.com/?submit.650222"
+					}
+				],
+				"published": "2025-09-17T22:32:11Z",
+				"modified": "2025-09-18T13:28:47Z"
+			}
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-2025-10624"
+			}
+		}
+	],
+	"data_source": {
+		"id": "enisa-euvd-list",
+		"raws": [
+			"fixtures/2025/EUVD-2025-29826.json"
+		]
+	}
+}
