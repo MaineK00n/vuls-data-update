@@ -686,8 +686,7 @@ func (e extractor) buildCPEMatches(match cveTypes.CPEMatch) ([]ccTypes.CPE, ccRa
 		// check the raw value BEFORE unescaping — unescapeWFN strips
 		// backslashes blindly, turning a concrete escaped `\*` or `\-` into a
 		// bare `*` or `-` indistinguishable from the wildcard markers.
-		verRaw := wfn.GetString(common.AttributeVersion)
-		switch verRaw {
+		switch verRaw := wfn.GetString(common.AttributeVersion); verRaw {
 		case "ANY", "NA":
 			continue
 		default:
