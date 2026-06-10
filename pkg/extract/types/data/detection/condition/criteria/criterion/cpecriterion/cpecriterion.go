@@ -128,6 +128,51 @@ type Query struct {
 	CPE string
 }
 
+// concretelyDisjoint reports whether two WFNs disagree byte-wise on any
+// concrete (non-ANY/NA) attribute. It exists to work around an upstream
+// go-cpe matching bug: matching.IsDisjoint returns false (and
+// matching.IsSuperset returns true) for two concrete values where the
+// trailing numeric segment of one is a numeric prefix of the other —
+// e.g. version "5.15.10" is reported as a "superset" of "5.15.103",
+// or "5.15" of "5.150". Alphabetic substrings ("linux_kernel" vs
+// "linux_kernel_extra") and dot-boundary segment additions ("5.15" vs
+// "5.15.10") are NOT affected. The bug let exact-match criteria fire
+// on unrelated concrete versions and produced false positives during
+// vuls-compare runs against linux_kernel.
+//
+// Tracked upstream as knqyf263/go-cpe#3 (issue) with a fix proposed in
+// knqyf263/go-cpe#9; this spot-check can be dropped once that fix lands
+// and we bump the dependency.
+//
+// The check runs on every attribute (not just version) for robustness
+// against future go-cpe regressions; wildcard / ANY / NA values fall
+// through unchanged so legitimate broad-criterion matches still hit.
+func concretelyDisjoint(qWFN, cWFN common.WellFormedName) bool {
+	for _, a := range []string{
+		common.AttributePart,
+		common.AttributeVendor,
+		common.AttributeProduct,
+		common.AttributeVersion,
+		common.AttributeUpdate,
+		common.AttributeEdition,
+		common.AttributeLanguage,
+		common.AttributeSwEdition,
+		common.AttributeTargetSw,
+		common.AttributeTargetHw,
+		common.AttributeOther,
+	} {
+		qv := qWFN.GetString(a)
+		cv := cWFN.GetString(a)
+		if qv == "ANY" || qv == "NA" || cv == "ANY" || cv == "NA" {
+			continue
+		}
+		if qv != cv {
+			return true
+		}
+	}
+	return false
+}
+
 func (c Criterion) Accept(query Query) (bool, error) {
 	qWFN, err := naming.UnbindFS(query.CPE)
 	if err != nil {
@@ -139,7 +184,7 @@ func (c Criterion) Accept(query Query) (bool, error) {
 		return false, errors.Wrapf(err, "unbind %q to WFN", string(c.CPE))
 	}
 
-	if !matching.IsDisjoint(qWFN, cWFN) {
+	if !matching.IsDisjoint(qWFN, cWFN) && !concretelyDisjoint(qWFN, cWFN) {
 		// c.version="NA" short-circuits: NA makes any subsequent version
 		// narrowing semantically meaningless.
 		if cWFN.GetString(common.AttributeVersion) == "NA" {
@@ -177,7 +222,7 @@ func (c Criterion) Accept(query Query) (bool, error) {
 		if err != nil {
 			return false, errors.Wrapf(err, "unbind %q to WFN", string(m))
 		}
-		if !matching.IsDisjoint(qWFN, mWFN) {
+		if !matching.IsDisjoint(qWFN, mWFN) && !concretelyDisjoint(qWFN, mWFN) {
 			return true, nil
 		}
 	}

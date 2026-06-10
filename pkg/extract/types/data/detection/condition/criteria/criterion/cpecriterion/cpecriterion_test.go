@@ -228,6 +228,32 @@ func TestCriterion_Accept(t *testing.T) {
 			want: true,
 		},
 		{
+			// go-cpe matching mis-classifies pairs of concrete values where one
+			// trailing numeric segment is a numeric prefix of the other — e.g.
+			// IsDisjoint("5.15.10", "5.15.103") returns false. The
+			// concretelyDisjoint spot-check rescues the byte-wise truth so
+			// the main CPE path does not falsely match.
+			name: "go-cpe over-match guard: main CPE concrete-vs-concrete substring → false",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:o:linux:linux_kernel:5.15.10:*:*:*:*:*:*:*",
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:o:linux:linux_kernel:5.15.103:*:*:*:*:*:*:*"}},
+			want: false,
+		},
+		{
+			// Same over-match guard applied along the CPEMatches loop — a
+			// cpematch entry "5.15.10" must NOT swallow a "5.15.103" query.
+			name: "go-cpe over-match guard: CPEMatches concrete-vs-concrete substring → false",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:o:linux:linux_kernel:*:*:*:*:*:*:*:*",
+				CPEMatches: []ccTypes.CPE{"cpe:2.3:o:linux:linux_kernel:5.15.10:*:*:*:*:*:*:*"},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:o:linux:linux_kernel:5.15.103:*:*:*:*:*:*:*"}},
+			want: false,
+		},
+		{
 			name: "unparseable query version with range yields false",
 			fields: fields{
 				Vulnerable: true,
