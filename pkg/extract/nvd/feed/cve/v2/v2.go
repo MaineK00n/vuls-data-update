@@ -108,13 +108,6 @@ func Extract(cveDir, cpematchDir string, opts ...Option) error {
 	for _, o := range opts {
 		o.apply(options)
 	}
-	// Clamp non-positive concurrency to 1: the producer goroutine sends
-	// into reqChan and needs at least one worker draining it, otherwise
-	// g.SetLimit(1+concurrency) either deadlocks (concurrency==0, no
-	// worker started) or panics (negative limit).
-	if options.concurrency < 1 {
-		options.concurrency = 1
-	}
 
 	if err := util.RemoveAll(options.dir); err != nil {
 		return errors.Wrapf(err, "remove %s", options.dir)
