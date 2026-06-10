@@ -57,36 +57,6 @@ func WithDir(dir string) Option {
 	return dirOption(dir)
 }
 
-// stixTypeToKind maps a STIX `type` discriminator to the ATT&CK Kind
-// for the primary records the extractor keeps. Treating dispatch as
-// data (vs. a 12-arm switch) lets discoverPrimaries reject any STIX
-// type we haven't taught the extractor in one place.
-var stixTypeToKind = map[string]attackTypes.Kind{
-	"attack-pattern":             attackTypes.KindTechnique,
-	"x-mitre-tactic":             attackTypes.KindTactic,
-	"course-of-action":           attackTypes.KindMitigation,
-	"intrusion-set":              attackTypes.KindGroup,
-	"malware":                    attackTypes.KindSoftware,
-	"tool":                       attackTypes.KindSoftware,
-	"campaign":                   attackTypes.KindCampaign,
-	"x-mitre-asset":              attackTypes.KindAsset,
-	"x-mitre-detection-strategy": attackTypes.KindDetectStrategy,
-	"x-mitre-analytic":           attackTypes.KindAnalytic,
-	"x-mitre-data-source":        attackTypes.KindDataSource,
-	"x-mitre-data-component":     attackTypes.KindDataComponent,
-}
-
-// stixTypesNotExtracted are STIX types intentionally skipped during
-// discovery — bundle / provenance metadata and matrix layout objects
-// that carry no per-record content the ATT&CK web UI surfaces from a
-// single ID query.
-var stixTypesNotExtracted = map[string]bool{
-	"identity":           true,
-	"marking-definition": true,
-	"x-mitre-collection": true,
-	"x-mitre-matrix":     true,
-}
-
 // entryInfo carries every per-ext-ID detail Stage 2 needs to build one
 // canonical record. Stage 1 populates a single map[extID]*entryInfo
 // instead of five parallel maps.
@@ -122,6 +92,37 @@ func Extract(args string, opts ...Option) error {
 	}
 
 	slog.Info("Extract MITRE ATT&CK")
+
+	// stixTypeToKind maps a STIX `type` discriminator to the ATT&CK
+	// Kind for the primary records the extractor keeps. Treating
+	// dispatch as data (vs. a 12-arm switch) lets the Stage 1a walk
+	// reject any STIX type we haven't taught the extractor in one
+	// place.
+	stixTypeToKind := map[string]attackTypes.Kind{
+		"attack-pattern":             attackTypes.KindTechnique,
+		"x-mitre-tactic":             attackTypes.KindTactic,
+		"course-of-action":           attackTypes.KindMitigation,
+		"intrusion-set":              attackTypes.KindGroup,
+		"malware":                    attackTypes.KindSoftware,
+		"tool":                       attackTypes.KindSoftware,
+		"campaign":                   attackTypes.KindCampaign,
+		"x-mitre-asset":              attackTypes.KindAsset,
+		"x-mitre-detection-strategy": attackTypes.KindDetectStrategy,
+		"x-mitre-analytic":           attackTypes.KindAnalytic,
+		"x-mitre-data-source":        attackTypes.KindDataSource,
+		"x-mitre-data-component":     attackTypes.KindDataComponent,
+	}
+
+	// stixTypesNotExtracted are STIX types intentionally skipped during
+	// discovery — bundle / provenance metadata and matrix layout objects
+	// that carry no per-record content the ATT&CK web UI surfaces from
+	// a single ID query.
+	stixTypesNotExtracted := map[string]bool{
+		"identity":           true,
+		"marking-definition": true,
+		"x-mitre-collection": true,
+		"x-mitre-matrix":     true,
+	}
 
 	// Stage 1 builds the file list each ext-ID needs to produce its
 	// canonical record (entries) plus the UUID lookup Stage 1c needs
