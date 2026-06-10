@@ -167,13 +167,18 @@ func Extract(args string, opts ...Option) error {
 				"identity", "marking-definition", "x-mitre-collection", "x-mitre-matrix",
 			}, peek.Type)
 		}
-		// Deprecated / revoked ICS and Mobile primaries from before
-		// the source_name unification still ship with mitre-ics-attack
-		// / mitre-mobile-attack instead of mitre-attack and so carry
-		// no canonical ATT&CK ID we can index by. Drop them.
 		extID := externalID(peek.ExternalReferences, "mitre-attack")
 		if extID == "" {
-			return nil
+			// Deprecated / revoked ICS and Mobile primaries from
+			// before the source_name unification still ship with
+			// mitre-ics-attack / mitre-mobile-attack instead of
+			// mitre-attack and so carry no canonical ATT&CK ID
+			// we can index by. Drop those silently; treat any
+			// live record without mitre-attack as data drift.
+			if peek.Revoked || peek.XMitreDeprecated {
+				return nil
+			}
+			return errors.Errorf("missing mitre-attack external_id in %s (type %q)", path, peek.Type)
 		}
 		// MITRE distributes referenced objects with every bundle that
 		// needs them: T1047 (Enterprise-only) is mirrored into the
@@ -823,6 +828,12 @@ type stixPeek struct {
 	Type               string                     `json:"type"`
 	ID                 string                     `json:"id"`
 	ExternalReferences []attack.ExternalReference `json:"external_references"`
+	// Revoked / XMitreDeprecated let Stage 1a recognise the legacy
+	// ICS / Mobile records that pre-date source_name unification:
+	// they have no mitre-attack external_id, so we drop them without
+	// erroring on the missing canonical ID.
+	Revoked          bool `json:"revoked,omitempty"`
+	XMitreDeprecated bool `json:"x_mitre_deprecated,omitempty"`
 	// Every primary kind: x_mitre_domains is bundle-scoped, so the
 	// same record published in multiple ATT&CK bundles contributes
 	// different domains. Stage 1 unions these across occurrences so
