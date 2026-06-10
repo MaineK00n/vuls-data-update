@@ -279,24 +279,22 @@ func Extract(args string, opts ...Option) error {
 	// list keeps Stage 1a and Stage 1c in sync.
 	for _, dom := range []string{"enterprise", "ics", "mobile"} {
 		relDir := filepath.Join(args, dom, "relationship")
-		relFiles, err := os.ReadDir(relDir)
-		if err != nil {
-			if errors.Is(err, fs.ErrNotExist) {
-				continue
+		if err := filepath.WalkDir(relDir, func(path string, d fs.DirEntry, err error) error {
+			if err != nil {
+				if errors.Is(err, fs.ErrNotExist) {
+					return nil
+				}
+				return err
 			}
-			return errors.Wrapf(err, "read %s", relDir)
-		}
-		for _, f := range relFiles {
-			if f.IsDir() || filepath.Ext(f.Name()) != ".json" {
-				continue
+			if d.IsDir() || filepath.Ext(path) != ".json" {
+				return nil
 			}
-			path := filepath.Join(relDir, f.Name())
 			r, err := decodeRelationship(path)
 			if err != nil {
 				return errors.Wrapf(err, "relationship %s", path)
 			}
 			if r.RelationshipType == "" || r.SourceRef == "" || r.TargetRef == "" {
-				continue
+				return nil
 			}
 			srcExt := uuids[r.SourceRef].ext
 			tgtExt := uuids[r.TargetRef].ext
@@ -316,6 +314,9 @@ func Extract(args string, opts ...Option) error {
 				}
 				entries[tgtExt] = tgt
 			}
+			return nil
+		}); err != nil {
+			return errors.Wrapf(err, "walk %s", relDir)
 		}
 	}
 
