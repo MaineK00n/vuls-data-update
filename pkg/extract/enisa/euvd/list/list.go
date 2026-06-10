@@ -62,7 +62,7 @@ func Extract(args string, opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	slog.Info("Extract European Union Vulnerability Database(EUVD) List")
+	slog.Info("Extract European Union Vulnerability Database (EUVD) List")
 	if err := filepath.WalkDir(args, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
@@ -94,7 +94,13 @@ func Extract(args string, opts ...Option) error {
 		if err != nil {
 			return errors.Errorf("unexpected EUVD ID format. expected: %q, actual: %q", "EUVD-yyyy-\\d{4,}", fetched.ID)
 		}
+		if splitted[0] != "EUVD" {
+			return errors.Errorf("unexpected EUVD ID format. expected: %q, actual: %q", "EUVD-yyyy-\\d{4,}", fetched.ID)
+		}
 		if _, err := time.Parse("2006", splitted[1]); err != nil {
+			return errors.Errorf("unexpected EUVD ID format. expected: %q, actual: %q", "EUVD-yyyy-\\d{4,}", fetched.ID)
+		}
+		if splitted[2] == "" || strings.Trim(splitted[2], "0123456789") != "" {
 			return errors.Errorf("unexpected EUVD ID format. expected: %q, actual: %q", "EUVD-yyyy-\\d{4,}", fetched.ID)
 		}
 		if err := util.Write(filepath.Join(options.dir, "data", splitted[1], fmt.Sprintf("%s.json", extracted.ID)), extracted, true); err != nil {
@@ -108,7 +114,7 @@ func Extract(args string, opts ...Option) error {
 
 	if err := util.Write(filepath.Join(options.dir, "datasource.json"), datasourceTypes.DataSource{
 		ID:   sourceTypes.ENISAEUVDList,
-		Name: new("European Union Vulnerability Database(EUVD) List"),
+		Name: new("European Union Vulnerability Database (EUVD) List"),
 		Raw: func() []repositoryTypes.Repository {
 			r, _ := utilgit.GetDataSourceRepository(args)
 			if r == nil {

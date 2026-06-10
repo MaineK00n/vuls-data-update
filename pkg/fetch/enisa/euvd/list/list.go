@@ -101,7 +101,7 @@ func Fetch(opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	slog.Info("Fetch European Union Vulnerability Database(EUVD) List")
+	slog.Info("Fetch European Union Vulnerability Database (EUVD) List")
 	if err := options.fetch(); err != nil {
 		return errors.Wrap(err, "fetch")
 	}
