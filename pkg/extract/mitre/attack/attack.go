@@ -58,8 +58,9 @@ func WithDir(dir string) Option {
 }
 
 // entryInfo carries every per-ext-ID detail Stage 2 needs to build one
-// canonical record. Stage 1 populates a single map[extID]*entryInfo
-// instead of five parallel maps.
+// canonical record. Stage 1 populates a single map[extID]entryInfo
+// instead of five parallel maps. Missing ext-IDs are expressed by a
+// failed map lookup; the map never stores a zero value on purpose.
 type entryInfo struct {
 	kind     attackTypes.Kind
 	stixType string
@@ -97,7 +98,7 @@ func Extract(args string, opts ...Option) error {
 	// canonical record (entries) plus the UUID lookup Stage 1c needs
 	// to resolve relationships (uuids). Nothing else crosses the
 	// Stage 1 ↔ Stage 2 boundary.
-	entries := make(map[string]*entryInfo)
+	entries := make(map[string]entryInfo)
 	uuids := make(map[string]uuidInfo)
 
 	// Stage 1a: walk every STIX file, peek the extended discriminator
@@ -184,11 +185,11 @@ func Extract(args string, opts ...Option) error {
 		uuids[peek.ID] = uuidInfo{ext: extID, kind: kind, path: path}
 		e, ok := entries[extID]
 		if !ok {
-			e = &entryInfo{kind: kind, stixType: peek.Type, peek: peek}
-			entries[extID] = e
+			e = entryInfo{kind: kind, stixType: peek.Type, peek: peek}
 		}
 		e.paths = append(e.paths, path)
 		e.files = append(e.files, path)
+		entries[extID] = e
 		return nil
 	}); err != nil {
 		return errors.Wrapf(err, "walk %s", args)
@@ -200,7 +201,7 @@ func Extract(args string, opts ...Option) error {
 	// Techniques) both surface as file membership in entries[id].files,
 	// so Stage 2 doesn't need a global edge index to know which files
 	// to open.
-	for _, e := range entries {
+	for extID, e := range entries {
 		switch e.kind {
 		case attackTypes.KindTechnique:
 			// KillChainPhases name the Tactic by its shortname; resolve
@@ -209,11 +210,12 @@ func Extract(args string, opts ...Option) error {
 			for _, kc := range e.peek.KillChainPhases {
 				switch kc.KillChainName {
 				case "mitre-attack", "mitre-ics-attack", "mitre-mobile-attack":
-					for _, tac := range entries {
+					for tExt, tac := range entries {
 						if tac.kind != attackTypes.KindTactic || tac.peek.XMitreShortname == nil || *tac.peek.XMitreShortname != kc.PhaseName {
 							continue
 						}
 						tac.files = append(tac.files, e.paths...)
+						entries[tExt] = tac
 						break
 					}
 				}
@@ -232,7 +234,9 @@ func Extract(args string, opts ...Option) error {
 				}
 				e.files = append(e.files, tac.paths...)
 				tac.files = append(tac.files, e.paths...)
+				entries[u.ext] = tac
 			}
+			entries[extID] = e
 		case attackTypes.KindDetectStrategy:
 			for _, ar := range e.peek.XMitreAnalyticRefs {
 				u, ok := uuids[ar]
@@ -245,7 +249,9 @@ func Extract(args string, opts ...Option) error {
 				}
 				e.files = append(e.files, an.paths...)
 				an.files = append(an.files, e.paths...)
+				entries[u.ext] = an
 			}
+			entries[extID] = e
 		case attackTypes.KindDataComponent:
 			if e.peek.XMitreDataSourceRef == nil {
 				continue
@@ -260,6 +266,8 @@ func Extract(args string, opts ...Option) error {
 			}
 			e.files = append(e.files, ds.paths...)
 			ds.files = append(ds.files, e.paths...)
+			entries[u.ext] = ds
+			entries[extID] = e
 		}
 	}
 
@@ -294,19 +302,23 @@ func Extract(args string, opts ...Option) error {
 			if r.RelationshipType == "" || r.SourceRef == "" || r.TargetRef == "" {
 				continue
 			}
-			src := entries[uuids[r.SourceRef].ext]
-			tgt := entries[uuids[r.TargetRef].ext]
-			if src != nil {
+			srcExt := uuids[r.SourceRef].ext
+			tgtExt := uuids[r.TargetRef].ext
+			src, srcOK := entries[srcExt]
+			tgt, tgtOK := entries[tgtExt]
+			if srcOK {
 				src.files = append(src.files, path)
-				if tgt != nil {
+				if tgtOK {
 					src.files = append(src.files, tgt.paths...)
 				}
+				entries[srcExt] = src
 			}
-			if tgt != nil {
+			if tgtOK {
 				tgt.files = append(tgt.files, path)
-				if src != nil {
+				if srcOK {
 					tgt.files = append(tgt.files, src.paths...)
 				}
+				entries[tgtExt] = tgt
 			}
 		}
 	}
