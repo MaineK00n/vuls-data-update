@@ -125,14 +125,10 @@ func Extract(args string, opts ...Option) error {
 
 	// Stage 1 builds the file list each ext-ID needs to produce its
 	// canonical record (entries) plus the UUID lookup Stage 1c needs
-	// to resolve relationships (uuids). The two Tactic shortname maps
-	// stay separate because they're keyed by something other than
-	// extID / UUID. Nothing else crosses the Stage 1 ↔ Stage 2
-	// boundary.
+	// to resolve relationships (uuids). Nothing else crosses the
+	// Stage 1 ↔ Stage 2 boundary.
 	entries := make(map[string]*entryInfo)
 	uuids := make(map[string]uuidInfo)
-	tacticShortnameToID := make(map[string]string)
-	tacticUUIDToShortname := make(map[string]string)
 
 	// Stage 1a: walk every STIX file, peek the extended discriminator
 	// envelope, apply the distribution-artifact filter, and register
@@ -189,10 +185,6 @@ func Extract(args string, opts ...Option) error {
 		}
 		e.paths = append(e.paths, path)
 		e.files = append(e.files, path)
-		if kind == attackTypes.KindTactic && peek.XMitreShortname != nil && *peek.XMitreShortname != "" {
-			tacticShortnameToID[*peek.XMitreShortname] = extID
-			tacticUUIDToShortname[peek.ID] = *peek.XMitreShortname
-		}
 		return nil
 	}); err != nil {
 		return errors.Wrapf(err, "walk %s", args)
@@ -213,10 +205,12 @@ func Extract(args string, opts ...Option) error {
 			for _, kc := range e.peek.KillChainPhases {
 				switch kc.KillChainName {
 				case "mitre-attack", "mitre-ics-attack", "mitre-mobile-attack":
-					if tacticExt, ok := tacticShortnameToID[kc.PhaseName]; ok {
-						if tac, ok := entries[tacticExt]; ok {
-							tac.files = append(tac.files, e.paths...)
+					for _, tac := range entries {
+						if tac.kind != attackTypes.KindTactic || tac.peek.XMitreShortname == nil || *tac.peek.XMitreShortname != kc.PhaseName {
+							continue
 						}
+						tac.files = append(tac.files, e.paths...)
+						break
 					}
 				}
 			}
@@ -343,7 +337,7 @@ func Extract(args string, opts ...Option) error {
 		var (
 			techniqueParent              string
 			techniqueSubtechniques       []string
-			techniqueTacticShortnames    []string
+			techniqueTactics             []tacticrefTypes.TacticRef
 			techniqueProcedures          []procedureTypes.Procedure
 			techniqueMitigations         []relatedrefTypes.RelatedRef
 			techniqueAssetsTargeted      []relatedrefTypes.RelatedRef
@@ -376,20 +370,36 @@ func Extract(args string, opts ...Option) error {
 			dataComponentSource  string
 		)
 
-		// Forward cross-refs come from the entry's own peek and never
-		// need another file to be opened.
+		// Forward cross-refs come from the entry's own peek. Tactic
+		// references resolve to shortname+ID by reading sibling entries
+		// directly, so no precomputed shortname/UUID lookup tables are
+		// needed.
 		switch kind {
 		case attackTypes.KindTechnique:
 			for _, kc := range ownPeek.KillChainPhases {
 				switch kc.KillChainName {
 				case "mitre-attack", "mitre-ics-attack", "mitre-mobile-attack":
-					techniqueTacticShortnames = append(techniqueTacticShortnames, kc.PhaseName)
+					tacticExt := ""
+					for tExt, tac := range entries {
+						if tac.kind != attackTypes.KindTactic || tac.peek.XMitreShortname == nil || *tac.peek.XMitreShortname != kc.PhaseName {
+							continue
+						}
+						tacticExt = tExt
+						break
+					}
+					techniqueTactics = append(techniqueTactics, tacticrefTypes.TacticRef{Shortname: kc.PhaseName, ID: tacticExt})
 				}
 			}
 			for _, tr := range ownPeek.TacticRefs {
-				if sn, ok := tacticUUIDToShortname[tr]; ok {
-					techniqueTacticShortnames = append(techniqueTacticShortnames, sn)
+				u, ok := uuids[tr]
+				if !ok {
+					continue
 				}
+				tac, ok := entries[u.ext]
+				if !ok || tac.peek.XMitreShortname == nil {
+					continue
+				}
+				techniqueTactics = append(techniqueTactics, tacticrefTypes.TacticRef{Shortname: *tac.peek.XMitreShortname, ID: u.ext})
 			}
 		case attackTypes.KindDetectStrategy:
 			for _, ar := range ownPeek.XMitreAnalyticRefs {
@@ -622,13 +632,9 @@ func Extract(args string, opts ...Option) error {
 			if isSub {
 				parent = techniqueParent
 			}
-			tactics := make([]tacticrefTypes.TacticRef, 0, len(techniqueTacticShortnames))
-			for _, sn := range techniqueTacticShortnames {
-				tactics = append(tactics, tacticrefTypes.TacticRef{Shortname: sn, ID: tacticShortnameToID[sn]})
-			}
 			extracted.Technique = techniqueTypes.Technique{
 				Platforms:            slices.Clone(ap.XMitrePlatforms),
-				Tactics:              tactics,
+				Tactics:              techniqueTactics,
 				IsSubtechnique:       isSub,
 				Parent:               parent,
 				Detection:            derefString(ap.XMitreDetection),
