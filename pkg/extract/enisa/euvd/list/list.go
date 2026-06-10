@@ -182,26 +182,6 @@ func extract(fetched list.Item, raws []string) (dataTypes.Data, error) {
 		return dataTypes.Data{}, errors.Wrap(err, "parse severity")
 	}
 
-	parseTime := func(value string) (*time.Time, error) {
-		if value == "" {
-			return nil, nil
-		}
-		t := utiltime.Parse([]string{"Jan 2, 2006, 3:04:05 PM"}, value)
-		if t == nil {
-			return nil, errors.Errorf("unexpected date format. expected: %q, actual: %q", "Jan 2, 2006, 3:04:05 PM", value)
-		}
-		return t, nil
-	}
-
-	published, err := parseTime(fetched.DatePublished)
-	if err != nil {
-		return dataTypes.Data{}, errors.Wrap(err, "parse datePublished")
-	}
-	modified, err := parseTime(fetched.DateUpdated)
-	if err != nil {
-		return dataTypes.Data{}, errors.Wrap(err, "parse dateUpdated")
-	}
-
 	return dataTypes.Data{
 		ID: dataTypes.RootID(fetched.ID),
 		Advisories: []advisoryTypes.Advisory{{
@@ -222,8 +202,8 @@ func extract(fetched list.Item, raws []string) (dataTypes.Data, error) {
 					}
 					return rs
 				}(),
-				Published: published,
-				Modified:  modified,
+				Published: utiltime.Parse([]string{"Jan 2, 2006, 3:04:05 PM"}, fetched.DatePublished),
+				Modified:  utiltime.Parse([]string{"Jan 2, 2006, 3:04:05 PM"}, fetched.DateUpdated),
 			},
 		}},
 		Vulnerabilities: func() []vulnerabilityTypes.Vulnerability {
