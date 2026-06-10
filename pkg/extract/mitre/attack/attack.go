@@ -196,7 +196,9 @@ func Extract(args string, opts ...Option) error {
 			// surface.
 			return errors.Errorf("missing mitre-attack external_id in %s (type %q)", path, peek.Type)
 		}
+
 		uuids[peek.ID] = uuidInfo{ext: extID, kind: kind, path: path}
+
 		e, ok := entries[extID]
 		if !ok {
 			e = entryInfo{kind: kind, stixType: peek.Type, peek: peek}
@@ -212,10 +214,9 @@ func Extract(args string, opts ...Option) error {
 
 	// Stage 1b: per-extID, link the files Stage 2 will need to build
 	// the cross-ref fields. Forward refs (e.g. Technique → Tactic via
-	// TacticRefs / KillChainPhases) and reverse refs (Tactic →
-	// Techniques) both surface as file membership in entries[id].files,
-	// so Stage 2 doesn't need a global edge index to know which files
-	// to open.
+	// KillChainPhases) and reverse refs (Tactic → Techniques) both
+	// surface as file membership in entries[id].files, so Stage 2
+	// doesn't need a global edge index to know which files to open.
 	for extID, e := range entries {
 		switch e.kind {
 		case attackTypes.KindTechnique:
@@ -234,22 +235,6 @@ func Extract(args string, opts ...Option) error {
 						break
 					}
 				}
-			}
-			// TacticRefs point at Tactic UUIDs; pull the Tactic file in
-			// for provenance + technique.Tactics ID resolution, and
-			// pull the Technique's file into the Tactic for reverse.
-			for _, tr := range e.peek.TacticRefs {
-				u, ok := uuids[tr]
-				if !ok {
-					continue
-				}
-				tac, ok := entries[u.ext]
-				if !ok {
-					continue
-				}
-				e.files = append(e.files, tac.paths...)
-				tac.files = append(tac.files, e.paths...)
-				entries[u.ext] = tac
 			}
 			entries[extID] = e
 		case attackTypes.KindDetectStrategy:
@@ -420,17 +405,6 @@ func Extract(args string, opts ...Option) error {
 					}
 					techniqueTactics = append(techniqueTactics, tacticrefTypes.TacticRef{Shortname: kc.PhaseName, ID: tacticExt})
 				}
-			}
-			for _, tr := range ownPeek.TacticRefs {
-				u, ok := uuids[tr]
-				if !ok {
-					continue
-				}
-				tac, ok := entries[u.ext]
-				if !ok || tac.peek.XMitreShortname == nil {
-					continue
-				}
-				techniqueTactics = append(techniqueTactics, tacticrefTypes.TacticRef{Shortname: *tac.peek.XMitreShortname, ID: u.ext})
 			}
 		case attackTypes.KindDetectStrategy:
 			for _, ar := range ownPeek.XMitreAnalyticRefs {
@@ -825,8 +799,8 @@ func Extract(args string, opts ...Option) error {
 // stixPeek is the envelope Stage 1 decodes from every STIX file. The
 // shared discriminator/ID/external_references trio classifies the
 // record and the kind-specific cross-ref fields let Stage 1 resolve
-// every UUID-based reference (Technique.TacticRefs +
-// KillChainPhases, DetectionStrategy.x_mitre_analytic_refs,
+// every UUID-based reference (Technique.KillChainPhases,
+// DetectionStrategy.x_mitre_analytic_refs,
 // DataComponent.x_mitre_data_source_ref, Tactic.x_mitre_shortname)
 // without paying for the full concrete struct. Stage 2 still reads
 // each kept record concretely so the build* helpers see real fields.
@@ -851,7 +825,6 @@ type stixPeek struct {
 	XMitreShortname *string `json:"x_mitre_shortname,omitempty"`
 
 	// Technique only.
-	TacticRefs      []string                `json:"tactic_refs,omitempty"`
 	KillChainPhases []attack.KillChainPhase `json:"kill_chain_phases,omitempty"`
 
 	// DetectionStrategy only.
