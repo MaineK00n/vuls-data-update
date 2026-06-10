@@ -285,12 +285,14 @@ func Extract(args string, opts ...Option) error {
 			if d.IsDir() || filepath.Ext(path) != ".json" {
 				return nil
 			}
-			r, err := decodeRelationship(path)
+			f, err := os.Open(path)
 			if err != nil {
-				return errors.Wrapf(err, "relationship %s", path)
+				return errors.Wrapf(err, "open %s", path)
 			}
-			if r.RelationshipType == "" || r.SourceRef == "" || r.TargetRef == "" {
-				return nil
+			defer f.Close()
+			var r attack.Relationship
+			if err := json.UnmarshalRead(f, &r); err != nil {
+				return errors.Wrapf(err, "decode %s", path)
 			}
 			srcExt := uuids[r.SourceRef].ext
 			tgtExt := uuids[r.TargetRef].ext
@@ -450,12 +452,15 @@ func Extract(args string, opts ...Option) error {
 				return errors.Wrapf(err, "peek %s", path)
 			}
 			if fp.Type == "relationship" {
-				rel, err := decodeRelationship(path)
+				f, err := os.Open(path)
 				if err != nil {
-					return errors.Wrapf(err, "relationship %s", path)
+					return errors.Wrapf(err, "open %s", path)
 				}
-				if rel.RelationshipType == "" || rel.SourceRef == "" || rel.TargetRef == "" {
-					continue
+				var rel attack.Relationship
+				err = json.UnmarshalRead(f, &rel)
+				f.Close()
+				if err != nil {
+					return errors.Wrapf(err, "decode %s", path)
 				}
 				if err := attachRead("relationship", path, args, r); err != nil {
 					return errors.Wrapf(err, "attach relationship %s for %s", path, extID)
@@ -1010,23 +1015,6 @@ func readConcrete(stixType, path, args string, r *utiljson.JSONReader) (any, err
 	// Unreachable when callers honour Stage 1's type-switch filter,
 	// but defensive in case the two dispatchers drift apart.
 	return nil, errors.Errorf("unexpected STIX type for readConcrete: %q", stixType)
-}
-
-// decodeRelationship reads a STIX relationship file. Stage 1c uses
-// this without a JSONReader because relationship files don't carry
-// content for the canonical record — their paths are tracked per-entry
-// by the per-extID file lists that Stage 2 walks.
-func decodeRelationship(path string) (attack.Relationship, error) {
-	f, err := os.Open(path)
-	if err != nil {
-		return attack.Relationship{}, errors.Wrapf(err, "open %s", path)
-	}
-	defer f.Close()
-	var r attack.Relationship
-	if err := json.UnmarshalRead(f, &r); err != nil {
-		return attack.Relationship{}, errors.Wrapf(err, "decode %s", path)
-	}
-	return r, nil
 }
 
 func derefTime(p *time.Time) time.Time {
