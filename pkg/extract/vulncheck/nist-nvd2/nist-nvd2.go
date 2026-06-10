@@ -113,6 +113,10 @@ func Extract(args string, opts ...Option) error {
 		o.apply(options)
 	}
 
+	// A non-positive concurrency would start no workers while the
+	// producer blocks on reqChan forever; clamp to at least one worker.
+	options.concurrency = max(1, options.concurrency)
+
 	if err := util.RemoveAll(options.dir); err != nil {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
