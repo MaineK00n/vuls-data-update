@@ -52,7 +52,9 @@
 	"data_source": {
 		"id": "mitre-attack",
 		"raws": [
-			"fixtures/enterprise/attack-pattern/attack-pattern--01a5a209-b94c-450b-b7f9-946497d91055.json"
+			"fixtures/enterprise/attack-pattern/attack-pattern--01a5a209-b94c-450b-b7f9-946497d91055.json",
+			"fixtures/ics/attack-pattern/attack-pattern--01a5a209-b94c-450b-b7f9-946497d91055.json",
+			"fixtures/mobile/attack-pattern/attack-pattern--01a5a209-b94c-450b-b7f9-946497d91055.json"
 		]
 	}
 }

@@ -224,6 +224,17 @@ func Extract(args string, opts ...Option) error {
 	// replays through attachRead.
 	attachments := make(map[string][]attachment)
 
+	// Cross-domain dedup is "first occurrence wins" for the concrete
+	// raw struct, but Domains and provenance paths union across every
+	// domain bundle the same ext-ID appears in. Stage 1a fills both;
+	// Stage 2 uses domainsByExtID to override the canonical record's
+	// Domains and resolves extID-tagged attachments through
+	// pathsByExtID so every other-domain copy of any referenced record
+	// is attached too.
+	domainsByExtID := make(map[string][]string)
+	domainSeenByExtID := make(map[string]map[string]bool)
+	pathsByExtID := make(map[string][]string)
+
 	// Stage 1a: walk every STIX file and peek the extended discriminator
 	// envelope. Stage 1a only records discoveries (Stage 1b/1c resolve
 	// cross-refs and relationships once uuidToExt is complete), so
@@ -269,6 +280,26 @@ func Extract(args string, opts ...Option) error {
 			idx.tacticShortnameToID[*peek.XMitreShortname] = extID
 			tacticUUIDToShortname[peek.ID] = *peek.XMitreShortname
 		}
+		// Union x_mitre_domains across every occurrence of this extID
+		// so cross-domain Groups / Software / Campaigns surface every
+		// bundle they're published in. Track non-first occurrences so
+		// Stage 2 can attach their files for provenance Raws.
+		if seen, ok := domainSeenByExtID[extID]; ok {
+			for _, dom := range peek.XMitreDomains {
+				if !seen[dom] {
+					seen[dom] = true
+					domainsByExtID[extID] = append(domainsByExtID[extID], dom)
+				}
+			}
+		} else {
+			seen = make(map[string]bool, len(peek.XMitreDomains))
+			for _, dom := range peek.XMitreDomains {
+				seen[dom] = true
+				domainsByExtID[extID] = append(domainsByExtID[extID], dom)
+			}
+			domainSeenByExtID[extID] = seen
+		}
+		pathsByExtID[extID] = append(pathsByExtID[extID], path)
 		primaries = append(primaries, discovered{
 			path:     path,
 			uuid:     peek.ID,
@@ -314,8 +345,8 @@ func Extract(args string, opts ...Option) error {
 				}
 				idx.techniqueTactics[p.extID] = append(idx.techniqueTactics[p.extID], shortname)
 				idx.tacticTechniques[shortname] = append(idx.tacticTechniques[shortname], p.extID)
-				if tacticPath, ok := uuidToPath[tr]; ok {
-					attachments[p.extID] = append(attachments[p.extID], attachment{path: tacticPath, stixType: "x-mitre-tactic"})
+				if refExt, ok := uuidToExt[tr]; ok {
+					attachments[p.extID] = append(attachments[p.extID], attachment{stixType: "x-mitre-tactic", extID: refExt})
 				}
 			}
 		case attackTypes.KindDetectStrategy:
@@ -326,9 +357,7 @@ func Extract(args string, opts ...Option) error {
 				}
 				idx.detectionStrategyAnalytics[p.extID] = append(idx.detectionStrategyAnalytics[p.extID], anExt)
 				idx.analyticDetectionStrategy[anExt] = p.extID
-				if anPath, ok := uuidToPath[ar]; ok {
-					attachments[p.extID] = append(attachments[p.extID], attachment{path: anPath, stixType: "x-mitre-analytic"})
-				}
+				attachments[p.extID] = append(attachments[p.extID], attachment{stixType: "x-mitre-analytic", extID: anExt})
 			}
 		case attackTypes.KindDataComponent:
 			if p.peek.XMitreDataSourceRef == nil {
@@ -341,9 +370,7 @@ func Extract(args string, opts ...Option) error {
 			}
 			idx.dataComponentSource[p.extID] = dsExt
 			idx.dataSourceComponents[dsExt] = append(idx.dataSourceComponents[dsExt], p.extID)
-			if dsPath, ok := uuidToPath[dsRef]; ok {
-				attachments[p.extID] = append(attachments[p.extID], attachment{path: dsPath, stixType: "x-mitre-data-source"})
-			}
+			attachments[p.extID] = append(attachments[p.extID], attachment{stixType: "x-mitre-data-source", extID: dsExt})
 		}
 	}
 
@@ -389,7 +416,6 @@ func Extract(args string, opts ...Option) error {
 				desc = *r.Description
 			}
 			refs := toReferences(r.ExternalReferences)
-			srcPath, tgtPath := uuidToPath[src], uuidToPath[tgt]
 
 			switch r.RelationshipType {
 			case "subtechnique-of":
@@ -397,21 +423,21 @@ func Extract(args string, opts ...Option) error {
 				if srcExt != "" && tgtExt != "" {
 					idx.techniqueParent[srcExt] = tgtExt
 					attachments[srcExt] = append(attachments[srcExt],
-						attachment{path: path, stixType: "relationship"},
-						attachment{path: tgtPath, stixType: "attack-pattern"},
+						attachment{stixType: "relationship", path: path},
+						attachment{stixType: "attack-pattern", extID: tgtExt},
 					)
 				}
 				// Reverse: parent → children.
-				recordSide(idx.techniqueSubtechniques, tgtExt, srcExt, srcExt, attachments, path, srcPath, "attack-pattern")
+				recordSide(idx.techniqueSubtechniques, tgtExt, srcExt, srcExt, attachments, path, "attack-pattern")
 			case "mitigates":
 				// fwd: M → T (Mitigation.TechniquesMitigated).
 				recordSide(idx.mitigates.fwd, srcExt, tgtExt,
 					relatedrefTypes.RelatedRef{ID: tgtExt, Description: desc, References: refs},
-					attachments, path, tgtPath, "attack-pattern")
+					attachments, path, "attack-pattern")
 				// rev: T → M (Technique.Mitigations).
 				recordSide(idx.mitigates.rev, tgtExt, srcExt,
 					relatedrefTypes.RelatedRef{ID: srcExt, Description: desc, References: refs},
-					attachments, path, srcPath, "course-of-action")
+					attachments, path, "course-of-action")
 			case "uses":
 				if srcExt == "" || tgtExt == "" {
 					continue
@@ -420,38 +446,38 @@ func Extract(args string, opts ...Option) error {
 				case srcKind == attackTypes.KindGroup && tgtKind == attackTypes.KindTechnique:
 					recordSide(idx.groupTechniquesUsed, srcExt, tgtExt,
 						techniqueusedTypes.TechniqueUsed{ID: tgtExt, Description: desc, References: refs},
-						attachments, path, tgtPath, "attack-pattern")
+						attachments, path, "attack-pattern")
 					recordSide(idx.techniqueProcedures, tgtExt, srcExt,
 						procedureTypes.Procedure{AttackerID: srcExt, Description: desc, References: refs},
-						attachments, path, srcPath, "intrusion-set")
+						attachments, path, "intrusion-set")
 				case srcKind == attackTypes.KindGroup && tgtKind == attackTypes.KindSoftware:
 					recordSide(idx.groupSoftwaresUsed, srcExt, tgtExt,
 						relatedrefTypes.RelatedRef{ID: tgtExt, Description: desc, References: refs},
-						attachments, path, tgtPath, stixTypeFromUUID(tgt))
+						attachments, path, stixTypeFromUUID(tgt))
 					recordSide(idx.softwareGroupsUsing, tgtExt, srcExt,
 						relatedrefTypes.RelatedRef{ID: srcExt, Description: desc, References: refs},
-						attachments, path, srcPath, "intrusion-set")
+						attachments, path, "intrusion-set")
 				case srcKind == attackTypes.KindSoftware && tgtKind == attackTypes.KindTechnique:
 					recordSide(idx.softwareTechniquesUsed, srcExt, tgtExt,
 						techniqueusedTypes.TechniqueUsed{ID: tgtExt, Description: desc, References: refs},
-						attachments, path, tgtPath, "attack-pattern")
+						attachments, path, "attack-pattern")
 					recordSide(idx.techniqueProcedures, tgtExt, srcExt,
 						procedureTypes.Procedure{AttackerID: srcExt, Description: desc, References: refs},
-						attachments, path, srcPath, stixTypeFromUUID(src))
+						attachments, path, stixTypeFromUUID(src))
 				case srcKind == attackTypes.KindCampaign && tgtKind == attackTypes.KindTechnique:
 					recordSide(idx.campaignTechniquesUsed, srcExt, tgtExt,
 						techniqueusedTypes.TechniqueUsed{ID: tgtExt, Description: desc, References: refs},
-						attachments, path, tgtPath, "attack-pattern")
+						attachments, path, "attack-pattern")
 					recordSide(idx.techniqueProcedures, tgtExt, srcExt,
 						procedureTypes.Procedure{AttackerID: srcExt, Description: desc, References: refs},
-						attachments, path, srcPath, "campaign")
+						attachments, path, "campaign")
 				case srcKind == attackTypes.KindCampaign && tgtKind == attackTypes.KindSoftware:
 					recordSide(idx.campaignSoftwaresUsed, srcExt, tgtExt,
 						relatedrefTypes.RelatedRef{ID: tgtExt, Description: desc, References: refs},
-						attachments, path, tgtPath, stixTypeFromUUID(tgt))
+						attachments, path, stixTypeFromUUID(tgt))
 					recordSide(idx.softwareCampaignsUsing, tgtExt, srcExt,
 						relatedrefTypes.RelatedRef{ID: srcExt, Description: desc, References: refs},
-						attachments, path, srcPath, "campaign")
+						attachments, path, "campaign")
 				}
 			case "attributed-to":
 				if srcKind != attackTypes.KindCampaign || tgtKind != attackTypes.KindGroup || srcExt == "" || tgtExt == "" {
@@ -460,11 +486,11 @@ func Extract(args string, opts ...Option) error {
 				// fwd: C → G (Campaign.GroupsAttributed).
 				recordSide(idx.attributedTo.fwd, srcExt, tgtExt,
 					relatedrefTypes.RelatedRef{ID: tgtExt, Description: desc, References: refs},
-					attachments, path, tgtPath, "intrusion-set")
+					attachments, path, "intrusion-set")
 				// rev: G → C (Group.CampaignsAttributed).
 				recordSide(idx.attributedTo.rev, tgtExt, srcExt,
 					relatedrefTypes.RelatedRef{ID: srcExt, Description: desc, References: refs},
-					attachments, path, srcPath, "campaign")
+					attachments, path, "campaign")
 			case "targets":
 				// attack-pattern --targets--> x-mitre-asset
 				if srcKind != attackTypes.KindTechnique || tgtKind != attackTypes.KindAsset || srcExt == "" || tgtExt == "" {
@@ -473,11 +499,11 @@ func Extract(args string, opts ...Option) error {
 				// fwd: T → A (Technique.AssetsTargeted).
 				recordSide(idx.targets.fwd, srcExt, tgtExt,
 					relatedrefTypes.RelatedRef{ID: tgtExt, Description: desc, References: refs},
-					attachments, path, tgtPath, "x-mitre-asset")
+					attachments, path, "x-mitre-asset")
 				// rev: A → T (Asset.TechniquesTargeting).
 				recordSide(idx.targets.rev, tgtExt, srcExt,
 					relatedrefTypes.RelatedRef{ID: srcExt, Description: desc, References: refs},
-					attachments, path, srcPath, "attack-pattern")
+					attachments, path, "attack-pattern")
 			case "detects":
 				// x-mitre-detection-strategy --detects--> attack-pattern
 				if srcKind != attackTypes.KindDetectStrategy || tgtKind != attackTypes.KindTechnique || srcExt == "" || tgtExt == "" {
@@ -486,11 +512,11 @@ func Extract(args string, opts ...Option) error {
 				// fwd: DET → T (DetectionStrategy.TechniquesDetected).
 				recordSide(idx.detects.fwd, srcExt, tgtExt,
 					relatedrefTypes.RelatedRef{ID: tgtExt, Description: desc, References: refs},
-					attachments, path, tgtPath, "attack-pattern")
+					attachments, path, "attack-pattern")
 				// rev: T → DET (Technique.DetectionStrategies).
 				recordSide(idx.detects.rev, tgtExt, srcExt,
 					relatedrefTypes.RelatedRef{ID: srcExt, Description: desc, References: refs},
-					attachments, path, srcPath, "x-mitre-detection-strategy")
+					attachments, path, "x-mitre-detection-strategy")
 			case "revoked-by":
 				// Captured by the boolean Revoked field already.
 			}
@@ -502,7 +528,10 @@ func Extract(args string, opts ...Option) error {
 	// attachment so the entry's reader sees every contributing file,
 	// then convert and write. Stage 2 reads only the files this one
 	// record needs — its primary plus the cross-refs and relationships
-	// already indexed in Stage 1.
+	// already indexed in Stage 1. Other-domain copies of the same
+	// ext-ID are attached for provenance; their bundle-specific
+	// x_mitre_domains were already unioned in Stage 1a and override
+	// the canonical record's Domains below.
 	processed := make(map[string]bool)
 	for _, p := range primaries {
 		if processed[p.extID] {
@@ -515,13 +544,36 @@ func Extract(args string, opts ...Option) error {
 		if err != nil {
 			return err
 		}
+		// Cross-domain copies of this same ext-ID. JSONReader dedupes
+		// the first occurrence's path internally, so re-attaching it
+		// is a cheap no-op.
+		for _, fp := range pathsByExtID[p.extID] {
+			if fp == p.path {
+				continue
+			}
+			if err := attachRead(p.stixType, fp, args, r); err != nil {
+				return errors.Wrapf(err, "attach cross-domain %s for %s", fp, p.extID)
+			}
+		}
 		for _, a := range attachments[p.extID] {
+			if a.extID != "" {
+				// Referenced primary: attach every cross-domain copy.
+				for _, fp := range pathsByExtID[a.extID] {
+					if err := attachRead(a.stixType, fp, args, r); err != nil {
+						return errors.Wrapf(err, "attach %s (%s) for %s", fp, a.extID, p.extID)
+					}
+				}
+				continue
+			}
 			if err := attachRead(a.stixType, a.path, args, r); err != nil {
 				return errors.Wrapf(err, "attach %s for %s", a.path, p.extID)
 			}
 		}
 		entry := primaryEntry{extID: p.extID, kind: p.kind, raw: raw, reader: r}
 		extracted := convert(&entry, idx)
+		if union := domainsByExtID[p.extID]; len(union) > 0 {
+			extracted.Domains = slices.Clone(union)
+		}
 		outPath := filepath.Join(options.dir, "attack", fmt.Sprintf("%s.json", p.extID))
 		if err := util.Write(outPath, extracted, true); err != nil {
 			return errors.Wrapf(err, "write %s", outPath)
@@ -563,6 +615,12 @@ type stixPeek struct {
 	Type               string                     `json:"type"`
 	ID                 string                     `json:"id"`
 	ExternalReferences []attack.ExternalReference `json:"external_references"`
+	// Every primary kind: x_mitre_domains is bundle-scoped, so the
+	// same record published in multiple ATT&CK bundles contributes
+	// different domains. Stage 1 unions these across occurrences so
+	// cross-domain Groups / Software / Campaigns don't appear as
+	// enterprise-only after first-wins dedup.
+	XMitreDomains []string `json:"x_mitre_domains,omitempty"`
 
 	// Tactic only.
 	XMitreShortname *string `json:"x_mitre_shortname,omitempty"`
@@ -603,14 +661,22 @@ func peekPrimary(path string) (stixPeek, error) {
 	return p, nil
 }
 
-// attachment records a file Stage 2 needs to register into a primary
+// attachment records a file Stage 2 must register into a primary
 // entry's JSONReader so the canonical record's data_source.raws list
-// every contributing file. Stage 1 records one attachment per
-// cross-reference / relationship file that touches the entry; Stage 2
-// replays them in order through attachRead.
+// every contributing file. Stage 2 resolves an attachment to actual
+// paths in one of two ways:
+//
+//   - When extID is set, Stage 2 attaches every path in
+//     pathsByExtID[extID] — this is what relationship handlers use for
+//     the "other side" of an edge, so cross-domain copies of the
+//     referenced record all surface in provenance.
+//   - When extID is empty, Stage 2 attaches the single path verbatim.
+//     Relationship files themselves use this form because they aren't
+//     primary records.
 type attachment struct {
-	path     string
 	stixType string
+	extID    string
+	path     string
 }
 
 // attachRead registers the path into r by reading the file as the
@@ -757,25 +823,26 @@ func decodeRelationship(path string) (attack.Relationship, error) {
 }
 
 // recordSide records one direction of a STIX relationship: appends
-// item into edges keyed by ownerExt and queues the relationship file +
-// the other-side STIX file as attachments on the owning primary's
-// JSONReader-to-be (replayed by Stage 2). No-op when either side's
-// ext ID is empty so callers can apply the forward and reverse
-// projections symmetrically without an outer ok-check.
+// item into edges keyed by ownerExt and queues the relationship file
+// (by path) plus the other-side primary (by extID, resolved through
+// pathsByExtID at Stage 2 so all cross-domain copies surface in
+// provenance). No-op when either side's ext ID is empty so callers can
+// apply the forward and reverse projections symmetrically without an
+// outer ok-check.
 func recordSide[T any](
 	edges map[string][]T,
 	ownerExt, otherExt string,
 	item T,
 	attachments map[string][]attachment,
-	relPath, otherPath, otherStixType string,
+	relPath, otherStixType string,
 ) {
 	if ownerExt == "" || otherExt == "" {
 		return
 	}
 	edges[ownerExt] = append(edges[ownerExt], item)
 	attachments[ownerExt] = append(attachments[ownerExt],
-		attachment{path: relPath, stixType: "relationship"},
-		attachment{path: otherPath, stixType: otherStixType},
+		attachment{stixType: "relationship", path: relPath},
+		attachment{stixType: otherStixType, extID: otherExt},
 	)
 }
 
