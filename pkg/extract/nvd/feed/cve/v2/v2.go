@@ -457,9 +457,22 @@ func (e extractor) nodeToCriteria(n cveTypes.Node) (criteriaTypes.Criteria, erro
 			return criteriaTypes.Criteria{}, errors.Wrapf(err, "invalid format. CPE: %s", match.Criteria)
 		}
 
-		cpeMatches, rangeType, err := e.buildCPEMatches(match)
-		if err != nil {
-			return criteriaTypes.Criteria{}, errors.Wrap(err, "build cpe matches")
+		// A range exists when any of the four endpoints is set. This single
+		// check decides both whether to emit a Range and whether to expand
+		// the cpematch feed; buildCPEMatches is only meaningful with a range.
+		hasRange := match.VersionStartIncluding != "" || match.VersionStartExcluding != "" ||
+			match.VersionEndIncluding != "" || match.VersionEndExcluding != ""
+
+		var (
+			rangeType  ccRangeTypes.RangeType
+			cpeMatches []ccTypes.CPE
+		)
+		if hasRange {
+			var err error
+			cpeMatches, rangeType, err = e.buildCPEMatches(match)
+			if err != nil {
+				return criteriaTypes.Criteria{}, errors.Wrap(err, "build cpe matches")
+			}
 		}
 
 		cn := criterionTypes.Criterion{
@@ -474,8 +487,7 @@ func (e extractor) nodeToCriteria(n cveTypes.Node) (criteriaTypes.Criteria, erro
 				}(),
 				CPE: ccTypes.CPE(match.Criteria),
 				Range: func() *ccRangeTypes.Range {
-					if match.VersionStartIncluding == "" && match.VersionStartExcluding == "" &&
-						match.VersionEndIncluding == "" && match.VersionEndExcluding == "" {
+					if !hasRange {
 						return nil
 					}
 					return &ccRangeTypes.Range{
@@ -613,6 +625,10 @@ func (e extractor) cpeNamesFromCpematch(matchCriteriaId string) ([]string, error
 // criterion's Range, derived from a single parse of the four endpoints — the
 // same version.NewSemver work the per-entry coverage check below reuses.
 //
+// Precondition: invoke only for a match that carries at least one range
+// endpoint (nodeToCriteria gates this with hasRange); a no-range match needs
+// neither expansion nor range classification.
+//
 // The criterion's Range still narrows by version on the parent CPE; the
 // returned list supplements Range with the versions Range cannot cover:
 //
@@ -621,9 +637,6 @@ func (e extractor) cpeNamesFromCpematch(matchCriteriaId string) ([]string, error
 //   - SEMVER range: Range already covers every semver-parseable version
 //     inside it, so only the entries Range misses (non-semver, or the rare
 //     semver version outside the range) are added.
-//   - No range: returns no matches — Range is absent, nothing needs to be
-//     enumerated, so the caller can invoke this unconditionally per
-//     CPEMatch.
 //
 // Lookup failures happen when the CVE feed and the cpematch feed have not
 // been snapshotted atomically: a freshly added matchCriteriaId can exist in
@@ -640,17 +653,6 @@ func (e extractor) cpeNamesFromCpematch(matchCriteriaId string) ([]string, error
 //     undetectable. Refuse to emit a broken criterion — caller fails the
 //     extract and the operator refreshes the cpematch snapshot.
 func (e extractor) buildCPEMatches(match cveTypes.CPEMatch) ([]ccTypes.CPE, ccRangeTypes.RangeType, error) {
-	if match.VersionStartIncluding == "" && match.VersionStartExcluding == "" &&
-		match.VersionEndIncluding == "" && match.VersionEndExcluding == "" {
-		// No range: nothing to classify or enumerate, and the caller emits no
-		// Range for this match, so the returned type is never used. Return
-		// Unknown as the safe sentinel — if a future caller did stamp it on a
-		// Range, an Unknown range with no CPEMatches fails closed (nothing
-		// matches), whereas an empty SEMVER range could be read as unbounded
-		// and over-match.
-		return nil, ccRangeTypes.RangeTypeUnknown, nil
-	}
-
 	// One parse of the four endpoints yields both the bounds the per-entry
 	// coverage check reuses and the range type the caller stamps on the
 	// criterion — the whole range classification, done once.
