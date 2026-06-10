@@ -1384,7 +1384,8 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 			"Microsoft Visual Studio 2022 Version 17.9",
 			"Microsoft Visual Studio 2026 Version 18.3",
 			"Microsoft Visual Studio 2026 Version 18.4",
-			"Microsoft Visual Studio 2026 Version 18.5":
+			"Microsoft Visual Studio 2026 Version 18.5",
+			"Microsoft Visual Studio 2026 Version 18.6":
 			if _, err := visualstudioversion.NewVersion(fixedBuild); err != nil {
 				return rangeTypes.RangeTypeUnknown, errors.Wrap(err, "visualstudioversion.NewVersion")
 			}
@@ -1555,6 +1556,7 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 			"Visual Studio Code - JS Debug Extension",
 			"Visual Studio Code - Kubernetes Tools",
 			"Visual Studio Code - Live Preview extension",
+			"Visual Studio Code - MSSQL Extension",
 			"Visual Studio Code Remote - Containers Extension",
 			"Visual Studio Code Remote - SSH Extension",
 			"Visual Studio Code WSL Extension":
@@ -2235,6 +2237,9 @@ var fixedBuildOverrides = map[[3]string]string{
 	{"CVE-2026-32077", "Windows Server 2012 (Server Core installation)", "1.000"}:    "",
 	{"CVE-2026-32077", "Windows Server 2012 R2", "1.000"}:                            "",
 	{"CVE-2026-32077", "Windows Server 2012 R2 (Server Core installation)", "1.000"}: "",
+	// 2026-Jun (IE Cumulative, FixedBuild "1.000" is a revision number, not a Windows OS build)
+	{"CVE-2026-45592", "Windows Server 2012 R2", "1.000"}:                            "",
+	{"CVE-2026-45592", "Windows Server 2012 R2 (Server Core installation)", "1.000"}: "",
 
 	// Windows OS (FixedBuild leaked from a sibling servicing branch: a single Vendor Fix
 	// Remediation grouped products from multiple servicing branches but specified only
