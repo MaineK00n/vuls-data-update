@@ -259,7 +259,7 @@ func (e extractor) buildData(fetched nistnvd2Types.CVE) (dataTypes.Data, error) 
 		}}
 	}()
 
-	var ss []severityTypes.Severity
+	ss := make([]severityTypes.Severity, 0, len(fetched.Metrics.CVSSMetricV2)+len(fetched.Metrics.CVSSMetricV30)+len(fetched.Metrics.CVSSMetricV31)+len(fetched.Metrics.CVSSMetricV40))
 	for _, c := range fetched.Metrics.CVSSMetricV2 {
 		sv2, err := v2Types.Parse(c.CvssData.VectorString)
 		if err != nil {
@@ -307,6 +307,9 @@ func (e extractor) buildData(fetched nistnvd2Types.CVE) (dataTypes.Data, error) 
 			Source:  c.Source,
 			CVSSv40: v40,
 		})
+	}
+	if len(ss) == 0 {
+		ss = nil
 	}
 
 	return dataTypes.Data{
@@ -497,6 +500,14 @@ func nodeToCriteria(id string, n nistnvd2Types.Node, vulnCPEs []vulnCPE) (criter
 	for _, match := range n.CPEMatch {
 		wfn, err := naming.UnbindFS(match.Criteria)
 		if err != nil {
+			// Dropping a cpeMatch under an AND node would assert a weaker
+			// condition than the source data states (over-broad detection);
+			// refuse the whole node and let configurationToCriteria decide
+			// whether the enclosing configuration must go too.
+			if ca.Operator == criteriaTypes.CriteriaOperatorTypeAND {
+				slog.Warn("invalid CPE in cpeMatch under AND node; skipping whole node", "id", id, "cpe", match.Criteria, "err", err)
+				return criteriaTypes.Criteria{}, false
+			}
 			slog.Warn("invalid CPE in cpeMatch; skipping", "id", id, "cpe", match.Criteria, "err", err)
 			continue
 		}
