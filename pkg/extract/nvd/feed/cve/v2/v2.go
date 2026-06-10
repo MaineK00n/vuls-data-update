@@ -681,14 +681,18 @@ func (e extractor) buildCPEMatches(match cveTypes.CPEMatch) ([]ccTypes.CPE, ccRa
 		}
 		// Skip cpematch entries whose version is ANY or NA — meta markers,
 		// not concrete versions the parent range was meant to enumerate.
-		// Without this skip we would inject NA-version entries for every
-		// ranged match whose cpematch happens to include `-`, producing
-		// spurious vendor:product-only hits at detection time for any
-		// scanned CPE that shares the vendor and product. wfn.GetString
-		// returns the logical names "ANY"/"NA" for `*`/`-`, so check the
-		// raw value BEFORE unescaping — unescapeWFN strips backslashes
-		// blindly, turning a concrete escaped `\*` or `\-` into a bare `*`
-		// or `-` that would be indistinguishable from the wildcard markers.
+		//   - ANY (`*`): a source-side wildcard is a superset of every
+		//     concrete version, so injecting it would match any scanned CPE
+		//     sharing the vendor and product — a spurious vendor:product-only
+		//     hit. (Not seen in current feed data, but kept as a guard.)
+		//   - NA (`-`): disjoint from every concrete version, so it never
+		//     matches a concrete scan (dead weight); a scan reporting `-` is
+		//     still caught via the query-side NA short-circuit in
+		//     cpecriterion.Accept, so skipping loses no detection.
+		// wfn.GetString returns the logical names "ANY"/"NA" for `*`/`-`, so
+		// check the raw value BEFORE unescaping — unescapeWFN strips
+		// backslashes blindly, turning a concrete escaped `\*` or `\-` into a
+		// bare `*` or `-` indistinguishable from the wildcard markers.
 		verRaw := wfn.GetString(common.AttributeVersion)
 		switch verRaw {
 		case "ANY", "NA":
