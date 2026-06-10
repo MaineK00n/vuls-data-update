@@ -167,19 +167,6 @@ func Extract(args string, opts ...Option) error {
 				"identity", "marking-definition", "x-mitre-collection", "x-mitre-matrix",
 			}, peek.Type)
 		}
-		extID := externalID(peek.ExternalReferences, "mitre-attack")
-		if extID == "" {
-			// Deprecated / revoked ICS and Mobile primaries from
-			// before the source_name unification still ship with
-			// mitre-ics-attack / mitre-mobile-attack instead of
-			// mitre-attack and so carry no canonical ATT&CK ID
-			// we can index by. Drop those silently; treat any
-			// live record without mitre-attack as data drift.
-			if peek.Revoked || peek.XMitreDeprecated {
-				return nil
-			}
-			return errors.Errorf("missing mitre-attack external_id in %s (type %q)", path, peek.Type)
-		}
 		// MITRE distributes referenced objects with every bundle that
 		// needs them: T1047 (Enterprise-only) is mirrored into the
 		// mobile/ and ics/ bundle dirs because those bundles reference
@@ -187,9 +174,25 @@ func Extract(args string, opts ...Option) error {
 		// domain in x_mitre_domains, so we keep only files whose
 		// bundle dir matches one of their declared domains; the rest
 		// are distribution artifacts we drop here before any indexing.
-		bundleDomain := bundleDomainOf(args, path)
-		if !slices.Contains(peek.XMitreDomains, bundleDomain) {
+		b := bundleOf(args, path)
+		if !slices.Contains(peek.XMitreDomains, b.domain) {
 			return nil
+		}
+		extID := externalID(peek.ExternalReferences, "mitre-attack")
+		if extID == "" && (peek.Revoked || peek.XMitreDeprecated) && b.sourceName != "mitre-attack" {
+			// Deprecated / revoked records from before the
+			// source_name unification still ship with the bundle's
+			// legacy source_name (mitre-ics-attack /
+			// mitre-mobile-attack) and never got migrated. Fall
+			// back so we surface their canonical ATT&CK IDs
+			// (T0xxx, etc.).
+			extID = externalID(peek.ExternalReferences, b.sourceName)
+		}
+		if extID == "" {
+			// Live records must carry the canonical mitre-attack
+			// external_id; anything else is schema drift CI should
+			// surface.
+			return errors.Errorf("missing mitre-attack external_id in %s (type %q)", path, peek.Type)
 		}
 		uuids[peek.ID] = uuidInfo{ext: extID, kind: kind, path: path}
 		e, ok := entries[extID]
@@ -595,14 +598,14 @@ func Extract(args string, opts ...Option) error {
 			if err := attachRead(fp.Type, path, args, r); err != nil {
 				return errors.Wrapf(err, "attach %s for %s", path, extID)
 			}
-			otherExt := externalID(fp.ExternalReferences, "mitre-attack")
+			// Resolve the cross-ref via the Stage 1 uuid index so we
+			// pick up records keyed on legacy source_names (T0xxx
+			// etc.) without re-reading external_references here.
+			otherExt := uuids[fp.ID].ext
 			if otherExt == "" {
-				return errors.Errorf("missing mitre-attack external_id in %s (type %q) referenced from %s", path, fp.Type, extID)
+				return errors.Errorf("file %s (id %s) was not indexed in Stage 1 but is referenced from %s", path, fp.ID, extID)
 			}
-			var otherKind attackTypes.Kind
-			if oe, ok := entries[otherExt]; ok {
-				otherKind = oe.kind
-			}
+			otherKind := entries[otherExt].kind
 			switch kind {
 			case attackTypes.KindTactic:
 				if otherKind == attackTypes.KindTechnique {
@@ -855,27 +858,45 @@ type stixPeek struct {
 	XMitreDataSourceRef *string `json:"x_mitre_data_source_ref,omitempty"`
 }
 
-// bundleDomainOf returns the ATT&CK domain string ("enterprise-attack"
-// / "mobile-attack" / "ics-attack") implied by path's bundle
+// bundleInfo carries the ATT&CK bundle identity for a file: its
+// x_mitre_domains value (used by the Stage 1a distribution-artifact
+// filter) and the legacy source_name (used to fall back when a
+// deprecated / revoked record never got migrated to mitre-attack).
+type bundleInfo struct {
+	domain     string // "enterprise-attack" / "ics-attack" / "mobile-attack"
+	sourceName string // "mitre-attack" / "mitre-ics-attack" / "mitre-mobile-attack"
+}
+
+// bundleOf returns the bundle identity implied by path's bundle
 // subdirectory under root. The raw repo uses bare bundle names
-// ("enterprise/", "mobile/", "ics/"), so we append "-attack" when the
-// directory name doesn't already end with that suffix. An empty
-// return string makes the artifact filter at Stage 1a reject the file
-// (which is what we want when path doesn't live under a recognised
-// bundle dir).
-func bundleDomainOf(root, path string) string {
+// ("enterprise/", "mobile/", "ics/"), so we strip an optional
+// "-attack" suffix to recover the bare name and then derive both
+// fields from it. A zero-value return makes the artifact filter at
+// Stage 1a reject the file (which is what we want when path doesn't
+// live under a recognised bundle dir).
+func bundleOf(root, path string) bundleInfo {
 	rel, err := filepath.Rel(root, path)
 	if err != nil {
-		return ""
+		return bundleInfo{}
 	}
 	dir, _, ok := strings.Cut(rel, string(filepath.Separator))
 	if !ok || dir == "" {
-		return ""
+		return bundleInfo{}
 	}
-	if strings.HasSuffix(dir, "-attack") {
-		return dir
+	bare := strings.TrimSuffix(dir, "-attack")
+	switch bare {
+	case "enterprise":
+		// Enterprise dropped its "enterprise-" prefix when the
+		// source_name was unified.
+		return bundleInfo{domain: "enterprise-attack", sourceName: "mitre-attack"}
+	case "ics", "mobile":
+		return bundleInfo{
+			domain:     fmt.Sprintf("%s-attack", bare),
+			sourceName: fmt.Sprintf("mitre-%s-attack", bare),
+		}
+	default:
+		return bundleInfo{}
 	}
-	return dir + "-attack"
 }
 
 func peekPrimary(path string) (stixPeek, error) {
