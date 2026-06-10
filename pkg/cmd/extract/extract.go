@@ -126,6 +126,7 @@ import (
 	ubuntuOVAL "github.com/MaineK00n/vuls-data-update/pkg/extract/ubuntu/oval"
 	ubuntuCVETracker "github.com/MaineK00n/vuls-data-update/pkg/extract/ubuntu/tracker"
 	vulncheckKEV "github.com/MaineK00n/vuls-data-update/pkg/extract/vulncheck/kev"
+	vulncheckNISTNVD2 "github.com/MaineK00n/vuls-data-update/pkg/extract/vulncheck/nist-nvd2"
 	wolfiOSV "github.com/MaineK00n/vuls-data-update/pkg/extract/wolfi/osv"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/util"
@@ -195,7 +196,7 @@ func NewCmdExtract() *cobra.Command {
 		newCmdSUSEOVAL(), newCmdSUSECVRF(), newCmdSUSECVRFCVE(), newCmdSUSECSAF(), newCmdSUSECSAFVEX(), newCmdSUSEOSV(),
 		newCmdSwiftGHSA(), newCmdSwiftOSV(),
 		newCmdUbuntuOVAL(), newCmdUbuntuCVETracker(), newCmdUbuntuOSV(),
-		newCmdVulnCheckKEV(),
+		newCmdVulnCheckKEV(), newCmdVulnCheckNISTNVD2(),
 		newCmdWolfiOSV(),
 	)
 
@@ -3176,6 +3177,38 @@ func newCmdVulnCheckKEV() *cobra.Command {
 	}
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
+
+	return cmd
+}
+
+func newCmdVulnCheckNISTNVD2() *cobra.Command {
+	options := &struct {
+		base
+		concurrency int
+	}{
+		base: base{
+			dir: filepath.Join(util.CacheDir(), "extract", "vulncheck", "nist-nvd2"),
+		},
+		concurrency: runtime.NumCPU(),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "vulncheck-nist-nvd2 <Raw VulnCheck NIST NVD2 Repository PATH>",
+		Short: "Extract VulnCheck NIST NVD2 data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update extract vulncheck-nist-nvd2 vuls-data-raw-vulncheck-nist-nvd2
+		`),
+		Args: cobra.ExactArgs(1),
+		RunE: func(_ *cobra.Command, args []string) error {
+			if err := vulncheckNISTNVD2.Extract(args[0], vulncheckNISTNVD2.WithDir(options.dir), vulncheckNISTNVD2.WithConcurrency(options.concurrency)); err != nil {
+				return errors.Wrap(err, "failed to extract vulncheck nist-nvd2")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
+	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrent workers")
 
 	return cmd
 }

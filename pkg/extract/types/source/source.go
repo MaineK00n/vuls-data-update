@@ -163,6 +163,7 @@ const (
 	UbuntuCVETracker           SourceID = "ubuntu-cve-tracker"
 	UbuntuUSNDB                SourceID = "ubuntu-usndb"
 	VulnCheckKEV               SourceID = "vulncheck-kev"
+	VulnCheckNISTNVD2          SourceID = "vulncheck-nist-nvd2"
 	WolfiOSV                   SourceID = "wolfi-osv"
 	WolfiSecDB                 SourceID = "wolfi-secdb"
 	WindRiverLinux             SourceID = "wind-river-linux"
