@@ -167,6 +167,10 @@ func Extract(args string, opts ...Option) error {
 				"identity", "marking-definition", "x-mitre-collection", "x-mitre-matrix",
 			}, peek.Type)
 		}
+		// Deprecated / revoked ICS and Mobile primaries from before
+		// the source_name unification still ship with mitre-ics-attack
+		// / mitre-mobile-attack instead of mitre-attack and so carry
+		// no canonical ATT&CK ID we can index by. Drop them.
 		extID := externalID(peek.ExternalReferences, "mitre-attack")
 		if extID == "" {
 			return nil
@@ -588,7 +592,7 @@ func Extract(args string, opts ...Option) error {
 			}
 			otherExt := externalID(fp.ExternalReferences, "mitre-attack")
 			if otherExt == "" {
-				continue
+				return errors.Errorf("missing mitre-attack external_id in %s (type %q) referenced from %s", path, fp.Type, extID)
 			}
 			var otherKind attackTypes.Kind
 			if oe, ok := entries[otherExt]; ok {
