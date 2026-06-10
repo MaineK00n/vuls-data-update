@@ -273,6 +273,17 @@ func Extract(args string, opts ...Option) error {
 		if extID == "" {
 			return nil
 		}
+		// MITRE distributes referenced objects with every bundle that
+		// needs them: T1047 (Enterprise-only) is mirrored into the
+		// mobile/ and ics/ bundle dirs because those bundles reference
+		// it from their relationships. Each copy declares its true
+		// domain in x_mitre_domains, so we keep only files whose
+		// bundle dir matches one of their declared domains; the rest
+		// are distribution artifacts we drop here before any indexing.
+		bundleDomain := bundleDomainOf(args, path)
+		if !slices.Contains(peek.XMitreDomains, bundleDomain) {
+			return nil
+		}
 		uuidToExt[peek.ID] = extID
 		uuidKind[peek.ID] = kind
 		uuidToPath[peek.ID] = path
@@ -646,6 +657,29 @@ var knownStixTypes = []string{
 	"x-mitre-data-source", "x-mitre-data-component",
 	"relationship",
 	"identity", "marking-definition", "x-mitre-collection", "x-mitre-matrix",
+}
+
+// bundleDomainOf returns the ATT&CK domain string ("enterprise-attack"
+// / "mobile-attack" / "ics-attack") implied by path's bundle
+// subdirectory under root. The raw repo uses bare bundle names
+// ("enterprise/", "mobile/", "ics/"), so we append "-attack" when the
+// directory name doesn't already end with that suffix. An empty
+// return string makes the artifact filter at Stage 1a reject the file
+// (which is what we want when path doesn't live under a recognised
+// bundle dir).
+func bundleDomainOf(root, path string) string {
+	rel, err := filepath.Rel(root, path)
+	if err != nil {
+		return ""
+	}
+	dir, _, ok := strings.Cut(rel, string(filepath.Separator))
+	if !ok || dir == "" {
+		return ""
+	}
+	if strings.HasSuffix(dir, "-attack") {
+		return dir
+	}
+	return dir + "-attack"
 }
 
 func peekPrimary(path string) (stixPeek, error) {

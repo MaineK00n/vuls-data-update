@@ -54,8 +54,6 @@
 			"fixtures/enterprise/relationship/relationship--00000000-0000-0000-0000-000000000101.json",
 			"fixtures/enterprise/relationship/relationship--00000000-0000-0000-0000-000000000102.json",
 			"fixtures/enterprise/relationship/relationship--00000000-0000-0000-0000-000000000105.json",
-			"fixtures/ics/attack-pattern/attack-pattern--3f18edba-28f4-4bb9-82c3-8aa60dcac5f7.json",
-			"fixtures/mobile/attack-pattern/attack-pattern--3f18edba-28f4-4bb9-82c3-8aa60dcac5f7.json",
 			"fixtures/mobile/intrusion-set/intrusion-set--00000000-0000-0000-0000-000000000001.json"
 		]
 	}
