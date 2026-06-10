@@ -223,11 +223,11 @@ func Extract(args string, opts ...Option) error {
 			// KillChainPhases name the Tactic by its shortname; resolve
 			// to the Tactic's ext-ID so we can add the Technique to that
 			// Tactic's file list (for Tactic.Techniques reverse).
-			for _, kc := range e.peek.KillChainPhases {
+			for _, kc := range e.peek.Technique.KillChainPhases {
 				switch kc.KillChainName {
 				case "mitre-attack", "mitre-ics-attack", "mitre-mobile-attack":
 					for tExt, tac := range entries {
-						if tac.kind != attackTypes.KindTactic || tac.peek.XMitreShortname == nil || *tac.peek.XMitreShortname != kc.PhaseName {
+						if tac.kind != attackTypes.KindTactic || tac.peek.Tactic.XMitreShortname != kc.PhaseName {
 							continue
 						}
 						tac.files = append(tac.files, e.paths...)
@@ -238,7 +238,7 @@ func Extract(args string, opts ...Option) error {
 			}
 			entries[extID] = e
 		case attackTypes.KindDetectStrategy:
-			for _, ar := range e.peek.XMitreAnalyticRefs {
+			for _, ar := range e.peek.DetectStrategy.XMitreAnalyticRefs {
 				u, ok := uuids[ar]
 				if !ok {
 					continue
@@ -253,10 +253,10 @@ func Extract(args string, opts ...Option) error {
 			}
 			entries[extID] = e
 		case attackTypes.KindDataComponent:
-			if e.peek.XMitreDataSourceRef == nil {
+			if e.peek.DataComponent.XMitreDataSourceRef == nil {
 				continue
 			}
-			u, ok := uuids[*e.peek.XMitreDataSourceRef]
+			u, ok := uuids[*e.peek.DataComponent.XMitreDataSourceRef]
 			if !ok {
 				continue
 			}
@@ -392,12 +392,12 @@ func Extract(args string, opts ...Option) error {
 		// needed.
 		switch kind {
 		case attackTypes.KindTechnique:
-			for _, kc := range ownPeek.KillChainPhases {
+			for _, kc := range ownPeek.Technique.KillChainPhases {
 				switch kc.KillChainName {
 				case "mitre-attack", "mitre-ics-attack", "mitre-mobile-attack":
 					tacticExt := ""
 					for tExt, tac := range entries {
-						if tac.kind != attackTypes.KindTactic || tac.peek.XMitreShortname == nil || *tac.peek.XMitreShortname != kc.PhaseName {
+						if tac.kind != attackTypes.KindTactic || tac.peek.Tactic.XMitreShortname != kc.PhaseName {
 							continue
 						}
 						tacticExt = tExt
@@ -407,14 +407,14 @@ func Extract(args string, opts ...Option) error {
 				}
 			}
 		case attackTypes.KindDetectStrategy:
-			for _, ar := range ownPeek.XMitreAnalyticRefs {
+			for _, ar := range ownPeek.DetectStrategy.XMitreAnalyticRefs {
 				if u, ok := uuids[ar]; ok {
 					detStrategyAnalytics = append(detStrategyAnalytics, u.ext)
 				}
 			}
 		case attackTypes.KindDataComponent:
-			if ownPeek.XMitreDataSourceRef != nil {
-				if u, ok := uuids[*ownPeek.XMitreDataSourceRef]; ok {
+			if ownPeek.DataComponent.XMitreDataSourceRef != nil {
+				if u, ok := uuids[*ownPeek.DataComponent.XMitreDataSourceRef]; ok {
 					dataComponentSource = u.ext
 				}
 			}
@@ -821,16 +821,29 @@ type stixPeek struct {
 	// enterprise-only after first-wins dedup.
 	XMitreDomains []string `json:"x_mitre_domains,omitempty"`
 
-	// Tactic only.
-	XMitreShortname *string `json:"x_mitre_shortname,omitempty"`
+	// Kind-specific cross-ref fields. Each sub-struct's JSON fields
+	// are inlined at the parent level (json:",inline"), matching STIX's
+	// flat schema while keeping Stage 1/2 access sites obvious about
+	// which Kind they're touching.
+	Tactic         stixPeekTactic         `json:",inline"`
+	Technique      stixPeekTechnique      `json:",inline"`
+	DetectStrategy stixPeekDetectStrategy `json:",inline"`
+	DataComponent  stixPeekDataComponent  `json:",inline"`
+}
 
-	// Technique only.
+type stixPeekTactic struct {
+	XMitreShortname string `json:"x_mitre_shortname,omitempty"`
+}
+
+type stixPeekTechnique struct {
 	KillChainPhases []attack.KillChainPhase `json:"kill_chain_phases,omitempty"`
+}
 
-	// DetectionStrategy only.
+type stixPeekDetectStrategy struct {
 	XMitreAnalyticRefs []string `json:"x_mitre_analytic_refs,omitempty"`
+}
 
-	// DataComponent only.
+type stixPeekDataComponent struct {
 	XMitreDataSourceRef *string `json:"x_mitre_data_source_ref,omitempty"`
 }
 
