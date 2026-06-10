@@ -2141,19 +2141,25 @@ func newCmdNVDFeedCPEMATCHv1() *cobra.Command {
 }
 
 func newCmdNVDFeedCVEv2() *cobra.Command {
-	options := &base{
-		dir: filepath.Join(util.CacheDir(), "extract", "nvd", "feed", "cve", "v2"),
+	options := &struct {
+		base
+		concurrency int
+	}{
+		base: base{
+			dir: filepath.Join(util.CacheDir(), "extract", "nvd", "feed", "cve", "v2"),
+		},
+		concurrency: runtime.NumCPU(),
 	}
 
 	cmd := &cobra.Command{
-		Use:   "nvd-feed-cve-v2 <Raw NVD CVE Feed v2 Repository PATH>",
+		Use:   "nvd-feed-cve-v2 <Raw NVD CVE Feed v2 Repository PATH> <Raw NVD CPEMatch Feed v2 Repository PATH>",
 		Short: "Extract NVD CVE Feed v2 data source",
 		Example: heredoc.Doc(`
-			$ vuls-data-update extract nvd-feed-cve-v2 vuls-data-raw-nvd-feed-cve-v2
+			$ vuls-data-update extract nvd-feed-cve-v2 vuls-data-raw-nvd-feed-cve-v2 vuls-data-raw-nvd-feed-cpematch-v2
 		`),
-		Args: cobra.ExactArgs(1),
+		Args: cobra.ExactArgs(2),
 		RunE: func(_ *cobra.Command, args []string) error {
-			if err := nvdFeedCVEv2.Extract(args[0], nvdFeedCVEv2.WithDir(options.dir)); err != nil {
+			if err := nvdFeedCVEv2.Extract(args[0], args[1], nvdFeedCVEv2.WithDir(options.dir), nvdFeedCVEv2.WithConcurrency(options.concurrency)); err != nil {
 				return errors.Wrap(err, "failed to extract nvd cve feed v2")
 			}
 			return nil
@@ -2161,6 +2167,7 @@ func newCmdNVDFeedCVEv2() *cobra.Command {
 	}
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
+	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrent workers")
 
 	return cmd
 }

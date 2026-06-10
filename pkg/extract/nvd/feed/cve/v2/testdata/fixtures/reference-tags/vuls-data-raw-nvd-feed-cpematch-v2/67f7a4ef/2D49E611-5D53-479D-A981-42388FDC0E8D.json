@@ -1,0 +1,7 @@
+{
+	"criteria": "cpe:2.3:o:google:android:16.0:*:*:*:*:*:*:*",
+	"matchCriteriaId": "2D49E611-5D53-479D-A981-42388FDC0E8D",
+	"created": "2025-09-02T19:02:13.967",
+	"lastModified": "2025-09-02T19:02:13.967",
+	"status": "Active"
+}
