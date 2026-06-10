@@ -69,15 +69,18 @@ type primaryEntry struct {
 }
 
 // discovered is what Stage 1 records for every primary STIX object it
-// finds during the discovery walk: just enough metadata for Stage 2 to
-// decide which file to read into which concrete struct, and to skip
-// extID collisions across enterprise / mobile / ics bundles.
+// finds during the discovery walk. The peek field carries the cross-
+// reference UUIDs / Tactic shortname that Stage 1 needs to resolve all
+// non-relationship links without reading concrete data, so Stage 2's
+// per-entry loop only opens this file and the attachments queued for
+// provenance.
 type discovered struct {
 	path     string
 	uuid     string
 	stixType string
 	kind     attackTypes.Kind
 	extID    string
+	peek     stixPeek
 }
 
 // stixTypeToKind maps a STIX `type` discriminator to the ATT&CK Kind
@@ -183,77 +186,12 @@ func Extract(args string, opts ...Option) error {
 
 	slog.Info("Extract MITRE ATT&CK")
 
-	entries := make(map[string]*primaryEntry) // extID → entry
-	uuidToExt := make(map[string]string)      // STIX UUID → ATT&CK external ID
+	uuidToExt := make(map[string]string) // STIX UUID → ATT&CK external ID
 	uuidKind := make(map[string]attackTypes.Kind)
 	uuidToPath := make(map[string]string) // STIX UUID → absolute path
-
-	// Stage 1 (discover): walk every STIX file and peek just enough
-	// metadata (type / UUID / external_references) to classify it.
-	// stixTypeToKind handles dispatch as data so an unrecognised STIX
-	// type fails CI in one place; concrete unmarshalling and JSONReader
-	// allocation are deferred to Stage 2 so skipped files (relationship,
-	// identity, ...) don't pay for either.
-	var primaries []discovered
-	if err := filepath.WalkDir(args, func(path string, d fs.DirEntry, err error) error {
-		if err != nil {
-			return err
-		}
-		if d.IsDir() {
-			if d.Name() == ".git" {
-				return filepath.SkipDir
-			}
-			return nil
-		}
-		if filepath.Ext(path) != ".json" {
-			return nil
-		}
-
-		peek, err := peekPrimary(path)
-		if err != nil {
-			return errors.Wrapf(err, "peek %s", path)
-		}
-		if peek.Type == "relationship" || stixTypesNotExtracted[peek.Type] {
-			return nil
-		}
-		kind, ok := stixTypeToKind[peek.Type]
-		if !ok {
-			return errors.Errorf("unexpected STIX type. expected: %q, actual: %q", knownStixTypes, peek.Type)
-		}
-		extID := externalID(peek.ExternalReferences, "mitre-attack")
-		if extID == "" {
-			return nil
-		}
-		uuidToExt[peek.ID] = extID
-		uuidKind[peek.ID] = kind
-		uuidToPath[peek.ID] = path
-		primaries = append(primaries, discovered{
-			path:     path,
-			uuid:     peek.ID,
-			stixType: peek.Type,
-			kind:     kind,
-			extID:    extID,
-		})
-		return nil
-	}); err != nil {
-		return errors.Wrapf(err, "walk %s", args)
-	}
-
-	// Stage 2 (build): per discovered primary, allocate a JSONReader
-	// and read its concrete STIX struct. The first ext-ID occurrence
-	// wins so a record published in multiple domain bundles
-	// (enterprise/ics/mobile) collapses to one canonical entry.
-	for _, p := range primaries {
-		if _, exists := entries[p.extID]; exists {
-			continue
-		}
-		r := utiljson.NewJSONReader()
-		raw, err := readConcrete(p.stixType, p.path, args, r)
-		if err != nil {
-			return err
-		}
-		entries[p.extID] = &primaryEntry{extID: p.extID, kind: p.kind, raw: raw, reader: r}
-	}
+	// Tactic UUID → x_mitre_shortname so Technique.TacticRefs can be
+	// resolved without re-reading each Tactic file in Stage 1b.
+	tacticUUIDToShortname := make(map[string]string)
 
 	idx := rels{
 		techniqueParent:            make(map[string]string),
@@ -279,88 +217,140 @@ func Extract(args string, opts ...Option) error {
 		tacticShortnameToID:        make(map[string]string),
 	}
 
-	// Index Tactic shortnames → external IDs once so Pass 3 can fill
-	// TacticRef.ID when a Technique lists its tactics by shortname.
-	for _, entry := range entries {
-		if entry.kind != attackTypes.KindTactic {
-			continue
+	// attachments queues every file Stage 2 must register into a
+	// primary entry's JSONReader so the canonical record's
+	// data_source.raws lists every contributing file. Stage 1 fills it
+	// during cross-ref resolution and the relationship walk; Stage 2
+	// replays through attachRead.
+	attachments := make(map[string][]attachment)
+
+	// Stage 1a: walk every STIX file and peek the extended discriminator
+	// envelope. Stage 1a only records discoveries (Stage 1b/1c resolve
+	// cross-refs and relationships once uuidToExt is complete), so
+	// skipped types (relationship / identity / marking-definition / ...)
+	// don't allocate a JSONReader and known-but-unkept primaries (no
+	// ATT&CK external_id) are dropped here.
+	var primaries []discovered
+	if err := filepath.WalkDir(args, func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
 		}
-		t := entry.raw.(*attack.XMitreTactic)
-		if t.XMitreShortname != nil && *t.XMitreShortname != "" {
-			idx.tacticShortnameToID[*t.XMitreShortname] = entry.extID
+		if d.IsDir() {
+			if d.Name() == ".git" {
+				return filepath.SkipDir
+			}
+			return nil
 		}
+		if filepath.Ext(path) != ".json" {
+			return nil
+		}
+
+		peek, err := peekPrimary(path)
+		if err != nil {
+			return errors.Wrapf(err, "peek %s", path)
+		}
+		// Relationships are handled in Stage 1c. The four
+		// not-extracted STIX kinds simply leave no trace.
+		if peek.Type == "relationship" || stixTypesNotExtracted[peek.Type] {
+			return nil
+		}
+		kind, ok := stixTypeToKind[peek.Type]
+		if !ok {
+			return errors.Errorf("unexpected STIX type. expected: %q, actual: %q", knownStixTypes, peek.Type)
+		}
+		extID := externalID(peek.ExternalReferences, "mitre-attack")
+		if extID == "" {
+			return nil
+		}
+		uuidToExt[peek.ID] = extID
+		uuidKind[peek.ID] = kind
+		uuidToPath[peek.ID] = path
+		if kind == attackTypes.KindTactic && peek.XMitreShortname != nil && *peek.XMitreShortname != "" {
+			idx.tacticShortnameToID[*peek.XMitreShortname] = extID
+			tacticUUIDToShortname[peek.ID] = *peek.XMitreShortname
+		}
+		primaries = append(primaries, discovered{
+			path:     path,
+			uuid:     peek.ID,
+			stixType: peek.Type,
+			kind:     kind,
+			extID:    extID,
+			peek:     peek,
+		})
+		return nil
+	}); err != nil {
+		return errors.Wrapf(err, "walk %s", args)
 	}
 
-	// Pass 1.5: resolve UUID-based refs that aren't covered by relationships.
-	//
-	//   - Technique.TacticRefs → tactic shortname (and build tactic → techniques reverse)
-	//   - DetectionStrategy.x_mitre_analytic_refs → analytic extIDs (forward + reverse)
-	//   - DataComponent.x_mitre_data_source_ref → data-source extID (forward + reverse)
-	//
-	// Each reference Read also registers the cross-ref path against the
-	// owning entry's reader for provenance.
-	for _, entry := range entries {
-		switch entry.kind {
+	// Stage 1b: resolve UUID-based cross-refs that don't come from
+	// relationships. uuidToExt is fully populated now, so each ref UUID
+	// either lands in our primary set or is dropped silently. The
+	// corresponding cross-ref file is queued as a provenance attachment
+	// on the owning entry (replayed by Stage 2 via attachRead). The
+	// resolved primary "first wins" — same dedup rule Stage 2 will use
+	// — so a record published in multiple domain bundles
+	// (enterprise/ics/mobile) doesn't have its cross-refs counted N times.
+	resolvedFirst := make(map[string]bool, len(primaries))
+	for _, p := range primaries {
+		if resolvedFirst[p.extID] {
+			continue
+		}
+		resolvedFirst[p.extID] = true
+		switch p.kind {
 		case attackTypes.KindTechnique:
-			ap := entry.raw.(*attack.AttackPattern)
-			// KillChainPhases shortnames (inline) → also reverse to tactic.Techniques
-			for _, kc := range ap.KillChainPhases {
+			// KillChainPhases shortnames are inline on the Technique — no file to attach.
+			for _, kc := range p.peek.KillChainPhases {
 				switch kc.KillChainName {
 				case "mitre-attack", "mitre-ics-attack", "mitre-mobile-attack":
-					idx.techniqueTactics[entry.extID] = append(idx.techniqueTactics[entry.extID], kc.PhaseName)
-					idx.tacticTechniques[kc.PhaseName] = append(idx.tacticTechniques[kc.PhaseName], entry.extID)
+					idx.techniqueTactics[p.extID] = append(idx.techniqueTactics[p.extID], kc.PhaseName)
+					idx.tacticTechniques[kc.PhaseName] = append(idx.tacticTechniques[kc.PhaseName], p.extID)
 				}
 			}
-			// TacticRefs → x-mitre-tactic file → shortname
-			for _, tr := range ap.TacticRefs {
-				tacticPath, ok := uuidToPath[tr]
+			// TacticRefs → shortname via the Tactic peek index built in Stage 1a.
+			for _, tr := range p.peek.TacticRefs {
+				shortname, ok := tacticUUIDToShortname[tr]
 				if !ok {
 					continue
 				}
-				var t attack.XMitreTactic
-				if err := entry.reader.Read(tacticPath, args, &t); err != nil {
-					return errors.Wrapf(err, "read tactic %s", tacticPath)
-				}
-				if t.XMitreShortname != nil {
-					idx.techniqueTactics[entry.extID] = append(idx.techniqueTactics[entry.extID], *t.XMitreShortname)
-					idx.tacticTechniques[*t.XMitreShortname] = append(idx.tacticTechniques[*t.XMitreShortname], entry.extID)
+				idx.techniqueTactics[p.extID] = append(idx.techniqueTactics[p.extID], shortname)
+				idx.tacticTechniques[shortname] = append(idx.tacticTechniques[shortname], p.extID)
+				if tacticPath, ok := uuidToPath[tr]; ok {
+					attachments[p.extID] = append(attachments[p.extID], attachment{path: tacticPath, stixType: "x-mitre-tactic"})
 				}
 			}
 		case attackTypes.KindDetectStrategy:
-			ds := entry.raw.(*attack.XMitreDetectionStrategy)
-			for _, ar := range ds.XMitreAnalyticRefs {
+			for _, ar := range p.peek.XMitreAnalyticRefs {
 				anExt, ok := uuidToExt[ar]
 				if !ok {
 					continue
 				}
-				idx.detectionStrategyAnalytics[entry.extID] = append(idx.detectionStrategyAnalytics[entry.extID], anExt)
-				idx.analyticDetectionStrategy[anExt] = entry.extID
+				idx.detectionStrategyAnalytics[p.extID] = append(idx.detectionStrategyAnalytics[p.extID], anExt)
+				idx.analyticDetectionStrategy[anExt] = p.extID
 				if anPath, ok := uuidToPath[ar]; ok {
-					if err := entry.reader.Read(anPath, args, new(attack.XMitreAnalytic)); err != nil {
-						return errors.Wrapf(err, "read analytic %s", anPath)
-					}
+					attachments[p.extID] = append(attachments[p.extID], attachment{path: anPath, stixType: "x-mitre-analytic"})
 				}
 			}
 		case attackTypes.KindDataComponent:
-			dc := entry.raw.(*attack.XMitreDataComponent)
-			if dc.XMitreDataSourceRef != nil {
-				if dsExt, ok := uuidToExt[*dc.XMitreDataSourceRef]; ok {
-					idx.dataComponentSource[entry.extID] = dsExt
-					idx.dataSourceComponents[dsExt] = append(idx.dataSourceComponents[dsExt], entry.extID)
-					if dsPath, ok := uuidToPath[*dc.XMitreDataSourceRef]; ok {
-						if err := entry.reader.Read(dsPath, args, new(attack.XMitreDataSource)); err != nil {
-							return errors.Wrapf(err, "read data-source %s", dsPath)
-						}
-					}
-				}
+			if p.peek.XMitreDataSourceRef == nil {
+				continue
+			}
+			dsRef := *p.peek.XMitreDataSourceRef
+			dsExt, ok := uuidToExt[dsRef]
+			if !ok {
+				continue
+			}
+			idx.dataComponentSource[p.extID] = dsExt
+			idx.dataSourceComponents[dsExt] = append(idx.dataSourceComponents[dsExt], p.extID)
+			if dsPath, ok := uuidToPath[dsRef]; ok {
+				attachments[p.extID] = append(attachments[p.extID], attachment{path: dsPath, stixType: "x-mitre-data-source"})
 			}
 		}
 	}
 
-	// Pass 2: read each domain's relationship files directly. Relationship
-	// JSON only ever lives at <domain>/relationship/*.json, so a flat
-	// per-directory ReadDir skips visiting every other STIX type folder
-	// that Pass 1 already consumed.
+	// Stage 1c: read each domain's relationship files and update idx +
+	// attachments. Relationship JSON lives at
+	// <domain>/relationship/*.json so a flat per-directory ReadDir
+	// skips the other STIX type folders Stage 1a already consumed.
 	domains, err := os.ReadDir(args)
 	if err != nil {
 		return errors.Wrapf(err, "read %s", args)
@@ -383,9 +373,9 @@ func Extract(args string, opts ...Option) error {
 			}
 			path := filepath.Join(relDir, f.Name())
 
-			var r attack.Relationship
-			if err := utiljson.NewJSONReader().Read(path, args, &r); err != nil {
-				return errors.Wrapf(err, "read json %s", path)
+			r, err := decodeRelationship(path)
+			if err != nil {
+				return errors.Wrapf(err, "relationship %s", path)
 			}
 			if r.RelationshipType == "" || r.SourceRef == "" || r.TargetRef == "" {
 				continue
@@ -399,141 +389,140 @@ func Extract(args string, opts ...Option) error {
 				desc = *r.Description
 			}
 			refs := toReferences(r.ExternalReferences)
+			srcPath, tgtPath := uuidToPath[src], uuidToPath[tgt]
 
 			switch r.RelationshipType {
 			case "subtechnique-of":
-				// Forward: subtechnique points at a single parent
-				// technique (the only edge whose forward projection
-				// isn't a slice; handled inline).
-				if srcEntry := entries[srcExt]; srcEntry != nil && tgtExt != "" {
-					if err := attachRel(srcEntry, path, args); err != nil {
-						return err
-					}
-					if err := attachCrossRef(srcEntry, uuidToPath[tgt], "attack-pattern", args); err != nil {
-						return err
-					}
+				// Forward: subtechnique → parent (single value).
+				if srcExt != "" && tgtExt != "" {
 					idx.techniqueParent[srcExt] = tgtExt
+					attachments[srcExt] = append(attachments[srcExt],
+						attachment{path: path, stixType: "relationship"},
+						attachment{path: tgtPath, stixType: "attack-pattern"},
+					)
 				}
-				// Reverse: parent gets list of children.
-				if err := recordEdge(idx.techniqueSubtechniques, tgtExt, srcExt, entries[tgtExt], path, args, uuidToPath[src], "attack-pattern", srcExt); err != nil {
-					return err
-				}
+				// Reverse: parent → children.
+				recordSide(idx.techniqueSubtechniques, tgtExt, srcExt, srcExt, attachments, path, srcPath, "attack-pattern")
 			case "mitigates":
-				// fwd: M → T (mitigation's TechniquesMitigated).
-				if err := recordEdge(idx.mitigates.fwd, srcExt, tgtExt, entries[srcExt], path, args, uuidToPath[tgt], "attack-pattern",
-					relatedrefTypes.RelatedRef{ID: tgtExt, Description: desc, References: refs}); err != nil {
-					return err
-				}
-				// rev: T → M (technique's Mitigations).
-				if err := recordEdge(idx.mitigates.rev, tgtExt, srcExt, entries[tgtExt], path, args, uuidToPath[src], "course-of-action",
-					relatedrefTypes.RelatedRef{ID: srcExt, Description: desc, References: refs}); err != nil {
-					return err
-				}
+				// fwd: M → T (Mitigation.TechniquesMitigated).
+				recordSide(idx.mitigates.fwd, srcExt, tgtExt,
+					relatedrefTypes.RelatedRef{ID: tgtExt, Description: desc, References: refs},
+					attachments, path, tgtPath, "attack-pattern")
+				// rev: T → M (Technique.Mitigations).
+				recordSide(idx.mitigates.rev, tgtExt, srcExt,
+					relatedrefTypes.RelatedRef{ID: srcExt, Description: desc, References: refs},
+					attachments, path, srcPath, "course-of-action")
 			case "uses":
 				if srcExt == "" || tgtExt == "" {
 					continue
 				}
 				switch {
 				case srcKind == attackTypes.KindGroup && tgtKind == attackTypes.KindTechnique:
-					if err := recordEdge(idx.groupTechniquesUsed, srcExt, tgtExt, entries[srcExt], path, args, uuidToPath[tgt], "attack-pattern",
-						techniqueusedTypes.TechniqueUsed{ID: tgtExt, Description: desc, References: refs}); err != nil {
-						return err
-					}
-					if err := recordEdge(idx.techniqueProcedures, tgtExt, srcExt, entries[tgtExt], path, args, uuidToPath[src], "intrusion-set",
-						procedureTypes.Procedure{AttackerID: srcExt, Description: desc, References: refs}); err != nil {
-						return err
-					}
+					recordSide(idx.groupTechniquesUsed, srcExt, tgtExt,
+						techniqueusedTypes.TechniqueUsed{ID: tgtExt, Description: desc, References: refs},
+						attachments, path, tgtPath, "attack-pattern")
+					recordSide(idx.techniqueProcedures, tgtExt, srcExt,
+						procedureTypes.Procedure{AttackerID: srcExt, Description: desc, References: refs},
+						attachments, path, srcPath, "intrusion-set")
 				case srcKind == attackTypes.KindGroup && tgtKind == attackTypes.KindSoftware:
-					if err := recordEdge(idx.groupSoftwaresUsed, srcExt, tgtExt, entries[srcExt], path, args, uuidToPath[tgt], stixTypeFromUUID(tgt),
-						relatedrefTypes.RelatedRef{ID: tgtExt, Description: desc, References: refs}); err != nil {
-						return err
-					}
-					if err := recordEdge(idx.softwareGroupsUsing, tgtExt, srcExt, entries[tgtExt], path, args, uuidToPath[src], "intrusion-set",
-						relatedrefTypes.RelatedRef{ID: srcExt, Description: desc, References: refs}); err != nil {
-						return err
-					}
+					recordSide(idx.groupSoftwaresUsed, srcExt, tgtExt,
+						relatedrefTypes.RelatedRef{ID: tgtExt, Description: desc, References: refs},
+						attachments, path, tgtPath, stixTypeFromUUID(tgt))
+					recordSide(idx.softwareGroupsUsing, tgtExt, srcExt,
+						relatedrefTypes.RelatedRef{ID: srcExt, Description: desc, References: refs},
+						attachments, path, srcPath, "intrusion-set")
 				case srcKind == attackTypes.KindSoftware && tgtKind == attackTypes.KindTechnique:
-					if err := recordEdge(idx.softwareTechniquesUsed, srcExt, tgtExt, entries[srcExt], path, args, uuidToPath[tgt], "attack-pattern",
-						techniqueusedTypes.TechniqueUsed{ID: tgtExt, Description: desc, References: refs}); err != nil {
-						return err
-					}
-					if err := recordEdge(idx.techniqueProcedures, tgtExt, srcExt, entries[tgtExt], path, args, uuidToPath[src], stixTypeFromUUID(src),
-						procedureTypes.Procedure{AttackerID: srcExt, Description: desc, References: refs}); err != nil {
-						return err
-					}
+					recordSide(idx.softwareTechniquesUsed, srcExt, tgtExt,
+						techniqueusedTypes.TechniqueUsed{ID: tgtExt, Description: desc, References: refs},
+						attachments, path, tgtPath, "attack-pattern")
+					recordSide(idx.techniqueProcedures, tgtExt, srcExt,
+						procedureTypes.Procedure{AttackerID: srcExt, Description: desc, References: refs},
+						attachments, path, srcPath, stixTypeFromUUID(src))
 				case srcKind == attackTypes.KindCampaign && tgtKind == attackTypes.KindTechnique:
-					if err := recordEdge(idx.campaignTechniquesUsed, srcExt, tgtExt, entries[srcExt], path, args, uuidToPath[tgt], "attack-pattern",
-						techniqueusedTypes.TechniqueUsed{ID: tgtExt, Description: desc, References: refs}); err != nil {
-						return err
-					}
-					if err := recordEdge(idx.techniqueProcedures, tgtExt, srcExt, entries[tgtExt], path, args, uuidToPath[src], "campaign",
-						procedureTypes.Procedure{AttackerID: srcExt, Description: desc, References: refs}); err != nil {
-						return err
-					}
+					recordSide(idx.campaignTechniquesUsed, srcExt, tgtExt,
+						techniqueusedTypes.TechniqueUsed{ID: tgtExt, Description: desc, References: refs},
+						attachments, path, tgtPath, "attack-pattern")
+					recordSide(idx.techniqueProcedures, tgtExt, srcExt,
+						procedureTypes.Procedure{AttackerID: srcExt, Description: desc, References: refs},
+						attachments, path, srcPath, "campaign")
 				case srcKind == attackTypes.KindCampaign && tgtKind == attackTypes.KindSoftware:
-					if err := recordEdge(idx.campaignSoftwaresUsed, srcExt, tgtExt, entries[srcExt], path, args, uuidToPath[tgt], stixTypeFromUUID(tgt),
-						relatedrefTypes.RelatedRef{ID: tgtExt, Description: desc, References: refs}); err != nil {
-						return err
-					}
-					if err := recordEdge(idx.softwareCampaignsUsing, tgtExt, srcExt, entries[tgtExt], path, args, uuidToPath[src], "campaign",
-						relatedrefTypes.RelatedRef{ID: srcExt, Description: desc, References: refs}); err != nil {
-						return err
-					}
+					recordSide(idx.campaignSoftwaresUsed, srcExt, tgtExt,
+						relatedrefTypes.RelatedRef{ID: tgtExt, Description: desc, References: refs},
+						attachments, path, tgtPath, stixTypeFromUUID(tgt))
+					recordSide(idx.softwareCampaignsUsing, tgtExt, srcExt,
+						relatedrefTypes.RelatedRef{ID: srcExt, Description: desc, References: refs},
+						attachments, path, srcPath, "campaign")
 				}
 			case "attributed-to":
 				if srcKind != attackTypes.KindCampaign || tgtKind != attackTypes.KindGroup || srcExt == "" || tgtExt == "" {
 					break
 				}
-				// fwd: C → G (campaign's GroupsAttributed).
-				if err := recordEdge(idx.attributedTo.fwd, srcExt, tgtExt, entries[srcExt], path, args, uuidToPath[tgt], "intrusion-set",
-					relatedrefTypes.RelatedRef{ID: tgtExt, Description: desc, References: refs}); err != nil {
-					return err
-				}
-				// rev: G → C (group's CampaignsAttributed).
-				if err := recordEdge(idx.attributedTo.rev, tgtExt, srcExt, entries[tgtExt], path, args, uuidToPath[src], "campaign",
-					relatedrefTypes.RelatedRef{ID: srcExt, Description: desc, References: refs}); err != nil {
-					return err
-				}
+				// fwd: C → G (Campaign.GroupsAttributed).
+				recordSide(idx.attributedTo.fwd, srcExt, tgtExt,
+					relatedrefTypes.RelatedRef{ID: tgtExt, Description: desc, References: refs},
+					attachments, path, tgtPath, "intrusion-set")
+				// rev: G → C (Group.CampaignsAttributed).
+				recordSide(idx.attributedTo.rev, tgtExt, srcExt,
+					relatedrefTypes.RelatedRef{ID: srcExt, Description: desc, References: refs},
+					attachments, path, srcPath, "campaign")
 			case "targets":
 				// attack-pattern --targets--> x-mitre-asset
 				if srcKind != attackTypes.KindTechnique || tgtKind != attackTypes.KindAsset || srcExt == "" || tgtExt == "" {
 					break
 				}
-				// fwd: T → A (technique's AssetsTargeted).
-				if err := recordEdge(idx.targets.fwd, srcExt, tgtExt, entries[srcExt], path, args, uuidToPath[tgt], "x-mitre-asset",
-					relatedrefTypes.RelatedRef{ID: tgtExt, Description: desc, References: refs}); err != nil {
-					return err
-				}
-				// rev: A → T (asset's TechniquesTargeting).
-				if err := recordEdge(idx.targets.rev, tgtExt, srcExt, entries[tgtExt], path, args, uuidToPath[src], "attack-pattern",
-					relatedrefTypes.RelatedRef{ID: srcExt, Description: desc, References: refs}); err != nil {
-					return err
-				}
+				// fwd: T → A (Technique.AssetsTargeted).
+				recordSide(idx.targets.fwd, srcExt, tgtExt,
+					relatedrefTypes.RelatedRef{ID: tgtExt, Description: desc, References: refs},
+					attachments, path, tgtPath, "x-mitre-asset")
+				// rev: A → T (Asset.TechniquesTargeting).
+				recordSide(idx.targets.rev, tgtExt, srcExt,
+					relatedrefTypes.RelatedRef{ID: srcExt, Description: desc, References: refs},
+					attachments, path, srcPath, "attack-pattern")
 			case "detects":
 				// x-mitre-detection-strategy --detects--> attack-pattern
 				if srcKind != attackTypes.KindDetectStrategy || tgtKind != attackTypes.KindTechnique || srcExt == "" || tgtExt == "" {
 					break
 				}
-				// fwd: DET → T (strategy's TechniquesDetected).
-				if err := recordEdge(idx.detects.fwd, srcExt, tgtExt, entries[srcExt], path, args, uuidToPath[tgt], "attack-pattern",
-					relatedrefTypes.RelatedRef{ID: tgtExt, Description: desc, References: refs}); err != nil {
-					return err
-				}
-				// rev: T → DET (technique's DetectionStrategies).
-				if err := recordEdge(idx.detects.rev, tgtExt, srcExt, entries[tgtExt], path, args, uuidToPath[src], "x-mitre-detection-strategy",
-					relatedrefTypes.RelatedRef{ID: srcExt, Description: desc, References: refs}); err != nil {
-					return err
-				}
+				// fwd: DET → T (DetectionStrategy.TechniquesDetected).
+				recordSide(idx.detects.fwd, srcExt, tgtExt,
+					relatedrefTypes.RelatedRef{ID: tgtExt, Description: desc, References: refs},
+					attachments, path, tgtPath, "attack-pattern")
+				// rev: T → DET (Technique.DetectionStrategies).
+				recordSide(idx.detects.rev, tgtExt, srcExt,
+					relatedrefTypes.RelatedRef{ID: srcExt, Description: desc, References: refs},
+					attachments, path, srcPath, "x-mitre-detection-strategy")
 			case "revoked-by":
-				// Captured by the boolean Revoked field already; skip rel-level handling.
+				// Captured by the boolean Revoked field already.
 			}
 		}
 	}
 
-	// Pass 3: convert each primary entry to the canonical record and emit.
-	for _, entry := range entries {
-		extracted := convert(entry, idx)
-		outPath := filepath.Join(options.dir, "attack", fmt.Sprintf("%s.json", entry.extID))
+	// Stage 2: for each unique discovered primary, allocate a fresh
+	// JSONReader, read its concrete STIX struct, replay every queued
+	// attachment so the entry's reader sees every contributing file,
+	// then convert and write. Stage 2 reads only the files this one
+	// record needs — its primary plus the cross-refs and relationships
+	// already indexed in Stage 1.
+	processed := make(map[string]bool)
+	for _, p := range primaries {
+		if processed[p.extID] {
+			continue
+		}
+		processed[p.extID] = true
+
+		r := utiljson.NewJSONReader()
+		raw, err := readConcrete(p.stixType, p.path, args, r)
+		if err != nil {
+			return err
+		}
+		for _, a := range attachments[p.extID] {
+			if err := attachRead(a.stixType, a.path, args, r); err != nil {
+				return errors.Wrapf(err, "attach %s for %s", a.path, p.extID)
+			}
+		}
+		entry := primaryEntry{extID: p.extID, kind: p.kind, raw: raw, reader: r}
+		extracted := convert(&entry, idx)
+		outPath := filepath.Join(options.dir, "attack", fmt.Sprintf("%s.json", p.extID))
 		if err := util.Write(outPath, extracted, true); err != nil {
 			return errors.Wrapf(err, "write %s", outPath)
 		}
@@ -562,12 +551,31 @@ func Extract(args string, opts ...Option) error {
 	return nil
 }
 
-// stixPeek is the minimal envelope Stage 1 decodes from every STIX
-// file to classify it without paying for the full concrete struct.
+// stixPeek is the envelope Stage 1 decodes from every STIX file. The
+// shared discriminator/ID/external_references trio classifies the
+// record and the kind-specific cross-ref fields let Stage 1 resolve
+// every UUID-based reference (Technique.TacticRefs +
+// KillChainPhases, DetectionStrategy.x_mitre_analytic_refs,
+// DataComponent.x_mitre_data_source_ref, Tactic.x_mitre_shortname)
+// without paying for the full concrete struct. Stage 2 still reads
+// each kept record concretely so the build* helpers see real fields.
 type stixPeek struct {
 	Type               string                     `json:"type"`
 	ID                 string                     `json:"id"`
 	ExternalReferences []attack.ExternalReference `json:"external_references"`
+
+	// Tactic only.
+	XMitreShortname *string `json:"x_mitre_shortname,omitempty"`
+
+	// Technique only.
+	TacticRefs      []string                `json:"tactic_refs,omitempty"`
+	KillChainPhases []attack.KillChainPhase `json:"kill_chain_phases,omitempty"`
+
+	// DetectionStrategy only.
+	XMitreAnalyticRefs []string `json:"x_mitre_analytic_refs,omitempty"`
+
+	// DataComponent only.
+	XMitreDataSourceRef *string `json:"x_mitre_data_source_ref,omitempty"`
 }
 
 // knownStixTypes is the sorted list of STIX types the extractor knows
@@ -593,6 +601,57 @@ func peekPrimary(path string) (stixPeek, error) {
 		return stixPeek{}, errors.Wrapf(err, "decode %s", path)
 	}
 	return p, nil
+}
+
+// attachment records a file Stage 2 needs to register into a primary
+// entry's JSONReader so the canonical record's data_source.raws list
+// every contributing file. Stage 1 records one attachment per
+// cross-reference / relationship file that touches the entry; Stage 2
+// replays them in order through attachRead.
+type attachment struct {
+	path     string
+	stixType string
+}
+
+// attachRead registers the path into r by reading the file as the
+// given STIX type. JSONReader's path tracking dedupes within a reader,
+// so the same file referenced by multiple relationships only appears
+// once in the final raws list. Unknown stixType is a silent no-op
+// because the input may include STIX kinds the extractor doesn't keep
+// (matching attachCrossRef's old behaviour).
+func attachRead(stixType, path, args string, r *utiljson.JSONReader) error {
+	if path == "" {
+		return nil
+	}
+	switch stixType {
+	case "relationship":
+		return r.Read(path, args, new(attack.Relationship))
+	case "attack-pattern":
+		return r.Read(path, args, new(attack.AttackPattern))
+	case "x-mitre-tactic":
+		return r.Read(path, args, new(attack.XMitreTactic))
+	case "course-of-action":
+		return r.Read(path, args, new(attack.CourseOfAction))
+	case "intrusion-set":
+		return r.Read(path, args, new(attack.IntrusionSet))
+	case "malware":
+		return r.Read(path, args, new(attack.Malware))
+	case "tool":
+		return r.Read(path, args, new(attack.Tool))
+	case "campaign":
+		return r.Read(path, args, new(attack.Campaign))
+	case "x-mitre-asset":
+		return r.Read(path, args, new(attack.XMitreAsset))
+	case "x-mitre-detection-strategy":
+		return r.Read(path, args, new(attack.XMitreDetectionStrategy))
+	case "x-mitre-analytic":
+		return r.Read(path, args, new(attack.XMitreAnalytic))
+	case "x-mitre-data-source":
+		return r.Read(path, args, new(attack.XMitreDataSource))
+	case "x-mitre-data-component":
+		return r.Read(path, args, new(attack.XMitreDataComponent))
+	}
+	return nil
 }
 
 // readConcrete is the Stage 2 dispatcher: given the STIX type already
@@ -680,65 +739,44 @@ func readConcrete(stixType, path, args string, r *utiljson.JSONReader) (any, err
 	return nil, errors.Errorf("unexpected STIX type for readConcrete: %q", stixType)
 }
 
-func attachRel(entry *primaryEntry, relPath, args string) error {
-	if err := entry.reader.Read(relPath, args, new(attack.Relationship)); err != nil {
-		return errors.Wrapf(err, "register relationship %s", relPath)
+// decodeRelationship reads a STIX relationship file. Stage 1c uses
+// this without a JSONReader because relationship files don't carry
+// content for the canonical record — their paths are tracked
+// per-entry through attachments at Stage 2.
+func decodeRelationship(path string) (attack.Relationship, error) {
+	f, err := os.Open(path)
+	if err != nil {
+		return attack.Relationship{}, errors.Wrapf(err, "open %s", path)
 	}
-	return nil
+	defer f.Close()
+	var r attack.Relationship
+	if err := json.UnmarshalRead(f, &r); err != nil {
+		return attack.Relationship{}, errors.Wrapf(err, "decode %s", path)
+	}
+	return r, nil
 }
 
-func attachCrossRef(entry *primaryEntry, crossPath, stixType, args string) error {
-	if crossPath == "" {
-		return nil
+// recordSide records one direction of a STIX relationship: appends
+// item into edges keyed by ownerExt and queues the relationship file +
+// the other-side STIX file as attachments on the owning primary's
+// JSONReader-to-be (replayed by Stage 2). No-op when either side's
+// ext ID is empty so callers can apply the forward and reverse
+// projections symmetrically without an outer ok-check.
+func recordSide[T any](
+	edges map[string][]T,
+	ownerExt, otherExt string,
+	item T,
+	attachments map[string][]attachment,
+	relPath, otherPath, otherStixType string,
+) {
+	if ownerExt == "" || otherExt == "" {
+		return
 	}
-	switch stixType {
-	case "attack-pattern":
-		return entry.reader.Read(crossPath, args, new(attack.AttackPattern))
-	case "intrusion-set":
-		return entry.reader.Read(crossPath, args, new(attack.IntrusionSet))
-	case "malware":
-		return entry.reader.Read(crossPath, args, new(attack.Malware))
-	case "tool":
-		return entry.reader.Read(crossPath, args, new(attack.Tool))
-	case "course-of-action":
-		return entry.reader.Read(crossPath, args, new(attack.CourseOfAction))
-	case "campaign":
-		return entry.reader.Read(crossPath, args, new(attack.Campaign))
-	case "x-mitre-tactic":
-		return entry.reader.Read(crossPath, args, new(attack.XMitreTactic))
-	case "x-mitre-asset":
-		return entry.reader.Read(crossPath, args, new(attack.XMitreAsset))
-	case "x-mitre-detection-strategy":
-		return entry.reader.Read(crossPath, args, new(attack.XMitreDetectionStrategy))
-	case "x-mitre-analytic":
-		return entry.reader.Read(crossPath, args, new(attack.XMitreAnalytic))
-	case "x-mitre-data-source":
-		return entry.reader.Read(crossPath, args, new(attack.XMitreDataSource))
-	case "x-mitre-data-component":
-		return entry.reader.Read(crossPath, args, new(attack.XMitreDataComponent))
-	}
-	return nil
-}
-
-// recordEdge attaches the relationship file + other-side STIX file to
-// the owning entry's reader for provenance, then appends item into
-// m[key]. A nil entry or empty other is a no-op so callers can apply
-// the forward and reverse directions of a relationship symmetrically
-// without an outer ok-check; entry is looked up by the caller via
-// entries[key] and may legitimately be missing when the rel points at
-// a STIX object outside the bundled dataset.
-func recordEdge[T any](m map[string][]T, key, other string, entry *primaryEntry, relPath, args, otherPath, otherStixType string, item T) error {
-	if entry == nil || other == "" {
-		return nil
-	}
-	if err := attachRel(entry, relPath, args); err != nil {
-		return err
-	}
-	if err := attachCrossRef(entry, otherPath, otherStixType, args); err != nil {
-		return err
-	}
-	m[key] = append(m[key], item)
-	return nil
+	edges[ownerExt] = append(edges[ownerExt], item)
+	attachments[ownerExt] = append(attachments[ownerExt],
+		attachment{path: relPath, stixType: "relationship"},
+		attachment{path: otherPath, stixType: otherStixType},
+	)
 }
 
 func stixTypeFromUUID(uuid string) string {
