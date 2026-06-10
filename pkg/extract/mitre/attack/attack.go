@@ -274,15 +274,11 @@ func Extract(args string, opts ...Option) error {
 	// Stage 1c: link relationship files into both sides' file lists,
 	// plus every cross-domain copy of the other-side primary so Stage 2
 	// can replay them for provenance without a global edge index.
-	doms, err := os.ReadDir(args)
-	if err != nil {
-		return errors.Wrapf(err, "read %s", args)
-	}
-	for _, dom := range doms {
-		if !dom.IsDir() || dom.Name() == ".git" {
-			continue
-		}
-		relDir := filepath.Join(args, dom.Name(), "relationship")
+	// ATT&CK only ships three bundles (enterprise / ics / mobile) and
+	// bundleOf already hard-codes that set, so iterating an explicit
+	// list keeps Stage 1a and Stage 1c in sync.
+	for _, dom := range []string{"enterprise", "ics", "mobile"} {
+		relDir := filepath.Join(args, dom, "relationship")
 		relFiles, err := os.ReadDir(relDir)
 		if err != nil {
 			if errors.Is(err, fs.ErrNotExist) {
