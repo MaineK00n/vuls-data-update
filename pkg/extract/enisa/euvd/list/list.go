@@ -85,7 +85,10 @@ func Extract(args string, opts ...Option) error {
 			return errors.Wrapf(err, "read json %s", path)
 		}
 
-		extracted := extract(fetched, r.Paths())
+		extracted, err := extract(fetched, r.Paths())
+		if err != nil {
+			return errors.Wrapf(err, "extract %s", path)
+		}
 
 		splitted, err := util.Split(fetched.ID, "-", "-")
 		if err != nil {
@@ -128,63 +131,84 @@ func Extract(args string, opts ...Option) error {
 	return nil
 }
 
-func extract(fetched list.Item, raws []string) dataTypes.Data {
+func extract(fetched list.Item, raws []string) (dataTypes.Data, error) {
+	severity, err := func() ([]severityTypes.Severity, error) {
+		switch {
+		case fetched.BaseScoreVector == "":
+			return nil, nil
+		case strings.HasPrefix(fetched.BaseScoreVector, "CVSS:3.0/"):
+			v30, err := v30Types.Parse(fetched.BaseScoreVector)
+			if err != nil {
+				return nil, errors.Wrapf(err, "parse cvss v3.0 vector %s", fetched.BaseScoreVector)
+			}
+			return []severityTypes.Severity{{
+				Type:    severityTypes.SeverityTypeCVSSv30,
+				Source:  "euvd.enisa.europa.eu",
+				CVSSv30: v30,
+			}}, nil
+		case strings.HasPrefix(fetched.BaseScoreVector, "CVSS:3.1/"):
+			v31, err := v31Types.Parse(fetched.BaseScoreVector)
+			if err != nil {
+				return nil, errors.Wrapf(err, "parse cvss v3.1 vector %s", fetched.BaseScoreVector)
+			}
+			return []severityTypes.Severity{{
+				Type:    severityTypes.SeverityTypeCVSSv31,
+				Source:  "euvd.enisa.europa.eu",
+				CVSSv31: v31,
+			}}, nil
+		case strings.HasPrefix(fetched.BaseScoreVector, "CVSS:4.0/"):
+			v40, err := v40Types.Parse(fetched.BaseScoreVector)
+			if err != nil {
+				return nil, errors.Wrapf(err, "parse cvss v4.0 vector %s", fetched.BaseScoreVector)
+			}
+			return []severityTypes.Severity{{
+				Type:    severityTypes.SeverityTypeCVSSv40,
+				Source:  "euvd.enisa.europa.eu",
+				CVSSv40: v40,
+			}}, nil
+		default:
+			v2, err := v2Types.Parse(fetched.BaseScoreVector)
+			if err != nil {
+				return nil, errors.Wrapf(err, "parse cvss v2 vector %s", fetched.BaseScoreVector)
+			}
+			return []severityTypes.Severity{{
+				Type:   severityTypes.SeverityTypeCVSSv2,
+				Source: "euvd.enisa.europa.eu",
+				CVSSv2: v2,
+			}}, nil
+		}
+	}()
+	if err != nil {
+		return dataTypes.Data{}, errors.Wrap(err, "parse severity")
+	}
+
+	parseTime := func(value string) (*time.Time, error) {
+		if value == "" {
+			return nil, nil
+		}
+		t := utiltime.Parse([]string{"Jan 2, 2006, 3:04:05 PM"}, value)
+		if t == nil {
+			return nil, errors.Errorf("unexpected date format. expected: %q, actual: %q", "Jan 2, 2006, 3:04:05 PM", value)
+		}
+		return t, nil
+	}
+
+	published, err := parseTime(fetched.DatePublished)
+	if err != nil {
+		return dataTypes.Data{}, errors.Wrap(err, "parse datePublished")
+	}
+	modified, err := parseTime(fetched.DateUpdated)
+	if err != nil {
+		return dataTypes.Data{}, errors.Wrap(err, "parse dateUpdated")
+	}
+
 	return dataTypes.Data{
 		ID: dataTypes.RootID(fetched.ID),
 		Advisories: []advisoryTypes.Advisory{{
 			Content: advisoryContentTypes.Content{
 				ID:          advisoryContentTypes.AdvisoryID(fetched.ID),
 				Description: fetched.Description,
-				Severity: func() []severityTypes.Severity {
-					switch {
-					case fetched.BaseScoreVector == "":
-						return nil
-					case strings.HasPrefix(fetched.BaseScoreVector, "CVSS:3.0/"):
-						v30, err := v30Types.Parse(fetched.BaseScoreVector)
-						if err != nil {
-							slog.Warn("unexpected CVSS v3.0 vector", slog.String("id", fetched.ID), slog.String("vector", fetched.BaseScoreVector))
-							return nil
-						}
-						return []severityTypes.Severity{{
-							Type:    severityTypes.SeverityTypeCVSSv30,
-							Source:  "euvd.enisa.europa.eu",
-							CVSSv30: v30,
-						}}
-					case strings.HasPrefix(fetched.BaseScoreVector, "CVSS:3.1/"):
-						v31, err := v31Types.Parse(fetched.BaseScoreVector)
-						if err != nil {
-							slog.Warn("unexpected CVSS v3.1 vector", slog.String("id", fetched.ID), slog.String("vector", fetched.BaseScoreVector))
-							return nil
-						}
-						return []severityTypes.Severity{{
-							Type:    severityTypes.SeverityTypeCVSSv31,
-							Source:  "euvd.enisa.europa.eu",
-							CVSSv31: v31,
-						}}
-					case strings.HasPrefix(fetched.BaseScoreVector, "CVSS:4.0/"):
-						v40, err := v40Types.Parse(fetched.BaseScoreVector)
-						if err != nil {
-							slog.Warn("unexpected CVSS v4.0 vector", slog.String("id", fetched.ID), slog.String("vector", fetched.BaseScoreVector))
-							return nil
-						}
-						return []severityTypes.Severity{{
-							Type:    severityTypes.SeverityTypeCVSSv40,
-							Source:  "euvd.enisa.europa.eu",
-							CVSSv40: v40,
-						}}
-					default:
-						v2, err := v2Types.Parse(fetched.BaseScoreVector)
-						if err != nil {
-							slog.Warn("unexpected CVSS vector", slog.String("id", fetched.ID), slog.String("vector", fetched.BaseScoreVector))
-							return nil
-						}
-						return []severityTypes.Severity{{
-							Type:   severityTypes.SeverityTypeCVSSv2,
-							Source: "euvd.enisa.europa.eu",
-							CVSSv2: v2,
-						}}
-					}
-				}(),
+				Severity:    severity,
 				References: func() []referenceTypes.Reference {
 					var rs []referenceTypes.Reference
 					for r := range strings.SplitSeq(fetched.References, "\n") {
@@ -198,18 +222,8 @@ func extract(fetched list.Item, raws []string) dataTypes.Data {
 					}
 					return rs
 				}(),
-				Published: func() *time.Time {
-					if fetched.DatePublished == "" {
-						return nil
-					}
-					return utiltime.Parse([]string{"Jan 2, 2006, 3:04:05 PM"}, fetched.DatePublished)
-				}(),
-				Modified: func() *time.Time {
-					if fetched.DateUpdated == "" {
-						return nil
-					}
-					return utiltime.Parse([]string{"Jan 2, 2006, 3:04:05 PM"}, fetched.DateUpdated)
-				}(),
+				Published: published,
+				Modified:  modified,
 			},
 		}},
 		Vulnerabilities: func() []vulnerabilityTypes.Vulnerability {
@@ -230,5 +244,5 @@ func extract(fetched list.Item, raws []string) dataTypes.Data {
 			ID:   sourceTypes.ENISAEUVDList,
 			Raws: raws,
 		},
-	}
+	}, nil
 }
