@@ -697,20 +697,21 @@ func (e extractor) buildCPEMatches(match cveTypes.CPEMatch) ([]ccTypes.CPE, ccRa
 		switch verRaw {
 		case "ANY", "NA":
 			continue
-		}
-		ver := unescapeWFN(verRaw)
+		default:
+			ver := unescapeWFN(verRaw)
 
-		// SEMVER range: skip if the entry's version is semver-parseable and
-		// falls inside the range — the Range already covers it. Non-semver
-		// or out-of-range entries need to appear in CPEMatches (the latter
-		// accounts for a tiny fraction of cases — segment-count or
-		// pre-release ordering quirks in NVD data).
-		if rangeType == ccRangeTypes.RangeTypeSEMVER {
-			if sv, err := version.NewSemver(ver); err == nil && versionInBounds(sv, bounds) {
-				continue
+			// SEMVER range: skip if the entry's version is semver-parseable
+			// and falls inside the range — the Range already covers it.
+			// Non-semver or out-of-range entries need to appear in CPEMatches
+			// (the latter accounts for a tiny fraction of cases — segment-count
+			// or pre-release ordering quirks in NVD data).
+			if rangeType == ccRangeTypes.RangeTypeSEMVER {
+				if sv, err := version.NewSemver(ver); err == nil && versionInBounds(sv, bounds) {
+					continue
+				}
 			}
+			cpeMatches = append(cpeMatches, ccTypes.CPE(n))
 		}
-		cpeMatches = append(cpeMatches, ccTypes.CPE(n))
 	}
 	return cpeMatches, rangeType, nil
 }
