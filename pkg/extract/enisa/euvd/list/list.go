@@ -185,7 +185,7 @@ func extract(fetched list.Item, raws []string) (dataTypes.Data, error) {
 		return dataTypes.Data{}, errors.Wrap(err, "parse severity")
 	}
 
-	aliasAdvisories, vulnerabilities, err := func() ([]advisoryTypes.Advisory, []vulnerabilityTypes.Vulnerability, error) {
+	advisories, vulnerabilities, err := func() ([]advisoryTypes.Advisory, []vulnerabilityTypes.Vulnerability, error) {
 		var as []advisoryTypes.Advisory
 		var vs []vulnerabilityTypes.Vulnerability
 		for a := range strings.SplitSeq(fetched.Aliases, "\n") {
@@ -240,7 +240,7 @@ func extract(fetched list.Item, raws []string) (dataTypes.Data, error) {
 				Published: utiltime.Parse([]string{"Jan 2, 2006, 3:04:05 PM"}, fetched.DatePublished),
 				Modified:  utiltime.Parse([]string{"Jan 2, 2006, 3:04:05 PM"}, fetched.DateUpdated),
 			},
-		}}, aliasAdvisories...),
+		}}, advisories...),
 		Vulnerabilities: vulnerabilities,
 		DataSource: sourceTypes.Source{
 			ID:   sourceTypes.ENISAEUVDList,
