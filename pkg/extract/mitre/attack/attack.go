@@ -312,10 +312,8 @@ func Extract(args string, opts ...Option) error {
 				return errors.Wrapf(err, "decode %s", path)
 			}
 
-			srcExt := uuids[r.SourceRef].ext
-			tgtExt := uuids[r.TargetRef].ext
-			src, srcOK := entries[srcExt]
-			tgt, tgtOK := entries[tgtExt]
+			src, srcOK := entries[uuids[r.SourceRef].ext]
+			tgt, tgtOK := entries[uuids[r.TargetRef].ext]
 			if !srcOK || !tgtOK {
 				return errors.Errorf("relationship %s references unindexed UUID (src=%s, tgt=%s)", path, r.SourceRef, r.TargetRef)
 			}
@@ -323,8 +321,8 @@ func Extract(args string, opts ...Option) error {
 			src.refs = append(src.refs, tgt.paths...)
 			tgt.rels[r.ID] = path
 			tgt.refs = append(tgt.refs, src.paths...)
-			entries[srcExt] = src
-			entries[tgtExt] = tgt
+			entries[uuids[r.SourceRef].ext] = src
+			entries[uuids[r.TargetRef].ext] = tgt
 
 			return nil
 		}); err != nil {
@@ -340,7 +338,6 @@ func Extract(args string, opts ...Option) error {
 	// is then handed to convert() unchanged.
 	for extID, e := range entries {
 		r := utiljson.NewJSONReader()
-		var raw any
 		domains := slices.Clone(e.peek.XMitreDomains)
 		domainSeen := make(map[string]bool, len(domains))
 		for _, d := range domains {
@@ -420,25 +417,23 @@ func Extract(args string, opts ...Option) error {
 			}
 		}
 
-		// Stage 2a: self primary files. The first one decodes into the
-		// concrete raw struct; the rest are cross-domain copies whose
-		// only contribution is provenance (attachRead) plus a union
-		// into domains.
-		for i, path := range e.paths {
-			if i == 0 {
-				rr, err := readConcrete(e.stixType, path, args, r)
-				if err != nil {
-					return err
-				}
-				raw = rr
-				continue
-			}
-			if err := attachRead(e.stixType, path, args, r); err != nil {
-				return errors.Wrapf(err, "attach self %s for %s", path, extID)
-			}
-			p, err := peekPrimary(path)
-			if err != nil {
-				return errors.Wrapf(err, "peek %s", path)
+		// Stage 2a: decode the canonical record from any one bundle
+		// copy (all copies have identical content). Stage 1a guarantees
+		// at least one path per entry.
+		raw, err := readConcrete(e.stixType, e.paths[0], args, r)
+		if err != nil {
+			return err
+		}
+
+		// Cross-domain copies of the same record (multi-domain Groups
+		// / Software / Campaigns) contribute provenance and their
+		// declared XMitreDomains subset, but nothing else. r.Read
+		// folds the path registration and the partial decode into
+		// one pass.
+		for _, path := range e.paths[1:] {
+			var p stixPeek
+			if err := r.Read(path, args, &p); err != nil {
+				return errors.Wrapf(err, "read self %s for %s", path, extID)
 			}
 			for _, d := range p.XMitreDomains {
 				if !domainSeen[d] {
@@ -450,27 +445,16 @@ func Extract(args string, opts ...Option) error {
 
 		// Stage 2b: relationships keyed by STIX UUID. Cross-bundle
 		// copies of the same logical relationship were collapsed at
-		// Stage 1c, so each edge is dispatched exactly once.
+		// Stage 1c, so each edge is dispatched exactly once. r.Read
+		// both decodes the edge and registers its path for raws in
+		// a single pass.
 		for _, path := range e.rels {
-			f, err := os.Open(path)
-			if err != nil {
-				return errors.Wrapf(err, "open %s", path)
-			}
 			var rel attack.Relationship
-			err = json.UnmarshalRead(f, &rel)
-			f.Close()
-			if err != nil {
-				return errors.Wrapf(err, "decode %s", path)
+			if err := r.Read(path, args, &rel); err != nil {
+				return errors.Wrapf(err, "read relationship %s for %s", path, extID)
 			}
-			if err := attachRead("relationship", path, args, r); err != nil {
-				return errors.Wrapf(err, "attach relationship %s for %s", path, extID)
-			}
-			srcU := uuids[rel.SourceRef]
-			tgtU := uuids[rel.TargetRef]
-			srcExt := srcU.ext
-			tgtExt := tgtU.ext
-			srcKind := srcU.kind
-			tgtKind := tgtU.kind
+			src := uuids[rel.SourceRef]
+			tgt := uuids[rel.TargetRef]
 			desc := ""
 			if rel.Description != nil {
 				desc = *rel.Description
@@ -482,105 +466,100 @@ func Extract(args string, opts ...Option) error {
 					if e.kind != attackTypes.KindTechnique {
 						break
 					}
-					if extID == srcExt {
-						techniqueParent = tgtExt
+					if extID == src.ext {
+						techniqueParent = tgt.ext
 					}
-					if extID == tgtExt {
-						techniqueSubtechniques = append(techniqueSubtechniques, srcExt)
+					if extID == tgt.ext {
+						techniqueSubtechniques = append(techniqueSubtechniques, src.ext)
 					}
 				case "mitigates":
-					if extID == srcExt && e.kind == attackTypes.KindMitigation {
-						mitigationTechniquesMitigated = append(mitigationTechniquesMitigated, relatedrefTypes.RelatedRef{ID: tgtExt, Description: desc, References: refs})
+					if extID == src.ext && e.kind == attackTypes.KindMitigation {
+						mitigationTechniquesMitigated = append(mitigationTechniquesMitigated, relatedrefTypes.RelatedRef{ID: tgt.ext, Description: desc, References: refs})
 					}
-					if extID == tgtExt && e.kind == attackTypes.KindTechnique {
-						techniqueMitigations = append(techniqueMitigations, relatedrefTypes.RelatedRef{ID: srcExt, Description: desc, References: refs})
+					if extID == tgt.ext && e.kind == attackTypes.KindTechnique {
+						techniqueMitigations = append(techniqueMitigations, relatedrefTypes.RelatedRef{ID: src.ext, Description: desc, References: refs})
 					}
 				case "uses":
 					switch {
-					case srcKind == attackTypes.KindGroup && tgtKind == attackTypes.KindTechnique:
-						if extID == srcExt && e.kind == attackTypes.KindGroup {
-							groupTechniquesUsed = append(groupTechniquesUsed, techniqueusedTypes.TechniqueUsed{ID: tgtExt, Description: desc, References: refs})
+					case src.kind == attackTypes.KindGroup && tgt.kind == attackTypes.KindTechnique:
+						if extID == src.ext && e.kind == attackTypes.KindGroup {
+							groupTechniquesUsed = append(groupTechniquesUsed, techniqueusedTypes.TechniqueUsed{ID: tgt.ext, Description: desc, References: refs})
 						}
-						if extID == tgtExt && e.kind == attackTypes.KindTechnique {
-							techniqueProcedures = append(techniqueProcedures, procedureTypes.Procedure{AttackerID: srcExt, Description: desc, References: refs})
+						if extID == tgt.ext && e.kind == attackTypes.KindTechnique {
+							techniqueProcedures = append(techniqueProcedures, procedureTypes.Procedure{AttackerID: src.ext, Description: desc, References: refs})
 						}
-					case srcKind == attackTypes.KindGroup && tgtKind == attackTypes.KindSoftware:
-						if extID == srcExt && e.kind == attackTypes.KindGroup {
-							groupSoftwaresUsed = append(groupSoftwaresUsed, relatedrefTypes.RelatedRef{ID: tgtExt, Description: desc, References: refs})
+					case src.kind == attackTypes.KindGroup && tgt.kind == attackTypes.KindSoftware:
+						if extID == src.ext && e.kind == attackTypes.KindGroup {
+							groupSoftwaresUsed = append(groupSoftwaresUsed, relatedrefTypes.RelatedRef{ID: tgt.ext, Description: desc, References: refs})
 						}
-						if extID == tgtExt && e.kind == attackTypes.KindSoftware {
-							softwareGroupsUsing = append(softwareGroupsUsing, relatedrefTypes.RelatedRef{ID: srcExt, Description: desc, References: refs})
+						if extID == tgt.ext && e.kind == attackTypes.KindSoftware {
+							softwareGroupsUsing = append(softwareGroupsUsing, relatedrefTypes.RelatedRef{ID: src.ext, Description: desc, References: refs})
 						}
-					case srcKind == attackTypes.KindSoftware && tgtKind == attackTypes.KindTechnique:
-						if extID == srcExt && e.kind == attackTypes.KindSoftware {
-							softwareTechniquesUsed = append(softwareTechniquesUsed, techniqueusedTypes.TechniqueUsed{ID: tgtExt, Description: desc, References: refs})
+					case src.kind == attackTypes.KindSoftware && tgt.kind == attackTypes.KindTechnique:
+						if extID == src.ext && e.kind == attackTypes.KindSoftware {
+							softwareTechniquesUsed = append(softwareTechniquesUsed, techniqueusedTypes.TechniqueUsed{ID: tgt.ext, Description: desc, References: refs})
 						}
-						if extID == tgtExt && e.kind == attackTypes.KindTechnique {
-							techniqueProcedures = append(techniqueProcedures, procedureTypes.Procedure{AttackerID: srcExt, Description: desc, References: refs})
+						if extID == tgt.ext && e.kind == attackTypes.KindTechnique {
+							techniqueProcedures = append(techniqueProcedures, procedureTypes.Procedure{AttackerID: src.ext, Description: desc, References: refs})
 						}
-					case srcKind == attackTypes.KindCampaign && tgtKind == attackTypes.KindTechnique:
-						if extID == srcExt && e.kind == attackTypes.KindCampaign {
-							campaignTechniquesUsed = append(campaignTechniquesUsed, techniqueusedTypes.TechniqueUsed{ID: tgtExt, Description: desc, References: refs})
+					case src.kind == attackTypes.KindCampaign && tgt.kind == attackTypes.KindTechnique:
+						if extID == src.ext && e.kind == attackTypes.KindCampaign {
+							campaignTechniquesUsed = append(campaignTechniquesUsed, techniqueusedTypes.TechniqueUsed{ID: tgt.ext, Description: desc, References: refs})
 						}
-						if extID == tgtExt && e.kind == attackTypes.KindTechnique {
-							techniqueProcedures = append(techniqueProcedures, procedureTypes.Procedure{AttackerID: srcExt, Description: desc, References: refs})
+						if extID == tgt.ext && e.kind == attackTypes.KindTechnique {
+							techniqueProcedures = append(techniqueProcedures, procedureTypes.Procedure{AttackerID: src.ext, Description: desc, References: refs})
 						}
-					case srcKind == attackTypes.KindCampaign && tgtKind == attackTypes.KindSoftware:
-						if extID == srcExt && e.kind == attackTypes.KindCampaign {
-							campaignSoftwaresUsed = append(campaignSoftwaresUsed, relatedrefTypes.RelatedRef{ID: tgtExt, Description: desc, References: refs})
+					case src.kind == attackTypes.KindCampaign && tgt.kind == attackTypes.KindSoftware:
+						if extID == src.ext && e.kind == attackTypes.KindCampaign {
+							campaignSoftwaresUsed = append(campaignSoftwaresUsed, relatedrefTypes.RelatedRef{ID: tgt.ext, Description: desc, References: refs})
 						}
-						if extID == tgtExt && e.kind == attackTypes.KindSoftware {
-							softwareCampaignsUsing = append(softwareCampaignsUsing, relatedrefTypes.RelatedRef{ID: srcExt, Description: desc, References: refs})
+						if extID == tgt.ext && e.kind == attackTypes.KindSoftware {
+							softwareCampaignsUsing = append(softwareCampaignsUsing, relatedrefTypes.RelatedRef{ID: src.ext, Description: desc, References: refs})
 						}
 					}
 				case "attributed-to":
-					if srcKind != attackTypes.KindCampaign || tgtKind != attackTypes.KindGroup {
+					if src.kind != attackTypes.KindCampaign || tgt.kind != attackTypes.KindGroup {
 						break
 					}
-					if extID == srcExt && e.kind == attackTypes.KindCampaign {
-						campaignGroupsAttributed = append(campaignGroupsAttributed, relatedrefTypes.RelatedRef{ID: tgtExt, Description: desc, References: refs})
+					if extID == src.ext && e.kind == attackTypes.KindCampaign {
+						campaignGroupsAttributed = append(campaignGroupsAttributed, relatedrefTypes.RelatedRef{ID: tgt.ext, Description: desc, References: refs})
 					}
-					if extID == tgtExt && e.kind == attackTypes.KindGroup {
-						groupCampaignsAttributed = append(groupCampaignsAttributed, relatedrefTypes.RelatedRef{ID: srcExt, Description: desc, References: refs})
+					if extID == tgt.ext && e.kind == attackTypes.KindGroup {
+						groupCampaignsAttributed = append(groupCampaignsAttributed, relatedrefTypes.RelatedRef{ID: src.ext, Description: desc, References: refs})
 					}
 				case "targets":
-					if srcKind != attackTypes.KindTechnique || tgtKind != attackTypes.KindAsset {
+					if src.kind != attackTypes.KindTechnique || tgt.kind != attackTypes.KindAsset {
 						break
 					}
-					if extID == srcExt && e.kind == attackTypes.KindTechnique {
-						techniqueAssetsTargeted = append(techniqueAssetsTargeted, relatedrefTypes.RelatedRef{ID: tgtExt, Description: desc, References: refs})
+					if extID == src.ext && e.kind == attackTypes.KindTechnique {
+						techniqueAssetsTargeted = append(techniqueAssetsTargeted, relatedrefTypes.RelatedRef{ID: tgt.ext, Description: desc, References: refs})
 					}
-					if extID == tgtExt && e.kind == attackTypes.KindAsset {
-						assetTechniquesTargeting = append(assetTechniquesTargeting, relatedrefTypes.RelatedRef{ID: srcExt, Description: desc, References: refs})
+					if extID == tgt.ext && e.kind == attackTypes.KindAsset {
+						assetTechniquesTargeting = append(assetTechniquesTargeting, relatedrefTypes.RelatedRef{ID: src.ext, Description: desc, References: refs})
 					}
 				case "detects":
-					if srcKind != attackTypes.KindDetectStrategy || tgtKind != attackTypes.KindTechnique {
+					if src.kind != attackTypes.KindDetectStrategy || tgt.kind != attackTypes.KindTechnique {
 						break
 					}
-					if extID == srcExt && e.kind == attackTypes.KindDetectStrategy {
-						detStrategyTechniquesDetected = append(detStrategyTechniquesDetected, relatedrefTypes.RelatedRef{ID: tgtExt, Description: desc, References: refs})
+					if extID == src.ext && e.kind == attackTypes.KindDetectStrategy {
+						detStrategyTechniquesDetected = append(detStrategyTechniquesDetected, relatedrefTypes.RelatedRef{ID: tgt.ext, Description: desc, References: refs})
 					}
-					if extID == tgtExt && e.kind == attackTypes.KindTechnique {
-						techniqueDetectionStrategies = append(techniqueDetectionStrategies, relatedrefTypes.RelatedRef{ID: srcExt, Description: desc, References: refs})
+					if extID == tgt.ext && e.kind == attackTypes.KindTechnique {
+						techniqueDetectionStrategies = append(techniqueDetectionStrategies, relatedrefTypes.RelatedRef{ID: src.ext, Description: desc, References: refs})
 					}
 			}
 		}
 
 		// Stage 2c: cross-referenced primary files (other side of
-		// relationships or forward refs). Each visit registers the
-		// path for raws and updates this entry's reverse cross-ref
-		// accumulator based on its kind.
+		// relationships or forward refs). r.Read folds the path
+		// registration for raws and the partial decode (just enough
+		// to resolve the UUID via Stage 1's uuid index — legacy
+		// source_names included) into a single pass.
 		for _, path := range e.refs {
-			fp, err := peekPrimary(path)
-			if err != nil {
-				return errors.Wrapf(err, "peek %s", path)
+			var fp stixPeek
+			if err := r.Read(path, args, &fp); err != nil {
+				return errors.Wrapf(err, "read ref %s for %s", path, extID)
 			}
-			if err := attachRead(fp.Type, path, args, r); err != nil {
-				return errors.Wrapf(err, "attach %s for %s", path, extID)
-			}
-			// Resolve the cross-ref via the Stage 1 uuid index so we
-			// pick up records keyed on legacy source_names (T0xxx
-			// etc.) without re-reading external_references here.
 			otherExt := uuids[fp.ID].ext
 			if otherExt == "" {
 				return errors.Errorf("file %s (id %s) was not indexed in Stage 1 but is referenced from %s", path, fp.ID, extID)
@@ -600,10 +579,6 @@ func Extract(args string, opts ...Option) error {
 					dataSourceComponents = append(dataSourceComponents, otherExt)
 				}
 			}
-		}
-
-		if raw == nil {
-			continue
 		}
 
 		c := commonFromRaw(raw)
@@ -894,47 +869,6 @@ func peekPrimary(path string) (stixPeek, error) {
 		return stixPeek{}, errors.Wrapf(err, "decode %s", path)
 	}
 	return p, nil
-}
-
-// attachRead registers the path into r by reading the file as the
-// given STIX type. JSONReader's path tracking dedupes within a reader,
-// so the same file referenced by multiple relationships only appears
-// once in the final raws list. Unknown stixType is a silent no-op
-// because the input may include STIX kinds the extractor doesn't keep
-// (matching attachCrossRef's old behaviour).
-func attachRead(stixType, path, args string, r *utiljson.JSONReader) error {
-	if path == "" {
-		return nil
-	}
-	switch stixType {
-	case "relationship":
-		return r.Read(path, args, new(attack.Relationship))
-	case "attack-pattern":
-		return r.Read(path, args, new(attack.AttackPattern))
-	case "x-mitre-tactic":
-		return r.Read(path, args, new(attack.XMitreTactic))
-	case "course-of-action":
-		return r.Read(path, args, new(attack.CourseOfAction))
-	case "intrusion-set":
-		return r.Read(path, args, new(attack.IntrusionSet))
-	case "malware":
-		return r.Read(path, args, new(attack.Malware))
-	case "tool":
-		return r.Read(path, args, new(attack.Tool))
-	case "campaign":
-		return r.Read(path, args, new(attack.Campaign))
-	case "x-mitre-asset":
-		return r.Read(path, args, new(attack.XMitreAsset))
-	case "x-mitre-detection-strategy":
-		return r.Read(path, args, new(attack.XMitreDetectionStrategy))
-	case "x-mitre-analytic":
-		return r.Read(path, args, new(attack.XMitreAnalytic))
-	case "x-mitre-data-source":
-		return r.Read(path, args, new(attack.XMitreDataSource))
-	case "x-mitre-data-component":
-		return r.Read(path, args, new(attack.XMitreDataComponent))
-	}
-	return nil
 }
 
 // readConcrete is the Stage 2 dispatcher: given the STIX type already
