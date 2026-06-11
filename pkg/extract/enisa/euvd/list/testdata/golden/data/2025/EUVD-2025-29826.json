@@ -41,17 +41,17 @@
 				"published": "2025-09-17T22:32:11Z",
 				"modified": "2025-09-18T13:28:47Z"
 			}
+		},
+		{
+			"content": {
+				"id": "GHSA-rf8g-3x8q-7xvc"
+			}
 		}
 	],
 	"vulnerabilities": [
 		{
 			"content": {
 				"id": "CVE-2025-10624"
-			}
-		},
-		{
-			"content": {
-				"id": "GHSA-rf8g-3x8q-7xvc"
 			}
 		}
 	],

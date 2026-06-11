@@ -29,17 +29,17 @@
 				"published": "2024-10-03T17:05:33Z",
 				"modified": "2024-10-03T17:46:18Z"
 			}
+		},
+		{
+			"content": {
+				"id": "GHSA-g5vx-c2fq-6jm8"
+			}
 		}
 	],
 	"vulnerabilities": [
 		{
 			"content": {
 				"id": "CVE-2024-7826"
-			}
-		},
-		{
-			"content": {
-				"id": "GHSA-g5vx-c2fq-6jm8"
 			}
 		}
 	],

@@ -37,13 +37,6 @@
 				"published": "2025-01-14T00:00:00Z",
 				"modified": "2025-02-12T20:31:20Z"
 			}
-		}
-	],
-	"vulnerabilities": [
-		{
-			"content": {
-				"id": "CVE-2024-56374"
-			}
 		},
 		{
 			"content": {
@@ -53,6 +46,13 @@
 		{
 			"content": {
 				"id": "PYSEC-2025-1"
+			}
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-2024-56374"
 			}
 		}
 	],

@@ -49,13 +49,6 @@
 				"published": "2025-09-24T21:20:31Z",
 				"modified": "2025-11-20T07:26:10Z"
 			}
-		}
-	],
-	"vulnerabilities": [
-		{
-			"content": {
-				"id": "CVE-2025-10894"
-			}
 		},
 		{
 			"content": {
@@ -100,6 +93,13 @@
 		{
 			"content": {
 				"id": "MAL-2025-41443"
+			}
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-2025-10894"
 			}
 		}
 	],

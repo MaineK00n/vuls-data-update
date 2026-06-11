@@ -30,17 +30,17 @@
 				"published": "2025-04-08T08:18:05Z",
 				"modified": "2026-05-23T15:57:36Z"
 			}
+		},
+		{
+			"content": {
+				"id": "GHSA-2pcw-fg2m-836w"
+			}
 		}
 	],
 	"vulnerabilities": [
 		{
 			"content": {
 				"id": "CVE-2025-22015"
-			}
-		},
-		{
-			"content": {
-				"id": "GHSA-2pcw-fg2m-836w"
 			}
 		}
 	],

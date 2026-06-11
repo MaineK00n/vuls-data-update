@@ -100,9 +100,6 @@ func Extract(args string, opts ...Option) error {
 		if _, err := time.Parse("2006", splitted[1]); err != nil {
 			return errors.Errorf("unexpected EUVD ID format. expected: %q, actual: %q", "EUVD-yyyy-\\d{4,}", fetched.ID)
 		}
-		if len(splitted[2]) < 4 || strings.Trim(splitted[2], "0123456789") != "" {
-			return errors.Errorf("unexpected EUVD ID format. expected: %q, actual: %q", "EUVD-yyyy-\\d{4,}", fetched.ID)
-		}
 		if err := util.Write(filepath.Join(options.dir, "data", splitted[1], fmt.Sprintf("%s.json", extracted.ID)), extracted, true); err != nil {
 			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "data", splitted[1], fmt.Sprintf("%s.json", extracted.ID)))
 		}
@@ -188,7 +185,8 @@ func extract(fetched list.Item, raws []string) (dataTypes.Data, error) {
 		return dataTypes.Data{}, errors.Wrap(err, "parse severity")
 	}
 
-	vulnerabilities, err := func() ([]vulnerabilityTypes.Vulnerability, error) {
+	aliasAdvisories, vulnerabilities, err := func() ([]advisoryTypes.Advisory, []vulnerabilityTypes.Vulnerability, error) {
+		var as []advisoryTypes.Advisory
 		var vs []vulnerabilityTypes.Vulnerability
 		for a := range strings.SplitSeq(fetched.Aliases, "\n") {
 			a = strings.TrimSpace(a)
@@ -196,17 +194,23 @@ func extract(fetched list.Item, raws []string) (dataTypes.Data, error) {
 				continue
 			}
 			switch {
-			case strings.HasPrefix(a, "CVE-"), strings.HasPrefix(a, "GHSA-"), strings.HasPrefix(a, "PYSEC-"), strings.HasPrefix(a, "MAL-"):
+			case strings.HasPrefix(a, "CVE-"):
 				vs = append(vs, vulnerabilityTypes.Vulnerability{
 					Content: vulnerabilityContentTypes.Content{
 						ID: vulnerabilityContentTypes.VulnerabilityID(a),
 					},
 				})
+			case strings.HasPrefix(a, "GHSA-"), strings.HasPrefix(a, "PYSEC-"), strings.HasPrefix(a, "MAL-"):
+				as = append(as, advisoryTypes.Advisory{
+					Content: advisoryContentTypes.Content{
+						ID: advisoryContentTypes.AdvisoryID(a),
+					},
+				})
 			default:
-				return nil, errors.Errorf("unexpected alias format. expected: %q, actual: %q", "(CVE|GHSA|PYSEC|MAL)-...", a)
+				return nil, nil, errors.Errorf("unexpected alias format. expected: %q, actual: %q", "(CVE|GHSA|PYSEC|MAL)-...", a)
 			}
 		}
-		return vs, nil
+		return as, vs, nil
 	}()
 	if err != nil {
 		return dataTypes.Data{}, errors.Wrap(err, "parse aliases")
@@ -214,7 +218,7 @@ func extract(fetched list.Item, raws []string) (dataTypes.Data, error) {
 
 	return dataTypes.Data{
 		ID: dataTypes.RootID(fetched.ID),
-		Advisories: []advisoryTypes.Advisory{{
+		Advisories: append([]advisoryTypes.Advisory{{
 			Content: advisoryContentTypes.Content{
 				ID:          advisoryContentTypes.AdvisoryID(fetched.ID),
 				Description: fetched.Description,
@@ -236,7 +240,7 @@ func extract(fetched list.Item, raws []string) (dataTypes.Data, error) {
 				Published: utiltime.Parse([]string{"Jan 2, 2006, 3:04:05 PM"}, fetched.DatePublished),
 				Modified:  utiltime.Parse([]string{"Jan 2, 2006, 3:04:05 PM"}, fetched.DateUpdated),
 			},
-		}},
+		}}, aliasAdvisories...),
 		Vulnerabilities: vulnerabilities,
 		DataSource: sourceTypes.Source{
 			ID:   sourceTypes.ENISAEUVDList,

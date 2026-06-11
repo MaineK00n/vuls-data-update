@@ -29,17 +29,17 @@
 				"published": "2025-09-12T07:21:51Z",
 				"modified": "2026-02-26T17:48:39Z"
 			}
+		},
+		{
+			"content": {
+				"id": "GHSA-h4h8-5cww-x7j2"
+			}
 		}
 	],
 	"vulnerabilities": [
 		{
 			"content": {
 				"id": "CVE-2025-21043"
-			}
-		},
-		{
-			"content": {
-				"id": "GHSA-h4h8-5cww-x7j2"
 			}
 		}
 	],

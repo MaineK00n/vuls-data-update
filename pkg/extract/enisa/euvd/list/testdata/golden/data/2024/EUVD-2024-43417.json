@@ -29,17 +29,17 @@
 				"published": "2024-10-17T09:49:16Z",
 				"modified": "2024-10-17T14:37:50Z"
 			}
+		},
+		{
+			"content": {
+				"id": "GHSA-88q9-p7rf-93g4"
+			}
 		}
 	],
 	"vulnerabilities": [
 		{
 			"content": {
 				"id": "CVE-2024-49390"
-			}
-		},
-		{
-			"content": {
-				"id": "GHSA-88q9-p7rf-93g4"
 			}
 		}
 	],

@@ -29,17 +29,17 @@
 				"published": "2000-02-04T05:00:00Z",
 				"modified": "2025-03-17T15:03:26Z"
 			}
+		},
+		{
+			"content": {
+				"id": "GHSA-926f-mjrv-g5m6"
+			}
 		}
 	],
 	"vulnerabilities": [
 		{
 			"content": {
 				"id": "CVE-1999-0532"
-			}
-		},
-		{
-			"content": {
-				"id": "GHSA-926f-mjrv-g5m6"
 			}
 		}
 	],
