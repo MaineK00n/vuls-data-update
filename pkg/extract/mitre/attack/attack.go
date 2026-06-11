@@ -61,12 +61,22 @@ func WithDir(dir string) Option {
 // canonical record. Stage 1 populates a single map[extID]entryInfo
 // instead of five parallel maps. Missing ext-IDs are expressed by a
 // failed map lookup; the map never stores a zero value on purpose.
+//
+// The three path collections are kept separate so Stage 2 doesn't have
+// to re-classify a single flat list:
+//   - paths: this ext-ID's own primary files (1..N bundle copies)
+//   - rels:  relationship files this ext-ID participates in, keyed by
+//            STIX UUID so cross-bundle copies of the same logical
+//            relationship dedupe naturally
+//   - refs:  cross-referenced primary files (other side of relationships
+//            or forward refs); raws-only, processed once each
 type entryInfo struct {
 	kind     attackTypes.Kind
 	stixType string
-	peek     stixPeek // first-occurrence peek, used to project own cross-ref fields in Stage 2
-	paths    []string // every bundle copy of this ext-ID's primary file
-	files    []string // every file Stage 2 has to open: primary + cross-domain copies + relationship + cross-ref targets
+	peek     stixPeek
+	paths    []string
+	rels     map[string]string // STIX UUID → one path (any bundle copy)
+	refs     []string
 }
 
 // uuidInfo collapses the three UUID-keyed lookups Stage 1c does when
@@ -201,10 +211,14 @@ func Extract(args string, opts ...Option) error {
 
 		e, ok := entries[extID]
 		if !ok {
-			e = entryInfo{kind: kind, stixType: peek.Type, peek: peek}
+			e = entryInfo{
+				kind:     kind,
+				stixType: peek.Type,
+				peek:     peek,
+				rels:     make(map[string]string),
+			}
 		}
 		e.paths = append(e.paths, path)
-		e.files = append(e.files, path)
 		entries[extID] = e
 
 		return nil
@@ -230,7 +244,7 @@ func Extract(args string, opts ...Option) error {
 						if tac.kind != attackTypes.KindTactic || tac.peek.Tactic.XMitreShortname != kc.PhaseName {
 							continue
 						}
-						tac.files = append(tac.files, e.paths...)
+						tac.refs = append(tac.refs, e.paths...)
 						entries[tExt] = tac
 						break
 					}
@@ -247,8 +261,8 @@ func Extract(args string, opts ...Option) error {
 				if !ok {
 					continue
 				}
-				e.files = append(e.files, an.paths...)
-				an.files = append(an.files, e.paths...)
+				e.refs = append(e.refs, an.paths...)
+				an.refs = append(an.refs, e.paths...)
 				entries[u.ext] = an
 			}
 			entries[extID] = e
@@ -264,8 +278,8 @@ func Extract(args string, opts ...Option) error {
 			if !ok {
 				continue
 			}
-			e.files = append(e.files, ds.paths...)
-			ds.files = append(ds.files, e.paths...)
+			e.refs = append(e.refs, ds.paths...)
+			ds.refs = append(ds.refs, e.paths...)
 			entries[u.ext] = ds
 			entries[extID] = e
 		}
@@ -305,10 +319,10 @@ func Extract(args string, opts ...Option) error {
 			if !srcOK || !tgtOK {
 				return errors.Errorf("relationship %s references unindexed UUID (src=%s, tgt=%s)", path, r.SourceRef, r.TargetRef)
 			}
-			src.files = append(src.files, path)
-			src.files = append(src.files, tgt.paths...)
-			tgt.files = append(tgt.files, path)
-			tgt.files = append(tgt.files, src.paths...)
+			src.rels[r.ID] = path
+			src.refs = append(src.refs, tgt.paths...)
+			tgt.rels[r.ID] = path
+			tgt.refs = append(tgt.refs, src.paths...)
 			entries[srcExt] = src
 			entries[tgtExt] = tgt
 
@@ -325,11 +339,6 @@ func Extract(args string, opts ...Option) error {
 	// per-entry rels struct accumulates the kind-specific fields and
 	// is then handed to convert() unchanged.
 	for extID, e := range entries {
-		selfSet := make(map[string]bool, len(e.paths))
-		for _, p := range e.paths {
-			selfSet[p] = true
-		}
-
 		r := utiljson.NewJSONReader()
 		var raw any
 		domains := slices.Clone(e.peek.XMitreDomains)
@@ -411,69 +420,64 @@ func Extract(args string, opts ...Option) error {
 			}
 		}
 
-		seenFile := make(map[string]bool, len(e.files))
-		for _, path := range e.files {
-			if seenFile[path] {
-				continue
-			}
-			seenFile[path] = true
-
-			if selfSet[path] {
-				if raw == nil {
-					rr, err := readConcrete(e.stixType, path, args, r)
-					if err != nil {
-						return err
-					}
-					raw = rr
-					continue
-				}
-				if err := attachRead(e.stixType, path, args, r); err != nil {
-					return errors.Wrapf(err, "attach self %s for %s", path, extID)
-				}
-				p, err := peekPrimary(path)
+		// Stage 2a: self primary files. The first one decodes into the
+		// concrete raw struct; the rest are cross-domain copies whose
+		// only contribution is provenance (attachRead) plus a union
+		// into domains.
+		for i, path := range e.paths {
+			if i == 0 {
+				rr, err := readConcrete(e.stixType, path, args, r)
 				if err != nil {
-					return errors.Wrapf(err, "peek %s", path)
+					return err
 				}
-				for _, d := range p.XMitreDomains {
-					if !domainSeen[d] {
-						domainSeen[d] = true
-						domains = append(domains, d)
-					}
-				}
+				raw = rr
 				continue
 			}
-
-			fp, err := peekPrimary(path)
+			if err := attachRead(e.stixType, path, args, r); err != nil {
+				return errors.Wrapf(err, "attach self %s for %s", path, extID)
+			}
+			p, err := peekPrimary(path)
 			if err != nil {
 				return errors.Wrapf(err, "peek %s", path)
 			}
-			if fp.Type == "relationship" {
-				f, err := os.Open(path)
-				if err != nil {
-					return errors.Wrapf(err, "open %s", path)
+			for _, d := range p.XMitreDomains {
+				if !domainSeen[d] {
+					domainSeen[d] = true
+					domains = append(domains, d)
 				}
-				var rel attack.Relationship
-				err = json.UnmarshalRead(f, &rel)
-				f.Close()
-				if err != nil {
-					return errors.Wrapf(err, "decode %s", path)
-				}
-				if err := attachRead("relationship", path, args, r); err != nil {
-					return errors.Wrapf(err, "attach relationship %s for %s", path, extID)
-				}
-				srcU := uuids[rel.SourceRef]
-				tgtU := uuids[rel.TargetRef]
-				srcExt := srcU.ext
-				tgtExt := tgtU.ext
-				srcKind := srcU.kind
-				tgtKind := tgtU.kind
-				desc := ""
-				if rel.Description != nil {
-					desc = *rel.Description
-				}
-				refs := toReferences(rel.ExternalReferences)
+			}
+		}
 
-				switch rel.RelationshipType {
+		// Stage 2b: relationships keyed by STIX UUID. Cross-bundle
+		// copies of the same logical relationship were collapsed at
+		// Stage 1c, so each edge is dispatched exactly once.
+		for _, path := range e.rels {
+			f, err := os.Open(path)
+			if err != nil {
+				return errors.Wrapf(err, "open %s", path)
+			}
+			var rel attack.Relationship
+			err = json.UnmarshalRead(f, &rel)
+			f.Close()
+			if err != nil {
+				return errors.Wrapf(err, "decode %s", path)
+			}
+			if err := attachRead("relationship", path, args, r); err != nil {
+				return errors.Wrapf(err, "attach relationship %s for %s", path, extID)
+			}
+			srcU := uuids[rel.SourceRef]
+			tgtU := uuids[rel.TargetRef]
+			srcExt := srcU.ext
+			tgtExt := tgtU.ext
+			srcKind := srcU.kind
+			tgtKind := tgtU.kind
+			desc := ""
+			if rel.Description != nil {
+				desc = *rel.Description
+			}
+			refs := toReferences(rel.ExternalReferences)
+
+			switch rel.RelationshipType {
 				case "subtechnique-of":
 					if e.kind != attackTypes.KindTechnique {
 						break
@@ -559,10 +563,18 @@ func Extract(args string, opts ...Option) error {
 					if extID == tgtExt && e.kind == attackTypes.KindTechnique {
 						techniqueDetectionStrategies = append(techniqueDetectionStrategies, relatedrefTypes.RelatedRef{ID: srcExt, Description: desc, References: refs})
 					}
-				}
-				continue
 			}
+		}
 
+		// Stage 2c: cross-referenced primary files (other side of
+		// relationships or forward refs). Each visit registers the
+		// path for raws and updates this entry's reverse cross-ref
+		// accumulator based on its kind.
+		for _, path := range e.refs {
+			fp, err := peekPrimary(path)
+			if err != nil {
+				return errors.Wrapf(err, "peek %s", path)
+			}
 			if err := attachRead(fp.Type, path, args, r); err != nil {
 				return errors.Wrapf(err, "attach %s for %s", path, extID)
 			}
