@@ -1,0 +1,112 @@
+{
+	"id": "EUVD-2025-29473",
+	"advisories": [
+		{
+			"content": {
+				"id": "EUVD-2025-29473",
+				"description": "Malicious code was inserted into the Nx (build system) package and several related plugins. The tampered package was published to the npm software registry, via a supply-chain attack. Affected versions contain code that scans the file system, collects credentials, and posts them to GitHub as a repo under user's accounts.",
+				"severity": [
+					{
+						"type": "cvss_v31",
+						"source": "euvd.enisa.europa.eu",
+						"cvss_v31": {
+							"vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:H/I:H/A:H",
+							"base_score": 9.6,
+							"base_severity": "CRITICAL",
+							"temporal_score": 9.6,
+							"temporal_severity": "CRITICAL",
+							"environmental_score": 9.7,
+							"environmental_severity": "CRITICAL"
+						}
+					}
+				],
+				"references": [
+					{
+						"source": "euvd.enisa.europa.eu",
+						"url": "https://access.redhat.com/security/cve/CVE-2025-10894"
+					},
+					{
+						"source": "euvd.enisa.europa.eu",
+						"url": "https://access.redhat.com/security/supply-chain-attacks-NPM-packages"
+					},
+					{
+						"source": "euvd.enisa.europa.eu",
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2396282"
+					},
+					{
+						"source": "euvd.enisa.europa.eu",
+						"url": "https://github.com/nrwl/nx/security/advisories/GHSA-cxm3-wv7p-598c"
+					},
+					{
+						"source": "euvd.enisa.europa.eu",
+						"url": "https://www.stepsecurity.io/blog/supply-chain-security-alert-popular-nx-build-system-package-compromised-with-data-stealing-malware"
+					},
+					{
+						"source": "euvd.enisa.europa.eu",
+						"url": "https://www.wiz.io/blog/s1ngularity-supply-chain-attack"
+					}
+				],
+				"published": "2025-09-24T21:20:31Z",
+				"modified": "2025-11-20T07:26:10Z"
+			}
+		},
+		{
+			"content": {
+				"id": "GHSA-cxm3-wv7p-598c"
+			}
+		},
+		{
+			"content": {
+				"id": "MAL-2025-41436"
+			}
+		},
+		{
+			"content": {
+				"id": "MAL-2025-41437"
+			}
+		},
+		{
+			"content": {
+				"id": "MAL-2025-41438"
+			}
+		},
+		{
+			"content": {
+				"id": "MAL-2025-41439"
+			}
+		},
+		{
+			"content": {
+				"id": "MAL-2025-41440"
+			}
+		},
+		{
+			"content": {
+				"id": "MAL-2025-41441"
+			}
+		},
+		{
+			"content": {
+				"id": "MAL-2025-41442"
+			}
+		},
+		{
+			"content": {
+				"id": "MAL-2025-41443"
+			}
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-2025-10894"
+			}
+		}
+	],
+	"data_source": {
+		"id": "enisa-euvd-list",
+		"raws": [
+			"fixtures/2025/EUVD-2025-29473.json"
+		]
+	}
+}

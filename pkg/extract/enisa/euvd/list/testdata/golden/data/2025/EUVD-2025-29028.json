@@ -1,0 +1,52 @@
+{
+	"id": "EUVD-2025-29028",
+	"advisories": [
+		{
+			"content": {
+				"id": "EUVD-2025-29028",
+				"description": "Out-of-bounds write in libimagecodec.quram.so prior to SMR Sep-2025 Release 1 allows remote attackers to execute arbitrary code.",
+				"severity": [
+					{
+						"type": "cvss_v31",
+						"source": "euvd.enisa.europa.eu",
+						"cvss_v31": {
+							"vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+							"base_score": 8.8,
+							"base_severity": "HIGH",
+							"temporal_score": 8.8,
+							"temporal_severity": "HIGH",
+							"environmental_score": 8.8,
+							"environmental_severity": "HIGH"
+						}
+					}
+				],
+				"references": [
+					{
+						"source": "euvd.enisa.europa.eu",
+						"url": "https://security.samsungmobile.com/securityUpdate.smsb?year=2025&month=09"
+					}
+				],
+				"published": "2025-09-12T07:21:51Z",
+				"modified": "2026-02-26T17:48:39Z"
+			}
+		},
+		{
+			"content": {
+				"id": "GHSA-h4h8-5cww-x7j2"
+			}
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-2025-21043"
+			}
+		}
+	],
+	"data_source": {
+		"id": "enisa-euvd-list",
+		"raws": [
+			"fixtures/2025/EUVD-2025-29028.json"
+		]
+	}
+}
