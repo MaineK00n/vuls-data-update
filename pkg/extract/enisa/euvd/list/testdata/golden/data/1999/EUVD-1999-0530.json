@@ -36,6 +36,11 @@
 			"content": {
 				"id": "CVE-1999-0532"
 			}
+		},
+		{
+			"content": {
+				"id": "GHSA-926f-mjrv-g5m6"
+			}
 		}
 	],
 	"data_source": {

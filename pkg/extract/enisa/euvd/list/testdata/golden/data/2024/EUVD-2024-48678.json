@@ -36,6 +36,11 @@
 			"content": {
 				"id": "CVE-2024-7826"
 			}
+		},
+		{
+			"content": {
+				"id": "GHSA-g5vx-c2fq-6jm8"
+			}
 		}
 	],
 	"data_source": {

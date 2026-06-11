@@ -48,6 +48,11 @@
 			"content": {
 				"id": "CVE-2025-10624"
 			}
+		},
+		{
+			"content": {
+				"id": "GHSA-rf8g-3x8q-7xvc"
+			}
 		}
 	],
 	"data_source": {

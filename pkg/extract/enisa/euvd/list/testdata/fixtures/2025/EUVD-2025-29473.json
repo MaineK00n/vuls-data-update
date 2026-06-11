@@ -1,0 +1,23 @@
+{
+	"id": "EUVD-2025-29473",
+	"enisaUuid": "f5a7ab76-4c40-386a-84b8-8b20c9a5af15",
+	"description": "Malicious code was inserted into the Nx (build system) package and several related plugins. The tampered package was published to the npm software registry, via a supply-chain attack. Affected versions contain code that scans the file system, collects credentials, and posts them to GitHub as a repo under user's accounts.",
+	"datePublished": "Sep 24, 2025, 9:20:31 PM",
+	"dateUpdated": "Nov 20, 2025, 7:26:10 AM",
+	"baseScore": 9.6,
+	"baseScoreVersion": "3.1",
+	"baseScoreVector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:H/I:H/A:H",
+	"references": "https://access.redhat.com/security/cve/CVE-2025-10894\nhttps://access.redhat.com/security/supply-chain-attacks-NPM-packages\nhttps://bugzilla.redhat.com/show_bug.cgi?id=2396282\nhttps://github.com/nrwl/nx/security/advisories/GHSA-cxm3-wv7p-598c\nhttps://www.stepsecurity.io/blog/supply-chain-security-alert-popular-nx-build-system-package-compromised-with-data-stealing-malware\nhttps://www.wiz.io/blog/s1ngularity-supply-chain-attack\n",
+	"aliases": "MAL-2025-41441\nMAL-2025-41443\nGHSA-cxm3-wv7p-598c\nMAL-2025-41438\nMAL-2025-41440\nMAL-2025-41437\nMAL-2025-41439\nMAL-2025-41436\nCVE-2025-10894\nMAL-2025-41442\n",
+	"assigner": "redhat",
+	"epss": 0.31,
+	"enisaIdProduct": [],
+	"enisaIdVendor": [
+		{
+			"id": "42c5d189-b413-32f0-9a3c-a23845354e53",
+			"vendor": {
+				"name": "Red Hat"
+			}
+		}
+	]
+}

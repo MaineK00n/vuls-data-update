@@ -36,6 +36,11 @@
 			"content": {
 				"id": "CVE-2024-49390"
 			}
+		},
+		{
+			"content": {
+				"id": "GHSA-88q9-p7rf-93g4"
+			}
 		}
 	],
 	"data_source": {

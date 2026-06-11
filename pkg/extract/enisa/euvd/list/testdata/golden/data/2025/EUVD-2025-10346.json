@@ -37,6 +37,11 @@
 			"content": {
 				"id": "CVE-2025-22015"
 			}
+		},
+		{
+			"content": {
+				"id": "GHSA-2pcw-fg2m-836w"
+			}
 		}
 	],
 	"data_source": {

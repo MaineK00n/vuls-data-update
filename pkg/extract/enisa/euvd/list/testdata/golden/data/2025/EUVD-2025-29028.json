@@ -36,6 +36,11 @@
 			"content": {
 				"id": "CVE-2025-21043"
 			}
+		},
+		{
+			"content": {
+				"id": "GHSA-h4h8-5cww-x7j2"
+			}
 		}
 	],
 	"data_source": {

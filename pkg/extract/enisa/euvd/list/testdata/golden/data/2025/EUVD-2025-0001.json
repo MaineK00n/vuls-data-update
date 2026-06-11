@@ -44,6 +44,16 @@
 			"content": {
 				"id": "CVE-2024-56374"
 			}
+		},
+		{
+			"content": {
+				"id": "GHSA-qcgg-j2x8-h9g8"
+			}
+		},
+		{
+			"content": {
+				"id": "PYSEC-2025-1"
+			}
 		}
 	],
 	"data_source": {

@@ -52,6 +52,11 @@
 			"content": {
 				"id": "CVE-2015-6639"
 			}
+		},
+		{
+			"content": {
+				"id": "GHSA-gj2v-r3v2-9q7q"
+			}
 		}
 	],
 	"data_source": {
