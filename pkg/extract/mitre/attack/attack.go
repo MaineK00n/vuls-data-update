@@ -474,6 +474,14 @@ func Extract(args string, opts ...Option) error {
 			}
 			refs := toReferences(rel.ExternalReferences)
 
+			// Stage 1c attaches every relationship to both endpoints'
+			// rels maps, so the entry currently being processed must
+			// be one of those endpoints. Anything else is a Stage 1
+			// invariant violation.
+			if extID != src.ext && extID != tgt.ext {
+				return errors.Errorf("relationship %s reached entry %s but matches neither src %s nor tgt %s", rel.ID, extID, src.ext, tgt.ext)
+			}
+
 			switch rel.RelationshipType {
 			case "subtechnique-of":
 				if e.kind != attackTypes.KindTechnique {
