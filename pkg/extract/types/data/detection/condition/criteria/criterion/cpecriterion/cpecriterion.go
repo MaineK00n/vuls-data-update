@@ -201,7 +201,11 @@ func (c Criterion) Accept(query Query) (bool, error) {
 			return true, nil
 		}
 		if c.Range != nil {
-			qVersion := strings.ReplaceAll(qWFN.GetString(common.AttributeVersion), "\\.", ".")
+			// WFN attribute values escape every special character with a
+			// backslash ("10\.1\.3\-h1"); strip all escapes, not just dots,
+			// so versions containing hyphens (e.g. PAN-OS hotfixes) reach
+			// the comparator intact.
+			qVersion := strings.ReplaceAll(qWFN.GetString(common.AttributeVersion), "\\", "")
 			isAccepted, err := c.Range.Accept(qVersion)
 			if err != nil {
 				return false, errors.Wrap(err, "range accept")
