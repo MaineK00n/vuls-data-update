@@ -19,7 +19,8 @@
 		],
 		"tactics": [
 			{
-				"shortname": "defense-evasion"
+				"shortname": "defense-evasion",
+				"id": "TA9004"
 			}
 		],
 		"is_subtechnique": false,

@@ -19,7 +19,8 @@
 		],
 		"tactics": [
 			{
-				"shortname": "command-and-control"
+				"shortname": "command-and-control",
+				"id": "TA9002"
 			}
 		],
 		"is_subtechnique": false,

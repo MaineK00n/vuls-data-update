@@ -17,7 +17,8 @@
 		],
 		"tactics": [
 			{
-				"shortname": "execution"
+				"shortname": "execution",
+				"id": "TA9005"
 			}
 		],
 		"is_subtechnique": false,

@@ -19,7 +19,8 @@
 		],
 		"tactics": [
 			{
-				"shortname": "initial-access"
+				"shortname": "initial-access",
+				"id": "TA9007"
 			}
 		],
 		"is_subtechnique": false,

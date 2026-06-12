@@ -22,7 +22,8 @@
 		],
 		"tactics": [
 			{
-				"shortname": "exfiltration"
+				"shortname": "exfiltration",
+				"id": "TA9006"
 			}
 		],
 		"is_subtechnique": false,

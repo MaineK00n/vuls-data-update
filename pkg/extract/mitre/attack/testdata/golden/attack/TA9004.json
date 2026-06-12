@@ -1,0 +1,43 @@
+{
+	"id": "TA9004",
+	"kind": "tactic",
+	"name": "Defense Evasion",
+	"description": "Test fixture for Defense Evasion tactic.",
+	"domains": [
+		"enterprise-attack"
+	],
+	"deprecated": false,
+	"revoked": false,
+	"version": "1.0",
+	"created": "2024-01-01T00:00:00Z",
+	"modified": "2024-01-01T00:00:00Z",
+	"tactic": {
+		"shortname": "defense-evasion",
+		"techniques": [
+			"T1055.011",
+			"T1066",
+			"T1134.003",
+			"T1140",
+			"T1205.002",
+			"T1562"
+		]
+	},
+	"references": [
+		{
+			"source": "mitre-attack",
+			"url": "https://attack.mitre.org/tactics/TA9004"
+		}
+	],
+	"data_source": {
+		"id": "mitre-attack",
+		"raws": [
+			"fixtures/enterprise/attack-pattern/attack-pattern--0042a9f5-f053-4769-b3ef-9ad018dfa298.json",
+			"fixtures/enterprise/attack-pattern/attack-pattern--005cc321-08ce-4d17-b1ea-cb5275926520.json",
+			"fixtures/enterprise/attack-pattern/attack-pattern--00d0b012-8a03-410e-95de-5826bf542de6.json",
+			"fixtures/enterprise/attack-pattern/attack-pattern--3ccef7ae-cb5e-48f6-8302-897105fbf55c.json",
+			"fixtures/enterprise/attack-pattern/attack-pattern--3d333250-30e4-4a82-9edc-756c68afc529.json",
+			"fixtures/enterprise/attack-pattern/attack-pattern--8cdeb020-e31e-4f88-a582-f53dcfbda819.json",
+			"fixtures/enterprise/x-mitre-tactic/x-mitre-tactic--00000000-0000-0000-0000-000000000010.json"
+		]
+	}
+}

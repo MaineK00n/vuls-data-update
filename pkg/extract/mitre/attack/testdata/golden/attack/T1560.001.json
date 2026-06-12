@@ -19,7 +19,8 @@
 		],
 		"tactics": [
 			{
-				"shortname": "collection"
+				"shortname": "collection",
+				"id": "TA9001"
 			}
 		],
 		"is_subtechnique": true,

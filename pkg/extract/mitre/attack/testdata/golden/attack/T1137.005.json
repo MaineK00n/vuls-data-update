@@ -18,7 +18,8 @@
 		],
 		"tactics": [
 			{
-				"shortname": "persistence"
+				"shortname": "persistence",
+				"id": "TA9009"
 			}
 		],
 		"is_subtechnique": true,

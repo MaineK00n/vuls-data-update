@@ -19,7 +19,8 @@
 		],
 		"tactics": [
 			{
-				"shortname": "lateral-movement"
+				"shortname": "lateral-movement",
+				"id": "TA9008"
 			}
 		],
 		"is_subtechnique": true,

@@ -339,10 +339,6 @@ func Extract(args string, opts ...Option) error {
 	for extID, e := range entries {
 		r := utiljson.NewJSONReader()
 		domains := slices.Clone(e.peek.XMitreDomains)
-		domainSeen := make(map[string]bool, len(domains))
-		for _, d := range domains {
-			domainSeen[d] = true
-		}
 
 		// Per-kind accumulators. Only the slots for the entry's own
 		// kind get populated below; every other group stays zero so
@@ -407,13 +403,16 @@ func Extract(args string, opts ...Option) error {
 			for _, kc := range e.peek.Technique.KillChainPhases {
 				switch kc.KillChainName {
 				case "mitre-attack", "mitre-ics-attack", "mitre-mobile-attack":
-					tacticExt := ""
+					var tacticExt string
 					for tExt, tac := range entries {
 						if tac.kind != attackTypes.KindTactic || tac.peek.Tactic.XMitreShortname != kc.PhaseName {
 							continue
 						}
 						tacticExt = tExt
 						break
+					}
+					if tacticExt == "" {
+						return errors.Errorf("technique %s references kill_chain_phase shortname %q with no matching x-mitre-tactic", extID, kc.PhaseName)
 					}
 					technique.tactics = append(technique.tactics, tacticrefTypes.TacticRef{Shortname: kc.PhaseName, ID: tacticExt})
 				}
@@ -445,8 +444,7 @@ func Extract(args string, opts ...Option) error {
 				return errors.Wrapf(err, "read self %s for %s", path, extID)
 			}
 			for _, d := range p.XMitreDomains {
-				if !domainSeen[d] {
-					domainSeen[d] = true
+				if !slices.Contains(domains, d) {
 					domains = append(domains, d)
 				}
 			}

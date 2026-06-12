@@ -77,6 +77,7 @@ type Attack struct {
 func (a *Attack) Sort() {
 	slices.Sort(a.Domains)
 	a.Technique.Sort()
+	a.Tactic.Sort()
 	a.Mitigation.Sort()
 	a.Group.Sort()
 	a.Software.Sort()

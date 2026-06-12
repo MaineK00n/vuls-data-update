@@ -1,0 +1,33 @@
+{
+	"id": "TA9008",
+	"kind": "tactic",
+	"name": "Lateral Movement",
+	"description": "Test fixture for Lateral Movement tactic.",
+	"domains": [
+		"enterprise-attack"
+	],
+	"deprecated": false,
+	"revoked": false,
+	"version": "1.0",
+	"created": "2024-01-01T00:00:00Z",
+	"modified": "2024-01-01T00:00:00Z",
+	"tactic": {
+		"shortname": "lateral-movement",
+		"techniques": [
+			"T1021.005"
+		]
+	},
+	"references": [
+		{
+			"source": "mitre-attack",
+			"url": "https://attack.mitre.org/tactics/TA9008"
+		}
+	],
+	"data_source": {
+		"id": "mitre-attack",
+		"raws": [
+			"fixtures/enterprise/attack-pattern/attack-pattern--01327cde-66c4-4123-bf34-5f258d59457b.json",
+			"fixtures/enterprise/x-mitre-tactic/x-mitre-tactic--00000000-0000-0000-0000-000000000014.json"
+		]
+	}
+}

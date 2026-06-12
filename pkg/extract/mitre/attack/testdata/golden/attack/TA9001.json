@@ -1,0 +1,35 @@
+{
+	"id": "TA9001",
+	"kind": "tactic",
+	"name": "Collection",
+	"description": "Test fixture for Collection tactic.",
+	"domains": [
+		"enterprise-attack"
+	],
+	"deprecated": false,
+	"revoked": false,
+	"version": "1.0",
+	"created": "2024-01-01T00:00:00Z",
+	"modified": "2024-01-01T00:00:00Z",
+	"tactic": {
+		"shortname": "collection",
+		"techniques": [
+			"T1113",
+			"T1560.001"
+		]
+	},
+	"references": [
+		{
+			"source": "mitre-attack",
+			"url": "https://attack.mitre.org/tactics/TA9001"
+		}
+	],
+	"data_source": {
+		"id": "mitre-attack",
+		"raws": [
+			"fixtures/enterprise/attack-pattern/attack-pattern--00f90846-cbd1-4fc5-9233-df5c2bf2a662.json",
+			"fixtures/enterprise/attack-pattern/attack-pattern--0259baeb-9f63-4c69-bf10-eb038c390688.json",
+			"fixtures/enterprise/x-mitre-tactic/x-mitre-tactic--00000000-0000-0000-0000-000000000007.json"
+		]
+	}
+}

@@ -19,13 +19,16 @@
 		],
 		"tactics": [
 			{
-				"shortname": "command-and-control"
+				"shortname": "command-and-control",
+				"id": "TA9002"
 			},
 			{
-				"shortname": "defense-evasion"
+				"shortname": "defense-evasion",
+				"id": "TA9004"
 			},
 			{
-				"shortname": "persistence"
+				"shortname": "persistence",
+				"id": "TA9009"
 			}
 		],
 		"is_subtechnique": true,

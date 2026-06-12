@@ -1,0 +1,39 @@
+{
+	"id": "TA9009",
+	"kind": "tactic",
+	"name": "Persistence",
+	"description": "Test fixture for Persistence tactic.",
+	"domains": [
+		"enterprise-attack"
+	],
+	"deprecated": false,
+	"revoked": false,
+	"version": "1.0",
+	"created": "2024-01-01T00:00:00Z",
+	"modified": "2024-01-01T00:00:00Z",
+	"tactic": {
+		"shortname": "persistence",
+		"techniques": [
+			"T1053.005",
+			"T1137.005",
+			"T1156",
+			"T1205.002"
+		]
+	},
+	"references": [
+		{
+			"source": "mitre-attack",
+			"url": "https://attack.mitre.org/tactics/TA9009"
+		}
+	],
+	"data_source": {
+		"id": "mitre-attack",
+		"raws": [
+			"fixtures/enterprise/attack-pattern/attack-pattern--005a06c6-14bf-4118-afa0-ebcd8aebb0c9.json",
+			"fixtures/enterprise/attack-pattern/attack-pattern--005cc321-08ce-4d17-b1ea-cb5275926520.json",
+			"fixtures/enterprise/attack-pattern/attack-pattern--01df3350-ce05-4bdf-bdf8-0a919a66d4a8.json",
+			"fixtures/enterprise/attack-pattern/attack-pattern--3d1b9d7e-3921-4d25-845a-7d9f15c0da44.json",
+			"fixtures/enterprise/x-mitre-tactic/x-mitre-tactic--00000000-0000-0000-0000-000000000015.json"
+		]
+	}
+}

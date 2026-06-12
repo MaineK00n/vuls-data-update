@@ -17,7 +17,8 @@
 		],
 		"tactics": [
 			{
-				"shortname": "resource-development"
+				"shortname": "resource-development",
+				"id": "TA9011"
 			}
 		],
 		"is_subtechnique": true,

@@ -1,0 +1,22 @@
+{
+	"type": "x-mitre-tactic",
+	"id": "x-mitre-tactic--00000000-0000-0000-0000-000000000008",
+	"spec_version": "2.1",
+	"created": "2024-01-01T00:00:00.000Z",
+	"modified": "2024-01-01T00:00:00.000Z",
+	"name": "Command and Control",
+	"description": "Test fixture for Command and Control tactic.",
+	"x_mitre_shortname": "command-and-control",
+	"x_mitre_version": "1.0",
+	"x_mitre_domains": [
+		"enterprise-attack"
+	],
+	"x_mitre_attack_spec_version": "3.0.0",
+	"external_references": [
+		{
+			"source_name": "mitre-attack",
+			"external_id": "TA9002",
+			"url": "https://attack.mitre.org/tactics/TA9002"
+		}
+	]
+}

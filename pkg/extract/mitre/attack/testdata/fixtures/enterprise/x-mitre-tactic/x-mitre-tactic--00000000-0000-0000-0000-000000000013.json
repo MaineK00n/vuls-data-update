@@ -1,0 +1,22 @@
+{
+	"type": "x-mitre-tactic",
+	"id": "x-mitre-tactic--00000000-0000-0000-0000-000000000013",
+	"spec_version": "2.1",
+	"created": "2024-01-01T00:00:00.000Z",
+	"modified": "2024-01-01T00:00:00.000Z",
+	"name": "Initial Access",
+	"description": "Test fixture for Initial Access tactic.",
+	"x_mitre_shortname": "initial-access",
+	"x_mitre_version": "1.0",
+	"x_mitre_domains": [
+		"enterprise-attack"
+	],
+	"x_mitre_attack_spec_version": "3.0.0",
+	"external_references": [
+		{
+			"source_name": "mitre-attack",
+			"external_id": "TA9007",
+			"url": "https://attack.mitre.org/tactics/TA9007"
+		}
+	]
+}

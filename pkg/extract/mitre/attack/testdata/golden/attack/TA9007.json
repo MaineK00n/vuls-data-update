@@ -1,0 +1,35 @@
+{
+	"id": "TA9007",
+	"kind": "tactic",
+	"name": "Initial Access",
+	"description": "Test fixture for Initial Access tactic.",
+	"domains": [
+		"enterprise-attack"
+	],
+	"deprecated": false,
+	"revoked": false,
+	"version": "1.0",
+	"created": "2024-01-01T00:00:00Z",
+	"modified": "2024-01-01T00:00:00Z",
+	"tactic": {
+		"shortname": "initial-access",
+		"techniques": [
+			"T1190",
+			"T1195"
+		]
+	},
+	"references": [
+		{
+			"source": "mitre-attack",
+			"url": "https://attack.mitre.org/tactics/TA9007"
+		}
+	],
+	"data_source": {
+		"id": "mitre-attack",
+		"raws": [
+			"fixtures/enterprise/attack-pattern/attack-pattern--3f18edba-28f4-4bb9-82c3-8aa60dcac5f7.json",
+			"fixtures/enterprise/attack-pattern/attack-pattern--3f886f2a-874f-4333-b794-aa6075009b1c.json",
+			"fixtures/enterprise/x-mitre-tactic/x-mitre-tactic--00000000-0000-0000-0000-000000000013.json"
+		]
+	}
+}

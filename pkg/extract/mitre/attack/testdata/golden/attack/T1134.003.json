@@ -17,10 +17,12 @@
 		],
 		"tactics": [
 			{
-				"shortname": "defense-evasion"
+				"shortname": "defense-evasion",
+				"id": "TA9004"
 			},
 			{
-				"shortname": "privilege-escalation"
+				"shortname": "privilege-escalation",
+				"id": "TA9010"
 			}
 		],
 		"is_subtechnique": true,

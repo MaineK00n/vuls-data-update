@@ -20,7 +20,8 @@
 		],
 		"tactics": [
 			{
-				"shortname": "credential-access"
+				"shortname": "credential-access",
+				"id": "TA9003"
 			}
 		],
 		"is_subtechnique": false,

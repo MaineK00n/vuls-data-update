@@ -1,0 +1,35 @@
+{
+	"id": "TA9005",
+	"kind": "tactic",
+	"name": "Execution",
+	"description": "Test fixture for Execution tactic.",
+	"domains": [
+		"enterprise-attack"
+	],
+	"deprecated": false,
+	"revoked": false,
+	"version": "1.0",
+	"created": "2024-01-01T00:00:00Z",
+	"modified": "2024-01-01T00:00:00Z",
+	"tactic": {
+		"shortname": "execution",
+		"techniques": [
+			"T1047",
+			"T1053.005"
+		]
+	},
+	"references": [
+		{
+			"source": "mitre-attack",
+			"url": "https://attack.mitre.org/tactics/TA9005"
+		}
+	],
+	"data_source": {
+		"id": "mitre-attack",
+		"raws": [
+			"fixtures/enterprise/attack-pattern/attack-pattern--005a06c6-14bf-4118-afa0-ebcd8aebb0c9.json",
+			"fixtures/enterprise/attack-pattern/attack-pattern--01a5a209-b94c-450b-b7f9-946497d91055.json",
+			"fixtures/enterprise/x-mitre-tactic/x-mitre-tactic--00000000-0000-0000-0000-000000000011.json"
+		]
+	}
+}
