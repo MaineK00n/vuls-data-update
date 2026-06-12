@@ -185,6 +185,18 @@ func TestRange_Accept(t *testing.T) {
 			want: false,
 		},
 		{
+			name: "PAN-OS hotfix above base accepted within window",
+			r:    ccRangeTypes.Range{Type: ccRangeTypes.RangeTypePANOS, GreaterEqual: "11.2.0", LessThan: "11.2.4-h1"},
+			v:    "11.2.4",
+			want: true,
+		},
+		{
+			name: "PAN-OS hotfix at upper bound rejected",
+			r:    ccRangeTypes.Range{Type: ccRangeTypes.RangeTypePANOS, GreaterEqual: "11.2.0", LessThan: "11.2.4-h1"},
+			v:    "11.2.4-h1",
+			want: false,
+		},
+		{
 			name: "Unknown type never matches",
 			r:    ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeUnknown, LessThan: "2.0.0"},
 			v:    "1.0.0",
@@ -239,6 +251,10 @@ func TestRangeType_Compare(t *testing.T) {
 		{name: "semver: v2 unparseable → CompareError", t: ccRangeTypes.RangeTypeSEMVER, v1: "1.0.0", v2: "not-a-semver", wantCompareErr: true},
 		{name: "version (loose): 4-segment v1 < v2", t: ccRangeTypes.RangeTypeVersion, v1: "9.16.19.0", v2: "9.16.20.0", want: -1},
 		{name: "version (loose): v1 unparseable → CompareError", t: ccRangeTypes.RangeTypeVersion, v1: "x.y.z.w.q", v2: "1.0", wantCompareErr: true},
+		{name: "pan-os: base < hotfix (hashicorp prerelease order would invert this)", t: ccRangeTypes.RangeTypePANOS, v1: "11.2.4", v2: "11.2.4-h1", want: -1},
+		{name: "pan-os: hotfix numeric order", t: ccRangeTypes.RangeTypePANOS, v1: "10.2.4-h2", v2: "10.2.4-h10", want: -1},
+		{name: "pan-os: equal", t: ccRangeTypes.RangeTypePANOS, v1: "10.2.4-h10", v2: "10.2.4-h10", want: 0},
+		{name: "pan-os: 2-segment unparseable → CompareError", t: ccRangeTypes.RangeTypePANOS, v1: "11.2", v2: "11.2.0", wantCompareErr: true},
 		{name: "Unknown → CompareError wrapping ErrRangeTypeUnknown", t: ccRangeTypes.RangeTypeUnknown, v1: "1.0.0", v2: "2.0.0", wantCompareErr: true},
 		{name: "unset (zero) RangeType collapses to Unknown → CompareError", t: ccRangeTypes.RangeType(0), v1: "1.0.0", v2: "2.0.0", wantCompareErr: true},
 	}
