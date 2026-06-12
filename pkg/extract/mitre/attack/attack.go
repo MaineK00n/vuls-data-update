@@ -762,7 +762,7 @@ func Extract(args string, opts ...Option) error {
 					Domains:     domains,
 					Deprecated:  deref(m.XMitreDeprecated),
 					Revoked:     deref(m.Revoked),
-				RevokedBy:   revokedBy,
+					RevokedBy:   revokedBy,
 					Version:     deref(m.XMitreVersion),
 					Created:     m.Created,
 					Modified:    m.Modified,
@@ -790,7 +790,7 @@ func Extract(args string, opts ...Option) error {
 					Domains:     domains,
 					Deprecated:  deref(t.XMitreDeprecated),
 					Revoked:     deref(t.Revoked),
-				RevokedBy:   revokedBy,
+					RevokedBy:   revokedBy,
 					Version:     deref(t.XMitreVersion),
 					Created:     t.Created,
 					Modified:    t.Modified,
@@ -1070,13 +1070,6 @@ type bundleInfo struct {
 	sourceName string // "mitre-attack" / "mitre-ics-attack" / "mitre-mobile-attack"
 }
 
-// bundleOf returns the bundle identity implied by path's bundle
-// subdirectory under root. The raw repo uses bare bundle names
-// ("enterprise/", "mobile/", "ics/"), so we strip an optional
-// "-attack" suffix to recover the bare name and then derive both
-// fields from it. A zero-value return makes the artifact filter at
-// Stage 1a reject the file (which is what we want when path doesn't
-// live under a recognised bundle dir).
 // bundleOf identifies which ATT&CK bundle a file belongs to from its
 // first path component. The expected input layout is the one produced
 // by vuls-data-raw-mitre-attack: bare bundle directory names
