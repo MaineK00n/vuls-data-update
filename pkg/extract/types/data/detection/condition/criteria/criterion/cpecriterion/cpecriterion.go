@@ -306,7 +306,11 @@ func (c Criterion) Accept(query Query) (MatchQuality, error) {
 		case c.Range != nil:
 			// Concrete query against a range: accept only if in range,
 			// otherwise fall through to CPEMatches.
-			qVersion := strings.ReplaceAll(qv, "\\.", ".")
+			// WFN attribute values escape every special character with a
+			// backslash ("10\.1\.3\-h1"); strip all escapes, not just dots,
+			// so versions containing hyphens (e.g. PAN-OS hotfixes) reach
+			// the comparator intact.
+			qVersion := strings.ReplaceAll(qv, "\\", "")
 			isAccepted, err := c.Range.Accept(qVersion)
 			if err != nil {
 				return MatchQualityUnknown, errors.Wrap(err, "range accept")
