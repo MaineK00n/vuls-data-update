@@ -339,6 +339,13 @@ func Extract(args string, opts ...Option) error {
 		r := utiljson.NewJSONReader()
 		domains := slices.Clone(e.peek.XMitreDomains)
 
+		// revokedBy collects the ext-IDs of the objects that replace
+		// this entry when it is Revoked. Stage 2b appends one per
+		// STIX revoked-by relationship pointing away from this entry;
+		// typical records have at most one but a future split (e.g.
+		// one Technique into several successors) can produce more.
+		var revokedBy []string
+
 		// Per-kind accumulators. Only the slots for the entry's own
 		// kind get populated below; every other group stays zero so
 		// the final Attack struct literal sees just the natural
@@ -559,11 +566,15 @@ func Extract(args string, opts ...Option) error {
 					technique.detectionStrategies = append(technique.detectionStrategies, relatedrefTypes.RelatedRef{ID: src.ext, Description: desc, References: refs})
 				}
 			case "revoked-by":
-				// MITRE uses revoked-by to point a withdrawn object at
-				// its replacement. The Revoked flag on the source
-				// already conveys that to consumers, so we keep the
-				// relationship file in raws (via the r.Read above) but
-				// do not surface an edge.
+				// MITRE points a withdrawn object at its replacement
+				// via revoked-by. Record the replacement on the
+				// source side so the canonical Attack record can
+				// surface "use X instead" alongside the Revoked
+				// flag. The target side (the replacement) doesn't
+				// need to know what it replaced.
+				if extID == src.ext {
+					revokedBy = append(revokedBy, tgt.ext)
+				}
 			default:
 				return errors.Errorf("unexpected relationship_type %q in %s", rel.RelationshipType, rel.ID)
 			}
@@ -626,6 +637,7 @@ func Extract(args string, opts ...Option) error {
 				Domains:     domains,
 				Deprecated:  deref(ap.XMitreDeprecated),
 				Revoked:     deref(ap.Revoked),
+				RevokedBy:   revokedBy,
 				Version:     deref(ap.XMitreVersion),
 				Created:     ap.Created,
 				Modified:    ap.Modified,
@@ -664,6 +676,7 @@ func Extract(args string, opts ...Option) error {
 				Domains:     domains,
 				Deprecated:  deref(t.XMitreDeprecated),
 				Revoked:     deref(t.Revoked),
+				RevokedBy:   revokedBy,
 				Version:     deref(t.XMitreVersion),
 				Created:     t.Created,
 				Modified:    t.Modified,
@@ -687,6 +700,7 @@ func Extract(args string, opts ...Option) error {
 				Domains:     domains,
 				Deprecated:  deref(m.XMitreDeprecated),
 				Revoked:     deref(m.Revoked),
+				RevokedBy:   revokedBy,
 				Version:     deref(m.XMitreVersion),
 				Created:     m.Created,
 				Modified:    m.Modified,
@@ -709,6 +723,7 @@ func Extract(args string, opts ...Option) error {
 				Domains:     domains,
 				Deprecated:  deref(is.XMitreDeprecated),
 				Revoked:     deref(is.Revoked),
+				RevokedBy:   revokedBy,
 				Version:     deref(is.XMitreVersion),
 				Created:     is.Created,
 				Modified:    is.Modified,
@@ -739,6 +754,7 @@ func Extract(args string, opts ...Option) error {
 					Domains:     domains,
 					Deprecated:  deref(m.XMitreDeprecated),
 					Revoked:     deref(m.Revoked),
+				RevokedBy:   revokedBy,
 					Version:     deref(m.XMitreVersion),
 					Created:     m.Created,
 					Modified:    m.Modified,
@@ -766,6 +782,7 @@ func Extract(args string, opts ...Option) error {
 					Domains:     domains,
 					Deprecated:  deref(t.XMitreDeprecated),
 					Revoked:     deref(t.Revoked),
+				RevokedBy:   revokedBy,
 					Version:     deref(t.XMitreVersion),
 					Created:     t.Created,
 					Modified:    t.Modified,
@@ -794,6 +811,7 @@ func Extract(args string, opts ...Option) error {
 				Domains:     domains,
 				Deprecated:  deref(camp.XMitreDeprecated),
 				Revoked:     deref(camp.Revoked),
+				RevokedBy:   revokedBy,
 				Version:     deref(camp.XMitreVersion),
 				Created:     camp.Created,
 				Modified:    camp.Modified,
@@ -829,6 +847,7 @@ func Extract(args string, opts ...Option) error {
 				Domains:     domains,
 				Deprecated:  deref(as.XMitreDeprecated),
 				Revoked:     deref(as.Revoked),
+				RevokedBy:   revokedBy,
 				Version:     deref(as.XMitreVersion),
 				Created:     as.Created,
 				Modified:    as.Modified,
@@ -854,6 +873,7 @@ func Extract(args string, opts ...Option) error {
 				Domains:    domains,
 				Deprecated: deref(ds.XMitreDeprecated),
 				Revoked:    deref(ds.Revoked),
+				RevokedBy:  revokedBy,
 				Version:    deref(ds.XMitreVersion),
 				Created:    ds.Created,
 				Modified:   ds.Modified,
@@ -877,6 +897,7 @@ func Extract(args string, opts ...Option) error {
 				Domains:     domains,
 				Deprecated:  deref(ds.XMitreDeprecated),
 				Revoked:     deref(ds.Revoked),
+				RevokedBy:   revokedBy,
 				Version:     deref(ds.XMitreVersion),
 				Created:     ds.Created,
 				Modified:    ds.Modified,
@@ -905,6 +926,7 @@ func Extract(args string, opts ...Option) error {
 				Domains:     domains,
 				Deprecated:  deref(dc.XMitreDeprecated),
 				Revoked:     deref(dc.Revoked),
+				RevokedBy:   revokedBy,
 				Version:     deref(dc.XMitreVersion),
 				Created:     dc.Created,
 				Modified:    dc.Modified,
@@ -940,6 +962,7 @@ func Extract(args string, opts ...Option) error {
 				Domains:     domains,
 				Deprecated:  deref(an.XMitreDeprecated),
 				Revoked:     deref(an.Revoked),
+				RevokedBy:   revokedBy,
 				Version:     deref(an.XMitreVersion),
 				Created:     an.Created,
 				Modified:    an.Modified,

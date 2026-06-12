@@ -54,6 +54,7 @@ type Attack struct {
 	Domains     []string  `json:"domains,omitempty"` // enterprise / ics / mobile
 	Deprecated  bool      `json:"deprecated,omitempty"`
 	Revoked     bool      `json:"revoked,omitempty"`
+	RevokedBy   []string  `json:"revoked_by,omitempty"` // ext-IDs of the replacement(s) when Revoked, sourced from STIX revoked-by relationships; usually one but a split (e.g. one Technique into several) can produce more
 	Version     string    `json:"version,omitempty"`
 	Created     time.Time `json:"created,omitzero"`
 	Modified    time.Time `json:"modified,omitzero"`
@@ -76,6 +77,7 @@ type Attack struct {
 
 func (a *Attack) Sort() {
 	slices.Sort(a.Domains)
+	slices.Sort(a.RevokedBy)
 	a.Technique.Sort()
 	a.Tactic.Sort()
 	a.Mitigation.Sort()
@@ -118,6 +120,7 @@ func Compare(x, y Attack) int {
 				return 0
 			}
 		}(),
+		slices.Compare(x.RevokedBy, y.RevokedBy),
 		techniqueTypes.Compare(x.Technique, y.Technique),
 		tacticTypes.Compare(x.Tactic, y.Tactic),
 		mitigationTypes.Compare(x.Mitigation, y.Mitigation),
