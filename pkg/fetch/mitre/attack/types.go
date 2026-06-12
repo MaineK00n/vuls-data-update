@@ -192,7 +192,6 @@ type IntrusionSet struct {
 	ObjectMarkingRefs       []string            `json:"object_marking_refs,omitempty"`
 	Revoked                 *bool               `json:"revoked,omitempty"`
 	SpecVersion             string              `json:"spec_version"`
-	XMitreAliases           []string            `json:"x_mitre_aliases,omitempty"`
 	XMitreAttackSpecVersion string              `json:"x_mitre_attack_spec_version,omitempty"`
 	XMitreContributors      []string            `json:"x_mitre_contributors,omitempty"`
 	XMitreDeprecated        *bool               `json:"x_mitre_deprecated,omitempty"`
@@ -204,10 +203,11 @@ type IntrusionSet struct {
 }
 
 // Malware represents a STIX 2.1 malware object (ATT&CK Software).
+// STIX 2.1 malware does not define a standard aliases field; ATT&CK
+// surfaces aliases via the MITRE custom x_mitre_aliases property.
 type Malware struct {
 	Type                    string              `json:"type"`
 	ID                      string              `json:"id"`
-	Aliases                 []string            `json:"aliases,omitempty"`
 	Created                 time.Time           `json:"created"`
 	CreatedByRef            *string             `json:"created_by_ref,omitempty"`
 	Description             *string             `json:"description,omitempty"`
@@ -231,11 +231,12 @@ type Malware struct {
 }
 
 // Tool represents a STIX 2.1 tool object (ATT&CK Software). Structurally
-// identical to Malware except the absence of is_family.
+// identical to Malware except the absence of is_family; like Malware,
+// STIX 2.1 tool has no aliases field and ATT&CK uses x_mitre_aliases
+// instead.
 type Tool struct {
 	Type                    string              `json:"type"`
 	ID                      string              `json:"id"`
-	Aliases                 []string            `json:"aliases,omitempty"`
 	Created                 time.Time           `json:"created"`
 	CreatedByRef            *string             `json:"created_by_ref,omitempty"`
 	Description             *string             `json:"description,omitempty"`
