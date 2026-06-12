@@ -1077,6 +1077,13 @@ type bundleInfo struct {
 // fields from it. A zero-value return makes the artifact filter at
 // Stage 1a reject the file (which is what we want when path doesn't
 // live under a recognised bundle dir).
+// bundleOf identifies which ATT&CK bundle a file belongs to from its
+// first path component. The expected input layout is the one produced
+// by vuls-data-raw-mitre-attack: bare bundle directory names
+// (enterprise / ics / mobile). Stage 1c iterates the same fixed list,
+// so the two stages agree on what they will accept. Files outside
+// those three directories return the zero bundleInfo and are dropped
+// by the Stage 1a distribution-artifact filter.
 func bundleOf(root, path string) bundleInfo {
 	rel, err := filepath.Rel(root, path)
 	if err != nil {
@@ -1086,16 +1093,15 @@ func bundleOf(root, path string) bundleInfo {
 	if !ok || dir == "" {
 		return bundleInfo{}
 	}
-	bare := strings.TrimSuffix(dir, "-attack")
-	switch bare {
+	switch dir {
 	case "enterprise":
 		// Enterprise dropped its "enterprise-" prefix when the
 		// source_name was unified.
 		return bundleInfo{domain: "enterprise-attack", sourceName: "mitre-attack"}
 	case "ics", "mobile":
 		return bundleInfo{
-			domain:     fmt.Sprintf("%s-attack", bare),
-			sourceName: fmt.Sprintf("mitre-%s-attack", bare),
+			domain:     fmt.Sprintf("%s-attack", dir),
+			sourceName: fmt.Sprintf("mitre-%s-attack", dir),
 		}
 	default:
 		return bundleInfo{}
