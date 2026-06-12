@@ -7,6 +7,7 @@ import (
 	stderrors "errors"
 	"fmt"
 
+	panosVersion "github.com/MaineK00n/go-paloalto-version/pan-os"
 	"github.com/hashicorp/go-version"
 	"github.com/pkg/errors"
 )
@@ -27,6 +28,7 @@ const (
 	_ RangeType = iota
 	RangeTypeVersion
 	RangeTypeSEMVER
+	RangeTypePANOS
 
 	RangeTypeUnknown
 )
@@ -37,6 +39,8 @@ func (t RangeType) String() string {
 		return "version"
 	case RangeTypeSEMVER:
 		return "semver"
+	case RangeTypePANOS:
+		return "pan-os"
 	default:
 		return "unknown"
 	}
@@ -60,6 +64,8 @@ func (t *RangeType) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		*t = RangeTypeVersion
 	case "semver":
 		*t = RangeTypeSEMVER
+	case "pan-os":
+		*t = RangeTypePANOS
 	case "unknown":
 		*t = RangeTypeUnknown
 	default:
@@ -84,6 +90,8 @@ func (t *RangeType) UnmarshalJSON(data []byte) error {
 		rt = RangeTypeVersion
 	case "semver":
 		rt = RangeTypeSEMVER
+	case "pan-os":
+		rt = RangeTypePANOS
 	case "unknown":
 		rt = RangeTypeUnknown
 	default:
@@ -176,6 +184,20 @@ func (t RangeType) Compare(v1, v2 string) (int, error) {
 			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
 		}
 		vb, err := version.NewVersion(v2)
+		if err != nil {
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
+		}
+		return va.Compare(vb), nil
+	case RangeTypePANOS:
+		// PAN-OS versions are <major>.<minor>.<maintenance>[-h<hotfix>].
+		// hashicorp comparators must not be used here: they parse "-hN" as a
+		// prerelease and invert the order (11.2.4-h1 < 11.2.4), while in
+		// PAN-OS a hotfix is released after its base (11.2.4 < 11.2.4-h1).
+		va, err := panosVersion.NewVersion(v1)
+		if err != nil {
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
+		}
+		vb, err := panosVersion.NewVersion(v2)
 		if err != nil {
 			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
 		}
