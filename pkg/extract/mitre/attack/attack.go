@@ -952,8 +952,14 @@ func Extract(args string, opts ...Option) error {
 			}
 			lrefs := make([]analyticTypes.LogSourceReference, 0, len(an.XMitreLogSourceReferences))
 			for _, lr := range an.XMitreLogSourceReferences {
+				// x_mitre_data_component_ref is a STIX UUID; the
+				// canonical record expects the DataComponent's DC*
+				// ext-ID instead. Resolve through the Stage 1 uuid
+				// index, falling back to "" if MITRE points at a
+				// component the extractor didn't keep (e.g.
+				// distribution artifact).
 				lrefs = append(lrefs, analyticTypes.LogSourceReference{
-					DataComponent: lr.XMitreDataComponentRef,
+					DataComponent: uuids[lr.XMitreDataComponentRef].ext,
 					Name:          lr.Name,
 					Channel:       lr.Channel,
 				})
