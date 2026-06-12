@@ -1,0 +1,123 @@
+{
+	"id": "PAN-SA-2025-0007",
+	"advisories": [
+		{
+			"content": {
+				"id": "PAN-SA-2025-0007",
+				"title": "Chromium: Monthly Vulnerability Update (March 2025)",
+				"description": "Palo Alto Networks incorporated the following Chromium security fixes into our products:\n\n * https://chromereleases.googleblog.com/2025/03/stable-channel-update-for-desktop.html\n   \n * https://chromereleases.googleblog.com/2025/02/stable-channel-update-for-desktop_25.html\n * https://chromereleases.googleblog.com/2025/02/stable-channel-update-for-desktop_18.html\n * https://chromereleases.googleblog.com/2025/02/stable-channel-update-for-desktop_12.html",
+				"references": [
+					{
+						"source": "00000000-0000-4000-9000-000000000000",
+						"url": "https://security.paloaltonetworks.com/PAN-SA-2025-0007"
+					}
+				],
+				"published": "2025-03-12T16:00:00Z"
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe"
+				}
+			]
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "PAN-SA-2025-0007",
+				"title": "Chromium: Monthly Vulnerability Update (March 2025)",
+				"description": "Palo Alto Networks incorporated the following Chromium security fixes into our products:\n\n * https://chromereleases.googleblog.com/2025/03/stable-channel-update-for-desktop.html\n   \n * https://chromereleases.googleblog.com/2025/02/stable-channel-update-for-desktop_25.html\n * https://chromereleases.googleblog.com/2025/02/stable-channel-update-for-desktop_18.html\n * https://chromereleases.googleblog.com/2025/02/stable-channel-update-for-desktop_12.html",
+				"severity": [
+					{
+						"type": "cvss_v40",
+						"source": "00000000-0000-4000-9000-000000000000",
+						"cvss_v40": {
+							"vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:A/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H/E:U/AU:N/R:U/V:D/RE:L/U:Amber",
+							"score": 7.6,
+							"severity": "HIGH"
+						}
+					}
+				],
+				"workarounds": [
+					{
+						"source": "00000000-0000-4000-9000-000000000000",
+						"description": "No workaround or mitigation is available."
+					}
+				],
+				"exploit": [
+					{
+						"source": "00000000-0000-4000-9000-000000000000",
+						"description": "Palo Alto Networks is not aware of any malicious exploitation of this issue."
+					}
+				],
+				"references": [
+					{
+						"source": "00000000-0000-4000-9000-000000000000",
+						"url": "https://security.paloaltonetworks.com/PAN-SA-2025-0007"
+					}
+				],
+				"published": "2025-03-12T16:00:00Z",
+				"optional": {
+					"affected": [
+						{
+							"vendor": "Palo Alto Networks",
+							"product": "Prisma Browser",
+							"defaultStatus": "unaffected",
+							"versions": [
+								{
+									"status": "affected",
+									"versionType": "custom",
+									"version": "0",
+									"lessThan": "133.16.4.99",
+									"changes": [
+										{
+											"at": "134.7.4.44",
+											"status": "unaffected"
+										}
+									]
+								}
+							]
+						}
+					],
+					"configurations": [
+						{
+							"lang": "en",
+							"value": "No special configuration is required to be affected by this issue.",
+							"supportingMedia": [
+								{
+									"base64": false,
+									"type": "text/html",
+									"value": "No special configuration is required to be affected by this issue."
+								}
+							]
+						}
+					],
+					"impacts": [
+						{
+							"descriptions": [
+								{
+									"lang": "en",
+									"value": ""
+								}
+							]
+						}
+					],
+					"source": {
+						"discovery": "EXTERNAL"
+					}
+				}
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe"
+				}
+			]
+		}
+	],
+	"data_source": {
+		"id": "paloalto-json",
+		"raws": [
+			"fixtures/2025/PAN-SA-2025-0007.json"
+		]
+	}
+}
