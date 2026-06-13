@@ -1,0 +1,37 @@
+{
+	"type": "x-mitre-analytic",
+	"id": "x-mitre-analytic--00000000-0000-0000-0000-000000000202",
+	"spec_version": "2.1",
+	"created": "2024-01-01T00:00:00.000Z",
+	"modified": "2024-01-01T00:00:00.000Z",
+	"x_mitre_version": "1.0",
+	"x_mitre_domains": [
+		"enterprise-attack"
+	],
+	"x_mitre_attack_spec_version": "3.0.0",
+	"name": "Test Analytic",
+	"description": "Test analytic fixture.",
+	"x_mitre_platforms": [
+		"TestPlatform"
+	],
+	"x_mitre_log_source_references": [
+		{
+			"x_mitre_data_component_ref": "x-mitre-data-component--00000000-0000-0000-0000-000000000201",
+			"name": "TestLogSourceName",
+			"channel": "TestLogSourceChannel"
+		}
+	],
+	"x_mitre_mutable_elements": [
+		{
+			"field": "TestField",
+			"description": "test mutable element"
+		}
+	],
+	"external_references": [
+		{
+			"source_name": "mitre-attack",
+			"external_id": "AN9990",
+			"url": "https://attack.mitre.org/analytics/AN9990"
+		}
+	]
+}

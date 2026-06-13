@@ -1,0 +1,38 @@
+{
+	"id": "DS9990",
+	"kind": "data-source",
+	"name": "Test Data Source",
+	"description": "Test data source fixture.",
+	"domains": [
+		"enterprise-attack"
+	],
+	"deprecated": false,
+	"revoked": false,
+	"version": "1.0",
+	"created": "2024-01-01T00:00:00Z",
+	"modified": "2024-01-01T00:00:00Z",
+	"attack_data_source": {
+		"platforms": [
+			"TestPlatform"
+		],
+		"collection_layers": [
+			"TestLayer"
+		],
+		"data_components": [
+			"DC9990"
+		]
+	},
+	"references": [
+		{
+			"source": "mitre-attack",
+			"url": "https://attack.mitre.org/datasources/DS9990"
+		}
+	],
+	"data_source": {
+		"id": "mitre-attack",
+		"raws": [
+			"fixtures/enterprise/x-mitre-data-component/x-mitre-data-component--00000000-0000-0000-0000-000000000201.json",
+			"fixtures/enterprise/x-mitre-data-source/x-mitre-data-source--00000000-0000-0000-0000-000000000200.json"
+		]
+	}
+}

@@ -30,7 +30,19 @@
 			"WMI: WMI Creation"
 		],
 		"network_requirements": false,
-		"remote_support": true
+		"remote_support": true,
+		"assets_targeted": [
+			{
+				"id": "A9990",
+				"description": "T1047 targets the Test Asset (A9990).",
+				"references": [
+					{
+						"source": "Asset Targeting Guide 2024",
+						"url": "https://example.test/asset-targeting-guide-2024"
+					}
+				]
+			}
+		]
 	},
 	"references": [
 		{
@@ -53,7 +65,9 @@
 	"data_source": {
 		"id": "mitre-attack",
 		"raws": [
-			"fixtures/enterprise/attack-pattern/attack-pattern--01a5a209-b94c-450b-b7f9-946497d91055.json"
+			"fixtures/enterprise/attack-pattern/attack-pattern--01a5a209-b94c-450b-b7f9-946497d91055.json",
+			"fixtures/enterprise/relationship/relationship--00000000-0000-0000-0000-000000000205.json",
+			"fixtures/enterprise/x-mitre-asset/x-mitre-asset--00000000-0000-0000-0000-000000000204.json"
 		]
 	}
 }

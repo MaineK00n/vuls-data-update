@@ -1,0 +1,36 @@
+{
+	"id": "DC9990",
+	"kind": "data-component",
+	"name": "Test Data Component",
+	"description": "Test data component fixture.",
+	"domains": [
+		"enterprise-attack"
+	],
+	"deprecated": false,
+	"revoked": false,
+	"version": "1.0",
+	"created": "2024-01-01T00:00:00Z",
+	"modified": "2024-01-01T00:00:00Z",
+	"data_component": {
+		"data_source": "DS9990",
+		"log_sources": [
+			{
+				"name": "TestLogSourceName",
+				"channel": "TestLogSourceChannel"
+			}
+		]
+	},
+	"references": [
+		{
+			"source": "mitre-attack",
+			"url": "https://attack.mitre.org/datacomponents/DC9990"
+		}
+	],
+	"data_source": {
+		"id": "mitre-attack",
+		"raws": [
+			"fixtures/enterprise/x-mitre-data-component/x-mitre-data-component--00000000-0000-0000-0000-000000000201.json",
+			"fixtures/enterprise/x-mitre-data-source/x-mitre-data-source--00000000-0000-0000-0000-000000000200.json"
+		]
+	}
+}
