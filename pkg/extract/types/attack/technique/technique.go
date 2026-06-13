@@ -10,23 +10,23 @@ import (
 )
 
 type Technique struct {
-	Platforms            []string                       `json:"platforms,omitempty"`
-	Tactics              []tacticrefTypes.TacticRef     `json:"tactics,omitempty"` // tactic shortname + Tactic ID (e.g., "credential-access" / "TA0006")
-	IsSubtechnique       bool                           `json:"is_subtechnique,omitempty"`
-	Parent               string                         `json:"parent,omitempty"` // Subtechnique parent Technique ID
-	Detection            string                         `json:"detection,omitempty"`
-	DataSources          []string                       `json:"data_sources,omitempty"`
-	Mitigations          []relatedrefTypes.RelatedRef   `json:"mitigations,omitempty"` // Mitigation IDs ("M*") + per-edge "Use" description from mitigates rel
-	Procedures           []procedureTypes.Procedure     `json:"procedures,omitempty"`  // Attacker (G*/S*/C*) → use description
-	PermissionsRequired  []string                       `json:"permissions_required,omitempty"`
-	EffectivePermissions []string                       `json:"effective_permissions,omitempty"`
-	DefenseBypassed      []string                       `json:"defense_bypassed,omitempty"`
-	ImpactType           []string                       `json:"impact_type,omitempty"`
-	NetworkRequirements  bool                           `json:"network_requirements,omitempty"`
-	RemoteSupport        bool                           `json:"remote_support,omitempty"`
-	Subtechniques        []string                       `json:"subtechniques,omitempty"`        // Technique IDs ("T*.*") that are sub-techniques of this one (reverse of Parent)
-	AssetsTargeted       []relatedrefTypes.RelatedRef   `json:"assets_targeted,omitempty"`      // Asset IDs ("A*") + per-edge description from "targets" rel
-	DetectionStrategies  []relatedrefTypes.RelatedRef   `json:"detection_strategies,omitempty"` // DetectionStrategy IDs ("DET*") + per-edge description from "detects" rel
+	Platforms            []string                     `json:"platforms,omitempty"`
+	Tactics              []tacticrefTypes.TacticRef   `json:"tactics,omitempty"` // tactic shortname + Tactic ID (e.g., "credential-access" / "TA0006")
+	IsSubtechnique       bool                         `json:"is_subtechnique,omitempty"`
+	Parent               string                       `json:"parent,omitempty"` // Subtechnique parent Technique ID
+	Detection            string                       `json:"detection,omitempty"`
+	DataSources          []string                     `json:"data_sources,omitempty"`
+	Mitigations          []relatedrefTypes.RelatedRef `json:"mitigations,omitempty"` // Mitigation IDs ("M*") + per-edge "Use" description from mitigates rel
+	Procedures           []procedureTypes.Procedure   `json:"procedures,omitempty"`  // Attacker (G*/S*/C*) → use description
+	PermissionsRequired  []string                     `json:"permissions_required,omitempty"`
+	EffectivePermissions []string                     `json:"effective_permissions,omitempty"`
+	DefenseBypassed      []string                     `json:"defense_bypassed,omitempty"`
+	ImpactType           []string                     `json:"impact_type,omitempty"`
+	NetworkRequirements  bool                         `json:"network_requirements,omitempty"`
+	RemoteSupport        bool                         `json:"remote_support,omitempty"`
+	Subtechniques        []string                     `json:"subtechniques,omitempty"`        // Technique IDs ("T*.*") that are sub-techniques of this one (reverse of Parent)
+	AssetsTargeted       []relatedrefTypes.RelatedRef `json:"assets_targeted,omitempty"`      // Asset IDs ("A*") + per-edge description from "targets" rel
+	DetectionStrategies  []relatedrefTypes.RelatedRef `json:"detection_strategies,omitempty"` // DetectionStrategy IDs ("DET*") + per-edge description from "detects" rel
 }
 
 func (t *Technique) Sort() {
