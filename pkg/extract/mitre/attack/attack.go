@@ -225,6 +225,42 @@ func Extract(args string, opts ...Option) error {
 		return errors.Wrapf(err, "walk %s", args)
 	}
 
+	// killChainDomain maps a kill_chain_phase's kill_chain_name to the
+	// domain (x_mitre_domains value) of the Tactic that shortname
+	// resolves under. ATT&CK reuses a handful of shortnames across
+	// bundles (e.g. "initial-access" exists in Enterprise / ICS /
+	// Mobile, each with a distinct TA* ID), so matching by shortname
+	// alone is non-deterministic — Stage 1b and Stage 2 must also
+	// filter the candidate Tactic by domain.
+	killChainDomain := map[string]string{
+		"mitre-attack":        "enterprise-attack",
+		"mitre-ics-attack":    "ics-attack",
+		"mitre-mobile-attack": "mobile-attack",
+	}
+
+	// tacticByDomainShortname keys every indexed Tactic by both its
+	// declared domain(s) and its shortname so Stage 1b and Stage 2 can
+	// resolve a KillChainPhase to the right Tactic in O(1) without
+	// scanning entries (and without the cross-domain ambiguity that
+	// shortname-only matching introduced).
+	type tacticKey struct {
+		domain    string
+		shortname string
+	}
+	tacticByDomainShortname := make(map[tacticKey]string)
+	for ext, e := range entries {
+		if e.kind != attackTypes.KindTactic {
+			continue
+		}
+		sn := e.peek.Tactic.XMitreShortname
+		if sn == "" {
+			continue
+		}
+		for _, d := range e.peek.XMitreDomains {
+			tacticByDomainShortname[tacticKey{domain: d, shortname: sn}] = ext
+		}
+	}
+
 	// Stage 1b: per-extID, link the files Stage 2 will need to build
 	// the cross-ref fields. Forward refs (e.g. Technique → Tactic via
 	// KillChainPhases) and reverse refs (Tactic → Techniques) both
@@ -234,20 +270,22 @@ func Extract(args string, opts ...Option) error {
 		switch e.kind {
 		case attackTypes.KindTechnique:
 			// KillChainPhases name the Tactic by its shortname; resolve
-			// to the Tactic's ext-ID so we can add the Technique to that
-			// Tactic's file list (for Tactic.Techniques reverse).
+			// to the right domain's Tactic via the prebuilt
+			// (domain, shortname) → ext index so cross-bundle shortname
+			// collisions (e.g. "initial-access" in both Enterprise and
+			// Mobile) pick the matching Tactic deterministically.
 			for _, kc := range e.peek.Technique.KillChainPhases {
-				switch kc.KillChainName {
-				case "mitre-attack", "mitre-ics-attack", "mitre-mobile-attack":
-					for tExt, tac := range entries {
-						if tac.kind != attackTypes.KindTactic || tac.peek.Tactic.XMitreShortname != kc.PhaseName {
-							continue
-						}
-						tac.refs = append(tac.refs, e.paths...)
-						entries[tExt] = tac
-						break
-					}
+				domain, ok := killChainDomain[kc.KillChainName]
+				if !ok {
+					continue
 				}
+				tExt, ok := tacticByDomainShortname[tacticKey{domain: domain, shortname: kc.PhaseName}]
+				if !ok {
+					continue
+				}
+				tac := entries[tExt]
+				tac.refs = append(tac.refs, e.paths...)
+				entries[tExt] = tac
 			}
 			entries[extID] = e
 		case attackTypes.KindDetectStrategy:
@@ -402,26 +440,23 @@ func Extract(args string, opts ...Option) error {
 
 		// Forward cross-refs come from the entry's own peek. Tactic
 		// references resolve to shortname+ID by reading sibling entries
-		// directly, so no precomputed shortname/UUID lookup tables are
-		// needed.
+		// directly. KillChainPhases resolve through the prebuilt
+		// (domain, shortname) → ext index so the chosen Tactic always
+		// matches the kill_chain_name's bundle, not whichever Tactic
+		// with that shortname the map iteration happened to visit
+		// first.
 		switch e.kind {
 		case attackTypes.KindTechnique:
 			for _, kc := range e.peek.Technique.KillChainPhases {
-				switch kc.KillChainName {
-				case "mitre-attack", "mitre-ics-attack", "mitre-mobile-attack":
-					var tacticExt string
-					for tExt, tac := range entries {
-						if tac.kind != attackTypes.KindTactic || tac.peek.Tactic.XMitreShortname != kc.PhaseName {
-							continue
-						}
-						tacticExt = tExt
-						break
-					}
-					if tacticExt == "" {
-						return errors.Errorf("technique %s references kill_chain_phase shortname %q with no matching x-mitre-tactic", extID, kc.PhaseName)
-					}
-					technique.tactics = append(technique.tactics, tacticrefTypes.TacticRef{Shortname: kc.PhaseName, ID: tacticExt})
+				domain, ok := killChainDomain[kc.KillChainName]
+				if !ok {
+					continue
 				}
+				tacticExt, ok := tacticByDomainShortname[tacticKey{domain: domain, shortname: kc.PhaseName}]
+				if !ok {
+					return errors.Errorf("technique %s references kill_chain_phase {%s, %s} with no matching x-mitre-tactic", extID, kc.KillChainName, kc.PhaseName)
+				}
+				technique.tactics = append(technique.tactics, tacticrefTypes.TacticRef{Shortname: kc.PhaseName, ID: tacticExt})
 			}
 		case attackTypes.KindDetectStrategy:
 			for _, ar := range e.peek.DetectStrategy.XMitreAnalyticRefs {
