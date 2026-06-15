@@ -205,6 +205,20 @@ func Extract(args string, opts ...Option) error {
 			// surface.
 			return errors.Errorf("missing mitre-attack external_id in %s (type %q)", path, peek.Type)
 		}
+		// Pre-2019 "one technique = one mitigation" era course-of-action
+		// records still ship deprecated but carry their Technique
+		// counterpart's T#### external_id instead of the M#### prefix
+		// every live mitigation uses. Indexing them under the same
+		// ext-ID as the live Technique collides in entries and
+		// double-links into Stage 1b's tactic.refs (manifesting as
+		// duplicate IDs in tactic.techniques). No live relationship
+		// endpoint references the stub, so dropping it here only loses
+		// provenance for the deprecated copy. Anything else with a
+		// non-M Mitigation ext-id is schema drift CI should surface.
+		if kind == attackTypes.KindMitigation && !strings.HasPrefix(extID, "M") {
+			slog.Warn("skipping legacy mitigation with non-M external_id (cross-kind ext-id collision)", "path", path, "ext_id", extID)
+			return nil
+		}
 
 		uuids[peek.ID] = uuidInfo{ext: extID, kind: kind, path: path}
 
