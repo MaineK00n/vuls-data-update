@@ -96,7 +96,7 @@ func TestValidateXAffectedList(t *testing.T) {
 		for _, d := range detections(r.fetched) {
 			for _, c := range d.Conditions {
 				for _, cn := range c.Criteria.Criterions {
-					if cn.CPE == nil || string(cn.CPE.CPE) != panosCPE || len(cn.CPE.CPEMatches) > 0 {
+					if cn.CPE == nil || string(cn.CPE.CPE) != "cpe:2.3:o:paloaltonetworks:pan-os:*:*:*:*:*:*:*:*" || len(cn.CPE.CPEMatches) > 0 {
 						continue
 					}
 					rangeCriteria = append(rangeCriteria, *cn.CPE)

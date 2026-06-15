@@ -48,11 +48,6 @@ import (
 	paloaltoJSON "github.com/MaineK00n/vuls-data-update/pkg/fetch/paloalto/json"
 )
 
-// panosCPE is the canonical PAN-OS CPE used for range-based criteria. It is
-// the same WFN template go-cve-dictionary uses when interpreting PAN-OS
-// affected entries.
-const panosCPE = "cpe:2.3:o:paloaltonetworks:pan-os:*:*:*:*:*:*:*:*"
-
 type options struct {
 	dir string
 }
@@ -427,7 +422,7 @@ func detections(fetched paloaltoJSON.CVE) []detectionTypes.Detection {
 						Type: criterionTypes.CriterionTypeCPE,
 						CPE: &ccTypes.Criterion{
 							Vulnerable: true,
-							CPE:        ccTypes.CPE(panosCPE),
+							CPE:        ccTypes.CPE("cpe:2.3:o:paloaltonetworks:pan-os:*:*:*:*:*:*:*:*"),
 							Range: func() *ccRangeTypes.Range {
 								if i.ge == "" && i.gt == "" && i.le == "" && i.lt == "" {
 									return nil
@@ -456,7 +451,7 @@ func detections(fetched paloaltoJSON.CVE) []detectionTypes.Detection {
 					Type: criterionTypes.CriterionTypeCPE,
 					CPE: &ccTypes.Criterion{
 						Vulnerable: true,
-						CPE:        ccTypes.CPE(panosCPE),
+						CPE:        ccTypes.CPE("cpe:2.3:o:paloaltonetworks:pan-os:*:*:*:*:*:*:*:*"),
 						CPEMatches: cpes,
 					},
 				})
