@@ -2898,15 +2898,15 @@ func newCmdMitreCAPEC() *cobra.Command {
 
 func newCmdMitreCVRF() *cobra.Command {
 	options := &base{
-		dir:   filepath.Join(util.CacheDir(), "fetch", "mitre", "cvrf"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "mitre", "cve", "cvrf"),
 		retry: 3,
 	}
 
 	cmd := &cobra.Command{
-		Use:   "mitre-cvrf",
+		Use:   "mitre-cve-cvrf",
 		Short: "Fetch MITRE CVE CVRF data source",
 		Example: heredoc.Doc(`
-			$ vuls-data-update fetch mitre-cvrf
+			$ vuls-data-update fetch mitre-cve-cvrf
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {

@@ -1687,14 +1687,14 @@ func newCmdMitreCAPEC() *cobra.Command {
 
 func newCmdMitreCVRF() *cobra.Command {
 	options := &base{
-		dir: filepath.Join(util.CacheDir(), "extract", "mitre", "cvrf"),
+		dir: filepath.Join(util.CacheDir(), "extract", "mitre", "cve", "cvrf"),
 	}
 
 	cmd := &cobra.Command{
-		Use:   "mitre-cvrf <Raw Mitre CVRF Repository PATH>",
+		Use:   "mitre-cve-cvrf <Raw Mitre CVRF Repository PATH>",
 		Short: "Extract Mitre CVRF data source",
 		Example: heredoc.Doc(`
-			$ vuls-data-update extract mitre-cvrf vuls-data-raw-mitre-cvrf
+			$ vuls-data-update extract mitre-cve-cvrf vuls-data-raw-mitre-cve-cvrf
 		`),
 		Args: cobra.ExactArgs(1),
 		RunE: func(_ *cobra.Command, args []string) error {
