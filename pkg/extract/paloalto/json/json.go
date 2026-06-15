@@ -673,8 +673,8 @@ func panosStanzaIntervals(stanza panosStanza) ([]panosInterval, error) {
 		case start == nil && upper == nil:
 			return nil, errors.Errorf("no version bounds. version: %q", stanza.version)
 		case upper == nil:
-			switch {
-			case start.Hotfix == nil:
+			switch start.Hotfix {
+			case nil:
 				// A bare release with no upper bound means the series from
 				// that release on (e.g. CVE-2020-2035 lists "8.1.0" .. "10.1.0"
 				// stanzas only, while x_affectedList enumerates the whole
@@ -747,7 +747,7 @@ func panosStanzaIntervals(stanza panosStanza) ([]panosInterval, error) {
 		bs = append(bs, baseTransition{v: *upper, affected: false})
 	}
 	for _, e := range baseEvents {
-		bs = append(bs, baseTransition{v: e.v, affected: e.affected})
+		bs = append(bs, baseTransition(e))
 	}
 	slices.SortStableFunc(bs, func(a, b baseTransition) int { return a.v.Compare(b.v) })
 	baseStatusAt := func(v panosVersion.Version) bool {
@@ -833,8 +833,8 @@ func panosStanzaIntervals(stanza panosStanza) ([]panosInterval, error) {
 		// The timeline would end "affected": close it at the highest version
 		// the stanza refers to — the data never means open-ended (e.g. the
 		// trailing line-end reverts of CVE-2026-0227 stanzas).
-		switch {
-		case clamp == nil:
+		switch clamp {
+		case nil:
 			is = append(is, panosInterval{ge: *open})
 		default:
 			if v, err := parsePANOSVersion(*open); err != nil || v.Compare(*clamp) < 0 {
