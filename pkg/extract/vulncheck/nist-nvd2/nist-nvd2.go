@@ -222,7 +222,7 @@ func extract(cvePath, cveDir, outputDir string) error {
 
 	splitted, err := util.Split(string(data.ID), "-", "-")
 	if err != nil {
-		return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "CVE-yyyy-\\d+", data.ID)
+		return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "CVE-\\d{4}-\\d{4,}", data.ID)
 	}
 
 	if err := util.Write(filepath.Join(e.outputDir, "data", splitted[1], fmt.Sprintf("%s.json", data.ID)), data, true); err != nil {
