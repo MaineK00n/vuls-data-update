@@ -12,6 +12,7 @@ import (
 	datasourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/attack/datasource"
 	detectionstrategyTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/attack/detectionstrategy"
 	groupTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/attack/group"
+	kindTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/attack/kind"
 	mitigationTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/attack/mitigation"
 	softwareTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/attack/software"
 	tacticTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/attack/tactic"
@@ -20,21 +21,24 @@ import (
 	sourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/source"
 )
 
-// Kind identifies the ATT&CK object category, derived from the STIX object type.
-type Kind string
+// Kind is re-exported from the leaf attack/kind package so existing
+// callers can keep referring to attackTypes.Kind and attackTypes.Kind*
+// unchanged, while leaf sub-types (e.g., attack/procedure) carry a
+// typed Kind without creating an import cycle.
+type Kind = kindTypes.Kind
 
 const (
-	KindTechnique      Kind = "technique"          // attack-pattern
-	KindTactic         Kind = "tactic"             // x-mitre-tactic
-	KindMitigation     Kind = "mitigation"         // course-of-action
-	KindGroup          Kind = "group"              // intrusion-set
-	KindSoftware       Kind = "software"           // malware | tool
-	KindCampaign       Kind = "campaign"           // campaign
-	KindDataSource     Kind = "data-source"        // x-mitre-data-source
-	KindDataComponent  Kind = "data-component"     // x-mitre-data-component
-	KindAnalytic       Kind = "analytic"           // x-mitre-analytic
-	KindDetectStrategy Kind = "detection-strategy" // x-mitre-detection-strategy
-	KindAsset          Kind = "asset"              // x-mitre-asset
+	KindTechnique      = kindTypes.Technique
+	KindTactic         = kindTypes.Tactic
+	KindMitigation     = kindTypes.Mitigation
+	KindGroup          = kindTypes.Group
+	KindSoftware       = kindTypes.Software
+	KindCampaign       = kindTypes.Campaign
+	KindDataSource     = kindTypes.DataSource
+	KindDataComponent  = kindTypes.DataComponent
+	KindAnalytic       = kindTypes.Analytic
+	KindDetectStrategy = kindTypes.DetectStrategy
+	KindAsset          = kindTypes.Asset
 )
 
 // Attack represents a single ATT&CK object keyed by its external_id

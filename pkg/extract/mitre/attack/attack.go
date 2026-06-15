@@ -570,7 +570,7 @@ func Extract(args string, opts ...Option) error {
 						group.techniquesUsed = append(group.techniquesUsed, techniqueusedTypes.TechniqueUsed{ID: tgt.ext, Description: desc, References: refs})
 					}
 					if extID == tgt.ext {
-						technique.procedures = append(technique.procedures, procedureTypes.Procedure{AttackerID: src.ext, Description: desc, References: refs})
+						technique.procedures = append(technique.procedures, procedureTypes.Procedure{AttackerKind: src.kind, AttackerID: src.ext, Description: desc, References: refs})
 					}
 				case src.kind == attackTypes.KindGroup && tgt.kind == attackTypes.KindSoftware:
 					if extID == src.ext {
@@ -584,14 +584,14 @@ func Extract(args string, opts ...Option) error {
 						software.techniquesUsed = append(software.techniquesUsed, techniqueusedTypes.TechniqueUsed{ID: tgt.ext, Description: desc, References: refs})
 					}
 					if extID == tgt.ext {
-						technique.procedures = append(technique.procedures, procedureTypes.Procedure{AttackerID: src.ext, Description: desc, References: refs})
+						technique.procedures = append(technique.procedures, procedureTypes.Procedure{AttackerKind: src.kind, AttackerID: src.ext, Description: desc, References: refs})
 					}
 				case src.kind == attackTypes.KindCampaign && tgt.kind == attackTypes.KindTechnique:
 					if extID == src.ext {
 						campaign.techniquesUsed = append(campaign.techniquesUsed, techniqueusedTypes.TechniqueUsed{ID: tgt.ext, Description: desc, References: refs})
 					}
 					if extID == tgt.ext {
-						technique.procedures = append(technique.procedures, procedureTypes.Procedure{AttackerID: src.ext, Description: desc, References: refs})
+						technique.procedures = append(technique.procedures, procedureTypes.Procedure{AttackerKind: src.kind, AttackerID: src.ext, Description: desc, References: refs})
 					}
 				case src.kind == attackTypes.KindCampaign && tgt.kind == attackTypes.KindSoftware:
 					if extID == src.ext {

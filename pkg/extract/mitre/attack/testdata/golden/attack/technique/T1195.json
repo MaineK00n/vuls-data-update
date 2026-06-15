@@ -43,18 +43,22 @@
 		],
 		"procedures": [
 			{
+				"attacker_kind": "campaign",
 				"attacker_id": "C9990",
 				"description": "TestCampaign uses Supply Chain Compromise."
 			},
 			{
+				"attacker_kind": "group",
 				"attacker_id": "G9990",
 				"description": "TestGroup uses Supply Chain Compromise."
 			},
 			{
+				"attacker_kind": "software",
 				"attacker_id": "S9990",
 				"description": "TestMalware uses Supply Chain Compromise."
 			},
 			{
+				"attacker_kind": "software",
 				"attacker_id": "S9991",
 				"description": "TestTool uses Supply Chain Compromise."
 			}
