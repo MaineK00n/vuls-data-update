@@ -360,7 +360,7 @@ func (e extractor) buildData(fetched nistnvd2Types.CVE) (dataTypes.Data, error) 
 						for _, r := range fetched.References {
 							if slices.Contains(r.Tags, "Mitigation") {
 								ms = append(ms, remediationTypes.Remediation{
-									Source:      "vulncheck.com",
+									Source:      r.Source,
 									Description: r.URL,
 								})
 							}
@@ -372,7 +372,7 @@ func (e extractor) buildData(fetched nistnvd2Types.CVE) (dataTypes.Data, error) 
 						for _, r := range fetched.References {
 							if slices.Contains(r.Tags, "Exploit") {
 								es = append(es, exploitTypes.Exploit{
-									Source: "vulncheck.com",
+									Source: r.Source,
 									Link:   r.URL,
 								})
 							}
