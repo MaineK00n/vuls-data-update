@@ -1065,9 +1065,8 @@ func Extract(args string, opts ...Option) error {
 		// Per-kind subdirectory namespaces the ext-ID so kinds that
 		// happen to share an external_id (pre-2019 1:1 mitigation stub
 		// vs. its live Technique) coexist as distinct records.
-		outPath := filepath.Join(options.dir, "attack", string(k.kind), fmt.Sprintf("%s.json", extID))
-		if err := util.Write(outPath, extracted, true); err != nil {
-			return errors.Wrapf(err, "write %s", outPath)
+		if err := util.Write(filepath.Join(options.dir, "attack", string(k.kind), fmt.Sprintf("%s.json", extID)), extracted, true); err != nil {
+			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "attack", string(k.kind), fmt.Sprintf("%s.json", extID)))
 		}
 	}
 
