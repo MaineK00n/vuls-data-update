@@ -2992,7 +2992,7 @@ func newCmdMitreV4() *cobra.Command {
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
 			if err := mitreV4.Fetch(mitreV4.WithDir(options.dir), mitreV4.WithRetry(options.retry)); err != nil {
-				return errors.Wrap(err, "failed to fetch mitre v4")
+				return errors.Wrap(err, "failed to fetch mitre cve v4")
 			}
 			return nil
 		},
@@ -3019,7 +3019,7 @@ func newCmdMitreV5() *cobra.Command {
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
 			if err := mitreV5.Fetch(mitreV5.WithDir(options.dir), mitreV5.WithRetry(options.retry)); err != nil {
-				return errors.Wrap(err, "failed to fetch mitre v5")
+				return errors.Wrap(err, "failed to fetch mitre cve v5")
 			}
 			return nil
 		},

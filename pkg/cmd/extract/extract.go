@@ -1749,7 +1749,7 @@ func newCmdMitreV4() *cobra.Command {
 		Args: cobra.ExactArgs(1),
 		RunE: func(_ *cobra.Command, args []string) error {
 			if err := mitreV4.Extract(args[0], mitreV4.WithDir(options.dir)); err != nil {
-				return errors.Wrap(err, "failed to extract mitre v4")
+				return errors.Wrap(err, "failed to extract mitre cve v4")
 			}
 			return nil
 		},
@@ -1774,7 +1774,7 @@ func newCmdMitreV5() *cobra.Command {
 		Args: cobra.ExactArgs(1),
 		RunE: func(_ *cobra.Command, args []string) error {
 			if err := mitreV5.Extract(args[0], mitreV5.WithDir(options.dir)); err != nil {
-				return errors.Wrap(err, "failed to extract mitre v5")
+				return errors.Wrap(err, "failed to extract mitre cve v5")
 			}
 			return nil
 		},
