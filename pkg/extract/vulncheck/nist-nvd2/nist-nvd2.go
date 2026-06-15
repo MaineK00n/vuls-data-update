@@ -236,6 +236,14 @@ func (e extractor) buildData(fetched nistnvd2Types.CVE) (dataTypes.Data, error) 
 	// enriched applicability statements — never from the plain NVD
 	// configurations field.
 	ds, err := func() ([]detectionType.Detection, error) {
+		// A Rejected CVE is withdrawn, so it must not produce detections —
+		// VulnCheck keeps vcConfigurations on some rejected entries, and
+		// emitting them would flag a withdrawn CVE (a false positive). The
+		// vulnerability content (the rejection reason) is still emitted, as
+		// other extractors (nvd/feed/cve/v2, mitre/v5) keep rejected records.
+		if fetched.VulnStatus == "Rejected" {
+			return nil, nil
+		}
 		if len(fetched.VCConfigurations) == 0 {
 			return nil, nil
 		}

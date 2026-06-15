@@ -50,8 +50,13 @@ func TestExtract(t *testing.T) {
 			golden: "./testdata/golden/exact-match",
 		},
 		{
-			// Entry without vcConfigurations: emitted as a vulnerability
-			// without detections.
+			// vulnStatus=Rejected entries: the vulnerability content (the
+			// rejection reason) is still emitted, but detections are
+			// suppressed — a rejected CVE is withdrawn, so flagging it would
+			// be a false positive. Covers a hollow reject (CVE-2024-2652, no
+			// vcConfigurations) and a reject that still carries
+			// vcConfigurations (CVE-2022-49267), proving the latter's
+			// detections are dropped.
 			name:   "rejected",
 			args:   "./testdata/fixtures/rejected/vuls-data-raw-vulncheck-nist-nvd2",
 			golden: "./testdata/golden/rejected",
