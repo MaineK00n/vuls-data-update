@@ -50,7 +50,7 @@ func WithDir(dir string) Option {
 
 func Extract(args string, opts ...Option) error {
 	options := &options{
-		dir: filepath.Join(util.CacheDir(), "extract", "mitre", "v5"),
+		dir: filepath.Join(util.CacheDir(), "extract", "mitre", "cve", "v5"),
 	}
 
 	for _, o := range opts {
@@ -99,7 +99,7 @@ func Extract(args string, opts ...Option) error {
 	}
 
 	if err := util.Write(filepath.Join(options.dir, "datasource.json"), datasourceTypes.DataSource{
-		ID:   sourceTypes.MitreV5,
+		ID:   sourceTypes.MitreCVEV5,
 		Name: new("MITRE CVE v5"),
 		Raw: func() []repositoryTypes.Repository {
 			r, _ := utilgit.GetDataSourceRepository(args)
@@ -288,7 +288,7 @@ func extract(fetched v5.CVE, raws []string) (dataTypes.Data, error) {
 				},
 			}},
 			DataSource: sourceTypes.Source{
-				ID:   sourceTypes.MitreV5,
+				ID:   sourceTypes.MitreCVEV5,
 				Raws: raws,
 			},
 		}, nil
@@ -327,7 +327,7 @@ func extract(fetched v5.CVE, raws []string) (dataTypes.Data, error) {
 				},
 			}},
 			DataSource: sourceTypes.Source{
-				ID:   sourceTypes.MitreV5,
+				ID:   sourceTypes.MitreCVEV5,
 				Raws: raws,
 			},
 		}, nil

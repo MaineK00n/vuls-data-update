@@ -2979,15 +2979,15 @@ func newCmdMitreEMB3D() *cobra.Command {
 
 func newCmdMitreV4() *cobra.Command {
 	options := &base{
-		dir:   filepath.Join(util.CacheDir(), "fetch", "mitre", "v4"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "mitre", "cve", "v4"),
 		retry: 3,
 	}
 
 	cmd := &cobra.Command{
-		Use:   "mitre-v4",
+		Use:   "mitre-cve-v4",
 		Short: "Fetch MITRE CVE V4 data source",
 		Example: heredoc.Doc(`
-			$ vuls-data-update fetch mitre-v4
+			$ vuls-data-update fetch mitre-cve-v4
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
@@ -3006,15 +3006,15 @@ func newCmdMitreV4() *cobra.Command {
 
 func newCmdMitreV5() *cobra.Command {
 	options := &base{
-		dir:   filepath.Join(util.CacheDir(), "fetch", "mitre", "v5"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "mitre", "cve", "v5"),
 		retry: 3,
 	}
 
 	cmd := &cobra.Command{
-		Use:   "mitre-v5",
+		Use:   "mitre-cve-v5",
 		Short: "Fetch MITRE CVE V5 data source",
 		Example: heredoc.Doc(`
-			$ vuls-data-update fetch mitre-v5
+			$ vuls-data-update fetch mitre-cve-v5
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {

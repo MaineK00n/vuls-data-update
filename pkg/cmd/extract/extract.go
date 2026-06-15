@@ -1737,14 +1737,14 @@ func newCmdMitreCWE() *cobra.Command {
 
 func newCmdMitreV4() *cobra.Command {
 	options := &base{
-		dir: filepath.Join(util.CacheDir(), "extract", "mitre", "v4"),
+		dir: filepath.Join(util.CacheDir(), "extract", "mitre", "cve", "v4"),
 	}
 
 	cmd := &cobra.Command{
-		Use:   "mitre-v4 <Raw Mitre V4 Repository PATH>",
+		Use:   "mitre-cve-v4 <Raw Mitre V4 Repository PATH>",
 		Short: "Extract Mitre V4 data source",
 		Example: heredoc.Doc(`
-			$ vuls-data-update extract mitre-v4 vuls-data-raw-mitre-v4
+			$ vuls-data-update extract mitre-cve-v4 vuls-data-raw-mitre-cve-v4
 		`),
 		Args: cobra.ExactArgs(1),
 		RunE: func(_ *cobra.Command, args []string) error {
@@ -1762,14 +1762,14 @@ func newCmdMitreV4() *cobra.Command {
 
 func newCmdMitreV5() *cobra.Command {
 	options := &base{
-		dir: filepath.Join(util.CacheDir(), "extract", "mitre", "v5"),
+		dir: filepath.Join(util.CacheDir(), "extract", "mitre", "cve", "v5"),
 	}
 
 	cmd := &cobra.Command{
-		Use:   "mitre-v5 <Raw Mitre V5 Repository PATH>",
+		Use:   "mitre-cve-v5 <Raw Mitre V5 Repository PATH>",
 		Short: "Extract Mitre V5 data source",
 		Example: heredoc.Doc(`
-			$ vuls-data-update extract mitre-v5 vuls-data-raw-mitre-v5
+			$ vuls-data-update extract mitre-cve-v5 vuls-data-raw-mitre-cve-v5
 		`),
 		Args: cobra.ExactArgs(1),
 		RunE: func(_ *cobra.Command, args []string) error {
