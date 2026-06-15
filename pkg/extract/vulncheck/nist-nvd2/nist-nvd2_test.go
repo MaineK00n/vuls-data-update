@@ -19,18 +19,17 @@ func TestExtract(t *testing.T) {
 			// vcConfigurations with two SEMVER ranges over the same product
 			// and vcVulnerableCPEs enumerating versions inside them. The
 			// detection criteria come from vcConfigurations only — the plain
-			// NVD configurations field in the same file is ignored — and
-			// every vcVulnerableCPEs entry is semver-parseable, so no
-			// cpe_matches are carried (the ranges already cover them).
+			// configurations field in the same file is ignored — and every
+			// vcVulnerableCPEs entry is semver-parseable, so no cpe_matches
+			// are carried (the ranges already cover them).
 			name:   "happy",
 			args:   "./testdata/fixtures/happy/vuls-data-raw-vulncheck-nist-nvd2",
 			golden: "./testdata/golden/happy",
 		},
 		{
-			// vulnStatus=Deferred entry that carries vcConfigurations but no
-			// plain NVD configurations — the VulnCheck enrichment NVD has
-			// not analyzed. Also exercises the empty node operator (""),
-			// which VulnCheck leaves unset and is treated as OR.
+			// Entry that carries vcConfigurations but no plain configurations:
+			// the detection is still built from vcConfigurations. Also
+			// exercises the empty node operator (""), which is mapped to OR.
 			name:   "vc-only",
 			args:   "./testdata/fixtures/vc-only/vuls-data-raw-vulncheck-nist-nvd2",
 			golden: "./testdata/golden/vc-only",
@@ -51,9 +50,8 @@ func TestExtract(t *testing.T) {
 			golden: "./testdata/golden/exact-match",
 		},
 		{
-			// vulnStatus=Rejected entry without configurations: emitted as a
-			// vulnerability without detections, matching extract/nvd/feed/cve/v2
-			// which does not filter by vulnStatus either.
+			// Entry without vcConfigurations: emitted as a vulnerability
+			// without detections.
 			name:   "rejected",
 			args:   "./testdata/fixtures/rejected/vuls-data-raw-vulncheck-nist-nvd2",
 			golden: "./testdata/golden/rejected",
@@ -72,6 +70,15 @@ func TestExtract(t *testing.T) {
 			// error too.
 			name:     "node-negate",
 			args:     "./testdata/fixtures/node-negate/vuls-data-raw-vulncheck-nist-nvd2",
+			hasError: true,
+		},
+		{
+			// A cpeMatch whose criteria is not a CPE 2.3 formatted string is
+			// a hard error rather than a skipped criterion — silently
+			// dropping it would weaken the enclosing configuration into an
+			// over-broad detection. Does not occur in the real feed.
+			name:     "invalid-cpe",
+			args:     "./testdata/fixtures/invalid-cpe/vuls-data-raw-vulncheck-nist-nvd2",
 			hasError: true,
 		},
 		{

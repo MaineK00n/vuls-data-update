@@ -97,15 +97,13 @@ type extractor struct {
 // Extract processes VulnCheck NIST NVD2 data and produces extracted
 // detection data.
 //
-// Unlike extract/nvd/feed/cve/v2, most malformed pieces of a CVE entry
-// (unexpected operators, unparseable CPEs or CVSS vectors, …) are logged
-// at WARN and skipped instead of failing the whole extraction, following
-// the tolerance of go-cve-dictionary's vulncheck fetcher — VulnCheck-
-// enriched data is not under NVD's quality control and a single bad entry
-// must not abort the remaining ~350k files. The one exception is
-// negate=true on a configuration or node: it never appears in the current
-// feed and inverts detection semantics, so it is treated as a hard error
-// (an unexpected schema change worth failing on).
+// A malformed piece of a CVE entry (negate=true, an unexpected
+// configuration/node operator, an invalid CPE in cpeMatch or
+// vcVulnerableCPEs, an unparseable CVSS vector) is a hard error rather
+// than a silent skip, so unexpected data surfaces instead of being
+// dropped — silently skipping a cpeMatch would also weaken an AND
+// configuration into an over-broad detection. The one tolerated quirk is
+// an empty node operator, which is mapped to OR.
 func Extract(args string, opts ...Option) error {
 	options := &options{
 		dir:         filepath.Join(util.CacheDir(), "extract", "vulncheck", "nist-nvd2"),
@@ -130,7 +128,6 @@ func Extract(args string, opts ...Option) error {
 	// +1 for the producer goroutine below: counting it inside the
 	// limited group with limit==concurrency==1 would deadlock (producer
 	// occupies the only slot; no worker can start to drain reqChan).
-	// Matches the pattern in extract/nvd/feed/cve/v2.
 	g.SetLimit(1 + options.concurrency)
 
 	reqChan := make(chan string)
@@ -138,7 +135,7 @@ func Extract(args string, opts ...Option) error {
 		defer close(reqChan)
 		if err := filepath.WalkDir(args, func(path string, d fs.DirEntry, err error) error {
 			if err != nil {
-				return err
+				return errors.Wrapf(err, "walk dir entry %s", path)
 			}
 
 			if d.IsDir() {
@@ -237,29 +234,27 @@ func extract(cvePath, cveDir, outputDir string) error {
 func (e extractor) buildData(fetched nistnvd2Types.CVE) (dataTypes.Data, error) {
 	// Detection criteria come from vcConfigurations only — VulnCheck's
 	// enriched applicability statements — never from the plain NVD
-	// configurations field, mirroring go-cve-dictionary's vulncheck
-	// fetcher. vcConfigurations also covers CVEs NVD has not analyzed
-	// (vulnStatus Deferred/Rejected), which is the value-add of this
-	// data source.
+	// configurations field.
 	ds, err := func() ([]detectionType.Detection, error) {
-		vulnCPEs := parseVulnerableCPEs(fetched.ID, fetched.VCVulnerableCPEs)
+		if len(fetched.VCConfigurations) == 0 {
+			return nil, nil
+		}
+
+		vulnCPEs, err := parseVulnerableCPEs(fetched.VCVulnerableCPEs)
+		if err != nil {
+			return nil, errors.Wrap(err, "parse vcVulnerableCPEs")
+		}
 
 		rootCriteria := criteriaTypes.Criteria{
 			Operator:  criteriaTypes.CriteriaOperatorTypeOR,
 			Criterias: make([]criteriaTypes.Criteria, 0, len(fetched.VCConfigurations)),
 		}
 		for _, c := range fetched.VCConfigurations {
-			ca, ok, err := configurationToCriteria(fetched.ID, c, vulnCPEs)
+			ca, err := configurationToCriteria(c, vulnCPEs)
 			if err != nil {
-				return nil, errors.Wrapf(err, "configuration to criteria. ID: %s", fetched.ID)
-			}
-			if !ok {
-				continue
+				return nil, errors.Wrap(err, "configuration to criteria")
 			}
 			rootCriteria.Criterias = append(rootCriteria.Criterias, ca)
-		}
-		if len(rootCriteria.Criterias) == 0 {
-			return nil, nil
 		}
 		return []detectionType.Detection{{
 			Ecosystem: ecosystemTypes.EcosystemTypeCPE,
@@ -273,56 +268,54 @@ func (e extractor) buildData(fetched nistnvd2Types.CVE) (dataTypes.Data, error) 
 	}
 
 	ss := make([]severityTypes.Severity, 0, len(fetched.Metrics.CVSSMetricV2)+len(fetched.Metrics.CVSSMetricV30)+len(fetched.Metrics.CVSSMetricV31)+len(fetched.Metrics.CVSSMetricV40))
-	for _, c := range fetched.Metrics.CVSSMetricV2 {
-		sv2, err := v2Types.Parse(c.CvssData.VectorString)
-		if err != nil {
-			slog.Warn("failed to parse cvss v2 vector; skipping", "id", fetched.ID, "vector", c.CvssData.VectorString, "err", err)
-			continue
-		}
-		ss = append(ss, severityTypes.Severity{
-			Type:   severityTypes.SeverityTypeCVSSv2,
-			Source: c.Source,
-			CVSSv2: sv2,
-		})
-	}
-	for _, c := range fetched.Metrics.CVSSMetricV30 {
-		v30, err := v30Types.Parse(c.CVSSData.VectorString)
-		if err != nil {
-			slog.Warn("failed to parse cvss v30 vector; skipping", "id", fetched.ID, "vector", c.CVSSData.VectorString, "err", err)
-			continue
-		}
-		ss = append(ss, severityTypes.Severity{
-			Type:    severityTypes.SeverityTypeCVSSv30,
-			Source:  c.Source,
-			CVSSv30: v30,
-		})
-	}
-	for _, c := range fetched.Metrics.CVSSMetricV31 {
-		v31, err := v31Types.Parse(c.CVSSData.VectorString)
-		if err != nil {
-			slog.Warn("failed to parse cvss v31 vector; skipping", "id", fetched.ID, "vector", c.CVSSData.VectorString, "err", err)
-			continue
-		}
-		ss = append(ss, severityTypes.Severity{
-			Type:    severityTypes.SeverityTypeCVSSv31,
-			Source:  c.Source,
-			CVSSv31: v31,
-		})
-	}
-	for _, c := range fetched.Metrics.CVSSMetricV40 {
-		v40, err := v40Types.Parse(c.CVSSData.VectorString)
-		if err != nil {
-			slog.Warn("failed to parse cvss v40 vector; skipping", "id", fetched.ID, "vector", c.CVSSData.VectorString, "err", err)
-			continue
-		}
-		ss = append(ss, severityTypes.Severity{
-			Type:    severityTypes.SeverityTypeCVSSv40,
-			Source:  c.Source,
-			CVSSv40: v40,
-		})
-	}
-	if len(ss) == 0 {
+	switch cap(ss) {
+	case 0:
 		ss = nil
+	default:
+		for _, c := range fetched.Metrics.CVSSMetricV2 {
+			sv2, err := v2Types.Parse(c.CvssData.VectorString)
+			if err != nil {
+				return dataTypes.Data{}, errors.Wrapf(err, "cvss v2 parse. vector: %s", c.CvssData.VectorString)
+			}
+			ss = append(ss, severityTypes.Severity{
+				Type:   severityTypes.SeverityTypeCVSSv2,
+				Source: c.Source,
+				CVSSv2: sv2,
+			})
+		}
+		for _, c := range fetched.Metrics.CVSSMetricV30 {
+			v30, err := v30Types.Parse(c.CVSSData.VectorString)
+			if err != nil {
+				return dataTypes.Data{}, errors.Wrapf(err, "cvss v30 parse. vector: %s", c.CVSSData.VectorString)
+			}
+			ss = append(ss, severityTypes.Severity{
+				Type:    severityTypes.SeverityTypeCVSSv30,
+				Source:  c.Source,
+				CVSSv30: v30,
+			})
+		}
+		for _, c := range fetched.Metrics.CVSSMetricV31 {
+			v31, err := v31Types.Parse(c.CVSSData.VectorString)
+			if err != nil {
+				return dataTypes.Data{}, errors.Wrapf(err, "cvss v31 parse. vector: %s", c.CVSSData.VectorString)
+			}
+			ss = append(ss, severityTypes.Severity{
+				Type:    severityTypes.SeverityTypeCVSSv31,
+				Source:  c.Source,
+				CVSSv31: v31,
+			})
+		}
+		for _, c := range fetched.Metrics.CVSSMetricV40 {
+			v40, err := v40Types.Parse(c.CVSSData.VectorString)
+			if err != nil {
+				return dataTypes.Data{}, errors.Wrapf(err, "cvss v40 parse. vector: %s", c.CVSSData.VectorString)
+			}
+			ss = append(ss, severityTypes.Severity{
+				Type:    severityTypes.SeverityTypeCVSSv40,
+				Source:  c.Source,
+				CVSSv40: v40,
+			})
+		}
 	}
 
 	return dataTypes.Data{
@@ -400,10 +393,9 @@ func (e extractor) buildData(fetched nistnvd2Types.CVE) (dataTypes.Data, error) 
 						}
 						return refs
 					}(),
-					// Freshly added entries carry nanosecond precision while
-					// NVD-analyzed ones carry milliseconds; .999999999 accepts
-					// any fractional precision including none, matching
-					// go-cve-dictionary's vulncheck fetcher.
+					// Timestamps carry either millisecond or nanosecond
+					// precision depending on the entry; .999999999 accepts any
+					// fractional precision including none.
 					Published: utiltime.Parse([]string{"2006-01-02T15:04:05.999999999"}, fetched.Published),
 					Modified:  utiltime.Parse([]string{"2006-01-02T15:04:05.999999999"}, fetched.LastModified),
 				},
@@ -426,35 +418,29 @@ type vulnCPE struct {
 	wfn  common.WellFormedName
 }
 
-// parseVulnerableCPEs parses vcVulnerableCPEs once per CVE. Entries
-// that are not valid CPE 2.3 formatted strings are logged at WARN and
-// skipped.
-func parseVulnerableCPEs(id string, names []string) []vulnCPE {
+// parseVulnerableCPEs parses vcVulnerableCPEs once per CVE. An entry
+// that is not a valid CPE 2.3 formatted string is an error: it does not
+// occur in the current feed, so encountering one signals unexpected data.
+func parseVulnerableCPEs(names []string) ([]vulnCPE, error) {
 	cpes := make([]vulnCPE, 0, len(names))
 	for _, n := range names {
 		wfn, err := naming.UnbindFS(n)
 		if err != nil {
-			slog.Warn("invalid CPE in vcVulnerableCPEs; skipping", "id", id, "cpe", n, "err", err)
-			continue
+			return nil, errors.Wrapf(err, "invalid format. CPE: %s", n)
 		}
 		cpes = append(cpes, vulnCPE{name: n, wfn: wfn})
 	}
-	return cpes
+	return cpes, nil
 }
 
 // configurationToCriteria converts a vcConfigurations entry into a
-// criteria tree. Returns ok=false when the configuration carries no
-// usable criteria (unexpected operator, or every node skipped); the
-// caller drops it. negate=true is returned as an error: it never
-// appears in real VulnCheck data, so encountering it signals an
-// unexpected schema change worth failing on rather than silently
-// emitting inverted detection semantics.
-func configurationToCriteria(id string, config nistnvd2Types.Config, vulnCPEs []vulnCPE) (criteriaTypes.Criteria, bool, error) {
-	// negate=true inverts detection semantics, which the criteria tree
-	// cannot express. It does not occur in the current feed, so treat it
-	// as a hard error instead of emitting the children non-negated.
+// criteria tree. Every malformed shape (negate=true, an unexpected
+// operator, an invalid cpeMatch CPE) is an error rather than a silent
+// skip, so unexpected data surfaces instead of being dropped — and a
+// silent skip would weaken AND semantics into over-broad detections.
+func configurationToCriteria(config nistnvd2Types.Config, vulnCPEs []vulnCPE) (criteriaTypes.Criteria, error) {
 	if config.Negate {
-		return criteriaTypes.Criteria{}, false, errors.New("negate=true on configuration is not supported")
+		return criteriaTypes.Criteria{}, errors.New("negate=true on configuration is not supported")
 	}
 
 	ca := criteriaTypes.Criteria{}
@@ -464,69 +450,43 @@ func configurationToCriteria(id string, config nistnvd2Types.Config, vulnCPEs []
 	case "OR", "":
 		ca.Operator = criteriaTypes.CriteriaOperatorTypeOR
 	default:
-		slog.Warn("unexpected configuration operator; skipping", "id", id, "operator", config.Operator)
-		return criteriaTypes.Criteria{}, false, nil
+		return criteriaTypes.Criteria{}, errors.Errorf("unexpected configuration operator. expected: %q, actual: %q", []string{"AND", "OR", ""}, config.Operator)
 	}
 
 	ca.Criterias = make([]criteriaTypes.Criteria, 0, len(config.Nodes))
 	for _, n := range config.Nodes {
-		child, ok, err := nodeToCriteria(id, n, vulnCPEs)
+		child, err := nodeToCriteria(n, vulnCPEs)
 		if err != nil {
-			return criteriaTypes.Criteria{}, false, errors.Wrap(err, "node to criteria")
-		}
-		if !ok {
-			// An AND configuration with a dropped node would assert a
-			// weaker condition than the source data states; refuse the
-			// whole configuration rather than emit it partially.
-			if ca.Operator == criteriaTypes.CriteriaOperatorTypeAND {
-				slog.Warn("node skipped under AND configuration; skipping whole configuration", "id", id)
-				return criteriaTypes.Criteria{}, false, nil
-			}
-			continue
+			return criteriaTypes.Criteria{}, errors.Wrap(err, "node to criteria")
 		}
 		ca.Criterias = append(ca.Criterias, child)
 	}
-	if len(ca.Criterias) == 0 {
-		return criteriaTypes.Criteria{}, false, nil
-	}
-	return ca, true, nil
+	return ca, nil
 }
 
 // nodeToCriteria converts a configuration node into a criteria subtree.
-// Returns ok=false when the node carries no usable criterion. negate=true
-// is returned as an error for the same reason as configurationToCriteria.
-func nodeToCriteria(id string, n nistnvd2Types.Node, vulnCPEs []vulnCPE) (criteriaTypes.Criteria, bool, error) {
+// Malformed shapes are errors, as in configurationToCriteria.
+func nodeToCriteria(n nistnvd2Types.Node, vulnCPEs []vulnCPE) (criteriaTypes.Criteria, error) {
 	if n.Negate {
-		return criteriaTypes.Criteria{}, false, errors.New("negate=true on node is not supported")
+		return criteriaTypes.Criteria{}, errors.New("negate=true on node is not supported")
 	}
 	ca := criteriaTypes.Criteria{}
 	switch n.Operator {
 	case "AND":
 		ca.Operator = criteriaTypes.CriteriaOperatorTypeAND
-	// Unlike NVD feed data, VulnCheck leaves the node operator empty for
-	// most single-node configurations; treat it as OR like the
-	// configuration-level operator.
+	// The node operator is empty for most single-node configurations;
+	// treat it as OR like the configuration-level operator.
 	case "OR", "":
 		ca.Operator = criteriaTypes.CriteriaOperatorTypeOR
 	default:
-		slog.Warn("unexpected node operator; skipping", "id", id, "operator", n.Operator)
-		return criteriaTypes.Criteria{}, false, nil
+		return criteriaTypes.Criteria{}, errors.Errorf("unexpected node operator. expected: %q, actual: %q", []string{"AND", "OR", ""}, n.Operator)
 	}
 
 	ca.Criterias = make([]criteriaTypes.Criteria, 0, len(n.CPEMatch))
 	for _, match := range n.CPEMatch {
 		wfn, err := naming.UnbindFS(match.Criteria)
 		if err != nil {
-			// Dropping a cpeMatch under an AND node would assert a weaker
-			// condition than the source data states (over-broad detection);
-			// refuse the whole node and let configurationToCriteria decide
-			// whether the enclosing configuration must go too.
-			if ca.Operator == criteriaTypes.CriteriaOperatorTypeAND {
-				slog.Warn("invalid CPE in cpeMatch under AND node; skipping whole node", "id", id, "cpe", match.Criteria, "err", err)
-				return criteriaTypes.Criteria{}, false, nil
-			}
-			slog.Warn("invalid CPE in cpeMatch; skipping", "id", id, "cpe", match.Criteria, "err", err)
-			continue
+			return criteriaTypes.Criteria{}, errors.Wrapf(err, "invalid format. CPE: %s", match.Criteria)
 		}
 
 		// A range exists when any of the four endpoints is set. This single
@@ -575,10 +535,7 @@ func nodeToCriteria(id string, n nistnvd2Types.Node, vulnCPEs []vulnCPE) (criter
 			Criterions: []criterionTypes.Criterion{cn},
 		})
 	}
-	if len(ca.Criterias) == 0 {
-		return criteriaTypes.Criteria{}, false, nil
-	}
-	return ca, true, nil
+	return ca, nil
 }
 
 // decideRangeType classifies match's version range: RangeTypeSEMVER when
@@ -601,11 +558,10 @@ func decideRangeType(match nistnvd2Types.CPEMatch) ccRangeTypes.RangeType {
 // It returns the range type (SEMVER/Unknown) the caller stamps on the
 // criterion's Range.
 //
-// This plays the role extract/nvd/feed/cve/v2's cpematch-feed expansion
-// plays for NVD data: vcConfigurations carries no usable matchCriteriaId
-// (the field is empty in VulnCheck data), but vcVulnerableCPEs already
-// enumerates the concrete vulnerable CPEs per CVE. Entries are associated
-// with the criterion by part:vendor:product.
+// vcConfigurations carries no usable matchCriteriaId (the field is
+// empty), so the concrete vulnerable CPEs come from vcVulnerableCPEs,
+// which enumerates them per CVE. Entries are associated with the
+// criterion by part:vendor:product.
 //
 // Precondition: invoke only for a match that carries at least one range
 // endpoint (nodeToCriteria gates this with hasRange); a no-range match needs
@@ -619,16 +575,15 @@ func decideRangeType(match nistnvd2Types.CPEMatch) ccRangeTypes.RangeType {
 //   - SEMVER range: Range already covers every semver-parseable version,
 //     so only non-semver entries are added.
 //
-// Unlike the per-matchCriteriaId cpematch expansion in
-// extract/nvd/feed/cve/v2, vcVulnerableCPEs is not scoped to one range: a
-// CVE with several ranges over the same product shares one flat list. A
-// semver entry outside this criterion's bounds therefore most likely
-// belongs to a sibling criterion, not to this one, so for a SEMVER range
-// every semver-parseable entry is skipped — in or out of bounds — and only
-// the non-semver versions Range cannot evaluate are carried. For an
-// Unknown range no per-entry narrowing is possible at all; the full
-// product-matched list is carried, trading over-match across sibling
-// ranges for not silently losing detection.
+// vcVulnerableCPEs is not scoped to one range: a CVE with several ranges
+// over the same product shares one flat list. A semver entry outside this
+// criterion's bounds therefore most likely belongs to a sibling
+// criterion, not to this one, so for a SEMVER range every semver-parseable
+// entry is skipped — in or out of bounds — and only the non-semver
+// versions Range cannot evaluate are carried. For an Unknown range no
+// per-entry narrowing is possible at all; the full product-matched list is
+// carried, trading over-match across sibling ranges for not silently
+// losing detection.
 func buildCPEMatches(match nistnvd2Types.CPEMatch, wfn common.WellFormedName, vulnCPEs []vulnCPE) ([]ccTypes.CPE, ccRangeTypes.RangeType) {
 	rangeType := decideRangeType(match)
 
