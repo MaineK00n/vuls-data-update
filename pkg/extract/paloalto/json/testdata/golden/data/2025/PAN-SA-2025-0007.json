@@ -6,27 +6,6 @@
 				"id": "PAN-SA-2025-0007",
 				"title": "Chromium: Monthly Vulnerability Update (March 2025)",
 				"description": "Palo Alto Networks incorporated the following Chromium security fixes into our products:\n\n * https://chromereleases.googleblog.com/2025/03/stable-channel-update-for-desktop.html\n   \n * https://chromereleases.googleblog.com/2025/02/stable-channel-update-for-desktop_25.html\n * https://chromereleases.googleblog.com/2025/02/stable-channel-update-for-desktop_18.html\n * https://chromereleases.googleblog.com/2025/02/stable-channel-update-for-desktop_12.html",
-				"references": [
-					{
-						"source": "00000000-0000-4000-9000-000000000000",
-						"url": "https://security.paloaltonetworks.com/PAN-SA-2025-0007"
-					}
-				],
-				"published": "2025-03-12T16:00:00Z"
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
-		}
-	],
-	"vulnerabilities": [
-		{
-			"content": {
-				"id": "PAN-SA-2025-0007",
-				"title": "Chromium: Monthly Vulnerability Update (March 2025)",
-				"description": "Palo Alto Networks incorporated the following Chromium security fixes into our products:\n\n * https://chromereleases.googleblog.com/2025/03/stable-channel-update-for-desktop.html\n   \n * https://chromereleases.googleblog.com/2025/02/stable-channel-update-for-desktop_25.html\n * https://chromereleases.googleblog.com/2025/02/stable-channel-update-for-desktop_18.html\n * https://chromereleases.googleblog.com/2025/02/stable-channel-update-for-desktop_12.html",
 				"severity": [
 					{
 						"type": "cvss_v40",

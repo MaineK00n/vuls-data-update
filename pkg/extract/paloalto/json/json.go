@@ -142,199 +142,219 @@ func Extract(args string, opts ...Option) error {
 }
 
 func extract(fetched paloaltoJSON.CVE, raws []string) (dataTypes.Data, error) {
-	switch fetched.CVEMetadata.State {
-	case "PUBLISHED":
-		return dataTypes.Data{
-			ID: dataTypes.RootID(fetched.CVEMetadata.CVEID),
-			Advisories: func() []advisoryTypes.Advisory {
-				id := advisoryID(fetched)
-				if id == "" {
-					return nil
-				}
-				return []advisoryTypes.Advisory{{
-					Content: advisoryContentTypes.Content{
-						ID: advisoryContentTypes.AdvisoryID(id),
-						Title: func() string {
-							if fetched.Containers.CNA.Title != nil {
-								return *fetched.Containers.CNA.Title
-							}
-							return ""
-						}(),
-						Description: description(fetched.Containers.CNA.Descriptions),
-						References: []referenceTypes.Reference{{
-							Source: getSource(fetched.Containers.CNA.ProviderMetadata),
-							URL:    fmt.Sprintf("https://security.paloaltonetworks.com/%s", id),
-						}},
-						Published: published(fetched),
-						Modified:  modified(fetched),
-					},
-					Segments: []segmentTypes.Segment{{Ecosystem: ecosystemTypes.EcosystemTypeCPE}},
-				}}
-			}(),
-			Vulnerabilities: []vulnerabilityTypes.Vulnerability{{
-				Content: vulnerabilityContentTypes.Content{
-					ID: vulnerabilityContentTypes.VulnerabilityID(fetched.CVEMetadata.CVEID),
-					Title: func() string {
-						if fetched.Containers.CNA.Title != nil {
-							return *fetched.Containers.CNA.Title
-						}
-						return ""
-					}(),
-					Description: description(fetched.Containers.CNA.Descriptions),
-					Severity: func() []severityTypes.Severity {
-						source := getSource(fetched.Containers.CNA.ProviderMetadata)
-						var ss []severityTypes.Severity
-						for _, metric := range fetched.Containers.CNA.Metrics {
-							if metric.CVSSv2 != nil {
-								v2, err := v2Types.Parse(metric.CVSSv2.VectorString)
-								if err != nil {
-									slog.Warn("unexpected CVSS v2 vector", slog.String("id", fetched.CVEMetadata.CVEID), slog.String("vector", metric.CVSSv2.VectorString))
-									continue
-								}
-								ss = append(ss, severityTypes.Severity{
-									Type:   severityTypes.SeverityTypeCVSSv2,
-									Source: source,
-									CVSSv2: v2,
-								})
-							}
-							if metric.CVSSv30 != nil {
-								v30, err := v30Types.Parse(metric.CVSSv30.VectorString)
-								if err != nil {
-									slog.Warn("unexpected CVSS v3.0 vector", slog.String("id", fetched.CVEMetadata.CVEID), slog.String("vector", metric.CVSSv30.VectorString))
-									continue
-								}
-								ss = append(ss, severityTypes.Severity{
-									Type:    severityTypes.SeverityTypeCVSSv30,
-									Source:  source,
-									CVSSv30: v30,
-								})
-							}
-							if metric.CVSSv31 != nil {
-								v31, err := v31Types.Parse(metric.CVSSv31.VectorString)
-								if err != nil {
-									slog.Warn("unexpected CVSS v3.1 vector", slog.String("id", fetched.CVEMetadata.CVEID), slog.String("vector", metric.CVSSv31.VectorString))
-									continue
-								}
-								ss = append(ss, severityTypes.Severity{
-									Type:    severityTypes.SeverityTypeCVSSv31,
-									Source:  source,
-									CVSSv31: v31,
-								})
-							}
-							if metric.CVSSv40 != nil {
-								v40, err := v40Types.Parse(metric.CVSSv40.VectorString)
-								if err != nil {
-									slog.Warn("unexpected CVSS v4.0 vector", slog.String("id", fetched.CVEMetadata.CVEID), slog.String("vector", metric.CVSSv40.VectorString))
-									continue
-								}
-								ss = append(ss, severityTypes.Severity{
-									Type:    severityTypes.SeverityTypeCVSSv40,
-									Source:  source,
-									CVSSv40: v40,
-								})
-							}
-						}
-						return ss
-					}(),
-					CWE: func() []cweTypes.CWE {
-						var cs []string
-						for _, p := range fetched.Containers.CNA.ProblemTypes {
-							for _, d := range p.Descriptions {
-								if d.CweID != nil && strings.HasPrefix(*d.CweID, "CWE-") {
-									cs = append(cs, *d.CweID)
-								}
-							}
-						}
-						if len(cs) == 0 {
-							return nil
-						}
-						return []cweTypes.CWE{{
-							Source: getSource(fetched.Containers.CNA.ProviderMetadata),
-							CWE:    util.Unique(cs),
-						}}
-					}(),
-					Mitigations: remediations(getSource(fetched.Containers.CNA.ProviderMetadata), fetched.Containers.CNA.Solutions),
-					Workarounds: remediations(getSource(fetched.Containers.CNA.ProviderMetadata), fetched.Containers.CNA.Workarounds),
-					Exploit: func() []exploitTypes.Exploit {
-						var es []exploitTypes.Exploit
-						for _, e := range fetched.Containers.CNA.Exploits {
-							if (e.Lang != "" && e.Lang != "en") || e.Value == "" {
-								continue
-							}
-							es = append(es, exploitTypes.Exploit{
-								Source:      getSource(fetched.Containers.CNA.ProviderMetadata),
-								Description: e.Value,
-							})
-						}
-						return es
-					}(),
-					References: func() []referenceTypes.Reference {
-						refs := make([]referenceTypes.Reference, 0, len(fetched.Containers.CNA.References))
-						for _, r := range fetched.Containers.CNA.References {
-							refs = append(refs, referenceTypes.Reference{
-								Source: getSource(fetched.Containers.CNA.ProviderMetadata),
-								URL:    r.URL,
-							})
-						}
-						return refs
-					}(),
-					Published: published(fetched),
-					Modified:  modified(fetched),
-					Optional: func() map[string]any {
-						m := make(map[string]any)
-						// Preserve information that has no canonical field but is
-						// still valuable: the raw affected products (incl. ones not
-						// expressible as detection criteria), the enumerated
-						// affected version list, CAPEC impacts, configuration
-						// conditions and the source metadata.
-						if len(fetched.Containers.CNA.Affected) > 0 {
-							m["affected"] = fetched.Containers.CNA.Affected
-						}
-						if fetched.Containers.CNA.XAffectedList != nil {
-							m["x_affectedList"] = fetched.Containers.CNA.XAffectedList
-						}
-						if len(fetched.Containers.CNA.Impacts) > 0 {
-							m["impacts"] = fetched.Containers.CNA.Impacts
-						}
-						if len(fetched.Containers.CNA.Configurations) > 0 {
-							m["configurations"] = fetched.Containers.CNA.Configurations
-						}
-						if fetched.Containers.CNA.Source != nil {
-							m["source"] = fetched.Containers.CNA.Source
-						}
-						if len(m) == 0 {
-							return nil
-						}
-						return m
-					}(),
-				},
-				Segments: []segmentTypes.Segment{{Ecosystem: ecosystemTypes.EcosystemTypeCPE}},
-			}},
-			Detections: detections(fetched),
-			DataSource: sourceTypes.Source{
-				ID:   sourceTypes.PaloAltoJSON,
-				Raws: raws,
-			},
-		}, nil
-	default:
+	if fetched.CVEMetadata.State != "PUBLISHED" {
 		return dataTypes.Data{}, errors.Errorf("unexpected CVE state. expected: %q, actual: %q", []string{"PUBLISHED"}, fetched.CVEMetadata.State)
 	}
+
+	data := dataTypes.Data{
+		ID:         dataTypes.RootID(fetched.CVEMetadata.CVEID),
+		Detections: detections(fetched),
+		DataSource: sourceTypes.Source{
+			ID:   sourceTypes.PaloAltoJSON,
+			Raws: raws,
+		},
+	}
+
+	// The record is a Palo Alto Networks CNA advisory document. Its CNA
+	// container (CVSS, title, description, CWE, ...) is placed on whichever
+	// canonical entity matches the root ID's class:
+	//   - a PAN-SA-* root is an advisory-class ID, so it becomes an Advisory
+	//     carrying the full content (PAN-SA bundles do not structurally
+	//     enumerate their member CVEs, so there are no Vulnerabilities)
+	//   - a CVE-* root is the authoritative CVE record (Palo Alto is the CNA),
+	//     so it becomes a Vulnerability carrying the full content; when the CVE
+	//     is published under a PAN-SA grouping (source.advisory), a bare
+	//     pointer Advisory records that membership
+	if strings.HasPrefix(fetched.CVEMetadata.CVEID, "PAN-SA-") {
+		data.Advisories = []advisoryTypes.Advisory{{
+			Content: advisoryContentTypes.Content{
+				ID:          advisoryContentTypes.AdvisoryID(fetched.CVEMetadata.CVEID),
+				Title:       title(fetched),
+				Description: description(fetched.Containers.CNA.Descriptions),
+				Severity:    severities(fetched),
+				CWE:         cwes(fetched),
+				Mitigations: remediations(getSource(fetched.Containers.CNA.ProviderMetadata), fetched.Containers.CNA.Solutions),
+				Workarounds: remediations(getSource(fetched.Containers.CNA.ProviderMetadata), fetched.Containers.CNA.Workarounds),
+				Exploit:     exploits(fetched),
+				References:  references(fetched),
+				Published:   published(fetched),
+				Modified:    modified(fetched),
+				Optional:    optional(fetched),
+			},
+			Segments: []segmentTypes.Segment{{Ecosystem: ecosystemTypes.EcosystemTypeCPE}},
+		}}
+		return data, nil
+	}
+
+	data.Vulnerabilities = []vulnerabilityTypes.Vulnerability{{
+		Content: vulnerabilityContentTypes.Content{
+			ID:          vulnerabilityContentTypes.VulnerabilityID(fetched.CVEMetadata.CVEID),
+			Title:       title(fetched),
+			Description: description(fetched.Containers.CNA.Descriptions),
+			Severity:    severities(fetched),
+			CWE:         cwes(fetched),
+			Mitigations: remediations(getSource(fetched.Containers.CNA.ProviderMetadata), fetched.Containers.CNA.Solutions),
+			Workarounds: remediations(getSource(fetched.Containers.CNA.ProviderMetadata), fetched.Containers.CNA.Workarounds),
+			Exploit:     exploits(fetched),
+			References:  references(fetched),
+			Published:   published(fetched),
+			Modified:    modified(fetched),
+			Optional:    optional(fetched),
+		},
+		Segments: []segmentTypes.Segment{{Ecosystem: ecosystemTypes.EcosystemTypeCPE}},
+	}}
+	if id := groupingAdvisoryID(fetched); id != "" {
+		data.Advisories = []advisoryTypes.Advisory{{
+			Content:  advisoryContentTypes.Content{ID: advisoryContentTypes.AdvisoryID(id)},
+			Segments: []segmentTypes.Segment{{Ecosystem: ecosystemTypes.EcosystemTypeCPE}},
+		}}
+	}
+	return data, nil
 }
 
-// advisoryID returns the PAN-SA advisory ID for the record, taken verbatim
-// from the raw data: the record ID itself for PAN-SA records, otherwise
-// containers.cna.source.advisory when it is a PAN-SA ID. Unlike
+// groupingAdvisoryID returns the PAN-SA advisory the CVE is published under,
+// taken verbatim from containers.cna.source.advisory. Unlike
 // go-cve-dictionary, no "PAN-<CVE ID>" fallback is synthesized.
-func advisoryID(fetched paloaltoJSON.CVE) string {
-	if strings.HasPrefix(fetched.CVEMetadata.CVEID, "PAN-SA-") {
-		return fetched.CVEMetadata.CVEID
-	}
+func groupingAdvisoryID(fetched paloaltoJSON.CVE) string {
 	if m, ok := fetched.Containers.CNA.Source.(map[string]any); ok {
 		if s, ok := m["advisory"].(string); ok && strings.HasPrefix(s, "PAN-SA-") {
 			return s
 		}
 	}
 	return ""
+}
+
+func title(fetched paloaltoJSON.CVE) string {
+	if fetched.Containers.CNA.Title != nil {
+		return *fetched.Containers.CNA.Title
+	}
+	return ""
+}
+
+func severities(fetched paloaltoJSON.CVE) []severityTypes.Severity {
+	source := getSource(fetched.Containers.CNA.ProviderMetadata)
+	var ss []severityTypes.Severity
+	for _, metric := range fetched.Containers.CNA.Metrics {
+		if metric.CVSSv2 != nil {
+			v2, err := v2Types.Parse(metric.CVSSv2.VectorString)
+			if err != nil {
+				slog.Warn("unexpected CVSS v2 vector", slog.String("id", fetched.CVEMetadata.CVEID), slog.String("vector", metric.CVSSv2.VectorString))
+				continue
+			}
+			ss = append(ss, severityTypes.Severity{
+				Type:   severityTypes.SeverityTypeCVSSv2,
+				Source: source,
+				CVSSv2: v2,
+			})
+		}
+		if metric.CVSSv30 != nil {
+			v30, err := v30Types.Parse(metric.CVSSv30.VectorString)
+			if err != nil {
+				slog.Warn("unexpected CVSS v3.0 vector", slog.String("id", fetched.CVEMetadata.CVEID), slog.String("vector", metric.CVSSv30.VectorString))
+				continue
+			}
+			ss = append(ss, severityTypes.Severity{
+				Type:    severityTypes.SeverityTypeCVSSv30,
+				Source:  source,
+				CVSSv30: v30,
+			})
+		}
+		if metric.CVSSv31 != nil {
+			v31, err := v31Types.Parse(metric.CVSSv31.VectorString)
+			if err != nil {
+				slog.Warn("unexpected CVSS v3.1 vector", slog.String("id", fetched.CVEMetadata.CVEID), slog.String("vector", metric.CVSSv31.VectorString))
+				continue
+			}
+			ss = append(ss, severityTypes.Severity{
+				Type:    severityTypes.SeverityTypeCVSSv31,
+				Source:  source,
+				CVSSv31: v31,
+			})
+		}
+		if metric.CVSSv40 != nil {
+			v40, err := v40Types.Parse(metric.CVSSv40.VectorString)
+			if err != nil {
+				slog.Warn("unexpected CVSS v4.0 vector", slog.String("id", fetched.CVEMetadata.CVEID), slog.String("vector", metric.CVSSv40.VectorString))
+				continue
+			}
+			ss = append(ss, severityTypes.Severity{
+				Type:    severityTypes.SeverityTypeCVSSv40,
+				Source:  source,
+				CVSSv40: v40,
+			})
+		}
+	}
+	return ss
+}
+
+func cwes(fetched paloaltoJSON.CVE) []cweTypes.CWE {
+	var cs []string
+	for _, p := range fetched.Containers.CNA.ProblemTypes {
+		for _, d := range p.Descriptions {
+			if d.CweID != nil && strings.HasPrefix(*d.CweID, "CWE-") {
+				cs = append(cs, *d.CweID)
+			}
+		}
+	}
+	if len(cs) == 0 {
+		return nil
+	}
+	return []cweTypes.CWE{{
+		Source: getSource(fetched.Containers.CNA.ProviderMetadata),
+		CWE:    util.Unique(cs),
+	}}
+}
+
+func exploits(fetched paloaltoJSON.CVE) []exploitTypes.Exploit {
+	var es []exploitTypes.Exploit
+	for _, e := range fetched.Containers.CNA.Exploits {
+		if (e.Lang != "" && e.Lang != "en") || e.Value == "" {
+			continue
+		}
+		es = append(es, exploitTypes.Exploit{
+			Source:      getSource(fetched.Containers.CNA.ProviderMetadata),
+			Description: e.Value,
+		})
+	}
+	return es
+}
+
+func references(fetched paloaltoJSON.CVE) []referenceTypes.Reference {
+	refs := make([]referenceTypes.Reference, 0, len(fetched.Containers.CNA.References))
+	for _, r := range fetched.Containers.CNA.References {
+		refs = append(refs, referenceTypes.Reference{
+			Source: getSource(fetched.Containers.CNA.ProviderMetadata),
+			URL:    r.URL,
+		})
+	}
+	return refs
+}
+
+// optional preserves information that has no canonical field but is still
+// valuable: the raw affected products (incl. ones not expressible as detection
+// criteria), the enumerated affected version list, CAPEC impacts,
+// configuration conditions and the source metadata.
+func optional(fetched paloaltoJSON.CVE) map[string]any {
+	m := make(map[string]any)
+	if len(fetched.Containers.CNA.Affected) > 0 {
+		m["affected"] = fetched.Containers.CNA.Affected
+	}
+	if fetched.Containers.CNA.XAffectedList != nil {
+		m["x_affectedList"] = fetched.Containers.CNA.XAffectedList
+	}
+	if len(fetched.Containers.CNA.Impacts) > 0 {
+		m["impacts"] = fetched.Containers.CNA.Impacts
+	}
+	if len(fetched.Containers.CNA.Configurations) > 0 {
+		m["configurations"] = fetched.Containers.CNA.Configurations
+	}
+	if fetched.Containers.CNA.Source != nil {
+		m["source"] = fetched.Containers.CNA.Source
+	}
+	if len(m) == 0 {
+		return nil
+	}
+	return m
 }
 
 func getSource(providerMetadata paloaltoJSON.ProviderMetadata) string {
