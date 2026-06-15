@@ -9,13 +9,13 @@
 				"severity": [
 					{
 						"type": "vendor",
-						"source": "sec.cloudapps.cisco.com",
+						"source": "cisco.com",
 						"vendor": "High"
 					}
 				],
 				"cwe": [
 					{
-						"source": "sec.cloudapps.cisco.com",
+						"source": "cisco.com",
 						"cwe": [
 							"CWE-404"
 						]
@@ -23,19 +23,19 @@
 				],
 				"references": [
 					{
-						"source": "sec.cloudapps.cisco.com",
+						"source": "cisco.com",
 						"url": "https://bst.cloudapps.cisco.com/bugsearch/bug/CSCwm91176"
 					},
 					{
-						"source": "sec.cloudapps.cisco.com",
+						"source": "cisco.com",
 						"url": "https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-3100_4200_tlsdos-2yNSCd54"
 					},
 					{
-						"source": "sec.cloudapps.cisco.com",
+						"source": "cisco.com",
 						"url": "https://sec.cloudapps.cisco.com/security/center/contentjson/CiscoSecurityAdvisory/cisco-sa-3100_4200_tlsdos-2yNSCd54/csaf/cisco-sa-3100_4200_tlsdos-2yNSCd54.json"
 					},
 					{
-						"source": "sec.cloudapps.cisco.com",
+						"source": "cisco.com",
 						"url": "https://sec.cloudapps.cisco.com/security/center/contentxml/CiscoSecurityAdvisory/cisco-sa-3100_4200_tlsdos-2yNSCd54/cvrf/cisco-sa-3100_4200_tlsdos-2yNSCd54_cvrf.xml"
 					}
 				],

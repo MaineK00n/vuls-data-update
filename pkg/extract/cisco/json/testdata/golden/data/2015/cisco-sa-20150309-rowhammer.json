@@ -9,13 +9,13 @@
 				"severity": [
 					{
 						"type": "vendor",
-						"source": "sec.cloudapps.cisco.com",
+						"source": "cisco.com",
 						"vendor": "Medium"
 					}
 				],
 				"cwe": [
 					{
-						"source": "sec.cloudapps.cisco.com",
+						"source": "cisco.com",
 						"cwe": [
 							"CWE-264"
 						]
@@ -23,15 +23,15 @@
 				],
 				"references": [
 					{
-						"source": "sec.cloudapps.cisco.com",
+						"source": "cisco.com",
 						"url": "https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-20150309-rowhammer"
 					},
 					{
-						"source": "sec.cloudapps.cisco.com",
+						"source": "cisco.com",
 						"url": "https://sec.cloudapps.cisco.com/security/center/contentjson/CiscoSecurityAdvisory/cisco-sa-20150309-rowhammer/csaf/cisco-sa-20150309-rowhammer.json"
 					},
 					{
-						"source": "sec.cloudapps.cisco.com",
+						"source": "cisco.com",
 						"url": "https://sec.cloudapps.cisco.com/security/center/contentxml/CiscoSecurityAdvisory/cisco-sa-20150309-rowhammer/cvrf/cisco-sa-20150309-rowhammer_cvrf.xml"
 					}
 				],

@@ -9,13 +9,13 @@
 				"severity": [
 					{
 						"type": "vendor",
-						"source": "sec.cloudapps.cisco.com",
+						"source": "cisco.com",
 						"vendor": "High"
 					}
 				],
 				"cwe": [
 					{
-						"source": "sec.cloudapps.cisco.com",
+						"source": "cisco.com",
 						"cwe": [
 							"CWE-20"
 						]
@@ -23,19 +23,19 @@
 				],
 				"references": [
 					{
-						"source": "sec.cloudapps.cisco.com",
+						"source": "cisco.com",
 						"url": "https://bst.cloudapps.cisco.com/bugsearch/bug/CSCup70579"
 					},
 					{
-						"source": "sec.cloudapps.cisco.com",
+						"source": "cisco.com",
 						"url": "https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-20150325-mdns"
 					},
 					{
-						"source": "sec.cloudapps.cisco.com",
+						"source": "cisco.com",
 						"url": "https://sec.cloudapps.cisco.com/security/center/contentjson/CiscoSecurityAdvisory/cisco-sa-20150325-mdns/csaf/cisco-sa-20150325-mdns.json"
 					},
 					{
-						"source": "sec.cloudapps.cisco.com",
+						"source": "cisco.com",
 						"url": "https://sec.cloudapps.cisco.com/security/center/contentxml/CiscoSecurityAdvisory/cisco-sa-20150325-mdns/cvrf/cisco-sa-20150325-mdns_cvrf.xml"
 					}
 				],

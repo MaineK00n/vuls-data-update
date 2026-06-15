@@ -9,13 +9,13 @@
 				"severity": [
 					{
 						"type": "vendor",
-						"source": "sec.cloudapps.cisco.com",
+						"source": "cisco.com",
 						"vendor": "Medium"
 					}
 				],
 				"cwe": [
 					{
-						"source": "sec.cloudapps.cisco.com",
+						"source": "cisco.com",
 						"cwe": [
 							"CWE-127",
 							"CWE-805"
@@ -24,39 +24,39 @@
 				],
 				"references": [
 					{
-						"source": "sec.cloudapps.cisco.com",
+						"source": "cisco.com",
 						"url": "https://bst.cloudapps.cisco.com/bugsearch/bug/CSCwo71401"
 					},
 					{
-						"source": "sec.cloudapps.cisco.com",
+						"source": "cisco.com",
 						"url": "https://bst.cloudapps.cisco.com/bugsearch/bug/CSCwq03467"
 					},
 					{
-						"source": "sec.cloudapps.cisco.com",
+						"source": "cisco.com",
 						"url": "https://bst.cloudapps.cisco.com/bugsearch/bug/CSCwq15864"
 					},
 					{
-						"source": "sec.cloudapps.cisco.com",
+						"source": "cisco.com",
 						"url": "https://bst.cloudapps.cisco.com/bugsearch/bug/CSCwq42141"
 					},
 					{
-						"source": "sec.cloudapps.cisco.com",
+						"source": "cisco.com",
 						"url": "https://bst.cloudapps.cisco.com/bugsearch/bug/CSCwq42153"
 					},
 					{
-						"source": "sec.cloudapps.cisco.com",
+						"source": "cisco.com",
 						"url": "https://bst.cloudapps.cisco.com/bugsearch/bug/CSCwq42161"
 					},
 					{
-						"source": "sec.cloudapps.cisco.com",
+						"source": "cisco.com",
 						"url": "https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-snort3-mime-vulns-tTL8PgVH"
 					},
 					{
-						"source": "sec.cloudapps.cisco.com",
+						"source": "cisco.com",
 						"url": "https://sec.cloudapps.cisco.com/security/center/contentjson/CiscoSecurityAdvisory/cisco-sa-snort3-mime-vulns-tTL8PgVH/csaf/cisco-sa-snort3-mime-vulns-tTL8PgVH.json"
 					},
 					{
-						"source": "sec.cloudapps.cisco.com",
+						"source": "cisco.com",
 						"url": "https://sec.cloudapps.cisco.com/security/center/contentxml/CiscoSecurityAdvisory/cisco-sa-snort3-mime-vulns-tTL8PgVH/cvrf/cisco-sa-snort3-mime-vulns-tTL8PgVH_cvrf.xml"
 					}
 				],

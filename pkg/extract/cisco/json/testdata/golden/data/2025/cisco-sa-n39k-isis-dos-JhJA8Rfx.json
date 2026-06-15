@@ -9,13 +9,13 @@
 				"severity": [
 					{
 						"type": "vendor",
-						"source": "sec.cloudapps.cisco.com",
+						"source": "cisco.com",
 						"vendor": "High"
 					}
 				],
 				"cwe": [
 					{
-						"source": "sec.cloudapps.cisco.com",
+						"source": "cisco.com",
 						"cwe": [
 							"CWE-733"
 						]
@@ -23,19 +23,19 @@
 				],
 				"references": [
 					{
-						"source": "sec.cloudapps.cisco.com",
+						"source": "cisco.com",
 						"url": "https://bst.cloudapps.cisco.com/bugsearch/bug/CSCwn49153"
 					},
 					{
-						"source": "sec.cloudapps.cisco.com",
+						"source": "cisco.com",
 						"url": "https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-n39k-isis-dos-JhJA8Rfx"
 					},
 					{
-						"source": "sec.cloudapps.cisco.com",
+						"source": "cisco.com",
 						"url": "https://sec.cloudapps.cisco.com/security/center/contentjson/CiscoSecurityAdvisory/cisco-sa-n39k-isis-dos-JhJA8Rfx/csaf/cisco-sa-n39k-isis-dos-JhJA8Rfx.json"
 					},
 					{
-						"source": "sec.cloudapps.cisco.com",
+						"source": "cisco.com",
 						"url": "https://sec.cloudapps.cisco.com/security/center/contentxml/CiscoSecurityAdvisory/cisco-sa-n39k-isis-dos-JhJA8Rfx/cvrf/cisco-sa-n39k-isis-dos-JhJA8Rfx_cvrf.xml"
 					}
 				],

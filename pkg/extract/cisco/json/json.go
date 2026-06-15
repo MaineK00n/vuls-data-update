@@ -152,7 +152,7 @@ func extract(fetched fetchTypes.Advisory, raws []string) (dataTypes.Data, error)
 	if !slices.Contains([]string{"", "NA"}, fetched.Sir) {
 		ss = append(ss, severityTypes.Severity{
 			Type:   severityTypes.SeverityTypeVendor,
-			Source: "sec.cloudapps.cisco.com",
+			Source: "cisco.com",
 			Vendor: &fetched.Sir,
 		})
 	}
@@ -168,7 +168,7 @@ func extract(fetched fetchTypes.Advisory, raws []string) (dataTypes.Data, error)
 	var cwes []cweTypes.CWE
 	if len(cweIDs) > 0 {
 		cwes = []cweTypes.CWE{{
-			Source: "sec.cloudapps.cisco.com",
+			Source: "cisco.com",
 			CWE:    cweIDs,
 		}}
 	}
@@ -180,7 +180,7 @@ func extract(fetched fetchTypes.Advisory, raws []string) (dataTypes.Data, error)
 			continue
 		}
 		refs = append(refs, referenceTypes.Reference{
-			Source: "sec.cloudapps.cisco.com",
+			Source: "cisco.com",
 			URL:    u,
 		})
 	}
@@ -189,7 +189,7 @@ func extract(fetched fetchTypes.Advisory, raws []string) (dataTypes.Data, error)
 			continue
 		}
 		refs = append(refs, referenceTypes.Reference{
-			Source: "sec.cloudapps.cisco.com",
+			Source: "cisco.com",
 			URL:    fmt.Sprintf("https://bst.cloudapps.cisco.com/bugsearch/bug/%s", b),
 		})
 	}
