@@ -56,21 +56,32 @@ func WithDir(dir string) Option {
 	return dirOption(dir)
 }
 
-// entryInfo carries every per-ext-ID detail Stage 2 needs to build one
-// canonical record. Stage 1 populates a single map[extID]entryInfo
-// instead of five parallel maps. Missing ext-IDs are expressed by a
-// failed map lookup; the map never stores a zero value on purpose.
+// entryKey is the composite primary key used throughout Stage 1 and
+// Stage 2. ATT&CK's external_id namespace is per-STIX-type rather than
+// global: pre-2019 "1 Technique = 1 Mitigation" course-of-action records
+// still carry the paired attack-pattern's T#### id (instead of the
+// modern M#### prefix), so (Kind, ID) is the only key that is unique
+// across the whole bundle set.
+type entryKey struct {
+	ext  string
+	kind attackTypes.Kind
+}
+
+// entryInfo carries every per-(ext-ID, kind) detail Stage 2 needs to
+// build one canonical record. Stage 1 populates a single
+// map[entryKey]entryInfo instead of N parallel maps. Missing entries are
+// expressed by a failed map lookup; the map never stores a zero value
+// on purpose.
 //
 // The three path collections are kept separate so Stage 2 doesn't have
 // to re-classify a single flat list:
-//   - paths: this ext-ID's own primary files (1..N bundle copies)
-//   - rels:  relationship files this ext-ID participates in, keyed by
+//   - paths: this entry's own primary files (1..N bundle copies)
+//   - rels:  relationship files this entry participates in, keyed by
 //     STIX UUID so cross-bundle copies of the same logical
 //     relationship dedupe naturally
 //   - refs:  cross-referenced primary files (other side of relationships
 //     or forward refs); raws-only, processed once each
 type entryInfo struct {
-	kind     attackTypes.Kind
 	stixType string
 	peek     stixPeek
 	paths    []string
@@ -107,7 +118,7 @@ func Extract(args string, opts ...Option) error {
 	// canonical record (entries) plus the UUID lookup Stage 1c needs
 	// to resolve relationships (uuids). Nothing else crosses the
 	// Stage 1 ↔ Stage 2 boundary.
-	entries := make(map[string]entryInfo)
+	entries := make(map[entryKey]entryInfo)
 	uuids := make(map[string]uuidInfo)
 
 	// Stage 1a: walk every STIX file, peek the extended discriminator
@@ -205,34 +216,27 @@ func Extract(args string, opts ...Option) error {
 			// surface.
 			return errors.Errorf("missing mitre-attack external_id in %s (type %q)", path, peek.Type)
 		}
-		// Pre-2019 "one technique = one mitigation" era course-of-action
-		// records still ship deprecated but carry their Technique
-		// counterpart's T#### external_id instead of the M#### prefix
-		// every live mitigation uses. Indexing them under the same
-		// ext-ID as the live Technique collides in entries and
-		// double-links into Stage 1b's tactic.refs (manifesting as
-		// duplicate IDs in tactic.techniques). No live relationship
-		// endpoint references the stub, so dropping it here only loses
-		// provenance for the deprecated copy. Anything else with a
-		// non-M Mitigation ext-id is schema drift CI should surface.
-		if kind == attackTypes.KindMitigation && !strings.HasPrefix(extID, "M") {
-			slog.Warn("skipping legacy mitigation with non-M external_id (cross-kind ext-id collision)", "path", path, "ext_id", extID)
-			return nil
-		}
-
+		// (Kind, ext-ID) is the composite primary key: pre-2019 "1
+		// Technique = 1 Mitigation" course-of-action records still carry
+		// their paired attack-pattern's T#### external_id, so keying
+		// entries by ext alone collapses the deprecated stub onto its
+		// live Technique. Composite key keeps both records — the live
+		// Technique under {T####, KindTechnique} and the legacy stub
+		// under {T####, KindMitigation} — without losing data or
+		// double-linking into Stage 1b's tactic.refs.
 		uuids[peek.ID] = uuidInfo{ext: extID, kind: kind, path: path}
 
-		e, ok := entries[extID]
+		k := entryKey{ext: extID, kind: kind}
+		e, ok := entries[k]
 		if !ok {
 			e = entryInfo{
-				kind:     kind,
 				stixType: peek.Type,
 				peek:     peek,
 				rels:     make(map[string]string),
 			}
 		}
 		e.paths = append(e.paths, path)
-		entries[extID] = e
+		entries[k] = e
 
 		return nil
 	}); err != nil {
@@ -256,14 +260,15 @@ func Extract(args string, opts ...Option) error {
 	// declared domain(s) and its shortname so Stage 1b and Stage 2 can
 	// resolve a KillChainPhase to the right Tactic in O(1) without
 	// scanning entries (and without the cross-domain ambiguity that
-	// shortname-only matching introduced).
+	// shortname-only matching introduced). The value is the Tactic's
+	// ext-ID; the corresponding entryKey is always {ext, KindTactic}.
 	type tacticKey struct {
 		domain    string
 		shortname string
 	}
 	tacticByDomainShortname := make(map[tacticKey]string)
-	for ext, e := range entries {
-		if e.kind != attackTypes.KindTactic {
+	for k, e := range entries {
+		if k.kind != attackTypes.KindTactic {
 			continue
 		}
 		sn := e.peek.Tactic.XMitreShortname
@@ -271,17 +276,17 @@ func Extract(args string, opts ...Option) error {
 			continue
 		}
 		for _, d := range e.peek.XMitreDomains {
-			tacticByDomainShortname[tacticKey{domain: d, shortname: sn}] = ext
+			tacticByDomainShortname[tacticKey{domain: d, shortname: sn}] = k.ext
 		}
 	}
 
-	// Stage 1b: per-extID, link the files Stage 2 will need to build
+	// Stage 1b: per-entry, link the files Stage 2 will need to build
 	// the cross-ref fields. Forward refs (e.g. Technique → Tactic via
 	// KillChainPhases) and reverse refs (Tactic → Techniques) both
-	// surface as file membership in entries[id].files, so Stage 2
+	// surface as file membership in entries[k].refs, so Stage 2
 	// doesn't need a global edge index to know which files to open.
-	for extID, e := range entries {
-		switch e.kind {
+	for k, e := range entries {
+		switch k.kind {
 		case attackTypes.KindTechnique:
 			// KillChainPhases name the Tactic by its shortname; resolve
 			// to the right domain's Tactic via the prebuilt
@@ -297,26 +302,28 @@ func Extract(args string, opts ...Option) error {
 				if !ok {
 					continue
 				}
-				tac := entries[tExt]
+				tk := entryKey{ext: tExt, kind: attackTypes.KindTactic}
+				tac := entries[tk]
 				tac.refs = append(tac.refs, e.paths...)
-				entries[tExt] = tac
+				entries[tk] = tac
 			}
-			entries[extID] = e
+			entries[k] = e
 		case attackTypes.KindDetectStrategy:
 			for _, ar := range e.peek.DetectStrategy.XMitreAnalyticRefs {
 				u, ok := uuids[ar]
 				if !ok {
 					continue
 				}
-				an, ok := entries[u.ext]
+				ak := entryKey{ext: u.ext, kind: u.kind}
+				an, ok := entries[ak]
 				if !ok {
 					continue
 				}
 				e.refs = append(e.refs, an.paths...)
 				an.refs = append(an.refs, e.paths...)
-				entries[u.ext] = an
+				entries[ak] = an
 			}
-			entries[extID] = e
+			entries[k] = e
 		case attackTypes.KindDataComponent:
 			if e.peek.DataComponent.XMitreDataSourceRef == nil {
 				continue
@@ -325,14 +332,15 @@ func Extract(args string, opts ...Option) error {
 			if !ok {
 				continue
 			}
-			ds, ok := entries[u.ext]
+			dk := entryKey{ext: u.ext, kind: u.kind}
+			ds, ok := entries[dk]
 			if !ok {
 				continue
 			}
 			e.refs = append(e.refs, ds.paths...)
 			ds.refs = append(ds.refs, e.paths...)
-			entries[u.ext] = ds
-			entries[extID] = e
+			entries[dk] = ds
+			entries[k] = e
 		}
 	}
 
@@ -363,8 +371,10 @@ func Extract(args string, opts ...Option) error {
 				return errors.Wrapf(err, "decode %s", path)
 			}
 
-			src, srcOK := entries[uuids[r.SourceRef].ext]
-			tgt, tgtOK := entries[uuids[r.TargetRef].ext]
+			sk := entryKey{ext: uuids[r.SourceRef].ext, kind: uuids[r.SourceRef].kind}
+			tk := entryKey{ext: uuids[r.TargetRef].ext, kind: uuids[r.TargetRef].kind}
+			src, srcOK := entries[sk]
+			tgt, tgtOK := entries[tk]
 			if !srcOK || !tgtOK {
 				return errors.Errorf("relationship %s references unindexed UUID (src=%s, tgt=%s)", path, r.SourceRef, r.TargetRef)
 			}
@@ -372,8 +382,8 @@ func Extract(args string, opts ...Option) error {
 			src.refs = append(src.refs, tgt.paths...)
 			tgt.rels[r.ID] = path
 			tgt.refs = append(tgt.refs, src.paths...)
-			entries[uuids[r.SourceRef].ext] = src
-			entries[uuids[r.TargetRef].ext] = tgt
+			entries[sk] = src
+			entries[tk] = tgt
 
 			return nil
 		}); err != nil {
@@ -381,13 +391,14 @@ func Extract(args string, opts ...Option) error {
 		}
 	}
 
-	// Stage 2: for each unique ext-ID, walk its file list. Each file is
-	// either this entry's primary (or a cross-domain copy of it), a
-	// relationship file we parse for src/tgt direction + per-edge
+	// Stage 2: for each unique (ext-ID, kind), walk its file list. Each
+	// file is either this entry's primary (or a cross-domain copy of
+	// it), a relationship file we parse for src/tgt direction + per-edge
 	// content, or another primary's file pulled in by cross-ref. The
 	// per-entry rels struct accumulates the kind-specific fields and
 	// is then handed to convert() unchanged.
-	for extID, e := range entries {
+	for k, e := range entries {
+		extID := k.ext
 		r := utiljson.NewJSONReader()
 		domains := slices.Clone(e.peek.XMitreDomains)
 
@@ -459,7 +470,7 @@ func Extract(args string, opts ...Option) error {
 		// matches the kill_chain_name's bundle, not whichever Tactic
 		// with that shortname the map iteration happened to visit
 		// first.
-		switch e.kind {
+		switch k.kind {
 		case attackTypes.KindTechnique:
 			for _, kc := range e.peek.Technique.KillChainPhases {
 				domain, ok := killChainDomain[kc.KillChainName]
@@ -533,8 +544,8 @@ func Extract(args string, opts ...Option) error {
 
 			switch rel.RelationshipType {
 			case "subtechnique-of":
-				if e.kind != attackTypes.KindTechnique {
-					return errors.Errorf("subtechnique-of relationship %s reached non-Technique endpoint %s (kind %v)", rel.ID, extID, e.kind)
+				if k.kind != attackTypes.KindTechnique {
+					return errors.Errorf("subtechnique-of relationship %s reached non-Technique endpoint %s (kind %v)", rel.ID, extID, k.kind)
 				}
 				if extID == src.ext {
 					technique.parent = tgt.ext
@@ -647,23 +658,28 @@ func Extract(args string, opts ...Option) error {
 			if err := r.Read(path, args, &fp); err != nil {
 				return errors.Wrapf(err, "read ref %s for %s", path, extID)
 			}
-			otherExt := uuids[fp.ID].ext
-			if otherExt == "" {
+			// uuids carries kind alongside ext for free, so we read
+			// the cross-ref's kind directly from the Stage 1 UUID
+			// index rather than re-consulting entries. With the
+			// composite-key entries map, an entries[ext] lookup
+			// alone is no longer well-defined (e.g. T1047 has both
+			// a Technique and a legacy Mitigation entry).
+			u := uuids[fp.ID]
+			if u.ext == "" {
 				return errors.Errorf("file %s (id %s) was not indexed in Stage 1 but is referenced from %s", path, fp.ID, extID)
 			}
-			otherKind := entries[otherExt].kind
-			switch e.kind {
+			switch k.kind {
 			case attackTypes.KindTactic:
-				if otherKind == attackTypes.KindTechnique {
-					tactic.techniques = append(tactic.techniques, otherExt)
+				if u.kind == attackTypes.KindTechnique {
+					tactic.techniques = append(tactic.techniques, u.ext)
 				}
 			case attackTypes.KindAnalytic:
-				if otherKind == attackTypes.KindDetectStrategy {
-					analytic.detectionStrategy = otherExt
+				if u.kind == attackTypes.KindDetectStrategy {
+					analytic.detectionStrategy = u.ext
 				}
 			case attackTypes.KindDataSource:
-				if otherKind == attackTypes.KindDataComponent {
-					dataSource.components = append(dataSource.components, otherExt)
+				if u.kind == attackTypes.KindDataComponent {
+					dataSource.components = append(dataSource.components, u.ext)
 				}
 			}
 		}
@@ -675,7 +691,7 @@ func Extract(args string, opts ...Option) error {
 		// concrete type stay in scope without an any-typed intermediate
 		// or a separate helper indirection.
 		var extracted attackTypes.Attack
-		switch e.kind {
+		switch k.kind {
 		case attackTypes.KindTechnique:
 			var ap attack.AttackPattern
 			if err := r.Read(e.paths[0], args, &ap); err != nil {
@@ -688,7 +704,7 @@ func Extract(args string, opts ...Option) error {
 			}
 			extracted = attackTypes.Attack{
 				ID:          extID,
-				Kind:        e.kind,
+				Kind:        k.kind,
 				Name:        deref(ap.Name),
 				Description: deref(ap.Description),
 				Domains:     domains,
@@ -727,7 +743,7 @@ func Extract(args string, opts ...Option) error {
 			}
 			extracted = attackTypes.Attack{
 				ID:          extID,
-				Kind:        e.kind,
+				Kind:        k.kind,
 				Name:        deref(t.Name),
 				Description: deref(t.Description),
 				Domains:     domains,
@@ -751,7 +767,7 @@ func Extract(args string, opts ...Option) error {
 			}
 			extracted = attackTypes.Attack{
 				ID:          extID,
-				Kind:        e.kind,
+				Kind:        k.kind,
 				Name:        deref(m.Name),
 				Description: deref(m.Description),
 				Domains:     domains,
@@ -774,7 +790,7 @@ func Extract(args string, opts ...Option) error {
 			}
 			extracted = attackTypes.Attack{
 				ID:          extID,
-				Kind:        e.kind,
+				Kind:        k.kind,
 				Name:        deref(is.Name),
 				Description: deref(is.Description),
 				Domains:     domains,
@@ -805,7 +821,7 @@ func Extract(args string, opts ...Option) error {
 				}
 				extracted = attackTypes.Attack{
 					ID:          extID,
-					Kind:        e.kind,
+					Kind:        k.kind,
 					Name:        deref(m.Name),
 					Description: deref(m.Description),
 					Domains:     domains,
@@ -833,7 +849,7 @@ func Extract(args string, opts ...Option) error {
 				}
 				extracted = attackTypes.Attack{
 					ID:          extID,
-					Kind:        e.kind,
+					Kind:        k.kind,
 					Name:        deref(t.Name),
 					Description: deref(t.Description),
 					Domains:     domains,
@@ -862,7 +878,7 @@ func Extract(args string, opts ...Option) error {
 			}
 			extracted = attackTypes.Attack{
 				ID:          extID,
-				Kind:        e.kind,
+				Kind:        k.kind,
 				Name:        deref(camp.Name),
 				Description: deref(camp.Description),
 				Domains:     domains,
@@ -898,7 +914,7 @@ func Extract(args string, opts ...Option) error {
 			}
 			extracted = attackTypes.Attack{
 				ID:          extID,
-				Kind:        e.kind,
+				Kind:        k.kind,
 				Name:        deref(as.Name),
 				Description: deref(as.Description),
 				Domains:     domains,
@@ -924,7 +940,7 @@ func Extract(args string, opts ...Option) error {
 			}
 			extracted = attackTypes.Attack{
 				ID:   extID,
-				Kind: e.kind,
+				Kind: k.kind,
 				Name: deref(ds.Name),
 				// XMitreDetectionStrategy has no description field.
 				Domains:    domains,
@@ -948,7 +964,7 @@ func Extract(args string, opts ...Option) error {
 			}
 			extracted = attackTypes.Attack{
 				ID:          extID,
-				Kind:        e.kind,
+				Kind:        k.kind,
 				Name:        deref(ds.Name),
 				Description: deref(ds.Description),
 				Domains:     domains,
@@ -977,7 +993,7 @@ func Extract(args string, opts ...Option) error {
 			}
 			extracted = attackTypes.Attack{
 				ID:          extID,
-				Kind:        e.kind,
+				Kind:        k.kind,
 				Name:        deref(dc.Name),
 				Description: deref(dc.Description),
 				Domains:     domains,
@@ -1019,7 +1035,7 @@ func Extract(args string, opts ...Option) error {
 			}
 			extracted = attackTypes.Attack{
 				ID:          extID,
-				Kind:        e.kind,
+				Kind:        k.kind,
 				Name:        deref(an.Name),
 				Description: deref(an.Description),
 				Domains:     domains,
@@ -1042,11 +1058,15 @@ func Extract(args string, opts ...Option) error {
 			// Stage 1a's stixType switch should make this unreachable;
 			// surface the drift if a new Kind ever gets added without a
 			// matching case here.
-			return errors.Errorf("unexpected kind for %s: %s", extID, e.kind)
+			return errors.Errorf("unexpected kind for %s: %s", extID, k.kind)
 		}
 
-		if err := util.Write(filepath.Join(options.dir, "attack", fmt.Sprintf("%s.json", extID)), extracted, true); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "attack", fmt.Sprintf("%s.json", extID)))
+		// Per-kind subdirectory namespaces the ext-ID so kinds that
+		// happen to share an external_id (pre-2019 1:1 mitigation stub
+		// vs. its live Technique) coexist as distinct records.
+		outPath := filepath.Join(options.dir, "attack", string(k.kind), fmt.Sprintf("%s.json", extID))
+		if err := util.Write(outPath, extracted, true); err != nil {
+			return errors.Wrapf(err, "write %s", outPath)
 		}
 	}
 

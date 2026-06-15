@@ -1,0 +1,26 @@
+{
+	"id": "T1047",
+	"kind": "mitigation",
+	"name": "Windows Management Instrumentation Mitigation",
+	"description": "Legacy pre-2019 1:1 mitigation stub for T1047. Carries the Technique's T#### external_id instead of the modern M#### prefix; preserved only as a deprecated archival record by MITRE.",
+	"domains": [
+		"enterprise-attack"
+	],
+	"deprecated": true,
+	"revoked": false,
+	"version": "1.0",
+	"created": "2018-10-17T00:14:20.652Z",
+	"modified": "2025-04-18T18:00:00Z",
+	"references": [
+		{
+			"source": "mitre-attack",
+			"url": "https://attack.mitre.org/mitigations/T1047"
+		}
+	],
+	"data_source": {
+		"id": "mitre-attack",
+		"raws": [
+			"fixtures/enterprise/course-of-action/course-of-action--00000000-0000-0000-0000-000000000207.json"
+		]
+	}
+}
