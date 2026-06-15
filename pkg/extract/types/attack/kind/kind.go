@@ -1,10 +1,8 @@
 // Package kind exposes the ATT&CK Kind enum on its own so leaf
 // sub-types (e.g., attack/procedure) can carry a typed Kind field
 // without creating an import cycle back to pkg/extract/types/attack.
-//
-// The root attack package re-exports both the Kind type and its
-// constants via aliases, so existing call sites keep referring to
-// attackTypes.Kind* unchanged.
+// Callers always reference Kind through this package; the root attack
+// package only embeds it as Attack.Kind.
 package kind
 
 // Kind identifies the ATT&CK object category, derived from the STIX
@@ -24,3 +22,23 @@ const (
 	DetectStrategy Kind = "detection-strategy" // x-mitre-detection-strategy
 	Asset          Kind = "asset"              // x-mitre-asset
 )
+
+// All returns every defined Kind. Used by consumers that need to scan
+// every per-Kind namespace (e.g., vuls2 SearchAttack iterating the
+// boltdb attack/<kind> sub-buckets for an unqualified ext-id query).
+// The order matches the const block above.
+func All() []Kind {
+	return []Kind{
+		Technique,
+		Tactic,
+		Mitigation,
+		Group,
+		Software,
+		Campaign,
+		DataSource,
+		DataComponent,
+		Analytic,
+		DetectStrategy,
+		Asset,
+	}
+}

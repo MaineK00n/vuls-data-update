@@ -21,26 +21,6 @@ import (
 	sourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/source"
 )
 
-// Kind is re-exported from the leaf attack/kind package so existing
-// callers can keep referring to attackTypes.Kind and attackTypes.Kind*
-// unchanged, while leaf sub-types (e.g., attack/procedure) carry a
-// typed Kind without creating an import cycle.
-type Kind = kindTypes.Kind
-
-const (
-	KindTechnique      = kindTypes.Technique
-	KindTactic         = kindTypes.Tactic
-	KindMitigation     = kindTypes.Mitigation
-	KindGroup          = kindTypes.Group
-	KindSoftware       = kindTypes.Software
-	KindCampaign       = kindTypes.Campaign
-	KindDataSource     = kindTypes.DataSource
-	KindDataComponent  = kindTypes.DataComponent
-	KindAnalytic       = kindTypes.Analytic
-	KindDetectStrategy = kindTypes.DetectStrategy
-	KindAsset          = kindTypes.Asset
-)
-
 // Attack represents a single ATT&CK object keyed by its external_id
 // (e.g. "T1234", "TA0001", "M1050", "A0007", "DET0237", "DS0014",
 // "DC0084", "AN0110"). Kind-specific fields are grouped in nested
@@ -51,17 +31,17 @@ const (
 // "DataSource" / json "data_source" is reserved for the per-record
 // provenance metadata shared across all extract types.
 type Attack struct {
-	ID          string    `json:"id"`
-	Kind        Kind      `json:"kind,omitempty"`
-	Name        string    `json:"name,omitempty"`
-	Description string    `json:"description,omitempty"`
-	Domains     []string  `json:"domains,omitempty"` // enterprise / ics / mobile
-	Deprecated  bool      `json:"deprecated,omitempty"`
-	Revoked     bool      `json:"revoked,omitempty"`
-	RevokedBy   []string  `json:"revoked_by,omitempty"` // ext-IDs of the replacement(s) when Revoked, sourced from STIX revoked-by relationships; usually one but a split (e.g. one Technique into several) can produce more
-	Version     string    `json:"version,omitempty"`
-	Created     time.Time `json:"created,omitzero"`
-	Modified    time.Time `json:"modified,omitzero"`
+	ID          string         `json:"id"`
+	Kind        kindTypes.Kind `json:"kind,omitempty"`
+	Name        string         `json:"name,omitempty"`
+	Description string         `json:"description,omitempty"`
+	Domains     []string       `json:"domains,omitempty"` // enterprise / ics / mobile
+	Deprecated  bool           `json:"deprecated,omitempty"`
+	Revoked     bool           `json:"revoked,omitempty"`
+	RevokedBy   []string       `json:"revoked_by,omitempty"` // ext-IDs of the replacement(s) when Revoked, sourced from STIX revoked-by relationships; usually one but a split (e.g. one Technique into several) can produce more
+	Version     string         `json:"version,omitempty"`
+	Created     time.Time      `json:"created,omitzero"`
+	Modified    time.Time      `json:"modified,omitzero"`
 
 	Technique         techniqueTypes.Technique                 `json:"technique,omitzero"`
 	Tactic            tacticTypes.Tactic                       `json:"tactic,omitzero"`

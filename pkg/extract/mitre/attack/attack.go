@@ -20,6 +20,7 @@ import (
 	datasourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/attack/datasource"
 	detectionstrategyTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/attack/detectionstrategy"
 	groupTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/attack/group"
+	kindTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/attack/kind"
 	mitigationTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/attack/mitigation"
 	procedureTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/attack/procedure"
 	relatedrefTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/attack/relatedref"
@@ -64,7 +65,7 @@ func WithDir(dir string) Option {
 // across the whole bundle set.
 type entryKey struct {
 	ext  string
-	kind attackTypes.Kind
+	kind kindTypes.Kind
 }
 
 // entryInfo carries every per-(ext-ID, kind) detail Stage 2 needs to
@@ -95,7 +96,7 @@ type entryInfo struct {
 // missing-key semantics.
 type uuidInfo struct {
 	ext  string
-	kind attackTypes.Kind
+	kind kindTypes.Kind
 	path string
 }
 
@@ -151,32 +152,32 @@ func Extract(args string, opts ...Option) error {
 		// the Kind we project this STIX type onto; an unknown type
 		// is a CI failure so the extractor catches MITRE schema
 		// drift.
-		var kind attackTypes.Kind
+		var kind kindTypes.Kind
 		switch peek.Type {
 		case "relationship", "identity", "marking-definition", "x-mitre-collection", "x-mitre-matrix":
 			return nil
 		case "attack-pattern":
-			kind = attackTypes.KindTechnique
+			kind = kindTypes.Technique
 		case "x-mitre-tactic":
-			kind = attackTypes.KindTactic
+			kind = kindTypes.Tactic
 		case "course-of-action":
-			kind = attackTypes.KindMitigation
+			kind = kindTypes.Mitigation
 		case "intrusion-set":
-			kind = attackTypes.KindGroup
+			kind = kindTypes.Group
 		case "malware", "tool":
-			kind = attackTypes.KindSoftware
+			kind = kindTypes.Software
 		case "campaign":
-			kind = attackTypes.KindCampaign
+			kind = kindTypes.Campaign
 		case "x-mitre-asset":
-			kind = attackTypes.KindAsset
+			kind = kindTypes.Asset
 		case "x-mitre-detection-strategy":
-			kind = attackTypes.KindDetectStrategy
+			kind = kindTypes.DetectStrategy
 		case "x-mitre-analytic":
-			kind = attackTypes.KindAnalytic
+			kind = kindTypes.Analytic
 		case "x-mitre-data-source":
-			kind = attackTypes.KindDataSource
+			kind = kindTypes.DataSource
 		case "x-mitre-data-component":
-			kind = attackTypes.KindDataComponent
+			kind = kindTypes.DataComponent
 		default:
 			return errors.Errorf("unexpected STIX type. expected: %q, actual: %q", []string{
 				"attack-pattern", "x-mitre-tactic", "course-of-action",
@@ -268,7 +269,7 @@ func Extract(args string, opts ...Option) error {
 	}
 	tacticByDomainShortname := make(map[tacticKey]string)
 	for k, e := range entries {
-		if k.kind != attackTypes.KindTactic {
+		if k.kind != kindTypes.Tactic {
 			continue
 		}
 		sn := e.peek.Tactic.XMitreShortname
@@ -287,7 +288,7 @@ func Extract(args string, opts ...Option) error {
 	// doesn't need a global edge index to know which files to open.
 	for k, e := range entries {
 		switch k.kind {
-		case attackTypes.KindTechnique:
+		case kindTypes.Technique:
 			// KillChainPhases name the Tactic by its shortname; resolve
 			// to the right domain's Tactic via the prebuilt
 			// (domain, shortname) → ext index so cross-bundle shortname
@@ -302,13 +303,13 @@ func Extract(args string, opts ...Option) error {
 				if !ok {
 					continue
 				}
-				tk := entryKey{ext: tExt, kind: attackTypes.KindTactic}
+				tk := entryKey{ext: tExt, kind: kindTypes.Tactic}
 				tac := entries[tk]
 				tac.refs = append(tac.refs, e.paths...)
 				entries[tk] = tac
 			}
 			entries[k] = e
-		case attackTypes.KindDetectStrategy:
+		case kindTypes.DetectStrategy:
 			for _, ar := range e.peek.DetectStrategy.XMitreAnalyticRefs {
 				u, ok := uuids[ar]
 				if !ok {
@@ -324,7 +325,7 @@ func Extract(args string, opts ...Option) error {
 				entries[ak] = an
 			}
 			entries[k] = e
-		case attackTypes.KindDataComponent:
+		case kindTypes.DataComponent:
 			if e.peek.DataComponent.XMitreDataSourceRef == nil {
 				continue
 			}
@@ -471,7 +472,7 @@ func Extract(args string, opts ...Option) error {
 		// with that shortname the map iteration happened to visit
 		// first.
 		switch k.kind {
-		case attackTypes.KindTechnique:
+		case kindTypes.Technique:
 			for _, kc := range e.peek.Technique.KillChainPhases {
 				domain, ok := killChainDomain[kc.KillChainName]
 				if !ok {
@@ -483,13 +484,13 @@ func Extract(args string, opts ...Option) error {
 				}
 				technique.tactics = append(technique.tactics, tacticrefTypes.TacticRef{Shortname: kc.PhaseName, ID: tacticExt})
 			}
-		case attackTypes.KindDetectStrategy:
+		case kindTypes.DetectStrategy:
 			for _, ar := range e.peek.DetectStrategy.XMitreAnalyticRefs {
 				if u, ok := uuids[ar]; ok {
 					detectStrategy.analytics = append(detectStrategy.analytics, u.ext)
 				}
 			}
-		case attackTypes.KindDataComponent:
+		case kindTypes.DataComponent:
 			if e.peek.DataComponent.XMitreDataSourceRef != nil {
 				if u, ok := uuids[*e.peek.DataComponent.XMitreDataSourceRef]; ok {
 					dataComponent.source = u.ext
@@ -544,7 +545,7 @@ func Extract(args string, opts ...Option) error {
 
 			switch rel.RelationshipType {
 			case "subtechnique-of":
-				if k.kind != attackTypes.KindTechnique {
+				if k.kind != kindTypes.Technique {
 					return errors.Errorf("subtechnique-of relationship %s reached non-Technique endpoint %s (kind %v)", rel.ID, extID, k.kind)
 				}
 				if extID == src.ext {
@@ -554,7 +555,7 @@ func Extract(args string, opts ...Option) error {
 					technique.subtechniques = append(technique.subtechniques, src.ext)
 				}
 			case "mitigates":
-				if src.kind != attackTypes.KindMitigation || tgt.kind != attackTypes.KindTechnique {
+				if src.kind != kindTypes.Mitigation || tgt.kind != kindTypes.Technique {
 					return errors.Errorf("mitigates relationship %s has unexpected endpoints: src kind=%v, tgt kind=%v", rel.ID, src.kind, tgt.kind)
 				}
 				if extID == src.ext {
@@ -565,35 +566,35 @@ func Extract(args string, opts ...Option) error {
 				}
 			case "uses":
 				switch {
-				case src.kind == attackTypes.KindGroup && tgt.kind == attackTypes.KindTechnique:
+				case src.kind == kindTypes.Group && tgt.kind == kindTypes.Technique:
 					if extID == src.ext {
 						group.techniquesUsed = append(group.techniquesUsed, techniqueusedTypes.TechniqueUsed{ID: tgt.ext, Description: desc, References: refs})
 					}
 					if extID == tgt.ext {
 						technique.procedures = append(technique.procedures, procedureTypes.Procedure{AttackerKind: src.kind, AttackerID: src.ext, Description: desc, References: refs})
 					}
-				case src.kind == attackTypes.KindGroup && tgt.kind == attackTypes.KindSoftware:
+				case src.kind == kindTypes.Group && tgt.kind == kindTypes.Software:
 					if extID == src.ext {
 						group.softwaresUsed = append(group.softwaresUsed, relatedrefTypes.RelatedRef{ID: tgt.ext, Description: desc, References: refs})
 					}
 					if extID == tgt.ext {
 						software.groupsUsing = append(software.groupsUsing, relatedrefTypes.RelatedRef{ID: src.ext, Description: desc, References: refs})
 					}
-				case src.kind == attackTypes.KindSoftware && tgt.kind == attackTypes.KindTechnique:
+				case src.kind == kindTypes.Software && tgt.kind == kindTypes.Technique:
 					if extID == src.ext {
 						software.techniquesUsed = append(software.techniquesUsed, techniqueusedTypes.TechniqueUsed{ID: tgt.ext, Description: desc, References: refs})
 					}
 					if extID == tgt.ext {
 						technique.procedures = append(technique.procedures, procedureTypes.Procedure{AttackerKind: src.kind, AttackerID: src.ext, Description: desc, References: refs})
 					}
-				case src.kind == attackTypes.KindCampaign && tgt.kind == attackTypes.KindTechnique:
+				case src.kind == kindTypes.Campaign && tgt.kind == kindTypes.Technique:
 					if extID == src.ext {
 						campaign.techniquesUsed = append(campaign.techniquesUsed, techniqueusedTypes.TechniqueUsed{ID: tgt.ext, Description: desc, References: refs})
 					}
 					if extID == tgt.ext {
 						technique.procedures = append(technique.procedures, procedureTypes.Procedure{AttackerKind: src.kind, AttackerID: src.ext, Description: desc, References: refs})
 					}
-				case src.kind == attackTypes.KindCampaign && tgt.kind == attackTypes.KindSoftware:
+				case src.kind == kindTypes.Campaign && tgt.kind == kindTypes.Software:
 					if extID == src.ext {
 						campaign.softwaresUsed = append(campaign.softwaresUsed, relatedrefTypes.RelatedRef{ID: tgt.ext, Description: desc, References: refs})
 					}
@@ -604,7 +605,7 @@ func Extract(args string, opts ...Option) error {
 					return errors.Errorf("uses relationship %s has unexpected endpoints: src kind=%v, tgt kind=%v", rel.ID, src.kind, tgt.kind)
 				}
 			case "attributed-to":
-				if src.kind != attackTypes.KindCampaign || tgt.kind != attackTypes.KindGroup {
+				if src.kind != kindTypes.Campaign || tgt.kind != kindTypes.Group {
 					return errors.Errorf("attributed-to relationship %s has unexpected endpoints: src kind=%v, tgt kind=%v", rel.ID, src.kind, tgt.kind)
 				}
 				if extID == src.ext {
@@ -614,7 +615,7 @@ func Extract(args string, opts ...Option) error {
 					group.campaignsAttributed = append(group.campaignsAttributed, relatedrefTypes.RelatedRef{ID: src.ext, Description: desc, References: refs})
 				}
 			case "targets":
-				if src.kind != attackTypes.KindTechnique || tgt.kind != attackTypes.KindAsset {
+				if src.kind != kindTypes.Technique || tgt.kind != kindTypes.Asset {
 					return errors.Errorf("targets relationship %s has unexpected endpoints: src kind=%v, tgt kind=%v", rel.ID, src.kind, tgt.kind)
 				}
 				if extID == src.ext {
@@ -624,7 +625,7 @@ func Extract(args string, opts ...Option) error {
 					asset.techniquesTargeting = append(asset.techniquesTargeting, relatedrefTypes.RelatedRef{ID: src.ext, Description: desc, References: refs})
 				}
 			case "detects":
-				if src.kind != attackTypes.KindDetectStrategy || tgt.kind != attackTypes.KindTechnique {
+				if src.kind != kindTypes.DetectStrategy || tgt.kind != kindTypes.Technique {
 					return errors.Errorf("detects relationship %s has unexpected endpoints: src kind=%v, tgt kind=%v", rel.ID, src.kind, tgt.kind)
 				}
 				if extID == src.ext {
@@ -669,16 +670,16 @@ func Extract(args string, opts ...Option) error {
 				return errors.Errorf("file %s (id %s) was not indexed in Stage 1 but is referenced from %s", path, fp.ID, extID)
 			}
 			switch k.kind {
-			case attackTypes.KindTactic:
-				if u.kind == attackTypes.KindTechnique {
+			case kindTypes.Tactic:
+				if u.kind == kindTypes.Technique {
 					tactic.techniques = append(tactic.techniques, u.ext)
 				}
-			case attackTypes.KindAnalytic:
-				if u.kind == attackTypes.KindDetectStrategy {
+			case kindTypes.Analytic:
+				if u.kind == kindTypes.DetectStrategy {
 					analytic.detectionStrategy = u.ext
 				}
-			case attackTypes.KindDataSource:
-				if u.kind == attackTypes.KindDataComponent {
+			case kindTypes.DataSource:
+				if u.kind == kindTypes.DataComponent {
 					dataSource.components = append(dataSource.components, u.ext)
 				}
 			}
@@ -692,7 +693,7 @@ func Extract(args string, opts ...Option) error {
 		// or a separate helper indirection.
 		var extracted attackTypes.Attack
 		switch k.kind {
-		case attackTypes.KindTechnique:
+		case kindTypes.Technique:
 			var ap attack.AttackPattern
 			if err := r.Read(e.paths[0], args, &ap); err != nil {
 				return errors.Wrapf(err, "read self %s for %s", e.paths[0], extID)
@@ -736,7 +737,7 @@ func Extract(args string, opts ...Option) error {
 					DetectionStrategies:  technique.detectionStrategies,
 				},
 			}
-		case attackTypes.KindTactic:
+		case kindTypes.Tactic:
 			var t attack.XMitreTactic
 			if err := r.Read(e.paths[0], args, &t); err != nil {
 				return errors.Wrapf(err, "read self %s for %s", e.paths[0], extID)
@@ -760,7 +761,7 @@ func Extract(args string, opts ...Option) error {
 					Techniques: tactic.techniques,
 				},
 			}
-		case attackTypes.KindMitigation:
+		case kindTypes.Mitigation:
 			var m attack.CourseOfAction
 			if err := r.Read(e.paths[0], args, &m); err != nil {
 				return errors.Wrapf(err, "read self %s for %s", e.paths[0], extID)
@@ -783,7 +784,7 @@ func Extract(args string, opts ...Option) error {
 					TechniquesMitigated: mitigation.techniquesMitigated,
 				},
 			}
-		case attackTypes.KindGroup:
+		case kindTypes.Group:
 			var is attack.IntrusionSet
 			if err := r.Read(e.paths[0], args, &is); err != nil {
 				return errors.Wrapf(err, "read self %s for %s", e.paths[0], extID)
@@ -809,7 +810,7 @@ func Extract(args string, opts ...Option) error {
 					CampaignsAttributed: group.campaignsAttributed,
 				},
 			}
-		case attackTypes.KindSoftware:
+		case kindTypes.Software:
 			// Software is either malware or tool; the literal differs
 			// only in the concrete type backing its common fields, so
 			// build it inside each inner arm.
@@ -871,7 +872,7 @@ func Extract(args string, opts ...Option) error {
 					},
 				}
 			}
-		case attackTypes.KindCampaign:
+		case kindTypes.Campaign:
 			var camp attack.Campaign
 			if err := r.Read(e.paths[0], args, &camp); err != nil {
 				return errors.Wrapf(err, "read self %s for %s", e.paths[0], extID)
@@ -899,7 +900,7 @@ func Extract(args string, opts ...Option) error {
 					SoftwaresUsed:    campaign.softwaresUsed,
 				},
 			}
-		case attackTypes.KindAsset:
+		case kindTypes.Asset:
 			var as attack.XMitreAsset
 			if err := r.Read(e.paths[0], args, &as); err != nil {
 				return errors.Wrapf(err, "read self %s for %s", e.paths[0], extID)
@@ -933,7 +934,7 @@ func Extract(args string, opts ...Option) error {
 					TechniquesTargeting: asset.techniquesTargeting,
 				},
 			}
-		case attackTypes.KindDetectStrategy:
+		case kindTypes.DetectStrategy:
 			var ds attack.XMitreDetectionStrategy
 			if err := r.Read(e.paths[0], args, &ds); err != nil {
 				return errors.Wrapf(err, "read self %s for %s", e.paths[0], extID)
@@ -957,7 +958,7 @@ func Extract(args string, opts ...Option) error {
 					TechniquesDetected: detectStrategy.techniquesDetected,
 				},
 			}
-		case attackTypes.KindDataSource:
+		case kindTypes.DataSource:
 			var ds attack.XMitreDataSource
 			if err := r.Read(e.paths[0], args, &ds); err != nil {
 				return errors.Wrapf(err, "read self %s for %s", e.paths[0], extID)
@@ -982,7 +983,7 @@ func Extract(args string, opts ...Option) error {
 					DataComponents:   dataSource.components,
 				},
 			}
-		case attackTypes.KindDataComponent:
+		case kindTypes.DataComponent:
 			var dc attack.XMitreDataComponent
 			if err := r.Read(e.paths[0], args, &dc); err != nil {
 				return errors.Wrapf(err, "read self %s for %s", e.paths[0], extID)
@@ -1010,7 +1011,7 @@ func Extract(args string, opts ...Option) error {
 					LogSources: logs,
 				},
 			}
-		case attackTypes.KindAnalytic:
+		case kindTypes.Analytic:
 			var an attack.XMitreAnalytic
 			if err := r.Read(e.paths[0], args, &an); err != nil {
 				return errors.Wrapf(err, "read self %s for %s", e.paths[0], extID)
