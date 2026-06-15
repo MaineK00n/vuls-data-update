@@ -60,21 +60,19 @@ func TestExtract(t *testing.T) {
 		},
 		{
 			// negate=true on a configuration cannot be expressed in the
-			// criteria tree. Unlike extract/nvd/feed/cve/v2 this must not
-			// fail the extraction (VulnCheck data is not under NVD's quality
-			// control): the configuration is skipped with a WARN and the
-			// entry is emitted without detections.
-			name:   "config-negate",
-			args:   "./testdata/fixtures/config-negate/vuls-data-raw-vulncheck-nist-nvd2",
-			golden: "./testdata/golden/config-negate",
+			// criteria tree and never appears in the real feed, so the
+			// extractor fails hard rather than silently emitting inverted
+			// detection semantics.
+			name:     "config-negate",
+			args:     "./testdata/fixtures/config-negate/vuls-data-raw-vulncheck-nist-nvd2",
+			hasError: true,
 		},
 		{
-			// Symmetric with config-negate: negate=true on a node drops the
-			// node (and with it the only configuration) with a WARN instead
-			// of failing.
-			name:   "node-negate",
-			args:   "./testdata/fixtures/node-negate/vuls-data-raw-vulncheck-nist-nvd2",
-			golden: "./testdata/golden/node-negate",
+			// Symmetric with config-negate: negate=true on a node is a hard
+			// error too.
+			name:     "node-negate",
+			args:     "./testdata/fixtures/node-negate/vuls-data-raw-vulncheck-nist-nvd2",
+			hasError: true,
 		},
 		{
 			// The CVE ID carries path-traversal characters in its year

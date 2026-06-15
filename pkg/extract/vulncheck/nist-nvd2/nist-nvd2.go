@@ -97,12 +97,15 @@ type extractor struct {
 // Extract processes VulnCheck NIST NVD2 data and produces extracted
 // detection data.
 //
-// Unlike extract/nvd/feed/cve/v2, malformed pieces of a CVE entry
-// (negated configurations, unparseable CPEs or CVSS vectors, …) are
-// logged at WARN and skipped instead of failing the whole extraction,
-// following the tolerance of go-cve-dictionary's vulncheck fetcher —
-// VulnCheck-enriched data is not under NVD's quality control and a
-// single bad entry must not abort the remaining ~350k files.
+// Unlike extract/nvd/feed/cve/v2, most malformed pieces of a CVE entry
+// (unexpected operators, unparseable CPEs or CVSS vectors, …) are logged
+// at WARN and skipped instead of failing the whole extraction, following
+// the tolerance of go-cve-dictionary's vulncheck fetcher — VulnCheck-
+// enriched data is not under NVD's quality control and a single bad entry
+// must not abort the remaining ~350k files. The one exception is
+// negate=true on a configuration or node: it never appears in the current
+// feed and inverts detection semantics, so it is treated as a hard error
+// (an unexpected schema change worth failing on).
 func Extract(args string, opts ...Option) error {
 	options := &options{
 		dir:         filepath.Join(util.CacheDir(), "extract", "vulncheck", "nist-nvd2"),
@@ -238,7 +241,7 @@ func (e extractor) buildData(fetched nistnvd2Types.CVE) (dataTypes.Data, error) 
 	// fetcher. vcConfigurations also covers CVEs NVD has not analyzed
 	// (vulnStatus Deferred/Rejected), which is the value-add of this
 	// data source.
-	ds := func() []detectionType.Detection {
+	ds, err := func() ([]detectionType.Detection, error) {
 		vulnCPEs := parseVulnerableCPEs(fetched.ID, fetched.VCVulnerableCPEs)
 
 		rootCriteria := criteriaTypes.Criteria{
@@ -246,22 +249,28 @@ func (e extractor) buildData(fetched nistnvd2Types.CVE) (dataTypes.Data, error) 
 			Criterias: make([]criteriaTypes.Criteria, 0, len(fetched.VCConfigurations)),
 		}
 		for _, c := range fetched.VCConfigurations {
-			ca, ok := configurationToCriteria(fetched.ID, c, vulnCPEs)
+			ca, ok, err := configurationToCriteria(fetched.ID, c, vulnCPEs)
+			if err != nil {
+				return nil, errors.Wrapf(err, "configuration to criteria. ID: %s", fetched.ID)
+			}
 			if !ok {
 				continue
 			}
 			rootCriteria.Criterias = append(rootCriteria.Criterias, ca)
 		}
 		if len(rootCriteria.Criterias) == 0 {
-			return nil
+			return nil, nil
 		}
 		return []detectionType.Detection{{
 			Ecosystem: ecosystemTypes.EcosystemTypeCPE,
 			Conditions: []conditionTypes.Condition{{
 				Criteria: rootCriteria,
 			}},
-		}}
+		}}, nil
 	}()
+	if err != nil {
+		return dataTypes.Data{}, errors.Wrapf(err, "build detection. ID: %s", fetched.ID)
+	}
 
 	ss := make([]severityTypes.Severity, 0, len(fetched.Metrics.CVSSMetricV2)+len(fetched.Metrics.CVSSMetricV30)+len(fetched.Metrics.CVSSMetricV31)+len(fetched.Metrics.CVSSMetricV40))
 	for _, c := range fetched.Metrics.CVSSMetricV2 {
@@ -435,16 +444,17 @@ func parseVulnerableCPEs(id string, names []string) []vulnCPE {
 
 // configurationToCriteria converts a vcConfigurations entry into a
 // criteria tree. Returns ok=false when the configuration carries no
-// usable criteria (negated, unexpected operator, or every node
-// skipped); the caller drops it, mirroring go-cve-dictionary's
-// vulncheck fetcher which skips rather than fails on such entries.
-func configurationToCriteria(id string, config nistnvd2Types.Config, vulnCPEs []vulnCPE) (criteriaTypes.Criteria, bool) {
+// usable criteria (unexpected operator, or every node skipped); the
+// caller drops it. negate=true is returned as an error: it never
+// appears in real VulnCheck data, so encountering it signals an
+// unexpected schema change worth failing on rather than silently
+// emitting inverted detection semantics.
+func configurationToCriteria(id string, config nistnvd2Types.Config, vulnCPEs []vulnCPE) (criteriaTypes.Criteria, bool, error) {
 	// negate=true inverts detection semantics, which the criteria tree
-	// cannot express. Emitting the children non-negated would invert
-	// the meaning, so drop the whole configuration.
+	// cannot express. It does not occur in the current feed, so treat it
+	// as a hard error instead of emitting the children non-negated.
 	if config.Negate {
-		slog.Warn("negate=true on configuration is not supported; skipping", "id", id)
-		return criteriaTypes.Criteria{}, false
+		return criteriaTypes.Criteria{}, false, errors.New("negate=true on configuration is not supported")
 	}
 
 	ca := criteriaTypes.Criteria{}
@@ -455,36 +465,39 @@ func configurationToCriteria(id string, config nistnvd2Types.Config, vulnCPEs []
 		ca.Operator = criteriaTypes.CriteriaOperatorTypeOR
 	default:
 		slog.Warn("unexpected configuration operator; skipping", "id", id, "operator", config.Operator)
-		return criteriaTypes.Criteria{}, false
+		return criteriaTypes.Criteria{}, false, nil
 	}
 
 	ca.Criterias = make([]criteriaTypes.Criteria, 0, len(config.Nodes))
 	for _, n := range config.Nodes {
-		child, ok := nodeToCriteria(id, n, vulnCPEs)
+		child, ok, err := nodeToCriteria(id, n, vulnCPEs)
+		if err != nil {
+			return criteriaTypes.Criteria{}, false, errors.Wrap(err, "node to criteria")
+		}
 		if !ok {
 			// An AND configuration with a dropped node would assert a
 			// weaker condition than the source data states; refuse the
 			// whole configuration rather than emit it partially.
 			if ca.Operator == criteriaTypes.CriteriaOperatorTypeAND {
 				slog.Warn("node skipped under AND configuration; skipping whole configuration", "id", id)
-				return criteriaTypes.Criteria{}, false
+				return criteriaTypes.Criteria{}, false, nil
 			}
 			continue
 		}
 		ca.Criterias = append(ca.Criterias, child)
 	}
 	if len(ca.Criterias) == 0 {
-		return criteriaTypes.Criteria{}, false
+		return criteriaTypes.Criteria{}, false, nil
 	}
-	return ca, true
+	return ca, true, nil
 }
 
 // nodeToCriteria converts a configuration node into a criteria subtree.
-// Returns ok=false when the node carries no usable criterion.
-func nodeToCriteria(id string, n nistnvd2Types.Node, vulnCPEs []vulnCPE) (criteriaTypes.Criteria, bool) {
+// Returns ok=false when the node carries no usable criterion. negate=true
+// is returned as an error for the same reason as configurationToCriteria.
+func nodeToCriteria(id string, n nistnvd2Types.Node, vulnCPEs []vulnCPE) (criteriaTypes.Criteria, bool, error) {
 	if n.Negate {
-		slog.Warn("negate=true on node is not supported; skipping", "id", id)
-		return criteriaTypes.Criteria{}, false
+		return criteriaTypes.Criteria{}, false, errors.New("negate=true on node is not supported")
 	}
 	ca := criteriaTypes.Criteria{}
 	switch n.Operator {
@@ -497,7 +510,7 @@ func nodeToCriteria(id string, n nistnvd2Types.Node, vulnCPEs []vulnCPE) (criter
 		ca.Operator = criteriaTypes.CriteriaOperatorTypeOR
 	default:
 		slog.Warn("unexpected node operator; skipping", "id", id, "operator", n.Operator)
-		return criteriaTypes.Criteria{}, false
+		return criteriaTypes.Criteria{}, false, nil
 	}
 
 	ca.Criterias = make([]criteriaTypes.Criteria, 0, len(n.CPEMatch))
@@ -510,7 +523,7 @@ func nodeToCriteria(id string, n nistnvd2Types.Node, vulnCPEs []vulnCPE) (criter
 			// whether the enclosing configuration must go too.
 			if ca.Operator == criteriaTypes.CriteriaOperatorTypeAND {
 				slog.Warn("invalid CPE in cpeMatch under AND node; skipping whole node", "id", id, "cpe", match.Criteria, "err", err)
-				return criteriaTypes.Criteria{}, false
+				return criteriaTypes.Criteria{}, false, nil
 			}
 			slog.Warn("invalid CPE in cpeMatch; skipping", "id", id, "cpe", match.Criteria, "err", err)
 			continue
@@ -563,9 +576,9 @@ func nodeToCriteria(id string, n nistnvd2Types.Node, vulnCPEs []vulnCPE) (criter
 		})
 	}
 	if len(ca.Criterias) == 0 {
-		return criteriaTypes.Criteria{}, false
+		return criteriaTypes.Criteria{}, false, nil
 	}
-	return ca, true
+	return ca, true, nil
 }
 
 // decideRangeType classifies match's version range: RangeTypeSEMVER when
