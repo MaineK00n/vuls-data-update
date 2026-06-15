@@ -40,12 +40,7 @@
 					}
 				],
 				"published": "2025-08-27T16:00:00Z",
-				"modified": "2025-08-27T16:00:00Z",
-				"optional": {
-					"cvss_base_score": "7.4",
-					"status": "Final",
-					"version": "1.0"
-				}
+				"modified": "2025-08-27T16:00:00Z"
 			},
 			"segments": [
 				{

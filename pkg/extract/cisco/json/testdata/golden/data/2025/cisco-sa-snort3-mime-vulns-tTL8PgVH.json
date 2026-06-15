@@ -61,16 +61,7 @@
 					}
 				],
 				"published": "2025-10-15T16:00:00Z",
-				"modified": "2026-02-12T18:38:13Z",
-				"optional": {
-					"cvss_base_score": "6.5",
-					"status": "Final",
-					"unconverted_product_names": [
-						"Cisco Cyber Vision ",
-						"Cisco UTD SNORT IPS Engine Software "
-					],
-					"version": "1.1"
-				}
+				"modified": "2026-02-12T18:38:13Z"
 			},
 			"segments": [
 				{

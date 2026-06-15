@@ -40,20 +40,7 @@
 					}
 				],
 				"published": "2015-03-25T23:00:00Z",
-				"modified": "2016-01-15T01:22:00Z",
-				"optional": {
-					"cvss_base_score": "7.8",
-					"ips_signatures": [
-						{
-							"legacyIpsId": "cisco-sa-20150325-mdns",
-							"legacyIpsUrl": "http://tools.cisco.com/security/center/viewIpsSignature.x?signatureId=4988&signatureSubId=0&softwareVersion=6.0&releaseVersion=S990",
-							"releaseVersion": "S990",
-							"softwareVersion": "6.0"
-						}
-					],
-					"status": "Final",
-					"version": "1.4"
-				}
+				"modified": "2016-01-15T01:22:00Z"
 			},
 			"segments": [
 				{

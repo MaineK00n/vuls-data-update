@@ -196,7 +196,6 @@ func extract(fetched fetchTypes.Advisory, raws []string) (dataTypes.Data, error)
 
 	// Build CPE-based detections from product names
 	var criterions []criterionTypes.Criterion
-	var unconverted []string
 	converted := make(map[string]struct{})
 	for _, p := range fetched.ProductNames {
 		if slices.Contains([]string{"", "NA"}, p) {
@@ -205,11 +204,9 @@ func extract(fetched fetchTypes.Advisory, raws []string) (dataTypes.Data, error)
 		cpe, err := convertProductName(p)
 		if err != nil {
 			slog.Warn("failed to convert product name to CPE", slog.String("name", p), slog.Any("err", err))
-			unconverted = append(unconverted, p)
 			continue
 		}
 		if cpe == "" {
-			unconverted = append(unconverted, p)
 			continue
 		}
 		if _, ok := converted[cpe]; ok {
@@ -224,8 +221,6 @@ func extract(fetched fetchTypes.Advisory, raws []string) (dataTypes.Data, error)
 			},
 		})
 	}
-	slices.Sort(unconverted)
-	unconverted = slices.Compact(unconverted)
 
 	var segments []segmentTypes.Segment
 	var detections []detectionTypes.Detection
@@ -273,28 +268,6 @@ func extract(fetched fetchTypes.Advisory, raws []string) (dataTypes.Data, error)
 				References:  refs,
 				Published:   utiltime.Parse([]string{"2006-01-02T15:04:05"}, fetched.FirstPublished),
 				Modified:    utiltime.Parse([]string{"2006-01-02T15:04:05"}, fetched.LastUpdated),
-				Optional: func() map[string]any {
-					m := make(map[string]any)
-					if !slices.Contains([]string{"", "NA"}, fetched.CvssBaseScore) {
-						m["cvss_base_score"] = fetched.CvssBaseScore
-					}
-					if !slices.Contains([]string{"", "NA"}, fetched.Status) {
-						m["status"] = fetched.Status
-					}
-					if !slices.Contains([]string{"", "NA"}, fetched.Version) {
-						m["version"] = fetched.Version
-					}
-					if ips := filterIPSSignatures(fetched.IpsSignatures); len(ips) > 0 {
-						m["ips_signatures"] = ips
-					}
-					if len(unconverted) > 0 {
-						m["unconverted_product_names"] = unconverted
-					}
-					if len(m) == 0 {
-						return nil
-					}
-					return m
-				}(),
 			},
 			Segments: segments,
 		}},
@@ -569,24 +542,4 @@ func convertProductName(name string) (string, error) {
 		return naming.BindToFS(wfn), nil
 	}
 	return "", nil
-}
-
-// filterIPSSignatures drops the "NA" placeholder entries from the raw
-// ipsSignatures value and returns the remaining entries, if any.
-func filterIPSSignatures(v any) []any {
-	switch vs := v.(type) {
-	case nil:
-		return nil
-	case []any:
-		var rs []any
-		for _, x := range vs {
-			if s, ok := x.(string); ok && slices.Contains([]string{"", "NA"}, s) {
-				continue
-			}
-			rs = append(rs, x)
-		}
-		return rs
-	default:
-		return []any{v}
-	}
 }
