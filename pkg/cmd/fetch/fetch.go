@@ -2911,7 +2911,7 @@ func newCmdMitreCVRF() *cobra.Command {
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
 			if err := mitreCVRF.Fetch(mitreCVRF.WithDir(options.dir), mitreCVRF.WithRetry(options.retry)); err != nil {
-				return errors.Wrap(err, "failed to fetch mitre cvrf")
+				return errors.Wrap(err, "failed to fetch mitre cve cvrf")
 			}
 			return nil
 		},

@@ -1699,7 +1699,7 @@ func newCmdMitreCVRF() *cobra.Command {
 		Args: cobra.ExactArgs(1),
 		RunE: func(_ *cobra.Command, args []string) error {
 			if err := mitreCVRF.Extract(args[0], mitreCVRF.WithDir(options.dir)); err != nil {
-				return errors.Wrap(err, "failed to extract mitre cvrf")
+				return errors.Wrap(err, "failed to extract mitre cve cvrf")
 			}
 			return nil
 		},
