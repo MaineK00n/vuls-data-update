@@ -207,14 +207,20 @@ func extract(cvePath, cveDir, outputDir string) error {
 		return errors.Wrapf(err, "buildData %s", cvePath)
 	}
 
-	// data.ID feeds the output path below; validate the year segment (and
-	// guard against path traversal) by splitting on "-" and parsing the
-	// year, the same shape the sibling extractors use.
+	// data.ID feeds both the year directory and the filename of the output
+	// path below, so validate the whole ID, not just the year — a malformed
+	// serial like "CVE-2024-0001/../../x" parses a valid year yet injects
+	// path separators into the filename and escapes outputDir. Split on "-"
+	// (sibling-extractor shape), parse the year, and require CVE prefix and a
+	// digits-only serial so no segment can carry a separator.
 	splitted, err := util.Split(string(data.ID), "-", "-")
 	if err != nil {
 		return errors.Errorf("unexpected CVE ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", data.ID)
 	}
 	if _, err := time.Parse("2006", splitted[1]); err != nil {
+		return errors.Errorf("unexpected CVE ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", data.ID)
+	}
+	if splitted[0] != "CVE" || splitted[2] == "" || strings.TrimLeft(splitted[2], "0123456789") != "" {
 		return errors.Errorf("unexpected CVE ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", data.ID)
 	}
 

@@ -106,6 +106,15 @@ func TestExtract(t *testing.T) {
 			args:     "./testdata/fixtures/malformed-id/vuls-data-raw-vulncheck-nist-nvd2",
 			hasError: true,
 		},
+		{
+			// Path traversal in the SERIAL segment ("CVE-2024-0001/../../x"):
+			// the year parses fine, but the serial injects separators into the
+			// output filename. The serial must be validated digits-only, not
+			// just the year.
+			name:     "malformed-id-serial",
+			args:     "./testdata/fixtures/malformed-id-serial/vuls-data-raw-vulncheck-nist-nvd2",
+			hasError: true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
