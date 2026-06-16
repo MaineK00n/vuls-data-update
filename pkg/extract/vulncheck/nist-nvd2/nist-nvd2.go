@@ -245,6 +245,10 @@ func (e extractor) buildData(fetched nistnvd2Types.CVE) (dataTypes.Data, error) 
 		if err != nil {
 			return nil, errors.Wrap(err, "parse vcVulnerableCPEs")
 		}
+		// Index vcVulnerableCPEs by part:vendor:product once per CVE so each
+		// cpeMatch expansion (and orphan detection) consults only the relevant
+		// product's entries instead of rescanning the whole list.
+		byProduct := indexByProduct(vulnCPEs)
 
 		rootCriteria := criteriaTypes.Criteria{
 			Operator:  criteriaTypes.CriteriaOperatorTypeOR,
@@ -254,7 +258,7 @@ func (e extractor) buildData(fetched nistnvd2Types.CVE) (dataTypes.Data, error) 
 		// used below to find orphan vcVulnerableCPEs (those no criterion covers).
 		claimed := make(map[string]struct{})
 		for _, c := range fetched.VCConfigurations {
-			ca, err := configurationToCriteria(c, vulnCPEs)
+			ca, err := configurationToCriteria(c, byProduct)
 			if err != nil {
 				return nil, errors.Wrap(err, "configuration to criteria")
 			}
@@ -270,7 +274,7 @@ func (e extractor) buildData(fetched nistnvd2Types.CVE) (dataTypes.Data, error) 
 		// product spelling). Dropping them would silently lose detection, so
 		// carry each product's orphans as one extra criterion (see
 		// buildOrphanCriteria).
-		orphans, err := buildOrphanCriteria(claimed, vulnCPEs)
+		orphans, err := buildOrphanCriteria(claimed, byProduct)
 		if err != nil {
 			return nil, errors.Wrap(err, "build orphan criteria")
 		}
@@ -463,6 +467,18 @@ func pvpKey(wfn common.WellFormedName) string {
 	return wfn.GetString(common.AttributePart) + ":" + wfn.GetString(common.AttributeVendor) + ":" + wfn.GetString(common.AttributeProduct)
 }
 
+// indexByProduct groups parsed vcVulnerableCPEs by part:vendor:product so
+// each cpeMatch expansion and orphan lookup touches only the relevant
+// product's entries (avoiding a full rescan of vulnCPEs per cpeMatch).
+func indexByProduct(vulnCPEs []vulnCPE) map[string][]vulnCPE {
+	idx := make(map[string][]vulnCPE)
+	for _, c := range vulnCPEs {
+		k := pvpKey(c.wfn)
+		idx[k] = append(idx[k], c)
+	}
+	return idx
+}
+
 // collectClaimedProducts adds the part:vendor:product of every cpeMatch
 // criterion in config to claimed. The CPEs were already validated by
 // configurationToCriteria (run first), so UnbindFS does not fail here.
@@ -480,36 +496,29 @@ func collectClaimedProducts(config nistnvd2Types.Config, claimed map[string]stru
 }
 
 // buildOrphanCriteria turns vcVulnerableCPEs whose part:vendor:product is not
-// in claimed into detection criteria. Each distinct product becomes one
-// criterion: a product-wildcard primary CPE (part:vendor:product fixed, every
-// other attribute ANY) with the concrete orphan CPEs in cpe_matches. A scanned
-// CPE with a concrete version hits an exact cpe_matches entry; a version-less
-// scan falls to the vuls2 vendor:product confidence tier — both faithful to
-// the source, since the concrete attributes live in cpe_matches.
-func buildOrphanCriteria(claimed map[string]struct{}, vulnCPEs []vulnCPE) ([]criteriaTypes.Criteria, error) {
-	order := make([]string, 0)
-	matches := make(map[string][]ccTypes.CPE)
-	primary := make(map[string]ccTypes.CPE)
-	for _, c := range vulnCPEs {
-		key := pvpKey(c.wfn)
+// in claimed into detection criteria. Each distinct product (key of byProduct)
+// becomes one criterion: a product-wildcard primary CPE (part:vendor:product
+// fixed, every other attribute ANY) with the concrete orphan CPEs in
+// cpe_matches. A scanned CPE with a concrete version hits an exact cpe_matches
+// entry; a version-less scan falls to the vuls2 vendor:product confidence tier
+// — both faithful to the source, since the concrete attributes live in
+// cpe_matches. Output order is normalized by util.Write's Sort().
+func buildOrphanCriteria(claimed map[string]struct{}, byProduct map[string][]vulnCPE) ([]criteriaTypes.Criteria, error) {
+	cs := make([]criteriaTypes.Criteria, 0)
+	for key, group := range byProduct {
 		if _, ok := claimed[key]; ok {
 			continue
 		}
-		if _, seen := matches[key]; !seen {
-			order = append(order, key)
-			p := common.NewWellFormedName()
-			for _, a := range []string{common.AttributePart, common.AttributeVendor, common.AttributeProduct} {
-				if err := p.Set(a, c.wfn.Get(a)); err != nil {
-					return nil, errors.Wrapf(err, "set %s on product-wildcard cpe. cpe: %s", a, c.name)
-				}
+		p := common.NewWellFormedName()
+		for _, a := range []string{common.AttributePart, common.AttributeVendor, common.AttributeProduct} {
+			if err := p.Set(a, group[0].wfn.Get(a)); err != nil {
+				return nil, errors.Wrapf(err, "set %s on product-wildcard cpe. cpe: %s", a, group[0].name)
 			}
-			primary[key] = ccTypes.CPE(naming.BindToFS(p))
 		}
-		matches[key] = append(matches[key], ccTypes.CPE(c.name))
-	}
-
-	cs := make([]criteriaTypes.Criteria, 0, len(order))
-	for _, key := range order {
+		matches := make([]ccTypes.CPE, 0, len(group))
+		for _, c := range group {
+			matches = append(matches, ccTypes.CPE(c.name))
+		}
 		cs = append(cs, criteriaTypes.Criteria{
 			Operator: criteriaTypes.CriteriaOperatorTypeOR,
 			Criterions: []criterionTypes.Criterion{{
@@ -517,8 +526,8 @@ func buildOrphanCriteria(claimed map[string]struct{}, vulnCPEs []vulnCPE) ([]cri
 				CPE: &ccTypes.Criterion{
 					Vulnerable: true,
 					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
-					CPE:        primary[key],
-					CPEMatches: matches[key],
+					CPE:        ccTypes.CPE(naming.BindToFS(p)),
+					CPEMatches: matches,
 				},
 			}},
 		})
@@ -531,7 +540,7 @@ func buildOrphanCriteria(claimed map[string]struct{}, vulnCPEs []vulnCPE) ([]cri
 // operator, an invalid cpeMatch CPE) is an error rather than a silent
 // skip, so unexpected data surfaces instead of being dropped — and a
 // silent skip would weaken AND semantics into over-broad detections.
-func configurationToCriteria(config nistnvd2Types.Config, vulnCPEs []vulnCPE) (criteriaTypes.Criteria, error) {
+func configurationToCriteria(config nistnvd2Types.Config, byProduct map[string][]vulnCPE) (criteriaTypes.Criteria, error) {
 	if config.Negate {
 		return criteriaTypes.Criteria{}, errors.New("negate=true on configuration is not supported")
 	}
@@ -548,7 +557,7 @@ func configurationToCriteria(config nistnvd2Types.Config, vulnCPEs []vulnCPE) (c
 
 	ca.Criterias = make([]criteriaTypes.Criteria, 0, len(config.Nodes))
 	for _, n := range config.Nodes {
-		child, err := nodeToCriteria(n, vulnCPEs)
+		child, err := nodeToCriteria(n, byProduct)
 		if err != nil {
 			return criteriaTypes.Criteria{}, errors.Wrap(err, "node to criteria")
 		}
@@ -559,7 +568,7 @@ func configurationToCriteria(config nistnvd2Types.Config, vulnCPEs []vulnCPE) (c
 
 // nodeToCriteria converts a configuration node into a criteria subtree.
 // Malformed shapes are errors, as in configurationToCriteria.
-func nodeToCriteria(n nistnvd2Types.Node, vulnCPEs []vulnCPE) (criteriaTypes.Criteria, error) {
+func nodeToCriteria(n nistnvd2Types.Node, byProduct map[string][]vulnCPE) (criteriaTypes.Criteria, error) {
 	if n.Negate {
 		return criteriaTypes.Criteria{}, errors.New("negate=true on node is not supported")
 	}
@@ -593,7 +602,7 @@ func nodeToCriteria(n nistnvd2Types.Node, vulnCPEs []vulnCPE) (criteriaTypes.Cri
 			cpeMatches []ccTypes.CPE
 		)
 		if hasRange {
-			cpeMatches, rangeType = buildCPEMatches(match, wfn, vulnCPEs)
+			cpeMatches, rangeType = buildCPEMatches(match, byProduct[pvpKey(wfn)])
 		}
 
 		cn := criterionTypes.Criterion{
@@ -653,8 +662,8 @@ func decideRangeType(match nistnvd2Types.CPEMatch) ccRangeTypes.RangeType {
 //
 // vcConfigurations carries no usable matchCriteriaId (the field is
 // empty), so the concrete vulnerable CPEs come from vcVulnerableCPEs,
-// which enumerates them per CVE. Entries are associated with the
-// criterion by part:vendor:product.
+// which enumerates them per CVE. candidates are the vcVulnerableCPEs already
+// filtered to this criterion's part:vendor:product (byProduct[pvpKey]).
 //
 // Precondition: invoke only for a match that carries at least one range
 // endpoint (nodeToCriteria gates this with hasRange); a no-range match needs
@@ -677,17 +686,11 @@ func decideRangeType(match nistnvd2Types.CPEMatch) ccRangeTypes.RangeType {
 // per-entry narrowing is possible at all; the full product-matched list is
 // carried, trading over-match across sibling ranges for not silently
 // losing detection.
-func buildCPEMatches(match nistnvd2Types.CPEMatch, wfn common.WellFormedName, vulnCPEs []vulnCPE) ([]ccTypes.CPE, ccRangeTypes.RangeType) {
+func buildCPEMatches(match nistnvd2Types.CPEMatch, candidates []vulnCPE) ([]ccTypes.CPE, ccRangeTypes.RangeType) {
 	rangeType := decideRangeType(match)
 
 	var cpeMatches []ccTypes.CPE
-	for _, c := range vulnCPEs {
-		if c.wfn.GetString(common.AttributePart) != wfn.GetString(common.AttributePart) ||
-			c.wfn.GetString(common.AttributeVendor) != wfn.GetString(common.AttributeVendor) ||
-			c.wfn.GetString(common.AttributeProduct) != wfn.GetString(common.AttributeProduct) {
-			continue
-		}
-
+	for _, c := range candidates {
 		// Skip entries whose version is ANY or NA — meta markers, not
 		// concrete versions the parent range was meant to enumerate.
 		// wfn.GetString returns the logical names "ANY"/"NA" for `*`/`-`, so
