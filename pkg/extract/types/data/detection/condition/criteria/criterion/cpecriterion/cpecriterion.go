@@ -174,6 +174,14 @@ func concretelyDisjoint(qWFN, cWFN common.WellFormedName) bool {
 	return false
 }
 
+// overlaps reports whether two WFNs are non-disjoint — their attribute sets
+// intersect, so the CPEs can refer to the same thing. It is matching.IsDisjoint
+// negated and corrected with the concretelyDisjoint bug-guard: the basic
+// "these two CPEs match on attributes" test used throughout Accept.
+func overlaps(a, b common.WellFormedName) bool {
+	return !matching.IsDisjoint(a, b) && !concretelyDisjoint(a, b)
+}
+
 // MatchQuality describes how strongly a Criterion matched a Query. It is a
 // source-agnostic property of the CPE relationship alone; how each quality is
 // projected onto a consumer's confidence model (e.g. vuls0's exact vs
@@ -256,11 +264,11 @@ func (c Criterion) Accept(query Query) (MatchQuality, error) {
 		if err := cAnyVer.Set(common.AttributeVersion, anyVal); err != nil {
 			return MatchQualityUnknown, errors.Wrap(err, "neutralise criterion version")
 		}
-		if !matching.IsDisjoint(qWFN, cAnyVer) && !concretelyDisjoint(qWFN, cAnyVer) {
+		if overlaps(qWFN, cAnyVer) {
 			return MatchQualityVersionUnconfirmed, nil
 		}
 		// Non-version attributes disagree; fall through to CPEMatches.
-	} else if !matching.IsDisjoint(qWFN, cWFN) && !concretelyDisjoint(qWFN, cWFN) {
+	} else if overlaps(qWFN, cWFN) {
 		// No narrowing → accept on attribute match alone.
 		if c.Range == nil && len(c.CPEMatches) == 0 {
 			switch {
@@ -304,7 +312,7 @@ func (c Criterion) Accept(query Query) (MatchQuality, error) {
 		if err != nil {
 			return MatchQualityUnknown, errors.Wrapf(err, "unbind %q to WFN", string(m))
 		}
-		if !matching.IsDisjoint(qWFN, mWFN) && !concretelyDisjoint(qWFN, mWFN) {
+		if overlaps(qWFN, mWFN) {
 			// Reached with a version-less query only via the main-CPE-disjoint
 			// path (the matched path returns above); it has no version to
 			// confirm against the enumerated concrete CPE.
