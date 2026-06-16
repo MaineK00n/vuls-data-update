@@ -191,8 +191,10 @@ type MatchQuality int
 
 const (
 	// MatchQualityUnknown is the zero value: a quality that was never set.
-	// Accept never returns it — its appearance signals an uninitialised value
-	// or an enum case this code does not handle, which callers treat as a bug.
+	// Accept only ever returns it together with a non-nil error; on the
+	// err == nil path it never appears. So an Unknown with no error signals an
+	// uninitialised value or an enum case this code does not handle, which
+	// callers treat as a bug.
 	MatchQualityUnknown MatchQuality = iota
 	// MatchQualityNone means the criterion was evaluated and does NOT accept
 	// the query (disjoint attributes, out of range, enumeration miss).
