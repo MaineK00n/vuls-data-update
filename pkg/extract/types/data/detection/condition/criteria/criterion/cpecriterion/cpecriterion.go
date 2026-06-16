@@ -281,7 +281,7 @@ func (c Criterion) Accept(query Query) (MatchQuality, error) {
 				return MatchQualityVersionUnconfirmed, nil
 			default:
 				// Concrete query equal to the concrete criterion version (a
-				// differing one would have been concretelyDisjoint).
+				// differing one would have failed the overlaps check above).
 				return MatchQualityExact, nil
 			}
 		}
