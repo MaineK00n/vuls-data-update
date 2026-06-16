@@ -270,8 +270,9 @@ func (c Criterion) Accept(query Query) (MatchQuality, error) {
 		}
 		// Non-version attributes disagree; fall through to CPEMatches.
 	case overlaps(qWFN, cWFN):
-		// No narrowing → accept on attribute match alone.
-		if c.Range == nil && len(c.CPEMatches) == 0 {
+		switch {
+		case c.Range == nil && len(c.CPEMatches) == 0:
+			// No narrowing → accept on attribute match alone.
 			switch {
 			case cv == "ANY":
 				// version=* with no range/cpematches: every version of the
@@ -285,13 +286,13 @@ func (c Criterion) Accept(query Query) (MatchQuality, error) {
 				// differing one would have failed the overlaps check above).
 				return MatchQualityExact, nil
 			}
-		}
-		// Has narrowing: a version-less query has no concrete version to
-		// confirm against the range / enumeration.
-		if queryVersionless {
+		case queryVersionless:
+			// Narrowed criterion, but the query has no concrete version to
+			// confirm against the range / enumeration.
 			return MatchQualityVersionUnconfirmed, nil
-		}
-		if c.Range != nil {
+		case c.Range != nil:
+			// Concrete query against a range: accept only if in range,
+			// otherwise fall through to CPEMatches.
 			qVersion := strings.ReplaceAll(qv, "\\.", ".")
 			isAccepted, err := c.Range.Accept(qVersion)
 			if err != nil {
@@ -300,9 +301,9 @@ func (c Criterion) Accept(query Query) (MatchQuality, error) {
 			if isAccepted {
 				return MatchQualityExact, nil
 			}
+		default:
+			// CPEMatches-only narrowing; fall through to CPEMatches.
 		}
-		// Fall through to CPEMatches: out-of-range (or non-semver) exceptions
-		// the Range alone could not capture.
 	default:
 		// Main CPE disjoint from the query; only CPEMatches can still match.
 	}
