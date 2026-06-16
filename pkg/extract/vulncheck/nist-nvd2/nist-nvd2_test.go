@@ -50,6 +50,17 @@ func TestExtract(t *testing.T) {
 			golden: "./testdata/golden/exact-match",
 		},
 		{
+			// Orphan vcVulnerableCPEs: the criterion product
+			// (zfs_storage_appliance_kit) differs from the vcVulnerableCPEs
+			// product (sun_zfs_storage_appliance_kit, an alternate spelling),
+			// so those concrete CPEs match no criterion. They are emitted as
+			// one extra product-wildcard criterion with the concrete CPEs in
+			// cpe_matches, rather than dropped.
+			name:   "orphan",
+			args:   "./testdata/fixtures/orphan/vuls-data-raw-vulncheck-nist-nvd2",
+			golden: "./testdata/golden/orphan",
+		},
+		{
 			// vulnStatus=Rejected entries: the vulnerability content (the
 			// rejection reason) is still emitted, but detections are
 			// suppressed — a rejected CVE is withdrawn, so flagging it would

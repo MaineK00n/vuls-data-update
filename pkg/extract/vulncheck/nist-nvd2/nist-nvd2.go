@@ -237,9 +237,6 @@ func (e extractor) buildData(fetched nistnvd2Types.CVE) (dataTypes.Data, error) 
 		if fetched.VulnStatus == "Rejected" {
 			return nil, nil
 		}
-		if len(fetched.VCConfigurations) == 0 {
-			return nil, nil
-		}
 
 		vulnCPEs, err := parseVulnerableCPEs(fetched.VCVulnerableCPEs)
 		if err != nil {
@@ -250,12 +247,34 @@ func (e extractor) buildData(fetched nistnvd2Types.CVE) (dataTypes.Data, error) 
 			Operator:  criteriaTypes.CriteriaOperatorTypeOR,
 			Criterias: make([]criteriaTypes.Criteria, 0, len(fetched.VCConfigurations)),
 		}
+		// claimed holds the part:vendor:product of every cpeMatch criterion,
+		// used below to find orphan vcVulnerableCPEs (those no criterion covers).
+		claimed := make(map[string]struct{})
 		for _, c := range fetched.VCConfigurations {
 			ca, err := configurationToCriteria(c, vulnCPEs)
 			if err != nil {
 				return nil, errors.Wrap(err, "configuration to criteria")
 			}
 			rootCriteria.Criterias = append(rootCriteria.Criterias, ca)
+			if err := collectClaimedProducts(c, claimed); err != nil {
+				return nil, errors.Wrap(err, "collect claimed products")
+			}
+		}
+
+		// vcVulnerableCPEs whose part:vendor:product no cpeMatch criterion
+		// covers are "orphans": concrete vulnerable CPEs the NVD-style
+		// configurations did not capture (VulnCheck enrichment, or an alternate
+		// product spelling). Dropping them would silently lose detection, so
+		// carry each product's orphans as one extra criterion (see
+		// buildOrphanCriteria).
+		orphans, err := buildOrphanCriteria(claimed, vulnCPEs)
+		if err != nil {
+			return nil, errors.Wrap(err, "build orphan criteria")
+		}
+		rootCriteria.Criterias = append(rootCriteria.Criterias, orphans...)
+
+		if len(rootCriteria.Criterias) == 0 {
+			return nil, nil
 		}
 		return []detectionType.Detection{{
 			Ecosystem: ecosystemTypes.EcosystemTypeCPE,
@@ -432,6 +451,76 @@ func parseVulnerableCPEs(names []string) ([]vulnCPE, error) {
 		cpes = append(cpes, vulnCPE{name: n, wfn: wfn})
 	}
 	return cpes, nil
+}
+
+// pvpKey returns the part:vendor:product key used to associate a
+// vcVulnerableCPE with a cpeMatch criterion (the same three attributes
+// buildCPEMatches matches on).
+func pvpKey(wfn common.WellFormedName) string {
+	return wfn.GetString(common.AttributePart) + ":" + wfn.GetString(common.AttributeVendor) + ":" + wfn.GetString(common.AttributeProduct)
+}
+
+// collectClaimedProducts adds the part:vendor:product of every cpeMatch
+// criterion in config to claimed. The CPEs were already validated by
+// configurationToCriteria (run first), so UnbindFS does not fail here.
+func collectClaimedProducts(config nistnvd2Types.Config, claimed map[string]struct{}) error {
+	for _, n := range config.Nodes {
+		for _, m := range n.CPEMatch {
+			wfn, err := naming.UnbindFS(m.Criteria)
+			if err != nil {
+				return errors.Wrapf(err, "invalid format. CPE: %s", m.Criteria)
+			}
+			claimed[pvpKey(wfn)] = struct{}{}
+		}
+	}
+	return nil
+}
+
+// buildOrphanCriteria turns vcVulnerableCPEs whose part:vendor:product is not
+// in claimed into detection criteria. Each distinct product becomes one
+// criterion: a product-wildcard primary CPE (part:vendor:product fixed, every
+// other attribute ANY) with the concrete orphan CPEs in cpe_matches. A scanned
+// CPE with a concrete version hits an exact cpe_matches entry; a version-less
+// scan falls to the vuls2 vendor:product confidence tier — both faithful to
+// the source, since the concrete attributes live in cpe_matches.
+func buildOrphanCriteria(claimed map[string]struct{}, vulnCPEs []vulnCPE) ([]criteriaTypes.Criteria, error) {
+	order := make([]string, 0)
+	matches := make(map[string][]ccTypes.CPE)
+	primary := make(map[string]ccTypes.CPE)
+	for _, c := range vulnCPEs {
+		key := pvpKey(c.wfn)
+		if _, ok := claimed[key]; ok {
+			continue
+		}
+		if _, seen := matches[key]; !seen {
+			order = append(order, key)
+			p := common.NewWellFormedName()
+			for _, a := range []string{common.AttributePart, common.AttributeVendor, common.AttributeProduct} {
+				if err := p.Set(a, c.wfn.Get(a)); err != nil {
+					return nil, errors.Wrapf(err, "set %s on product-wildcard cpe. cpe: %s", a, c.name)
+				}
+			}
+			primary[key] = ccTypes.CPE(naming.BindToFS(p))
+		}
+		matches[key] = append(matches[key], ccTypes.CPE(c.name))
+	}
+
+	cs := make([]criteriaTypes.Criteria, 0, len(order))
+	for _, key := range order {
+		cs = append(cs, criteriaTypes.Criteria{
+			Operator: criteriaTypes.CriteriaOperatorTypeOR,
+			Criterions: []criterionTypes.Criterion{{
+				Type: criterionTypes.CriterionTypeCPE,
+				CPE: &ccTypes.Criterion{
+					Vulnerable: true,
+					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
+					CPE:        primary[key],
+					CPEMatches: matches[key],
+				},
+			}},
+		})
+	}
+	return cs, nil
 }
 
 // configurationToCriteria converts a vcConfigurations entry into a
