@@ -535,12 +535,24 @@ func Extract(args string, opts ...Option) error {
 			}
 			refs := toReferences(rel.ExternalReferences)
 
+			// Direction membership is decided on the full (Kind, ext)
+			// composite key rather than ext alone. Bare ext equality
+			// would mis-attribute on collisions like the pre-2019 1:1
+			// course-of-action mitigations that reuse a Technique's
+			// T#### id: a `mitigates` edge whose Technique target is
+			// T1047 would also "look like" the legacy Mitigation
+			// (Mitigation, T1047) under bare-ext matching, and a
+			// future `revoked-by` chain on a colliding id would emit
+			// a phantom RevokedBy on the wrong-kind sibling.
+			isSrc := k.kind == src.kind && extID == src.ext
+			isTgt := k.kind == tgt.kind && extID == tgt.ext
+
 			// Stage 1c attaches every relationship to both endpoints'
 			// rels maps, so the entry currently being processed must
 			// be one of those endpoints. Anything else is a Stage 1
 			// invariant violation.
-			if extID != src.ext && extID != tgt.ext {
-				return errors.Errorf("relationship %s reached entry %s but matches neither src %s nor tgt %s", rel.ID, extID, src.ext, tgt.ext)
+			if !isSrc && !isTgt {
+				return errors.Errorf("relationship %s reached entry %s/%s but matches neither src %s/%s nor tgt %s/%s", rel.ID, k.kind, extID, src.kind, src.ext, tgt.kind, tgt.ext)
 			}
 
 			switch rel.RelationshipType {
@@ -548,57 +560,57 @@ func Extract(args string, opts ...Option) error {
 				if k.kind != kindTypes.Technique {
 					return errors.Errorf("subtechnique-of relationship %s reached non-Technique endpoint %s (kind %v)", rel.ID, extID, k.kind)
 				}
-				if extID == src.ext {
+				if isSrc {
 					technique.parent = tgt.ext
 				}
-				if extID == tgt.ext {
+				if isTgt {
 					technique.subtechniques = append(technique.subtechniques, src.ext)
 				}
 			case "mitigates":
 				if src.kind != kindTypes.Mitigation || tgt.kind != kindTypes.Technique {
 					return errors.Errorf("mitigates relationship %s has unexpected endpoints: src kind=%v, tgt kind=%v", rel.ID, src.kind, tgt.kind)
 				}
-				if extID == src.ext {
+				if isSrc {
 					mitigation.techniquesMitigated = append(mitigation.techniquesMitigated, relatedrefTypes.RelatedRef{ID: tgt.ext, Description: desc, References: refs})
 				}
-				if extID == tgt.ext {
+				if isTgt {
 					technique.mitigations = append(technique.mitigations, relatedrefTypes.RelatedRef{ID: src.ext, Description: desc, References: refs})
 				}
 			case "uses":
 				switch {
 				case src.kind == kindTypes.Group && tgt.kind == kindTypes.Technique:
-					if extID == src.ext {
+					if isSrc {
 						group.techniquesUsed = append(group.techniquesUsed, techniqueusedTypes.TechniqueUsed{ID: tgt.ext, Description: desc, References: refs})
 					}
-					if extID == tgt.ext {
+					if isTgt {
 						technique.procedures = append(technique.procedures, procedureTypes.Procedure{AttackerKind: src.kind, AttackerID: src.ext, Description: desc, References: refs})
 					}
 				case src.kind == kindTypes.Group && tgt.kind == kindTypes.Software:
-					if extID == src.ext {
+					if isSrc {
 						group.softwaresUsed = append(group.softwaresUsed, relatedrefTypes.RelatedRef{ID: tgt.ext, Description: desc, References: refs})
 					}
-					if extID == tgt.ext {
+					if isTgt {
 						software.groupsUsing = append(software.groupsUsing, relatedrefTypes.RelatedRef{ID: src.ext, Description: desc, References: refs})
 					}
 				case src.kind == kindTypes.Software && tgt.kind == kindTypes.Technique:
-					if extID == src.ext {
+					if isSrc {
 						software.techniquesUsed = append(software.techniquesUsed, techniqueusedTypes.TechniqueUsed{ID: tgt.ext, Description: desc, References: refs})
 					}
-					if extID == tgt.ext {
+					if isTgt {
 						technique.procedures = append(technique.procedures, procedureTypes.Procedure{AttackerKind: src.kind, AttackerID: src.ext, Description: desc, References: refs})
 					}
 				case src.kind == kindTypes.Campaign && tgt.kind == kindTypes.Technique:
-					if extID == src.ext {
+					if isSrc {
 						campaign.techniquesUsed = append(campaign.techniquesUsed, techniqueusedTypes.TechniqueUsed{ID: tgt.ext, Description: desc, References: refs})
 					}
-					if extID == tgt.ext {
+					if isTgt {
 						technique.procedures = append(technique.procedures, procedureTypes.Procedure{AttackerKind: src.kind, AttackerID: src.ext, Description: desc, References: refs})
 					}
 				case src.kind == kindTypes.Campaign && tgt.kind == kindTypes.Software:
-					if extID == src.ext {
+					if isSrc {
 						campaign.softwaresUsed = append(campaign.softwaresUsed, relatedrefTypes.RelatedRef{ID: tgt.ext, Description: desc, References: refs})
 					}
-					if extID == tgt.ext {
+					if isTgt {
 						software.campaignsUsing = append(software.campaignsUsing, relatedrefTypes.RelatedRef{ID: src.ext, Description: desc, References: refs})
 					}
 				default:
@@ -608,30 +620,30 @@ func Extract(args string, opts ...Option) error {
 				if src.kind != kindTypes.Campaign || tgt.kind != kindTypes.Group {
 					return errors.Errorf("attributed-to relationship %s has unexpected endpoints: src kind=%v, tgt kind=%v", rel.ID, src.kind, tgt.kind)
 				}
-				if extID == src.ext {
+				if isSrc {
 					campaign.groupsAttributed = append(campaign.groupsAttributed, relatedrefTypes.RelatedRef{ID: tgt.ext, Description: desc, References: refs})
 				}
-				if extID == tgt.ext {
+				if isTgt {
 					group.campaignsAttributed = append(group.campaignsAttributed, relatedrefTypes.RelatedRef{ID: src.ext, Description: desc, References: refs})
 				}
 			case "targets":
 				if src.kind != kindTypes.Technique || tgt.kind != kindTypes.Asset {
 					return errors.Errorf("targets relationship %s has unexpected endpoints: src kind=%v, tgt kind=%v", rel.ID, src.kind, tgt.kind)
 				}
-				if extID == src.ext {
+				if isSrc {
 					technique.assetsTargeted = append(technique.assetsTargeted, relatedrefTypes.RelatedRef{ID: tgt.ext, Description: desc, References: refs})
 				}
-				if extID == tgt.ext {
+				if isTgt {
 					asset.techniquesTargeting = append(asset.techniquesTargeting, relatedrefTypes.RelatedRef{ID: src.ext, Description: desc, References: refs})
 				}
 			case "detects":
 				if src.kind != kindTypes.DetectStrategy || tgt.kind != kindTypes.Technique {
 					return errors.Errorf("detects relationship %s has unexpected endpoints: src kind=%v, tgt kind=%v", rel.ID, src.kind, tgt.kind)
 				}
-				if extID == src.ext {
+				if isSrc {
 					detectStrategy.techniquesDetected = append(detectStrategy.techniquesDetected, relatedrefTypes.RelatedRef{ID: tgt.ext, Description: desc, References: refs})
 				}
-				if extID == tgt.ext {
+				if isTgt {
 					technique.detectionStrategies = append(technique.detectionStrategies, relatedrefTypes.RelatedRef{ID: src.ext, Description: desc, References: refs})
 				}
 			case "revoked-by":
@@ -641,7 +653,7 @@ func Extract(args string, opts ...Option) error {
 				// surface "use X instead" alongside the Revoked
 				// flag. The target side (the replacement) doesn't
 				// need to know what it replaced.
-				if extID == src.ext {
+				if isSrc {
 					revokedBy = append(revokedBy, tgt.ext)
 				}
 			default:
@@ -1020,12 +1032,19 @@ func Extract(args string, opts ...Option) error {
 			for _, lr := range an.XMitreLogSourceReferences {
 				// x_mitre_data_component_ref is a STIX UUID; the
 				// canonical record expects the DataComponent's DC*
-				// ext-ID instead. Resolve through the Stage 1 uuid
-				// index, falling back to "" if MITRE points at a
-				// component the extractor didn't keep (e.g.
-				// distribution artifact).
+				// ext-ID. LogSourceReference.DataComponent has no
+				// omitempty and is documented as a DC* id, so emitting
+				// an empty string would publish an invalid graph
+				// edge. If MITRE points at a component the extractor
+				// didn't keep (e.g. distribution artifact dropped by
+				// Stage 1a), warn and skip the entry instead.
+				u, ok := uuids[lr.XMitreDataComponentRef]
+				if !ok || u.ext == "" {
+					slog.Warn("dropping analytic log_source_reference with unresolved x_mitre_data_component_ref", "analytic", extID, "data_component_ref", lr.XMitreDataComponentRef)
+					continue
+				}
 				lrefs = append(lrefs, analyticTypes.LogSourceReference{
-					DataComponent: uuids[lr.XMitreDataComponentRef].ext,
+					DataComponent: u.ext,
 					Name:          lr.Name,
 					Channel:       lr.Channel,
 				})
