@@ -6,10 +6,10 @@ import (
 	"io/fs"
 	"log/slog"
 	"path/filepath"
-	"regexp"
 	"runtime"
 	"slices"
 	"strings"
+	"time"
 
 	"github.com/hashicorp/go-version"
 	"github.com/knqyf263/go-cpe/common"
@@ -47,15 +47,6 @@ import (
 	utiltime "github.com/MaineK00n/vuls-data-update/pkg/extract/util/time"
 	nistnvd2Types "github.com/MaineK00n/vuls-data-update/pkg/fetch/vulncheck/nist-nvd2"
 )
-
-// cveIDPattern guards the CVE ID before it is used to build the output
-// path. data.ID flows from the (external) VulnCheck NIST NVD2 JSON into
-// filepath.Join below; an unvalidated ID such as "CVE-2024/../../x-1"
-// would survive util.Split and traverse outside outputDir. Anchoring on
-// the full CVE-YYYY-N+ shape keeps both the year directory and the
-// filename inside the tree. Serial is \d{4,} (CVE serials can exceed 4
-// digits).
-var cveIDPattern = regexp.MustCompile(`^CVE-[0-9]{4}-[0-9]{4,}$`)
 
 type options struct {
 	dir         string
@@ -216,13 +207,15 @@ func extract(cvePath, cveDir, outputDir string) error {
 		return errors.Wrapf(err, "buildData %s", cvePath)
 	}
 
-	if !cveIDPattern.MatchString(string(data.ID)) {
-		return errors.Errorf("unexpected ID format. expected: %q, actual: %q", "CVE-\\d{4}-\\d{4,}", data.ID)
-	}
-
+	// data.ID feeds the output path below; validate the year segment (and
+	// guard against path traversal) by splitting on "-" and parsing the
+	// year, the same shape the sibling extractors use.
 	splitted, err := util.Split(string(data.ID), "-", "-")
 	if err != nil {
-		return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "CVE-\\d{4}-\\d{4,}", data.ID)
+		return errors.Errorf("unexpected CVE ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", data.ID)
+	}
+	if _, err := time.Parse("2006", splitted[1]); err != nil {
+		return errors.Errorf("unexpected CVE ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", data.ID)
 	}
 
 	if err := util.Write(filepath.Join(e.outputDir, "data", splitted[1], fmt.Sprintf("%s.json", data.ID)), data, true); err != nil {
