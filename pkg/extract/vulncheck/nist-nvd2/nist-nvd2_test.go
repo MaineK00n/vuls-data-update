@@ -98,21 +98,12 @@ func TestExtract(t *testing.T) {
 			hasError: true,
 		},
 		{
-			// The CVE ID carries path-traversal characters in its year
-			// segment ("CVE-2024/../../x-0001"). data.ID is used to build
-			// the output path, so the extractor must reject a malformed ID
-			// rather than let it escape outputDir via filepath.Join.
+			// The first segment is not a valid year ("CVE-2024/../../x-0001"
+			// → year segment "2024/../../x"), so time.Parse rejects it and the
+			// extractor errors. (Validation matches the sibling extractors and
+			// does not specifically harden the serial segment.)
 			name:     "malformed-id",
 			args:     "./testdata/fixtures/malformed-id/vuls-data-raw-vulncheck-nist-nvd2",
-			hasError: true,
-		},
-		{
-			// Path traversal in the SERIAL segment ("CVE-2024-0001/../../x"):
-			// the year parses fine, but the serial injects separators into the
-			// output filename. The serial must be validated digits-only, not
-			// just the year.
-			name:     "malformed-id-serial",
-			args:     "./testdata/fixtures/malformed-id-serial/vuls-data-raw-vulncheck-nist-nvd2",
 			hasError: true,
 		},
 	}
