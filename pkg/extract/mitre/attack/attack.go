@@ -1032,16 +1032,16 @@ func Extract(args string, opts ...Option) error {
 			for _, lr := range an.XMitreLogSourceReferences {
 				// x_mitre_data_component_ref is a STIX UUID; the
 				// canonical record expects the DataComponent's DC*
-				// ext-ID. LogSourceReference.DataComponent has no
-				// omitempty and is documented as a DC* id, so emitting
-				// an empty string would publish an invalid graph
-				// edge. If MITRE points at a component the extractor
-				// didn't keep (e.g. distribution artifact dropped by
-				// Stage 1a), warn and skip the entry instead.
+				// ext-ID. Unlike its sibling forward-ref fields
+				// (DataComponent.DataSource, DetectionStrategy.Analytics,
+				// Analytic.DetectionStrategy — all omitempty) the
+				// LogSourceReference.DataComponent JSON tag carries
+				// no omitempty, so the schema treats it as required.
+				// An unindexed UUID here is MITRE schema drift CI
+				// should surface, not a recoverable miss.
 				u, ok := uuids[lr.XMitreDataComponentRef]
 				if !ok || u.ext == "" {
-					slog.Warn("dropping analytic log_source_reference with unresolved x_mitre_data_component_ref", "analytic", extID, "data_component_ref", lr.XMitreDataComponentRef)
-					continue
+					return errors.Errorf("analytic %s log_source_reference points at unindexed data-component UUID %q", extID, lr.XMitreDataComponentRef)
 				}
 				lrefs = append(lrefs, analyticTypes.LogSourceReference{
 					DataComponent: u.ext,
