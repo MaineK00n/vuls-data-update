@@ -182,8 +182,9 @@ func concretelyDisjoint(qWFN, cWFN common.WellFormedName) bool {
 type MatchQuality int
 
 const (
-	// MatchQualityNone means the criterion does not accept the query.
-	MatchQualityNone MatchQuality = iota
+	// MatchQualityUnknown is the iota-zero default: the criterion does not
+	// accept the query (also the safe value when a quality was never set).
+	MatchQualityUnknown MatchQuality = iota
 	// MatchQualityExact means the criterion accepts the query with sufficient
 	// version evidence: a concrete query version confirmed by equality, range,
 	// or enumeration, OR a version=* criterion with no range/cpematches (every
@@ -203,7 +204,7 @@ func (q MatchQuality) String() string {
 	case MatchQualityVersionUnconfirmed:
 		return "VersionUnconfirmed"
 	default:
-		return "None"
+		return "Unknown"
 	}
 }
 
@@ -215,24 +216,19 @@ func (q MatchQuality) String() string {
 func (c Criterion) Match(query Query) (MatchQuality, error) {
 	qWFN, err := naming.UnbindFS(query.CPE)
 	if err != nil {
-		return MatchQualityNone, errors.Wrapf(err, "unbind %q to WFN", query.CPE)
+		return MatchQualityUnknown, errors.Wrapf(err, "unbind %q to WFN", query.CPE)
 	}
 
 	cWFN, err := naming.UnbindFS(string(c.CPE))
 	if err != nil {
-		return MatchQualityNone, errors.Wrapf(err, "unbind %q to WFN", string(c.CPE))
-	}
-
-	queryVersionless := func() bool {
-		switch qWFN.GetString(common.AttributeVersion) {
-		case "ANY", "NA":
-			return true
-		default:
-			return false
-		}
+		return MatchQualityUnknown, errors.Wrapf(err, "unbind %q to WFN", string(c.CPE))
 	}
 
 	cv := cWFN.GetString(common.AttributeVersion)
+	qv := qWFN.GetString(common.AttributeVersion)
+	// qWFN is fixed for this call, so whether the query carries a concrete
+	// version is a single determined value, not a per-branch computation.
+	queryVersionless := qv == "ANY" || qv == "NA"
 
 	if cv == "NA" {
 		// A version=NA criterion fixes the product but not the version: it
@@ -246,10 +242,10 @@ func (c Criterion) Match(query Query) (MatchQuality, error) {
 		cAnyVer := maps.Clone(cWFN)
 		anyVal, err := common.NewLogicalValue("ANY")
 		if err != nil {
-			return MatchQualityNone, errors.Wrap(err, "build ANY logical value")
+			return MatchQualityUnknown, errors.Wrap(err, "build ANY logical value")
 		}
 		if err := cAnyVer.Set(common.AttributeVersion, anyVal); err != nil {
-			return MatchQualityNone, errors.Wrap(err, "neutralise criterion version")
+			return MatchQualityUnknown, errors.Wrap(err, "neutralise criterion version")
 		}
 		if !matching.IsDisjoint(qWFN, cAnyVer) && !concretelyDisjoint(qWFN, cAnyVer) {
 			return MatchQualityVersionUnconfirmed, nil
@@ -264,7 +260,7 @@ func (c Criterion) Match(query Query) (MatchQuality, error) {
 				// product is affected. This "all versions" reading takes
 				// precedence over a version-less query.
 				return MatchQualityExact, nil
-			case queryVersionless():
+			case queryVersionless:
 				return MatchQualityVersionUnconfirmed, nil
 			default:
 				// Concrete query equal to the concrete criterion version (a
@@ -274,14 +270,14 @@ func (c Criterion) Match(query Query) (MatchQuality, error) {
 		}
 		// Has narrowing: a version-less query has no concrete version to
 		// confirm against the range / enumeration.
-		if queryVersionless() {
+		if queryVersionless {
 			return MatchQualityVersionUnconfirmed, nil
 		}
 		if c.Range != nil {
-			qVersion := strings.ReplaceAll(qWFN.GetString(common.AttributeVersion), "\\.", ".")
+			qVersion := strings.ReplaceAll(qv, "\\.", ".")
 			isAccepted, err := c.Range.Accept(qVersion)
 			if err != nil {
-				return MatchQualityNone, errors.Wrap(err, "range accept")
+				return MatchQualityUnknown, errors.Wrap(err, "range accept")
 			}
 			if isAccepted {
 				return MatchQualityExact, nil
@@ -297,25 +293,25 @@ func (c Criterion) Match(query Query) (MatchQuality, error) {
 	for _, m := range c.CPEMatches {
 		mWFN, err := naming.UnbindFS(string(m))
 		if err != nil {
-			return MatchQualityNone, errors.Wrapf(err, "unbind %q to WFN", string(m))
+			return MatchQualityUnknown, errors.Wrapf(err, "unbind %q to WFN", string(m))
 		}
 		if !matching.IsDisjoint(qWFN, mWFN) && !concretelyDisjoint(qWFN, mWFN) {
 			// Reached with a version-less query only via the main-CPE-disjoint
 			// path (the matched path returns above); it has no version to
 			// confirm against the enumerated concrete CPE.
-			if queryVersionless() {
+			if queryVersionless {
 				return MatchQualityVersionUnconfirmed, nil
 			}
 			return MatchQualityExact, nil
 		}
 	}
 
-	return MatchQualityNone, nil
+	return MatchQualityUnknown, nil
 }
 
 // Accept reports whether the criterion accepts the query, collapsing
 // Match's quality to a bool. Retained for callers that only need acceptance.
 func (c Criterion) Accept(query Query) (bool, error) {
 	q, err := c.Match(query)
-	return q != MatchQualityNone, err
+	return q != MatchQualityUnknown, err
 }
