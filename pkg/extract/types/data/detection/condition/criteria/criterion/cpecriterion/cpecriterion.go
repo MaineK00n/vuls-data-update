@@ -247,7 +247,8 @@ func (c Criterion) Accept(query Query) (MatchQuality, error) {
 	// version is a single determined value, not a per-branch computation.
 	queryVersionless := qv == "ANY" || qv == "NA"
 
-	if cv == "NA" {
+	switch {
+	case cv == "NA":
 		// A version=NA criterion fixes the product but not the version: it
 		// matches any scan whose non-version attributes are compatible, at
 		// version-unconfirmed quality. This mirrors go-cve-dictionary's
@@ -268,7 +269,7 @@ func (c Criterion) Accept(query Query) (MatchQuality, error) {
 			return MatchQualityVersionUnconfirmed, nil
 		}
 		// Non-version attributes disagree; fall through to CPEMatches.
-	} else if overlaps(qWFN, cWFN) {
+	case overlaps(qWFN, cWFN):
 		// No narrowing → accept on attribute match alone.
 		if c.Range == nil && len(c.CPEMatches) == 0 {
 			switch {
@@ -302,6 +303,8 @@ func (c Criterion) Accept(query Query) (MatchQuality, error) {
 		}
 		// Fall through to CPEMatches: out-of-range (or non-semver) exceptions
 		// the Range alone could not capture.
+	default:
+		// Main CPE disjoint from the query; only CPEMatches can still match.
 	}
 
 	// CPEMatches: tried when (a) main CPE matched but neither NA short-circuit
