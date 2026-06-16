@@ -252,8 +252,13 @@ func (c Criterion) Contains(query Query, repositories []string) (bool, error) {
 			if err != nil {
 				return false, errors.Wrap(err, "cpe criterion accept")
 			}
-			if quality == ccTypes.MatchQualityExact || quality == ccTypes.MatchQualityVersionUnconfirmed {
+			switch quality {
+			case ccTypes.MatchQualityNone:
+				// not matched by this query; try the next
+			case ccTypes.MatchQualityExact, ccTypes.MatchQualityVersionUnconfirmed:
 				return true, nil
+			default:
+				return false, errors.Errorf("unexpected cpe match quality. expected: %q, actual: %q", []ccTypes.MatchQuality{ccTypes.MatchQualityNone, ccTypes.MatchQualityExact, ccTypes.MatchQualityVersionUnconfirmed}, quality)
 			}
 		}
 		return false, nil
