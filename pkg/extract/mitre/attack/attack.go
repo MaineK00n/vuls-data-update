@@ -379,10 +379,21 @@ func Extract(args string, opts ...Option) error {
 			if !srcOK || !tgtOK {
 				return errors.Errorf("relationship %s references unindexed UUID (src=%s, tgt=%s)", path, r.SourceRef, r.TargetRef)
 			}
+			// MITRE distributes the same logical relationship in every
+			// bundle that needs it (27 relationship UUIDs in the v18
+			// enterprise/ics/mobile snapshot appear in two bundles).
+			// The rels map dedupes on STIX UUID for Stage 2b, so only
+			// fan out other-side paths into refs the first time we
+			// see the id; otherwise we'd double-count tgt.paths into
+			// src.refs (and vice versa), wasting Stage 2c r.Read work
+			// and risking accumulator dups if a future Kind ever both
+			// participates in a STIX relationship and reads e.refs.
+			if _, seen := src.rels[r.ID]; !seen {
+				src.refs = append(src.refs, tgt.paths...)
+				tgt.refs = append(tgt.refs, src.paths...)
+			}
 			src.rels[r.ID] = path
-			src.refs = append(src.refs, tgt.paths...)
 			tgt.rels[r.ID] = path
-			tgt.refs = append(tgt.refs, src.paths...)
 			entries[sk] = src
 			entries[tk] = tgt
 
