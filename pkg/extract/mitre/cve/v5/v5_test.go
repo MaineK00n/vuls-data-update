@@ -1,10 +1,10 @@
-package v4_test
+package v5_test
 
 import (
 	"path/filepath"
 	"testing"
 
-	v4 "github.com/MaineK00n/vuls-data-update/pkg/extract/mitre/v4"
+	v5 "github.com/MaineK00n/vuls-data-update/pkg/extract/mitre/cve/v5"
 	utiltest "github.com/MaineK00n/vuls-data-update/pkg/extract/util/test"
 )
 
@@ -22,7 +22,7 @@ func TestExtract(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			dir := t.TempDir()
-			err := v4.Extract(tt.args, v4.WithDir(dir))
+			err := v5.Extract(tt.args, v5.WithDir(dir))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)

@@ -27,7 +27,7 @@ import (
 	utilgit "github.com/MaineK00n/vuls-data-update/pkg/extract/util/git"
 	utiljson "github.com/MaineK00n/vuls-data-update/pkg/extract/util/json"
 	utiltime "github.com/MaineK00n/vuls-data-update/pkg/extract/util/time"
-	v5 "github.com/MaineK00n/vuls-data-update/pkg/fetch/mitre/v5"
+	v5 "github.com/MaineK00n/vuls-data-update/pkg/fetch/mitre/cve/v5"
 )
 
 type options struct {
