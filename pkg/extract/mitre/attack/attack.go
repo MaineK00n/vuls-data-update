@@ -301,7 +301,7 @@ func Extract(args string, opts ...Option) error {
 				}
 				tExt, ok := tacticByDomainShortname[tacticKey{domain: domain, shortname: kc.PhaseName}]
 				if !ok {
-					continue
+					return errors.Errorf("technique %s references kill_chain_phase {%s, %s} with no matching x-mitre-tactic", k.ext, kc.KillChainName, kc.PhaseName)
 				}
 				tk := entryKey{ext: tExt, kind: kindTypes.Tactic}
 				tac := entries[tk]
@@ -313,12 +313,12 @@ func Extract(args string, opts ...Option) error {
 			for _, ar := range e.peek.DetectStrategy.XMitreAnalyticRefs {
 				u, ok := uuids[ar]
 				if !ok {
-					continue
+					return errors.Errorf("detection-strategy %s references unindexed analytic UUID %q", k.ext, ar)
 				}
 				ak := entryKey{ext: u.ext, kind: u.kind}
 				an, ok := entries[ak]
 				if !ok {
-					continue
+					return errors.Errorf("detection-strategy %s references analytic UUID %q whose entry %s/%s is missing", k.ext, ar, u.kind, u.ext)
 				}
 				e.refs = append(e.refs, an.paths...)
 				an.refs = append(an.refs, e.paths...)
@@ -331,12 +331,12 @@ func Extract(args string, opts ...Option) error {
 			}
 			u, ok := uuids[*e.peek.DataComponent.XMitreDataSourceRef]
 			if !ok {
-				continue
+				return errors.Errorf("data-component %s references unindexed data-source UUID %q", k.ext, *e.peek.DataComponent.XMitreDataSourceRef)
 			}
 			dk := entryKey{ext: u.ext, kind: u.kind}
 			ds, ok := entries[dk]
 			if !ok {
-				continue
+				return errors.Errorf("data-component %s references data-source UUID %q whose entry %s/%s is missing", k.ext, *e.peek.DataComponent.XMitreDataSourceRef, u.kind, u.ext)
 			}
 			e.refs = append(e.refs, ds.paths...)
 			ds.refs = append(ds.refs, e.paths...)
@@ -497,15 +497,19 @@ func Extract(args string, opts ...Option) error {
 			}
 		case kindTypes.DetectStrategy:
 			for _, ar := range e.peek.DetectStrategy.XMitreAnalyticRefs {
-				if u, ok := uuids[ar]; ok {
-					detectStrategy.analytics = append(detectStrategy.analytics, u.ext)
+				u, ok := uuids[ar]
+				if !ok {
+					return errors.Errorf("detection-strategy %s references unindexed analytic UUID %q", extID, ar)
 				}
+				detectStrategy.analytics = append(detectStrategy.analytics, u.ext)
 			}
 		case kindTypes.DataComponent:
 			if e.peek.DataComponent.XMitreDataSourceRef != nil {
-				if u, ok := uuids[*e.peek.DataComponent.XMitreDataSourceRef]; ok {
-					dataComponent.source = u.ext
+				u, ok := uuids[*e.peek.DataComponent.XMitreDataSourceRef]
+				if !ok {
+					return errors.Errorf("data-component %s references unindexed data-source UUID %q", extID, *e.peek.DataComponent.XMitreDataSourceRef)
 				}
+				dataComponent.source = u.ext
 			}
 		}
 
