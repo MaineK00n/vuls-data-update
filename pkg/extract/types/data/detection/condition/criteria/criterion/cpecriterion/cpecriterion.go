@@ -182,9 +182,13 @@ func concretelyDisjoint(qWFN, cWFN common.WellFormedName) bool {
 type MatchQuality int
 
 const (
-	// MatchQualityUnknown is the iota-zero default: the criterion does not
-	// accept the query (also the safe value when a quality was never set).
+	// MatchQualityUnknown is the zero value: a quality that was never set.
+	// Accept never returns it — its appearance signals an uninitialised value
+	// or an enum case this code does not handle, which callers treat as a bug.
 	MatchQualityUnknown MatchQuality = iota
+	// MatchQualityNone means the criterion was evaluated and does NOT accept
+	// the query (disjoint attributes, out of range, enumeration miss).
+	MatchQualityNone
 	// MatchQualityExact means the criterion accepts the query with sufficient
 	// version evidence: a concrete query version confirmed by equality, range,
 	// or enumeration, OR a version=* criterion with no range/cpematches (every
@@ -199,6 +203,8 @@ const (
 
 func (q MatchQuality) String() string {
 	switch q {
+	case MatchQualityNone:
+		return "None"
 	case MatchQualityExact:
 		return "Exact"
 	case MatchQualityVersionUnconfirmed:
@@ -208,12 +214,15 @@ func (q MatchQuality) String() string {
 	}
 }
 
-// Match reports how strongly the criterion matches the query (see
-// MatchQuality). The branch structure mirrors the affected-set semantics
-// documented on Criterion: attribute match, then NA short-circuit, then
-// narrowing (range / cpematches), with the CPEMatches enumeration tried both
-// as an out-of-range fallback and (defensively) when the main CPE is disjoint.
-func (c Criterion) Match(query Query) (MatchQuality, error) {
+// Accept reports how strongly the criterion matches the query as a
+// MatchQuality (None vs Exact vs VersionUnconfirmed) — the CPE analogue of the
+// other criterion kinds' Accept (e.g. kbcriterion returns two bools); a richer
+// return under the same vocabulary. The branch structure mirrors the
+// affected-set semantics documented on Criterion: attribute match, then NA
+// short-circuit, then narrowing (range / cpematches), with the CPEMatches
+// enumeration tried both as an out-of-range fallback and (defensively) when the
+// main CPE is disjoint.
+func (c Criterion) Accept(query Query) (MatchQuality, error) {
 	qWFN, err := naming.UnbindFS(query.CPE)
 	if err != nil {
 		return MatchQualityUnknown, errors.Wrapf(err, "unbind %q to WFN", query.CPE)
@@ -306,12 +315,5 @@ func (c Criterion) Match(query Query) (MatchQuality, error) {
 		}
 	}
 
-	return MatchQualityUnknown, nil
-}
-
-// Accept reports whether the criterion accepts the query, collapsing
-// Match's quality to a bool. Retained for callers that only need acceptance.
-func (c Criterion) Accept(query Query) (bool, error) {
-	q, err := c.Match(query)
-	return q != MatchQualityUnknown, err
+	return MatchQualityNone, nil
 }

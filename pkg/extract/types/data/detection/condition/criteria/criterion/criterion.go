@@ -248,11 +248,11 @@ func (c Criterion) Contains(query Query, repositories []string) (bool, error) {
 		}
 
 		for _, q := range query.CPE {
-			isAccepted, err := c.CPE.Accept(q)
+			quality, err := c.CPE.Accept(q)
 			if err != nil {
 				return false, errors.Wrap(err, "cpe criterion accept")
 			}
-			if isAccepted {
+			if quality == ccTypes.MatchQualityExact || quality == ccTypes.MatchQualityVersionUnconfirmed {
 				return true, nil
 			}
 		}
@@ -363,15 +363,19 @@ func (c Criterion) Accept(query Query, repositories []string) (FilteredCriterion
 
 		var accepts CPEAccepts
 		for i, q := range query.CPE {
-			quality, err := c.CPE.Match(q)
+			quality, err := c.CPE.Accept(q)
 			if err != nil {
-				return FilteredCriterion{}, errors.Wrap(err, "cpe criterion match")
+				return FilteredCriterion{}, errors.Wrap(err, "cpe criterion accept")
 			}
 			switch quality {
+			case ccTypes.MatchQualityNone:
+				// evaluated, no match; contributes no index
 			case ccTypes.MatchQualityExact:
 				accepts.Exact = append(accepts.Exact, i)
 			case ccTypes.MatchQualityVersionUnconfirmed:
 				accepts.VersionUnconfirmed = append(accepts.VersionUnconfirmed, i)
+			default:
+				return FilteredCriterion{}, errors.Errorf("unexpected cpe match quality. expected: %q, actual: %q", []ccTypes.MatchQuality{ccTypes.MatchQualityNone, ccTypes.MatchQualityExact, ccTypes.MatchQualityVersionUnconfirmed}, quality)
 			}
 		}
 		return FilteredCriterion{
@@ -392,7 +396,7 @@ func (fc FilteredCriterion) Affected() (bool, error) {
 	case CriterionTypeKB:
 		return fc.Accepts.KB.Covered || fc.Accepts.KB.Unapplied, nil
 	case CriterionTypeCPE:
-		return !fc.Accepts.CPE.IsZero(), nil
+		return len(fc.Accepts.CPE.Exact) > 0 || len(fc.Accepts.CPE.VersionUnconfirmed) > 0, nil
 	default:
 		return false, errors.Errorf("unexpected criterion type. expected: %q, actual: %q", []CriterionType{CriterionTypeVersion, CriterionTypeNoneExist, CriterionTypeKB, CriterionTypeCPE}, fc.Criterion.Type)
 	}

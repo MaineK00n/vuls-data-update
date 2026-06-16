@@ -387,19 +387,19 @@ func TestCriterion_Accept(t *testing.T) {
 				CPEMatches: tt.fields.CPEMatches,
 				Fixed:      tt.fields.Fixed,
 			}
-			got, err := c.Accept(tt.args.query)
+			quality, err := c.Accept(tt.args.query)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Accept() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			if got != tt.want {
-				t.Errorf("Accept() = %v, want %v", got, tt.want)
+			if accepted := quality != ccTypes.MatchQualityNone; accepted != tt.want {
+				t.Errorf("Accept() accepted = %v (quality %s), want %v", accepted, quality, tt.want)
 			}
 		})
 	}
 }
 
-func TestCriterion_Match(t *testing.T) {
+func TestCriterion_AcceptQuality(t *testing.T) {
 	type fields struct {
 		CPE        ccTypes.CPE
 		Range      *ccRangeTypes.Range
@@ -466,7 +466,7 @@ func TestCriterion_Match(t *testing.T) {
 			name:   "criterion version NA, disjoint target_sw -> None",
 			fields: fields{CPE: "cpe:2.3:a:vendor:product:-:*:*:*:*:windows:*:*"},
 			args:   args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:9.9.9:*:*:*:*:linux:*:*"}},
-			want:   ccTypes.MatchQualityUnknown,
+			want:   ccTypes.MatchQualityNone,
 		},
 		{
 			name:   "concrete criterion, query version ANY -> VersionUnconfirmed",
@@ -484,25 +484,25 @@ func TestCriterion_Match(t *testing.T) {
 			name:   "concrete version mismatch -> None",
 			fields: fields{CPE: "cpe:2.3:a:vendor:product:1.0:*:*:*:*:*:*:*"},
 			args:   args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:2.0:*:*:*:*:*:*:*"}},
-			want:   ccTypes.MatchQualityUnknown,
+			want:   ccTypes.MatchQualityNone,
 		},
 		{
 			name:   "range out of bounds -> None",
 			fields: fields{CPE: "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*", Range: &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeSEMVER, LessThan: "1.0.0"}},
 			args:   args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:2.0.0:*:*:*:*:*:*:*"}},
-			want:   ccTypes.MatchQualityUnknown,
+			want:   ccTypes.MatchQualityNone,
 		},
 		{
 			name:   "non-semver query against semver range (compare error) -> None (no RPM fallback)",
 			fields: fields{CPE: "cpe:2.3:o:vendor:product:*:*:*:*:*:*:*:*", Range: &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeSEMVER, LessThan: "22.2"}},
 			args:   args{query: ccTypes.Query{CPE: "cpe:2.3:o:vendor:product:21.4r3:*:*:*:*:*:*:*"}},
-			want:   ccTypes.MatchQualityUnknown,
+			want:   ccTypes.MatchQualityNone,
 		},
 		{
 			name:   "part disjoint -> None",
 			fields: fields{CPE: "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*"},
 			args:   args{query: ccTypes.Query{CPE: "cpe:2.3:o:vendor:product:1.0:*:*:*:*:*:*:*"}},
-			want:   ccTypes.MatchQualityUnknown,
+			want:   ccTypes.MatchQualityNone,
 		},
 	}
 	for _, tt := range tests {
@@ -513,13 +513,13 @@ func TestCriterion_Match(t *testing.T) {
 				Range:      tt.fields.Range,
 				CPEMatches: tt.fields.CPEMatches,
 			}
-			got, err := c.Match(tt.args.query)
+			got, err := c.Accept(tt.args.query)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("Match() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("Accept() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if got != tt.want {
-				t.Errorf("Match() = %v, want %v", got, tt.want)
+				t.Errorf("Accept() = %v, want %v", got, tt.want)
 			}
 		})
 	}
