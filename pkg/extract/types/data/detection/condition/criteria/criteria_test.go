@@ -7,6 +7,7 @@ import (
 
 	criteriaTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria"
 	criterionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion"
+	ccTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/cpecriterion"
 	necTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/noneexistcriterion"
 	necBinaryPackageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/noneexistcriterion/binary"
 	necSourcePackageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/noneexistcriterion/source"
@@ -15,7 +16,6 @@ import (
 	affectedrangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/affected/range"
 	vcPackageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package"
 	vcBinaryPackageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package/binary"
-	ccTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/cpecriterion"
 	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment/ecosystem"
 )
 
@@ -733,7 +733,7 @@ func TestCriteria_Accept(t *testing.T) {
 								CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
 							},
 						},
-						Accepts: criterionTypes.AcceptQueries{CPE: []int{0}},
+						Accepts: criterionTypes.AcceptQueries{CPE: criterionTypes.CPEAccepts{Exact: []int{0}}},
 					},
 				},
 			},
@@ -2112,7 +2112,7 @@ func TestFilteredCriteria_Affected(t *testing.T) {
 								CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
 							},
 						},
-						Accepts: criterionTypes.AcceptQueries{CPE: []int{0}},
+						Accepts: criterionTypes.AcceptQueries{CPE: criterionTypes.CPEAccepts{Exact: []int{0}}},
 					},
 				},
 			},
@@ -2145,7 +2145,7 @@ func TestFilteredCriteria_Affected(t *testing.T) {
 								CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
 							},
 						},
-						Accepts: criterionTypes.AcceptQueries{CPE: []int{0}},
+						Accepts: criterionTypes.AcceptQueries{CPE: criterionTypes.CPEAccepts{Exact: []int{0}}},
 					},
 				},
 			},

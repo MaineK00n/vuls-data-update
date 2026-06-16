@@ -399,4 +399,128 @@ func TestCriterion_Accept(t *testing.T) {
 	}
 }
 
-
+func TestCriterion_Match(t *testing.T) {
+	type fields struct {
+		CPE        ccTypes.CPE
+		Range      *ccRangeTypes.Range
+		CPEMatches []ccTypes.CPE
+	}
+	type args struct {
+		query ccTypes.Query
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		args    args
+		want    ccTypes.MatchQuality
+		wantErr bool
+	}{
+		{
+			name:   "concrete version equality, no narrowing -> Exact",
+			fields: fields{CPE: "cpe:2.3:a:vendor:product:1.0:*:*:*:*:*:*:*"},
+			args:   args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:1.0:*:*:*:*:*:*:*"}},
+			want:   ccTypes.MatchQualityExact,
+		},
+		{
+			name:   "range accepts concrete version -> Exact",
+			fields: fields{CPE: "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*", Range: &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeSEMVER, LessThan: "2.0.0"}},
+			args:   args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:1.0.0:*:*:*:*:*:*:*"}},
+			want:   ccTypes.MatchQualityExact,
+		},
+		{
+			name:   "cpematches accepts concrete version -> Exact",
+			fields: fields{CPE: "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*", Range: &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeSEMVER, LessThan: "1.0.0"}, CPEMatches: []ccTypes.CPE{"cpe:2.3:a:vendor:product:15.4\\(2\\)t1:*:*:*:*:*:*:*"}},
+			args:   args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:15.4\\(2\\)t1:*:*:*:*:*:*:*"}},
+			want:   ccTypes.MatchQualityExact,
+		},
+		{
+			name:   "version=* no range/cpematches, concrete query -> Exact (all versions)",
+			fields: fields{CPE: "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*"},
+			args:   args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:1.0:*:*:*:*:*:*:*"}},
+			want:   ccTypes.MatchQualityExact,
+		},
+		{
+			name:   "version=* no range/cpematches, version-less query -> Exact (all-versions precedence)",
+			fields: fields{CPE: "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*"},
+			args:   args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*"}},
+			want:   ccTypes.MatchQualityExact,
+		},
+		{
+			name:   "criterion version NA, version-less query -> VersionUnconfirmed",
+			fields: fields{CPE: "cpe:2.3:a:vendor:product:-:*:*:*:*:*:*:*"},
+			args:   args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*"}},
+			want:   ccTypes.MatchQualityVersionUnconfirmed,
+		},
+		{
+			// version=NA fixes the product but not the version, so a concrete
+			// scan version still matches at version-unconfirmed quality (e.g.
+			// linux_kernel:- meaning "all versions" — go-cve-dictionary parity).
+			name:   "criterion version NA, concrete query -> VersionUnconfirmed",
+			fields: fields{CPE: "cpe:2.3:a:vendor:product:-:*:*:*:*:*:*:*"},
+			args:   args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:9.9.9:*:*:*:*:*:*:*"}},
+			want:   ccTypes.MatchQualityVersionUnconfirmed,
+		},
+		{
+			// A version=NA criterion still gates on non-version attributes:
+			// a disjoint target_sw is not a match.
+			name:   "criterion version NA, disjoint target_sw -> None",
+			fields: fields{CPE: "cpe:2.3:a:vendor:product:-:*:*:*:*:windows:*:*"},
+			args:   args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:9.9.9:*:*:*:*:linux:*:*"}},
+			want:   ccTypes.MatchQualityNone,
+		},
+		{
+			name:   "concrete criterion, query version ANY -> VersionUnconfirmed",
+			fields: fields{CPE: "cpe:2.3:a:vendor:product:1.0:*:*:*:*:*:*:*"},
+			args:   args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*"}},
+			want:   ccTypes.MatchQualityVersionUnconfirmed,
+		},
+		{
+			name:   "ranged criterion, query version ANY -> VersionUnconfirmed",
+			fields: fields{CPE: "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*", Range: &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeSEMVER, LessThan: "2.0.0"}},
+			args:   args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*"}},
+			want:   ccTypes.MatchQualityVersionUnconfirmed,
+		},
+		{
+			name:   "concrete version mismatch -> None",
+			fields: fields{CPE: "cpe:2.3:a:vendor:product:1.0:*:*:*:*:*:*:*"},
+			args:   args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:2.0:*:*:*:*:*:*:*"}},
+			want:   ccTypes.MatchQualityNone,
+		},
+		{
+			name:   "range out of bounds -> None",
+			fields: fields{CPE: "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*", Range: &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeSEMVER, LessThan: "1.0.0"}},
+			args:   args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:2.0.0:*:*:*:*:*:*:*"}},
+			want:   ccTypes.MatchQualityNone,
+		},
+		{
+			name:   "non-semver query against semver range (compare error) -> None (no RPM fallback)",
+			fields: fields{CPE: "cpe:2.3:o:vendor:product:*:*:*:*:*:*:*:*", Range: &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeSEMVER, LessThan: "22.2"}},
+			args:   args{query: ccTypes.Query{CPE: "cpe:2.3:o:vendor:product:21.4r3:*:*:*:*:*:*:*"}},
+			want:   ccTypes.MatchQualityNone,
+		},
+		{
+			name:   "part disjoint -> None",
+			fields: fields{CPE: "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*"},
+			args:   args{query: ccTypes.Query{CPE: "cpe:2.3:o:vendor:product:1.0:*:*:*:*:*:*:*"}},
+			want:   ccTypes.MatchQualityNone,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := ccTypes.Criterion{
+				Vulnerable: true,
+				CPE:        tt.fields.CPE,
+				Range:      tt.fields.Range,
+				CPEMatches: tt.fields.CPEMatches,
+			}
+			got, err := c.Match(tt.args.query)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Match() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if got != tt.want {
+				t.Errorf("Match() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

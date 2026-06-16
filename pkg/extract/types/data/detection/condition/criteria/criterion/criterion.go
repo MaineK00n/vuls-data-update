@@ -276,11 +276,25 @@ type KB struct {
 	Unapplied bool `json:"unapplied,omitempty"`
 }
 
+// CPEAccepts records the indices of accepted CPE queries grouped by match
+// quality (see cpecriterion.MatchQuality). Exact holds version-confirmed
+// matches; VersionUnconfirmed holds matches accepted on attribute equality but
+// without version confirmation. Projecting these onto a consumer's confidence
+// model (e.g. vuls0's exact / vendor:product tiers) is the consumer's concern.
+type CPEAccepts struct {
+	Exact              []int `json:"exact,omitempty"`
+	VersionUnconfirmed []int `json:"version_unconfirmed,omitempty"`
+}
+
+func (a CPEAccepts) IsZero() bool {
+	return len(a.Exact) == 0 && len(a.VersionUnconfirmed) == 0
+}
+
 type AcceptQueries struct {
-	Version   []int `json:"version,omitempty"`
-	NoneExist bool  `json:"none_exist,omitempty"`
-	KB        KB    `json:"kb,omitzero"`
-	CPE       []int `json:"cpe,omitempty"`
+	Version   []int      `json:"version,omitempty"`
+	NoneExist bool       `json:"none_exist,omitempty"`
+	KB        KB         `json:"kb,omitzero"`
+	CPE       CPEAccepts `json:"cpe,omitzero"`
 }
 
 func (c Criterion) Accept(query Query, repositories []string) (FilteredCriterion, error) {
@@ -347,19 +361,22 @@ func (c Criterion) Accept(query Query, repositories []string) (FilteredCriterion
 			return FilteredCriterion{Criterion: c, Accepts: AcceptQueries{}}, nil
 		}
 
-		var is []int
+		var accepts CPEAccepts
 		for i, q := range query.CPE {
-			isAccepted, err := c.CPE.Accept(q)
+			quality, err := c.CPE.Match(q)
 			if err != nil {
-				return FilteredCriterion{}, errors.Wrap(err, "cpe criterion accept")
+				return FilteredCriterion{}, errors.Wrap(err, "cpe criterion match")
 			}
-			if isAccepted {
-				is = append(is, i)
+			switch quality {
+			case ccTypes.MatchQualityExact:
+				accepts.Exact = append(accepts.Exact, i)
+			case ccTypes.MatchQualityVersionUnconfirmed:
+				accepts.VersionUnconfirmed = append(accepts.VersionUnconfirmed, i)
 			}
 		}
 		return FilteredCriterion{
 			Criterion: c,
-			Accepts:   AcceptQueries{CPE: is},
+			Accepts:   AcceptQueries{CPE: accepts},
 		}, nil
 	default:
 		return FilteredCriterion{}, errors.Errorf("unexpected criterion type. expected: %q, actual: %q", []CriterionType{CriterionTypeVersion, CriterionTypeNoneExist, CriterionTypeKB, CriterionTypeCPE}, c.Type)
@@ -375,7 +392,7 @@ func (fc FilteredCriterion) Affected() (bool, error) {
 	case CriterionTypeKB:
 		return fc.Accepts.KB.Covered || fc.Accepts.KB.Unapplied, nil
 	case CriterionTypeCPE:
-		return len(fc.Accepts.CPE) > 0, nil
+		return !fc.Accepts.CPE.IsZero(), nil
 	default:
 		return false, errors.Errorf("unexpected criterion type. expected: %q, actual: %q", []CriterionType{CriterionTypeVersion, CriterionTypeNoneExist, CriterionTypeKB, CriterionTypeCPE}, fc.Criterion.Type)
 	}
