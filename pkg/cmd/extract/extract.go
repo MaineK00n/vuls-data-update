@@ -43,6 +43,7 @@ import (
 	exploitInTheWild "github.com/MaineK00n/vuls-data-update/pkg/extract/exploit/inthewild"
 	exploitTrickest "github.com/MaineK00n/vuls-data-update/pkg/extract/exploit/trickest"
 	fedoraAPI "github.com/MaineK00n/vuls-data-update/pkg/extract/fedora/api"
+	fortinetCSAF "github.com/MaineK00n/vuls-data-update/pkg/extract/fortinet/csaf"
 	fortinetCVRF "github.com/MaineK00n/vuls-data-update/pkg/extract/fortinet/cvrf"
 	fortinetHandmade "github.com/MaineK00n/vuls-data-update/pkg/extract/fortinet/handmade"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/freebsd"
@@ -165,7 +166,7 @@ func NewCmdExtract() *cobra.Command {
 		newCmdErlangGHSA(), newCmdErlangOSV(),
 		newCmdExploitExploitDB(), newCmdExploitGitHub(), newCmdExploitInTheWild(), newCmdExploitTrickest(),
 		newCmdFedoraAPI(),
-		newCmdFortinetHandmade(), newCmdFortinetCVRF(),
+		newCmdFortinetHandmade(), newCmdFortinetCSAF(), newCmdFortinetCVRF(),
 		newCmdFreeBSD(),
 		newCmdGentoo(),
 		newCmdGHActionsOSV(),
@@ -1100,6 +1101,31 @@ func newCmdFortinetHandmade() *cobra.Command {
 		RunE: func(_ *cobra.Command, args []string) error {
 			if err := fortinetHandmade.Extract(args[0], fortinetHandmade.WithDir(options.dir)); err != nil {
 				return errors.Wrap(err, "failed to extract fortinet handmade")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
+
+	return cmd
+}
+
+func newCmdFortinetCSAF() *cobra.Command {
+	options := &base{
+		dir: filepath.Join(util.CacheDir(), "extract", "fortinet", "csaf"),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "fortinet-csaf <Raw Fortinet CSAF Repository PATH>",
+		Short: "Extract Fortinet CSAF data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update extract fortinet-csaf vuls-data-raw-fortinet-csaf
+		`),
+		Args: cobra.ExactArgs(1),
+		RunE: func(_ *cobra.Command, args []string) error {
+			if err := fortinetCSAF.Extract(args[0], fortinetCSAF.WithDir(options.dir)); err != nil {
+				return errors.Wrap(err, "failed to extract fortinet csaf")
 			}
 			return nil
 		},

@@ -1,0 +1,240 @@
+{
+	"document_title": "Incorrect global authorization",
+	"document_type": "Fortinet PSIRT Advisories",
+	"documentpublisher": {
+		"type": "Vendor",
+		"contact_details": "\n            Fortinet PSIRT Contact:\n            Website: https://fortiguard.fortinet.com/faq/psirt-contact\n        "
+	},
+	"documenttracking": {
+		"identification": {
+			"id": "FG-IR-26-136"
+		},
+		"status": "Final",
+		"version": "1",
+		"revisionhistory": {
+			"revision": {
+				"number": "1",
+				"date": "2026-05-12T00:00:00",
+				"description": "Current version"
+			}
+		},
+		"initial_release_date": "2026-05-12T00:00:00",
+		"current_release_date": "2026-05-12T00:00:00"
+	},
+	"documentnotes": {
+		"note": [
+			{
+				"text": "\n            A missing authorization vulnerability [CWE-862] in FortiSandbox, FortiSandbox Cloud and FortiSandbox PaaS WEB UI may allow an unauthenticated attacker to execute unauthorized code or commands via HTTP requests.\n        ",
+				"title": "Summary",
+				"type": "Summary",
+				"ordinal": "1"
+			},
+			{
+				"text": "\n            None\n        ",
+				"title": "Description",
+				"type": "General",
+				"ordinal": "2"
+			},
+			{
+				"text": "\n            Execute unauthorized code or commands\n        ",
+				"title": "Impact",
+				"type": "General",
+				"ordinal": "3"
+			},
+			{
+				"text": "\n            None\n        ",
+				"title": "Solutions",
+				"type": "General",
+				"ordinal": "4"
+			}
+		]
+	},
+	"acknowledgments": {
+		"acknowledgment": [
+			{
+				"description": "Internally discovered and reported by Adham El karn of Fortinet Product Security team."
+			}
+		]
+	},
+	"vulnerability": {
+		"ordinal": "1",
+		"title": "Incorrect global authorization",
+		"references": {
+			"type": "Self",
+			"reference": [
+				{
+					"url": "https://fortiguard.fortinet.com/psirt/FG-IR-26-136",
+					"description": "Incorrect global authorization"
+				}
+			]
+		},
+		"cve": [
+			"CVE-2026-26083"
+		],
+		"product_statuses": {
+			"status": {
+				"type": "Known Affected",
+				"product_id": [
+					"FortiSandbox-FortiSandbox 5.0",
+					"FortiSandbox-FortiSandbox 4.4",
+					"FortiSandbox Cloud-FortiSandbox Cloud 24",
+					"FortiSandbox Cloud-FortiSandbox Cloud 23",
+					"FortiSandbox Cloud-FortiSandbox Cloud 5.0",
+					"FortiSandbox PaaS-FortiSandbox PaaS 23.4",
+					"FortiSandbox PaaS-FortiSandbox PaaS 23.3",
+					"FortiSandbox PaaS-FortiSandbox PaaS 23.1",
+					"FortiSandbox PaaS-FortiSandbox PaaS 22.2",
+					"FortiSandbox PaaS-FortiSandbox PaaS 22.1",
+					"FortiSandbox PaaS-FortiSandbox PaaS 21.4",
+					"FortiSandbox PaaS-FortiSandbox PaaS 21.3",
+					"FortiSandbox PaaS-FortiSandbox PaaS 5.0",
+					"FortiSandbox PaaS-FortiSandbox PaaS 4.4"
+				]
+			}
+		},
+		"cvss_scoresets": {
+			"scoreset_v3": {
+				"base_score_v3": "9.1",
+				"vector_v3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H/E:F/RL:O/RC:C"
+			}
+		}
+	},
+	"product_tree": {
+		"branch": {
+			"name": "Fortinet",
+			"type": "Vendor",
+			"branch": [
+				{
+					"name": "FortiSandbox",
+					"type": "Product Name",
+					"branch": [
+						{
+							"name": "FortiSandbox 5.0",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiSandbox FortiSandbox 5.0",
+								"product_id": "FortiSandbox-FortiSandbox 5.0"
+							}
+						},
+						{
+							"name": "FortiSandbox 4.4",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiSandbox FortiSandbox 4.4",
+								"product_id": "FortiSandbox-FortiSandbox 4.4"
+							}
+						}
+					]
+				},
+				{
+					"name": "FortiSandbox Cloud",
+					"type": "Product Name",
+					"branch": [
+						{
+							"name": "FortiSandbox Cloud 24",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiSandbox Cloud FortiSandbox Cloud 24",
+								"product_id": "FortiSandbox Cloud-FortiSandbox Cloud 24"
+							}
+						},
+						{
+							"name": "FortiSandbox Cloud 23",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiSandbox Cloud FortiSandbox Cloud 23",
+								"product_id": "FortiSandbox Cloud-FortiSandbox Cloud 23"
+							}
+						},
+						{
+							"name": "FortiSandbox Cloud 5.0",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiSandbox Cloud FortiSandbox Cloud 5.0",
+								"product_id": "FortiSandbox Cloud-FortiSandbox Cloud 5.0"
+							}
+						}
+					]
+				},
+				{
+					"name": "FortiSandbox PaaS",
+					"type": "Product Name",
+					"branch": [
+						{
+							"name": "FortiSandbox PaaS 23.4",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiSandbox PaaS FortiSandbox PaaS 23.4",
+								"product_id": "FortiSandbox PaaS-FortiSandbox PaaS 23.4"
+							}
+						},
+						{
+							"name": "FortiSandbox PaaS 23.3",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiSandbox PaaS FortiSandbox PaaS 23.3",
+								"product_id": "FortiSandbox PaaS-FortiSandbox PaaS 23.3"
+							}
+						},
+						{
+							"name": "FortiSandbox PaaS 23.1",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiSandbox PaaS FortiSandbox PaaS 23.1",
+								"product_id": "FortiSandbox PaaS-FortiSandbox PaaS 23.1"
+							}
+						},
+						{
+							"name": "FortiSandbox PaaS 22.2",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiSandbox PaaS FortiSandbox PaaS 22.2",
+								"product_id": "FortiSandbox PaaS-FortiSandbox PaaS 22.2"
+							}
+						},
+						{
+							"name": "FortiSandbox PaaS 22.1",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiSandbox PaaS FortiSandbox PaaS 22.1",
+								"product_id": "FortiSandbox PaaS-FortiSandbox PaaS 22.1"
+							}
+						},
+						{
+							"name": "FortiSandbox PaaS 21.4",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiSandbox PaaS FortiSandbox PaaS 21.4",
+								"product_id": "FortiSandbox PaaS-FortiSandbox PaaS 21.4"
+							}
+						},
+						{
+							"name": "FortiSandbox PaaS 21.3",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiSandbox PaaS FortiSandbox PaaS 21.3",
+								"product_id": "FortiSandbox PaaS-FortiSandbox PaaS 21.3"
+							}
+						},
+						{
+							"name": "FortiSandbox PaaS 5.0",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiSandbox PaaS FortiSandbox PaaS 5.0",
+								"product_id": "FortiSandbox PaaS-FortiSandbox PaaS 5.0"
+							}
+						},
+						{
+							"name": "FortiSandbox PaaS 4.4",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiSandbox PaaS FortiSandbox PaaS 4.4",
+								"product_id": "FortiSandbox PaaS-FortiSandbox PaaS 4.4"
+							}
+						}
+					]
+				}
+			]
+		}
+	}
+}

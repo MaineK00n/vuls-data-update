@@ -1,0 +1,1648 @@
+{
+	"document": {
+		"category": "Fortinet PSIRT Advisories",
+		"csaf_version": "2.0",
+		"publisher": {
+			"category": "vendor",
+			"contact_details": "https://fortiguard.fortinet.com/faq/psirt-contact",
+			"issuing_authority": "Fortinet PSIRT",
+			"name": "Fortinet PSIRT",
+			"namespace": "https://fortiguard.fortinet.com/psirt"
+		},
+		"title": "Pre-authentication Denial of Service attack in OpenSSH - CVE-2025-26466",
+		"tracking": {
+			"current_release_date": "2026-04-14T00:00:00",
+			"id": "FG-IR-25-122",
+			"initial_release_date": "2025-03-11T00:00:00",
+			"revision_history": [
+				{
+					"date": "2025-03-11T00:00:00",
+					"number": "1",
+					"summary": "Initial Publication"
+				}
+			],
+			"status": "final",
+			"version": "0"
+		}
+	},
+	"product_tree": {
+		"branches": [
+			{
+				"branches": [
+					{
+						"branches": [
+							{
+								"category": "product_version_range",
+								"name": "FortiADC/ 7.8 all versions",
+								"product": {
+									"name": "FortiADC",
+									"product_id": "FortiADC/ 7.8 all versions"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "FortiADC/7.6.1",
+								"product": {
+									"name": "FortiADC",
+									"product_id": "FortiADC 7.6.1"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiADC/ 7.4 all versions",
+								"product": {
+									"name": "FortiADC",
+									"product_id": "FortiADC/ 7.4 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiADC/ 7.2 all versions",
+								"product": {
+									"name": "FortiADC",
+									"product_id": "FortiADC/ 7.2 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiADC/ 7.1 all versions",
+								"product": {
+									"name": "FortiADC",
+									"product_id": "FortiADC/ 7.1 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiADC/ 7.0 all versions",
+								"product": {
+									"name": "FortiADC",
+									"product_id": "FortiADC/ 7.0 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiADC/ 6.2 all versions",
+								"product": {
+									"name": "FortiADC",
+									"product_id": "FortiADC/ 6.2 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiADC/ 6.1 all versions",
+								"product": {
+									"name": "FortiADC",
+									"product_id": "FortiADC/ 6.1 all versions"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiADC"
+					},
+					{
+						"branches": [
+							{
+								"category": "product_version",
+								"name": "FortiADCManager/7.6.0",
+								"product": {
+									"name": "FortiADCManager",
+									"product_id": "FortiADCManager 7.6.0"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiADCManager/ 7.4 all versions",
+								"product": {
+									"name": "FortiADCManager",
+									"product_id": "FortiADCManager/ 7.4 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiADCManager/ 7.2 all versions",
+								"product": {
+									"name": "FortiADCManager",
+									"product_id": "FortiADCManager/ 7.2 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiADCManager/ 7.1 all versions",
+								"product": {
+									"name": "FortiADCManager",
+									"product_id": "FortiADCManager/ 7.1 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiADCManager/ 7.0 all versions",
+								"product": {
+									"name": "FortiADCManager",
+									"product_id": "FortiADCManager/ 7.0 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiADCManager/ 6.2 all versions",
+								"product": {
+									"name": "FortiADCManager",
+									"product_id": "FortiADCManager/ 6.2 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiADCManager/ 6.1 all versions",
+								"product": {
+									"name": "FortiADCManager",
+									"product_id": "FortiADCManager/ 6.1 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiADCManager/ 6.0 all versions",
+								"product": {
+									"name": "FortiADCManager",
+									"product_id": "FortiADCManager/ 6.0 all versions"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiADCManager"
+					},
+					{
+						"branches": [
+							{
+								"category": "product_version_range",
+								"name": "FortiAIOps/ 3.2 all versions",
+								"product": {
+									"name": "FortiAIOps",
+									"product_id": "FortiAIOps/ 3.2 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiAIOps/ 3.0 all versions",
+								"product": {
+									"name": "FortiAIOps",
+									"product_id": "FortiAIOps/ 3.0 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiAIOps/2.1 all versions",
+								"product": {
+									"name": "FortiAIOps",
+									"product_id": "FortiAIOps 2.1 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiAIOps/>=2.0.1|<=2.0.2",
+								"product": {
+									"name": "FortiAIOps",
+									"product_id": "FortiAIOps >=2.0.1|<=2.0.2"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiAIOps/ 1.1 all versions",
+								"product": {
+									"name": "FortiAIOps",
+									"product_id": "FortiAIOps/ 1.1 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiAIOps/ 1.0 all versions",
+								"product": {
+									"name": "FortiAIOps",
+									"product_id": "FortiAIOps/ 1.0 all versions"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiAIOps"
+					},
+					{
+						"branches": [
+							{
+								"category": "product_version_range",
+								"name": "FortiAnalyzer/>=7.6.0|<=7.6.2",
+								"product": {
+									"name": "FortiAnalyzer",
+									"product_id": "FortiAnalyzer >=7.6.0|<=7.6.2"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiAnalyzer/>=7.4.3|<=7.4.6",
+								"product": {
+									"name": "FortiAnalyzer",
+									"product_id": "FortiAnalyzer >=7.4.3|<=7.4.6"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiAnalyzer/>=7.2.5|<=7.2.10",
+								"product": {
+									"name": "FortiAnalyzer",
+									"product_id": "FortiAnalyzer >=7.2.5|<=7.2.10"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiAnalyzer/>=7.0.12|<=7.0.14",
+								"product": {
+									"name": "FortiAnalyzer",
+									"product_id": "FortiAnalyzer >=7.0.12|<=7.0.14"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiAnalyzer/>=6.4.14|<=6.4.15",
+								"product": {
+									"name": "FortiAnalyzer",
+									"product_id": "FortiAnalyzer >=6.4.14|<=6.4.15"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiAnalyzer"
+					},
+					{
+						"branches": [
+							{
+								"category": "product_version_range",
+								"name": "FortiAnalyzer-BigData/ 7.6 all versions",
+								"product": {
+									"name": "FortiAnalyzer-BigData",
+									"product_id": "FortiAnalyzer-BigData/ 7.6 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiAnalyzer-BigData/>=7.4.2|<=7.4.3",
+								"product": {
+									"name": "FortiAnalyzer-BigData",
+									"product_id": "FortiAnalyzer-BigData >=7.4.2|<=7.4.3"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiAnalyzer-BigData/>=7.2.8|<=7.2.9",
+								"product": {
+									"name": "FortiAnalyzer-BigData",
+									"product_id": "FortiAnalyzer-BigData >=7.2.8|<=7.2.9"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiAnalyzer-BigData"
+					},
+					{
+						"branches": [
+							{
+								"category": "product_version_range",
+								"name": "FortiDDoS-F/>=7.0.1|<=7.0.4",
+								"product": {
+									"name": "FortiDDoS-F",
+									"product_id": "FortiDDoS-F >=7.0.1|<=7.0.4"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiDDoS-F/ 6.6 all versions",
+								"product": {
+									"name": "FortiDDoS-F",
+									"product_id": "FortiDDoS-F/ 6.6 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiDDoS-F/ 6.5 all versions",
+								"product": {
+									"name": "FortiDDoS-F",
+									"product_id": "FortiDDoS-F/ 6.5 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiDDoS-F/ 6.4 all versions",
+								"product": {
+									"name": "FortiDDoS-F",
+									"product_id": "FortiDDoS-F/ 6.4 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiDDoS-F/ 6.3 all versions",
+								"product": {
+									"name": "FortiDDoS-F",
+									"product_id": "FortiDDoS-F/ 6.3 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiDDoS-F/ 6.2 all versions",
+								"product": {
+									"name": "FortiDDoS-F",
+									"product_id": "FortiDDoS-F/ 6.2 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiDDoS-F/ 6.1 all versions",
+								"product": {
+									"name": "FortiDDoS-F",
+									"product_id": "FortiDDoS-F/ 6.1 all versions"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiDDoS-F"
+					},
+					{
+						"branches": [
+							{
+								"category": "product_version_range",
+								"name": "FortiExtender/>=7.6.0|<=7.6.2",
+								"product": {
+									"name": "FortiExtender",
+									"product_id": "FortiExtender >=7.6.0|<=7.6.2"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiExtender/>=7.4.4|<=7.4.7",
+								"product": {
+									"name": "FortiExtender",
+									"product_id": "FortiExtender >=7.4.4|<=7.4.7"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "FortiExtender/7.2.5",
+								"product": {
+									"name": "FortiExtender",
+									"product_id": "FortiExtender 7.2.5"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "FortiExtender/7.0.5",
+								"product": {
+									"name": "FortiExtender",
+									"product_id": "FortiExtender 7.0.5"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiExtender"
+					},
+					{
+						"branches": [
+							{
+								"category": "product_version_range",
+								"name": "FortiMail/>=7.6.0|<=7.6.3",
+								"product": {
+									"name": "FortiMail",
+									"product_id": "FortiMail >=7.6.0|<=7.6.3"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiMail/>=7.4.2|<=7.4.5",
+								"product": {
+									"name": "FortiMail",
+									"product_id": "FortiMail >=7.4.2|<=7.4.5"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiMail/>=7.2.6|<=7.2.8",
+								"product": {
+									"name": "FortiMail",
+									"product_id": "FortiMail >=7.2.6|<=7.2.8"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiMail/>=7.0.8|<=7.0.9",
+								"product": {
+									"name": "FortiMail",
+									"product_id": "FortiMail >=7.0.8|<=7.0.9"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiMail"
+					},
+					{
+						"branches": [
+							{
+								"category": "product_version_range",
+								"name": "FortiManager/>=7.6.0|<=7.6.2",
+								"product": {
+									"name": "FortiManager",
+									"product_id": "FortiManager >=7.6.0|<=7.6.2"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiManager/>=7.4.3|<=7.4.6",
+								"product": {
+									"name": "FortiManager",
+									"product_id": "FortiManager >=7.4.3|<=7.4.6"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiManager/>=7.2.5|<=7.2.10",
+								"product": {
+									"name": "FortiManager",
+									"product_id": "FortiManager >=7.2.5|<=7.2.10"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiManager/>=7.0.12|<=7.0.14",
+								"product": {
+									"name": "FortiManager",
+									"product_id": "FortiManager >=7.0.12|<=7.0.14"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiManager/>=6.4.14|<=6.4.15",
+								"product": {
+									"name": "FortiManager",
+									"product_id": "FortiManager >=6.4.14|<=6.4.15"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiManager"
+					},
+					{
+						"branches": [
+							{
+								"category": "product_version_range",
+								"name": "FortiNDR/>=7.6.0|<=7.6.1",
+								"product": {
+									"name": "FortiNDR",
+									"product_id": "FortiNDR >=7.6.0|<=7.6.1"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiNDR/>=7.4.3|<=7.4.8",
+								"product": {
+									"name": "FortiNDR",
+									"product_id": "FortiNDR >=7.4.3|<=7.4.8"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "FortiNDR/7.2.2 and above",
+								"product": {
+									"name": "FortiNDR",
+									"product_id": "FortiNDR 7.2.2 and above"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiNDR/ 7.1 all versions",
+								"product": {
+									"name": "FortiNDR",
+									"product_id": "FortiNDR/ 7.1 all versions"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "FortiNDR/7.0.6 and above",
+								"product": {
+									"name": "FortiNDR",
+									"product_id": "FortiNDR 7.0.6 and above"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiNDR/ 1.5 all versions",
+								"product": {
+									"name": "FortiNDR",
+									"product_id": "FortiNDR/ 1.5 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiNDR/ 1.4 all versions",
+								"product": {
+									"name": "FortiNDR",
+									"product_id": "FortiNDR/ 1.4 all versions"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiNDR"
+					},
+					{
+						"branches": [
+							{
+								"category": "product_version_range",
+								"name": "FortiSandbox/>=5.0.0|<=5.0.1",
+								"product": {
+									"name": "FortiSandbox",
+									"product_id": "FortiSandbox >=5.0.0|<=5.0.1"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiSandbox/>=4.4.4|<=4.4.7",
+								"product": {
+									"name": "FortiSandbox",
+									"product_id": "FortiSandbox >=4.4.4|<=4.4.7"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiSandbox/>=4.2.7|<=4.2.8",
+								"product": {
+									"name": "FortiSandbox",
+									"product_id": "FortiSandbox >=4.2.7|<=4.2.8"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiSandbox/ 4.0 all versions",
+								"product": {
+									"name": "FortiSandbox",
+									"product_id": "FortiSandbox/ 4.0 all versions"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiSandbox"
+					},
+					{
+						"branches": [
+							{
+								"category": "product_version_range",
+								"name": "FortiSwitch/>=7.6.0|<=7.6.4",
+								"product": {
+									"name": "FortiSwitch",
+									"product_id": "FortiSwitch >=7.6.0|<=7.6.4"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiSwitch/>=7.4.4|<=7.4.7",
+								"product": {
+									"name": "FortiSwitch",
+									"product_id": "FortiSwitch >=7.4.4|<=7.4.7"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiSwitch/>=7.2.8|<=7.2.10",
+								"product": {
+									"name": "FortiSwitch",
+									"product_id": "FortiSwitch >=7.2.8|<=7.2.10"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiSwitch/ 7.0 all versions",
+								"product": {
+									"name": "FortiSwitch",
+									"product_id": "FortiSwitch/ 7.0 all versions"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiSwitch"
+					},
+					{
+						"branches": [
+							{
+								"category": "product_version_range",
+								"name": "FortiVoice/>=7.2.0|<=7.2.1",
+								"product": {
+									"name": "FortiVoice",
+									"product_id": "FortiVoice >=7.2.0|<=7.2.1"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiVoice/>=7.0.2|<=7.0.7",
+								"product": {
+									"name": "FortiVoice",
+									"product_id": "FortiVoice >=7.0.2|<=7.0.7"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiVoice/>=6.4.9|<=6.4.11",
+								"product": {
+									"name": "FortiVoice",
+									"product_id": "FortiVoice >=6.4.9|<=6.4.11"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiVoice"
+					},
+					{
+						"branches": [
+							{
+								"category": "product_version_range",
+								"name": "FortiWeb/ 8.0 all versions",
+								"product": {
+									"name": "FortiWeb",
+									"product_id": "FortiWeb/ 8.0 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiWeb/>=7.6.0|<=7.6.4",
+								"product": {
+									"name": "FortiWeb",
+									"product_id": "FortiWeb >=7.6.0|<=7.6.4"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiWeb/>=7.4.3|<=7.4.8",
+								"product": {
+									"name": "FortiWeb",
+									"product_id": "FortiWeb >=7.4.3|<=7.4.8"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "FortiWeb/7.2.8 and above",
+								"product": {
+									"name": "FortiWeb",
+									"product_id": "FortiWeb 7.2.8 and above"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiWeb/ 7.0 all versions",
+								"product": {
+									"name": "FortiWeb",
+									"product_id": "FortiWeb/ 7.0 all versions"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiWeb"
+					}
+				],
+				"category": "vendor",
+				"name": "Fortinet PSIRT"
+			}
+		]
+	},
+	"vulnerabilities": [
+		{
+			"cve": "CVE-2025-26466",
+			"cwe": {
+				"id": "CWE-1395",
+				"name": "The product has a dependency on a third-party component that contains one or more known vulnerabilities. + "
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "OpenSSH vulnerability (CVE-2025-26466)\n\n",
+					"title": "Summary"
+				},
+				{
+					"category": "general",
+					"text": "N/A",
+					"title": "Workarounds"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiADC 7.6.1"
+				],
+				"known_not_affected": [
+					"FortiADC/ 7.8 all versions",
+					"FortiADC-7.6.2",
+					"FortiADC/ 7.4 all versions",
+					"FortiADC/ 7.2 all versions",
+					"FortiADC/ 7.1 all versions",
+					"FortiADC/ 7.0 all versions",
+					"FortiADC/ 6.2 all versions",
+					"FortiADC/ 6.1 all versions"
+				]
+			},
+			"references": [
+				{
+					"summary": "CVE-2025-26466\r\nA flaw was found in the OpenSSH package. For each ping packet the SSH server receives, a pong packet is allocated in a memory buffer and stored in a queue of packages. It is only freed when the server/client key exchange has finished. A malicious client may keep sending such packages, leading to an uncontrolled increase in memory consumption on the server side. Consequently, the server may become unavailable, resulting in a denial of service attack.",
+					"url": "https://nvd.nist.gov/vuln/detail/CVE-2025-26466\r\nhttps://www.qualys.com/2025/02/18/openssh-mitm-dos.txt"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiADC 7.8: Not Applicable\nFortiADC 7.6: Upgrade to 7.6.2 or above\nFortiADC 7.4: Not Applicable\nFortiADC 7.2: Not Applicable\nFortiADC 7.1: Not Applicable\nFortiADC 7.0: Not Applicable\nFortiADC 6.2: Not Applicable\nFortiADC 6.1: Not Applicable",
+					"product_ids": [
+						"FortiADC"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 5.9,
+						"baseSeverity": "MEDIUM",
+						"vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:H/E:X/RL:O/RC:X",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiADC"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Denial of service"
+				}
+			],
+			"title": "FortiADC - MEDIUM - FG-IR-25-122"
+		},
+		{
+			"cve": "CVE-2025-26466",
+			"cwe": {
+				"id": "CWE-1395",
+				"name": "The product has a dependency on a third-party component that contains one or more known vulnerabilities. + "
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "OpenSSH vulnerability (CVE-2025-26466)\n\n",
+					"title": "Summary"
+				},
+				{
+					"category": "general",
+					"text": "N/A",
+					"title": "Workarounds"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiADCManager 7.6.0"
+				],
+				"known_not_affected": [
+					"FortiADCManager-7.6.1",
+					"FortiADCManager/ 7.4 all versions",
+					"FortiADCManager/ 7.2 all versions",
+					"FortiADCManager/ 7.1 all versions",
+					"FortiADCManager/ 7.0 all versions",
+					"FortiADCManager/ 6.2 all versions",
+					"FortiADCManager/ 6.1 all versions",
+					"FortiADCManager/ 6.0 all versions"
+				]
+			},
+			"references": [
+				{
+					"summary": "CVE-2025-26466\r\nA flaw was found in the OpenSSH package. For each ping packet the SSH server receives, a pong packet is allocated in a memory buffer and stored in a queue of packages. It is only freed when the server/client key exchange has finished. A malicious client may keep sending such packages, leading to an uncontrolled increase in memory consumption on the server side. Consequently, the server may become unavailable, resulting in a denial of service attack.",
+					"url": "https://nvd.nist.gov/vuln/detail/CVE-2025-26466\r\nhttps://www.qualys.com/2025/02/18/openssh-mitm-dos.txt"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiADCManager 7.6: Upgrade to 7.6.1 or above\nFortiADCManager 7.4: Not Applicable\nFortiADCManager 7.2: Not Applicable\nFortiADCManager 7.1: Not Applicable\nFortiADCManager 7.0: Not Applicable\nFortiADCManager 6.2: Not Applicable\nFortiADCManager 6.1: Not Applicable\nFortiADCManager 6.0: Not Applicable",
+					"product_ids": [
+						"FortiADCManager"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 5.9,
+						"baseSeverity": "MEDIUM",
+						"vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:H/E:X/RL:O/RC:X",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiADCManager"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Denial of service"
+				}
+			],
+			"title": "FortiADCManager - MEDIUM - FG-IR-25-122"
+		},
+		{
+			"cve": "CVE-2025-26466",
+			"cwe": {
+				"id": "CWE-1395",
+				"name": "The product has a dependency on a third-party component that contains one or more known vulnerabilities. + "
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "OpenSSH vulnerability (CVE-2025-26466)\n\n",
+					"title": "Summary"
+				},
+				{
+					"category": "general",
+					"text": "N/A",
+					"title": "Workarounds"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiAIOps 2.1 all versions",
+					"FortiAIOps >=2.0.1|<=2.0.2"
+				],
+				"known_not_affected": [
+					"FortiAIOps/ 3.2 all versions",
+					"FortiAIOps/ 3.0 all versions",
+					"FortiAIOps/ 1.1 all versions",
+					"FortiAIOps/ 1.0 all versions"
+				]
+			},
+			"references": [
+				{
+					"summary": "CVE-2025-26466\r\nA flaw was found in the OpenSSH package. For each ping packet the SSH server receives, a pong packet is allocated in a memory buffer and stored in a queue of packages. It is only freed when the server/client key exchange has finished. A malicious client may keep sending such packages, leading to an uncontrolled increase in memory consumption on the server side. Consequently, the server may become unavailable, resulting in a denial of service attack.",
+					"url": "https://nvd.nist.gov/vuln/detail/CVE-2025-26466\r\nhttps://www.qualys.com/2025/02/18/openssh-mitm-dos.txt"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiAIOps 3.2: Not Applicable\nFortiAIOps 3.0: Not Applicable\nFortiAIOps 2.1: Migrate to a fixed release\nFortiAIOps 2.0: Migrate to a fixed release\nFortiAIOps 1.1: Not Applicable\nFortiAIOps 1.0: Not applicable",
+					"product_ids": [
+						"FortiAIOps"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 5.9,
+						"baseSeverity": "MEDIUM",
+						"vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:H/E:X/RL:O/RC:X",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiAIOps"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Denial of service"
+				}
+			],
+			"title": "FortiAIOps - MEDIUM - FG-IR-25-122"
+		},
+		{
+			"cve": "CVE-2025-26466",
+			"cwe": {
+				"id": "CWE-1395",
+				"name": "The product has a dependency on a third-party component that contains one or more known vulnerabilities. + "
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "OpenSSH vulnerability (CVE-2025-26466)\n\n",
+					"title": "Summary"
+				},
+				{
+					"category": "general",
+					"text": "N/A",
+					"title": "Workarounds"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiAnalyzer >=7.6.0|<=7.6.2",
+					"FortiAnalyzer >=7.4.3|<=7.4.6",
+					"FortiAnalyzer >=7.2.5|<=7.2.10",
+					"FortiAnalyzer >=7.0.12|<=7.0.14",
+					"FortiAnalyzer >=6.4.14|<=6.4.15"
+				],
+				"known_not_affected": [
+					"FortiAnalyzer-7.6.3",
+					"FortiAnalyzer-7.4.7",
+					"FortiAnalyzer-7.2.11"
+				]
+			},
+			"references": [
+				{
+					"summary": "CVE-2025-26466\r\nA flaw was found in the OpenSSH package. For each ping packet the SSH server receives, a pong packet is allocated in a memory buffer and stored in a queue of packages. It is only freed when the server/client key exchange has finished. A malicious client may keep sending such packages, leading to an uncontrolled increase in memory consumption on the server side. Consequently, the server may become unavailable, resulting in a denial of service attack.",
+					"url": "https://nvd.nist.gov/vuln/detail/CVE-2025-26466\r\nhttps://www.qualys.com/2025/02/18/openssh-mitm-dos.txt"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiAnalyzer 7.6: Upgrade to 7.6.3 or above\nFortiAnalyzer 7.4: Upgrade to 7.4.7 or above\nFortiAnalyzer 7.2: Upgrade to 7.2.11 or above\nFortiAnalyzer 7.0: Migrate to a fixed release\nFortiAnalyzer 6.4: Migrate to a fixed release",
+					"product_ids": [
+						"FortiAnalyzer"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 5.9,
+						"baseSeverity": "MEDIUM",
+						"vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:H/E:X/RL:O/RC:X",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiAnalyzer"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Denial of service"
+				}
+			],
+			"title": "FortiAnalyzer - MEDIUM - FG-IR-25-122"
+		},
+		{
+			"cve": "CVE-2025-26466",
+			"cwe": {
+				"id": "CWE-1395",
+				"name": "The product has a dependency on a third-party component that contains one or more known vulnerabilities. + "
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "OpenSSH vulnerability (CVE-2025-26466)\n\n",
+					"title": "Summary"
+				},
+				{
+					"category": "general",
+					"text": "N/A",
+					"title": "Workarounds"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiAnalyzer-BigData >=7.4.2|<=7.4.3",
+					"FortiAnalyzer-BigData >=7.2.8|<=7.2.9"
+				],
+				"known_not_affected": [
+					"FortiAnalyzer-BigData/ 7.6 all versions",
+					"FortiAnalyzer-BigData-7.4.4",
+					"FortiAnalyzer-BigData-7.2.10"
+				]
+			},
+			"references": [
+				{
+					"summary": "CVE-2025-26466\r\nA flaw was found in the OpenSSH package. For each ping packet the SSH server receives, a pong packet is allocated in a memory buffer and stored in a queue of packages. It is only freed when the server/client key exchange has finished. A malicious client may keep sending such packages, leading to an uncontrolled increase in memory consumption on the server side. Consequently, the server may become unavailable, resulting in a denial of service attack.",
+					"url": "https://nvd.nist.gov/vuln/detail/CVE-2025-26466\r\nhttps://www.qualys.com/2025/02/18/openssh-mitm-dos.txt"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiAnalyzer-BigData 7.6: Not Applicable\nFortiAnalyzer-BigData 7.4: Upgrade to 7.4.4 or above\nFortiAnalyzer-BigData 7.2: Upgrade to 7.2.10 or above",
+					"product_ids": [
+						"FortiAnalyzer-BigData"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 5.9,
+						"baseSeverity": "MEDIUM",
+						"vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:H/E:X/RL:O/RC:X",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiAnalyzer-BigData"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Denial of service"
+				}
+			],
+			"title": "FortiAnalyzer-BigData - MEDIUM - FG-IR-25-122"
+		},
+		{
+			"cve": "CVE-2025-26466",
+			"cwe": {
+				"id": "CWE-1395",
+				"name": "The product has a dependency on a third-party component that contains one or more known vulnerabilities. + "
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "OpenSSH vulnerability (CVE-2025-26466)\n\n",
+					"title": "Summary"
+				},
+				{
+					"category": "general",
+					"text": "N/A",
+					"title": "Workarounds"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiDDoS-F >=7.0.1|<=7.0.4"
+				],
+				"known_not_affected": [
+					"FortiDDoS-F-7.0.5",
+					"FortiDDoS-F/ 6.6 all versions",
+					"FortiDDoS-F/ 6.5 all versions",
+					"FortiDDoS-F/ 6.4 all versions",
+					"FortiDDoS-F/ 6.3 all versions",
+					"FortiDDoS-F/ 6.2 all versions",
+					"FortiDDoS-F/ 6.1 all versions"
+				]
+			},
+			"references": [
+				{
+					"summary": "CVE-2025-26466\r\nA flaw was found in the OpenSSH package. For each ping packet the SSH server receives, a pong packet is allocated in a memory buffer and stored in a queue of packages. It is only freed when the server/client key exchange has finished. A malicious client may keep sending such packages, leading to an uncontrolled increase in memory consumption on the server side. Consequently, the server may become unavailable, resulting in a denial of service attack.",
+					"url": "https://nvd.nist.gov/vuln/detail/CVE-2025-26466\r\nhttps://www.qualys.com/2025/02/18/openssh-mitm-dos.txt"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiDDoS-F 7.0: Upgrade to 7.0.5 or above\nFortiDDoS-F 6.6: Not Applicable\nFortiDDoS-F 6.5: Not Applicable\nFortiDDoS-F 6.4: Not Applicable\nFortiDDoS-F 6.3: Not Applicable\nFortiDDoS-F 6.2: Not Applicable\nFortiDDoS-F 6.1: Not Applicable",
+					"product_ids": [
+						"FortiDDoS-F"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 5.9,
+						"baseSeverity": "MEDIUM",
+						"vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:H/E:X/RL:O/RC:X",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiDDoS-F"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Denial of service"
+				}
+			],
+			"title": "FortiDDoS-F - MEDIUM - FG-IR-25-122"
+		},
+		{
+			"cve": "CVE-2025-26466",
+			"cwe": {
+				"id": "CWE-1395",
+				"name": "The product has a dependency on a third-party component that contains one or more known vulnerabilities. + "
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "OpenSSH vulnerability (CVE-2025-26466)\n\n",
+					"title": "Summary"
+				},
+				{
+					"category": "general",
+					"text": "N/A",
+					"title": "Workarounds"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiExtender >=7.6.0|<=7.6.2",
+					"FortiExtender >=7.4.4|<=7.4.7",
+					"FortiExtender 7.2.5",
+					"FortiExtender 7.0.5"
+				],
+				"known_not_affected": [
+					"FortiExtender-7.6.3",
+					"FortiExtender-7.4.8"
+				]
+			},
+			"references": [
+				{
+					"summary": "CVE-2025-26466\r\nA flaw was found in the OpenSSH package. For each ping packet the SSH server receives, a pong packet is allocated in a memory buffer and stored in a queue of packages. It is only freed when the server/client key exchange has finished. A malicious client may keep sending such packages, leading to an uncontrolled increase in memory consumption on the server side. Consequently, the server may become unavailable, resulting in a denial of service attack.",
+					"url": "https://nvd.nist.gov/vuln/detail/CVE-2025-26466\r\nhttps://www.qualys.com/2025/02/18/openssh-mitm-dos.txt"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiExtender 7.6: Upgrade to 7.6.3 or above\nFortiExtender 7.4: Upgrade to 7.4.8 or above\nFortiExtender 7.2: Migrate to a fixed release\nFortiExtender 7.0: Migrate to a fixed release",
+					"product_ids": [
+						"FortiExtender"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 5.9,
+						"baseSeverity": "MEDIUM",
+						"vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:H/E:X/RL:O/RC:X",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiExtender"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Denial of service"
+				}
+			],
+			"title": "FortiExtender - MEDIUM - FG-IR-25-122"
+		},
+		{
+			"cve": "CVE-2025-26466",
+			"cwe": {
+				"id": "CWE-1395",
+				"name": "The product has a dependency on a third-party component that contains one or more known vulnerabilities. + "
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "OpenSSH vulnerability (CVE-2025-26466)\n\n",
+					"title": "Summary"
+				},
+				{
+					"category": "general",
+					"text": "N/A",
+					"title": "Workarounds"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiMail >=7.6.0|<=7.6.3",
+					"FortiMail >=7.4.2|<=7.4.5",
+					"FortiMail >=7.2.6|<=7.2.8",
+					"FortiMail >=7.0.8|<=7.0.9"
+				],
+				"known_not_affected": [
+					"FortiMail-7.6.4",
+					"FortiMail-7.4.6",
+					"FortiMail-7.2.9"
+				]
+			},
+			"references": [
+				{
+					"summary": "CVE-2025-26466\r\nA flaw was found in the OpenSSH package. For each ping packet the SSH server receives, a pong packet is allocated in a memory buffer and stored in a queue of packages. It is only freed when the server/client key exchange has finished. A malicious client may keep sending such packages, leading to an uncontrolled increase in memory consumption on the server side. Consequently, the server may become unavailable, resulting in a denial of service attack.",
+					"url": "https://nvd.nist.gov/vuln/detail/CVE-2025-26466\r\nhttps://www.qualys.com/2025/02/18/openssh-mitm-dos.txt"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiMail 7.6: Upgrade to 7.6.4 or above\nFortiMail 7.4: Upgrade to 7.4.6 or above\nFortiMail 7.2: Upgrade to 7.2.9 or above\nFortiMail 7.0: Migrate to a fixed release",
+					"product_ids": [
+						"FortiMail"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 5.9,
+						"baseSeverity": "MEDIUM",
+						"vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:H/E:X/RL:O/RC:X",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiMail"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Denial of service"
+				}
+			],
+			"title": "FortiMail - MEDIUM - FG-IR-25-122"
+		},
+		{
+			"cve": "CVE-2025-26466",
+			"cwe": {
+				"id": "CWE-1395",
+				"name": "The product has a dependency on a third-party component that contains one or more known vulnerabilities. + "
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "OpenSSH vulnerability (CVE-2025-26466)\n\n",
+					"title": "Summary"
+				},
+				{
+					"category": "general",
+					"text": "N/A",
+					"title": "Workarounds"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiManager >=7.6.0|<=7.6.2",
+					"FortiManager >=7.4.3|<=7.4.6",
+					"FortiManager >=7.2.5|<=7.2.10",
+					"FortiManager >=7.0.12|<=7.0.14",
+					"FortiManager >=6.4.14|<=6.4.15"
+				],
+				"known_not_affected": [
+					"FortiManager-7.6.3",
+					"FortiManager-7.4.7",
+					"FortiManager-7.2.11"
+				]
+			},
+			"references": [
+				{
+					"summary": "CVE-2025-26466\r\nA flaw was found in the OpenSSH package. For each ping packet the SSH server receives, a pong packet is allocated in a memory buffer and stored in a queue of packages. It is only freed when the server/client key exchange has finished. A malicious client may keep sending such packages, leading to an uncontrolled increase in memory consumption on the server side. Consequently, the server may become unavailable, resulting in a denial of service attack.",
+					"url": "https://nvd.nist.gov/vuln/detail/CVE-2025-26466\r\nhttps://www.qualys.com/2025/02/18/openssh-mitm-dos.txt"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiManager 7.6: Upgrade to 7.6.3 or above\nFortiManager 7.4: Upgrade to 7.4.7 or above\nFortiManager 7.2: Upgrade to 7.2.11 or above\nFortiManager 7.0: Migrate to a fixed release\nFortiManager 6.4: Migrate to a fixed release",
+					"product_ids": [
+						"FortiManager"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 5.9,
+						"baseSeverity": "MEDIUM",
+						"vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:H/E:X/RL:O/RC:X",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiManager"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Denial of service"
+				}
+			],
+			"title": "FortiManager - MEDIUM - FG-IR-25-122"
+		},
+		{
+			"cve": "CVE-2025-26466",
+			"cwe": {
+				"id": "CWE-1395",
+				"name": "The product has a dependency on a third-party component that contains one or more known vulnerabilities. + "
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "OpenSSH vulnerability (CVE-2025-26466)\n\n",
+					"title": "Summary"
+				},
+				{
+					"category": "general",
+					"text": "N/A",
+					"title": "Workarounds"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiNDR >=7.6.0|<=7.6.1",
+					"FortiNDR >=7.4.3|<=7.4.8",
+					"FortiNDR 7.2.2 and above",
+					"FortiNDR 7.0.6 and above"
+				],
+				"known_not_affected": [
+					"FortiNDR-7.6.2",
+					"FortiNDR-7.4.9",
+					"FortiNDR/ 7.1 all versions",
+					"FortiNDR/ 1.5 all versions",
+					"FortiNDR/ 1.4 all versions"
+				]
+			},
+			"references": [
+				{
+					"summary": "CVE-2025-26466\r\nA flaw was found in the OpenSSH package. For each ping packet the SSH server receives, a pong packet is allocated in a memory buffer and stored in a queue of packages. It is only freed when the server/client key exchange has finished. A malicious client may keep sending such packages, leading to an uncontrolled increase in memory consumption on the server side. Consequently, the server may become unavailable, resulting in a denial of service attack.",
+					"url": "https://nvd.nist.gov/vuln/detail/CVE-2025-26466\r\nhttps://www.qualys.com/2025/02/18/openssh-mitm-dos.txt"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiNDR 7.6: Upgrade to 7.6.2 or above\nFortiNDR 7.4: Upgrade to 7.4.9 or above\nFortiNDR 7.2: Migrate to a fixed release\nFortiNDR 7.1: Not Applicable\nFortiNDR 7.0: Migrate to a fixed release\nFortiNDR 1.5: Not Applicable\nFortiNDR 1.4: Not Applicable",
+					"product_ids": [
+						"FortiNDR"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 5.9,
+						"baseSeverity": "MEDIUM",
+						"vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:H/E:X/RL:O/RC:X",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiNDR"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Denial of service"
+				}
+			],
+			"title": "FortiNDR - MEDIUM - FG-IR-25-122"
+		},
+		{
+			"cve": "CVE-2025-26466",
+			"cwe": {
+				"id": "CWE-1395",
+				"name": "The product has a dependency on a third-party component that contains one or more known vulnerabilities. + "
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "OpenSSH vulnerability (CVE-2025-26466)\n\n",
+					"title": "Summary"
+				},
+				{
+					"category": "general",
+					"text": "N/A",
+					"title": "Workarounds"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiSandbox >=5.0.0|<=5.0.1",
+					"FortiSandbox >=4.4.4|<=4.4.7",
+					"FortiSandbox >=4.2.7|<=4.2.8"
+				],
+				"known_not_affected": [
+					"FortiSandbox-5.0.2",
+					"FortiSandbox-4.4.8",
+					"FortiSandbox/ 4.0 all versions"
+				]
+			},
+			"references": [
+				{
+					"summary": "CVE-2025-26466\r\nA flaw was found in the OpenSSH package. For each ping packet the SSH server receives, a pong packet is allocated in a memory buffer and stored in a queue of packages. It is only freed when the server/client key exchange has finished. A malicious client may keep sending such packages, leading to an uncontrolled increase in memory consumption on the server side. Consequently, the server may become unavailable, resulting in a denial of service attack.",
+					"url": "https://nvd.nist.gov/vuln/detail/CVE-2025-26466\r\nhttps://www.qualys.com/2025/02/18/openssh-mitm-dos.txt"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiSandbox 5.0: Upgrade to 5.0.2 or above\nFortiSandbox 4.4: Upgrade to 4.4.8 or above\nFortiSandbox 4.2: Migrate to a fixed release\nFortiSandbox 4.0: Not Applicable",
+					"product_ids": [
+						"FortiSandbox"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 5.9,
+						"baseSeverity": "MEDIUM",
+						"vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:H/E:X/RL:O/RC:X",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiSandbox"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Denial of service"
+				}
+			],
+			"title": "FortiSandbox - MEDIUM - FG-IR-25-122"
+		},
+		{
+			"cve": "CVE-2025-26466",
+			"cwe": {
+				"id": "CWE-1395",
+				"name": "The product has a dependency on a third-party component that contains one or more known vulnerabilities. + "
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "OpenSSH vulnerability (CVE-2025-26466)\n\n",
+					"title": "Summary"
+				},
+				{
+					"category": "general",
+					"text": "N/A",
+					"title": "Workarounds"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiSwitch >=7.6.0|<=7.6.4",
+					"FortiSwitch >=7.4.4|<=7.4.7",
+					"FortiSwitch >=7.2.8|<=7.2.10"
+				],
+				"known_not_affected": [
+					"FortiSwitch-7.6.5",
+					"FortiSwitch-7.4.8",
+					"FortiSwitch/ 7.0 all versions"
+				]
+			},
+			"references": [
+				{
+					"summary": "CVE-2025-26466\r\nA flaw was found in the OpenSSH package. For each ping packet the SSH server receives, a pong packet is allocated in a memory buffer and stored in a queue of packages. It is only freed when the server/client key exchange has finished. A malicious client may keep sending such packages, leading to an uncontrolled increase in memory consumption on the server side. Consequently, the server may become unavailable, resulting in a denial of service attack.",
+					"url": "https://nvd.nist.gov/vuln/detail/CVE-2025-26466\r\nhttps://www.qualys.com/2025/02/18/openssh-mitm-dos.txt"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiSwitch 7.6: Upgrade to 7.6.5 or above\nFortiSwitch 7.4: Upgrade to 7.4.8 or above\nFortiSwitch 7.2: Migrate to a fixed release\nFortiSwitch 7.0: Not Applicable",
+					"product_ids": [
+						"FortiSwitch"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 5.9,
+						"baseSeverity": "MEDIUM",
+						"vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:H/E:X/RL:O/RC:X",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiSwitch"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Denial of service"
+				}
+			],
+			"title": "FortiSwitch - MEDIUM - FG-IR-25-122"
+		},
+		{
+			"cve": "CVE-2025-26466",
+			"cwe": {
+				"id": "CWE-1395",
+				"name": "The product has a dependency on a third-party component that contains one or more known vulnerabilities. + "
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "OpenSSH vulnerability (CVE-2025-26466)\n\n",
+					"title": "Summary"
+				},
+				{
+					"category": "general",
+					"text": "N/A",
+					"title": "Workarounds"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiVoice >=7.2.0|<=7.2.1",
+					"FortiVoice >=7.0.2|<=7.0.7",
+					"FortiVoice >=6.4.9|<=6.4.11"
+				],
+				"known_not_affected": [
+					"FortiVoice-7.2.2",
+					"FortiVoice-7.0.8",
+					"FortiVoice-6.4.12"
+				]
+			},
+			"references": [
+				{
+					"summary": "CVE-2025-26466\r\nA flaw was found in the OpenSSH package. For each ping packet the SSH server receives, a pong packet is allocated in a memory buffer and stored in a queue of packages. It is only freed when the server/client key exchange has finished. A malicious client may keep sending such packages, leading to an uncontrolled increase in memory consumption on the server side. Consequently, the server may become unavailable, resulting in a denial of service attack.",
+					"url": "https://nvd.nist.gov/vuln/detail/CVE-2025-26466\r\nhttps://www.qualys.com/2025/02/18/openssh-mitm-dos.txt"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiVoice 7.2: Upgrade to 7.2.2 or above\nFortiVoice 7.0: Upgrade to 7.0.8 or above\nFortiVoice 6.4: Upgrade to 6.4.12 or above",
+					"product_ids": [
+						"FortiVoice"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 5.9,
+						"baseSeverity": "MEDIUM",
+						"vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:H/E:X/RL:O/RC:X",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiVoice"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Denial of service"
+				}
+			],
+			"title": "FortiVoice - MEDIUM - FG-IR-25-122"
+		},
+		{
+			"cve": "CVE-2025-26466",
+			"cwe": {
+				"id": "CWE-1395",
+				"name": "The product has a dependency on a third-party component that contains one or more known vulnerabilities. + "
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "OpenSSH vulnerability (CVE-2025-26466)\n\n",
+					"title": "Summary"
+				},
+				{
+					"category": "general",
+					"text": "N/A",
+					"title": "Workarounds"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiWeb >=7.6.0|<=7.6.4",
+					"FortiWeb >=7.4.3|<=7.4.8",
+					"FortiWeb 7.2.8 and above"
+				],
+				"known_not_affected": [
+					"FortiWeb/ 8.0 all versions",
+					"FortiWeb-7.6.5",
+					"FortiWeb-7.4.9",
+					"FortiWeb/ 7.0 all versions"
+				]
+			},
+			"references": [
+				{
+					"summary": "CVE-2025-26466\r\nA flaw was found in the OpenSSH package. For each ping packet the SSH server receives, a pong packet is allocated in a memory buffer and stored in a queue of packages. It is only freed when the server/client key exchange has finished. A malicious client may keep sending such packages, leading to an uncontrolled increase in memory consumption on the server side. Consequently, the server may become unavailable, resulting in a denial of service attack.",
+					"url": "https://nvd.nist.gov/vuln/detail/CVE-2025-26466\r\nhttps://www.qualys.com/2025/02/18/openssh-mitm-dos.txt"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiWeb 8.0: Not Applicable\nFortiWeb 7.6: Upgrade to 7.6.5 or above\nFortiWeb 7.4: Upgrade to 7.4.9 or above\nFortiWeb 7.2: Migrate to a fixed release\nFortiWeb 7.0: Not Applicable",
+					"product_ids": [
+						"FortiWeb"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 5.9,
+						"baseSeverity": "MEDIUM",
+						"vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:H/E:X/RL:O/RC:X",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiWeb"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Denial of service"
+				}
+			],
+			"title": "FortiWeb - MEDIUM - FG-IR-25-122"
+		}
+	]
+}

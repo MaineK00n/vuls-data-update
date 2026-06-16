@@ -1,0 +1,69 @@
+{
+	"document_title": "Potential Buffer Overflow During HTTP Session Authentication",
+	"document_type": "Fortinet PSIRT Advisories",
+	"documentpublisher": {
+		"type": "Vendor",
+		"contact_details": "\n            Fortinet PSIRT Contact:\n            Email: psirt@fortinet.com\n            Website: fortiguard.com/psirt-pgpkey\n        "
+	},
+	"documenttracking": {
+		"identification": {
+			"id": "FG-IR-012-003"
+		},
+		"revisionhistory": {
+			"revision": {}
+		},
+		"current_release_date": "2013-01-29T00:00:00"
+	},
+	"documentnotes": {
+		"note": [
+			{
+				"text": "\n                    Fortinet has verified a potential issue during HTTP session authentication that could lead to a buffer overflow condition on the FortiGate unit when properly exploited. An attacker may craft a malicious HTTP request which exploits a variable in the HTTP header causing the buffer overflow condition when parsed by the FortiGate unit. When properly crafted, it may result in control of code flow execution.\n        ",
+				"title": "Summary",
+				"type": "Summary"
+			},
+			{
+				"text": "\n                    Fortinet has verified a potential issue during HTTP session authentication that could lead to a buffer overflow condition on the FortiGate unit when properly exploited. An attacker may craft a malicious HTTP request which exploits a variable in the HTTP header causing the buffer overflow condition when parsed by the FortiGate unit. When properly crafted, it may result in control of code flow execution.\n        ",
+				"title": "Description",
+				"type": "Description"
+			},
+			{
+				"text": "\n                    Remote Code Execution\n        ",
+				"title": "Impact",
+				"type": "Description"
+			},
+			{
+				"text": "\n                    Some FortiGate units are affected. The following lists affected FortiOS units and versions, along with release status:\n\n    v4.2 - FortiGate 60C Units Only\n        Release TBA\n    v4.3 - All FortiGate Units < v4.3.8\n        Fix in v4.3.9, Released 8/20/2012\n    v5.0 Beta - All FortiGate Units\n        Fix in Beta 6, Release Scheduled 8/23/2012\n        ",
+				"title": "Affected Products",
+				"type": "Description"
+			},
+			{
+				"text": "\n                    Fortinet recommends the following solutions:\n\n                    If your product is affected as per 'Affected Product' section, apply the indicated upgrade when availablebranch under 'Affected Product'.                \n        ",
+				"title": "Solutions",
+				"type": "Description"
+			}
+		]
+	},
+	"document_references": {},
+	"acknowledgments": {
+		"acknowledgment": [
+			{
+				"description": "Benjamin Kunz Mejri of Vulnerability Laboratory Research Team"
+			}
+		]
+	},
+	"vulnerability": {
+		"references": {},
+		"cve": [
+			"CVE-2013-1471"
+		],
+		"product_statuses": {
+			"status": {}
+		},
+		"cvss_scoresets": {
+			"scoreset_v3": {}
+		}
+	},
+	"product_tree": {
+		"branch": {}
+	}
+}

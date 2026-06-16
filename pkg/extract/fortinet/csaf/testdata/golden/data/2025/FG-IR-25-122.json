@@ -1,0 +1,756 @@
+{
+	"id": "FG-IR-25-122",
+	"advisories": [
+		{
+			"content": {
+				"id": "FG-IR-25-122",
+				"title": "Pre-authentication Denial of Service attack in OpenSSH - CVE-2025-26466",
+				"references": [
+					{
+						"source": "fortiguard.com",
+						"url": "https://fortiguard.fortinet.com/psirt/FG-IR-25-122"
+					}
+				],
+				"published": "2025-03-11T00:00:00Z",
+				"modified": "2026-04-14T00:00:00Z"
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe",
+					"tag": "CVE-2025-26466"
+				}
+			]
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-2025-26466",
+				"title": "FortiADC - MEDIUM - FG-IR-25-122",
+				"description": "OpenSSH vulnerability (CVE-2025-26466)",
+				"severity": [
+					{
+						"type": "vendor",
+						"source": "fortiguard.com",
+						"vendor": "Denial of service"
+					},
+					{
+						"type": "cvss_v31",
+						"source": "fortiguard.com",
+						"cvss_v31": {
+							"vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:H/E:X/RL:O/RC:X",
+							"base_score": 5.9,
+							"base_severity": "MEDIUM",
+							"temporal_score": 5.7,
+							"temporal_severity": "MEDIUM",
+							"environmental_score": 5.7,
+							"environmental_severity": "MEDIUM"
+						}
+					}
+				],
+				"cwe": [
+					{
+						"source": "fortiguard.com",
+						"cwe": [
+							"CWE-1395"
+						]
+					}
+				],
+				"workarounds": [
+					{
+						"source": "fortiguard.com",
+						"description": "N/A"
+					}
+				],
+				"references": [
+					{
+						"source": "fortiguard.com",
+						"url": "https://nvd.nist.gov/vuln/detail/CVE-2025-26466\r\nhttps://www.qualys.com/2025/02/18/openssh-mitm-dos.txt"
+					}
+				],
+				"optional": {
+					"known_not_affected": [
+						"FortiADC-7.6.2",
+						"FortiADC/ 6.1 all versions",
+						"FortiADC/ 6.2 all versions",
+						"FortiADC/ 7.0 all versions",
+						"FortiADC/ 7.1 all versions",
+						"FortiADC/ 7.2 all versions",
+						"FortiADC/ 7.4 all versions",
+						"FortiADC/ 7.8 all versions",
+						"FortiADCManager-7.6.1",
+						"FortiADCManager/ 6.0 all versions",
+						"FortiADCManager/ 6.1 all versions",
+						"FortiADCManager/ 6.2 all versions",
+						"FortiADCManager/ 7.0 all versions",
+						"FortiADCManager/ 7.1 all versions",
+						"FortiADCManager/ 7.2 all versions",
+						"FortiADCManager/ 7.4 all versions",
+						"FortiAIOps/ 1.0 all versions",
+						"FortiAIOps/ 1.1 all versions",
+						"FortiAIOps/ 3.0 all versions",
+						"FortiAIOps/ 3.2 all versions",
+						"FortiAnalyzer-7.2.11",
+						"FortiAnalyzer-7.4.7",
+						"FortiAnalyzer-7.6.3",
+						"FortiAnalyzer-BigData-7.2.10",
+						"FortiAnalyzer-BigData-7.4.4",
+						"FortiAnalyzer-BigData/ 7.6 all versions",
+						"FortiDDoS-F-7.0.5",
+						"FortiDDoS-F/ 6.1 all versions",
+						"FortiDDoS-F/ 6.2 all versions",
+						"FortiDDoS-F/ 6.3 all versions",
+						"FortiDDoS-F/ 6.4 all versions",
+						"FortiDDoS-F/ 6.5 all versions",
+						"FortiDDoS-F/ 6.6 all versions",
+						"FortiExtender-7.4.8",
+						"FortiExtender-7.6.3",
+						"FortiMail-7.2.9",
+						"FortiMail-7.4.6",
+						"FortiMail-7.6.4",
+						"FortiManager-7.2.11",
+						"FortiManager-7.4.7",
+						"FortiManager-7.6.3",
+						"FortiNDR-7.4.9",
+						"FortiNDR-7.6.2",
+						"FortiNDR/ 1.4 all versions",
+						"FortiNDR/ 1.5 all versions",
+						"FortiNDR/ 7.1 all versions",
+						"FortiSandbox-4.4.8",
+						"FortiSandbox-5.0.2",
+						"FortiSandbox/ 4.0 all versions",
+						"FortiSwitch-7.4.8",
+						"FortiSwitch-7.6.5",
+						"FortiSwitch/ 7.0 all versions",
+						"FortiVoice-6.4.12",
+						"FortiVoice-7.0.8",
+						"FortiVoice-7.2.2",
+						"FortiWeb-7.4.9",
+						"FortiWeb-7.6.5",
+						"FortiWeb/ 7.0 all versions",
+						"FortiWeb/ 8.0 all versions"
+					]
+				}
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe",
+					"tag": "CVE-2025-26466"
+				}
+			]
+		}
+	],
+	"detections": [
+		{
+			"ecosystem": "cpe",
+			"conditions": [
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:a:fortinet:fortiadc_manager:7.6.0:*:*:*:*:*:*:*"
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:a:fortinet:fortiaiops:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet",
+										"ge": "2.0.1",
+										"le": "2.0.2"
+									}
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:a:fortinet:fortiaiops:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet",
+										"ge": "2.1",
+										"lt": "2.2"
+									}
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:o:fortinet:fortiadc:7.6.1:*:*:*:*:*:*:*"
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:o:fortinet:fortianalyzer-bigdata:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet",
+										"ge": "7.2.8",
+										"le": "7.2.9"
+									}
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:o:fortinet:fortianalyzer-bigdata:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet",
+										"ge": "7.4.2",
+										"le": "7.4.3"
+									}
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:o:fortinet:fortianalyzer:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet",
+										"ge": "6.4.14",
+										"le": "6.4.15"
+									}
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:o:fortinet:fortianalyzer:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet",
+										"ge": "7.0.12",
+										"le": "7.0.14"
+									}
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:o:fortinet:fortianalyzer:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet",
+										"ge": "7.2.5",
+										"le": "7.2.10"
+									}
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:o:fortinet:fortianalyzer:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet",
+										"ge": "7.4.3",
+										"le": "7.4.6"
+									}
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:o:fortinet:fortianalyzer:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet",
+										"ge": "7.6.0",
+										"le": "7.6.2"
+									}
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:o:fortinet:fortiddos-f:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet",
+										"ge": "7.0.1",
+										"le": "7.0.4"
+									}
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:o:fortinet:fortiextender:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet",
+										"ge": "7.4.4",
+										"le": "7.4.7"
+									}
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:o:fortinet:fortiextender:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet",
+										"ge": "7.6.0",
+										"le": "7.6.2"
+									}
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:o:fortinet:fortiextender:7.0.5:*:*:*:*:*:*:*"
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:o:fortinet:fortiextender:7.2.5:*:*:*:*:*:*:*"
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:o:fortinet:fortimail:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet",
+										"ge": "7.0.8",
+										"le": "7.0.9"
+									}
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:o:fortinet:fortimail:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet",
+										"ge": "7.2.6",
+										"le": "7.2.8"
+									}
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:o:fortinet:fortimail:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet",
+										"ge": "7.4.2",
+										"le": "7.4.5"
+									}
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:o:fortinet:fortimail:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet",
+										"ge": "7.6.0",
+										"le": "7.6.3"
+									}
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:o:fortinet:fortimanager:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet",
+										"ge": "6.4.14",
+										"le": "6.4.15"
+									}
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:o:fortinet:fortimanager:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet",
+										"ge": "7.0.12",
+										"le": "7.0.14"
+									}
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:o:fortinet:fortimanager:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet",
+										"ge": "7.2.5",
+										"le": "7.2.10"
+									}
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:o:fortinet:fortimanager:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet",
+										"ge": "7.4.3",
+										"le": "7.4.6"
+									}
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:o:fortinet:fortimanager:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet",
+										"ge": "7.6.0",
+										"le": "7.6.2"
+									}
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:o:fortinet:fortindr:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet",
+										"ge": "7.0.6"
+									}
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:o:fortinet:fortindr:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet",
+										"ge": "7.2.2"
+									}
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:o:fortinet:fortindr:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet",
+										"ge": "7.4.3",
+										"le": "7.4.8"
+									}
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:o:fortinet:fortindr:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet",
+										"ge": "7.6.0",
+										"le": "7.6.1"
+									}
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:o:fortinet:fortisandbox:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet",
+										"ge": "4.2.7",
+										"le": "4.2.8"
+									}
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:o:fortinet:fortisandbox:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet",
+										"ge": "4.4.4",
+										"le": "4.4.7"
+									}
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:o:fortinet:fortisandbox:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet",
+										"ge": "5.0.0",
+										"le": "5.0.1"
+									}
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:o:fortinet:fortiswitch:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet",
+										"ge": "7.2.8",
+										"le": "7.2.10"
+									}
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:o:fortinet:fortiswitch:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet",
+										"ge": "7.4.4",
+										"le": "7.4.7"
+									}
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:o:fortinet:fortiswitch:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet",
+										"ge": "7.6.0",
+										"le": "7.6.4"
+									}
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:o:fortinet:fortivoice:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet",
+										"ge": "6.4.9",
+										"le": "6.4.11"
+									}
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:o:fortinet:fortivoice:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet",
+										"ge": "7.0.2",
+										"le": "7.0.7"
+									}
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:o:fortinet:fortivoice:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet",
+										"ge": "7.2.0",
+										"le": "7.2.1"
+									}
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:o:fortinet:fortiweb:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet",
+										"ge": "7.2.8"
+									}
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:o:fortinet:fortiweb:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet",
+										"ge": "7.4.3",
+										"le": "7.4.8"
+									}
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:o:fortinet:fortiweb:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet",
+										"ge": "7.6.0",
+										"le": "7.6.4"
+									}
+								}
+							}
+						]
+					},
+					"tag": "CVE-2025-26466"
+				}
+			]
+		}
+	],
+	"data_source": {
+		"id": "fortinet-csaf",
+		"raws": [
+			"fixtures/2025/FG-IR-25-122.json"
+		]
+	}
+}

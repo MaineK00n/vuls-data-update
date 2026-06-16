@@ -1,0 +1,262 @@
+{
+	"document": {
+		"acknowledgments": [
+			{
+				"summary": "Fortinet is pleased to thank Francesco Caserta, Alessandro Esposito, Andrea Lomuscio and Alessandro Ruggieri from the Italian National Cybersecurity\r\nAgency (ACN) for reporting this vulnerability under responsible disclosure."
+			}
+		],
+		"category": "Fortinet PSIRT Advisories",
+		"csaf_version": "2.0",
+		"publisher": {
+			"category": "vendor",
+			"contact_details": "https://fortiguard.fortinet.com/faq/psirt-contact",
+			"issuing_authority": "Fortinet PSIRT",
+			"name": "Fortinet PSIRT",
+			"namespace": "https://fortiguard.fortinet.com/psirt"
+		},
+		"title": "Privilege escalation in automation-stitch",
+		"tracking": {
+			"current_release_date": "2026-01-14T00:00:00",
+			"id": "FG-IR-24-385",
+			"initial_release_date": "2025-06-10T00:00:00",
+			"revision_history": [
+				{
+					"date": "2025-06-10T00:00:00",
+					"number": "1",
+					"summary": "Initial Publication"
+				}
+			],
+			"status": "final",
+			"version": "0"
+		}
+	},
+	"product_tree": {
+		"branches": [
+			{
+				"branches": [
+					{
+						"branches": [
+							{
+								"category": "product_version_range",
+								"name": "FortiOS/ 7.6 all versions",
+								"product": {
+									"name": "FortiOS",
+									"product_id": "FortiOS/ 7.6 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiOS/>=7.4.0|<=7.4.7",
+								"product": {
+									"name": "FortiOS",
+									"product_id": "FortiOS >=7.4.0|<=7.4.7"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiOS/>=7.2.0|<=7.2.11",
+								"product": {
+									"name": "FortiOS",
+									"product_id": "FortiOS >=7.2.0|<=7.2.11"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "FortiOS/7.0.6 and above",
+								"product": {
+									"name": "FortiOS",
+									"product_id": "FortiOS 7.0.6 and above"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiOS/ 6.4 all versions",
+								"product": {
+									"name": "FortiOS",
+									"product_id": "FortiOS/ 6.4 all versions"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiOS"
+					},
+					{
+						"branches": [
+							{
+								"category": "product_version_range",
+								"name": "FortiProxy/>=7.6.0|<=7.6.2",
+								"product": {
+									"name": "FortiProxy",
+									"product_id": "FortiProxy >=7.6.0|<=7.6.2"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiProxy/>=7.4.0|<=7.4.8",
+								"product": {
+									"name": "FortiProxy",
+									"product_id": "FortiProxy >=7.4.0|<=7.4.8"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiProxy/7.2 all versions",
+								"product": {
+									"name": "FortiProxy",
+									"product_id": "FortiProxy 7.2 all versions"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "FortiProxy/7.0.5 and above",
+								"product": {
+									"name": "FortiProxy",
+									"product_id": "FortiProxy 7.0.5 and above"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiProxy"
+					}
+				],
+				"category": "vendor",
+				"name": "Fortinet PSIRT"
+			}
+		]
+	},
+	"vulnerabilities": [
+		{
+			"cve": "CVE-2025-22862",
+			"cwe": {
+				"id": "CWE-288",
+				"name": "Authentication Bypass Using an Alternate Path or Channel"
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "Privilege escalation in automation-stitch\n\n",
+					"title": "Summary"
+				},
+				{
+					"category": "general",
+					"text": "N/A",
+					"title": "Workarounds"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiOS >=7.4.0|<=7.4.7",
+					"FortiOS >=7.2.0|<=7.2.11",
+					"FortiOS 7.0.6 and above"
+				],
+				"known_not_affected": [
+					"FortiOS/ 7.6 all versions",
+					"FortiOS-7.4.8",
+					"FortiOS-7.2.12",
+					"FortiOS/ 6.4 all versions"
+				]
+			},
+			"references": [
+				{
+					"summary": "An Authentication Bypass Using an Alternate Path or Channel vulnerability [CWE-288] in FortiOS and FortiProxy may allow an authenticated attacker to elevate their privileges via triggering a malicious Webhook action in the Automation Stitch component.",
+					"url": "https://fortiguard.fortinet.com/psirt/FG-IR-24-385"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiOS 7.6: Not Applicable\nFortiOS 7.4: Upgrade to 7.4.8 or above\nFortiOS 7.2: Upgrade to 7.2.12 or above\nFortiOS 7.0: Migrate to a fixed release\nFortiOS 6.4: Not Applicable",
+					"product_ids": [
+						"FortiOS"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 6.3,
+						"baseSeverity": "MEDIUM",
+						"vectorString": "CVSS:3.1/AV:L/AC:L/PR:H/UI:N/S:U/C:H/I:H/A:H/E:P/RL:X/RC:C",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiOS"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Escalation of privilege"
+				}
+			],
+			"title": "FortiOS - MEDIUM - FG-IR-24-385"
+		},
+		{
+			"cve": "CVE-2025-22862",
+			"cwe": {
+				"id": "CWE-288",
+				"name": "Authentication Bypass Using an Alternate Path or Channel"
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "Privilege escalation in automation-stitch\n\n",
+					"title": "Summary"
+				},
+				{
+					"category": "general",
+					"text": "N/A",
+					"title": "Workarounds"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiProxy >=7.6.0|<=7.6.2",
+					"FortiProxy >=7.4.0|<=7.4.8",
+					"FortiProxy 7.2 all versions",
+					"FortiProxy 7.0.5 and above"
+				],
+				"known_not_affected": [
+					"FortiProxy-7.6.3",
+					"FortiProxy-7.4.9"
+				]
+			},
+			"references": [
+				{
+					"summary": "An Authentication Bypass Using an Alternate Path or Channel vulnerability [CWE-288] in FortiOS and FortiProxy may allow an authenticated attacker to elevate their privileges via triggering a malicious Webhook action in the Automation Stitch component.",
+					"url": "https://fortiguard.fortinet.com/psirt/FG-IR-24-385"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiProxy 7.6: Upgrade to 7.6.3 or above\nFortiProxy 7.4: Upgrade to 7.4.9 or above\nFortiProxy 7.2: Migrate to a fixed release\nFortiProxy 7.0: Migrate to a fixed release",
+					"product_ids": [
+						"FortiProxy"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 6.3,
+						"baseSeverity": "MEDIUM",
+						"vectorString": "CVSS:3.1/AV:L/AC:L/PR:H/UI:N/S:U/C:H/I:H/A:H/E:P/RL:X/RC:C",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiProxy"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Escalation of privilege"
+				}
+			],
+			"title": "FortiProxy - MEDIUM - FG-IR-24-385"
+		}
+	]
+}
