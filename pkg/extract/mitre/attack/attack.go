@@ -297,7 +297,7 @@ func Extract(args string, opts ...Option) error {
 			for _, kc := range e.peek.Technique.KillChainPhases {
 				domain, ok := killChainDomain[kc.KillChainName]
 				if !ok {
-					continue
+					return errors.Errorf("technique %s references kill_chain_phase with unknown kill_chain_name %q (expected one of mitre-attack, mitre-ics-attack, mitre-mobile-attack)", k.ext, kc.KillChainName)
 				}
 				tExt, ok := tacticByDomainShortname[tacticKey{domain: domain, shortname: kc.PhaseName}]
 				if !ok {
@@ -487,7 +487,7 @@ func Extract(args string, opts ...Option) error {
 			for _, kc := range e.peek.Technique.KillChainPhases {
 				domain, ok := killChainDomain[kc.KillChainName]
 				if !ok {
-					continue
+					return errors.Errorf("technique %s references kill_chain_phase with unknown kill_chain_name %q (expected one of mitre-attack, mitre-ics-attack, mitre-mobile-attack)", extID, kc.KillChainName)
 				}
 				tacticExt, ok := tacticByDomainShortname[tacticKey{domain: domain, shortname: kc.PhaseName}]
 				if !ok {
