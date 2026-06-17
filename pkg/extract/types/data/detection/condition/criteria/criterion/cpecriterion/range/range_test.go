@@ -241,6 +241,13 @@ func TestRangeType_Compare(t *testing.T) {
 		{name: "fortinet: equal", t: ccRangeTypes.RangeTypeFortinet, v1: "7.2.0", v2: "7.2.0", want: 0},
 		{name: "fortinet: v1 > v2", t: ccRangeTypes.RangeTypeFortinet, v1: "7.1.0", v2: "7.0.0", want: 1},
 		{name: "fortinet: v1 unparseable → CompareError", t: ccRangeTypes.RangeTypeFortinet, v1: "not-a-version", v2: "7.0.0", wantCompareErr: true},
+		// Train-style tokens (as produced by product.TrainRange) must compare,
+		// both against each other and against fully-qualified semver bounds.
+		{name: "fortinet: train minor < train minor", t: ccRangeTypes.RangeTypeFortinet, v1: "7.2", v2: "7.4", want: -1},
+		{name: "fortinet: train major < train major", t: ccRangeTypes.RangeTypeFortinet, v1: "7", v2: "8", want: -1},
+		{name: "fortinet: train equal", t: ccRangeTypes.RangeTypeFortinet, v1: "7.2", v2: "7.2", want: 0},
+		{name: "fortinet: concrete within train lower bound (7.2.0 >= 7.2)", t: ccRangeTypes.RangeTypeFortinet, v1: "7.2.0", v2: "7.2", want: 0},
+		{name: "fortinet: concrete below next train (7.2.5 < 7.3)", t: ccRangeTypes.RangeTypeFortinet, v1: "7.2.5", v2: "7.3", want: -1},
 		{name: "version (loose): 4-segment v1 < v2", t: ccRangeTypes.RangeTypeVersion, v1: "9.16.19.0", v2: "9.16.20.0", want: -1},
 		{name: "version (loose): v1 unparseable → CompareError", t: ccRangeTypes.RangeTypeVersion, v1: "x.y.z.w.q", v2: "1.0", wantCompareErr: true},
 		{name: "Unknown → CompareError wrapping ErrRangeTypeUnknown", t: ccRangeTypes.RangeTypeUnknown, v1: "1.0.0", v2: "2.0.0", wantCompareErr: true},

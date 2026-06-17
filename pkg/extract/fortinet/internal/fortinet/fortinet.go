@@ -33,6 +33,14 @@ func YearDir(id string) (string, error) {
 		}
 		return s != ""
 	}
+
+	// The ID is used verbatim as the output filename, so reject a non-numeric
+	// <number> segment — it could otherwise carry path separators (e.g.
+	// "FG-IR-24-0/../x") and escape the output directory.
+	if !isDigits(ss[3]) {
+		return "", errors.Errorf("unexpected ID format. expected: %q, actual: %q", format, id)
+	}
+
 	switch yy := ss[2]; {
 	case len(yy) == 2 && isDigits(yy):
 		return fmt.Sprintf("20%s", yy), nil
