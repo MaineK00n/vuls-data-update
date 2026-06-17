@@ -494,6 +494,21 @@ func detections(fetched paloaltoJSON.CVE) []detectionTypes.Detection {
 		}
 	}
 
+	// Deduplicate: a record may repeat an identical affected stanza across
+	// multiple affected entries (e.g. one per platform variant), which would
+	// otherwise emit the same criterion twice into the OR list. Drop exact
+	// duplicates, preserving first-seen order.
+	deduped := make([]criterionTypes.Criterion, 0, len(cns))
+	for _, cn := range cns {
+		if slices.ContainsFunc(deduped, func(e criterionTypes.Criterion) bool {
+			return criterionTypes.Compare(e, cn) == 0
+		}) {
+			continue
+		}
+		deduped = append(deduped, cn)
+	}
+	cns = deduped
+
 	if len(cns) == 0 {
 		return nil
 	}
