@@ -377,9 +377,13 @@ func TestCriterion_Accept(t *testing.T) {
 			want: true,
 		},
 		{
-			// go-cpe escapes the dots and hyphen of a PAN-OS hotfix version in
-			// the WFN ("10\.1\.14\-h11"); Accept must unescape it before the
-			// pan-os comparator runs, otherwise the escaped query never matches.
+			// The query carries the hotfix in the VERSION attribute
+			// ("10.1.14-h11"). That is the form the vuls snmp2cpe scanner emits;
+			// NVD- and cisco-provided CPEs instead put the hotfix in the UPDATE
+			// attribute (":h11:"). go-cpe escapes the dots and hyphen of the
+			// version-attribute form in the WFN ("10\.1\.14\-h11"), so Accept
+			// must unescape it before the pan-os comparator runs, otherwise the
+			// escaped query never matches.
 			name: "pan-os hotfix query, escaped version, within range",
 			fields: fields{
 				Vulnerable: true,
