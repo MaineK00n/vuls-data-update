@@ -110,8 +110,9 @@ func Extract(args string, opts ...Option) error {
 			return errors.Errorf("unexpected firstPublished format. expected: %q, actual: %q", "2006-01-02T15:04:05", fetched.FirstPublished)
 		}
 
-		if err := util.Write(filepath.Join(options.dir, "data", fmt.Sprintf("%d", t.Year()), fmt.Sprintf("%s.json", data.ID)), data, true); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "data", fmt.Sprintf("%d", t.Year()), fmt.Sprintf("%s.json", data.ID)))
+		outPath := filepath.Join(options.dir, "data", fmt.Sprintf("%d", t.Year()), fmt.Sprintf("%s.json", data.ID))
+		if err := util.Write(outPath, data, true); err != nil {
+			return errors.Wrapf(err, "write %s", outPath)
 		}
 
 		return nil
@@ -145,6 +146,12 @@ func Extract(args string, opts ...Option) error {
 func extract(fetched fetchTypes.Advisory, raws []string) (dataTypes.Data, error) {
 	if fetched.AdvisoryID == "" {
 		return dataTypes.Data{}, errors.New("advisoryId is empty")
+	}
+	// advisoryId becomes a path segment in the output filename, so reject any
+	// value that could escape the extract directory (path separators or a
+	// parent/current-dir reference).
+	if strings.ContainsAny(fetched.AdvisoryID, `/\`) || fetched.AdvisoryID == "." || fetched.AdvisoryID == ".." {
+		return dataTypes.Data{}, errors.Errorf("unexpected advisoryId containing a path separator: %q", fetched.AdvisoryID)
 	}
 
 	// Build vendor severity from SIR (Security Impact Rating)

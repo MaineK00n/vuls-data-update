@@ -1,0 +1,12 @@
+{
+	"advisoryId": "cisco-sa-../../../etc/passwd",
+	"advisoryTitle": "path traversal advisoryId guard fixture",
+	"firstPublished": "2025-01-01T00:00:00",
+	"lastUpdated": "2025-01-01T00:00:00",
+	"cves": [
+		"CVE-2025-0001"
+	],
+	"productNames": [
+		"NA"
+	]
+}
