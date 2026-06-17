@@ -570,8 +570,11 @@ func validCPEs(id string, cpes []string) ([]ccTypes.CPE, error) {
 // PanosStanza is one PAN-OS affected versions[] entry. It is exported only so
 // the white-box test in package json_test can drive PanosStanzaIntervals.
 type PanosStanza struct {
-	Status          string
-	Version         string
+	Status  string
+	Version string
+	// LessThan and LessThanOrEqual are mutually exclusive (CVE 5.0 version
+	// object); at most one is non-empty. panosStanzaIntervals rejects a stanza
+	// that sets both.
 	LessThan        string
 	LessThanOrEqual string
 	Changes         []PanosChange
@@ -635,7 +638,7 @@ type panosTransition struct {
 func panosStanzaIntervals(stanza PanosStanza) ([]PanosInterval, error) {
 	affected, err := statusToBool(stanza.Status)
 	if err != nil {
-		return nil, errors.Wrapf(err, "statusToBool %q", stanza.Status)
+		return nil, errors.Wrapf(err, "parse status %q", stanza.Status)
 	}
 
 	start, defaultUpper, all, err := parsePANOSVersionExpr(stanza.Version)
@@ -661,11 +664,22 @@ func panosStanzaIntervals(stanza PanosStanza) ([]PanosInterval, error) {
 		}
 	}
 
+	// lessThan and lessThanOrEqual are mutually exclusive in the CVE 5.0
+	// version object. Reject a stanza that sets both rather than silently
+	// dropping lessThanOrEqual in the switch below.
+	if stanza.LessThan != "" && stanza.LessThanOrEqual != "" {
+		return nil, errors.Errorf("both lessThan %q and lessThanOrEqual %q are set", stanza.LessThan, stanza.LessThanOrEqual)
+	}
+
 	var (
 		upper          *panosVersion.Version
 		upperInclusive bool
 		upperIsRelease bool
 	)
+	// Resolve the upper bound by priority: an explicit lessThan / lessThanOrEqual
+	// (mutually exclusive, guarded above) wins; otherwise fall back to the
+	// series-implied bound (defaultUpper, e.g. "8.0.*" -> 8.1.0). defaultUpper is
+	// NOT exclusive with the explicit bounds — it is the lowest-priority default.
 	switch {
 	case stanza.LessThan != "":
 		v, isRelease, err := parsePANOSBoundExpr(stanza.LessThan, start)
