@@ -203,8 +203,7 @@ func extract(fetched fetchTypes.Advisory, raws []string) (dataTypes.Data, error)
 		}
 		cpe, err := convertProductName(p)
 		if err != nil {
-			slog.Warn("failed to convert product name to CPE", slog.String("name", p), slog.Any("err", err))
-			continue
+			return dataTypes.Data{}, errors.Wrapf(err, "convert product name %q", p)
 		}
 		if cpe == "" {
 			continue
@@ -511,10 +510,24 @@ var productConversions = []productConversion{
 	},
 }
 
+// knownUnparseableProductNames lists product names whose version string the
+// go-cisco-version parsers reject but which are known, accepted artifacts of
+// the upstream data (a truncated version, or a letter-suffixed build that the
+// parser does not model). These are skipped silently. Any OTHER parse failure
+// is treated as a hard error (see convertProductName) so that a newly
+// introduced malformed pattern surfaces loudly instead of being dropped.
+var knownUnparseableProductNames = map[string]struct{}{
+	"Cisco IOS XE Software .0":                   {},
+	"Cisco IOS XE Software .1":                   {},
+	"Cisco Wireless LAN Controller (WLC) 3.6.0E": {},
+}
+
 // convertProductName converts a Cisco product name to a CPE 2.3 formatted
 // string with the exact version bound. It returns an empty string for
 // product names that carry no detectable version ("Base", etc.) or belong to
-// product families without an established CPE mapping.
+// product families without an established CPE mapping. A version that fails to
+// parse returns an error unless the product name is in
+// knownUnparseableProductNames, in which case it is skipped (empty string).
 func convertProductName(name string) (string, error) {
 	for _, c := range productConversions {
 		s, ok := strings.CutPrefix(name, c.prefix)
@@ -528,6 +541,9 @@ func convertProductName(name string) (string, error) {
 
 		v, err := c.parse(s)
 		if err != nil {
+			if _, ok := knownUnparseableProductNames[name]; ok {
+				return "", nil
+			}
 			return "", errors.Wrapf(err, "parse version %q", s)
 		}
 
