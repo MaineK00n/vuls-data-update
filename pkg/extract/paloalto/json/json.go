@@ -146,18 +146,23 @@ func extract(fetched paloaltoJSON.CVE, raws []string) (dataTypes.Data, error) {
 		return dataTypes.Data{}, errors.Errorf("unexpected CVE state. expected: %q, actual: %q", []string{"PUBLISHED"}, fetched.CVEMetadata.State)
 	}
 
-	data := dataTypes.Data{
-		ID:         dataTypes.RootID(fetched.CVEMetadata.CVEID),
-		Detections: detections(fetched),
-		DataSource: sourceTypes.Source{
-			ID:   sourceTypes.PaloAltoJSON,
-			Raws: raws,
-		},
+	ds, err := detections(fetched)
+	if err != nil {
+		return dataTypes.Data{}, errors.Wrap(err, "detections")
 	}
 
 	ss, err := severities(fetched)
 	if err != nil {
 		return dataTypes.Data{}, errors.Wrap(err, "severities")
+	}
+
+	data := dataTypes.Data{
+		ID:         dataTypes.RootID(fetched.CVEMetadata.CVEID),
+		Detections: ds,
+		DataSource: sourceTypes.Source{
+			ID:   sourceTypes.PaloAltoJSON,
+			Raws: raws,
+		},
 	}
 
 	// The record is a Palo Alto Networks CNA advisory document. Its CNA
@@ -385,11 +390,6 @@ func modified(fetched paloaltoJSON.CVE) *time.Time {
 	return nil
 }
 
-// errPanosNoVersionBounds marks a stanza that carries no usable version
-// constraint (version "None"/"" with no lessThan/lessThanOrEqual): there is
-// nothing to detect, so callers skip it silently rather than warning.
-var errPanosNoVersionBounds = errors.New("no version bounds")
-
 // isKnownPANOSVersionAnomaly reports stanzas whose version field is known-bad
 // upstream data, skipped without warning. It is pinned to the exact advisory
 // and wording so any new anomaly (a different advisory or different text) still
@@ -400,7 +400,7 @@ func isKnownPANOSVersionAnomaly(id, version string) bool {
 	return id == "PAN-SA-2023-0004" && strings.HasPrefix(version, "with GlobalProtect")
 }
 
-func detections(fetched paloaltoJSON.CVE) []detectionTypes.Detection {
+func detections(fetched paloaltoJSON.CVE) ([]detectionTypes.Detection, error) {
 	var cns []criterionTypes.Criterion
 	for _, a := range fetched.Containers.CNA.Affected {
 		if a.Vendor == nil || *a.Vendor != "Palo Alto Networks" || a.Product == nil {
@@ -439,12 +439,11 @@ func detections(fetched paloaltoJSON.CVE) []detectionTypes.Detection {
 
 				is, err := panosStanzaIntervals(stanza)
 				if err != nil {
-					if errors.Is(err, errPanosNoVersionBounds) {
-						// version "None"/"" with no bound: nothing to detect.
-						continue
-					}
-					slog.Warn("failed to interpret PAN-OS affected version", slog.String("id", fetched.CVEMetadata.CVEID), slog.String("version", stanza.Version), slog.String("lessThan", stanza.LessThan), slog.String("lessThanOrEqual", stanza.LessThanOrEqual), slog.String("err", err.Error()))
-					continue
+					// An unrecognized shape is a new upstream anomaly: fail loud
+					// (a warning would scroll past unnoticed in CI). Known
+					// benign / anomalous shapes are skipped above; shapes with no
+					// constraint yield no interval rather than an error.
+					return nil, errors.Wrapf(err, "interpret PAN-OS affected version %q", stanza.Version)
 				}
 				for _, i := range is {
 					cns = append(cns, criterionTypes.Criterion{
@@ -512,7 +511,7 @@ func detections(fetched paloaltoJSON.CVE) []detectionTypes.Detection {
 	})
 
 	if len(cns) == 0 {
-		return nil
+		return nil, nil
 	}
 
 	return []detectionTypes.Detection{{
@@ -523,7 +522,7 @@ func detections(fetched paloaltoJSON.CVE) []detectionTypes.Detection {
 				Criterions: cns,
 			},
 		}},
-	}}
+	}}, nil
 }
 
 // validCPEs filters cpes down to ones that bind as CPE 2.3 formatted strings.
@@ -707,7 +706,9 @@ func panosStanzaIntervals(stanza PanosStanza) ([]PanosInterval, error) {
 			}
 			return nil, nil
 		case start == nil && upper == nil:
-			return nil, errPanosNoVersionBounds
+			// No version and no bound (e.g. version "None"/"" with no
+			// lessThan/lessThanOrEqual): no constraint, so nothing to detect.
+			return nil, nil
 		case upper == nil:
 			switch start.Hotfix {
 			case nil:

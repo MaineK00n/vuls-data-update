@@ -68,8 +68,10 @@ func TestPanosStanzaIntervals(t *testing.T) {
 		{
 			// A change coinciding with the release fix.
 			name: "simple fix: change at the fix release",
-			stanza: paloaltoJSON.PanosStanza{Status: "affected", Version: "8.1", LessThan: "8.1.13",
-				Changes: []paloaltoJSON.PanosChange{{At: "8.1.13", Status: "unaffected"}}},
+			stanza: paloaltoJSON.PanosStanza{
+				Status: "affected", Version: "8.1", LessThan: "8.1.13",
+				Changes: []paloaltoJSON.PanosChange{{At: "8.1.13", Status: "unaffected"}},
+			},
 			want: []paloaltoJSON.PanosInterval{{GE: "8.1.0", LT: "8.1.13", Fixed: []string{"8.1.13"}}},
 		},
 		{
@@ -106,6 +108,12 @@ func TestPanosStanzaIntervals(t *testing.T) {
 			name:   "None with lessThanOrEqual",
 			stanza: paloaltoJSON.PanosStanza{Status: "affected", Version: "None", LessThanOrEqual: "6.0.14"},
 			want:   []paloaltoJSON.PanosInterval{{LE: "6.0.14"}},
+		},
+		{
+			// version None with no bound: no constraint → no interval, no error.
+			name:   "None without bound → no interval",
+			stanza: paloaltoJSON.PanosStanza{Status: "affected", Version: "None"},
+			want:   nil,
 		},
 		{
 			// Unaffected complement: "unaffected 7.0.2 lessThan 7.0*" means
