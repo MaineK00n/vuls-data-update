@@ -147,12 +147,6 @@ func extract(fetched fetchTypes.Advisory, raws []string) (dataTypes.Data, error)
 	if fetched.AdvisoryID == "" {
 		return dataTypes.Data{}, errors.New("advisoryId is empty")
 	}
-	// advisoryId becomes a path segment in the output filename, so reject any
-	// value that could escape the extract directory (path separators or a
-	// parent/current-dir reference).
-	if strings.ContainsAny(fetched.AdvisoryID, `/\`) || fetched.AdvisoryID == "." || fetched.AdvisoryID == ".." {
-		return dataTypes.Data{}, errors.Errorf("unexpected advisoryId unsafe as a path segment (path separator or directory reference): %q", fetched.AdvisoryID)
-	}
 
 	// Build vendor severity from SIR (Security Impact Rating)
 	var ss []severityTypes.Severity

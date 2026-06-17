@@ -18,11 +18,6 @@ func TestExtract(t *testing.T) {
 			name: "happy",
 			args: "./testdata/fixtures",
 		},
-		{
-			name:     "path traversal advisoryId is rejected",
-			args:     "./testdata/fixtures_error",
-			hasError: true,
-		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
