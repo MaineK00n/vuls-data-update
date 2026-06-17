@@ -307,7 +307,7 @@ func cwes(fetched paloaltoJSON.CVE) []cweTypes.CWE {
 func exploits(fetched paloaltoJSON.CVE) []exploitTypes.Exploit {
 	var es []exploitTypes.Exploit
 	for _, e := range fetched.Containers.CNA.Exploits {
-		if (e.Lang != "" && e.Lang != "en") || e.Value == "" {
+		if !isEnglish(e.Lang) || e.Value == "" {
 			continue
 		}
 		es = append(es, exploitTypes.Exploit{
@@ -336,9 +336,16 @@ func getSource(providerMetadata paloaltoJSON.ProviderMetadata) string {
 	return providerMetadata.OrgID
 }
 
+// isEnglish reports whether a CVE-record lang tag denotes English. Palo Alto
+// mixes the ISO 639-1 "en" and the ISO 639-2 "eng" codes (and the occasional
+// "en-US"); an empty tag is treated as English too.
+func isEnglish(lang string) bool {
+	return lang == "" || lang == "en" || lang == "eng" || strings.HasPrefix(lang, "en-")
+}
+
 func description(ds []paloaltoJSON.Description) string {
 	for _, d := range ds {
-		if d.Lang == "en" || strings.HasPrefix(d.Lang, "en-") {
+		if isEnglish(d.Lang) {
 			return d.Value
 		}
 	}
@@ -348,7 +355,7 @@ func description(ds []paloaltoJSON.Description) string {
 func remediations(source string, ds []paloaltoJSON.Description) []remediationTypes.Remediation {
 	var rs []remediationTypes.Remediation
 	for _, d := range ds {
-		if (d.Lang != "" && d.Lang != "en") || d.Value == "" {
+		if !isEnglish(d.Lang) || d.Value == "" {
 			continue
 		}
 		rs = append(rs, remediationTypes.Remediation{
