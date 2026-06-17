@@ -635,7 +635,7 @@ type panosTransition struct {
 func panosStanzaIntervals(stanza PanosStanza) ([]PanosInterval, error) {
 	affected, err := statusToBool(stanza.Status)
 	if err != nil {
-		return nil, errors.Wrap(err, "parse status")
+		return nil, errors.Wrapf(err, "statusToBool %q", stanza.Status)
 	}
 
 	start, defaultUpper, all, err := parsePANOSVersionExpr(stanza.Version)
