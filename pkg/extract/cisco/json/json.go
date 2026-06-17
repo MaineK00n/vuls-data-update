@@ -149,7 +149,7 @@ func extract(fetched fetchTypes.Advisory, raws []string) (dataTypes.Data, error)
 
 	// Build vendor severity from SIR (Security Impact Rating)
 	var ss []severityTypes.Severity
-	if !slices.Contains([]string{"", "NA"}, fetched.Sir) {
+	if fetched.Sir != "NA" {
 		ss = append(ss, severityTypes.Severity{
 			Type:   severityTypes.SeverityTypeVendor,
 			Source: "cisco.com",
@@ -160,7 +160,7 @@ func extract(fetched fetchTypes.Advisory, raws []string) (dataTypes.Data, error)
 	// Build CWE
 	var cweIDs []string
 	for _, c := range fetched.Cwe {
-		if slices.Contains([]string{"", "NA"}, c) || slices.Contains(cweIDs, c) {
+		if c == "NA" || slices.Contains(cweIDs, c) {
 			continue
 		}
 		cweIDs = append(cweIDs, c)
@@ -176,7 +176,7 @@ func extract(fetched fetchTypes.Advisory, raws []string) (dataTypes.Data, error)
 	// Build references from advisory URLs and bug IDs
 	var refs []referenceTypes.Reference
 	for _, u := range []string{fetched.PublicationURL, fetched.CsafURL, fetched.CvrfURL} {
-		if slices.Contains([]string{"", "NA"}, u) {
+		if u == "NA" {
 			continue
 		}
 		refs = append(refs, referenceTypes.Reference{
@@ -185,7 +185,7 @@ func extract(fetched fetchTypes.Advisory, raws []string) (dataTypes.Data, error)
 		})
 	}
 	for _, b := range fetched.BugIDs {
-		if slices.Contains([]string{"", "NA"}, b) {
+		if b == "NA" {
 			continue
 		}
 		refs = append(refs, referenceTypes.Reference{
@@ -198,7 +198,7 @@ func extract(fetched fetchTypes.Advisory, raws []string) (dataTypes.Data, error)
 	var criterions []criterionTypes.Criterion
 	converted := make(map[string]struct{})
 	for _, p := range fetched.ProductNames {
-		if slices.Contains([]string{"", "NA"}, p) {
+		if p == "NA" {
 			continue
 		}
 		cpe, err := convertProductName(p)
@@ -243,7 +243,7 @@ func extract(fetched fetchTypes.Advisory, raws []string) (dataTypes.Data, error)
 	// advisory-only data (no vulnerability records are fabricated).
 	var vulns []vulnerabilityTypes.Vulnerability
 	for _, cve := range fetched.Cves {
-		if slices.Contains([]string{"", "NA"}, cve) || slices.ContainsFunc(vulns, func(v vulnerabilityTypes.Vulnerability) bool {
+		if cve == "NA" || slices.ContainsFunc(vulns, func(v vulnerabilityTypes.Vulnerability) bool {
 			return v.Content.ID == vulnerabilityContentTypes.VulnerabilityID(cve)
 		}) {
 			continue
