@@ -410,6 +410,29 @@ func TestCriterion_Accept(t *testing.T) {
 			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:15.4\\(2\\)t1:*:*:*:*:*:*:*"}},
 			want: ccTypes.MatchQualityExact,
 		},
+		{
+			// go-cpe escapes the dots and hyphen of a PAN-OS hotfix version in
+			// the WFN ("10\.1\.14\-h11"); Accept must unescape it before the
+			// pan-os comparator runs, otherwise the escaped query never matches.
+			name: "pan-os hotfix query, escaped version, within range",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:o:paloaltonetworks:pan-os:*:*:*:*:*:*:*:*",
+				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypePANOS, GreaterEqual: "10.1.0", LessThan: "10.1.14-h13"},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:o:paloaltonetworks:pan-os:10.1.14-h11:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityExact,
+		},
+		{
+			name: "pan-os hotfix query, escaped version, at exclusive upper bound",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:o:paloaltonetworks:pan-os:*:*:*:*:*:*:*:*",
+				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypePANOS, GreaterEqual: "10.1.0", LessThan: "10.1.14-h13"},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:o:paloaltonetworks:pan-os:10.1.14-h13:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityNone,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
