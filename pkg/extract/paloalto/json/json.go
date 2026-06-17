@@ -179,7 +179,6 @@ func extract(fetched paloaltoJSON.CVE, raws []string) (dataTypes.Data, error) {
 				References:  references(fetched),
 				Published:   published(fetched),
 				Modified:    modified(fetched),
-				Optional:    optional(fetched),
 			},
 			Segments: []segmentTypes.Segment{{Ecosystem: ecosystemTypes.EcosystemTypeCPE}},
 		}}
@@ -199,7 +198,6 @@ func extract(fetched paloaltoJSON.CVE, raws []string) (dataTypes.Data, error) {
 			References:  references(fetched),
 			Published:   published(fetched),
 			Modified:    modified(fetched),
-			Optional:    optional(fetched),
 		},
 		Segments: []segmentTypes.Segment{{Ecosystem: ecosystemTypes.EcosystemTypeCPE}},
 	}}
@@ -328,33 +326,6 @@ func references(fetched paloaltoJSON.CVE) []referenceTypes.Reference {
 		})
 	}
 	return refs
-}
-
-// optional preserves information that has no canonical field but is still
-// valuable: the raw affected products (incl. ones not expressible as detection
-// criteria), the enumerated affected version list, CAPEC impacts,
-// configuration conditions and the source metadata.
-func optional(fetched paloaltoJSON.CVE) map[string]any {
-	m := make(map[string]any)
-	if len(fetched.Containers.CNA.Affected) > 0 {
-		m["affected"] = fetched.Containers.CNA.Affected
-	}
-	if fetched.Containers.CNA.XAffectedList != nil {
-		m["x_affectedList"] = fetched.Containers.CNA.XAffectedList
-	}
-	if len(fetched.Containers.CNA.Impacts) > 0 {
-		m["impacts"] = fetched.Containers.CNA.Impacts
-	}
-	if len(fetched.Containers.CNA.Configurations) > 0 {
-		m["configurations"] = fetched.Containers.CNA.Configurations
-	}
-	if fetched.Containers.CNA.Source != nil {
-		m["source"] = fetched.Containers.CNA.Source
-	}
-	if len(m) == 0 {
-		return nil
-	}
-	return m
 }
 
 func getSource(providerMetadata paloaltoJSON.ProviderMetadata) string {
