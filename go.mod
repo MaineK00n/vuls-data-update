@@ -5,6 +5,7 @@ go 1.26
 require (
 	github.com/MaineK00n/go-cisco-version v0.0.0-20250611084427-015c6492ef23
 	github.com/MaineK00n/go-microsoft-version v0.0.0-20260325021654-1d9206bdeffc
+	github.com/MaineK00n/go-paloalto-version v0.0.0-20260324210858-f043171ba2bf
 	github.com/MakeNowJust/heredoc v1.0.0
 	github.com/PuerkitoBio/goquery v1.12.0
 	github.com/aquasecurity/go-gem-version v0.0.0-20201115065557-8eed6fe000ce
@@ -40,7 +41,6 @@ require (
 
 require (
 	dario.cat/mergo v1.0.0 // indirect
-	github.com/MaineK00n/go-paloalto-version v0.0.0-20260324210858-f043171ba2bf // indirect
 	github.com/Microsoft/go-winio v0.6.2 // indirect
 	github.com/ProtonMail/go-crypto v1.1.6 // indirect
 	github.com/andybalholm/cascadia v1.3.3 // indirect
