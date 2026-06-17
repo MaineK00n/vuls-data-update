@@ -1,10 +1,10 @@
-package cvrf_test
+package v4_test
 
 import (
 	"path/filepath"
 	"testing"
 
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/mitre/cvrf"
+	v4 "github.com/MaineK00n/vuls-data-update/pkg/extract/mitre/cve/v4"
 	utiltest "github.com/MaineK00n/vuls-data-update/pkg/extract/util/test"
 )
 
@@ -22,7 +22,7 @@ func TestExtract(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			dir := t.TempDir()
-			err := cvrf.Extract(tt.args, cvrf.WithDir(dir))
+			err := v4.Extract(tt.args, v4.WithDir(dir))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)

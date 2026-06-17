@@ -12,7 +12,7 @@ import (
 
 	"github.com/google/go-cmp/cmp"
 
-	v5 "github.com/MaineK00n/vuls-data-update/pkg/fetch/mitre/v5"
+	v5 "github.com/MaineK00n/vuls-data-update/pkg/fetch/mitre/cve/v5"
 )
 
 func TestFetch(t *testing.T) {

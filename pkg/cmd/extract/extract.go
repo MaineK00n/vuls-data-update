@@ -67,10 +67,10 @@ import (
 	microsoftMSUC "github.com/MaineK00n/vuls-data-update/pkg/extract/microsoft/msuc"
 	microsoftWSUSSCN2 "github.com/MaineK00n/vuls-data-update/pkg/extract/microsoft/wsusscn2"
 	mitreCAPEC "github.com/MaineK00n/vuls-data-update/pkg/extract/mitre/capec"
-	mitreCVRF "github.com/MaineK00n/vuls-data-update/pkg/extract/mitre/cvrf"
+	mitreCVRF "github.com/MaineK00n/vuls-data-update/pkg/extract/mitre/cve/cvrf"
+	mitreV4 "github.com/MaineK00n/vuls-data-update/pkg/extract/mitre/cve/v4"
+	mitreV5 "github.com/MaineK00n/vuls-data-update/pkg/extract/mitre/cve/v5"
 	mitreCWE "github.com/MaineK00n/vuls-data-update/pkg/extract/mitre/cwe"
-	mitreV4 "github.com/MaineK00n/vuls-data-update/pkg/extract/mitre/v4"
-	mitreV5 "github.com/MaineK00n/vuls-data-update/pkg/extract/mitre/v5"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/msf"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/netbsd"
 	npmDB "github.com/MaineK00n/vuls-data-update/pkg/extract/npm/db"
@@ -1687,19 +1687,19 @@ func newCmdMitreCAPEC() *cobra.Command {
 
 func newCmdMitreCVRF() *cobra.Command {
 	options := &base{
-		dir: filepath.Join(util.CacheDir(), "extract", "mitre", "cvrf"),
+		dir: filepath.Join(util.CacheDir(), "extract", "mitre", "cve", "cvrf"),
 	}
 
 	cmd := &cobra.Command{
-		Use:   "mitre-cvrf <Raw Mitre CVRF Repository PATH>",
+		Use:   "mitre-cve-cvrf <Raw Mitre CVRF Repository PATH>",
 		Short: "Extract Mitre CVRF data source",
 		Example: heredoc.Doc(`
-			$ vuls-data-update extract mitre-cvrf vuls-data-raw-mitre-cvrf
+			$ vuls-data-update extract mitre-cve-cvrf vuls-data-raw-mitre-cve-cvrf
 		`),
 		Args: cobra.ExactArgs(1),
 		RunE: func(_ *cobra.Command, args []string) error {
 			if err := mitreCVRF.Extract(args[0], mitreCVRF.WithDir(options.dir)); err != nil {
-				return errors.Wrap(err, "failed to extract mitre cvrf")
+				return errors.Wrap(err, "failed to extract mitre cve cvrf")
 			}
 			return nil
 		},
@@ -1737,19 +1737,19 @@ func newCmdMitreCWE() *cobra.Command {
 
 func newCmdMitreV4() *cobra.Command {
 	options := &base{
-		dir: filepath.Join(util.CacheDir(), "extract", "mitre", "v4"),
+		dir: filepath.Join(util.CacheDir(), "extract", "mitre", "cve", "v4"),
 	}
 
 	cmd := &cobra.Command{
-		Use:   "mitre-v4 <Raw Mitre V4 Repository PATH>",
+		Use:   "mitre-cve-v4 <Raw Mitre V4 Repository PATH>",
 		Short: "Extract Mitre V4 data source",
 		Example: heredoc.Doc(`
-			$ vuls-data-update extract mitre-v4 vuls-data-raw-mitre-v4
+			$ vuls-data-update extract mitre-cve-v4 vuls-data-raw-mitre-cve-v4
 		`),
 		Args: cobra.ExactArgs(1),
 		RunE: func(_ *cobra.Command, args []string) error {
 			if err := mitreV4.Extract(args[0], mitreV4.WithDir(options.dir)); err != nil {
-				return errors.Wrap(err, "failed to extract mitre v4")
+				return errors.Wrap(err, "failed to extract mitre cve v4")
 			}
 			return nil
 		},
@@ -1762,19 +1762,19 @@ func newCmdMitreV4() *cobra.Command {
 
 func newCmdMitreV5() *cobra.Command {
 	options := &base{
-		dir: filepath.Join(util.CacheDir(), "extract", "mitre", "v5"),
+		dir: filepath.Join(util.CacheDir(), "extract", "mitre", "cve", "v5"),
 	}
 
 	cmd := &cobra.Command{
-		Use:   "mitre-v5 <Raw Mitre V5 Repository PATH>",
+		Use:   "mitre-cve-v5 <Raw Mitre V5 Repository PATH>",
 		Short: "Extract Mitre V5 data source",
 		Example: heredoc.Doc(`
-			$ vuls-data-update extract mitre-v5 vuls-data-raw-mitre-v5
+			$ vuls-data-update extract mitre-cve-v5 vuls-data-raw-mitre-cve-v5
 		`),
 		Args: cobra.ExactArgs(1),
 		RunE: func(_ *cobra.Command, args []string) error {
 			if err := mitreV5.Extract(args[0], mitreV5.WithDir(options.dir)); err != nil {
-				return errors.Wrap(err, "failed to extract mitre v5")
+				return errors.Wrap(err, "failed to extract mitre cve v5")
 			}
 			return nil
 		},

@@ -96,11 +96,11 @@ import (
 	minimOSSecDB "github.com/MaineK00n/vuls-data-update/pkg/fetch/minimos/secdb"
 	mitreATTACK "github.com/MaineK00n/vuls-data-update/pkg/fetch/mitre/attack"
 	mitreCAPEC "github.com/MaineK00n/vuls-data-update/pkg/fetch/mitre/capec"
-	mitreCVRF "github.com/MaineK00n/vuls-data-update/pkg/fetch/mitre/cvrf"
+	mitreCVRF "github.com/MaineK00n/vuls-data-update/pkg/fetch/mitre/cve/cvrf"
+	mitreV4 "github.com/MaineK00n/vuls-data-update/pkg/fetch/mitre/cve/v4"
+	mitreV5 "github.com/MaineK00n/vuls-data-update/pkg/fetch/mitre/cve/v5"
 	mitreCWE "github.com/MaineK00n/vuls-data-update/pkg/fetch/mitre/cwe"
 	mitreEMB3D "github.com/MaineK00n/vuls-data-update/pkg/fetch/mitre/emb3d"
-	mitreV4 "github.com/MaineK00n/vuls-data-update/pkg/fetch/mitre/v4"
-	mitreV5 "github.com/MaineK00n/vuls-data-update/pkg/fetch/mitre/v5"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/msf"
 	ncscCSAF "github.com/MaineK00n/vuls-data-update/pkg/fetch/ncsc/csaf"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/netbsd"
@@ -2898,20 +2898,20 @@ func newCmdMitreCAPEC() *cobra.Command {
 
 func newCmdMitreCVRF() *cobra.Command {
 	options := &base{
-		dir:   filepath.Join(util.CacheDir(), "fetch", "mitre", "cvrf"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "mitre", "cve", "cvrf"),
 		retry: 3,
 	}
 
 	cmd := &cobra.Command{
-		Use:   "mitre-cvrf",
+		Use:   "mitre-cve-cvrf",
 		Short: "Fetch MITRE CVE CVRF data source",
 		Example: heredoc.Doc(`
-			$ vuls-data-update fetch mitre-cvrf
+			$ vuls-data-update fetch mitre-cve-cvrf
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
 			if err := mitreCVRF.Fetch(mitreCVRF.WithDir(options.dir), mitreCVRF.WithRetry(options.retry)); err != nil {
-				return errors.Wrap(err, "failed to fetch mitre cvrf")
+				return errors.Wrap(err, "failed to fetch mitre cve cvrf")
 			}
 			return nil
 		},
@@ -2979,20 +2979,20 @@ func newCmdMitreEMB3D() *cobra.Command {
 
 func newCmdMitreV4() *cobra.Command {
 	options := &base{
-		dir:   filepath.Join(util.CacheDir(), "fetch", "mitre", "v4"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "mitre", "cve", "v4"),
 		retry: 3,
 	}
 
 	cmd := &cobra.Command{
-		Use:   "mitre-v4",
+		Use:   "mitre-cve-v4",
 		Short: "Fetch MITRE CVE V4 data source",
 		Example: heredoc.Doc(`
-			$ vuls-data-update fetch mitre-v4
+			$ vuls-data-update fetch mitre-cve-v4
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
 			if err := mitreV4.Fetch(mitreV4.WithDir(options.dir), mitreV4.WithRetry(options.retry)); err != nil {
-				return errors.Wrap(err, "failed to fetch mitre v4")
+				return errors.Wrap(err, "failed to fetch mitre cve v4")
 			}
 			return nil
 		},
@@ -3006,20 +3006,20 @@ func newCmdMitreV4() *cobra.Command {
 
 func newCmdMitreV5() *cobra.Command {
 	options := &base{
-		dir:   filepath.Join(util.CacheDir(), "fetch", "mitre", "v5"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "mitre", "cve", "v5"),
 		retry: 3,
 	}
 
 	cmd := &cobra.Command{
-		Use:   "mitre-v5",
+		Use:   "mitre-cve-v5",
 		Short: "Fetch MITRE CVE V5 data source",
 		Example: heredoc.Doc(`
-			$ vuls-data-update fetch mitre-v5
+			$ vuls-data-update fetch mitre-cve-v5
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
 			if err := mitreV5.Fetch(mitreV5.WithDir(options.dir), mitreV5.WithRetry(options.retry)); err != nil {
-				return errors.Wrap(err, "failed to fetch mitre v5")
+				return errors.Wrap(err, "failed to fetch mitre cve v5")
 			}
 			return nil
 		},
