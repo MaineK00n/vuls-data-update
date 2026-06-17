@@ -87,12 +87,15 @@ func TestPanosStanzaIntervals(t *testing.T) {
 			want:   []paloaltoJSON.PanosInterval{{GE: "7.1.0", LT: "7.2.0"}},
 		},
 		{
-			// "All" → every version, no range narrowing (a bare criterion).
-			name:   "All affected → unbounded interval",
+			// "All" affected → one zero-value interval (every bound empty), NOT
+			// nil: it maps to a bare CPE criterion matching every PAN-OS version.
+			// Contrast with the unaffected case below, which returns nil.
+			name:   "All affected → one empty-bounds interval",
 			stanza: paloaltoJSON.PanosStanza{Status: "affected", Version: "All"},
 			want:   []paloaltoJSON.PanosInterval{{}},
 		},
 		{
+			// "All" unaffected → nothing affected → nil (no criterion).
 			name:   "All unaffected → no interval",
 			stanza: paloaltoJSON.PanosStanza{Status: "unaffected", Version: "All"},
 			want:   nil,
