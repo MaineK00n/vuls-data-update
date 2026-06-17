@@ -182,7 +182,11 @@ func TestPanosStanzaIntervals(t *testing.T) {
 			want: []paloaltoJSON.PanosInterval{{GE: "9.1.0", LT: "9.1.3", Fixed: []string{"9.1.3"}}},
 		},
 		{
-			name:    "invalid status",
+			// "unknown" is a valid CVE 5.0 status but not a valid input to this
+			// function: the caller (detections) skips unknown stanzas before
+			// calling, so reaching here with anything other than affected /
+			// unaffected is an error.
+			name:    "non-affected/unaffected status is an error",
 			stanza:  paloaltoJSON.PanosStanza{Status: "unknown", Version: "9.0.0"},
 			wantErr: true,
 		},
