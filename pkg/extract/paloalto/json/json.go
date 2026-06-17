@@ -593,6 +593,24 @@ type PanosInterval struct {
 	Fixed          []string
 }
 
+// transitionPriority decides which transition wins when several are generated
+// for the same version (higher wins). In particular a maintenance line's own
+// pre-first-change status (priorityLineStart) must beat the neighbouring line's
+// revert marker (priorityLineEnd) placed on the same version.
+type transitionPriority int
+
+const (
+	// priorityLineEnd: the previous maintenance line's end reverting to the
+	// base-timeline status.
+	priorityLineEnd transitionPriority = iota + 1
+	// priorityLineStart: a maintenance line's own start segment.
+	priorityLineStart
+	// priorityStanzaBound: the stanza's own start version or upper bound.
+	priorityStanzaBound
+	// priorityChangeEvent: an explicit changes[] event.
+	priorityChangeEvent
+)
+
 // panosTransition is a status switch point on the version timeline.
 type panosTransition struct {
 	affected bool
@@ -600,13 +618,9 @@ type panosTransition struct {
 	// change (or a concrete lessThan release), i.e. an actual fix release —
 	// as opposed to line boundaries where the status merely reverts.
 	fix bool
-	// priority decides which transition wins when several are generated for
-	// the same version: explicit change events (4) > the stanza's own
-	// start / upper bound (3) > a line's own start segment (2) > the
-	// previous line's end reverting to the base status (1). In particular a
-	// line's own pre-first-change status must beat the neighbouring line's
-	// revert marker placed on the same version.
-	priority int
+	// priority resolves collisions when several transitions land on the same
+	// version (see transitionPriority).
+	priority transitionPriority
 }
 
 // panosStanzaIntervals interprets one PAN-OS versions[] stanza into affected
@@ -700,7 +714,9 @@ func panosStanzaIntervals(stanza PanosStanza) ([]PanosInterval, error) {
 			// next-release bound.
 			upper = v
 		}
-	case defaultUpper != nil:
+	default:
+		// No explicit bound: fall back to the series-implied bound, which is
+		// nil for non-series forms (leaving upper unset).
 		upper = defaultUpper
 	}
 
@@ -800,18 +816,18 @@ func panosStanzaIntervals(stanza PanosStanza) ([]PanosInterval, error) {
 	}
 
 	if start != nil {
-		add(*start, panosTransition{affected: affected, priority: 3})
+		add(*start, panosTransition{affected: affected, priority: priorityStanzaBound})
 	}
 	if upper != nil && !upperInclusive {
 		// Explicit upper bound; an event at the same version wins (it carries
 		// the real status). For affected stanzas the concrete bound is the
 		// fix release.
-		add(*upper, panosTransition{affected: false, fix: upperIsRelease && affected, priority: 3})
+		add(*upper, panosTransition{affected: false, fix: upperIsRelease && affected, priority: priorityStanzaBound})
 	}
 
 	baseEvents := make([]event, 0, len(events))
 	for _, e := range events {
-		add(e.v, panosTransition{affected: e.affected, fix: !e.affected, priority: 4})
+		add(e.v, panosTransition{affected: e.affected, fix: !e.affected, priority: priorityChangeEvent})
 		if e.v.Hotfix == nil {
 			baseEvents = append(baseEvents, e)
 		}
@@ -876,8 +892,8 @@ func panosStanzaIntervals(stanza PanosStanza) ([]PanosInterval, error) {
 		updateClamp(lineEnd)
 
 		slices.SortStableFunc(es, func(a, b event) int { return a.v.Compare(b.v) })
-		add(lineStart, panosTransition{affected: !es[0].affected, priority: 2})
-		add(lineEnd, panosTransition{affected: baseStatusAt(lineEnd), priority: 1})
+		add(lineStart, panosTransition{affected: !es[0].affected, priority: priorityLineStart})
+		add(lineEnd, panosTransition{affected: baseStatusAt(lineEnd), priority: priorityLineEnd})
 	}
 	for _, e := range baseEvents {
 		updateClamp(panosVersion.Version{Major: e.v.Major, Minor: e.v.Minor, Maintenance: e.v.Maintenance + 1})
