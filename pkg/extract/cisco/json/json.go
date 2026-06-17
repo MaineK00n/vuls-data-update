@@ -522,6 +522,11 @@ var knownUnparseableProductNames = map[string]struct{}{
 	"Cisco Wireless LAN Controller (WLC) 3.6.0E": {}, // cisco-sa-20181017-wlc-gui-privesc, cisco-sa-20160831-wlc-2, cisco-sa-20160831-wlc-1
 }
 
+// wfnVersionEscaper escapes characters that are special in a CPE WFN version
+// attribute so the exact version binds cleanly into the formatted string. It
+// is immutable and safe for concurrent use, so it is shared across calls.
+var wfnVersionEscaper = strings.NewReplacer(".", "\\.", "-", "\\-", "(", "\\(", ")", "\\)")
+
 // convertProductName converts a Cisco product name to a CPE 2.3 formatted
 // string with the exact version bound. It returns an empty string for
 // product names that carry no detectable version ("Base", etc.) or belong to
@@ -551,7 +556,7 @@ func convertProductName(name string) (string, error) {
 		if err != nil {
 			return "", errors.Wrapf(err, "unbind %q", c.cpe)
 		}
-		if err := wfn.Set(common.AttributeVersion, strings.NewReplacer(".", "\\.", "-", "\\-", "(", "\\(", ")", "\\)").Replace(strings.ToLower(v))); err != nil {
+		if err := wfn.Set(common.AttributeVersion, wfnVersionEscaper.Replace(strings.ToLower(v))); err != nil {
 			return "", errors.Wrapf(err, "set version %q", v)
 		}
 
