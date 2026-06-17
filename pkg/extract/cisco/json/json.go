@@ -195,29 +195,41 @@ func extract(fetched fetchTypes.Advisory, raws []string) (dataTypes.Data, error)
 		})
 	}
 
-	// Build CPE-based detections from product names
-	criterions := make([]criterionTypes.Criterion, 0, len(fetched.ProductNames))
-	converted := make(map[string]struct{}, len(fetched.ProductNames))
+	// Build CPE-based detections from product names. Group the concrete
+	// versioned CPEs by their product-family base CPE (part:vendor:product with
+	// a wildcard version): one criterion per family, with the base as the
+	// primary CPE and the concrete versions enumerated in CPEMatches.
+	matchesByBase := make(map[string][]ccTypes.CPE, len(fetched.ProductNames))
+	var bases []string
+	seen := make(map[string]struct{}, len(fetched.ProductNames))
 	for _, p := range fetched.ProductNames {
 		if p == "NA" {
 			continue
 		}
-		cpe, err := convertProductName(p)
+		base, concrete, err := convertProductName(p)
 		if err != nil {
 			return dataTypes.Data{}, errors.Wrapf(err, "convert product name %q", p)
 		}
-		if cpe == "" {
+		if concrete == "" {
 			continue
 		}
-		if _, ok := converted[cpe]; ok {
+		if _, ok := seen[concrete]; ok {
 			continue
 		}
-		converted[cpe] = struct{}{}
+		seen[concrete] = struct{}{}
+		if _, ok := matchesByBase[base]; !ok {
+			bases = append(bases, base)
+		}
+		matchesByBase[base] = append(matchesByBase[base], ccTypes.CPE(concrete))
+	}
+	criterions := make([]criterionTypes.Criterion, 0, len(bases))
+	for _, base := range bases {
 		criterions = append(criterions, criterionTypes.Criterion{
 			Type: criterionTypes.CriterionTypeCPE,
 			CPE: &ccTypes.Criterion{
 				Vulnerable: true,
-				CPE:        ccTypes.CPE(cpe),
+				CPE:        ccTypes.CPE(base),
+				CPEMatches: matchesByBase[base],
 			},
 		})
 	}
@@ -528,13 +540,17 @@ var knownUnparseableProductNames = map[string]struct{}{
 // is immutable and safe for concurrent use, so it is shared across calls.
 var wfnVersionEscaper = strings.NewReplacer(".", "\\.", "-", "\\-", "(", "\\(", ")", "\\)")
 
-// convertProductName converts a Cisco product name to a CPE 2.3 formatted
-// string with the exact version bound. It returns an empty string for
-// product names that carry no detectable version ("Base", etc.) or belong to
-// product families without an established CPE mapping. A version that fails to
-// parse returns an error unless the product name is in
-// knownUnparseableProductNames, in which case it is skipped (empty string).
-func convertProductName(name string) (string, error) {
+// convertProductName converts a Cisco product name to a pair of CPE 2.3
+// formatted strings: base is the product family CPE with a wildcard version
+// (part:vendor:product pinned, everything else "*"), and concrete is the same
+// CPE with the exact version bound. Detections group by base (the primary CPE)
+// and collect the concrete CPEs into CPEMatches.
+//
+// It returns ("", "", nil) for product names that carry no detectable version
+// ("Base", etc.) or belong to product families without an established CPE
+// mapping. A version that fails to parse returns an error unless the product
+// name is in knownUnparseableProductNames, in which case it is skipped.
+func convertProductName(name string) (base, concrete string, err error) {
 	for _, c := range productConversions {
 		s, ok := strings.CutPrefix(name, c.prefix)
 		if !ok {
@@ -542,26 +558,26 @@ func convertProductName(name string) (string, error) {
 		}
 		s = strings.TrimSpace(s)
 		if slices.Contains(c.skips, s) {
-			return "", nil
+			return "", "", nil
 		}
 
 		v, err := c.parse(s)
 		if err != nil {
 			if _, ok := knownUnparseableProductNames[name]; ok {
-				return "", nil
+				return "", "", nil
 			}
-			return "", errors.Wrapf(err, "parse version %q", s)
+			return "", "", errors.Wrapf(err, "parse version %q", s)
 		}
 
 		wfn, err := naming.UnbindFS(c.cpe)
 		if err != nil {
-			return "", errors.Wrapf(err, "unbind %q", c.cpe)
+			return "", "", errors.Wrapf(err, "unbind %q", c.cpe)
 		}
 		if err := wfn.Set(common.AttributeVersion, wfnVersionEscaper.Replace(strings.ToLower(v))); err != nil {
-			return "", errors.Wrapf(err, "set version %q", v)
+			return "", "", errors.Wrapf(err, "set version %q", v)
 		}
 
-		return naming.BindToFS(wfn), nil
+		return c.cpe, naming.BindToFS(wfn), nil
 	}
-	return "", nil
+	return "", "", nil
 }

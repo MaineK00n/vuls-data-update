@@ -73,112 +73,34 @@
 								"type": "cpe",
 								"cpe": {
 									"vulnerable": true,
-									"cpe": "cpe:2.3:a:cisco:firepower_threat_defense:7.4.0.0:*:*:*:*:*:*:*"
+									"cpe": "cpe:2.3:a:cisco:firepower_threat_defense:*:*:*:*:*:*:*:*",
+									"cpe_matches": [
+										"cpe:2.3:a:cisco:firepower_threat_defense:7.4.0.0:*:*:*:*:*:*:*",
+										"cpe:2.3:a:cisco:firepower_threat_defense:7.4.1.0:*:*:*:*:*:*:*",
+										"cpe:2.3:a:cisco:firepower_threat_defense:7.4.1.1:*:*:*:*:*:*:*",
+										"cpe:2.3:a:cisco:firepower_threat_defense:7.4.2.0:*:*:*:*:*:*:*",
+										"cpe:2.3:a:cisco:firepower_threat_defense:7.4.2.1:*:*:*:*:*:*:*",
+										"cpe:2.3:a:cisco:firepower_threat_defense:7.6.0.0:*:*:*:*:*:*:*"
+									]
 								}
 							},
 							{
 								"type": "cpe",
 								"cpe": {
 									"vulnerable": true,
-									"cpe": "cpe:2.3:a:cisco:firepower_threat_defense:7.4.1.0:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:a:cisco:firepower_threat_defense:7.4.1.1:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:a:cisco:firepower_threat_defense:7.4.2.0:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:a:cisco:firepower_threat_defense:7.4.2.1:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:a:cisco:firepower_threat_defense:7.6.0.0:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:o:cisco:adaptive_security_appliance_software:9.20.1.0:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:o:cisco:adaptive_security_appliance_software:9.20.1.5:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:o:cisco:adaptive_security_appliance_software:9.20.2.0:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:o:cisco:adaptive_security_appliance_software:9.20.2.10:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:o:cisco:adaptive_security_appliance_software:9.20.2.21:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:o:cisco:adaptive_security_appliance_software:9.20.2.22:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:o:cisco:adaptive_security_appliance_software:9.20.3.0:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:o:cisco:adaptive_security_appliance_software:9.20.3.4:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:o:cisco:adaptive_security_appliance_software:9.20.3.7:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:o:cisco:adaptive_security_appliance_software:9.22.1.1:*:*:*:*:*:*:*"
+									"cpe": "cpe:2.3:o:cisco:adaptive_security_appliance_software:*:*:*:*:*:*:*:*",
+									"cpe_matches": [
+										"cpe:2.3:o:cisco:adaptive_security_appliance_software:9.20.1.0:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:adaptive_security_appliance_software:9.20.1.5:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:adaptive_security_appliance_software:9.20.2.0:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:adaptive_security_appliance_software:9.20.2.10:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:adaptive_security_appliance_software:9.20.2.21:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:adaptive_security_appliance_software:9.20.2.22:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:adaptive_security_appliance_software:9.20.3.0:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:adaptive_security_appliance_software:9.20.3.4:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:adaptive_security_appliance_software:9.20.3.7:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:adaptive_security_appliance_software:9.22.1.1:*:*:*:*:*:*:*"
+									]
 								}
 							}
 						]

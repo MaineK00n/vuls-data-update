@@ -73,462 +73,84 @@
 								"type": "cpe",
 								"cpe": {
 									"vulnerable": true,
-									"cpe": "cpe:2.3:o:cisco:ios:12.4\\(25e\\)jap1m:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:o:cisco:ios:15.1\\(2\\)sy1:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:o:cisco:ios:15.1\\(2\\)sy2:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:o:cisco:ios:15.1\\(2\\)sy3:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:o:cisco:ios:15.1\\(2\\)sy:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:o:cisco:ios:15.2\\(1\\)e1:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:o:cisco:ios:15.2\\(1\\)e2:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:o:cisco:ios:15.2\\(1\\)e3:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:o:cisco:ios:15.2\\(1\\)e:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:o:cisco:ios:15.2\\(2\\)e:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:o:cisco:ios:15.2\\(2\\)jb1:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:o:cisco:ios:15.3\\(2\\)s2:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:o:cisco:ios:15.3\\(3\\)ja1n:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:o:cisco:ios:15.3\\(3\\)jn:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:o:cisco:ios:15.3\\(3\\)jnb:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:o:cisco:ios:15.3\\(3\\)s1:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:o:cisco:ios:15.3\\(3\\)s1a:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:o:cisco:ios:15.3\\(3\\)s2:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:o:cisco:ios:15.3\\(3\\)s2a:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:o:cisco:ios:15.3\\(3\\)s3:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:o:cisco:ios:15.3\\(3\\)s:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:o:cisco:ios:15.4\\(1\\)s1:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:o:cisco:ios:15.4\\(1\\)s2:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:o:cisco:ios:15.4\\(1\\)s:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:o:cisco:ios:15.4\\(1\\)t1:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:o:cisco:ios:15.4\\(1\\)t2:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:o:cisco:ios:15.4\\(1\\)t:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:o:cisco:ios:15.4\\(2\\)s1:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:o:cisco:ios:15.4\\(2\\)sn1:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:o:cisco:ios:15.4\\(2\\)sn:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:o:cisco:ios:15.4\\(2\\)t1:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:o:cisco:ios:15.4\\(2\\)t:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:o:cisco:ios:15.4\\(3\\)m1:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:o:cisco:ios:15.4\\(3\\)m2:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:o:cisco:ios:15.4\\(3\\)m:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:o:cisco:ios:15.4\\(3\\)s:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:o:cisco:ios:15.4\\(3\\)sn1:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:o:cisco:ios_xe:3.10.0s:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:o:cisco:ios_xe:3.10.1s:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:o:cisco:ios_xe:3.10.1xbs:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:o:cisco:ios_xe:3.10.1xcs:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:o:cisco:ios_xe:3.10.2as:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:o:cisco:ios_xe:3.10.2s:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:o:cisco:ios_xe:3.10.2ts:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:o:cisco:ios_xe:3.10.3s:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:o:cisco:ios_xe:3.11.0s:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:o:cisco:ios_xe:3.11.1s:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:o:cisco:ios_xe:3.11.2s:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:o:cisco:ios_xe:3.12.0as:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:o:cisco:ios_xe:3.12.0s:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:o:cisco:ios_xe:3.12.1s:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:o:cisco:ios_xe:3.13.0as:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:o:cisco:ios_xe:3.13.0s:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:o:cisco:ios_xe:3.3.0se:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:o:cisco:ios_xe:3.3.0xo:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:o:cisco:ios_xe:3.3.1se:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:o:cisco:ios_xe:3.3.1xo:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:o:cisco:ios_xe:3.3.2se:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:o:cisco:ios_xe:3.3.2xo:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:o:cisco:ios_xe:3.3.3se:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:o:cisco:ios_xe:3.5.0e:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:o:cisco:ios_xe:3.5.1e:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:o:cisco:ios_xe:3.5.2e:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:o:cisco:ios_xe:3.5.3e:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:o:cisco:ios_xe:3.6.0ae:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:o:cisco:ios_xe:3.6.0e:*:*:*:*:*:*:*"
+									"cpe": "cpe:2.3:o:cisco:ios:*:*:*:*:*:*:*:*",
+									"cpe_matches": [
+										"cpe:2.3:o:cisco:ios:12.4\\(25e\\)jap1m:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios:15.1\\(2\\)sy1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios:15.1\\(2\\)sy2:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios:15.1\\(2\\)sy3:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios:15.1\\(2\\)sy:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios:15.2\\(1\\)e1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios:15.2\\(1\\)e2:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios:15.2\\(1\\)e3:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios:15.2\\(1\\)e:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios:15.2\\(2\\)e:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios:15.2\\(2\\)jb1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios:15.3\\(2\\)s2:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios:15.3\\(3\\)ja1n:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios:15.3\\(3\\)jn:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios:15.3\\(3\\)jnb:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios:15.3\\(3\\)s1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios:15.3\\(3\\)s1a:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios:15.3\\(3\\)s2:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios:15.3\\(3\\)s2a:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios:15.3\\(3\\)s3:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios:15.3\\(3\\)s:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios:15.4\\(1\\)s1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios:15.4\\(1\\)s2:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios:15.4\\(1\\)s:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios:15.4\\(1\\)t1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios:15.4\\(1\\)t2:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios:15.4\\(1\\)t:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios:15.4\\(2\\)s1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios:15.4\\(2\\)sn1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios:15.4\\(2\\)sn:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios:15.4\\(2\\)t1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios:15.4\\(2\\)t:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios:15.4\\(3\\)m1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios:15.4\\(3\\)m2:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios:15.4\\(3\\)m:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios:15.4\\(3\\)s:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios:15.4\\(3\\)sn1:*:*:*:*:*:*:*"
+									]
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"cpe": "cpe:2.3:o:cisco:ios_xe:*:*:*:*:*:*:*:*",
+									"cpe_matches": [
+										"cpe:2.3:o:cisco:ios_xe:3.10.0s:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xe:3.10.1s:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xe:3.10.1xbs:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xe:3.10.1xcs:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xe:3.10.2as:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xe:3.10.2s:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xe:3.10.2ts:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xe:3.10.3s:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xe:3.11.0s:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xe:3.11.1s:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xe:3.11.2s:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xe:3.12.0as:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xe:3.12.0s:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xe:3.12.1s:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xe:3.13.0as:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xe:3.13.0s:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xe:3.3.0se:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xe:3.3.0xo:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xe:3.3.1se:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xe:3.3.1xo:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xe:3.3.2se:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xe:3.3.2xo:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xe:3.3.3se:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xe:3.5.0e:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xe:3.5.1e:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xe:3.5.2e:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xe:3.5.3e:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xe:3.6.0ae:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xe:3.6.0e:*:*:*:*:*:*:*"
+									]
 								}
 							}
 						]

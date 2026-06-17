@@ -104,105 +104,24 @@
 								"type": "cpe",
 								"cpe": {
 									"vulnerable": true,
-									"cpe": "cpe:2.3:a:cisco:firepower_threat_defense:7.3.0.0:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:a:cisco:firepower_threat_defense:7.3.1.0:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:a:cisco:firepower_threat_defense:7.3.1.1:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:a:cisco:firepower_threat_defense:7.3.1.2:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:a:cisco:firepower_threat_defense:7.4.0.0:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:a:cisco:firepower_threat_defense:7.4.1.0:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:a:cisco:firepower_threat_defense:7.4.1.1:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:a:cisco:firepower_threat_defense:7.4.2.0:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:a:cisco:firepower_threat_defense:7.4.2.1:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:a:cisco:firepower_threat_defense:7.4.2.2:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:a:cisco:firepower_threat_defense:7.4.2.3:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:a:cisco:firepower_threat_defense:7.4.2.4:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:a:cisco:firepower_threat_defense:7.6.0.0:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:a:cisco:firepower_threat_defense:7.6.1.0:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"cpe": "cpe:2.3:a:cisco:firepower_threat_defense:7.7.0.0:*:*:*:*:*:*:*"
+									"cpe": "cpe:2.3:a:cisco:firepower_threat_defense:*:*:*:*:*:*:*:*",
+									"cpe_matches": [
+										"cpe:2.3:a:cisco:firepower_threat_defense:7.3.0.0:*:*:*:*:*:*:*",
+										"cpe:2.3:a:cisco:firepower_threat_defense:7.3.1.0:*:*:*:*:*:*:*",
+										"cpe:2.3:a:cisco:firepower_threat_defense:7.3.1.1:*:*:*:*:*:*:*",
+										"cpe:2.3:a:cisco:firepower_threat_defense:7.3.1.2:*:*:*:*:*:*:*",
+										"cpe:2.3:a:cisco:firepower_threat_defense:7.4.0.0:*:*:*:*:*:*:*",
+										"cpe:2.3:a:cisco:firepower_threat_defense:7.4.1.0:*:*:*:*:*:*:*",
+										"cpe:2.3:a:cisco:firepower_threat_defense:7.4.1.1:*:*:*:*:*:*:*",
+										"cpe:2.3:a:cisco:firepower_threat_defense:7.4.2.0:*:*:*:*:*:*:*",
+										"cpe:2.3:a:cisco:firepower_threat_defense:7.4.2.1:*:*:*:*:*:*:*",
+										"cpe:2.3:a:cisco:firepower_threat_defense:7.4.2.2:*:*:*:*:*:*:*",
+										"cpe:2.3:a:cisco:firepower_threat_defense:7.4.2.3:*:*:*:*:*:*:*",
+										"cpe:2.3:a:cisco:firepower_threat_defense:7.4.2.4:*:*:*:*:*:*:*",
+										"cpe:2.3:a:cisco:firepower_threat_defense:7.6.0.0:*:*:*:*:*:*:*",
+										"cpe:2.3:a:cisco:firepower_threat_defense:7.6.1.0:*:*:*:*:*:*:*",
+										"cpe:2.3:a:cisco:firepower_threat_defense:7.7.0.0:*:*:*:*:*:*:*"
+									]
 								}
 							}
 						]
