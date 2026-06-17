@@ -390,16 +390,6 @@ func modified(fetched paloaltoJSON.CVE) *time.Time {
 	return nil
 }
 
-// isKnownPANOSVersionAnomaly reports stanzas whose version field is known-bad
-// upstream data, skipped without warning. It is pinned to the exact advisory
-// and wording so any new anomaly (a different advisory or different text) still
-// surfaces as a warning. Tracked for upstream reporting (see design notes).
-func isKnownPANOSVersionAnomaly(id, version string) bool {
-	// PAN-SA-2023-0004 stores GlobalProtect configuration descriptions in the
-	// version field of "PAN-OS" affected entries.
-	return id == "PAN-SA-2023-0004" && strings.HasPrefix(version, "with GlobalProtect")
-}
-
 func detections(fetched paloaltoJSON.CVE) ([]detectionTypes.Detection, error) {
 	var cns []criterionTypes.Criterion
 	for _, a := range fetched.Containers.CNA.Affected {
@@ -413,13 +403,19 @@ func detections(fetched paloaltoJSON.CVE) ([]detectionTypes.Detection, error) {
 			// per-maintenance-line backport fixes (see panosStanzaIntervals).
 			for _, v := range a.Versions {
 				// Known shapes that carry no detectable version range are
-				// skipped silently; anything else that fails to interpret is
-				// warned so a new upstream anomaly gets noticed.
+				// skipped here; anything else that fails to interpret falls
+				// through to a hard error below so a new upstream anomaly cannot
+				// pass unnoticed.
 				if v.Status == "unknown" {
 					// CVE 5.0 "unknown" impact: no affected range can be asserted.
 					continue
 				}
-				if isKnownPANOSVersionAnomaly(fetched.CVEMetadata.CVEID, v.Version) {
+				// PAN-SA-2023-0004 stores GlobalProtect configuration
+				// descriptions in the version field of "PAN-OS" affected entries.
+				// Pinned to the exact advisory + wording so a new anomaly (a
+				// different advisory or different text) still hard-errors.
+				// Tracked for upstream reporting (see design notes).
+				if fetched.CVEMetadata.CVEID == "PAN-SA-2023-0004" && strings.HasPrefix(v.Version, "with GlobalProtect") {
 					continue
 				}
 
