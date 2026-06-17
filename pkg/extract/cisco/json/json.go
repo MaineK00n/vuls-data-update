@@ -151,7 +151,7 @@ func extract(fetched fetchTypes.Advisory, raws []string) (dataTypes.Data, error)
 	// value that could escape the extract directory (path separators or a
 	// parent/current-dir reference).
 	if strings.ContainsAny(fetched.AdvisoryID, `/\`) || fetched.AdvisoryID == "." || fetched.AdvisoryID == ".." {
-		return dataTypes.Data{}, errors.Errorf("unexpected advisoryId containing a path separator: %q", fetched.AdvisoryID)
+		return dataTypes.Data{}, errors.Errorf("unexpected advisoryId unsafe as a path segment (path separator or directory reference): %q", fetched.AdvisoryID)
 	}
 
 	// Build vendor severity from SIR (Security Impact Rating)
