@@ -473,7 +473,11 @@ func detections(fetched paloaltoJSON.CVE) ([]detectionTypes.Detection, error) {
 			// it verbatim as a separate enumeration criterion: it adds recall
 			// for NVD-style "pan-os:<ver>:<hotfix>" queries and is inert for
 			// queries that carry "<ver>-h<hotfix>" in the version attribute.
-			if cpes := validCPEs(fetched.CVEMetadata.CVEID, a.Cpes); len(cpes) > 0 {
+			cpes, err := validCPEs(fetched.CVEMetadata.CVEID, a.Cpes)
+			if err != nil {
+				return nil, errors.Wrapf(err, "valid cpes for %q", *a.Product)
+			}
+			if len(cpes) > 0 {
 				cns = append(cns, criterionTypes.Criterion{
 					Type: criterionTypes.CriterionTypeCPE,
 					CPE: &ccTypes.Criterion{
@@ -488,7 +492,11 @@ func detections(fetched paloaltoJSON.CVE) ([]detectionTypes.Detection, error) {
 			// enough for detection (versions[] use product-specific version
 			// schemes such as "6.2.8-h2 (6.2.8-c243)"). Same policy as
 			// go-cve-dictionary. Products without cpes[] yield no criterion.
-			for _, c := range validCPEs(fetched.CVEMetadata.CVEID, a.Cpes) {
+			cpes, err := validCPEs(fetched.CVEMetadata.CVEID, a.Cpes)
+			if err != nil {
+				return nil, errors.Wrapf(err, "valid cpes for %q", *a.Product)
+			}
+			for _, c := range cpes {
 				cns = append(cns, criterionTypes.Criterion{
 					Type: criterionTypes.CriterionTypeCPE,
 					CPE: &ccTypes.Criterion{
@@ -524,24 +532,39 @@ func detections(fetched paloaltoJSON.CVE) ([]detectionTypes.Detection, error) {
 	}}, nil
 }
 
-// validCPEs filters cpes down to ones that bind as CPE 2.3 formatted strings.
-// Invalid entries (recurring upstream typos: an unescaped space in target_sw
-// such as "Chrome OS", a part of "undefined", or an extra attribute field)
-// would make cpecriterion.Accept error at detect time, so they are skipped
-// with a warning rather than emitted into criteria.
-func validCPEs(id string, cpes []string) []ccTypes.CPE {
+// validCPEs filters cpes down to ones that bind as CPE 2.3 formatted strings;
+// an unbindable CPE would make cpecriterion.Accept error at detect time, so it
+// must not be emitted into criteria.
+//
+// The three known upstream typos are tolerated (skipped — the affected entry's
+// other CPEs still produce criteria), pinned to the exact advisory + wording so
+// a new malformation hard-errors instead of passing unnoticed. Tracked for
+// upstream reporting (see design notes, appendix A).
+func validCPEs(id string, cpes []string) ([]ccTypes.CPE, error) {
 	cs := make([]ccTypes.CPE, 0, len(cpes))
 	for _, c := range cpes {
 		if _, err := naming.UnbindFS(c); err != nil {
-			slog.Warn("invalid CPE", slog.String("id", id), slog.String("cpe", c))
+			switch {
+			case id == "CVE-2025-4227" && strings.Contains(c, "Chrome OS"):
+				// unescaped space in target_sw "Chrome OS", e.g.
+				// cpe:2.3:a:palo_alto_networks:globalprotect_app:6.0.0:*:*:*:*:Chrome OS:*:*
+			case id == "CVE-2024-3596" && strings.Contains(c, ":undefined:"):
+				// CPE part is "undefined":
+				// cpe:2.3:undefined:paloaltonetworks:palo_alto_networks_pan-os:9.1.7:-:*:*:*:*:*:*
+			case id == "CVE-2025-4619" && strings.Contains(c, "palo_alto_networks:pan-os"):
+				// extra trailing attribute field (13 components), e.g.
+				// cpe:2.3:o:palo_alto_networks:pan-os:11.1.5:-:*:*:*:*:*:*:*
+			default:
+				return nil, errors.Wrapf(err, "unbind cpe %q", c)
+			}
 			continue
 		}
 		cs = append(cs, ccTypes.CPE(c))
 	}
 	if len(cs) == 0 {
-		return nil
+		return nil, nil
 	}
-	return cs
+	return cs, nil
 }
 
 // PanosStanza is one PAN-OS affected versions[] entry. It is exported only so
