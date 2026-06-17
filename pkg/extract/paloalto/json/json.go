@@ -943,9 +943,9 @@ func parsePANOSBoundExpr(s string, start *panosVersion.Version) (bound *panosVer
 }
 
 func parseMajorMinor(s string) (major, minor int, err error) {
-	ss := strings.Split(s, ".")
-	if len(ss) != 2 {
-		return 0, 0, errors.Errorf("unexpected version format. expected: %q, actual: %q", "<major>.<minor>", s)
+	ss, err := util.Split(s, ".")
+	if err != nil {
+		return 0, 0, errors.Wrapf(err, "split %q into <major>.<minor>", s)
 	}
 	major, err = strconv.Atoi(ss[0])
 	if err != nil {
