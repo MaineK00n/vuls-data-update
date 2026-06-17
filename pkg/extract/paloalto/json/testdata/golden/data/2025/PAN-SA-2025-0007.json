@@ -35,56 +35,7 @@
 						"url": "https://security.paloaltonetworks.com/PAN-SA-2025-0007"
 					}
 				],
-				"published": "2025-03-12T16:00:00Z",
-				"optional": {
-					"affected": [
-						{
-							"vendor": "Palo Alto Networks",
-							"product": "Prisma Browser",
-							"defaultStatus": "unaffected",
-							"versions": [
-								{
-									"status": "affected",
-									"versionType": "custom",
-									"version": "0",
-									"lessThan": "133.16.4.99",
-									"changes": [
-										{
-											"at": "134.7.4.44",
-											"status": "unaffected"
-										}
-									]
-								}
-							]
-						}
-					],
-					"configurations": [
-						{
-							"lang": "en",
-							"value": "No special configuration is required to be affected by this issue.",
-							"supportingMedia": [
-								{
-									"base64": false,
-									"type": "text/html",
-									"value": "No special configuration is required to be affected by this issue."
-								}
-							]
-						}
-					],
-					"impacts": [
-						{
-							"descriptions": [
-								{
-									"lang": "en",
-									"value": ""
-								}
-							]
-						}
-					],
-					"source": {
-						"discovery": "EXTERNAL"
-					}
-				}
+				"published": "2025-03-12T16:00:00Z"
 			},
 			"segments": [
 				{
