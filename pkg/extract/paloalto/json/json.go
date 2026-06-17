@@ -397,23 +397,23 @@ func detections(fetched paloaltoJSON.CVE) []detectionTypes.Detection {
 			// Range criteria from versions[], interpreting changes as
 			// per-maintenance-line backport fixes (see panosStanzaIntervals).
 			for _, v := range a.Versions {
-				stanza := panosStanza{
-					status:  v.Status,
-					version: v.Version,
+				stanza := PanosStanza{
+					Status:  v.Status,
+					Version: v.Version,
 				}
 				if v.LessThan != nil {
-					stanza.lessThan = *v.LessThan
+					stanza.LessThan = *v.LessThan
 				}
 				if v.LessThanOrEqual != nil {
-					stanza.lessThanOrEqual = *v.LessThanOrEqual
+					stanza.LessThanOrEqual = *v.LessThanOrEqual
 				}
 				for _, c := range v.Changes {
-					stanza.changes = append(stanza.changes, panosChange{at: c.At, status: c.Status})
+					stanza.Changes = append(stanza.Changes, PanosChange{At: c.At, Status: c.Status})
 				}
 
 				is, err := panosStanzaIntervals(stanza)
 				if err != nil {
-					slog.Warn("failed to interpret PAN-OS affected version", slog.String("id", fetched.CVEMetadata.CVEID), slog.String("version", stanza.version), slog.String("lessThan", stanza.lessThan), slog.String("lessThanOrEqual", stanza.lessThanOrEqual), slog.String("err", err.Error()))
+					slog.Warn("failed to interpret PAN-OS affected version", slog.String("id", fetched.CVEMetadata.CVEID), slog.String("version", stanza.Version), slog.String("lessThan", stanza.LessThan), slog.String("lessThanOrEqual", stanza.LessThanOrEqual), slog.String("err", err.Error()))
 					continue
 				}
 				for _, i := range is {
@@ -423,18 +423,18 @@ func detections(fetched paloaltoJSON.CVE) []detectionTypes.Detection {
 							Vulnerable: true,
 							CPE:        ccTypes.CPE("cpe:2.3:o:paloaltonetworks:pan-os:*:*:*:*:*:*:*:*"),
 							Range: func() *ccRangeTypes.Range {
-								if i.ge == "" && i.gt == "" && i.le == "" && i.lt == "" {
+								if i.GE == "" && i.GT == "" && i.LE == "" && i.LT == "" {
 									return nil
 								}
 								return &ccRangeTypes.Range{
 									Type:         ccRangeTypes.RangeTypePANOS,
-									GreaterEqual: i.ge,
-									GreaterThan:  i.gt,
-									LessEqual:    i.le,
-									LessThan:     i.lt,
+									GreaterEqual: i.GE,
+									GreaterThan:  i.GT,
+									LessEqual:    i.LE,
+									LessThan:     i.LT,
 								}
 							}(),
-							Fixed: i.fixed,
+							Fixed: i.Fixed,
 						},
 					})
 				}
@@ -516,24 +516,27 @@ func validCPEs(id string, cpes []string) []ccTypes.CPE {
 	return cs
 }
 
-type panosStanza struct {
-	status          string
-	version         string
-	lessThan        string
-	lessThanOrEqual string
-	changes         []panosChange
+// PanosStanza is one PAN-OS affected versions[] entry. It is exported only so
+// the white-box test in package json_test can drive PanosStanzaIntervals.
+type PanosStanza struct {
+	Status          string
+	Version         string
+	LessThan        string
+	LessThanOrEqual string
+	Changes         []PanosChange
 }
 
-type panosChange struct {
-	at     string
-	status string
+// PanosChange is one versions[].changes[] event.
+type PanosChange struct {
+	At     string
+	Status string
 }
 
-// panosInterval is one contiguous affected version interval. fixed lists the
+// PanosInterval is one contiguous affected version interval. Fixed lists the
 // release that closes the interval when that release is an actual fix.
-type panosInterval struct {
-	ge, gt, le, lt string
-	fixed          []string
+type PanosInterval struct {
+	GE, GT, LE, LT string
+	Fixed          []string
 }
 
 // panosTransition is a status switch point on the version timeline.
@@ -573,24 +576,24 @@ type panosTransition struct {
 // A timeline that would end "affected" without an explicit upper bound is
 // clamped at the highest version any event refers to (the data never means
 // open-ended; e.g. the trailing lines of CVE-2026-0227 stanzas).
-func panosStanzaIntervals(stanza panosStanza) ([]panosInterval, error) {
-	affected, err := statusToBool(stanza.status)
+func panosStanzaIntervals(stanza PanosStanza) ([]PanosInterval, error) {
+	affected, err := statusToBool(stanza.Status)
 	if err != nil {
 		return nil, errors.Wrap(err, "parse status")
 	}
 
-	start, defaultUpper, all, err := parsePANOSVersionExpr(stanza.version)
+	start, defaultUpper, all, err := parsePANOSVersionExpr(stanza.Version)
 	if err != nil {
-		return nil, errors.Wrapf(err, "parse version %q", stanza.version)
+		return nil, errors.Wrapf(err, "parse version %q", stanza.Version)
 	}
 
 	if all {
 		switch {
-		case stanza.lessThan != "" || stanza.lessThanOrEqual != "" || len(stanza.changes) > 0:
-			return nil, errors.Errorf("version is %q, but lessThan, lessThanOrEqual or changes is set", stanza.version)
+		case stanza.LessThan != "" || stanza.LessThanOrEqual != "" || len(stanza.Changes) > 0:
+			return nil, errors.Errorf("version is %q, but lessThan, lessThanOrEqual or changes is set", stanza.Version)
 		case affected:
 			// All versions affected: a criterion without range narrowing.
-			return []panosInterval{{}}, nil
+			return []PanosInterval{{}}, nil
 		default:
 			return nil, nil
 		}
@@ -602,16 +605,16 @@ func panosStanzaIntervals(stanza panosStanza) ([]panosInterval, error) {
 		upperIsRelease bool
 	)
 	switch {
-	case stanza.lessThan != "":
-		v, isRelease, err := parsePANOSBoundExpr(stanza.lessThan, start)
+	case stanza.LessThan != "":
+		v, isRelease, err := parsePANOSBoundExpr(stanza.LessThan, start)
 		if err != nil {
-			return nil, errors.Wrapf(err, "parse lessThan %q", stanza.lessThan)
+			return nil, errors.Wrapf(err, "parse lessThan %q", stanza.LessThan)
 		}
 		upper, upperIsRelease = v, isRelease
-	case stanza.lessThanOrEqual != "":
-		v, isRelease, err := parsePANOSBoundExpr(stanza.lessThanOrEqual, start)
+	case stanza.LessThanOrEqual != "":
+		v, isRelease, err := parsePANOSBoundExpr(stanza.LessThanOrEqual, start)
 		if err != nil {
-			return nil, errors.Wrapf(err, "parse lessThanOrEqual %q", stanza.lessThanOrEqual)
+			return nil, errors.Wrapf(err, "parse lessThanOrEqual %q", stanza.LessThanOrEqual)
 		}
 		switch {
 		case isRelease:
@@ -629,18 +632,18 @@ func panosStanzaIntervals(stanza panosStanza) ([]panosInterval, error) {
 		v        panosVersion.Version
 		affected bool
 	}
-	events := make([]event, 0, len(stanza.changes))
-	for _, c := range stanza.changes {
-		a, err := statusToBool(c.status)
+	events := make([]event, 0, len(stanza.Changes))
+	for _, c := range stanza.Changes {
+		a, err := statusToBool(c.Status)
 		if err != nil {
-			return nil, errors.Wrapf(err, "parse change status %q", c.status)
+			return nil, errors.Wrapf(err, "parse change status %q", c.Status)
 		}
 		// at occasionally lists several versions at once
 		// (CVE-2019-17440: "9.0.6, 9.0.5-h3").
-		for at := range strings.SplitSeq(c.at, ",") {
+		for at := range strings.SplitSeq(c.At, ",") {
 			v, err := parsePANOSVersion(at)
 			if err != nil {
-				return nil, errors.Wrapf(err, "parse change at %q", c.at)
+				return nil, errors.Wrapf(err, "parse change at %q", c.At)
 			}
 			events = append(events, event{v: v, affected: a})
 		}
@@ -669,12 +672,12 @@ func panosStanzaIntervals(stanza panosStanza) ([]panosInterval, error) {
 				upper.Compare(panosVersion.Version{Major: start.Major, Minor: start.Minor + 1}) == 0 {
 				seriesStart := panosVersion.Version{Major: start.Major, Minor: start.Minor}
 				if seriesStart.Compare(*start) < 0 {
-					return []panosInterval{{ge: seriesStart.String(), lt: start.String(), fixed: []string{start.String()}}}, nil
+					return []PanosInterval{{GE: seriesStart.String(), LT: start.String(), Fixed: []string{start.String()}}}, nil
 				}
 			}
 			return nil, nil
 		case start == nil && upper == nil:
-			return nil, errors.Errorf("no version bounds. version: %q", stanza.version)
+			return nil, errors.Errorf("no version bounds. version: %q", stanza.Version)
 		case upper == nil:
 			switch start.Hotfix {
 			case nil:
@@ -682,26 +685,26 @@ func panosStanzaIntervals(stanza panosStanza) ([]panosInterval, error) {
 				// that release on (e.g. CVE-2020-2035 lists "8.1.0" .. "10.1.0"
 				// stanzas only, while x_affectedList enumerates the whole
 				// series).
-				return []panosInterval{{ge: start.String(), lt: panosVersion.Version{Major: start.Major, Minor: start.Minor + 1}.String()}}, nil
+				return []PanosInterval{{GE: start.String(), LT: panosVersion.Version{Major: start.Major, Minor: start.Minor + 1}.String()}}, nil
 			default:
 				// A single concrete hotfix release.
-				return []panosInterval{{ge: start.String(), le: start.String()}}, nil
+				return []PanosInterval{{GE: start.String(), LE: start.String()}}, nil
 			}
 		default:
-			i := panosInterval{}
+			i := PanosInterval{}
 			if start != nil {
-				i.ge = start.String()
+				i.GE = start.String()
 			}
 			switch {
 			case upperInclusive:
-				i.le = upper.String()
+				i.LE = upper.String()
 			default:
-				i.lt = upper.String()
+				i.LT = upper.String()
 				if upperIsRelease {
-					i.fixed = []string{upper.String()}
+					i.Fixed = []string{upper.String()}
 				}
 			}
-			return []panosInterval{i}, nil
+			return []PanosInterval{i}, nil
 		}
 	}
 
@@ -806,7 +809,7 @@ func panosStanzaIntervals(stanza panosStanza) ([]panosInterval, error) {
 	slices.SortFunc(ks, func(a, b string) int { return versions[a].Compare(versions[b]) })
 
 	var (
-		is      []panosInterval
+		is      []PanosInterval
 		current = start == nil && affected
 		open    *string
 	)
@@ -823,9 +826,9 @@ func panosStanzaIntervals(stanza panosStanza) ([]panosInterval, error) {
 			v := versions[k].String()
 			open = &v
 		default:
-			i := panosInterval{ge: *open, lt: versions[k].String()}
+			i := PanosInterval{GE: *open, LT: versions[k].String()}
 			if t.fix {
-				i.fixed = []string{versions[k].String()}
+				i.Fixed = []string{versions[k].String()}
 			}
 			is = append(is, i)
 			open = nil
@@ -838,10 +841,10 @@ func panosStanzaIntervals(stanza panosStanza) ([]panosInterval, error) {
 		// trailing line-end reverts of CVE-2026-0227 stanzas).
 		switch clamp {
 		case nil:
-			is = append(is, panosInterval{ge: *open})
+			is = append(is, PanosInterval{GE: *open})
 		default:
 			if v, err := parsePANOSVersion(*open); err != nil || v.Compare(*clamp) < 0 {
-				is = append(is, panosInterval{ge: *open, lt: clamp.String()})
+				is = append(is, PanosInterval{GE: *open, LT: clamp.String()})
 			}
 		}
 	}
