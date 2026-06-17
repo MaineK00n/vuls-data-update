@@ -452,6 +452,9 @@ func detections(fetched paloaltoJSON.CVE) ([]detectionTypes.Detection, error) {
 							Vulnerable: true,
 							CPE:        ccTypes.CPE("cpe:2.3:o:paloaltonetworks:pan-os:*:*:*:*:*:*:*:*"),
 							Range: func() *ccRangeTypes.Range {
+								// An interval with no bounds (the "All versions
+								// affected" case) is a bare criterion: no Range,
+								// matches every PAN-OS version.
 								if i.GE == "" && i.GT == "" && i.LE == "" && i.LT == "" {
 									return nil
 								}
@@ -605,6 +608,11 @@ type panosTransition struct {
 // A timeline that would end "affected" without an explicit upper bound is
 // clamped at the highest version any event refers to (the data never means
 // open-ended; e.g. the trailing lines of CVE-2026-0227 stanzas).
+//
+// Return contract: an empty/nil slice means "nothing affected here" (no
+// criterion). A single zero-value interval (all bounds empty) means "every
+// version affected" — it maps to a bare CPE criterion with no Range. These two
+// are distinct, so callers must not collapse nil and []PanosInterval{{}}.
 func panosStanzaIntervals(stanza PanosStanza) ([]PanosInterval, error) {
 	affected, err := statusToBool(stanza.Status)
 	if err != nil {
@@ -621,9 +629,15 @@ func panosStanzaIntervals(stanza PanosStanza) ([]PanosInterval, error) {
 		case stanza.LessThan != "" || stanza.LessThanOrEqual != "" || len(stanza.Changes) > 0:
 			return nil, errors.Errorf("version is %q, but lessThan, lessThanOrEqual or changes is set", stanza.Version)
 		case affected:
-			// All versions affected: a criterion without range narrowing.
+			// "All" versions affected: one interval with every bound empty.
+			// This is deliberately a single zero-value element, NOT nil — an
+			// empty-bounds interval becomes a bare CPE criterion (Range == nil)
+			// that matches every PAN-OS version, whereas nil (below) means no
+			// interval and hence no criterion. See the return contract on
+			// panosStanzaIntervals.
 			return []PanosInterval{{}}, nil
 		default:
+			// "All" but unaffected: nothing is affected, so no interval.
 			return nil, nil
 		}
 	}
