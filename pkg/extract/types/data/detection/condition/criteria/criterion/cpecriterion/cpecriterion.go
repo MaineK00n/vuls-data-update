@@ -202,10 +202,10 @@ func (c Criterion) Accept(query Query) (bool, error) {
 		}
 		if c.Range != nil {
 			// WFN attribute values escape every special character with a
-			// backslash ("10\.1\.3\-h1"); strip all escapes, not just dots,
-			// so versions containing hyphens (e.g. PAN-OS hotfixes) reach
-			// the comparator intact.
-			qVersion := strings.ReplaceAll(qWFN.GetString(common.AttributeVersion), "\\", "")
+			// backslash ("10\.1\.3\-h1"); unescape so versions containing
+			// any special char (e.g. the hyphen in PAN-OS hotfixes) reach the
+			// comparator intact.
+			qVersion := unescapeWFN(qWFN.GetString(common.AttributeVersion))
 			isAccepted, err := c.Range.Accept(qVersion)
 			if err != nil {
 				return false, errors.Wrap(err, "range accept")
@@ -232,4 +232,24 @@ func (c Criterion) Accept(query Query) (bool, error) {
 	}
 
 	return false, nil
+}
+
+// unescapeWFN reverses WFN attribute escaping: a backslash escapes the
+// character that follows it (e.g. "10\.1\.3\-h1" -> "10.1.3-h1"). The escape
+// marker is consumed while the escaped character is preserved, so an escaped
+// backslash ("\\") yields a single literal backslash. A trailing lone
+// backslash is kept as-is.
+func unescapeWFN(s string) string {
+	if !strings.Contains(s, "\\") {
+		return s
+	}
+	var b strings.Builder
+	b.Grow(len(s))
+	for i := 0; i < len(s); i++ {
+		if s[i] == '\\' && i+1 < len(s) {
+			i++
+		}
+		b.WriteByte(s[i])
+	}
+	return b.String()
 }
