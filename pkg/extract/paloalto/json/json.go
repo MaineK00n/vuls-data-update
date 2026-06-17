@@ -385,6 +385,21 @@ func modified(fetched paloaltoJSON.CVE) *time.Time {
 	return nil
 }
 
+// errPanosNoVersionBounds marks a stanza that carries no usable version
+// constraint (version "None"/"" with no lessThan/lessThanOrEqual): there is
+// nothing to detect, so callers skip it silently rather than warning.
+var errPanosNoVersionBounds = errors.New("no version bounds")
+
+// isKnownPANOSVersionAnomaly reports stanzas whose version field is known-bad
+// upstream data, skipped without warning. It is pinned to the exact advisory
+// and wording so any new anomaly (a different advisory or different text) still
+// surfaces as a warning. Tracked for upstream reporting (see design notes).
+func isKnownPANOSVersionAnomaly(id, version string) bool {
+	// PAN-SA-2023-0004 stores GlobalProtect configuration descriptions in the
+	// version field of "PAN-OS" affected entries.
+	return id == "PAN-SA-2023-0004" && strings.HasPrefix(version, "with GlobalProtect")
+}
+
 func detections(fetched paloaltoJSON.CVE) []detectionTypes.Detection {
 	var cns []criterionTypes.Criterion
 	for _, a := range fetched.Containers.CNA.Affected {
@@ -397,6 +412,17 @@ func detections(fetched paloaltoJSON.CVE) []detectionTypes.Detection {
 			// Range criteria from versions[], interpreting changes as
 			// per-maintenance-line backport fixes (see panosStanzaIntervals).
 			for _, v := range a.Versions {
+				// Known shapes that carry no detectable version range are
+				// skipped silently; anything else that fails to interpret is
+				// warned so a new upstream anomaly gets noticed.
+				if v.Status == "unknown" {
+					// CVE 5.0 "unknown" impact: no affected range can be asserted.
+					continue
+				}
+				if isKnownPANOSVersionAnomaly(fetched.CVEMetadata.CVEID, v.Version) {
+					continue
+				}
+
 				stanza := PanosStanza{
 					Status:  v.Status,
 					Version: v.Version,
@@ -413,6 +439,10 @@ func detections(fetched paloaltoJSON.CVE) []detectionTypes.Detection {
 
 				is, err := panosStanzaIntervals(stanza)
 				if err != nil {
+					if errors.Is(err, errPanosNoVersionBounds) {
+						// version "None"/"" with no bound: nothing to detect.
+						continue
+					}
 					slog.Warn("failed to interpret PAN-OS affected version", slog.String("id", fetched.CVEMetadata.CVEID), slog.String("version", stanza.Version), slog.String("lessThan", stanza.LessThan), slog.String("lessThanOrEqual", stanza.LessThanOrEqual), slog.String("err", err.Error()))
 					continue
 				}
@@ -677,7 +707,7 @@ func panosStanzaIntervals(stanza PanosStanza) ([]PanosInterval, error) {
 			}
 			return nil, nil
 		case start == nil && upper == nil:
-			return nil, errors.Errorf("no version bounds. version: %q", stanza.Version)
+			return nil, errPanosNoVersionBounds
 		case upper == nil:
 			switch start.Hotfix {
 			case nil:
