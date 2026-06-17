@@ -452,8 +452,7 @@ func detections(fetched paloaltoJSON.CVE) []detectionTypes.Detection {
 			// Non-PAN-OS products: only the cpes[] enumeration is reliable
 			// enough for detection (versions[] use product-specific version
 			// schemes such as "6.2.8-h2 (6.2.8-c243)"). Same policy as
-			// go-cve-dictionary; the raw affected entry is preserved in
-			// Optional["affected"].
+			// go-cve-dictionary. Products without cpes[] yield no criterion.
 			for _, c := range validCPEs(fetched.CVEMetadata.CVEID, a.Cpes) {
 				cns = append(cns, criterionTypes.Criterion{
 					Type: criterionTypes.CriterionTypeCPE,
@@ -491,9 +490,10 @@ func detections(fetched paloaltoJSON.CVE) []detectionTypes.Detection {
 }
 
 // validCPEs filters cpes down to ones that bind as CPE 2.3 formatted strings.
-// Invalid entries (e.g. unescaped spaces in target_sw such as "Chrome OS")
+// Invalid entries (recurring upstream typos: an unescaped space in target_sw
+// such as "Chrome OS", a part of "undefined", or an extra attribute field)
 // would make cpecriterion.Accept error at detect time, so they are skipped
-// with a warning; the raw values remain available in Optional["affected"].
+// with a warning rather than emitted into criteria.
 func validCPEs(id string, cpes []string) []ccTypes.CPE {
 	cs := make([]ccTypes.CPE, 0, len(cpes))
 	for _, c := range cpes {
