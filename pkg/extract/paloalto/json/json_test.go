@@ -174,6 +174,27 @@ func TestPanosStanzaIntervals(t *testing.T) {
 			},
 		},
 		{
+			// Regression backported into a hotfix line (CVE-2025-4619 shape):
+			// line 10.2.1 is unaffected at its base (10.2.1, 10.2.1-h1); a
+			// regression reappears at 10.2.1-h2 and is fixed at 10.2.1-h5. This
+			// exercises the priority tie-break — line 10.2.1's own start status
+			// (unaffected) must beat the previous line's revert marker
+			// (affected) at version 10.2.1, else the interval would wrongly
+			// start at 10.2.1 instead of 10.2.1-h2.
+			name: "regression in a hotfix line (priority tie-break)",
+			stanza: paloaltoJSON.PanosStanza{Status: "affected", Version: "10.2.0", LessThan: "10.2.3",
+				Changes: []paloaltoJSON.PanosChange{
+					{At: "10.2.0-h1", Status: "unaffected"},
+					{At: "10.2.1-h2", Status: "affected"},
+					{At: "10.2.1-h5", Status: "unaffected"},
+				}},
+			want: []paloaltoJSON.PanosInterval{
+				{GE: "10.2.0", LT: "10.2.0-h1", Fixed: []string{"10.2.0-h1"}},
+				{GE: "10.2.1-h2", LT: "10.2.1-h5", Fixed: []string{"10.2.1-h5"}},
+				{GE: "10.2.2", LT: "10.2.3", Fixed: []string{"10.2.3"}},
+			},
+		},
+		{
 			// Comma-separated changes.at (CVE-2019-17440 shape): both versions
 			// are parsed; here the earlier base fix closes the series.
 			name: "comma-separated changes.at",
