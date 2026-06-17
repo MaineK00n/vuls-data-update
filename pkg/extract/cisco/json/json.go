@@ -202,8 +202,8 @@ func extract(fetched fetchTypes.Advisory, raws []string) (dataTypes.Data, error)
 	}
 
 	// Build CPE-based detections from product names
-	var criterions []criterionTypes.Criterion
-	converted := make(map[string]struct{})
+	criterions := make([]criterionTypes.Criterion, 0, len(fetched.ProductNames))
+	converted := make(map[string]struct{}, len(fetched.ProductNames))
 	for _, p := range fetched.ProductNames {
 		if p == "NA" {
 			continue
