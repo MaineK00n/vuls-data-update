@@ -49,6 +49,16 @@ func TestConvertProductName(t *testing.T) {
 			want:    "",
 		},
 		{
+			name:    "known unparseable entry with trailing whitespace is still skipped",
+			product: "Cisco IOS XE Software .0  ",
+			want:    "",
+		},
+		{
+			name:    "trailing whitespace on the version does not affect conversion",
+			product: "Cisco NX-OS Software 10.1(1)  ",
+			want:    `cpe:2.3:o:cisco:nx-os:10.1\(1\):*:*:*:*:*:*:*`,
+		},
+		{
 			name:     "unknown unparseable version errors",
 			product:  "Cisco Wireless LAN Controller (WLC) 9.9.9Z",
 			hasError: true,

@@ -547,7 +547,10 @@ func convertProductName(name string) (string, error) {
 
 		v, err := c.parse(s)
 		if err != nil {
-			if _, ok := knownUnparseableProductNames[name]; ok {
+			// Match the allow-list on the trimmed name so an allow-listed
+			// malformed entry that arrives with incidental surrounding
+			// whitespace is still skipped rather than aborting the run.
+			if _, ok := knownUnparseableProductNames[strings.TrimSpace(name)]; ok {
 				return "", nil
 			}
 			return "", errors.Wrapf(err, "parse version %q", s)
