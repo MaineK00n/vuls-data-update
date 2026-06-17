@@ -155,6 +155,11 @@ func extract(fetched paloaltoJSON.CVE, raws []string) (dataTypes.Data, error) {
 		},
 	}
 
+	ss, err := severities(fetched)
+	if err != nil {
+		return dataTypes.Data{}, errors.Wrap(err, "severities")
+	}
+
 	// The record is a Palo Alto Networks CNA advisory document. Its CNA
 	// container (CVSS, title, description, CWE, ...) is placed on whichever
 	// canonical entity matches the root ID's class:
@@ -171,7 +176,7 @@ func extract(fetched paloaltoJSON.CVE, raws []string) (dataTypes.Data, error) {
 				ID:          advisoryContentTypes.AdvisoryID(fetched.CVEMetadata.CVEID),
 				Title:       title(fetched),
 				Description: description(fetched.Containers.CNA.Descriptions),
-				Severity:    severities(fetched),
+				Severity:    ss,
 				CWE:         cwes(fetched),
 				Mitigations: remediations(getSource(fetched.Containers.CNA.ProviderMetadata), fetched.Containers.CNA.Solutions),
 				Workarounds: remediations(getSource(fetched.Containers.CNA.ProviderMetadata), fetched.Containers.CNA.Workarounds),
@@ -190,7 +195,7 @@ func extract(fetched paloaltoJSON.CVE, raws []string) (dataTypes.Data, error) {
 			ID:          vulnerabilityContentTypes.VulnerabilityID(fetched.CVEMetadata.CVEID),
 			Title:       title(fetched),
 			Description: description(fetched.Containers.CNA.Descriptions),
-			Severity:    severities(fetched),
+			Severity:    ss,
 			CWE:         cwes(fetched),
 			Mitigations: remediations(getSource(fetched.Containers.CNA.ProviderMetadata), fetched.Containers.CNA.Solutions),
 			Workarounds: remediations(getSource(fetched.Containers.CNA.ProviderMetadata), fetched.Containers.CNA.Workarounds),
@@ -229,15 +234,14 @@ func title(fetched paloaltoJSON.CVE) string {
 	return ""
 }
 
-func severities(fetched paloaltoJSON.CVE) []severityTypes.Severity {
+func severities(fetched paloaltoJSON.CVE) ([]severityTypes.Severity, error) {
 	source := getSource(fetched.Containers.CNA.ProviderMetadata)
 	var ss []severityTypes.Severity
 	for _, metric := range fetched.Containers.CNA.Metrics {
 		if metric.CVSSv2 != nil {
 			v2, err := v2Types.Parse(metric.CVSSv2.VectorString)
 			if err != nil {
-				slog.Warn("unexpected CVSS v2 vector", slog.String("id", fetched.CVEMetadata.CVEID), slog.String("vector", metric.CVSSv2.VectorString))
-				continue
+				return nil, errors.Wrapf(err, "parse cvss v2 vector %q", metric.CVSSv2.VectorString)
 			}
 			ss = append(ss, severityTypes.Severity{
 				Type:   severityTypes.SeverityTypeCVSSv2,
@@ -248,8 +252,7 @@ func severities(fetched paloaltoJSON.CVE) []severityTypes.Severity {
 		if metric.CVSSv30 != nil {
 			v30, err := v30Types.Parse(metric.CVSSv30.VectorString)
 			if err != nil {
-				slog.Warn("unexpected CVSS v3.0 vector", slog.String("id", fetched.CVEMetadata.CVEID), slog.String("vector", metric.CVSSv30.VectorString))
-				continue
+				return nil, errors.Wrapf(err, "parse cvss v3.0 vector %q", metric.CVSSv30.VectorString)
 			}
 			ss = append(ss, severityTypes.Severity{
 				Type:    severityTypes.SeverityTypeCVSSv30,
@@ -260,8 +263,7 @@ func severities(fetched paloaltoJSON.CVE) []severityTypes.Severity {
 		if metric.CVSSv31 != nil {
 			v31, err := v31Types.Parse(metric.CVSSv31.VectorString)
 			if err != nil {
-				slog.Warn("unexpected CVSS v3.1 vector", slog.String("id", fetched.CVEMetadata.CVEID), slog.String("vector", metric.CVSSv31.VectorString))
-				continue
+				return nil, errors.Wrapf(err, "parse cvss v3.1 vector %q", metric.CVSSv31.VectorString)
 			}
 			ss = append(ss, severityTypes.Severity{
 				Type:    severityTypes.SeverityTypeCVSSv31,
@@ -272,8 +274,7 @@ func severities(fetched paloaltoJSON.CVE) []severityTypes.Severity {
 		if metric.CVSSv40 != nil {
 			v40, err := v40Types.Parse(metric.CVSSv40.VectorString)
 			if err != nil {
-				slog.Warn("unexpected CVSS v4.0 vector", slog.String("id", fetched.CVEMetadata.CVEID), slog.String("vector", metric.CVSSv40.VectorString))
-				continue
+				return nil, errors.Wrapf(err, "parse cvss v4.0 vector %q", metric.CVSSv40.VectorString)
 			}
 			ss = append(ss, severityTypes.Severity{
 				Type:    severityTypes.SeverityTypeCVSSv40,
@@ -282,7 +283,7 @@ func severities(fetched paloaltoJSON.CVE) []severityTypes.Severity {
 			})
 		}
 	}
-	return ss
+	return ss, nil
 }
 
 func cwes(fetched paloaltoJSON.CVE) []cweTypes.CWE {
