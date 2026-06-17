@@ -517,9 +517,9 @@ var productConversions = []productConversion{
 // is treated as a hard error (see convertProductName) so that a newly
 // introduced malformed pattern surfaces loudly instead of being dropped.
 var knownUnparseableProductNames = map[string]struct{}{
-	"Cisco IOS XE Software .0":                   {},
-	"Cisco IOS XE Software .1":                   {},
-	"Cisco Wireless LAN Controller (WLC) 3.6.0E": {},
+	"Cisco IOS XE Software .0":                   {}, // cisco-sa-20170201-cbr
+	"Cisco IOS XE Software .1":                   {}, // cisco-sa-20170201-cbr
+	"Cisco Wireless LAN Controller (WLC) 3.6.0E": {}, // cisco-sa-20181017-wlc-gui-privesc, cisco-sa-20160831-wlc-2, cisco-sa-20160831-wlc-1
 }
 
 // convertProductName converts a Cisco product name to a CPE 2.3 formatted
