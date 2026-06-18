@@ -149,7 +149,8 @@ func extract(fetched cvrfTypes.CVRF, raws []string) (dataTypes.Data, error) {
 	var criterions []criterionTypes.Criterion
 	if status := fetched.Vulnerability.ProductStatuses.Status; status.Type == "Known Affected" {
 		prodMap := buildProductMap(fetched)
-		seen := make(map[string]struct{})
+		criterions = make([]criterionTypes.Criterion, 0, len(status.ProductID))
+		seen := make(map[string]struct{}, len(status.ProductID))
 		for _, pid := range status.ProductID {
 			cn, err := toCriterion(pid, prodMap)
 			if err != nil {
@@ -322,11 +323,22 @@ var cwePattern = regexp.MustCompile(`CWE-\d+`)
 // vulnCWE extracts CWE identifiers from the Summary note text. Unlike CSAF,
 // CVRF carries no structured CWE field, so they are recovered from the prose.
 func vulnCWE(fetched cvrfTypes.CVRF) []cweTypes.CWE {
-	ids := cwePattern.FindAllString(noteText(fetched, "Summary"), -1)
-	if len(ids) == 0 {
+	matches := cwePattern.FindAllString(noteText(fetched, "Summary"), -1)
+	if len(matches) == 0 {
 		return nil
 	}
-	return []cweTypes.CWE{{Source: "fortiguard.com", CWE: slices.Compact(slices.Sorted(slices.Values(ids)))}}
+	// Dedupe preserving encounter order; final ordering is applied by the
+	// type's Sort() during util.Write, so no sort is needed here.
+	seen := make(map[string]struct{}, len(matches))
+	ids := make([]string, 0, len(matches))
+	for _, m := range matches {
+		if _, ok := seen[m]; ok {
+			continue
+		}
+		seen[m] = struct{}{}
+		ids = append(ids, m)
+	}
+	return []cweTypes.CWE{{Source: "fortiguard.com", CWE: ids}}
 }
 
 func vulnReferences(fetched cvrfTypes.CVRF) []referenceTypes.Reference {
