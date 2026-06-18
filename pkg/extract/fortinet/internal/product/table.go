@@ -1,7 +1,10 @@
-// Code generated from the curated handmade CPE dataset plus hand-added
-// overrides; see docs/extract-fortinet-csaf-cvrf.md. Maps a Fortinet product
-// name (as it appears in CSAF product nodes and CVRF "Product Name" branches)
-// to its CPE 2.3 formatted string with a wildcard version.
+// Derived from the curated CPEs in the legacy vuls-data-raw-fortinet
+// (handmade) dataset, plus hand-added overrides for product names that
+// dataset did not cover. Maps a Fortinet product name (as it appears in CSAF
+// product nodes and CVRF "Product Name" branches) to its CPE 2.3 formatted
+// string with a wildcard version. A name missing here makes the CSAF/CVRF
+// extractor hard-error on the affected product rather than silently drop it,
+// so add new Fortinet products here.
 package product
 
 var nameToCPE = map[string]string{

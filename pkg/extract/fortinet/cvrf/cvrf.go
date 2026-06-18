@@ -75,7 +75,7 @@ func Extract(args string, opts ...Option) error {
 	slog.Info("Extract Fortinet CVRF")
 	if err := filepath.WalkDir(args, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
-			return err
+			return errors.Wrapf(err, "walk %s", path)
 		}
 
 		if d.IsDir() {
@@ -146,21 +146,14 @@ func extract(fetched cvrfTypes.CVRF, raws []string) (dataTypes.Data, error) {
 	// Detection: a single untagged OR over the Known Affected product versions.
 	// The status is shared across the advisory's CVEs, so it is not partitioned
 	// per CVE.
-	var (
-		criterions  []criterionTypes.Criterion
-		unconverted []string
-	)
+	var criterions []criterionTypes.Criterion
 	if status := fetched.Vulnerability.ProductStatuses.Status; status.Type == "Known Affected" {
 		prodMap := buildProductMap(fetched)
 		seen := make(map[string]struct{})
 		for _, pid := range status.ProductID {
-			cn, ok := toCriterion(pid, prodMap)
-			if !ok {
-				if !slices.Contains(unconverted, pid) {
-					unconverted = append(unconverted, pid)
-				}
-				slog.Warn("failed to resolve known affected product", slog.String("advisory", id), slog.String("product_id", pid))
-				continue
+			cn, err := toCriterion(pid, prodMap)
+			if err != nil {
+				return dataTypes.Data{}, errors.Wrapf(err, "resolve known affected %q (advisory %s)", pid, id)
 			}
 			key := string(cn.CPE.CPE)
 			if cn.CPE.Range != nil {
@@ -173,8 +166,6 @@ func extract(fetched cvrfTypes.CVRF, raws []string) (dataTypes.Data, error) {
 			criterions = append(criterions, cn)
 		}
 	}
-	slices.Sort(unconverted)
-	unconverted = slices.Compact(unconverted)
 
 	seg := segmentTypes.Segment{Ecosystem: ecosystemTypes.EcosystemTypeCPE}
 	var (
@@ -232,7 +223,7 @@ func extract(fetched cvrfTypes.CVRF, raws []string) (dataTypes.Data, error) {
 				}},
 				Published: utiltime.Parse([]string{"2006-01-02T15:04:05", time.RFC3339}, fetched.DocumentTracking.InitialReleaseDate),
 				Modified:  utiltime.Parse([]string{"2006-01-02T15:04:05", time.RFC3339}, fetched.DocumentTracking.CurrentReleaseDate),
-				Optional:  advisoryOptional(fetched, unconverted),
+				Optional:  advisoryOptional(fetched),
 			},
 			Segments: advSegs,
 		}},
@@ -267,15 +258,20 @@ func buildProductMap(fetched cvrfTypes.CVRF) map[string]productVersion {
 	return m
 }
 
-func toCriterion(productID string, prodMap map[string]productVersion) (criterionTypes.Criterion, bool) {
+// toCriterion resolves a Known Affected product_id to a CPE criterion. It
+// hard-errors when the product_id is absent from the tree, the product is not
+// in the whitelist, or its version cannot be parsed — a new Fortinet product,
+// a new version grammar, or a resolver bug must fail the extract, not silently
+// drop an affected product (which would be a detection false negative).
+func toCriterion(productID string, prodMap map[string]productVersion) (criterionTypes.Criterion, error) {
 	pv, ok := prodMap[productID]
 	if !ok {
-		return criterionTypes.Criterion{}, false
+		return criterionTypes.Criterion{}, errors.Errorf("known affected %q not found in product tree", productID)
 	}
 
 	cpe, ok := product.ToCPE(pv.productName)
 	if !ok {
-		return criterionTypes.Criterion{}, false
+		return criterionTypes.Criterion{}, errors.Errorf("unknown fortinet product %q (whitelist miss; add it to internal/product)", pv.productName)
 	}
 
 	// The version branch name occasionally carries the product name as a prefix
@@ -293,20 +289,18 @@ func toCriterion(productID string, prodMap map[string]productVersion) (criterion
 	case product.IsConcrete(ver):
 		baked, err := product.BakeVersion(cpe, ver)
 		if err != nil {
-			slog.Warn("failed to bake version", slog.String("product_id", productID), slog.Any("err", err))
-			return criterionTypes.Criterion{}, false
+			return criterionTypes.Criterion{}, errors.Wrapf(err, "bake version for %q", productID)
 		}
 		c.CPE = ccTypes.CPE(baked)
 	default:
 		r, err := product.TrainRange(ver)
 		if err != nil {
-			slog.Warn("failed to build train range", slog.String("product_id", productID), slog.Any("err", err))
-			return criterionTypes.Criterion{}, false
+			return criterionTypes.Criterion{}, errors.Wrapf(err, "train range for %q", productID)
 		}
 		c.Range = &r
 	}
 
-	return criterionTypes.Criterion{Type: criterionTypes.CriterionTypeCPE, CPE: &c}, true
+	return criterionTypes.Criterion{Type: criterionTypes.CriterionTypeCPE, CPE: &c}, nil
 }
 
 func vulnSeverity(fetched cvrfTypes.CVRF) []severityTypes.Severity {
@@ -347,18 +341,15 @@ func vulnReferences(fetched cvrfTypes.CVRF) []referenceTypes.Reference {
 }
 
 // advisoryOptional collects the free-text notes (Description / Solutions /
-// Affected Products, when not the placeholder "None") and any unconverted
-// product names. These have no structured home but carry residual value,
-// especially for the older advisories that have no product statuses.
-func advisoryOptional(fetched cvrfTypes.CVRF, unconverted []string) map[string]any {
+// Affected Products, when not the placeholder "None"). These have no
+// structured home but carry residual value, especially for the older
+// advisories that have no product statuses.
+func advisoryOptional(fetched cvrfTypes.CVRF) map[string]any {
 	m := make(map[string]any)
 	for _, title := range []string{"Description", "Solutions", "Affected Products"} {
 		if t := noteText(fetched, title); t != "" && !strings.EqualFold(t, "None") {
 			m[strings.ToLower(strings.ReplaceAll(title, " ", "_"))] = t
 		}
-	}
-	if len(unconverted) > 0 {
-		m["unconverted_product_names"] = unconverted
 	}
 	if len(m) == 0 {
 		return nil

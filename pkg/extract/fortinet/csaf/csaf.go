@@ -76,7 +76,7 @@ func Extract(args string, opts ...Option) error {
 	slog.Info("Extract Fortinet CSAF")
 	if err := filepath.WalkDir(args, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
-			return err
+			return errors.Wrapf(err, "walk %s", path)
 		}
 
 		if d.IsDir() {
@@ -164,7 +164,7 @@ func extract(fetched csafTypes.CSAF, raws []string) (dataTypes.Data, error) {
 		return dataTypes.Data{}, errors.New("document.tracking.id is empty")
 	}
 
-	refMap, unconverted := buildProductRefs(fetched.ProductTree.Branches)
+	refMap := buildProductRefs(fetched.ProductTree.Branches)
 
 	// Fortinet splits one logical CVE across several CSAF vulnerability objects
 	// (one per product family), each repeating the scores/notes. Merge them by
@@ -206,13 +206,9 @@ func extract(fetched csafTypes.CSAF, raws []string) (dataTypes.Data, error) {
 			a.knownNotAffected = append(a.knownNotAffected, string(pid))
 		}
 		for _, pid := range v.ProductStatus.KnownAffected {
-			cn, ok := toCriterion(string(pid), refMap)
-			if !ok {
-				if !slices.Contains(unconverted, string(pid)) {
-					unconverted = append(unconverted, string(pid))
-				}
-				slog.Warn("failed to resolve known_affected product", slog.String("advisory", id), slog.String("product_id", string(pid)))
-				continue
+			cn, err := toCriterion(string(pid), refMap)
+			if err != nil {
+				return dataTypes.Data{}, errors.Wrapf(err, "resolve known_affected %q (advisory %s, %s)", string(pid), id, v.CVE)
 			}
 			a.criterions = append(a.criterions, cn)
 		}
@@ -283,9 +279,6 @@ func extract(fetched csafTypes.CSAF, raws []string) (dataTypes.Data, error) {
 		})
 	}
 
-	slices.Sort(unconverted)
-	unconverted = slices.Compact(unconverted)
-
 	return dataTypes.Data{
 		ID: dataTypes.RootID(id),
 		Advisories: []advisoryTypes.Advisory{{
@@ -298,12 +291,6 @@ func extract(fetched csafTypes.CSAF, raws []string) (dataTypes.Data, error) {
 				}},
 				Published: utiltime.Parse([]string{"2006-01-02T15:04:05", time.RFC3339}, fetched.Document.Tracking.InitialReleaseDate),
 				Modified:  utiltime.Parse([]string{"2006-01-02T15:04:05", time.RFC3339}, fetched.Document.Tracking.CurrentReleaseDate),
-				Optional: func() map[string]any {
-					if len(unconverted) == 0 {
-						return nil
-					}
-					return map[string]any{"unconverted_product_names": unconverted}
-				}(),
 			},
 			Segments: segments,
 		}},
@@ -326,65 +313,61 @@ func extract(fetched csafTypes.CSAF, raws []string) (dataTypes.Data, error) {
 
 // buildProductRefs walks the product tree and maps every product_version /
 // product_version_range product_id to its CPE and version expression. The
-// product CPE comes from the nearest ancestor "product" branch name. Product
-// names with no CPE mapping are collected as unconverted.
-func buildProductRefs(branches []csafTypes.Branch) (map[string]productRef, []string) {
+// product CPE comes from the nearest ancestor "product" branch name. Branches
+// under a product name with no CPE mapping are skipped here; the whitelist is
+// enforced at the known_affected use-site (toCriterion), which hard-errors so
+// a new/unknown product surfaces loudly rather than being silently dropped.
+func buildProductRefs(branches []csafTypes.Branch) map[string]productRef {
 	refMap := make(map[string]productRef)
-	var unconverted []string
 
-	var walk func(bs []csafTypes.Branch, productName, productCPE string, mapped bool)
-	walk = func(bs []csafTypes.Branch, productName, productCPE string, mapped bool) {
+	var walk func(bs []csafTypes.Branch, productCPE string, mapped bool)
+	walk = func(bs []csafTypes.Branch, productCPE string, mapped bool) {
 		for _, b := range bs {
-			pn, pc, pm := productName, productCPE, mapped
+			pc, pm := productCPE, mapped
 			switch b.Category {
 			case "product_name", "product":
-				pn = b.Name
 				pc, pm = product.ToCPE(b.Name)
-				if !pm && !slices.Contains(unconverted, b.Name) {
-					unconverted = append(unconverted, b.Name)
-				}
 			case "product_version", "product_version_range":
-				if b.Product != nil && b.Product.ProductID != "" {
+				if pm && b.Product != nil && b.Product.ProductID != "" {
 					_, exp, _ := strings.Cut(b.Name, "/")
-					if pm {
-						refMap[string(b.Product.ProductID)] = productRef{cpe: pc, versionExp: strings.TrimSpace(exp)}
-					}
+					refMap[string(b.Product.ProductID)] = productRef{cpe: pc, versionExp: strings.TrimSpace(exp)}
 				}
 			}
-			walk(b.Branches, pn, pc, pm)
+			walk(b.Branches, pc, pm)
 		}
 	}
-	walk(branches, "", "", false)
+	walk(branches, "", false)
 
-	return refMap, unconverted
+	return refMap
 }
 
 // toCriterion resolves a known_affected product_id to a CPE criterion using the
-// product tree map. Returns false when the product cannot be resolved.
-func toCriterion(productID string, refMap map[string]productRef) (criterionTypes.Criterion, bool) {
+// product tree map. It hard-errors when the product is not in the whitelist or
+// its version cannot be parsed — a new Fortinet product, a new version grammar,
+// or a resolver bug must fail the extract, not silently drop an affected
+// product (which would be a detection false negative).
+func toCriterion(productID string, refMap map[string]productRef) (criterionTypes.Criterion, error) {
 	ref, ok := refMap[productID]
 	if !ok {
 		// Bare product reference (whole product, no version branch).
-		if cpe, mapped := product.ToCPE(productID); mapped {
-			ref = productRef{cpe: cpe}
-		} else {
-			return criterionTypes.Criterion{}, false
+		cpe, mapped := product.ToCPE(productID)
+		if !mapped {
+			return criterionTypes.Criterion{}, errors.Errorf("unknown fortinet product: cannot resolve known_affected %q to a CPE (whitelist miss; add it to internal/product)", productID)
 		}
+		ref = productRef{cpe: cpe}
 	}
 
 	cpe := ref.cpe
 	rng, err := versionRange(ref.versionExp)
 	if err != nil {
-		slog.Warn("failed to build version range", slog.String("product_id", productID), slog.Any("err", err))
-		return criterionTypes.Criterion{}, false
+		return criterionTypes.Criterion{}, errors.Wrapf(err, "version range for %q", productID)
 	}
 
 	if rng == nil && ref.versionExp != "" && ref.versionExp != "all versions" {
 		// Concrete single version → bake into the CPE.
 		baked, err := product.BakeVersion(cpe, ref.versionExp)
 		if err != nil {
-			slog.Warn("failed to bake version", slog.String("product_id", productID), slog.Any("err", err))
-			return criterionTypes.Criterion{}, false
+			return criterionTypes.Criterion{}, errors.Wrapf(err, "bake version for %q", productID)
 		}
 		cpe = baked
 	}
@@ -397,7 +380,7 @@ func toCriterion(productID string, refMap map[string]productRef) (criterionTypes
 			CPE:        ccTypes.CPE(cpe),
 			Range:      rng,
 		},
-	}, true
+	}, nil
 }
 
 // versionRange parses a CSAF Fortinet version expression into a range, or nil
