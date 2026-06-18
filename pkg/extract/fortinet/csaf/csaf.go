@@ -364,14 +364,12 @@ func toCriterion(productID string, refMap map[string]productRef) (criterionTypes
 	}
 
 	cpe := ref.cpe
-	rng, err := versionRange(ref.versionExp)
+	rng, bakeVersion, err := resolveVersion(ref.versionExp)
 	if err != nil {
-		return criterionTypes.Criterion{}, errors.Wrapf(err, "version range for %q", productID)
+		return criterionTypes.Criterion{}, errors.Wrapf(err, "resolve version for %q", productID)
 	}
-
-	if rng == nil && ref.versionExp != "" && ref.versionExp != "all versions" {
-		// Concrete single version → bake into the CPE.
-		baked, err := product.BakeVersion(cpe, ref.versionExp)
+	if bakeVersion != "" {
+		baked, err := product.BakeVersion(cpe, bakeVersion)
 		if err != nil {
 			return criterionTypes.Criterion{}, errors.Wrapf(err, "bake version for %q", productID)
 		}
@@ -389,32 +387,39 @@ func toCriterion(productID string, refMap map[string]productRef) (criterionTypes
 	}, nil
 }
 
-// versionRange parses a CSAF Fortinet version expression into a range, or nil
-// when the expression denotes a concrete version ("7.4.3"), the whole product
-// ("all versions" / ""), so the caller bakes / leaves the CPE as-is.
-func versionRange(exp string) (*ccRangeTypes.Range, error) {
+// resolveVersion interprets a CSAF Fortinet version expression and returns
+// exactly one of three outcomes, so the caller never has to guess:
+//   - (range, "",   nil): narrow the CPE by this version range
+//   - (nil,   ver,  nil): bake this concrete version into the CPE
+//   - (nil,   "",   nil): whole product — leave the CPE version wildcarded
+//
+// The whole-product outcome covers an empty/"all versions" expression and a
+// non-numeric "<name> all versions" (the product name leaked into the version,
+// e.g. "FortiClient iOS all versions"). Returning an empty bake string here is
+// what prevents that leaked string from being baked into the CPE version.
+func resolveVersion(exp string) (*ccRangeTypes.Range, string, error) {
 	switch {
 	case exp == "" || exp == "all versions":
-		return nil, nil
+		return nil, "", nil
 	case strings.HasSuffix(exp, "all versions"):
 		// "<train> all versions" → the whole X.Y train. When the prefix is
 		// not a numeric train (e.g. the product name leaked in as
 		// "FortiClient iOS all versions"), treat it as the whole product.
 		train := strings.TrimSpace(strings.TrimSuffix(exp, "all versions"))
-		if train == "" || (train[0] < '0' || train[0] > '9') {
-			return nil, nil
+		if train == "" || train[0] < '0' || train[0] > '9' {
+			return nil, "", nil
 		}
 		r, err := product.TrainRange(train)
 		if err != nil {
-			return nil, errors.Wrap(err, "train range")
+			return nil, "", errors.Wrap(err, "train range")
 		}
-		return &r, nil
+		return &r, "", nil
 	case strings.HasSuffix(exp, " and above"):
 		// Open-ended lower bound, e.g. "7.0.6 and above" → ge 7.0.6.
 		return &ccRangeTypes.Range{
 			Type:         ccRangeTypes.RangeTypeFortinet,
 			GreaterEqual: strings.TrimSpace(strings.TrimSuffix(exp, " and above")),
-		}, nil
+		}, "", nil
 	case strings.ContainsAny(exp, "<>"):
 		r := ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeFortinet}
 		for part := range strings.SplitSeq(exp, "|") {
@@ -429,20 +434,20 @@ func versionRange(exp string) (*ccRangeTypes.Range, error) {
 			case strings.HasPrefix(part, "<"):
 				r.LessThan = strings.TrimSpace(strings.TrimPrefix(part, "<"))
 			default:
-				return nil, errors.Errorf("unexpected bound %q in %q", part, exp)
+				return nil, "", errors.Errorf("unexpected bound %q in %q", part, exp)
 			}
 		}
-		return &r, nil
+		return &r, "", nil
 	case !product.IsConcrete(exp):
 		// Bare train like "7.0" without the "all versions" suffix.
 		r, err := product.TrainRange(exp)
 		if err != nil {
-			return nil, errors.Wrap(err, "train range")
+			return nil, "", errors.Wrap(err, "train range")
 		}
-		return &r, nil
+		return &r, "", nil
 	default:
-		// Concrete version → caller bakes into the CPE.
-		return nil, nil
+		// Concrete version → bake into the CPE.
+		return nil, exp, nil
 	}
 }
 
