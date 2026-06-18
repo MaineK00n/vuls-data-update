@@ -92,6 +92,7 @@ import (
 	oracleLinux "github.com/MaineK00n/vuls-data-update/pkg/extract/oracle/linux"
 	ossFuzzOSV "github.com/MaineK00n/vuls-data-update/pkg/extract/oss-fuzz/osv"
 	paloaltoJSON "github.com/MaineK00n/vuls-data-update/pkg/extract/paloalto/json"
+	paloaltoList "github.com/MaineK00n/vuls-data-update/pkg/extract/paloalto/list"
 	perlDB "github.com/MaineK00n/vuls-data-update/pkg/extract/perl/db"
 	pipDB "github.com/MaineK00n/vuls-data-update/pkg/extract/pip/db"
 	pipGHSA "github.com/MaineK00n/vuls-data-update/pkg/extract/pip/ghsa"
@@ -187,6 +188,7 @@ func NewCmdExtract() *cobra.Command {
 		newCmdOracleLinux(),
 		newCmdOSSFuzzOSV(),
 		newCmdPaloAltoJSON(),
+		newCmdPaloAltoList(),
 		newCmdPerlDB(),
 		newCmdPipGHSA(), newCmdPipGLSA(), newCmdPipOSV(), newCmdPipDB(),
 		newCmdPubGHSA(), newCmdPubOSV(),
@@ -2316,6 +2318,31 @@ func newCmdPaloAltoJSON() *cobra.Command {
 		RunE: func(_ *cobra.Command, args []string) error {
 			if err := paloaltoJSON.Extract(args[0], paloaltoJSON.WithDir(options.dir)); err != nil {
 				return errors.Wrap(err, "failed to extract paloalto json")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
+
+	return cmd
+}
+
+func newCmdPaloAltoList() *cobra.Command {
+	options := &base{
+		dir: filepath.Join(util.CacheDir(), "extract", "paloalto", "list"),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "paloalto-list <Raw Palo Alto Networks List Repository PATH>",
+		Short: "Extract Palo Alto Networks List data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update extract paloalto-list vuls-data-raw-paloalto-list
+		`),
+		Args: cobra.ExactArgs(1),
+		RunE: func(_ *cobra.Command, args []string) error {
+			if err := paloaltoList.Extract(args[0], paloaltoList.WithDir(options.dir)); err != nil {
+				return errors.Wrap(err, "failed to extract paloalto list")
 			}
 			return nil
 		},
