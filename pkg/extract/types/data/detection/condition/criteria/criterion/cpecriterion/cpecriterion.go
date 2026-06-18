@@ -201,13 +201,16 @@ const (
 	MatchQualityNone
 	// MatchQualityExact means the criterion accepts the query with sufficient
 	// version evidence: a concrete query version confirmed by equality, range,
-	// or enumeration, OR a version=* criterion with no range/cpematches (every
-	// version of the product is affected).
+	// or enumeration; a version=* criterion with no range/cpematches (every
+	// version of the product is affected); OR a query whose version is ANY —
+	// the scan asks for all versions of the product, so any match is reported
+	// with full confidence (respecting the intent of whoever wrote the query).
 	MatchQualityExact
 	// MatchQualityVersionUnconfirmed means the criterion accepts the query on
 	// attribute equality but the query's concrete version cannot be confirmed
-	// affected: the criterion version is NA, or the query itself carries no
-	// concrete version (ANY/NA) against a version-bearing criterion.
+	// affected: the query version is NA against a version-bearing criterion, or
+	// the criterion version is NA matched against a concrete/NA query. (A query
+	// version of ANY is Exact instead — see MatchQualityExact.)
 	MatchQualityVersionUnconfirmed
 )
 
@@ -245,9 +248,13 @@ func (c Criterion) Accept(query Query) (MatchQuality, error) {
 
 	cv := cWFN.GetString(common.AttributeVersion)
 	qv := qWFN.GetString(common.AttributeVersion)
-	// qWFN is fixed for this call, so whether the query carries a concrete
-	// version is a single determined value, not a per-branch computation.
-	queryVersionless := qv == "ANY" || qv == "NA"
+	// qWFN is fixed for this call, so the query's version disposition is a
+	// single determined value. ANY and NA are split: query version ANY is the
+	// scan asking for "all versions of this product" (a confident, Exact match
+	// — respecting the query author's intent); query version NA carries no
+	// version to confirm.
+	queryANY := qv == "ANY"
+	queryNA := qv == "NA"
 
 	switch {
 	case cv == "NA":
@@ -268,29 +275,40 @@ func (c Criterion) Accept(query Query) (MatchQuality, error) {
 			return MatchQualityUnknown, errors.Wrap(err, "neutralise criterion version")
 		}
 		if overlaps(qWFN, cAnyVer) {
+			// query=ANY asks for all versions → Exact; otherwise there is no
+			// concrete version to confirm against a no-version criterion.
+			if queryANY {
+				return MatchQualityExact, nil
+			}
 			return MatchQualityVersionUnconfirmed, nil
 		}
 		// Non-version attributes disagree; fall through to CPEMatches.
 	case overlaps(qWFN, cWFN):
 		switch {
+		case queryANY:
+			// The scan asks for all versions of this product (version=*), so
+			// any accepted criterion is a confident match regardless of how it
+			// narrows versions — respecting the query author's intent.
+			// (Deliberately stronger than go-cve-dictionary, which reports a
+			// version-less query at vendor:product.)
+			return MatchQualityExact, nil
 		case c.Range == nil && len(c.CPEMatches) == 0:
 			// No narrowing → accept on attribute match alone.
 			switch {
 			case cv == "ANY":
 				// version=* with no range/cpematches: every version of the
-				// product is affected. This "all versions" reading takes
-				// precedence over a version-less query.
+				// product is affected.
 				return MatchQualityExact, nil
-			case queryVersionless:
+			case queryNA:
 				return MatchQualityVersionUnconfirmed, nil
 			default:
 				// Concrete query equal to the concrete criterion version (a
 				// differing one would have failed the overlaps check above).
 				return MatchQualityExact, nil
 			}
-		case queryVersionless:
-			// Narrowed criterion, but the query has no concrete version to
-			// confirm against the range / enumeration.
+		case queryNA:
+			// Narrowed criterion, but the query has no version to confirm
+			// against the range / enumeration.
 			return MatchQualityVersionUnconfirmed, nil
 		case c.Range != nil:
 			// Concrete query against a range: accept only if in range,
@@ -320,9 +338,10 @@ func (c Criterion) Accept(query Query) (MatchQuality, error) {
 		}
 		if overlaps(qWFN, mWFN) {
 			// Reached with a version-less query only via the main-CPE-disjoint
-			// path (the matched path returns above); it has no version to
-			// confirm against the enumerated concrete CPE.
-			if queryVersionless {
+			// path (the matched path returns above). query=ANY (all versions)
+			// and a confirmed concrete query are Exact; query=NA has no version
+			// to confirm against the enumerated concrete CPE.
+			if queryNA {
 				return MatchQualityVersionUnconfirmed, nil
 			}
 			return MatchQualityExact, nil

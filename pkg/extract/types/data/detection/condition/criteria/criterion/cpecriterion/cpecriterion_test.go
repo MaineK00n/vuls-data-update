@@ -66,14 +66,14 @@ func TestCriterion_Accept(t *testing.T) {
 			want: ccTypes.MatchQualityNone,
 		},
 		{
-			name: "query version wildcard with range -> VersionUnconfirmed",
+			name: "query version wildcard with range -> Exact (query=ANY)",
 			fields: fields{
 				Vulnerable: true,
 				CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
 				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeSEMVER, LessThan: "0.0.2"},
 			},
 			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*"}},
-			want: ccTypes.MatchQualityVersionUnconfirmed,
+			want: ccTypes.MatchQualityExact,
 		},
 		{
 			name: "version=* criterion, query version wildcard, no range -> Exact (all versions)",
@@ -85,13 +85,13 @@ func TestCriterion_Accept(t *testing.T) {
 			want: ccTypes.MatchQualityExact,
 		},
 		{
-			name: "concrete criterion, query version wildcard, no range -> VersionUnconfirmed",
+			name: "concrete criterion, query version wildcard, no range -> Exact (query=ANY)",
 			fields: fields{
 				Vulnerable: true,
 				CPE:        "cpe:2.3:a:vendor:product:1.0:*:*:*:*:*:*:*",
 			},
 			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*"}},
-			want: ccTypes.MatchQualityVersionUnconfirmed,
+			want: ccTypes.MatchQualityExact,
 		},
 		{
 			name: "version=* criterion with range, query version NA -> VersionUnconfirmed",
@@ -114,23 +114,23 @@ func TestCriterion_Accept(t *testing.T) {
 			want: ccTypes.MatchQualityNone,
 		},
 		{
-			name: "criterion version NA, query version wildcard -> VersionUnconfirmed",
+			name: "criterion version NA, query version wildcard -> Exact (query=ANY)",
 			fields: fields{
 				Vulnerable: true,
 				CPE:        "cpe:2.3:a:vendor:product:-:*:*:*:*:*:*:*",
 			},
 			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*"}},
-			want: ccTypes.MatchQualityVersionUnconfirmed,
+			want: ccTypes.MatchQualityExact,
 		},
 		{
-			name: "criterion version NA with range (range ignored), query wildcard -> VersionUnconfirmed",
+			name: "criterion version NA with range (range ignored), query wildcard -> Exact (query=ANY)",
 			fields: fields{
 				Vulnerable: true,
 				CPE:        "cpe:2.3:a:vendor:product:-:*:*:*:*:*:*:*",
 				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeSEMVER, LessThan: "0.0.2"},
 			},
 			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*"}},
-			want: ccTypes.MatchQualityVersionUnconfirmed,
+			want: ccTypes.MatchQualityExact,
 		},
 		{
 			// version=NA fixes the product but not the version, so a concrete
@@ -195,24 +195,24 @@ func TestCriterion_Accept(t *testing.T) {
 			want: ccTypes.MatchQualityNone,
 		},
 		{
-			name: "concrete criterion with range, query version ANY -> VersionUnconfirmed",
+			name: "concrete criterion with range, query version ANY -> Exact (query=ANY)",
 			fields: fields{
 				Vulnerable: true,
 				CPE:        "cpe:2.3:a:vendor:product:1.0:*:*:*:*:*:*:*",
 				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeSEMVER, LessThan: "2.0.0"},
 			},
 			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*"}},
-			want: ccTypes.MatchQualityVersionUnconfirmed,
+			want: ccTypes.MatchQualityExact,
 		},
 		{
-			name: "concrete criterion outside range, query version ANY short-circuits -> VersionUnconfirmed",
+			name: "concrete criterion outside range, query version ANY short-circuits -> Exact (query=ANY)",
 			fields: fields{
 				Vulnerable: true,
 				CPE:        "cpe:2.3:a:vendor:product:3.0.0:*:*:*:*:*:*:*",
 				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeSEMVER, LessThan: "2.0.0"},
 			},
 			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*"}},
-			want: ccTypes.MatchQualityVersionUnconfirmed,
+			want: ccTypes.MatchQualityExact,
 		},
 		{
 			name: "ge/lt range, query in range -> Exact",
