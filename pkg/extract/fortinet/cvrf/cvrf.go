@@ -157,7 +157,7 @@ func extract(fetched cvrfTypes.CVRF, raws []string) (dataTypes.Data, error) {
 			}
 			key := string(cn.CPE.CPE)
 			if cn.CPE.Range != nil {
-				key = fmt.Sprintf("%s|%s|%s|%s|%s", cn.CPE.CPE, cn.CPE.Range.GreaterEqual, cn.CPE.Range.GreaterThan, cn.CPE.Range.LessEqual, cn.CPE.Range.LessThan)
+				key = fmt.Sprintf("%s|%s|%s|%s|%s|%s", cn.CPE.CPE, cn.CPE.Range.Type, cn.CPE.Range.GreaterEqual, cn.CPE.Range.GreaterThan, cn.CPE.Range.LessEqual, cn.CPE.Range.LessThan)
 			}
 			if _, ok := seen[key]; ok {
 				continue
@@ -332,10 +332,11 @@ func vulnCWE(fetched cvrfTypes.CVRF) []cweTypes.CWE {
 func vulnReferences(fetched cvrfTypes.CVRF) []referenceTypes.Reference {
 	var rs []referenceTypes.Reference
 	for _, r := range fetched.Vulnerability.References.Reference {
-		if r.URL == "" {
-			continue
+		// A single reference url sometimes packs several URLs separated by
+		// CRLF/whitespace; emit one Reference per URL.
+		for _, u := range strings.Fields(r.URL) {
+			rs = append(rs, referenceTypes.Reference{Source: "fortiguard.com", URL: u})
 		}
-		rs = append(rs, referenceTypes.Reference{Source: "fortiguard.com", URL: r.URL})
 	}
 	return rs
 }

@@ -65,7 +65,11 @@
 				"references": [
 					{
 						"source": "fortiguard.com",
-						"url": "https://nvd.nist.gov/vuln/detail/CVE-2025-26466\r\nhttps://www.qualys.com/2025/02/18/openssh-mitm-dos.txt"
+						"url": "https://nvd.nist.gov/vuln/detail/CVE-2025-26466"
+					},
+					{
+						"source": "fortiguard.com",
+						"url": "https://www.qualys.com/2025/02/18/openssh-mitm-dos.txt"
 					}
 				],
 				"optional": {

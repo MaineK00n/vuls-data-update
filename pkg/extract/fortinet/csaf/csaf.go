@@ -198,9 +198,9 @@ func extract(fetched csafTypes.CSAF, raws []string) (dataTypes.Data, error) {
 			a.workarounds = append(a.workarounds, w)
 		}
 		for _, r := range v.References {
-			if r.URL != "" {
-				a.references = append(a.references, r.URL)
-			}
+			// A single reference.url sometimes packs several URLs separated by
+			// CRLF/whitespace; emit one Reference per URL.
+			a.references = append(a.references, strings.Fields(r.URL)...)
 		}
 		for _, pid := range v.ProductStatus.KnownNotAffected {
 			a.knownNotAffected = append(a.knownNotAffected, string(pid))
