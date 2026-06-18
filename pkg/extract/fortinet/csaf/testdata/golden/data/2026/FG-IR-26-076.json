@@ -1,0 +1,115 @@
+{
+	"id": "FG-IR-26-076",
+	"advisories": [
+		{
+			"content": {
+				"id": "FG-IR-26-076",
+				"title": "OpenSSL CVE-2025-15467",
+				"references": [
+					{
+						"source": "fortiguard.com",
+						"url": "https://fortiguard.fortinet.com/psirt/FG-IR-26-076"
+					}
+				],
+				"published": "2026-01-30T00:00:00Z",
+				"modified": "2026-03-13T00:00:00Z"
+			}
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-2025-15467",
+				"title": "FortiNAC-F - CRITICAL - FG-IR-26-076",
+				"description": "OpenSSL CVE-2025-15467 informative advisory.",
+				"severity": [
+					{
+						"type": "vendor",
+						"source": "fortiguard.com",
+						"vendor": "Execute unauthorized code or commands"
+					},
+					{
+						"type": "cvss_v31",
+						"source": "fortiguard.com",
+						"cvss_v31": {
+							"vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H/E:X/RL:X/RC:X",
+							"base_score": 9.8,
+							"base_severity": "CRITICAL",
+							"temporal_score": 9.8,
+							"temporal_severity": "CRITICAL",
+							"environmental_score": 9.8,
+							"environmental_severity": "CRITICAL"
+						}
+					}
+				],
+				"cwe": [
+					{
+						"source": "fortiguard.com",
+						"cwe": [
+							"CWE-1395"
+						]
+					}
+				],
+				"workarounds": [
+					{
+						"source": "fortiguard.com",
+						"description": "N/A"
+					}
+				],
+				"references": [
+					{
+						"source": "fortiguard.com",
+						"url": "https://nvd.nist.gov/vuln/detail/CVE-2025-15467"
+					},
+					{
+						"source": "fortiguard.com",
+						"url": "https://www.openwall.com/lists/oss-security/2026/01/27/10"
+					}
+				],
+				"optional": {
+					"known_not_affected": [
+						"FortiNAC-F/ all versions",
+						"FortiNAC-F/FortiADC Manager all versions",
+						"FortiNAC-F/FortiADC all versions",
+						"FortiNAC-F/FortiAP all versions",
+						"FortiNAC-F/FortiAP-U all versions",
+						"FortiNAC-F/FortiAP-W2 all versions",
+						"FortiNAC-F/FortiAnalyzer all versions",
+						"FortiNAC-F/FortiAuthenticator all versions",
+						"FortiNAC-F/FortiClient Android all versions",
+						"FortiNAC-F/FortiClient EMS all versions",
+						"FortiNAC-F/FortiClient Linux all versions",
+						"FortiNAC-F/FortiClient MacOS all versions",
+						"FortiNAC-F/FortiClient Windows all versions",
+						"FortiNAC-F/FortiClient iOS all versions",
+						"FortiNAC-F/FortiCloud all versions",
+						"FortiNAC-F/FortiConverter all versions",
+						"FortiNAC-F/FortiDDoS all versions",
+						"FortiNAC-F/FortiExtender all versions",
+						"FortiNAC-F/FortiMail all versions",
+						"FortiNAC-F/FortiManager all versions",
+						"FortiNAC-F/FortiNAC all versions",
+						"FortiNAC-F/FortiOS all versions",
+						"FortiNAC-F/FortiPortal all versions",
+						"FortiNAC-F/FortiProxy all versions",
+						"FortiNAC-F/FortiRecorder all versions",
+						"FortiNAC-F/FortiSIEM all versions",
+						"FortiNAC-F/FortiSOAR all versions",
+						"FortiNAC-F/FortiSandbox all versions",
+						"FortiNAC-F/FortiSwitch all versions",
+						"FortiNAC-F/FortiTester all versions",
+						"FortiNAC-F/FortiVoice all versions",
+						"FortiNAC-F/FortiWeb Manager all versions",
+						"FortiNAC-F/FortiWeb all versions"
+					]
+				}
+			}
+		}
+	],
+	"data_source": {
+		"id": "fortinet-csaf",
+		"raws": [
+			"fixtures/2026/FG-IR-26-076.json"
+		]
+	}
+}

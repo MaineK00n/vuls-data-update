@@ -223,8 +223,14 @@ func extract(fetched csafTypes.CSAF, raws []string) (dataTypes.Data, error) {
 		a := accs[cve]
 		seg := segmentTypes.Segment{Ecosystem: ecosystemTypes.EcosystemTypeCPE, Tag: segmentTypes.DetectionTag(cve)}
 
+		// Only carry the CVE-tagged segment when it has a matching detection
+		// condition. A CVE with no known_affected (e.g. known_not_affected
+		// only) otherwise leaves a dangling segment tag with no condition or
+		// advisory segment, producing an internally inconsistent dataset.
+		var vsegs []segmentTypes.Segment
 		if len(a.criterions) > 0 {
 			segments = append(segments, seg)
+			vsegs = []segmentTypes.Segment{seg}
 			conditions = append(conditions, conditionTypes.Condition{
 				Criteria: criteriaTypes.Criteria{
 					Operator:   criteriaTypes.CriteriaOperatorTypeOR,
@@ -275,7 +281,7 @@ func extract(fetched csafTypes.CSAF, raws []string) (dataTypes.Data, error) {
 					return map[string]any{"known_not_affected": nas}
 				}(),
 			},
-			Segments: []segmentTypes.Segment{seg},
+			Segments: vsegs,
 		})
 	}
 
