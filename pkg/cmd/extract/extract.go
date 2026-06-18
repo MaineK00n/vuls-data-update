@@ -45,7 +45,6 @@ import (
 	fedoraAPI "github.com/MaineK00n/vuls-data-update/pkg/extract/fedora/api"
 	fortinetCSAF "github.com/MaineK00n/vuls-data-update/pkg/extract/fortinet/csaf"
 	fortinetCVRF "github.com/MaineK00n/vuls-data-update/pkg/extract/fortinet/cvrf"
-	fortinetHandmade "github.com/MaineK00n/vuls-data-update/pkg/extract/fortinet/handmade"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/freebsd"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/gentoo"
 	ghactionsOSV "github.com/MaineK00n/vuls-data-update/pkg/extract/ghactions/osv"
@@ -166,7 +165,7 @@ func NewCmdExtract() *cobra.Command {
 		newCmdErlangGHSA(), newCmdErlangOSV(),
 		newCmdExploitExploitDB(), newCmdExploitGitHub(), newCmdExploitInTheWild(), newCmdExploitTrickest(),
 		newCmdFedoraAPI(),
-		newCmdFortinetHandmade(), newCmdFortinetCSAF(), newCmdFortinetCVRF(),
+		newCmdFortinetCSAF(), newCmdFortinetCVRF(),
 		newCmdFreeBSD(),
 		newCmdGentoo(),
 		newCmdGHActionsOSV(),
@@ -1076,31 +1075,6 @@ func newCmdFedoraAPI() *cobra.Command {
 		RunE: func(_ *cobra.Command, args []string) error {
 			if err := fedoraAPI.Extract(args[0], fedoraAPI.WithDir(options.dir)); err != nil {
 				return errors.Wrap(err, "failed to extract fedora api")
-			}
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
-
-	return cmd
-}
-
-func newCmdFortinetHandmade() *cobra.Command {
-	options := &base{
-		dir: filepath.Join(util.CacheDir(), "extract", "fortinet", "handmade"),
-	}
-
-	cmd := &cobra.Command{
-		Use:   "fortinet-handmade <Raw Fortinet Handmade Repository PATH>",
-		Short: "Extract Fortinet Handmade data source",
-		Example: heredoc.Doc(`
-			$ vuls-data-update extract fortinet-handmade vuls-data-raw-fortinet-handmade
-		`),
-		Args: cobra.ExactArgs(1),
-		RunE: func(_ *cobra.Command, args []string) error {
-			if err := fortinetHandmade.Extract(args[0], fortinetHandmade.WithDir(options.dir)); err != nil {
-				return errors.Wrap(err, "failed to extract fortinet handmade")
 			}
 			return nil
 		},
