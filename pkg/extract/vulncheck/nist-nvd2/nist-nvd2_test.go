@@ -16,12 +16,11 @@ func TestExtract(t *testing.T) {
 		hasError bool
 	}{
 		{
-			// vcConfigurations with two SEMVER ranges over the same product
-			// and vcVulnerableCPEs enumerating versions inside them. The
-			// detection criteria come from vcConfigurations only — the plain
-			// configurations field in the same file is ignored — and every
-			// vcVulnerableCPEs entry is semver-parseable, so no cpe_matches
-			// are carried (the ranges already cover them).
+			// vcConfigurations (two SEMVER ranges) and vcVulnerableCPEs are
+			// emitted as two separate conditions: condition 1 is the range
+			// tree from vcConfigurations (the plain NVD configurations field is
+			// ignored), condition 2 is the flat vcVulnerableCPEs grouped per
+			// product into cpe_matches.
 			name:   "happy",
 			args:   "./testdata/fixtures/happy/vuls-data-raw-vulncheck-nist-nvd2",
 			golden: "./testdata/golden/happy",
@@ -35,27 +34,27 @@ func TestExtract(t *testing.T) {
 			golden: "./testdata/golden/vc-only",
 		},
 		{
-			// Range endpoint "8.0_patch_34" is not semver, so the range type
-			// is unknown and the product-matched vcVulnerableCPEs entries
-			// are carried in cpe_matches as the detection fallback.
+			// Range endpoint "8.0_patch_34" is not semver, so the
+			// vcConfigurations condition's Range is typed unknown; the concrete
+			// versions a Range cannot express are carried by the separate
+			// vcVulnerableCPEs condition.
 			name:   "non-semver-range",
 			args:   "./testdata/fixtures/non-semver-range/vuls-data-raw-vulncheck-nist-nvd2",
 			golden: "./testdata/golden/non-semver-range",
 		},
 		{
-			// Criterion without any range endpoint (version "-"): no Range
-			// and no cpe_matches expansion.
+			// Criterion without any range endpoint (version "-"): the
+			// vcConfigurations condition emits the CPE with no Range.
 			name:   "exact-match",
 			args:   "./testdata/fixtures/exact-match/vuls-data-raw-vulncheck-nist-nvd2",
 			golden: "./testdata/golden/exact-match",
 		},
 		{
-			// Orphan vcVulnerableCPEs: the criterion product
-			// (zfs_storage_appliance_kit) differs from the vcVulnerableCPEs
-			// product (sun_zfs_storage_appliance_kit, an alternate spelling),
-			// so those concrete CPEs match no criterion. They are emitted as
-			// one extra product-wildcard criterion with the concrete CPEs in
-			// cpe_matches, rather than dropped.
+			// vcVulnerableCPEs whose product (sun_zfs_storage_appliance_kit, an
+			// alternate spelling) is absent from vcConfigurations
+			// (zfs_storage_appliance_kit): the vcVulnerableCPEs condition emits
+			// it regardless, so it is not dropped just because no configuration
+			// mentions that product.
 			name:   "orphan",
 			args:   "./testdata/fixtures/orphan/vuls-data-raw-vulncheck-nist-nvd2",
 			golden: "./testdata/golden/orphan",
