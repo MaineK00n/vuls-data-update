@@ -248,13 +248,6 @@ func (c Criterion) Accept(query Query) (MatchQuality, error) {
 
 	cv := cWFN.GetString(common.AttributeVersion)
 	qv := qWFN.GetString(common.AttributeVersion)
-	// qWFN is fixed for this call, so the query's version disposition is a
-	// single determined value. ANY and NA are split: query version ANY is the
-	// scan asking for "all versions of this product" (a confident, Exact match
-	// — respecting the query author's intent); query version NA carries no
-	// version to confirm.
-	queryANY := qv == "ANY"
-	queryNA := qv == "NA"
 
 	switch {
 	case cv == "NA":
@@ -277,7 +270,7 @@ func (c Criterion) Accept(query Query) (MatchQuality, error) {
 		if overlaps(qWFN, cAnyVer) {
 			// query=ANY asks for all versions → Exact; otherwise there is no
 			// concrete version to confirm against a no-version criterion.
-			if queryANY {
+			if qv == "ANY" {
 				return MatchQualityExact, nil
 			}
 			return MatchQualityVersionUnconfirmed, nil
@@ -285,7 +278,7 @@ func (c Criterion) Accept(query Query) (MatchQuality, error) {
 		// Non-version attributes disagree; fall through to CPEMatches.
 	case overlaps(qWFN, cWFN):
 		switch {
-		case queryANY:
+		case qv == "ANY":
 			// The scan asks for all versions of this product (version=*), so
 			// any accepted criterion is a confident match regardless of how it
 			// narrows versions — respecting the query author's intent.
@@ -299,14 +292,14 @@ func (c Criterion) Accept(query Query) (MatchQuality, error) {
 				// version=* with no range/cpematches: every version of the
 				// product is affected.
 				return MatchQualityExact, nil
-			case queryNA:
+			case qv == "NA":
 				return MatchQualityVersionUnconfirmed, nil
 			default:
 				// Concrete query equal to the concrete criterion version (a
 				// differing one would have failed the overlaps check above).
 				return MatchQualityExact, nil
 			}
-		case queryNA:
+		case qv == "NA":
 			// Narrowed criterion, but the query has no version to confirm
 			// against the range / enumeration.
 			return MatchQualityVersionUnconfirmed, nil
@@ -341,7 +334,7 @@ func (c Criterion) Accept(query Query) (MatchQuality, error) {
 			// path (the matched path returns above). query=ANY (all versions)
 			// and a confirmed concrete query are Exact; query=NA has no version
 			// to confirm against the enumerated concrete CPE.
-			if queryNA {
+			if qv == "NA" {
 				return MatchQualityVersionUnconfirmed, nil
 			}
 			return MatchQualityExact, nil
