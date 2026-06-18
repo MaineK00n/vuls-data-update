@@ -346,7 +346,7 @@ func vulnReferences(fetched cvrfTypes.CVRF) []referenceTypes.Reference {
 	for _, r := range fetched.Vulnerability.References.Reference {
 		// A single reference url sometimes packs several URLs separated by
 		// CRLF/whitespace; emit one Reference per URL.
-		for _, u := range strings.Fields(r.URL) {
+		for u := range strings.FieldsSeq(r.URL) {
 			rs = append(rs, referenceTypes.Reference{Source: "fortiguard.com", URL: u})
 		}
 	}
