@@ -1,0 +1,803 @@
+{
+	"document": {
+		"acknowledgments": [
+			{
+				"summary": "Internally discovered and reported by Gwendal Guégniaud of Fortinet Product Security Team."
+			}
+		],
+		"category": "Fortinet PSIRT Advisories",
+		"csaf_version": "2.0",
+		"publisher": {
+			"category": "vendor",
+			"contact_details": "https://fortiguard.fortinet.com/faq/psirt-contact",
+			"issuing_authority": "Fortinet PSIRT",
+			"name": "Fortinet PSIRT",
+			"namespace": "https://fortiguard.fortinet.com/psirt"
+		},
+		"title": "Path traversal in csfd daemon",
+		"tracking": {
+			"current_release_date": "2026-01-14T00:00:00",
+			"id": "FG-IR-24-259",
+			"initial_release_date": "2025-01-14T00:00:00",
+			"revision_history": [
+				{
+					"date": "2025-01-14T00:00:00",
+					"number": "1",
+					"summary": "Initial Publication"
+				}
+			],
+			"status": "final",
+			"version": "0"
+		}
+	},
+	"product_tree": {
+		"branches": [
+			{
+				"branches": [
+					{
+						"branches": [
+							{
+								"category": "product_version_range",
+								"name": "FortiManager/>=7.6.0|<=7.6.1",
+								"product": {
+									"name": "FortiManager",
+									"product_id": "FortiManager >=7.6.0|<=7.6.1"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiManager/>=7.4.1|<=7.4.3",
+								"product": {
+									"name": "FortiManager",
+									"product_id": "FortiManager >=7.4.1|<=7.4.3"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiManager/ 7.2 all versions",
+								"product": {
+									"name": "FortiManager",
+									"product_id": "FortiManager/ 7.2 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiManager/ 7.0 all versions",
+								"product": {
+									"name": "FortiManager",
+									"product_id": "FortiManager/ 7.0 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiManager/ 6.4 all versions",
+								"product": {
+									"name": "FortiManager",
+									"product_id": "FortiManager/ 6.4 all versions"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiManager"
+					},
+					{
+						"branches": [
+							{
+								"category": "product_version_range",
+								"name": "FortiManager Cloud/>=7.4.1|<=7.4.3",
+								"product": {
+									"name": "FortiManager Cloud",
+									"product_id": "FortiManager Cloud >=7.4.1|<=7.4.3"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiManager Cloud"
+					},
+					{
+						"branches": [
+							{
+								"category": "product_version",
+								"name": "FortiOS/7.6.0",
+								"product": {
+									"name": "FortiOS",
+									"product_id": "FortiOS 7.6.0"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiOS/>=7.4.0|<=7.4.4",
+								"product": {
+									"name": "FortiOS",
+									"product_id": "FortiOS >=7.4.0|<=7.4.4"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiOS/>=7.2.0|<=7.2.9",
+								"product": {
+									"name": "FortiOS",
+									"product_id": "FortiOS >=7.2.0|<=7.2.9"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiOS/>=7.0.0|<=7.0.15",
+								"product": {
+									"name": "FortiOS",
+									"product_id": "FortiOS >=7.0.0|<=7.0.15"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiOS/>=6.4.0|<=6.4.15",
+								"product": {
+									"name": "FortiOS",
+									"product_id": "FortiOS >=6.4.0|<=6.4.15"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiOS"
+					},
+					{
+						"branches": [
+							{
+								"category": "product_version_range",
+								"name": "FortiProxy/ 7.6 all versions",
+								"product": {
+									"name": "FortiProxy",
+									"product_id": "FortiProxy/ 7.6 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiProxy/>=7.4.0|<=7.4.5",
+								"product": {
+									"name": "FortiProxy",
+									"product_id": "FortiProxy >=7.4.0|<=7.4.5"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiProxy/>=7.2.0|<=7.2.11",
+								"product": {
+									"name": "FortiProxy",
+									"product_id": "FortiProxy >=7.2.0|<=7.2.11"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiProxy/>=7.0.0|<=7.0.18",
+								"product": {
+									"name": "FortiProxy",
+									"product_id": "FortiProxy >=7.0.0|<=7.0.18"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiProxy/2.0 all versions",
+								"product": {
+									"name": "FortiProxy",
+									"product_id": "FortiProxy 2.0 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiProxy/1.2 all versions",
+								"product": {
+									"name": "FortiProxy",
+									"product_id": "FortiProxy 1.2 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiProxy/1.1 all versions",
+								"product": {
+									"name": "FortiProxy",
+									"product_id": "FortiProxy 1.1 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiProxy/1.0 all versions",
+								"product": {
+									"name": "FortiProxy",
+									"product_id": "FortiProxy 1.0 all versions"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiProxy"
+					},
+					{
+						"branches": [
+							{
+								"category": "product_version_range",
+								"name": "FortiRecorder/>=7.2.0|<=7.2.1",
+								"product": {
+									"name": "FortiRecorder",
+									"product_id": "FortiRecorder >=7.2.0|<=7.2.1"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiRecorder/>=7.0.0|<=7.0.4",
+								"product": {
+									"name": "FortiRecorder",
+									"product_id": "FortiRecorder >=7.0.0|<=7.0.4"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiRecorder/ 6.4 all versions",
+								"product": {
+									"name": "FortiRecorder",
+									"product_id": "FortiRecorder/ 6.4 all versions"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiRecorder"
+					},
+					{
+						"branches": [
+							{
+								"category": "product_version_range",
+								"name": "FortiVoice/ 7.2 all versions",
+								"product": {
+									"name": "FortiVoice",
+									"product_id": "FortiVoice/ 7.2 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiVoice/>=7.0.0|<=7.0.4",
+								"product": {
+									"name": "FortiVoice",
+									"product_id": "FortiVoice >=7.0.0|<=7.0.4"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiVoice/>=6.4.0|<=6.4.9",
+								"product": {
+									"name": "FortiVoice",
+									"product_id": "FortiVoice >=6.4.0|<=6.4.9"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiVoice/6.0 all versions",
+								"product": {
+									"name": "FortiVoice",
+									"product_id": "FortiVoice 6.0 all versions"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiVoice"
+					},
+					{
+						"branches": [
+							{
+								"category": "product_version",
+								"name": "FortiWeb/7.6.0",
+								"product": {
+									"name": "FortiWeb",
+									"product_id": "FortiWeb 7.6.0"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiWeb/>=7.4.0|<=7.4.4",
+								"product": {
+									"name": "FortiWeb",
+									"product_id": "FortiWeb >=7.4.0|<=7.4.4"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiWeb/7.2 all versions",
+								"product": {
+									"name": "FortiWeb",
+									"product_id": "FortiWeb 7.2 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiWeb/7.0 all versions",
+								"product": {
+									"name": "FortiWeb",
+									"product_id": "FortiWeb 7.0 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiWeb/6.4 all versions",
+								"product": {
+									"name": "FortiWeb",
+									"product_id": "FortiWeb 6.4 all versions"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiWeb"
+					}
+				],
+				"category": "vendor",
+				"name": "Fortinet PSIRT"
+			}
+		]
+	},
+	"vulnerabilities": [
+		{
+			"cve": "CVE-2024-48884",
+			"cwe": {
+				"id": "CWE-22",
+				"name": "Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')"
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "Path traversal in csfd daemon.\n\n",
+					"title": "Summary"
+				},
+				{
+					"category": "general",
+					"text": "N/A",
+					"title": "Workarounds"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiManager >=7.6.0|<=7.6.1",
+					"FortiManager >=7.4.1|<=7.4.3"
+				],
+				"known_not_affected": [
+					"FortiManager-7.6.2",
+					"FortiManager-7.4.4",
+					"FortiManager/ 7.2 all versions",
+					"FortiManager/ 7.0 all versions",
+					"FortiManager/ 6.4 all versions"
+				]
+			},
+			"references": [
+				{
+					"summary": "An improper limitation of a pathname to a restricted directory vulnerability ('path traversal') [CWE-22] in FortiManager, FortiOS, FortiProxy, FortiRecorder, FortiVoice and FortiWeb may allow a remote authenticated attacker with access to the security fabric interface and port to write arbitrary files and a remote unauthenticated attacker with the same network access to delete an arbitrary folder.",
+					"url": "https://fortiguard.fortinet.com/psirt/FG-IR-24-259"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiManager 7.6: Upgrade to 7.6.2 or above\nFortiManager 7.4: Upgrade to 7.4.4 or above\nFortiManager 7.2: Not Applicable\nFortiManager 7.0: Not Applicable\nFortiManager 6.4: Not Applicable",
+					"product_ids": [
+						"FortiManager"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 7.1,
+						"baseSeverity": "HIGH",
+						"vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H/E:P/RL:U/RC:C",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiManager"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Escalation of privilege"
+				}
+			],
+			"title": "FortiManager - HIGH - FG-IR-24-259"
+		},
+		{
+			"cve": "CVE-2024-48884",
+			"cwe": {
+				"id": "CWE-22",
+				"name": "Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')"
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "Path traversal in csfd daemon.\n\n",
+					"title": "Summary"
+				},
+				{
+					"category": "general",
+					"text": "N/A",
+					"title": "Workarounds"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiManager Cloud >=7.4.1|<=7.4.3"
+				],
+				"known_not_affected": [
+					"FortiManager Cloud-7.4.4"
+				]
+			},
+			"references": [
+				{
+					"summary": "An improper limitation of a pathname to a restricted directory vulnerability ('path traversal') [CWE-22] in FortiManager, FortiOS, FortiProxy, FortiRecorder, FortiVoice and FortiWeb may allow a remote authenticated attacker with access to the security fabric interface and port to write arbitrary files and a remote unauthenticated attacker with the same network access to delete an arbitrary folder.",
+					"url": "https://fortiguard.fortinet.com/psirt/FG-IR-24-259"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiManager Cloud 7.4: Upgrade to 7.4.4 or above",
+					"product_ids": [
+						"FortiManager Cloud"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 7.1,
+						"baseSeverity": "HIGH",
+						"vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H/E:P/RL:U/RC:C",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiManager Cloud"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Escalation of privilege"
+				}
+			],
+			"title": "FortiManager Cloud - HIGH - FG-IR-24-259"
+		},
+		{
+			"cve": "CVE-2024-48884",
+			"cwe": {
+				"id": "CWE-22",
+				"name": "Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')"
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "Path traversal in csfd daemon.\n\n",
+					"title": "Summary"
+				},
+				{
+					"category": "general",
+					"text": "N/A",
+					"title": "Workarounds"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiOS 7.6.0",
+					"FortiOS >=7.4.0|<=7.4.4",
+					"FortiOS >=7.2.0|<=7.2.9",
+					"FortiOS >=7.0.0|<=7.0.15",
+					"FortiOS >=6.4.0|<=6.4.15"
+				],
+				"known_not_affected": [
+					"FortiOS-7.6.1",
+					"FortiOS-7.4.5",
+					"FortiOS-7.2.10",
+					"FortiOS-7.0.16",
+					"FortiOS-6.4.16"
+				]
+			},
+			"references": [
+				{
+					"summary": "An improper limitation of a pathname to a restricted directory vulnerability ('path traversal') [CWE-22] in FortiManager, FortiOS, FortiProxy, FortiRecorder, FortiVoice and FortiWeb may allow a remote authenticated attacker with access to the security fabric interface and port to write arbitrary files and a remote unauthenticated attacker with the same network access to delete an arbitrary folder.",
+					"url": "https://fortiguard.fortinet.com/psirt/FG-IR-24-259"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiOS 7.6: Upgrade to 7.6.1 or above\nFortiOS 7.4: Upgrade to 7.4.5 or above\nFortiOS 7.2: Upgrade to 7.2.10 or above\nFortiOS 7.0: Upgrade to 7.0.16 or above\nFortiOS 6.4: Upgrade to 6.4.16 or above",
+					"product_ids": [
+						"FortiOS"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 7.1,
+						"baseSeverity": "HIGH",
+						"vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H/E:P/RL:U/RC:C",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiOS"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Escalation of privilege"
+				}
+			],
+			"title": "FortiOS - HIGH - FG-IR-24-259"
+		},
+		{
+			"cve": "CVE-2024-48884",
+			"cwe": {
+				"id": "CWE-22",
+				"name": "Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')"
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "Path traversal in csfd daemon.\n\n",
+					"title": "Summary"
+				},
+				{
+					"category": "general",
+					"text": "N/A",
+					"title": "Workarounds"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiProxy >=7.4.0|<=7.4.5",
+					"FortiProxy >=7.2.0|<=7.2.11",
+					"FortiProxy >=7.0.0|<=7.0.18",
+					"FortiProxy 2.0 all versions",
+					"FortiProxy 1.2 all versions",
+					"FortiProxy 1.1 all versions",
+					"FortiProxy 1.0 all versions"
+				],
+				"known_not_affected": [
+					"FortiProxy/ 7.6 all versions",
+					"FortiProxy-7.4.6",
+					"FortiProxy-7.2.12",
+					"FortiProxy-7.0.19"
+				]
+			},
+			"references": [
+				{
+					"summary": "An improper limitation of a pathname to a restricted directory vulnerability ('path traversal') [CWE-22] in FortiManager, FortiOS, FortiProxy, FortiRecorder, FortiVoice and FortiWeb may allow a remote authenticated attacker with access to the security fabric interface and port to write arbitrary files and a remote unauthenticated attacker with the same network access to delete an arbitrary folder.",
+					"url": "https://fortiguard.fortinet.com/psirt/FG-IR-24-259"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiProxy 7.6: Not Applicable\nFortiProxy 7.4: Upgrade to 7.4.6 or above\nFortiProxy 7.2: Upgrade to 7.2.12 or above\nFortiProxy 7.0: Upgrade to 7.0.19 or above\nFortiProxy 2.0: Migrate to a fixed release\nFortiProxy 1.2: Migrate to a fixed release\nFortiProxy 1.1: Migrate to a fixed release\nFortiProxy 1.0: Migrate to a fixed release",
+					"product_ids": [
+						"FortiProxy"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 7.1,
+						"baseSeverity": "HIGH",
+						"vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H/E:P/RL:U/RC:C",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiProxy"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Escalation of privilege"
+				}
+			],
+			"title": "FortiProxy - HIGH - FG-IR-24-259"
+		},
+		{
+			"cve": "CVE-2024-48885",
+			"cwe": {
+				"id": "CWE-22",
+				"name": "Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')"
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "Path traversal in csfd daemon.\n\n",
+					"title": "Summary"
+				},
+				{
+					"category": "general",
+					"text": "N/A",
+					"title": "Workarounds"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiRecorder >=7.2.0|<=7.2.1",
+					"FortiRecorder >=7.0.0|<=7.0.4"
+				],
+				"known_not_affected": [
+					"FortiRecorder-7.2.2",
+					"FortiRecorder-7.0.5",
+					"FortiRecorder/ 6.4 all versions"
+				]
+			},
+			"references": [
+				{
+					"summary": "An improper limitation of a pathname to a restricted directory vulnerability ('path traversal') [CWE-22] in FortiManager, FortiOS, FortiProxy, FortiRecorder, FortiVoice and FortiWeb may allow a remote authenticated attacker with access to the security fabric interface and port to write arbitrary files and a remote unauthenticated attacker with the same network access to delete an arbitrary folder.",
+					"url": "https://fortiguard.fortinet.com/psirt/FG-IR-24-259"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiRecorder 7.2: Upgrade to 7.2.2 or above\nFortiRecorder 7.0: Upgrade to 7.0.5 or above\nFortiRecorder 6.4: Not Applicable",
+					"product_ids": [
+						"FortiRecorder"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 5.2,
+						"baseSeverity": "MEDIUM",
+						"vectorString": "CVSS:3.1/AV:N/AC:H/PR:L/UI:N/S:U/C:N/I:N/A:H/E:F/RL:U/RC:C",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiRecorder"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Escalation of privilege"
+				}
+			],
+			"title": "FortiRecorder - MEDIUM - FG-IR-24-259"
+		},
+		{
+			"cve": "CVE-2024-48885",
+			"cwe": {
+				"id": "CWE-22",
+				"name": "Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')"
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "Path traversal in csfd daemon.\n\n",
+					"title": "Summary"
+				},
+				{
+					"category": "general",
+					"text": "N/A",
+					"title": "Workarounds"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiVoice >=7.0.0|<=7.0.4",
+					"FortiVoice >=6.4.0|<=6.4.9",
+					"FortiVoice 6.0 all versions"
+				],
+				"known_not_affected": [
+					"FortiVoice/ 7.2 all versions",
+					"FortiVoice-7.0.5",
+					"FortiVoice-6.4.10"
+				]
+			},
+			"references": [
+				{
+					"summary": "An improper limitation of a pathname to a restricted directory vulnerability ('path traversal') [CWE-22] in FortiManager, FortiOS, FortiProxy, FortiRecorder, FortiVoice and FortiWeb may allow a remote authenticated attacker with access to the security fabric interface and port to write arbitrary files and a remote unauthenticated attacker with the same network access to delete an arbitrary folder.",
+					"url": "https://fortiguard.fortinet.com/psirt/FG-IR-24-259"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiVoice 7.2: Not Applicable\nFortiVoice 7.0: Upgrade to 7.0.5 or above\nFortiVoice 6.4: Upgrade to 6.4.10 or above\nFortiVoice 6.0: Migrate to a fixed release",
+					"product_ids": [
+						"FortiVoice"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 5.2,
+						"baseSeverity": "MEDIUM",
+						"vectorString": "CVSS:3.1/AV:N/AC:H/PR:L/UI:N/S:U/C:N/I:N/A:H/E:F/RL:U/RC:C",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiVoice"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Escalation of privilege"
+				}
+			],
+			"title": "FortiVoice - MEDIUM - FG-IR-24-259"
+		},
+		{
+			"cve": "CVE-2024-48885",
+			"cwe": {
+				"id": "CWE-22",
+				"name": "Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')"
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "Path traversal in csfd daemon.\n\n",
+					"title": "Summary"
+				},
+				{
+					"category": "general",
+					"text": "N/A",
+					"title": "Workarounds"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiWeb 7.6.0",
+					"FortiWeb >=7.4.0|<=7.4.4",
+					"FortiWeb 7.2 all versions",
+					"FortiWeb 7.0 all versions",
+					"FortiWeb 6.4 all versions"
+				],
+				"known_not_affected": [
+					"FortiWeb-7.6.1",
+					"FortiWeb-7.4.5"
+				]
+			},
+			"references": [
+				{
+					"summary": "An improper limitation of a pathname to a restricted directory vulnerability ('path traversal') [CWE-22] in FortiManager, FortiOS, FortiProxy, FortiRecorder, FortiVoice and FortiWeb may allow a remote authenticated attacker with access to the security fabric interface and port to write arbitrary files and a remote unauthenticated attacker with the same network access to delete an arbitrary folder.",
+					"url": "https://fortiguard.fortinet.com/psirt/FG-IR-24-259"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiWeb 7.6: Upgrade to 7.6.1 or above\nFortiWeb 7.4: Upgrade to 7.4.5 or above\nFortiWeb 7.2: Migrate to a fixed release\nFortiWeb 7.0: Migrate to a fixed release\nFortiWeb 6.4: Migrate to a fixed release",
+					"product_ids": [
+						"FortiWeb"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 5.2,
+						"baseSeverity": "MEDIUM",
+						"vectorString": "CVSS:3.1/AV:N/AC:H/PR:L/UI:N/S:U/C:N/I:N/A:H/E:F/RL:U/RC:C",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiWeb"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Escalation of privilege"
+				}
+			],
+			"title": "FortiWeb - MEDIUM - FG-IR-24-259"
+		}
+	]
+}
