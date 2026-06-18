@@ -1,0 +1,46 @@
+{
+	"id": "AN9990",
+	"kind": "analytic",
+	"name": "Test Analytic",
+	"description": "Test analytic fixture.",
+	"domains": [
+		"enterprise-attack"
+	],
+	"deprecated": false,
+	"revoked": false,
+	"version": "1.0",
+	"created": "2024-01-01T00:00:00Z",
+	"modified": "2024-01-01T00:00:00Z",
+	"analytic": {
+		"detection_strategy": "DET9990",
+		"platforms": [
+			"TestPlatform"
+		],
+		"log_source_references": [
+			{
+				"data_component": "DC9990",
+				"name": "TestLogSourceName",
+				"channel": "TestLogSourceChannel"
+			}
+		],
+		"mutable_elements": [
+			{
+				"field": "TestField",
+				"description": "test mutable element"
+			}
+		]
+	},
+	"references": [
+		{
+			"source": "mitre-attack",
+			"url": "https://attack.mitre.org/analytics/AN9990"
+		}
+	],
+	"data_source": {
+		"id": "mitre-attack",
+		"raws": [
+			"fixtures/enterprise/x-mitre-analytic/x-mitre-analytic--00000000-0000-0000-0000-000000000202.json",
+			"fixtures/enterprise/x-mitre-detection-strategy/x-mitre-detection-strategy--00000000-0000-0000-0000-000000000203.json"
+		]
+	}
+}

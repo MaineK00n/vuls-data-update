@@ -1,0 +1,57 @@
+{
+	"id": "A9990",
+	"kind": "asset",
+	"name": "Test Asset",
+	"description": "Test asset fixture.",
+	"domains": [
+		"enterprise-attack"
+	],
+	"deprecated": false,
+	"revoked": false,
+	"version": "1.0",
+	"created": "2024-01-01T00:00:00Z",
+	"modified": "2024-01-01T00:00:00Z",
+	"asset": {
+		"platforms": [
+			"TestPlatform"
+		],
+		"sectors": [
+			"TestSector"
+		],
+		"related_assets": [
+			{
+				"name": "RelatedTestAsset",
+				"description": "test related asset",
+				"sectors": [
+					"RelatedSector"
+				]
+			}
+		],
+		"techniques_targeting": [
+			{
+				"id": "T1047",
+				"description": "T1047 targets the Test Asset (A9990).",
+				"references": [
+					{
+						"source": "Asset Targeting Guide 2024",
+						"url": "https://example.test/asset-targeting-guide-2024"
+					}
+				]
+			}
+		]
+	},
+	"references": [
+		{
+			"source": "mitre-attack",
+			"url": "https://attack.mitre.org/assets/A9990"
+		}
+	],
+	"data_source": {
+		"id": "mitre-attack",
+		"raws": [
+			"fixtures/enterprise/attack-pattern/attack-pattern--01a5a209-b94c-450b-b7f9-946497d91055.json",
+			"fixtures/enterprise/relationship/relationship--00000000-0000-0000-0000-000000000205.json",
+			"fixtures/enterprise/x-mitre-asset/x-mitre-asset--00000000-0000-0000-0000-000000000204.json"
+		]
+	}
+}

@@ -1,0 +1,68 @@
+{
+	"id": "T1560.001",
+	"kind": "technique",
+	"name": "Archive via Utility",
+	"description": "Adversaries may use utilities to compress and/or encrypt collected data prior to exfiltration. Many utilities include functionalities to compress, encrypt, or otherwise package data into a format that is easier/more secure to transport.\n\nAdversaries may abuse various utilities to compress or encrypt data before exfiltration. Some third party utilities may be preinstalled, such as <code>tar</code> on Linux and macOS or <code>zip</code> on Windows systems. \n\nOn Windows, <code>diantz</code> or <code> makecab</code> may be used to package collected files into a cabinet (.cab) file. <code>diantz</code> may also be used to download and compress files from remote locations (i.e. [Remote Data Staging](https://attack.mitre.org/techniques/T1074/002)).(Citation: diantz.exe_lolbas) <code>xcopy</code> on Windows can copy files and directories with a variety of options. Additionally, adversaries may use [certutil](https://attack.mitre.org/software/S0160) to Base64 encode collected data before exfiltration. \n\nAdversaries may use also third party utilities, such as 7-Zip, WinRAR, and WinZip, to perform similar activities.(Citation: 7zip Homepage)(Citation: WinRAR Homepage)(Citation: WinZip Homepage)",
+	"domains": [
+		"enterprise-attack"
+	],
+	"deprecated": false,
+	"revoked": false,
+	"version": "1.3",
+	"created": "2020-02-20T21:01:25.428Z",
+	"modified": "2023-09-15T19:02:53.995Z",
+	"technique": {
+		"platforms": [
+			"Linux",
+			"Windows",
+			"macOS"
+		],
+		"tactics": [
+			{
+				"shortname": "collection",
+				"id": "TA9001"
+			}
+		],
+		"is_subtechnique": true,
+		"detection": "Common utilities that may be present on the system or brought in by an adversary may be detectable through process monitoring and monitoring for command-line arguments for known archival utilities. This may yield a significant number of benign events, depending on how systems in the environment are typically used.\n\nConsider detecting writing of files with extensions and/or headers associated with compressed or encrypted file types. Detection efforts may focus on follow-on exfiltration activity, where compressed or encrypted files can be detected in transit with a network intrusion detection or data loss prevention system analyzing file headers.(Citation: Wikipedia File Header Signatures)",
+		"data_sources": [
+			"Command: Command Execution",
+			"File: File Creation",
+			"Process: Process Creation"
+		],
+		"network_requirements": false,
+		"remote_support": false
+	},
+	"references": [
+		{
+			"source": "7zip Homepage",
+			"url": "https://www.7-zip.org/"
+		},
+		{
+			"source": "Wikipedia File Header Signatures",
+			"url": "https://en.wikipedia.org/wiki/List_of_file_signatures"
+		},
+		{
+			"source": "WinRAR Homepage",
+			"url": "https://www.rarlab.com/"
+		},
+		{
+			"source": "WinZip Homepage",
+			"url": "https://www.winzip.com/win/en/"
+		},
+		{
+			"source": "diantz.exe_lolbas",
+			"url": "https://lolbas-project.github.io/lolbas/Binaries/Diantz/"
+		},
+		{
+			"source": "mitre-attack",
+			"url": "https://attack.mitre.org/techniques/T1560/001"
+		}
+	],
+	"data_source": {
+		"id": "mitre-attack",
+		"raws": [
+			"fixtures/enterprise/attack-pattern/attack-pattern--00f90846-cbd1-4fc5-9233-df5c2bf2a662.json"
+		]
+	}
+}

@@ -1,0 +1,60 @@
+{
+	"id": "S9990",
+	"kind": "software",
+	"name": "TestMalware",
+	"description": "Test malware fixture.",
+	"domains": [
+		"enterprise-attack"
+	],
+	"deprecated": false,
+	"revoked": false,
+	"version": "1.0",
+	"created": "2024-01-01T00:00:00Z",
+	"modified": "2024-01-01T00:00:00Z",
+	"software": {
+		"type": "malware",
+		"aliases": [
+			"TM",
+			"TestMalware"
+		],
+		"platforms": [
+			"Linux",
+			"Windows"
+		],
+		"techniques_used": [
+			{
+				"id": "T1195",
+				"description": "TestMalware uses Supply Chain Compromise."
+			}
+		],
+		"groups_using": [
+			{
+				"id": "G9990"
+			}
+		],
+		"campaigns_using": [
+			{
+				"id": "C9990"
+			}
+		]
+	},
+	"references": [
+		{
+			"source": "mitre-attack",
+			"url": "https://attack.mitre.org/software/S9990"
+		}
+	],
+	"data_source": {
+		"id": "mitre-attack",
+		"raws": [
+			"fixtures/enterprise/attack-pattern/attack-pattern--3f18edba-28f4-4bb9-82c3-8aa60dcac5f7.json",
+			"fixtures/enterprise/campaign/campaign--00000000-0000-0000-0000-000000000004.json",
+			"fixtures/enterprise/intrusion-set/intrusion-set--00000000-0000-0000-0000-000000000001.json",
+			"fixtures/enterprise/malware/malware--00000000-0000-0000-0000-000000000002.json",
+			"fixtures/enterprise/relationship/relationship--00000000-0000-0000-0000-000000000101.json",
+			"fixtures/enterprise/relationship/relationship--00000000-0000-0000-0000-000000000102.json",
+			"fixtures/enterprise/relationship/relationship--00000000-0000-0000-0000-000000000105.json",
+			"fixtures/mobile/intrusion-set/intrusion-set--00000000-0000-0000-0000-000000000001.json"
+		]
+	}
+}

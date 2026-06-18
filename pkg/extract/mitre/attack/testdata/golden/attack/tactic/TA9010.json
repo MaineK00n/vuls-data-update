@@ -1,0 +1,37 @@
+{
+	"id": "TA9010",
+	"kind": "tactic",
+	"name": "Privilege Escalation",
+	"description": "Test fixture for Privilege Escalation tactic.",
+	"domains": [
+		"enterprise-attack"
+	],
+	"deprecated": false,
+	"revoked": false,
+	"version": "1.0",
+	"created": "2024-01-01T00:00:00Z",
+	"modified": "2024-01-01T00:00:00Z",
+	"tactic": {
+		"shortname": "privilege-escalation",
+		"techniques": [
+			"T1053.005",
+			"T1055.011",
+			"T1134.003"
+		]
+	},
+	"references": [
+		{
+			"source": "mitre-attack",
+			"url": "https://attack.mitre.org/tactics/TA9010"
+		}
+	],
+	"data_source": {
+		"id": "mitre-attack",
+		"raws": [
+			"fixtures/enterprise/attack-pattern/attack-pattern--0042a9f5-f053-4769-b3ef-9ad018dfa298.json",
+			"fixtures/enterprise/attack-pattern/attack-pattern--005a06c6-14bf-4118-afa0-ebcd8aebb0c9.json",
+			"fixtures/enterprise/attack-pattern/attack-pattern--8cdeb020-e31e-4f88-a582-f53dcfbda819.json",
+			"fixtures/enterprise/x-mitre-tactic/x-mitre-tactic--00000000-0000-0000-0000-000000000016.json"
+		]
+	}
+}

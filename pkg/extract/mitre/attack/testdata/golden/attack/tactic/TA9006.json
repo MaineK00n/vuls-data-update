@@ -1,0 +1,33 @@
+{
+	"id": "TA9006",
+	"kind": "tactic",
+	"name": "Exfiltration",
+	"description": "Test fixture for Exfiltration tactic.",
+	"domains": [
+		"enterprise-attack"
+	],
+	"deprecated": false,
+	"revoked": false,
+	"version": "1.0",
+	"created": "2024-01-01T00:00:00Z",
+	"modified": "2024-01-01T00:00:00Z",
+	"tactic": {
+		"shortname": "exfiltration",
+		"techniques": [
+			"T1567"
+		]
+	},
+	"references": [
+		{
+			"source": "mitre-attack",
+			"url": "https://attack.mitre.org/tactics/TA9006"
+		}
+	],
+	"data_source": {
+		"id": "mitre-attack",
+		"raws": [
+			"fixtures/enterprise/attack-pattern/attack-pattern--40597f16-0963-4249-bf4c-ac93b7fb9807.json",
+			"fixtures/enterprise/x-mitre-tactic/x-mitre-tactic--00000000-0000-0000-0000-000000000012.json"
+		]
+	}
+}

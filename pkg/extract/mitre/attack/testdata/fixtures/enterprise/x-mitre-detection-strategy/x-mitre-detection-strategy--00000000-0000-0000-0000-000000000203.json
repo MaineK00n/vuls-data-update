@@ -1,0 +1,23 @@
+{
+	"type": "x-mitre-detection-strategy",
+	"id": "x-mitre-detection-strategy--00000000-0000-0000-0000-000000000203",
+	"spec_version": "2.1",
+	"created": "2024-01-01T00:00:00.000Z",
+	"modified": "2024-01-01T00:00:00.000Z",
+	"x_mitre_version": "1.0",
+	"x_mitre_domains": [
+		"enterprise-attack"
+	],
+	"x_mitre_attack_spec_version": "3.0.0",
+	"name": "Test Detection Strategy",
+	"x_mitre_analytic_refs": [
+		"x-mitre-analytic--00000000-0000-0000-0000-000000000202"
+	],
+	"external_references": [
+		{
+			"source_name": "mitre-attack",
+			"external_id": "DET9990",
+			"url": "https://attack.mitre.org/detectionstrategies/DET9990"
+		}
+	]
+}

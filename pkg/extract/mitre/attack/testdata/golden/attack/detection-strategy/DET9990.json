@@ -1,0 +1,45 @@
+{
+	"id": "DET9990",
+	"kind": "detection-strategy",
+	"name": "Test Detection Strategy",
+	"domains": [
+		"enterprise-attack"
+	],
+	"deprecated": false,
+	"revoked": false,
+	"version": "1.0",
+	"created": "2024-01-01T00:00:00Z",
+	"modified": "2024-01-01T00:00:00Z",
+	"detection_strategy": {
+		"analytics": [
+			"AN9990"
+		],
+		"techniques_detected": [
+			{
+				"id": "T1219",
+				"description": "DET9990 detects T1219 via the test analytic.",
+				"references": [
+					{
+						"source": "DetectionStrategy Reference 2024",
+						"url": "https://example.test/detection-strategy-reference-2024"
+					}
+				]
+			}
+		]
+	},
+	"references": [
+		{
+			"source": "mitre-attack",
+			"url": "https://attack.mitre.org/detectionstrategies/DET9990"
+		}
+	],
+	"data_source": {
+		"id": "mitre-attack",
+		"raws": [
+			"fixtures/enterprise/attack-pattern/attack-pattern--4061e78c-1284-44b4-9116-73e4ac3912f7.json",
+			"fixtures/enterprise/relationship/relationship--00000000-0000-0000-0000-000000000206.json",
+			"fixtures/enterprise/x-mitre-analytic/x-mitre-analytic--00000000-0000-0000-0000-000000000202.json",
+			"fixtures/enterprise/x-mitre-detection-strategy/x-mitre-detection-strategy--00000000-0000-0000-0000-000000000203.json"
+		]
+	}
+}

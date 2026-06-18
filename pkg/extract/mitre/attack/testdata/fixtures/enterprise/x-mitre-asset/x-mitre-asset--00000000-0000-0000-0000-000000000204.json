@@ -1,0 +1,36 @@
+{
+	"type": "x-mitre-asset",
+	"id": "x-mitre-asset--00000000-0000-0000-0000-000000000204",
+	"spec_version": "2.1",
+	"created": "2024-01-01T00:00:00.000Z",
+	"modified": "2024-01-01T00:00:00.000Z",
+	"x_mitre_version": "1.0",
+	"x_mitre_domains": [
+		"enterprise-attack"
+	],
+	"x_mitre_attack_spec_version": "3.0.0",
+	"name": "Test Asset",
+	"description": "Test asset fixture.",
+	"x_mitre_platforms": [
+		"TestPlatform"
+	],
+	"x_mitre_sectors": [
+		"TestSector"
+	],
+	"x_mitre_related_assets": [
+		{
+			"name": "RelatedTestAsset",
+			"description": "test related asset",
+			"related_asset_sectors": [
+				"RelatedSector"
+			]
+		}
+	],
+	"external_references": [
+		{
+			"source_name": "mitre-attack",
+			"external_id": "A9990",
+			"url": "https://attack.mitre.org/assets/A9990"
+		}
+	]
+}

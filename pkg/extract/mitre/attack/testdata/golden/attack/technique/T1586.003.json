@@ -1,0 +1,49 @@
+{
+	"id": "T1586.003",
+	"kind": "technique",
+	"name": "Cloud Accounts",
+	"description": "Adversaries may compromise cloud accounts that can be used during targeting. Adversaries can use compromised cloud accounts to further their operations, including leveraging cloud storage services such as Dropbox, Microsoft OneDrive, or AWS S3 buckets for [Exfiltration to Cloud Storage](https://attack.mitre.org/techniques/T1567/002) or to [Upload Tool](https://attack.mitre.org/techniques/T1608/002)s. Cloud accounts can also be used in the acquisition of infrastructure, such as [Virtual Private Server](https://attack.mitre.org/techniques/T1583/003)s or [Serverless](https://attack.mitre.org/techniques/T1583/007) infrastructure. Compromising cloud accounts may allow adversaries to develop sophisticated capabilities without managing their own servers.(Citation: Awake Security C2 Cloud)\n\nA variety of methods exist for compromising cloud accounts, such as gathering credentials via [Phishing for Information](https://attack.mitre.org/techniques/T1598), purchasing credentials from third-party sites, conducting [Password Spraying](https://attack.mitre.org/techniques/T1110/003) attacks, or attempting to [Steal Application Access Token](https://attack.mitre.org/techniques/T1528)s.(Citation: MSTIC Nobelium Oct 2021) Prior to compromising cloud accounts, adversaries may conduct Reconnaissance to inform decisions about which accounts to compromise to further their operation. In some cases, adversaries may target privileged service provider accounts with the intent of leveraging a [Trusted Relationship](https://attack.mitre.org/techniques/T1199) between service providers and their customers.(Citation: MSTIC Nobelium Oct 2021)",
+	"domains": [
+		"enterprise-attack"
+	],
+	"deprecated": false,
+	"revoked": false,
+	"version": "1.0",
+	"created": "2022-05-27T14:30:01.904Z",
+	"modified": "2022-10-21T14:21:57.991Z",
+	"technique": {
+		"platforms": [
+			"PRE"
+		],
+		"tactics": [
+			{
+				"shortname": "resource-development",
+				"id": "TA9011"
+			}
+		],
+		"is_subtechnique": true,
+		"detection": "Much of this activity will take place outside the visibility of the target organization, making detection of this behavior difficult. Detection efforts may be focused on related stages of the adversary lifecycle, such as during exfiltration (ex: [Transfer Data to Cloud Account](https://attack.mitre.org/techniques/T1537)).",
+		"network_requirements": false,
+		"remote_support": false
+	},
+	"references": [
+		{
+			"source": "Awake Security C2 Cloud",
+			"url": "https://awakesecurity.com/blog/threat-hunting-series-detecting-command-control-in-the-cloud/"
+		},
+		{
+			"source": "MSTIC Nobelium Oct 2021",
+			"url": "https://www.microsoft.com/security/blog/2021/10/25/nobelium-targeting-delegated-administrative-privileges-to-facilitate-broader-attacks/"
+		},
+		{
+			"source": "mitre-attack",
+			"url": "https://attack.mitre.org/techniques/T1586/003"
+		}
+	],
+	"data_source": {
+		"id": "mitre-attack",
+		"raws": [
+			"fixtures/enterprise/attack-pattern/attack-pattern--3d52e51e-f6db-4719-813c-48002a99f43a.json"
+		]
+	}
+}

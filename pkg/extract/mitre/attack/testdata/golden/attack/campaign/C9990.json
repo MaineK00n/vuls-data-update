@@ -1,0 +1,57 @@
+{
+	"id": "C9990",
+	"kind": "campaign",
+	"name": "TestCampaign",
+	"description": "Test campaign fixture.",
+	"domains": [
+		"enterprise-attack"
+	],
+	"deprecated": false,
+	"revoked": false,
+	"version": "1.0",
+	"created": "2024-01-01T00:00:00Z",
+	"modified": "2024-01-01T00:00:00Z",
+	"campaign": {
+		"aliases": [
+			"TC",
+			"TestCampaign"
+		],
+		"first_seen": "2023-06-01T00:00:00Z",
+		"last_seen": "2023-12-31T00:00:00Z",
+		"techniques_used": [
+			{
+				"id": "T1195",
+				"description": "TestCampaign uses Supply Chain Compromise."
+			}
+		],
+		"groups_attributed": [
+			{
+				"id": "G9990"
+			}
+		],
+		"softwares_used": [
+			{
+				"id": "S9990"
+			}
+		]
+	},
+	"references": [
+		{
+			"source": "mitre-attack",
+			"url": "https://attack.mitre.org/campaigns/C9990"
+		}
+	],
+	"data_source": {
+		"id": "mitre-attack",
+		"raws": [
+			"fixtures/enterprise/attack-pattern/attack-pattern--3f18edba-28f4-4bb9-82c3-8aa60dcac5f7.json",
+			"fixtures/enterprise/campaign/campaign--00000000-0000-0000-0000-000000000004.json",
+			"fixtures/enterprise/intrusion-set/intrusion-set--00000000-0000-0000-0000-000000000001.json",
+			"fixtures/enterprise/malware/malware--00000000-0000-0000-0000-000000000002.json",
+			"fixtures/enterprise/relationship/relationship--00000000-0000-0000-0000-000000000104.json",
+			"fixtures/enterprise/relationship/relationship--00000000-0000-0000-0000-000000000105.json",
+			"fixtures/enterprise/relationship/relationship--00000000-0000-0000-0000-000000000106.json",
+			"fixtures/mobile/intrusion-set/intrusion-set--00000000-0000-0000-0000-000000000001.json"
+		]
+	}
+}

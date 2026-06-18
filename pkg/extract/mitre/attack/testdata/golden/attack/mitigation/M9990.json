@@ -1,0 +1,42 @@
+{
+	"id": "M9990",
+	"kind": "mitigation",
+	"name": "TestMitigation",
+	"description": "Test mitigation fixture.",
+	"domains": [
+		"enterprise-attack"
+	],
+	"deprecated": false,
+	"revoked": false,
+	"version": "1.0",
+	"created": "2024-01-01T00:00:00Z",
+	"modified": "2024-01-01T00:00:00Z",
+	"mitigation": {
+		"techniques_mitigated": [
+			{
+				"id": "T1195",
+				"description": "Mitigate T1195 by validating supply-chain integrity end-to-end.",
+				"references": [
+					{
+						"source": "Supply Chain Risk Mgmt Guide 2023",
+						"url": "https://example.test/supply-chain-risk-mgmt-2023"
+					}
+				]
+			}
+		]
+	},
+	"references": [
+		{
+			"source": "mitre-attack",
+			"url": "https://attack.mitre.org/mitigations/M9990"
+		}
+	],
+	"data_source": {
+		"id": "mitre-attack",
+		"raws": [
+			"fixtures/enterprise/attack-pattern/attack-pattern--3f18edba-28f4-4bb9-82c3-8aa60dcac5f7.json",
+			"fixtures/enterprise/course-of-action/course-of-action--00000000-0000-0000-0000-000000000005.json",
+			"fixtures/enterprise/relationship/relationship--00000000-0000-0000-0000-000000000107.json"
+		]
+	}
+}
