@@ -474,9 +474,11 @@ func pvpKey(wfn common.WellFormedName) string {
 // Entries whose version is ANY or NA are skipped: ANY is a superset of every
 // concrete version (it would turn a versioned criterion into a
 // vendor:product-only hit) and NA is disjoint from every concrete version (dead
-// weight). The raw value is checked BEFORE any unescaping so a concrete escaped
-// "\*"/"\-" is not mistaken for the wildcard markers. Output order is
-// normalized by util.Write's Sort().
+// weight). naming.UnbindFS maps the wildcard "*" and not-applicable "-" markers
+// to the logical values, so GetString returns "ANY"/"NA" for them, whereas a
+// concrete version — including an escaped literal "\*"/"\-" — comes back as its
+// bound string; the equality check therefore skips only the true markers.
+// Output order is normalized by util.Write's Sort().
 func vulnerableCPECriteria(vulnCPEs []vulnCPE) (criteriaTypes.Criteria, error) {
 	root := criteriaTypes.Criteria{Operator: criteriaTypes.CriteriaOperatorTypeOR}
 	for _, group := range indexByProduct(vulnCPEs) {
