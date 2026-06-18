@@ -45,3 +45,40 @@ func TestExtract(t *testing.T) {
 		})
 	}
 }
+
+// Whitelist enforcement: a Known Affected product that is absent from the tree
+// or not in the product table must hard-error rather than be silently dropped.
+func TestToCriterionWhitelist(t *testing.T) {
+	tests := []struct {
+		name      string
+		productID string
+		prodMap   map[string]cvrf.ProductVersion
+		wantErr   bool
+	}{
+		{
+			name:      "known product, concrete version",
+			productID: "FortiOS-7.4.3",
+			prodMap:   map[string]cvrf.ProductVersion{"FortiOS-7.4.3": cvrf.NewProductVersion("FortiOS", "7.4.3")},
+		},
+		{
+			name:      "product_id absent from tree → hard error",
+			productID: "FortiOS-7.4.3",
+			prodMap:   map[string]cvrf.ProductVersion{},
+			wantErr:   true,
+		},
+		{
+			name:      "unknown product name → hard error",
+			productID: "FortiNonexistent-1.0.0",
+			prodMap:   map[string]cvrf.ProductVersion{"FortiNonexistent-1.0.0": cvrf.NewProductVersion("FortiNonexistent", "1.0.0")},
+			wantErr:   true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			_, err := cvrf.ToCriterion(tt.productID, tt.prodMap)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("ToCriterion(%q) error = %v, wantErr %v", tt.productID, err, tt.wantErr)
+			}
+		})
+	}
+}
