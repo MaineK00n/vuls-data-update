@@ -3,6 +3,7 @@ package cpecriterion
 import (
 	"cmp"
 	"maps"
+	"regexp"
 	"slices"
 	"strings"
 
@@ -311,6 +312,20 @@ func (c Criterion) Accept(query Query) (MatchQuality, error) {
 			// any special char (e.g. the hyphen in PAN-OS hotfixes) reach the
 			// comparator intact.
 			qVersion := unescapeWFN(qv)
+			// A PAN-OS query may carry the hotfix in the UPDATE attribute
+			// (NVD/cisco form: version="10.1.14", update="h11") rather than in
+			// the version (snmp2cpe form: "10.1.14-h11"). Fold a hotfix-looking
+			// UPDATE into the version so the pan-os comparator sees the full
+			// release; otherwise the query reads as the base version and
+			// over-matches at hotfix fix boundaries (e.g. accepted by "< 10.1.14-h13"
+			// when the device is actually fixed). Scoped to the pan-os range type
+			// (other range types do not use the UPDATE attribute this way); for
+			// the snmp2cpe form UPDATE is ANY and nothing is folded.
+			if c.Range.Type == rangeTypes.RangeTypePANOS {
+				if u := unescapeWFN(qWFN.GetString(common.AttributeUpdate)); panosHotfixUpdate.MatchString(u) {
+					qVersion = qVersion + "-" + u
+				}
+			}
 			isAccepted, err := c.Range.Accept(qVersion)
 			if err != nil {
 				return MatchQualityUnknown, errors.Wrap(err, "range accept")
@@ -347,6 +362,12 @@ func (c Criterion) Accept(query Query) (MatchQuality, error) {
 
 	return MatchQualityNone, nil
 }
+
+// panosHotfixUpdate matches a PAN-OS hotfix encoded in the WFN UPDATE
+// attribute ("h11"), the form NVD/cisco-style CPEs use. The snmp2cpe scanner
+// instead carries the hotfix in the version attribute ("10.1.14-h11"); both
+// must reach the pan-os comparator as the full "X.Y.Z-hN" release.
+var panosHotfixUpdate = regexp.MustCompile(`^[hH][0-9]+$`)
 
 // unescapeWFN reverses WFN attribute escaping: a backslash escapes the
 // character that follows it (e.g. "10\.1\.3\-h1" -> "10.1.3-h1"). The escape

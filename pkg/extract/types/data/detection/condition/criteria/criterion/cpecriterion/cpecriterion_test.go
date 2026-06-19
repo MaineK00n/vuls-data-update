@@ -437,6 +437,33 @@ func TestCriterion_Accept(t *testing.T) {
 			args: args{query: ccTypes.Query{CPE: "cpe:2.3:o:paloaltonetworks:pan-os:10.1.14-h13:*:*:*:*:*:*:*"}},
 			want: ccTypes.MatchQualityNone,
 		},
+		{
+			// The query carries the hotfix in the UPDATE attribute instead
+			// (NVD/cisco form: version="10.1.14", update="h11"). Accept folds a
+			// hotfix-looking UPDATE into the version for pan-os ranges, so this
+			// resolves to 10.1.14-h11 and is correctly in range.
+			name: "pan-os hotfix query, update attribute, within range",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:o:paloaltonetworks:pan-os:*:*:*:*:*:*:*:*",
+				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypePANOS, GreaterEqual: "10.1.0", LessThan: "10.1.14-h13"},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:o:paloaltonetworks:pan-os:10.1.14:h11:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityExact,
+		},
+		{
+			// Same UPDATE-attribute form at the exclusive hotfix upper bound: the
+			// device is fixed (10.1.14-h13), so without folding UPDATE the query
+			// would read as base 10.1.14 (< 10.1.14-h13) and falsely match.
+			name: "pan-os hotfix query, update attribute, at exclusive upper bound",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:o:paloaltonetworks:pan-os:*:*:*:*:*:*:*:*",
+				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypePANOS, GreaterEqual: "10.1.0", LessThan: "10.1.14-h13"},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:o:paloaltonetworks:pan-os:10.1.14:h13:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityNone,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
