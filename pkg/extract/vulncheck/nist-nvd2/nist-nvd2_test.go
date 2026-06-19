@@ -18,8 +18,9 @@ func TestExtract(t *testing.T) {
 		{
 			// vcConfigurations (two SEMVER ranges) with vcVulnerableCPEs that
 			// all fall inside those ranges. Because the ranges already detect
-			// every concrete version, the supplement (condition 2) is empty and
-			// only the configuration condition is emitted — as the nested
+			// every concrete version, the vcVulnerableCPEs group is empty and
+			// only the vcConfigurations group is emitted — used directly as the
+			// single condition's criteria (no root-OR wrapper), the nested
 			// root-OR → configuration → node tree that mirrors the NVD v2
 			// extractor (the plain NVD configurations field is ignored).
 			name:   "happy",
@@ -36,25 +37,26 @@ func TestExtract(t *testing.T) {
 		},
 		{
 			// Range endpoint "8.0_patch_34" is not semver, so the
-			// vcConfigurations condition's Range is typed unknown; the concrete
-			// versions a Range cannot express are carried by the separate
-			// vcVulnerableCPEs condition.
+			// vcConfigurations group's Range is typed unknown; the concrete
+			// versions a Range cannot express are carried by the sibling
+			// vcVulnerableCPEs group under the same root OR.
 			name:   "non-semver-range",
 			args:   "./testdata/fixtures/non-semver-range/vuls-data-raw-vulncheck-nist-nvd2",
 			golden: "./testdata/golden/non-semver-range",
 		},
 		{
 			// Criterion without any range endpoint (version "-"): the
-			// vcConfigurations condition emits the CPE with no Range.
+			// vcConfigurations group emits the CPE with no Range.
 			name:   "exact-match",
 			args:   "./testdata/fixtures/exact-match/vuls-data-raw-vulncheck-nist-nvd2",
 			golden: "./testdata/golden/exact-match",
 		},
 		{
-			// The vcVulnerableCPEs supplement condition, exercised end to end.
-			// Two distinct products are absent from vcConfigurations
-			// (zfs_storage_appliance_kit) so no configuration range covers them
-			// and both are kept in condition 2, becoming one criterion each
+			// The vcVulnerableCPEs supplement group, exercised end to end: it
+			// becomes the second criteria under the root OR, alongside the
+			// vcConfigurations group. Two distinct products are absent from
+			// vcConfigurations (zfs_storage_appliance_kit) so no configuration
+			// range covers them and both are kept, becoming one criterion each
 			// (grouped by part:vendor:product): sun_zfs_storage_appliance_kit (an
 			// alternate spelling) and zfs_storage_appliance. This pins the
 			// multi-product grouping and the deterministic ordering of the
