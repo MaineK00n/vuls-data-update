@@ -228,13 +228,12 @@ func extract(cvePath, cveDir, outputDir string) error {
 }
 
 func (e extractor) buildData(fetched nistnvd2Types.CVE) (dataTypes.Data, error) {
-	// The detection is a single CPE condition whose criteria ORs two groups
-	// mirroring the two raw input fields: the vcConfigurations applicability
-	// tree and the vcVulnerableCPEs concrete CPE list. They are siblings under
-	// one root OR (not separate conditions — Condition.Tag is for segmenting
-	// detections by product/stream, which is not what this split is) so the
-	// output stays parallel to the sibling nvd/feed/cve/v2 extractor, which also
-	// emits a single condition.
+	// The detection is a single CPE condition (not several — Condition.Tag is
+	// for segmenting detections by product/stream, which is not what this split
+	// is; nvd/feed/cve/v2 likewise emits one condition). Its root criteria always
+	// ORs the present groups, one per raw input field, in a uniform shape — the
+	// structure never varies with the data (no single-group collapse), so it
+	// reads the same for every record:
 	//
 	//   group 1 — vcConfigurations: a root OR over configurations, each an
 	//   AND/OR over its nodes, each node combining its cpeMatch criteria.
@@ -243,9 +242,8 @@ func (e extractor) buildData(fetched nistnvd2Types.CVE) (dataTypes.Data, error) 
 	//   Range cannot express (non-semver) or does not cover, and products the
 	//   configurations omit.
 	//
-	// When only one group is present its criteria is used directly (no
-	// single-child OR wrapper). Both are built from VulnCheck's enriched fields
-	// only — never the plain NVD configurations.
+	// Both are built from VulnCheck's enriched fields only — never the plain NVD
+	// configurations.
 	ds, err := func() ([]detectionType.Detection, error) {
 		// A Rejected CVE is withdrawn, so it must not produce detections —
 		// VulnCheck keeps vcConfigurations on some rejected entries, and
@@ -256,7 +254,8 @@ func (e extractor) buildData(fetched nistnvd2Types.CVE) (dataTypes.Data, error) 
 			return nil, nil
 		}
 
-		var groups []criteriaTypes.Criteria
+		// Accumulate the present groups directly into the root OR criteria.
+		criteria := criteriaTypes.Criteria{Operator: criteriaTypes.CriteriaOperatorTypeOR}
 
 		// Group 1: vcConfigurations applicability tree (CPE + version Range).
 		cc, err := vcConfigurationsCriteria(fetched.VCConfigurations)
@@ -264,7 +263,7 @@ func (e extractor) buildData(fetched nistnvd2Types.CVE) (dataTypes.Data, error) 
 			return nil, errors.Wrap(err, "vcConfigurations criteria")
 		}
 		if len(cc.Criterias) > 0 {
-			groups = append(groups, cc)
+			criteria.Criterias = append(criteria.Criterias, cc)
 		}
 
 		// What group 1 already detects, per product — used to drop the
@@ -284,20 +283,11 @@ func (e extractor) buildData(fetched nistnvd2Types.CVE) (dataTypes.Data, error) 
 			return nil, errors.Wrap(err, "vulnerable cpe criteria")
 		}
 		if len(vc.Criterions) > 0 {
-			groups = append(groups, vc)
+			criteria.Criterias = append(criteria.Criterias, vc)
 		}
 
-		var criteria criteriaTypes.Criteria
-		switch len(groups) {
-		case 0:
+		if len(criteria.Criterias) == 0 {
 			return nil, nil
-		case 1:
-			criteria = groups[0]
-		default:
-			criteria = criteriaTypes.Criteria{
-				Operator:  criteriaTypes.CriteriaOperatorTypeOR,
-				Criterias: groups,
-			}
 		}
 		return []detectionType.Detection{{
 			Ecosystem:  ecosystemTypes.EcosystemTypeCPE,

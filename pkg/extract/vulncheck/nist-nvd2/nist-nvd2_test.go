@@ -19,10 +19,10 @@ func TestExtract(t *testing.T) {
 			// vcConfigurations (two SEMVER ranges) with vcVulnerableCPEs that
 			// all fall inside those ranges. Because the ranges already detect
 			// every concrete version, the vcVulnerableCPEs group is empty and
-			// only the vcConfigurations group is emitted — used directly as the
-			// single condition's criteria (no root-OR wrapper), the nested
-			// root-OR → configuration → node tree that mirrors the NVD v2
-			// extractor (the plain NVD configurations field is ignored).
+			// the root OR carries only the vcConfigurations group — the shape is
+			// uniform regardless of how many groups are present (the root OR
+			// always wraps them, no single-group collapse). The plain NVD
+			// configurations field is ignored.
 			name:   "happy",
 			args:   "./testdata/fixtures/happy/vuls-data-raw-vulncheck-nist-nvd2",
 			golden: "./testdata/golden/happy",
