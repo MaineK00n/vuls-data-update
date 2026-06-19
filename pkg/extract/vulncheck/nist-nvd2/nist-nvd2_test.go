@@ -50,14 +50,16 @@ func TestExtract(t *testing.T) {
 			golden: "./testdata/golden/exact-match",
 		},
 		{
-			// vcVulnerableCPEs whose product (sun_zfs_storage_appliance_kit, an
-			// alternate spelling) is absent from vcConfigurations
-			// (zfs_storage_appliance_kit): the vcVulnerableCPEs condition emits
-			// it regardless, so it is not dropped just because no configuration
-			// mentions that product.
-			name:   "orphan",
-			args:   "./testdata/fixtures/orphan/vuls-data-raw-vulncheck-nist-nvd2",
-			golden: "./testdata/golden/orphan",
+			// The vcVulnerableCPEs condition, exercised end to end: its product
+			// (sun_zfs_storage_appliance_kit, an alternate spelling) is absent
+			// from vcConfigurations (zfs_storage_appliance_kit), so this also
+			// proves condition 2 is emitted independently of the configuration
+			// products (not dropped). The fixture adds ANY ("*") and NA ("-")
+			// versioned entries, which must be skipped — only the concrete
+			// versions land in cpe_matches.
+			name:   "vuln-cpes",
+			args:   "./testdata/fixtures/vuln-cpes/vuls-data-raw-vulncheck-nist-nvd2",
+			golden: "./testdata/golden/vuln-cpes",
 		},
 		{
 			// vulnStatus=Rejected entries: the vulnerability content (the
