@@ -210,7 +210,10 @@ func TestWrite(t *testing.T) {
 			case err == nil && tt.hasError:
 				t.Error("expected error has not occurred")
 			case err != nil && tt.hasError:
-				// error was expected and occurred, test passed
+				// error was expected and occurred; it must not have left an artifact behind
+				if _, statErr := os.Stat(path); statErr == nil {
+					t.Errorf("Write() returned an error but left a file at %s", path)
+				}
 				return
 			default:
 				f, err := os.Open(path)

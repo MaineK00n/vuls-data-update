@@ -61,16 +61,10 @@ func ChunkSlice(length int, chunkSize int) <-chan IndexChunk {
 }
 
 func Write(path string, content any, doSort bool) error {
-	if err := os.MkdirAll(filepath.Dir(path), os.ModePerm); err != nil {
-		return errors.Wrapf(err, "mkdir %s", filepath.Dir(path))
-	}
-
-	f, err := os.Create(path)
-	if err != nil {
-		return errors.Wrapf(err, "create %s", path)
-	}
-	defer f.Close()
-
+	// Sort (and validate the type) before touching the filesystem so an
+	// unsupported doSort type returns an error without leaving an empty file
+	// behind. Sorting mutates content's shared slice/map backing storage, so
+	// doing it here is equivalent to doing it just before encoding.
 	if doSort {
 		switch v := content.(type) {
 		case dataTypes.Data:
@@ -100,6 +94,16 @@ func Write(path string, content any, doSort bool) error {
 			return errors.Errorf("doSort requested but content type %T has no sort handler; add a case to the util.Write type switch", content)
 		}
 	}
+
+	if err := os.MkdirAll(filepath.Dir(path), os.ModePerm); err != nil {
+		return errors.Wrapf(err, "mkdir %s", filepath.Dir(path))
+	}
+
+	f, err := os.Create(path)
+	if err != nil {
+		return errors.Wrapf(err, "create %s", path)
+	}
+	defer f.Close()
 
 	if err := json.MarshalWrite(f, content, jsontext.WithIndent("\t"), json.Deterministic(true)); err != nil {
 		return errors.Wrap(err, "encode json")
