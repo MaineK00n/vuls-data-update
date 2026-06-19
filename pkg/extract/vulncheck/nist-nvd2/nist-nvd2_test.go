@@ -19,9 +19,9 @@ func TestExtract(t *testing.T) {
 			// vcConfigurations (two SEMVER ranges) with vcVulnerableCPEs that
 			// all fall inside those ranges. Because the ranges already detect
 			// every concrete version, the supplement (condition 2) is empty and
-			// only the configuration condition is emitted — collapsed to a
-			// single flat OR of the two range criteria (the plain NVD
-			// configurations field is ignored).
+			// only the configuration condition is emitted — as the nested
+			// root-OR → configuration → node tree that mirrors the NVD v2
+			// extractor (the plain NVD configurations field is ignored).
 			name:   "happy",
 			args:   "./testdata/fixtures/happy/vuls-data-raw-vulncheck-nist-nvd2",
 			golden: "./testdata/golden/happy",
@@ -88,6 +88,15 @@ func TestExtract(t *testing.T) {
 			name:     "node-negate",
 			args:     "./testdata/fixtures/node-negate/vuls-data-raw-vulncheck-nist-nvd2",
 			hasError: true,
+		},
+		{
+			// A node AND operator (a conjunction of CPEs, e.g. OS + application)
+			// is preserved as an AND criteria, mirroring the NVD v2 extractor —
+			// not flattened or rejected. Does not occur in the real feed, but the
+			// structure handles it faithfully if it ever appears.
+			name:   "and-operator",
+			args:   "./testdata/fixtures/and-operator/vuls-data-raw-vulncheck-nist-nvd2",
+			golden: "./testdata/golden/and-operator",
 		},
 		{
 			// A cpeMatch whose criteria is not a CPE 2.3 formatted string is

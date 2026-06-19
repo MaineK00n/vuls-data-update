@@ -230,15 +230,14 @@ func extract(cvePath, cveDir, outputDir string) error {
 func (e extractor) buildData(fetched nistnvd2Types.CVE) (dataTypes.Data, error) {
 	// vcConfigurations and vcVulnerableCPEs become two separate conditions,
 	// mirroring the two raw input fields. Condition 1 is the configuration
-	// applicability tree (CPE + version Range); condition 2 is the flat
-	// concrete CPE list. Following NVD, condition 2 carries ONLY the entries
-	// condition 1 does not already detect — versions a Range cannot express
-	// (non-semver) or does not cover, and products the configurations omit.
-	// Detection is unchanged across the split: a CPE Detection's conditions are
-	// OR'd by the consumer, and vcConfigurations is pure OR in the feed (no AND
-	// configuration exists), so a standalone vcVulnerableCPEs condition cannot
-	// weaken any AND. Both are built from VulnCheck's enriched fields only —
-	// never the plain NVD configurations.
+	// applicability tree (CPE + version Range), built with the same structure as
+	// the sibling nvd/feed/cve/v2 extractor — a root OR over configurations, each
+	// an AND/OR over its nodes, each node combining its cpeMatch criteria — so
+	// the output stays parallel to NVD's. Condition 2 is the flat concrete CPE
+	// list. Following NVD, condition 2 carries ONLY the entries condition 1 does
+	// not already detect — versions a Range cannot express (non-semver) or does
+	// not cover, and products the configurations omit. Both are built from
+	// VulnCheck's enriched fields only — never the plain NVD configurations.
 	ds, err := func() ([]detectionType.Detection, error) {
 		// A Rejected CVE is withdrawn, so it must not produce detections —
 		// VulnCheck keeps vcConfigurations on some rejected entries, and
@@ -249,29 +248,22 @@ func (e extractor) buildData(fetched nistnvd2Types.CVE) (dataTypes.Data, error) 
 			return nil, nil
 		}
 
-		// What the vcConfigurations condition already detects, per product —
-		// used to drop the redundant vcVulnerableCPEs from condition 2.
-		coverage, err := buildConfigCoverage(fetched.VCConfigurations)
-		if err != nil {
-			return nil, errors.Wrap(err, "build config coverage")
-		}
-
 		var conditions []conditionTypes.Condition
 
 		// Condition 1: vcConfigurations applicability tree (CPE + version Range).
-		if len(fetched.VCConfigurations) > 0 {
-			root := criteriaTypes.Criteria{
-				Operator:  criteriaTypes.CriteriaOperatorTypeOR,
-				Criterias: make([]criteriaTypes.Criteria, 0, len(fetched.VCConfigurations)),
-			}
-			for _, c := range fetched.VCConfigurations {
-				ca, err := configurationToCriteria(c)
-				if err != nil {
-					return nil, errors.Wrap(err, "configuration to criteria")
-				}
-				root.Criterias = append(root.Criterias, ca)
-			}
-			conditions = append(conditions, conditionTypes.Condition{Criteria: collapse(root)})
+		cc, err := vcConfigurationsCriteria(fetched.VCConfigurations)
+		if err != nil {
+			return nil, errors.Wrap(err, "vcConfigurations criteria")
+		}
+		if len(cc.Criterias) > 0 {
+			conditions = append(conditions, conditionTypes.Condition{Criteria: cc})
+		}
+
+		// What condition 1 already detects, per product — used to drop the
+		// redundant vcVulnerableCPEs from condition 2.
+		coverage, err := buildConfigCoverage(fetched.VCConfigurations)
+		if err != nil {
+			return nil, errors.Wrap(err, "build config coverage")
 		}
 
 		// Condition 2: vcVulnerableCPEs not already covered by condition 1.
@@ -657,29 +649,32 @@ func unescapeVersion(s string) string {
 	return strings.ReplaceAll(s, "\\", "")
 }
 
-// collapse removes redundant single-child wrapper criteria: a Criteria holding
-// exactly one sub-criteria and no criterions of its own is equivalent to that
-// child (OR/AND of a single element is identity), so it is replaced by the
-// child. Applied bottom-up, this flattens the common single-config /
-// single-node chains down toward one level while preserving any multi-child
-// (meaningful) AND/OR structure.
-func collapse(c criteriaTypes.Criteria) criteriaTypes.Criteria {
-	for i := range c.Criterias {
-		c.Criterias[i] = collapse(c.Criterias[i])
+// vcConfigurationsCriteria builds the criteria tree for vcConfigurations,
+// mirroring the sibling nvd/feed/cve/v2 extractor: a root OR over each
+// configuration, each configuration an AND/OR over its nodes, each node an
+// AND/OR over its cpeMatch criteria. The applicability structure is preserved
+// as-is (no flattening or collapsing) so it stays parallel to the NVD v2 output;
+// the concrete vulnerable CPEs live in the separate vcVulnerableCPEs condition,
+// not here.
+func vcConfigurationsCriteria(configs []nistnvd2Types.Config) (criteriaTypes.Criteria, error) {
+	root := criteriaTypes.Criteria{
+		Operator:  criteriaTypes.CriteriaOperatorTypeOR,
+		Criterias: make([]criteriaTypes.Criteria, 0, len(configs)),
 	}
-	if len(c.Criterias) == 1 && len(c.Criterions) == 0 {
-		return c.Criterias[0]
+	for _, config := range configs {
+		ca, err := configurationToCriteria(config)
+		if err != nil {
+			return criteriaTypes.Criteria{}, errors.Wrap(err, "configuration to criteria")
+		}
+		root.Criterias = append(root.Criterias, ca)
 	}
-	return c
+	return root, nil
 }
 
-// configurationToCriteria converts a vcConfigurations entry into a
-// criteria tree of CPE + version Range criteria (the concrete vulnerable
-// CPEs live in the separate vcVulnerableCPEs condition, not here). Every
-// malformed shape (negate=true, an unexpected operator, an invalid cpeMatch
-// CPE) is an error rather than a silent skip, so unexpected data surfaces
-// instead of being dropped — and a silent skip would weaken AND semantics
-// into over-broad detections.
+// configurationToCriteria converts one vcConfigurations entry into a criteria
+// subtree (AND/OR over its nodes). negate=true and an unexpected operator are
+// errors rather than silent skips, so unexpected data surfaces instead of being
+// dropped (neither occurs in the feed). Mirrors nvd/feed/cve/v2.
 func configurationToCriteria(config nistnvd2Types.Config) (criteriaTypes.Criteria, error) {
 	if config.Negate {
 		return criteriaTypes.Criteria{}, errors.New("negate=true on configuration is not supported")
@@ -706,26 +701,31 @@ func configurationToCriteria(config nistnvd2Types.Config) (criteriaTypes.Criteri
 	return ca, nil
 }
 
-// nodeToCriteria converts a configuration node into a criteria subtree.
-// Malformed shapes are errors, as in configurationToCriteria.
+// nodeToCriteria converts one configuration node into a criteria subtree whose
+// operator (AND/OR) combines the node's cpeMatch criteria. Malformed shapes are
+// errors, as in configurationToCriteria.
 func nodeToCriteria(n nistnvd2Types.Node) (criteriaTypes.Criteria, error) {
 	if n.Negate {
 		return criteriaTypes.Criteria{}, errors.New("negate=true on node is not supported")
 	}
+
 	ca := criteriaTypes.Criteria{}
 	switch n.Operator {
 	case "AND":
 		ca.Operator = criteriaTypes.CriteriaOperatorTypeAND
-	// The node operator is empty for most single-node configurations;
-	// treat it as OR like the configuration-level operator.
+	// vcConfigurations leaves the node operator empty for most single-CPE nodes
+	// (NVD v2's plain configurations always set it); treat "" as OR.
 	case "OR", "":
 		ca.Operator = criteriaTypes.CriteriaOperatorTypeOR
 	default:
 		return criteriaTypes.Criteria{}, errors.Errorf("unexpected node operator. expected: %q, actual: %q", []string{"AND", "OR", ""}, n.Operator)
 	}
 
-	// Each cpeMatch is a criterion placed directly under the node (no
-	// single-criterion wrapper); the node's operator combines them.
+	// Each cpeMatch is a criterion placed directly under the node; the node's
+	// operator combines them. NVD v2 wraps each cpeMatch in its own
+	// single-criterion OR sub-criteria, which is semantically identical
+	// (Criteria.Operator applies to Criterions and Criterias alike) but the flat
+	// form mirrors the source's flat cpeMatch array without the empty wrapper.
 	ca.Criterions = make([]criterionTypes.Criterion, 0, len(n.CPEMatch))
 	for _, match := range n.CPEMatch {
 		if _, err := naming.UnbindFS(match.Criteria); err != nil {
