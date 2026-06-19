@@ -270,9 +270,20 @@ func StanzaIntervals(stanza Stanza) ([]Interval, error) {
 		add(*start, transition{affected: affected, priority: priorityStanzaBound})
 	}
 	if upper != nil && !upperInclusive {
-		// Explicit upper bound; an event at the same version wins (it carries
-		// the real status). For affected stanzas the concrete bound is the
-		// fix release.
+		// Explicit EXCLUSIVE upper bound; an event at the same version wins (it
+		// carries the real status). For affected stanzas the concrete bound is
+		// the fix release.
+		//
+		// An inclusive bound (lessThanOrEqual) is deliberately NOT added as a
+		// transition here: its switch to unaffected is at the NEXT version, not
+		// at the bound itself. PAN's data always pairs a lessThanOrEqual with a
+		// redundant change at bound+1 (status "unaffected") — e.g. version "5.0"
+		// lessThanOrEqual "5.0.19" with changes[]{at: "5.0.20", unaffected} —
+		// which supplies that closing transition, so the interval still ends
+		// exactly at the inclusive cap. The inclusive bound additionally feeds
+		// updateClamp below (bound.maintenance+1), which would close an
+		// affected-ending timeline; such a timeline cannot arise from this data
+		// (every lessThanOrEqual change is "unaffected" at bound+1).
 		add(*upper, transition{affected: false, fix: upperIsRelease && affected, priority: priorityStanzaBound})
 	}
 
