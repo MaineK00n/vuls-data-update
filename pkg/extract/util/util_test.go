@@ -151,11 +151,11 @@ func TestSplit(t *testing.T) {
 
 func TestWrite(t *testing.T) {
 	tests := []struct {
-		name    string
-		content any
-		doSort  bool
-		want    any
-		wantErr bool
+		name     string
+		content  any
+		doSort   bool
+		want     any
+		hasError bool
 	}{
 		{
 			name: "microsoftkb.KB",
@@ -196,32 +196,37 @@ func TestWrite(t *testing.T) {
 					Raws: []string{"c.json", "a.json", "b.json"},
 				},
 			},
-			doSort:  true,
-			wantErr: true,
+			doSort:   true,
+			hasError: true,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			path := filepath.Join(t.TempDir(), "out.json")
-			if err := util.Write(path, tt.content, tt.doSort); (err != nil) != tt.wantErr {
-				t.Fatalf("Write() error = %v, wantErr %v", err, tt.wantErr)
-			} else if tt.wantErr {
+			err := util.Write(path, tt.content, tt.doSort)
+			switch {
+			case err != nil && !tt.hasError:
+				t.Error("unexpected error:", err)
+			case err == nil && tt.hasError:
+				t.Error("expected error has not occurred")
+			case err != nil && tt.hasError:
+				// error was expected and occurred, test passed
 				return
-			}
+			default:
+				f, err := os.Open(path)
+				if err != nil {
+					t.Fatal("unexpected error:", err)
+				}
+				defer f.Close()
 
-			f, err := os.Open(path)
-			if err != nil {
-				t.Fatal("unexpected error:", err)
-			}
-			defer f.Close()
+				got := reflect.New(reflect.TypeOf(tt.want)).Interface()
+				if err := json.UnmarshalRead(f, got); err != nil {
+					t.Fatal("unexpected error:", err)
+				}
 
-			got := reflect.New(reflect.TypeOf(tt.want)).Interface()
-			if err := json.UnmarshalRead(f, got); err != nil {
-				t.Fatal("unexpected error:", err)
-			}
-
-			if diff := cmp.Diff(tt.want, reflect.ValueOf(got).Elem().Interface()); diff != "" {
-				t.Errorf("Write(). (-expected +got):\n%s", diff)
+				if diff := cmp.Diff(tt.want, reflect.ValueOf(got).Elem().Interface()); diff != "" {
+					t.Errorf("Write(). (-expected +got):\n%s", diff)
+				}
 			}
 		})
 	}
