@@ -533,9 +533,10 @@ func detections(fetched paloaltoJSON.CVE) ([]detectionTypes.Detection, error) {
 // must not be emitted into criteria.
 //
 // The three known upstream typos are tolerated (skipped — the affected entry's
-// other CPEs still produce criteria), pinned to the exact advisory + wording so
-// a new malformation hard-errors instead of passing unnoticed. Tracked for
-// upstream reporting (see design notes, appendix A).
+// other CPEs still produce criteria), each pinned to its CVE ID plus a
+// distinctive substring of the specific malformation, so a different
+// malformation hard-errors instead of passing unnoticed. Tracked for upstream
+// reporting (see design notes, appendix A).
 func validCPEs(id string, cpes []string) ([]ccTypes.CPE, error) {
 	cs := make([]ccTypes.CPE, 0, len(cpes))
 	for _, c := range cpes {
