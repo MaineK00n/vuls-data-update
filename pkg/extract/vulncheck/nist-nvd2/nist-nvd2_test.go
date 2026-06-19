@@ -51,12 +51,16 @@ func TestExtract(t *testing.T) {
 			golden: "./testdata/golden/exact-match",
 		},
 		{
-			// The vcVulnerableCPEs supplement condition, exercised end to end:
-			// its product (sun_zfs_storage_appliance_kit, an alternate spelling)
-			// is absent from vcConfigurations (zfs_storage_appliance_kit), so no
-			// configuration range covers it and it is kept in condition 2. The
-			// fixture adds ANY ("*") and NA ("-") versioned entries, which must
-			// be skipped — only the concrete versions land in cpe_matches.
+			// The vcVulnerableCPEs supplement condition, exercised end to end.
+			// Two distinct products are absent from vcConfigurations
+			// (zfs_storage_appliance_kit) so no configuration range covers them
+			// and both are kept in condition 2, becoming one criterion each
+			// (grouped by part:vendor:product): sun_zfs_storage_appliance_kit (an
+			// alternate spelling) and zfs_storage_appliance. This pins the
+			// multi-product grouping and the deterministic ordering of the
+			// resulting criterions. The fixture also adds ANY ("*") and NA ("-")
+			// versioned entries, which must be skipped — only the concrete
+			// versions land in cpe_matches.
 			name:   "vuln-cpes",
 			args:   "./testdata/fixtures/vuln-cpes/vuls-data-raw-vulncheck-nist-nvd2",
 			golden: "./testdata/golden/vuln-cpes",
