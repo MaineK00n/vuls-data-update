@@ -83,8 +83,7 @@ func Write(path string, content any, doSort bool) error {
 			(&v).Sort()
 		case map[string]eolTypes.EOL:
 			// map values are not addressable, so sort a copy and write it back.
-			for k := range v {
-				e := v[k]
+			for k, e := range v {
 				e.Sort()
 				v[k] = e
 			}
