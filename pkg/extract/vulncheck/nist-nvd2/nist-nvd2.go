@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"runtime"
 	"slices"
+	"strings"
 	"time"
 
 	"github.com/hashicorp/go-version"
@@ -227,13 +228,17 @@ func extract(cvePath, cveDir, outputDir string) error {
 }
 
 func (e extractor) buildData(fetched nistnvd2Types.CVE) (dataTypes.Data, error) {
-	// vcConfigurations and vcVulnerableCPEs are kept as two separate
-	// conditions, mirroring the two raw input fields rather than merging the
-	// flat CPE list into the configuration tree. Detection is unchanged: a
-	// CPE Detection's conditions are OR'd by the consumer, and vcConfigurations
-	// is pure OR in the feed (no AND configuration exists), so a standalone
-	// vcVulnerableCPEs condition cannot weaken any AND. Both are built from
-	// VulnCheck's enriched fields only — never the plain NVD configurations.
+	// vcConfigurations and vcVulnerableCPEs become two separate conditions,
+	// mirroring the two raw input fields. Condition 1 is the configuration
+	// applicability tree (CPE + version Range); condition 2 is the flat
+	// concrete CPE list. Following NVD, condition 2 carries ONLY the entries
+	// condition 1 does not already detect — versions a Range cannot express
+	// (non-semver) or does not cover, and products the configurations omit.
+	// Detection is unchanged across the split: a CPE Detection's conditions are
+	// OR'd by the consumer, and vcConfigurations is pure OR in the feed (no AND
+	// configuration exists), so a standalone vcVulnerableCPEs condition cannot
+	// weaken any AND. Both are built from VulnCheck's enriched fields only —
+	// never the plain NVD configurations.
 	ds, err := func() ([]detectionType.Detection, error) {
 		// A Rejected CVE is withdrawn, so it must not produce detections —
 		// VulnCheck keeps vcConfigurations on some rejected entries, and
@@ -244,9 +249,16 @@ func (e extractor) buildData(fetched nistnvd2Types.CVE) (dataTypes.Data, error) 
 			return nil, nil
 		}
 
+		// What the vcConfigurations condition already detects, per product —
+		// used to drop the redundant vcVulnerableCPEs from condition 2.
+		coverage, err := buildConfigCoverage(fetched.VCConfigurations)
+		if err != nil {
+			return nil, errors.Wrap(err, "build config coverage")
+		}
+
 		var conditions []conditionTypes.Condition
 
-		// Condition 1: vcConfigurations applicability tree (version ranges).
+		// Condition 1: vcConfigurations applicability tree (CPE + version Range).
 		if len(fetched.VCConfigurations) > 0 {
 			root := criteriaTypes.Criteria{
 				Operator:  criteriaTypes.CriteriaOperatorTypeOR,
@@ -259,23 +271,19 @@ func (e extractor) buildData(fetched nistnvd2Types.CVE) (dataTypes.Data, error) 
 				}
 				root.Criterias = append(root.Criterias, ca)
 			}
-			conditions = append(conditions, conditionTypes.Condition{Criteria: root})
+			conditions = append(conditions, conditionTypes.Condition{Criteria: collapse(root)})
 		}
 
-		// Condition 2: vcVulnerableCPEs — the flat list of concrete vulnerable
-		// CPEs, emitted wholesale (one criterion per product). This carries the
-		// versions a range cannot express (non-semver / unknown) and the
-		// products the configurations do not mention, without the extractor
-		// having to associate the two fields.
+		// Condition 2: vcVulnerableCPEs not already covered by condition 1.
 		vulnCPEs, err := parseVulnerableCPEs(fetched.VCVulnerableCPEs)
 		if err != nil {
 			return nil, errors.Wrap(err, "parse vcVulnerableCPEs")
 		}
-		vc, err := vulnerableCPECriteria(vulnCPEs)
+		vc, err := vulnerableCPECriteria(vulnCPEs, coverage)
 		if err != nil {
 			return nil, errors.Wrap(err, "vulnerable cpe criteria")
 		}
-		if len(vc.Criterias) > 0 {
+		if len(vc.Criterions) > 0 {
 			conditions = append(conditions, conditionTypes.Condition{Criteria: vc})
 		}
 
@@ -463,29 +471,39 @@ func pvpKey(wfn common.WellFormedName) string {
 	return fmt.Sprintf("%s:%s:%s", wfn.GetString(common.AttributePart), wfn.GetString(common.AttributeVendor), wfn.GetString(common.AttributeProduct))
 }
 
-// vulnerableCPECriteria builds the vcVulnerableCPEs condition: the flat list of
-// concrete vulnerable CPEs, grouped one criterion per part:vendor:product. Each
-// criterion is a product-wildcard primary CPE (part:vendor:product fixed, every
-// other attribute ANY) with the product's concrete CPEs in cpe_matches. A
-// scanned CPE with a concrete version hits an exact cpe_matches entry; a
-// version-less scan falls to the vuls2 vendor:product confidence tier — both
-// faithful to the source, since the concrete attributes live in cpe_matches.
+// vulnerableCPECriteria builds the vcVulnerableCPEs condition: the concrete
+// vulnerable CPEs that the vcConfigurations condition does NOT already detect
+// (coverage), grouped one criterion per part:vendor:product. Each criterion is
+// a product-wildcard primary CPE (part:vendor:product fixed, every other
+// attribute ANY) with the product's concrete CPEs in cpe_matches. A scanned CPE
+// with a concrete version hits an exact cpe_matches entry; a version-less scan
+// falls to the vuls2 vendor:product confidence tier — both faithful to the
+// source, since the concrete attributes live in cpe_matches. The result is flat
+// (criterions directly under one OR); output order is normalized by Sort().
 //
-// Entries whose version is ANY or NA are skipped: ANY is a superset of every
-// concrete version (it would turn a versioned criterion into a
-// vendor:product-only hit) and NA is disjoint from every concrete version (dead
-// weight). naming.UnbindFS maps the wildcard "*" and not-applicable "-" markers
-// to the logical values, so GetString returns "ANY"/"NA" for them, whereas a
-// concrete version — including an escaped literal "\*"/"\-" — comes back as its
-// bound string; the equality check therefore skips only the true markers.
-// Output order is normalized by util.Write's Sort().
-func vulnerableCPECriteria(vulnCPEs []vulnCPE) (criteriaTypes.Criteria, error) {
+// An entry is dropped when:
+//   - its version is ANY or NA — ANY is a superset of every concrete version
+//     (it would turn a versioned criterion into a vendor:product-only hit) and
+//     NA is disjoint from every concrete version (dead weight). naming.UnbindFS
+//     maps the "*"/"-" markers to the logical values, so GetString returns
+//     "ANY"/"NA" for them, whereas a concrete version — including an escaped
+//     literal "\*"/"\-" — comes back as its bound string; the equality check
+//     therefore drops only the true markers.
+//   - the vcConfigurations condition already detects it (coverage.covers):
+//     a whole-product criterion, or a semver Range that includes the version.
+//     Following NVD, the concrete list only supplements what ranges cannot.
+func vulnerableCPECriteria(vulnCPEs []vulnCPE, coverage map[string]*productCoverage) (criteriaTypes.Criteria, error) {
 	root := criteriaTypes.Criteria{Operator: criteriaTypes.CriteriaOperatorTypeOR}
-	for _, group := range indexByProduct(vulnCPEs) {
+	for key, group := range indexByProduct(vulnCPEs) {
+		cov := coverage[key]
 		matches := make([]ccTypes.CPE, 0, len(group))
 		for _, c := range group {
-			switch c.wfn.GetString(common.AttributeVersion) {
+			verRaw := c.wfn.GetString(common.AttributeVersion)
+			switch verRaw {
 			case "ANY", "NA":
+				continue
+			}
+			if cov.covers(verRaw) {
 				continue
 			}
 			matches = append(matches, ccTypes.CPE(c.name))
@@ -499,17 +517,14 @@ func vulnerableCPECriteria(vulnCPEs []vulnCPE) (criteriaTypes.Criteria, error) {
 				return criteriaTypes.Criteria{}, errors.Wrapf(err, "set %s on product-wildcard cpe. cpe: %s", a, group[0].name)
 			}
 		}
-		root.Criterias = append(root.Criterias, criteriaTypes.Criteria{
-			Operator: criteriaTypes.CriteriaOperatorTypeOR,
-			Criterions: []criterionTypes.Criterion{{
-				Type: criterionTypes.CriterionTypeCPE,
-				CPE: &ccTypes.Criterion{
-					Vulnerable: true,
-					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
-					CPE:        ccTypes.CPE(naming.BindToFS(p)),
-					CPEMatches: matches,
-				},
-			}},
+		root.Criterions = append(root.Criterions, criterionTypes.Criterion{
+			Type: criterionTypes.CriterionTypeCPE,
+			CPE: &ccTypes.Criterion{
+				Vulnerable: true,
+				FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
+				CPE:        ccTypes.CPE(naming.BindToFS(p)),
+				CPEMatches: matches,
+			},
 		})
 	}
 	return root, nil
@@ -523,6 +538,139 @@ func indexByProduct(vulnCPEs []vulnCPE) map[string][]vulnCPE {
 		idx[k] = append(idx[k], c)
 	}
 	return idx
+}
+
+// productCoverage summarizes, per part:vendor:product, what the
+// vcConfigurations condition already detects: whole is true when a
+// whole-product criterion (version NA, or ANY with no range) matches every
+// version; ranges are its semver version ranges (including a concrete exact
+// version as a point range).
+type productCoverage struct {
+	whole  bool
+	ranges []semverRange
+}
+
+// covers reports whether a vcVulnerableCPE version is already detected by the
+// vcConfigurations condition. A nil receiver (product absent from any
+// configuration) covers nothing.
+func (c *productCoverage) covers(verRaw string) bool {
+	if c == nil {
+		return false
+	}
+	if c.whole {
+		return true
+	}
+	v, err := version.NewSemver(unescapeVersion(verRaw))
+	if err != nil {
+		return false // non-semver: a Range cannot decide it → keep as supplement
+	}
+	for _, r := range c.ranges {
+		if r.covers(v) {
+			return true
+		}
+	}
+	return false
+}
+
+// semverRange is a parsed vcConfigurations version range.
+type semverRange struct {
+	ge, gt, le, lt *version.Version
+}
+
+func (r semverRange) covers(v *version.Version) bool {
+	if r.ge != nil && v.LessThan(r.ge) {
+		return false
+	}
+	if r.gt != nil && !v.GreaterThan(r.gt) {
+		return false
+	}
+	if r.le != nil && v.GreaterThan(r.le) {
+		return false
+	}
+	if r.lt != nil && !v.LessThan(r.lt) {
+		return false
+	}
+	return true
+}
+
+// buildConfigCoverage indexes the vcConfigurations cpeMatch criteria by
+// part:vendor:product so vulnerableCPECriteria can drop the vcVulnerableCPEs the
+// configuration already detects. Only semver-evaluable ranges contribute (an
+// unknown range cannot decide membership, so its product's enumerations are
+// kept). The cpeMatch CPEs were already validated by configurationToCriteria.
+func buildConfigCoverage(configs []nistnvd2Types.Config) (map[string]*productCoverage, error) {
+	cov := make(map[string]*productCoverage)
+	for _, conf := range configs {
+		for _, n := range conf.Nodes {
+			for _, m := range n.CPEMatch {
+				wfn, err := naming.UnbindFS(m.Criteria)
+				if err != nil {
+					return nil, errors.Wrapf(err, "invalid format. CPE: %s", m.Criteria)
+				}
+				key := pvpKey(wfn)
+				c := cov[key]
+				if c == nil {
+					c = &productCoverage{}
+					cov[key] = c
+				}
+				hasRange := m.VersionStartIncluding != "" || m.VersionStartExcluding != "" ||
+					m.VersionEndIncluding != "" || m.VersionEndExcluding != ""
+				switch ver := wfn.GetString(common.AttributeVersion); {
+				case ver == "NA", ver == "ANY" && !hasRange:
+					c.whole = true // matches every version
+				case hasRange:
+					if decideRangeType(m) == ccRangeTypes.RangeTypeSEMVER {
+						c.ranges = append(c.ranges, semverRange{
+							ge: semverOrNil(m.VersionStartIncluding),
+							gt: semverOrNil(m.VersionStartExcluding),
+							le: semverOrNil(m.VersionEndIncluding),
+							lt: semverOrNil(m.VersionEndExcluding),
+						})
+					}
+				default: // concrete exact version (no range): covers just that version
+					if v := semverOrNil(unescapeVersion(ver)); v != nil {
+						c.ranges = append(c.ranges, semverRange{ge: v, le: v})
+					}
+				}
+			}
+		}
+	}
+	return cov, nil
+}
+
+// semverOrNil parses s as semver, returning nil on empty or non-semver input.
+// Range endpoints from the raw JSON are not WFN-escaped, so no unescape here.
+func semverOrNil(s string) *version.Version {
+	if s == "" {
+		return nil
+	}
+	v, err := version.NewSemver(s)
+	if err != nil {
+		return nil
+	}
+	return v
+}
+
+// unescapeVersion strips WFN backslash escaping from a version attribute value
+// ("6\.3\.0" → "6.3.0") so it can be parsed as semver.
+func unescapeVersion(s string) string {
+	return strings.ReplaceAll(s, "\\", "")
+}
+
+// collapse removes redundant single-child wrapper criteria: a Criteria holding
+// exactly one sub-criteria and no criterions of its own is equivalent to that
+// child (OR/AND of a single element is identity), so it is replaced by the
+// child. Applied bottom-up, this flattens the common single-config /
+// single-node chains down toward one level while preserving any multi-child
+// (meaningful) AND/OR structure.
+func collapse(c criteriaTypes.Criteria) criteriaTypes.Criteria {
+	for i := range c.Criterias {
+		c.Criterias[i] = collapse(c.Criterias[i])
+	}
+	if len(c.Criterias) == 1 && len(c.Criterions) == 0 {
+		return c.Criterias[0]
+	}
+	return c
 }
 
 // configurationToCriteria converts a vcConfigurations entry into a
@@ -576,7 +724,9 @@ func nodeToCriteria(n nistnvd2Types.Node) (criteriaTypes.Criteria, error) {
 		return criteriaTypes.Criteria{}, errors.Errorf("unexpected node operator. expected: %q, actual: %q", []string{"AND", "OR", ""}, n.Operator)
 	}
 
-	ca.Criterias = make([]criteriaTypes.Criteria, 0, len(n.CPEMatch))
+	// Each cpeMatch is a criterion placed directly under the node (no
+	// single-criterion wrapper); the node's operator combines them.
+	ca.Criterions = make([]criterionTypes.Criterion, 0, len(n.CPEMatch))
 	for _, match := range n.CPEMatch {
 		if _, err := naming.UnbindFS(match.Criteria); err != nil {
 			return criteriaTypes.Criteria{}, errors.Wrapf(err, "invalid format. CPE: %s", match.Criteria)
@@ -586,33 +736,30 @@ func nodeToCriteria(n nistnvd2Types.Node) (criteriaTypes.Criteria, error) {
 		hasRange := match.VersionStartIncluding != "" || match.VersionStartExcluding != "" ||
 			match.VersionEndIncluding != "" || match.VersionEndExcluding != ""
 
-		ca.Criterias = append(ca.Criterias, criteriaTypes.Criteria{
-			Operator: criteriaTypes.CriteriaOperatorTypeOR,
-			Criterions: []criterionTypes.Criterion{{
-				Type: criterionTypes.CriterionTypeCPE,
-				CPE: &ccTypes.Criterion{
-					Vulnerable: match.Vulnerable,
-					FixStatus: func() *fixstatusTypes.FixStatus {
-						if match.Vulnerable {
-							return &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown}
-						}
+		ca.Criterions = append(ca.Criterions, criterionTypes.Criterion{
+			Type: criterionTypes.CriterionTypeCPE,
+			CPE: &ccTypes.Criterion{
+				Vulnerable: match.Vulnerable,
+				FixStatus: func() *fixstatusTypes.FixStatus {
+					if match.Vulnerable {
+						return &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown}
+					}
+					return nil
+				}(),
+				CPE: ccTypes.CPE(match.Criteria),
+				Range: func() *ccRangeTypes.Range {
+					if !hasRange {
 						return nil
-					}(),
-					CPE: ccTypes.CPE(match.Criteria),
-					Range: func() *ccRangeTypes.Range {
-						if !hasRange {
-							return nil
-						}
-						return &ccRangeTypes.Range{
-							Type:         decideRangeType(match),
-							GreaterEqual: match.VersionStartIncluding,
-							GreaterThan:  match.VersionStartExcluding,
-							LessEqual:    match.VersionEndIncluding,
-							LessThan:     match.VersionEndExcluding,
-						}
-					}(),
-				},
-			}},
+					}
+					return &ccRangeTypes.Range{
+						Type:         decideRangeType(match),
+						GreaterEqual: match.VersionStartIncluding,
+						GreaterThan:  match.VersionStartExcluding,
+						LessEqual:    match.VersionEndIncluding,
+						LessThan:     match.VersionEndExcluding,
+					}
+				}(),
+			},
 		})
 	}
 	return ca, nil

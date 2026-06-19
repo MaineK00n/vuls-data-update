@@ -16,11 +16,12 @@ func TestExtract(t *testing.T) {
 		hasError bool
 	}{
 		{
-			// vcConfigurations (two SEMVER ranges) and vcVulnerableCPEs are
-			// emitted as two separate conditions: condition 1 is the range
-			// tree from vcConfigurations (the plain NVD configurations field is
-			// ignored), condition 2 is the flat vcVulnerableCPEs grouped per
-			// product into cpe_matches.
+			// vcConfigurations (two SEMVER ranges) with vcVulnerableCPEs that
+			// all fall inside those ranges. Because the ranges already detect
+			// every concrete version, the supplement (condition 2) is empty and
+			// only the configuration condition is emitted — collapsed to a
+			// single flat OR of the two range criteria (the plain NVD
+			// configurations field is ignored).
 			name:   "happy",
 			args:   "./testdata/fixtures/happy/vuls-data-raw-vulncheck-nist-nvd2",
 			golden: "./testdata/golden/happy",
@@ -50,13 +51,12 @@ func TestExtract(t *testing.T) {
 			golden: "./testdata/golden/exact-match",
 		},
 		{
-			// The vcVulnerableCPEs condition, exercised end to end: its product
-			// (sun_zfs_storage_appliance_kit, an alternate spelling) is absent
-			// from vcConfigurations (zfs_storage_appliance_kit), so this also
-			// proves condition 2 is emitted independently of the configuration
-			// products (not dropped). The fixture adds ANY ("*") and NA ("-")
-			// versioned entries, which must be skipped — only the concrete
-			// versions land in cpe_matches.
+			// The vcVulnerableCPEs supplement condition, exercised end to end:
+			// its product (sun_zfs_storage_appliance_kit, an alternate spelling)
+			// is absent from vcConfigurations (zfs_storage_appliance_kit), so no
+			// configuration range covers it and it is kept in condition 2. The
+			// fixture adds ANY ("*") and NA ("-") versioned entries, which must
+			// be skipped — only the concrete versions land in cpe_matches.
 			name:   "vuln-cpes",
 			args:   "./testdata/fixtures/vuln-cpes/vuls-data-raw-vulncheck-nist-nvd2",
 			golden: "./testdata/golden/vuln-cpes",
