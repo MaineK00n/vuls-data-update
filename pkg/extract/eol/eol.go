@@ -90,7 +90,10 @@ func Extract(opts ...Option) error {
 				m[v] = eol
 			}
 
-			if err := util.Write(filepath.Join(options.dir, "eol", c, fmt.Sprintf("%s.json", e)), m, true); err != nil {
+			// m is a map[string]eolTypes.EOL: key order is already made deterministic by the
+			// json.Deterministic encoder, EOL.Sort is a no-op, and each EOL's date slices are
+			// sorted above, so there is nothing for doSort to do.
+			if err := util.Write(filepath.Join(options.dir, "eol", c, fmt.Sprintf("%s.json", e)), m, false); err != nil {
 				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "eol", c, fmt.Sprintf("%s.json", e)))
 			}
 		}

@@ -90,6 +90,7 @@ func Write(path string, content any, doSort bool) error {
 		case datasourceTypes.DataSource:
 			(&v).Sort()
 		default:
+			return errors.Errorf("doSort requested but content type %T has no sort handler; add a case to the util.Write type switch", content)
 		}
 	}
 

@@ -155,6 +155,7 @@ func TestWrite(t *testing.T) {
 		content any
 		doSort  bool
 		want    any
+		wantErr bool
 	}{
 		{
 			name: "microsoftkb.KB",
@@ -183,7 +184,7 @@ func TestWrite(t *testing.T) {
 			},
 		},
 		{
-			name: "pointer type is not sorted",
+			name: "pointer type with doSort errors",
 			content: &microsoftkbTypes.KB{
 				KBID: "5070881",
 				Updates: []microsoftkbUpdateTypes.Update{
@@ -195,25 +196,17 @@ func TestWrite(t *testing.T) {
 					Raws: []string{"c.json", "a.json", "b.json"},
 				},
 			},
-			doSort: true,
-			want: microsoftkbTypes.KB{
-				KBID: "5070881",
-				Updates: []microsoftkbUpdateTypes.Update{
-					{UpdateID: "bbb"},
-					{UpdateID: "aaa"},
-				},
-				DataSource: sourceTypes.Source{
-					ID:   "microsoft-wsusscn2",
-					Raws: []string{"c.json", "a.json", "b.json"},
-				},
-			},
+			doSort:  true,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			path := filepath.Join(t.TempDir(), "out.json")
-			if err := util.Write(path, tt.content, tt.doSort); err != nil {
-				t.Fatal("unexpected error:", err)
+			if err := util.Write(path, tt.content, tt.doSort); (err != nil) != tt.wantErr {
+				t.Fatalf("Write() error = %v, wantErr %v", err, tt.wantErr)
+			} else if tt.wantErr {
+				return
 			}
 
 			f, err := os.Open(path)
