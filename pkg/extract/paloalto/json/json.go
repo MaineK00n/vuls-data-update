@@ -411,7 +411,6 @@ func detections(fetched paloaltoJSON.CVE) ([]detectionTypes.Detection, error) {
 				// descriptions in the version field of "PAN-OS" affected entries.
 				// Pinned to the exact advisory + wording so a new anomaly (a
 				// different advisory or different text) still hard-errors.
-				// Tracked for upstream reporting (see design notes).
 				if fetched.CVEMetadata.CVEID == "PAN-SA-2023-0004" && strings.HasPrefix(v.Version, "with GlobalProtect") {
 					continue
 				}
