@@ -1,0 +1,164 @@
+package nistnvd2_test
+
+import (
+	"path/filepath"
+	"testing"
+
+	utiltest "github.com/MaineK00n/vuls-data-update/pkg/extract/util/test"
+	nistnvd2 "github.com/MaineK00n/vuls-data-update/pkg/extract/vulncheck/nist-nvd2"
+)
+
+func TestExtract(t *testing.T) {
+	tests := []struct {
+		name     string
+		args     string
+		golden   string
+		hasError bool
+	}{
+		{
+			// vcConfigurations (two SEMVER ranges) with vcVulnerableCPEs that
+			// all fall inside those ranges. Because the ranges already detect
+			// every concrete version, the vcVulnerableCPEs group is empty and
+			// the root OR carries only the vcConfigurations group — the shape is
+			// uniform regardless of how many groups are present (the root OR
+			// always wraps them, no single-group collapse). The plain NVD
+			// configurations field is ignored.
+			name:   "happy",
+			args:   "./testdata/fixtures/happy/vuls-data-raw-vulncheck-nist-nvd2",
+			golden: "./testdata/golden/happy",
+		},
+		{
+			// Entry that carries vcConfigurations but no plain configurations:
+			// the detection is still built from vcConfigurations. Also
+			// exercises the empty node operator (""), which is mapped to OR.
+			name:   "vc-only",
+			args:   "./testdata/fixtures/vc-only/vuls-data-raw-vulncheck-nist-nvd2",
+			golden: "./testdata/golden/vc-only",
+		},
+		{
+			// Range endpoint "8.0_patch_34" is not semver, so the
+			// vcConfigurations group's Range is typed unknown; the concrete
+			// versions a Range cannot express are carried by the sibling
+			// vcVulnerableCPEs group under the same root OR.
+			name:   "non-semver-range",
+			args:   "./testdata/fixtures/non-semver-range/vuls-data-raw-vulncheck-nist-nvd2",
+			golden: "./testdata/golden/non-semver-range",
+		},
+		{
+			// Criterion without any range endpoint (version "-"): the
+			// vcConfigurations group emits the CPE with no Range.
+			name:   "exact-match",
+			args:   "./testdata/fixtures/exact-match/vuls-data-raw-vulncheck-nist-nvd2",
+			golden: "./testdata/golden/exact-match",
+		},
+		{
+			// The vcVulnerableCPEs supplement group, exercised end to end: it
+			// becomes the second criteria under the root OR, alongside the
+			// vcConfigurations group. Two distinct products are absent from
+			// vcConfigurations (zfs_storage_appliance_kit) so no configuration
+			// range covers them and both are kept, becoming one criterion each
+			// (grouped by part:vendor:product): sun_zfs_storage_appliance_kit (an
+			// alternate spelling) and zfs_storage_appliance. This pins the
+			// multi-product grouping and the deterministic ordering of the
+			// resulting criterions. The fixture also adds ANY ("*") and NA ("-")
+			// versioned entries, which must be skipped — only the concrete
+			// versions land in cpe_matches.
+			name:   "vuln-cpes",
+			args:   "./testdata/fixtures/vuln-cpes/vuls-data-raw-vulncheck-nist-nvd2",
+			golden: "./testdata/golden/vuln-cpes",
+		},
+		{
+			// A vcConfigurations node mixes a vulnerable=true app with a
+			// vulnerable=false platform (example:os) — the NVD "running on"
+			// shape. Coverage is built only from vulnerable=true matches, so the
+			// platform does NOT suppress the colliding vcVulnerableCPEs entry
+			// (example:os:1.0): it stays in group 2 as a vulnerable criterion,
+			// while group 1 still carries the platform as a non-vulnerable
+			// clause. Guards against a false negative where a vulnerable CPE
+			// would otherwise land in neither group.
+			name:   "non-vulnerable-platform",
+			args:   "./testdata/fixtures/non-vulnerable-platform/vuls-data-raw-vulncheck-nist-nvd2",
+			golden: "./testdata/golden/non-vulnerable-platform",
+		},
+		{
+			// vulnStatus=Rejected entries: the vulnerability content (the
+			// rejection reason) is still emitted, but detections are
+			// suppressed — a rejected CVE is withdrawn, so flagging it would
+			// be a false positive. Covers a hollow reject (CVE-2024-2652, no
+			// vcConfigurations) and a reject that still carries
+			// vcConfigurations (CVE-2022-49267), proving the latter's
+			// detections are dropped.
+			name:   "rejected",
+			args:   "./testdata/fixtures/rejected/vuls-data-raw-vulncheck-nist-nvd2",
+			golden: "./testdata/golden/rejected",
+		},
+		{
+			// negate=true on a configuration cannot be expressed in the
+			// criteria tree and never appears in the real feed, so the
+			// extractor fails hard rather than silently emitting inverted
+			// detection semantics.
+			name:     "config-negate",
+			args:     "./testdata/fixtures/config-negate/vuls-data-raw-vulncheck-nist-nvd2",
+			hasError: true,
+		},
+		{
+			// Symmetric with config-negate: negate=true on a node is a hard
+			// error too.
+			name:     "node-negate",
+			args:     "./testdata/fixtures/node-negate/vuls-data-raw-vulncheck-nist-nvd2",
+			hasError: true,
+		},
+		{
+			// A node AND operator (a conjunction of CPEs, e.g. OS + application)
+			// is preserved as an AND criteria, mirroring the NVD v2 extractor —
+			// not flattened or rejected. Does not occur in the real feed, but the
+			// structure handles it faithfully if it ever appears.
+			name:   "and-operator",
+			args:   "./testdata/fixtures/and-operator/vuls-data-raw-vulncheck-nist-nvd2",
+			golden: "./testdata/golden/and-operator",
+		},
+		{
+			// A cpeMatch whose criteria is not a CPE 2.3 formatted string is
+			// a hard error rather than a skipped criterion — silently
+			// dropping it would weaken the enclosing configuration into an
+			// over-broad detection. Does not occur in the real feed.
+			name:     "invalid-cpe",
+			args:     "./testdata/fixtures/invalid-cpe/vuls-data-raw-vulncheck-nist-nvd2",
+			hasError: true,
+		},
+		{
+			// The first segment is not a valid year ("CVE-2024/../../x-0001"
+			// → year segment "2024/../../x"), so time.Parse rejects it and the
+			// extractor errors. (Validation matches the sibling extractors and
+			// does not specifically harden the serial segment.)
+			name:     "malformed-id",
+			args:     "./testdata/fixtures/malformed-id/vuls-data-raw-vulncheck-nist-nvd2",
+			hasError: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			dir := t.TempDir()
+			err := nistnvd2.Extract(tt.args, nistnvd2.WithDir(dir))
+			switch {
+			case err != nil && !tt.hasError:
+				t.Error("unexpected error:", err)
+			case err == nil && tt.hasError:
+				t.Error("expected error has not occurred")
+			case err != nil && tt.hasError:
+				// error was expected and occurred, test passed
+				return
+			default:
+				ep, err := filepath.Abs(tt.golden)
+				if err != nil {
+					t.Error("unexpected error:", err)
+				}
+				gp, err := filepath.Abs(dir)
+				if err != nil {
+					t.Error("unexpected error:", err)
+				}
+				utiltest.Diff(t, ep, gp)
+			}
+		})
+	}
+}
