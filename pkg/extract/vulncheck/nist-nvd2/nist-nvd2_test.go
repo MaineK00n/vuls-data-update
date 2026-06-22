@@ -68,6 +68,19 @@ func TestExtract(t *testing.T) {
 			golden: "./testdata/golden/vuln-cpes",
 		},
 		{
+			// A vcConfigurations node mixes a vulnerable=true app with a
+			// vulnerable=false platform (example:os) — the NVD "running on"
+			// shape. Coverage is built only from vulnerable=true matches, so the
+			// platform does NOT suppress the colliding vcVulnerableCPEs entry
+			// (example:os:1.0): it stays in group 2 as a vulnerable criterion,
+			// while group 1 still carries the platform as a non-vulnerable
+			// clause. Guards against a false negative where a vulnerable CPE
+			// would otherwise land in neither group.
+			name:   "non-vulnerable-platform",
+			args:   "./testdata/fixtures/non-vulnerable-platform/vuls-data-raw-vulncheck-nist-nvd2",
+			golden: "./testdata/golden/non-vulnerable-platform",
+		},
+		{
 			// vulnStatus=Rejected entries: the vulnerability content (the
 			// rejection reason) is still emitted, but detections are
 			// suppressed — a rejected CVE is withdrawn, so flagging it would

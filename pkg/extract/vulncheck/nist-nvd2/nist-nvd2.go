@@ -589,16 +589,25 @@ func (r semverRange) covers(v *version.Version) bool {
 	return true
 }
 
-// buildConfigCoverage indexes the vcConfigurations cpeMatch criteria by
-// part:vendor:product so vulnerableCPECriteria can drop the vcVulnerableCPEs the
-// configuration already detects. Only semver-evaluable ranges contribute (an
-// unknown range cannot decide membership, so its product's enumerations are
-// kept). The cpeMatch CPEs were already validated by configurationToCriteria.
+// buildConfigCoverage indexes the vulnerable=true vcConfigurations cpeMatch
+// criteria by part:vendor:product so vulnerableCPECriteria can drop the
+// vcVulnerableCPEs the configuration already detects as vulnerable. Only
+// semver-evaluable ranges contribute (an unknown range cannot decide membership,
+// so its product's enumerations are kept). The cpeMatch CPEs were already
+// validated by configurationToCriteria.
 func buildConfigCoverage(configs []nistnvd2Types.Config) (map[string]productCoverage, error) {
 	cov := make(map[string]productCoverage)
 	for _, conf := range configs {
 		for _, n := range conf.Nodes {
 			for _, m := range n.CPEMatch {
+				// Coverage means "already detected as vulnerable by group 1", so
+				// only vulnerable=true matches contribute. A vulnerable=false
+				// clause (e.g. an NVD running-on platform) detects nothing;
+				// counting it would let it suppress a colliding vcVulnerableCPEs
+				// entry, dropping a vulnerable CPE from both groups.
+				if !m.Vulnerable {
+					continue
+				}
 				wfn, err := naming.UnbindFS(m.Criteria)
 				if err != nil {
 					return nil, errors.Wrapf(err, "invalid format. CPE: %s", m.Criteria)
