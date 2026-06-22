@@ -491,10 +491,10 @@ func pvpKey(wfn common.WellFormedName) string {
 //   - the vcConfigurations condition already detects it (coverage.covers):
 //     a whole-product criterion, or a semver Range that includes the version.
 //     Following NVD, the concrete list only supplements what ranges cannot.
-func vulnerableCPECriteria(vulnCPEs []vulnCPE, coverage map[string]*productCoverage) (criteriaTypes.Criteria, error) {
+func vulnerableCPECriteria(vulnCPEs []vulnCPE, coverage map[string]productCoverage) (criteriaTypes.Criteria, error) {
 	root := criteriaTypes.Criteria{Operator: criteriaTypes.CriteriaOperatorTypeOR}
 	for key, group := range indexByProduct(vulnCPEs) {
-		cov := coverage[key]
+		cov := coverage[key] // zero value if absent → covers nothing
 		matches := make([]ccTypes.CPE, 0, len(group))
 		for _, c := range group {
 			verRaw := c.wfn.GetString(common.AttributeVersion)
@@ -540,22 +540,19 @@ func indexByProduct(vulnCPEs []vulnCPE) map[string][]vulnCPE {
 }
 
 // productCoverage summarizes, per part:vendor:product, what the
-// vcConfigurations condition already detects: whole is true when a
-// whole-product criterion (version NA, or ANY with no range) matches every
-// version; ranges are its semver version ranges (including a concrete exact
-// version as a point range).
+// vcConfigurations group already detects: whole is true when a whole-product
+// criterion (version NA, or ANY with no range) matches every version; ranges
+// are its semver version ranges (including a concrete exact version as a point
+// range).
 type productCoverage struct {
 	whole  bool
 	ranges []semverRange
 }
 
 // covers reports whether a vcVulnerableCPE version is already detected by the
-// vcConfigurations condition. A nil receiver (product absent from any
+// vcConfigurations group. The zero value (product absent from every
 // configuration) covers nothing.
-func (c *productCoverage) covers(verRaw string) bool {
-	if c == nil {
-		return false
-	}
+func (c productCoverage) covers(verRaw string) bool {
 	if c.whole {
 		return true
 	}
@@ -597,8 +594,8 @@ func (r semverRange) covers(v *version.Version) bool {
 // configuration already detects. Only semver-evaluable ranges contribute (an
 // unknown range cannot decide membership, so its product's enumerations are
 // kept). The cpeMatch CPEs were already validated by configurationToCriteria.
-func buildConfigCoverage(configs []nistnvd2Types.Config) (map[string]*productCoverage, error) {
-	cov := make(map[string]*productCoverage)
+func buildConfigCoverage(configs []nistnvd2Types.Config) (map[string]productCoverage, error) {
+	cov := make(map[string]productCoverage)
 	for _, conf := range configs {
 		for _, n := range conf.Nodes {
 			for _, m := range n.CPEMatch {
@@ -607,11 +604,7 @@ func buildConfigCoverage(configs []nistnvd2Types.Config) (map[string]*productCov
 					return nil, errors.Wrapf(err, "invalid format. CPE: %s", m.Criteria)
 				}
 				key := pvpKey(wfn)
-				c := cov[key]
-				if c == nil {
-					c = &productCoverage{}
-					cov[key] = c
-				}
+				c := cov[key] // zero value if absent
 				hasRange := m.VersionStartIncluding != "" || m.VersionStartExcluding != "" ||
 					m.VersionEndIncluding != "" || m.VersionEndExcluding != ""
 				switch ver := wfn.GetString(common.AttributeVersion); {
@@ -631,6 +624,7 @@ func buildConfigCoverage(configs []nistnvd2Types.Config) (map[string]*productCov
 						c.ranges = append(c.ranges, semverRange{ge: v, le: v})
 					}
 				}
+				cov[key] = c
 			}
 		}
 	}
