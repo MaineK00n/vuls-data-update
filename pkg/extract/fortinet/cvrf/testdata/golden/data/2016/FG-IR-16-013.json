@@ -13,11 +13,7 @@
 					}
 				],
 				"published": "2017-04-05T00:00:00Z",
-				"modified": "2017-04-05T00:00:00Z",
-				"optional": {
-					"affected_products": "FortiOS 5.4.0 to 5.4.3",
-					"solutions": "Upgrade to FortiOS version5.4.4 or 5.6.0"
-				}
+				"modified": "2017-04-05T00:00:00Z"
 			},
 			"segments": [
 				{

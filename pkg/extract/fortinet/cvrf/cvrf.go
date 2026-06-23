@@ -213,7 +213,6 @@ func extract(fetched cvrfTypes.CVRF, raws []string) (dataTypes.Data, error) {
 				}},
 				Published: utiltime.Parse([]string{"2006-01-02T15:04:05", time.RFC3339}, fetched.DocumentTracking.InitialReleaseDate),
 				Modified:  utiltime.Parse([]string{"2006-01-02T15:04:05", time.RFC3339}, fetched.DocumentTracking.CurrentReleaseDate),
-				Optional:  advisoryOptional(fetched),
 			},
 			Segments: advSegs,
 		}},
@@ -397,23 +396,6 @@ func vulnReferences(fetched cvrfTypes.CVRF) []referenceTypes.Reference {
 		}
 	}
 	return rs
-}
-
-// advisoryOptional collects the free-text notes (Description / Solutions /
-// Affected Products, when not the placeholder "None"). These have no
-// structured home but carry residual value, especially for the older
-// advisories that have no product statuses.
-func advisoryOptional(fetched cvrfTypes.CVRF) map[string]any {
-	m := make(map[string]any)
-	for _, title := range []string{"Description", "Solutions", "Affected Products"} {
-		if t := noteText(fetched, title); t != "" && !strings.EqualFold(t, "None") {
-			m[strings.ToLower(strings.ReplaceAll(title, " ", "_"))] = t
-		}
-	}
-	if len(m) == 0 {
-		return nil
-	}
-	return m
 }
 
 func noteText(fetched cvrfTypes.CVRF, title string) string {

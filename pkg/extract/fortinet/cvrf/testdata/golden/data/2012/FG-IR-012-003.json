@@ -12,12 +12,7 @@
 						"url": "https://fortiguard.fortinet.com/psirt/FG-IR-012-003"
 					}
 				],
-				"modified": "2013-01-29T00:00:00Z",
-				"optional": {
-					"affected_products": "Some FortiGate units are affected. The following lists affected FortiOS units and versions, along with release status:\n\n    v4.2 - FortiGate 60C Units Only\n        Release TBA\n    v4.3 - All FortiGate Units < v4.3.8\n        Fix in v4.3.9, Released 8/20/2012\n    v5.0 Beta - All FortiGate Units\n        Fix in Beta 6, Release Scheduled 8/23/2012",
-					"description": "Fortinet has verified a potential issue during HTTP session authentication that could lead to a buffer overflow condition on the FortiGate unit when properly exploited. An attacker may craft a malicious HTTP request which exploits a variable in the HTTP header causing the buffer overflow condition when parsed by the FortiGate unit. When properly crafted, it may result in control of code flow execution.",
-					"solutions": "Fortinet recommends the following solutions:\n\n                    If your product is affected as per 'Affected Product' section, apply the indicated upgrade when availablebranch under 'Affected Product'."
-				}
+				"modified": "2013-01-29T00:00:00Z"
 			}
 		}
 	],

@@ -13,10 +13,7 @@
 					}
 				],
 				"published": "2023-11-14T00:00:00Z",
-				"modified": "2023-11-14T00:00:00Z",
-				"optional": {
-					"affected_products": "FortiSIEM version 7.0.0 FortiSIEM version 6.7.0 through 6.7.6 FortiSIEM version 6.6.0 through 6.6.3 FortiSIEM version 6.5.0 through 6.5.1 FortiSIEM version 6.4.0 through 6.4.2 FortiSIEM 6.3 all versions FortiSIEM 6.2 all versions FortiSIEM 6.1 all versions FortiSIEM 5.4 all versions FortiSIEM 5.3 all versions"
-				}
+				"modified": "2023-11-14T00:00:00Z"
 			},
 			"segments": [
 				{

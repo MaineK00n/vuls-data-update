@@ -13,12 +13,7 @@
 					}
 				],
 				"published": "2013-05-13T00:00:00Z",
-				"modified": "2013-05-13T00:00:00Z",
-				"optional": {
-					"affected_products": "FortiClient Lite 4.3.3.445 for WindowsFortiClient 4.3.3.445 for WindowsFortiClient 4.0.2 for MacOSFortiClient SSL VPN 4.0.2012 for LinuxFortiClient Lite 2.0 for Android",
-					"description": "Under certain conditions, FortiClient VPN may be susceptible to a certificate validation vulnerability which would allow an attacker to intercept user credentials in a man-in-the-middle attack.",
-					"solutions": "Solutions have been available since April 2012. It is recommended to update to a version greater or equal to the following affected product list:FortiClient Lite 4.3.4.461 for WindowsFortiClient 4.3.5.472 for WindowsFortiClient 4.0.3.134 for MacOSFortiClient SSL VPN 4.0.2258 for LinuxFortiClient 4.0 for Android (Replaces FortiClient Lite 2.0)"
-				}
+				"modified": "2013-05-13T00:00:00Z"
 			}
 		}
 	],
