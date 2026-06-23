@@ -43,17 +43,23 @@ func IsConcrete(v string) bool {
 
 // TrainRange builds a "fortinet"-typed range spanning an entire release train:
 // ge train, lt <next train>, where <next> increments the train's last numeric
-// component (7.0 -> 7.1, 7 -> 8). It errors when that component is not numeric.
+// component (7.0 -> 7.1, 7 -> 8, 24 -> 25). The train may be single-segment
+// ("24", as FortiSandbox Cloud uses) or dotted ("7.2"); it errors when the last
+// component is not numeric. (util.Split is deliberately not used here: it
+// requires the "." delimiter to be present and would reject single-segment
+// trains.)
 func TrainRange(train string) (ccRangeTypes.Range, error) {
-	ss := strings.Split(train, ".")
-	last, err := strconv.Atoi(ss[len(ss)-1])
+	// LastIndex returns -1 when there is no ".", so prefix is "" and last is
+	// the whole token — exactly the single-segment behaviour we want.
+	i := strings.LastIndex(train, ".")
+	prefix, lastComponent := train[:i+1], train[i+1:]
+	last, err := strconv.Atoi(lastComponent)
 	if err != nil {
 		return ccRangeTypes.Range{}, errors.Wrapf(err, "non-numeric train %q", train)
 	}
-	ss[len(ss)-1] = strconv.Itoa(last + 1)
 	return ccRangeTypes.Range{
 		Type:         ccRangeTypes.RangeTypeFortinet,
 		GreaterEqual: train,
-		LessThan:     strings.Join(ss, "."),
+		LessThan:     prefix + strconv.Itoa(last+1),
 	}, nil
 }
