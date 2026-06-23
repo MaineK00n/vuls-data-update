@@ -288,8 +288,8 @@ func knownAffectedCriterions(advID string, productIDs []string, prodMap map[stri
 		// version token.
 		ver := strings.TrimSpace(strings.TrimPrefix(pv.version, pv.productName))
 		if !isExactVersion(ver) {
-			// Coarse "X.Y" / "X" trains are dropped by design (see the doc
-			// comment); only exact versions are enumerated.
+			// Coarse "X.Y" / "X" trains are dropped by design (rationale in the
+			// function comment above); only exact versions are enumerated.
 			continue
 		}
 
