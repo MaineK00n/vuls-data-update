@@ -3,8 +3,9 @@
 package fortinet
 
 import (
-	"fmt"
+	"strconv"
 	"strings"
+	"time"
 
 	"github.com/pkg/errors"
 
@@ -25,28 +26,26 @@ func YearDir(id string) (string, error) {
 		return "", errors.Errorf("unexpected ID format. expected: %q, actual: %q", format, id)
 	}
 
-	isDigits := func(s string) bool {
-		for _, r := range s {
-			if r < '0' || r > '9' {
-				return false
-			}
-		}
-		return s != ""
-	}
-
-	// The ID is used verbatim as the output filename, so reject a non-numeric
-	// <number> segment — it could otherwise carry path separators (e.g.
+	// The <number> segment is used verbatim in the output filename, so require
+	// it to be numeric — otherwise it could carry path separators (e.g.
 	// "FG-IR-24-0/../x") and escape the output directory.
-	if !isDigits(ss[3]) {
+	if _, err := strconv.Atoi(ss[3]); err != nil {
 		return "", errors.Errorf("unexpected ID format. expected: %q, actual: %q", format, id)
 	}
 
+	// Build the 4-digit year explicitly (no 2-digit-year pivot), then validate
+	// it through time.Parse rather than hand-rolling a digit check.
+	var year string
 	switch yy := ss[2]; {
-	case len(yy) == 2 && isDigits(yy):
-		return fmt.Sprintf("20%s", yy), nil
-	case len(yy) == 3 && strings.HasPrefix(yy, "0") && isDigits(yy):
-		return fmt.Sprintf("2%s", yy), nil
+	case len(yy) == 2:
+		year = "20" + yy
+	case len(yy) == 3 && strings.HasPrefix(yy, "0"):
+		year = "2" + yy
 	default:
 		return "", errors.Errorf("unexpected ID format. expected: %q, actual: %q", format, id)
 	}
+	if _, err := time.Parse("2006", year); err != nil {
+		return "", errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", format, id)
+	}
+	return year, nil
 }

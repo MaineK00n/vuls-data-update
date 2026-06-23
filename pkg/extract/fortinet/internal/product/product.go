@@ -3,6 +3,7 @@
 package product
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
 
@@ -60,6 +61,6 @@ func TrainRange(train string) (ccRangeTypes.Range, error) {
 	return ccRangeTypes.Range{
 		Type:         ccRangeTypes.RangeTypeFortinet,
 		GreaterEqual: train,
-		LessThan:     prefix + strconv.Itoa(last+1),
+		LessThan:     fmt.Sprintf("%s%d", prefix, last+1),
 	}, nil
 }
