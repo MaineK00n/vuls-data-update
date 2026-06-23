@@ -48,7 +48,7 @@ func TestExtract(t *testing.T) {
 
 // Whitelist enforcement: a Known Affected product that is absent from the tree
 // or not in the product table must hard-error rather than be silently dropped.
-func TestToCriterionWhitelist(t *testing.T) {
+func TestKnownAffectedCriterionsWhitelist(t *testing.T) {
 	tests := []struct {
 		name      string
 		productID string
@@ -75,9 +75,33 @@ func TestToCriterionWhitelist(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			_, err := cvrf.ToCriterion(tt.productID, tt.prodMap)
+			_, err := cvrf.KnownAffectedCriterions("FG-IR-TEST", []string{tt.productID}, tt.prodMap)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("ToCriterion(%q) error = %v, wantErr %v", tt.productID, err, tt.wantErr)
+				t.Errorf("KnownAffectedCriterions(%q) error = %v, wantErr %v", tt.productID, err, tt.wantErr)
+			}
+		})
+	}
+}
+
+// isExactVersion keeps only concrete x.y.z[...] releases; coarse trains are
+// dropped from the enumeration.
+func TestIsExactVersion(t *testing.T) {
+	tests := []struct {
+		ver  string
+		want bool
+	}{
+		{ver: "7.4.3", want: true},
+		{ver: "7.4.3.1", want: true},
+		{ver: "25.2.a", want: true},
+		{ver: "25.1.a.2", want: true},
+		{ver: "7.4", want: false},
+		{ver: "24", want: false},
+		{ver: "", want: false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.ver, func(t *testing.T) {
+			if got := cvrf.IsExactVersion(tt.ver); got != tt.want {
+				t.Errorf("IsExactVersion(%q) = %v, want %v", tt.ver, got, tt.want)
 			}
 		})
 	}

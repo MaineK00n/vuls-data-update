@@ -12,5 +12,9 @@ func NewProductVersion(productName, version string) ProductVersion {
 	return productVersion{productName: productName, version: version}
 }
 
-// ToCriterion exposes toCriterion for whitelist-enforcement tests.
-var ToCriterion = toCriterion
+// KnownAffectedCriterions exposes knownAffectedCriterions for
+// whitelist-enforcement tests.
+var KnownAffectedCriterions = knownAffectedCriterions
+
+// IsExactVersion exposes isExactVersion for version-classification tests.
+var IsExactVersion = isExactVersion

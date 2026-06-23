@@ -13,7 +13,7 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/fortinet/internal/fortinet"
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/fortinet/internal/product"
+	productpkg "github.com/MaineK00n/vuls-data-update/pkg/extract/fortinet/internal/product"
 	dataTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data"
 	advisoryTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/advisory"
 	advisoryContentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/advisory/content"
@@ -143,26 +143,18 @@ func extract(fetched cvrfTypes.CVRF, raws []string) (dataTypes.Data, error) {
 		return dataTypes.Data{}, errors.New("documenttracking.identification.id is empty")
 	}
 
-	// Detection: a single untagged OR over the Known Affected product versions.
-	// The status is shared across the advisory's CVEs, so it is not partitioned
-	// per CVE.
+	// Detection: a single untagged OR over the Known Affected products. The
+	// status is shared across the advisory's CVEs, so it is not partitioned per
+	// CVE. Versions are grouped per product — one criterion whose main CPE pins
+	// part/vendor/product (version wildcard) and whose CPEMatches enumerate the
+	// exact affected versions.
 	var criterions []criterionTypes.Criterion
 	if status := fetched.Vulnerability.ProductStatuses.Status; status.Type == "Known Affected" {
-		prodMap := buildProductMap(fetched)
-		criterions = make([]criterionTypes.Criterion, 0, len(status.ProductID))
-		seen := make(map[string]struct{}, len(status.ProductID))
-		for _, pid := range status.ProductID {
-			cn, err := toCriterion(pid, prodMap)
-			if err != nil {
-				return dataTypes.Data{}, errors.Wrapf(err, "resolve known affected %q (advisory %s)", pid, id)
-			}
-			key := string(cn.CPE.CPE)
-			if _, ok := seen[key]; ok {
-				continue
-			}
-			seen[key] = struct{}{}
-			criterions = append(criterions, cn)
+		cs, err := knownAffectedCriterions(id, status.ProductID, buildProductMap(fetched))
+		if err != nil {
+			return dataTypes.Data{}, err
 		}
+		criterions = cs
 	}
 
 	seg := segmentTypes.Segment{Ecosystem: ecosystemTypes.EcosystemTypeCPE}
@@ -256,46 +248,92 @@ func buildProductMap(fetched cvrfTypes.CVRF) map[string]productVersion {
 	return m
 }
 
-// toCriterion resolves a Known Affected product_id to a CPE criterion. It
-// hard-errors when the product_id is absent from the tree, the product is not
-// in the whitelist, or its version cannot be parsed — a new Fortinet product,
-// a new version grammar, or a resolver bug must fail the extract, not silently
-// drop an affected product (which would be a detection false negative).
-func toCriterion(productID string, prodMap map[string]productVersion) (criterionTypes.Criterion, error) {
-	pv, ok := prodMap[productID]
-	if !ok {
-		return criterionTypes.Criterion{}, errors.Errorf("known affected %q not found in product tree", productID)
+// knownAffectedCriterions resolves the Known Affected product_ids into one CPE
+// criterion per product: the product CPE (version wildcard) as the main CPE,
+// with the exact affected versions enumerated in CPEMatches. A wildcard main
+// CPE plus a non-empty CPEMatches matches only the enumerated versions (the
+// "no narrowing" path is closed once CPEMatches is populated), so this does not
+// over-detect the whole product.
+//
+// Only concrete versions are kept. CVRF enumerates affected versions
+// explicitly, so a coarse "X.Y" / "X" train (e.g. "5.0") is dropped rather than
+// ranged-over: ranging "5.0" would cover all 5.0.x and over-detect. Because
+// detection ORs the CVRF and CSAF datasets, the companion CSAF source supplies
+// the precise ranges for the advisories present there, and the exact CVRF
+// enumeration covers the rest.
+//
+// It hard-errors when a product_id is absent from the tree or the product is
+// not whitelisted — a new Fortinet product or a resolver bug must fail the
+// extract, not silently drop coverage.
+func knownAffectedCriterions(advID string, productIDs []string, prodMap map[string]productVersion) ([]criterionTypes.Criterion, error) {
+	type product struct {
+		cpe      string
+		versions map[string]struct{} // baked exact-version CPE strings
 	}
-
-	cpe, ok := product.ToCPE(pv.productName)
-	if !ok {
-		return criterionTypes.Criterion{}, errors.Errorf("unknown fortinet product %q (whitelist miss; add it to internal/product)", pv.productName)
-	}
-
-	// The version branch name occasionally carries the product name as a prefix
-	// (e.g. "FortiSandbox Cloud 24"); strip it to leave the bare version token.
-	ver := strings.TrimSpace(strings.TrimPrefix(pv.version, pv.productName))
-
-	c := ccTypes.Criterion{
-		Vulnerable: true,
-		FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
-		CPE:        ccTypes.CPE(cpe),
-	}
-	if ver != "" {
-		// CVRF enumerates affected versions, so each is baked into the CPE
-		// exactly — no version range. A CVRF "X.Y" train (e.g. "5.0") is too
-		// coarse to range over ("5.0" would cover all 5.0.x and over-detect);
-		// since detection ORs the CVRF and CSAF datasets, the precise CSAF
-		// range covers the advisories present there, and the exact CVRF
-		// enumeration covers the rest.
-		baked, err := product.BakeVersion(cpe, ver)
-		if err != nil {
-			return criterionTypes.Criterion{}, errors.Wrapf(err, "bake version for %q", productID)
+	products := make(map[string]*product)
+	var order []string // product CPEs in first-seen order
+	for _, pid := range productIDs {
+		pv, ok := prodMap[pid]
+		if !ok {
+			return nil, errors.Errorf("known affected %q not found in product tree (advisory %s)", pid, advID)
 		}
-		c.CPE = ccTypes.CPE(baked)
+
+		cpe, ok := productpkg.ToCPE(pv.productName)
+		if !ok {
+			return nil, errors.Errorf("unknown fortinet product %q (whitelist miss; add it to internal/product) (advisory %s)", pv.productName, advID)
+		}
+
+		// The version branch name occasionally carries the product name as a
+		// prefix (e.g. "FortiSandbox Cloud 24"); strip it to leave the bare
+		// version token.
+		ver := strings.TrimSpace(strings.TrimPrefix(pv.version, pv.productName))
+		if !isExactVersion(ver) {
+			// Coarse "X.Y" / "X" trains are dropped by design (see the doc
+			// comment); only exact versions are enumerated.
+			continue
+		}
+
+		baked, err := productpkg.BakeVersion(cpe, ver)
+		if err != nil {
+			return nil, errors.Wrapf(err, "bake version for %q (advisory %s)", pid, advID)
+		}
+
+		p, ok := products[cpe]
+		if !ok {
+			p = &product{cpe: cpe, versions: make(map[string]struct{})}
+			products[cpe] = p
+			order = append(order, cpe)
+		}
+		p.versions[baked] = struct{}{}
 	}
 
-	return criterionTypes.Criterion{Type: criterionTypes.CriterionTypeCPE, CPE: &c}, nil
+	criterions := make([]criterionTypes.Criterion, 0, len(order))
+	for _, cpe := range order {
+		p := products[cpe]
+		matches := make([]ccTypes.CPE, 0, len(p.versions))
+		for m := range p.versions {
+			matches = append(matches, ccTypes.CPE(m))
+		}
+		criterions = append(criterions, criterionTypes.Criterion{
+			Type: criterionTypes.CriterionTypeCPE,
+			CPE: &ccTypes.Criterion{
+				Vulnerable: true,
+				FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
+				CPE:        ccTypes.CPE(cpe),
+				CPEMatches: matches,
+			},
+		})
+	}
+	return criterions, nil
+}
+
+// isExactVersion reports whether a CVRF version token is a concrete release —
+// three or more dot-separated components (e.g. "7.4.3", or the FortiSASE forms
+// "25.2.a" / "25.1.a.2") — rather than a coarse "X.Y" / "X" train. Only exact
+// versions are enumerated into a criterion's CPEMatches; trains are dropped
+// (see knownAffectedCriterions).
+func isExactVersion(ver string) bool {
+	return strings.Count(ver, ".") >= 2
 }
 
 func vulnSeverity(fetched cvrfTypes.CVRF) []severityTypes.Severity {
