@@ -151,10 +151,11 @@ func TestSplit(t *testing.T) {
 
 func TestWrite(t *testing.T) {
 	tests := []struct {
-		name    string
-		content any
-		doSort  bool
-		want    any
+		name     string
+		content  any
+		doSort   bool
+		want     any
+		hasError bool
 	}{
 		{
 			name: "microsoftkb.KB",
@@ -183,7 +184,7 @@ func TestWrite(t *testing.T) {
 			},
 		},
 		{
-			name: "pointer type is not sorted",
+			name: "pointer type with doSort errors",
 			content: &microsoftkbTypes.KB{
 				KBID: "5070881",
 				Updates: []microsoftkbUpdateTypes.Update{
@@ -195,40 +196,40 @@ func TestWrite(t *testing.T) {
 					Raws: []string{"c.json", "a.json", "b.json"},
 				},
 			},
-			doSort: true,
-			want: microsoftkbTypes.KB{
-				KBID: "5070881",
-				Updates: []microsoftkbUpdateTypes.Update{
-					{UpdateID: "bbb"},
-					{UpdateID: "aaa"},
-				},
-				DataSource: sourceTypes.Source{
-					ID:   "microsoft-wsusscn2",
-					Raws: []string{"c.json", "a.json", "b.json"},
-				},
-			},
+			doSort:   true,
+			hasError: true,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			path := filepath.Join(t.TempDir(), "out.json")
-			if err := util.Write(path, tt.content, tt.doSort); err != nil {
-				t.Fatal("unexpected error:", err)
-			}
+			err := util.Write(path, tt.content, tt.doSort)
+			switch {
+			case err != nil && !tt.hasError:
+				t.Error("unexpected error:", err)
+			case err == nil && tt.hasError:
+				t.Error("expected error has not occurred")
+			case err != nil && tt.hasError:
+				// error was expected and occurred; it must not have left an artifact behind
+				if _, statErr := os.Stat(path); statErr == nil {
+					t.Errorf("Write() returned an error but left a file at %s", path)
+				}
+				return
+			default:
+				f, err := os.Open(path)
+				if err != nil {
+					t.Fatal("unexpected error:", err)
+				}
+				defer f.Close()
 
-			f, err := os.Open(path)
-			if err != nil {
-				t.Fatal("unexpected error:", err)
-			}
-			defer f.Close()
+				got := reflect.New(reflect.TypeOf(tt.want)).Interface()
+				if err := json.UnmarshalRead(f, got); err != nil {
+					t.Fatal("unexpected error:", err)
+				}
 
-			got := reflect.New(reflect.TypeOf(tt.want)).Interface()
-			if err := json.UnmarshalRead(f, got); err != nil {
-				t.Fatal("unexpected error:", err)
-			}
-
-			if diff := cmp.Diff(tt.want, reflect.ValueOf(got).Elem().Interface()); diff != "" {
-				t.Errorf("Write(). (-expected +got):\n%s", diff)
+				if diff := cmp.Diff(tt.want, reflect.ValueOf(got).Elem().Interface()); diff != "" {
+					t.Errorf("Write(). (-expected +got):\n%s", diff)
+				}
 			}
 		})
 	}
