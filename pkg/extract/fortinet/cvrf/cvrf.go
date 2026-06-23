@@ -157,9 +157,6 @@ func extract(fetched cvrfTypes.CVRF, raws []string) (dataTypes.Data, error) {
 				return dataTypes.Data{}, errors.Wrapf(err, "resolve known affected %q (advisory %s)", pid, id)
 			}
 			key := string(cn.CPE.CPE)
-			if cn.CPE.Range != nil {
-				key = fmt.Sprintf("%s|%s|%s|%s|%s|%s", cn.CPE.CPE, cn.CPE.Range.Type, cn.CPE.Range.GreaterEqual, cn.CPE.Range.GreaterThan, cn.CPE.Range.LessEqual, cn.CPE.Range.LessThan)
-			}
 			if _, ok := seen[key]; ok {
 				continue
 			}

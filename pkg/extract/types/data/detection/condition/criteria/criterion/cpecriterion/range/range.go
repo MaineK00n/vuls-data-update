@@ -27,7 +27,6 @@ const (
 	_ RangeType = iota
 	RangeTypeVersion
 	RangeTypeSEMVER
-	RangeTypeFortinet
 
 	RangeTypeUnknown
 )
@@ -38,8 +37,6 @@ func (t RangeType) String() string {
 		return "version"
 	case RangeTypeSEMVER:
 		return "semver"
-	case RangeTypeFortinet:
-		return "fortinet"
 	default:
 		return "unknown"
 	}
@@ -63,8 +60,6 @@ func (t *RangeType) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		*t = RangeTypeVersion
 	case "semver":
 		*t = RangeTypeSEMVER
-	case "fortinet":
-		*t = RangeTypeFortinet
 	case "unknown":
 		*t = RangeTypeUnknown
 	default:
@@ -89,8 +84,6 @@ func (t *RangeType) UnmarshalJSON(data []byte) error {
 		rt = RangeTypeVersion
 	case "semver":
 		rt = RangeTypeSEMVER
-	case "fortinet":
-		rt = RangeTypeFortinet
 	case "unknown":
 		rt = RangeTypeUnknown
 	default:
@@ -167,11 +160,7 @@ var ErrRangeTypeUnknown = errors.New("unknown range type")
 // surfaces unwrapped and propagates loudly.
 func (t RangeType) Compare(v1, v2 string) (int, error) {
 	switch t {
-	case RangeTypeSEMVER, RangeTypeFortinet:
-		// RangeTypeFortinet shares the semver comparator today; it exists as a
-		// distinct type so a Fortinet-specific comparator can be slotted in
-		// later (e.g. if the firmware versioning diverges from semver) without
-		// rewriting already-extracted data.
+	case RangeTypeSEMVER:
 		va, err := version.NewSemver(v1)
 		if err != nil {
 			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
@@ -232,10 +221,10 @@ func (r Range) Accept(v string) (bool, error) {
 		reject func(int) bool
 	}
 	bounds := []bound{
-		{"ge", r.GreaterEqual, func(n int) bool { return n > 0 }}, // need bound <= v
-		{"gt", r.GreaterThan, func(n int) bool { return n >= 0 }}, // need bound <  v
-		{"le", r.LessEqual, func(n int) bool { return n < 0 }},    // need bound >= v
-		{"lt", r.LessThan, func(n int) bool { return n <= 0 }},    // need bound >  v
+		{"ge", r.GreaterEqual, func(n int) bool { return n > 0 }},  // need bound <= v
+		{"gt", r.GreaterThan, func(n int) bool { return n >= 0 }},  // need bound <  v
+		{"le", r.LessEqual, func(n int) bool { return n < 0 }},     // need bound >= v
+		{"lt", r.LessThan, func(n int) bool { return n <= 0 }},     // need bound >  v
 	}
 	for _, b := range bounds {
 		if b.s == "" {
