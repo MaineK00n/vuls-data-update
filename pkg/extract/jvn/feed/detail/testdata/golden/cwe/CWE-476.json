@@ -1,0 +1,13 @@
+{
+	"id": "CWE-476",
+	"name": "NULL ポインタデリファレンス",
+	"references": [
+		{
+			"source": "jvndb.jvn.jp",
+			"url": "http://cwe.mitre.org/data/definitions/476.html"
+		}
+	],
+	"data_source": {
+		"id": "jvn-feed-detail"
+	}
+}

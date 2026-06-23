@@ -13,6 +13,7 @@ import (
 	"github.com/knqyf263/go-cpe/naming"
 	"github.com/pkg/errors"
 
+	cwecatalogTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/cwe"
 	dataTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data"
 	advisoryTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/advisory"
 	advisoryContentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/advisory/content"
@@ -73,6 +74,7 @@ func Extract(args string, opts ...Option) error {
 	}
 
 	slog.Info("Extract JVN Feed Detail")
+	cwes := make(map[string]cwecatalogTypes.CWE)
 	if err := filepath.WalkDir(args, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
@@ -109,9 +111,40 @@ func Extract(args string, opts ...Option) error {
 			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "data", splitted[1], fmt.Sprintf("%s.json", data.ID)))
 		}
 
+		for _, item := range fetched.VulinfoData.Related.RelatedItem {
+			if item.Type != "cwe" || !strings.HasPrefix(item.VulinfoID, "CWE-") {
+				continue
+			}
+			if _, ok := cwes[item.VulinfoID]; ok {
+				continue
+			}
+			cwes[item.VulinfoID] = cwecatalogTypes.CWE{
+				ID:   item.VulinfoID,
+				Name: strings.TrimSuffix(item.Title, fmt.Sprintf("(%s)", item.VulinfoID)),
+				References: func() []referenceTypes.Reference {
+					if item.URL == "" {
+						return nil
+					}
+					return []referenceTypes.Reference{{
+						Source: "jvndb.jvn.jp",
+						URL:    item.URL,
+					}}
+				}(),
+				DataSource: sourceTypes.Source{
+					ID: sourceTypes.JVNFeedDetail,
+				},
+			}
+		}
+
 		return nil
 	}); err != nil {
 		return errors.Wrapf(err, "walk %s", args)
+	}
+
+	for id, c := range cwes {
+		if err := util.Write(filepath.Join(options.dir, "cwe", fmt.Sprintf("%s.json", id)), c, true); err != nil {
+			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "cwe", fmt.Sprintf("%s.json", id)))
+		}
 	}
 
 	if err := util.Write(filepath.Join(options.dir, "datasource.json"), datasourceTypes.DataSource{

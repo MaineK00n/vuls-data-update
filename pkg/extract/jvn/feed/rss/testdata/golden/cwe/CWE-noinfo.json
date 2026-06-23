@@ -1,0 +1,13 @@
+{
+	"id": "CWE-noinfo",
+	"name": "情報不足",
+	"references": [
+		{
+			"source": "jvndb.jvn.jp",
+			"url": "https://www.ipa.go.jp/security/vuln/scap/cwe.html"
+		}
+	],
+	"data_source": {
+		"id": "jvn-feed-rss"
+	}
+}

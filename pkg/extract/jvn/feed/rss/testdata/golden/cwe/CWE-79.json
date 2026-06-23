@@ -1,0 +1,13 @@
+{
+	"id": "CWE-79",
+	"name": "クロスサイトスクリプティング",
+	"references": [
+		{
+			"source": "jvndb.jvn.jp",
+			"url": "https://jvndb.jvn.jp/ja/cwe/CWE-79.html"
+		}
+	],
+	"data_source": {
+		"id": "jvn-feed-rss"
+	}
+}
