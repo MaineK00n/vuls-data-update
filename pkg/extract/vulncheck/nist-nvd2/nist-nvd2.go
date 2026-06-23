@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/fs"
 	"log/slog"
+	"os"
 	"path/filepath"
 	"runtime"
 	"slices"
@@ -114,6 +115,25 @@ func Extract(args string, opts ...Option) error {
 	}
 
 	slog.Info("Extract VulnCheck NIST NVD2")
+
+	if err := os.MkdirAll(options.dir, 0755); err != nil {
+		return errors.Wrapf(err, "mkdir %s", options.dir)
+	}
+	if err := os.WriteFile(filepath.Join(options.dir, "README.md"), []byte(`## Repository of VulnCheck NVD++ (nist-nvd2) data accumulation
+
+All the data in this repository are fetched from VulnCheck by its API.
+
+- https://docs.vulncheck.com/
+- https://docs.vulncheck.com/api
+- https://docs.vulncheck.com/community/nist-nvd/attribution
+
+**CAUTION**
+
+When you use the data in this repository, you *MUST* comply with the terms and conditions of VulnCheck NVD++: https://docs.vulncheck.com/community/nist-nvd/attribution
+Notably, you must show "prominent attribution" to show the data is from VulnCheck NVD++ to users.
+`), 0666); err != nil {
+		return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "README.md"))
+	}
 
 	g, ctx := errgroup.WithContext(context.Background())
 	// +1 for the producer goroutine below: counting it inside the
