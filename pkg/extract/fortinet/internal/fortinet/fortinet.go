@@ -36,6 +36,13 @@ func YearDir(id string) (string, error) {
 	// yy is a 2-digit year (24 -> 2024); the legacy zero-padded 3-digit form
 	// (012 -> 2012) is normalised to its 2-digit year first. Let time.Parse do
 	// the digit validation and year resolution.
+	//
+	// time.Parse's "06" reference uses Go's 2-digit-year pivot, so 69-99 map to
+	// 1969-1999 rather than 20xx. This is intentionally accepted, not worked
+	// around: Fortinet PSIRT advisories start in 2012, and the two-digit year
+	// won't reach 69 for decades, so the pivot is unreachable in practice. The
+	// "yy maps to 20yy" summary above is therefore accurate for every ID this
+	// sees.
 	yy := ss[2]
 	if len(yy) == 3 && strings.HasPrefix(yy, "0") {
 		yy = yy[1:]
