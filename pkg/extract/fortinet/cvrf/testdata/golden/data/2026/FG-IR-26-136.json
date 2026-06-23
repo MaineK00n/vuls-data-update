@@ -8,7 +8,7 @@
 				"description": "A missing authorization vulnerability [CWE-862] in FortiSandbox, FortiSandbox Cloud and FortiSandbox PaaS WEB UI may allow an unauthenticated attacker to execute unauthorized code or commands via HTTP requests.",
 				"references": [
 					{
-						"source": "fortiguard.com",
+						"source": "fortiguard.fortinet.com",
 						"url": "https://fortiguard.fortinet.com/psirt/FG-IR-26-136"
 					}
 				],
@@ -30,7 +30,7 @@
 				"severity": [
 					{
 						"type": "cvss_v31",
-						"source": "fortiguard.com",
+						"source": "fortiguard.fortinet.com",
 						"cvss_v31": {
 							"vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H/E:F/RL:O/RC:C",
 							"base_score": 9.8,
@@ -44,7 +44,7 @@
 				],
 				"cwe": [
 					{
-						"source": "fortiguard.com",
+						"source": "fortiguard.fortinet.com",
 						"cwe": [
 							"CWE-862"
 						]
@@ -52,7 +52,7 @@
 				],
 				"references": [
 					{
-						"source": "fortiguard.com",
+						"source": "fortiguard.fortinet.com",
 						"url": "https://fortiguard.fortinet.com/psirt/FG-IR-26-136"
 					}
 				]

@@ -8,7 +8,7 @@
 				"description": "Under certain conditions, FortiClient VPN may be susceptible to a certificate validation vulnerability which would allow an attacker to intercept user credentials in a man-in-the-middle attack.",
 				"references": [
 					{
-						"source": "fortiguard.com",
+						"source": "fortiguard.fortinet.com",
 						"url": "https://fortiguard.fortinet.com/psirt/FG-IR-13-008"
 					}
 				],

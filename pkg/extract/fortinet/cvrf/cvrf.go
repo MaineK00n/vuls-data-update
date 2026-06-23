@@ -219,7 +219,7 @@ func extract(fetched cvrfTypes.CVRF, raws []string) (dataTypes.Data, error) {
 				Title:       fetched.DocumentTitle,
 				Description: noteText(fetched, "Summary"),
 				References: []referenceTypes.Reference{{
-					Source: "fortiguard.com",
+					Source: "fortiguard.fortinet.com",
 					URL:    fmt.Sprintf("https://fortiguard.fortinet.com/psirt/%s", id),
 				}},
 				Published: utiltime.Parse([]string{"2006-01-02T15:04:05", time.RFC3339}, fetched.DocumentTracking.InitialReleaseDate),
@@ -310,7 +310,7 @@ func vulnSeverity(fetched cvrfTypes.CVRF) []severityTypes.Severity {
 		if c, err := v31Types.Parse(vec); err != nil {
 			slog.Warn("skip unparseable cvss vector", slog.String("vector", vec), slog.Any("err", err))
 		} else {
-			ss = append(ss, severityTypes.Severity{Type: severityTypes.SeverityTypeCVSSv31, Source: "fortiguard.com", CVSSv31: c})
+			ss = append(ss, severityTypes.Severity{Type: severityTypes.SeverityTypeCVSSv31, Source: "fortiguard.fortinet.com", CVSSv31: c})
 		}
 	}
 	return ss
@@ -338,7 +338,7 @@ func vulnCWE(fetched cvrfTypes.CVRF) []cweTypes.CWE {
 		seen[m] = struct{}{}
 		ids = append(ids, m)
 	}
-	return []cweTypes.CWE{{Source: "fortiguard.com", CWE: ids}}
+	return []cweTypes.CWE{{Source: "fortiguard.fortinet.com", CWE: ids}}
 }
 
 func vulnReferences(fetched cvrfTypes.CVRF) []referenceTypes.Reference {
@@ -347,7 +347,7 @@ func vulnReferences(fetched cvrfTypes.CVRF) []referenceTypes.Reference {
 		// A single reference url sometimes packs several URLs separated by
 		// CRLF/whitespace; emit one Reference per URL.
 		for u := range strings.FieldsSeq(r.URL) {
-			rs = append(rs, referenceTypes.Reference{Source: "fortiguard.com", URL: u})
+			rs = append(rs, referenceTypes.Reference{Source: "fortiguard.fortinet.com", URL: u})
 		}
 	}
 	return rs

@@ -8,7 +8,7 @@
 				"description": "An improper check or handling of exceptional conditions vulnerability [CWE-703] in FortiOS, FortiProxy, FortiPAM & FortiSwitchManager fgfm daemon may allow an unauthenticated attacker to repeatedly reset the fgfm connection via crafted SSL encrypted TCP requests.",
 				"references": [
 					{
-						"source": "fortiguard.com",
+						"source": "fortiguard.fortinet.com",
 						"url": "https://fortiguard.fortinet.com/psirt/FG-IR-24-041"
 					}
 				],
@@ -30,7 +30,7 @@
 				"severity": [
 					{
 						"type": "cvss_v31",
-						"source": "fortiguard.com",
+						"source": "fortiguard.fortinet.com",
 						"cvss_v31": {
 							"vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L/E:P/RL:X/RC:C",
 							"base_score": 5.3,
@@ -44,7 +44,7 @@
 				],
 				"cwe": [
 					{
-						"source": "fortiguard.com",
+						"source": "fortiguard.fortinet.com",
 						"cwe": [
 							"CWE-703"
 						]
@@ -52,7 +52,7 @@
 				],
 				"references": [
 					{
-						"source": "fortiguard.com",
+						"source": "fortiguard.fortinet.com",
 						"url": "https://fortiguard.fortinet.com/psirt/FG-IR-24-041"
 					}
 				]

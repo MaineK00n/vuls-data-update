@@ -8,7 +8,7 @@
 				"description": "An insertion of sensitive information into log file vulnerability [CWE-532] in FortiSIEM may allow an authenticated user to view an encrypted ElasticSearch password via debug log files generated when FortiSIEM is configured with ElasticSearch Event Storage.",
 				"references": [
 					{
-						"source": "fortiguard.com",
+						"source": "fortiguard.fortinet.com",
 						"url": "https://fortiguard.fortinet.com/psirt/FG-IR-23-392"
 					}
 				],
@@ -33,7 +33,7 @@
 				"severity": [
 					{
 						"type": "cvss_v31",
-						"source": "fortiguard.com",
+						"source": "fortiguard.fortinet.com",
 						"cvss_v31": {
 							"vector": "CVSS:3.1/AV:L/AC:L/PR:H/UI:N/S:U/C:L/I:N/A:N/E:P/RL:O/RC:C",
 							"base_score": 2.3,
@@ -47,7 +47,7 @@
 				],
 				"cwe": [
 					{
-						"source": "fortiguard.com",
+						"source": "fortiguard.fortinet.com",
 						"cwe": [
 							"CWE-532"
 						]
@@ -55,7 +55,7 @@
 				],
 				"references": [
 					{
-						"source": "fortiguard.com",
+						"source": "fortiguard.fortinet.com",
 						"url": "https://fortiguard.fortinet.com/psirt/FG-IR-23-392"
 					}
 				]

@@ -8,7 +8,7 @@
 				"description": "Fortinet has verified a potential issue during HTTP session authentication that could lead to a buffer overflow condition on the FortiGate unit when properly exploited. An attacker may craft a malicious HTTP request which exploits a variable in the HTTP header causing the buffer overflow condition when parsed by the FortiGate unit. When properly crafted, it may result in control of code flow execution.",
 				"references": [
 					{
-						"source": "fortiguard.com",
+						"source": "fortiguard.fortinet.com",
 						"url": "https://fortiguard.fortinet.com/psirt/FG-IR-012-003"
 					}
 				],
