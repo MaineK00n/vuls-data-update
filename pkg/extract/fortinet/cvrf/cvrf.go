@@ -352,6 +352,15 @@ func vulnSeverity(fetched cvrfTypes.CVRF) []severityTypes.Severity {
 // note, in any of the observed forms: "[CWE-200]", "(CWE-415)", "[CWE-78 ]".
 var cwePattern = regexp.MustCompile(`CWE-\d+`)
 
+// urlPattern extracts http(s) URLs from a CVRF reference string. Reference
+// values are not clean URLs: some pack several URLs separated by CRLF/space,
+// some wrap a URL in HTML ("<p>https://…</p>", "<a href=\"…\">…</a><br />"),
+// and a few hold non-URL free text (workaround prose). Matching URLs directly
+// — stopping at whitespace, quotes and angle brackets — recovers the real URL
+// from every form (including href-only anchors) and yields nothing for the
+// free-text entries, which are then skipped.
+var urlPattern = regexp.MustCompile(`https?://[^\s"'<>]+`)
+
 // vulnCWE extracts CWE identifiers from the Summary note text. Unlike CSAF,
 // CVRF carries no structured CWE field, so they are recovered from the prose.
 func vulnCWE(fetched cvrfTypes.CVRF) []cweTypes.CWE {
@@ -375,10 +384,15 @@ func vulnCWE(fetched cvrfTypes.CVRF) []cweTypes.CWE {
 
 func vulnReferences(fetched cvrfTypes.CVRF) []referenceTypes.Reference {
 	var rs []referenceTypes.Reference
+	seen := make(map[string]struct{})
 	for _, r := range fetched.Vulnerability.References.Reference {
-		// A single reference url sometimes packs several URLs separated by
-		// CRLF/whitespace; emit one Reference per URL.
-		for u := range strings.FieldsSeq(r.URL) {
+		// Reference values pack multiple URLs and/or wrap them in HTML; pull the
+		// real URLs out (see urlPattern) and emit one Reference each, deduped.
+		for _, u := range urlPattern.FindAllString(r.URL, -1) {
+			if _, ok := seen[u]; ok {
+				continue
+			}
+			seen[u] = struct{}{}
 			rs = append(rs, referenceTypes.Reference{Source: "fortiguard.fortinet.com", URL: u})
 		}
 	}
