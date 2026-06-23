@@ -33,19 +33,16 @@ func YearDir(id string) (string, error) {
 		return "", errors.Errorf("unexpected ID format. expected: %q, actual: %q", format, id)
 	}
 
-	// Build the 4-digit year explicitly (no 2-digit-year pivot), then validate
-	// it through time.Parse rather than hand-rolling a digit check.
-	var year string
-	switch yy := ss[2]; {
-	case len(yy) == 2:
-		year = "20" + yy
-	case len(yy) == 3 && strings.HasPrefix(yy, "0"):
-		year = "2" + yy
-	default:
-		return "", errors.Errorf("unexpected ID format. expected: %q, actual: %q", format, id)
+	// yy is a 2-digit year (24 -> 2024); the legacy zero-padded 3-digit form
+	// (012 -> 2012) is normalised to its 2-digit year first. Let time.Parse do
+	// the digit validation and year resolution.
+	yy := ss[2]
+	if len(yy) == 3 && strings.HasPrefix(yy, "0") {
+		yy = yy[1:]
 	}
-	if _, err := time.Parse("2006", year); err != nil {
+	t, err := time.Parse("06", yy)
+	if err != nil {
 		return "", errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", format, id)
 	}
-	return year, nil
+	return strconv.Itoa(t.Year()), nil
 }
