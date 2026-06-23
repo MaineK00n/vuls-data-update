@@ -152,7 +152,7 @@ func extract(fetched cvrfTypes.CVRF, raws []string) (dataTypes.Data, error) {
 	if status := fetched.Vulnerability.ProductStatuses.Status; status.Type == "Known Affected" {
 		cs, err := knownAffectedCriterions(id, status.ProductID, buildProductMap(fetched))
 		if err != nil {
-			return dataTypes.Data{}, err
+			return dataTypes.Data{}, errors.Wrap(err, "build known affected criterions")
 		}
 		criterions = cs
 	}
