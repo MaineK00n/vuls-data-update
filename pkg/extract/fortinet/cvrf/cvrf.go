@@ -284,21 +284,18 @@ func toCriterion(productID string, prodMap map[string]productVersion) (criterion
 		FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
 		CPE:        ccTypes.CPE(cpe),
 	}
-	switch {
-	case ver == "":
-		// Whole product (no version branch).
-	case product.IsConcrete(ver):
+	if ver != "" {
+		// CVRF enumerates affected versions, so each is baked into the CPE
+		// exactly — no version range. A CVRF "X.Y" train (e.g. "5.0") is too
+		// coarse to range over ("5.0" would cover all 5.0.x and over-detect);
+		// since detection ORs the CVRF and CSAF datasets, the precise CSAF
+		// range covers the advisories present there, and the exact CVRF
+		// enumeration covers the rest.
 		baked, err := product.BakeVersion(cpe, ver)
 		if err != nil {
 			return criterionTypes.Criterion{}, errors.Wrapf(err, "bake version for %q", productID)
 		}
 		c.CPE = ccTypes.CPE(baked)
-	default:
-		r, err := product.TrainRange(ver)
-		if err != nil {
-			return criterionTypes.Criterion{}, errors.Wrapf(err, "train range for %q", productID)
-		}
-		c.Range = &r
 	}
 
 	return criterionTypes.Criterion{Type: criterionTypes.CriterionTypeCPE, CPE: &c}, nil

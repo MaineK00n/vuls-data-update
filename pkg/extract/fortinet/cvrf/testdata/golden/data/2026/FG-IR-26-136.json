@@ -79,12 +79,7 @@
 									"fix_status": {
 										"class": "unknown"
 									},
-									"cpe": "cpe:2.3:a:fortinet:fortisandbox_cloud:*:*:*:*:*:*:*:*",
-									"range": {
-										"type": "fortinet",
-										"ge": "23",
-										"lt": "24"
-									}
+									"cpe": "cpe:2.3:a:fortinet:fortisandbox_cloud:23:*:*:*:*:*:*:*"
 								}
 							},
 							{
@@ -94,12 +89,7 @@
 									"fix_status": {
 										"class": "unknown"
 									},
-									"cpe": "cpe:2.3:a:fortinet:fortisandbox_cloud:*:*:*:*:*:*:*:*",
-									"range": {
-										"type": "fortinet",
-										"ge": "24",
-										"lt": "25"
-									}
+									"cpe": "cpe:2.3:a:fortinet:fortisandbox_cloud:24:*:*:*:*:*:*:*"
 								}
 							},
 							{
@@ -109,12 +99,7 @@
 									"fix_status": {
 										"class": "unknown"
 									},
-									"cpe": "cpe:2.3:a:fortinet:fortisandbox_cloud:*:*:*:*:*:*:*:*",
-									"range": {
-										"type": "fortinet",
-										"ge": "5.0",
-										"lt": "5.1"
-									}
+									"cpe": "cpe:2.3:a:fortinet:fortisandbox_cloud:5.0:*:*:*:*:*:*:*"
 								}
 							},
 							{
@@ -124,12 +109,7 @@
 									"fix_status": {
 										"class": "unknown"
 									},
-									"cpe": "cpe:2.3:a:fortinet:fortisandbox_paas:*:*:*:*:*:*:*:*",
-									"range": {
-										"type": "fortinet",
-										"ge": "21.3",
-										"lt": "21.4"
-									}
+									"cpe": "cpe:2.3:a:fortinet:fortisandbox_paas:21.3:*:*:*:*:*:*:*"
 								}
 							},
 							{
@@ -139,12 +119,7 @@
 									"fix_status": {
 										"class": "unknown"
 									},
-									"cpe": "cpe:2.3:a:fortinet:fortisandbox_paas:*:*:*:*:*:*:*:*",
-									"range": {
-										"type": "fortinet",
-										"ge": "21.4",
-										"lt": "21.5"
-									}
+									"cpe": "cpe:2.3:a:fortinet:fortisandbox_paas:21.4:*:*:*:*:*:*:*"
 								}
 							},
 							{
@@ -154,12 +129,7 @@
 									"fix_status": {
 										"class": "unknown"
 									},
-									"cpe": "cpe:2.3:a:fortinet:fortisandbox_paas:*:*:*:*:*:*:*:*",
-									"range": {
-										"type": "fortinet",
-										"ge": "22.1",
-										"lt": "22.2"
-									}
+									"cpe": "cpe:2.3:a:fortinet:fortisandbox_paas:22.1:*:*:*:*:*:*:*"
 								}
 							},
 							{
@@ -169,12 +139,7 @@
 									"fix_status": {
 										"class": "unknown"
 									},
-									"cpe": "cpe:2.3:a:fortinet:fortisandbox_paas:*:*:*:*:*:*:*:*",
-									"range": {
-										"type": "fortinet",
-										"ge": "22.2",
-										"lt": "22.3"
-									}
+									"cpe": "cpe:2.3:a:fortinet:fortisandbox_paas:22.2:*:*:*:*:*:*:*"
 								}
 							},
 							{
@@ -184,12 +149,7 @@
 									"fix_status": {
 										"class": "unknown"
 									},
-									"cpe": "cpe:2.3:a:fortinet:fortisandbox_paas:*:*:*:*:*:*:*:*",
-									"range": {
-										"type": "fortinet",
-										"ge": "23.1",
-										"lt": "23.2"
-									}
+									"cpe": "cpe:2.3:a:fortinet:fortisandbox_paas:23.1:*:*:*:*:*:*:*"
 								}
 							},
 							{
@@ -199,12 +159,7 @@
 									"fix_status": {
 										"class": "unknown"
 									},
-									"cpe": "cpe:2.3:a:fortinet:fortisandbox_paas:*:*:*:*:*:*:*:*",
-									"range": {
-										"type": "fortinet",
-										"ge": "23.3",
-										"lt": "23.4"
-									}
+									"cpe": "cpe:2.3:a:fortinet:fortisandbox_paas:23.3:*:*:*:*:*:*:*"
 								}
 							},
 							{
@@ -214,12 +169,7 @@
 									"fix_status": {
 										"class": "unknown"
 									},
-									"cpe": "cpe:2.3:a:fortinet:fortisandbox_paas:*:*:*:*:*:*:*:*",
-									"range": {
-										"type": "fortinet",
-										"ge": "23.4",
-										"lt": "23.5"
-									}
+									"cpe": "cpe:2.3:a:fortinet:fortisandbox_paas:23.4:*:*:*:*:*:*:*"
 								}
 							},
 							{
@@ -229,12 +179,7 @@
 									"fix_status": {
 										"class": "unknown"
 									},
-									"cpe": "cpe:2.3:a:fortinet:fortisandbox_paas:*:*:*:*:*:*:*:*",
-									"range": {
-										"type": "fortinet",
-										"ge": "4.4",
-										"lt": "4.5"
-									}
+									"cpe": "cpe:2.3:a:fortinet:fortisandbox_paas:4.4:*:*:*:*:*:*:*"
 								}
 							},
 							{
@@ -244,12 +189,7 @@
 									"fix_status": {
 										"class": "unknown"
 									},
-									"cpe": "cpe:2.3:a:fortinet:fortisandbox_paas:*:*:*:*:*:*:*:*",
-									"range": {
-										"type": "fortinet",
-										"ge": "5.0",
-										"lt": "5.1"
-									}
+									"cpe": "cpe:2.3:a:fortinet:fortisandbox_paas:5.0:*:*:*:*:*:*:*"
 								}
 							},
 							{
@@ -259,12 +199,7 @@
 									"fix_status": {
 										"class": "unknown"
 									},
-									"cpe": "cpe:2.3:o:fortinet:fortisandbox:*:*:*:*:*:*:*:*",
-									"range": {
-										"type": "fortinet",
-										"ge": "4.4",
-										"lt": "4.5"
-									}
+									"cpe": "cpe:2.3:o:fortinet:fortisandbox:4.4:*:*:*:*:*:*:*"
 								}
 							},
 							{
@@ -274,12 +209,7 @@
 									"fix_status": {
 										"class": "unknown"
 									},
-									"cpe": "cpe:2.3:o:fortinet:fortisandbox:*:*:*:*:*:*:*:*",
-									"range": {
-										"type": "fortinet",
-										"ge": "5.0",
-										"lt": "5.1"
-									}
+									"cpe": "cpe:2.3:o:fortinet:fortisandbox:5.0:*:*:*:*:*:*:*"
 								}
 							}
 						]
