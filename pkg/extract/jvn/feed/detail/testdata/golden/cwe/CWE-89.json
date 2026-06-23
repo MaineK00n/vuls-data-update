@@ -1,0 +1,13 @@
+{
+	"id": "CWE-89",
+	"name": "SQLインジェクション",
+	"references": [
+		{
+			"source": "jvndb.jvn.jp",
+			"url": "https://jvndb.jvn.jp/ja/cwe/CWE-89.html"
+		}
+	],
+	"data_source": {
+		"id": "jvn-feed-detail"
+	}
+}

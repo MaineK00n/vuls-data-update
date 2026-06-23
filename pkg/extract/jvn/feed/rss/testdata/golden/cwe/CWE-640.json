@@ -1,0 +1,13 @@
+{
+	"id": "CWE-640",
+	"name": "パスワードを忘れた場合の脆弱なパスワードリカバリの仕組み",
+	"references": [
+		{
+			"source": "jvndb.jvn.jp",
+			"url": "https://cwe.mitre.org/data/definitions/640.html"
+		}
+	],
+	"data_source": {
+		"id": "jvn-feed-rss"
+	}
+}

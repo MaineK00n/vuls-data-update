@@ -13,6 +13,7 @@ import (
 	"github.com/knqyf263/go-cpe/naming"
 	"github.com/pkg/errors"
 
+	cwecatalogTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/cwe"
 	dataTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data"
 	advisoryTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/advisory"
 	advisoryContentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/advisory/content"
@@ -73,6 +74,7 @@ func Extract(args string, opts ...Option) error {
 	}
 
 	slog.Info("Extract JVN Feed RSS")
+	cwes := make(map[string]cwecatalogTypes.CWE)
 	if err := filepath.WalkDir(args, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
@@ -109,9 +111,43 @@ func Extract(args string, opts ...Option) error {
 			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "data", splitted[1], fmt.Sprintf("%s.json", data.ID)))
 		}
 
+		for _, ref := range fetched.References {
+			// CWE classification entries are the references with no source
+			// attribute; CWE-prefixed entries that do carry a source (e.g.
+			// related documents) are not CWE classifications, so skip them.
+			if ref.Source != "" || !strings.HasPrefix(ref.ID, "CWE-") {
+				continue
+			}
+			if _, ok := cwes[ref.ID]; ok {
+				continue
+			}
+			cwes[ref.ID] = cwecatalogTypes.CWE{
+				ID:   ref.ID,
+				Name: strings.TrimSuffix(ref.Title, fmt.Sprintf("(%s)", ref.ID)),
+				References: func() []referenceTypes.Reference {
+					if ref.Text == "" {
+						return nil
+					}
+					return []referenceTypes.Reference{{
+						Source: "jvndb.jvn.jp",
+						URL:    ref.Text,
+					}}
+				}(),
+				DataSource: sourceTypes.Source{
+					ID: sourceTypes.JVNFeedRSS,
+				},
+			}
+		}
+
 		return nil
 	}); err != nil {
 		return errors.Wrapf(err, "walk %s", args)
+	}
+
+	for id, c := range cwes {
+		if err := util.Write(filepath.Join(options.dir, "cwe", fmt.Sprintf("%s.json", id)), c, true); err != nil {
+			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "cwe", fmt.Sprintf("%s.json", id)))
+		}
 	}
 
 	if err := util.Write(filepath.Join(options.dir, "datasource.json"), datasourceTypes.DataSource{

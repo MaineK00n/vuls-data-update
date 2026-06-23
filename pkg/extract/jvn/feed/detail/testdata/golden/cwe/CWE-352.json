@@ -1,0 +1,13 @@
+{
+	"id": "CWE-352",
+	"name": "クロスサイトリクエストフォージェリ",
+	"references": [
+		{
+			"source": "jvndb.jvn.jp",
+			"url": "https://jvndb.jvn.jp/ja/cwe/CWE-352.html"
+		}
+	],
+	"data_source": {
+		"id": "jvn-feed-detail"
+	}
+}
