@@ -18,3 +18,7 @@ var KnownAffectedCriterions = knownAffectedCriterions
 
 // IsExactVersion exposes isExactVersion for version-classification tests.
 var IsExactVersion = isExactVersion
+
+// ExtractData exposes the per-advisory extract function for status-type
+// validation tests.
+var ExtractData = extract

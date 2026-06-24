@@ -6,6 +6,7 @@ import (
 
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/fortinet/cvrf"
 	utiltest "github.com/MaineK00n/vuls-data-update/pkg/extract/util/test"
+	cvrfTypes "github.com/MaineK00n/vuls-data-update/pkg/fetch/fortinet/cvrf"
 )
 
 func TestExtract(t *testing.T) {
@@ -102,6 +103,32 @@ func TestIsExactVersion(t *testing.T) {
 		t.Run(tt.ver, func(t *testing.T) {
 			if got := cvrf.IsExactVersion(tt.ver); got != tt.want {
 				t.Errorf("IsExactVersion(%q) = %v, want %v", tt.ver, got, tt.want)
+			}
+		})
+	}
+}
+
+// The only product-status type observed across the corpus is "Known Affected";
+// an empty type is a content-only advisory, and any other type must fail loudly
+// rather than silently emit no detection.
+func TestExtractStatusType(t *testing.T) {
+	tests := []struct {
+		name       string
+		statusType string
+		wantErr    bool
+	}{
+		{name: "known affected", statusType: "Known Affected"},
+		{name: "empty (content-only)", statusType: ""},
+		{name: "unexpected type → error", statusType: "Known Not Affected", wantErr: true},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var fetched cvrfTypes.CVRF
+			fetched.DocumentTracking.Identification.ID = "FG-IR-24-001"
+			fetched.Vulnerability.ProductStatuses.Status.Type = tt.statusType
+			_, err := cvrf.ExtractData(fetched, nil)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("ExtractData() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
 	}

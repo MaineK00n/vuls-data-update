@@ -148,13 +148,23 @@ func extract(fetched cvrfTypes.CVRF, raws []string) (dataTypes.Data, error) {
 	// CVE. Versions are grouped per product — one criterion whose main CPE pins
 	// part/vendor/product (version wildcard) and whose CPEMatches enumerate the
 	// exact affected versions.
+	//
+	// CVRF carries a single product status whose only observed type across the
+	// corpus is "Known Affected"; advisories without it (no product_statuses, or
+	// a status element without a type) are content-only. Any other type is
+	// unexpected — fail loudly rather than silently emit no detection.
 	var criterions []criterionTypes.Criterion
-	if status := fetched.Vulnerability.ProductStatuses.Status; status.Type == "Known Affected" {
+	switch status := fetched.Vulnerability.ProductStatuses.Status; status.Type {
+	case "Known Affected":
 		cs, err := knownAffectedCriterions(id, status.ProductID, buildProductMap(fetched))
 		if err != nil {
 			return dataTypes.Data{}, errors.Wrap(err, "build known affected criterions")
 		}
 		criterions = cs
+	case "":
+		// No product status → content-only advisory, no detection.
+	default:
+		return dataTypes.Data{}, errors.Errorf("unexpected product status type %q in advisory %s (expected \"Known Affected\" or none)", status.Type, id)
 	}
 
 	// The advisory and its vulnerabilities share the same segment (the cpe
