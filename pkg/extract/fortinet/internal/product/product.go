@@ -11,7 +11,8 @@ import (
 
 // ToCPE returns the CPE 2.3 formatted string (wildcard version) for a Fortinet
 // product name, or ("", false) when the name is not in the table. Callers
-// should log and record unknown names rather than fabricate a CPE.
+// decide how to handle a miss rather than fabricate a CPE; the CVRF extractor,
+// for one, treats an unknown affected product as a hard error.
 func ToCPE(name string) (string, bool) {
 	cpe, ok := nameToCPE[strings.TrimSpace(name)]
 	return cpe, ok

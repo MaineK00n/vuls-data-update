@@ -398,8 +398,8 @@ func advisoryCWE(fetched cvrfTypes.CVRF) []cweTypes.CWE {
 	if len(matches) == 0 {
 		return nil
 	}
-	// Dedupe preserving encounter order; final ordering is applied by the
-	// type's Sort() during util.Write, so no sort is needed here.
+	// Dedupe the CWE IDs. The output order does not matter here — cwe.CWE.Sort()
+	// normalises it during util.Write — so no sort is needed.
 	seen := make(map[string]struct{}, len(matches))
 	ids := make([]string, 0, len(matches))
 	for _, m := range matches {
