@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/fs"
 	"log/slog"
+	"os"
 	"path/filepath"
 	"time"
 
@@ -57,6 +58,26 @@ func Extract(args string, opts ...Option) error {
 	}
 
 	slog.Info("Extract VulnCheck KEV")
+
+	if err := os.MkdirAll(options.dir, 0755); err != nil {
+		return errors.Wrapf(err, "mkdir %s", options.dir)
+	}
+	if err := os.WriteFile(filepath.Join(options.dir, "README.md"), []byte(`## Repository of VulnCheck KEV data accumulation
+
+All the data in this repository are fetched from VulnCheck by its API.
+
+- https://docs.vulncheck.com/
+- https://docs.vulncheck.com/api
+- https://docs.vulncheck.com/community/vulncheck-kev/attribution
+
+**CAUTION**
+
+When you use the data in this repository, you *MUST* comply with the terms and conditions of VulnCheck KEV: https://docs.vulncheck.com/community/vulncheck-kev/attribution
+Notably, you must show "prominent attribution" to show the data is from VulnCheck KEV to users.
+`), 0666); err != nil {
+		return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "README.md"))
+	}
+
 	if err := filepath.WalkDir(args, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err

@@ -3,6 +3,7 @@ package test
 import (
 	"encoding/json/v2"
 	"fmt"
+	"io"
 	"io/fs"
 	"net/url"
 	"os"
@@ -23,7 +24,7 @@ import (
 )
 
 func Diff(t *testing.T, expectedAbsPath, gotAbsPath string) {
-	for _, name := range []string{"datasource.json", "data", "cpe", "cwe", "capec", "attack", "microsoftkb", "eol"} {
+	for _, name := range []string{"datasource.json", "README.md", "data", "cpe", "cwe", "capec", "attack", "microsoftkb", "eol"} {
 		if _, err := os.Stat(filepath.Join(gotAbsPath, name)); err != nil {
 			continue
 		}
@@ -70,6 +71,16 @@ func Diff(t *testing.T, expectedAbsPath, gotAbsPath string) {
 				got.Sort()
 
 				diff = cmp.Diff(want, got)
+			case "README.md":
+				want, err := io.ReadAll(ef)
+				if err != nil {
+					return err
+				}
+				got, err := io.ReadAll(gf)
+				if err != nil {
+					return err
+				}
+				diff = cmp.Diff(string(want), string(got))
 			case "data":
 				var want, got dataTypes.Data
 				if err := json.UnmarshalRead(ef, &want); err != nil {
