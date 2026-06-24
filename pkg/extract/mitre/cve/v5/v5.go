@@ -289,29 +289,39 @@ func extract(fetched v5.CVE, raws []string) (dataTypes.Data, error) {
 									continue
 								}
 
-								bs, err := json.Marshal(metric.Other.Content)
-								if err != nil {
-									slog.Warn("marshal ssvc content", slog.String("cve", fetched.CVEMetadata.CVEID))
-									continue
-								}
-								var content struct {
-									Role      string           `json:"role,omitempty"`
-									Version   string           `json:"version,omitempty"`
-									Options   []map[string]any `json:"options,omitempty"`
-									Timestamp string           `json:"timestamp,omitempty"`
-								}
-								if err := json.Unmarshal(bs, &content); err != nil {
+								var content v5.SSVC
+								if err := json.Unmarshal(metric.Other.Content, &content); err != nil {
 									slog.Warn("unmarshal ssvc content", slog.String("cve", fetched.CVEMetadata.CVEID))
 									continue
 								}
 
 								var options []ssvcTypes.Option
 								for _, o := range content.Options {
-									for k, v := range o {
-										options = append(options, ssvcTypes.Option{
-											Key:   k,
-											Value: fmt.Sprintf("%v", v),
-										})
+									m, ok := o.(map[string]any)
+									if !ok {
+										continue
+									}
+									for k, v := range m {
+										// Per the SSVC computed schema, an option value is
+										// a string or an array of strings.
+										switch vs := v.(type) {
+										case string:
+											options = append(options, ssvcTypes.Option{
+												Key:   k,
+												Value: vs,
+											})
+										case []any:
+											for _, e := range vs {
+												if s, ok := e.(string); ok {
+													options = append(options, ssvcTypes.Option{
+														Key:   k,
+														Value: s,
+													})
+												}
+											}
+										default:
+											slog.Warn("unexpected ssvc option value type", slog.String("cve", fetched.CVEMetadata.CVEID), slog.String("key", k))
+										}
 									}
 								}
 
