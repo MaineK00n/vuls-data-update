@@ -17,6 +17,11 @@ func ToCPE(name string) (string, bool) {
 	return cpe, ok
 }
 
+// versionEscaper escapes the CPE WFN special characters (dots and hyphens) in a
+// concrete version string. It is stateless and safe for concurrent use, so it
+// is shared rather than rebuilt on every BakeVersion call.
+var versionEscaper = strings.NewReplacer(".", `\.`, "-", `\-`)
+
 // BakeVersion returns cpe with its version attribute set to the concrete
 // version string (dots/hyphens escaped per CPE WFN rules), e.g.
 // ("cpe:2.3:o:fortinet:fortios:*:...", "7.4.3") -> the same CPE pinned to
@@ -26,7 +31,7 @@ func BakeVersion(cpe, version string) (string, error) {
 	if err != nil {
 		return "", errors.Wrapf(err, "unbind %q to WFN", cpe)
 	}
-	if err := wfn.Set("version", strings.NewReplacer(".", `\.`, "-", `\-`).Replace(version)); err != nil {
+	if err := wfn.Set("version", versionEscaper.Replace(version)); err != nil {
 		return "", errors.Wrapf(err, "set version %q", version)
 	}
 	return naming.BindToFS(wfn), nil
