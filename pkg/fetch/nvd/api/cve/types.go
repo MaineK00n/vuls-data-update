@@ -32,6 +32,7 @@ type CVE struct {
 	Descriptions          []LangString    `json:"descriptions"`
 	References            []Reference     `json:"references"`
 	Metrics               Metrics         `json:"metrics,omitzero"`
+	Affected              []Affected      `json:"affected,omitempty"`
 	Weaknesses            []Weakness      `json:"weaknesses,omitempty"`
 	Configurations        []Config        `json:"configurations,omitempty"`
 	VendorComments        []VendorComment `json:"vendorComments,omitempty"`
@@ -63,6 +64,8 @@ type Metrics struct {
 	CVSSMetricV31 []CVSSMetricV31 `json:"cvssMetricV31,omitempty"`
 	// CVSS V4.0 score.
 	CVSSMetricV40 []CVSSMetricV40 `json:"cvssMetricV40,omitempty"`
+	// SSVC V2.0.3 score.
+	SSVCV203 []SSVCV203 `json:"ssvcV203,omitempty"`
 }
 
 type CVSSMetricV2 struct {
@@ -123,6 +126,67 @@ type CVSSMetricV40 struct {
 	Source   string  `json:"source"`
 	Type     string  `json:"type"`
 	CVSSData CVSSV40 `json:"cvssData"`
+}
+
+type SSVCV203 struct {
+	Source   string `json:"source"`
+	SSVCData SSVC   `json:"ssvcData"`
+}
+
+// Computed SSVC score representing the path in the decision tree
+// https://csrc.nist.gov/schema/nvd/api/2.0/ssvc-v2.0.3.json
+type SSVC struct {
+	Computed        string           `json:"computed,omitempty"`
+	Options         []map[string]any `json:"options"`
+	Timestamp       string           `json:"timestamp,omitempty"`
+	Role            string           `json:"role"`
+	Version         string           `json:"version"`
+	DecisionTree    any              `json:"decisionTree,omitempty"`
+	ID              string           `json:"id,omitempty"`
+	DecisionTreeURL string           `json:"decisionTreeUrl,omitempty"`
+	Schema          string           `json:"$schema,omitempty"`
+	Generator       string           `json:"generator,omitempty"`
+}
+
+type Affected struct {
+	Source       string         `json:"source"`
+	AffectedData []AffectedData `json:"affectedData"`
+}
+
+// Product information representing the products vulnerable to the CVE
+// https://csrc.nist.gov/schema/nvd/api/2.0/cve_affected_1.0.json
+type AffectedData struct {
+	Vendor          string                   `json:"vendor,omitempty"`
+	Product         string                   `json:"product,omitempty"`
+	CollectionURL   string                   `json:"collectionURL,omitempty"`
+	PackageName     string                   `json:"packageName,omitempty"`
+	CPEs            []string                 `json:"cpes,omitempty"`
+	Modules         []string                 `json:"modules,omitempty"`
+	ProgramFiles    []string                 `json:"programFiles,omitempty"`
+	ProgramRoutines []AffectedProgramRoutine `json:"programRoutines,omitempty"`
+	Platforms       []string                 `json:"platforms,omitempty"`
+	Repo            string                   `json:"repo,omitempty"`
+	DefaultStatus   string                   `json:"defaultStatus,omitempty"` // enum: affected, unaffected, unknown
+	Versions        []AffectedVersion        `json:"versions,omitempty"`
+	PackageURL      string                   `json:"packageURL,omitempty"`
+}
+
+type AffectedProgramRoutine struct {
+	Name string `json:"name"`
+}
+
+type AffectedVersion struct {
+	Version         string                  `json:"version"`
+	Status          string                  `json:"status"` // enum: affected, unaffected, unknown
+	VersionType     string                  `json:"versionType,omitempty"`
+	LessThan        string                  `json:"lessThan,omitempty"`
+	LessThanOrEqual string                  `json:"lessThanOrEqual,omitempty"`
+	Changes         []AffectedVersionChange `json:"changes,omitempty"`
+}
+
+type AffectedVersionChange struct {
+	At     string `json:"at"`
+	Status string `json:"status"` // enum: affected, unaffected, unknown
 }
 
 type VendorComment struct {
