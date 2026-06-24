@@ -1,0 +1,44 @@
+{
+	"id": "CWE-1200",
+	"kind": "view",
+	"name": "Weaknesses in the 2019 CWE Top 25 Most Dangerous Software Errors",
+	"status": "Obsolete",
+	"description": "CWE entries in this view are listed in the 2019 CWE Top 25 Most Dangerous Software Errors.",
+	"view": {
+		"type": "Graph",
+		"members": [
+			{
+				"cweid": "CWE-119",
+				"view_id": "CWE-1200"
+			},
+			{
+				"cweid": "CWE-125",
+				"view_id": "CWE-1200"
+			},
+			{
+				"cweid": "CWE-20",
+				"view_id": "CWE-1200"
+			},
+			{
+				"cweid": "CWE-200",
+				"view_id": "CWE-1200"
+			},
+			{
+				"cweid": "CWE-79",
+				"view_id": "CWE-1200"
+			}
+		]
+	},
+	"references": [
+		{
+			"source": "cwe.mitre.org",
+			"url": "https://cwe.mitre.org/data/definitions/1200.html"
+		}
+	],
+	"data_source": {
+		"id": "mitre-cwe",
+		"raws": [
+			"fixtures/view/1200.json"
+		]
+	}
+}

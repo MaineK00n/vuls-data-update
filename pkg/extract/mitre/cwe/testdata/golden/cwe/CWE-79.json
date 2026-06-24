@@ -10,6 +10,12 @@
 		"diagram": "/data/images/CWE-79-Diagram.png",
 		"rankings": [
 			{
+				"view_id": "CWE-1200",
+				"view_name": "Weaknesses in the 2019 CWE Top 25 Most Dangerous Software Errors",
+				"rank": 2,
+				"score": 45.69
+			},
+			{
 				"view_id": "CWE-1344",
 				"view_name": "Weaknesses in OWASP Top Ten (2021)",
 				"category_id": "CWE-1347",
@@ -54,6 +60,7 @@
 		"raws": [
 			"fixtures/category/1347.json",
 			"fixtures/category/1440.json",
+			"fixtures/view/1200.json",
 			"fixtures/view/1344.json",
 			"fixtures/view/1430.json",
 			"fixtures/view/1435.json",
