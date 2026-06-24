@@ -10,6 +10,10 @@
 					{
 						"source": "fortiguard.fortinet.com",
 						"url": "https://fortiguard.fortinet.com/psirt/FG-IR-16-013"
+					},
+					{
+						"source": "fortiguard.fortinet.com",
+						"url": "https://nvd.nist.gov/vuln/detail/CVE-2016-0723"
 					}
 				],
 				"published": "2017-04-05T00:00:00Z",
@@ -25,18 +29,7 @@
 	"vulnerabilities": [
 		{
 			"content": {
-				"id": "CVE-2015-1339",
-				"title": "Linux Kernel Vulnerabilities",
-				"references": [
-					{
-						"source": "fortiguard.fortinet.com",
-						"url": "https://fortiguard.fortinet.com/psirt/FG-IR-16-013"
-					},
-					{
-						"source": "fortiguard.fortinet.com",
-						"url": "https://nvd.nist.gov/vuln/detail/CVE-2016-0723"
-					}
-				]
+				"id": "CVE-2015-1339"
 			},
 			"segments": [
 				{
@@ -46,18 +39,7 @@
 		},
 		{
 			"content": {
-				"id": "CVE-2015-7515",
-				"title": "Linux Kernel Vulnerabilities",
-				"references": [
-					{
-						"source": "fortiguard.fortinet.com",
-						"url": "https://fortiguard.fortinet.com/psirt/FG-IR-16-013"
-					},
-					{
-						"source": "fortiguard.fortinet.com",
-						"url": "https://nvd.nist.gov/vuln/detail/CVE-2016-0723"
-					}
-				]
+				"id": "CVE-2015-7515"
 			},
 			"segments": [
 				{
@@ -67,18 +49,7 @@
 		},
 		{
 			"content": {
-				"id": "CVE-2016-0723",
-				"title": "Linux Kernel Vulnerabilities",
-				"references": [
-					{
-						"source": "fortiguard.fortinet.com",
-						"url": "https://fortiguard.fortinet.com/psirt/FG-IR-16-013"
-					},
-					{
-						"source": "fortiguard.fortinet.com",
-						"url": "https://nvd.nist.gov/vuln/detail/CVE-2016-0723"
-					}
-				]
+				"id": "CVE-2016-0723"
 			},
 			"segments": [
 				{
@@ -88,18 +59,7 @@
 		},
 		{
 			"content": {
-				"id": "CVE-2016-2384",
-				"title": "Linux Kernel Vulnerabilities",
-				"references": [
-					{
-						"source": "fortiguard.fortinet.com",
-						"url": "https://fortiguard.fortinet.com/psirt/FG-IR-16-013"
-					},
-					{
-						"source": "fortiguard.fortinet.com",
-						"url": "https://nvd.nist.gov/vuln/detail/CVE-2016-0723"
-					}
-				]
+				"id": "CVE-2016-2384"
 			},
 			"segments": [
 				{
@@ -109,18 +69,7 @@
 		},
 		{
 			"content": {
-				"id": "CVE-2016-2544",
-				"title": "Linux Kernel Vulnerabilities",
-				"references": [
-					{
-						"source": "fortiguard.fortinet.com",
-						"url": "https://fortiguard.fortinet.com/psirt/FG-IR-16-013"
-					},
-					{
-						"source": "fortiguard.fortinet.com",
-						"url": "https://nvd.nist.gov/vuln/detail/CVE-2016-0723"
-					}
-				]
+				"id": "CVE-2016-2544"
 			},
 			"segments": [
 				{
@@ -130,18 +79,7 @@
 		},
 		{
 			"content": {
-				"id": "CVE-2016-2545",
-				"title": "Linux Kernel Vulnerabilities",
-				"references": [
-					{
-						"source": "fortiguard.fortinet.com",
-						"url": "https://fortiguard.fortinet.com/psirt/FG-IR-16-013"
-					},
-					{
-						"source": "fortiguard.fortinet.com",
-						"url": "https://nvd.nist.gov/vuln/detail/CVE-2016-0723"
-					}
-				]
+				"id": "CVE-2016-2545"
 			},
 			"segments": [
 				{
@@ -151,18 +89,7 @@
 		},
 		{
 			"content": {
-				"id": "CVE-2016-2546",
-				"title": "Linux Kernel Vulnerabilities",
-				"references": [
-					{
-						"source": "fortiguard.fortinet.com",
-						"url": "https://fortiguard.fortinet.com/psirt/FG-IR-16-013"
-					},
-					{
-						"source": "fortiguard.fortinet.com",
-						"url": "https://nvd.nist.gov/vuln/detail/CVE-2016-0723"
-					}
-				]
+				"id": "CVE-2016-2546"
 			},
 			"segments": [
 				{
@@ -172,18 +99,7 @@
 		},
 		{
 			"content": {
-				"id": "CVE-2016-2847",
-				"title": "Linux Kernel Vulnerabilities",
-				"references": [
-					{
-						"source": "fortiguard.fortinet.com",
-						"url": "https://fortiguard.fortinet.com/psirt/FG-IR-16-013"
-					},
-					{
-						"source": "fortiguard.fortinet.com",
-						"url": "https://nvd.nist.gov/vuln/detail/CVE-2016-0723"
-					}
-				]
+				"id": "CVE-2016-2847"
 			},
 			"segments": [
 				{

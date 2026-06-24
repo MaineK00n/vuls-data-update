@@ -6,22 +6,6 @@
 				"id": "FG-IR-26-136",
 				"title": "Incorrect global authorization",
 				"description": "A missing authorization vulnerability [CWE-862] in FortiSandbox, FortiSandbox Cloud and FortiSandbox PaaS WEB UI may allow an unauthenticated attacker to execute unauthorized code or commands via HTTP requests.",
-				"references": [
-					{
-						"source": "fortiguard.fortinet.com",
-						"url": "https://fortiguard.fortinet.com/psirt/FG-IR-26-136"
-					}
-				],
-				"published": "2026-05-12T00:00:00Z",
-				"modified": "2026-05-12T00:00:00Z"
-			}
-		}
-	],
-	"vulnerabilities": [
-		{
-			"content": {
-				"id": "CVE-2026-26083",
-				"title": "Incorrect global authorization",
 				"severity": [
 					{
 						"type": "cvss_v31",
@@ -50,7 +34,16 @@
 						"source": "fortiguard.fortinet.com",
 						"url": "https://fortiguard.fortinet.com/psirt/FG-IR-26-136"
 					}
-				]
+				],
+				"published": "2026-05-12T00:00:00Z",
+				"modified": "2026-05-12T00:00:00Z"
+			}
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-2026-26083"
 			}
 		}
 	],

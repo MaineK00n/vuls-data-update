@@ -1,0 +1,142 @@
+{
+	"id": "FG-IR-20-104",
+	"advisories": [
+		{
+			"content": {
+				"id": "FG-IR-20-104",
+				"title": "Ripple20",
+				"description": "On June 16, 2020, cybersecurity researchers from JSOF published a set of 19 vulnerabilities, dubbed Ripple20 that are impacting the TCP/IP stack developed by Treck. A remote attacker can exploit some of these vulnerabilities to take control of an affected system.",
+				"severity": [
+					{
+						"type": "cvss_v31",
+						"source": "fortiguard.fortinet.com",
+						"cvss_v31": {
+							"vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H/E:U/RL:X/RC:X",
+							"base_score": 9.8,
+							"base_severity": "CRITICAL",
+							"temporal_score": 9,
+							"temporal_severity": "CRITICAL",
+							"environmental_score": 9,
+							"environmental_severity": "CRITICAL"
+						}
+					}
+				],
+				"references": [
+					{
+						"source": "fortiguard.fortinet.com",
+						"url": "https://fortiguard.fortinet.com/psirt/FG-IR-20-104"
+					},
+					{
+						"source": "fortiguard.fortinet.com",
+						"url": "https://www.jsof-tech.com/ripple20/"
+					}
+				],
+				"published": "2020-07-30T00:00:00Z",
+				"modified": "2020-07-30T00:00:00Z"
+			}
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-2020-11896"
+			}
+		},
+		{
+			"content": {
+				"id": "CVE-2020-11897"
+			}
+		},
+		{
+			"content": {
+				"id": "CVE-2020-11898"
+			}
+		},
+		{
+			"content": {
+				"id": "CVE-2020-11899"
+			}
+		},
+		{
+			"content": {
+				"id": "CVE-2020-11900"
+			}
+		},
+		{
+			"content": {
+				"id": "CVE-2020-11901"
+			}
+		},
+		{
+			"content": {
+				"id": "CVE-2020-11902"
+			}
+		},
+		{
+			"content": {
+				"id": "CVE-2020-11903"
+			}
+		},
+		{
+			"content": {
+				"id": "CVE-2020-11904"
+			}
+		},
+		{
+			"content": {
+				"id": "CVE-2020-11905"
+			}
+		},
+		{
+			"content": {
+				"id": "CVE-2020-11906"
+			}
+		},
+		{
+			"content": {
+				"id": "CVE-2020-11907"
+			}
+		},
+		{
+			"content": {
+				"id": "CVE-2020-11908"
+			}
+		},
+		{
+			"content": {
+				"id": "CVE-2020-11909"
+			}
+		},
+		{
+			"content": {
+				"id": "CVE-2020-11910"
+			}
+		},
+		{
+			"content": {
+				"id": "CVE-2020-11911"
+			}
+		},
+		{
+			"content": {
+				"id": "CVE-2020-11912"
+			}
+		},
+		{
+			"content": {
+				"id": "CVE-2020-11913"
+			}
+		},
+		{
+			"content": {
+				"id": "CVE-2020-11914"
+			}
+		}
+	],
+	"data_source": {
+		"id": "fortinet-cvrf",
+		"raws": [
+			"fixtures/2020/FG-IR-20-104.json"
+		]
+	}
+}
