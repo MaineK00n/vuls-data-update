@@ -295,7 +295,6 @@ func extract(fetched v5.CVE, raws []string) (dataTypes.Data, error) {
 									continue
 								}
 								var content struct {
-									ID        string           `json:"id,omitempty"`
 									Role      string           `json:"role,omitempty"`
 									Version   string           `json:"version,omitempty"`
 									Options   []map[string]any `json:"options,omitempty"`
@@ -318,7 +317,6 @@ func extract(fetched v5.CVE, raws []string) (dataTypes.Data, error) {
 
 								ss = append(ss, ssvcTypes.SSVC{
 									Source:    source,
-									ID:        content.ID,
 									Role:      content.Role,
 									Version:   content.Version,
 									Options:   options,
@@ -339,6 +337,17 @@ func extract(fetched v5.CVE, raws []string) (dataTypes.Data, error) {
 							return utiltime.Parse([]string{"2006-01-02T15:04:05.000Z"}, *fetched.CVEMetadata.DateUpdated)
 						}
 						return nil
+					}(),
+					Optional: func() map[string]any {
+						// Map each source label (provider shortName) to the
+						// container that produced it. CNA/ADP is determined by
+						// structural position, not by any source-string suffix.
+						cts := make(map[string]string)
+						cts[getSource(fetched.Containers.CNA.ProviderMetadata)] = "CNA"
+						for _, c := range fetched.Containers.ADP {
+							cts[getSource(c.ProviderMetadata)] = "ADP"
+						}
+						return map[string]any{"container_types": cts}
 					}(),
 				},
 			}},

@@ -8,7 +8,6 @@ import (
 
 type SSVC struct {
 	Source    string     `json:"source,omitempty"`
-	ID        string     `json:"id,omitempty"`
 	Role      string     `json:"role,omitempty"`
 	Version   string     `json:"version,omitempty"`
 	Options   []Option   `json:"options,omitempty"`
@@ -34,7 +33,6 @@ func CompareOption(x, y Option) int {
 func Compare(x, y SSVC) int {
 	return cmp.Or(
 		cmp.Compare(x.Source, y.Source),
-		cmp.Compare(x.ID, y.ID),
 		cmp.Compare(x.Role, y.Role),
 		cmp.Compare(x.Version, y.Version),
 		slices.CompareFunc(x.Options, y.Options, CompareOption),

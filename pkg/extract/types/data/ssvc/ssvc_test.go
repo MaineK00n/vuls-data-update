@@ -21,14 +21,12 @@ func TestCompare(t *testing.T) {
 			args: args{
 				x: ssvcTypes.SSVC{
 					Source:  "CISA-ADP",
-					ID:      "CVE-2024-0001",
 					Role:    "CISA Coordinator",
 					Version: "2.0.3",
 					Options: []ssvcTypes.Option{{Key: "Exploitation", Value: "none"}},
 				},
 				y: ssvcTypes.SSVC{
 					Source:  "CISA-ADP",
-					ID:      "CVE-2024-0001",
 					Role:    "CISA Coordinator",
 					Version: "2.0.3",
 					Options: []ssvcTypes.Option{{Key: "Exploitation", Value: "none"}},
