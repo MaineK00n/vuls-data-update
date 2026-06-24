@@ -289,7 +289,8 @@ func knownAffectedCriterions(productIDs []string, prodMap map[string]productVers
 		cpe      string
 		versions []ccTypes.CPE // baked exact-version CPEs, deduped
 	}
-	var products []*product
+	products := make(map[string]product)
+	var order []string // product CPEs in first-seen order
 	for _, pid := range productIDs {
 		pv, ok := prodMap[pid]
 		if !ok {
@@ -316,21 +317,20 @@ func knownAffectedCriterions(productIDs []string, prodMap map[string]productVers
 			return nil, errors.Wrapf(err, "bake version for %q", pid)
 		}
 
-		p := func() *product {
-			if i := slices.IndexFunc(products, func(p *product) bool { return p.cpe == cpe }); i >= 0 {
-				return products[i]
-			}
-			np := &product{cpe: cpe}
-			products = append(products, np)
-			return np
-		}()
+		p, ok := products[cpe]
+		if !ok {
+			p.cpe = cpe
+			order = append(order, cpe)
+		}
 		if !slices.Contains(p.versions, ccTypes.CPE(baked)) {
 			p.versions = append(p.versions, ccTypes.CPE(baked))
 		}
+		products[cpe] = p
 	}
 
-	criterions := make([]criterionTypes.Criterion, 0, len(products))
-	for _, p := range products {
+	criterions := make([]criterionTypes.Criterion, 0, len(order))
+	for _, cpe := range order {
+		p := products[cpe]
 		criterions = append(criterions, criterionTypes.Criterion{
 			Type: criterionTypes.CriterionTypeCPE,
 			CPE: &ccTypes.Criterion{
