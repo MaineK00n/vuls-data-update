@@ -157,11 +157,12 @@ func extract(fetched cvrfTypes.CVRF, raws []string) (dataTypes.Data, error) {
 		criterions = cs
 	}
 
-	seg := segmentTypes.Segment{Ecosystem: ecosystemTypes.EcosystemTypeCPE}
+	// The advisory and its vulnerabilities share the same segment (the cpe
+	// ecosystem, untagged) — CVRF emits a single untagged detection, so there is
+	// no per-CVE partitioning to distinguish them.
 	var (
 		detections []detectionTypes.Detection
-		vulnSegs   []segmentTypes.Segment
-		advSegs    []segmentTypes.Segment
+		segs       []segmentTypes.Segment
 	)
 	if len(criterions) > 0 {
 		detections = []detectionTypes.Detection{{
@@ -173,8 +174,7 @@ func extract(fetched cvrfTypes.CVRF, raws []string) (dataTypes.Data, error) {
 				},
 			}},
 		}}
-		vulnSegs = []segmentTypes.Segment{seg}
-		advSegs = []segmentTypes.Segment{seg}
+		segs = []segmentTypes.Segment{{Ecosystem: ecosystemTypes.EcosystemTypeCPE}}
 	}
 
 	// CVRF carries a single advisory-level CVSS score, CWE set and reference
@@ -198,7 +198,7 @@ func extract(fetched cvrfTypes.CVRF, raws []string) (dataTypes.Data, error) {
 				ID:         vulnerabilityContentTypes.VulnerabilityID(cve),
 				References: cveRefs[cve],
 			},
-			Segments: vulnSegs,
+			Segments: segs,
 		})
 	}
 
@@ -215,7 +215,7 @@ func extract(fetched cvrfTypes.CVRF, raws []string) (dataTypes.Data, error) {
 				Published:   utiltime.Parse([]string{"2006-01-02T15:04:05", time.RFC3339}, fetched.DocumentTracking.InitialReleaseDate),
 				Modified:    utiltime.Parse([]string{"2006-01-02T15:04:05", time.RFC3339}, fetched.DocumentTracking.CurrentReleaseDate),
 			},
-			Segments: advSegs,
+			Segments: segs,
 		}},
 		Vulnerabilities: vulns,
 		Detections:      detections,
