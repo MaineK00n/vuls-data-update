@@ -38,6 +38,11 @@ func TestFetch(t *testing.T) {
 			expectedCount: 1,
 		},
 		{
+			name:          "with SSVC and affected data",
+			fixturePrefix: "ssvc_affected",
+			expectedCount: 1,
+		},
+		{
 			name:          "Precisely single page",
 			fixturePrefix: "3_items",
 			expectedCount: 3,
