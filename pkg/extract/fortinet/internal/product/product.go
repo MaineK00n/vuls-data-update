@@ -5,6 +5,7 @@ package product
 import (
 	"strings"
 
+	"github.com/knqyf263/go-cpe/common"
 	"github.com/knqyf263/go-cpe/naming"
 	"github.com/pkg/errors"
 )
@@ -32,7 +33,7 @@ func BakeVersion(cpe, version string) (string, error) {
 	if err != nil {
 		return "", errors.Wrapf(err, "unbind %q to WFN", cpe)
 	}
-	if err := wfn.Set("version", versionEscaper.Replace(version)); err != nil {
+	if err := wfn.Set(common.AttributeVersion, versionEscaper.Replace(version)); err != nil {
 		return "", errors.Wrapf(err, "set version %q", version)
 	}
 	return naming.BindToFS(wfn), nil
