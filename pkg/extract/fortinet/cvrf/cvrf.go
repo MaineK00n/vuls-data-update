@@ -266,10 +266,12 @@ func buildProductMap(fetched cvrfTypes.CVRF) map[string]productVersion {
 
 // knownAffectedCriterions resolves the Known Affected product_ids into one CPE
 // criterion per product: the product CPE (version wildcard) as the main CPE,
-// with the exact affected versions enumerated in CPEMatches. A wildcard main
-// CPE plus a non-empty CPEMatches matches only the enumerated versions (the
-// "no narrowing" path is closed once CPEMatches is populated), so this does not
-// over-detect the whole product.
+// with the exact affected versions enumerated in CPEMatches. With a non-empty
+// CPEMatches the "no narrowing" path is closed, so a query with a concrete
+// version matches only when it is one of the enumerated versions — the wildcard
+// main CPE does not over-detect the whole product. (A version-less query still
+// follows the usual cpecriterion semantics: ANY matches, NA is
+// version-unconfirmed.)
 //
 // Only concrete versions are kept. CVRF enumerates affected versions
 // explicitly, so a coarse "X.Y" / "X" train (e.g. "5.0") is dropped rather than
