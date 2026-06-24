@@ -1,0 +1,30 @@
+{
+	"id": "FG-IR-13-008",
+	"advisories": [
+		{
+			"content": {
+				"id": "FG-IR-13-008",
+				"title": "Potential Man-In-The Middle Vulnerability in FortiClient VPN",
+				"description": "Under certain conditions, FortiClient VPN may be susceptible to a certificate validation vulnerability which would allow an attacker to intercept user credentials in a man-in-the-middle attack.",
+				"references": [
+					{
+						"source": "fortiguard.fortinet.com",
+						"url": "http://archives.neohapsis.com/archives/fulldisclosure/2013-05/0001.html"
+					},
+					{
+						"source": "fortiguard.fortinet.com",
+						"url": "https://fortiguard.fortinet.com/psirt/FG-IR-13-008"
+					}
+				],
+				"published": "2013-05-13T00:00:00Z",
+				"modified": "2013-05-13T00:00:00Z"
+			}
+		}
+	],
+	"data_source": {
+		"id": "fortinet-cvrf",
+		"raws": [
+			"fixtures/2013/FG-IR-13-008.json"
+		]
+	}
+}

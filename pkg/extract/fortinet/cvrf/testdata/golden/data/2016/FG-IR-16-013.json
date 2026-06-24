@@ -1,0 +1,411 @@
+{
+	"id": "FG-IR-16-013",
+	"advisories": [
+		{
+			"content": {
+				"id": "FG-IR-16-013",
+				"title": "Linux Kernel Vulnerabilities",
+				"description": "A race condition in the tty_ioctl function in drivers/tty/tty_io.c in the Linux kernel may allow local users to obtain sensitive information from kernel memory or cause a denial of service.",
+				"references": [
+					{
+						"source": "fortiguard.fortinet.com",
+						"url": "https://fortiguard.fortinet.com/psirt/FG-IR-16-013"
+					},
+					{
+						"source": "fortiguard.fortinet.com",
+						"url": "https://nvd.nist.gov/vuln/detail/CVE-2016-0723"
+					}
+				],
+				"published": "2017-04-05T00:00:00Z",
+				"modified": "2017-04-05T00:00:00Z"
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe"
+				}
+			]
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-2015-1339"
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2015-7515"
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2016-0723"
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2016-2384"
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2016-2544"
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2016-2545"
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2016-2546"
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2016-2847"
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe"
+				}
+			]
+		}
+	],
+	"detections": [
+		{
+			"ecosystem": "cpe",
+			"conditions": [
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:o:fortinet:fortiauthenticator:*:*:*:*:*:*:*:*",
+									"cpe_matches": [
+										"cpe:2.3:o:fortinet:fortiauthenticator:1.0.0:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortiauthenticator:1.1.0:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortiauthenticator:1.2.0:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortiauthenticator:1.2.1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortiauthenticator:1.3.0:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortiauthenticator:1.3.1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortiauthenticator:2.1.0:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortiauthenticator:2.2.0:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortiauthenticator:3.0.0:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortiauthenticator:3.0.1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortiauthenticator:3.0.2:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortiauthenticator:3.0.3:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortiauthenticator:3.1.0:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortiauthenticator:3.1.1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortiauthenticator:3.1.2:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortiauthenticator:3.2.0:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortiauthenticator:3.2.1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortiauthenticator:3.3.0:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortiauthenticator:3.3.1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortiauthenticator:3.3.2:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortiauthenticator:4.0.0:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortiauthenticator:4.0.1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortiauthenticator:4.1.0:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortiauthenticator:4.1.1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortiauthenticator:4.1.2:*:*:*:*:*:*:*"
+									]
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:o:fortinet:fortidb:*:*:*:*:*:*:*:*",
+									"cpe_matches": [
+										"cpe:2.3:o:fortinet:fortidb:0.4.10:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortidb:0.5.16:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortidb:2.0.2:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortidb:2.4.0:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortidb:3.2.1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortidb:3.2.3:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortidb:3.2.4:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortidb:3.2.5:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortidb:3.2.6:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortidb:3.2.7:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortidb:4.0.0:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortidb:4.0.1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortidb:4.3.2:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortidb:4.4.0:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortidb:4.4.1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortidb:4.4.2:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortidb:4.4.3:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortidb:5.0.0:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortidb:5.1.0:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortidb:5.1.1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortidb:5.1.2:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortidb:5.1.3:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortidb:5.1.4:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortidb:5.1.5:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortidb:5.1.7:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortidb:5.1.8:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortidb:5.1.9:*:*:*:*:*:*:*"
+									]
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:o:fortinet:fortiddos:*:*:*:*:*:*:*:*",
+									"cpe_matches": [
+										"cpe:2.3:o:fortinet:fortiddos:3.1.0:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortiddos:3.2.0:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortiddos:4.0.0:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortiddos:4.0.1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortiddos:4.1.0:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortiddos:4.1.10:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortiddos:4.1.11:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortiddos:4.1.12:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortiddos:4.1.1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortiddos:4.1.2:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortiddos:4.1.3:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortiddos:4.1.4:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortiddos:4.1.5:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortiddos:4.1.6:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortiddos:4.1.7:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortiddos:4.1.8:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortiddos:4.1.9:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortiddos:4.2.0:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortiddos:4.2.1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortiddos:4.2.2:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortiddos:4.2.3:*:*:*:*:*:*:*"
+									]
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*",
+									"cpe_matches": [
+										"cpe:2.3:o:fortinet:fortios:4.0.0:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:4.0.1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:4.0.2:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:4.0.3:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:4.0.4:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:4.1.10:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:4.1.11:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:4.1.1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:4.1.2:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:4.1.3:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:4.1.4:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:4.1.5:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:4.1.6:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:4.1.7:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:4.1.8:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:4.1.9:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:4.2.0:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:4.2.10:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:4.2.11:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:4.2.12:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:4.2.13:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:4.2.14:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:4.2.15:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:4.2.16:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:4.2.1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:4.2.2:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:4.2.3:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:4.2.4:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:4.2.5:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:4.2.6:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:4.2.7:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:4.2.8:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:4.2.9:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:4.3.0:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:4.3.10:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:4.3.11:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:4.3.12:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:4.3.13:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:4.3.14:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:4.3.15:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:4.3.16:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:4.3.17:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:4.3.18:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:4.3.19:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:4.3.1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:4.3.2:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:4.3.3:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:4.3.4:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:4.3.5:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:4.3.6:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:4.3.7:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:4.3.8:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:4.3.9:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:5.0.0:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:5.0.10:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:5.0.11:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:5.0.12:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:5.0.13:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:5.0.14:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:5.0.1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:5.0.2:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:5.0.3:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:5.0.4:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:5.0.5:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:5.0.6:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:5.0.7:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:5.0.8:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:5.0.9:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:5.2.0:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:5.2.10:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:5.2.11:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:5.2.12:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:5.2.13:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:5.2.14:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:5.2.15:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:5.2.1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:5.2.2:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:5.2.3:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:5.2.4:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:5.2.5:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:5.2.6:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:5.2.7:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:5.2.8:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:5.2.9:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:5.4.0:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:5.4.10:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:5.4.11:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:5.4.12:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:5.4.13:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:5.4.1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:5.4.2:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:5.4.3:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:5.4.4:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:5.4.5:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:5.4.6:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:5.4.7:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:5.4.8:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortios:5.4.9:*:*:*:*:*:*:*"
+									]
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:o:fortinet:fortisandbox:*:*:*:*:*:*:*:*",
+									"cpe_matches": [
+										"cpe:2.3:o:fortinet:fortisandbox:1.1.0:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortisandbox:1.2.0:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortisandbox:1.2.3:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortisandbox:1.3.0:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortisandbox:1.4.0:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortisandbox:1.4.1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortisandbox:1.4.2:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortisandbox:1.4.3:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortisandbox:2.0.0:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortisandbox:2.0.1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortisandbox:2.0.2:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortisandbox:2.0.3:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortisandbox:2.1.0:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortisandbox:2.1.1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortisandbox:2.1.2:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortisandbox:2.1.3:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortisandbox:2.2.0:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortisandbox:2.2.1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortisandbox:2.2.2:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortisandbox:2.3.0:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortisandbox:2.3.1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortisandbox:2.3.2:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortisandbox:2.3.3:*:*:*:*:*:*:*"
+									]
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:o:fortinet:fortiwan:*:*:*:*:*:*:*:*",
+									"cpe_matches": [
+										"cpe:2.3:o:fortinet:fortiwan:0.4.10:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortiwan:0.4.20:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortiwan:4.0.0:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortiwan:4.0.1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortiwan:4.0.2:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortiwan:4.0.3:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortiwan:4.0.4:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortiwan:4.0.5:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortiwan:4.0.6:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortiwan:4.1.1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortiwan:4.1.2:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortiwan:4.1.3:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortiwan:4.2.1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:fortinet:fortiwan:4.2.2:*:*:*:*:*:*:*"
+									]
+								}
+							}
+						]
+					}
+				}
+			]
+		}
+	],
+	"data_source": {
+		"id": "fortinet-cvrf",
+		"raws": [
+			"fixtures/2016/FG-IR-16-013.json"
+		]
+	}
+}

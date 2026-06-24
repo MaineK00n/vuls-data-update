@@ -1,0 +1,32 @@
+{
+	"id": "FG-IR-012-003",
+	"advisories": [
+		{
+			"content": {
+				"id": "FG-IR-012-003",
+				"title": "Potential Buffer Overflow During HTTP Session Authentication",
+				"description": "Fortinet has verified a potential issue during HTTP session authentication that could lead to a buffer overflow condition on the FortiGate unit when properly exploited. An attacker may craft a malicious HTTP request which exploits a variable in the HTTP header causing the buffer overflow condition when parsed by the FortiGate unit. When properly crafted, it may result in control of code flow execution.",
+				"references": [
+					{
+						"source": "fortiguard.fortinet.com",
+						"url": "https://fortiguard.fortinet.com/psirt/FG-IR-012-003"
+					}
+				],
+				"modified": "2013-01-29T00:00:00Z"
+			}
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-2013-1471"
+			}
+		}
+	],
+	"data_source": {
+		"id": "fortinet-cvrf",
+		"raws": [
+			"fixtures/2012/FG-IR-012-003.json"
+		]
+	}
+}

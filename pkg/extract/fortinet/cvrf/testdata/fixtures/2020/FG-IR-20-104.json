@@ -1,0 +1,102 @@
+{
+	"document_title": "Ripple20",
+	"document_type": "Fortinet PSIRT Advisories",
+	"documentpublisher": {
+		"type": "Vendor",
+		"contact_details": "\n            Fortinet PSIRT Contact:\n            Website: https://fortiguard.fortinet.com/faq/psirt-contact\n        "
+	},
+	"documenttracking": {
+		"identification": {
+			"id": "FG-IR-20-104"
+		},
+		"status": "Final",
+		"version": "1",
+		"revisionhistory": {
+			"revision": {
+				"number": "1",
+				"date": "2020-07-30T00:00:00",
+				"description": "Current version"
+			}
+		},
+		"initial_release_date": "2020-07-30T00:00:00",
+		"current_release_date": "2020-07-30T00:00:00"
+	},
+	"documentnotes": {
+		"note": [
+			{
+				"text": "\n            On June 16, 2020, cybersecurity researchers from JSOF published a set of 19 vulnerabilities, dubbed Ripple20 that are impacting the TCP/IP stack developed by Treck. A remote attacker can exploit some of these vulnerabilities to take control of an affected system.\n        ",
+				"title": "Summary",
+				"type": "Summary",
+				"ordinal": "1"
+			},
+			{
+				"text": "\n            Information disclosure\n        ",
+				"title": "Impact",
+				"type": "General",
+				"ordinal": "2"
+			},
+			{
+				"text": "\n            Fortinet products do not use the low-level TCP/IP software library developed by Treck, Inc and are therefore not impacted by these vulnerabilities.\n        ",
+				"title": "Affected Products",
+				"type": "General",
+				"ordinal": "3"
+			}
+		]
+	},
+	"document_references": {
+		"reference": [
+			{
+				"url": "https://fortiguard.fortinet.com/psirt/FG-IR-20-104",
+				"description": "Ripple20"
+			},
+			{
+				"url": "https://www.jsof-tech.com/ripple20/",
+				"description": "https://www.jsof-tech.com/ripple20/"
+			}
+		]
+	},
+	"vulnerability": {
+		"ordinal": "1",
+		"title": "Ripple20",
+		"references": {
+			"type": "Self",
+			"reference": [
+				{
+					"url": "https://fortiguard.fortinet.com/psirt/FG-IR-20-104",
+					"description": "Ripple20"
+				},
+				{
+					"url": "https://www.jsof-tech.com/ripple20/",
+					"description": "https://www.jsof-tech.com/ripple20/"
+				}
+			]
+		},
+		"cve": [
+			"CVE-2020-11896",
+			"CVE-2020-11897",
+			"CVE-2020-11898",
+			"CVE-2020-11899",
+			"CVE-2020-11900",
+			"CVE-2020-11901",
+			"CVE-2020-11902",
+			"CVE-2020-11903",
+			"CVE-2020-11904",
+			"CVE-2020-11905",
+			"CVE-2020-11906",
+			"CVE-2020-11907",
+			"CVE-2020-11908",
+			"CVE-2020-11909",
+			"CVE-2020-11910",
+			"CVE-2020-11911",
+			"CVE-2020-11912",
+			"CVE-2020-11913",
+			"CVE-2020-11914"
+		],
+		"cvss_scoresets": {
+			"scoreset_v3": {
+				"base_score_v3": "9.8",
+				"vector_v3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H/E:U/RL:X/RC:X"
+			}
+		}
+	}
+}
