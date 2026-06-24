@@ -381,18 +381,20 @@ func advisorySeverity(fetched cvrfTypes.CVRF) ([]severityTypes.Severity, error) 
 var cwePattern = regexp.MustCompile(`CWE-\d+`)
 
 // urlCandidatePattern finds candidate http(s) URL substrings in a CVRF
-// reference string. Reference values are not clean URLs: some pack several URLs
-// separated by CRLF/space, some wrap a URL in HTML ("<p>https://…</p>",
-// "<a href=\"…\">…</a><br />"), and a few hold non-URL free text (workaround
-// prose). Stopping at whitespace, quotes and angle brackets pulls a candidate
-// out of every form (including href-only anchors); extractReferenceURLs then
-// validates each via url.Parse.
+// reference value. The values are messy and the URL is not always at the start:
+// it can sit behind a citation marker ("[1] https://…", "- https://…",
+// "1. https://…"), inside prose ("…see the link: https://…"), or wrapped in
+// HTML ("<p>https://…</p>", "<a href=\"…\">…</a>"). Matching the URL substring
+// directly — stopping at whitespace, quotes and angle brackets — pulls it out of
+// every such form (including href-only anchors); a few values are non-URL free
+// text and match nothing. extractReferenceURLs then validates each candidate
+// with url.Parse.
 var urlCandidatePattern = regexp.MustCompile(`https?://[^\s"'<>]+`)
 
 // extractReferenceURLs returns the well-formed http(s) URLs in a CVRF reference
-// string: each candidate from urlCandidatePattern that url.Parse accepts with an
-// http/https scheme and a host. Free-text entries and any malformed candidate
-// yield nothing.
+// value: each urlCandidatePattern match that url.Parse accepts with an
+// http/https scheme and a host. Free text and malformed candidates yield
+// nothing.
 func extractReferenceURLs(s string) []string {
 	var urls []string
 	for _, cand := range urlCandidatePattern.FindAllString(s, -1) {

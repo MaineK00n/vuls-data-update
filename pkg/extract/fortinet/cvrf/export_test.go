@@ -22,3 +22,6 @@ var IsExactVersion = isExactVersion
 // ExtractData exposes the per-advisory extract function for status-type
 // validation tests.
 var ExtractData = extract
+
+// ExtractReferenceURLs exposes extractReferenceURLs for reference-parsing tests.
+var ExtractReferenceURLs = extractReferenceURLs

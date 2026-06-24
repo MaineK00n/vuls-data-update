@@ -2,6 +2,7 @@ package cvrf_test
 
 import (
 	"path/filepath"
+	"slices"
 	"testing"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/fortinet/cvrf"
@@ -159,6 +160,33 @@ func TestExtractSeverityVector(t *testing.T) {
 			_, err := cvrf.ExtractData(fetched, nil)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("ExtractData() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
+
+// CVRF reference values put the URL behind citation markers, inside prose, or
+// in HTML wrappers; extractReferenceURLs recovers the URL from any position and
+// rejects non-URL free text.
+func TestExtractReferenceURLs(t *testing.T) {
+	tests := []struct {
+		name string
+		in   string
+		want []string
+	}{
+		{name: "bare url", in: "https://example.com/x", want: []string{"https://example.com/x"}},
+		{name: "citation marker", in: "[1] https://blog.example.com/x", want: []string{"https://blog.example.com/x"}},
+		{name: "dash marker with newline", in: "- https://example.com/x\n", want: []string{"https://example.com/x"}},
+		{name: "embedded in prose", in: "see the link: https://example.com/x", want: []string{"https://example.com/x"}},
+		{name: "p wrapper", in: "<p>https://nvd.nist.gov/vuln/detail/CVE-2016-0723</p>", want: []string{"https://nvd.nist.gov/vuln/detail/CVE-2016-0723"}},
+		{name: "a href (non-url anchor text)", in: `<a href="http://archives.neohapsis.com/x.html">Neohapsis</a>`, want: []string{"http://archives.neohapsis.com/x.html"}},
+		{name: "free text", in: `Disable "Save Password" setting`, want: nil},
+		{name: "empty", in: "", want: nil},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := cvrf.ExtractReferenceURLs(tt.in); !slices.Equal(got, tt.want) {
+				t.Errorf("ExtractReferenceURLs(%q) = %q, want %q", tt.in, got, tt.want)
 			}
 		})
 	}
