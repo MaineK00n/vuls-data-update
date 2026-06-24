@@ -428,9 +428,8 @@ func advisoryCWE(fetched cvrfTypes.CVRF) []cweTypes.CWE {
 }
 
 // advisoryReferences returns the advisory's references: the canonical PSIRT URL
-// followed by the URLs pulled from the CVRF reference entries (which are
-// advisory-wide, not per-CVE), deduped (a handful per advisory).
-func advisoryReferences(fetched cvrfTypes.CVRF, id string) []referenceTypes.Reference {
+// and any http(s) URLs extracted from the CVRF reference entries (which are
+// advisory-wide, not per-CVE), deduped. Output ordering is normalized by Sort().
 	rs := []referenceTypes.Reference{{
 		Source: "fortiguard.fortinet.com",
 		URL:    fmt.Sprintf("https://fortiguard.fortinet.com/psirt/%s", id),
