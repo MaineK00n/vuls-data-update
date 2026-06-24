@@ -76,7 +76,7 @@ func TestKnownAffectedCriterionsWhitelist(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			_, err := cvrf.KnownAffectedCriterions("FG-IR-TEST", []string{tt.productID}, tt.prodMap)
+			_, err := cvrf.KnownAffectedCriterions([]string{tt.productID}, tt.prodMap)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("KnownAffectedCriterions(%q) error = %v, wantErr %v", tt.productID, err, tt.wantErr)
 			}
@@ -115,10 +115,12 @@ func TestExtractStatusType(t *testing.T) {
 	tests := []struct {
 		name       string
 		statusType string
+		productIDs []string
 		wantErr    bool
 	}{
 		{name: "known affected", statusType: "Known Affected"},
 		{name: "empty (content-only)", statusType: ""},
+		{name: "empty type with products → error", statusType: "", productIDs: []string{"FortiOS-7.4.3"}, wantErr: true},
 		{name: "unexpected type → error", statusType: "Known Not Affected", wantErr: true},
 	}
 	for _, tt := range tests {
@@ -126,6 +128,7 @@ func TestExtractStatusType(t *testing.T) {
 			var fetched cvrfTypes.CVRF
 			fetched.DocumentTracking.Identification.ID = "FG-IR-24-001"
 			fetched.Vulnerability.ProductStatuses.Status.Type = tt.statusType
+			fetched.Vulnerability.ProductStatuses.Status.ProductID = tt.productIDs
 			_, err := cvrf.ExtractData(fetched, nil)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("ExtractData() error = %v, wantErr %v", err, tt.wantErr)

@@ -156,15 +156,22 @@ func extract(fetched cvrfTypes.CVRF, raws []string) (dataTypes.Data, error) {
 	var criterions []criterionTypes.Criterion
 	switch status := fetched.Vulnerability.ProductStatuses.Status; status.Type {
 	case "Known Affected":
-		cs, err := knownAffectedCriterions(id, status.ProductID, buildProductMap(fetched))
+		cs, err := knownAffectedCriterions(status.ProductID, buildProductMap(fetched))
 		if err != nil {
 			return dataTypes.Data{}, errors.Wrap(err, "build known affected criterions")
 		}
 		criterions = cs
 	case "":
-		// No product status → content-only advisory, no detection.
+		// No product status type → content-only advisory, no detection. A typed
+		// status is the only thing that lists products, so a missing type must
+		// come with no products; products without a type would be an affected
+		// set we cannot classify and is treated as unexpected rather than
+		// dropped.
+		if len(status.ProductID) > 0 {
+			return dataTypes.Data{}, errors.Errorf("product status lists %d product(s) but has no type", len(status.ProductID))
+		}
 	default:
-		return dataTypes.Data{}, errors.Errorf("unexpected product status type %q in advisory %s (expected \"Known Affected\" or none)", status.Type, id)
+		return dataTypes.Data{}, errors.Errorf("unexpected product status type %q (expected %q or none)", status.Type, "Known Affected")
 	}
 
 	// The advisory and its vulnerabilities share the same segment (the cpe
@@ -196,7 +203,7 @@ func extract(fetched cvrfTypes.CVRF, raws []string) (dataTypes.Data, error) {
 	// holds the links that name its own CVE).
 	severity, err := advisorySeverity(fetched)
 	if err != nil {
-		return dataTypes.Data{}, errors.Wrapf(err, "advisory severity (advisory %s)", id)
+		return dataTypes.Data{}, errors.Wrap(err, "advisory severity")
 	}
 
 	advRefs, cveRefs := splitReferences(fetched, id)
@@ -280,7 +287,7 @@ func buildProductMap(fetched cvrfTypes.CVRF) map[string]productVersion {
 // It hard-errors when a product_id is absent from the tree or the product is
 // not whitelisted — a new Fortinet product or a resolver bug must fail the
 // extract, not silently drop coverage.
-func knownAffectedCriterions(advID string, productIDs []string, prodMap map[string]productVersion) ([]criterionTypes.Criterion, error) {
+func knownAffectedCriterions(productIDs []string, prodMap map[string]productVersion) ([]criterionTypes.Criterion, error) {
 	type product struct {
 		cpe      string
 		versions map[string]struct{} // baked exact-version CPE strings
@@ -290,12 +297,12 @@ func knownAffectedCriterions(advID string, productIDs []string, prodMap map[stri
 	for _, pid := range productIDs {
 		pv, ok := prodMap[pid]
 		if !ok {
-			return nil, errors.Errorf("known affected %q not found in product tree (advisory %s)", pid, advID)
+			return nil, errors.Errorf("known affected %q not found in product tree", pid)
 		}
 
 		cpe, ok := productpkg.ToCPE(pv.productName)
 		if !ok {
-			return nil, errors.Errorf("unknown fortinet product %q (whitelist miss; add it to internal/product) (advisory %s)", pv.productName, advID)
+			return nil, errors.Errorf("unknown fortinet product %q (whitelist miss; add it to internal/product)", pv.productName)
 		}
 
 		// The version branch name occasionally carries the product name as a
@@ -310,7 +317,7 @@ func knownAffectedCriterions(advID string, productIDs []string, prodMap map[stri
 
 		baked, err := productpkg.BakeVersion(cpe, ver)
 		if err != nil {
-			return nil, errors.Wrapf(err, "bake version for %q (advisory %s)", pid, advID)
+			return nil, errors.Wrapf(err, "bake version for %q", pid)
 		}
 
 		p, ok := products[cpe]
