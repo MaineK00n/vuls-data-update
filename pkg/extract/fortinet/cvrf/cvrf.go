@@ -194,6 +194,11 @@ func extract(fetched cvrfTypes.CVRF, raws []string) (dataTypes.Data, error) {
 	// CVE-specific reference links. Mirrors the jvn/feed/detail layout
 	// (advisory holds severity/cwe/advisory-wide references; a vulnerability
 	// holds the links that name its own CVE).
+	severity, err := advisorySeverity(fetched)
+	if err != nil {
+		return dataTypes.Data{}, errors.Wrapf(err, "advisory severity (advisory %s)", id)
+	}
+
 	advRefs, cveRefs := splitReferences(fetched, id)
 
 	var vulns []vulnerabilityTypes.Vulnerability
@@ -219,7 +224,7 @@ func extract(fetched cvrfTypes.CVRF, raws []string) (dataTypes.Data, error) {
 				ID:          advisoryContentTypes.AdvisoryID(id),
 				Title:       fetched.DocumentTitle,
 				Description: noteText(fetched, "Summary"),
-				Severity:    advisorySeverity(fetched),
+				Severity:    severity,
 				CWE:         advisoryCWE(fetched),
 				References:  advRefs,
 				Published:   utiltime.Parse([]string{"2006-01-02T15:04:05", time.RFC3339}, fetched.DocumentTracking.InitialReleaseDate),
@@ -349,16 +354,24 @@ func isExactVersion(ver string) bool {
 // advisorySeverity returns the advisory's CVSS severity. CVRF carries a single
 // advisory-level scoreset (shared across the advisory's CVEs), so it lives on
 // the advisory rather than on each vulnerability.
-func advisorySeverity(fetched cvrfTypes.CVRF) []severityTypes.Severity {
-	var ss []severityTypes.Severity
-	if vec := fetched.Vulnerability.CVSSScoreSets.ScoreSetV3.VectorV3; strings.HasPrefix(vec, "CVSS:3.1/") {
-		if c, err := v31Types.Parse(vec); err != nil {
-			slog.Warn("skip unparseable cvss vector", slog.String("vector", vec), slog.Any("err", err))
-		} else {
-			ss = append(ss, severityTypes.Severity{Type: severityTypes.SeverityTypeCVSSv31, Source: "fortiguard.fortinet.com", CVSSv31: c})
-		}
+func advisorySeverity(fetched cvrfTypes.CVRF) ([]severityTypes.Severity, error) {
+	vec := fetched.Vulnerability.CVSSScoreSets.ScoreSetV3.VectorV3
+	if vec == "" {
+		// No score → no severity.
+		return nil, nil
 	}
-	return ss
+	// Every non-empty vector across the corpus is a CVSS 3.1 vector that parses
+	// cleanly, so an empty or 3.1 vector are the only expected shapes: a parse
+	// failure or any other version is unexpected and fails the extract rather
+	// than being silently dropped.
+	if !strings.HasPrefix(vec, "CVSS:3.1/") {
+		return nil, errors.Errorf("unexpected cvss vector %q (expected CVSS:3.1/ or empty)", vec)
+	}
+	c, err := v31Types.Parse(vec)
+	if err != nil {
+		return nil, errors.Wrapf(err, "parse cvss vector %q", vec)
+	}
+	return []severityTypes.Severity{{Type: severityTypes.SeverityTypeCVSSv31, Source: "fortiguard.fortinet.com", CVSSv31: c}}, nil
 }
 
 // cwePattern matches the CWE identifiers Fortinet embeds inline in the Summary

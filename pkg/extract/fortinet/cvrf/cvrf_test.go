@@ -133,3 +133,30 @@ func TestExtractStatusType(t *testing.T) {
 		})
 	}
 }
+
+// Every non-empty CVRF vector across the corpus is a parseable CVSS 3.1 vector,
+// so an empty or valid 3.1 vector are the only expected shapes; a non-3.1 or
+// malformed vector fails the extract rather than being silently dropped.
+func TestExtractSeverityVector(t *testing.T) {
+	tests := []struct {
+		name    string
+		vector  string
+		wantErr bool
+	}{
+		{name: "empty (no score)", vector: ""},
+		{name: "valid 3.1", vector: "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H"},
+		{name: "non-3.1 → error", vector: "CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H", wantErr: true},
+		{name: "malformed 3.1 → error", vector: "CVSS:3.1/not-a-vector", wantErr: true},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var fetched cvrfTypes.CVRF
+			fetched.DocumentTracking.Identification.ID = "FG-IR-24-001"
+			fetched.Vulnerability.CVSSScoreSets.ScoreSetV3.VectorV3 = tt.vector
+			_, err := cvrf.ExtractData(fetched, nil)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("ExtractData() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
