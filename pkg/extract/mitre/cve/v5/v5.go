@@ -1,6 +1,7 @@
 package v5
 
 import (
+	"encoding/json/v2"
 	"fmt"
 	"io/fs"
 	"log/slog"
@@ -18,6 +19,7 @@ import (
 	v30Types "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity/cvss/v30"
 	v31Types "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity/cvss/v31"
 	v40Types "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity/cvss/v40"
+	ssvcTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/ssvc"
 	vulnerabilityTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/vulnerability"
 	vulnerabilityContentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/vulnerability/content"
 	datasourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/datasource"
@@ -272,6 +274,59 @@ func extract(fetched v5.CVE, raws []string) (dataTypes.Data, error) {
 							}
 						}
 						return refs
+					}(),
+					SSVC: func() []ssvcTypes.SSVC {
+						m := make(map[string][]v5.Metric)
+						m[getSource(fetched.Containers.CNA.ProviderMetadata)] = append(m[getSource(fetched.Containers.CNA.ProviderMetadata)], fetched.Containers.CNA.Metrics...)
+						for _, c := range fetched.Containers.ADP {
+							m[getSource(c.ProviderMetadata)] = append(m[getSource(c.ProviderMetadata)], c.Metrics...)
+						}
+
+						var ss []ssvcTypes.SSVC
+						for source, ms := range m {
+							for _, metric := range ms {
+								if metric.Other == nil || metric.Other.Type != "ssvc" {
+									continue
+								}
+
+								bs, err := json.Marshal(metric.Other.Content)
+								if err != nil {
+									slog.Warn("marshal ssvc content", slog.String("cve", fetched.CVEMetadata.CVEID))
+									continue
+								}
+								var content struct {
+									ID        string           `json:"id,omitempty"`
+									Role      string           `json:"role,omitempty"`
+									Version   string           `json:"version,omitempty"`
+									Options   []map[string]any `json:"options,omitempty"`
+									Timestamp string           `json:"timestamp,omitempty"`
+								}
+								if err := json.Unmarshal(bs, &content); err != nil {
+									slog.Warn("unmarshal ssvc content", slog.String("cve", fetched.CVEMetadata.CVEID))
+									continue
+								}
+
+								var options []ssvcTypes.Option
+								for _, o := range content.Options {
+									for k, v := range o {
+										options = append(options, ssvcTypes.Option{
+											Key:   k,
+											Value: fmt.Sprintf("%v", v),
+										})
+									}
+								}
+
+								ss = append(ss, ssvcTypes.SSVC{
+									Source:    source,
+									ID:        content.ID,
+									Role:      content.Role,
+									Version:   content.Version,
+									Options:   options,
+									Timestamp: utiltime.Parse([]string{"2006-01-02T15:04:05.999999999Z07:00"}, content.Timestamp),
+								})
+							}
+						}
+						return ss
 					}(),
 					Published: func() *time.Time {
 						if fetched.CVEMetadata.DatePublished != nil {
