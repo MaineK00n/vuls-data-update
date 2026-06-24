@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/fs"
 	"log/slog"
+	"net/url"
 	"path/filepath"
 	"regexp"
 	"slices"
@@ -286,10 +287,9 @@ func buildProductMap(fetched cvrfTypes.CVRF) map[string]productVersion {
 func knownAffectedCriterions(productIDs []string, prodMap map[string]productVersion) ([]criterionTypes.Criterion, error) {
 	type product struct {
 		cpe      string
-		versions map[string]struct{} // baked exact-version CPE strings
+		versions []ccTypes.CPE // baked exact-version CPEs, deduped
 	}
-	products := make(map[string]*product)
-	var order []string // product CPEs in first-seen order
+	var products []*product
 	for _, pid := range productIDs {
 		pv, ok := prodMap[pid]
 		if !ok {
@@ -316,29 +316,28 @@ func knownAffectedCriterions(productIDs []string, prodMap map[string]productVers
 			return nil, errors.Wrapf(err, "bake version for %q", pid)
 		}
 
-		p, ok := products[cpe]
-		if !ok {
-			p = &product{cpe: cpe, versions: make(map[string]struct{})}
-			products[cpe] = p
-			order = append(order, cpe)
+		p := func() *product {
+			if i := slices.IndexFunc(products, func(p *product) bool { return p.cpe == cpe }); i >= 0 {
+				return products[i]
+			}
+			np := &product{cpe: cpe}
+			products = append(products, np)
+			return np
+		}()
+		if !slices.Contains(p.versions, ccTypes.CPE(baked)) {
+			p.versions = append(p.versions, ccTypes.CPE(baked))
 		}
-		p.versions[baked] = struct{}{}
 	}
 
-	criterions := make([]criterionTypes.Criterion, 0, len(order))
-	for _, cpe := range order {
-		p := products[cpe]
-		matches := make([]ccTypes.CPE, 0, len(p.versions))
-		for m := range p.versions {
-			matches = append(matches, ccTypes.CPE(m))
-		}
+	criterions := make([]criterionTypes.Criterion, 0, len(products))
+	for _, p := range products {
 		criterions = append(criterions, criterionTypes.Criterion{
 			Type: criterionTypes.CriterionTypeCPE,
 			CPE: &ccTypes.Criterion{
 				Vulnerable: true,
 				FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
-				CPE:        ccTypes.CPE(cpe),
-				CPEMatches: matches,
+				CPE:        ccTypes.CPE(p.cpe),
+				CPEMatches: p.versions,
 			},
 		})
 	}
@@ -381,14 +380,30 @@ func advisorySeverity(fetched cvrfTypes.CVRF) ([]severityTypes.Severity, error) 
 // note, in any of the observed forms: "[CWE-200]", "(CWE-415)", "[CWE-78 ]".
 var cwePattern = regexp.MustCompile(`CWE-\d+`)
 
-// urlPattern extracts http(s) URLs from a CVRF reference string. Reference
-// values are not clean URLs: some pack several URLs separated by CRLF/space,
-// some wrap a URL in HTML ("<p>https://…</p>", "<a href=\"…\">…</a><br />"),
-// and a few hold non-URL free text (workaround prose). Matching URLs directly
-// — stopping at whitespace, quotes and angle brackets — recovers the real URL
-// from every form (including href-only anchors) and yields nothing for the
-// free-text entries, which are then skipped.
-var urlPattern = regexp.MustCompile(`https?://[^\s"'<>]+`)
+// urlCandidatePattern finds candidate http(s) URL substrings in a CVRF
+// reference string. Reference values are not clean URLs: some pack several URLs
+// separated by CRLF/space, some wrap a URL in HTML ("<p>https://…</p>",
+// "<a href=\"…\">…</a><br />"), and a few hold non-URL free text (workaround
+// prose). Stopping at whitespace, quotes and angle brackets pulls a candidate
+// out of every form (including href-only anchors); extractReferenceURLs then
+// validates each via url.Parse.
+var urlCandidatePattern = regexp.MustCompile(`https?://[^\s"'<>]+`)
+
+// extractReferenceURLs returns the well-formed http(s) URLs in a CVRF reference
+// string: each candidate from urlCandidatePattern that url.Parse accepts with an
+// http/https scheme and a host. Free-text entries and any malformed candidate
+// yield nothing.
+func extractReferenceURLs(s string) []string {
+	var urls []string
+	for _, cand := range urlCandidatePattern.FindAllString(s, -1) {
+		u, err := url.Parse(cand)
+		if err != nil || (u.Scheme != "http" && u.Scheme != "https") || u.Host == "" {
+			continue
+		}
+		urls = append(urls, cand)
+	}
+	return urls
+}
 
 // advisoryCWE extracts CWE identifiers from the Summary note text. Unlike CSAF,
 // CVRF carries no structured CWE field, so they are recovered from the prose;
@@ -398,36 +413,31 @@ func advisoryCWE(fetched cvrfTypes.CVRF) []cweTypes.CWE {
 	if len(matches) == 0 {
 		return nil
 	}
-	// Dedupe the CWE IDs. The output order does not matter here — cwe.CWE.Sort()
-	// normalises it during util.Write — so no sort is needed.
-	seen := make(map[string]struct{}, len(matches))
-	ids := make([]string, 0, len(matches))
+	// Dedupe the CWE IDs (a handful at most). The output order does not matter
+	// here — cwe.CWE.Sort() normalises it during util.Write — so no sort is
+	// needed.
+	var ids []string
 	for _, m := range matches {
-		if _, ok := seen[m]; ok {
-			continue
+		if !slices.Contains(ids, m) {
+			ids = append(ids, m)
 		}
-		seen[m] = struct{}{}
-		ids = append(ids, m)
 	}
 	return []cweTypes.CWE{{Source: "fortiguard.fortinet.com", CWE: ids}}
 }
 
 // advisoryReferences returns the advisory's references: the canonical PSIRT URL
 // followed by the URLs pulled from the CVRF reference entries (which are
-// advisory-wide, not per-CVE), deduped. The reference values are not clean URLs
-// (multiple URLs packed together, HTML wrappers, non-URL prose), so the real
-// URLs are matched out via urlPattern.
+// advisory-wide, not per-CVE), deduped (a handful per advisory).
 func advisoryReferences(fetched cvrfTypes.CVRF, id string) []referenceTypes.Reference {
-	canonical := fmt.Sprintf("https://fortiguard.fortinet.com/psirt/%s", id)
-	rs := []referenceTypes.Reference{{Source: "fortiguard.fortinet.com", URL: canonical}}
-	seen := map[string]struct{}{canonical: {}}
+	rs := []referenceTypes.Reference{{
+		Source: "fortiguard.fortinet.com",
+		URL:    fmt.Sprintf("https://fortiguard.fortinet.com/psirt/%s", id),
+	}}
 	for _, r := range fetched.Vulnerability.References.Reference {
-		for _, u := range urlPattern.FindAllString(r.URL, -1) {
-			if _, ok := seen[u]; ok {
-				continue
+		for _, u := range extractReferenceURLs(r.URL) {
+			if !slices.ContainsFunc(rs, func(x referenceTypes.Reference) bool { return x.URL == u }) {
+				rs = append(rs, referenceTypes.Reference{Source: "fortiguard.fortinet.com", URL: u})
 			}
-			seen[u] = struct{}{}
-			rs = append(rs, referenceTypes.Reference{Source: "fortiguard.fortinet.com", URL: u})
 		}
 	}
 	return rs
