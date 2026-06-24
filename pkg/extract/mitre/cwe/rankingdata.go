@@ -18,6 +18,7 @@ type rankingEntry struct {
 //	CWE-750  https://cwe.mitre.org/top25/archive/2009/2009_cwe_sans_top25.html
 //	CWE-800  https://cwe.mitre.org/top25/archive/2010/2010_cwe_sans_top25.html
 //	CWE-900  https://cwe.mitre.org/top25/archive/2011/2011_cwe_sans_top25.html
+//	CWE-1200 https://cwe.mitre.org/top25/archive/2019/2019_cwe_top25.html
 //	CWE-1337 https://cwe.mitre.org/top25/archive/2021/2021_cwe_top25.html
 //	CWE-1350 https://cwe.mitre.org/top25/archive/2020/2020_cwe_top25.html
 //	CWE-1387 https://cwe.mitre.org/top25/archive/2022/2022_cwe_top25.html
@@ -48,6 +49,15 @@ var supplementalRankings = map[string][]rankingEntry{
 		{"CWE-732", 65.5}, {"CWE-676", 64.6}, {"CWE-327", 64.1}, {"CWE-131", 62.4},
 		{"CWE-307", 61.5}, {"CWE-601", 61.1}, {"CWE-134", 61.0}, {"CWE-190", 60.3},
 		{"CWE-759", 59.9},
+	},
+	"CWE-1200": { // 2019 CWE Top 25 Most Dangerous Software Errors
+		{"CWE-119", 75.56}, {"CWE-79", 45.69}, {"CWE-20", 43.61}, {"CWE-200", 32.12},
+		{"CWE-125", 26.53}, {"CWE-89", 24.54}, {"CWE-416", 17.94}, {"CWE-190", 17.35},
+		{"CWE-352", 15.54}, {"CWE-22", 14.10}, {"CWE-78", 11.47}, {"CWE-787", 11.08},
+		{"CWE-287", 10.78}, {"CWE-476", 9.74}, {"CWE-732", 6.33}, {"CWE-434", 5.50},
+		{"CWE-611", 5.48}, {"CWE-94", 5.36}, {"CWE-798", 5.12}, {"CWE-400", 5.04},
+		{"CWE-772", 5.04}, {"CWE-426", 4.40}, {"CWE-502", 4.30}, {"CWE-269", 4.23},
+		{"CWE-295", 4.06},
 	},
 	"CWE-1337": { // 2021 CWE Top 25 Most Dangerous Software Weaknesses
 		{"CWE-787", 65.93}, {"CWE-79", 46.84}, {"CWE-125", 24.9}, {"CWE-20", 20.47},
