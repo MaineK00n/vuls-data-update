@@ -1,0 +1,120 @@
+{
+	"id": "FG-IR-22-008",
+	"advisories": [
+		{
+			"content": {
+				"id": "FG-IR-22-008",
+				"title": "Multiple vulnerabilities in Apache Airflow",
+				"description": "Security advisories were released affecting the version of Apache Airflow library used in some Fortinet products:CVE-2020-13927:The previous default setting for Airflow's Experimental API was to allow all API requests without authentication, but this poses security risks to users who miss this fact. From Airflow 1.10.11 the default has been changed to deny all requests by default and is documented at https://airflow.apache.org/docs/1.10.11/security.html#api-authentication. Note this change fixes it for new installs but existing users need to change their config to default [api]auth_backend = airflow.api.auth.backend.deny_all as mentioned in the Updating Guide: https://github.com/apache/airflow/blob/1.10.11/UPDATING.md#experimental-api-will-deny-all-request-by-defaultCVE-2020-11982:An issue was found in Apache Airflow versions 1.10.10 and below. When using CeleryExecutor, if an attack can connect to the broker (Redis, RabbitMQ) directly, it was possible to insert a malicious payload directly to the broker which could lead to a deserialization attack (and thus remote code execution) on the Worker.CVE-2020-11981:An issue was found in Apache Airflow versions 1.10.10 and below. When using CeleryExecutor, if an attacker can connect to the broker (Redis, RabbitMQ) directly, it is possible to inject commands, resulting in the celery worker running arbitrary commands.CVE-2021-35936:If remote logging is not used, the worker (in the case of CeleryExecutor) or the scheduler (in the case of LocalExecutor) runs a Flask logging server and is listening on a specific port and also binds on 0.0.0.0 by default. This logging server had no authentication and allows reading log files of DAG jobs. This issue affects Apache Airflow < 2.1.2.CVE-2021-28359:The \"origin\" parameter passed to some of the endpoints like '/trigger' was vulnerable to XSS exploit. This issue affects Apache Airflow versions <1.10.15 in 1.x series and affects 2.0.0 and 2.0.1 and 2.x series. This is the same as CVE-2020-13944 & CVE-2020-17515 but the implemented fix did not fix the issue completely. Update to Airflow 1.10.15 or 2.0.2. Please also update your Python version to the latest available PATCH releases of the installed MINOR versions, example update to Python 3.6.13 if you are on Python 3.6. (Those contain the fix for CVE-2021-23336 https://nvd.nist.gov/vuln/detail/CVE-2021-23336).CVE-2020-17526:Incorrect Session Validation in Apache Airflow Webserver versions prior to 1.10.14 with default config allows a malicious airflow user on site A where they log in normally, to access unauthorized Airflow Webserver on Site B through the session from Site A. This does not affect users who have changed the default value for [webserver] secret_key config.CVE-2020-17513:In Apache Airflow versions prior to 1.10.13, the Charts and Query View of the old (Flask-admin based) UI were vulnerable for SSRF attack.",
+				"severity": [
+					{
+						"type": "cvss_v31",
+						"source": "fortiguard.fortinet.com",
+						"cvss_v31": {
+							"vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H/E:U/RL:U/RC:X",
+							"base_score": 9.8,
+							"base_severity": "CRITICAL",
+							"temporal_score": 9,
+							"temporal_severity": "CRITICAL",
+							"environmental_score": 9,
+							"environmental_severity": "CRITICAL"
+						}
+					}
+				],
+				"references": [
+					{
+						"source": "fortiguard.fortinet.com",
+						"url": "https://fortiguard.fortinet.com/psirt/FG-IR-22-008"
+					}
+				],
+				"published": "2022-06-07T00:00:00Z",
+				"modified": "2022-06-07T00:00:00Z"
+			}
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-2020-11981",
+				"references": [
+					{
+						"source": "fortiguard.fortinet.com",
+						"url": "https://nvd.nist.gov/vuln/detail/CVE-2020-11981"
+					}
+				]
+			}
+		},
+		{
+			"content": {
+				"id": "CVE-2020-11982",
+				"references": [
+					{
+						"source": "fortiguard.fortinet.com",
+						"url": "https://nvd.nist.gov/vuln/detail/CVE-2020-11982"
+					}
+				]
+			}
+		},
+		{
+			"content": {
+				"id": "CVE-2020-13927",
+				"references": [
+					{
+						"source": "fortiguard.fortinet.com",
+						"url": "https://nvd.nist.gov/vuln/detail/CVE-2020-13927"
+					}
+				]
+			}
+		},
+		{
+			"content": {
+				"id": "CVE-2020-17513",
+				"references": [
+					{
+						"source": "fortiguard.fortinet.com",
+						"url": "https://nvd.nist.gov/vuln/detail/CVE-2020-17513"
+					}
+				]
+			}
+		},
+		{
+			"content": {
+				"id": "CVE-2020-17526",
+				"references": [
+					{
+						"source": "fortiguard.fortinet.com",
+						"url": "https://nvd.nist.gov/vuln/detail/CVE-2020-17526"
+					}
+				]
+			}
+		},
+		{
+			"content": {
+				"id": "CVE-2021-28359",
+				"references": [
+					{
+						"source": "fortiguard.fortinet.com",
+						"url": "https://nvd.nist.gov/vuln/detail/CVE-2021-28359"
+					}
+				]
+			}
+		},
+		{
+			"content": {
+				"id": "CVE-2021-35936",
+				"references": [
+					{
+						"source": "fortiguard.fortinet.com",
+						"url": "https://nvd.nist.gov/vuln/detail/CVE-2021-35936"
+					}
+				]
+			}
+		}
+	],
+	"data_source": {
+		"id": "fortinet-cvrf",
+		"raws": [
+			"fixtures/2022/FG-IR-22-008.json"
+		]
+	}
+}

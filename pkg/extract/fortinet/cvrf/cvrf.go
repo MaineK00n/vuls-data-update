@@ -180,9 +180,12 @@ func extract(fetched cvrfTypes.CVRF, raws []string) (dataTypes.Data, error) {
 	// CVRF carries a single advisory-level CVSS score, CWE set and reference
 	// list shared across all the advisory's CVEs (e.g. FG-IR-20-104's 9.8 is
 	// the advisory aggregate, not any one CVE's score). Place them on the
-	// advisory; the CVEs are emitted as an ID-only enumeration. Mirrors the
-	// jvn/feed/detail layout (advisory holds severity/cwe/references, the
-	// vulnerabilities are CVE-ID rows).
+	// advisory; the CVEs are emitted as an enumeration carrying only their
+	// CVE-specific reference links. Mirrors the jvn/feed/detail layout
+	// (advisory holds severity/cwe/advisory-wide references; a vulnerability
+	// holds the links that name its own CVE).
+	advRefs, cveRefs := splitReferences(fetched, id)
+
 	var vulns []vulnerabilityTypes.Vulnerability
 	for _, cve := range fetched.Vulnerability.CVE {
 		if cve == "" || slices.ContainsFunc(vulns, func(v vulnerabilityTypes.Vulnerability) bool {
@@ -191,7 +194,10 @@ func extract(fetched cvrfTypes.CVRF, raws []string) (dataTypes.Data, error) {
 			continue
 		}
 		vulns = append(vulns, vulnerabilityTypes.Vulnerability{
-			Content:  vulnerabilityContentTypes.Content{ID: vulnerabilityContentTypes.VulnerabilityID(cve)},
+			Content: vulnerabilityContentTypes.Content{
+				ID:         vulnerabilityContentTypes.VulnerabilityID(cve),
+				References: cveRefs[cve],
+			},
 			Segments: vulnSegs,
 		})
 	}
@@ -205,7 +211,7 @@ func extract(fetched cvrfTypes.CVRF, raws []string) (dataTypes.Data, error) {
 				Description: noteText(fetched, "Summary"),
 				Severity:    advisorySeverity(fetched),
 				CWE:         advisoryCWE(fetched),
-				References:  advisoryReferences(fetched, id),
+				References:  advRefs,
 				Published:   utiltime.Parse([]string{"2006-01-02T15:04:05", time.RFC3339}, fetched.DocumentTracking.InitialReleaseDate),
 				Modified:    utiltime.Parse([]string{"2006-01-02T15:04:05", time.RFC3339}, fetched.DocumentTracking.CurrentReleaseDate),
 			},
@@ -358,6 +364,11 @@ var cwePattern = regexp.MustCompile(`CWE-\d+`)
 // free-text entries, which are then skipped.
 var urlPattern = regexp.MustCompile(`https?://[^\s"'<>]+`)
 
+// cvePattern matches a CVE ID embedded in a reference URL (e.g.
+// "https://nvd.nist.gov/vuln/detail/CVE-2016-0723"), so links naming a specific
+// CVE can be attributed to that vulnerability rather than the whole advisory.
+var cvePattern = regexp.MustCompile(`(?i)CVE-\d{4}-\d{4,}`)
+
 // advisoryCWE extracts CWE identifiers from the Summary note text. Unlike CSAF,
 // CVRF carries no structured CWE field, so they are recovered from the prose;
 // the result is advisory-level (the Summary describes the whole advisory).
@@ -380,25 +391,61 @@ func advisoryCWE(fetched cvrfTypes.CVRF) []cweTypes.CWE {
 	return []cweTypes.CWE{{Source: "fortiguard.fortinet.com", CWE: ids}}
 }
 
-// advisoryReferences returns the advisory's references: the canonical PSIRT URL
-// followed by the URLs pulled from the CVRF reference entries (which are
-// advisory-wide, not per-CVE), deduped. The reference values are not clean URLs
-// (multiple URLs packed together, HTML wrappers, non-URL prose), so the real
-// URLs are matched out via urlPattern.
-func advisoryReferences(fetched cvrfTypes.CVRF, id string) []referenceTypes.Reference {
-	canonical := fmt.Sprintf("https://fortiguard.fortinet.com/psirt/%s", id)
-	rs := []referenceTypes.Reference{{Source: "fortiguard.fortinet.com", URL: canonical}}
-	seen := map[string]struct{}{canonical: {}}
-	for _, r := range fetched.Vulnerability.References.Reference {
-		for _, u := range urlPattern.FindAllString(r.URL, -1) {
-			if _, ok := seen[u]; ok {
-				continue
-			}
-			seen[u] = struct{}{}
-			rs = append(rs, referenceTypes.Reference{Source: "fortiguard.fortinet.com", URL: u})
+// splitReferences partitions the advisory's reference URLs into an
+// advisory-level list and per-CVE lists. A URL naming a CVE that is in the
+// advisory's cve[] is attributed to that CVE's vulnerability (mirroring
+// jvn/feed/detail, where per-CVE links live on the vulnerability); everything
+// else — the canonical PSIRT URL and links that name no advisory CVE (or a CVE
+// outside cve[]) — stays on the advisory. The reference values are not clean
+// URLs (multiple URLs packed together, HTML wrappers, non-URL prose), so the
+// real URLs are matched out via urlPattern. Each bucket is deduped.
+func splitReferences(fetched cvrfTypes.CVRF, id string) (adv []referenceTypes.Reference, perCVE map[string][]referenceTypes.Reference) {
+	cves := make(map[string]struct{}, len(fetched.Vulnerability.CVE))
+	for _, c := range fetched.Vulnerability.CVE {
+		if c != "" {
+			cves[c] = struct{}{}
 		}
 	}
-	return rs
+
+	canonical := fmt.Sprintf("https://fortiguard.fortinet.com/psirt/%s", id)
+	adv = []referenceTypes.Reference{{Source: "fortiguard.fortinet.com", URL: canonical}}
+	advSeen := map[string]struct{}{canonical: {}}
+	perCVE = make(map[string][]referenceTypes.Reference)
+	cveSeen := make(map[string]map[string]struct{}) // cve -> seen URLs
+
+	for _, r := range fetched.Vulnerability.References.Reference {
+		for _, u := range urlPattern.FindAllString(r.URL, -1) {
+			ref := referenceTypes.Reference{Source: "fortiguard.fortinet.com", URL: u}
+
+			// Attribute the URL to every advisory CVE it names.
+			var targets []string
+			for _, m := range cvePattern.FindAllString(u, -1) {
+				if _, ok := cves[strings.ToUpper(m)]; ok {
+					targets = append(targets, strings.ToUpper(m))
+				}
+			}
+
+			if len(targets) == 0 {
+				if _, ok := advSeen[u]; ok {
+					continue
+				}
+				advSeen[u] = struct{}{}
+				adv = append(adv, ref)
+				continue
+			}
+			for _, cve := range targets {
+				if cveSeen[cve] == nil {
+					cveSeen[cve] = make(map[string]struct{})
+				}
+				if _, ok := cveSeen[cve][u]; ok {
+					continue
+				}
+				cveSeen[cve][u] = struct{}{}
+				perCVE[cve] = append(perCVE[cve], ref)
+			}
+		}
+	}
+	return adv, perCVE
 }
 
 func noteText(fetched cvrfTypes.CVRF, title string) string {
