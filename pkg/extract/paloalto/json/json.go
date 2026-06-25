@@ -295,27 +295,28 @@ func isGeneralMetric(m paloaltoJSON.Metric) bool {
 // present, otherwise the highest-base-score metric overall. Returns -1 when no
 // metric carries the version.
 func selectMetric(ms []paloaltoJSON.Metric, has func(paloaltoJSON.Metric) bool, score func(paloaltoJSON.Metric) float64) int {
-	var general []int
+	var metrics, general []int
 	for i, m := range ms {
-		if has(m) && isGeneralMetric(m) {
+		if !has(m) {
+			continue
+		}
+		metrics = append(metrics, i)
+		if isGeneralMetric(m) {
 			general = append(general, i)
 		}
 	}
-	// Prefer GENERAL: if any exist, the highest-scoring among them.
+	// Prefer GENERAL: choose among the GENERAL metrics if any exist, otherwise
+	// among all the version's metrics. Either way take the highest base score.
+	pool := metrics
 	if len(general) > 0 {
-		best := general[0]
-		for _, i := range general[1:] {
-			if score(ms[i]) > score(ms[best]) {
-				best = i
-			}
-		}
-		return best
+		pool = general
 	}
-	// No GENERAL — every metric for the version is a scenario variant; take the
-	// highest-scoring one.
-	best := -1
-	for i, m := range ms {
-		if has(m) && (best == -1 || score(m) > score(ms[best])) {
+	if len(pool) == 0 {
+		return -1
+	}
+	best := pool[0]
+	for _, i := range pool[1:] {
+		if score(ms[i]) > score(ms[best]) {
 			best = i
 		}
 	}
