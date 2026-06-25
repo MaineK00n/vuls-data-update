@@ -29,11 +29,11 @@ type CVE struct {
 			DatePublic       *string          `json:"datePublic,omitempty"`
 			RejectedReasons  []Description    `json:"rejectedReasons,omitempty"`
 			ReplacedBy       []string         `json:"replacedBy,omitempty"`
-			XGenerator       any              `json:"x_generator,omitempty"`
-			XLegacyV4Record  any              `json:"x_legacyV4Record,omitempty"`
-			XRedhatCweChain  any              `json:"x_redhatCweChain,omitempty"`
-			XAffectedList    any              `json:"x_affectedList,omitempty"`
-			XConverterErrors any              `json:"x_ConverterErrors,omitempty"`
+			XGenerator       jsontext.Value   `json:"x_generator,omitempty"`
+			XLegacyV4Record  jsontext.Value   `json:"x_legacyV4Record,omitempty"`
+			XRedhatCweChain  jsontext.Value   `json:"x_redhatCweChain,omitempty"`
+			XAffectedList    jsontext.Value   `json:"x_affectedList,omitempty"`
+			XConverterErrors jsontext.Value   `json:"x_ConverterErrors,omitempty"`
 		} `json:"cna"`
 		ADP []struct {
 			ProviderMetadata ProviderMetadata `json:"providerMetadata"`
