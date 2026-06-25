@@ -282,12 +282,12 @@ func severities(fetched paloaltoJSON.CVE) ([]severityTypes.Severity, error) {
 
 // isGeneralMetric reports whether a metric is the default "GENERAL" scenario.
 func isGeneralMetric(m paloaltoJSON.Metric) bool {
-	for _, s := range m.Scenarios {
-		if s.Value == "GENERAL" {
-			return true
-		}
-	}
-	return false
+	return slices.ContainsFunc(m.Scenarios, func(s struct {
+		Lang  string `json:"lang"`
+		Value string `json:"value"`
+	}) bool {
+		return s.Value == "GENERAL"
+	})
 }
 
 // selectMetric picks, among the metrics carrying a given CVSS version (has), the
