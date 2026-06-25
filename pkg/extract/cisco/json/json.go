@@ -110,9 +110,8 @@ func Extract(args string, opts ...Option) error {
 			return errors.Errorf("unexpected firstPublished format. expected: %q, actual: %q", "2006-01-02T15:04:05", fetched.FirstPublished)
 		}
 
-		outPath := filepath.Join(options.dir, "data", fmt.Sprintf("%d", t.Year()), fmt.Sprintf("%s.json", data.ID))
-		if err := util.Write(outPath, data, true); err != nil {
-			return errors.Wrapf(err, "write %s", outPath)
+		if err := util.Write(filepath.Join(options.dir, "data", fmt.Sprintf("%d", t.Year()), fmt.Sprintf("%s.json", data.ID)), data, true); err != nil {
+			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "data", fmt.Sprintf("%d", t.Year()), fmt.Sprintf("%s.json", data.ID)))
 		}
 
 		return nil
@@ -200,7 +199,6 @@ func extract(fetched fetchTypes.Advisory, raws []string) (dataTypes.Data, error)
 	// a wildcard version): one criterion per family, with the base as the
 	// primary CPE and the concrete versions enumerated in CPEMatches.
 	matchesByBase := make(map[string][]ccTypes.CPE, len(fetched.ProductNames))
-	var bases []string
 	seen := make(map[string]struct{}, len(fetched.ProductNames))
 	for _, p := range fetched.ProductNames {
 		if p == "NA" {
@@ -217,19 +215,16 @@ func extract(fetched fetchTypes.Advisory, raws []string) (dataTypes.Data, error)
 			continue
 		}
 		seen[concrete] = struct{}{}
-		if _, ok := matchesByBase[base]; !ok {
-			bases = append(bases, base)
-		}
 		matchesByBase[base] = append(matchesByBase[base], ccTypes.CPE(concrete))
 	}
-	criterions := make([]criterionTypes.Criterion, 0, len(bases))
-	for _, base := range bases {
+	criterions := make([]criterionTypes.Criterion, 0, len(matchesByBase))
+	for base, matches := range matchesByBase {
 		criterions = append(criterions, criterionTypes.Criterion{
 			Type: criterionTypes.CriterionTypeCPE,
 			CPE: &ccTypes.Criterion{
 				Vulnerable: true,
 				CPE:        ccTypes.CPE(base),
-				CPEMatches: matchesByBase[base],
+				CPEMatches: matches,
 			},
 		})
 	}
