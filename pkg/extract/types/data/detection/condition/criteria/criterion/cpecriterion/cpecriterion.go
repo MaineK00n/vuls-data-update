@@ -2,6 +2,7 @@ package cpecriterion
 
 import (
 	"cmp"
+	"fmt"
 	"maps"
 	"regexp"
 	"slices"
@@ -323,7 +324,7 @@ func (c Criterion) Accept(query Query) (MatchQuality, error) {
 			// the snmp2cpe form UPDATE is ANY and nothing is folded.
 			if c.Range.Type == rangeTypes.RangeTypePANOS {
 				if u := unescapeWFN(qWFN.GetString(common.AttributeUpdate)); panosHotfixUpdate.MatchString(u) {
-					qVersion = qVersion + "-" + u
+					qVersion = fmt.Sprintf("%s-%s", qVersion, u)
 				}
 			}
 			isAccepted, err := c.Range.Accept(qVersion)
