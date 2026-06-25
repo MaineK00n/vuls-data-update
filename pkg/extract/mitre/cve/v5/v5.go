@@ -128,6 +128,128 @@ func Extract(args string, opts ...Option) error {
 func extract(fetched v5.CVE, raws []string) (dataTypes.Data, error) {
 	switch fetched.CVEMetadata.State {
 	case "PUBLISHED":
+		severities, err := func() ([]severityTypes.Severity, error) {
+			m := make(map[string][]v5.Metric)
+			m[getSource(fetched.Containers.CNA.ProviderMetadata)] = append(m[getSource(fetched.Containers.CNA.ProviderMetadata)], fetched.Containers.CNA.Metrics...)
+			for _, c := range fetched.Containers.ADP {
+				m[getSource(c.ProviderMetadata)] = append(m[getSource(c.ProviderMetadata)], c.Metrics...)
+			}
+			var ss []severityTypes.Severity
+			for source, ms := range m {
+				for _, metric := range ms {
+					if metric.CVSSv2 != nil {
+						v2, err := v2Types.Parse(metric.CVSSv2.VectorString)
+						if err != nil {
+							return nil, errors.Wrapf(err, "parse cvss v2 vector %s", metric.CVSSv2.VectorString)
+						}
+						ss = append(ss, severityTypes.Severity{
+							Type:   severityTypes.SeverityTypeCVSSv2,
+							Source: source,
+							CVSSv2: v2,
+						})
+					}
+					if metric.CVSSv30 != nil {
+						v30, err := v30Types.Parse(metric.CVSSv30.VectorString)
+						if err != nil {
+							return nil, errors.Wrapf(err, "parse cvss v3.0 vector %s", metric.CVSSv30.VectorString)
+						}
+						ss = append(ss, severityTypes.Severity{
+							Type:    severityTypes.SeverityTypeCVSSv30,
+							Source:  source,
+							CVSSv30: v30,
+						})
+					}
+					if metric.CVSSv31 != nil {
+						v31, err := v31Types.Parse(metric.CVSSv31.VectorString)
+						if err != nil {
+							return nil, errors.Wrapf(err, "parse cvss v3.1 vector %s", metric.CVSSv31.VectorString)
+						}
+						ss = append(ss, severityTypes.Severity{
+							Type:    severityTypes.SeverityTypeCVSSv31,
+							Source:  source,
+							CVSSv31: v31,
+						})
+					}
+					if metric.CVSSv40 != nil {
+						v40, err := v40Types.Parse(metric.CVSSv40.VectorString)
+						if err != nil {
+							return nil, errors.Wrapf(err, "parse cvss v4.0 vector %s", metric.CVSSv40.VectorString)
+						}
+						ss = append(ss, severityTypes.Severity{
+							Type:    severityTypes.SeverityTypeCVSSv40,
+							Source:  source,
+							CVSSv40: v40,
+						})
+					}
+				}
+			}
+			return ss, nil
+		}()
+		if err != nil {
+			return dataTypes.Data{}, errors.Wrap(err, "parse severity")
+		}
+
+		ssvcs, err := func() ([]ssvcTypes.SSVC, error) {
+			m := make(map[string][]v5.Metric)
+			m[getSource(fetched.Containers.CNA.ProviderMetadata)] = append(m[getSource(fetched.Containers.CNA.ProviderMetadata)], fetched.Containers.CNA.Metrics...)
+			for _, c := range fetched.Containers.ADP {
+				m[getSource(c.ProviderMetadata)] = append(m[getSource(c.ProviderMetadata)], c.Metrics...)
+			}
+			var ss []ssvcTypes.SSVC
+			for source, ms := range m {
+				for _, metric := range ms {
+					if metric.Other == nil || metric.Other.Type != "ssvc" {
+						continue
+					}
+					var content v5.SSVC
+					if err := json.Unmarshal(metric.Other.Content, &content); err != nil {
+						return nil, errors.Wrap(err, "unmarshal ssvc content")
+					}
+					var options []ssvcTypes.Option
+					for _, o := range content.Options {
+						mo, ok := o.(map[string]any)
+						if !ok {
+							return nil, errors.Errorf("unexpected ssvc option type %T", o)
+						}
+						for k, v := range mo {
+							// Per the SSVC computed schema, an option value is a string or an array of strings.
+							switch vs := v.(type) {
+							case string:
+								options = append(options, ssvcTypes.Option{
+									Key:   k,
+									Value: vs,
+								})
+							case []any:
+								for _, e := range vs {
+									s, ok := e.(string)
+									if !ok {
+										return nil, errors.Errorf("unexpected ssvc option value type %T for key %q", e, k)
+									}
+									options = append(options, ssvcTypes.Option{
+										Key:   k,
+										Value: s,
+									})
+								}
+							default:
+								return nil, errors.Errorf("unexpected ssvc option value type %T for key %q", v, k)
+							}
+						}
+					}
+					ss = append(ss, ssvcTypes.SSVC{
+						Source:    source,
+						Role:      content.Role,
+						Version:   content.Version,
+						Options:   options,
+						Timestamp: utiltime.Parse([]string{"2006-01-02T15:04:05.999999999Z07:00"}, content.Timestamp),
+					})
+				}
+			}
+			return ss, nil
+		}()
+		if err != nil {
+			return dataTypes.Data{}, errors.Wrap(err, "parse ssvc")
+		}
+
 		return dataTypes.Data{
 			ID: dataTypes.RootID(fetched.CVEMetadata.CVEID),
 			Vulnerabilities: []vulnerabilityTypes.Vulnerability{{
@@ -147,68 +269,7 @@ func extract(fetched v5.CVE, raws []string) (dataTypes.Data, error) {
 						}
 						return ""
 					}(),
-					Severity: func() []severityTypes.Severity {
-						m := make(map[string][]v5.Metric)
-						m[getSource(fetched.Containers.CNA.ProviderMetadata)] = append(m[getSource(fetched.Containers.CNA.ProviderMetadata)], fetched.Containers.CNA.Metrics...)
-						for _, c := range fetched.Containers.ADP {
-							m[getSource(c.ProviderMetadata)] = append(m[getSource(c.ProviderMetadata)], c.Metrics...)
-						}
-
-						var ss []severityTypes.Severity
-						for source, ms := range m {
-							for _, metric := range ms {
-								if metric.CVSSv2 != nil {
-									v2, err := v2Types.Parse(metric.CVSSv2.VectorString)
-									if err != nil {
-										slog.Warn("unexpected CVSS v2 vector", slog.String("vector", metric.CVSSv2.VectorString))
-										continue
-									}
-									ss = append(ss, severityTypes.Severity{
-										Type:   severityTypes.SeverityTypeCVSSv2,
-										Source: source,
-										CVSSv2: v2,
-									})
-								}
-								if metric.CVSSv30 != nil {
-									v30, err := v30Types.Parse(metric.CVSSv30.VectorString)
-									if err != nil {
-										slog.Warn("unexpected CVSS v3.0 vector", slog.String("vector", metric.CVSSv30.VectorString))
-										continue
-									}
-									ss = append(ss, severityTypes.Severity{
-										Type:    severityTypes.SeverityTypeCVSSv30,
-										Source:  source,
-										CVSSv30: v30,
-									})
-								}
-								if metric.CVSSv31 != nil {
-									v31, err := v31Types.Parse(metric.CVSSv31.VectorString)
-									if err != nil {
-										slog.Warn("unexpected CVSS v3.1 vector", slog.String("vector", metric.CVSSv31.VectorString))
-										continue
-									}
-									ss = append(ss, severityTypes.Severity{
-										Type:    severityTypes.SeverityTypeCVSSv31,
-										Source:  source,
-										CVSSv31: v31,
-									})
-								}
-								if metric.CVSSv40 != nil {
-									v40, err := v40Types.Parse(metric.CVSSv40.VectorString)
-									if err != nil {
-										slog.Warn("unexpected CVSS v4.0 vector", slog.String("vector", metric.CVSSv40.VectorString))
-										continue
-									}
-									ss = append(ss, severityTypes.Severity{
-										Type:    severityTypes.SeverityTypeCVSSv40,
-										Source:  source,
-										CVSSv40: v40,
-									})
-								}
-							}
-						}
-						return ss
-					}(),
+					Severity: severities,
 					CWE: func() []cweTypes.CWE {
 						m := make(map[string][]v5.ProblemType)
 						m[getSource(fetched.Containers.CNA.ProviderMetadata)] = append(m[getSource(fetched.Containers.CNA.ProviderMetadata)], fetched.Containers.CNA.ProblemTypes...)
@@ -275,67 +336,7 @@ func extract(fetched v5.CVE, raws []string) (dataTypes.Data, error) {
 						}
 						return refs
 					}(),
-					SSVC: func() []ssvcTypes.SSVC {
-						m := make(map[string][]v5.Metric)
-						m[getSource(fetched.Containers.CNA.ProviderMetadata)] = append(m[getSource(fetched.Containers.CNA.ProviderMetadata)], fetched.Containers.CNA.Metrics...)
-						for _, c := range fetched.Containers.ADP {
-							m[getSource(c.ProviderMetadata)] = append(m[getSource(c.ProviderMetadata)], c.Metrics...)
-						}
-
-						var ss []ssvcTypes.SSVC
-						for source, ms := range m {
-							for _, metric := range ms {
-								if metric.Other == nil || metric.Other.Type != "ssvc" {
-									continue
-								}
-
-								var content v5.SSVC
-								if err := json.Unmarshal(metric.Other.Content, &content); err != nil {
-									slog.Warn("unmarshal ssvc content", slog.String("cve", fetched.CVEMetadata.CVEID))
-									continue
-								}
-
-								var options []ssvcTypes.Option
-								for _, o := range content.Options {
-									m, ok := o.(map[string]any)
-									if !ok {
-										continue
-									}
-									for k, v := range m {
-										// Per the SSVC computed schema, an option value is
-										// a string or an array of strings.
-										switch vs := v.(type) {
-										case string:
-											options = append(options, ssvcTypes.Option{
-												Key:   k,
-												Value: vs,
-											})
-										case []any:
-											for _, e := range vs {
-												if s, ok := e.(string); ok {
-													options = append(options, ssvcTypes.Option{
-														Key:   k,
-														Value: s,
-													})
-												}
-											}
-										default:
-											slog.Warn("unexpected ssvc option value type", slog.String("cve", fetched.CVEMetadata.CVEID), slog.String("key", k))
-										}
-									}
-								}
-
-								ss = append(ss, ssvcTypes.SSVC{
-									Source:    source,
-									Role:      content.Role,
-									Version:   content.Version,
-									Options:   options,
-									Timestamp: utiltime.Parse([]string{"2006-01-02T15:04:05.999999999Z07:00"}, content.Timestamp),
-								})
-							}
-						}
-						return ss
-					}(),
+					SSVC: ssvcs,
 					Published: func() *time.Time {
 						if fetched.CVEMetadata.DatePublished != nil {
 							return utiltime.Parse([]string{"2006-01-02T15:04:05.000Z"}, *fetched.CVEMetadata.DatePublished)
