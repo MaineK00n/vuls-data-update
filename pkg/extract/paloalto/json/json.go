@@ -294,17 +294,16 @@ func isGeneralMetric(m paloaltoJSON.Metric) bool {
 // one to emit: the GENERAL scenario when present, otherwise the highest base
 // score. Returns -1 when no metric carries the version.
 func selectMetric(ms []paloaltoJSON.Metric, has func(paloaltoJSON.Metric) bool, score func(paloaltoJSON.Metric) float64) int {
+	// the GENERAL one, if any
+	if i := slices.IndexFunc(ms, func(m paloaltoJSON.Metric) bool {
+		return has(m) && isGeneralMetric(m)
+	}); i >= 0 {
+		return i
+	}
+	// otherwise the highest-scoring one
 	best := -1
 	for i, m := range ms {
-		if !has(m) {
-			continue
-		}
-		switch {
-		case best == -1:
-			best = i
-		case isGeneralMetric(m) && !isGeneralMetric(ms[best]):
-			best = i
-		case isGeneralMetric(m) == isGeneralMetric(ms[best]) && score(m) > score(ms[best]):
+		if has(m) && (best == -1 || score(m) > score(ms[best])) {
 			best = i
 		}
 	}
