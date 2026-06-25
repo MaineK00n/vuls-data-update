@@ -1,0 +1,168 @@
+{
+	"id": "cisco-sa-20150325-mdns",
+	"advisories": [
+		{
+			"content": {
+				"id": "cisco-sa-20150325-mdns",
+				"title": "Cisco IOS Software and IOS XE Software mDNS Gateway Denial of Service Vulnerability",
+				"description": "A vulnerability in the multicast DNS (mDNS) gateway function of Cisco IOS Software and Cisco IOS XE Software could allow an unauthenticated, remote attacker to reload the vulnerable device.<br />\r\n<br />\r\nThe vulnerability is due to improper validation of mDNS packets. An attacker could exploit this vulnerability by sending malformed IP version 4 (IPv4) or IP version 6 (IPv6) packets on UDP port 5353. An exploit could allow the attacker to cause a denial of service (DoS) condition.<br />\r\n<br />\r\nCisco has released software updates that address this vulnerability. This advisory is available at the following link:<br />\r\n<a href=\"https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-20150325-mdns\">https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-20150325-mdns</a>wo<br />\r\n<br />\r\n<span id=\"ctl00_MainBodyContainer_DgFields_ctl02_lblField\"><strong>Note:</strong> The March 25, 2015, Cisco IOS &amp; XE Software Security Advisory bundled publication includes seven Cisco Security Advisories. The advisories address vulnerabilities in Cisco IOS Software and Cisco IOS XE Software. Individual publication links are in <em>Cisco Event Response: Semiannual Cisco IOS &amp; XE Software Security Advisory Bundled Publication</em> at the following link:\r\n<p><a href=\"http://www.cisco.com/web/about/security/intelligence/Cisco_ERP_mar15.html\">http://www.cisco.com/web/about/security/intelligence/Cisco_ERP_mar15.html</a></p>\r\n</span>",
+				"severity": [
+					{
+						"type": "vendor",
+						"source": "cisco.com",
+						"vendor": "High"
+					}
+				],
+				"cwe": [
+					{
+						"source": "cisco.com",
+						"cwe": [
+							"CWE-20"
+						]
+					}
+				],
+				"references": [
+					{
+						"source": "cisco.com",
+						"url": "https://bst.cloudapps.cisco.com/bugsearch/bug/CSCup70579"
+					},
+					{
+						"source": "cisco.com",
+						"url": "https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-20150325-mdns"
+					},
+					{
+						"source": "cisco.com",
+						"url": "https://sec.cloudapps.cisco.com/security/center/contentjson/CiscoSecurityAdvisory/cisco-sa-20150325-mdns/csaf/cisco-sa-20150325-mdns.json"
+					},
+					{
+						"source": "cisco.com",
+						"url": "https://sec.cloudapps.cisco.com/security/center/contentxml/CiscoSecurityAdvisory/cisco-sa-20150325-mdns/cvrf/cisco-sa-20150325-mdns_cvrf.xml"
+					}
+				],
+				"published": "2015-03-25T23:00:00Z",
+				"modified": "2016-01-15T01:22:00Z"
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe"
+				}
+			]
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-2015-0650"
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe"
+				}
+			]
+		}
+	],
+	"detections": [
+		{
+			"ecosystem": "cpe",
+			"conditions": [
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"cpe": "cpe:2.3:o:cisco:ios:*:*:*:*:*:*:*:*",
+									"cpe_matches": [
+										"cpe:2.3:o:cisco:ios:12.4\\(25e\\)jap1m:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios:15.1\\(2\\)sy1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios:15.1\\(2\\)sy2:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios:15.1\\(2\\)sy3:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios:15.1\\(2\\)sy:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios:15.2\\(1\\)e1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios:15.2\\(1\\)e2:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios:15.2\\(1\\)e3:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios:15.2\\(1\\)e:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios:15.2\\(2\\)e:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios:15.2\\(2\\)jb1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios:15.3\\(2\\)s2:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios:15.3\\(3\\)ja1n:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios:15.3\\(3\\)jn:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios:15.3\\(3\\)jnb:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios:15.3\\(3\\)s1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios:15.3\\(3\\)s1a:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios:15.3\\(3\\)s2:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios:15.3\\(3\\)s2a:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios:15.3\\(3\\)s3:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios:15.3\\(3\\)s:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios:15.4\\(1\\)s1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios:15.4\\(1\\)s2:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios:15.4\\(1\\)s:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios:15.4\\(1\\)t1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios:15.4\\(1\\)t2:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios:15.4\\(1\\)t:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios:15.4\\(2\\)s1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios:15.4\\(2\\)sn1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios:15.4\\(2\\)sn:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios:15.4\\(2\\)t1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios:15.4\\(2\\)t:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios:15.4\\(3\\)m1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios:15.4\\(3\\)m2:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios:15.4\\(3\\)m:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios:15.4\\(3\\)s:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios:15.4\\(3\\)sn1:*:*:*:*:*:*:*"
+									]
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"cpe": "cpe:2.3:o:cisco:ios_xe:*:*:*:*:*:*:*:*",
+									"cpe_matches": [
+										"cpe:2.3:o:cisco:ios_xe:3.10.0s:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xe:3.10.1s:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xe:3.10.1xbs:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xe:3.10.1xcs:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xe:3.10.2as:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xe:3.10.2s:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xe:3.10.2ts:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xe:3.10.3s:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xe:3.11.0s:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xe:3.11.1s:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xe:3.11.2s:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xe:3.12.0as:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xe:3.12.0s:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xe:3.12.1s:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xe:3.13.0as:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xe:3.13.0s:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xe:3.3.0se:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xe:3.3.0xo:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xe:3.3.1se:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xe:3.3.1xo:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xe:3.3.2se:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xe:3.3.2xo:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xe:3.3.3se:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xe:3.5.0e:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xe:3.5.1e:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xe:3.5.2e:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xe:3.5.3e:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xe:3.6.0ae:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xe:3.6.0e:*:*:*:*:*:*:*"
+									]
+								}
+							}
+						]
+					}
+				}
+			]
+		}
+	],
+	"data_source": {
+		"id": "cisco-json",
+		"raws": [
+			"fixtures/2015/cisco-sa-20150325-mdns.json"
+		]
+	}
+}

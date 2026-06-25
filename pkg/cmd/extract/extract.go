@@ -22,6 +22,7 @@ import (
 	cargoOSV "github.com/MaineK00n/vuls-data-update/pkg/extract/cargo/osv"
 	chainguardOSV "github.com/MaineK00n/vuls-data-update/pkg/extract/chainguard/osv"
 	cisaKEV "github.com/MaineK00n/vuls-data-update/pkg/extract/cisa/kev"
+	ciscoJSON "github.com/MaineK00n/vuls-data-update/pkg/extract/cisco/json"
 	composerDB "github.com/MaineK00n/vuls-data-update/pkg/extract/composer/db"
 	composerGHSA "github.com/MaineK00n/vuls-data-update/pkg/extract/composer/ghsa"
 	composerGLSA "github.com/MaineK00n/vuls-data-update/pkg/extract/composer/glsa"
@@ -155,6 +156,7 @@ func NewCmdExtract() *cobra.Command {
 		newCmdCargoGHSA(), newCmdCargoOSV(), newCmdCargoDB(),
 		newCmdChainguardOSV(),
 		newCmdCISAKEV(),
+		newCmdCiscoJSON(),
 		newCmdComposerGHSA(), newCmdComposerGLSA(), newCmdComposerOSV(), newCmdComposerDB(),
 		newCmdConanGLSA(),
 		newCmdDebianOVAL(), newCmdDebianSecurityTrackerAPI(), newCmdDebianSecurityTrackerSalsa(), newCmdDebianOSV(),
@@ -543,6 +545,31 @@ func newCmdCISAKEV() *cobra.Command {
 		RunE: func(_ *cobra.Command, args []string) error {
 			if err := cisaKEV.Extract(args[0], cisaKEV.WithDir(options.dir)); err != nil {
 				return errors.Wrap(err, "failed to extract cisa kev")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
+
+	return cmd
+}
+
+func newCmdCiscoJSON() *cobra.Command {
+	options := &base{
+		dir: filepath.Join(util.CacheDir(), "extract", "cisco", "json"),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "cisco-json <Raw Cisco JSON Repository PATH>",
+		Short: "Extract Cisco JSON data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update extract cisco-json vuls-data-raw-cisco-json
+		`),
+		Args: cobra.ExactArgs(1),
+		RunE: func(_ *cobra.Command, args []string) error {
+			if err := ciscoJSON.Extract(args[0], ciscoJSON.WithDir(options.dir)); err != nil {
+				return errors.Wrap(err, "failed to extract cisco json")
 			}
 			return nil
 		},

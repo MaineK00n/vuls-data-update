@@ -1,0 +1,52 @@
+{
+	"advisoryId": "cisco-sa-snort3-mime-vulns-tTL8PgVH",
+	"advisoryTitle": "Multiple Cisco Products Snort 3 MIME Denial of Service Vulnerabilities",
+	"bugIDs": [
+		"CSCwo71401",
+		"CSCwq03467",
+		"CSCwq15864",
+		"CSCwq42141",
+		"CSCwq42153",
+		"CSCwq42161"
+	],
+	"csafUrl": "https://sec.cloudapps.cisco.com/security/center/contentjson/CiscoSecurityAdvisory/cisco-sa-snort3-mime-vulns-tTL8PgVH/csaf/cisco-sa-snort3-mime-vulns-tTL8PgVH.json",
+	"cves": [
+		"CVE-2025-20359",
+		"CVE-2025-20360"
+	],
+	"cvrfUrl": "https://sec.cloudapps.cisco.com/security/center/contentxml/CiscoSecurityAdvisory/cisco-sa-snort3-mime-vulns-tTL8PgVH/cvrf/cisco-sa-snort3-mime-vulns-tTL8PgVH_cvrf.xml",
+	"cvssBaseScore": "6.5",
+	"cwe": [
+		"CWE-127",
+		"CWE-805"
+	],
+	"firstPublished": "2025-10-15T16:00:00",
+	"ipsSignatures": [
+		"NA"
+	],
+	"lastUpdated": "2026-02-12T18:38:13",
+	"productNames": [
+		"Cisco Cyber Vision ",
+		"Cisco UTD SNORT IPS Engine Software ",
+		"Cisco Secure Firewall Threat Defense (FTD) Software 7.3.0",
+		"Cisco Secure Firewall Threat Defense (FTD) Software 7.3.1",
+		"Cisco Secure Firewall Threat Defense (FTD) Software 7.3.1.1",
+		"Cisco Secure Firewall Threat Defense (FTD) Software 7.3.1.2",
+		"Cisco Secure Firewall Threat Defense (FTD) Software 7.4.0",
+		"Cisco Secure Firewall Threat Defense (FTD) Software 7.4.1",
+		"Cisco Secure Firewall Threat Defense (FTD) Software 7.4.1.1",
+		"Cisco Secure Firewall Threat Defense (FTD) Software 7.4.2",
+		"Cisco Secure Firewall Threat Defense (FTD) Software 7.4.2.1",
+		"Cisco Secure Firewall Threat Defense (FTD) Software 7.4.2.2",
+		"Cisco Secure Firewall Threat Defense (FTD) Software 7.4.2.3",
+		"Cisco Secure Firewall Threat Defense (FTD) Software 7.4.2.4",
+		"Cisco Secure Firewall Threat Defense (FTD) Software 7.6.0",
+		"Cisco Secure Firewall Threat Defense (FTD) Software 7.6.1",
+		"Cisco Secure Firewall Threat Defense (FTD) Software 7.7.0"
+	],
+	"publicationUrl": "https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-snort3-mime-vulns-tTL8PgVH",
+	"sir": "Medium",
+	"status": "Final",
+	"summary": "<p>Multiple Cisco products are affected by vulnerabilities in the HTTP Multipurpose Internet Mail Extensions (MIME) Decoder that could allow an unauthenticated, remote attacker to cause the Snort 3 Detection Engine to leak possible sensitive information or to restart.</p>\r\n<p>For more information about these vulnerabilities, see the <a href=\"#details\">Details</a> section of this advisory.&nbsp;</p>\r\n<p>Cisco has released software updates that address these vulnerabilities. There are no workarounds that address these vulnerabilities.</p>\r\n<p>This advisory is available at the following link:<br><a href=\"https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-snort3-mime-vulns-tTL8PgVH\">https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-snort3-mime-vulns-tTL8PgVH</a></p>",
+	"version": "1.1"
+}

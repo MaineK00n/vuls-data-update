@@ -1,0 +1,139 @@
+{
+	"id": "cisco-sa-snort3-mime-vulns-tTL8PgVH",
+	"advisories": [
+		{
+			"content": {
+				"id": "cisco-sa-snort3-mime-vulns-tTL8PgVH",
+				"title": "Multiple Cisco Products Snort 3 MIME Denial of Service Vulnerabilities",
+				"description": "<p>Multiple Cisco products are affected by vulnerabilities in the HTTP Multipurpose Internet Mail Extensions (MIME) Decoder that could allow an unauthenticated, remote attacker to cause the Snort 3 Detection Engine to leak possible sensitive information or to restart.</p>\r\n<p>For more information about these vulnerabilities, see the <a href=\"#details\">Details</a> section of this advisory.&nbsp;</p>\r\n<p>Cisco has released software updates that address these vulnerabilities. There are no workarounds that address these vulnerabilities.</p>\r\n<p>This advisory is available at the following link:<br><a href=\"https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-snort3-mime-vulns-tTL8PgVH\">https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-snort3-mime-vulns-tTL8PgVH</a></p>",
+				"severity": [
+					{
+						"type": "vendor",
+						"source": "cisco.com",
+						"vendor": "Medium"
+					}
+				],
+				"cwe": [
+					{
+						"source": "cisco.com",
+						"cwe": [
+							"CWE-127",
+							"CWE-805"
+						]
+					}
+				],
+				"references": [
+					{
+						"source": "cisco.com",
+						"url": "https://bst.cloudapps.cisco.com/bugsearch/bug/CSCwo71401"
+					},
+					{
+						"source": "cisco.com",
+						"url": "https://bst.cloudapps.cisco.com/bugsearch/bug/CSCwq03467"
+					},
+					{
+						"source": "cisco.com",
+						"url": "https://bst.cloudapps.cisco.com/bugsearch/bug/CSCwq15864"
+					},
+					{
+						"source": "cisco.com",
+						"url": "https://bst.cloudapps.cisco.com/bugsearch/bug/CSCwq42141"
+					},
+					{
+						"source": "cisco.com",
+						"url": "https://bst.cloudapps.cisco.com/bugsearch/bug/CSCwq42153"
+					},
+					{
+						"source": "cisco.com",
+						"url": "https://bst.cloudapps.cisco.com/bugsearch/bug/CSCwq42161"
+					},
+					{
+						"source": "cisco.com",
+						"url": "https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-snort3-mime-vulns-tTL8PgVH"
+					},
+					{
+						"source": "cisco.com",
+						"url": "https://sec.cloudapps.cisco.com/security/center/contentjson/CiscoSecurityAdvisory/cisco-sa-snort3-mime-vulns-tTL8PgVH/csaf/cisco-sa-snort3-mime-vulns-tTL8PgVH.json"
+					},
+					{
+						"source": "cisco.com",
+						"url": "https://sec.cloudapps.cisco.com/security/center/contentxml/CiscoSecurityAdvisory/cisco-sa-snort3-mime-vulns-tTL8PgVH/cvrf/cisco-sa-snort3-mime-vulns-tTL8PgVH_cvrf.xml"
+					}
+				],
+				"published": "2025-10-15T16:00:00Z",
+				"modified": "2026-02-12T18:38:13Z"
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe"
+				}
+			]
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-2025-20359"
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2025-20360"
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe"
+				}
+			]
+		}
+	],
+	"detections": [
+		{
+			"ecosystem": "cpe",
+			"conditions": [
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"cpe": "cpe:2.3:a:cisco:firepower_threat_defense:*:*:*:*:*:*:*:*",
+									"cpe_matches": [
+										"cpe:2.3:a:cisco:firepower_threat_defense:7.3.0.0:*:*:*:*:*:*:*",
+										"cpe:2.3:a:cisco:firepower_threat_defense:7.3.1.0:*:*:*:*:*:*:*",
+										"cpe:2.3:a:cisco:firepower_threat_defense:7.3.1.1:*:*:*:*:*:*:*",
+										"cpe:2.3:a:cisco:firepower_threat_defense:7.3.1.2:*:*:*:*:*:*:*",
+										"cpe:2.3:a:cisco:firepower_threat_defense:7.4.0.0:*:*:*:*:*:*:*",
+										"cpe:2.3:a:cisco:firepower_threat_defense:7.4.1.0:*:*:*:*:*:*:*",
+										"cpe:2.3:a:cisco:firepower_threat_defense:7.4.1.1:*:*:*:*:*:*:*",
+										"cpe:2.3:a:cisco:firepower_threat_defense:7.4.2.0:*:*:*:*:*:*:*",
+										"cpe:2.3:a:cisco:firepower_threat_defense:7.4.2.1:*:*:*:*:*:*:*",
+										"cpe:2.3:a:cisco:firepower_threat_defense:7.4.2.2:*:*:*:*:*:*:*",
+										"cpe:2.3:a:cisco:firepower_threat_defense:7.4.2.3:*:*:*:*:*:*:*",
+										"cpe:2.3:a:cisco:firepower_threat_defense:7.4.2.4:*:*:*:*:*:*:*",
+										"cpe:2.3:a:cisco:firepower_threat_defense:7.6.0.0:*:*:*:*:*:*:*",
+										"cpe:2.3:a:cisco:firepower_threat_defense:7.6.1.0:*:*:*:*:*:*:*",
+										"cpe:2.3:a:cisco:firepower_threat_defense:7.7.0.0:*:*:*:*:*:*:*"
+									]
+								}
+							}
+						]
+					}
+				}
+			]
+		}
+	],
+	"data_source": {
+		"id": "cisco-json",
+		"raws": [
+			"fixtures/2025/cisco-sa-snort3-mime-vulns-tTL8PgVH.json"
+		]
+	}
+}

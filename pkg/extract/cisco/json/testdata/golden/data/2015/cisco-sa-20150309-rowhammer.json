@@ -1,0 +1,49 @@
+{
+	"id": "cisco-sa-20150309-rowhammer",
+	"advisories": [
+		{
+			"content": {
+				"id": "cisco-sa-20150309-rowhammer",
+				"title": "Row Hammer Privilege Escalation Vulnerability",
+				"description": "On March 9, 2015, new research was published that takes advantage of a flaw in double data rate type 3 (DDR3) synchronous dynamic random-access memory (SDRAM) to perform privilege escalation attacks on systems that contain the affected hardware. The flaw is known as Row Hammer. To attempt an attack, the attacker must execute a malicious binary on an affected system.<br />\r\n<br />\r\nIn addition, the research focused on consumer hardware that did not have a number of mitigations and memory protections that have been integrated into chipsets and memory modules used in Cisco server-class products. Of note in the paper is that the researchers were unable, in their testing, to exploit devices that use Error-Correcting Code (ECC) memory.<br />\r\n<br />\r\nCisco offers a limited number of products that allow an unprivileged user to load and execute binaries.<br />\r\n<br />\r\nThe research report is at the following link:<br />\r\n<a href=\"http://googleprojectzero.blogspot.com/2015/03/exploiting-dram-rowhammer-bug-to-gain.html\">http://googleprojectzero.blogspot.com/2015/03/exploiting-dram-rowhammer-bug-to-gain.html</a><br />\r\n<br />\r\nThis advisory is available at the following link:<br />\r\n<a href=\"https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-20150309-rowhammer\">https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-20150309-rowhammer</a>",
+				"severity": [
+					{
+						"type": "vendor",
+						"source": "cisco.com",
+						"vendor": "Medium"
+					}
+				],
+				"cwe": [
+					{
+						"source": "cisco.com",
+						"cwe": [
+							"CWE-264"
+						]
+					}
+				],
+				"references": [
+					{
+						"source": "cisco.com",
+						"url": "https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-20150309-rowhammer"
+					},
+					{
+						"source": "cisco.com",
+						"url": "https://sec.cloudapps.cisco.com/security/center/contentjson/CiscoSecurityAdvisory/cisco-sa-20150309-rowhammer/csaf/cisco-sa-20150309-rowhammer.json"
+					},
+					{
+						"source": "cisco.com",
+						"url": "https://sec.cloudapps.cisco.com/security/center/contentxml/CiscoSecurityAdvisory/cisco-sa-20150309-rowhammer/cvrf/cisco-sa-20150309-rowhammer_cvrf.xml"
+					}
+				],
+				"published": "2015-03-09T21:50:00Z",
+				"modified": "2016-09-08T19:07:00Z"
+			}
+		}
+	],
+	"data_source": {
+		"id": "cisco-json",
+		"raws": [
+			"fixtures/2015/cisco-sa-20150309-rowhammer.json"
+		]
+	}
+}

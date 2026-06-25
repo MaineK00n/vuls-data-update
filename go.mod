@@ -3,6 +3,7 @@ module github.com/MaineK00n/vuls-data-update
 go 1.26
 
 require (
+	github.com/MaineK00n/go-cisco-version v0.0.0-20250611084427-015c6492ef23
 	github.com/MaineK00n/go-microsoft-version v0.0.0-20260325021654-1d9206bdeffc
 	github.com/MakeNowJust/heredoc v1.0.0
 	github.com/PuerkitoBio/goquery v1.12.0
