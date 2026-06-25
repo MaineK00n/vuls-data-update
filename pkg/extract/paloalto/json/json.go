@@ -44,13 +44,6 @@ import (
 	paloaltoJSON "github.com/MaineK00n/vuls-data-update/pkg/fetch/paloalto/json"
 )
 
-// source is the fixed data-source label for Palo Alto records. The per-record
-// containers.cna.providerMetadata is unreliable in this dataset (placeholder
-// UUIDs, the literal "Not found", or the upstream CVE's original CNA), so a
-// stable label is used for every content field — matching the repo convention
-// (cisco-json "cisco.com", nvd "nvd.nist.gov") and the paloalto-list extractor.
-const source = "security.paloaltonetworks.com"
-
 type options struct {
 	dir string
 }
@@ -186,8 +179,8 @@ func extract(fetched paloaltoJSON.CVE, raws []string) (dataTypes.Data, error) {
 				Description: description(fetched.Containers.CNA.Descriptions),
 				Severity:    ss,
 				CWE:         cwes(fetched),
-				Mitigations: remediations(source, fetched.Containers.CNA.Solutions),
-				Workarounds: remediations(source, fetched.Containers.CNA.Workarounds),
+				Mitigations: remediations(fetched.Containers.CNA.Solutions),
+				Workarounds: remediations(fetched.Containers.CNA.Workarounds),
 				References:  references(fetched),
 				Published:   published(fetched),
 				Modified:    modified(fetched),
@@ -204,8 +197,8 @@ func extract(fetched paloaltoJSON.CVE, raws []string) (dataTypes.Data, error) {
 			Description: description(fetched.Containers.CNA.Descriptions),
 			Severity:    ss,
 			CWE:         cwes(fetched),
-			Mitigations: remediations(source, fetched.Containers.CNA.Solutions),
-			Workarounds: remediations(source, fetched.Containers.CNA.Workarounds),
+			Mitigations: remediations(fetched.Containers.CNA.Solutions),
+			Workarounds: remediations(fetched.Containers.CNA.Workarounds),
 			References:  references(fetched),
 			Published:   published(fetched),
 			Modified:    modified(fetched),
@@ -261,28 +254,28 @@ func severities(fetched paloaltoJSON.CVE) ([]severityTypes.Severity, error) {
 		if err != nil {
 			return nil, errors.Wrapf(err, "parse cvss v2 vector %q", ms[i].CVSSv2.VectorString)
 		}
-		ss = append(ss, severityTypes.Severity{Type: severityTypes.SeverityTypeCVSSv2, Source: source, CVSSv2: v2})
+		ss = append(ss, severityTypes.Severity{Type: severityTypes.SeverityTypeCVSSv2, Source: "security.paloaltonetworks.com", CVSSv2: v2})
 	}
 	if i := selectMetric(ms, func(m paloaltoJSON.Metric) bool { return m.CVSSv30 != nil }, func(m paloaltoJSON.Metric) float64 { return m.CVSSv30.BaseScore }); i >= 0 {
 		v30, err := v30Types.Parse(ms[i].CVSSv30.VectorString)
 		if err != nil {
 			return nil, errors.Wrapf(err, "parse cvss v3.0 vector %q", ms[i].CVSSv30.VectorString)
 		}
-		ss = append(ss, severityTypes.Severity{Type: severityTypes.SeverityTypeCVSSv30, Source: source, CVSSv30: v30})
+		ss = append(ss, severityTypes.Severity{Type: severityTypes.SeverityTypeCVSSv30, Source: "security.paloaltonetworks.com", CVSSv30: v30})
 	}
 	if i := selectMetric(ms, func(m paloaltoJSON.Metric) bool { return m.CVSSv31 != nil }, func(m paloaltoJSON.Metric) float64 { return m.CVSSv31.BaseScore }); i >= 0 {
 		v31, err := v31Types.Parse(ms[i].CVSSv31.VectorString)
 		if err != nil {
 			return nil, errors.Wrapf(err, "parse cvss v3.1 vector %q", ms[i].CVSSv31.VectorString)
 		}
-		ss = append(ss, severityTypes.Severity{Type: severityTypes.SeverityTypeCVSSv31, Source: source, CVSSv31: v31})
+		ss = append(ss, severityTypes.Severity{Type: severityTypes.SeverityTypeCVSSv31, Source: "security.paloaltonetworks.com", CVSSv31: v31})
 	}
 	if i := selectMetric(ms, func(m paloaltoJSON.Metric) bool { return m.CVSSv40 != nil }, func(m paloaltoJSON.Metric) float64 { return m.CVSSv40.BaseScore }); i >= 0 {
 		v40, err := v40Types.Parse(ms[i].CVSSv40.VectorString)
 		if err != nil {
 			return nil, errors.Wrapf(err, "parse cvss v4.0 vector %q", ms[i].CVSSv40.VectorString)
 		}
-		ss = append(ss, severityTypes.Severity{Type: severityTypes.SeverityTypeCVSSv40, Source: source, CVSSv40: v40})
+		ss = append(ss, severityTypes.Severity{Type: severityTypes.SeverityTypeCVSSv40, Source: "security.paloaltonetworks.com", CVSSv40: v40})
 	}
 	return ss, nil
 }
@@ -331,7 +324,7 @@ func cwes(fetched paloaltoJSON.CVE) []cweTypes.CWE {
 		return nil
 	}
 	return []cweTypes.CWE{{
-		Source: source,
+		Source: "security.paloaltonetworks.com",
 		CWE:    util.Unique(cs),
 	}}
 }
@@ -340,7 +333,7 @@ func references(fetched paloaltoJSON.CVE) []referenceTypes.Reference {
 	refs := make([]referenceTypes.Reference, 0, len(fetched.Containers.CNA.References))
 	for _, r := range fetched.Containers.CNA.References {
 		refs = append(refs, referenceTypes.Reference{
-			Source: source,
+			Source: "security.paloaltonetworks.com",
 			URL:    r.URL,
 		})
 	}
@@ -368,14 +361,14 @@ func description(ds []paloaltoJSON.Description) string {
 	return strings.Join(vs, "\n\n")
 }
 
-func remediations(source string, ds []paloaltoJSON.Description) []remediationTypes.Remediation {
+func remediations(ds []paloaltoJSON.Description) []remediationTypes.Remediation {
 	var rs []remediationTypes.Remediation
 	for _, d := range ds {
 		if !isEnglish(d.Lang) || d.Value == "" {
 			continue
 		}
 		rs = append(rs, remediationTypes.Remediation{
-			Source:      source,
+			Source:      "security.paloaltonetworks.com",
 			Description: d.Value,
 		})
 	}
