@@ -9,7 +9,7 @@
 				"severity": [
 					{
 						"type": "cvss_v40",
-						"source": "00000000-0000-4000-9000-000000000000",
+						"source": "security.paloaltonetworks.com",
 						"cvss_v40": {
 							"vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:A/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H/E:U/AU:N/R:U/V:D/RE:L/U:Amber",
 							"score": 7.6,
@@ -19,25 +19,19 @@
 				],
 				"mitigations": [
 					{
-						"source": "00000000-0000-4000-9000-000000000000",
+						"source": "security.paloaltonetworks.com",
 						"description": "CVE             PRISMA ACCESS BROWSER\nCVE-2025-0995   133.16.4.99\nCVE-2025-0996   133.16.4.99\nCVE-2025-0997   133.16.4.99\nCVE-2025-0998   133.16.4.99\nCVE-2025-0999   133.27.6.127\nCVE-2025-1006   133.27.6.127\nCVE-2025-1426   133.27.6.127\nCVE-2025-1914   134.7.4.44\nCVE-2025-1915   134.7.4.44\nCVE-2025-1916   134.7.4.44\nCVE-2025-1917   134.7.4.44\nCVE-2025-1918   134.7.4.44\nCVE-2025-1919   134.7.4.44\nCVE-2025-1921   134.7.4.44\nCVE-2025-1922   134.7.4.44\nCVE-2025-1923   134.7.4.44"
 					}
 				],
 				"workarounds": [
 					{
-						"source": "00000000-0000-4000-9000-000000000000",
+						"source": "security.paloaltonetworks.com",
 						"description": "No workaround or mitigation is available."
-					}
-				],
-				"exploit": [
-					{
-						"source": "00000000-0000-4000-9000-000000000000",
-						"description": "Palo Alto Networks is not aware of any malicious exploitation of this issue."
 					}
 				],
 				"references": [
 					{
-						"source": "00000000-0000-4000-9000-000000000000",
+						"source": "security.paloaltonetworks.com",
 						"url": "https://security.paloaltonetworks.com/PAN-SA-2025-0007"
 					}
 				],

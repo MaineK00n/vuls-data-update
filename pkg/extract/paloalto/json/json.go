@@ -25,7 +25,6 @@ import (
 	ccRangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/cpecriterion/range"
 	segmentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment"
 	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment/ecosystem"
-	exploitTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/exploit"
 	referenceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/reference"
 	remediationTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/remediation"
 	severityTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity"
@@ -44,6 +43,13 @@ import (
 	utiltime "github.com/MaineK00n/vuls-data-update/pkg/extract/util/time"
 	paloaltoJSON "github.com/MaineK00n/vuls-data-update/pkg/fetch/paloalto/json"
 )
+
+// source is the fixed data-source label for Palo Alto records. The per-record
+// containers.cna.providerMetadata is unreliable in this dataset (placeholder
+// UUIDs, the literal "Not found", or the upstream CVE's original CNA), so a
+// stable label is used for every content field — matching the repo convention
+// (cisco-json "cisco.com", nvd "nvd.nist.gov") and the paloalto-list extractor.
+const source = "security.paloaltonetworks.com"
 
 type options struct {
 	dir string
@@ -180,9 +186,8 @@ func extract(fetched paloaltoJSON.CVE, raws []string) (dataTypes.Data, error) {
 				Description: description(fetched.Containers.CNA.Descriptions),
 				Severity:    ss,
 				CWE:         cwes(fetched),
-				Mitigations: remediations(getSource(fetched.Containers.CNA.ProviderMetadata), fetched.Containers.CNA.Solutions),
-				Workarounds: remediations(getSource(fetched.Containers.CNA.ProviderMetadata), fetched.Containers.CNA.Workarounds),
-				Exploit:     exploits(fetched),
+				Mitigations: remediations(source, fetched.Containers.CNA.Solutions),
+				Workarounds: remediations(source, fetched.Containers.CNA.Workarounds),
 				References:  references(fetched),
 				Published:   published(fetched),
 				Modified:    modified(fetched),
@@ -199,9 +204,8 @@ func extract(fetched paloaltoJSON.CVE, raws []string) (dataTypes.Data, error) {
 			Description: description(fetched.Containers.CNA.Descriptions),
 			Severity:    ss,
 			CWE:         cwes(fetched),
-			Mitigations: remediations(getSource(fetched.Containers.CNA.ProviderMetadata), fetched.Containers.CNA.Solutions),
-			Workarounds: remediations(getSource(fetched.Containers.CNA.ProviderMetadata), fetched.Containers.CNA.Workarounds),
-			Exploit:     exploits(fetched),
+			Mitigations: remediations(source, fetched.Containers.CNA.Solutions),
+			Workarounds: remediations(source, fetched.Containers.CNA.Workarounds),
 			References:  references(fetched),
 			Published:   published(fetched),
 			Modified:    modified(fetched),
@@ -236,56 +240,75 @@ func title(fetched paloaltoJSON.CVE) string {
 	return ""
 }
 
+// severities emits one Severity per CVSS version present. Palo Alto can publish
+// several metrics of the same version for one CVE (one per metrics[].scenarios),
+// so for each version the GENERAL scenario is preferred, otherwise the
+// highest-base-score vector — e.g. CVE-2024-0012 carries two cvssV4_0 vectors
+// and no GENERAL scenario, so the 9.3 vector is kept over the 5.9 one.
 func severities(fetched paloaltoJSON.CVE) ([]severityTypes.Severity, error) {
-	source := getSource(fetched.Containers.CNA.ProviderMetadata)
+	ms := fetched.Containers.CNA.Metrics
 	var ss []severityTypes.Severity
-	for _, metric := range fetched.Containers.CNA.Metrics {
-		if metric.CVSSv2 != nil {
-			v2, err := v2Types.Parse(metric.CVSSv2.VectorString)
-			if err != nil {
-				return nil, errors.Wrapf(err, "parse cvss v2 vector %q", metric.CVSSv2.VectorString)
-			}
-			ss = append(ss, severityTypes.Severity{
-				Type:   severityTypes.SeverityTypeCVSSv2,
-				Source: source,
-				CVSSv2: v2,
-			})
+
+	if i := selectMetric(ms, func(m paloaltoJSON.Metric) bool { return m.CVSSv2 != nil }, func(m paloaltoJSON.Metric) float64 { return m.CVSSv2.BaseScore }); i >= 0 {
+		v2, err := v2Types.Parse(ms[i].CVSSv2.VectorString)
+		if err != nil {
+			return nil, errors.Wrapf(err, "parse cvss v2 vector %q", ms[i].CVSSv2.VectorString)
 		}
-		if metric.CVSSv30 != nil {
-			v30, err := v30Types.Parse(metric.CVSSv30.VectorString)
-			if err != nil {
-				return nil, errors.Wrapf(err, "parse cvss v3.0 vector %q", metric.CVSSv30.VectorString)
-			}
-			ss = append(ss, severityTypes.Severity{
-				Type:    severityTypes.SeverityTypeCVSSv30,
-				Source:  source,
-				CVSSv30: v30,
-			})
+		ss = append(ss, severityTypes.Severity{Type: severityTypes.SeverityTypeCVSSv2, Source: source, CVSSv2: v2})
+	}
+	if i := selectMetric(ms, func(m paloaltoJSON.Metric) bool { return m.CVSSv30 != nil }, func(m paloaltoJSON.Metric) float64 { return m.CVSSv30.BaseScore }); i >= 0 {
+		v30, err := v30Types.Parse(ms[i].CVSSv30.VectorString)
+		if err != nil {
+			return nil, errors.Wrapf(err, "parse cvss v3.0 vector %q", ms[i].CVSSv30.VectorString)
 		}
-		if metric.CVSSv31 != nil {
-			v31, err := v31Types.Parse(metric.CVSSv31.VectorString)
-			if err != nil {
-				return nil, errors.Wrapf(err, "parse cvss v3.1 vector %q", metric.CVSSv31.VectorString)
-			}
-			ss = append(ss, severityTypes.Severity{
-				Type:    severityTypes.SeverityTypeCVSSv31,
-				Source:  source,
-				CVSSv31: v31,
-			})
+		ss = append(ss, severityTypes.Severity{Type: severityTypes.SeverityTypeCVSSv30, Source: source, CVSSv30: v30})
+	}
+	if i := selectMetric(ms, func(m paloaltoJSON.Metric) bool { return m.CVSSv31 != nil }, func(m paloaltoJSON.Metric) float64 { return m.CVSSv31.BaseScore }); i >= 0 {
+		v31, err := v31Types.Parse(ms[i].CVSSv31.VectorString)
+		if err != nil {
+			return nil, errors.Wrapf(err, "parse cvss v3.1 vector %q", ms[i].CVSSv31.VectorString)
 		}
-		if metric.CVSSv40 != nil {
-			v40, err := v40Types.Parse(metric.CVSSv40.VectorString)
-			if err != nil {
-				return nil, errors.Wrapf(err, "parse cvss v4.0 vector %q", metric.CVSSv40.VectorString)
-			}
-			ss = append(ss, severityTypes.Severity{
-				Type:    severityTypes.SeverityTypeCVSSv40,
-				Source:  source,
-				CVSSv40: v40,
-			})
+		ss = append(ss, severityTypes.Severity{Type: severityTypes.SeverityTypeCVSSv31, Source: source, CVSSv31: v31})
+	}
+	if i := selectMetric(ms, func(m paloaltoJSON.Metric) bool { return m.CVSSv40 != nil }, func(m paloaltoJSON.Metric) float64 { return m.CVSSv40.BaseScore }); i >= 0 {
+		v40, err := v40Types.Parse(ms[i].CVSSv40.VectorString)
+		if err != nil {
+			return nil, errors.Wrapf(err, "parse cvss v4.0 vector %q", ms[i].CVSSv40.VectorString)
 		}
+		ss = append(ss, severityTypes.Severity{Type: severityTypes.SeverityTypeCVSSv40, Source: source, CVSSv40: v40})
 	}
 	return ss, nil
+}
+
+// isGeneralMetric reports whether a metric is the default "GENERAL" scenario.
+func isGeneralMetric(m paloaltoJSON.Metric) bool {
+	for _, s := range m.Scenarios {
+		if s.Value == "GENERAL" {
+			return true
+		}
+	}
+	return false
+}
+
+// selectMetric picks, among the metrics carrying a given CVSS version (has), the
+// one to emit: the GENERAL scenario when present, otherwise the highest base
+// score. Returns -1 when no metric carries the version.
+func selectMetric(ms []paloaltoJSON.Metric, has func(paloaltoJSON.Metric) bool, score func(paloaltoJSON.Metric) float64) int {
+	best := -1
+	for i, m := range ms {
+		if !has(m) {
+			continue
+		}
+		switch {
+		case best == -1:
+			best = i
+		case isGeneralMetric(m) && !isGeneralMetric(ms[best]):
+			best = i
+		case isGeneralMetric(m) == isGeneralMetric(ms[best]) && score(m) > score(ms[best]):
+			best = i
+		}
+	}
+	return best
 }
 
 func cwes(fetched paloaltoJSON.CVE) []cweTypes.CWE {
@@ -301,41 +324,20 @@ func cwes(fetched paloaltoJSON.CVE) []cweTypes.CWE {
 		return nil
 	}
 	return []cweTypes.CWE{{
-		Source: getSource(fetched.Containers.CNA.ProviderMetadata),
+		Source: source,
 		CWE:    util.Unique(cs),
 	}}
-}
-
-func exploits(fetched paloaltoJSON.CVE) []exploitTypes.Exploit {
-	var es []exploitTypes.Exploit
-	for _, e := range fetched.Containers.CNA.Exploits {
-		if !isEnglish(e.Lang) || e.Value == "" {
-			continue
-		}
-		es = append(es, exploitTypes.Exploit{
-			Source:      getSource(fetched.Containers.CNA.ProviderMetadata),
-			Description: e.Value,
-		})
-	}
-	return es
 }
 
 func references(fetched paloaltoJSON.CVE) []referenceTypes.Reference {
 	refs := make([]referenceTypes.Reference, 0, len(fetched.Containers.CNA.References))
 	for _, r := range fetched.Containers.CNA.References {
 		refs = append(refs, referenceTypes.Reference{
-			Source: getSource(fetched.Containers.CNA.ProviderMetadata),
+			Source: source,
 			URL:    r.URL,
 		})
 	}
 	return refs
-}
-
-func getSource(providerMetadata paloaltoJSON.ProviderMetadata) string {
-	if providerMetadata.ShortName != nil {
-		return *providerMetadata.ShortName
-	}
-	return providerMetadata.OrgID
 }
 
 // isEnglish reports whether a CVE-record lang tag denotes English. Palo Alto
@@ -345,13 +347,18 @@ func isEnglish(lang string) bool {
 	return lang == "" || lang == "en" || lang == "eng" || strings.HasPrefix(lang, "en-")
 }
 
+// description joins every English entry. Palo Alto frequently splits a record's
+// description across several lang:"en" descriptions[] entries (e.g.
+// CVE-2020-1968 has three, the trailing ones covering non-PAN-OS products not
+// captured elsewhere), so taking only the first would silently drop content.
 func description(ds []paloaltoJSON.Description) string {
+	var vs []string
 	for _, d := range ds {
-		if isEnglish(d.Lang) {
-			return d.Value
+		if isEnglish(d.Lang) && d.Value != "" {
+			vs = append(vs, d.Value)
 		}
 	}
-	return ""
+	return strings.Join(vs, "\n\n")
 }
 
 func remediations(source string, ds []paloaltoJSON.Description) []remediationTypes.Remediation {
