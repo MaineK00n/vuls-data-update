@@ -1,5 +1,7 @@
 package v5
 
+import "encoding/json/jsontext"
+
 type CVE struct {
 	DataType    string      `json:"dataType"`
 	DataVersion string      `json:"dataVersion"`
@@ -27,11 +29,11 @@ type CVE struct {
 			DatePublic       *string          `json:"datePublic,omitempty"`
 			RejectedReasons  []Description    `json:"rejectedReasons,omitempty"`
 			ReplacedBy       []string         `json:"replacedBy,omitempty"`
-			XGenerator       any              `json:"x_generator,omitempty"`
-			XLegacyV4Record  any              `json:"x_legacyV4Record,omitempty"`
-			XRedhatCweChain  any              `json:"x_redhatCweChain,omitempty"`
-			XAffectedList    any              `json:"x_affectedList,omitempty"`
-			XConverterErrors any              `json:"x_ConverterErrors,omitempty"`
+			XGenerator       jsontext.Value   `json:"x_generator,omitempty"`
+			XLegacyV4Record  jsontext.Value   `json:"x_legacyV4Record,omitempty"`
+			XRedhatCweChain  jsontext.Value   `json:"x_redhatCweChain,omitempty"`
+			XAffectedList    jsontext.Value   `json:"x_affectedList,omitempty"`
+			XConverterErrors jsontext.Value   `json:"x_ConverterErrors,omitempty"`
 		} `json:"cna"`
 		ADP []struct {
 			ProviderMetadata ProviderMetadata `json:"providerMetadata"`
@@ -138,8 +140,8 @@ type Metric struct {
 	CVSSv31 *CVSSv31 `json:"cvssV3_1,omitempty"`
 	CVSSv40 *CVSSv40 `json:"cvssV4_0,omitempty"`
 	Other   *struct {
-		Type    string `json:"type"`
-		Content any    `json:"content"`
+		Type    string         `json:"type"`
+		Content jsontext.Value `json:"content"`
 	} `json:"other,omitempty"`
 }
 
