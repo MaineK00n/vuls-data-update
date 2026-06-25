@@ -245,6 +245,13 @@ func title(fetched paloaltoJSON.CVE) string {
 // so for each version the GENERAL scenario is preferred, otherwise the
 // highest-base-score vector — e.g. CVE-2024-0012 carries two cvssV4_0 vectors
 // and no GENERAL scenario, so the 9.3 vector is kept over the 5.9 one.
+//
+// Scenarios are ranked by the record's published baseScore (the base-severity
+// headline; present on every metric across the dataset) rather than by re-parsing
+// the vector — the chosen scenario's vector string is then parsed for the emitted
+// Severity. For CVSS v4.0 the parsed Score is the library's threat/environmental
+// value, which can differ from baseScore; ranking deliberately stays on the
+// published base score so the choice matches the headline severity.
 func severities(fetched paloaltoJSON.CVE) ([]severityTypes.Severity, error) {
 	ms := fetched.Containers.CNA.Metrics
 	var ss []severityTypes.Severity
