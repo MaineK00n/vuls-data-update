@@ -291,32 +291,19 @@ func isGeneralMetric(m paloaltoJSON.Metric) bool {
 }
 
 // selectMetric picks, among the metrics carrying a given CVSS version (has), the
-// one to emit: the highest-base-score GENERAL scenario when any GENERAL is
-// present, otherwise the highest-base-score metric overall. Returns -1 when no
-// metric carries the version.
+// one to emit: the GENERAL scenario when present, otherwise the highest base
+// score. Returns -1 when no metric carries the version.
 func selectMetric(ms []paloaltoJSON.Metric, has func(paloaltoJSON.Metric) bool, score func(paloaltoJSON.Metric) float64) int {
-	var metrics, general []int
+	// the GENERAL one, if any
+	if i := slices.IndexFunc(ms, func(m paloaltoJSON.Metric) bool {
+		return has(m) && isGeneralMetric(m)
+	}); i >= 0 {
+		return i
+	}
+	// otherwise the highest-scoring one
+	best := -1
 	for i, m := range ms {
-		if !has(m) {
-			continue
-		}
-		metrics = append(metrics, i)
-		if isGeneralMetric(m) {
-			general = append(general, i)
-		}
-	}
-	// Prefer GENERAL: choose among the GENERAL metrics if any exist, otherwise
-	// among all the version's metrics. Either way take the highest base score.
-	pool := metrics
-	if len(general) > 0 {
-		pool = general
-	}
-	if len(pool) == 0 {
-		return -1
-	}
-	best := pool[0]
-	for _, i := range pool[1:] {
-		if score(ms[i]) > score(ms[best]) {
+		if has(m) && (best == -1 || score(m) > score(ms[best])) {
 			best = i
 		}
 	}
