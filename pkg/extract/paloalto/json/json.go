@@ -375,20 +375,23 @@ func remediations(ds []paloaltoJSON.Description) []remediationTypes.Remediation 
 }
 
 func published(fetched paloaltoJSON.CVE) *time.Time {
+	// datePublic only ever carries the millisecond-Z form.
 	if fetched.Containers.CNA.DatePublic != nil {
-		if t := utiltime.Parse([]string{"2006-01-02T15:04:05.000Z", time.RFC3339Nano}, *fetched.Containers.CNA.DatePublic); t != nil {
+		if t := utiltime.Parse([]string{"2006-01-02T15:04:05.000Z"}, *fetched.Containers.CNA.DatePublic); t != nil {
 			return t
 		}
 	}
+	// datePublished is the millisecond-Z form or a timezone-less form.
 	if fetched.CVEMetadata.DatePublished != nil {
-		return utiltime.Parse([]string{"2006-01-02T15:04:05.000Z", "2006-01-02T15:04:05", time.RFC3339Nano}, *fetched.CVEMetadata.DatePublished)
+		return utiltime.Parse([]string{"2006-01-02T15:04:05.000Z", "2006-01-02T15:04:05"}, *fetched.CVEMetadata.DatePublished)
 	}
 	return nil
 }
 
 func modified(fetched paloaltoJSON.CVE) *time.Time {
+	// dateUpdated is the millisecond-Z form or RFC3339 with a 6-digit fraction.
 	if fetched.CVEMetadata.DateUpdated != nil {
-		return utiltime.Parse([]string{"2006-01-02T15:04:05.000Z", "2006-01-02T15:04:05", time.RFC3339Nano}, *fetched.CVEMetadata.DateUpdated)
+		return utiltime.Parse([]string{"2006-01-02T15:04:05.000Z", time.RFC3339Nano}, *fetched.CVEMetadata.DateUpdated)
 	}
 	return nil
 }
