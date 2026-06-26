@@ -35,11 +35,30 @@ func TestFetch(t *testing.T) {
 			},
 		},
 		{
-			name: "include non-existent",
+			name: "include known 404 (skipped)",
 			args: args{
 				ids: []string{
 					"CVE-2025-0114",
-					"PAN-SA-0000-0000",
+					"PAN-SA-2016-0011", // known upstream 404 regression
+				},
+			},
+		},
+		{
+			name: "include unknown 404 (fails)",
+			args: args{
+				ids: []string{
+					"CVE-2025-0114",
+					"PAN-SA-0000-0000", // 404 but not a known regression
+				},
+			},
+			hasError: true,
+		},
+		{
+			name: "include server error (still fails)",
+			args: args{
+				ids: []string{
+					"CVE-2025-0114",
+					"PAN-SA-9999-0500",
 				},
 			},
 			hasError: true,
@@ -50,7 +69,12 @@ func TestFetch(t *testing.T) {
 			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				switch {
 				case strings.HasPrefix(r.URL.Path, "/json/"):
-					http.ServeFile(w, r, filepath.Join("testdata", "fixtures", path.Base(r.URL.Path)))
+					switch path.Base(r.URL.Path) {
+					case "PAN-SA-9999-0500":
+						http.Error(w, "internal server error", http.StatusInternalServerError)
+					default:
+						http.ServeFile(w, r, filepath.Join("testdata", "fixtures", path.Base(r.URL.Path)))
+					}
 				default:
 					http.NotFound(w, r)
 				}
