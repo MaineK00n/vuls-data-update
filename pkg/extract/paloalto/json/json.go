@@ -557,7 +557,7 @@ func validCPEs(id string, cpes []string) ([]ccTypes.CPE, error) {
 				// CPE part is "undefined":
 				// cpe:2.3:undefined:paloaltonetworks:palo_alto_networks_pan-os:9.1.7:-:*:*:*:*:*:*
 			case id == "CVE-2025-4619" && strings.Contains(c, "palo_alto_networks:pan-os"):
-				// extra trailing attribute field (13 components), e.g.
+				// extra trailing attribute field (14 components vs the valid 13), e.g.
 				// cpe:2.3:o:palo_alto_networks:pan-os:11.1.5:-:*:*:*:*:*:*:*
 			default:
 				return nil, errors.Wrapf(err, "unbind cpe %q", c)
