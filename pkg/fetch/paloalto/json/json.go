@@ -151,9 +151,10 @@ func Fetch(ids []string, opts ...Option) error {
 			// A handful of advisories listed by /json/?page= return 404 on the
 			// per-advisory endpoint (a known upstream regression); tolerate only these
 			// IDs so a 404 on any other advisory still fails loudly as a new regression.
-			// The vuls-data-db pipeline restores the last-known-good copy of these from
-			// history. Empty this list once upstream restores the endpoints — see
-			// MaineK00n/vuls-data-update#864 and vuls-data-db docs/paloalto-missing-json-csaf-ids.md.
+			// The vulsio/vuls-data-db pipeline restores the last-known-good copy of these
+			// from history. Empty this list once upstream restores the endpoints — see
+			// MaineK00n/vuls-data-update#864 and vulsio/vuls-data-db's
+			// docs/paloalto-missing-json-csaf-ids.md.
 			switch id {
 			case "CVE-2022-42889",
 				"PAN-SA-2014-0001", "PAN-SA-2014-0002", "PAN-SA-2014-0004", "PAN-SA-2014-0006",
