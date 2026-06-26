@@ -6,6 +6,8 @@ import (
 	"encoding/json/v2"
 	stderrors "errors"
 	"fmt"
+	"strconv"
+	"strings"
 
 	panosVersion "github.com/MaineK00n/go-paloalto-version/pan-os"
 	"github.com/hashicorp/go-version"
@@ -28,6 +30,7 @@ const (
 	_ RangeType = iota
 	RangeTypeVersion
 	RangeTypeSEMVER
+	RangeTypeFortinet
 	RangeTypePANOS
 
 	RangeTypeUnknown
@@ -39,6 +42,8 @@ func (t RangeType) String() string {
 		return "version"
 	case RangeTypeSEMVER:
 		return "semver"
+	case RangeTypeFortinet:
+		return "fortinet"
 	case RangeTypePANOS:
 		return "pan-os"
 	default:
@@ -64,6 +69,8 @@ func (t *RangeType) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		*t = RangeTypeVersion
 	case "semver":
 		*t = RangeTypeSEMVER
+	case "fortinet":
+		*t = RangeTypeFortinet
 	case "pan-os":
 		*t = RangeTypePANOS
 	case "unknown":
@@ -90,6 +97,8 @@ func (t *RangeType) UnmarshalJSON(data []byte) error {
 		rt = RangeTypeVersion
 	case "semver":
 		rt = RangeTypeSEMVER
+	case "fortinet":
+		rt = RangeTypeFortinet
 	case "pan-os":
 		rt = RangeTypePANOS
 	case "unknown":
@@ -178,6 +187,39 @@ func (t RangeType) Compare(v1, v2 string) (int, error) {
 			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
 		}
 		return va.Compare(vb), nil
+	case RangeTypeFortinet:
+		// Why this is not plain semver: Fortinet uses two version schemes. Almost
+		// everything is numeric (7.4.3) — and every *range bound* is — but
+		// FortiSASE labels releases with a calendar scheme that carries an
+		// alphabetic component (25.2.a, 25.1.a.2). semver cannot parse the latter,
+		// and a scanned (queried) version can be one, so a Fortinet-specific
+		// comparator is needed.
+		//
+		// compareFortinetVersions walks components: numeric vs numeric
+		// numerically, letters lexically (the documented milestone order
+		// a < b < c), and a bare train before its builds (25.2 < 25.2.a, while
+		// 7.2 == 7.2.0). A numeric component against an alphabetic one at the same
+		// position — a build "1.2.1" vs a milestone "1.2.a" — has no defined order
+		// across the two schemes, so it is reported INCOMPARABLE rather than
+		// guessed: the result is a *CompareError, which Range.Accept swallows as a
+		// safe non-match (never a false positive).
+		//
+		// Why this is safe for detection (under the current data): the incomparable
+		// case requires a numeric component to meet an alphabetic one at the same
+		// position, i.e. a non-numeric query lined up against a numeric bound that
+		// still has a component where the query's letter sits. The Fortinet
+		// extractors prevent exactly that at extract time — a range bound is always
+		// numeric, and a product with non-numeric versions keeps its ranges train-
+		// granular (bound dot <= 1, see csaf.toCriterion / product.IsNonNumericVersioned).
+		// So a non-numeric tail only ever meets an *exhausted* bound (25.2 vs 25.2.a),
+		// which is comparable, never a numeric component. The incomparable branch is
+		// therefore unreachable for today's corpus; if future data (or a bug)
+		// reaches it anyway, it fails safe rather than inventing an order.
+		c, ok := compareFortinetVersions(v1, v2)
+		if !ok {
+			return 0, &CompareError{Err: errors.Errorf("incomparable fortinet versions %q and %q", v1, v2)}
+		}
+		return c, nil
 	case RangeTypeVersion:
 		va, err := version.NewVersion(v1)
 		if err != nil {
@@ -211,6 +253,57 @@ func (t RangeType) Compare(v1, v2 string) (int, error) {
 	default:
 		return 0, errors.Errorf("unsupported range type: %s", t)
 	}
+}
+
+// compareFortinetVersions compares two Fortinet version strings component by
+// component (split on ".") and reports whether they are comparable at all.
+// Numeric components compare numerically and alphabetic ones lexically (the
+// FortiSASE calendar letters a < b < c). When one version runs out of components
+// the other's tail decides, with trailing zeros treated as equal (7.2 == 7.2.0)
+// but any non-zero or lettered tail making the longer version greater — so a
+// bare train precedes its builds (25.2 < 25.2.a). The two are NOT comparable
+// when, at the same position, one component is numeric and the other alphabetic
+// (e.g. a build "1.2.1" against a milestone "1.2.a"), which is undefined across
+// Fortinet's numeric and calendar schemes.
+func compareFortinetVersions(a, b string) (order int, comparable bool) {
+	as := strings.Split(a, ".")
+	bs := strings.Split(b, ".")
+	for i := 0; i < len(as) || i < len(bs); i++ {
+		switch {
+		case i >= len(as):
+			return -tailSign(bs[i:]), true
+		case i >= len(bs):
+			return tailSign(as[i:]), true
+		}
+		an, aerr := strconv.Atoi(as[i])
+		bn, berr := strconv.Atoi(bs[i])
+		switch {
+		case aerr == nil && berr == nil:
+			if an != bn {
+				return cmp.Compare(an, bn), true
+			}
+		case aerr != nil && berr != nil:
+			if as[i] != bs[i] {
+				return strings.Compare(as[i], bs[i]), true
+			}
+		default:
+			return 0, false // numeric vs alphabetic at the same position
+		}
+	}
+	return 0, true
+}
+
+// tailSign reports whether the trailing components of a longer version make it
+// greater than a shorter one sharing its prefix: 0 when every component is a
+// numeric zero (a trailing-zero no-op, 7.2 == 7.2.0), 1 otherwise (a non-zero or
+// lettered tail, 25.2 < 25.2.a).
+func tailSign(comps []string) int {
+	for _, c := range comps {
+		if n, err := strconv.Atoi(c); err != nil || n != 0 {
+			return 1
+		}
+	}
+	return 0
 }
 
 // Accept returns true when v satisfies every non-empty bound on r, comparing

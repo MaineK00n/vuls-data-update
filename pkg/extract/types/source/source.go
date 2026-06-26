@@ -58,6 +58,7 @@ const (
 	ExploitTrickest            SourceID = "exploit-trickest"
 	FedoraAPI                  SourceID = "fedora-api"
 	Fortinet                   SourceID = "fortinet"
+	FortinetCSAF               SourceID = "fortinet-csaf"
 	FortinetCVRF               SourceID = "fortinet-cvrf"
 	FreeBSD                    SourceID = "freebsd"
 	Gentoo                     SourceID = "gentoo"
