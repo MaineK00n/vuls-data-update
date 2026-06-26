@@ -36,7 +36,7 @@ func TestFetch(t *testing.T) {
 			},
 		},
 		{
-			name: "include non-existent (500 skipped)",
+			name: "include non-existent",
 			args: args{
 				ids: []string{
 					"CVE-2025-0114",
@@ -44,36 +44,12 @@ func TestFetch(t *testing.T) {
 				},
 			},
 		},
-		{
-			name: "include known 404 (skipped)",
-			args: args{
-				ids: []string{
-					"CVE-2025-0114",
-					"PAN-SA-2016-0011", // known upstream 404 regression
-				},
-			},
-		},
-		{
-			name: "include unknown 404 (fails)",
-			args: args{
-				ids: []string{
-					"CVE-2025-0114",
-					"PAN-SA-9999-0404", // 404 but not a known regression
-				},
-			},
-			hasError: true,
-		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				switch {
 				case strings.HasPrefix(r.URL.Path, "/csaf/"):
-					switch path.Base(r.URL.Path) {
-					case "PAN-SA-2016-0011", "PAN-SA-9999-0404": // known + unknown 404
-						http.NotFound(w, r)
-						return
-					}
 					f, err := os.Open(filepath.Join("testdata", "fixtures", path.Base(r.URL.Path)))
 					if err != nil {
 						if errors.Is(err, fs.ErrNotExist) {

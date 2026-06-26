@@ -13,12 +13,63 @@ import (
 
 	"github.com/pkg/errors"
 
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/paloalto/internal/missing"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
 const dataURLFormat = "https://security.paloaltonetworks.com/json/%s"
+
+// knownMissing lists advisory IDs that are advertised by the list endpoint
+// (/json/?page=) but whose per-advisory /json/<id> endpoint returns HTTP 404 — a
+// known upstream regression (the human-readable HTML pages still return 200, so
+// the advisories themselves exist). A 404 is tolerated only for these IDs; any
+// other 404 fails the fetch so a new regression surfaces loudly instead of being
+// silently skipped. Once upstream restores these endpoints this list should be
+// emptied / removed — see MaineK00n/vuls-data-update#864 and vuls-data-db
+// docs/paloalto-missing-json-csaf-ids.md.
+var knownMissing = map[string]struct{}{
+	"CVE-2022-42889":   {},
+	"PAN-SA-2014-0001": {},
+	"PAN-SA-2014-0002": {},
+	"PAN-SA-2014-0004": {},
+	"PAN-SA-2014-0006": {},
+	"PAN-SA-2015-0003": {},
+	"PAN-SA-2015-0005": {},
+	"PAN-SA-2015-0006": {},
+	"PAN-SA-2016-0006": {},
+	"PAN-SA-2016-0007": {},
+	"PAN-SA-2016-0008": {},
+	"PAN-SA-2016-0010": {},
+	"PAN-SA-2016-0011": {},
+	"PAN-SA-2016-0013": {},
+	"PAN-SA-2016-0014": {},
+	"PAN-SA-2016-0015": {},
+	"PAN-SA-2016-0016": {},
+	"PAN-SA-2016-0017": {},
+	"PAN-SA-2016-0018": {},
+	"PAN-SA-2016-0019": {},
+	"PAN-SA-2016-0020": {},
+	"PAN-SA-2016-0022": {},
+	"PAN-SA-2016-0023": {},
+	"PAN-SA-2016-0024": {},
+	"PAN-SA-2016-0025": {},
+	"PAN-SA-2016-0026": {},
+	"PAN-SA-2016-0028": {},
+	"PAN-SA-2016-0029": {},
+	"PAN-SA-2016-0030": {},
+	"PAN-SA-2016-0031": {},
+	"PAN-SA-2016-0032": {},
+	"PAN-SA-2016-0033": {},
+	"PAN-SA-2018-0001": {},
+	"PAN-SA-2018-0011": {},
+	"PAN-SA-2018-0015": {},
+	"PAN-SA-2019-0004": {},
+	"PAN-SA-2019-0011": {},
+	"PAN-SA-2019-0012": {},
+	"PAN-SA-2019-0013": {},
+	"PAN-SA-2022-0006": {},
+	"PAN-SA-2022-0007": {},
+}
 
 type options struct {
 	dataURL     string
@@ -118,7 +169,7 @@ func Fetch(ids []string, opts ...Option) error {
 			// pipeline restores the last-known-good copy of the skipped IDs from history.
 			if resp.StatusCode == http.StatusNotFound {
 				id := path.Base(resp.Request.URL.Path)
-				if !missing.Is(id) {
+				if _, ok := knownMissing[id]; !ok {
 					return errors.Errorf("unexpected 404 for advisory %q (not a known upstream regression)", id)
 				}
 				slog.Warn("skip advisory: known upstream 404 regression", "id", id)

@@ -8,7 +8,6 @@ import (
 	"io"
 	"log/slog"
 	"net/http"
-	"path"
 	"path/filepath"
 	"strings"
 	"time"
@@ -16,7 +15,6 @@ import (
 	"github.com/hashicorp/go-retryablehttp"
 	"github.com/pkg/errors"
 
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/paloalto/internal/missing"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
@@ -153,19 +151,6 @@ func Fetch(ids []string, opts ...Option) error {
 			// ignore the error because there is no way to check in advance that there is no CSAF
 			// e.g. https://security.paloaltonetworks.com/csaf/CVE-2016-2219
 			_, _ = io.Copy(io.Discard, resp.Body)
-			return nil
-		case http.StatusNotFound:
-			// A handful of advisories listed upstream return 404 on the per-advisory CSAF
-			// endpoint (a known upstream regression). Skip those, but only for the known
-			// IDs (pkg/fetch/paloalto/internal/missing) so a 404 on any other advisory
-			// still fails loudly as a new regression. The vuls-data-db pipeline restores
-			// the last-known-good copy of the skipped IDs from history.
-			_, _ = io.Copy(io.Discard, resp.Body)
-			id := path.Base(resp.Request.URL.Path)
-			if !missing.Is(id) {
-				return errors.Errorf("unexpected 404 for advisory %q (not a known upstream regression)", id)
-			}
-			slog.Warn("skip advisory: known upstream 404 regression", "id", id)
 			return nil
 		default:
 			_, _ = io.Copy(io.Discard, resp.Body)
