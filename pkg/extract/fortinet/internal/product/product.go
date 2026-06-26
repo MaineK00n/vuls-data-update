@@ -71,8 +71,9 @@ func BakeVersion(cpe, version string) (string, error) {
 	return naming.BindToFS(wfn), nil
 }
 
-// IsConcrete reports whether v is a concrete release (3 or more dotted
-// components, e.g. 7.4.3) as opposed to a release train (7 or 7.4).
+// IsConcrete reports whether v is a concrete release (3 or more
+// dot-separated components, i.e. at least two dots, e.g. 7.4.3) as opposed
+// to a release train (7 or 7.4).
 func IsConcrete(v string) bool {
 	return strings.Count(v, ".") >= 2
 }
