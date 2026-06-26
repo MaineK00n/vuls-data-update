@@ -35,13 +35,23 @@ func TestFetch(t *testing.T) {
 			},
 		},
 		{
-			name: "include not-found (404 skipped)",
+			name: "include known 404 (skipped)",
 			args: args{
 				ids: []string{
 					"CVE-2025-0114",
-					"PAN-SA-0000-0000",
+					"PAN-SA-2016-0011", // known upstream 404 regression
 				},
 			},
+		},
+		{
+			name: "include unknown 404 (fails)",
+			args: args{
+				ids: []string{
+					"CVE-2025-0114",
+					"PAN-SA-0000-0000", // 404 but not a known regression
+				},
+			},
+			hasError: true,
 		},
 		{
 			name: "include server error (still fails)",

@@ -45,13 +45,23 @@ func TestFetch(t *testing.T) {
 			},
 		},
 		{
-			name: "include not-found (404 skipped)",
+			name: "include known 404 (skipped)",
 			args: args{
 				ids: []string{
 					"CVE-2025-0114",
-					"PAN-SA-9999-0404",
+					"PAN-SA-2016-0011", // known upstream 404 regression
 				},
 			},
+		},
+		{
+			name: "include unknown 404 (fails)",
+			args: args{
+				ids: []string{
+					"CVE-2025-0114",
+					"PAN-SA-9999-0404", // 404 but not a known regression
+				},
+			},
+			hasError: true,
 		},
 	}
 	for _, tt := range tests {
@@ -59,7 +69,8 @@ func TestFetch(t *testing.T) {
 			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				switch {
 				case strings.HasPrefix(r.URL.Path, "/csaf/"):
-					if path.Base(r.URL.Path) == "PAN-SA-9999-0404" {
+					switch path.Base(r.URL.Path) {
+					case "PAN-SA-2016-0011", "PAN-SA-9999-0404": // known + unknown 404
 						http.NotFound(w, r)
 						return
 					}
