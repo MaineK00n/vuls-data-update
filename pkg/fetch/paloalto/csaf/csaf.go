@@ -152,6 +152,13 @@ func Fetch(ids []string, opts ...Option) error {
 			// e.g. https://security.paloaltonetworks.com/csaf/CVE-2016-2219
 			_, _ = io.Copy(io.Discard, resp.Body)
 			return nil
+		case http.StatusNotFound:
+			// Some advisories listed upstream return 404 on the per-advisory CSAF endpoint
+			// (an upstream regression). Skip them instead of failing the whole fetch; the
+			// vuls-data-db pipeline restores the last-known-good copy from history.
+			_, _ = io.Copy(io.Discard, resp.Body)
+			slog.Warn("skip advisory: per-advisory CSAF endpoint returned 404", "url", resp.Request.URL)
+			return nil
 		default:
 			_, _ = io.Copy(io.Discard, resp.Body)
 			return errors.Errorf("error response with status code %d", resp.StatusCode)

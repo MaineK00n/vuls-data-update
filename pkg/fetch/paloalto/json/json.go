@@ -109,6 +109,13 @@ func Fetch(ids []string, opts ...Option) error {
 
 		if resp.StatusCode != http.StatusOK {
 			_, _ = io.Copy(io.Discard, resp.Body)
+			// Some advisories listed by /json/?page= return 404 on the per-advisory
+			// endpoint (an upstream regression). Skip them instead of failing the whole
+			// fetch; the vuls-data-db pipeline restores the last-known-good copy from history.
+			if resp.StatusCode == http.StatusNotFound {
+				slog.Warn("skip advisory: per-advisory JSON endpoint returned 404", "url", resp.Request.URL)
+				return nil
+			}
 			return errors.Errorf("error response with status code %d", resp.StatusCode)
 		}
 

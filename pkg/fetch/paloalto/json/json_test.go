@@ -35,11 +35,20 @@ func TestFetch(t *testing.T) {
 			},
 		},
 		{
-			name: "include non-existent",
+			name: "include not-found (404 skipped)",
 			args: args{
 				ids: []string{
 					"CVE-2025-0114",
 					"PAN-SA-0000-0000",
+				},
+			},
+		},
+		{
+			name: "include server error (still fails)",
+			args: args{
+				ids: []string{
+					"CVE-2025-0114",
+					"PAN-SA-9999-0500",
 				},
 			},
 			hasError: true,
@@ -50,7 +59,12 @@ func TestFetch(t *testing.T) {
 			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				switch {
 				case strings.HasPrefix(r.URL.Path, "/json/"):
-					http.ServeFile(w, r, filepath.Join("testdata", "fixtures", path.Base(r.URL.Path)))
+					switch path.Base(r.URL.Path) {
+					case "PAN-SA-9999-0500":
+						http.Error(w, "internal server error", http.StatusInternalServerError)
+					default:
+						http.ServeFile(w, r, filepath.Join("testdata", "fixtures", path.Base(r.URL.Path)))
+					}
 				default:
 					http.NotFound(w, r)
 				}

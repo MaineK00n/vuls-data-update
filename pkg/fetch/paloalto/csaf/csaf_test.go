@@ -36,11 +36,20 @@ func TestFetch(t *testing.T) {
 			},
 		},
 		{
-			name: "include non-existent",
+			name: "include non-existent (500 skipped)",
 			args: args{
 				ids: []string{
 					"CVE-2025-0114",
 					"PAN-SA-0000-0000",
+				},
+			},
+		},
+		{
+			name: "include not-found (404 skipped)",
+			args: args{
+				ids: []string{
+					"CVE-2025-0114",
+					"PAN-SA-9999-0404",
 				},
 			},
 		},
@@ -50,6 +59,10 @@ func TestFetch(t *testing.T) {
 			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				switch {
 				case strings.HasPrefix(r.URL.Path, "/csaf/"):
+					if path.Base(r.URL.Path) == "PAN-SA-9999-0404" {
+						http.NotFound(w, r)
+						return
+					}
 					f, err := os.Open(filepath.Join("testdata", "fixtures", path.Base(r.URL.Path)))
 					if err != nil {
 						if errors.Is(err, fs.ErrNotExist) {
