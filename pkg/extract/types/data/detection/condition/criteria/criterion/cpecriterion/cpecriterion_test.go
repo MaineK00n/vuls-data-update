@@ -410,6 +410,86 @@ func TestCriterion_Accept(t *testing.T) {
 			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:15.4\\(2\\)t1:*:*:*:*:*:*:*"}},
 			want: ccTypes.MatchQualityExact,
 		},
+		{
+			// The query carries the hotfix in the VERSION attribute
+			// ("10.1.14-h11"). That is the form the vuls snmp2cpe scanner emits;
+			// NVD- and cisco-provided CPEs instead put the hotfix in the UPDATE
+			// attribute (":h11:"). go-cpe escapes the dots and hyphen of the
+			// version-attribute form in the WFN ("10\.1\.14\-h11"), so Accept
+			// must unescape it before the pan-os comparator runs, otherwise the
+			// escaped query never matches.
+			name: "pan-os hotfix query, escaped version, within range",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:o:paloaltonetworks:pan-os:*:*:*:*:*:*:*:*",
+				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypePANOS, GreaterEqual: "10.1.0", LessThan: "10.1.14-h13"},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:o:paloaltonetworks:pan-os:10.1.14-h11:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityExact,
+		},
+		{
+			name: "pan-os hotfix query, escaped version, at exclusive upper bound",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:o:paloaltonetworks:pan-os:*:*:*:*:*:*:*:*",
+				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypePANOS, GreaterEqual: "10.1.0", LessThan: "10.1.14-h13"},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:o:paloaltonetworks:pan-os:10.1.14-h13:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityNone,
+		},
+		{
+			// The query carries the hotfix in the UPDATE attribute instead
+			// (NVD/cisco form: version="10.1.14", update="h11"). Accept folds a
+			// hotfix-looking UPDATE into the version for pan-os ranges, so this
+			// resolves to 10.1.14-h11 and is correctly in range.
+			name: "pan-os hotfix query, update attribute, within range",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:o:paloaltonetworks:pan-os:*:*:*:*:*:*:*:*",
+				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypePANOS, GreaterEqual: "10.1.0", LessThan: "10.1.14-h13"},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:o:paloaltonetworks:pan-os:10.1.14:h11:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityExact,
+		},
+		{
+			// Same UPDATE-attribute form at the exclusive hotfix upper bound: the
+			// device is fixed (10.1.14-h13), so without folding UPDATE the query
+			// would read as base 10.1.14 (< 10.1.14-h13) and falsely match.
+			name: "pan-os hotfix query, update attribute, at exclusive upper bound",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:o:paloaltonetworks:pan-os:*:*:*:*:*:*:*:*",
+				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypePANOS, GreaterEqual: "10.1.0", LessThan: "10.1.14-h13"},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:o:paloaltonetworks:pan-os:10.1.14:h13:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityNone,
+		},
+		{
+			// Uppercase UPDATE hotfix ("H11"): the fold lowercases it to the
+			// "-h11" form the comparator requires (it rejects "-H11"), so it
+			// still resolves to 10.1.14-h11 and is in range.
+			name: "pan-os hotfix query, uppercase update attribute, within range",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:o:paloaltonetworks:pan-os:*:*:*:*:*:*:*:*",
+				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypePANOS, GreaterEqual: "10.1.0", LessThan: "10.1.14-h13"},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:o:paloaltonetworks:pan-os:10.1.14:H11:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityExact,
+		},
+		{
+			// The hotfix is already in the version AND a hotfix-looking UPDATE is
+			// also present: do not fold (that would build an unparseable
+			// "10.1.14-h11-h11"); the version form alone is in range.
+			name: "pan-os hotfix in version, hotfix update attribute, no double-fold",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:o:paloaltonetworks:pan-os:*:*:*:*:*:*:*:*",
+				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypePANOS, GreaterEqual: "10.1.0", LessThan: "10.1.14-h13"},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:o:paloaltonetworks:pan-os:10.1.14-h11:h11:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityExact,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

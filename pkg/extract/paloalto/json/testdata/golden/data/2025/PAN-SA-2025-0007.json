@@ -1,0 +1,53 @@
+{
+	"id": "PAN-SA-2025-0007",
+	"advisories": [
+		{
+			"content": {
+				"id": "PAN-SA-2025-0007",
+				"title": "Chromium: Monthly Vulnerability Update (March 2025)",
+				"description": "Palo Alto Networks incorporated the following Chromium security fixes into our products:\n\n * https://chromereleases.googleblog.com/2025/03/stable-channel-update-for-desktop.html\n   \n * https://chromereleases.googleblog.com/2025/02/stable-channel-update-for-desktop_25.html\n * https://chromereleases.googleblog.com/2025/02/stable-channel-update-for-desktop_18.html\n * https://chromereleases.googleblog.com/2025/02/stable-channel-update-for-desktop_12.html",
+				"severity": [
+					{
+						"type": "cvss_v40",
+						"source": "security.paloaltonetworks.com",
+						"cvss_v40": {
+							"vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:A/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H/E:U/AU:N/R:U/V:D/RE:L/U:Amber",
+							"score": 7.6,
+							"severity": "HIGH"
+						}
+					}
+				],
+				"mitigations": [
+					{
+						"source": "security.paloaltonetworks.com",
+						"description": "CVE             PRISMA ACCESS BROWSER\nCVE-2025-0995   133.16.4.99\nCVE-2025-0996   133.16.4.99\nCVE-2025-0997   133.16.4.99\nCVE-2025-0998   133.16.4.99\nCVE-2025-0999   133.27.6.127\nCVE-2025-1006   133.27.6.127\nCVE-2025-1426   133.27.6.127\nCVE-2025-1914   134.7.4.44\nCVE-2025-1915   134.7.4.44\nCVE-2025-1916   134.7.4.44\nCVE-2025-1917   134.7.4.44\nCVE-2025-1918   134.7.4.44\nCVE-2025-1919   134.7.4.44\nCVE-2025-1921   134.7.4.44\nCVE-2025-1922   134.7.4.44\nCVE-2025-1923   134.7.4.44"
+					}
+				],
+				"workarounds": [
+					{
+						"source": "security.paloaltonetworks.com",
+						"description": "No workaround or mitigation is available."
+					}
+				],
+				"references": [
+					{
+						"source": "security.paloaltonetworks.com",
+						"url": "https://security.paloaltonetworks.com/PAN-SA-2025-0007"
+					}
+				],
+				"published": "2025-03-12T16:00:00Z"
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe"
+				}
+			]
+		}
+	],
+	"data_source": {
+		"id": "paloalto-json",
+		"raws": [
+			"fixtures/2025/PAN-SA-2025-0007.json"
+		]
+	}
+}

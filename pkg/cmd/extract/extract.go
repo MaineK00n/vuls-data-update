@@ -92,6 +92,7 @@ import (
 	nvdFeedCVEv2 "github.com/MaineK00n/vuls-data-update/pkg/extract/nvd/feed/cve/v2"
 	oracleLinux "github.com/MaineK00n/vuls-data-update/pkg/extract/oracle/linux"
 	ossFuzzOSV "github.com/MaineK00n/vuls-data-update/pkg/extract/oss-fuzz/osv"
+	paloaltoJSON "github.com/MaineK00n/vuls-data-update/pkg/extract/paloalto/json"
 	perlDB "github.com/MaineK00n/vuls-data-update/pkg/extract/perl/db"
 	pipDB "github.com/MaineK00n/vuls-data-update/pkg/extract/pip/db"
 	pipGHSA "github.com/MaineK00n/vuls-data-update/pkg/extract/pip/ghsa"
@@ -187,6 +188,7 @@ func NewCmdExtract() *cobra.Command {
 		newCmdNVDAPICVE(), newCmdNVDAPICPE(), newCmdNVDFeedCVEv1(), newCmdNVDFeedCPEv1(), newCmdNVDFeedCPEMATCHv1(), newCmdNVDFeedCVEv2(), newCmdNVDFeedCPEv2(), newCmdNVDFeedCPEMATCHv2(),
 		newCmdOracleLinux(),
 		newCmdOSSFuzzOSV(),
+		newCmdPaloAltoJSON(),
 		newCmdPerlDB(),
 		newCmdPipGHSA(), newCmdPipGLSA(), newCmdPipOSV(), newCmdPipDB(),
 		newCmdPubGHSA(), newCmdPubOSV(),
@@ -2316,6 +2318,31 @@ func newCmdOSSFuzzOSV() *cobra.Command {
 		RunE: func(_ *cobra.Command, args []string) error {
 			if err := ossFuzzOSV.Extract(args[0], ossFuzzOSV.WithDir(options.dir)); err != nil {
 				return errors.Wrap(err, "failed to extract oss-fuzz osv")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
+
+	return cmd
+}
+
+func newCmdPaloAltoJSON() *cobra.Command {
+	options := &base{
+		dir: filepath.Join(util.CacheDir(), "extract", "paloalto", "json"),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "paloalto-json <Raw Palo Alto Networks JSON Repository PATH>",
+		Short: "Extract Palo Alto Networks JSON data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update extract paloalto-json vuls-data-raw-paloalto-json
+		`),
+		Args: cobra.ExactArgs(1),
+		RunE: func(_ *cobra.Command, args []string) error {
+			if err := paloaltoJSON.Extract(args[0], paloaltoJSON.WithDir(options.dir)); err != nil {
+				return errors.Wrap(err, "failed to extract paloalto json")
 			}
 			return nil
 		},
