@@ -164,9 +164,9 @@ func Fetch(ids []string, opts ...Option) error {
 			_, _ = io.Copy(io.Discard, resp.Body)
 			// A handful of advisories listed by /json/?page= return 404 on the
 			// per-advisory endpoint (a known upstream regression). Skip those, but only
-			// for the known IDs (pkg/fetch/paloalto/internal/missing) so a 404 on any
-			// other advisory still fails loudly as a new regression. The vuls-data-db
-			// pipeline restores the last-known-good copy of the skipped IDs from history.
+			// for the known IDs (knownMissing) so a 404 on any other advisory still fails
+			// loudly as a new regression. The vuls-data-db pipeline restores the
+			// last-known-good copy of the skipped IDs from history.
 			if resp.StatusCode == http.StatusNotFound {
 				id := path.Base(resp.Request.URL.Path)
 				if _, ok := knownMissing[id]; !ok {
