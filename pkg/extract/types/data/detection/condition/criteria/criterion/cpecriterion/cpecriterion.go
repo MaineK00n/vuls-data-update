@@ -322,9 +322,14 @@ func (c Criterion) Accept(query Query) (MatchQuality, error) {
 			// when the device is actually fixed). Scoped to the pan-os range type
 			// (other range types do not use the UPDATE attribute this way); for
 			// the snmp2cpe form UPDATE is ANY and nothing is folded.
-			if c.Range.Type == rangeTypes.RangeTypePANOS {
+			//
+			// Normalise to the lowercase "-hN" the comparator requires (it
+			// rejects "-H11"), and only fold when the version is a base release —
+			// if it already carries a hotfix ("10.1.14-h11"), appending the
+			// UPDATE would produce an unparseable "...-h11-h11".
+			if c.Range.Type == rangeTypes.RangeTypePANOS && !strings.Contains(qVersion, "-") {
 				if u := unescapeWFN(qWFN.GetString(common.AttributeUpdate)); panosHotfixUpdate.MatchString(u) {
-					qVersion = fmt.Sprintf("%s-%s", qVersion, u)
+					qVersion = fmt.Sprintf("%s-%s", qVersion, strings.ToLower(u))
 				}
 			}
 			isAccepted, err := c.Range.Accept(qVersion)

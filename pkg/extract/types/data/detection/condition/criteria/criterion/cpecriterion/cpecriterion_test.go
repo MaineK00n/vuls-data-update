@@ -464,6 +464,32 @@ func TestCriterion_Accept(t *testing.T) {
 			args: args{query: ccTypes.Query{CPE: "cpe:2.3:o:paloaltonetworks:pan-os:10.1.14:h13:*:*:*:*:*:*"}},
 			want: ccTypes.MatchQualityNone,
 		},
+		{
+			// Uppercase UPDATE hotfix ("H11"): the fold lowercases it to the
+			// "-h11" form the comparator requires (it rejects "-H11"), so it
+			// still resolves to 10.1.14-h11 and is in range.
+			name: "pan-os hotfix query, uppercase update attribute, within range",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:o:paloaltonetworks:pan-os:*:*:*:*:*:*:*:*",
+				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypePANOS, GreaterEqual: "10.1.0", LessThan: "10.1.14-h13"},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:o:paloaltonetworks:pan-os:10.1.14:H11:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityExact,
+		},
+		{
+			// The hotfix is already in the version AND a hotfix-looking UPDATE is
+			// also present: do not fold (that would build an unparseable
+			// "10.1.14-h11-h11"); the version form alone is in range.
+			name: "pan-os hotfix in version, hotfix update attribute, no double-fold",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:o:paloaltonetworks:pan-os:*:*:*:*:*:*:*:*",
+				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypePANOS, GreaterEqual: "10.1.0", LessThan: "10.1.14-h13"},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:o:paloaltonetworks:pan-os:10.1.14-h11:h11:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityExact,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
