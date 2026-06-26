@@ -162,20 +162,20 @@ func Fetch(ids []string, opts ...Option) error {
 
 		if resp.StatusCode != http.StatusOK {
 			_, _ = io.Copy(io.Discard, resp.Body)
+			id := path.Base(resp.Request.URL.Path)
 			// A handful of advisories listed by /json/?page= return 404 on the
 			// per-advisory endpoint (a known upstream regression). Skip those, but only
 			// for the known IDs (knownMissing) so a 404 on any other advisory still fails
 			// loudly as a new regression. The vuls-data-db pipeline restores the
 			// last-known-good copy of the skipped IDs from history.
 			if resp.StatusCode == http.StatusNotFound {
-				id := path.Base(resp.Request.URL.Path)
 				if _, ok := knownMissing[id]; !ok {
 					return errors.Errorf("unexpected 404 for advisory %q (not a known upstream regression)", id)
 				}
 				slog.Warn("skip advisory: known upstream 404 regression", "id", id)
 				return nil
 			}
-			return errors.Errorf("error response with status code %d", resp.StatusCode)
+			return errors.Errorf("error response with status code %d for advisory %q", resp.StatusCode, id)
 		}
 
 		var v CVE
