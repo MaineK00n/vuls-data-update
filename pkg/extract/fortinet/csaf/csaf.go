@@ -80,7 +80,7 @@ func Extract(args string, opts ...Option) error {
 	slog.Info("Extract Fortinet CSAF")
 	if err := filepath.WalkDir(args, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
-			return err
+			return errors.Wrapf(err, "walk %s", path)
 		}
 
 		if d.IsDir() {
