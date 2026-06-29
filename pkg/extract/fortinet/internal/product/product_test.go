@@ -125,9 +125,9 @@ func TestRangeType(t *testing.T) {
 		want    ccRangeTypes.RangeType
 		wantErr bool
 	}{
-		{name: "FortiOS → numeric per-product type", cpe: "cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*", want: ccRangeTypes.RangeTypeFortinetFortios},
-		{name: "FortiSASE → non-numeric per-product type", cpe: "cpe:2.3:a:fortinet:fortisase:*:*:*:*:*:*:*:*", want: ccRangeTypes.RangeTypeFortinetFortisase},
-		{name: "hyphenated slug resolves (fortinac-f)", cpe: "cpe:2.3:o:fortinet:fortinac-f:*:*:*:*:*:*:*:*", want: ccRangeTypes.RangeTypeFortinetFortinacF},
+		{name: "FortiOS → numeric per-product type", cpe: "cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*", want: ccRangeTypes.RangeTypeFortinetFortiOS},
+		{name: "FortiSASE → non-numeric per-product type", cpe: "cpe:2.3:a:fortinet:fortisase:*:*:*:*:*:*:*:*", want: ccRangeTypes.RangeTypeFortinetFortiSASE},
+		{name: "hyphenated slug resolves (fortinac-f)", cpe: "cpe:2.3:o:fortinet:fortinac-f:*:*:*:*:*:*:*:*", want: ccRangeTypes.RangeTypeFortinetFortiNACF},
 		{name: "unknown slug → error", cpe: "cpe:2.3:o:fortinet:fortinonexistent:*:*:*:*:*:*:*:*", wantErr: true},
 		{name: "malformed cpe → error", cpe: "not-a-cpe", wantErr: true},
 	}

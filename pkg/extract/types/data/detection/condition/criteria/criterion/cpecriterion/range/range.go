@@ -18,12 +18,13 @@ import (
 // RangeType selects the version comparator used by Compare / Accept. Extractors
 // must set it explicitly — Accept on a zero (unset) or Unknown Type refuses to
 // evaluate (returns false), so a forgotten Type produces a safe non-match
-// rather than a silent false positive. The `type` JSON tag carries `omitempty`,
-// so a zero value is omitted from output; an explicitly-set Unknown serializes
-// as "unknown".
+// rather than a silent false positive. The `type` JSON tag carries
+// `omitempty`, so a zero value is omitted from output rather than written
+// as "unknown"; an explicitly-set Unknown is serialized as "unknown".
 //
 // Independent from versioncriterion/affected/range.RangeType: only types
-// meaningful for CPE-side matching belong here.
+// meaningful for CPE-side matching belong here. Add new comparators (e.g.
+// cisco IOS train versions) as needed.
 type RangeType int
 
 const (
@@ -41,72 +42,72 @@ const (
 	// fortinetNonNumericTypes); the per-product split is what lets that stay true
 	// product-by-product going forward.
 	RangeTypeFortinetAntivirusEngine
-	RangeTypeFortinetAscenlink
-	RangeTypeFortinetFortiadc
-	RangeTypeFortinetFortiadcManager
-	RangeTypeFortinetFortiaiops
-	RangeTypeFortinetFortianalyzer
-	RangeTypeFortinetFortianalyzerBigdata
-	RangeTypeFortinetFortianalyzerCloud
-	RangeTypeFortinetFortiap
-	RangeTypeFortinetFortiapC
-	RangeTypeFortinetFortiapS
-	RangeTypeFortinetFortiapU
-	RangeTypeFortinetFortiapW2
-	RangeTypeFortinetFortiauthenticator
-	RangeTypeFortinetForticache
-	RangeTypeFortinetForticamera
-	RangeTypeFortinetForticlient
-	RangeTypeFortinetForticlientEnterpriseManagementServer
-	RangeTypeFortinetForticlientEnterpriseManagementServerCloud
-	RangeTypeFortinetForticonverter
-	RangeTypeFortinetFortidb
-	RangeTypeFortinetFortiddos
-	RangeTypeFortinetFortiddosCm
-	RangeTypeFortinetFortiddosF
-	RangeTypeFortinetFortideceptor
-	RangeTypeFortinetFortidlp
-	RangeTypeFortinetFortiedr
-	RangeTypeFortinetFortiedrManager
-	RangeTypeFortinetFortiextender
-	RangeTypeFortinetFortifone
-	RangeTypeFortinetFortiguest
-	RangeTypeFortinetFortiisolator
-	RangeTypeFortinetFortimail
-	RangeTypeFortinetFortimanager
-	RangeTypeFortinetFortimanagerCloud
-	RangeTypeFortinetFortinac
-	RangeTypeFortinetFortinacF
-	RangeTypeFortinetFortindr
-	RangeTypeFortinetFortios
-	RangeTypeFortinetFortios6k7k
-	RangeTypeFortinetFortiosIpsEngine
-	RangeTypeFortinetFortipam
-	RangeTypeFortinetFortiportal
-	RangeTypeFortinetFortipresence
-	RangeTypeFortinetFortiproxy
-	RangeTypeFortinetFortirecorder
-	RangeTypeFortinetFortisandbox
-	RangeTypeFortinetFortisandboxCloud
-	RangeTypeFortinetFortisandboxPaas
-	RangeTypeFortinetFortisase
-	RangeTypeFortinetFortisiem
-	RangeTypeFortinetFortisoar
-	RangeTypeFortinetFortisoarAgentCommunicationBridge
-	RangeTypeFortinetFortisra
-	RangeTypeFortinetFortiswitch
-	RangeTypeFortinetFortiswitchaxfixed
-	RangeTypeFortinetFortiswitchmanager
-	RangeTypeFortinetFortitester
-	RangeTypeFortinetFortitokenMobile
-	RangeTypeFortinetFortivoice
-	RangeTypeFortinetFortivoiceCloudUnifiedCommunicationsDesktop
-	RangeTypeFortinetFortiwan
-	RangeTypeFortinetFortiwanManager
-	RangeTypeFortinetFortiweb
-	RangeTypeFortinetFortiwebManager
-	RangeTypeFortinetFortiwlc
-	RangeTypeFortinetFortiwlm
+	RangeTypeFortinetAscenLink
+	RangeTypeFortinetFortiADC
+	RangeTypeFortinetFortiADCManager
+	RangeTypeFortinetFortiAIOps
+	RangeTypeFortinetFortiAnalyzer
+	RangeTypeFortinetFortiAnalyzerBigData
+	RangeTypeFortinetFortiAnalyzerCloud
+	RangeTypeFortinetFortiAP
+	RangeTypeFortinetFortiAPC
+	RangeTypeFortinetFortiAPS
+	RangeTypeFortinetFortiAPU
+	RangeTypeFortinetFortiAPW2
+	RangeTypeFortinetFortiAuthenticator
+	RangeTypeFortinetFortiCache
+	RangeTypeFortinetFortiCamera
+	RangeTypeFortinetFortiClient
+	RangeTypeFortinetFortiClientEnterpriseManagementServer
+	RangeTypeFortinetFortiClientEnterpriseManagementServerCloud
+	RangeTypeFortinetFortiConverter
+	RangeTypeFortinetFortiDB
+	RangeTypeFortinetFortiDDoS
+	RangeTypeFortinetFortiDDoSCM
+	RangeTypeFortinetFortiDDoSF
+	RangeTypeFortinetFortiDeceptor
+	RangeTypeFortinetFortiDLP
+	RangeTypeFortinetFortiEDR
+	RangeTypeFortinetFortiEDRManager
+	RangeTypeFortinetFortiExtender
+	RangeTypeFortinetFortiFone
+	RangeTypeFortinetFortiGuest
+	RangeTypeFortinetFortiIsolator
+	RangeTypeFortinetFortiMail
+	RangeTypeFortinetFortiManager
+	RangeTypeFortinetFortiManagerCloud
+	RangeTypeFortinetFortiNAC
+	RangeTypeFortinetFortiNACF
+	RangeTypeFortinetFortiNDR
+	RangeTypeFortinetFortiOS
+	RangeTypeFortinetFortiOS6k7k
+	RangeTypeFortinetFortiOSIPSEngine
+	RangeTypeFortinetFortiPAM
+	RangeTypeFortinetFortiPortal
+	RangeTypeFortinetFortiPresence
+	RangeTypeFortinetFortiProxy
+	RangeTypeFortinetFortiRecorder
+	RangeTypeFortinetFortiSandbox
+	RangeTypeFortinetFortiSandboxCloud
+	RangeTypeFortinetFortiSandboxPaaS
+	RangeTypeFortinetFortiSASE
+	RangeTypeFortinetFortiSIEM
+	RangeTypeFortinetFortiSOAR
+	RangeTypeFortinetFortiSOARAgentCommunicationBridge
+	RangeTypeFortinetFortiSRA
+	RangeTypeFortinetFortiSwitch
+	RangeTypeFortinetFortiSwitchAXFixed
+	RangeTypeFortinetFortiSwitchManager
+	RangeTypeFortinetFortiTester
+	RangeTypeFortinetFortiTokenMobile
+	RangeTypeFortinetFortiVoice
+	RangeTypeFortinetFortiVoiceCloudUnifiedCommunicationsDesktop
+	RangeTypeFortinetFortiWAN
+	RangeTypeFortinetFortiWANManager
+	RangeTypeFortinetFortiWeb
+	RangeTypeFortinetFortiWebManager
+	RangeTypeFortinetFortiWLC
+	RangeTypeFortinetFortiWLM
 	RangeTypeFortinetMeru
 
 	RangeTypeUnknown
@@ -120,72 +121,72 @@ var rangeTypeNames = map[RangeType]string{
 	RangeTypePANOS:                                               "pan-os",
 	RangeTypeUnknown:                                             "unknown",
 	RangeTypeFortinetAntivirusEngine:                             "fortinet-antivirus_engine",
-	RangeTypeFortinetAscenlink:                                   "fortinet-ascenlink",
-	RangeTypeFortinetFortiadc:                                    "fortinet-fortiadc",
-	RangeTypeFortinetFortiadcManager:                             "fortinet-fortiadc_manager",
-	RangeTypeFortinetFortiaiops:                                  "fortinet-fortiaiops",
-	RangeTypeFortinetFortianalyzer:                               "fortinet-fortianalyzer",
-	RangeTypeFortinetFortianalyzerBigdata:                        "fortinet-fortianalyzer-bigdata",
-	RangeTypeFortinetFortianalyzerCloud:                          "fortinet-fortianalyzer_cloud",
-	RangeTypeFortinetFortiap:                                     "fortinet-fortiap",
-	RangeTypeFortinetFortiapC:                                    "fortinet-fortiap-c",
-	RangeTypeFortinetFortiapS:                                    "fortinet-fortiap-s",
-	RangeTypeFortinetFortiapU:                                    "fortinet-fortiap-u",
-	RangeTypeFortinetFortiapW2:                                   "fortinet-fortiap-w2",
-	RangeTypeFortinetFortiauthenticator:                          "fortinet-fortiauthenticator",
-	RangeTypeFortinetForticache:                                  "fortinet-forticache",
-	RangeTypeFortinetForticamera:                                 "fortinet-forticamera",
-	RangeTypeFortinetForticlient:                                 "fortinet-forticlient",
-	RangeTypeFortinetForticlientEnterpriseManagementServer:       "fortinet-forticlient_enterprise_management_server",
-	RangeTypeFortinetForticlientEnterpriseManagementServerCloud:  "fortinet-forticlient_enterprise_management_server_cloud",
-	RangeTypeFortinetForticonverter:                              "fortinet-forticonverter",
-	RangeTypeFortinetFortidb:                                     "fortinet-fortidb",
-	RangeTypeFortinetFortiddos:                                   "fortinet-fortiddos",
-	RangeTypeFortinetFortiddosCm:                                 "fortinet-fortiddos-cm",
-	RangeTypeFortinetFortiddosF:                                  "fortinet-fortiddos-f",
-	RangeTypeFortinetFortideceptor:                               "fortinet-fortideceptor",
-	RangeTypeFortinetFortidlp:                                    "fortinet-fortidlp",
-	RangeTypeFortinetFortiedr:                                    "fortinet-fortiedr",
-	RangeTypeFortinetFortiedrManager:                             "fortinet-fortiedr_manager",
-	RangeTypeFortinetFortiextender:                               "fortinet-fortiextender",
-	RangeTypeFortinetFortifone:                                   "fortinet-fortifone",
-	RangeTypeFortinetFortiguest:                                  "fortinet-fortiguest",
-	RangeTypeFortinetFortiisolator:                               "fortinet-fortiisolator",
-	RangeTypeFortinetFortimail:                                   "fortinet-fortimail",
-	RangeTypeFortinetFortimanager:                                "fortinet-fortimanager",
-	RangeTypeFortinetFortimanagerCloud:                           "fortinet-fortimanager_cloud",
-	RangeTypeFortinetFortinac:                                    "fortinet-fortinac",
-	RangeTypeFortinetFortinacF:                                   "fortinet-fortinac-f",
-	RangeTypeFortinetFortindr:                                    "fortinet-fortindr",
-	RangeTypeFortinetFortios:                                     "fortinet-fortios",
-	RangeTypeFortinetFortios6k7k:                                 "fortinet-fortios-6k7k",
-	RangeTypeFortinetFortiosIpsEngine:                            "fortinet-fortios_ips_engine",
-	RangeTypeFortinetFortipam:                                    "fortinet-fortipam",
-	RangeTypeFortinetFortiportal:                                 "fortinet-fortiportal",
-	RangeTypeFortinetFortipresence:                               "fortinet-fortipresence",
-	RangeTypeFortinetFortiproxy:                                  "fortinet-fortiproxy",
-	RangeTypeFortinetFortirecorder:                               "fortinet-fortirecorder",
-	RangeTypeFortinetFortisandbox:                                "fortinet-fortisandbox",
-	RangeTypeFortinetFortisandboxCloud:                           "fortinet-fortisandbox_cloud",
-	RangeTypeFortinetFortisandboxPaas:                            "fortinet-fortisandbox_paas",
-	RangeTypeFortinetFortisase:                                   "fortinet-fortisase",
-	RangeTypeFortinetFortisiem:                                   "fortinet-fortisiem",
-	RangeTypeFortinetFortisoar:                                   "fortinet-fortisoar",
-	RangeTypeFortinetFortisoarAgentCommunicationBridge:           "fortinet-fortisoar_agent_communication_bridge",
-	RangeTypeFortinetFortisra:                                    "fortinet-fortisra",
-	RangeTypeFortinetFortiswitch:                                 "fortinet-fortiswitch",
-	RangeTypeFortinetFortiswitchaxfixed:                          "fortinet-fortiswitchaxfixed",
-	RangeTypeFortinetFortiswitchmanager:                          "fortinet-fortiswitchmanager",
-	RangeTypeFortinetFortitester:                                 "fortinet-fortitester",
-	RangeTypeFortinetFortitokenMobile:                            "fortinet-fortitoken_mobile",
-	RangeTypeFortinetFortivoice:                                  "fortinet-fortivoice",
-	RangeTypeFortinetFortivoiceCloudUnifiedCommunicationsDesktop: "fortinet-fortivoice_cloud_unified_communications_desktop",
-	RangeTypeFortinetFortiwan:                                    "fortinet-fortiwan",
-	RangeTypeFortinetFortiwanManager:                             "fortinet-fortiwan_manager",
-	RangeTypeFortinetFortiweb:                                    "fortinet-fortiweb",
-	RangeTypeFortinetFortiwebManager:                             "fortinet-fortiweb_manager",
-	RangeTypeFortinetFortiwlc:                                    "fortinet-fortiwlc",
-	RangeTypeFortinetFortiwlm:                                    "fortinet-fortiwlm",
+	RangeTypeFortinetAscenLink:                                   "fortinet-ascenlink",
+	RangeTypeFortinetFortiADC:                                    "fortinet-fortiadc",
+	RangeTypeFortinetFortiADCManager:                             "fortinet-fortiadc_manager",
+	RangeTypeFortinetFortiAIOps:                                  "fortinet-fortiaiops",
+	RangeTypeFortinetFortiAnalyzer:                               "fortinet-fortianalyzer",
+	RangeTypeFortinetFortiAnalyzerBigData:                        "fortinet-fortianalyzer-bigdata",
+	RangeTypeFortinetFortiAnalyzerCloud:                          "fortinet-fortianalyzer_cloud",
+	RangeTypeFortinetFortiAP:                                     "fortinet-fortiap",
+	RangeTypeFortinetFortiAPC:                                    "fortinet-fortiap-c",
+	RangeTypeFortinetFortiAPS:                                    "fortinet-fortiap-s",
+	RangeTypeFortinetFortiAPU:                                    "fortinet-fortiap-u",
+	RangeTypeFortinetFortiAPW2:                                   "fortinet-fortiap-w2",
+	RangeTypeFortinetFortiAuthenticator:                          "fortinet-fortiauthenticator",
+	RangeTypeFortinetFortiCache:                                  "fortinet-forticache",
+	RangeTypeFortinetFortiCamera:                                 "fortinet-forticamera",
+	RangeTypeFortinetFortiClient:                                 "fortinet-forticlient",
+	RangeTypeFortinetFortiClientEnterpriseManagementServer:       "fortinet-forticlient_enterprise_management_server",
+	RangeTypeFortinetFortiClientEnterpriseManagementServerCloud:  "fortinet-forticlient_enterprise_management_server_cloud",
+	RangeTypeFortinetFortiConverter:                              "fortinet-forticonverter",
+	RangeTypeFortinetFortiDB:                                     "fortinet-fortidb",
+	RangeTypeFortinetFortiDDoS:                                   "fortinet-fortiddos",
+	RangeTypeFortinetFortiDDoSCM:                                 "fortinet-fortiddos-cm",
+	RangeTypeFortinetFortiDDoSF:                                  "fortinet-fortiddos-f",
+	RangeTypeFortinetFortiDeceptor:                               "fortinet-fortideceptor",
+	RangeTypeFortinetFortiDLP:                                    "fortinet-fortidlp",
+	RangeTypeFortinetFortiEDR:                                    "fortinet-fortiedr",
+	RangeTypeFortinetFortiEDRManager:                             "fortinet-fortiedr_manager",
+	RangeTypeFortinetFortiExtender:                               "fortinet-fortiextender",
+	RangeTypeFortinetFortiFone:                                   "fortinet-fortifone",
+	RangeTypeFortinetFortiGuest:                                  "fortinet-fortiguest",
+	RangeTypeFortinetFortiIsolator:                               "fortinet-fortiisolator",
+	RangeTypeFortinetFortiMail:                                   "fortinet-fortimail",
+	RangeTypeFortinetFortiManager:                                "fortinet-fortimanager",
+	RangeTypeFortinetFortiManagerCloud:                           "fortinet-fortimanager_cloud",
+	RangeTypeFortinetFortiNAC:                                    "fortinet-fortinac",
+	RangeTypeFortinetFortiNACF:                                   "fortinet-fortinac-f",
+	RangeTypeFortinetFortiNDR:                                    "fortinet-fortindr",
+	RangeTypeFortinetFortiOS:                                     "fortinet-fortios",
+	RangeTypeFortinetFortiOS6k7k:                                 "fortinet-fortios-6k7k",
+	RangeTypeFortinetFortiOSIPSEngine:                            "fortinet-fortios_ips_engine",
+	RangeTypeFortinetFortiPAM:                                    "fortinet-fortipam",
+	RangeTypeFortinetFortiPortal:                                 "fortinet-fortiportal",
+	RangeTypeFortinetFortiPresence:                               "fortinet-fortipresence",
+	RangeTypeFortinetFortiProxy:                                  "fortinet-fortiproxy",
+	RangeTypeFortinetFortiRecorder:                               "fortinet-fortirecorder",
+	RangeTypeFortinetFortiSandbox:                                "fortinet-fortisandbox",
+	RangeTypeFortinetFortiSandboxCloud:                           "fortinet-fortisandbox_cloud",
+	RangeTypeFortinetFortiSandboxPaaS:                            "fortinet-fortisandbox_paas",
+	RangeTypeFortinetFortiSASE:                                   "fortinet-fortisase",
+	RangeTypeFortinetFortiSIEM:                                   "fortinet-fortisiem",
+	RangeTypeFortinetFortiSOAR:                                   "fortinet-fortisoar",
+	RangeTypeFortinetFortiSOARAgentCommunicationBridge:           "fortinet-fortisoar_agent_communication_bridge",
+	RangeTypeFortinetFortiSRA:                                    "fortinet-fortisra",
+	RangeTypeFortinetFortiSwitch:                                 "fortinet-fortiswitch",
+	RangeTypeFortinetFortiSwitchAXFixed:                          "fortinet-fortiswitchaxfixed",
+	RangeTypeFortinetFortiSwitchManager:                          "fortinet-fortiswitchmanager",
+	RangeTypeFortinetFortiTester:                                 "fortinet-fortitester",
+	RangeTypeFortinetFortiTokenMobile:                            "fortinet-fortitoken_mobile",
+	RangeTypeFortinetFortiVoice:                                  "fortinet-fortivoice",
+	RangeTypeFortinetFortiVoiceCloudUnifiedCommunicationsDesktop: "fortinet-fortivoice_cloud_unified_communications_desktop",
+	RangeTypeFortinetFortiWAN:                                    "fortinet-fortiwan",
+	RangeTypeFortinetFortiWANManager:                             "fortinet-fortiwan_manager",
+	RangeTypeFortinetFortiWeb:                                    "fortinet-fortiweb",
+	RangeTypeFortinetFortiWebManager:                             "fortinet-fortiweb_manager",
+	RangeTypeFortinetFortiWLC:                                    "fortinet-fortiwlc",
+	RangeTypeFortinetFortiWLM:                                    "fortinet-fortiwlm",
 	RangeTypeFortinetMeru:                                        "fortinet-meru",
 }
 
@@ -201,7 +202,7 @@ var rangeTypeByName = func() map[string]RangeType {
 // the FortiSASE non-numeric scheme (an alphabetic milestone component, e.g.
 // 25.2.a); every other Fortinet type is purely numeric.
 var fortinetNonNumericTypes = map[RangeType]struct{}{
-	RangeTypeFortinetFortisase: {},
+	RangeTypeFortinetFortiSASE: {},
 }
 
 // IsFortinetNonNumeric reports whether t is a Fortinet per-product type that uses
@@ -279,9 +280,10 @@ func Compare(x, y Range) int {
 }
 
 // CompareError wraps the failure modes RangeType.Compare can raise so that
-// callers can classify them: any expected, swallow-safe failure (e.g. an
-// unparseable version) is wrapped in CompareError; anything else surfaces
-// unwrapped so it propagates loudly.
+// callers can classify them. Mirrors versioncriterion/affected/range's
+// pattern: any expected, swallow-safe failure (e.g. an unparseable version)
+// is wrapped in CompareError; anything else (e.g. comparator-internal bugs)
+// surfaces unwrapped so it propagates loudly.
 type CompareError struct {
 	Err error
 }
@@ -292,8 +294,8 @@ func (e *CompareError) Error() string {
 
 func (e *CompareError) Unwrap() error { return e.Err }
 
-// NewVersionError records which side (v1 or v2) and which RangeType triggered
-// the parse failure.
+// NewVersionError records which side (v1 or v2) and which RangeType
+// triggered the parse failure.
 type NewVersionError struct {
 	RangeType RangeType
 	Version   string
@@ -306,24 +308,25 @@ func (e *NewVersionError) Error() string {
 
 func (e *NewVersionError) Unwrap() error { return e.Err }
 
-// ErrRangeTypeUnknown is wrapped in a CompareError when Compare is called with a
-// Type that cannot evaluate any version.
+// ErrRangeTypeUnknown is wrapped in a CompareError when Compare is called
+// with a Type that cannot evaluate any version.
 var ErrRangeTypeUnknown = errors.New("unknown range type")
 
-// Compare returns an integer comparing v1 and v2 under the comparator selected
-// by t: negative for v1 < v2, zero for equal, positive for v1 > v2.
+// Compare returns an integer comparing v1 and v2 under the comparator
+// selected by t (semantics match hashicorp version.Version.Compare):
+// negative for v1 < v2, zero for equal, positive for v1 > v2.
 //
-// Parse failures (either side) are wrapped in *CompareError so detect-time
-// callers can swallow them gracefully; a Type with no comparator (Unknown/zero)
-// likewise returns a *CompareError wrapping ErrRangeTypeUnknown. Any other error
+// Parse failures (either side) are wrapped in *CompareError so that
+// detect-time callers can swallow them gracefully. A RangeType with no
+// comparator (Unknown or zero) likewise returns a *CompareError wrapping
+// ErrRangeTypeUnknown. Any other error (e.g. an unsupported RangeType
+// added without a Compare branch, or a comparator-internal failure)
 // surfaces unwrapped and propagates loudly.
 //
-// Fortinet per-product types dispatch to one of two comparators: the FortiSASE
-// non-numeric scheme (fortinetNonNumericTypes) vs. the numeric scheme everything else
-// uses. The numeric comparator refuses to order a non-numeric component, so a
-// numeric product never matches a non-numeric (letter) version (it fails safe via
-// CompareError); a product that later adopts a different scheme moves to its own
-// branch without touching the others.
+// Fortinet per-product types dispatch to go-fortinet-version: the FortiSASE
+// non-numeric scheme (fortinetNonNumericTypes) or the numeric scheme every
+// other product uses. The numeric comparator refuses to order a letter
+// component, so a numeric product safely never matches a non-numeric version.
 func (t RangeType) Compare(v1, v2 string) (int, error) {
 	switch t {
 	case RangeTypeSEMVER:
@@ -349,8 +352,8 @@ func (t RangeType) Compare(v1, v2 string) (int, error) {
 	case RangeTypePANOS:
 		// PAN-OS versions are <major>.<minor>.<maintenance>[-h<hotfix>].
 		// hashicorp comparators must not be used here: they parse "-hN" as a
-		// prerelease and invert the order (11.2.4-h1 < 11.2.4), while in PAN-OS a
-		// hotfix is released after its base (11.2.4 < 11.2.4-h1).
+		// prerelease and invert the order (11.2.4-h1 < 11.2.4), while in
+		// PAN-OS a hotfix is released after its base (11.2.4 < 11.2.4-h1).
 		va, err := panosVersion.NewVersion(v1)
 		if err != nil {
 			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
@@ -377,46 +380,52 @@ func (t RangeType) Compare(v1, v2 string) (int, error) {
 		// version and Compare's ErrIncomparable both surface as *CompareError, so
 		// Range.Accept treats them as a safe non-match.
 		if IsFortinetNonNumeric(t) {
-			return compareFortinetVersion(t, v1, v2,
-				nonnumericVersion.NewVersion,
-				func(a, b nonnumericVersion.Version) (int, error) { return a.Compare(b) })
+			va, err := nonnumericVersion.NewVersion(v1)
+			if err != nil {
+				return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
+			}
+			vb, err := nonnumericVersion.NewVersion(v2)
+			if err != nil {
+				return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
+			}
+			n, err := va.Compare(vb)
+			if err != nil {
+				return 0, &CompareError{Err: err}
+			}
+			return n, nil
 		}
-		return compareFortinetVersion(t, v1, v2,
-			numericVersion.NewVersion,
-			func(a, b numericVersion.Version) (int, error) { return a.Compare(b) })
+		va, err := numericVersion.NewVersion(v1)
+		if err != nil {
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
+		}
+		vb, err := numericVersion.NewVersion(v2)
+		if err != nil {
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
+		}
+		n, err := va.Compare(vb)
+		if err != nil {
+			return 0, &CompareError{Err: err}
+		}
+		return n, nil
 	}
 }
 
-// compareFortinetVersion parses v1 and v2 with a go-fortinet-version constructor
-// and compares them, wrapping every failure (parse error or an incomparable
-// pair) in *CompareError so Range.Accept swallows it as a safe non-match.
-func compareFortinetVersion[V any](t RangeType, v1, v2 string, parse func(string) (V, error), compare func(V, V) (int, error)) (int, error) {
-	a, err := parse(v1)
-	if err != nil {
-		return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
-	}
-	b, err := parse(v2)
-	if err != nil {
-		return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
-	}
-	n, err := compare(a, b)
-	if err != nil {
-		return 0, &CompareError{Err: err}
-	}
-	return n, nil
-}
-
-// Accept returns true when v satisfies every non-empty bound on r, comparing via
-// r.Type.Compare. An empty Range (all four bound strings unset) with a usable
-// Type accepts any v — even an unparseable one — because "no bound" means "no
-// constraint"; an empty Range with Type=Unknown/unset still returns false.
+// Accept returns true when v satisfies every non-empty bound on r, comparing
+// via r.Type.Compare. An empty Range (all four bound strings unset) with a
+// usable Type accepts any v — even an unparseable one — because "no bound"
+// means "no constraint"; an empty Range with Type=Unknown/unset still
+// returns false (no constraint can be evaluated).
 //
 // Compare failures that classify as *CompareError (parse failures on either
-// bound or query, plus the Unknown-type sentinel) are swallowed as graceful
-// non-matches so a detect run against malformed scan input does not crash. Other
-// errors propagate. Mirrors versioncriterion/affected.Accept.
+// bound or query, plus Unknown-type sentinel) are swallowed as graceful
+// non-matches so a detect run against malformed scan input does not crash.
+// Other errors (e.g. an unsupported RangeType that landed in data without a
+// matching Compare branch) propagate so the caller can surface the
+// data-invariant violation. Mirrors versioncriterion/affected.Accept.
 func (r Range) Accept(v string) (bool, error) {
 	if r.GreaterEqual == "" && r.GreaterThan == "" && r.LessEqual == "" && r.LessThan == "" {
+		// No bounds → no narrowing, but Unknown / unset Type still
+		// refuses to declare a match.
 		if r.Type == RangeTypeUnknown || r.Type == 0 {
 			return false, nil
 		}
@@ -424,15 +433,17 @@ func (r Range) Accept(v string) (bool, error) {
 	}
 
 	type bound struct {
-		label  string
-		s      string
+		label string
+		s     string
+		// reject reports whether the Compare(bound, v) sign should
+		// disqualify the criterion (i.e. the bound is violated).
 		reject func(int) bool
 	}
 	bounds := []bound{
-		{"ge", r.GreaterEqual, func(n int) bool { return n > 0 }},
-		{"gt", r.GreaterThan, func(n int) bool { return n >= 0 }},
-		{"le", r.LessEqual, func(n int) bool { return n < 0 }},
-		{"lt", r.LessThan, func(n int) bool { return n <= 0 }},
+		{"ge", r.GreaterEqual, func(n int) bool { return n > 0 }}, // need bound <= v
+		{"gt", r.GreaterThan, func(n int) bool { return n >= 0 }}, // need bound <  v
+		{"le", r.LessEqual, func(n int) bool { return n < 0 }},    // need bound >= v
+		{"lt", r.LessThan, func(n int) bool { return n <= 0 }},    // need bound >  v
 	}
 	for _, b := range bounds {
 		if b.s == "" {

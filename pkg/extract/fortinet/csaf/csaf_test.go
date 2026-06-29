@@ -94,7 +94,7 @@ func TestToCriterion(t *testing.T) {
 					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
 					CPE:        ccTypes.CPE("cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*"),
 					Range: &ccRangeTypes.Range{
-						Type:         ccRangeTypes.RangeTypeFortinetFortios,
+						Type:         ccRangeTypes.RangeTypeFortinetFortiOS,
 						GreaterEqual: "7.0.0",
 						LessEqual:    "7.0.5",
 					},
@@ -148,7 +148,7 @@ func TestToCriterion(t *testing.T) {
 					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
 					CPE:        ccTypes.CPE("cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*"),
 					Range: &ccRangeTypes.Range{
-						Type:         ccRangeTypes.RangeTypeFortinetFortios,
+						Type:         ccRangeTypes.RangeTypeFortinetFortiOS,
 						GreaterEqual: "7.0.0",
 						LessEqual:    "7.0.5",
 					},
@@ -170,7 +170,7 @@ func TestToCriterion(t *testing.T) {
 					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
 					CPE:        ccTypes.CPE("cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*"),
 					Range: &ccRangeTypes.Range{
-						Type:         ccRangeTypes.RangeTypeFortinetFortios,
+						Type:         ccRangeTypes.RangeTypeFortinetFortiOS,
 						GreaterEqual: "7.0",
 						LessThan:     "7.1",
 					},
@@ -192,7 +192,7 @@ func TestToCriterion(t *testing.T) {
 					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
 					CPE:        ccTypes.CPE("cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*"),
 					Range: &ccRangeTypes.Range{
-						Type:         ccRangeTypes.RangeTypeFortinetFortios,
+						Type:         ccRangeTypes.RangeTypeFortinetFortiOS,
 						GreaterEqual: "7.0.0",
 					},
 				},
@@ -213,7 +213,7 @@ func TestToCriterion(t *testing.T) {
 					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
 					CPE:        ccTypes.CPE("cpe:2.3:a:fortinet:fortisase:*:*:*:*:*:*:*:*"),
 					Range: &ccRangeTypes.Range{
-						Type:         ccRangeTypes.RangeTypeFortinetFortisase,
+						Type:         ccRangeTypes.RangeTypeFortinetFortiSASE,
 						GreaterEqual: "25.2",
 						LessThan:     "25.3",
 					},
