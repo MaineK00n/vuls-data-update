@@ -13,33 +13,25 @@ import (
 	ccRangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/cpecriterion/range"
 )
 
-// nonNumericVersionedCPEProducts holds the CPE product slugs of the Fortinet
-// products whose versions are NOT purely numeric (digits and dots) — they can
-// carry an alphabetic component. That non-numeric component is the whole point:
-// a version like "25.2.a" cannot be ordered against a multi-component numeric
-// bound (the comparator's undefined "numeric vs alphabetic at the same position"
-// case), so these products' advisory ranges must stay train-granular (the CSAF
-// extractor asserts this).
-//
-// Today the only such product is FortiSASE, which uses a YY.N.<letter> scheme
-// (e.g. "25.2.a") — verified as the sole non-numeric-versioned product across
-// the CSAF and CVRF corpora. FortiSandbox is deliberately absent: its Cloud
-// variant is also non-numeric-versioned but shares the "fortisandbox" slug with
-// the numeric appliance, so the slug cannot single it out.
-var nonNumericVersionedCPEProducts = map[string]struct{}{
-	"fortisase": {},
-}
-
-// IsNonNumericVersioned reports whether the product encoded in a CPE 2.3
-// formatted string has versions that are not purely numeric (see
-// nonNumericVersionedCPEProducts). It errors when cpe is not a parseable CPE.
-func IsNonNumericVersioned(cpe string) (bool, error) {
+// RangeType returns the per-product cpecriterion range type for the product
+// encoded in a CPE 2.3 formatted string (e.g. fortios -> RangeTypeFortinetFortios).
+// Fortinet uses one range type per product so a product whose versioning scheme
+// later diverges gets its own comparator without affecting any other product.
+// It errors when cpe is not parseable or the product slug has no range type, so
+// a new Fortinet product is noticed and added rather than silently mis-compared.
+func RangeType(cpe string) (ccRangeTypes.RangeType, error) {
 	wfn, err := naming.UnbindFS(cpe)
 	if err != nil {
-		return false, errors.Wrapf(err, "unbind %q to WFN", cpe)
+		return 0, errors.Wrapf(err, "unbind %q to WFN", cpe)
 	}
-	_, ok := nonNumericVersionedCPEProducts[wfn.GetString(common.AttributeProduct)]
-	return ok, nil
+	// GetString returns the WFN value with CPE special characters (e.g. "-")
+	// backslash-escaped; strip the escapes to recover the bare product slug.
+	slug := strings.ReplaceAll(wfn.GetString(common.AttributeProduct), `\`, "")
+	rt, ok := ccRangeTypes.FortinetRangeTypeBySlug(slug)
+	if !ok {
+		return 0, errors.Errorf("no range type for fortinet product slug %q (cpe %q); add it to cpecriterion/range", slug, cpe)
+	}
+	return rt, nil
 }
 
 // ToCPE returns the CPE 2.3 formatted string (wildcard version) for a Fortinet
@@ -78,9 +70,11 @@ func IsConcrete(v string) bool {
 	return strings.Count(v, ".") >= 2
 }
 
-// TrainRange builds a "fortinet"-typed range spanning an entire release train:
-// ge train, lt <next train>, where <next> increments the train's last numeric
-// component (7.0 -> 7.1, 7 -> 8). It errors when that component is not numeric.
+// TrainRange builds a range spanning an entire release train: ge train,
+// lt <next train>, where <next> increments the train's last numeric component
+// (7.0 -> 7.1, 7 -> 8). It errors when that component is not numeric. The Range
+// Type is left unset; the caller sets the per-product range type (it has the
+// product, this helper does not).
 func TrainRange(train string) (ccRangeTypes.Range, error) {
 	ss := strings.Split(train, ".")
 	last, err := strconv.Atoi(ss[len(ss)-1])
@@ -89,7 +83,6 @@ func TrainRange(train string) (ccRangeTypes.Range, error) {
 	}
 	ss[len(ss)-1] = strconv.Itoa(last + 1)
 	return ccRangeTypes.Range{
-		Type:         ccRangeTypes.RangeTypeFortinet,
 		GreaterEqual: train,
 		LessThan:     strings.Join(ss, "."),
 	}, nil

@@ -106,7 +106,7 @@
 									},
 									"cpe": "cpe:2.3:a:fortinet:forticlient_enterprise_management_server:*:*:*:*:*:*:*:*",
 									"range": {
-										"type": "fortinet",
+										"type": "fortinet-forticlient_enterprise_management_server",
 										"ge": "1.0.0",
 										"le": "1.0.2"
 									}
@@ -121,7 +121,7 @@
 									},
 									"cpe": "cpe:2.3:a:fortinet:forticlient_enterprise_management_server:*:*:*:*:*:*:*:*",
 									"range": {
-										"type": "fortinet",
+										"type": "fortinet-forticlient_enterprise_management_server",
 										"ge": "7.0.0",
 										"le": "7.0.4"
 									}
@@ -136,7 +136,7 @@
 									},
 									"cpe": "cpe:2.3:a:fortinet:forticlient_enterprise_management_server:*:*:*:*:*:*:*:*",
 									"range": {
-										"type": "fortinet",
+										"type": "fortinet-forticlient_enterprise_management_server",
 										"ge": "7.0.6",
 										"le": "7.0.8"
 									}
@@ -181,7 +181,7 @@
 									},
 									"cpe": "cpe:2.3:o:fortinet:forticache:*:*:*:*:*:*:*:*",
 									"range": {
-										"type": "fortinet",
+										"type": "fortinet-forticache",
 										"ge": "1.0",
 										"lt": "1.1"
 									}
@@ -196,7 +196,7 @@
 									},
 									"cpe": "cpe:2.3:o:fortinet:forticache:*:*:*:*:*:*:*:*",
 									"range": {
-										"type": "fortinet",
+										"type": "fortinet-forticache",
 										"ge": "2.0",
 										"lt": "2.1"
 									}
@@ -211,7 +211,7 @@
 									},
 									"cpe": "cpe:2.3:o:fortinet:forticache:*:*:*:*:*:*:*:*",
 									"range": {
-										"type": "fortinet",
+										"type": "fortinet-forticache",
 										"ge": "2.1",
 										"lt": "2.2"
 									}
@@ -226,7 +226,7 @@
 									},
 									"cpe": "cpe:2.3:o:fortinet:forticache:*:*:*:*:*:*:*:*",
 									"range": {
-										"type": "fortinet",
+										"type": "fortinet-forticache",
 										"ge": "2.2",
 										"lt": "2.3"
 									}
@@ -241,7 +241,7 @@
 									},
 									"cpe": "cpe:2.3:o:fortinet:forticache:*:*:*:*:*:*:*:*",
 									"range": {
-										"type": "fortinet",
+										"type": "fortinet-forticache",
 										"ge": "2.3",
 										"lt": "2.4"
 									}
@@ -256,7 +256,7 @@
 									},
 									"cpe": "cpe:2.3:o:fortinet:forticache:*:*:*:*:*:*:*:*",
 									"range": {
-										"type": "fortinet",
+										"type": "fortinet-forticache",
 										"ge": "3.0",
 										"lt": "3.1"
 									}
@@ -271,7 +271,7 @@
 									},
 									"cpe": "cpe:2.3:o:fortinet:forticache:*:*:*:*:*:*:*:*",
 									"range": {
-										"type": "fortinet",
+										"type": "fortinet-forticache",
 										"ge": "3.1",
 										"lt": "3.2"
 									}
@@ -286,7 +286,7 @@
 									},
 									"cpe": "cpe:2.3:o:fortinet:forticache:*:*:*:*:*:*:*:*",
 									"range": {
-										"type": "fortinet",
+										"type": "fortinet-forticache",
 										"ge": "4.0",
 										"lt": "4.1"
 									}
@@ -331,7 +331,7 @@
 									},
 									"cpe": "cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*",
 									"range": {
-										"type": "fortinet",
+										"type": "fortinet-fortios",
 										"ge": "5.4.0",
 										"le": "5.4.1"
 									}

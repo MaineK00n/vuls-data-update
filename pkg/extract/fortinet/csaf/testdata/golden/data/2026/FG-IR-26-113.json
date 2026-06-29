@@ -151,7 +151,7 @@
 									},
 									"cpe": "cpe:2.3:a:fortinet:fortisandbox_paas:*:*:*:*:*:*:*:*",
 									"range": {
-										"type": "fortinet",
+										"type": "fortinet-fortisandbox_paas",
 										"ge": "5.0.1",
 										"le": "5.0.5"
 									}
@@ -174,7 +174,7 @@
 									},
 									"cpe": "cpe:2.3:o:fortinet:fortisandbox:*:*:*:*:*:*:*:*",
 									"range": {
-										"type": "fortinet",
+										"type": "fortinet-fortisandbox",
 										"ge": "4.4",
 										"lt": "4.5"
 									}
@@ -189,7 +189,7 @@
 									},
 									"cpe": "cpe:2.3:o:fortinet:fortisandbox:*:*:*:*:*:*:*:*",
 									"range": {
-										"type": "fortinet",
+										"type": "fortinet-fortisandbox",
 										"ge": "5.0.0",
 										"le": "5.0.5"
 									}

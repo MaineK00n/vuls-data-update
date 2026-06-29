@@ -96,10 +96,10 @@ func TestTrainRange(t *testing.T) {
 		want    ccRangeTypes.Range
 		wantErr bool
 	}{
-		{train: "7.0", want: ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeFortinet, GreaterEqual: "7.0", LessThan: "7.1"}},
-		{train: "7", want: ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeFortinet, GreaterEqual: "7", LessThan: "8"}},
-		{train: "6.253", want: ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeFortinet, GreaterEqual: "6.253", LessThan: "6.254"}},
-		{train: "24", want: ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeFortinet, GreaterEqual: "24", LessThan: "25"}},
+		{train: "7.0", want: ccRangeTypes.Range{GreaterEqual: "7.0", LessThan: "7.1"}},
+		{train: "7", want: ccRangeTypes.Range{GreaterEqual: "7", LessThan: "8"}},
+		{train: "6.253", want: ccRangeTypes.Range{GreaterEqual: "6.253", LessThan: "6.254"}},
+		{train: "24", want: ccRangeTypes.Range{GreaterEqual: "24", LessThan: "25"}},
 		{train: "abc", wantErr: true},
 	}
 	for _, tt := range tests {
@@ -118,26 +118,30 @@ func TestTrainRange(t *testing.T) {
 	}
 }
 
-func TestIsNonNumericVersioned(t *testing.T) {
+func TestRangeType(t *testing.T) {
 	tests := []struct {
 		name    string
 		cpe     string
-		want    bool
+		want    ccRangeTypes.RangeType
 		wantErr bool
 	}{
-		{name: "FortiSASE has non-numeric versions", cpe: "cpe:2.3:a:fortinet:fortisase:*:*:*:*:*:*:*:*", want: true},
-		{name: "FortiOS is purely numeric", cpe: "cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*", want: false},
-		{name: "FortiSandbox not listed (shared slug)", cpe: "cpe:2.3:o:fortinet:fortisandbox:*:*:*:*:*:*:*:*", want: false},
+		{name: "FortiOS → numeric per-product type", cpe: "cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*", want: ccRangeTypes.RangeTypeFortinetFortios},
+		{name: "FortiSASE → calendar per-product type", cpe: "cpe:2.3:a:fortinet:fortisase:*:*:*:*:*:*:*:*", want: ccRangeTypes.RangeTypeFortinetFortisase},
+		{name: "hyphenated slug resolves (fortinac-f)", cpe: "cpe:2.3:o:fortinet:fortinac-f:*:*:*:*:*:*:*:*", want: ccRangeTypes.RangeTypeFortinetFortinacF},
+		{name: "unknown slug → error", cpe: "cpe:2.3:o:fortinet:fortinonexistent:*:*:*:*:*:*:*:*", wantErr: true},
 		{name: "malformed cpe → error", cpe: "not-a-cpe", wantErr: true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := product.IsNonNumericVersioned(tt.cpe)
+			got, err := product.RangeType(tt.cpe)
 			if (err != nil) != tt.wantErr {
-				t.Fatalf("IsNonNumericVersioned(%q) error = %v, wantErr %v", tt.cpe, err, tt.wantErr)
+				t.Fatalf("RangeType(%q) error = %v, wantErr %v", tt.cpe, err, tt.wantErr)
+			}
+			if err != nil {
+				return
 			}
 			if got != tt.want {
-				t.Errorf("IsNonNumericVersioned(%q) = %v, want %v", tt.cpe, got, tt.want)
+				t.Errorf("RangeType(%q) = %v, want %v", tt.cpe, got, tt.want)
 			}
 		})
 	}

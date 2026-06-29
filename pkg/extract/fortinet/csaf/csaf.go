@@ -460,59 +460,61 @@ func toCriterion(productID string, refMap map[string]productRef) (criterionTypes
 	if err != nil {
 		return criterionTypes.Criterion{}, errors.Wrapf(err, "resolve version for %q", productID)
 	}
-	// Range-bound invariants. These two asserts are what makes the
-	// RangeTypeFortinet comparator safe at detect time: they guarantee a
-	// non-numeric version (FortiSASE "25.2.a") is only ever compared against a
-	// numeric bound that runs out of components before the letter, never against
-	// a numeric component at the same position (the comparator's "incomparable"
-	// case). If Fortinet's data ever breaks an invariant, this fails loudly at
-	// extract rather than silently mis-detecting later.
-	if rng != nil {
-		nonNumericVersioned, err := product.IsNonNumericVersioned(cpe)
+	// The range/bake paths need the product's per-product range type (it selects
+	// the detect-time comparator). Resolve it once; an unknown product hard-errors.
+	if rng != nil || bakeVersion != "" {
+		rt, err := product.RangeType(cpe)
 		if err != nil {
-			return criterionTypes.Criterion{}, errors.Wrapf(err, "check non-numeric versioning for %q", productID)
+			return criterionTypes.Criterion{}, errors.Wrapf(err, "range type for %q", productID)
 		}
-		for _, b := range []string{rng.GreaterEqual, rng.GreaterThan, rng.LessEqual, rng.LessThan} {
-			if b == "" {
-				continue
+
+		// Range-bound invariants. These two asserts keep a calendar product's
+		// comparator safe at detect time: they guarantee a non-numeric version
+		// (FortiSASE "25.2.a") is only ever compared against a numeric bound that
+		// runs out of components before the letter, never against a numeric
+		// component at the same position (the comparator's "incomparable" case).
+		// If Fortinet's data ever breaks an invariant, this fails loudly at
+		// extract rather than silently mis-detecting later.
+		if rng != nil {
+			rng.Type = rt
+			for _, b := range []string{rng.GreaterEqual, rng.GreaterThan, rng.LessEqual, rng.LessThan} {
+				if b == "" {
+					continue
+				}
+				// (1) Every bound is numeric across the whole corpus. A non-numeric
+				// bound (a version like "25.2.a", which only ever appears as an
+				// enumerated concrete version, never as a bound) signals an upstream
+				// format change or a parsing bug.
+				if !numericBound.MatchString(b) {
+					return criterionTypes.Criterion{}, errors.Errorf("unexpected non-numeric range bound %q for %q (expr %q)", b, productID, ref.versionExp)
+				}
+				// (2) A calendar-versioned product (e.g. FortiSASE) keeps its ranges
+				// train-granular (bound dot <= 1: "25.2", not "25.2.0"). A
+				// multi-component numeric bound would line a numeric component up with
+				// such a version's letter — the comparator's undefined numeric-vs-
+				// alphabetic case — so reject it here.
+				if ccRangeTypes.IsFortinetCalendar(rt) && strings.Count(b, ".") >= 2 {
+					return criterionTypes.Criterion{}, errors.Errorf("product %q is calendar-versioned and must use a train range (bound dot<=1), got bound %q (expr %q)", productID, b, ref.versionExp)
+				}
 			}
-			// (1) Every bound is numeric across the whole corpus. A non-numeric
-			// bound (a version like "25.2.a", which only ever appears as an
-			// enumerated concrete version, never as a bound) signals an upstream
-			// format change or a parsing bug.
-			if !numericBound.MatchString(b) {
-				return criterionTypes.Criterion{}, errors.Errorf("unexpected non-numeric range bound %q for %q (expr %q)", b, productID, ref.versionExp)
+		}
+		if bakeVersion != "" {
+			// Validate the concrete version before baking. BakeVersion accepts many
+			// CPE-legal-but-bogus shapes ("7.0.x", "v7.0.0", "7..0", "7.0.0|7.2.1"),
+			// which would bake a version no scanner reports — a silent detection
+			// false-negative. A numeric product must be purely numeric-dotted; a
+			// calendar-versioned product (FortiSASE) may also carry a calendar
+			// letter component ("25.2.a").
+			validVersion := numericBound.MatchString(bakeVersion) || (ccRangeTypes.IsFortinetCalendar(rt) && concreteCalendarVersion.MatchString(bakeVersion))
+			if !validVersion {
+				return criterionTypes.Criterion{}, errors.Errorf("unexpected concrete version %q for %q (expr %q)", bakeVersion, productID, ref.versionExp)
 			}
-			// (2) A product with non-numeric versions (e.g. FortiSASE) keeps its
-			// ranges train-granular (bound dot <= 1: "25.2", not "25.2.0"). A
-			// multi-component numeric bound would line a numeric component up with
-			// such a version's letter — the comparator's undefined numeric-vs-
-			// alphabetic case — so reject it here.
-			if nonNumericVersioned && strings.Count(b, ".") >= 2 {
-				return criterionTypes.Criterion{}, errors.Errorf("product %q has non-numeric versions and must use a train range (bound dot<=1), got bound %q (expr %q)", productID, b, ref.versionExp)
+			baked, err := product.BakeVersion(cpe, bakeVersion)
+			if err != nil {
+				return criterionTypes.Criterion{}, errors.Wrapf(err, "bake version for %q", productID)
 			}
+			cpe = baked
 		}
-	}
-	if bakeVersion != "" {
-		// Validate the concrete version before baking. BakeVersion accepts many
-		// CPE-legal-but-bogus shapes ("7.0.x", "v7.0.0", "7..0", "7.0.0|7.2.1"),
-		// which would bake a version no scanner reports — a silent detection
-		// false-negative. A numeric product must be purely numeric-dotted; a
-		// non-numeric-versioned product (FortiSASE) may also carry a calendar
-		// letter component ("25.2.a").
-		nonNumericVersioned, err := product.IsNonNumericVersioned(cpe)
-		if err != nil {
-			return criterionTypes.Criterion{}, errors.Wrapf(err, "check non-numeric versioning for %q", productID)
-		}
-		validVersion := numericBound.MatchString(bakeVersion) || (nonNumericVersioned && concreteCalendarVersion.MatchString(bakeVersion))
-		if !validVersion {
-			return criterionTypes.Criterion{}, errors.Errorf("unexpected concrete version %q for %q (expr %q)", bakeVersion, productID, ref.versionExp)
-		}
-		baked, err := product.BakeVersion(cpe, bakeVersion)
-		if err != nil {
-			return criterionTypes.Criterion{}, errors.Wrapf(err, "bake version for %q", productID)
-		}
-		cpe = baked
 	}
 
 	return criterionTypes.Criterion{
@@ -577,12 +579,10 @@ func resolveVersion(exp string) (*ccRangeTypes.Range, string, error) {
 			// "no constraint" and widen to the whole product, so reject it.
 			return nil, "", errors.Errorf("empty lower bound in %q", exp)
 		}
-		return &ccRangeTypes.Range{
-			Type:         ccRangeTypes.RangeTypeFortinet,
-			GreaterEqual: ge,
-		}, "", nil
+		// Type is set by the caller (toCriterion), which knows the product.
+		return &ccRangeTypes.Range{GreaterEqual: ge}, "", nil
 	case strings.ContainsAny(exp, "<>"):
-		r := ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeFortinet}
+		r := ccRangeTypes.Range{}
 		for part := range strings.SplitSeq(exp, "|") {
 			part = strings.TrimSpace(part)
 			var bound *string
