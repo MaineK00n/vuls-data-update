@@ -274,6 +274,7 @@ func extract(fetched csafTypes.CSAF, raws []string) (dataTypes.Data, error) {
 			tag := segmentTypes.DetectionTag(key)
 			if len(gkeys) > 1 && len(g.pids) > 0 {
 				h := fnv.New32a()
+				// hash.Hash.Write is documented never to return an error.
 				_, _ = h.Write([]byte(slices.Max(g.pids)))
 				tag = segmentTypes.DetectionTag(fmt.Sprintf("%s_%08x", key, h.Sum32()))
 			}
@@ -404,23 +405,36 @@ func extract(fetched csafTypes.CSAF, raws []string) (dataTypes.Data, error) {
 func buildProductRefs(branches []csafTypes.Branch) map[string]productRef {
 	refMap := make(map[string]productRef)
 
-	var walk func(bs []csafTypes.Branch, productCPE string, mapped bool)
-	walk = func(bs []csafTypes.Branch, productCPE string, mapped bool) {
+	var walk func(bs []csafTypes.Branch, productCPE, productName string, mapped bool)
+	walk = func(bs []csafTypes.Branch, productCPE, productName string, mapped bool) {
 		for _, b := range bs {
-			pc, pm := productCPE, mapped
+			pc, pn, pm := productCPE, productName, mapped
 			switch b.Category {
 			case "product_name", "product":
 				pc, pm = product.ToCPE(b.Name)
+				pn = b.Name
 			case "product_version", "product_version_range":
 				if pm && b.Product != nil && b.Product.ProductID != "" {
-					_, exp, _ := strings.Cut(b.Name, "/")
+					// Leaf names take two forms: "<product>/<version-exp>"
+					// (e.g. "FortiOS/>=7.0.0|<=7.0.5") and, in some advisories,
+					// "<product> <version>" with no slash (e.g. "FortiOS 5.0.0").
+					// Take the version after "/" when present, else strip the
+					// product-name prefix — otherwise the version would be empty
+					// and the product would wildcard to all versions (over-detect).
+					exp, found := "", false
+					if _, after, ok := strings.Cut(b.Name, "/"); ok {
+						exp, found = after, true
+					}
+					if !found {
+						exp = strings.TrimPrefix(b.Name, pn)
+					}
 					refMap[string(b.Product.ProductID)] = productRef{cpe: pc, versionExp: strings.TrimSpace(exp)}
 				}
 			}
-			walk(b.Branches, pc, pm)
+			walk(b.Branches, pc, pn, pm)
 		}
 	}
-	walk(branches, "", false)
+	walk(branches, "", "", false)
 
 	return refMap
 }
