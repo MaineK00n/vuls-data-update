@@ -13,23 +13,26 @@ import (
 	ccRangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/cpecriterion/range"
 )
 
-// RangeType returns the per-product cpecriterion range type for the product
-// encoded in a CPE 2.3 formatted string (e.g. fortios -> RangeTypeFortinetFortios).
-// Fortinet uses one range type per product so a product whose versioning scheme
-// later diverges gets its own comparator without affecting any other product.
-// It errors when cpe is not parseable or the product slug has no range type, so
-// a new Fortinet product is noticed and added rather than silently mis-compared.
-func RangeType(cpe string) (ccRangeTypes.RangeType, error) {
-	wfn, err := naming.UnbindFS(cpe)
-	if err != nil {
-		return 0, errors.Wrapf(err, "unbind %q to WFN", cpe)
+// cpeToRangeType is the inverse of nameToProduct keyed by CPE: every product's
+// CPE maps to its per-product range type (names sharing a CPE share the type).
+var cpeToRangeType = func() map[string]ccRangeTypes.RangeType {
+	m := make(map[string]ccRangeTypes.RangeType, len(nameToProduct))
+	for _, p := range nameToProduct {
+		m[p.cpe] = p.rangeType
 	}
-	// GetString returns the WFN value with CPE special characters (e.g. "-")
-	// backslash-escaped; strip the escapes to recover the bare product slug.
-	slug := strings.ReplaceAll(wfn.GetString(common.AttributeProduct), `\`, "")
-	rt, ok := ccRangeTypes.FortinetRangeTypeBySlug(slug)
+	return m
+}()
+
+// RangeType returns the per-product cpecriterion range type for a Fortinet CPE
+// 2.3 formatted string (the wildcard CPE produced by ToCPE). Fortinet uses one
+// range type per product so a product whose versioning scheme later diverges
+// gets its own comparator without affecting any other product. It errors when
+// the CPE has no entry, so a new Fortinet product is noticed and added rather
+// than silently mis-compared.
+func RangeType(cpe string) (ccRangeTypes.RangeType, error) {
+	rt, ok := cpeToRangeType[cpe]
 	if !ok {
-		return 0, errors.Errorf("no range type for fortinet product slug %q (cpe %q); add it to cpecriterion/range", slug, cpe)
+		return 0, errors.Errorf("no range type for cpe %q; add the product to table.go", cpe)
 	}
 	return rt, nil
 }
@@ -39,8 +42,8 @@ func RangeType(cpe string) (ccRangeTypes.RangeType, error) {
 // decide how to handle a miss rather than fabricate a CPE; the CVRF extractor,
 // for one, treats an unknown affected product as a hard error.
 func ToCPE(name string) (string, bool) {
-	cpe, ok := nameToCPE[strings.TrimSpace(name)]
-	return cpe, ok
+	p, ok := nameToProduct[strings.TrimSpace(name)]
+	return p.cpe, ok
 }
 
 // versionEscaper escapes the CPE WFN special characters (dots and hyphens) in a

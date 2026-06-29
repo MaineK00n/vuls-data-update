@@ -37,8 +37,8 @@ const (
 	// versioning scheme later diverges must carry its own type to get its own
 	// comparator without changing how any other product is compared — and adding
 	// a type stays additive (existing products are untouched). Today every
-	// product is purely numeric except the FortiSASE calendar scheme (see
-	// fortinetCalendarTypes); the per-product split is what lets that stay true
+	// product is purely numeric except the FortiSASE non-numeric scheme (see
+	// fortinetNonNumericTypes); the per-product split is what lets that stay true
 	// product-by-product going forward.
 	RangeTypeFortinetAntivirusEngine
 	RangeTypeFortinetAscenlink
@@ -197,27 +197,19 @@ var rangeTypeByName = func() map[string]RangeType {
 	return m
 }()
 
-// fortinetCalendarTypes are the Fortinet per-product types whose versions use
-// the FortiSASE-style calendar scheme (an alphabetic milestone component, e.g.
+// fortinetNonNumericTypes are the Fortinet per-product types whose versions use
+// the FortiSASE non-numeric scheme (an alphabetic milestone component, e.g.
 // 25.2.a); every other Fortinet type is purely numeric.
-var fortinetCalendarTypes = map[RangeType]struct{}{
+var fortinetNonNumericTypes = map[RangeType]struct{}{
 	RangeTypeFortinetFortisase: {},
 }
 
-// IsFortinetCalendar reports whether t is a Fortinet per-product type that uses
-// the calendar version scheme.
-func IsFortinetCalendar(t RangeType) bool {
-	_, ok := fortinetCalendarTypes[t]
+// IsFortinetNonNumeric reports whether t is a Fortinet per-product type that uses
+// the non-numeric version scheme (the product → type mapping lives in the
+// fortinet product table).
+func IsFortinetNonNumeric(t RangeType) bool {
+	_, ok := fortinetNonNumericTypes[t]
 	return ok
-}
-
-// FortinetRangeTypeBySlug returns the per-product RangeType for a Fortinet CPE
-// product slug (e.g. "fortios" -> RangeTypeFortinetFortios). ok is false when
-// the slug has no type, so the caller can hard-error and a new product gets
-// noticed rather than silently mis-compared.
-func FortinetRangeTypeBySlug(slug string) (RangeType, bool) {
-	t, ok := rangeTypeByName["fortinet-"+slug]
-	return t, ok
 }
 
 func (t RangeType) String() string {
@@ -327,9 +319,9 @@ var ErrRangeTypeUnknown = errors.New("unknown range type")
 // surfaces unwrapped and propagates loudly.
 //
 // Fortinet per-product types dispatch to one of two comparators: the FortiSASE
-// calendar scheme (fortinetCalendarTypes) vs. the numeric scheme everything else
+// non-numeric scheme (fortinetNonNumericTypes) vs. the numeric scheme everything else
 // uses. The numeric comparator refuses to order a non-numeric component, so a
-// numeric product never matches a calendar/letter version (it fails safe via
+// numeric product never matches a non-numeric (letter) version (it fails safe via
 // CompareError); a product that later adopts a different scheme moves to its own
 // branch without touching the others.
 func (t RangeType) Compare(v1, v2 string) (int, error) {
@@ -383,8 +375,8 @@ func (t RangeType) Compare(v1, v2 string) (int, error) {
 			c  int
 			ok bool
 		)
-		if IsFortinetCalendar(t) {
-			c, ok = compareFortinetCalendar(v1, v2)
+		if IsFortinetNonNumeric(t) {
+			c, ok = compareFortinetNonNumeric(v1, v2)
 		} else {
 			c, ok = compareFortinetNumeric(v1, v2)
 		}
@@ -398,7 +390,7 @@ func (t RangeType) Compare(v1, v2 string) (int, error) {
 // compareFortinetNumeric compares two purely numeric Fortinet version strings
 // (dot-separated, e.g. 7.4.3 or train 7.2). Any non-numeric component — a
 // milestone letter, or an empty component from a stray dot — makes the pair
-// incomparable, so a numeric product never orders a calendar/letter version and
+// incomparable, so a numeric product never orders a non-numeric (letter) version and
 // Range.Accept fails safe (non-match). Trailing zeros are a no-op (7.2 == 7.2.0).
 func compareFortinetNumeric(a, b string) (order int, comparable bool) {
 	as := strings.Split(a, ".")
@@ -429,7 +421,7 @@ func compareFortinetNumeric(a, b string) (order int, comparable bool) {
 	return 0, true
 }
 
-// compareFortinetCalendar compares two FortiSASE-style calendar version strings
+// compareFortinetNonNumeric compares two FortiSASE-style non-numeric version strings
 // component by component (split on ".") and reports whether they are comparable
 // at all. Numeric components compare numerically and alphabetic ones lexically
 // (the milestone letters a < b < c). When one version runs out of components the
@@ -439,7 +431,7 @@ func compareFortinetNumeric(a, b string) (order int, comparable bool) {
 // the same position, one component is numeric and the other alphabetic (e.g. a
 // build "1.2.1" against a milestone "1.2.a"), or when a component is empty (a
 // stray dot), so Range.Accept fails safe on malformed input.
-func compareFortinetCalendar(a, b string) (order int, comparable bool) {
+func compareFortinetNonNumeric(a, b string) (order int, comparable bool) {
 	as := strings.Split(a, ".")
 	bs := strings.Split(b, ".")
 	if slices.Contains(as, "") || slices.Contains(bs, "") {

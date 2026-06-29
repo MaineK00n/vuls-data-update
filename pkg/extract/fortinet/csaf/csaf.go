@@ -468,7 +468,7 @@ func toCriterion(productID string, refMap map[string]productRef) (criterionTypes
 			return criterionTypes.Criterion{}, errors.Wrapf(err, "range type for %q", productID)
 		}
 
-		// Range-bound invariants. These two asserts keep a calendar product's
+		// Range-bound invariants. These two asserts keep a non-numeric-versioned product's
 		// comparator safe at detect time: they guarantee a non-numeric version
 		// (FortiSASE "25.2.a") is only ever compared against a numeric bound that
 		// runs out of components before the letter, never against a numeric
@@ -488,13 +488,13 @@ func toCriterion(productID string, refMap map[string]productRef) (criterionTypes
 				if !numericBound.MatchString(b) {
 					return criterionTypes.Criterion{}, errors.Errorf("unexpected non-numeric range bound %q for %q (expr %q)", b, productID, ref.versionExp)
 				}
-				// (2) A calendar-versioned product (e.g. FortiSASE) keeps its ranges
+				// (2) A non-numeric-versioned product (e.g. FortiSASE) keeps its ranges
 				// train-granular (bound dot <= 1: "25.2", not "25.2.0"). A
 				// multi-component numeric bound would line a numeric component up with
 				// such a version's letter — the comparator's undefined numeric-vs-
 				// alphabetic case — so reject it here.
-				if ccRangeTypes.IsFortinetCalendar(rt) && strings.Count(b, ".") >= 2 {
-					return criterionTypes.Criterion{}, errors.Errorf("product %q is calendar-versioned and must use a train range (bound dot<=1), got bound %q (expr %q)", productID, b, ref.versionExp)
+				if ccRangeTypes.IsFortinetNonNumeric(rt) && strings.Count(b, ".") >= 2 {
+					return criterionTypes.Criterion{}, errors.Errorf("product %q is non-numeric-versioned and must use a train range (bound dot<=1), got bound %q (expr %q)", productID, b, ref.versionExp)
 				}
 			}
 		}
@@ -503,9 +503,9 @@ func toCriterion(productID string, refMap map[string]productRef) (criterionTypes
 			// CPE-legal-but-bogus shapes ("7.0.x", "v7.0.0", "7..0", "7.0.0|7.2.1"),
 			// which would bake a version no scanner reports — a silent detection
 			// false-negative. A numeric product must be purely numeric-dotted; a
-			// calendar-versioned product (FortiSASE) may also carry a calendar
-			// letter component ("25.2.a").
-			validVersion := numericBound.MatchString(bakeVersion) || (ccRangeTypes.IsFortinetCalendar(rt) && concreteCalendarVersion.MatchString(bakeVersion))
+			// non-numeric-versioned product (FortiSASE) may also carry a
+			// milestone-letter component ("25.2.a").
+			validVersion := numericBound.MatchString(bakeVersion) || (ccRangeTypes.IsFortinetNonNumeric(rt) && concreteNonNumericVersion.MatchString(bakeVersion))
 			if !validVersion {
 				return criterionTypes.Criterion{}, errors.Errorf("unexpected concrete version %q for %q (expr %q)", bakeVersion, productID, ref.versionExp)
 			}
@@ -543,14 +543,14 @@ func toCriterion(productID string, refMap map[string]productRef) (criterionTypes
 // non-numeric tail (e.g. "25.2.a" or "7.1-b5955") is rejected by toCriterion.
 var numericBound = regexp.MustCompile(`^[0-9]+(\.[0-9]+)*$`)
 
-// concreteCalendarVersion matches a FortiSASE-style concrete version: a numeric
+// concreteNonNumericVersion matches a FortiSASE-style concrete version: a numeric
 // head plus trailing components that are each either numeric or a single
 // lowercase milestone letter (e.g. "25.2.a", "25.1.a.2"). It validates a bake
 // token for a non-numeric-versioned product, where numericBound is too strict.
 // Each component is constrained so ambiguous tokens the Fortinet comparator
 // can't order meaningfully ("25.1.a10", "25.2.alpha", "7.0.x", "v7.0.0",
 // "7..0", a "7.0.0|7.2.1" pipe list) fail loudly instead of being baked.
-var concreteCalendarVersion = regexp.MustCompile(`^[0-9]+(\.([0-9]+|[a-z]))*$`)
+var concreteNonNumericVersion = regexp.MustCompile(`^[0-9]+(\.([0-9]+|[a-z]))*$`)
 
 func resolveVersion(exp string) (*ccRangeTypes.Range, string, error) {
 	switch {

@@ -260,22 +260,22 @@ func TestRangeType_Compare(t *testing.T) {
 		{name: "fortinet: train equal", t: ccRangeTypes.RangeTypeFortinetFortios, v1: "7.2", v2: "7.2", want: 0},
 		{name: "fortinet: concrete within train lower bound (7.2.0 >= 7.2)", t: ccRangeTypes.RangeTypeFortinetFortios, v1: "7.2.0", v2: "7.2", want: 0},
 		{name: "fortinet: concrete below next train (7.2.5 < 7.3)", t: ccRangeTypes.RangeTypeFortinetFortios, v1: "7.2.5", v2: "7.3", want: -1},
-		// Calendar versions (FortiSASE) and build suffixes are not semver. The
+		// Non-numeric versions (FortiSASE) and build suffixes are not semver. The
 		// numeric prefix decides first; an equal prefix is broken by the suffix,
 		// so a lettered build sorts just after its bare train and letters order
 		// sequentially — while staying inside the train range.
-		{name: "fortinet: bare train below its calendar build (25.2 < 25.2.a)", t: ccRangeTypes.RangeTypeFortinetFortisase, v1: "25.2", v2: "25.2.a", want: -1},
-		{name: "fortinet: calendar above its bare train (25.2.a > 25.2)", t: ccRangeTypes.RangeTypeFortinetFortisase, v1: "25.2.a", v2: "25.2", want: 1},
-		{name: "fortinet: calendar below next train (25.2.a < 25.3)", t: ccRangeTypes.RangeTypeFortinetFortisase, v1: "25.2.a", v2: "25.3", want: -1},
-		{name: "fortinet: calendar above prev train (25.2.a > 25.1)", t: ccRangeTypes.RangeTypeFortinetFortisase, v1: "25.2.a", v2: "25.1", want: 1},
+		{name: "fortinet: bare train below its non-numeric build (25.2 < 25.2.a)", t: ccRangeTypes.RangeTypeFortinetFortisase, v1: "25.2", v2: "25.2.a", want: -1},
+		{name: "fortinet: non-numeric above its bare train (25.2.a > 25.2)", t: ccRangeTypes.RangeTypeFortinetFortisase, v1: "25.2.a", v2: "25.2", want: 1},
+		{name: "fortinet: non-numeric below next train (25.2.a < 25.3)", t: ccRangeTypes.RangeTypeFortinetFortisase, v1: "25.2.a", v2: "25.3", want: -1},
+		{name: "fortinet: non-numeric above prev train (25.2.a > 25.1)", t: ccRangeTypes.RangeTypeFortinetFortisase, v1: "25.2.a", v2: "25.1", want: 1},
 		{name: "fortinet: sequential letters (25.2.a < 25.2.b)", t: ccRangeTypes.RangeTypeFortinetFortisase, v1: "25.2.a", v2: "25.2.b", want: -1},
 		{name: "fortinet: letter patch after letter (25.1.a < 25.1.a.2)", t: ccRangeTypes.RangeTypeFortinetFortisase, v1: "25.1.a", v2: "25.1.a.2", want: -1},
 		{name: "fortinet: numeric letter-patch ordering (25.1.a.2 < 25.1.a.10)", t: ccRangeTypes.RangeTypeFortinetFortisase, v1: "25.1.a.2", v2: "25.1.a.10", want: -1},
-		{name: "fortinet: nested calendar above bare train (25.1.a.2 > 25.1)", t: ccRangeTypes.RangeTypeFortinetFortisase, v1: "25.1.a.2", v2: "25.1", want: 1},
+		{name: "fortinet: nested non-numeric above bare train (25.1.a.2 > 25.1)", t: ccRangeTypes.RangeTypeFortinetFortisase, v1: "25.1.a.2", v2: "25.1", want: 1},
 		{name: "fortinet: pure-numeric trailing zero stays equal (7.2.0 == 7.2)", t: ccRangeTypes.RangeTypeFortinetFortios, v1: "7.2.0", v2: "7.2", want: 0},
 		// A numeric build vs an alphabetic milestone at the same position is
 		// undefined across Fortinet's two schemes → incomparable (swallowed).
-		{name: "fortinet: numeric build vs calendar milestone → CompareError (1.2.1 vs 1.2.a)", t: ccRangeTypes.RangeTypeFortinetFortisase, v1: "1.2.1", v2: "1.2.a", wantCompareErr: true},
+		{name: "fortinet: numeric build vs non-numeric milestone → CompareError (1.2.1 vs 1.2.a)", t: ccRangeTypes.RangeTypeFortinetFortisase, v1: "1.2.1", v2: "1.2.a", wantCompareErr: true},
 		{name: "fortinet: build suffix vs train → CompareError (7.1-b5955 vs 7.1)", t: ccRangeTypes.RangeTypeFortinetFortios, v1: "7.1-b5955", v2: "7.1", wantCompareErr: true},
 		{name: "fortinet: non-version vs numeric → CompareError", t: ccRangeTypes.RangeTypeFortinetFortisase, v1: "alpha", v2: "25.2", wantCompareErr: true},
 		// Empty components (consecutive/trailing dots) are malformed → incomparable.
