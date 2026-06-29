@@ -278,6 +278,9 @@ func TestRangeType_Compare(t *testing.T) {
 		{name: "fortinet: numeric build vs calendar milestone → CompareError (1.2.1 vs 1.2.a)", t: ccRangeTypes.RangeTypeFortinet, v1: "1.2.1", v2: "1.2.a", wantCompareErr: true},
 		{name: "fortinet: build suffix vs train → CompareError (7.1-b5955 vs 7.1)", t: ccRangeTypes.RangeTypeFortinet, v1: "7.1-b5955", v2: "7.1", wantCompareErr: true},
 		{name: "fortinet: non-version vs numeric → CompareError", t: ccRangeTypes.RangeTypeFortinet, v1: "alpha", v2: "25.2", wantCompareErr: true},
+		// Empty components (consecutive/trailing dots) are malformed → incomparable.
+		{name: "fortinet: consecutive dots → CompareError (7..0 vs 7.0.0)", t: ccRangeTypes.RangeTypeFortinet, v1: "7..0", v2: "7.0.0", wantCompareErr: true},
+		{name: "fortinet: trailing dot → CompareError (7.2. vs 7.2)", t: ccRangeTypes.RangeTypeFortinet, v1: "7.2.", v2: "7.2", wantCompareErr: true},
 		{name: "version (loose): 4-segment v1 < v2", t: ccRangeTypes.RangeTypeVersion, v1: "9.16.19.0", v2: "9.16.20.0", want: -1},
 		{name: "version (loose): v1 unparseable → CompareError", t: ccRangeTypes.RangeTypeVersion, v1: "x.y.z.w.q", v2: "1.0", wantCompareErr: true},
 		{name: "pan-os: base < hotfix (hashicorp prerelease order would invert this)", t: ccRangeTypes.RangeTypePANOS, v1: "11.2.4", v2: "11.2.4-h1", want: -1},

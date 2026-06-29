@@ -557,9 +557,15 @@ func resolveVersion(exp string) (*ccRangeTypes.Range, string, error) {
 		return &r, "", nil
 	case strings.HasSuffix(exp, " and above"):
 		// Open-ended lower bound, e.g. "7.0.6 and above" → ge 7.0.6.
+		ge := strings.TrimSpace(strings.TrimSuffix(exp, " and above"))
+		if ge == "" {
+			// No version before "and above" → an empty bound would be treated as
+			// "no constraint" and widen to the whole product, so reject it.
+			return nil, "", errors.Errorf("empty lower bound in %q", exp)
+		}
 		return &ccRangeTypes.Range{
 			Type:         ccRangeTypes.RangeTypeFortinet,
-			GreaterEqual: strings.TrimSpace(strings.TrimSuffix(exp, " and above")),
+			GreaterEqual: ge,
 		}, "", nil
 	case strings.ContainsAny(exp, "<>"):
 		r := ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeFortinet}

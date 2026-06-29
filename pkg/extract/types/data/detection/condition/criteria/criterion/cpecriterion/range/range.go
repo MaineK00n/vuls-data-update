@@ -6,6 +6,7 @@ import (
 	"encoding/json/v2"
 	stderrors "errors"
 	"fmt"
+	"slices"
 	"strconv"
 	"strings"
 
@@ -268,6 +269,12 @@ func (t RangeType) Compare(v1, v2 string) (int, error) {
 func compareFortinetVersions(a, b string) (order int, comparable bool) {
 	as := strings.Split(a, ".")
 	bs := strings.Split(b, ".")
+	// An empty component (consecutive/leading/trailing dot, e.g. "7..0" or
+	// "7.2.") is malformed; refuse to order it so Range.Accept fails safe
+	// (non-match) on malformed scan input rather than inventing an order.
+	if slices.Contains(as, "") || slices.Contains(bs, "") {
+		return 0, false
+	}
 	for i := 0; i < len(as) || i < len(bs); i++ {
 		switch {
 		case i >= len(as):
@@ -336,10 +343,10 @@ func (r Range) Accept(v string) (bool, error) {
 		reject func(int) bool
 	}
 	bounds := []bound{
-		{"ge", r.GreaterEqual, func(n int) bool { return n > 0 }},  // need bound <= v
-		{"gt", r.GreaterThan, func(n int) bool { return n >= 0 }},  // need bound <  v
-		{"le", r.LessEqual, func(n int) bool { return n < 0 }},     // need bound >= v
-		{"lt", r.LessThan, func(n int) bool { return n <= 0 }},     // need bound >  v
+		{"ge", r.GreaterEqual, func(n int) bool { return n > 0 }}, // need bound <= v
+		{"gt", r.GreaterThan, func(n int) bool { return n >= 0 }}, // need bound <  v
+		{"le", r.LessEqual, func(n int) bool { return n < 0 }},    // need bound >= v
+		{"lt", r.LessThan, func(n int) bool { return n <= 0 }},    // need bound >  v
 	}
 	for _, b := range bounds {
 		if b.s == "" {

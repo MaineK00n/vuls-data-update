@@ -357,6 +357,18 @@ func TestToCriterion(t *testing.T) {
 			wantErr: true,
 		},
 		{
+			// "and above" with no version before it would yield an empty lower
+			// bound (treated as no constraint) → reject.
+			name: "and above with no version rejected",
+			args: args{
+				productID: "product-id-1",
+				refMap: map[string]csaf.ProductRef{
+					"product-id-1": csaf.NewProductRef("cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*", " and above"),
+				},
+			},
+			wantErr: true,
+		},
+		{
 			// Bogus concrete version that BakeVersion would otherwise accept (CPE
 			// legal but no scanner reports it) — a silent false-negative.
 			name: "bogus concrete version with letter component rejected",
