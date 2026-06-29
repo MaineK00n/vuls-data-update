@@ -481,7 +481,8 @@ func toCriterion(productID string, refMap map[string]productRef) (criterionTypes
 		if err != nil {
 			return criterionTypes.Criterion{}, errors.Wrapf(err, "check non-numeric versioning for %q", productID)
 		}
-		if !numericBound.MatchString(bakeVersion) && !(nonNumericVersioned && concreteCalendarVersion.MatchString(bakeVersion)) {
+		validVersion := numericBound.MatchString(bakeVersion) || (nonNumericVersioned && concreteCalendarVersion.MatchString(bakeVersion))
+		if !validVersion {
 			return criterionTypes.Criterion{}, errors.Errorf("unexpected concrete version %q for %q (expr %q)", bakeVersion, productID, ref.versionExp)
 		}
 		baked, err := product.BakeVersion(cpe, bakeVersion)
