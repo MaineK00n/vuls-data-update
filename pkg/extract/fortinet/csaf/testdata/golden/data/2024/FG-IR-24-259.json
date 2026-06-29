@@ -60,12 +60,6 @@
 						]
 					}
 				],
-				"workarounds": [
-					{
-						"source": "fortiguard.fortinet.com",
-						"description": "N/A"
-					}
-				],
 				"references": [
 					{
 						"source": "fortiguard.fortinet.com",
@@ -111,12 +105,6 @@
 						"cwe": [
 							"CWE-22"
 						]
-					}
-				],
-				"workarounds": [
-					{
-						"source": "fortiguard.fortinet.com",
-						"description": "N/A"
 					}
 				],
 				"references": [

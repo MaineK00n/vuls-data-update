@@ -77,7 +77,7 @@ func Extract(args string, opts ...Option) error {
 	slog.Info("Extract Fortinet CSAF")
 	if err := filepath.WalkDir(args, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
-			return errors.Wrapf(err, "walk %s", path)
+			return err
 		}
 
 		if d.IsDir() {
@@ -191,7 +191,7 @@ func extract(fetched csafTypes.CSAF, raws []string) (dataTypes.Data, error) {
 		if v.CWE != nil && v.CWE.ID != "" {
 			a.cwe = append(a.cwe, v.CWE.ID)
 		}
-		if w := noteText(v.Notes, "Workarounds"); w != "" {
+		if w := noteText(v.Notes, "Workarounds"); !placeholderNote(w) {
 			a.workarounds = append(a.workarounds, w)
 		}
 		for _, r := range v.References {
@@ -391,6 +391,19 @@ func toCriterion(productID string, refMap map[string]productRef) (criterionTypes
 		}
 	}
 	if bakeVersion != "" {
+		// Validate the concrete version before baking. BakeVersion accepts many
+		// CPE-legal-but-bogus shapes ("7.0.x", "v7.0.0", "7..0", "7.0.0|7.2.1"),
+		// which would bake a version no scanner reports — a silent detection
+		// false-negative. A numeric product must be purely numeric-dotted; a
+		// non-numeric-versioned product (FortiSASE) may also carry a calendar
+		// letter component ("25.2.a").
+		nonNumericVersioned, err := product.IsNonNumericVersioned(cpe)
+		if err != nil {
+			return criterionTypes.Criterion{}, errors.Wrapf(err, "check non-numeric versioning for %q", productID)
+		}
+		if !numericBound.MatchString(bakeVersion) && !(nonNumericVersioned && concreteCalendarVersion.MatchString(bakeVersion)) {
+			return criterionTypes.Criterion{}, errors.Errorf("unexpected concrete version %q for %q (expr %q)", bakeVersion, productID, ref.versionExp)
+		}
 		baked, err := product.BakeVersion(cpe, bakeVersion)
 		if err != nil {
 			return criterionTypes.Criterion{}, errors.Wrapf(err, "bake version for %q", productID)
@@ -424,6 +437,14 @@ func toCriterion(productID string, refMap map[string]productRef) (criterionTypes
 // non-numeric tail (e.g. "25.2.a" or "7.1-b5955") is rejected by toCriterion.
 var numericBound = regexp.MustCompile(`^[0-9]+(\.[0-9]+)*$`)
 
+// concreteCalendarVersion matches a FortiSASE-style concrete version whose
+// trailing components may be a lowercase milestone letter as well as numeric
+// (e.g. "25.2.a", "25.1.a.2"). It validates a bake token for a
+// non-numeric-versioned product, where numericBound is too strict; both reject
+// CPE-legal-but-bogus shapes like "7.0.x", "v7.0.0", "7..0" or a "7.0.0|7.2.1"
+// pipe list.
+var concreteCalendarVersion = regexp.MustCompile(`^[0-9]+(\.[0-9a-z]+)*$`)
+
 func resolveVersion(exp string) (*ccRangeTypes.Range, string, error) {
 	switch {
 	case exp == "" || exp == "all versions":
@@ -453,18 +474,28 @@ func resolveVersion(exp string) (*ccRangeTypes.Range, string, error) {
 		r := ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeFortinet}
 		for part := range strings.SplitSeq(exp, "|") {
 			part = strings.TrimSpace(part)
+			var bound *string
+			var op string
 			switch {
 			case strings.HasPrefix(part, ">="):
-				r.GreaterEqual = strings.TrimSpace(strings.TrimPrefix(part, ">="))
+				op, bound = ">=", &r.GreaterEqual
 			case strings.HasPrefix(part, ">"):
-				r.GreaterThan = strings.TrimSpace(strings.TrimPrefix(part, ">"))
+				op, bound = ">", &r.GreaterThan
 			case strings.HasPrefix(part, "<="):
-				r.LessEqual = strings.TrimSpace(strings.TrimPrefix(part, "<="))
+				op, bound = "<=", &r.LessEqual
 			case strings.HasPrefix(part, "<"):
-				r.LessThan = strings.TrimSpace(strings.TrimPrefix(part, "<"))
+				op, bound = "<", &r.LessThan
 			default:
 				return nil, "", errors.Errorf("unexpected bound %q in %q", part, exp)
 			}
+			// An empty version after the operator (e.g. ">" or ">=7.0.0|<=") would
+			// be silently treated as "no constraint" by Range.Accept and over-match,
+			// so reject it rather than emit an open-ended range.
+			v := strings.TrimSpace(strings.TrimPrefix(part, op))
+			if v == "" {
+				return nil, "", errors.Errorf("empty bound %q in %q", part, exp)
+			}
+			*bound = v
 		}
 		return &r, "", nil
 	case !product.IsConcrete(exp):
@@ -520,4 +551,16 @@ func noteText(notes []csafTypes.Note, title string) string {
 		}
 	}
 	return ""
+}
+
+// placeholderNote reports whether a note's text is a Fortinet "no value here"
+// placeholder rather than real content (the "Workarounds" note is literally
+// "N/A" across the corpus), so it is dropped instead of emitted as a record.
+func placeholderNote(s string) bool {
+	switch strings.ToLower(strings.TrimSpace(s)) {
+	case "", "n/a", "none":
+		return true
+	default:
+		return false
+	}
 }

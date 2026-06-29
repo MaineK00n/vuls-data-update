@@ -334,6 +334,61 @@ func TestToCriterion(t *testing.T) {
 			},
 			wantErr: true,
 		},
+		{
+			// Empty bound after an operator would be silently treated as "no
+			// constraint" and over-match.
+			name: "empty bound after operator rejected",
+			args: args{
+				productID: "product-id-1",
+				refMap: map[string]csaf.ProductRef{
+					"product-id-1": csaf.NewProductRef("cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*", ">=7.0.0|<="),
+				},
+			},
+			wantErr: true,
+		},
+		{
+			name: "bare operator with no version rejected",
+			args: args{
+				productID: "product-id-1",
+				refMap: map[string]csaf.ProductRef{
+					"product-id-1": csaf.NewProductRef("cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*", ">"),
+				},
+			},
+			wantErr: true,
+		},
+		{
+			// Bogus concrete version that BakeVersion would otherwise accept (CPE
+			// legal but no scanner reports it) — a silent false-negative.
+			name: "bogus concrete version with letter component rejected",
+			args: args{
+				productID: "product-id-1",
+				refMap: map[string]csaf.ProductRef{
+					"product-id-1": csaf.NewProductRef("cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*", "7.0.x"),
+				},
+			},
+			wantErr: true,
+		},
+		{
+			name: "concrete version with leading v rejected",
+			args: args{
+				productID: "product-id-1",
+				refMap: map[string]csaf.ProductRef{
+					"product-id-1": csaf.NewProductRef("cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*", "v7.0.0"),
+				},
+			},
+			wantErr: true,
+		},
+		{
+			// Pipe list without a <> operator falls through to the bake path.
+			name: "concrete version pipe list rejected",
+			args: args{
+				productID: "product-id-1",
+				refMap: map[string]csaf.ProductRef{
+					"product-id-1": csaf.NewProductRef("cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*", "7.0.0|7.2.1"),
+				},
+			},
+			wantErr: true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

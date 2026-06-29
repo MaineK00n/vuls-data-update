@@ -56,12 +56,6 @@
 						]
 					}
 				],
-				"workarounds": [
-					{
-						"source": "fortiguard.fortinet.com",
-						"description": "N/A"
-					}
-				],
 				"references": [
 					{
 						"source": "fortiguard.fortinet.com",
