@@ -390,7 +390,13 @@ func (t RangeType) Compare(v1, v2 string) (int, error) {
 			}
 			n, err := va.Compare(vb)
 			if err != nil {
-				return 0, &CompareError{Err: err}
+				// An incomparable pair (a numeric component meeting a milestone
+				// letter) is an expected, swallow-safe outcome; any other error
+				// is unexpected and propagates loudly.
+				if stderrors.Is(err, nonnumericVersion.ErrIncomparable) {
+					return 0, &CompareError{Err: err}
+				}
+				return 0, err
 			}
 			return n, nil
 		}
@@ -402,9 +408,11 @@ func (t RangeType) Compare(v1, v2 string) (int, error) {
 		if err != nil {
 			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
 		}
+		// Numeric versions are totally ordered, so Compare returns no expected
+		// error; any error here is unexpected and propagates loudly.
 		n, err := va.Compare(vb)
 		if err != nil {
-			return 0, &CompareError{Err: err}
+			return 0, err
 		}
 		return n, nil
 	}

@@ -15,9 +15,14 @@ import (
 
 // cpeToRangeType is the inverse of nameToProduct keyed by CPE: every product's
 // CPE maps to its per-product range type (names sharing a CPE share the type).
+// It panics at package init if two names map the same CPE to different range
+// types, so a table mistake fails fast rather than silently mis-comparing.
 var cpeToRangeType = func() map[string]ccRangeTypes.RangeType {
 	m := make(map[string]ccRangeTypes.RangeType, len(nameToProduct))
-	for _, p := range nameToProduct {
+	for name, p := range nameToProduct {
+		if existing, ok := m[p.cpe]; ok && existing != p.rangeType {
+			panic(errors.Errorf("conflicting range types for cpe %q: %s and %s (check product %q in table.go)", p.cpe, existing, p.rangeType, name))
+		}
 		m[p.cpe] = p.rangeType
 	}
 	return m
