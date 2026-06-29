@@ -1,9 +1,11 @@
 package csaf
 
 import (
+	"cmp"
 	"fmt"
 	"io/fs"
 	"log/slog"
+	"maps"
 	"path/filepath"
 	"regexp"
 	"slices"
@@ -146,15 +148,35 @@ type productRef struct {
 	versionExp string
 }
 
-// cveAcc accumulates the per-CVE fields merged across the multiple CSAF
-// vulnerability objects that share a CVE. String slices are deduped on emit.
-type cveAcc struct {
+// keyAcc accumulates one vulnerability key — a CVE, or the advisory ID when a
+// CSAF vulnerability object carries no CVE (a few older Fortinet advisories are
+// published without one). description/cwe/references/workarounds are CVE-level
+// (shared across the key); severity, criterions and mitigations live per
+// severity group (see sevGroup). String slices are deduped on emit.
+type keyAcc struct {
 	description string
-	severity    []severityTypes.Severity
 	cwe         []string
-	workarounds []string
 	references  []string
+	workarounds []string
+	groups      map[sevKey]*sevGroup
+}
+
+// sevKey groups the per-family CSAF vulnerability objects of one key by their
+// severity profile (CVSS vector(s) + vendor impact). CSAF scopes scores to
+// .products and impact threats to .product_ids; Fortinet replicates one CVE
+// across one object per product family. Today every family shares the same
+// severity, so a key collapses to a single group and the per-CVE output is
+// unchanged — but distinct severities (which CSAF permits) split into separate
+// segments/conditions rather than being over-attributed to every product.
+type sevKey struct {
+	cvss   string
+	impact string
+}
+
+type sevGroup struct {
+	severities  []severityTypes.Severity
 	criterions  []criterionTypes.Criterion
+	mitigations []string
 }
 
 func extract(fetched csafTypes.CSAF, raws []string) (dataTypes.Data, error) {
@@ -165,29 +187,25 @@ func extract(fetched csafTypes.CSAF, raws []string) (dataTypes.Data, error) {
 
 	refMap := buildProductRefs(fetched.ProductTree.Branches)
 
-	// Fortinet splits one logical CVE across several CSAF vulnerability objects
-	// (one per product family), each repeating the scores/notes. Merge them by
-	// CVE so each CVE yields a single vulnerability record and condition.
-	accs := make(map[string]*cveAcc)
+	// Merge the per-family CSAF vulnerability objects by key (CVE, or advisory
+	// ID when a object has no CVE), distributing each object's score / impact /
+	// vendor_fix remediation to its own family and grouping families by severity
+	// profile.
+	accs := make(map[string]*keyAcc)
 	for _, v := range fetched.Vulnerabilities {
-		if v.CVE == "" {
-			return dataTypes.Data{}, errors.Errorf("vulnerability without cve in advisory %s", id)
+		key := v.CVE
+		if key == "" {
+			key = id
 		}
-
-		a, ok := accs[v.CVE]
-		if !ok {
-			a = &cveAcc{}
-			accs[v.CVE] = a
+		a := accs[key]
+		if a == nil {
+			a = &keyAcc{groups: make(map[sevKey]*sevGroup)}
+			accs[key] = a
 		}
 
 		if a.description == "" {
 			a.description = noteText(v.Notes, "Summary")
 		}
-		sev, err := vulnSeverity(v)
-		if err != nil {
-			return dataTypes.Data{}, errors.Wrapf(err, "severity for advisory %s, %s", id, v.CVE)
-		}
-		a.severity = append(a.severity, sev...)
 		if v.CWE != nil && v.CWE.ID != "" {
 			a.cwe = append(a.cwe, v.CWE.ID)
 		}
@@ -199,12 +217,33 @@ func extract(fetched csafTypes.CSAF, raws []string) (dataTypes.Data, error) {
 			// CRLF/whitespace; emit one Reference per URL.
 			a.references = append(a.references, strings.Fields(r.URL)...)
 		}
+
+		sevs, sk, err := vulnSeverity(v)
+		if err != nil {
+			return dataTypes.Data{}, errors.Wrapf(err, "severity for advisory %s, %s", id, key)
+		}
+		g := a.groups[sk]
+		if g == nil {
+			g = &sevGroup{severities: sevs}
+			a.groups[sk] = g
+		}
 		for _, pid := range v.ProductStatus.KnownAffected {
 			cn, err := toCriterion(string(pid), refMap)
 			if err != nil {
-				return dataTypes.Data{}, errors.Wrapf(err, "resolve known_affected %q (advisory %s, %s)", string(pid), id, v.CVE)
+				return dataTypes.Data{}, errors.Wrapf(err, "resolve known_affected %q (advisory %s, %s)", string(pid), id, key)
 			}
-			a.criterions = append(a.criterions, cn)
+			g.criterions = append(g.criterions, cn)
+		}
+		for _, rem := range v.Remediations {
+			switch rem.Category {
+			case "vendor_fix":
+				// Per-train fix guidance ("FortiOS 7.4: Upgrade to 7.4.8 ...").
+				if rem.Details != "" {
+					g.mitigations = append(g.mitigations, rem.Details)
+				}
+			default:
+				return dataTypes.Data{}, errors.Errorf("unexpected remediation category %q (advisory %s, %s)", rem.Category, id, key)
+			}
 		}
 	}
 
@@ -213,65 +252,96 @@ func extract(fetched csafTypes.CSAF, raws []string) (dataTypes.Data, error) {
 		conditions []conditionTypes.Condition
 		segments   []segmentTypes.Segment
 	)
-	for cve, a := range accs {
-		seg := segmentTypes.Segment{Ecosystem: ecosystemTypes.EcosystemTypeCPE, Tag: segmentTypes.DetectionTag(cve)}
+	for key, a := range accs {
+		// Sort the severity groups so a multi-group key gets stable tag suffixes.
+		gkeys := slices.SortedFunc(maps.Keys(a.groups), func(x, y sevKey) int {
+			return cmp.Or(cmp.Compare(x.cvss, y.cvss), cmp.Compare(x.impact, y.impact))
+		})
+		for i, sk := range gkeys {
+			g := a.groups[sk]
 
-		// Only carry the CVE-tagged segment when it has a matching detection
-		// condition. A CVE with no known_affected (e.g. known_not_affected
-		// only) otherwise leaves a dangling segment tag with no condition or
-		// advisory segment, producing an internally inconsistent dataset.
-		var vsegs []segmentTypes.Segment
-		if len(a.criterions) > 0 {
-			segments = append(segments, seg)
-			vsegs = []segmentTypes.Segment{seg}
-			conditions = append(conditions, conditionTypes.Condition{
-				Criteria: criteriaTypes.Criteria{
-					Operator:   criteriaTypes.CriteriaOperatorTypeOR,
-					Criterions: a.criterions,
+			// One severity group → the tag is the bare key (CVE / advisory ID),
+			// keeping the common single-group output stable. Multiple groups
+			// within one key → suffix so each group's segment/condition is
+			// distinct.
+			tag := segmentTypes.DetectionTag(key)
+			if len(gkeys) > 1 {
+				tag = segmentTypes.DetectionTag(fmt.Sprintf("%s#%d", key, i))
+			}
+			seg := segmentTypes.Segment{Ecosystem: ecosystemTypes.EcosystemTypeCPE, Tag: tag}
+
+			// Only carry the tagged segment when it has a matching detection
+			// condition. A group with no known_affected (e.g. known_not_affected
+			// only) otherwise leaves a dangling segment tag with no condition or
+			// advisory segment, producing an internally inconsistent dataset.
+			var vsegs []segmentTypes.Segment
+			if len(g.criterions) > 0 {
+				segments = append(segments, seg)
+				vsegs = []segmentTypes.Segment{seg}
+				conditions = append(conditions, conditionTypes.Condition{
+					Criteria: criteriaTypes.Criteria{
+						Operator:   criteriaTypes.CriteriaOperatorTypeOR,
+						Criterions: g.criterions,
+					},
+					Tag: tag,
+				})
+			}
+
+			// A no-CVE key (the advisory ID) emits only the advisory segment and
+			// detection condition above — no Vulnerability record. The consumer
+			// synthesizes a VulnInfo from the advisory ID via its advisory
+			// fallback, which fires only when no Vulnerability shares the tag.
+			if key == id {
+				continue
+			}
+
+			vulns = append(vulns, vulnerabilityTypes.Vulnerability{
+				Content: vulnerabilityContentTypes.Content{
+					ID: vulnerabilityContentTypes.VulnerabilityID(key),
+					// Per-object v.Title is product-family specific boilerplate
+					// ("FortiOS - HIGH - FG-IR-..."); use the advisory's document
+					// title, which is descriptive and stable across the merge.
+					Title:       fetched.Document.Title,
+					Description: a.description,
+					Severity: func() []severityTypes.Severity {
+						ss := slices.Clone(g.severities)
+						slices.SortFunc(ss, severityTypes.Compare)
+						return slices.CompactFunc(ss, func(x, y severityTypes.Severity) bool {
+							return severityTypes.Compare(x, y) == 0
+						})
+					}(),
+					CWE: func() []cweTypes.CWE {
+						cwes := slices.Compact(slices.Sorted(slices.Values(a.cwe)))
+						if len(cwes) == 0 {
+							return nil
+						}
+						return []cweTypes.CWE{{Source: "fortiguard.fortinet.com", CWE: cwes}}
+					}(),
+					Workarounds: func() []remediationTypes.Remediation {
+						var rs []remediationTypes.Remediation
+						for _, w := range slices.Compact(slices.Sorted(slices.Values(a.workarounds))) {
+							rs = append(rs, remediationTypes.Remediation{Source: "fortiguard.fortinet.com", Description: w})
+						}
+						return rs
+					}(),
+					Mitigations: func() []remediationTypes.Remediation {
+						var rs []remediationTypes.Remediation
+						for _, m := range slices.Compact(slices.Sorted(slices.Values(g.mitigations))) {
+							rs = append(rs, remediationTypes.Remediation{Source: "fortiguard.fortinet.com", Description: m})
+						}
+						return rs
+					}(),
+					References: func() []referenceTypes.Reference {
+						var rs []referenceTypes.Reference
+						for _, u := range slices.Compact(slices.Sorted(slices.Values(a.references))) {
+							rs = append(rs, referenceTypes.Reference{Source: "fortiguard.fortinet.com", URL: u})
+						}
+						return rs
+					}(),
 				},
-				Tag: segmentTypes.DetectionTag(cve),
+				Segments: vsegs,
 			})
 		}
-
-		vulns = append(vulns, vulnerabilityTypes.Vulnerability{
-			Content: vulnerabilityContentTypes.Content{
-				ID: vulnerabilityContentTypes.VulnerabilityID(cve),
-				// Per-object v.Title is product-family specific boilerplate
-				// ("FortiOS - HIGH - FG-IR-..."); use the advisory's document
-				// title, which is descriptive and stable across the merge.
-				Title:       fetched.Document.Title,
-				Description: a.description,
-				Severity: func() []severityTypes.Severity {
-					ss := slices.Clone(a.severity)
-					slices.SortFunc(ss, severityTypes.Compare)
-					return slices.CompactFunc(ss, func(x, y severityTypes.Severity) bool {
-						return severityTypes.Compare(x, y) == 0
-					})
-				}(),
-				CWE: func() []cweTypes.CWE {
-					cwes := slices.Compact(slices.Sorted(slices.Values(a.cwe)))
-					if len(cwes) == 0 {
-						return nil
-					}
-					return []cweTypes.CWE{{Source: "fortiguard.fortinet.com", CWE: cwes}}
-				}(),
-				Workarounds: func() []remediationTypes.Remediation {
-					var rs []remediationTypes.Remediation
-					for _, w := range slices.Compact(slices.Sorted(slices.Values(a.workarounds))) {
-						rs = append(rs, remediationTypes.Remediation{Source: "fortiguard.fortinet.com", Description: w})
-					}
-					return rs
-				}(),
-				References: func() []referenceTypes.Reference {
-					var rs []referenceTypes.Reference
-					for _, u := range slices.Compact(slices.Sorted(slices.Values(a.references))) {
-						rs = append(rs, referenceTypes.Reference{Source: "fortiguard.fortinet.com", URL: u})
-					}
-					return rs
-				}(),
-			},
-			Segments: vsegs,
-		})
 	}
 
 	return dataTypes.Data{
@@ -280,6 +350,16 @@ func extract(fetched csafTypes.CSAF, raws []string) (dataTypes.Data, error) {
 			Content: advisoryContentTypes.Content{
 				ID:    advisoryContentTypes.AdvisoryID(id),
 				Title: fetched.Document.Title,
+				// A no-CVE advisory carries its summary here (keyed by the advisory
+				// ID), since the consumer's advisory fallback reads the advisory
+				// Description; CVE advisories keep descriptions on their per-CVE
+				// vulnerability records instead.
+				Description: func() string {
+					if a, ok := accs[id]; ok {
+						return a.description
+					}
+					return ""
+				}(),
 				References: []referenceTypes.Reference{{
 					Source: "fortiguard.fortinet.com",
 					URL:    fmt.Sprintf("https://fortiguard.fortinet.com/psirt/%s", id),
@@ -511,8 +591,12 @@ func resolveVersion(exp string) (*ccRangeTypes.Range, string, error) {
 	}
 }
 
-func vulnSeverity(v csafTypes.Vulnerability) ([]severityTypes.Severity, error) {
+// vulnSeverity returns the severities for one CSAF vulnerability object (its
+// per-family CVSS v3.1 score(s) and vendor impact) together with the sevKey that
+// groups families of the same key by identical severity profile.
+func vulnSeverity(v csafTypes.Vulnerability) ([]severityTypes.Severity, sevKey, error) {
 	var ss []severityTypes.Severity
+	var vectors, impacts []string
 	seen := make(map[string]struct{})
 	for _, sc := range v.Scores {
 		if sc.CvssV3 == nil || sc.CvssV3.VectorString == "" {
@@ -527,21 +611,30 @@ func vulnSeverity(v csafTypes.Vulnerability) ([]severityTypes.Severity, error) {
 		// not a known shape we choose to skip — hard-error rather than silently
 		// drop the severity.
 		if !strings.HasPrefix(sc.CvssV3.VectorString, "CVSS:3.1/") {
-			return nil, errors.Errorf("unexpected non-3.1 cvss vector %q", sc.CvssV3.VectorString)
+			return nil, sevKey{}, errors.Errorf("unexpected non-3.1 cvss vector %q", sc.CvssV3.VectorString)
 		}
 		c, err := v31Types.Parse(sc.CvssV3.VectorString)
 		if err != nil {
-			return nil, errors.Wrapf(err, "parse cvss vector %q", sc.CvssV3.VectorString)
+			return nil, sevKey{}, errors.Wrapf(err, "parse cvss vector %q", sc.CvssV3.VectorString)
 		}
 		ss = append(ss, severityTypes.Severity{Type: severityTypes.SeverityTypeCVSSv31, Source: "fortiguard.fortinet.com", CVSSv31: c})
+		vectors = append(vectors, sc.CvssV3.VectorString)
 	}
+	seenImpact := make(map[string]struct{})
 	for _, t := range v.Threats {
 		if t.Category != "impact" || t.Details == "" {
 			continue
 		}
+		if _, ok := seenImpact[t.Details]; ok {
+			continue
+		}
+		seenImpact[t.Details] = struct{}{}
 		ss = append(ss, severityTypes.Severity{Type: severityTypes.SeverityTypeVendor, Source: "fortiguard.fortinet.com", Vendor: new(t.Details)})
+		impacts = append(impacts, t.Details)
 	}
-	return ss, nil
+	slices.Sort(vectors)
+	slices.Sort(impacts)
+	return ss, sevKey{cvss: strings.Join(vectors, "\n"), impact: strings.Join(impacts, "\n")}, nil
 }
 
 func noteText(notes []csafTypes.Note, title string) string {

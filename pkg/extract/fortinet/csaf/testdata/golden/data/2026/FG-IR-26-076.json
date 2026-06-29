@@ -50,6 +50,12 @@
 						]
 					}
 				],
+				"mitigations": [
+					{
+						"source": "fortiguard.fortinet.com",
+						"description": "FortiWeb Manager: Not Affected\nFortiWeb: Not Affected\nFortiVoice: Not Affected\nFortiTester: Not Affected\nFortiSwitch: Not Affected\nFortiSandbox: Not Affected\nFortiSOAR: Not Affected\nFortiSIEM: Not Affected\nFortiRecorder: Not Affected\nFortiProxy: Not Affected\nFortiPortal: Not Affected\nFortiOS: Not Affected\nFortiNAC-F: Not Affected\nFortiNAC: Not Affected\nFortiManager: Not Affected\nFortiMail: Not Affected\nFortiExtender: Not Affected\nFortiDDoS: Not Affected\nFortiConverter: Not Affected\nFortiCloud: Not Affected\nFortiClient iOS: Not Affected\nFortiClient Windows: Not Affected\nFortiClient MacOS: Not Affected\nFortiClient Linux: Not Affected\nFortiClient EMS: Not Affected\nFortiClient Android: Not Affected\nFortiAuthenticator: Not Affected\nFortiAnalyzer: Not Affected\nFortiAP-W2: Not Affected\nFortiAP-U: Not Affected\nFortiAP: Not Affected\nFortiADC Manager: Not Affected\nFortiADC: Not Affected"
+					}
+				],
 				"references": [
 					{
 						"source": "fortiguard.fortinet.com",
