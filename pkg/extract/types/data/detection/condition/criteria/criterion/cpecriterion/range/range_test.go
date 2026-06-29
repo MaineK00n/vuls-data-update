@@ -281,6 +281,12 @@ func TestRangeType_Compare(t *testing.T) {
 		// Empty components (consecutive/trailing dots) are malformed → incomparable.
 		{name: "fortinet: consecutive dots → CompareError (7..0 vs 7.0.0)", t: ccRangeTypes.RangeTypeFortinetFortios, v1: "7..0", v2: "7.0.0", wantCompareErr: true},
 		{name: "fortinet: trailing dot → CompareError (7.2. vs 7.2)", t: ccRangeTypes.RangeTypeFortinetFortios, v1: "7.2.", v2: "7.2", wantCompareErr: true},
+		// Signed / overflowing numeric components are not unsigned digits → incomparable.
+		{name: "fortinet: signed component → CompareError (7.-1 vs 7.0)", t: ccRangeTypes.RangeTypeFortinetFortios, v1: "7.-1", v2: "7.0", wantCompareErr: true},
+		{name: "fortinet: plus-signed component → CompareError (7.+0 vs 7.0)", t: ccRangeTypes.RangeTypeFortinetFortios, v1: "7.+0", v2: "7.0", wantCompareErr: true},
+		// Non-numeric components must be a single milestone letter; multi-char tokens are incomparable.
+		{name: "fortinet: multi-char milestone → CompareError (25.2.alpha vs 25.2)", t: ccRangeTypes.RangeTypeFortinetFortisase, v1: "25.2.alpha", v2: "25.2", wantCompareErr: true},
+		{name: "fortinet: letter+digits milestone → CompareError (25.1.a10 vs 25.1)", t: ccRangeTypes.RangeTypeFortinetFortisase, v1: "25.1.a10", v2: "25.1", wantCompareErr: true},
 		{name: "version (loose): 4-segment v1 < v2", t: ccRangeTypes.RangeTypeVersion, v1: "9.16.19.0", v2: "9.16.20.0", want: -1},
 		{name: "version (loose): v1 unparseable → CompareError", t: ccRangeTypes.RangeTypeVersion, v1: "x.y.z.w.q", v2: "1.0", wantCompareErr: true},
 		{name: "pan-os: base < hotfix (hashicorp prerelease order would invert this)", t: ccRangeTypes.RangeTypePANOS, v1: "11.2.4", v2: "11.2.4-h1", want: -1},
