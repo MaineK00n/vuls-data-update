@@ -121,6 +121,30 @@ func TestBuildFixedBuildCriterion(t *testing.T) {
 			want: nil,
 		},
 		{
+			name: "Microsoft Office 365 for Mac",
+			args: args{
+				cveID:         "CVE-2026-44817",
+				productName:   "Microsoft Office 365 for Mac",
+				rawFixedBuild: "16.110.26061317",
+			},
+			want: &criterionTypes.Criterion{
+				Type: criterionTypes.CriterionTypeVersion,
+				Version: &vcTypes.Criterion{
+					Vulnerable: true,
+					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
+					Package: packageTypes.Package{
+						Type:   packageTypes.PackageTypeBinary,
+						Binary: &binaryTypes.Package{Name: "Microsoft Office 365 for Mac"},
+					},
+					Affected: &affectedTypes.Affected{
+						Type:  affectedrangeTypes.RangeTypeMicrosoftOfficeMac,
+						Range: []affectedrangeTypes.Range{{LessThan: "16.110.26061317"}},
+						Fixed: []string{"16.110.26061317"},
+					},
+				},
+			},
+		},
+		{
 			name: "Branch-leaked Win11 21H2 x64 FixedBuild applies override end-to-end (CVE-2023-21817)",
 			args: args{
 				cveID:         "CVE-2023-21817",

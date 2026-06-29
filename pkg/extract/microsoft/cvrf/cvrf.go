@@ -1200,6 +1200,7 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 
 		// Microsoft Office for Mac
 		case "Microsoft Office 2019 for Mac",
+			"Microsoft Office 365 for Mac",
 			"Microsoft Office for Mac",
 			"Microsoft Office LTSC for Mac 2021",
 			"Microsoft Office LTSC for Mac 2024":
