@@ -1,0 +1,206 @@
+{
+  "document": {
+    "acknowledgments": [
+      {
+        "summary": "Fortinet is pleased to thank Juampa Rodriguez from Red Electrica for reporting this vulnerability under responsible disclosure. "
+      }
+    ],
+    "category": "Fortinet PSIRT Advisories",
+    "csaf_version": "2.0",
+    "publisher": {
+      "category": "vendor",
+      "contact_details": "https://fortiguard.fortinet.com/faq/psirt-contact",
+      "issuing_authority": "Fortinet PSIRT",
+      "name": "Fortinet PSIRT",
+      "namespace": "https://fortiguard.fortinet.com/psirt"
+    },
+    "title": "Credential disclosure in LDAP configuration web page. [fixture: FortiSandbox PaaS severity altered to exercise per-severity-group split]",
+    "tracking": {
+      "current_release_date": "2026-04-14T00:00:00",
+      "id": "FG-IR-26-113",
+      "initial_release_date": "2026-04-14T00:00:00",
+      "revision_history": [
+        {
+          "date": "2026-04-14T00:00:00",
+          "number": "1",
+          "summary": "Initial Publication"
+        }
+      ],
+      "status": "final",
+      "version": "0"
+    }
+  },
+  "product_tree": {
+    "branches": [
+      {
+        "branches": [
+          {
+            "branches": [
+              {
+                "category": "product_version_range",
+                "name": "FortiSandbox/>=5.0.0|<=5.0.5",
+                "product": {
+                  "name": "FortiSandbox",
+                  "product_id": "FortiSandbox >=5.0.0|<=5.0.5"
+                }
+              },
+              {
+                "category": "product_version_range",
+                "name": "FortiSandbox/4.4 all versions",
+                "product": {
+                  "name": "FortiSandbox",
+                  "product_id": "FortiSandbox 4.4 all versions"
+                }
+              }
+            ],
+            "category": "product",
+            "name": "FortiSandbox"
+          },
+          {
+            "branches": [
+              {
+                "category": "product_version_range",
+                "name": "FortiSandbox PaaS/>=5.0.1|<=5.0.5",
+                "product": {
+                  "name": "FortiSandbox PaaS",
+                  "product_id": "FortiSandbox PaaS >=5.0.1|<=5.0.5"
+                }
+              }
+            ],
+            "category": "product",
+            "name": "FortiSandbox PaaS"
+          }
+        ],
+        "category": "vendor",
+        "name": "Fortinet PSIRT"
+      }
+    ]
+  },
+  "vulnerabilities": [
+    {
+      "cve": "CVE-2026-27316",
+      "cwe": {
+        "id": "CWE-522",
+        "name": "Insufficiently Protected Credentials"
+      },
+      "notes": [
+        {
+          "category": "summary",
+          "text": "Credential disclosure in GUI\n\n",
+          "title": "Summary"
+        },
+        {
+          "category": "general",
+          "text": "N/A",
+          "title": "Workarounds"
+        }
+      ],
+      "product_status": {
+        "known_affected": [
+          "FortiSandbox >=5.0.0|<=5.0.5",
+          "FortiSandbox 4.4 all versions"
+        ],
+        "known_not_affected": [
+          "FortiSandbox-5.0.6"
+        ]
+      },
+      "references": [
+        {
+          "summary": "An Insufficiently protected credentials vulnerability [CWE-522] in FortiSanbox and FortiSanbox PaaS GUI may allow an authenticated administrator to read LDAP server credentials via client-side inspection.",
+          "url": "https://fortiguard.fortinet.com/psirt/FG-IR-26-113"
+        }
+      ],
+      "remediations": [
+        {
+          "category": "vendor_fix",
+          "details": "FortiSandbox 5.0: Upgrade to 5.0.6 or above\nFortiSandbox 4.4: Migrate to a fixed release",
+          "product_ids": [
+            "FortiSandbox"
+          ]
+        }
+      ],
+      "scores": [
+        {
+          "cvss_v3": {
+            "baseScore": 2.5,
+            "baseSeverity": "LOW",
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:U/C:L/I:N/A:N/E:P/RL:O/RC:C",
+            "version": "3.1"
+          },
+          "products": [
+            "FortiSandbox"
+          ]
+        }
+      ],
+      "threats": [
+        {
+          "category": "impact",
+          "details": "Information disclosure"
+        }
+      ],
+      "title": "FortiSandbox - LOW - FG-IR-26-113"
+    },
+    {
+      "cve": "CVE-2026-27316",
+      "cwe": {
+        "id": "CWE-522",
+        "name": "Insufficiently Protected Credentials"
+      },
+      "notes": [
+        {
+          "category": "summary",
+          "text": "Credential disclosure in GUI\n\n",
+          "title": "Summary"
+        },
+        {
+          "category": "general",
+          "text": "N/A",
+          "title": "Workarounds"
+        }
+      ],
+      "product_status": {
+        "known_affected": [
+          "FortiSandbox PaaS >=5.0.1|<=5.0.5"
+        ],
+        "known_not_affected": [
+          "FortiSandbox PaaS-5.0.6"
+        ]
+      },
+      "references": [
+        {
+          "summary": "An Insufficiently protected credentials vulnerability [CWE-522] in FortiSanbox and FortiSanbox PaaS GUI may allow an authenticated administrator to read LDAP server credentials via client-side inspection.",
+          "url": "https://fortiguard.fortinet.com/psirt/FG-IR-26-113"
+        }
+      ],
+      "remediations": [
+        {
+          "category": "vendor_fix",
+          "details": "FortiSandbox PaaS 5.0: Upgrade to 5.0.6 or above",
+          "product_ids": [
+            "FortiSandbox PaaS"
+          ]
+        }
+      ],
+      "scores": [
+        {
+          "cvss_v3": {
+            "baseScore": 9.0,
+            "baseSeverity": "CRITICAL",
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H/E:P/RL:O/RC:C",
+            "version": "3.1"
+          },
+          "products": [
+            "FortiSandbox PaaS"
+          ]
+        }
+      ],
+      "threats": [
+        {
+          "category": "impact",
+          "details": "Information disclosure"
+        }
+      ],
+      "title": "FortiSandbox PaaS - LOW - FG-IR-26-113"
+    }
+  ]
+}

@@ -3,6 +3,7 @@ package csaf
 import (
 	"cmp"
 	"fmt"
+	"hash/fnv"
 	"io/fs"
 	"log/slog"
 	"maps"
@@ -177,6 +178,7 @@ type sevGroup struct {
 	severities  []severityTypes.Severity
 	criterions  []criterionTypes.Criterion
 	mitigations []string
+	pids        []string // known_affected product_ids, for a stable split tag suffix
 }
 
 func extract(fetched csafTypes.CSAF, raws []string) (dataTypes.Data, error) {
@@ -233,6 +235,7 @@ func extract(fetched csafTypes.CSAF, raws []string) (dataTypes.Data, error) {
 				return dataTypes.Data{}, errors.Wrapf(err, "resolve known_affected %q (advisory %s, %s)", string(pid), id, key)
 			}
 			g.criterions = append(g.criterions, cn)
+			g.pids = append(g.pids, string(pid))
 		}
 		for _, rem := range v.Remediations {
 			switch rem.Category {
@@ -257,16 +260,22 @@ func extract(fetched csafTypes.CSAF, raws []string) (dataTypes.Data, error) {
 		gkeys := slices.SortedFunc(maps.Keys(a.groups), func(x, y sevKey) int {
 			return cmp.Or(cmp.Compare(x.cvss, y.cvss), cmp.Compare(x.impact, y.impact))
 		})
-		for i, sk := range gkeys {
+		for _, sk := range gkeys {
 			g := a.groups[sk]
 
 			// One severity group → the tag is the bare key (CVE / advisory ID),
 			// keeping the common single-group output stable. Multiple groups
-			// within one key → suffix so each group's segment/condition is
-			// distinct.
+			// within one key → suffix each tag with a hash of the group's largest
+			// product_id (the groups partition the products, so the maxima differ).
+			// Keying the suffix on the product set, not on a positional index or
+			// the severity value, keeps the tag stable across data updates (it
+			// only moves if that group's products change), minimizing extracted
+			// diff — mirroring redhat/csaf's calculateTag.
 			tag := segmentTypes.DetectionTag(key)
-			if len(gkeys) > 1 {
-				tag = segmentTypes.DetectionTag(fmt.Sprintf("%s#%d", key, i))
+			if len(gkeys) > 1 && len(g.pids) > 0 {
+				h := fnv.New32a()
+				_, _ = h.Write([]byte(slices.Max(g.pids)))
+				tag = segmentTypes.DetectionTag(fmt.Sprintf("%s_%08x", key, h.Sum32()))
 			}
 			seg := segmentTypes.Segment{Ecosystem: ecosystemTypes.EcosystemTypeCPE, Tag: tag}
 

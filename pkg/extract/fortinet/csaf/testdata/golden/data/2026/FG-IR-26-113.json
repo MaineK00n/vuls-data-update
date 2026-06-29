@@ -1,0 +1,211 @@
+{
+	"id": "FG-IR-26-113",
+	"advisories": [
+		{
+			"content": {
+				"id": "FG-IR-26-113",
+				"title": "Credential disclosure in LDAP configuration web page. [fixture: FortiSandbox PaaS severity altered to exercise per-severity-group split]",
+				"references": [
+					{
+						"source": "fortiguard.fortinet.com",
+						"url": "https://fortiguard.fortinet.com/psirt/FG-IR-26-113"
+					}
+				],
+				"published": "2026-04-14T00:00:00Z",
+				"modified": "2026-04-14T00:00:00Z"
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe",
+					"tag": "CVE-2026-27316_3cf3c98b"
+				},
+				{
+					"ecosystem": "cpe",
+					"tag": "CVE-2026-27316_d2c42ffb"
+				}
+			]
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-2026-27316",
+				"title": "Credential disclosure in LDAP configuration web page. [fixture: FortiSandbox PaaS severity altered to exercise per-severity-group split]",
+				"description": "Credential disclosure in GUI",
+				"severity": [
+					{
+						"type": "vendor",
+						"source": "fortiguard.fortinet.com",
+						"vendor": "Information disclosure"
+					},
+					{
+						"type": "cvss_v31",
+						"source": "fortiguard.fortinet.com",
+						"cvss_v31": {
+							"vector": "CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:U/C:L/I:N/A:N/E:P/RL:O/RC:C",
+							"base_score": 2.7,
+							"base_severity": "LOW",
+							"temporal_score": 2.5,
+							"temporal_severity": "LOW",
+							"environmental_score": 2.5,
+							"environmental_severity": "LOW"
+						}
+					}
+				],
+				"cwe": [
+					{
+						"source": "fortiguard.fortinet.com",
+						"cwe": [
+							"CWE-522"
+						]
+					}
+				],
+				"mitigations": [
+					{
+						"source": "fortiguard.fortinet.com",
+						"description": "FortiSandbox 5.0: Upgrade to 5.0.6 or above\nFortiSandbox 4.4: Migrate to a fixed release"
+					}
+				],
+				"references": [
+					{
+						"source": "fortiguard.fortinet.com",
+						"url": "https://fortiguard.fortinet.com/psirt/FG-IR-26-113"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe",
+					"tag": "CVE-2026-27316_d2c42ffb"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2026-27316",
+				"title": "Credential disclosure in LDAP configuration web page. [fixture: FortiSandbox PaaS severity altered to exercise per-severity-group split]",
+				"description": "Credential disclosure in GUI",
+				"severity": [
+					{
+						"type": "vendor",
+						"source": "fortiguard.fortinet.com",
+						"vendor": "Information disclosure"
+					},
+					{
+						"type": "cvss_v31",
+						"source": "fortiguard.fortinet.com",
+						"cvss_v31": {
+							"vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H/E:P/RL:O/RC:C",
+							"base_score": 9.8,
+							"base_severity": "CRITICAL",
+							"temporal_score": 8.8,
+							"temporal_severity": "HIGH",
+							"environmental_score": 8.8,
+							"environmental_severity": "HIGH"
+						}
+					}
+				],
+				"cwe": [
+					{
+						"source": "fortiguard.fortinet.com",
+						"cwe": [
+							"CWE-522"
+						]
+					}
+				],
+				"mitigations": [
+					{
+						"source": "fortiguard.fortinet.com",
+						"description": "FortiSandbox PaaS 5.0: Upgrade to 5.0.6 or above"
+					}
+				],
+				"references": [
+					{
+						"source": "fortiguard.fortinet.com",
+						"url": "https://fortiguard.fortinet.com/psirt/FG-IR-26-113"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe",
+					"tag": "CVE-2026-27316_3cf3c98b"
+				}
+			]
+		}
+	],
+	"detections": [
+		{
+			"ecosystem": "cpe",
+			"conditions": [
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:a:fortinet:fortisandbox_paas:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet",
+										"ge": "5.0.1",
+										"le": "5.0.5"
+									}
+								}
+							}
+						]
+					},
+					"tag": "CVE-2026-27316_3cf3c98b"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:o:fortinet:fortisandbox:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet",
+										"ge": "4.4",
+										"lt": "4.5"
+									}
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:o:fortinet:fortisandbox:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet",
+										"ge": "5.0.0",
+										"le": "5.0.5"
+									}
+								}
+							}
+						]
+					},
+					"tag": "CVE-2026-27316_d2c42ffb"
+				}
+			]
+		}
+	],
+	"data_source": {
+		"id": "fortinet-csaf",
+		"raws": [
+			"fixtures/2026/FG-IR-26-113.json"
+		]
+	}
+}
