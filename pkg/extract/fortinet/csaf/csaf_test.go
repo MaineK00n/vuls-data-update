@@ -389,6 +389,19 @@ func TestToCriterion(t *testing.T) {
 			},
 			wantErr: true,
 		},
+		{
+			// A non-numeric-versioned product may bake a single-letter milestone
+			// (25.2.a), but an ambiguous multi-char component the comparator can't
+			// order (25.1.a10, 25.2.alpha) must hard-error, not be baked.
+			name: "non-numeric product bogus milestone version rejected",
+			args: args{
+				productID: "product-id-1",
+				refMap: map[string]csaf.ProductRef{
+					"product-id-1": csaf.NewProductRef("cpe:2.3:a:fortinet:fortisase:*:*:*:*:*:*:*:*", "25.1.a10"),
+				},
+			},
+			wantErr: true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

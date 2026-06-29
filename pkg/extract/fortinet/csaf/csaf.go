@@ -527,13 +527,14 @@ func toCriterion(productID string, refMap map[string]productRef) (criterionTypes
 // non-numeric tail (e.g. "25.2.a" or "7.1-b5955") is rejected by toCriterion.
 var numericBound = regexp.MustCompile(`^[0-9]+(\.[0-9]+)*$`)
 
-// concreteCalendarVersion matches a FortiSASE-style concrete version whose
-// trailing components may be a lowercase milestone letter as well as numeric
-// (e.g. "25.2.a", "25.1.a.2"). It validates a bake token for a
-// non-numeric-versioned product, where numericBound is too strict; both reject
-// CPE-legal-but-bogus shapes like "7.0.x", "v7.0.0", "7..0" or a "7.0.0|7.2.1"
-// pipe list.
-var concreteCalendarVersion = regexp.MustCompile(`^[0-9]+(\.[0-9a-z]+)*$`)
+// concreteCalendarVersion matches a FortiSASE-style concrete version: a numeric
+// head plus trailing components that are each either numeric or a single
+// lowercase milestone letter (e.g. "25.2.a", "25.1.a.2"). It validates a bake
+// token for a non-numeric-versioned product, where numericBound is too strict.
+// Each component is constrained so ambiguous tokens the Fortinet comparator
+// can't order meaningfully ("25.1.a10", "25.2.alpha", "7.0.x", "v7.0.0",
+// "7..0", a "7.0.0|7.2.1" pipe list) fail loudly instead of being baked.
+var concreteCalendarVersion = regexp.MustCompile(`^[0-9]+(\.([0-9]+|[a-z]))*$`)
 
 func resolveVersion(exp string) (*ccRangeTypes.Range, string, error) {
 	switch {
