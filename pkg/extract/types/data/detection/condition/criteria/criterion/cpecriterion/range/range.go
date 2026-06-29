@@ -6,12 +6,13 @@ import (
 	"encoding/json/v2"
 	stderrors "errors"
 	"fmt"
-	"strconv"
 	"strings"
 
 	panosVersion "github.com/MaineK00n/go-paloalto-version/pan-os"
 	"github.com/hashicorp/go-version"
 	"github.com/pkg/errors"
+	nonnumericVersion "github.com/vulsio/go-fortinet-version/nonnumeric"
+	numericVersion "github.com/vulsio/go-fortinet-version/numeric"
 )
 
 // RangeType selects the version comparator used by Compare / Accept. Extractors
@@ -370,94 +371,39 @@ func (t RangeType) Compare(v1, v2 string) (int, error) {
 		if !known || !strings.HasPrefix(name, "fortinet-") {
 			return 0, errors.Errorf("unsupported range type: %s", t)
 		}
-		c, ok := compareFortinet(v1, v2, IsFortinetNonNumeric(t))
-		if !ok {
-			return 0, &CompareError{Err: errors.Errorf("incomparable fortinet versions %q and %q (type %s)", v1, v2, t)}
+		// Per-product Fortinet types dispatch to go-fortinet-version: the
+		// nonnumeric (FortiSASE milestone-letter) scheme vs. the numeric scheme
+		// every other product uses. NewVersion rejecting a wrong-scheme/malformed
+		// version and Compare's ErrIncomparable both surface as *CompareError, so
+		// Range.Accept treats them as a safe non-match.
+		if IsFortinetNonNumeric(t) {
+			return compareFortinetVersion(t, v1, v2,
+				nonnumericVersion.NewVersion,
+				func(a, b nonnumericVersion.Version) (int, error) { return a.Compare(b) })
 		}
-		return c, nil
+		return compareFortinetVersion(t, v1, v2,
+			numericVersion.NewVersion,
+			func(a, b numericVersion.Version) (int, error) { return a.Compare(b) })
 	}
 }
 
-// fortinetComp classifies one "."-separated version component. A component is
-// either unsigned digits (strconv.ParseUint — so signed "+0"/"-1", overflow,
-// and empty all fail) or a single lowercase milestone letter (a, b, c, …).
-// Anything else is invalid, which makes the version incomparable so malformed
-// scan input fails safe (non-match) rather than matching a range.
-type fortinetComp struct {
-	num     uint64
-	letter  byte
-	numeric bool
-	valid   bool
-}
-
-func classifyFortinetComp(s string) fortinetComp {
-	if n, err := strconv.ParseUint(s, 10, 64); err == nil {
-		return fortinetComp{num: n, numeric: true, valid: true}
+// compareFortinetVersion parses v1 and v2 with a go-fortinet-version constructor
+// and compares them, wrapping every failure (parse error or an incomparable
+// pair) in *CompareError so Range.Accept swallows it as a safe non-match.
+func compareFortinetVersion[V any](t RangeType, v1, v2 string, parse func(string) (V, error), compare func(V, V) (int, error)) (int, error) {
+	a, err := parse(v1)
+	if err != nil {
+		return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
 	}
-	if len(s) == 1 && s[0] >= 'a' && s[0] <= 'z' {
-		return fortinetComp{letter: s[0], valid: true}
+	b, err := parse(v2)
+	if err != nil {
+		return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
 	}
-	return fortinetComp{}
-}
-
-// compareFortinet compares two Fortinet version strings component by component
-// (split on "."). Numeric components compare numerically; when allowLetters is
-// true a single milestone letter (a < b < c) is also valid and compares
-// lexically (FortiSASE), otherwise only numeric components are accepted. A
-// component that is invalid (empty, a signed/overflowing number, or — and when
-// allowLetters — a multi-char/non-[a-z] token like "alpha"/"a10"), or a
-// numeric-vs-letter mismatch at the same position, makes the pair incomparable
-// so Range.Accept fails safe (non-match). When one side is a prefix of the
-// other the remaining tail decides (see fortinetTailSign): trailing zeros are
-// equal (7.2 == 7.2.0), a non-zero or lettered tail makes the longer side
-// greater (a bare train precedes its builds, 25.2 < 25.2.a).
-func compareFortinet(a, b string, allowLetters bool) (order int, comparable bool) {
-	as := strings.Split(a, ".")
-	bs := strings.Split(b, ".")
-	for i := 0; i < len(as) || i < len(bs); i++ {
-		switch {
-		case i >= len(as):
-			return fortinetTailSign(bs[i:], -1, allowLetters)
-		case i >= len(bs):
-			return fortinetTailSign(as[i:], 1, allowLetters)
-		}
-		ca, cb := classifyFortinetComp(as[i]), classifyFortinetComp(bs[i])
-		switch {
-		case !ca.valid || !cb.valid:
-			return 0, false
-		case !allowLetters && (!ca.numeric || !cb.numeric):
-			return 0, false
-		case ca.numeric && cb.numeric:
-			if ca.num != cb.num {
-				return cmp.Compare(ca.num, cb.num), true
-			}
-		case !ca.numeric && !cb.numeric:
-			if ca.letter != cb.letter {
-				return cmp.Compare(ca.letter, cb.letter), true
-			}
-		default:
-			return 0, false // numeric vs letter at the same position
-		}
+	n, err := compare(a, b)
+	if err != nil {
+		return 0, &CompareError{Err: err}
 	}
-	return 0, true
-}
-
-// fortinetTailSign decides ordering when one version is a prefix of the other:
-// a numeric-zero trailing component is a no-op (7.2 == 7.2.0); any other valid
-// component (a non-zero number, or a letter when allowLetters) makes the longer
-// side greater, with the sign applied via dir. An invalid component — or a
-// letter when allowLetters is false — is incomparable (fail safe).
-func fortinetTailSign(comps []string, dir int, allowLetters bool) (int, bool) {
-	for _, c := range comps {
-		cc := classifyFortinetComp(c)
-		switch {
-		case !cc.valid, !allowLetters && !cc.numeric:
-			return 0, false
-		case !cc.numeric || cc.num != 0:
-			return dir, true
-		}
-	}
-	return 0, true
+	return n, nil
 }
 
 // Accept returns true when v satisfies every non-empty bound on r, comparing via

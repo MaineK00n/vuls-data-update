@@ -32,6 +32,7 @@ require (
 	github.com/spf13/cobra v1.10.2
 	github.com/tealeg/xlsx v1.0.5
 	github.com/ulikunitz/xz v0.5.15
+	github.com/vulsio/go-fortinet-version v0.0.0-20260629092944-998bd70fcdc5
 	golang.org/x/net v0.55.0
 	golang.org/x/sync v0.20.0
 	gopkg.in/yaml.v3 v3.0.1
