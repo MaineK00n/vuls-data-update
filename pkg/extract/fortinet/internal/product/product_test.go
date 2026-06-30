@@ -80,6 +80,8 @@ func TestTrainRange(t *testing.T) {
 		{train: "6.253", want: ccRangeTypes.Range{GreaterEqual: "6.253", LessThan: "6.254"}},
 		{train: "24", want: ccRangeTypes.Range{GreaterEqual: "24", LessThan: "25"}},
 		{train: "abc", wantErr: true},
+		{train: "7.0.0", wantErr: true}, // concrete version is not a train
+		{train: "7.4.3.1", wantErr: true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.train, func(t *testing.T) {

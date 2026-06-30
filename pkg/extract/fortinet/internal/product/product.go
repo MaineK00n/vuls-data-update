@@ -52,10 +52,18 @@ func IsConcrete(v string) bool {
 
 // TrainRange builds a range spanning an entire release train: ge train,
 // lt <next train>, where <next> increments the train's last numeric component
-// (7.0 -> 7.1, 7 -> 8). It errors when that component is not numeric. The Range
-// Type is left unset; the caller sets the per-product range type (it has the
-// product, this helper does not).
+// (7.0 -> 7.1, 7 -> 8). It errors when the input is a concrete version rather
+// than a train, or when the last component is not numeric. The Range Type is left
+// unset; the caller sets the per-product range type (it has the product, this
+// helper does not).
 func TrainRange(train string) (ccRangeTypes.Range, error) {
+	// A train is 1-2 components ("7", "7.0"); a concrete version ("7.0.0") is not a
+	// train. Incrementing its last component would silently narrow the range to a
+	// single patch ("7.0.0" -> [7.0.0, 7.0.1)) instead of spanning a train, a
+	// detection false negative, so reject it as unexpected input.
+	if IsConcrete(train) {
+		return ccRangeTypes.Range{}, errors.Errorf("expected a release train (1-2 components), got concrete version %q", train)
+	}
 	ss := strings.Split(train, ".")
 	last, err := strconv.Atoi(ss[len(ss)-1])
 	if err != nil {
