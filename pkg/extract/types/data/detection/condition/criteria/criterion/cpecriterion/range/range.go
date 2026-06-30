@@ -710,12 +710,10 @@ func (t RangeType) Compare(v1, v2 string) (int, error) {
 		n, err := va.Compare(vb)
 		if err != nil {
 			// An incomparable pair (a numeric component meeting a milestone
-			// letter) is an expected, swallow-safe outcome; any other error is
-			// unexpected and propagates loudly.
-			if stderrors.Is(err, nonnumericVersion.ErrIncomparable) {
-				return 0, &CompareError{Err: err}
-			}
-			return 0, err
+			// letter) is the expected error here; wrap it — like every other
+			// failure path in this function — in *CompareError so Range.Accept
+			// degrades to a safe non-match instead of aborting detection.
+			return 0, &CompareError{Err: err}
 		}
 		return n, nil
 	case RangeTypeFortinetAntivirusEngine,
@@ -796,11 +794,13 @@ func (t RangeType) Compare(v1, v2 string) (int, error) {
 		if err != nil {
 			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
 		}
-		// Numeric versions are totally ordered, so Compare returns no expected
-		// error; any error here is unexpected and propagates loudly.
+		// Numeric versions are totally ordered, so a comparison error is not
+		// expected here. Should one occur, wrap it in *CompareError like every
+		// other failure path in this function so Range.Accept degrades to a safe
+		// non-match instead of aborting detection.
 		n, err := va.Compare(vb)
 		if err != nil {
-			return 0, err
+			return 0, &CompareError{Err: err}
 		}
 		return n, nil
 	case RangeTypeUnknown, 0:
