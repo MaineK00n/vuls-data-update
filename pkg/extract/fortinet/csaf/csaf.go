@@ -6,12 +6,13 @@ import (
 	"io/fs"
 	"log/slog"
 	"path/filepath"
-	"regexp"
 	"slices"
 	"strings"
 	"time"
 
 	"github.com/pkg/errors"
+	nonnumericVersion "github.com/vulsio/go-fortinet-version/nonnumeric"
+	numericVersion "github.com/vulsio/go-fortinet-version/numeric"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/fortinet/internal/fortinet"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/fortinet/internal/product"
@@ -469,8 +470,8 @@ func toCriterion(productID string, refMap map[string]productRef) (criterionTypes
 				// bound (a version like "25.2.a", which only ever appears as an
 				// enumerated concrete version, never as a bound) signals an upstream
 				// format change or a parsing bug.
-				if !numericBound.MatchString(b) {
-					return criterionTypes.Criterion{}, errors.Errorf("unexpected non-numeric range bound %q for %q (expr %q)", b, productID, ref.versionExp)
+				if _, err := numericVersion.NewVersion(b); err != nil {
+					return criterionTypes.Criterion{}, errors.Wrapf(err, "unexpected non-numeric range bound %q for %q (expr %q)", b, productID, ref.versionExp)
 				}
 				// (2) A non-numeric-versioned product (e.g. FortiSASE) keeps its ranges
 				// train-granular (bound dot <= 1: "25.2", not "25.2.0"). A
@@ -486,12 +487,18 @@ func toCriterion(productID string, refMap map[string]productRef) (criterionTypes
 			// Validate the concrete version before baking. BakeVersion accepts many
 			// CPE-legal-but-bogus shapes ("7.0.x", "v7.0.0", "7..0", "7.0.0|7.2.1"),
 			// which would bake a version no scanner reports — a silent detection
-			// false-negative. A numeric product must be purely numeric-dotted; a
-			// non-numeric-versioned product (FortiSASE) may also carry a
-			// milestone-letter component ("25.2.a").
-			validVersion := numericBound.MatchString(bakeVersion) || (rt == ccRangeTypes.RangeTypeFortinetFortiSASE && concreteNonNumericVersion.MatchString(bakeVersion))
-			if !validVersion {
-				return criterionTypes.Criterion{}, errors.Errorf("unexpected concrete version %q for %q (expr %q)", bakeVersion, productID, ref.versionExp)
+			// false-negative. Defer "is this a real version" to the same parser the
+			// detector uses: a numeric product must parse under the numeric scheme,
+			// a non-numeric-versioned product (FortiSASE) under the milestone scheme
+			// (which also accepts a single letter component, "25.2.a").
+			var verErr error
+			if rt == ccRangeTypes.RangeTypeFortinetFortiSASE {
+				_, verErr = nonnumericVersion.NewVersion(bakeVersion)
+			} else {
+				_, verErr = numericVersion.NewVersion(bakeVersion)
+			}
+			if verErr != nil {
+				return criterionTypes.Criterion{}, errors.Wrapf(verErr, "unexpected concrete version %q for %q (expr %q)", bakeVersion, productID, ref.versionExp)
 			}
 			baked, err := product.BakeVersion(cpe, bakeVersion)
 			if err != nil {
@@ -511,20 +518,6 @@ func toCriterion(productID string, refMap map[string]productRef) (criterionTypes
 		},
 	}, nil
 }
-
-// numericBound matches a pure numeric-dotted version (e.g. "7.0", "7.4.3",
-// "25.2.91") — the only shape Fortinet uses for a range bound. Anything with a
-// non-numeric tail (e.g. "25.2.a" or "7.1-b5955") is rejected by toCriterion.
-var numericBound = regexp.MustCompile(`^[0-9]+(\.[0-9]+)*$`)
-
-// concreteNonNumericVersion matches a FortiSASE-style concrete version: a numeric
-// head plus trailing components that are each either numeric or a single
-// lowercase milestone letter (e.g. "25.2.a", "25.1.a.2"). It validates a bake
-// token for a non-numeric-versioned product, where numericBound is too strict.
-// Each component is constrained so ambiguous tokens the Fortinet comparator
-// can't order meaningfully ("25.1.a10", "25.2.alpha", "7.0.x", "v7.0.0",
-// "7..0", a "7.0.0|7.2.1" pipe list) fail loudly instead of being baked.
-var concreteNonNumericVersion = regexp.MustCompile(`^[0-9]+(\.([0-9]+|[a-z]))*$`)
 
 // resolveVersion interprets a CSAF Fortinet version expression and returns
 // exactly one of three outcomes, so the caller never has to guess:
@@ -547,8 +540,8 @@ func resolveVersion(exp string) (*ccRangeTypes.Range, string, error) {
 		// versions" — is unexpected in known_affected data, so hard-error rather
 		// than silently widen to the whole product (which would mask the leak).
 		train := strings.TrimSpace(strings.TrimSuffix(exp, "all versions"))
-		if !numericBound.MatchString(train) {
-			return nil, "", errors.Errorf("unexpected non-numeric train %q in %q", train, exp)
+		if _, err := numericVersion.NewVersion(train); err != nil {
+			return nil, "", errors.Wrapf(err, "unexpected non-numeric train %q in %q", train, exp)
 		}
 		r, err := product.TrainRange(train)
 		if err != nil {
