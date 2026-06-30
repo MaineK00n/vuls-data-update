@@ -523,16 +523,6 @@ func toCriterion(productID string, refMap map[string]productRef) (criterionTypes
 	}, nil
 }
 
-// resolveVersion interprets a CSAF Fortinet version expression and returns
-// exactly one of three outcomes, so the caller never has to guess:
-//   - (range, "",   nil): narrow the CPE by this version range
-//   - (nil,   ver,  nil): bake this concrete version into the CPE
-//   - (nil,   "",   nil): whole product — leave the CPE version wildcarded
-//
-// The whole-product outcome covers an empty/"all versions" expression. A
-// non-numeric "<x> all versions" (e.g. a product name leaked into the version,
-// "FortiClient iOS all versions") is not silently widened to whole product —
-// it hard-errors, since it never legitimately appears in known_affected data.
 // numericBound matches a pure numeric-dotted version (e.g. "7.0", "7.4.3",
 // "25.2.91") — the only shape Fortinet uses for a range bound. Anything with a
 // non-numeric tail (e.g. "25.2.a" or "7.1-b5955") is rejected by toCriterion.
@@ -547,6 +537,16 @@ var numericBound = regexp.MustCompile(`^[0-9]+(\.[0-9]+)*$`)
 // "7..0", a "7.0.0|7.2.1" pipe list) fail loudly instead of being baked.
 var concreteNonNumericVersion = regexp.MustCompile(`^[0-9]+(\.([0-9]+|[a-z]))*$`)
 
+// resolveVersion interprets a CSAF Fortinet version expression and returns
+// exactly one of three outcomes, so the caller never has to guess:
+//   - (range, "",   nil): narrow the CPE by this version range
+//   - (nil,   ver,  nil): bake this concrete version into the CPE
+//   - (nil,   "",   nil): whole product — leave the CPE version wildcarded
+//
+// The whole-product outcome covers an empty/"all versions" expression. A
+// non-numeric "<x> all versions" (e.g. a product name leaked into the version,
+// "FortiClient iOS all versions") is not silently widened to whole product —
+// it hard-errors, since it never legitimately appears in known_affected data.
 func resolveVersion(exp string) (*ccRangeTypes.Range, string, error) {
 	switch {
 	case exp == "" || exp == "all versions":
