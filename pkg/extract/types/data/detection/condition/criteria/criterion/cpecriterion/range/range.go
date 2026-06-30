@@ -112,96 +112,153 @@ const (
 	RangeTypeUnknown
 )
 
-// rangeTypeNames is the single source of truth mapping each RangeType to its
-// serialized string; rangeTypeByName is its inverse.
-var rangeTypeNames = map[RangeType]string{
-	RangeTypeVersion:                                             "version",
-	RangeTypeSEMVER:                                              "semver",
-	RangeTypePANOS:                                               "pan-os",
-	RangeTypeUnknown:                                             "unknown",
-	RangeTypeFortinetAntivirusEngine:                             "fortinet-antivirus_engine",
-	RangeTypeFortinetAscenLink:                                   "fortinet-ascenlink",
-	RangeTypeFortinetFortiADC:                                    "fortinet-fortiadc",
-	RangeTypeFortinetFortiADCManager:                             "fortinet-fortiadc_manager",
-	RangeTypeFortinetFortiAIOps:                                  "fortinet-fortiaiops",
-	RangeTypeFortinetFortiAnalyzer:                               "fortinet-fortianalyzer",
-	RangeTypeFortinetFortiAnalyzerBigData:                        "fortinet-fortianalyzer-bigdata",
-	RangeTypeFortinetFortiAnalyzerCloud:                          "fortinet-fortianalyzer_cloud",
-	RangeTypeFortinetFortiAP:                                     "fortinet-fortiap",
-	RangeTypeFortinetFortiAPC:                                    "fortinet-fortiap-c",
-	RangeTypeFortinetFortiAPS:                                    "fortinet-fortiap-s",
-	RangeTypeFortinetFortiAPU:                                    "fortinet-fortiap-u",
-	RangeTypeFortinetFortiAPW2:                                   "fortinet-fortiap-w2",
-	RangeTypeFortinetFortiAuthenticator:                          "fortinet-fortiauthenticator",
-	RangeTypeFortinetFortiCache:                                  "fortinet-forticache",
-	RangeTypeFortinetFortiCamera:                                 "fortinet-forticamera",
-	RangeTypeFortinetFortiClient:                                 "fortinet-forticlient",
-	RangeTypeFortinetFortiClientEnterpriseManagementServer:       "fortinet-forticlient_enterprise_management_server",
-	RangeTypeFortinetFortiClientEnterpriseManagementServerCloud:  "fortinet-forticlient_enterprise_management_server_cloud",
-	RangeTypeFortinetFortiConverter:                              "fortinet-forticonverter",
-	RangeTypeFortinetFortiDB:                                     "fortinet-fortidb",
-	RangeTypeFortinetFortiDDoS:                                   "fortinet-fortiddos",
-	RangeTypeFortinetFortiDDoSCM:                                 "fortinet-fortiddos-cm",
-	RangeTypeFortinetFortiDDoSF:                                  "fortinet-fortiddos-f",
-	RangeTypeFortinetFortiDeceptor:                               "fortinet-fortideceptor",
-	RangeTypeFortinetFortiDLP:                                    "fortinet-fortidlp",
-	RangeTypeFortinetFortiEDR:                                    "fortinet-fortiedr",
-	RangeTypeFortinetFortiEDRManager:                             "fortinet-fortiedr_manager",
-	RangeTypeFortinetFortiExtender:                               "fortinet-fortiextender",
-	RangeTypeFortinetFortiFone:                                   "fortinet-fortifone",
-	RangeTypeFortinetFortiGuest:                                  "fortinet-fortiguest",
-	RangeTypeFortinetFortiIsolator:                               "fortinet-fortiisolator",
-	RangeTypeFortinetFortiMail:                                   "fortinet-fortimail",
-	RangeTypeFortinetFortiManager:                                "fortinet-fortimanager",
-	RangeTypeFortinetFortiManagerCloud:                           "fortinet-fortimanager_cloud",
-	RangeTypeFortinetFortiNAC:                                    "fortinet-fortinac",
-	RangeTypeFortinetFortiNACF:                                   "fortinet-fortinac-f",
-	RangeTypeFortinetFortiNDR:                                    "fortinet-fortindr",
-	RangeTypeFortinetFortiOS:                                     "fortinet-fortios",
-	RangeTypeFortinetFortiOS6k7k:                                 "fortinet-fortios-6k7k",
-	RangeTypeFortinetFortiOSIPSEngine:                            "fortinet-fortios_ips_engine",
-	RangeTypeFortinetFortiPAM:                                    "fortinet-fortipam",
-	RangeTypeFortinetFortiPortal:                                 "fortinet-fortiportal",
-	RangeTypeFortinetFortiPresence:                               "fortinet-fortipresence",
-	RangeTypeFortinetFortiProxy:                                  "fortinet-fortiproxy",
-	RangeTypeFortinetFortiRecorder:                               "fortinet-fortirecorder",
-	RangeTypeFortinetFortiSandbox:                                "fortinet-fortisandbox",
-	RangeTypeFortinetFortiSandboxCloud:                           "fortinet-fortisandbox_cloud",
-	RangeTypeFortinetFortiSandboxPaaS:                            "fortinet-fortisandbox_paas",
-	RangeTypeFortinetFortiSASE:                                   "fortinet-fortisase",
-	RangeTypeFortinetFortiSIEM:                                   "fortinet-fortisiem",
-	RangeTypeFortinetFortiSOAR:                                   "fortinet-fortisoar",
-	RangeTypeFortinetFortiSOARAgentCommunicationBridge:           "fortinet-fortisoar_agent_communication_bridge",
-	RangeTypeFortinetFortiSRA:                                    "fortinet-fortisra",
-	RangeTypeFortinetFortiSwitch:                                 "fortinet-fortiswitch",
-	RangeTypeFortinetFortiSwitchAXFixed:                          "fortinet-fortiswitchaxfixed",
-	RangeTypeFortinetFortiSwitchManager:                          "fortinet-fortiswitchmanager",
-	RangeTypeFortinetFortiTester:                                 "fortinet-fortitester",
-	RangeTypeFortinetFortiTokenMobile:                            "fortinet-fortitoken_mobile",
-	RangeTypeFortinetFortiVoice:                                  "fortinet-fortivoice",
-	RangeTypeFortinetFortiVoiceCloudUnifiedCommunicationsDesktop: "fortinet-fortivoice_cloud_unified_communications_desktop",
-	RangeTypeFortinetFortiWAN:                                    "fortinet-fortiwan",
-	RangeTypeFortinetFortiWANManager:                             "fortinet-fortiwan_manager",
-	RangeTypeFortinetFortiWeb:                                    "fortinet-fortiweb",
-	RangeTypeFortinetFortiWebManager:                             "fortinet-fortiweb_manager",
-	RangeTypeFortinetFortiWLC:                                    "fortinet-fortiwlc",
-	RangeTypeFortinetFortiWLM:                                    "fortinet-fortiwlm",
-	RangeTypeFortinetMeru:                                        "fortinet-meru",
-}
-
-var rangeTypeByName = func() map[string]RangeType {
-	m := make(map[string]RangeType, len(rangeTypeNames))
-	for t, s := range rangeTypeNames {
-		m[s] = t
-	}
-	return m
-}()
-
 func (t RangeType) String() string {
-	if s, ok := rangeTypeNames[t]; ok {
-		return s
+	switch t {
+	case RangeTypeVersion:
+		return "version"
+	case RangeTypeSEMVER:
+		return "semver"
+	case RangeTypePANOS:
+		return "pan-os"
+	case RangeTypeFortinetAntivirusEngine:
+		return "fortinet-antivirus_engine"
+	case RangeTypeFortinetAscenLink:
+		return "fortinet-ascenlink"
+	case RangeTypeFortinetFortiADC:
+		return "fortinet-fortiadc"
+	case RangeTypeFortinetFortiADCManager:
+		return "fortinet-fortiadc_manager"
+	case RangeTypeFortinetFortiAIOps:
+		return "fortinet-fortiaiops"
+	case RangeTypeFortinetFortiAnalyzer:
+		return "fortinet-fortianalyzer"
+	case RangeTypeFortinetFortiAnalyzerBigData:
+		return "fortinet-fortianalyzer-bigdata"
+	case RangeTypeFortinetFortiAnalyzerCloud:
+		return "fortinet-fortianalyzer_cloud"
+	case RangeTypeFortinetFortiAP:
+		return "fortinet-fortiap"
+	case RangeTypeFortinetFortiAPC:
+		return "fortinet-fortiap-c"
+	case RangeTypeFortinetFortiAPS:
+		return "fortinet-fortiap-s"
+	case RangeTypeFortinetFortiAPU:
+		return "fortinet-fortiap-u"
+	case RangeTypeFortinetFortiAPW2:
+		return "fortinet-fortiap-w2"
+	case RangeTypeFortinetFortiAuthenticator:
+		return "fortinet-fortiauthenticator"
+	case RangeTypeFortinetFortiCache:
+		return "fortinet-forticache"
+	case RangeTypeFortinetFortiCamera:
+		return "fortinet-forticamera"
+	case RangeTypeFortinetFortiClient:
+		return "fortinet-forticlient"
+	case RangeTypeFortinetFortiClientEnterpriseManagementServer:
+		return "fortinet-forticlient_enterprise_management_server"
+	case RangeTypeFortinetFortiClientEnterpriseManagementServerCloud:
+		return "fortinet-forticlient_enterprise_management_server_cloud"
+	case RangeTypeFortinetFortiConverter:
+		return "fortinet-forticonverter"
+	case RangeTypeFortinetFortiDB:
+		return "fortinet-fortidb"
+	case RangeTypeFortinetFortiDDoS:
+		return "fortinet-fortiddos"
+	case RangeTypeFortinetFortiDDoSCM:
+		return "fortinet-fortiddos-cm"
+	case RangeTypeFortinetFortiDDoSF:
+		return "fortinet-fortiddos-f"
+	case RangeTypeFortinetFortiDeceptor:
+		return "fortinet-fortideceptor"
+	case RangeTypeFortinetFortiDLP:
+		return "fortinet-fortidlp"
+	case RangeTypeFortinetFortiEDR:
+		return "fortinet-fortiedr"
+	case RangeTypeFortinetFortiEDRManager:
+		return "fortinet-fortiedr_manager"
+	case RangeTypeFortinetFortiExtender:
+		return "fortinet-fortiextender"
+	case RangeTypeFortinetFortiFone:
+		return "fortinet-fortifone"
+	case RangeTypeFortinetFortiGuest:
+		return "fortinet-fortiguest"
+	case RangeTypeFortinetFortiIsolator:
+		return "fortinet-fortiisolator"
+	case RangeTypeFortinetFortiMail:
+		return "fortinet-fortimail"
+	case RangeTypeFortinetFortiManager:
+		return "fortinet-fortimanager"
+	case RangeTypeFortinetFortiManagerCloud:
+		return "fortinet-fortimanager_cloud"
+	case RangeTypeFortinetFortiNAC:
+		return "fortinet-fortinac"
+	case RangeTypeFortinetFortiNACF:
+		return "fortinet-fortinac-f"
+	case RangeTypeFortinetFortiNDR:
+		return "fortinet-fortindr"
+	case RangeTypeFortinetFortiOS:
+		return "fortinet-fortios"
+	case RangeTypeFortinetFortiOS6k7k:
+		return "fortinet-fortios-6k7k"
+	case RangeTypeFortinetFortiOSIPSEngine:
+		return "fortinet-fortios_ips_engine"
+	case RangeTypeFortinetFortiPAM:
+		return "fortinet-fortipam"
+	case RangeTypeFortinetFortiPortal:
+		return "fortinet-fortiportal"
+	case RangeTypeFortinetFortiPresence:
+		return "fortinet-fortipresence"
+	case RangeTypeFortinetFortiProxy:
+		return "fortinet-fortiproxy"
+	case RangeTypeFortinetFortiRecorder:
+		return "fortinet-fortirecorder"
+	case RangeTypeFortinetFortiSandbox:
+		return "fortinet-fortisandbox"
+	case RangeTypeFortinetFortiSandboxCloud:
+		return "fortinet-fortisandbox_cloud"
+	case RangeTypeFortinetFortiSandboxPaaS:
+		return "fortinet-fortisandbox_paas"
+	case RangeTypeFortinetFortiSASE:
+		return "fortinet-fortisase"
+	case RangeTypeFortinetFortiSIEM:
+		return "fortinet-fortisiem"
+	case RangeTypeFortinetFortiSOAR:
+		return "fortinet-fortisoar"
+	case RangeTypeFortinetFortiSOARAgentCommunicationBridge:
+		return "fortinet-fortisoar_agent_communication_bridge"
+	case RangeTypeFortinetFortiSRA:
+		return "fortinet-fortisra"
+	case RangeTypeFortinetFortiSwitch:
+		return "fortinet-fortiswitch"
+	case RangeTypeFortinetFortiSwitchAXFixed:
+		return "fortinet-fortiswitchaxfixed"
+	case RangeTypeFortinetFortiSwitchManager:
+		return "fortinet-fortiswitchmanager"
+	case RangeTypeFortinetFortiTester:
+		return "fortinet-fortitester"
+	case RangeTypeFortinetFortiTokenMobile:
+		return "fortinet-fortitoken_mobile"
+	case RangeTypeFortinetFortiVoice:
+		return "fortinet-fortivoice"
+	case RangeTypeFortinetFortiVoiceCloudUnifiedCommunicationsDesktop:
+		return "fortinet-fortivoice_cloud_unified_communications_desktop"
+	case RangeTypeFortinetFortiWAN:
+		return "fortinet-fortiwan"
+	case RangeTypeFortinetFortiWANManager:
+		return "fortinet-fortiwan_manager"
+	case RangeTypeFortinetFortiWeb:
+		return "fortinet-fortiweb"
+	case RangeTypeFortinetFortiWebManager:
+		return "fortinet-fortiweb_manager"
+	case RangeTypeFortinetFortiWLC:
+		return "fortinet-fortiwlc"
+	case RangeTypeFortinetFortiWLM:
+		return "fortinet-fortiwlm"
+	case RangeTypeFortinetMeru:
+		return "fortinet-meru"
+	default:
+		return "unknown"
 	}
-	return "unknown"
 }
 
 func (t RangeType) MarshalJSONTo(enc *jsontext.Encoder) error {
@@ -216,11 +273,155 @@ func (t *RangeType) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	if token.Kind() != '"' {
 		return fmt.Errorf("unexpected type. expected: %s, got %s", "string", token.Kind())
 	}
-	rt, ok := rangeTypeByName[token.String()]
-	if !ok {
+
+	switch token.String() {
+	case "version":
+		*t = RangeTypeVersion
+	case "semver":
+		*t = RangeTypeSEMVER
+	case "pan-os":
+		*t = RangeTypePANOS
+	case "unknown":
+		*t = RangeTypeUnknown
+	case "fortinet-antivirus_engine":
+		*t = RangeTypeFortinetAntivirusEngine
+	case "fortinet-ascenlink":
+		*t = RangeTypeFortinetAscenLink
+	case "fortinet-fortiadc":
+		*t = RangeTypeFortinetFortiADC
+	case "fortinet-fortiadc_manager":
+		*t = RangeTypeFortinetFortiADCManager
+	case "fortinet-fortiaiops":
+		*t = RangeTypeFortinetFortiAIOps
+	case "fortinet-fortianalyzer":
+		*t = RangeTypeFortinetFortiAnalyzer
+	case "fortinet-fortianalyzer-bigdata":
+		*t = RangeTypeFortinetFortiAnalyzerBigData
+	case "fortinet-fortianalyzer_cloud":
+		*t = RangeTypeFortinetFortiAnalyzerCloud
+	case "fortinet-fortiap":
+		*t = RangeTypeFortinetFortiAP
+	case "fortinet-fortiap-c":
+		*t = RangeTypeFortinetFortiAPC
+	case "fortinet-fortiap-s":
+		*t = RangeTypeFortinetFortiAPS
+	case "fortinet-fortiap-u":
+		*t = RangeTypeFortinetFortiAPU
+	case "fortinet-fortiap-w2":
+		*t = RangeTypeFortinetFortiAPW2
+	case "fortinet-fortiauthenticator":
+		*t = RangeTypeFortinetFortiAuthenticator
+	case "fortinet-forticache":
+		*t = RangeTypeFortinetFortiCache
+	case "fortinet-forticamera":
+		*t = RangeTypeFortinetFortiCamera
+	case "fortinet-forticlient":
+		*t = RangeTypeFortinetFortiClient
+	case "fortinet-forticlient_enterprise_management_server":
+		*t = RangeTypeFortinetFortiClientEnterpriseManagementServer
+	case "fortinet-forticlient_enterprise_management_server_cloud":
+		*t = RangeTypeFortinetFortiClientEnterpriseManagementServerCloud
+	case "fortinet-forticonverter":
+		*t = RangeTypeFortinetFortiConverter
+	case "fortinet-fortidb":
+		*t = RangeTypeFortinetFortiDB
+	case "fortinet-fortiddos":
+		*t = RangeTypeFortinetFortiDDoS
+	case "fortinet-fortiddos-cm":
+		*t = RangeTypeFortinetFortiDDoSCM
+	case "fortinet-fortiddos-f":
+		*t = RangeTypeFortinetFortiDDoSF
+	case "fortinet-fortideceptor":
+		*t = RangeTypeFortinetFortiDeceptor
+	case "fortinet-fortidlp":
+		*t = RangeTypeFortinetFortiDLP
+	case "fortinet-fortiedr":
+		*t = RangeTypeFortinetFortiEDR
+	case "fortinet-fortiedr_manager":
+		*t = RangeTypeFortinetFortiEDRManager
+	case "fortinet-fortiextender":
+		*t = RangeTypeFortinetFortiExtender
+	case "fortinet-fortifone":
+		*t = RangeTypeFortinetFortiFone
+	case "fortinet-fortiguest":
+		*t = RangeTypeFortinetFortiGuest
+	case "fortinet-fortiisolator":
+		*t = RangeTypeFortinetFortiIsolator
+	case "fortinet-fortimail":
+		*t = RangeTypeFortinetFortiMail
+	case "fortinet-fortimanager":
+		*t = RangeTypeFortinetFortiManager
+	case "fortinet-fortimanager_cloud":
+		*t = RangeTypeFortinetFortiManagerCloud
+	case "fortinet-fortinac":
+		*t = RangeTypeFortinetFortiNAC
+	case "fortinet-fortinac-f":
+		*t = RangeTypeFortinetFortiNACF
+	case "fortinet-fortindr":
+		*t = RangeTypeFortinetFortiNDR
+	case "fortinet-fortios":
+		*t = RangeTypeFortinetFortiOS
+	case "fortinet-fortios-6k7k":
+		*t = RangeTypeFortinetFortiOS6k7k
+	case "fortinet-fortios_ips_engine":
+		*t = RangeTypeFortinetFortiOSIPSEngine
+	case "fortinet-fortipam":
+		*t = RangeTypeFortinetFortiPAM
+	case "fortinet-fortiportal":
+		*t = RangeTypeFortinetFortiPortal
+	case "fortinet-fortipresence":
+		*t = RangeTypeFortinetFortiPresence
+	case "fortinet-fortiproxy":
+		*t = RangeTypeFortinetFortiProxy
+	case "fortinet-fortirecorder":
+		*t = RangeTypeFortinetFortiRecorder
+	case "fortinet-fortisandbox":
+		*t = RangeTypeFortinetFortiSandbox
+	case "fortinet-fortisandbox_cloud":
+		*t = RangeTypeFortinetFortiSandboxCloud
+	case "fortinet-fortisandbox_paas":
+		*t = RangeTypeFortinetFortiSandboxPaaS
+	case "fortinet-fortisase":
+		*t = RangeTypeFortinetFortiSASE
+	case "fortinet-fortisiem":
+		*t = RangeTypeFortinetFortiSIEM
+	case "fortinet-fortisoar":
+		*t = RangeTypeFortinetFortiSOAR
+	case "fortinet-fortisoar_agent_communication_bridge":
+		*t = RangeTypeFortinetFortiSOARAgentCommunicationBridge
+	case "fortinet-fortisra":
+		*t = RangeTypeFortinetFortiSRA
+	case "fortinet-fortiswitch":
+		*t = RangeTypeFortinetFortiSwitch
+	case "fortinet-fortiswitchaxfixed":
+		*t = RangeTypeFortinetFortiSwitchAXFixed
+	case "fortinet-fortiswitchmanager":
+		*t = RangeTypeFortinetFortiSwitchManager
+	case "fortinet-fortitester":
+		*t = RangeTypeFortinetFortiTester
+	case "fortinet-fortitoken_mobile":
+		*t = RangeTypeFortinetFortiTokenMobile
+	case "fortinet-fortivoice":
+		*t = RangeTypeFortinetFortiVoice
+	case "fortinet-fortivoice_cloud_unified_communications_desktop":
+		*t = RangeTypeFortinetFortiVoiceCloudUnifiedCommunicationsDesktop
+	case "fortinet-fortiwan":
+		*t = RangeTypeFortinetFortiWAN
+	case "fortinet-fortiwan_manager":
+		*t = RangeTypeFortinetFortiWANManager
+	case "fortinet-fortiweb":
+		*t = RangeTypeFortinetFortiWeb
+	case "fortinet-fortiweb_manager":
+		*t = RangeTypeFortinetFortiWebManager
+	case "fortinet-fortiwlc":
+		*t = RangeTypeFortinetFortiWLC
+	case "fortinet-fortiwlm":
+		*t = RangeTypeFortinetFortiWLM
+	case "fortinet-meru":
+		*t = RangeTypeFortinetMeru
+	default:
 		return fmt.Errorf("invalid RangeType %s", token.String())
 	}
-	*t = rt
 	return nil
 }
 
@@ -233,8 +434,154 @@ func (t *RangeType) UnmarshalJSON(data []byte) error {
 	if err := json.Unmarshal(data, &s); err != nil {
 		return fmt.Errorf("data should be a string, got %s", data)
 	}
-	rt, ok := rangeTypeByName[s]
-	if !ok {
+
+	var rt RangeType
+	switch s {
+	case "version":
+		rt = RangeTypeVersion
+	case "semver":
+		rt = RangeTypeSEMVER
+	case "pan-os":
+		rt = RangeTypePANOS
+	case "unknown":
+		rt = RangeTypeUnknown
+	case "fortinet-antivirus_engine":
+		rt = RangeTypeFortinetAntivirusEngine
+	case "fortinet-ascenlink":
+		rt = RangeTypeFortinetAscenLink
+	case "fortinet-fortiadc":
+		rt = RangeTypeFortinetFortiADC
+	case "fortinet-fortiadc_manager":
+		rt = RangeTypeFortinetFortiADCManager
+	case "fortinet-fortiaiops":
+		rt = RangeTypeFortinetFortiAIOps
+	case "fortinet-fortianalyzer":
+		rt = RangeTypeFortinetFortiAnalyzer
+	case "fortinet-fortianalyzer-bigdata":
+		rt = RangeTypeFortinetFortiAnalyzerBigData
+	case "fortinet-fortianalyzer_cloud":
+		rt = RangeTypeFortinetFortiAnalyzerCloud
+	case "fortinet-fortiap":
+		rt = RangeTypeFortinetFortiAP
+	case "fortinet-fortiap-c":
+		rt = RangeTypeFortinetFortiAPC
+	case "fortinet-fortiap-s":
+		rt = RangeTypeFortinetFortiAPS
+	case "fortinet-fortiap-u":
+		rt = RangeTypeFortinetFortiAPU
+	case "fortinet-fortiap-w2":
+		rt = RangeTypeFortinetFortiAPW2
+	case "fortinet-fortiauthenticator":
+		rt = RangeTypeFortinetFortiAuthenticator
+	case "fortinet-forticache":
+		rt = RangeTypeFortinetFortiCache
+	case "fortinet-forticamera":
+		rt = RangeTypeFortinetFortiCamera
+	case "fortinet-forticlient":
+		rt = RangeTypeFortinetFortiClient
+	case "fortinet-forticlient_enterprise_management_server":
+		rt = RangeTypeFortinetFortiClientEnterpriseManagementServer
+	case "fortinet-forticlient_enterprise_management_server_cloud":
+		rt = RangeTypeFortinetFortiClientEnterpriseManagementServerCloud
+	case "fortinet-forticonverter":
+		rt = RangeTypeFortinetFortiConverter
+	case "fortinet-fortidb":
+		rt = RangeTypeFortinetFortiDB
+	case "fortinet-fortiddos":
+		rt = RangeTypeFortinetFortiDDoS
+	case "fortinet-fortiddos-cm":
+		rt = RangeTypeFortinetFortiDDoSCM
+	case "fortinet-fortiddos-f":
+		rt = RangeTypeFortinetFortiDDoSF
+	case "fortinet-fortideceptor":
+		rt = RangeTypeFortinetFortiDeceptor
+	case "fortinet-fortidlp":
+		rt = RangeTypeFortinetFortiDLP
+	case "fortinet-fortiedr":
+		rt = RangeTypeFortinetFortiEDR
+	case "fortinet-fortiedr_manager":
+		rt = RangeTypeFortinetFortiEDRManager
+	case "fortinet-fortiextender":
+		rt = RangeTypeFortinetFortiExtender
+	case "fortinet-fortifone":
+		rt = RangeTypeFortinetFortiFone
+	case "fortinet-fortiguest":
+		rt = RangeTypeFortinetFortiGuest
+	case "fortinet-fortiisolator":
+		rt = RangeTypeFortinetFortiIsolator
+	case "fortinet-fortimail":
+		rt = RangeTypeFortinetFortiMail
+	case "fortinet-fortimanager":
+		rt = RangeTypeFortinetFortiManager
+	case "fortinet-fortimanager_cloud":
+		rt = RangeTypeFortinetFortiManagerCloud
+	case "fortinet-fortinac":
+		rt = RangeTypeFortinetFortiNAC
+	case "fortinet-fortinac-f":
+		rt = RangeTypeFortinetFortiNACF
+	case "fortinet-fortindr":
+		rt = RangeTypeFortinetFortiNDR
+	case "fortinet-fortios":
+		rt = RangeTypeFortinetFortiOS
+	case "fortinet-fortios-6k7k":
+		rt = RangeTypeFortinetFortiOS6k7k
+	case "fortinet-fortios_ips_engine":
+		rt = RangeTypeFortinetFortiOSIPSEngine
+	case "fortinet-fortipam":
+		rt = RangeTypeFortinetFortiPAM
+	case "fortinet-fortiportal":
+		rt = RangeTypeFortinetFortiPortal
+	case "fortinet-fortipresence":
+		rt = RangeTypeFortinetFortiPresence
+	case "fortinet-fortiproxy":
+		rt = RangeTypeFortinetFortiProxy
+	case "fortinet-fortirecorder":
+		rt = RangeTypeFortinetFortiRecorder
+	case "fortinet-fortisandbox":
+		rt = RangeTypeFortinetFortiSandbox
+	case "fortinet-fortisandbox_cloud":
+		rt = RangeTypeFortinetFortiSandboxCloud
+	case "fortinet-fortisandbox_paas":
+		rt = RangeTypeFortinetFortiSandboxPaaS
+	case "fortinet-fortisase":
+		rt = RangeTypeFortinetFortiSASE
+	case "fortinet-fortisiem":
+		rt = RangeTypeFortinetFortiSIEM
+	case "fortinet-fortisoar":
+		rt = RangeTypeFortinetFortiSOAR
+	case "fortinet-fortisoar_agent_communication_bridge":
+		rt = RangeTypeFortinetFortiSOARAgentCommunicationBridge
+	case "fortinet-fortisra":
+		rt = RangeTypeFortinetFortiSRA
+	case "fortinet-fortiswitch":
+		rt = RangeTypeFortinetFortiSwitch
+	case "fortinet-fortiswitchaxfixed":
+		rt = RangeTypeFortinetFortiSwitchAXFixed
+	case "fortinet-fortiswitchmanager":
+		rt = RangeTypeFortinetFortiSwitchManager
+	case "fortinet-fortitester":
+		rt = RangeTypeFortinetFortiTester
+	case "fortinet-fortitoken_mobile":
+		rt = RangeTypeFortinetFortiTokenMobile
+	case "fortinet-fortivoice":
+		rt = RangeTypeFortinetFortiVoice
+	case "fortinet-fortivoice_cloud_unified_communications_desktop":
+		rt = RangeTypeFortinetFortiVoiceCloudUnifiedCommunicationsDesktop
+	case "fortinet-fortiwan":
+		rt = RangeTypeFortinetFortiWAN
+	case "fortinet-fortiwan_manager":
+		rt = RangeTypeFortinetFortiWANManager
+	case "fortinet-fortiweb":
+		rt = RangeTypeFortinetFortiWeb
+	case "fortinet-fortiweb_manager":
+		rt = RangeTypeFortinetFortiWebManager
+	case "fortinet-fortiwlc":
+		rt = RangeTypeFortinetFortiWLC
+	case "fortinet-fortiwlm":
+		rt = RangeTypeFortinetFortiWLM
+	case "fortinet-meru":
+		rt = RangeTypeFortinetMeru
+	default:
 		return fmt.Errorf("invalid RangeType %s", s)
 	}
 	*t = rt
