@@ -65,9 +65,9 @@ func TestToCriterion(t *testing.T) {
 		{
 			name: "concrete version baked",
 			args: args{
-				productID: "product-id-1",
+				productID: "FortiOS 7.4.3",
 				refMap: map[string]csaf.ProductRef{
-					"product-id-1": csaf.NewProductRef("FortiOS", "7.4.3"),
+					"FortiOS 7.4.3": csaf.NewProductRef("FortiOS", "7.4.3"),
 				},
 			},
 			want: criterionTypes.Criterion{
@@ -82,9 +82,9 @@ func TestToCriterion(t *testing.T) {
 		{
 			name: "range expr → range, wildcard cpe",
 			args: args{
-				productID: "product-id-1",
+				productID: "FortiOS >=7.0.0|<=7.0.5",
 				refMap: map[string]csaf.ProductRef{
-					"product-id-1": csaf.NewProductRef("FortiOS", ">=7.0.0|<=7.0.5"),
+					"FortiOS >=7.0.0|<=7.0.5": csaf.NewProductRef("FortiOS", ">=7.0.0|<=7.0.5"),
 				},
 			},
 			want: criterionTypes.Criterion{
@@ -104,9 +104,9 @@ func TestToCriterion(t *testing.T) {
 		{
 			name: "whole product (all versions)",
 			args: args{
-				productID: "product-id-1",
+				productID: "FortiOS all versions",
 				refMap: map[string]csaf.ProductRef{
-					"product-id-1": csaf.NewProductRef("FortiOS", "all versions"),
+					"FortiOS all versions": csaf.NewProductRef("FortiOS", "all versions"),
 				},
 			},
 			want: criterionTypes.Criterion{
@@ -121,7 +121,7 @@ func TestToCriterion(t *testing.T) {
 		{
 			name: "product_id not in tree map rejected",
 			args: args{
-				productID: "FortiOS",
+				productID: "FortiOS 6.0.0",
 				refMap:    map[string]csaf.ProductRef{},
 			},
 			wantErr: true,
@@ -151,9 +151,9 @@ func TestToCriterion(t *testing.T) {
 		{
 			name: "X.Y all versions → train range, wildcard cpe",
 			args: args{
-				productID: "product-id-1",
+				productID: "FortiOS 7.0 all versions",
 				refMap: map[string]csaf.ProductRef{
-					"product-id-1": csaf.NewProductRef("FortiOS", "7.0 all versions"),
+					"FortiOS 7.0 all versions": csaf.NewProductRef("FortiOS", "7.0 all versions"),
 				},
 			},
 			want: criterionTypes.Criterion{
@@ -173,9 +173,9 @@ func TestToCriterion(t *testing.T) {
 		{
 			name: "numeric and above ok (numeric product)",
 			args: args{
-				productID: "product-id-1",
+				productID: "FortiOS 7.0.0 and above",
 				refMap: map[string]csaf.ProductRef{
-					"product-id-1": csaf.NewProductRef("FortiOS", "7.0.0 and above"),
+					"FortiOS 7.0.0 and above": csaf.NewProductRef("FortiOS", "7.0.0 and above"),
 				},
 			},
 			want: criterionTypes.Criterion{
@@ -194,9 +194,9 @@ func TestToCriterion(t *testing.T) {
 		{
 			name: "non-numeric product train range ok",
 			args: args{
-				productID: "product-id-1",
+				productID: "FortiSASE 25.2 all versions",
 				refMap: map[string]csaf.ProductRef{
-					"product-id-1": csaf.NewProductRef("FortiSASE", "25.2 all versions"),
+					"FortiSASE 25.2 all versions": csaf.NewProductRef("FortiSASE", "25.2 all versions"),
 				},
 			},
 			want: criterionTypes.Criterion{
@@ -216,9 +216,9 @@ func TestToCriterion(t *testing.T) {
 		{
 			name: "non-numeric product whole-product ok",
 			args: args{
-				productID: "product-id-1",
+				productID: "FortiSASE all versions",
 				refMap: map[string]csaf.ProductRef{
-					"product-id-1": csaf.NewProductRef("FortiSASE", "all versions"),
+					"FortiSASE all versions": csaf.NewProductRef("FortiSASE", "all versions"),
 				},
 			},
 			want: criterionTypes.Criterion{
@@ -233,9 +233,9 @@ func TestToCriterion(t *testing.T) {
 		{
 			name: "non-numeric concrete version baked, not a bound",
 			args: args{
-				productID: "product-id-1",
+				productID: "FortiSASE 25.2.a",
 				refMap: map[string]csaf.ProductRef{
-					"product-id-1": csaf.NewProductRef("FortiSASE", "25.2.a"),
+					"FortiSASE 25.2.a": csaf.NewProductRef("FortiSASE", "25.2.a"),
 				},
 			},
 			want: criterionTypes.Criterion{
@@ -250,9 +250,9 @@ func TestToCriterion(t *testing.T) {
 		{
 			name: "product in tree but not whitelisted → hard error",
 			args: args{
-				productID: "product-id-1",
+				productID: "FortiNonexistent >=1.0.0|<=2.0.0",
 				refMap: map[string]csaf.ProductRef{
-					"product-id-1": csaf.NewProductRef("FortiNonexistent", ">=1.0.0|<=2.0.0"),
+					"FortiNonexistent >=1.0.0|<=2.0.0": csaf.NewProductRef("FortiNonexistent", ">=1.0.0|<=2.0.0"),
 				},
 			},
 			wantErr: true,
@@ -262,9 +262,9 @@ func TestToCriterion(t *testing.T) {
 			// non-numeric train and must hard-error, not be widened to whole product.
 			name: "leaked product name all versions → hard error",
 			args: args{
-				productID: "product-id-1",
+				productID: "FortiOS FortiClient iOS all versions",
 				refMap: map[string]csaf.ProductRef{
-					"product-id-1": csaf.NewProductRef("FortiOS", "FortiClient iOS all versions"),
+					"FortiOS FortiClient iOS all versions": csaf.NewProductRef("FortiOS", "FortiClient iOS all versions"),
 				},
 			},
 			wantErr: true,
@@ -272,9 +272,9 @@ func TestToCriterion(t *testing.T) {
 		{
 			name: "non-numeric lower bound rejected",
 			args: args{
-				productID: "product-id-1",
+				productID: "FortiOS >=25.2.a|<=25.2.5",
 				refMap: map[string]csaf.ProductRef{
-					"product-id-1": csaf.NewProductRef("FortiOS", ">=25.2.a|<=25.2.5"),
+					"FortiOS >=25.2.a|<=25.2.5": csaf.NewProductRef("FortiOS", ">=25.2.a|<=25.2.5"),
 				},
 			},
 			wantErr: true,
@@ -282,9 +282,9 @@ func TestToCriterion(t *testing.T) {
 		{
 			name: "non-numeric upper bound rejected",
 			args: args{
-				productID: "product-id-1",
+				productID: "FortiOS >=25.2.0|<=25.2.c",
 				refMap: map[string]csaf.ProductRef{
-					"product-id-1": csaf.NewProductRef("FortiOS", ">=25.2.0|<=25.2.c"),
+					"FortiOS >=25.2.0|<=25.2.c": csaf.NewProductRef("FortiOS", ">=25.2.0|<=25.2.c"),
 				},
 			},
 			wantErr: true,
@@ -292,9 +292,9 @@ func TestToCriterion(t *testing.T) {
 		{
 			name: "non-numeric and above rejected",
 			args: args{
-				productID: "product-id-1",
+				productID: "FortiOS 25.2.a and above",
 				refMap: map[string]csaf.ProductRef{
-					"product-id-1": csaf.NewProductRef("FortiOS", "25.2.a and above"),
+					"FortiOS 25.2.a and above": csaf.NewProductRef("FortiOS", "25.2.a and above"),
 				},
 			},
 			wantErr: true,
@@ -302,9 +302,9 @@ func TestToCriterion(t *testing.T) {
 		{
 			name: "build suffix bound rejected",
 			args: args{
-				productID: "product-id-1",
+				productID: "FortiOS >=7.1-b5955",
 				refMap: map[string]csaf.ProductRef{
-					"product-id-1": csaf.NewProductRef("FortiOS", ">=7.1-b5955"),
+					"FortiOS >=7.1-b5955": csaf.NewProductRef("FortiOS", ">=7.1-b5955"),
 				},
 			},
 			wantErr: true,
@@ -312,9 +312,9 @@ func TestToCriterion(t *testing.T) {
 		{
 			name: "non-numeric product multi-component range rejected",
 			args: args{
-				productID: "product-id-1",
+				productID: "FortiSASE >=25.2.0|<=25.2.5",
 				refMap: map[string]csaf.ProductRef{
-					"product-id-1": csaf.NewProductRef("FortiSASE", ">=25.2.0|<=25.2.5"),
+					"FortiSASE >=25.2.0|<=25.2.5": csaf.NewProductRef("FortiSASE", ">=25.2.0|<=25.2.5"),
 				},
 			},
 			wantErr: true,
@@ -322,9 +322,9 @@ func TestToCriterion(t *testing.T) {
 		{
 			name: "non-numeric product 3-component and-above rejected",
 			args: args{
-				productID: "product-id-1",
+				productID: "FortiSASE 25.2.0 and above",
 				refMap: map[string]csaf.ProductRef{
-					"product-id-1": csaf.NewProductRef("FortiSASE", "25.2.0 and above"),
+					"FortiSASE 25.2.0 and above": csaf.NewProductRef("FortiSASE", "25.2.0 and above"),
 				},
 			},
 			wantErr: true,
@@ -334,9 +334,9 @@ func TestToCriterion(t *testing.T) {
 			// constraint" and over-match.
 			name: "empty bound after operator rejected",
 			args: args{
-				productID: "product-id-1",
+				productID: "FortiOS >=7.0.0|<=",
 				refMap: map[string]csaf.ProductRef{
-					"product-id-1": csaf.NewProductRef("FortiOS", ">=7.0.0|<="),
+					"FortiOS >=7.0.0|<=": csaf.NewProductRef("FortiOS", ">=7.0.0|<="),
 				},
 			},
 			wantErr: true,
@@ -344,9 +344,9 @@ func TestToCriterion(t *testing.T) {
 		{
 			name: "bare operator with no version rejected",
 			args: args{
-				productID: "product-id-1",
+				productID: "FortiOS >",
 				refMap: map[string]csaf.ProductRef{
-					"product-id-1": csaf.NewProductRef("FortiOS", ">"),
+					"FortiOS >": csaf.NewProductRef("FortiOS", ">"),
 				},
 			},
 			wantErr: true,
@@ -356,9 +356,9 @@ func TestToCriterion(t *testing.T) {
 			// bound (treated as no constraint) → reject.
 			name: "and above with no version rejected",
 			args: args{
-				productID: "product-id-1",
+				productID: "FortiOS  and above",
 				refMap: map[string]csaf.ProductRef{
-					"product-id-1": csaf.NewProductRef("FortiOS", " and above"),
+					"FortiOS  and above": csaf.NewProductRef("FortiOS", " and above"),
 				},
 			},
 			wantErr: true,
@@ -368,9 +368,9 @@ func TestToCriterion(t *testing.T) {
 			// legal but no scanner reports it) — a silent false-negative.
 			name: "bogus concrete version with letter component rejected",
 			args: args{
-				productID: "product-id-1",
+				productID: "FortiOS 7.0.x",
 				refMap: map[string]csaf.ProductRef{
-					"product-id-1": csaf.NewProductRef("FortiOS", "7.0.x"),
+					"FortiOS 7.0.x": csaf.NewProductRef("FortiOS", "7.0.x"),
 				},
 			},
 			wantErr: true,
@@ -378,20 +378,22 @@ func TestToCriterion(t *testing.T) {
 		{
 			name: "concrete version with leading v rejected",
 			args: args{
-				productID: "product-id-1",
+				productID: "FortiOS v7.0.0",
 				refMap: map[string]csaf.ProductRef{
-					"product-id-1": csaf.NewProductRef("FortiOS", "v7.0.0"),
+					"FortiOS v7.0.0": csaf.NewProductRef("FortiOS", "v7.0.0"),
 				},
 			},
 			wantErr: true,
 		},
 		{
-			// Pipe list without a <> operator falls through to the bake path.
-			name: "concrete version pipe list rejected",
+			// A stray non-numeric symbol (and no <> operator) is neither a range
+			// nor a valid concrete version, so it falls through to the bake path,
+			// where numericBound rejects it.
+			name: "concrete version with stray symbol rejected",
 			args: args{
-				productID: "product-id-1",
+				productID: "FortiOS 7.0.0$7.2.1",
 				refMap: map[string]csaf.ProductRef{
-					"product-id-1": csaf.NewProductRef("FortiOS", "7.0.0|7.2.1"),
+					"FortiOS 7.0.0$7.2.1": csaf.NewProductRef("FortiOS", "7.0.0$7.2.1"),
 				},
 			},
 			wantErr: true,
@@ -402,9 +404,9 @@ func TestToCriterion(t *testing.T) {
 			// order (25.1.a10, 25.2.alpha) must hard-error, not be baked.
 			name: "non-numeric product bogus milestone version rejected",
 			args: args{
-				productID: "product-id-1",
+				productID: "FortiSASE 25.1.a10",
 				refMap: map[string]csaf.ProductRef{
-					"product-id-1": csaf.NewProductRef("FortiSASE", "25.1.a10"),
+					"FortiSASE 25.1.a10": csaf.NewProductRef("FortiSASE", "25.1.a10"),
 				},
 			},
 			wantErr: true,
