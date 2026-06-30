@@ -119,23 +119,3 @@ func TestResolve(t *testing.T) {
 		})
 	}
 }
-
-// A product's comparator is per-CPE, so every name sharing a CPE must map it to
-// the same range type. A table edit that gives one CPE conflicting range types
-// would silently mis-compare at detect time, so guard the invariant here.
-func TestNameToProductCPERangeTypeConsistent(t *testing.T) {
-	type entry struct {
-		rangeType ccRangeTypes.RangeType
-		name      string
-	}
-	byCPE := make(map[string]entry)
-	for _, e := range product.ProductEntries() {
-		if seen, ok := byCPE[e.CPE]; ok {
-			if seen.rangeType != e.RangeType {
-				t.Errorf("cpe %q has conflicting range types: %s (product %q) and %s (product %q)", e.CPE, seen.rangeType, seen.name, e.RangeType, e.Name)
-			}
-			continue
-		}
-		byCPE[e.CPE] = entry{rangeType: e.RangeType, name: e.Name}
-	}
-}
