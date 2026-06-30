@@ -281,8 +281,6 @@ func (t *RangeType) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		*t = RangeTypeSEMVER
 	case "pan-os":
 		*t = RangeTypePANOS
-	case "unknown":
-		*t = RangeTypeUnknown
 	case "fortinet-antivirus_engine":
 		*t = RangeTypeFortinetAntivirusEngine
 	case "fortinet-ascenlink":
@@ -419,6 +417,8 @@ func (t *RangeType) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		*t = RangeTypeFortinetFortiWLM
 	case "fortinet-meru":
 		*t = RangeTypeFortinetMeru
+	case "unknown":
+		*t = RangeTypeUnknown
 	default:
 		return fmt.Errorf("invalid RangeType %s", token.String())
 	}
@@ -443,8 +443,6 @@ func (t *RangeType) UnmarshalJSON(data []byte) error {
 		rt = RangeTypeSEMVER
 	case "pan-os":
 		rt = RangeTypePANOS
-	case "unknown":
-		rt = RangeTypeUnknown
 	case "fortinet-antivirus_engine":
 		rt = RangeTypeFortinetAntivirusEngine
 	case "fortinet-ascenlink":
@@ -581,6 +579,8 @@ func (t *RangeType) UnmarshalJSON(data []byte) error {
 		rt = RangeTypeFortinetFortiWLM
 	case "fortinet-meru":
 		rt = RangeTypeFortinetMeru
+	case "unknown":
+		rt = RangeTypeUnknown
 	default:
 		return fmt.Errorf("invalid RangeType %s", s)
 	}
