@@ -324,6 +324,14 @@ func TestRangeType_ParseVersion(t *testing.T) {
 		v       string
 		wantErr bool
 	}{
+		// ParseVersion accepts v iff Compare can parse it under the type's scheme,
+		// so every range type is covered, not just the Fortinet ones.
+		{name: "semver: valid", t: ccRangeTypes.RangeTypeSEMVER, v: "1.2.3"},
+		{name: "semver: invalid", t: ccRangeTypes.RangeTypeSEMVER, v: "not-a-semver", wantErr: true},
+		{name: "version (loose): valid 4-segment", t: ccRangeTypes.RangeTypeVersion, v: "9.16.19.0"},
+		{name: "version (loose): invalid", t: ccRangeTypes.RangeTypeVersion, v: "x.y.z.w.q", wantErr: true},
+		{name: "pan-os: valid hotfix", t: ccRangeTypes.RangeTypePANOS, v: "11.2.4-h1"},
+		{name: "pan-os: invalid 2-segment", t: ccRangeTypes.RangeTypePANOS, v: "11.2", wantErr: true},
 		// FortiSASE → milestone (non-numeric) scheme: numeric and single-letter
 		// components are valid; multi-char or wrong-scheme tokens are not.
 		{name: "fortisase: numeric concrete", t: ccRangeTypes.RangeTypeFortinetFortiSASE, v: "25.2.0"},
@@ -339,6 +347,9 @@ func TestRangeType_ParseVersion(t *testing.T) {
 		{name: "numeric: leading v invalid", t: ccRangeTypes.RangeTypeFortinetFortiOS, v: "v7.0.0", wantErr: true},
 		{name: "numeric: empty component invalid", t: ccRangeTypes.RangeTypeFortinetFortiOS, v: "7..0", wantErr: true},
 		{name: "numeric: empty string invalid", t: ccRangeTypes.RangeTypeFortinetFortiOS, v: "", wantErr: true},
+		// Unknown / unset types cannot parse a version under any scheme.
+		{name: "unknown type", t: ccRangeTypes.RangeTypeUnknown, v: "1.0.0", wantErr: true},
+		{name: "unset (zero) type", t: ccRangeTypes.RangeType(0), v: "1.0.0", wantErr: true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

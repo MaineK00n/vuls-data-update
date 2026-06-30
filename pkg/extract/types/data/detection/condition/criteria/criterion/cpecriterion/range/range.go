@@ -815,19 +815,18 @@ func (t RangeType) Compare(v1, v2 string) (int, error) {
 }
 
 // ParseVersion reports (via a returned error) whether v is a well-formed version
-// under the Fortinet version scheme this range type uses: FortiSASE uses the
-// milestone-letter (non-numeric) scheme, every other Fortinet product the numeric
-// one. It mirrors the scheme dispatch in Compare so a caller (the CSAF extractor)
-// can reject — before baking a concrete version into a CPE — a version it could
-// never compare at detect time, without re-implementing that dispatch or
-// importing the version library itself. Defined only for the Fortinet per-product
-// range types.
+// under the scheme this range type uses for comparison — equivalently, whether
+// the detector could compare v at all. It delegates to Compare (comparing v
+// against itself), so the per-type scheme dispatch lives in exactly one place and
+// every range type is handled identically to detection: a parse failure surfaces
+// as a *CompareError, an Unknown/unset type as the wrapped ErrRangeTypeUnknown,
+// and an unsupported type as a plain error. A caller (the CSAF extractor) uses it
+// to reject, before baking a concrete version into a CPE, a version that could
+// never be compared at detect time. Comparing v with itself is always
+// well-defined for a parseable v (same kind at every position), so the only error
+// it can return is a parse/dispatch failure, never ErrIncomparable.
 func (t RangeType) ParseVersion(v string) error {
-	if t == RangeTypeFortinetFortiSASE {
-		_, err := nonnumericVersion.NewVersion(v)
-		return err
-	}
-	_, err := numericVersion.NewVersion(v)
+	_, err := t.Compare(v, v)
 	return err
 }
 
