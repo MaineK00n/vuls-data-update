@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/pkg/errors"
+	nonnumericVersion "github.com/vulsio/go-fortinet-version/nonnumeric"
 	numericVersion "github.com/vulsio/go-fortinet-version/numeric"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/fortinet/internal/fortinet"
@@ -549,11 +550,19 @@ func toCriterion(productID string, refMap map[string]productRef) (criterionTypes
 		// Validate the concrete version before baking. BakeVersion accepts many
 		// CPE-legal-but-bogus shapes ("7.0.x", "v7.0.0", "7..0", "7.0.0|7.2.1"),
 		// which would bake a version no scanner reports — a silent detection
-		// false-negative. rt.ParseVersion defers "is this a real version" to the
-		// same scheme dispatch the detector's Compare uses, so a version we could
-		// never compare is rejected here rather than baked.
-		if err := rt.ParseVersion(bakeVersion); err != nil {
-			return criterionTypes.Criterion{}, errors.Wrapf(err, "unexpected concrete version %q for %q (expr %q)", bakeVersion, productID, ref.versionExp)
+		// false-negative. Defer "is this a real version" to the same parser the
+		// detector uses: a numeric product must parse under the numeric scheme,
+		// a non-numeric-versioned product (FortiSASE) under the milestone scheme
+		// (which also accepts a single letter component, "25.2.a").
+		switch rt {
+		case ccRangeTypes.RangeTypeFortinetFortiSASE:
+			if _, err := nonnumericVersion.NewVersion(bakeVersion); err != nil {
+				return criterionTypes.Criterion{}, errors.Wrapf(err, "unexpected concrete version %q for %q (expr %q)", bakeVersion, productID, ref.versionExp)
+			}
+		default:
+			if _, err := numericVersion.NewVersion(bakeVersion); err != nil {
+				return criterionTypes.Criterion{}, errors.Wrapf(err, "unexpected concrete version %q for %q (expr %q)", bakeVersion, productID, ref.versionExp)
+			}
 		}
 		baked, err := product.BakeVersion(cpe, bakeVersion)
 		if err != nil {

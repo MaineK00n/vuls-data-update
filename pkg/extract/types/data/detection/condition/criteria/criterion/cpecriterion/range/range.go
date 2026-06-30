@@ -814,22 +814,6 @@ func (t RangeType) Compare(v1, v2 string) (int, error) {
 	}
 }
 
-// ParseVersion reports (via a returned error) whether v is a well-formed version
-// under the scheme this range type uses for comparison — equivalently, whether
-// the detector could compare v at all. It delegates to Compare (comparing v
-// against itself), so the per-type scheme dispatch lives in exactly one place and
-// every range type is handled identically to detection: a parse failure surfaces
-// as a *CompareError, an Unknown/unset type as the wrapped ErrRangeTypeUnknown,
-// and an unsupported type as a plain error. A caller (the CSAF extractor) uses it
-// to reject, before baking a concrete version into a CPE, a version that could
-// never be compared at detect time. Comparing v with itself is always
-// well-defined for a parseable v (same kind at every position), so the only error
-// it can return is a parse/dispatch failure, never ErrIncomparable.
-func (t RangeType) ParseVersion(v string) error {
-	_, err := t.Compare(v, v)
-	return err
-}
-
 // Accept returns true when v satisfies every non-empty bound on r, comparing
 // via r.Type.Compare. An empty Range (all four bound strings unset) with a
 // usable Type accepts any v — even an unparseable one — because "no bound"

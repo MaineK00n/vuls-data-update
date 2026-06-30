@@ -317,49 +317,6 @@ func TestRangeType_Compare(t *testing.T) {
 	}
 }
 
-func TestRangeType_ParseVersion(t *testing.T) {
-	tests := []struct {
-		name    string
-		t       ccRangeTypes.RangeType
-		v       string
-		wantErr bool
-	}{
-		// ParseVersion accepts v iff Compare can parse it under the type's scheme,
-		// so every range type is covered, not just the Fortinet ones.
-		{name: "semver: valid", t: ccRangeTypes.RangeTypeSEMVER, v: "1.2.3"},
-		{name: "semver: invalid", t: ccRangeTypes.RangeTypeSEMVER, v: "not-a-semver", wantErr: true},
-		{name: "version (loose): valid 4-segment", t: ccRangeTypes.RangeTypeVersion, v: "9.16.19.0"},
-		{name: "version (loose): invalid", t: ccRangeTypes.RangeTypeVersion, v: "x.y.z.w.q", wantErr: true},
-		{name: "pan-os: valid hotfix", t: ccRangeTypes.RangeTypePANOS, v: "11.2.4-h1"},
-		{name: "pan-os: invalid 2-segment", t: ccRangeTypes.RangeTypePANOS, v: "11.2", wantErr: true},
-		// FortiSASE → milestone (non-numeric) scheme: numeric and single-letter
-		// components are valid; multi-char or wrong-scheme tokens are not.
-		{name: "fortisase: numeric concrete", t: ccRangeTypes.RangeTypeFortinetFortiSASE, v: "25.2.0"},
-		{name: "fortisase: milestone letter", t: ccRangeTypes.RangeTypeFortinetFortiSASE, v: "25.2.a"},
-		{name: "fortisase: nested letter patch", t: ccRangeTypes.RangeTypeFortinetFortiSASE, v: "25.1.a.2"},
-		{name: "fortisase: multi-char milestone invalid", t: ccRangeTypes.RangeTypeFortinetFortiSASE, v: "25.1.a10", wantErr: true},
-		{name: "fortisase: alpha word invalid", t: ccRangeTypes.RangeTypeFortinetFortiSASE, v: "25.2.alpha", wantErr: true},
-		// Every other Fortinet product → numeric scheme: a letter component is
-		// rejected (would be accepted under the milestone scheme).
-		{name: "numeric: concrete", t: ccRangeTypes.RangeTypeFortinetFortiOS, v: "7.4.3"},
-		{name: "numeric: train", t: ccRangeTypes.RangeTypeFortinetFortiOS, v: "7.0"},
-		{name: "numeric: letter component invalid", t: ccRangeTypes.RangeTypeFortinetFortiOS, v: "7.0.x", wantErr: true},
-		{name: "numeric: leading v invalid", t: ccRangeTypes.RangeTypeFortinetFortiOS, v: "v7.0.0", wantErr: true},
-		{name: "numeric: empty component invalid", t: ccRangeTypes.RangeTypeFortinetFortiOS, v: "7..0", wantErr: true},
-		{name: "numeric: empty string invalid", t: ccRangeTypes.RangeTypeFortinetFortiOS, v: "", wantErr: true},
-		// Unknown / unset types cannot parse a version under any scheme.
-		{name: "unknown type", t: ccRangeTypes.RangeTypeUnknown, v: "1.0.0", wantErr: true},
-		{name: "unset (zero) type", t: ccRangeTypes.RangeType(0), v: "1.0.0", wantErr: true},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if err := tt.t.ParseVersion(tt.v); (err != nil) != tt.wantErr {
-				t.Errorf("ParseVersion(%q) error = %v, wantErr %v", tt.v, err, tt.wantErr)
-			}
-		})
-	}
-}
-
 func TestErrRangeTypeUnknown_Wrapped(t *testing.T) {
 	_, err := ccRangeTypes.RangeTypeUnknown.Compare("1.0.0", "2.0.0")
 	if err == nil {
