@@ -67,7 +67,7 @@ func TestToCriterion(t *testing.T) {
 			args: args{
 				productID: "product-id-1",
 				refMap: map[string]csaf.ProductRef{
-					"product-id-1": csaf.NewProductRef("cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*", "7.4.3"),
+					"product-id-1": csaf.NewProductRef("FortiOS", "7.4.3"),
 				},
 			},
 			want: criterionTypes.Criterion{
@@ -84,7 +84,7 @@ func TestToCriterion(t *testing.T) {
 			args: args{
 				productID: "product-id-1",
 				refMap: map[string]csaf.ProductRef{
-					"product-id-1": csaf.NewProductRef("cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*", ">=7.0.0|<=7.0.5"),
+					"product-id-1": csaf.NewProductRef("FortiOS", ">=7.0.0|<=7.0.5"),
 				},
 			},
 			want: criterionTypes.Criterion{
@@ -106,7 +106,7 @@ func TestToCriterion(t *testing.T) {
 			args: args{
 				productID: "product-id-1",
 				refMap: map[string]csaf.ProductRef{
-					"product-id-1": csaf.NewProductRef("cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*", "all versions"),
+					"product-id-1": csaf.NewProductRef("FortiOS", "all versions"),
 				},
 			},
 			want: criterionTypes.Criterion{
@@ -131,7 +131,7 @@ func TestToCriterion(t *testing.T) {
 			args: args{
 				productID: "FortiOS >=7.0.0|<=7.0.5",
 				refMap: map[string]csaf.ProductRef{
-					"FortiOS >=7.0.0|<=7.0.5": csaf.NewProductRef("cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*", ">=7.0.0|<=7.0.5"),
+					"FortiOS >=7.0.0|<=7.0.5": csaf.NewProductRef("FortiOS", ">=7.0.0|<=7.0.5"),
 				},
 			},
 			want: criterionTypes.Criterion{
@@ -153,7 +153,7 @@ func TestToCriterion(t *testing.T) {
 			args: args{
 				productID: "product-id-1",
 				refMap: map[string]csaf.ProductRef{
-					"product-id-1": csaf.NewProductRef("cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*", "7.0 all versions"),
+					"product-id-1": csaf.NewProductRef("FortiOS", "7.0 all versions"),
 				},
 			},
 			want: criterionTypes.Criterion{
@@ -175,7 +175,7 @@ func TestToCriterion(t *testing.T) {
 			args: args{
 				productID: "product-id-1",
 				refMap: map[string]csaf.ProductRef{
-					"product-id-1": csaf.NewProductRef("cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*", "7.0.0 and above"),
+					"product-id-1": csaf.NewProductRef("FortiOS", "7.0.0 and above"),
 				},
 			},
 			want: criterionTypes.Criterion{
@@ -196,7 +196,7 @@ func TestToCriterion(t *testing.T) {
 			args: args{
 				productID: "product-id-1",
 				refMap: map[string]csaf.ProductRef{
-					"product-id-1": csaf.NewProductRef("cpe:2.3:a:fortinet:fortisase:*:*:*:*:*:*:*:*", "25.2 all versions"),
+					"product-id-1": csaf.NewProductRef("FortiSASE", "25.2 all versions"),
 				},
 			},
 			want: criterionTypes.Criterion{
@@ -218,7 +218,7 @@ func TestToCriterion(t *testing.T) {
 			args: args{
 				productID: "product-id-1",
 				refMap: map[string]csaf.ProductRef{
-					"product-id-1": csaf.NewProductRef("cpe:2.3:a:fortinet:fortisase:*:*:*:*:*:*:*:*", "all versions"),
+					"product-id-1": csaf.NewProductRef("FortiSASE", "all versions"),
 				},
 			},
 			want: criterionTypes.Criterion{
@@ -235,7 +235,7 @@ func TestToCriterion(t *testing.T) {
 			args: args{
 				productID: "product-id-1",
 				refMap: map[string]csaf.ProductRef{
-					"product-id-1": csaf.NewProductRef("cpe:2.3:a:fortinet:fortisase:*:*:*:*:*:*:*:*", "25.2.a"),
+					"product-id-1": csaf.NewProductRef("FortiSASE", "25.2.a"),
 				},
 			},
 			want: criterionTypes.Criterion{
@@ -248,10 +248,12 @@ func TestToCriterion(t *testing.T) {
 			},
 		},
 		{
-			name: "unknown product → hard error",
+			name: "product in tree but not whitelisted → hard error",
 			args: args{
-				productID: "FortiNonexistent >=1.0.0|<=2.0.0",
-				refMap:    map[string]csaf.ProductRef{},
+				productID: "product-id-1",
+				refMap: map[string]csaf.ProductRef{
+					"product-id-1": csaf.NewProductRef("FortiNonexistent", ">=1.0.0|<=2.0.0"),
+				},
 			},
 			wantErr: true,
 		},
@@ -262,7 +264,7 @@ func TestToCriterion(t *testing.T) {
 			args: args{
 				productID: "product-id-1",
 				refMap: map[string]csaf.ProductRef{
-					"product-id-1": csaf.NewProductRef("cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*", "FortiClient iOS all versions"),
+					"product-id-1": csaf.NewProductRef("FortiOS", "FortiClient iOS all versions"),
 				},
 			},
 			wantErr: true,
@@ -272,7 +274,7 @@ func TestToCriterion(t *testing.T) {
 			args: args{
 				productID: "product-id-1",
 				refMap: map[string]csaf.ProductRef{
-					"product-id-1": csaf.NewProductRef("cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*", ">=25.2.a|<=25.2.5"),
+					"product-id-1": csaf.NewProductRef("FortiOS", ">=25.2.a|<=25.2.5"),
 				},
 			},
 			wantErr: true,
@@ -282,7 +284,7 @@ func TestToCriterion(t *testing.T) {
 			args: args{
 				productID: "product-id-1",
 				refMap: map[string]csaf.ProductRef{
-					"product-id-1": csaf.NewProductRef("cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*", ">=25.2.0|<=25.2.c"),
+					"product-id-1": csaf.NewProductRef("FortiOS", ">=25.2.0|<=25.2.c"),
 				},
 			},
 			wantErr: true,
@@ -292,7 +294,7 @@ func TestToCriterion(t *testing.T) {
 			args: args{
 				productID: "product-id-1",
 				refMap: map[string]csaf.ProductRef{
-					"product-id-1": csaf.NewProductRef("cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*", "25.2.a and above"),
+					"product-id-1": csaf.NewProductRef("FortiOS", "25.2.a and above"),
 				},
 			},
 			wantErr: true,
@@ -302,7 +304,7 @@ func TestToCriterion(t *testing.T) {
 			args: args{
 				productID: "product-id-1",
 				refMap: map[string]csaf.ProductRef{
-					"product-id-1": csaf.NewProductRef("cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*", ">=7.1-b5955"),
+					"product-id-1": csaf.NewProductRef("FortiOS", ">=7.1-b5955"),
 				},
 			},
 			wantErr: true,
@@ -312,7 +314,7 @@ func TestToCriterion(t *testing.T) {
 			args: args{
 				productID: "product-id-1",
 				refMap: map[string]csaf.ProductRef{
-					"product-id-1": csaf.NewProductRef("cpe:2.3:a:fortinet:fortisase:*:*:*:*:*:*:*:*", ">=25.2.0|<=25.2.5"),
+					"product-id-1": csaf.NewProductRef("FortiSASE", ">=25.2.0|<=25.2.5"),
 				},
 			},
 			wantErr: true,
@@ -322,7 +324,7 @@ func TestToCriterion(t *testing.T) {
 			args: args{
 				productID: "product-id-1",
 				refMap: map[string]csaf.ProductRef{
-					"product-id-1": csaf.NewProductRef("cpe:2.3:a:fortinet:fortisase:*:*:*:*:*:*:*:*", "25.2.0 and above"),
+					"product-id-1": csaf.NewProductRef("FortiSASE", "25.2.0 and above"),
 				},
 			},
 			wantErr: true,
@@ -334,7 +336,7 @@ func TestToCriterion(t *testing.T) {
 			args: args{
 				productID: "product-id-1",
 				refMap: map[string]csaf.ProductRef{
-					"product-id-1": csaf.NewProductRef("cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*", ">=7.0.0|<="),
+					"product-id-1": csaf.NewProductRef("FortiOS", ">=7.0.0|<="),
 				},
 			},
 			wantErr: true,
@@ -344,7 +346,7 @@ func TestToCriterion(t *testing.T) {
 			args: args{
 				productID: "product-id-1",
 				refMap: map[string]csaf.ProductRef{
-					"product-id-1": csaf.NewProductRef("cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*", ">"),
+					"product-id-1": csaf.NewProductRef("FortiOS", ">"),
 				},
 			},
 			wantErr: true,
@@ -356,7 +358,7 @@ func TestToCriterion(t *testing.T) {
 			args: args{
 				productID: "product-id-1",
 				refMap: map[string]csaf.ProductRef{
-					"product-id-1": csaf.NewProductRef("cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*", " and above"),
+					"product-id-1": csaf.NewProductRef("FortiOS", " and above"),
 				},
 			},
 			wantErr: true,
@@ -368,7 +370,7 @@ func TestToCriterion(t *testing.T) {
 			args: args{
 				productID: "product-id-1",
 				refMap: map[string]csaf.ProductRef{
-					"product-id-1": csaf.NewProductRef("cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*", "7.0.x"),
+					"product-id-1": csaf.NewProductRef("FortiOS", "7.0.x"),
 				},
 			},
 			wantErr: true,
@@ -378,7 +380,7 @@ func TestToCriterion(t *testing.T) {
 			args: args{
 				productID: "product-id-1",
 				refMap: map[string]csaf.ProductRef{
-					"product-id-1": csaf.NewProductRef("cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*", "v7.0.0"),
+					"product-id-1": csaf.NewProductRef("FortiOS", "v7.0.0"),
 				},
 			},
 			wantErr: true,
@@ -389,7 +391,7 @@ func TestToCriterion(t *testing.T) {
 			args: args{
 				productID: "product-id-1",
 				refMap: map[string]csaf.ProductRef{
-					"product-id-1": csaf.NewProductRef("cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*", "7.0.0|7.2.1"),
+					"product-id-1": csaf.NewProductRef("FortiOS", "7.0.0|7.2.1"),
 				},
 			},
 			wantErr: true,
@@ -402,7 +404,7 @@ func TestToCriterion(t *testing.T) {
 			args: args{
 				productID: "product-id-1",
 				refMap: map[string]csaf.ProductRef{
-					"product-id-1": csaf.NewProductRef("cpe:2.3:a:fortinet:fortisase:*:*:*:*:*:*:*:*", "25.1.a10"),
+					"product-id-1": csaf.NewProductRef("FortiSASE", "25.1.a10"),
 				},
 			},
 			wantErr: true,

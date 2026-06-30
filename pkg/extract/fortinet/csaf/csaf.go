@@ -142,11 +142,13 @@ func Extract(args string, opts ...Option) error {
 	return nil
 }
 
-// productRef is a product_tree node resolved to a CPE plus the version
-// expression carried in its branch name (the part after "<product>/").
+// productRef is a product_tree leaf's ancestor product name plus the version
+// expression carried in its branch name (the part after "<product>/"). The name
+// is resolved to a CPE at the use site (toCriterion), which also enforces the
+// whitelist.
 type productRef struct {
-	cpe        string
-	versionExp string
+	productName string
+	versionExp  string
 }
 
 // keyAcc accumulates one vulnerability key — a CVE, or the advisory ID when a
@@ -397,24 +399,22 @@ func extract(fetched csafTypes.CSAF, raws []string) (dataTypes.Data, error) {
 }
 
 // buildProductRefs walks the product tree and maps every product_version /
-// product_version_range product_id to its CPE and version expression. The
-// product CPE comes from the nearest ancestor "product" branch name. Branches
-// under a product name with no CPE mapping are skipped here; the whitelist is
-// enforced at the known_affected use-site (toCriterion), which hard-errors so
-// a new/unknown product surfaces loudly rather than being silently dropped.
+// product_version_range product_id to its ancestor product name and version
+// expression. The name → CPE whitelist is resolved and enforced at the
+// known_affected use-site (toCriterion), which hard-errors so a new/unknown
+// product surfaces loudly rather than being silently dropped.
 func buildProductRefs(branches []csafTypes.Branch) map[string]productRef {
 	refMap := make(map[string]productRef)
 
-	var walk func(bs []csafTypes.Branch, productCPE, productName string, mapped bool)
-	walk = func(bs []csafTypes.Branch, productCPE, productName string, mapped bool) {
+	var walk func(bs []csafTypes.Branch, productName string)
+	walk = func(bs []csafTypes.Branch, productName string) {
 		for _, b := range bs {
-			pc, pn, pm := productCPE, productName, mapped
+			pn := productName
 			switch b.Category {
 			case "product_name", "product":
-				pc, pm = product.ToCPE(b.Name)
 				pn = b.Name
 			case "product_version", "product_version_range":
-				if pm && b.Product != nil && b.Product.ProductID != "" {
+				if pn != "" && b.Product != nil && b.Product.ProductID != "" {
 					// Leaf names take two forms: "<product>/<version-exp>"
 					// (e.g. "FortiOS/>=7.0.0|<=7.0.5") and, in some advisories,
 					// "<product> <version>" with no slash (e.g. "FortiOS 5.0.0").
@@ -428,13 +428,14 @@ func buildProductRefs(branches []csafTypes.Branch) map[string]productRef {
 					if !found {
 						exp = strings.TrimPrefix(b.Name, pn)
 					}
-					refMap[string(b.Product.ProductID)] = productRef{cpe: pc, versionExp: strings.TrimSpace(exp)}
+					refMap[string(b.Product.ProductID)] = productRef{productName: pn, versionExp: strings.TrimSpace(exp)}
 				}
+			default:
 			}
-			walk(b.Branches, pc, pn, pm)
+			walk(b.Branches, pn)
 		}
 	}
-	walk(branches, "", "", false)
+	walk(branches, "")
 
 	return refMap
 }
@@ -448,14 +449,17 @@ func toCriterion(productID string, refMap map[string]productRef) (criterionTypes
 	ref, ok := refMap[productID]
 	if !ok {
 		// Every known_affected in Fortinet CSAF references a product_version /
-		// product_version_range leaf, so a miss means buildProductRefs skipped it:
-		// the product is not in the whitelist, or the advisory carries an
-		// unexpected product_id shape. Fail loudly rather than silently widening
-		// to a whole-product match or dropping the affected product.
-		return criterionTypes.Criterion{}, errors.Errorf("cannot resolve known_affected %q to a known product_version (whitelist miss or unexpected product_id; add the product to internal/product)", productID)
+		// product_version_range leaf, so a miss means the advisory carries a
+		// product_id with no such leaf in the tree. Fail loudly rather than
+		// silently dropping the affected product.
+		return criterionTypes.Criterion{}, errors.Errorf("cannot resolve known_affected %q to a product_version in the tree", productID)
 	}
 
-	cpe := ref.cpe
+	cpe, mapped := product.ToCPE(ref.productName)
+	if !mapped {
+		return criterionTypes.Criterion{}, errors.Errorf("unknown fortinet product %q (known_affected %q; add it to internal/product)", ref.productName, productID)
+	}
+
 	rng, bakeVersion, err := resolveVersion(ref.versionExp)
 	if err != nil {
 		return criterionTypes.Criterion{}, errors.Wrapf(err, "resolve version for %q", productID)

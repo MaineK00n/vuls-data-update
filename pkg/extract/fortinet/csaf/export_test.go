@@ -6,9 +6,11 @@ package csaf
 // refMap for ToCriterion.
 type ProductRef = productRef
 
-// NewProductRef constructs a ProductRef from a CPE and a version expression.
-func NewProductRef(cpe, versionExp string) ProductRef {
-	return productRef{cpe: cpe, versionExp: versionExp}
+// NewProductRef constructs a ProductRef from a product name and a version
+// expression. The name is resolved to a CPE (and whitelist-checked) in
+// ToCriterion.
+func NewProductRef(productName, versionExp string) ProductRef {
+	return productRef{productName: productName, versionExp: versionExp}
 }
 
 // ToCriterion exposes toCriterion for whitelist-enforcement tests.
