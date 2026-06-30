@@ -620,8 +620,8 @@ func resolveVersion(exp string) (*ccRangeTypes.Range, string, error) {
 // vulnSeverity returns the severities for one CSAF vulnerability object (its
 // per-family CVSS v3.1 score and vendor impact) together with the sevKey that
 // groups families of the same key by identical severity profile. Fortinet emits
-// exactly one cvss vector and one impact per object; more than one distinct of
-// either is a hard error (see below), not silently merged.
+// exactly one cvss vector and one impact per object; anything else (zero or
+// multiple distinct) is a hard error (see below), not silently handled.
 func vulnSeverity(v csafTypes.Vulnerability) ([]severityTypes.Severity, sevKey, error) {
 	var ss []severityTypes.Severity
 	var vectors, impacts []string
@@ -661,17 +661,17 @@ func vulnSeverity(v csafTypes.Vulnerability) ([]severityTypes.Severity, sevKey, 
 		impacts = append(impacts, t.Details)
 	}
 	// Fortinet emits exactly one cvss vector and one impact per vulnerability
-	// object. More than one distinct of either would change how severities map to
-	// product families, so fail loudly (this path only runs in CI, so a silent
-	// merge would go unnoticed) — it is the signal to revisit the per-family
-	// grouping rather than something to absorb.
-	if len(vectors) > 1 {
-		return nil, sevKey{}, errors.Errorf("vulnerability %q has multiple distinct cvss vectors (%s); revisit per-family severity grouping", v.CVE, strings.Join(vectors, ", "))
+	// object (verified across the corpus). Zero or more than one distinct of
+	// either would drop or mis-map a severity, so fail loudly — this path only
+	// runs in CI, so a silent fallback would go unnoticed; it is the signal to
+	// revisit the per-family grouping.
+	if len(vectors) != 1 {
+		return nil, sevKey{}, errors.Errorf("vulnerability %q has %d distinct cvss vectors, want exactly 1 (%s)", v.CVE, len(vectors), strings.Join(vectors, ", "))
 	}
-	if len(impacts) > 1 {
-		return nil, sevKey{}, errors.Errorf("vulnerability %q has multiple distinct impacts (%s); revisit per-family severity grouping", v.CVE, strings.Join(impacts, ", "))
+	if len(impacts) != 1 {
+		return nil, sevKey{}, errors.Errorf("vulnerability %q has %d distinct impacts, want exactly 1 (%s)", v.CVE, len(impacts), strings.Join(impacts, ", "))
 	}
-	return ss, sevKey{cvss: strings.Join(vectors, "\n"), impact: strings.Join(impacts, "\n")}, nil
+	return ss, sevKey{cvss: vectors[0], impact: impacts[0]}, nil
 }
 
 func noteText(notes []csafTypes.Note, title string) string {
