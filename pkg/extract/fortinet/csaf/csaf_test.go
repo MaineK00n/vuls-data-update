@@ -119,19 +119,12 @@ func TestToCriterion(t *testing.T) {
 			},
 		},
 		{
-			name: "known product, bare (whole product)",
+			name: "product_id not in tree map rejected",
 			args: args{
 				productID: "FortiOS",
 				refMap:    map[string]csaf.ProductRef{},
 			},
-			want: criterionTypes.Criterion{
-				Type: criterionTypes.CriterionTypeCPE,
-				CPE: &ccTypes.Criterion{
-					Vulnerable: true,
-					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
-					CPE:        ccTypes.CPE("cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*"),
-				},
-			},
+			wantErr: true,
 		},
 		{
 			name: "known product via tree ref with range",

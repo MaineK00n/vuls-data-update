@@ -447,12 +447,12 @@ func buildProductRefs(branches []csafTypes.Branch) map[string]productRef {
 func toCriterion(productID string, refMap map[string]productRef) (criterionTypes.Criterion, error) {
 	ref, ok := refMap[productID]
 	if !ok {
-		// Bare product reference (whole product, no version branch).
-		cpe, mapped := product.ToCPE(productID)
-		if !mapped {
-			return criterionTypes.Criterion{}, errors.Errorf("unknown fortinet product: cannot resolve known_affected %q to a CPE (whitelist miss; add it to internal/product)", productID)
-		}
-		ref = productRef{cpe: cpe}
+		// Every known_affected in Fortinet CSAF references a product_version /
+		// product_version_range leaf, so a miss means buildProductRefs skipped it:
+		// the product is not in the whitelist, or the advisory carries an
+		// unexpected product_id shape. Fail loudly rather than silently widening
+		// to a whole-product match or dropping the affected product.
+		return criterionTypes.Criterion{}, errors.Errorf("cannot resolve known_affected %q to a known product_version (whitelist miss or unexpected product_id; add the product to internal/product)", productID)
 	}
 
 	cpe := ref.cpe
