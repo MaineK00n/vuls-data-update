@@ -491,14 +491,15 @@ func toCriterion(productID string, refMap map[string]productRef) (criterionTypes
 			// detector uses: a numeric product must parse under the numeric scheme,
 			// a non-numeric-versioned product (FortiSASE) under the milestone scheme
 			// (which also accepts a single letter component, "25.2.a").
-			var verErr error
-			if rt == ccRangeTypes.RangeTypeFortinetFortiSASE {
-				_, verErr = nonnumericVersion.NewVersion(bakeVersion)
-			} else {
-				_, verErr = numericVersion.NewVersion(bakeVersion)
-			}
-			if verErr != nil {
-				return criterionTypes.Criterion{}, errors.Wrapf(verErr, "unexpected concrete version %q for %q (expr %q)", bakeVersion, productID, ref.versionExp)
+			switch rt {
+			case ccRangeTypes.RangeTypeFortinetFortiSASE:
+				if _, err := nonnumericVersion.NewVersion(bakeVersion); err != nil {
+					return criterionTypes.Criterion{}, errors.Wrapf(err, "unexpected concrete version %q for %q (expr %q)", bakeVersion, productID, ref.versionExp)
+				}
+			default:
+				if _, err := numericVersion.NewVersion(bakeVersion); err != nil {
+					return criterionTypes.Criterion{}, errors.Wrapf(err, "unexpected concrete version %q for %q (expr %q)", bakeVersion, productID, ref.versionExp)
+				}
 			}
 			baked, err := product.BakeVersion(cpe, bakeVersion)
 			if err != nil {
