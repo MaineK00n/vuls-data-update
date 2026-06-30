@@ -297,7 +297,7 @@ func knownAffectedCriterions(productIDs []string, prodMap map[string]productVers
 			return nil, errors.Errorf("known affected %q not found in product tree", pid)
 		}
 
-		cpe, ok := productpkg.ToCPE(pv.productName)
+		cpe, _, ok := productpkg.Resolve(pv.productName)
 		if !ok {
 			return nil, errors.Errorf("unknown fortinet product %q (whitelist miss; add it to internal/product)", pv.productName)
 		}

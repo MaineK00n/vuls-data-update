@@ -448,15 +448,11 @@ func buildProductRefs(branches []csafTypes.Branch) map[string]productRef {
 func toCriterion(productID string, refMap map[string]productRef) (criterionTypes.Criterion, error) {
 	ref, ok := refMap[productID]
 	if !ok {
-		// Every known_affected in Fortinet CSAF references a product_version /
-		// product_version_range leaf, so a miss means the advisory carries a
-		// product_id with no such leaf in the tree. Fail loudly rather than
-		// silently dropping the affected product.
 		return criterionTypes.Criterion{}, errors.Errorf("cannot resolve known_affected %q to a product_version in the tree", productID)
 	}
 
-	cpe, mapped := product.ToCPE(ref.productName)
-	if !mapped {
+	cpe, rt, ok := product.Resolve(ref.productName)
+	if !ok {
 		return criterionTypes.Criterion{}, errors.Errorf("unknown fortinet product %q (known_affected %q; add it to internal/product)", ref.productName, productID)
 	}
 
@@ -464,14 +460,9 @@ func toCriterion(productID string, refMap map[string]productRef) (criterionTypes
 	if err != nil {
 		return criterionTypes.Criterion{}, errors.Wrapf(err, "resolve version for %q", productID)
 	}
-	// The range/bake paths need the product's per-product range type (it selects
-	// the detect-time comparator). Resolve it once; an unknown product hard-errors.
+	// rt (the product's per-product range type, resolved above) selects the
+	// detect-time comparator; it is only consulted on the range/bake paths.
 	if rng != nil || bakeVersion != "" {
-		rt, err := product.RangeType(cpe)
-		if err != nil {
-			return criterionTypes.Criterion{}, errors.Wrapf(err, "range type for %q", productID)
-		}
-
 		// Range-bound invariants. These two asserts keep a non-numeric-versioned product's
 		// comparator safe at detect time: they guarantee a non-numeric version
 		// (FortiSASE "25.2.a") is only ever compared against a numeric bound that

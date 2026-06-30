@@ -1,5 +1,5 @@
 // Package product resolves Fortinet product names (shared between the CSAF and
-// CVRF extractors) to CPEs.
+// CVRF extractors) to CPEs and their per-product range types.
 package product
 
 import (
@@ -13,42 +13,27 @@ import (
 	ccRangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/cpecriterion/range"
 )
 
-// cpeToRangeType is the inverse of nameToProduct keyed by CPE: every product's
-// CPE maps to its per-product range type (names sharing a CPE share the type).
-// It panics at package init if two names map the same CPE to different range
-// types, so a table mistake fails fast rather than silently mis-comparing.
-var cpeToRangeType = func() map[string]ccRangeTypes.RangeType {
-	m := make(map[string]ccRangeTypes.RangeType, len(nameToProduct))
+// A product's comparator is per-CPE, so every name sharing a CPE must share its
+// range type. Validate the table once at init; a mistake that gives one CPE
+// conflicting range types fails fast rather than silently mis-comparing.
+func init() {
+	seen := make(map[string]ccRangeTypes.RangeType, len(nameToProduct))
 	for name, p := range nameToProduct {
-		if existing, ok := m[p.cpe]; ok && existing != p.rangeType {
+		if existing, ok := seen[p.cpe]; ok && existing != p.rangeType {
 			panic(errors.Errorf("conflicting range types for cpe %q: %s and %s (check product %q in table.go)", p.cpe, existing, p.rangeType, name))
 		}
-		m[p.cpe] = p.rangeType
+		seen[p.cpe] = p.rangeType
 	}
-	return m
-}()
-
-// RangeType returns the per-product cpecriterion range type for a Fortinet CPE
-// 2.3 formatted string (the wildcard CPE produced by ToCPE). Fortinet uses one
-// range type per product so a product whose versioning scheme later diverges
-// gets its own comparator without affecting any other product. It errors when
-// the CPE has no entry, so a new Fortinet product is noticed and added rather
-// than silently mis-compared.
-func RangeType(cpe string) (ccRangeTypes.RangeType, error) {
-	rt, ok := cpeToRangeType[cpe]
-	if !ok {
-		return 0, errors.Errorf("no range type for cpe %q; add the product to table.go", cpe)
-	}
-	return rt, nil
 }
 
-// ToCPE returns the CPE 2.3 formatted string (wildcard version) for a Fortinet
-// product name, or ("", false) when the name is not in the table. Callers
-// decide how to handle a miss rather than fabricate a CPE; the CVRF extractor,
-// for one, treats an unknown affected product as a hard error.
-func ToCPE(name string) (string, bool) {
+// Resolve returns the CPE 2.3 formatted string (wildcard version) and the
+// per-product cpecriterion range type for a Fortinet product name, or ok=false
+// when the name is not in the table. Fortinet uses one range type per product,
+// so a product whose versioning scheme later diverges gets its own comparator
+// without affecting any other product.
+func Resolve(name string) (cpe string, rangeType ccRangeTypes.RangeType, ok bool) {
 	p, ok := nameToProduct[strings.TrimSpace(name)]
-	return p.cpe, ok
+	return p.cpe, p.rangeType, ok
 }
 
 // versionEscaper escapes the CPE WFN special characters (dots and hyphens) in a

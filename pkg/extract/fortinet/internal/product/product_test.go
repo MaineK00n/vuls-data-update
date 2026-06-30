@@ -9,27 +9,6 @@ import (
 	ccRangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/cpecriterion/range"
 )
 
-func TestToCPE(t *testing.T) {
-	tests := []struct {
-		name   string
-		want   string
-		wantOK bool
-	}{
-		{name: "FortiOS", want: "cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*", wantOK: true},
-		{name: "FortiClientWindows", want: "cpe:2.3:a:fortinet:forticlient:*:*:*:*:*:*:*:*", wantOK: true},
-		{name: "  FortiProxy  ", want: "cpe:2.3:o:fortinet:fortiproxy:*:*:*:*:*:*:*:*", wantOK: true},
-		{name: "Nonexistent Product", want: "", wantOK: false},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got, ok := product.ToCPE(tt.name)
-			if ok != tt.wantOK || got != tt.want {
-				t.Errorf("ToCPE(%q) = (%q, %v), want (%q, %v)", tt.name, got, ok, tt.want, tt.wantOK)
-			}
-		})
-	}
-}
-
 func TestBakeVersion(t *testing.T) {
 	type args struct {
 		cpe     string
@@ -118,30 +97,24 @@ func TestTrainRange(t *testing.T) {
 	}
 }
 
-func TestRangeType(t *testing.T) {
+func TestResolve(t *testing.T) {
 	tests := []struct {
-		name    string
-		cpe     string
-		want    ccRangeTypes.RangeType
-		wantErr bool
+		name      string
+		wantCPE   string
+		wantRange ccRangeTypes.RangeType
+		wantOK    bool
 	}{
-		{name: "FortiOS → numeric per-product type", cpe: "cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*", want: ccRangeTypes.RangeTypeFortinetFortiOS},
-		{name: "FortiSASE → non-numeric per-product type", cpe: "cpe:2.3:a:fortinet:fortisase:*:*:*:*:*:*:*:*", want: ccRangeTypes.RangeTypeFortinetFortiSASE},
-		{name: "hyphenated slug resolves (fortinac-f)", cpe: "cpe:2.3:o:fortinet:fortinac-f:*:*:*:*:*:*:*:*", want: ccRangeTypes.RangeTypeFortinetFortiNACF},
-		{name: "unknown slug → error", cpe: "cpe:2.3:o:fortinet:fortinonexistent:*:*:*:*:*:*:*:*", wantErr: true},
-		{name: "malformed cpe → error", cpe: "not-a-cpe", wantErr: true},
+		{name: "FortiOS", wantCPE: "cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*", wantRange: ccRangeTypes.RangeTypeFortinetFortiOS, wantOK: true},
+		{name: "FortiSASE", wantCPE: "cpe:2.3:a:fortinet:fortisase:*:*:*:*:*:*:*:*", wantRange: ccRangeTypes.RangeTypeFortinetFortiSASE, wantOK: true},
+		{name: "FortiClientWindows", wantCPE: "cpe:2.3:a:fortinet:forticlient:*:*:*:*:*:*:*:*", wantRange: ccRangeTypes.RangeTypeFortinetFortiClient, wantOK: true},
+		{name: "  FortiProxy  ", wantCPE: "cpe:2.3:o:fortinet:fortiproxy:*:*:*:*:*:*:*:*", wantRange: ccRangeTypes.RangeTypeFortinetFortiProxy, wantOK: true},
+		{name: "Nonexistent Product", wantOK: false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := product.RangeType(tt.cpe)
-			if (err != nil) != tt.wantErr {
-				t.Fatalf("RangeType(%q) error = %v, wantErr %v", tt.cpe, err, tt.wantErr)
-			}
-			if err != nil {
-				return
-			}
-			if got != tt.want {
-				t.Errorf("RangeType(%q) = %v, want %v", tt.cpe, got, tt.want)
+			cpe, rt, ok := product.Resolve(tt.name)
+			if ok != tt.wantOK || cpe != tt.wantCPE || rt != tt.wantRange {
+				t.Errorf("Resolve(%q) = (%q, %v, %v), want (%q, %v, %v)", tt.name, cpe, rt, ok, tt.wantCPE, tt.wantRange, tt.wantOK)
 			}
 		})
 	}
