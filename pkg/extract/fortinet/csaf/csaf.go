@@ -669,55 +669,55 @@ func resolveVersion(exp string) (*ccRangeTypes.Range, string, error) {
 // exactly one cvss vector and one impact per object; anything else (zero or
 // multiple distinct) is a hard error (see below), not silently handled.
 func vulnSeverity(v csafTypes.Vulnerability) ([]severityTypes.Severity, sevKey, error) {
-	var ss []severityTypes.Severity
-	var vectors, impacts []string
-	seen := make(map[string]struct{})
+	// Fortinet emits exactly one cvss vector and one impact per vulnerability
+	// object (verified across the corpus). Hold a single value and fail loudly on
+	// a second distinct one (a duplicate of the same value is tolerated); zero, or
+	// more than one distinct, of either would drop or mis-map a severity. This
+	// path only runs in CI, so a silent fallback would go unnoticed — a hard error
+	// is the signal to revisit the per-family grouping.
+	var vector string
 	for _, sc := range v.Scores {
 		if sc.CvssV3 == nil || sc.CvssV3.VectorString == "" {
 			continue
 		}
-		if _, ok := seen[sc.CvssV3.VectorString]; ok {
-			continue
+		if vector != "" && vector != sc.CvssV3.VectorString {
+			return nil, sevKey{}, errors.Errorf("vulnerability %q has multiple distinct cvss vectors (%q, %q)", v.CVE, vector, sc.CvssV3.VectorString)
 		}
-		seen[sc.CvssV3.VectorString] = struct{}{}
-		// Every cvss_v3 score in the corpus is CVSS:3.1 and parseable. A non-3.1
-		// vector or one that fails to parse is malformed/unexpected upstream data,
-		// not a known shape we choose to skip — hard-error rather than silently
-		// drop the severity.
-		if !strings.HasPrefix(sc.CvssV3.VectorString, "CVSS:3.1/") {
-			return nil, sevKey{}, errors.Errorf("unexpected non-3.1 cvss vector %q", sc.CvssV3.VectorString)
-		}
-		c, err := v31Types.Parse(sc.CvssV3.VectorString)
-		if err != nil {
-			return nil, sevKey{}, errors.Wrapf(err, "parse cvss vector %q", sc.CvssV3.VectorString)
-		}
-		ss = append(ss, severityTypes.Severity{Type: severityTypes.SeverityTypeCVSSv31, Source: "fortiguard.fortinet.com", CVSSv31: c})
-		vectors = append(vectors, sc.CvssV3.VectorString)
+		vector = sc.CvssV3.VectorString
 	}
-	seenImpact := make(map[string]struct{})
+	if vector == "" {
+		return nil, sevKey{}, errors.Errorf("vulnerability %q has no cvss vector", v.CVE)
+	}
+	// Every cvss_v3 score in the corpus is CVSS:3.1 and parseable. A non-3.1
+	// vector or one that fails to parse is malformed/unexpected upstream data, not
+	// a known shape we choose to skip — hard-error rather than silently drop it.
+	if !strings.HasPrefix(vector, "CVSS:3.1/") {
+		return nil, sevKey{}, errors.Errorf("unexpected non-3.1 cvss vector %q", vector)
+	}
+	c, err := v31Types.Parse(vector)
+	if err != nil {
+		return nil, sevKey{}, errors.Wrapf(err, "parse cvss vector %q", vector)
+	}
+
+	var impact string
 	for _, t := range v.Threats {
 		if t.Category != "impact" || t.Details == "" {
 			continue
 		}
-		if _, ok := seenImpact[t.Details]; ok {
-			continue
+		if impact != "" && impact != t.Details {
+			return nil, sevKey{}, errors.Errorf("vulnerability %q has multiple distinct impacts (%q, %q)", v.CVE, impact, t.Details)
 		}
-		seenImpact[t.Details] = struct{}{}
-		ss = append(ss, severityTypes.Severity{Type: severityTypes.SeverityTypeVendor, Source: "fortiguard.fortinet.com", Vendor: new(t.Details)})
-		impacts = append(impacts, t.Details)
+		impact = t.Details
 	}
-	// Fortinet emits exactly one cvss vector and one impact per vulnerability
-	// object (verified across the corpus). Zero or more than one distinct of
-	// either would drop or mis-map a severity, so fail loudly — this path only
-	// runs in CI, so a silent fallback would go unnoticed; it is the signal to
-	// revisit the per-family grouping.
-	if len(vectors) != 1 {
-		return nil, sevKey{}, errors.Errorf("vulnerability %q has %d distinct cvss vectors, want exactly 1 (%s)", v.CVE, len(vectors), strings.Join(vectors, ", "))
+	if impact == "" {
+		return nil, sevKey{}, errors.Errorf("vulnerability %q has no impact", v.CVE)
 	}
-	if len(impacts) != 1 {
-		return nil, sevKey{}, errors.Errorf("vulnerability %q has %d distinct impacts, want exactly 1 (%s)", v.CVE, len(impacts), strings.Join(impacts, ", "))
+
+	ss := []severityTypes.Severity{
+		{Type: severityTypes.SeverityTypeCVSSv31, Source: "fortiguard.fortinet.com", CVSSv31: c},
+		{Type: severityTypes.SeverityTypeVendor, Source: "fortiguard.fortinet.com", Vendor: new(impact)},
 	}
-	return ss, sevKey{cvss: vectors[0], impact: impacts[0]}, nil
+	return ss, sevKey{cvss: vector, impact: impact}, nil
 }
 
 func noteText(notes []csafTypes.Note, title string) string {
