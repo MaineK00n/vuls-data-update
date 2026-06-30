@@ -37,9 +37,9 @@ const (
 	// versioning scheme later diverges must carry its own type to get its own
 	// comparator without changing how any other product is compared — and adding
 	// a type stays additive (existing products are untouched). Today every
-	// product is purely numeric except the FortiSASE non-numeric scheme (see
-	// fortinetNonNumericTypes); the per-product split is what lets that stay true
-	// product-by-product going forward.
+	// product is purely numeric except the FortiSASE non-numeric scheme (which
+	// Compare gives its own case); the per-product split is what lets that stay
+	// true product-by-product going forward.
 	RangeTypeFortinetAntivirusEngine
 	RangeTypeFortinetAscenLink
 	RangeTypeFortinetFortiADC
@@ -197,21 +197,6 @@ var rangeTypeByName = func() map[string]RangeType {
 	return m
 }()
 
-// fortinetNonNumericTypes are the Fortinet per-product types whose versions use
-// the FortiSASE non-numeric scheme (an alphabetic milestone component, e.g.
-// 25.2.a); every other Fortinet type is purely numeric.
-var fortinetNonNumericTypes = map[RangeType]struct{}{
-	RangeTypeFortinetFortiSASE: {},
-}
-
-// IsFortinetNonNumeric reports whether t is a Fortinet per-product type that uses
-// the non-numeric version scheme (the product → type mapping lives in the
-// fortinet product table).
-func IsFortinetNonNumeric(t RangeType) bool {
-	_, ok := fortinetNonNumericTypes[t]
-	return ok
-}
-
 func (t RangeType) String() string {
 	if s, ok := rangeTypeNames[t]; ok {
 		return s
@@ -322,9 +307,9 @@ var ErrRangeTypeUnknown = errors.New("unknown range type")
 // added without a Compare branch, or a comparator-internal failure)
 // surfaces unwrapped and propagates loudly.
 //
-// Fortinet per-product types dispatch to go-fortinet-version: the FortiSASE
-// non-numeric scheme (fortinetNonNumericTypes) or the numeric scheme every
-// other product uses. The numeric comparator refuses to order a letter
+// Fortinet per-product types dispatch to go-fortinet-version: FortiSASE uses
+// the non-numeric (milestone-letter) scheme; every other Fortinet product uses
+// the numeric scheme. The numeric comparator refuses to order a letter
 // component, so a numeric product safely never matches a non-numeric version.
 func (t RangeType) Compare(v1, v2 string) (int, error) {
 	switch t {
@@ -368,6 +353,30 @@ func (t RangeType) Compare(v1, v2 string) (int, error) {
 		// CompareError. Forgetting to set Type therefore produces a safe
 		// non-match rather than a loud error.
 		return 0, &CompareError{Err: ErrRangeTypeUnknown}
+	case RangeTypeFortinetFortiSASE:
+		// FortiSASE uses the non-numeric (milestone-letter) version scheme.
+		// NewVersion rejecting a wrong-scheme/malformed version and Compare's
+		// ErrIncomparable both surface as *CompareError, so Range.Accept treats
+		// them as a safe non-match.
+		va, err := nonnumericVersion.NewVersion(v1)
+		if err != nil {
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
+		}
+		vb, err := nonnumericVersion.NewVersion(v2)
+		if err != nil {
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
+		}
+		n, err := va.Compare(vb)
+		if err != nil {
+			// An incomparable pair (a numeric component meeting a milestone
+			// letter) is an expected, swallow-safe outcome; any other error is
+			// unexpected and propagates loudly.
+			if stderrors.Is(err, nonnumericVersion.ErrIncomparable) {
+				return 0, &CompareError{Err: err}
+			}
+			return 0, err
+		}
+		return n, nil
 	case RangeTypeFortinetAntivirusEngine,
 		RangeTypeFortinetAscenLink,
 		RangeTypeFortinetFortiADC,
@@ -417,7 +426,6 @@ func (t RangeType) Compare(v1, v2 string) (int, error) {
 		RangeTypeFortinetFortiSandbox,
 		RangeTypeFortinetFortiSandboxCloud,
 		RangeTypeFortinetFortiSandboxPaaS,
-		RangeTypeFortinetFortiSASE,
 		RangeTypeFortinetFortiSIEM,
 		RangeTypeFortinetFortiSOAR,
 		RangeTypeFortinetFortiSOARAgentCommunicationBridge,
@@ -436,32 +444,9 @@ func (t RangeType) Compare(v1, v2 string) (int, error) {
 		RangeTypeFortinetFortiWLC,
 		RangeTypeFortinetFortiWLM,
 		RangeTypeFortinetMeru:
-		// Per-product Fortinet types dispatch to go-fortinet-version: the
-		// nonnumeric (FortiSASE milestone-letter) scheme vs. the numeric scheme
-		// every other product uses. NewVersion rejecting a wrong-scheme/malformed
-		// version and Compare's ErrIncomparable both surface as *CompareError, so
-		// Range.Accept treats them as a safe non-match.
-		if IsFortinetNonNumeric(t) {
-			va, err := nonnumericVersion.NewVersion(v1)
-			if err != nil {
-				return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
-			}
-			vb, err := nonnumericVersion.NewVersion(v2)
-			if err != nil {
-				return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
-			}
-			n, err := va.Compare(vb)
-			if err != nil {
-				// An incomparable pair (a numeric component meeting a milestone
-				// letter) is an expected, swallow-safe outcome; any other error
-				// is unexpected and propagates loudly.
-				if stderrors.Is(err, nonnumericVersion.ErrIncomparable) {
-					return 0, &CompareError{Err: err}
-				}
-				return 0, err
-			}
-			return n, nil
-		}
+		// Every other Fortinet product uses the purely numeric scheme. A
+		// malformed or wrong-scheme version is rejected by NewVersion and wrapped
+		// in *CompareError so Range.Accept treats it as a safe non-match.
 		va, err := numericVersion.NewVersion(v1)
 		if err != nil {
 			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}

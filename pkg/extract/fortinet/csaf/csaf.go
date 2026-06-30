@@ -488,7 +488,7 @@ func toCriterion(productID string, refMap map[string]productRef) (criterionTypes
 				// multi-component numeric bound would line a numeric component up with
 				// such a version's letter — the comparator's undefined numeric-vs-
 				// alphabetic case — so reject it here.
-				if ccRangeTypes.IsFortinetNonNumeric(rt) && strings.Count(b, ".") >= 2 {
+				if rt == ccRangeTypes.RangeTypeFortinetFortiSASE && strings.Count(b, ".") >= 2 {
 					return criterionTypes.Criterion{}, errors.Errorf("product %q is non-numeric-versioned and must use a train range (bound dot<=1), got bound %q (expr %q)", productID, b, ref.versionExp)
 				}
 			}
@@ -500,7 +500,7 @@ func toCriterion(productID string, refMap map[string]productRef) (criterionTypes
 			// false-negative. A numeric product must be purely numeric-dotted; a
 			// non-numeric-versioned product (FortiSASE) may also carry a
 			// milestone-letter component ("25.2.a").
-			validVersion := numericBound.MatchString(bakeVersion) || (ccRangeTypes.IsFortinetNonNumeric(rt) && concreteNonNumericVersion.MatchString(bakeVersion))
+			validVersion := numericBound.MatchString(bakeVersion) || (rt == ccRangeTypes.RangeTypeFortinetFortiSASE && concreteNonNumericVersion.MatchString(bakeVersion))
 			if !validVersion {
 				return criterionTypes.Criterion{}, errors.Errorf("unexpected concrete version %q for %q (expr %q)", bakeVersion, productID, ref.versionExp)
 			}
