@@ -347,12 +347,6 @@ func (t RangeType) Compare(v1, v2 string) (int, error) {
 			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
 		}
 		return va.Compare(vb), nil
-	case RangeTypeUnknown, 0:
-		// Unknown (explicit) and the zero value (unset) collapse to the same
-		// graceful "cannot evaluate" outcome — callers swallow this via
-		// CompareError. Forgetting to set Type therefore produces a safe
-		// non-match rather than a loud error.
-		return 0, &CompareError{Err: ErrRangeTypeUnknown}
 	case RangeTypeFortinetFortiSASE:
 		// FortiSASE uses the non-numeric (milestone-letter) version scheme.
 		// NewVersion rejecting a wrong-scheme/malformed version and Compare's
@@ -462,6 +456,12 @@ func (t RangeType) Compare(v1, v2 string) (int, error) {
 			return 0, err
 		}
 		return n, nil
+	case RangeTypeUnknown, 0:
+		// Unknown (explicit) and the zero value (unset) collapse to the same
+		// graceful "cannot evaluate" outcome — callers swallow this via
+		// CompareError. Forgetting to set Type therefore produces a safe
+		// non-match rather than a loud error.
+		return 0, &CompareError{Err: ErrRangeTypeUnknown}
 	default:
 		return 0, errors.Errorf("unsupported range type: %s", t)
 	}
