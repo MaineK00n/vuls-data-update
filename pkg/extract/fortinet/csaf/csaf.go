@@ -1,12 +1,10 @@
 package csaf
 
 import (
-	"cmp"
 	"fmt"
 	"hash/fnv"
 	"io/fs"
 	"log/slog"
-	"maps"
 	"path/filepath"
 	"regexp"
 	"slices"
@@ -259,13 +257,10 @@ func extract(fetched csafTypes.CSAF, raws []string) (dataTypes.Data, error) {
 		segments   []segmentTypes.Segment
 	)
 	for key, a := range accs {
-		// Sort the severity groups so a multi-group key gets stable tag suffixes.
-		gkeys := slices.SortedFunc(maps.Keys(a.groups), func(x, y sevKey) int {
-			return cmp.Or(cmp.Compare(x.cvss, y.cvss), cmp.Compare(x.impact, y.impact))
-		})
-		for _, sk := range gkeys {
-			g := a.groups[sk]
-
+		// Group iteration order is irrelevant: each tag is derived from the group's
+		// own product set (below), and util.Write re-sorts every output slice by a
+		// content-based total order, so the append order never reaches the output.
+		for _, g := range a.groups {
 			// One severity group → the tag is the bare key (CVE / advisory ID),
 			// keeping the common single-group output stable. Multiple groups
 			// within one key → suffix each tag with a hash of the group's largest
@@ -275,7 +270,7 @@ func extract(fetched csafTypes.CSAF, raws []string) (dataTypes.Data, error) {
 			// only moves if that group's products change), minimizing extracted
 			// diff — mirroring redhat/csaf's calculateTag.
 			tag := segmentTypes.DetectionTag(key)
-			if len(gkeys) > 1 && len(g.pids) > 0 {
+			if len(a.groups) > 1 && len(g.pids) > 0 {
 				h := fnv.New32a()
 				// hash.Hash.Write is documented never to return an error.
 				_, _ = h.Write([]byte(slices.Max(g.pids)))
