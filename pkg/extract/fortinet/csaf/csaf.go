@@ -445,13 +445,13 @@ func toCriterion(productID string, refMap map[string]productRef) (criterionTypes
 		return criterionTypes.Criterion{}, errors.Errorf("unknown fortinet product %q (known_affected %q; add it to internal/product)", ref.productName, productID)
 	}
 
-	rng, bakeVersion, err := resolveVersion(ref.versionExp)
+	r, bakeVersion, err := resolveVersion(ref.versionExp)
 	if err != nil {
 		return criterionTypes.Criterion{}, errors.Wrapf(err, "resolve version for %q", productID)
 	}
 	// rt (the product's per-product range type, resolved above) selects the
 	// detect-time comparator; it is only consulted on the range/bake paths.
-	if rng != nil || bakeVersion != "" {
+	if r != nil || bakeVersion != "" {
 		// Range-bound invariants. These two asserts keep a non-numeric-versioned product's
 		// comparator safe at detect time: they guarantee a non-numeric version
 		// (FortiSASE "25.2.a") is only ever compared against a numeric bound that
@@ -459,9 +459,9 @@ func toCriterion(productID string, refMap map[string]productRef) (criterionTypes
 		// component at the same position (the comparator's "incomparable" case).
 		// If Fortinet's data ever breaks an invariant, this fails loudly at
 		// extract rather than silently mis-detecting later.
-		if rng != nil {
-			rng.Type = rt
-			for _, b := range []string{rng.GreaterEqual, rng.GreaterThan, rng.LessEqual, rng.LessThan} {
+		if r != nil {
+			r.Type = rt
+			for _, b := range []string{r.GreaterEqual, r.GreaterThan, r.LessEqual, r.LessThan} {
 				if b == "" {
 					continue
 				}
@@ -507,7 +507,7 @@ func toCriterion(productID string, refMap map[string]productRef) (criterionTypes
 			Vulnerable: true,
 			FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
 			CPE:        ccTypes.CPE(cpe),
-			Range:      rng,
+			Range:      r,
 		},
 	}, nil
 }
