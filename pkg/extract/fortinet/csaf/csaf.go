@@ -187,7 +187,10 @@ func extract(fetched csafTypes.CSAF, raws []string) (dataTypes.Data, error) {
 		return dataTypes.Data{}, errors.New("document.tracking.id is empty")
 	}
 
-	refMap := buildProductRefs(fetched.ProductTree.Branches)
+	refMap, err := buildProductRefs(id, fetched.ProductTree.Branches)
+	if err != nil {
+		return dataTypes.Data{}, errors.Wrap(err, "build product refs")
+	}
 
 	// Merge the per-family CSAF vulnerability objects by key (CVE, or advisory
 	// ID when a object has no CVE), distributing each object's score / impact to
@@ -388,46 +391,106 @@ func extract(fetched csafTypes.CSAF, raws []string) (dataTypes.Data, error) {
 	}, nil
 }
 
-// buildProductRefs walks the product tree and maps every product_version /
-// product_version_range product_id to its ancestor product name and version
-// expression. The name → CPE whitelist is resolved and enforced at the
-// known_affected use-site (toCriterion), which hard-errors so a new/unknown
-// product surfaces loudly rather than being silently dropped.
-func buildProductRefs(branches []csafTypes.Branch) map[string]productRef {
+// buildProductRefs maps every product_version / product_version_range product_id
+// to its ancestor product name and version expression. Two product-tree dialects
+// exist: all current advisories use the standard one (product nodes are category
+// "product", version leaves are named "<product>/<expr>"); exactly one historical
+// advisory (FG-IR-21-173) uses a legacy one (category "product_name", leaves
+// "<product> <version>" with a space and no slash). Switch on the advisory ID so
+// the exception is explicit and bounded, and have each dialect hard-error when
+// its assumption is violated — so Fortinet standardizing FG-IR-21-173, or a new
+// legacy-format advisory, surfaces loudly instead of being silently mis-parsed.
+// The name → CPE whitelist is resolved and enforced later at the known_affected
+// use-site (toCriterion).
+func buildProductRefs(id string, branches []csafTypes.Branch) (map[string]productRef, error) {
+	switch id {
+	case "FG-IR-21-173":
+		return buildProductRefsLegacy(branches)
+	default:
+		return buildProductRefsStandard(branches)
+	}
+}
+
+// buildProductRefsStandard maps a standard-dialect product tree: product nodes
+// are category "product" and version leaves are named "<product>/<expr>". It
+// hard-errors on a legacy-dialect node (category "product_name") or a version
+// leaf without the "/" separator.
+func buildProductRefsStandard(branches []csafTypes.Branch) (map[string]productRef, error) {
 	refMap := make(map[string]productRef)
 
-	var walk func(bs []csafTypes.Branch, productName string)
-	walk = func(bs []csafTypes.Branch, productName string) {
+	var walk func(bs []csafTypes.Branch, productName string) error
+	walk = func(bs []csafTypes.Branch, productName string) error {
 		for _, b := range bs {
 			pn := productName
 			switch b.Category {
-			case "product_name", "product":
+			case "product_name":
+				return errors.Errorf("unexpected legacy product_name node %q in a standard-dialect advisory", b.Name)
+			case "product":
 				pn = b.Name
 			case "product_version", "product_version_range":
 				if pn != "" && b.Product != nil && b.Product.ProductID != "" {
-					// Leaf names take two forms: "<product>/<version-exp>"
-					// (e.g. "FortiOS/>=7.0.0|<=7.0.5") and, in some advisories,
-					// "<product> <version>" with no slash (e.g. "FortiOS 5.0.0").
-					// Take the version after "/" when present, else strip the
-					// product-name prefix — otherwise the version would be empty
-					// and the product would wildcard to all versions (over-detect).
-					exp, found := "", false
-					if _, after, ok := strings.Cut(b.Name, "/"); ok {
-						exp, found = after, true
+					_, after, ok := strings.Cut(b.Name, "/")
+					if !ok {
+						return errors.Errorf("standard-dialect version leaf %q has no %q separator", b.Name, "/")
 					}
-					if !found {
-						exp = strings.TrimPrefix(b.Name, pn)
+					refMap[string(b.Product.ProductID)] = productRef{productName: pn, versionExp: strings.TrimSpace(after)}
+				}
+			default:
+			}
+			if err := walk(b.Branches, pn); err != nil {
+				return err
+			}
+		}
+		return nil
+	}
+	if err := walk(branches, ""); err != nil {
+		return nil, err
+	}
+
+	return refMap, nil
+}
+
+// buildProductRefsLegacy maps the legacy-dialect product tree of the one advisory
+// that uses it (FG-IR-21-173): product nodes are category "product_name" and
+// version leaves are named "<product> <version>" (a space, no slash). It
+// hard-errors on a standard-dialect node (category "product"), a slash-containing
+// leaf, or a leaf not prefixed by its product name.
+func buildProductRefsLegacy(branches []csafTypes.Branch) (map[string]productRef, error) {
+	refMap := make(map[string]productRef)
+
+	var walk func(bs []csafTypes.Branch, productName string) error
+	walk = func(bs []csafTypes.Branch, productName string) error {
+		for _, b := range bs {
+			pn := productName
+			switch b.Category {
+			case "product":
+				return errors.Errorf("unexpected standard product node %q in the legacy-dialect advisory", b.Name)
+			case "product_name":
+				pn = b.Name
+			case "product_version", "product_version_range":
+				if pn != "" && b.Product != nil && b.Product.ProductID != "" {
+					if strings.Contains(b.Name, "/") {
+						return errors.Errorf("legacy-dialect version leaf %q unexpectedly contains %q", b.Name, "/")
+					}
+					exp, ok := strings.CutPrefix(b.Name, pn)
+					if !ok {
+						return errors.Errorf("legacy-dialect version leaf %q is not prefixed by product name %q", b.Name, pn)
 					}
 					refMap[string(b.Product.ProductID)] = productRef{productName: pn, versionExp: strings.TrimSpace(exp)}
 				}
 			default:
 			}
-			walk(b.Branches, pn)
+			if err := walk(b.Branches, pn); err != nil {
+				return err
+			}
 		}
+		return nil
 	}
-	walk(branches, "")
+	if err := walk(branches, ""); err != nil {
+		return nil, err
+	}
 
-	return refMap
+	return refMap, nil
 }
 
 // toCriterion resolves a known_affected product_id to a CPE criterion using the
