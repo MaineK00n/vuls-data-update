@@ -76,7 +76,7 @@ func Extract(args string, opts ...Option) error {
 	slog.Info("Extract Fortinet CVRF")
 	if err := filepath.WalkDir(args, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
-			return errors.Wrapf(err, "walk %s", path)
+			return err
 		}
 
 		if d.IsDir() {
@@ -297,7 +297,7 @@ func knownAffectedCriterions(productIDs []string, prodMap map[string]productVers
 			return nil, errors.Errorf("known affected %q not found in product tree", pid)
 		}
 
-		cpe, ok := productpkg.ToCPE(pv.productName)
+		cpe, _, ok := productpkg.Resolve(pv.productName)
 		if !ok {
 			return nil, errors.Errorf("unknown fortinet product %q (whitelist miss; add it to internal/product)", pv.productName)
 		}

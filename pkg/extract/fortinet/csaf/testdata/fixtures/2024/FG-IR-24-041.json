@@ -1,0 +1,513 @@
+{
+	"document": {
+		"acknowledgments": [
+			{
+				"summary": "Internally discovered and reported by Théo Leleu of Fortinet Product Security team."
+			}
+		],
+		"category": "Fortinet PSIRT Advisories",
+		"csaf_version": "2.0",
+		"publisher": {
+			"category": "vendor",
+			"contact_details": "https://fortiguard.fortinet.com/faq/psirt-contact",
+			"issuing_authority": "Fortinet PSIRT",
+			"name": "Fortinet PSIRT",
+			"namespace": "https://fortiguard.fortinet.com/psirt"
+		},
+		"title": "FGFM protocol allows unauthenticated reset of the connection",
+		"tracking": {
+			"current_release_date": "2026-01-14T00:00:00",
+			"id": "FG-IR-24-041",
+			"initial_release_date": "2025-10-14T00:00:00",
+			"revision_history": [
+				{
+					"date": "2025-10-14T00:00:00",
+					"number": "1",
+					"summary": "Initial Publication"
+				}
+			],
+			"status": "final",
+			"version": "0"
+		}
+	},
+	"product_tree": {
+		"branches": [
+			{
+				"branches": [
+					{
+						"branches": [
+							{
+								"category": "product_version_range",
+								"name": "FortiOS/ 7.6 all versions",
+								"product": {
+									"name": "FortiOS",
+									"product_id": "FortiOS/ 7.6 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiOS/>=7.4.0|<=7.4.3",
+								"product": {
+									"name": "FortiOS",
+									"product_id": "FortiOS >=7.4.0|<=7.4.3"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiOS/>=7.2.0|<=7.2.7",
+								"product": {
+									"name": "FortiOS",
+									"product_id": "FortiOS >=7.2.0|<=7.2.7"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiOS/7.0 all versions",
+								"product": {
+									"name": "FortiOS",
+									"product_id": "FortiOS 7.0 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiOS/6.4 all versions",
+								"product": {
+									"name": "FortiOS",
+									"product_id": "FortiOS 6.4 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiOS/6.2 all versions",
+								"product": {
+									"name": "FortiOS",
+									"product_id": "FortiOS 6.2 all versions"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiOS"
+					},
+					{
+						"branches": [
+							{
+								"category": "product_version_range",
+								"name": "FortiPAM/ 1.7 all versions",
+								"product": {
+									"name": "FortiPAM",
+									"product_id": "FortiPAM/ 1.7 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiPAM/ 1.6 all versions",
+								"product": {
+									"name": "FortiPAM",
+									"product_id": "FortiPAM/ 1.6 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiPAM/ 1.5 all versions",
+								"product": {
+									"name": "FortiPAM",
+									"product_id": "FortiPAM/ 1.5 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiPAM/ 1.4 all versions",
+								"product": {
+									"name": "FortiPAM",
+									"product_id": "FortiPAM/ 1.4 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiPAM/ 1.3 all versions",
+								"product": {
+									"name": "FortiPAM",
+									"product_id": "FortiPAM/ 1.3 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiPAM/1.2 all versions",
+								"product": {
+									"name": "FortiPAM",
+									"product_id": "FortiPAM 1.2 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiPAM/1.1 all versions",
+								"product": {
+									"name": "FortiPAM",
+									"product_id": "FortiPAM 1.1 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiPAM/1.0 all versions",
+								"product": {
+									"name": "FortiPAM",
+									"product_id": "FortiPAM 1.0 all versions"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiPAM"
+					},
+					{
+						"branches": [
+							{
+								"category": "product_version_range",
+								"name": "FortiProxy/ 7.6 all versions",
+								"product": {
+									"name": "FortiProxy",
+									"product_id": "FortiProxy/ 7.6 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiProxy/>=7.4.0|<=7.4.3",
+								"product": {
+									"name": "FortiProxy",
+									"product_id": "FortiProxy >=7.4.0|<=7.4.3"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiProxy/>=7.2.0|<=7.2.9",
+								"product": {
+									"name": "FortiProxy",
+									"product_id": "FortiProxy >=7.2.0|<=7.2.9"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiProxy/7.0 all versions",
+								"product": {
+									"name": "FortiProxy",
+									"product_id": "FortiProxy 7.0 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiProxy/2.0 all versions",
+								"product": {
+									"name": "FortiProxy",
+									"product_id": "FortiProxy 2.0 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiProxy/1.2 all versions",
+								"product": {
+									"name": "FortiProxy",
+									"product_id": "FortiProxy 1.2 all versions"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiProxy"
+					},
+					{
+						"branches": [
+							{
+								"category": "product_version_range",
+								"name": "FortiSwitchManager/>=7.2.0|<=7.2.3",
+								"product": {
+									"name": "FortiSwitchManager",
+									"product_id": "FortiSwitchManager >=7.2.0|<=7.2.3"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiSwitchManager/>=7.0.0|<=7.0.3",
+								"product": {
+									"name": "FortiSwitchManager",
+									"product_id": "FortiSwitchManager >=7.0.0|<=7.0.3"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiSwitchManager"
+					}
+				],
+				"category": "vendor",
+				"name": "Fortinet PSIRT"
+			}
+		]
+	},
+	"vulnerabilities": [
+		{
+			"cve": "CVE-2024-26008",
+			"cwe": {
+				"id": "CWE-754",
+				"name": "Improper Check for Unusual or Exceptional Conditions"
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "Improper check or handling of exceptional conditions vulnerability in FortiOS, FortiProxy, FortiPAM & FortiSwitchManager\n\n",
+					"title": "Summary"
+				},
+				{
+					"category": "general",
+					"text": "N/A",
+					"title": "Workarounds"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiOS >=7.4.0|<=7.4.3",
+					"FortiOS >=7.2.0|<=7.2.7",
+					"FortiOS 7.0 all versions",
+					"FortiOS 6.4 all versions",
+					"FortiOS 6.2 all versions"
+				],
+				"known_not_affected": [
+					"FortiOS/ 7.6 all versions",
+					"FortiOS-7.4.4",
+					"FortiOS-7.2.8"
+				]
+			},
+			"references": [
+				{
+					"summary": "An improper check or handling of exceptional conditions vulnerability [CWE-703] in FortiOS, FortiProxy, FortiPAM & FortiSwitchManager fgfm daemon may allow an unauthenticated attacker to repeatedly reset the fgfm connection via crafted SSL encrypted TCP requests.",
+					"url": "https://fortiguard.fortinet.com/psirt/FG-IR-24-041"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiOS 7.6: Not Applicable\nFortiOS 7.4: Upgrade to 7.4.4 or above\nFortiOS 7.2: Upgrade to 7.2.8 or above\nFortiOS 7.0: Migrate to a fixed release\nFortiOS 6.4: Migrate to a fixed release\nFortiOS 6.2: Migrate to a fixed release",
+					"product_ids": [
+						"FortiOS"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 5,
+						"baseSeverity": "MEDIUM",
+						"vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L/E:P/RL:X/RC:C",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiOS"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Denial of service"
+				}
+			],
+			"title": "FortiOS - MEDIUM - FG-IR-24-041"
+		},
+		{
+			"cve": "CVE-2024-26008",
+			"cwe": {
+				"id": "CWE-754",
+				"name": "Improper Check for Unusual or Exceptional Conditions"
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "Improper check or handling of exceptional conditions vulnerability in FortiOS, FortiProxy, FortiPAM & FortiSwitchManager\n\n",
+					"title": "Summary"
+				},
+				{
+					"category": "general",
+					"text": "N/A",
+					"title": "Workarounds"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiPAM 1.2 all versions",
+					"FortiPAM 1.1 all versions",
+					"FortiPAM 1.0 all versions"
+				],
+				"known_not_affected": [
+					"FortiPAM/ 1.7 all versions",
+					"FortiPAM/ 1.6 all versions",
+					"FortiPAM/ 1.5 all versions",
+					"FortiPAM/ 1.4 all versions",
+					"FortiPAM/ 1.3 all versions"
+				]
+			},
+			"references": [
+				{
+					"summary": "An improper check or handling of exceptional conditions vulnerability [CWE-703] in FortiOS, FortiProxy, FortiPAM & FortiSwitchManager fgfm daemon may allow an unauthenticated attacker to repeatedly reset the fgfm connection via crafted SSL encrypted TCP requests.",
+					"url": "https://fortiguard.fortinet.com/psirt/FG-IR-24-041"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiPAM 1.7: Not Applicable\nFortiPAM 1.6: Not Applicable\nFortiPAM 1.5: Not Applicable\nFortiPAM 1.4: Not Applicable\nFortiPAM 1.3: Not Applicable\nFortiPAM 1.2: Migrate to a fixed release\nFortiPAM 1.1: Migrate to a fixed release\nFortiPAM 1.0: Migrate to a fixed release",
+					"product_ids": [
+						"FortiPAM"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 5,
+						"baseSeverity": "MEDIUM",
+						"vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L/E:P/RL:X/RC:C",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiPAM"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Denial of service"
+				}
+			],
+			"title": "FortiPAM - MEDIUM - FG-IR-24-041"
+		},
+		{
+			"cve": "CVE-2024-26008",
+			"cwe": {
+				"id": "CWE-754",
+				"name": "Improper Check for Unusual or Exceptional Conditions"
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "Improper check or handling of exceptional conditions vulnerability in FortiOS, FortiProxy, FortiPAM & FortiSwitchManager\n\n",
+					"title": "Summary"
+				},
+				{
+					"category": "general",
+					"text": "N/A",
+					"title": "Workarounds"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiProxy >=7.4.0|<=7.4.3",
+					"FortiProxy >=7.2.0|<=7.2.9",
+					"FortiProxy 7.0 all versions",
+					"FortiProxy 2.0 all versions",
+					"FortiProxy 1.2 all versions"
+				],
+				"known_not_affected": [
+					"FortiProxy/ 7.6 all versions",
+					"FortiProxy-7.4.4",
+					"FortiProxy-7.2.10"
+				]
+			},
+			"references": [
+				{
+					"summary": "An improper check or handling of exceptional conditions vulnerability [CWE-703] in FortiOS, FortiProxy, FortiPAM & FortiSwitchManager fgfm daemon may allow an unauthenticated attacker to repeatedly reset the fgfm connection via crafted SSL encrypted TCP requests.",
+					"url": "https://fortiguard.fortinet.com/psirt/FG-IR-24-041"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiProxy 7.6: Not Applicable\nFortiProxy 7.4: Upgrade to 7.4.4 or above\nFortiProxy 7.2: Upgrade to 7.2.10 or above\nFortiProxy 7.0: Migrate to a fixed release\nFortiProxy 2.0: Migrate to a fixed release\nFortiProxy 1.2: Migrate to a fixed release",
+					"product_ids": [
+						"FortiProxy"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 5,
+						"baseSeverity": "MEDIUM",
+						"vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L/E:P/RL:X/RC:C",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiProxy"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Denial of service"
+				}
+			],
+			"title": "FortiProxy - MEDIUM - FG-IR-24-041"
+		},
+		{
+			"cve": "CVE-2024-26008",
+			"cwe": {
+				"id": "CWE-754",
+				"name": "Improper Check for Unusual or Exceptional Conditions"
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "Improper check or handling of exceptional conditions vulnerability in FortiOS, FortiProxy, FortiPAM & FortiSwitchManager\n\n",
+					"title": "Summary"
+				},
+				{
+					"category": "general",
+					"text": "N/A",
+					"title": "Workarounds"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiSwitchManager >=7.2.0|<=7.2.3",
+					"FortiSwitchManager >=7.0.0|<=7.0.3"
+				],
+				"known_not_affected": [
+					"FortiSwitchManager-7.2.4",
+					"FortiSwitchManager-7.0.4"
+				]
+			},
+			"references": [
+				{
+					"summary": "An improper check or handling of exceptional conditions vulnerability [CWE-703] in FortiOS, FortiProxy, FortiPAM & FortiSwitchManager fgfm daemon may allow an unauthenticated attacker to repeatedly reset the fgfm connection via crafted SSL encrypted TCP requests.",
+					"url": "https://fortiguard.fortinet.com/psirt/FG-IR-24-041"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiSwitchManager 7.2: Upgrade to 7.2.4 or above\nFortiSwitchManager 7.0: Upgrade to 7.0.4 or above",
+					"product_ids": [
+						"FortiSwitchManager"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 5,
+						"baseSeverity": "MEDIUM",
+						"vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L/E:P/RL:X/RC:C",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiSwitchManager"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Denial of service"
+				}
+			],
+			"title": "FortiSwitchManager - MEDIUM - FG-IR-24-041"
+		}
+	]
+}

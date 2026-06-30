@@ -249,6 +249,44 @@ func TestRangeType_Compare(t *testing.T) {
 		{name: "semver: v1 > v2", t: ccRangeTypes.RangeTypeSEMVER, v1: "2.0.0", v2: "1.0.0", want: 1},
 		{name: "semver: v1 unparseable → CompareError", t: ccRangeTypes.RangeTypeSEMVER, v1: "not-a-semver", v2: "1.0.0", wantCompareErr: true},
 		{name: "semver: v2 unparseable → CompareError", t: ccRangeTypes.RangeTypeSEMVER, v1: "1.0.0", v2: "not-a-semver", wantCompareErr: true},
+		{name: "fortinet: v1 < v2", t: ccRangeTypes.RangeTypeFortinetFortiOS, v1: "7.0.0", v2: "7.0.1", want: -1},
+		{name: "fortinet: equal", t: ccRangeTypes.RangeTypeFortinetFortiOS, v1: "7.2.0", v2: "7.2.0", want: 0},
+		{name: "fortinet: v1 > v2", t: ccRangeTypes.RangeTypeFortinetFortiOS, v1: "7.1.0", v2: "7.0.0", want: 1},
+		{name: "fortinet: v1 unparseable → CompareError", t: ccRangeTypes.RangeTypeFortinetFortiOS, v1: "not-a-version", v2: "7.0.0", wantCompareErr: true},
+		// Train-style tokens (as produced by product.TrainRange) must compare,
+		// both against each other and against fully-qualified semver bounds.
+		{name: "fortinet: train minor < train minor", t: ccRangeTypes.RangeTypeFortinetFortiOS, v1: "7.2", v2: "7.4", want: -1},
+		{name: "fortinet: train major < train major", t: ccRangeTypes.RangeTypeFortinetFortiOS, v1: "7", v2: "8", want: -1},
+		{name: "fortinet: train equal", t: ccRangeTypes.RangeTypeFortinetFortiOS, v1: "7.2", v2: "7.2", want: 0},
+		{name: "fortinet: concrete within train lower bound (7.2.0 >= 7.2)", t: ccRangeTypes.RangeTypeFortinetFortiOS, v1: "7.2.0", v2: "7.2", want: 0},
+		{name: "fortinet: concrete below next train (7.2.5 < 7.3)", t: ccRangeTypes.RangeTypeFortinetFortiOS, v1: "7.2.5", v2: "7.3", want: -1},
+		// Non-numeric versions (FortiSASE) and build suffixes are not semver. The
+		// numeric prefix decides first; an equal prefix is broken by the suffix,
+		// so a lettered build sorts just after its bare train and letters order
+		// sequentially — while staying inside the train range.
+		{name: "fortinet: bare train below its non-numeric build (25.2 < 25.2.a)", t: ccRangeTypes.RangeTypeFortinetFortiSASE, v1: "25.2", v2: "25.2.a", want: -1},
+		{name: "fortinet: non-numeric above its bare train (25.2.a > 25.2)", t: ccRangeTypes.RangeTypeFortinetFortiSASE, v1: "25.2.a", v2: "25.2", want: 1},
+		{name: "fortinet: non-numeric below next train (25.2.a < 25.3)", t: ccRangeTypes.RangeTypeFortinetFortiSASE, v1: "25.2.a", v2: "25.3", want: -1},
+		{name: "fortinet: non-numeric above prev train (25.2.a > 25.1)", t: ccRangeTypes.RangeTypeFortinetFortiSASE, v1: "25.2.a", v2: "25.1", want: 1},
+		{name: "fortinet: sequential letters (25.2.a < 25.2.b)", t: ccRangeTypes.RangeTypeFortinetFortiSASE, v1: "25.2.a", v2: "25.2.b", want: -1},
+		{name: "fortinet: letter patch after letter (25.1.a < 25.1.a.2)", t: ccRangeTypes.RangeTypeFortinetFortiSASE, v1: "25.1.a", v2: "25.1.a.2", want: -1},
+		{name: "fortinet: numeric letter-patch ordering (25.1.a.2 < 25.1.a.10)", t: ccRangeTypes.RangeTypeFortinetFortiSASE, v1: "25.1.a.2", v2: "25.1.a.10", want: -1},
+		{name: "fortinet: nested non-numeric above bare train (25.1.a.2 > 25.1)", t: ccRangeTypes.RangeTypeFortinetFortiSASE, v1: "25.1.a.2", v2: "25.1", want: 1},
+		{name: "fortinet: pure-numeric trailing zero stays equal (7.2.0 == 7.2)", t: ccRangeTypes.RangeTypeFortinetFortiOS, v1: "7.2.0", v2: "7.2", want: 0},
+		// A numeric build vs an alphabetic milestone at the same position is
+		// undefined across Fortinet's two schemes → incomparable (swallowed).
+		{name: "fortinet: numeric build vs non-numeric milestone → CompareError (1.2.1 vs 1.2.a)", t: ccRangeTypes.RangeTypeFortinetFortiSASE, v1: "1.2.1", v2: "1.2.a", wantCompareErr: true},
+		{name: "fortinet: build suffix vs train → CompareError (7.1-b5955 vs 7.1)", t: ccRangeTypes.RangeTypeFortinetFortiOS, v1: "7.1-b5955", v2: "7.1", wantCompareErr: true},
+		{name: "fortinet: non-version vs numeric → CompareError", t: ccRangeTypes.RangeTypeFortinetFortiSASE, v1: "alpha", v2: "25.2", wantCompareErr: true},
+		// Empty components (consecutive/trailing dots) are malformed → incomparable.
+		{name: "fortinet: consecutive dots → CompareError (7..0 vs 7.0.0)", t: ccRangeTypes.RangeTypeFortinetFortiOS, v1: "7..0", v2: "7.0.0", wantCompareErr: true},
+		{name: "fortinet: trailing dot → CompareError (7.2. vs 7.2)", t: ccRangeTypes.RangeTypeFortinetFortiOS, v1: "7.2.", v2: "7.2", wantCompareErr: true},
+		// Signed / overflowing numeric components are not unsigned digits → incomparable.
+		{name: "fortinet: signed component → CompareError (7.-1 vs 7.0)", t: ccRangeTypes.RangeTypeFortinetFortiOS, v1: "7.-1", v2: "7.0", wantCompareErr: true},
+		{name: "fortinet: plus-signed component → CompareError (7.+0 vs 7.0)", t: ccRangeTypes.RangeTypeFortinetFortiOS, v1: "7.+0", v2: "7.0", wantCompareErr: true},
+		// Non-numeric components must be a single milestone letter; multi-char tokens are incomparable.
+		{name: "fortinet: multi-char milestone → CompareError (25.2.alpha vs 25.2)", t: ccRangeTypes.RangeTypeFortinetFortiSASE, v1: "25.2.alpha", v2: "25.2", wantCompareErr: true},
+		{name: "fortinet: letter+digits milestone → CompareError (25.1.a10 vs 25.1)", t: ccRangeTypes.RangeTypeFortinetFortiSASE, v1: "25.1.a10", v2: "25.1", wantCompareErr: true},
 		{name: "version (loose): 4-segment v1 < v2", t: ccRangeTypes.RangeTypeVersion, v1: "9.16.19.0", v2: "9.16.20.0", want: -1},
 		{name: "version (loose): v1 unparseable → CompareError", t: ccRangeTypes.RangeTypeVersion, v1: "x.y.z.w.q", v2: "1.0", wantCompareErr: true},
 		{name: "pan-os: base < hotfix (hashicorp prerelease order would invert this)", t: ccRangeTypes.RangeTypePANOS, v1: "11.2.4", v2: "11.2.4-h1", want: -1},

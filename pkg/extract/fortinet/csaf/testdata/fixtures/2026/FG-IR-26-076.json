@@ -1,0 +1,401 @@
+{
+	"document": {
+		"category": "Fortinet PSIRT Advisories",
+		"csaf_version": "2.0",
+		"publisher": {
+			"category": "vendor",
+			"contact_details": "https://fortiguard.fortinet.com/faq/psirt-contact",
+			"issuing_authority": "Fortinet PSIRT",
+			"name": "Fortinet PSIRT",
+			"namespace": "https://fortiguard.fortinet.com/psirt"
+		},
+		"title": "OpenSSL CVE-2025-15467",
+		"tracking": {
+			"current_release_date": "2026-03-13T00:00:00",
+			"id": "FG-IR-26-076",
+			"initial_release_date": "2026-01-30T00:00:00",
+			"revision_history": [
+				{
+					"date": "2026-01-30T00:00:00",
+					"number": "1",
+					"summary": "Initial Publication"
+				}
+			],
+			"status": "final",
+			"version": "0"
+		}
+	},
+	"product_tree": {
+		"branches": [
+			{
+				"branches": [
+					{
+						"branches": [
+							{
+								"category": "product_version_range",
+								"name": "FortiNAC-F/FortiWeb Manager all versions",
+								"product": {
+									"name": "FortiNAC-F",
+									"product_id": "FortiNAC-F/FortiWeb Manager all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiNAC-F/FortiWeb all versions",
+								"product": {
+									"name": "FortiNAC-F",
+									"product_id": "FortiNAC-F/FortiWeb all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiNAC-F/FortiVoice all versions",
+								"product": {
+									"name": "FortiNAC-F",
+									"product_id": "FortiNAC-F/FortiVoice all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiNAC-F/FortiTester all versions",
+								"product": {
+									"name": "FortiNAC-F",
+									"product_id": "FortiNAC-F/FortiTester all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiNAC-F/FortiSwitch all versions",
+								"product": {
+									"name": "FortiNAC-F",
+									"product_id": "FortiNAC-F/FortiSwitch all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiNAC-F/FortiSandbox all versions",
+								"product": {
+									"name": "FortiNAC-F",
+									"product_id": "FortiNAC-F/FortiSandbox all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiNAC-F/FortiSOAR all versions",
+								"product": {
+									"name": "FortiNAC-F",
+									"product_id": "FortiNAC-F/FortiSOAR all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiNAC-F/FortiSIEM all versions",
+								"product": {
+									"name": "FortiNAC-F",
+									"product_id": "FortiNAC-F/FortiSIEM all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiNAC-F/FortiRecorder all versions",
+								"product": {
+									"name": "FortiNAC-F",
+									"product_id": "FortiNAC-F/FortiRecorder all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiNAC-F/FortiProxy all versions",
+								"product": {
+									"name": "FortiNAC-F",
+									"product_id": "FortiNAC-F/FortiProxy all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiNAC-F/FortiPortal all versions",
+								"product": {
+									"name": "FortiNAC-F",
+									"product_id": "FortiNAC-F/FortiPortal all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiNAC-F/FortiOS all versions",
+								"product": {
+									"name": "FortiNAC-F",
+									"product_id": "FortiNAC-F/FortiOS all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiNAC-F/ all versions",
+								"product": {
+									"name": "FortiNAC-F",
+									"product_id": "FortiNAC-F/ all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiNAC-F/FortiNAC all versions",
+								"product": {
+									"name": "FortiNAC-F",
+									"product_id": "FortiNAC-F/FortiNAC all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiNAC-F/FortiManager all versions",
+								"product": {
+									"name": "FortiNAC-F",
+									"product_id": "FortiNAC-F/FortiManager all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiNAC-F/FortiMail all versions",
+								"product": {
+									"name": "FortiNAC-F",
+									"product_id": "FortiNAC-F/FortiMail all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiNAC-F/FortiExtender all versions",
+								"product": {
+									"name": "FortiNAC-F",
+									"product_id": "FortiNAC-F/FortiExtender all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiNAC-F/FortiDDoS all versions",
+								"product": {
+									"name": "FortiNAC-F",
+									"product_id": "FortiNAC-F/FortiDDoS all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiNAC-F/FortiConverter all versions",
+								"product": {
+									"name": "FortiNAC-F",
+									"product_id": "FortiNAC-F/FortiConverter all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiNAC-F/FortiCloud all versions",
+								"product": {
+									"name": "FortiNAC-F",
+									"product_id": "FortiNAC-F/FortiCloud all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiNAC-F/FortiClient iOS all versions",
+								"product": {
+									"name": "FortiNAC-F",
+									"product_id": "FortiNAC-F/FortiClient iOS all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiNAC-F/FortiClient Windows all versions",
+								"product": {
+									"name": "FortiNAC-F",
+									"product_id": "FortiNAC-F/FortiClient Windows all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiNAC-F/FortiClient MacOS all versions",
+								"product": {
+									"name": "FortiNAC-F",
+									"product_id": "FortiNAC-F/FortiClient MacOS all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiNAC-F/FortiClient Linux all versions",
+								"product": {
+									"name": "FortiNAC-F",
+									"product_id": "FortiNAC-F/FortiClient Linux all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiNAC-F/FortiClient EMS all versions",
+								"product": {
+									"name": "FortiNAC-F",
+									"product_id": "FortiNAC-F/FortiClient EMS all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiNAC-F/FortiClient Android all versions",
+								"product": {
+									"name": "FortiNAC-F",
+									"product_id": "FortiNAC-F/FortiClient Android all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiNAC-F/FortiAuthenticator all versions",
+								"product": {
+									"name": "FortiNAC-F",
+									"product_id": "FortiNAC-F/FortiAuthenticator all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiNAC-F/FortiAnalyzer all versions",
+								"product": {
+									"name": "FortiNAC-F",
+									"product_id": "FortiNAC-F/FortiAnalyzer all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiNAC-F/FortiAP-W2 all versions",
+								"product": {
+									"name": "FortiNAC-F",
+									"product_id": "FortiNAC-F/FortiAP-W2 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiNAC-F/FortiAP-U all versions",
+								"product": {
+									"name": "FortiNAC-F",
+									"product_id": "FortiNAC-F/FortiAP-U all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiNAC-F/FortiAP all versions",
+								"product": {
+									"name": "FortiNAC-F",
+									"product_id": "FortiNAC-F/FortiAP all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiNAC-F/FortiADC Manager all versions",
+								"product": {
+									"name": "FortiNAC-F",
+									"product_id": "FortiNAC-F/FortiADC Manager all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiNAC-F/FortiADC all versions",
+								"product": {
+									"name": "FortiNAC-F",
+									"product_id": "FortiNAC-F/FortiADC all versions"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiNAC-F"
+					}
+				],
+				"category": "vendor",
+				"name": "Fortinet PSIRT"
+			}
+		]
+	},
+	"vulnerabilities": [
+		{
+			"cve": "CVE-2025-15467",
+			"cwe": {
+				"id": "CWE-1395",
+				"name": "The product has a dependency on a third-party component that contains one or more known vulnerabilities. + "
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "OpenSSL CVE-2025-15467 informative advisory.\n\n",
+					"title": "Summary"
+				},
+				{
+					"category": "general",
+					"text": "N/A",
+					"title": "Workarounds"
+				}
+			],
+			"product_status": {
+				"known_not_affected": [
+					"FortiNAC-F/FortiWeb Manager all versions",
+					"FortiNAC-F/FortiWeb all versions",
+					"FortiNAC-F/FortiVoice all versions",
+					"FortiNAC-F/FortiTester all versions",
+					"FortiNAC-F/FortiSwitch all versions",
+					"FortiNAC-F/FortiSandbox all versions",
+					"FortiNAC-F/FortiSOAR all versions",
+					"FortiNAC-F/FortiSIEM all versions",
+					"FortiNAC-F/FortiRecorder all versions",
+					"FortiNAC-F/FortiProxy all versions",
+					"FortiNAC-F/FortiPortal all versions",
+					"FortiNAC-F/FortiOS all versions",
+					"FortiNAC-F/ all versions",
+					"FortiNAC-F/FortiNAC all versions",
+					"FortiNAC-F/FortiManager all versions",
+					"FortiNAC-F/FortiMail all versions",
+					"FortiNAC-F/FortiExtender all versions",
+					"FortiNAC-F/FortiDDoS all versions",
+					"FortiNAC-F/FortiConverter all versions",
+					"FortiNAC-F/FortiCloud all versions",
+					"FortiNAC-F/FortiClient iOS all versions",
+					"FortiNAC-F/FortiClient Windows all versions",
+					"FortiNAC-F/FortiClient MacOS all versions",
+					"FortiNAC-F/FortiClient Linux all versions",
+					"FortiNAC-F/FortiClient EMS all versions",
+					"FortiNAC-F/FortiClient Android all versions",
+					"FortiNAC-F/FortiAuthenticator all versions",
+					"FortiNAC-F/FortiAnalyzer all versions",
+					"FortiNAC-F/FortiAP-W2 all versions",
+					"FortiNAC-F/FortiAP-U all versions",
+					"FortiNAC-F/FortiAP all versions",
+					"FortiNAC-F/FortiADC Manager all versions",
+					"FortiNAC-F/FortiADC all versions"
+				]
+			},
+			"references": [
+				{
+					"summary": "**CVE-2025-15467**\r\nParsing CMS AuthEnvelopedData message with maliciously crafted AEAD parameters can trigger a stack buffer overflow. \r\nA stack buffer overflow may lead to a crash, causing Denial of Service, or potentially remote code execution. When parsing CMS AuthEnvelopedData structures that use AEAD ciphers such as AES-GCM, the IV (Initialization Vector) encoded in the ASN.1 parameters is copied into a fixed-size stack buffer without verifying that its length fits the destination. An attacker can supply a crafted CMS message with an oversized IV, causing a stack-based out-of-bounds write before any authentication or tag verification occurs. Applications and services that parse untrusted CMS or PKCS#7 content using AEAD ciphers (e.g., S/MIME AuthEnvelopedData with AES-GCM) are vulnerable. Because the overflow occurs prior to authentication, no valid key material is required to trigger it. While exploitability to remote code execution depends on platform and toolchain mitigations, the stack-based write primitive represents a severe risk.\r\n\r\nThe FIPS modules in 3.6, 3.5, 3.4, 3.3 and 3.0 are not affected by this issue, as the CMS implementation is outside the OpenSSL FIPS module boundary.\r\nOpenSSL 3.6, 3.5, 3.4, 3.3 and 3.0 are vulnerable to this issue.\r\nOpenSSL 1.1.1 and 1.0.2 are not affected by this issue.",
+					"url": "https://www.openwall.com/lists/oss-security/2026/01/27/10\r\nhttps://nvd.nist.gov/vuln/detail/CVE-2025-15467"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiWeb Manager: Not Affected\nFortiWeb: Not Affected\nFortiVoice: Not Affected\nFortiTester: Not Affected\nFortiSwitch: Not Affected\nFortiSandbox: Not Affected\nFortiSOAR: Not Affected\nFortiSIEM: Not Affected\nFortiRecorder: Not Affected\nFortiProxy: Not Affected\nFortiPortal: Not Affected\nFortiOS: Not Affected\nFortiNAC-F: Not Affected\nFortiNAC: Not Affected\nFortiManager: Not Affected\nFortiMail: Not Affected\nFortiExtender: Not Affected\nFortiDDoS: Not Affected\nFortiConverter: Not Affected\nFortiCloud: Not Affected\nFortiClient iOS: Not Affected\nFortiClient Windows: Not Affected\nFortiClient MacOS: Not Affected\nFortiClient Linux: Not Affected\nFortiClient EMS: Not Affected\nFortiClient Android: Not Affected\nFortiAuthenticator: Not Affected\nFortiAnalyzer: Not Affected\nFortiAP-W2: Not Affected\nFortiAP-U: Not Affected\nFortiAP: Not Affected\nFortiADC Manager: Not Affected\nFortiADC: Not Affected",
+					"product_ids": [
+						"FortiNAC-F"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 9.8,
+						"baseSeverity": "CRITICAL",
+						"vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H/E:X/RL:X/RC:X",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiNAC-F"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Execute unauthorized code or commands"
+				}
+			],
+			"title": "FortiNAC-F - CRITICAL - FG-IR-26-076"
+		}
+	]
+}

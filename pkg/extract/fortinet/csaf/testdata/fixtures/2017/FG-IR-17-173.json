@@ -1,0 +1,655 @@
+{
+	"document": {
+		"acknowledgments": [
+			{
+				"summary": " "
+			}
+		],
+		"category": "Fortinet PSIRT Advisories",
+		"csaf_version": "2.0",
+		"publisher": {
+			"category": "vendor",
+			"contact_details": "https://fortiguard.fortinet.com/faq/psirt-contact",
+			"issuing_authority": "Fortinet PSIRT",
+			"name": "Fortinet PSIRT",
+			"namespace": "https://fortiguard.fortinet.com/psirt"
+		},
+		"title": "CVE-2016-2183 - 3DES Vulnerability - SWEET32",
+		"tracking": {
+			"current_release_date": "2025-11-19T00:00:00",
+			"id": "FG-IR-17-173",
+			"initial_release_date": "2019-02-07T00:00:00",
+			"revision_history": [
+				{
+					"date": "2019-02-07T00:00:00",
+					"number": "1",
+					"summary": "Initial Publication"
+				}
+			],
+			"status": "final",
+			"version": "0"
+		}
+	},
+	"product_tree": {
+		"branches": [
+			{
+				"branches": [
+					{
+						"branches": [
+							{
+								"category": "product_version_range",
+								"name": "FortiAnalyzer/ 6.2 all versions",
+								"product": {
+									"name": "FortiAnalyzer",
+									"product_id": "FortiAnalyzer/ 6.2 all versions"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "FortiAnalyzer/6.0.2",
+								"product": {
+									"name": "FortiAnalyzer",
+									"product_id": "FortiAnalyzer 6.0.2"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiAnalyzer/ 5.6 all versions",
+								"product": {
+									"name": "FortiAnalyzer",
+									"product_id": "FortiAnalyzer/ 5.6 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiAnalyzer/>=5.4.6|<=5.4.7",
+								"product": {
+									"name": "FortiAnalyzer",
+									"product_id": "FortiAnalyzer >=5.4.6|<=5.4.7"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiAnalyzer/>=5.4.0|<=5.4.1",
+								"product": {
+									"name": "FortiAnalyzer",
+									"product_id": "FortiAnalyzer >=5.4.0|<=5.4.1"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiAnalyzer/>=5.2.0|<=5.2.9",
+								"product": {
+									"name": "FortiAnalyzer",
+									"product_id": "FortiAnalyzer >=5.2.0|<=5.2.9"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiAnalyzer"
+					},
+					{
+						"branches": [
+							{
+								"category": "product_version",
+								"name": "FortiCache/4.2.8",
+								"product": {
+									"name": "FortiCache",
+									"product_id": "FortiCache 4.2.8"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "FortiCache/4.1.1",
+								"product": {
+									"name": "FortiCache",
+									"product_id": "FortiCache 4.1.1"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiCache/4.0 all versions",
+								"product": {
+									"name": "FortiCache",
+									"product_id": "FortiCache 4.0 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiCache/3.1 all versions",
+								"product": {
+									"name": "FortiCache",
+									"product_id": "FortiCache 3.1 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiCache/3.0 all versions",
+								"product": {
+									"name": "FortiCache",
+									"product_id": "FortiCache 3.0 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiCache/2.3 all versions",
+								"product": {
+									"name": "FortiCache",
+									"product_id": "FortiCache 2.3 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiCache/2.2 all versions",
+								"product": {
+									"name": "FortiCache",
+									"product_id": "FortiCache 2.2 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiCache/2.1 all versions",
+								"product": {
+									"name": "FortiCache",
+									"product_id": "FortiCache 2.1 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiCache/2.0 all versions",
+								"product": {
+									"name": "FortiCache",
+									"product_id": "FortiCache 2.0 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiCache/1.0 all versions",
+								"product": {
+									"name": "FortiCache",
+									"product_id": "FortiCache 1.0 all versions"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "FortiCache/0.4.10",
+								"product": {
+									"name": "FortiCache",
+									"product_id": "FortiCache 0.4.10"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiCache"
+					},
+					{
+						"branches": [
+							{
+								"category": "product_version",
+								"name": "FortiClientEMS/7.2.0",
+								"product": {
+									"name": "FortiClientEMS",
+									"product_id": "FortiClientEMS 7.2.0"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiClientEMS/>=7.0.6|<=7.0.8",
+								"product": {
+									"name": "FortiClientEMS",
+									"product_id": "FortiClientEMS >=7.0.6|<=7.0.8"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiClientEMS/>=7.0.0|<=7.0.4",
+								"product": {
+									"name": "FortiClientEMS",
+									"product_id": "FortiClientEMS >=7.0.0|<=7.0.4"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "FortiClientEMS/1.2.1",
+								"product": {
+									"name": "FortiClientEMS",
+									"product_id": "FortiClientEMS 1.2.1"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiClientEMS/>=1.0.0|<=1.0.2",
+								"product": {
+									"name": "FortiClientEMS",
+									"product_id": "FortiClientEMS >=1.0.0|<=1.0.2"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiClientEMS"
+					},
+					{
+						"branches": [
+							{
+								"category": "product_version_range",
+								"name": "FortiManager/ 6.2 all versions",
+								"product": {
+									"name": "FortiManager",
+									"product_id": "FortiManager/ 6.2 all versions"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "FortiManager/6.0.2",
+								"product": {
+									"name": "FortiManager",
+									"product_id": "FortiManager 6.0.2"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiManager/ 5.6 all versions",
+								"product": {
+									"name": "FortiManager",
+									"product_id": "FortiManager/ 5.6 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiManager/>=5.4.6|<=5.4.7",
+								"product": {
+									"name": "FortiManager",
+									"product_id": "FortiManager >=5.4.6|<=5.4.7"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiManager/>=5.4.0|<=5.4.1",
+								"product": {
+									"name": "FortiManager",
+									"product_id": "FortiManager >=5.4.0|<=5.4.1"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiManager/>=5.2.0|<=5.2.9",
+								"product": {
+									"name": "FortiManager",
+									"product_id": "FortiManager >=5.2.0|<=5.2.9"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiManager"
+					},
+					{
+						"branches": [
+							{
+								"category": "product_version_range",
+								"name": "FortiOS/ 5.6 all versions",
+								"product": {
+									"name": "FortiOS",
+									"product_id": "FortiOS/ 5.6 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiOS/>=5.4.0|<=5.4.1",
+								"product": {
+									"name": "FortiOS",
+									"product_id": "FortiOS >=5.4.0|<=5.4.1"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "FortiOS/5.2.12",
+								"product": {
+									"name": "FortiOS",
+									"product_id": "FortiOS 5.2.12"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "FortiOS/5.2.9",
+								"product": {
+									"name": "FortiOS",
+									"product_id": "FortiOS 5.2.9"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "FortiOS/5.0.14",
+								"product": {
+									"name": "FortiOS",
+									"product_id": "FortiOS 5.0.14"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiOS"
+					},
+					{
+						"branches": [
+							{
+								"category": "product_version",
+								"name": "FortiPortal/5.0.0",
+								"product": {
+									"name": "FortiPortal",
+									"product_id": "FortiPortal 5.0.0"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiPortal"
+					},
+					{
+						"branches": [
+							{
+								"category": "product_version_range",
+								"name": "FortiSwitch/ 6.2 all versions",
+								"product": {
+									"name": "FortiSwitch",
+									"product_id": "FortiSwitch/ 6.2 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiSwitch/>=6.0.0|<=6.0.1",
+								"product": {
+									"name": "FortiSwitch",
+									"product_id": "FortiSwitch >=6.0.0|<=6.0.1"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "FortiSwitch/3.6.7",
+								"product": {
+									"name": "FortiSwitch",
+									"product_id": "FortiSwitch 3.6.7"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiSwitch"
+					}
+				],
+				"category": "vendor",
+				"name": "Fortinet PSIRT"
+			}
+		]
+	},
+	"vulnerabilities": [
+		{
+			"cve": "CVE-2016-2183",
+			"cwe": {
+				"id": "CWE-1395",
+				"name": "The product has a dependency on a third-party component that contains one or more known vulnerabilities. + "
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "Sweet32 Birthday attack in TLS\n\n",
+					"title": "Summary"
+				},
+				{
+					"category": "general",
+					"text": "N/A",
+					"title": "Workarounds"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiCache 4.2.8",
+					"FortiCache 4.1.1",
+					"FortiCache 4.0 all versions",
+					"FortiCache 3.1 all versions",
+					"FortiCache 3.0 all versions",
+					"FortiCache 2.3 all versions",
+					"FortiCache 2.2 all versions",
+					"FortiCache 2.1 all versions",
+					"FortiCache 2.0 all versions",
+					"FortiCache 1.0 all versions",
+					"FortiCache 0.4.10"
+				],
+				"known_not_affected": [
+					"FortiCache-4.2.9",
+					"FortiCache-4.1.2"
+				]
+			},
+			"references": [
+				{
+					"summary": "The DES and Triple DES ciphers, as used in the TLS, SSH, and IPSec protocols and other protocols and products, have a birthday bound of approximately four billion blocks, which makes it easier for remote attackers to obtain cleartext data via a birthday attack against a long-duration encrypted session, as demonstrated by an HTTPS session using Triple DES in CBC mode, aka a &quot;Sweet32&quot; attack.\n\n\n\nhttps://nvd.nist.gov/vuln/detail/CVE-2016-2183\n\nhttps://nvd.nist.gov/vuln/detail/CVE-2016-6329\n\n",
+					"url": "https://sweet32.info/"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiCache 4.2: Upgrade to 4.2.9 or above\nFortiCache 4.1: Upgrade to 4.1.2 or above\nFortiCache 4.0: Migrate to a fixed release\nFortiCache 3.1: Migrate to a fixed release\nFortiCache 3.0: Migrate to a fixed release\nFortiCache 2.3: Migrate to a fixed release\nFortiCache 2.2: Migrate to a fixed release\nFortiCache 2.1: Migrate to a fixed release\nFortiCache 2.0: Migrate to a fixed release\nFortiCache 1.0: Migrate to a fixed release\nFortiCache 0.4: Migrate to a fixed release",
+					"product_ids": [
+						"FortiCache"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 5.3,
+						"baseSeverity": "MEDIUM",
+						"vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N/E:U/RL:X/RC:X",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiCache"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Information disclosure"
+				}
+			],
+			"title": "FortiCache - MEDIUM - FG-IR-17-173"
+		},
+		{
+			"cve": "CVE-2016-2183",
+			"cwe": {
+				"id": "CWE-1395",
+				"name": "The product has a dependency on a third-party component that contains one or more known vulnerabilities. + "
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "Sweet32 Birthday attack in TLS\n\n",
+					"title": "Summary"
+				},
+				{
+					"category": "general",
+					"text": "N/A",
+					"title": "Workarounds"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiClientEMS 7.2.0",
+					"FortiClientEMS >=7.0.6|<=7.0.8",
+					"FortiClientEMS >=7.0.0|<=7.0.4",
+					"FortiClientEMS 1.2.1",
+					"FortiClientEMS >=1.0.0|<=1.0.2"
+				],
+				"known_not_affected": [
+					"FortiClientEMS-7.2.1",
+					"FortiClientEMS-7.0.9",
+					"FortiClientEMS-7.0.9"
+				]
+			},
+			"references": [
+				{
+					"summary": "The DES and Triple DES ciphers, as used in the TLS, SSH, and IPSec protocols and other protocols and products, have a birthday bound of approximately four billion blocks, which makes it easier for remote attackers to obtain cleartext data via a birthday attack against a long-duration encrypted session, as demonstrated by an HTTPS session using Triple DES in CBC mode, aka a &quot;Sweet32&quot; attack.\n\n\n\nhttps://nvd.nist.gov/vuln/detail/CVE-2016-2183\n\nhttps://nvd.nist.gov/vuln/detail/CVE-2016-6329\n\n",
+					"url": "https://sweet32.info/"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiClientEMS 7.2: Upgrade to 7.2.1 or above\nFortiClientEMS 7.0: Upgrade to 7.0.9 or above\nFortiClientEMS 7.0: Upgrade to 7.0.9 or above\nFortiClientEMS 1.2: Migrate to a fixed release\nFortiClientEMS 1.0: Migrate to a fixed release",
+					"product_ids": [
+						"FortiClientEMS"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 5.3,
+						"baseSeverity": "MEDIUM",
+						"vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N/E:U/RL:X/RC:X",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiClientEMS"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Information disclosure"
+				}
+			],
+			"title": "FortiClientEMS - MEDIUM - FG-IR-17-173"
+		},
+		{
+			"cve": "CVE-2016-2183",
+			"cwe": {
+				"id": "CWE-1395",
+				"name": "The product has a dependency on a third-party component that contains one or more known vulnerabilities. + "
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "Sweet32 Birthday attack in TLS\n\n",
+					"title": "Summary"
+				},
+				{
+					"category": "general",
+					"text": "N/A",
+					"title": "Workarounds"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiOS >=5.4.0|<=5.4.1",
+					"FortiOS 5.2.12",
+					"FortiOS 5.2.9",
+					"FortiOS 5.0.14"
+				],
+				"known_not_affected": [
+					"FortiOS/ 5.6 all versions",
+					"FortiOS-5.4.2",
+					"FortiOS-5.2.10",
+					"FortiOS-5.2.10",
+					"FortiOS-5.0.15"
+				]
+			},
+			"references": [
+				{
+					"summary": "The DES and Triple DES ciphers, as used in the TLS, SSH, and IPSec protocols and other protocols and products, have a birthday bound of approximately four billion blocks, which makes it easier for remote attackers to obtain cleartext data via a birthday attack against a long-duration encrypted session, as demonstrated by an HTTPS session using Triple DES in CBC mode, aka a &quot;Sweet32&quot; attack.\n\n\n\nhttps://nvd.nist.gov/vuln/detail/CVE-2016-2183\n\nhttps://nvd.nist.gov/vuln/detail/CVE-2016-6329\n\n",
+					"url": "https://sweet32.info/"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiOS 5.6: Not Applicable\nFortiOS 5.4: Upgrade to 5.4.2 or above\nFortiOS 5.2: Upgrade to 5.2.10 or above\nFortiOS 5.2: Upgrade to 5.2.10 or above\nFortiOS 5.0: Upgrade to 5.0.15 or above",
+					"product_ids": [
+						"FortiOS"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 5.3,
+						"baseSeverity": "MEDIUM",
+						"vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N/E:U/RL:X/RC:X",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiOS"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Information disclosure"
+				}
+			],
+			"title": "FortiOS - MEDIUM - FG-IR-17-173"
+		},
+		{
+			"cve": "CVE-2016-2183",
+			"cwe": {
+				"id": "CWE-1395",
+				"name": "The product has a dependency on a third-party component that contains one or more known vulnerabilities. + "
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "Sweet32 Birthday attack in TLS\n\n",
+					"title": "Summary"
+				},
+				{
+					"category": "general",
+					"text": "N/A",
+					"title": "Workarounds"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiPortal 5.0.0"
+				],
+				"known_not_affected": [
+					"FortiPortal-5.0.1"
+				]
+			},
+			"references": [
+				{
+					"summary": "The DES and Triple DES ciphers, as used in the TLS, SSH, and IPSec protocols and other protocols and products, have a birthday bound of approximately four billion blocks, which makes it easier for remote attackers to obtain cleartext data via a birthday attack against a long-duration encrypted session, as demonstrated by an HTTPS session using Triple DES in CBC mode, aka a &quot;Sweet32&quot; attack.\n\n\n\nhttps://nvd.nist.gov/vuln/detail/CVE-2016-2183\n\nhttps://nvd.nist.gov/vuln/detail/CVE-2016-6329\n\n",
+					"url": "https://sweet32.info/"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiPortal 5.0: Upgrade to 5.0.1 or above",
+					"product_ids": [
+						"FortiPortal"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 5.3,
+						"baseSeverity": "MEDIUM",
+						"vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N/E:U/RL:X/RC:X",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiPortal"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Information disclosure"
+				}
+			],
+			"title": "FortiPortal - MEDIUM - FG-IR-17-173"
+		}
+	]
+}

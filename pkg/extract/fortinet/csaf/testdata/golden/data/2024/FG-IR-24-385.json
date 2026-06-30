@@ -1,0 +1,198 @@
+{
+	"id": "FG-IR-24-385",
+	"advisories": [
+		{
+			"content": {
+				"id": "FG-IR-24-385",
+				"title": "Privilege escalation in automation-stitch",
+				"references": [
+					{
+						"source": "fortiguard.fortinet.com",
+						"url": "https://fortiguard.fortinet.com/psirt/FG-IR-24-385"
+					}
+				],
+				"published": "2025-06-10T00:00:00Z",
+				"modified": "2026-01-14T00:00:00Z"
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe",
+					"tag": "CVE-2025-22862"
+				}
+			]
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-2025-22862",
+				"title": "Privilege escalation in automation-stitch",
+				"description": "Privilege escalation in automation-stitch",
+				"severity": [
+					{
+						"type": "vendor",
+						"source": "fortiguard.fortinet.com",
+						"vendor": "Escalation of privilege"
+					},
+					{
+						"type": "cvss_v31",
+						"source": "fortiguard.fortinet.com",
+						"cvss_v31": {
+							"vector": "CVSS:3.1/AV:L/AC:L/PR:H/UI:N/S:U/C:H/I:H/A:H/E:P/RL:X/RC:C",
+							"base_score": 6.7,
+							"base_severity": "MEDIUM",
+							"temporal_score": 6.3,
+							"temporal_severity": "MEDIUM",
+							"environmental_score": 6.3,
+							"environmental_severity": "MEDIUM"
+						}
+					}
+				],
+				"cwe": [
+					{
+						"source": "fortiguard.fortinet.com",
+						"cwe": [
+							"CWE-288"
+						]
+					}
+				],
+				"references": [
+					{
+						"source": "fortiguard.fortinet.com",
+						"url": "https://fortiguard.fortinet.com/psirt/FG-IR-24-385"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe",
+					"tag": "CVE-2025-22862"
+				}
+			]
+		}
+	],
+	"detections": [
+		{
+			"ecosystem": "cpe",
+			"conditions": [
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet-fortios",
+										"ge": "7.0.6"
+									}
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet-fortios",
+										"ge": "7.2.0",
+										"le": "7.2.11"
+									}
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet-fortios",
+										"ge": "7.4.0",
+										"le": "7.4.7"
+									}
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:o:fortinet:fortiproxy:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet-fortiproxy",
+										"ge": "7.0.5"
+									}
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:o:fortinet:fortiproxy:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet-fortiproxy",
+										"ge": "7.2",
+										"lt": "7.3"
+									}
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:o:fortinet:fortiproxy:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet-fortiproxy",
+										"ge": "7.4.0",
+										"le": "7.4.8"
+									}
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:o:fortinet:fortiproxy:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet-fortiproxy",
+										"ge": "7.6.0",
+										"le": "7.6.2"
+									}
+								}
+							}
+						]
+					},
+					"tag": "CVE-2025-22862"
+				}
+			]
+		}
+	],
+	"data_source": {
+		"id": "fortinet-csaf",
+		"raws": [
+			"fixtures/2024/FG-IR-24-385.json"
+		]
+	}
+}
