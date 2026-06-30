@@ -56,64 +56,6 @@
 						]
 					}
 				],
-				"mitigations": [
-					{
-						"source": "fortiguard.fortinet.com",
-						"description": "FortiADC 7.8: Not Applicable\nFortiADC 7.6: Upgrade to 7.6.2 or above\nFortiADC 7.4: Not Applicable\nFortiADC 7.2: Not Applicable\nFortiADC 7.1: Not Applicable\nFortiADC 7.0: Not Applicable\nFortiADC 6.2: Not Applicable\nFortiADC 6.1: Not Applicable"
-					},
-					{
-						"source": "fortiguard.fortinet.com",
-						"description": "FortiADCManager 7.6: Upgrade to 7.6.1 or above\nFortiADCManager 7.4: Not Applicable\nFortiADCManager 7.2: Not Applicable\nFortiADCManager 7.1: Not Applicable\nFortiADCManager 7.0: Not Applicable\nFortiADCManager 6.2: Not Applicable\nFortiADCManager 6.1: Not Applicable\nFortiADCManager 6.0: Not Applicable"
-					},
-					{
-						"source": "fortiguard.fortinet.com",
-						"description": "FortiAIOps 3.2: Not Applicable\nFortiAIOps 3.0: Not Applicable\nFortiAIOps 2.1: Migrate to a fixed release\nFortiAIOps 2.0: Migrate to a fixed release\nFortiAIOps 1.1: Not Applicable\nFortiAIOps 1.0: Not applicable"
-					},
-					{
-						"source": "fortiguard.fortinet.com",
-						"description": "FortiAnalyzer 7.6: Upgrade to 7.6.3 or above\nFortiAnalyzer 7.4: Upgrade to 7.4.7 or above\nFortiAnalyzer 7.2: Upgrade to 7.2.11 or above\nFortiAnalyzer 7.0: Migrate to a fixed release\nFortiAnalyzer 6.4: Migrate to a fixed release"
-					},
-					{
-						"source": "fortiguard.fortinet.com",
-						"description": "FortiAnalyzer-BigData 7.6: Not Applicable\nFortiAnalyzer-BigData 7.4: Upgrade to 7.4.4 or above\nFortiAnalyzer-BigData 7.2: Upgrade to 7.2.10 or above"
-					},
-					{
-						"source": "fortiguard.fortinet.com",
-						"description": "FortiDDoS-F 7.0: Upgrade to 7.0.5 or above\nFortiDDoS-F 6.6: Not Applicable\nFortiDDoS-F 6.5: Not Applicable\nFortiDDoS-F 6.4: Not Applicable\nFortiDDoS-F 6.3: Not Applicable\nFortiDDoS-F 6.2: Not Applicable\nFortiDDoS-F 6.1: Not Applicable"
-					},
-					{
-						"source": "fortiguard.fortinet.com",
-						"description": "FortiExtender 7.6: Upgrade to 7.6.3 or above\nFortiExtender 7.4: Upgrade to 7.4.8 or above\nFortiExtender 7.2: Migrate to a fixed release\nFortiExtender 7.0: Migrate to a fixed release"
-					},
-					{
-						"source": "fortiguard.fortinet.com",
-						"description": "FortiMail 7.6: Upgrade to 7.6.4 or above\nFortiMail 7.4: Upgrade to 7.4.6 or above\nFortiMail 7.2: Upgrade to 7.2.9 or above\nFortiMail 7.0: Migrate to a fixed release"
-					},
-					{
-						"source": "fortiguard.fortinet.com",
-						"description": "FortiManager 7.6: Upgrade to 7.6.3 or above\nFortiManager 7.4: Upgrade to 7.4.7 or above\nFortiManager 7.2: Upgrade to 7.2.11 or above\nFortiManager 7.0: Migrate to a fixed release\nFortiManager 6.4: Migrate to a fixed release"
-					},
-					{
-						"source": "fortiguard.fortinet.com",
-						"description": "FortiNDR 7.6: Upgrade to 7.6.2 or above\nFortiNDR 7.4: Upgrade to 7.4.9 or above\nFortiNDR 7.2: Migrate to a fixed release\nFortiNDR 7.1: Not Applicable\nFortiNDR 7.0: Migrate to a fixed release\nFortiNDR 1.5: Not Applicable\nFortiNDR 1.4: Not Applicable"
-					},
-					{
-						"source": "fortiguard.fortinet.com",
-						"description": "FortiSandbox 5.0: Upgrade to 5.0.2 or above\nFortiSandbox 4.4: Upgrade to 4.4.8 or above\nFortiSandbox 4.2: Migrate to a fixed release\nFortiSandbox 4.0: Not Applicable"
-					},
-					{
-						"source": "fortiguard.fortinet.com",
-						"description": "FortiSwitch 7.6: Upgrade to 7.6.5 or above\nFortiSwitch 7.4: Upgrade to 7.4.8 or above\nFortiSwitch 7.2: Migrate to a fixed release\nFortiSwitch 7.0: Not Applicable"
-					},
-					{
-						"source": "fortiguard.fortinet.com",
-						"description": "FortiVoice 7.2: Upgrade to 7.2.2 or above\nFortiVoice 7.0: Upgrade to 7.0.8 or above\nFortiVoice 6.4: Upgrade to 6.4.12 or above"
-					},
-					{
-						"source": "fortiguard.fortinet.com",
-						"description": "FortiWeb 8.0: Not Applicable\nFortiWeb 7.6: Upgrade to 7.6.5 or above\nFortiWeb 7.4: Upgrade to 7.4.9 or above\nFortiWeb 7.2: Migrate to a fixed release\nFortiWeb 7.0: Not Applicable"
-					}
-				],
 				"references": [
 					{
 						"source": "fortiguard.fortinet.com",

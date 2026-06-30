@@ -154,8 +154,8 @@ type productRef struct {
 // keyAcc accumulates one vulnerability key — a CVE, or the advisory ID when a
 // CSAF vulnerability object carries no CVE (a few older Fortinet advisories are
 // published without one). description/cwe/references/workarounds are CVE-level
-// (shared across the key); severity, criterions and mitigations live per
-// severity group (see sevGroup). String slices are deduped on emit.
+// (shared across the key); severity and criterions live per severity group
+// (see sevGroup). String slices are deduped on emit.
 type keyAcc struct {
 	description string
 	cwe         []string
@@ -177,10 +177,9 @@ type sevKey struct {
 }
 
 type sevGroup struct {
-	severities  []severityTypes.Severity
-	criterions  []criterionTypes.Criterion
-	mitigations []string
-	pids        []string // known_affected product_ids, for a stable split tag suffix
+	severities []severityTypes.Severity
+	criterions []criterionTypes.Criterion
+	pids       []string // known_affected product_ids, for a stable split tag suffix
 }
 
 func extract(fetched csafTypes.CSAF, raws []string) (dataTypes.Data, error) {
@@ -192,9 +191,8 @@ func extract(fetched csafTypes.CSAF, raws []string) (dataTypes.Data, error) {
 	refMap := buildProductRefs(fetched.ProductTree.Branches)
 
 	// Merge the per-family CSAF vulnerability objects by key (CVE, or advisory
-	// ID when a object has no CVE), distributing each object's score / impact /
-	// vendor_fix remediation to its own family and grouping families by severity
-	// profile.
+	// ID when a object has no CVE), distributing each object's score / impact to
+	// its own family and grouping families by severity profile.
 	accs := make(map[string]*keyAcc)
 	for _, v := range fetched.Vulnerabilities {
 		key := v.CVE
@@ -242,10 +240,13 @@ func extract(fetched csafTypes.CSAF, raws []string) (dataTypes.Data, error) {
 		for _, rem := range v.Remediations {
 			switch rem.Category {
 			case "vendor_fix":
-				// Per-train fix guidance ("FortiOS 7.4: Upgrade to 7.4.8 ...").
-				if rem.Details != "" {
-					g.mitigations = append(g.mitigations, rem.Details)
-				}
+				// The fix — the upgrade target, e.g. "FortiOS 7.4: Upgrade to
+				// 7.4.8" — is already encoded structurally in the detection version
+				// range, and the CVRF extractor likewise carries no fix text. Don't
+				// duplicate it as a mitigation: it is the fix, not a mitigation or
+				// workaround, and the schema has no fix bucket. The switch is kept
+				// so a future non-vendor_fix category (a real mitigation/workaround)
+				// surfaces in default and gets routed to the right field then.
 			default:
 				return dataTypes.Data{}, errors.Errorf("unexpected remediation category %q (advisory %s, %s)", rem.Category, id, key)
 			}
@@ -333,13 +334,6 @@ func extract(fetched csafTypes.CSAF, raws []string) (dataTypes.Data, error) {
 						var rs []remediationTypes.Remediation
 						for _, w := range slices.Compact(slices.Sorted(slices.Values(a.workarounds))) {
 							rs = append(rs, remediationTypes.Remediation{Source: "fortiguard.fortinet.com", Description: w})
-						}
-						return rs
-					}(),
-					Mitigations: func() []remediationTypes.Remediation {
-						var rs []remediationTypes.Remediation
-						for _, m := range slices.Compact(slices.Sorted(slices.Values(g.mitigations))) {
-							rs = append(rs, remediationTypes.Remediation{Source: "fortiguard.fortinet.com", Description: m})
 						}
 						return rs
 					}(),

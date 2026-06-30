@@ -56,16 +56,6 @@
 						]
 					}
 				],
-				"mitigations": [
-					{
-						"source": "fortiguard.fortinet.com",
-						"description": "FortiOS 7.6: Not Applicable\nFortiOS 7.4: Upgrade to 7.4.8 or above\nFortiOS 7.2: Upgrade to 7.2.12 or above\nFortiOS 7.0: Migrate to a fixed release\nFortiOS 6.4: Not Applicable"
-					},
-					{
-						"source": "fortiguard.fortinet.com",
-						"description": "FortiProxy 7.6: Upgrade to 7.6.3 or above\nFortiProxy 7.4: Upgrade to 7.4.9 or above\nFortiProxy 7.2: Migrate to a fixed release\nFortiProxy 7.0: Migrate to a fixed release"
-					}
-				],
 				"references": [
 					{
 						"source": "fortiguard.fortinet.com",

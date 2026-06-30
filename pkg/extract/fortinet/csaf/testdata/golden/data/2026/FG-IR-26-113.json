@@ -60,12 +60,6 @@
 						]
 					}
 				],
-				"mitigations": [
-					{
-						"source": "fortiguard.fortinet.com",
-						"description": "FortiSandbox 5.0: Upgrade to 5.0.6 or above\nFortiSandbox 4.4: Migrate to a fixed release"
-					}
-				],
 				"references": [
 					{
 						"source": "fortiguard.fortinet.com",
@@ -111,12 +105,6 @@
 						"cwe": [
 							"CWE-522"
 						]
-					}
-				],
-				"mitigations": [
-					{
-						"source": "fortiguard.fortinet.com",
-						"description": "FortiSandbox PaaS 5.0: Upgrade to 5.0.6 or above"
 					}
 				],
 				"references": [

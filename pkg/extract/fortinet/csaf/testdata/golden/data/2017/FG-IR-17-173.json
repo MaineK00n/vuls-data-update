@@ -56,24 +56,6 @@
 						]
 					}
 				],
-				"mitigations": [
-					{
-						"source": "fortiguard.fortinet.com",
-						"description": "FortiCache 4.2: Upgrade to 4.2.9 or above\nFortiCache 4.1: Upgrade to 4.1.2 or above\nFortiCache 4.0: Migrate to a fixed release\nFortiCache 3.1: Migrate to a fixed release\nFortiCache 3.0: Migrate to a fixed release\nFortiCache 2.3: Migrate to a fixed release\nFortiCache 2.2: Migrate to a fixed release\nFortiCache 2.1: Migrate to a fixed release\nFortiCache 2.0: Migrate to a fixed release\nFortiCache 1.0: Migrate to a fixed release\nFortiCache 0.4: Migrate to a fixed release"
-					},
-					{
-						"source": "fortiguard.fortinet.com",
-						"description": "FortiClientEMS 7.2: Upgrade to 7.2.1 or above\nFortiClientEMS 7.0: Upgrade to 7.0.9 or above\nFortiClientEMS 7.0: Upgrade to 7.0.9 or above\nFortiClientEMS 1.2: Migrate to a fixed release\nFortiClientEMS 1.0: Migrate to a fixed release"
-					},
-					{
-						"source": "fortiguard.fortinet.com",
-						"description": "FortiOS 5.6: Not Applicable\nFortiOS 5.4: Upgrade to 5.4.2 or above\nFortiOS 5.2: Upgrade to 5.2.10 or above\nFortiOS 5.2: Upgrade to 5.2.10 or above\nFortiOS 5.0: Upgrade to 5.0.15 or above"
-					},
-					{
-						"source": "fortiguard.fortinet.com",
-						"description": "FortiPortal 5.0: Upgrade to 5.0.1 or above"
-					}
-				],
 				"references": [
 					{
 						"source": "fortiguard.fortinet.com",
