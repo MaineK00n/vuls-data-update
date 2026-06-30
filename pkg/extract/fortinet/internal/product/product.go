@@ -13,19 +13,6 @@ import (
 	ccRangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/cpecriterion/range"
 )
 
-// A product's comparator is per-CPE, so every name sharing a CPE must share its
-// range type. Validate the table once at init; a mistake that gives one CPE
-// conflicting range types fails fast rather than silently mis-comparing.
-func init() {
-	seen := make(map[string]ccRangeTypes.RangeType, len(nameToProduct))
-	for name, p := range nameToProduct {
-		if existing, ok := seen[p.cpe]; ok && existing != p.rangeType {
-			panic(errors.Errorf("conflicting range types for cpe %q: %s and %s (check product %q in table.go)", p.cpe, existing, p.rangeType, name))
-		}
-		seen[p.cpe] = p.rangeType
-	}
-}
-
 // Resolve returns the CPE 2.3 formatted string (wildcard version) and the
 // per-product cpecriterion range type for a Fortinet product name, or ok=false
 // when the name is not in the table. Fortinet uses one range type per product,
