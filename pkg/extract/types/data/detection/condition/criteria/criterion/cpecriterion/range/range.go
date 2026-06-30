@@ -6,7 +6,6 @@ import (
 	"encoding/json/v2"
 	stderrors "errors"
 	"fmt"
-	"strings"
 
 	panosVersion "github.com/MaineK00n/go-paloalto-version/pan-os"
 	"github.com/hashicorp/go-version"
@@ -369,11 +368,74 @@ func (t RangeType) Compare(v1, v2 string) (int, error) {
 		// CompareError. Forgetting to set Type therefore produces a safe
 		// non-match rather than a loud error.
 		return 0, &CompareError{Err: ErrRangeTypeUnknown}
-	default:
-		name, known := rangeTypeNames[t]
-		if !known || !strings.HasPrefix(name, "fortinet-") {
-			return 0, errors.Errorf("unsupported range type: %s", t)
-		}
+	case RangeTypeFortinetAntivirusEngine,
+		RangeTypeFortinetAscenLink,
+		RangeTypeFortinetFortiADC,
+		RangeTypeFortinetFortiADCManager,
+		RangeTypeFortinetFortiAIOps,
+		RangeTypeFortinetFortiAnalyzer,
+		RangeTypeFortinetFortiAnalyzerBigData,
+		RangeTypeFortinetFortiAnalyzerCloud,
+		RangeTypeFortinetFortiAP,
+		RangeTypeFortinetFortiAPC,
+		RangeTypeFortinetFortiAPS,
+		RangeTypeFortinetFortiAPU,
+		RangeTypeFortinetFortiAPW2,
+		RangeTypeFortinetFortiAuthenticator,
+		RangeTypeFortinetFortiCache,
+		RangeTypeFortinetFortiCamera,
+		RangeTypeFortinetFortiClient,
+		RangeTypeFortinetFortiClientEnterpriseManagementServer,
+		RangeTypeFortinetFortiClientEnterpriseManagementServerCloud,
+		RangeTypeFortinetFortiConverter,
+		RangeTypeFortinetFortiDB,
+		RangeTypeFortinetFortiDDoS,
+		RangeTypeFortinetFortiDDoSCM,
+		RangeTypeFortinetFortiDDoSF,
+		RangeTypeFortinetFortiDeceptor,
+		RangeTypeFortinetFortiDLP,
+		RangeTypeFortinetFortiEDR,
+		RangeTypeFortinetFortiEDRManager,
+		RangeTypeFortinetFortiExtender,
+		RangeTypeFortinetFortiFone,
+		RangeTypeFortinetFortiGuest,
+		RangeTypeFortinetFortiIsolator,
+		RangeTypeFortinetFortiMail,
+		RangeTypeFortinetFortiManager,
+		RangeTypeFortinetFortiManagerCloud,
+		RangeTypeFortinetFortiNAC,
+		RangeTypeFortinetFortiNACF,
+		RangeTypeFortinetFortiNDR,
+		RangeTypeFortinetFortiOS,
+		RangeTypeFortinetFortiOS6k7k,
+		RangeTypeFortinetFortiOSIPSEngine,
+		RangeTypeFortinetFortiPAM,
+		RangeTypeFortinetFortiPortal,
+		RangeTypeFortinetFortiPresence,
+		RangeTypeFortinetFortiProxy,
+		RangeTypeFortinetFortiRecorder,
+		RangeTypeFortinetFortiSandbox,
+		RangeTypeFortinetFortiSandboxCloud,
+		RangeTypeFortinetFortiSandboxPaaS,
+		RangeTypeFortinetFortiSASE,
+		RangeTypeFortinetFortiSIEM,
+		RangeTypeFortinetFortiSOAR,
+		RangeTypeFortinetFortiSOARAgentCommunicationBridge,
+		RangeTypeFortinetFortiSRA,
+		RangeTypeFortinetFortiSwitch,
+		RangeTypeFortinetFortiSwitchAXFixed,
+		RangeTypeFortinetFortiSwitchManager,
+		RangeTypeFortinetFortiTester,
+		RangeTypeFortinetFortiTokenMobile,
+		RangeTypeFortinetFortiVoice,
+		RangeTypeFortinetFortiVoiceCloudUnifiedCommunicationsDesktop,
+		RangeTypeFortinetFortiWAN,
+		RangeTypeFortinetFortiWANManager,
+		RangeTypeFortinetFortiWeb,
+		RangeTypeFortinetFortiWebManager,
+		RangeTypeFortinetFortiWLC,
+		RangeTypeFortinetFortiWLM,
+		RangeTypeFortinetMeru:
 		// Per-product Fortinet types dispatch to go-fortinet-version: the
 		// nonnumeric (FortiSASE milestone-letter) scheme vs. the numeric scheme
 		// every other product uses. NewVersion rejecting a wrong-scheme/malformed
@@ -415,6 +477,8 @@ func (t RangeType) Compare(v1, v2 string) (int, error) {
 			return 0, err
 		}
 		return n, nil
+	default:
+		return 0, errors.Errorf("unsupported range type: %s", t)
 	}
 }
 
