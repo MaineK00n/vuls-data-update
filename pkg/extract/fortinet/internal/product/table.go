@@ -15,8 +15,13 @@ import (
 // carries its own range type so a product whose version scheme later diverges
 // gets its own comparator without affecting any other (see cpecriterion/range).
 // twoComponentVersions marks the few products whose concrete releases have two
-// dot-separated components (e.g. IPS Engine "7.166", FortiSandbox Cloud
-// "23.4") instead of the usual three (see IsExactVersion).
+// dot-separated components (e.g. IPS Engine "7.166") instead of the usual
+// three (see IsExactVersion). Mark a product ONLY with corpus evidence that no
+// three-component release exists under its two-component tokens: FortiSandbox
+// Cloud/PaaS look two-component in some advisories ("23.4", "5.0") but other
+// advisories enumerate build-suffixed releases under those very tokens
+// ("23.4.4350", "5.0.4"), so their two-component tokens are trains and they
+// must NOT be marked.
 type productInfo struct {
 	cpe                  string
 	rangeType            ccRangeTypes.RangeType
@@ -82,8 +87,8 @@ var nameToProduct = map[string]productInfo{
 	"FortiSOAR on-premise":                 {cpe: "cpe:2.3:a:fortinet:fortisoar:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiSOAR},
 	"FortiSRA":                             {cpe: "cpe:2.3:a:fortinet:fortisra:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiSRA},
 	"FortiSandbox":                         {cpe: "cpe:2.3:o:fortinet:fortisandbox:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiSandbox},
-	"FortiSandbox Cloud":                   {cpe: "cpe:2.3:a:fortinet:fortisandbox_cloud:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiSandboxCloud, twoComponentVersions: true},
-	"FortiSandbox PaaS":                    {cpe: "cpe:2.3:a:fortinet:fortisandbox_paas:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiSandboxPaaS, twoComponentVersions: true},
+	"FortiSandbox Cloud":                   {cpe: "cpe:2.3:a:fortinet:fortisandbox_cloud:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiSandboxCloud},
+	"FortiSandbox PaaS":                    {cpe: "cpe:2.3:a:fortinet:fortisandbox_paas:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiSandboxPaaS},
 	"FortiSwitch":                          {cpe: "cpe:2.3:o:fortinet:fortiswitch:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiSwitch},
 	"FortiSwitchAXFixed":                   {cpe: "cpe:2.3:a:fortinet:fortiswitchaxfixed:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiSwitchAXFixed},
 	"FortiSwitchManager":                   {cpe: "cpe:2.3:o:fortinet:fortiswitchmanager:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiSwitchManager},

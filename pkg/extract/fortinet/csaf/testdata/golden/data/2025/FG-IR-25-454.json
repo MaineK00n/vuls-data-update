@@ -101,7 +101,12 @@
 									"fix_status": {
 										"class": "unknown"
 									},
-									"cpe": "cpe:2.3:a:fortinet:fortisandbox_cloud:24.1:*:*:*:*:*:*:*"
+									"cpe": "cpe:2.3:a:fortinet:fortisandbox_cloud:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet-fortisandbox_cloud",
+										"ge": "24.1",
+										"lt": "24.2"
+									}
 								}
 							},
 							{

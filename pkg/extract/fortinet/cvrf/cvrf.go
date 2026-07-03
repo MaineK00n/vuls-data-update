@@ -312,8 +312,8 @@ func knownAffectedCriterions(productIDs []string, prodMap map[string]productVers
 			// Coarse trains are dropped by design (rationale in the function
 			// comment above); only exact versions are enumerated. What counts as
 			// exact depends on the product's version arity (see
-			// product.IsExactVersion): "23.4" is an exact FortiSandbox Cloud
-			// release but a train for FortiSandbox proper.
+			// product.IsExactVersion): "7.166" is an exact IPS Engine build but
+			// "7.4" is a FortiOS train.
 			continue
 		}
 

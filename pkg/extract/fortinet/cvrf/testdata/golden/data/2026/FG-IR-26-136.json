@@ -37,72 +37,14 @@
 				],
 				"published": "2026-05-12T00:00:00Z",
 				"modified": "2026-05-12T00:00:00Z"
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		}
 	],
 	"vulnerabilities": [
 		{
 			"content": {
 				"id": "CVE-2026-26083"
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
-		}
-	],
-	"detections": [
-		{
-			"ecosystem": "cpe",
-			"conditions": [
-				{
-					"criteria": {
-						"operator": "OR",
-						"criterions": [
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "unknown"
-									},
-									"cpe": "cpe:2.3:a:fortinet:fortisandbox_cloud:*:*:*:*:*:*:*:*",
-									"cpe_matches": [
-										"cpe:2.3:a:fortinet:fortisandbox_cloud:5.0:*:*:*:*:*:*:*"
-									]
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "unknown"
-									},
-									"cpe": "cpe:2.3:a:fortinet:fortisandbox_paas:*:*:*:*:*:*:*:*",
-									"cpe_matches": [
-										"cpe:2.3:a:fortinet:fortisandbox_paas:21.3:*:*:*:*:*:*:*",
-										"cpe:2.3:a:fortinet:fortisandbox_paas:21.4:*:*:*:*:*:*:*",
-										"cpe:2.3:a:fortinet:fortisandbox_paas:22.1:*:*:*:*:*:*:*",
-										"cpe:2.3:a:fortinet:fortisandbox_paas:22.2:*:*:*:*:*:*:*",
-										"cpe:2.3:a:fortinet:fortisandbox_paas:23.1:*:*:*:*:*:*:*",
-										"cpe:2.3:a:fortinet:fortisandbox_paas:23.3:*:*:*:*:*:*:*",
-										"cpe:2.3:a:fortinet:fortisandbox_paas:23.4:*:*:*:*:*:*:*",
-										"cpe:2.3:a:fortinet:fortisandbox_paas:4.4:*:*:*:*:*:*:*",
-										"cpe:2.3:a:fortinet:fortisandbox_paas:5.0:*:*:*:*:*:*:*"
-									]
-								}
-							}
-						]
-					}
-				}
-			]
+			}
 		}
 	],
 	"data_source": {

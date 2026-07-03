@@ -590,8 +590,8 @@ func toCriterion(productID string, refMap map[string]productRef) (criterionTypes
 //   - (nil,   "",   nil): whole product — leave the CPE version wildcarded
 //
 // The product name decides the exact-vs-train split for a bare version token
-// (product.IsExactVersion): "23.4" is a concrete FortiSandbox Cloud release to
-// bake, but a FortiSandbox train to range-over. The whole-product outcome
+// (product.IsExactVersion): "7.166" is a concrete IPS Engine build to bake,
+// but "7.4" is a FortiOS train to range-over. The whole-product outcome
 // covers an empty/"all versions" expression. A non-numeric "<x> all versions"
 // (e.g. a product name leaked into the version, "FortiClient iOS all
 // versions") is not silently widened to whole product — it hard-errors, since

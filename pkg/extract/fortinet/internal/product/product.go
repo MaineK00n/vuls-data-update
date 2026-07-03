@@ -57,12 +57,11 @@ func isConcrete(v string) bool {
 // releases with three or more dot-separated components (e.g. FortiOS "7.4.3",
 // FortiSASE "25.2.a"), so a one- or two-component token ("7", "7.4") is a
 // train. A few products version their releases with two components (e.g.
-// FortiAuthenticator OutlookAgent "2.1", IPS Engine "7.166", FortiSandbox
-// Cloud "23.4"); those are marked twoComponentVersions in the table, and for
-// them a two-component token is a concrete release — only a bare major ("24")
+// FortiAuthenticator OutlookAgent "2.1", IPS Engine "7.166"); those are marked
+// twoComponentVersions in the table (see its comment for the evidence bar),
+// and for them a two-component token is a concrete release — only a bare major
 // is a train. The distinction cannot be made from the version string alone:
-// the same "X.Y" shape is exact for FortiSandbox Cloud/PaaS but a train for
-// FortiSandbox proper, even within a single advisory (e.g. FG-IR-26-136). An
+// the same "X.Y" shape is an exact IPS Engine build but a FortiOS train. An
 // unknown product name falls back to the three-component rule.
 func IsExactVersion(name, ver string) bool {
 	if nameToProduct[strings.TrimSpace(name)].twoComponentVersions {

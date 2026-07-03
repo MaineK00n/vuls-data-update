@@ -50,8 +50,11 @@ func TestBakeVersion(t *testing.T) {
 }
 
 // IsExactVersion honors per-product version arity: the same "X.Y" token is a
-// concrete release for a two-component product but a train for a
-// three-component one (both shapes co-exist in e.g. FG-IR-26-136).
+// concrete release for a two-component product (IPS Engine "7.166") but a
+// train for a three-component one (FortiOS "7.4"). FortiSandbox Cloud/PaaS
+// stay on the three-component rule: their two-component tokens ("23.4",
+// "5.0") sit above real build-suffixed releases ("23.4.4350", "5.0.4") in the
+// corpus, i.e. they are trains.
 func TestIsExactVersion(t *testing.T) {
 	type args struct {
 		name string
@@ -73,11 +76,16 @@ func TestIsExactVersion(t *testing.T) {
 		// Two-component products: "X.Y" is exact, a bare major is a train.
 		{args: args{name: "FortiAuthenticator OutlookAgent", ver: "2.1"}, want: true},
 		{args: args{name: "IPS Engine", ver: "7.166"}, want: true},
+		{args: args{name: "IPS Engine", ver: "7"}, want: false},
 		{args: args{name: "AV Engine", ver: "6.137"}, want: true},
-		{args: args{name: "FortiSandbox Cloud", ver: "23.4"}, want: true},
-		{args: args{name: "FortiSandbox PaaS", ver: "23.4"}, want: true},
-		{args: args{name: "FortiSandbox Cloud", ver: "24"}, want: false},
-		{args: args{name: "FortiSandbox Cloud", ver: ""}, want: false},
+		{args: args{name: "AV Engine", ver: "4.4.54"}, want: true},
+		{args: args{name: "AV Engine", ver: ""}, want: false},
+		// FortiSandbox Cloud/PaaS mix year-based and build-suffixed schemes;
+		// their two-component tokens are trains (23.4 < 23.4.4350 exists).
+		{args: args{name: "FortiSandbox Cloud", ver: "23.4"}, want: false},
+		{args: args{name: "FortiSandbox Cloud", ver: "5.0.4"}, want: true},
+		{args: args{name: "FortiSandbox PaaS", ver: "23.4"}, want: false},
+		{args: args{name: "FortiSandbox PaaS", ver: "23.4.4350"}, want: true},
 		// Unknown product falls back to the three-component rule.
 		{args: args{name: "FortiNonexistent", ver: "1.2"}, want: false},
 		{args: args{name: "FortiNonexistent", ver: "1.2.3"}, want: true},
