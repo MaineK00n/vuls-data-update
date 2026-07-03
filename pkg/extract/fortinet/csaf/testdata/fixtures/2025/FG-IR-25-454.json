@@ -1,0 +1,231 @@
+{
+	"document": {
+		"acknowledgments": [
+			{
+				"summary": "Internally discovered and reported by Théo Leleu of Fortinet Product Security team."
+			}
+		],
+		"category": "Fortinet PSIRT Advisories",
+		"csaf_version": "2.0",
+		"publisher": {
+			"category": "vendor",
+			"contact_details": "https://fortiguard.fortinet.com/faq/psirt-contact",
+			"issuing_authority": "Fortinet PSIRT",
+			"name": "Fortinet PSIRT",
+			"namespace": "https://fortiguard.fortinet.com/psirt"
+		},
+		"title": "OS command injection in GUI backup options",
+		"tracking": {
+			"current_release_date": "2026-01-14T00:00:00",
+			"id": "FG-IR-25-454",
+			"initial_release_date": "2025-12-09T00:00:00",
+			"revision_history": [
+				{
+					"date": "2025-12-09T00:00:00",
+					"number": "1",
+					"summary": "Initial Publication"
+				}
+			],
+			"status": "final",
+			"version": "0"
+		}
+	},
+	"product_tree": {
+		"branches": [
+			{
+				"branches": [
+					{
+						"branches": [
+							{
+								"category": "product_version_range",
+								"name": "FortiSandbox/>=5.0.0|<=5.0.2",
+								"product": {
+									"name": "FortiSandbox",
+									"product_id": "FortiSandbox >=5.0.0|<=5.0.2"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiSandbox/>=4.4.0|<=4.4.7",
+								"product": {
+									"name": "FortiSandbox",
+									"product_id": "FortiSandbox >=4.4.0|<=4.4.7"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiSandbox/4.2 all versions",
+								"product": {
+									"name": "FortiSandbox",
+									"product_id": "FortiSandbox 4.2 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiSandbox/4.0 all versions",
+								"product": {
+									"name": "FortiSandbox",
+									"product_id": "FortiSandbox 4.0 all versions"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiSandbox"
+					},
+					{
+						"branches": [
+							{
+								"category": "product_version",
+								"name": "FortiSandbox Cloud/24.1",
+								"product": {
+									"name": "FortiSandbox Cloud",
+									"product_id": "FortiSandbox Cloud 24.1"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiSandbox Cloud/23 all versions",
+								"product": {
+									"name": "FortiSandbox Cloud",
+									"product_id": "FortiSandbox Cloud 23 all versions"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiSandbox Cloud"
+					}
+				],
+				"category": "vendor",
+				"name": "Fortinet PSIRT"
+			}
+		]
+	},
+	"vulnerabilities": [
+		{
+			"cve": "CVE-2025-53679",
+			"cwe": {
+				"id": "CWE-78",
+				"name": "Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')"
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "Improper neutralization of special elements used in an OS command vulnerability in FortiSandbox\n\n",
+					"title": "Summary"
+				},
+				{
+					"category": "general",
+					"text": "N/A",
+					"title": "Workarounds"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiSandbox >=5.0.0|<=5.0.2",
+					"FortiSandbox >=4.4.0|<=4.4.7",
+					"FortiSandbox 4.2 all versions",
+					"FortiSandbox 4.0 all versions"
+				],
+				"known_not_affected": [
+					"FortiSandbox-5.0.3",
+					"FortiSandbox-4.4.8"
+				]
+			},
+			"references": [
+				{
+					"summary": "An improper neutralization of special elements used in an OS command ('OS Command Injection') vulnerability [CWE-78] in FortiSandbox GUI may allow an authenticated privileged attacker to execute unauthorized code or commands via crafted HTTP or HTTPS requests.",
+					"url": "https://fortiguard.fortinet.com/psirt/FG-IR-25-454"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiSandbox 5.0: Upgrade to 5.0.3 or above\nFortiSandbox 4.4: Upgrade to 4.4.8 or above\nFortiSandbox 4.2: Migrate to a fixed release\nFortiSandbox 4.0: Migrate to a fixed release",
+					"product_ids": [
+						"FortiSandbox"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 6.9,
+						"baseSeverity": "MEDIUM",
+						"vectorString": "CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:U/C:H/I:H/A:H/E:X/RL:O/RC:C",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiSandbox"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Execute unauthorized code or commands"
+				}
+			],
+			"title": "FortiSandbox - MEDIUM - FG-IR-25-454"
+		},
+		{
+			"cve": "CVE-2025-53679",
+			"cwe": {
+				"id": "CWE-78",
+				"name": "Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')"
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "Improper neutralization of special elements used in an OS command vulnerability in FortiSandbox\n\n",
+					"title": "Summary"
+				},
+				{
+					"category": "general",
+					"text": "N/A",
+					"title": "Workarounds"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiSandbox Cloud 24.1",
+					"FortiSandbox Cloud 23 all versions"
+				]
+			},
+			"references": [
+				{
+					"summary": "An improper neutralization of special elements used in an OS command ('OS Command Injection') vulnerability [CWE-78] in FortiSandbox GUI may allow an authenticated privileged attacker to execute unauthorized code or commands via crafted HTTP or HTTPS requests.",
+					"url": "https://fortiguard.fortinet.com/psirt/FG-IR-25-454"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiSandbox Cloud 24: Fortinet remediated this issue in 24.2 (not released) and hence customers do not need to perform any action.\nFortiSandbox Cloud 23: Migrate to a fixed release",
+					"product_ids": [
+						"FortiSandbox Cloud"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 6.9,
+						"baseSeverity": "MEDIUM",
+						"vectorString": "CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:U/C:H/I:H/A:H/E:X/RL:O/RC:C",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiSandbox Cloud"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Execute unauthorized code or commands"
+				}
+			],
+			"title": "FortiSandbox Cloud - MEDIUM - FG-IR-25-454"
+		}
+	]
+}

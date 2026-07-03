@@ -43,12 +43,12 @@ func BakeVersion(cpe, version string) (string, error) {
 	return naming.BindToFS(wfn), nil
 }
 
-// IsConcrete reports whether v is a concrete release (3 or more
-// dot-separated components, i.e. at least two dots, e.g. 7.4.3) as opposed
-// to a release train (7 or 7.4). It is a purely format-level check with no
-// product context; for the exact-vs-train split that respects per-product
-// version arity, see IsExactVersion.
-func IsConcrete(v string) bool {
+// isConcrete reports whether v has 3 or more dot-separated components (i.e.
+// at least two dots, e.g. 7.4.3). It is a purely format-level check with no
+// product context, kept internal so that all classification goes through the
+// product-aware IsExactVersion; TrainRange also uses it to reject inputs that
+// cannot be a train under any product's versioning scheme.
+func isConcrete(v string) bool {
 	return strings.Count(v, ".") >= 2
 }
 
@@ -68,7 +68,7 @@ func IsExactVersion(name, ver string) bool {
 	if nameToProduct[strings.TrimSpace(name)].twoComponentVersions {
 		return strings.Count(ver, ".") >= 1
 	}
-	return strings.Count(ver, ".") >= 2
+	return isConcrete(ver)
 }
 
 // TrainRange builds a range spanning an entire release train: ge train,
@@ -82,7 +82,7 @@ func TrainRange(train string) (ccRangeTypes.Range, error) {
 	// train. Incrementing its last component would silently narrow the range to a
 	// single patch ("7.0.0" -> [7.0.0, 7.0.1)) instead of spanning a train, a
 	// detection false negative, so reject it as unexpected input.
-	if IsConcrete(train) {
+	if isConcrete(train) {
 		return ccRangeTypes.Range{}, errors.Errorf("expected a release train (1-2 components), got concrete version %q", train)
 	}
 	ss := strings.Split(train, ".")

@@ -1,0 +1,180 @@
+{
+	"id": "FG-IR-25-454",
+	"advisories": [
+		{
+			"content": {
+				"id": "FG-IR-25-454",
+				"title": "OS command injection in GUI backup options",
+				"references": [
+					{
+						"source": "fortiguard.fortinet.com",
+						"url": "https://fortiguard.fortinet.com/psirt/FG-IR-25-454"
+					}
+				],
+				"published": "2025-12-09T00:00:00Z",
+				"modified": "2026-01-14T00:00:00Z"
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe",
+					"tag": "CVE-2025-53679"
+				}
+			]
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-2025-53679",
+				"title": "OS command injection in GUI backup options",
+				"description": "Improper neutralization of special elements used in an OS command vulnerability in FortiSandbox",
+				"severity": [
+					{
+						"type": "vendor",
+						"source": "fortiguard.fortinet.com",
+						"vendor": "Execute unauthorized code or commands"
+					},
+					{
+						"type": "cvss_v31",
+						"source": "fortiguard.fortinet.com",
+						"cvss_v31": {
+							"vector": "CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:U/C:H/I:H/A:H/E:X/RL:O/RC:C",
+							"base_score": 7.2,
+							"base_severity": "HIGH",
+							"temporal_score": 6.9,
+							"temporal_severity": "MEDIUM",
+							"environmental_score": 6.9,
+							"environmental_severity": "MEDIUM"
+						}
+					}
+				],
+				"cwe": [
+					{
+						"source": "fortiguard.fortinet.com",
+						"cwe": [
+							"CWE-78"
+						]
+					}
+				],
+				"references": [
+					{
+						"source": "fortiguard.fortinet.com",
+						"url": "https://fortiguard.fortinet.com/psirt/FG-IR-25-454"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe",
+					"tag": "CVE-2025-53679"
+				}
+			]
+		}
+	],
+	"detections": [
+		{
+			"ecosystem": "cpe",
+			"conditions": [
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:a:fortinet:fortisandbox_cloud:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet-fortisandbox_cloud",
+										"ge": "23",
+										"lt": "24"
+									}
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:a:fortinet:fortisandbox_cloud:24.1:*:*:*:*:*:*:*"
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:o:fortinet:fortisandbox:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet-fortisandbox",
+										"ge": "4.0",
+										"lt": "4.1"
+									}
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:o:fortinet:fortisandbox:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet-fortisandbox",
+										"ge": "4.2",
+										"lt": "4.3"
+									}
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:o:fortinet:fortisandbox:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet-fortisandbox",
+										"ge": "4.4.0",
+										"le": "4.4.7"
+									}
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:o:fortinet:fortisandbox:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet-fortisandbox",
+										"ge": "5.0.0",
+										"le": "5.0.2"
+									}
+								}
+							}
+						]
+					},
+					"tag": "CVE-2025-53679"
+				}
+			]
+		}
+	],
+	"data_source": {
+		"id": "fortinet-csaf",
+		"raws": [
+			"fixtures/2025/FG-IR-25-454.json"
+		]
+	}
+}

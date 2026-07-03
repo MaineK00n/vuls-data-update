@@ -49,26 +49,6 @@ func TestBakeVersion(t *testing.T) {
 	}
 }
 
-func TestIsConcrete(t *testing.T) {
-	tests := []struct {
-		v    string
-		want bool
-	}{
-		{v: "7.4.3", want: true},
-		{v: "7.4.3.1", want: true},
-		{v: "7.4", want: false},
-		{v: "7", want: false},
-		{v: "24", want: false},
-	}
-	for _, tt := range tests {
-		t.Run(tt.v, func(t *testing.T) {
-			if got := product.IsConcrete(tt.v); got != tt.want {
-				t.Errorf("IsConcrete(%q) = %v, want %v", tt.v, got, tt.want)
-			}
-		})
-	}
-}
-
 // IsExactVersion honors per-product version arity: the same "X.Y" token is a
 // concrete release for a two-component product but a train for a
 // three-component one (both shapes co-exist in e.g. FG-IR-26-136).

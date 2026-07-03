@@ -509,7 +509,7 @@ func toCriterion(productID string, refMap map[string]productRef) (criterionTypes
 		return criterionTypes.Criterion{}, errors.Errorf("unknown fortinet product %q (known_affected %q; add it to internal/product)", ref.productName, productID)
 	}
 
-	r, bakeVersion, err := resolveVersion(ref.versionExp)
+	r, bakeVersion, err := resolveVersion(ref.productName, ref.versionExp)
 	if err != nil {
 		return criterionTypes.Criterion{}, errors.Wrapf(err, "resolve version for %q", productID)
 	}
@@ -582,17 +582,21 @@ func toCriterion(productID string, refMap map[string]productRef) (criterionTypes
 	}, nil
 }
 
-// resolveVersion interprets a CSAF Fortinet version expression and returns
-// exactly one of three outcomes, so the caller never has to guess:
+// resolveVersion interprets a CSAF Fortinet version expression for the named
+// product and returns exactly one of three outcomes, so the caller never has
+// to guess:
 //   - (range, "",   nil): narrow the CPE by this version range
 //   - (nil,   ver,  nil): bake this concrete version into the CPE
 //   - (nil,   "",   nil): whole product — leave the CPE version wildcarded
 //
-// The whole-product outcome covers an empty/"all versions" expression. A
-// non-numeric "<x> all versions" (e.g. a product name leaked into the version,
-// "FortiClient iOS all versions") is not silently widened to whole product —
-// it hard-errors, since it never legitimately appears in known_affected data.
-func resolveVersion(exp string) (*ccRangeTypes.Range, string, error) {
+// The product name decides the exact-vs-train split for a bare version token
+// (product.IsExactVersion): "23.4" is a concrete FortiSandbox Cloud release to
+// bake, but a FortiSandbox train to range-over. The whole-product outcome
+// covers an empty/"all versions" expression. A non-numeric "<x> all versions"
+// (e.g. a product name leaked into the version, "FortiClient iOS all
+// versions") is not silently widened to whole product — it hard-errors, since
+// it never legitimately appears in known_affected data.
+func resolveVersion(productName, exp string) (*ccRangeTypes.Range, string, error) {
 	switch {
 	case exp == "" || exp == "all versions":
 		return nil, "", nil
@@ -649,7 +653,7 @@ func resolveVersion(exp string) (*ccRangeTypes.Range, string, error) {
 			*bound = v
 		}
 		return &r, "", nil
-	case !product.IsConcrete(exp):
+	case !product.IsExactVersion(productName, exp):
 		// Bare train like "7.0" without the "all versions" suffix.
 		r, err := product.TrainRange(exp)
 		if err != nil {
