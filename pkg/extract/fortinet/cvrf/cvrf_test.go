@@ -85,30 +85,6 @@ func TestKnownAffectedCriterionsWhitelist(t *testing.T) {
 	}
 }
 
-// isExactVersion keeps only concrete x.y.z[...] releases; coarse trains are
-// dropped from the enumeration.
-func TestIsExactVersion(t *testing.T) {
-	tests := []struct {
-		ver  string
-		want bool
-	}{
-		{ver: "7.4.3", want: true},
-		{ver: "7.4.3.1", want: true},
-		{ver: "25.2.a", want: true},
-		{ver: "25.1.a.2", want: true},
-		{ver: "7.4", want: false},
-		{ver: "24", want: false},
-		{ver: "", want: false},
-	}
-	for _, tt := range tests {
-		t.Run(tt.ver, func(t *testing.T) {
-			if got := cvrf.IsExactVersion(tt.ver); got != tt.want {
-				t.Errorf("IsExactVersion(%q) = %v, want %v", tt.ver, got, tt.want)
-			}
-		})
-	}
-}
-
 // The only product-status type observed across the corpus is "Known Affected";
 // an empty type is a content-only advisory, and any other type must fail loudly
 // rather than silently emit no detection.

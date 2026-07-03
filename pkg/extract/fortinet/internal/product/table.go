@@ -14,13 +14,17 @@ import (
 // productInfo is a product's CPE and its per-product range type. Each product
 // carries its own range type so a product whose version scheme later diverges
 // gets its own comparator without affecting any other (see cpecriterion/range).
+// twoComponentVersions marks the few products whose concrete releases have two
+// dot-separated components (e.g. IPS Engine "7.166", FortiSandbox Cloud
+// "23.4") instead of the usual three (see IsExactVersion).
 type productInfo struct {
-	cpe       string
-	rangeType ccRangeTypes.RangeType
+	cpe                  string
+	rangeType            ccRangeTypes.RangeType
+	twoComponentVersions bool
 }
 
 var nameToProduct = map[string]productInfo{
-	"AV Engine":                            {cpe: "cpe:2.3:a:fortinet:antivirus_engine:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetAntivirusEngine},
+	"AV Engine":                            {cpe: "cpe:2.3:a:fortinet:antivirus_engine:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetAntivirusEngine, twoComponentVersions: true},
 	"AscenLink":                            {cpe: "cpe:2.3:o:fortinet:ascenlink:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetAscenLink},
 	"FortiADC":                             {cpe: "cpe:2.3:o:fortinet:fortiadc:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiADC},
 	"FortiADCManager":                      {cpe: "cpe:2.3:a:fortinet:fortiadc_manager:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiADCManager},
@@ -34,7 +38,7 @@ var nameToProduct = map[string]productInfo{
 	"FortiAnalyzer Cloud":                  {cpe: "cpe:2.3:a:fortinet:fortianalyzer_cloud:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiAnalyzerCloud},
 	"FortiAnalyzer-BigData":                {cpe: "cpe:2.3:o:fortinet:fortianalyzer-bigdata:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiAnalyzerBigData},
 	"FortiAuthenticator":                   {cpe: "cpe:2.3:o:fortinet:fortiauthenticator:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiAuthenticator},
-	"FortiAuthenticator OutlookAgent":      {cpe: "cpe:2.3:a:fortinet:fortiauthenticator:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiAuthenticator},
+	"FortiAuthenticator OutlookAgent":      {cpe: "cpe:2.3:a:fortinet:fortiauthenticator:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiAuthenticator, twoComponentVersions: true},
 	"FortiCache":                           {cpe: "cpe:2.3:o:fortinet:forticache:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiCache},
 	"FortiCamera":                          {cpe: "cpe:2.3:o:fortinet:forticamera:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiCamera},
 	"FortiClientAndroid":                   {cpe: "cpe:2.3:a:fortinet:forticlient:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiClient},
@@ -78,8 +82,8 @@ var nameToProduct = map[string]productInfo{
 	"FortiSOAR on-premise":                 {cpe: "cpe:2.3:a:fortinet:fortisoar:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiSOAR},
 	"FortiSRA":                             {cpe: "cpe:2.3:a:fortinet:fortisra:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiSRA},
 	"FortiSandbox":                         {cpe: "cpe:2.3:o:fortinet:fortisandbox:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiSandbox},
-	"FortiSandbox Cloud":                   {cpe: "cpe:2.3:a:fortinet:fortisandbox_cloud:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiSandboxCloud},
-	"FortiSandbox PaaS":                    {cpe: "cpe:2.3:a:fortinet:fortisandbox_paas:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiSandboxPaaS},
+	"FortiSandbox Cloud":                   {cpe: "cpe:2.3:a:fortinet:fortisandbox_cloud:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiSandboxCloud, twoComponentVersions: true},
+	"FortiSandbox PaaS":                    {cpe: "cpe:2.3:a:fortinet:fortisandbox_paas:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiSandboxPaaS, twoComponentVersions: true},
 	"FortiSwitch":                          {cpe: "cpe:2.3:o:fortinet:fortiswitch:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiSwitch},
 	"FortiSwitchAXFixed":                   {cpe: "cpe:2.3:a:fortinet:fortiswitchaxfixed:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiSwitchAXFixed},
 	"FortiSwitchManager":                   {cpe: "cpe:2.3:o:fortinet:fortiswitchmanager:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiSwitchManager},
@@ -95,6 +99,6 @@ var nameToProduct = map[string]productInfo{
 	"FortiWLM":                             {cpe: "cpe:2.3:o:fortinet:fortiwlm:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiWLM},
 	"FortiWeb":                             {cpe: "cpe:2.3:o:fortinet:fortiweb:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiWeb},
 	"FortiWebManager":                      {cpe: "cpe:2.3:a:fortinet:fortiweb_manager:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiWebManager},
-	"IPS Engine":                           {cpe: "cpe:2.3:a:fortinet:fortios_ips_engine:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiOSIPSEngine},
+	"IPS Engine":                           {cpe: "cpe:2.3:a:fortinet:fortios_ips_engine:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiOSIPSEngine, twoComponentVersions: true},
 	"Meru AP":                              {cpe: "cpe:2.3:a:fortinet:meru:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetMeru},
 }

@@ -69,6 +69,48 @@ func TestIsConcrete(t *testing.T) {
 	}
 }
 
+// IsExactVersion honors per-product version arity: the same "X.Y" token is a
+// concrete release for a two-component product but a train for a
+// three-component one (both shapes co-exist in e.g. FG-IR-26-136).
+func TestIsExactVersion(t *testing.T) {
+	type args struct {
+		name string
+		ver  string
+	}
+	tests := []struct {
+		args args
+		want bool
+	}{
+		// Three-component products: >= 3 components is exact, "X.Y" / "X" are trains.
+		{args: args{name: "FortiOS", ver: "7.4.3"}, want: true},
+		{args: args{name: "FortiOS", ver: "7.4.3.1"}, want: true},
+		{args: args{name: "FortiSASE", ver: "25.2.a"}, want: true},
+		{args: args{name: "FortiSASE", ver: "25.1.a.2"}, want: true},
+		{args: args{name: "FortiOS", ver: "7.4"}, want: false},
+		{args: args{name: "FortiOS", ver: "24"}, want: false},
+		{args: args{name: "FortiOS", ver: ""}, want: false},
+		{args: args{name: "FortiSandbox", ver: "5.0"}, want: false},
+		// Two-component products: "X.Y" is exact, a bare major is a train.
+		{args: args{name: "FortiAuthenticator OutlookAgent", ver: "2.1"}, want: true},
+		{args: args{name: "IPS Engine", ver: "7.166"}, want: true},
+		{args: args{name: "AV Engine", ver: "6.137"}, want: true},
+		{args: args{name: "FortiSandbox Cloud", ver: "23.4"}, want: true},
+		{args: args{name: "FortiSandbox PaaS", ver: "23.4"}, want: true},
+		{args: args{name: "FortiSandbox Cloud", ver: "24"}, want: false},
+		{args: args{name: "FortiSandbox Cloud", ver: ""}, want: false},
+		// Unknown product falls back to the three-component rule.
+		{args: args{name: "FortiNonexistent", ver: "1.2"}, want: false},
+		{args: args{name: "FortiNonexistent", ver: "1.2.3"}, want: true},
+	}
+	for _, tt := range tests {
+		t.Run(tt.args.name+"/"+tt.args.ver, func(t *testing.T) {
+			if got := product.IsExactVersion(tt.args.name, tt.args.ver); got != tt.want {
+				t.Errorf("IsExactVersion(%q, %q) = %v, want %v", tt.args.name, tt.args.ver, got, tt.want)
+			}
+		})
+	}
+}
+
 func TestTrainRange(t *testing.T) {
 	tests := []struct {
 		train   string

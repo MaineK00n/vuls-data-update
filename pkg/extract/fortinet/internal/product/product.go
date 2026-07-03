@@ -45,9 +45,30 @@ func BakeVersion(cpe, version string) (string, error) {
 
 // IsConcrete reports whether v is a concrete release (3 or more
 // dot-separated components, i.e. at least two dots, e.g. 7.4.3) as opposed
-// to a release train (7 or 7.4).
+// to a release train (7 or 7.4). It is a purely format-level check with no
+// product context; for the exact-vs-train split that respects per-product
+// version arity, see IsExactVersion.
 func IsConcrete(v string) bool {
 	return strings.Count(v, ".") >= 2
+}
+
+// IsExactVersion reports whether ver is a concrete, enumerable release of the
+// named product rather than a coarse release train. Most Fortinet products cut
+// releases with three or more dot-separated components (e.g. FortiOS "7.4.3",
+// FortiSASE "25.2.a"), so a one- or two-component token ("7", "7.4") is a
+// train. A few products version their releases with two components (e.g.
+// FortiAuthenticator OutlookAgent "2.1", IPS Engine "7.166", FortiSandbox
+// Cloud "23.4"); those are marked twoComponentVersions in the table, and for
+// them a two-component token is a concrete release — only a bare major ("24")
+// is a train. The distinction cannot be made from the version string alone:
+// the same "X.Y" shape is exact for FortiSandbox Cloud/PaaS but a train for
+// FortiSandbox proper, even within a single advisory (e.g. FG-IR-26-136). An
+// unknown product name falls back to the three-component rule.
+func IsExactVersion(name, ver string) bool {
+	if nameToProduct[strings.TrimSpace(name)].twoComponentVersions {
+		return strings.Count(ver, ".") >= 1
+	}
+	return strings.Count(ver, ".") >= 2
 }
 
 // TrainRange builds a range spanning an entire release train: ge train,
