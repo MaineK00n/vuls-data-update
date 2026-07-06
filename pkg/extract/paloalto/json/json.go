@@ -9,6 +9,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/knqyf263/go-cpe/common"
 	"github.com/knqyf263/go-cpe/naming"
 	"github.com/pkg/errors"
 
@@ -475,20 +476,45 @@ func detections(fetched paloaltoJSON.CVE) ([]detectionTypes.Detection, error) {
 			// The PAN-OS cpes[] enumeration (present in 2024+ records) carries
 			// the same affected set as versions[] expanded to hotfix
 			// granularity, with the hotfix in the CPE update attribute. Keep
-			// it verbatim as a separate enumeration criterion: it adds recall
-			// for NVD-style "pan-os:<ver>:<hotfix>" queries and is inert for
-			// queries that carry "<ver>-h<hotfix>" in the version attribute.
+			// the entries verbatim, but emit one enumeration criterion per
+			// part:vendor:product group, with the group's PVP as the
+			// criterion's main CPE: upstream mixes vendor spellings
+			// (paloaltonetworks vs palo_alto_networks), and enumeration
+			// entries whose PVP differs from the main CPE are dead data — the
+			// criterion is unreachable through the db-side part:vendor:product
+			// index (built from main CPEs only) for queries in the divergent
+			// spelling, and Accept's attribute comparison rejects them for
+			// queries in the main CPE's spelling. Grouping keeps each spelling
+			// reachable by a query in that spelling; the enumeration adds
+			// recall for NVD-style "pan-os:<ver>:<hotfix>" queries and is
+			// inert for queries that carry "<ver>-h<hotfix>" in the version
+			// attribute.
 			cpes, err := validCPEs(fetched.CVEMetadata.CVEID, a.Cpes)
 			if err != nil {
 				return nil, errors.Wrapf(err, "valid cpes for %q", *a.Product)
 			}
-			if len(cpes) > 0 {
+			groups := make(map[string][]ccTypes.CPE)
+			for _, c := range cpes {
+				wfn, err := naming.UnbindFS(string(c))
+				if err != nil {
+					return nil, errors.Wrapf(err, "unbind %q", string(c))
+				}
+				mwfn := common.NewWellFormedName()
+				for _, attr := range []string{common.AttributePart, common.AttributeVendor, common.AttributeProduct} {
+					if err := mwfn.Set(attr, wfn.Get(attr)); err != nil {
+						return nil, errors.Wrapf(err, "set %s of %q", attr, string(c))
+					}
+				}
+				main := naming.BindToFS(mwfn)
+				groups[main] = append(groups[main], c)
+			}
+			for main, cs := range groups {
 				cns = append(cns, criterionTypes.Criterion{
 					Type: criterionTypes.CriterionTypeCPE,
 					CPE: &ccTypes.Criterion{
 						Vulnerable: true,
-						CPE:        ccTypes.CPE("cpe:2.3:o:paloaltonetworks:pan-os:*:*:*:*:*:*:*:*"),
-						CPEMatches: cpes,
+						CPE:        ccTypes.CPE(main),
+						CPEMatches: cs,
 					},
 				})
 			}
