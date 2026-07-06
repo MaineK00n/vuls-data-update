@@ -177,7 +177,7 @@ func Extract(vexDir, repository2cpeDir string, opts ...Option) error {
 }
 
 func (e extractor) extract(vuln v1.VEX, c2r map[string][]string) (dataTypes.Data, error) {
-	pm, err := walkProductTree(vuln.ProductTree, c2r)
+	pm, err := walkProductTree(vuln.Document.Tracking.ID, vuln.ProductTree, c2r)
 	if err != nil {
 		return dataTypes.Data{}, errors.Wrap(err, "walk product_tree")
 	}
@@ -237,7 +237,7 @@ type status struct {
 	affected_status string
 }
 
-func walkProductTree(pt v1.ProductTree, c2r map[string][]string) (map[v1.ProductID][]product, error) {
+func walkProductTree(trackingID string, pt v1.ProductTree, c2r map[string][]string) (map[v1.ProductID][]product, error) {
 	var f func(m map[v1.ProductID]v1.FullProductName, branch v1.Branch) error
 	f = func(m map[v1.ProductID]v1.FullProductName, branch v1.Branch) error {
 		for _, b := range branch.Branches {
@@ -370,7 +370,26 @@ func walkProductTree(pt v1.ProductTree, c2r map[string][]string) (map[v1.Product
 							case "":
 								ss := strings.Split(rpmmod, ":")
 								if len(ss) < 2 {
-									return nil, errors.Errorf("unexpected purl format. expected: %q, actual: %q", "pkg:rpm/redhat/<name>?arch=<arch>(&epoch=<epoch>)&rpmmod=<<module>:<stream>>", fpn.ProductIdentificationHelper.PURL)
+									// The RHEL 10 flatpak SRPMs firefox-flatpak
+									// and thunderbird-flatpak in CVE-2026-7323
+									// carry rpmmod="rhel10", a bare module name
+									// with no ":<stream>" suffix. It is the only
+									// 1-part rpmmod in the feed and cannot form a
+									// module:stream modularitylabel, so the entry
+									// is malformed and unusable for version
+									// detection — skip it rather than emit a
+									// bogus package. Scope the exception to this
+									// exact vetted (advisory, value) pair so any
+									// other colonless rpmmod, or rpmmod="rhel10"
+									// resurfacing in a different advisory, still
+									// fails loudly for a human to review.
+									switch {
+									case trackingID == "CVE-2026-7323" && rpmmod == "rhel10":
+										slog.Warn("skipping CVE-2026-7323 flatpak SRPM with bare-module rpmmod", slog.String("purl", fpn.ProductIdentificationHelper.PURL))
+										return nil, nil
+									default:
+										return nil, errors.Errorf("unexpected purl format. expected: %q, actual: %q", "pkg:rpm/redhat/<name>?arch=<arch>(&epoch=<epoch>)&rpmmod=<<module>:<stream>>", fpn.ProductIdentificationHelper.PURL)
+									}
 								}
 								p.modularitylabel = fmt.Sprintf("%s:%s", ss[0], ss[1])
 								p.name = instance.Name
@@ -423,7 +442,7 @@ func walkProductTree(pt v1.ProductTree, c2r map[string][]string) (map[v1.Product
 						// processed or just added to this skip list — silent
 						// data loss is worse than a loud failure.
 						for _, s := range []string{
-							"pkg:generic/", "pkg:maven/", "pkg:npm/", "pkg:oci/", "pkg:pypi/",
+							"pkg:generic/", "pkg:golang/", "pkg:maven/", "pkg:npm/", "pkg:oci/", "pkg:pypi/",
 						} {
 							if strings.HasPrefix(fpn.ProductIdentificationHelper.PURL, s) {
 								return nil, nil

@@ -25,6 +25,17 @@ func TestExtract(t *testing.T) {
 				repository2cpe: "./testdata/fixtures/repository2cpe",
 			},
 		},
+		{
+			// A bare-module rpmmod ("rhel10") is tolerated only for the
+			// vetted CVE-2026-7323 flatpak SRPMs; the same value in any other
+			// advisory must fail loudly.
+			name: "bare-module rpmmod outside CVE-2026-7323 errors",
+			args: args{
+				vex:            "./testdata/fixtures/vex_rpmmod_error",
+				repository2cpe: "./testdata/fixtures/repository2cpe",
+			},
+			hasError: true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
