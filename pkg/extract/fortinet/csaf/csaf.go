@@ -610,7 +610,7 @@ func resolveVersion(productName, exp string) (*ccRangeTypes.Range, string, error
 		if _, err := numericVersion.NewVersion(train); err != nil {
 			return nil, "", errors.Wrapf(err, "unexpected non-numeric train %q in %q", train, exp)
 		}
-		r, err := product.TrainRange(train)
+		r, err := product.TrainRange(productName, train)
 		if err != nil {
 			return nil, "", errors.Wrap(err, "train range")
 		}
@@ -655,7 +655,7 @@ func resolveVersion(productName, exp string) (*ccRangeTypes.Range, string, error
 		return &r, "", nil
 	case !product.IsExactVersion(productName, exp):
 		// Bare train like "7.0" without the "all versions" suffix.
-		r, err := product.TrainRange(exp)
+		r, err := product.TrainRange(productName, exp)
 		if err != nil {
 			return nil, "", errors.Wrap(err, "train range")
 		}
