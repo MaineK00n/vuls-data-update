@@ -326,7 +326,7 @@ func walkProductTree(trackingID string, pt v2.ProductTree, c2r map[string][]stri
 						names[branch.Product.ProductID] = *n
 					}
 				case "product_version":
-					v, err := parseRPMPurl(pih.PURL)
+					v, err := parseRPMPurl(trackingID, pih.PURL)
 					if err != nil {
 						return errors.Wrapf(err, "parse purl. tracking_id: %q, product_id: %q", trackingID, branch.Product.ProductID)
 					}
@@ -387,7 +387,7 @@ func walkProductTree(trackingID string, pt v2.ProductTree, c2r map[string][]stri
 // (cargo, gem, generic, golang, maven, npm, oci, pypi) which the RPM-based
 // extractor does not handle. Any other prefix is an error so a new artifact
 // class triggers a deliberate decision instead of silent data loss.
-func parseRPMPurl(s string) (*versionInfo, error) {
+func parseRPMPurl(trackingID, s string) (*versionInfo, error) {
 	if s == "" {
 		return nil, nil
 	}
@@ -437,7 +437,22 @@ func parseRPMPurl(s string) (*versionInfo, error) {
 	if rpmmod := quals["rpmmod"]; rpmmod != "" {
 		parts := strings.Split(rpmmod, ":")
 		if len(parts) < 2 {
-			return nil, errors.Errorf("unexpected rpmmod format. expected: %q, actual: %q", "<module>:<stream>[:<version>:<context>]", rpmmod)
+			// The RHEL 10 flatpak SRPMs firefox-flatpak and thunderbird-flatpak
+			// in CVE-2026-7323 carry rpmmod="rhel10", a bare module name with no
+			// ":<stream>" suffix. It is the only 1-part rpmmod in the feed and
+			// cannot form a module:stream modularitylabel, so the entry is
+			// malformed and unusable for version detection — skip it rather than
+			// emit a bogus package. Scope the exception to this exact vetted
+			// (advisory, value) pair so any other colonless rpmmod, or
+			// rpmmod="rhel10" resurfacing in a different advisory, still fails
+			// loudly for a human to review.
+			switch {
+			case trackingID == "CVE-2026-7323" && rpmmod == "rhel10":
+				slog.Warn("skipping CVE-2026-7323 flatpak SRPM with bare-module rpmmod", slog.String("purl", s))
+				return nil, nil
+			default:
+				return nil, errors.Errorf("unexpected rpmmod format. expected: %q, actual: %q", "<module>:<stream>[:<version>:<context>]", rpmmod)
+			}
 		}
 		out.modularitylabel = fmt.Sprintf("%s:%s", parts[0], parts[1])
 	}
