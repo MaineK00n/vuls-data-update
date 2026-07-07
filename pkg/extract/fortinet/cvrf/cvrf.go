@@ -277,7 +277,7 @@ func buildProductMap(fetched cvrfTypes.CVRF) map[string]productVersion {
 // Only concrete versions are kept. CVRF enumerates affected versions
 // explicitly, so a coarse train (e.g. "5.0" for FortiOS) is dropped rather
 // than ranged-over: ranging "5.0" would cover all 5.0.x and over-detect.
-// Exact-vs-train is decided per product (product.IsExactVersion), since a few
+// Exact-vs-train is decided per product (productpkg.IsExactVersion), since a few
 // products version their releases with two components. Because detection ORs
 // the CVRF and CSAF datasets, the companion CSAF source supplies the precise
 // ranges for the advisories present there, and the exact CVRF enumeration
@@ -312,7 +312,7 @@ func knownAffectedCriterions(productIDs []string, prodMap map[string]productVers
 			// Coarse trains are dropped by design (rationale in the function
 			// comment above); only exact versions are enumerated. What counts as
 			// exact depends on the product's version arity (see
-			// product.IsExactVersion): "7.166" is an exact IPS Engine build but
+			// productpkg.IsExactVersion): "7.166" is an exact IPS Engine build but
 			// "7.4" is a FortiOS train.
 			continue
 		}
