@@ -14,14 +14,17 @@ import (
 // productInfo is a product's CPE and its per-product range type. Each product
 // carries its own range type so a product whose version scheme later diverges
 // gets its own comparator without affecting any other (see cpecriterion/range).
-// twoComponentVersions marks the few products whose concrete releases have two
-// dot-separated components (e.g. IPS Engine "7.166") instead of the usual
-// three (see IsExactVersion). Mark a product ONLY with corpus evidence that no
-// three-component release exists under its two-component tokens: FortiSandbox
-// Cloud/PaaS look two-component in some advisories ("23.4", "5.0") but other
-// advisories enumerate build-suffixed releases under those very tokens
-// ("23.4.4350", "5.0.4"), so their two-component tokens are trains and they
-// must NOT be marked.
+// twoComponentVersions marks products for which a two-component token ("X.Y",
+// e.g. IPS Engine "7.166") is itself a concrete release rather than a train;
+// for them only a bare major is a train (see IsExactVersion). It does NOT
+// claim every release of the product has two components: AV Engine also has
+// older three-component exacts ("4.4.54"), which remain exact under the
+// default rule. Mark a product ONLY with corpus evidence that no
+// three-component release exists under any of its two-component tokens:
+// FortiSandbox Cloud/PaaS look two-component in some advisories ("23.4",
+// "5.0") but other advisories enumerate build-suffixed releases under those
+// very tokens ("23.4.4350", "5.0.4"), so their two-component tokens are
+// trains and they must NOT be marked.
 type productInfo struct {
 	cpe                  string
 	rangeType            ccRangeTypes.RangeType
