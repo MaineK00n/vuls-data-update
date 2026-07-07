@@ -46,8 +46,10 @@ func BakeVersion(cpe, version string) (string, error) {
 // isConcrete reports whether v has 3 or more dot-separated components (i.e.
 // at least two dots, e.g. 7.4.3). It is a purely format-level check with no
 // product context, kept internal so that all classification goes through the
-// product-aware IsExactVersion; TrainRange also uses it to reject inputs that
-// cannot be a train under any product's versioning scheme.
+// product-aware IsExactVersion; TrainRange also uses it as its input guard —
+// a token with three or more components is a concrete release for every
+// product, never a train (the converse does not hold: a 1-2 component token
+// may still be an exact release of a twoComponentVersions product).
 func isConcrete(v string) bool {
 	return strings.Count(v, ".") >= 2
 }

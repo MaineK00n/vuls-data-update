@@ -18,8 +18,9 @@ import (
 // e.g. IPS Engine "7.166") is itself a concrete release rather than a train;
 // for them only a bare major is a train (see IsExactVersion). It does NOT
 // claim every release of the product has two components: AV Engine also has
-// older three-component exacts ("4.4.54"), which remain exact under the
-// default rule. Mark a product ONLY with corpus evidence that no
+// older three-component exacts ("4.4.54"), which the marked rule likewise
+// classifies exact (it accepts any token with one or more dots). Mark a
+// product ONLY with corpus evidence that no
 // three-component release exists under any of its two-component tokens:
 // FortiSandbox Cloud/PaaS look two-component in some advisories ("23.4",
 // "5.0") but other advisories enumerate build-suffixed releases under those
