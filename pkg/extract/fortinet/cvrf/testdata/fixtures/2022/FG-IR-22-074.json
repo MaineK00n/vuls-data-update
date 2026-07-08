@@ -1,0 +1,1094 @@
+{
+	"document_title": "Evasion by manipulating MIME attachment",
+	"document_type": "Fortinet PSIRT Advisories",
+	"documentpublisher": {
+		"type": "Vendor",
+		"contact_details": "\n            Fortinet PSIRT Contact:\n            Website: https://fortiguard.fortinet.com/faq/psirt-contact\n        "
+	},
+	"documenttracking": {
+		"identification": {
+			"id": "FG-IR-22-074"
+		},
+		"status": "Final",
+		"version": "1",
+		"revisionhistory": {
+			"revision": {
+				"number": "1",
+				"date": "2022-11-01T00:00:00",
+				"description": "Current version"
+			}
+		},
+		"initial_release_date": "2022-11-01T00:00:00",
+		"current_release_date": "2022-11-01T00:00:00"
+	},
+	"documentnotes": {
+		"note": [
+			{
+				"text": "\n            An insufficient verification of data authenticity vulnerability [CWE-345] in FortiClient, FortiMail and FortiOS AV engines may allow an attacker to bypass the AV engine via manipulating MIME attachment with junk and pad characters in base64.\n        ",
+				"title": "Summary",
+				"type": "Summary",
+				"ordinal": "1"
+			},
+			{
+				"text": "\n            None\n        ",
+				"title": "Description",
+				"type": "General",
+				"ordinal": "2"
+			},
+			{
+				"text": "\n            Denial of service\n        ",
+				"title": "Impact",
+				"type": "General",
+				"ordinal": "3"
+			},
+			{
+				"text": "\n            FortiOS version 7.2.0FortiOS version 7.0.0 through 7.0.6FortiOS 6.4 all versionsFortiOS 6.2 all versionsFortiOS 6.0 all versionsFortiMail 7.2 all versions are not affectedFortiMail version 7.0.0 through 7.0.2FortiMail version 6.4.0 through 6.4.6FortiMail 6.2 all versionsFortiMail 6.0 all versionsAV Engine 6.4 all versions are not affectedAV Engine 6.2 all versions are not affectedAV Engine 6.0 all versions are not affectedAV Engine 6 all versionsAV Engine 4.4 all versionsAV Engine 2.0 all versionsAV Engine 0.4 all versions\n        ",
+				"title": "Affected Products",
+				"type": "General",
+				"ordinal": "4"
+			},
+			{
+				"text": "\n            Please upgrade AV engine to version 6.00169 or above.Please upgrade AV engine to version 6.00275 or above.Please upgrade to FortiMail version 7.2.0 or abovePlease upgrade to FortiMail version 7.0.3 or abovePlease upgrade to FortiMail version 6.4.7 or abovePlease upgrade to FortiOS version 7.0.8 or above.Please upgrade to FortiOS version 7.2.2 or above.Please upgrade FortiOS AV engine to version 6.00169 or above.Please upgrade FortiOS AV engine to version 6.00275 or above.\n        ",
+				"title": "Solutions",
+				"type": "General",
+				"ordinal": "5"
+			}
+		]
+	},
+	"vulnerability": {
+		"ordinal": "1",
+		"title": "Evasion by manipulating MIME attachment",
+		"references": {
+			"type": "Self",
+			"reference": [
+				{
+					"url": "https://fortiguard.fortinet.com/psirt/FG-IR-22-074",
+					"description": "Evasion by manipulating MIME attachment"
+				}
+			]
+		},
+		"cve": [
+			"CVE-2022-26122"
+		],
+		"product_statuses": {
+			"status": {
+				"type": "Known Affected",
+				"product_id": [
+					"AV Engine-6.253",
+					"AV Engine-6.252",
+					"AV Engine-6.243",
+					"AV Engine-6.157",
+					"AV Engine-6.156",
+					"AV Engine-6.145",
+					"AV Engine-6.144",
+					"AV Engine-6.142",
+					"AV Engine-6.137",
+					"AV Engine-6.33",
+					"AV Engine-4.4.54",
+					"AV Engine-2.0.60",
+					"AV Engine-2.0.49",
+					"AV Engine-0.4.23",
+					"FortiMail-7.0.2",
+					"FortiMail-7.0.1",
+					"FortiMail-7.0.0",
+					"FortiMail-6.4.6",
+					"FortiMail-6.4.5",
+					"FortiMail-6.4.4",
+					"FortiMail-6.4.3",
+					"FortiMail-6.4.2",
+					"FortiMail-6.4.1",
+					"FortiMail-6.4.0",
+					"FortiMail-6.2.9",
+					"FortiMail-6.2.8",
+					"FortiMail-6.2.7",
+					"FortiMail-6.2.6",
+					"FortiMail-6.2.5",
+					"FortiMail-6.2.4",
+					"FortiMail-6.2.3",
+					"FortiMail-6.2.2",
+					"FortiMail-6.2.1",
+					"FortiMail-6.2.0",
+					"FortiMail-6.0.12",
+					"FortiMail-6.0.11",
+					"FortiMail-6.0.10",
+					"FortiMail-6.0.9",
+					"FortiMail-6.0.8",
+					"FortiMail-6.0.7",
+					"FortiMail-6.0.6",
+					"FortiMail-6.0.5",
+					"FortiMail-6.0.4",
+					"FortiMail-6.0.3",
+					"FortiMail-6.0.2",
+					"FortiMail-6.0.1",
+					"FortiMail-6.0.0",
+					"FortiOS-7.2.0",
+					"FortiOS-7.0.6",
+					"FortiOS-7.0.5",
+					"FortiOS-7.0.4",
+					"FortiOS-7.0.3",
+					"FortiOS-7.0.2",
+					"FortiOS-7.0.1",
+					"FortiOS-7.0.0",
+					"FortiOS-6.4.16",
+					"FortiOS-6.4.15",
+					"FortiOS-6.4.14",
+					"FortiOS-6.4.13",
+					"FortiOS-6.4.12",
+					"FortiOS-6.4.11",
+					"FortiOS-6.4.10",
+					"FortiOS-6.4.9",
+					"FortiOS-6.4.8",
+					"FortiOS-6.4.7",
+					"FortiOS-6.4.6",
+					"FortiOS-6.4.5",
+					"FortiOS-6.4.4",
+					"FortiOS-6.4.3",
+					"FortiOS-6.4.2",
+					"FortiOS-6.4.1",
+					"FortiOS-6.4.0",
+					"FortiOS-6.2.17",
+					"FortiOS-6.2.16",
+					"FortiOS-6.2.15",
+					"FortiOS-6.2.14",
+					"FortiOS-6.2.13",
+					"FortiOS-6.2.12",
+					"FortiOS-6.2.11",
+					"FortiOS-6.2.10",
+					"FortiOS-6.2.9",
+					"FortiOS-6.2.8",
+					"FortiOS-6.2.7",
+					"FortiOS-6.2.6",
+					"FortiOS-6.2.5",
+					"FortiOS-6.2.4",
+					"FortiOS-6.2.3",
+					"FortiOS-6.2.2",
+					"FortiOS-6.2.1",
+					"FortiOS-6.2.0",
+					"FortiOS-6.0.18",
+					"FortiOS-6.0.17",
+					"FortiOS-6.0.16",
+					"FortiOS-6.0.15",
+					"FortiOS-6.0.14",
+					"FortiOS-6.0.13",
+					"FortiOS-6.0.12",
+					"FortiOS-6.0.11",
+					"FortiOS-6.0.10",
+					"FortiOS-6.0.9",
+					"FortiOS-6.0.8",
+					"FortiOS-6.0.7",
+					"FortiOS-6.0.6",
+					"FortiOS-6.0.5",
+					"FortiOS-6.0.4",
+					"FortiOS-6.0.3",
+					"FortiOS-6.0.2",
+					"FortiOS-6.0.1",
+					"FortiOS-6.0.0"
+				]
+			}
+		},
+		"cvss_scoresets": {
+			"scoreset_v3": {
+				"base_score_v3": "4.3",
+				"vector_v3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:N/I:L/A:N/E:P/RL:U/RC:R"
+			}
+		}
+	},
+	"product_tree": {
+		"branch": {
+			"name": "Fortinet",
+			"type": "Vendor",
+			"branch": [
+				{
+					"name": "AV Engine",
+					"type": "Product Name",
+					"branch": [
+						{
+							"name": "6.253",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "AV Engine 6.253",
+								"product_id": "AV Engine-6.253"
+							}
+						},
+						{
+							"name": "6.252",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "AV Engine 6.252",
+								"product_id": "AV Engine-6.252"
+							}
+						},
+						{
+							"name": "6.243",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "AV Engine 6.243",
+								"product_id": "AV Engine-6.243"
+							}
+						},
+						{
+							"name": "6.157",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "AV Engine 6.157",
+								"product_id": "AV Engine-6.157"
+							}
+						},
+						{
+							"name": "6.156",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "AV Engine 6.156",
+								"product_id": "AV Engine-6.156"
+							}
+						},
+						{
+							"name": "6.145",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "AV Engine 6.145",
+								"product_id": "AV Engine-6.145"
+							}
+						},
+						{
+							"name": "6.144",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "AV Engine 6.144",
+								"product_id": "AV Engine-6.144"
+							}
+						},
+						{
+							"name": "6.142",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "AV Engine 6.142",
+								"product_id": "AV Engine-6.142"
+							}
+						},
+						{
+							"name": "6.137",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "AV Engine 6.137",
+								"product_id": "AV Engine-6.137"
+							}
+						},
+						{
+							"name": "6.33",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "AV Engine 6.33",
+								"product_id": "AV Engine-6.33"
+							}
+						},
+						{
+							"name": "4.4.54",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "AV Engine 4.4.54",
+								"product_id": "AV Engine-4.4.54"
+							}
+						},
+						{
+							"name": "2.0.60",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "AV Engine 2.0.60",
+								"product_id": "AV Engine-2.0.60"
+							}
+						},
+						{
+							"name": "2.0.49",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "AV Engine 2.0.49",
+								"product_id": "AV Engine-2.0.49"
+							}
+						},
+						{
+							"name": "0.4.23",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "AV Engine 0.4.23",
+								"product_id": "AV Engine-0.4.23"
+							}
+						}
+					]
+				},
+				{
+					"name": "FortiMail",
+					"type": "Product Name",
+					"branch": [
+						{
+							"name": "7.0.2",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiMail 7.0.2",
+								"product_id": "FortiMail-7.0.2"
+							}
+						},
+						{
+							"name": "7.0.1",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiMail 7.0.1",
+								"product_id": "FortiMail-7.0.1"
+							}
+						},
+						{
+							"name": "7.0.0",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiMail 7.0.0",
+								"product_id": "FortiMail-7.0.0"
+							}
+						},
+						{
+							"name": "6.4.6",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiMail 6.4.6",
+								"product_id": "FortiMail-6.4.6"
+							}
+						},
+						{
+							"name": "6.4.5",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiMail 6.4.5",
+								"product_id": "FortiMail-6.4.5"
+							}
+						},
+						{
+							"name": "6.4.4",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiMail 6.4.4",
+								"product_id": "FortiMail-6.4.4"
+							}
+						},
+						{
+							"name": "6.4.3",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiMail 6.4.3",
+								"product_id": "FortiMail-6.4.3"
+							}
+						},
+						{
+							"name": "6.4.2",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiMail 6.4.2",
+								"product_id": "FortiMail-6.4.2"
+							}
+						},
+						{
+							"name": "6.4.1",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiMail 6.4.1",
+								"product_id": "FortiMail-6.4.1"
+							}
+						},
+						{
+							"name": "6.4.0",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiMail 6.4.0",
+								"product_id": "FortiMail-6.4.0"
+							}
+						},
+						{
+							"name": "6.2.9",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiMail 6.2.9",
+								"product_id": "FortiMail-6.2.9"
+							}
+						},
+						{
+							"name": "6.2.8",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiMail 6.2.8",
+								"product_id": "FortiMail-6.2.8"
+							}
+						},
+						{
+							"name": "6.2.7",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiMail 6.2.7",
+								"product_id": "FortiMail-6.2.7"
+							}
+						},
+						{
+							"name": "6.2.6",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiMail 6.2.6",
+								"product_id": "FortiMail-6.2.6"
+							}
+						},
+						{
+							"name": "6.2.5",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiMail 6.2.5",
+								"product_id": "FortiMail-6.2.5"
+							}
+						},
+						{
+							"name": "6.2.4",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiMail 6.2.4",
+								"product_id": "FortiMail-6.2.4"
+							}
+						},
+						{
+							"name": "6.2.3",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiMail 6.2.3",
+								"product_id": "FortiMail-6.2.3"
+							}
+						},
+						{
+							"name": "6.2.2",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiMail 6.2.2",
+								"product_id": "FortiMail-6.2.2"
+							}
+						},
+						{
+							"name": "6.2.1",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiMail 6.2.1",
+								"product_id": "FortiMail-6.2.1"
+							}
+						},
+						{
+							"name": "6.2.0",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiMail 6.2.0",
+								"product_id": "FortiMail-6.2.0"
+							}
+						},
+						{
+							"name": "6.0.12",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiMail 6.0.12",
+								"product_id": "FortiMail-6.0.12"
+							}
+						},
+						{
+							"name": "6.0.11",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiMail 6.0.11",
+								"product_id": "FortiMail-6.0.11"
+							}
+						},
+						{
+							"name": "6.0.10",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiMail 6.0.10",
+								"product_id": "FortiMail-6.0.10"
+							}
+						},
+						{
+							"name": "6.0.9",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiMail 6.0.9",
+								"product_id": "FortiMail-6.0.9"
+							}
+						},
+						{
+							"name": "6.0.8",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiMail 6.0.8",
+								"product_id": "FortiMail-6.0.8"
+							}
+						},
+						{
+							"name": "6.0.7",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiMail 6.0.7",
+								"product_id": "FortiMail-6.0.7"
+							}
+						},
+						{
+							"name": "6.0.6",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiMail 6.0.6",
+								"product_id": "FortiMail-6.0.6"
+							}
+						},
+						{
+							"name": "6.0.5",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiMail 6.0.5",
+								"product_id": "FortiMail-6.0.5"
+							}
+						},
+						{
+							"name": "6.0.4",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiMail 6.0.4",
+								"product_id": "FortiMail-6.0.4"
+							}
+						},
+						{
+							"name": "6.0.3",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiMail 6.0.3",
+								"product_id": "FortiMail-6.0.3"
+							}
+						},
+						{
+							"name": "6.0.2",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiMail 6.0.2",
+								"product_id": "FortiMail-6.0.2"
+							}
+						},
+						{
+							"name": "6.0.1",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiMail 6.0.1",
+								"product_id": "FortiMail-6.0.1"
+							}
+						},
+						{
+							"name": "6.0.0",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiMail 6.0.0",
+								"product_id": "FortiMail-6.0.0"
+							}
+						}
+					]
+				},
+				{
+					"name": "FortiOS",
+					"type": "Product Name",
+					"branch": [
+						{
+							"name": "7.2.0",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiOS 7.2.0",
+								"product_id": "FortiOS-7.2.0"
+							}
+						},
+						{
+							"name": "7.0.6",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiOS 7.0.6",
+								"product_id": "FortiOS-7.0.6"
+							}
+						},
+						{
+							"name": "7.0.5",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiOS 7.0.5",
+								"product_id": "FortiOS-7.0.5"
+							}
+						},
+						{
+							"name": "7.0.4",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiOS 7.0.4",
+								"product_id": "FortiOS-7.0.4"
+							}
+						},
+						{
+							"name": "7.0.3",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiOS 7.0.3",
+								"product_id": "FortiOS-7.0.3"
+							}
+						},
+						{
+							"name": "7.0.2",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiOS 7.0.2",
+								"product_id": "FortiOS-7.0.2"
+							}
+						},
+						{
+							"name": "7.0.1",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiOS 7.0.1",
+								"product_id": "FortiOS-7.0.1"
+							}
+						},
+						{
+							"name": "7.0.0",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiOS 7.0.0",
+								"product_id": "FortiOS-7.0.0"
+							}
+						},
+						{
+							"name": "6.4.16",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiOS 6.4.16",
+								"product_id": "FortiOS-6.4.16"
+							}
+						},
+						{
+							"name": "6.4.15",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiOS 6.4.15",
+								"product_id": "FortiOS-6.4.15"
+							}
+						},
+						{
+							"name": "6.4.14",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiOS 6.4.14",
+								"product_id": "FortiOS-6.4.14"
+							}
+						},
+						{
+							"name": "6.4.13",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiOS 6.4.13",
+								"product_id": "FortiOS-6.4.13"
+							}
+						},
+						{
+							"name": "6.4.12",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiOS 6.4.12",
+								"product_id": "FortiOS-6.4.12"
+							}
+						},
+						{
+							"name": "6.4.11",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiOS 6.4.11",
+								"product_id": "FortiOS-6.4.11"
+							}
+						},
+						{
+							"name": "6.4.10",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiOS 6.4.10",
+								"product_id": "FortiOS-6.4.10"
+							}
+						},
+						{
+							"name": "6.4.9",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiOS 6.4.9",
+								"product_id": "FortiOS-6.4.9"
+							}
+						},
+						{
+							"name": "6.4.8",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiOS 6.4.8",
+								"product_id": "FortiOS-6.4.8"
+							}
+						},
+						{
+							"name": "6.4.7",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiOS 6.4.7",
+								"product_id": "FortiOS-6.4.7"
+							}
+						},
+						{
+							"name": "6.4.6",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiOS 6.4.6",
+								"product_id": "FortiOS-6.4.6"
+							}
+						},
+						{
+							"name": "6.4.5",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiOS 6.4.5",
+								"product_id": "FortiOS-6.4.5"
+							}
+						},
+						{
+							"name": "6.4.4",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiOS 6.4.4",
+								"product_id": "FortiOS-6.4.4"
+							}
+						},
+						{
+							"name": "6.4.3",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiOS 6.4.3",
+								"product_id": "FortiOS-6.4.3"
+							}
+						},
+						{
+							"name": "6.4.2",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiOS 6.4.2",
+								"product_id": "FortiOS-6.4.2"
+							}
+						},
+						{
+							"name": "6.4.1",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiOS 6.4.1",
+								"product_id": "FortiOS-6.4.1"
+							}
+						},
+						{
+							"name": "6.4.0",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiOS 6.4.0",
+								"product_id": "FortiOS-6.4.0"
+							}
+						},
+						{
+							"name": "6.2.17",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiOS 6.2.17",
+								"product_id": "FortiOS-6.2.17"
+							}
+						},
+						{
+							"name": "6.2.16",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiOS 6.2.16",
+								"product_id": "FortiOS-6.2.16"
+							}
+						},
+						{
+							"name": "6.2.15",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiOS 6.2.15",
+								"product_id": "FortiOS-6.2.15"
+							}
+						},
+						{
+							"name": "6.2.14",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiOS 6.2.14",
+								"product_id": "FortiOS-6.2.14"
+							}
+						},
+						{
+							"name": "6.2.13",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiOS 6.2.13",
+								"product_id": "FortiOS-6.2.13"
+							}
+						},
+						{
+							"name": "6.2.12",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiOS 6.2.12",
+								"product_id": "FortiOS-6.2.12"
+							}
+						},
+						{
+							"name": "6.2.11",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiOS 6.2.11",
+								"product_id": "FortiOS-6.2.11"
+							}
+						},
+						{
+							"name": "6.2.10",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiOS 6.2.10",
+								"product_id": "FortiOS-6.2.10"
+							}
+						},
+						{
+							"name": "6.2.9",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiOS 6.2.9",
+								"product_id": "FortiOS-6.2.9"
+							}
+						},
+						{
+							"name": "6.2.8",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiOS 6.2.8",
+								"product_id": "FortiOS-6.2.8"
+							}
+						},
+						{
+							"name": "6.2.7",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiOS 6.2.7",
+								"product_id": "FortiOS-6.2.7"
+							}
+						},
+						{
+							"name": "6.2.6",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiOS 6.2.6",
+								"product_id": "FortiOS-6.2.6"
+							}
+						},
+						{
+							"name": "6.2.5",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiOS 6.2.5",
+								"product_id": "FortiOS-6.2.5"
+							}
+						},
+						{
+							"name": "6.2.4",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiOS 6.2.4",
+								"product_id": "FortiOS-6.2.4"
+							}
+						},
+						{
+							"name": "6.2.3",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiOS 6.2.3",
+								"product_id": "FortiOS-6.2.3"
+							}
+						},
+						{
+							"name": "6.2.2",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiOS 6.2.2",
+								"product_id": "FortiOS-6.2.2"
+							}
+						},
+						{
+							"name": "6.2.1",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiOS 6.2.1",
+								"product_id": "FortiOS-6.2.1"
+							}
+						},
+						{
+							"name": "6.2.0",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiOS 6.2.0",
+								"product_id": "FortiOS-6.2.0"
+							}
+						},
+						{
+							"name": "6.0.18",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiOS 6.0.18",
+								"product_id": "FortiOS-6.0.18"
+							}
+						},
+						{
+							"name": "6.0.17",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiOS 6.0.17",
+								"product_id": "FortiOS-6.0.17"
+							}
+						},
+						{
+							"name": "6.0.16",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiOS 6.0.16",
+								"product_id": "FortiOS-6.0.16"
+							}
+						},
+						{
+							"name": "6.0.15",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiOS 6.0.15",
+								"product_id": "FortiOS-6.0.15"
+							}
+						},
+						{
+							"name": "6.0.14",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiOS 6.0.14",
+								"product_id": "FortiOS-6.0.14"
+							}
+						},
+						{
+							"name": "6.0.13",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiOS 6.0.13",
+								"product_id": "FortiOS-6.0.13"
+							}
+						},
+						{
+							"name": "6.0.12",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiOS 6.0.12",
+								"product_id": "FortiOS-6.0.12"
+							}
+						},
+						{
+							"name": "6.0.11",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiOS 6.0.11",
+								"product_id": "FortiOS-6.0.11"
+							}
+						},
+						{
+							"name": "6.0.10",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiOS 6.0.10",
+								"product_id": "FortiOS-6.0.10"
+							}
+						},
+						{
+							"name": "6.0.9",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiOS 6.0.9",
+								"product_id": "FortiOS-6.0.9"
+							}
+						},
+						{
+							"name": "6.0.8",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiOS 6.0.8",
+								"product_id": "FortiOS-6.0.8"
+							}
+						},
+						{
+							"name": "6.0.7",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiOS 6.0.7",
+								"product_id": "FortiOS-6.0.7"
+							}
+						},
+						{
+							"name": "6.0.6",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiOS 6.0.6",
+								"product_id": "FortiOS-6.0.6"
+							}
+						},
+						{
+							"name": "6.0.5",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiOS 6.0.5",
+								"product_id": "FortiOS-6.0.5"
+							}
+						},
+						{
+							"name": "6.0.4",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiOS 6.0.4",
+								"product_id": "FortiOS-6.0.4"
+							}
+						},
+						{
+							"name": "6.0.3",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiOS 6.0.3",
+								"product_id": "FortiOS-6.0.3"
+							}
+						},
+						{
+							"name": "6.0.2",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiOS 6.0.2",
+								"product_id": "FortiOS-6.0.2"
+							}
+						},
+						{
+							"name": "6.0.1",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiOS 6.0.1",
+								"product_id": "FortiOS-6.0.1"
+							}
+						},
+						{
+							"name": "6.0.0",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiOS 6.0.0",
+								"product_id": "FortiOS-6.0.0"
+							}
+						}
+					]
+				}
+			]
+		}
+	}
+}

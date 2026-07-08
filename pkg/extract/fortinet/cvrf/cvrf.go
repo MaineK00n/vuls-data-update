@@ -275,11 +275,13 @@ func buildProductMap(fetched cvrfTypes.CVRF) map[string]productVersion {
 // version-unconfirmed.)
 //
 // Only concrete versions are kept. CVRF enumerates affected versions
-// explicitly, so a coarse "X.Y" / "X" train (e.g. "5.0") is dropped rather than
-// ranged-over: ranging "5.0" would cover all 5.0.x and over-detect. Because
-// detection ORs the CVRF and CSAF datasets, the companion CSAF source supplies
-// the precise ranges for the advisories present there, and the exact CVRF
-// enumeration covers the rest.
+// explicitly, so a coarse train (e.g. "5.0" for FortiOS) is dropped rather
+// than ranged-over: ranging "5.0" would cover all 5.0.x and over-detect.
+// Exact-vs-train is decided per product (productpkg.IsExactVersion), since a few
+// products version their releases with two components. Because detection ORs
+// the CVRF and CSAF datasets, the companion CSAF source supplies the precise
+// ranges for the advisories present there, and the exact CVRF enumeration
+// covers the rest.
 //
 // It hard-errors when a product_id is absent from the tree or the product is
 // not whitelisted — a new Fortinet product or a resolver bug must fail the
@@ -306,9 +308,12 @@ func knownAffectedCriterions(productIDs []string, prodMap map[string]productVers
 		// prefix (e.g. "FortiSandbox Cloud 24"); strip it to leave the bare
 		// version token.
 		ver := strings.TrimSpace(strings.TrimPrefix(pv.version, pv.productName))
-		if !isExactVersion(ver) {
-			// Coarse "X.Y" / "X" trains are dropped by design (rationale in the
-			// function comment above); only exact versions are enumerated.
+		if !productpkg.IsExactVersion(pv.productName, ver) {
+			// Coarse trains are dropped by design (rationale in the function
+			// comment above); only exact versions are enumerated. What counts as
+			// exact depends on the product's version arity (see
+			// productpkg.IsExactVersion): "7.166" is an exact IPS Engine build but
+			// "7.4" is a FortiOS train.
 			continue
 		}
 
@@ -342,15 +347,6 @@ func knownAffectedCriterions(productIDs []string, prodMap map[string]productVers
 		})
 	}
 	return criterions, nil
-}
-
-// isExactVersion reports whether a CVRF version token is a concrete release —
-// three or more dot-separated components (e.g. "7.4.3", or the FortiSASE forms
-// "25.2.a" / "25.1.a.2") — rather than a coarse "X.Y" / "X" train. Only exact
-// versions are enumerated into a criterion's CPEMatches; trains are dropped
-// (see knownAffectedCriterions).
-func isExactVersion(ver string) bool {
-	return strings.Count(ver, ".") >= 2
 }
 
 // advisorySeverity returns the advisory's CVSS severity. CVRF carries a single

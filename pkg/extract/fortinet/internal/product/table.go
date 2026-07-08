@@ -14,13 +14,26 @@ import (
 // productInfo is a product's CPE and its per-product range type. Each product
 // carries its own range type so a product whose version scheme later diverges
 // gets its own comparator without affecting any other (see cpecriterion/range).
+// twoComponentVersions marks products for which a two-component token ("X.Y",
+// e.g. IPS Engine "7.166") is itself a concrete release rather than a train;
+// for them only a bare major is a train (see IsExactVersion). It does NOT
+// claim every release of the product has two components: AV Engine also has
+// older three-component exacts ("4.4.54"), which the marked rule likewise
+// classifies exact (it accepts any token with one or more dots). Mark a
+// product ONLY with corpus evidence that no
+// three-component release exists under any of its two-component tokens:
+// FortiSandbox Cloud/PaaS look two-component in some advisories ("23.4",
+// "5.0") but other advisories enumerate build-suffixed releases under those
+// very tokens ("23.4.4350", "5.0.4"), so their two-component tokens are
+// trains and they must NOT be marked.
 type productInfo struct {
-	cpe       string
-	rangeType ccRangeTypes.RangeType
+	cpe                  string
+	rangeType            ccRangeTypes.RangeType
+	twoComponentVersions bool
 }
 
 var nameToProduct = map[string]productInfo{
-	"AV Engine":                            {cpe: "cpe:2.3:a:fortinet:antivirus_engine:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetAntivirusEngine},
+	"AV Engine":                            {cpe: "cpe:2.3:a:fortinet:antivirus_engine:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetAntivirusEngine, twoComponentVersions: true},
 	"AscenLink":                            {cpe: "cpe:2.3:o:fortinet:ascenlink:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetAscenLink},
 	"FortiADC":                             {cpe: "cpe:2.3:o:fortinet:fortiadc:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiADC},
 	"FortiADCManager":                      {cpe: "cpe:2.3:a:fortinet:fortiadc_manager:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiADCManager},
@@ -34,7 +47,7 @@ var nameToProduct = map[string]productInfo{
 	"FortiAnalyzer Cloud":                  {cpe: "cpe:2.3:a:fortinet:fortianalyzer_cloud:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiAnalyzerCloud},
 	"FortiAnalyzer-BigData":                {cpe: "cpe:2.3:o:fortinet:fortianalyzer-bigdata:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiAnalyzerBigData},
 	"FortiAuthenticator":                   {cpe: "cpe:2.3:o:fortinet:fortiauthenticator:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiAuthenticator},
-	"FortiAuthenticator OutlookAgent":      {cpe: "cpe:2.3:a:fortinet:fortiauthenticator:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiAuthenticator},
+	"FortiAuthenticator OutlookAgent":      {cpe: "cpe:2.3:a:fortinet:fortiauthenticator:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiAuthenticator, twoComponentVersions: true},
 	"FortiCache":                           {cpe: "cpe:2.3:o:fortinet:forticache:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiCache},
 	"FortiCamera":                          {cpe: "cpe:2.3:o:fortinet:forticamera:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiCamera},
 	"FortiClientAndroid":                   {cpe: "cpe:2.3:a:fortinet:forticlient:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiClient},
@@ -95,6 +108,6 @@ var nameToProduct = map[string]productInfo{
 	"FortiWLM":                             {cpe: "cpe:2.3:o:fortinet:fortiwlm:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiWLM},
 	"FortiWeb":                             {cpe: "cpe:2.3:o:fortinet:fortiweb:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiWeb},
 	"FortiWebManager":                      {cpe: "cpe:2.3:a:fortinet:fortiweb_manager:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiWebManager},
-	"IPS Engine":                           {cpe: "cpe:2.3:a:fortinet:fortios_ips_engine:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiOSIPSEngine},
+	"IPS Engine":                           {cpe: "cpe:2.3:a:fortinet:fortios_ips_engine:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiOSIPSEngine, twoComponentVersions: true},
 	"Meru AP":                              {cpe: "cpe:2.3:a:fortinet:meru:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetMeru},
 }

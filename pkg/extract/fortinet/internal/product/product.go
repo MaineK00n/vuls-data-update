@@ -43,26 +43,38 @@ func BakeVersion(cpe, version string) (string, error) {
 	return naming.BindToFS(wfn), nil
 }
 
-// IsConcrete reports whether v is a concrete release (3 or more
-// dot-separated components, i.e. at least two dots, e.g. 7.4.3) as opposed
-// to a release train (7 or 7.4).
-func IsConcrete(v string) bool {
-	return strings.Count(v, ".") >= 2
+// IsExactVersion reports whether ver is a concrete, enumerable release of the
+// named product rather than a coarse release train. Most Fortinet products cut
+// releases with three or more dot-separated components (e.g. FortiOS "7.4.3",
+// FortiSASE "25.2.a"), so a one- or two-component token ("7", "7.4") is a
+// train. A few products version their releases with two components (e.g.
+// FortiAuthenticator OutlookAgent "2.1", IPS Engine "7.166"); those are marked
+// twoComponentVersions in the table (see its comment for the evidence bar),
+// and for them a two-component token is a concrete release — only a bare major
+// is a train. The distinction cannot be made from the version string alone:
+// the same "X.Y" shape is an exact IPS Engine build but a FortiOS train. An
+// unknown product name falls back to the three-component rule.
+func IsExactVersion(name, ver string) bool {
+	if nameToProduct[strings.TrimSpace(name)].twoComponentVersions {
+		return strings.Count(ver, ".") >= 1
+	}
+	return strings.Count(ver, ".") >= 2
 }
 
-// TrainRange builds a range spanning an entire release train: ge train,
-// lt <next train>, where <next> increments the train's last numeric component
-// (7.0 -> 7.1, 7 -> 8). It errors when the input is a concrete version rather
-// than a train, or when the last component is not numeric. The Range Type is left
-// unset; the caller sets the per-product range type (it has the product, this
-// helper does not).
-func TrainRange(train string) (ccRangeTypes.Range, error) {
-	// A train is 1-2 components ("7", "7.0"); a concrete version ("7.0.0") is not a
-	// train. Incrementing its last component would silently narrow the range to a
-	// single patch ("7.0.0" -> [7.0.0, 7.0.1)) instead of spanning a train, a
-	// detection false negative, so reject it as unexpected input.
-	if IsConcrete(train) {
-		return ccRangeTypes.Range{}, errors.Errorf("expected a release train (1-2 components), got concrete version %q", train)
+// TrainRange builds a range spanning an entire release train of the named
+// product: ge train, lt <next train>, where <next> increments the train's
+// last numeric component (7.0 -> 7.1, 7 -> 8). It errors when the input is a
+// concrete release of that product rather than a train (IsExactVersion — for
+// a twoComponentVersions product even "7.166" is concrete), or when the last
+// component is not numeric. The Range Type is left unset; the caller sets the
+// per-product range type.
+func TrainRange(name, train string) (ccRangeTypes.Range, error) {
+	// Spanning a concrete release would silently narrow the range ("7.0.0" ->
+	// [7.0.0, 7.0.1) instead of the 7.0 train; IPS Engine "7.166" -> [7.166,
+	// 7.167) instead of the single build) — a detection false negative or a
+	// bogus range, so reject it as unexpected input.
+	if IsExactVersion(name, train) {
+		return ccRangeTypes.Range{}, errors.Errorf("expected a release train of %q, got concrete version %q", name, train)
 	}
 	ss := strings.Split(train, ".")
 	last, err := strconv.Atoi(ss[len(ss)-1])
