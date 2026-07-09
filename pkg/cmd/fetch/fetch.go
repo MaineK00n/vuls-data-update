@@ -2482,9 +2482,15 @@ func newCmdMicrosoftBulletin() *cobra.Command {
 }
 
 func newCmdMicrosoftCVRF() *cobra.Command {
-	options := &base{
-		dir:   filepath.Join(util.CacheDir(), "fetch", "microsoft", "cvrf"),
-		retry: 3,
+	options := &struct {
+		base
+		supplementMonths int
+	}{
+		base: base{
+			dir:   filepath.Join(util.CacheDir(), "fetch", "microsoft", "cvrf"),
+			retry: 3,
+		},
+		supplementMonths: 3,
 	}
 
 	cmd := &cobra.Command{
@@ -2495,7 +2501,7 @@ func newCmdMicrosoftCVRF() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := microsoftCVRF.Fetch(microsoftCVRF.WithDir(options.dir), microsoftCVRF.WithRetry(options.retry)); err != nil {
+			if err := microsoftCVRF.Fetch(microsoftCVRF.WithDir(options.dir), microsoftCVRF.WithRetry(options.retry), microsoftCVRF.WithSupplementMonths(options.supplementMonths)); err != nil {
 				return errors.Wrap(err, "failed to fetch microsoft cvrf")
 			}
 			return nil
@@ -2504,6 +2510,7 @@ func newCmdMicrosoftCVRF() *cobra.Command {
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+	cmd.Flags().IntVarP(&options.supplementMonths, "supplement-months", "", options.supplementMonths, "recover this many recent months by fetching their CVRF document URL directly when they are missing from the index (0 to disable)")
 
 	return cmd
 }
