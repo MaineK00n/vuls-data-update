@@ -1,0 +1,14 @@
+{
+  "@odata.context": "https://api.msrc.microsoft.com/$metadata#Updates",
+  "value": [
+    {
+      "ID": "2016-Apr",
+      "Alias": "2016-Apr",
+      "DocumentTitle": "April 2016 Security Updates",
+      "Severity": null,
+      "InitialReleaseDate": "2016-04-12T07:00:00Z",
+      "CurrentReleaseDate": "2018-04-10T07:00:00Z",
+      "CvrfUrl": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2016-Apr"
+    }
+  ]
+}
