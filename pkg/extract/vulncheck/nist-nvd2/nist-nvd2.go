@@ -449,9 +449,9 @@ func (e extractor) buildData(fetched nistnvd2Types.CVE) (dataTypes.Data, error) 
 					Modified:  utiltime.Parse([]string{"2006-01-02T15:04:05.999999999"}, fetched.LastModified),
 				},
 				// A segment ties the vulnerability to a detection in the same
-				// ecosystem; when the record produced no detections (Rejected,
-				// or no vcConfigurations/vcVulnerableCPEs) a segment would
-				// dangle, so it is emitted only alongside detections.
+				// ecosystem; when the record produced no detections (no
+				// vcConfigurations/vcVulnerableCPEs) a segment would dangle,
+				// so it is emitted only alongside detections.
 				Segments: func() []segmentTypes.Segment {
 					if len(ds) == 0 {
 						return nil
