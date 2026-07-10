@@ -8,6 +8,7 @@ import (
 	"log/slog"
 	"path/filepath"
 	"runtime"
+	"strings"
 
 	"github.com/hashicorp/go-version"
 	"github.com/knqyf263/go-cpe/common"
@@ -381,6 +382,17 @@ func (e extractor) nodeToCriteria(n cveTypes.Node) (criteriaTypes.Criteria, erro
 		if err != nil {
 			return criteriaTypes.Criteria{}, errors.Wrapf(err, "invalid format. CPE: %s", match.Criteria)
 		}
+
+		// NVD occasionally publishes a range endpoint with stray surrounding
+		// whitespace (e.g. versionEndIncluding " 5.10.35" in CVE-2021-46973),
+		// which fails semver parsing and would demote the whole range to
+		// RangeTypeUnknown — losing the detection. Trim it so the endpoint
+		// classifies and is emitted as a clean SEMVER bound.
+		match.VersionStartIncluding = strings.TrimSpace(match.VersionStartIncluding)
+		match.VersionStartExcluding = strings.TrimSpace(match.VersionStartExcluding)
+		match.VersionEndIncluding = strings.TrimSpace(match.VersionEndIncluding)
+		match.VersionEndExcluding = strings.TrimSpace(match.VersionEndExcluding)
+
 		rangeType := decideRangeType(match)
 
 		var cpeMatches []ccTypes.CPE
