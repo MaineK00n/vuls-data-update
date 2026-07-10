@@ -36,6 +36,7 @@ import (
 	v30Types "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity/cvss/v30"
 	v31Types "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity/cvss/v31"
 	v40Types "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity/cvss/v40"
+	statusTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/status"
 	vulnerabilityTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/vulnerability"
 	vulnerabilityContentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/vulnerability/content"
 	datasourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/datasource"
@@ -326,6 +327,12 @@ func (e extractor) buildData(fetched cveTypes.CVE) (dataTypes.Data, error) {
 							if d.Lang == "en" {
 								return d.Value
 							}
+						}
+						return ""
+					}(),
+					Status: func() statusTypes.Status {
+						if fetched.VulnStatus == "Rejected" {
+							return statusTypes.StatusRejected
 						}
 						return ""
 					}(),
