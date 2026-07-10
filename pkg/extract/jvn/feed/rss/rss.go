@@ -13,6 +13,7 @@ import (
 	"github.com/knqyf263/go-cpe/naming"
 	"github.com/pkg/errors"
 
+	jvnutil "github.com/MaineK00n/vuls-data-update/pkg/extract/jvn/internal"
 	cwecatalogTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/cwe"
 	dataTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data"
 	advisoryTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/advisory"
@@ -313,6 +314,7 @@ func extract(fetched fetchTypes.Item, raws []string) (dataTypes.Data, error) {
 				ID:          advisoryContentTypes.AdvisoryID(fetched.Identifier),
 				Title:       fetched.Title,
 				Description: fetched.Description,
+				Status:      jvnutil.Status(fetched.Title, fetched.Description),
 				Severity:    ss,
 				CWE:         cwes,
 				References:  refs,

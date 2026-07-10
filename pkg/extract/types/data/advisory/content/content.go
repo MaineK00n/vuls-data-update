@@ -11,10 +11,12 @@ import (
 	referenceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/reference"
 	remediationTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/remediation"
 	severityTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity"
+	statusTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/status"
 )
 
 type Content struct {
 	ID          AdvisoryID                     `json:"id,omitempty"`
+	Status      statusTypes.Status             `json:"status,omitempty"`
 	Title       string                         `json:"title,omitempty"`
 	Description string                         `json:"description,omitempty"`
 	Severity    []severityTypes.Severity       `json:"severity,omitempty"`
@@ -57,6 +59,7 @@ func (c *Content) Sort() {
 func Compare(x, y Content) int {
 	return cmp.Or(
 		cmp.Compare(x.ID, y.ID),
+		statusTypes.Compare(x.Status, y.Status),
 		cmp.Compare(x.Title, y.Title),
 		cmp.Compare(x.Description, y.Description),
 		slices.CompareFunc(x.Severity, y.Severity, severityTypes.Compare),

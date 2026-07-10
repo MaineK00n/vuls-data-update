@@ -36,6 +36,7 @@ import (
 	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment/ecosystem"
 	referenceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/reference"
 	severityTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity"
+	statusTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/status"
 	vulnerabilityTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/vulnerability"
 	vulnerabilityContentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/vulnerability/content"
 	datasourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/datasource"
@@ -971,6 +972,12 @@ func (e extractor) readCVE(path string) (vulnerabilityContentTypes.Content, []fe
 			return vulnerabilityContentTypes.Content{
 				ID:          vulnerabilityContentTypes.VulnerabilityID(b.Header.Name),
 				Description: ann.Type,
+				Status: func() statusTypes.Status {
+					if ann.Type == "REJECTED" {
+						return statusTypes.StatusRejected
+					}
+					return ""
+				}(),
 				References: []referenceTypes.Reference{{
 					Source: "security-tracker.debian.org",
 					URL:    fmt.Sprintf("https://security-tracker.debian.org/tracker/%s", b.Header.Name),

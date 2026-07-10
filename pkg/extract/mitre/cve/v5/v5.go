@@ -20,6 +20,7 @@ import (
 	v31Types "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity/cvss/v31"
 	v40Types "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity/cvss/v40"
 	ssvcTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/ssvc"
+	statusTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/status"
 	vulnerabilityTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/vulnerability"
 	vulnerabilityContentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/vulnerability/content"
 	datasourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/datasource"
@@ -387,6 +388,7 @@ func extract(fetched v5.CVE, raws []string) (dataTypes.Data, error) {
 						}
 						return ""
 					}(),
+					Status: statusTypes.StatusRejected,
 					Published: func() *time.Time {
 						if fetched.CVEMetadata.DatePublished != nil {
 							return utiltime.Parse([]string{"2006-01-02T15:04:05.000Z"}, *fetched.CVEMetadata.DatePublished)

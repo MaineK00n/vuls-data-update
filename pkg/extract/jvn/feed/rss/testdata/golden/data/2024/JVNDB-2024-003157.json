@@ -1,0 +1,94 @@
+{
+	"id": "JVNDB-2024-003157",
+	"advisories": [
+		{
+			"content": {
+				"id": "JVNDB-2024-003157",
+				"status": "withdrawn",
+				"title": "** 削除 ** Linux の Linux Kernel における解放済みメモリ使用 (Use After Free) の脆弱性",
+				"description": "** 削除 ** 本件は CVE-2024-26904 として採番されていましたが、取り消されました。\r\n\r\n",
+				"severity": [
+					{
+						"type": "cvss_v30",
+						"source": "jvndb.jvn.jp",
+						"cvss_v30": {
+							"vector": "CVSS:3.0/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
+							"base_score": 7.8,
+							"base_severity": "HIGH",
+							"temporal_score": 7.8,
+							"temporal_severity": "HIGH",
+							"environmental_score": 7.8,
+							"environmental_severity": "HIGH"
+						}
+					}
+				],
+				"references": [
+					{
+						"source": "jvndb.jvn.jp",
+						"url": "https://nvd.nist.gov/vuln/detail/CVE-2024-26904"
+					},
+					{
+						"source": "jvndb.jvn.jp",
+						"url": "https://www.cve.org/CVERecord?id=CVE-2024-26904"
+					}
+				],
+				"published": "2024-05-01T00:00:00+09:00",
+				"modified": "2024-05-01T00:00:00+09:00"
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe"
+				}
+			]
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-2024-26904",
+				"references": [
+					{
+						"source": "jvndb.jvn.jp",
+						"url": "https://nvd.nist.gov/vuln/detail/CVE-2024-26904"
+					},
+					{
+						"source": "jvndb.jvn.jp",
+						"url": "https://www.cve.org/CVERecord?id=CVE-2024-26904"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe"
+				}
+			]
+		}
+	],
+	"detections": [
+		{
+			"ecosystem": "cpe",
+			"conditions": [
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"cpe": "cpe:2.3:o:linux:linux_kernel:*:*:*:*:*:*:*:*"
+								}
+							}
+						]
+					}
+				}
+			]
+		}
+	],
+	"data_source": {
+		"id": "jvn-feed-rss",
+		"raws": [
+			"fixtures/2024/JVNDB-2024-003157.json"
+		]
+	}
+}
