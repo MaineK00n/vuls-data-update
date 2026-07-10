@@ -183,7 +183,7 @@ func extract(fetched api.Advisory, raws []string) (*dataTypes.Data, error) {
 			return nil, errors.Wrapf(err, "get ecosystem")
 		}
 
-		d, err := func() (detectionTypes.Detection, error) {
+		ds, err := func() ([]detectionTypes.Detection, error) {
 			var cs []criterion.Criterion
 			for _, build := range fetched.Builds {
 				switch build.Type {
@@ -229,7 +229,7 @@ func extract(fetched api.Advisory, raws []string) (*dataTypes.Data, error) {
 					}
 				case "module":
 					if build.Module == nil || build.Module.Name == "" || build.Module.Stream == "" {
-						return detectionTypes.Detection{}, errors.New("module info is incomplete")
+						return nil, errors.New("module info is incomplete")
 					}
 
 					nevram := make(map[string]map[string][]string)
@@ -274,10 +274,13 @@ func extract(fetched api.Advisory, raws []string) (*dataTypes.Data, error) {
 					}
 				case "flatpak", "container":
 				default:
-					return detectionTypes.Detection{}, errors.Errorf("unexpected build type. expected: %q, actual: %q", []string{"rpm", "module", "flatpak", "container"}, build.Type)
+					return nil, errors.Errorf("unexpected build type. expected: %q, actual: %q", []string{"rpm", "module", "flatpak", "container"}, build.Type)
 				}
 			}
-			return detectionTypes.Detection{
+			if len(cs) == 0 {
+				return nil, nil
+			}
+			return []detectionTypes.Detection{{
 				Ecosystem: eco,
 				Conditions: []conditionTypes.Condition{{
 					Criteria: criteriaTypes.Criteria{
@@ -285,7 +288,7 @@ func extract(fetched api.Advisory, raws []string) (*dataTypes.Data, error) {
 						Criterions: cs,
 					},
 				}},
-			}, nil
+			}}, nil
 		}()
 		if err != nil {
 			return nil, errors.Wrapf(err, "get detections")
@@ -382,7 +385,7 @@ func extract(fetched api.Advisory, raws []string) (*dataTypes.Data, error) {
 
 				return vs
 			}(),
-			Detections: []detectionTypes.Detection{d},
+			Detections: ds,
 			DataSource: sourceTypes.Source{
 				ID:   sourceTypes.FedoraAPI,
 				Raws: raws,
