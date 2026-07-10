@@ -81,13 +81,12 @@ func TestExtract(t *testing.T) {
 			golden: "./testdata/golden/non-vulnerable-platform",
 		},
 		{
-			// vulnStatus=Rejected entries: the vulnerability content (the
-			// rejection reason) is still emitted, but detections are
-			// suppressed — a rejected CVE is withdrawn, so flagging it would
-			// be a false positive. Covers a hollow reject (CVE-2024-2652, no
-			// vcConfigurations) and a reject that still carries
-			// vcConfigurations (CVE-2022-49267), proving the latter's
-			// detections are dropped.
+			// vulnStatus=Rejected entries are kept whole: both the vulnerability
+			// content (the rejection reason) AND the detections are emitted, so
+			// the consumer decides whether to drop the withdrawn CVE. Covers a
+			// hollow reject (CVE-2024-2652, no vcConfigurations → no detections)
+			// and a reject that still carries vcConfigurations (CVE-2022-49267),
+			// proving the latter's detections are now emitted.
 			name:   "rejected",
 			args:   "./testdata/fixtures/rejected/vuls-data-raw-vulncheck-nist-nvd2",
 			golden: "./testdata/golden/rejected",
