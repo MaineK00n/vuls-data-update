@@ -266,14 +266,10 @@ func (e extractor) buildData(fetched nistnvd2Types.CVE) (dataTypes.Data, error) 
 	// Both are built from VulnCheck's enriched fields only — never the plain NVD
 	// configurations.
 	ds, err := func() ([]detectionType.Detection, error) {
-		// A Rejected CVE is withdrawn, so it must not produce detections —
-		// VulnCheck keeps vcConfigurations on some rejected entries, and
-		// emitting them would flag a withdrawn CVE (a false positive). The
-		// vulnerability content (the rejection reason) is still emitted, as
-		// other extractors (nvd/feed/cve/v2, mitre/v5) keep rejected records.
-		if fetched.VulnStatus == "Rejected" {
-			return nil, nil
-		}
+		// Detections are emitted even for a Rejected CVE. The rejection is
+		// recorded on the vulnerability content's Status (StatusRejected)
+		// instead, leaving it to the consumer to drop the withdrawn CVE.
+		// (Previously rejected entries produced no detections here.)
 
 		// Accumulate the present groups directly into the root OR criteria.
 		criteria := criteriaTypes.Criteria{Operator: criteriaTypes.CriteriaOperatorTypeOR}
