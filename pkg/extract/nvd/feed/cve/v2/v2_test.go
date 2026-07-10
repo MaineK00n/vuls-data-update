@@ -129,6 +129,20 @@ func TestExtract(t *testing.T) {
 			hasError: true,
 		},
 		{
+			// A CVE with no configurations (CVE-2024-0094, Deferred): no
+			// detections are built, and the vulnerability must not carry a
+			// segment either — a segment ties the vulnerability to a
+			// detection, so without detections it would dangle. The cpematch
+			// fixture entry is unused (nothing references it); it only keeps
+			// the directory non-empty.
+			name: "no-detection",
+			args: args{
+				cveDir:      "./testdata/fixtures/no-detection/vuls-data-raw-nvd-feed-cve-v2",
+				cpematchDir: "./testdata/fixtures/no-detection/vuls-data-raw-nvd-feed-cpematch-v2",
+			},
+			golden: "./testdata/golden/no-detection",
+		},
+		{
 			// negate=true on a configuration object is not implemented.
 			// The extractor must return an explicit error rather than
 			// silently emit non-negated criteria, which would invert
