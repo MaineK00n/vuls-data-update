@@ -23,6 +23,17 @@ func TestExtract(t *testing.T) {
 			golden:      "./testdata/golden/happy",
 		},
 		{
+			// A range endpoint carrying stray surrounding whitespace
+			// (versionEndIncluding " 5.10.35" in the real CVE-2021-46973). The
+			// endpoint is trimmed before classification, so the range stays
+			// SEMVER (ge 5.8, le 5.10.35) instead of being demoted to unknown
+			// and losing the detection.
+			name:        "whitespace-range",
+			cveDir:      "./testdata/fixtures/whitespace-range/vuls-data-raw-nvd-api-cve",
+			cpematchDir: "./testdata/fixtures/whitespace-range/vuls-data-raw-nvd-api-cpematch",
+			golden:      "./testdata/golden/whitespace-range",
+		},
+		{
 			name:        "with-and",
 			cveDir:      "./testdata/fixtures/with-and/vuls-data-raw-nvd-api-cve",
 			cpematchDir: "./testdata/fixtures/with-and/vuls-data-raw-nvd-api-cpematch",
