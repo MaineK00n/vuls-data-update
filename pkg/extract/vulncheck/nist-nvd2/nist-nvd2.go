@@ -380,12 +380,7 @@ func (e extractor) buildData(fetched nistnvd2Types.CVE) (dataTypes.Data, error) 
 						}
 						return ""
 					}(),
-					Status: func() statusTypes.Status {
-						if fetched.VulnStatus == "Rejected" {
-							return statusTypes.StatusRejected
-						}
-						return ""
-					}(),
+					Status:   statusTypes.Normalize(fetched.VulnStatus),
 					Severity: ss,
 					CWE: func() []cweTypes.CWE {
 						if len(fetched.Weaknesses) == 0 {

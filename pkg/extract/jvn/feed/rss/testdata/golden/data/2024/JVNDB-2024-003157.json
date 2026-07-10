@@ -4,9 +4,9 @@
 		{
 			"content": {
 				"id": "JVNDB-2024-003157",
+				"status": "withdrawn",
 				"title": "** 削除 ** Linux の Linux Kernel における解放済みメモリ使用 (Use After Free) の脆弱性",
 				"description": "** 削除 ** 本件は CVE-2024-26904 として採番されていましたが、取り消されました。\r\n\r\n",
-				"status": "withdrawn",
 				"severity": [
 					{
 						"type": "cvss_v30",
