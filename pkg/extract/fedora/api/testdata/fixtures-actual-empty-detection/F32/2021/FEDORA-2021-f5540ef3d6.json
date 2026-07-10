@@ -1,0 +1,38 @@
+{
+	"alias": "FEDORA-2021-f5540ef3d6",
+	"bugs": [
+		{
+			"bug_id": 1920001,
+			"security": true,
+			"bugzilla": {
+				"bug_id": "1920001",
+				"alias": [
+					"CVE-2021-9999"
+				],
+				"creation_ts": "2021-01-10 12:34:56 +0000",
+				"short_desc": "example flatpak-only security advisory",
+				"delta_ts": "2021-01-11 01:02:03 +0000",
+				"bug_severity": "moderate"
+			}
+		}
+	],
+	"builds": [
+		{
+			"nvr": "example-flatpak-1-1.fc32",
+			"release_id": 57,
+			"signed": true,
+			"type": "flatpak"
+		}
+	],
+	"date_submitted": "2021-01-09 08:07:06",
+	"notes": "Regression fixture for a real empty-detection advisory shape.",
+	"release": {
+		"id_prefix": "FEDORA",
+		"name": "F32",
+		"version": "32"
+	},
+	"severity": "moderate",
+	"title": "example-flatpak-1-1.fc32",
+	"url": "https://bodhi.fedoraproject.org/updates/FEDORA-2021-f5540ef3d6",
+	"updateid": "FEDORA-2021-f5540ef3d6"
+}

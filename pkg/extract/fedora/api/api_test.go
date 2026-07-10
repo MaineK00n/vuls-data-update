@@ -12,11 +12,18 @@ func TestExtract(t *testing.T) {
 	tests := []struct {
 		name     string
 		args     string
+		golden   string
 		hasError bool
 	}{
 		{
-			name: "happy",
-			args: "./testdata/fixtures",
+			name:   "happy",
+			args:   "./testdata/fixtures",
+			golden: "./testdata/golden",
+		},
+		{
+			name:   "actual empty detection advisory",
+			args:   "./testdata/fixtures-actual-empty-detection",
+			golden: "./testdata/golden-actual-empty-detection",
 		},
 	}
 	for _, tt := range tests {
@@ -32,7 +39,7 @@ func TestExtract(t *testing.T) {
 				// error was expected and occurred, test passed
 				return
 			default:
-				ep, err := filepath.Abs(filepath.Join("testdata", "golden"))
+				ep, err := filepath.Abs(tt.golden)
 				if err != nil {
 					t.Error("unexpected error:", err)
 				}

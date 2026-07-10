@@ -1,0 +1,65 @@
+{
+	"id": "FEDORA-2021-f5540ef3d6",
+	"advisories": [
+		{
+			"content": {
+				"id": "FEDORA-2021-f5540ef3d6",
+				"title": "example-flatpak-1-1.fc32",
+				"description": "Regression fixture for a real empty-detection advisory shape.",
+				"severity": [
+					{
+						"type": "vendor",
+						"source": "fedoraproject.org",
+						"vendor": "moderate"
+					}
+				],
+				"references": [
+					{
+						"source": "fedoraproject.org",
+						"url": "https://bodhi.fedoraproject.org/updates/FEDORA-2021-f5540ef3d6"
+					}
+				],
+				"published": "2021-01-09T08:07:06Z"
+			},
+			"segments": [
+				{
+					"ecosystem": "fedora:32"
+				}
+			]
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-2021-9999",
+				"title": "example flatpak-only security advisory",
+				"severity": [
+					{
+						"type": "vendor",
+						"source": "fedoraproject.org",
+						"vendor": "moderate"
+					}
+				],
+				"references": [
+					{
+						"source": "fedoraproject.org",
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=1920001"
+					}
+				],
+				"published": "2021-01-10T12:34:56Z",
+				"modified": "2021-01-11T01:02:03Z"
+			},
+			"segments": [
+				{
+					"ecosystem": "fedora:32"
+				}
+			]
+		}
+	],
+	"data_source": {
+		"id": "fedora-api",
+		"raws": [
+			"fixtures-actual-empty-detection/F32/2021/FEDORA-2021-f5540ef3d6.json"
+		]
+	}
+}
