@@ -59,7 +59,7 @@
 	"data_source": {
 		"id": "fedora-api",
 		"raws": [
-			"fixtures-actual-empty-detection/F32/2021/FEDORA-2021-f5540ef3d6.json"
+			"fixtures/F32/2021/FEDORA-2021-f5540ef3d6.json"
 		]
 	}
 }
