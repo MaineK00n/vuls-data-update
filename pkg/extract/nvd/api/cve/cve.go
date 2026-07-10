@@ -328,7 +328,16 @@ func (e extractor) buildData(fetched cveTypes.CVE) (dataTypes.Data, error) {
 					Published: utiltime.Parse([]string{"2006-01-02T15:04:05.000"}, fetched.Published),
 					Modified:  utiltime.Parse([]string{"2006-01-02T15:04:05.000"}, fetched.LastModified),
 				},
-				Segments: []segmentTypes.Segment{{Ecosystem: ecosystemTypes.EcosystemTypeCPE}},
+				// A segment ties the vulnerability to a detection in the same
+				// ecosystem; when the record produced no detections (no
+				// configurations) a segment would dangle, so it is emitted
+				// only alongside detections.
+				Segments: func() []segmentTypes.Segment {
+					if len(ds) == 0 {
+						return nil
+					}
+					return []segmentTypes.Segment{{Ecosystem: ecosystemTypes.EcosystemTypeCPE}}
+				}(),
 			},
 		},
 		Detections: ds,
