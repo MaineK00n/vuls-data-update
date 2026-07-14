@@ -92,6 +92,16 @@ func TestExtract(t *testing.T) {
 			golden: "./testdata/golden/rejected",
 		},
 		{
+			// A live (non-Rejected) entry with neither vcConfigurations nor
+			// vcVulnerableCPEs (CVE-2024-0094, Deferred): no detections are
+			// built, and the vulnerability must not carry a segment either —
+			// a segment ties the vulnerability to a detection, so without
+			// detections it would dangle.
+			name:   "no-detection",
+			args:   "./testdata/fixtures/no-detection/vuls-data-raw-vulncheck-nist-nvd2",
+			golden: "./testdata/golden/no-detection",
+		},
+		{
 			// negate=true on a configuration cannot be expressed in the
 			// criteria tree and never appears in the real feed, so the
 			// extractor fails hard rather than silently emitting inverted
