@@ -145,31 +145,6 @@ func Fetch(ids []string, opts ...Option) error {
 			}
 
 			return nil
-		case http.StatusNotFound:
-			_, _ = io.Copy(io.Discard, resp.Body)
-			id := path.Base(resp.Request.URL.Path)
-			// A handful of advisories listed by /json/?page= return 404 on the
-			// per-advisory endpoint (a known upstream regression); tolerate only these
-			// IDs so a 404 on any other advisory still fails loudly as a new regression.
-			// Empty this list once upstream restores the endpoints — see #864.
-			switch id {
-			case "CVE-2022-42889",
-				"PAN-SA-2014-0001", "PAN-SA-2014-0002", "PAN-SA-2014-0004", "PAN-SA-2014-0006",
-				"PAN-SA-2015-0003", "PAN-SA-2015-0005", "PAN-SA-2015-0006",
-				"PAN-SA-2016-0006", "PAN-SA-2016-0007", "PAN-SA-2016-0008", "PAN-SA-2016-0010",
-				"PAN-SA-2016-0011", "PAN-SA-2016-0013", "PAN-SA-2016-0014", "PAN-SA-2016-0015",
-				"PAN-SA-2016-0016", "PAN-SA-2016-0017", "PAN-SA-2016-0018", "PAN-SA-2016-0019",
-				"PAN-SA-2016-0020", "PAN-SA-2016-0022", "PAN-SA-2016-0023", "PAN-SA-2016-0024",
-				"PAN-SA-2016-0025", "PAN-SA-2016-0026", "PAN-SA-2016-0028", "PAN-SA-2016-0029",
-				"PAN-SA-2016-0030", "PAN-SA-2016-0031", "PAN-SA-2016-0032", "PAN-SA-2016-0033",
-				"PAN-SA-2018-0001", "PAN-SA-2018-0011", "PAN-SA-2018-0015",
-				"PAN-SA-2019-0004", "PAN-SA-2019-0011", "PAN-SA-2019-0012", "PAN-SA-2019-0013",
-				"PAN-SA-2022-0006", "PAN-SA-2022-0007":
-				slog.Warn("skip advisory: known upstream 404 regression", "id", id)
-				return nil
-			default:
-				return errors.Errorf("unexpected 404 for advisory %q (not a known upstream regression)", id)
-			}
 		default:
 			_, _ = io.Copy(io.Discard, resp.Body)
 			return errors.Errorf("error response with status code %d for advisory %q", resp.StatusCode, path.Base(resp.Request.URL.Path))

@@ -35,20 +35,11 @@ func TestFetch(t *testing.T) {
 			},
 		},
 		{
-			name: "include known 404 (skipped)",
+			name: "include 404 (fails)",
 			args: args{
 				ids: []string{
 					"CVE-2025-0114",
-					"PAN-SA-2016-0011", // known upstream 404 regression
-				},
-			},
-		},
-		{
-			name: "include unknown 404 (fails)",
-			args: args{
-				ids: []string{
-					"CVE-2025-0114",
-					"PAN-SA-0000-0000", // 404 but not a known regression
+					"PAN-SA-0000-0000", // per-advisory endpoint returns 404
 				},
 			},
 			hasError: true,
@@ -72,6 +63,8 @@ func TestFetch(t *testing.T) {
 					switch path.Base(r.URL.Path) {
 					case "PAN-SA-9999-0500":
 						http.Error(w, "internal server error", http.StatusInternalServerError)
+					case "PAN-SA-0000-0000":
+						http.NotFound(w, r)
 					default:
 						http.ServeFile(w, r, filepath.Join("testdata", "fixtures", path.Base(r.URL.Path)))
 					}
