@@ -128,11 +128,8 @@ func Extract(args string, opts ...Option) error {
 					return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "ALSA-<year>:<ID>", extracted.ID)
 				}
 
-				if _, err := os.Stat(filepath.Join(options.dir, "data", ss[0], ss[1], fmt.Sprintf("%s.json", extracted.ID))); err == nil {
-					f, err := os.Open(filepath.Join(options.dir, "data", ss[0], ss[1], fmt.Sprintf("%s.json", extracted.ID)))
-					if err != nil {
-						return errors.Wrapf(err, "open %s", filepath.Join(options.dir, "data", ss[0], ss[1], fmt.Sprintf("%s.json", extracted.ID)))
-					}
+				switch f, err := os.Open(filepath.Join(options.dir, "data", ss[0], ss[1], fmt.Sprintf("%s.json", extracted.ID))); {
+				case err == nil:
 					defer f.Close()
 
 					var base dataTypes.Data
@@ -141,6 +138,9 @@ func Extract(args string, opts ...Option) error {
 					}
 
 					extracted.Merge(base)
+				case errors.Is(err, os.ErrNotExist):
+				default:
+					return errors.Wrapf(err, "open %s", filepath.Join(options.dir, "data", ss[0], ss[1], fmt.Sprintf("%s.json", extracted.ID)))
 				}
 
 				if err := util.Write(filepath.Join(options.dir, "data", ss[0], ss[1], fmt.Sprintf("%s.json", extracted.ID)), extracted, true); err != nil {
@@ -399,7 +399,7 @@ func (e extractor) walkCriterions(ca criteriaTypes.Criteria, major string, ovalC
 			}
 
 			if s.Evr.Text == "" {
-				return criteriaTypes.Criteria{}, errors.New("evr is empty")
+				return criteriaTypes.Criteria{}, errors.Errorf("evr is empty. state: %s", filepath.Join("states", "rpminfo_state", t1.State.StateRef))
 			}
 			switch s.Evr.Operation {
 			case "less than":
