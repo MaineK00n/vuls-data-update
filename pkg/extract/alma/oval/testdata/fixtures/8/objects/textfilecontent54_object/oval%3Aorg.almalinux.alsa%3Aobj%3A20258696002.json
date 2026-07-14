@@ -1,0 +1,16 @@
+{
+	"id": "oval:org.almalinux.alsa:obj:20258696002",
+	"version": "1",
+	"filepath": {
+		"text": "/etc/dnf/modules.d/perl-FCGI.module",
+		"datatype": "string"
+	},
+	"pattern": {
+		"text": "\\[perl-FCGI\\][\\w\\W]*",
+		"operation": "pattern match"
+	},
+	"instance": {
+		"text": "1",
+		"datatype": "int"
+	}
+}

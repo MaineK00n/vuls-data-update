@@ -1,0 +1,12 @@
+{
+	"check": "at least one",
+	"comment": "perl-FCGI is signed with AlmaLinux OS 8 key (2ae81e8aced7258b)",
+	"id": "oval:org.almalinux.alsa:tst:20258696003",
+	"version": "1",
+	"object": {
+		"object_ref": "oval:org.almalinux.alsa:obj:20258696001"
+	},
+	"state": {
+		"state_ref": "oval:org.almalinux.alba:ste:2020034802723"
+	}
+}

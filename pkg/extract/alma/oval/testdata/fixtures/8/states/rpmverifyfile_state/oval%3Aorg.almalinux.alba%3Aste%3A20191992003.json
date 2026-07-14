@@ -1,0 +1,12 @@
+{
+	"id": "oval:org.almalinux.alba:ste:20191992003",
+	"attrversion": "635",
+	"name": {
+		"text": "^almalinux-release",
+		"operation": "pattern match"
+	},
+	"version": {
+		"text": "^8[^\\d]",
+		"operation": "pattern match"
+	}
+}

@@ -1,0 +1,1970 @@
+{
+	"id": "ALSA-2024:0265",
+	"advisories": [
+		{
+			"content": {
+				"id": "ALSA-2024:0265",
+				"title": "ALSA-2024:0265: java-1.8.0-openjdk security and bug fix update (Important)",
+				"description": "The java-1.8.0-openjdk packages provide the OpenJDK 8 Java Runtime Environment and the OpenJDK 8 Java Software Development Kit.\n\nSecurity Fix(es):\n\n* OpenJDK: array out-of-bounds access due to missing range check in C1 compiler (8314468) (CVE-2024-20918)\n* OpenJDK: RSA padding issue and timing side-channel attack against TLS (8317547) (CVE-2024-20952)\n* OpenJDK: JVM class file verifier flaw allows unverified bytecode execution (8314295) (CVE-2024-20919)\n* OpenJDK: range check loop optimization issue (8314307) (CVE-2024-20921)\n* OpenJDK: arbitrary Java code execution in Nashorn (8314284) (CVE-2024-20926)\n* OpenJDK: logging of digital signature private keys (8316976) (CVE-2024-20945)\n\nFor more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.\n\nBug Fix(es):\n\n* In the previous release in October 2023 (8u392), the RPMs on AlmaLinux 8 were changed to use Provides for java, jre, java-headless, jre-headless, java-devel and java-sdk which included the full RPM version. This prevented the Provides being used to resolve a dependency on Java 1.8.0 (for example, \"Requires: java-headless 1:1.8.0\"). This change has now been reverted to the old \"1:1.8.0\" value. (AlmaLinux-19636, AlmaLinux-19637)",
+				"severity": [
+					{
+						"type": "vendor",
+						"source": "packager@almalinux.org",
+						"vendor": "Important"
+					}
+				],
+				"references": [
+					{
+						"source": "packager@almalinux.org",
+						"url": "https://access.redhat.com/errata/RHSA-2024:0265"
+					},
+					{
+						"source": "packager@almalinux.org",
+						"url": "https://access.redhat.com/security/cve/CVE-2024-20918"
+					},
+					{
+						"source": "packager@almalinux.org",
+						"url": "https://access.redhat.com/security/cve/CVE-2024-20919"
+					},
+					{
+						"source": "packager@almalinux.org",
+						"url": "https://access.redhat.com/security/cve/CVE-2024-20921"
+					},
+					{
+						"source": "packager@almalinux.org",
+						"url": "https://access.redhat.com/security/cve/CVE-2024-20926"
+					},
+					{
+						"source": "packager@almalinux.org",
+						"url": "https://access.redhat.com/security/cve/CVE-2024-20945"
+					},
+					{
+						"source": "packager@almalinux.org",
+						"url": "https://access.redhat.com/security/cve/CVE-2024-20952"
+					},
+					{
+						"source": "packager@almalinux.org",
+						"url": "https://bugzilla.redhat.com/2257728"
+					},
+					{
+						"source": "packager@almalinux.org",
+						"url": "https://bugzilla.redhat.com/2257837"
+					},
+					{
+						"source": "packager@almalinux.org",
+						"url": "https://bugzilla.redhat.com/2257850"
+					},
+					{
+						"source": "packager@almalinux.org",
+						"url": "https://bugzilla.redhat.com/2257853"
+					},
+					{
+						"source": "packager@almalinux.org",
+						"url": "https://bugzilla.redhat.com/2257859"
+					},
+					{
+						"source": "packager@almalinux.org",
+						"url": "https://bugzilla.redhat.com/2257874"
+					},
+					{
+						"source": "packager@almalinux.org",
+						"url": "https://errata.almalinux.org/8/ALSA-2024-0265.html"
+					}
+				],
+				"published": "2024-01-17T00:00:00Z",
+				"modified": "2024-01-17T00:00:00Z"
+			},
+			"segments": [
+				{
+					"ecosystem": "alma:8"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "ALSA-2024:0265",
+				"title": "ALSA-2024:0265: java-1.8.0-openjdk security and bug fix update (Important)",
+				"description": "The java-1.8.0-openjdk packages provide the OpenJDK 8 Java Runtime Environment and the OpenJDK 8 Java Software Development Kit.\n\nSecurity Fix(es):\n\n* OpenJDK: array out-of-bounds access due to missing range check in C1 compiler (8314468) (CVE-2024-20918)\n* OpenJDK: RSA padding issue and timing side-channel attack against TLS (8317547) (CVE-2024-20952)\n* OpenJDK: JVM class file verifier flaw allows unverified bytecode execution (8314295) (CVE-2024-20919)\n* OpenJDK: range check loop optimization issue (8314307) (CVE-2024-20921)\n* OpenJDK: arbitrary Java code execution in Nashorn (8314284) (CVE-2024-20926)\n* OpenJDK: logging of digital signature private keys (8316976) (CVE-2024-20945)\n\nFor more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.\n\nBug Fix(es):\n\n* In the previous release in October 2023 (8u392), the RPMs on AlmaLinux 8 were changed to use Provides for java, jre, java-headless, jre-headless, java-devel and java-sdk which included the full RPM version. This prevented the Provides being used to resolve a dependency on Java 1.8.0 (for example, \"Requires: java-headless 1:1.8.0\"). This change has now been reverted to the old \"1:1.8.0\" value. (AlmaLinux-19636, AlmaLinux-19637)",
+				"severity": [
+					{
+						"type": "vendor",
+						"source": "packager@almalinux.org",
+						"vendor": "Important"
+					}
+				],
+				"references": [
+					{
+						"source": "packager@almalinux.org",
+						"url": "https://access.redhat.com/errata/RHSA-2024:0265"
+					},
+					{
+						"source": "packager@almalinux.org",
+						"url": "https://access.redhat.com/security/cve/CVE-2024-20918"
+					},
+					{
+						"source": "packager@almalinux.org",
+						"url": "https://access.redhat.com/security/cve/CVE-2024-20919"
+					},
+					{
+						"source": "packager@almalinux.org",
+						"url": "https://access.redhat.com/security/cve/CVE-2024-20921"
+					},
+					{
+						"source": "packager@almalinux.org",
+						"url": "https://access.redhat.com/security/cve/CVE-2024-20926"
+					},
+					{
+						"source": "packager@almalinux.org",
+						"url": "https://access.redhat.com/security/cve/CVE-2024-20945"
+					},
+					{
+						"source": "packager@almalinux.org",
+						"url": "https://access.redhat.com/security/cve/CVE-2024-20952"
+					},
+					{
+						"source": "packager@almalinux.org",
+						"url": "https://bugzilla.redhat.com/2257728"
+					},
+					{
+						"source": "packager@almalinux.org",
+						"url": "https://bugzilla.redhat.com/2257837"
+					},
+					{
+						"source": "packager@almalinux.org",
+						"url": "https://bugzilla.redhat.com/2257850"
+					},
+					{
+						"source": "packager@almalinux.org",
+						"url": "https://bugzilla.redhat.com/2257853"
+					},
+					{
+						"source": "packager@almalinux.org",
+						"url": "https://bugzilla.redhat.com/2257859"
+					},
+					{
+						"source": "packager@almalinux.org",
+						"url": "https://bugzilla.redhat.com/2257874"
+					},
+					{
+						"source": "packager@almalinux.org",
+						"url": "https://errata.almalinux.org/9/ALSA-2024-0265.html"
+					}
+				],
+				"published": "2024-01-17T00:00:00Z",
+				"modified": "2024-01-17T00:00:00Z"
+			},
+			"segments": [
+				{
+					"ecosystem": "alma:9"
+				}
+			]
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-2024-20918",
+				"severity": [
+					{
+						"type": "vendor",
+						"source": "packager@almalinux.org",
+						"vendor": "Important"
+					},
+					{
+						"type": "cvss_v31",
+						"source": "packager@almalinux.org",
+						"cvss_v31": {
+							"vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:N",
+							"base_score": 7.4,
+							"base_severity": "HIGH",
+							"temporal_score": 7.4,
+							"temporal_severity": "HIGH",
+							"environmental_score": 7.4,
+							"environmental_severity": "HIGH"
+						}
+					}
+				],
+				"cwe": [
+					{
+						"source": "packager@almalinux.org",
+						"cwe": [
+							"CWE-190->(CWE-125|CWE-787)"
+						]
+					}
+				],
+				"references": [
+					{
+						"source": "packager@almalinux.org",
+						"url": "https://access.redhat.com/security/cve/CVE-2024-20918"
+					}
+				],
+				"published": "2024-01-16T00:00:00Z"
+			},
+			"segments": [
+				{
+					"ecosystem": "alma:8"
+				},
+				{
+					"ecosystem": "alma:9"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2024-20919",
+				"severity": [
+					{
+						"type": "vendor",
+						"source": "packager@almalinux.org",
+						"vendor": "Moderate"
+					},
+					{
+						"type": "cvss_v31",
+						"source": "packager@almalinux.org",
+						"cvss_v31": {
+							"vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:H/A:N",
+							"base_score": 5.9,
+							"base_severity": "MEDIUM",
+							"temporal_score": 5.9,
+							"temporal_severity": "MEDIUM",
+							"environmental_score": 5.9,
+							"environmental_severity": "MEDIUM"
+						}
+					}
+				],
+				"cwe": [
+					{
+						"source": "packager@almalinux.org",
+						"cwe": [
+							"CWE-20"
+						]
+					}
+				],
+				"references": [
+					{
+						"source": "packager@almalinux.org",
+						"url": "https://access.redhat.com/security/cve/CVE-2024-20919"
+					}
+				],
+				"published": "2024-01-16T00:00:00Z"
+			},
+			"segments": [
+				{
+					"ecosystem": "alma:8"
+				},
+				{
+					"ecosystem": "alma:9"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2024-20921",
+				"severity": [
+					{
+						"type": "vendor",
+						"source": "packager@almalinux.org",
+						"vendor": "Moderate"
+					},
+					{
+						"type": "cvss_v31",
+						"source": "packager@almalinux.org",
+						"cvss_v31": {
+							"vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:N/A:N",
+							"base_score": 5.9,
+							"base_severity": "MEDIUM",
+							"temporal_score": 5.9,
+							"temporal_severity": "MEDIUM",
+							"environmental_score": 5.9,
+							"environmental_severity": "MEDIUM"
+						}
+					}
+				],
+				"cwe": [
+					{
+						"source": "packager@almalinux.org",
+						"cwe": [
+							"CWE-20"
+						]
+					}
+				],
+				"references": [
+					{
+						"source": "packager@almalinux.org",
+						"url": "https://access.redhat.com/security/cve/CVE-2024-20921"
+					}
+				],
+				"published": "2024-01-16T00:00:00Z"
+			},
+			"segments": [
+				{
+					"ecosystem": "alma:8"
+				},
+				{
+					"ecosystem": "alma:9"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2024-20926",
+				"severity": [
+					{
+						"type": "vendor",
+						"source": "packager@almalinux.org",
+						"vendor": "Moderate"
+					},
+					{
+						"type": "cvss_v31",
+						"source": "packager@almalinux.org",
+						"cvss_v31": {
+							"vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:N/A:N",
+							"base_score": 5.9,
+							"base_severity": "MEDIUM",
+							"temporal_score": 5.9,
+							"temporal_severity": "MEDIUM",
+							"environmental_score": 5.9,
+							"environmental_severity": "MEDIUM"
+						}
+					}
+				],
+				"cwe": [
+					{
+						"source": "packager@almalinux.org",
+						"cwe": [
+							"CWE-20"
+						]
+					}
+				],
+				"references": [
+					{
+						"source": "packager@almalinux.org",
+						"url": "https://access.redhat.com/security/cve/CVE-2024-20926"
+					}
+				],
+				"published": "2024-01-16T00:00:00Z"
+			},
+			"segments": [
+				{
+					"ecosystem": "alma:8"
+				},
+				{
+					"ecosystem": "alma:9"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2024-20945",
+				"severity": [
+					{
+						"type": "vendor",
+						"source": "packager@almalinux.org",
+						"vendor": "Moderate"
+					},
+					{
+						"type": "cvss_v31",
+						"source": "packager@almalinux.org",
+						"cvss_v31": {
+							"vector": "CVSS:3.1/AV:L/AC:H/PR:L/UI:N/S:U/C:H/I:N/A:N",
+							"base_score": 4.7,
+							"base_severity": "MEDIUM",
+							"temporal_score": 4.7,
+							"temporal_severity": "MEDIUM",
+							"environmental_score": 4.7,
+							"environmental_severity": "MEDIUM"
+						}
+					}
+				],
+				"cwe": [
+					{
+						"source": "packager@almalinux.org",
+						"cwe": [
+							"CWE-532"
+						]
+					}
+				],
+				"references": [
+					{
+						"source": "packager@almalinux.org",
+						"url": "https://access.redhat.com/security/cve/CVE-2024-20945"
+					}
+				],
+				"published": "2024-01-16T00:00:00Z"
+			},
+			"segments": [
+				{
+					"ecosystem": "alma:8"
+				},
+				{
+					"ecosystem": "alma:9"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2024-20952",
+				"severity": [
+					{
+						"type": "vendor",
+						"source": "packager@almalinux.org",
+						"vendor": "Important"
+					},
+					{
+						"type": "cvss_v31",
+						"source": "packager@almalinux.org",
+						"cvss_v31": {
+							"vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:N",
+							"base_score": 7.4,
+							"base_severity": "HIGH",
+							"temporal_score": 7.4,
+							"temporal_severity": "HIGH",
+							"environmental_score": 7.4,
+							"environmental_severity": "HIGH"
+						}
+					}
+				],
+				"cwe": [
+					{
+						"source": "packager@almalinux.org",
+						"cwe": [
+							"CWE-385"
+						]
+					}
+				],
+				"references": [
+					{
+						"source": "packager@almalinux.org",
+						"url": "https://access.redhat.com/security/cve/CVE-2024-20952"
+					}
+				],
+				"published": "2024-01-16T00:00:00Z"
+			},
+			"segments": [
+				{
+					"ecosystem": "alma:8"
+				},
+				{
+					"ecosystem": "alma:9"
+				}
+			]
+		}
+	],
+	"detections": [
+		{
+			"ecosystem": "alma:8",
+			"conditions": [
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "version",
+										"version": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "fixed"
+											},
+											"package": {
+												"type": "binary",
+												"binary": {
+													"name": "java-1.8.0-openjdk",
+													"architectures": [
+														"aarch64",
+														"ppc64le",
+														"s390x",
+														"x86_64"
+													]
+												}
+											},
+											"affected": {
+												"type": "rpm",
+												"range": [
+													{
+														"lt": "1:1.8.0.402.b06-2.el8"
+													}
+												],
+												"fixed": [
+													"1:1.8.0.402.b06-2.el8"
+												]
+											}
+										}
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "version",
+										"version": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "fixed"
+											},
+											"package": {
+												"type": "binary",
+												"binary": {
+													"name": "java-1.8.0-openjdk-accessibility",
+													"architectures": [
+														"aarch64",
+														"ppc64le",
+														"s390x",
+														"x86_64"
+													]
+												}
+											},
+											"affected": {
+												"type": "rpm",
+												"range": [
+													{
+														"lt": "1:1.8.0.402.b06-2.el8"
+													}
+												],
+												"fixed": [
+													"1:1.8.0.402.b06-2.el8"
+												]
+											}
+										}
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "version",
+										"version": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "fixed"
+											},
+											"package": {
+												"type": "binary",
+												"binary": {
+													"name": "java-1.8.0-openjdk-accessibility-fastdebug",
+													"architectures": [
+														"aarch64",
+														"ppc64le",
+														"s390x",
+														"x86_64"
+													]
+												}
+											},
+											"affected": {
+												"type": "rpm",
+												"range": [
+													{
+														"lt": "1:1.8.0.402.b06-2.el8"
+													}
+												],
+												"fixed": [
+													"1:1.8.0.402.b06-2.el8"
+												]
+											}
+										}
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "version",
+										"version": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "fixed"
+											},
+											"package": {
+												"type": "binary",
+												"binary": {
+													"name": "java-1.8.0-openjdk-accessibility-slowdebug",
+													"architectures": [
+														"aarch64",
+														"ppc64le",
+														"s390x",
+														"x86_64"
+													]
+												}
+											},
+											"affected": {
+												"type": "rpm",
+												"range": [
+													{
+														"lt": "1:1.8.0.402.b06-2.el8"
+													}
+												],
+												"fixed": [
+													"1:1.8.0.402.b06-2.el8"
+												]
+											}
+										}
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "version",
+										"version": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "fixed"
+											},
+											"package": {
+												"type": "binary",
+												"binary": {
+													"name": "java-1.8.0-openjdk-demo",
+													"architectures": [
+														"aarch64",
+														"ppc64le",
+														"s390x",
+														"x86_64"
+													]
+												}
+											},
+											"affected": {
+												"type": "rpm",
+												"range": [
+													{
+														"lt": "1:1.8.0.402.b06-2.el8"
+													}
+												],
+												"fixed": [
+													"1:1.8.0.402.b06-2.el8"
+												]
+											}
+										}
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "version",
+										"version": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "fixed"
+											},
+											"package": {
+												"type": "binary",
+												"binary": {
+													"name": "java-1.8.0-openjdk-demo-fastdebug",
+													"architectures": [
+														"aarch64",
+														"ppc64le",
+														"s390x",
+														"x86_64"
+													]
+												}
+											},
+											"affected": {
+												"type": "rpm",
+												"range": [
+													{
+														"lt": "1:1.8.0.402.b06-2.el8"
+													}
+												],
+												"fixed": [
+													"1:1.8.0.402.b06-2.el8"
+												]
+											}
+										}
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "version",
+										"version": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "fixed"
+											},
+											"package": {
+												"type": "binary",
+												"binary": {
+													"name": "java-1.8.0-openjdk-demo-slowdebug",
+													"architectures": [
+														"aarch64",
+														"ppc64le",
+														"s390x",
+														"x86_64"
+													]
+												}
+											},
+											"affected": {
+												"type": "rpm",
+												"range": [
+													{
+														"lt": "1:1.8.0.402.b06-2.el8"
+													}
+												],
+												"fixed": [
+													"1:1.8.0.402.b06-2.el8"
+												]
+											}
+										}
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "version",
+										"version": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "fixed"
+											},
+											"package": {
+												"type": "binary",
+												"binary": {
+													"name": "java-1.8.0-openjdk-devel",
+													"architectures": [
+														"aarch64",
+														"ppc64le",
+														"s390x",
+														"x86_64"
+													]
+												}
+											},
+											"affected": {
+												"type": "rpm",
+												"range": [
+													{
+														"lt": "1:1.8.0.402.b06-2.el8"
+													}
+												],
+												"fixed": [
+													"1:1.8.0.402.b06-2.el8"
+												]
+											}
+										}
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "version",
+										"version": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "fixed"
+											},
+											"package": {
+												"type": "binary",
+												"binary": {
+													"name": "java-1.8.0-openjdk-devel-fastdebug",
+													"architectures": [
+														"aarch64",
+														"ppc64le",
+														"s390x",
+														"x86_64"
+													]
+												}
+											},
+											"affected": {
+												"type": "rpm",
+												"range": [
+													{
+														"lt": "1:1.8.0.402.b06-2.el8"
+													}
+												],
+												"fixed": [
+													"1:1.8.0.402.b06-2.el8"
+												]
+											}
+										}
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "version",
+										"version": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "fixed"
+											},
+											"package": {
+												"type": "binary",
+												"binary": {
+													"name": "java-1.8.0-openjdk-devel-slowdebug",
+													"architectures": [
+														"aarch64",
+														"ppc64le",
+														"s390x",
+														"x86_64"
+													]
+												}
+											},
+											"affected": {
+												"type": "rpm",
+												"range": [
+													{
+														"lt": "1:1.8.0.402.b06-2.el8"
+													}
+												],
+												"fixed": [
+													"1:1.8.0.402.b06-2.el8"
+												]
+											}
+										}
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "version",
+										"version": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "fixed"
+											},
+											"package": {
+												"type": "binary",
+												"binary": {
+													"name": "java-1.8.0-openjdk-fastdebug",
+													"architectures": [
+														"aarch64",
+														"ppc64le",
+														"s390x",
+														"x86_64"
+													]
+												}
+											},
+											"affected": {
+												"type": "rpm",
+												"range": [
+													{
+														"lt": "1:1.8.0.402.b06-2.el8"
+													}
+												],
+												"fixed": [
+													"1:1.8.0.402.b06-2.el8"
+												]
+											}
+										}
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "version",
+										"version": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "fixed"
+											},
+											"package": {
+												"type": "binary",
+												"binary": {
+													"name": "java-1.8.0-openjdk-headless",
+													"architectures": [
+														"aarch64",
+														"ppc64le",
+														"s390x",
+														"x86_64"
+													]
+												}
+											},
+											"affected": {
+												"type": "rpm",
+												"range": [
+													{
+														"lt": "1:1.8.0.402.b06-2.el8"
+													}
+												],
+												"fixed": [
+													"1:1.8.0.402.b06-2.el8"
+												]
+											}
+										}
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "version",
+										"version": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "fixed"
+											},
+											"package": {
+												"type": "binary",
+												"binary": {
+													"name": "java-1.8.0-openjdk-headless-fastdebug",
+													"architectures": [
+														"aarch64",
+														"ppc64le",
+														"s390x",
+														"x86_64"
+													]
+												}
+											},
+											"affected": {
+												"type": "rpm",
+												"range": [
+													{
+														"lt": "1:1.8.0.402.b06-2.el8"
+													}
+												],
+												"fixed": [
+													"1:1.8.0.402.b06-2.el8"
+												]
+											}
+										}
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "version",
+										"version": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "fixed"
+											},
+											"package": {
+												"type": "binary",
+												"binary": {
+													"name": "java-1.8.0-openjdk-headless-slowdebug",
+													"architectures": [
+														"aarch64",
+														"ppc64le",
+														"s390x",
+														"x86_64"
+													]
+												}
+											},
+											"affected": {
+												"type": "rpm",
+												"range": [
+													{
+														"lt": "1:1.8.0.402.b06-2.el8"
+													}
+												],
+												"fixed": [
+													"1:1.8.0.402.b06-2.el8"
+												]
+											}
+										}
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "version",
+										"version": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "fixed"
+											},
+											"package": {
+												"type": "binary",
+												"binary": {
+													"name": "java-1.8.0-openjdk-javadoc"
+												}
+											},
+											"affected": {
+												"type": "rpm",
+												"range": [
+													{
+														"lt": "1:1.8.0.402.b06-2.el8"
+													}
+												],
+												"fixed": [
+													"1:1.8.0.402.b06-2.el8"
+												]
+											}
+										}
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "version",
+										"version": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "fixed"
+											},
+											"package": {
+												"type": "binary",
+												"binary": {
+													"name": "java-1.8.0-openjdk-javadoc-zip"
+												}
+											},
+											"affected": {
+												"type": "rpm",
+												"range": [
+													{
+														"lt": "1:1.8.0.402.b06-2.el8"
+													}
+												],
+												"fixed": [
+													"1:1.8.0.402.b06-2.el8"
+												]
+											}
+										}
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "version",
+										"version": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "fixed"
+											},
+											"package": {
+												"type": "binary",
+												"binary": {
+													"name": "java-1.8.0-openjdk-slowdebug",
+													"architectures": [
+														"aarch64",
+														"ppc64le",
+														"s390x",
+														"x86_64"
+													]
+												}
+											},
+											"affected": {
+												"type": "rpm",
+												"range": [
+													{
+														"lt": "1:1.8.0.402.b06-2.el8"
+													}
+												],
+												"fixed": [
+													"1:1.8.0.402.b06-2.el8"
+												]
+											}
+										}
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "version",
+										"version": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "fixed"
+											},
+											"package": {
+												"type": "binary",
+												"binary": {
+													"name": "java-1.8.0-openjdk-src",
+													"architectures": [
+														"aarch64",
+														"ppc64le",
+														"s390x",
+														"x86_64"
+													]
+												}
+											},
+											"affected": {
+												"type": "rpm",
+												"range": [
+													{
+														"lt": "1:1.8.0.402.b06-2.el8"
+													}
+												],
+												"fixed": [
+													"1:1.8.0.402.b06-2.el8"
+												]
+											}
+										}
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "version",
+										"version": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "fixed"
+											},
+											"package": {
+												"type": "binary",
+												"binary": {
+													"name": "java-1.8.0-openjdk-src-fastdebug",
+													"architectures": [
+														"aarch64",
+														"ppc64le",
+														"s390x",
+														"x86_64"
+													]
+												}
+											},
+											"affected": {
+												"type": "rpm",
+												"range": [
+													{
+														"lt": "1:1.8.0.402.b06-2.el8"
+													}
+												],
+												"fixed": [
+													"1:1.8.0.402.b06-2.el8"
+												]
+											}
+										}
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "version",
+										"version": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "fixed"
+											},
+											"package": {
+												"type": "binary",
+												"binary": {
+													"name": "java-1.8.0-openjdk-src-slowdebug",
+													"architectures": [
+														"aarch64",
+														"ppc64le",
+														"s390x",
+														"x86_64"
+													]
+												}
+											},
+											"affected": {
+												"type": "rpm",
+												"range": [
+													{
+														"lt": "1:1.8.0.402.b06-2.el8"
+													}
+												],
+												"fixed": [
+													"1:1.8.0.402.b06-2.el8"
+												]
+											}
+										}
+									}
+								]
+							}
+						]
+					}
+				}
+			]
+		},
+		{
+			"ecosystem": "alma:9",
+			"conditions": [
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "version",
+										"version": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "fixed"
+											},
+											"package": {
+												"type": "binary",
+												"binary": {
+													"name": "java-1.8.0-openjdk",
+													"architectures": [
+														"aarch64",
+														"ppc64le",
+														"s390x",
+														"x86_64"
+													]
+												}
+											},
+											"affected": {
+												"type": "rpm",
+												"range": [
+													{
+														"lt": "1:1.8.0.402.b06-2.el9"
+													}
+												],
+												"fixed": [
+													"1:1.8.0.402.b06-2.el9"
+												]
+											}
+										}
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "version",
+										"version": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "fixed"
+											},
+											"package": {
+												"type": "binary",
+												"binary": {
+													"name": "java-1.8.0-openjdk-demo",
+													"architectures": [
+														"aarch64",
+														"ppc64le",
+														"s390x",
+														"x86_64"
+													]
+												}
+											},
+											"affected": {
+												"type": "rpm",
+												"range": [
+													{
+														"lt": "1:1.8.0.402.b06-2.el9"
+													}
+												],
+												"fixed": [
+													"1:1.8.0.402.b06-2.el9"
+												]
+											}
+										}
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "version",
+										"version": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "fixed"
+											},
+											"package": {
+												"type": "binary",
+												"binary": {
+													"name": "java-1.8.0-openjdk-demo-fastdebug",
+													"architectures": [
+														"aarch64",
+														"ppc64le",
+														"s390x",
+														"x86_64"
+													]
+												}
+											},
+											"affected": {
+												"type": "rpm",
+												"range": [
+													{
+														"lt": "1:1.8.0.402.b06-2.el9"
+													}
+												],
+												"fixed": [
+													"1:1.8.0.402.b06-2.el9"
+												]
+											}
+										}
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "version",
+										"version": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "fixed"
+											},
+											"package": {
+												"type": "binary",
+												"binary": {
+													"name": "java-1.8.0-openjdk-demo-slowdebug",
+													"architectures": [
+														"aarch64",
+														"ppc64le",
+														"s390x",
+														"x86_64"
+													]
+												}
+											},
+											"affected": {
+												"type": "rpm",
+												"range": [
+													{
+														"lt": "1:1.8.0.402.b06-2.el9"
+													}
+												],
+												"fixed": [
+													"1:1.8.0.402.b06-2.el9"
+												]
+											}
+										}
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "version",
+										"version": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "fixed"
+											},
+											"package": {
+												"type": "binary",
+												"binary": {
+													"name": "java-1.8.0-openjdk-devel",
+													"architectures": [
+														"aarch64",
+														"ppc64le",
+														"s390x",
+														"x86_64"
+													]
+												}
+											},
+											"affected": {
+												"type": "rpm",
+												"range": [
+													{
+														"lt": "1:1.8.0.402.b06-2.el9"
+													}
+												],
+												"fixed": [
+													"1:1.8.0.402.b06-2.el9"
+												]
+											}
+										}
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "version",
+										"version": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "fixed"
+											},
+											"package": {
+												"type": "binary",
+												"binary": {
+													"name": "java-1.8.0-openjdk-devel-fastdebug",
+													"architectures": [
+														"aarch64",
+														"ppc64le",
+														"s390x",
+														"x86_64"
+													]
+												}
+											},
+											"affected": {
+												"type": "rpm",
+												"range": [
+													{
+														"lt": "1:1.8.0.402.b06-2.el9"
+													}
+												],
+												"fixed": [
+													"1:1.8.0.402.b06-2.el9"
+												]
+											}
+										}
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "version",
+										"version": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "fixed"
+											},
+											"package": {
+												"type": "binary",
+												"binary": {
+													"name": "java-1.8.0-openjdk-devel-slowdebug",
+													"architectures": [
+														"aarch64",
+														"ppc64le",
+														"s390x",
+														"x86_64"
+													]
+												}
+											},
+											"affected": {
+												"type": "rpm",
+												"range": [
+													{
+														"lt": "1:1.8.0.402.b06-2.el9"
+													}
+												],
+												"fixed": [
+													"1:1.8.0.402.b06-2.el9"
+												]
+											}
+										}
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "version",
+										"version": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "fixed"
+											},
+											"package": {
+												"type": "binary",
+												"binary": {
+													"name": "java-1.8.0-openjdk-fastdebug",
+													"architectures": [
+														"aarch64",
+														"ppc64le",
+														"s390x",
+														"x86_64"
+													]
+												}
+											},
+											"affected": {
+												"type": "rpm",
+												"range": [
+													{
+														"lt": "1:1.8.0.402.b06-2.el9"
+													}
+												],
+												"fixed": [
+													"1:1.8.0.402.b06-2.el9"
+												]
+											}
+										}
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "version",
+										"version": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "fixed"
+											},
+											"package": {
+												"type": "binary",
+												"binary": {
+													"name": "java-1.8.0-openjdk-headless",
+													"architectures": [
+														"aarch64",
+														"ppc64le",
+														"s390x",
+														"x86_64"
+													]
+												}
+											},
+											"affected": {
+												"type": "rpm",
+												"range": [
+													{
+														"lt": "1:1.8.0.402.b06-2.el9"
+													}
+												],
+												"fixed": [
+													"1:1.8.0.402.b06-2.el9"
+												]
+											}
+										}
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "version",
+										"version": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "fixed"
+											},
+											"package": {
+												"type": "binary",
+												"binary": {
+													"name": "java-1.8.0-openjdk-headless-fastdebug",
+													"architectures": [
+														"aarch64",
+														"ppc64le",
+														"s390x",
+														"x86_64"
+													]
+												}
+											},
+											"affected": {
+												"type": "rpm",
+												"range": [
+													{
+														"lt": "1:1.8.0.402.b06-2.el9"
+													}
+												],
+												"fixed": [
+													"1:1.8.0.402.b06-2.el9"
+												]
+											}
+										}
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "version",
+										"version": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "fixed"
+											},
+											"package": {
+												"type": "binary",
+												"binary": {
+													"name": "java-1.8.0-openjdk-headless-slowdebug",
+													"architectures": [
+														"aarch64",
+														"ppc64le",
+														"s390x",
+														"x86_64"
+													]
+												}
+											},
+											"affected": {
+												"type": "rpm",
+												"range": [
+													{
+														"lt": "1:1.8.0.402.b06-2.el9"
+													}
+												],
+												"fixed": [
+													"1:1.8.0.402.b06-2.el9"
+												]
+											}
+										}
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "version",
+										"version": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "fixed"
+											},
+											"package": {
+												"type": "binary",
+												"binary": {
+													"name": "java-1.8.0-openjdk-javadoc"
+												}
+											},
+											"affected": {
+												"type": "rpm",
+												"range": [
+													{
+														"lt": "1:1.8.0.402.b06-2.el9"
+													}
+												],
+												"fixed": [
+													"1:1.8.0.402.b06-2.el9"
+												]
+											}
+										}
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "version",
+										"version": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "fixed"
+											},
+											"package": {
+												"type": "binary",
+												"binary": {
+													"name": "java-1.8.0-openjdk-javadoc-zip"
+												}
+											},
+											"affected": {
+												"type": "rpm",
+												"range": [
+													{
+														"lt": "1:1.8.0.402.b06-2.el9"
+													}
+												],
+												"fixed": [
+													"1:1.8.0.402.b06-2.el9"
+												]
+											}
+										}
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "version",
+										"version": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "fixed"
+											},
+											"package": {
+												"type": "binary",
+												"binary": {
+													"name": "java-1.8.0-openjdk-slowdebug",
+													"architectures": [
+														"aarch64",
+														"ppc64le",
+														"s390x",
+														"x86_64"
+													]
+												}
+											},
+											"affected": {
+												"type": "rpm",
+												"range": [
+													{
+														"lt": "1:1.8.0.402.b06-2.el9"
+													}
+												],
+												"fixed": [
+													"1:1.8.0.402.b06-2.el9"
+												]
+											}
+										}
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "version",
+										"version": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "fixed"
+											},
+											"package": {
+												"type": "binary",
+												"binary": {
+													"name": "java-1.8.0-openjdk-src",
+													"architectures": [
+														"aarch64",
+														"ppc64le",
+														"s390x",
+														"x86_64"
+													]
+												}
+											},
+											"affected": {
+												"type": "rpm",
+												"range": [
+													{
+														"lt": "1:1.8.0.402.b06-2.el9"
+													}
+												],
+												"fixed": [
+													"1:1.8.0.402.b06-2.el9"
+												]
+											}
+										}
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "version",
+										"version": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "fixed"
+											},
+											"package": {
+												"type": "binary",
+												"binary": {
+													"name": "java-1.8.0-openjdk-src-fastdebug",
+													"architectures": [
+														"aarch64",
+														"ppc64le",
+														"s390x",
+														"x86_64"
+													]
+												}
+											},
+											"affected": {
+												"type": "rpm",
+												"range": [
+													{
+														"lt": "1:1.8.0.402.b06-2.el9"
+													}
+												],
+												"fixed": [
+													"1:1.8.0.402.b06-2.el9"
+												]
+											}
+										}
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "version",
+										"version": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "fixed"
+											},
+											"package": {
+												"type": "binary",
+												"binary": {
+													"name": "java-1.8.0-openjdk-src-slowdebug",
+													"architectures": [
+														"aarch64",
+														"ppc64le",
+														"s390x",
+														"x86_64"
+													]
+												}
+											},
+											"affected": {
+												"type": "rpm",
+												"range": [
+													{
+														"lt": "1:1.8.0.402.b06-2.el9"
+													}
+												],
+												"fixed": [
+													"1:1.8.0.402.b06-2.el9"
+												]
+											}
+										}
+									}
+								]
+							}
+						]
+					}
+				}
+			]
+		}
+	],
+	"data_source": {
+		"id": "alma-oval",
+		"raws": [
+			"fixtures/8/definitions/oval:org.almalinux.alsa:def:20240265.json",
+			"fixtures/8/objects/rpminfo_object/oval:org.almalinux.alsa:obj:20191146001.json",
+			"fixtures/8/objects/rpminfo_object/oval:org.almalinux.alsa:obj:20191146002.json",
+			"fixtures/8/objects/rpminfo_object/oval:org.almalinux.alsa:obj:20191146003.json",
+			"fixtures/8/objects/rpminfo_object/oval:org.almalinux.alsa:obj:20191146004.json",
+			"fixtures/8/objects/rpminfo_object/oval:org.almalinux.alsa:obj:20191146005.json",
+			"fixtures/8/objects/rpminfo_object/oval:org.almalinux.alsa:obj:20191146006.json",
+			"fixtures/8/objects/rpminfo_object/oval:org.almalinux.alsa:obj:20191146007.json",
+			"fixtures/8/objects/rpminfo_object/oval:org.almalinux.alsa:obj:20191146008.json",
+			"fixtures/8/objects/rpminfo_object/oval:org.almalinux.alsa:obj:20212776003.json",
+			"fixtures/8/objects/rpminfo_object/oval:org.almalinux.alsa:obj:20212776004.json",
+			"fixtures/8/objects/rpminfo_object/oval:org.almalinux.alsa:obj:20212776006.json",
+			"fixtures/8/objects/rpminfo_object/oval:org.almalinux.alsa:obj:20212776007.json",
+			"fixtures/8/objects/rpminfo_object/oval:org.almalinux.alsa:obj:20212776009.json",
+			"fixtures/8/objects/rpminfo_object/oval:org.almalinux.alsa:obj:20212776010.json",
+			"fixtures/8/objects/rpminfo_object/oval:org.almalinux.alsa:obj:20212776011.json",
+			"fixtures/8/objects/rpminfo_object/oval:org.almalinux.alsa:obj:20212776013.json",
+			"fixtures/8/objects/rpminfo_object/oval:org.almalinux.alsa:obj:20212776014.json",
+			"fixtures/8/objects/rpminfo_object/oval:org.almalinux.alsa:obj:20212776017.json",
+			"fixtures/8/objects/rpminfo_object/oval:org.almalinux.alsa:obj:20212776019.json",
+			"fixtures/8/objects/rpminfo_object/oval:org.almalinux.alsa:obj:20212776020.json",
+			"fixtures/8/states/rpminfo_state/oval:org.almalinux.alsa:ste:20240265001.json",
+			"fixtures/8/states/rpminfo_state/oval:org.almalinux.alsa:ste:20240265004.json",
+			"fixtures/8/tests/rpminfo_test/oval:org.almalinux.alsa:tst:2020034803418.json",
+			"fixtures/8/tests/rpminfo_test/oval:org.almalinux.alsa:tst:2020034803419.json",
+			"fixtures/8/tests/rpminfo_test/oval:org.almalinux.alsa:tst:2020034803420.json",
+			"fixtures/8/tests/rpminfo_test/oval:org.almalinux.alsa:tst:2020034803421.json",
+			"fixtures/8/tests/rpminfo_test/oval:org.almalinux.alsa:tst:2020034803422.json",
+			"fixtures/8/tests/rpminfo_test/oval:org.almalinux.alsa:tst:2020034803423.json",
+			"fixtures/8/tests/rpminfo_test/oval:org.almalinux.alsa:tst:2020034803424.json",
+			"fixtures/8/tests/rpminfo_test/oval:org.almalinux.alsa:tst:2020034803425.json",
+			"fixtures/8/tests/rpminfo_test/oval:org.almalinux.alsa:tst:2020034803426.json",
+			"fixtures/8/tests/rpminfo_test/oval:org.almalinux.alsa:tst:2020034803427.json",
+			"fixtures/8/tests/rpminfo_test/oval:org.almalinux.alsa:tst:2020034803428.json",
+			"fixtures/8/tests/rpminfo_test/oval:org.almalinux.alsa:tst:2020034803429.json",
+			"fixtures/8/tests/rpminfo_test/oval:org.almalinux.alsa:tst:2020034803430.json",
+			"fixtures/8/tests/rpminfo_test/oval:org.almalinux.alsa:tst:2020034803431.json",
+			"fixtures/8/tests/rpminfo_test/oval:org.almalinux.alsa:tst:2020034803432.json",
+			"fixtures/8/tests/rpminfo_test/oval:org.almalinux.alsa:tst:2020034803433.json",
+			"fixtures/8/tests/rpminfo_test/oval:org.almalinux.alsa:tst:2020034803434.json",
+			"fixtures/8/tests/rpminfo_test/oval:org.almalinux.alsa:tst:2020034803435.json",
+			"fixtures/8/tests/rpminfo_test/oval:org.almalinux.alsa:tst:2020034803436.json",
+			"fixtures/8/tests/rpminfo_test/oval:org.almalinux.alsa:tst:2020034803437.json",
+			"fixtures/8/tests/rpminfo_test/oval:org.almalinux.alsa:tst:2020034803438.json",
+			"fixtures/8/tests/rpminfo_test/oval:org.almalinux.alsa:tst:2020034803439.json",
+			"fixtures/8/tests/rpminfo_test/oval:org.almalinux.alsa:tst:2020034803440.json",
+			"fixtures/8/tests/rpminfo_test/oval:org.almalinux.alsa:tst:2020034803441.json",
+			"fixtures/8/tests/rpminfo_test/oval:org.almalinux.alsa:tst:2020034803442.json",
+			"fixtures/8/tests/rpminfo_test/oval:org.almalinux.alsa:tst:2020034803443.json",
+			"fixtures/8/tests/rpminfo_test/oval:org.almalinux.alsa:tst:2020034803444.json",
+			"fixtures/8/tests/rpminfo_test/oval:org.almalinux.alsa:tst:2020034803445.json",
+			"fixtures/8/tests/rpminfo_test/oval:org.almalinux.alsa:tst:2020034803446.json",
+			"fixtures/8/tests/rpminfo_test/oval:org.almalinux.alsa:tst:2020034803447.json",
+			"fixtures/8/tests/rpminfo_test/oval:org.almalinux.alsa:tst:2020034803448.json",
+			"fixtures/8/tests/rpminfo_test/oval:org.almalinux.alsa:tst:2020034803449.json",
+			"fixtures/8/tests/rpminfo_test/oval:org.almalinux.alsa:tst:2020034803450.json",
+			"fixtures/8/tests/rpminfo_test/oval:org.almalinux.alsa:tst:2020034803451.json",
+			"fixtures/8/tests/rpminfo_test/oval:org.almalinux.alsa:tst:2020034803452.json",
+			"fixtures/8/tests/rpminfo_test/oval:org.almalinux.alsa:tst:2020034803453.json",
+			"fixtures/8/tests/rpminfo_test/oval:org.almalinux.alsa:tst:2020034803454.json",
+			"fixtures/8/tests/rpminfo_test/oval:org.almalinux.alsa:tst:2020034803455.json",
+			"fixtures/8/tests/rpminfo_test/oval:org.almalinux.alsa:tst:2020034803456.json",
+			"fixtures/8/tests/rpminfo_test/oval:org.almalinux.alsa:tst:2020034803457.json",
+			"fixtures/8/tests/rpminfo_test/oval:org.almalinux.alsa:tst:20240265001.json",
+			"fixtures/8/tests/rpminfo_test/oval:org.almalinux.alsa:tst:20240265003.json",
+			"fixtures/8/tests/rpminfo_test/oval:org.almalinux.alsa:tst:20240265009.json",
+			"fixtures/8/tests/rpminfo_test/oval:org.almalinux.alsa:tst:20240265015.json",
+			"fixtures/8/tests/rpminfo_test/oval:org.almalinux.alsa:tst:20240265023.json",
+			"fixtures/8/tests/rpminfo_test/oval:org.almalinux.alsa:tst:20240265029.json",
+			"fixtures/8/tests/rpminfo_test/oval:org.almalinux.alsa:tst:20240265031.json",
+			"fixtures/8/tests/rpminfo_test/oval:org.almalinux.alsa:tst:20240265035.json",
+			"fixtures/8/tests/rpminfo_test/oval:org.almalinux.alsa:tst:20240265040.json",
+			"fixtures/8/tests/rpminfo_test/oval:org.almalinux.alsa:tst:20240265041.json",
+			"fixtures/8/tests/rpminfo_test/oval:org.almalinux.alsa:tst:20240265042.json",
+			"fixtures/8/tests/rpminfo_test/oval:org.almalinux.alsa:tst:20240265043.json",
+			"fixtures/8/tests/rpminfo_test/oval:org.almalinux.alsa:tst:20240265044.json",
+			"fixtures/8/tests/rpminfo_test/oval:org.almalinux.alsa:tst:20240265045.json",
+			"fixtures/8/tests/rpminfo_test/oval:org.almalinux.alsa:tst:20240265046.json",
+			"fixtures/8/tests/rpminfo_test/oval:org.almalinux.alsa:tst:20240265047.json",
+			"fixtures/8/tests/rpminfo_test/oval:org.almalinux.alsa:tst:20240265048.json",
+			"fixtures/8/tests/rpminfo_test/oval:org.almalinux.alsa:tst:20240265049.json",
+			"fixtures/8/tests/rpminfo_test/oval:org.almalinux.alsa:tst:20240265050.json",
+			"fixtures/8/tests/rpminfo_test/oval:org.almalinux.alsa:tst:20240265051.json",
+			"fixtures/8/tests/rpmverifyfile_test/oval:org.almalinux.alba:tst:20191992003.json",
+			"fixtures/8/tests/rpmverifyfile_test/oval:org.almalinux.alba:tst:20191992005.json",
+			"fixtures/9/definitions/oval:org.almalinux.alsa:def:20240265.json",
+			"fixtures/9/objects/rpminfo_object/oval:org.almalinux.alsa:obj:20222137001.json",
+			"fixtures/9/objects/rpminfo_object/oval:org.almalinux.alsa:obj:20222137002.json",
+			"fixtures/9/objects/rpminfo_object/oval:org.almalinux.alsa:obj:20222137003.json",
+			"fixtures/9/objects/rpminfo_object/oval:org.almalinux.alsa:obj:20222137004.json",
+			"fixtures/9/objects/rpminfo_object/oval:org.almalinux.alsa:obj:20222137005.json",
+			"fixtures/9/objects/rpminfo_object/oval:org.almalinux.alsa:obj:20222137006.json",
+			"fixtures/9/objects/rpminfo_object/oval:org.almalinux.alsa:obj:20222137007.json",
+			"fixtures/9/objects/rpminfo_object/oval:org.almalinux.alsa:obj:20222137008.json",
+			"fixtures/9/objects/rpminfo_object/oval:org.almalinux.alsa:obj:20222137009.json",
+			"fixtures/9/objects/rpminfo_object/oval:org.almalinux.alsa:obj:20222137010.json",
+			"fixtures/9/objects/rpminfo_object/oval:org.almalinux.alsa:obj:20222137011.json",
+			"fixtures/9/objects/rpminfo_object/oval:org.almalinux.alsa:obj:20222137012.json",
+			"fixtures/9/objects/rpminfo_object/oval:org.almalinux.alsa:obj:20222137013.json",
+			"fixtures/9/objects/rpminfo_object/oval:org.almalinux.alsa:obj:20222137014.json",
+			"fixtures/9/objects/rpminfo_object/oval:org.almalinux.alsa:obj:20222137015.json",
+			"fixtures/9/objects/rpminfo_object/oval:org.almalinux.alsa:obj:20222137016.json",
+			"fixtures/9/objects/rpminfo_object/oval:org.almalinux.alsa:obj:20222137017.json",
+			"fixtures/9/states/rpminfo_state/oval:org.almalinux.alsa:ste:20240265001.json",
+			"fixtures/9/states/rpminfo_state/oval:org.almalinux.alsa:ste:20240265004.json",
+			"fixtures/9/tests/rpminfo_test/oval:org.almalinux.alsa:tst:20222137002.json",
+			"fixtures/9/tests/rpminfo_test/oval:org.almalinux.alsa:tst:20222137004.json",
+			"fixtures/9/tests/rpminfo_test/oval:org.almalinux.alsa:tst:20222137006.json",
+			"fixtures/9/tests/rpminfo_test/oval:org.almalinux.alsa:tst:20222137008.json",
+			"fixtures/9/tests/rpminfo_test/oval:org.almalinux.alsa:tst:20222137010.json",
+			"fixtures/9/tests/rpminfo_test/oval:org.almalinux.alsa:tst:20222137012.json",
+			"fixtures/9/tests/rpminfo_test/oval:org.almalinux.alsa:tst:20222137014.json",
+			"fixtures/9/tests/rpminfo_test/oval:org.almalinux.alsa:tst:20222137016.json",
+			"fixtures/9/tests/rpminfo_test/oval:org.almalinux.alsa:tst:20222137018.json",
+			"fixtures/9/tests/rpminfo_test/oval:org.almalinux.alsa:tst:20222137020.json",
+			"fixtures/9/tests/rpminfo_test/oval:org.almalinux.alsa:tst:20222137022.json",
+			"fixtures/9/tests/rpminfo_test/oval:org.almalinux.alsa:tst:20222137024.json",
+			"fixtures/9/tests/rpminfo_test/oval:org.almalinux.alsa:tst:20222137026.json",
+			"fixtures/9/tests/rpminfo_test/oval:org.almalinux.alsa:tst:20222137028.json",
+			"fixtures/9/tests/rpminfo_test/oval:org.almalinux.alsa:tst:20222137030.json",
+			"fixtures/9/tests/rpminfo_test/oval:org.almalinux.alsa:tst:20222137032.json",
+			"fixtures/9/tests/rpminfo_test/oval:org.almalinux.alsa:tst:20222137034.json",
+			"fixtures/9/tests/rpminfo_test/oval:org.almalinux.alsa:tst:20240265001.json",
+			"fixtures/9/tests/rpminfo_test/oval:org.almalinux.alsa:tst:20240265003.json",
+			"fixtures/9/tests/rpminfo_test/oval:org.almalinux.alsa:tst:20240265009.json",
+			"fixtures/9/tests/rpminfo_test/oval:org.almalinux.alsa:tst:20240265017.json",
+			"fixtures/9/tests/rpminfo_test/oval:org.almalinux.alsa:tst:20240265023.json",
+			"fixtures/9/tests/rpminfo_test/oval:org.almalinux.alsa:tst:20240265025.json",
+			"fixtures/9/tests/rpminfo_test/oval:org.almalinux.alsa:tst:20240265029.json",
+			"fixtures/9/tests/rpminfo_test/oval:org.almalinux.alsa:tst:20240265034.json",
+			"fixtures/9/tests/rpminfo_test/oval:org.almalinux.alsa:tst:20240265035.json",
+			"fixtures/9/tests/rpminfo_test/oval:org.almalinux.alsa:tst:20240265036.json",
+			"fixtures/9/tests/rpminfo_test/oval:org.almalinux.alsa:tst:20240265037.json",
+			"fixtures/9/tests/rpminfo_test/oval:org.almalinux.alsa:tst:20240265038.json",
+			"fixtures/9/tests/rpminfo_test/oval:org.almalinux.alsa:tst:20240265039.json",
+			"fixtures/9/tests/rpminfo_test/oval:org.almalinux.alsa:tst:20240265040.json",
+			"fixtures/9/tests/rpminfo_test/oval:org.almalinux.alsa:tst:20240265041.json",
+			"fixtures/9/tests/rpminfo_test/oval:org.almalinux.alsa:tst:20240265042.json",
+			"fixtures/9/tests/rpminfo_test/oval:org.almalinux.alsa:tst:20240265043.json",
+			"fixtures/9/tests/rpmverifyfile_test/oval:org.almalinux.alba:tst:20225749023.json",
+			"fixtures/9/tests/rpmverifyfile_test/oval:org.almalinux.alba:tst:20225749024.json"
+		]
+	}
+}

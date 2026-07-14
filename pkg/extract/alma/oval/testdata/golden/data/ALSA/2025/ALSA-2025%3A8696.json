@@ -1,0 +1,153 @@
+{
+	"id": "ALSA-2025:8696",
+	"advisories": [
+		{
+			"content": {
+				"id": "ALSA-2025:8696",
+				"title": "ALSA-2025:8696: perl-FCGI:0.78 security update (Important)",
+				"description": "The perl-FCGI package provides a Perl module for writing FastCGI applications. FastCGI is a more efficient alternative to traditional CGI, as it keeps application processes persistent across multiple requests. This module allows Perl web applications to handle requests faster and with lower resource overhead, making it suitable for high-traffic environments.  \n\nSecurity Fix(es):  \n\n  * perl-fcgi: FCGI versions 0.44 through 0.82, for Perl, include a vulnerable version of the FastCGI fcgi2 (aka fcgi) library (CVE-2025-40907)\n\n\nFor more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.",
+				"severity": [
+					{
+						"type": "vendor",
+						"source": "packager@almalinux.org",
+						"vendor": "Important"
+					}
+				],
+				"references": [
+					{
+						"source": "packager@almalinux.org",
+						"url": "https://access.redhat.com/errata/RHSA-2025:8696"
+					},
+					{
+						"source": "packager@almalinux.org",
+						"url": "https://access.redhat.com/security/cve/CVE-2025-40907"
+					},
+					{
+						"source": "packager@almalinux.org",
+						"url": "https://bugzilla.redhat.com/2366847"
+					},
+					{
+						"source": "packager@almalinux.org",
+						"url": "https://errata.almalinux.org/8/ALSA-2025-8696.html"
+					}
+				],
+				"published": "2025-06-09T00:00:00Z",
+				"modified": "2025-06-09T00:00:00Z"
+			},
+			"segments": [
+				{
+					"ecosystem": "alma:8"
+				}
+			]
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-2025-40907",
+				"severity": [
+					{
+						"type": "vendor",
+						"source": "packager@almalinux.org",
+						"vendor": "Important"
+					},
+					{
+						"type": "cvss_v31",
+						"source": "packager@almalinux.org",
+						"cvss_v31": {
+							"vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+							"base_score": 7.5,
+							"base_severity": "HIGH",
+							"temporal_score": 7.5,
+							"temporal_severity": "HIGH",
+							"environmental_score": 7.5,
+							"environmental_severity": "HIGH"
+						}
+					}
+				],
+				"cwe": [
+					{
+						"source": "packager@almalinux.org",
+						"cwe": [
+							"CWE-1395"
+						]
+					}
+				],
+				"references": [
+					{
+						"source": "packager@almalinux.org",
+						"url": "https://access.redhat.com/security/cve/CVE-2025-40907"
+					}
+				],
+				"published": "2025-05-16T00:00:00Z"
+			},
+			"segments": [
+				{
+					"ecosystem": "alma:8"
+				}
+			]
+		}
+	],
+	"detections": [
+		{
+			"ecosystem": "alma:8",
+			"conditions": [
+				{
+					"criteria": {
+						"operator": "AND",
+						"criterions": [
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "perl-FCGI:0.78::perl-FCGI",
+											"architectures": [
+												"aarch64",
+												"ppc64le",
+												"s390x",
+												"x86_64"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "1:0.78-12.module_el8.10.0+4011+62915be2"
+											}
+										],
+										"fixed": [
+											"1:0.78-12.module_el8.10.0+4011+62915be2"
+										]
+									}
+								}
+							}
+						]
+					}
+				}
+			]
+		}
+	],
+	"data_source": {
+		"id": "alma-oval",
+		"raws": [
+			"fixtures/8/definitions/oval:org.almalinux.alsa:def:20258696.json",
+			"fixtures/8/objects/rpminfo_object/oval:org.almalinux.alsa:obj:20258696001.json",
+			"fixtures/8/objects/textfilecontent54_object/oval:org.almalinux.alsa:obj:20258696002.json",
+			"fixtures/8/states/rpminfo_state/oval:org.almalinux.alsa:ste:20258696001.json",
+			"fixtures/8/states/textfilecontent54_state/oval:org.almalinux.alsa:ste:20258696002.json",
+			"fixtures/8/tests/rpminfo_test/oval:org.almalinux.alsa:tst:20258696001.json",
+			"fixtures/8/tests/rpminfo_test/oval:org.almalinux.alsa:tst:20258696002.json",
+			"fixtures/8/tests/rpminfo_test/oval:org.almalinux.alsa:tst:20258696003.json",
+			"fixtures/8/tests/rpmverifyfile_test/oval:org.almalinux.alba:tst:20191992003.json",
+			"fixtures/8/tests/rpmverifyfile_test/oval:org.almalinux.alba:tst:20191992005.json",
+			"fixtures/8/tests/textfilecontent54_test/oval:org.almalinux.alsa:tst:20258696004.json"
+		]
+	}
+}

@@ -1,0 +1,12 @@
+{
+	"check": "at least one",
+	"comment": "AlmaLinux 10 is installed",
+	"id": "oval:org.almalinux.alsa:tst:20250001002",
+	"version": "635",
+	"object": {
+		"object_ref": "oval:org.almalinux.alsa:obj:20250001001"
+	},
+	"state": {
+		"state_ref": "oval:org.almalinux.alsa:ste:20250001002"
+	}
+}

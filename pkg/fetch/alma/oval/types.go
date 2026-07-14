@@ -70,164 +70,188 @@ type Criterion struct {
 }
 
 type Tests struct {
-	RpmverifyfileTest []struct {
-		Check   string `xml:"check,attr" json:"check,omitempty"`
-		Comment string `xml:"comment,attr" json:"comment,omitempty"`
-		ID      string `xml:"id,attr" json:"id,omitempty"`
-		Version string `xml:"version,attr" json:"version,omitempty"`
-		Object  struct {
-			ObjectRef string `xml:"object_ref,attr" json:"object_ref,omitempty"`
-		} `xml:"object" json:"object,omitzero"`
-		State struct {
-			StateRef string `xml:"state_ref,attr" json:"state_ref,omitempty"`
-		} `xml:"state" json:"state,omitzero"`
-	} `xml:"rpmverifyfile_test" json:"rpmverifyfile_test,omitempty"`
-	UnameTest []struct {
-		ID      string `xml:"id,attr" json:"id,omitempty"`
-		Version string `xml:"version,attr" json:"version,omitempty"`
-		Check   string `xml:"check,attr" json:"check,omitempty"`
-		Comment string `xml:"comment,attr" json:"comment,omitempty"`
-		Object  struct {
-			ObjectRef string `xml:"object_ref,attr" json:"object_ref,omitempty"`
-		} `xml:"object" json:"object,omitzero"`
-		State struct {
-			StateRef string `xml:"state_ref,attr" json:"state_ref,omitempty"`
-		} `xml:"state" json:"state,omitzero"`
-	} `xml:"uname_test" json:"uname_test,omitempty"`
-	Textfilecontent54Test []struct {
-		ID      string `xml:"id,attr" json:"id,omitempty"`
-		Version string `xml:"version,attr" json:"version,omitempty"`
-		Check   string `xml:"check,attr" json:"check,omitempty"`
-		Comment string `xml:"comment,attr" json:"comment,omitempty"`
-		Object  struct {
-			ObjectRef string `xml:"object_ref,attr" json:"object_ref,omitempty"`
-		} `xml:"object" json:"object,omitzero"`
-		State struct {
-			StateRef string `xml:"state_ref,attr" json:"state_ref,omitempty"`
-		} `xml:"state" json:"state,omitzero"`
-	} `xml:"textfilecontent54_test" json:"textfilecontent54_test,omitempty"`
-	RpminfoTest []struct {
-		Check   string `xml:"check,attr" json:"check,omitempty"`
-		Comment string `xml:"comment,attr" json:"comment,omitempty"`
-		ID      string `xml:"id,attr" json:"id,omitempty"`
-		Version string `xml:"version,attr" json:"version,omitempty"`
-		Object  struct {
-			ObjectRef string `xml:"object_ref,attr" json:"object_ref,omitempty"`
-		} `xml:"object" json:"object,omitzero"`
-		State struct {
-			StateRef string `xml:"state_ref,attr" json:"state_ref,omitempty"`
-		} `xml:"state" json:"state,omitzero"`
-	} `xml:"rpminfo_test" json:"rpminfo_test,omitempty"`
+	RpmverifyfileTest     []RpmverifyfileTest     `xml:"rpmverifyfile_test" json:"rpmverifyfile_test,omitempty"`
+	UnameTest             []UnameTest             `xml:"uname_test" json:"uname_test,omitempty"`
+	Textfilecontent54Test []Textfilecontent54Test `xml:"textfilecontent54_test" json:"textfilecontent54_test,omitempty"`
+	RpminfoTest           []RpminfoTest           `xml:"rpminfo_test" json:"rpminfo_test,omitempty"`
+}
+
+type RpmverifyfileTest struct {
+	Check   string `xml:"check,attr" json:"check,omitempty"`
+	Comment string `xml:"comment,attr" json:"comment,omitempty"`
+	ID      string `xml:"id,attr" json:"id,omitempty"`
+	Version string `xml:"version,attr" json:"version,omitempty"`
+	Object  struct {
+		ObjectRef string `xml:"object_ref,attr" json:"object_ref,omitempty"`
+	} `xml:"object" json:"object,omitzero"`
+	State struct {
+		StateRef string `xml:"state_ref,attr" json:"state_ref,omitempty"`
+	} `xml:"state" json:"state,omitzero"`
+}
+
+type UnameTest struct {
+	ID      string `xml:"id,attr" json:"id,omitempty"`
+	Version string `xml:"version,attr" json:"version,omitempty"`
+	Check   string `xml:"check,attr" json:"check,omitempty"`
+	Comment string `xml:"comment,attr" json:"comment,omitempty"`
+	Object  struct {
+		ObjectRef string `xml:"object_ref,attr" json:"object_ref,omitempty"`
+	} `xml:"object" json:"object,omitzero"`
+	State struct {
+		StateRef string `xml:"state_ref,attr" json:"state_ref,omitempty"`
+	} `xml:"state" json:"state,omitzero"`
+}
+
+type Textfilecontent54Test struct {
+	ID      string `xml:"id,attr" json:"id,omitempty"`
+	Version string `xml:"version,attr" json:"version,omitempty"`
+	Check   string `xml:"check,attr" json:"check,omitempty"`
+	Comment string `xml:"comment,attr" json:"comment,omitempty"`
+	Object  struct {
+		ObjectRef string `xml:"object_ref,attr" json:"object_ref,omitempty"`
+	} `xml:"object" json:"object,omitzero"`
+	State struct {
+		StateRef string `xml:"state_ref,attr" json:"state_ref,omitempty"`
+	} `xml:"state" json:"state,omitzero"`
+}
+
+type RpminfoTest struct {
+	Check   string `xml:"check,attr" json:"check,omitempty"`
+	Comment string `xml:"comment,attr" json:"comment,omitempty"`
+	ID      string `xml:"id,attr" json:"id,omitempty"`
+	Version string `xml:"version,attr" json:"version,omitempty"`
+	Object  struct {
+		ObjectRef string `xml:"object_ref,attr" json:"object_ref,omitempty"`
+	} `xml:"object" json:"object,omitzero"`
+	State struct {
+		StateRef string `xml:"state_ref,attr" json:"state_ref,omitempty"`
+	} `xml:"state" json:"state,omitzero"`
 }
 
 type Objects struct {
-	RpmverifyfileObject []struct {
-		ID          string `xml:"id,attr" json:"id,omitempty"`
-		AttrVersion string `xml:"version,attr" json:"attrversion,omitempty"`
-		Behaviors   struct {
-			Noconfigfiles string `xml:"noconfigfiles,attr" json:"noconfigfiles,omitempty"`
-			Noghostfiles  string `xml:"noghostfiles,attr" json:"noghostfiles,omitempty"`
-			Nogroup       string `xml:"nogroup,attr" json:"nogroup,omitempty"`
-			Nolinkto      string `xml:"nolinkto,attr" json:"nolinkto,omitempty"`
-			Nomd5         string `xml:"nomd5,attr" json:"nomd5,omitempty"`
-			Nomode        string `xml:"nomode,attr" json:"nomode,omitempty"`
-			Nomtime       string `xml:"nomtime,attr" json:"nomtime,omitempty"`
-			Nordev        string `xml:"nordev,attr" json:"nordev,omitempty"`
-			Nosize        string `xml:"nosize,attr" json:"nosize,omitempty"`
-			Nouser        string `xml:"nouser,attr" json:"nouser,omitempty"`
-		} `xml:"behaviors" json:"behaviors,omitzero"`
-		Name struct {
-			Operation string `xml:"operation,attr" json:"operation,omitempty"`
-		} `xml:"name" json:"name,omitzero"`
-		Epoch struct {
-			Operation string `xml:"operation,attr" json:"operation,omitempty"`
-		} `xml:"epoch" json:"epoch,omitzero"`
-		Version struct {
-			Operation string `xml:"operation,attr" json:"operation,omitempty"`
-		} `xml:"version" json:"version,omitzero"`
-		Release struct {
-			Operation string `xml:"operation,attr" json:"operation,omitempty"`
-		} `xml:"release" json:"release,omitzero"`
-		Arch struct {
-			Operation string `xml:"operation,attr" json:"operation,omitempty"`
-		} `xml:"arch" json:"arch,omitzero"`
-		Filepath string `xml:"filepath" json:"Filepath,omitempty"`
-	} `xml:"rpmverifyfile_object" json:"rpmverifyfile_object,omitempty"`
-	UnameObject struct {
-		ID      string `xml:"id,attr" json:"id,omitempty"`
-		Version string `xml:"version,attr" json:"version,omitempty"`
-	} `xml:"uname_object" json:"uname_object,omitzero"`
-	Textfilecontent54Object []struct {
-		ID       string `xml:"id,attr" json:"id,omitempty"`
-		Version  string `xml:"version,attr" json:"version,omitempty"`
-		Filepath struct {
-			Text     string `xml:",chardata" json:"text,omitempty"`
-			Datatype string `xml:"datatype,attr" json:"datatype,omitempty"`
-		} `xml:"filepath" json:"filepath,omitzero"`
-		Pattern struct {
-			Text      string `xml:",chardata" json:"text,omitempty"`
-			Operation string `xml:"operation,attr" json:"operation,omitempty"`
-		} `xml:"pattern" json:"pattern,omitzero"`
-		Instance struct {
-			Text     string `xml:",chardata" json:"text,omitempty"`
-			Datatype string `xml:"datatype,attr" json:"datatype,omitempty"`
-			VarRef   string `xml:"var_ref,attr" json:"var_ref,omitempty"`
-		} `xml:"instance" json:"instance,omitzero"`
-	} `xml:"textfilecontent54_object" json:"textfilecontent54_object,omitempty"`
-	RpminfoObject []struct {
-		ID      string `xml:"id,attr" json:"id,omitempty"`
-		Version string `xml:"version,attr" json:"version,omitempty"`
-		Name    string `xml:"name" json:"Name,omitempty"`
-	} `xml:"rpminfo_object" json:"rpminfo_object,omitempty"`
+	RpmverifyfileObject     []RpmverifyfileObject     `xml:"rpmverifyfile_object" json:"rpmverifyfile_object,omitempty"`
+	UnameObject             UnameObject               `xml:"uname_object" json:"uname_object,omitzero"`
+	Textfilecontent54Object []Textfilecontent54Object `xml:"textfilecontent54_object" json:"textfilecontent54_object,omitempty"`
+	RpminfoObject           []RpminfoObject           `xml:"rpminfo_object" json:"rpminfo_object,omitempty"`
+}
+
+type RpmverifyfileObject struct {
+	ID          string `xml:"id,attr" json:"id,omitempty"`
+	AttrVersion string `xml:"version,attr" json:"attrversion,omitempty"`
+	Behaviors   struct {
+		Noconfigfiles string `xml:"noconfigfiles,attr" json:"noconfigfiles,omitempty"`
+		Noghostfiles  string `xml:"noghostfiles,attr" json:"noghostfiles,omitempty"`
+		Nogroup       string `xml:"nogroup,attr" json:"nogroup,omitempty"`
+		Nolinkto      string `xml:"nolinkto,attr" json:"nolinkto,omitempty"`
+		Nomd5         string `xml:"nomd5,attr" json:"nomd5,omitempty"`
+		Nomode        string `xml:"nomode,attr" json:"nomode,omitempty"`
+		Nomtime       string `xml:"nomtime,attr" json:"nomtime,omitempty"`
+		Nordev        string `xml:"nordev,attr" json:"nordev,omitempty"`
+		Nosize        string `xml:"nosize,attr" json:"nosize,omitempty"`
+		Nouser        string `xml:"nouser,attr" json:"nouser,omitempty"`
+	} `xml:"behaviors" json:"behaviors,omitzero"`
+	Name struct {
+		Operation string `xml:"operation,attr" json:"operation,omitempty"`
+	} `xml:"name" json:"name,omitzero"`
+	Epoch struct {
+		Operation string `xml:"operation,attr" json:"operation,omitempty"`
+	} `xml:"epoch" json:"epoch,omitzero"`
+	Version struct {
+		Operation string `xml:"operation,attr" json:"operation,omitempty"`
+	} `xml:"version" json:"version,omitzero"`
+	Release struct {
+		Operation string `xml:"operation,attr" json:"operation,omitempty"`
+	} `xml:"release" json:"release,omitzero"`
+	Arch struct {
+		Operation string `xml:"operation,attr" json:"operation,omitempty"`
+	} `xml:"arch" json:"arch,omitzero"`
+	Filepath string `xml:"filepath" json:"Filepath,omitempty"`
+}
+
+type UnameObject struct {
+	ID      string `xml:"id,attr" json:"id,omitempty"`
+	Version string `xml:"version,attr" json:"version,omitempty"`
+}
+
+type Textfilecontent54Object struct {
+	ID       string `xml:"id,attr" json:"id,omitempty"`
+	Version  string `xml:"version,attr" json:"version,omitempty"`
+	Filepath struct {
+		Text     string `xml:",chardata" json:"text,omitempty"`
+		Datatype string `xml:"datatype,attr" json:"datatype,omitempty"`
+	} `xml:"filepath" json:"filepath,omitzero"`
+	Pattern struct {
+		Text      string `xml:",chardata" json:"text,omitempty"`
+		Operation string `xml:"operation,attr" json:"operation,omitempty"`
+	} `xml:"pattern" json:"pattern,omitzero"`
+	Instance struct {
+		Text     string `xml:",chardata" json:"text,omitempty"`
+		Datatype string `xml:"datatype,attr" json:"datatype,omitempty"`
+		VarRef   string `xml:"var_ref,attr" json:"var_ref,omitempty"`
+	} `xml:"instance" json:"instance,omitzero"`
+}
+
+type RpminfoObject struct {
+	ID      string `xml:"id,attr" json:"id,omitempty"`
+	Version string `xml:"version,attr" json:"version,omitempty"`
+	Name    string `xml:"name" json:"Name,omitempty"`
 }
 
 type States struct {
-	RpmverifyfileState []struct {
-		ID          string `xml:"id,attr" json:"id,omitempty"`
-		AttrVersion string `xml:"version,attr" json:"attrversion,omitempty"`
-		Name        struct {
-			Text      string `xml:",chardata" json:"text,omitempty"`
-			Operation string `xml:"operation,attr" json:"operation,omitempty"`
-		} `xml:"name" json:"name,omitzero"`
-		Version struct {
-			Text      string `xml:",chardata" json:"text,omitempty"`
-			Operation string `xml:"operation,attr" json:"operation,omitempty"`
-		} `xml:"version" json:"version,omitzero"`
-	} `xml:"rpmverifyfile_state" json:"rpmverifyfile_state,omitempty"`
-	UnameState []struct {
-		ID        string `xml:"id,attr" json:"id,omitempty"`
-		Version   string `xml:"version,attr" json:"version,omitempty"`
-		OsRelease struct {
-			Text      string `xml:",chardata" json:"text,omitempty"`
-			Operation string `xml:"operation,attr" json:"operation,omitempty"`
-		} `xml:"os_release" json:"os_release,omitzero"`
-	} `xml:"uname_state" json:"uname_state,omitempty"`
-	Textfilecontent54State []struct {
-		ID      string `xml:"id,attr" json:"id,omitempty"`
-		Version string `xml:"version,attr" json:"version,omitempty"`
-		Text    struct {
-			Text      string `xml:",chardata" json:"text,omitempty"`
-			Operation string `xml:"operation,attr" json:"operation,omitempty"`
-		} `xml:"text" json:"text,omitzero"`
-	} `xml:"textfilecontent54_state" json:"textfilecontent54_state,omitempty"`
-	RpminfoState []struct {
-		ID      string `xml:"id,attr" json:"id,omitempty"`
-		Version string `xml:"version,attr" json:"version,omitempty"`
-		Arch    struct {
-			Text      string `xml:",chardata" json:"text,omitempty"`
-			Operation string `xml:"operation,attr" json:"operation,omitempty"`
-			Datatype  string `xml:"datatype,attr" json:"datatype,omitempty"`
-		} `xml:"arch" json:"arch,omitzero"`
-		Evr struct {
-			Text      string `xml:",chardata" json:"text,omitempty"`
-			Datatype  string `xml:"datatype,attr" json:"datatype,omitempty"`
-			Operation string `xml:"operation,attr" json:"operation,omitempty"`
-		} `xml:"evr" json:"evr,omitzero"`
-		SignatureKeyid struct {
-			Text      string `xml:",chardata" json:"text,omitempty"`
-			Operation string `xml:"operation,attr" json:"operation,omitempty"`
-		} `xml:"signature_keyid" json:"signature_keyid,omitzero"`
-	} `xml:"rpminfo_state" json:"rpminfo_state,omitempty"`
+	RpmverifyfileState     []RpmverifyfileState     `xml:"rpmverifyfile_state" json:"rpmverifyfile_state,omitempty"`
+	UnameState             []UnameState             `xml:"uname_state" json:"uname_state,omitempty"`
+	Textfilecontent54State []Textfilecontent54State `xml:"textfilecontent54_state" json:"textfilecontent54_state,omitempty"`
+	RpminfoState           []RpminfoState           `xml:"rpminfo_state" json:"rpminfo_state,omitempty"`
+}
+
+type RpmverifyfileState struct {
+	ID          string `xml:"id,attr" json:"id,omitempty"`
+	AttrVersion string `xml:"version,attr" json:"attrversion,omitempty"`
+	Name        struct {
+		Text      string `xml:",chardata" json:"text,omitempty"`
+		Operation string `xml:"operation,attr" json:"operation,omitempty"`
+	} `xml:"name" json:"name,omitzero"`
+	Version struct {
+		Text      string `xml:",chardata" json:"text,omitempty"`
+		Operation string `xml:"operation,attr" json:"operation,omitempty"`
+	} `xml:"version" json:"version,omitzero"`
+}
+
+type UnameState struct {
+	ID        string `xml:"id,attr" json:"id,omitempty"`
+	Version   string `xml:"version,attr" json:"version,omitempty"`
+	OsRelease struct {
+		Text      string `xml:",chardata" json:"text,omitempty"`
+		Operation string `xml:"operation,attr" json:"operation,omitempty"`
+	} `xml:"os_release" json:"os_release,omitzero"`
+}
+
+type Textfilecontent54State struct {
+	ID      string `xml:"id,attr" json:"id,omitempty"`
+	Version string `xml:"version,attr" json:"version,omitempty"`
+	Text    struct {
+		Text      string `xml:",chardata" json:"text,omitempty"`
+		Operation string `xml:"operation,attr" json:"operation,omitempty"`
+	} `xml:"text" json:"text,omitzero"`
+}
+
+type RpminfoState struct {
+	ID      string `xml:"id,attr" json:"id,omitempty"`
+	Version string `xml:"version,attr" json:"version,omitempty"`
+	Arch    struct {
+		Text      string `xml:",chardata" json:"text,omitempty"`
+		Operation string `xml:"operation,attr" json:"operation,omitempty"`
+		Datatype  string `xml:"datatype,attr" json:"datatype,omitempty"`
+	} `xml:"arch" json:"arch,omitzero"`
+	Evr struct {
+		Text      string `xml:",chardata" json:"text,omitempty"`
+		Datatype  string `xml:"datatype,attr" json:"datatype,omitempty"`
+		Operation string `xml:"operation,attr" json:"operation,omitempty"`
+	} `xml:"evr" json:"evr,omitzero"`
+	SignatureKeyid struct {
+		Text      string `xml:",chardata" json:"text,omitempty"`
+		Operation string `xml:"operation,attr" json:"operation,omitempty"`
+	} `xml:"signature_keyid" json:"signature_keyid,omitzero"`
 }
 
 type Variables struct {

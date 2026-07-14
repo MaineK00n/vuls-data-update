@@ -1,0 +1,12 @@
+{
+	"check": "at least one",
+	"comment": "open-vm-tools-sdmp is earlier than 0:12.5.0-1.el10.alma.1",
+	"id": "oval:org.almalinux.alsa:tst:2025000003007",
+	"version": "1",
+	"object": {
+		"object_ref": "oval:org.almalinux.alsa:obj:2025000003004"
+	},
+	"state": {
+		"state_ref": "oval:org.almalinux.alsa:ste:2025000003001"
+	}
+}

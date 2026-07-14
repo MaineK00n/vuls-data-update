@@ -1,0 +1,169 @@
+{
+	"id": "oval:org.almalinux.alsa:def:2025000003",
+	"version": "635",
+	"class": "patch",
+	"metadata": {
+		"Title": "ALSA-2025:A003: open-vm-tools security update (Moderate)",
+		"reference": [
+			{
+				"ref_id": "CVE-2025-22247",
+				"source": "CVE",
+				"ref_url": "https://access.redhat.com/security/cve/CVE-2025-22247"
+			},
+			{
+				"ref_id": "ALSA-2025:A003",
+				"source": "ALSA",
+				"ref_url": "https://errata.almalinux.org/10/ALSA-2025-A003.html"
+			}
+		],
+		"Description": "The Open Virtual Machine Tools are the open source implementation of the VMware Tools. They are a set of guest operating system virtualization components that enhance performance and user experience of virtual machines.\n\nSecurity Fix(es):\n\n* open-vm-tools:A malicious actor with non-administrative privileges on a guest virtual machine (VM) may tamper with the local files to trigger insecure file operations within that VM. (CVE-2025-22247)\n\nFor more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.",
+		"advisory": {
+			"from": "packager@almalinux.org",
+			"Severity": "Moderate",
+			"Rights": "Copyright 2025 AlmaLinux OS",
+			"issued": {
+				"date": "2025-06-20"
+			},
+			"updated": {
+				"date": "2025-06-20"
+			},
+			"affected_cpe_list": {
+				"Cpe": [
+					"cpe:/a:almalinux:almalinux:10",
+					"cpe:/a:almalinux:almalinux:10::appstream",
+					"cpe:/a:almalinux:almalinux:10::powertools",
+					"cpe:/a:almalinux:almalinux:10::highavailability",
+					"cpe:/a:almalinux:almalinux:10::nfv",
+					"cpe:/a:almalinux:almalinux:10::realtime",
+					"cpe:/a:almalinux:almalinux:10::resilientstorage",
+					"cpe:/a:almalinux:almalinux:10::sap",
+					"cpe:/a:almalinux:almalinux:10::sap_hana",
+					"cpe:/a:almalinux:almalinux:10::supplementary",
+					"cpe:/o:almalinux:almalinux:10",
+					"cpe:/o:almalinux:almalinux:10::baseos"
+				]
+			},
+			"bugzilla": [
+				{
+					"href": "https://bugzilla.redhat.com/2364261",
+					"id": "2364261"
+				}
+			],
+			"cve": [
+				{
+					"text": "CVE-2025-22247",
+					"public": "20250512",
+					"href": "https://access.redhat.com/security/cve/CVE-2025-22247",
+					"impact": "Moderate",
+					"cwe": "CWE-266",
+					"cvss3": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:L/I:H/A:N"
+				}
+			]
+		}
+	},
+	"criteria": {
+		"operator": "OR",
+		"criterias": [
+			{
+				"operator": "AND",
+				"criterias": [
+					{
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:org.almalinux.alsa:tst:2025000003001",
+										"comment": "open-vm-tools-test is earlier than 0:12.5.0-1.el10.alma.1"
+									},
+									{
+										"test_ref": "oval:org.almalinux.alsa:tst:2025000003002",
+										"comment": "open-vm-tools-test is signed with AlmaLinux OS 10 key (dee5c11cc2a1e572)"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:org.almalinux.alsa:tst:2025000003003",
+										"comment": "open-vm-tools-salt-minion is earlier than 0:12.5.0-1.el10.alma.1"
+									},
+									{
+										"test_ref": "oval:org.almalinux.alsa:tst:2025000003004",
+										"comment": "open-vm-tools-salt-minion is signed with AlmaLinux OS 10 key (dee5c11cc2a1e572)"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:org.almalinux.alsa:tst:2025000003005",
+										"comment": "open-vm-tools-devel is earlier than 0:12.5.0-1.el10.alma.1"
+									},
+									{
+										"test_ref": "oval:org.almalinux.alsa:tst:2025000003006",
+										"comment": "open-vm-tools-devel is signed with AlmaLinux OS 10 key (dee5c11cc2a1e572)"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:org.almalinux.alsa:tst:2025000003007",
+										"comment": "open-vm-tools-sdmp is earlier than 0:12.5.0-1.el10.alma.1"
+									},
+									{
+										"test_ref": "oval:org.almalinux.alsa:tst:2025000003008",
+										"comment": "open-vm-tools-sdmp is signed with AlmaLinux OS 10 key (dee5c11cc2a1e572)"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:org.almalinux.alsa:tst:2025000003009",
+										"comment": "open-vm-tools is earlier than 0:12.5.0-1.el10.alma.1"
+									},
+									{
+										"test_ref": "oval:org.almalinux.alsa:tst:2025000003010",
+										"comment": "open-vm-tools is signed with AlmaLinux OS 10 key (dee5c11cc2a1e572)"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:org.almalinux.alsa:tst:2025000003011",
+										"comment": "open-vm-tools-desktop is earlier than 0:12.5.0-1.el10.alma.1"
+									},
+									{
+										"test_ref": "oval:org.almalinux.alsa:tst:2025000003012",
+										"comment": "open-vm-tools-desktop is signed with AlmaLinux OS 10 key (dee5c11cc2a1e572)"
+									}
+								]
+							}
+						]
+					}
+				],
+				"criterions": [
+					{
+						"test_ref": "oval:org.almalinux.alsa:tst:20250001002",
+						"comment": "AlmaLinux 10 is installed"
+					}
+				]
+			}
+		],
+		"criterions": [
+			{
+				"test_ref": "oval:org.almalinux.alsa:tst:20250001001",
+				"comment": "AlmaLinux must be installed"
+			}
+		]
+	}
+}

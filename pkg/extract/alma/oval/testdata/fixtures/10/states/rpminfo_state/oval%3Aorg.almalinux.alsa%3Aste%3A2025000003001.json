@@ -1,0 +1,14 @@
+{
+	"id": "oval:org.almalinux.alsa:ste:2025000003001",
+	"version": "1",
+	"arch": {
+		"text": "aarch64|x86_64|x86_64_v2",
+		"operation": "pattern match",
+		"datatype": "string"
+	},
+	"evr": {
+		"text": "0:12.5.0-1.el10.alma.1",
+		"datatype": "evr_string",
+		"operation": "less than"
+	}
+}

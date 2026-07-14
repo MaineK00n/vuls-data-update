@@ -1,0 +1,12 @@
+{
+	"check": "at least one",
+	"comment": "java-1.8.0-openjdk-javadoc is signed with AlmaLinux OS 9 key",
+	"id": "oval:org.almalinux.alsa:tst:20222137024",
+	"version": "635",
+	"object": {
+		"object_ref": "oval:org.almalinux.alsa:obj:20222137012"
+	},
+	"state": {
+		"state_ref": "oval:org.almalinux.alba:ste:20225749002"
+	}
+}

@@ -1,0 +1,12 @@
+{
+	"check": "at least one",
+	"comment": "java-1.8.0-openjdk-slowdebug is signed with AlmaLinux OS 8 key (51d6647ec21ad6ea)",
+	"id": "oval:org.almalinux.alsa:tst:2020034803450",
+	"version": "636",
+	"object": {
+		"object_ref": "oval:org.almalinux.alsa:obj:20212776017"
+	},
+	"state": {
+		"state_ref": "oval:org.almalinux.alba:ste:2020034802722"
+	}
+}

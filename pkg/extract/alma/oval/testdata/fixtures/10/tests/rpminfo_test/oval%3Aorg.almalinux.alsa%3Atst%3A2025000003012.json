@@ -1,0 +1,12 @@
+{
+	"check": "at least one",
+	"comment": "open-vm-tools-desktop is signed with AlmaLinux OS 10 key (dee5c11cc2a1e572)",
+	"id": "oval:org.almalinux.alsa:tst:2025000003012",
+	"version": "1",
+	"object": {
+		"object_ref": "oval:org.almalinux.alsa:obj:2025000003006"
+	},
+	"state": {
+		"state_ref": "oval:org.almalinux.alsa:ste:20250001003"
+	}
+}

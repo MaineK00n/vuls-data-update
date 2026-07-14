@@ -1,0 +1,12 @@
+{
+	"id": "oval:org.almalinux.alsa:tst:20258696004",
+	"version": "1",
+	"check": "all",
+	"comment": "Module perl-FCGI:0.78 is enabled",
+	"object": {
+		"object_ref": "oval:org.almalinux.alsa:obj:20258696002"
+	},
+	"state": {
+		"state_ref": "oval:org.almalinux.alsa:ste:20258696002"
+	}
+}

@@ -1,0 +1,12 @@
+{
+	"check": "none satisfy",
+	"comment": "AlmaLinux must be installed",
+	"id": "oval:org.almalinux.alba:tst:20191992005",
+	"version": "635",
+	"object": {
+		"object_ref": "oval:org.almalinux.alba:obj:20191992002"
+	},
+	"state": {
+		"state_ref": "oval:org.almalinux.alba:ste:20191992005"
+	}
+}

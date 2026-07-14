@@ -1,0 +1,14 @@
+{
+	"id": "oval:org.almalinux.alsa:ste:20258696001",
+	"version": "1",
+	"arch": {
+		"text": "aarch64|s390x|ppc64le|x86_64",
+		"operation": "pattern match",
+		"datatype": "string"
+	},
+	"evr": {
+		"text": "1:0.78-12.module_el8.10.0+4011+62915be2",
+		"datatype": "evr_string",
+		"operation": "less than"
+	}
+}

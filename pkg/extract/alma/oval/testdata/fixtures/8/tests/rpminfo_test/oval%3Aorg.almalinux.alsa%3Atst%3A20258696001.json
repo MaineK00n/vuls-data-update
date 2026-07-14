@@ -1,0 +1,12 @@
+{
+	"check": "at least one",
+	"comment": "perl-FCGI is earlier than 1:0.78-12.module_el8.10.0+4011+62915be2",
+	"id": "oval:org.almalinux.alsa:tst:20258696001",
+	"version": "1",
+	"object": {
+		"object_ref": "oval:org.almalinux.alsa:obj:20258696001"
+	},
+	"state": {
+		"state_ref": "oval:org.almalinux.alsa:ste:20258696001"
+	}
+}

@@ -1,8 +1,0 @@
-{
-	"id": "oval:org.almalinux.alsa:ste:20228832007",
-	"version": "636",
-	"text": {
-		"text": "\\nstream\\s*=\\s*18\\b[\\w\\W]*\\nstate\\s*=\\s*(enabled|1|true)|\\nstate\\s*=\\s*(enabled|1|true)[\\w\\W]*\\nstream\\s*=\\s*18\\b",
-		"operation": "pattern match"
-	}
-}

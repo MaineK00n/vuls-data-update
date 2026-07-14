@@ -1,0 +1,8 @@
+{
+	"id": "oval:org.almalinux.alsa:ste:20250001003",
+	"version": "635",
+	"signature_keyid": {
+		"text": "dee5c11cc2a1e572",
+		"operation": "equals"
+	}
+}

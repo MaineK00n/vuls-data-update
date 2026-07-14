@@ -1,0 +1,12 @@
+{
+	"check": "at least one",
+	"comment": "java-1.8.0-openjdk-src-slowdebug is earlier than 1:1.8.0.402.b06-2.el8",
+	"id": "oval:org.almalinux.alsa:tst:20240265051",
+	"version": "1",
+	"object": {
+		"object_ref": "oval:org.almalinux.alsa:obj:20212776020"
+	},
+	"state": {
+		"state_ref": "oval:org.almalinux.alsa:ste:20240265001"
+	}
+}

@@ -1,0 +1,5 @@
+{
+	"id": "oval:org.almalinux.alsa:obj:2025000003005",
+	"version": "1",
+	"Name": "open-vm-tools-salt-minion"
+}
