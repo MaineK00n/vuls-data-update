@@ -6,6 +6,8 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"path/filepath"
+	"strings"
 	"testing"
 	"time"
 
@@ -124,6 +126,93 @@ func TestCheckRetry(t *testing.T) {
 			}
 			if rt.reqCount != tt.wantReqCount {
 				t.Errorf("request count, got: %d, want: %d", rt.reqCount, tt.wantReqCount)
+			}
+		})
+	}
+}
+
+func TestIsAlertURL(t *testing.T) {
+	tests := []struct {
+		name string
+		url  string
+		want bool
+	}{
+		{name: "at alert html", url: "https://www.jpcert.or.jp/at/2021/at210050.html", want: true},
+		{name: "at alert txt", url: "http://www.jpcert.or.jp/at/2004/at040002.txt", want: true},
+		{
+			// A vendor advisory URL that merely contains "/at/" as a path segment
+			// (not the "/at/<year>/" alert structure) must not be treated as one.
+			name: "vendor /at/ path is skipped",
+			url:  "http://assistenzatecnica.telecomitalia.it/at/portals/assistenzatecnica.portal?_nfpb=true",
+			want: false,
+		},
+		{name: "weekly report is skipped", url: "http://www.jpcert.or.jp/wr/2004/wr043001.txt", want: false},
+		{name: "press release is skipped", url: "http://www.jpcert.or.jp/pr/2007/pr070002.pdf", want: false},
+		{name: "non-at path is skipped", url: "https://jvn.jp/vu/JVNVU95841181/index.html", want: false},
+		{name: "empty is skipped", url: "  ", want: false},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := jvnutil.IsAlertURL(tt.url); got != tt.want {
+				t.Errorf("IsAlertURL(%q) = %v, want %v", tt.url, got, tt.want)
+			}
+		})
+	}
+}
+
+func TestFetchTitle(t *testing.T) {
+	tests := []struct {
+		name string
+		// path is requested against the test server, which serves the file at
+		// that path under testdata/fixtures.
+		path      string
+		want      string
+		wantError bool
+	}{
+		{
+			name: "happy path",
+			path: "/at210050.html",
+			want: "Apache Log4jの任意のコード実行の脆弱性（CVE-2021-44228）に関する注意喚起",
+		},
+		{
+			// Older alerts are referenced as PGP-signed .txt files; the title is
+			// fetched from the .html rendering (here the same fixture).
+			name: "txt is fetched as html",
+			path: "/at210050.txt",
+			want: "Apache Log4jの任意のコード実行の脆弱性（CVE-2021-44228）に関する注意喚起",
+		},
+		{
+			// A page without a <title> is treated as an error.
+			name:      "no title element",
+			path:      "/no_title.html",
+			wantError: true,
+		},
+		{
+			// A non-existent file makes ServeFile respond with 404.
+			name:      "not found",
+			path:      "/nonexistent.html",
+			wantError: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				http.ServeFile(w, r, filepath.Join("testdata", "fixtures", strings.TrimPrefix(r.URL.Path, "/")))
+			}))
+			defer ts.Close()
+
+			got, err := jvnutil.FetchTitle(utilhttp.NewClient(utilhttp.WithClientRetryMax(0)), ts.URL+tt.path)
+			switch {
+			case err != nil && !tt.wantError:
+				t.Fatalf("unexpected error: %s", err)
+			case err == nil && tt.wantError:
+				t.Fatal("expected error has not occurred")
+			default:
+				if got != tt.want {
+					t.Errorf("FetchTitle() = %q, want %q", got, tt.want)
+				}
 			}
 		})
 	}

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:sec="http://jvn.jp/rss/mod_sec/" xmlns:sy="http://purl.org/rss/1.0/modules/syndication/" xsi:schemaLocation="http://purl.org/rss/1.0/ https://jvndb.jvn.jp/schema/jvnrss_2.0.xsd" xml:lang="ja">
+  <channel rdf:about="https://jvndb.jvn.jp/ja/rss/years/jvndb_2007.rdf">
+    <title>JVNDB RSS Feed - 2007 Years Entry</title>
+    <link>https://jvndb.jvn.jp/</link>
+    <description>JVN iPedia 2007年情報</description>
+    <dc:creator></dc:creator>
+    <dc:date>2007-04-01T00:00:00+09:00</dc:date>
+    <dcterms:modified>2007-04-01T00:00:00+09:00</dcterms:modified>
+    <items>
+      <rdf:Seq>
+        <rdf:li rdf:resource="https://jvndb.jvn.jp/ja/contents/2007/JVNDB-2007-000127.html"/>
+      </rdf:Seq>
+    </items>
+  </channel>
+  <item rdf:about="https://jvndb.jvn.jp/ja/contents/2007/JVNDB-2007-000127.html">
+    <title>トレンドマイクロ ウイルス検索エンジンの UPX ファイル処理にバッファオーバーフローの脆弱性</title>
+    <link>https://jvndb.jvn.jp/ja/contents/2007/JVNDB-2007-000127.html</link>
+    <description>トレンドマイクロのウイルス対策製品で使用されるウイルス検索エンジンVSAPI には、不正な UPX 圧縮実行ファイルを適切に処理できないため、UPX 圧縮実行ファイルをスキャン処理することでバッファオーバーフローが発生する脆弱性が存在します。</description>
+    <sec:identifier>JVNDB-2007-000127</sec:identifier>
+    <sec:references source="JVN" id="JVNVU#276432">http://jvn.jp/cert/JVNVU%23276432/index.html</sec:references>
+    <sec:references source="CVE" id="CVE-2007-0851">http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2007-0851</sec:references>
+    <sec:references source="NVD" id="CVE-2007-0851">http://nvd.nist.gov/nvd.cfm?cvename=CVE-2007-0851</sec:references>
+    <sec:references source="JPCERT-AT" id="JPCERT-PR-2007-0002">http://www.jpcert.or.jp/pr/2007/pr070002.pdf</sec:references>
+    <sec:references source="CERT-VN" id="VU#276432">http://www.kb.cert.org/vuls/id/276432</sec:references>
+    <sec:cpe version="2.2" vendor="トレンドマイクロ" product="Trend Micro Scan Engine">cpe:/a:trendmicro:scan_engine</sec:cpe>
+    <sec:cvss version="2.0" score="5.4" type="Base" severity="Medium" vector="AV:N/AC:H/Au:N/C:N/I:N/A:C"/>
+    <dc:date>2007-04-01T00:00+09:00</dc:date>
+    <dcterms:issued>2007-04-01T00:00+09:00</dcterms:issued>
+    <dcterms:modified>2007-04-01T00:00+09:00</dcterms:modified>
+  </item>
+</rdf:RDF>

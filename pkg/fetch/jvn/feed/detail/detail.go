@@ -100,10 +100,15 @@ func Fetch(opts ...Option) error {
 		}
 	}
 
+	client := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry))
+	// A single JPCERT-AT alert is referenced by many advisories, so cache the
+	// fetched title per URL to avoid refetching.
+	certTitles := make(map[string]string)
+
 	for _, c := range filtered {
 		slog.Info("Fetch JVNDB Detail Feed", slog.String("feed", c.Filename))
 		vs, err := func() ([]Vulinfo, error) {
-			resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(c.URL)
+			resp, err := client.Get(c.URL)
 			if err != nil {
 				return nil, errors.Wrap(err, "fetch jvndb detail")
 			}
@@ -140,6 +145,28 @@ func Fetch(opts ...Option) error {
 
 		bar := progressbar.Default(int64(len(vs)))
 		for _, a := range vs {
+			for i, ref := range a.VulinfoData.Related.RelatedItem {
+				// Only JPCERT-AT alert pages ("/at/") carry a fetchable title; other
+				// cited JPCERT reference types (weekly reports, press releases) are
+				// skipped by IsAlertURL. Match on the URL rather than VulinfoID/Name,
+				// which are inconsistent in the feed. Trim once so the cache key,
+				// fetch target, and error context all use the same canonical URL.
+				u := strings.TrimSpace(ref.URL)
+				if !jvnutil.IsAlertURL(u) {
+					continue
+				}
+				title, ok := certTitles[u]
+				if !ok {
+					t, err := jvnutil.FetchTitle(client, u)
+					if err != nil {
+						return errors.Wrapf(err, "fetch JPCERT-AT title %s", u)
+					}
+					title = t
+					certTitles[u] = title
+				}
+				a.VulinfoData.Related.RelatedItem[i].FetchedTitle = title
+			}
+
 			splitted, err := util.Split(a.VulinfoID, "-", "-")
 			if err != nil {
 				return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "JVNDB-yyyy-\\d{6}", a.VulinfoID)

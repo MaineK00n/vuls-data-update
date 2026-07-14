@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:sec="http://jvn.jp/rss/mod_sec/" xmlns:sy="http://purl.org/rss/1.0/modules/syndication/" xsi:schemaLocation="http://purl.org/rss/1.0/ https://jvndb.jvn.jp/schema/jvnrss_2.0.xsd" xml:lang="ja">
+  <channel rdf:about="https://jvndb.jvn.jp/ja/rss/years/jvndb_2011.rdf">
+    <title>JVNDB RSS Feed - 2011 Years Entry</title>
+    <link>https://jvndb.jvn.jp/</link>
+    <description>JVN iPedia 2011年情報</description>
+    <dc:creator></dc:creator>
+    <dc:date>2011-05-02T13:25:00+09:00</dc:date>
+    <dcterms:modified>2011-05-02T13:25:00+09:00</dcterms:modified>
+    <items>
+      <rdf:Seq>
+        <rdf:li rdf:resource="https://jvndb.jvn.jp/ja/contents/2011/JVNDB-2011-001013.html"/>
+      </rdf:Seq>
+    </items>
+  </channel>
+  <item rdf:about="https://jvndb.jvn.jp/ja/contents/2011/JVNDB-2011-001013.html">
+    <title>Microsoft Internet Explorer 8 における解放済みメモリを使用する脆弱性</title>
+    <link>https://jvndb.jvn.jp/ja/contents/2011/JVNDB-2011-001013.html</link>
+    <description>Microsoft Internet Explorer 8 の mshtml.dll ライブラリには、解放済みメモリを使用する (use-after-free) 脆弱性が存在します。</description>
+    <sec:identifier>JVNDB-2011-001013</sec:identifier>
+    <sec:references source="JVN" id="JVNVU#427980">http://jvn.jp/cert/JVNVU427980</sec:references>
+    <sec:references source="JVN" id="JVNTA11-102A">http://jvn.jp/cert/JVNTA11-102A</sec:references>
+    <sec:references source="CVE" id="CVE-2011-0346">http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-0346</sec:references>
+    <sec:references source="NVD" id="CVE-2011-0346">http://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2011-0346</sec:references>
+    <sec:references source="JPCERT-AT" id="JPCERT-AT-2011-0008">https://www.jpcert.or.jp/at/2011/at110008.txt</sec:references>
+    <sec:references source="CERT-SA" id="SA11-102A">http://www.us-cert.gov/cas/alerts/SA11-102A.html</sec:references>
+    <sec:references source="CERT-VN" id="VU#427980">http://www.kb.cert.org/vuls/id/427980</sec:references>
+    <sec:references source="CERT-TA" id="TA11-102A">http://www.us-cert.gov/cas/techalerts/TA11-102A.html</sec:references>
+    <sec:references source="IPA" id="20110413-ms11-018">http://www.ipa.go.jp/security/ciadr/vul/20110413-ms11-018.html</sec:references>
+    <sec:references source="BID" id="45639">http://www.securityfocus.com/bid/45639</sec:references>
+    <sec:references title="リソース管理の問題(CWE-399)" id="CWE-399">https://jvndb.jvn.jp/ja/cwe/CWE-399.html</sec:references>
+    <sec:cpe version="2.2" vendor="マイクロソフト" product="Microsoft Internet Explorer">cpe:/a:microsoft:internet_explorer</sec:cpe>
+    <sec:cvss version="2.0" score="9.3" type="Base" severity="High" vector="AV:N/AC:M/Au:N/C:C/I:C/A:C"/>
+    <dc:date>2011-05-02T13:25+09:00</dc:date>
+    <dcterms:issued>2011-01-28T15:38+09:00</dcterms:issued>
+    <dcterms:modified>2011-05-02T13:25+09:00</dcterms:modified>
+  </item>
+</rdf:RDF>

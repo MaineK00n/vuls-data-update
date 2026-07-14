@@ -1,0 +1,85 @@
+{
+	"about": "https://jvndb.jvn.jp/ja/contents/2011/JVNDB-2011-001013.html",
+	"title": "Microsoft Internet Explorer 8 における解放済みメモリを使用する脆弱性",
+	"link": "https://jvndb.jvn.jp/ja/contents/2011/JVNDB-2011-001013.html",
+	"description": "Microsoft Internet Explorer 8 の mshtml.dll ライブラリには、解放済みメモリを使用する (use-after-free) 脆弱性が存在します。",
+	"identifier": "JVNDB-2011-001013",
+	"references": [
+		{
+			"text": "http://jvn.jp/cert/JVNVU427980",
+			"source": "JVN",
+			"id": "JVNVU#427980"
+		},
+		{
+			"text": "http://jvn.jp/cert/JVNTA11-102A",
+			"source": "JVN",
+			"id": "JVNTA11-102A"
+		},
+		{
+			"text": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-0346",
+			"source": "CVE",
+			"id": "CVE-2011-0346"
+		},
+		{
+			"text": "http://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2011-0346",
+			"source": "NVD",
+			"id": "CVE-2011-0346"
+		},
+		{
+			"text": "https://www.jpcert.or.jp/at/2011/at110008.txt",
+			"source": "JPCERT-AT",
+			"id": "JPCERT-AT-2011-0008",
+			"fetchedtitle": "2011年4月 Microsoft セキュリティ情報 (緊急 9件含) に関する注意喚起"
+		},
+		{
+			"text": "http://www.us-cert.gov/cas/alerts/SA11-102A.html",
+			"source": "CERT-SA",
+			"id": "SA11-102A"
+		},
+		{
+			"text": "http://www.kb.cert.org/vuls/id/427980",
+			"source": "CERT-VN",
+			"id": "VU#427980"
+		},
+		{
+			"text": "http://www.us-cert.gov/cas/techalerts/TA11-102A.html",
+			"source": "CERT-TA",
+			"id": "TA11-102A"
+		},
+		{
+			"text": "http://www.ipa.go.jp/security/ciadr/vul/20110413-ms11-018.html",
+			"source": "IPA",
+			"id": "20110413-ms11-018"
+		},
+		{
+			"text": "http://www.securityfocus.com/bid/45639",
+			"source": "BID",
+			"id": "45639"
+		},
+		{
+			"text": "https://jvndb.jvn.jp/ja/cwe/CWE-399.html",
+			"id": "CWE-399",
+			"title": "リソース管理の問題(CWE-399)"
+		}
+	],
+	"cpe": [
+		{
+			"text": "cpe:/a:microsoft:internet_explorer",
+			"version": "2.2",
+			"vendor": "マイクロソフト",
+			"product": "Microsoft Internet Explorer"
+		}
+	],
+	"cvss": [
+		{
+			"version": "2.0",
+			"score": "9.3",
+			"type": "Base",
+			"severity": "High",
+			"vector": "AV:N/AC:M/Au:N/C:C/I:C/A:C"
+		}
+	],
+	"date": "2011-05-02T13:25+09:00",
+	"issued": "2011-01-28T15:38+09:00",
+	"modified": "2011-05-02T13:25+09:00"
+}

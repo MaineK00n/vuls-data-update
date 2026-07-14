@@ -1,0 +1,54 @@
+{
+	"about": "https://jvndb.jvn.jp/ja/contents/2007/JVNDB-2007-000127.html",
+	"title": "トレンドマイクロ ウイルス検索エンジンの UPX ファイル処理にバッファオーバーフローの脆弱性",
+	"link": "https://jvndb.jvn.jp/ja/contents/2007/JVNDB-2007-000127.html",
+	"description": "トレンドマイクロのウイルス対策製品で使用されるウイルス検索エンジンVSAPI には、不正な UPX 圧縮実行ファイルを適切に処理できないため、UPX 圧縮実行ファイルをスキャン処理することでバッファオーバーフローが発生する脆弱性が存在します。",
+	"identifier": "JVNDB-2007-000127",
+	"references": [
+		{
+			"text": "http://jvn.jp/cert/JVNVU%23276432/index.html",
+			"source": "JVN",
+			"id": "JVNVU#276432"
+		},
+		{
+			"text": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2007-0851",
+			"source": "CVE",
+			"id": "CVE-2007-0851"
+		},
+		{
+			"text": "http://nvd.nist.gov/nvd.cfm?cvename=CVE-2007-0851",
+			"source": "NVD",
+			"id": "CVE-2007-0851"
+		},
+		{
+			"text": "http://www.jpcert.or.jp/pr/2007/pr070002.pdf",
+			"source": "JPCERT-AT",
+			"id": "JPCERT-PR-2007-0002"
+		},
+		{
+			"text": "http://www.kb.cert.org/vuls/id/276432",
+			"source": "CERT-VN",
+			"id": "VU#276432"
+		}
+	],
+	"cpe": [
+		{
+			"text": "cpe:/a:trendmicro:scan_engine",
+			"version": "2.2",
+			"vendor": "トレンドマイクロ",
+			"product": "Trend Micro Scan Engine"
+		}
+	],
+	"cvss": [
+		{
+			"version": "2.0",
+			"score": "5.4",
+			"type": "Base",
+			"severity": "Medium",
+			"vector": "AV:N/AC:H/Au:N/C:N/I:N/A:C"
+		}
+	],
+	"date": "2007-04-01T00:00+09:00",
+	"issued": "2007-04-01T00:00+09:00",
+	"modified": "2007-04-01T00:00+09:00"
+}

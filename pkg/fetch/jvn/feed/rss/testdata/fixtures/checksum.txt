@@ -28,6 +28,27 @@
         "lastModified": "2023/10/29 09:01:06"
     },
     {
+        "url": "https://jvndb.jvn.jp/ja/rss/years/jvndb_2021.rdf",
+        "filename": "jvndb_2021.rdf",
+        "sha256": "b6d8f1c0a1b2c3d4e5f60718293a4b5c6d7e8f90112233445566778899aabbcc",
+        "size": 30000000,
+        "lastModified": "2023/10/29 09:00:41"
+    },
+    {
+        "url": "https://jvndb.jvn.jp/ja/rss/years/jvndb_2011.rdf",
+        "filename": "jvndb_2011.rdf",
+        "sha256": "11cc22dd33ee44ff5566778899aabbccddeeff00112233445566778899aabbcc",
+        "size": 5000000,
+        "lastModified": "2011/05/02 13:25:00"
+    },
+    {
+        "url": "https://jvndb.jvn.jp/ja/rss/years/jvndb_2007.rdf",
+        "filename": "jvndb_2007.rdf",
+        "sha256": "2007aabbccddeeff00112233445566778899aabbccddeeff0011223344556677",
+        "size": 3000000,
+        "lastModified": "2007/04/01 00:00:00"
+    },
+    {
         "url": "https://jvndb.jvn.jp/ja/feed/detail/jvndb_detail_2023.rdf",
         "filename": "jvndb_detail_2023.rdf",
         "sha256": "61aa3296207db6305bc27145c4be4ab486249d124a7eaf56fc0c3b3372327a36",
