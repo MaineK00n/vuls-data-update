@@ -189,7 +189,7 @@ func (e extractor) extract(major string, def oval.Definition) (dataTypes.Data, e
 				ids = append(ids, r.RefID)
 			}
 		}
-		switch ids := slices.Compact(ids); len(ids) {
+		switch ids := util.Unique(ids); len(ids) {
 		case 1:
 			return ids[0], nil
 		default:
@@ -379,6 +379,9 @@ func (e extractor) walkCriterions(ca criteriaTypes.Criteria, major string, ovalC
 	for _, ovalCn := range ovalCns {
 		var t1 oval.RpminfoTest
 		if err := e.read(major, "tests", "rpminfo_test", ovalCn.TestRef, &t1); err != nil {
+			if !errors.Is(err, os.ErrNotExist) {
+				return criteriaTypes.Criteria{}, errors.Wrapf(err, "read %s", filepath.Join("tests", "rpminfo_test", ovalCn.TestRef))
+			}
 			next = append(next, ovalCn)
 			continue
 		}
@@ -441,6 +444,9 @@ func (e extractor) walkCriterions(ca criteriaTypes.Criteria, major string, ovalC
 	for _, ovalCn := range ovalCns {
 		var t2 oval.Textfilecontent54Test
 		if err := e.read(major, "tests", "textfilecontent54_test", ovalCn.TestRef, &t2); err != nil {
+			if !errors.Is(err, os.ErrNotExist) {
+				return criteriaTypes.Criteria{}, errors.Wrapf(err, "read %s", filepath.Join("tests", "textfilecontent54_test", ovalCn.TestRef))
+			}
 			next = append(next, ovalCn)
 			continue
 		}
@@ -521,6 +527,9 @@ func (e extractor) walkCriterions(ca criteriaTypes.Criteria, major string, ovalC
 	for _, ovalCn := range ovalCns {
 		var t3 oval.RpmverifyfileTest
 		if err := e.read(major, "tests", "rpmverifyfile_test", ovalCn.TestRef, &t3); err != nil {
+			if !errors.Is(err, os.ErrNotExist) {
+				return criteriaTypes.Criteria{}, errors.Wrapf(err, "read %s", filepath.Join("tests", "rpmverifyfile_test", ovalCn.TestRef))
+			}
 			next = append(next, ovalCn)
 			continue
 		}
