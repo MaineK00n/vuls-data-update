@@ -63,6 +63,8 @@ func TestFetch(t *testing.T) {
 					switch path.Base(r.URL.Path) {
 					case "PAN-SA-9999-0500":
 						http.Error(w, "internal server error", http.StatusInternalServerError)
+					case "PAN-SA-0000-0000":
+						http.NotFound(w, r)
 					default:
 						http.ServeFile(w, r, filepath.Join("testdata", "fixtures", path.Base(r.URL.Path)))
 					}
