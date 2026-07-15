@@ -2244,6 +2244,11 @@ var fixedBuildOverrides = map[[3]string]string{
 	// 2026-Jun (IE Cumulative, FixedBuild "1.000" is a revision number, not a Windows OS build)
 	{"CVE-2026-45592", "Windows Server 2012 R2", "1.000"}:                            "",
 	{"CVE-2026-45592", "Windows Server 2012 R2 (Server Core installation)", "1.000"}: "",
+	// 2026-Jul (IE Cumulative, FixedBuild "1.000" is a revision number, not a Windows OS build)
+	{"CVE-2026-50480", "Windows Server 2012", "1.000"}:                               "",
+	{"CVE-2026-50480", "Windows Server 2012 (Server Core installation)", "1.000"}:    "",
+	{"CVE-2026-50480", "Windows Server 2012 R2", "1.000"}:                            "",
+	{"CVE-2026-50480", "Windows Server 2012 R2 (Server Core installation)", "1.000"}: "",
 
 	// Windows OS (FixedBuild leaked from a sibling servicing branch: a single Vendor Fix
 	// Remediation grouped products from multiple servicing branches but specified only
