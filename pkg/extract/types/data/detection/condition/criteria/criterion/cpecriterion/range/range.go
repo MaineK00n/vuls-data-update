@@ -222,9 +222,9 @@ func Compare(x, y Range) int {
 
 // CompareError wraps the failure modes RangeType.Compare can raise so that
 // callers can classify them. Mirrors versioncriterion/affected/range's
-// pattern: any expected, swallow-safe failure (e.g. an unparseable version)
-// is wrapped in CompareError; anything else (e.g. comparator-internal bugs)
-// surfaces unwrapped so it propagates loudly.
+// pattern: every failure Compare raises — parse errors, unevaluable types,
+// comparator-internal errors — is wrapped in CompareError so that Accept can
+// always degrade it to a safe non-match.
 type CompareError struct {
 	Err error
 }
@@ -274,9 +274,10 @@ var ErrRangeTypeUnknown = errors.New("unknown range type")
 // detect-time callers can swallow them gracefully. A RangeType with no
 // comparator likewise wraps in *CompareError: Unknown and the zero value
 // carry ErrRangeTypeUnknown, and a value this build does not know (data from
-// a newer vuls-data-update) carries *UnsupportedRangeTypeError. Any other
-// error (a comparator-internal failure) surfaces unwrapped and propagates
-// loudly.
+// a newer vuls-data-update) carries *UnsupportedRangeTypeError.
+// Comparator-internal failures (e.g. an incomparable non-numeric pair) wrap
+// in *CompareError as well — every error this function raises classifies as
+// *CompareError, so Accept can always degrade it to a safe non-match.
 //
 // Fortinet per-product types dispatch to go-fortinet-version: FortiSASE uses
 // the non-numeric (milestone-letter) scheme; every other Fortinet product uses
@@ -450,9 +451,10 @@ func (t RangeType) Compare(v1, v2 string) (int, error) {
 // Compare failures that classify as *CompareError (parse failures on either
 // bound or query, the Unknown-type sentinel, plus range types this build
 // does not know) are swallowed as graceful non-matches so a detect run
-// against malformed scan input or newer data does not crash. Other errors
-// (comparator-internal failures) propagate so the caller can surface them.
-// Mirrors versioncriterion/affected.Accept.
+// against malformed scan input or newer data does not crash. Every error
+// Compare currently raises classifies as *CompareError; the propagation
+// branch below is defensive, for error kinds a future comparator might
+// introduce. Mirrors versioncriterion/affected.Accept.
 func (r Range) Accept(v string) (bool, error) {
 	if r.GreaterEqual == "" && r.GreaterThan == "" && r.LessEqual == "" && r.LessThan == "" {
 		// No bounds → no narrowing, but Unknown / unset Type still
