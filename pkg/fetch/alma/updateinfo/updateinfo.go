@@ -246,6 +246,10 @@ func (o options) listRepomds(client *utilhttp.Client) ([]string, error) {
 		slog.Info("Walk repo.almalinux.org", slog.Int("depth", depth), slog.Int("dirs", len(results)), slog.Int("repomds", len(repomds)))
 	}
 
+	if len(frontier) > 0 {
+		slog.Warn("walk stopped at max depth with directories still pending; crawl may be incomplete", slog.Int("max_depth", maxDepth), slog.Int("pending", len(frontier)))
+	}
+
 	return repomds, nil
 }
 
@@ -278,7 +282,7 @@ func (o options) listDirs(client *utilhttp.Client, u string) ([]string, error) {
 	d.Find("a").Each(func(_ int, selection *goquery.Selection) {
 		txt := strings.TrimSpace(selection.Text())
 		name, ok := strings.CutSuffix(txt, "/")
-		if !ok || name == "" || name == ".." {
+		if !ok || name == "" || name == "." || name == ".." {
 			return
 		}
 		dirs = append(dirs, name)
