@@ -1307,12 +1307,14 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 			"Microsoft SQL Server 2022 for x64-based Systems (CU 22)",
 			"Microsoft SQL Server 2022 for x64-based Systems (CU 23)",
 			"Microsoft SQL Server 2022 for x64-based Systems (CU 24)",
+			"Microsoft SQL Server 2022 for x64-based Systems (CU 25)",
 			"Microsoft SQL Server 2022 for x64-based Systems (CU 5)",
 			"Microsoft SQL Server 2022 for x64-based Systems (CU 8)",
 			"Microsoft SQL Server 2022 for x64-based Systems (GDR)",
 			"Microsoft SQL Server 2025 for x64-based Systems (CU2)",
 			"Microsoft SQL Server 2025 for x64-based Systems (CU3)",
 			"Microsoft SQL Server 2025 for x64-based Systems (CU4)",
+			"Microsoft SQL Server 2025 for x64-based Systems (CU6)",
 			"Microsoft SQL Server 2025 for x64-based Systems (GDR)",
 			"SQL Server 2019 for Linux Containers",
 			"SQL Server Integration Services for Visual Studio 2019",
@@ -1386,7 +1388,8 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 			"Microsoft Visual Studio 2026 Version 18.3",
 			"Microsoft Visual Studio 2026 Version 18.4",
 			"Microsoft Visual Studio 2026 Version 18.5",
-			"Microsoft Visual Studio 2026 Version 18.6":
+			"Microsoft Visual Studio 2026 Version 18.6",
+			"Microsoft Visual Studio 2026 Version 18.7":
 			if _, err := visualstudioversion.NewVersion(fixedBuild); err != nil {
 				return rangeTypes.RangeTypeUnknown, errors.Wrap(err, "visualstudioversion.NewVersion")
 			}
