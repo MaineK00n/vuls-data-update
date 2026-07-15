@@ -1,6 +1,8 @@
 package affectedrange_test
 
 import (
+	"encoding/json/v2"
+	stderrors "errors"
 	"testing"
 
 	affectedrangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/affected/range"
@@ -1221,5 +1223,52 @@ func TestRangeType_Compare(t *testing.T) {
 				t.Errorf("RangeType.Compare() = %v, want %v", got, tt.want)
 			}
 		})
+	}
+}
+
+func TestRangeType_Compare_UnsupportedRangeType(t *testing.T) {
+	_, err := affectedrangeTypes.RangeType("future-type").Compare(ecosystemTypes.EcosystemTypeRedHat, "1.0.0", "2.0.0")
+	if _, ok := stderrors.AsType[*affectedrangeTypes.CompareError](err); !ok {
+		t.Errorf("Compare() error = %v, want *CompareError", err)
+	}
+	if _, ok := stderrors.AsType[*affectedrangeTypes.UnsupportedRangeTypeError](err); !ok {
+		t.Errorf("Compare() error = %v, want to wrap *UnsupportedRangeTypeError", err)
+	}
+}
+
+func TestRangeTypes_HaveComparator(t *testing.T) {
+	// Pre-existing debt, not a template: pacman and freebsd-pkg are declared
+	// (and appear in extracted data) but have never had a comparator — before
+	// the string conversion they fell into Compare's default error branch.
+	// Do not add new types here; a new RangeType must ship with its comparator.
+	noComparator := map[affectedrangeTypes.RangeType]bool{
+		affectedrangeTypes.RangeTypePacman:     true,
+		affectedrangeTypes.RangeTypeFreeBSDPkg: true,
+	}
+	for _, rt := range affectedrangeTypes.RangeTypes() {
+		t.Run(string(rt), func(t *testing.T) {
+			_, err := rt.Compare(ecosystemTypes.EcosystemTypeRedHat, "1.0.0", "2.0.0")
+			if _, ok := stderrors.AsType[*affectedrangeTypes.UnsupportedRangeTypeError](err); ok != noComparator[rt] {
+				if ok {
+					t.Errorf("RangeTypes() contains %q but Compare has no comparator for it", rt)
+				} else {
+					t.Errorf("%q has a comparator now; drop it from the noComparator exceptions", rt)
+				}
+			}
+		})
+	}
+}
+
+func TestRangeType_JSONRoundTrip_UnknownValue(t *testing.T) {
+	var rt affectedrangeTypes.RangeType
+	if err := json.Unmarshal([]byte(`"future-type"`), &rt); err != nil {
+		t.Fatalf("unmarshal unknown range type: %v", err)
+	}
+	bs, err := json.Marshal(rt)
+	if err != nil {
+		t.Fatalf("marshal unknown range type: %v", err)
+	}
+	if string(bs) != `"future-type"` {
+		t.Errorf("round trip = %s, want %q (unknown values must survive read-modify-write losslessly)", bs, "future-type")
 	}
 }

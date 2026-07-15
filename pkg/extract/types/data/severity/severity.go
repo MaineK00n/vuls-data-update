@@ -2,9 +2,6 @@ package severity
 
 import (
 	"cmp"
-	"encoding/json/jsontext"
-	"encoding/json/v2"
-	"fmt"
 
 	v2Types "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity/cvss/v2"
 	v30Types "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity/cvss/v30"
@@ -23,91 +20,32 @@ type Severity struct {
 	CVSSv40 *v40Types.CVSSv40 `json:"cvss_v40,omitempty"`
 }
 
-type SeverityType int
+// SeverityType is a string so that unmarshaling never validates against the
+// known set: data produced by a newer vuls-data-update (carrying severity
+// types this build does not know) still round-trips losslessly instead of
+// failing the whole read.
+type SeverityType string
 
 const (
-	_ SeverityType = iota
-	SeverityTypeVendor
-	SeverityTypeCVSSv2
-	SeverityTypeCVSSv30
-	SeverityTypeCVSSv31
-	SeverityTypeCVSSv40
+	SeverityTypeVendor  SeverityType = "vendor"
+	SeverityTypeCVSSv2  SeverityType = "cvss_v2"
+	SeverityTypeCVSSv30 SeverityType = "cvss_v30"
+	SeverityTypeCVSSv31 SeverityType = "cvss_v31"
+	SeverityTypeCVSSv40 SeverityType = "cvss_v40"
 )
 
-func (t SeverityType) String() string {
-	switch t {
-	case SeverityTypeVendor:
-		return "vendor"
-	case SeverityTypeCVSSv2:
-		return "cvss_v2"
-	case SeverityTypeCVSSv30:
-		return "cvss_v30"
-	case SeverityTypeCVSSv31:
-		return "cvss_v31"
-	case SeverityTypeCVSSv40:
-		return "cvss_v40"
-	default:
-		return ""
+// SeverityTypes returns every SeverityType this build knows, in declaration
+// order. Consumers (vuls2, vuls0) diff this list against a newer
+// vuls-data-update in CI to detect enum additions that require a dependency
+// bump. The known set must be append-only.
+func SeverityTypes() []SeverityType {
+	return []SeverityType{
+		SeverityTypeVendor,
+		SeverityTypeCVSSv2,
+		SeverityTypeCVSSv30,
+		SeverityTypeCVSSv31,
+		SeverityTypeCVSSv40,
 	}
-}
-
-func (t SeverityType) MarshalJSONTo(enc *jsontext.Encoder) error {
-	return enc.WriteToken(jsontext.String(t.String()))
-}
-
-func (t *SeverityType) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	token, err := dec.ReadToken()
-	if err != nil {
-		return err
-	}
-	if token.Kind() != '"' {
-		return fmt.Errorf("unexpected type. expected: %s, got %s", "string", token.Kind())
-	}
-
-	switch token.String() {
-	case "vendor":
-		*t = SeverityTypeVendor
-	case "cvss_v2":
-		*t = SeverityTypeCVSSv2
-	case "cvss_v30":
-		*t = SeverityTypeCVSSv30
-	case "cvss_v31":
-		*t = SeverityTypeCVSSv31
-	case "cvss_v40":
-		*t = SeverityTypeCVSSv40
-	default:
-		return fmt.Errorf("invalid SeverityType %s", token.String())
-	}
-	return nil
-}
-
-func (t SeverityType) MarshalJSON() ([]byte, error) {
-	return json.Marshal(t.String())
-}
-
-func (t *SeverityType) UnmarshalJSON(data []byte) error {
-	var s string
-	if err := json.Unmarshal(data, &s); err != nil {
-		return fmt.Errorf("data should be a string, got %s", data)
-	}
-
-	var st SeverityType
-	switch s {
-	case "vendor":
-		st = SeverityTypeVendor
-	case "cvss_v2":
-		st = SeverityTypeCVSSv2
-	case "cvss_v30":
-		st = SeverityTypeCVSSv30
-	case "cvss_v31":
-		st = SeverityTypeCVSSv31
-	case "cvss_v40":
-		st = SeverityTypeCVSSv40
-	default:
-		return fmt.Errorf("invalid SeverityType %s", s)
-	}
-	*t = st
-	return nil
 }
 
 func Compare(x, y Severity) int {

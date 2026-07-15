@@ -294,7 +294,8 @@ func TestRangeType_Compare(t *testing.T) {
 		{name: "pan-os: equal", t: ccRangeTypes.RangeTypePANOS, v1: "10.2.4-h10", v2: "10.2.4-h10", want: 0},
 		{name: "pan-os: 2-segment unparseable → CompareError", t: ccRangeTypes.RangeTypePANOS, v1: "11.2", v2: "11.2.0", wantCompareErr: true},
 		{name: "Unknown → CompareError wrapping ErrRangeTypeUnknown", t: ccRangeTypes.RangeTypeUnknown, v1: "1.0.0", v2: "2.0.0", wantCompareErr: true},
-		{name: "unset (zero) RangeType collapses to Unknown → CompareError", t: ccRangeTypes.RangeType(0), v1: "1.0.0", v2: "2.0.0", wantCompareErr: true},
+		{name: "unset (zero) RangeType collapses to Unknown → CompareError", t: ccRangeTypes.RangeType(""), v1: "1.0.0", v2: "2.0.0", wantCompareErr: true},
+		{name: "unsupported RangeType (newer data) → CompareError wrapping UnsupportedRangeTypeError", t: ccRangeTypes.RangeType("fortinet-fortifuture"), v1: "1.0.0", v2: "2.0.0", wantCompareErr: true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -324,5 +325,30 @@ func TestErrRangeTypeUnknown_Wrapped(t *testing.T) {
 	}
 	if !stderrors.Is(err, ccRangeTypes.ErrRangeTypeUnknown) {
 		t.Errorf("expected ErrRangeTypeUnknown via errors.Is; got %v", err)
+	}
+}
+
+func TestRangeTypes_HaveComparator(t *testing.T) {
+	for _, rt := range ccRangeTypes.RangeTypes() {
+		t.Run(string(rt), func(t *testing.T) {
+			_, err := rt.Compare("1.0.0", "2.0.0")
+			if _, ok := stderrors.AsType[*ccRangeTypes.UnsupportedRangeTypeError](err); ok {
+				t.Errorf("RangeTypes() contains %q but Compare has no comparator for it", rt)
+			}
+		})
+	}
+}
+
+func TestRange_Accept_UnsupportedRangeType(t *testing.T) {
+	// Data written by a newer vuls-data-update may carry a range type this
+	// build does not know. Accept must degrade to a non-match (skip the
+	// criterion) instead of failing the whole detection.
+	r := ccRangeTypes.Range{Type: ccRangeTypes.RangeType("fortinet-fortifuture"), LessThan: "1.0.0"}
+	got, err := r.Accept("0.9.0")
+	if err != nil {
+		t.Fatalf("Accept() unexpected error: %v", err)
+	}
+	if got {
+		t.Errorf("Accept() = true, want false (unsupported range type must degrade to non-match)")
 	}
 }

@@ -217,3 +217,20 @@ func TestAffected_Accept(t *testing.T) {
 		})
 	}
 }
+
+func TestAffected_Accept_UnsupportedRangeType(t *testing.T) {
+	// Data written by a newer vuls-data-update may carry a range type this
+	// build does not know. Accept must degrade to a non-match (skip the
+	// criterion) instead of failing the whole detection.
+	a := affectedTypes.Affected{
+		Type:  affectedrangeTypes.RangeType("future-type"),
+		Range: []affectedrangeTypes.Range{{LessThan: "1.0.0"}},
+	}
+	got, err := a.Accept(ecosystemTypes.EcosystemTypeRedHat, "0.9.0")
+	if err != nil {
+		t.Fatalf("Accept() unexpected error: %v", err)
+	}
+	if got {
+		t.Errorf("Accept() = true, want false (unsupported range type must degrade to non-match)")
+	}
+}

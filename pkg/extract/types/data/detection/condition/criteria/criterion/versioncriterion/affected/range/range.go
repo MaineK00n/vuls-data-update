@@ -2,8 +2,6 @@ package affectedrange
 
 import (
 	"cmp"
-	"encoding/json/jsontext"
-	"encoding/json/v2"
 	"fmt"
 	"strings"
 
@@ -43,302 +41,97 @@ import (
 	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment/ecosystem"
 )
 
-type RangeType int
+// RangeType selects the version comparator used by Compare. It is a string
+// so that unmarshaling never validates against the known set: data produced
+// by a newer vuls-data-update (carrying range types this build does not know)
+// still round-trips losslessly. Compare answers such values with
+// *UnsupportedRangeTypeError wrapped in *CompareError, which
+// versioncriterion/affected.Accept degrades to a safe non-match, so an old
+// binary skips the criterion instead of failing detection.
+type RangeType string
 
 const (
-	_ RangeType = iota
-	RangeTypeVersion
-	RangeTypeSEMVER
-	RangeTypeAPK
-	RangeTypeRPM
-	RangeTypeRPMVersionOnly
-	RangeTypeDPKG
-	RangeTypePacman
-	RangeTypeFreeBSDPkg
-	RangeTypeNPM
-	RangeTypeRubyGems
-	RangeTypePyPI
-	RangeTypeMaven
-	RangeTypeMicrosoftDefenderAndroid
-	RangeTypeMicrosoftDefenderIOS
-	RangeTypeMicrosoftDefenderIoT
-	RangeTypeMicrosoftDefenderLinux
-	RangeTypeMicrosoftDefenderMac
-	RangeTypeMicrosoftDefenderSecurityIntelligence
-	RangeTypeMicrosoftDefenderWindows
-	RangeTypeMicrosoftDotNetCore
-	RangeTypeMicrosoftEdge
-	RangeTypeMicrosoftExchange
-	RangeTypeMicrosoftOfficeMac
-	RangeTypeMicrosoftOfficeWindows
-	RangeTypeMicrosoftSharePoint
-	RangeTypeMicrosoftSQLServer
-	RangeTypeMicrosoftTeamsAndroid
-	RangeTypeMicrosoftTeamsClient
-	RangeTypeMicrosoftTeamsDesktop
-	RangeTypeMicrosoftTeamsIOS
-	RangeTypeMicrosoftTeamsMac
-	RangeTypeMicrosoftVisualStudio
-	RangeTypeMicrosoftVSCode
-	RangeTypeMicrosoftWindows
+	RangeTypeVersion                               RangeType = "version"
+	RangeTypeSEMVER                                RangeType = "semver"
+	RangeTypeAPK                                   RangeType = "apk"
+	RangeTypeRPM                                   RangeType = "rpm"
+	RangeTypeRPMVersionOnly                        RangeType = "rpm-version-only"
+	RangeTypeDPKG                                  RangeType = "dpkg"
+	RangeTypePacman                                RangeType = "pacman"
+	RangeTypeFreeBSDPkg                            RangeType = "freebsd-pkg"
+	RangeTypeNPM                                   RangeType = "npm"
+	RangeTypeRubyGems                              RangeType = "rubygems"
+	RangeTypePyPI                                  RangeType = "pypi"
+	RangeTypeMaven                                 RangeType = "maven"
+	RangeTypeMicrosoftDefenderAndroid              RangeType = "microsoft-defender-android"
+	RangeTypeMicrosoftDefenderIOS                  RangeType = "microsoft-defender-ios"
+	RangeTypeMicrosoftDefenderIoT                  RangeType = "microsoft-defender-iot"
+	RangeTypeMicrosoftDefenderLinux                RangeType = "microsoft-defender-linux"
+	RangeTypeMicrosoftDefenderMac                  RangeType = "microsoft-defender-mac"
+	RangeTypeMicrosoftDefenderSecurityIntelligence RangeType = "microsoft-defender-security-intelligence"
+	RangeTypeMicrosoftDefenderWindows              RangeType = "microsoft-defender-windows"
+	RangeTypeMicrosoftDotNetCore                   RangeType = "microsoft-dotnet-core"
+	RangeTypeMicrosoftEdge                         RangeType = "microsoft-edge"
+	RangeTypeMicrosoftExchange                     RangeType = "microsoft-exchange"
+	RangeTypeMicrosoftOfficeMac                    RangeType = "microsoft-office-mac"
+	RangeTypeMicrosoftOfficeWindows                RangeType = "microsoft-office-windows"
+	RangeTypeMicrosoftSharePoint                   RangeType = "microsoft-sharepoint"
+	RangeTypeMicrosoftSQLServer                    RangeType = "microsoft-sqlserver"
+	RangeTypeMicrosoftTeamsAndroid                 RangeType = "microsoft-teams-android"
+	RangeTypeMicrosoftTeamsClient                  RangeType = "microsoft-teams-client"
+	RangeTypeMicrosoftTeamsDesktop                 RangeType = "microsoft-teams-desktop"
+	RangeTypeMicrosoftTeamsIOS                     RangeType = "microsoft-teams-ios"
+	RangeTypeMicrosoftTeamsMac                     RangeType = "microsoft-teams-mac"
+	RangeTypeMicrosoftVisualStudio                 RangeType = "microsoft-visualstudio"
+	RangeTypeMicrosoftVSCode                       RangeType = "microsoft-vscode"
+	RangeTypeMicrosoftWindows                      RangeType = "microsoft-windows"
 
-	RangeTypeUnknown
+	RangeTypeUnknown RangeType = "unknown"
 )
 
-func (t RangeType) String() string {
-	switch t {
-	case RangeTypeVersion:
-		return "version"
-	case RangeTypeSEMVER:
-		return "semver"
-	case RangeTypeAPK:
-		return "apk"
-	case RangeTypeRPM:
-		return "rpm"
-	case RangeTypeRPMVersionOnly:
-		return "rpm-version-only"
-	case RangeTypeDPKG:
-		return "dpkg"
-	case RangeTypePacman:
-		return "pacman"
-	case RangeTypeFreeBSDPkg:
-		return "freebsd-pkg"
-	case RangeTypeNPM:
-		return "npm"
-	case RangeTypeRubyGems:
-		return "rubygems"
-	case RangeTypePyPI:
-		return "pypi"
-	case RangeTypeMaven:
-		return "maven"
-	case RangeTypeMicrosoftDefenderAndroid:
-		return "microsoft-defender-android"
-	case RangeTypeMicrosoftDefenderIOS:
-		return "microsoft-defender-ios"
-	case RangeTypeMicrosoftDefenderIoT:
-		return "microsoft-defender-iot"
-	case RangeTypeMicrosoftDefenderLinux:
-		return "microsoft-defender-linux"
-	case RangeTypeMicrosoftDefenderMac:
-		return "microsoft-defender-mac"
-	case RangeTypeMicrosoftDefenderSecurityIntelligence:
-		return "microsoft-defender-security-intelligence"
-	case RangeTypeMicrosoftDefenderWindows:
-		return "microsoft-defender-windows"
-	case RangeTypeMicrosoftDotNetCore:
-		return "microsoft-dotnet-core"
-	case RangeTypeMicrosoftEdge:
-		return "microsoft-edge"
-	case RangeTypeMicrosoftExchange:
-		return "microsoft-exchange"
-	case RangeTypeMicrosoftOfficeMac:
-		return "microsoft-office-mac"
-	case RangeTypeMicrosoftOfficeWindows:
-		return "microsoft-office-windows"
-	case RangeTypeMicrosoftSharePoint:
-		return "microsoft-sharepoint"
-	case RangeTypeMicrosoftSQLServer:
-		return "microsoft-sqlserver"
-	case RangeTypeMicrosoftTeamsAndroid:
-		return "microsoft-teams-android"
-	case RangeTypeMicrosoftTeamsClient:
-		return "microsoft-teams-client"
-	case RangeTypeMicrosoftTeamsDesktop:
-		return "microsoft-teams-desktop"
-	case RangeTypeMicrosoftTeamsIOS:
-		return "microsoft-teams-ios"
-	case RangeTypeMicrosoftTeamsMac:
-		return "microsoft-teams-mac"
-	case RangeTypeMicrosoftVisualStudio:
-		return "microsoft-visualstudio"
-	case RangeTypeMicrosoftVSCode:
-		return "microsoft-vscode"
-	case RangeTypeMicrosoftWindows:
-		return "microsoft-windows"
-	case RangeTypeUnknown:
-		return "unknown"
-	default:
-		return "unknown"
+// RangeTypes returns every RangeType this build knows, in declaration order.
+// Consumers (vuls2, vuls0) diff this list against a newer vuls-data-update in
+// CI to detect enum additions that require a dependency bump. The known set
+// must be append-only: removing or renaming a value would leave already
+// extracted data undetectable by builds that follow the removal.
+func RangeTypes() []RangeType {
+	return []RangeType{
+		RangeTypeVersion,
+		RangeTypeSEMVER,
+		RangeTypeAPK,
+		RangeTypeRPM,
+		RangeTypeRPMVersionOnly,
+		RangeTypeDPKG,
+		RangeTypePacman,
+		RangeTypeFreeBSDPkg,
+		RangeTypeNPM,
+		RangeTypeRubyGems,
+		RangeTypePyPI,
+		RangeTypeMaven,
+		RangeTypeMicrosoftDefenderAndroid,
+		RangeTypeMicrosoftDefenderIOS,
+		RangeTypeMicrosoftDefenderIoT,
+		RangeTypeMicrosoftDefenderLinux,
+		RangeTypeMicrosoftDefenderMac,
+		RangeTypeMicrosoftDefenderSecurityIntelligence,
+		RangeTypeMicrosoftDefenderWindows,
+		RangeTypeMicrosoftDotNetCore,
+		RangeTypeMicrosoftEdge,
+		RangeTypeMicrosoftExchange,
+		RangeTypeMicrosoftOfficeMac,
+		RangeTypeMicrosoftOfficeWindows,
+		RangeTypeMicrosoftSharePoint,
+		RangeTypeMicrosoftSQLServer,
+		RangeTypeMicrosoftTeamsAndroid,
+		RangeTypeMicrosoftTeamsClient,
+		RangeTypeMicrosoftTeamsDesktop,
+		RangeTypeMicrosoftTeamsIOS,
+		RangeTypeMicrosoftTeamsMac,
+		RangeTypeMicrosoftVisualStudio,
+		RangeTypeMicrosoftVSCode,
+		RangeTypeMicrosoftWindows,
+		RangeTypeUnknown,
 	}
-}
-
-func (t RangeType) MarshalJSONTo(enc *jsontext.Encoder) error {
-	return enc.WriteToken(jsontext.String(t.String()))
-}
-
-func (t *RangeType) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	token, err := dec.ReadToken()
-	if err != nil {
-		return err
-	}
-	if token.Kind() != '"' {
-		return fmt.Errorf("unexpected type. expected: %s, got %s", "string", token.Kind())
-	}
-
-	switch token.String() {
-	case "version":
-		*t = RangeTypeVersion
-	case "semver":
-		*t = RangeTypeSEMVER
-	case "apk":
-		*t = RangeTypeAPK
-	case "rpm":
-		*t = RangeTypeRPM
-	case "rpm-version-only":
-		*t = RangeTypeRPMVersionOnly
-	case "dpkg":
-		*t = RangeTypeDPKG
-	case "pacman":
-		*t = RangeTypePacman
-	case "freebsd-pkg":
-		*t = RangeTypeFreeBSDPkg
-	case "npm":
-		*t = RangeTypeNPM
-	case "rubygems":
-		*t = RangeTypeRubyGems
-	case "pypi":
-		*t = RangeTypePyPI
-	case "maven":
-		*t = RangeTypeMaven
-	case "microsoft-defender-android":
-		*t = RangeTypeMicrosoftDefenderAndroid
-	case "microsoft-defender-ios":
-		*t = RangeTypeMicrosoftDefenderIOS
-	case "microsoft-defender-iot":
-		*t = RangeTypeMicrosoftDefenderIoT
-	case "microsoft-defender-linux":
-		*t = RangeTypeMicrosoftDefenderLinux
-	case "microsoft-defender-mac":
-		*t = RangeTypeMicrosoftDefenderMac
-	case "microsoft-defender-security-intelligence":
-		*t = RangeTypeMicrosoftDefenderSecurityIntelligence
-	case "microsoft-defender-windows":
-		*t = RangeTypeMicrosoftDefenderWindows
-	case "microsoft-dotnet-core":
-		*t = RangeTypeMicrosoftDotNetCore
-	case "microsoft-edge":
-		*t = RangeTypeMicrosoftEdge
-	case "microsoft-exchange":
-		*t = RangeTypeMicrosoftExchange
-	case "microsoft-office-mac":
-		*t = RangeTypeMicrosoftOfficeMac
-	case "microsoft-office-windows":
-		*t = RangeTypeMicrosoftOfficeWindows
-	case "microsoft-sharepoint":
-		*t = RangeTypeMicrosoftSharePoint
-	case "microsoft-sqlserver":
-		*t = RangeTypeMicrosoftSQLServer
-	case "microsoft-teams-android":
-		*t = RangeTypeMicrosoftTeamsAndroid
-	case "microsoft-teams-client":
-		*t = RangeTypeMicrosoftTeamsClient
-	case "microsoft-teams-desktop":
-		*t = RangeTypeMicrosoftTeamsDesktop
-	case "microsoft-teams-ios":
-		*t = RangeTypeMicrosoftTeamsIOS
-	case "microsoft-teams-mac":
-		*t = RangeTypeMicrosoftTeamsMac
-	case "microsoft-visualstudio":
-		*t = RangeTypeMicrosoftVisualStudio
-	case "microsoft-vscode":
-		*t = RangeTypeMicrosoftVSCode
-	case "microsoft-windows":
-		*t = RangeTypeMicrosoftWindows
-	case "unknown":
-		*t = RangeTypeUnknown
-	default:
-		return fmt.Errorf("invalid CriterionType %s", token.String())
-	}
-	return nil
-}
-
-func (t RangeType) MarshalJSON() ([]byte, error) {
-	return json.Marshal(t.String())
-}
-
-func (t *RangeType) UnmarshalJSON(data []byte) error {
-	var s string
-	if err := json.Unmarshal(data, &s); err != nil {
-		return fmt.Errorf("data should be a string, got %s", data)
-	}
-
-	var rt RangeType
-	switch s {
-	case "version":
-		rt = RangeTypeVersion
-	case "semver":
-		rt = RangeTypeSEMVER
-	case "apk":
-		rt = RangeTypeAPK
-	case "rpm":
-		rt = RangeTypeRPM
-	case "rpm-version-only":
-		rt = RangeTypeRPMVersionOnly
-	case "dpkg":
-		rt = RangeTypeDPKG
-	case "pacman":
-		rt = RangeTypePacman
-	case "freebsd-pkg":
-		rt = RangeTypeFreeBSDPkg
-	case "npm":
-		rt = RangeTypeNPM
-	case "rubygems":
-		rt = RangeTypeRubyGems
-	case "pypi":
-		rt = RangeTypePyPI
-	case "maven":
-		rt = RangeTypeMaven
-	case "microsoft-defender-android":
-		rt = RangeTypeMicrosoftDefenderAndroid
-	case "microsoft-defender-ios":
-		rt = RangeTypeMicrosoftDefenderIOS
-	case "microsoft-defender-iot":
-		rt = RangeTypeMicrosoftDefenderIoT
-	case "microsoft-defender-linux":
-		rt = RangeTypeMicrosoftDefenderLinux
-	case "microsoft-defender-mac":
-		rt = RangeTypeMicrosoftDefenderMac
-	case "microsoft-defender-security-intelligence":
-		rt = RangeTypeMicrosoftDefenderSecurityIntelligence
-	case "microsoft-defender-windows":
-		rt = RangeTypeMicrosoftDefenderWindows
-	case "microsoft-dotnet-core":
-		rt = RangeTypeMicrosoftDotNetCore
-	case "microsoft-edge":
-		rt = RangeTypeMicrosoftEdge
-	case "microsoft-exchange":
-		rt = RangeTypeMicrosoftExchange
-	case "microsoft-office-mac":
-		rt = RangeTypeMicrosoftOfficeMac
-	case "microsoft-office-windows":
-		rt = RangeTypeMicrosoftOfficeWindows
-	case "microsoft-sharepoint":
-		rt = RangeTypeMicrosoftSharePoint
-	case "microsoft-sqlserver":
-		rt = RangeTypeMicrosoftSQLServer
-	case "microsoft-teams-android":
-		rt = RangeTypeMicrosoftTeamsAndroid
-	case "microsoft-teams-client":
-		rt = RangeTypeMicrosoftTeamsClient
-	case "microsoft-teams-desktop":
-		rt = RangeTypeMicrosoftTeamsDesktop
-	case "microsoft-teams-ios":
-		rt = RangeTypeMicrosoftTeamsIOS
-	case "microsoft-teams-mac":
-		rt = RangeTypeMicrosoftTeamsMac
-	case "microsoft-visualstudio":
-		rt = RangeTypeMicrosoftVisualStudio
-	case "microsoft-vscode":
-		rt = RangeTypeMicrosoftVSCode
-	case "microsoft-windows":
-		rt = RangeTypeMicrosoftWindows
-	case "unknown":
-		rt = RangeTypeUnknown
-	default:
-		return fmt.Errorf("invalid RangeType %s", s)
-	}
-	*t = rt
-	return nil
 }
 
 type Range struct {
@@ -387,6 +180,19 @@ type CannotCompareError struct {
 
 func (e *CannotCompareError) Error() string {
 	return fmt.Sprintf("cannot version comare. %s", e.Reason)
+}
+
+// UnsupportedRangeTypeError is wrapped in a *CompareError when Compare is
+// called with a RangeType this build has no comparator for — typically data
+// produced by a newer vuls-data-update read by an older binary. Callers that
+// need to tell "skipped because the binary is too old" apart from ordinary
+// parse failures can errors.As for this type through the CompareError chain.
+type UnsupportedRangeTypeError struct {
+	RangeType RangeType
+}
+
+func (e *UnsupportedRangeTypeError) Error() string {
+	return fmt.Sprintf("unsupported range type %q", string(e.RangeType))
 }
 
 var ErrRangeTypeUnknown = errors.New("unknown range type")
@@ -751,7 +557,12 @@ func (t RangeType) Compare(family ecosystemTypes.Ecosystem, v1, v2 string) (int,
 	case RangeTypeUnknown:
 		return 0, &CompareError{Err: ErrRangeTypeUnknown}
 	default:
-		return 0, errors.Errorf("unsupported range type: %s", t)
+		// A RangeType with no comparator here is either the zero value (unset)
+		// or a value this build does not know (data from a newer
+		// vuls-data-update). Both wrap in *CompareError so
+		// versioncriterion/affected.Accept degrades to a safe non-match
+		// instead of aborting detection on an old binary.
+		return 0, &CompareError{Err: &UnsupportedRangeTypeError{RangeType: t}}
 	}
 }
 

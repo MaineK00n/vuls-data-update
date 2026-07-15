@@ -2,9 +2,6 @@ package criterion
 
 import (
 	"cmp"
-	"encoding/json/jsontext"
-	"encoding/json/v2"
-	"fmt"
 
 	"github.com/pkg/errors"
 
@@ -14,90 +11,33 @@ import (
 	vcTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion"
 )
 
-type CriterionType int
+// CriterionType is a string so that unmarshaling never validates against the
+// known set: data produced by a newer vuls-data-update (carrying criterion
+// types this build does not know) still round-trips losslessly instead of
+// failing the whole read.
+type CriterionType string
 
 const (
-	_ CriterionType = iota
-	CriterionTypeVersion
-	CriterionTypeNoneExist
-	CriterionTypeKB
-	CriterionTypeCPE
+	CriterionTypeVersion   CriterionType = "version"
+	CriterionTypeNoneExist CriterionType = "none-exist"
+	CriterionTypeKB        CriterionType = "kb"
+	CriterionTypeCPE       CriterionType = "cpe"
 
-	CriterionTypeUnknown
+	CriterionTypeUnknown CriterionType = "unknown"
 )
 
-func (t CriterionType) String() string {
-	switch t {
-	case CriterionTypeVersion:
-		return "version"
-	case CriterionTypeNoneExist:
-		return "none-exist"
-	case CriterionTypeKB:
-		return "kb"
-	case CriterionTypeCPE:
-		return "cpe"
-	default:
-		return "unknown"
+// CriterionTypes returns every CriterionType this build knows, in declaration
+// order. Consumers (vuls2, vuls0) diff this list against a newer
+// vuls-data-update in CI to detect enum additions that require a dependency
+// bump. The known set must be append-only.
+func CriterionTypes() []CriterionType {
+	return []CriterionType{
+		CriterionTypeVersion,
+		CriterionTypeNoneExist,
+		CriterionTypeKB,
+		CriterionTypeCPE,
+		CriterionTypeUnknown,
 	}
-}
-
-func (t CriterionType) MarshalJSONTo(enc *jsontext.Encoder) error {
-	return enc.WriteToken(jsontext.String(t.String()))
-}
-
-func (t *CriterionType) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	token, err := dec.ReadToken()
-	if err != nil {
-		return err
-	}
-	if token.Kind() != '"' {
-		return fmt.Errorf("unexpected type. expected: %s, got %s", "string", token.Kind())
-	}
-
-	switch token.String() {
-	case "version":
-		*t = CriterionTypeVersion
-	case "none-exist":
-		*t = CriterionTypeNoneExist
-	case "kb":
-		*t = CriterionTypeKB
-	case "cpe":
-		*t = CriterionTypeCPE
-	case "unknown":
-		*t = CriterionTypeUnknown
-	default:
-		return fmt.Errorf("invalid CriterionType %s", token.String())
-	}
-	return nil
-}
-
-func (t CriterionType) MarshalJSON() ([]byte, error) {
-	return json.Marshal(t.String())
-}
-
-func (t *CriterionType) UnmarshalJSON(data []byte) error {
-	var s string
-	if err := json.Unmarshal(data, &s); err != nil {
-		return fmt.Errorf("data should be a string, got %s", data)
-	}
-
-	var ct CriterionType
-	switch s {
-	case "version":
-		ct = CriterionTypeVersion
-	case "none-exist":
-		ct = CriterionTypeNoneExist
-	case "kb":
-		ct = CriterionTypeKB
-	case "cpe":
-		ct = CriterionTypeCPE
-	case "unknown":
-		ct = CriterionTypeUnknown
-	default:
-		return fmt.Errorf("invalid CriterionType %s", s)
-	}
-	*t = ct
-	return nil
 }
 
 type Criterion struct {
