@@ -168,6 +168,96 @@ func TestBuildFixedBuildCriterion(t *testing.T) {
 				},
 			},
 		},
+		{
+			name: "SQL Server 2022 CU 25",
+			args: args{
+				cveID:         "CVE-2026-47295",
+				productName:   "Microsoft SQL Server 2022 for x64-based Systems (CU 25)",
+				rawFixedBuild: "16.0.4262.2",
+			},
+			want: &criterionTypes.Criterion{
+				Type: criterionTypes.CriterionTypeVersion,
+				Version: &vcTypes.Criterion{
+					Vulnerable: true,
+					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
+					Package: packageTypes.Package{
+						Type:   packageTypes.PackageTypeBinary,
+						Binary: &binaryTypes.Package{Name: "Microsoft SQL Server 2022 for x64-based Systems (CU 25)"},
+					},
+					Affected: &affectedTypes.Affected{
+						Type:  affectedrangeTypes.RangeTypeMicrosoftSQLServer,
+						Range: []affectedrangeTypes.Range{{LessThan: "16.0.4262.2"}},
+						Fixed: []string{"16.0.4262.2"},
+					},
+				},
+			},
+		},
+		{
+			name: "SQL Server 2025 CU6",
+			args: args{
+				cveID:         "CVE-2026-47296",
+				productName:   "Microsoft SQL Server 2025 for x64-based Systems (CU6)",
+				rawFixedBuild: "17.0.4060.2",
+			},
+			want: &criterionTypes.Criterion{
+				Type: criterionTypes.CriterionTypeVersion,
+				Version: &vcTypes.Criterion{
+					Vulnerable: true,
+					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
+					Package: packageTypes.Package{
+						Type:   packageTypes.PackageTypeBinary,
+						Binary: &binaryTypes.Package{Name: "Microsoft SQL Server 2025 for x64-based Systems (CU6)"},
+					},
+					Affected: &affectedTypes.Affected{
+						Type:  affectedrangeTypes.RangeTypeMicrosoftSQLServer,
+						Range: []affectedrangeTypes.Range{{LessThan: "17.0.4060.2"}},
+						Fixed: []string{"17.0.4060.2"},
+					},
+				},
+			},
+		},
+		{
+			name: "Visual Studio 2026 Version 18.7",
+			args: args{
+				cveID:         "CVE-2026-47300",
+				productName:   "Microsoft Visual Studio 2026 Version 18.7",
+				rawFixedBuild: "18.7.4",
+			},
+			want: &criterionTypes.Criterion{
+				Type: criterionTypes.CriterionTypeVersion,
+				Version: &vcTypes.Criterion{
+					Vulnerable: true,
+					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
+					Package: packageTypes.Package{
+						Type:   packageTypes.PackageTypeBinary,
+						Binary: &binaryTypes.Package{Name: "Microsoft Visual Studio 2026 Version 18.7"},
+					},
+					Affected: &affectedTypes.Affected{
+						Type:  affectedrangeTypes.RangeTypeMicrosoftVisualStudio,
+						Range: []affectedrangeTypes.Range{{LessThan: "18.7.4"}},
+						Fixed: []string{"18.7.4"},
+					},
+				},
+			},
+		},
+		{
+			name: "CVE-2026-50480 Windows Server 2012 IE Cumulative 1.000 skipped",
+			args: args{
+				cveID:         "CVE-2026-50480",
+				productName:   "Windows Server 2012",
+				rawFixedBuild: "1.000",
+			},
+			want: nil,
+		},
+		{
+			name: "CVE-2026-50480 Windows Server 2012 R2 IE Cumulative 1.000 skipped",
+			args: args{
+				cveID:         "CVE-2026-50480",
+				productName:   "Windows Server 2012 R2",
+				rawFixedBuild: "1.000",
+			},
+			want: nil,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -197,6 +287,26 @@ func TestFixedBuildOverrides(t *testing.T) {
 		{
 			name: "CVE-2026-32077 Windows Server 2012 R2 Server Core",
 			key:  [3]string{"CVE-2026-32077", "Windows Server 2012 R2 (Server Core installation)", "1.000"},
+			want: "",
+		},
+		{
+			name: "CVE-2026-50480 Windows Server 2012",
+			key:  [3]string{"CVE-2026-50480", "Windows Server 2012", "1.000"},
+			want: "",
+		},
+		{
+			name: "CVE-2026-50480 Windows Server 2012 Server Core",
+			key:  [3]string{"CVE-2026-50480", "Windows Server 2012 (Server Core installation)", "1.000"},
+			want: "",
+		},
+		{
+			name: "CVE-2026-50480 Windows Server 2012 R2",
+			key:  [3]string{"CVE-2026-50480", "Windows Server 2012 R2", "1.000"},
+			want: "",
+		},
+		{
+			name: "CVE-2026-50480 Windows Server 2012 R2 Server Core",
+			key:  [3]string{"CVE-2026-50480", "Windows Server 2012 R2 (Server Core installation)", "1.000"},
 			want: "",
 		},
 		// Branch-leaked Windows OS FixedBuild (sibling-servicing-branch leak in
