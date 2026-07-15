@@ -295,8 +295,9 @@ func extract(fetched api.Advisory, raws []string) (*dataTypes.Data, error) {
 		}
 
 		// A segment ties the content to a detection in the same ecosystem;
-		// when the update produced no detections (no rpm builds) a segment
-		// would dangle, so it is emitted only alongside detections.
+		// when the update produced no detections (no rpm/module build yields
+		// criteria) a segment would dangle, so it is emitted only alongside
+		// detections.
 		segments := func() []segmentTypes.Segment {
 			if len(ds) == 0 {
 				return nil
