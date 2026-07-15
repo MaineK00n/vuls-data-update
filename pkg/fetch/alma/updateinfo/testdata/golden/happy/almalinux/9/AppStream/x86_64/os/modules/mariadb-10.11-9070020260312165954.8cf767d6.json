@@ -1,0 +1,56 @@
+{
+	"name": "mariadb",
+	"stream": "10.11",
+	"version": 9070020260312165954,
+	"static_context": false,
+	"context": "8cf767d6",
+	"arch": "x86_64",
+	"summary": "MariaDB Module",
+	"description": "MariaDB is a community developed branch of MySQL.",
+	"license": {
+		"module": [
+			"MIT"
+		]
+	},
+	"dependencies": [
+		{
+			"build_requires": {
+				"platform": [
+					"el9"
+				]
+			},
+			"requires": {
+				"platform": [
+					"el9"
+				]
+			}
+		}
+	],
+	"references": {
+		"community": "http://mariadb.org",
+		"documentation": "https://mariadb.com/kb/en/library/documentation/",
+		"tracker": "http://bugzilla.redhat.com"
+	},
+	"profiles": {
+		"client": {
+			"rpms": [
+				"mariadb"
+			]
+		},
+		"server": {
+			"rpms": [
+				"mariadb-server"
+			]
+		}
+	},
+	"api": {
+		"rpms": [
+			"mariadb"
+		]
+	},
+	"artifacts": {
+		"rpms": [
+			"mariadb-0:10.11.13-1.module_el9+123+abcdef.x86_64"
+		]
+	}
+}

@@ -1,0 +1,51 @@
+{
+	"from": "updates@fedoraproject.org",
+	"status": "stable",
+	"type": "security",
+	"version": "1",
+	"id": "FEDORA-EPEL-2024-1a2b3c4d5e",
+	"title": "htmldoc-1.9.19 security update",
+	"issued": {
+		"date": "2024-05-01 01:23:45"
+	},
+	"updated": {
+		"date": "2024-05-01 01:23:45"
+	},
+	"rights": "Copyright (C) 2024 Red Hat, Inc. and others.",
+	"release": "Extra Packages for Enterprise Linux 10",
+	"pushcount": "1",
+	"severity": "Moderate",
+	"summary": "htmldoc-1.9.19 security update",
+	"description": "Security fix for CVE-2024-0000.",
+	"references": {
+		"reference": [
+			{
+				"href": "https://bugzilla.redhat.com/show_bug.cgi?id=2270000",
+				"id": "2270000",
+				"type": "bugzilla",
+				"title": "CVE-2024-0000 htmldoc: example"
+			}
+		]
+	},
+	"pkglist": {
+		"collection": {
+			"short": "epel-10-x86_64_v2",
+			"name": "epel-10-x86_64_v2",
+			"package": [
+				{
+					"name": "htmldoc",
+					"epoch": "0",
+					"version": "1.9.19",
+					"release": "1.el10",
+					"arch": "x86_64_v2",
+					"src": "htmldoc-1.9.19-1.el10.src.rpm",
+					"filename": "htmldoc-1.9.19-1.el10.x86_64_v2.rpm",
+					"sum": {
+						"text": "1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
+						"type": "sha256"
+					}
+				}
+			]
+		}
+	}
+}

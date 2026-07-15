@@ -1,0 +1,50 @@
+{
+	"from": "packager@almalinux.org",
+	"status": "final",
+	"type": "bugfix",
+	"version": "1",
+	"id": "ALBA-2023:0123",
+	"title": "curl bugfix update",
+	"issued": {
+		"date": "2023-01-10 00:00:00"
+	},
+	"updated": {
+		"date": "2023-01-10 00:00:00"
+	},
+	"release": "0",
+	"pushcount": "1",
+	"severity": "None",
+	"summary": "curl bugfix update",
+	"description": "curl bugfix update description.",
+	"references": {
+		"reference": [
+			{
+				"href": "https://errata.almalinux.org/9/ALBA-2023-0123.html",
+				"id": "ALBA-2023:0123",
+				"type": "self",
+				"title": "ALBA-2023:0123"
+			}
+		]
+	},
+	"pkglist": {
+		"collection": {
+			"short": "almalinux-9-for-x86_64-baseos-rpms__9_default",
+			"name": "almalinux-9-for-x86_64-baseos-rpms__9_default",
+			"package": [
+				{
+					"name": "curl",
+					"epoch": "0",
+					"version": "7.76.1",
+					"release": "23.el9",
+					"arch": "x86_64",
+					"src": "curl-7.76.1-23.el9.src.rpm",
+					"filename": "curl-7.76.1-23.el9.x86_64.rpm",
+					"sum": {
+						"text": "deadbeef00000000000000000000000000000000000000000000000000000000",
+						"type": "sha256"
+					}
+				}
+			]
+		}
+	}
+}

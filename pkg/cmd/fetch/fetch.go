@@ -12,6 +12,7 @@ import (
 	almaErrata "github.com/MaineK00n/vuls-data-update/pkg/fetch/alma/errata"
 	almaOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/alma/osv"
 	almaOVAL "github.com/MaineK00n/vuls-data-update/pkg/fetch/alma/oval"
+	almaUpdateinfo "github.com/MaineK00n/vuls-data-update/pkg/fetch/alma/updateinfo"
 	alpineOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/alpine/osv"
 	alpineSecDB "github.com/MaineK00n/vuls-data-update/pkg/fetch/alpine/secdb"
 	altOVAL "github.com/MaineK00n/vuls-data-update/pkg/fetch/alt/oval"
@@ -209,7 +210,7 @@ func NewCmdFetch() *cobra.Command {
 	}
 
 	cmd.AddCommand(
-		newCmdAlmaErrata(), newCmdAlmaOSV(), newCmdAlmaOVAL(),
+		newCmdAlmaErrata(), newCmdAlmaOSV(), newCmdAlmaOVAL(), newCmdAlmaUpdateinfo(),
 		newCmdAlpineSecDB(), newCmdAlpineOSV(),
 		newCmdAltOVAL(),
 		newCmdAmazon(),
@@ -368,6 +369,46 @@ func newCmdAlmaOVAL() *cobra.Command {
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+
+	return cmd
+}
+
+func newCmdAlmaUpdateinfo() *cobra.Command {
+	options := &struct {
+		base
+		trees       []string
+		concurrency int
+		wait        time.Duration
+	}{
+		base: base{
+			dir:   filepath.Join(util.CacheDir(), "fetch", "alma", "updateinfo"),
+			retry: 3,
+		},
+		trees:       almaUpdateinfo.DefaultTrees(),
+		concurrency: 5,
+		wait:        1 * time.Second,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "alma-updateinfo",
+		Short: "Fetch AlmaLinux Updateinfo data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch alma-updateinfo
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := almaUpdateinfo.Fetch(almaUpdateinfo.WithDir(options.dir), almaUpdateinfo.WithRetry(options.retry), almaUpdateinfo.WithTrees(options.trees), almaUpdateinfo.WithConcurrency(options.concurrency), almaUpdateinfo.WithWait(options.wait)); err != nil {
+				return errors.Wrap(err, "failed to fetch almalinux updateinfo")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+	cmd.Flags().StringSliceVarP(&options.trees, "trees", "", options.trees, "top-level repo.almalinux.org trees to crawl")
+	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrent processes")
+	cmd.Flags().DurationVarP(&options.wait, "wait", "", options.wait, "wait duration")
 
 	return cmd
 }
