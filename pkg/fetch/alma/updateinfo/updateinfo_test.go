@@ -152,6 +152,14 @@ func Test_toDir(t *testing.T) {
 			},
 			wantErr: true,
 		},
+		{
+			name: "dot-segment rejected (path traversal)",
+			args: args{
+				u:       "https://repo.almalinux.org/almalinux/9/../../../etc/repodata/xxx-updateinfo.xml.gz",
+				baseURL: "https://repo.almalinux.org/",
+			},
+			wantErr: true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

@@ -587,7 +587,15 @@ func toDir(u, baseURL string) (string, error) {
 		return "", errors.Errorf("unexpected url format. expected: %q, actual: %q", fmt.Sprintf("%s/<tree>/.../repodata/...", strings.TrimSuffix(baseURL, "/")), u)
 	}
 
+	// Guard against dot-segments so a crafted URL cannot escape options.dir via
+	// filepath.Join path traversal. Callers currently pass URLs already cleaned
+	// by url.ResolveReference, but toDir must not rely on that invariant.
 	ps := append([]string{}, ss[:i]...)
+	for _, p := range ps {
+		if p == "." || p == ".." {
+			return "", errors.Errorf("unexpected dot-segment %q in url: %q", p, u)
+		}
+	}
 
 	switch name := ss[len(ss)-1]; {
 	case strings.Contains(name, "updateinfo.xml"):
