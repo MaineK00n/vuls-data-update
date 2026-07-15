@@ -83,8 +83,6 @@ func Extract(args string, opts ...Option) error {
 
 	slog.Info("Extract AlmaLinux OVAL")
 
-	br := utiljson.NewJSONReader()
-
 	majorEntries, err := os.ReadDir(args)
 	if err != nil {
 		return errors.Wrapf(err, "read %s", args)
@@ -105,7 +103,7 @@ func Extract(args string, opts ...Option) error {
 
 			e := extractor{
 				ovalDir: args,
-				r:       br.Copy(),
+				r:       utiljson.NewJSONReader(),
 			}
 
 			var def oval.Definition
