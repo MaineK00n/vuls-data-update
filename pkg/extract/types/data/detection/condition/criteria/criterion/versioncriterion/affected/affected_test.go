@@ -214,6 +214,21 @@ func TestAffected_Accept(t *testing.T) {
 			},
 			want: false,
 		},
+		{
+			// An all-empty Range element means match-all for known types; an
+			// unsupported (newer-data) type must not get that, since newer
+			// data may constrain matching in ways this build cannot parse.
+			name: "unsupported range type (newer data) with empty range does not match",
+			fields: fields{
+				Type:  affectedrangeTypes.RangeType("future-type"),
+				Range: []affectedrangeTypes.Range{{}},
+			},
+			args: args{
+				family: ecosystemTypes.EcosystemTypeRedHat,
+				v:      "0.9.0",
+			},
+			want: false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

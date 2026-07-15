@@ -4,6 +4,7 @@ import (
 	"cmp"
 	stderrors "errors"
 	"fmt"
+	"slices"
 
 	panosVersion "github.com/MaineK00n/go-paloalto-version/pan-os"
 	"github.com/hashicorp/go-version"
@@ -457,9 +458,12 @@ func (t RangeType) Compare(v1, v2 string) (int, error) {
 // introduce. Mirrors versioncriterion/affected.Accept.
 func (r Range) Accept(v string) (bool, error) {
 	if r.GreaterEqual == "" && r.GreaterThan == "" && r.LessEqual == "" && r.LessThan == "" {
-		// No bounds → no narrowing, but Unknown / unset Type still
-		// refuses to declare a match.
-		if r.Type == RangeTypeUnknown || r.Type == "" {
+		// No bounds → no narrowing, but Unknown / unset Type still refuses
+		// to declare a match, and so does a RangeType this build does not
+		// know (data from a newer vuls-data-update): newer data may
+		// constrain matching in ways this build cannot even parse, so
+		// assuming match-all here would risk false positives.
+		if r.Type == RangeTypeUnknown || r.Type == "" || !slices.Contains(RangeTypes(), r.Type) {
 			return false, nil
 		}
 		return true, nil

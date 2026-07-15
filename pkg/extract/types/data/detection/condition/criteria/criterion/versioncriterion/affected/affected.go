@@ -31,6 +31,15 @@ func Compare(x, y Affected) int {
 }
 
 func (a Affected) Accept(family ecosystemTypes.Ecosystem, v string) (bool, error) {
+	// A RangeType this build does not know (data from a newer
+	// vuls-data-update) may constrain matching in ways this build cannot
+	// even parse; refuse to match rather than risk the all-empty-Range
+	// match-all below declaring false positives. Known types — including
+	// Unknown, whose bounded ranges degrade via CompareError — keep their
+	// existing semantics.
+	if !slices.Contains(rangeTypes.RangeTypes(), a.Type) {
+		return false, nil
+	}
 	for _, r := range a.Range {
 		if r.Equal != "" {
 			n, err := a.Type.Compare(family, r.Equal, v)

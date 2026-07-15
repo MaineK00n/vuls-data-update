@@ -229,6 +229,16 @@ func TestRange_Accept(t *testing.T) {
 			v:    "0.9.0",
 			want: false,
 		},
+		{
+			// Without bounds the fast path declares match-all for known
+			// types; an unsupported (newer-data) type must not get that,
+			// since newer data may constrain matching in ways this build
+			// cannot even parse.
+			name: "unsupported type (newer data) with no bounds never matches",
+			r:    ccRangeTypes.Range{Type: ccRangeTypes.RangeType("fortinet-fortifuture")},
+			v:    "1.0.0",
+			want: false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
