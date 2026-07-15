@@ -554,14 +554,15 @@ func (t RangeType) Compare(family ecosystemTypes.Ecosystem, v1, v2 string) (int,
 			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
 		}
 		return va.Compare(vb), nil
-	case RangeTypeUnknown:
+	case RangeTypeUnknown, "":
+		// Unknown (explicit) and the zero value (unset) collapse to the same
+		// graceful "cannot evaluate" outcome, mirroring cpecriterion/range.
 		return 0, &CompareError{Err: ErrRangeTypeUnknown}
 	default:
-		// A RangeType with no comparator here is either the zero value (unset)
-		// or a value this build does not know (data from a newer
-		// vuls-data-update). Both wrap in *CompareError so
-		// versioncriterion/affected.Accept degrades to a safe non-match
-		// instead of aborting detection on an old binary.
+		// A non-empty RangeType with no comparator here is a value this build
+		// does not know (data from a newer vuls-data-update). It wraps in
+		// *CompareError so versioncriterion/affected.Accept degrades to a
+		// safe non-match instead of aborting detection on an old binary.
 		return 0, &CompareError{Err: &UnsupportedRangeTypeError{RangeType: t}}
 	}
 }

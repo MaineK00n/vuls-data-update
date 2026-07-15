@@ -1234,6 +1234,17 @@ func TestRangeType_Compare_UnsupportedRangeType(t *testing.T) {
 	if _, ok := stderrors.AsType[*affectedrangeTypes.UnsupportedRangeTypeError](err); !ok {
 		t.Errorf("Compare() error = %v, want to wrap *UnsupportedRangeTypeError", err)
 	}
+
+	// The zero value (unset) is a data bug, not version skew: it classifies as
+	// ErrRangeTypeUnknown, mirroring cpecriterion/range, and must NOT be
+	// reported as an unsupported (newer-data) range type.
+	_, err = affectedrangeTypes.RangeType("").Compare(ecosystemTypes.EcosystemTypeRedHat, "1.0.0", "2.0.0")
+	if !stderrors.Is(err, affectedrangeTypes.ErrRangeTypeUnknown) {
+		t.Errorf("Compare() error = %v, want ErrRangeTypeUnknown", err)
+	}
+	if _, ok := stderrors.AsType[*affectedrangeTypes.UnsupportedRangeTypeError](err); ok {
+		t.Errorf("Compare() error = %v, must not wrap *UnsupportedRangeTypeError for the zero value", err)
+	}
 }
 
 func TestRangeTypes_HaveComparator(t *testing.T) {
