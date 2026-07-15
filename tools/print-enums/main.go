@@ -1,5 +1,7 @@
 // Command print-enums prints every enum value of the extracted-data schema
-// known to this build, one per line as "<package-path>.<type>\t<value>".
+// known to this build, one per line as
+// "<module-relative package path>.<type>\t<value>"
+// (e.g. "pkg/extract/types/data/severity.SeverityType\tvendor").
 //
 // Consumers (vuls2, vuls0) run this command twice — once without a version so
 // it resolves through their own go.mod, and once at vuls-data-update HEAD
