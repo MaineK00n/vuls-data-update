@@ -294,6 +294,16 @@ func extract(fetched api.Advisory, raws []string) (*dataTypes.Data, error) {
 			return nil, errors.Wrapf(err, "get detections")
 		}
 
+		// A segment ties the content to a detection in the same ecosystem;
+		// when the update produced no detections (no rpm builds) a segment
+		// would dangle, so it is emitted only alongside detections.
+		segments := func() []segmentTypes.Segment {
+			if len(ds) == 0 {
+				return nil
+			}
+			return []segmentTypes.Segment{{Ecosystem: eco}}
+		}()
+
 		return &dataTypes.Data{
 			ID: dataTypes.RootID(fetched.Updateid),
 			Advisories: []advisoryTypes.Advisory{{
@@ -318,7 +328,7 @@ func extract(fetched api.Advisory, raws []string) (*dataTypes.Data, error) {
 						return utiltime.Parse([]string{"2006-01-02 15:04:05"}, *fetched.DateModified)
 					}(),
 				},
-				Segments: []segmentTypes.Segment{{Ecosystem: eco}},
+				Segments: segments,
 			}},
 			Vulnerabilities: func() []vulnerabilityTypes.Vulnerability {
 				m := make(map[string]api.Bugzilla)
@@ -363,7 +373,7 @@ func extract(fetched api.Advisory, raws []string) (*dataTypes.Data, error) {
 									Published: utiltime.Parse([]string{"2006-01-02 15:04:05 -0700"}, b.CreationTs),
 									Modified:  utiltime.Parse([]string{"2006-01-02 15:04:05 -0700"}, b.DeltaTs),
 								},
-								Segments: []segmentTypes.Segment{{Ecosystem: eco}},
+								Segments: segments,
 							})
 						}
 					}
@@ -378,7 +388,7 @@ func extract(fetched api.Advisory, raws []string) (*dataTypes.Data, error) {
 							Content: vulnerabilityContentTypes.Content{
 								ID: vulnerabilityContentTypes.VulnerabilityID(cveid),
 							},
-							Segments: []segmentTypes.Segment{{Ecosystem: eco}},
+							Segments: segments,
 						})
 					}
 				}

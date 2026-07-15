@@ -20,12 +20,7 @@
 					}
 				],
 				"published": "2021-01-09T08:07:06Z"
-			},
-			"segments": [
-				{
-					"ecosystem": "fedora:32"
-				}
-			]
+			}
 		}
 	],
 	"vulnerabilities": [
@@ -48,12 +43,7 @@
 				],
 				"published": "2021-01-10T12:34:56Z",
 				"modified": "2021-01-11T01:02:03Z"
-			},
-			"segments": [
-				{
-					"ecosystem": "fedora:32"
-				}
-			]
+			}
 		}
 	],
 	"data_source": {

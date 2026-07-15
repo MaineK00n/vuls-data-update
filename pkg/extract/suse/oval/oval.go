@@ -401,32 +401,32 @@ func (e extractor) buildData(def oval.Definition) (dataTypes.Data, error) {
 		return dataTypes.Data{}, errors.Wrapf(err, "build detection")
 	}
 
+	// A segment ties the content to a detection in the same ecosystem; when
+	// the definition produced no detections (never-satisfied criteria) a
+	// segment would dangle, so it is emitted only alongside detections.
+	segments := func() []segmentTypes.Segment {
+		if len(ds) == 0 {
+			return nil
+		}
+		return []segmentTypes.Segment{{Ecosystem: es, Tag: tag}}
+	}()
+
 	return dataTypes.Data{
 		ID: dataTypes.RootID(id),
 		Advisories: func() []advisoryTypes.Advisory {
 			advs := make([]advisoryTypes.Advisory, 0, len(as))
 			for _, a := range as {
 				advs = append(advs, advisoryTypes.Advisory{
-					Content: a,
-					Segments: []segmentTypes.Segment{
-						{
-							Ecosystem: es,
-							Tag:       tag,
-						},
-					},
+					Content:  a,
+					Segments: segments,
 				})
 			}
 			return advs
 		}(),
 		Vulnerabilities: []vulnerabilityTypes.Vulnerability{
 			{
-				Content: v,
-				Segments: []segmentTypes.Segment{
-					{
-						Ecosystem: es,
-						Tag:       tag,
-					},
-				},
+				Content:  v,
+				Segments: segments,
 			},
 		},
 		Detections: ds,

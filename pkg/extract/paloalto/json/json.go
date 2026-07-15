@@ -162,6 +162,16 @@ func extract(fetched paloaltoJSON.CVE, raws []string) (dataTypes.Data, error) {
 		},
 	}
 
+	// A segment ties the content to a detection in the same ecosystem; when
+	// the record produced no detections a segment would dangle, so it is
+	// emitted only alongside detections.
+	segments := func() []segmentTypes.Segment {
+		if len(ds) == 0 {
+			return nil
+		}
+		return []segmentTypes.Segment{{Ecosystem: ecosystemTypes.EcosystemTypeCPE}}
+	}()
+
 	// The record is a Palo Alto Networks CNA advisory document. Its CNA
 	// container (CVSS, title, description, CWE, ...) is placed on whichever
 	// canonical entity matches the root ID's class:
@@ -186,7 +196,7 @@ func extract(fetched paloaltoJSON.CVE, raws []string) (dataTypes.Data, error) {
 				Published:   published(fetched),
 				Modified:    modified(fetched),
 			},
-			Segments: []segmentTypes.Segment{{Ecosystem: ecosystemTypes.EcosystemTypeCPE}},
+			Segments: segments,
 		}}
 		return data, nil
 	}
@@ -204,12 +214,12 @@ func extract(fetched paloaltoJSON.CVE, raws []string) (dataTypes.Data, error) {
 			Published:   published(fetched),
 			Modified:    modified(fetched),
 		},
-		Segments: []segmentTypes.Segment{{Ecosystem: ecosystemTypes.EcosystemTypeCPE}},
+		Segments: segments,
 	}}
 	if id := groupingAdvisoryID(fetched); id != "" {
 		data.Advisories = []advisoryTypes.Advisory{{
 			Content:  advisoryContentTypes.Content{ID: advisoryContentTypes.AdvisoryID(id)},
-			Segments: []segmentTypes.Segment{{Ecosystem: ecosystemTypes.EcosystemTypeCPE}},
+			Segments: segments,
 		}}
 	}
 	return data, nil
