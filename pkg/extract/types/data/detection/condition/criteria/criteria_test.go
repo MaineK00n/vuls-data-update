@@ -1,6 +1,7 @@
 package criteria_test
 
 import (
+	"encoding/json/v2"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
@@ -8,6 +9,7 @@ import (
 	criteriaTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria"
 	criterionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion"
 	ccTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/cpecriterion"
+	ccRangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/cpecriterion/range"
 	necTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/noneexistcriterion"
 	necBinaryPackageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/noneexistcriterion/binary"
 	necSourcePackageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/noneexistcriterion/source"
@@ -2631,5 +2633,56 @@ func TestFilteredCriteria_Affected(t *testing.T) {
 				t.Errorf("FilteredCriteria.Affected() = %v, want %v", got, tt.want)
 			}
 		})
+	}
+}
+
+func TestCriteria_UnknownEnumValueRoundTrip(t *testing.T) {
+	// Forward-compat contract: the schema's enums are deliberately NOT
+	// validated at unmarshal, so data produced by a newer vuls-data-update
+	// (carrying enum values this build does not know) must survive a
+	// read-modify-write cycle losslessly — a rewriter must not corrupt or
+	// reject values it does not understand. Re-introducing a validating
+	// unmarshaler on any of these enums breaks this test.
+	want := criteriaTypes.Criteria{
+		Operator: criteriaTypes.CriteriaOperatorType("future-operator"),
+		Criterions: []criterionTypes.Criterion{
+			{
+				Type: criterionTypes.CriterionType("future-criterion"),
+			},
+			{
+				Type: criterionTypes.CriterionTypeVersion,
+				Version: &vcTypes.Criterion{
+					Vulnerable: true,
+					Package: vcPackageTypes.Package{
+						Type:   vcPackageTypes.PackageType("future-package"),
+						Binary: &vcBinaryPackageTypes.Package{Name: "future"},
+					},
+					Affected: &affectedTypes.Affected{
+						Type:  affectedrangeTypes.RangeType("future-range"),
+						Range: []affectedrangeTypes.Range{{LessThan: "1.0.0"}},
+					},
+				},
+			},
+			{
+				Type: criterionTypes.CriterionTypeCPE,
+				CPE: &ccTypes.Criterion{
+					Vulnerable: true,
+					CPE:        "cpe:2.3:o:fortinet:future:*:*:*:*:*:*:*:*",
+					Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeType("fortinet-fortifuture"), LessThan: "1.0.0"},
+				},
+			},
+		},
+	}
+
+	bs, err := json.Marshal(want)
+	if err != nil {
+		t.Fatalf("marshal criteria with unknown enum values: %v", err)
+	}
+	var got criteriaTypes.Criteria
+	if err := json.Unmarshal(bs, &got); err != nil {
+		t.Fatalf("unmarshal criteria with unknown enum values: %v", err)
+	}
+	if diff := cmp.Diff(want, got); diff != "" {
+		t.Errorf("round trip (-expected +got):\n%s", diff)
 	}
 }

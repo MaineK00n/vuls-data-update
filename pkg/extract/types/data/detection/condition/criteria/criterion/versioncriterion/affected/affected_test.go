@@ -199,6 +199,21 @@ func TestAffected_Accept(t *testing.T) {
 			},
 			want: true,
 		},
+		{
+			// Data written by a newer vuls-data-update may carry a range type
+			// this build does not know. Accept must degrade to a non-match
+			// (skip the criterion) instead of failing the whole detection.
+			name: "unsupported range type (newer data) degrades to non-match",
+			fields: fields{
+				Type:  affectedrangeTypes.RangeType("future-type"),
+				Range: []affectedrangeTypes.Range{{LessThan: "1.0.0"}},
+			},
+			args: args{
+				family: ecosystemTypes.EcosystemTypeRedHat,
+				v:      "0.9.0",
+			},
+			want: false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -215,22 +230,5 @@ func TestAffected_Accept(t *testing.T) {
 				t.Errorf("Affected.Accept() = %v, want %v", got, tt.want)
 			}
 		})
-	}
-}
-
-func TestAffected_Accept_UnsupportedRangeType(t *testing.T) {
-	// Data written by a newer vuls-data-update may carry a range type this
-	// build does not know. Accept must degrade to a non-match (skip the
-	// criterion) instead of failing the whole detection.
-	a := affectedTypes.Affected{
-		Type:  affectedrangeTypes.RangeType("future-type"),
-		Range: []affectedrangeTypes.Range{{LessThan: "1.0.0"}},
-	}
-	got, err := a.Accept(ecosystemTypes.EcosystemTypeRedHat, "0.9.0")
-	if err != nil {
-		t.Fatalf("Accept() unexpected error: %v", err)
-	}
-	if got {
-		t.Errorf("Accept() = true, want false (unsupported range type must degrade to non-match)")
 	}
 }

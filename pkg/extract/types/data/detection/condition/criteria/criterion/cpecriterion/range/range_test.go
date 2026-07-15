@@ -220,6 +220,15 @@ func TestRange_Accept(t *testing.T) {
 			v:    "1.0.0",
 			want: false,
 		},
+		{
+			// Data written by a newer vuls-data-update may carry a range type
+			// this build does not know. Accept must degrade to a non-match
+			// (skip the criterion) instead of failing the whole detection.
+			name: "unsupported type (newer data) never matches",
+			r:    ccRangeTypes.Range{Type: ccRangeTypes.RangeType("fortinet-fortifuture"), LessThan: "1.0.0"},
+			v:    "0.9.0",
+			want: false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -336,19 +345,5 @@ func TestRangeTypes_HaveComparator(t *testing.T) {
 				t.Errorf("RangeTypes() contains %q but Compare has no comparator for it", rt)
 			}
 		})
-	}
-}
-
-func TestRange_Accept_UnsupportedRangeType(t *testing.T) {
-	// Data written by a newer vuls-data-update may carry a range type this
-	// build does not know. Accept must degrade to a non-match (skip the
-	// criterion) instead of failing the whole detection.
-	r := ccRangeTypes.Range{Type: ccRangeTypes.RangeType("fortinet-fortifuture"), LessThan: "1.0.0"}
-	got, err := r.Accept("0.9.0")
-	if err != nil {
-		t.Fatalf("Accept() unexpected error: %v", err)
-	}
-	if got {
-		t.Errorf("Accept() = true, want false (unsupported range type must degrade to non-match)")
 	}
 }

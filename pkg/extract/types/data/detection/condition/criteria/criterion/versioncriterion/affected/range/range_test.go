@@ -1,7 +1,6 @@
 package affectedrange_test
 
 import (
-	"encoding/json/v2"
 	stderrors "errors"
 	"testing"
 
@@ -42,6 +41,11 @@ func TestRangeType_Compare(t *testing.T) {
 		args    args
 		want    int
 		wantErr bool
+		// wantErrIs, when set, is additionally checked with errors.Is.
+		wantErrIs error
+		// wantUnsupported expects *UnsupportedRangeTypeError in the chain —
+		// the "data from a newer vuls-data-update" classification.
+		wantUnsupported bool
 	}{
 		{
 			name: "centos v1: non centos package, v2: non centos package",
@@ -1209,7 +1213,31 @@ func TestRangeType_Compare(t *testing.T) {
 				v1: "awful-version",
 				v2: "XXXX",
 			},
-			wantErr: true,
+			wantErr:   true,
+			wantErrIs: affectedrangeTypes.ErrRangeTypeUnknown,
+		},
+		{
+			// The zero value (unset) is a data bug, not version skew: it
+			// classifies as ErrRangeTypeUnknown, mirroring cpecriterion/range,
+			// and must NOT be reported as an unsupported (newer-data) type.
+			name: "unset (zero) type collapses to Unknown",
+			rt:   affectedrangeTypes.RangeType(""),
+			args: args{
+				v1: "1.0.0",
+				v2: "2.0.0",
+			},
+			wantErr:   true,
+			wantErrIs: affectedrangeTypes.ErrRangeTypeUnknown,
+		},
+		{
+			name: "unsupported type (newer data)",
+			rt:   affectedrangeTypes.RangeType("future-type"),
+			args: args{
+				v1: "1.0.0",
+				v2: "2.0.0",
+			},
+			wantErr:         true,
+			wantUnsupported: true,
 		},
 	}
 	for _, tt := range tests {
@@ -1219,31 +1247,23 @@ func TestRangeType_Compare(t *testing.T) {
 				t.Errorf("RangeType.Compare() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
+			if err != nil {
+				// Every failure Compare raises must classify as *CompareError
+				// so that Accept degrades it to a safe non-match.
+				if _, ok := stderrors.AsType[*affectedrangeTypes.CompareError](err); !ok {
+					t.Errorf("RangeType.Compare() error = %v, want *CompareError", err)
+				}
+			}
+			if tt.wantErrIs != nil && !stderrors.Is(err, tt.wantErrIs) {
+				t.Errorf("RangeType.Compare() error = %v, want errors.Is %v", err, tt.wantErrIs)
+			}
+			if _, ok := stderrors.AsType[*affectedrangeTypes.UnsupportedRangeTypeError](err); ok != tt.wantUnsupported {
+				t.Errorf("RangeType.Compare() error = %v, wantUnsupported %v", err, tt.wantUnsupported)
+			}
 			if got != tt.want {
 				t.Errorf("RangeType.Compare() = %v, want %v", got, tt.want)
 			}
 		})
-	}
-}
-
-func TestRangeType_Compare_UnsupportedRangeType(t *testing.T) {
-	_, err := affectedrangeTypes.RangeType("future-type").Compare(ecosystemTypes.EcosystemTypeRedHat, "1.0.0", "2.0.0")
-	if _, ok := stderrors.AsType[*affectedrangeTypes.CompareError](err); !ok {
-		t.Errorf("Compare() error = %v, want *CompareError", err)
-	}
-	if _, ok := stderrors.AsType[*affectedrangeTypes.UnsupportedRangeTypeError](err); !ok {
-		t.Errorf("Compare() error = %v, want to wrap *UnsupportedRangeTypeError", err)
-	}
-
-	// The zero value (unset) is a data bug, not version skew: it classifies as
-	// ErrRangeTypeUnknown, mirroring cpecriterion/range, and must NOT be
-	// reported as an unsupported (newer-data) range type.
-	_, err = affectedrangeTypes.RangeType("").Compare(ecosystemTypes.EcosystemTypeRedHat, "1.0.0", "2.0.0")
-	if !stderrors.Is(err, affectedrangeTypes.ErrRangeTypeUnknown) {
-		t.Errorf("Compare() error = %v, want ErrRangeTypeUnknown", err)
-	}
-	if _, ok := stderrors.AsType[*affectedrangeTypes.UnsupportedRangeTypeError](err); ok {
-		t.Errorf("Compare() error = %v, must not wrap *UnsupportedRangeTypeError for the zero value", err)
 	}
 }
 
@@ -1267,19 +1287,5 @@ func TestRangeTypes_HaveComparator(t *testing.T) {
 				}
 			}
 		})
-	}
-}
-
-func TestRangeType_JSONRoundTrip_UnknownValue(t *testing.T) {
-	var rt affectedrangeTypes.RangeType
-	if err := json.Unmarshal([]byte(`"future-type"`), &rt); err != nil {
-		t.Fatalf("unmarshal unknown range type: %v", err)
-	}
-	bs, err := json.Marshal(rt)
-	if err != nil {
-		t.Fatalf("marshal unknown range type: %v", err)
-	}
-	if string(bs) != `"future-type"` {
-		t.Errorf("round trip = %s, want %q (unknown values must survive read-modify-write losslessly)", bs, "future-type")
 	}
 }
