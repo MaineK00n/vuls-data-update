@@ -42,6 +42,13 @@
         "lastModified": "2023/10/29 09:15:44"
     },
     {
+        "url": "https://jvndb.jvn.jp/ja/feed/detail/jvndb_detail_2021.rdf",
+        "filename": "jvndb_detail_2021.rdf",
+        "sha256": "a7c9e2f1b3d4c5e6a7b8c9d0e1f2031425364758697a8b9cadbecfd0e1f20314",
+        "size": 60000000,
+        "lastModified": "2023/10/29 09:16:12"
+    },
+    {
         "url": "https://jvndb.jvn.jp/ja/feed/vendor/myjvn_vendor_202311.rdf",
         "filename": "myjvn_vendor_202311.rdf",
         "sha256": "59c66815e8f210e2b452578f6ba89edf74fdba866cb530ed83a2c5746b93f429",

@@ -93,6 +93,9 @@ type Vulinfo struct {
 				VulinfoID string `xml:"VulinfoID" json:"vulinfoid,omitempty"`
 				URL       string `xml:"URL" json:"url,omitempty"`
 				Title     string `xml:"Title" json:"title,omitempty"`
+				// FetchedTitle holds the HTML <title> of the referenced page,
+				// retrieved separately from the feed for JPCERT-AT references.
+				FetchedTitle string `xml:"-" json:"fetchedtitle,omitempty"`
 			} `xml:"RelatedItem" json:"relateditem,omitempty"`
 		} `xml:"Related" json:"related,omitzero"`
 		History struct {

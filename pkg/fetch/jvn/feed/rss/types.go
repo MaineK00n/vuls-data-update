@@ -62,6 +62,9 @@ type Item struct {
 		Source string `xml:"source,attr" json:"source,omitempty"`
 		ID     string `xml:"id,attr" json:"id,omitempty"`
 		Title  string `xml:"title,attr" json:"title,omitempty"`
+		// FetchedTitle holds the HTML <title> of the referenced page, retrieved
+		// separately from the feed for JPCERT-AT references.
+		FetchedTitle string `xml:"-" json:"fetchedtitle,omitempty"`
 	} `xml:"references" json:"references,omitempty"`
 	CPE []struct {
 		Text    string `xml:",chardata" json:"text,omitempty"`
