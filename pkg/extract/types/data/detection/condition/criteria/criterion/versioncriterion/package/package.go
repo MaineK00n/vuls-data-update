@@ -137,6 +137,9 @@ func (p Package) Accept(query Query, repositories []string) (bool, error) {
 		}
 		return isAccepted, nil
 	default:
-		return false, errors.Errorf("unexpected package type. expected: %q, actual: %q", []PackageType{PackageTypeBinary, PackageTypeSource, PackageTypeLanguage}, p.Type)
+		// A PackageType this build cannot evaluate — Unknown, unset, or a
+		// value from a newer vuls-data-update — reports "does not accept" so
+		// detection skips the criterion instead of aborting.
+		return false, nil
 	}
 }

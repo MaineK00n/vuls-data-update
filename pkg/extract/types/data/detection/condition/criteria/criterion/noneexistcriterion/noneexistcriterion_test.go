@@ -337,6 +337,19 @@ func TestCriterion_Accept(t *testing.T) {
 			},
 			want: true,
 		},
+		{
+			// A package type this build does not know (data from a newer
+			// vuls-data-update) must report not accepted (not affected)
+			// instead of aborting.
+			name: "unsupported package type (newer data) degrades to non-match",
+			fields: fields{
+				Type: necTypes.PackageType("future-package"),
+			},
+			args: args{
+				query: necTypes.Query{Binaries: []binaryTypes.Query{{Name: "name"}}},
+			},
+			want: false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

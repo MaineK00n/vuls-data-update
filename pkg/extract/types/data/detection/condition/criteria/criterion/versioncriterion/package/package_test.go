@@ -116,9 +116,22 @@ func TestPackage_Accept(t *testing.T) {
 			want: true,
 		},
 		{
-			name:    "unknown",
-			fields:  fields{Type: packageTypes.PackageTypeUnknown},
-			wantErr: true,
+			name:   "unknown",
+			fields: fields{Type: packageTypes.PackageTypeUnknown},
+			want:   false,
+		},
+		{
+			// Data written by a newer vuls-data-update may carry a package
+			// type this build does not know. Accept must degrade to a
+			// non-match (skip the criterion) instead of failing detection.
+			name:   "unsupported type (newer data) degrades to non-match",
+			fields: fields{Type: packageTypes.PackageType("future-package")},
+			args: args{
+				query: packageTypes.Query{
+					Binary: &binaryTypes.Query{Name: "name"},
+				},
+			},
+			want: false,
 		},
 	}
 	for _, tt := range tests {

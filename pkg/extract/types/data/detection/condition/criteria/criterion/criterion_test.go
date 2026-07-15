@@ -295,6 +295,19 @@ func TestCriterion_Contains(t *testing.T) {
 			},
 			want: false,
 		},
+		{
+			// A criterion type this build does not know (data from a newer
+			// vuls-data-update) must report "does not contain" instead of
+			// aborting.
+			name: "unsupported criterion type (newer data) does not contain",
+			fields: fields{
+				Type: criterionTypes.CriterionType("future-criterion"),
+			},
+			args: args{
+				query: criterionTypes.Query{NoneExist: &necTypes.Query{}},
+			},
+			want: false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -664,6 +677,20 @@ func TestCriterion_Accept(t *testing.T) {
 				Accepts: criterionTypes.AcceptQueries{},
 			},
 		},
+		{
+			// A criterion type this build does not know (data from a newer
+			// vuls-data-update) must accept no queries instead of aborting.
+			name: "unsupported criterion type (newer data) accepts nothing",
+			fields: fields{
+				Type: criterionTypes.CriterionType("future-criterion"),
+			},
+			args: args{
+				query: criterionTypes.Query{NoneExist: &necTypes.Query{}},
+			},
+			want: criterionTypes.FilteredCriterion{
+				Criterion: criterionTypes.Criterion{Type: criterionTypes.CriterionType("future-criterion")},
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -801,6 +828,15 @@ func TestFilteredCriterion_Affected(t *testing.T) {
 					},
 				},
 				Accepts: criterionTypes.AcceptQueries{KB: criterionTypes.KB{}},
+			},
+			want: false,
+		},
+		{
+			// A criterion type this build does not know (data from a newer
+			// vuls-data-update) must report not affected instead of aborting.
+			name: "unsupported criterion type (newer data) is not affected",
+			fields: fields{
+				Criterion: criterionTypes.Criterion{Type: criterionTypes.CriterionType("future-criterion")},
 			},
 			want: false,
 		},

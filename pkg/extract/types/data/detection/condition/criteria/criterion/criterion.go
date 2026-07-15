@@ -203,7 +203,10 @@ func (c Criterion) Contains(query Query, repositories []string) (bool, error) {
 		}
 		return false, nil
 	default:
-		return false, errors.Errorf("unexpected criterion type. expected: %q, actual: %q", []CriterionType{CriterionTypeVersion, CriterionTypeNoneExist, CriterionTypeKB, CriterionTypeCPE}, c.Type)
+		// A CriterionType this build cannot evaluate — Unknown, unset, or a
+		// value from a newer vuls-data-update — reports "does not contain" so
+		// detection skips the criterion instead of aborting.
+		return false, nil
 	}
 }
 
@@ -328,7 +331,11 @@ func (c Criterion) Accept(query Query, repositories []string) (FilteredCriterion
 			Accepts:   AcceptQueries{CPE: accepts},
 		}, nil
 	default:
-		return FilteredCriterion{}, errors.Errorf("unexpected criterion type. expected: %q, actual: %q", []CriterionType{CriterionTypeVersion, CriterionTypeNoneExist, CriterionTypeKB, CriterionTypeCPE}, c.Type)
+		// A CriterionType this build cannot evaluate — Unknown, unset, or a
+		// value from a newer vuls-data-update — accepts no queries;
+		// FilteredCriterion.Affected then reports not affected, so detection
+		// skips the criterion instead of aborting.
+		return FilteredCriterion{Criterion: c, Accepts: AcceptQueries{}}, nil
 	}
 }
 
@@ -343,6 +350,9 @@ func (fc FilteredCriterion) Affected() (bool, error) {
 	case CriterionTypeCPE:
 		return len(fc.Accepts.CPE.Exact) > 0 || len(fc.Accepts.CPE.VersionUnconfirmed) > 0, nil
 	default:
-		return false, errors.Errorf("unexpected criterion type. expected: %q, actual: %q", []CriterionType{CriterionTypeVersion, CriterionTypeNoneExist, CriterionTypeKB, CriterionTypeCPE}, fc.Criterion.Type)
+		// A CriterionType this build cannot evaluate — Unknown, unset, or a
+		// value from a newer vuls-data-update — reports not affected so
+		// detection skips the criterion instead of aborting.
+		return false, nil
 	}
 }

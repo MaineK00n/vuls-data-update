@@ -183,6 +183,9 @@ func (c FilteredCriteria) Affected() (bool, error) {
 		}
 		return false, nil
 	default:
-		return false, errors.Errorf("unexpected criteria operator type. expected: %q, actual: %q", []CriteriaOperatorType{CriteriaOperatorTypeAND, CriteriaOperatorTypeOR}, c.Operator)
+		// An operator this build cannot evaluate — unset, or a value from a
+		// newer vuls-data-update — reports not affected so detection skips
+		// the whole criteria subtree instead of aborting.
+		return false, nil
 	}
 }

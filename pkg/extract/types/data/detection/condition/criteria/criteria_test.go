@@ -2616,6 +2616,19 @@ func TestFilteredCriteria_Affected(t *testing.T) {
 			},
 			want: true,
 		},
+		{
+			// An operator this build does not know (data from a newer
+			// vuls-data-update) must report not affected for the whole
+			// subtree instead of aborting.
+			name: "unsupported operator (newer data) is not affected",
+			fields: fields{
+				Operator: criteriaTypes.CriteriaOperatorType("future-operator"),
+				Criterions: []criterionTypes.FilteredCriterion{{
+					Criterion: criterionTypes.Criterion{Type: criterionTypes.CriterionType("future-criterion")},
+				}},
+			},
+			want: false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

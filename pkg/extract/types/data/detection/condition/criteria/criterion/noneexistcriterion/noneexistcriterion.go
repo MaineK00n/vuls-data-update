@@ -120,6 +120,11 @@ func (c Criterion) Accept(query Query, repositories []string) (bool, error) {
 		}
 		return true, nil
 	default:
-		return false, errors.Errorf("unexpected none exist criterion type. expected: %q, actual: %q", []PackageType{PackageTypeBinary, PackageTypeSource}, c.Type)
+		// A PackageType this build cannot evaluate — Unknown, unset, or a
+		// value from a newer vuls-data-update — reports "does not accept"
+		// (not affected) so detection skips the criterion instead of
+		// aborting. For a none-exist criterion this is the conservative
+		// direction: it under-detects rather than falsely claiming absence.
+		return false, nil
 	}
 }
