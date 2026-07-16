@@ -9,6 +9,7 @@ import (
 	kbcTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/kbcriterion"
 	necTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/noneexistcriterion"
 	vcTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion"
+	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/internal/cmputil"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/internal/enum"
 )
 
@@ -131,7 +132,17 @@ func Compare(x, y Criterion) int {
 					return ccTypes.Compare(*x.CPE, *y.CPE)
 				}
 			default:
-				return 0
+				// An out-of-vocabulary type (data from a newer vuls-data-update)
+				// selects no payload arm, but the ordering must stay total over
+				// everything this build can see: returning 0 for elements that
+				// differ in visible payload would make canonical output
+				// nondeterministic under the unstable slices.SortFunc.
+				return cmp.Or(
+					cmputil.Ptr(x.Version, y.Version, vcTypes.Compare),
+					cmputil.Ptr(x.NoneExist, y.NoneExist, necTypes.Compare),
+					cmputil.Ptr(x.KB, y.KB, kbcTypes.Compare),
+					cmputil.Ptr(x.CPE, y.CPE, ccTypes.Compare),
+				)
 			}
 		}(),
 	)

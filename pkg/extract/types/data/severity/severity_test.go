@@ -17,6 +17,14 @@ func TestCompare(t *testing.T) {
 		want int
 	}{
 		{
+			name: "unknown type orders by visible payload",
+			args: args{
+				x: severityTypes.Severity{Type: severityTypes.SeverityType("future-severity"), Source: "source1", Vendor: new("a")},
+				y: severityTypes.Severity{Type: severityTypes.SeverityType("future-severity"), Source: "source1", Vendor: new("b")},
+			},
+			want: -1,
+		},
+		{
 			name: "x == y",
 			args: args{
 				x: severityTypes.Severity{
