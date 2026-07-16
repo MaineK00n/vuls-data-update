@@ -469,9 +469,12 @@ func (r Range) Accept(v string) (bool, error) {
 		// to types outside the vocabulary: with all bounds empty the loop
 		// below never calls Compare, so its CompareError safety net cannot
 		// kick in — without this guard an unevaluable Type would fall
-		// through to the unconditional true and match every version, and
-		// newer data may constrain matching in ways this build cannot even
-		// parse (false positives).
+		// through to the unconditional true and match every version. For
+		// Unknown, empty bounds mean "the source declared a constraint we
+		// could not translate", not "no constraint"; for a type outside the
+		// vocabulary, a newer build may carry constraints in JSON fields
+		// this build's unmarshal silently drops. Matching everything in
+		// either case would risk false positives.
 		if r.Type == RangeTypeUnknown || !slices.Contains(RangeTypes(), r.Type) {
 			return false, nil
 		}
