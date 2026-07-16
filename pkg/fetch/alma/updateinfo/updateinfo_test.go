@@ -1,6 +1,7 @@
 package updateinfo_test
 
 import (
+	"fmt"
 	"io/fs"
 	"net/http"
 	"net/http/httptest"
@@ -74,6 +75,23 @@ func TestFetch(t *testing.T) {
 				}
 			}
 		})
+	}
+}
+
+func TestFetch_cyclicTree(t *testing.T) {
+	// Every directory listing links a self-descending "loop/" entry and never a
+	// repodata/, simulating a cyclic (self-referential symlink) tree. The walk
+	// must reach maxDepth and fail rather than loop or return a partial set.
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		w.Header().Set("Content-Type", "text/html")
+		fmt.Fprint(w, `<html><body><a href="../">../</a><a href="loop/">loop/</a></body></html>`)
+	}))
+	defer ts.Close()
+
+	dir := t.TempDir()
+	err := updateinfo.Fetch(updateinfo.WithBaseURL(ts.URL), updateinfo.WithDir(dir), updateinfo.WithWait(0))
+	if err == nil {
+		t.Error("expected error for a cyclic tree that never terminates, got nil")
 	}
 }
 

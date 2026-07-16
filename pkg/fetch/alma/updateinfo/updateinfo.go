@@ -229,8 +229,12 @@ func (o options) listRepomds(client *utilhttp.Client) ([]string, error) {
 		slog.Info("Walk repo.almalinux.org", slog.Int("depth", depth), slog.Int("dirs", len(results)), slog.Int("repomds", len(repomds)))
 	}
 
+	// Reaching maxDepth with directories still pending is not a per-item skip but
+	// a traversal that did not complete: the tree is deeper than any known layout
+	// or is cyclic (e.g. a self-referential symlink). Fail loudly rather than
+	// silently returning an incomplete repomd set.
 	if len(frontier) > 0 {
-		slog.Warn("walk stopped at max depth with directories still pending; crawl may be incomplete", slog.Int("max_depth", maxDepth), slog.Int("pending", len(frontier)))
+		return nil, errors.Errorf("walk reached max depth %d with %d directories still pending; repo.almalinux.org tree is deeper than expected or cyclic", maxDepth, len(frontier))
 	}
 
 	return repomds, nil
