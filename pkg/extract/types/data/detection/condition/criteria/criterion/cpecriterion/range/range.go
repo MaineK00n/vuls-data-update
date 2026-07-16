@@ -464,11 +464,14 @@ func (t RangeType) Compare(v1, v2 string) (int, error) {
 // introduce. Mirrors versioncriterion/affected.Accept.
 func (r Range) Accept(v string) (bool, error) {
 	if r.GreaterEqual == "" && r.GreaterThan == "" && r.LessEqual == "" && r.LessThan == "" {
-		// No bounds → no narrowing, but Unknown still refuses to declare a
-		// match, and so does anything outside the vocabulary (unset, or a
-		// RangeType this build does not know — data from a newer
-		// vuls-data-update may constrain matching in ways this build cannot
-		// even parse, so assuming match-all here would risk false positives).
+		// No bounds means "no constraint", which for a known Type reads as
+		// "every version matches". Do not grant that reading to Unknown or
+		// to types outside the vocabulary: with all bounds empty the loop
+		// below never calls Compare, so its CompareError safety net cannot
+		// kick in — without this guard an unevaluable Type would fall
+		// through to the unconditional true and match every version, and
+		// newer data may constrain matching in ways this build cannot even
+		// parse (false positives).
 		if r.Type == RangeTypeUnknown || !slices.Contains(RangeTypes(), r.Type) {
 			return false, nil
 		}
