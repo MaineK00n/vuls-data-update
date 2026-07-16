@@ -376,7 +376,6 @@ func newCmdAlmaOVAL() *cobra.Command {
 func newCmdAlmaUpdateinfo() *cobra.Command {
 	options := &struct {
 		base
-		trees       []string
 		concurrency int
 		wait        time.Duration
 	}{
@@ -384,7 +383,6 @@ func newCmdAlmaUpdateinfo() *cobra.Command {
 			dir:   filepath.Join(util.CacheDir(), "fetch", "alma", "updateinfo"),
 			retry: 3,
 		},
-		trees:       almaUpdateinfo.DefaultTrees(),
 		concurrency: 5,
 		wait:        1 * time.Second,
 	}
@@ -397,7 +395,7 @@ func newCmdAlmaUpdateinfo() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := almaUpdateinfo.Fetch(almaUpdateinfo.WithDir(options.dir), almaUpdateinfo.WithRetry(options.retry), almaUpdateinfo.WithTrees(options.trees), almaUpdateinfo.WithConcurrency(options.concurrency), almaUpdateinfo.WithWait(options.wait)); err != nil {
+			if err := almaUpdateinfo.Fetch(almaUpdateinfo.WithDir(options.dir), almaUpdateinfo.WithRetry(options.retry), almaUpdateinfo.WithConcurrency(options.concurrency), almaUpdateinfo.WithWait(options.wait)); err != nil {
 				return errors.Wrap(err, "failed to fetch almalinux updateinfo")
 			}
 			return nil
@@ -406,7 +404,6 @@ func newCmdAlmaUpdateinfo() *cobra.Command {
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
-	cmd.Flags().StringSliceVarP(&options.trees, "trees", "", options.trees, "top-level repo.almalinux.org trees to crawl")
 	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrent processes")
 	cmd.Flags().DurationVarP(&options.wait, "wait", "", options.wait, "wait duration")
 

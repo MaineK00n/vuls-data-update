@@ -38,24 +38,19 @@ const baseURL = "https://repo.almalinux.org/"
 // root (<version>/<repository>/<arch>/<variant>/repodata).
 const maxDepth = 16
 
-// defaultTrees are the top-level distribution trees of repo.almalinux.org that
-// ship RPM repodata (and thus updateinfo/modules). Non-distribution trees
+// trees are the top-level distribution trees of repo.almalinux.org that ship
+// RPM repodata (and thus updateinfo/modules). Non-distribution trees
 // (build_system, development, security's oval/ltp, elevate, rpi, wsl) are left
 // out. Each tree is walked depth-agnostically until a repodata/ directory is
 // found, so differing layouts (e.g. almalinux/<v>/<repo>/<arch>/os/repodata vs
 // almalinux-epel/<v>/<arch>/repodata) are handled structurally.
-var defaultTrees = []string{
+var trees = []string{
 	"almalinux",
 	"vault",
 	"almalinux-epel",
 	"almalinux-kitten",
 	"almalinux-nvidia",
 	"backports",
-}
-
-// DefaultTrees returns a copy of the top-level trees crawled by default.
-func DefaultTrees() []string {
-	return slices.Clone(defaultTrees)
 }
 
 // idPattern extracts <prefix> and <year> from advisory IDs such as
@@ -65,7 +60,6 @@ var idPattern = regexp.MustCompile(`^(.+)-(\d{4})[-:]`)
 
 type options struct {
 	baseURL     string
-	trees       []string
 	dir         string
 	retry       int
 	concurrency int
@@ -84,16 +78,6 @@ func (u baseURLOption) apply(opts *options) {
 
 func WithBaseURL(url string) Option {
 	return baseURLOption(url)
-}
-
-type treesOption []string
-
-func (t treesOption) apply(opts *options) {
-	opts.trees = t
-}
-
-func WithTrees(trees []string) Option {
-	return treesOption(trees)
 }
 
 type dirOption string
@@ -139,7 +123,6 @@ func WithWait(wait time.Duration) Option {
 func Fetch(opts ...Option) error {
 	options := &options{
 		baseURL:     baseURL,
-		trees:       defaultTrees,
 		dir:         filepath.Join(util.CacheDir(), "fetch", "alma", "updateinfo"),
 		retry:       3,
 		concurrency: 5,
@@ -178,7 +161,7 @@ func (o options) listRepomds(client *utilhttp.Client) ([]string, error) {
 	slog.Info("Fetch AlmaLinux repomd list")
 
 	var frontier []string
-	for _, tree := range o.trees {
+	for _, tree := range trees {
 		u, err := url.JoinPath(o.baseURL, tree)
 		if err != nil {
 			return nil, errors.Wrap(err, "join url path")
