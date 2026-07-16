@@ -252,7 +252,7 @@ func TestData_Merge(t *testing.T) {
 								{
 									Type:   severityTypes.SeverityTypeVendor,
 									Source: "vendor",
-									Vendor: func() *string { s := "Critical"; return &s }(),
+									Vendor: new("Critical"),
 								},
 							},
 						},
@@ -274,7 +274,7 @@ func TestData_Merge(t *testing.T) {
 										{
 											Type:   severityTypes.SeverityTypeVendor,
 											Source: "vendor",
-											Vendor: func() *string { s := "Critical"; return &s }(),
+											Vendor: new("Critical"),
 										},
 										{
 											Type:    severityTypes.SeverityTypeCVSSv31,
@@ -301,7 +301,7 @@ func TestData_Merge(t *testing.T) {
 								{
 									Type:   severityTypes.SeverityTypeVendor,
 									Source: "vendor",
-									Vendor: func() *string { s := "Critical"; return &s }(),
+									Vendor: new("Critical"),
 								},
 								{
 									Type:    severityTypes.SeverityTypeCVSSv31,
