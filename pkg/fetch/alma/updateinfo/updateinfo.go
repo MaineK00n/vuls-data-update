@@ -469,27 +469,24 @@ func (o options) fetchUpdateinfo(client *utilhttp.Client, u string) error {
 	}
 
 	for _, u := range ui.Update {
-		p := updateinfoPath(filepath.Join(o.dir, d), u.ID)
-		if err := util.Write(p, u); err != nil {
-			return errors.Wrapf(err, "write %s", p)
+		// Group advisories under <prefix>/<year>/ (ALSA/ALBA/ALEA-<year>:<seq>),
+		// matching the alma-errata layout. An ID that does not fit is an
+		// unexpected format we do not understand: fail loudly rather than write
+		// it somewhere unvalidated and let it flow into extract unnoticed.
+		splitted, err := util.Split(u.ID, "-", ":")
+		if err != nil {
+			return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "(ALSA|ALBA|ALEA)-yyyy:\\d{4}", u.ID)
+		}
+		if _, err := time.Parse("2006", splitted[1]); err != nil {
+			return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "(ALSA|ALBA|ALEA)-yyyy:\\d{4}", u.ID)
+		}
+
+		if err := util.Write(filepath.Join(o.dir, d, splitted[0], splitted[1], fmt.Sprintf("%s.json", u.ID)), u); err != nil {
+			return errors.Wrapf(err, "write %s", filepath.Join(o.dir, d, splitted[0], splitted[1], fmt.Sprintf("%s.json", u.ID)))
 		}
 	}
 
 	return nil
-}
-
-// updateinfoPath groups an advisory under <prefix>/<year>/ when its ID has the
-// "<prefix>-<year>:<seq>" shape used by AlmaLinux errata (ALSA/ALBA/ALEA),
-// matching the alma-errata layout. IDs from other trees that do not fit are
-// written flat under their repodata directory rather than failing the fetch;
-// grouping is only an on-disk convenience, so the fallback loses no data.
-func updateinfoPath(baseDir, id string) string {
-	if ss, err := util.Split(id, "-", ":"); err == nil {
-		if _, err := time.Parse("2006", ss[1]); err == nil {
-			return filepath.Join(baseDir, ss[0], ss[1], fmt.Sprintf("%s.json", id))
-		}
-	}
-	return filepath.Join(baseDir, fmt.Sprintf("%s.json", id))
 }
 
 func (o options) fetchModules(client *utilhttp.Client, u string) error {

@@ -28,6 +28,12 @@ func TestFetch(t *testing.T) {
 		{
 			name: "happy",
 		},
+		{
+			// An advisory id that does not fit the <prefix>-<year>:<seq> shape
+			// must fail the fetch rather than be written somewhere unvalidated.
+			name:     "badid",
+			hasError: true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -188,41 +194,6 @@ func Test_toDir(t *testing.T) {
 			}
 			if got != tt.want {
 				t.Errorf("toDir() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func Test_updateinfoPath(t *testing.T) {
-	type args struct {
-		baseDir string
-		id      string
-	}
-	tests := []struct {
-		name string
-		args args
-		want string
-	}{
-		{
-			name: "alma advisory grouped by prefix and year",
-			args: args{baseDir: filepath.FromSlash("almalinux/9/BaseOS/x86_64/os/updateinfo"), id: "ALSA-2022:4940"},
-			want: filepath.FromSlash("almalinux/9/BaseOS/x86_64/os/updateinfo/ALSA/2022/ALSA-2022:4940.json"),
-		},
-		{
-			name: "dash-separated epel id does not fit the errata shape and is written flat",
-			args: args{baseDir: filepath.FromSlash("almalinux-epel/10/x86_64_v2/updateinfo"), id: "FEDORA-EPEL-2024-1a2b3c4d5e"},
-			want: filepath.FromSlash("almalinux-epel/10/x86_64_v2/updateinfo/FEDORA-EPEL-2024-1a2b3c4d5e.json"),
-		},
-		{
-			name: "id without a year is written flat",
-			args: args{baseDir: filepath.FromSlash("backports/9/updateinfo"), id: "SOMETHING-WEIRD"},
-			want: filepath.FromSlash("backports/9/updateinfo/SOMETHING-WEIRD.json"),
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := updateinfo.UpdateinfoPath(tt.args.baseDir, tt.args.id); got != tt.want {
-				t.Errorf("updateinfoPath() = %v, want %v", got, tt.want)
 			}
 		})
 	}
