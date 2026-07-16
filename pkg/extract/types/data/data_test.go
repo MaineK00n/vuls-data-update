@@ -11,6 +11,7 @@ import (
 	detectionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection"
 	segmentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment"
 	severityTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity"
+	v2Types "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity/cvss/v2"
 	v31Types "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity/cvss/v31"
 	vulnerabilityTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/vulnerability"
 	vulnerabilityContentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/vulnerability/content"
@@ -232,11 +233,12 @@ func TestData_Merge(t *testing.T) {
 		},
 		{
 			// Regression case for Merge's Sort normalization: the same advisory
-			// content carries its severities in opposite orders on the two sides
-			// (receiver freshly built in construction order vs merged-in side
-			// round-tripped through util.Write's Sort). Order-sensitive Compare
-			// must still match them as one advisory, not duplicate it.
-			name: "same advisory with severities in reverse order",
+			// content carries its severities in a different non-canonical order
+			// on each side (canonical: vendor, cvss_v2, cvss_v31). The two raw
+			// orders also differ from each other, so the match succeeds only if
+			// BOTH d.Sort() and e.Sort() run — dropping either one makes this
+			// case duplicate the advisory instead of merging it.
+			name: "same advisory with severities in different non-canonical orders",
 			fields: dataTypes.Data{
 				ID: dataTypes.RootID("id"),
 				Advisories: []advisoryTypes.Advisory{
@@ -253,6 +255,11 @@ func TestData_Merge(t *testing.T) {
 									Type:   severityTypes.SeverityTypeVendor,
 									Source: "vendor",
 									Vendor: new("Critical"),
+								},
+								{
+									Type:   severityTypes.SeverityTypeCVSSv2,
+									Source: "vendor",
+									CVSSv2: &v2Types.CVSSv2{Vector: "AV:N/AC:L/Au:N/C:C/I:C/A:C", BaseScore: 10, NVDBaseSeverity: "HIGH"},
 								},
 							},
 						},
@@ -272,14 +279,19 @@ func TestData_Merge(t *testing.T) {
 									ID: advisoryContentTypes.AdvisoryID("ADV-001"),
 									Severity: []severityTypes.Severity{
 										{
-											Type:   severityTypes.SeverityTypeVendor,
+											Type:   severityTypes.SeverityTypeCVSSv2,
 											Source: "vendor",
-											Vendor: new("Critical"),
+											CVSSv2: &v2Types.CVSSv2{Vector: "AV:N/AC:L/Au:N/C:C/I:C/A:C", BaseScore: 10, NVDBaseSeverity: "HIGH"},
 										},
 										{
 											Type:    severityTypes.SeverityTypeCVSSv31,
 											Source:  "vendor",
 											CVSSv31: &v31Types.CVSSv31{Vector: "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H", BaseScore: 9.8, BaseSeverity: "CRITICAL"},
+										},
+										{
+											Type:   severityTypes.SeverityTypeVendor,
+											Source: "vendor",
+											Vendor: new("Critical"),
 										},
 									},
 								},
@@ -302,6 +314,11 @@ func TestData_Merge(t *testing.T) {
 									Type:   severityTypes.SeverityTypeVendor,
 									Source: "vendor",
 									Vendor: new("Critical"),
+								},
+								{
+									Type:   severityTypes.SeverityTypeCVSSv2,
+									Source: "vendor",
+									CVSSv2: &v2Types.CVSSv2{Vector: "AV:N/AC:L/Au:N/C:C/I:C/A:C", BaseScore: 10, NVDBaseSeverity: "HIGH"},
 								},
 								{
 									Type:    severityTypes.SeverityTypeCVSSv31,
