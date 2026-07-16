@@ -52,10 +52,21 @@ func Compare(x, y Data) int {
 }
 
 func (d *Data) Merge(ds ...Data) {
+	// Contents are matched with order-sensitive Compare, so both sides must be
+	// in canonical (sorted) order first: d is typically freshly built in
+	// construction order, while an element of ds may have round-tripped
+	// through util.Write's Sort. Relying on the two orders coinciding is what
+	// this normalization replaces. Note that e.Sort() below reorders the
+	// backing arrays of the caller's ds elements in place — Merge treats its
+	// inputs as owned. The appends below may leave d non-canonical again;
+	// that is fine — matching scans linearly and never relies on d's order,
+	// and the result is canonicalized by util.Write's Sort on write.
+	d.Sort()
 	for _, e := range ds {
 		if d.ID != e.ID {
 			continue
 		}
+		e.Sort()
 
 		as := d.Advisories
 		for _, ea := range e.Advisories {
