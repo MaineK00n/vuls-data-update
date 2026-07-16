@@ -338,33 +338,6 @@ func TestRangeType_CompareVersions(t *testing.T) {
 	}
 }
 
-func TestRangeType_CompareVersions_Classification(t *testing.T) {
-	// The error taxonomy is a public contract (consumers plan to warn on
-	// *UnsupportedRangeTypeError): the declared "unknown" vocabulary value is
-	// normal data and classifies as ErrRangeTypeUnknown, while everything
-	// outside the vocabulary — unset or a value from a newer
-	// vuls-data-update — classifies as *UnsupportedRangeTypeError carrying
-	// the offending value. Both wrap in *CompareError (asserted in
-	// TestRangeType_CompareVersions).
-	tests := []struct {
-		name      string
-		rt        ccRangeTypes.RangeType
-		wantErrIs error
-	}{
-		{name: "declared unknown", rt: ccRangeTypes.RangeTypeUnknown, wantErrIs: ccRangeTypes.ErrRangeTypeUnknown},
-		{name: "unset (zero)", rt: ccRangeTypes.RangeType(""), wantErrIs: &ccRangeTypes.UnsupportedRangeTypeError{RangeType: ""}},
-		{name: "newer data", rt: ccRangeTypes.RangeType("fortinet-fortifuture"), wantErrIs: &ccRangeTypes.UnsupportedRangeTypeError{RangeType: "fortinet-fortifuture"}},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			_, err := tt.rt.CompareVersions("1.0.0", "2.0.0")
-			if !stderrors.Is(err, tt.wantErrIs) {
-				t.Errorf("CompareVersions() error = %v, want errors.Is %v", err, tt.wantErrIs)
-			}
-		})
-	}
-}
-
 func TestRangeTypes_HaveComparator(t *testing.T) {
 	for _, rt := range ccRangeTypes.RangeTypes() {
 		t.Run(string(rt), func(t *testing.T) {

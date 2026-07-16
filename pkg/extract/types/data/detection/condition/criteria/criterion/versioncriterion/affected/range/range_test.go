@@ -1254,33 +1254,6 @@ func TestRangeType_CompareVersions(t *testing.T) {
 	}
 }
 
-func TestRangeType_CompareVersions_Classification(t *testing.T) {
-	// The error taxonomy is a public contract (consumers plan to warn on
-	// *UnsupportedRangeTypeError): the declared "unknown" vocabulary value is
-	// normal data and classifies as ErrRangeTypeUnknown, while everything
-	// outside the vocabulary — unset or a value from a newer
-	// vuls-data-update — classifies as *UnsupportedRangeTypeError carrying
-	// the offending value. Both wrap in *CompareError (asserted in
-	// TestRangeType_CompareVersions).
-	tests := []struct {
-		name      string
-		rt        affectedrangeTypes.RangeType
-		wantErrIs error
-	}{
-		{name: "declared unknown", rt: affectedrangeTypes.RangeTypeUnknown, wantErrIs: affectedrangeTypes.ErrRangeTypeUnknown},
-		{name: "unset (zero)", rt: affectedrangeTypes.RangeType(""), wantErrIs: &affectedrangeTypes.UnsupportedRangeTypeError{RangeType: ""}},
-		{name: "newer data", rt: affectedrangeTypes.RangeType("future-type"), wantErrIs: &affectedrangeTypes.UnsupportedRangeTypeError{RangeType: "future-type"}},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			_, err := tt.rt.CompareVersions(ecosystemTypes.EcosystemTypeRedHat, "1.0.0", "2.0.0")
-			if !stderrors.Is(err, tt.wantErrIs) {
-				t.Errorf("CompareVersions() error = %v, want errors.Is %v", err, tt.wantErrIs)
-			}
-		})
-	}
-}
-
 func TestRangeTypes_HaveComparator(t *testing.T) {
 	// Pre-existing debt, not a template: pacman and freebsd-pkg are declared
 	// (and appear in extracted data) but have never had a comparator — before

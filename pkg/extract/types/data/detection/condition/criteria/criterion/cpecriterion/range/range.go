@@ -286,13 +286,6 @@ func (e *UnsupportedRangeTypeError) Error() string {
 	return fmt.Sprintf("unsupported range type %q", string(e.RangeType))
 }
 
-// Is lets errors.Is match an *UnsupportedRangeTypeError target carrying the
-// same RangeType through the CompareError chain.
-func (e *UnsupportedRangeTypeError) Is(target error) bool {
-	t, ok := target.(*UnsupportedRangeTypeError)
-	return ok && t.RangeType == e.RangeType
-}
-
 // ErrRangeTypeUnknown is wrapped in a CompareError when Compare is called
 // with a Type that cannot evaluate any version.
 var ErrRangeTypeUnknown = errors.New("unknown range type")
