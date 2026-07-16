@@ -220,7 +220,7 @@ func (o options) listRepomds(client *utilhttp.Client) ([]string, error) {
 		}
 		frontier = next
 
-		slog.Info("Walk repo.almalinux.org", slog.Int("depth", depth), slog.Int("dirs", len(results)), slog.Int("repomds", len(repomds)))
+		slog.Info("Walk", slog.String("baseURL", o.baseURL), slog.Int("depth", depth), slog.Int("dirs", len(results)), slog.Int("repomds", len(repomds)))
 	}
 
 	// Reaching maxDepth with directories still pending is not a per-item skip but
@@ -228,7 +228,7 @@ func (o options) listRepomds(client *utilhttp.Client) ([]string, error) {
 	// or is cyclic (e.g. a self-referential symlink). Fail loudly rather than
 	// silently returning an incomplete repomd set.
 	if len(frontier) > 0 {
-		return nil, errors.Errorf("walk reached max depth %d with %d directories still pending; repo.almalinux.org tree is deeper than expected or cyclic", maxDepth, len(frontier))
+		return nil, errors.Errorf("walk reached max depth %d with %d directories still pending; %s tree is deeper than expected or cyclic", maxDepth, len(frontier), strings.TrimSuffix(o.baseURL, "/"))
 	}
 
 	return repomds, nil
@@ -537,9 +537,7 @@ func (o options) fetchModules(client *utilhttp.Client, u string) error {
 						return errors.Wrapf(err, "write %s", filepath.Join(o.dir, d, fmt.Sprintf("%s-%s-%d.%s.json", md.Name, md.Stream, md.Version, md.Context)))
 					}
 				default:
-					// Older/other modulemd stream versions are not modeled; log
-					// and skip rather than aborting the whole raw-mirror fetch.
-					slog.Warn("unexpected modulemd version, skipping", slog.String("url", u), slog.Int("version", ms.Version))
+					return errors.Errorf("unexpected modulemd version. expected: %q, actual: %q", "2", fmt.Sprintf("%d", ms.Version))
 				}
 			default:
 			}
