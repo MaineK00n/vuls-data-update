@@ -124,18 +124,6 @@
 					"tag": "8-fixed--c9a8ff43-76fb-3b18"
 				},
 				{
-					"ecosystem": "redhat:8",
-					"tag": "8-unaffected-vulnerable_code_not_present-608a79bb-2e34-1163"
-				},
-				{
-					"ecosystem": "redhat:8",
-					"tag": "8-unaffected-vulnerable_code_not_present-bbae5af6-d574-14b7"
-				},
-				{
-					"ecosystem": "redhat:8",
-					"tag": "8-unaffected-vulnerable_code_not_present-c9a8ff43-76fb-3b18"
-				},
-				{
 					"ecosystem": "redhat:9",
 					"tag": "9-fixed--29c2fe94-cbbe-85ff"
 				},
@@ -146,18 +134,6 @@
 				{
 					"ecosystem": "redhat:9",
 					"tag": "9-fixed--ed494b4a-555c-d18a"
-				},
-				{
-					"ecosystem": "redhat:9",
-					"tag": "9-unaffected-vulnerable_code_not_present-29c2fe94-cbbe-85ff"
-				},
-				{
-					"ecosystem": "redhat:9",
-					"tag": "9-unaffected-vulnerable_code_not_present-6f5c40c1-dc0e-2369"
-				},
-				{
-					"ecosystem": "redhat:9",
-					"tag": "9-unaffected-vulnerable_code_not_present-ed494b4a-555c-d18a"
 				}
 			]
 		}
@@ -318,24 +294,8 @@
 					"tag": "8-fixed--bbae5af6-d574-14b7"
 				},
 				{
-					"ecosystem": "redhat:8",
-					"tag": "8-unaffected-vulnerable_code_not_present-608a79bb-2e34-1163"
-				},
-				{
-					"ecosystem": "redhat:8",
-					"tag": "8-unaffected-vulnerable_code_not_present-c9a8ff43-76fb-3b18"
-				},
-				{
 					"ecosystem": "redhat:9",
 					"tag": "9-fixed--6f5c40c1-dc0e-2369"
-				},
-				{
-					"ecosystem": "redhat:9",
-					"tag": "9-unaffected-vulnerable_code_not_present-29c2fe94-cbbe-85ff"
-				},
-				{
-					"ecosystem": "redhat:9",
-					"tag": "9-unaffected-vulnerable_code_not_present-ed494b4a-555c-d18a"
 				}
 			]
 		},
@@ -414,24 +374,8 @@
 					"tag": "8-fixed--608a79bb-2e34-1163"
 				},
 				{
-					"ecosystem": "redhat:8",
-					"tag": "8-unaffected-vulnerable_code_not_present-bbae5af6-d574-14b7"
-				},
-				{
-					"ecosystem": "redhat:8",
-					"tag": "8-unaffected-vulnerable_code_not_present-c9a8ff43-76fb-3b18"
-				},
-				{
 					"ecosystem": "redhat:9",
 					"tag": "9-fixed--29c2fe94-cbbe-85ff"
-				},
-				{
-					"ecosystem": "redhat:9",
-					"tag": "9-unaffected-vulnerable_code_not_present-6f5c40c1-dc0e-2369"
-				},
-				{
-					"ecosystem": "redhat:9",
-					"tag": "9-unaffected-vulnerable_code_not_present-ed494b4a-555c-d18a"
 				}
 			]
 		}

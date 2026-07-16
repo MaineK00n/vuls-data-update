@@ -827,10 +827,6 @@ func buildDataComponents(doc v2.Document, baseVulnerability vulnerabilityContent
 		for _, pmax := range apm {
 			assessment := pmax.assessment
 			tag := calculateTag(pmax)
-			ss := []segmentTypes.Segment{{
-				Ecosystem: es,
-				Tag:       tag,
-			}}
 			ca := criteriaTypes.Criteria{
 				Operator: criteriaTypes.CriteriaOperatorTypeOR,
 			}
@@ -864,25 +860,52 @@ func buildDataComponents(doc v2.Document, baseVulnerability vulnerabilityContent
 				})
 			}
 
+			// A segment ties content to a detection condition via
+			// (ecosystem, tag); when the group yields no criteria
+			// (known_not_affected assessments) a segment would dangle, so it
+			// is emitted only alongside a condition. The content itself is
+			// still kept, deduplicated by Compare — groups that lose their
+			// segments collapse into one entry per distinct content.
+			ss := func() []segmentTypes.Segment {
+				if len(ca.Criterias) == 0 {
+					return nil
+				}
+				return []segmentTypes.Segment{{
+					Ecosystem: es,
+					Tag:       tag,
+				}}
+			}()
+
 			v, err := buildVulnerability(baseVulnerability, assessment)
 			if err != nil {
 				return nil, nil, nil, errors.Wrap(err, "build vulnerability")
 			}
-			vs = append(vs, vulnerabilityTypes.Vulnerability{
-				Content:  v,
-				Segments: ss,
-			})
+			switch i := slices.IndexFunc(vs, func(x vulnerabilityTypes.Vulnerability) bool {
+				return vulnerabilityContentTypes.Compare(x.Content, v) == 0
+			}); i {
+			case -1:
+				vs = append(vs, vulnerabilityTypes.Vulnerability{
+					Content:  v,
+					Segments: ss,
+				})
+			default:
+				vs[i].Segments = append(vs[i].Segments, ss...)
+			}
 
 			// One Advisory entry per RHSA; same segments shared across them
 			// because they all attest to the same (env, pkg) fix combination.
 			for _, content := range buildAdvisories(assessment) {
-				as = append(as, advisoryTypes.Advisory{
-					Content: content,
-					Segments: []segmentTypes.Segment{{
-						Ecosystem: es,
-						Tag:       tag,
-					}},
-				})
+				switch i := slices.IndexFunc(as, func(x advisoryTypes.Advisory) bool {
+					return advisoryContentTypes.Compare(x.Content, content) == 0
+				}); i {
+				case -1:
+					as = append(as, advisoryTypes.Advisory{
+						Content:  content,
+						Segments: ss,
+					})
+				default:
+					as[i].Segments = append(as[i].Segments, ss...)
+				}
 			}
 		}
 

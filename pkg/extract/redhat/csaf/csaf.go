@@ -847,12 +847,37 @@ func buildDataComponents(baseAdvisory advisoryContentTypes.Content, baseVulnerab
 			}
 
 			for major, pidsPerMajor := range pidsm {
-				segment := segmentTypes.Segment{
-					Ecosystem: ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeRedHat, major)),
-					Tag:       calculateTag(major, pidsPerMajor, status),
+				criterias, err := buildCriterias(pidsPerMajor, status, pm)
+				if err != nil {
+					return nil, nil, nil, errors.Wrap(err, "build criterions")
 				}
 
-				adv.Segments = append(adv.Segments, segment)
+				// A segment ties content to a detection condition via
+				// (ecosystem, tag); when the group yields no criteria
+				// (unaffected assessments, source-RPM-only groups) a segment
+				// would dangle, so it is emitted only alongside a condition.
+				// The content itself is still kept, deduplicated by Compare.
+				segments := func() []segmentTypes.Segment {
+					if len(criterias) == 0 {
+						return nil
+					}
+					return []segmentTypes.Segment{{
+						Ecosystem: ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeRedHat, major)),
+						Tag:       calculateTag(major, pidsPerMajor, status),
+					}}
+				}()
+
+				if len(criterias) > 0 {
+					cm[major] = append(cm[major], conditionTypes.Condition{
+						Criteria: criteriaTypes.Criteria{
+							Operator:  criteriaTypes.CriteriaOperatorTypeOR,
+							Criterias: criterias,
+						},
+						Tag: segments[0].Tag,
+					})
+				}
+
+				adv.Segments = append(adv.Segments, segments...)
 
 				for cveID, a := range vassGroup {
 					if a.Status != status {
@@ -888,25 +913,11 @@ func buildDataComponents(baseAdvisory advisoryContentTypes.Content, baseVulnerab
 					if index < 0 {
 						vs = append(vs, vulnerabilityTypes.Vulnerability{
 							Content:  base,
-							Segments: []segmentTypes.Segment{segment},
+							Segments: segments,
 						})
 					} else {
-						vs[index].Segments = append(vs[index].Segments, segment)
+						vs[index].Segments = append(vs[index].Segments, segments...)
 					}
-				}
-
-				criterias, err := buildCriterias(pidsPerMajor, status, pm)
-				if err != nil {
-					return nil, nil, nil, errors.Wrap(err, "build criterions")
-				}
-				if len(criterias) > 0 {
-					cm[major] = append(cm[major], conditionTypes.Condition{
-						Criteria: criteriaTypes.Criteria{
-							Operator:  criteriaTypes.CriteriaOperatorTypeOR,
-							Criterias: criterias,
-						},
-						Tag: segment.Tag,
-					})
 				}
 			}
 		}
