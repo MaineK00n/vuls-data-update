@@ -1,0 +1,57 @@
+{
+	"from": "releng@rockylinux.org",
+	"status": "final",
+	"type": "security",
+	"version": "2",
+	"id": "RLSA-2023:3820",
+	"title": "Moderate: mariadb security update",
+	"issued": {
+		"date": "2023-06-27 00:00:00"
+	},
+	"updated": {
+		"date": "2023-06-27 00:00:00"
+	},
+	"rights": "Copyright 2023 Rocky Enterprise Software Foundation",
+	"release": "Rocky Linux 9",
+	"pushcount": "1",
+	"severity": "Moderate",
+	"summary": "mariadb security update",
+	"description": "MariaDB is a community developed branch of MySQL.",
+	"references": {
+		"reference": [
+			{
+				"href": "https://errata.rockylinux.org/RLSA-2023:3820",
+				"id": "RLSA-2023:3820",
+				"type": "self",
+				"title": "RLSA-2023:3820"
+			},
+			{
+				"href": "https://access.redhat.com/security/cve/CVE-2022-47015",
+				"id": "CVE-2022-47015",
+				"type": "cve",
+				"title": "CVE-2022-47015"
+			}
+		]
+	},
+	"pkglist": {
+		"collection": {
+			"short": "rocky-linux-9-x86-64-appstream-rpms",
+			"name": "rocky-linux-9-x86-64-appstream-rpms",
+			"package": [
+				{
+					"name": "mariadb",
+					"epoch": "3",
+					"version": "10.5.16",
+					"release": "2.module+el9.1.0+13358+56c3b6a3",
+					"arch": "x86_64",
+					"src": "mariadb-10.5.16-2.module+el9.1.0+13358+56c3b6a3.src.rpm",
+					"filename": "mariadb-10.5.16-2.module+el9.1.0+13358+56c3b6a3.x86_64.rpm",
+					"sum": {
+						"text": "abc1230000000000000000000000000000000000000000000000000000000000",
+						"type": "sha256"
+					}
+				}
+			]
+		}
+	}
+}

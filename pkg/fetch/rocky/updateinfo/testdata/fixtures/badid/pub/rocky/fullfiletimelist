@@ -1,0 +1,8 @@
+[Version]
+2
+
+[Files]
+1780000000	f	627	9/BaseOS/x86_64/os/repodata/repomd.xml
+1780000000	f	400	9/BaseOS/x86_64/os/repodata/badid-updateinfo.xml.gz
+
+[End]

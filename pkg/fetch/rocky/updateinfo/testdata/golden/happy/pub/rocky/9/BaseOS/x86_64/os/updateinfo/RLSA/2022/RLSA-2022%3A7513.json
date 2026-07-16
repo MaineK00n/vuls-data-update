@@ -1,0 +1,57 @@
+{
+	"from": "releng@rockylinux.org",
+	"status": "final",
+	"type": "security",
+	"version": "2",
+	"id": "RLSA-2022:7513",
+	"title": "Important: xz security update",
+	"issued": {
+		"date": "2022-11-08 09:19:42"
+	},
+	"updated": {
+		"date": "2023-02-02 12:53:50"
+	},
+	"rights": "Copyright 2022 Rocky Enterprise Software Foundation",
+	"release": "Rocky Linux 9",
+	"pushcount": "1",
+	"severity": "Important",
+	"summary": "xz security update",
+	"description": "XZ Utils is an integrated collection of user-space file compression utilities.",
+	"references": {
+		"reference": [
+			{
+				"href": "https://errata.rockylinux.org/RLSA-2022:7513",
+				"id": "RLSA-2022:7513",
+				"type": "self",
+				"title": "RLSA-2022:7513"
+			},
+			{
+				"href": "https://access.redhat.com/security/cve/CVE-2022-1271",
+				"id": "CVE-2022-1271",
+				"type": "cve",
+				"title": "CVE-2022-1271"
+			}
+		]
+	},
+	"pkglist": {
+		"collection": {
+			"short": "rocky-linux-9-x86-64-baseos-rpms",
+			"name": "rocky-linux-9-x86-64-baseos-rpms",
+			"package": [
+				{
+					"name": "xz",
+					"epoch": "0",
+					"version": "5.2.5",
+					"release": "8.el9_0",
+					"arch": "x86_64",
+					"src": "xz-5.2.5-8.el9_0.src.rpm",
+					"filename": "xz-5.2.5-8.el9_0.x86_64.rpm",
+					"sum": {
+						"text": "4567587f72bb7fdcc4f2e5b6c731d83b0e14e841680c557d4ca2e19775a364c2",
+						"type": "sha256"
+					}
+				}
+			]
+		}
+	}
+}

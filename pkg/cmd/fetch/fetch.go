@@ -157,6 +157,7 @@ import (
 	redhatVEXv2 "github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/vex/v2"
 	rockyErrata "github.com/MaineK00n/vuls-data-update/pkg/fetch/rocky/errata"
 	rockyOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/rocky/osv"
+	rockyUpdateinfo "github.com/MaineK00n/vuls-data-update/pkg/fetch/rocky/updateinfo"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/rootio"
 	rubygemsGHSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/rubygems/ghsa"
 	rubygemsGLSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/rubygems/glsa"
@@ -272,7 +273,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdPubGHSA(), newCmdPubOSV(),
 		newCmdROSV(),
 		newCmdRedHatOVALRepositoryToCPE(), newCmdRedHatOVALV1(), newCmdRedHatOVALV2(), newCmdRedHatCVE(), newCmdRedHatCVRF(), newCmdRedHatCSAF(), newCmdRedHatVEXV1(), newCmdRedHatVEXV2(), newCmdRedHatOSV(), newCmdRedHatAppstreamLifecycle(), newCmdRedHatPackageManifest(),
-		newCmdRockyErrata(), newCmdRockyOSV(),
+		newCmdRockyErrata(), newCmdRockyOSV(), newCmdRockyUpdateinfo(),
 		newCmdRootio(),
 		newCmdRubygemsGHSA(), newCmdRubygemsGLSA(), newCmdRubygemsOSV(), newCmdRubygemsDB(),
 		newCmdSealOSV(),
@@ -4904,6 +4905,43 @@ func newCmdRockyOSV() *cobra.Command {
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+
+	return cmd
+}
+
+func newCmdRockyUpdateinfo() *cobra.Command {
+	options := &struct {
+		base
+		concurrency int
+		wait        time.Duration
+	}{
+		base: base{
+			dir:   filepath.Join(util.CacheDir(), "fetch", "rocky", "updateinfo"),
+			retry: 3,
+		},
+		concurrency: 5,
+		wait:        1 * time.Second,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "rocky-updateinfo",
+		Short: "Fetch Rocky Linux Updateinfo data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch rocky-updateinfo
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := rockyUpdateinfo.Fetch(rockyUpdateinfo.WithDir(options.dir), rockyUpdateinfo.WithRetry(options.retry), rockyUpdateinfo.WithConcurrency(options.concurrency), rockyUpdateinfo.WithWait(options.wait)); err != nil {
+				return errors.Wrap(err, "failed to fetch rocky linux updateinfo")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrent processes")
+	cmd.Flags().DurationVarP(&options.wait, "wait", "", options.wait, "wait duration")
 
 	return cmd
 }

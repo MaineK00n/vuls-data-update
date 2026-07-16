@@ -1,0 +1,51 @@
+{
+	"from": "releng@rockylinux.org",
+	"status": "final",
+	"type": "bugfix",
+	"version": "2",
+	"id": "RLBA-2023:0456",
+	"title": "curl bugfix update",
+	"issued": {
+		"date": "2023-01-10 00:00:00"
+	},
+	"updated": {
+		"date": "2023-01-10 00:00:00"
+	},
+	"rights": "Copyright 2023 Rocky Enterprise Software Foundation",
+	"release": "Rocky Linux 9",
+	"pushcount": "1",
+	"severity": "None",
+	"summary": "curl bugfix update",
+	"description": "curl bugfix update description.",
+	"references": {
+		"reference": [
+			{
+				"href": "https://errata.rockylinux.org/RLBA-2023:0456",
+				"id": "RLBA-2023:0456",
+				"type": "self",
+				"title": "RLBA-2023:0456"
+			}
+		]
+	},
+	"pkglist": {
+		"collection": {
+			"short": "rocky-linux-9-x86-64-baseos-rpms",
+			"name": "rocky-linux-9-x86-64-baseos-rpms",
+			"package": [
+				{
+					"name": "curl",
+					"epoch": "0",
+					"version": "7.76.1",
+					"release": "23.el9",
+					"arch": "x86_64",
+					"src": "curl-7.76.1-23.el9.src.rpm",
+					"filename": "curl-7.76.1-23.el9.x86_64.rpm",
+					"sum": {
+						"text": "deadbeef00000000000000000000000000000000000000000000000000000000",
+						"type": "sha256"
+					}
+				}
+			]
+		}
+	}
+}
