@@ -286,8 +286,8 @@ func (e *UnsupportedRangeTypeError) Error() string {
 	return fmt.Sprintf("unsupported range type %q", string(e.RangeType))
 }
 
-// ErrRangeTypeUnknown is wrapped in a CompareError when Compare is called
-// with a Type that cannot evaluate any version.
+// ErrRangeTypeUnknown is wrapped in a CompareError when CompareVersions is
+// called with a Type that cannot evaluate any version.
 var ErrRangeTypeUnknown = errors.New("unknown range type")
 
 // CompareVersions returns an integer comparing v1 and v2 under the comparator
