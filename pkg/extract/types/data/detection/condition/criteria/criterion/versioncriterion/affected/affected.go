@@ -38,9 +38,13 @@ func (a Affected) Accept(family ecosystemTypes.Ecosystem, v string) (bool, error
 	// through to the unconditional true below. For an unknown type,
 	// "all-empty" cannot be trusted: a newer type may carry constraints in
 	// JSON fields this build's unmarshal silently drops, so matching every
-	// version would risk false positives. Known types — including Unknown —
-	// keep their existing semantics.
-	if !a.Type.Known() {
+	// version would risk false positives. Unknown is refused for the same
+	// reason, mirroring cpecriterion/range: its empty bounds mean "the source
+	// declared a constraint we could not translate", not "no constraint" —
+	// its bounded ranges would degrade via CompareError anyway, so this only
+	// closes the all-empty match-all path. Other known types keep their
+	// existing semantics.
+	if a.Type == rangeTypes.RangeTypeUnknown || !a.Type.Known() {
 		return false, nil
 	}
 	for _, r := range a.Range {

@@ -12,12 +12,15 @@
 //	  <(go run github.com/MaineK00n/vuls-data-update/tools/print-enums) \
 //	  <(go run github.com/MaineK00n/vuls-data-update/tools/print-enums@main)
 //
-// Values are sorted per enum so the output is diff-stable across builds.
+// Values are printed in declaration (vocabulary) order, which is also the
+// canonical sort order of extracted data. The vocabularies are append-only,
+// so an added value appends one line — and because the order itself is
+// semantic, the diff additionally catches reordering or mid-list insertion
+// (an append-only violation that would reorder extracted data).
 package main
 
 import (
 	"fmt"
-	"slices"
 
 	severityTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity"
 
@@ -40,12 +43,7 @@ func main() {
 }
 
 func printEnum[T ~string](pkg, name string, values []T) {
-	vs := make([]string, 0, len(values))
 	for _, v := range values {
-		vs = append(vs, string(v))
-	}
-	slices.Sort(vs)
-	for _, v := range vs {
 		fmt.Printf("%s.%s\t%s\n", pkg, name, v)
 	}
 }

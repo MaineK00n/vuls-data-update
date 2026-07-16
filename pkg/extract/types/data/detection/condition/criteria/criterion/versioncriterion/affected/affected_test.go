@@ -215,6 +215,21 @@ func TestAffected_Accept(t *testing.T) {
 			want: false,
 		},
 		{
+			// Unknown's empty bounds mean "the source declared a constraint we
+			// could not translate", not "no constraint" — mirroring
+			// cpecriterion/range, it must not get the all-empty match-all.
+			name: "unknown range type with empty range does not match",
+			fields: fields{
+				Type:  affectedrangeTypes.RangeTypeUnknown,
+				Range: []affectedrangeTypes.Range{{}},
+			},
+			args: args{
+				family: ecosystemTypes.EcosystemTypeRedHat,
+				v:      "0.9.0",
+			},
+			want: false,
+		},
+		{
 			// An all-empty Range element means match-all for known types; an
 			// unsupported (newer-data) type must not get that, since newer
 			// data may constrain matching in ways this build cannot parse.
