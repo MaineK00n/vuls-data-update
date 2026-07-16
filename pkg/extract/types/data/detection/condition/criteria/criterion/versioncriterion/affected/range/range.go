@@ -46,7 +46,7 @@ import (
 // Compare method is unrelated: it is the vocabulary ordering). It is a string
 // so that unmarshaling never validates against the known set: data produced
 // by a newer vuls-data-update (carrying range types this build does not know)
-// still round-trips losslessly. Compare answers such values with
+// still round-trips losslessly. CompareVersions answers such values with
 // *UnsupportedRangeTypeError wrapped in *CompareError, which
 // versioncriterion/affected.Accept degrades to a safe non-match, so an old
 // binary skips the criterion instead of failing detection.

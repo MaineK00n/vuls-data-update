@@ -24,7 +24,7 @@ import (
 //
 // It is a string so that unmarshaling never validates against the known set:
 // data produced by a newer vuls-data-update (carrying range types this build
-// does not know) still round-trips losslessly. Compare answers such values
+// does not know) still round-trips losslessly. CompareVersions answers such
 // with *UnsupportedRangeTypeError wrapped in *CompareError, which Accept
 // degrades to a safe non-match, so an old binary skips the criterion instead
 // of failing detection.
@@ -241,11 +241,11 @@ func Compare(x, y Range) int {
 	)
 }
 
-// CompareError wraps the failure modes RangeType.Compare can raise so that
-// callers can classify them. Mirrors versioncriterion/affected/range's
-// pattern: every failure Compare raises — parse errors, unevaluable types,
-// comparator-internal errors — is wrapped in CompareError so that Accept can
-// always degrade it to a safe non-match.
+// CompareError wraps the failure modes RangeType.CompareVersions can raise
+// so that callers can classify them. Mirrors versioncriterion/affected/range's
+// pattern: every failure CompareVersions raises — parse errors, unevaluable
+// types, comparator-internal errors — is wrapped in CompareError so that
+// Accept can always degrade it to a safe non-match.
 type CompareError struct {
 	Err error
 }
@@ -470,8 +470,9 @@ func (t RangeType) CompareVersions(v1, v2 string) (int, error) {
 }
 
 // Accept returns true when v satisfies every non-empty bound on r, comparing
-// via r.Type.Compare. An empty Range (all four bound strings unset) with a
-// usable Type accepts any v — even an unparseable one — because "no bound"
+// via r.Type.CompareVersions. An empty Range (all four bound strings unset)
+// with a usable Type accepts any v — even an unparseable one — because "no
+// bound"
 // means "no constraint"; an empty Range with Type=Unknown/unset still
 // returns false (no constraint can be evaluated).
 //
@@ -479,7 +480,7 @@ func (t RangeType) CompareVersions(v1, v2 string) (int, error) {
 // bound or query, the Unknown-type sentinel, plus range types this build
 // does not know) are swallowed as graceful non-matches so a detect run
 // against malformed scan input or newer data does not crash. Every error
-// Compare currently raises classifies as *CompareError; the propagation
+// CompareVersions currently raises classifies as *CompareError; the propagation
 // branch below is defensive, for error kinds a future comparator might
 // introduce. Mirrors versioncriterion/affected.Accept.
 func (r Range) Accept(v string) (bool, error) {
@@ -487,7 +488,7 @@ func (r Range) Accept(v string) (bool, error) {
 		// No bounds means "no constraint", which for a known Type reads as
 		// "every version matches". Do not grant that reading to Unknown or
 		// to types outside the vocabulary: with all bounds empty the loop
-		// below never calls Compare, so its CompareError safety net cannot
+		// below never calls CompareVersions, so its CompareError safety net cannot
 		// kick in — without this guard an unevaluable Type would fall
 		// through to the unconditional true and match every version. For
 		// Unknown, empty bounds mean "the source declared a constraint we
@@ -504,7 +505,7 @@ func (r Range) Accept(v string) (bool, error) {
 	type bound struct {
 		label string
 		s     string
-		// reject reports whether the Compare(bound, v) sign should
+		// reject reports whether the CompareVersions(bound, v) sign should
 		// disqualify the criterion (i.e. the bound is violated).
 		reject func(int) bool
 	}
