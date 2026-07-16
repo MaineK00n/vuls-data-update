@@ -475,10 +475,10 @@ func (o options) fetchUpdateinfo(client *utilhttp.Client, u string) error {
 		// it somewhere unvalidated and let it flow into extract unnoticed.
 		splitted, err := util.Split(u.ID, "-", ":")
 		if err != nil {
-			return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "(ALSA|ALBA|ALEA)-yyyy:\\d{4}", u.ID)
+			return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "(ALSA|ALBA|ALEA)-yyyy:<sequence>", u.ID)
 		}
 		if _, err := time.Parse("2006", splitted[1]); err != nil {
-			return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "(ALSA|ALBA|ALEA)-yyyy:\\d{4}", u.ID)
+			return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "(ALSA|ALBA|ALEA)-yyyy:<sequence>", u.ID)
 		}
 
 		if err := util.Write(filepath.Join(o.dir, d, splitted[0], splitted[1], fmt.Sprintf("%s.json", u.ID)), u); err != nil {
