@@ -12,7 +12,9 @@ import (
 // CriteriaOperatorType is a string so that unmarshaling never validates
 // against the known set: data produced by a newer vuls-data-update (carrying
 // operator types this build does not know) still round-trips losslessly
-// instead of failing the whole read.
+// instead of failing the whole read. Unlike the other enums, evaluation
+// (FilteredCriteria.Affected) stays strict on out-of-vocabulary values —
+// see the rationale on its default branch.
 type CriteriaOperatorType string
 
 const (
@@ -183,9 +185,13 @@ func (c FilteredCriteria) Affected() (bool, error) {
 		}
 		return false, nil
 	default:
-		// An operator this build cannot evaluate — unset, or a value from a
-		// newer vuls-data-update — reports not affected so detection skips
-		// the whole criteria subtree instead of aborting.
-		return false, nil
+		// Deliberately strict, unlike the other enum dispatches: AND/OR is a
+		// closed boolean algebra with no growth pressure, an unknown operator
+		// would silently suppress an entire criteria subtree (not just one
+		// criterion), and if a non-monotone operator (e.g. negation) ever
+		// were added, "skip as not affected" would no longer be provably
+		// conservative. An out-of-vocabulary operator is data corruption or
+		// a semantic change that must fail loudly.
+		return false, errors.Errorf("unexpected criteria operator type. expected: %q, actual: %q", []CriteriaOperatorType{CriteriaOperatorTypeAND, CriteriaOperatorTypeOR}, c.Operator)
 	}
 }

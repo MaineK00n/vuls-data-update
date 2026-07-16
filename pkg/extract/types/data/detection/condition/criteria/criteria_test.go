@@ -2617,17 +2617,17 @@ func TestFilteredCriteria_Affected(t *testing.T) {
 			want: true,
 		},
 		{
-			// An operator this build does not know (data from a newer
-			// vuls-data-update) must report not affected for the whole
-			// subtree instead of aborting.
-			name: "unsupported operator (newer data) is not affected",
+			// Unlike the other enum dispatches, an out-of-vocabulary operator
+			// fails loudly: AND/OR is a closed set, and silently skipping a
+			// whole criteria subtree would hide data corruption.
+			name: "unsupported operator errors instead of skipping the subtree",
 			fields: fields{
 				Operator: criteriaTypes.CriteriaOperatorType("future-operator"),
 				Criterions: []criterionTypes.FilteredCriterion{{
 					Criterion: criterionTypes.Criterion{Type: criterionTypes.CriterionType("future-criterion")},
 				}},
 			},
-			want: false,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
