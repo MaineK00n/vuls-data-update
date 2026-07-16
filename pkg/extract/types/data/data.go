@@ -56,11 +56,10 @@ func (d *Data) Merge(ds ...Data) {
 	// in canonical (sorted) order first: d is typically freshly built in
 	// construction order, while an element of ds may have round-tripped
 	// through util.Write's Sort. Relying on the two orders coinciding is what
-	// this normalization replaces. The appends below leave d non-canonical
-	// again, so re-sort on the way out — Merge's output should be canonical
-	// without every caller having to remember a follow-up Sort.
+	// this normalization replaces. The appends below may leave d non-canonical
+	// again; that is fine — matching scans linearly and never relies on d's
+	// order, and the result is canonicalized by util.Write's Sort on write.
 	d.Sort()
-	defer d.Sort()
 	for _, e := range ds {
 		if d.ID != e.ID {
 			continue
