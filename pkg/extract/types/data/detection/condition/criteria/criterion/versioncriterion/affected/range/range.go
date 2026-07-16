@@ -183,10 +183,13 @@ func (e *CannotCompareError) Error() string {
 }
 
 // UnsupportedRangeTypeError is wrapped in a *CompareError when Compare is
-// called with a RangeType this build has no comparator for — typically data
-// produced by a newer vuls-data-update read by an older binary. Callers that
-// need to tell "skipped because the binary is too old" apart from ordinary
-// parse failures can errors.As for this type through the CompareError chain.
+// called with a RangeType outside this build's vocabulary: a value produced
+// by a newer vuls-data-update read by an older binary, or the zero value
+// (unset — a producer-side bug; check the RangeType field to tell the two
+// apart). Only the declared "unknown" vocabulary value classifies as
+// ErrRangeTypeUnknown instead. Callers that need to tell these anomalies
+// apart from ordinary parse failures can errors.As for this type through
+// the CompareError chain.
 type UnsupportedRangeTypeError struct {
 	RangeType RangeType
 }
@@ -554,15 +557,18 @@ func (t RangeType) Compare(family ecosystemTypes.Ecosystem, v1, v2 string) (int,
 			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
 		}
 		return va.Compare(vb), nil
-	case RangeTypeUnknown, "":
-		// Unknown (explicit) and the zero value (unset) collapse to the same
-		// graceful "cannot evaluate" outcome, mirroring cpecriterion/range.
+	case RangeTypeUnknown:
+		// The declared "unknown" vocabulary value is normal data (e.g. NVD
+		// emits it for ranges it cannot express); it quietly cannot evaluate.
 		return 0, &CompareError{Err: ErrRangeTypeUnknown}
 	default:
-		// A non-empty RangeType with no comparator here is a value this build
-		// does not know (data from a newer vuls-data-update). It wraps in
-		// *CompareError so versioncriterion/affected.Accept degrades to a
-		// safe non-match instead of aborting detection on an old binary.
+		// Everything outside the vocabulary — the zero value (unset, a
+		// producer-side bug) or a value this build does not know (data from
+		// a newer vuls-data-update) — is an anomaly worth surfacing, so it
+		// classifies as *UnsupportedRangeTypeError (the two are told apart
+		// via its RangeType field). Wrapping in *CompareError still lets
+		// versioncriterion/affected.Accept degrade to a safe non-match
+		// instead of aborting detection on an old binary.
 		return 0, &CompareError{Err: &UnsupportedRangeTypeError{RangeType: t}}
 	}
 }

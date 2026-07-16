@@ -313,7 +313,7 @@ func TestRangeType_Compare(t *testing.T) {
 		{name: "pan-os: equal", t: ccRangeTypes.RangeTypePANOS, v1: "10.2.4-h10", v2: "10.2.4-h10", want: 0},
 		{name: "pan-os: 2-segment unparseable → CompareError", t: ccRangeTypes.RangeTypePANOS, v1: "11.2", v2: "11.2.0", wantCompareErr: true},
 		{name: "Unknown → CompareError wrapping ErrRangeTypeUnknown", t: ccRangeTypes.RangeTypeUnknown, v1: "1.0.0", v2: "2.0.0", wantCompareErr: true},
-		{name: "unset (zero) RangeType collapses to Unknown → CompareError", t: ccRangeTypes.RangeType(""), v1: "1.0.0", v2: "2.0.0", wantCompareErr: true},
+		{name: "unset (zero) RangeType is outside the vocabulary → CompareError wrapping UnsupportedRangeTypeError", t: ccRangeTypes.RangeType(""), v1: "1.0.0", v2: "2.0.0", wantCompareErr: true},
 		{name: "unsupported RangeType (newer data) → CompareError wrapping UnsupportedRangeTypeError", t: ccRangeTypes.RangeType("fortinet-fortifuture"), v1: "1.0.0", v2: "2.0.0", wantCompareErr: true},
 	}
 	for _, tt := range tests {

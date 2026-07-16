@@ -251,10 +251,13 @@ func (e *NewVersionError) Error() string {
 func (e *NewVersionError) Unwrap() error { return e.Err }
 
 // UnsupportedRangeTypeError is wrapped in a *CompareError when Compare is
-// called with a RangeType this build has no comparator for — typically data
-// produced by a newer vuls-data-update read by an older binary. Callers that
-// need to tell "skipped because the binary is too old" apart from ordinary
-// parse failures can errors.As for this type through the CompareError chain.
+// called with a RangeType outside this build's vocabulary: a value produced
+// by a newer vuls-data-update read by an older binary, or the zero value
+// (unset — a producer-side bug; check the RangeType field to tell the two
+// apart). Only the declared "unknown" vocabulary value classifies as
+// ErrRangeTypeUnknown instead. Callers that need to tell these anomalies
+// apart from ordinary parse failures can errors.As for this type through
+// the CompareError chain.
 type UnsupportedRangeTypeError struct {
 	RangeType RangeType
 }
@@ -273,9 +276,10 @@ var ErrRangeTypeUnknown = errors.New("unknown range type")
 //
 // Parse failures (either side) are wrapped in *CompareError so that
 // detect-time callers can swallow them gracefully. A RangeType with no
-// comparator likewise wraps in *CompareError: Unknown and the zero value
-// carry ErrRangeTypeUnknown, and a value this build does not know (data from
-// a newer vuls-data-update) carries *UnsupportedRangeTypeError.
+// comparator likewise wraps in *CompareError: the declared Unknown value
+// carries ErrRangeTypeUnknown, while anything outside the vocabulary — the
+// zero value (unset) or a value this build does not know (data from a newer
+// vuls-data-update) — carries *UnsupportedRangeTypeError.
 // Comparator-internal failures (e.g. an incomparable non-numeric pair) wrap
 // in *CompareError as well — every error this function raises classifies as
 // *CompareError, so Accept can always degrade it to a safe non-match.
@@ -429,16 +433,18 @@ func (t RangeType) Compare(v1, v2 string) (int, error) {
 			return 0, &CompareError{Err: err}
 		}
 		return n, nil
-	case RangeTypeUnknown, "":
-		// Unknown (explicit) and the zero value (unset) collapse to the same
-		// graceful "cannot evaluate" outcome — callers swallow this via
-		// CompareError. Forgetting to set Type therefore produces a safe
-		// non-match rather than a loud error.
+	case RangeTypeUnknown:
+		// The declared "unknown" vocabulary value is normal data; it quietly
+		// cannot evaluate.
 		return 0, &CompareError{Err: ErrRangeTypeUnknown}
 	default:
-		// A RangeType this build does not know (data from a newer
-		// vuls-data-update) wraps in *CompareError so Range.Accept degrades
-		// to a safe non-match instead of aborting detection on an old binary.
+		// Everything outside the vocabulary — the zero value (unset, a
+		// producer-side bug) or a value this build does not know (data from
+		// a newer vuls-data-update) — is an anomaly worth surfacing, so it
+		// classifies as *UnsupportedRangeTypeError (the two are told apart
+		// via its RangeType field). Wrapping in *CompareError still lets
+		// Range.Accept degrade to a safe non-match instead of aborting
+		// detection on an old binary.
 		return 0, &CompareError{Err: &UnsupportedRangeTypeError{RangeType: t}}
 	}
 }
@@ -458,12 +464,12 @@ func (t RangeType) Compare(v1, v2 string) (int, error) {
 // introduce. Mirrors versioncriterion/affected.Accept.
 func (r Range) Accept(v string) (bool, error) {
 	if r.GreaterEqual == "" && r.GreaterThan == "" && r.LessEqual == "" && r.LessThan == "" {
-		// No bounds → no narrowing, but Unknown / unset Type still refuses
-		// to declare a match, and so does a RangeType this build does not
-		// know (data from a newer vuls-data-update): newer data may
-		// constrain matching in ways this build cannot even parse, so
-		// assuming match-all here would risk false positives.
-		if r.Type == RangeTypeUnknown || r.Type == "" || !slices.Contains(RangeTypes(), r.Type) {
+		// No bounds → no narrowing, but Unknown still refuses to declare a
+		// match, and so does anything outside the vocabulary (unset, or a
+		// RangeType this build does not know — data from a newer
+		// vuls-data-update may constrain matching in ways this build cannot
+		// even parse, so assuming match-all here would risk false positives).
+		if r.Type == RangeTypeUnknown || !slices.Contains(RangeTypes(), r.Type) {
 			return false, nil
 		}
 		return true, nil

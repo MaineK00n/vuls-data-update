@@ -1217,17 +1217,18 @@ func TestRangeType_Compare(t *testing.T) {
 			wantErrIs: affectedrangeTypes.ErrRangeTypeUnknown,
 		},
 		{
-			// The zero value (unset) is a data bug, not version skew: it
-			// classifies as ErrRangeTypeUnknown, mirroring cpecriterion/range,
-			// and must NOT be reported as an unsupported (newer-data) type.
-			name: "unset (zero) type collapses to Unknown",
+			// The zero value (unset) is outside the vocabulary — a
+			// producer-side bug — so like a newer-data value it classifies
+			// as *UnsupportedRangeTypeError; only the declared "unknown"
+			// vocabulary value gets ErrRangeTypeUnknown.
+			name: "unset (zero) type is outside the vocabulary → unsupported",
 			rt:   affectedrangeTypes.RangeType(""),
 			args: args{
 				v1: "1.0.0",
 				v2: "2.0.0",
 			},
-			wantErr:   true,
-			wantErrIs: affectedrangeTypes.ErrRangeTypeUnknown,
+			wantErr:         true,
+			wantUnsupported: true,
 		},
 		{
 			name: "unsupported type (newer data)",
