@@ -6,6 +6,14 @@ import (
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
 
+	advisoryTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/advisory"
+	advisoryContentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/advisory/content"
+	detectionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection"
+	conditionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition"
+	segmentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment"
+	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment/ecosystem"
+	vulnerabilityTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/vulnerability"
+	vulnerabilityContentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/vulnerability/content"
 	microsoftkbTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/microsoftkb"
 	microsoftkbSupersededByTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/microsoftkb/supersededby"
 	microsoftkbSupersedesTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/microsoftkb/supersedes"
@@ -470,6 +478,80 @@ func TestDeriveSupersedes(t *testing.T) {
 				}),
 			); diff != "" {
 				t.Errorf("DeriveSupersedes() mismatch (-want +got):\n%s", diff)
+			}
+		})
+	}
+}
+
+func TestFilterSegments(t *testing.T) {
+	type args struct {
+		as []advisoryTypes.Advisory
+		vs []vulnerabilityTypes.Vulnerability
+		ds []detectionTypes.Detection
+	}
+	tests := []struct {
+		name   string
+		args   args
+		wantAs []advisoryTypes.Advisory
+		wantVs []vulnerabilityTypes.Vulnerability
+	}{
+		{
+			name: "segments without conditions are dropped, content kept",
+			args: args{
+				as: []advisoryTypes.Advisory{{
+					Content: advisoryContentTypes.Content{ID: "ADV-0001"},
+					Segments: []segmentTypes.Segment{
+						{Ecosystem: ecosystemTypes.EcosystemTypeMicrosoft, Tag: "Windows 11 Version 22H2 for x64-based Systems"},
+						{Ecosystem: ecosystemTypes.EcosystemTypeMicrosoft, Tag: "Microsoft Word 2016 for Mac"},
+					},
+				}},
+				vs: []vulnerabilityTypes.Vulnerability{{
+					Content: vulnerabilityContentTypes.Content{ID: "CVE-2024-0001"},
+					Segments: []segmentTypes.Segment{
+						{Ecosystem: ecosystemTypes.EcosystemTypeMicrosoft, Tag: "Microsoft Word 2016 for Mac"},
+					},
+				}},
+				ds: []detectionTypes.Detection{{
+					Ecosystem: ecosystemTypes.EcosystemTypeMicrosoft,
+					Conditions: []conditionTypes.Condition{{
+						Tag: "Windows 11 Version 22H2 for x64-based Systems",
+					}},
+				}},
+			},
+			wantAs: []advisoryTypes.Advisory{{
+				Content: advisoryContentTypes.Content{ID: "ADV-0001"},
+				Segments: []segmentTypes.Segment{
+					{Ecosystem: ecosystemTypes.EcosystemTypeMicrosoft, Tag: "Windows 11 Version 22H2 for x64-based Systems"},
+				},
+			}},
+			wantVs: []vulnerabilityTypes.Vulnerability{{
+				Content: vulnerabilityContentTypes.Content{ID: "CVE-2024-0001"},
+			}},
+		},
+		{
+			name: "no detections drops all segments",
+			args: args{
+				as: []advisoryTypes.Advisory{{
+					Content:  advisoryContentTypes.Content{ID: "MS01-050"},
+					Segments: []segmentTypes.Segment{{Ecosystem: ecosystemTypes.EcosystemTypeMicrosoft, Tag: "Microsoft Excel 2001 for Macintosh"}},
+				}},
+				vs: []vulnerabilityTypes.Vulnerability{{
+					Content:  vulnerabilityContentTypes.Content{ID: "CVE-2001-0718"},
+					Segments: []segmentTypes.Segment{{Ecosystem: ecosystemTypes.EcosystemTypeMicrosoft, Tag: "Microsoft Excel 2001 for Macintosh"}},
+				}},
+			},
+			wantAs: []advisoryTypes.Advisory{{Content: advisoryContentTypes.Content{ID: "MS01-050"}}},
+			wantVs: []vulnerabilityTypes.Vulnerability{{Content: vulnerabilityContentTypes.Content{ID: "CVE-2001-0718"}}},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			gotAs, gotVs := FilterSegments(tt.args.as, tt.args.vs, tt.args.ds)
+			if diff := cmp.Diff(tt.wantAs, gotAs); diff != "" {
+				t.Errorf("advisories (-expected +got):\n%s", diff)
+			}
+			if diff := cmp.Diff(tt.wantVs, gotVs); diff != "" {
+				t.Errorf("vulnerabilities (-expected +got):\n%s", diff)
 			}
 		})
 	}

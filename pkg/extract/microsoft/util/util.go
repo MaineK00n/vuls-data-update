@@ -4,6 +4,10 @@ import (
 	"slices"
 	"strings"
 
+	advisoryTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/advisory"
+	detectionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection"
+	segmentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment"
+	vulnerabilityTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/vulnerability"
 	microsoftkbTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/microsoftkb"
 	microsoftkbSupersedesTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/microsoftkb/supersedes"
 )
@@ -127,4 +131,40 @@ func DeriveSupersedes(kbs []microsoftkbTypes.KB) {
 			}
 		}
 	}
+}
+
+// FilterSegments removes advisory/vulnerability segments that have no
+// corresponding detection condition ((ecosystem, tag) pair in ds). A segment
+// ties content to a detection condition; when a product yields no condition
+// (no KB / fixed-build detection path, e.g. Mac Office) a segment would
+// dangle, so only segments backed by a condition are kept. The content
+// entries themselves are preserved (they are already deduplicated by content
+// in the callers), possibly with no segments left.
+func FilterSegments(as []advisoryTypes.Advisory, vs []vulnerabilityTypes.Vulnerability, ds []detectionTypes.Detection) ([]advisoryTypes.Advisory, []vulnerabilityTypes.Vulnerability) {
+	known := make(map[segmentTypes.Segment]struct{})
+	for _, d := range ds {
+		for _, c := range d.Conditions {
+			known[segmentTypes.Segment{Ecosystem: d.Ecosystem, Tag: c.Tag}] = struct{}{}
+		}
+	}
+
+	for i := range as {
+		as[i].Segments = slices.DeleteFunc(as[i].Segments, func(s segmentTypes.Segment) bool {
+			_, ok := known[s]
+			return !ok
+		})
+		if len(as[i].Segments) == 0 {
+			as[i].Segments = nil
+		}
+	}
+	for i := range vs {
+		vs[i].Segments = slices.DeleteFunc(vs[i].Segments, func(s segmentTypes.Segment) bool {
+			_, ok := known[s]
+			return !ok
+		})
+		if len(vs[i].Segments) == 0 {
+			vs[i].Segments = nil
+		}
+	}
+	return as, vs
 }

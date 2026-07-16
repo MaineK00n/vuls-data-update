@@ -22,41 +22,7 @@
 				"optional": {
 					"impact": "Remote Code Execution"
 				}
-			},
-			"segments": [
-				{
-					"ecosystem": "microsoft",
-					"tag": "Microsoft Excel 2000 for Windows"
-				},
-				{
-					"ecosystem": "microsoft",
-					"tag": "Microsoft Excel 2001 for Macintosh"
-				},
-				{
-					"ecosystem": "microsoft",
-					"tag": "Microsoft Excel 2002 for Windows"
-				},
-				{
-					"ecosystem": "microsoft",
-					"tag": "Microsoft Excel 98 for Macintosh"
-				},
-				{
-					"ecosystem": "microsoft",
-					"tag": "Microsoft PowerPoint 2000 for Windows"
-				},
-				{
-					"ecosystem": "microsoft",
-					"tag": "Microsoft PowerPoint 2001 for Macintosh"
-				},
-				{
-					"ecosystem": "microsoft",
-					"tag": "Microsoft PowerPoint 2002 for Windows"
-				},
-				{
-					"ecosystem": "microsoft",
-					"tag": "Microsoft PowerPoint 98 for Macintosh"
-				}
-			]
+			}
 		}
 	],
 	"vulnerabilities": [
@@ -69,41 +35,7 @@
 						"url": "https://msrc.microsoft.com/update-guide/vulnerability/CAN-2001-0718"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "microsoft",
-					"tag": "Microsoft Excel 2000 for Windows"
-				},
-				{
-					"ecosystem": "microsoft",
-					"tag": "Microsoft Excel 2001 for Macintosh"
-				},
-				{
-					"ecosystem": "microsoft",
-					"tag": "Microsoft Excel 2002 for Windows"
-				},
-				{
-					"ecosystem": "microsoft",
-					"tag": "Microsoft Excel 98 for Macintosh"
-				},
-				{
-					"ecosystem": "microsoft",
-					"tag": "Microsoft PowerPoint 2000 for Windows"
-				},
-				{
-					"ecosystem": "microsoft",
-					"tag": "Microsoft PowerPoint 2001 for Macintosh"
-				},
-				{
-					"ecosystem": "microsoft",
-					"tag": "Microsoft PowerPoint 2002 for Windows"
-				},
-				{
-					"ecosystem": "microsoft",
-					"tag": "Microsoft PowerPoint 98 for Macintosh"
-				}
-			]
+			}
 		}
 	],
 	"data_source": {

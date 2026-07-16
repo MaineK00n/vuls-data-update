@@ -9419,19 +9419,23 @@ func (e extractor) extract(rows []bulletin.Bulletin) ([]dataTypes.Data, []micros
 	// Build result
 	datas := make([]dataTypes.Data, 0, len(groups))
 	for rootID, g := range groups {
+		ds := func() []detectionTypes.Detection {
+			if len(g.conditions) == 0 {
+				return nil
+			}
+			return []detectionTypes.Detection{{
+				Ecosystem:  ecosystemTypes.Ecosystem(ecosystemTypes.EcosystemTypeMicrosoft),
+				Conditions: g.conditions,
+			}}
+		}()
+
+		advisories, vulns := microsoftutil.FilterSegments(g.advisories, g.vulns, ds)
+
 		datas = append(datas, dataTypes.Data{
 			ID:              rootID,
-			Advisories:      g.advisories,
-			Vulnerabilities: g.vulns,
-			Detections: func() []detectionTypes.Detection {
-				if len(g.conditions) == 0 {
-					return nil
-				}
-				return []detectionTypes.Detection{{
-					Ecosystem:  ecosystemTypes.Ecosystem(ecosystemTypes.EcosystemTypeMicrosoft),
-					Conditions: g.conditions,
-				}}
-			}(),
+			Advisories:      advisories,
+			Vulnerabilities: vulns,
+			Detections:      ds,
 			DataSource: sourceTypes.Source{
 				ID:   sourceTypes.MicrosoftBulletin,
 				Raws: e.r.Paths(),

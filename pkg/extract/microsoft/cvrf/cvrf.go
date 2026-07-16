@@ -314,23 +314,27 @@ func (e extractor) extract(c cvrf.CVRF) ([]dataTypes.Data, []microsoftkbTypes.KB
 			return nil, nil, errors.Wrapf(err, "collect KBs for %s", v.CVE)
 		}
 
+		ds := func() []detectionTypes.Detection {
+			if len(conditionsByEcosystem) == 0 {
+				return nil
+			}
+			ds := make([]detectionTypes.Detection, 0, len(conditionsByEcosystem))
+			for eco, conds := range conditionsByEcosystem {
+				ds = append(ds, detectionTypes.Detection{
+					Ecosystem:  eco,
+					Conditions: conds,
+				})
+			}
+			return ds
+		}()
+
+		advisories, vulns = microsoftutil.FilterSegments(advisories, vulns, ds)
+
 		datas = append(datas, dataTypes.Data{
 			ID:              dataTypes.RootID(v.CVE),
 			Advisories:      advisories,
 			Vulnerabilities: vulns,
-			Detections: func() []detectionTypes.Detection {
-				if len(conditionsByEcosystem) == 0 {
-					return nil
-				}
-				ds := make([]detectionTypes.Detection, 0, len(conditionsByEcosystem))
-				for eco, conds := range conditionsByEcosystem {
-					ds = append(ds, detectionTypes.Detection{
-						Ecosystem:  eco,
-						Conditions: conds,
-					})
-				}
-				return ds
-			}(),
+			Detections:      ds,
 			DataSource: sourceTypes.Source{
 				ID:   sourceTypes.MicrosoftCVRF,
 				Raws: e.r.Paths(),
