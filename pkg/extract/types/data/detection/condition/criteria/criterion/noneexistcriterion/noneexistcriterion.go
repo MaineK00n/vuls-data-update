@@ -7,6 +7,7 @@ import (
 
 	binaryTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/noneexistcriterion/binary"
 	sourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/noneexistcriterion/source"
+	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/internal/enum"
 )
 
 // PackageType is a string so that unmarshaling never validates against the
@@ -34,6 +35,14 @@ func PackageTypes() []PackageType {
 	}
 }
 
+// Compare orders t against u by vocabulary rank — the declaration order of
+// PackageTypes() — preserving the canonical output order from before the
+// string conversion. Values outside the vocabulary sort after every known
+// value, lexicographically among themselves.
+func (t PackageType) Compare(u PackageType) int {
+	return enum.Compare(PackageTypes(), t, u)
+}
+
 type Criterion struct {
 	Type   PackageType          `json:"type,omitempty"`
 	Binary *binaryTypes.Package `json:"binary,omitempty"`
@@ -52,7 +61,7 @@ func (c *Criterion) Sort() {
 
 func Compare(x, y Criterion) int {
 	return cmp.Or(
-		cmp.Compare(x.Type, y.Type),
+		x.Type.Compare(y.Type),
 		func() int {
 			switch x.Type {
 			case PackageTypeBinary:

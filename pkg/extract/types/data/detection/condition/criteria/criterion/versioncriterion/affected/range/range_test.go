@@ -29,7 +29,7 @@ func TestCompare(t *testing.T) {
 	}
 }
 
-func TestRangeType_Compare(t *testing.T) {
+func TestRangeType_CompareVersions(t *testing.T) {
 	type args struct {
 		family ecosystemTypes.Ecosystem
 		v1     string
@@ -1243,26 +1243,26 @@ func TestRangeType_Compare(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := tt.rt.Compare(tt.args.family, tt.args.v1, tt.args.v2)
+			got, err := tt.rt.CompareVersions(tt.args.family, tt.args.v1, tt.args.v2)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("RangeType.Compare() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("RangeType.CompareVersions() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if err != nil {
 				// Every failure Compare raises must classify as *CompareError
 				// so that Accept degrades it to a safe non-match.
 				if _, ok := stderrors.AsType[*affectedrangeTypes.CompareError](err); !ok {
-					t.Errorf("RangeType.Compare() error = %v, want *CompareError", err)
+					t.Errorf("RangeType.CompareVersions() error = %v, want *CompareError", err)
 				}
 			}
 			if tt.wantErrIs != nil && !stderrors.Is(err, tt.wantErrIs) {
-				t.Errorf("RangeType.Compare() error = %v, want errors.Is %v", err, tt.wantErrIs)
+				t.Errorf("RangeType.CompareVersions() error = %v, want errors.Is %v", err, tt.wantErrIs)
 			}
 			if _, ok := stderrors.AsType[*affectedrangeTypes.UnsupportedRangeTypeError](err); ok != tt.wantUnsupported {
-				t.Errorf("RangeType.Compare() error = %v, wantUnsupported %v", err, tt.wantUnsupported)
+				t.Errorf("RangeType.CompareVersions() error = %v, wantUnsupported %v", err, tt.wantUnsupported)
 			}
 			if got != tt.want {
-				t.Errorf("RangeType.Compare() = %v, want %v", got, tt.want)
+				t.Errorf("RangeType.CompareVersions() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -1279,7 +1279,7 @@ func TestRangeTypes_HaveComparator(t *testing.T) {
 	}
 	for _, rt := range affectedrangeTypes.RangeTypes() {
 		t.Run(string(rt), func(t *testing.T) {
-			_, err := rt.Compare(ecosystemTypes.EcosystemTypeRedHat, "1.0.0", "2.0.0")
+			_, err := rt.CompareVersions(ecosystemTypes.EcosystemTypeRedHat, "1.0.0", "2.0.0")
 			if _, ok := stderrors.AsType[*affectedrangeTypes.UnsupportedRangeTypeError](err); ok != noComparator[rt] {
 				if ok {
 					t.Errorf("RangeTypes() contains %q but Compare has no comparator for it", rt)

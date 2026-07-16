@@ -8,6 +8,7 @@ import (
 	v31Types "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity/cvss/v31"
 	v40Types "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity/cvss/v40"
 	vendorTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity/vendor"
+	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/internal/enum"
 )
 
 type Severity struct {
@@ -48,10 +49,18 @@ func SeverityTypes() []SeverityType {
 	}
 }
 
+// Compare orders t against u by vocabulary rank — the declaration order of
+// SeverityTypes() — preserving the canonical output order from before the
+// string conversion. Values outside the vocabulary sort after every known
+// value, lexicographically among themselves.
+func (t SeverityType) Compare(u SeverityType) int {
+	return enum.Compare(SeverityTypes(), t, u)
+}
+
 func Compare(x, y Severity) int {
 	return cmp.Or(
 		cmp.Compare(x.Source, y.Source),
-		cmp.Compare(x.Type, y.Type),
+		x.Type.Compare(y.Type),
 		func() int {
 			switch x.Type {
 			case SeverityTypeVendor:

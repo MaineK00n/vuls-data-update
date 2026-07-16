@@ -48,11 +48,11 @@ func TestCompare(t *testing.T) {
 			name: "x:type > y:type",
 			args: args{
 				x: severityTypes.Severity{
-					Type:   severityTypes.SeverityTypeVendor,
+					Type:   severityTypes.SeverityTypeCVSSv31,
 					Source: "source1",
 				},
 				y: severityTypes.Severity{
-					Type:   severityTypes.SeverityTypeCVSSv31,
+					Type:   severityTypes.SeverityTypeVendor,
 					Source: "source1",
 				},
 			},

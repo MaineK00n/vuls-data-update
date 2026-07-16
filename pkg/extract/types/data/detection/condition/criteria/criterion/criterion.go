@@ -9,6 +9,7 @@ import (
 	kbcTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/kbcriterion"
 	necTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/noneexistcriterion"
 	vcTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion"
+	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/internal/enum"
 )
 
 // CriterionType is a string so that unmarshaling never validates against the
@@ -38,6 +39,14 @@ func CriterionTypes() []CriterionType {
 		CriterionTypeCPE,
 		CriterionTypeUnknown,
 	}
+}
+
+// Compare orders t against u by vocabulary rank — the declaration order of
+// CriterionTypes() — preserving the canonical output order from before the
+// string conversion. Values outside the vocabulary sort after every known
+// value, lexicographically among themselves.
+func (t CriterionType) Compare(u CriterionType) int {
+	return enum.Compare(CriterionTypes(), t, u)
 }
 
 type Criterion struct {
@@ -72,7 +81,7 @@ func (c *Criterion) Sort() {
 
 func Compare(x, y Criterion) int {
 	return cmp.Or(
-		cmp.Compare(x.Type, y.Type),
+		x.Type.Compare(y.Type),
 		func() int {
 			switch x.Type {
 			case CriterionTypeVersion:

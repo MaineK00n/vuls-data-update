@@ -254,7 +254,7 @@ func TestRange_Accept(t *testing.T) {
 	}
 }
 
-func TestRangeType_Compare(t *testing.T) {
+func TestRangeType_CompareVersions(t *testing.T) {
 	tests := []struct {
 		name           string
 		t              ccRangeTypes.RangeType
@@ -318,7 +318,7 @@ func TestRangeType_Compare(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := tt.t.Compare(tt.v1, tt.v2)
+			got, err := tt.t.CompareVersions(tt.v1, tt.v2)
 			isCompareErr := false
 			if err != nil {
 				_, isCompareErr = stderrors.AsType[*ccRangeTypes.CompareError](err)
@@ -338,7 +338,7 @@ func TestRangeType_Compare(t *testing.T) {
 }
 
 func TestErrRangeTypeUnknown_Wrapped(t *testing.T) {
-	_, err := ccRangeTypes.RangeTypeUnknown.Compare("1.0.0", "2.0.0")
+	_, err := ccRangeTypes.RangeTypeUnknown.CompareVersions("1.0.0", "2.0.0")
 	if err == nil {
 		t.Fatal("expected error")
 	}
@@ -350,7 +350,7 @@ func TestErrRangeTypeUnknown_Wrapped(t *testing.T) {
 func TestRangeTypes_HaveComparator(t *testing.T) {
 	for _, rt := range ccRangeTypes.RangeTypes() {
 		t.Run(string(rt), func(t *testing.T) {
-			_, err := rt.Compare("1.0.0", "2.0.0")
+			_, err := rt.CompareVersions("1.0.0", "2.0.0")
 			if _, ok := stderrors.AsType[*ccRangeTypes.UnsupportedRangeTypeError](err); ok {
 				t.Errorf("RangeTypes() contains %q but Compare has no comparator for it", rt)
 			}

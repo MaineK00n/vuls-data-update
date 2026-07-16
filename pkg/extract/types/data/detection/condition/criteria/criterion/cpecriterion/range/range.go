@@ -11,6 +11,8 @@ import (
 	"github.com/pkg/errors"
 	nonnumericVersion "github.com/vulsio/go-fortinet-version/nonnumeric"
 	numericVersion "github.com/vulsio/go-fortinet-version/numeric"
+
+	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/internal/enum"
 )
 
 // RangeType selects the version comparator used by Compare / Accept. Extractors
@@ -199,6 +201,14 @@ func RangeTypes() []RangeType {
 	}
 }
 
+// Compare orders t against u by vocabulary rank — the declaration order of
+// RangeTypes() — preserving the canonical output order from before the
+// string conversion. Values outside the vocabulary sort after every known
+// value, lexicographically among themselves.
+func (t RangeType) Compare(u RangeType) int {
+	return enum.Compare(RangeTypes(), t, u)
+}
+
 // Range is a version constraint for a CPE criterion. Type selects the
 // comparator; bounds are inclusive (Greater/LessEqual) or exclusive
 // (Greater/LessThan). Unlike versioncriterion/affected/Range there is no
@@ -213,7 +223,7 @@ type Range struct {
 
 func Compare(x, y Range) int {
 	return cmp.Or(
-		cmp.Compare(x.Type, y.Type),
+		x.Type.Compare(y.Type),
 		cmp.Compare(x.GreaterEqual, y.GreaterEqual),
 		cmp.Compare(x.GreaterThan, y.GreaterThan),
 		cmp.Compare(x.LessEqual, y.LessEqual),
@@ -270,7 +280,7 @@ func (e *UnsupportedRangeTypeError) Error() string {
 // with a Type that cannot evaluate any version.
 var ErrRangeTypeUnknown = errors.New("unknown range type")
 
-// Compare returns an integer comparing v1 and v2 under the comparator
+// CompareVersions returns an integer comparing v1 and v2 under the comparator
 // selected by t (semantics match hashicorp version.Version.Compare):
 // negative for v1 < v2, zero for equal, positive for v1 > v2.
 //
@@ -288,7 +298,7 @@ var ErrRangeTypeUnknown = errors.New("unknown range type")
 // the non-numeric (milestone-letter) scheme; every other Fortinet product uses
 // the numeric scheme. The numeric comparator refuses to order a letter
 // component, so a numeric product safely never matches a non-numeric version.
-func (t RangeType) Compare(v1, v2 string) (int, error) {
+func (t RangeType) CompareVersions(v1, v2 string) (int, error) {
 	switch t {
 	case RangeTypeSEMVER:
 		va, err := version.NewSemver(v1)
@@ -498,7 +508,7 @@ func (r Range) Accept(v string) (bool, error) {
 		if b.s == "" {
 			continue
 		}
-		n, err := r.Type.Compare(b.s, v)
+		n, err := r.Type.CompareVersions(b.s, v)
 		if err != nil {
 			if _, ok := stderrors.AsType[*CompareError](err); ok {
 				return false, nil

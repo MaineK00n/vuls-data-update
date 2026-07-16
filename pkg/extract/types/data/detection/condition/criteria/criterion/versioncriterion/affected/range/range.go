@@ -39,6 +39,7 @@ import (
 	mvn "github.com/masahiro331/go-mvn-version"
 
 	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment/ecosystem"
+	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/internal/enum"
 )
 
 // RangeType selects the version comparator used by Compare. It is a string
@@ -134,6 +135,14 @@ func RangeTypes() []RangeType {
 	}
 }
 
+// Compare orders t against u by vocabulary rank — the declaration order of
+// RangeTypes() — preserving the canonical output order from before the
+// string conversion. Values outside the vocabulary sort after every known
+// value, lexicographically among themselves.
+func (t RangeType) Compare(u RangeType) int {
+	return enum.Compare(RangeTypes(), t, u)
+}
+
 type Range struct {
 	Equal        string `json:"eq,omitempty"`
 	LessThan     string `json:"lt,omitempty"`
@@ -200,7 +209,10 @@ func (e *UnsupportedRangeTypeError) Error() string {
 
 var ErrRangeTypeUnknown = errors.New("unknown range type")
 
-func (t RangeType) Compare(family ecosystemTypes.Ecosystem, v1, v2 string) (int, error) {
+// CompareVersions returns an integer comparing v1 and v2 under the
+// comparator selected by t: negative for v1 < v2, zero for equal, positive
+// for v1 > v2.
+func (t RangeType) CompareVersions(family ecosystemTypes.Ecosystem, v1, v2 string) (int, error) {
 	switch t {
 	case RangeTypeVersion:
 		va, err := version.NewVersion(v1)

@@ -7,6 +7,7 @@ import (
 	"github.com/pkg/errors"
 
 	criterionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion"
+	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/internal/enum"
 )
 
 // CriteriaOperatorType is a string so that unmarshaling never validates
@@ -33,6 +34,14 @@ func CriteriaOperatorTypes() []CriteriaOperatorType {
 	}
 }
 
+// Compare orders t against u by vocabulary rank — the declaration order of
+// CriteriaOperatorTypes() — preserving the canonical output order from before the
+// string conversion. Values outside the vocabulary sort after every known
+// value, lexicographically among themselves.
+func (t CriteriaOperatorType) Compare(u CriteriaOperatorType) int {
+	return enum.Compare(CriteriaOperatorTypes(), t, u)
+}
+
 type Criteria struct {
 	Operator     CriteriaOperatorType       `json:"operator,omitempty"`
 	Criterias    []Criteria                 `json:"criterias,omitempty"`
@@ -56,7 +65,7 @@ func (c *Criteria) Sort() {
 
 func Compare(x, y Criteria) int {
 	return cmp.Or(
-		cmp.Compare(x.Operator, y.Operator),
+		x.Operator.Compare(y.Operator),
 		slices.CompareFunc(x.Criterions, y.Criterions, criterionTypes.Compare),
 		slices.CompareFunc(x.Criterias, y.Criterias, Compare),
 		slices.Compare(x.Repositories, y.Repositories),

@@ -24,7 +24,7 @@ func (a *Affected) Sort() {
 
 func Compare(x, y Affected) int {
 	return cmp.Or(
-		cmp.Compare(x.Type, y.Type),
+		x.Type.Compare(y.Type),
 		slices.CompareFunc(x.Range, y.Range, rangeTypes.Compare),
 		slices.Compare(x.Fixed, y.Fixed),
 	)
@@ -45,7 +45,7 @@ func (a Affected) Accept(family ecosystemTypes.Ecosystem, v string) (bool, error
 	}
 	for _, r := range a.Range {
 		if r.Equal != "" {
-			n, err := a.Type.Compare(family, r.Equal, v)
+			n, err := a.Type.CompareVersions(family, r.Equal, v)
 			if err != nil {
 				if _, ok := stderrors.AsType[*rangeTypes.CompareError](err); ok {
 					continue
@@ -57,7 +57,7 @@ func (a Affected) Accept(family ecosystemTypes.Ecosystem, v string) (bool, error
 			}
 		}
 		if r.GreaterEqual != "" {
-			n, err := a.Type.Compare(family, r.GreaterEqual, v)
+			n, err := a.Type.CompareVersions(family, r.GreaterEqual, v)
 			if err != nil {
 				if _, ok := stderrors.AsType[*rangeTypes.CompareError](err); ok {
 					continue
@@ -69,7 +69,7 @@ func (a Affected) Accept(family ecosystemTypes.Ecosystem, v string) (bool, error
 			}
 		}
 		if r.GreaterThan != "" {
-			n, err := a.Type.Compare(family, r.GreaterThan, v)
+			n, err := a.Type.CompareVersions(family, r.GreaterThan, v)
 			if err != nil {
 				if _, ok := stderrors.AsType[*rangeTypes.CompareError](err); ok {
 					continue
@@ -81,7 +81,7 @@ func (a Affected) Accept(family ecosystemTypes.Ecosystem, v string) (bool, error
 			}
 		}
 		if r.LessEqual != "" {
-			n, err := a.Type.Compare(family, r.LessEqual, v)
+			n, err := a.Type.CompareVersions(family, r.LessEqual, v)
 			if err != nil {
 				if _, ok := stderrors.AsType[*rangeTypes.CompareError](err); ok {
 					continue
@@ -93,7 +93,7 @@ func (a Affected) Accept(family ecosystemTypes.Ecosystem, v string) (bool, error
 			}
 		}
 		if r.LessThan != "" {
-			n, err := a.Type.Compare(family, r.LessThan, v)
+			n, err := a.Type.CompareVersions(family, r.LessThan, v)
 			if err != nil {
 				if _, ok := stderrors.AsType[*rangeTypes.CompareError](err); ok {
 					continue
