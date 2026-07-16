@@ -90,7 +90,7 @@ func TestFetch_cyclicTree(t *testing.T) {
 	// must reach maxDepth and fail rather than loop or return a partial set.
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		w.Header().Set("Content-Type", "text/html")
-		fmt.Fprint(w, `<html><body><a href="../">../</a><a href="loop/">loop/</a></body></html>`)
+		_, _ = fmt.Fprint(w, `<html><body><a href="../">../</a><a href="loop/">loop/</a></body></html>`)
 	}))
 	defer ts.Close()
 
