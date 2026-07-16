@@ -10,6 +10,8 @@ import (
 	advisoryContentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/advisory/content"
 	detectionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection"
 	segmentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment"
+	severityTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity"
+	v31Types "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity/cvss/v31"
 	vulnerabilityTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/vulnerability"
 	vulnerabilityContentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/vulnerability/content"
 	sourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/source"
@@ -223,6 +225,94 @@ func TestData_Merge(t *testing.T) {
 						},
 						Segments: []segmentTypes.Segment{
 							{Ecosystem: "ecosystem:2.1"},
+						},
+					},
+				},
+			},
+		},
+		{
+			// Regression case for Merge's Sort normalization: the same advisory
+			// content carries its severities in opposite orders on the two sides
+			// (receiver freshly built in construction order vs merged-in side
+			// round-tripped through util.Write's Sort). Order-sensitive Compare
+			// must still match them as one advisory, not duplicate it.
+			name: "same advisory with severities in reverse order",
+			fields: dataTypes.Data{
+				ID: dataTypes.RootID("id"),
+				Advisories: []advisoryTypes.Advisory{
+					{
+						Content: advisoryContentTypes.Content{
+							ID: advisoryContentTypes.AdvisoryID("ADV-001"),
+							Severity: []severityTypes.Severity{
+								{
+									Type:    severityTypes.SeverityTypeCVSSv31,
+									Source:  "vendor",
+									CVSSv31: &v31Types.CVSSv31{Vector: "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H", BaseScore: 9.8, BaseSeverity: "CRITICAL"},
+								},
+								{
+									Type:   severityTypes.SeverityTypeVendor,
+									Source: "vendor",
+									Vendor: func() *string { s := "Critical"; return &s }(),
+								},
+							},
+						},
+						Segments: []segmentTypes.Segment{
+							{Ecosystem: "ecosystem:1"},
+						},
+					},
+				},
+			},
+			args: args{
+				ds: []dataTypes.Data{
+					{
+						ID: dataTypes.RootID("id"),
+						Advisories: []advisoryTypes.Advisory{
+							{
+								Content: advisoryContentTypes.Content{
+									ID: advisoryContentTypes.AdvisoryID("ADV-001"),
+									Severity: []severityTypes.Severity{
+										{
+											Type:   severityTypes.SeverityTypeVendor,
+											Source: "vendor",
+											Vendor: func() *string { s := "Critical"; return &s }(),
+										},
+										{
+											Type:    severityTypes.SeverityTypeCVSSv31,
+											Source:  "vendor",
+											CVSSv31: &v31Types.CVSSv31{Vector: "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H", BaseScore: 9.8, BaseSeverity: "CRITICAL"},
+										},
+									},
+								},
+								Segments: []segmentTypes.Segment{
+									{Ecosystem: "ecosystem:2"},
+								},
+							},
+						},
+					},
+				},
+			},
+			expected: dataTypes.Data{
+				ID: dataTypes.RootID("id"),
+				Advisories: []advisoryTypes.Advisory{
+					{
+						Content: advisoryContentTypes.Content{
+							ID: advisoryContentTypes.AdvisoryID("ADV-001"),
+							Severity: []severityTypes.Severity{
+								{
+									Type:   severityTypes.SeverityTypeVendor,
+									Source: "vendor",
+									Vendor: func() *string { s := "Critical"; return &s }(),
+								},
+								{
+									Type:    severityTypes.SeverityTypeCVSSv31,
+									Source:  "vendor",
+									CVSSv31: &v31Types.CVSSv31{Vector: "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H", BaseScore: 9.8, BaseSeverity: "CRITICAL"},
+								},
+							},
+						},
+						Segments: []segmentTypes.Segment{
+							{Ecosystem: "ecosystem:1"},
+							{Ecosystem: "ecosystem:2"},
 						},
 					},
 				},
