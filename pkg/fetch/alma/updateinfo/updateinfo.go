@@ -14,7 +14,6 @@ import (
 	"net/url"
 	"path"
 	"path/filepath"
-	"regexp"
 	"slices"
 	"strings"
 	"time"
@@ -52,11 +51,6 @@ var trees = []string{
 	"almalinux-nvidia",
 	"backports",
 }
-
-// idPattern extracts <prefix> and <year> from advisory IDs such as
-// "ALSA-2022:4940" or "FEDORA-EPEL-2024-abcdef0123" so they can be grouped on
-// disk. IDs that do not match are written flat under their repodata directory.
-var idPattern = regexp.MustCompile(`^(.+)-(\d{4})[-:]`)
 
 type options struct {
 	baseURL     string
@@ -484,11 +478,16 @@ func (o options) fetchUpdateinfo(client *utilhttp.Client, u string) error {
 	return nil
 }
 
-// updateinfoPath groups an advisory under <prefix>/<year>/ when its ID matches
-// the common "<prefix>-<year>[-:]..." shape, and otherwise writes it flat.
+// updateinfoPath groups an advisory under <prefix>/<year>/ when its ID has the
+// "<prefix>-<year>:<seq>" shape used by AlmaLinux errata (ALSA/ALBA/ALEA),
+// matching the alma-errata layout. IDs from other trees that do not fit are
+// written flat under their repodata directory rather than failing the fetch;
+// grouping is only an on-disk convenience, so the fallback loses no data.
 func updateinfoPath(baseDir, id string) string {
-	if m := idPattern.FindStringSubmatch(id); m != nil {
-		return filepath.Join(baseDir, m[1], m[2], fmt.Sprintf("%s.json", id))
+	if ss, err := util.Split(id, "-", ":"); err == nil {
+		if _, err := time.Parse("2006", ss[1]); err == nil {
+			return filepath.Join(baseDir, ss[0], ss[1], fmt.Sprintf("%s.json", id))
+		}
 	}
 	return filepath.Join(baseDir, fmt.Sprintf("%s.json", id))
 }

@@ -209,12 +209,12 @@ func Test_updateinfoPath(t *testing.T) {
 			want: filepath.FromSlash("almalinux/9/BaseOS/x86_64/os/updateinfo/ALSA/2022/ALSA-2022:4940.json"),
 		},
 		{
-			name: "epel advisory grouped by prefix and year",
+			name: "dash-separated epel id does not fit the errata shape and is written flat",
 			args: args{baseDir: filepath.FromSlash("almalinux-epel/10/x86_64_v2/updateinfo"), id: "FEDORA-EPEL-2024-1a2b3c4d5e"},
-			want: filepath.FromSlash("almalinux-epel/10/x86_64_v2/updateinfo/FEDORA-EPEL/2024/FEDORA-EPEL-2024-1a2b3c4d5e.json"),
+			want: filepath.FromSlash("almalinux-epel/10/x86_64_v2/updateinfo/FEDORA-EPEL-2024-1a2b3c4d5e.json"),
 		},
 		{
-			name: "unparseable id written flat",
+			name: "id without a year is written flat",
 			args: args{baseDir: filepath.FromSlash("backports/9/updateinfo"), id: "SOMETHING-WEIRD"},
 			want: filepath.FromSlash("backports/9/updateinfo/SOMETHING-WEIRD.json"),
 		},
