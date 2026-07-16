@@ -40,8 +40,10 @@ func PackageTypes() []PackageType {
 // string conversion. Values outside the vocabulary sort after every known
 // value, lexicographically among themselves.
 func (t PackageType) Compare(u PackageType) int {
-	return enum.Compare(PackageTypes(), t, u)
+	return vocabulary.Compare(t, u)
 }
+
+var vocabulary = enum.NewVocabulary(PackageTypes())
 
 type Criterion struct {
 	Type   PackageType          `json:"type,omitempty"`

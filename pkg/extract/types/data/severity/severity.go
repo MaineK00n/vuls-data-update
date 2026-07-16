@@ -54,8 +54,10 @@ func SeverityTypes() []SeverityType {
 // string conversion. Values outside the vocabulary sort after every known
 // value, lexicographically among themselves.
 func (t SeverityType) Compare(u SeverityType) int {
-	return enum.Compare(SeverityTypes(), t, u)
+	return vocabulary.Compare(t, u)
 }
+
+var vocabulary = enum.NewVocabulary(SeverityTypes())
 
 func Compare(x, y Severity) int {
 	return cmp.Or(

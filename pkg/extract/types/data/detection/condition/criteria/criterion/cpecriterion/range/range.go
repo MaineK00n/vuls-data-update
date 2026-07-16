@@ -4,7 +4,6 @@ import (
 	"cmp"
 	stderrors "errors"
 	"fmt"
-	"slices"
 
 	panosVersion "github.com/MaineK00n/go-paloalto-version/pan-os"
 	"github.com/hashicorp/go-version"
@@ -15,7 +14,8 @@ import (
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/internal/enum"
 )
 
-// RangeType selects the version comparator used by Compare / Accept. Extractors
+// RangeType selects the version comparator used by CompareVersions / Accept
+// (the Compare method is unrelated: it is the vocabulary ordering). Extractors
 // must set it explicitly — Accept on a zero (unset) or Unknown Type refuses to
 // evaluate (returns false), so a forgotten Type produces a safe non-match
 // rather than a silent false positive. The `type` JSON tag carries
@@ -39,7 +39,7 @@ const (
 	RangeTypeSEMVER  RangeType = "semver"
 	RangeTypePANOS   RangeType = "pan-os"
 
-	// Fortinet uses one RangeType per product. RangeType.Compare receives only
+	// Fortinet uses one RangeType per product. RangeType.CompareVersions receives only
 	// the two version strings (no product context), so a product whose
 	// versioning scheme later diverges must carry its own type to get its own
 	// comparator without changing how any other product is compared — and adding
@@ -206,7 +206,17 @@ func RangeTypes() []RangeType {
 // string conversion. Values outside the vocabulary sort after every known
 // value, lexicographically among themselves.
 func (t RangeType) Compare(u RangeType) int {
-	return enum.Compare(RangeTypes(), t, u)
+	return vocabulary.Compare(t, u)
+}
+
+var vocabulary = enum.NewVocabulary(RangeTypes())
+
+// Known reports whether t is in this build's vocabulary — i.e. whether this
+// build can be expected to evaluate it (modulo comparator-less debt, see
+// UnsupportedRangeTypeError). Data from a newer vuls-data-update may carry
+// values for which Known is false.
+func (t RangeType) Known() bool {
+	return vocabulary.Contains(t)
 }
 
 // Range is a version constraint for a CPE criterion. Type selects the
@@ -260,8 +270,8 @@ func (e *NewVersionError) Error() string {
 
 func (e *NewVersionError) Unwrap() error { return e.Err }
 
-// UnsupportedRangeTypeError is wrapped in a *CompareError when Compare is
-// called with a RangeType outside this build's vocabulary: a value produced
+// UnsupportedRangeTypeError is wrapped in a *CompareError when
+// CompareVersions is called with a RangeType outside this build's vocabulary: a value produced
 // by a newer vuls-data-update read by an older binary, or the zero value
 // (unset — a producer-side bug; check the RangeType field to tell the two
 // apart). Only the declared "unknown" vocabulary value classifies as
@@ -485,7 +495,7 @@ func (r Range) Accept(v string) (bool, error) {
 		// vocabulary, a newer build may carry constraints in JSON fields
 		// this build's unmarshal silently drops. Matching everything in
 		// either case would risk false positives.
-		if r.Type == RangeTypeUnknown || !slices.Contains(RangeTypes(), r.Type) {
+		if r.Type == RangeTypeUnknown || !r.Type.Known() {
 			return false, nil
 		}
 		return true, nil

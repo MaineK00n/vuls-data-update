@@ -40,7 +40,7 @@ func (a Affected) Accept(family ecosystemTypes.Ecosystem, v string) (bool, error
 	// JSON fields this build's unmarshal silently drops, so matching every
 	// version would risk false positives. Known types — including Unknown —
 	// keep their existing semantics.
-	if !slices.Contains(rangeTypes.RangeTypes(), a.Type) {
+	if !a.Type.Known() {
 		return false, nil
 	}
 	for _, r := range a.Range {

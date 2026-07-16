@@ -42,7 +42,8 @@ import (
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/internal/enum"
 )
 
-// RangeType selects the version comparator used by Compare. It is a string
+// RangeType selects the version comparator used by CompareVersions (the
+// Compare method is unrelated: it is the vocabulary ordering). It is a string
 // so that unmarshaling never validates against the known set: data produced
 // by a newer vuls-data-update (carrying range types this build does not know)
 // still round-trips losslessly. Compare answers such values with
@@ -140,7 +141,17 @@ func RangeTypes() []RangeType {
 // string conversion. Values outside the vocabulary sort after every known
 // value, lexicographically among themselves.
 func (t RangeType) Compare(u RangeType) int {
-	return enum.Compare(RangeTypes(), t, u)
+	return vocabulary.Compare(t, u)
+}
+
+var vocabulary = enum.NewVocabulary(RangeTypes())
+
+// Known reports whether t is in this build's vocabulary — i.e. whether this
+// build can be expected to evaluate it (modulo comparator-less debt, see
+// UnsupportedRangeTypeError). Data from a newer vuls-data-update may carry
+// values for which Known is false.
+func (t RangeType) Known() bool {
+	return vocabulary.Contains(t)
 }
 
 type Range struct {
@@ -191,14 +202,16 @@ func (e *CannotCompareError) Error() string {
 	return fmt.Sprintf("cannot compare versions. %s", e.Reason)
 }
 
-// UnsupportedRangeTypeError is wrapped in a *CompareError when Compare is
-// called with a RangeType outside this build's vocabulary: a value produced
-// by a newer vuls-data-update read by an older binary, or the zero value
-// (unset — a producer-side bug; check the RangeType field to tell the two
-// apart). Only the declared "unknown" vocabulary value classifies as
-// ErrRangeTypeUnknown instead. Callers that need to tell these anomalies
-// apart from ordinary parse failures can errors.As for this type through
-// the CompareError chain.
+// UnsupportedRangeTypeError is wrapped in a *CompareError when
+// CompareVersions is called with a RangeType this build has no comparator
+// for. That is usually a value outside the vocabulary — produced by a newer
+// vuls-data-update and read by an older binary, or the zero value (unset — a
+// producer-side bug; check the RangeType field to tell the two apart) — but
+// also covers the vocabulary values pacman and freebsd-pkg, whose
+// comparators were never implemented (pre-existing debt). Only the declared
+// "unknown" vocabulary value classifies as ErrRangeTypeUnknown instead.
+// Callers that need to tell these anomalies apart from ordinary parse
+// failures can errors.As for this type through the CompareError chain.
 type UnsupportedRangeTypeError struct {
 	RangeType RangeType
 }

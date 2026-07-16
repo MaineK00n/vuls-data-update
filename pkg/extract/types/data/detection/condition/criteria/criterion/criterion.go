@@ -46,8 +46,10 @@ func CriterionTypes() []CriterionType {
 // string conversion. Values outside the vocabulary sort after every known
 // value, lexicographically among themselves.
 func (t CriterionType) Compare(u CriterionType) int {
-	return enum.Compare(CriterionTypes(), t, u)
+	return vocabulary.Compare(t, u)
 }
+
+var vocabulary = enum.NewVocabulary(CriterionTypes())
 
 type Criterion struct {
 	Type      CriterionType       `json:"type,omitempty"`

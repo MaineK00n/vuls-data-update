@@ -39,8 +39,10 @@ func CriteriaOperatorTypes() []CriteriaOperatorType {
 // string conversion. Values outside the vocabulary sort after every known
 // value, lexicographically among themselves.
 func (t CriteriaOperatorType) Compare(u CriteriaOperatorType) int {
-	return enum.Compare(CriteriaOperatorTypes(), t, u)
+	return vocabulary.Compare(t, u)
 }
+
+var vocabulary = enum.NewVocabulary(CriteriaOperatorTypes())
 
 type Criteria struct {
 	Operator     CriteriaOperatorType       `json:"operator,omitempty"`
