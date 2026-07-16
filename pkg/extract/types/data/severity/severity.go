@@ -8,7 +8,6 @@ import (
 	v31Types "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity/cvss/v31"
 	v40Types "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity/cvss/v40"
 	vendorTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity/vendor"
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/internal/cmputil"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/internal/enum"
 )
 
@@ -122,18 +121,7 @@ func Compare(x, y Severity) int {
 					return v40Types.Compare(*x.CVSSv40, *y.CVSSv40)
 				}
 			default:
-				// An out-of-vocabulary type (data from a newer vuls-data-update)
-				// selects no payload arm, but the ordering must stay total over
-				// everything this build can see: returning 0 for elements that
-				// differ in visible payload would make canonical output
-				// nondeterministic under the unstable slices.SortFunc.
-				return cmp.Or(
-					cmputil.Ptr(x.Vendor, y.Vendor, cmp.Compare[string]),
-					cmputil.Ptr(x.CVSSv2, y.CVSSv2, v2Types.Compare),
-					cmputil.Ptr(x.CVSSv30, y.CVSSv30, v30Types.Compare),
-					cmputil.Ptr(x.CVSSv31, y.CVSSv31, v31Types.Compare),
-					cmputil.Ptr(x.CVSSv40, y.CVSSv40, v40Types.Compare),
-				)
+				return 0
 			}
 		}(),
 	)

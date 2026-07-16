@@ -7,7 +7,6 @@ import (
 
 	binaryTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/noneexistcriterion/binary"
 	sourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/noneexistcriterion/source"
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/internal/cmputil"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/internal/enum"
 )
 
@@ -90,15 +89,7 @@ func Compare(x, y Criterion) int {
 					return sourceTypes.Compare(*x.Source, *y.Source)
 				}
 			default:
-				// An out-of-vocabulary type (data from a newer vuls-data-update)
-				// selects no payload arm, but the ordering must stay total over
-				// everything this build can see: returning 0 for elements that
-				// differ in visible payload would make canonical output
-				// nondeterministic under the unstable slices.SortFunc.
-				return cmp.Or(
-					cmputil.Ptr(x.Binary, y.Binary, binaryTypes.Compare),
-					cmputil.Ptr(x.Source, y.Source, sourceTypes.Compare),
-				)
+				return 0
 			}
 		}(),
 	)

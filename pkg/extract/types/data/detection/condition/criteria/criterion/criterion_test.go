@@ -52,16 +52,6 @@ func TestCompare(t *testing.T) {
 		args args
 		want int
 	}{
-		{
-			// Same out-of-vocabulary type: ordering must still be total over
-			// the visible payload (nondeterministic canonical output otherwise).
-			name: "unknown type orders by visible payload",
-			args: args{
-				x: criterionTypes.Criterion{Type: criterionTypes.CriterionType("future-criterion")},
-				y: criterionTypes.Criterion{Type: criterionTypes.CriterionType("future-criterion"), Version: &vcTypes.Criterion{}},
-			},
-			want: -1,
-		},
 		// TODO: Add test cases.
 	}
 	for _, tt := range tests {

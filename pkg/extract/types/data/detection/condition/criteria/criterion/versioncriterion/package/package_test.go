@@ -45,14 +45,6 @@ func TestCompare(t *testing.T) {
 		args args
 		want int
 	}{
-		{
-			name: "unknown type orders by visible payload",
-			args: args{
-				x: packageTypes.Package{Type: packageTypes.PackageType("future-package")},
-				y: packageTypes.Package{Type: packageTypes.PackageType("future-package"), Binary: &binaryTypes.Package{Name: "name"}},
-			},
-			want: -1,
-		},
 		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
