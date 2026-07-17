@@ -20,9 +20,11 @@
 package main
 
 import (
-	"errors"
+	stderrors "errors"
 	"fmt"
 	"os"
+
+	"github.com/pkg/errors"
 
 	criteriaTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria"
 	criterionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion"
@@ -42,7 +44,7 @@ func main() {
 }
 
 func run() error {
-	return errors.Join(
+	return stderrors.Join(
 		printEnum("pkg/extract/types/data/detection/condition/criteria", "CriteriaOperatorType", criteriaTypes.CriteriaOperatorTypes()),
 		printEnum("pkg/extract/types/data/detection/condition/criteria/criterion", "CriterionType", criterionTypes.CriterionTypes()),
 		printEnum("pkg/extract/types/data/detection/condition/criteria/criterion/cpecriterion/range", "RangeType", cpecriterionrangeTypes.RangeTypes()),
@@ -57,7 +59,7 @@ func run() error {
 func printEnum[T ~string](pkg, name string, values []T) error {
 	for _, v := range values {
 		if _, err := fmt.Printf("%s.%s\t%s\n", pkg, name, v); err != nil {
-			return fmt.Errorf("print %s.%s: %w", pkg, name, err)
+			return errors.Wrapf(err, "print %s.%s", pkg, name)
 		}
 	}
 	return nil

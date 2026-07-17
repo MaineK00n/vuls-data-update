@@ -203,6 +203,6 @@ func (c FilteredCriteria) Affected() (bool, error) {
 		// were added, "skip as not affected" would no longer be provably
 		// conservative. An out-of-vocabulary operator is data corruption or
 		// a semantic change that must fail loudly.
-		return false, errors.Errorf("unexpected criteria operator type. expected: %q, actual: %q", []CriteriaOperatorType{CriteriaOperatorTypeAND, CriteriaOperatorTypeOR}, c.Operator)
+		return false, errors.Errorf("unexpected criteria operator type. expected: %q, actual: %q", CriteriaOperatorTypes(), c.Operator)
 	}
 }

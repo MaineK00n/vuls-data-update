@@ -346,7 +346,7 @@ func TestRangeTypes_HaveComparator(t *testing.T) {
 		t.Run(string(rt), func(t *testing.T) {
 			_, err := rt.CompareVersions("1.0.0", "2.0.0")
 			if _, ok := stderrors.AsType[*ccRangeTypes.UnsupportedRangeTypeError](err); ok {
-				t.Errorf("RangeTypes() contains %q but Compare has no comparator for it", rt)
+				t.Errorf("RangeTypes() contains %q but CompareVersions has no comparator for it", rt)
 			}
 		})
 	}

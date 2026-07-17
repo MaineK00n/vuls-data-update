@@ -16,6 +16,9 @@ type Vocabulary[T ~string] struct {
 }
 
 func NewVocabulary[T ~string](values []T) Vocabulary[T] {
+	// Clone so a later mutation of the caller's slice cannot desynchronize
+	// values and rank.
+	values = slices.Clone(values)
 	rank := make(map[T]int, len(values))
 	for i, v := range values {
 		rank[v] = i
