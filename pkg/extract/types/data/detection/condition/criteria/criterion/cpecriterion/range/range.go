@@ -11,6 +11,7 @@ import (
 	nonnumericVersion "github.com/vulsio/go-fortinet-version/nonnumeric"
 	numericVersion "github.com/vulsio/go-fortinet-version/numeric"
 
+	warningTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/warning"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/internal/enum"
 )
 
@@ -484,21 +485,26 @@ func (t RangeType) CompareVersions(v1, v2 string) (int, error) {
 // branch below is defensive, for error kinds a future comparator might
 // introduce. Mirrors versioncriterion/affected.Accept.
 func (r Range) Accept(v string) (bool, error) {
+	// The declared Unknown vocabulary value is normal data ("the source
+	// declared a constraint we could not translate", not "no constraint")
+	// and quietly refuses to match — including the no-bounds match-all
+	// below.
+	if r.Type == RangeTypeUnknown {
+		return false, nil
+	}
+	// Types outside the vocabulary — unset, or data from a newer
+	// vuls-data-update — are refused wholesale as unevaluable, reported as a
+	// non-fatal *warning.UnevaluableError for the criterion layer to record.
+	// This must sit above the no-bounds fast path: with all bounds empty the
+	// loop below never calls CompareVersions, so its CompareError safety net
+	// cannot kick in, and a newer type may carry constraints in JSON fields
+	// this build's unmarshal silently drops — falling through to the
+	// unconditional match-all would risk false positives.
+	if !r.Type.Known() {
+		return false, &warningTypes.UnevaluableError{Warning: warningTypes.Warning{Kind: warningTypes.KindUnevaluableRangeType, Cause: string(r.Type)}}
+	}
 	if r.GreaterEqual == "" && r.GreaterThan == "" && r.LessEqual == "" && r.LessThan == "" {
-		// No bounds means "no constraint", which for a known Type reads as
-		// "every version matches". Do not grant that reading to Unknown or
-		// to types outside the vocabulary: with all bounds empty the loop
-		// below never calls CompareVersions, so its CompareError safety net cannot
-		// kick in — without this guard an unevaluable Type would fall
-		// through to the unconditional true and match every version. For
-		// Unknown, empty bounds mean "the source declared a constraint we
-		// could not translate", not "no constraint"; for a type outside the
-		// vocabulary, a newer build may carry constraints in JSON fields
-		// this build's unmarshal silently drops. Matching everything in
-		// either case would risk false positives.
-		if r.Type == RangeTypeUnknown || !r.Type.Known() {
-			return false, nil
-		}
+		// No bounds means "no constraint": every version matches.
 		return true, nil
 	}
 

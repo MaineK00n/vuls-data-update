@@ -2,6 +2,8 @@ package criterion
 
 import (
 	"cmp"
+	stderrors "errors"
+	"slices"
 
 	"github.com/pkg/errors"
 
@@ -164,6 +166,11 @@ func (c Criterion) Contains(query Query, repositories []string) (bool, error) {
 		for _, q := range query.Version {
 			isAccepted, err := c.Version.Accept(q, repositories)
 			if err != nil {
+				// Unevaluable data cannot contain the query; the warning is
+				// recorded by Accept, which evaluates the same criterion.
+				if _, ok := stderrors.AsType[*warningTypes.UnevaluableError](err); ok {
+					continue
+				}
 				return false, errors.Wrap(err, "version criterion accept")
 			}
 			if isAccepted {
@@ -181,6 +188,9 @@ func (c Criterion) Contains(query Query, repositories []string) (bool, error) {
 
 		isAccepted, err := c.NoneExist.Accept(*query.NoneExist, repositories)
 		if err != nil {
+			if _, ok := stderrors.AsType[*warningTypes.UnevaluableError](err); ok {
+				return false, nil
+			}
 			return false, errors.Wrap(err, "none exist criterion accept")
 		}
 		return isAccepted, nil
@@ -208,6 +218,9 @@ func (c Criterion) Contains(query Query, repositories []string) (bool, error) {
 		for _, q := range query.CPE {
 			quality, err := c.CPE.Accept(q)
 			if err != nil {
+				if _, ok := stderrors.AsType[*warningTypes.UnevaluableError](err); ok {
+					continue
+				}
 				return false, errors.Wrap(err, "cpe criterion accept")
 			}
 			switch quality {
@@ -274,28 +287,24 @@ func (c Criterion) Accept(query Query, repositories []string) (FilteredCriterion
 		if c.Version == nil {
 			return FilteredCriterion{}, errors.New("criterion is not set for version criterion")
 		}
-		// Enums this arm is about to evaluate must be in this build's
-		// vocabulary; otherwise the criterion contributes "not affected" and
-		// the reason is recorded on the result so callers can surface it.
-		// The deeper vocabulary guards remain as silent backstops.
-		var ws []warningTypes.Warning
-		if !c.Version.Package.Type.Known() {
-			ws = append(ws, warningTypes.Warning{Kind: warningTypes.KindUnevaluablePackageType, Cause: string(c.Version.Package.Type)})
-		}
-		if c.Version.Affected != nil && !c.Version.Affected.Type.Known() {
-			ws = append(ws, warningTypes.Warning{Kind: warningTypes.KindUnevaluableRangeType, Cause: string(c.Version.Affected.Type)})
-		}
-		if len(ws) > 0 {
-			return FilteredCriterion{Criterion: c, Warnings: ws}, nil
-		}
 		if len(query.Version) == 0 {
 			return FilteredCriterion{Criterion: c, Accepts: AcceptQueries{}}, nil
 		}
 
 		var is []int
+		var ws []warningTypes.Warning
 		for i, q := range query.Version {
 			isAccepted, err := c.Version.Accept(q, repositories)
 			if err != nil {
+				// The layer that could not evaluate its own data reports it
+				// as a non-fatal *warning.UnevaluableError; record it once
+				// and treat the query as not accepted.
+				if ue, ok := stderrors.AsType[*warningTypes.UnevaluableError](err); ok {
+					if !slices.Contains(ws, ue.Warning) {
+						ws = append(ws, ue.Warning)
+					}
+					continue
+				}
 				return FilteredCriterion{}, errors.Wrap(err, "version criterion accept")
 			}
 			if isAccepted {
@@ -305,13 +314,11 @@ func (c Criterion) Accept(query Query, repositories []string) (FilteredCriterion
 		return FilteredCriterion{
 			Criterion: c,
 			Accepts:   AcceptQueries{Version: is},
+			Warnings:  ws,
 		}, nil
 	case CriterionTypeNoneExist:
 		if c.NoneExist == nil {
 			return FilteredCriterion{}, errors.New("criterion is not set for none exist criterion")
-		}
-		if !c.NoneExist.Type.Known() {
-			return FilteredCriterion{Criterion: c, Warnings: []warningTypes.Warning{{Kind: warningTypes.KindUnevaluablePackageType, Cause: string(c.NoneExist.Type)}}}, nil
 		}
 		if query.NoneExist == nil {
 			return FilteredCriterion{Criterion: c, Accepts: AcceptQueries{}}, nil
@@ -319,6 +326,9 @@ func (c Criterion) Accept(query Query, repositories []string) (FilteredCriterion
 
 		isAccepted, err := c.NoneExist.Accept(*query.NoneExist, repositories)
 		if err != nil {
+			if ue, ok := stderrors.AsType[*warningTypes.UnevaluableError](err); ok {
+				return FilteredCriterion{Criterion: c, Warnings: []warningTypes.Warning{ue.Warning}}, nil
+			}
 			return FilteredCriterion{}, errors.Wrap(err, "none exist criterion accept")
 		}
 		return FilteredCriterion{
@@ -345,17 +355,21 @@ func (c Criterion) Accept(query Query, repositories []string) (FilteredCriterion
 		if c.CPE == nil {
 			return FilteredCriterion{}, errors.New("criterion is not set for cpe criterion")
 		}
-		if c.CPE.Range != nil && !c.CPE.Range.Type.Known() {
-			return FilteredCriterion{Criterion: c, Warnings: []warningTypes.Warning{{Kind: warningTypes.KindUnevaluableRangeType, Cause: string(c.CPE.Range.Type)}}}, nil
-		}
 		if len(query.CPE) == 0 {
 			return FilteredCriterion{Criterion: c, Accepts: AcceptQueries{}}, nil
 		}
 
 		var accepts CPEAccepts
+		var ws []warningTypes.Warning
 		for i, q := range query.CPE {
 			quality, err := c.CPE.Accept(q)
 			if err != nil {
+				if ue, ok := stderrors.AsType[*warningTypes.UnevaluableError](err); ok {
+					if !slices.Contains(ws, ue.Warning) {
+						ws = append(ws, ue.Warning)
+					}
+					continue
+				}
 				return FilteredCriterion{}, errors.Wrap(err, "cpe criterion accept")
 			}
 			switch quality {
@@ -372,6 +386,7 @@ func (c Criterion) Accept(query Query, repositories []string) (FilteredCriterion
 		return FilteredCriterion{
 			Criterion: c,
 			Accepts:   AcceptQueries{CPE: accepts},
+			Warnings:  ws,
 		}, nil
 	default:
 		// A criterion type outside this build's vocabulary (data from a

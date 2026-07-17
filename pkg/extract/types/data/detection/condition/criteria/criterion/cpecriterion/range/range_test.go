@@ -203,10 +203,11 @@ func TestRange_Accept(t *testing.T) {
 			want: false,
 		},
 		{
-			name: "unset type (zero) treated as unknown",
-			r:    ccRangeTypes.Range{LessThan: "2.0.0"},
-			v:    "1.0.0",
-			want: false,
+			name:    "unset type (zero) is unevaluable",
+			r:       ccRangeTypes.Range{LessThan: "2.0.0"},
+			v:       "1.0.0",
+			want:    false,
+			wantErr: true,
 		},
 		{
 			name: "unparseable bound is swallowed as graceful non-match (CompareError classified)",
@@ -224,20 +225,22 @@ func TestRange_Accept(t *testing.T) {
 			// Data written by a newer vuls-data-update may carry a range type
 			// this build does not know. Accept must degrade to a non-match
 			// (skip the criterion) instead of failing the whole detection.
-			name: "unsupported type (newer data) never matches",
-			r:    ccRangeTypes.Range{Type: ccRangeTypes.RangeType("fortinet-fortifuture"), LessThan: "1.0.0"},
-			v:    "0.9.0",
-			want: false,
+			name:    "unsupported type (newer data) reports unevaluable",
+			r:       ccRangeTypes.Range{Type: ccRangeTypes.RangeType("fortinet-fortifuture"), LessThan: "1.0.0"},
+			v:       "0.9.0",
+			want:    false,
+			wantErr: true,
 		},
 		{
 			// Without bounds the fast path declares match-all for known
 			// types; an unsupported (newer-data) type must not get that,
 			// since newer data may constrain matching in ways this build
 			// cannot even parse.
-			name: "unsupported type (newer data) with no bounds never matches",
-			r:    ccRangeTypes.Range{Type: ccRangeTypes.RangeType("fortinet-fortifuture")},
-			v:    "1.0.0",
-			want: false,
+			name:    "unsupported type (newer data) with no bounds reports unevaluable",
+			r:       ccRangeTypes.Range{Type: ccRangeTypes.RangeType("fortinet-fortifuture")},
+			v:       "1.0.0",
+			want:    false,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {

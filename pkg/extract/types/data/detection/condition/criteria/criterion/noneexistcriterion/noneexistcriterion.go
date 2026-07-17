@@ -7,6 +7,7 @@ import (
 
 	binaryTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/noneexistcriterion/binary"
 	sourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/noneexistcriterion/source"
+	warningTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/warning"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/internal/enum"
 )
 
@@ -137,11 +138,15 @@ func (c Criterion) Accept(query Query, repositories []string) (bool, error) {
 		}
 		return true, nil
 	default:
-		// A PackageType this build cannot evaluate — Unknown, unset, or a
-		// value from a newer vuls-data-update — reports "does not accept"
-		// (not affected) so detection skips the criterion instead of
-		// aborting. For a none-exist criterion this is the conservative
-		// direction: it under-detects rather than falsely claiming absence.
-		return false, nil
+		// The declared Unknown vocabulary value is normal data and quietly
+		// does not accept (for a none-exist criterion that is the
+		// conservative direction: under-detect rather than falsely claim
+		// absence). Anything else here — unset, or a value from a newer
+		// vuls-data-update — is unevaluable: report it as a non-fatal
+		// *warning.UnevaluableError so the criterion layer can record it.
+		if c.Type == PackageTypeUnknown {
+			return false, nil
+		}
+		return false, &warningTypes.UnevaluableError{Warning: warningTypes.Warning{Kind: warningTypes.KindUnevaluablePackageType, Cause: string(c.Type)}}
 	}
 }

@@ -203,7 +203,7 @@ func TestAffected_Accept(t *testing.T) {
 			// Data written by a newer vuls-data-update may carry a range type
 			// this build does not know. Accept must degrade to a non-match
 			// (skip the criterion) instead of failing the whole detection.
-			name: "unsupported range type (newer data) degrades to non-match",
+			name: "unsupported range type (newer data) reports unevaluable",
 			fields: fields{
 				Type:  affectedrangeTypes.RangeType("future-type"),
 				Range: []affectedrangeTypes.Range{{LessThan: "1.0.0"}},
@@ -212,7 +212,8 @@ func TestAffected_Accept(t *testing.T) {
 				family: ecosystemTypes.EcosystemTypeRedHat,
 				v:      "0.9.0",
 			},
-			want: false,
+			want:    false,
+			wantErr: true,
 		},
 		{
 			// Unknown's empty bounds mean "the source declared a constraint we
@@ -233,7 +234,7 @@ func TestAffected_Accept(t *testing.T) {
 			// An all-empty Range element means match-all for known types; an
 			// unsupported (newer-data) type must not get that, since newer
 			// data may constrain matching in ways this build cannot parse.
-			name: "unsupported range type (newer data) with empty range does not match",
+			name: "unsupported range type (newer data) with empty range reports unevaluable",
 			fields: fields{
 				Type:  affectedrangeTypes.RangeType("future-type"),
 				Range: []affectedrangeTypes.Range{{}},
@@ -242,7 +243,8 @@ func TestAffected_Accept(t *testing.T) {
 				family: ecosystemTypes.EcosystemTypeRedHat,
 				v:      "0.9.0",
 			},
-			want: false,
+			want:    false,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {

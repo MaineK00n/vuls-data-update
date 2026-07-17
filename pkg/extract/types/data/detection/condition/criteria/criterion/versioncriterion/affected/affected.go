@@ -8,6 +8,7 @@ import (
 	"github.com/pkg/errors"
 
 	rangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/affected/range"
+	warningTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/warning"
 	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment/ecosystem"
 )
 
@@ -31,21 +32,23 @@ func Compare(x, y Affected) int {
 }
 
 func (a Affected) Accept(family ecosystemTypes.Ecosystem, v string) (bool, error) {
-	// Refuse types outside this build's vocabulary (data from a newer
-	// vuls-data-update) wholesale. Bounded ranges would degrade to false on
-	// their own — Compare answers with *CompareError and each element is
-	// skipped — but an all-empty Range element never calls Compare and falls
-	// through to the unconditional true below. For an unknown type,
-	// "all-empty" cannot be trusted: a newer type may carry constraints in
-	// JSON fields this build's unmarshal silently drops, so matching every
-	// version would risk false positives. Unknown is refused for the same
-	// reason, mirroring cpecriterion/range: its empty bounds mean "the source
-	// declared a constraint we could not translate", not "no constraint" —
-	// its bounded ranges would degrade via CompareError anyway, so this only
-	// closes the all-empty match-all path. Other known types keep their
-	// existing semantics.
-	if a.Type == rangeTypes.RangeTypeUnknown || !a.Type.Known() {
+	// The declared Unknown vocabulary value is normal data ("the source
+	// declared a constraint we could not translate", not "no constraint")
+	// and quietly refuses to match — this also closes the all-empty-Range
+	// match-all path below, mirroring cpecriterion/range.
+	if a.Type == rangeTypes.RangeTypeUnknown {
 		return false, nil
+	}
+	// Types outside the vocabulary — unset, or data from a newer
+	// vuls-data-update — are refused wholesale as unevaluable, reported as a
+	// non-fatal *warning.UnevaluableError for the criterion layer to record.
+	// Bounded ranges would degrade to false on their own via *CompareError,
+	// but an all-empty Range element never calls CompareVersions, and for an
+	// unknown type "all-empty" cannot be trusted: a newer type may carry
+	// constraints in JSON fields this build's unmarshal silently drops, so
+	// matching every version would risk false positives.
+	if !a.Type.Known() {
+		return false, &warningTypes.UnevaluableError{Warning: warningTypes.Warning{Kind: warningTypes.KindUnevaluableRangeType, Cause: string(a.Type)}}
 	}
 	for _, r := range a.Range {
 		if r.Equal != "" {

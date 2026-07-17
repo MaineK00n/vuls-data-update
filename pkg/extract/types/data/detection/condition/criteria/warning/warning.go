@@ -9,6 +9,7 @@ package warning
 
 import (
 	"cmp"
+	"fmt"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/internal/enum"
 )
@@ -57,6 +58,21 @@ func (k Kind) Compare(u Kind) int {
 }
 
 var vocabulary = enum.NewVocabulary(Kinds())
+
+// UnevaluableError is returned (in place of a silent skip) by the layer that
+// discovers it cannot evaluate its own data — e.g. package.Accept on an
+// out-of-vocabulary PackageType — carrying the Warning to record. It is
+// non-fatal by contract: criterion.Accept catches it with errors.As,
+// accumulates the Warning on the FilteredCriterion, and treats the query as
+// not accepted. Only the layer that owns the data inspects it; intermediate
+// layers just propagate (wrapping is fine, errors.As traverses).
+type UnevaluableError struct {
+	Warning Warning
+}
+
+func (e *UnevaluableError) Error() string {
+	return fmt.Sprintf("unevaluable: %s %q", e.Warning.Kind, e.Warning.Cause)
+}
 
 func Compare(x, y Warning) int {
 	return cmp.Or(

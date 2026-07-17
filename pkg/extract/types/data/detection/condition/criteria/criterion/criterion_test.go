@@ -695,9 +695,11 @@ func TestCriterion_Accept(t *testing.T) {
 			},
 		},
 		{
-			// Nested enums outside the vocabulary are recorded too — one
-			// warning per offending value, in field order.
-			name: "version criterion with unknown package and range types records both",
+			// The layer that owns the data reports what it could not
+			// evaluate; evaluation stops at the first blocker, so only the
+			// package type surfaces here (the range type would surface once
+			// the package type is understood).
+			name: "version criterion with unknown package type records the first blocker",
 			fields: fields{
 				Type: criterionTypes.CriterionTypeVersion,
 				Version: &vcTypes.Criterion{
@@ -726,6 +728,46 @@ func TestCriterion_Accept(t *testing.T) {
 				},
 				Warnings: []warningTypes.Warning{
 					{Kind: warningTypes.KindUnevaluablePackageType, Cause: "future-package"},
+				},
+			},
+		},
+		{
+			// With the package evaluable and matching, the unevaluable range
+			// type is the blocker that surfaces.
+			name: "version criterion with unknown range type records the skip",
+			fields: fields{
+				Type: criterionTypes.CriterionTypeVersion,
+				Version: &vcTypes.Criterion{
+					Vulnerable: true,
+					Package: vcPackageTypes.Package{
+						Type:   vcPackageTypes.PackageTypeBinary,
+						Binary: &vcBinaryPackageTypes.Package{Name: "name"},
+					},
+					Affected: &affectedTypes.Affected{
+						Type:  affectedrangeType.RangeType("future-range"),
+						Range: []affectedrangeType.Range{{LessThan: "1.0.0"}},
+					},
+				},
+			},
+			args: args{
+				query: criterionTypes.Query{Version: []vcTypes.Query{{Binary: &vcTypes.QueryBinary{Family: ecosystemTypes.EcosystemTypeRedHat, Name: "name", Version: "0.0.1", Arch: "x86_64"}}}},
+			},
+			want: criterionTypes.FilteredCriterion{
+				Criterion: criterionTypes.Criterion{
+					Type: criterionTypes.CriterionTypeVersion,
+					Version: &vcTypes.Criterion{
+						Vulnerable: true,
+						Package: vcPackageTypes.Package{
+							Type:   vcPackageTypes.PackageTypeBinary,
+							Binary: &vcBinaryPackageTypes.Package{Name: "name"},
+						},
+						Affected: &affectedTypes.Affected{
+							Type:  affectedrangeType.RangeType("future-range"),
+							Range: []affectedrangeType.Range{{LessThan: "1.0.0"}},
+						},
+					},
+				},
+				Warnings: []warningTypes.Warning{
 					{Kind: warningTypes.KindUnevaluableRangeType, Cause: "future-range"},
 				},
 			},
