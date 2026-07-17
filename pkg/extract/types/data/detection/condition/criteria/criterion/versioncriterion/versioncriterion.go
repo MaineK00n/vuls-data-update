@@ -177,14 +177,20 @@ func (c Criterion) Accept(query Query, repositories []string) (bool, error) {
 			return false, errors.Wrap(err, "affected accept")
 		}
 		return isAccepted, nil
-	default:
+	case packageTypes.PackageTypeUnknown:
 		// The declared Unknown vocabulary value is normal data and quietly
-		// does not accept. Anything else here — unset, or a value from a
-		// newer vuls-data-update — is unevaluable: report it as a non-fatal
+		// does not accept.
+		return false, nil
+	default:
+		// Out of vocabulary — unset, or a value from a newer
+		// vuls-data-update — is unevaluable: report it as a non-fatal
 		// *warning.UnevaluableError so the criterion layer can record it.
-		if c.Package.Type == packageTypes.PackageTypeUnknown {
-			return false, nil
+		if !c.Package.Type.Known() {
+			return false, &warningTypes.UnevaluableError{Warning: warningTypes.Warning{Kind: warningTypes.KindUnevaluablePackageType, Cause: string(c.Package.Type)}}
 		}
-		return false, &warningTypes.UnevaluableError{Warning: warningTypes.Warning{Kind: warningTypes.KindUnevaluablePackageType, Cause: string(c.Package.Type)}}
+		// In the vocabulary but not dispatched above: the vocabulary and
+		// this switch are out of sync within this build — a bug, not newer
+		// data. Fail loudly (mirrors the criteria operator default).
+		return false, errors.Errorf("unexpected package type. expected: %q, actual: %q", packageTypes.PackageTypes(), c.Package.Type)
 	}
 }

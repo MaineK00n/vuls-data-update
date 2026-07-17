@@ -233,11 +233,22 @@ func (c Criterion) Contains(query Query, repositories []string) (bool, error) {
 			}
 		}
 		return false, nil
-	default:
-		// A CriterionType this build cannot evaluate — Unknown, unset, or a
-		// value from a newer vuls-data-update — reports "does not contain" so
-		// detection skips the criterion instead of aborting.
+	case CriterionTypeUnknown:
+		// The declared "unknown" vocabulary value is normal data (the source
+		// declared a criterion the extractor could not translate) and
+		// quietly does not contain.
 		return false, nil
+	default:
+		// A criterion type outside this build's vocabulary (data from a
+		// newer vuls-data-update) cannot contain the query; the warning is
+		// recorded by Accept, which evaluates the same criterion.
+		if !c.Type.Known() {
+			return false, nil
+		}
+		// In the vocabulary but not dispatched above: the vocabulary and
+		// this switch are out of sync within this build — a bug, not newer
+		// data. Fail loudly (mirrors the criteria operator default).
+		return false, errors.Errorf("unexpected criterion type. expected: %q, actual: %q", CriterionTypes(), c.Type)
 	}
 }
 
@@ -388,15 +399,22 @@ func (c Criterion) Accept(query Query, repositories []string) (FilteredCriterion
 			Accepts:   AcceptQueries{CPE: accepts},
 			Warnings:  ws,
 		}, nil
+	case CriterionTypeUnknown:
+		// The declared "unknown" vocabulary value is normal data (the source
+		// declared a criterion the extractor could not translate) and
+		// contributes "not affected", quietly.
+		return FilteredCriterion{Criterion: c, Accepts: AcceptQueries{}}, nil
 	default:
 		// A criterion type outside this build's vocabulary (data from a
 		// newer vuls-data-update) contributes "not affected", recorded on
-		// the result so callers can surface it. The declared "unknown"
-		// vocabulary value is normal data and stays quiet.
+		// the result so callers can surface it.
 		if !c.Type.Known() {
 			return FilteredCriterion{Criterion: c, Warnings: []warningTypes.Warning{{Kind: warningTypes.KindUnevaluableCriterionType, Cause: string(c.Type)}}}, nil
 		}
-		return FilteredCriterion{Criterion: c, Accepts: AcceptQueries{}}, nil
+		// In the vocabulary but not dispatched above: the vocabulary and
+		// this switch are out of sync within this build — a bug, not newer
+		// data. Fail loudly (mirrors the criteria operator default).
+		return FilteredCriterion{}, errors.Errorf("unexpected criterion type. expected: %q, actual: %q", CriterionTypes(), c.Type)
 	}
 }
 
@@ -410,10 +428,19 @@ func (fc FilteredCriterion) Affected() (bool, error) {
 		return fc.Accepts.KB.Covered || fc.Accepts.KB.Unapplied, nil
 	case CriterionTypeCPE:
 		return len(fc.Accepts.CPE.Exact) > 0 || len(fc.Accepts.CPE.VersionUnconfirmed) > 0, nil
-	default:
-		// A CriterionType this build cannot evaluate — Unknown, unset, or a
-		// value from a newer vuls-data-update — reports not affected so
-		// detection skips the criterion instead of aborting.
+	case CriterionTypeUnknown:
+		// The declared "unknown" vocabulary value is normal data and quietly
+		// reports not affected.
 		return false, nil
+	default:
+		// Data from a newer vuls-data-update: not affected; the warning was
+		// recorded when Accept produced this FilteredCriterion.
+		if !fc.Criterion.Type.Known() {
+			return false, nil
+		}
+		// In the vocabulary but not dispatched above: the vocabulary and
+		// this switch are out of sync within this build — a bug, not newer
+		// data. Fail loudly (mirrors the criteria operator default).
+		return false, errors.Errorf("unexpected criterion type. expected: %q, actual: %q", CriterionTypes(), fc.Criterion.Type)
 	}
 }

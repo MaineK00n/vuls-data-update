@@ -44,6 +44,12 @@ func (t PackageType) Compare(u PackageType) int {
 	return vocabulary.Compare(t, u)
 }
 
+// Known reports whether t is in this build's vocabulary. Data from a newer
+// vuls-data-update may carry values for which Known is false.
+func (t PackageType) Known() bool {
+	return vocabulary.Contains(t)
+}
+
 var vocabulary = enum.NewVocabulary(PackageTypes())
 
 type Criterion struct {
@@ -131,16 +137,22 @@ func (c Criterion) Accept(query Query, repositories []string) (bool, error) {
 			}
 		}
 		return true, nil
-	default:
+	case PackageTypeUnknown:
 		// The declared Unknown vocabulary value is normal data and quietly
 		// does not accept (for a none-exist criterion that is the
 		// conservative direction: under-detect rather than falsely claim
-		// absence). Anything else here — unset, or a value from a newer
+		// absence).
+		return false, nil
+	default:
+		// Out of vocabulary — unset, or a value from a newer
 		// vuls-data-update — is unevaluable: report it as a non-fatal
 		// *warning.UnevaluableError so the criterion layer can record it.
-		if c.Type == PackageTypeUnknown {
-			return false, nil
+		if !c.Type.Known() {
+			return false, &warningTypes.UnevaluableError{Warning: warningTypes.Warning{Kind: warningTypes.KindUnevaluablePackageType, Cause: string(c.Type)}}
 		}
-		return false, &warningTypes.UnevaluableError{Warning: warningTypes.Warning{Kind: warningTypes.KindUnevaluablePackageType, Cause: string(c.Type)}}
+		// In the vocabulary but not dispatched above: the vocabulary and
+		// this switch are out of sync within this build — a bug, not newer
+		// data. Fail loudly (mirrors the criteria operator default).
+		return false, errors.Errorf("unexpected package type. expected: %q, actual: %q", PackageTypes(), c.Type)
 	}
 }
