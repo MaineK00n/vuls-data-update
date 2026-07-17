@@ -1,0 +1,64 @@
+{
+	"from": "packager@almalinux.org",
+	"status": "final",
+	"type": "security",
+	"version": "1",
+	"id": "ALSA-2023:7549",
+	"title": "Moderate: nodejs security update",
+	"issued": {
+		"date": "2023-11-28 00:00:00"
+	},
+	"updated": {
+		"date": "2023-11-28 00:00:00"
+	},
+	"rights": "Copyright 2023 AlmaLinux OS",
+	"release": "0",
+	"pushcount": "1",
+	"severity": "Moderate",
+	"summary": "nodejs security update",
+	"description": "Node.js is a software development platform for building fast and scalable network applications.",
+	"solution": "Refer to https://access.redhat.com/articles/11258",
+	"references": {
+		"reference": [
+			{
+				"href": "https://access.redhat.com/errata/RHSA-2023:7549",
+				"id": "RHSA-2023:7549",
+				"type": "rhsa",
+				"title": "RHSA-2023:7549"
+			},
+			{
+				"href": "https://access.redhat.com/security/cve/CVE-2023-44487",
+				"id": "CVE-2023-44487",
+				"type": "cve",
+				"title": "CVE-2023-44487"
+			},
+			{
+				"href": "https://errata.almalinux.org/9/ALSA-2023-7549.html",
+				"id": "ALSA-2023:7549",
+				"type": "self",
+				"title": "ALSA-2023:7549"
+			}
+		]
+	},
+	"pkglist": {
+		"collection": {
+			"short": "almalinux-9-for-x86_64-appstream-rpms__9_default",
+			"name": "almalinux-9-for-x86_64-appstream-rpms__9_default",
+			"package": [
+				{
+					"name": "nodejs",
+					"epoch": "1",
+					"version": "18.18.2",
+					"release": "1.el9",
+					"arch": "x86_64",
+					"src": "nodejs-18.18.2-1.el9.src.rpm",
+					"filename": "nodejs-18.18.2-1.el9.x86_64.rpm",
+					"sum": {
+						"text": "cafebabe0000000000000000000000000000000000000000000000000000abcd",
+						"type": "sha256"
+					}
+				}
+			]
+		}
+	}
+}

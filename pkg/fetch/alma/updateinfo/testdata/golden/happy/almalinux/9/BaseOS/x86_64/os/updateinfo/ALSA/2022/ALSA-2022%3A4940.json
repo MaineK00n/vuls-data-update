@@ -1,0 +1,64 @@
+{
+	"from": "packager@almalinux.org",
+	"status": "final",
+	"type": "security",
+	"version": "1",
+	"id": "ALSA-2022:4940",
+	"title": "Important: xz security update",
+	"issued": {
+		"date": "2022-06-08 00:00:00"
+	},
+	"updated": {
+		"date": "2023-03-07 17:32:16"
+	},
+	"rights": "Copyright 2022 AlmaLinux OS",
+	"release": "0",
+	"pushcount": "1",
+	"severity": "Important",
+	"summary": "xz security update",
+	"description": "XZ Utils is an integrated collection of user-space file compression utilities.",
+	"solution": "For details on how to apply this update, refer to: https://access.redhat.com/articles/11258",
+	"references": {
+		"reference": [
+			{
+				"href": "https://access.redhat.com/errata/RHSA-2022:4940",
+				"id": "RHSA-2022:4940",
+				"type": "rhsa",
+				"title": "RHSA-2022:4940"
+			},
+			{
+				"href": "https://access.redhat.com/security/cve/CVE-2022-1271",
+				"id": "CVE-2022-1271",
+				"type": "cve",
+				"title": "CVE-2022-1271"
+			},
+			{
+				"href": "https://errata.almalinux.org/9/ALSA-2022-4940.html",
+				"id": "ALSA-2022:4940",
+				"type": "self",
+				"title": "ALSA-2022:4940"
+			}
+		]
+	},
+	"pkglist": {
+		"collection": {
+			"short": "almalinux-9-for-x86_64-baseos-rpms__9_1_default",
+			"name": "almalinux-9-for-x86_64-baseos-rpms__9_1_default",
+			"package": [
+				{
+					"name": "xz",
+					"epoch": "0",
+					"version": "5.2.5",
+					"release": "8.el9_0",
+					"arch": "x86_64",
+					"src": "xz-5.2.5-8.el9_0.src.rpm",
+					"filename": "xz-5.2.5-8.el9_0.x86_64.rpm",
+					"sum": {
+						"text": "4567587f72bb7fdcc4f2e5b6c731d83b0e14e841680c557d4ca2e19775a364c2",
+						"type": "sha256"
+					}
+				}
+			]
+		}
+	}
+}
