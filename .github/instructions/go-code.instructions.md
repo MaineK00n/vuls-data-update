@@ -54,7 +54,6 @@ description: "Go code conventions for vuls-data-update: deterministic JSON, util
 - Sentinel errors (`errors.New`) are rare; check with `errors.Is()`
   - Use specific sentinel errors (e.g., `ErrNotFoundX`) rather than generic ones when callers need to distinguish error types
 - Non-fatal errors: `slog.Warn(...)` + skip (e.g., invalid CPE, unparseable score) — still log, never silently drop
-  - Exception — **types packages (`pkg/extract/types/**`) never log**: they are library code embedded in host applications (vuls2 / vuls0) whose logging they must not bypass. Record non-fatal evaluation events as structured data on the result instead (e.g. `FilteredCriterion.Warnings`); projecting them into logs or scan-result warnings is the caller's job
 
 ## Slice and Map Idioms
 
