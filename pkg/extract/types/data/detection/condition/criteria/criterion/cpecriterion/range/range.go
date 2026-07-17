@@ -17,11 +17,13 @@ import (
 
 // RangeType selects the version comparator used by CompareVersions / Accept
 // (the Compare method is unrelated: it is the vocabulary ordering). Extractors
-// must set it explicitly — Accept on a zero (unset) or Unknown Type refuses to
-// evaluate (returns false), so a forgotten Type produces a safe non-match
-// rather than a silent false positive. The `type` JSON tag carries
-// `omitempty`, so a zero value is omitted from output rather than written
-// as "unknown"; an explicitly-set Unknown is serialized as "unknown".
+// must set it explicitly — Accept refuses to evaluate anything it cannot
+// understand: the declared Unknown value quietly does not match, while a zero
+// (unset — a producer-side bug) or out-of-vocabulary Type is reported as a
+// non-fatal *warning.UnevaluableError for the criterion layer to record, so a
+// forgotten Type surfaces instead of silently matching. The `type` JSON tag
+// carries `omitempty`, so a zero value is omitted from output rather than
+// written as "unknown"; an explicitly-set Unknown is serialized as "unknown".
 //
 // It is a string so that unmarshaling never validates against the known set:
 // data produced by a newer vuls-data-update (carrying range types this build
