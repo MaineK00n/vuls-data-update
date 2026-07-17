@@ -1241,7 +1241,7 @@ func TestRangeType_CompareVersions(t *testing.T) {
 				return
 			}
 			if err != nil {
-				// Every failure Compare raises must classify as *CompareError
+				// Every failure CompareVersions raises must classify as *CompareError
 				// so that Accept degrades it to a safe non-match.
 				if _, ok := stderrors.AsType[*affectedrangeTypes.CompareError](err); !ok {
 					t.Errorf("RangeType.CompareVersions() error = %v, want *CompareError", err)
@@ -1257,7 +1257,8 @@ func TestRangeType_CompareVersions(t *testing.T) {
 func TestRangeTypes_HaveComparator(t *testing.T) {
 	// Pre-existing debt, not a template: pacman and freebsd-pkg are declared
 	// (and appear in extracted data) but have never had a comparator — before
-	// the string conversion they fell into Compare's default error branch.
+	// the string conversion they fell into the version comparator's default
+	// error branch (now CompareVersions).
 	// Do not add new types here; a new RangeType must ship with its comparator.
 	noComparator := map[affectedrangeTypes.RangeType]bool{
 		affectedrangeTypes.RangeTypePacman:     true,

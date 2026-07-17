@@ -20,7 +20,9 @@
 package main
 
 import (
+	"errors"
 	"fmt"
+	"os"
 
 	criteriaTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria"
 	criterionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion"
@@ -33,18 +35,30 @@ import (
 )
 
 func main() {
-	printEnum("pkg/extract/types/data/detection/condition/criteria", "CriteriaOperatorType", criteriaTypes.CriteriaOperatorTypes())
-	printEnum("pkg/extract/types/data/detection/condition/criteria/criterion", "CriterionType", criterionTypes.CriterionTypes())
-	printEnum("pkg/extract/types/data/detection/condition/criteria/criterion/cpecriterion/range", "RangeType", cpecriterionrangeTypes.RangeTypes())
-	printEnum("pkg/extract/types/data/detection/condition/criteria/criterion/noneexistcriterion", "PackageType", necTypes.PackageTypes())
-	printEnum("pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/affected/range", "RangeType", affectedrangeTypes.RangeTypes())
-	printEnum("pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package", "PackageType", vcPackageTypes.PackageTypes())
-	printEnum("pkg/extract/types/data/detection/condition/criteria/warning", "Kind", warningTypes.Kinds())
-	printEnum("pkg/extract/types/data/severity", "SeverityType", severityTypes.SeverityTypes())
+	if err := run(); err != nil {
+		fmt.Fprintln(os.Stderr, "error:", err)
+		os.Exit(1)
+	}
 }
 
-func printEnum[T ~string](pkg, name string, values []T) {
+func run() error {
+	return errors.Join(
+		printEnum("pkg/extract/types/data/detection/condition/criteria", "CriteriaOperatorType", criteriaTypes.CriteriaOperatorTypes()),
+		printEnum("pkg/extract/types/data/detection/condition/criteria/criterion", "CriterionType", criterionTypes.CriterionTypes()),
+		printEnum("pkg/extract/types/data/detection/condition/criteria/criterion/cpecriterion/range", "RangeType", cpecriterionrangeTypes.RangeTypes()),
+		printEnum("pkg/extract/types/data/detection/condition/criteria/criterion/noneexistcriterion", "PackageType", necTypes.PackageTypes()),
+		printEnum("pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/affected/range", "RangeType", affectedrangeTypes.RangeTypes()),
+		printEnum("pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package", "PackageType", vcPackageTypes.PackageTypes()),
+		printEnum("pkg/extract/types/data/detection/condition/criteria/warning", "Kind", warningTypes.Kinds()),
+		printEnum("pkg/extract/types/data/severity", "SeverityType", severityTypes.SeverityTypes()),
+	)
+}
+
+func printEnum[T ~string](pkg, name string, values []T) error {
 	for _, v := range values {
-		fmt.Printf("%s.%s\t%s\n", pkg, name, v)
+		if _, err := fmt.Printf("%s.%s\t%s\n", pkg, name, v); err != nil {
+			return fmt.Errorf("print %s.%s: %w", pkg, name, err)
+		}
 	}
+	return nil
 }
