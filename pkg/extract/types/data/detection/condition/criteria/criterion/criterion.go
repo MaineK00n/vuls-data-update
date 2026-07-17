@@ -9,6 +9,7 @@ import (
 	kbcTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/kbcriterion"
 	necTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/noneexistcriterion"
 	vcTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion"
+	warningTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/warning"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/internal/enum"
 )
 
@@ -47,6 +48,12 @@ func CriterionTypes() []CriterionType {
 // value, lexicographically among themselves.
 func (t CriterionType) Compare(u CriterionType) int {
 	return vocabulary.Compare(t, u)
+}
+
+// Known reports whether t is in this build's vocabulary. Data from a newer
+// vuls-data-update may carry values for which Known is false.
+func (t CriterionType) Known() bool {
+	return vocabulary.Contains(t)
 }
 
 var vocabulary = enum.NewVocabulary(CriterionTypes())
@@ -224,6 +231,11 @@ func (c Criterion) Contains(query Query, repositories []string) (bool, error) {
 type FilteredCriterion struct {
 	Criterion Criterion     `json:"criterion,omitzero"`
 	Accepts   AcceptQueries `json:"accepts,omitzero"`
+	// Warnings records non-fatal evaluation events — e.g. enum values this
+	// build could not evaluate (data from a newer vuls-data-update). The
+	// detection types never log; callers project these into logs or
+	// scan-result warnings by walking the FilteredCriteria tree.
+	Warnings []warningTypes.Warning `json:"warnings,omitempty"`
 }
 
 // KB records which evaluation path accepted the KB criterion (i.e., detected
@@ -256,7 +268,50 @@ type AcceptQueries struct {
 	CPE       CPEAccepts `json:"cpe,omitzero"`
 }
 
+// unknownEnums collects the enum values in this criterion that are outside
+// this build's vocabulary — data from a newer vuls-data-update that this
+// build cannot evaluate. Declared "unknown" vocabulary values are normal
+// data and are not reported. The walk order is fixed, so the result is
+// deterministic.
+func (c Criterion) unknownEnums() []warningTypes.Warning {
+	if !c.Type.Known() {
+		return []warningTypes.Warning{{Kind: warningTypes.KindUnevaluableCriterionType, Cause: string(c.Type)}}
+	}
+
+	var ws []warningTypes.Warning
+	switch c.Type {
+	case CriterionTypeVersion:
+		if c.Version == nil {
+			break
+		}
+		if !c.Version.Package.Type.Known() {
+			ws = append(ws, warningTypes.Warning{Kind: warningTypes.KindUnevaluablePackageType, Cause: string(c.Version.Package.Type)})
+		}
+		if c.Version.Affected != nil && !c.Version.Affected.Type.Known() {
+			ws = append(ws, warningTypes.Warning{Kind: warningTypes.KindUnevaluableRangeType, Cause: string(c.Version.Affected.Type)})
+		}
+	case CriterionTypeNoneExist:
+		if c.NoneExist != nil && !c.NoneExist.Type.Known() {
+			ws = append(ws, warningTypes.Warning{Kind: warningTypes.KindUnevaluablePackageType, Cause: string(c.NoneExist.Type)})
+		}
+	case CriterionTypeCPE:
+		if c.CPE != nil && c.CPE.Range != nil && !c.CPE.Range.Type.Known() {
+			ws = append(ws, warningTypes.Warning{Kind: warningTypes.KindUnevaluableRangeType, Cause: string(c.CPE.Range.Type)})
+		}
+	default:
+	}
+	return ws
+}
+
 func (c Criterion) Accept(query Query, repositories []string) (FilteredCriterion, error) {
+	// A criterion this build cannot evaluate contributes "not affected", and
+	// the reason is recorded on the result so callers can surface it; the
+	// deeper vocabulary guards remain as silent backstops behind this single
+	// observation point.
+	if ws := c.unknownEnums(); len(ws) > 0 {
+		return FilteredCriterion{Criterion: c, Warnings: ws}, nil
+	}
+
 	switch c.Type {
 	case CriterionTypeVersion:
 		if c.Version == nil {
@@ -342,10 +397,9 @@ func (c Criterion) Accept(query Query, repositories []string) (FilteredCriterion
 			Accepts:   AcceptQueries{CPE: accepts},
 		}, nil
 	default:
-		// A CriterionType this build cannot evaluate — Unknown, unset, or a
-		// value from a newer vuls-data-update — accepts no queries;
-		// FilteredCriterion.Affected then reports not affected, so detection
-		// skips the criterion instead of aborting.
+		// Unknown (declared, normal data) or unset — quietly accepts no
+		// queries; out-of-vocabulary values were already recorded and
+		// short-circuited by the unknownEnums pre-check above.
 		return FilteredCriterion{Criterion: c, Accepts: AcceptQueries{}}, nil
 	}
 }

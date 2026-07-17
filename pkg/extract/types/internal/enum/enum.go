@@ -47,9 +47,9 @@ func (v Vocabulary[T]) Compare(x, y T) int {
 	switch {
 	case xok && yok:
 		return cmp.Compare(xi, yi)
-	case xok:
+	case xok && !yok:
 		return -1
-	case yok:
+	case !xok && yok:
 		return +1
 	default:
 		return cmp.Compare(x, y)

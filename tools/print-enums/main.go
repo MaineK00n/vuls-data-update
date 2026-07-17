@@ -22,14 +22,14 @@ package main
 import (
 	"fmt"
 
-	severityTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity"
-
 	criteriaTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria"
 	criterionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion"
 	cpecriterionrangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/cpecriterion/range"
 	necTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/noneexistcriterion"
 	affectedrangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/affected/range"
 	vcPackageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package"
+	warningTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/warning"
+	severityTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity"
 )
 
 func main() {
@@ -39,6 +39,7 @@ func main() {
 	printEnum("pkg/extract/types/data/detection/condition/criteria/criterion/noneexistcriterion", "PackageType", necTypes.PackageTypes())
 	printEnum("pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/affected/range", "RangeType", affectedrangeTypes.RangeTypes())
 	printEnum("pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package", "PackageType", vcPackageTypes.PackageTypes())
+	printEnum("pkg/extract/types/data/detection/condition/criteria/warning", "Kind", warningTypes.Kinds())
 	printEnum("pkg/extract/types/data/severity", "SeverityType", severityTypes.SeverityTypes())
 }
 

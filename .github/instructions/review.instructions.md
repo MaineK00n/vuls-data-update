@@ -27,6 +27,7 @@ description: "Code review guidelines: checklist, severity classification, review
 - Error messages: lowercase verb phrase in library code, `"failed to ..."` in `pkg/cmd/`
 - Validation errors: use `"unexpected X. expected: %q, actual: %q"` pattern
 - Non-fatal errors: `slog.Warn(...)` + skip, don't silently ignore
+  - Exception: types packages (`pkg/extract/types/**`) must NOT log — they record structured warnings on results (e.g. `FilteredCriterion.Warnings`) and leave projection to callers. Do not flag missing `slog.Warn` there; do flag logging added to types packages
 
 ### Code Idioms
 - Pre-allocate slices: `make([]T, 0, len(x))` — not `var s []T` when capacity is known

@@ -15,6 +15,7 @@ import (
 	fixstatusType "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/fixstatus"
 	vcPackageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package"
 	vcBinaryPackageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package/binary"
+	warningTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/warning"
 	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment/ecosystem"
 )
 
@@ -679,7 +680,8 @@ func TestCriterion_Accept(t *testing.T) {
 		},
 		{
 			// A criterion type this build does not know (data from a newer
-			// vuls-data-update) must accept no queries instead of aborting.
+			// vuls-data-update) must accept no queries instead of aborting,
+			// and the skip must be recorded on the result.
 			name: "unsupported criterion type (newer data) accepts nothing",
 			fields: fields{
 				Type: criterionTypes.CriterionType("future-criterion"),
@@ -689,6 +691,60 @@ func TestCriterion_Accept(t *testing.T) {
 			},
 			want: criterionTypes.FilteredCriterion{
 				Criterion: criterionTypes.Criterion{Type: criterionTypes.CriterionType("future-criterion")},
+				Warnings:  []warningTypes.Warning{{Kind: warningTypes.KindUnevaluableCriterionType, Cause: "future-criterion"}},
+			},
+		},
+		{
+			// Nested enums outside the vocabulary are recorded too — one
+			// warning per offending value, in field order.
+			name: "version criterion with unknown package and range types records both",
+			fields: fields{
+				Type: criterionTypes.CriterionTypeVersion,
+				Version: &vcTypes.Criterion{
+					Vulnerable: true,
+					Package:    vcPackageTypes.Package{Type: vcPackageTypes.PackageType("future-package")},
+					Affected: &affectedTypes.Affected{
+						Type:  affectedrangeType.RangeType("future-range"),
+						Range: []affectedrangeType.Range{{LessThan: "1.0.0"}},
+					},
+				},
+			},
+			args: args{
+				query: criterionTypes.Query{Version: []vcTypes.Query{{Binary: &vcTypes.QueryBinary{Family: ecosystemTypes.EcosystemTypeRedHat, Name: "name", Version: "0.0.1"}}}},
+			},
+			want: criterionTypes.FilteredCriterion{
+				Criterion: criterionTypes.Criterion{
+					Type: criterionTypes.CriterionTypeVersion,
+					Version: &vcTypes.Criterion{
+						Vulnerable: true,
+						Package:    vcPackageTypes.Package{Type: vcPackageTypes.PackageType("future-package")},
+						Affected: &affectedTypes.Affected{
+							Type:  affectedrangeType.RangeType("future-range"),
+							Range: []affectedrangeType.Range{{LessThan: "1.0.0"}},
+						},
+					},
+				},
+				Warnings: []warningTypes.Warning{
+					{Kind: warningTypes.KindUnevaluablePackageType, Cause: "future-package"},
+					{Kind: warningTypes.KindUnevaluableRangeType, Cause: "future-range"},
+				},
+			},
+		},
+		{
+			name: "none-exist criterion with unknown package type records the skip",
+			fields: fields{
+				Type:      criterionTypes.CriterionTypeNoneExist,
+				NoneExist: &necTypes.Criterion{Type: necTypes.PackageType("future-package")},
+			},
+			args: args{
+				query: criterionTypes.Query{NoneExist: &necTypes.Query{}},
+			},
+			want: criterionTypes.FilteredCriterion{
+				Criterion: criterionTypes.Criterion{
+					Type:      criterionTypes.CriterionTypeNoneExist,
+					NoneExist: &necTypes.Criterion{Type: necTypes.PackageType("future-package")},
+				},
+				Warnings: []warningTypes.Warning{{Kind: warningTypes.KindUnevaluablePackageType, Cause: "future-package"}},
 			},
 		},
 	}

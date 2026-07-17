@@ -46,6 +46,12 @@ func (t PackageType) Compare(u PackageType) int {
 	return vocabulary.Compare(t, u)
 }
 
+// Known reports whether t is in this build's vocabulary. Data from a newer
+// vuls-data-update may carry values for which Known is false.
+func (t PackageType) Known() bool {
+	return vocabulary.Contains(t)
+}
+
 var vocabulary = enum.NewVocabulary(PackageTypes())
 
 type Package struct {
