@@ -39,28 +39,37 @@ func (a Affected) Accept(family ecosystemTypes.Ecosystem, v string) (bool, error
 	if a.Type == rangeTypes.RangeTypeUnknown {
 		return false, nil
 	}
-	// Types outside the vocabulary — unset, or data from a newer
-	// vuls-data-update — are refused wholesale as unevaluable, reported as a
-	// non-fatal *warning.UnevaluableError for the criterion layer to record.
-	// Bounded ranges would degrade to false on their own via *CompareError,
-	// but an all-empty Range element never calls CompareVersions, and for an
-	// unknown type "all-empty" cannot be trusted: a newer type may carry
-	// constraints in JSON fields this build's unmarshal silently drops, so
-	// matching every version would risk false positives.
-	if !a.Type.Known() {
-		return false, &warningTypes.UnevaluableError{Warning: warningTypes.Warning{Kind: warningTypes.KindUnevaluableRangeType, Cause: string(a.Type)}}
-	}
-	// Comparator-less vocabulary debt (pacman, freebsd-pkg) degrades
-	// silently by policy — bounded ranges already do, via CompareError — but
-	// it must not fall through to the all-empty-Range match-all below: a
-	// type that can evaluate nothing must not match everything.
-	if !a.Type.Evaluable() {
-		return false, nil
+	// Whether a Type is evaluable is derived from CompareVersions itself —
+	// its default branch answers anything it has no comparator for (unset,
+	// newer-data values, and comparator-less vocabulary debt like pacman)
+	// with *UnsupportedRangeTypeError, which the bound comparisons below
+	// classify into a non-fatal *warning.UnevaluableError. The all-empty
+	// Range element is the one path that never invokes CompareVersions and
+	// would fall through to the unconditional match-all — matching every
+	// version with a type that can evaluate nothing, and "all-empty" cannot
+	// even be trusted for newer types (their constraints may live in JSON
+	// fields this build's unmarshal silently drops). So probe: compare v
+	// against itself purely to learn whether a comparator exists. A parse
+	// failure (*CompareError without the unsupported cause) keeps the
+	// documented match-all semantics — no bounds accept even an unparseable
+	// v.
+	if slices.Contains(a.Range, rangeTypes.Range{}) {
+		if _, err := a.Type.CompareVersions(family, v, v); err != nil {
+			if ue, ok := stderrors.AsType[*rangeTypes.UnsupportedRangeTypeError](err); ok {
+				return false, &warningTypes.UnevaluableError{Warning: warningTypes.Warning{Kind: warningTypes.KindUnevaluableRangeType, Cause: string(ue.RangeType)}}
+			}
+			if _, ok := stderrors.AsType[*rangeTypes.CompareError](err); !ok {
+				return false, errors.Wrapf(err, "compare (type: %s, v1: %s, v2: %s)", a.Type, v, v)
+			}
+		}
 	}
 	for _, r := range a.Range {
 		if r.Equal != "" {
 			n, err := a.Type.CompareVersions(family, r.Equal, v)
 			if err != nil {
+				if ue, ok := stderrors.AsType[*rangeTypes.UnsupportedRangeTypeError](err); ok {
+					return false, &warningTypes.UnevaluableError{Warning: warningTypes.Warning{Kind: warningTypes.KindUnevaluableRangeType, Cause: string(ue.RangeType)}}
+				}
 				if _, ok := stderrors.AsType[*rangeTypes.CompareError](err); ok {
 					continue
 				}
@@ -73,6 +82,9 @@ func (a Affected) Accept(family ecosystemTypes.Ecosystem, v string) (bool, error
 		if r.GreaterEqual != "" {
 			n, err := a.Type.CompareVersions(family, r.GreaterEqual, v)
 			if err != nil {
+				if ue, ok := stderrors.AsType[*rangeTypes.UnsupportedRangeTypeError](err); ok {
+					return false, &warningTypes.UnevaluableError{Warning: warningTypes.Warning{Kind: warningTypes.KindUnevaluableRangeType, Cause: string(ue.RangeType)}}
+				}
 				if _, ok := stderrors.AsType[*rangeTypes.CompareError](err); ok {
 					continue
 				}
@@ -85,6 +97,9 @@ func (a Affected) Accept(family ecosystemTypes.Ecosystem, v string) (bool, error
 		if r.GreaterThan != "" {
 			n, err := a.Type.CompareVersions(family, r.GreaterThan, v)
 			if err != nil {
+				if ue, ok := stderrors.AsType[*rangeTypes.UnsupportedRangeTypeError](err); ok {
+					return false, &warningTypes.UnevaluableError{Warning: warningTypes.Warning{Kind: warningTypes.KindUnevaluableRangeType, Cause: string(ue.RangeType)}}
+				}
 				if _, ok := stderrors.AsType[*rangeTypes.CompareError](err); ok {
 					continue
 				}
@@ -97,6 +112,9 @@ func (a Affected) Accept(family ecosystemTypes.Ecosystem, v string) (bool, error
 		if r.LessEqual != "" {
 			n, err := a.Type.CompareVersions(family, r.LessEqual, v)
 			if err != nil {
+				if ue, ok := stderrors.AsType[*rangeTypes.UnsupportedRangeTypeError](err); ok {
+					return false, &warningTypes.UnevaluableError{Warning: warningTypes.Warning{Kind: warningTypes.KindUnevaluableRangeType, Cause: string(ue.RangeType)}}
+				}
 				if _, ok := stderrors.AsType[*rangeTypes.CompareError](err); ok {
 					continue
 				}
@@ -109,6 +127,9 @@ func (a Affected) Accept(family ecosystemTypes.Ecosystem, v string) (bool, error
 		if r.LessThan != "" {
 			n, err := a.Type.CompareVersions(family, r.LessThan, v)
 			if err != nil {
+				if ue, ok := stderrors.AsType[*rangeTypes.UnsupportedRangeTypeError](err); ok {
+					return false, &warningTypes.UnevaluableError{Warning: warningTypes.Warning{Kind: warningTypes.KindUnevaluableRangeType, Cause: string(ue.RangeType)}}
+				}
 				if _, ok := stderrors.AsType[*rangeTypes.CompareError](err); ok {
 					continue
 				}

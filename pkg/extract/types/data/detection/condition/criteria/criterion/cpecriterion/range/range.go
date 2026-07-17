@@ -494,19 +494,23 @@ func (r Range) Accept(v string) (bool, error) {
 	if r.Type == RangeTypeUnknown {
 		return false, nil
 	}
-	// Types outside the vocabulary — unset, or data from a newer
-	// vuls-data-update — are refused wholesale as unevaluable, reported as a
-	// non-fatal *warning.UnevaluableError for the criterion layer to record.
-	// This must sit above the no-bounds fast path: with all bounds empty the
-	// loop below never calls CompareVersions, so its CompareError safety net
-	// cannot kick in, and a newer type may carry constraints in JSON fields
-	// this build's unmarshal silently drops — falling through to the
-	// unconditional match-all would risk false positives.
-	if !r.Type.Known() {
-		return false, &warningTypes.UnevaluableError{Warning: warningTypes.Warning{Kind: warningTypes.KindUnevaluableRangeType, Cause: string(r.Type)}}
-	}
 	if r.GreaterEqual == "" && r.GreaterThan == "" && r.LessEqual == "" && r.LessThan == "" {
-		// No bounds means "no constraint": every version matches.
+		// No bounds means "no constraint": every version matches — but only
+		// for a Type this build can evaluate. Whether it can is derived from
+		// CompareVersions itself (its default answers unset / newer-data
+		// values with *UnsupportedRangeTypeError), and this fast path is the
+		// one place that never invokes it, so probe: compare v against
+		// itself purely to learn whether a comparator exists. A parse
+		// failure (*CompareError without the unsupported cause) keeps the
+		// documented semantics — no bounds accept even an unparseable v.
+		if _, err := r.Type.CompareVersions(v, v); err != nil {
+			if ue, ok := stderrors.AsType[*UnsupportedRangeTypeError](err); ok {
+				return false, &warningTypes.UnevaluableError{Warning: warningTypes.Warning{Kind: warningTypes.KindUnevaluableRangeType, Cause: string(ue.RangeType)}}
+			}
+			if _, ok := stderrors.AsType[*CompareError](err); !ok {
+				return false, errors.Wrapf(err, "compare (type: %s, v1: %s, v2: %s)", r.Type, v, v)
+			}
+		}
 		return true, nil
 	}
 
@@ -529,6 +533,9 @@ func (r Range) Accept(v string) (bool, error) {
 		}
 		n, err := r.Type.CompareVersions(b.s, v)
 		if err != nil {
+			if ue, ok := stderrors.AsType[*UnsupportedRangeTypeError](err); ok {
+				return false, &warningTypes.UnevaluableError{Warning: warningTypes.Warning{Kind: warningTypes.KindUnevaluableRangeType, Cause: string(ue.RangeType)}}
+			}
 			if _, ok := stderrors.AsType[*CompareError](err); ok {
 				return false, nil
 			}

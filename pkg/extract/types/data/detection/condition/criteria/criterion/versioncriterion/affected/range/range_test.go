@@ -1255,18 +1255,24 @@ func TestRangeType_CompareVersions(t *testing.T) {
 }
 
 func TestRangeTypes_HaveComparator(t *testing.T) {
-	// Evaluable() is the single source of truth for comparator-less debt
-	// (pacman, freebsd-pkg): CompareVersions must answer exactly the
-	// non-Evaluable vocabulary values with *UnsupportedRangeTypeError.
+	// Documentation of pre-existing debt, not a template: pacman and
+	// freebsd-pkg are in the vocabulary but have never had a comparator, so
+	// CompareVersions answers them with *UnsupportedRangeTypeError and their
+	// evaluation surfaces as an unevaluable warning. Implementing a
+	// comparator makes this test fail — then remove the entry here. Do not
+	// add new types; a new RangeType must ship with its comparator.
+	noComparator := map[affectedrangeTypes.RangeType]bool{
+		affectedrangeTypes.RangeTypePacman:     true,
+		affectedrangeTypes.RangeTypeFreeBSDPkg: true,
+	}
 	for _, rt := range affectedrangeTypes.RangeTypes() {
 		t.Run(string(rt), func(t *testing.T) {
 			_, err := rt.CompareVersions(ecosystemTypes.EcosystemTypeRedHat, "1.0.0", "2.0.0")
-			_, unsupported := stderrors.AsType[*affectedrangeTypes.UnsupportedRangeTypeError](err)
-			if unsupported == rt.Evaluable() {
+			if _, unsupported := stderrors.AsType[*affectedrangeTypes.UnsupportedRangeTypeError](err); unsupported != noComparator[rt] {
 				if unsupported {
-					t.Errorf("%q is Evaluable but CompareVersions has no comparator for it", rt)
+					t.Errorf("RangeTypes() contains %q but CompareVersions has no comparator for it", rt)
 				} else {
-					t.Errorf("%q is not Evaluable but CompareVersions has a comparator; drop it from comparatorless", rt)
+					t.Errorf("%q has a comparator now; drop it from noComparator", rt)
 				}
 			}
 		})
