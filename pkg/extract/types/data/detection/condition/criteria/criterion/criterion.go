@@ -268,54 +268,25 @@ type AcceptQueries struct {
 	CPE       CPEAccepts `json:"cpe,omitzero"`
 }
 
-// unknownEnums collects the enum values in this criterion that are outside
-// this build's vocabulary — data from a newer vuls-data-update that this
-// build cannot evaluate. Declared "unknown" vocabulary values are normal
-// data and are not reported. The walk order is fixed, so the result is
-// deterministic.
-func (c Criterion) unknownEnums() []warningTypes.Warning {
-	if !c.Type.Known() {
-		return []warningTypes.Warning{{Kind: warningTypes.KindUnevaluableCriterionType, Cause: string(c.Type)}}
-	}
-
-	var ws []warningTypes.Warning
+func (c Criterion) Accept(query Query, repositories []string) (FilteredCriterion, error) {
 	switch c.Type {
 	case CriterionTypeVersion:
 		if c.Version == nil {
-			break
+			return FilteredCriterion{}, errors.New("criterion is not set for version criterion")
 		}
+		// Enums this arm is about to evaluate must be in this build's
+		// vocabulary; otherwise the criterion contributes "not affected" and
+		// the reason is recorded on the result so callers can surface it.
+		// The deeper vocabulary guards remain as silent backstops.
+		var ws []warningTypes.Warning
 		if !c.Version.Package.Type.Known() {
 			ws = append(ws, warningTypes.Warning{Kind: warningTypes.KindUnevaluablePackageType, Cause: string(c.Version.Package.Type)})
 		}
 		if c.Version.Affected != nil && !c.Version.Affected.Type.Known() {
 			ws = append(ws, warningTypes.Warning{Kind: warningTypes.KindUnevaluableRangeType, Cause: string(c.Version.Affected.Type)})
 		}
-	case CriterionTypeNoneExist:
-		if c.NoneExist != nil && !c.NoneExist.Type.Known() {
-			ws = append(ws, warningTypes.Warning{Kind: warningTypes.KindUnevaluablePackageType, Cause: string(c.NoneExist.Type)})
-		}
-	case CriterionTypeCPE:
-		if c.CPE != nil && c.CPE.Range != nil && !c.CPE.Range.Type.Known() {
-			ws = append(ws, warningTypes.Warning{Kind: warningTypes.KindUnevaluableRangeType, Cause: string(c.CPE.Range.Type)})
-		}
-	default:
-	}
-	return ws
-}
-
-func (c Criterion) Accept(query Query, repositories []string) (FilteredCriterion, error) {
-	// A criterion this build cannot evaluate contributes "not affected", and
-	// the reason is recorded on the result so callers can surface it; the
-	// deeper vocabulary guards remain as silent backstops behind this single
-	// observation point.
-	if ws := c.unknownEnums(); len(ws) > 0 {
-		return FilteredCriterion{Criterion: c, Warnings: ws}, nil
-	}
-
-	switch c.Type {
-	case CriterionTypeVersion:
-		if c.Version == nil {
-			return FilteredCriterion{}, errors.New("criterion is not set for version criterion")
+		if len(ws) > 0 {
+			return FilteredCriterion{Criterion: c, Warnings: ws}, nil
 		}
 		if len(query.Version) == 0 {
 			return FilteredCriterion{Criterion: c, Accepts: AcceptQueries{}}, nil
@@ -338,6 +309,9 @@ func (c Criterion) Accept(query Query, repositories []string) (FilteredCriterion
 	case CriterionTypeNoneExist:
 		if c.NoneExist == nil {
 			return FilteredCriterion{}, errors.New("criterion is not set for none exist criterion")
+		}
+		if !c.NoneExist.Type.Known() {
+			return FilteredCriterion{Criterion: c, Warnings: []warningTypes.Warning{{Kind: warningTypes.KindUnevaluablePackageType, Cause: string(c.NoneExist.Type)}}}, nil
 		}
 		if query.NoneExist == nil {
 			return FilteredCriterion{Criterion: c, Accepts: AcceptQueries{}}, nil
@@ -371,6 +345,9 @@ func (c Criterion) Accept(query Query, repositories []string) (FilteredCriterion
 		if c.CPE == nil {
 			return FilteredCriterion{}, errors.New("criterion is not set for cpe criterion")
 		}
+		if c.CPE.Range != nil && !c.CPE.Range.Type.Known() {
+			return FilteredCriterion{Criterion: c, Warnings: []warningTypes.Warning{{Kind: warningTypes.KindUnevaluableRangeType, Cause: string(c.CPE.Range.Type)}}}, nil
+		}
 		if len(query.CPE) == 0 {
 			return FilteredCriterion{Criterion: c, Accepts: AcceptQueries{}}, nil
 		}
@@ -397,9 +374,13 @@ func (c Criterion) Accept(query Query, repositories []string) (FilteredCriterion
 			Accepts:   AcceptQueries{CPE: accepts},
 		}, nil
 	default:
-		// Unknown (declared, normal data) or unset — quietly accepts no
-		// queries; out-of-vocabulary values were already recorded and
-		// short-circuited by the unknownEnums pre-check above.
+		// A criterion type outside this build's vocabulary (data from a
+		// newer vuls-data-update) contributes "not affected", recorded on
+		// the result so callers can surface it. The declared "unknown"
+		// vocabulary value is normal data and stays quiet.
+		if !c.Type.Known() {
+			return FilteredCriterion{Criterion: c, Warnings: []warningTypes.Warning{{Kind: warningTypes.KindUnevaluableCriterionType, Cause: string(c.Type)}}}, nil
+		}
 		return FilteredCriterion{Criterion: c, Accepts: AcceptQueries{}}, nil
 	}
 }
