@@ -89,16 +89,12 @@ func TestRange_Accept(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name: "empty range matches anything",
+			// "No version constraint" is expressed by Criterion.Range == nil;
+			// an endpoint-less Range expresses nothing and cannot match.
+			name: "endpoint-less range expresses nothing and does not match",
 			r:    ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeSEMVER},
 			v:    "1.0.0",
-			want: true,
-		},
-		{
-			name: "empty range matches even unparseable v",
-			r:    ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeSEMVER},
-			v:    "not-a-semver",
-			want: true,
+			want: false,
 		},
 		{
 			name: "ge inclusive lower, equal",
@@ -232,15 +228,13 @@ func TestRange_Accept(t *testing.T) {
 			wantErr: true,
 		},
 		{
-			// Without bounds the fast path declares match-all for known
-			// types; an unsupported (newer-data) type must not get that,
-			// since newer data may constrain matching in ways this build
-			// cannot even parse.
-			name:    "unsupported type (newer data) with no bounds reports unevaluable",
-			r:       ccRangeTypes.Range{Type: ccRangeTypes.RangeType("fortinet-fortifuture")},
-			v:       "1.0.0",
-			want:    false,
-			wantErr: true,
+			// Endpoint-less: expresses nothing regardless of the type; the
+			// unevaluable classification only applies where evaluation is
+			// actually attempted (bounded ranges).
+			name: "unsupported type (newer data) with no bounds does not match, silently",
+			r:    ccRangeTypes.Range{Type: ccRangeTypes.RangeType("fortinet-fortifuture")},
+			v:    "1.0.0",
+			want: false,
 		},
 	}
 	for _, tt := range tests {

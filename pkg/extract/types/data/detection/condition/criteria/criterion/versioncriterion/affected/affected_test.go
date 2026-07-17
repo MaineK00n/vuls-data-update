@@ -216,10 +216,9 @@ func TestAffected_Accept(t *testing.T) {
 			wantErr: true,
 		},
 		{
-			// Comparator-less vocabulary debt (pacman) is unevaluable like
-			// any other type CompareVersions has no comparator for — and it
-			// must not get the all-empty match-all.
-			name: "comparator-less vocabulary type with empty range reports unevaluable",
+			// An endpoint-less element expresses nothing and is skipped
+			// regardless of the type; no evaluation happens, so no warning.
+			name: "comparator-less vocabulary type with empty range does not match, silently",
 			fields: fields{
 				Type:  affectedrangeTypes.RangeTypePacman,
 				Range: []affectedrangeTypes.Range{{}},
@@ -228,8 +227,7 @@ func TestAffected_Accept(t *testing.T) {
 				family: ecosystemTypes.EcosystemTypeArch,
 				v:      "0.9.0",
 			},
-			want:    false,
-			wantErr: true,
+			want: false,
 		},
 		{
 			name: "comparator-less vocabulary type with bounds reports unevaluable",
@@ -260,10 +258,9 @@ func TestAffected_Accept(t *testing.T) {
 			want: false,
 		},
 		{
-			// An all-empty Range element means match-all for known types; an
-			// unsupported (newer-data) type must not get that, since newer
-			// data may constrain matching in ways this build cannot parse.
-			name: "unsupported range type (newer data) with empty range reports unevaluable",
+			// An endpoint-less element expresses nothing and is skipped
+			// regardless of the type (it mirrors the empty Range slice).
+			name: "unsupported range type (newer data) with empty range does not match, silently",
 			fields: fields{
 				Type:  affectedrangeTypes.RangeType("future-type"),
 				Range: []affectedrangeTypes.Range{{}},
@@ -272,8 +269,7 @@ func TestAffected_Accept(t *testing.T) {
 				family: ecosystemTypes.EcosystemTypeRedHat,
 				v:      "0.9.0",
 			},
-			want:    false,
-			wantErr: true,
+			want: false,
 		},
 	}
 	for _, tt := range tests {

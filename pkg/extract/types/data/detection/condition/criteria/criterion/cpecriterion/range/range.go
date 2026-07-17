@@ -487,31 +487,14 @@ func (t RangeType) CompareVersions(v1, v2 string) (int, error) {
 // branch below is defensive, for error kinds a future comparator might
 // introduce. Mirrors versioncriterion/affected.Accept.
 func (r Range) Accept(v string) (bool, error) {
-	// The declared Unknown vocabulary value is normal data ("the source
-	// declared a constraint we could not translate", not "no constraint")
-	// and quietly refuses to match — including the no-bounds match-all
-	// below.
-	if r.Type == RangeTypeUnknown {
-		return false, nil
-	}
 	if r.GreaterEqual == "" && r.GreaterThan == "" && r.LessEqual == "" && r.LessThan == "" {
-		// No bounds means "no constraint": every version matches — but only
-		// for a Type this build can evaluate. Whether it can is derived from
-		// CompareVersions itself (its default answers unset / newer-data
-		// values with *UnsupportedRangeTypeError), and this fast path is the
-		// one place that never invokes it, so probe: compare v against
-		// itself purely to learn whether a comparator exists. A parse
-		// failure (*CompareError without the unsupported cause) keeps the
-		// documented semantics — no bounds accept even an unparseable v.
-		if _, err := r.Type.CompareVersions(v, v); err != nil {
-			if ue, ok := stderrors.AsType[*UnsupportedRangeTypeError](err); ok {
-				return false, &warningTypes.UnevaluableError{Warning: warningTypes.Warning{Kind: warningTypes.KindUnevaluableRangeType, Cause: string(ue.RangeType)}}
-			}
-			if _, ok := stderrors.AsType[*CompareError](err); !ok {
-				return false, errors.Wrapf(err, "compare (type: %s, v1: %s, v2: %s)", r.Type, v, v)
-			}
-		}
-		return true, nil
+		// A Range with no endpoints expresses nothing and cannot declare a
+		// match ("no version constraint" is expressed by Criterion.Range ==
+		// nil, which never reaches here; no extractor produces an endpoint-
+		// less Range, and rejecting malformed ones is schema validation's
+		// job). Falling through to an unconditional match-all here was an
+		// oversight, mirrored from versioncriterion/affected.
+		return false, nil
 	}
 
 	type bound struct {
