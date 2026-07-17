@@ -465,19 +465,20 @@ func (t RangeType) CompareVersions(v1, v2 string) (int, error) {
 }
 
 // Accept returns true when v satisfies every non-empty bound on r, comparing
-// via r.Type.CompareVersions. An empty Range (all four bound strings unset)
-// with a usable Type accepts any v — even an unparseable one — because "no
-// bound"
-// means "no constraint"; an empty Range with Type=Unknown/unset still
-// returns false (no constraint can be evaluated).
+// via r.Type.CompareVersions. An endpoint-less Range (all four bound strings
+// unset) expresses nothing — "no version constraint" is Criterion.Range ==
+// nil — and reports a non-fatal *warning.UnevaluableError (empty-range).
 //
-// Compare failures that classify as *CompareError (parse failures on either
-// bound or query, the Unknown-type sentinel, plus range types this build
-// does not know) are swallowed as graceful non-matches so a detect run
-// against malformed scan input or newer data does not crash. Every error
-// CompareVersions currently raises classifies as *CompareError; the propagation
-// branch below is defensive, for error kinds a future comparator might
-// introduce. Mirrors versioncriterion/affected.Accept.
+// Bound comparisons that cannot be evaluated split two ways: a range type
+// this build has no comparator for (*UnsupportedRangeTypeError through the
+// *CompareError chain) also reports a non-fatal *warning.UnevaluableError so
+// the criterion layer can record it, while the remaining *CompareError
+// failures (parse failures on either bound or query, the Unknown-type
+// sentinel) are swallowed as graceful non-matches so a detect run against
+// malformed scan input does not crash. Every error CompareVersions currently
+// raises classifies as *CompareError; the propagation branch below is
+// defensive, for error kinds a future comparator might introduce. Mirrors
+// versioncriterion/affected.Accept.
 func (r Range) Accept(v string) (bool, error) {
 	if r.GreaterEqual == "" && r.GreaterThan == "" && r.LessEqual == "" && r.LessThan == "" {
 		// A Range with no endpoints expresses nothing and cannot declare a

@@ -191,7 +191,7 @@ type CannotCompareError struct {
 }
 
 func (e *CannotCompareError) Error() string {
-	return fmt.Sprintf("cannot compare versions. %s", e.Reason)
+	return fmt.Sprintf("cannot compare versions: %s", e.Reason)
 }
 
 // UnsupportedRangeTypeError is wrapped in a *CompareError when
