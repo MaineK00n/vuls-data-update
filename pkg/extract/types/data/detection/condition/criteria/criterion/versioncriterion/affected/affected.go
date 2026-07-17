@@ -50,6 +50,13 @@ func (a Affected) Accept(family ecosystemTypes.Ecosystem, v string) (bool, error
 	if !a.Type.Known() {
 		return false, &warningTypes.UnevaluableError{Warning: warningTypes.Warning{Kind: warningTypes.KindUnevaluableRangeType, Cause: string(a.Type)}}
 	}
+	// Comparator-less vocabulary debt (pacman, freebsd-pkg) degrades
+	// silently by policy — bounded ranges already do, via CompareError — but
+	// it must not fall through to the all-empty-Range match-all below: a
+	// type that can evaluate nothing must not match everything.
+	if !a.Type.Evaluable() {
+		return false, nil
+	}
 	for _, r := range a.Range {
 		if r.Equal != "" {
 			n, err := a.Type.CompareVersions(family, r.Equal, v)

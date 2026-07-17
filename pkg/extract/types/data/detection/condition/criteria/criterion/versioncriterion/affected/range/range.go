@@ -146,6 +146,25 @@ func (t RangeType) Compare(u RangeType) int {
 
 var vocabulary = enum.NewVocabulary(RangeTypes())
 
+// comparatorless lists vocabulary values that have never had a comparator —
+// pre-existing debt, not a template: CompareVersions answers them with
+// *UnsupportedRangeTypeError and evaluation degrades silently. Do not add
+// new types here; a new RangeType must ship with its comparator.
+var comparatorless = map[RangeType]struct{}{
+	RangeTypePacman:     {},
+	RangeTypeFreeBSDPkg: {},
+}
+
+// Evaluable reports whether this build can actually evaluate t: it is in the
+// vocabulary AND has a comparator. Known but comparator-less debt (pacman,
+// freebsd-pkg) is not evaluable.
+func (t RangeType) Evaluable() bool {
+	if _, ok := comparatorless[t]; ok {
+		return false
+	}
+	return vocabulary.Contains(t)
+}
+
 // Known reports whether t is in this build's vocabulary — i.e. whether this
 // build can be expected to evaluate it (modulo comparator-less debt, see
 // UnsupportedRangeTypeError). Data from a newer vuls-data-update may carry

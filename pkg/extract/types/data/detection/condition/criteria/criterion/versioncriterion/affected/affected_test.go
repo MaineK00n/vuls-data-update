@@ -216,6 +216,33 @@ func TestAffected_Accept(t *testing.T) {
 			wantErr: true,
 		},
 		{
+			// Comparator-less vocabulary debt (pacman) degrades silently by
+			// policy, but a type that can evaluate nothing must not get the
+			// all-empty match-all.
+			name: "comparator-less vocabulary type with empty range does not match",
+			fields: fields{
+				Type:  affectedrangeTypes.RangeTypePacman,
+				Range: []affectedrangeTypes.Range{{}},
+			},
+			args: args{
+				family: ecosystemTypes.EcosystemTypeArch,
+				v:      "0.9.0",
+			},
+			want: false,
+		},
+		{
+			name: "comparator-less vocabulary type with bounds does not match (silently)",
+			fields: fields{
+				Type:  affectedrangeTypes.RangeTypePacman,
+				Range: []affectedrangeTypes.Range{{LessThan: "1.0.0"}},
+			},
+			args: args{
+				family: ecosystemTypes.EcosystemTypeArch,
+				v:      "0.9.0",
+			},
+			want: false,
+		},
+		{
 			// Unknown's empty bounds mean "the source declared a constraint we
 			// could not translate", not "no constraint" — mirroring
 			// cpecriterion/range, it must not get the all-empty match-all.
