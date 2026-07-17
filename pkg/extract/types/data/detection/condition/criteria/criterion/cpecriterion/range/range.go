@@ -214,14 +214,6 @@ func (t RangeType) Compare(u RangeType) int {
 
 var vocabulary = enum.NewVocabulary(RangeTypes())
 
-// Known reports whether t is in this build's vocabulary — i.e. whether this
-// build can be expected to evaluate it (modulo comparator-less debt, see
-// UnsupportedRangeTypeError). Data from a newer vuls-data-update may carry
-// values for which Known is false.
-func (t RangeType) Known() bool {
-	return vocabulary.Contains(t)
-}
-
 // Range is a version constraint for a CPE criterion. Type selects the
 // comparator; bounds are inclusive (Greater/LessEqual) or exclusive
 // (Greater/LessThan). Unlike versioncriterion/affected/Range there is no
