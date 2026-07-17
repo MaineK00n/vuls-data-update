@@ -481,12 +481,13 @@ func (t RangeType) CompareVersions(v1, v2 string) (int, error) {
 func (r Range) Accept(v string) (bool, error) {
 	if r.GreaterEqual == "" && r.GreaterThan == "" && r.LessEqual == "" && r.LessThan == "" {
 		// A Range with no endpoints expresses nothing and cannot declare a
-		// match ("no version constraint" is expressed by Criterion.Range ==
-		// nil, which never reaches here; no extractor produces an endpoint-
-		// less Range, and rejecting malformed ones is schema validation's
-		// job). Falling through to an unconditional match-all here was an
-		// oversight, mirrored from versioncriterion/affected.
-		return false, nil
+		// match: "no version constraint" is expressed by Criterion.Range ==
+		// nil, which never reaches here, so this is malformed data (schema
+		// validation is the hard gate) or a newer range type whose
+		// constraints live in JSON fields this build's unmarshal drops.
+		// Report it as a non-fatal empty-range warning rather than aborting
+		// detection in the field.
+		return false, &warningTypes.UnevaluableError{Warning: warningTypes.Warning{Kind: warningTypes.KindEmptyRange, Cause: string(r.Type)}}
 	}
 
 	type bound struct {

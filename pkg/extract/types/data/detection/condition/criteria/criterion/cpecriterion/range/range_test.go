@@ -90,11 +90,13 @@ func TestRange_Accept(t *testing.T) {
 	}{
 		{
 			// "No version constraint" is expressed by Criterion.Range == nil;
-			// an endpoint-less Range expresses nothing and cannot match.
-			name: "endpoint-less range expresses nothing and does not match",
-			r:    ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeSEMVER},
-			v:    "1.0.0",
-			want: false,
+			// an endpoint-less Range expresses nothing, cannot be evaluated,
+			// and is reported as a non-fatal empty-range warning.
+			name:    "endpoint-less range reports empty-range",
+			r:       ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeSEMVER},
+			v:       "1.0.0",
+			want:    false,
+			wantErr: true,
 		},
 		{
 			name: "ge inclusive lower, equal",
@@ -212,10 +214,13 @@ func TestRange_Accept(t *testing.T) {
 			want: false,
 		},
 		{
-			name: "empty range with Type=Unknown returns false",
-			r:    ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeUnknown},
-			v:    "1.0.0",
-			want: false,
+			// The empty-ness is the anomaly, not the type: even the declared
+			// "unknown" value warns when it carries no endpoints.
+			name:    "empty range with Type=Unknown reports empty-range",
+			r:       ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeUnknown},
+			v:       "1.0.0",
+			want:    false,
+			wantErr: true,
 		},
 		{
 			// Data written by a newer vuls-data-update may carry a range type
@@ -228,13 +233,15 @@ func TestRange_Accept(t *testing.T) {
 			wantErr: true,
 		},
 		{
-			// Endpoint-less: expresses nothing regardless of the type; the
-			// unevaluable classification only applies where evaluation is
-			// actually attempted (bounded ranges).
-			name: "unsupported type (newer data) with no bounds does not match, silently",
-			r:    ccRangeTypes.Range{Type: ccRangeTypes.RangeType("fortinet-fortifuture")},
-			v:    "1.0.0",
-			want: false,
+			// Endpoint-less: expresses nothing regardless of the type — it
+			// may also be a newer range type whose constraints live in JSON
+			// fields this build's unmarshal dropped, so it is reported
+			// rather than silently skipped.
+			name:    "unsupported type (newer data) with no bounds reports empty-range",
+			r:       ccRangeTypes.Range{Type: ccRangeTypes.RangeType("fortinet-fortifuture")},
+			v:       "1.0.0",
+			want:    false,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {

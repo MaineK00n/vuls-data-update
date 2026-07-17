@@ -33,18 +33,19 @@ func Compare(x, y Affected) int {
 
 func (a Affected) Accept(family ecosystemTypes.Ecosystem, v string) (bool, error) {
 	for _, r := range a.Range {
-		// A Range element with no endpoints expresses nothing: like an empty
-		// Range slice, it cannot declare a match (falling through to the
-		// unconditional true below was an oversight — no extractor produces
-		// such elements, and rejecting malformed ones is schema validation's
-		// job). Whether a Type is evaluable is derived from CompareVersions
-		// itself on the bound comparisons below: anything it has no
-		// comparator for (unset, newer-data values, comparator-less
-		// vocabulary debt like pacman) answers with
-		// *UnsupportedRangeTypeError and is reported as a non-fatal
-		// *warning.UnevaluableError.
+		// A Range element with no endpoints expresses nothing — malformed
+		// data (no extractor produces one; schema validation is the hard
+		// gate) or a newer range type whose constraints live in JSON fields
+		// this build's unmarshal drops. Either way the criterion cannot be
+		// evaluated: report it as a non-fatal empty-range warning rather
+		// than aborting detection in the field. Whether a Type is evaluable
+		// is otherwise derived from CompareVersions itself on the bound
+		// comparisons below: anything it has no comparator for (unset,
+		// newer-data values, comparator-less vocabulary debt like pacman)
+		// answers with *UnsupportedRangeTypeError and is reported as a
+		// non-fatal *warning.UnevaluableError.
 		if r == (rangeTypes.Range{}) {
-			continue
+			return false, &warningTypes.UnevaluableError{Warning: warningTypes.Warning{Kind: warningTypes.KindEmptyRange, Cause: string(a.Type)}}
 		}
 		if r.Equal != "" {
 			n, err := a.Type.CompareVersions(family, r.Equal, v)

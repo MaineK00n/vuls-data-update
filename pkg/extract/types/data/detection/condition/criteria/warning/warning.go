@@ -38,6 +38,11 @@ const (
 	// KindUnevaluableRangeType: the affected / cpe range Type is outside
 	// this build's vocabulary.
 	KindUnevaluableRangeType Kind = "unevaluable-range-type"
+	// KindEmptyRange: a Range with no endpoints, which expresses nothing —
+	// malformed data (schema validation's hard gate) or a newer range type
+	// whose constraints live in JSON fields this build's unmarshal drops.
+	// Cause carries the range type. The criterion is skipped.
+	KindEmptyRange Kind = "empty-range"
 )
 
 // Kinds returns every Kind this build knows, in declaration order. The known
@@ -47,6 +52,7 @@ func Kinds() []Kind {
 		KindUnevaluableCriterionType,
 		KindUnevaluablePackageType,
 		KindUnevaluableRangeType,
+		KindEmptyRange,
 	}
 }
 

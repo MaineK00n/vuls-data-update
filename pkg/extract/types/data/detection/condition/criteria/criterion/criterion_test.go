@@ -773,6 +773,47 @@ func TestCriterion_Accept(t *testing.T) {
 			},
 		},
 		{
+			// An endpoint-less Range element expresses nothing and cannot be
+			// evaluated; the empty-range warning surfaces on the result.
+			name: "version criterion with endpoint-less range records empty-range",
+			fields: fields{
+				Type: criterionTypes.CriterionTypeVersion,
+				Version: &vcTypes.Criterion{
+					Vulnerable: true,
+					Package: vcPackageTypes.Package{
+						Type:   vcPackageTypes.PackageTypeBinary,
+						Binary: &vcBinaryPackageTypes.Package{Name: "name"},
+					},
+					Affected: &affectedTypes.Affected{
+						Type:  affectedrangeType.RangeTypeRPM,
+						Range: []affectedrangeType.Range{{}},
+					},
+				},
+			},
+			args: args{
+				query: criterionTypes.Query{Version: []vcTypes.Query{{Binary: &vcTypes.QueryBinary{Family: ecosystemTypes.EcosystemTypeRedHat, Name: "name", Version: "0.0.1", Arch: "x86_64"}}}},
+			},
+			want: criterionTypes.FilteredCriterion{
+				Criterion: criterionTypes.Criterion{
+					Type: criterionTypes.CriterionTypeVersion,
+					Version: &vcTypes.Criterion{
+						Vulnerable: true,
+						Package: vcPackageTypes.Package{
+							Type:   vcPackageTypes.PackageTypeBinary,
+							Binary: &vcBinaryPackageTypes.Package{Name: "name"},
+						},
+						Affected: &affectedTypes.Affected{
+							Type:  affectedrangeType.RangeTypeRPM,
+							Range: []affectedrangeType.Range{{}},
+						},
+					},
+				},
+				Warnings: []warningTypes.Warning{
+					{Kind: warningTypes.KindEmptyRange, Cause: "rpm"},
+				},
+			},
+		},
+		{
 			name: "none-exist criterion with unknown package type records the skip",
 			fields: fields{
 				Type:      criterionTypes.CriterionTypeNoneExist,
