@@ -74,34 +74,6 @@ func Compare(x, y Criteria) int {
 	)
 }
 
-func (c Criteria) Contains(query criterionTypes.Query, parentRepositories []string) (bool, error) {
-	repositories := parentRepositories
-	if len(c.Repositories) > 0 {
-		repositories = c.Repositories
-	}
-
-	for _, ca := range c.Criterias {
-		isContained, err := ca.Contains(query, repositories)
-		if err != nil {
-			return false, errors.Wrap(err, "criteria contains")
-		}
-		if isContained {
-			return true, nil
-		}
-	}
-
-	for _, cn := range c.Criterions {
-		isContained, err := cn.Contains(query, repositories)
-		if err != nil {
-			return false, errors.Wrap(err, "criterion accept")
-		}
-		if isContained {
-			return true, nil
-		}
-	}
-	return false, nil
-}
-
 type FilteredCriteria struct {
 	Operator     CriteriaOperatorType               `json:"operator,omitempty"`
 	Criterias    []FilteredCriteria                 `json:"criterias,omitempty"`
