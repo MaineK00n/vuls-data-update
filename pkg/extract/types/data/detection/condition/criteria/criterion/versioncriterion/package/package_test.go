@@ -122,8 +122,9 @@ func TestPackage_Accept(t *testing.T) {
 		},
 		{
 			// Data written by a newer vuls-data-update may carry a package
-			// type this build does not know. Accept must degrade to a
-			// non-match (skip the criterion) instead of failing detection.
+			// type this build does not know. Accept reports the non-fatal
+			// *warning.UnevaluableError — a sentinel for the criterion layer
+			// to catch and record as a skip, not a fatal abort of detection.
 			name:   "unsupported type (newer data) reports unevaluable",
 			fields: fields{Type: packageTypes.PackageType("future-package")},
 			args: args{
