@@ -2253,7 +2253,7 @@ func TestFilteredCriteria_Affected(t *testing.T) {
 	}
 }
 
-func TestCriteria_UnknownEnumValueRoundTrip(t *testing.T) {
+func TestCriteria_OutOfVocabularyEnumValueRoundTrip(t *testing.T) {
 	// Forward-compat contract: the schema's enums are deliberately NOT
 	// validated at unmarshal, so data produced by a newer vuls-data-update
 	// (carrying enum values this build does not know) must survive a
@@ -2293,11 +2293,11 @@ func TestCriteria_UnknownEnumValueRoundTrip(t *testing.T) {
 
 	bs, err := json.Marshal(want)
 	if err != nil {
-		t.Fatalf("marshal criteria with unknown enum values: %v", err)
+		t.Fatalf("marshal criteria with out-of-vocabulary enum values: %v", err)
 	}
 	var got criteriaTypes.Criteria
 	if err := json.Unmarshal(bs, &got); err != nil {
-		t.Fatalf("unmarshal criteria with unknown enum values: %v", err)
+		t.Fatalf("unmarshal criteria with out-of-vocabulary enum values: %v", err)
 	}
 	if diff := cmp.Diff(want, got); diff != "" {
 		t.Errorf("round trip (-expected +got):\n%s", diff)
