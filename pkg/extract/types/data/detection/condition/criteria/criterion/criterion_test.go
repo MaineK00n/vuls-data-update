@@ -433,7 +433,7 @@ func TestCriterion_Accept(t *testing.T) {
 			// evaluate; evaluation stops at the first blocker, so only the
 			// package type surfaces here (the range type would surface once
 			// the package type is understood).
-			name: "version criterion with unknown package type records the first blocker",
+			name: "version criterion with out-of-vocabulary package type records the first blocker",
 			fields: fields{
 				Type: criterionTypes.CriterionTypeVersion,
 				Version: &vcTypes.Criterion{
@@ -468,7 +468,7 @@ func TestCriterion_Accept(t *testing.T) {
 		{
 			// With the package evaluable and matching, the unevaluable range
 			// type is the blocker that surfaces.
-			name: "version criterion with unknown range type records the skip",
+			name: "version criterion with out-of-vocabulary range type records the skip",
 			fields: fields{
 				Type: criterionTypes.CriterionTypeVersion,
 				Version: &vcTypes.Criterion{
@@ -548,7 +548,7 @@ func TestCriterion_Accept(t *testing.T) {
 			},
 		},
 		{
-			name: "none-exist criterion with unknown package type records the skip",
+			name: "none-exist criterion with out-of-vocabulary package type records the skip",
 			fields: fields{
 				Type:      criterionTypes.CriterionTypeNoneExist,
 				NoneExist: &necTypes.Criterion{Type: necTypes.PackageType("future-package")},

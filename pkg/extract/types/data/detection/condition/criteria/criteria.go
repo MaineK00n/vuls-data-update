@@ -169,8 +169,8 @@ func (c FilteredCriteria) Affected() (bool, error) {
 		return false, nil
 	default:
 		// Deliberately strict, unlike the other enum dispatches: AND/OR is a
-		// closed boolean algebra with no growth pressure, an unknown operator
-		// would silently suppress an entire criteria subtree (not just one
+		// closed boolean algebra with no growth pressure, an out-of-vocabulary
+		// operator would silently suppress an entire criteria subtree (not just one
 		// criterion), and if a non-monotone operator (e.g. negation) ever
 		// were added, "skip as not affected" would no longer be provably
 		// conservative. An out-of-vocabulary operator is data corruption or
