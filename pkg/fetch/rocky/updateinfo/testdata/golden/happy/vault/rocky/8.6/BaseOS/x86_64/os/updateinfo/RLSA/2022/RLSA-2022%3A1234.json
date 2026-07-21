@@ -1,0 +1,57 @@
+{
+	"from": "releng@rockylinux.org",
+	"status": "final",
+	"type": "security",
+	"version": "2",
+	"id": "RLSA-2022:1234",
+	"title": "Important: openssl security update",
+	"issued": {
+		"date": "2022-05-03 00:00:00"
+	},
+	"updated": {
+		"date": "2022-05-03 00:00:00"
+	},
+	"rights": "Copyright 2022 Rocky Enterprise Software Foundation",
+	"release": "Rocky Linux 8",
+	"pushcount": "1",
+	"severity": "Important",
+	"summary": "openssl security update",
+	"description": "OpenSSL is a toolkit that implements the SSL and TLS protocols.",
+	"references": {
+		"reference": [
+			{
+				"href": "https://errata.rockylinux.org/RLSA-2022:1234",
+				"id": "RLSA-2022:1234",
+				"type": "self",
+				"title": "RLSA-2022:1234"
+			},
+			{
+				"href": "https://access.redhat.com/security/cve/CVE-2022-0778",
+				"id": "CVE-2022-0778",
+				"type": "cve",
+				"title": "CVE-2022-0778"
+			}
+		]
+	},
+	"pkglist": {
+		"collection": {
+			"short": "rocky-linux-8-x86-64-baseos-rpms",
+			"name": "rocky-linux-8-x86-64-baseos-rpms",
+			"package": [
+				{
+					"name": "openssl",
+					"epoch": "1",
+					"version": "1.1.1k",
+					"release": "6.el8_5",
+					"arch": "x86_64",
+					"src": "openssl-1.1.1k-6.el8_5.src.rpm",
+					"filename": "openssl-1.1.1k-6.el8_5.x86_64.rpm",
+					"sum": {
+						"text": "cafe1230000000000000000000000000000000000000000000000000000000000",
+						"type": "sha256"
+					}
+				}
+			]
+		}
+	}
+}
