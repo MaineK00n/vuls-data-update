@@ -33,14 +33,22 @@ func TestVocabulary_Compare(t *testing.T) {
 
 func TestVocabulary_Contains(t *testing.T) {
 	vocabulary := enum.NewVocabulary([]string{"vendor", "cvss_v2"})
-	if !vocabulary.Contains("vendor") {
-		t.Errorf("Contains(vendor) = false, want true")
+
+	tests := []struct {
+		name string
+		v    string
+		want bool
+	}{
+		{name: "known value", v: "vendor", want: true},
+		{name: "unknown value", v: "future", want: false},
+		{name: "empty (unset) value", v: "", want: false},
 	}
-	if vocabulary.Contains("future") {
-		t.Errorf("Contains(future) = true, want false")
-	}
-	if vocabulary.Contains("") {
-		t.Errorf(`Contains("") = true, want false`)
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := vocabulary.Contains(tt.v); got != tt.want {
+				t.Errorf("Contains(%q) = %v, want %v", tt.v, got, tt.want)
+			}
+		})
 	}
 }
 
