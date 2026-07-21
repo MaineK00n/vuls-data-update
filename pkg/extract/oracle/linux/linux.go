@@ -265,6 +265,7 @@ func (e extractor) extract(def linux.Definition) (dataTypes.Data, error) {
 						refs = append(refs, referenceTypes.Reference{
 							Source: "linux.oracle.com/security",
 							URL:    r.RefURL,
+							Title:  r.RefID,
 						})
 					}
 					return refs

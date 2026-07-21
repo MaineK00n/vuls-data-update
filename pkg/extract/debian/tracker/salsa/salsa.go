@@ -898,7 +898,9 @@ func collectSeverityAndBugRefs(anns []packageAnnotation) (*string, []referenceTy
 					Source: "security-tracker.debian.org",
 					URL:    fmt.Sprintf("https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=%d", *f.Bug),
 				}
-				if !slices.Contains(refs, r) {
+				if !slices.ContainsFunc(refs, func(e referenceTypes.Reference) bool {
+					return referenceTypes.Compare(e, r) == 0
+				}) {
 					refs = append(refs, r)
 				}
 			}

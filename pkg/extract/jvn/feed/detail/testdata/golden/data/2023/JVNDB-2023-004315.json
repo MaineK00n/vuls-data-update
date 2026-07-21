@@ -32,27 +32,51 @@
 				"references": [
 					{
 						"source": "jvndb.jvn.jp",
-						"url": "https://code.google.com/archive/p/oaicat/issues/7"
+						"url": "https://code.google.com/archive/p/oaicat/issues/7",
+						"title": "関連文書",
+						"tags": [
+							"advisory"
+						]
 					},
 					{
 						"source": "jvndb.jvn.jp",
-						"url": "https://github.com/OCLC-Research/oaicat/commit/6cc65501869fa663bcd24a70b63f41f5cfe6b3e1"
+						"url": "https://github.com/OCLC-Research/oaicat/commit/6cc65501869fa663bcd24a70b63f41f5cfe6b3e1",
+						"title": "関連文書",
+						"tags": [
+							"advisory"
+						]
 					},
 					{
 						"source": "jvndb.jvn.jp",
-						"url": "https://nvd.nist.gov/vuln/detail/CVE-2013-10019"
+						"url": "https://nvd.nist.gov/vuln/detail/CVE-2013-10019",
+						"title": "National Vulnerability Database (NVD)",
+						"tags": [
+							"advisory"
+						]
 					},
 					{
 						"source": "jvndb.jvn.jp",
-						"url": "https://oaicat.googlecode.com/files/oaicat-1.5.62.tar.gz"
+						"url": "https://oaicat.googlecode.com/files/oaicat-1.5.62.tar.gz",
+						"title": "関連文書",
+						"tags": [
+							"advisory"
+						]
 					},
 					{
 						"source": "jvndb.jvn.jp",
-						"url": "https://vuldb.com/?id.221489"
+						"url": "https://vuldb.com/?id.221489",
+						"title": "関連文書",
+						"tags": [
+							"advisory"
+						]
 					},
 					{
 						"source": "jvndb.jvn.jp",
-						"url": "https://www.cve.org/CVERecord?id=CVE-2013-10019"
+						"url": "https://www.cve.org/CVERecord?id=CVE-2013-10019",
+						"title": "Common Vulnerabilities and Exposures (CVE)",
+						"tags": [
+							"advisory"
+						]
 					}
 				],
 				"published": "2023-10-27T17:01:51+09:00",
@@ -72,11 +96,19 @@
 				"references": [
 					{
 						"source": "jvndb.jvn.jp",
-						"url": "https://nvd.nist.gov/vuln/detail/CVE-2013-10019"
+						"url": "https://nvd.nist.gov/vuln/detail/CVE-2013-10019",
+						"title": "National Vulnerability Database (NVD)",
+						"tags": [
+							"advisory"
+						]
 					},
 					{
 						"source": "jvndb.jvn.jp",
-						"url": "https://www.cve.org/CVERecord?id=CVE-2013-10019"
+						"url": "https://www.cve.org/CVERecord?id=CVE-2013-10019",
+						"title": "Common Vulnerabilities and Exposures (CVE)",
+						"tags": [
+							"advisory"
+						]
 					}
 				]
 			},

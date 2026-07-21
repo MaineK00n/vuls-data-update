@@ -32,23 +32,43 @@
 				"references": [
 					{
 						"source": "jvndb.jvn.jp",
-						"url": "https://cdn.kernel.org/pub/linux/kernel/v5.x/ChangeLog-5.16.3"
+						"url": "https://cdn.kernel.org/pub/linux/kernel/v5.x/ChangeLog-5.16.3",
+						"title": "ChangeLog",
+						"tags": [
+							"vendor"
+						]
 					},
 					{
 						"source": "jvndb.jvn.jp",
-						"url": "https://github.com/torvalds/linux/commit/3ba880a12df5aa4488c18281701b5b1bc3d4531a"
+						"url": "https://github.com/torvalds/linux/commit/3ba880a12df5aa4488c18281701b5b1bc3d4531a",
+						"title": "GitHub",
+						"tags": [
+							"vendor"
+						]
 					},
 					{
 						"source": "jvndb.jvn.jp",
-						"url": "https://nvd.nist.gov/vuln/detail/CVE-2023-23001"
+						"url": "https://nvd.nist.gov/vuln/detail/CVE-2023-23001",
+						"title": "National Vulnerability Database (NVD)",
+						"tags": [
+							"advisory"
+						]
 					},
 					{
 						"source": "jvndb.jvn.jp",
-						"url": "https://www.cve.org/CVERecord?id=CVE-2023-23001"
+						"url": "https://www.cve.org/CVERecord?id=CVE-2023-23001",
+						"title": "Common Vulnerabilities and Exposures (CVE)",
+						"tags": [
+							"advisory"
+						]
 					},
 					{
 						"source": "jvndb.jvn.jp",
-						"url": "https://www.kernel.org"
+						"url": "https://www.kernel.org",
+						"title": "Linux Kernel",
+						"tags": [
+							"vendor"
+						]
 					}
 				],
 				"published": "2023-10-16T17:17:41+09:00",
@@ -68,11 +88,19 @@
 				"references": [
 					{
 						"source": "jvndb.jvn.jp",
-						"url": "https://nvd.nist.gov/vuln/detail/CVE-2023-23001"
+						"url": "https://nvd.nist.gov/vuln/detail/CVE-2023-23001",
+						"title": "National Vulnerability Database (NVD)",
+						"tags": [
+							"advisory"
+						]
 					},
 					{
 						"source": "jvndb.jvn.jp",
-						"url": "https://www.cve.org/CVERecord?id=CVE-2023-23001"
+						"url": "https://www.cve.org/CVERecord?id=CVE-2023-23001",
+						"title": "Common Vulnerabilities and Exposures (CVE)",
+						"tags": [
+							"advisory"
+						]
 					}
 				]
 			},

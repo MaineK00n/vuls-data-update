@@ -259,6 +259,13 @@ func extract(fetched amazon.Update, raws []string) dataTypes.Data {
 						rs = append(rs, referenceTypes.Reference{
 							Source: fetched.Author,
 							URL:    r.Href,
+							Title:  r.Title,
+							Tags: func() []string {
+								if r.Type == "" {
+									return nil
+								}
+								return []string{r.Type}
+							}(),
 						})
 					}
 					return rs
@@ -283,6 +290,8 @@ func extract(fetched amazon.Update, raws []string) dataTypes.Data {
 								{
 									Source: fetched.Author,
 									URL:    r.Href,
+									Title:  r.Title,
+									Tags:   []string{r.Type},
 								},
 							},
 						},

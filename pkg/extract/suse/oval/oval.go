@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io/fs"
 	"log/slog"
-	"maps"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -454,7 +453,7 @@ func buildAdvisoryAndVulnerability(def oval.Definition) ([]advisoryContentTypes.
 		})
 	}
 
-	refs := make(map[referenceTypes.Reference]struct{})
+	var refs []referenceTypes.Reference
 
 	for _, cve := range def.Metadata.Advisory.Cve {
 		source, err := func() (string, error) {
@@ -472,10 +471,11 @@ func buildAdvisoryAndVulnerability(def oval.Definition) ([]advisoryContentTypes.
 			return nil, vulnerabilityContentTypes.Content{}, errors.Wrap(err, "determine CVE source")
 		}
 
-		refs[referenceTypes.Reference{
+		refs = append(refs, referenceTypes.Reference{
 			Source: source,
 			URL:    strings.TrimSuffix(strings.TrimSpace(cve.Href), "/"),
-		}] = struct{}{}
+			Title:  strings.TrimSpace(cve.Text),
+		})
 
 		ss, err := buildSeverities(source, cve)
 		if err != nil {
@@ -489,25 +489,28 @@ func buildAdvisoryAndVulnerability(def oval.Definition) ([]advisoryContentTypes.
 		if !strings.HasPrefix(b.Text, "SUSE bug ") {
 			return nil, vulnerabilityContentTypes.Content{}, errors.Errorf("unexpected bugzilla text. expected prefix: %q, actual: %q", "SUSE bug ", b.Text)
 		}
-		refs[referenceTypes.Reference{
+		refs = append(refs, referenceTypes.Reference{
 			Source: "SUSE",
 			URL:    strings.TrimSpace(b.Href),
-		}] = struct{}{}
+			Title:  strings.TrimSpace(b.Text),
+		})
 	}
 
 	var advs []advisoryContentTypes.Content
 	for _, r := range def.Metadata.Reference {
 		switch r.Source {
 		case "SUSE CVE":
-			refs[referenceTypes.Reference{
+			refs = append(refs, referenceTypes.Reference{
 				Source: "SUSE",
 				URL:    strings.TrimSuffix(strings.TrimSpace(r.RefURL), "/"),
-			}] = struct{}{}
+				Title:  r.RefID,
+			})
 		case "CVE":
-			refs[referenceTypes.Reference{
+			refs = append(refs, referenceTypes.Reference{
 				Source: "CVE",
 				URL:    strings.TrimSuffix(strings.TrimSpace(r.RefURL), "/"),
-			}] = struct{}{}
+				Title:  r.RefID,
+			})
 		case "SUSE-SU":
 			if r.RefID == "" {
 				if r.RefURL == "" {
@@ -523,6 +526,7 @@ func buildAdvisoryAndVulnerability(def oval.Definition) ([]advisoryContentTypes.
 					{
 						Source: "SUSE",
 						URL:    strings.TrimSpace(r.RefURL),
+						Title:  r.RefID,
 					},
 				},
 			})
@@ -531,7 +535,10 @@ func buildAdvisoryAndVulnerability(def oval.Definition) ([]advisoryContentTypes.
 		}
 	}
 
-	v.References = slices.Collect(maps.Keys(refs))
+	slices.SortFunc(refs, referenceTypes.Compare)
+	v.References = slices.CompactFunc(refs, func(a, b referenceTypes.Reference) bool {
+		return referenceTypes.Compare(a, b) == 0
+	})
 	return advs, v, nil
 }
 

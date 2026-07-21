@@ -438,6 +438,7 @@ func (e extractor) buildData(fetched nistnvd2Types.CVE) (dataTypes.Data, error) 
 							refs = append(refs, referenceTypes.Reference{
 								Source: r.Source,
 								URL:    r.URL,
+								Tags:   r.Tags,
 							})
 						}
 						return refs

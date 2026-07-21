@@ -716,6 +716,7 @@ func walkVulnerabilities(vulns []v2.Vulnerability, pids []v2.ProductID) (map[v2.
 				rs = append(rs, referenceTypes.Reference{
 					Source: "secalert@redhat.com",
 					URL:    r.URL,
+					Title:  r.Summary,
 				})
 			}
 			return rs

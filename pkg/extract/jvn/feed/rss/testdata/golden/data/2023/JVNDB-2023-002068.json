@@ -32,15 +32,24 @@
 				"references": [
 					{
 						"source": "jvndb.jvn.jp",
-						"url": "https://labs.nettitude.com/blog/cve-2022-25026-cve-2022-25027-vulnerabilities-in-rocket-trufusion-enterprise/"
+						"url": "https://labs.nettitude.com/blog/cve-2022-25026-cve-2022-25027-vulnerabilities-in-rocket-trufusion-enterprise/",
+						"tags": [
+							"関連文書"
+						]
 					},
 					{
 						"source": "jvndb.jvn.jp",
-						"url": "https://nvd.nist.gov/vuln/detail/CVE-2022-25027"
+						"url": "https://nvd.nist.gov/vuln/detail/CVE-2022-25027",
+						"tags": [
+							"NVD"
+						]
 					},
 					{
 						"source": "jvndb.jvn.jp",
-						"url": "https://www.cve.org/CVERecord?id=CVE-2022-25027"
+						"url": "https://www.cve.org/CVERecord?id=CVE-2022-25027",
+						"tags": [
+							"CVE"
+						]
 					}
 				],
 				"published": "2023-06-08T16:22:00+09:00",
@@ -60,11 +69,17 @@
 				"references": [
 					{
 						"source": "jvndb.jvn.jp",
-						"url": "https://nvd.nist.gov/vuln/detail/CVE-2022-25027"
+						"url": "https://nvd.nist.gov/vuln/detail/CVE-2022-25027",
+						"tags": [
+							"NVD"
+						]
 					},
 					{
 						"source": "jvndb.jvn.jp",
-						"url": "https://www.cve.org/CVERecord?id=CVE-2022-25027"
+						"url": "https://www.cve.org/CVERecord?id=CVE-2022-25027",
+						"tags": [
+							"CVE"
+						]
 					}
 				]
 			},

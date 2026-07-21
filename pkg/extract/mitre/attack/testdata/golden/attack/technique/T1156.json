@@ -30,7 +30,8 @@
 	"references": [
 		{
 			"source": "intezer-kaiji-malware",
-			"url": "https://www.intezer.com/blog/research/kaiji-new-chinese-linux-malware-turning-to-golang/"
+			"url": "https://www.intezer.com/blog/research/kaiji-new-chinese-linux-malware-turning-to-golang/",
+			"title": "Paul Litvak. (2020, May 4). Kaiji: New Chinese Linux malware turning to Golang. Retrieved December 17, 2020."
 		},
 		{
 			"source": "mitre-attack",

@@ -41,63 +41,78 @@
 	"references": [
 		{
 			"source": "ADSecurity Detecting Forged Tickets",
-			"url": "https://adsecurity.org/?p=1515"
+			"url": "https://adsecurity.org/?p=1515",
+			"title": "Metcalf, S. (2015, May 03). Detecting Forged Kerberos Ticket (Golden Ticket & Silver Ticket) Use in Active Directory. Retrieved December 23, 2015."
 		},
 		{
 			"source": "ADSecurity Kerberos Ring Decoder",
-			"url": "https://adsecurity.org/?p=227"
+			"url": "https://adsecurity.org/?p=227",
+			"title": "Sean Metcalf. (2014, September 12). Kerberos, Active Directory’s Secret Decoder Ring. Retrieved February 27, 2020."
 		},
 		{
 			"source": "AdSecurity Cracking Kerberos Dec 2015",
-			"url": "https://adsecurity.org/?p=2293"
+			"url": "https://adsecurity.org/?p=2293",
+			"title": "Metcalf, S. (2015, December 31). Cracking Kerberos TGS Tickets Using Kerberoast – Exploiting Kerberos to Compromise the Active Directory Domain. Retrieved March 22, 2018."
 		},
 		{
 			"source": "Brining MimiKatz to Unix",
-			"url": "https://labs.portcullis.co.uk/download/eu-18-Wadhwa-Brown-Where-2-worlds-collide-Bringing-Mimikatz-et-al-to-UNIX.pdf"
+			"url": "https://labs.portcullis.co.uk/download/eu-18-Wadhwa-Brown-Where-2-worlds-collide-Bringing-Mimikatz-et-al-to-UNIX.pdf",
+			"title": "Tim Wadhwa-Brown. (2018, November). Where 2 worlds collide Bringing Mimikatz et al to UNIX. Retrieved October 13, 2021."
 		},
 		{
 			"source": "CERT-EU Golden Ticket Protection",
-			"url": "https://cert.europa.eu/static/WhitePapers/UPDATED%20-%20CERT-EU_Security_Whitepaper_2014-007_Kerberos_Golden_Ticket_Protection_v1_4.pdf"
+			"url": "https://cert.europa.eu/static/WhitePapers/UPDATED%20-%20CERT-EU_Security_Whitepaper_2014-007_Kerberos_Golden_Ticket_Protection_v1_4.pdf",
+			"title": "Abolins, D., Boldea, C., Socha, K., Soria-Machado, M. (2016, April 26). Kerberos Golden Ticket Protection. Retrieved July 13, 2017."
 		},
 		{
 			"source": "Kekeo",
-			"url": "https://github.com/gentilkiwi/kekeo"
+			"url": "https://github.com/gentilkiwi/kekeo",
+			"title": "Benjamin Delpy. (n.d.). Kekeo. Retrieved October 4, 2021."
 		},
 		{
 			"source": "Linux Kerberos Tickets",
-			"url": "https://www.fireeye.com/blog/threat-research/2020/04/kerberos-tickets-on-linux-red-teams.html"
+			"url": "https://www.fireeye.com/blog/threat-research/2020/04/kerberos-tickets-on-linux-red-teams.html",
+			"title": "Trevor Haskell. (2020, April 1). Kerberos Tickets on Linux Red Teams. Retrieved October 4, 2021."
 		},
 		{
 			"source": "MIT ccache",
-			"url": "https://web.mit.edu/kerberos/krb5-1.12/doc/basic/ccache_def.html"
+			"url": "https://web.mit.edu/kerberos/krb5-1.12/doc/basic/ccache_def.html",
+			"title": "Massachusetts Institute of Technology. (n.d.). MIT Kerberos Documentation: Credential Cache. Retrieved October 4, 2021."
 		},
 		{
 			"source": "Medium Detecting Attempts to Steal Passwords from Memory",
-			"url": "https://medium.com/threatpunter/detecting-attempts-to-steal-passwords-from-memory-558f16dce4ea"
+			"url": "https://medium.com/threatpunter/detecting-attempts-to-steal-passwords-from-memory-558f16dce4ea",
+			"title": "French, D. (2018, October 2). Detecting Attempts to Steal Passwords from Memory. Retrieved October 11, 2019."
 		},
 		{
 			"source": "Microsoft Detecting Kerberoasting Feb 2018",
-			"url": "https://blogs.technet.microsoft.com/motiba/2018/02/23/detecting-kerberoasting-activity-using-azure-security-center/"
+			"url": "https://blogs.technet.microsoft.com/motiba/2018/02/23/detecting-kerberoasting-activity-using-azure-security-center/",
+			"title": "Bani, M. (2018, February 23). Detecting Kerberoasting activity using Azure Security Center. Retrieved March 23, 2018."
 		},
 		{
 			"source": "Microsoft Kerberos Golden Ticket",
-			"url": "https://gallery.technet.microsoft.com/scriptcenter/Kerberos-Golden-Ticket-b4814285"
+			"url": "https://gallery.technet.microsoft.com/scriptcenter/Kerberos-Golden-Ticket-b4814285",
+			"title": "Microsoft. (2015, March 24). Kerberos Golden Ticket Check (Updated). Retrieved February 27, 2020."
 		},
 		{
 			"source": "Microsoft Klist",
-			"url": "https://docs.microsoft.com/windows-server/administration/windows-commands/klist"
+			"url": "https://docs.microsoft.com/windows-server/administration/windows-commands/klist",
+			"title": "Microsoft. (2021, March 3). klist. Retrieved October 14, 2021."
 		},
 		{
 			"source": "SpectorOps Bifrost Kerberos macOS 2019",
-			"url": "https://posts.specterops.io/when-kirbi-walks-the-bifrost-4c727807744f"
+			"url": "https://posts.specterops.io/when-kirbi-walks-the-bifrost-4c727807744f",
+			"title": "Cody Thomas. (2019, November 14). When Kirbi walks the Bifrost. Retrieved October 6, 2021."
 		},
 		{
 			"source": "Stealthbits Detect PtT 2019",
-			"url": "https://blog.stealthbits.com/detect-pass-the-ticket-attacks"
+			"url": "https://blog.stealthbits.com/detect-pass-the-ticket-attacks",
+			"title": "Jeff Warren. (2019, February 19). How to Detect Pass-the-Ticket Attacks. Retrieved February 27, 2020."
 		},
 		{
 			"source": "macOS kerberos framework MIT",
-			"url": "http://web.mit.edu/macdev/KfM/Common/Documentation/preferences.html"
+			"url": "http://web.mit.edu/macdev/KfM/Common/Documentation/preferences.html",
+			"title": "Massachusetts Institute of Technology. (2007, October 27). Kerberos for Macintosh Preferences Documentation. Retrieved October 6, 2021."
 		},
 		{
 			"source": "mitre-attack",

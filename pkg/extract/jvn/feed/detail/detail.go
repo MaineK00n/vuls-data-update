@@ -1,6 +1,7 @@
 package detail
 
 import (
+	"cmp"
 	"fmt"
 	"io/fs"
 	"log/slog"
@@ -237,6 +238,8 @@ func extract(fetched fetchTypes.Vulinfo, raws []string) (dataTypes.Data, error) 
 		refs = append(refs, referenceTypes.Reference{
 			Source: "jvndb.jvn.jp",
 			URL:    item.URL,
+			Title:  cmp.Or(item.FetchedTitle, item.Name),
+			Tags:   []string{item.Type},
 		})
 	}
 
@@ -297,6 +300,8 @@ func extract(fetched fetchTypes.Vulinfo, raws []string) (dataTypes.Data, error) 
 					v.Content.References = append(v.Content.References, referenceTypes.Reference{
 						Source: "jvndb.jvn.jp",
 						URL:    item.URL,
+						Title:  cmp.Or(item.FetchedTitle, item.Name),
+						Tags:   []string{item.Type},
 					})
 					vulnMap[item.VulinfoID] = v
 				}

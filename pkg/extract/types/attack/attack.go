@@ -73,6 +73,9 @@ func (a *Attack) Sort() {
 	a.AttackDataSource.Sort()
 	a.DataComponent.Sort()
 	a.Analytic.Sort()
+	for i := range a.References {
+		(&a.References[i]).Sort()
+	}
 	slices.SortFunc(a.References, referenceTypes.Compare)
 	a.DataSource.Sort()
 }

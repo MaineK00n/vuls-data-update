@@ -328,10 +328,15 @@ func extract(fetched v5.CVE, raws []string) (dataTypes.Data, error) {
 						var refs []referenceTypes.Reference
 						for source, rs := range m {
 							for _, r := range rs {
-								refs = append(refs, referenceTypes.Reference{
+								ref := referenceTypes.Reference{
 									Source: source,
 									URL:    r.URL,
-								})
+									Tags:   r.Tags,
+								}
+								if r.Name != nil {
+									ref.Title = *r.Name
+								}
+								refs = append(refs, ref)
 							}
 						}
 						return refs

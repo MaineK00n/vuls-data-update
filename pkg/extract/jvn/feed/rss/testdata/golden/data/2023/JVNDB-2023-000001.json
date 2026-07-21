@@ -45,15 +45,24 @@
 				"references": [
 					{
 						"source": "jvndb.jvn.jp",
-						"url": "https://jvn.jp/jp/JVN16765254/index.html"
+						"url": "https://jvn.jp/jp/JVN16765254/index.html",
+						"tags": [
+							"JVN"
+						]
 					},
 					{
 						"source": "jvndb.jvn.jp",
-						"url": "https://www.cve.org/CVERecord?id=CVE-2022-46648"
+						"url": "https://www.cve.org/CVERecord?id=CVE-2022-46648",
+						"tags": [
+							"CVE"
+						]
 					},
 					{
 						"source": "jvndb.jvn.jp",
-						"url": "https://www.cve.org/CVERecord?id=CVE-2022-47318"
+						"url": "https://www.cve.org/CVERecord?id=CVE-2022-47318",
+						"tags": [
+							"CVE"
+						]
 					}
 				],
 				"published": "2023-01-05T12:02:00+09:00",
@@ -73,7 +82,10 @@
 				"references": [
 					{
 						"source": "jvndb.jvn.jp",
-						"url": "https://www.cve.org/CVERecord?id=CVE-2022-46648"
+						"url": "https://www.cve.org/CVERecord?id=CVE-2022-46648",
+						"tags": [
+							"CVE"
+						]
 					}
 				]
 			},
@@ -89,7 +101,10 @@
 				"references": [
 					{
 						"source": "jvndb.jvn.jp",
-						"url": "https://www.cve.org/CVERecord?id=CVE-2022-47318"
+						"url": "https://www.cve.org/CVERecord?id=CVE-2022-47318",
+						"tags": [
+							"CVE"
+						]
 					}
 				]
 			},

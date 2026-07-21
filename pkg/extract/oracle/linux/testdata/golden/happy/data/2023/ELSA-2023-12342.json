@@ -16,15 +16,18 @@
 				"references": [
 					{
 						"source": "linux.oracle.com/security",
-						"url": "https://linux.oracle.com/cve/CVE-2022-4144.html"
+						"url": "https://linux.oracle.com/cve/CVE-2022-4144.html",
+						"title": "CVE-2022-4144"
 					},
 					{
 						"source": "linux.oracle.com/security",
-						"url": "https://linux.oracle.com/cve/CVE-2023-0664.html"
+						"url": "https://linux.oracle.com/cve/CVE-2023-0664.html",
+						"title": "CVE-2023-0664"
 					},
 					{
 						"source": "linux.oracle.com/security",
-						"url": "https://linux.oracle.com/errata/ELSA-2023-12342.html"
+						"url": "https://linux.oracle.com/errata/ELSA-2023-12342.html",
+						"title": "ELSA-2023-12342"
 					}
 				],
 				"published": "2023-05-15T00:00:00Z"

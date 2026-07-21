@@ -16,23 +16,28 @@
 				"references": [
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://access.redhat.com/errata/RHSA-2023:7207"
+						"url": "https://access.redhat.com/errata/RHSA-2023:7207",
+						"title": "https://access.redhat.com/errata/RHSA-2023:7207"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://access.redhat.com/security/updates/classification/#moderate"
+						"url": "https://access.redhat.com/security/updates/classification/#moderate",
+						"title": "https://access.redhat.com/security/updates/classification/#moderate"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2209497"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2209497",
+						"title": "2209497"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2235527"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2235527",
+						"title": "2235527"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://security.access.redhat.com/data/csaf/v2/advisories/2023/rhsa-2023_7207.json"
+						"url": "https://security.access.redhat.com/data/csaf/v2/advisories/2023/rhsa-2023_7207.json",
+						"title": "Canonical URL"
 					}
 				],
 				"published": "2023-11-14T17:00:58Z",
@@ -83,27 +88,33 @@
 				"references": [
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://access.redhat.com/security/cve/CVE-2020-22217"
+						"url": "https://access.redhat.com/security/cve/CVE-2020-22217",
+						"title": "Canonical URL"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2235527"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2235527",
+						"title": "RHBZ#2235527"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://github.com/c-ares/c-ares/issues/333"
+						"url": "https://github.com/c-ares/c-ares/issues/333",
+						"title": "https://github.com/c-ares/c-ares/issues/333"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://github.com/c-ares/c-ares/pull/332"
+						"url": "https://github.com/c-ares/c-ares/pull/332",
+						"title": "https://github.com/c-ares/c-ares/pull/332"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://nvd.nist.gov/vuln/detail/CVE-2020-22217"
+						"url": "https://nvd.nist.gov/vuln/detail/CVE-2020-22217",
+						"title": "https://nvd.nist.gov/vuln/detail/CVE-2020-22217"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://www.cve.org/CVERecord?id=CVE-2020-22217"
+						"url": "https://www.cve.org/CVERecord?id=CVE-2020-22217",
+						"title": "https://www.cve.org/CVERecord?id=CVE-2020-22217"
 					}
 				],
 				"published": "2023-08-22T00:00:00Z"
@@ -143,23 +154,28 @@
 				"references": [
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://access.redhat.com/security/cve/CVE-2023-31130"
+						"url": "https://access.redhat.com/security/cve/CVE-2023-31130",
+						"title": "Canonical URL"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2209497"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2209497",
+						"title": "RHBZ#2209497"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://github.com/c-ares/c-ares/security/advisories/GHSA-x6mf-cxr9-8q6v"
+						"url": "https://github.com/c-ares/c-ares/security/advisories/GHSA-x6mf-cxr9-8q6v",
+						"title": "https://github.com/c-ares/c-ares/security/advisories/GHSA-x6mf-cxr9-8q6v"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://nvd.nist.gov/vuln/detail/CVE-2023-31130"
+						"url": "https://nvd.nist.gov/vuln/detail/CVE-2023-31130",
+						"title": "https://nvd.nist.gov/vuln/detail/CVE-2023-31130"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://www.cve.org/CVERecord?id=CVE-2023-31130"
+						"url": "https://www.cve.org/CVERecord?id=CVE-2023-31130",
+						"title": "https://www.cve.org/CVERecord?id=CVE-2023-31130"
 					}
 				],
 				"published": "2023-05-22T00:00:00Z"

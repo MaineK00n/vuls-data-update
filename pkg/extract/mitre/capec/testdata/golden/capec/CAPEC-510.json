@@ -29,7 +29,8 @@
 	"references": [
 		{
 			"source": "capec.mitre.org",
-			"url": "http://www.adallom.com/blog/a-new-zeus-variant-targeting-salesforce-com-accounts-research-and-analysis/"
+			"url": "http://www.adallom.com/blog/a-new-zeus-variant-targeting-salesforce-com-accounts-research-and-analysis/",
+			"title": "Ami Luttwak, A new Zeus variant targeting Salesforce.com – Research and Analysis, Adallom, Inc."
 		},
 		{
 			"source": "capec.mitre.org",

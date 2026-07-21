@@ -38,39 +38,48 @@
 	"references": [
 		{
 			"source": "CIS Multiple SMB Vulnerabilities",
-			"url": "https://www.cisecurity.org/advisory/multiple-vulnerabilities-in-microsoft-windows-smb-server-could-allow-for-remote-code-execution/"
+			"url": "https://www.cisecurity.org/advisory/multiple-vulnerabilities-in-microsoft-windows-smb-server-could-allow-for-remote-code-execution/",
+			"title": "CIS. (2017, May 15). Multiple Vulnerabilities in Microsoft Windows SMB Server Could Allow for Remote Code Execution. Retrieved April 3, 2018."
 		},
 		{
 			"source": "CWE top 25",
-			"url": "https://cwe.mitre.org/top25/index.html"
+			"url": "https://cwe.mitre.org/top25/index.html",
+			"title": "Christey, S., Brown, M., Kirby, D., Martin, B., Paller, A.. (2011, September 13). 2011 CWE/SANS Top 25 Most Dangerous Software Errors. Retrieved April 10, 2019."
 		},
 		{
 			"source": "Cisco Blog Legacy Device Attacks",
-			"url": "https://community.cisco.com/t5/security-blogs/attackers-continue-to-target-legacy-devices/ba-p/4169954"
+			"url": "https://community.cisco.com/t5/security-blogs/attackers-continue-to-target-legacy-devices/ba-p/4169954",
+			"title": "Omar Santos. (2020, October 19). Attackers Continue to Target Legacy Devices. Retrieved October 20, 2020."
 		},
 		{
 			"source": "Mandiant Fortinet Zero Day",
-			"url": "https://www.mandiant.com/resources/blog/fortinet-malware-ecosystem"
+			"url": "https://www.mandiant.com/resources/blog/fortinet-malware-ecosystem",
+			"title": "Marvi, A. et al.. (2023, March 16). Fortinet Zero-Day and Custom Malware Used by Suspected Chinese Actor in Espionage Operation. Retrieved March 22, 2023."
 		},
 		{
 			"source": "NVD CVE-2014-7169",
-			"url": "https://nvd.nist.gov/vuln/detail/CVE-2014-7169"
+			"url": "https://nvd.nist.gov/vuln/detail/CVE-2014-7169",
+			"title": "National Vulnerability Database. (2017, September 24). CVE-2014-7169 Detail. Retrieved April 3, 2018."
 		},
 		{
 			"source": "NVD CVE-2016-6662",
-			"url": "https://nvd.nist.gov/vuln/detail/CVE-2016-6662"
+			"url": "https://nvd.nist.gov/vuln/detail/CVE-2016-6662",
+			"title": "National Vulnerability Database. (2017, February 2). CVE-2016-6662 Detail. Retrieved April 3, 2018."
 		},
 		{
 			"source": "OWASP Top 10",
-			"url": "https://www.owasp.org/index.php/Category:OWASP_Top_Ten_Project"
+			"url": "https://www.owasp.org/index.php/Category:OWASP_Top_Ten_Project",
+			"title": "OWASP. (2018, February 23). OWASP Top Ten Project. Retrieved April 3, 2018."
 		},
 		{
 			"source": "US-CERT TA18-106A Network Infrastructure Devices 2018",
-			"url": "https://us-cert.cisa.gov/ncas/alerts/TA18-106A"
+			"url": "https://us-cert.cisa.gov/ncas/alerts/TA18-106A",
+			"title": "US-CERT. (2018, April 20). Russian State-Sponsored Cyber Actors Targeting Network Infrastructure Devices. Retrieved October 19, 2020."
 		},
 		{
 			"source": "Wired Russia Cyberwar",
-			"url": "https://www.wired.com/story/russia-ukraine-cyberattacks-mandiant/"
+			"url": "https://www.wired.com/story/russia-ukraine-cyberattacks-mandiant/",
+			"title": "Greenberg, A. (2022, November 10). Russia’s New Cyberwarfare in Ukraine Is Fast, Dirty, and Relentless. Retrieved March 22, 2023."
 		},
 		{
 			"source": "mitre-attack",

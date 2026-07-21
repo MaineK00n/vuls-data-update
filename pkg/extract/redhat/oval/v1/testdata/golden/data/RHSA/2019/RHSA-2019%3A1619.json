@@ -16,15 +16,24 @@
 				"references": [
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://access.redhat.com/errata/RHSA-2019:1619"
+						"url": "https://access.redhat.com/errata/RHSA-2019:1619",
+						"title": "RHSA-2019:1619",
+						"tags": [
+							"RHSA"
+						]
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://access.redhat.com/security/cve/CVE-2019-12735"
+						"url": "https://access.redhat.com/security/cve/CVE-2019-12735",
+						"title": "CVE-2019-12735",
+						"tags": [
+							"CVE"
+						]
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/1718308"
+						"url": "https://bugzilla.redhat.com/1718308",
+						"title": "CVE-2019-12735 vim/neovim: ':source!' command allows arbitrary command execution via modelines"
 					}
 				],
 				"published": "2019-06-27T00:00:00Z",
@@ -89,7 +98,8 @@
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/1718308"
+						"url": "https://bugzilla.redhat.com/1718308",
+						"title": "CVE-2019-12735 vim/neovim: ':source!' command allows arbitrary command execution via modelines"
 					}
 				],
 				"published": "2019-06-05T00:00:00Z"

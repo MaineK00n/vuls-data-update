@@ -43,19 +43,23 @@
 	"references": [
 		{
 			"source": "Leonardo Turla Penquin May 2020",
-			"url": "https://www.leonardo.com/documents/20142/10868623/Malware+Technical+Insight+_Turla+%E2%80%9CPenquin_x64%E2%80%9D.pdf"
+			"url": "https://www.leonardo.com/documents/20142/10868623/Malware+Technical+Insight+_Turla+%E2%80%9CPenquin_x64%E2%80%9D.pdf",
+			"title": "Leonardo. (2020, May 29). MALWARE TECHNICAL INSIGHT TURLA “Penquin_x64”. Retrieved March 11, 2021."
 		},
 		{
 			"source": "crowdstrike bpf socket filters",
-			"url": "https://www.crowdstrike.com/blog/how-to-hunt-for-decisivearchitect-and-justforfun-implant/"
+			"url": "https://www.crowdstrike.com/blog/how-to-hunt-for-decisivearchitect-and-justforfun-implant/",
+			"title": "Jamie Harries. (2022, May 25). Hunting a Global Telecommunications Threat: DecisiveArchitect and Its Custom Implant JustForFun. Retrieved October 18, 2022."
 		},
 		{
 			"source": "exatrack bpf filters passive backdoors",
-			"url": "https://exatrack.com/public/Tricephalic_Hellkeeper.pdf"
+			"url": "https://exatrack.com/public/Tricephalic_Hellkeeper.pdf",
+			"title": "ExaTrack. (2022, May 11). Tricephalic Hellkeeper: a tale of a passive backdoor. Retrieved October 18, 2022."
 		},
 		{
 			"source": "haking9 libpcap network sniffing",
-			"url": "http://recursos.aldabaknocking.com/libpcapHakin9LuisMartinGarcia.pdf"
+			"url": "http://recursos.aldabaknocking.com/libpcapHakin9LuisMartinGarcia.pdf",
+			"title": "Luis Martin Garcia. (2008, February 1). Hakin9 Issue 2/2008 Vol 3 No.2 VoIP Abuse: Storming SIP Security. Retrieved October 18, 2022."
 		},
 		{
 			"source": "mitre-attack",

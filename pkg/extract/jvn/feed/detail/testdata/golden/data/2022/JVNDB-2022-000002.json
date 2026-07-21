@@ -46,27 +46,51 @@
 				"references": [
 					{
 						"source": "jvndb.jvn.jp",
-						"url": "https://ja.wordpress.org/plugins/quiz-master-next/"
+						"url": "https://ja.wordpress.org/plugins/quiz-master-next/",
+						"title": "ExpressTech",
+						"tags": [
+							"vendor"
+						]
 					},
 					{
 						"source": "jvndb.jvn.jp",
-						"url": "https://jvn.jp/jp/JVN72788165/index.html"
+						"url": "https://jvn.jp/jp/JVN72788165/index.html",
+						"title": "JVN",
+						"tags": [
+							"advisory"
+						]
 					},
 					{
 						"source": "jvndb.jvn.jp",
-						"url": "https://quizandsurveymaster.com/"
+						"url": "https://quizandsurveymaster.com/",
+						"title": "ExpressTech",
+						"tags": [
+							"vendor"
+						]
 					},
 					{
 						"source": "jvndb.jvn.jp",
-						"url": "https://www.cve.org/CVERecord?id=CVE-2022-0180"
+						"url": "https://www.cve.org/CVERecord?id=CVE-2022-0180",
+						"title": "Common Vulnerabilities and Exposures (CVE)",
+						"tags": [
+							"advisory"
+						]
 					},
 					{
 						"source": "jvndb.jvn.jp",
-						"url": "https://www.cve.org/CVERecord?id=CVE-2022-0181"
+						"url": "https://www.cve.org/CVERecord?id=CVE-2022-0181",
+						"title": "Common Vulnerabilities and Exposures (CVE)",
+						"tags": [
+							"advisory"
+						]
 					},
 					{
 						"source": "jvndb.jvn.jp",
-						"url": "https://www.cve.org/CVERecord?id=CVE-2022-0182"
+						"url": "https://www.cve.org/CVERecord?id=CVE-2022-0182",
+						"title": "Common Vulnerabilities and Exposures (CVE)",
+						"tags": [
+							"advisory"
+						]
 					}
 				],
 				"published": "2022-01-12T12:08:20+09:00",
@@ -86,7 +110,11 @@
 				"references": [
 					{
 						"source": "jvndb.jvn.jp",
-						"url": "https://www.cve.org/CVERecord?id=CVE-2022-0180"
+						"url": "https://www.cve.org/CVERecord?id=CVE-2022-0180",
+						"title": "Common Vulnerabilities and Exposures (CVE)",
+						"tags": [
+							"advisory"
+						]
 					}
 				]
 			},
@@ -102,7 +130,11 @@
 				"references": [
 					{
 						"source": "jvndb.jvn.jp",
-						"url": "https://www.cve.org/CVERecord?id=CVE-2022-0181"
+						"url": "https://www.cve.org/CVERecord?id=CVE-2022-0181",
+						"title": "Common Vulnerabilities and Exposures (CVE)",
+						"tags": [
+							"advisory"
+						]
 					}
 				]
 			},
@@ -118,7 +150,11 @@
 				"references": [
 					{
 						"source": "jvndb.jvn.jp",
-						"url": "https://www.cve.org/CVERecord?id=CVE-2022-0182"
+						"url": "https://www.cve.org/CVERecord?id=CVE-2022-0182",
+						"title": "Common Vulnerabilities and Exposures (CVE)",
+						"tags": [
+							"advisory"
+						]
 					}
 				]
 			},

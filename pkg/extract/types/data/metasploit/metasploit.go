@@ -28,6 +28,9 @@ func (m *Metasploit) Sort() {
 	slices.Sort(m.Aliases)
 	slices.Sort(m.Author)
 	slices.Sort(m.Targets)
+	for i := range m.References {
+		(&m.References[i]).Sort()
+	}
 	slices.SortFunc(m.References, referenceTypes.Compare)
 }
 

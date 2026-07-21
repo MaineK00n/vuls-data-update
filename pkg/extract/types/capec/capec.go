@@ -61,6 +61,9 @@ func (c *CAPEC) Sort() {
 		slices.Sort(c.Consequences[k])
 	}
 	slices.SortFunc(c.Mitigations, mitigationTypes.Compare)
+	for i := range c.References {
+		(&c.References[i]).Sort()
+	}
 	slices.SortFunc(c.References, referenceTypes.Compare)
 	c.DataSource.Sort()
 }

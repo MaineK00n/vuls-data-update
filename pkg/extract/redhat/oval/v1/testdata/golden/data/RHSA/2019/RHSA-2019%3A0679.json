@@ -16,39 +16,63 @@
 				"references": [
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://access.redhat.com/errata/RHSA-2019:0679"
+						"url": "https://access.redhat.com/errata/RHSA-2019:0679",
+						"title": "RHSA-2019:0679",
+						"tags": [
+							"RHSA"
+						]
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://access.redhat.com/security/cve/CVE-2019-3855"
+						"url": "https://access.redhat.com/security/cve/CVE-2019-3855",
+						"title": "CVE-2019-3855",
+						"tags": [
+							"CVE"
+						]
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://access.redhat.com/security/cve/CVE-2019-3856"
+						"url": "https://access.redhat.com/security/cve/CVE-2019-3856",
+						"title": "CVE-2019-3856",
+						"tags": [
+							"CVE"
+						]
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://access.redhat.com/security/cve/CVE-2019-3857"
+						"url": "https://access.redhat.com/security/cve/CVE-2019-3857",
+						"title": "CVE-2019-3857",
+						"tags": [
+							"CVE"
+						]
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://access.redhat.com/security/cve/CVE-2019-3863"
+						"url": "https://access.redhat.com/security/cve/CVE-2019-3863",
+						"title": "CVE-2019-3863",
+						"tags": [
+							"CVE"
+						]
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/1687303"
+						"url": "https://bugzilla.redhat.com/1687303",
+						"title": "CVE-2019-3855 libssh2: Integer overflow in transport read resulting in out of bounds write"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/1687304"
+						"url": "https://bugzilla.redhat.com/1687304",
+						"title": "CVE-2019-3856 libssh2: Integer overflow in keyboard interactive handling resulting in out of bounds write"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/1687305"
+						"url": "https://bugzilla.redhat.com/1687305",
+						"title": "CVE-2019-3857 libssh2: Integer overflow in SSH packet processing channel resulting in out of bounds write"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/1687313"
+						"url": "https://bugzilla.redhat.com/1687313",
+						"title": "CVE-2019-3863 libssh2: Integer overflow in user authenticate keyboard interactive allows out-of-bounds writes"
 					}
 				],
 				"published": "2019-03-28T00:00:00Z",
@@ -101,7 +125,8 @@
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/1687303"
+						"url": "https://bugzilla.redhat.com/1687303",
+						"title": "CVE-2019-3855 libssh2: Integer overflow in transport read resulting in out of bounds write"
 					}
 				],
 				"published": "2019-03-13T00:00:00Z"
@@ -151,7 +176,8 @@
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/1687304"
+						"url": "https://bugzilla.redhat.com/1687304",
+						"title": "CVE-2019-3856 libssh2: Integer overflow in keyboard interactive handling resulting in out of bounds write"
 					}
 				],
 				"published": "2019-03-13T00:00:00Z"
@@ -201,7 +227,8 @@
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/1687305"
+						"url": "https://bugzilla.redhat.com/1687305",
+						"title": "CVE-2019-3857 libssh2: Integer overflow in SSH packet processing channel resulting in out of bounds write"
 					}
 				],
 				"published": "2019-03-13T00:00:00Z"
@@ -251,7 +278,8 @@
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/1687313"
+						"url": "https://bugzilla.redhat.com/1687313",
+						"title": "CVE-2019-3863 libssh2: Integer overflow in user authenticate keyboard interactive allows out-of-bounds writes"
 					}
 				],
 				"published": "2019-03-13T00:00:00Z"

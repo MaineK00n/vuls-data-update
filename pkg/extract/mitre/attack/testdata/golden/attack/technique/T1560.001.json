@@ -36,23 +36,28 @@
 	"references": [
 		{
 			"source": "7zip Homepage",
-			"url": "https://www.7-zip.org/"
+			"url": "https://www.7-zip.org/",
+			"title": "I. Pavlov. (2019). 7-Zip. Retrieved February 20, 2020."
 		},
 		{
 			"source": "Wikipedia File Header Signatures",
-			"url": "https://en.wikipedia.org/wiki/List_of_file_signatures"
+			"url": "https://en.wikipedia.org/wiki/List_of_file_signatures",
+			"title": "Wikipedia. (2016, March 31). List of file signatures. Retrieved April 22, 2016."
 		},
 		{
 			"source": "WinRAR Homepage",
-			"url": "https://www.rarlab.com/"
+			"url": "https://www.rarlab.com/",
+			"title": "A. Roshal. (2020). RARLAB. Retrieved February 20, 2020."
 		},
 		{
 			"source": "WinZip Homepage",
-			"url": "https://www.winzip.com/win/en/"
+			"url": "https://www.winzip.com/win/en/",
+			"title": "Corel Corporation. (2020). WinZip. Retrieved February 20, 2020."
 		},
 		{
 			"source": "diantz.exe_lolbas",
-			"url": "https://lolbas-project.github.io/lolbas/Binaries/Diantz/"
+			"url": "https://lolbas-project.github.io/lolbas/Binaries/Diantz/",
+			"title": "Living Off The Land Binaries, Scripts and Libraries (LOLBAS). (n.d.). Diantz.exe. Retrieved October 25, 2021."
 		},
 		{
 			"source": "mitre-attack",

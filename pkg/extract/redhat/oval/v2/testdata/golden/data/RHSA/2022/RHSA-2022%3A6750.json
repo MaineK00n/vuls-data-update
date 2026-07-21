@@ -16,15 +16,24 @@
 				"references": [
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://access.redhat.com/errata/RHSA-2022:6750"
+						"url": "https://access.redhat.com/errata/RHSA-2022:6750",
+						"title": "RHSA-2022:6750",
+						"tags": [
+							"RHSA"
+						]
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://access.redhat.com/security/cve/CVE-2022-3100"
+						"url": "https://access.redhat.com/security/cve/CVE-2022-3100",
+						"title": "CVE-2022-3100",
+						"tags": [
+							"CVE"
+						]
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/2125404"
+						"url": "https://bugzilla.redhat.com/2125404",
+						"title": "CVE-2022-3100 openstack-barbican: access policy bypass via query string injection"
 					}
 				],
 				"published": "2022-09-29T00:00:00Z",
@@ -77,7 +86,8 @@
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/2125404"
+						"url": "https://bugzilla.redhat.com/2125404",
+						"title": "CVE-2022-3100 openstack-barbican: access policy bypass via query string injection"
 					}
 				]
 			},

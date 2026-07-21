@@ -16,15 +16,18 @@
 				"references": [
 					{
 						"source": "linux.oracle.com/security",
-						"url": "https://linux.oracle.com/cve/CVE-2007-0493.html"
+						"url": "https://linux.oracle.com/cve/CVE-2007-0493.html",
+						"title": "CVE-2007-0493"
 					},
 					{
 						"source": "linux.oracle.com/security",
-						"url": "https://linux.oracle.com/cve/CVE-2007-0494.html"
+						"url": "https://linux.oracle.com/cve/CVE-2007-0494.html",
+						"title": "CVE-2007-0494"
 					},
 					{
 						"source": "linux.oracle.com/security",
-						"url": "https://linux.oracle.com/errata/ELSA-2007-0057.html"
+						"url": "https://linux.oracle.com/errata/ELSA-2007-0057.html",
+						"title": "ELSA-2007-0057"
 					}
 				],
 				"published": "2007-06-26T00:00:00Z"

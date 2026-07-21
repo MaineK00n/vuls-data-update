@@ -24,15 +24,18 @@
 					},
 					{
 						"source": "errata.rockylinux.org",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2180697"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2180697",
+						"title": "* Command 'pcs config checkpoint diff' does not show configuration differences between checkpoints"
 					},
 					{
 						"source": "errata.rockylinux.org",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2180704"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2180704",
+						"title": "* Need a way to add a scsi fencing device to a cluster without requiring a restart of all cluster resources"
 					},
 					{
 						"source": "errata.rockylinux.org",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2183180"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2183180",
+						"title": "* [WebUI] fence levels prevent loading of cluster status"
 					},
 					{
 						"source": "errata.rockylinux.org",

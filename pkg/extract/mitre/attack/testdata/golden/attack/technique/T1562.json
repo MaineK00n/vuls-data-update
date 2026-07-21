@@ -65,7 +65,8 @@
 	"references": [
 		{
 			"source": "Emotet shutdown",
-			"url": "https://thedfirreport.com/2022/11/28/emotet-strikes-again-lnk-file-leads-to-domain-wide-ransomware/"
+			"url": "https://thedfirreport.com/2022/11/28/emotet-strikes-again-lnk-file-leads-to-domain-wide-ransomware/",
+			"title": "The DFIR Report. (2022, November 8). Emotet Strikes Again – LNK File Leads to Domain Wide Ransomware. Retrieved March 6, 2023."
 		},
 		{
 			"source": "mitre-attack",

@@ -258,6 +258,7 @@ func buildReferences(fetched cve.CVE) []referenceTypes.Reference {
 		refs = append(refs, referenceTypes.Reference{
 			Source: "secalert@redhat.com",
 			URL:    fetched.Bugzilla.URL,
+			Title:  fetched.Bugzilla.Description,
 		})
 	}
 

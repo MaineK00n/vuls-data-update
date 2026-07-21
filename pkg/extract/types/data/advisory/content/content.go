@@ -51,6 +51,9 @@ func (c *Content) Sort() {
 		c.KEV.Sort()
 	}
 
+	for i := range c.References {
+		(&c.References[i]).Sort()
+	}
 	slices.SortFunc(c.References, referenceTypes.Compare)
 }
 

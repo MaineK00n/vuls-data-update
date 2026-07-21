@@ -49,7 +49,8 @@
 	"references": [
 		{
 			"source": "Microsoft Command-line Logging",
-			"url": "https://technet.microsoft.com/en-us/windows-server-docs/identity/ad-ds/manage/component-updates/command-line-process-auditing"
+			"url": "https://technet.microsoft.com/en-us/windows-server-docs/identity/ad-ds/manage/component-updates/command-line-process-auditing",
+			"title": "Mathers, B. (2017, March 7). Command line process auditing. Retrieved April 21, 2017."
 		},
 		{
 			"source": "mitre-attack",

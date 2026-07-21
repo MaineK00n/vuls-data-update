@@ -14,6 +14,9 @@ type TechniqueUsed struct {
 }
 
 func (t *TechniqueUsed) Sort() {
+	for i := range t.References {
+		(&t.References[i]).Sort()
+	}
 	slices.SortFunc(t.References, referenceTypes.Compare)
 }
 

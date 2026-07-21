@@ -24,15 +24,24 @@
 				"references": [
 					{
 						"source": "osv.dev/Rocky-Linux",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2067482"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2067482",
+						"tags": [
+							"REPORT"
+						]
 					},
 					{
 						"source": "osv.dev/Rocky-Linux",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2147572"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2147572",
+						"tags": [
+							"REPORT"
+						]
 					},
 					{
 						"source": "osv.dev/Rocky-Linux",
-						"url": "https://errata.rockylinux.org/RXSA-2023:0101"
+						"url": "https://errata.rockylinux.org/RXSA-2023:0101",
+						"tags": [
+							"ADVISORY"
+						]
 					},
 					{
 						"source": "osv.dev/Rocky-Linux",

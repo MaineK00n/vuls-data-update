@@ -69,7 +69,8 @@
 	"references": [
 		{
 			"source": "capec.mitre.org",
-			"url": "http://sharefuzz.sourceforge.net"
+			"url": "http://sharefuzz.sourceforge.net",
+			"title": "Sharefuzz"
 		},
 		{
 			"source": "capec.mitre.org",
@@ -77,7 +78,8 @@
 		},
 		{
 			"source": "capec.mitre.org",
-			"url": "https://owasp.org/www-community/attacks/Buffer_Overflow_via_Environment_Variables"
+			"url": "https://owasp.org/www-community/attacks/Buffer_Overflow_via_Environment_Variables",
+			"title": "Buffer Overflow via Environment Variables"
 		}
 	],
 	"data_source": {

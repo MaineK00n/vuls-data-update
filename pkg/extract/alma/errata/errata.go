@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io/fs"
 	"log/slog"
-	"maps"
 	"os"
 	"path/filepath"
 	"slices"
@@ -183,18 +182,27 @@ func extract(fetched errata.Erratum, osver string, raws []string) dataTypes.Data
 					Vendor: &fetched.Severity,
 				}},
 				References: func() []referenceTypes.Reference {
-					m := make(map[referenceTypes.Reference]struct{})
-					m[referenceTypes.Reference{
+					refs := []referenceTypes.Reference{{
 						Source: "errata.almalinux.org",
 						URL:    fmt.Sprintf("https://errata.almalinux.org/%s/%s.html", osver, strings.ReplaceAll(fetched.ID, ":", "-")),
-					}] = struct{}{}
+					}}
 					for _, r := range fetched.References {
-						m[referenceTypes.Reference{
+						refs = append(refs, referenceTypes.Reference{
 							Source: "errata.almalinux.org",
 							URL:    r.Href,
-						}] = struct{}{}
+							Title:  r.ID,
+							Tags: func() []string {
+								if r.Type == "" {
+									return nil
+								}
+								return []string{r.Type}
+							}(),
+						})
 					}
-					return slices.Collect(maps.Keys(m))
+					slices.SortFunc(refs, referenceTypes.Compare)
+					return slices.CompactFunc(refs, func(a, b referenceTypes.Reference) bool {
+						return referenceTypes.Compare(a, b) == 0
+					})
 				}(),
 				Published: new(time.Unix(int64(fetched.IssuedDate), 0)),
 				Modified:  new(time.Unix(int64(fetched.UpdatedDate), 0)),
@@ -214,6 +222,8 @@ func extract(fetched errata.Erratum, osver string, raws []string) dataTypes.Data
 					base.References = append(base.References, referenceTypes.Reference{
 						Source: "errata.almalinux.org",
 						URL:    r.Href,
+						Title:  r.ID,
+						Tags:   []string{r.Type},
 					})
 					m[r.ID] = base
 				}

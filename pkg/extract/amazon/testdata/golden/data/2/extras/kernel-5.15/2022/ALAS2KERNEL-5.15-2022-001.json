@@ -16,51 +16,87 @@
 				"references": [
 					{
 						"source": "linux-security@amazon.com",
-						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-1015"
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-1015",
+						"tags": [
+							"cve"
+						]
 					},
 					{
 						"source": "linux-security@amazon.com",
-						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-1016"
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-1016",
+						"tags": [
+							"cve"
+						]
 					},
 					{
 						"source": "linux-security@amazon.com",
-						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-1158"
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-1158",
+						"tags": [
+							"cve"
+						]
 					},
 					{
 						"source": "linux-security@amazon.com",
-						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-1263"
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-1263",
+						"tags": [
+							"cve"
+						]
 					},
 					{
 						"source": "linux-security@amazon.com",
-						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-1353"
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-1353",
+						"tags": [
+							"cve"
+						]
 					},
 					{
 						"source": "linux-security@amazon.com",
-						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-1729"
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-1729",
+						"tags": [
+							"cve"
+						]
 					},
 					{
 						"source": "linux-security@amazon.com",
-						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-23222"
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-23222",
+						"tags": [
+							"cve"
+						]
 					},
 					{
 						"source": "linux-security@amazon.com",
-						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-28893"
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-28893",
+						"tags": [
+							"cve"
+						]
 					},
 					{
 						"source": "linux-security@amazon.com",
-						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-29581"
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-29581",
+						"tags": [
+							"cve"
+						]
 					},
 					{
 						"source": "linux-security@amazon.com",
-						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-29582"
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-29582",
+						"tags": [
+							"cve"
+						]
 					},
 					{
 						"source": "linux-security@amazon.com",
-						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-30594"
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-30594",
+						"tags": [
+							"cve"
+						]
 					},
 					{
 						"source": "linux-security@amazon.com",
-						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-3526"
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-3526",
+						"tags": [
+							"cve"
+						]
 					},
 					{
 						"source": "linux-security@amazon.com",
@@ -84,7 +120,10 @@
 				"references": [
 					{
 						"source": "linux-security@amazon.com",
-						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-1015"
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-1015",
+						"tags": [
+							"cve"
+						]
 					},
 					{
 						"source": "linux-security@amazon.com",
@@ -104,7 +143,10 @@
 				"references": [
 					{
 						"source": "linux-security@amazon.com",
-						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-1016"
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-1016",
+						"tags": [
+							"cve"
+						]
 					},
 					{
 						"source": "linux-security@amazon.com",
@@ -124,7 +166,10 @@
 				"references": [
 					{
 						"source": "linux-security@amazon.com",
-						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-1158"
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-1158",
+						"tags": [
+							"cve"
+						]
 					},
 					{
 						"source": "linux-security@amazon.com",
@@ -144,7 +189,10 @@
 				"references": [
 					{
 						"source": "linux-security@amazon.com",
-						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-1263"
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-1263",
+						"tags": [
+							"cve"
+						]
 					},
 					{
 						"source": "linux-security@amazon.com",
@@ -164,7 +212,10 @@
 				"references": [
 					{
 						"source": "linux-security@amazon.com",
-						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-1353"
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-1353",
+						"tags": [
+							"cve"
+						]
 					},
 					{
 						"source": "linux-security@amazon.com",
@@ -184,7 +235,10 @@
 				"references": [
 					{
 						"source": "linux-security@amazon.com",
-						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-1729"
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-1729",
+						"tags": [
+							"cve"
+						]
 					},
 					{
 						"source": "linux-security@amazon.com",
@@ -204,7 +258,10 @@
 				"references": [
 					{
 						"source": "linux-security@amazon.com",
-						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-23222"
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-23222",
+						"tags": [
+							"cve"
+						]
 					},
 					{
 						"source": "linux-security@amazon.com",
@@ -224,7 +281,10 @@
 				"references": [
 					{
 						"source": "linux-security@amazon.com",
-						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-28893"
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-28893",
+						"tags": [
+							"cve"
+						]
 					},
 					{
 						"source": "linux-security@amazon.com",
@@ -244,7 +304,10 @@
 				"references": [
 					{
 						"source": "linux-security@amazon.com",
-						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-29581"
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-29581",
+						"tags": [
+							"cve"
+						]
 					},
 					{
 						"source": "linux-security@amazon.com",
@@ -264,7 +327,10 @@
 				"references": [
 					{
 						"source": "linux-security@amazon.com",
-						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-29582"
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-29582",
+						"tags": [
+							"cve"
+						]
 					},
 					{
 						"source": "linux-security@amazon.com",
@@ -284,7 +350,10 @@
 				"references": [
 					{
 						"source": "linux-security@amazon.com",
-						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-30594"
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-30594",
+						"tags": [
+							"cve"
+						]
 					},
 					{
 						"source": "linux-security@amazon.com",
@@ -304,7 +373,10 @@
 				"references": [
 					{
 						"source": "linux-security@amazon.com",
-						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-3526"
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-3526",
+						"tags": [
+							"cve"
+						]
 					},
 					{
 						"source": "linux-security@amazon.com",

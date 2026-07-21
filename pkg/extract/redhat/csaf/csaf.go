@@ -219,6 +219,7 @@ func (e extractor) extract(adv csaf.CSAF, c2r map[string][]string) (dataTypes.Da
 				rs = append(rs, referenceTypes.Reference{
 					Source: "secalert@redhat.com",
 					URL:    r.URL,
+					Title:  r.Summary,
 				})
 			}
 			return rs
@@ -771,6 +772,7 @@ func walkVulnerabilities(vulns []csaf.Vulnerability, pids []csaf.ProductID) (map
 					rs = append(rs, referenceTypes.Reference{
 						Source: "secalert@redhat.com",
 						URL:    r.URL,
+						Title:  r.Summary,
 					})
 				}
 				return rs

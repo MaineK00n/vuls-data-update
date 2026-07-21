@@ -45,11 +45,17 @@
 				"references": [
 					{
 						"source": "jvndb.jvn.jp",
-						"url": "https://jvn.jp/jp/JVN64806328/index.html"
+						"url": "https://jvn.jp/jp/JVN64806328/index.html",
+						"tags": [
+							"JVN"
+						]
 					},
 					{
 						"source": "jvndb.jvn.jp",
-						"url": "https://www.cve.org/CVERecord?id=CVE-2021-20877"
+						"url": "https://www.cve.org/CVERecord?id=CVE-2021-20877",
+						"tags": [
+							"CVE"
+						]
 					}
 				],
 				"published": "2022-01-19T12:05:00+09:00",
@@ -64,7 +70,10 @@
 				"references": [
 					{
 						"source": "jvndb.jvn.jp",
-						"url": "https://www.cve.org/CVERecord?id=CVE-2021-20877"
+						"url": "https://www.cve.org/CVERecord?id=CVE-2021-20877",
+						"tags": [
+							"CVE"
+						]
 					}
 				]
 			}

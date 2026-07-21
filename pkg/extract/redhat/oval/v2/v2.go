@@ -418,6 +418,7 @@ func (e extractor) extract(major, stream string, def v2.Definition, c2r map[stri
 				content.References = append(content.References, referenceTypes.Reference{
 					Source: "secalert@redhat.com",
 					URL:    b.Href,
+					Title:  b.Text,
 				})
 				m[lhs] = content
 			}
@@ -457,12 +458,20 @@ func (e extractor) extract(major, stream string, def v2.Definition, c2r map[stri
 							refs = append(refs, referenceTypes.Reference{
 								Source: "secalert@redhat.com",
 								URL:    r.RefURL,
+								Title:  r.RefID,
+								Tags: func() []string {
+									if r.Source != "" {
+										return []string{r.Source}
+									}
+									return nil
+								}(),
 							})
 						}
 						for _, b := range def.Metadata.Advisory.Bugzilla {
 							refs = append(refs, referenceTypes.Reference{
 								Source: "secalert@redhat.com",
 								URL:    b.Href,
+								Title:  b.Text,
 							})
 						}
 						return refs

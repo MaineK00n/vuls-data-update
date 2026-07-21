@@ -63,11 +63,13 @@
 	"references": [
 		{
 			"source": "capec.mitre.org",
-			"url": "https://arstechnica.com/information-technology/2020/04/unpatched-zoom-bug-lets-attackers-steal-windows-credentials-with-no-warning/"
+			"url": "https://arstechnica.com/information-technology/2020/04/unpatched-zoom-bug-lets-attackers-steal-windows-credentials-with-no-warning/",
+			"title": "Dan Goodin, Attackers can use Zoom to steal users’ Windows credentials with no warning, 2020--04---01, Ars Technica"
 		},
 		{
 			"source": "capec.mitre.org",
-			"url": "https://blog.stealthbits.com/how-attackers-are-stealing-your-credentials-with-mimikatz/"
+			"url": "https://blog.stealthbits.com/how-attackers-are-stealing-your-credentials-with-mimikatz/",
+			"title": "Jeff Warren, How Attackers are Stealing Your Credentials with Mimikatz, 2017--07---11, STEALTHbits Technologies, Inc."
 		},
 		{
 			"source": "capec.mitre.org",

@@ -1250,6 +1250,7 @@ func toReferences(ers []attack.ExternalReference) []referenceTypes.Reference {
 		out = append(out, referenceTypes.Reference{
 			Source: er.SourceName,
 			URL:    *er.URL,
+			Title:  deref(er.Description),
 		})
 	}
 	if len(out) == 0 {

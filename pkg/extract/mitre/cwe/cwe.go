@@ -549,6 +549,7 @@ func extractReferences(id string, refs []cwe.Reference) []referenceTypes.Referen
 		out = append(out, referenceTypes.Reference{
 			Source: "cwe.mitre.org",
 			URL:    r.URL,
+			Title:  r.Title,
 		})
 	}
 	return out

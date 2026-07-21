@@ -332,10 +332,15 @@ func cwes(fetched paloaltoJSON.CVE) []cweTypes.CWE {
 func references(fetched paloaltoJSON.CVE) []referenceTypes.Reference {
 	refs := make([]referenceTypes.Reference, 0, len(fetched.Containers.CNA.References))
 	for _, r := range fetched.Containers.CNA.References {
-		refs = append(refs, referenceTypes.Reference{
+		ref := referenceTypes.Reference{
 			Source: "security.paloaltonetworks.com",
 			URL:    r.URL,
-		})
+			Tags:   r.Tags,
+		}
+		if r.Name != nil {
+			ref.Title = *r.Name
+		}
+		refs = append(refs, ref)
 	}
 	return refs
 }

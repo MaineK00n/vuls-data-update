@@ -33,6 +33,9 @@ func (c *CWE) Sort() {
 	c.Weakness.Sort()
 	c.Category.Sort()
 	c.View.Sort()
+	for i := range c.References {
+		(&c.References[i]).Sort()
+	}
 	slices.SortFunc(c.References, referenceTypes.Compare)
 	c.DataSource.Sort()
 }

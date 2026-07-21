@@ -16,19 +16,31 @@
 				"references": [
 					{
 						"source": "linux-security@amazon.com",
-						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-3778"
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-3778",
+						"tags": [
+							"cve"
+						]
 					},
 					{
 						"source": "linux-security@amazon.com",
-						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-3796"
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-3796",
+						"tags": [
+							"cve"
+						]
 					},
 					{
 						"source": "linux-security@amazon.com",
-						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-3872"
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-3872",
+						"tags": [
+							"cve"
+						]
 					},
 					{
 						"source": "linux-security@amazon.com",
-						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-3875"
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-3875",
+						"tags": [
+							"cve"
+						]
 					},
 					{
 						"source": "linux-security@amazon.com",
@@ -52,7 +64,10 @@
 				"references": [
 					{
 						"source": "linux-security@amazon.com",
-						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-3778"
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-3778",
+						"tags": [
+							"cve"
+						]
 					},
 					{
 						"source": "linux-security@amazon.com",
@@ -72,7 +87,10 @@
 				"references": [
 					{
 						"source": "linux-security@amazon.com",
-						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-3796"
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-3796",
+						"tags": [
+							"cve"
+						]
 					},
 					{
 						"source": "linux-security@amazon.com",
@@ -92,7 +110,10 @@
 				"references": [
 					{
 						"source": "linux-security@amazon.com",
-						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-3872"
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-3872",
+						"tags": [
+							"cve"
+						]
 					},
 					{
 						"source": "linux-security@amazon.com",
@@ -112,7 +133,10 @@
 				"references": [
 					{
 						"source": "linux-security@amazon.com",
-						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-3875"
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-3875",
+						"tags": [
+							"cve"
+						]
 					},
 					{
 						"source": "linux-security@amazon.com",

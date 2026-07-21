@@ -16,11 +16,17 @@
 				"references": [
 					{
 						"source": "linux-security@amazon.com",
-						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-3634"
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-3634",
+						"tags": [
+							"cve"
+						]
 					},
 					{
 						"source": "linux-security@amazon.com",
-						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-24903"
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-24903",
+						"tags": [
+							"cve"
+						]
 					},
 					{
 						"source": "linux-security@amazon.com",
@@ -44,7 +50,10 @@
 				"references": [
 					{
 						"source": "linux-security@amazon.com",
-						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-3634"
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-3634",
+						"tags": [
+							"cve"
+						]
 					},
 					{
 						"source": "linux-security@amazon.com",
@@ -64,7 +73,10 @@
 				"references": [
 					{
 						"source": "linux-security@amazon.com",
-						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-24903"
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-24903",
+						"tags": [
+							"cve"
+						]
 					},
 					{
 						"source": "linux-security@amazon.com",

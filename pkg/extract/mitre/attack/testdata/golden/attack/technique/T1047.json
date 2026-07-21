@@ -47,15 +47,18 @@
 	"references": [
 		{
 			"source": "FireEye WMI 2015",
-			"url": "https://www.fireeye.com/content/dam/fireeye-www/global/en/current-threats/pdfs/wp-windows-management-instrumentation.pdf"
+			"url": "https://www.fireeye.com/content/dam/fireeye-www/global/en/current-threats/pdfs/wp-windows-management-instrumentation.pdf",
+			"title": "Ballenthin, W., et al. (2015). Windows Management Instrumentation (WMI) Offense, Defense, and Forensics. Retrieved March 30, 2016."
 		},
 		{
 			"source": "FireEye WMI SANS 2015",
-			"url": "https://www.fireeye.com/content/dam/fireeye-www/services/pdfs/sans-dfir-2015.pdf"
+			"url": "https://www.fireeye.com/content/dam/fireeye-www/services/pdfs/sans-dfir-2015.pdf",
+			"title": "Devon Kerr. (2015). There's Something About WMI. Retrieved May 4, 2020."
 		},
 		{
 			"source": "MSDN WMI",
-			"url": "https://msdn.microsoft.com/en-us/library/aa394582.aspx"
+			"url": "https://msdn.microsoft.com/en-us/library/aa394582.aspx",
+			"title": "Microsoft. (n.d.). Windows Management Instrumentation. Retrieved April 27, 2016."
 		},
 		{
 			"source": "mitre-attack",

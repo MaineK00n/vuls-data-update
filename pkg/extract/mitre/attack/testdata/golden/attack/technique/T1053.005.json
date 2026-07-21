@@ -49,39 +49,48 @@
 	"references": [
 		{
 			"source": "Defending Against Scheduled Task Attacks in Windows Environments",
-			"url": "https://blog.qualys.com/vulnerabilities-threat-research/2022/06/20/defending-against-scheduled-task-attacks-in-windows-environments"
+			"url": "https://blog.qualys.com/vulnerabilities-threat-research/2022/06/20/defending-against-scheduled-task-attacks-in-windows-environments",
+			"title": "Harshal Tupsamudre. (2022, June 20). Defending Against Scheduled Tasks. Retrieved July 5, 2022."
 		},
 		{
 			"source": "Microsoft Scheduled Task Events Win10",
-			"url": "https://docs.microsoft.com/en-us/windows/security/threat-protection/auditing/audit-other-object-access-events"
+			"url": "https://docs.microsoft.com/en-us/windows/security/threat-protection/auditing/audit-other-object-access-events",
+			"title": "Microsoft. (2017, May 28). Audit Other Object Access Events. Retrieved June 27, 2019."
 		},
 		{
 			"source": "ProofPoint Serpent",
-			"url": "https://www.proofpoint.com/us/blog/threat-insight/serpent-no-swiping-new-backdoor-targets-french-entities-unique-attack-chain"
+			"url": "https://www.proofpoint.com/us/blog/threat-insight/serpent-no-swiping-new-backdoor-targets-french-entities-unique-attack-chain",
+			"title": "Campbell, B. et al. (2022, March 21). Serpent, No Swiping! New Backdoor Targets French Entities with Unique Attack Chain. Retrieved April 11, 2022."
 		},
 		{
 			"source": "SigmaHQ",
-			"url": "https://github.com/SigmaHQ/sigma/blob/master/rules/windows/registry/registry_delete/registry_delete_schtasks_hide_task_via_sd_value_removal.yml"
+			"url": "https://github.com/SigmaHQ/sigma/blob/master/rules/windows/registry/registry_delete/registry_delete_schtasks_hide_task_via_sd_value_removal.yml",
+			"title": "Sittikorn S. (2022, April 15). Removal Of SD Value to Hide Schedule Task - Registry. Retrieved June 1, 2022."
 		},
 		{
 			"source": "Tarrask scheduled task",
-			"url": "https://www.microsoft.com/security/blog/2022/04/12/tarrask-malware-uses-scheduled-tasks-for-defense-evasion/"
+			"url": "https://www.microsoft.com/security/blog/2022/04/12/tarrask-malware-uses-scheduled-tasks-for-defense-evasion/",
+			"title": "Microsoft Threat Intelligence Team & Detection and Response Team . (2022, April 12). Tarrask malware uses scheduled tasks for defense evasion. Retrieved June 1, 2022."
 		},
 		{
 			"source": "TechNet Autoruns",
-			"url": "https://technet.microsoft.com/en-us/sysinternals/bb963902"
+			"url": "https://technet.microsoft.com/en-us/sysinternals/bb963902",
+			"title": "Russinovich, M. (2016, January 4). Autoruns for Windows v13.51. Retrieved June 6, 2016."
 		},
 		{
 			"source": "TechNet Forum Scheduled Task Operational Setting",
-			"url": "https://social.technet.microsoft.com/Forums/en-US/e5bca729-52e7-4fcb-ba12-3225c564674c/scheduled-tasks-history-retention-settings?forum=winserver8gen"
+			"url": "https://social.technet.microsoft.com/Forums/en-US/e5bca729-52e7-4fcb-ba12-3225c564674c/scheduled-tasks-history-retention-settings?forum=winserver8gen",
+			"title": "Satyajit321. (2015, November 3). Scheduled Tasks History Retention settings. Retrieved December 12, 2017."
 		},
 		{
 			"source": "TechNet Scheduled Task Events",
-			"url": "https://technet.microsoft.com/library/dd315590.aspx"
+			"url": "https://technet.microsoft.com/library/dd315590.aspx",
+			"title": "Microsoft. (n.d.). General Task Registration. Retrieved December 12, 2017."
 		},
 		{
 			"source": "Twitter Leoloobeek Scheduled Task",
-			"url": "https://twitter.com/leoloobeek/status/939248813465853953"
+			"url": "https://twitter.com/leoloobeek/status/939248813465853953",
+			"title": "Loobeek, L. (2017, December 8). leoloobeek Status. Retrieved December 12, 2017."
 		},
 		{
 			"source": "mitre-attack",

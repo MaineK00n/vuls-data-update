@@ -111,7 +111,8 @@
 	"references": [
 		{
 			"source": "cwe.mitre.org",
-			"url": "http://ro.ecu.edu.au/cgi/viewcontent.cgi?article=1174&context=ecuworks2012"
+			"url": "http://ro.ecu.edu.au/cgi/viewcontent.cgi?article=1174&context=ecuworks2012",
+			"title": "The 2011 IDN Homograph Attack Mitigation Survey"
 		},
 		{
 			"source": "cwe.mitre.org",
@@ -119,7 +120,8 @@
 		},
 		{
 			"source": "cwe.mitre.org",
-			"url": "https://www.microsoftpressstore.com/store/writing-secure-code-9780735617223"
+			"url": "https://www.microsoftpressstore.com/store/writing-secure-code-9780735617223",
+			"title": "Writing Secure Code"
 		}
 	],
 	"data_source": {

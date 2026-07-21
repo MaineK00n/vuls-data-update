@@ -32,11 +32,13 @@
 	"references": [
 		{
 			"source": "Talos IPFS 2022",
-			"url": "https://blog.talosintelligence.com/ipfs-abuse/"
+			"url": "https://blog.talosintelligence.com/ipfs-abuse/",
+			"title": "Edmund Brumaghin. (2022, November 9). Threat Spotlight: Cyber Criminal Adoption of IPFS for Phishing, Malware Campaigns. Retrieved March 8, 2023."
 		},
 		{
 			"source": "Volexity Ocean Lotus November 2020",
-			"url": "https://www.volexity.com/blog/2020/11/06/oceanlotus-extending-cyber-espionage-operations-through-fake-websites/"
+			"url": "https://www.volexity.com/blog/2020/11/06/oceanlotus-extending-cyber-espionage-operations-through-fake-websites/",
+			"title": "Adair, S. and Lancaster, T. (2020, November 6). OceanLotus: Extending Cyber Espionage Operations Through Fake Websites. Retrieved November 20, 2020."
 		},
 		{
 			"source": "mitre-attack",

@@ -39,19 +39,23 @@
 	"references": [
 		{
 			"source": "Microsoft Detect Outlook Forms",
-			"url": "https://docs.microsoft.com/en-us/office365/securitycompliance/detect-and-remediate-outlook-rules-forms-attack"
+			"url": "https://docs.microsoft.com/en-us/office365/securitycompliance/detect-and-remediate-outlook-rules-forms-attack",
+			"title": "Fox, C., Vangel, D. (2018, April 22). Detect and Remediate Outlook Rules and Custom Forms Injections Attacks in Office 365. Retrieved February 4, 2019."
 		},
 		{
 			"source": "Pfammatter - Hidden Inbox Rules",
-			"url": "https://blog.compass-security.com/2018/09/hidden-inbox-rules-in-microsoft-exchange/"
+			"url": "https://blog.compass-security.com/2018/09/hidden-inbox-rules-in-microsoft-exchange/",
+			"title": "Damian Pfammatter. (2018, September 17). Hidden Inbox Rules in Microsoft Exchange. Retrieved October 12, 2021."
 		},
 		{
 			"source": "SensePost NotRuler",
-			"url": "https://github.com/sensepost/notruler"
+			"url": "https://github.com/sensepost/notruler",
+			"title": "SensePost. (2017, September 21). NotRuler - The opposite of Ruler, provides blue teams with the ability to detect Ruler usage against Exchange. Retrieved February 4, 2019."
 		},
 		{
 			"source": "SilentBreak Outlook Rules",
-			"url": "https://silentbreaksecurity.com/malicious-outlook-rules/"
+			"url": "https://silentbreaksecurity.com/malicious-outlook-rules/",
+			"title": "Landers, N. (2015, December 4). Malicious Outlook Rules. Retrieved February 4, 2019."
 		},
 		{
 			"source": "mitre-attack",

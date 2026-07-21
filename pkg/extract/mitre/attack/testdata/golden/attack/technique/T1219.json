@@ -49,15 +49,18 @@
 	"references": [
 		{
 			"source": "CrowdStrike 2015 Global Threat Report",
-			"url": "https://go.crowdstrike.com/rs/281-OBQ-266/images/15GlobalThreatReport.pdf"
+			"url": "https://go.crowdstrike.com/rs/281-OBQ-266/images/15GlobalThreatReport.pdf",
+			"title": "CrowdStrike Intelligence. (2016). 2015 Global Threat Report. Retrieved April 11, 2018."
 		},
 		{
 			"source": "CrySyS Blog TeamSpy",
-			"url": "https://blog.crysys.hu/2013/03/teamspy/"
+			"url": "https://blog.crysys.hu/2013/03/teamspy/",
+			"title": "CrySyS Lab. (2013, March 20). TeamSpy – Obshie manevri. Ispolzovat’ tolko s razreshenija S-a. Retrieved April 11, 2018."
 		},
 		{
 			"source": "Symantec Living off the Land",
-			"url": "https://www.symantec.com/content/dam/symantec/docs/security-center/white-papers/istr-living-off-the-land-and-fileless-attack-techniques-en.pdf"
+			"url": "https://www.symantec.com/content/dam/symantec/docs/security-center/white-papers/istr-living-off-the-land-and-fileless-attack-techniques-en.pdf",
+			"title": "Wueest, C., Anand, H. (2017, July). Living off the land and fileless attack techniques. Retrieved April 10, 2018."
 		},
 		{
 			"source": "mitre-attack",

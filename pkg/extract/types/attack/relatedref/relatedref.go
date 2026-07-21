@@ -31,6 +31,9 @@ type RelatedRef struct {
 }
 
 func (r *RelatedRef) Sort() {
+	for i := range r.References {
+		(&r.References[i]).Sort()
+	}
 	slices.SortFunc(r.References, referenceTypes.Compare)
 }
 

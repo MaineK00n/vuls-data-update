@@ -29,11 +29,13 @@
 	"references": [
 		{
 			"source": "Awake Security C2 Cloud",
-			"url": "https://awakesecurity.com/blog/threat-hunting-series-detecting-command-control-in-the-cloud/"
+			"url": "https://awakesecurity.com/blog/threat-hunting-series-detecting-command-control-in-the-cloud/",
+			"title": "Gary Golomb and Tory Kei. (n.d.). Threat Hunting Series: Detecting Command & Control in the Cloud. Retrieved May 27, 2022."
 		},
 		{
 			"source": "MSTIC Nobelium Oct 2021",
-			"url": "https://www.microsoft.com/security/blog/2021/10/25/nobelium-targeting-delegated-administrative-privileges-to-facilitate-broader-attacks/"
+			"url": "https://www.microsoft.com/security/blog/2021/10/25/nobelium-targeting-delegated-administrative-privileges-to-facilitate-broader-attacks/",
+			"title": "Microsoft Threat Intelligence Center. (2021, October 25). NOBELIUM targeting delegated administrative privileges to facilitate broader attacks. Retrieved March 25, 2022."
 		},
 		{
 			"source": "mitre-attack",

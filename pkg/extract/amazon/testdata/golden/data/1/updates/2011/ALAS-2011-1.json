@@ -16,7 +16,10 @@
 				"references": [
 					{
 						"source": "linux-security@amazon.com",
-						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-3192"
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-3192",
+						"tags": [
+							"cve"
+						]
 					},
 					{
 						"source": "linux-security@amazon.com",
@@ -24,7 +27,10 @@
 					},
 					{
 						"source": "linux-security@amazon.com",
-						"url": "https://rhn.redhat.com/errata/RHSA-2011:1245.html"
+						"url": "https://rhn.redhat.com/errata/RHSA-2011:1245.html",
+						"tags": [
+							"redhat"
+						]
 					}
 				],
 				"published": "2011-09-27T22:46:00Z",
@@ -44,7 +50,10 @@
 				"references": [
 					{
 						"source": "linux-security@amazon.com",
-						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-3192"
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-3192",
+						"tags": [
+							"cve"
+						]
 					},
 					{
 						"source": "linux-security@amazon.com",

@@ -16,79 +16,98 @@
 				"references": [
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://access.redhat.com/articles/4966181"
+						"url": "https://access.redhat.com/articles/4966181",
+						"title": "https://access.redhat.com/articles/4966181"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://access.redhat.com/documentation/en-us/red_hat_build_of_quarkus/2.13/"
+						"url": "https://access.redhat.com/documentation/en-us/red_hat_build_of_quarkus/2.13/",
+						"title": "https://access.redhat.com/documentation/en-us/red_hat_build_of_quarkus/2.13/"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://access.redhat.com/errata/RHSA-2023:7700"
+						"url": "https://access.redhat.com/errata/RHSA-2023:7700",
+						"title": "https://access.redhat.com/errata/RHSA-2023:7700"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://access.redhat.com/security/updates/classification/#important"
+						"url": "https://access.redhat.com/security/updates/classification/#important",
+						"title": "https://access.redhat.com/security/updates/classification/#important"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2215229"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2215229",
+						"title": "2215229"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2215393"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2215393",
+						"title": "2215393"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2215394"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2215394",
+						"title": "2215394"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2215445"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2215445",
+						"title": "2215445"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2216888"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2216888",
+						"title": "2216888"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2240036"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2240036",
+						"title": "2240036"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2241722"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2241722",
+						"title": "2241722"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2242521"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2242521",
+						"title": "2242521"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2246370"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2246370",
+						"title": "2246370"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2253113"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2253113",
+						"title": "2253113"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://issues.redhat.com/browse/QUARKUS-3781"
+						"url": "https://issues.redhat.com/browse/QUARKUS-3781",
+						"title": "QUARKUS-3781"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://issues.redhat.com/browse/QUARKUS-3782"
+						"url": "https://issues.redhat.com/browse/QUARKUS-3782",
+						"title": "QUARKUS-3782"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://issues.redhat.com/browse/QUARKUS-3785"
+						"url": "https://issues.redhat.com/browse/QUARKUS-3785",
+						"title": "QUARKUS-3785"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://issues.redhat.com/browse/QUARKUS-3787"
+						"url": "https://issues.redhat.com/browse/QUARKUS-3787",
+						"title": "QUARKUS-3787"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://security.access.redhat.com/data/csaf/v2/advisories/2023/rhsa-2023_7700.json"
+						"url": "https://security.access.redhat.com/data/csaf/v2/advisories/2023/rhsa-2023_7700.json",
+						"title": "Canonical URL"
 					}
 				],
 				"published": "2023-12-07T14:26:37Z",

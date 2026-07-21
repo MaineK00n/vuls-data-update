@@ -16,191 +16,238 @@
 				"references": [
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/8.9_release_notes/index"
+						"url": "https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/8.9_release_notes/index",
+						"title": "https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/8.9_release_notes/index"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://access.redhat.com/errata/RHSA-2023:6939"
+						"url": "https://access.redhat.com/errata/RHSA-2023:6939",
+						"title": "https://access.redhat.com/errata/RHSA-2023:6939"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://access.redhat.com/security/updates/classification/#moderate"
+						"url": "https://access.redhat.com/security/updates/classification/#moderate",
+						"title": "https://access.redhat.com/security/updates/classification/#moderate"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2066138"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2066138",
+						"title": "2066138"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2144541"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2144541",
+						"title": "2144541"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2163037"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2163037",
+						"title": "2163037"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2165744"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2165744",
+						"title": "2165744"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2166195"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2166195",
+						"title": "2166195"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2173082"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2173082",
+						"title": "2173082"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2174485"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2174485",
+						"title": "2174485"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2175721"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2175721",
+						"title": "2175721"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2175794"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2175794",
+						"title": "2175794"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2178358"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2178358",
+						"title": "2178358"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2178488"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2178488",
+						"title": "2178488"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2178492"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2178492",
+						"title": "2178492"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2179449"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2179449",
+						"title": "2179449"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2179465"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2179465",
+						"title": "2179465"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2180104"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2180104",
+						"title": "2180104"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2180118"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2180118",
+						"title": "2180118"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2181521"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2181521",
+						"title": "2181521"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2182052"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2182052",
+						"title": "2182052"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2182883"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2182883",
+						"title": "2182883"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2182884"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2182884",
+						"title": "2182884"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2182894"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2182894",
+						"title": "2182894"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2183041"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2183041",
+						"title": "2183041"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2183596"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2183596",
+						"title": "2183596"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2184481"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2184481",
+						"title": "2184481"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2184482"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2184482",
+						"title": "2184482"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2184483"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2184483",
+						"title": "2184483"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2184484"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2184484",
+						"title": "2184484"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2188524"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2188524",
+						"title": "2188524"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2189578"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2189578",
+						"title": "2189578"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2192977"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2192977",
+						"title": "2192977"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2196026"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2196026",
+						"title": "2196026"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2196027"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2196027",
+						"title": "2196027"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2196029"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2196029",
+						"title": "2196029"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2216700"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2216700",
+						"title": "2216700"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2218315"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2218315",
+						"title": "2218315"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2220931"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2220931",
+						"title": "2220931"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2222167"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2222167",
+						"title": "2222167"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2228689"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2228689",
+						"title": "2228689"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2229746"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2229746",
+						"title": "2229746"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2232127"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2232127",
+						"title": "2232127"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2233218"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2233218",
+						"title": "2233218"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://issues.redhat.com/browse/RHEL-3126"
+						"url": "https://issues.redhat.com/browse/RHEL-3126",
+						"title": "RHEL-3126"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://issues.redhat.com/browse/RHEL-3149"
+						"url": "https://issues.redhat.com/browse/RHEL-3149",
+						"title": "RHEL-3149"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://security.access.redhat.com/data/csaf/v2/advisories/2023/rhsa-2023_6939.json"
+						"url": "https://security.access.redhat.com/data/csaf/v2/advisories/2023/rhsa-2023_6939.json",
+						"title": "Canonical URL"
 					}
 				],
 				"published": "2023-11-14T16:03:32Z",
@@ -251,35 +298,43 @@
 				"references": [
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://access.redhat.com/security/cve/CVE-2022-3064"
+						"url": "https://access.redhat.com/security/cve/CVE-2022-3064",
+						"title": "Canonical URL"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2163037"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2163037",
+						"title": "RHBZ#2163037"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://github.com/advisories/GHSA-6q6q-88xp-6f2r"
+						"url": "https://github.com/advisories/GHSA-6q6q-88xp-6f2r",
+						"title": "https://github.com/advisories/GHSA-6q6q-88xp-6f2r"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://github.com/go-yaml/yaml/commit/f221b8435cfb71e54062f6c6e99e9ade30b124d5"
+						"url": "https://github.com/go-yaml/yaml/commit/f221b8435cfb71e54062f6c6e99e9ade30b124d5",
+						"title": "https://github.com/go-yaml/yaml/commit/f221b8435cfb71e54062f6c6e99e9ade30b124d5"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://github.com/go-yaml/yaml/releases/tag/v2.2.4"
+						"url": "https://github.com/go-yaml/yaml/releases/tag/v2.2.4",
+						"title": "https://github.com/go-yaml/yaml/releases/tag/v2.2.4"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://nvd.nist.gov/vuln/detail/CVE-2022-3064"
+						"url": "https://nvd.nist.gov/vuln/detail/CVE-2022-3064",
+						"title": "https://nvd.nist.gov/vuln/detail/CVE-2022-3064"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://pkg.go.dev/vuln/GO-2022-0956"
+						"url": "https://pkg.go.dev/vuln/GO-2022-0956",
+						"title": "https://pkg.go.dev/vuln/GO-2022-0956"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://www.cve.org/CVERecord?id=CVE-2022-3064"
+						"url": "https://www.cve.org/CVERecord?id=CVE-2022-3064",
+						"title": "https://www.cve.org/CVERecord?id=CVE-2022-3064"
 					}
 				],
 				"published": "2022-08-29T00:00:00Z"
@@ -327,47 +382,58 @@
 				"references": [
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://access.redhat.com/security/cve/CVE-2022-41723"
+						"url": "https://access.redhat.com/security/cve/CVE-2022-41723",
+						"title": "Canonical URL"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2178358"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2178358",
+						"title": "RHBZ#2178358"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://github.com/advisories/GHSA-vvpx-j8f3-3w6h"
+						"url": "https://github.com/advisories/GHSA-vvpx-j8f3-3w6h",
+						"title": "https://github.com/advisories/GHSA-vvpx-j8f3-3w6h"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://go.dev/cl/468135"
+						"url": "https://go.dev/cl/468135",
+						"title": "https://go.dev/cl/468135"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://go.dev/cl/468295"
+						"url": "https://go.dev/cl/468295",
+						"title": "https://go.dev/cl/468295"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://go.dev/issue/57855"
+						"url": "https://go.dev/issue/57855",
+						"title": "https://go.dev/issue/57855"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://groups.google.com/g/golang-announce/c/V0aBFqaFs_E"
+						"url": "https://groups.google.com/g/golang-announce/c/V0aBFqaFs_E",
+						"title": "https://groups.google.com/g/golang-announce/c/V0aBFqaFs_E"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://nvd.nist.gov/vuln/detail/CVE-2022-41723"
+						"url": "https://nvd.nist.gov/vuln/detail/CVE-2022-41723",
+						"title": "https://nvd.nist.gov/vuln/detail/CVE-2022-41723"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://pkg.go.dev/vuln/GO-2023-1571"
+						"url": "https://pkg.go.dev/vuln/GO-2023-1571",
+						"title": "https://pkg.go.dev/vuln/GO-2023-1571"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://vuln.go.dev/ID/GO-2023-1571.json"
+						"url": "https://vuln.go.dev/ID/GO-2023-1571.json",
+						"title": "https://vuln.go.dev/ID/GO-2023-1571.json"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://www.cve.org/CVERecord?id=CVE-2022-41723"
+						"url": "https://www.cve.org/CVERecord?id=CVE-2022-41723",
+						"title": "https://www.cve.org/CVERecord?id=CVE-2022-41723"
 					}
 				],
 				"published": "2023-02-17T14:00:00Z"
@@ -415,35 +481,43 @@
 				"references": [
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://access.redhat.com/security/cve/CVE-2022-41724"
+						"url": "https://access.redhat.com/security/cve/CVE-2022-41724",
+						"title": "Canonical URL"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2178492"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2178492",
+						"title": "RHBZ#2178492"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://go.dev/cl/468125"
+						"url": "https://go.dev/cl/468125",
+						"title": "https://go.dev/cl/468125"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://go.dev/issue/58001"
+						"url": "https://go.dev/issue/58001",
+						"title": "https://go.dev/issue/58001"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://groups.google.com/g/golang-announce/c/V0aBFqaFs_E"
+						"url": "https://groups.google.com/g/golang-announce/c/V0aBFqaFs_E",
+						"title": "https://groups.google.com/g/golang-announce/c/V0aBFqaFs_E"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://nvd.nist.gov/vuln/detail/CVE-2022-41724"
+						"url": "https://nvd.nist.gov/vuln/detail/CVE-2022-41724",
+						"title": "https://nvd.nist.gov/vuln/detail/CVE-2022-41724"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://pkg.go.dev/vuln/GO-2023-1570"
+						"url": "https://pkg.go.dev/vuln/GO-2023-1570",
+						"title": "https://pkg.go.dev/vuln/GO-2023-1570"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://www.cve.org/CVERecord?id=CVE-2022-41724"
+						"url": "https://www.cve.org/CVERecord?id=CVE-2022-41724",
+						"title": "https://www.cve.org/CVERecord?id=CVE-2022-41724"
 					}
 				],
 				"published": "2023-02-15T00:00:00Z"
@@ -491,35 +565,43 @@
 				"references": [
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://access.redhat.com/security/cve/CVE-2022-41725"
+						"url": "https://access.redhat.com/security/cve/CVE-2022-41725",
+						"title": "Canonical URL"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2178488"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2178488",
+						"title": "RHBZ#2178488"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://go.dev/cl/468124"
+						"url": "https://go.dev/cl/468124",
+						"title": "https://go.dev/cl/468124"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://go.dev/issue/58006"
+						"url": "https://go.dev/issue/58006",
+						"title": "https://go.dev/issue/58006"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://groups.google.com/g/golang-announce/c/V0aBFqaFs_E"
+						"url": "https://groups.google.com/g/golang-announce/c/V0aBFqaFs_E",
+						"title": "https://groups.google.com/g/golang-announce/c/V0aBFqaFs_E"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://nvd.nist.gov/vuln/detail/CVE-2022-41725"
+						"url": "https://nvd.nist.gov/vuln/detail/CVE-2022-41725",
+						"title": "https://nvd.nist.gov/vuln/detail/CVE-2022-41725"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://pkg.go.dev/vuln/GO-2023-1569"
+						"url": "https://pkg.go.dev/vuln/GO-2023-1569",
+						"title": "https://pkg.go.dev/vuln/GO-2023-1569"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://www.cve.org/CVERecord?id=CVE-2022-41725"
+						"url": "https://www.cve.org/CVERecord?id=CVE-2022-41725",
+						"title": "https://www.cve.org/CVERecord?id=CVE-2022-41725"
 					}
 				],
 				"published": "2023-02-15T00:00:00Z"
@@ -567,27 +649,33 @@
 				"references": [
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://access.redhat.com/security/cve/CVE-2023-24534"
+						"url": "https://access.redhat.com/security/cve/CVE-2023-24534",
+						"title": "Canonical URL"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2184483"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2184483",
+						"title": "RHBZ#2184483"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://go.dev/issue/58975"
+						"url": "https://go.dev/issue/58975",
+						"title": "https://go.dev/issue/58975"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://groups.google.com/g/golang-announce/c/Xdv6JL9ENs8"
+						"url": "https://groups.google.com/g/golang-announce/c/Xdv6JL9ENs8",
+						"title": "https://groups.google.com/g/golang-announce/c/Xdv6JL9ENs8"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://nvd.nist.gov/vuln/detail/CVE-2023-24534"
+						"url": "https://nvd.nist.gov/vuln/detail/CVE-2023-24534",
+						"title": "https://nvd.nist.gov/vuln/detail/CVE-2023-24534"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://www.cve.org/CVERecord?id=CVE-2023-24534"
+						"url": "https://www.cve.org/CVERecord?id=CVE-2023-24534",
+						"title": "https://www.cve.org/CVERecord?id=CVE-2023-24534"
 					}
 				],
 				"published": "2023-04-04T00:00:00Z"
@@ -641,27 +729,33 @@
 				"references": [
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://access.redhat.com/security/cve/CVE-2023-24536"
+						"url": "https://access.redhat.com/security/cve/CVE-2023-24536",
+						"title": "Canonical URL"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2184482"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2184482",
+						"title": "RHBZ#2184482"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://go.dev/issue/59153"
+						"url": "https://go.dev/issue/59153",
+						"title": "https://go.dev/issue/59153"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://groups.google.com/g/golang-announce/c/Xdv6JL9ENs8"
+						"url": "https://groups.google.com/g/golang-announce/c/Xdv6JL9ENs8",
+						"title": "https://groups.google.com/g/golang-announce/c/Xdv6JL9ENs8"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://nvd.nist.gov/vuln/detail/CVE-2023-24536"
+						"url": "https://nvd.nist.gov/vuln/detail/CVE-2023-24536",
+						"title": "https://nvd.nist.gov/vuln/detail/CVE-2023-24536"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://www.cve.org/CVERecord?id=CVE-2023-24536"
+						"url": "https://www.cve.org/CVERecord?id=CVE-2023-24536",
+						"title": "https://www.cve.org/CVERecord?id=CVE-2023-24536"
 					}
 				],
 				"published": "2023-04-04T00:00:00Z"
@@ -709,27 +803,33 @@
 				"references": [
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://access.redhat.com/security/cve/CVE-2023-24537"
+						"url": "https://access.redhat.com/security/cve/CVE-2023-24537",
+						"title": "Canonical URL"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2184484"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2184484",
+						"title": "RHBZ#2184484"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://github.com/golang/go/issues/59180"
+						"url": "https://github.com/golang/go/issues/59180",
+						"title": "https://github.com/golang/go/issues/59180"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://groups.google.com/g/golang-announce/c/Xdv6JL9ENs8"
+						"url": "https://groups.google.com/g/golang-announce/c/Xdv6JL9ENs8",
+						"title": "https://groups.google.com/g/golang-announce/c/Xdv6JL9ENs8"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://nvd.nist.gov/vuln/detail/CVE-2023-24537"
+						"url": "https://nvd.nist.gov/vuln/detail/CVE-2023-24537",
+						"title": "https://nvd.nist.gov/vuln/detail/CVE-2023-24537"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://www.cve.org/CVERecord?id=CVE-2023-24537"
+						"url": "https://www.cve.org/CVERecord?id=CVE-2023-24537",
+						"title": "https://www.cve.org/CVERecord?id=CVE-2023-24537"
 					}
 				],
 				"published": "2023-04-04T00:00:00Z"
@@ -783,27 +883,33 @@
 				"references": [
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://access.redhat.com/security/cve/CVE-2023-24538"
+						"url": "https://access.redhat.com/security/cve/CVE-2023-24538",
+						"title": "Canonical URL"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2184481"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2184481",
+						"title": "RHBZ#2184481"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://github.com/golang/go/issues/59234"
+						"url": "https://github.com/golang/go/issues/59234",
+						"title": "https://github.com/golang/go/issues/59234"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://groups.google.com/g/golang-announce/c/Xdv6JL9ENs8"
+						"url": "https://groups.google.com/g/golang-announce/c/Xdv6JL9ENs8",
+						"title": "https://groups.google.com/g/golang-announce/c/Xdv6JL9ENs8"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://nvd.nist.gov/vuln/detail/CVE-2023-24538"
+						"url": "https://nvd.nist.gov/vuln/detail/CVE-2023-24538",
+						"title": "https://nvd.nist.gov/vuln/detail/CVE-2023-24538"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://www.cve.org/CVERecord?id=CVE-2023-24538"
+						"url": "https://www.cve.org/CVERecord?id=CVE-2023-24538",
+						"title": "https://www.cve.org/CVERecord?id=CVE-2023-24538"
 					}
 				],
 				"published": "2023-04-04T00:00:00Z"
@@ -857,27 +963,33 @@
 				"references": [
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://access.redhat.com/security/cve/CVE-2023-24539"
+						"url": "https://access.redhat.com/security/cve/CVE-2023-24539",
+						"title": "Canonical URL"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2196026"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2196026",
+						"title": "RHBZ#2196026"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://github.com/golang/go/issues/59720"
+						"url": "https://github.com/golang/go/issues/59720",
+						"title": "https://github.com/golang/go/issues/59720"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://groups.google.com/g/golang-announce/c/MEb0UyuSMsU"
+						"url": "https://groups.google.com/g/golang-announce/c/MEb0UyuSMsU",
+						"title": "https://groups.google.com/g/golang-announce/c/MEb0UyuSMsU"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://nvd.nist.gov/vuln/detail/CVE-2023-24539"
+						"url": "https://nvd.nist.gov/vuln/detail/CVE-2023-24539",
+						"title": "https://nvd.nist.gov/vuln/detail/CVE-2023-24539"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://www.cve.org/CVERecord?id=CVE-2023-24539"
+						"url": "https://www.cve.org/CVERecord?id=CVE-2023-24539",
+						"title": "https://www.cve.org/CVERecord?id=CVE-2023-24539"
 					}
 				],
 				"published": "2023-04-20T00:00:00Z"
@@ -931,27 +1043,33 @@
 				"references": [
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://access.redhat.com/security/cve/CVE-2023-24540"
+						"url": "https://access.redhat.com/security/cve/CVE-2023-24540",
+						"title": "Canonical URL"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2196027"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2196027",
+						"title": "RHBZ#2196027"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://go.dev/issue/59721"
+						"url": "https://go.dev/issue/59721",
+						"title": "https://go.dev/issue/59721"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://groups.google.com/g/golang-announce/c/MEb0UyuSMsU"
+						"url": "https://groups.google.com/g/golang-announce/c/MEb0UyuSMsU",
+						"title": "https://groups.google.com/g/golang-announce/c/MEb0UyuSMsU"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://nvd.nist.gov/vuln/detail/CVE-2023-24540"
+						"url": "https://nvd.nist.gov/vuln/detail/CVE-2023-24540",
+						"title": "https://nvd.nist.gov/vuln/detail/CVE-2023-24540"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://www.cve.org/CVERecord?id=CVE-2023-24540"
+						"url": "https://www.cve.org/CVERecord?id=CVE-2023-24540",
+						"title": "https://www.cve.org/CVERecord?id=CVE-2023-24540"
 					}
 				],
 				"published": "2023-04-20T00:00:00Z"
@@ -999,39 +1117,48 @@
 				"references": [
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://access.redhat.com/security/cve/CVE-2023-25173"
+						"url": "https://access.redhat.com/security/cve/CVE-2023-25173",
+						"title": "Canonical URL"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2174485"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2174485",
+						"title": "RHBZ#2174485"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://github.com/containerd/containerd/commit/133f6bb6cd827ce35a5fb279c1ead12b9d21460a"
+						"url": "https://github.com/containerd/containerd/commit/133f6bb6cd827ce35a5fb279c1ead12b9d21460a",
+						"title": "https://github.com/containerd/containerd/commit/133f6bb6cd827ce35a5fb279c1ead12b9d21460a"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://github.com/containerd/containerd/releases/tag/v1.5.18"
+						"url": "https://github.com/containerd/containerd/releases/tag/v1.5.18",
+						"title": "https://github.com/containerd/containerd/releases/tag/v1.5.18"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://github.com/containerd/containerd/releases/tag/v1.6.18"
+						"url": "https://github.com/containerd/containerd/releases/tag/v1.6.18",
+						"title": "https://github.com/containerd/containerd/releases/tag/v1.6.18"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://github.com/containerd/containerd/security/advisories/GHSA-hmfx-3pcx-653p"
+						"url": "https://github.com/containerd/containerd/security/advisories/GHSA-hmfx-3pcx-653p",
+						"title": "https://github.com/containerd/containerd/security/advisories/GHSA-hmfx-3pcx-653p"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://nvd.nist.gov/vuln/detail/CVE-2023-25173"
+						"url": "https://nvd.nist.gov/vuln/detail/CVE-2023-25173",
+						"title": "https://nvd.nist.gov/vuln/detail/CVE-2023-25173"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://www.benthamsgaze.org/2022/08/22/vulnerability-in-linux-containers-investigation-and-mitigation/"
+						"url": "https://www.benthamsgaze.org/2022/08/22/vulnerability-in-linux-containers-investigation-and-mitigation/",
+						"title": "https://www.benthamsgaze.org/2022/08/22/vulnerability-in-linux-containers-investigation-and-mitigation/"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://www.cve.org/CVERecord?id=CVE-2023-25173"
+						"url": "https://www.cve.org/CVERecord?id=CVE-2023-25173",
+						"title": "https://www.cve.org/CVERecord?id=CVE-2023-25173"
 					}
 				],
 				"published": "2023-02-15T00:00:00Z"
@@ -1085,27 +1212,33 @@
 				"references": [
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://access.redhat.com/security/cve/CVE-2023-25809"
+						"url": "https://access.redhat.com/security/cve/CVE-2023-25809",
+						"title": "Canonical URL"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2182884"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2182884",
+						"title": "RHBZ#2182884"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://github.com/opencontainers/runc/commit/0d62b950e60f6980b54fe3bafd9a9c608dc1df17"
+						"url": "https://github.com/opencontainers/runc/commit/0d62b950e60f6980b54fe3bafd9a9c608dc1df17",
+						"title": "https://github.com/opencontainers/runc/commit/0d62b950e60f6980b54fe3bafd9a9c608dc1df17"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://github.com/opencontainers/runc/security/advisories/GHSA-m8cg-xc2p-r3fc"
+						"url": "https://github.com/opencontainers/runc/security/advisories/GHSA-m8cg-xc2p-r3fc",
+						"title": "https://github.com/opencontainers/runc/security/advisories/GHSA-m8cg-xc2p-r3fc"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://nvd.nist.gov/vuln/detail/CVE-2023-25809"
+						"url": "https://nvd.nist.gov/vuln/detail/CVE-2023-25809",
+						"title": "https://nvd.nist.gov/vuln/detail/CVE-2023-25809"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://www.cve.org/CVERecord?id=CVE-2023-25809"
+						"url": "https://www.cve.org/CVERecord?id=CVE-2023-25809",
+						"title": "https://www.cve.org/CVERecord?id=CVE-2023-25809"
 					}
 				],
 				"published": "2023-03-29T00:00:00Z"
@@ -1153,31 +1286,38 @@
 				"references": [
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://access.redhat.com/security/cve/CVE-2023-27561"
+						"url": "https://access.redhat.com/security/cve/CVE-2023-27561",
+						"title": "Canonical URL"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2175721"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2175721",
+						"title": "RHBZ#2175721"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://gist.github.com/LiveOverflow/c937820b688922eb127fb760ce06dab9"
+						"url": "https://gist.github.com/LiveOverflow/c937820b688922eb127fb760ce06dab9",
+						"title": "https://gist.github.com/LiveOverflow/c937820b688922eb127fb760ce06dab9"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://github.com/opencontainers/runc/issues/2197#issuecomment-1437617334"
+						"url": "https://github.com/opencontainers/runc/issues/2197#issuecomment-1437617334",
+						"title": "https://github.com/opencontainers/runc/issues/2197#issuecomment-1437617334"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://github.com/opencontainers/runc/issues/3751"
+						"url": "https://github.com/opencontainers/runc/issues/3751",
+						"title": "https://github.com/opencontainers/runc/issues/3751"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://nvd.nist.gov/vuln/detail/CVE-2023-27561"
+						"url": "https://nvd.nist.gov/vuln/detail/CVE-2023-27561",
+						"title": "https://nvd.nist.gov/vuln/detail/CVE-2023-27561"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://www.cve.org/CVERecord?id=CVE-2023-27561"
+						"url": "https://www.cve.org/CVERecord?id=CVE-2023-27561",
+						"title": "https://www.cve.org/CVERecord?id=CVE-2023-27561"
 					}
 				],
 				"published": "2023-02-20T00:00:00Z"
@@ -1231,23 +1371,28 @@
 				"references": [
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://access.redhat.com/security/cve/CVE-2023-28642"
+						"url": "https://access.redhat.com/security/cve/CVE-2023-28642",
+						"title": "Canonical URL"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2182883"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2182883",
+						"title": "RHBZ#2182883"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://github.com/advisories/GHSA-g2j6-57v7-gm8c"
+						"url": "https://github.com/advisories/GHSA-g2j6-57v7-gm8c",
+						"title": "https://github.com/advisories/GHSA-g2j6-57v7-gm8c"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://nvd.nist.gov/vuln/detail/CVE-2023-28642"
+						"url": "https://nvd.nist.gov/vuln/detail/CVE-2023-28642",
+						"title": "https://nvd.nist.gov/vuln/detail/CVE-2023-28642"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://www.cve.org/CVERecord?id=CVE-2023-28642"
+						"url": "https://www.cve.org/CVERecord?id=CVE-2023-28642",
+						"title": "https://www.cve.org/CVERecord?id=CVE-2023-28642"
 					}
 				],
 				"published": "2023-03-29T00:00:00Z"
@@ -1301,27 +1446,33 @@
 				"references": [
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://access.redhat.com/security/cve/CVE-2023-29400"
+						"url": "https://access.redhat.com/security/cve/CVE-2023-29400",
+						"title": "Canonical URL"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2196029"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2196029",
+						"title": "RHBZ#2196029"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://go.dev/issue/59722"
+						"url": "https://go.dev/issue/59722",
+						"title": "https://go.dev/issue/59722"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://groups.google.com/g/golang-announce/c/MEb0UyuSMsU"
+						"url": "https://groups.google.com/g/golang-announce/c/MEb0UyuSMsU",
+						"title": "https://groups.google.com/g/golang-announce/c/MEb0UyuSMsU"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://nvd.nist.gov/vuln/detail/CVE-2023-29400"
+						"url": "https://nvd.nist.gov/vuln/detail/CVE-2023-29400",
+						"title": "https://nvd.nist.gov/vuln/detail/CVE-2023-29400"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://www.cve.org/CVERecord?id=CVE-2023-29400"
+						"url": "https://www.cve.org/CVERecord?id=CVE-2023-29400",
+						"title": "https://www.cve.org/CVERecord?id=CVE-2023-29400"
 					}
 				],
 				"published": "2023-04-20T00:00:00Z"
@@ -1369,23 +1520,28 @@
 				"references": [
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://access.redhat.com/security/cve/CVE-2023-29406"
+						"url": "https://access.redhat.com/security/cve/CVE-2023-29406",
+						"title": "Canonical URL"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2222167"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2222167",
+						"title": "RHBZ#2222167"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://groups.google.com/g/golang-announce/c/2q13H6LEEx0"
+						"url": "https://groups.google.com/g/golang-announce/c/2q13H6LEEx0",
+						"title": "https://groups.google.com/g/golang-announce/c/2q13H6LEEx0"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://nvd.nist.gov/vuln/detail/CVE-2023-29406"
+						"url": "https://nvd.nist.gov/vuln/detail/CVE-2023-29406",
+						"title": "https://nvd.nist.gov/vuln/detail/CVE-2023-29406"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://www.cve.org/CVERecord?id=CVE-2023-29406"
+						"url": "https://www.cve.org/CVERecord?id=CVE-2023-29406",
+						"title": "https://www.cve.org/CVERecord?id=CVE-2023-29406"
 					}
 				],
 				"published": "2023-07-11T00:00:00Z"
@@ -1433,31 +1589,38 @@
 				"references": [
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://access.redhat.com/security/cve/CVE-2023-3978"
+						"url": "https://access.redhat.com/security/cve/CVE-2023-3978",
+						"title": "Canonical URL"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2228689"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2228689",
+						"title": "RHBZ#2228689"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://go.dev/cl/514896"
+						"url": "https://go.dev/cl/514896",
+						"title": "https://go.dev/cl/514896"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://go.dev/issue/61615"
+						"url": "https://go.dev/issue/61615",
+						"title": "https://go.dev/issue/61615"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://nvd.nist.gov/vuln/detail/CVE-2023-3978"
+						"url": "https://nvd.nist.gov/vuln/detail/CVE-2023-3978",
+						"title": "https://nvd.nist.gov/vuln/detail/CVE-2023-3978"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://pkg.go.dev/vuln/GO-2023-1988"
+						"url": "https://pkg.go.dev/vuln/GO-2023-1988",
+						"title": "https://pkg.go.dev/vuln/GO-2023-1988"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://www.cve.org/CVERecord?id=CVE-2023-3978"
+						"url": "https://www.cve.org/CVERecord?id=CVE-2023-3978",
+						"title": "https://www.cve.org/CVERecord?id=CVE-2023-3978"
 					}
 				],
 				"published": "2023-08-02T00:00:00Z"

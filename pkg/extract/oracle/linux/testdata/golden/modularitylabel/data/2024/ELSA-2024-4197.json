@@ -16,11 +16,13 @@
 				"references": [
 					{
 						"source": "linux.oracle.com/security",
-						"url": "https://linux.oracle.com/cve/CVE-2023-38709.html"
+						"url": "https://linux.oracle.com/cve/CVE-2023-38709.html",
+						"title": "CVE-2023-38709"
 					},
 					{
 						"source": "linux.oracle.com/security",
-						"url": "https://linux.oracle.com/errata/ELSA-2024-4197.html"
+						"url": "https://linux.oracle.com/errata/ELSA-2024-4197.html",
+						"title": "ELSA-2024-4197"
 					}
 				],
 				"published": "2024-07-01T00:00:00Z"

@@ -16,39 +16,63 @@
 				"references": [
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://access.redhat.com/errata/RHSA-2022:5214"
+						"url": "https://access.redhat.com/errata/RHSA-2022:5214",
+						"title": "RHSA-2022:5214",
+						"tags": [
+							"RHSA"
+						]
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://access.redhat.com/security/cve/CVE-2022-1012"
+						"url": "https://access.redhat.com/security/cve/CVE-2022-1012",
+						"title": "CVE-2022-1012",
+						"tags": [
+							"CVE"
+						]
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://access.redhat.com/security/cve/CVE-2022-1966"
+						"url": "https://access.redhat.com/security/cve/CVE-2022-1966",
+						"title": "CVE-2022-1966",
+						"tags": [
+							"CVE"
+						]
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://access.redhat.com/security/cve/CVE-2022-27666"
+						"url": "https://access.redhat.com/security/cve/CVE-2022-27666",
+						"title": "CVE-2022-27666",
+						"tags": [
+							"CVE"
+						]
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://access.redhat.com/security/cve/CVE-2022-32250"
+						"url": "https://access.redhat.com/security/cve/CVE-2022-32250",
+						"title": "CVE-2022-32250",
+						"tags": [
+							"CVE"
+						]
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/2061633"
+						"url": "https://bugzilla.redhat.com/2061633",
+						"title": "kernel: buffer overflow in IPsec ESP transformation code"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/2064604"
+						"url": "https://bugzilla.redhat.com/2064604",
+						"title": "kernel: Small table perturb size in the TCP source port generation algorithm can lead to information leak"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/2092427"
+						"url": "https://bugzilla.redhat.com/2092427",
+						"title": "kernel: a use-after-free write in the netfilter subsystem can lead to privilege escalation to root"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/2093146"
+						"url": "https://bugzilla.redhat.com/2093146",
+						"title": "kernel: netfilter: nf_tables: incorrect NFT_STATEFUL_EXPR check leads to a use-after-free (write)"
 					}
 				],
 				"published": "2022-06-28T00:00:00Z",

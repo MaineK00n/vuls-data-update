@@ -45,15 +45,27 @@
 				"references": [
 					{
 						"source": "jvndb.jvn.jp",
-						"url": "https://cweb.canon.jp/e-support/info/211221xss.html"
+						"url": "https://cweb.canon.jp/e-support/info/211221xss.html",
+						"title": "Canon",
+						"tags": [
+							"vendor"
+						]
 					},
 					{
 						"source": "jvndb.jvn.jp",
-						"url": "https://jvn.jp/jp/JVN64806328/index.html"
+						"url": "https://jvn.jp/jp/JVN64806328/index.html",
+						"title": "JVN",
+						"tags": [
+							"advisory"
+						]
 					},
 					{
 						"source": "jvndb.jvn.jp",
-						"url": "https://www.cve.org/CVERecord?id=CVE-2021-20877"
+						"url": "https://www.cve.org/CVERecord?id=CVE-2021-20877",
+						"title": "Common Vulnerabilities and Exposures (CVE)",
+						"tags": [
+							"advisory"
+						]
 					}
 				],
 				"published": "2022-01-19T12:05:15+09:00",
@@ -68,7 +80,11 @@
 				"references": [
 					{
 						"source": "jvndb.jvn.jp",
-						"url": "https://www.cve.org/CVERecord?id=CVE-2021-20877"
+						"url": "https://www.cve.org/CVERecord?id=CVE-2021-20877",
+						"title": "Common Vulnerabilities and Exposures (CVE)",
+						"tags": [
+							"advisory"
+						]
 					}
 				]
 			}

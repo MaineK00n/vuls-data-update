@@ -36,51 +36,63 @@
 	"references": [
 		{
 			"source": "Apple Unified Log Analysis Remote Login and Screen Sharing",
-			"url": "https://sarah-edwards-xzkc.squarespace.com/blog/2020/4/30/analysis-of-apple-unified-logs-quarantine-edition-entry-6-working-from-home-remote-logins"
+			"url": "https://sarah-edwards-xzkc.squarespace.com/blog/2020/4/30/analysis-of-apple-unified-logs-quarantine-edition-entry-6-working-from-home-remote-logins",
+			"title": "Sarah Edwards. (2020, April 30). Analysis of Apple Unified Logs: Quarantine Edition [Entry 6] – Working From Home? Remote Logins. Retrieved August 19, 2021."
 		},
 		{
 			"source": "Attacking VNC Servers PentestLab",
-			"url": "https://pentestlab.blog/2012/10/30/attacking-vnc-servers/"
+			"url": "https://pentestlab.blog/2012/10/30/attacking-vnc-servers/",
+			"title": "Administrator, Penetration Testing Lab. (2012, October 30). Attacking VNC Servers. Retrieved October 6, 2021."
 		},
 		{
 			"source": "Gnome Remote Desktop grd-settings",
-			"url": "https://gitlab.gnome.org/GNOME/gnome-remote-desktop/-/blob/9aa9181e/src/grd-settings.c#L207"
+			"url": "https://gitlab.gnome.org/GNOME/gnome-remote-desktop/-/blob/9aa9181e/src/grd-settings.c#L207",
+			"title": "Pascal Nowack. (n.d.). Retrieved September 21, 2021."
 		},
 		{
 			"source": "Gnome Remote Desktop gschema",
-			"url": "https://gitlab.gnome.org/GNOME/gnome-remote-desktop/-/blob/9aa9181e/src/org.gnome.desktop.remote-desktop.gschema.xml.in"
+			"url": "https://gitlab.gnome.org/GNOME/gnome-remote-desktop/-/blob/9aa9181e/src/org.gnome.desktop.remote-desktop.gschema.xml.in",
+			"title": "Pascal Nowack. (n.d.). Retrieved September 21, 2021."
 		},
 		{
 			"source": "Havana authentication bug",
-			"url": "http://lists.openstack.org/pipermail/openstack/2013-December/004138.html"
+			"url": "http://lists.openstack.org/pipermail/openstack/2013-December/004138.html",
+			"title": "Jay Pipes. (2013, December 23). Security Breach! Tenant A is seeing the VNC Consoles of Tenant B!. Retrieved October 6, 2021."
 		},
 		{
 			"source": "Hijacking VNC",
-			"url": "https://int0x33.medium.com/day-70-hijacking-vnc-enum-brute-access-and-crack-d3d18a4601cc"
+			"url": "https://int0x33.medium.com/day-70-hijacking-vnc-enum-brute-access-and-crack-d3d18a4601cc",
+			"title": "Z3RO. (2019, March 10). Day 70: Hijacking VNC (Enum, Brute, Access and Crack). Retrieved September 20, 2021."
 		},
 		{
 			"source": "MacOS VNC software for Remote Desktop",
-			"url": "https://support.apple.com/guide/remote-desktop/set-up-a-computer-running-vnc-software-apdbed09830/mac"
+			"url": "https://support.apple.com/guide/remote-desktop/set-up-a-computer-running-vnc-software-apdbed09830/mac",
+			"title": "Apple Support. (n.d.). Set up a computer running VNC software for Remote Desktop. Retrieved August 18, 2021."
 		},
 		{
 			"source": "Offensive Security VNC Authentication Check",
-			"url": "https://www.offensive-security.com/metasploit-unleashed/vnc-authentication/"
+			"url": "https://www.offensive-security.com/metasploit-unleashed/vnc-authentication/",
+			"title": "Offensive Security. (n.d.). VNC Authentication. Retrieved October 6, 2021."
 		},
 		{
 			"source": "The Remote Framebuffer Protocol",
-			"url": "https://datatracker.ietf.org/doc/html/rfc6143#section-7.2.2"
+			"url": "https://datatracker.ietf.org/doc/html/rfc6143#section-7.2.2",
+			"title": "T. Richardson, J. Levine, RealVNC Ltd.. (2011, March). The Remote Framebuffer Protocol. Retrieved September 20, 2021."
 		},
 		{
 			"source": "VNC Authentication",
-			"url": "https://help.realvnc.com/hc/en-us/articles/360002250097-Setting-up-System-Authentication"
+			"url": "https://help.realvnc.com/hc/en-us/articles/360002250097-Setting-up-System-Authentication",
+			"title": "Tegan. (2019, August 15). Setting up System Authentication. Retrieved September 20, 2021."
 		},
 		{
 			"source": "VNC Vulnerabilities",
-			"url": "https://www.bleepingcomputer.com/news/security/dozens-of-vnc-vulnerabilities-found-in-linux-windows-solutions/"
+			"url": "https://www.bleepingcomputer.com/news/security/dozens-of-vnc-vulnerabilities-found-in-linux-windows-solutions/",
+			"title": "Sergiu Gatlan. (2019, November 22). Dozens of VNC Vulnerabilities Found in Linux, Windows Solutions. Retrieved September 20, 2021."
 		},
 		{
 			"source": "macOS root VNC login without authentication",
-			"url": "https://www.tenable.com/blog/detecting-macos-high-sierra-root-account-without-authentication"
+			"url": "https://www.tenable.com/blog/detecting-macos-high-sierra-root-account-without-authentication",
+			"title": "Nick Miles. (2017, November 30). Detecting macOS High Sierra root account without authentication. Retrieved September 20, 2021."
 		},
 		{
 			"source": "mitre-attack",

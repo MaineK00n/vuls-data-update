@@ -23,6 +23,9 @@ type Procedure struct {
 }
 
 func (p *Procedure) Sort() {
+	for i := range p.References {
+		(&p.References[i]).Sort()
+	}
 	slices.SortFunc(p.References, referenceTypes.Compare)
 }
 

@@ -16,95 +16,118 @@
 				"references": [
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://access.redhat.com/documentation/en-us/red_hat_satellite/6.16/html/updating_red_hat_satellite/index"
+						"url": "https://access.redhat.com/documentation/en-us/red_hat_satellite/6.16/html/updating_red_hat_satellite/index",
+						"title": "https://access.redhat.com/documentation/en-us/red_hat_satellite/6.16/html/updating_red_hat_satellite/index"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://access.redhat.com/errata/RHSA-2025:2399"
+						"url": "https://access.redhat.com/errata/RHSA-2025:2399",
+						"title": "https://access.redhat.com/errata/RHSA-2025:2399"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://access.redhat.com/security/updates/classification/#moderate"
+						"url": "https://access.redhat.com/security/updates/classification/#moderate",
+						"title": "https://access.redhat.com/security/updates/classification/#moderate"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2333856"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2333856",
+						"title": "2333856"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2337996"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2337996",
+						"title": "2337996"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://issues.redhat.com/browse/SAT-30027"
+						"url": "https://issues.redhat.com/browse/SAT-30027",
+						"title": "SAT-30027"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://issues.redhat.com/browse/SAT-30099"
+						"url": "https://issues.redhat.com/browse/SAT-30099",
+						"title": "SAT-30099"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://issues.redhat.com/browse/SAT-30256"
+						"url": "https://issues.redhat.com/browse/SAT-30256",
+						"title": "SAT-30256"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://issues.redhat.com/browse/SAT-30283"
+						"url": "https://issues.redhat.com/browse/SAT-30283",
+						"title": "SAT-30283"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://issues.redhat.com/browse/SAT-30293"
+						"url": "https://issues.redhat.com/browse/SAT-30293",
+						"title": "SAT-30293"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://issues.redhat.com/browse/SAT-30294"
+						"url": "https://issues.redhat.com/browse/SAT-30294",
+						"title": "SAT-30294"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://issues.redhat.com/browse/SAT-30918"
+						"url": "https://issues.redhat.com/browse/SAT-30918",
+						"title": "SAT-30918"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://issues.redhat.com/browse/SAT-30934"
+						"url": "https://issues.redhat.com/browse/SAT-30934",
+						"title": "SAT-30934"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://issues.redhat.com/browse/SAT-30936"
+						"url": "https://issues.redhat.com/browse/SAT-30936",
+						"title": "SAT-30936"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://issues.redhat.com/browse/SAT-30937"
+						"url": "https://issues.redhat.com/browse/SAT-30937",
+						"title": "SAT-30937"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://issues.redhat.com/browse/SAT-30938"
+						"url": "https://issues.redhat.com/browse/SAT-30938",
+						"title": "SAT-30938"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://issues.redhat.com/browse/SAT-30939"
+						"url": "https://issues.redhat.com/browse/SAT-30939",
+						"title": "SAT-30939"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://issues.redhat.com/browse/SAT-30940"
+						"url": "https://issues.redhat.com/browse/SAT-30940",
+						"title": "SAT-30940"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://issues.redhat.com/browse/SAT-30941"
+						"url": "https://issues.redhat.com/browse/SAT-30941",
+						"title": "SAT-30941"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://issues.redhat.com/browse/SAT-30942"
+						"url": "https://issues.redhat.com/browse/SAT-30942",
+						"title": "SAT-30942"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://issues.redhat.com/browse/SAT-30954"
+						"url": "https://issues.redhat.com/browse/SAT-30954",
+						"title": "SAT-30954"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://issues.redhat.com/browse/SAT-30955"
+						"url": "https://issues.redhat.com/browse/SAT-30955",
+						"title": "SAT-30955"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://security.access.redhat.com/data/csaf/v2/advisories/2025/rhsa-2025_2399.json"
+						"url": "https://security.access.redhat.com/data/csaf/v2/advisories/2025/rhsa-2025_2399.json",
+						"title": "Canonical URL"
 					}
 				],
 				"published": "2025-03-05T14:29:44Z",
@@ -199,23 +222,28 @@
 				"references": [
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://access.redhat.com/security/cve/CVE-2024-35195"
+						"url": "https://access.redhat.com/security/cve/CVE-2024-35195",
+						"title": "Canonical URL"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2282114"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2282114",
+						"title": "RHBZ#2282114"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://github.com/psf/requests/security/advisories/GHSA-9wx4-h78v-vm56"
+						"url": "https://github.com/psf/requests/security/advisories/GHSA-9wx4-h78v-vm56",
+						"title": "https://github.com/psf/requests/security/advisories/GHSA-9wx4-h78v-vm56"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://nvd.nist.gov/vuln/detail/CVE-2024-35195"
+						"url": "https://nvd.nist.gov/vuln/detail/CVE-2024-35195",
+						"title": "https://nvd.nist.gov/vuln/detail/CVE-2024-35195"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://www.cve.org/CVERecord?id=CVE-2024-35195"
+						"url": "https://www.cve.org/CVERecord?id=CVE-2024-35195",
+						"title": "https://www.cve.org/CVERecord?id=CVE-2024-35195"
 					}
 				],
 				"published": "2024-05-20T00:00:00Z"
@@ -283,31 +311,38 @@
 				"references": [
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://access.redhat.com/security/cve/CVE-2024-56326"
+						"url": "https://access.redhat.com/security/cve/CVE-2024-56326",
+						"title": "Canonical URL"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2333856"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2333856",
+						"title": "RHBZ#2333856"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://github.com/pallets/jinja/commit/48b0687e05a5466a91cd5812d604fa37ad0943b4"
+						"url": "https://github.com/pallets/jinja/commit/48b0687e05a5466a91cd5812d604fa37ad0943b4",
+						"title": "https://github.com/pallets/jinja/commit/48b0687e05a5466a91cd5812d604fa37ad0943b4"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://github.com/pallets/jinja/releases/tag/3.1.5"
+						"url": "https://github.com/pallets/jinja/releases/tag/3.1.5",
+						"title": "https://github.com/pallets/jinja/releases/tag/3.1.5"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://github.com/pallets/jinja/security/advisories/GHSA-q2x7-8rv6-6q7h"
+						"url": "https://github.com/pallets/jinja/security/advisories/GHSA-q2x7-8rv6-6q7h",
+						"title": "https://github.com/pallets/jinja/security/advisories/GHSA-q2x7-8rv6-6q7h"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://nvd.nist.gov/vuln/detail/CVE-2024-56326"
+						"url": "https://nvd.nist.gov/vuln/detail/CVE-2024-56326",
+						"title": "https://nvd.nist.gov/vuln/detail/CVE-2024-56326"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://www.cve.org/CVERecord?id=CVE-2024-56326"
+						"url": "https://www.cve.org/CVERecord?id=CVE-2024-56326",
+						"title": "https://www.cve.org/CVERecord?id=CVE-2024-56326"
 					}
 				],
 				"published": "2024-12-23T15:43:49.4Z"
@@ -375,35 +410,43 @@
 				"references": [
 					{
 						"source": "secalert@redhat.com",
-						"url": "http://www.openwall.com/lists/oss-security/2025/01/14/2"
+						"url": "http://www.openwall.com/lists/oss-security/2025/01/14/2",
+						"title": "http://www.openwall.com/lists/oss-security/2025/01/14/2"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://access.redhat.com/security/cve/CVE-2024-56374"
+						"url": "https://access.redhat.com/security/cve/CVE-2024-56374",
+						"title": "Canonical URL"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2337996"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2337996",
+						"title": "RHBZ#2337996"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://docs.djangoproject.com/en/dev/releases/security/"
+						"url": "https://docs.djangoproject.com/en/dev/releases/security/",
+						"title": "https://docs.djangoproject.com/en/dev/releases/security/"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://groups.google.com/g/django-announce"
+						"url": "https://groups.google.com/g/django-announce",
+						"title": "https://groups.google.com/g/django-announce"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://nvd.nist.gov/vuln/detail/CVE-2024-56374"
+						"url": "https://nvd.nist.gov/vuln/detail/CVE-2024-56374",
+						"title": "https://nvd.nist.gov/vuln/detail/CVE-2024-56374"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://www.cve.org/CVERecord?id=CVE-2024-56374"
+						"url": "https://www.cve.org/CVERecord?id=CVE-2024-56374",
+						"title": "https://www.cve.org/CVERecord?id=CVE-2024-56374"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://www.djangoproject.com/weblog/2025/jan/14/security-releases/"
+						"url": "https://www.djangoproject.com/weblog/2025/jan/14/security-releases/",
+						"title": "https://www.djangoproject.com/weblog/2025/jan/14/security-releases/"
 					}
 				],
 				"published": "2025-01-14T00:00:00Z"

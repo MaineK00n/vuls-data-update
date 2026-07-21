@@ -32,7 +32,10 @@
 				"references": [
 					{
 						"source": "security.paloaltonetworks.com",
-						"url": "https://security.paloaltonetworks.com/PAN-SA-2025-0007"
+						"url": "https://security.paloaltonetworks.com/PAN-SA-2025-0007",
+						"tags": [
+							"vendor-advisory"
+						]
 					}
 				],
 				"published": "2025-03-12T16:00:00Z"

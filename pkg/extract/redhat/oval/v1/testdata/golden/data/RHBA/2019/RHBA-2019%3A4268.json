@@ -16,23 +16,37 @@
 				"references": [
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://access.redhat.com/errata/RHBA-2019:4268"
+						"url": "https://access.redhat.com/errata/RHBA-2019:4268",
+						"title": "RHBA-2019:4268",
+						"tags": [
+							"RHSA"
+						]
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://access.redhat.com/security/cve/CVE-2019-10195"
+						"url": "https://access.redhat.com/security/cve/CVE-2019-10195",
+						"title": "CVE-2019-10195",
+						"tags": [
+							"CVE"
+						]
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://access.redhat.com/security/cve/CVE-2019-14867"
+						"url": "https://access.redhat.com/security/cve/CVE-2019-14867",
+						"title": "CVE-2019-14867",
+						"tags": [
+							"CVE"
+						]
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/1726223"
+						"url": "https://bugzilla.redhat.com/1726223",
+						"title": "CVE-2019-10195 ipa: Batch API logging user passwords to /var/log/httpd/error_log"
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/1766920"
+						"url": "https://bugzilla.redhat.com/1766920",
+						"title": "CVE-2019-14867 ipa: Denial of service in IPA server due to wrong use of ber_scanf()"
 					}
 				],
 				"published": "2019-12-17T00:00:00Z",
@@ -85,7 +99,8 @@
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/1726223"
+						"url": "https://bugzilla.redhat.com/1726223",
+						"title": "CVE-2019-10195 ipa: Batch API logging user passwords to /var/log/httpd/error_log"
 					}
 				],
 				"published": "2019-11-26T00:00:00Z"
@@ -135,7 +150,8 @@
 					},
 					{
 						"source": "secalert@redhat.com",
-						"url": "https://bugzilla.redhat.com/1766920"
+						"url": "https://bugzilla.redhat.com/1766920",
+						"title": "CVE-2019-14867 ipa: Denial of service in IPA server due to wrong use of ber_scanf()"
 					}
 				],
 				"published": "2019-08-26T00:00:00Z"

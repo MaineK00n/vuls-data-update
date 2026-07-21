@@ -24,11 +24,17 @@
 				"references": [
 					{
 						"source": "osv.dev/Rocky-Linux",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2142707"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2142707",
+						"tags": [
+							"REPORT"
+						]
 					},
 					{
 						"source": "osv.dev/Rocky-Linux",
-						"url": "https://errata.rockylinux.org/RLSA-2023:0005"
+						"url": "https://errata.rockylinux.org/RLSA-2023:0005",
+						"tags": [
+							"ADVISORY"
+						]
 					},
 					{
 						"source": "osv.dev/Rocky-Linux",

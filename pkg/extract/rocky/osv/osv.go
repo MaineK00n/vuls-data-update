@@ -7,6 +7,7 @@ import (
 	"log/slog"
 	"os"
 	"path/filepath"
+	"slices"
 	"strconv"
 	"strings"
 	"time"
@@ -279,9 +280,18 @@ func extract(fetched osv.OSV, raws []string) (dataTypes.Data, error) {
 		}
 
 		refs, err := func() ([]referenceTypes.Reference, error) {
-			us := make(map[string]struct{})
+			var rs []referenceTypes.Reference
 			for _, r := range fetched.References {
-				us[r.URL] = struct{}{}
+				rs = append(rs, referenceTypes.Reference{
+					URL:    r.URL,
+					Source: "osv.dev/Rocky-Linux",
+					Tags: func() []string {
+						if r.Type == "" {
+							return nil
+						}
+						return []string{r.Type}
+					}(),
+				})
 			}
 
 			dbs, err := parseDatabaseSpecific(fetched.DatabaseSpecific)
@@ -289,7 +299,10 @@ func extract(fetched osv.OSV, raws []string) (dataTypes.Data, error) {
 				return nil, errors.Wrap(err, "get database specific source")
 			}
 			if dbs.Source != "" {
-				us[dbs.Source] = struct{}{}
+				rs = append(rs, referenceTypes.Reference{
+					URL:    dbs.Source,
+					Source: "osv.dev/Rocky-Linux",
+				})
 			}
 
 			for _, a := range fetched.Affected {
@@ -298,18 +311,17 @@ func extract(fetched osv.OSV, raws []string) (dataTypes.Data, error) {
 					return nil, errors.Wrap(err, "get database specific source")
 				}
 				if dbs.Source != "" {
-					us[dbs.Source] = struct{}{}
+					rs = append(rs, referenceTypes.Reference{
+						URL:    dbs.Source,
+						Source: "osv.dev/Rocky-Linux",
+					})
 				}
 			}
 
-			rs := make([]referenceTypes.Reference, 0, len(us))
-			for u := range us {
-				rs = append(rs, referenceTypes.Reference{
-					URL:    u,
-					Source: "osv.dev/Rocky-Linux",
-				})
-			}
-			return rs, nil
+			slices.SortFunc(rs, referenceTypes.Compare)
+			return slices.CompactFunc(rs, func(a, b referenceTypes.Reference) bool {
+				return referenceTypes.Compare(a, b) == 0
+			}), nil
 		}()
 		if err != nil {
 			return advisoryTypes.Advisory{}, errors.Wrap(err, "create references")

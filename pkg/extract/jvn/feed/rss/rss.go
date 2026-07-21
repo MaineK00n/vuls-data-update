@@ -1,6 +1,7 @@
 package rss
 
 import (
+	"cmp"
 	"fmt"
 	"io/fs"
 	"log/slog"
@@ -240,6 +241,8 @@ func extract(fetched fetchTypes.Item, raws []string) (dataTypes.Data, error) {
 		refs = append(refs, referenceTypes.Reference{
 			Source: "jvndb.jvn.jp",
 			URL:    ref.Text,
+			Title:  cmp.Or(ref.FetchedTitle, ref.Title),
+			Tags:   []string{ref.Source},
 		})
 	}
 
@@ -298,6 +301,8 @@ func extract(fetched fetchTypes.Item, raws []string) (dataTypes.Data, error) {
 				v.Content.References = append(v.Content.References, referenceTypes.Reference{
 					Source: "jvndb.jvn.jp",
 					URL:    ref.Text,
+					Title:  cmp.Or(ref.FetchedTitle, ref.Title),
+					Tags:   []string{ref.Source},
 				})
 				vulnMap[ref.ID] = v
 			}

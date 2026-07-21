@@ -240,6 +240,10 @@ func convert(e capecEntry, entries map[string]capecEntry) (capecTypes.CAPEC, err
 	relatedAttacks := make([]string, 0, len(c.ExternalReferences))
 	refs := make([]referenceTypes.Reference, 0, len(c.ExternalReferences))
 	for _, r := range c.ExternalReferences {
+		var title string
+		if r.Description != nil {
+			title = *r.Description
+		}
 		switch strings.ToLower(r.SourceName) {
 		case "cwe":
 			if r.ExternalID != nil {
@@ -257,6 +261,7 @@ func convert(e capecEntry, entries map[string]capecEntry) (capecTypes.CAPEC, err
 				refs = append(refs, referenceTypes.Reference{
 					Source: "capec.mitre.org",
 					URL:    *r.URL,
+					Title:  title,
 				})
 			}
 		default:
@@ -264,6 +269,7 @@ func convert(e capecEntry, entries map[string]capecEntry) (capecTypes.CAPEC, err
 				refs = append(refs, referenceTypes.Reference{
 					Source: "capec.mitre.org",
 					URL:    *r.URL,
+					Title:  title,
 				})
 			}
 		}

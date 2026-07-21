@@ -16,59 +16,101 @@
 				"references": [
 					{
 						"source": "linux-security@amazon.com",
-						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2024-58092"
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2024-58092",
+						"tags": [
+							"cve"
+						]
 					},
 					{
 						"source": "linux-security@amazon.com",
-						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-21893"
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-21893",
+						"tags": [
+							"cve"
+						]
 					},
 					{
 						"source": "linux-security@amazon.com",
-						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-21926"
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-21926",
+						"tags": [
+							"cve"
+						]
 					},
 					{
 						"source": "linux-security@amazon.com",
-						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-21997"
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-21997",
+						"tags": [
+							"cve"
+						]
 					},
 					{
 						"source": "linux-security@amazon.com",
-						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-21999"
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-21999",
+						"tags": [
+							"cve"
+						]
 					},
 					{
 						"source": "linux-security@amazon.com",
-						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-22000"
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-22000",
+						"tags": [
+							"cve"
+						]
 					},
 					{
 						"source": "linux-security@amazon.com",
-						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-22002"
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-22002",
+						"tags": [
+							"cve"
+						]
 					},
 					{
 						"source": "linux-security@amazon.com",
-						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-22005"
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-22005",
+						"tags": [
+							"cve"
+						]
 					},
 					{
 						"source": "linux-security@amazon.com",
-						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-22013"
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-22013",
+						"tags": [
+							"cve"
+						]
 					},
 					{
 						"source": "linux-security@amazon.com",
-						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-22015"
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-22015",
+						"tags": [
+							"cve"
+						]
 					},
 					{
 						"source": "linux-security@amazon.com",
-						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-22017"
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-22017",
+						"tags": [
+							"cve"
+						]
 					},
 					{
 						"source": "linux-security@amazon.com",
-						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-22021"
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-22021",
+						"tags": [
+							"cve"
+						]
 					},
 					{
 						"source": "linux-security@amazon.com",
-						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-22022"
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-22022",
+						"tags": [
+							"cve"
+						]
 					},
 					{
 						"source": "linux-security@amazon.com",
-						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-22023"
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-22023",
+						"tags": [
+							"cve"
+						]
 					},
 					{
 						"source": "linux-security@amazon.com",
@@ -92,7 +134,10 @@
 				"references": [
 					{
 						"source": "linux-security@amazon.com",
-						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2024-58092"
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2024-58092",
+						"tags": [
+							"cve"
+						]
 					},
 					{
 						"source": "linux-security@amazon.com",
@@ -112,7 +157,10 @@
 				"references": [
 					{
 						"source": "linux-security@amazon.com",
-						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-21893"
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-21893",
+						"tags": [
+							"cve"
+						]
 					},
 					{
 						"source": "linux-security@amazon.com",
@@ -132,7 +180,10 @@
 				"references": [
 					{
 						"source": "linux-security@amazon.com",
-						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-21926"
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-21926",
+						"tags": [
+							"cve"
+						]
 					},
 					{
 						"source": "linux-security@amazon.com",
@@ -152,7 +203,10 @@
 				"references": [
 					{
 						"source": "linux-security@amazon.com",
-						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-21997"
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-21997",
+						"tags": [
+							"cve"
+						]
 					},
 					{
 						"source": "linux-security@amazon.com",
@@ -172,7 +226,10 @@
 				"references": [
 					{
 						"source": "linux-security@amazon.com",
-						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-21999"
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-21999",
+						"tags": [
+							"cve"
+						]
 					},
 					{
 						"source": "linux-security@amazon.com",
@@ -192,7 +249,10 @@
 				"references": [
 					{
 						"source": "linux-security@amazon.com",
-						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-22000"
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-22000",
+						"tags": [
+							"cve"
+						]
 					},
 					{
 						"source": "linux-security@amazon.com",
@@ -212,7 +272,10 @@
 				"references": [
 					{
 						"source": "linux-security@amazon.com",
-						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-22002"
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-22002",
+						"tags": [
+							"cve"
+						]
 					},
 					{
 						"source": "linux-security@amazon.com",
@@ -232,7 +295,10 @@
 				"references": [
 					{
 						"source": "linux-security@amazon.com",
-						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-22005"
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-22005",
+						"tags": [
+							"cve"
+						]
 					},
 					{
 						"source": "linux-security@amazon.com",
@@ -252,7 +318,10 @@
 				"references": [
 					{
 						"source": "linux-security@amazon.com",
-						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-22013"
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-22013",
+						"tags": [
+							"cve"
+						]
 					},
 					{
 						"source": "linux-security@amazon.com",
@@ -272,7 +341,10 @@
 				"references": [
 					{
 						"source": "linux-security@amazon.com",
-						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-22015"
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-22015",
+						"tags": [
+							"cve"
+						]
 					},
 					{
 						"source": "linux-security@amazon.com",
@@ -292,7 +364,10 @@
 				"references": [
 					{
 						"source": "linux-security@amazon.com",
-						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-22017"
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-22017",
+						"tags": [
+							"cve"
+						]
 					},
 					{
 						"source": "linux-security@amazon.com",
@@ -312,7 +387,10 @@
 				"references": [
 					{
 						"source": "linux-security@amazon.com",
-						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-22021"
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-22021",
+						"tags": [
+							"cve"
+						]
 					},
 					{
 						"source": "linux-security@amazon.com",
@@ -332,7 +410,10 @@
 				"references": [
 					{
 						"source": "linux-security@amazon.com",
-						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-22022"
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-22022",
+						"tags": [
+							"cve"
+						]
 					},
 					{
 						"source": "linux-security@amazon.com",
@@ -352,7 +433,10 @@
 				"references": [
 					{
 						"source": "linux-security@amazon.com",
-						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-22023"
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-22023",
+						"tags": [
+							"cve"
+						]
 					},
 					{
 						"source": "linux-security@amazon.com",

@@ -16,19 +16,23 @@
 				"references": [
 					{
 						"source": "linux.oracle.com/security",
-						"url": "https://linux.oracle.com/cve/CVE-2024-21011.html"
+						"url": "https://linux.oracle.com/cve/CVE-2024-21011.html",
+						"title": "CVE-2024-21011"
 					},
 					{
 						"source": "linux.oracle.com/security",
-						"url": "https://linux.oracle.com/cve/CVE-2024-21012.html"
+						"url": "https://linux.oracle.com/cve/CVE-2024-21012.html",
+						"title": "CVE-2024-21012"
 					},
 					{
 						"source": "linux.oracle.com/security",
-						"url": "https://linux.oracle.com/cve/CVE-2024-21068.html"
+						"url": "https://linux.oracle.com/cve/CVE-2024-21068.html",
+						"title": "CVE-2024-21068"
 					},
 					{
 						"source": "linux.oracle.com/security",
-						"url": "https://linux.oracle.com/errata/ELSA-2024-1828.html"
+						"url": "https://linux.oracle.com/errata/ELSA-2024-1828.html",
+						"title": "ELSA-2024-1828"
 					}
 				],
 				"published": "2024-04-23T00:00:00Z"

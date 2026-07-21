@@ -58,19 +58,23 @@
 		},
 		{
 			"source": "capec.mitre.org",
-			"url": "https://msrc-blog.microsoft.com/2019/08/05/corporate-iot-a-path-to-intrusion"
+			"url": "https://msrc-blog.microsoft.com/2019/08/05/corporate-iot-a-path-to-intrusion",
+			"title": "Corporate IoT – a path to intrusion, 2019--10---05, Microsoft Security Response Center (MSRC)"
 		},
 		{
 			"source": "capec.mitre.org",
-			"url": "https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/03-Identity_Management_Testing/04-Testing_for_Account_Enumeration_and_Guessable_User_Account.html"
+			"url": "https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/03-Identity_Management_Testing/04-Testing_for_Account_Enumeration_and_Guessable_User_Account.html",
+			"title": "OWASP Web Security Testing Guide, The Open Web Application Security Project (OWASP)"
 		},
 		{
 			"source": "capec.mitre.org",
-			"url": "https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/04-Authentication_Testing/02-Testing_for_Default_Credentials.html"
+			"url": "https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/04-Authentication_Testing/02-Testing_for_Default_Credentials.html",
+			"title": "OWASP Web Security Testing Guide, The Open Web Application Security Project (OWASP)"
 		},
 		{
 			"source": "capec.mitre.org",
-			"url": "https://www.us-cert.gov/ncas/alerts/TA13-175A"
+			"url": "https://www.us-cert.gov/ncas/alerts/TA13-175A",
+			"title": "Risks of Default Passwords on the Internet, 2016--10---07, Cybersecurity and Infrastructure Security Agency (CISA)"
 		}
 	],
 	"data_source": {

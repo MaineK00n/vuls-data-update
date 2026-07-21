@@ -40,31 +40,38 @@
 	"references": [
 		{
 			"source": "Elastic Process Injection July 2017",
-			"url": "https://www.endgame.com/blog/technical-blog/ten-process-injection-techniques-technical-survey-common-and-trending-process"
+			"url": "https://www.endgame.com/blog/technical-blog/ten-process-injection-techniques-technical-survey-common-and-trending-process",
+			"title": "Hosseini, A. (2017, July 18). Ten Process Injection Techniques: A Technical Survey Of Common And Trending Process Injection Techniques. Retrieved December 7, 2017."
 		},
 		{
 			"source": "MalwareTech Power Loader Aug 2013",
-			"url": "https://www.malwaretech.com/2013/08/powerloader-injection-something-truly.html"
+			"url": "https://www.malwaretech.com/2013/08/powerloader-injection-something-truly.html",
+			"title": "MalwareTech. (2013, August 13). PowerLoader Injection – Something truly amazing. Retrieved December 16, 2017."
 		},
 		{
 			"source": "Microsoft GetWindowLong function",
-			"url": "https://msdn.microsoft.com/library/windows/desktop/ms633584.aspx"
+			"url": "https://msdn.microsoft.com/library/windows/desktop/ms633584.aspx",
+			"title": "Microsoft. (n.d.). GetWindowLong function. Retrieved December 16, 2017."
 		},
 		{
 			"source": "Microsoft SendNotifyMessage function",
-			"url": "https://msdn.microsoft.com/library/windows/desktop/ms644953.aspx"
+			"url": "https://msdn.microsoft.com/library/windows/desktop/ms644953.aspx",
+			"title": "Microsoft. (n.d.). SendNotifyMessage function. Retrieved December 16, 2017."
 		},
 		{
 			"source": "Microsoft SetWindowLong function",
-			"url": "https://msdn.microsoft.com/library/windows/desktop/ms633591.aspx"
+			"url": "https://msdn.microsoft.com/library/windows/desktop/ms633591.aspx",
+			"title": "Microsoft. (n.d.). SetWindowLong function. Retrieved December 16, 2017."
 		},
 		{
 			"source": "Microsoft Window Classes",
-			"url": "https://msdn.microsoft.com/library/windows/desktop/ms633574.aspx"
+			"url": "https://msdn.microsoft.com/library/windows/desktop/ms633574.aspx",
+			"title": "Microsoft. (n.d.). About Window Classes. Retrieved December 16, 2017."
 		},
 		{
 			"source": "WeLiveSecurity Gapz and Redyms Mar 2013",
-			"url": "https://www.welivesecurity.com/2013/03/19/gapz-and-redyms-droppers-based-on-power-loader-code/"
+			"url": "https://www.welivesecurity.com/2013/03/19/gapz-and-redyms-droppers-based-on-power-loader-code/",
+			"title": "Matrosov, A. (2013, March 19). Gapz and Redyms droppers based on Power Loader code. Retrieved December 16, 2017."
 		},
 		{
 			"source": "mitre-attack",

@@ -358,6 +358,7 @@ func extract(fetched errata.Advisory, raws []string) (dataTypes.Data, error) {
 						rs = append(rs, referenceTypes.Reference{
 							Source: "errata.rockylinux.org",
 							URL:    fix.Source,
+							Title:  fix.Description,
 						})
 					}
 					return rs
