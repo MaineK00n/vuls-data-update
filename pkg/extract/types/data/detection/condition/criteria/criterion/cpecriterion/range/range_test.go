@@ -329,8 +329,10 @@ func TestRangeType_CompareVersions(t *testing.T) {
 			}
 			if err != nil {
 				// Every failure CompareVersions raises must classify as
-				// *CompareError so that Accept degrades it to a safe
-				// non-match.
+				// *CompareError so that Accept can catch and classify it —
+				// a non-fatal unevaluable warning for
+				// *UnsupportedRangeTypeError, a swallowed non-match for the
+				// rest — instead of aborting detection fatally.
 				if _, ok := stderrors.AsType[*ccRangeTypes.CompareError](err); !ok {
 					t.Errorf("CompareVersions() error = %v, want *CompareError", err)
 				}
