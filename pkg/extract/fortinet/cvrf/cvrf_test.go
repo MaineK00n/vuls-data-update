@@ -193,3 +193,43 @@ func TestSupplementCriterions(t *testing.T) {
 		t.Errorf("SupplementCriterions(unknown) = %v, %v, want nil, nil", cs, err)
 	}
 }
+
+// A cve[] entry is normally a bare CVE ID; the three known malformed
+// FG-IR-14-010 entries are normalized by exact-string fixup, and any other
+// non-bare shape must fail the extract instead of becoming a junk (or
+// silently mis-normalized) vulnerability ID.
+func TestExtractCVEEntries(t *testing.T) {
+	tests := []struct {
+		name    string
+		cves    []string
+		wantIDs []string
+		wantErr bool
+	}{
+		{name: "bare id", cves: []string{"CVE-2020-12345"}, wantIDs: []string{"CVE-2020-12345"}},
+		{name: "known fixup", cves: []string{"CVE-<br />2014-2722 key issue"}, wantIDs: []string{"CVE-2014-2722"}},
+		{name: "fixup + bare, deduped", cves: []string{"CVE-2014-2721 password issue", "CVE-2014-2721"}, wantIDs: []string{"CVE-2014-2721"}},
+		{name: "unknown malformed entry → error", cves: []string{"CVE-2020-12345 some new junk"}, wantErr: true},
+		{name: "short sequence → error", cves: []string{"CVE-2014-1"}, wantErr: true},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var fetched cvrfTypes.CVRF
+			fetched.DocumentTracking.Identification.ID = "FG-IR-24-001"
+			fetched.Vulnerability.CVE = tt.cves
+			data, err := cvrf.ExtractData(fetched, nil)
+			if (err != nil) != tt.wantErr {
+				t.Fatalf("ExtractData() error = %v, wantErr %v", err, tt.wantErr)
+			}
+			if tt.wantErr {
+				return
+			}
+			got := make([]string, 0, len(data.Vulnerabilities))
+			for _, v := range data.Vulnerabilities {
+				got = append(got, string(v.Content.ID))
+			}
+			if !slices.Equal(got, tt.wantIDs) {
+				t.Errorf("vulnerability IDs = %q, want %q", got, tt.wantIDs)
+			}
+		})
+	}
+}
