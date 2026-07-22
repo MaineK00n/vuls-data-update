@@ -1,10 +1,6 @@
 package cvrf
 
 import (
-	_ "embed"
-	"encoding/json/v2"
-	"sync"
-
 	"github.com/pkg/errors"
 	numericVersion "github.com/vulsio/go-fortinet-version/numeric"
 
@@ -15,49 +11,40 @@ import (
 	fixstatusTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/fixstatus"
 )
 
-// supplement.json carries the affected-product data for the historical CVRF
-// advisories (2012 through 2022) whose product_statuses/product_tree are
-// empty upstream, so the CVRF document itself yields no detection. The rows
-// were generated once from two Fortinet-authored sources and then frozen:
-// the curated version ranges of the legacy vuls-data-raw-fortinet (handmade)
-// dataset, and the affected-version data Fortinet publishes as a CNA in its
-// cvelistV5 records. Where both sources cover an advisory, handmade rows win
-// per product (curated ranges) and CNA rows fill the products handmade
-// misses; disagreements were reviewed by hand. The gap is historical — from
-// 2022 on Fortinet populates product_statuses (and publishes CSAF) — so this
-// table is a frozen asset, not a maintained feed.
-//
-//go:embed supplement.json
-var supplementJSON []byte
+// supplementTable (supplement_data.go) carries the affected-product data for
+// the historical CVRF advisories (2012 through 2022) whose
+// product_statuses/product_tree are empty upstream, so the CVRF document
+// itself yields no detection. The rows were generated once from two
+// Fortinet-authored sources and then frozen: the curated version ranges of
+// the legacy vuls-data-raw-fortinet (handmade) dataset, and the
+// affected-version data Fortinet publishes as a CNA in its cvelistV5 records.
+// Where both sources cover an advisory, handmade rows win per product
+// (curated ranges) and CNA rows fill the products handmade misses;
+// disagreements were reviewed by hand. The gap is historical — from 2022 on
+// Fortinet populates product_statuses (and publishes CSAF) — so the table is
+// a frozen asset, not a maintained feed (mirroring how microsoft/bulletin
+// compiles its frozen archive amendments in).
 
 // supplementRange mirrors cpecriterion/range bounds; the range type is not in
 // the data — it is the per-product type from the product table.
 type supplementRange struct {
-	GreaterEqual string `json:"ge,omitempty"`
-	GreaterThan  string `json:"gt,omitempty"`
-	LessEqual    string `json:"le,omitempty"`
-	LessThan     string `json:"lt,omitempty"`
+	GreaterEqual string
+	GreaterThan  string
+	LessEqual    string
+	LessThan     string
 }
 
 // supplementProduct is one affected product of a supplemented advisory:
 // enumerated exact versions and/or version ranges. A row with neither means
 // the whole product is affected (the advisory said "any version").
 type supplementProduct struct {
-	Product  string            `json:"product"`
-	Versions []string          `json:"versions,omitempty"`
-	Ranges   []supplementRange `json:"ranges,omitempty"`
+	Product  string
+	Versions []string
+	Ranges   []supplementRange
 }
 
-var supplementTable = sync.OnceValues(func() (map[string][]supplementProduct, error) {
-	var m map[string][]supplementProduct
-	if err := json.Unmarshal(supplementJSON, &m); err != nil {
-		return nil, errors.Wrap(err, "unmarshal supplement.json")
-	}
-	return m, nil
-})
-
 // supplementCriterions builds the detection criterions for an advisory from
-// the embedded supplement table, or nil when the advisory has no entry.
+// the supplement table, or nil when the advisory has no entry.
 // Exact versions become CPEMatches on a wildcard-version product CPE (the
 // same shape knownAffectedCriterions emits) and ranges become one range
 // criterion each with the product's per-product range type (the same shape
@@ -66,11 +53,7 @@ var supplementTable = sync.OnceValues(func() (map[string][]supplementProduct, er
 // fails the numeric scheme fails the extract rather than silently dropping
 // an affected product.
 func supplementCriterions(id string) ([]criterionTypes.Criterion, error) {
-	table, err := supplementTable()
-	if err != nil {
-		return nil, err
-	}
-	rows, ok := table[id]
+	rows, ok := supplementTable[id]
 	if !ok {
 		return nil, nil
 	}

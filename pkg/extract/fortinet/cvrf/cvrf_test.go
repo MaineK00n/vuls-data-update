@@ -174,10 +174,7 @@ func TestExtractReferenceURLs(t *testing.T) {
 // table row references a product missing from internal/product or carries a
 // version outside the numeric scheme.
 func TestSupplementCriterions(t *testing.T) {
-	ids, err := cvrf.SupplementIDs()
-	if err != nil {
-		t.Fatal("unexpected error:", err)
-	}
+	ids := cvrf.SupplementIDs()
 	if len(ids) == 0 {
 		t.Fatal("supplement table is empty")
 	}
