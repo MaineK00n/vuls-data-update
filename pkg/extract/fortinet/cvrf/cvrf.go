@@ -408,8 +408,8 @@ var cveEntryFixups = map[string]string{
 }
 
 // cveIDPattern is the shape every (fixed-up) cve[] entry must have: a bare
-// CVE ID.
-var cveIDPattern = regexp.MustCompile(`^CVE-\d{4}-\d+$`)
+// CVE ID (the sequence part has four or more digits).
+var cveIDPattern = regexp.MustCompile(`^CVE-\d{4}-\d{4,}$`)
 
 // urlCandidatePattern finds candidate http(s) URL substrings in a CVRF
 // reference value. The values are messy and the URL is not always at the start:
