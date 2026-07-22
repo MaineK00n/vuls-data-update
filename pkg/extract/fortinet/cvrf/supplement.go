@@ -1,6 +1,8 @@
 package cvrf
 
 import (
+	"cmp"
+
 	"github.com/pkg/errors"
 	numericVersion "github.com/vulsio/go-fortinet-version/numeric"
 
@@ -105,6 +107,27 @@ func supplementCriterions(id string) ([]criterionTypes.Criterion, error) {
 				}
 				if _, err := numericVersion.NewVersion(b); err != nil {
 					return nil, errors.Wrapf(err, "unexpected range bound %q for %q in supplement entry %q", b, row.Product, id)
+				}
+			}
+			// A lower bound above the upper bound (a transcription slip like
+			// the legacy dataset's "ge 4.4.0, le 4.3.1") makes the criterion
+			// unsatisfiable — a silent detection false negative — so reject
+			// the row instead of emitting it.
+			if lo, hi := cmp.Or(r.GreaterEqual, r.GreaterThan), cmp.Or(r.LessEqual, r.LessThan); lo != "" && hi != "" {
+				vlo, err := numericVersion.NewVersion(lo)
+				if err != nil {
+					return nil, errors.Wrapf(err, "parse lower bound %q for %q in supplement entry %q", lo, row.Product, id)
+				}
+				vhi, err := numericVersion.NewVersion(hi)
+				if err != nil {
+					return nil, errors.Wrapf(err, "parse upper bound %q for %q in supplement entry %q", hi, row.Product, id)
+				}
+				c, err := vlo.Compare(vhi)
+				if err != nil {
+					return nil, errors.Wrapf(err, "compare bounds %q, %q for %q in supplement entry %q", lo, hi, row.Product, id)
+				}
+				if c > 0 {
+					return nil, errors.Errorf("inverted range for %q in supplement entry %q: lower bound %q > upper bound %q", row.Product, id, lo, hi)
 				}
 			}
 			criterions = append(criterions, criterionTypes.Criterion{
