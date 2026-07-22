@@ -1,0 +1,81 @@
+{
+	"document_title": "Path traversal in controller",
+	"document_type": "Fortinet PSIRT Advisories",
+	"documentpublisher": {
+		"type": "Vendor",
+		"contact_details": "\n            Fortinet PSIRT Contact:\n            Website: https://fortiguard.fortinet.com/faq/psirt-contact\n        "
+	},
+	"documenttracking": {
+		"identification": {
+			"id": "FG-IR-21-085"
+		},
+		"status": "Final",
+		"version": "1",
+		"revisionhistory": {
+			"revision": {
+				"number": "1",
+				"date": "2021-08-03T00:00:00",
+				"description": "Current version"
+			}
+		},
+		"initial_release_date": "2021-08-03T00:00:00",
+		"current_release_date": "2021-08-03T00:00:00"
+	},
+	"documentnotes": {
+		"note": [
+			{
+				"text": "\n            A protection mechanism failure vulnerability (CWE-693) resulting in improperly limiting pathname to a restricted directory in FortiPortal may allow an authenticated attacker to perform a path traversal attack via maliciously crafted GET parameters.\n        ",
+				"title": "Summary",
+				"type": "Summary",
+				"ordinal": "1"
+			},
+			{
+				"text": "\n            Information disclosure\n        ",
+				"title": "Impact",
+				"type": "General",
+				"ordinal": "2"
+			},
+			{
+				"text": "\n            FortiPortal versions 5.2.5 and below.FortiPortal versions 5.3.5 and below.FortiPortal versions 6.0.4 and below.\n        ",
+				"title": "Affected Products",
+				"type": "General",
+				"ordinal": "3"
+			},
+			{
+				"text": "\n            Please upgrade to FortiPortal version 5.2.6 or above.Please upgrade to FortiPortal version 5.3.6 or above.Please upgrade to FortiPortal version 6.0.5 or above.\n        ",
+				"title": "Solutions",
+				"type": "General",
+				"ordinal": "4"
+			}
+		]
+	},
+	"acknowledgments": {
+		"acknowledgment": [
+			{
+				"description": "Fortinet is pleased to thank Ben Knight for reporting this issue under responsible disclosure."
+			}
+		]
+	},
+	"vulnerability": {
+		"ordinal": "1",
+		"title": "Path traversal in controller",
+		"references": {
+			"type": "Self",
+			"reference": [
+				{
+					"url": "https://fortiguard.fortinet.com/psirt/FG-IR-21-085",
+					"description": "Path traversal in controller"
+				}
+			]
+		},
+		"cve": [
+			"CVE-2021-36168"
+		],
+		"cvss_scoresets": {
+			"scoreset_v3": {
+				"base_score_v3": "6.2",
+				"vector_v3": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:N/A:N/E:P/RL:X/RC:C"
+			}
+		}
+	}
+}

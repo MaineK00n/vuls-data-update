@@ -167,3 +167,32 @@ func TestExtractReferenceURLs(t *testing.T) {
 		})
 	}
 }
+
+// The embedded supplement table is frozen curated data; every entry must
+// build cleanly against the current product table and version schemes, and an
+// advisory outside the table must yield no criterions. A failure here means a
+// table row references a product missing from internal/product or carries a
+// version outside the numeric scheme.
+func TestSupplementCriterions(t *testing.T) {
+	ids, err := cvrf.SupplementIDs()
+	if err != nil {
+		t.Fatal("unexpected error:", err)
+	}
+	if len(ids) == 0 {
+		t.Fatal("supplement table is empty")
+	}
+	for _, id := range ids {
+		cs, err := cvrf.SupplementCriterions(id)
+		if err != nil {
+			t.Errorf("SupplementCriterions(%q): unexpected error: %v", id, err)
+			continue
+		}
+		if len(cs) == 0 {
+			t.Errorf("SupplementCriterions(%q) = no criterions, want at least one", id)
+		}
+	}
+
+	if cs, err := cvrf.SupplementCriterions("FG-IR-99-999"); err != nil || cs != nil {
+		t.Errorf("SupplementCriterions(unknown) = %v, %v, want nil, nil", cs, err)
+	}
+}

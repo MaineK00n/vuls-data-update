@@ -18,7 +18,93 @@
 				],
 				"published": "2013-05-13T00:00:00Z",
 				"modified": "2013-05-13T00:00:00Z"
-			}
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe"
+				}
+			]
+		}
+	],
+	"detections": [
+		{
+			"ecosystem": "cpe",
+			"conditions": [
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:a:fortinet:forticlient:*:*:*:*:*:*:*:*",
+									"cpe_matches": [
+										"cpe:2.3:a:fortinet:forticlient:4.0.2:*:*:*:*:*:*:*"
+									]
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:a:fortinet:forticlient:*:*:*:*:*:*:*:*",
+									"cpe_matches": [
+										"cpe:2.3:a:fortinet:forticlient:4.3.3.445:*:*:*:*:*:*:*"
+									]
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:a:fortinet:forticlient_lite:*:*:*:*:*:*:*:*",
+									"cpe_matches": [
+										"cpe:2.3:a:fortinet:forticlient_lite:4.3.3.445:*:*:*:*:*:*:*"
+									]
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:a:fortinet:forticlient_lite:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet-forticlient_lite",
+										"ge": "2.0",
+										"lt": "2.1"
+									}
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:a:fortinet:forticlient_ssl_vpn:*:*:*:*:*:*:*:*",
+									"cpe_matches": [
+										"cpe:2.3:a:fortinet:forticlient_ssl_vpn:4.0.2012:*:*:*:*:*:*:*"
+									]
+								}
+							}
+						]
+					}
+				}
+			]
 		}
 	],
 	"data_source": {

@@ -13,14 +13,68 @@
 					}
 				],
 				"modified": "2013-01-29T00:00:00Z"
-			}
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe"
+				}
+			]
 		}
 	],
 	"vulnerabilities": [
 		{
 			"content": {
 				"id": "CVE-2013-1471"
-			}
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe"
+				}
+			]
+		}
+	],
+	"detections": [
+		{
+			"ecosystem": "cpe",
+			"conditions": [
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet-fortios",
+										"ge": "4.2.0",
+										"le": "4.2.16"
+									}
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet-fortios",
+										"ge": "4.3.0",
+										"lt": "4.3.8"
+									}
+								}
+							}
+						]
+					}
+				}
+			]
 		}
 	],
 	"data_source": {

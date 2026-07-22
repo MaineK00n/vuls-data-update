@@ -151,8 +151,9 @@ func extract(fetched cvrfTypes.CVRF, raws []string) (dataTypes.Data, error) {
 	// exact affected versions.
 	//
 	// CVRF carries a single product status whose only observed type across the
-	// corpus is "Known Affected"; advisories without it (no product_statuses, or
-	// a status element without a type) are content-only. Any other type is
+	// corpus is "Known Affected". Advisories without it — the 2012-2022
+	// historical corpus — fall back to the embedded supplement table (see
+	// supplement.go); those in neither are content-only. Any other type is
 	// unexpected — fail loudly rather than silently emit no detection.
 	var criterions []criterionTypes.Criterion
 	switch status := fetched.Vulnerability.ProductStatuses.Status; status.Type {
@@ -163,14 +164,18 @@ func extract(fetched cvrfTypes.CVRF, raws []string) (dataTypes.Data, error) {
 		}
 		criterions = cs
 	case "":
-		// No product status type → content-only advisory, no detection. A typed
-		// status is the only thing that lists products, so a missing type must
-		// come with no products; products without a type would be an affected
-		// set we cannot classify and is treated as unexpected rather than
-		// dropped.
+		// No product status type. A typed status is the only thing that lists
+		// products, so a missing type must come with no products; products
+		// without a type would be an affected set we cannot classify and is
+		// treated as unexpected rather than dropped.
 		if len(status.ProductID) > 0 {
 			return dataTypes.Data{}, errors.Errorf("product status lists %d product(s) but has no type", len(status.ProductID))
 		}
+		cs, err := supplementCriterions(id)
+		if err != nil {
+			return dataTypes.Data{}, errors.Wrap(err, "build supplement criterions")
+		}
+		criterions = cs
 	default:
 		return dataTypes.Data{}, errors.Errorf("unexpected product status type %q (expected %q or none)", status.Type, "Known Affected")
 	}
@@ -208,13 +213,27 @@ func extract(fetched cvrfTypes.CVRF, raws []string) (dataTypes.Data, error) {
 
 	var vulns []vulnerabilityTypes.Vulnerability
 	for _, cve := range fetched.Vulnerability.CVE {
-		if cve == "" || slices.ContainsFunc(vulns, func(v vulnerabilityTypes.Vulnerability) bool {
-			return v.Content.ID == vulnerabilityContentTypes.VulnerabilityID(cve)
+		if cve == "" {
+			continue
+		}
+		// A cve[] entry is normally a bare CVE ID, but FG-IR-14-010 suffixes
+		// free text and embeds a stray HTML tag ("CVE-2014-2721 password
+		// issue", "CVE-<br />2014-2722 key issue"). Recover the ID so the
+		// vulnerability record carries a queryable CVE ID; an entry without a
+		// recoverable ID is unexpected and fails the extract rather than
+		// emitting a junk ID.
+		m := cvePattern.FindStringSubmatch(cve)
+		if m == nil {
+			return dataTypes.Data{}, errors.Errorf("no CVE ID in cve entry %q", cve)
+		}
+		id := fmt.Sprintf("CVE-%s-%s", m[1], m[2])
+		if slices.ContainsFunc(vulns, func(v vulnerabilityTypes.Vulnerability) bool {
+			return v.Content.ID == vulnerabilityContentTypes.VulnerabilityID(id)
 		}) {
 			continue
 		}
 		vulns = append(vulns, vulnerabilityTypes.Vulnerability{
-			Content:  vulnerabilityContentTypes.Content{ID: vulnerabilityContentTypes.VulnerabilityID(cve)},
+			Content:  vulnerabilityContentTypes.Content{ID: vulnerabilityContentTypes.VulnerabilityID(id)},
 			Segments: segs,
 		})
 	}
@@ -375,6 +394,11 @@ func advisorySeverity(fetched cvrfTypes.CVRF) ([]severityTypes.Severity, error) 
 // cwePattern matches the CWE identifiers Fortinet embeds inline in the Summary
 // note, in any of the observed forms: "[CWE-200]", "(CWE-415)", "[CWE-78 ]".
 var cwePattern = regexp.MustCompile(`CWE-\d+`)
+
+// cvePattern recovers the CVE identifier from a vulnerability cve[] entry,
+// tolerating the stray HTML tag FG-IR-14-010 embeds between "CVE-" and the
+// year ("CVE-<br />2014-2722 key issue").
+var cvePattern = regexp.MustCompile(`CVE-(?:<br />)?(\d{4})-(\d+)`)
 
 // urlCandidatePattern finds candidate http(s) URL substrings in a CVRF
 // reference value. The values are messy and the URL is not always at the start:

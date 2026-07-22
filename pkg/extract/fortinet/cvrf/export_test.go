@@ -22,3 +22,21 @@ var ExtractData = extract
 
 // ExtractReferenceURLs exposes extractReferenceURLs for reference-parsing tests.
 var ExtractReferenceURLs = extractReferenceURLs
+
+// SupplementCriterions exposes supplementCriterions for whole-table
+// validation tests.
+var SupplementCriterions = supplementCriterions
+
+// SupplementIDs returns every advisory ID in the embedded supplement table,
+// so tests can validate that each entry builds cleanly.
+func SupplementIDs() ([]string, error) {
+	table, err := supplementTable()
+	if err != nil {
+		return nil, err
+	}
+	ids := make([]string, 0, len(table))
+	for id := range table {
+		ids = append(ids, id)
+	}
+	return ids, nil
+}

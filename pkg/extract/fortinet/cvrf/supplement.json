@@ -1,0 +1,10481 @@
+{
+ "FG-IR-012-001": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "4.3.0",
+     "le": "4.3.5"
+    }
+   ]
+  }
+ ],
+ "FG-IR-012-002": [
+  {
+   "product": "FortiWeb",
+   "ranges": [
+    {
+     "le": "4.3.6"
+    }
+   ]
+  }
+ ],
+ "FG-IR-012-003": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "4.2.0",
+     "le": "4.2.16"
+    },
+    {
+     "ge": "4.3.0",
+     "lt": "4.3.8"
+    }
+   ]
+  }
+ ],
+ "FG-IR-012-007": [
+  {
+   "product": "FortiDB",
+   "ranges": [
+    {
+     "lt": "4.4.2"
+    }
+   ]
+  }
+ ],
+ "FG-IR-012-008": [
+  {
+   "product": "FortiWeb",
+   "ranges": [
+    {
+     "lt": "4.4.4"
+    }
+   ]
+  }
+ ],
+ "FG-IR-013-001": [
+  {
+   "product": "FortiMail",
+   "ranges": [
+    {
+     "lt": "4.3.4"
+    }
+   ]
+  }
+ ],
+ "FG-IR-13-008": [
+  {
+   "product": "FortiClient Lite",
+   "ranges": [
+    {
+     "ge": "2.0",
+     "lt": "2.1"
+    }
+   ],
+   "versions": [
+    "4.3.3.445"
+   ]
+  },
+  {
+   "product": "FortiClientMac",
+   "versions": [
+    "4.0.2"
+   ]
+  },
+  {
+   "product": "FortiClientSSLVPN",
+   "versions": [
+    "4.0.2012"
+   ]
+  },
+  {
+   "product": "FortiClientWindows",
+   "versions": [
+    "4.3.3.445"
+   ]
+  }
+ ],
+ "FG-IR-13-009": [
+  {
+   "product": "FortiWeb",
+   "ranges": [
+    {
+     "ge": "5.0.0",
+     "le": "5.0.2"
+    },
+    {
+     "le": "4.4.7"
+    }
+   ]
+  }
+ ],
+ "FG-IR-13-014": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "gt": "5.0.0",
+     "le": "5.0.2"
+    },
+    {
+     "le": "4.3.12"
+    }
+   ]
+  }
+ ],
+ "FG-IR-13-016": [
+  {
+   "product": "FortiAuthenticator",
+   "ranges": [
+    {
+     "ge": "1.0.0",
+     "le": "1.3.1"
+    },
+    {
+     "ge": "2.0.0",
+     "le": "2.2.0"
+    }
+   ]
+  }
+ ],
+ "FG-IR-13-018": [
+  {
+   "product": "FortiAnalyzer",
+   "ranges": [
+    {
+     "ge": "4.0.0",
+     "lt": "4.3.7"
+    },
+    {
+     "ge": "5.0.0",
+     "lt": "5.0.5"
+    }
+   ]
+  }
+ ],
+ "FG-IR-14-001": [
+  {
+   "product": "FortiWeb",
+   "ranges": [
+    {
+     "le": "5.0.3"
+    }
+   ]
+  }
+ ],
+ "FG-IR-14-002": [
+  {
+   "product": "FortiWeb",
+   "ranges": [
+    {
+     "le": "5.0.3"
+    }
+   ]
+  }
+ ],
+ "FG-IR-14-003": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "le": "5.0.5"
+    }
+   ]
+  }
+ ],
+ "FG-IR-14-004": [
+  {
+   "product": "FortiADC",
+   "ranges": [
+    {
+     "le": "3.2.0"
+    }
+   ]
+  }
+ ],
+ "FG-IR-14-006": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "5.0.0",
+     "le": "5.0.7"
+    },
+    {
+     "le": "4.3.15"
+    }
+   ]
+  }
+ ],
+ "FG-IR-14-010": [
+  {
+   "product": "FortiBalancer"
+  }
+ ],
+ "FG-IR-14-011": [
+  {
+   "product": "AscenLink",
+   "ranges": [
+    {
+     "ge": "7.1",
+     "lt": "7.2"
+    }
+   ]
+  }
+ ],
+ "FG-IR-14-012": [
+  {
+   "product": "FortiWeb",
+   "ranges": [
+    {
+     "ge": "5.0.0",
+     "le": "5.2.0"
+    }
+   ]
+  }
+ ],
+ "FG-IR-14-013": [
+  {
+   "product": "FortiWeb",
+   "ranges": [
+    {
+     "le": "5.1.4"
+    }
+   ]
+  }
+ ],
+ "FG-IR-14-018": [
+  {
+   "product": "AscenLink",
+   "ranges": [
+    {
+     "ge": "7.1",
+     "lt": "7.2"
+    }
+   ]
+  }
+ ],
+ "FG-IR-14-030": [
+  {
+   "product": "FortiAnalyzer",
+   "ranges": [
+    {
+     "ge": "4.0.0",
+     "le": "5.0.7"
+    },
+    {
+     "ge": "4.0.0",
+     "le": "5.2.0"
+    }
+   ]
+  },
+  {
+   "product": "FortiAuthenticator",
+   "ranges": [
+    {
+     "le": "3.1.1"
+    }
+   ]
+  },
+  {
+   "product": "FortiDB",
+   "ranges": [
+    {
+     "ge": "4.0.0",
+     "le": "5.1.1"
+    }
+   ]
+  },
+  {
+   "product": "FortiManager",
+   "ranges": [
+    {
+     "ge": "4.0.0",
+     "le": "5.0.7"
+    },
+    {
+     "ge": "4.0.0",
+     "le": "5.2.0"
+    }
+   ]
+  },
+  {
+   "product": "FortiWLC",
+   "ranges": [
+    {
+     "ge": "8.0.0",
+     "le": "8.5.3"
+    },
+    {
+     "ge": "8.0.0",
+     "le": "8.6.0"
+    }
+   ]
+  }
+ ],
+ "FG-IR-14-031": [
+  {
+   "product": "FortiADC"
+  },
+  {
+   "product": "FortiAnalyzer",
+   "ranges": [
+    {
+     "ge": "5.0.0",
+     "le": "5.0.9"
+    },
+    {
+     "ge": "5.2.0",
+     "le": "5.2.1"
+    }
+   ]
+  },
+  {
+   "product": "FortiAuthenticator",
+   "ranges": [
+    {
+     "ge": "3.0.0",
+     "le": "3.0.3"
+    }
+   ]
+  },
+  {
+   "product": "FortiCache",
+   "ranges": [
+    {
+     "ge": "2.2.0",
+     "le": "3.0.8"
+    }
+   ]
+  },
+  {
+   "product": "FortiClientWindows"
+  },
+  {
+   "product": "FortiDB"
+  },
+  {
+   "product": "FortiDDoS",
+   "ranges": [
+    {
+     "lt": "4.1.3"
+    }
+   ]
+  },
+  {
+   "product": "FortiMail"
+  },
+  {
+   "product": "FortiManager",
+   "ranges": [
+    {
+     "ge": "5.0.0",
+     "le": "5.0.9"
+    },
+    {
+     "ge": "5.2.0",
+     "le": "5.2.1"
+    }
+   ]
+  },
+  {
+   "product": "FortiOS"
+  },
+  {
+   "product": "FortiRecorder"
+  },
+  {
+   "product": "FortiSwitch"
+  },
+  {
+   "product": "FortiVoice"
+  },
+  {
+   "product": "FortiWeb",
+   "ranges": [
+    {
+     "ge": "5.2.0",
+     "le": "5.2.4"
+    },
+    {
+     "ge": "5.3.0",
+     "le": "5.3.2"
+    }
+   ]
+  }
+ ],
+ "FG-IR-14-032": [
+  {
+   "product": "FortiADC",
+   "ranges": [
+    {
+     "ge": "3.1.1",
+     "le": "4.0.4"
+    }
+   ]
+  }
+ ],
+ "FG-IR-14-033": [
+  {
+   "product": "FortiAnalyzer",
+   "ranges": [
+    {
+     "lt": "5.0.7"
+    }
+   ]
+  },
+  {
+   "product": "FortiManager",
+   "ranges": [
+    {
+     "lt": "5.0.7"
+    }
+   ]
+  }
+ ],
+ "FG-IR-14-034": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "5.0.0",
+     "le": "5.0.10"
+    },
+    {
+     "ge": "5.2.0",
+     "le": "5.2.2"
+    }
+   ]
+  }
+ ],
+ "FG-IR-15-002": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "5.2.0",
+     "le": "5.2.2"
+    },
+    {
+     "le": "5.0.11"
+    }
+   ]
+  }
+ ],
+ "FG-IR-15-003": [
+  {
+   "product": "FortiAuthenticator",
+   "ranges": [
+    {
+     "lt": "3.2.0"
+    },
+    {
+     "lt": "3.2.1"
+    }
+   ]
+  }
+ ],
+ "FG-IR-15-004": [
+  {
+   "product": "FortiClientAndroid",
+   "ranges": [
+    {
+     "lt": "5.2.6"
+    }
+   ]
+  },
+  {
+   "product": "FortiClientiOS",
+   "ranges": [
+    {
+     "lt": "5.2.1"
+    }
+   ]
+  }
+ ],
+ "FG-IR-15-005": [
+  {
+   "product": "FortiADC",
+   "ranges": [
+    {
+     "lt": "4.2.0"
+    }
+   ]
+  },
+  {
+   "product": "FortiAnalyzer",
+   "ranges": [
+    {
+     "ge": "5.0.0",
+     "le": "5.0.10"
+    },
+    {
+     "ge": "5.2.0",
+     "le": "5.2.1"
+    }
+   ]
+  },
+  {
+   "product": "FortiMail",
+   "ranges": [
+    {
+     "ge": "5.0.0",
+     "lt": "5.0.8"
+    },
+    {
+     "ge": "5.1.0",
+     "lt": "5.1.5"
+    },
+    {
+     "ge": "5.2.0",
+     "lt": "5.2.3"
+    },
+    {
+     "lt": "4.3.9"
+    }
+   ]
+  },
+  {
+   "product": "FortiManager",
+   "ranges": [
+    {
+     "ge": "5.0.3",
+     "le": "5.0.10"
+    },
+    {
+     "ge": "5.2.0",
+     "le": "5.2.1"
+    }
+   ]
+  },
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "5.2.0",
+     "lt": "5.2.3"
+    }
+   ]
+  },
+  {
+   "product": "FortiWeb",
+   "ranges": [
+    {
+     "ge": "5.1.2",
+     "le": "5.3.4"
+    }
+   ]
+  }
+ ],
+ "FG-IR-15-006": [
+  {
+   "product": "FSSO",
+   "ranges": [
+    {
+     "lt": "5.0.0237"
+    }
+   ]
+  }
+ ],
+ "FG-IR-15-007": [
+  {
+   "product": "FortiMail"
+  },
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "5.2.0",
+     "lt": "5.2.3"
+    },
+    {
+     "lt": "5.0.11"
+    }
+   ]
+  }
+ ],
+ "FG-IR-15-008": [
+  {
+   "product": "FortiADC",
+   "ranges": [
+    {
+     "lt": "4.2.2"
+    }
+   ]
+  },
+  {
+   "product": "FortiClientAndroid",
+   "ranges": [
+    {
+     "lt": "5.2.6"
+    }
+   ]
+  },
+  {
+   "product": "FortiClientMac",
+   "ranges": [
+    {
+     "lt": "5.2.4"
+    }
+   ]
+  },
+  {
+   "product": "FortiClientWindows",
+   "ranges": [
+    {
+     "lt": "5.2.4"
+    }
+   ]
+  },
+  {
+   "product": "FortiClientiOS",
+   "ranges": [
+    {
+     "lt": "5.2.1"
+    }
+   ]
+  },
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "5.2.0",
+     "le": "5.2.3"
+    },
+    {
+     "le": "5.0.11"
+    }
+   ]
+  }
+ ],
+ "FG-IR-15-009": [
+  {
+   "product": "FortiMail",
+   "ranges": [
+    {
+     "ge": "5.0.3",
+     "le": "5.2.3"
+    }
+   ]
+  }
+ ],
+ "FG-IR-15-010": [
+  {
+   "product": "FortiWeb",
+   "ranges": [
+    {
+     "ge": "5.0.0",
+     "le": "5.3.4"
+    },
+    {
+     "lt": "5.3.5"
+    }
+   ]
+  }
+ ],
+ "FG-IR-15-011": [
+  {
+   "product": "FortiManager",
+   "ranges": [
+    {
+     "ge": "5.0.0",
+     "le": "5.0.10"
+    },
+    {
+     "ge": "5.2.0",
+     "le": "5.2.1"
+    }
+   ]
+  }
+ ],
+ "FG-IR-15-012": [
+  {
+   "product": "FortiSandbox",
+   "ranges": [
+    {
+     "le": "2.0.2"
+    }
+   ]
+  }
+ ],
+ "FG-IR-15-014": [
+  {
+   "product": "AscenLink",
+   "ranges": [
+    {
+     "le": "7.2.4"
+    }
+   ]
+  },
+  {
+   "product": "FortiAnalyzer",
+   "ranges": [
+    {
+     "le": "5.2.2"
+    }
+   ]
+  },
+  {
+   "product": "FortiAuthenticator",
+   "ranges": [
+    {
+     "le": "4.0.0"
+    }
+   ]
+  },
+  {
+   "product": "FortiClientAndroid",
+   "ranges": [
+    {
+     "le": "5.2.5"
+    }
+   ]
+  },
+  {
+   "product": "FortiClientMac",
+   "ranges": [
+    {
+     "le": "5.2.3"
+    }
+   ]
+  },
+  {
+   "product": "FortiClientWindows",
+   "ranges": [
+    {
+     "le": "5.2.3"
+    }
+   ]
+  },
+  {
+   "product": "FortiMail",
+   "ranges": [
+    {
+     "ge": "5.1.0",
+     "le": "5.1.5"
+    },
+    {
+     "ge": "5.2.0",
+     "le": "5.2.4"
+    },
+    {
+     "le": "5.0.8"
+    }
+   ]
+  },
+  {
+   "product": "FortiManager",
+   "ranges": [
+    {
+     "le": "5.2.2"
+    }
+   ]
+  },
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "le": "5.2.3"
+    }
+   ]
+  },
+  {
+   "product": "FortiRecorder",
+   "ranges": [
+    {
+     "le": "2.0.0"
+    }
+   ]
+  },
+  {
+   "product": "FortiWAN",
+   "ranges": [
+    {
+     "le": "4.0.2"
+    }
+   ]
+  }
+ ],
+ "FG-IR-15-016": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "le": "4.3.12"
+    }
+   ]
+  }
+ ],
+ "FG-IR-15-017": [
+  {
+   "product": "FortiClientSSLVPN",
+   "ranges": [
+    {
+     "le": "2312"
+    }
+   ]
+  }
+ ],
+ "FG-IR-15-019": [
+  {
+   "product": "FortiSandbox",
+   "ranges": [
+    {
+     "le": "2.0.4"
+    }
+   ]
+  }
+ ],
+ "FG-IR-15-020": [
+  {
+   "product": "FortiOS",
+   "versions": [
+    "5.2.3"
+   ]
+  }
+ ],
+ "FG-IR-15-021": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "5.0.0",
+     "le": "5.0.11"
+    },
+    {
+     "ge": "5.2.0",
+     "le": "5.2.3"
+    }
+   ]
+  }
+ ],
+ "FG-IR-15-022": [
+  {
+   "product": "FortiManager",
+   "ranges": [
+    {
+     "le": "5.2.2"
+    },
+    {
+     "le": "5.2.3"
+    }
+   ]
+  }
+ ],
+ "FG-IR-15-023": [
+  {
+   "product": "FortiADC",
+   "ranges": [
+    {
+     "lt": "4.4.0"
+    }
+   ]
+  },
+  {
+   "product": "FortiAP",
+   "ranges": [
+    {
+     "lt": "5.4.0"
+    }
+   ]
+  },
+  {
+   "product": "FortiAnalyzer",
+   "ranges": [
+    {
+     "ge": "5.4.0",
+     "lt": "5.4.1"
+    },
+    {
+     "lt": "5.2.5"
+    }
+   ]
+  },
+  {
+   "product": "FortiAuthenticator",
+   "ranges": [
+    {
+     "le": "4.1.0"
+    }
+   ]
+  },
+  {
+   "product": "FortiCache",
+   "ranges": [
+    {
+     "lt": "5.2.6"
+    }
+   ]
+  },
+  {
+   "product": "FortiClientAndroid",
+   "ranges": [
+    {
+     "lt": "5.2.8"
+    }
+   ]
+  },
+  {
+   "product": "FortiClientMac",
+   "ranges": [
+    {
+     "lt": "5.4.1"
+    }
+   ]
+  },
+  {
+   "product": "FortiClientWindows",
+   "ranges": [
+    {
+     "lt": "5.4.1"
+    }
+   ]
+  },
+  {
+   "product": "FortiClientiOS",
+   "ranges": [
+    {
+     "lt": "5.2.3"
+    }
+   ]
+  },
+  {
+   "product": "FortiDB",
+   "ranges": [
+    {
+     "lt": "5.2.0"
+    }
+   ]
+  },
+  {
+   "product": "FortiDDoS",
+   "ranges": [
+    {
+     "lt": "4.1.11"
+    }
+   ]
+  },
+  {
+   "product": "FortiExplorer",
+   "ranges": [
+    {
+     "lt": "2.7.0"
+    }
+   ]
+  },
+  {
+   "product": "FortiExtender",
+   "ranges": [
+    {
+     "lt": "2.0.3"
+    }
+   ]
+  },
+  {
+   "product": "FortiMail",
+   "ranges": [
+    {
+     "ge": "5.1.0",
+     "lt": "5.1.6"
+    },
+    {
+     "ge": "5.2.0",
+     "lt": "5.2.7"
+    },
+    {
+     "ge": "5.3.0",
+     "lt": "5.3.1"
+    },
+    {
+     "lt": "5.0.9"
+    }
+   ]
+  },
+  {
+   "product": "FortiManager",
+   "ranges": [
+    {
+     "ge": "5.4.0",
+     "lt": "5.4.1"
+    },
+    {
+     "lt": "5.2.5"
+    }
+   ]
+  },
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "lt": "5.2.6"
+    }
+   ]
+  },
+  {
+   "product": "FortiRecorder",
+   "ranges": [
+    {
+     "lt": "2.3.0"
+    }
+   ]
+  },
+  {
+   "product": "FortiSandbox",
+   "ranges": [
+    {
+     "lt": "2.2.0"
+    }
+   ]
+  },
+  {
+   "product": "FortiSwitch",
+   "ranges": [
+    {
+     "lt": "3.4.0"
+    }
+   ]
+  },
+  {
+   "product": "FortiSwitch-EFX",
+   "ranges": [
+    {
+     "lt": "3.4.0"
+    }
+   ]
+  },
+  {
+   "product": "FortiVoice",
+   "ranges": [
+    {
+     "lt": "5.2.1.82"
+    }
+   ]
+  },
+  {
+   "product": "FortiWAN",
+   "ranges": [
+    {
+     "lt": "4.1.2"
+    }
+   ]
+  },
+  {
+   "product": "FortiWeb",
+   "ranges": [
+    {
+     "lt": "5.5.2"
+    }
+   ]
+  }
+ ],
+ "FG-IR-15-025": [
+  {
+   "product": "FortiClientWindows",
+   "ranges": [
+    {
+     "le": "5.2.3"
+    }
+   ]
+  }
+ ],
+ "FG-IR-16-001": [
+  {
+   "product": "FortiAnalyzer",
+   "ranges": [
+    {
+     "ge": "5.0.5",
+     "le": "5.0.11"
+    },
+    {
+     "ge": "5.2.0",
+     "le": "5.2.4"
+    }
+   ]
+  },
+  {
+   "product": "FortiCache",
+   "ranges": [
+    {
+     "ge": "3.0.0",
+     "le": "3.0.7"
+    }
+   ]
+  },
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "4.1.0",
+     "le": "4.1.10"
+    },
+    {
+     "ge": "4.2.0",
+     "le": "4.2.15"
+    },
+    {
+     "ge": "4.3.0",
+     "le": "4.3.16"
+    },
+    {
+     "ge": "5.0.0",
+     "le": "5.0.7"
+    }
+   ]
+  },
+  {
+   "product": "FortiSwitch",
+   "ranges": [
+    {
+     "ge": "3.3.0",
+     "le": "3.3.2"
+    }
+   ]
+  }
+ ],
+ "FG-IR-16-003": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "5.0.0",
+     "lt": "5.0.13"
+    },
+    {
+     "ge": "5.2.0",
+     "lt": "5.2.4"
+    }
+   ]
+  }
+ ],
+ "FG-IR-16-004": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "5.0.0",
+     "lt": "5.0.13"
+    },
+    {
+     "ge": "5.2.0",
+     "lt": "5.2.3"
+    }
+   ]
+  }
+ ],
+ "FG-IR-16-008": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "5.2.0",
+     "lt": "5.2.6"
+    },
+    {
+     "lt": "5.0.13"
+    }
+   ]
+  }
+ ],
+ "FG-IR-16-009": [
+  {
+   "product": "FortiWeb",
+   "ranges": [
+    {
+     "ge": "4.4.6",
+     "le": "5.5.2"
+    }
+   ]
+  }
+ ],
+ "FG-IR-16-010": [
+  {
+   "product": "FortiWeb",
+   "ranges": [
+    {
+     "lt": "5.5.3"
+    }
+   ]
+  }
+ ],
+ "FG-IR-16-011": [
+  {
+   "product": "FortiSwitch",
+   "versions": [
+    "3.4.1"
+   ]
+  }
+ ],
+ "FG-IR-16-014": [
+  {
+   "product": "FortiAnalyzer",
+   "ranges": [
+    {
+     "ge": "5.0.0",
+     "le": "5.0.11"
+    },
+    {
+     "ge": "5.2.0",
+     "le": "5.2.5"
+    }
+   ]
+  },
+  {
+   "product": "FortiManager",
+   "ranges": [
+    {
+     "ge": "5.0.0",
+     "le": "5.0.11"
+    },
+    {
+     "ge": "5.2.0",
+     "le": "5.2.5"
+    }
+   ]
+  }
+ ],
+ "FG-IR-16-015": [
+  {
+   "product": "FortiAnalyzer",
+   "ranges": [
+    {
+     "ge": "5.0.0",
+     "le": "5.0.12"
+    },
+    {
+     "ge": "5.2.0",
+     "le": "5.2.5"
+    }
+   ]
+  },
+  {
+   "product": "FortiManager",
+   "ranges": [
+    {
+     "ge": "5.0.0",
+     "le": "5.0.11"
+    },
+    {
+     "ge": "5.2.0",
+     "le": "5.2.5"
+    }
+   ]
+  }
+ ],
+ "FG-IR-16-016": [
+  {
+   "product": "FortiAnalyzer",
+   "ranges": [
+    {
+     "ge": "5.0.0",
+     "le": "5.0.12"
+    },
+    {
+     "ge": "5.2.0",
+     "le": "5.2.5"
+    }
+   ],
+   "versions": [
+    "5.4.0"
+   ]
+  },
+  {
+   "product": "FortiManager",
+   "ranges": [
+    {
+     "ge": "5.0.0",
+     "le": "5.0.11"
+    },
+    {
+     "ge": "5.2.0",
+     "le": "5.2.5"
+    }
+   ],
+   "versions": [
+    "5.4.0"
+   ]
+  }
+ ],
+ "FG-IR-16-017": [
+  {
+   "product": "FortiAnalyzer",
+   "ranges": [
+    {
+     "ge": "5.0.0",
+     "le": "5.0.12"
+    },
+    {
+     "ge": "5.2.0",
+     "le": "5.2.5"
+    }
+   ]
+  },
+  {
+   "product": "FortiManager",
+   "ranges": [
+    {
+     "ge": "5.0.0",
+     "le": "5.0.11"
+    },
+    {
+     "ge": "5.2.0",
+     "le": "5.2.5"
+    }
+   ]
+  }
+ ],
+ "FG-IR-16-020": [
+  {
+   "product": "FortiVoice",
+   "ranges": [
+    {
+     "le": "5.0.4"
+    }
+   ]
+  }
+ ],
+ "FG-IR-16-021": [
+  {
+   "product": "FortiClientWindows",
+   "ranges": [
+    {
+     "le": "5.4.0"
+    }
+   ]
+  }
+ ],
+ "FG-IR-16-023": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "4.0.0",
+     "le": "4.1.10"
+    },
+    {
+     "ge": "4.2.0",
+     "le": "4.2.12"
+    },
+    {
+     "ge": "4.3.0",
+     "le": "4.3.8"
+    }
+   ]
+  },
+  {
+   "product": "FortiSwitch",
+   "ranges": [
+    {
+     "le": "3.4.2"
+    }
+   ]
+  }
+ ],
+ "FG-IR-16-026": [
+  {
+   "product": "FortiAP",
+   "versions": [
+    "5.4.0"
+   ]
+  },
+  {
+   "product": "FortiAnalyzer",
+   "ranges": [
+    {
+     "le": "5.2.2"
+    },
+    {
+     "le": "5.2.7"
+    }
+   ],
+   "versions": [
+    "5.4.0"
+   ]
+  },
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "5.2.0",
+     "le": "5.2.3"
+    },
+    {
+     "ge": "5.2.0",
+     "le": "5.2.7"
+    },
+    {
+     "le": "5.0.12"
+    },
+    {
+     "le": "5.0.13"
+    }
+   ],
+   "versions": [
+    "5.4.0"
+   ]
+  },
+  {
+   "product": "FortiSwitch",
+   "ranges": [
+    {
+     "le": "3.3.3"
+    },
+    {
+     "le": "3.4.1"
+    }
+   ]
+  }
+ ],
+ "FG-IR-16-029": [
+  {
+   "product": "FortiWLC",
+   "ranges": [
+    {
+     "le": "6.1.2.29"
+    }
+   ],
+   "versions": [
+    "7.0.9.1",
+    "7.0.10.0",
+    "8.0.5.0",
+    "8.1.2.0",
+    "8.2.4.0"
+   ]
+  }
+ ],
+ "FG-IR-16-030": [
+  {
+   "product": "FortiWLC",
+   "ranges": [
+    {
+     "le": "6.1.2.29"
+    }
+   ],
+   "versions": [
+    "7.0.9.1",
+    "7.0.10.0",
+    "8.0.5.0",
+    "8.1.2.0",
+    "8.2.4.0"
+   ]
+  }
+ ],
+ "FG-IR-16-037": [
+  {
+   "product": "FortiDDoS",
+   "ranges": [
+    {
+     "le": "4.2.2"
+    }
+   ]
+  }
+ ],
+ "FG-IR-16-039": [
+  {
+   "product": "FortiAnalyzer",
+   "ranges": [
+    {
+     "ge": "5.2.0",
+     "le": "5.2.9"
+    },
+    {
+     "ge": "6.0.0",
+     "le": "6.0.11"
+    },
+    {
+     "ge": "6.2.0",
+     "le": "6.2.3"
+    }
+   ]
+  },
+  {
+   "product": "FortiAuthenticator",
+   "ranges": [
+    {
+     "ge": "6.0.0",
+     "le": "6.0.5"
+    },
+    {
+     "ge": "6.2.0",
+     "le": "6.2.1"
+    }
+   ],
+   "versions": [
+    "5.5.0"
+   ]
+  },
+  {
+   "product": "FortiManager",
+   "ranges": [
+    {
+     "ge": "5.2.0",
+     "le": "5.2.9"
+    },
+    {
+     "ge": "6.0.0",
+     "le": "6.0.11"
+    },
+    {
+     "ge": "6.2.0",
+     "le": "6.2.3"
+    }
+   ]
+  },
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "5.2.0",
+     "le": "5.2.8"
+    },
+    {
+     "ge": "5.4.0",
+     "le": "5.4.1"
+    }
+   ]
+  },
+  {
+   "product": "FortiWAN",
+   "ranges": [
+    {
+     "ge": "4.5.0",
+     "le": "4.5.4"
+    }
+   ]
+  },
+  {
+   "product": "FortiWLC",
+   "ranges": [
+    {
+     "ge": "8.4.0",
+     "le": "8.4.8"
+    },
+    {
+     "ge": "8.5.0",
+     "le": "8.5.5"
+    }
+   ],
+   "versions": [
+    "8.6.0"
+   ]
+  }
+ ],
+ "FG-IR-16-041": [
+  {
+   "product": "FortiClientSSLVPN"
+  }
+ ],
+ "FG-IR-16-045": [
+  {
+   "product": "FortiWAN",
+   "ranges": [
+    {
+     "le": "4.2.4"
+    }
+   ]
+  }
+ ],
+ "FG-IR-16-047": [
+  {
+   "product": "FortiAnalyzer",
+   "ranges": [
+    {
+     "ge": "5.4.0",
+     "le": "5.4.1"
+    }
+   ]
+  },
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "5.4.0",
+     "le": "5.4.1"
+    },
+    {
+     "le": "5.2.8"
+    }
+   ]
+  }
+ ],
+ "FG-IR-16-048": [
+  {
+   "product": "AscenLink",
+   "ranges": [
+    {
+     "ge": "7.2.0",
+     "le": "7.2.16"
+    }
+   ]
+  },
+  {
+   "product": "FSSO CA",
+   "ranges": [
+    {
+     "ge": "4.0.0",
+     "le": "4.0.2"
+    },
+    {
+     "ge": "4.2.2",
+     "le": "4.2.9"
+    },
+    {
+     "ge": "4.3.0",
+     "le": "4.3.10"
+    },
+    {
+     "ge": "5.0.0",
+     "le": "5.0.9"
+    },
+    {
+     "ge": "5.2.0",
+     "le": "5.2.3"
+    },
+    {
+     "ge": "5.2.6",
+     "le": "5.2.9"
+    }
+   ],
+   "versions": [
+    "0.4.20",
+    "3.0.0",
+    "4.1.2"
+   ]
+  },
+  {
+   "product": "FortiADC",
+   "ranges": [
+    {
+     "ge": "3.2.0",
+     "le": "3.2.2"
+    },
+    {
+     "ge": "4.0.0",
+     "le": "4.0.2"
+    },
+    {
+     "ge": "4.1.0",
+     "le": "4.1.1"
+    },
+    {
+     "ge": "4.2.0",
+     "le": "4.2.3"
+    },
+    {
+     "ge": "4.3.0",
+     "le": "4.3.2"
+    },
+    {
+     "ge": "4.4.0",
+     "le": "4.4.1"
+    },
+    {
+     "ge": "4.5.0",
+     "le": "4.5.4"
+    }
+   ],
+   "versions": [
+    "3.0.0",
+    "3.1.0",
+    "4.6.0"
+   ]
+  },
+  {
+   "product": "FortiAP",
+   "ranges": [
+    {
+     "le": "5.4.1"
+    }
+   ]
+  },
+  {
+   "product": "FortiAP-W2",
+   "ranges": [
+    {
+     "ge": "5.4.0",
+     "le": "5.4.2"
+    }
+   ]
+  },
+  {
+   "product": "FortiAnalyzer",
+   "ranges": [
+    {
+     "ge": "4.0.0",
+     "le": "4.0.4"
+    },
+    {
+     "ge": "4.1.0",
+     "le": "4.1.5"
+    },
+    {
+     "ge": "4.2.0",
+     "le": "4.2.6"
+    },
+    {
+     "ge": "4.3.0",
+     "le": "4.3.8"
+    },
+    {
+     "ge": "5.0.0",
+     "le": "5.0.13"
+    },
+    {
+     "ge": "5.2.0",
+     "le": "5.2.9"
+    },
+    {
+     "ge": "5.4.0",
+     "le": "5.4.1"
+    }
+   ]
+  },
+  {
+   "product": "FortiAuthenticator",
+   "ranges": [
+    {
+     "ge": "1.2.0",
+     "le": "1.2.1"
+    },
+    {
+     "ge": "1.3.0",
+     "le": "1.3.1"
+    },
+    {
+     "ge": "3.0.0",
+     "le": "3.0.3"
+    },
+    {
+     "ge": "3.1.0",
+     "le": "3.1.2"
+    },
+    {
+     "ge": "3.2.0",
+     "le": "3.2.1"
+    },
+    {
+     "ge": "3.3.0",
+     "le": "3.3.2"
+    },
+    {
+     "ge": "4.0.0",
+     "le": "4.0.1"
+    },
+    {
+     "ge": "4.1.0",
+     "le": "4.1.2"
+    }
+   ],
+   "versions": [
+    "1.0.0",
+    "1.1.0",
+    "2.1.0",
+    "2.2.0"
+   ]
+  },
+  {
+   "product": "FortiCache",
+   "ranges": [
+    {
+     "ge": "2.0.0",
+     "le": "2.0.1"
+    },
+    {
+     "ge": "2.1.0",
+     "le": "2.1.3"
+    },
+    {
+     "ge": "2.2.0",
+     "le": "2.2.4"
+    },
+    {
+     "ge": "2.3.0",
+     "le": "2.3.7"
+    },
+    {
+     "ge": "3.0.0",
+     "le": "3.0.8"
+    },
+    {
+     "ge": "3.1.0",
+     "le": "3.1.1"
+    },
+    {
+     "ge": "4.0.0",
+     "le": "4.0.4"
+    }
+   ],
+   "versions": [
+    "0.4.10",
+    "1.0.0",
+    "4.1.1"
+   ]
+  },
+  {
+   "product": "FortiClientAndroid",
+   "versions": [
+    "5.4.0"
+   ]
+  },
+  {
+   "product": "FortiClientEMS",
+   "ranges": [
+    {
+     "ge": "1.0.0",
+     "le": "1.0.2"
+    }
+   ]
+  },
+  {
+   "product": "FortiClientMac",
+   "ranges": [
+    {
+     "ge": "4.0.0",
+     "le": "4.0.3"
+    },
+    {
+     "ge": "5.0.0",
+     "le": "5.0.10"
+    },
+    {
+     "ge": "5.2.0",
+     "le": "5.2.6"
+    },
+    {
+     "ge": "5.4.0",
+     "le": "5.4.1"
+    }
+   ]
+  },
+  {
+   "product": "FortiClientSSLVPN",
+   "versions": [
+    "4.0.2328"
+   ]
+  },
+  {
+   "product": "FortiClientWindows",
+   "versions": [
+    "5.4.1"
+   ]
+  },
+  {
+   "product": "FortiDB",
+   "ranges": [
+    {
+     "ge": "3.2.1",
+     "le": "3.2.7"
+    },
+    {
+     "ge": "4.0.0",
+     "le": "4.0.1"
+    },
+    {
+     "ge": "4.4.0",
+     "le": "4.4.3"
+    },
+    {
+     "ge": "5.1.0",
+     "le": "5.1.1"
+    },
+    {
+     "ge": "5.1.5",
+     "le": "5.1.10"
+    }
+   ],
+   "versions": [
+    "0.4.10",
+    "0.5.16",
+    "2.0.2",
+    "2.4.0",
+    "4.3.2",
+    "5.0.0"
+   ]
+  },
+  {
+   "product": "FortiDDoS",
+   "ranges": [
+    {
+     "ge": "0.4.10",
+     "le": "0.4.23"
+    },
+    {
+     "ge": "4.0.0",
+     "le": "4.0.1"
+    },
+    {
+     "ge": "4.1.0",
+     "le": "4.1.12"
+    },
+    {
+     "ge": "4.2.1",
+     "le": "4.2.2"
+    }
+   ],
+   "versions": [
+    "3.1.0",
+    "3.2.0"
+   ]
+  },
+  {
+   "product": "FortiExplorer",
+   "versions": [
+    "1.3.0",
+    "1.4.0",
+    "1.5.0",
+    "1.6.0",
+    "1.7.0",
+    "1.8.0",
+    "2.0.0",
+    "2.1.0",
+    "2.2.0",
+    "2.3.0",
+    "2.4.0",
+    "2.5.0",
+    "2.6.0"
+   ]
+  },
+  {
+   "product": "FortiMail",
+   "ranges": [
+    {
+     "ge": "4.0.1",
+     "le": "4.0.5"
+    },
+    {
+     "ge": "4.1.0",
+     "le": "4.1.3"
+    },
+    {
+     "ge": "4.2.0",
+     "le": "4.2.4"
+    },
+    {
+     "ge": "4.3.0",
+     "le": "4.3.9"
+    },
+    {
+     "ge": "5.0.0",
+     "le": "5.0.11"
+    },
+    {
+     "ge": "5.1.0",
+     "le": "5.1.6"
+    },
+    {
+     "ge": "5.2.0",
+     "le": "5.2.8"
+    },
+    {
+     "ge": "5.3.0",
+     "le": "5.3.5"
+    }
+   ],
+   "versions": [
+    "2.0.1"
+   ]
+  },
+  {
+   "product": "FortiManager",
+   "ranges": [
+    {
+     "ge": "4.0.0",
+     "le": "4.0.3"
+    },
+    {
+     "ge": "4.1.1",
+     "le": "4.1.4"
+    },
+    {
+     "ge": "4.2.0",
+     "le": "4.2.9"
+    },
+    {
+     "ge": "4.3.0",
+     "le": "4.3.8"
+    },
+    {
+     "ge": "5.0.0",
+     "le": "5.0.12"
+    },
+    {
+     "ge": "5.2.0",
+     "le": "5.2.9"
+    },
+    {
+     "ge": "5.4.0",
+     "le": "5.4.1"
+    }
+   ]
+  },
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "5.4.0",
+     "le": "5.4.1"
+    },
+    {
+     "le": "5.2.9"
+    }
+   ]
+  },
+  {
+   "product": "FortiRecorder",
+   "ranges": [
+    {
+     "ge": "1.3.0",
+     "le": "1.3.1"
+    },
+    {
+     "ge": "1.4.0",
+     "le": "1.4.1"
+    },
+    {
+     "ge": "2.1.0",
+     "le": "2.1.1"
+    },
+    {
+     "ge": "2.2.0",
+     "le": "2.2.2"
+    },
+    {
+     "ge": "2.4.0",
+     "le": "2.4.1"
+    }
+   ],
+   "versions": [
+    "1.0.0",
+    "1.1.0",
+    "1.2.0",
+    "2.0.0",
+    "2.3.0"
+   ]
+  },
+  {
+   "product": "FortiSandbox",
+   "ranges": [
+    {
+     "ge": "1.2.0",
+     "le": "1.2.3"
+    },
+    {
+     "ge": "1.4.0",
+     "le": "1.4.3"
+    },
+    {
+     "ge": "2.0.0",
+     "le": "2.0.3"
+    },
+    {
+     "ge": "2.1.0",
+     "le": "2.1.3"
+    },
+    {
+     "ge": "2.2.0",
+     "le": "2.2.2"
+    },
+    {
+     "ge": "2.3.0",
+     "le": "2.3.2"
+    }
+   ],
+   "versions": [
+    "1.1.0",
+    "1.3.0"
+   ]
+  },
+  {
+   "product": "FortiSwitch",
+   "ranges": [
+    {
+     "le": "3.5.0"
+    }
+   ]
+  },
+  {
+   "product": "FortiTester",
+   "ranges": [
+    {
+     "ge": "2.4.0",
+     "le": "2.4.1"
+    }
+   ],
+   "versions": [
+    "2.3.0",
+    "2.5.0",
+    "2.6.0",
+    "2.7.0"
+   ]
+  },
+  {
+   "product": "FortiTokenAndroid",
+   "versions": [
+    "3.0.5"
+   ]
+  },
+  {
+   "product": "FortiVoice",
+   "versions": [
+    "5.0.5",
+    "5.3.3"
+   ]
+  },
+  {
+   "product": "FortiWAN",
+   "ranges": [
+    {
+     "ge": "0.4.10",
+     "le": "0.4.24"
+    },
+    {
+     "ge": "4.0.0",
+     "le": "4.0.6"
+    },
+    {
+     "ge": "4.1.1",
+     "le": "4.1.3"
+    },
+    {
+     "ge": "4.2.1",
+     "le": "4.2.5"
+    }
+   ]
+  },
+  {
+   "product": "FortiWeb",
+   "ranges": [
+    {
+     "ge": "4.1.0",
+     "le": "4.1.2"
+    },
+    {
+     "ge": "4.2.0",
+     "le": "4.2.4"
+    },
+    {
+     "ge": "4.3.1",
+     "le": "4.3.7"
+    },
+    {
+     "ge": "4.4.0",
+     "le": "4.4.7"
+    },
+    {
+     "ge": "5.0.0",
+     "le": "5.0.6"
+    },
+    {
+     "ge": "5.1.0",
+     "le": "5.1.4"
+    },
+    {
+     "ge": "5.2.0",
+     "le": "5.2.4"
+    },
+    {
+     "ge": "5.3.0",
+     "le": "5.3.9"
+    },
+    {
+     "ge": "5.4.0",
+     "le": "5.4.1"
+    },
+    {
+     "ge": "5.5.0",
+     "le": "5.5.7"
+    }
+   ],
+   "versions": [
+    "3.0.0",
+    "4.0.2",
+    "5.6.0"
+   ]
+  }
+ ],
+ "FG-IR-16-050": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "5.2.0",
+     "le": "5.2.10"
+    }
+   ],
+   "versions": [
+    "5.4.1"
+   ]
+  }
+ ],
+ "FG-IR-16-051": [
+  {
+   "product": "FortiAnalyzer",
+   "ranges": [
+    {
+     "ge": "5.0.0",
+     "le": "5.0.12"
+    },
+    {
+     "ge": "5.2.0",
+     "le": "5.2.2"
+    }
+   ]
+  },
+  {
+   "product": "FortiManager",
+   "ranges": [
+    {
+     "ge": "5.0.0",
+     "le": "5.0.11"
+    },
+    {
+     "ge": "5.2.0",
+     "le": "5.2.2"
+    }
+   ]
+  }
+ ],
+ "FG-IR-16-052": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "5.4.0",
+     "le": "5.4.1"
+    }
+   ]
+  }
+ ],
+ "FG-IR-16-055": [
+  {
+   "product": "FortiManager",
+   "ranges": [
+    {
+     "ge": "5.0.6",
+     "le": "5.2.7"
+    },
+    {
+     "ge": "5.4.0",
+     "le": "5.4.1"
+    }
+   ]
+  }
+ ],
+ "FG-IR-16-065": [
+  {
+   "product": "FortiWLC",
+   "versions": [
+    "7.0.9.1",
+    "7.0.10.0",
+    "8.1.2.0",
+    "8.1.3.2",
+    "8.2.4.0"
+   ]
+  }
+ ],
+ "FG-IR-16-067": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "4.3.0",
+     "le": "4.3.18"
+    }
+   ]
+  }
+ ],
+ "FG-IR-16-069": [
+  {
+   "product": "FortiClientSSLVPN"
+  }
+ ],
+ "FG-IR-16-080": [
+  {
+   "product": "Connect",
+   "ranges": [
+    {
+     "ge": "14.10.0.0",
+     "lt": "14.10.0.5"
+    },
+    {
+     "ge": "14.2.0.0",
+     "lt": "14.2.0.12"
+    },
+    {
+     "ge": "15.10.0.0",
+     "lt": "15.10.0.3"
+    },
+    {
+     "ge": "16.7.0.0",
+     "lt": "16.7.0.1"
+    }
+   ]
+  }
+ ],
+ "FG-IR-16-088": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "5.0.0",
+     "le": "5.0.14"
+    },
+    {
+     "ge": "5.2.0",
+     "le": "5.2.15"
+    }
+   ]
+  }
+ ],
+ "FG-IR-16-090": [
+  {
+   "product": "FortiOS"
+  }
+ ],
+ "FG-IR-16-095": [
+  {
+   "product": "FortiClientWindows",
+   "ranges": [
+    {
+     "ge": "5.4.1",
+     "le": "5.4.2"
+    }
+   ]
+  }
+ ],
+ "FG-IR-17-011": [
+  {
+   "product": "FortiMail",
+   "ranges": [
+    {
+     "ge": "5.0.0",
+     "le": "5.2.9"
+    },
+    {
+     "ge": "5.3.0",
+     "le": "5.3.8"
+    }
+   ]
+  }
+ ],
+ "FG-IR-17-014": [
+  {
+   "product": "FortiAnalyzer",
+   "ranges": [
+    {
+     "ge": "5.4.0",
+     "le": "5.4.2"
+    }
+   ]
+  },
+  {
+   "product": "FortiManager",
+   "ranges": [
+    {
+     "ge": "5.4.0",
+     "le": "5.4.2"
+    }
+   ]
+  }
+ ],
+ "FG-IR-17-017": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "5.2.0",
+     "le": "5.2.10"
+    }
+   ]
+  }
+ ],
+ "FG-IR-17-019": [
+  {
+   "product": "FortiAP",
+   "ranges": [
+    {
+     "le": "5.4.2"
+    }
+   ]
+  },
+  {
+   "product": "FortiAnalyzer",
+   "ranges": [
+    {
+     "le": "5.4.2"
+    }
+   ]
+  },
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "le": "5.4.5"
+    }
+   ]
+  },
+  {
+   "product": "FortiSwitch",
+   "ranges": [
+    {
+     "le": "3.5.2"
+    }
+   ]
+  }
+ ],
+ "FG-IR-17-051": [
+  {
+   "product": "FortiAnalyzer",
+   "ranges": [
+    {
+     "le": "5.4.2"
+    }
+   ]
+  },
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "le": "5.4.4"
+    }
+   ]
+  }
+ ],
+ "FG-IR-17-053": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "5.6.0",
+     "le": "5.6.10"
+    },
+    {
+     "ge": "6.0.0",
+     "le": "6.0.6"
+    },
+    {
+     "le": "5.4.13"
+    }
+   ]
+  }
+ ],
+ "FG-IR-17-057": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "5.0.0",
+     "le": "5.0.14"
+    },
+    {
+     "ge": "5.2.0",
+     "le": "5.2.10"
+    }
+   ]
+  }
+ ],
+ "FG-IR-17-070": [
+  {
+   "product": "FortiClientWindows",
+   "ranges": [
+    {
+     "le": "5.4.3"
+    }
+   ],
+   "versions": [
+    "5.6.0"
+   ]
+  }
+ ],
+ "FG-IR-17-073": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "5.0.0",
+     "le": "5.4.4"
+    }
+   ],
+   "versions": [
+    "5.6.0"
+   ]
+  }
+ ],
+ "FG-IR-17-076": [
+  {
+   "product": "FortiWeb",
+   "ranges": [
+    {
+     "le": "5.7.1"
+    }
+   ]
+  }
+ ],
+ "FG-IR-17-097": [
+  {
+   "product": "FortiWLC-SD",
+   "ranges": [
+    {
+     "le": "8.2.4"
+    }
+   ]
+  }
+ ],
+ "FG-IR-17-099": [
+  {
+   "product": "FortiMail",
+   "ranges": [
+    {
+     "ge": "5.2.0",
+     "le": "5.2.9"
+    },
+    {
+     "ge": "5.3.0",
+     "le": "5.3.9"
+    },
+    {
+     "le": "5.1.7"
+    }
+   ]
+  }
+ ],
+ "FG-IR-17-103": [
+  {
+   "product": "FortiAuthenticator",
+   "ranges": [
+    {
+     "ge": "5.0.0",
+     "le": "5.0.0"
+    }
+   ]
+  },
+  {
+   "product": "FortiMail",
+   "versions": [
+    "5.3.13"
+   ]
+  },
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "le": "5.6.5"
+    }
+   ],
+   "versions": [
+    "6.0.0"
+   ]
+  }
+ ],
+ "FG-IR-17-104": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "5.4.0",
+     "le": "5.4.5"
+    },
+    {
+     "le": "5.2.11"
+    }
+   ],
+   "versions": [
+    "5.6.0"
+   ]
+  }
+ ],
+ "FG-IR-17-106": [
+  {
+   "product": "FortiWLC",
+   "ranges": [
+    {
+     "ge": "6.1.4",
+     "le": "6.1.5"
+    },
+    {
+     "ge": "7.0.7",
+     "le": "7.0.10"
+    },
+    {
+     "ge": "8.0.0",
+     "le": "8.3.2"
+    }
+   ],
+   "versions": [
+    "6.1.2"
+   ]
+  }
+ ],
+ "FG-IR-17-113": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "5.4.0",
+     "le": "5.4.5"
+    }
+   ],
+   "versions": [
+    "5.6.0"
+   ]
+  }
+ ],
+ "FG-IR-17-114": [
+  {
+   "product": "FortiPortal",
+   "ranges": [
+    {
+     "le": "4.0.0"
+    }
+   ]
+  }
+ ],
+ "FG-IR-17-115": [
+  {
+   "product": "FortiWLM",
+   "ranges": [
+    {
+     "le": "8.3.0"
+    }
+   ]
+  }
+ ],
+ "FG-IR-17-118": [
+  {
+   "product": "FortiAP",
+   "ranges": [
+    {
+     "le": "5.4.3"
+    }
+   ],
+   "versions": [
+    "5.6.0"
+   ]
+  },
+  {
+   "product": "FortiAP-S",
+   "ranges": [
+    {
+     "le": "5.4.3"
+    }
+   ],
+   "versions": [
+    "5.6.0"
+   ]
+  },
+  {
+   "product": "FortiAP-W2",
+   "ranges": [
+    {
+     "le": "5.4.3"
+    }
+   ],
+   "versions": [
+    "5.6.0"
+   ]
+  },
+  {
+   "product": "FortiAnalyzer",
+   "ranges": [
+    {
+     "le": "5.4.2"
+    }
+   ]
+  },
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "le": "5.6.0"
+    }
+   ]
+  },
+  {
+   "product": "FortiSwitch",
+   "ranges": [
+    {
+     "le": "3.6.2"
+    }
+   ]
+  }
+ ],
+ "FG-IR-17-119": [
+  {
+   "product": "FortiWLC",
+   "ranges": [
+    {
+     "ge": "6.1.2",
+     "le": "6.1.5"
+    },
+    {
+     "ge": "7.0.7",
+     "le": "7.0.10"
+    },
+    {
+     "ge": "8.0.0",
+     "le": "8.3.2"
+    }
+   ]
+  }
+ ],
+ "FG-IR-17-127": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "5.2.0",
+     "le": "5.2.11"
+    },
+    {
+     "ge": "5.4.0",
+     "le": "5.4.4"
+    }
+   ]
+  }
+ ],
+ "FG-IR-17-131": [
+  {
+   "product": "FortiWeb",
+   "ranges": [
+    {
+     "le": "5.7.1"
+    }
+   ],
+   "versions": [
+    "5.8.0"
+   ]
+  }
+ ],
+ "FG-IR-17-137": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "5.2.0",
+     "le": "5.2.12"
+    },
+    {
+     "ge": "5.4.0",
+     "le": "5.4.5"
+    },
+    {
+     "le": "5.0.14"
+    }
+   ],
+   "versions": [
+    "5.6.0"
+   ]
+  }
+ ],
+ "FG-IR-17-162": [
+  {
+   "product": "FortiWeb",
+   "ranges": [
+    {
+     "ge": "5.4.1",
+     "le": "5.8.2"
+    }
+   ]
+  }
+ ],
+ "FG-IR-17-168": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "5.2.0",
+     "le": "5.2.11"
+    },
+    {
+     "ge": "5.4.0",
+     "le": "5.4.5"
+    }
+   ],
+   "versions": [
+    "5.6.0"
+   ]
+  }
+ ],
+ "FG-IR-17-172": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "5.4.0",
+     "le": "5.4.5"
+    },
+    {
+     "ge": "5.6.0",
+     "le": "5.6.2"
+    },
+    {
+     "le": "5.2.15"
+    }
+   ]
+  }
+ ],
+ "FG-IR-17-196": [
+  {
+   "product": "FortiAP",
+   "ranges": [
+    {
+     "ge": "5.4.0",
+     "le": "5.4.3"
+    },
+    {
+     "le": "5.2.6"
+    }
+   ],
+   "versions": [
+    "5.6.0"
+   ]
+  },
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "5.4.0",
+     "le": "5.4.8"
+    },
+    {
+     "ge": "5.6.0",
+     "le": "5.6.2"
+    },
+    {
+     "le": "5.2.11"
+    }
+   ]
+  },
+  {
+   "product": "FortiWLC",
+   "ranges": [
+    {
+     "ge": "8.0.0",
+     "le": "8.0.6"
+    },
+    {
+     "ge": "8.2.0",
+     "le": "8.2.7"
+    },
+    {
+     "ge": "8.3.0",
+     "le": "8.3.3"
+    },
+    {
+     "le": "7.0.11"
+    }
+   ]
+  },
+  {
+   "product": "Meru AP",
+   "ranges": [
+    {
+     "ge": "8.0.0",
+     "le": "8.0.0"
+    },
+    {
+     "ge": "8.2.0",
+     "le": "8.2.7"
+    },
+    {
+     "ge": "8.3.0",
+     "le": "8.3.3"
+    },
+    {
+     "le": "7.0.11"
+    }
+   ]
+  }
+ ],
+ "FG-IR-17-206": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "5.4.0",
+     "le": "5.4.5"
+    }
+   ]
+  }
+ ],
+ "FG-IR-17-214": [
+  {
+   "product": "FortiClientMac",
+   "ranges": [
+    {
+     "le": "5.6.0"
+    }
+   ]
+  },
+  {
+   "product": "FortiClientSSLVPN",
+   "ranges": [
+    {
+     "le": "4.4.2334"
+    },
+    {
+     "le": "4.4.2335"
+    }
+   ]
+  },
+  {
+   "product": "FortiClientWindows",
+   "ranges": [
+    {
+     "le": "5.6.0"
+    }
+   ]
+  }
+ ],
+ "FG-IR-17-231": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "5.2.0",
+     "le": "5.2.15"
+    },
+    {
+     "ge": "5.4.0",
+     "le": "5.4.8"
+    },
+    {
+     "ge": "5.6.0",
+     "le": "5.6.2"
+    }
+   ]
+  }
+ ],
+ "FG-IR-17-242": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "5.6.0",
+     "le": "5.6.7"
+    },
+    {
+     "ge": "6.0.0",
+     "le": "6.0.4"
+    },
+    {
+     "le": "5.4.9"
+    }
+   ]
+  }
+ ],
+ "FG-IR-17-245": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "5.2.0",
+     "le": "5.2.15"
+    },
+    {
+     "ge": "5.4.0",
+     "le": "5.4.8"
+    },
+    {
+     "ge": "5.6.0",
+     "le": "5.6.2"
+    }
+   ]
+  }
+ ],
+ "FG-IR-17-259": [
+  {
+   "product": "FortiCloud",
+   "ranges": [
+    {
+     "le": "3.2.0"
+    }
+   ]
+  }
+ ],
+ "FG-IR-17-262": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "5.2.0",
+     "le": "5.2.15"
+    },
+    {
+     "ge": "5.4.0",
+     "le": "5.4.7"
+    },
+    {
+     "ge": "5.6.0",
+     "le": "5.6.2"
+    }
+   ]
+  }
+ ],
+ "FG-IR-17-274": [
+  {
+   "product": "FortiWLC",
+   "ranges": [
+    {
+     "ge": "7.0.0",
+     "le": "7.0.11"
+    },
+    {
+     "ge": "8.0.0",
+     "le": "8.3.3"
+    }
+   ]
+  }
+ ],
+ "FG-IR-17-279": [
+  {
+   "product": "FortiWeb",
+   "ranges": [
+    {
+     "ge": "5.6.0",
+     "lt": "6.1.0"
+    }
+   ]
+  }
+ ],
+ "FG-IR-17-302": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "5.4.6",
+     "le": "5.4.9"
+    },
+    {
+     "ge": "6.0.0",
+     "le": "6.0.1"
+    }
+   ]
+  }
+ ],
+ "FG-IR-17-305": [
+  {
+   "product": "FortiAnalyzer",
+   "ranges": [
+    {
+     "le": "5.6.4"
+    }
+   ],
+   "versions": [
+    "6.0.0"
+   ]
+  },
+  {
+   "product": "FortiManager",
+   "ranges": [
+    {
+     "le": "5.6.4"
+    }
+   ],
+   "versions": [
+    "6.0.0"
+   ]
+  }
+ ],
+ "FG-IR-18-006": [
+  {
+   "product": "FortiManager",
+   "ranges": [
+    {
+     "le": "5.6.6"
+    }
+   ],
+   "versions": [
+    "6.0.0"
+   ]
+  }
+ ],
+ "FG-IR-18-013": [
+  {
+   "product": "FortiSwitch",
+   "ranges": [
+    {
+     "ge": "6.0.0",
+     "le": "6.0.1"
+    },
+    {
+     "le": "3.6.8"
+    }
+   ]
+  }
+ ],
+ "FG-IR-18-014": [
+  {
+   "product": "FortiAnalyzer",
+   "ranges": [
+    {
+     "le": "5.6.5"
+    }
+   ],
+   "versions": [
+    "6.0.0"
+   ]
+  },
+  {
+   "product": "FortiManager",
+   "ranges": [
+    {
+     "le": "5.6.5"
+    }
+   ],
+   "versions": [
+    "6.0.0"
+   ]
+  }
+ ],
+ "FG-IR-18-016": [
+  {
+   "product": "FortiManager",
+   "ranges": [
+    {
+     "le": "6.0.1"
+    }
+   ]
+  }
+ ],
+ "FG-IR-18-018": [
+  {
+   "product": "FortiOS",
+   "versions": [
+    "5.6.0"
+   ]
+  }
+ ],
+ "FG-IR-18-022": [
+  {
+   "product": "FortiAnalyzer",
+   "ranges": [
+    {
+     "le": "5.6.5"
+    }
+   ],
+   "versions": [
+    "6.0.0"
+   ]
+  },
+  {
+   "product": "FortiManager",
+   "ranges": [
+    {
+     "le": "5.6.5"
+    }
+   ],
+   "versions": [
+    "6.0.0"
+   ]
+  }
+ ],
+ "FG-IR-18-024": [
+  {
+   "product": "FortiSandbox",
+   "ranges": [
+    {
+     "ge": "2.4.0",
+     "le": "2.4.1"
+    },
+    {
+     "ge": "2.5.0",
+     "le": "2.5.2"
+    }
+   ]
+  }
+ ],
+ "FG-IR-18-026": [
+  {
+   "product": "FortiCloud",
+   "ranges": [
+    {
+     "le": "3.2.1"
+    }
+   ]
+  }
+ ],
+ "FG-IR-18-027": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "le": "5.6.5"
+    }
+   ],
+   "versions": [
+    "6.0.0"
+   ]
+  }
+ ],
+ "FG-IR-18-051": [
+  {
+   "product": "FortiManager",
+   "ranges": [
+    {
+     "ge": "5.2.0",
+     "le": "5.2.7"
+    },
+    {
+     "ge": "5.4.0",
+     "le": "5.4.1"
+    }
+   ]
+  }
+ ],
+ "FG-IR-18-059": [
+  {
+   "product": "FortiAuthenticator",
+   "ranges": [
+    {
+     "ge": "4.0.0",
+     "lt": "5.3.0"
+    }
+   ]
+  }
+ ],
+ "FG-IR-18-074": [
+  {
+   "product": "FortiCloud",
+   "ranges": [
+    {
+     "le": "3.2.1"
+    }
+   ]
+  }
+ ],
+ "FG-IR-18-085": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "6.0.0",
+     "le": "6.0.1"
+    },
+    {
+     "le": "5.6.5"
+    }
+   ]
+  }
+ ],
+ "FG-IR-18-092": [
+  {
+   "product": "FortiClientWindows",
+   "ranges": [
+    {
+     "le": "6.0.2"
+    }
+   ]
+  }
+ ],
+ "FG-IR-18-100": [
+  {
+   "product": "FortiClientMac",
+   "ranges": [
+    {
+     "lt": "6.2.2"
+    }
+   ]
+  },
+  {
+   "product": "FortiClientWindows",
+   "ranges": [
+    {
+     "lt": "6.2.0"
+    }
+   ]
+  },
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "6.0.0",
+     "lt": "6.0.8"
+    },
+    {
+     "lt": "5.6.12"
+    }
+   ]
+  }
+ ],
+ "FG-IR-18-101": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "6.0.0",
+     "le": "6.0.1"
+    },
+    {
+     "le": "5.6.7"
+    }
+   ]
+  }
+ ],
+ "FG-IR-18-108": [
+  {
+   "product": "FortiClientWindows",
+   "ranges": [
+    {
+     "le": "6.0.4"
+    }
+   ]
+  }
+ ],
+ "FG-IR-18-121": [
+  {
+   "product": "FortiAnalyzer",
+   "ranges": [
+    {
+     "le": "5.6.0"
+    }
+   ]
+  },
+  {
+   "product": "FortiManager",
+   "ranges": [
+    {
+     "le": "5.6.0"
+    }
+   ]
+  }
+ ],
+ "FG-IR-18-157": [
+  {
+   "product": "FortiADC",
+   "ranges": [
+    {
+     "ge": "6.0.0",
+     "le": "6.0.1"
+    },
+    {
+     "ge": "6.1.0",
+     "le": "6.1.0"
+    },
+    {
+     "le": "5.4.4"
+    }
+   ]
+  },
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "le": "6.0.2"
+    }
+   ]
+  }
+ ],
+ "FG-IR-18-173": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "le": "6.2.0"
+    }
+   ],
+   "versions": [
+    "6.2.3"
+   ]
+  }
+ ],
+ "FG-IR-18-199": [
+  {
+   "product": "FortiAP"
+  },
+  {
+   "product": "FortiOS"
+  }
+ ],
+ "FG-IR-18-214": [
+  {
+   "product": "FortiOS"
+  }
+ ],
+ "FG-IR-18-232": [
+  {
+   "product": "FortiAnalyzer",
+   "ranges": [
+    {
+     "ge": "6.0.0",
+     "le": "6.0.4"
+    }
+   ]
+  },
+  {
+   "product": "FortiManager",
+   "ranges": [
+    {
+     "ge": "6.0.0",
+     "le": "6.0.4"
+    }
+   ]
+  },
+  {
+   "product": "FortiPortal",
+   "ranges": [
+    {
+     "ge": "4.1.0",
+     "le": "4.1.2"
+    },
+    {
+     "ge": "4.2.0",
+     "le": "4.2.2"
+    },
+    {
+     "ge": "5.0.0",
+     "le": "5.0.3"
+    },
+    {
+     "ge": "5.1.0",
+     "le": "5.1.2"
+    },
+    {
+     "ge": "5.2.0",
+     "le": "5.2.6"
+    },
+    {
+     "ge": "5.3.0",
+     "le": "5.3.8"
+    },
+    {
+     "ge": "6.0.0",
+     "le": "6.0.9"
+    }
+   ]
+  },
+  {
+   "product": "FortiSwitch",
+   "ranges": [
+    {
+     "ge": "6.0.0",
+     "le": "6.0.7"
+    },
+    {
+     "ge": "6.2.0",
+     "le": "6.2.7"
+    },
+    {
+     "ge": "6.4.0",
+     "le": "6.4.10"
+    },
+    {
+     "ge": "7.0.0",
+     "le": "7.0.4"
+    }
+   ]
+  }
+ ],
+ "FG-IR-18-325": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "5.2.12",
+     "le": "5.2.15"
+    },
+    {
+     "ge": "5.4.6",
+     "le": "5.4.7"
+    },
+    {
+     "ge": "5.6.1",
+     "le": "5.6.3"
+    }
+   ]
+  }
+ ],
+ "FG-IR-18-356": [
+  {
+   "product": "FortiAP-S",
+   "ranges": [
+    {
+     "ge": "6.0.0",
+     "lt": "6.0.4"
+    },
+    {
+     "lt": "5.6.4"
+    }
+   ]
+  },
+  {
+   "product": "FortiAP-W2",
+   "ranges": [
+    {
+     "ge": "6.0.0",
+     "lt": "6.0.4"
+    },
+    {
+     "lt": "5.6.4"
+    }
+   ]
+  }
+ ],
+ "FG-IR-18-382": [
+  {
+   "product": "FortiSIEM",
+   "ranges": [
+    {
+     "le": "5.2.0"
+    }
+   ]
+  }
+ ],
+ "FG-IR-18-383": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "5.4.0",
+     "le": "5.4.12"
+    },
+    {
+     "ge": "5.6.0",
+     "le": "5.6.7"
+    },
+    {
+     "ge": "6.0.0",
+     "le": "6.0.4"
+    },
+    {
+     "le": "5.2.15"
+    }
+   ]
+  },
+  {
+   "product": "FortiProxy",
+   "ranges": [
+    {
+     "le": "1.2.8"
+    }
+   ],
+   "versions": [
+    "2.0.0"
+   ]
+  }
+ ],
+ "FG-IR-18-384": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "5.4.6",
+     "le": "5.4.12"
+    },
+    {
+     "ge": "5.6.3",
+     "le": "5.6.7"
+    },
+    {
+     "ge": "6.0.0",
+     "le": "6.0.4"
+    }
+   ]
+  },
+  {
+   "product": "FortiProxy",
+   "ranges": [
+    {
+     "ge": "1.0.0",
+     "le": "1.0.7"
+    },
+    {
+     "ge": "1.1.0",
+     "le": "1.1.6"
+    },
+    {
+     "ge": "1.2.0",
+     "le": "1.2.8"
+    }
+   ],
+   "versions": [
+    "2.0.0"
+   ]
+  }
+ ],
+ "FG-IR-18-387": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "5.6.0",
+     "le": "5.6.7"
+    },
+    {
+     "ge": "6.0.0",
+     "le": "6.0.4"
+    },
+    {
+     "le": "5.4.13"
+    }
+   ]
+  },
+  {
+   "product": "FortiProxy",
+   "ranges": [
+    {
+     "le": "1.2.8"
+    }
+   ],
+   "versions": [
+    "2.0.0"
+   ]
+  }
+ ],
+ "FG-IR-18-388": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "5.2.0",
+     "le": "5.2.14"
+    },
+    {
+     "ge": "5.4.0",
+     "le": "5.4.12"
+    },
+    {
+     "ge": "5.6.0",
+     "le": "5.6.10"
+    },
+    {
+     "ge": "6.0.0",
+     "le": "6.0.4"
+    }
+   ]
+  },
+  {
+   "product": "FortiProxy",
+   "ranges": [
+    {
+     "le": "1.2.8"
+    }
+   ],
+   "versions": [
+    "2.0.0"
+   ]
+  }
+ ],
+ "FG-IR-18-389": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "5.4.1",
+     "le": "5.4.10"
+    },
+    {
+     "ge": "5.6.0",
+     "le": "5.6.8"
+    },
+    {
+     "ge": "6.0.0",
+     "le": "6.0.4"
+    }
+   ]
+  },
+  {
+   "product": "FortiProxy",
+   "ranges": [
+    {
+     "ge": "1.0.0",
+     "le": "1.0.7"
+    },
+    {
+     "ge": "1.1.0",
+     "le": "1.1.6"
+    },
+    {
+     "ge": "1.2.0",
+     "le": "1.2.8"
+    }
+   ],
+   "versions": [
+    "2.0.0"
+   ]
+  }
+ ],
+ "FG-IR-19-001": [
+  {
+   "product": "FortiCASB",
+   "ranges": [
+    {
+     "lt": "4.1.0"
+    }
+   ]
+  }
+ ],
+ "FG-IR-19-002": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "5.2.0",
+     "le": "5.2.14"
+    },
+    {
+     "ge": "5.4.0",
+     "le": "5.4.13"
+    },
+    {
+     "ge": "5.6.0",
+     "le": "5.6.12"
+    },
+    {
+     "ge": "6.0.0",
+     "le": "6.0.4"
+    }
+   ]
+  }
+ ],
+ "FG-IR-19-003": [
+  {
+   "product": "FortiClientMac",
+   "versions": [
+    "6.0.1",
+    "6.0.2",
+    "6.0.3",
+    "6.0.4"
+   ]
+  }
+ ],
+ "FG-IR-19-007": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "5.6.0",
+     "le": "5.6.10"
+    },
+    {
+     "ge": "6.0.0",
+     "le": "6.0.6"
+    }
+   ],
+   "versions": [
+    "6.2.0"
+   ]
+  },
+  {
+   "product": "FortiManager",
+   "ranges": [
+    {
+     "le": "6.2.3"
+    }
+   ]
+  }
+ ],
+ "FG-IR-19-013": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "5.4.0",
+     "le": "5.4.13"
+    },
+    {
+     "ge": "5.6.0",
+     "le": "5.6.14"
+    },
+    {
+     "ge": "6.0.0",
+     "le": "6.0.17"
+    },
+    {
+     "ge": "6.2.0",
+     "le": "6.2.2"
+    }
+   ],
+   "versions": [
+    "5.2.7"
+   ]
+  },
+  {
+   "product": "FortiAP-S",
+   "ranges": [
+    {
+     "lt": "6.2.2"
+    }
+   ]
+  },
+  {
+   "product": "FortiAP-W2",
+   "ranges": [
+    {
+     "lt": "6.2.2"
+    }
+   ]
+  },
+  {
+   "product": "FortiAnalyzer",
+   "ranges": [
+    {
+     "lt": "6.2.3"
+    }
+   ]
+  },
+  {
+   "product": "FortiManager",
+   "ranges": [
+    {
+     "lt": "6.2.3"
+    }
+   ]
+  },
+  {
+   "product": "FortiSwitch",
+   "ranges": [
+    {
+     "lt": "3.6.11"
+    }
+   ],
+   "versions": [
+    "6.0.6",
+    "6.2.2"
+   ]
+  }
+ ],
+ "FG-IR-19-034": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "5.6.0",
+     "le": "5.6.10"
+    },
+    {
+     "ge": "6.0.0",
+     "le": "6.0.4"
+    }
+   ]
+  }
+ ],
+ "FG-IR-19-037": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "4.0.0",
+     "le": "4.0.4"
+    },
+    {
+     "ge": "4.1.0",
+     "le": "4.1.11"
+    },
+    {
+     "ge": "4.2.0",
+     "le": "4.2.16"
+    },
+    {
+     "ge": "4.3.0",
+     "le": "4.3.19"
+    },
+    {
+     "ge": "5.0.0",
+     "le": "5.0.14"
+    },
+    {
+     "ge": "5.2.0",
+     "le": "5.2.15"
+    },
+    {
+     "ge": "5.4.0",
+     "le": "5.4.13"
+    },
+    {
+     "ge": "5.6.0",
+     "le": "5.6.13"
+    },
+    {
+     "ge": "6.0.0",
+     "le": "6.0.14"
+    }
+   ],
+   "versions": [
+    "6.2.0"
+   ]
+  }
+ ],
+ "FG-IR-19-043": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "5.6.0",
+     "le": "5.6.5"
+    },
+    {
+     "ge": "6.2.0",
+     "le": "6.2.2"
+    }
+   ],
+   "versions": [
+    "6.0.1",
+    "6.0.3"
+   ]
+  }
+ ],
+ "FG-IR-19-060": [
+  {
+   "product": "FortiClientEMS",
+   "ranges": [
+    {
+     "le": "6.2.1"
+    }
+   ]
+  },
+  {
+   "product": "FortiClientWindows",
+   "ranges": [
+    {
+     "le": "6.2.3"
+    },
+    {
+     "lt": "6.0.6"
+    }
+   ]
+  }
+ ],
+ "FG-IR-19-070": [
+  {
+   "product": "FortiWeb",
+   "ranges": [
+    {
+     "le": "6.0.2"
+    }
+   ]
+  }
+ ],
+ "FG-IR-19-072": [
+  {
+   "product": "FortiClientEMS",
+   "versions": [
+    "6.2.0"
+   ]
+  }
+ ],
+ "FG-IR-19-099": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "5.6.0",
+     "le": "5.6.10"
+    },
+    {
+     "ge": "6.0.0",
+     "le": "6.0.6"
+    }
+   ],
+   "versions": [
+    "6.2.0"
+   ]
+  }
+ ],
+ "FG-IR-19-100": [
+  {
+   "product": "FortiSIEM",
+   "ranges": [
+    {
+     "le": "5.2.2"
+    }
+   ]
+  }
+ ],
+ "FG-IR-19-104": [
+  {
+   "product": "FortiAuthenticator",
+   "versions": [
+    "6.0.0"
+   ]
+  }
+ ],
+ "FG-IR-19-107": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "6.2.0",
+     "le": "6.2.1"
+    },
+    {
+     "ge": "6.2.0",
+     "le": "6.2.2"
+    }
+   ]
+  }
+ ],
+ "FG-IR-19-110": [
+  {
+   "product": "FortiClientMac",
+   "ranges": [
+    {
+     "le": "6.2.0"
+    }
+   ]
+  },
+  {
+   "product": "FortiClientWindows",
+   "ranges": [
+    {
+     "le": "6.2.0"
+    }
+   ]
+  }
+ ],
+ "FG-IR-19-111": [
+  {
+   "product": "FortiOS",
+   "versions": [
+    "6.2.0"
+   ]
+  }
+ ],
+ "FG-IR-19-134": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "5.4.0",
+     "le": "5.4.13"
+    },
+    {
+     "ge": "5.6.0",
+     "le": "5.6.10"
+    },
+    {
+     "ge": "6.0.0",
+     "le": "6.0.6"
+    },
+    {
+     "ge": "6.2.0",
+     "le": "6.2.1"
+    }
+   ]
+  }
+ ],
+ "FG-IR-19-140": [
+  {
+   "product": "FortiNAC",
+   "ranges": [
+    {
+     "ge": "8.3.0",
+     "le": "8.3.6"
+    }
+   ],
+   "versions": [
+    "8.5.0"
+   ]
+  }
+ ],
+ "FG-IR-19-145": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "5.6.0",
+     "le": "5.6.10"
+    },
+    {
+     "ge": "6.0.0",
+     "le": "6.0.8"
+    }
+   ],
+   "versions": [
+    "6.2.0"
+   ]
+  }
+ ],
+ "FG-IR-19-148": [
+  {
+   "product": "FortiClientWindows",
+   "ranges": [
+    {
+     "le": "6.2.0"
+    }
+   ]
+  }
+ ],
+ "FG-IR-19-179": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "5.4.0",
+     "le": "5.4.11"
+    },
+    {
+     "ge": "5.6.0",
+     "le": "5.6.9"
+    },
+    {
+     "ge": "6.0.0",
+     "le": "6.0.5"
+    },
+    {
+     "ge": "6.2.0",
+     "le": "6.2.1"
+    }
+   ]
+  }
+ ],
+ "FG-IR-19-184": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "6.0.0",
+     "le": "6.0.6"
+    },
+    {
+     "ge": "6.2.0",
+     "le": "6.2.1"
+    }
+   ]
+  }
+ ],
+ "FG-IR-19-185": [
+  {
+   "product": "FortiRecorder",
+   "ranges": [
+    {
+     "lt": "2.7.4"
+    }
+   ]
+  }
+ ],
+ "FG-IR-19-186": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "5.0.3",
+     "le": "5.0.5"
+    }
+   ]
+  }
+ ],
+ "FG-IR-19-191": [
+  {
+   "product": "FortiManager",
+   "ranges": [
+    {
+     "le": "6.0.6"
+    }
+   ],
+   "versions": [
+    "6.2.0",
+    "6.2.1"
+   ]
+  }
+ ],
+ "FG-IR-19-194": [
+  {
+   "product": "FortiClientWindows",
+   "ranges": [
+    {
+     "lt": "6.4.0"
+    }
+   ]
+  }
+ ],
+ "FG-IR-19-195": [
+  {
+   "product": "FortiSIEM",
+   "ranges": [
+    {
+     "le": "5.2.5"
+    }
+   ]
+  }
+ ],
+ "FG-IR-19-197": [
+  {
+   "product": "FortiSIEM",
+   "ranges": [
+    {
+     "le": "5.2.5"
+    }
+   ]
+  }
+ ],
+ "FG-IR-19-209": [
+  {
+   "product": "FortiAP",
+   "ranges": [
+    {
+     "lt": "6.0.0"
+    }
+   ]
+  },
+  {
+   "product": "FortiAP-S",
+   "ranges": [
+    {
+     "le": "6.0.5"
+    }
+   ],
+   "versions": [
+    "6.2.0",
+    "6.2.1"
+   ]
+  },
+  {
+   "product": "FortiAP-U",
+   "ranges": [
+    {
+     "le": "6.0.5"
+    }
+   ]
+  },
+  {
+   "product": "FortiAP-W2",
+   "ranges": [
+    {
+     "le": "6.0.5"
+    }
+   ],
+   "versions": [
+    "6.2.0",
+    "6.2.1"
+   ]
+  }
+ ],
+ "FG-IR-19-210": [
+  {
+   "product": "FortiClientMac",
+   "versions": [
+    "6.2.1"
+   ]
+  }
+ ],
+ "FG-IR-19-217": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "5.2.0",
+     "le": "5.2.15"
+    },
+    {
+     "ge": "5.4.0",
+     "le": "5.4.13"
+    },
+    {
+     "ge": "5.6.0",
+     "le": "5.6.13"
+    },
+    {
+     "ge": "6.0.0",
+     "le": "6.0.9"
+    },
+    {
+     "ge": "6.2.0",
+     "le": "6.2.2"
+    }
+   ]
+  },
+  {
+   "product": "FortiProxy",
+   "ranges": [
+    {
+     "le": "1.2.9"
+    }
+   ],
+   "versions": [
+    "2.0.0"
+   ]
+  }
+ ],
+ "FG-IR-19-220": [
+  {
+   "product": "FortiADC",
+   "ranges": [
+    {
+     "le": "5.3.3"
+    }
+   ]
+  }
+ ],
+ "FG-IR-19-223": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "5.6.0",
+     "le": "5.6.12"
+    },
+    {
+     "ge": "6.0.0",
+     "le": "6.0.8"
+    },
+    {
+     "ge": "6.2.0",
+     "le": "6.2.1"
+    }
+   ]
+  },
+  {
+   "product": "FortiProxy",
+   "ranges": [
+    {
+     "ge": "1.2.0",
+     "le": "1.2.9"
+    }
+   ],
+   "versions": [
+    "2.0.0"
+   ]
+  }
+ ],
+ "FG-IR-19-227": [
+  {
+   "product": "FortiClientMac",
+   "versions": [
+    "6.0.7",
+    "6.2.0"
+   ]
+  }
+ ],
+ "FG-IR-19-236": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "5.6.0",
+     "le": "5.6.14"
+    },
+    {
+     "ge": "6.0.0",
+     "le": "6.0.6"
+    },
+    {
+     "ge": "6.2.0",
+     "le": "6.2.1"
+    }
+   ]
+  }
+ ],
+ "FG-IR-19-237": [
+  {
+   "product": "FortiMail",
+   "ranges": [
+    {
+     "ge": "6.0.0",
+     "le": "6.0.6"
+    },
+    {
+     "le": "5.4.10"
+    }
+   ],
+   "versions": [
+    "6.2.0"
+   ]
+  }
+ ],
+ "FG-IR-19-238": [
+  {
+   "product": "FortiClientLinux",
+   "ranges": [
+    {
+     "le": "6.2.1"
+    }
+   ]
+  }
+ ],
+ "FG-IR-19-240": [
+  {
+   "product": "FortiSIEM",
+   "versions": [
+    "5.2.5"
+   ]
+  }
+ ],
+ "FG-IR-19-244": [
+  {
+   "product": "FortiADC",
+   "ranges": [
+    {
+     "le": "5.3.7"
+    }
+   ]
+  },
+  {
+   "product": "FortiADCManager",
+   "ranges": [
+    {
+     "le": "5.2.1"
+    },
+    {
+     "le": "5.3.0"
+    }
+   ]
+  }
+ ],
+ "FG-IR-19-248": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "6.0.0",
+     "le": "6.0.10"
+    },
+    {
+     "ge": "6.2.0",
+     "le": "6.2.2"
+    }
+   ]
+  },
+  {
+   "product": "FortiProxy",
+   "ranges": [
+    {
+     "ge": "1.0",
+     "lt": "1.1"
+    },
+    {
+     "ge": "1.1",
+     "lt": "1.2"
+    },
+    {
+     "le": "1.2.9"
+    },
+    {
+     "le": "2.0.0"
+    }
+   ]
+  }
+ ],
+ "FG-IR-19-258": [
+  {
+   "product": "FortiPresence",
+   "ranges": [
+    {
+     "le": "2.1.0"
+    }
+   ]
+  }
+ ],
+ "FG-IR-19-265": [
+  {
+   "product": "FortiWeb",
+   "versions": [
+    "6.0.5",
+    "6.1.1",
+    "6.2.0"
+   ]
+  }
+ ],
+ "FG-IR-19-269": [
+  {
+   "product": "FortiWeb",
+   "ranges": [
+    {
+     "le": "6.2.0"
+    }
+   ]
+  }
+ ],
+ "FG-IR-19-270": [
+  {
+   "product": "FortiIsolator",
+   "versions": [
+    "1.2.2"
+   ]
+  }
+ ],
+ "FG-IR-19-271": [
+  {
+   "product": "FortiManager",
+   "ranges": [
+    {
+     "le": "6.2.1"
+    }
+   ]
+  }
+ ],
+ "FG-IR-19-281": [
+  {
+   "product": "FortiClientWindows",
+   "ranges": [
+    {
+     "le": "6.2.2"
+    }
+   ]
+  }
+ ],
+ "FG-IR-19-283": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "6.0.0",
+     "le": "6.0.9"
+    },
+    {
+     "ge": "6.2.0",
+     "le": "6.2.3"
+    }
+   ],
+   "versions": [
+    "6.4.0"
+   ]
+  }
+ ],
+ "FG-IR-19-294": [
+  {
+   "product": "FortiAnalyzer",
+   "ranges": [
+    {
+     "ge": "6.2.0",
+     "le": "6.2.3"
+    },
+    {
+     "le": "6.0.8"
+    }
+   ]
+  },
+  {
+   "product": "FortiManager",
+   "ranges": [
+    {
+     "ge": "6.2.0",
+     "le": "6.2.3"
+    },
+    {
+     "le": "6.0.8"
+    }
+   ]
+  }
+ ],
+ "FG-IR-19-296": [
+  {
+   "product": "FortiSIEM",
+   "versions": [
+    "5.2.6"
+   ]
+  }
+ ],
+ "FG-IR-19-298": [
+  {
+   "product": "FortiAP-S",
+   "ranges": [
+    {
+     "ge": "6.2.0",
+     "le": "6.2.2"
+    },
+    {
+     "le": "6.0.5"
+    }
+   ]
+  },
+  {
+   "product": "FortiAP-U",
+   "ranges": [
+    {
+     "le": "6.0.1"
+    }
+   ]
+  },
+  {
+   "product": "FortiAP-W2",
+   "ranges": [
+    {
+     "ge": "6.2.0",
+     "le": "6.2.2"
+    },
+    {
+     "le": "6.0.5"
+    }
+   ]
+  }
+ ],
+ "FG-IR-19-301": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "6.2.0",
+     "le": "6.2.9"
+    },
+    {
+     "ge": "6.4.0",
+     "le": "6.4.1"
+    }
+   ]
+  }
+ ],
+ "FG-IR-19-306": [
+  {
+   "product": "FortiGate Cloud",
+   "ranges": [
+    {
+     "ge": "4.4",
+     "lt": "4.5"
+    }
+   ]
+  }
+ ],
+ "FG-IR-20-001": [
+  {
+   "product": "FortiWeb",
+   "versions": [
+    "6.2.2"
+   ]
+  }
+ ],
+ "FG-IR-20-002": [
+  {
+   "product": "FortiNAC",
+   "ranges": [
+    {
+     "lt": "8.7.2"
+    }
+   ]
+  }
+ ],
+ "FG-IR-20-003": [
+  {
+   "product": "FortiAnalyzer",
+   "versions": [
+    "6.2.2",
+    "6.2.3"
+   ]
+  }
+ ],
+ "FG-IR-20-005": [
+  {
+   "product": "FortiAnalyzer",
+   "versions": [
+    "6.2.0",
+    "6.2.1",
+    "6.2.2",
+    "6.2.3"
+   ]
+  },
+  {
+   "product": "FortiManager",
+   "versions": [
+    "6.2.0",
+    "6.2.1",
+    "6.2.2",
+    "6.2.3"
+   ]
+  }
+ ],
+ "FG-IR-20-006": [
+  {
+   "product": "FortiDeceptor",
+   "ranges": [
+    {
+     "le": "3.0.0"
+    }
+   ]
+  }
+ ],
+ "FG-IR-20-009": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "6.0.0",
+     "le": "6.0.11"
+    },
+    {
+     "ge": "6.2.0",
+     "le": "6.2.4"
+    }
+   ]
+  },
+  {
+   "product": "FortiProxy",
+   "ranges": [
+    {
+     "le": "1.2.9"
+    }
+   ],
+   "versions": [
+    "2.0.0"
+   ]
+  }
+ ],
+ "FG-IR-20-011": [
+  {
+   "product": "FortiIsolator",
+   "versions": [
+    "2.0.1"
+   ]
+  }
+ ],
+ "FG-IR-20-012": [
+  {
+   "product": "FortiADC",
+   "ranges": [
+    {
+     "ge": "5.3",
+     "lt": "5.4"
+    },
+    {
+     "lt": "5.3.5"
+    }
+   ],
+   "versions": [
+    "5.4.0"
+   ]
+  }
+ ],
+ "FG-IR-20-013": [
+  {
+   "product": "FortiADC",
+   "ranges": [
+    {
+     "le": "5.3.3"
+    }
+   ]
+  }
+ ],
+ "FG-IR-20-014": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "6.0.0",
+     "le": "6.0.13"
+    },
+    {
+     "ge": "6.2.0",
+     "le": "6.2.9"
+    },
+    {
+     "ge": "6.4.0",
+     "le": "6.4.1"
+    }
+   ]
+  },
+  {
+   "product": "FortiAuthenticator",
+   "ranges": [
+    {
+     "ge": "6.0.0",
+     "le": "6.0.4"
+    }
+   ],
+   "versions": [
+    "5.5.0",
+    "6.1.0"
+   ]
+  }
+ ],
+ "FG-IR-20-016": [
+  {
+   "product": "FortiWLC",
+   "versions": [
+    "8.5.1"
+   ]
+  }
+ ],
+ "FG-IR-20-021": [
+  {
+   "product": "FortiSIEMWindowsAgent",
+   "versions": [
+    "3.1.2"
+   ]
+  }
+ ],
+ "FG-IR-20-027": [
+  {
+   "product": "FortiWebManager",
+   "versions": [
+    "6.0.2",
+    "6.2.3"
+   ]
+  }
+ ],
+ "FG-IR-20-033": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "6.0.0",
+     "le": "6.0.11"
+    },
+    {
+     "ge": "6.2.0",
+     "le": "6.2.5"
+    }
+   ]
+  }
+ ],
+ "FG-IR-20-037": [
+  {
+   "product": "FortiClientWindows",
+   "ranges": [
+    {
+     "ge": "6.0.0",
+     "le": "6.0.10"
+    },
+    {
+     "ge": "6.2.0",
+     "le": "6.2.6"
+    }
+   ]
+  }
+ ],
+ "FG-IR-20-038": [
+  {
+   "product": "FortiNAC",
+   "ranges": [
+    {
+     "le": "8.8.1"
+    }
+   ]
+  }
+ ],
+ "FG-IR-20-040": [
+  {
+   "product": "FortiClientWindows",
+   "ranges": [
+    {
+     "le": "6.0.9"
+    },
+    {
+     "le": "6.2.1"
+    }
+   ]
+  }
+ ],
+ "FG-IR-20-041": [
+  {
+   "product": "FortiSIEM",
+   "ranges": [
+    {
+     "le": "5.2.8"
+    }
+   ]
+  }
+ ],
+ "FG-IR-20-044": [
+  {
+   "product": "FortiADC",
+   "versions": [
+    "5.4.3",
+    "6.0.0"
+   ]
+  }
+ ],
+ "FG-IR-20-045": [
+  {
+   "product": "FortiMail",
+   "ranges": [
+    {
+     "le": "6.2.2"
+    }
+   ],
+   "versions": [
+    "5.4.10",
+    "6.0.7"
+   ]
+  },
+  {
+   "product": "FortiVoice",
+   "versions": [
+    "6.0.0",
+    "6.0.1"
+   ]
+  }
+ ],
+ "FG-IR-20-049": [
+  {
+   "product": "FortiAuthenticator",
+   "ranges": [
+    {
+     "lt": "6.3.0"
+    }
+   ]
+  }
+ ],
+ "FG-IR-20-054": [
+  {
+   "product": "FortiAnalyzer",
+   "ranges": [
+    {
+     "lt": "6.2.5"
+    },
+    {
+     "lt": "6.4.1"
+    }
+   ]
+  },
+  {
+   "product": "FortiTester",
+   "ranges": [
+    {
+     "lt": "3.9.0"
+    }
+   ]
+  }
+ ],
+ "FG-IR-20-061": [
+  {
+   "product": "FortiManager",
+   "ranges": [
+    {
+     "ge": "6.4.0",
+     "le": "6.4.3"
+    }
+   ]
+  }
+ ],
+ "FG-IR-20-066": [
+  {
+   "product": "FortiPortal",
+   "ranges": [
+    {
+     "le": "4.0.4"
+    },
+    {
+     "le": "4.1.2"
+    },
+    {
+     "le": "4.2.2"
+    },
+    {
+     "le": "5.0.3"
+    },
+    {
+     "le": "5.1.2"
+    },
+    {
+     "le": "5.2.6"
+    },
+    {
+     "le": "5.3.6"
+    },
+    {
+     "le": "6.0.4"
+    }
+   ]
+  }
+ ],
+ "FG-IR-20-067": [
+  {
+   "product": "FortiClientEMS",
+   "versions": [
+    "6.0.0",
+    "6.0.1",
+    "6.0.2",
+    "6.0.3",
+    "6.0.4",
+    "6.0.5",
+    "6.0.6",
+    "6.0.8",
+    "6.2.0",
+    "6.2.1",
+    "6.2.2",
+    "6.2.3",
+    "6.2.4",
+    "6.2.6",
+    "6.2.7",
+    "6.2.8",
+    "6.2.9",
+    "6.4.0",
+    "6.4.1"
+   ]
+  }
+ ],
+ "FG-IR-20-068": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "6.2.2",
+     "le": "6.2.5"
+    },
+    {
+     "ge": "6.4.0",
+     "le": "6.4.1"
+    }
+   ]
+  }
+ ],
+ "FG-IR-20-070": [
+  {
+   "product": "FortiSandbox",
+   "versions": [
+    "3.2.1"
+   ]
+  }
+ ],
+ "FG-IR-20-071": [
+  {
+   "product": "FortiSandbox",
+   "versions": [
+    "3.1.4",
+    "3.2.1"
+   ]
+  }
+ ],
+ "FG-IR-20-072": [
+  {
+   "product": "FortiClientEMS",
+   "versions": [
+    "6.2.0",
+    "6.2.1",
+    "6.2.2",
+    "6.2.3",
+    "6.2.4",
+    "6.2.6",
+    "6.2.7",
+    "6.2.8",
+    "6.4.0",
+    "6.4.1",
+    "6.4.2"
+   ]
+  }
+ ],
+ "FG-IR-20-074": [
+  {
+   "product": "FortiClientEMS",
+   "versions": [
+    "6.2.0",
+    "6.2.1",
+    "6.2.2",
+    "6.2.3",
+    "6.2.4",
+    "6.2.6",
+    "6.2.7",
+    "6.2.8",
+    "6.4.0",
+    "6.4.1"
+   ]
+  }
+ ],
+ "FG-IR-20-076": [
+  {
+   "product": "FortiWeb",
+   "versions": [
+    "6.2.3",
+    "6.3.4"
+   ]
+  }
+ ],
+ "FG-IR-20-078": [
+  {
+   "product": "FortiAuthenticator",
+   "ranges": [
+    {
+     "ge": "6.0.0",
+     "le": "6.0.7"
+    },
+    {
+     "ge": "6.1.0",
+     "le": "6.1.2"
+    },
+    {
+     "ge": "6.2.0",
+     "le": "6.2.1"
+    },
+    {
+     "ge": "6.3.0",
+     "le": "6.3.3"
+    },
+    {
+     "ge": "6.4.0",
+     "le": "6.4.6"
+    }
+   ]
+  },
+  {
+   "product": "FortiDeceptor",
+   "ranges": [
+    {
+     "ge": "1.0.0",
+     "le": "1.0.1"
+    },
+    {
+     "ge": "3.0.0",
+     "le": "3.0.2"
+    },
+    {
+     "ge": "3.1.0",
+     "le": "3.1.1"
+    }
+   ],
+   "versions": [
+    "1.1.0",
+    "2.0.0",
+    "2.1.0"
+   ]
+  },
+  {
+   "product": "FortiMail",
+   "ranges": [
+    {
+     "ge": "5.4.0",
+     "le": "5.4.12"
+    },
+    {
+     "ge": "6.0.0",
+     "le": "6.0.9"
+    },
+    {
+     "ge": "6.2.1",
+     "le": "6.2.4"
+    }
+   ],
+   "versions": [
+    "6.4.0"
+   ]
+  }
+ ],
+ "FG-IR-20-079": [
+  {
+   "product": "FortiClientWindows",
+   "versions": [
+    "6.4.0",
+    "6.4.1",
+    "6.4.2",
+    "7.0.0",
+    "7.0.1"
+   ]
+  }
+ ],
+ "FG-IR-20-082": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "5.6.0",
+     "le": "5.6.12"
+    },
+    {
+     "ge": "6.0.0",
+     "le": "6.0.11"
+    },
+    {
+     "ge": "6.2.0",
+     "le": "6.2.4"
+    },
+    {
+     "ge": "6.4.0",
+     "le": "6.4.1"
+    }
+   ]
+  }
+ ],
+ "FG-IR-20-083": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "5.6.0",
+     "le": "5.6.12"
+    },
+    {
+     "ge": "6.0.0",
+     "le": "6.0.10"
+    }
+   ]
+  }
+ ],
+ "FG-IR-20-091": [
+  {
+   "product": "FortiOS"
+  }
+ ],
+ "FG-IR-20-092": [
+  {
+   "product": "FortiAnalyzer",
+   "versions": [
+    "6.0.0",
+    "6.0.1",
+    "6.0.2",
+    "6.0.3",
+    "6.0.4",
+    "6.0.5",
+    "6.0.6",
+    "6.4.4"
+   ]
+  }
+ ],
+ "FG-IR-20-098": [
+  {
+   "product": "FortiAnalyzer",
+   "versions": [
+    "6.0.0",
+    "6.0.1",
+    "6.0.2",
+    "6.0.3",
+    "6.0.4",
+    "6.0.5",
+    "6.0.6",
+    "6.0.7",
+    "6.0.8",
+    "6.0.9",
+    "6.0.10",
+    "6.2.0",
+    "6.2.1",
+    "6.2.2",
+    "6.2.3",
+    "6.2.4",
+    "6.2.5",
+    "6.2.6",
+    "6.2.7",
+    "6.4.0",
+    "6.4.1",
+    "6.4.2",
+    "6.4.3"
+   ]
+  }
+ ],
+ "FG-IR-20-103": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "6.0.0",
+     "le": "6.0.11"
+    },
+    {
+     "ge": "6.2.0",
+     "le": "6.2.4"
+    },
+    {
+     "ge": "6.4.0",
+     "le": "6.4.1"
+    }
+   ]
+  }
+ ],
+ "FG-IR-20-110": [
+  {
+   "product": "FortiClientLinux",
+   "ranges": [
+    {
+     "ge": "6.0.0",
+     "le": "6.0.6"
+    },
+    {
+     "ge": "6.2.0",
+     "le": "6.2.4"
+    },
+    {
+     "ge": "6.2.6",
+     "le": "6.2.7"
+    }
+   ],
+   "versions": [
+    "6.0.8",
+    "6.4.0"
+   ]
+  }
+ ],
+ "FG-IR-20-120": [
+  {
+   "product": "FortiWeb",
+   "ranges": [
+    {
+     "ge": "5.9",
+     "lt": "5.10"
+    },
+    {
+     "ge": "6.0",
+     "lt": "6.1"
+    },
+    {
+     "ge": "6.1",
+     "lt": "6.2"
+    },
+    {
+     "le": "6.2.3"
+    },
+    {
+     "le": "6.3.7"
+    }
+   ]
+  }
+ ],
+ "FG-IR-20-122": [
+  {
+   "product": "FortiWeb",
+   "ranges": [
+    {
+     "ge": "6.3.0",
+     "le": "6.3.7"
+    },
+    {
+     "lt": "6.2.4"
+    }
+   ]
+  }
+ ],
+ "FG-IR-20-123": [
+  {
+   "product": "FortiWeb",
+   "ranges": [
+    {
+     "ge": "6.3.0",
+     "le": "6.3.5"
+    }
+   ]
+  }
+ ],
+ "FG-IR-20-124": [
+  {
+   "product": "FortiWeb",
+   "ranges": [
+    {
+     "ge": "6.3.0",
+     "le": "6.3.7"
+    },
+    {
+     "lt": "6.2.4"
+    }
+   ]
+  }
+ ],
+ "FG-IR-20-125": [
+  {
+   "product": "FortiWeb",
+   "ranges": [
+    {
+     "ge": "6.3.0",
+     "le": "6.3.5"
+    },
+    {
+     "lt": "6.2.4"
+    }
+   ]
+  }
+ ],
+ "FG-IR-20-126": [
+  {
+   "product": "FortiWeb",
+   "ranges": [
+    {
+     "ge": "6.3.0",
+     "le": "6.3.7"
+    },
+    {
+     "lt": "6.2.4"
+    }
+   ]
+  }
+ ],
+ "FG-IR-20-127": [
+  {
+   "product": "FortiClientWindows",
+   "versions": [
+    "6.2.0",
+    "6.2.1",
+    "6.2.2",
+    "6.2.3",
+    "6.2.4",
+    "6.2.5",
+    "6.2.6",
+    "6.2.7",
+    "6.2.8",
+    "6.4.0",
+    "6.4.1",
+    "6.4.2",
+    "6.4.3",
+    "6.4.4",
+    "6.4.5",
+    "6.4.6",
+    "7.0.0"
+   ]
+  }
+ ],
+ "FG-IR-20-131": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "5.6.0",
+     "le": "5.6.14"
+    },
+    {
+     "ge": "6.0.0",
+     "le": "6.0.12"
+    },
+    {
+     "ge": "6.2.0",
+     "le": "6.2.9"
+    },
+    {
+     "ge": "6.4.0",
+     "le": "6.4.6"
+    }
+   ],
+   "versions": [
+    "7.0.0"
+   ]
+  }
+ ],
+ "FG-IR-20-137": [
+  {
+   "product": "FortiWLC",
+   "ranges": [
+    {
+     "ge": "8.4.0",
+     "le": "8.4.2"
+    },
+    {
+     "ge": "8.4.4",
+     "le": "8.4.8"
+    },
+    {
+     "ge": "8.5.0",
+     "le": "8.5.3"
+    }
+   ],
+   "versions": [
+    "8.3.3",
+    "8.6.0"
+   ]
+  }
+ ],
+ "FG-IR-20-138": [
+  {
+   "product": "FortiWLC",
+   "ranges": [
+    {
+     "ge": "8.2.4",
+     "le": "8.2.7"
+    },
+    {
+     "ge": "8.3.0",
+     "le": "8.3.3"
+    },
+    {
+     "ge": "8.4.0",
+     "le": "8.4.2"
+    },
+    {
+     "ge": "8.4.4",
+     "le": "8.4.8"
+    },
+    {
+     "ge": "8.5.0",
+     "le": "8.5.3"
+    }
+   ],
+   "versions": [
+    "8.1.3",
+    "8.6.0"
+   ]
+  }
+ ],
+ "FG-IR-20-147": [
+  {
+   "product": "FortiWLC",
+   "ranges": [
+    {
+     "ge": "8.2.6",
+     "le": "8.2.7"
+    },
+    {
+     "ge": "8.3.2",
+     "le": "8.3.3"
+    },
+    {
+     "ge": "8.4.0",
+     "le": "8.4.2"
+    },
+    {
+     "ge": "8.4.4",
+     "le": "8.4.8"
+    },
+    {
+     "ge": "8.5.0",
+     "le": "8.5.2"
+    }
+   ]
+  }
+ ],
+ "FG-IR-20-158": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "5.6.0",
+     "le": "5.6.14"
+    },
+    {
+     "ge": "6.0.0",
+     "le": "6.0.13"
+    },
+    {
+     "ge": "6.2.0",
+     "le": "6.2.9"
+    },
+    {
+     "ge": "6.4.0",
+     "le": "6.4.6"
+    }
+   ],
+   "versions": [
+    "7.0.0"
+   ]
+  }
+ ],
+ "FG-IR-20-170": [
+  {
+   "product": "FortiAuthenticator",
+   "ranges": [
+    {
+     "lt": "6.0.6"
+    }
+   ]
+  },
+  {
+   "product": "FortiSandbox",
+   "versions": [
+    "3.0.0",
+    "3.0.1",
+    "3.0.2",
+    "3.0.3",
+    "3.0.4",
+    "3.0.5",
+    "3.0.6",
+    "3.1.0",
+    "3.1.1",
+    "3.1.2",
+    "3.1.3",
+    "3.1.4",
+    "3.2.0",
+    "3.2.1",
+    "3.2.2"
+   ]
+  }
+ ],
+ "FG-IR-20-171": [
+  {
+   "product": "FortiSandbox",
+   "versions": [
+    "3.1.0",
+    "3.1.1",
+    "3.1.2",
+    "3.1.3",
+    "3.1.4",
+    "3.2.0",
+    "3.2.1",
+    "3.2.2"
+   ]
+  }
+ ],
+ "FG-IR-20-172": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "6.2.0",
+     "le": "6.2.5"
+    },
+    {
+     "ge": "6.4.0",
+     "le": "6.4.2"
+    }
+   ]
+  }
+ ],
+ "FG-IR-20-177": [
+  {
+   "product": "FortiDeceptor",
+   "versions": [
+    "3.0.0",
+    "3.0.1",
+    "3.1.0"
+   ]
+  }
+ ],
+ "FG-IR-20-178": [
+  {
+   "product": "FortiSandbox",
+   "ranges": [
+    {
+     "lt": "3.2.2"
+    }
+   ]
+  }
+ ],
+ "FG-IR-20-183": [
+  {
+   "product": "FortiSDNConnector",
+   "versions": [
+    "1.0.0",
+    "1.1.0",
+    "1.1.1",
+    "1.1.2",
+    "1.1.3",
+    "1.1.4",
+    "1.1.5",
+    "1.1.6",
+    "1.1.7"
+   ]
+  }
+ ],
+ "FG-IR-20-185": [
+  {
+   "product": "FortiSandbox",
+   "ranges": [
+    {
+     "lt": "3.2.2"
+    }
+   ]
+  }
+ ],
+ "FG-IR-20-188": [
+  {
+   "product": "FortiSandbox",
+   "ranges": [
+    {
+     "lt": "4.0.0"
+    }
+   ]
+  }
+ ],
+ "FG-IR-20-189": [
+  {
+   "product": "FortiManager",
+   "versions": [
+    "6.2.6",
+    "6.4.3"
+   ]
+  }
+ ],
+ "FG-IR-20-190": [
+  {
+   "product": "FortiManager",
+   "versions": [
+    "6.2.7",
+    "6.4.3"
+   ]
+  }
+ ],
+ "FG-IR-20-191": [
+  {
+   "product": "FSSO"
+  },
+  {
+   "product": "FSSO CA"
+  }
+ ],
+ "FG-IR-20-193": [
+  {
+   "product": "FortiGate Cloud",
+   "ranges": [
+    {
+     "le": "20.3"
+    }
+   ]
+  }
+ ],
+ "FG-IR-20-194": [
+  {
+   "product": "FortiAnalyzer",
+   "ranges": [
+    {
+     "ge": "6.0",
+     "lt": "6.1"
+    },
+    {
+     "le": "6.2.7"
+    },
+    {
+     "le": "6.4.5"
+    }
+   ]
+  },
+  {
+   "product": "FortiManager",
+   "ranges": [
+    {
+     "ge": "6.0",
+     "lt": "6.1"
+    },
+    {
+     "le": "6.2.7"
+    },
+    {
+     "le": "6.4.5"
+    }
+   ]
+  }
+ ],
+ "FG-IR-20-198": [
+  {
+   "product": "FortiSandbox",
+   "versions": [
+    "3.0.0",
+    "3.0.1",
+    "3.0.2",
+    "3.0.3",
+    "3.0.4",
+    "3.0.5",
+    "3.0.6",
+    "3.1.0",
+    "3.1.1",
+    "3.1.2",
+    "3.1.3",
+    "3.1.4",
+    "3.2.0",
+    "3.2.1",
+    "3.2.2"
+   ]
+  }
+ ],
+ "FG-IR-20-199": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "5.6.0",
+     "le": "5.6.13"
+    },
+    {
+     "ge": "6.0.0",
+     "le": "6.0.12"
+    },
+    {
+     "ge": "6.2.0",
+     "le": "6.2.7"
+    },
+    {
+     "ge": "6.4.0",
+     "le": "6.4.5"
+    }
+   ]
+  },
+  {
+   "product": "FortiProxy",
+   "ranges": [
+    {
+     "ge": "1.2.0",
+     "le": "1.2.9"
+    },
+    {
+     "ge": "2.0.0",
+     "le": "2.0.1"
+    }
+   ]
+  }
+ ],
+ "FG-IR-20-202": [
+  {
+   "product": "FortiSandbox",
+   "versions": [
+    "3.1.0",
+    "3.1.1",
+    "3.1.2",
+    "3.1.3",
+    "3.1.4",
+    "3.2.0",
+    "3.2.1",
+    "3.2.2"
+   ]
+  }
+ ],
+ "FG-IR-20-206": [
+  {
+   "product": "FortiWeb",
+   "versions": [
+    "6.2.0",
+    "6.2.1",
+    "6.2.2",
+    "6.2.3",
+    "6.2.4",
+    "6.3.0",
+    "6.3.1",
+    "6.3.2",
+    "6.3.3",
+    "6.3.4",
+    "6.3.5",
+    "6.3.6",
+    "6.3.7",
+    "6.3.8",
+    "6.3.9",
+    "6.3.10",
+    "6.3.11",
+    "6.3.12",
+    "6.3.13",
+    "6.3.14"
+   ]
+  }
+ ],
+ "FG-IR-20-209": [
+  {
+   "product": "FortiSandbox",
+   "ranges": [
+    {
+     "lt": "4.0.0"
+    }
+   ]
+  }
+ ],
+ "FG-IR-20-210": [
+  {
+   "product": "FortiAP",
+   "ranges": [
+    {
+     "ge": "6.4.1",
+     "le": "6.4.5"
+    }
+   ]
+  },
+  {
+   "product": "FortiAP-S",
+   "ranges": [
+    {
+     "ge": "6.2.4",
+     "le": "6.2.5"
+    }
+   ]
+  },
+  {
+   "product": "FortiAP-W2",
+   "ranges": [
+    {
+     "ge": "6.2.4",
+     "le": "6.2.5"
+    }
+   ]
+  }
+ ],
+ "FG-IR-20-217": [
+  {
+   "product": "FortiAuthenticator",
+   "ranges": [
+    {
+     "le": "6.3.2"
+    }
+   ]
+  }
+ ],
+ "FG-IR-20-218": [
+  {
+   "product": "FortiSandbox",
+   "ranges": [
+    {
+     "lt": "4.0.0"
+    }
+   ]
+  }
+ ],
+ "FG-IR-20-222": [
+  {
+   "product": "FortiADC",
+   "ranges": [
+    {
+     "lt": "6.2.1"
+    }
+   ]
+  },
+  {
+   "product": "FortiMail",
+   "ranges": [
+    {
+     "le": "7.0.1"
+    }
+   ]
+  },
+  {
+   "product": "FortiSandbox",
+   "ranges": [
+    {
+     "lt": "4.0.1"
+    }
+   ]
+  },
+  {
+   "product": "FortiWeb",
+   "ranges": [
+    {
+     "lt": "6.3.12"
+    }
+   ]
+  }
+ ],
+ "FG-IR-20-224": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "6.2.0",
+     "le": "6.2.2"
+    },
+    {
+     "le": "6.0.9"
+    }
+   ]
+  },
+  {
+   "product": "FortiProxy",
+   "ranges": [
+    {
+     "le": "1.2.9"
+    }
+   ],
+   "versions": [
+    "2.0.0"
+   ]
+  }
+ ],
+ "FG-IR-20-226": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "6.0.0",
+     "le": "6.0.8"
+    },
+    {
+     "ge": "6.2.0",
+     "le": "6.2.1"
+    }
+   ],
+   "versions": [
+    "5.6.12"
+   ]
+  },
+  {
+   "product": "FortiProxy",
+   "ranges": [
+    {
+     "ge": "1.2.0",
+     "le": "1.2.9"
+    }
+   ],
+   "versions": [
+    "2.0.0"
+   ]
+  }
+ ],
+ "FG-IR-20-229": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "5.4.0",
+     "le": "5.4.12"
+    },
+    {
+     "ge": "5.6.0",
+     "le": "5.6.10"
+    },
+    {
+     "ge": "6.0.0",
+     "le": "6.0.4"
+    },
+    {
+     "le": "5.2.14"
+    }
+   ]
+  },
+  {
+   "product": "FortiProxy",
+   "ranges": [
+    {
+     "le": "1.2.8"
+    }
+   ],
+   "versions": [
+    "2.0.0"
+   ]
+  }
+ ],
+ "FG-IR-20-230": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "5.4.0",
+     "le": "5.4.12"
+    },
+    {
+     "ge": "5.6.0",
+     "le": "5.6.7"
+    },
+    {
+     "ge": "6.0.0",
+     "le": "6.0.4"
+    },
+    {
+     "le": "5.2"
+    }
+   ]
+  },
+  {
+   "product": "FortiProxy",
+   "ranges": [
+    {
+     "le": "1.2.8"
+    }
+   ],
+   "versions": [
+    "2.0.0"
+   ]
+  }
+ ],
+ "FG-IR-20-231": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "5.4.1",
+     "le": "5.4.10"
+    },
+    {
+     "ge": "5.6.0",
+     "le": "5.6.8"
+    },
+    {
+     "ge": "6.0.0",
+     "le": "6.0.4"
+    }
+   ]
+  },
+  {
+   "product": "FortiProxy",
+   "ranges": [
+    {
+     "ge": "1.0.0",
+     "le": "1.0.7"
+    },
+    {
+     "ge": "1.1.0",
+     "le": "1.1.6"
+    },
+    {
+     "ge": "1.2.0",
+     "le": "1.2.8"
+    }
+   ],
+   "versions": [
+    "2.0.0"
+   ]
+  }
+ ],
+ "FG-IR-20-232": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "5.6.0",
+     "le": "5.6.7"
+    },
+    {
+     "ge": "6.0.0",
+     "le": "6.0.4"
+    },
+    {
+     "le": "5.4"
+    }
+   ]
+  },
+  {
+   "product": "FortiProxy",
+   "ranges": [
+    {
+     "le": "1.2.8"
+    }
+   ],
+   "versions": [
+    "2.0.0"
+   ]
+  }
+ ],
+ "FG-IR-20-233": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "5.4.6",
+     "le": "5.4.12"
+    },
+    {
+     "ge": "5.6.3",
+     "le": "5.6.7"
+    },
+    {
+     "ge": "6.0.0",
+     "le": "6.0.4"
+    }
+   ]
+  },
+  {
+   "product": "FortiProxy",
+   "ranges": [
+    {
+     "ge": "1.0.0",
+     "le": "1.0.7"
+    },
+    {
+     "ge": "1.1.0",
+     "le": "1.1.6"
+    },
+    {
+     "ge": "1.2.0",
+     "le": "1.2.8"
+    }
+   ],
+   "versions": [
+    "2.0.0"
+   ]
+  }
+ ],
+ "FG-IR-20-234": [
+  {
+   "product": "FortiSandbox",
+   "versions": [
+    "3.1.4",
+    "3.2.2"
+   ]
+  }
+ ],
+ "FG-IR-20-235": [
+  {
+   "product": "FortiProxy",
+   "ranges": [
+    {
+     "le": "1.2.9"
+    }
+   ],
+   "versions": [
+    "2.0.0"
+   ]
+  }
+ ],
+ "FG-IR-20-236": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "le": "6.2.4"
+    }
+   ]
+  },
+  {
+   "product": "FortiProxy",
+   "ranges": [
+    {
+     "le": "1.2.9"
+    }
+   ],
+   "versions": [
+    "2.0.0"
+   ]
+  }
+ ],
+ "FG-IR-20-241": [
+  {
+   "product": "FortiClientLinux",
+   "ranges": [
+    {
+     "le": "6.2.8"
+    },
+    {
+     "le": "6.4.2"
+    }
+   ]
+  }
+ ],
+ "FG-IR-20-243": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "5.6.0",
+     "le": "5.6.14"
+    },
+    {
+     "ge": "6.0.0",
+     "le": "6.0.17"
+    },
+    {
+     "ge": "6.2.0",
+     "le": "6.2.9"
+    },
+    {
+     "ge": "6.4.0",
+     "le": "6.4.6"
+    }
+   ],
+   "versions": [
+    "7.0.0"
+   ]
+  }
+ ],
+ "FG-IR-20-244": [
+  {
+   "product": "FortiMail",
+   "ranges": [
+    {
+     "lt": "7.0.0"
+    }
+   ]
+  }
+ ],
+ "FG-IR-21-001": [
+  {
+   "product": "FortiWLC",
+   "ranges": [
+    {
+     "le": "8.6.0"
+    }
+   ]
+  }
+ ],
+ "FG-IR-21-002": [
+  {
+   "product": "FortiWLC",
+   "ranges": [
+    {
+     "ge": "8.1.2",
+     "le": "8.1.3"
+    },
+    {
+     "ge": "8.2.4",
+     "le": "8.2.7"
+    },
+    {
+     "ge": "8.3.0",
+     "le": "8.3.3"
+    },
+    {
+     "ge": "8.4.0",
+     "le": "8.4.2"
+    },
+    {
+     "ge": "8.4.4",
+     "le": "8.4.8"
+    },
+    {
+     "ge": "8.5.0",
+     "le": "8.5.3"
+    }
+   ],
+   "versions": [
+    "8.0.6",
+    "8.6.0"
+   ]
+  }
+ ],
+ "FG-IR-21-003": [
+  {
+   "product": "FortiMail",
+   "ranges": [
+    {
+     "lt": "7.0.0"
+    }
+   ]
+  }
+ ],
+ "FG-IR-21-004": [
+  {
+   "product": "Meru AP",
+   "versions": [
+    "8.5.0",
+    "8.5.1",
+    "8.5.2",
+    "8.5.3",
+    "8.5.4",
+    "8.5.5",
+    "8.6.0",
+    "8.6.1"
+   ]
+  }
+ ],
+ "FG-IR-21-005": [
+  {
+   "product": "FortiSandbox",
+   "ranges": [
+    {
+     "lt": "3.2.2"
+    }
+   ]
+  }
+ ],
+ "FG-IR-21-006": [
+  {
+   "product": "FortiProxy",
+   "ranges": [
+    {
+     "ge": "1.0.0",
+     "le": "1.0.7"
+    },
+    {
+     "ge": "1.1.0",
+     "le": "1.1.6"
+    },
+    {
+     "ge": "1.2.0",
+     "le": "1.2.9"
+    },
+    {
+     "ge": "2.0.0",
+     "le": "2.0.1"
+    }
+   ]
+  }
+ ],
+ "FG-IR-21-007": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "le": "6.0.10"
+    },
+    {
+     "le": "6.2.2"
+    }
+   ]
+  },
+  {
+   "product": "FortiProxy",
+   "ranges": [
+    {
+     "ge": "1.0",
+     "lt": "1.1"
+    },
+    {
+     "ge": "1.1",
+     "lt": "1.2"
+    },
+    {
+     "le": "1.2.9"
+    },
+    {
+     "le": "2.0.0"
+    }
+   ]
+  }
+ ],
+ "FG-IR-21-008": [
+  {
+   "product": "FortiMail",
+   "ranges": [
+    {
+     "lt": "7.0.1"
+    }
+   ]
+  }
+ ],
+ "FG-IR-21-012": [
+  {
+   "product": "FortiMail",
+   "ranges": [
+    {
+     "lt": "6.4.4"
+    }
+   ]
+  }
+ ],
+ "FG-IR-21-014": [
+  {
+   "product": "FortiMail",
+   "ranges": [
+    {
+     "lt": "6.4.4"
+    }
+   ]
+  }
+ ],
+ "FG-IR-21-018": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "6.4.2",
+     "le": "6.4.4"
+    }
+   ]
+  }
+ ],
+ "FG-IR-21-019": [
+  {
+   "product": "FortiMail",
+   "ranges": [
+    {
+     "ge": "6.2.0",
+     "le": "6.2.6"
+    },
+    {
+     "ge": "6.4.0",
+     "le": "6.4.4"
+    }
+   ]
+  }
+ ],
+ "FG-IR-21-021": [
+  {
+   "product": "FortiMail",
+   "ranges": [
+    {
+     "lt": "6.4.4"
+    }
+   ]
+  }
+ ],
+ "FG-IR-21-022": [
+  {
+   "product": "FortiClientMac",
+   "ranges": [
+    {
+     "le": "6.4.3"
+    }
+   ]
+  }
+ ],
+ "FG-IR-21-023": [
+  {
+   "product": "FortiMail",
+   "ranges": [
+    {
+     "ge": "5.0.0",
+     "le": "5.0.11"
+    },
+    {
+     "ge": "5.1.0",
+     "le": "5.1.7"
+    },
+    {
+     "ge": "5.2.0",
+     "le": "5.2.10"
+    },
+    {
+     "ge": "5.3.0",
+     "le": "5.3.10"
+    },
+    {
+     "ge": "5.3.12",
+     "le": "5.3.13"
+    },
+    {
+     "ge": "5.4.0",
+     "le": "5.4.12"
+    },
+    {
+     "ge": "6.0.0",
+     "le": "6.0.10"
+    },
+    {
+     "ge": "6.2.0",
+     "le": "6.2.6"
+    },
+    {
+     "ge": "6.4.0",
+     "le": "6.4.4"
+    },
+    {
+     "lt": "6.4.5"
+    }
+   ]
+  },
+  {
+   "product": "FortiNDR",
+   "ranges": [
+    {
+     "ge": "1.3.0",
+     "le": "1.3.1"
+    },
+    {
+     "ge": "1.5.0",
+     "le": "1.5.3"
+    },
+    {
+     "ge": "7.0.0",
+     "le": "7.0.6"
+    }
+   ],
+   "versions": [
+    "1.1.0",
+    "1.2.0",
+    "1.4.0",
+    "7.1.0",
+    "7.2.0"
+   ]
+  }
+ ],
+ "FG-IR-21-026": [
+  {
+   "product": "FortiSwitch",
+   "ranges": [
+    {
+     "ge": "6.0.0",
+     "le": "6.0.6"
+    },
+    {
+     "ge": "6.2.0",
+     "le": "6.2.6"
+    },
+    {
+     "ge": "6.4.0",
+     "le": "6.4.6"
+    },
+    {
+     "le": "3.6.11"
+    }
+   ]
+  }
+ ],
+ "FG-IR-21-027": [
+  {
+   "product": "FortiMail",
+   "ranges": [
+    {
+     "ge": "6.2.0",
+     "le": "6.2.7"
+    },
+    {
+     "ge": "6.4.0",
+     "le": "6.4.4"
+    }
+   ]
+  }
+ ],
+ "FG-IR-21-028": [
+  {
+   "product": "FortiMail",
+   "ranges": [
+    {
+     "lt": "7.0.1"
+    }
+   ]
+  }
+ ],
+ "FG-IR-21-031": [
+  {
+   "product": "FortiMail",
+   "ranges": [
+    {
+     "ge": "6.2.0",
+     "le": "6.2.9"
+    },
+    {
+     "ge": "6.2.0",
+     "lt": "6.3"
+    },
+    {
+     "ge": "6.4.0",
+     "le": "6.4.4"
+    }
+   ]
+  }
+ ],
+ "FG-IR-21-037": [
+  {
+   "product": "FortiAnalyzer",
+   "ranges": [
+    {
+     "ge": "5.6",
+     "lt": "5.7"
+    },
+    {
+     "ge": "6.0",
+     "lt": "6.1"
+    },
+    {
+     "ge": "6.2",
+     "lt": "6.3"
+    },
+    {
+     "le": "6.2.7"
+    },
+    {
+     "le": "6.4.5"
+    }
+   ]
+  },
+  {
+   "product": "FortiManager",
+   "ranges": [
+    {
+     "ge": "5.6",
+     "lt": "5.7"
+    },
+    {
+     "ge": "6.0",
+     "lt": "6.1"
+    },
+    {
+     "ge": "6.2",
+     "lt": "6.3"
+    },
+    {
+     "le": "6.2.7"
+    },
+    {
+     "le": "6.4.5"
+    }
+   ]
+  },
+  {
+   "product": "FortiPortal",
+   "ranges": [
+    {
+     "le": "5.2.5"
+    },
+    {
+     "le": "5.3.5"
+    },
+    {
+     "le": "6.0.4"
+    }
+   ]
+  }
+ ],
+ "FG-IR-21-039": [
+  {
+   "product": "FortiWeb",
+   "versions": [
+    "3.0.0",
+    "4.0.2",
+    "4.1.0",
+    "4.1.1",
+    "4.1.2",
+    "4.2.0",
+    "4.2.2",
+    "4.2.3",
+    "4.2.4",
+    "4.3.1",
+    "4.3.2",
+    "4.3.3",
+    "4.3.4",
+    "4.3.5",
+    "4.3.6",
+    "4.3.7",
+    "4.4.0",
+    "4.4.1",
+    "4.4.2",
+    "4.4.3",
+    "4.4.4",
+    "4.4.5",
+    "4.4.6",
+    "4.4.7",
+    "5.0.0",
+    "5.0.1",
+    "5.0.2",
+    "5.0.3",
+    "5.0.4",
+    "5.0.5",
+    "5.0.6",
+    "5.1.0",
+    "5.1.1",
+    "5.1.2",
+    "5.1.3",
+    "5.1.4",
+    "5.2.0",
+    "5.2.1",
+    "5.2.2",
+    "5.2.3",
+    "5.2.4",
+    "5.3.0",
+    "5.3.1",
+    "5.3.2",
+    "5.3.3",
+    "5.3.4",
+    "5.3.5",
+    "5.3.6",
+    "5.3.7",
+    "5.3.8",
+    "5.3.9",
+    "5.4.0",
+    "5.4.1",
+    "5.5.0",
+    "5.5.1",
+    "5.5.2",
+    "5.5.3",
+    "5.5.4",
+    "5.5.5",
+    "5.5.6",
+    "5.5.7",
+    "5.6.0",
+    "5.6.1",
+    "5.6.2",
+    "5.7.0",
+    "5.7.1",
+    "5.7.2",
+    "5.7.3",
+    "5.8.0",
+    "5.8.1",
+    "5.8.2",
+    "5.8.3",
+    "5.8.5",
+    "5.8.6",
+    "5.8.7",
+    "5.9.0",
+    "5.9.1",
+    "6.0.0",
+    "6.0.1",
+    "6.0.2",
+    "6.0.3",
+    "6.0.4",
+    "6.0.5",
+    "6.0.6",
+    "6.0.7",
+    "6.1.0",
+    "6.1.1",
+    "6.1.2",
+    "6.2.0",
+    "6.2.1",
+    "6.2.2",
+    "6.2.3",
+    "6.2.4",
+    "6.2.5",
+    "6.3.0",
+    "6.3.1",
+    "6.3.2",
+    "6.3.3",
+    "6.3.4",
+    "6.3.5",
+    "6.3.6",
+    "6.3.7",
+    "6.3.8",
+    "6.3.9",
+    "6.3.10",
+    "6.3.11",
+    "6.3.12",
+    "6.3.13",
+    "6.3.14",
+    "6.3.15",
+    "6.4.0"
+   ]
+  }
+ ],
+ "FG-IR-21-040": [
+  {
+   "product": "FortiIsolator",
+   "versions": [
+    "2.3.0",
+    "2.3.1",
+    "2.3.2"
+   ]
+  }
+ ],
+ "FG-IR-21-042": [
+  {
+   "product": "FortiMail",
+   "ranges": [
+    {
+     "ge": "6.2.0",
+     "le": "6.2.6"
+    },
+    {
+     "ge": "6.4.0",
+     "le": "6.4.4"
+    }
+   ]
+  }
+ ],
+ "FG-IR-21-043": [
+  {
+   "product": "FortiManager",
+   "versions": [
+    "6.4.4",
+    "6.4.5"
+   ]
+  }
+ ],
+ "FG-IR-21-047": [
+  {
+   "product": "FortiWeb",
+   "versions": [
+    "6.3.0",
+    "6.3.1",
+    "6.3.2",
+    "6.3.3",
+    "6.3.4",
+    "6.3.5",
+    "6.3.6",
+    "6.3.7",
+    "6.3.8",
+    "6.3.9",
+    "6.3.10",
+    "6.3.11",
+    "6.3.12",
+    "6.3.13"
+   ]
+  }
+ ],
+ "FG-IR-21-049": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "6.0.0",
+     "le": "6.0.12"
+    },
+    {
+     "ge": "6.2.0",
+     "le": "6.2.9"
+    },
+    {
+     "ge": "6.4.0",
+     "le": "6.4.6"
+    }
+   ],
+   "versions": [
+    "7.0.0"
+   ]
+  }
+ ],
+ "FG-IR-21-050": [
+  {
+   "product": "FortiAnalyzer",
+   "ranges": [
+    {
+     "le": "5.6.11"
+    },
+    {
+     "le": "6.0.11"
+    },
+    {
+     "le": "6.2.7"
+    },
+    {
+     "le": "6.4.5"
+    }
+   ],
+   "versions": [
+    "7.0.0"
+   ]
+  },
+  {
+   "product": "FortiManager",
+   "ranges": [
+    {
+     "le": "5.6.11"
+    },
+    {
+     "le": "6.0.11"
+    },
+    {
+     "le": "6.2.7"
+    },
+    {
+     "le": "6.4.5"
+    }
+   ],
+   "versions": [
+    "7.0.0"
+   ]
+  }
+ ],
+ "FG-IR-21-051": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "5.6.0",
+     "le": "5.6.13"
+    },
+    {
+     "ge": "6.0.0",
+     "le": "6.0.12"
+    },
+    {
+     "ge": "6.2.0",
+     "le": "6.2.8"
+    },
+    {
+     "ge": "6.4.0",
+     "le": "6.4.5"
+    }
+   ]
+  },
+  {
+   "product": "FortiOS-6K7K",
+   "ranges": [
+    {
+     "ge": "6.2.0",
+     "le": "6.2.6"
+    }
+   ],
+   "versions": [
+    "6.4.2"
+   ]
+  }
+ ],
+ "FG-IR-21-056": [
+  {
+   "product": "FortiAnalyzer",
+   "ranges": [
+    {
+     "ge": "6.0",
+     "lt": "6.1"
+    },
+    {
+     "ge": "6.2",
+     "lt": "6.3"
+    },
+    {
+     "ge": "6.4.0",
+     "le": "6.4.7"
+    },
+    {
+     "ge": "7.0.0",
+     "le": "7.0.3"
+    }
+   ]
+  },
+  {
+   "product": "FortiManager",
+   "ranges": [
+    {
+     "ge": "6.0",
+     "lt": "6.1"
+    },
+    {
+     "ge": "6.2",
+     "lt": "6.3"
+    },
+    {
+     "ge": "6.4.0",
+     "le": "6.4.7"
+    },
+    {
+     "ge": "7.0.0",
+     "le": "7.0.3"
+    }
+   ]
+  }
+ ],
+ "FG-IR-21-059": [
+  {
+   "product": "FortiAnalyzer",
+   "ranges": [
+    {
+     "le": "5.6.11"
+    },
+    {
+     "le": "6.0.11"
+    },
+    {
+     "le": "6.2.8"
+    },
+    {
+     "le": "6.4.5"
+    }
+   ],
+   "versions": [
+    "7.0.0"
+   ]
+  },
+  {
+   "product": "FortiManager",
+   "ranges": [
+    {
+     "le": "5.6.11"
+    },
+    {
+     "le": "6.0.11"
+    },
+    {
+     "le": "6.2.8"
+    },
+    {
+     "le": "6.4.5"
+    }
+   ],
+   "versions": [
+    "7.0.0"
+   ]
+  }
+ ],
+ "FG-IR-21-060": [
+  {
+   "product": "FortiWAN",
+   "ranges": [
+    {
+     "lt": "4.5.9"
+    }
+   ]
+  }
+ ],
+ "FG-IR-21-062": [
+  {
+   "product": "FortiWAN",
+   "ranges": [
+    {
+     "lt": "4.5.9"
+    }
+   ]
+  }
+ ],
+ "FG-IR-21-063": [
+  {
+   "product": "FortiAnalyzer",
+   "ranges": [
+    {
+     "le": "5.6.11"
+    },
+    {
+     "le": "6.0.11"
+    },
+    {
+     "le": "6.2.8"
+    },
+    {
+     "le": "6.4.6"
+    }
+   ],
+   "versions": [
+    "7.0.0"
+   ]
+  },
+  {
+   "product": "FortiManager",
+   "ranges": [
+    {
+     "le": "5.6.11"
+    },
+    {
+     "le": "6.0.11"
+    },
+    {
+     "le": "6.2.8"
+    },
+    {
+     "le": "6.4.6"
+    }
+   ],
+   "versions": [
+    "7.0.0"
+   ]
+  }
+ ],
+ "FG-IR-21-064": [
+  {
+   "product": "FortiWAN",
+   "ranges": [
+    {
+     "lt": "4.5.9"
+    }
+   ]
+  }
+ ],
+ "FG-IR-21-065": [
+  {
+   "product": "FortiWAN",
+   "ranges": [
+    {
+     "lt": "4.5.9"
+    }
+   ]
+  }
+ ],
+ "FG-IR-21-068": [
+  {
+   "product": "FortiAuthenticator",
+   "ranges": [
+    {
+     "lt": "6.3.1"
+    }
+   ]
+  }
+ ],
+ "FG-IR-21-069": [
+  {
+   "product": "FortiWAN",
+   "ranges": [
+    {
+     "ge": "4.0.0",
+     "le": "4.0.6"
+    },
+    {
+     "ge": "4.1.1",
+     "le": "4.1.3"
+    },
+    {
+     "ge": "4.2.1",
+     "le": "4.2.2"
+    },
+    {
+     "ge": "4.2.5",
+     "le": "4.2.7"
+    },
+    {
+     "ge": "4.3.0",
+     "le": "4.3.1"
+    },
+    {
+     "ge": "4.4.0",
+     "le": "4.4.1"
+    },
+    {
+     "ge": "4.5.0",
+     "le": "4.5.7"
+    }
+   ]
+  }
+ ],
+ "FG-IR-21-070": [
+  {
+   "product": "FortiWAN",
+   "ranges": [
+    {
+     "lt": "4.5.9"
+    }
+   ]
+  }
+ ],
+ "FG-IR-21-074": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "6.2.0",
+     "le": "6.2.9"
+    },
+    {
+     "ge": "6.4.0",
+     "le": "6.4.6"
+    },
+    {
+     "ge": "7.0.0",
+     "le": "7.0.1"
+    }
+   ]
+  }
+ ],
+ "FG-IR-21-075": [
+  {
+   "product": "FortiClientEMS",
+   "ranges": [
+    {
+     "le": "6.4.6"
+    },
+    {
+     "le": "7.0.1"
+    }
+   ]
+  },
+  {
+   "product": "FortiClientMac",
+   "ranges": [
+    {
+     "le": "6.4.6"
+    },
+    {
+     "le": "7.0.1"
+    }
+   ]
+  }
+ ],
+ "FG-IR-21-077": [
+  {
+   "product": "FortiPortal",
+   "versions": [
+    "5.0.0",
+    "5.0.1",
+    "5.0.2",
+    "5.0.3",
+    "5.1.0",
+    "5.1.1",
+    "5.1.2",
+    "5.2.0",
+    "5.2.1",
+    "5.2.2",
+    "5.2.3",
+    "5.2.4",
+    "5.2.5",
+    "5.3.0",
+    "5.3.1",
+    "5.3.2",
+    "5.3.3",
+    "5.3.4",
+    "5.3.5",
+    "6.0.0",
+    "6.0.1",
+    "6.0.2",
+    "6.0.3",
+    "6.0.4"
+   ]
+  }
+ ],
+ "FG-IR-21-078": [
+  {
+   "product": "FortiWAN",
+   "ranges": [
+    {
+     "lt": "4.5.9"
+    }
+   ]
+  }
+ ],
+ "FG-IR-21-079": [
+  {
+   "product": "FortiClientMac",
+   "versions": [
+    "6.4.0",
+    "6.4.1",
+    "6.4.2",
+    "6.4.3",
+    "6.4.4",
+    "6.4.5",
+    "7.0.0"
+   ]
+  }
+ ],
+ "FG-IR-21-084": [
+  {
+   "product": "FortiPortal",
+   "ranges": [
+    {
+     "ge": "5.2.0",
+     "le": "5.2.5"
+    },
+    {
+     "ge": "5.3.0",
+     "le": "5.3.5"
+    },
+    {
+     "ge": "6.0.0",
+     "le": "6.0.4"
+    },
+    {
+     "le": "4.2.2"
+    }
+   ]
+  }
+ ],
+ "FG-IR-21-085": [
+  {
+   "product": "FortiPortal",
+   "versions": [
+    "4.0.0",
+    "4.0.1",
+    "4.0.2",
+    "4.0.3",
+    "4.0.4",
+    "4.1.1",
+    "4.1.2",
+    "4.2.1",
+    "4.2.2",
+    "5.0.0",
+    "5.0.1",
+    "5.0.2",
+    "5.0.3",
+    "5.1.0",
+    "5.1.1",
+    "5.1.2",
+    "5.2.0",
+    "5.2.1",
+    "5.2.2",
+    "5.2.3",
+    "5.2.4",
+    "5.2.5",
+    "5.3.0",
+    "5.3.1",
+    "5.3.2",
+    "5.3.3",
+    "5.3.4",
+    "5.3.5",
+    "6.0.0",
+    "6.0.1",
+    "6.0.2",
+    "6.0.3",
+    "6.0.4"
+   ]
+  }
+ ],
+ "FG-IR-21-088": [
+  {
+   "product": "FortiClientEMS",
+   "ranges": [
+    {
+     "ge": "6.0",
+     "lt": "6.1"
+    },
+    {
+     "ge": "6.2",
+     "lt": "6.3"
+    },
+    {
+     "le": "6.4.6"
+    }
+   ],
+   "versions": [
+    "7.0.0"
+   ]
+  },
+  {
+   "product": "FortiClientWindows",
+   "ranges": [
+    {
+     "ge": "6.0",
+     "lt": "6.1"
+    },
+    {
+     "ge": "6.2",
+     "lt": "6.3"
+    },
+    {
+     "le": "6.4.6"
+    }
+   ],
+   "versions": [
+    "7.0.0"
+   ]
+  }
+ ],
+ "FG-IR-21-091": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "5.6.0",
+     "le": "5.6.14"
+    },
+    {
+     "ge": "6.0.0",
+     "le": "6.0.17"
+    },
+    {
+     "ge": "6.2.0",
+     "le": "6.2.9"
+    },
+    {
+     "ge": "6.4.0",
+     "le": "6.4.6"
+    }
+   ],
+   "versions": [
+    "7.0.0"
+   ]
+  }
+ ],
+ "FG-IR-21-092": [
+  {
+   "product": "FortiPortal",
+   "ranges": [
+    {
+     "ge": "5.2.0",
+     "le": "5.2.5"
+    },
+    {
+     "ge": "5.3.0",
+     "le": "5.3.5"
+    },
+    {
+     "ge": "6.0.0",
+     "le": "6.0.4"
+    },
+    {
+     "le": "4.2.2"
+    }
+   ]
+  }
+ ],
+ "FG-IR-21-094": [
+  {
+   "product": "FortiPortal",
+   "versions": [
+    "6.0.0",
+    "6.0.1",
+    "6.0.2",
+    "6.0.3",
+    "6.0.4"
+   ]
+  }
+ ],
+ "FG-IR-21-096": [
+  {
+   "product": "FortiPortal",
+   "ranges": [
+    {
+     "lt": "6.0.6"
+    }
+   ]
+  }
+ ],
+ "FG-IR-21-099": [
+  {
+   "product": "FortiPortal",
+   "ranges": [
+    {
+     "lt": "6.0.6"
+    }
+   ]
+  }
+ ],
+ "FG-IR-21-100": [
+  {
+   "product": "FortiPortal",
+   "ranges": [
+    {
+     "lt": "6.0.6"
+    }
+   ]
+  }
+ ],
+ "FG-IR-21-102": [
+  {
+   "product": "FortiPortal",
+   "ranges": [
+    {
+     "lt": "6.0.6"
+    }
+   ]
+  }
+ ],
+ "FG-IR-21-103": [
+  {
+   "product": "FortiManager",
+   "ranges": [
+    {
+     "ge": "6.0",
+     "lt": "6.1"
+    },
+    {
+     "ge": "6.2",
+     "lt": "6.3"
+    },
+    {
+     "le": "6.4.6"
+    },
+    {
+     "le": "7.0.1"
+    }
+   ],
+   "versions": [
+    "5.6.0"
+   ]
+  }
+ ],
+ "FG-IR-21-104": [
+  {
+   "product": "FortiPortal",
+   "ranges": [
+    {
+     "lt": "6.0.6"
+    }
+   ]
+  }
+ ],
+ "FG-IR-21-106": [
+  {
+   "product": "FortiWLM",
+   "ranges": [
+    {
+     "le": "8.3.3"
+    },
+    {
+     "le": "8.4.2"
+    },
+    {
+     "le": "8.5.2"
+    },
+    {
+     "le": "8.6.2"
+    }
+   ],
+   "versions": [
+    "8.2.2"
+   ]
+  }
+ ],
+ "FG-IR-21-107": [
+  {
+   "product": "FortiWLM",
+   "versions": [
+    "8.2.2",
+    "8.3.0",
+    "8.3.1",
+    "8.3.2",
+    "8.4.0",
+    "8.4.1",
+    "8.4.2",
+    "8.5.0",
+    "8.5.1",
+    "8.5.2",
+    "8.6.0",
+    "8.6.1"
+   ]
+  }
+ ],
+ "FG-IR-21-109": [
+  {
+   "product": "FortiPortal",
+   "ranges": [
+    {
+     "lt": "6.0.6"
+    }
+   ]
+  }
+ ],
+ "FG-IR-21-110": [
+  {
+   "product": "FortiWLM",
+   "versions": [
+    "8.2.2",
+    "8.3.0",
+    "8.3.1",
+    "8.3.2",
+    "8.4.0",
+    "8.4.1",
+    "8.4.2",
+    "8.5.0",
+    "8.5.1",
+    "8.5.2",
+    "8.6.0",
+    "8.6.1"
+   ]
+  }
+ ],
+ "FG-IR-21-111": [
+  {
+   "product": "FortiWLM",
+   "versions": [
+    "8.2.2",
+    "8.3.0",
+    "8.3.1",
+    "8.3.2",
+    "8.4.0",
+    "8.4.1",
+    "8.4.2",
+    "8.5.0",
+    "8.5.1",
+    "8.5.2",
+    "8.6.0",
+    "8.6.1"
+   ]
+  }
+ ],
+ "FG-IR-21-112": [
+  {
+   "product": "FortiAnalyzer",
+   "versions": [
+    "6.4.6",
+    "7.0.0"
+   ]
+  },
+  {
+   "product": "FortiManager",
+   "versions": [
+    "6.4.6",
+    "7.0.0"
+   ]
+  }
+ ],
+ "FG-IR-21-114": [
+  {
+   "product": "FortiWLM",
+   "versions": [
+    "8.2.2",
+    "8.3.0",
+    "8.3.1",
+    "8.3.2",
+    "8.4.0",
+    "8.4.1",
+    "8.4.2",
+    "8.5.0",
+    "8.5.1",
+    "8.5.2",
+    "8.6.0",
+    "8.6.1"
+   ]
+  }
+ ],
+ "FG-IR-21-115": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "6.0.0",
+     "le": "6.0.13"
+    },
+    {
+     "ge": "6.2.0",
+     "le": "6.2.9"
+    },
+    {
+     "ge": "6.4.0",
+     "le": "6.4.6"
+    },
+    {
+     "ge": "7.0.0",
+     "le": "7.0.1"
+    }
+   ]
+  },
+  {
+   "product": "FortiOS-6K7K",
+   "ranges": [
+    {
+     "ge": "6.0.0",
+     "le": "6.0.10"
+    },
+    {
+     "ge": "6.2.0",
+     "le": "6.2.8"
+    },
+    {
+     "ge": "6.4.0",
+     "le": "6.4.5"
+    }
+   ]
+  }
+ ],
+ "FG-IR-21-118": [
+  {
+   "product": "FortiWeb",
+   "versions": [
+    "6.0.0",
+    "6.0.1",
+    "6.0.2",
+    "6.0.3",
+    "6.0.4",
+    "6.0.5",
+    "6.0.6",
+    "6.0.7",
+    "6.1.0",
+    "6.1.1",
+    "6.1.2",
+    "6.2.0",
+    "6.2.1",
+    "6.2.2",
+    "6.2.3",
+    "6.2.4",
+    "6.2.5",
+    "6.2.6",
+    "6.3.0",
+    "6.3.1",
+    "6.3.2",
+    "6.3.3",
+    "6.3.4",
+    "6.3.5",
+    "6.3.6",
+    "6.3.7",
+    "6.3.8",
+    "6.3.9",
+    "6.3.10",
+    "6.3.11",
+    "6.3.12",
+    "6.3.13",
+    "6.3.14",
+    "6.3.15",
+    "6.4.0",
+    "6.4.1"
+   ]
+  }
+ ],
+ "FG-IR-21-119": [
+  {
+   "product": "FortiWeb",
+   "versions": [
+    "6.2.0",
+    "6.2.1",
+    "6.2.2",
+    "6.2.3",
+    "6.2.4",
+    "6.2.5",
+    "6.3.0",
+    "6.3.1",
+    "6.3.2",
+    "6.3.3",
+    "6.3.4",
+    "6.3.5",
+    "6.3.6",
+    "6.3.7",
+    "6.3.8",
+    "6.3.9",
+    "6.3.10",
+    "6.3.11",
+    "6.3.12",
+    "6.3.13",
+    "6.3.14",
+    "6.3.15",
+    "6.4.0"
+   ]
+  }
+ ],
+ "FG-IR-21-120": [
+  {
+   "product": "FortiWeb",
+   "ranges": [
+    {
+     "le": "6.2.5"
+    },
+    {
+     "le": "6.3.15"
+    },
+    {
+     "le": "6.4.1"
+    }
+   ]
+  }
+ ],
+ "FG-IR-21-122": [
+  {
+   "product": "FortiWeb",
+   "versions": [
+    "6.2.0",
+    "6.2.1",
+    "6.2.2",
+    "6.2.3",
+    "6.2.4",
+    "6.2.5",
+    "6.2.6",
+    "6.3.0",
+    "6.3.1",
+    "6.3.2",
+    "6.3.3",
+    "6.3.4",
+    "6.3.5",
+    "6.3.6",
+    "6.3.7",
+    "6.3.8",
+    "6.3.9",
+    "6.3.10",
+    "6.3.11",
+    "6.3.12",
+    "6.3.13",
+    "6.3.14",
+    "6.3.15",
+    "6.4.0",
+    "6.4.1"
+   ]
+  }
+ ],
+ "FG-IR-21-123": [
+  {
+   "product": "FortiWeb",
+   "versions": [
+    "6.0.0",
+    "6.0.1",
+    "6.0.2",
+    "6.0.3",
+    "6.0.4",
+    "6.0.5",
+    "6.0.6",
+    "6.0.7",
+    "6.1.0",
+    "6.1.1",
+    "6.1.2",
+    "6.2.0",
+    "6.2.1",
+    "6.2.2",
+    "6.2.3",
+    "6.2.4",
+    "6.2.5",
+    "6.2.6",
+    "6.3.0",
+    "6.3.1",
+    "6.3.2",
+    "6.3.3",
+    "6.3.4",
+    "6.3.5",
+    "6.3.6",
+    "6.3.7",
+    "6.3.8",
+    "6.3.9",
+    "6.3.10",
+    "6.3.11",
+    "6.3.12",
+    "6.3.13",
+    "6.3.14",
+    "6.3.15",
+    "6.4.0",
+    "6.4.1"
+   ]
+  }
+ ],
+ "FG-IR-21-126": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "6.0.0",
+     "le": "6.0.17"
+    },
+    {
+     "ge": "6.2.0",
+     "le": "6.2.15"
+    },
+    {
+     "ge": "6.4.0",
+     "le": "6.4.8"
+    },
+    {
+     "ge": "7.0.0",
+     "le": "7.0.3"
+    }
+   ]
+  },
+  {
+   "product": "FortiProxy",
+   "ranges": [
+    {
+     "ge": "1.0.0",
+     "le": "1.0.7"
+    },
+    {
+     "ge": "1.1.0",
+     "le": "1.1.6"
+    },
+    {
+     "ge": "1.2.0",
+     "le": "1.2.13"
+    },
+    {
+     "ge": "2.0.0",
+     "le": "2.0.7"
+    },
+    {
+     "ge": "7.0.0",
+     "le": "7.0.1"
+    }
+   ]
+  },
+  {
+   "product": "FortiSwitch",
+   "ranges": [
+    {
+     "ge": "6.0.0",
+     "le": "6.0.7"
+    },
+    {
+     "ge": "6.2.0",
+     "le": "6.2.7"
+    },
+    {
+     "ge": "6.4.0",
+     "le": "6.4.10"
+    },
+    {
+     "ge": "7.0.0",
+     "le": "7.0.3"
+    }
+   ]
+  },
+  {
+   "product": "FortiWeb",
+   "ranges": [
+    {
+     "ge": "6.0.0",
+     "le": "6.0.8"
+    },
+    {
+     "ge": "6.1.0",
+     "le": "6.1.3"
+    },
+    {
+     "ge": "6.2.0",
+     "le": "6.2.7"
+    },
+    {
+     "ge": "6.3.0",
+     "le": "6.3.16"
+    },
+    {
+     "ge": "6.4.0",
+     "le": "6.4.2"
+    }
+   ]
+  }
+ ],
+ "FG-IR-21-128": [
+  {
+   "product": "FortiWLM",
+   "versions": [
+    "8.2.2",
+    "8.3.0",
+    "8.3.1",
+    "8.3.2",
+    "8.4.0",
+    "8.4.1",
+    "8.4.2",
+    "8.5.0",
+    "8.5.1",
+    "8.5.2",
+    "8.6.0",
+    "8.6.1",
+    "8.6.2"
+   ]
+  }
+ ],
+ "FG-IR-21-129": [
+  {
+   "product": "FortiWLM",
+   "versions": [
+    "8.2.2",
+    "8.3.0",
+    "8.3.1",
+    "8.3.2",
+    "8.4.0",
+    "8.4.1",
+    "8.4.2",
+    "8.5.0",
+    "8.5.1",
+    "8.5.2",
+    "8.6.0",
+    "8.6.1"
+   ]
+  }
+ ],
+ "FG-IR-21-130": [
+  {
+   "product": "FortiWeb",
+   "ranges": [
+    {
+     "ge": "6.0.0",
+     "le": "6.0.7"
+    },
+    {
+     "ge": "6.1.0",
+     "le": "6.1.2"
+    },
+    {
+     "ge": "6.2.0",
+     "le": "6.2.6"
+    },
+    {
+     "ge": "6.3.0",
+     "le": "6.3.15"
+    }
+   ],
+   "versions": [
+    "6.4.0",
+    "6.4.1"
+   ]
+  }
+ ],
+ "FG-IR-21-131": [
+  {
+   "product": "FortiWeb",
+   "versions": [
+    "6.0.0",
+    "6.0.1",
+    "6.0.2",
+    "6.0.3",
+    "6.0.4",
+    "6.0.5",
+    "6.0.6",
+    "6.0.7",
+    "6.1.0",
+    "6.1.1",
+    "6.1.2",
+    "6.2.0",
+    "6.2.1",
+    "6.2.2",
+    "6.2.3",
+    "6.2.4",
+    "6.2.5",
+    "6.3.0",
+    "6.3.1",
+    "6.3.2",
+    "6.3.3",
+    "6.3.4",
+    "6.3.5",
+    "6.3.6",
+    "6.3.7",
+    "6.3.8",
+    "6.3.9",
+    "6.3.10",
+    "6.3.11",
+    "6.3.12",
+    "6.3.13",
+    "6.3.14",
+    "6.3.15",
+    "6.4.0",
+    "6.4.1"
+   ]
+  }
+ ],
+ "FG-IR-21-132": [
+  {
+   "product": "FortiADC",
+   "ranges": [
+    {
+     "ge": "5.0.0",
+     "le": "5.0.4"
+    },
+    {
+     "ge": "5.1.0",
+     "le": "5.1.7"
+    },
+    {
+     "ge": "5.2.0",
+     "le": "5.2.8"
+    },
+    {
+     "ge": "5.3.0",
+     "le": "5.3.7"
+    },
+    {
+     "ge": "5.4.0",
+     "le": "5.4.5"
+    },
+    {
+     "ge": "6.0.0",
+     "le": "6.0.4"
+    },
+    {
+     "ge": "6.1.0",
+     "le": "6.1.6"
+    },
+    {
+     "ge": "6.2.0",
+     "le": "6.2.2"
+    }
+   ],
+   "versions": [
+    "7.0.0"
+   ]
+  },
+  {
+   "product": "FortiDDoS",
+   "ranges": [
+    {
+     "ge": "4.4.0",
+     "le": "4.4.2"
+    },
+    {
+     "ge": "5.3.0",
+     "le": "5.3.2"
+    },
+    {
+     "ge": "5.4.0",
+     "le": "5.4.3"
+    },
+    {
+     "ge": "5.5.0",
+     "le": "5.5.1"
+    },
+    {
+     "ge": "5.6.0",
+     "le": "5.6.1"
+    }
+   ],
+   "versions": [
+    "4.5.0",
+    "4.6.0",
+    "4.7.0",
+    "5.0.0",
+    "5.1.0",
+    "5.2.0",
+    "5.7.0"
+   ]
+  },
+  {
+   "product": "FortiDDoS-CM",
+   "ranges": [
+    {
+     "ge": "5.3.0",
+     "le": "5.3.1"
+    },
+    {
+     "ge": "5.4.0",
+     "le": "5.4.3"
+    },
+    {
+     "ge": "5.5.0",
+     "le": "5.5.1"
+    }
+   ],
+   "versions": [
+    "4.7.0",
+    "5.0.0",
+    "5.1.0",
+    "5.2.0"
+   ]
+  },
+  {
+   "product": "FortiDDoS-F",
+   "ranges": [
+    {
+     "ge": "6.1.0",
+     "le": "6.1.4"
+    },
+    {
+     "ge": "6.2.0",
+     "le": "6.2.2"
+    }
+   ],
+   "versions": [
+    "6.3.0"
+   ]
+  },
+  {
+   "product": "FortiFone",
+   "ranges": [
+    {
+     "ge": "3.0.0",
+     "le": "3.0.11"
+    }
+   ]
+  },
+  {
+   "product": "FortiMail",
+   "ranges": [
+    {
+     "ge": "5.4.0",
+     "le": "5.4.12"
+    },
+    {
+     "ge": "6.0.0",
+     "le": "6.0.12"
+    },
+    {
+     "ge": "6.2.0",
+     "le": "6.2.8"
+    },
+    {
+     "ge": "6.4.0",
+     "le": "6.4.6"
+    },
+    {
+     "ge": "7.0.0",
+     "le": "7.0.2"
+    }
+   ]
+  },
+  {
+   "product": "FortiNDR",
+   "ranges": [
+    {
+     "ge": "1.3.0",
+     "le": "1.3.1"
+    },
+    {
+     "ge": "1.5.0",
+     "le": "1.5.3"
+    }
+   ],
+   "versions": [
+    "1.1.0",
+    "1.2.0",
+    "1.4.0"
+   ]
+  },
+  {
+   "product": "FortiRecorder",
+   "ranges": [
+    {
+     "ge": "2.6.0",
+     "le": "2.6.3"
+    },
+    {
+     "ge": "2.7.0",
+     "le": "2.7.7"
+    },
+    {
+     "ge": "6.0.0",
+     "le": "6.0.10"
+    },
+    {
+     "ge": "6.4.0",
+     "le": "6.4.2"
+    }
+   ]
+  },
+  {
+   "product": "FortiVoice",
+   "ranges": [
+    {
+     "ge": "6.0.0",
+     "le": "6.0.10"
+    },
+    {
+     "ge": "6.4.0",
+     "le": "6.4.4"
+    }
+   ]
+  },
+  {
+   "product": "FortiWeb",
+   "ranges": [
+    {
+     "ge": "6.3.0",
+     "le": "6.3.15"
+    },
+    {
+     "ge": "6.4.0",
+     "le": "6.4.1"
+    }
+   ]
+  }
+ ],
+ "FG-IR-21-133": [
+  {
+   "product": "FortiWeb",
+   "versions": [
+    "6.0.0",
+    "6.0.1",
+    "6.0.2",
+    "6.0.3",
+    "6.0.4",
+    "6.0.5",
+    "6.0.6",
+    "6.0.7",
+    "6.1.0",
+    "6.1.1",
+    "6.1.2",
+    "6.2.0",
+    "6.2.1",
+    "6.2.2",
+    "6.2.3",
+    "6.2.4",
+    "6.2.5",
+    "6.2.6",
+    "6.3.0",
+    "6.3.1",
+    "6.3.2",
+    "6.3.3",
+    "6.3.4",
+    "6.3.5",
+    "6.3.6",
+    "6.3.7",
+    "6.3.8",
+    "6.3.9",
+    "6.3.10",
+    "6.3.11",
+    "6.3.12",
+    "6.3.13",
+    "6.3.14",
+    "6.3.15",
+    "6.4.0",
+    "6.4.1"
+   ]
+  }
+ ],
+ "FG-IR-21-134": [
+  {
+   "product": "FortiWeb",
+   "versions": [
+    "6.4.0",
+    "6.4.1"
+   ]
+  }
+ ],
+ "FG-IR-21-138": [
+  {
+   "product": "FortiWeb",
+   "versions": [
+    "6.3.0",
+    "6.3.1",
+    "6.3.2",
+    "6.3.3",
+    "6.3.4",
+    "6.3.5",
+    "6.3.6",
+    "6.3.7",
+    "6.3.8",
+    "6.3.9",
+    "6.3.10",
+    "6.3.11",
+    "6.3.12",
+    "6.3.13",
+    "6.3.14",
+    "6.3.15",
+    "6.4.0",
+    "6.4.1"
+   ]
+  }
+ ],
+ "FG-IR-21-139": [
+  {
+   "product": "FortiWeb",
+   "versions": [
+    "6.4.0",
+    "6.4.1"
+   ]
+  }
+ ],
+ "FG-IR-21-140": [
+  {
+   "product": "FortiClientEMS",
+   "versions": [
+    "6.4.0",
+    "6.4.1",
+    "6.4.2",
+    "6.4.3",
+    "6.4.4",
+    "7.0.0",
+    "7.0.1"
+   ]
+  }
+ ],
+ "FG-IR-21-147": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "6.2.0",
+     "le": "6.2.10"
+    },
+    {
+     "ge": "6.4.0",
+     "le": "6.4.8"
+    },
+    {
+     "ge": "7.0.0",
+     "le": "7.0.3"
+    }
+   ]
+  }
+ ],
+ "FG-IR-21-148": [
+  {
+   "product": "FortiExtender",
+   "ranges": [
+    {
+     "le": "7.0.1"
+    }
+   ]
+  }
+ ],
+ "FG-IR-21-152": [
+  {
+   "product": "FortiWeb",
+   "ranges": [
+    {
+     "ge": "6.3.0",
+     "le": "6.3.15"
+    }
+   ],
+   "versions": [
+    "6.4.0",
+    "6.4.1"
+   ]
+  }
+ ],
+ "FG-IR-21-155": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "6.0.0",
+     "le": "6.0.17"
+    },
+    {
+     "ge": "6.2.0",
+     "le": "6.2.10"
+    },
+    {
+     "ge": "6.4.0",
+     "le": "6.4.8"
+    },
+    {
+     "ge": "7.0.0",
+     "le": "7.0.3"
+    }
+   ]
+  },
+  {
+   "product": "FortiProxy",
+   "ranges": [
+    {
+     "ge": "1.0",
+     "lt": "1.1"
+    },
+    {
+     "ge": "1.1",
+     "lt": "1.2"
+    },
+    {
+     "ge": "1.2",
+     "lt": "1.3"
+    },
+    {
+     "le": "2.0.6"
+    }
+   ],
+   "versions": [
+    "7.0.0"
+   ]
+  },
+  {
+   "product": "FortiRecorder",
+   "ranges": [
+    {
+     "le": "6.0.10"
+    },
+    {
+     "le": "6.4.2"
+    }
+   ]
+  },
+  {
+   "product": "FortiSwitch",
+   "ranges": [
+    {
+     "ge": "6.0",
+     "lt": "6.1"
+    },
+    {
+     "ge": "6.2",
+     "lt": "6.3"
+    },
+    {
+     "le": "6.4.9"
+    },
+    {
+     "le": "7.0.2"
+    }
+   ]
+  },
+  {
+   "product": "FortiVoice",
+   "ranges": [
+    {
+     "le": "6.0.10"
+    },
+    {
+     "le": "6.4.3"
+    }
+   ]
+  }
+ ],
+ "FG-IR-21-156": [
+  {
+   "product": "FortiWeb",
+   "ranges": [
+    {
+     "ge": "6.3.0",
+     "le": "6.3.15"
+    }
+   ],
+   "versions": [
+    "6.4.0",
+    "6.4.1"
+   ]
+  }
+ ],
+ "FG-IR-21-157": [
+  {
+   "product": "FortiWeb",
+   "ranges": [
+    {
+     "ge": "6.1.0",
+     "le": "6.1.2"
+    },
+    {
+     "ge": "6.2.0",
+     "le": "6.2.6"
+    },
+    {
+     "ge": "6.3.0",
+     "le": "6.3.15"
+    }
+   ],
+   "versions": [
+    "6.4.0",
+    "6.4.1"
+   ]
+  }
+ ],
+ "FG-IR-21-158": [
+  {
+   "product": "FortiWeb",
+   "ranges": [
+    {
+     "le": "6.4.1"
+    }
+   ]
+  }
+ ],
+ "FG-IR-21-160": [
+  {
+   "product": "FortiWeb",
+   "ranges": [
+    {
+     "ge": "6.3.0",
+     "le": "6.3.15"
+    }
+   ],
+   "versions": [
+    "6.4.0",
+    "6.4.1"
+   ]
+  }
+ ],
+ "FG-IR-21-163": [
+  {
+   "product": "FortiAP",
+   "ranges": [
+    {
+     "ge": "6.0.0",
+     "le": "6.4.7"
+    },
+    {
+     "ge": "7.0.0",
+     "le": "7.0.3"
+    }
+   ],
+   "versions": [
+    "7.2.0"
+   ]
+  },
+  {
+   "product": "FortiAP-S",
+   "ranges": [
+    {
+     "ge": "6.0.0",
+     "le": "6.4.7"
+    }
+   ]
+  },
+  {
+   "product": "FortiAP-U",
+   "ranges": [
+    {
+     "ge": "5.4.0",
+     "le": "6.2.3"
+    }
+   ]
+  },
+  {
+   "product": "FortiAP-W2",
+   "ranges": [
+    {
+     "ge": "6.0.0",
+     "le": "6.4.7"
+    },
+    {
+     "ge": "7.0.0",
+     "le": "7.0.3"
+    }
+   ],
+   "versions": [
+    "7.2.0"
+   ]
+  }
+ ],
+ "FG-IR-21-166": [
+  {
+   "product": "FortiWeb",
+   "ranges": [
+    {
+     "le": "6.4.1"
+    }
+   ]
+  }
+ ],
+ "FG-IR-21-167": [
+  {
+   "product": "FortiClientWindows",
+   "versions": [
+    "4.0.1",
+    "4.0.2",
+    "4.0.3",
+    "4.0.4",
+    "4.1.0",
+    "4.1.1",
+    "4.1.2",
+    "4.1.3",
+    "4.2.0",
+    "4.2.1",
+    "4.2.2",
+    "4.2.3",
+    "4.2.4",
+    "4.2.5",
+    "4.2.6",
+    "4.2.7",
+    "4.3.0",
+    "4.3.1",
+    "4.3.2",
+    "4.3.3",
+    "4.3.4",
+    "4.3.5",
+    "5.0.0",
+    "5.0.1",
+    "5.0.2",
+    "5.0.3",
+    "5.0.4",
+    "5.0.5",
+    "5.0.6",
+    "5.0.7",
+    "5.0.8",
+    "5.0.9",
+    "5.0.10",
+    "5.0.11",
+    "5.2.0",
+    "5.2.1",
+    "5.2.2",
+    "5.2.3",
+    "5.2.4",
+    "5.2.5",
+    "5.2.6",
+    "5.4.0",
+    "5.4.1",
+    "5.4.2",
+    "5.4.3",
+    "5.4.4",
+    "5.4.5",
+    "5.6.0",
+    "5.6.1",
+    "5.6.2",
+    "5.6.3",
+    "5.6.4",
+    "5.6.5",
+    "5.6.6",
+    "6.0.0",
+    "6.0.1",
+    "6.0.2",
+    "6.0.3",
+    "6.0.4",
+    "6.0.5",
+    "6.0.6",
+    "6.0.7",
+    "6.0.8",
+    "6.0.9",
+    "6.0.10",
+    "6.2.0",
+    "6.2.1",
+    "6.2.2",
+    "6.2.3",
+    "6.2.4",
+    "6.2.5",
+    "6.2.6",
+    "6.2.7",
+    "6.2.8",
+    "6.2.9",
+    "6.4.0",
+    "6.4.1"
+   ]
+  }
+ ],
+ "FG-IR-21-168": [
+  {
+   "product": "FortiWeb",
+   "versions": [
+    "6.2.0",
+    "6.2.1",
+    "6.2.2",
+    "6.2.3",
+    "6.2.4",
+    "6.2.5",
+    "6.2.6",
+    "6.3.0",
+    "6.3.1",
+    "6.3.2",
+    "6.3.3",
+    "6.3.4",
+    "6.3.5",
+    "6.3.6",
+    "6.3.7",
+    "6.3.8",
+    "6.3.9",
+    "6.3.10",
+    "6.3.11",
+    "6.3.12",
+    "6.3.13",
+    "6.3.14",
+    "6.3.15",
+    "6.4.0",
+    "6.4.1"
+   ]
+  }
+ ],
+ "FG-IR-21-170": [
+  {
+   "product": "FortiDeceptor",
+   "ranges": [
+    {
+     "ge": "3.0.0",
+     "le": "3.0.2"
+    },
+    {
+     "ge": "3.1.0",
+     "le": "3.1.1"
+    },
+    {
+     "ge": "3.2.0",
+     "le": "3.2.2"
+    },
+    {
+     "ge": "3.3.0",
+     "le": "3.3.3"
+    },
+    {
+     "ge": "4.0.0",
+     "le": "4.0.2"
+    },
+    {
+     "ge": "4.1.0",
+     "le": "4.1.1"
+    }
+   ],
+   "versions": [
+    "4.2.0"
+   ]
+  },
+  {
+   "product": "FortiSandbox",
+   "ranges": [
+    {
+     "ge": "3.1.0",
+     "le": "3.1.5"
+    },
+    {
+     "ge": "3.2.0",
+     "le": "3.2.3"
+    },
+    {
+     "ge": "4.0.0",
+     "le": "4.0.2"
+    }
+   ]
+  }
+ ],
+ "FG-IR-21-175": [
+  {
+   "product": "FortiSIEMWindowsAgent",
+   "versions": [
+    "3.1.0",
+    "3.1.2",
+    "3.2.0",
+    "3.2.1",
+    "3.2.2",
+    "3.3.0",
+    "4.0.0",
+    "4.1.0",
+    "4.1.1",
+    "4.1.2",
+    "4.1.3",
+    "4.1.4"
+   ]
+  }
+ ],
+ "FG-IR-21-176": [
+  {
+   "product": "FortiSIEMWindowsAgent",
+   "versions": [
+    "3.1.0",
+    "3.1.2",
+    "3.2.0",
+    "3.2.1",
+    "3.2.2",
+    "3.3.0",
+    "4.0.0",
+    "4.1.0",
+    "4.1.1",
+    "4.1.2",
+    "4.1.3",
+    "4.1.4"
+   ]
+  }
+ ],
+ "FG-IR-21-178": [
+  {
+   "product": "FortiNAC",
+   "versions": [
+    "8.8.0",
+    "8.8.1",
+    "8.8.2",
+    "8.8.3",
+    "8.8.4",
+    "8.8.5",
+    "8.8.6",
+    "8.8.7",
+    "8.8.8",
+    "8.8.9",
+    "9.1.0",
+    "9.1.1",
+    "9.1.2",
+    "9.1.3",
+    "9.2.0"
+   ]
+  }
+ ],
+ "FG-IR-21-179": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "6.0.0",
+     "le": "6.0.14"
+    },
+    {
+     "ge": "6.2.0",
+     "le": "6.2.10"
+    },
+    {
+     "ge": "6.4.0",
+     "le": "6.4.8"
+    },
+    {
+     "ge": "7.0.0",
+     "le": "7.0.3"
+    }
+   ]
+  },
+  {
+   "product": "FortiProxy",
+   "ranges": [
+    {
+     "lt": "2.0.8"
+    }
+   ]
+  }
+ ],
+ "FG-IR-21-180": [
+  {
+   "product": "FortiWeb",
+   "ranges": [
+    {
+     "ge": "5.9.0",
+     "le": "5.9.1"
+    },
+    {
+     "ge": "6.0.0",
+     "le": "6.0.7"
+    },
+    {
+     "ge": "6.1.0",
+     "le": "6.1.2"
+    },
+    {
+     "ge": "6.2.0",
+     "le": "6.2.6"
+    },
+    {
+     "ge": "6.3.0",
+     "le": "6.3.16"
+    },
+    {
+     "ge": "6.4.0",
+     "le": "6.4.1"
+    }
+   ]
+  }
+ ],
+ "FG-IR-21-181": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "7.0.0",
+     "le": "7.0.1"
+    }
+   ]
+  },
+  {
+   "product": "FortiProxy",
+   "versions": [
+    "7.0.0"
+   ]
+  }
+ ],
+ "FG-IR-21-182": [
+  {
+   "product": "FortiNAC",
+   "versions": [
+    "8.8.0",
+    "8.8.1",
+    "8.8.2",
+    "8.8.3",
+    "8.8.4",
+    "8.8.5",
+    "8.8.6",
+    "8.8.7",
+    "8.8.8",
+    "9.1.0",
+    "9.1.1",
+    "9.1.2"
+   ]
+  }
+ ],
+ "FG-IR-21-185": [
+  {
+   "product": "FortiMail",
+   "versions": [
+    "6.0.0",
+    "6.0.1",
+    "6.0.2",
+    "6.0.3",
+    "6.0.4",
+    "6.0.5",
+    "6.0.6",
+    "6.0.7",
+    "6.0.8",
+    "6.0.9",
+    "6.0.10",
+    "6.0.11",
+    "6.2.0",
+    "6.2.1",
+    "6.2.2",
+    "6.2.3",
+    "6.2.4",
+    "6.2.5",
+    "6.2.6",
+    "6.2.7",
+    "6.4.0",
+    "6.4.1",
+    "6.4.2",
+    "6.4.3",
+    "6.4.4",
+    "6.4.5",
+    "7.0.0",
+    "7.0.1"
+   ]
+  }
+ ],
+ "FG-IR-21-186": [
+  {
+   "product": "FortiWeb",
+   "ranges": [
+    {
+     "ge": "5.6.0",
+     "le": "5.6.2"
+    },
+    {
+     "ge": "5.6.0",
+     "lt": "5.7"
+    },
+    {
+     "ge": "5.7.0",
+     "le": "5.7.3"
+    },
+    {
+     "ge": "5.7.0",
+     "lt": "5.8"
+    },
+    {
+     "ge": "5.8.0",
+     "le": "5.8.3"
+    },
+    {
+     "ge": "5.8.0",
+     "lt": "5.9"
+    },
+    {
+     "ge": "5.8.5",
+     "le": "5.8.7"
+    },
+    {
+     "ge": "5.9.0",
+     "le": "5.9.1"
+    },
+    {
+     "ge": "6.0.0",
+     "le": "6.0.7"
+    },
+    {
+     "ge": "6.1.0",
+     "le": "6.1.2"
+    },
+    {
+     "ge": "6.2.0",
+     "le": "6.2.6"
+    },
+    {
+     "ge": "6.3.0",
+     "le": "6.3.16"
+    },
+    {
+     "ge": "6.4.0",
+     "le": "6.4.1"
+    }
+   ]
+  }
+ ],
+ "FG-IR-21-188": [
+  {
+   "product": "FortiWeb",
+   "versions": [
+    "6.2.0",
+    "6.2.1",
+    "6.2.2",
+    "6.2.3",
+    "6.2.4",
+    "6.2.5",
+    "6.2.6",
+    "6.3.0",
+    "6.3.1",
+    "6.3.2",
+    "6.3.3",
+    "6.3.4",
+    "6.3.5",
+    "6.3.6",
+    "6.3.7",
+    "6.3.8",
+    "6.3.9",
+    "6.3.10",
+    "6.3.11",
+    "6.3.12",
+    "6.3.13",
+    "6.3.14",
+    "6.3.15",
+    "6.3.16",
+    "6.4.0",
+    "6.4.1"
+   ]
+  }
+ ],
+ "FG-IR-21-189": [
+  {
+   "product": "FortiWLM",
+   "versions": [
+    "8.2.2",
+    "8.3.0",
+    "8.3.1",
+    "8.3.2",
+    "8.4.0",
+    "8.4.1",
+    "8.4.2",
+    "8.5.0",
+    "8.5.1",
+    "8.5.2",
+    "8.6.0",
+    "8.6.1",
+    "8.6.2"
+   ]
+  }
+ ],
+ "FG-IR-21-192": [
+  {
+   "product": "FortiClientEMS",
+   "versions": [
+    "6.2.0",
+    "6.2.1",
+    "6.2.2",
+    "6.2.3",
+    "6.2.4",
+    "6.2.6",
+    "6.2.7",
+    "6.2.8",
+    "6.2.9",
+    "6.4.0",
+    "6.4.1",
+    "6.4.2",
+    "6.4.3",
+    "6.4.4",
+    "7.0.0",
+    "7.0.1"
+   ]
+  }
+ ],
+ "FG-IR-21-200": [
+  {
+   "product": "FortiWLC",
+   "ranges": [
+    {
+     "le": "8.6.1"
+    }
+   ]
+  }
+ ],
+ "FG-IR-21-201": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "6.0.0",
+     "le": "6.0.13"
+    },
+    {
+     "ge": "6.2.0",
+     "le": "6.2.9"
+    },
+    {
+     "ge": "6.4.0",
+     "le": "6.4.7"
+    },
+    {
+     "ge": "7.0.0",
+     "le": "7.0.2"
+    }
+   ]
+  }
+ ],
+ "FG-IR-21-206": [
+  {
+   "product": "FortiAnalyzer",
+   "ranges": [
+    {
+     "ge": "5.6.0",
+     "le": "5.6.11"
+    },
+    {
+     "ge": "6.0.0",
+     "le": "6.0.12"
+    },
+    {
+     "ge": "6.2.0",
+     "le": "6.2.12"
+    },
+    {
+     "ge": "6.4.0",
+     "le": "6.4.7"
+    },
+    {
+     "ge": "7.0.0",
+     "le": "7.0.2"
+    }
+   ]
+  },
+  {
+   "product": "FortiManager",
+   "ranges": [
+    {
+     "ge": "5.6.0",
+     "le": "5.6.11"
+    },
+    {
+     "ge": "6.0.0",
+     "le": "6.0.12"
+    },
+    {
+     "ge": "6.2.0",
+     "le": "6.2.12"
+    },
+    {
+     "ge": "6.4.0",
+     "le": "6.4.7"
+    },
+    {
+     "ge": "7.0.0",
+     "le": "7.0.2"
+    }
+   ]
+  }
+ ],
+ "FG-IR-21-213": [
+  {
+   "product": "FortiDeceptor",
+   "ranges": [
+    {
+     "ge": "1.0.0",
+     "lt": "3.3"
+    },
+    {
+     "ge": "3.3.0",
+     "le": "3.3.2"
+    },
+    {
+     "ge": "4.0.0",
+     "le": "4.0.1"
+    }
+   ]
+  }
+ ],
+ "FG-IR-21-214": [
+  {
+   "product": "FortiWeb",
+   "ranges": [
+    {
+     "ge": "5.6.0",
+     "le": "5.6.2"
+    },
+    {
+     "ge": "5.7.0",
+     "le": "5.7.3"
+    },
+    {
+     "ge": "5.8.0",
+     "le": "5.8.3"
+    },
+    {
+     "ge": "5.8.5",
+     "le": "5.8.7"
+    },
+    {
+     "ge": "5.9.0",
+     "le": "5.9.1"
+    },
+    {
+     "ge": "6.0.0",
+     "le": "6.0.7"
+    },
+    {
+     "ge": "6.1.0",
+     "le": "6.1.2"
+    },
+    {
+     "ge": "6.2.0",
+     "le": "6.2.6"
+    },
+    {
+     "ge": "6.3.0",
+     "le": "6.3.16"
+    },
+    {
+     "ge": "6.4.0",
+     "le": "6.4.2"
+    }
+   ]
+  }
+ ],
+ "FG-IR-21-218": [
+  {
+   "product": "FortiRecorder",
+   "ranges": [
+    {
+     "ge": "2.7.0",
+     "le": "2.7.7"
+    },
+    {
+     "ge": "6.0.0",
+     "le": "6.0.12"
+    },
+    {
+     "ge": "6.4.0",
+     "le": "6.4.3"
+    }
+   ]
+  },
+  {
+   "product": "FortiWeb",
+   "ranges": [
+    {
+     "ge": "6.0.0",
+     "le": "6.0.8"
+    },
+    {
+     "ge": "6.1.0",
+     "le": "6.1.3"
+    },
+    {
+     "ge": "6.2.0",
+     "le": "6.2.7"
+    },
+    {
+     "ge": "6.3.0",
+     "le": "6.3.17"
+    },
+    {
+     "ge": "6.4.0",
+     "le": "6.4.1"
+    }
+   ]
+  }
+ ],
+ "FG-IR-21-222": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "6.4.0",
+     "le": "6.4.9"
+    },
+    {
+     "ge": "7.0.0",
+     "le": "7.0.5"
+    }
+   ],
+   "versions": [
+    "7.2.0"
+   ]
+  }
+ ],
+ "FG-IR-21-226": [
+  {
+   "product": "FortiClientLinux",
+   "ranges": [
+    {
+     "le": "6.2.9"
+    },
+    {
+     "le": "6.4.7"
+    },
+    {
+     "le": "7.0.2"
+    }
+   ]
+  }
+ ],
+ "FG-IR-21-227": [
+  {
+   "product": "FortiAP-C",
+   "ranges": [
+    {
+     "ge": "5.2.0",
+     "le": "5.2.1"
+    },
+    {
+     "ge": "5.4.0",
+     "le": "5.4.3"
+    }
+   ]
+  }
+ ],
+ "FG-IR-21-228": [
+  {
+   "product": "FortiAnalyzer",
+   "versions": [
+    "6.0.0",
+    "6.0.1",
+    "6.0.2",
+    "6.0.3",
+    "6.0.4",
+    "6.0.5",
+    "6.0.6",
+    "6.0.7",
+    "6.0.8",
+    "6.0.9",
+    "6.0.10",
+    "6.0.11",
+    "6.2.0",
+    "6.2.1",
+    "6.2.2",
+    "6.2.3",
+    "6.2.4",
+    "6.2.5",
+    "6.2.6",
+    "6.2.7",
+    "6.2.8",
+    "6.2.9",
+    "6.4.0",
+    "6.4.1",
+    "6.4.2",
+    "6.4.3",
+    "6.4.4",
+    "6.4.5",
+    "6.4.6",
+    "6.4.7",
+    "6.4.8",
+    "7.0.0",
+    "7.0.1",
+    "7.0.2",
+    "7.0.3",
+    "7.0.4"
+   ]
+  },
+  {
+   "product": "FortiManager",
+   "versions": [
+    "6.0.0",
+    "6.0.1",
+    "6.0.2",
+    "6.0.3",
+    "6.0.4",
+    "6.0.5",
+    "6.0.6",
+    "6.0.7",
+    "6.0.8",
+    "6.0.9",
+    "6.0.10",
+    "6.0.11",
+    "6.2.0",
+    "6.2.1",
+    "6.2.2",
+    "6.2.3",
+    "6.2.4",
+    "6.2.5",
+    "6.2.6",
+    "6.2.7",
+    "6.2.8",
+    "6.2.9",
+    "6.4.0",
+    "6.4.1",
+    "6.4.2",
+    "6.4.3",
+    "6.4.4",
+    "6.4.5",
+    "6.4.6",
+    "6.4.7",
+    "6.4.8",
+    "7.0.0",
+    "7.0.1",
+    "7.0.2",
+    "7.0.3",
+    "7.0.4"
+   ]
+  }
+ ],
+ "FG-IR-21-230": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "6.0.0",
+     "le": "6.0.14"
+    },
+    {
+     "ge": "6.2.0",
+     "le": "6.2.10"
+    },
+    {
+     "ge": "6.4.0",
+     "le": "6.4.8"
+    },
+    {
+     "ge": "7.0.0",
+     "le": "7.0.3"
+    }
+   ]
+  }
+ ],
+ "FG-IR-21-232": [
+  {
+   "product": "FortiClientLinux",
+   "ranges": [
+    {
+     "le": "6.0.8"
+    },
+    {
+     "le": "6.2.9"
+    },
+    {
+     "le": "6.4.7"
+    },
+    {
+     "le": "7.0.2"
+    }
+   ]
+  }
+ ],
+ "FG-IR-21-233": [
+  {
+   "product": "FortiIsolator",
+   "ranges": [
+    {
+     "ge": "1.2.0",
+     "le": "1.2.2"
+    },
+    {
+     "ge": "2.0.0",
+     "le": "2.0.1"
+    },
+    {
+     "ge": "2.1.0",
+     "le": "2.1.2"
+    },
+    {
+     "ge": "2.3.0",
+     "le": "2.3.4"
+    }
+   ],
+   "versions": [
+    "1.0.0",
+    "1.1.0",
+    "2.2.0"
+   ]
+  }
+ ],
+ "FG-IR-21-234": [
+  {
+   "product": "FortiWeb",
+   "ranges": [
+    {
+     "ge": "5.6.0",
+     "le": "5.6.2"
+    },
+    {
+     "ge": "5.7.0",
+     "le": "5.7.3"
+    },
+    {
+     "ge": "5.8.0",
+     "le": "5.8.3"
+    },
+    {
+     "ge": "5.8.5",
+     "le": "5.8.7"
+    },
+    {
+     "ge": "5.9.0",
+     "le": "5.9.1"
+    },
+    {
+     "ge": "6.0.0",
+     "le": "6.0.7"
+    },
+    {
+     "ge": "6.1.0",
+     "le": "6.1.2"
+    },
+    {
+     "ge": "6.2.0",
+     "le": "6.2.6"
+    },
+    {
+     "ge": "6.3.0",
+     "le": "6.3.17"
+    },
+    {
+     "ge": "6.4.0",
+     "le": "6.4.2"
+    }
+   ]
+  }
+ ],
+ "FG-IR-21-235": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "5.0.0",
+     "le": "5.0.14"
+    },
+    {
+     "ge": "5.2.0",
+     "le": "5.2.15"
+    },
+    {
+     "ge": "5.4.0",
+     "le": "5.4.13"
+    },
+    {
+     "ge": "5.6.0",
+     "le": "5.6.14"
+    },
+    {
+     "ge": "6.0.0",
+     "le": "6.0.14"
+    },
+    {
+     "ge": "6.2.0",
+     "le": "6.2.10"
+    },
+    {
+     "ge": "6.4.0",
+     "le": "6.4.8"
+    },
+    {
+     "ge": "7.0.0",
+     "le": "7.0.3"
+    }
+   ]
+  },
+  {
+   "product": "FortiOS-6K7K",
+   "ranges": [
+    {
+     "ge": "6.0.12",
+     "le": "6.0.16"
+    },
+    {
+     "ge": "6.2.6",
+     "le": "6.2.7"
+    },
+    {
+     "ge": "6.2.9",
+     "le": "6.2.13"
+    }
+   ],
+   "versions": [
+    "6.0.10",
+    "6.2.4",
+    "6.4.2",
+    "6.4.6"
+   ]
+  }
+ ],
+ "FG-IR-21-238": [
+  {
+   "product": "FortiClientWindows",
+   "versions": [
+    "6.0.0",
+    "6.0.1",
+    "6.0.2",
+    "6.0.3",
+    "6.0.4",
+    "6.0.5",
+    "6.0.6",
+    "6.0.7",
+    "6.0.8",
+    "6.0.9",
+    "6.0.10",
+    "6.2.0",
+    "6.2.1",
+    "6.2.2",
+    "6.2.3",
+    "6.2.4",
+    "6.2.5",
+    "6.2.6",
+    "6.2.7",
+    "6.2.8",
+    "6.2.9",
+    "6.4.0",
+    "6.4.1",
+    "6.4.2",
+    "6.4.3",
+    "6.4.4",
+    "6.4.5",
+    "6.4.6",
+    "6.4.7",
+    "7.0.0",
+    "7.0.1",
+    "7.0.2"
+   ]
+  }
+ ],
+ "FG-IR-21-239": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "6.0.0",
+     "le": "6.0.14"
+    },
+    {
+     "ge": "6.2.0",
+     "le": "6.2.10"
+    },
+    {
+     "ge": "6.4.0",
+     "le": "6.4.8"
+    }
+   ],
+   "versions": [
+    "7.0.0"
+   ]
+  }
+ ],
+ "FG-IR-21-242": [
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "6.0.0",
+     "le": "6.0.14"
+    },
+    {
+     "ge": "6.2.0",
+     "le": "6.2.10"
+    },
+    {
+     "ge": "6.4.0",
+     "le": "6.4.8"
+    },
+    {
+     "ge": "7.0.0",
+     "le": "7.0.3"
+    }
+   ]
+  }
+ ],
+ "FG-IR-21-255": [
+  {
+   "product": "FortiAnalyzer",
+   "versions": [
+    "5.6.0",
+    "5.6.1",
+    "5.6.2",
+    "5.6.3",
+    "5.6.4",
+    "5.6.5",
+    "5.6.6",
+    "5.6.7",
+    "5.6.8",
+    "5.6.9",
+    "5.6.10",
+    "5.6.11",
+    "6.0.0",
+    "6.0.1",
+    "6.0.2",
+    "6.0.3",
+    "6.0.4",
+    "6.0.5",
+    "6.0.6",
+    "6.0.7",
+    "6.0.8",
+    "6.0.9",
+    "6.0.10",
+    "6.0.11",
+    "6.2.0",
+    "6.2.1",
+    "6.2.2",
+    "6.2.3",
+    "6.2.4",
+    "6.2.5",
+    "6.2.6",
+    "6.2.7",
+    "6.2.8",
+    "6.2.9",
+    "6.4.0",
+    "6.4.1",
+    "6.4.2",
+    "6.4.3",
+    "6.4.4",
+    "6.4.5",
+    "6.4.6",
+    "6.4.7",
+    "7.0.0",
+    "7.0.1",
+    "7.0.2"
+   ]
+  },
+  {
+   "product": "FortiManager",
+   "versions": [
+    "5.6.0",
+    "5.6.1",
+    "5.6.2",
+    "5.6.3",
+    "5.6.4",
+    "5.6.5",
+    "5.6.6",
+    "5.6.7",
+    "5.6.8",
+    "5.6.9",
+    "5.6.10",
+    "5.6.11",
+    "6.0.0",
+    "6.0.1",
+    "6.0.2",
+    "6.0.3",
+    "6.0.4",
+    "6.0.5",
+    "6.0.6",
+    "6.0.7",
+    "6.0.8",
+    "6.0.9",
+    "6.0.10",
+    "6.0.11",
+    "6.2.0",
+    "6.2.1",
+    "6.2.2",
+    "6.2.3",
+    "6.2.4",
+    "6.2.5",
+    "6.2.6",
+    "6.2.7",
+    "6.2.8",
+    "6.2.9",
+    "6.4.0",
+    "6.4.1",
+    "6.4.2",
+    "6.4.3",
+    "6.4.4",
+    "6.4.5",
+    "6.4.6",
+    "6.4.7",
+    "7.0.0",
+    "7.0.1",
+    "7.0.2"
+   ]
+  }
+ ],
+ "FG-IR-22-007": [
+  {
+   "product": "FortiFone",
+   "ranges": [
+    {
+     "le": "3.0.11"
+    }
+   ]
+  }
+ ],
+ "FG-IR-22-008": [
+  {
+   "product": "FortiAnalyzer",
+   "ranges": [
+    {
+     "ge": "6.4.0",
+     "le": "6.4.7"
+    },
+    {
+     "ge": "7.0.0",
+     "le": "7.0.2"
+    }
+   ]
+  }
+ ],
+ "FG-IR-22-026": [
+  {
+   "product": "FortiAnalyzer",
+   "ranges": [
+    {
+     "ge": "5.6.0",
+     "le": "5.6.11"
+    },
+    {
+     "ge": "6.0.0",
+     "le": "6.0.11"
+    },
+    {
+     "ge": "6.2.0",
+     "le": "6.2.10"
+    },
+    {
+     "ge": "6.4.0",
+     "le": "6.4.11"
+    },
+    {
+     "ge": "7.0.0",
+     "le": "7.0.3"
+    }
+   ]
+  },
+  {
+   "product": "FortiManager",
+   "ranges": [
+    {
+     "ge": "5.6.0",
+     "le": "5.6.11"
+    },
+    {
+     "ge": "6.0.0",
+     "le": "6.0.11"
+    },
+    {
+     "ge": "6.2.0",
+     "le": "6.2.10"
+    },
+    {
+     "ge": "6.4.0",
+     "le": "6.4.11"
+    },
+    {
+     "ge": "7.0.0",
+     "le": "7.0.3"
+    }
+   ]
+  }
+ ],
+ "FG-IR-22-041": [
+  {
+   "product": "FortiSOAR PaaS",
+   "ranges": [
+    {
+     "ge": "5.0.0",
+     "le": "5.2.2"
+    },
+    {
+     "le": "6.4.4"
+    },
+    {
+     "le": "7.0.2"
+    }
+   ],
+   "versions": [
+    "6.0.0"
+   ]
+  }
+ ],
+ "FG-IR-22-044": [
+  {
+   "product": "FortiClientWindows",
+   "ranges": [
+    {
+     "ge": "6.0.0",
+     "le": "6.0.10"
+    },
+    {
+     "ge": "6.2.0",
+     "le": "6.2.9"
+    },
+    {
+     "ge": "6.4.0",
+     "le": "6.4.7"
+    },
+    {
+     "ge": "7.0.0",
+     "le": "7.0.3"
+    }
+   ]
+  }
+ ],
+ "FG-IR-22-046": [
+  {
+   "product": "FortiADC",
+   "ranges": [
+    {
+     "ge": "5.0.0",
+     "le": "5.0.4"
+    },
+    {
+     "ge": "5.1.0",
+     "le": "5.1.7"
+    },
+    {
+     "ge": "5.2.0",
+     "le": "5.2.8"
+    },
+    {
+     "ge": "5.3.0",
+     "le": "5.3.7"
+    },
+    {
+     "ge": "5.4.0",
+     "le": "5.4.5"
+    },
+    {
+     "ge": "6.0.0",
+     "le": "6.0.4"
+    },
+    {
+     "ge": "6.1.0",
+     "le": "6.1.6"
+    },
+    {
+     "ge": "6.2.0",
+     "le": "6.2.3"
+    },
+    {
+     "ge": "7.0.0",
+     "le": "7.0.1"
+    }
+   ]
+  }
+ ],
+ "FG-IR-22-050": [
+  {
+   "product": "FortiAuthenticator",
+   "ranges": [
+    {
+     "ge": "6.3.0",
+     "le": "6.3.3"
+    }
+   ]
+  },
+  {
+   "product": "FortiProxy",
+   "ranges": [
+    {
+     "ge": "7.0.0",
+     "le": "7.0.3"
+    }
+   ]
+  },
+  {
+   "product": "FortiSIEM",
+   "ranges": [
+    {
+     "ge": "6.1.0",
+     "le": "6.1.2"
+    },
+    {
+     "ge": "6.2.0",
+     "le": "6.2.1"
+    },
+    {
+     "ge": "6.3.0",
+     "le": "6.3.3"
+    }
+   ],
+   "versions": [
+    "6.4.0"
+   ]
+  }
+ ],
+ "FG-IR-22-052": [
+  {
+   "product": "FortiEDR",
+   "ranges": [
+    {
+     "ge": "4.1.0",
+     "le": "4.1.1"
+    },
+    {
+     "ge": "5.0.0",
+     "le": "5.0.2"
+    }
+   ],
+   "versions": [
+    "4.0.0",
+    "4.2.2"
+   ]
+  }
+ ],
+ "FG-IR-22-056": [
+  {
+   "product": "FortiDeceptor",
+   "ranges": [
+    {
+     "ge": "1.0.0",
+     "le": "1.0.1"
+    },
+    {
+     "ge": "3.0.2",
+     "le": "3.0.0"
+    },
+    {
+     "ge": "3.1.1",
+     "le": "3.1.0"
+    },
+    {
+     "ge": "3.2.0",
+     "le": "3.2.2"
+    },
+    {
+     "ge": "3.3.0",
+     "lt": "3.3.3"
+    },
+    {
+     "ge": "4.0.0",
+     "lt": "4.0.2"
+    }
+   ],
+   "versions": [
+    "1.1.0",
+    "2.0.0",
+    "2.1.0",
+    "4.1.0"
+   ]
+  },
+  {
+   "product": "FortiSandbox",
+   "ranges": [
+    {
+     "ge": "4.2.0",
+     "le": "4.2.2"
+    }
+   ]
+  }
+ ],
+ "FG-IR-22-058": [
+  {
+   "product": "FortiNAC",
+   "ranges": [
+    {
+     "ge": "8.5.0",
+     "le": "8.5.2"
+    },
+    {
+     "ge": "8.6.2",
+     "le": "8.6.5"
+    },
+    {
+     "ge": "8.7.0",
+     "le": "8.7.6"
+    },
+    {
+     "ge": "8.8.0",
+     "le": "8.8.11"
+    },
+    {
+     "ge": "9.1.0",
+     "le": "9.1.5"
+    },
+    {
+     "ge": "9.2.0",
+     "le": "9.2.3"
+    },
+    {
+     "le": "8.3.7"
+    }
+   ],
+   "versions": [
+    "8.5.4",
+    "8.6.0"
+   ]
+  }
+ ],
+ "FG-IR-22-059": [
+  {
+   "product": "FortiADC",
+   "ranges": [
+    {
+     "ge": "6.0.0",
+     "le": "6.0.4"
+    },
+    {
+     "ge": "6.1.0",
+     "le": "6.1.4"
+    },
+    {
+     "ge": "6.2.0",
+     "le": "6.2.3"
+    },
+    {
+     "ge": "7.0.0",
+     "le": "7.0.1"
+    }
+   ]
+  },
+  {
+   "product": "FortiADCManager",
+   "ranges": [
+    {
+     "lt": "7.0.0"
+    }
+   ]
+  },
+  {
+   "product": "FortiAIOps",
+   "ranges": [
+    {
+     "lt": "1.1.0"
+    }
+   ]
+  },
+  {
+   "product": "FortiAP",
+   "ranges": [
+    {
+     "lt": "7.2.1"
+    }
+   ]
+  },
+  {
+   "product": "FortiAP-W2",
+   "ranges": [
+    {
+     "lt": "7.2.1"
+    }
+   ]
+  },
+  {
+   "product": "FortiAnalyzer",
+   "ranges": [
+    {
+     "ge": "6.2.0",
+     "le": "6.2.9"
+    },
+    {
+     "ge": "6.4.0",
+     "le": "6.4.7"
+    },
+    {
+     "ge": "7.0.0",
+     "le": "7.0.3"
+    }
+   ]
+  },
+  {
+   "product": "FortiAuthenticator",
+   "ranges": [
+    {
+     "ge": "6.0.0",
+     "le": "6.4.1"
+    }
+   ]
+  },
+  {
+   "product": "FortiClientAndroid",
+   "ranges": [
+    {
+     "lt": "7.0.3"
+    }
+   ]
+  },
+  {
+   "product": "FortiClientEMS",
+   "ranges": [
+    {
+     "ge": "6.2.0",
+     "le": "6.2.9"
+    },
+    {
+     "ge": "6.4.0",
+     "le": "6.4.7"
+    },
+    {
+     "ge": "7.0.0",
+     "le": "7.0.3"
+    }
+   ]
+  },
+  {
+   "product": "FortiClientLinux",
+   "ranges": [
+    {
+     "lt": "7.0.6"
+    }
+   ]
+  },
+  {
+   "product": "FortiClientMac",
+   "ranges": [
+    {
+     "ge": "6.2.0",
+     "le": "6.2.9"
+    },
+    {
+     "ge": "6.4.0",
+     "le": "6.4.8"
+    },
+    {
+     "ge": "7.0.0",
+     "le": "7.0.5"
+    }
+   ]
+  },
+  {
+   "product": "FortiClientWindows",
+   "ranges": [
+    {
+     "ge": "6.2.0",
+     "le": "6.2.9"
+    },
+    {
+     "ge": "6.4.0",
+     "le": "6.4.8"
+    },
+    {
+     "ge": "7.0.0",
+     "le": "7.0.3"
+    }
+   ]
+  },
+  {
+   "product": "FortiClientiOS",
+   "ranges": [
+    {
+     "le": "7.0.3"
+    }
+   ]
+  },
+  {
+   "product": "FortiDeceptor",
+   "ranges": [
+    {
+     "ge": "3.0.0",
+     "lt": "4.0.0"
+    },
+    {
+     "ge": "4.0.0",
+     "lt": "4.1.0"
+    }
+   ],
+   "versions": [
+    "4.1.0"
+   ]
+  },
+  {
+   "product": "FortiIsolator",
+   "ranges": [
+    {
+     "ge": "2.0.0",
+     "le": "2.0.1"
+    },
+    {
+     "ge": "2.1.0",
+     "le": "2.1.2"
+    },
+    {
+     "ge": "2.3.0",
+     "le": "2.3.4"
+    }
+   ],
+   "versions": [
+    "2.2.0",
+    "2.4.0"
+   ]
+  },
+  {
+   "product": "FortiMail",
+   "ranges": [
+    {
+     "ge": "6.0.0",
+     "le": "6.0.9"
+    },
+    {
+     "ge": "6.2.0",
+     "le": "6.2.8"
+    },
+    {
+     "ge": "6.4.0",
+     "le": "6.4.6"
+    },
+    {
+     "ge": "7.0.0",
+     "le": "7.0.3"
+    }
+   ]
+  },
+  {
+   "product": "FortiManager",
+   "ranges": [
+    {
+     "ge": "6.2.0",
+     "le": "6.2.9"
+    },
+    {
+     "ge": "6.4.0",
+     "le": "6.4.7"
+    },
+    {
+     "ge": "7.0.0",
+     "le": "7.0.3"
+    }
+   ]
+  },
+  {
+   "product": "FortiNDR",
+   "ranges": [
+    {
+     "lt": "7.0.0"
+    }
+   ]
+  },
+  {
+   "product": "FortiOS",
+   "ranges": [
+    {
+     "ge": "6.0.0",
+     "le": "6.0.14"
+    },
+    {
+     "ge": "6.2.0",
+     "le": "6.2.10"
+    },
+    {
+     "ge": "6.4.0",
+     "le": "6.4.8"
+    },
+    {
+     "ge": "7.0.0",
+     "le": "7.0.5"
+    }
+   ]
+  },
+  {
+   "product": "FortiProxy",
+   "ranges": [
+    {
+     "ge": "7.0.0",
+     "le": "7.0.3"
+    }
+   ]
+  },
+  {
+   "product": "FortiRecorder",
+   "ranges": [
+    {
+     "ge": "6.0.0",
+     "le": "6.0.10"
+    },
+    {
+     "ge": "6.4.0",
+     "le": "6.4.2"
+    }
+   ]
+  },
+  {
+   "product": "FortiSIEM",
+   "ranges": [
+    {
+     "lt": "6.4.0"
+    }
+   ]
+  },
+  {
+   "product": "FortiSwitch",
+   "ranges": [
+    {
+     "ge": "6.0.0",
+     "le": "6.0.7"
+    },
+    {
+     "ge": "6.2.0",
+     "le": "6.2.7"
+    },
+    {
+     "ge": "6.4.0",
+     "le": "6.4.10"
+    },
+    {
+     "ge": "7.0.0",
+     "le": "7.0.4"
+    }
+   ]
+  },
+  {
+   "product": "FortiTester",
+   "ranges": [
+    {
+     "le": "7.1.1"
+    }
+   ]
+  },
+  {
+   "product": "FortiVoice",
+   "ranges": [
+    {
+     "ge": "6.0.0",
+     "le": "6.0.11"
+    },
+    {
+     "ge": "6.4.0",
+     "le": "6.4.4"
+    }
+   ]
+  },
+  {
+   "product": "FortiWAN",
+   "ranges": [
+    {
+     "ge": "4.0.0",
+     "le": "4.0.6"
+    },
+    {
+     "ge": "4.1.0",
+     "le": "4.1.3"
+    },
+    {
+     "ge": "4.2.0",
+     "le": "4.2.7"
+    },
+    {
+     "ge": "4.4.0",
+     "le": "4.3.1"
+    },
+    {
+     "ge": "4.5.0",
+     "le": "4.5.9"
+    }
+   ],
+   "versions": [
+    "4.4.0"
+   ]
+  },
+  {
+   "product": "FortiWeb",
+   "ranges": [
+    {
+     "ge": "6.3.0",
+     "le": "6.3.18"
+    },
+    {
+     "ge": "6.4.0",
+     "le": "6.4.2"
+    }
+   ],
+   "versions": [
+    "7.0.0"
+   ]
+  }
+ ],
+ "FG-IR-22-060": [
+  {
+   "product": "FortiSandbox",
+   "ranges": [
+    {
+     "ge": "3.0.1",
+     "le": "3.0.7"
+    },
+    {
+     "ge": "3.1.0",
+     "le": "3.1.5"
+    },
+    {
+     "ge": "3.2.0",
+     "le": "3.2.3"
+    },
+    {
+     "ge": "4.0.0",
+     "le": "4.0.2"
+    }
+   ],
+   "versions": [
+    "4.2.0"
+   ]
+  }
+ ],
+ "FG-IR-22-061": [
+  {
+   "product": "FortiADC",
+   "ranges": [
+    {
+     "ge": "5.4.0",
+     "le": "5.4.5"
+    },
+    {
+     "ge": "6.0.0",
+     "le": "6.0.4"
+    },
+    {
+     "ge": "6.1.0",
+     "le": "6.1.6"
+    },
+    {
+     "ge": "6.2.0",
+     "le": "6.2.3"
+    },
+    {
+     "ge": "7.0.0",
+     "le": "7.0.2"
+    }
+   ]
+  }
+ ]
+}
