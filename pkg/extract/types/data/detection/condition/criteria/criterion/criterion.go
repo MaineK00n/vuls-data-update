@@ -26,8 +26,6 @@ const (
 	CriterionTypeNoneExist CriterionType = "none-exist"
 	CriterionTypeKB        CriterionType = "kb"
 	CriterionTypeCPE       CriterionType = "cpe"
-
-	CriterionTypeUnknown CriterionType = "unknown"
 )
 
 // CriterionTypes returns every CriterionType this build knows, in declaration
@@ -40,7 +38,6 @@ func CriterionTypes() []CriterionType {
 		CriterionTypeNoneExist,
 		CriterionTypeKB,
 		CriterionTypeCPE,
-		CriterionTypeUnknown,
 	}
 }
 
@@ -300,11 +297,6 @@ func (c Criterion) Accept(query Query, repositories []string) (FilteredCriterion
 			Accepts:   AcceptQueries{CPE: accepts},
 			Warnings:  ws,
 		}, nil
-	case CriterionTypeUnknown:
-		// The declared "unknown" vocabulary value is normal data (the source
-		// declared a criterion the extractor could not translate) and
-		// contributes "not affected", quietly.
-		return FilteredCriterion{Criterion: c, Accepts: AcceptQueries{}}, nil
 	default:
 		// A criterion type outside this build's vocabulary (data from a
 		// newer vuls-data-update) contributes "not affected", recorded on
@@ -329,10 +321,6 @@ func (fc FilteredCriterion) Affected() (bool, error) {
 		return fc.Accepts.KB.Covered || fc.Accepts.KB.Unapplied, nil
 	case CriterionTypeCPE:
 		return len(fc.Accepts.CPE.Exact) > 0 || len(fc.Accepts.CPE.VersionUnconfirmed) > 0, nil
-	case CriterionTypeUnknown:
-		// The declared "unknown" vocabulary value is normal data and quietly
-		// reports not affected.
-		return false, nil
 	default:
 		// Data from a newer vuls-data-update: not affected; the warning was
 		// recorded when Accept produced this FilteredCriterion.

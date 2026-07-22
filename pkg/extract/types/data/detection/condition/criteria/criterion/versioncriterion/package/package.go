@@ -22,8 +22,6 @@ const (
 	PackageTypeBinary   PackageType = "binary"
 	PackageTypeSource   PackageType = "source"
 	PackageTypeLanguage PackageType = "language"
-
-	PackageTypeUnknown PackageType = "unknown"
 )
 
 // PackageTypes returns every PackageType this build knows, in declaration
@@ -35,7 +33,6 @@ func PackageTypes() []PackageType {
 		PackageTypeBinary,
 		PackageTypeSource,
 		PackageTypeLanguage,
-		PackageTypeUnknown,
 	}
 }
 
@@ -154,10 +151,6 @@ func (p Package) Accept(query Query, repositories []string) (bool, error) {
 			return false, errors.Wrap(err, "language package accept")
 		}
 		return isAccepted, nil
-	case PackageTypeUnknown:
-		// The declared Unknown vocabulary value is normal data and quietly
-		// does not accept.
-		return false, nil
 	default:
 		// Out of vocabulary — unset, or a value from a newer
 		// vuls-data-update — is unevaluable: report it as a non-fatal

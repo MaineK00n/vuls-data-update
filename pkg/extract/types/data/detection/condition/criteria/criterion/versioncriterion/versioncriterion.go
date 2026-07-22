@@ -177,10 +177,6 @@ func (c Criterion) Accept(query Query, repositories []string) (bool, error) {
 			return false, errors.Wrap(err, "affected accept")
 		}
 		return isAccepted, nil
-	case packageTypes.PackageTypeUnknown:
-		// The declared Unknown vocabulary value is normal data and quietly
-		// does not accept.
-		return false, nil
 	default:
 		// Out of vocabulary — unset, or a value from a newer
 		// vuls-data-update — is unevaluable: report it as a non-fatal
