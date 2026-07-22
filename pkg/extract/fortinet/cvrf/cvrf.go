@@ -216,17 +216,17 @@ func extract(fetched cvrfTypes.CVRF, raws []string) (dataTypes.Data, error) {
 		if cve == "" {
 			continue
 		}
-		// A cve[] entry is normally a bare CVE ID, but FG-IR-14-010 suffixes
-		// free text and embeds a stray HTML tag ("CVE-2014-2721 password
-		// issue", "CVE-<br />2014-2722 key issue"). Recover the ID so the
-		// vulnerability record carries a queryable CVE ID; an entry without a
-		// recoverable ID is unexpected and fails the extract rather than
-		// emitting a junk ID.
-		m := cvePattern.FindStringSubmatch(cve)
-		if m == nil {
-			return dataTypes.Data{}, errors.Errorf("no CVE ID in cve entry %q", cve)
+		// A cve[] entry is a bare CVE ID everywhere in the corpus except the
+		// three known FG-IR-14-010 entries fixed up above; anything else is a
+		// new upstream shape and fails the extract rather than emitting a
+		// junk vulnerability ID (or a silently mis-normalized one).
+		id, ok := cveEntryFixups[cve]
+		if !ok {
+			id = cve
 		}
-		id := fmt.Sprintf("CVE-%s-%s", m[1], m[2])
+		if !cveIDPattern.MatchString(id) {
+			return dataTypes.Data{}, errors.Errorf("unexpected cve entry. expected: bare CVE ID or a known fixup, actual: %q", cve)
+		}
 		if slices.ContainsFunc(vulns, func(v vulnerabilityTypes.Vulnerability) bool {
 			return v.Content.ID == vulnerabilityContentTypes.VulnerabilityID(id)
 		}) {
@@ -395,10 +395,21 @@ func advisorySeverity(fetched cvrfTypes.CVRF) ([]severityTypes.Severity, error) 
 // note, in any of the observed forms: "[CWE-200]", "(CWE-415)", "[CWE-78 ]".
 var cwePattern = regexp.MustCompile(`CWE-\d+`)
 
-// cvePattern recovers the CVE identifier from a vulnerability cve[] entry,
-// tolerating the stray HTML tag FG-IR-14-010 embeds between "CVE-" and the
-// year ("CVE-<br />2014-2722 key issue").
-var cvePattern = regexp.MustCompile(`CVE-(?:<br />)?(\d{4})-(\d+)`)
+// cveEntryFixups maps the three malformed cve[] entries of FG-IR-14-010 — the
+// only non-bare entries in the whole corpus — to their CVE IDs. The fixup is
+// keyed on the exact malformed string, not applied as a lenient pattern: a
+// pattern that recovers "the" CVE ID from arbitrary junk would silently
+// mis-handle a future malformed shape (e.g. keep only the first of two IDs in
+// one entry), while an unknown shape here fails the extract loudly instead.
+var cveEntryFixups = map[string]string{
+	"CVE-2014-2721 password issue":         "CVE-2014-2721",
+	"CVE-<br />2014-2722 key issue":        "CVE-2014-2722",
+	"CVE-<br />2014-2723 permission issue": "CVE-2014-2723",
+}
+
+// cveIDPattern is the shape every (fixed-up) cve[] entry must have: a bare
+// CVE ID.
+var cveIDPattern = regexp.MustCompile(`^CVE-\d{4}-\d+$`)
 
 // urlCandidatePattern finds candidate http(s) URL substrings in a CVRF
 // reference value. The values are messy and the URL is not always at the start:
