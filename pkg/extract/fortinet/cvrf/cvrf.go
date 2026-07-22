@@ -217,9 +217,10 @@ func extract(fetched cvrfTypes.CVRF, raws []string) (dataTypes.Data, error) {
 			continue
 		}
 		// A cve[] entry is a bare CVE ID everywhere in the corpus except the
-		// three known FG-IR-14-010 entries fixed up above; anything else is a
-		// new upstream shape and fails the extract rather than emitting a
-		// junk vulnerability ID (or a silently mis-normalized one).
+		// three known FG-IR-14-010 entries normalized via cveEntryFixups;
+		// anything else is a new upstream shape and fails the extract rather
+		// than emitting a junk vulnerability ID (or a silently mis-normalized
+		// one).
 		id, ok := cveEntryFixups[cve]
 		if !ok {
 			id = cve
