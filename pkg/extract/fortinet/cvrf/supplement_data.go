@@ -464,7 +464,7 @@ var supplementTable = map[string][]supplementProduct{
 		{Product: "FortiOS", Ranges: []supplementRange{{GreaterEqual: "5.6.0", LessEqual: "5.6.7"}, {GreaterEqual: "6.0.0", LessEqual: "6.0.4"}, {LessEqual: "5.4.9"}}},
 	},
 	"FG-IR-17-245": {
-		{Product: "FortiOS", Ranges: []supplementRange{{GreaterEqual: "5.2.0", LessEqual: "5.2.15"}, {GreaterEqual: "5.4.0", LessEqual: "5.4.8"}, {GreaterEqual: "5.6.0", LessEqual: "5.6.2"}}},
+		{Product: "FortiOS", Ranges: []supplementRange{{LessEqual: "5.2.15"}, {GreaterEqual: "5.4.0", LessEqual: "5.4.8"}, {GreaterEqual: "5.6.0", LessEqual: "5.6.2"}}},
 	},
 	"FG-IR-17-259": {
 		{Product: "FortiCloud", Ranges: []supplementRange{{LessEqual: "3.2.0"}}},
@@ -538,7 +538,7 @@ var supplementTable = map[string][]supplementProduct{
 		{Product: "FortiOS", Ranges: []supplementRange{{GreaterEqual: "6.0.0", LessEqual: "6.0.1"}, {LessEqual: "5.6.7"}}},
 	},
 	"FG-IR-18-108": {
-		{Product: "FortiClientWindows", Ranges: []supplementRange{{LessEqual: "6.0.4"}}},
+		{Product: "FortiClientWindows", Ranges: []supplementRange{{LessEqual: "6.0.5"}}},
 	},
 	"FG-IR-18-121": {
 		{Product: "FortiAnalyzer", Ranges: []supplementRange{{LessEqual: "5.6.0"}}},
@@ -559,8 +559,8 @@ var supplementTable = map[string][]supplementProduct{
 		{Product: "FortiOS"},
 	},
 	"FG-IR-18-232": {
-		{Product: "FortiAnalyzer", Ranges: []supplementRange{{GreaterEqual: "6.0.0", LessEqual: "6.0.4"}}},
-		{Product: "FortiManager", Ranges: []supplementRange{{GreaterEqual: "6.0.0", LessEqual: "6.0.4"}}},
+		{Product: "FortiAnalyzer", Ranges: []supplementRange{{GreaterEqual: "5.6.0", LessEqual: "5.6.11"}, {GreaterEqual: "6.0.0", LessEqual: "6.0.4"}}},
+		{Product: "FortiManager", Ranges: []supplementRange{{GreaterEqual: "5.6.0", LessEqual: "5.6.11"}, {GreaterEqual: "6.0.0", LessEqual: "6.0.4"}}},
 		{Product: "FortiPortal", Ranges: []supplementRange{{GreaterEqual: "4.1.0", LessEqual: "4.1.2"}, {GreaterEqual: "4.2.0", LessEqual: "4.2.2"}, {GreaterEqual: "5.0.0", LessEqual: "5.0.3"}, {GreaterEqual: "5.1.0", LessEqual: "5.1.2"}, {GreaterEqual: "5.2.0", LessEqual: "5.2.6"}, {GreaterEqual: "5.3.0", LessEqual: "5.3.8"}, {GreaterEqual: "6.0.0", LessEqual: "6.0.9"}}},
 		{Product: "FortiSwitch", Ranges: []supplementRange{{GreaterEqual: "6.0.0", LessEqual: "6.0.7"}, {GreaterEqual: "6.2.0", LessEqual: "6.2.7"}, {GreaterEqual: "6.4.0", LessEqual: "6.4.10"}, {GreaterEqual: "7.0.0", LessEqual: "7.0.4"}}},
 	},
@@ -616,7 +616,7 @@ var supplementTable = map[string][]supplementProduct{
 		{Product: "FortiSwitch", Versions: []string{"6.0.6", "6.2.2"}, Ranges: []supplementRange{{LessThan: "3.6.11"}}},
 	},
 	"FG-IR-19-034": {
-		{Product: "FortiOS", Ranges: []supplementRange{{GreaterEqual: "5.6.0", LessEqual: "5.6.10"}, {GreaterEqual: "6.0.0", LessEqual: "6.0.4"}}},
+		{Product: "FortiOS", Ranges: []supplementRange{{GreaterEqual: "5.2.0", LessEqual: "5.6.10"}, {GreaterEqual: "6.0.0", LessEqual: "6.0.4"}}},
 	},
 	"FG-IR-19-037": {
 		{Product: "FortiOS", Versions: []string{"6.2.0"}, Ranges: []supplementRange{{GreaterEqual: "4.0.0", LessEqual: "4.0.4"}, {GreaterEqual: "4.1.0", LessEqual: "4.1.11"}, {GreaterEqual: "4.2.0", LessEqual: "4.2.16"}, {GreaterEqual: "4.3.0", LessEqual: "4.3.19"}, {GreaterEqual: "5.0.0", LessEqual: "5.0.14"}, {GreaterEqual: "5.2.0", LessEqual: "5.2.15"}, {GreaterEqual: "5.4.0", LessEqual: "5.4.13"}, {GreaterEqual: "5.6.0", LessEqual: "5.6.13"}, {GreaterEqual: "6.0.0", LessEqual: "6.0.14"}}},
@@ -675,7 +675,7 @@ var supplementTable = map[string][]supplementProduct{
 		{Product: "FortiRecorder", Ranges: []supplementRange{{LessThan: "2.7.4"}}},
 	},
 	"FG-IR-19-186": {
-		{Product: "FortiOS", Ranges: []supplementRange{{GreaterEqual: "5.0.3", LessEqual: "5.0.5"}}},
+		{Product: "FortiOS", Versions: []string{"6.2.0", "6.2.1"}, Ranges: []supplementRange{{LessEqual: "6.0.8"}}},
 	},
 	"FG-IR-19-191": {
 		{Product: "FortiManager", Versions: []string{"6.2.0", "6.2.1"}, Ranges: []supplementRange{{LessEqual: "6.0.6"}}},
@@ -878,7 +878,7 @@ var supplementTable = map[string][]supplementProduct{
 		{Product: "FortiClientWindows", Versions: []string{"6.4.0", "6.4.1", "6.4.2", "7.0.0", "7.0.1"}},
 	},
 	"FG-IR-20-082": {
-		{Product: "FortiOS", Ranges: []supplementRange{{GreaterEqual: "5.6.0", LessEqual: "5.6.12"}, {GreaterEqual: "6.0.0", LessEqual: "6.0.11"}, {GreaterEqual: "6.2.0", LessEqual: "6.2.4"}, {GreaterEqual: "6.4.0", LessEqual: "6.4.1"}}},
+		{Product: "FortiOS", Ranges: []supplementRange{{GreaterEqual: "5.6.0", LessEqual: "5.6.12"}, {GreaterEqual: "6.0.0", LessEqual: "6.0.10"}, {GreaterEqual: "6.2.0", LessEqual: "6.2.4"}, {GreaterEqual: "6.4.0", LessEqual: "6.4.1"}}},
 	},
 	"FG-IR-20-083": {
 		{Product: "FortiOS", Ranges: []supplementRange{{GreaterEqual: "5.6.0", LessEqual: "5.6.12"}, {GreaterEqual: "6.0.0", LessEqual: "6.0.10"}}},
@@ -893,7 +893,7 @@ var supplementTable = map[string][]supplementProduct{
 		{Product: "FortiAnalyzer", Versions: []string{"6.0.0", "6.0.1", "6.0.2", "6.0.3", "6.0.4", "6.0.5", "6.0.6", "6.0.7", "6.0.8", "6.0.9", "6.0.10", "6.2.0", "6.2.1", "6.2.2", "6.2.3", "6.2.4", "6.2.5", "6.2.6", "6.2.7", "6.4.0", "6.4.1", "6.4.2", "6.4.3"}},
 	},
 	"FG-IR-20-103": {
-		{Product: "FortiOS", Ranges: []supplementRange{{GreaterEqual: "6.0.0", LessEqual: "6.0.11"}, {GreaterEqual: "6.2.0", LessEqual: "6.2.4"}, {GreaterEqual: "6.4.0", LessEqual: "6.4.1"}}},
+		{Product: "FortiOS", Ranges: []supplementRange{{GreaterEqual: "6.0.0", LessEqual: "6.0.10"}, {GreaterEqual: "6.2.0", LessEqual: "6.2.4"}, {GreaterEqual: "6.4.0", LessEqual: "6.4.1"}}},
 	},
 	"FG-IR-20-110": {
 		{Product: "FortiClientLinux", Versions: []string{"6.0.8", "6.4.0"}, Ranges: []supplementRange{{GreaterEqual: "6.0.0", LessEqual: "6.0.6"}, {GreaterEqual: "6.2.0", LessEqual: "6.2.4"}, {GreaterEqual: "6.2.6", LessEqual: "6.2.7"}}},
@@ -932,7 +932,7 @@ var supplementTable = map[string][]supplementProduct{
 		{Product: "FortiWLC", Ranges: []supplementRange{{GreaterEqual: "8.2.6", LessEqual: "8.2.7"}, {GreaterEqual: "8.3.2", LessEqual: "8.3.3"}, {GreaterEqual: "8.4.0", LessEqual: "8.4.2"}, {GreaterEqual: "8.4.4", LessEqual: "8.4.8"}, {GreaterEqual: "8.5.0", LessEqual: "8.5.2"}}},
 	},
 	"FG-IR-20-158": {
-		{Product: "FortiOS", Versions: []string{"7.0.0"}, Ranges: []supplementRange{{GreaterEqual: "5.6.0", LessEqual: "5.6.14"}, {GreaterEqual: "6.0.0", LessEqual: "6.0.13"}, {GreaterEqual: "6.2.0", LessEqual: "6.2.9"}, {GreaterEqual: "6.4.0", LessEqual: "6.4.6"}}},
+		{Product: "FortiOS", Versions: []string{"7.0.0"}, Ranges: []supplementRange{{GreaterEqual: "5.6.0", LessEqual: "5.6.14"}, {GreaterEqual: "6.0.0", LessEqual: "6.0.14"}, {GreaterEqual: "6.2.0", LessEqual: "6.2.9"}, {GreaterEqual: "6.4.0", LessEqual: "6.4.6"}}},
 	},
 	"FG-IR-20-170": {
 		{Product: "FortiAuthenticator", Ranges: []supplementRange{{LessThan: "6.0.6"}}},
