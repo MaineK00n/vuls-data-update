@@ -165,7 +165,7 @@ var supplementTable = map[string][]supplementProduct{
 		{Product: "FortiOS", Ranges: []supplementRange{{LessEqual: "4.3.12"}}},
 	},
 	"FG-IR-15-017": {
-		{Product: "FortiClientSSLVPN", Ranges: []supplementRange{{LessEqual: "2312"}}},
+		{Product: "FortiClientSSLVPN", Ranges: []supplementRange{{LessEqual: "4.0.2312"}}},
 	},
 	"FG-IR-15-019": {
 		{Product: "FortiSandbox", Ranges: []supplementRange{{LessEqual: "2.0.4"}}},
