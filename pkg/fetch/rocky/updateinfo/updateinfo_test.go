@@ -291,3 +291,36 @@ func Test_ModuleStreamVersion(t *testing.T) {
 		})
 	}
 }
+
+func Test_isKnownDanglingRef(t *testing.T) {
+	tests := []struct {
+		name string
+		u    string
+		want bool
+	}{
+		{
+			// A repomd-referenced updateinfo that is genuinely absent from vault.
+			name: "known dangling ref",
+			u:    "https://dl.rockylinux.org/vault/rocky/8.6/RT/x86_64/kickstart/repodata/3f851aab6522f26ab8f7e912ff74b62831df3f662ef7596e681628da678054c9-updateinfo.xml.gz",
+			want: true,
+		},
+		{
+			// A 404 anywhere else (even in vault) is not silently skipped.
+			name: "unlisted vault 404 is not skipped",
+			u:    "https://dl.rockylinux.org/vault/rocky/8.6/BaseOS/x86_64/os/repodata/deadbeef-updateinfo.xml.gz",
+			want: false,
+		},
+		{
+			name: "live pub repo is not skipped",
+			u:    "https://dl.rockylinux.org/pub/rocky/9/BaseOS/x86_64/os/repodata/abc-updateinfo.xml.gz",
+			want: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := updateinfo.IsKnownDanglingRef(tt.u); got != tt.want {
+				t.Errorf("isKnownDanglingRef() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
