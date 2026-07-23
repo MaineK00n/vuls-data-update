@@ -40,11 +40,30 @@ func TestUnevaluableError_Error(t *testing.T) {
 
 func TestUnevaluableError_Unwrap(t *testing.T) {
 	underlying := stderrors.New("underlying")
-	err := &warningTypes.UnevaluableError{Warning: warningTypes.Warning{Kind: warningTypes.KindUnevaluableRangeType, Cause: "future-range"}, Err: underlying}
-	if !stderrors.Is(err, underlying) {
-		t.Errorf("errors.Is() = false, want the underlying error reachable through Unwrap")
+	tests := []struct {
+		name string
+		err  *warningTypes.UnevaluableError
+		want error
+	}{
+		{
+			name: "underlying error reachable",
+			err:  &warningTypes.UnevaluableError{Warning: warningTypes.Warning{Kind: warningTypes.KindUnevaluableRangeType, Cause: "future-range"}, Err: underlying},
+			want: underlying,
+		},
+		{
+			name: "data-derived warning has nothing to unwrap",
+			err:  &warningTypes.UnevaluableError{Warning: warningTypes.Warning{Kind: warningTypes.KindEmptyRange}},
+			want: nil,
+		},
 	}
-	if got := stderrors.Unwrap(&warningTypes.UnevaluableError{Warning: warningTypes.Warning{Kind: warningTypes.KindEmptyRange}}); got != nil {
-		t.Errorf("Unwrap() = %v, want nil for a data-derived warning", got)
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := stderrors.Unwrap(tt.err); got != tt.want {
+				t.Errorf("Unwrap() = %v, want %v", got, tt.want)
+			}
+			if tt.want != nil && !stderrors.Is(tt.err, tt.want) {
+				t.Errorf("errors.Is() = false, want the underlying error reachable through Unwrap")
+			}
+		})
 	}
 }
