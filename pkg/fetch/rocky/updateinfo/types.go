@@ -1,6 +1,11 @@
 package updateinfo
 
-import "gopkg.in/yaml.v3"
+import (
+	"strconv"
+
+	"github.com/pkg/errors"
+	"gopkg.in/yaml.v3"
+)
 
 type repomd struct {
 	Revision string `xml:"revision"`
@@ -84,11 +89,35 @@ type modules struct {
 	Data     yaml.Node `yaml:"data"`
 }
 
+// ModuleStreamVersion is a modulemd stream version. The modulemd spec types it
+// as a 64-bit integer, but some repositories (e.g. Rocky vault) quote it as a
+// string, so accept both a YAML integer and a quoted integer string.
+type ModuleStreamVersion int64
+
+func (v *ModuleStreamVersion) UnmarshalYAML(n *yaml.Node) error {
+	var i int64
+	if err := n.Decode(&i); err == nil {
+		*v = ModuleStreamVersion(i)
+		return nil
+	}
+
+	var s string
+	if err := n.Decode(&s); err != nil {
+		return errors.Wrap(err, "decode modulemd stream version")
+	}
+	i, err := strconv.ParseInt(s, 10, 64)
+	if err != nil {
+		return errors.Wrapf(err, "parse modulemd stream version %q", s)
+	}
+	*v = ModuleStreamVersion(i)
+	return nil
+}
+
 // https://github.com/fedora-modularity/libmodulemd/blob/f3039d851e15535955c5d80901816522f004f6dd/yaml_specs/modulemd_stream_v2.yaml
 type Modulemd struct {
 	Name          string                            `yaml:"name" json:"name,omitempty"`
 	Stream        string                            `yaml:"stream" json:"stream,omitempty"`
-	Version       int64                             `yaml:"version" json:"version,omitempty"`
+	Version       ModuleStreamVersion               `yaml:"version" json:"version,omitempty"`
 	StaticContext bool                              `yaml:"static_context" json:"static_context,omitempty"`
 	Context       string                            `yaml:"context" json:"context,omitempty"`
 	Arch          string                            `yaml:"arch" json:"arch,omitempty"`

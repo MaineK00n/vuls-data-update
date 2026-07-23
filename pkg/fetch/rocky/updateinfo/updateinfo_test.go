@@ -13,6 +13,7 @@ import (
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
+	"gopkg.in/yaml.v3"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/rocky/updateinfo"
 )
@@ -257,6 +258,35 @@ func Test_decompress(t *testing.T) {
 			}
 			if got.String() != tt.want {
 				t.Errorf("decompress() = %q, want %q", got.String(), tt.want)
+			}
+		})
+	}
+}
+
+func Test_ModuleStreamVersion(t *testing.T) {
+	tests := []struct {
+		name    string
+		in      string
+		want    int64
+		wantErr bool
+	}{
+		{name: "integer", in: "version: 9040020240101000000", want: 9040020240101000000},
+		// Some Rocky vault modules quote the stream version as a string.
+		{name: "quoted string", in: `version: "9010020230330221931"`, want: 9010020230330221931},
+		{name: "non-numeric string", in: `version: "not-a-number"`, wantErr: true},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var md updateinfo.Modulemd
+			err := yaml.Unmarshal([]byte(tt.in), &md)
+			if (err != nil) != tt.wantErr {
+				t.Fatalf("Unmarshal() error = %v, wantErr %v", err, tt.wantErr)
+			}
+			if tt.wantErr {
+				return
+			}
+			if int64(md.Version) != tt.want {
+				t.Errorf("Version = %d, want %d", int64(md.Version), tt.want)
 			}
 		})
 	}
