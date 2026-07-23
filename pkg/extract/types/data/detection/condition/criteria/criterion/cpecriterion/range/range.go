@@ -281,6 +281,13 @@ func (e *UnsupportedRangeTypeError) Error() string {
 	return fmt.Sprintf("unsupported range type %q", string(e.RangeType))
 }
 
+// Warning implements warning.Warnable: evaluation sites catch this error
+// generically through the CompareError chain and record it as an
+// unevaluable-range-type warning, with the offending type as the cause.
+func (e *UnsupportedRangeTypeError) Warning() warningTypes.Warning {
+	return warningTypes.Warning{Kind: warningTypes.KindUnevaluableRangeType, Cause: string(e.RangeType)}
+}
+
 // ErrRangeTypeUnknown is wrapped in a CompareError when CompareVersions is
 // called with a Type that cannot evaluate any version.
 var ErrRangeTypeUnknown = errors.New("unknown range type")
@@ -510,8 +517,8 @@ func (r Range) Accept(v string) (bool, error) {
 		}
 		n, err := r.Type.CompareVersions(b.s, v)
 		if err != nil {
-			if ue, ok := stderrors.AsType[*UnsupportedRangeTypeError](err); ok {
-				return false, &warningTypes.UnevaluableError{Warning: warningTypes.Warning{Kind: warningTypes.KindUnevaluableRangeType, Cause: string(ue.RangeType)}}
+			if w, ok := stderrors.AsType[warningTypes.Warnable](err); ok {
+				return false, &warningTypes.UnevaluableError{Warning: w.Warning(), Err: err}
 			}
 			if _, ok := stderrors.AsType[*CompareError](err); ok {
 				return false, nil

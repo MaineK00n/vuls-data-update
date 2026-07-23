@@ -7,6 +7,8 @@ import (
 
 	"github.com/pkg/errors"
 
+	warningTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/warning"
+
 	microsoftdefenderandroid "github.com/MaineK00n/go-microsoft-version/defender/android"
 	microsoftdefenderios "github.com/MaineK00n/go-microsoft-version/defender/ios"
 	microsoftdefenderiot "github.com/MaineK00n/go-microsoft-version/defender/iot"
@@ -210,6 +212,13 @@ type UnsupportedRangeTypeError struct {
 
 func (e *UnsupportedRangeTypeError) Error() string {
 	return fmt.Sprintf("unsupported range type %q", string(e.RangeType))
+}
+
+// Warning implements warning.Warnable: evaluation sites catch this error
+// generically through the CompareError chain and record it as an
+// unevaluable-range-type warning, with the offending type as the cause.
+func (e *UnsupportedRangeTypeError) Warning() warningTypes.Warning {
+	return warningTypes.Warning{Kind: warningTypes.KindUnevaluableRangeType, Cause: string(e.RangeType)}
 }
 
 var ErrRangeTypeUnknown = errors.New("unknown range type")

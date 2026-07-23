@@ -67,6 +67,17 @@ func (k Kind) Compare(u Kind) int {
 
 var vocabulary = enum.NewVocabulary(Kinds())
 
+// Warnable is implemented by errors that know how to describe themselves as
+// a Warning (e.g. *UnsupportedRangeTypeError in the range packages). The
+// evaluation sites catch it generically with errors.As and wrap it in an
+// *UnevaluableError, so the error type itself is the single source of its
+// error -> Warning mapping instead of a hand-coded chain at every catch
+// site.
+type Warnable interface {
+	error
+	Warning() Warning
+}
+
 // UnevaluableError is returned (in place of a silent skip) by the layer that
 // discovers it cannot evaluate its own data — e.g. package.Accept on an
 // out-of-vocabulary PackageType — carrying the Warning to record. It is
@@ -76,14 +87,25 @@ var vocabulary = enum.NewVocabulary(Kinds())
 // layers just propagate (wrapping is fine, errors.As traverses).
 type UnevaluableError struct {
 	Warning Warning
+	// Err is the originating error, if any (e.g. the *CompareError chain
+	// carrying an *UnsupportedRangeTypeError); errors.Is/As reach it through
+	// Unwrap. It is nil when the warning derives from inspecting the data
+	// itself (e.g. an empty range) rather than from a failing operation.
+	Err error
 }
 
 func (e *UnevaluableError) Error() string {
-	if e.Warning.Cause == "" {
-		return fmt.Sprintf("unevaluable: %s", e.Warning.Kind)
+	s := fmt.Sprintf("unevaluable: %s", e.Warning.Kind)
+	if e.Warning.Cause != "" {
+		s = fmt.Sprintf("%s %q", s, e.Warning.Cause)
 	}
-	return fmt.Sprintf("unevaluable: %s %q", e.Warning.Kind, e.Warning.Cause)
+	if e.Err != nil {
+		s = fmt.Sprintf("%s: %v", s, e.Err)
+	}
+	return s
 }
+
+func (e *UnevaluableError) Unwrap() error { return e.Err }
 
 func Compare(x, y Warning) int {
 	return cmp.Or(

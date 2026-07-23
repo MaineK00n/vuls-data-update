@@ -50,8 +50,8 @@ func (a Affected) Accept(family ecosystemTypes.Ecosystem, v string) (bool, error
 		if r.Equal != "" {
 			n, err := a.Type.CompareVersions(family, r.Equal, v)
 			if err != nil {
-				if ue, ok := stderrors.AsType[*rangeTypes.UnsupportedRangeTypeError](err); ok {
-					return false, &warningTypes.UnevaluableError{Warning: warningTypes.Warning{Kind: warningTypes.KindUnevaluableRangeType, Cause: string(ue.RangeType)}}
+				if w, ok := stderrors.AsType[warningTypes.Warnable](err); ok {
+					return false, &warningTypes.UnevaluableError{Warning: w.Warning(), Err: err}
 				}
 				if _, ok := stderrors.AsType[*rangeTypes.CompareError](err); ok {
 					continue
@@ -65,8 +65,8 @@ func (a Affected) Accept(family ecosystemTypes.Ecosystem, v string) (bool, error
 		if r.GreaterEqual != "" {
 			n, err := a.Type.CompareVersions(family, r.GreaterEqual, v)
 			if err != nil {
-				if ue, ok := stderrors.AsType[*rangeTypes.UnsupportedRangeTypeError](err); ok {
-					return false, &warningTypes.UnevaluableError{Warning: warningTypes.Warning{Kind: warningTypes.KindUnevaluableRangeType, Cause: string(ue.RangeType)}}
+				if w, ok := stderrors.AsType[warningTypes.Warnable](err); ok {
+					return false, &warningTypes.UnevaluableError{Warning: w.Warning(), Err: err}
 				}
 				if _, ok := stderrors.AsType[*rangeTypes.CompareError](err); ok {
 					continue
@@ -80,8 +80,8 @@ func (a Affected) Accept(family ecosystemTypes.Ecosystem, v string) (bool, error
 		if r.GreaterThan != "" {
 			n, err := a.Type.CompareVersions(family, r.GreaterThan, v)
 			if err != nil {
-				if ue, ok := stderrors.AsType[*rangeTypes.UnsupportedRangeTypeError](err); ok {
-					return false, &warningTypes.UnevaluableError{Warning: warningTypes.Warning{Kind: warningTypes.KindUnevaluableRangeType, Cause: string(ue.RangeType)}}
+				if w, ok := stderrors.AsType[warningTypes.Warnable](err); ok {
+					return false, &warningTypes.UnevaluableError{Warning: w.Warning(), Err: err}
 				}
 				if _, ok := stderrors.AsType[*rangeTypes.CompareError](err); ok {
 					continue
@@ -95,8 +95,8 @@ func (a Affected) Accept(family ecosystemTypes.Ecosystem, v string) (bool, error
 		if r.LessEqual != "" {
 			n, err := a.Type.CompareVersions(family, r.LessEqual, v)
 			if err != nil {
-				if ue, ok := stderrors.AsType[*rangeTypes.UnsupportedRangeTypeError](err); ok {
-					return false, &warningTypes.UnevaluableError{Warning: warningTypes.Warning{Kind: warningTypes.KindUnevaluableRangeType, Cause: string(ue.RangeType)}}
+				if w, ok := stderrors.AsType[warningTypes.Warnable](err); ok {
+					return false, &warningTypes.UnevaluableError{Warning: w.Warning(), Err: err}
 				}
 				if _, ok := stderrors.AsType[*rangeTypes.CompareError](err); ok {
 					continue
@@ -110,8 +110,8 @@ func (a Affected) Accept(family ecosystemTypes.Ecosystem, v string) (bool, error
 		if r.LessThan != "" {
 			n, err := a.Type.CompareVersions(family, r.LessThan, v)
 			if err != nil {
-				if ue, ok := stderrors.AsType[*rangeTypes.UnsupportedRangeTypeError](err); ok {
-					return false, &warningTypes.UnevaluableError{Warning: warningTypes.Warning{Kind: warningTypes.KindUnevaluableRangeType, Cause: string(ue.RangeType)}}
+				if w, ok := stderrors.AsType[warningTypes.Warnable](err); ok {
+					return false, &warningTypes.UnevaluableError{Warning: w.Warning(), Err: err}
 				}
 				if _, ok := stderrors.AsType[*rangeTypes.CompareError](err); ok {
 					continue
