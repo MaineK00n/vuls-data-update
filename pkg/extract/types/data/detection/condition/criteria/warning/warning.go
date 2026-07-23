@@ -41,7 +41,9 @@ const (
 	// KindEmptyRange: a Range with no endpoints, which expresses nothing —
 	// malformed data (schema validation's hard gate) or a newer range type
 	// whose constraints live in JSON fields this build's unmarshal drops.
-	// Cause carries the range type. The criterion is skipped.
+	// The criterion is skipped. It carries no Cause: the trigger is the
+	// absence of endpoints, not any concrete datum, and the range type is
+	// already reachable from the criterion the warning attaches to.
 	KindEmptyRange Kind = "empty-range"
 )
 
@@ -77,6 +79,9 @@ type UnevaluableError struct {
 }
 
 func (e *UnevaluableError) Error() string {
+	if e.Warning.Cause == "" {
+		return fmt.Sprintf("unevaluable: %s", e.Warning.Kind)
+	}
 	return fmt.Sprintf("unevaluable: %s %q", e.Warning.Kind, e.Warning.Cause)
 }
 

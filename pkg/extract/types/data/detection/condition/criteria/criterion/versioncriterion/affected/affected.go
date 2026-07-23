@@ -45,7 +45,7 @@ func (a Affected) Accept(family ecosystemTypes.Ecosystem, v string) (bool, error
 		// answers with *UnsupportedRangeTypeError and is reported as a
 		// non-fatal *warning.UnevaluableError.
 		if r == (rangeTypes.Range{}) {
-			return false, &warningTypes.UnevaluableError{Warning: warningTypes.Warning{Kind: warningTypes.KindEmptyRange, Cause: string(a.Type)}}
+			return false, &warningTypes.UnevaluableError{Warning: warningTypes.Warning{Kind: warningTypes.KindEmptyRange}}
 		}
 		if r.Equal != "" {
 			n, err := a.Type.CompareVersions(family, r.Equal, v)

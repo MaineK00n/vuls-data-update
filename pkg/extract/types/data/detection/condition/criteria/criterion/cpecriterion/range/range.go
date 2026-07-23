@@ -488,7 +488,7 @@ func (r Range) Accept(v string) (bool, error) {
 		// constraints live in JSON fields this build's unmarshal drops.
 		// Report it as a non-fatal empty-range warning rather than aborting
 		// detection in the field.
-		return false, &warningTypes.UnevaluableError{Warning: warningTypes.Warning{Kind: warningTypes.KindEmptyRange, Cause: string(r.Type)}}
+		return false, &warningTypes.UnevaluableError{Warning: warningTypes.Warning{Kind: warningTypes.KindEmptyRange}}
 	}
 
 	type bound struct {

@@ -543,7 +543,7 @@ func TestCriterion_Accept(t *testing.T) {
 					},
 				},
 				Warnings: []warningTypes.Warning{
-					{Kind: warningTypes.KindEmptyRange, Cause: "rpm"},
+					{Kind: warningTypes.KindEmptyRange},
 				},
 			},
 		},
