@@ -420,47 +420,9 @@ func (o options) fetchUpdateinfo(client *utilhttp.Client, u string) error {
 		return errors.Wrap(err, "to dir")
 	}
 
-	buf := new(bytes.Buffer)
-	switch {
-	case strings.HasSuffix(u, ".xml"):
-		if _, err := buf.ReadFrom(resp.Body); err != nil {
-			return errors.Wrap(err, "read xml")
-		}
-	case strings.HasSuffix(u, ".gz"):
-		r, err := gzip.NewReader(resp.Body)
-		if err != nil {
-			return errors.Wrap(err, "create gzip reader")
-		}
-		defer r.Close()
-
-		if _, err := buf.ReadFrom(r); err != nil {
-			return errors.Wrap(err, "read gzip")
-		}
-	case strings.HasSuffix(u, ".xz"):
-		r, err := xz.NewReader(resp.Body)
-		if err != nil {
-			return errors.Wrap(err, "create xz reader")
-		}
-
-		if _, err := buf.ReadFrom(r); err != nil {
-			return errors.Wrap(err, "read xz")
-		}
-	case strings.HasSuffix(u, ".bz2"):
-		if _, err := buf.ReadFrom(bzip2.NewReader(resp.Body)); err != nil {
-			return errors.Wrap(err, "read bzip2")
-		}
-	case strings.HasSuffix(u, ".zst"):
-		r, err := zstd.NewReader(resp.Body)
-		if err != nil {
-			return errors.Wrap(err, "create zstd reader")
-		}
-		defer r.Close()
-
-		if _, err := buf.ReadFrom(r); err != nil {
-			return errors.Wrap(err, "read zstd")
-		}
-	default:
-		return errors.Errorf("unexpected updateinfo fileformat. expected: %q, actual: %q", []string{".xml", ".xml.gz", ".xml.xz", ".xml.bz2", ".xml.zst"}, u)
+	buf, err := decompress(u, resp.Body)
+	if err != nil {
+		return errors.Wrap(err, "decompress")
 	}
 
 	var ui updateinfo
@@ -506,13 +468,12 @@ func (o options) fetchModules(client *utilhttp.Client, u string) error {
 		return errors.Wrap(err, "to dir")
 	}
 
-	gr, err := gzip.NewReader(resp.Body)
+	buf, err := decompress(u, resp.Body)
 	if err != nil {
-		return errors.Wrap(err, "create gzip reader")
+		return errors.Wrap(err, "decompress")
 	}
-	defer gr.Close()
 
-	scanner := bufio.NewScanner(gr)
+	scanner := bufio.NewScanner(buf)
 	var sb strings.Builder
 	for scanner.Scan() {
 		switch s := scanner.Text(); s {
@@ -553,6 +514,59 @@ func (o options) fetchModules(client *utilhttp.Client, u string) error {
 	return nil
 }
 
+// decompress reads the (optionally compressed) body of a repodata file into a
+// buffer, selecting the decoder from the URL suffix. AlmaLinux usually ships
+// updateinfo/modules as *.gz, but some (vault) repositories serve uncompressed
+// *.yaml, and mirrors may re-compress with other algorithms, so both callers
+// share this format handling.
+func decompress(u string, r io.Reader) (*bytes.Buffer, error) {
+	buf := new(bytes.Buffer)
+	// Match the suffix case-insensitively for robustness against upper-cased
+	// repodata filenames.
+	switch lu := strings.ToLower(u); {
+	case strings.HasSuffix(lu, ".xml"), strings.HasSuffix(lu, ".yaml"):
+		if _, err := buf.ReadFrom(r); err != nil {
+			return nil, errors.Wrap(err, "read")
+		}
+	case strings.HasSuffix(lu, ".gz"):
+		gr, err := gzip.NewReader(r)
+		if err != nil {
+			return nil, errors.Wrap(err, "create gzip reader")
+		}
+		defer gr.Close()
+
+		if _, err := buf.ReadFrom(gr); err != nil {
+			return nil, errors.Wrap(err, "read gzip")
+		}
+	case strings.HasSuffix(lu, ".xz"):
+		xr, err := xz.NewReader(r)
+		if err != nil {
+			return nil, errors.Wrap(err, "create xz reader")
+		}
+
+		if _, err := buf.ReadFrom(xr); err != nil {
+			return nil, errors.Wrap(err, "read xz")
+		}
+	case strings.HasSuffix(lu, ".bz2"):
+		if _, err := buf.ReadFrom(bzip2.NewReader(r)); err != nil {
+			return nil, errors.Wrap(err, "read bzip2")
+		}
+	case strings.HasSuffix(lu, ".zst"):
+		zr, err := zstd.NewReader(r)
+		if err != nil {
+			return nil, errors.Wrap(err, "create zstd reader")
+		}
+		defer zr.Close()
+
+		if _, err := buf.ReadFrom(zr); err != nil {
+			return nil, errors.Wrap(err, "read zstd")
+		}
+	default:
+		return nil, errors.Errorf("unexpected fileformat. expected: %q, actual: %q", []string{".xml", ".yaml", ".gz", ".xz", ".bz2", ".zst"}, u)
+	}
+	return buf, nil
+}
+
 // toDir maps a repodata file URL to the on-disk directory that mirrors its
 // source path, replacing the trailing "repodata/<file>" with "updateinfo" or
 // "modules". The full source prefix (tree/version/repository/arch/variant) is
@@ -582,7 +596,9 @@ func toDir(u, baseURL string) (string, error) {
 		}
 	}
 
-	switch name := ss[len(ss)-1]; {
+	// Classify case-insensitively: some repositories publish upper-cased
+	// repodata filenames (e.g. <hash>-UPDATEINFO.xml.gz).
+	switch name := strings.ToLower(ss[len(ss)-1]); {
 	case strings.Contains(name, "updateinfo.xml"):
 		ps = append(ps, "updateinfo")
 	case strings.Contains(name, "-modules.yaml"):
