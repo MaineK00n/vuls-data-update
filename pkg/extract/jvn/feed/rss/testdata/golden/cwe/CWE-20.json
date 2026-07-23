@@ -1,0 +1,13 @@
+{
+	"id": "CWE-20",
+	"name": "不適切な入力確認",
+	"references": [
+		{
+			"source": "jvndb.jvn.jp",
+			"url": "https://jvndb.jvn.jp/ja/cwe/CWE-20.html"
+		}
+	],
+	"data_source": {
+		"id": "jvn-feed-rss"
+	}
+}

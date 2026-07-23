@@ -1,0 +1,108 @@
+{
+	"id": "JVNDB-2021-005429",
+	"advisories": [
+		{
+			"content": {
+				"id": "JVNDB-2021-005429",
+				"title": "Apache Log4j における任意のコードが実行可能な脆弱性",
+				"description": "Log4j には JNDI Lookup 機能による外部入力値の検証不備に起因して任意の Java コードを実行可能な脆弱性が存在します。  The Apache Software Foundation が提供する Log4j は、Java ベースのロギングライブラリです。Log4j には、ログに記載された文字列から一部の値を変数として評価する Lookup 機能が実装されています。 その Lookup 機能の内、JNDI Lookup 機能を悪用することにより、ログに含まれる外部の URL もしくは内部パスから Java のクラス情報をデシリアライズして実行してしまう問題（CWE-20, CVE-2021-44228）が発見されました。 これにより、遠隔の攻撃者が細工した文字列を脆弱なシステムのログに記載させ、結果として任意の Java コードをシステムに実行させることが可能です。 ",
+				"severity": [
+					{
+						"type": "cvss_v2",
+						"source": "jvndb.jvn.jp",
+						"cvss_v2": {
+							"vector": "AV:N/AC:M/Au:N/C:C/I:C/A:C",
+							"base_score": 9.3,
+							"nvd_base_severity": "HIGH",
+							"temporal_score": 9.3,
+							"nvd_temporal_severity": "HIGH",
+							"environmental_score": 9.3,
+							"nvd_environmental_severity": "HIGH"
+						}
+					},
+					{
+						"type": "cvss_v30",
+						"source": "jvndb.jvn.jp",
+						"cvss_v30": {
+							"vector": "CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H",
+							"base_score": 10,
+							"base_severity": "CRITICAL",
+							"temporal_score": 10,
+							"temporal_severity": "CRITICAL",
+							"environmental_score": 10,
+							"environmental_severity": "CRITICAL"
+						}
+					}
+				],
+				"references": [
+					{
+						"source": "jvndb.jvn.jp",
+						"url": "https://logging.apache.org/log4j/2.x/security.html"
+					},
+					{
+						"source": "jvndb.jvn.jp",
+						"url": "https://www.hitachi.co.jp/Prod/comp/soft1/global/security/info/vuls/hitachi-sec-2021-146/index.html"
+					},
+					{
+						"source": "jvndb.jvn.jp",
+						"url": "https://www.hitachi.co.jp/Prod/comp/soft1/global/security/info/vuls/hitachi-sec-2021-147/index.html"
+					},
+					{
+						"source": "jvndb.jvn.jp",
+						"url": "https://www.hitachi.co.jp/hirt/publications/hirt-pub21001/"
+					},
+					{
+						"source": "jvndb.jvn.jp",
+						"url": "https://www.jpcert.or.jp/at/2021/at210050.html"
+					}
+				],
+				"published": "2021-12-14T16:37:27+09:00",
+				"modified": "2022-12-15T10:24:36+09:00",
+				"optional": {
+					"reference_titles": {
+						"https://www.jpcert.or.jp/at/2021/at210050.html": "Apache Log4jの任意のコード実行の脆弱性（CVE-2021-44228）に関する注意喚起"
+					}
+				}
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe"
+				}
+			]
+		}
+	],
+	"detections": [
+		{
+			"ecosystem": "cpe",
+			"conditions": [
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"cpe": "cpe:2.3:a:apache:log4j:*:*:*:*:*:*:*:*"
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"cpe": "cpe:2.3:a:nec:acos_access_toolkit:*:*:*:*:*:*:*:*"
+								}
+							}
+						]
+					}
+				}
+			]
+		}
+	],
+	"data_source": {
+		"id": "jvn-feed-detail",
+		"raws": [
+			"fixtures/2021/JVNDB-2021-005429.json"
+		]
+	}
+}

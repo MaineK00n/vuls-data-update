@@ -240,6 +240,17 @@ func extract(fetched fetchTypes.Vulinfo, raws []string) (dataTypes.Data, error) 
 		})
 	}
 
+	// Collect fetched reference titles (HTML <title> of referenced JPCERT-AT
+	// alert pages) into an optional url->title map. Only a subset of related
+	// items carries one, so it is kept in Optional rather than on Reference.
+	referenceTitles := make(map[string]string)
+	for _, item := range fetched.VulinfoData.Related.RelatedItem {
+		if item.URL == "" || item.FetchedTitle == "" {
+			continue
+		}
+		referenceTitles[item.URL] = item.FetchedTitle
+	}
+
 	// Build CPE-based detections (convert CPE 2.2 URI to CPE 2.3 FS format)
 	var criterions []criterionTypes.Criterion
 	for _, item := range fetched.VulinfoData.Affected.AffectedItem {
@@ -318,6 +329,12 @@ func extract(fetched fetchTypes.Vulinfo, raws []string) (dataTypes.Data, error) 
 				References:  refs,
 				Published:   utiltime.Parse([]string{time.RFC3339}, fetched.VulinfoData.DateFirstPublished),
 				Modified:    utiltime.Parse([]string{time.RFC3339}, fetched.VulinfoData.DateLastUpdated),
+				Optional: func() map[string]any {
+					if len(referenceTitles) == 0 {
+						return nil
+					}
+					return map[string]any{"reference_titles": referenceTitles}
+				}(),
 			},
 			Segments: segments,
 		}},

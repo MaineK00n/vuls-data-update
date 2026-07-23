@@ -243,6 +243,17 @@ func extract(fetched fetchTypes.Item, raws []string) (dataTypes.Data, error) {
 		})
 	}
 
+	// Collect fetched reference titles (HTML <title> of referenced JPCERT-AT
+	// alert pages) into an optional url->title map. Only a subset of references
+	// carries one, so it is kept in Optional rather than on Reference itself.
+	referenceTitles := make(map[string]string)
+	for _, ref := range fetched.References {
+		if ref.Text == "" || ref.FetchedTitle == "" {
+			continue
+		}
+		referenceTitles[ref.Text] = ref.FetchedTitle
+	}
+
 	// Build CPE-based detections (convert CPE 2.2 URI to CPE 2.3 FS format)
 	var criterions []criterionTypes.Criterion
 	for _, cpe := range fetched.CPE {
@@ -318,6 +329,12 @@ func extract(fetched fetchTypes.Item, raws []string) (dataTypes.Data, error) {
 				References:  refs,
 				Published:   utiltime.Parse([]string{time.RFC3339, "2006-01-02T15:04-07:00"}, fetched.Issued),
 				Modified:    utiltime.Parse([]string{time.RFC3339, "2006-01-02T15:04-07:00"}, fetched.Modified),
+				Optional: func() map[string]any {
+					if len(referenceTitles) == 0 {
+						return nil
+					}
+					return map[string]any{"reference_titles": referenceTitles}
+				}(),
 			},
 			Segments: segments,
 		}},

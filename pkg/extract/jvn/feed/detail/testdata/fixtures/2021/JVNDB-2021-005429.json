@@ -1,0 +1,115 @@
+{
+	"vulinfoid": "JVNDB-2021-005429",
+	"vulinfodata": {
+		"title": "Apache Log4j における任意のコードが実行可能な脆弱性",
+		"vulinfodescription": {
+			"overview": "Log4j には JNDI Lookup 機能による外部入力値の検証不備に起因して任意の Java コードを実行可能な脆弱性が存在します。  The Apache Software Foundation が提供する Log4j は、Java ベースのロギングライブラリです。Log4j には、ログに記載された文字列から一部の値を変数として評価する Lookup 機能が実装されています。 その Lookup 機能の内、JNDI Lookup 機能を悪用することにより、ログに含まれる外部の URL もしくは内部パスから Java のクラス情報をデシリアライズして実行してしまう問題（CWE-20, CVE-2021-44228）が発見されました。 これにより、遠隔の攻撃者が細工した文字列を脆弱なシステムのログに記載させ、結果として任意の Java コードをシステムに実行させることが可能です。 "
+		},
+		"affected": {
+			"affecteditem": [
+				{
+					"name": "Apache Software Foundation",
+					"productname": "Apache Log4j",
+					"cpe": {
+						"text": "cpe:/a:apache:log4j",
+						"version": "2.2"
+					},
+					"versionnumber": [
+						"2.13.0 から 2.15.0 より前のバージョン",
+						"core 2.0-beta9 から 2.12.1 より前のバージョン"
+					]
+				},
+				{
+					"name": "日本電気",
+					"productname": "ACOS Access Toolkit",
+					"cpe": {
+						"text": "cpe:/a:nec:acos_access_toolkit",
+						"version": "2.2"
+					}
+				}
+			]
+		},
+		"impact": {
+			"cvss": [
+				{
+					"version": "2.0",
+					"severity": {
+						"text": "High",
+						"type": "Base"
+					},
+					"base": "9.3",
+					"vector": "AV:N/AC:M/Au:N/C:C/I:C/A:C"
+				},
+				{
+					"version": "3.0",
+					"severity": {
+						"text": "Critical",
+						"type": "Base"
+					},
+					"base": "10",
+					"vector": "CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H"
+				}
+			],
+			"impactitem": {
+				"description": "遠隔の攻撃者により細工された文字列を Log4j がログに記録することにより、システム上で任意の Java コードが実行される可能性があります。"
+			}
+		},
+		"solution": {
+			"solutionitem": {
+				"description": "[アップデートする] 開発者により、本脆弱性を修正した以下のバージョンが提供されています。 開発者が提供する情報をもとに、最新版にアップデートしてください。 なお、本アップデートでは、Log4j の Lookup 機能が削除されており、JNDI へのアクセスがデフォルトで無効化されています。   　* Java 8のユーザ向け修正版 　　* Log4j 2.17.1  　* Java 7のユーザ向け修正版 　　* Log4j 2.12.4  　* Java 6のユーザ向け修正 　　* Log4j 2.3.2  開発者は当初、本脆弱性に対する修正版として 2.15.0 をリリースしていましたが、特定の構成において任意のコード実行が行われる可能性があることが判明し、Lookup 機能を削除した上で JNDI 機能そのものをデフォルトで無効化した 2.16.0 および 2.12.2 が改めてリリースされました。この問題に対しては CVE-2021-45046 が採番されています。  2021年12月18日、開発者は Log4j 2.0-alpha1 から 2.16.0 までのバージョンにおいて、再帰的（self-referential）なLookup を行う設定下において、サービス運用（DoS）が行われる脆弱性が新たに発見されたとして、バージョン 2.17.0 をリリースしました。この脆弱性に対しては CVE-2021-45105 が採番されています。  2021年12月21日、開発者は一連の脆弱性を修正したバージョンとして、Java 6 ユーザ向けに 2.3.1 を、Java 7 ユーザ向けに 2.12.3 をリリースしました。  2021年12月28日、開発者は Log4j2 2.0-beta7 から 2.17.0（2.3.2 および 2.12.4 を除く）において、攻撃者がログ出力設定を変更できる場合に限り任意のコード実行が行われる可能性があるとして、Log4j 2.17.1、2.12.4、2.3.2 をリリースしました。この修正では、JNDI のデータソースを Java プロトコルに制限する変更が行われました。この脆弱性に対しては CVE-2021-44832 が採番されています。  [ワークアラウンドを実施する] 以下の回避策を適用することにより、本脆弱性の悪用を防ぐことが可能です。  　* JndiLookup クラスをクラスパスから除外する 　　* 例: zip -q -d log4j-core-*.jar org/apache/logging/log4j/core/lookup/JndiLookup.class 　　* この回避策は CVE-2021-45046 に対しても有効です  　* Log4j を実行する Java 仮想マシンを起動する際に log4j2.formatMsgNoLookups を true に設定する（Log4j 2.10 およびそれ以降のバージョンが対象） 　　* 例: -Dlog4j2.formatMsgNoLookups=true 　　* この回避策は CVE-2021-45046 に対して有効ではありません  　* 環境変数 LOG4J_FORMAT_MSG_NO_LOOKUPS を true に設定する（Log4j 2.10 およびそれ以降のバージョンが対象） 　　* この回避策は CVE-2021-45046 に対して有効ではありません  また、本脆弱性の影響を軽減するため、システムから外部への接続を制限するアクセス制御を実施または強化することも有効です。"
+			}
+		},
+		"related": {
+			"relateditem": [
+				{
+					"type": "vendor",
+					"name": "Apache",
+					"vulinfoid": "Apache Log4j Security Vulnerabilities - Fixed in Log4j 2.15.0",
+					"url": "https://logging.apache.org/log4j/2.x/security.html"
+				},
+				{
+					"type": "vendor",
+					"name": "Hitachi Incdent Response Team",
+					"vulinfoid": "HIRT-PUB21001：Apache Log4jの脆弱性",
+					"url": "https://www.hitachi.co.jp/hirt/publications/hirt-pub21001/"
+				},
+				{
+					"type": "vendor",
+					"name": "Hitachi Software Vulnerability Information",
+					"vulinfoid": "hitachi-sec-2021-146",
+					"url": "https://www.hitachi.co.jp/Prod/comp/soft1/global/security/info/vuls/hitachi-sec-2021-146/index.html"
+				},
+				{
+					"type": "vendor",
+					"name": "Hitachi Software Vulnerability Information",
+					"vulinfoid": "hitachi-sec-2021-147",
+					"url": "https://www.hitachi.co.jp/Prod/comp/soft1/global/security/info/vuls/hitachi-sec-2021-147/index.html"
+				},
+				{
+					"type": "advisory",
+					"name": "JPCERT 緊急報告",
+					"vulinfoid": "JPCERT-AT-2021-0050",
+					"url": "https://www.jpcert.or.jp/at/2021/at210050.html",
+					"fetchedtitle": "Apache Log4jの任意のコード実行の脆弱性（CVE-2021-44228）に関する注意喚起"
+				}
+			]
+		},
+		"history": {
+			"historyitem": [
+				{
+					"historyno": "1",
+					"datetime": "2021-12-14T16:37:27+09:00",
+					"description": "[2021年12月14日]\\n  掲載"
+				},
+				{
+					"historyno": "2",
+					"datetime": "2021-12-16T18:10:13+09:00",
+					"description": "[2021年12月16日]\\n  影響を受けるシステム：内容を更新\\n  対策：内容を更新\\n  ベンダ情報：トレンドマイクロ (アラート/アドバイザリ：Apache Log4j の脆弱性（CVE-2021-44228）について) を追加\\n  共通脆弱性識別子(CVE)：CVE-2021-45046 を追加\\n  参考情報：National Vulnerability Database (NVD) (CVE-2021-45046) を追加\\n  参考情報：US-CERT Vulnerability Note (VU#930724) を追加"
+				}
+			]
+		},
+		"datefirstpublished": "2021-12-14T16:37:27+09:00",
+		"datelastupdated": "2022-12-15T10:24:36+09:00",
+		"datepublic": "2021-12-13T00:00:00+09:00"
+	}
+}

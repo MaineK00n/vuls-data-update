@@ -1,0 +1,138 @@
+{
+	"id": "JVNDB-2011-001013",
+	"advisories": [
+		{
+			"content": {
+				"id": "JVNDB-2011-001013",
+				"title": "Microsoft Internet Explorer 8 における解放済みメモリを使用する脆弱性",
+				"description": "Microsoft Internet Explorer 8 の mshtml.dll ライブラリには、解放済みメモリを使用する (use-after-free) 脆弱性が存在します。",
+				"severity": [
+					{
+						"type": "cvss_v2",
+						"source": "jvndb.jvn.jp",
+						"cvss_v2": {
+							"vector": "AV:N/AC:M/Au:N/C:C/I:C/A:C",
+							"base_score": 9.3,
+							"nvd_base_severity": "HIGH",
+							"temporal_score": 9.3,
+							"nvd_temporal_severity": "HIGH",
+							"environmental_score": 9.3,
+							"nvd_environmental_severity": "HIGH"
+						}
+					}
+				],
+				"cwe": [
+					{
+						"source": "jvndb.jvn.jp",
+						"cwe": [
+							"CWE-399"
+						]
+					}
+				],
+				"references": [
+					{
+						"source": "jvndb.jvn.jp",
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-0346"
+					},
+					{
+						"source": "jvndb.jvn.jp",
+						"url": "http://jvn.jp/cert/JVNTA11-102A"
+					},
+					{
+						"source": "jvndb.jvn.jp",
+						"url": "http://jvn.jp/cert/JVNVU427980"
+					},
+					{
+						"source": "jvndb.jvn.jp",
+						"url": "http://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2011-0346"
+					},
+					{
+						"source": "jvndb.jvn.jp",
+						"url": "http://www.ipa.go.jp/security/ciadr/vul/20110413-ms11-018.html"
+					},
+					{
+						"source": "jvndb.jvn.jp",
+						"url": "http://www.kb.cert.org/vuls/id/427980"
+					},
+					{
+						"source": "jvndb.jvn.jp",
+						"url": "http://www.securityfocus.com/bid/45639"
+					},
+					{
+						"source": "jvndb.jvn.jp",
+						"url": "http://www.us-cert.gov/cas/alerts/SA11-102A.html"
+					},
+					{
+						"source": "jvndb.jvn.jp",
+						"url": "http://www.us-cert.gov/cas/techalerts/TA11-102A.html"
+					},
+					{
+						"source": "jvndb.jvn.jp",
+						"url": "https://www.jpcert.or.jp/at/2011/at110008.txt"
+					}
+				],
+				"published": "2011-01-28T15:38:00+09:00",
+				"modified": "2011-05-02T13:25:00+09:00",
+				"optional": {
+					"reference_titles": {
+						"https://www.jpcert.or.jp/at/2011/at110008.txt": "2011年4月 Microsoft セキュリティ情報 (緊急 9件含) に関する注意喚起"
+					}
+				}
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe"
+				}
+			]
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-2011-0346",
+				"references": [
+					{
+						"source": "jvndb.jvn.jp",
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-0346"
+					},
+					{
+						"source": "jvndb.jvn.jp",
+						"url": "http://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2011-0346"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe"
+				}
+			]
+		}
+	],
+	"detections": [
+		{
+			"ecosystem": "cpe",
+			"conditions": [
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"cpe": "cpe:2.3:a:microsoft:internet_explorer:*:*:*:*:*:*:*:*"
+								}
+							}
+						]
+					}
+				}
+			]
+		}
+	],
+	"data_source": {
+		"id": "jvn-feed-rss",
+		"raws": [
+			"fixtures/2011/JVNDB-2011-001013.json"
+		]
+	}
+}
