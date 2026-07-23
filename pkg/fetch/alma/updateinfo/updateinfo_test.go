@@ -1,6 +1,8 @@
 package updateinfo_test
 
 import (
+	"bytes"
+	"compress/gzip"
 	"fmt"
 	"io/fs"
 	"net/http"
@@ -163,6 +165,15 @@ func Test_toDir(t *testing.T) {
 			want: "almalinux/9/BaseOS/x86_64/kickstart/updateinfo",
 		},
 		{
+			// Guard against upper-cased repodata filenames some repositories publish.
+			name: "uppercase updateinfo filename",
+			args: args{
+				u:       "https://repo.almalinux.org/almalinux/9/BaseOS/x86_64/os/repodata/abc-UPDATEINFO.xml.gz",
+				baseURL: "https://repo.almalinux.org/",
+			},
+			want: "almalinux/9/BaseOS/x86_64/os/updateinfo",
+		},
+		{
 			name: "unexpected host",
 			args: args{
 				u:       "https://example.com/almalinux/9/BaseOS/x86_64/os/repodata/updateinfo.xml.gz",
@@ -196,6 +207,76 @@ func Test_toDir(t *testing.T) {
 			}
 			if got != tt.want {
 				t.Errorf("toDir() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_decompress(t *testing.T) {
+	gz := func(t *testing.T, b []byte) []byte {
+		t.Helper()
+		var buf bytes.Buffer
+		w := gzip.NewWriter(&buf)
+		if _, err := w.Write(b); err != nil {
+			t.Fatal(err)
+		}
+		if err := w.Close(); err != nil {
+			t.Fatal(err)
+		}
+		return buf.Bytes()
+	}
+	payload := []byte("document: modulemd\nversion: 2\n")
+	tests := []struct {
+		name    string
+		u       string
+		body    func(*testing.T) []byte
+		want    string
+		wantErr bool
+	}{
+		{
+			// Some (vault) repositories serve uncompressed modules.yaml.
+			name: "uncompressed yaml",
+			u:    "https://example.com/repodata/abc-modules.yaml",
+			body: func(_ *testing.T) []byte { return payload },
+			want: string(payload),
+		},
+		{
+			name: "uncompressed xml",
+			u:    "https://example.com/repodata/abc-updateinfo.xml",
+			body: func(_ *testing.T) []byte { return payload },
+			want: string(payload),
+		},
+		{
+			name: "gzip",
+			u:    "https://example.com/repodata/abc-updateinfo.xml.gz",
+			body: func(t *testing.T) []byte { return gz(t, payload) },
+			want: string(payload),
+		},
+		{
+			// Upper-cased filename must still be recognized as gzip.
+			name: "uppercase gzip filename",
+			u:    "https://example.com/repodata/abc-UPDATEINFO.XML.GZ",
+			body: func(t *testing.T) []byte { return gz(t, payload) },
+			want: string(payload),
+		},
+		{
+			name:    "unexpected format",
+			u:       "https://example.com/repodata/abc.rpm",
+			body:    func(_ *testing.T) []byte { return payload },
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := updateinfo.Decompress(tt.u, bytes.NewReader(tt.body(t)))
+			if (err != nil) != tt.wantErr {
+				t.Fatalf("decompress() error = %v, wantErr %v", err, tt.wantErr)
+			}
+			if tt.wantErr {
+				return
+			}
+			if got.String() != tt.want {
+				t.Errorf("decompress() = %q, want %q", got.String(), tt.want)
 			}
 		})
 	}
