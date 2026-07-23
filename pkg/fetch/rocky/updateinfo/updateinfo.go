@@ -462,12 +462,14 @@ func (o options) fetchModules(client *utilhttp.Client, u string) error {
 // with other algorithms, so both callers share this format handling.
 func decompress(u string, r io.Reader) (*bytes.Buffer, error) {
 	buf := new(bytes.Buffer)
-	switch {
-	case strings.HasSuffix(u, ".xml"), strings.HasSuffix(u, ".yaml"):
+	// Match the suffix case-insensitively: some Rocky repositories publish
+	// upper-cased repodata filenames (e.g. <hash>-UPDATEINFO.xml.gz).
+	switch lu := strings.ToLower(u); {
+	case strings.HasSuffix(lu, ".xml"), strings.HasSuffix(lu, ".yaml"):
 		if _, err := buf.ReadFrom(r); err != nil {
 			return nil, errors.Wrap(err, "read")
 		}
-	case strings.HasSuffix(u, ".gz"):
+	case strings.HasSuffix(lu, ".gz"):
 		gr, err := gzip.NewReader(r)
 		if err != nil {
 			return nil, errors.Wrap(err, "create gzip reader")
@@ -477,7 +479,7 @@ func decompress(u string, r io.Reader) (*bytes.Buffer, error) {
 		if _, err := buf.ReadFrom(gr); err != nil {
 			return nil, errors.Wrap(err, "read gzip")
 		}
-	case strings.HasSuffix(u, ".xz"):
+	case strings.HasSuffix(lu, ".xz"):
 		xr, err := xz.NewReader(r)
 		if err != nil {
 			return nil, errors.Wrap(err, "create xz reader")
@@ -486,11 +488,11 @@ func decompress(u string, r io.Reader) (*bytes.Buffer, error) {
 		if _, err := buf.ReadFrom(xr); err != nil {
 			return nil, errors.Wrap(err, "read xz")
 		}
-	case strings.HasSuffix(u, ".bz2"):
+	case strings.HasSuffix(lu, ".bz2"):
 		if _, err := buf.ReadFrom(bzip2.NewReader(r)); err != nil {
 			return nil, errors.Wrap(err, "read bzip2")
 		}
-	case strings.HasSuffix(u, ".zst"):
+	case strings.HasSuffix(lu, ".zst"):
 		zr, err := zstd.NewReader(r)
 		if err != nil {
 			return nil, errors.Wrap(err, "create zstd reader")
@@ -535,7 +537,9 @@ func toDir(u, baseURL string) (string, error) {
 		}
 	}
 
-	switch name := ss[len(ss)-1]; {
+	// Classify case-insensitively: some Rocky repositories publish upper-cased
+	// repodata filenames (e.g. <hash>-UPDATEINFO.xml.gz in a few SIG repos).
+	switch name := strings.ToLower(ss[len(ss)-1]); {
 	case strings.Contains(name, "updateinfo.xml"):
 		ps = append(ps, "updateinfo")
 	case strings.Contains(name, "-modules.yaml"):
