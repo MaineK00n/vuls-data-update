@@ -89,16 +89,14 @@ func TestRange_Accept(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name: "empty range matches anything",
-			r:    ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeSEMVER},
-			v:    "1.0.0",
-			want: true,
-		},
-		{
-			name: "empty range matches even unparseable v",
-			r:    ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeSEMVER},
-			v:    "not-a-semver",
-			want: true,
+			// "No version constraint" is expressed by Criterion.Range == nil;
+			// an endpoint-less Range expresses nothing, cannot be evaluated,
+			// and is reported as a non-fatal empty-range warning.
+			name:    "endpoint-less range reports empty-range",
+			r:       ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeSEMVER},
+			v:       "1.0.0",
+			want:    false,
+			wantErr: true,
 		},
 		{
 			name: "ge inclusive lower, equal",
@@ -203,10 +201,11 @@ func TestRange_Accept(t *testing.T) {
 			want: false,
 		},
 		{
-			name: "unset type (zero) treated as unknown",
-			r:    ccRangeTypes.Range{LessThan: "2.0.0"},
-			v:    "1.0.0",
-			want: false,
+			name:    "unset type (zero) is unevaluable",
+			r:       ccRangeTypes.Range{LessThan: "2.0.0"},
+			v:       "1.0.0",
+			want:    false,
+			wantErr: true,
 		},
 		{
 			name: "unparseable bound is swallowed as graceful non-match (CompareError classified)",
@@ -215,10 +214,35 @@ func TestRange_Accept(t *testing.T) {
 			want: false,
 		},
 		{
-			name: "empty range with Type=Unknown returns false",
-			r:    ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeUnknown},
-			v:    "1.0.0",
-			want: false,
+			// The empty-ness is the anomaly, not the type: even the declared
+			// "unknown" value warns when it carries no endpoints.
+			name:    "empty range with Type=Unknown reports empty-range",
+			r:       ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeUnknown},
+			v:       "1.0.0",
+			want:    false,
+			wantErr: true,
+		},
+		{
+			// Data written by a newer vuls-data-update may carry a range type
+			// this build does not know. Accept reports the non-fatal
+			// *warning.UnevaluableError — a sentinel for the criterion layer
+			// to catch and record as a skip, not a fatal abort of detection.
+			name:    "unsupported type (newer data) reports unevaluable",
+			r:       ccRangeTypes.Range{Type: ccRangeTypes.RangeType("fortinet-fortifuture"), LessThan: "1.0.0"},
+			v:       "0.9.0",
+			want:    false,
+			wantErr: true,
+		},
+		{
+			// Endpoint-less: expresses nothing regardless of the type — it
+			// may also be a newer range type whose constraints live in JSON
+			// fields this build's unmarshal dropped, so it is reported
+			// rather than silently skipped.
+			name:    "unsupported type (newer data) with no bounds reports empty-range",
+			r:       ccRangeTypes.Range{Type: ccRangeTypes.RangeType("fortinet-fortifuture")},
+			v:       "1.0.0",
+			want:    false,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -235,24 +259,23 @@ func TestRange_Accept(t *testing.T) {
 	}
 }
 
-func TestRangeType_Compare(t *testing.T) {
+func TestRangeType_CompareVersions(t *testing.T) {
 	tests := []struct {
-		name           string
-		t              ccRangeTypes.RangeType
-		v1, v2         string
-		want           int
-		wantCompareErr bool // expect *CompareError-wrapped failure (parse / unknown type)
-		wantOtherErr   bool // expect a non-CompareError (e.g. unsupported type)
+		name    string
+		t       ccRangeTypes.RangeType
+		v1, v2  string
+		want    int
+		wantErr bool
 	}{
 		{name: "semver: v1 < v2", t: ccRangeTypes.RangeTypeSEMVER, v1: "1.0.0", v2: "2.0.0", want: -1},
 		{name: "semver: equal", t: ccRangeTypes.RangeTypeSEMVER, v1: "1.0.0", v2: "1.0.0", want: 0},
 		{name: "semver: v1 > v2", t: ccRangeTypes.RangeTypeSEMVER, v1: "2.0.0", v2: "1.0.0", want: 1},
-		{name: "semver: v1 unparseable → CompareError", t: ccRangeTypes.RangeTypeSEMVER, v1: "not-a-semver", v2: "1.0.0", wantCompareErr: true},
-		{name: "semver: v2 unparseable → CompareError", t: ccRangeTypes.RangeTypeSEMVER, v1: "1.0.0", v2: "not-a-semver", wantCompareErr: true},
+		{name: "semver: v1 unparseable → CompareError", t: ccRangeTypes.RangeTypeSEMVER, v1: "not-a-semver", v2: "1.0.0", wantErr: true},
+		{name: "semver: v2 unparseable → CompareError", t: ccRangeTypes.RangeTypeSEMVER, v1: "1.0.0", v2: "not-a-semver", wantErr: true},
 		{name: "fortinet: v1 < v2", t: ccRangeTypes.RangeTypeFortinetFortiOS, v1: "7.0.0", v2: "7.0.1", want: -1},
 		{name: "fortinet: equal", t: ccRangeTypes.RangeTypeFortinetFortiOS, v1: "7.2.0", v2: "7.2.0", want: 0},
 		{name: "fortinet: v1 > v2", t: ccRangeTypes.RangeTypeFortinetFortiOS, v1: "7.1.0", v2: "7.0.0", want: 1},
-		{name: "fortinet: v1 unparseable → CompareError", t: ccRangeTypes.RangeTypeFortinetFortiOS, v1: "not-a-version", v2: "7.0.0", wantCompareErr: true},
+		{name: "fortinet: v1 unparseable → CompareError", t: ccRangeTypes.RangeTypeFortinetFortiOS, v1: "not-a-version", v2: "7.0.0", wantErr: true},
 		// Train-style tokens (as produced by product.TrainRange) must compare,
 		// both against each other and against fully-qualified semver bounds.
 		{name: "fortinet: train minor < train minor", t: ccRangeTypes.RangeTypeFortinetFortiOS, v1: "7.2", v2: "7.4", want: -1},
@@ -275,54 +298,60 @@ func TestRangeType_Compare(t *testing.T) {
 		{name: "fortinet: pure-numeric trailing zero stays equal (7.2.0 == 7.2)", t: ccRangeTypes.RangeTypeFortinetFortiOS, v1: "7.2.0", v2: "7.2", want: 0},
 		// A numeric build vs an alphabetic milestone at the same position is
 		// undefined across Fortinet's two schemes → incomparable (swallowed).
-		{name: "fortinet: numeric build vs non-numeric milestone → CompareError (1.2.1 vs 1.2.a)", t: ccRangeTypes.RangeTypeFortinetFortiSASE, v1: "1.2.1", v2: "1.2.a", wantCompareErr: true},
-		{name: "fortinet: build suffix vs train → CompareError (7.1-b5955 vs 7.1)", t: ccRangeTypes.RangeTypeFortinetFortiOS, v1: "7.1-b5955", v2: "7.1", wantCompareErr: true},
-		{name: "fortinet: non-version vs numeric → CompareError", t: ccRangeTypes.RangeTypeFortinetFortiSASE, v1: "alpha", v2: "25.2", wantCompareErr: true},
+		{name: "fortinet: numeric build vs non-numeric milestone → CompareError (1.2.1 vs 1.2.a)", t: ccRangeTypes.RangeTypeFortinetFortiSASE, v1: "1.2.1", v2: "1.2.a", wantErr: true},
+		{name: "fortinet: build suffix vs train → CompareError (7.1-b5955 vs 7.1)", t: ccRangeTypes.RangeTypeFortinetFortiOS, v1: "7.1-b5955", v2: "7.1", wantErr: true},
+		{name: "fortinet: non-version vs numeric → CompareError", t: ccRangeTypes.RangeTypeFortinetFortiSASE, v1: "alpha", v2: "25.2", wantErr: true},
 		// Empty components (consecutive/trailing dots) are malformed → incomparable.
-		{name: "fortinet: consecutive dots → CompareError (7..0 vs 7.0.0)", t: ccRangeTypes.RangeTypeFortinetFortiOS, v1: "7..0", v2: "7.0.0", wantCompareErr: true},
-		{name: "fortinet: trailing dot → CompareError (7.2. vs 7.2)", t: ccRangeTypes.RangeTypeFortinetFortiOS, v1: "7.2.", v2: "7.2", wantCompareErr: true},
+		{name: "fortinet: consecutive dots → CompareError (7..0 vs 7.0.0)", t: ccRangeTypes.RangeTypeFortinetFortiOS, v1: "7..0", v2: "7.0.0", wantErr: true},
+		{name: "fortinet: trailing dot → CompareError (7.2. vs 7.2)", t: ccRangeTypes.RangeTypeFortinetFortiOS, v1: "7.2.", v2: "7.2", wantErr: true},
 		// Signed / overflowing numeric components are not unsigned digits → incomparable.
-		{name: "fortinet: signed component → CompareError (7.-1 vs 7.0)", t: ccRangeTypes.RangeTypeFortinetFortiOS, v1: "7.-1", v2: "7.0", wantCompareErr: true},
-		{name: "fortinet: plus-signed component → CompareError (7.+0 vs 7.0)", t: ccRangeTypes.RangeTypeFortinetFortiOS, v1: "7.+0", v2: "7.0", wantCompareErr: true},
+		{name: "fortinet: signed component → CompareError (7.-1 vs 7.0)", t: ccRangeTypes.RangeTypeFortinetFortiOS, v1: "7.-1", v2: "7.0", wantErr: true},
+		{name: "fortinet: plus-signed component → CompareError (7.+0 vs 7.0)", t: ccRangeTypes.RangeTypeFortinetFortiOS, v1: "7.+0", v2: "7.0", wantErr: true},
 		// Non-numeric components must be a single milestone letter; multi-char tokens are incomparable.
-		{name: "fortinet: multi-char milestone → CompareError (25.2.alpha vs 25.2)", t: ccRangeTypes.RangeTypeFortinetFortiSASE, v1: "25.2.alpha", v2: "25.2", wantCompareErr: true},
-		{name: "fortinet: letter+digits milestone → CompareError (25.1.a10 vs 25.1)", t: ccRangeTypes.RangeTypeFortinetFortiSASE, v1: "25.1.a10", v2: "25.1", wantCompareErr: true},
+		{name: "fortinet: multi-char milestone → CompareError (25.2.alpha vs 25.2)", t: ccRangeTypes.RangeTypeFortinetFortiSASE, v1: "25.2.alpha", v2: "25.2", wantErr: true},
+		{name: "fortinet: letter+digits milestone → CompareError (25.1.a10 vs 25.1)", t: ccRangeTypes.RangeTypeFortinetFortiSASE, v1: "25.1.a10", v2: "25.1", wantErr: true},
 		{name: "version (loose): 4-segment v1 < v2", t: ccRangeTypes.RangeTypeVersion, v1: "9.16.19.0", v2: "9.16.20.0", want: -1},
-		{name: "version (loose): v1 unparseable → CompareError", t: ccRangeTypes.RangeTypeVersion, v1: "x.y.z.w.q", v2: "1.0", wantCompareErr: true},
+		{name: "version (loose): v1 unparseable → CompareError", t: ccRangeTypes.RangeTypeVersion, v1: "x.y.z.w.q", v2: "1.0", wantErr: true},
 		{name: "pan-os: base < hotfix (hashicorp prerelease order would invert this)", t: ccRangeTypes.RangeTypePANOS, v1: "11.2.4", v2: "11.2.4-h1", want: -1},
 		{name: "pan-os: hotfix numeric order", t: ccRangeTypes.RangeTypePANOS, v1: "10.2.4-h2", v2: "10.2.4-h10", want: -1},
 		{name: "pan-os: equal", t: ccRangeTypes.RangeTypePANOS, v1: "10.2.4-h10", v2: "10.2.4-h10", want: 0},
-		{name: "pan-os: 2-segment unparseable → CompareError", t: ccRangeTypes.RangeTypePANOS, v1: "11.2", v2: "11.2.0", wantCompareErr: true},
-		{name: "Unknown → CompareError wrapping ErrRangeTypeUnknown", t: ccRangeTypes.RangeTypeUnknown, v1: "1.0.0", v2: "2.0.0", wantCompareErr: true},
-		{name: "unset (zero) RangeType collapses to Unknown → CompareError", t: ccRangeTypes.RangeType(0), v1: "1.0.0", v2: "2.0.0", wantCompareErr: true},
+		{name: "pan-os: 2-segment unparseable → CompareError", t: ccRangeTypes.RangeTypePANOS, v1: "11.2", v2: "11.2.0", wantErr: true},
+		{name: "Unknown → CompareError wrapping ErrRangeTypeUnknown", t: ccRangeTypes.RangeTypeUnknown, v1: "1.0.0", v2: "2.0.0", wantErr: true},
+		{name: "unset (zero) RangeType is outside the vocabulary → CompareError wrapping UnsupportedRangeTypeError", t: ccRangeTypes.RangeType(""), v1: "1.0.0", v2: "2.0.0", wantErr: true},
+		{name: "unsupported RangeType (newer data) → CompareError wrapping UnsupportedRangeTypeError", t: ccRangeTypes.RangeType("fortinet-fortifuture"), v1: "1.0.0", v2: "2.0.0", wantErr: true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := tt.t.Compare(tt.v1, tt.v2)
-			isCompareErr := false
-			if err != nil {
-				_, isCompareErr = stderrors.AsType[*ccRangeTypes.CompareError](err)
+			got, err := tt.t.CompareVersions(tt.v1, tt.v2)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("CompareVersions() error = %v, wantErr %v", err, tt.wantErr)
+				return
 			}
-			switch {
-			case tt.wantCompareErr && !isCompareErr:
-				t.Errorf("Compare() error = %v, want *CompareError", err)
-			case tt.wantOtherErr && (err == nil || isCompareErr):
-				t.Errorf("Compare() error = %v, want non-CompareError", err)
-			case !tt.wantCompareErr && !tt.wantOtherErr && err != nil:
-				t.Errorf("Compare() unexpected error: %v", err)
-			case err == nil && got != tt.want:
-				t.Errorf("Compare() = %d, want %d", got, tt.want)
+			if err != nil {
+				// Every failure CompareVersions raises must classify as
+				// *CompareError so that Accept can catch and classify it —
+				// a non-fatal unevaluable warning for
+				// *UnsupportedRangeTypeError, a swallowed non-match for the
+				// rest — instead of aborting detection fatally.
+				if _, ok := stderrors.AsType[*ccRangeTypes.CompareError](err); !ok {
+					t.Errorf("CompareVersions() error = %v, want *CompareError", err)
+				}
+				return
+			}
+			if got != tt.want {
+				t.Errorf("CompareVersions() = %d, want %d", got, tt.want)
 			}
 		})
 	}
 }
 
-func TestErrRangeTypeUnknown_Wrapped(t *testing.T) {
-	_, err := ccRangeTypes.RangeTypeUnknown.Compare("1.0.0", "2.0.0")
-	if err == nil {
-		t.Fatal("expected error")
-	}
-	if !stderrors.Is(err, ccRangeTypes.ErrRangeTypeUnknown) {
-		t.Errorf("expected ErrRangeTypeUnknown via errors.Is; got %v", err)
+func TestRangeTypes_HaveComparator(t *testing.T) {
+	for _, rt := range ccRangeTypes.RangeTypes() {
+		t.Run(string(rt), func(t *testing.T) {
+			_, err := rt.CompareVersions("1.0.0", "2.0.0")
+			if _, ok := stderrors.AsType[*ccRangeTypes.UnsupportedRangeTypeError](err); ok {
+				t.Errorf("RangeTypes() contains %q but CompareVersions has no comparator for it", rt)
+			}
+		})
 	}
 }

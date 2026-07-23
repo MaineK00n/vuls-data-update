@@ -2,9 +2,8 @@ package criterion
 
 import (
 	"cmp"
-	"encoding/json/jsontext"
-	"encoding/json/v2"
-	"fmt"
+	stderrors "errors"
+	"slices"
 
 	"github.com/pkg/errors"
 
@@ -12,93 +11,51 @@ import (
 	kbcTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/kbcriterion"
 	necTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/noneexistcriterion"
 	vcTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion"
+	warningTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/warning"
+	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/internal/enum"
 )
 
-type CriterionType int
+// CriterionType is a string so that unmarshaling never validates against the
+// known set: data produced by a newer vuls-data-update (carrying criterion
+// types this build does not know) still round-trips losslessly instead of
+// failing the whole read.
+type CriterionType string
 
 const (
-	_ CriterionType = iota
-	CriterionTypeVersion
-	CriterionTypeNoneExist
-	CriterionTypeKB
-	CriterionTypeCPE
-
-	CriterionTypeUnknown
+	CriterionTypeVersion   CriterionType = "version"
+	CriterionTypeNoneExist CriterionType = "none-exist"
+	CriterionTypeKB        CriterionType = "kb"
+	CriterionTypeCPE       CriterionType = "cpe"
 )
 
-func (t CriterionType) String() string {
-	switch t {
-	case CriterionTypeVersion:
-		return "version"
-	case CriterionTypeNoneExist:
-		return "none-exist"
-	case CriterionTypeKB:
-		return "kb"
-	case CriterionTypeCPE:
-		return "cpe"
-	default:
-		return "unknown"
+// CriterionTypes returns every CriterionType this build knows, in declaration
+// order. Consumers (vuls2, vuls0) diff this list against a newer
+// vuls-data-update in CI to detect enum additions that require a dependency
+// bump. The known set must be append-only.
+func CriterionTypes() []CriterionType {
+	return []CriterionType{
+		CriterionTypeVersion,
+		CriterionTypeNoneExist,
+		CriterionTypeKB,
+		CriterionTypeCPE,
 	}
 }
 
-func (t CriterionType) MarshalJSONTo(enc *jsontext.Encoder) error {
-	return enc.WriteToken(jsontext.String(t.String()))
+// Compare orders t against u by vocabulary rank — the declaration order of
+// CriterionTypes() — preserving the canonical output order from before the
+// string conversion. Values outside the vocabulary sort after every known
+// value, lexicographically among themselves.
+func (t CriterionType) Compare(u CriterionType) int {
+	return vocabulary.Compare(t, u)
 }
 
-func (t *CriterionType) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	token, err := dec.ReadToken()
-	if err != nil {
-		return err
-	}
-	if token.Kind() != '"' {
-		return fmt.Errorf("unexpected type. expected: %s, got %s", "string", token.Kind())
-	}
-
-	switch token.String() {
-	case "version":
-		*t = CriterionTypeVersion
-	case "none-exist":
-		*t = CriterionTypeNoneExist
-	case "kb":
-		*t = CriterionTypeKB
-	case "cpe":
-		*t = CriterionTypeCPE
-	case "unknown":
-		*t = CriterionTypeUnknown
-	default:
-		return fmt.Errorf("invalid CriterionType %s", token.String())
-	}
-	return nil
+// Known reports whether t is in this build's vocabulary. Data from a newer
+// vuls-data-update may carry values for which Known is false.
+func (t CriterionType) Known() bool {
+	return vocabulary.Contains(t)
 }
 
-func (t CriterionType) MarshalJSON() ([]byte, error) {
-	return json.Marshal(t.String())
-}
-
-func (t *CriterionType) UnmarshalJSON(data []byte) error {
-	var s string
-	if err := json.Unmarshal(data, &s); err != nil {
-		return fmt.Errorf("data should be a string, got %s", data)
-	}
-
-	var ct CriterionType
-	switch s {
-	case "version":
-		ct = CriterionTypeVersion
-	case "none-exist":
-		ct = CriterionTypeNoneExist
-	case "kb":
-		ct = CriterionTypeKB
-	case "cpe":
-		ct = CriterionTypeCPE
-	case "unknown":
-		ct = CriterionTypeUnknown
-	default:
-		return fmt.Errorf("invalid CriterionType %s", s)
-	}
-	*t = ct
-	return nil
-}
+var vocabulary = enum.NewVocabulary(CriterionTypes())
 
 type Criterion struct {
 	Type      CriterionType       `json:"type,omitempty"`
@@ -132,7 +89,7 @@ func (c *Criterion) Sort() {
 
 func Compare(x, y Criterion) int {
 	return cmp.Or(
-		cmp.Compare(x.Type, y.Type),
+		x.Type.Compare(y.Type),
 		func() int {
 			switch x.Type {
 			case CriterionTypeVersion:
@@ -193,83 +150,14 @@ type Query struct {
 	CPE       []ccTypes.Query
 }
 
-func (c Criterion) Contains(query Query, repositories []string) (bool, error) {
-	switch c.Type {
-	case CriterionTypeVersion:
-		if c.Version == nil {
-			return false, errors.New("criterion is not set for version criterion")
-		}
-		if len(query.Version) == 0 {
-			return false, nil
-		}
-
-		for _, q := range query.Version {
-			isAccepted, err := c.Version.Accept(q, repositories)
-			if err != nil {
-				return false, errors.Wrap(err, "version criterion accept")
-			}
-			if isAccepted {
-				return true, nil
-			}
-		}
-		return false, nil
-	case CriterionTypeNoneExist:
-		if c.NoneExist == nil {
-			return false, errors.New("criterion is not set for none exist criterion")
-		}
-		if query.NoneExist == nil {
-			return false, nil
-		}
-
-		isAccepted, err := c.NoneExist.Accept(*query.NoneExist, repositories)
-		if err != nil {
-			return false, errors.Wrap(err, "none exist criterion accept")
-		}
-		return isAccepted, nil
-	case CriterionTypeKB:
-		if c.KB == nil {
-			return false, errors.New("criterion is not set for kb criterion")
-		}
-		if query.KB == nil {
-			return false, nil
-		}
-
-		byCovered, byUnapplied, err := c.KB.Accept(*query.KB)
-		if err != nil {
-			return false, errors.Wrap(err, "kb criterion accept")
-		}
-		return byCovered || byUnapplied, nil
-	case CriterionTypeCPE:
-		if c.CPE == nil {
-			return false, errors.New("criterion is not set for cpe criterion")
-		}
-		if len(query.CPE) == 0 {
-			return false, nil
-		}
-
-		for _, q := range query.CPE {
-			quality, err := c.CPE.Accept(q)
-			if err != nil {
-				return false, errors.Wrap(err, "cpe criterion accept")
-			}
-			switch quality {
-			case ccTypes.MatchQualityNone:
-				// not matched by this query; try the next
-			case ccTypes.MatchQualityExact, ccTypes.MatchQualityVersionUnconfirmed:
-				return true, nil
-			default:
-				return false, errors.Errorf("unexpected cpe match quality. expected: %q, actual: %q", []ccTypes.MatchQuality{ccTypes.MatchQualityNone, ccTypes.MatchQualityExact, ccTypes.MatchQualityVersionUnconfirmed}, quality)
-			}
-		}
-		return false, nil
-	default:
-		return false, errors.Errorf("unexpected criterion type. expected: %q, actual: %q", []CriterionType{CriterionTypeVersion, CriterionTypeNoneExist, CriterionTypeKB, CriterionTypeCPE}, c.Type)
-	}
-}
-
 type FilteredCriterion struct {
 	Criterion Criterion     `json:"criterion,omitzero"`
 	Accepts   AcceptQueries `json:"accepts,omitzero"`
+	// Warnings records non-fatal evaluation events — e.g. enum values this
+	// build could not evaluate (data from a newer vuls-data-update). The
+	// detection types never log; callers project these into logs or
+	// scan-result warnings by walking the FilteredCriteria tree.
+	Warnings []warningTypes.Warning `json:"warnings,omitempty"`
 }
 
 // KB records which evaluation path accepted the KB criterion (i.e., detected
@@ -313,9 +201,19 @@ func (c Criterion) Accept(query Query, repositories []string) (FilteredCriterion
 		}
 
 		var is []int
+		var ws []warningTypes.Warning
 		for i, q := range query.Version {
 			isAccepted, err := c.Version.Accept(q, repositories)
 			if err != nil {
+				// The layer that could not evaluate its own data reports it
+				// as a non-fatal *warning.UnevaluableError; record it once
+				// and treat the query as not accepted.
+				if ue, ok := stderrors.AsType[*warningTypes.UnevaluableError](err); ok {
+					if !slices.Contains(ws, ue.Warning) {
+						ws = append(ws, ue.Warning)
+					}
+					continue
+				}
 				return FilteredCriterion{}, errors.Wrap(err, "version criterion accept")
 			}
 			if isAccepted {
@@ -325,6 +223,7 @@ func (c Criterion) Accept(query Query, repositories []string) (FilteredCriterion
 		return FilteredCriterion{
 			Criterion: c,
 			Accepts:   AcceptQueries{Version: is},
+			Warnings:  ws,
 		}, nil
 	case CriterionTypeNoneExist:
 		if c.NoneExist == nil {
@@ -336,6 +235,9 @@ func (c Criterion) Accept(query Query, repositories []string) (FilteredCriterion
 
 		isAccepted, err := c.NoneExist.Accept(*query.NoneExist, repositories)
 		if err != nil {
+			if ue, ok := stderrors.AsType[*warningTypes.UnevaluableError](err); ok {
+				return FilteredCriterion{Criterion: c, Warnings: []warningTypes.Warning{ue.Warning}}, nil
+			}
 			return FilteredCriterion{}, errors.Wrap(err, "none exist criterion accept")
 		}
 		return FilteredCriterion{
@@ -367,9 +269,16 @@ func (c Criterion) Accept(query Query, repositories []string) (FilteredCriterion
 		}
 
 		var accepts CPEAccepts
+		var ws []warningTypes.Warning
 		for i, q := range query.CPE {
 			quality, err := c.CPE.Accept(q)
 			if err != nil {
+				if ue, ok := stderrors.AsType[*warningTypes.UnevaluableError](err); ok {
+					if !slices.Contains(ws, ue.Warning) {
+						ws = append(ws, ue.Warning)
+					}
+					continue
+				}
 				return FilteredCriterion{}, errors.Wrap(err, "cpe criterion accept")
 			}
 			switch quality {
@@ -386,9 +295,19 @@ func (c Criterion) Accept(query Query, repositories []string) (FilteredCriterion
 		return FilteredCriterion{
 			Criterion: c,
 			Accepts:   AcceptQueries{CPE: accepts},
+			Warnings:  ws,
 		}, nil
 	default:
-		return FilteredCriterion{}, errors.Errorf("unexpected criterion type. expected: %q, actual: %q", []CriterionType{CriterionTypeVersion, CriterionTypeNoneExist, CriterionTypeKB, CriterionTypeCPE}, c.Type)
+		// A criterion type outside this build's vocabulary (data from a
+		// newer vuls-data-update) contributes "not affected", recorded on
+		// the result so callers can surface it.
+		if !c.Type.Known() {
+			return FilteredCriterion{Criterion: c, Warnings: []warningTypes.Warning{{Kind: warningTypes.KindUnevaluableCriterionType, Cause: string(c.Type)}}}, nil
+		}
+		// In the vocabulary but not dispatched above: the vocabulary and
+		// this switch are out of sync within this build — a bug, not newer
+		// data. Fail loudly (mirrors the criteria operator default).
+		return FilteredCriterion{}, errors.Errorf("unexpected criterion type. expected: %q, actual: %q", CriterionTypes(), c.Type)
 	}
 }
 
@@ -403,6 +322,14 @@ func (fc FilteredCriterion) Affected() (bool, error) {
 	case CriterionTypeCPE:
 		return len(fc.Accepts.CPE.Exact) > 0 || len(fc.Accepts.CPE.VersionUnconfirmed) > 0, nil
 	default:
-		return false, errors.Errorf("unexpected criterion type. expected: %q, actual: %q", []CriterionType{CriterionTypeVersion, CriterionTypeNoneExist, CriterionTypeKB, CriterionTypeCPE}, fc.Criterion.Type)
+		// Data from a newer vuls-data-update: not affected; the warning was
+		// recorded when Accept produced this FilteredCriterion.
+		if !fc.Criterion.Type.Known() {
+			return false, nil
+		}
+		// In the vocabulary but not dispatched above: the vocabulary and
+		// this switch are out of sync within this build — a bug, not newer
+		// data. Fail loudly (mirrors the criteria operator default).
+		return false, errors.Errorf("unexpected criterion type. expected: %q, actual: %q", CriterionTypes(), fc.Criterion.Type)
 	}
 }

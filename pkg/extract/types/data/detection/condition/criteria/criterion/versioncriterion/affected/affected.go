@@ -8,6 +8,7 @@ import (
 	"github.com/pkg/errors"
 
 	rangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/affected/range"
+	warningTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/warning"
 	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment/ecosystem"
 )
 
@@ -24,7 +25,7 @@ func (a *Affected) Sort() {
 
 func Compare(x, y Affected) int {
 	return cmp.Or(
-		cmp.Compare(x.Type, y.Type),
+		x.Type.Compare(y.Type),
 		slices.CompareFunc(x.Range, y.Range, rangeTypes.Compare),
 		slices.Compare(x.Fixed, y.Fixed),
 	)
@@ -32,9 +33,26 @@ func Compare(x, y Affected) int {
 
 func (a Affected) Accept(family ecosystemTypes.Ecosystem, v string) (bool, error) {
 	for _, r := range a.Range {
+		// A Range element with no endpoints expresses nothing — malformed
+		// data (no extractor produces one; schema validation is the hard
+		// gate) or a newer range type whose constraints live in JSON fields
+		// this build's unmarshal drops. Either way the criterion cannot be
+		// evaluated: report it as a non-fatal empty-range warning rather
+		// than aborting detection in the field. Whether a Type is evaluable
+		// is otherwise derived from CompareVersions itself on the bound
+		// comparisons below: anything it has no comparator for (unset,
+		// newer-data values, comparator-less vocabulary debt like pacman)
+		// answers with *UnsupportedRangeTypeError and is reported as a
+		// non-fatal *warning.UnevaluableError.
+		if r == (rangeTypes.Range{}) {
+			return false, &warningTypes.UnevaluableError{Warning: warningTypes.Warning{Kind: warningTypes.KindEmptyRange}}
+		}
 		if r.Equal != "" {
-			n, err := a.Type.Compare(family, r.Equal, v)
+			n, err := a.Type.CompareVersions(family, r.Equal, v)
 			if err != nil {
+				if w, ok := stderrors.AsType[warningTypes.Warnable](err); ok {
+					return false, &warningTypes.UnevaluableError{Warning: w.Warning(), Err: err}
+				}
 				if _, ok := stderrors.AsType[*rangeTypes.CompareError](err); ok {
 					continue
 				}
@@ -45,8 +63,11 @@ func (a Affected) Accept(family ecosystemTypes.Ecosystem, v string) (bool, error
 			}
 		}
 		if r.GreaterEqual != "" {
-			n, err := a.Type.Compare(family, r.GreaterEqual, v)
+			n, err := a.Type.CompareVersions(family, r.GreaterEqual, v)
 			if err != nil {
+				if w, ok := stderrors.AsType[warningTypes.Warnable](err); ok {
+					return false, &warningTypes.UnevaluableError{Warning: w.Warning(), Err: err}
+				}
 				if _, ok := stderrors.AsType[*rangeTypes.CompareError](err); ok {
 					continue
 				}
@@ -57,8 +78,11 @@ func (a Affected) Accept(family ecosystemTypes.Ecosystem, v string) (bool, error
 			}
 		}
 		if r.GreaterThan != "" {
-			n, err := a.Type.Compare(family, r.GreaterThan, v)
+			n, err := a.Type.CompareVersions(family, r.GreaterThan, v)
 			if err != nil {
+				if w, ok := stderrors.AsType[warningTypes.Warnable](err); ok {
+					return false, &warningTypes.UnevaluableError{Warning: w.Warning(), Err: err}
+				}
 				if _, ok := stderrors.AsType[*rangeTypes.CompareError](err); ok {
 					continue
 				}
@@ -69,8 +93,11 @@ func (a Affected) Accept(family ecosystemTypes.Ecosystem, v string) (bool, error
 			}
 		}
 		if r.LessEqual != "" {
-			n, err := a.Type.Compare(family, r.LessEqual, v)
+			n, err := a.Type.CompareVersions(family, r.LessEqual, v)
 			if err != nil {
+				if w, ok := stderrors.AsType[warningTypes.Warnable](err); ok {
+					return false, &warningTypes.UnevaluableError{Warning: w.Warning(), Err: err}
+				}
 				if _, ok := stderrors.AsType[*rangeTypes.CompareError](err); ok {
 					continue
 				}
@@ -81,8 +108,11 @@ func (a Affected) Accept(family ecosystemTypes.Ecosystem, v string) (bool, error
 			}
 		}
 		if r.LessThan != "" {
-			n, err := a.Type.Compare(family, r.LessThan, v)
+			n, err := a.Type.CompareVersions(family, r.LessThan, v)
 			if err != nil {
+				if w, ok := stderrors.AsType[warningTypes.Warnable](err); ok {
+					return false, &warningTypes.UnevaluableError{Warning: w.Warning(), Err: err}
+				}
 				if _, ok := stderrors.AsType[*rangeTypes.CompareError](err); ok {
 					continue
 				}

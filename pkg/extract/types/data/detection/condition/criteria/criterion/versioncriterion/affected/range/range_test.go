@@ -1,6 +1,7 @@
 package affectedrange_test
 
 import (
+	stderrors "errors"
 	"testing"
 
 	affectedrangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/affected/range"
@@ -28,7 +29,7 @@ func TestCompare(t *testing.T) {
 	}
 }
 
-func TestRangeType_Compare(t *testing.T) {
+func TestRangeType_CompareVersions(t *testing.T) {
 	type args struct {
 		family ecosystemTypes.Ecosystem
 		v1     string
@@ -1209,16 +1210,73 @@ func TestRangeType_Compare(t *testing.T) {
 			},
 			wantErr: true,
 		},
+		{
+			// The zero value (unset) is outside the vocabulary — a
+			// producer-side bug — so like a newer-data value it classifies
+			// as *UnsupportedRangeTypeError; only the declared "unknown"
+			// vocabulary value gets ErrRangeTypeUnknown.
+			name: "unset (zero) type is outside the vocabulary → unsupported",
+			rt:   affectedrangeTypes.RangeType(""),
+			args: args{
+				v1: "1.0.0",
+				v2: "2.0.0",
+			},
+			wantErr: true,
+		},
+		{
+			name: "unsupported type (newer data)",
+			rt:   affectedrangeTypes.RangeType("future-type"),
+			args: args{
+				v1: "1.0.0",
+				v2: "2.0.0",
+			},
+			wantErr: true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := tt.rt.Compare(tt.args.family, tt.args.v1, tt.args.v2)
+			got, err := tt.rt.CompareVersions(tt.args.family, tt.args.v1, tt.args.v2)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("RangeType.Compare() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("RangeType.CompareVersions() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
+			if err != nil {
+				// Every failure CompareVersions raises must classify as
+				// *CompareError so that Accept can catch and classify it —
+				// a non-fatal unevaluable warning for
+				// *UnsupportedRangeTypeError, a swallowed non-match for the
+				// rest — instead of aborting detection fatally.
+				if _, ok := stderrors.AsType[*affectedrangeTypes.CompareError](err); !ok {
+					t.Errorf("RangeType.CompareVersions() error = %v, want *CompareError", err)
+				}
+			}
 			if got != tt.want {
-				t.Errorf("RangeType.Compare() = %v, want %v", got, tt.want)
+				t.Errorf("RangeType.CompareVersions() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestRangeTypes_HaveComparator(t *testing.T) {
+	// Documentation of pre-existing debt, not a template: pacman and
+	// freebsd-pkg are in the vocabulary but have never had a comparator, so
+	// CompareVersions answers them with *UnsupportedRangeTypeError and their
+	// evaluation surfaces as an unevaluable warning. Implementing a
+	// comparator makes this test fail — then remove the entry here. Do not
+	// add new types; a new RangeType must ship with its comparator.
+	noComparator := map[affectedrangeTypes.RangeType]bool{
+		affectedrangeTypes.RangeTypePacman:     true,
+		affectedrangeTypes.RangeTypeFreeBSDPkg: true,
+	}
+	for _, rt := range affectedrangeTypes.RangeTypes() {
+		t.Run(string(rt), func(t *testing.T) {
+			_, err := rt.CompareVersions(ecosystemTypes.EcosystemTypeRedHat, "1.0.0", "2.0.0")
+			if _, unsupported := stderrors.AsType[*affectedrangeTypes.UnsupportedRangeTypeError](err); unsupported != noComparator[rt] {
+				if unsupported {
+					t.Errorf("RangeTypes() contains %q but CompareVersions has no comparator for it", rt)
+				} else {
+					t.Errorf("%q has a comparator now; drop it from noComparator", rt)
+				}
 			}
 		})
 	}

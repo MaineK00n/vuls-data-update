@@ -11,6 +11,7 @@ import (
 	binaryTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package/binary"
 	languageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package/language"
 	sourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package/source"
+	warningTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/warning"
 	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment/ecosystem"
 )
 
@@ -177,6 +178,15 @@ func (c Criterion) Accept(query Query, repositories []string) (bool, error) {
 		}
 		return isAccepted, nil
 	default:
-		return false, errors.Errorf("unexpected version criterion package type. expected: %q, actual: %q", []packageTypes.PackageType{packageTypes.PackageTypeBinary, packageTypes.PackageTypeSource, packageTypes.PackageTypeLanguage}, c.Package.Type)
+		// Out of vocabulary — unset, or a value from a newer
+		// vuls-data-update — is unevaluable: report it as a non-fatal
+		// *warning.UnevaluableError so the criterion layer can record it.
+		if !c.Package.Type.Known() {
+			return false, &warningTypes.UnevaluableError{Warning: warningTypes.Warning{Kind: warningTypes.KindUnevaluablePackageType, Cause: string(c.Package.Type)}}
+		}
+		// In the vocabulary but not dispatched above: the vocabulary and
+		// this switch are out of sync within this build — a bug, not newer
+		// data. Fail loudly (mirrors the criteria operator default).
+		return false, errors.Errorf("unexpected package type. expected: %q, actual: %q", packageTypes.PackageTypes(), c.Package.Type)
 	}
 }

@@ -199,6 +199,86 @@ func TestAffected_Accept(t *testing.T) {
 			},
 			want: true,
 		},
+		{
+			// Data written by a newer vuls-data-update may carry a range type
+			// this build does not know. Accept reports the non-fatal
+			// *warning.UnevaluableError — a sentinel for the criterion layer
+			// to catch and record as a skip, not a fatal abort of detection.
+			name: "unsupported range type (newer data) reports unevaluable",
+			fields: fields{
+				Type:  affectedrangeTypes.RangeType("future-type"),
+				Range: []affectedrangeTypes.Range{{LessThan: "1.0.0"}},
+			},
+			args: args{
+				family: ecosystemTypes.EcosystemTypeRedHat,
+				v:      "0.9.0",
+			},
+			want:    false,
+			wantErr: true,
+		},
+		{
+			// An endpoint-less element expresses nothing regardless of the
+			// type: it cannot be evaluated and is reported as a non-fatal
+			// empty-range warning.
+			name: "comparator-less vocabulary type with empty range reports empty-range",
+			fields: fields{
+				Type:  affectedrangeTypes.RangeTypePacman,
+				Range: []affectedrangeTypes.Range{{}},
+			},
+			args: args{
+				family: ecosystemTypes.EcosystemTypeArch,
+				v:      "0.9.0",
+			},
+			want:    false,
+			wantErr: true,
+		},
+		{
+			name: "comparator-less vocabulary type with bounds reports unevaluable",
+			fields: fields{
+				Type:  affectedrangeTypes.RangeTypePacman,
+				Range: []affectedrangeTypes.Range{{LessThan: "1.0.0"}},
+			},
+			args: args{
+				family: ecosystemTypes.EcosystemTypeArch,
+				v:      "0.9.0",
+			},
+			want:    false,
+			wantErr: true,
+		},
+		{
+			// Unknown's empty bounds mean "the source declared a constraint we
+			// could not translate", not "no constraint" — mirroring
+			// cpecriterion/range, it must not get the all-empty match-all.
+			// The empty-ness is the anomaly, so it warns like any other type.
+			name: "unknown range type with empty range reports empty-range",
+			fields: fields{
+				Type:  affectedrangeTypes.RangeTypeUnknown,
+				Range: []affectedrangeTypes.Range{{}},
+			},
+			args: args{
+				family: ecosystemTypes.EcosystemTypeRedHat,
+				v:      "0.9.0",
+			},
+			want:    false,
+			wantErr: true,
+		},
+		{
+			// An endpoint-less element expresses nothing regardless of the
+			// type — it may also be a newer range type whose constraints live
+			// in JSON fields this build's unmarshal dropped, so it is
+			// reported rather than silently skipped.
+			name: "unsupported range type (newer data) with empty range reports empty-range",
+			fields: fields{
+				Type:  affectedrangeTypes.RangeType("future-type"),
+				Range: []affectedrangeTypes.Range{{}},
+			},
+			args: args{
+				family: ecosystemTypes.EcosystemTypeRedHat,
+				v:      "0.9.0",
+			},
+			want:    false,
+			wantErr: true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

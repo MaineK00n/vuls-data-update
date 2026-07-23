@@ -2,81 +2,47 @@ package criteria
 
 import (
 	"cmp"
-	"encoding/json/jsontext"
-	"encoding/json/v2"
-	"fmt"
 	"slices"
 
 	"github.com/pkg/errors"
 
 	criterionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion"
+	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/internal/enum"
 )
 
-type CriteriaOperatorType int
+// CriteriaOperatorType is a string so that unmarshaling never validates
+// against the known set: data produced by a newer vuls-data-update (carrying
+// operator types this build does not know) still round-trips losslessly
+// instead of failing the whole read. Unlike the other enums, evaluation
+// (FilteredCriteria.Affected) stays strict on out-of-vocabulary values —
+// see the rationale on its default branch.
+type CriteriaOperatorType string
 
 const (
-	_ CriteriaOperatorType = iota
-	CriteriaOperatorTypeOR
-	CriteriaOperatorTypeAND
+	CriteriaOperatorTypeOR  CriteriaOperatorType = "OR"
+	CriteriaOperatorTypeAND CriteriaOperatorType = "AND"
 )
 
-func (t CriteriaOperatorType) String() string {
-	switch t {
-	case CriteriaOperatorTypeOR:
-		return "OR"
-	case CriteriaOperatorTypeAND:
-		return "AND"
-	default:
-		return ""
+// CriteriaOperatorTypes returns every CriteriaOperatorType this build knows,
+// in declaration order. Consumers (vuls2, vuls0) diff this list against a
+// newer vuls-data-update in CI to detect enum additions that require a
+// dependency bump. The known set must be append-only.
+func CriteriaOperatorTypes() []CriteriaOperatorType {
+	return []CriteriaOperatorType{
+		CriteriaOperatorTypeOR,
+		CriteriaOperatorTypeAND,
 	}
 }
 
-func (t CriteriaOperatorType) MarshalJSONTo(enc *jsontext.Encoder) error {
-	return enc.WriteToken(jsontext.String(t.String()))
+// Compare orders t against u by vocabulary rank — the declaration order of
+// CriteriaOperatorTypes() — preserving the canonical output order from before the
+// string conversion. Values outside the vocabulary sort after every known
+// value, lexicographically among themselves.
+func (t CriteriaOperatorType) Compare(u CriteriaOperatorType) int {
+	return vocabulary.Compare(t, u)
 }
 
-func (t *CriteriaOperatorType) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	token, err := dec.ReadToken()
-	if err != nil {
-		return err
-	}
-	if token.Kind() != '"' {
-		return fmt.Errorf("unexpected type. expected: %s, got %s", "string", token.Kind())
-	}
-
-	switch token.String() {
-	case "OR":
-		*t = CriteriaOperatorTypeOR
-	case "AND":
-		*t = CriteriaOperatorTypeAND
-	default:
-		return fmt.Errorf("invalid CriteriaOperatorType %s", token.String())
-	}
-	return nil
-}
-
-func (t CriteriaOperatorType) MarshalJSON() ([]byte, error) {
-	return json.Marshal(t.String())
-}
-
-func (t *CriteriaOperatorType) UnmarshalJSON(data []byte) error {
-	var s string
-	if err := json.Unmarshal(data, &s); err != nil {
-		return fmt.Errorf("data should be a string, got %s", data)
-	}
-
-	var ct CriteriaOperatorType
-	switch s {
-	case "OR":
-		ct = CriteriaOperatorTypeOR
-	case "AND":
-		ct = CriteriaOperatorTypeAND
-	default:
-		return fmt.Errorf("invalid CriteriaOperatorType %s", s)
-	}
-	*t = ct
-	return nil
-}
+var vocabulary = enum.NewVocabulary(CriteriaOperatorTypes())
 
 type Criteria struct {
 	Operator     CriteriaOperatorType       `json:"operator,omitempty"`
@@ -101,39 +67,11 @@ func (c *Criteria) Sort() {
 
 func Compare(x, y Criteria) int {
 	return cmp.Or(
-		cmp.Compare(x.Operator, y.Operator),
+		x.Operator.Compare(y.Operator),
 		slices.CompareFunc(x.Criterions, y.Criterions, criterionTypes.Compare),
 		slices.CompareFunc(x.Criterias, y.Criterias, Compare),
 		slices.Compare(x.Repositories, y.Repositories),
 	)
-}
-
-func (c Criteria) Contains(query criterionTypes.Query, parentRepositories []string) (bool, error) {
-	repositories := parentRepositories
-	if len(c.Repositories) > 0 {
-		repositories = c.Repositories
-	}
-
-	for _, ca := range c.Criterias {
-		isContained, err := ca.Contains(query, repositories)
-		if err != nil {
-			return false, errors.Wrap(err, "criteria contains")
-		}
-		if isContained {
-			return true, nil
-		}
-	}
-
-	for _, cn := range c.Criterions {
-		isContained, err := cn.Contains(query, repositories)
-		if err != nil {
-			return false, errors.Wrap(err, "criterion accept")
-		}
-		if isContained {
-			return true, nil
-		}
-	}
-	return false, nil
 }
 
 type FilteredCriteria struct {
@@ -230,6 +168,13 @@ func (c FilteredCriteria) Affected() (bool, error) {
 		}
 		return false, nil
 	default:
-		return false, errors.Errorf("unexpected criteria operator type. expected: %q, actual: %q", []CriteriaOperatorType{CriteriaOperatorTypeAND, CriteriaOperatorTypeOR}, c.Operator)
+		// Deliberately strict, unlike the other enum dispatches: AND/OR is a
+		// closed boolean algebra with no growth pressure, an out-of-vocabulary
+		// operator would silently suppress an entire criteria subtree (not just one
+		// criterion), and if a non-monotone operator (e.g. negation) ever
+		// were added, "skip as not affected" would no longer be provably
+		// conservative. An out-of-vocabulary operator is data corruption or
+		// a semantic change that must fail loudly.
+		return false, errors.Errorf("unexpected criteria operator type. expected: %q, actual: %q", CriteriaOperatorTypes(), c.Operator)
 	}
 }

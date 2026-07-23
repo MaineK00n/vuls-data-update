@@ -337,6 +337,21 @@ func TestCriterion_Accept(t *testing.T) {
 			},
 			want: true,
 		},
+		{
+			// A package type this build does not know (data from a newer
+			// vuls-data-update) reports the non-fatal
+			// *warning.UnevaluableError — a sentinel for the criterion layer
+			// to catch and record as a skip, not a fatal abort of detection.
+			name: "unsupported package type (newer data) reports unevaluable",
+			fields: fields{
+				Type: necTypes.PackageType("future-package"),
+			},
+			args: args{
+				query: necTypes.Query{Binaries: []binaryTypes.Query{{Name: "name"}}},
+			},
+			want:    false,
+			wantErr: true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

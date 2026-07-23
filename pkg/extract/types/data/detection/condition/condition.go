@@ -26,14 +26,6 @@ func Compare(x, y Condition) int {
 	)
 }
 
-func (c Condition) Contains(query criterionTypes.Query) (bool, error) {
-	isContained, err := c.Criteria.Contains(query, nil)
-	if err != nil {
-		return false, errors.Wrap(err, "criteria contains")
-	}
-	return isContained, nil
-}
-
 func (c Condition) Accept(query criterionTypes.Query) (FilteredCondition, error) {
 	filtered, err := c.Criteria.Accept(query, nil)
 	if err != nil {

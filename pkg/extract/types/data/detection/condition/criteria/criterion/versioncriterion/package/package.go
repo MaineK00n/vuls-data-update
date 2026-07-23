@@ -2,95 +2,55 @@ package criterionpackage
 
 import (
 	"cmp"
-	"encoding/json/jsontext"
-	"encoding/json/v2"
-	"fmt"
 
 	"github.com/pkg/errors"
 
 	binaryTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package/binary"
 	languageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package/language"
 	sourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package/source"
+	warningTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/warning"
+	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/internal/enum"
 )
 
-type PackageType int
+// PackageType is a string so that unmarshaling never validates against the
+// known set: data produced by a newer vuls-data-update (carrying package
+// types this build does not know) still round-trips losslessly instead of
+// failing the whole read.
+type PackageType string
 
 const (
-	_ PackageType = iota
-	PackageTypeBinary
-	PackageTypeSource
-	PackageTypeLanguage
-
-	PackageTypeUnknown
+	PackageTypeBinary   PackageType = "binary"
+	PackageTypeSource   PackageType = "source"
+	PackageTypeLanguage PackageType = "language"
 )
 
-func (t PackageType) String() string {
-	switch t {
-	case PackageTypeBinary:
-		return "binary"
-	case PackageTypeSource:
-		return "source"
-	case PackageTypeLanguage:
-		return "language"
-	default:
-		return "unknown"
+// PackageTypes returns every PackageType this build knows, in declaration
+// order. Consumers (vuls2, vuls0) diff this list against a newer
+// vuls-data-update in CI to detect enum additions that require a dependency
+// bump. The known set must be append-only.
+func PackageTypes() []PackageType {
+	return []PackageType{
+		PackageTypeBinary,
+		PackageTypeSource,
+		PackageTypeLanguage,
 	}
 }
 
-func (t PackageType) MarshalJSONTo(enc *jsontext.Encoder) error {
-	return enc.WriteToken(jsontext.String(t.String()))
+// Compare orders t against u by vocabulary rank — the declaration order of
+// PackageTypes() — preserving the canonical output order from before the
+// string conversion. Values outside the vocabulary sort after every known
+// value, lexicographically among themselves.
+func (t PackageType) Compare(u PackageType) int {
+	return vocabulary.Compare(t, u)
 }
 
-func (t *PackageType) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	token, err := dec.ReadToken()
-	if err != nil {
-		return err
-	}
-	if token.Kind() != '"' {
-		return fmt.Errorf("unexpected type. expected: %s, got %s", "string", token.Kind())
-	}
-
-	switch token.String() {
-	case "binary":
-		*t = PackageTypeBinary
-	case "source":
-		*t = PackageTypeSource
-	case "language":
-		*t = PackageTypeLanguage
-	case "unknown":
-		*t = PackageTypeUnknown
-	default:
-		return fmt.Errorf("invalid PackageType %s", token.String())
-	}
-	return nil
+// Known reports whether t is in this build's vocabulary. Data from a newer
+// vuls-data-update may carry values for which Known is false.
+func (t PackageType) Known() bool {
+	return vocabulary.Contains(t)
 }
 
-func (t PackageType) MarshalJSON() ([]byte, error) {
-	return json.Marshal(t.String())
-}
-
-func (t *PackageType) UnmarshalJSON(data []byte) error {
-	var s string
-	if err := json.Unmarshal(data, &s); err != nil {
-		return fmt.Errorf("data should be a string, got %s", data)
-	}
-
-	var pt PackageType
-	switch s {
-	case "binary":
-		pt = PackageTypeBinary
-	case "source":
-		pt = PackageTypeSource
-	case "language":
-		pt = PackageTypeLanguage
-	case "unknown":
-		pt = PackageTypeUnknown
-	default:
-		return fmt.Errorf("invalid PackageType %s", s)
-	}
-	*t = pt
-	return nil
-}
+var vocabulary = enum.NewVocabulary(PackageTypes())
 
 type Package struct {
 	Type     PackageType            `json:"type,omitempty"`
@@ -113,7 +73,7 @@ func (p *Package) Sort() {
 
 func Compare(x, y Package) int {
 	return cmp.Or(
-		cmp.Compare(x.Type, y.Type),
+		x.Type.Compare(y.Type),
 		func() int {
 			switch x.Type {
 			case PackageTypeBinary:
@@ -192,6 +152,15 @@ func (p Package) Accept(query Query, repositories []string) (bool, error) {
 		}
 		return isAccepted, nil
 	default:
-		return false, errors.Errorf("unexpected package type. expected: %q, actual: %q", []PackageType{PackageTypeBinary, PackageTypeSource, PackageTypeLanguage}, p.Type)
+		// Out of vocabulary — unset, or a value from a newer
+		// vuls-data-update — is unevaluable: report it as a non-fatal
+		// *warning.UnevaluableError so the criterion layer can record it.
+		if !p.Type.Known() {
+			return false, &warningTypes.UnevaluableError{Warning: warningTypes.Warning{Kind: warningTypes.KindUnevaluablePackageType, Cause: string(p.Type)}}
+		}
+		// In the vocabulary but not dispatched above: the vocabulary and
+		// this switch are out of sync within this build — a bug, not newer
+		// data. Fail loudly (mirrors the criteria operator default).
+		return false, errors.Errorf("unexpected package type. expected: %q, actual: %q", PackageTypes(), p.Type)
 	}
 }

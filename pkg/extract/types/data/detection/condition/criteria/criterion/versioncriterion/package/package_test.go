@@ -116,8 +116,18 @@ func TestPackage_Accept(t *testing.T) {
 			want: true,
 		},
 		{
-			name:    "unknown",
-			fields:  fields{Type: packageTypes.PackageTypeUnknown},
+			// Data written by a newer vuls-data-update may carry a package
+			// type this build does not know. Accept reports the non-fatal
+			// *warning.UnevaluableError — a sentinel for the criterion layer
+			// to catch and record as a skip, not a fatal abort of detection.
+			name:   "unsupported type (newer data) reports unevaluable",
+			fields: fields{Type: packageTypes.PackageType("future-package")},
+			args: args{
+				query: packageTypes.Query{
+					Binary: &binaryTypes.Query{Name: "name"},
+				},
+			},
+			want:    false,
 			wantErr: true,
 		},
 	}
