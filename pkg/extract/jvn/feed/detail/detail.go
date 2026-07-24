@@ -243,10 +243,13 @@ func extract(fetched fetchTypes.Vulinfo, raws []string) (dataTypes.Data, error) 
 	// Collect fetched reference titles (HTML <title> of referenced JPCERT-AT
 	// alert pages) into an optional url->title map. Only a subset of related
 	// items carries one, so it is kept in Optional rather than on Reference.
-	referenceTitles := make(map[string]string)
+	var referenceTitles map[string]string
 	for _, item := range fetched.VulinfoData.Related.RelatedItem {
 		if item.URL == "" || item.FetchedTitle == "" {
 			continue
+		}
+		if referenceTitles == nil {
+			referenceTitles = make(map[string]string)
 		}
 		referenceTitles[item.URL] = item.FetchedTitle
 	}

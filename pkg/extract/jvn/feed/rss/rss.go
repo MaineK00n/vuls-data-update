@@ -246,10 +246,13 @@ func extract(fetched fetchTypes.Item, raws []string) (dataTypes.Data, error) {
 	// Collect fetched reference titles (HTML <title> of referenced JPCERT-AT
 	// alert pages) into an optional url->title map. Only a subset of references
 	// carries one, so it is kept in Optional rather than on Reference itself.
-	referenceTitles := make(map[string]string)
+	var referenceTitles map[string]string
 	for _, ref := range fetched.References {
 		if ref.Text == "" || ref.FetchedTitle == "" {
 			continue
+		}
+		if referenceTitles == nil {
+			referenceTitles = make(map[string]string)
 		}
 		referenceTitles[ref.Text] = ref.FetchedTitle
 	}
