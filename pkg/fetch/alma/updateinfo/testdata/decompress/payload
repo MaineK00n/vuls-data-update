@@ -1,0 +1,8 @@
+---
+document: modulemd
+version: 2
+data:
+  name: mariadb
+  stream: "10.5"
+  version: 9010020230330221931
+...
