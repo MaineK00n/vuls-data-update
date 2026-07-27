@@ -1,3 +1,7 @@
 package updateinfo
 
-var ToDir = toDir
+var (
+	ToDir              = toDir
+	Decompress         = decompress
+	IsKnownDanglingRef = isKnownDanglingRef
+)

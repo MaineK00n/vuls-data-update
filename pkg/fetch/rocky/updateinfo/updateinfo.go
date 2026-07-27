@@ -2,7 +2,6 @@ package updateinfo
 
 import (
 	"bufio"
-	"bytes"
 	"compress/bzip2"
 	"compress/gzip"
 	"context"
@@ -48,6 +47,32 @@ var trees = []struct {
 	{dir: "pub/rocky", manifest: "fullfiletimelist"},
 	{dir: "pub/sig", manifest: "fullfiletimelist"},
 	{dir: "vault", manifest: "fullfiletimelist-vault"},
+}
+
+// isKnownDanglingRef reports whether u is a repodata file that a repomd.xml
+// references but which is absent from the mirror — a dangling reference frozen
+// into an archived vault snapshot (all listed here are Rocky 8.6 kickstart repos
+// whose declared updateinfo has no file present at all, verified 404). These are
+// dropped in fetchRepomd so the file is skipped; any other missing file still
+// 404s and fails loudly, so a newly-appearing dangling reference can be added
+// after verification. vault is frozen, so the set is stable.
+func isKnownDanglingRef(u string) bool {
+	p, err := url.Parse(u)
+	if err != nil {
+		return false
+	}
+	switch path.Clean(p.Path) {
+	case "/vault/rocky/8.6/HighAvailability/aarch64/kickstart/repodata/ad677747a8d80f3f3f5f6ccfaf15dd3a992c6f2341207c2f58c0dcab1e25e044-updateinfo.xml.gz",
+		"/vault/rocky/8.6/HighAvailability/x86_64/kickstart/repodata/ad677747a8d80f3f3f5f6ccfaf15dd3a992c6f2341207c2f58c0dcab1e25e044-updateinfo.xml.gz",
+		"/vault/rocky/8.6/NFV/aarch64/kickstart/repodata/ad677747a8d80f3f3f5f6ccfaf15dd3a992c6f2341207c2f58c0dcab1e25e044-updateinfo.xml.gz",
+		"/vault/rocky/8.6/NFV/x86_64/kickstart/repodata/29a22b48118310a1d7e1f4c5f5906e7be99a19c7eb0d3c779ea4ea9fdcb50181-updateinfo.xml.gz",
+		"/vault/rocky/8.6/ResilientStorage/aarch64/kickstart/repodata/ad677747a8d80f3f3f5f6ccfaf15dd3a992c6f2341207c2f58c0dcab1e25e044-updateinfo.xml.gz",
+		"/vault/rocky/8.6/ResilientStorage/x86_64/kickstart/repodata/ad677747a8d80f3f3f5f6ccfaf15dd3a992c6f2341207c2f58c0dcab1e25e044-updateinfo.xml.gz",
+		"/vault/rocky/8.6/RT/x86_64/kickstart/repodata/3f851aab6522f26ab8f7e912ff74b62831df3f662ef7596e681628da678054c9-updateinfo.xml.gz":
+		return true
+	default:
+		return false
+	}
 }
 
 type options struct {
@@ -251,24 +276,23 @@ func (o options) fetch(client *utilhttp.Client, urls []string) error {
 							return errors.Wrapf(err, "fetch repomd %s", u)
 						}
 
-						if uu == "" {
-							return nil
+						// uu/mu are independent: a repomd may declare only one of
+						// updateinfo/modules, and a dangling reference blanks just that
+						// one, so fetch whichever is present without skipping the other.
+						if uu != "" {
+							time.Sleep(o.wait)
+
+							if err := o.fetchUpdateinfo(client, uu); err != nil {
+								return errors.Wrapf(err, "fetch updateinfo %s", uu)
+							}
 						}
 
-						time.Sleep(o.wait)
+						if mu != "" {
+							time.Sleep(o.wait)
 
-						if err := o.fetchUpdateinfo(client, uu); err != nil {
-							return errors.Wrapf(err, "fetch updateinfo %s", uu)
-						}
-
-						if mu == "" {
-							return nil
-						}
-
-						time.Sleep(o.wait)
-
-						if err := o.fetchModules(client, mu); err != nil {
-							return errors.Wrapf(err, "fetch modules %s", mu)
+							if err := o.fetchModules(client, mu); err != nil {
+								return errors.Wrapf(err, "fetch modules %s", mu)
+							}
 						}
 
 						return nil
@@ -339,6 +363,19 @@ func (o options) fetchRepomd(client *utilhttp.Client, u string) (string, string,
 		}
 	}
 
+	// A repomd.xml can reference an updateinfo/modules file that is absent from
+	// the mirror (a dangling reference frozen into an archived vault snapshot).
+	// Drop only the known-dangling ones so the file is skipped; any other missing
+	// file still 404s in fetchUpdateinfo/fetchModules and fails loudly.
+	if isKnownDanglingRef(uu) {
+		slog.Warn("skipping known dangling reference in repomd", slog.String("url", uu))
+		uu = ""
+	}
+	if isKnownDanglingRef(mu) {
+		slog.Warn("skipping known dangling reference in repomd", slog.String("url", mu))
+		mu = ""
+	}
+
 	return uu, mu, nil
 }
 
@@ -362,13 +399,14 @@ func (o options) fetchUpdateinfo(client *utilhttp.Client, u string) error {
 		return errors.Wrap(err, "to dir")
 	}
 
-	buf, err := decompress(u, resp.Body)
+	dr, err := decompress(u, resp.Body)
 	if err != nil {
 		return errors.Wrap(err, "decompress")
 	}
+	defer dr.Close()
 
 	var ui updateinfo
-	if err := xml.NewDecoder(buf).Decode(&ui); err != nil {
+	if err := xml.NewDecoder(dr).Decode(&ui); err != nil {
 		return errors.Wrap(err, "decode xml")
 	}
 
@@ -410,12 +448,13 @@ func (o options) fetchModules(client *utilhttp.Client, u string) error {
 		return errors.Wrap(err, "to dir")
 	}
 
-	buf, err := decompress(u, resp.Body)
+	dr, err := decompress(u, resp.Body)
 	if err != nil {
 		return errors.Wrap(err, "decompress")
 	}
+	defer dr.Close()
 
-	scanner := bufio.NewScanner(buf)
+	scanner := bufio.NewScanner(dr)
 	var sb strings.Builder
 	for scanner.Scan() {
 		switch s := scanner.Text(); s {
@@ -456,54 +495,40 @@ func (o options) fetchModules(client *utilhttp.Client, u string) error {
 	return nil
 }
 
-// decompress reads the (optionally compressed) body of a repodata file into a
-// buffer, selecting the decoder from the URL suffix. Rocky Linux ships
-// updateinfo as *.xml.gz but modules as *.yaml.xz, and mirrors may re-compress
-// with other algorithms, so both callers share this format handling.
-func decompress(u string, r io.Reader) (*bytes.Buffer, error) {
-	buf := new(bytes.Buffer)
-	switch {
-	case strings.HasSuffix(u, ".xml"), strings.HasSuffix(u, ".yaml"):
-		if _, err := buf.ReadFrom(r); err != nil {
-			return nil, errors.Wrap(err, "read")
-		}
-	case strings.HasSuffix(u, ".gz"):
+// decompress returns a reader over the (optionally compressed) body of a repodata
+// file, selecting the decoder from the URL suffix. Rocky Linux ships updateinfo as
+// *.xml.gz but modules as *.yaml.xz, and mirrors may re-compress with other
+// algorithms, so both callers share this format handling. The result streams (it
+// does not buffer the whole payload) and must be closed by the caller.
+func decompress(u string, r io.Reader) (io.ReadCloser, error) {
+	// Match the suffix case-insensitively: some Rocky repositories publish
+	// upper-cased repodata filenames (e.g. <hash>-UPDATEINFO.xml.gz).
+	switch lu := strings.ToLower(u); {
+	case strings.HasSuffix(lu, ".xml"), strings.HasSuffix(lu, ".yaml"):
+		return io.NopCloser(r), nil
+	case strings.HasSuffix(lu, ".gz"):
 		gr, err := gzip.NewReader(r)
 		if err != nil {
 			return nil, errors.Wrap(err, "create gzip reader")
 		}
-		defer gr.Close()
-
-		if _, err := buf.ReadFrom(gr); err != nil {
-			return nil, errors.Wrap(err, "read gzip")
-		}
-	case strings.HasSuffix(u, ".xz"):
+		return gr, nil
+	case strings.HasSuffix(lu, ".xz"):
 		xr, err := xz.NewReader(r)
 		if err != nil {
 			return nil, errors.Wrap(err, "create xz reader")
 		}
-
-		if _, err := buf.ReadFrom(xr); err != nil {
-			return nil, errors.Wrap(err, "read xz")
-		}
-	case strings.HasSuffix(u, ".bz2"):
-		if _, err := buf.ReadFrom(bzip2.NewReader(r)); err != nil {
-			return nil, errors.Wrap(err, "read bzip2")
-		}
-	case strings.HasSuffix(u, ".zst"):
+		return io.NopCloser(xr), nil
+	case strings.HasSuffix(lu, ".bz2"):
+		return io.NopCloser(bzip2.NewReader(r)), nil
+	case strings.HasSuffix(lu, ".zst"):
 		zr, err := zstd.NewReader(r)
 		if err != nil {
 			return nil, errors.Wrap(err, "create zstd reader")
 		}
-		defer zr.Close()
-
-		if _, err := buf.ReadFrom(zr); err != nil {
-			return nil, errors.Wrap(err, "read zstd")
-		}
+		return zr.IOReadCloser(), nil
 	default:
 		return nil, errors.Errorf("unexpected fileformat. expected: %q, actual: %q", []string{".xml", ".yaml", ".gz", ".xz", ".bz2", ".zst"}, u)
 	}
-	return buf, nil
 }
 
 // toDir maps a repodata file URL to the on-disk directory that mirrors its
@@ -535,7 +560,9 @@ func toDir(u, baseURL string) (string, error) {
 		}
 	}
 
-	switch name := ss[len(ss)-1]; {
+	// Classify case-insensitively: some Rocky repositories publish upper-cased
+	// repodata filenames (e.g. <hash>-UPDATEINFO.xml.gz in a few SIG repos).
+	switch name := strings.ToLower(ss[len(ss)-1]); {
 	case strings.Contains(name, "updateinfo.xml"):
 		ps = append(ps, "updateinfo")
 	case strings.Contains(name, "-modules.yaml"):
