@@ -409,6 +409,13 @@ func (o options) fetchUpdateinfo(client *utilhttp.Client, u string) error {
 	if err := xml.NewDecoder(dr).Decode(&ui); err != nil {
 		return errors.Wrap(err, "decode xml")
 	}
+	// The XML decoder can stop before the end of the stream, so drain the rest to
+	// make the decompressor verify its trailer/checksum — gzip/zstd surface
+	// integrity errors only once the stream is fully read (fetchModules already
+	// reads to EOF via bufio.Scanner).
+	if _, err := io.Copy(io.Discard, dr); err != nil {
+		return errors.Wrap(err, "drain updateinfo")
+	}
 
 	for _, u := range ui.Update {
 		// Group advisories under <prefix>/<year>/ (RLSA/RLBA/RLEA-<year>:<seq>),

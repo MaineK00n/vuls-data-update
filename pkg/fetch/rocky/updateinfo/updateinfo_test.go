@@ -36,6 +36,14 @@ func TestFetch(t *testing.T) {
 			name:     "badid",
 			hasError: true,
 		},
+		{
+			// updateinfo.xml.gz whose deflate decodes to valid XML but whose gzip
+			// trailer CRC is corrupted. xml.Decode stops before the trailer and
+			// succeeds, so only the post-decode drain in fetchUpdateinfo catches
+			// the corruption — this case fails without that drain.
+			name:     "corruptcrc",
+			hasError: true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
