@@ -117,6 +117,7 @@ import (
 	nvdAPICPE "github.com/MaineK00n/vuls-data-update/pkg/fetch/nvd/api/cpe"
 	nvdAPICPEMatch "github.com/MaineK00n/vuls-data-update/pkg/fetch/nvd/api/cpematch"
 	nvdAPICVE "github.com/MaineK00n/vuls-data-update/pkg/fetch/nvd/api/cve"
+	nvdAPICVEHistory "github.com/MaineK00n/vuls-data-update/pkg/fetch/nvd/api/cvehistory"
 	nvdFeedCPEv1 "github.com/MaineK00n/vuls-data-update/pkg/fetch/nvd/feed/cpe/v1"
 	nvdFeedCPEv2 "github.com/MaineK00n/vuls-data-update/pkg/fetch/nvd/feed/cpe/v2"
 	nvdFeedCPEMATCHv1 "github.com/MaineK00n/vuls-data-update/pkg/fetch/nvd/feed/cpematch/v1"
@@ -260,7 +261,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdNpmGHSA(), newCmdNpmGLSA(), newCmdNpmOSV(), newCmdNpmDB(),
 		newCmdNucleiAPI(), newCmdNucleiRepository(),
 		newCmdNugetGHSA(), newCmdNugetGLSA(), newCmdNugetOSV(),
-		newCmdNVDAPICVE(), newCmdNVDAPICPE(), newCmdNVDAPICPEMatch(), newCmdNVDFeedCVEv1(), newCmdNVDFeedCPEv1(), newCmdNVDFeedCPEMATCHv1(), newCmdNVDFeedCVEv2(), newCmdNVDFeedCPEv2(), newCmdNVDFeedCPEMATCHv2(),
+		newCmdNVDAPICVE(), newCmdNVDAPICVEHistory(), newCmdNVDAPICPE(), newCmdNVDAPICPEMatch(), newCmdNVDFeedCVEv1(), newCmdNVDFeedCPEv1(), newCmdNVDFeedCPEMATCHv1(), newCmdNVDFeedCVEv2(), newCmdNVDFeedCPEv2(), newCmdNVDFeedCPEMATCHv2(),
 		newCmdOcamlOSV(),
 		newCmdOpenEulerCVRF(), newCmdOpenEulerCSAF(), newCmdOpenEulerOSV(),
 		newCmdOracleLinux(), newCmdOracleOLAM(), newCmdOracleOpenStack(), newCmdOracleVM(),
@@ -3513,6 +3514,76 @@ func newCmdNVDAPICVE() *cobra.Command {
 	cmd.Flags().DurationVarP(&options.wait, "wait", "", options.wait, "sleep duration between consecutive requests")
 	cmd.Flags().TimeVarP(&options.lastModStartDate, "last-mod-start-date", "", options.lastModStartDate, []string{time.DateOnly, time.DateTime, time.RFC3339, "2006-01-02T15:04:05.000-07:00"}, "return only the CVEs that were last modified during the specified period")
 	cmd.Flags().TimeVarP(&options.lastModEndDate, "last-mod-end-date", "", options.lastModEndDate, []string{time.DateOnly, time.DateTime, time.RFC3339, "2006-01-02T15:04:05.000-07:00"}, "return only the CVEs that were last modified during the specified period")
+	cmd.Flags().StringVarP(&options.apiKey, "api-key", "", options.apiKey, "API Key to increase rate limit")
+
+	return cmd
+}
+
+func newCmdNVDAPICVEHistory() *cobra.Command {
+	options := &struct {
+		base
+		retryWaitMin    time.Duration
+		retryWaitMax    time.Duration
+		concurrency     int
+		wait            time.Duration
+		changeStartDate time.Time
+		changeEndDate   time.Time
+		apiKey          string
+	}{
+		base: base{
+			dir:   filepath.Join(util.CacheDir(), "fetch", "nvd", "api", "cvehistory"),
+			retry: 20,
+		},
+		retryWaitMin:    6 * time.Second,
+		retryWaitMax:    30 * time.Second,
+		concurrency:     1,
+		wait:            6 * time.Second,
+		changeStartDate: time.Date(1, time.January, 1, 0, 0, 0, 0, time.UTC),
+		changeEndDate:   time.Date(1, time.January, 1, 0, 0, 0, 0, time.UTC),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "nvd-api-cvehistory",
+		Short: "Fetch NVD API CVE Change History data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch nvd-api-cvehistory
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := nvdAPICVEHistory.Fetch(
+				nvdAPICVEHistory.WithDir(options.dir),
+				nvdAPICVEHistory.WithRetry(options.retry), nvdAPICVEHistory.WithRetryWaitMin(options.retryWaitMin), nvdAPICVEHistory.WithRetryWaitMax(options.retryWaitMax),
+				nvdAPICVEHistory.WithConcurrency(options.concurrency), nvdAPICVEHistory.WithWait(options.wait),
+				nvdAPICVEHistory.WithChangeStartDate(func() *time.Time {
+					if options.changeStartDate.IsZero() {
+						return nil
+					}
+					return &options.changeStartDate
+				}()),
+				nvdAPICVEHistory.WithChangeEndDate(func() *time.Time {
+					if options.changeEndDate.IsZero() {
+						return nil
+					}
+					return &options.changeEndDate
+				}()),
+				nvdAPICVEHistory.WithAPIKey(options.apiKey),
+			); err != nil {
+				return errors.Wrap(err, "failed to fetch nvd api cvehistory")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+	cmd.Flags().DurationVarP(&options.retryWaitMin, "retry-wait-min", "", options.retryWaitMin, "number of minimum time to retry wait")
+	cmd.Flags().DurationVarP(&options.retryWaitMax, "retry-wait-max", "", options.retryWaitMax, "number of maximum time to retry wait")
+	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrent API requests")
+	// Rate limit without API key: 5 requests in a rolling 30 second window, and
+	// with API key: 50 requests in a rolling 30 second window.
+	cmd.Flags().DurationVarP(&options.wait, "wait", "", options.wait, "sleep duration between consecutive requests")
+	cmd.Flags().TimeVarP(&options.changeStartDate, "change-start-date", "", options.changeStartDate, []string{time.DateOnly, time.DateTime, time.RFC3339, "2006-01-02T15:04:05.000-07:00"}, "return only the CVE change events that occurred during the specified period")
+	cmd.Flags().TimeVarP(&options.changeEndDate, "change-end-date", "", options.changeEndDate, []string{time.DateOnly, time.DateTime, time.RFC3339, "2006-01-02T15:04:05.000-07:00"}, "return only the CVE change events that occurred during the specified period")
 	cmd.Flags().StringVarP(&options.apiKey, "api-key", "", options.apiKey, "API Key to increase rate limit")
 
 	return cmd

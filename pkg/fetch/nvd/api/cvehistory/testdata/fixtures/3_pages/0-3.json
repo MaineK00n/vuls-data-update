@@ -1,0 +1,46 @@
+{
+  "resultsPerPage": 3,
+  "startIndex": 0,
+  "totalResults": 8,
+  "format": "NVD_CVEHistory",
+  "version": "2.0",
+  "timestamp": "2026-07-28T12:00:00.000",
+  "cveChanges": [
+    {
+      "change": {
+        "cveId": "CVE-2024-6488",
+        "eventName": "CVE Rejected",
+        "cveChangeId": "F76168A4-D7A4-4C62-9555-758EAAC5650D",
+        "sourceIdentifier": "security@wordfence.com",
+        "created": "2024-07-03T19:15:05.143",
+        "details": []
+      }
+    },
+    {
+      "change": {
+        "cveId": "CVE-2024-45342",
+        "eventName": "CVE Rejected",
+        "cveChangeId": "0147E440-12A8-405E-BF5A-C937B2FF8D8F",
+        "sourceIdentifier": "security@golang.org",
+        "created": "2025-01-08T20:15:27.583",
+        "details": []
+      }
+    },
+    {
+      "change": {
+        "cveId": "CVE-2024-6488",
+        "eventName": "New CVE Received",
+        "cveChangeId": "CC438820-317D-46E7-8D4F-9857F634EB6B",
+        "sourceIdentifier": "security@wordfence.com",
+        "created": "2024-07-03T19:15:05.143",
+        "details": [
+          {
+            "action": "Added",
+            "type": "Description",
+            "newValue": "Rejected reason: REJECTED"
+          }
+        ]
+      }
+    }
+  ]
+}
