@@ -128,6 +128,7 @@ import (
 	openeulerCSAF "github.com/MaineK00n/vuls-data-update/pkg/fetch/openeuler/csaf"
 	openeulerCVRF "github.com/MaineK00n/vuls-data-update/pkg/fetch/openeuler/cvrf"
 	openeulerOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/openeuler/osv"
+	opensslSecJSON "github.com/MaineK00n/vuls-data-update/pkg/fetch/openssl/secjson"
 	oracleLinux "github.com/MaineK00n/vuls-data-update/pkg/fetch/oracle/linux"
 	oracleOLAM "github.com/MaineK00n/vuls-data-update/pkg/fetch/oracle/olam"
 	oracleOpenStack "github.com/MaineK00n/vuls-data-update/pkg/fetch/oracle/openstack"
@@ -264,6 +265,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdNVDAPICVE(), newCmdNVDAPICVEHistory(), newCmdNVDAPICPE(), newCmdNVDAPICPEMatch(), newCmdNVDFeedCVEv1(), newCmdNVDFeedCPEv1(), newCmdNVDFeedCPEMATCHv1(), newCmdNVDFeedCVEv2(), newCmdNVDFeedCPEv2(), newCmdNVDFeedCPEMATCHv2(),
 		newCmdOcamlOSV(),
 		newCmdOpenEulerCVRF(), newCmdOpenEulerCSAF(), newCmdOpenEulerOSV(),
+		newCmdOpenSSLSecJSON(),
 		newCmdOracleLinux(), newCmdOracleOLAM(), newCmdOracleOpenStack(), newCmdOracleVM(),
 		newCmdOSSFuzzOSV(),
 		newCmdOXCSAF(),
@@ -4016,6 +4018,43 @@ func newCmdOpenEulerOSV() *cobra.Command {
 		RunE: func(_ *cobra.Command, _ []string) error {
 			if err := openeulerOSV.Fetch(openeulerOSV.WithDir(options.dir), openeulerOSV.WithRetry(options.retry), openeulerOSV.WithConcurrency(options.concurrency), openeulerOSV.WithWait(options.wait)); err != nil {
 				return errors.Wrap(err, "failed to fetch openeuler osv")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrent http requests")
+	cmd.Flags().DurationVarP(&options.wait, "wait", "", options.wait, "wait duration")
+
+	return cmd
+}
+
+func newCmdOpenSSLSecJSON() *cobra.Command {
+	options := &struct {
+		base
+		concurrency int
+		wait        time.Duration
+	}{
+		base: base{
+			dir:   filepath.Join(util.CacheDir(), "fetch", "openssl", "secjson"),
+			retry: 3,
+		},
+		concurrency: 5,
+		wait:        1 * time.Second,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "openssl-secjson",
+		Short: "Fetch OpenSSL Security Advisory (JSON) data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch openssl-secjson
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := opensslSecJSON.Fetch(opensslSecJSON.WithDir(options.dir), opensslSecJSON.WithRetry(options.retry), opensslSecJSON.WithConcurrency(options.concurrency), opensslSecJSON.WithWait(options.wait)); err != nil {
+				return errors.Wrap(err, "failed to fetch openssl secjson")
 			}
 			return nil
 		},
