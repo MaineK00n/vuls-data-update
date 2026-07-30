@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/url"
 	"path/filepath"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -25,6 +26,13 @@ const (
 
 	// resultsPerPage must be <= 5,000, this implementation almost uses the max value
 	resultsPerPageMax = 5_000
+)
+
+// Patterns defined by the API schema
+// https://csrc.nist.gov/schema/nvd/api/2.0/cve_history_api_json_2.0.schema
+var (
+	cveIDPattern       = regexp.MustCompile(`^CVE-([0-9]{4})-[0-9]{4,}$`)
+	cveChangeIDPattern = regexp.MustCompile(`^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$`)
 )
 
 type options struct {
@@ -183,7 +191,7 @@ func Fetch(opts ...Option) error {
 
 	slog.Info("Fetch NVD CVE History API", slog.String("dir", options.dir))
 
-	c := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry), utilhttp.WithClientRetryWaitMin(time.Duration(options.retryWaitMin)*time.Second), utilhttp.WithClientRetryWaitMax(time.Duration(options.retryWaitMax)*time.Second), utilhttp.WithClientCheckRetry(nvdutil.CheckRetry), utilhttp.WithClientBackoff(nvdutil.Backoff))
+	c := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry), utilhttp.WithClientRetryWaitMin(options.retryWaitMin), utilhttp.WithClientRetryWaitMax(options.retryWaitMax), utilhttp.WithClientCheckRetry(nvdutil.CheckRetry), utilhttp.WithClientBackoff(nvdutil.Backoff))
 
 	h := make(http.Header)
 	if options.apiKey != "" {
@@ -268,16 +276,18 @@ func Fetch(opts ...Option) error {
 		// Store each change event in its own file, so that no page has to wait
 		// for the others.
 		for _, ch := range response.CVEChanges {
-			splitted, err := util.Split(ch.Change.CVEID, "-", "-")
-			if err != nil {
-				return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", ch.Change.CVEID)
+			// Both IDs come from the API response and are used as path elements,
+			// so accept only the formats the schema defines.
+			m := cveIDPattern.FindStringSubmatch(ch.Change.CVEID)
+			if m == nil {
+				return errors.Errorf("unexpected ID format. expected: %q, actual: %q", cveIDPattern.String(), ch.Change.CVEID)
 			}
-			if _, err := time.Parse("2006", splitted[1]); err != nil {
-				return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", ch.Change.CVEID)
+			if !cveChangeIDPattern.MatchString(ch.Change.CVEChangeID) {
+				return errors.Errorf("unexpected change ID format. expected: %q, actual: %q", cveChangeIDPattern.String(), ch.Change.CVEChangeID)
 			}
 
-			if err := util.Write(filepath.Join(options.dir, splitted[1], ch.Change.CVEID, fmt.Sprintf("%s.json", ch.Change.CVEChangeID)), ch.Change); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, splitted[1], ch.Change.CVEID, fmt.Sprintf("%s.json", ch.Change.CVEChangeID)))
+			if err := util.Write(filepath.Join(options.dir, m[1], ch.Change.CVEID, fmt.Sprintf("%s.json", ch.Change.CVEChangeID)), ch.Change); err != nil {
+				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, m[1], ch.Change.CVEID, fmt.Sprintf("%s.json", ch.Change.CVEChangeID)))
 			}
 		}
 		return nil

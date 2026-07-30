@@ -17,7 +17,7 @@ type api20 struct {
 }
 
 // A change event of a CVE.
-// Top level structure that fetch command stores CVE change history json files is []Change.
+// Top level structure that fetch command stores CVE change history json files.
 type Change struct {
 	CVEID            string   `json:"cveId"`
 	EventName        string   `json:"eventName"`

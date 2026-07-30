@@ -76,6 +76,12 @@ func TestFetch(t *testing.T) {
 			expectedCount: 3,
 		},
 		{
+			// Both IDs are used as path elements, so a malformed one must not be written
+			name:          "malformed cveChangeId",
+			fixturePrefix: "invalid_id",
+			hasError:      true,
+		},
+		{
 			name: "date range exceeds 120 days",
 			args: []cvehistory.Option{
 				cvehistory.WithChangeStartDate(new(time.Date(2024, time.July, 1, 0, 0, 0, 0, time.UTC))),
