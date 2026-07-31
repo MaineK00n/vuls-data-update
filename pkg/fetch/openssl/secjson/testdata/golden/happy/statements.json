@@ -1,0 +1,53 @@
+{
+	"statements": [
+		{
+			"base": "none",
+			"text": "Note: All OpenSSL versions before 1.1.1 are out of support and no longer receiving updates.  Extended support is available for 1.0.2 from OpenSSL Software Services for premium support customers."
+		},
+		{
+			"base": "0.9.6",
+			"text": "OpenSSL 0.9.6 is out of support and no longer receiving updates."
+		},
+		{
+			"base": "0.9.7",
+			"text": "OpenSSL 0.9.7 is out of support and no longer receiving updates."
+		},
+		{
+			"base": "0.9.8",
+			"text": "OpenSSL 0.9.8 is out of support since 1st January 2016 and no longer receiving updates."
+		},
+		{
+			"base": "1.0.0",
+			"text": "OpenSSL 1.0.0 is out of support since 1st January 2016 and no longer receiving updates."
+		},
+		{
+			"base": "1.0.1",
+			"text": "OpenSSL 1.0.1 is out of support since 1st January 2017 and no longer receiving updates."
+		},
+		{
+			"base": "1.0.2",
+			"text": "OpenSSL 1.0.2 is out of support since 1st January 2020 and is no longer receiving updates.  Extended support is available from OpenSSL Software Services for premium support customers."
+		},
+		{
+			"base": "1.1.0",
+			"text": "OpenSSL 1.1.0 is out of support since 12th September 2019 and no longer receiving updates."
+		}
+	],
+	"disputed": [
+		{
+			"base": "0.9.8",
+			"cve": "CVE-2010-0928",
+			"text": "This was not treated as a security issue as it is outside of the OpenSSL threat model."
+		},
+		{
+			"base": "fips",
+			"cve": "CVE-2007-6755",
+			"text": "Only OpenSSL FIPS module shipped Dual EC DRBG, and it [was not affected](https://marc.info/?l=openssl-announce&m=138747119822324)."
+		},
+		{
+			"base": "none",
+			"cve": "CVE-2002-20001",
+			"text": "[We do not consider this to be a vulnerability in OpenSSL](https://github.com/openssl/openssl/issues/17374)."
+		}
+	]
+}
