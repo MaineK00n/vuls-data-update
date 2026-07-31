@@ -1,0 +1,30 @@
+{
+  "resultsPerPage": 2,
+  "startIndex": 6,
+  "totalResults": 8,
+  "format": "NVD_CVEHistory",
+  "version": "2.0",
+  "timestamp": "2026-07-28T12:00:00.000",
+  "cveChanges": [
+    {
+      "change": {
+        "cveId": "CVE-2017-16532",
+        "eventName": "Reanalysis",
+        "cveChangeId": "BE9AAB08-C7AF-4C04-BB34-ECA3D2368C54",
+        "sourceIdentifier": "nvd@nist.gov",
+        "created": "2024-07-17T15:30:45.187",
+        "details": []
+      }
+    },
+    {
+      "change": {
+        "cveId": "CVE-2024-2567",
+        "eventName": "CVE Modified",
+        "cveChangeId": "386BB84A-837B-4FB2-ADCC-A3EBCD964566",
+        "sourceIdentifier": "cna@vuldb.com",
+        "created": "2024-07-05T18:15:30.850",
+        "details": []
+      }
+    }
+  ]
+}

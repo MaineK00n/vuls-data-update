@@ -1,0 +1,67 @@
+{
+  "resultsPerPage": 1,
+  "startIndex": 0,
+  "totalResults": 1,
+  "format": "NVD_CVEHistory",
+  "version": "2.0",
+  "timestamp": "2026-07-28T12:00:00.000",
+  "cveChanges": [
+    {
+      "change": {
+        "cveId": "CVE-2025-5914",
+        "eventName": "CVE Modified",
+        "cveChangeId": "5A88AA91-2A39-400B-8CEA-3B7871636C68",
+        "sourceIdentifier": "secalert@redhat.com",
+        "created": "2026-07-27T00:16:22.150",
+        "details": [
+          {
+            "action": "Changed",
+            "type": "Affected",
+            "oldValue": [
+              {
+                "defaultStatus": "unaffected",
+                "collectionURL": "https://github.com/libarchive/libarchive/",
+                "packageName": "libarchive",
+                "versions": [
+                  {
+                    "version": "0",
+                    "lessThan": "3.8.0",
+                    "versionType": "semver",
+                    "status": "affected"
+                  }
+                ]
+              }
+            ],
+            "newValue": [
+              {
+                "defaultStatus": "unaffected",
+                "collectionURL": "https://github.com/libarchive/libarchive/",
+                "packageName": "libarchive",
+                "versions": [
+                  {
+                    "version": "0",
+                    "lessThan": "3.8.0",
+                    "versionType": "semver",
+                    "status": "affected"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "action": "Changed",
+            "type": "CVSSV4",
+            "oldValue": {
+              "baseScore": 7.5,
+              "baseSeverity": "HIGH"
+            },
+            "newValue": {
+              "baseScore": 9.8,
+              "baseSeverity": "CRITICAL"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

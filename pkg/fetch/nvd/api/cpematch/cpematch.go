@@ -183,7 +183,7 @@ func Fetch(opts ...Option) error {
 
 	slog.Info("Fetch NVD CPE match API", slog.String("dir", options.dir))
 
-	c := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry), utilhttp.WithClientRetryWaitMin(time.Duration(options.retryWaitMin)*time.Second), utilhttp.WithClientRetryWaitMax(time.Duration(options.retryWaitMax)*time.Second), utilhttp.WithClientCheckRetry(nvdutil.CheckRetry), utilhttp.WithClientBackoff(nvdutil.Backoff))
+	c := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry), utilhttp.WithClientRetryWaitMin(options.retryWaitMin), utilhttp.WithClientRetryWaitMax(options.retryWaitMax), utilhttp.WithClientCheckRetry(nvdutil.CheckRetry), utilhttp.WithClientBackoff(nvdutil.Backoff))
 
 	h := make(http.Header)
 	if options.apiKey != "" {

@@ -1,0 +1,20 @@
+{
+  "resultsPerPage": 1,
+  "startIndex": 0,
+  "totalResults": 1,
+  "format": "NVD_CVEHistory",
+  "version": "2.0",
+  "timestamp": "2026-07-28T12:00:00.000",
+  "cveChanges": [
+    {
+      "change": {
+        "cveId": "CVE-2024-6488",
+        "eventName": "CVE Modified",
+        "cveChangeId": "../../../../etc/passwd",
+        "sourceIdentifier": "security@wordfence.com",
+        "created": "2024-07-04T21:15:10.403",
+        "details": []
+      }
+    }
+  ]
+}

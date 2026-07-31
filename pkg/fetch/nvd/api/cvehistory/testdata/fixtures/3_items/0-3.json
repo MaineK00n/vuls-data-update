@@ -1,0 +1,40 @@
+{
+  "resultsPerPage": 3,
+  "startIndex": 0,
+  "totalResults": 3,
+  "format": "NVD_CVEHistory",
+  "version": "2.0",
+  "timestamp": "2026-07-28T12:00:00.000",
+  "cveChanges": [
+    {
+      "change": {
+        "cveId": "CVE-2024-6488",
+        "eventName": "CVE Rejected",
+        "cveChangeId": "F76168A4-D7A4-4C62-9555-758EAAC5650D",
+        "sourceIdentifier": "security@wordfence.com",
+        "created": "2024-07-03T19:15:05.143",
+        "details": []
+      }
+    },
+    {
+      "change": {
+        "cveId": "CVE-2024-45342",
+        "eventName": "CVE Rejected",
+        "cveChangeId": "0147E440-12A8-405E-BF5A-C937B2FF8D8F",
+        "sourceIdentifier": "security@golang.org",
+        "created": "2025-01-08T20:15:27.583",
+        "details": []
+      }
+    },
+    {
+      "change": {
+        "cveId": "CVE-2022-23815",
+        "eventName": "Reanalysis",
+        "cveChangeId": "91FE9AB8-2F77-49A0-B634-98495FCB844A",
+        "sourceIdentifier": "nvd@nist.gov",
+        "created": "2025-01-03T18:04:09.057",
+        "details": []
+      }
+    }
+  ]
+}

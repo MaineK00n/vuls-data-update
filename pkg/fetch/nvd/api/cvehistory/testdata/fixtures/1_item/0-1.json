@@ -1,0 +1,20 @@
+{
+  "resultsPerPage": 1,
+  "startIndex": 0,
+  "totalResults": 1,
+  "format": "NVD_CVEHistory",
+  "version": "2.0",
+  "timestamp": "2026-07-28T12:00:00.000",
+  "cveChanges": [
+    {
+      "change": {
+        "cveId": "CVE-2022-23815",
+        "eventName": "Reanalysis",
+        "cveChangeId": "91FE9AB8-2F77-49A0-B634-98495FCB844A",
+        "sourceIdentifier": "nvd@nist.gov",
+        "created": "2025-01-03T18:04:09.057",
+        "details": []
+      }
+    }
+  ]
+}

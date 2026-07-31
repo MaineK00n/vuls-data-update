@@ -1,17 +1,18 @@
-package cpe
+package cvehistory
 
 import (
 	"encoding/json/v2"
 	"fmt"
-	"hash/fnv"
 	"io"
 	"log/slog"
 	"net/http"
+	"net/url"
 	"path/filepath"
+	"regexp"
+	"strconv"
+	"strings"
 	"time"
 
-	"github.com/knqyf263/go-cpe/common"
-	"github.com/knqyf263/go-cpe/naming"
 	"github.com/pkg/errors"
 
 	nvdutil "github.com/MaineK00n/vuls-data-update/pkg/fetch/nvd/api/util"
@@ -20,24 +21,31 @@ import (
 )
 
 const (
-	// API reference page: https://nvd.nist.gov/developers/products
-	apiURL = "https://services.nvd.nist.gov/rest/json/cpes/2.0"
+	// API reference page: https://nvd.nist.gov/developers/vulnerabilities
+	apiURL = "https://services.nvd.nist.gov/rest/json/cvehistory/2.0"
 
-	// resultsPerPage must be <= 10,000, this implementation almost uses the max value
-	resultsPerPageMax = 10_000
+	// resultsPerPage must be <= 5,000, this implementation almost uses the max value
+	resultsPerPageMax = 5_000
+)
+
+// Patterns defined by the API schema
+// https://csrc.nist.gov/schema/nvd/api/2.0/cve_history_api_json_2.0.schema
+var (
+	cveIDPattern       = regexp.MustCompile(`^CVE-([0-9]{4})-[0-9]{4,}$`)
+	cveChangeIDPattern = regexp.MustCompile(`^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$`)
 )
 
 type options struct {
-	baseURL          string
-	dir              string
-	retry            int
-	retryWaitMin     time.Duration
-	retryWaitMax     time.Duration
-	concurrency      int
-	wait             time.Duration
-	lastModStartDate *time.Time
-	lastModEndDate   *time.Time
-	apiKey           string
+	baseURL         string
+	dir             string
+	retry           int
+	retryWaitMin    time.Duration
+	retryWaitMax    time.Duration
+	concurrency     int
+	wait            time.Duration
+	changeStartDate *time.Time
+	changeEndDate   *time.Time
+	apiKey          string
 
 	// test purpose only
 	resultsPerPage int
@@ -117,28 +125,28 @@ func WithWait(wait time.Duration) Option {
 	return waitOption(wait)
 }
 
-type lastModStartDateOption struct {
+type changeStartDateOption struct {
 	Date *time.Time
 }
 
-func (d lastModStartDateOption) apply(opts *options) {
-	opts.lastModStartDate = d.Date
+func (d changeStartDateOption) apply(opts *options) {
+	opts.changeStartDate = d.Date
 }
 
-func WithLastModStartDate(lastModStartDate *time.Time) Option {
-	return lastModStartDateOption{Date: lastModStartDate}
+func WithChangeStartDate(changeStartDate *time.Time) Option {
+	return changeStartDateOption{Date: changeStartDate}
 }
 
-type lastModEndDateOption struct {
+type changeEndDateOption struct {
 	Date *time.Time
 }
 
-func (d lastModEndDateOption) apply(opts *options) {
-	opts.lastModEndDate = d.Date
+func (d changeEndDateOption) apply(opts *options) {
+	opts.changeEndDate = d.Date
 }
 
-func WithLastModEndDate(lastModEndDate *time.Time) Option {
-	return lastModEndDateOption{Date: lastModEndDate}
+func WithChangeEndDate(changeEndDate *time.Time) Option {
+	return changeEndDateOption{Date: changeEndDate}
 }
 
 type apiKeyOption string
@@ -165,7 +173,7 @@ func Fetch(opts ...Option) error {
 	options := &options{
 		baseURL:        apiURL,
 		apiKey:         "",
-		dir:            filepath.Join(util.CacheDir(), "fetch", "nvd", "api", "cpe"),
+		dir:            filepath.Join(util.CacheDir(), "fetch", "nvd", "api", "cvehistory"),
 		retry:          20,
 		retryWaitMin:   6 * time.Second,
 		retryWaitMax:   30 * time.Second,
@@ -181,7 +189,7 @@ func Fetch(opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	slog.Info("Fetch NVD CPE API", slog.String("dir", options.dir))
+	slog.Info("Fetch NVD CVE History API", slog.String("dir", options.dir))
 
 	c := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry), utilhttp.WithClientRetryWaitMin(options.retryWaitMin), utilhttp.WithClientRetryWaitMax(options.retryWaitMax), utilhttp.WithClientCheckRetry(nvdutil.CheckRetry), utilhttp.WithClientBackoff(nvdutil.Backoff))
 
@@ -193,7 +201,7 @@ func Fetch(opts ...Option) error {
 
 	// Preliminary API call to get totalResults.
 	// Use 1 as resultsPerPage to save time.
-	u, err := nvdutil.FullURL(options.baseURL, 0, 1, options.lastModStartDate, options.lastModEndDate)
+	u, err := fullURL(options.baseURL, 0, 1, options.changeStartDate, options.changeEndDate)
 	if err != nil {
 		return errors.Wrap(err, "full URL")
 	}
@@ -224,7 +232,7 @@ func Fetch(opts ...Option) error {
 	// Actual API calls
 	us := make([]string, 0, pages)
 	for startIndex := 0; startIndex < totalResults; startIndex += options.resultsPerPage {
-		url, err := nvdutil.FullURL(options.baseURL, startIndex, options.resultsPerPage, options.lastModStartDate, options.lastModEndDate)
+		url, err := fullURL(options.baseURL, startIndex, options.resultsPerPage, options.changeStartDate, options.changeEndDate)
 		if err != nil {
 			return errors.Wrap(err, "full URL")
 		}
@@ -248,7 +256,7 @@ func Fetch(opts ...Option) error {
 		// NVD's API document does not say that response item counts are equal to
 		// request's resultsPerPage (in non-final pages).
 		// If we don't check the counts, we may have incomplete results.
-		actualResults := len(response.Products)
+		actualResults := len(response.CVEChanges)
 		finalStartIndex := options.resultsPerPage * (pages - 1)
 		if response.StartIndex == finalStartIndex && !preciselyPaged {
 			// Allow the last page have more than expected results,
@@ -264,29 +272,53 @@ func Fetch(opts ...Option) error {
 			}
 		}
 
-		dv := hash32([]byte("vendor:product"))
-
-		for _, p := range response.Products {
-			d := dv
-
-			wfn, err := naming.UnbindFS(p.CPE.Name)
-			if err == nil {
-				d = hash32(fmt.Appendf(nil, "%s:%s", wfn.GetString(common.AttributeVendor), wfn.GetString(common.AttributeProduct)))
+		// A CVE has multiple change events, and they are spread over the pages.
+		// Store each change event in its own file, so that no page has to wait
+		// for the others.
+		for _, ch := range response.CVEChanges {
+			// Both IDs come from the API response and are used as path elements,
+			// so accept only the formats the schema defines.
+			m := cveIDPattern.FindStringSubmatch(ch.Change.CVEID)
+			if m == nil {
+				return errors.Errorf("unexpected ID format. expected: %q, actual: %q", cveIDPattern.String(), ch.Change.CVEID)
+			}
+			if !cveChangeIDPattern.MatchString(ch.Change.CVEChangeID) {
+				return errors.Errorf("unexpected change ID format. expected: %q, actual: %q", cveChangeIDPattern.String(), ch.Change.CVEChangeID)
 			}
 
-			if err := util.Write(filepath.Join(options.dir, fmt.Sprintf("%x", d), fmt.Sprintf("%s.json", p.CPE.NameID)), p.CPE); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, fmt.Sprintf("%x", d), fmt.Sprintf("%s.json", p.CPE.NameID)))
+			if err := util.Write(filepath.Join(options.dir, m[1], ch.Change.CVEID, fmt.Sprintf("%s.json", ch.Change.CVEChangeID)), ch.Change); err != nil {
+				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, m[1], ch.Change.CVEID, fmt.Sprintf("%s.json", ch.Change.CVEChangeID)))
 			}
 		}
 		return nil
 	}, headerOption); err != nil {
 		return errors.Wrap(err, "pipeline get")
 	}
+
 	return nil
 }
 
-func hash32(message []byte) uint32 {
-	h := fnv.New32()
-	h.Write(message)
-	return h.Sum32()
+func fullURL(baseURL string, startIndex, resultsPerPage int, changeStartDate, changeEndDate *time.Time) (string, error) {
+	u, err := url.Parse(baseURL)
+	if err != nil {
+		return "", errors.Wrapf(err, "parse base URL: %s", baseURL)
+	}
+	q := u.Query()
+	q.Set("startIndex", strconv.Itoa(startIndex))
+	q.Set("resultsPerPage", strconv.Itoa(resultsPerPage))
+	if changeStartDate != nil || changeEndDate != nil {
+		if changeStartDate == nil || changeEndDate == nil {
+			return "", errors.New("Both changeStartDate and changeEndDate are required when either is present")
+		}
+		if (*changeEndDate).Before(*changeStartDate) {
+			return "", errors.New("end date is before start date")
+		}
+		if (*changeEndDate).Sub(*changeStartDate) > 120*24*time.Hour {
+			return "", errors.New("Date range cannot exceed 120 days")
+		}
+		q.Set("changeStartDate", changeStartDate.Format("2006-01-02T15:04:05.000-07:00"))
+		q.Set("changeEndDate", changeEndDate.Format("2006-01-02T15:04:05.000-07:00"))
+	}
+	u.RawQuery = strings.ReplaceAll(q.Encode(), "%3A", ":")
+	return u.String(), nil
 }
