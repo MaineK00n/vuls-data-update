@@ -1,0 +1,56 @@
+{
+	"id": "FG-IR-26-155",
+	"advisories": [
+		{
+			"content": {
+				"id": "FG-IR-26-155",
+				"title": "Supers override fails to properly override supervisor address",
+				"description": "An Improper Restriction of Communication Channel to Intended Endpoints [CWE-923] vulnerability in FortiSIEM Windows Agent may allow an unauthorized attacker on the same local network to execute arbitrary code via spoofing the supervisors hostname when the Windows device is configured with the 'Supers Override' feature.",
+				"severity": [
+					{
+						"type": "cvss_v31",
+						"source": "fortiguard.fortinet.com",
+						"cvss_v31": {
+							"vector": "CVSS:3.1/AV:A/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H/E:P/RL:O/RC:C",
+							"base_score": 7.5,
+							"base_severity": "HIGH",
+							"temporal_score": 6.7,
+							"temporal_severity": "MEDIUM",
+							"environmental_score": 6.7,
+							"environmental_severity": "MEDIUM"
+						}
+					}
+				],
+				"cwe": [
+					{
+						"source": "fortiguard.fortinet.com",
+						"cwe": [
+							"CWE-923"
+						]
+					}
+				],
+				"references": [
+					{
+						"source": "fortiguard.fortinet.com",
+						"url": "https://fortiguard.fortinet.com/psirt/FG-IR-26-155"
+					}
+				],
+				"published": "2026-07-14T00:00:00Z",
+				"modified": "2026-07-14T00:00:00Z"
+			}
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-2026-59841"
+			}
+		}
+	],
+	"data_source": {
+		"id": "fortinet-cvrf",
+		"raws": [
+			"fixtures/2026/FG-IR-26-155.json"
+		]
+	}
+}

@@ -1,0 +1,193 @@
+{
+	"document": {
+		"acknowledgments": [
+			{
+				"summary": "Fortinet is pleased to thank Nicola Scremin (@ScreSys) for reporting this vulnerability under responsible disclosure."
+			}
+		],
+		"category": "Fortinet PSIRT Advisories",
+		"csaf_version": "2.0",
+		"publisher": {
+			"category": "vendor",
+			"contact_details": "https://fortiguard.fortinet.com/faq/psirt-contact",
+			"issuing_authority": "Fortinet PSIRT",
+			"name": "Fortinet PSIRT",
+			"namespace": "https://fortiguard.fortinet.com/psirt"
+		},
+		"title": "Supers override fails to properly override supervisor address",
+		"tracking": {
+			"current_release_date": "2026-07-14T00:00:00",
+			"id": "FG-IR-26-155",
+			"initial_release_date": "2026-07-14T00:00:00",
+			"revision_history": [
+				{
+					"date": "2026-07-14T00:00:00",
+					"number": "1",
+					"summary": "Initial Publication"
+				}
+			],
+			"status": "final",
+			"version": "0"
+		}
+	},
+	"product_tree": {
+		"branches": [
+			{
+				"branches": [
+					{
+						"branches": [
+							{
+								"category": "product_version_range",
+								"name": "FortiSIEMWindowsAgent/ 7.5 all versions",
+								"product": {
+									"name": "FortiSIEMWindowsAgent",
+									"product_id": "FortiSIEMWindowsAgent/ 7.5 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiSIEMWindowsAgent/>=7.4.0|<=7.4.1",
+								"product": {
+									"name": "FortiSIEMWindowsAgent",
+									"product_id": "FortiSIEMWindowsAgent >=7.4.0|<=7.4.1"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiSIEMWindowsAgent/ 7.3 all versions",
+								"product": {
+									"name": "FortiSIEMWindowsAgent",
+									"product_id": "FortiSIEMWindowsAgent/ 7.3 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiSIEMWindowsAgent/ 7.2 all versions",
+								"product": {
+									"name": "FortiSIEMWindowsAgent",
+									"product_id": "FortiSIEMWindowsAgent/ 7.2 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiSIEMWindowsAgent/ 7.1 all versions",
+								"product": {
+									"name": "FortiSIEMWindowsAgent",
+									"product_id": "FortiSIEMWindowsAgent/ 7.1 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiSIEMWindowsAgent/ 5.0 all versions",
+								"product": {
+									"name": "FortiSIEMWindowsAgent",
+									"product_id": "FortiSIEMWindowsAgent/ 5.0 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiSIEMWindowsAgent/ 4.4 all versions",
+								"product": {
+									"name": "FortiSIEMWindowsAgent",
+									"product_id": "FortiSIEMWindowsAgent/ 4.4 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiSIEMWindowsAgent/ 4.3 all versions",
+								"product": {
+									"name": "FortiSIEMWindowsAgent",
+									"product_id": "FortiSIEMWindowsAgent/ 4.3 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiSIEMWindowsAgent/ 4.2 all versions",
+								"product": {
+									"name": "FortiSIEMWindowsAgent",
+									"product_id": "FortiSIEMWindowsAgent/ 4.2 all versions"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiSIEMWindowsAgent"
+					}
+				],
+				"category": "vendor",
+				"name": "Fortinet PSIRT"
+			}
+		]
+	},
+	"vulnerabilities": [
+		{
+			"cve": "CVE-2026-59841",
+			"cwe": {
+				"id": "CWE-923",
+				"name": "Improper Restriction of Communication Channel to Intended Endpoints"
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "Vulnerability in supers override feature in FortiSIEM Windows Agent installer can lead to unintended behavior \n\n",
+					"title": "Summary"
+				},
+				{
+					"category": "general",
+					"text": "N/A",
+					"title": "Workarounds"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiSIEMWindowsAgent >=7.4.0|<=7.4.1"
+				],
+				"known_not_affected": [
+					"FortiSIEMWindowsAgent/ 7.5 all versions",
+					"FortiSIEMWindowsAgent-7.4.2",
+					"FortiSIEMWindowsAgent/ 7.3 all versions",
+					"FortiSIEMWindowsAgent/ 7.2 all versions",
+					"FortiSIEMWindowsAgent/ 7.1 all versions",
+					"FortiSIEMWindowsAgent/ 5.0 all versions",
+					"FortiSIEMWindowsAgent/ 4.4 all versions",
+					"FortiSIEMWindowsAgent/ 4.3 all versions",
+					"FortiSIEMWindowsAgent/ 4.2 all versions"
+				]
+			},
+			"references": [
+				{
+					"summary": "An Improper Restriction of Communication Channel to Intended Endpoints [CWE-923] vulnerability in FortiSIEM Windows Agent may allow an unauthorized attacker on the same local network to execute arbitrary code via spoofing the supervisors hostname when the Windows device is configured with the 'Supers Override' feature. ",
+					"url": "https://fortiguard.fortinet.com/psirt/FG-IR-26-155"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiSIEMWindowsAgent 7.5: Not Applicable\nFortiSIEMWindowsAgent 7.4: Upgrade to 7.4.2 or above\nFortiSIEMWindowsAgent 7.3: Not Applicable\nFortiSIEMWindowsAgent 7.2: Not Applicable\nFortiSIEMWindowsAgent 7.1: Not Applicable\nFortiSIEMWindowsAgent 5.0: Not Applicable\nFortiSIEMWindowsAgent 4.4: Not Applicable\nFortiSIEMWindowsAgent 4.3: Not Applicable\nFortiSIEMWindowsAgent 4.2: Not Applicable",
+					"product_ids": [
+						"FortiSIEMWindowsAgent"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 6.9,
+						"baseSeverity": "MEDIUM",
+						"vectorString": "CVSS:3.1/AV:A/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H/E:P/RL:O/RC:C",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiSIEMWindowsAgent"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Escalation of privilege"
+				}
+			],
+			"title": "FortiSIEMWindowsAgent - MEDIUM - FG-IR-26-155"
+		}
+	]
+}
