@@ -290,6 +290,15 @@ func (e extractor) buildData(def oval.Definition) (dataTypes.Data, error) {
 
 	id := strings.TrimSpace(def.Metadata.Title)
 
+	// Cross-check the "<package> was already fixed" allowlist, so that we notice both when SUSE
+	// introduces the pattern in a new definition and when a known definition stops using it.
+	if _, known := alreadyFixedDefinitions[fmt.Sprintf("%s:%s", e.osname, e.version)][id]; known != hasAlreadyFixedCriterion(def.Criteria) {
+		if known {
+			return dataTypes.Data{}, errors.Errorf(`"was already fixed" criterion not found in known definition. id: %s, os: %s:%s. remove it from alreadyFixedDefinitions`, id, e.osname, e.version)
+		}
+		return dataTypes.Data{}, errors.Errorf(`"was already fixed" criterion found in unknown definition. id: %s, os: %s:%s. verify the definition and add it to alreadyFixedDefinitions`, id, e.osname, e.version)
+	}
+
 	es, err := func() (ecosystemTypes.Ecosystem, error) {
 		switch e.osname {
 		case "suse.linux.enterprise", "suse.linux.enterprise.server", "suse.linux.enterprise.desktop":
@@ -735,6 +744,20 @@ func (e extractor) translateCriterion(oc oval.Criterion) (translated, error) {
 		// sanity check
 		if s.Version.Text != "0" || s.Version.Operation != "equals" {
 			return translated{}, errors.Errorf(`unexpected rpminfo_state for "is not affected". test: %s, expected: %q %q, actual: %q %q`, oc.TestRef, "equals", "0", s.Version.Operation, s.Version.Text)
+		}
+		return translated{neverSatisfied: true}, nil
+	}
+
+	if strings.HasSuffix(oc.Comment, alreadyFixedCriterionSuffix) {
+		// "<package> was already fixed" criteria (16 products, since 2026-07-22) are true when the
+		// installed package is NEWER than the version that already contained the fix, i.e. the
+		// matching system is NOT vulnerable (the SUSE CVE pages list these as "Already fixed").
+		// Translating them literally per the OVAL specification would flag patched systems as
+		// vulnerable forever, so treat them as never-satisfied.
+		// buildData ensures they only appear in definitions listed in alreadyFixedDefinitions.
+		// sanity check
+		if s.Evr.Text == "" || s.Evr.Operation != "greater than" {
+			return translated{}, errors.Errorf(`unexpected rpminfo_state for "was already fixed". test: %s, expected: evr %q, actual: version: %q %q, evr: %q %q`, oc.TestRef, "greater than", s.Version.Operation, s.Version.Text, s.Evr.Operation, s.Evr.Text)
 		}
 		return translated{neverSatisfied: true}, nil
 	}

@@ -18,6 +18,16 @@ func TestExtract(t *testing.T) {
 			name: "happy",
 			args: "./testdata/fixtures",
 		},
+		{
+			name:     "was already fixed criterion in unknown definition",
+			args:     "./testdata/fixtures-already-fixed-unknown",
+			hasError: true,
+		},
+		{
+			name:     "was already fixed criterion gone from known definition",
+			args:     "./testdata/fixtures-already-fixed-gone",
+			hasError: true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
