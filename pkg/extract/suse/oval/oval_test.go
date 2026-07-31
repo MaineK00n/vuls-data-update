@@ -12,20 +12,24 @@ func TestExtract(t *testing.T) {
 	tests := []struct {
 		name     string
 		args     string
+		golden   string
 		hasError bool
 	}{
 		{
-			name: "happy",
-			args: "./testdata/fixtures",
+			name:   "happy",
+			args:   "./testdata/fixtures/happy",
+			golden: "./testdata/golden/happy",
 		},
 		{
-			name:     "was already fixed criterion in unknown definition",
-			args:     "./testdata/fixtures-already-fixed-unknown",
+			// "was already fixed" criterion in a definition not listed in alreadyFixedDefinitions
+			name:     "already-fixed-unknown",
+			args:     "./testdata/fixtures/already-fixed-unknown",
 			hasError: true,
 		},
 		{
-			name:     "was already fixed criterion gone from known definition",
-			args:     "./testdata/fixtures-already-fixed-gone",
+			// definition listed in alreadyFixedDefinitions without a "was already fixed" criterion
+			name:     "already-fixed-gone",
+			args:     "./testdata/fixtures/already-fixed-gone",
 			hasError: true,
 		},
 	}
@@ -41,7 +45,7 @@ func TestExtract(t *testing.T) {
 			case err != nil:
 				t.Error("unexpected error:", err)
 			default:
-				ep, err := filepath.Abs(filepath.Join("testdata", "golden"))
+				ep, err := filepath.Abs(tt.golden)
 				if err != nil {
 					t.Error("unexpected error:", err)
 				}
