@@ -15,6 +15,7 @@ import (
 	alpineSecDB "github.com/MaineK00n/vuls-data-update/pkg/extract/alpine/secdb"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/amazon"
 	androidOSV "github.com/MaineK00n/vuls-data-update/pkg/extract/android/osv"
+	apacheTomcatXML "github.com/MaineK00n/vuls-data-update/pkg/extract/apache/tomcat/xml"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/arch"
 	bitnamiOSV "github.com/MaineK00n/vuls-data-update/pkg/extract/bitnami/osv"
 	cargoDB "github.com/MaineK00n/vuls-data-update/pkg/extract/cargo/db"
@@ -153,6 +154,7 @@ func NewCmdExtract() *cobra.Command {
 		newCmdAlpineSecDB(), newCmdAlpineOSV(),
 		newCmdAmazon(),
 		newCmdAndroidOSV(),
+		newCmdApacheTomcatXML(),
 		newCmdArch(),
 		newCmdBitnamiOSV(),
 		newCmdCargoGHSA(), newCmdCargoOSV(), newCmdCargoDB(),
@@ -373,6 +375,31 @@ func newCmdAndroidOSV() *cobra.Command {
 		RunE: func(_ *cobra.Command, args []string) error {
 			if err := androidOSV.Extract(args[0], androidOSV.WithDir(options.dir)); err != nil {
 				return errors.Wrap(err, "failed to extract android osv")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
+
+	return cmd
+}
+
+func newCmdApacheTomcatXML() *cobra.Command {
+	options := &base{
+		dir: filepath.Join(util.CacheDir(), "extract", "apache", "tomcat", "xml"),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "apache-tomcat-xml <Raw Apache Tomcat Security Vulnerabilities Repository PATH>",
+		Short: "Extract Apache Tomcat Security Vulnerabilities data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update extract apache-tomcat-xml vuls-data-raw-apache-tomcat-xml
+		`),
+		Args: cobra.ExactArgs(1),
+		RunE: func(_ *cobra.Command, args []string) error {
+			if err := apacheTomcatXML.Extract(args[0], apacheTomcatXML.WithDir(options.dir)); err != nil {
+				return errors.Wrap(err, "failed to extract apache tomcat xml")
 			}
 			return nil
 		},

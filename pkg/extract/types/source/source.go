@@ -22,6 +22,7 @@ const (
 	Amazon                     SourceID = "amazon"
 	AndroidOSV                 SourceID = "android-osv"
 	AnolisOVAL                 SourceID = "anolis-oval"
+	ApacheTomcatXML            SourceID = "apache-tomcat-xml"
 	Arch                       SourceID = "arch"
 	AzureOVAL                  SourceID = "azure-oval"
 	BitnamiOSV                 SourceID = "bitnami-osv"
