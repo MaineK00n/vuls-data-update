@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+
+  <properties>
+    <author>Apache Tomcat Project</author>
+    <title>Apache Tomcat 11 vulnerabilities</title>
+  </properties>
+
+<body>
+
+  <section name="Apache Tomcat 11.x vulnerabilities">
+    <p>This page lists all security vulnerabilities fixed in released versions
+       of Apache Tomcat<sup>&#174;</sup> 11.x.</p>
+
+    <p><strong>Note:</strong> Vulnerabilities that are not Tomcat vulnerabilities
+       but have either been incorrectly reported against Tomcat or where Tomcat
+       provides a workaround are listed at the end of this page.</p>
+  </section>
+
+  <section name="Table of Contents">
+    <toc/>
+  </section>
+
+  <section name="Fixed in Apache Tomcat 11.0.25" rtext="not yet released">
+
+    <p><strong>Low: DoS in WebSocket chat example</strong>
+       <cve>CVE-2026-66299</cve></p>
+
+    <p>The WebSocket chat example provided an unbounded buffer for undelivered
+       messages.</p>
+
+    <p>This was fixed with commit
+       <hashlink hash="4e8e3f8964e9653bab427bf794e026c69ee80f2b"/>.</p>
+
+    <p>Affects: 11.0.0-M20 to 11.0.24<br/>
+       Users who followed the security guidance to remove the examples web
+       application are not affected.</p>
+
+  </section>
+
+  <section name="Fixed in Apache Tomcat 11.0.21" rtext="2026-05-13">
+
+    <p><strong>Note: The issue below was fixed in Apache Tomcat 11.0.20 but the
+       release vote for the 11.0.20 release candidate did not pass.</strong></p>
+
+    <p><strong>Important: The fix for <cve>CVE-2026-29146</cve> allowed the
+       bypass of the EncryptInterceptor</strong>
+       <cve>CVE-2026-34486</cve></p>
+
+    <p>An error in the fix for <cve>CVE-2026-29146</cve> allowed the
+       EncryptInterceptor to be bypassed.</p>
+
+    <p>This was fixed in revision <revlink rev="1840057">1840057</revlink> and
+       reported as bug <bug>69420</bug>.</p>
+
+    <p>Affects: 11.0.0-M1 to 11.0.20</p>
+
+    <p><strong>Important: Remote Code Execution via session persistence</strong>
+       <cve>CVE-2026-11111</cve>,
+       <cve>CVE-2026-22222</cve></p>
+
+    <p>If:</p>
+    <ul>
+      <li>an attacker is able to control the contents of a file; and</li>
+      <li>the server is configured to use the PersistenceManager</li>
+    </ul>
+    <p>then remote code execution is possible. See the
+       <a href="https://lists.apache.org/thread/example">announcement</a>.</p>
+
+    <o>Applications that do not use non-blocking I/O are not exposed to this
+       vulnerability.</o>
+
+    <p>Affects: 11.0.0-M1 to 11.0.20</p>
+
+  </section>
+
+  <section name="Fixed in Apache Tomcat 11.0.12" rtext="released 18 Aug 2025">
+
+    <p><strong>Moderate: Multiple weaknesses in HTTP DIGEST authentication</strong>
+       <a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2026-1184"
+       rel="nofollow">CVE-2026-1184</a></p>
+
+    <p>Several weaknesses were identified.</p>
+
+    <p>Affects: 11.0.0-M1 to 11.0.11</p>
+
+    <p><strong>JavaMail information disclosure</strong>
+       <cve>CVE-2026-33333</cve></p>
+
+    <p>An entry whose header carries no severity rating.</p>
+
+  </section>
+
+  <section name="Not a vulnerability in Tomcat">
+
+    <p><strong>Critical: Remote Code Execution via log4j</strong>
+       <cve>CVE-2021-44228</cve></p>
+
+    <p>Apache Tomcat does not ship with log4j. This is not a vulnerability in
+       Apache Tomcat.</p>
+
+  </section>
+
+</body>
+</document>
