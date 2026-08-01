@@ -1,7 +1,9 @@
 // Package panos interprets Palo Alto PAN-OS affected-version data into
 // contiguous affected intervals. It is shared by the paloalto json and list
 // extractors, which translate their respective raw formats into a Stanza and
-// call StanzaIntervals.
+// call StanzaIntervals with their own source ID: readings that are a convention
+// of one raw format rather than of PAN-OS versioning are pinned to that source
+// so a source cannot inherit them merely by sharing this package.
 package panos
 
 import (
@@ -15,6 +17,7 @@ import (
 	panosVersion "github.com/MaineK00n/go-paloalto-version/pan-os"
 	"github.com/pkg/errors"
 
+	sourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/source"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/util"
 )
 
@@ -77,6 +80,9 @@ type transition struct {
 }
 
 // StanzaIntervals interprets one PAN-OS stanza into affected version intervals.
+// sourceID identifies the raw format the stanza came from; it scopes the
+// source-specific readings so that a source that does not share a convention
+// does not silently get its intervals.
 //
 // PAN-OS maintains maintenance lines (X.Y.Z) in parallel and backports fixes
 // as hotfixes (X.Y.Z-hN), which PAN expresses through changes[] entries. The
@@ -101,7 +107,7 @@ type transition struct {
 // criterion). A single zero-value interval (all bounds empty) means "every
 // version affected" — it maps to a bare CPE criterion with no Range. These two
 // are distinct, so callers must not collapse nil and []Interval{{}}.
-func StanzaIntervals(stanza Stanza) ([]Interval, error) {
+func StanzaIntervals(sourceID sourceTypes.SourceID, stanza Stanza) ([]Interval, error) {
 	affected, err := statusToBool(stanza.Status)
 	if err != nil {
 		return nil, errors.Wrapf(err, "parse status %q", stanza.Status)
@@ -207,11 +213,24 @@ func StanzaIntervals(stanza Stanza) ([]Interval, error) {
 	if len(events) == 0 {
 		switch {
 		case !affected:
-			// "unaffected <X.Y.Z> lessThan <X.Y*>" implies the series was
-			// affected before the fix release: emit the complement
-			// [X.Y.0, X.Y.Z) (e.g. PAN-SA-2015-0006 "unaffected 7.0.2,
-			// lessThan 7.0*").
-			if start != nil && upper != nil && !upperInclusive && !upperIsRelease &&
+			// In paloalto-json, "unaffected <X.Y.Z> lessThan <X.Y*>" implies
+			// the series was affected before the fix release: emit the
+			// complement [X.Y.0, X.Y.Z) (e.g. PAN-SA-2015-0006 "unaffected
+			// 7.0.2, lessThan 7.0*"). Reading an affected range out of an
+			// unaffected stanza is a convention of that raw format, not of
+			// PAN-OS versioning, so it is pinned to the source: elsewhere the
+			// stanza asserts nothing but "unaffected", and turning it into an
+			// affected range would emit a criterion the data never stated.
+			//
+			// It holds for paloalto-json as a whole and needs no per-advisory
+			// pinning: every stanza of this shape in the raw corpus names its
+			// version as the fix release in solutions/descriptions ("PAN-OS
+			// 8.1.1 and later"). x_affectedList must not be used to narrow it
+			// further — that list omits the newest train in several advisories
+			// (CVE-2018-8715 enumerates no 8.1 version although its
+			// description says "and PAN-OS 8.1.0").
+			if sourceID == sourceTypes.PaloAltoJSON &&
+				start != nil && upper != nil && !upperInclusive && !upperIsRelease &&
 				upper.Compare(panosVersion.Version{Major: start.Major, Minor: start.Minor + 1}) == 0 {
 				seriesStart := panosVersion.Version{Major: start.Major, Minor: start.Minor}
 				if seriesStart.Compare(*start) < 0 {

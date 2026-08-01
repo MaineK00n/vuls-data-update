@@ -439,7 +439,7 @@ func detections(fetched paloaltoJSON.CVE) ([]detectionTypes.Detection, error) {
 					stanza.Changes = append(stanza.Changes, panos.Change{At: c.At, Status: c.Status})
 				}
 
-				is, err := panos.StanzaIntervals(stanza)
+				is, err := panos.StanzaIntervals(sourceTypes.PaloAltoJSON, stanza)
 				if err != nil {
 					// An unrecognized shape is a new upstream anomaly: fail loud
 					// (a warning would scroll past unnoticed in CI). Known
