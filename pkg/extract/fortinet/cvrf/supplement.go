@@ -38,7 +38,10 @@ type supplementRange struct {
 
 // supplementProduct is one affected product of a supplemented advisory:
 // enumerated exact versions and/or version ranges. A row with neither means
-// the whole product is affected (the advisory said "any version").
+// the whole product is affected — such rows match every version and were
+// each audited against the advisory text and CVE/NVD records (the verdict is
+// on the row in supplement_data.go; the generator refuses to emit an
+// unaudited one).
 type supplementProduct struct {
 	Product  string
 	Versions []string

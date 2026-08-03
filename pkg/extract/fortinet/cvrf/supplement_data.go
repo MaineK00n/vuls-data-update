@@ -56,7 +56,7 @@ var supplementTable = map[string][]supplementProduct{
 		{Product: "FortiOS", Ranges: []supplementRange{{GreaterEqual: "5.0.0", LessEqual: "5.0.7"}, {LessEqual: "4.3.15"}}},
 	},
 	"FG-IR-14-010": {
-		{Product: "FortiBalancer"},
+		{Product: "FortiBalancer"}, // whole product, audited: advisory: all software versions affected
 	},
 	"FG-IR-14-011": {
 		{Product: "AscenLink", Ranges: []supplementRange{{GreaterEqual: "7.1", LessThan: "7.2"}}},
@@ -78,19 +78,19 @@ var supplementTable = map[string][]supplementProduct{
 		{Product: "FortiWLC", Ranges: []supplementRange{{GreaterEqual: "8.0.0", LessEqual: "8.5.3"}, {GreaterEqual: "8.0.0", LessEqual: "8.6.0"}}},
 	},
 	"FG-IR-14-031": {
-		{Product: "FortiADC"},
+		{Product: "FortiADC"}, // whole product, audited: POODLE: default-config, no version bound in the note
 		{Product: "FortiAnalyzer", Ranges: []supplementRange{{GreaterEqual: "5.0.0", LessEqual: "5.0.9"}, {GreaterEqual: "5.2.0", LessEqual: "5.2.1"}}},
 		{Product: "FortiAuthenticator", Ranges: []supplementRange{{GreaterEqual: "3.0.0", LessEqual: "3.0.3"}}},
 		{Product: "FortiCache", Ranges: []supplementRange{{GreaterEqual: "2.2.0", LessEqual: "3.0.8"}}},
-		{Product: "FortiClientWindows"},
-		{Product: "FortiDB"},
+		{Product: "FortiClientWindows"}, // whole product, audited: POODLE: default-config, no version bound in the note
+		{Product: "FortiDB"},            // whole product, audited: POODLE: default-config, no version bound in the note
 		{Product: "FortiDDoS", Ranges: []supplementRange{{LessThan: "4.1.3"}}},
-		{Product: "FortiMail"},
+		{Product: "FortiMail"}, // whole product, audited: POODLE: default-config, no version bound in the note
 		{Product: "FortiManager", Ranges: []supplementRange{{GreaterEqual: "5.0.0", LessEqual: "5.0.9"}, {GreaterEqual: "5.2.0", LessEqual: "5.2.1"}}},
-		{Product: "FortiOS"},
-		{Product: "FortiRecorder"},
-		{Product: "FortiSwitch"},
-		{Product: "FortiVoice"},
+		{Product: "FortiOS"},       // whole product, audited: POODLE: default-config, no version bound in the note
+		{Product: "FortiRecorder"}, // whole product, audited: POODLE: default-config, no version bound in the note
+		{Product: "FortiSwitch"},   // whole product, audited: POODLE: default-config, no version bound in the note
+		{Product: "FortiVoice"},    // whole product, audited: POODLE: default-config, no version bound in the note
 		{Product: "FortiWeb", Ranges: []supplementRange{{GreaterEqual: "5.2.0", LessEqual: "5.2.4"}, {GreaterEqual: "5.3.0", LessEqual: "5.3.2"}}},
 	},
 	"FG-IR-14-032": {
@@ -125,7 +125,7 @@ var supplementTable = map[string][]supplementProduct{
 		{Product: "FSSO", Ranges: []supplementRange{{LessThan: "5.0.0237"}}},
 	},
 	"FG-IR-15-007": {
-		{Product: "FortiMail"},
+		{Product: "FortiMail"}, // whole product, audited: FREAK: note says all versions in default configuration
 		{Product: "FortiOS", Ranges: []supplementRange{{GreaterEqual: "5.2.0", LessThan: "5.2.3"}, {LessThan: "5.0.11"}}},
 	},
 	"FG-IR-15-008": {
@@ -281,7 +281,7 @@ var supplementTable = map[string][]supplementProduct{
 		{Product: "FortiWLC", Versions: []string{"8.6.0"}, Ranges: []supplementRange{{GreaterEqual: "8.4.0", LessEqual: "8.4.8"}, {GreaterEqual: "8.5.0", LessEqual: "8.5.5"}}},
 	},
 	"FG-IR-16-041": {
-		{Product: "FortiClientSSLVPN"},
+		{Product: "FortiClientSSLVPN"}, // whole product, audited: CVE rejected; bound only expressed in FortiOS-bundle versions
 	},
 	"FG-IR-16-045": {
 		{Product: "FortiWAN", Ranges: []supplementRange{{LessEqual: "4.2.4"}}},
@@ -339,7 +339,7 @@ var supplementTable = map[string][]supplementProduct{
 		{Product: "FortiOS", Ranges: []supplementRange{{GreaterEqual: "4.3.0", LessEqual: "4.3.18"}}},
 	},
 	"FG-IR-16-069": {
-		{Product: "FortiClientSSLVPN"},
+		{Product: "FortiClientSSLVPN"}, // whole product, audited: CVE rejected; bound only expressed in FortiOS-bundle versions
 	},
 	"FG-IR-16-080": {
 		{Product: "Connect", Ranges: []supplementRange{{GreaterEqual: "14.10.0.0", LessThan: "14.10.0.5"}, {GreaterEqual: "14.2.0.0", LessThan: "14.2.0.12"}, {GreaterEqual: "15.10.0.0", LessThan: "15.10.0.3"}, {GreaterEqual: "16.7.0.0", LessThan: "16.7.0.1"}}},
