@@ -71,6 +71,7 @@ import (
 	golangOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/golang/osv"
 	haskellGHCOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/haskell/ghc/osv"
 	haskellHackageOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/haskell/hackage/osv"
+	intelCSAF "github.com/MaineK00n/vuls-data-update/pkg/fetch/intel/csaf"
 	juliaOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/julia/osv"
 	jvnFeedDetail "github.com/MaineK00n/vuls-data-update/pkg/fetch/jvn/feed/detail"
 	jvnFeedProduct "github.com/MaineK00n/vuls-data-update/pkg/fetch/jvn/feed/product"
@@ -246,6 +247,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdGitOSV(),
 		newCmdGolangGHSA(), newCmdGolangGLSA(), newCmdGolangOSV(), newCmdGolangDB(), newCmdGolangVulnDB(),
 		newCmdHaskellGHCOSV(), newCmdHaskellHackageOSV(),
+		newCmdIntelCSAF(),
 		newCmdJuliaOSV(),
 		newCmdJVNFeedDetail(), newCmdJVNFeedProduct(), newCmdJVNFeedRSS(),
 		newCmdK8sJSON(), newCmdK8sOSV(),
@@ -2188,6 +2190,33 @@ func newCmdHaskellHackageOSV() *cobra.Command {
 		RunE: func(_ *cobra.Command, _ []string) error {
 			if err := haskellHackageOSV.Fetch(haskellHackageOSV.WithDir(options.dir), haskellHackageOSV.WithRetry(options.retry)); err != nil {
 				return errors.Wrap(err, "failed to fetch haskell hackage osv")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+
+	return cmd
+}
+
+func newCmdIntelCSAF() *cobra.Command {
+	options := &base{
+		dir:   filepath.Join(util.CacheDir(), "fetch", "intel", "csaf"),
+		retry: 3,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "intel-csaf",
+		Short: "Fetch Intel Security Center CSAF data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch intel-csaf
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := intelCSAF.Fetch(intelCSAF.WithDir(options.dir), intelCSAF.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch intel csaf")
 			}
 			return nil
 		},

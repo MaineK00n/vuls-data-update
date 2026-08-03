@@ -1,0 +1,418 @@
+{
+	"__comment__": "This content is licensed under the Creative Commons Attribution 4.0 International License (https://creativecommons.org/licenses/by/4.0/). If you distribute this content you must provide attribution to Intel Corporation and provide a link to the original.",
+	"document": {
+		"acknowledgments": [
+			{
+				"names": [
+					"Intel would like to thank Yngweijw  (CVE-2024-34163) for reporting this issue. Intel, and nearly the entire technology industry, follows a disclosure practice called Coordinated Disclosure, under which a cybersecurity vulnerability is generally publicly disclosed only after mitigations are available."
+				]
+			}
+		],
+		"category": "csaf_security_advisory",
+		"csaf_version": "2.0",
+		"lang": "en",
+		"notes": [
+			{
+				"category": "summary",
+				"text": "Potential security vulnerabilities in some Intel® NUC BIOS Firmware  may allow escalation of privilege, denial of service, information disclosure. Intel is releasing firmware updates to mitigate these potential vulnerabilities.",
+				"title": "Summary"
+			},
+			{
+				"category": "legal_disclaimer",
+				"text": "Intel provides these materials as-is, with no express or implied warranties.\\r\\nAll products, dates, and figures specified are preliminary based on current expectations, and are subject to change without notice. \\r\\nIntel products and services described may contain design defects or errors known as errata, which may cause the product to deviate from published specifications. Current characterized errata are available on request.\\r\\nIntel products that have met their End of Servicing Updates may no longer receive functional and security updates. For additional details on support and servicing, please see this help article. (https://www.intel.com/content/www/us/en/support/articles/000022396/processors.html)\\r\\nIntel technologies' features and benefits depend on system configuration and may require enabled hardware, software or service activation. Performance varies depending on system configuration. No product or component can be absolutely secure. Check with your system manufacturer or retailer or learn more at http://intel.com.(http://intel.com) \\r\\nSome results have been estimated or simulated using internal Intel analysis or architecture simulation or modeling, and provided to you for informational purposes. Any differences in your system hardware, software or configuration may affect your actual performance. \\r\\nIntel and the Intel logo are trademarks of Intel Corporation or its subsidiaries in the United States and other countries. \\r\\n© Intel Corporation. Intel, the Intel logo, and other Intel marks are trademarks of Intel Corporation or its subsidiaries. Other names and brands may be claimed as the property of others.",
+				"title": "Legal Notices and Disclaimers"
+			},
+			{
+				"category": "details",
+				"text": "Intel recommends updating the affected Intel® NUC BIOS firmware to the latest version \r\n\r\nIntel® NUC X15 Laptop Kits\r\n\r\nDownload Link\r\n\r\nLAPAC71G, LAPAC71H\r\n\r\nACADL357.0065\r\n\r\nLAPBC510, LAPBC710\r\n\r\nBCTGL357.0083\r\n\r\nLAPRC510, LAPRC710\r\n\r\nRCADL357.0066\r\n\r\nLAPKC51E, LAPKC71E, LAPKC71F\r\n\r\nKCTGL357.0048",
+				"title": "Recommendation"
+			},
+			{
+				"category": "details",
+				"text": "High",
+				"title": "Severity rating"
+			},
+			{
+				"category": "details",
+				"text": "Firmware",
+				"title": "Advisory Category"
+			},
+			{
+				"category": "details",
+				"text": "Escalation of Privilege, Denial of Service, Information Disclosure",
+				"title": "Impact of vulnerability"
+			},
+			{
+				"category": "details",
+				"text": "Contact Intel PSIRT at mailto:secure@intel.com with any questions, requests for technical details, or proposed coordination with other parties. Please encrypt any sensitive details using our PGP key, which can be found at https://www.intel.com/content/www/us/en/security-center/pgp-public-key.html.",
+				"title": "Contact"
+			}
+		],
+		"publisher": {
+			"category": "vendor",
+			"contact_details": "secure@intel.com",
+			"issuing_authority": "Intel Corporation is responsible for vulnerability handling across all Intel offerings.",
+			"name": "Intel Corporation",
+			"namespace": "https://www.intel.com"
+		},
+		"references": [
+			{
+				"summary": "Security Center",
+				"url": "https://www.intel.com/content/www/us/en/security-center/advisory/intel-sa-01022.html"
+			}
+		],
+		"title": "Intel® NUC BIOS Firmware Advisory",
+		"tracking": {
+			"current_release_date": "2024-08-13T00:00:00+00:00",
+			"id": "INTEL-SA-01022",
+			"initial_release_date": "2024-08-13T00:00:00+00:00",
+			"revision_history": [
+				{
+					"date": "2024-08-13T00:00:00+00:00",
+					"number": "1.0.0",
+					"summary": "Initial release"
+				}
+			],
+			"status": "final",
+			"version": "1.0.0"
+		}
+	},
+	"vulnerabilities": [
+		{
+			"cve": "CVE-2023-45229",
+			"product_status": {
+				"known_affected": [
+					"See reference."
+				]
+			},
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 6.5,
+						"baseSeverity": "MEDIUM",
+						"vectorString": "CVSS:3.1/AV:A/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
+						"version": "3.1"
+					},
+					"cvss_v4": {
+						"baseScore": null,
+						"baseSeverity": "NONE",
+						"vectorString": "",
+						"version": "4.0"
+					},
+					"products": [
+						"See reference."
+					]
+				}
+			],
+			"title": "EDK2's Network Package is susceptible to an out-of-bounds read vulnerability when processing the IA_NA or IA_TA option in a DHCPv6 Advertise message. This vulnerability can be exploited by an attacker to gain unauthorized access and potentially lead to a loss of Confidentiality."
+		},
+		{
+			"cve": "CVE-2022-36763",
+			"product_status": {
+				"known_affected": [
+					"See reference."
+				]
+			},
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 7,
+						"baseSeverity": "HIGH",
+						"vectorString": "CVSS:3.1/AV:L/AC:H/PR:L/UI:N/S:C/C:L/I:L/A:H",
+						"version": "3.1"
+					},
+					"cvss_v4": {
+						"baseScore": null,
+						"baseSeverity": "NONE",
+						"vectorString": "",
+						"version": "4.0"
+					},
+					"products": [
+						"See reference."
+					]
+				}
+			],
+			"title": "EDK2 is susceptible to a vulnerability in the Tcg2MeasureGptTable() function, allowing a user to trigger a heap buffer overflow via a local network. Successful exploitation of this vulnerability may result in a compromise of confidentiality, integrity, and/or availability."
+		},
+		{
+			"cve": "CVE-2023-45231",
+			"product_status": {
+				"known_affected": [
+					"See reference."
+				]
+			},
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 6.5,
+						"baseSeverity": "MEDIUM",
+						"vectorString": "CVSS:3.1/AV:A/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
+						"version": "3.1"
+					},
+					"cvss_v4": {
+						"baseScore": null,
+						"baseSeverity": "NONE",
+						"vectorString": "",
+						"version": "4.0"
+					},
+					"products": [
+						"See reference."
+					]
+				}
+			],
+			"title": "EDK2's Network Package is susceptible to an out-of-bounds read vulnerability when processing  Neighbor Discovery Redirect message. This vulnerability can be exploited by an attacker to gain unauthorized access and potentially lead to a loss of Confidentiality."
+		},
+		{
+			"cve": "CVE-2023-45232",
+			"product_status": {
+				"known_affected": [
+					"See reference."
+				]
+			},
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 7.5,
+						"baseSeverity": "HIGH",
+						"vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+						"version": "3.1"
+					},
+					"cvss_v4": {
+						"baseScore": null,
+						"baseSeverity": "NONE",
+						"vectorString": "",
+						"version": "4.0"
+					},
+					"products": [
+						"See reference."
+					]
+				}
+			],
+			"title": "EDK2's Network Package is susceptible to an infinite loop vulnerability when parsing unknown options in the Destination Options header of IPv6. This vulnerability can be exploited by an attacker to gain unauthorized access and potentially lead to a loss of Availability."
+		},
+		{
+			"cve": "CVE-2023-45237",
+			"product_status": {
+				"known_affected": [
+					"See reference."
+				]
+			},
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 5.3,
+						"baseSeverity": "MEDIUM",
+						"vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N",
+						"version": "3.1"
+					},
+					"cvss_v4": {
+						"baseScore": null,
+						"baseSeverity": "NONE",
+						"vectorString": "",
+						"version": "4.0"
+					},
+					"products": [
+						"See reference."
+					]
+				}
+			],
+			"title": "EDK2's Network Package is susceptible to a predictable TCP Initial Sequence Number. This vulnerability can be exploited by an attacker to gain unauthorized access and potentially lead to a loss of Confidentiality."
+		},
+		{
+			"cve": "CVE-2023-45235",
+			"product_status": {
+				"known_affected": [
+					"See reference."
+				]
+			},
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 8.3,
+						"baseSeverity": "HIGH",
+						"vectorString": "CVSS:3.1/AV:A/AC:L/PR:N/UI:N/S:U/C:H/I:L/A:H",
+						"version": "3.1"
+					},
+					"cvss_v4": {
+						"baseScore": null,
+						"baseSeverity": "NONE",
+						"vectorString": "",
+						"version": "4.0"
+					},
+					"products": [
+						"See reference."
+					]
+				}
+			],
+			"title": "EDK2's Network Package is susceptible to a buffer overflow vulnerability when handling Server ID option from a DHCPv6 proxy Advertise message. This vulnerability can be exploited by an attacker to gain unauthorized access and potentially lead to a loss of Confidentiality, Integrity and/or Availability."
+		},
+		{
+			"cve": "CVE-2023-45230",
+			"product_status": {
+				"known_affected": [
+					"See reference."
+				]
+			},
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 8.3,
+						"baseSeverity": "HIGH",
+						"vectorString": "CVSS:3.1/AV:A/AC:L/PR:N/UI:N/S:U/C:H/I:L/A:H",
+						"version": "3.1"
+					},
+					"cvss_v4": {
+						"baseScore": null,
+						"baseSeverity": "NONE",
+						"vectorString": "",
+						"version": "4.0"
+					},
+					"products": [
+						"See reference."
+					]
+				}
+			],
+			"title": "EDK2's Network Package is susceptible to a buffer overflow vulnerability via a long server ID option in DHCPv6 client. This vulnerability can be exploited by an attacker to gain unauthorized access and potentially lead to a loss of Confidentiality, Integrity and/or Availability."
+		},
+		{
+			"cve": "CVE-2023-45236",
+			"product_status": {
+				"known_affected": [
+					"See reference."
+				]
+			},
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 5.8,
+						"baseSeverity": "MEDIUM",
+						"vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:L/I:N/A:N",
+						"version": "3.1"
+					},
+					"cvss_v4": {
+						"baseScore": null,
+						"baseSeverity": "NONE",
+						"vectorString": "",
+						"version": "4.0"
+					},
+					"products": [
+						"See reference."
+					]
+				}
+			],
+			"title": "EDK2's Network Package is susceptible to a predictable TCP Initial Sequence Number. This vulnerability can be exploited by an attacker to gain unauthorized access and potentially lead to a loss of Confidentiality."
+		},
+		{
+			"cve": "CVE-2024-34163",
+			"product_status": {
+				"known_affected": [
+					"See reference."
+				]
+			},
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 7.5,
+						"baseSeverity": "HIGH",
+						"vectorString": "CVSS:3.1/AV:L/AC:H/PR:H/UI:N/S:C/C:H/I:H/A:H",
+						"version": "3.1"
+					},
+					"cvss_v4": {
+						"baseScore": 8.7,
+						"baseSeverity": "HIGH",
+						"vectorString": "CVSS:4.0/AV:L/AC:H/AT:P/PR:H/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H",
+						"version": "4.0"
+					},
+					"products": [
+						"See reference."
+					]
+				}
+			],
+			"title": "Improper input validation in firmware for some Intel® NUC may allow a privileged user to potentially enable escalation of privilege via local access."
+		},
+		{
+			"cve": "CVE-2023-39539",
+			"product_status": {
+				"known_affected": [
+					"See reference."
+				]
+			},
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 7.5,
+						"baseSeverity": "HIGH",
+						"vectorString": "CVSS:3.1/AV:L/AC:H/PR:H/UI:N/S:C/C:H/I:H/A:H",
+						"version": "3.1"
+					},
+					"cvss_v4": {
+						"baseScore": null,
+						"baseSeverity": "NONE",
+						"vectorString": "",
+						"version": "4.0"
+					},
+					"products": [
+						"See reference."
+					]
+				}
+			],
+			"title": "AMI AptioV contains a vulnerability in BIOS where a User may cause an unrestricted upload of a PNG Logo file with dangerous type by Local access. A successful exploit of this vulnerability may lead to a loss of confidentiality, integrity, and/or availability."
+		},
+		{
+			"cve": "CVE-2023-45233",
+			"product_status": {
+				"known_affected": [
+					"See reference."
+				]
+			},
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 7.5,
+						"baseSeverity": "HIGH",
+						"vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+						"version": "3.1"
+					},
+					"cvss_v4": {
+						"baseScore": null,
+						"baseSeverity": "NONE",
+						"vectorString": "",
+						"version": "4.0"
+					},
+					"products": [
+						"See reference."
+					]
+				}
+			],
+			"title": "EDK2's Network Package is susceptible to an infinite lop vulnerability when parsing a PadN option in the Destination Options header of IPv6. This vulnerability can be exploited by an attacker to gain unauthorized access and potentially lead to a loss of Availability."
+		},
+		{
+			"cve": "CVE-2023-45234",
+			"product_status": {
+				"known_affected": [
+					"See reference."
+				]
+			},
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 8.3,
+						"baseSeverity": "HIGH",
+						"vectorString": "CVSS:3.1/AV:A/AC:L/PR:N/UI:N/S:U/C:H/I:L/A:H",
+						"version": "3.1"
+					},
+					"cvss_v4": {
+						"baseScore": null,
+						"baseSeverity": "NONE",
+						"vectorString": "",
+						"version": "4.0"
+					},
+					"products": [
+						"See reference."
+					]
+				}
+			],
+			"title": "EDK2's Network Package is susceptible to a buffer overflow vulnerability when processing DNS Servers option from a DHCPv6 Advertise message. This vulnerability can be exploited by an attacker to gain unauthorized access and potentially lead to a loss of Confidentiality, Integrity and/or Availability."
+		}
+	]
+}
