@@ -858,10 +858,8 @@ func (e extractor) translateEVRCriterion(oc oval.Criterion, t oval.RpminfoTest, 
 			},
 		}, nil
 	case "less than or equal":
-		// Used in "<package> was already fixed" criteria (present since 2026-07-22; their
-		// original "greater than <fixed version>" encoding was a generation mistake, replaced
-		// with this relation in the 2026-08-02 regeneration).
-		// The bound is the last vulnerable build, so this is a regular fixed-range criterion.
+		// Used in "<package> was already fixed" criteria. The bound is the last vulnerable
+		// build, so this is a regular fixed-range criterion.
 		return translated{
 			criterion: &criterionTypes.Criterion{
 				Type: criterionTypes.CriterionTypeVersion,
