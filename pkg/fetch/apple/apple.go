@@ -9,6 +9,7 @@ import (
 	"net/url"
 	"path"
 	"path/filepath"
+	"regexp"
 	"slices"
 	"strings"
 	"time"
@@ -22,6 +23,30 @@ import (
 )
 
 const baseURL = "https://support.apple.com/en-us/100100"
+
+// inlineAdvisoryPageIDs are the archive index pages that inline pre-2005
+// advisory content directly instead of listing links to per-release pages.
+// They are parsed as advisories; any other page yielding no releases is an
+// error.
+var inlineAdvisoryPageIDs = map[string]struct{}{
+	"101682": {}, // Apple security updates (03 Oct 2003 to 11 Jan 2005)
+	"104191": {}, // Apple security updates (August 2003 and earlier)
+}
+
+// retiredHosts are the hosts that links on pre-2011 archive pages are known
+// to point at but that no longer serve content. Links to them are skipped;
+// links to any other unexpected host are an error.
+var retiredHosts = map[string]struct{}{
+	"docs.info.apple.com": {},
+	"www.info.apple.com":  {},
+	"info.apple.com":      {},
+}
+
+// removableArticleIDPattern matches the legacy article ID forms (4-digit HT
+// and 5-digit TA numbers, all pre-2011 releases) that are known to have been
+// removed upstream. Only these may respond 404; a 404 on any other article is
+// an error.
+var removableArticleIDPattern = regexp.MustCompile(`^(HT[0-9]{4}|TA[0-9]{5})$`)
 
 type options struct {
 	baseURL     string
@@ -125,7 +150,9 @@ func Fetch(opts ...Option) error {
 
 // fetchLists crawls the security releases index page and its archive pages,
 // writes each as lists/<id>.json, and returns the advisory URLs found in the
-// release rows, keyed by article ID.
+// release rows, keyed by article ID. The pre-2005 archive pages that inline
+// advisory content instead of listing links are written as
+// advisories/<id>.json directly.
 func (opts options) fetchLists(client *utilhttp.Client, root *url.URL) (map[string]*url.URL, error) {
 	queue := []*url.URL{root}
 	visited := map[string]struct{}{articleID(root): {}}
@@ -135,47 +162,86 @@ func (opts options) fetchLists(client *utilhttp.Client, root *url.URL) (map[stri
 		queue = queue[1:]
 
 		slog.Info("Fetch security releases list", slog.String("url", u.String()))
-		list, archives, err := func() (*List, []*url.URL, error) {
+		list, advisory, archives, err := func() (*List, *Advisory, []*url.URL, error) {
 			resp, err := client.Get(u.String())
 			if err != nil {
-				return nil, nil, errors.Wrapf(err, "get %s", u)
+				return nil, nil, nil, errors.Wrapf(err, "get %s", u)
 			}
 			defer resp.Body.Close()
 
 			if resp.StatusCode != http.StatusOK {
 				_, _ = io.Copy(io.Discard, resp.Body)
-				return nil, nil, errors.Errorf("error response with status code %d", resp.StatusCode)
+				return nil, nil, nil, errors.Errorf("error response with status code %d", resp.StatusCode)
 			}
 
 			if id := articleID(resp.Request.URL); id != articleID(u) {
 				// redirected to an already visited page, e.g. legacy hub articles pointing to the current index
 				if _, ok := visited[id]; ok {
 					_, _ = io.Copy(io.Discard, resp.Body)
-					return nil, nil, nil
+					return nil, nil, nil, nil
 				}
 				visited[id] = struct{}{}
 			}
 
 			doc, err := goquery.NewDocumentFromReader(resp.Body)
 			if err != nil {
-				return nil, nil, errors.Wrap(err, "parse html")
+				return nil, nil, nil, errors.Wrap(err, "parse html")
 			}
 
 			list, archives, err := parseList(doc, articleID(u), u, root)
 			if err != nil {
-				return nil, nil, errors.Wrapf(err, "parse list. URL: %s", u)
+				return nil, nil, nil, errors.Wrapf(err, "parse list. URL: %s", u)
 			}
-			return list, archives, nil
+
+			if len(list.Releases) == 0 {
+				if _, ok := inlineAdvisoryPageIDs[list.ID]; !ok {
+					return nil, nil, nil, errors.Errorf("no releases found in list page. URL: %s", u)
+				}
+				advisory, err := parseAdvisory(doc, list.ID, u.String())
+				if err != nil {
+					return nil, nil, nil, errors.Wrapf(err, "parse advisory. URL: %s", u)
+				}
+				return nil, advisory, archives, nil
+			}
+
+			return list, nil, archives, nil
 		}()
 		if err != nil {
 			return nil, err
 		}
-		if list == nil {
-			continue
+
+		if list != nil {
+			if err := util.Write(filepath.Join(opts.dir, "lists", fmt.Sprintf("%s.json", list.ID)), list); err != nil {
+				return nil, errors.Wrapf(err, "write %s", filepath.Join(opts.dir, "lists", fmt.Sprintf("%s.json", list.ID)))
+			}
+
+			for _, r := range list.Releases {
+				if r.URL == "" {
+					continue
+				}
+				ru, err := url.Parse(r.URL)
+				if err != nil {
+					return nil, errors.Wrapf(err, "parse release link %s. list: %s", r.URL, list.ID)
+				}
+				if ru.Host != root.Host {
+					if _, ok := retiredHosts[ru.Host]; !ok {
+						return nil, errors.Errorf("unexpected release link host. expected: %q, actual: %q. URL: %s", root.Host, ru.Host, r.URL)
+					}
+					slog.Warn("skip release link to retired host", slog.String("url", r.URL), slog.String("list", list.ID))
+					continue
+				}
+				ru.Scheme = root.Scheme
+				ru.Fragment = ""
+				if _, ok := advisories[articleID(ru)]; !ok {
+					advisories[articleID(ru)] = ru
+				}
+			}
 		}
 
-		if err := util.Write(filepath.Join(opts.dir, "lists", fmt.Sprintf("%s.json", list.ID)), list); err != nil {
-			return nil, errors.Wrapf(err, "write %s", filepath.Join(opts.dir, "lists", fmt.Sprintf("%s.json", list.ID)))
+		if advisory != nil {
+			if err := util.Write(filepath.Join(opts.dir, "advisories", fmt.Sprintf("%s.json", advisory.ID)), advisory); err != nil {
+				return nil, errors.Wrapf(err, "write %s", filepath.Join(opts.dir, "advisories", fmt.Sprintf("%s.json", advisory.ID)))
+			}
 		}
 
 		for _, a := range archives {
@@ -184,26 +250,6 @@ func (opts options) fetchLists(client *utilhttp.Client, root *url.URL) (map[stri
 			}
 			visited[articleID(a)] = struct{}{}
 			queue = append(queue, a)
-		}
-
-		for _, r := range list.Releases {
-			if r.URL == "" {
-				continue
-			}
-			ru, err := url.Parse(r.URL)
-			if err != nil {
-				slog.Warn("skip unparsable release link", slog.String("url", r.URL), slog.String("list", list.ID))
-				continue
-			}
-			if ru.Host != root.Host {
-				slog.Warn("skip release link to unexpected host", slog.String("url", r.URL), slog.String("list", list.ID))
-				continue
-			}
-			ru.Scheme = root.Scheme
-			ru.Fragment = ""
-			if _, ok := advisories[articleID(ru)]; !ok {
-				advisories[articleID(ru)] = ru
-			}
 		}
 
 		time.Sleep(opts.wait)
@@ -229,7 +275,10 @@ func (opts options) fetchAdvisories(client *utilhttp.Client, advisories map[stri
 		case http.StatusOK:
 		case http.StatusNotFound:
 			_, _ = io.Copy(io.Discard, resp.Body)
-			slog.Warn("advisory not found", slog.String("url", originalURL(resp).String()))
+			if !removableArticleIDPattern.MatchString(articleID(originalURL(resp))) {
+				return errors.Errorf("unexpected not found response. only articles matching %q are known to be removed upstream. URL: %s", removableArticleIDPattern, originalURL(resp))
+			}
+			slog.Warn("skip advisory removed upstream", slog.String("url", originalURL(resp).String()))
 			return nil
 		default:
 			_, _ = io.Copy(io.Discard, resp.Body)
@@ -373,16 +422,11 @@ func parseList(doc *goquery.Document, id string, pageURL, root *url.URL) (*List,
 				continue
 			}
 			pendingList = false
-			list.parseListItems(b.sel, pageURL)
+			if err := list.parseListItems(b.sel, pageURL); err != nil {
+				return nil, nil, errors.Wrap(err, "parse list items")
+			}
 		default:
 		}
-	}
-
-	if len(list.Releases) == 0 {
-		// e.g. https://support.apple.com/en-us/101682 and
-		// https://support.apple.com/en-us/104191 inline pre-2005 advisories
-		// instead of listing links to per-release pages
-		slog.Warn("no releases found in list page", slog.String("url", pageURL.String()))
 	}
 
 	var archives []*url.URL
@@ -396,11 +440,13 @@ func parseList(doc *goquery.Document, id string, pageURL, root *url.URL) (*List,
 		}
 		u, err := pageURL.Parse(href)
 		if err != nil {
-			slog.Warn("skip unparsable archive link", slog.String("href", href), slog.String("list", id))
-			continue
+			return nil, nil, errors.Wrapf(err, "parse archive link %s. list: %s", href, id)
 		}
 		if u.Host != root.Host {
-			// e.g. links to the retired info.apple.com on pre-2005 pages
+			if _, ok := retiredHosts[u.Host]; !ok {
+				return nil, nil, errors.Errorf("unexpected archive link host. expected: %q, actual: %q. URL: %s", root.Host, u.Host, u)
+			}
+			// nav links to the retired info.apple.com on pre-2011 pages
 			continue
 		}
 		u.Scheme = root.Scheme
@@ -455,10 +501,9 @@ func (l *List) parseTable(tab *goquery.Selection, pageURL *url.URL) error {
 		if href, ok := tds.Eq(0).Find("a").First().Attr("href"); ok {
 			u, err := pageURL.Parse(href)
 			if err != nil {
-				slog.Warn("skip unparsable release link", slog.String("href", href), slog.String("list", l.ID))
-			} else {
-				r.URL = u.String()
+				return errors.Wrapf(err, "parse release link %s. list: %s", href, l.ID)
 			}
+			r.URL = u.String()
 		}
 
 		l.Releases = append(l.Releases, r)
@@ -466,7 +511,7 @@ func (l *List) parseTable(tab *goquery.Selection, pageURL *url.URL) error {
 	return nil
 }
 
-func (l *List) parseListItems(ul *goquery.Selection, pageURL *url.URL) {
+func (l *List) parseListItems(ul *goquery.Selection, pageURL *url.URL) error {
 	for _, li := range ul.ChildrenFiltered("li").EachIter() {
 		var r Release
 		if a := li.Find("a").First(); a.Length() > 0 {
@@ -474,10 +519,9 @@ func (l *List) parseListItems(ul *goquery.Selection, pageURL *url.URL) {
 			if href, ok := a.Attr("href"); ok {
 				u, err := pageURL.Parse(href)
 				if err != nil {
-					slog.Warn("skip unparsable release link", slog.String("href", href), slog.String("list", l.ID))
-				} else {
-					r.URL = u.String()
+					return errors.Wrapf(err, "parse release link %s. list: %s", href, l.ID)
 				}
+				r.URL = u.String()
 			}
 			li = li.Clone()
 			li.Find("a").First().Remove()
@@ -487,6 +531,7 @@ func (l *List) parseListItems(ul *goquery.Selection, pageURL *url.URL) {
 		}
 		l.Releases = append(l.Releases, r)
 	}
+	return nil
 }
 
 func parseAdvisory(doc *goquery.Document, id, pageURL string) (*Advisory, error) {

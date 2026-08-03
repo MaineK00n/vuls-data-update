@@ -24,8 +24,8 @@
 			"release_date": "8 Dec 2015"
 		},
 		{
-			"name": "Xcode 17.6",
-			"url": "https://www.example.com/other",
+			"name": "Security Update 2007-009",
+			"url": "http://docs.info.apple.com/article.html?artnum=307179",
 			"available_for": "macOS Tahoe",
 			"release_date": "27 Jul 2026"
 		}
