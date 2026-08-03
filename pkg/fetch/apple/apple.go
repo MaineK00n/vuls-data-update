@@ -279,8 +279,9 @@ type block struct {
 }
 
 // blocks collects content blocks under s, descending through wrapper elements
-// but not into the returned blocks themselves. List items that only hold
-// inline content are returned as "p" blocks.
+// but not into the returned blocks themselves. It does not descend into list
+// items: callers handle "ul" blocks themselves, calling blocks(li) per item,
+// which returns an empty slice for items that only hold inline content.
 func blocks(s *goquery.Selection) []block {
 	var bs []block
 	var walk func(s *goquery.Selection)
