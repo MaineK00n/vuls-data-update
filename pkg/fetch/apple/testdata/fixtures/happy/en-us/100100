@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head><title>Apple security releases - Apple Support</title></head>
+<body>
+<div class="main section viewport-content" role="main" id="content">
+    <div id="sections">
+        <div class="alignment">
+            <h1 class="gb-header">Apple security releases</h1>
+        </div>
+        <div class="alignment">
+            <p class="gb-paragraph">This document lists security updates and Rapid Security Responses for Apple software.</p>
+        </div>
+        <div class="alignment">
+            <h2 class="gb-header">Apple security updates</h2>
+        </div>
+        <div class="alignment">
+            <div class="table-wrapper gb-table"><table class="gb-table"><tbody>
+                <tr><th class="gb-table-header-cell" colspan="1" rowspan="1"><p class="gb-paragraph">Name&nbsp;and&nbsp;information&nbsp;link</p></th><th class="gb-table-header-cell" colspan="1" rowspan="1"><p class="gb-paragraph">Available for</p></th><th class="gb-table-header-cell" colspan="1" rowspan="1"><p class="gb-paragraph">Release&nbsp;date</p></th></tr>
+                <tr><td class="gb-table-cell" colspan="1" rowspan="1"><p class="gb-paragraph"><a href="/en-us/128067" class="gb-anchor">macOS Tahoe 26.6</a></p></td><td class="gb-table-cell" colspan="1" rowspan="1"><p class="gb-paragraph">macOS Tahoe</p></td><td class="gb-table-cell" colspan="1" rowspan="1"><p class="gb-paragraph">27 Jul 2026</p></td></tr>
+                <tr><td class="gb-table-cell" colspan="1" rowspan="1"><p class="gb-paragraph">iOS 26.5.1</p><p class="gb-paragraph">This update has no published CVE entries.</p></td><td class="gb-table-cell" colspan="1" rowspan="1"><p class="gb-paragraph">iPhone 17 (all models) and iPhone Air</p></td><td class="gb-table-cell" colspan="1" rowspan="1"><p class="gb-paragraph">01 Jun 2026</p></td></tr>
+                <tr><td class="gb-table-cell" colspan="1" rowspan="1"><p class="gb-paragraph"><a href="/kb/HT205636" class="gb-anchor">Safari 9.0.2</a></p></td><td class="gb-table-cell" colspan="1" rowspan="1"><p class="gb-paragraph">OS X Mavericks v10.9.5, OS X Yosemite v10.10.5, and OS X El Capitan v10.11.2</p></td><td class="gb-table-cell" colspan="1" rowspan="1"><p class="gb-paragraph">8 Dec 2015</p></td></tr>
+                <tr><td class="gb-table-cell" colspan="1" rowspan="1"><p class="gb-paragraph"><a href="https://www.example.com/other" class="gb-anchor">Xcode 17.6</a></p></td><td class="gb-table-cell" colspan="1" rowspan="1"><p class="gb-paragraph">macOS Tahoe</p></td><td class="gb-table-cell" colspan="1" rowspan="1"><p class="gb-paragraph">27 Jul 2026</p></td></tr>
+            </tbody></table></div>
+        </div>
+        <div class="alignment">
+            <p class="gb-paragraph">For information about older updates, see <a href="/en-us/103813" class="gb-anchor">Apple security updates (2015)</a>.</p>
+        </div>
+    </div>
+</div>
+</body>
+</html>

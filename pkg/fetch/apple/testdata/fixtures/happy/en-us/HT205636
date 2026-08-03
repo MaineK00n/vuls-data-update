@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head><title>About the security content of Safari 9.0.2 - Apple Support</title></head>
+<body>
+<div class="main section viewport-content" role="main" id="content">
+    <div id="sections">
+        <div class="alignment">
+            <h1 class="gb-header">About the security content of Safari 9.0.2</h1>
+        </div>
+        <div class="alignment">
+            <p class="gb-paragraph">This document describes the security content of Safari 9.0.2.</p>
+        </div>
+        <div class="alignment">
+            <p class="gb-paragraph">Where possible, <a href="http://cve.mitre.org/about/" class="gb-anchor">CVE IDs</a> are used to reference the vulnerabilities for further information.</p>
+        </div>
+        <div class="alignment">
+            <h2 class="gb-header">Safari 9.0.2</h2>
+        </div>
+        <div class="alignment">
+            <div class="note gb-note">Released December 8, 2015</div>
+        </div>
+        <div class="alignment">
+            <ul role="list" class="list gb-list">
+                <li role="listitem" class="gb-list_item"><p class="gb-paragraph"><b>WebKit</b></p><p class="gb-paragraph">Available for: OS X Mavericks v10.9.5, OS X Yosemite v10.10.5, and OS X El Capitan v10.11.2</p><p class="gb-paragraph">Impact: Visiting a maliciously crafted website may lead to arbitrary code execution</p><p class="gb-paragraph">Description: Multiple memory corruption issues existed in WebKit.<br>These issues were addressed through improved memory handling.</p><p class="gb-paragraph">CVE-ID</p><p class="gb-paragraph">CVE-2015-7048 : Apple</p><p class="gb-paragraph">CVE-2015-7095 : Apple</p></li>
+                <li role="listitem" class="gb-list_item"><p class="gb-paragraph"><b>Safari</b></p><p class="gb-paragraph">Available for: OS X Mavericks v10.9.5, OS X Yosemite v10.10.5, and OS X El Capitan v10.11.2</p><p class="gb-paragraph">Impact: Visiting a malicious website may lead to user interface spoofing</p><p class="gb-paragraph">Description: An issue existed in Safari's handling of URLs.</p><p class="gb-paragraph">CVE-ID</p><p class="gb-paragraph">CVE-2015-7093 : xisigr of Tencent</p></li>
+            </ul>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -20,6 +20,7 @@ import (
 	anchoreEnrichment "github.com/MaineK00n/vuls-data-update/pkg/fetch/anchore/enrichment"
 	androidOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/android/osv"
 	anolisOVAL "github.com/MaineK00n/vuls-data-update/pkg/fetch/anolis/oval"
+	"github.com/MaineK00n/vuls-data-update/pkg/fetch/apple"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/arch"
 	bellsoftAlpaquitaOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/bellsoft/alpaquita/osv"
 	bellsoftHardenedContainersOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/bellsoft/hardened-containers/osv"
@@ -221,6 +222,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdAnchoreEnrichment(),
 		newCmdAndroidOSV(),
 		newCmdAnolisOVAL(),
+		newCmdApple(),
 		newCmdArch(),
 		newCmdBellSoftAlpaquitaOSV(), newCmdBellSoftHardenedContainersOSV(),
 		newCmdBitnamiOSV(),
@@ -600,6 +602,43 @@ func newCmdAnolisOVAL() *cobra.Command {
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+
+	return cmd
+}
+
+func newCmdApple() *cobra.Command {
+	options := &struct {
+		base
+		concurrency int
+		wait        time.Duration
+	}{
+		base: base{
+			dir:   filepath.Join(util.CacheDir(), "fetch", "apple"),
+			retry: 3,
+		},
+		concurrency: 5,
+		wait:        1 * time.Second,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "apple",
+		Short: "Fetch Apple Security Releases data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch apple
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := apple.Fetch(apple.WithDir(options.dir), apple.WithRetry(options.retry), apple.WithConcurrency(options.concurrency), apple.WithWait(options.wait)); err != nil {
+				return errors.Wrap(err, "failed to fetch apple")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrency http request")
+	cmd.Flags().DurationVarP(&options.wait, "wait", "", options.wait, "wait duration")
 
 	return cmd
 }

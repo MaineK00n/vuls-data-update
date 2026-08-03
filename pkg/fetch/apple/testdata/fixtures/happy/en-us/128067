@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head><title>About the security content of macOS Tahoe 26.6 - Apple Support</title></head>
+<body>
+<div class="main section viewport-content" role="main" id="content">
+    <div id="sections">
+        <div class="alignment">
+            <h1 class="gb-header">About the security content of macOS Tahoe 26.6</h1>
+        </div>
+        <div class="alignment">
+            <p class="subheader gb-subheader">This document describes the security content of macOS Tahoe 26.6.</p>
+        </div>
+        <div class="alignment">
+            <h2 class="gb-header">About Apple security updates</h2>
+        </div>
+        <div class="alignment">
+            <p class="gb-paragraph">For our customers' protection, Apple doesn't disclose, discuss, or confirm security issues until an investigation has occurred and patches or releases are available.</p>
+        </div>
+        <div class="alignment">
+            <p class="gb-paragraph">Apple security documents reference vulnerabilities by <a href="https://www.cve.org/About/Overview" class="gb-anchor">CVE-ID</a> when possible.</p>
+        </div>
+        <div class="alignment">
+            <h2 class="gb-header">macOS Tahoe 26.6</h2>
+        </div>
+        <div class="alignment">
+            <div class="note gb-note"><p class="gb-paragraph">Released July 27, 2026</p></div>
+        </div>
+        <div class="alignment">
+            <h3 class="gb-header">Accounts</h3>
+        </div>
+        <div class="alignment">
+            <p class="gb-paragraph">Available for: macOS Tahoe</p>
+        </div>
+        <div class="alignment">
+            <p class="gb-paragraph">Impact: An app may be able to access sensitive user data</p>
+        </div>
+        <div class="alignment">
+            <p class="gb-paragraph">Description: An access issue was addressed with additional sandbox restrictions.</p>
+        </div>
+        <div class="alignment">
+            <p class="gb-paragraph">CVE-2026-43819: Omar Cerrito</p>
+        </div>
+        <div class="alignment">
+            <h3 class="gb-header">WebKit</h3>
+        </div>
+        <div class="alignment">
+            <p class="gb-paragraph">Available for: macOS Tahoe</p>
+        </div>
+        <div class="alignment">
+            <p class="gb-paragraph">Impact: Processing maliciously crafted web content may lead to an unexpected Safari crash</p>
+        </div>
+        <div class="alignment">
+            <p class="gb-paragraph">Description: The issue was addressed with improved memory handling.</p>
+        </div>
+        <div class="alignment">
+            <p class="gb-paragraph">WebKit Bugzilla: 259231</p>
+        </div>
+        <div class="alignment">
+            <p class="gb-paragraph">CVE-2026-40765: an anonymous researcher</p>
+        </div>
+        <div class="alignment">
+            <div class="note gb-note"><p class="gb-paragraph">Entry added August 1, 2026</p></div>
+        </div>
+        <div class="alignment">
+            <h2 class="gb-header">Additional recognition</h2>
+        </div>
+        <div class="alignment">
+            <h3 class="gb-header">CoreServices</h3>
+        </div>
+        <div class="alignment">
+            <p class="gb-paragraph">We would like to acknowledge an anonymous researcher for their assistance.</p>
+        </div>
+    </div>
+</div>
+</body>
+</html>

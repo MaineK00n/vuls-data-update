@@ -1,0 +1,33 @@
+{
+	"id": "100100",
+	"url": "https://support.apple.com/en-us/100100",
+	"title": "Apple security releases",
+	"releases": [
+		{
+			"name": "macOS Tahoe 26.6",
+			"url": "https://support.apple.com/en-us/128067",
+			"available_for": "macOS Tahoe",
+			"release_date": "27 Jul 2026"
+		},
+		{
+			"name": "iOS 26.5.1",
+			"notes": [
+				"This update has no published CVE entries."
+			],
+			"available_for": "iPhone 17 (all models) and iPhone Air",
+			"release_date": "01 Jun 2026"
+		},
+		{
+			"name": "Safari 9.0.2",
+			"url": "https://support.apple.com/kb/HT205636",
+			"available_for": "OS X Mavericks v10.9.5, OS X Yosemite v10.10.5, and OS X El Capitan v10.11.2",
+			"release_date": "8 Dec 2015"
+		},
+		{
+			"name": "Xcode 17.6",
+			"url": "https://www.example.com/other",
+			"available_for": "macOS Tahoe",
+			"release_date": "27 Jul 2026"
+		}
+	]
+}
