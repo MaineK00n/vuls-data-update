@@ -99,6 +99,7 @@ const (
 	MitreCVEV5                 SourceID = "mitre-cve-v5"
 	MitreCWE                   SourceID = "mitre-cwe"
 	NetBSD                     SourceID = "netbsd"
+	NginxSecurityAdvisories    SourceID = "nginx-security-advisories"
 	NpmDB                      SourceID = "npm-db"
 	NpmGHSA                    SourceID = "npm-ghsa"
 	NpmGLSA                    SourceID = "npm-glsa"
