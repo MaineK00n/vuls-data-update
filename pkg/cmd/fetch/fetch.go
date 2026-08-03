@@ -20,6 +20,7 @@ import (
 	anchoreEnrichment "github.com/MaineK00n/vuls-data-update/pkg/fetch/anchore/enrichment"
 	androidOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/android/osv"
 	anolisOVAL "github.com/MaineK00n/vuls-data-update/pkg/fetch/anolis/oval"
+	apacheHTTPDJSON "github.com/MaineK00n/vuls-data-update/pkg/fetch/apache/httpd/json"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/arch"
 	bellsoftAlpaquitaOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/bellsoft/alpaquita/osv"
 	bellsoftHardenedContainersOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/bellsoft/hardened-containers/osv"
@@ -220,6 +221,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdAnchoreEnrichment(),
 		newCmdAndroidOSV(),
 		newCmdAnolisOVAL(),
+		newCmdApacheHTTPDJSON(),
 		newCmdArch(),
 		newCmdBellSoftAlpaquitaOSV(), newCmdBellSoftHardenedContainersOSV(),
 		newCmdBitnamiOSV(),
@@ -599,6 +601,43 @@ func newCmdAnolisOVAL() *cobra.Command {
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+
+	return cmd
+}
+
+func newCmdApacheHTTPDJSON() *cobra.Command {
+	options := &struct {
+		base
+		concurrency int
+		wait        time.Duration
+	}{
+		base: base{
+			dir:   filepath.Join(util.CacheDir(), "fetch", "apache", "httpd", "json"),
+			retry: 3,
+		},
+		concurrency: 5,
+		wait:        1 * time.Second,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "apache-httpd-json",
+		Short: "Fetch Apache HTTP Server CVE (JSON) data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch apache-httpd-json
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := apacheHTTPDJSON.Fetch(apacheHTTPDJSON.WithDir(options.dir), apacheHTTPDJSON.WithRetry(options.retry), apacheHTTPDJSON.WithConcurrency(options.concurrency), apacheHTTPDJSON.WithWait(options.wait)); err != nil {
+				return errors.Wrap(err, "failed to fetch apache httpd json")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrent http requests")
+	cmd.Flags().DurationVarP(&options.wait, "wait", "", options.wait, "wait duration")
 
 	return cmd
 }
