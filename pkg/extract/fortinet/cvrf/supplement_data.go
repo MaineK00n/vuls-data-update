@@ -347,9 +347,6 @@ var supplementTable = map[string][]supplementProduct{
 	"FG-IR-16-088": {
 		{Product: "FortiOS", Ranges: []supplementRange{{GreaterEqual: "5.0.0", LessEqual: "5.0.14"}, {GreaterEqual: "5.2.0", LessEqual: "5.2.15"}}},
 	},
-	"FG-IR-16-090": {
-		{Product: "FortiOS"},
-	},
 	"FG-IR-16-095": {
 		{Product: "FortiClientWindows", Ranges: []supplementRange{{GreaterEqual: "5.4.1", LessEqual: "5.4.2"}}},
 	},
@@ -550,13 +547,6 @@ var supplementTable = map[string][]supplementProduct{
 	},
 	"FG-IR-18-173": {
 		{Product: "FortiOS", Versions: []string{"6.2.3"}, Ranges: []supplementRange{{LessEqual: "6.2.0"}}},
-	},
-	"FG-IR-18-199": {
-		{Product: "FortiAP"},
-		{Product: "FortiOS"},
-	},
-	"FG-IR-18-214": {
-		{Product: "FortiOS"},
 	},
 	"FG-IR-18-232": {
 		{Product: "FortiAnalyzer", Ranges: []supplementRange{{GreaterEqual: "5.6.0", LessEqual: "5.6.11"}, {GreaterEqual: "6.0.0", LessEqual: "6.0.4"}}},
@@ -884,7 +874,7 @@ var supplementTable = map[string][]supplementProduct{
 		{Product: "FortiOS", Ranges: []supplementRange{{GreaterEqual: "5.6.0", LessEqual: "5.6.12"}, {GreaterEqual: "6.0.0", LessEqual: "6.0.10"}}},
 	},
 	"FG-IR-20-091": {
-		{Product: "FortiOS"},
+		{Product: "FortiOS", Versions: []string{"5.6.0", "5.6.1", "5.6.2", "5.6.3", "5.6.4", "5.6.5", "5.6.6", "5.6.7", "5.6.8", "5.6.9", "5.6.10", "5.6.11", "5.6.12", "5.6.13", "6.0.0", "6.0.1", "6.0.2", "6.0.3", "6.0.4", "6.0.5", "6.0.6", "6.0.7", "6.0.8", "6.0.9", "6.0.10", "6.0.11", "6.2.0", "6.2.1", "6.2.2", "6.2.3", "6.2.4", "6.2.5", "6.4.0", "6.4.1", "6.4.2", "6.4.3"}},
 	},
 	"FG-IR-20-092": {
 		{Product: "FortiAnalyzer", Versions: []string{"6.0.0", "6.0.1", "6.0.2", "6.0.3", "6.0.4", "6.0.5", "6.0.6", "6.4.4"}},
@@ -966,8 +956,8 @@ var supplementTable = map[string][]supplementProduct{
 		{Product: "FortiManager", Versions: []string{"6.2.7", "6.4.3"}},
 	},
 	"FG-IR-20-191": {
-		{Product: "FSSO"},
-		{Product: "FSSO CA"},
+		{Product: "FSSO", Ranges: []supplementRange{{LessEqual: "5.0.295"}}},
+		{Product: "FSSO CA", Ranges: []supplementRange{{LessEqual: "5.0.295"}}},
 	},
 	"FG-IR-20-193": {
 		{Product: "FortiGate Cloud", Ranges: []supplementRange{{LessEqual: "20.3"}}},
