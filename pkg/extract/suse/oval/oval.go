@@ -857,6 +857,28 @@ func (e extractor) translateEVRCriterion(oc oval.Criterion, t oval.RpminfoTest, 
 				},
 			},
 		}, nil
+	case "less than or equal":
+		// Used in "<package> was already fixed" criteria (since 2026-07-22, replacing a
+		// mistaken "greater than <fixed version>" encoding in the 2026-08-02 regeneration).
+		// The bound is the last vulnerable build, so this is a regular fixed-range criterion.
+		return translated{
+			criterion: &criterionTypes.Criterion{
+				Type: criterionTypes.CriterionTypeVersion,
+				Version: &vcTypes.Criterion{
+					Vulnerable: true,
+					FixStatus: &fixstatusTypes.FixStatus{
+						Class: fixstatusTypes.ClassFixed,
+					},
+					Package: pkg,
+					Affected: &affectedTypes.Affected{
+						Type: affectedrangeTypes.RangeTypeRPM,
+						Range: []affectedrangeTypes.Range{{
+							LessEqual: s.Evr.Text,
+						}},
+					},
+				},
+			},
+		}, nil
 	case "equals":
 		// Should be siblings of kernel-livepatch patterns, sanity check.
 		if !strings.HasPrefix(o.Name, "kernel-") {
@@ -1010,6 +1032,6 @@ func (e extractor) translateEVRCriterion(oc oval.Criterion, t oval.RpminfoTest, 
 			return translated{}, errors.Errorf("unexpected rpminfo_test check. test: %s, expected: %q, actual: %q", oc.TestRef, []string{"at least one", "all", "none satisfy"}, t.Check)
 		}
 	default:
-		return translated{}, errors.Errorf("unexpected evr operation. test: %s, check: %q, expected: %q, actual: %q", oc.TestRef, "at least one", []string{"less than", "equals", "greater than", "greater than or equal"}, s.Evr.Operation)
+		return translated{}, errors.Errorf("unexpected evr operation. test: %s, check: %q, expected: %q, actual: %q", oc.TestRef, "at least one", []string{"less than", "less than or equal", "equals", "greater than", "greater than or equal"}, s.Evr.Operation)
 	}
 }
