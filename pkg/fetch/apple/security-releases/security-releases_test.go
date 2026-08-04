@@ -37,6 +37,10 @@ func TestFetch(t *testing.T) {
 			name:     "unexpected_empty_list",
 			hasError: true,
 		},
+		{
+			name:     "unexpected_table",
+			hasError: true,
+		},
 	}
 
 	for _, tt := range tests {

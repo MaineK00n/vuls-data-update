@@ -567,13 +567,13 @@ func parseAdvisory(doc *goquery.Document, id, pageURL string) (*Advisory, error)
 		section = Section{}
 	}
 
-	var handle func(b block)
-	handle = func(b block) {
+	var handle func(b block) error
+	handle = func(b block) error {
 		switch b.name {
 		case "h1":
 			if advisory.Title == "" {
 				advisory.Title = normText(b.sel)
-				return
+				return nil
 			}
 			flushSection()
 			section.Name = normText(b.sel)
@@ -587,7 +587,7 @@ func parseAdvisory(doc *goquery.Document, id, pageURL string) (*Advisory, error)
 			if isBoldParagraph(b.sel) {
 				flushEntry()
 				entry.Component = normText(b.sel)
-				return
+				return nil
 			}
 			if t := normText(b.sel); t != "" {
 				entry.classify(t)
@@ -606,29 +606,29 @@ func parseAdvisory(doc *goquery.Document, id, pageURL string) (*Advisory, error)
 					continue
 				}
 				for _, lb := range lbs {
-					handle(lb)
+					if err := handle(lb); err != nil {
+						return err
+					}
 				}
 			}
 		case "table":
-			slog.Warn("unexpected table in advisory, flattening to text", slog.String("id", id))
-			for _, tr := range b.sel.Find("tr").EachIter() {
-				if t := normText(tr); t != "" {
-					entry.Others = append(entry.Others, t)
-				}
-			}
+			return errors.New("unexpected table in advisory page")
 		default:
 		}
+		return nil
 	}
 	for _, b := range blocks(s) {
-		handle(b)
+		if err := handle(b); err != nil {
+			return nil, err
+		}
 	}
 	flushSection()
 
 	if advisory.Title == "" {
-		slog.Warn("no title found in advisory page", slog.String("url", pageURL))
+		return nil, errors.New("no title found in advisory page")
 	}
 	if len(advisory.Sections) == 0 {
-		slog.Warn("no sections found in advisory page", slog.String("url", pageURL))
+		return nil, errors.New("no sections found in advisory page")
 	}
 
 	return &advisory, nil
