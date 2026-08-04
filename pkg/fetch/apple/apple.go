@@ -24,25 +24,29 @@ import (
 
 const baseURL = "https://support.apple.com/en-us/100100"
 
-// inlineAdvisoryPageIDs are the archive index pages that inline pre-2005
-// advisory content directly instead of listing links to per-release pages.
-// They are parsed as advisories; any other page yielding no releases is an
-// error.
-var inlineAdvisoryPageIDs = []string{
-	"101682", // Apple security updates (03 Oct 2003 to 11 Jan 2005)
-	"104191", // Apple security updates (August 2003 and earlier)
-}
+// Known upstream state, so that only expected pages may be skipped; anything
+// outside these fails the fetch loudly.
+var (
+	// inlineAdvisoryPageIDs are the archive index pages that inline pre-2005
+	// advisory content directly instead of listing links to per-release pages.
+	// They are parsed as advisories; any other page yielding no releases is an
+	// error.
+	inlineAdvisoryPageIDs = []string{
+		"101682", // Apple security updates (03 Oct 2003 to 11 Jan 2005)
+		"104191", // Apple security updates (August 2003 and earlier)
+	}
 
-// retiredHosts are the hosts that links on pre-2011 archive pages are known
-// to point at but that no longer serve content. Links to them are skipped;
-// links to any other unexpected host are an error.
-var retiredHosts = []string{"docs.info.apple.com", "www.info.apple.com", "info.apple.com"}
+	// retiredHosts are the hosts that links on pre-2011 archive pages are known
+	// to point at but that no longer serve content. Links to them are skipped;
+	// links to any other unexpected host are an error.
+	retiredHosts = []string{"docs.info.apple.com", "www.info.apple.com", "info.apple.com"}
 
-// removableArticleIDPattern matches the legacy article ID forms (4-digit HT
-// and 5-digit TA numbers, all pre-2011 releases) that are known to have been
-// removed upstream. Only these may respond 404; a 404 on any other article is
-// an error.
-var removableArticleIDPattern = regexp.MustCompile(`^(HT[0-9]{4}|TA[0-9]{5})$`)
+	// removableArticleIDPattern matches the legacy article ID forms (4-digit HT
+	// and 5-digit TA numbers, all pre-2011 releases) that are known to have been
+	// removed upstream. Only these may respond 404; a 404 on any other article
+	// is an error.
+	removableArticleIDPattern = regexp.MustCompile(`^(HT[0-9]{4}|TA[0-9]{5})$`)
+)
 
 type options struct {
 	baseURL     string
