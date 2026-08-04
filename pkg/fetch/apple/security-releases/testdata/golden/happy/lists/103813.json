@@ -19,6 +19,11 @@
 			"text": "- Mac OS X v10.4 - v10.4.5 - 03 Apr 2006"
 		},
 		{
+			"name": "Time Capsule and AirPort Base Station (802.11n) Firmware 7.5.2",
+			"url": "https://support.apple.com/kb/HT4298",
+			"text": "- AirPort Extreme, AirPort Express, Time Capsule - 09 Dec 2010"
+		},
+		{
 			"name": "The Software Update preference"
 		}
 	]

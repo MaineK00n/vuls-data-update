@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head><title>About the security content of Time Capsule and AirPort Base Station (802.11n) Firmware 7.5.2 - Apple Support</title></head>
+<body>
+<div class="main section viewport-content" role="main" id="content">
+    <div id="sections">
+        <div class="alignment">
+            <h1 class="gb-header">About the security content of Time Capsule and AirPort Base Station (802.11n) Firmware 7.5.2</h1>
+        </div>
+        <div class="alignment">
+            <h2 class="gb-header">Time Capsule and AirPort Base Station (802.11n) Firmware 7.5.2</h2>
+        </div>
+        <div class="alignment">
+            <p class="gb-paragraph"><b>AirPort Extreme Base Station with 802.11n, AirPort Express Base Station with 802.11n, Time Capsule</b></p>
+        </div>
+        <div class="alignment">
+            <p class="gb-paragraph">Available for: AirPort Extreme Base Station with 802.11n, AirPort Express Base Station with 802.11n, Time Capsule</p>
+        </div>
+        <div class="alignment">
+            <p class="gb-paragraph">CVE-ID: CVE-2008-4309</p>
+        </div>
+        <div class="alignment">
+            <p class="gb-paragraph">Impact: A remote attacker may terminate the operation of the SNMP service</p>
+        </div>
+        <div class="alignment">
+            <p class="gb-paragraph">Description: An integer overflow exists in the netsnmp_create_subtree_cache function.</p>
+        </div>
+        <div class="alignment">
+            <p class="gb-paragraph">Available for: AirPort Extreme Base Station with 802.11n, AirPort Express Base Station with 802.11n, Time Capsule</p>
+        </div>
+        <div class="alignment">
+            <p class="gb-paragraph">CVE-ID: CVE-2009-2189</p>
+        </div>
+        <div class="alignment">
+            <p class="gb-paragraph">Impact: Receiving a large number of IPv6 Router Advertisement (RA) and Neighbor Discovery (ND) packets may cause the base station to restart</p>
+        </div>
+        <div class="alignment">
+            <p class="gb-paragraph">Description: A resource consumption issue exists in the base station's handling of Router Advertisement and Neighbor Discovery packets.</p>
+        </div>
+    </div>
+</div>
+</body>
+</html>
