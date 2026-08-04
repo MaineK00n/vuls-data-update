@@ -1,4 +1,4 @@
-package apple
+package securityreleases
 
 // List represents a security releases index page,
 // e.g. https://support.apple.com/en-us/100100 and its archive pages.

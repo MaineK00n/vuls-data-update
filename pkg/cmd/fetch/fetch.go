@@ -20,7 +20,7 @@ import (
 	anchoreEnrichment "github.com/MaineK00n/vuls-data-update/pkg/fetch/anchore/enrichment"
 	androidOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/android/osv"
 	anolisOVAL "github.com/MaineK00n/vuls-data-update/pkg/fetch/anolis/oval"
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/apple"
+	appleSecurityReleases "github.com/MaineK00n/vuls-data-update/pkg/fetch/apple/security-releases"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/arch"
 	bellsoftAlpaquitaOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/bellsoft/alpaquita/osv"
 	bellsoftHardenedContainersOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/bellsoft/hardened-containers/osv"
@@ -222,7 +222,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdAnchoreEnrichment(),
 		newCmdAndroidOSV(),
 		newCmdAnolisOVAL(),
-		newCmdApple(),
+		newCmdAppleSecurityReleases(),
 		newCmdArch(),
 		newCmdBellSoftAlpaquitaOSV(), newCmdBellSoftHardenedContainersOSV(),
 		newCmdBitnamiOSV(),
@@ -606,14 +606,14 @@ func newCmdAnolisOVAL() *cobra.Command {
 	return cmd
 }
 
-func newCmdApple() *cobra.Command {
+func newCmdAppleSecurityReleases() *cobra.Command {
 	options := &struct {
 		base
 		concurrency int
 		wait        time.Duration
 	}{
 		base: base{
-			dir:   filepath.Join(util.CacheDir(), "fetch", "apple"),
+			dir:   filepath.Join(util.CacheDir(), "fetch", "apple", "security-releases"),
 			retry: 3,
 		},
 		concurrency: 5,
@@ -621,15 +621,15 @@ func newCmdApple() *cobra.Command {
 	}
 
 	cmd := &cobra.Command{
-		Use:   "apple",
+		Use:   "apple-security-releases",
 		Short: "Fetch Apple Security Releases data source",
 		Example: heredoc.Doc(`
-			$ vuls-data-update fetch apple
+			$ vuls-data-update fetch apple-security-releases
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := apple.Fetch(apple.WithDir(options.dir), apple.WithRetry(options.retry), apple.WithConcurrency(options.concurrency), apple.WithWait(options.wait)); err != nil {
-				return errors.Wrap(err, "failed to fetch apple")
+			if err := appleSecurityReleases.Fetch(appleSecurityReleases.WithDir(options.dir), appleSecurityReleases.WithRetry(options.retry), appleSecurityReleases.WithConcurrency(options.concurrency), appleSecurityReleases.WithWait(options.wait)); err != nil {
+				return errors.Wrap(err, "failed to fetch apple security releases")
 			}
 			return nil
 		},

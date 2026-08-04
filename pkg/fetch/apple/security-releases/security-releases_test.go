@@ -1,4 +1,4 @@
-package apple_test
+package securityreleases_test
 
 import (
 	"bytes"
@@ -14,7 +14,7 @@ import (
 
 	"github.com/google/go-cmp/cmp"
 
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/apple"
+	securityreleases "github.com/MaineK00n/vuls-data-update/pkg/fetch/apple/security-releases"
 )
 
 func TestFetch(t *testing.T) {
@@ -60,7 +60,7 @@ func TestFetch(t *testing.T) {
 			defer ts.Close()
 
 			dir := t.TempDir()
-			err := apple.Fetch(apple.WithBaseURL(fmt.Sprintf("%s/en-us/100100", ts.URL)), apple.WithDir(dir), apple.WithRetry(0), apple.WithConcurrency(2), apple.WithWait(0))
+			err := securityreleases.Fetch(securityreleases.WithBaseURL(fmt.Sprintf("%s/en-us/100100", ts.URL)), securityreleases.WithDir(dir), securityreleases.WithRetry(0), securityreleases.WithConcurrency(2), securityreleases.WithWait(0))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)

@@ -1,4 +1,4 @@
-package apple
+package securityreleases
 
 import (
 	"fmt"
@@ -113,7 +113,7 @@ func WithWait(wait time.Duration) Option {
 func Fetch(opts ...Option) error {
 	options := &options{
 		baseURL:     baseURL,
-		dir:         filepath.Join(util.CacheDir(), "fetch", "apple"),
+		dir:         filepath.Join(util.CacheDir(), "fetch", "apple", "security-releases"),
 		retry:       3,
 		concurrency: 5,
 		wait:        1 * time.Second,
