@@ -158,6 +158,15 @@ func extract(fetched cvrfTypes.CVRF, raws []string) (dataTypes.Data, error) {
 	var criterions []criterionTypes.Criterion
 	switch status := fetched.Vulnerability.ProductStatuses.Status; status.Type {
 	case "Known Affected":
+		// The symmetric counterpart of the products-without-a-type guard
+		// below: a typed status that lists no products never occurs in the
+		// corpus, and letting it through would silently emit no detection
+		// for an advisory that claims to have an affected set. (A missing
+		// or empty product_tree needs no extra guard here — every listed
+		// product then fails tree resolution below.)
+		if len(status.ProductID) == 0 {
+			return dataTypes.Data{}, errors.Errorf("product status type %q lists no products", status.Type)
+		}
 		cs, err := knownAffectedCriterions(status.ProductID, buildProductMap(fetched))
 		if err != nil {
 			return dataTypes.Data{}, errors.Wrap(err, "build known affected criterions")

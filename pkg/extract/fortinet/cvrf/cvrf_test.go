@@ -95,7 +95,8 @@ func TestExtractStatusType(t *testing.T) {
 		productIDs []string
 		wantErr    bool
 	}{
-		{name: "known affected", statusType: "Known Affected"},
+		{name: "known affected with no products → error", statusType: "Known Affected", wantErr: true},
+		{name: "known affected with products but no tree → error", statusType: "Known Affected", productIDs: []string{"FortiOS-7.4.3"}, wantErr: true},
 		{name: "empty (content-only)", statusType: ""},
 		{name: "empty type with products → error", statusType: "", productIDs: []string{"FortiOS-7.4.3"}, wantErr: true},
 		{name: "unexpected type → error", statusType: "Known Not Affected", wantErr: true},
