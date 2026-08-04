@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head><title>Apple security updates (August, 2003 and earlier) - Apple Support</title></head>
+<body>
+<div class="main section viewport-content" role="main" id="content">
+    <div id="sections">
+        <div class="alignment">
+            <h1 class="gb-header">Apple security updates (August, 2003 and earlier)</h1>
+        </div>
+        <div class="alignment">
+            <p class="gb-paragraph">Security updates are listed below according to the software release in which they first appeared. Where possible, CVE IDs (<a href="http://cve.mitre.org/cve/" class="gb-anchor">http://cve.mitre.org/cve/</a>) are used to reference the vulnerabilities for further information.</p>
+        </div>
+        <div class="alignment">
+            <p class="gb-paragraph">For information about newer security updates, see technical document 61798, &quot;<a href="http://www.info.apple.com/kbnum/n61798" class="gb-anchor">Apple security updates</a>&quot;.</p>
+        </div>
+        <div class="alignment">
+            <p class="gb-paragraph"><b>Security Update 2003-08-14</b></p>
+        </div>
+        <div class="alignment">
+            <ul role="list" class="list gb-list">
+                <li role="listitem" class="gb-list_item"><p class="gb-paragraph"><b>fb_realpath(): Addresses CAN-2003-0466</b>, a potential vulnerability in the fb_realpath() function, which could allow a local or remote user to gain unauthorized root privileges to a system.</p></li>
+                <li role="listitem" class="gb-list_item"><p class="gb-paragraph"><b>Workgroup Manager: Fixes CAN-2003-0601</b> to improve the security of your system by assigning a &quot;disabled&quot; password to a new account.</p></li>
+            </ul>
+        </div>
+    </div>
+</div>
+</body>
+</html>

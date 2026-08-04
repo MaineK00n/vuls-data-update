@@ -23,12 +23,9 @@
 					"description": "iTunes supports several common playlist formats. iTunes 4.7.1 fixes a buffer overflow in the parsing of m3u and pls playlist files.",
 					"ids": [
 						"CVE-ID: CAN-2005-0043"
-					]
-				},
-				{
-					"component": "Security Update 2003-08-14",
+					],
 					"others": [
-						"fb_realpath(): Addresses CAN-2003-0466, a potential vulnerability in the fb_realpath() function, which could allow a local or remote user to gain unauthorized root privileges to a system."
+						"For information about earlier security updates, see \"Apple security updates (August, 2003 and earlier)\"."
 					]
 				}
 			]

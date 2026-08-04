@@ -25,6 +25,18 @@ func TestFetch(t *testing.T) {
 		{
 			name: "happy",
 		},
+		{
+			name:     "unexpected_notfound",
+			hasError: true,
+		},
+		{
+			name:     "unexpected_host",
+			hasError: true,
+		},
+		{
+			name:     "unexpected_empty_list",
+			hasError: true,
+		},
 	}
 
 	for _, tt := range tests {
@@ -54,6 +66,7 @@ func TestFetch(t *testing.T) {
 				t.Error("unexpected error:", err)
 			case err == nil && tt.hasError:
 				t.Error("expected error has not occurred")
+			case err != nil && tt.hasError:
 			default:
 				if err := filepath.WalkDir(dir, func(p string, d fs.DirEntry, err error) error {
 					if err != nil {
