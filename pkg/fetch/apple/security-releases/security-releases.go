@@ -286,7 +286,7 @@ func (opts options) fetchAdvisories(client *utilhttp.Client, advisories map[stri
 			if !removableArticleIDPattern.MatchString(articleID(originalURL(resp))) {
 				return errors.Errorf("unexpected not found response. only articles matching %q are known to be removed upstream. URL: %s", removableArticleIDPattern, originalURL(resp))
 			}
-			slog.Warn("skip advisory removed upstream", slog.String("url", originalURL(resp).String()))
+			// removed upstream; the release row referencing it is still recorded in the list
 			return nil
 		default:
 			_, _ = io.Copy(io.Discard, resp.Body)
