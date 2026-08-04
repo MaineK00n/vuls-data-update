@@ -112,10 +112,15 @@ func supplementCriterions(id string) ([]criterionTypes.Criterion, error) {
 					return nil, errors.Wrapf(err, "unexpected range bound %q for %q in supplement entry %q", b, row.Product, id)
 				}
 			}
-			// A lower bound above the upper bound (a transcription slip like
-			// the legacy dataset's "ge 4.4.0, le 4.3.1") makes the criterion
-			// unsatisfiable — a silent detection false negative — so reject
-			// the row instead of emitting it.
+			// A lower bound above the upper bound makes the criterion
+			// unsatisfiable — a silent detection false negative. The source
+			// data really carried such rows (the legacy dataset had
+			// "ge 4.4.0, le 4.3.1"); the generator rejects them at
+			// table-generation time, so this check guards the other editing
+			// path: supplement_data.go is maintained as ordinary source, and
+			// TestSupplementCriterions walks the whole table through here,
+			// turning a bad hand edit into a test failure instead of a
+			// criterion that never matches.
 			if lo, hi := cmp.Or(r.GreaterEqual, r.GreaterThan), cmp.Or(r.LessEqual, r.LessThan); lo != "" && hi != "" {
 				vlo, err := numericVersion.NewVersion(lo)
 				if err != nil {
