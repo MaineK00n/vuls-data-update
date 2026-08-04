@@ -28,19 +28,15 @@ const baseURL = "https://support.apple.com/en-us/100100"
 // advisory content directly instead of listing links to per-release pages.
 // They are parsed as advisories; any other page yielding no releases is an
 // error.
-var inlineAdvisoryPageIDs = map[string]struct{}{
-	"101682": {}, // Apple security updates (03 Oct 2003 to 11 Jan 2005)
-	"104191": {}, // Apple security updates (August 2003 and earlier)
+var inlineAdvisoryPageIDs = []string{
+	"101682", // Apple security updates (03 Oct 2003 to 11 Jan 2005)
+	"104191", // Apple security updates (August 2003 and earlier)
 }
 
 // retiredHosts are the hosts that links on pre-2011 archive pages are known
 // to point at but that no longer serve content. Links to them are skipped;
 // links to any other unexpected host are an error.
-var retiredHosts = map[string]struct{}{
-	"docs.info.apple.com": {},
-	"www.info.apple.com":  {},
-	"info.apple.com":      {},
-}
+var retiredHosts = []string{"docs.info.apple.com", "www.info.apple.com", "info.apple.com"}
 
 // removableArticleIDPattern matches the legacy article ID forms (4-digit HT
 // and 5-digit TA numbers, all pre-2011 releases) that are known to have been
@@ -194,7 +190,7 @@ func (opts options) fetchLists(client *utilhttp.Client, root *url.URL) (map[stri
 			}
 
 			if len(list.Releases) == 0 {
-				if _, ok := inlineAdvisoryPageIDs[list.ID]; !ok {
+				if !slices.Contains(inlineAdvisoryPageIDs, list.ID) {
 					return nil, nil, nil, errors.Errorf("no releases found in list page. URL: %s", u)
 				}
 				advisory, err := parseAdvisory(doc, list.ID, u.String())
@@ -224,7 +220,7 @@ func (opts options) fetchLists(client *utilhttp.Client, root *url.URL) (map[stri
 					return nil, errors.Wrapf(err, "parse release link %s. list: %s", r.URL, list.ID)
 				}
 				if ru.Host != root.Host {
-					if _, ok := retiredHosts[ru.Host]; !ok {
+					if !slices.Contains(retiredHosts, ru.Host) {
 						return nil, errors.Errorf("unexpected release link host. expected: %q, actual: %q. URL: %s", root.Host, ru.Host, r.URL)
 					}
 					slog.Warn("skip release link to retired host", slog.String("url", r.URL), slog.String("list", list.ID))
@@ -443,7 +439,7 @@ func parseList(doc *goquery.Document, id string, pageURL, root *url.URL) (*List,
 			return nil, nil, errors.Wrapf(err, "parse archive link %s. list: %s", href, id)
 		}
 		if u.Host != root.Host {
-			if _, ok := retiredHosts[u.Host]; !ok {
+			if !slices.Contains(retiredHosts, u.Host) {
 				return nil, nil, errors.Errorf("unexpected archive link host. expected: %q, actual: %q. URL: %s", root.Host, u.Host, u)
 			}
 			// nav links to the retired info.apple.com on pre-2011 pages
