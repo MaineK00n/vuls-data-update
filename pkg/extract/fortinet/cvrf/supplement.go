@@ -26,6 +26,17 @@ import (
 // Fortinet populates product_statuses (and publishes CSAF) — so the table is
 // a frozen asset, not a maintained feed (mirroring how microsoft/bulletin
 // compiles its frozen archive amendments in).
+//
+// Known imprecision (deliberate, matching the Known Affected path): rows are
+// advisory-granular, so for a multi-CVE advisory whose note scopes products
+// per CVE (seven entries: FG-IR-15-008, -16-026, -17-104, -17-127, -17-196,
+// -19-007, -19-238 — e.g. FG-IR-16-026 says "FortiAP is not affected" by
+// CVE-2016-2108 while other CVEs do affect it), a hit correctly reports the
+// advisory but attributes all of its CVEs to the matched product. Splitting
+// those seven into per-CVE tagged conditions (the shape the CSAF extractor
+// emits) is a possible follow-up; it would make this table's granularity
+// diverge from the product_statuses path, which Fortinet's own data keeps
+// advisory-level.
 
 // supplementRange mirrors cpecriterion/range bounds; the range type is not in
 // the data — it is the per-product type from the product table.
