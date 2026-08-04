@@ -1,0 +1,31 @@
+{
+	"id": "HT204426",
+	"url": "https://support.apple.com/en-us/HT204426",
+	"sections": [
+		{
+			"name": "AppleTV 7.1",
+			"entries": [
+				{
+					"notes": [
+						"Released March 9, 2015"
+					]
+				},
+				{
+					"component": "Security",
+					"available_for": [
+						"Apple TV 3rd generation and later"
+					],
+					"impact": [
+						"An attacker with a privileged network position may be able to intercept SSL/TLS connections"
+					],
+					"description": [
+						"Secure Transport accepted short ephemeral RSA keys. This issue was addressed by removing support for ephemeral RSA keys."
+					],
+					"ids": [
+						"CVE-2015-1067: an anonymous researcher"
+					]
+				}
+			]
+		}
+	]
+}

@@ -24,6 +24,11 @@
 			"text": "- AirPort Extreme, AirPort Express, Time Capsule - 09 Dec 2010"
 		},
 		{
+			"name": "AppleTV 7.1",
+			"url": "https://support.apple.com/kb/HT204426",
+			"text": "- Apple TV 3rd generation and later - 09 Mar 2015"
+		},
+		{
 			"name": "The Software Update preference"
 		}
 	]
