@@ -1,0 +1,40 @@
+{
+	"branch": "jk",
+	"properties": {
+		"author": "Apache Tomcat Project",
+		"title": "Apache Tomcat JK Connectors vulnerabilities"
+	},
+	"sections": [
+		{
+			"name": "Apache Tomcat JK Connectors vulnerabilities",
+			"blocks": [
+				{
+					"tag": "p",
+					"xml": "This page lists all security vulnerabilities fixed in released versions\n       of the Apache Tomcat JK Connectors."
+				}
+			]
+		},
+		{
+			"name": "Fixed in Apache Tomcat JK Connector 1.2.50",
+			"rtext": "2024-09-30",
+			"blocks": [
+				{
+					"tag": "p",
+					"xml": "<strong>Low: Incorrect default permissions</strong>\n       <cve>CVE-2024-46544</cve>"
+				},
+				{
+					"tag": "p",
+					"xml": "Incorrect default permissions for the memory mapped file configured by\n       the <code>JkShmFile</code> directive on Unix like systems."
+				},
+				{
+					"tag": "p",
+					"xml": "This was fixed with commit\n       <connectorshashlink hash=\"d55706e92b65018c2e4c7ab14014a996b0174966\"/>."
+				},
+				{
+					"tag": "p",
+					"xml": "Affects: JK 1.2.0-1.2.49 (mod_jk on Unix like platforms only)"
+				}
+			]
+		}
+	]
+}

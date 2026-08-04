@@ -1,0 +1,141 @@
+{
+	"branch": "11",
+	"properties": {
+		"author": "Apache Tomcat Project",
+		"title": "Apache Tomcat 11 vulnerabilities"
+	},
+	"sections": [
+		{
+			"name": "Apache Tomcat 11.x vulnerabilities",
+			"blocks": [
+				{
+					"tag": "p",
+					"xml": "This page lists all security vulnerabilities fixed in released versions\n       of Apache Tomcat<sup>&#174;</sup> 11.x."
+				},
+				{
+					"tag": "p",
+					"xml": "<strong>Note:</strong> Vulnerabilities that are not Tomcat vulnerabilities\n       but have either been incorrectly reported against Tomcat or where Tomcat\n       provides a workaround are listed at the end of this page."
+				}
+			]
+		},
+		{
+			"name": "Table of Contents",
+			"blocks": [
+				{
+					"tag": "toc"
+				}
+			]
+		},
+		{
+			"name": "Fixed in Apache Tomcat 11.0.25",
+			"rtext": "not yet released",
+			"blocks": [
+				{
+					"tag": "p",
+					"xml": "<strong>Low: DoS in WebSocket chat example</strong>\n       <cve>CVE-2026-66299</cve>"
+				},
+				{
+					"tag": "p",
+					"xml": "The WebSocket chat example provided an unbounded buffer for undelivered\n       messages."
+				},
+				{
+					"tag": "p",
+					"xml": "This was fixed with commit\n       <hashlink hash=\"4e8e3f8964e9653bab427bf794e026c69ee80f2b\"/>."
+				},
+				{
+					"tag": "p",
+					"xml": "Affects: 11.0.0-M20 to 11.0.24<br/>\n       Users who followed the security guidance to remove the examples web\n       application are not affected."
+				}
+			]
+		},
+		{
+			"name": "Fixed in Apache Tomcat 11.0.21",
+			"rtext": "2026-05-13",
+			"blocks": [
+				{
+					"tag": "p",
+					"xml": "<strong>Note: The issue below was fixed in Apache Tomcat 11.0.20 but the\n       release vote for the 11.0.20 release candidate did not pass.</strong>"
+				},
+				{
+					"tag": "p",
+					"xml": "<strong>Important: The fix for <cve>CVE-2026-29146</cve> allowed the\n       bypass of the EncryptInterceptor</strong>\n       <cve>CVE-2026-34486</cve>"
+				},
+				{
+					"tag": "p",
+					"xml": "An error in the fix for <cve>CVE-2026-29146</cve> allowed the\n       EncryptInterceptor to be bypassed."
+				},
+				{
+					"tag": "p",
+					"xml": "This was fixed in revision <revlink rev=\"1840057\">1840057</revlink> and\n       reported as bug <bug>69420</bug>."
+				},
+				{
+					"tag": "p",
+					"xml": "Affects: 11.0.0-M1 to 11.0.20"
+				},
+				{
+					"tag": "p",
+					"xml": "<strong>Important: Remote Code Execution via session persistence</strong>\n       <cve>CVE-2026-11111</cve>,\n       <cve>CVE-2026-22222</cve>"
+				},
+				{
+					"tag": "p",
+					"xml": "If:"
+				},
+				{
+					"tag": "ul",
+					"xml": "\n      <li>an attacker is able to control the contents of a file; and</li>\n      <li>the server is configured to use the PersistenceManager</li>\n    "
+				},
+				{
+					"tag": "p",
+					"xml": "then remote code execution is possible. See the\n       <a href=\"https://lists.apache.org/thread/example\">announcement</a>."
+				},
+				{
+					"tag": "o",
+					"xml": "Applications that do not use non-blocking I/O are not exposed to this\n       vulnerability."
+				},
+				{
+					"tag": "p",
+					"xml": "Affects: 11.0.0-M1 to 11.0.20"
+				}
+			]
+		},
+		{
+			"name": "Fixed in Apache Tomcat 11.0.12",
+			"rtext": "released 18 Aug 2025",
+			"blocks": [
+				{
+					"tag": "p",
+					"xml": "<strong>Moderate: Multiple weaknesses in HTTP DIGEST authentication</strong>\n       <a href=\"http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2026-1184\"\n       rel=\"nofollow\">CVE-2026-1184</a>"
+				},
+				{
+					"tag": "p",
+					"xml": "Several weaknesses were identified."
+				},
+				{
+					"tag": "p",
+					"xml": "Affects: 11.0.0-M1 to 11.0.11"
+				},
+				{
+					"tag": "p",
+					"xml": "<strong>JavaMail information disclosure</strong>\n       <cve>CVE-2026-33333</cve>"
+				},
+				{
+					"tag": "p",
+					"xml": "An entry whose header carries no severity rating."
+				}
+			]
+		},
+		{
+			"name": "Not a vulnerability in Tomcat",
+			"blocks": [
+				{
+					"tag": "p",
+					"xml": "<strong>Critical: Remote Code Execution via log4j</strong>\n       <cve>CVE-2021-44228</cve>"
+				},
+				{
+					"tag": "p",
+					"xml": "Apache Tomcat does not ship with log4j. This is not a vulnerability in\n       Apache Tomcat."
+				}
+			]
+		}
+	]
+}
