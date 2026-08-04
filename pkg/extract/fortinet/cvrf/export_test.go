@@ -36,3 +36,11 @@ func SupplementIDs() []string {
 	}
 	return ids
 }
+
+// SupplementTable exposes the table for the whole-product guard test, which
+// injects (and removes) a synthetic unaudited row.
+var SupplementTable = supplementTable
+
+// SupplementProduct aliases the unexported supplementProduct for the guard
+// test's synthetic row.
+type SupplementProduct = supplementProduct

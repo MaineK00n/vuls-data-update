@@ -233,3 +233,15 @@ func TestExtractCVEEntries(t *testing.T) {
 		})
 	}
 }
+
+// A row with no version constraint matches every version of its product, so
+// only pairs audited into wholeProductAudited may emit one; a hand edit that
+// accidentally drops a row's constraints must fail instead of silently
+// widening detection to the whole product.
+func TestSupplementWholeProductGuard(t *testing.T) {
+	cvrf.SupplementTable["FG-IR-99-998"] = []cvrf.SupplementProduct{{Product: "FortiOS"}}
+	defer delete(cvrf.SupplementTable, "FG-IR-99-998")
+	if _, err := cvrf.SupplementCriterions("FG-IR-99-998"); err == nil {
+		t.Error("SupplementCriterions() with an unaudited whole-product row: expected error, got nil")
+	}
+}

@@ -48,6 +48,34 @@ type supplementProduct struct {
 	Ranges   []supplementRange
 }
 
+// advisoryProduct keys the whole-product allowlist below.
+type advisoryProduct struct {
+	advisory, product string
+}
+
+// wholeProductAudited is the closed set of supplement rows allowed to emit a
+// whole-product criterion (no version constraint — it matches every version
+// of the product, the largest false-positive surface in the table). Each pair
+// was audited individually against the advisory text and CVE/NVD records; the
+// verdict is on the row in supplement_data.go. A row with no versions and no
+// ranges outside this list fails the extract, so a hand edit that drops a
+// row's constraints by accident cannot silently widen detection to the whole
+// product — extend this list only with a fresh audit.
+var wholeProductAudited = map[advisoryProduct]struct{}{
+	{"FG-IR-14-010", "FortiBalancer"}:      {},
+	{"FG-IR-14-031", "FortiADC"}:           {},
+	{"FG-IR-14-031", "FortiClientWindows"}: {},
+	{"FG-IR-14-031", "FortiDB"}:            {},
+	{"FG-IR-14-031", "FortiMail"}:          {},
+	{"FG-IR-14-031", "FortiOS"}:            {},
+	{"FG-IR-14-031", "FortiRecorder"}:      {},
+	{"FG-IR-14-031", "FortiSwitch"}:        {},
+	{"FG-IR-14-031", "FortiVoice"}:         {},
+	{"FG-IR-15-007", "FortiMail"}:          {},
+	{"FG-IR-16-041", "FortiClientSSLVPN"}:  {},
+	{"FG-IR-16-069", "FortiClientSSLVPN"}:  {},
+}
+
 // supplementCriterions builds the detection criterions for an advisory from
 // the supplement table, or nil when the advisory has no entry.
 // Exact versions become CPEMatches on a wildcard-version product CPE (the
@@ -150,7 +178,12 @@ func supplementCriterions(id string) ([]criterionTypes.Criterion, error) {
 		}
 
 		if len(row.Versions) == 0 && len(row.Ranges) == 0 {
-			// Whole product: the wildcard-version CPE with no narrowing.
+			// Whole product: the wildcard-version CPE with no narrowing —
+			// only the audited pairs may take this branch (see
+			// wholeProductAudited).
+			if _, ok := wholeProductAudited[advisoryProduct{advisory: id, product: row.Product}]; !ok {
+				return nil, errors.Errorf("unaudited whole-product row for %q in supplement entry %q (add versions or ranges, or audit it into wholeProductAudited)", row.Product, id)
+			}
 			criterions = append(criterions, criterionTypes.Criterion{
 				Type: criterionTypes.CriterionTypeCPE,
 				CPE: &ccTypes.Criterion{
