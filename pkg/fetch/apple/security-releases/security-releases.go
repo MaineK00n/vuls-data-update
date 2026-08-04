@@ -206,7 +206,13 @@ func (opts options) fetchLists(client *utilhttp.Client, root *url.URL) (map[stri
 				}
 				advisory, err := parseAdvisory(doc, list.ID, u.String())
 				if err != nil {
-					return nil, nil, nil, errors.Wrapf(err, "parse advisory. URL: %s", u)
+					// pages are occasionally served in a degraded rendering,
+					// e.g. without the <h1> title; retry before treating it
+					// as a real format change
+					advisory, err = opts.retryAdvisory(client, u, err)
+					if err != nil {
+						return nil, nil, nil, errors.Wrapf(err, "parse advisory. URL: %s", u)
+					}
 				}
 				return nil, advisory, archives, nil
 			}
@@ -301,7 +307,13 @@ func (opts options) fetchAdvisories(client *utilhttp.Client, advisories map[stri
 		id := articleID(originalURL(resp))
 		advisory, err := parseAdvisory(doc, id, resp.Request.URL.String())
 		if err != nil {
-			return errors.Wrapf(err, "parse advisory. URL: %s", originalURL(resp))
+			// pages are occasionally served in a degraded rendering, e.g.
+			// without the <h1> title; retry before treating it as a real
+			// format change
+			advisory, err = opts.retryAdvisory(client, originalURL(resp), err)
+			if err != nil {
+				return errors.Wrapf(err, "parse advisory. URL: %s", originalURL(resp))
+			}
 		}
 
 		if err := util.Write(filepath.Join(opts.dir, "advisories", fmt.Sprintf("%s.json", id)), advisory); err != nil {
@@ -309,6 +321,41 @@ func (opts options) fetchAdvisories(client *utilhttp.Client, advisories map[stri
 		}
 		return nil
 	})
+}
+
+// retryAdvisory re-fetches and re-parses an advisory page up to opts.retry
+// times after initial failed with err, for transient degraded renderings that
+// the HTTP-level retry cannot catch. It returns the last error if all
+// attempts fail.
+func (opts options) retryAdvisory(client *utilhttp.Client, u *url.URL, err error) (*Advisory, error) {
+	var advisory *Advisory
+	for range opts.retry {
+		time.Sleep(opts.wait)
+
+		advisory, err = func() (*Advisory, error) {
+			resp, err := client.Get(u.String())
+			if err != nil {
+				return nil, errors.Wrapf(err, "get %s", u)
+			}
+			defer resp.Body.Close()
+
+			if resp.StatusCode != http.StatusOK {
+				_, _ = io.Copy(io.Discard, resp.Body)
+				return nil, errors.Errorf("error response with status code %d", resp.StatusCode)
+			}
+
+			doc, err := goquery.NewDocumentFromReader(resp.Body)
+			if err != nil {
+				return nil, errors.Wrap(err, "parse html")
+			}
+
+			return parseAdvisory(doc, articleID(u), resp.Request.URL.String())
+		}()
+		if err == nil {
+			return advisory, nil
+		}
+	}
+	return nil, err
 }
 
 // articleID returns the support article ID of a page URL,

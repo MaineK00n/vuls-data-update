@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head><title>About the security content of macOS Tahoe 26.8 - Apple Support</title></head>
+<body>
+<div class="main section viewport-content" role="main" id="content">
+    <div id="sections">
+        <div class="alignment">
+            <h1 class="gb-header">About the security content of macOS Tahoe 26.8</h1>
+        </div>
+        <div class="alignment">
+            <h2 class="gb-header">macOS Tahoe 26.8</h2>
+        </div>
+        <div class="alignment">
+            <div class="note gb-note"><p class="gb-paragraph">Released October 1, 2026</p></div>
+        </div>
+        <div class="alignment">
+            <h3 class="gb-header">Kernel</h3>
+        </div>
+        <div class="alignment">
+            <p class="gb-paragraph">Available for: macOS Tahoe</p>
+        </div>
+        <div class="alignment">
+            <p class="gb-paragraph">Impact: An app may be able to execute arbitrary code with kernel privileges</p>
+        </div>
+        <div class="alignment">
+            <p class="gb-paragraph">Description: A memory corruption issue was addressed with improved validation.</p>
+        </div>
+        <div class="alignment">
+            <p class="gb-paragraph">CVE-2026-50001: an anonymous researcher</p>
+        </div>
+    </div>
+</div>
+</body>
+</html>
