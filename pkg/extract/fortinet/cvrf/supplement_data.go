@@ -320,7 +320,7 @@ var supplementTable = map[string][]supplementProduct{
 		{Product: "FortiSandbox", Versions: []string{"1.1.0", "1.3.0"}, Ranges: []supplementRange{{GreaterEqual: "1.2.0", LessEqual: "1.2.3"}, {GreaterEqual: "1.4.0", LessEqual: "1.4.3"}, {GreaterEqual: "2.0.0", LessEqual: "2.0.3"}, {GreaterEqual: "2.1.0", LessEqual: "2.1.3"}, {GreaterEqual: "2.2.0", LessEqual: "2.2.2"}, {GreaterEqual: "2.3.0", LessEqual: "2.3.2"}}},
 		{Product: "FortiSwitch", Ranges: []supplementRange{{LessEqual: "3.5.0"}}},
 		{Product: "FortiTester", Versions: []string{"2.3.0", "2.5.0", "2.6.0", "2.7.0"}, Ranges: []supplementRange{{GreaterEqual: "2.4.0", LessEqual: "2.4.1"}}},
-		{Product: "FortiTokenAndroid", Versions: []string{"3.0.5"}},
+		{Product: "FortiTokenIOS", Versions: []string{"3.0.5"}},
 		{Product: "FortiVoice", Versions: []string{"5.0.5", "5.3.3"}},
 		{Product: "FortiWAN", Ranges: []supplementRange{{GreaterEqual: "0.4.10", LessEqual: "0.4.24"}, {GreaterEqual: "4.0.0", LessEqual: "4.0.6"}, {GreaterEqual: "4.1.1", LessEqual: "4.1.3"}, {GreaterEqual: "4.2.1", LessEqual: "4.2.5"}}},
 		{Product: "FortiWeb", Versions: []string{"3.0.0", "4.0.2", "5.6.0"}, Ranges: []supplementRange{{GreaterEqual: "4.1.0", LessEqual: "4.1.2"}, {GreaterEqual: "4.2.0", LessEqual: "4.2.4"}, {GreaterEqual: "4.3.1", LessEqual: "4.3.7"}, {GreaterEqual: "4.4.0", LessEqual: "4.4.7"}, {GreaterEqual: "5.0.0", LessEqual: "5.0.6"}, {GreaterEqual: "5.1.0", LessEqual: "5.1.4"}, {GreaterEqual: "5.2.0", LessEqual: "5.2.4"}, {GreaterEqual: "5.3.0", LessEqual: "5.3.9"}, {GreaterEqual: "5.4.0", LessEqual: "5.4.1"}, {GreaterEqual: "5.5.0", LessEqual: "5.5.7"}}},
@@ -830,8 +830,8 @@ var supplementTable = map[string][]supplementProduct{
 		{Product: "FortiADC", Versions: []string{"6.0.0"}, Ranges: []supplementRange{{LessEqual: "5.4.3"}}},
 	},
 	"FG-IR-20-045": {
-		{Product: "FortiMail", Versions: []string{"5.4.10", "6.0.7"}, Ranges: []supplementRange{{LessEqual: "6.2.2"}}},
-		{Product: "FortiVoice", Versions: []string{"6.0.0", "6.0.1"}},
+		{Product: "FortiMail", Ranges: []supplementRange{{GreaterEqual: "5.4.0", LessEqual: "5.4.10"}, {GreaterEqual: "6.0.0", LessEqual: "6.0.7"}, {GreaterEqual: "6.2.0", LessEqual: "6.2.2"}}},
+		{Product: "FortiVoice", Ranges: []supplementRange{{GreaterEqual: "5.4.0", LessThan: "5.5"}, {GreaterEqual: "6.0.0", LessEqual: "6.0.1"}}},
 	},
 	"FG-IR-20-049": {
 		{Product: "FortiAuthenticator", Ranges: []supplementRange{{LessThan: "6.3.0"}}},

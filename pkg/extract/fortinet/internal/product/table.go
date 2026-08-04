@@ -33,29 +33,29 @@ type productInfo struct {
 }
 
 var nameToProduct = map[string]productInfo{
-	"AV Engine":                            {cpe: "cpe:2.3:a:fortinet:antivirus_engine:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetAntivirusEngine, twoComponentVersions: true},
-	"AscenLink":                            {cpe: "cpe:2.3:o:fortinet:ascenlink:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetAscenLink},
-	"Connect":                              {cpe: "cpe:2.3:a:fortinet:connect:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetConnect},
-	"FSSO":                                 {cpe: "cpe:2.3:a:fortinet:fortinet_single_sign-on:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFSSO},
-	"FSSO CA":                              {cpe: "cpe:2.3:a:fortinet:fsso_ca:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFSSOCA},
-	"FortiADC":                             {cpe: "cpe:2.3:o:fortinet:fortiadc:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiADC},
-	"FortiADCManager":                      {cpe: "cpe:2.3:a:fortinet:fortiadc_manager:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiADCManager},
-	"FortiAIOps":                           {cpe: "cpe:2.3:a:fortinet:fortiaiops:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiAIOps},
-	"FortiAP":                              {cpe: "cpe:2.3:o:fortinet:fortiap:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiAP},
-	"FortiAP-C":                            {cpe: "cpe:2.3:o:fortinet:fortiap-c:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiAPC},
-	"FortiAP-S":                            {cpe: "cpe:2.3:o:fortinet:fortiap-s:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiAPS},
-	"FortiAP-U":                            {cpe: "cpe:2.3:o:fortinet:fortiap-u:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiAPU},
-	"FortiAP-W2":                           {cpe: "cpe:2.3:o:fortinet:fortiap-w2:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiAPW2},
-	"FortiAnalyzer":                        {cpe: "cpe:2.3:o:fortinet:fortianalyzer:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiAnalyzer},
-	"FortiAnalyzer Cloud":                  {cpe: "cpe:2.3:a:fortinet:fortianalyzer_cloud:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiAnalyzerCloud},
-	"FortiAnalyzer-BigData":                {cpe: "cpe:2.3:o:fortinet:fortianalyzer-bigdata:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiAnalyzerBigData},
-	"FortiAuthenticator":                   {cpe: "cpe:2.3:o:fortinet:fortiauthenticator:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiAuthenticator},
-	"FortiAuthenticator OutlookAgent":      {cpe: "cpe:2.3:a:fortinet:fortiauthenticator:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiAuthenticator, twoComponentVersions: true},
-	"FortiBalancer":                        {cpe: "cpe:2.3:o:fortinet:fortibalancer:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiBalancer},
-	"FortiCASB":                            {cpe: "cpe:2.3:a:fortinet:forticasb:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiCASB},
-	"FortiCache":                           {cpe: "cpe:2.3:o:fortinet:forticache:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiCache},
-	"FortiCamera":                          {cpe: "cpe:2.3:o:fortinet:forticamera:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiCamera},
-	"FortiClient Lite":                     {cpe: "cpe:2.3:a:fortinet:forticlient_lite:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiClientLite},
+	"AV Engine":                       {cpe: "cpe:2.3:a:fortinet:antivirus_engine:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetAntivirusEngine, twoComponentVersions: true},
+	"AscenLink":                       {cpe: "cpe:2.3:o:fortinet:ascenlink:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetAscenLink},
+	"Connect":                         {cpe: "cpe:2.3:a:fortinet:connect:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetConnect},
+	"FSSO":                            {cpe: "cpe:2.3:a:fortinet:fortinet_single_sign-on:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFSSO},
+	"FSSO CA":                         {cpe: "cpe:2.3:a:fortinet:fsso_ca:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFSSOCA},
+	"FortiADC":                        {cpe: "cpe:2.3:o:fortinet:fortiadc:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiADC},
+	"FortiADCManager":                 {cpe: "cpe:2.3:a:fortinet:fortiadc_manager:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiADCManager},
+	"FortiAIOps":                      {cpe: "cpe:2.3:a:fortinet:fortiaiops:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiAIOps},
+	"FortiAP":                         {cpe: "cpe:2.3:o:fortinet:fortiap:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiAP},
+	"FortiAP-C":                       {cpe: "cpe:2.3:o:fortinet:fortiap-c:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiAPC},
+	"FortiAP-S":                       {cpe: "cpe:2.3:o:fortinet:fortiap-s:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiAPS},
+	"FortiAP-U":                       {cpe: "cpe:2.3:o:fortinet:fortiap-u:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiAPU},
+	"FortiAP-W2":                      {cpe: "cpe:2.3:o:fortinet:fortiap-w2:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiAPW2},
+	"FortiAnalyzer":                   {cpe: "cpe:2.3:o:fortinet:fortianalyzer:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiAnalyzer},
+	"FortiAnalyzer Cloud":             {cpe: "cpe:2.3:a:fortinet:fortianalyzer_cloud:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiAnalyzerCloud},
+	"FortiAnalyzer-BigData":           {cpe: "cpe:2.3:o:fortinet:fortianalyzer-bigdata:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiAnalyzerBigData},
+	"FortiAuthenticator":              {cpe: "cpe:2.3:o:fortinet:fortiauthenticator:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiAuthenticator},
+	"FortiAuthenticator OutlookAgent": {cpe: "cpe:2.3:a:fortinet:fortiauthenticator:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiAuthenticator, twoComponentVersions: true},
+	"FortiBalancer":                   {cpe: "cpe:2.3:o:fortinet:fortibalancer:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiBalancer},
+	"FortiCASB":                       {cpe: "cpe:2.3:a:fortinet:forticasb:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiCASB},
+	"FortiCache":                      {cpe: "cpe:2.3:o:fortinet:forticache:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiCache},
+	"FortiCamera":                     {cpe: "cpe:2.3:o:fortinet:forticamera:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiCamera},
+	"FortiClient Lite":                {cpe: "cpe:2.3:a:fortinet:forticlient_lite:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiClientLite},
 	// The FortiClient platform variants (Windows/Mac/Linux/iOS/Android) share
 	// one CPE on purpose: neither the NVD dictionary nor the legacy handmade
 	// dataset gives them distinct product slugs — both express the platform
@@ -68,7 +68,9 @@ var nameToProduct = map[string]productInfo{
 	// paths and their goldens as well. The cost of the wildcard is bounded:
 	// when an advisory's platforms carry different ranges (e.g.
 	// FG-IR-22-059), the OR across that advisory's rows over-matches the
-	// narrower platforms by the difference.
+	// narrower platforms by the difference. The same reasoning covers the
+	// other shared-CPE families below (FortiToken Mobile's Android/iOS/WP
+	// names, FortiSOAR PaaS/on-premise, FortiAuthenticator/OutlookAgent).
 	"FortiClientAndroid":                   {cpe: "cpe:2.3:a:fortinet:forticlient:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiClient},
 	"FortiClientEMS":                       {cpe: "cpe:2.3:a:fortinet:forticlient_enterprise_management_server:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiClientEnterpriseManagementServer},
 	"FortiClientEMS Cloud":                 {cpe: "cpe:2.3:a:fortinet:forticlient_enterprise_management_server_cloud:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiClientEnterpriseManagementServerCloud},
