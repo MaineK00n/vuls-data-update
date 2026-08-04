@@ -155,11 +155,15 @@ func Fetch(opts ...Option) error {
 // advisories/<id>.json directly.
 func (opts options) fetchLists(client *utilhttp.Client, root *url.URL) (map[string]*url.URL, error) {
 	queue := []*url.URL{root}
-	visited := map[string]struct{}{articleID(root): {}}
+	processed := make(map[string]struct{})
 	advisories := make(map[string]*url.URL)
 	for len(queue) > 0 {
 		u := queue[0]
 		queue = queue[1:]
+
+		if _, ok := processed[articleID(u)]; ok {
+			continue
+		}
 
 		slog.Info("Fetch security releases list", slog.String("url", u.String()))
 		list, advisory, archives, err := func() (*List, *Advisory, []*url.URL, error) {
@@ -174,14 +178,17 @@ func (opts options) fetchLists(client *utilhttp.Client, root *url.URL) (map[stri
 				return nil, nil, nil, errors.Errorf("error response with status code %d", resp.StatusCode)
 			}
 
-			if id := articleID(resp.Request.URL); id != articleID(u) {
-				// redirected to an already visited page, e.g. legacy hub articles pointing to the current index
-				if _, ok := visited[id]; ok {
-					_, _ = io.Copy(io.Discard, resp.Body)
-					return nil, nil, nil, nil
-				}
-				visited[id] = struct{}{}
+			// mark both the requested and the redirected-to article as
+			// processed, so that aliases are handled only once, e.g. the
+			// legacy hub article kb/HT201222 linked from older lists
+			// redirects to the current index en-us/100100
+			if _, ok := processed[articleID(resp.Request.URL)]; ok {
+				_, _ = io.Copy(io.Discard, resp.Body)
+				processed[articleID(u)] = struct{}{}
+				return nil, nil, nil, nil
 			}
+			processed[articleID(u)] = struct{}{}
+			processed[articleID(resp.Request.URL)] = struct{}{}
 
 			doc, err := goquery.NewDocumentFromReader(resp.Body)
 			if err != nil {
@@ -207,7 +214,7 @@ func (opts options) fetchLists(client *utilhttp.Client, root *url.URL) (map[stri
 			return list, nil, archives, nil
 		}()
 		if err != nil {
-			return nil, err
+			return nil, errors.Wrapf(err, "fetch list %s", u)
 		}
 
 		if list != nil {
@@ -227,11 +234,11 @@ func (opts options) fetchLists(client *utilhttp.Client, root *url.URL) (map[stri
 					if !slices.Contains(retiredHosts, ru.Host) {
 						return nil, errors.Errorf("unexpected release link host. expected: %q, actual: %q. URL: %s", root.Host, ru.Host, r.URL)
 					}
-					slog.Warn("skip release link to retired host", slog.String("url", r.URL), slog.String("list", list.ID))
+					// nothing to fetch; the link is still recorded in the list
 					continue
 				}
+				// pre-2015 lists link http://; fetch https:// directly to avoid a redirect hop
 				ru.Scheme = root.Scheme
-				ru.Fragment = ""
 				if _, ok := advisories[articleID(ru)]; !ok {
 					advisories[articleID(ru)] = ru
 				}
@@ -244,11 +251,12 @@ func (opts options) fetchLists(client *utilhttp.Client, root *url.URL) (map[stri
 			}
 		}
 
+		// the queue may hold the same article more than once; the processed
+		// check at dequeue drops duplicates before fetching
 		for _, a := range archives {
-			if _, ok := visited[articleID(a)]; ok {
+			if _, ok := processed[articleID(a)]; ok {
 				continue
 			}
-			visited[articleID(a)] = struct{}{}
 			queue = append(queue, a)
 		}
 
@@ -449,8 +457,8 @@ func parseList(doc *goquery.Document, id string, pageURL, root *url.URL) (*List,
 			// nav links to the retired info.apple.com on pre-2011 pages
 			continue
 		}
+		// pre-2015 lists link http://; fetch https:// directly to avoid a redirect hop
 		u.Scheme = root.Scheme
-		u.Fragment = ""
 		archives = append(archives, u)
 	}
 
