@@ -682,25 +682,18 @@ func parseAdvisory(doc *goquery.Document, id, pageURL string) (*Advisory, error)
 }
 
 func (e Entry) isEmpty() bool {
-	return e.Component == "" && e.AvailableFor == "" && e.Impact == "" && e.Description == "" && len(e.IDs) == 0 && len(e.Notes) == 0 && len(e.Others) == 0
+	return e.Component == "" && len(e.AvailableFor) == 0 && len(e.Impact) == 0 && len(e.Description) == 0 && len(e.IDs) == 0 && len(e.Notes) == 0 && len(e.Others) == 0
 }
 
 // classify sorts a paragraph into the matching entry field by its label.
 func (e *Entry) classify(t string) {
-	appendField := func(f *string, v string) {
-		if *f == "" {
-			*f = v
-			return
-		}
-		*f += "\n" + v
-	}
 	switch {
 	case strings.HasPrefix(t, "Available for:"):
-		appendField(&e.AvailableFor, strings.TrimSpace(strings.TrimPrefix(t, "Available for:")))
+		e.AvailableFor = append(e.AvailableFor, strings.TrimSpace(strings.TrimPrefix(t, "Available for:")))
 	case strings.HasPrefix(t, "Impact:"):
-		appendField(&e.Impact, strings.TrimSpace(strings.TrimPrefix(t, "Impact:")))
+		e.Impact = append(e.Impact, strings.TrimSpace(strings.TrimPrefix(t, "Impact:")))
 	case strings.HasPrefix(t, "Description:"):
-		appendField(&e.Description, strings.TrimSpace(strings.TrimPrefix(t, "Description:")))
+		e.Description = append(e.Description, strings.TrimSpace(strings.TrimPrefix(t, "Description:")))
 	case strings.HasPrefix(t, "CVE-"), strings.HasPrefix(t, "WebKit Bugzilla"):
 		e.IDs = append(e.IDs, t)
 	default:

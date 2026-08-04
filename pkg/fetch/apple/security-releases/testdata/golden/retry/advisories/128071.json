@@ -13,9 +13,15 @@
 				},
 				{
 					"component": "Kernel",
-					"available_for": "macOS Tahoe",
-					"impact": "An app may be able to execute arbitrary code with kernel privileges",
-					"description": "A memory corruption issue was addressed with improved validation.",
+					"available_for": [
+						"macOS Tahoe"
+					],
+					"impact": [
+						"An app may be able to execute arbitrary code with kernel privileges"
+					],
+					"description": [
+						"A memory corruption issue was addressed with improved validation."
+					],
 					"ids": [
 						"CVE-2026-50001: an anonymous researcher"
 					]

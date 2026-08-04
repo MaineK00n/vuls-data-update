@@ -33,18 +33,30 @@
 				},
 				{
 					"component": "Accounts",
-					"available_for": "macOS Tahoe",
-					"impact": "An app may be able to access sensitive user data",
-					"description": "An access issue was addressed with additional sandbox restrictions.",
+					"available_for": [
+						"macOS Tahoe"
+					],
+					"impact": [
+						"An app may be able to access sensitive user data"
+					],
+					"description": [
+						"An access issue was addressed with additional sandbox restrictions."
+					],
 					"ids": [
 						"CVE-2026-43819: Omar Cerrito"
 					]
 				},
 				{
 					"component": "WebKit",
-					"available_for": "macOS Tahoe",
-					"impact": "Processing maliciously crafted web content may lead to an unexpected Safari crash",
-					"description": "The issue was addressed with improved memory handling.",
+					"available_for": [
+						"macOS Tahoe"
+					],
+					"impact": [
+						"Processing maliciously crafted web content may lead to an unexpected Safari crash"
+					],
+					"description": [
+						"The issue was addressed with improved memory handling."
+					],
 					"ids": [
 						"WebKit Bugzilla: 259231",
 						"CVE-2026-40765: an anonymous researcher"

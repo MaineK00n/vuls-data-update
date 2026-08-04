@@ -23,9 +23,15 @@
 				},
 				{
 					"component": "WebKit",
-					"available_for": "OS X Mavericks v10.9.5, OS X Yosemite v10.10.5, and OS X El Capitan v10.11.2",
-					"impact": "Visiting a maliciously crafted website may lead to arbitrary code execution",
-					"description": "Multiple memory corruption issues existed in WebKit.\nThese issues were addressed through improved memory handling.",
+					"available_for": [
+						"OS X Mavericks v10.9.5, OS X Yosemite v10.10.5, and OS X El Capitan v10.11.2"
+					],
+					"impact": [
+						"Visiting a maliciously crafted website may lead to arbitrary code execution"
+					],
+					"description": [
+						"Multiple memory corruption issues existed in WebKit.\nThese issues were addressed through improved memory handling."
+					],
 					"ids": [
 						"CVE-ID",
 						"CVE-2015-7048 : Apple",
@@ -34,9 +40,15 @@
 				},
 				{
 					"component": "Safari",
-					"available_for": "OS X Mavericks v10.9.5, OS X Yosemite v10.10.5, and OS X El Capitan v10.11.2",
-					"impact": "Visiting a malicious website may lead to user interface spoofing",
-					"description": "An issue existed in Safari's handling of URLs.",
+					"available_for": [
+						"OS X Mavericks v10.9.5, OS X Yosemite v10.10.5, and OS X El Capitan v10.11.2"
+					],
+					"impact": [
+						"Visiting a malicious website may lead to user interface spoofing"
+					],
+					"description": [
+						"An issue existed in Safari's handling of URLs."
+					],
 					"ids": [
 						"CVE-ID",
 						"CVE-2015-7093 : xisigr of Tencent"

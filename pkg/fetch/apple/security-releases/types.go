@@ -40,12 +40,16 @@ type Section struct {
 
 // Entry is a vulnerability entry in a section. Content before the first
 // component heading (e.g. the "Released ..." note) is kept in an entry with an
-// empty component.
+// empty component. Each labeled paragraph is one slice element; some pages
+// repeat the label block under a single component heading (e.g. the AirPort
+// firmware advisories), in which case the elements of AvailableFor, Impact,
+// Description and IDs line up block-wise. Newlines within an element come
+// from <br> in the source.
 type Entry struct {
 	Component    string   `json:"component,omitempty"`
-	AvailableFor string   `json:"available_for,omitempty"`
-	Impact       string   `json:"impact,omitempty"`
-	Description  string   `json:"description,omitempty"`
+	AvailableFor []string `json:"available_for,omitempty"`
+	Impact       []string `json:"impact,omitempty"`
+	Description  []string `json:"description,omitempty"`
 	IDs          []string `json:"ids,omitempty"`
 	Notes        []string `json:"notes,omitempty"`
 	Others       []string `json:"others,omitempty"`

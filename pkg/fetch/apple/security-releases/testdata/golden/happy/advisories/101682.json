@@ -18,9 +18,15 @@
 				},
 				{
 					"component": "iTunes 4.7.1",
-					"available_for": "Mac OS X, Microsoft Windows XP, Microsoft Windows 2000",
-					"impact": "Malicious playlists can cause iTunes to crash and could execute arbitrary code.",
-					"description": "iTunes supports several common playlist formats. iTunes 4.7.1 fixes a buffer overflow in the parsing of m3u and pls playlist files.",
+					"available_for": [
+						"Mac OS X, Microsoft Windows XP, Microsoft Windows 2000"
+					],
+					"impact": [
+						"Malicious playlists can cause iTunes to crash and could execute arbitrary code."
+					],
+					"description": [
+						"iTunes supports several common playlist formats. iTunes 4.7.1 fixes a buffer overflow in the parsing of m3u and pls playlist files."
+					],
 					"ids": [
 						"CVE-ID: CAN-2005-0043"
 					],
