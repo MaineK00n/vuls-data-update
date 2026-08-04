@@ -85,9 +85,12 @@ func TestKnownAffectedCriterionsWhitelist(t *testing.T) {
 	}
 }
 
-// The only product-status type observed across the corpus is "Known Affected";
-// an empty type is a content-only advisory, and any other type must fail loudly
-// rather than silently emit no detection.
+// The only product-status type observed across the corpus is "Known
+// Affected", and it must list products (resolvable in the product tree). An
+// empty type falls back to the supplement table — content-only when the
+// advisory has no entry there. Everything else must fail loudly rather than
+// silently emit no detection: an unexpected type, a typed status listing no
+// products, or products listed without a type.
 func TestExtractStatusType(t *testing.T) {
 	tests := []struct {
 		name       string
