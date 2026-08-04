@@ -56,6 +56,19 @@ var nameToProduct = map[string]productInfo{
 	"FortiCache":                           {cpe: "cpe:2.3:o:fortinet:forticache:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiCache},
 	"FortiCamera":                          {cpe: "cpe:2.3:o:fortinet:forticamera:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiCamera},
 	"FortiClient Lite":                     {cpe: "cpe:2.3:a:fortinet:forticlient_lite:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiClientLite},
+	// The FortiClient platform variants (Windows/Mac/Linux/iOS/Android) share
+	// one CPE on purpose: neither the NVD dictionary nor the legacy handmade
+	// dataset gives them distinct product slugs — both express the platform
+	// in the target_sw attribute instead, which cpecriterion matching does
+	// honor (concrete target_sw values must agree; ANY matches anything).
+	// The table still leaves target_sw wildcarded: qualifying it needs a
+	// spelling policy first (the NVD itself mixes ios/iphone_os and
+	// linux/linux_kernel, and a concrete criteria value misses queries using
+	// the other spelling), and it would change the CSAF/CVRF known-affected
+	// paths and their goldens as well. The cost of the wildcard is bounded:
+	// when an advisory's platforms carry different ranges (e.g.
+	// FG-IR-22-059), the OR across that advisory's rows over-matches the
+	// narrower platforms by the difference.
 	"FortiClientAndroid":                   {cpe: "cpe:2.3:a:fortinet:forticlient:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiClient},
 	"FortiClientEMS":                       {cpe: "cpe:2.3:a:fortinet:forticlient_enterprise_management_server:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiClientEnterpriseManagementServer},
 	"FortiClientEMS Cloud":                 {cpe: "cpe:2.3:a:fortinet:forticlient_enterprise_management_server_cloud:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiClientEnterpriseManagementServerCloud},
