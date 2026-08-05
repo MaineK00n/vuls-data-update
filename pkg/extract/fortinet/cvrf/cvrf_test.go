@@ -211,17 +211,6 @@ func TestSupplementCriterions(t *testing.T) {
 		table map[string][]cvrf.SupplementProduct
 		id    string
 	}
-	// The whole-product branch only opens for allowlisted (advisory,
-	// product) pairs, and the allowlist is production data — so the
-	// audited-pair case derives an entry at runtime (the helper returns a
-	// sorted list, so the pick is stable) instead of pinning an advisory
-	// that could later gain bounds and leave the list. The production-row
-	// case below owns the concrete FG-IR-16-041 expectation.
-	auditedPair := cvrf.WholeProductAuditedPairs()[0]
-	auditedCPE, _, ok := product.Resolve(auditedPair[1])
-	if !ok {
-		t.Fatalf("audited product %q not in the product table", auditedPair[1])
-	}
 	tests := []struct {
 		name    string
 		args    args
@@ -265,13 +254,17 @@ func TestSupplementCriterions(t *testing.T) {
 			},
 		},
 		{
+			// FG-IR-14-010/FortiBalancer is on the whole-product allowlist;
+			// if it ever leaves, this case fails naming the pair to update.
+			// (A different pair from the production-row case below, so the
+			// two cases do not check the same row twice.)
 			name: "audited whole-product row emits the bare product CPE",
 			args: args{
-				table: map[string][]cvrf.SupplementProduct{auditedPair[0]: {{Product: auditedPair[1]}}},
-				id:    auditedPair[0],
+				table: map[string][]cvrf.SupplementProduct{"FG-IR-14-010": {{Product: "FortiBalancer"}}},
+				id:    "FG-IR-14-010",
 			},
 			want: []criterionTypes.Criterion{
-				supplementCPECriterion(auditedCPE, nil, nil),
+				supplementCPECriterion("cpe:2.3:o:fortinet:fortibalancer:*:*:*:*:*:*:*:*", nil, nil),
 			},
 		},
 		{
