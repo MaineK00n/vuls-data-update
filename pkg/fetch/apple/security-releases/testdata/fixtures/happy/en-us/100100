@@ -51,6 +51,8 @@
                                 <p class="gb-paragraph">01 Jun 2026</p>
                             </td>
                         </tr>
+                        <!-- kb/-style link from a table-format list (as on 2016-2017-era archives);
+                             also linked from 103813 to exercise fetching the advisory only once -->
                         <tr>
                             <td class="gb-table-cell" colspan="1" rowspan="1">
                                 <p class="gb-paragraph"><a href="/kb/HT205636" class="gb-anchor">Safari 9.0.2</a></p>
@@ -62,6 +64,7 @@
                                 <p class="gb-paragraph">8 Dec 2015</p>
                             </td>
                         </tr>
+                        <!-- link to a retired host: recorded in the list but not fetched -->
                         <tr>
                             <td class="gb-table-cell" colspan="1" rowspan="1">
                                 <p class="gb-paragraph"><a href="http://docs.info.apple.com/article.html?artnum=307179" class="gb-anchor">Security Update 2007-009</a></p>

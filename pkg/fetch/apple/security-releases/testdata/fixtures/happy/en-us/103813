@@ -10,6 +10,7 @@
         <div class="alignment">
             <p class="gb-paragraph">This document lists security updates for Apple software released in 2015.</p>
         </div>
+        <!-- legacy hub article: redirects to 100100, which is already processed -->
         <div class="alignment">
             <p class="gb-paragraph">To learn about current security updates, see <a href="/kb/HT201222" class="gb-anchor">Apple security updates</a>.</p>
         </div>
@@ -21,15 +22,18 @@
                 <li role="listitem" class="gb-list_item">
                     <p class="gb-paragraph"><a href="/kb/HT205636" class="gb-anchor">Safari 9.0.2</a> - OS X Mavericks v10.9.5, OS X Yosemite v10.10.5, and OS X El Capitan v10.11.2 - 8 Dec 2015</p>
                 </li>
+                <!-- HT4435 and TA23081 respond 404: removed upstream, allowlisted by ID form -->
                 <li role="listitem" class="gb-list_item">
                     <p class="gb-paragraph"><a href="/kb/HT4435" class="gb-anchor">Mac OS X v10.6.5 / Security Update 2010-007</a> - Mac OS X v10.5.8, Mac OS X v10.6 - v10.6.4 - 10 Nov 2010</p>
                 </li>
                 <li role="listitem" class="gb-list_item">
                     <p class="gb-paragraph"><a href="/kb/TA23081" class="gb-anchor">Mac OS X 10.4.6 Update (PowerPC)</a> - Mac OS X v10.4 - v10.4.5 - 03 Apr 2006</p>
                 </li>
+                <!-- HT4298: repeated label blocks under one component heading -->
                 <li role="listitem" class="gb-list_item">
                     <p class="gb-paragraph"><a href="/kb/HT4298" class="gb-anchor">Time Capsule and AirPort Base Station (802.11n) Firmware 7.5.2</a> - AirPort Extreme, AirPort Express, Time Capsule - 09 Dec 2010</p>
                 </li>
+                <!-- HT204426: page served with an empty <h1>, title is omitted -->
                 <li role="listitem" class="gb-list_item">
                     <p class="gb-paragraph"><a href="/kb/HT204426" class="gb-anchor">AppleTV 7.1</a> - Apple TV 3rd generation and later - 09 Mar 2015</p>
                 </li>
