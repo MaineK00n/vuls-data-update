@@ -401,9 +401,8 @@ func TestSupplementCriterions(t *testing.T) {
 // criterion per range, one bare criterion for an audited whole-product row),
 // every range criterion carries at least one bound and the range type the
 // product table assigns to the row's product, no advisory lists a product
-// twice, and
-// every key is a plausible advisory ID (an ID typo would orphan the entry —
-// the CVRF document it supplements could never reference it).
+// twice, and every key is a plausible advisory ID (an ID typo would orphan
+// the entry — the CVRF document it supplements could never reference it).
 func TestSupplementTableInvariants(t *testing.T) {
 	if len(cvrf.SupplementTable) == 0 {
 		t.Fatal("supplement table is empty")
