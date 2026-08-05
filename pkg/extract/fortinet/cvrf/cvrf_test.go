@@ -5,6 +5,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"slices"
+	"strings"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
@@ -211,6 +212,24 @@ func TestSupplementCriterions(t *testing.T) {
 		table map[string][]cvrf.SupplementProduct
 		id    string
 	}
+	// The whole-product branch only opens for allowlisted (advisory,
+	// product) pairs, and the allowlist is production data — so the
+	// audited-pair case derives an entry at runtime (sorted for a stable
+	// pick) instead of pinning an advisory that could later gain bounds and
+	// leave the list. The production-row case below owns the concrete
+	// FG-IR-16-041 expectation.
+	auditedPairs := cvrf.WholeProductAuditedPairs()
+	slices.SortFunc(auditedPairs, func(a, b [2]string) int {
+		if c := strings.Compare(a[0], b[0]); c != 0 {
+			return c
+		}
+		return strings.Compare(a[1], b[1])
+	})
+	auditedPair := auditedPairs[0]
+	auditedCPE, _, ok := product.Resolve(auditedPair[1])
+	if !ok {
+		t.Fatalf("audited product %q not in the product table", auditedPair[1])
+	}
 	tests := []struct {
 		name    string
 		args    args
@@ -254,15 +273,13 @@ func TestSupplementCriterions(t *testing.T) {
 			},
 		},
 		{
-			// The whole-product allowlist keys on (advisory, product), so the
-			// synthetic table reuses an audited pair.
 			name: "audited whole-product row emits the bare product CPE",
 			args: args{
-				table: map[string][]cvrf.SupplementProduct{"FG-IR-16-041": {{Product: "FortiClientSSLVPN"}}},
-				id:    "FG-IR-16-041",
+				table: map[string][]cvrf.SupplementProduct{auditedPair[0]: {{Product: auditedPair[1]}}},
+				id:    auditedPair[0],
 			},
 			want: []criterionTypes.Criterion{
-				supplementCPECriterion("cpe:2.3:a:fortinet:forticlient_ssl_vpn:*:*:*:*:*:*:*:*", nil, nil),
+				supplementCPECriterion(auditedCPE, nil, nil),
 			},
 		},
 		{
