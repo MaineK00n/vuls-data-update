@@ -45,6 +45,14 @@ type Section struct {
 // firmware advisories), in which case the elements of AvailableFor, Impact,
 // Description and IDs line up block-wise. Newlines within an element come
 // from <br> in the source.
+//
+// IDs holds the vulnerability reference paragraphs verbatim, in all their
+// era-specific shapes: "CVE-2026-43819: credit" (current), "CVE-2015-7048 :
+// credit" preceded by a standalone "CVE-ID" marker paragraph (2012-2015),
+// "CVE-ID: CVE-2008-4309" inline label (2003-2010), and "WebKit Bugzilla:
+// NNNNNN" lines. Markers and labels are deliberately not stripped here:
+// interpreting them is the extract stage's job, and a repeated "CVE-ID"
+// marker doubles as a block-boundary hint in repeated-label entries.
 type Entry struct {
 	Component    string   `json:"component,omitempty"`
 	AvailableFor []string `json:"available_for,omitempty"`
