@@ -143,6 +143,14 @@ func supplementCriterions(id string) ([]criterionTypes.Criterion, error) {
 				LessEqual:    sr.LessEqual,
 				LessThan:     sr.LessThan,
 			}
+			// A range with no bounds at all never matches anything (the
+			// evaluator treats a bound-less range as empty, not as
+			// match-all) — the same silent-false-negative class as an
+			// inverted range, and the likeliest shape of a hand edit that
+			// blanks a row's constraints without deleting the range.
+			if cmp.Or(r.GreaterEqual, r.GreaterThan, r.LessEqual, r.LessThan) == "" {
+				return nil, errors.Errorf("empty range for %q in supplement entry %q: no bounds set", row.Product, id)
+			}
 			for _, b := range []string{r.GreaterEqual, r.GreaterThan, r.LessEqual, r.LessThan} {
 				if b == "" {
 					continue
