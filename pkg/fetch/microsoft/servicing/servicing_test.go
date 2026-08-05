@@ -75,6 +75,16 @@ func TestFetch(t *testing.T) {
 			golden: "cross-series",
 		},
 		{
+			// url.ResolveReference removes dot-segments from the escaped path,
+			// but Path is decoded, so one spelled %2e%2e arrives as ".." and
+			// would land the write outside origin/. KB5102210's listing carries
+			// one in an href, KB5102211 carries one in its redirect; both have to
+			// be refused, and the article that does not is still stored.
+			name:   "encoded dot-segment does not escape origin",
+			kbs:    []string{"KB5102210", "KB5102211"},
+			golden: "encoded-dot-segment",
+		},
+		{
 			// Pre-2018 articles stay on /help/<KB>. There is no series to read,
 			// and that is not a failure.
 			name:   "non-servicing article is skipped",

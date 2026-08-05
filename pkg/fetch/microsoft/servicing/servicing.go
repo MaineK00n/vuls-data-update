@@ -609,6 +609,22 @@ func writeOrigin(dir, name string, content []byte) error {
 // parsePath splits a canonical servicing URL into its product, series and the
 // path below it.
 func parsePath(u *url.URL) (article, bool) {
+	// A canonical servicing path has no dot-segments, and url.ResolveReference,
+	// which every URL reaching here has been through, removes the ones a redirect
+	// or an href spells out. It removes them from the escaped path, though, while
+	// Path is decoded: %2e%2e survives resolution and arrives here as "..", from
+	// where filepath.Join would carry the write out of origin/. Reject rather
+	// than clean — no article is addressed that way, so nothing is lost.
+	//
+	// This is the only place an article is built, and its name is the only path
+	// origin/ is written at, so the check covers both the redirect resolve reads
+	// and the listing hrefs resolveHref follows.
+	for s := range strings.SplitSeq(u.Path, "/") {
+		if s == "." || s == ".." {
+			return article{}, false
+		}
+	}
+
 	m := servicingPathPattern.FindStringSubmatch(u.Path)
 	if m == nil {
 		return article{}, false
