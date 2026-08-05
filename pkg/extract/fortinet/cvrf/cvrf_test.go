@@ -5,7 +5,6 @@ import (
 	"path/filepath"
 	"regexp"
 	"slices"
-	"strings"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
@@ -214,18 +213,11 @@ func TestSupplementCriterions(t *testing.T) {
 	}
 	// The whole-product branch only opens for allowlisted (advisory,
 	// product) pairs, and the allowlist is production data — so the
-	// audited-pair case derives an entry at runtime (sorted for a stable
-	// pick) instead of pinning an advisory that could later gain bounds and
-	// leave the list. The production-row case below owns the concrete
-	// FG-IR-16-041 expectation.
-	auditedPairs := cvrf.WholeProductAuditedPairs()
-	slices.SortFunc(auditedPairs, func(a, b [2]string) int {
-		if c := strings.Compare(a[0], b[0]); c != 0 {
-			return c
-		}
-		return strings.Compare(a[1], b[1])
-	})
-	auditedPair := auditedPairs[0]
+	// audited-pair case derives an entry at runtime (the helper returns a
+	// sorted list, so the pick is stable) instead of pinning an advisory
+	// that could later gain bounds and leave the list. The production-row
+	// case below owns the concrete FG-IR-16-041 expectation.
+	auditedPair := cvrf.WholeProductAuditedPairs()[0]
 	auditedCPE, _, ok := product.Resolve(auditedPair[1])
 	if !ok {
 		t.Fatalf("audited product %q not in the product table", auditedPair[1])

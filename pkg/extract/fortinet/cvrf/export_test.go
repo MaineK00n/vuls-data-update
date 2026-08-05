@@ -1,5 +1,7 @@
 package cvrf
 
+import "slices"
+
 // Exports for the cvrf_test package.
 
 // ProductVersion aliases the unexported productVersion so external tests can
@@ -40,13 +42,14 @@ type (
 )
 
 // WholeProductAuditedPairs lists the whole-product allowlist as
-// (advisory, product) pairs, so tests can check every entry still backs a
-// live constraint-less row (a stale entry would silently pre-authorize a
-// future whole-product widening).
+// (advisory, product) pairs, sorted so callers see a deterministic order,
+// so tests can check every entry still backs a live constraint-less row (a
+// stale entry would silently pre-authorize a future whole-product widening).
 func WholeProductAuditedPairs() [][2]string {
 	pairs := make([][2]string, 0, len(wholeProductAudited))
 	for k := range wholeProductAudited {
 		pairs = append(pairs, [2]string{k.advisory, k.product})
 	}
+	slices.SortFunc(pairs, func(a, b [2]string) int { return slices.Compare(a[:], b[:]) })
 	return pairs
 }
