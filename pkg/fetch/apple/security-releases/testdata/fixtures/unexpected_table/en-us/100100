@@ -8,10 +8,34 @@
             <h1 class="gb-header">Apple security releases</h1>
         </div>
         <div class="alignment">
-            <div class="table-wrapper gb-table"><table class="gb-table"><tbody>
-                <tr><th class="gb-table-header-cell" colspan="1" rowspan="1"><p class="gb-paragraph">Name&nbsp;and&nbsp;information&nbsp;link</p></th><th class="gb-table-header-cell" colspan="1" rowspan="1"><p class="gb-paragraph">Available for</p></th><th class="gb-table-header-cell" colspan="1" rowspan="1"><p class="gb-paragraph">Release&nbsp;date</p></th></tr>
-                <tr><td class="gb-table-cell" colspan="1" rowspan="1"><p class="gb-paragraph"><a href="/en-us/128070" class="gb-anchor">macOS Tahoe 26.7</a></p></td><td class="gb-table-cell" colspan="1" rowspan="1"><p class="gb-paragraph">macOS Tahoe</p></td><td class="gb-table-cell" colspan="1" rowspan="1"><p class="gb-paragraph">01 Sep 2026</p></td></tr>
-            </tbody></table></div>
+            <div class="table-wrapper gb-table">
+                <table class="gb-table">
+                    <tbody>
+                        <tr>
+                            <th class="gb-table-header-cell" colspan="1" rowspan="1">
+                                <p class="gb-paragraph">Name&nbsp;and&nbsp;information&nbsp;link</p>
+                            </th>
+                            <th class="gb-table-header-cell" colspan="1" rowspan="1">
+                                <p class="gb-paragraph">Available for</p>
+                            </th>
+                            <th class="gb-table-header-cell" colspan="1" rowspan="1">
+                                <p class="gb-paragraph">Release&nbsp;date</p>
+                            </th>
+                        </tr>
+                        <tr>
+                            <td class="gb-table-cell" colspan="1" rowspan="1">
+                                <p class="gb-paragraph"><a href="/en-us/128070" class="gb-anchor">macOS Tahoe 26.7</a></p>
+                            </td>
+                            <td class="gb-table-cell" colspan="1" rowspan="1">
+                                <p class="gb-paragraph">macOS Tahoe</p>
+                            </td>
+                            <td class="gb-table-cell" colspan="1" rowspan="1">
+                                <p class="gb-paragraph">01 Sep 2026</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
