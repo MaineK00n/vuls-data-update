@@ -124,6 +124,7 @@ import (
 	nvdFeedCPEMATCHv2 "github.com/MaineK00n/vuls-data-update/pkg/fetch/nvd/feed/cpematch/v2"
 	nvdFeedCVEv1 "github.com/MaineK00n/vuls-data-update/pkg/fetch/nvd/feed/cve/v1"
 	nvdFeedCVEv2 "github.com/MaineK00n/vuls-data-update/pkg/fetch/nvd/feed/cve/v2"
+	nvidiaCVE "github.com/MaineK00n/vuls-data-update/pkg/fetch/nvidia/cve"
 	ocamlOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/ocaml/osv"
 	openeulerCSAF "github.com/MaineK00n/vuls-data-update/pkg/fetch/openeuler/csaf"
 	openeulerCVRF "github.com/MaineK00n/vuls-data-update/pkg/fetch/openeuler/cvrf"
@@ -263,6 +264,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdNucleiAPI(), newCmdNucleiRepository(),
 		newCmdNugetGHSA(), newCmdNugetGLSA(), newCmdNugetOSV(),
 		newCmdNVDAPICVE(), newCmdNVDAPICVEHistory(), newCmdNVDAPICPE(), newCmdNVDAPICPEMatch(), newCmdNVDFeedCVEv1(), newCmdNVDFeedCPEv1(), newCmdNVDFeedCPEMATCHv1(), newCmdNVDFeedCVEv2(), newCmdNVDFeedCPEv2(), newCmdNVDFeedCPEMATCHv2(),
+		newCmdNVIDIACVE(),
 		newCmdOcamlOSV(),
 		newCmdOpenEulerCVRF(), newCmdOpenEulerCSAF(), newCmdOpenEulerOSV(),
 		newCmdOpenSSLSecJSON(),
@@ -3882,6 +3884,33 @@ func newCmdNVDFeedCPEMATCHv2() *cobra.Command {
 		RunE: func(_ *cobra.Command, _ []string) error {
 			if err := nvdFeedCPEMATCHv2.Fetch(nvdFeedCPEMATCHv2.WithDir(options.dir), nvdFeedCPEMATCHv2.WithRetry(options.retry)); err != nil {
 				return errors.Wrap(err, "failed to fetch nvd cpematch feed v2")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+
+	return cmd
+}
+
+func newCmdNVIDIACVE() *cobra.Command {
+	options := &base{
+		dir:   filepath.Join(util.CacheDir(), "fetch", "nvidia", "cve"),
+		retry: 3,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "nvidia-cve",
+		Short: "Fetch NVIDIA CVE Record data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch nvidia-cve
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := nvidiaCVE.Fetch(nvidiaCVE.WithDir(options.dir), nvidiaCVE.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch nvidia cve record")
 			}
 			return nil
 		},
