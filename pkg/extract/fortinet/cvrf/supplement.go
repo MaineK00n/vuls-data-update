@@ -59,9 +59,13 @@ type supplementProduct struct {
 	Ranges   []supplementRange
 }
 
-// advisoryProduct keys the whole-product allowlist below.
+// advisoryProduct keys the whole-product allowlist below. The fields are
+// exported only so the external test package can read the allowlist through
+// its export_test.go alias (the type itself stays package-private, like
+// supplementProduct's fields).
 type advisoryProduct struct {
-	advisory, product string
+	Advisory string
+	Product  string
 }
 
 // wholeProductAudited is the closed set of supplement rows allowed to emit a
@@ -201,7 +205,7 @@ func supplementCriterions(table map[string][]supplementProduct, id string) ([]cr
 			// Whole product: the wildcard-version CPE with no narrowing —
 			// only the audited pairs may take this branch (see
 			// wholeProductAudited).
-			if _, ok := wholeProductAudited[advisoryProduct{advisory: id, product: row.Product}]; !ok {
+			if _, ok := wholeProductAudited[advisoryProduct{Advisory: id, Product: row.Product}]; !ok {
 				return nil, errors.Errorf("unaudited whole-product row for %q in supplement entry %q (add versions or ranges, or audit it into wholeProductAudited)", row.Product, id)
 			}
 			criterions = append(criterions, criterionTypes.Criterion{

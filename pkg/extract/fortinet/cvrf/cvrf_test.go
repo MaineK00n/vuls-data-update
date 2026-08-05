@@ -474,12 +474,12 @@ func TestSupplementTableInvariants(t *testing.T) {
 // a stale entry would silently pre-authorize a future whole-product widening
 // of that (advisory, product) pair.
 func TestSupplementWholeProductAuditedLive(t *testing.T) {
-	for _, p := range cvrf.WholeProductAuditedPairs() {
-		ok := slices.ContainsFunc(cvrf.SupplementTable[p[0]], func(row cvrf.SupplementProduct) bool {
-			return row.Product == p[1] && len(row.Versions) == 0 && len(row.Ranges) == 0
+	for p := range cvrf.WholeProductAudited {
+		ok := slices.ContainsFunc(cvrf.SupplementTable[p.Advisory], func(row cvrf.SupplementProduct) bool {
+			return row.Product == p.Product && len(row.Versions) == 0 && len(row.Ranges) == 0
 		})
 		if !ok {
-			t.Errorf("wholeProductAudited entry (%s, %s) backs no constraint-less row in the table", p[0], p[1])
+			t.Errorf("wholeProductAudited entry (%s, %s) backs no constraint-less row in the table", p.Advisory, p.Product)
 		}
 	}
 }
