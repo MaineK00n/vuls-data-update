@@ -383,7 +383,8 @@ func TestSupplementCriterions(t *testing.T) {
 // criterions (one CPEMatches criterion when it enumerates versions, one range
 // criterion per range, one bare criterion for an audited whole-product row),
 // every range criterion carries at least one bound and the range type the
-// product table assigns to its CPE, no advisory lists a product twice, and
+// product table assigns to the row's product, no advisory lists a product
+// twice, and
 // every key is a plausible advisory ID (an ID typo would orphan the entry —
 // the CVRF document it supplements could never reference it).
 func TestSupplementTableInvariants(t *testing.T) {
@@ -397,8 +398,33 @@ func TestSupplementTableInvariants(t *testing.T) {
 				t.Errorf("advisory ID %q does not match the FG-IR shape", id)
 			}
 			rows := cvrf.SupplementTable[id]
-			wantN := 0
-			typeOf := make(map[string]ccRangeTypes.RangeType, len(rows))
+			cs, err := cvrf.SupplementCriterions(cvrf.SupplementTable, id)
+			if err != nil {
+				t.Fatalf("unexpected error: %v", err)
+			}
+			// Criterions come out in row order (versions criterion first
+			// within a row), so walk both in lockstep: each criterion is
+			// checked against the row that produced it. A CPE-keyed lookup
+			// would go wrong for the product families that share one CPE
+			// (FortiClient*, FortiToken Mobile, ...) if a family ever split
+			// its range types — and the final index comparison subsumes the
+			// criterion count check.
+			i := 0
+			next := func(row cvrf.SupplementProduct, cpe string) criterionTypes.Criterion {
+				t.Helper()
+				if i >= len(cs) {
+					t.Fatalf("criterion count = %d, want more (missing for row %q)", len(cs), row.Product)
+				}
+				c := cs[i]
+				i++
+				if c.Type != criterionTypes.CriterionTypeCPE || c.CPE == nil {
+					t.Fatalf("row %q: not a CPE criterion: %+v", row.Product, c)
+				}
+				if !c.CPE.Vulnerable || string(c.CPE.CPE) != cpe {
+					t.Errorf("row %q: criterion CPE = %q vulnerable = %t, want %q vulnerable = true", row.Product, c.CPE.CPE, c.CPE.Vulnerable, cpe)
+				}
+				return c
+			}
 			seen := make(map[string]bool, len(rows))
 			for _, row := range rows {
 				if seen[row.Product] {
@@ -409,38 +435,35 @@ func TestSupplementTableInvariants(t *testing.T) {
 				if !ok {
 					t.Fatalf("product %q not in the product table", row.Product)
 				}
-				typeOf[cpe] = rt
 				if len(row.Versions) > 0 {
-					wantN++
+					c := next(row, cpe)
+					if len(c.CPE.CPEMatches) != len(row.Versions) || c.CPE.Range != nil {
+						t.Errorf("row %q: versions criterion has %d matches (want %d) and range %v (want none)", row.Product, len(c.CPE.CPEMatches), len(row.Versions), c.CPE.Range)
+					}
 				}
-				wantN += len(row.Ranges)
-				if len(row.Versions) == 0 && len(row.Ranges) == 0 {
-					wantN++
-				}
-			}
-			cs, err := cvrf.SupplementCriterions(cvrf.SupplementTable, id)
-			if err != nil {
-				t.Fatalf("unexpected error: %v", err)
-			}
-			if len(cs) != wantN {
-				t.Fatalf("criterion count = %d, want %d", len(cs), wantN)
-			}
-			for _, c := range cs {
-				if c.Type != criterionTypes.CriterionTypeCPE || c.CPE == nil {
-					t.Errorf("not a CPE criterion: %+v", c)
-					continue
-				}
-				if !c.CPE.Vulnerable || c.CPE.CPE == "" {
-					t.Errorf("criterion lacks the vulnerable flag or a CPE: %+v", c.CPE)
-				}
-				if r := c.CPE.Range; r != nil {
+				for range row.Ranges {
+					c := next(row, cpe)
+					r := c.CPE.Range
+					if r == nil {
+						t.Errorf("row %q: range criterion has no range", row.Product)
+						continue
+					}
 					if r.GreaterEqual == "" && r.GreaterThan == "" && r.LessEqual == "" && r.LessThan == "" {
-						t.Errorf("range criterion for %s has no bounds", c.CPE.CPE)
+						t.Errorf("row %q: range criterion has no bounds", row.Product)
 					}
-					if want, ok := typeOf[string(c.CPE.CPE)]; !ok || r.Type != want {
-						t.Errorf("range type for %s = %q, want %q", c.CPE.CPE, r.Type, want)
+					if r.Type != rt {
+						t.Errorf("row %q: range type = %q, want %q", row.Product, r.Type, rt)
 					}
 				}
+				if len(row.Versions) == 0 && len(row.Ranges) == 0 {
+					c := next(row, cpe)
+					if len(c.CPE.CPEMatches) != 0 || c.CPE.Range != nil {
+						t.Errorf("row %q: whole-product criterion carries narrowing: %+v", row.Product, c.CPE)
+					}
+				}
+			}
+			if i != len(cs) {
+				t.Errorf("criterion count = %d, want %d", len(cs), i)
 			}
 		})
 	}
