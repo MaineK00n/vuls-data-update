@@ -180,7 +180,7 @@ func extract(fetched cvrfTypes.CVRF, raws []string) (dataTypes.Data, error) {
 		if len(status.ProductID) > 0 {
 			return dataTypes.Data{}, errors.Errorf("product status lists %d product(s) but has no type", len(status.ProductID))
 		}
-		cs, err := supplementCriterions(id)
+		cs, err := supplementCriterions(supplementTable, id)
 		if err != nil {
 			return dataTypes.Data{}, errors.Wrap(err, "build supplement criterions")
 		}

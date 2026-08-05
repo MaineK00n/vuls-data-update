@@ -24,23 +24,29 @@ var ExtractData = extract
 var ExtractReferenceURLs = extractReferenceURLs
 
 // SupplementCriterions exposes supplementCriterions for whole-table
-// validation tests.
+// validation tests; guard tests pass synthetic tables instead of mutating
+// the production one.
 var SupplementCriterions = supplementCriterions
 
-// SupplementIDs returns every advisory ID in the supplement table, so tests
-// can validate that each entry builds cleanly.
-func SupplementIDs() []string {
-	ids := make([]string, 0, len(supplementTable))
-	for id := range supplementTable {
-		ids = append(ids, id)
-	}
-	return ids
-}
-
-// SupplementTable exposes the table for the whole-product guard test, which
-// injects (and removes) a synthetic unaudited row.
+// SupplementTable exposes the production table as a read-only view for the
+// whole-table validation tests.
 var SupplementTable = supplementTable
 
-// SupplementProduct aliases the unexported supplementProduct for the guard
-// test's synthetic row.
-type SupplementProduct = supplementProduct
+// SupplementProduct / SupplementRange alias the unexported row types so
+// tests can read production rows and build synthetic ones.
+type (
+	SupplementProduct = supplementProduct
+	SupplementRange   = supplementRange
+)
+
+// WholeProductAuditedPairs lists the whole-product allowlist as
+// (advisory, product) pairs, so tests can check every entry still backs a
+// live constraint-less row (a stale entry would silently pre-authorize a
+// future whole-product widening).
+func WholeProductAuditedPairs() [][2]string {
+	pairs := make([][2]string, 0, len(wholeProductAudited))
+	for k := range wholeProductAudited {
+		pairs = append(pairs, [2]string{k.advisory, k.product})
+	}
+	return pairs
+}

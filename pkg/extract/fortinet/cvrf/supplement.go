@@ -88,7 +88,8 @@ var wholeProductAudited = map[advisoryProduct]struct{}{
 }
 
 // supplementCriterions builds the detection criterions for an advisory from
-// the supplement table, or nil when the advisory has no entry.
+// the given supplement table (supplementTable in production; tests inject
+// synthetic tables), or nil when the advisory has no entry.
 // Exact versions become CPEMatches on a wildcard-version product CPE (the
 // same shape knownAffectedCriterions emits) and ranges become one range
 // criterion each with the product's per-product range type (the same shape
@@ -96,8 +97,8 @@ var wholeProductAudited = map[advisoryProduct]struct{}{
 // table row whose product is missing from internal/product or whose version
 // fails the numeric scheme fails the extract rather than silently dropping
 // an affected product.
-func supplementCriterions(id string) ([]criterionTypes.Criterion, error) {
-	rows, ok := supplementTable[id]
+func supplementCriterions(table map[string][]supplementProduct, id string) ([]criterionTypes.Criterion, error) {
+	rows, ok := table[id]
 	if !ok {
 		return nil, nil
 	}
