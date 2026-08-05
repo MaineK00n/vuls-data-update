@@ -181,6 +181,202 @@ func TestExtractReferenceURLs(t *testing.T) {
 	}
 }
 
+// supplementCPECriterion builds the criterion shape supplementCriterions
+// emits — a vulnerable CPE criterion with fix status unknown — narrowed by
+// exact-version matches and/or a range when given.
+func supplementCPECriterion(cpe string, matches []ccTypes.CPE, r *ccRangeTypes.Range) criterionTypes.Criterion {
+	return criterionTypes.Criterion{
+		Type: criterionTypes.CriterionTypeCPE,
+		CPE: &ccTypes.Criterion{
+			Vulnerable: true,
+			FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
+			CPE:        ccTypes.CPE(cpe),
+			CPEMatches: matches,
+			Range:      r,
+		},
+	}
+}
+
+// supplementCriterions turns supplement rows into criterions: exact versions
+// bake into CPEMatches, ranges pick up the product's per-product range type,
+// and an audited whole-product row emits the bare product CPE. Everything
+// malformed is a hard error rather than a silent detection gap: an unknown
+// product, a non-numeric version or bound, a bound-less or inverted range
+// (criterions that never match), and a whole-product row outside the audited
+// allowlist (a criterion that matches everything). Most cases inject
+// synthetic tables; the "production row" cases run against the embedded
+// table, pinning one real row per shape in full.
+func TestSupplementCriterions(t *testing.T) {
+	const fortiOSCPE = "cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*"
+	type args struct {
+		table map[string][]cvrf.SupplementProduct
+		id    string
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    []criterionTypes.Criterion
+		wantErr bool
+	}{
+		{
+			name: "exact versions become CPEMatches",
+			args: args{
+				table: map[string][]cvrf.SupplementProduct{"FG-IR-24-001": {{Product: "FortiOS", Versions: []string{"7.4.3", "7.4.4"}}}},
+				id:    "FG-IR-24-001",
+			},
+			want: []criterionTypes.Criterion{
+				supplementCPECriterion(fortiOSCPE, []ccTypes.CPE{
+					"cpe:2.3:o:fortinet:fortios:7.4.3:*:*:*:*:*:*:*",
+					"cpe:2.3:o:fortinet:fortios:7.4.4:*:*:*:*:*:*:*",
+				}, nil),
+			},
+		},
+		{
+			name: "ranges carry the product's range type",
+			args: args{
+				table: map[string][]cvrf.SupplementProduct{"FG-IR-24-001": {{Product: "FortiOS", Ranges: []cvrf.SupplementRange{{GreaterEqual: "7.0.0", LessThan: "7.4.4"}}}}},
+				id:    "FG-IR-24-001",
+			},
+			want: []criterionTypes.Criterion{
+				supplementCPECriterion(fortiOSCPE, nil,
+					&ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeFortinetFortiOS, GreaterEqual: "7.0.0", LessThan: "7.4.4"}),
+			},
+		},
+		{
+			name: "a row with versions and ranges emits both, versions first",
+			args: args{
+				table: map[string][]cvrf.SupplementProduct{"FG-IR-24-001": {{Product: "FortiOS", Versions: []string{"7.4.3"}, Ranges: []cvrf.SupplementRange{{LessEqual: "7.0.17"}}}}},
+				id:    "FG-IR-24-001",
+			},
+			want: []criterionTypes.Criterion{
+				supplementCPECriterion(fortiOSCPE, []ccTypes.CPE{"cpe:2.3:o:fortinet:fortios:7.4.3:*:*:*:*:*:*:*"}, nil),
+				supplementCPECriterion(fortiOSCPE, nil,
+					&ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeFortinetFortiOS, LessEqual: "7.0.17"}),
+			},
+		},
+		{
+			// The whole-product allowlist keys on (advisory, product), so the
+			// synthetic table reuses an audited pair.
+			name: "audited whole-product row emits the bare product CPE",
+			args: args{
+				table: map[string][]cvrf.SupplementProduct{"FG-IR-16-041": {{Product: "FortiClientSSLVPN"}}},
+				id:    "FG-IR-16-041",
+			},
+			want: []criterionTypes.Criterion{
+				supplementCPECriterion("cpe:2.3:a:fortinet:forticlient_ssl_vpn:*:*:*:*:*:*:*:*", nil, nil),
+			},
+		},
+		{
+			// Not an error — the caller falls back to content-only extraction.
+			name: "advisory not in the table yields nil",
+			args: args{
+				table: map[string][]cvrf.SupplementProduct{"FG-IR-24-001": {{Product: "FortiOS", Versions: []string{"7.4.3"}}}},
+				id:    "FG-IR-99-999",
+			},
+			want: nil,
+		},
+		// The three production-table cases below pin one real row of each
+		// shape against expectations hand-written from the advisory notes,
+		// so an accidental edit to these rows fails even when it keeps the
+		// shape intact (the invariant walk checks shapes, not values).
+		{
+			// Solutions: "5.0 branch: 5.0.13 or above / 5.2 branch: 5.2.4 or
+			// above / 4.3 and lower branches are not affected".
+			name: "production row: ranges (FG-IR-16-003)",
+			args: args{table: cvrf.SupplementTable, id: "FG-IR-16-003"},
+			want: []criterionTypes.Criterion{
+				supplementCPECriterion(fortiOSCPE, nil,
+					&ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeFortinetFortiOS, GreaterEqual: "5.0.0", LessThan: "5.0.13"}),
+				supplementCPECriterion(fortiOSCPE, nil,
+					&ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeFortinetFortiOS, GreaterEqual: "5.2.0", LessThan: "5.2.4"}),
+			},
+		},
+		{
+			// "FortiIsolator version 2.3.2 and below" — enumerated releases.
+			name: "production row: enumerated versions (FG-IR-21-040)",
+			args: args{table: cvrf.SupplementTable, id: "FG-IR-21-040"},
+			want: []criterionTypes.Criterion{
+				supplementCPECriterion("cpe:2.3:o:fortinet:fortiisolator:*:*:*:*:*:*:*:*", []ccTypes.CPE{
+					"cpe:2.3:o:fortinet:fortiisolator:2.3.0:*:*:*:*:*:*:*",
+					"cpe:2.3:o:fortinet:fortiisolator:2.3.1:*:*:*:*:*:*:*",
+					"cpe:2.3:o:fortinet:fortiisolator:2.3.2:*:*:*:*:*:*:*",
+				}, nil),
+			},
+		},
+		{
+			// Audited whole-product row (CVE rejected, FortiOS-bundle-only
+			// bounds) — the bare wildcard CPE with no narrowing.
+			name: "production row: audited whole product (FG-IR-16-041)",
+			args: args{table: cvrf.SupplementTable, id: "FG-IR-16-041"},
+			want: []criterionTypes.Criterion{
+				supplementCPECriterion("cpe:2.3:a:fortinet:forticlient_ssl_vpn:*:*:*:*:*:*:*:*", nil, nil),
+			},
+		},
+		{
+			name: "unknown product → error",
+			args: args{
+				table: map[string][]cvrf.SupplementProduct{"FG-IR-24-001": {{Product: "FortiNonexistent", Versions: []string{"1.0.0"}}}},
+				id:    "FG-IR-24-001",
+			},
+			wantErr: true,
+		},
+		{
+			name: "non-numeric version → error",
+			args: args{
+				table: map[string][]cvrf.SupplementProduct{"FG-IR-24-001": {{Product: "FortiOS", Versions: []string{"seven"}}}},
+				id:    "FG-IR-24-001",
+			},
+			wantErr: true,
+		},
+		{
+			name: "non-numeric bound → error",
+			args: args{
+				table: map[string][]cvrf.SupplementProduct{"FG-IR-24-001": {{Product: "FortiOS", Ranges: []cvrf.SupplementRange{{LessEqual: "seven"}}}}},
+				id:    "FG-IR-24-001",
+			},
+			wantErr: true,
+		},
+		{
+			name: "empty range → error",
+			args: args{
+				table: map[string][]cvrf.SupplementProduct{"FG-IR-24-001": {{Product: "FortiOS", Ranges: []cvrf.SupplementRange{{}}}}},
+				id:    "FG-IR-24-001",
+			},
+			wantErr: true,
+		},
+		{
+			name: "inverted range → error",
+			args: args{
+				table: map[string][]cvrf.SupplementProduct{"FG-IR-24-001": {{Product: "FortiOS", Ranges: []cvrf.SupplementRange{{GreaterEqual: "2.0.0", LessEqual: "1.0.0"}}}}},
+				id:    "FG-IR-24-001",
+			},
+			wantErr: true,
+		},
+		{
+			name: "unaudited whole-product row → error",
+			args: args{
+				table: map[string][]cvrf.SupplementProduct{"FG-IR-99-998": {{Product: "FortiOS"}}},
+				id:    "FG-IR-99-998",
+			},
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := cvrf.SupplementCriterions(tt.args.table, tt.args.id)
+			if (err != nil) != tt.wantErr {
+				t.Fatalf("SupplementCriterions(%q) error = %v, wantErr %v", tt.args.id, err, tt.wantErr)
+			}
+			if tt.wantErr {
+				return
+			}
+			if diff := cmp.Diff(tt.want, got); diff != "" {
+				t.Errorf("(-expected +got):\n%s", diff)
+			}
+		})
+	}
+}
+
 // The embedded supplement table is frozen curated data. Walking every entry
 // exercises the builder's hard errors (unknown product, non-numeric version,
 // empty or inverted range, unaudited whole-product row), and the shape
@@ -191,7 +387,7 @@ func TestExtractReferenceURLs(t *testing.T) {
 // product table assigns to its CPE, no advisory lists a product twice, and
 // every key is a plausible advisory ID (an ID typo would orphan the entry —
 // the CVRF document it supplements could never reference it).
-func TestSupplementCriterions(t *testing.T) {
+func TestSupplementTableInvariants(t *testing.T) {
 	if len(cvrf.SupplementTable) == 0 {
 		t.Fatal("supplement table is empty")
 	}
@@ -251,88 +447,6 @@ func TestSupplementCriterions(t *testing.T) {
 	}
 }
 
-// The whole-table walk above checks shapes, not values — these pin one
-// advisory of each shape (ranges, exact versions, audited whole product)
-// against expectations written out by hand from the advisory notes.
-func TestSupplementCriterionsRepresentative(t *testing.T) {
-	rangeCriterion := func(cpe string, r ccRangeTypes.Range) criterionTypes.Criterion {
-		return criterionTypes.Criterion{
-			Type: criterionTypes.CriterionTypeCPE,
-			CPE: &ccTypes.Criterion{
-				Vulnerable: true,
-				FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
-				CPE:        ccTypes.CPE(cpe),
-				Range:      &r,
-			},
-		}
-	}
-	tests := []struct {
-		id   string
-		want []criterionTypes.Criterion
-	}{
-		{
-			// Solutions: "5.0 branch: 5.0.13 or above / 5.2 branch: 5.2.4 or
-			// above / 4.3 and lower branches are not affected".
-			id: "FG-IR-16-003",
-			want: []criterionTypes.Criterion{
-				rangeCriterion("cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*",
-					ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeFortinetFortiOS, GreaterEqual: "5.0.0", LessThan: "5.0.13"}),
-				rangeCriterion("cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*",
-					ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeFortinetFortiOS, GreaterEqual: "5.2.0", LessThan: "5.2.4"}),
-			},
-		},
-		{
-			// "FortiIsolator version 2.3.2 and below" — enumerated releases.
-			id: "FG-IR-21-040",
-			want: []criterionTypes.Criterion{{
-				Type: criterionTypes.CriterionTypeCPE,
-				CPE: &ccTypes.Criterion{
-					Vulnerable: true,
-					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
-					CPE:        "cpe:2.3:o:fortinet:fortiisolator:*:*:*:*:*:*:*:*",
-					CPEMatches: []ccTypes.CPE{
-						"cpe:2.3:o:fortinet:fortiisolator:2.3.0:*:*:*:*:*:*:*",
-						"cpe:2.3:o:fortinet:fortiisolator:2.3.1:*:*:*:*:*:*:*",
-						"cpe:2.3:o:fortinet:fortiisolator:2.3.2:*:*:*:*:*:*:*",
-					},
-				},
-			}},
-		},
-		{
-			// Audited whole-product row (CVE rejected, FortiOS-bundle-only
-			// bounds) — the bare wildcard CPE with no narrowing.
-			id: "FG-IR-16-041",
-			want: []criterionTypes.Criterion{{
-				Type: criterionTypes.CriterionTypeCPE,
-				CPE: &ccTypes.Criterion{
-					Vulnerable: true,
-					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
-					CPE:        "cpe:2.3:a:fortinet:forticlient_ssl_vpn:*:*:*:*:*:*:*:*",
-				},
-			}},
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.id, func(t *testing.T) {
-			got, err := cvrf.SupplementCriterions(cvrf.SupplementTable, tt.id)
-			if err != nil {
-				t.Fatalf("unexpected error: %v", err)
-			}
-			if diff := cmp.Diff(tt.want, got); diff != "" {
-				t.Errorf("(-expected +got):\n%s", diff)
-			}
-		})
-	}
-}
-
-// An advisory outside the table is not an error — the caller falls back to
-// content-only extraction.
-func TestSupplementCriterionsUnknownID(t *testing.T) {
-	if cs, err := cvrf.SupplementCriterions(cvrf.SupplementTable, "FG-IR-99-999"); err != nil || cs != nil {
-		t.Errorf("SupplementCriterions(unknown) = %v, %v, want nil, nil", cs, err)
-	}
-}
-
 // Every wholeProductAudited entry must still back a live constraint-less row;
 // a stale entry would silently pre-authorize a future whole-product widening
 // of that (advisory, product) pair.
@@ -384,27 +498,5 @@ func TestExtractCVEEntries(t *testing.T) {
 				t.Errorf("vulnerability IDs = %q, want %q", got, tt.wantIDs)
 			}
 		})
-	}
-}
-
-// A row with no version constraint matches every version of its product, so
-// only pairs audited into wholeProductAudited may emit one; a hand edit that
-// accidentally deletes a row's constraints must fail instead of silently
-// widening detection to the whole product.
-func TestSupplementWholeProductGuard(t *testing.T) {
-	table := map[string][]cvrf.SupplementProduct{"FG-IR-99-998": {{Product: "FortiOS"}}}
-	if _, err := cvrf.SupplementCriterions(table, "FG-IR-99-998"); err == nil {
-		t.Error("SupplementCriterions() with an unaudited whole-product row: expected error, got nil")
-	}
-}
-
-// A range with every bound blank would extract into a criterion that never
-// matches — a silent detection false negative, and the likeliest shape of a
-// hand edit that blanks a row's bounds without deleting the range (which
-// would instead trip the whole-product guard above).
-func TestSupplementEmptyRangeGuard(t *testing.T) {
-	table := map[string][]cvrf.SupplementProduct{"FG-IR-99-997": {{Product: "FortiOS", Ranges: []cvrf.SupplementRange{{}}}}}
-	if _, err := cvrf.SupplementCriterions(table, "FG-IR-99-997"); err == nil {
-		t.Error("SupplementCriterions() with an empty range: expected error, got nil")
 	}
 }

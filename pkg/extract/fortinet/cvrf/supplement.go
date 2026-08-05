@@ -166,8 +166,8 @@ func supplementCriterions(table map[string][]supplementProduct, id string) ([]cr
 			// "ge 4.4.0, le 4.3.1"); the generator rejects them at
 			// table-generation time, so this check guards the other editing
 			// path: supplement_data.go is maintained as ordinary source, and
-			// TestSupplementCriterions walks the whole table through here,
-			// turning a bad hand edit into a test failure instead of a
+			// TestSupplementTableInvariants walks the whole table through
+			// here, turning a bad hand edit into a test failure instead of a
 			// criterion that never matches.
 			if lo, hi := cmp.Or(r.GreaterEqual, r.GreaterThan), cmp.Or(r.LessEqual, r.LessThan); lo != "" && hi != "" {
 				vlo, err := numericVersion.NewVersion(lo)
