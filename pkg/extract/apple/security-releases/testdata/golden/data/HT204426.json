@@ -1,0 +1,38 @@
+{
+	"id": "HT204426",
+	"advisories": [
+		{
+			"content": {
+				"id": "HT204426",
+				"title": "AppleTV 7.1",
+				"references": [
+					{
+						"source": "support.apple.com",
+						"url": "https://support.apple.com/en-us/HT204426"
+					}
+				],
+				"published": "2015-03-09T00:00:00Z"
+			}
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-2015-1067",
+				"references": [
+					{
+						"source": "support.apple.com",
+						"url": "https://www.cve.org/CVERecord?id=CVE-2015-1067"
+					}
+				]
+			}
+		}
+	],
+	"data_source": {
+		"id": "apple-security-releases",
+		"raws": [
+			"fixtures/advisories/HT204426.json",
+			"fixtures/lists/103813.json"
+		]
+	}
+}

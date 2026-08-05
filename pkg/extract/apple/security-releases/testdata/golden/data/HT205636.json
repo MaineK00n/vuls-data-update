@@ -1,0 +1,61 @@
+{
+	"id": "HT205636",
+	"advisories": [
+		{
+			"content": {
+				"id": "HT205636",
+				"title": "About the security content of Safari 9.0.2",
+				"references": [
+					{
+						"source": "support.apple.com",
+						"url": "https://support.apple.com/en-us/HT205636"
+					}
+				],
+				"published": "2015-12-08T00:00:00Z"
+			}
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-2015-7048",
+				"references": [
+					{
+						"source": "support.apple.com",
+						"url": "https://www.cve.org/CVERecord?id=CVE-2015-7048"
+					}
+				]
+			}
+		},
+		{
+			"content": {
+				"id": "CVE-2015-7093",
+				"references": [
+					{
+						"source": "support.apple.com",
+						"url": "https://www.cve.org/CVERecord?id=CVE-2015-7093"
+					}
+				]
+			}
+		},
+		{
+			"content": {
+				"id": "CVE-2015-7095",
+				"references": [
+					{
+						"source": "support.apple.com",
+						"url": "https://www.cve.org/CVERecord?id=CVE-2015-7095"
+					}
+				]
+			}
+		}
+	],
+	"data_source": {
+		"id": "apple-security-releases",
+		"raws": [
+			"fixtures/advisories/HT205636.json",
+			"fixtures/lists/100100.json",
+			"fixtures/lists/103813.json"
+		]
+	}
+}

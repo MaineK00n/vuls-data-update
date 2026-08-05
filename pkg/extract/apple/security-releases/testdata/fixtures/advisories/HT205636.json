@@ -1,0 +1,60 @@
+{
+	"id": "HT205636",
+	"url": "https://support.apple.com/en-us/HT205636",
+	"title": "About the security content of Safari 9.0.2",
+	"sections": [
+		{
+			"entries": [
+				{
+					"others": [
+						"This document describes the security content of Safari 9.0.2.",
+						"Where possible, CVE IDs are used to reference the vulnerabilities for further information."
+					]
+				}
+			]
+		},
+		{
+			"name": "Safari 9.0.2",
+			"entries": [
+				{
+					"notes": [
+						"Released December 8, 2015"
+					]
+				},
+				{
+					"component": "WebKit",
+					"available_for": [
+						"OS X Mavericks v10.9.5, OS X Yosemite v10.10.5, and OS X El Capitan v10.11.2"
+					],
+					"impact": [
+						"Visiting a maliciously crafted website may lead to arbitrary code execution"
+					],
+					"description": [
+						"Multiple memory corruption issues existed in WebKit.\nThese issues were addressed through improved memory handling."
+					],
+					"ids": [
+						"CVE-ID",
+						"CVE-2015-7048 : Apple",
+						"CVE-2015-7095 : Apple"
+					]
+				},
+				{
+					"component": "Safari",
+					"available_for": [
+						"OS X Mavericks v10.9.5, OS X Yosemite v10.10.5, and OS X El Capitan v10.11.2"
+					],
+					"impact": [
+						"Visiting a malicious website may lead to user interface spoofing"
+					],
+					"description": [
+						"An issue existed in Safari's handling of URLs."
+					],
+					"ids": [
+						"CVE-ID",
+						"CVE-2015-7093 : xisigr of Tencent"
+					]
+				}
+			]
+		}
+	]
+}

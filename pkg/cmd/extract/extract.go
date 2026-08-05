@@ -15,6 +15,7 @@ import (
 	alpineSecDB "github.com/MaineK00n/vuls-data-update/pkg/extract/alpine/secdb"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/amazon"
 	androidOSV "github.com/MaineK00n/vuls-data-update/pkg/extract/android/osv"
+	appleSecurityReleases "github.com/MaineK00n/vuls-data-update/pkg/extract/apple/security-releases"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/arch"
 	bitnamiOSV "github.com/MaineK00n/vuls-data-update/pkg/extract/bitnami/osv"
 	cargoDB "github.com/MaineK00n/vuls-data-update/pkg/extract/cargo/db"
@@ -154,6 +155,7 @@ func NewCmdExtract() *cobra.Command {
 		newCmdAlpineSecDB(), newCmdAlpineOSV(),
 		newCmdAmazon(),
 		newCmdAndroidOSV(),
+		newCmdAppleSecurityReleases(),
 		newCmdArch(),
 		newCmdBitnamiOSV(),
 		newCmdCargoGHSA(), newCmdCargoOSV(), newCmdCargoDB(),
@@ -374,6 +376,31 @@ func newCmdAndroidOSV() *cobra.Command {
 		RunE: func(_ *cobra.Command, args []string) error {
 			if err := androidOSV.Extract(args[0], androidOSV.WithDir(options.dir)); err != nil {
 				return errors.Wrap(err, "failed to extract android osv")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
+
+	return cmd
+}
+
+func newCmdAppleSecurityReleases() *cobra.Command {
+	options := &base{
+		dir: filepath.Join(util.CacheDir(), "extract", "apple", "security-releases"),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "apple-security-releases <Raw Apple Security Releases Repository PATH>",
+		Short: "Extract Apple Security Releases data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update extract apple-security-releases vuls-data-raw-apple-security-releases
+		`),
+		Args: cobra.ExactArgs(1),
+		RunE: func(_ *cobra.Command, args []string) error {
+			if err := appleSecurityReleases.Extract(args[0], appleSecurityReleases.WithDir(options.dir)); err != nil {
+				return errors.Wrap(err, "failed to extract apple security releases")
 			}
 			return nil
 		},
