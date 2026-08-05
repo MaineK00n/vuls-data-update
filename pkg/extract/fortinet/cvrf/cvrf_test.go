@@ -207,7 +207,6 @@ func supplementCPECriterion(cpe string, matches []ccTypes.CPE, r *ccRangeTypes.R
 // synthetic tables; the "production row" cases run against the embedded
 // table, pinning one real row per shape in full.
 func TestSupplementCriterions(t *testing.T) {
-	const fortiOSCPE = "cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*"
 	type args struct {
 		table map[string][]cvrf.SupplementProduct
 		id    string
@@ -225,7 +224,7 @@ func TestSupplementCriterions(t *testing.T) {
 				id:    "FG-IR-24-001",
 			},
 			want: []criterionTypes.Criterion{
-				supplementCPECriterion(fortiOSCPE, []ccTypes.CPE{
+				supplementCPECriterion("cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*", []ccTypes.CPE{
 					"cpe:2.3:o:fortinet:fortios:7.4.3:*:*:*:*:*:*:*",
 					"cpe:2.3:o:fortinet:fortios:7.4.4:*:*:*:*:*:*:*",
 				}, nil),
@@ -238,7 +237,7 @@ func TestSupplementCriterions(t *testing.T) {
 				id:    "FG-IR-24-001",
 			},
 			want: []criterionTypes.Criterion{
-				supplementCPECriterion(fortiOSCPE, nil,
+				supplementCPECriterion("cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*", nil,
 					&ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeFortinetFortiOS, GreaterEqual: "7.0.0", LessThan: "7.4.4"}),
 			},
 		},
@@ -249,8 +248,8 @@ func TestSupplementCriterions(t *testing.T) {
 				id:    "FG-IR-24-001",
 			},
 			want: []criterionTypes.Criterion{
-				supplementCPECriterion(fortiOSCPE, []ccTypes.CPE{"cpe:2.3:o:fortinet:fortios:7.4.3:*:*:*:*:*:*:*"}, nil),
-				supplementCPECriterion(fortiOSCPE, nil,
+				supplementCPECriterion("cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*", []ccTypes.CPE{"cpe:2.3:o:fortinet:fortios:7.4.3:*:*:*:*:*:*:*"}, nil),
+				supplementCPECriterion("cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*", nil,
 					&ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeFortinetFortiOS, LessEqual: "7.0.17"}),
 			},
 		},
@@ -285,9 +284,9 @@ func TestSupplementCriterions(t *testing.T) {
 			name: "production row: ranges (FG-IR-16-003)",
 			args: args{table: cvrf.SupplementTable, id: "FG-IR-16-003"},
 			want: []criterionTypes.Criterion{
-				supplementCPECriterion(fortiOSCPE, nil,
+				supplementCPECriterion("cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*", nil,
 					&ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeFortinetFortiOS, GreaterEqual: "5.0.0", LessThan: "5.0.13"}),
-				supplementCPECriterion(fortiOSCPE, nil,
+				supplementCPECriterion("cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*", nil,
 					&ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeFortinetFortiOS, GreaterEqual: "5.2.0", LessThan: "5.2.4"}),
 			},
 		},
