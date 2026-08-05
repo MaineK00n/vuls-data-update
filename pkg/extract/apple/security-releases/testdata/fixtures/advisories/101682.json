@@ -1,0 +1,40 @@
+{
+	"id": "101682",
+	"url": "https://support.apple.com/en-us/101682",
+	"title": "Apple security updates (03-Oct-2003 to 11-Jan-2005)",
+	"sections": [
+		{
+			"entries": [
+				{
+					"others": [
+						"Important: For information about later (newer) security updates, see \"Apple security updates\"."
+					]
+				},
+				{
+					"component": "Security updates",
+					"others": [
+						"Security updates are listed below according to the software release in which they first appeared."
+					]
+				},
+				{
+					"component": "iTunes 4.7.1",
+					"available_for": [
+						"Mac OS X, Microsoft Windows XP, Microsoft Windows 2000"
+					],
+					"impact": [
+						"Malicious playlists can cause iTunes to crash and could execute arbitrary code."
+					],
+					"description": [
+						"iTunes supports several common playlist formats. iTunes 4.7.1 fixes a buffer overflow in the parsing of m3u and pls playlist files."
+					],
+					"ids": [
+						"CVE-ID: CAN-2005-0043"
+					],
+					"others": [
+						"For information about earlier security updates, see \"Apple security updates (August, 2003 and earlier)\"."
+					]
+				}
+			]
+		}
+	]
+}

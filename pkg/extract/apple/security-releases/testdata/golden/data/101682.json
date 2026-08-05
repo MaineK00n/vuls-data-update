@@ -1,0 +1,36 @@
+{
+	"id": "101682",
+	"advisories": [
+		{
+			"content": {
+				"id": "101682",
+				"title": "Apple security updates (03-Oct-2003 to 11-Jan-2005)",
+				"references": [
+					{
+						"source": "support.apple.com",
+						"url": "https://support.apple.com/en-us/101682"
+					}
+				]
+			}
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-2005-0043",
+				"references": [
+					{
+						"source": "support.apple.com",
+						"url": "https://www.cve.org/CVERecord?id=CVE-2005-0043"
+					}
+				]
+			}
+		}
+	],
+	"data_source": {
+		"id": "apple-security-releases",
+		"raws": [
+			"fixtures/advisories/101682.json"
+		]
+	}
+}
