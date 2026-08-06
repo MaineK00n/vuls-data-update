@@ -265,13 +265,12 @@ func (opts options) fetch(kbs []string) error {
 		return errors.Wrap(err, "resolve")
 	}
 
-	stored := make(map[string]struct{}, len(seeds))
-	targets, err := opts.discover(client, seeds, stored)
+	targets, err := opts.discover(client, seeds)
 	if err != nil {
 		return errors.Wrap(err, "discover")
 	}
 
-	if err := opts.collect(client, targets, stored); err != nil {
+	if err := opts.collect(client, targets); err != nil {
 		return errors.Wrap(err, "collect")
 	}
 
@@ -352,7 +351,8 @@ func (opts options) resolve(client *utilhttp.Client, kbs []string) ([]article, e
 	return articles, nil
 }
 
-// discover stores the articles asked for and reports what their listings name.
+// discover stores the articles asked for and reports the ones their listings
+// name that are still missing.
 //
 // Only these listings are read. Following them further would not find anything
 // in the same series -- the listing is identical on every article of one -- but
@@ -360,9 +360,16 @@ func (opts options) resolve(client *utilhttp.Client, kbs []string) ([]article, e
 // os/windows-8-1/2024/01/end-of-support, and reading that article's listing in
 // turn would drag in the whole of Windows 8.1. One hop keeps a request for a
 // series to that series and whatever it points at directly.
-func (opts options) discover(client *utilhttp.Client, seeds []article, stored map[string]struct{}) ([]article, error) {
+//
+// What comes back is deduplicated against what went out, because a listing
+// names its whole series and one was read per KB asked for: three members of
+// os/windows-11 name its 300 articles 900 times between them, those three
+// included. Every article named more than once is one article, so the caller is
+// told about it once, and about the seeds not at all.
+func (opts options) discover(client *utilhttp.Client, seeds []article) ([]article, error) {
 	slog.Info("Discover series", slog.Int("articles", len(seeds)))
 
+	stored := make(map[string]struct{}, len(seeds))
 	bar := progressbar.Default(int64(len(seeds)))
 	targetChan := make(chan []article, len(seeds))
 	var g errgroup.Group
@@ -411,7 +418,13 @@ func (opts options) discover(client *utilhttp.Client, seeds []article, stored ma
 
 	var targets []article
 	for t := range targetChan {
-		targets = append(targets, t...)
+		for _, a := range t {
+			if _, ok := stored[a.name()]; ok {
+				continue
+			}
+			stored[a.name()] = struct{}{}
+			targets = append(targets, a)
+		}
 	}
 
 	return targets, nil
@@ -419,15 +432,7 @@ func (opts options) discover(client *utilhttp.Client, seeds []article, stored ma
 
 // collect stores the rest of the series. Their listings are not read: they say
 // what discover has already been told.
-func (opts options) collect(client *utilhttp.Client, targets []article, stored map[string]struct{}) error {
-	targets = slices.DeleteFunc(targets, func(a article) bool {
-		if _, ok := stored[a.name()]; ok {
-			return true
-		}
-		stored[a.name()] = struct{}{}
-		return false
-	})
-
+func (opts options) collect(client *utilhttp.Client, targets []article) error {
 	slog.Info("Collect series", slog.Int("articles", len(targets)))
 
 	bar := progressbar.Default(int64(len(targets)))
