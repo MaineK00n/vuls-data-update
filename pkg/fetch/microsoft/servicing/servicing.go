@@ -167,10 +167,16 @@ func WithWait(wait time.Duration) Option {
 func retryPolicy(ctx context.Context, resp *http.Response, err error) (bool, error) {
 	retry, rerr := retryablehttp.ErrorPropagatedRetryPolicy(ctx, resp, err)
 	if retry || rerr != nil {
-		return retry, rerr
+		return retry, errors.Wrap(rerr, "retry policy")
 	}
 
-	return resp != nil && resp.StatusCode == http.StatusForbidden, nil
+	// The status goes with the decision: given a nil error, retryablehttp gives
+	// up saying only "giving up after N attempt(s)", never that it was throttled.
+	if resp != nil && resp.StatusCode == http.StatusForbidden {
+		return true, errors.Errorf("unexpected HTTP status %s", resp.Status)
+	}
+
+	return false, nil
 }
 
 // errNotServed reports an article support.microsoft.com does not serve. A
