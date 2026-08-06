@@ -472,9 +472,7 @@ func (opts options) store(client *utilhttp.Client, a article) ([]byte, error) {
 	}
 	defer resp.Body.Close()
 
-	switch resp.StatusCode {
-	case http.StatusOK:
-	default:
+	if resp.StatusCode != http.StatusOK {
 		_, _ = io.Copy(io.Discard, resp.Body)
 		return nil, errors.Errorf("error response with status code %d, url: %s", resp.StatusCode, a.url)
 	}
