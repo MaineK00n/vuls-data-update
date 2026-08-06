@@ -179,11 +179,6 @@ func retryPolicy(ctx context.Context, resp *http.Response, err error) (bool, err
 	return false, nil
 }
 
-// errNotServed reports an article support.microsoft.com does not serve. A
-// listing naming one is Microsoft's own inconsistency, not a fetch failure, so
-// the crawl steps over it rather than losing the run.
-var errNotServed = errors.New("not served")
-
 // entry is one item of a series listing. It is a crawl frontier, not data: the
 // listing is only read to find the rest of the series, and the articles it
 // points at are stored in its place.
@@ -391,10 +386,6 @@ func (opts options) discover(client *utilhttp.Client, seeds []article, stored ma
 
 			bs, err := opts.store(client, a)
 			if err != nil {
-				if errors.Is(err, errNotServed) {
-					slog.Warn("article is not served", slog.String("url", a.url))
-					return nil
-				}
 				return errors.Wrapf(err, "store %s", a.url)
 			}
 
@@ -455,10 +446,6 @@ func (opts options) collect(client *utilhttp.Client, targets []article, stored m
 			}()
 
 			if _, err := opts.store(client, a); err != nil {
-				if errors.Is(err, errNotServed) {
-					slog.Warn("listed article is not served", slog.String("url", a.url))
-					return nil
-				}
 				return errors.Wrapf(err, "store %s", a.url)
 			}
 
@@ -487,9 +474,6 @@ func (opts options) store(client *utilhttp.Client, a article) ([]byte, error) {
 
 	switch resp.StatusCode {
 	case http.StatusOK:
-	case http.StatusNotFound:
-		_, _ = io.Copy(io.Discard, resp.Body)
-		return nil, errors.Wrapf(errNotServed, "get %s", a.url)
 	default:
 		_, _ = io.Copy(io.Discard, resp.Body)
 		return nil, errors.Errorf("error response with status code %d, url: %s", resp.StatusCode, a.url)
