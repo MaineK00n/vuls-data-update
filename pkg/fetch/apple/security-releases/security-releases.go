@@ -246,8 +246,11 @@ func (opts options) fetchLists(client *utilhttp.Client, root *url.URL, archives 
 		// it is parsed. mutating state shared across the level (processed,
 		// advisories, next) and writing files stays sequential below, so it
 		// needs no synchronization. aliases of already processed pages are
-		// parsed here just to be discarded below (~20 pages per run), which
-		// is cheaper than reading processed under a lock
+		// parsed here just to be discarded below (~20 pages per run): not
+		// because a parse is cheap, but so the callback stays a pure
+		// function of the response instead of silently depending on
+		// processed not being written mid-level; the wasted parses are
+		// milliseconds against the network round trips
 		pageChan := make(chan parsed, len(us))
 		if err := client.PipelineGet(us, opts.concurrency, opts.wait, false, func(resp *http.Response) error {
 			defer resp.Body.Close()
