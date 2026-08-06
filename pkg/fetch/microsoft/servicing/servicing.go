@@ -349,10 +349,6 @@ func (opts options) resolve(client *utilhttp.Client, kbs []string) ([]article, e
 		articles = append(articles, a)
 	}
 
-	// Ordered so a rerun walks the same tree in the same order rather than in
-	// whatever order the lookups happened to finish.
-	slices.SortFunc(articles, func(a, b article) int { return strings.Compare(a.name(), b.name()) })
-
 	return articles, nil
 }
 
@@ -417,7 +413,6 @@ func (opts options) discover(client *utilhttp.Client, seeds []article, stored ma
 	for t := range targetChan {
 		targets = append(targets, t...)
 	}
-	slices.SortFunc(targets, func(a, b article) int { return strings.Compare(a.name(), b.name()) })
 
 	return targets, nil
 }
