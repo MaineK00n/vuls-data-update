@@ -265,7 +265,7 @@ func (opts options) fetch(kbs []string) error {
 
 	client := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry), utilhttp.WithClientCheckRetry(retryPolicy))
 
-	seeds, err := opts.resolve(client, util.Unique(kbs))
+	seeds, err := opts.resolve(client, kbs)
 	if err != nil {
 		return errors.Wrap(err, "resolve")
 	}
@@ -289,6 +289,16 @@ func (opts options) fetch(kbs []string) error {
 // product and series as path segments, so the body would add nothing a crawl
 // does not already reach.
 func (opts options) resolve(client *utilhttp.Client, kbs []string) ([]article, error) {
+	// /help/ takes the article number alone; /help/KB5101004 is a 404. Callers
+	// pass either spelling, so normalize rather than reject — and normalize
+	// before deduplicating, or "KB5101004" and "5101004" are two lookups of the
+	// one article.
+	ns := make([]string, 0, len(kbs))
+	for _, kb := range kbs {
+		ns = append(ns, strings.TrimPrefix(strings.ToUpper(kb), "KB"))
+	}
+	kbs = util.Unique(ns)
+
 	slog.Info("Resolve KB to servicing article", slog.Int("count", len(kbs)))
 
 	bar := progressbar.Default(int64(len(kbs)))
@@ -301,12 +311,6 @@ func (opts options) resolve(client *utilhttp.Client, kbs []string) ([]article, e
 				time.Sleep(opts.wait)
 				_ = bar.Add(1)
 			}()
-
-			// /help/ takes the article number alone; /help/KB5101004 is a 404.
-			// Callers pass either spelling, so normalize rather than reject, and
-			// keep the normalized form: it is what sidebar entries carry, and the
-			// two have to compare equal for a series to cover its members.
-			kb = strings.TrimPrefix(strings.ToUpper(kb), "KB")
 
 			req, err := utilhttp.NewRequest(http.MethodHead, fmt.Sprintf(opts.helpURL, kb))
 			if err != nil {
