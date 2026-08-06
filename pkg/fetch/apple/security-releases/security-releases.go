@@ -26,6 +26,12 @@ const baseURL = "https://support.apple.com/en-us/100100"
 
 // Known upstream state, so that only expected pages may be skipped; anything
 // outside these fails the fetch loudly.
+//
+// The retired-host links and the removed articles together cost about 75
+// pre-2011 advisories: their list rows survive, but no advisories/<id>.json
+// is written for them, which downstream stages should treat as normal. The
+// contents survive on the Wayback Machine and could be recovered in a
+// follow-up with a committed table of pinned snapshot URLs.
 var (
 	// inlineAdvisoryPageIDs are the archive index pages that inline pre-2005
 	// advisory content directly instead of listing links to per-release pages.
