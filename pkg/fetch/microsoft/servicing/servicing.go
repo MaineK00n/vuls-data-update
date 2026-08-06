@@ -222,12 +222,35 @@ func (a article) name() string {
 // Series that render no listing — os/windows and os/windows-server collect
 // unrelated one-off notices rather than a monthly track — are the exception,
 // and every KB landing on one is retrieved.
+// The defaults are set by what support.microsoft.com throttles at, measured
+// over 200 articles per run:
+//
+//	concurrency  retry   403s   backoff   gave up
+//	          3      3     77      140s        12
+//	          3      5     42      114s         1
+//	          3      8     23       57s         0
+//	          1      5      8       10s         0
+//	          2      5      9       12s         0
+//
+// Waiting longer between requests is not the lever: at one request a second the
+// throttle arrives after 46 articles, at two a second after 75. It is a quota
+// over a window, and any crawl worth running reaches it.
+//
+// What matters is going quiet once it does. The window is 3 to 5 seconds when
+// nothing is asking, so a lone worker's first retry clears it -- but a third
+// worker keeps the quota spent while the other two back off, and their retries
+// then land together and spend it again. Hence two, which throttles a fifth as
+// often as three for the same throughput.
+//
+// retry is well past the 5 that measured clean, because an unused retry costs
+// nothing and a real seed list is many times 200 articles. nvd/api, against an
+// API that throttles the same way, allows 20.
 func Fetch(kbs []string, opts ...Option) error {
 	options := &options{
 		helpURL:     helpURL,
 		dir:         filepath.Join(util.CacheDir(), "fetch", "microsoft", "servicing"),
-		retry:       3,
-		concurrency: 3,
+		retry:       10,
+		concurrency: 2,
 		wait:        1 * time.Second,
 	}
 
