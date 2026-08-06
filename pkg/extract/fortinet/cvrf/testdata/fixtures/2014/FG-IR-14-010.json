@@ -1,0 +1,70 @@
+{
+	"document_title": "FortiBalancer Remote SSH Vulnerability",
+	"document_type": "Fortinet PSIRT Advisories",
+	"documentpublisher": {
+		"type": "Vendor",
+		"contact_details": "\n            Fortinet PSIRT Contact:\n            Website: https://fortiguard.fortinet.com/faq/psirt-contact\n        "
+	},
+	"documenttracking": {
+		"identification": {
+			"id": "FG-IR-14-010"
+		},
+		"status": "Final",
+		"version": "1",
+		"revisionhistory": {
+			"revision": {
+				"number": "1",
+				"date": "2014-04-02T00:00:00",
+				"description": "Current version"
+			}
+		},
+		"initial_release_date": "2014-04-02T00:00:00",
+		"current_release_date": "2014-04-02T00:00:00"
+	},
+	"documentnotes": {
+		"note": [
+			{
+				"text": "\n            A platform-specific remote access vulnerability has been discovered that may allow a remote user to gain privileged access to affected systems using SSH. The vulnerability is caused by a configuration error, and is not the result of an underlying SSH defect.\n        ",
+				"title": "Description",
+				"type": "General",
+				"ordinal": "1"
+			},
+			{
+				"text": "\n            Remote Access\n        ",
+				"title": "Impact",
+				"type": "General",
+				"ordinal": "2"
+			},
+			{
+				"text": "\n            FortiBalancer 400, 1000, 2000 and 3000.All software versions are affected.\n        ",
+				"title": "Affected Products",
+				"type": "General",
+				"ordinal": "3"
+			},
+			{
+				"text": "\n            Apply the patch provided on the Fortinet Support site, or use one of the workarounds shown below. The patch and supporting documentation are available in the FortiBalancer firmware download directory, accessible from https://support.fortinet.com. The following files are available:FortiBalancer-Component-Patch.pdf - Installation InstructionsFBLOS-FortiBalancer-Patch-2014_02.fn - System patchOther Workarounds:1. Disable SSH on the Web UI via Admin Tools -> System Management. Uncheck \"enable SSH access\" and click \"save changes\" on the top right.2. Disable SSH in the console via:config tssh offwrite memoryexit3. Use Webwall rules in order to block TCP port 22 destined to the load balancer external IP address:config taccesslist deny tcp 0.0.0.0 0.0.0.0 0 <external-ip-address> 255.255.255.255 22 100accesslist permit tcp 0.0.0.0 0.0.0.0 0 0.0.0.0 0.0.0.0 0 100accessgroup 100 <external-port>webwall <external-port> onwrite memoryexit4. Use a firewall to block TCP port 22 access to the FortiBalancer.\n        ",
+				"title": "Solutions",
+				"type": "General",
+				"ordinal": "4"
+			}
+		]
+	},
+	"vulnerability": {
+		"ordinal": "1",
+		"title": "FortiBalancer Remote SSH Vulnerability",
+		"references": {
+			"type": "Self",
+			"reference": [
+				{
+					"url": "https://fortiguard.fortinet.com/psirt/FG-IR-14-010",
+					"description": "FortiBalancer Remote SSH Vulnerability"
+				}
+			]
+		},
+		"cve": [
+			"CVE-2014-2721 password issue",
+			"CVE-<br />2014-2722 key issue",
+			"CVE-<br />2014-2723 permission issue"
+		]
+	}
+}

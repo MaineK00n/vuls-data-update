@@ -151,26 +151,40 @@ func extract(fetched cvrfTypes.CVRF, raws []string) (dataTypes.Data, error) {
 	// exact affected versions.
 	//
 	// CVRF carries a single product status whose only observed type across the
-	// corpus is "Known Affected"; advisories without it (no product_statuses, or
-	// a status element without a type) are content-only. Any other type is
+	// corpus is "Known Affected". Advisories without it — the 2012-2022
+	// historical corpus — fall back to the embedded supplement table (see
+	// supplement.go); those in neither are content-only. Any other type is
 	// unexpected — fail loudly rather than silently emit no detection.
 	var criterions []criterionTypes.Criterion
 	switch status := fetched.Vulnerability.ProductStatuses.Status; status.Type {
 	case "Known Affected":
+		// The symmetric counterpart of the products-without-a-type guard
+		// below: a typed status that lists no products never occurs in the
+		// corpus, and letting it through would silently emit no detection
+		// for an advisory that claims to have an affected set. (A missing
+		// or empty product_tree needs no extra guard here — every listed
+		// product then fails tree resolution below.)
+		if len(status.ProductID) == 0 {
+			return dataTypes.Data{}, errors.Errorf("product status type %q lists no products", status.Type)
+		}
 		cs, err := knownAffectedCriterions(status.ProductID, buildProductMap(fetched))
 		if err != nil {
 			return dataTypes.Data{}, errors.Wrap(err, "build known affected criterions")
 		}
 		criterions = cs
 	case "":
-		// No product status type → content-only advisory, no detection. A typed
-		// status is the only thing that lists products, so a missing type must
-		// come with no products; products without a type would be an affected
-		// set we cannot classify and is treated as unexpected rather than
-		// dropped.
+		// No product status type. A typed status is the only thing that lists
+		// products, so a missing type must come with no products; products
+		// without a type would be an affected set we cannot classify and is
+		// treated as unexpected rather than dropped.
 		if len(status.ProductID) > 0 {
 			return dataTypes.Data{}, errors.Errorf("product status lists %d product(s) but has no type", len(status.ProductID))
 		}
+		cs, err := supplementCriterions(supplementTable, id)
+		if err != nil {
+			return dataTypes.Data{}, errors.Wrap(err, "build supplement criterions")
+		}
+		criterions = cs
 	default:
 		return dataTypes.Data{}, errors.Errorf("unexpected product status type %q (expected %q or none)", status.Type, "Known Affected")
 	}
@@ -208,13 +222,28 @@ func extract(fetched cvrfTypes.CVRF, raws []string) (dataTypes.Data, error) {
 
 	var vulns []vulnerabilityTypes.Vulnerability
 	for _, cve := range fetched.Vulnerability.CVE {
-		if cve == "" || slices.ContainsFunc(vulns, func(v vulnerabilityTypes.Vulnerability) bool {
-			return v.Content.ID == vulnerabilityContentTypes.VulnerabilityID(cve)
+		if cve == "" {
+			continue
+		}
+		// A cve[] entry is a bare CVE ID everywhere in the corpus except the
+		// three known FG-IR-14-010 entries normalized via cveEntryFixups;
+		// anything else is a new upstream shape and fails the extract rather
+		// than emitting a junk vulnerability ID (or a silently mis-normalized
+		// one).
+		id, ok := cveEntryFixups[cve]
+		if !ok {
+			id = cve
+		}
+		if !cveIDPattern.MatchString(id) {
+			return dataTypes.Data{}, errors.Errorf("unexpected cve entry. expected: bare CVE ID or a known fixup, actual: %q", cve)
+		}
+		if slices.ContainsFunc(vulns, func(v vulnerabilityTypes.Vulnerability) bool {
+			return v.Content.ID == vulnerabilityContentTypes.VulnerabilityID(id)
 		}) {
 			continue
 		}
 		vulns = append(vulns, vulnerabilityTypes.Vulnerability{
-			Content:  vulnerabilityContentTypes.Content{ID: vulnerabilityContentTypes.VulnerabilityID(cve)},
+			Content:  vulnerabilityContentTypes.Content{ID: vulnerabilityContentTypes.VulnerabilityID(id)},
 			Segments: segs,
 		})
 	}
@@ -375,6 +404,22 @@ func advisorySeverity(fetched cvrfTypes.CVRF) ([]severityTypes.Severity, error) 
 // cwePattern matches the CWE identifiers Fortinet embeds inline in the Summary
 // note, in any of the observed forms: "[CWE-200]", "(CWE-415)", "[CWE-78 ]".
 var cwePattern = regexp.MustCompile(`CWE-\d+`)
+
+// cveEntryFixups maps the three malformed cve[] entries of FG-IR-14-010 — the
+// only non-bare entries in the whole corpus — to their CVE IDs. The fixup is
+// keyed on the exact malformed string, not applied as a lenient pattern: a
+// pattern that recovers "the" CVE ID from arbitrary junk would silently
+// mis-handle a future malformed shape (e.g. keep only the first of two IDs in
+// one entry), while an unknown shape here fails the extract loudly instead.
+var cveEntryFixups = map[string]string{
+	"CVE-2014-2721 password issue":         "CVE-2014-2721",
+	"CVE-<br />2014-2722 key issue":        "CVE-2014-2722",
+	"CVE-<br />2014-2723 permission issue": "CVE-2014-2723",
+}
+
+// cveIDPattern is the shape every (fixed-up) cve[] entry must have: a bare
+// CVE ID (the sequence part has four or more digits).
+var cveIDPattern = regexp.MustCompile(`^CVE-\d{4}-\d{4,}$`)
 
 // urlCandidatePattern finds candidate http(s) URL substrings in a CVRF
 // reference value. The values are messy and the URL is not always at the start:

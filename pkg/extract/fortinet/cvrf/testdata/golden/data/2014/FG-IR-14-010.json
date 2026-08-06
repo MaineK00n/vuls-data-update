@@ -1,0 +1,86 @@
+{
+	"id": "FG-IR-14-010",
+	"advisories": [
+		{
+			"content": {
+				"id": "FG-IR-14-010",
+				"title": "FortiBalancer Remote SSH Vulnerability",
+				"references": [
+					{
+						"source": "fortiguard.fortinet.com",
+						"url": "https://fortiguard.fortinet.com/psirt/FG-IR-14-010"
+					}
+				],
+				"published": "2014-04-02T00:00:00Z",
+				"modified": "2014-04-02T00:00:00Z"
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe"
+				}
+			]
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-2014-2721"
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2014-2722"
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2014-2723"
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe"
+				}
+			]
+		}
+	],
+	"detections": [
+		{
+			"ecosystem": "cpe",
+			"conditions": [
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:o:fortinet:fortibalancer:*:*:*:*:*:*:*:*"
+								}
+							}
+						]
+					}
+				}
+			]
+		}
+	],
+	"data_source": {
+		"id": "fortinet-cvrf",
+		"raws": [
+			"fixtures/2014/FG-IR-14-010.json"
+		]
+	}
+}

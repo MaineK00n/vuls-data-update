@@ -1,0 +1,87 @@
+{
+	"document_title": "Potential Information Disclosure Vulnerability in FortiGate",
+	"document_type": "Fortinet PSIRT Advisories",
+	"documentpublisher": {
+		"type": "Vendor",
+		"contact_details": "\n            Fortinet PSIRT Contact:\n            Email: vulnwatch@fortinet.com\n            Website: fortiguard.com/psirt-pgpkey\n        "
+	},
+	"documenttracking": {
+		"identification": {
+			"id": "FG-IR-012-001"
+		},
+		"revisionhistory": {
+			"revision": {}
+		},
+		"current_release_date": "2012-02-01T00:00:00"
+	},
+	"documentnotes": {
+		"note": [
+			{
+				"text": "\n            On January 27, 2012, vulnerability-lab.com publicly released news of discovered vulnerabilities discovered in FortiGate UTM WAF Appliances platforms.\n        ",
+				"title": "Summary",
+				"type": "Summary"
+			},
+			{
+				"text": "\n            On January 27, 2012, vulnerability-lab.com publicly released news of discovered vulnerabilities discovered in FortiGate UTM WAF Appliances platforms.\n        ",
+				"title": "Description",
+				"type": "Description"
+			},
+			{
+				"text": "\n            Information Disclosure\n        ",
+				"title": "Impact",
+				"type": "Description"
+			},
+			{
+				"text": "\n            Versions of FortiGate appliances believed to be affected include FortiOS v4.3 through FOS 4.3.5. At this time, there is no knowledge of other Fortinet offerings being affected, although precautionary measures are being taken to prevent similar occurrences.\n        ",
+				"title": "Affected Products",
+				"type": "Description"
+			},
+			{
+				"text": "\n            Fortinet is working towards an updated firmware release to address the issues. These issues will be fixed in FortiOS 4.3.6 and higher. Update March 26, 2012: FortiOS 4.3.6 is now available. Firmware images can be obtained from https://support.fortinet.com . The following precautions are also recommended: Ensure all GUI sessions use encryption (via HTTPS); Configure the FortiGate to only allow GUI admin access from trusted hosts or networks; If administrative access to FortiGates is required from untrusted hosts, SSH access is recommended as SSH is not affected; Refrain from administering FortiGate appliances from untrusted or shared computers. For more information, customers are encouraged to contact Customer Support at support@fortinet.com\n        ",
+				"title": "Solutions",
+				"type": "Description"
+			},
+			{
+				"text": "\n            None\n        ",
+				"title": "Acknowledgement",
+				"type": "Description"
+			}
+		]
+	},
+	"document_references": {
+		"reference": [
+			{
+				"url": "<a href=\"http://vulnerability-lab.com/get_content.php?id=144\">Vulnerability Research Laboratory (VL-ID 144)</a>",
+				"description": "<a href=\"http://vulnerability-lab.com/get_content.php?id=144\">Vulnerability Research Laboratory (VL-ID 144)</a>"
+			},
+			{
+				"url": "<a href=\"http://secunia.com/advisories/47693\">Secunia Advisory SA47693</a>",
+				"description": "<a href=\"http://secunia.com/advisories/47693\">Secunia Advisory SA47693</a>"
+			},
+			{
+				"url": "<a href=\"http://www.securityfocus.com/bid/51708\">Security Focus (51708)</a>",
+				"description": "<a href=\"http://www.securityfocus.com/bid/51708\">Security Focus (51708)</a>"
+			},
+			{
+				"url": "<a href=\"http://xforce.iss.net/xforce/xfdb/72761\">IBM ISS (72761)</a>",
+				"description": "<a href=\"http://xforce.iss.net/xforce/xfdb/72761\">IBM ISS (72761)</a>"
+			}
+		]
+	},
+	"acknowledgments": {},
+	"vulnerability": {
+		"references": {},
+		"cve": [
+			"CVE-2012-0941"
+		],
+		"product_statuses": {
+			"status": {}
+		},
+		"cvss_scoresets": {
+			"scoreset_v3": {}
+		}
+	},
+	"product_tree": {
+		"branch": {}
+	}
+}

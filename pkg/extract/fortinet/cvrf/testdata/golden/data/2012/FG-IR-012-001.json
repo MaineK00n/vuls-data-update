@@ -1,0 +1,71 @@
+{
+	"id": "FG-IR-012-001",
+	"advisories": [
+		{
+			"content": {
+				"id": "FG-IR-012-001",
+				"title": "Potential Information Disclosure Vulnerability in FortiGate",
+				"description": "On January 27, 2012, vulnerability-lab.com publicly released news of discovered vulnerabilities discovered in FortiGate UTM WAF Appliances platforms.",
+				"references": [
+					{
+						"source": "fortiguard.fortinet.com",
+						"url": "https://fortiguard.fortinet.com/psirt/FG-IR-012-001"
+					}
+				],
+				"modified": "2012-02-01T00:00:00Z"
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe"
+				}
+			]
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-2012-0941"
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe"
+				}
+			]
+		}
+	],
+	"detections": [
+		{
+			"ecosystem": "cpe",
+			"conditions": [
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet-fortios",
+										"ge": "4.3.0",
+										"le": "4.3.5"
+									}
+								}
+							}
+						]
+					}
+				}
+			]
+		}
+	],
+	"data_source": {
+		"id": "fortinet-cvrf",
+		"raws": [
+			"fixtures/2012/FG-IR-012-001.json"
+		]
+	}
+}

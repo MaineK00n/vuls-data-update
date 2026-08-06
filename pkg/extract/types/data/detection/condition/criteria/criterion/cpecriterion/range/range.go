@@ -52,6 +52,9 @@ const (
 	// true product-by-product going forward.
 	RangeTypeFortinetAntivirusEngine                             RangeType = "fortinet-antivirus_engine"
 	RangeTypeFortinetAscenLink                                   RangeType = "fortinet-ascenlink"
+	RangeTypeFortinetConnect                                     RangeType = "fortinet-connect"
+	RangeTypeFortinetFSSO                                        RangeType = "fortinet-fortinet_single_sign-on"
+	RangeTypeFortinetFSSOCA                                      RangeType = "fortinet-fsso_ca"
 	RangeTypeFortinetFortiADC                                    RangeType = "fortinet-fortiadc"
 	RangeTypeFortinetFortiADCManager                             RangeType = "fortinet-fortiadc_manager"
 	RangeTypeFortinetFortiAIOps                                  RangeType = "fortinet-fortiaiops"
@@ -64,11 +67,16 @@ const (
 	RangeTypeFortinetFortiAPU                                    RangeType = "fortinet-fortiap-u"
 	RangeTypeFortinetFortiAPW2                                   RangeType = "fortinet-fortiap-w2"
 	RangeTypeFortinetFortiAuthenticator                          RangeType = "fortinet-fortiauthenticator"
+	RangeTypeFortinetFortiBalancer                               RangeType = "fortinet-fortibalancer"
+	RangeTypeFortinetFortiCASB                                   RangeType = "fortinet-forticasb"
 	RangeTypeFortinetFortiCache                                  RangeType = "fortinet-forticache"
 	RangeTypeFortinetFortiCamera                                 RangeType = "fortinet-forticamera"
 	RangeTypeFortinetFortiClient                                 RangeType = "fortinet-forticlient"
 	RangeTypeFortinetFortiClientEnterpriseManagementServer       RangeType = "fortinet-forticlient_enterprise_management_server"
 	RangeTypeFortinetFortiClientEnterpriseManagementServerCloud  RangeType = "fortinet-forticlient_enterprise_management_server_cloud"
+	RangeTypeFortinetFortiClientLite                             RangeType = "fortinet-forticlient_lite"
+	RangeTypeFortinetFortiClientSSLVPN                           RangeType = "fortinet-forticlient_ssl_vpn"
+	RangeTypeFortinetFortiCloud                                  RangeType = "fortinet-forticloud"
 	RangeTypeFortinetFortiConverter                              RangeType = "fortinet-forticonverter"
 	RangeTypeFortinetFortiDB                                     RangeType = "fortinet-fortidb"
 	RangeTypeFortinetFortiDDoS                                   RangeType = "fortinet-fortiddos"
@@ -78,8 +86,10 @@ const (
 	RangeTypeFortinetFortiDLP                                    RangeType = "fortinet-fortidlp"
 	RangeTypeFortinetFortiEDR                                    RangeType = "fortinet-fortiedr"
 	RangeTypeFortinetFortiEDRManager                             RangeType = "fortinet-fortiedr_manager"
+	RangeTypeFortinetFortiExplorer                               RangeType = "fortinet-fortiexplorer"
 	RangeTypeFortinetFortiExtender                               RangeType = "fortinet-fortiextender"
 	RangeTypeFortinetFortiFone                                   RangeType = "fortinet-fortifone"
+	RangeTypeFortinetFortiGateCloud                              RangeType = "fortinet-fortigate_cloud"
 	RangeTypeFortinetFortiGuest                                  RangeType = "fortinet-fortiguest"
 	RangeTypeFortinetFortiIsolator                               RangeType = "fortinet-fortiisolator"
 	RangeTypeFortinetFortiMail                                   RangeType = "fortinet-fortimail"
@@ -100,6 +110,7 @@ const (
 	RangeTypeFortinetFortiSandboxCloud                           RangeType = "fortinet-fortisandbox_cloud"
 	RangeTypeFortinetFortiSandboxPaaS                            RangeType = "fortinet-fortisandbox_paas"
 	RangeTypeFortinetFortiSASE                                   RangeType = "fortinet-fortisase"
+	RangeTypeFortinetFortiSDNConnector                           RangeType = "fortinet-fortisdnconnector"
 	RangeTypeFortinetFortiSIEM                                   RangeType = "fortinet-fortisiem"
 	RangeTypeFortinetFortiSIEMWindowsAgent                       RangeType = "fortinet-fortisiem_windows_agent"
 	RangeTypeFortinetFortiSOAR                                   RangeType = "fortinet-fortisoar"
@@ -107,6 +118,7 @@ const (
 	RangeTypeFortinetFortiSRA                                    RangeType = "fortinet-fortisra"
 	RangeTypeFortinetFortiSwitch                                 RangeType = "fortinet-fortiswitch"
 	RangeTypeFortinetFortiSwitchAXFixed                          RangeType = "fortinet-fortiswitchaxfixed"
+	RangeTypeFortinetFortiSwitchEFX                              RangeType = "fortinet-fortiswitch-efx"
 	RangeTypeFortinetFortiSwitchManager                          RangeType = "fortinet-fortiswitchmanager"
 	RangeTypeFortinetFortiTester                                 RangeType = "fortinet-fortitester"
 	RangeTypeFortinetFortiTokenMobile                            RangeType = "fortinet-fortitoken_mobile"
@@ -117,6 +129,7 @@ const (
 	RangeTypeFortinetFortiWeb                                    RangeType = "fortinet-fortiweb"
 	RangeTypeFortinetFortiWebManager                             RangeType = "fortinet-fortiweb_manager"
 	RangeTypeFortinetFortiWLC                                    RangeType = "fortinet-fortiwlc"
+	RangeTypeFortinetFortiWLCSD                                  RangeType = "fortinet-fortiwlc-sd"
 	RangeTypeFortinetFortiWLM                                    RangeType = "fortinet-fortiwlm"
 	RangeTypeFortinetMeru                                        RangeType = "fortinet-meru"
 
@@ -135,6 +148,9 @@ func RangeTypes() []RangeType {
 		RangeTypePANOS,
 		RangeTypeFortinetAntivirusEngine,
 		RangeTypeFortinetAscenLink,
+		RangeTypeFortinetConnect,
+		RangeTypeFortinetFSSO,
+		RangeTypeFortinetFSSOCA,
 		RangeTypeFortinetFortiADC,
 		RangeTypeFortinetFortiADCManager,
 		RangeTypeFortinetFortiAIOps,
@@ -147,11 +163,16 @@ func RangeTypes() []RangeType {
 		RangeTypeFortinetFortiAPU,
 		RangeTypeFortinetFortiAPW2,
 		RangeTypeFortinetFortiAuthenticator,
+		RangeTypeFortinetFortiBalancer,
+		RangeTypeFortinetFortiCASB,
 		RangeTypeFortinetFortiCache,
 		RangeTypeFortinetFortiCamera,
 		RangeTypeFortinetFortiClient,
 		RangeTypeFortinetFortiClientEnterpriseManagementServer,
 		RangeTypeFortinetFortiClientEnterpriseManagementServerCloud,
+		RangeTypeFortinetFortiClientLite,
+		RangeTypeFortinetFortiClientSSLVPN,
+		RangeTypeFortinetFortiCloud,
 		RangeTypeFortinetFortiConverter,
 		RangeTypeFortinetFortiDB,
 		RangeTypeFortinetFortiDDoS,
@@ -161,8 +182,10 @@ func RangeTypes() []RangeType {
 		RangeTypeFortinetFortiDLP,
 		RangeTypeFortinetFortiEDR,
 		RangeTypeFortinetFortiEDRManager,
+		RangeTypeFortinetFortiExplorer,
 		RangeTypeFortinetFortiExtender,
 		RangeTypeFortinetFortiFone,
+		RangeTypeFortinetFortiGateCloud,
 		RangeTypeFortinetFortiGuest,
 		RangeTypeFortinetFortiIsolator,
 		RangeTypeFortinetFortiMail,
@@ -183,6 +206,7 @@ func RangeTypes() []RangeType {
 		RangeTypeFortinetFortiSandboxCloud,
 		RangeTypeFortinetFortiSandboxPaaS,
 		RangeTypeFortinetFortiSASE,
+		RangeTypeFortinetFortiSDNConnector,
 		RangeTypeFortinetFortiSIEM,
 		RangeTypeFortinetFortiSIEMWindowsAgent,
 		RangeTypeFortinetFortiSOAR,
@@ -190,6 +214,7 @@ func RangeTypes() []RangeType {
 		RangeTypeFortinetFortiSRA,
 		RangeTypeFortinetFortiSwitch,
 		RangeTypeFortinetFortiSwitchAXFixed,
+		RangeTypeFortinetFortiSwitchEFX,
 		RangeTypeFortinetFortiSwitchManager,
 		RangeTypeFortinetFortiTester,
 		RangeTypeFortinetFortiTokenMobile,
@@ -200,6 +225,7 @@ func RangeTypes() []RangeType {
 		RangeTypeFortinetFortiWeb,
 		RangeTypeFortinetFortiWebManager,
 		RangeTypeFortinetFortiWLC,
+		RangeTypeFortinetFortiWLCSD,
 		RangeTypeFortinetFortiWLM,
 		RangeTypeFortinetMeru,
 		RangeTypeUnknown,
@@ -372,6 +398,9 @@ func (t RangeType) CompareVersions(v1, v2 string) (int, error) {
 		return n, nil
 	case RangeTypeFortinetAntivirusEngine,
 		RangeTypeFortinetAscenLink,
+		RangeTypeFortinetConnect,
+		RangeTypeFortinetFSSO,
+		RangeTypeFortinetFSSOCA,
 		RangeTypeFortinetFortiADC,
 		RangeTypeFortinetFortiADCManager,
 		RangeTypeFortinetFortiAIOps,
@@ -384,11 +413,16 @@ func (t RangeType) CompareVersions(v1, v2 string) (int, error) {
 		RangeTypeFortinetFortiAPU,
 		RangeTypeFortinetFortiAPW2,
 		RangeTypeFortinetFortiAuthenticator,
+		RangeTypeFortinetFortiBalancer,
+		RangeTypeFortinetFortiCASB,
 		RangeTypeFortinetFortiCache,
 		RangeTypeFortinetFortiCamera,
 		RangeTypeFortinetFortiClient,
 		RangeTypeFortinetFortiClientEnterpriseManagementServer,
 		RangeTypeFortinetFortiClientEnterpriseManagementServerCloud,
+		RangeTypeFortinetFortiClientLite,
+		RangeTypeFortinetFortiClientSSLVPN,
+		RangeTypeFortinetFortiCloud,
 		RangeTypeFortinetFortiConverter,
 		RangeTypeFortinetFortiDB,
 		RangeTypeFortinetFortiDDoS,
@@ -398,8 +432,10 @@ func (t RangeType) CompareVersions(v1, v2 string) (int, error) {
 		RangeTypeFortinetFortiDLP,
 		RangeTypeFortinetFortiEDR,
 		RangeTypeFortinetFortiEDRManager,
+		RangeTypeFortinetFortiExplorer,
 		RangeTypeFortinetFortiExtender,
 		RangeTypeFortinetFortiFone,
+		RangeTypeFortinetFortiGateCloud,
 		RangeTypeFortinetFortiGuest,
 		RangeTypeFortinetFortiIsolator,
 		RangeTypeFortinetFortiMail,
@@ -419,6 +455,7 @@ func (t RangeType) CompareVersions(v1, v2 string) (int, error) {
 		RangeTypeFortinetFortiSandbox,
 		RangeTypeFortinetFortiSandboxCloud,
 		RangeTypeFortinetFortiSandboxPaaS,
+		RangeTypeFortinetFortiSDNConnector,
 		RangeTypeFortinetFortiSIEM,
 		RangeTypeFortinetFortiSIEMWindowsAgent,
 		RangeTypeFortinetFortiSOAR,
@@ -426,6 +463,7 @@ func (t RangeType) CompareVersions(v1, v2 string) (int, error) {
 		RangeTypeFortinetFortiSRA,
 		RangeTypeFortinetFortiSwitch,
 		RangeTypeFortinetFortiSwitchAXFixed,
+		RangeTypeFortinetFortiSwitchEFX,
 		RangeTypeFortinetFortiSwitchManager,
 		RangeTypeFortinetFortiTester,
 		RangeTypeFortinetFortiTokenMobile,
@@ -436,6 +474,7 @@ func (t RangeType) CompareVersions(v1, v2 string) (int, error) {
 		RangeTypeFortinetFortiWeb,
 		RangeTypeFortinetFortiWebManager,
 		RangeTypeFortinetFortiWLC,
+		RangeTypeFortinetFortiWLCSD,
 		RangeTypeFortinetFortiWLM,
 		RangeTypeFortinetMeru:
 		// Every other Fortinet product uses the purely numeric scheme. A
