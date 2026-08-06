@@ -83,12 +83,15 @@ func TestFetch(t *testing.T) {
 			golden: "cross-series",
 		},
 		{
-			// url.ResolveReference removes dot-segments from the escaped path,
-			// but Path is decoded, so one spelled %2e%2e arrives as ".." and
-			// would land the write outside origin/. KB5102210's listing carries
-			// one in an href, KB5102211 carries one in its redirect; both have to
-			// be refused, and the article that does not is still stored.
-			name:   "encoded dot-segment does not escape origin",
+			// A listing is HTML off the network, and both ways it can point out
+			// of the tree are refused. url.ResolveReference removes dot-segments
+			// from the escaped path but Path is decoded, so one spelled %2e%2e
+			// comes back as ".." and would write outside origin/; KB5102210's
+			// listing carries one and KB5102211's redirect carries another. An
+			// href naming a host rebases the target onto it, and KB5102210's
+			// listing carries one of those too, pointing at a port nothing
+			// answers on -- following it is a connection error, not a diff.
+			name:   "a listing pointing out of the tree is refused",
 			kbs:    []string{"KB5102210", "KB5102211"},
 			golden: "encoded-dot-segment",
 		},

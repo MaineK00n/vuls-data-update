@@ -582,6 +582,15 @@ func resolveHref(base *url.URL, href string) (article, bool) {
 
 	target := base.ResolveReference(ref)
 
+	// A listing is HTML off the network, and an href in it that names a scheme
+	// or a host rebases the target onto that host -- parsePath reads the path
+	// alone, so anything serving /<locale>/servicing/... would be retrieved and
+	// stored as a Microsoft servicing article. Nothing is lost by refusing:
+	// every one of the 70,922 listing hrefs across 271 articles is relative.
+	if target.Scheme != base.Scheme || target.Host != base.Host {
+		return article{}, false
+	}
+
 	a, ok := parsePath(target)
 	if !ok {
 		return article{}, false
