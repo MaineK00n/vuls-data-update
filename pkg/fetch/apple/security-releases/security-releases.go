@@ -136,9 +136,9 @@ func Fetch(opts ...Option) error {
 		return errors.Wrapf(err, "parse %s", options.baseURL)
 	}
 
-	advisories, err := options.fetchLists(client, root)
+	advisories, err := options.crawlLists(client, root)
 	if err != nil {
-		return errors.Wrap(err, "fetch lists")
+		return errors.Wrap(err, "crawl lists")
 	}
 
 	if err := options.fetchAdvisories(client, advisories); err != nil {
@@ -159,7 +159,7 @@ type listPage struct {
 	archives  []*url.URL
 }
 
-// fetchLists crawls the security releases index page and its archive pages
+// crawlLists crawls the security releases index page and its archive pages
 // as a level-synchronous BFS: the root page lists every archive page, so the
 // crawl normally takes two levels, and following the archive pages' own
 // navigation links is kept only as a safety net for a future archive that is
@@ -167,7 +167,7 @@ type listPage struct {
 // lists/<canonical id>.json; the pre-2005 pages that inline advisory content
 // are written as advisories/<id>.json instead. It returns the advisory URLs
 // found in the release rows, keyed by the linked article ID.
-func (opts options) fetchLists(client *utilhttp.Client, root *url.URL) (map[string]*url.URL, error) {
+func (opts options) crawlLists(client *utilhttp.Client, root *url.URL) (map[string]*url.URL, error) {
 	processed := make(map[string]struct{})
 	advisories := make(map[string]*url.URL)
 	level := []*url.URL{root}
