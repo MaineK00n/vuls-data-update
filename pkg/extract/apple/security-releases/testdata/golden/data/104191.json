@@ -17,6 +17,28 @@
 	"vulnerabilities": [
 		{
 			"content": {
+				"id": "CVE-2002-1366",
+				"references": [
+					{
+						"source": "support.apple.com",
+						"url": "https://www.cve.org/CVERecord?id=CVE-2002-1366"
+					}
+				]
+			}
+		},
+		{
+			"content": {
+				"id": "CVE-2002-1383",
+				"references": [
+					{
+						"source": "support.apple.com",
+						"url": "https://www.cve.org/CVERecord?id=CVE-2002-1383"
+					}
+				]
+			}
+		},
+		{
+			"content": {
 				"id": "CVE-2003-0466",
 				"references": [
 					{
