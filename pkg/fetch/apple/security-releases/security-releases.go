@@ -220,8 +220,12 @@ func (opts options) fetchLists(client *utilhttp.Client, root *url.URL, archives 
 			us = append(us, u.String())
 		}
 
-		// only the network round trips run concurrently; interpreting and
-		// persisting the pages happens sequentially below
+		// only the network round trips run concurrently, so that
+		// interpreting the pages below, which mutates state shared across
+		// the level (processed, advisories, next) and may write the same
+		// file for aliases of one page, needs no synchronization. the price
+		// is serializing per-page parsing and local writes, which are
+		// negligible next to the fetches
 		resps, err := client.MultiGet(us, opts.concurrency, opts.wait, false)
 		if err != nil {
 			return nil, errors.Wrap(err, "multi get")
