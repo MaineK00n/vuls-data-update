@@ -18,6 +18,11 @@ import (
 	dataTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data"
 	advisoryTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/advisory"
 	advisoryContentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/advisory/content"
+	detectionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection"
+	conditionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition"
+	criteriaTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria"
+	segmentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment"
+	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment/ecosystem"
 	referenceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/reference"
 	vulnerabilityTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/vulnerability"
 	vulnerabilityContentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/vulnerability/content"
@@ -34,6 +39,11 @@ import (
 // vulnerabilityIDPattern matches CVE IDs and their pre-2005 candidate form
 // (CAN-), which shares the number space with CVE.
 var vulnerabilityIDPattern = regexp.MustCompile(`(CVE|CAN)-[0-9]{4}-[0-9]{4,}`)
+
+// inlineAdvisoryPageIDs are the pre-2005 archive pages the fetch stage stores
+// under advisories/: their sections are prose bundles of dozens of releases,
+// not release sections, so no detections are derived from them.
+var inlineAdvisoryPageIDs = []string{"101682", "104191"}
 
 // trailingDatePattern matches the release date at the end of a list-format
 // row text, e.g. "- Mac OS X v10.4 - v10.4.5 - 03 Apr 2006".
@@ -225,6 +235,66 @@ func extract(fetched securityreleases.Advisory, releases []release, raws []strin
 		title = releases[0].row.Name
 	}
 
+	// one condition per release section, tagged with the raw section name;
+	// the sections of the pre-2005 inline archive pages are not releases,
+	// and only names releaseCriterions maps to a CPE yield a condition
+	var conditions []conditionTypes.Condition
+	tagsByCVE := make(map[string][]segmentTypes.DetectionTag)
+	var cves []string
+	for _, s := range fetched.Sections {
+		var sectionCVEs []string
+		for _, e := range s.Entries {
+			// vulnerability references live in IDs; the pre-2005 inline
+			// archive pages carry them in prose, which the fetch stage
+			// stores in Others
+			for _, t := range slices.Concat(e.IDs, e.Others) {
+				for _, m := range vulnerabilityIDPattern.FindAllString(t, -1) {
+					// CAN- is the pre-2005 candidate form of the same CVE
+					// number
+					sectionCVEs = append(sectionCVEs, strings.Replace(m, "CAN-", "CVE-", 1))
+				}
+			}
+		}
+		slices.Sort(sectionCVEs)
+		sectionCVEs = slices.Compact(sectionCVEs)
+		cves = append(cves, sectionCVEs...)
+
+		if slices.Contains(inlineAdvisoryPageIDs, rootID) {
+			continue
+		}
+		cs := releaseCriterions(s.Name)
+		if len(cs) == 0 {
+			continue
+		}
+		tag := segmentTypes.DetectionTag(s.Name)
+		// combined pages may repeat a section name, e.g. "Safari 11.0.2"
+		// twice; the same name maps to the same criterions, so keep the first
+		if !slices.ContainsFunc(conditions, func(c conditionTypes.Condition) bool { return c.Tag == tag }) {
+			conditions = append(conditions, conditionTypes.Condition{
+				Criteria: criteriaTypes.Criteria{
+					Operator:   criteriaTypes.CriteriaOperatorTypeOR,
+					Criterions: cs,
+				},
+				Tag: tag,
+			})
+		}
+		for _, c := range sectionCVEs {
+			if !slices.Contains(tagsByCVE[c], tag) {
+				tagsByCVE[c] = append(tagsByCVE[c], tag)
+			}
+		}
+	}
+	slices.Sort(cves)
+	cves = slices.Compact(cves)
+
+	segments := func(tags []segmentTypes.DetectionTag) []segmentTypes.Segment {
+		ss := make([]segmentTypes.Segment, 0, len(tags))
+		for _, t := range tags {
+			ss = append(ss, segmentTypes.Segment{Ecosystem: ecosystemTypes.Ecosystem(ecosystemTypes.EcosystemTypeCPE), Tag: t})
+		}
+		return ss
+	}
+
 	return dataTypes.Data{
 		ID: dataTypes.RootID(rootID),
 		Advisories: []advisoryTypes.Advisory{{
@@ -234,26 +304,15 @@ func extract(fetched securityreleases.Advisory, releases []release, raws []strin
 				References: []referenceTypes.Reference{{Source: "support.apple.com", URL: fetched.URL}},
 				Published:  published(fetched, releases),
 			},
+			Segments: segments(func() []segmentTypes.DetectionTag {
+				ts := make([]segmentTypes.DetectionTag, 0, len(conditions))
+				for _, c := range conditions {
+					ts = append(ts, c.Tag)
+				}
+				return ts
+			}()),
 		}},
 		Vulnerabilities: func() []vulnerabilityTypes.Vulnerability {
-			var cves []string
-			for _, s := range fetched.Sections {
-				for _, e := range s.Entries {
-					// vulnerability references live in IDs; the pre-2005
-					// inline archive pages carry them in prose, which the
-					// fetch stage stores in Others
-					for _, t := range slices.Concat(e.IDs, e.Others) {
-						for _, m := range vulnerabilityIDPattern.FindAllString(t, -1) {
-							// CAN- is the pre-2005 candidate form of the same
-							// CVE number
-							cves = append(cves, strings.Replace(m, "CAN-", "CVE-", 1))
-						}
-					}
-				}
-			}
-			slices.Sort(cves)
-			cves = slices.Compact(cves)
-
 			vs := make([]vulnerabilityTypes.Vulnerability, 0, len(cves))
 			for _, c := range cves {
 				vs = append(vs, vulnerabilityTypes.Vulnerability{
@@ -264,9 +323,19 @@ func extract(fetched securityreleases.Advisory, releases []release, raws []strin
 							URL:    fmt.Sprintf("https://www.cve.org/CVERecord?id=%s", c),
 						}},
 					},
+					Segments: segments(tagsByCVE[c]),
 				})
 			}
 			return vs
+		}(),
+		Detections: func() []detectionTypes.Detection {
+			if len(conditions) == 0 {
+				return nil
+			}
+			return []detectionTypes.Detection{{
+				Ecosystem:  ecosystemTypes.Ecosystem(ecosystemTypes.EcosystemTypeCPE),
+				Conditions: conditions,
+			}}
 		}(),
 		DataSource: sourceTypes.Source{
 			ID:   sourceTypes.AppleSecurityReleases,
@@ -275,10 +344,6 @@ func extract(fetched securityreleases.Advisory, releases []release, raws []strin
 	}, nil
 }
 
-// published returns the release date, preferring the "Released ..." note on
-// the advisory page and falling back to the release date column of the list
-// rows. either may be missing: old list-format rows keep the date inside the
-// unparsed row text, and pointer pages have no note.
 func published(fetched securityreleases.Advisory, releases []release) *time.Time {
 	for _, s := range fetched.Sections {
 		for _, e := range s.Entries {

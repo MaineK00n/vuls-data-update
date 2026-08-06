@@ -12,7 +12,13 @@
 					}
 				],
 				"published": "2015-12-08T00:00:00Z"
-			}
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe",
+					"tag": "Safari 9.0.2"
+				}
+			]
 		}
 	],
 	"vulnerabilities": [
@@ -25,7 +31,13 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2015-7048"
 					}
 				]
-			}
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe",
+					"tag": "Safari 9.0.2"
+				}
+			]
 		},
 		{
 			"content": {
@@ -36,7 +48,13 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2015-7093"
 					}
 				]
-			}
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe",
+					"tag": "Safari 9.0.2"
+				}
+			]
 		},
 		{
 			"content": {
@@ -47,7 +65,45 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2015-7095"
 					}
 				]
-			}
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe",
+					"tag": "Safari 9.0.2"
+				}
+			]
+		}
+	],
+	"detections": [
+		{
+			"ecosystem": "cpe",
+			"conditions": [
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"cpe": "cpe:2.3:a:apple:safari:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "version",
+										"lt": "9.0.2"
+									},
+									"fixed": [
+										"9.0.2"
+									]
+								}
+							}
+						]
+					},
+					"tag": "Safari 9.0.2"
+				}
+			]
 		}
 	],
 	"data_source": {
