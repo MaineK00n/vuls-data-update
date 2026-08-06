@@ -53,17 +53,25 @@ func TestFetch(t *testing.T) {
 			// series, so neither speaks for the other and there is no listing to
 			// follow. Both are recorded from their own headings, including the
 			// one that names no KB anywhere.
+			//
+			// Written both ways, since with no listing to reach them by each
+			// article hangs on its own KB resolving: /help/ takes the number
+			// alone, so a prefix has to be stripped whatever its case, and a bare
+			// number left as it is.
 			name:   "sidebar-less path keeps every article",
-			kbs:    []string{"KB890175", "KB4519108"},
+			kbs:    []string{"kb890175", "4519108"},
 			golden: "sidebar-less",
 		},
 		{
-			// Microsoft lists an article it does not serve. Losing the run over
-			// one of those would throw away the thousands already fetched, since
-			// the tree is wiped at the start.
-			name:   "listed article is not served",
-			kbs:    []string{"KB5102203"},
-			golden: "not-served",
+			// A listing naming an article the site does not serve is not a thing
+			// support.microsoft.com was observed doing — 489 listing entries
+			// across os/windows-11, os/server-2008 and dotnetframework were all
+			// served — so it means this crawl built the wrong URL. Skipping it
+			// would leave a series short of members with the run still green,
+			// which is the failure this fetcher exists to stop happening.
+			name:     "listed article is not served",
+			kbs:      []string{"KB5102203"},
+			hasError: true,
 		},
 		{
 			// A listing can leave its own series: os/server-2008 links to
