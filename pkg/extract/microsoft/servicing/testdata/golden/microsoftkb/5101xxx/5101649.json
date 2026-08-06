@@ -1,0 +1,13 @@
+{
+	"kb_id": "5101649",
+	"url": "https://support.microsoft.com/en-us/servicing/os/windows-11/2026/07/july-14-2026-kb5101649-os-build-28000-2525",
+	"products": [
+		"os/windows-11"
+	],
+	"data_source": {
+		"id": "microsoft-servicing",
+		"raws": [
+			"os/windows-11/2026/07/july-14-2026-kb5101649-os-build-28000-2525.json"
+		]
+	}
+}

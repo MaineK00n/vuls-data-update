@@ -1,0 +1,18 @@
+{
+	"kb_id": "5036035",
+	"url": "https://support.microsoft.com/en-us/servicing/dotnetframework/windows-11/22h2/2024/02/march-26-2024-kb5036035-cumulative-update-preview-for-net-framework-3-5-and-4-8-1-for-windows-11-ver",
+	"products": [
+		"dotnetframework/windows-11/22h2"
+	],
+	"supersedes": [
+		{
+			"kb_id": "5034467"
+		}
+	],
+	"data_source": {
+		"id": "microsoft-servicing",
+		"raws": [
+			"dotnetframework/windows-11/22h2/2024/02/march-26-2024-kb5036035-cumulative-update-preview-for-net-framework-3-5-and-4-8-1-for-windows-11-ver.json"
+		]
+	}
+}
