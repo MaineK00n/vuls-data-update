@@ -148,17 +148,6 @@ func Fetch(opts ...Option) error {
 	return nil
 }
 
-// listPage is a fetched and parsed security releases list page. Exactly one
-// of list and advisory is set: the pre-2005 archive pages inline advisory
-// content instead of listing links.
-type listPage struct {
-	requested *url.URL
-	final     *url.URL
-	list      *List
-	advisory  *Advisory
-	archives  []*url.URL
-}
-
 // crawlLists crawls the security releases index page and its archive pages
 // as a level-synchronous BFS: the root page lists every archive page, so the
 // crawl normally takes two levels, and following the archive pages' own
@@ -179,86 +168,89 @@ func (opts options) crawlLists(client *utilhttp.Client, root *url.URL) (map[stri
 			us = append(us, u.String())
 		}
 
-		// processed is read-only while PipelineGet runs and is updated only
-		// between levels below
-		pageChan := make(chan listPage, len(us))
-		if err := client.PipelineGet(us, opts.concurrency, opts.wait, false, func(resp *http.Response) error {
-			defer resp.Body.Close()
-
-			if resp.StatusCode != http.StatusOK {
-				_, _ = io.Copy(io.Discard, resp.Body)
-				return errors.Errorf("error response with status code %d. URL: %s", resp.StatusCode, originalURL(resp))
-			}
-
-			// an alias of a page processed in an earlier level, e.g. the
-			// legacy hub article kb/HT201222 linked from older lists
-			// redirects to the current index en-us/100100
-			if _, ok := processed[articleID(resp.Request.URL)]; ok {
-				_, _ = io.Copy(io.Discard, resp.Body)
-				return nil
-			}
-
-			doc, err := goquery.NewDocumentFromReader(resp.Body)
-			if err != nil {
-				return errors.Wrap(err, "parse html")
-			}
-
-			// lists are keyed by the canonical (redirect-resolved) article
-			// ID, unlike advisories, whose file names keep the linked ID for
-			// the join with list rows
-			page := listPage{requested: originalURL(resp), final: resp.Request.URL}
-			list, archives, err := parseList(doc, articleID(page.final), page.final, root)
-			if err != nil {
-				return errors.Wrapf(err, "parse list. URL: %s", page.requested)
-			}
-			page.list, page.archives = &list, archives
-
-			if len(list.Releases) == 0 {
-				if !slices.Contains(inlineAdvisoryPageIDs, list.ID) {
-					return errors.Errorf("no releases found in list page. URL: %s", page.requested)
-				}
-				advisory, err := parseAdvisory(doc, list.ID, page.final.String())
-				if err != nil {
-					return errors.Wrapf(err, "parse advisory. URL: %s", page.requested)
-				}
-				page.list, page.advisory = nil, &advisory
-			}
-
-			pageChan <- page
-
-			return nil
-		}); err != nil {
-			return nil, errors.Wrap(err, "pipeline get")
+		// only the network round trips run concurrently; interpreting and
+		// persisting the pages happens sequentially below
+		resps, err := client.MultiGet(us, opts.concurrency, opts.wait, false)
+		if err != nil {
+			return nil, errors.Wrap(err, "multi get")
 		}
-		close(pageChan)
 
 		var next []*url.URL
-		for page := range pageChan {
-			// two aliases fetched in the same level may resolve to the same
-			// page; keep the first
-			if _, ok := processed[articleID(page.final)]; ok {
-				processed[articleID(page.requested)] = struct{}{}
-				continue
-			}
-			processed[articleID(page.requested)] = struct{}{}
-			processed[articleID(page.final)] = struct{}{}
+		for _, resp := range resps {
+			if err := func() error {
+				defer resp.Body.Close()
 
-			if page.list != nil {
-				if err := util.Write(filepath.Join(opts.dir, "lists", fmt.Sprintf("%s.json", page.list.ID)), page.list); err != nil {
-					return nil, errors.Wrapf(err, "write %s", filepath.Join(opts.dir, "lists", fmt.Sprintf("%s.json", page.list.ID)))
+				requested, final := originalURL(resp), resp.Request.URL
+
+				if resp.StatusCode != http.StatusOK {
+					_, _ = io.Copy(io.Discard, resp.Body)
+					return errors.Errorf("error response with status code %d. URL: %s", resp.StatusCode, requested)
 				}
 
-				for _, r := range page.list.Releases {
+				// an alias of an already processed page, e.g. the legacy hub
+				// article kb/HT201222 linked from older lists redirects to
+				// the current index en-us/100100
+				if _, ok := processed[articleID(final)]; ok {
+					_, _ = io.Copy(io.Discard, resp.Body)
+					processed[articleID(requested)] = struct{}{}
+					return nil
+				}
+
+				doc, err := goquery.NewDocumentFromReader(resp.Body)
+				if err != nil {
+					return errors.Wrap(err, "parse html")
+				}
+
+				processed[articleID(requested)] = struct{}{}
+				processed[articleID(final)] = struct{}{}
+
+				// lists are keyed by the canonical (redirect-resolved)
+				// article ID, unlike advisories, whose file names keep the
+				// linked ID for the join with list rows
+				list, archives, err := parseList(doc, articleID(final), final, root)
+				if err != nil {
+					return errors.Wrapf(err, "parse list. URL: %s", requested)
+				}
+
+				for _, a := range archives {
+					if _, ok := processed[articleID(a)]; ok {
+						continue
+					}
+					if slices.ContainsFunc(next, func(u *url.URL) bool { return articleID(u) == articleID(a) }) {
+						continue
+					}
+					next = append(next, a)
+				}
+
+				if len(list.Releases) == 0 {
+					if !slices.Contains(inlineAdvisoryPageIDs, list.ID) {
+						return errors.Errorf("no releases found in list page. URL: %s", requested)
+					}
+					advisory, err := parseAdvisory(doc, list.ID, final.String())
+					if err != nil {
+						return errors.Wrapf(err, "parse advisory. URL: %s", requested)
+					}
+					if err := util.Write(filepath.Join(opts.dir, "advisories", fmt.Sprintf("%s.json", advisory.ID)), advisory); err != nil {
+						return errors.Wrapf(err, "write %s", filepath.Join(opts.dir, "advisories", fmt.Sprintf("%s.json", advisory.ID)))
+					}
+					return nil
+				}
+
+				if err := util.Write(filepath.Join(opts.dir, "lists", fmt.Sprintf("%s.json", list.ID)), list); err != nil {
+					return errors.Wrapf(err, "write %s", filepath.Join(opts.dir, "lists", fmt.Sprintf("%s.json", list.ID)))
+				}
+
+				for _, r := range list.Releases {
 					if r.URL == "" {
 						continue
 					}
 					ru, err := url.Parse(r.URL)
 					if err != nil {
-						return nil, errors.Wrapf(err, "parse release link %s. list: %s", r.URL, page.list.ID)
+						return errors.Wrapf(err, "parse release link %s. list: %s", r.URL, list.ID)
 					}
 					if ru.Host != root.Host {
 						if !slices.Contains(retiredHosts, ru.Host) {
-							return nil, errors.Errorf("unexpected release link host. expected: %q, actual: %q. URL: %s", root.Host, ru.Host, r.URL)
+							return errors.Errorf("unexpected release link host. expected: %q, actual: %q. URL: %s", root.Host, ru.Host, r.URL)
 						}
 						// nothing to fetch; the link is still recorded in the list
 						continue
@@ -269,22 +261,10 @@ func (opts options) crawlLists(client *utilhttp.Client, root *url.URL) (map[stri
 						advisories[articleID(ru)] = ru
 					}
 				}
-			}
 
-			if page.advisory != nil {
-				if err := util.Write(filepath.Join(opts.dir, "advisories", fmt.Sprintf("%s.json", page.advisory.ID)), page.advisory); err != nil {
-					return nil, errors.Wrapf(err, "write %s", filepath.Join(opts.dir, "advisories", fmt.Sprintf("%s.json", page.advisory.ID)))
-				}
-			}
-
-			for _, a := range page.archives {
-				if _, ok := processed[articleID(a)]; ok {
-					continue
-				}
-				if slices.ContainsFunc(next, func(u *url.URL) bool { return articleID(u) == articleID(a) }) {
-					continue
-				}
-				next = append(next, a)
+				return nil
+			}(); err != nil {
+				return nil, errors.Wrap(err, "process list page")
 			}
 		}
 		level = next
