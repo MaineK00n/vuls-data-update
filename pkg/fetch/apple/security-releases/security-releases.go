@@ -136,9 +136,19 @@ func Fetch(opts ...Option) error {
 		return errors.Wrapf(err, "parse %s", options.baseURL)
 	}
 
-	advisories, err := options.crawlLists(client, root)
+	archives, advisories, err := options.fetchIndex(client, root)
 	if err != nil {
-		return errors.Wrap(err, "crawl lists")
+		return errors.Wrap(err, "fetch index")
+	}
+
+	listAdvisories, err := options.fetchLists(client, root, archives)
+	if err != nil {
+		return errors.Wrap(err, "fetch lists")
+	}
+	for id, u := range listAdvisories {
+		if _, ok := advisories[id]; !ok {
+			advisories[id] = u
+		}
 	}
 
 	if err := options.fetchAdvisories(client, advisories); err != nil {
@@ -148,18 +158,60 @@ func Fetch(opts ...Option) error {
 	return nil
 }
 
-// crawlLists crawls the security releases index page and its archive pages
-// as a level-synchronous BFS: the root page lists every archive page, so the
-// crawl normally takes two levels, and following the archive pages' own
-// navigation links is kept only as a safety net for a future archive that is
-// linked solely from another archive. Each list page is written as
-// lists/<canonical id>.json; the pre-2005 pages that inline advisory content
-// are written as advisories/<id>.json instead. It returns the advisory URLs
-// found in the release rows, keyed by the linked article ID.
-func (opts options) crawlLists(client *utilhttp.Client, root *url.URL) (map[string]*url.URL, error) {
-	processed := make(map[string]struct{})
+// fetchIndex fetches the security releases index page, which authoritatively
+// lists every archive page, writes it as lists/<id>.json, and returns the
+// archive page URLs together with the advisory URLs of its release rows.
+func (opts options) fetchIndex(client *utilhttp.Client, root *url.URL) ([]*url.URL, map[string]*url.URL, error) {
+	slog.Info("Fetch security releases index", slog.String("url", root.String()))
+
+	resp, err := client.Get(root.String())
+	if err != nil {
+		return nil, nil, errors.Wrapf(err, "get %s", root)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		_, _ = io.Copy(io.Discard, resp.Body)
+		return nil, nil, errors.Errorf("error response with status code %d. URL: %s", resp.StatusCode, root)
+	}
+
+	doc, err := goquery.NewDocumentFromReader(resp.Body)
+	if err != nil {
+		return nil, nil, errors.Wrap(err, "parse html")
+	}
+
+	list, archives, err := parseList(doc, articleID(resp.Request.URL), resp.Request.URL, root)
+	if err != nil {
+		return nil, nil, errors.Wrapf(err, "parse list. URL: %s", root)
+	}
+	if len(list.Releases) == 0 {
+		return nil, nil, errors.Errorf("no releases found in list page. URL: %s", root)
+	}
+
+	if err := util.Write(filepath.Join(opts.dir, "lists", fmt.Sprintf("%s.json", list.ID)), list); err != nil {
+		return nil, nil, errors.Wrapf(err, "write %s", filepath.Join(opts.dir, "lists", fmt.Sprintf("%s.json", list.ID)))
+	}
+
+	advisories, err := advisoryURLs(list, root)
+	if err != nil {
+		return nil, nil, errors.Wrap(err, "collect advisory urls")
+	}
+
+	return archives, advisories, nil
+}
+
+// fetchLists fetches the archive pages level by level with MultiGet and
+// returns the advisory URLs of their release rows. The index already lists
+// every archive page, so the crawl normally ends after one level; following
+// the archive pages' own navigation links is kept only as a safety net for a
+// future archive that is linked solely from another archive. Each page is
+// written as lists/<canonical id>.json; the pre-2005 pages that inline
+// advisory content instead of listing links are written as
+// advisories/<id>.json instead.
+func (opts options) fetchLists(client *utilhttp.Client, root *url.URL, archives []*url.URL) (map[string]*url.URL, error) {
+	processed := map[string]struct{}{articleID(root): {}}
 	advisories := make(map[string]*url.URL)
-	level := []*url.URL{root}
+	level := nextLevel(archives, processed, nil)
 	for len(level) > 0 {
 		slog.Info("Fetch security releases lists", slog.Int("count", len(level)))
 
@@ -211,16 +263,7 @@ func (opts options) crawlLists(client *utilhttp.Client, root *url.URL) (map[stri
 				if err != nil {
 					return errors.Wrapf(err, "parse list. URL: %s", requested)
 				}
-
-				for _, a := range archives {
-					if _, ok := processed[articleID(a)]; ok {
-						continue
-					}
-					if slices.ContainsFunc(next, func(u *url.URL) bool { return articleID(u) == articleID(a) }) {
-						continue
-					}
-					next = append(next, a)
-				}
+				next = nextLevel(archives, processed, next)
 
 				if len(list.Releases) == 0 {
 					if !slices.Contains(inlineAdvisoryPageIDs, list.ID) {
@@ -240,25 +283,13 @@ func (opts options) crawlLists(client *utilhttp.Client, root *url.URL) (map[stri
 					return errors.Wrapf(err, "write %s", filepath.Join(opts.dir, "lists", fmt.Sprintf("%s.json", list.ID)))
 				}
 
-				for _, r := range list.Releases {
-					if r.URL == "" {
-						continue
-					}
-					ru, err := url.Parse(r.URL)
-					if err != nil {
-						return errors.Wrapf(err, "parse release link %s. list: %s", r.URL, list.ID)
-					}
-					if ru.Host != root.Host {
-						if !slices.Contains(retiredHosts, ru.Host) {
-							return errors.Errorf("unexpected release link host. expected: %q, actual: %q. URL: %s", root.Host, ru.Host, r.URL)
-						}
-						// nothing to fetch; the link is still recorded in the list
-						continue
-					}
-					// pre-2015 lists link http://; fetch https:// directly to avoid a redirect hop
-					ru.Scheme = root.Scheme
-					if _, ok := advisories[articleID(ru)]; !ok {
-						advisories[articleID(ru)] = ru
+				as, err := advisoryURLs(list, root)
+				if err != nil {
+					return errors.Wrap(err, "collect advisory urls")
+				}
+				for id, u := range as {
+					if _, ok := advisories[id]; !ok {
+						advisories[id] = u
 					}
 				}
 
@@ -268,6 +299,49 @@ func (opts options) crawlLists(client *utilhttp.Client, root *url.URL) (map[stri
 			}
 		}
 		level = next
+	}
+	return advisories, nil
+}
+
+// nextLevel appends the archive URLs that are neither processed nor already
+// queued to level.
+func nextLevel(archives []*url.URL, processed map[string]struct{}, level []*url.URL) []*url.URL {
+	for _, a := range archives {
+		if _, ok := processed[articleID(a)]; ok {
+			continue
+		}
+		if slices.ContainsFunc(level, func(u *url.URL) bool { return articleID(u) == articleID(a) }) {
+			continue
+		}
+		level = append(level, a)
+	}
+	return level
+}
+
+// advisoryURLs collects the advisory URLs the release rows of a list link
+// to, keyed by the linked article ID.
+func advisoryURLs(list List, root *url.URL) (map[string]*url.URL, error) {
+	advisories := make(map[string]*url.URL)
+	for _, r := range list.Releases {
+		if r.URL == "" {
+			continue
+		}
+		ru, err := url.Parse(r.URL)
+		if err != nil {
+			return nil, errors.Wrapf(err, "parse release link %s. list: %s", r.URL, list.ID)
+		}
+		if ru.Host != root.Host {
+			if !slices.Contains(retiredHosts, ru.Host) {
+				return nil, errors.Errorf("unexpected release link host. expected: %q, actual: %q. URL: %s", root.Host, ru.Host, r.URL)
+			}
+			// nothing to fetch; the link is still recorded in the list
+			continue
+		}
+		// pre-2015 lists link http://; fetch https:// directly to avoid a redirect hop
+		ru.Scheme = root.Scheme
+		if _, ok := advisories[articleID(ru)]; !ok {
+			advisories[articleID(ru)] = ru
+		}
 	}
 	return advisories, nil
 }
