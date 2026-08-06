@@ -55,12 +55,6 @@ import (
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
-// originDir holds the pages as the vendor served them, beside the raw/ JSON
-// derived from them. Keeping both makes the tree self-describing: raw/ can be
-// reproduced from origin/ without consulting anything outside it, which is what
-// lets a parser change be replayed without refetching.
-const originDir = "origin"
-
 // helpURL resolves a KB number to its servicing article. support.microsoft.com
 // redirects /help/<KB> to the canonical path, which is also how the product and
 // series are discovered: they are path segments, not page content.
@@ -283,6 +277,80 @@ func (opts options) fetch(kbs []string) error {
 	return nil
 }
 
+// resolve maps each KB to the article support.microsoft.com serves for it.
+//
+// HEAD is enough: only the redirect target is wanted, and it carries the
+// product and series as path segments, so the body would add nothing a crawl
+// does not already reach.
+func (opts options) resolve(client *utilhttp.Client, kbs []string) ([]article, error) {
+	slog.Info("Resolve KB to servicing article", slog.Int("count", len(kbs)))
+
+	bar := progressbar.Default(int64(len(kbs)))
+	articleChan := make(chan article, len(kbs))
+	var g errgroup.Group
+	g.SetLimit(opts.concurrency)
+	for _, kb := range kbs {
+		g.Go(func() error {
+			defer func() {
+				time.Sleep(opts.wait)
+				_ = bar.Add(1)
+			}()
+
+			// /help/ takes the article number alone; /help/KB5101004 is a 404.
+			// Callers pass either spelling, so normalize rather than reject, and
+			// keep the normalized form: it is what sidebar entries carry, and the
+			// two have to compare equal for a series to cover its members.
+			kb = strings.TrimPrefix(strings.ToUpper(kb), "KB")
+
+			req, err := utilhttp.NewRequest(http.MethodHead, fmt.Sprintf(opts.helpURL, kb))
+			if err != nil {
+				return errors.Wrapf(err, "new request for %s", kb)
+			}
+
+			resp, err := client.Do(req)
+			if err != nil {
+				return errors.Wrapf(err, "head %s", kb)
+			}
+			defer resp.Body.Close()
+			_, _ = io.Copy(io.Discard, resp.Body)
+
+			if resp.StatusCode != http.StatusOK {
+				slog.Warn("unexpected status", slog.String("kb", kb), slog.Int("status", resp.StatusCode))
+				return nil
+			}
+
+			a, ok := parsePath(resp.Request.URL)
+			if !ok {
+				// Pre-2018 KBs and hub pages stay on /help/<KB> or land on a
+				// product landing page. There is no series to read there.
+				slog.Warn("not a servicing article", slog.String("kb", kb), slog.String("url", resp.Request.URL.String()))
+				return nil
+			}
+			a.url = resp.Request.URL.String()
+
+			articleChan <- a
+
+			return nil
+		})
+	}
+	if err := g.Wait(); err != nil {
+		return nil, errors.Wrap(err, "err in goroutine")
+	}
+	close(articleChan)
+	_ = bar.Close()
+
+	articles := make([]article, 0, len(kbs))
+	for a := range articleChan {
+		articles = append(articles, a)
+	}
+
+	// Ordered so a rerun walks the same tree in the same order rather than in
+	// whatever order the lookups happened to finish.
+	slices.SortFunc(articles, func(a, b article) int { return strings.Compare(a.name(), b.name()) })
+
+	return articles, nil
+}
+
 // discover stores the articles asked for and reports what their listings name.
 //
 // Only these listings are read. Following them further would not find anything
@@ -395,104 +463,6 @@ func (opts options) collect(client *utilhttp.Client, targets []article, stored m
 	return nil
 }
 
-// resolveHref turns a listing href, which is relative to the article it was
-// read from, into the article it points at.
-func resolveHref(from article, href string) (article, bool) {
-	base, err := url.Parse(from.url)
-	if err != nil {
-		return article{}, false
-	}
-
-	ref, err := url.Parse(href)
-	if err != nil {
-		return article{}, false
-	}
-
-	target := base.ResolveReference(ref)
-
-	a, ok := parsePath(target)
-	if !ok {
-		return article{}, false
-	}
-	a.url = target.String()
-
-	return a, true
-}
-
-// resolve maps each KB to the article support.microsoft.com serves for it.
-//
-// HEAD is enough: only the redirect target is wanted, and it carries the
-// product and series as path segments, so the body would add nothing a crawl
-// does not already reach.
-func (opts options) resolve(client *utilhttp.Client, kbs []string) ([]article, error) {
-	slog.Info("Resolve KB to servicing article", slog.Int("count", len(kbs)))
-
-	bar := progressbar.Default(int64(len(kbs)))
-	articleChan := make(chan article, len(kbs))
-	var g errgroup.Group
-	g.SetLimit(opts.concurrency)
-	for _, kb := range kbs {
-		g.Go(func() error {
-			defer func() {
-				time.Sleep(opts.wait)
-				_ = bar.Add(1)
-			}()
-
-			// /help/ takes the article number alone; /help/KB5101004 is a 404.
-			// Callers pass either spelling, so normalize rather than reject, and
-			// keep the normalized form: it is what sidebar entries carry, and the
-			// two have to compare equal for a series to cover its members.
-			kb = strings.TrimPrefix(strings.ToUpper(kb), "KB")
-
-			req, err := utilhttp.NewRequest(http.MethodHead, fmt.Sprintf(opts.helpURL, kb))
-			if err != nil {
-				return errors.Wrapf(err, "new request for %s", kb)
-			}
-
-			resp, err := client.Do(req)
-			if err != nil {
-				return errors.Wrapf(err, "head %s", kb)
-			}
-			defer resp.Body.Close()
-			_, _ = io.Copy(io.Discard, resp.Body)
-
-			if resp.StatusCode != http.StatusOK {
-				slog.Warn("unexpected status", slog.String("kb", kb), slog.Int("status", resp.StatusCode))
-				return nil
-			}
-
-			a, ok := parsePath(resp.Request.URL)
-			if !ok {
-				// Pre-2018 KBs and hub pages stay on /help/<KB> or land on a
-				// product landing page. There is no series to read there.
-				slog.Warn("not a servicing article", slog.String("kb", kb), slog.String("url", resp.Request.URL.String()))
-				return nil
-			}
-			a.url = resp.Request.URL.String()
-
-			articleChan <- a
-
-			return nil
-		})
-	}
-	if err := g.Wait(); err != nil {
-		return nil, errors.Wrap(err, "err in goroutine")
-	}
-	close(articleChan)
-	_ = bar.Close()
-
-	articles := make([]article, 0, len(kbs))
-	for a := range articleChan {
-		articles = append(articles, a)
-	}
-
-	// Ordered so a rerun walks the same tree in the same order rather than in
-	// whatever order the lookups happened to finish.
-	slices.SortFunc(articles, func(a, b article) int { return strings.Compare(a.name(), b.name()) })
-
-	return articles, nil
-}
-
 // store retrieves one article, writes it to origin/ and reports the KBs its
 // sidebar accounts for.
 func (opts options) store(client *utilhttp.Client, a article) ([]byte, error) {
@@ -536,7 +506,7 @@ func (opts options) store(client *utilhttp.Client, a article) ([]byte, error) {
 func (opts options) convert() error {
 	slog.Info("Convert origin to raw")
 
-	root := filepath.Join(opts.dir, originDir)
+	root := filepath.Join(opts.dir, "origin")
 	if _, err := os.Stat(root); err != nil {
 		if !errors.Is(err, fs.ErrNotExist) {
 			return errors.Wrapf(err, "stat %s", root)
@@ -593,7 +563,7 @@ func (opts options) convert() error {
 // article does not, and would turn every fetch into a diff, drowning the signal
 // this tree exists to carry: that Microsoft revised the article.
 func writeOrigin(dir, name string, content []byte) error {
-	path := filepath.Join(dir, originDir, name)
+	path := filepath.Join(dir, "origin", name)
 
 	if err := os.MkdirAll(filepath.Dir(path), os.ModePerm); err != nil {
 		return errors.Wrapf(err, "mkdir %s", filepath.Dir(path))
@@ -604,6 +574,30 @@ func writeOrigin(dir, name string, content []byte) error {
 	}
 
 	return nil
+}
+
+// resolveHref turns a listing href, which is relative to the article it was
+// read from, into the article it points at.
+func resolveHref(from article, href string) (article, bool) {
+	base, err := url.Parse(from.url)
+	if err != nil {
+		return article{}, false
+	}
+
+	ref, err := url.Parse(href)
+	if err != nil {
+		return article{}, false
+	}
+
+	target := base.ResolveReference(ref)
+
+	a, ok := parsePath(target)
+	if !ok {
+		return article{}, false
+	}
+	a.url = target.String()
+
+	return a, true
 }
 
 // parsePath splits a canonical servicing URL into its product, series and the
