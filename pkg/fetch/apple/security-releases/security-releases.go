@@ -211,7 +211,7 @@ func (opts options) crawlLists(client *utilhttp.Client, root *url.URL) (map[stri
 			if err != nil {
 				return errors.Wrapf(err, "parse list. URL: %s", page.requested)
 			}
-			page.list, page.archives = list, archives
+			page.list, page.archives = &list, archives
 
 			if len(list.Releases) == 0 {
 				if !slices.Contains(inlineAdvisoryPageIDs, list.ID) {
@@ -221,7 +221,7 @@ func (opts options) crawlLists(client *utilhttp.Client, root *url.URL) (map[stri
 				if err != nil {
 					return errors.Wrapf(err, "parse advisory. URL: %s", page.requested)
 				}
-				page.list, page.advisory = nil, advisory
+				page.list, page.advisory = nil, &advisory
 			}
 
 			pageChan <- page
@@ -430,10 +430,10 @@ func contentRoot(doc *goquery.Document) (*goquery.Selection, error) {
 	return s, nil
 }
 
-func parseList(doc *goquery.Document, id string, pageURL, root *url.URL) (*List, []*url.URL, error) {
+func parseList(doc *goquery.Document, id string, pageURL, root *url.URL) (List, []*url.URL, error) {
 	s, err := contentRoot(doc)
 	if err != nil {
-		return nil, nil, err
+		return List{}, nil, err
 	}
 
 	list := List{ID: id, URL: pageURL.String()}
@@ -446,7 +446,7 @@ func parseList(doc *goquery.Document, id string, pageURL, root *url.URL) (*List,
 			}
 		case "table":
 			if err := list.parseTable(b.sel, pageURL); err != nil {
-				return nil, nil, errors.Wrap(err, "parse table")
+				return List{}, nil, errors.Wrap(err, "parse table")
 			}
 		case "p":
 			if strings.HasPrefix(normText(b.sel), "Name and information link") {
@@ -458,7 +458,7 @@ func parseList(doc *goquery.Document, id string, pageURL, root *url.URL) (*List,
 			}
 			pendingList = false
 			if err := list.parseListItems(b.sel, pageURL); err != nil {
-				return nil, nil, errors.Wrap(err, "parse list items")
+				return List{}, nil, errors.Wrap(err, "parse list items")
 			}
 		default:
 		}
@@ -475,11 +475,11 @@ func parseList(doc *goquery.Document, id string, pageURL, root *url.URL) (*List,
 		}
 		u, err := pageURL.Parse(href)
 		if err != nil {
-			return nil, nil, errors.Wrapf(err, "parse archive link %s. list: %s", href, id)
+			return List{}, nil, errors.Wrapf(err, "parse archive link %s. list: %s", href, id)
 		}
 		if u.Host != root.Host {
 			if !slices.Contains(retiredHosts, u.Host) {
-				return nil, nil, errors.Errorf("unexpected archive link host. expected: %q, actual: %q. URL: %s", root.Host, u.Host, u)
+				return List{}, nil, errors.Errorf("unexpected archive link host. expected: %q, actual: %q. URL: %s", root.Host, u.Host, u)
 			}
 			// nav links to the retired info.apple.com on pre-2011 pages
 			continue
@@ -489,7 +489,7 @@ func parseList(doc *goquery.Document, id string, pageURL, root *url.URL) (*List,
 		archives = append(archives, u)
 	}
 
-	return &list, archives, nil
+	return list, archives, nil
 }
 
 func (l *List) parseTable(tab *goquery.Selection, pageURL *url.URL) error {
@@ -569,10 +569,10 @@ func (l *List) parseListItems(ul *goquery.Selection, pageURL *url.URL) error {
 	return nil
 }
 
-func parseAdvisory(doc *goquery.Document, id, pageURL string) (*Advisory, error) {
+func parseAdvisory(doc *goquery.Document, id, pageURL string) (Advisory, error) {
 	s, err := contentRoot(doc)
 	if err != nil {
-		return nil, err
+		return Advisory{}, err
 	}
 
 	advisory := Advisory{ID: id, URL: pageURL}
@@ -646,7 +646,7 @@ func parseAdvisory(doc *goquery.Document, id, pageURL string) (*Advisory, error)
 	}
 	for _, b := range blocks(s) {
 		if err := handle(b); err != nil {
-			return nil, err
+			return Advisory{}, err
 		}
 	}
 	flushSection()
@@ -655,10 +655,10 @@ func parseAdvisory(doc *goquery.Document, id, pageURL string) (*Advisory, error)
 	// <h1> for hours at a time; the name is recoverable from the release
 	// list, so only missing sections are treated as a format change
 	if len(advisory.Sections) == 0 {
-		return nil, errors.New("no sections found in advisory page")
+		return Advisory{}, errors.New("no sections found in advisory page")
 	}
 
-	return &advisory, nil
+	return advisory, nil
 }
 
 func (e Entry) isEmpty() bool {
