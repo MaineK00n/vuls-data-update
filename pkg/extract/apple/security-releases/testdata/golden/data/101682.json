@@ -17,6 +17,39 @@
 	"vulnerabilities": [
 		{
 			"content": {
+				"id": "CVE-2004-0488",
+				"references": [
+					{
+						"source": "support.apple.com",
+						"url": "https://www.cve.org/CVERecord?id=CVE-2004-0488"
+					}
+				]
+			}
+		},
+		{
+			"content": {
+				"id": "CVE-2004-0493",
+				"references": [
+					{
+						"source": "support.apple.com",
+						"url": "https://www.cve.org/CVERecord?id=CVE-2004-0493"
+					}
+				]
+			}
+		},
+		{
+			"content": {
+				"id": "CVE-2004-0988",
+				"references": [
+					{
+						"source": "support.apple.com",
+						"url": "https://www.cve.org/CVERecord?id=CVE-2004-0988"
+					}
+				]
+			}
+		},
+		{
+			"content": {
 				"id": "CVE-2005-0043",
 				"references": [
 					{
