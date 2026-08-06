@@ -32,6 +32,19 @@
             <p class="gb-paragraph">Description: iTunes supports several common playlist formats. iTunes 4.7.1 fixes a buffer overflow in the parsing of m3u and pls playlist files.</p>
         </div>
         <div class="alignment">
+            <p class="gb-paragraph"><b>Safari 1.2.4</b></p>
+        </div>
+        <div class="alignment">
+            <p class="gb-paragraph">Available for: Mac OS X v10.3.4</p>
+        </div>
+        <!-- label spelling variants seen upstream: spaced "CVE ID:" and plural "CVE-IDs:" -->
+        <div class="alignment">
+            <p class="gb-paragraph">CVE ID: CAN-2004-0988</p>
+        </div>
+        <div class="alignment">
+            <p class="gb-paragraph">CVE-IDs: CAN-2004-0493, CAN-2004-0488</p>
+        </div>
+        <div class="alignment">
             <p class="gb-paragraph">For information about earlier security updates, see &quot;<a href="/en-us/104191" class="gb-anchor">Apple security updates (August, 2003 and earlier)</a>&quot;.</p>
         </div>
     </div>

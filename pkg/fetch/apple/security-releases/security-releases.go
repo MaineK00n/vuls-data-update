@@ -647,7 +647,7 @@ func (e *Entry) classify(t string) {
 		e.Impact = append(e.Impact, strings.TrimSpace(strings.TrimPrefix(t, "Impact:")))
 	case strings.HasPrefix(t, "Description:"):
 		e.Description = append(e.Description, strings.TrimSpace(strings.TrimPrefix(t, "Description:")))
-	case strings.HasPrefix(t, "CVE-"), strings.HasPrefix(t, "WebKit Bugzilla"):
+	case strings.HasPrefix(t, "CVE-"), strings.HasPrefix(t, "CAN-"), strings.HasPrefix(t, "CVE ID:"), strings.HasPrefix(t, "CVE IDs:"), strings.HasPrefix(t, "WebKit Bugzilla"):
 		e.IDs = append(e.IDs, t)
 	default:
 		e.Others = append(e.Others, t)

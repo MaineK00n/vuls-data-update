@@ -20,6 +20,9 @@
             <ul role="list" class="list gb-list">
                 <li role="listitem" class="gb-list_item"><p class="gb-paragraph"><b>fb_realpath(): Addresses CAN-2003-0466</b>, a potential vulnerability in the fb_realpath() function, which could allow a local or remote user to gain unauthorized root privileges to a system.</p></li>
                 <li role="listitem" class="gb-list_item"><p class="gb-paragraph"><b>Workgroup Manager: Fixes CAN-2003-0601</b> to improve the security of your system by assigning a &quot;disabled&quot; password to a new account.</p></li>
+                <!-- bare candidate-number lines: bold CAN id + plain title -->
+                <li role="listitem" class="gb-list_item"><p class="gb-paragraph"><b>CAN-2002-1383:</b> Multiple Integer Overflows</p></li>
+                <li role="listitem" class="gb-list_item"><p class="gb-paragraph"><b>CAN-2002-1366:</b> /etc/cups/certs/ Race Condition</p></li>
             </ul>
         </div>
     </div>
