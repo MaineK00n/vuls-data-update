@@ -209,10 +209,20 @@ func (opts options) fetchIndex(client *utilhttp.Client, root *url.URL) ([]*url.U
 // advisory content instead of listing links are written as
 // advisories/<id>.json instead.
 func (opts options) fetchLists(client *utilhttp.Client, root *url.URL, archives []*url.URL) (map[string]*url.URL, error) {
+	// the crawl is expected to end after two levels (the archives, then
+	// their alias links); processed prevents revisits, so a deeper graph
+	// means upstream keeps producing links to fresh article IDs in a way
+	// this crawler does not understand
+	const maxLevel = 10
+
 	processed := map[string]struct{}{articleID(root): {}}
 	advisories := make(map[string]*url.URL)
 	level := nextLevel(archives, processed, nil)
-	for len(level) > 0 {
+	for n := 1; len(level) > 0; n++ {
+		if n > maxLevel {
+			return nil, errors.Errorf("archive crawl did not converge within %d levels", maxLevel)
+		}
+
 		slog.Info("Fetch security releases lists", slog.Int("count", len(level)))
 
 		us := make([]string, 0, len(level))
