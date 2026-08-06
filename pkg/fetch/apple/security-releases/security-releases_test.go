@@ -42,7 +42,7 @@ func TestFetch(t *testing.T) {
 			hasError: true,
 		},
 		{
-			// an 11-deep chain of archive pages each linking the next
+			// a 6-deep chain of archive pages each linking the next
 			name:     "unexpected_deep_crawl",
 			hasError: true,
 		},

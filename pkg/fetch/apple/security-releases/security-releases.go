@@ -213,7 +213,7 @@ func (opts options) fetchLists(client *utilhttp.Client, root *url.URL, archives 
 	// their alias links); processed prevents revisits, so a deeper graph
 	// means upstream keeps producing links to fresh article IDs in a way
 	// this crawler does not understand
-	const maxLevel = 10
+	const maxLevel = 5
 
 	processed := map[string]struct{}{articleID(root): {}}
 	advisories := make(map[string]*url.URL)
