@@ -2640,9 +2640,9 @@ func newCmdMicrosoftServicing() *cobra.Command {
 	}{
 		base: base{
 			dir:   filepath.Join(util.CacheDir(), "fetch", "microsoft", "servicing"),
-			retry: 3,
+			retry: 10,
 		},
-		concurrency: 3,
+		concurrency: 2,
 		wait:        1 * time.Second,
 	}
 
