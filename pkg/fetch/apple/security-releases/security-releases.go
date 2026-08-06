@@ -1,7 +1,6 @@
 package securityreleases
 
 import (
-	"cmp"
 	"fmt"
 	"io"
 	"log/slog"
@@ -295,22 +294,13 @@ func (opts options) fetchLists(client *utilhttp.Client, root *url.URL, archives 
 		}
 		close(pageChan)
 
-		// the channel drains in completion order; interpret in article ID
-		// order instead so that first-wins choices below do not depend on
-		// response arrival
-		pages := make([]parsed, 0, len(us))
-		for page := range pageChan {
-			pages = append(pages, page)
-		}
-		slices.SortFunc(pages, func(a, b parsed) int {
-			return cmp.Or(
-				cmp.Compare(articleID(a.final), articleID(b.final)),
-				cmp.Compare(articleID(a.requested), articleID(b.requested)),
-			)
-		})
-
+		// the channel drains in completion order, which is not deterministic,
+		// but no output depends on it: aliases resolving to the same page
+		// carry identical content, so whichever is interpreted first writes
+		// the same file, and duplicate advisory links agree on the article
+		// ID, which is all the advisories map keeps
 		var next []*url.URL
-		for _, page := range pages {
+		for page := range pageChan {
 			// an alias of an already processed page, e.g. the legacy hub
 			// article kb/HT201222 linked from older lists redirects to the
 			// current index en-us/100100
