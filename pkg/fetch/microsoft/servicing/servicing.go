@@ -16,12 +16,13 @@
 // catalog at all; the sidebar on any article in the series still lists all six
 // in order.
 //
-// Fetching is two steps. The articles asked for are stored and their sidebars
-// read; then everything those sidebars name is stored, without reading its
-// sidebar in turn. One hop is enough — a sidebar repeated on every article of a
-// series has nothing more to say — and it is also the limit worth taking: a
-// Windows Server 2008 sidebar links into Windows 8.1, so following further
-// would pull in a series nobody asked for.
+// Fetching is two steps, one reading and one writing. The sidebar on each
+// article asked for is read to learn the rest of its series; then every article
+// they name — the ones asked for included — is retrieved and stored, and no
+// further sidebar is read. One hop is enough — a sidebar repeated on every
+// article of a series has nothing more to say — and it is also the limit worth
+// taking: a Windows Server 2008 sidebar links into Windows 8.1, so following
+// further would pull in a series nobody asked for.
 //
 // fetch writes <dir>/origin verbatim and then produces <dir>/raw by reading it
 // back, never the HTTP response, so raw/ is reproducible from origin/ alone.
@@ -48,8 +49,6 @@ import (
 
 	"github.com/hashicorp/go-retryablehttp"
 	"github.com/pkg/errors"
-	"github.com/schollz/progressbar/v3"
-	"golang.org/x/sync/errgroup"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
@@ -295,53 +294,41 @@ func (opts options) resolve(client *utilhttp.Client, kbs []string) ([]article, e
 
 	slog.Info("Resolve KB to servicing article", slog.Int("count", len(kbs)))
 
-	bar := progressbar.Default(int64(len(kbs)))
-	articleChan := make(chan article, len(kbs))
-	var g errgroup.Group
-	g.SetLimit(opts.concurrency)
+	reqs := make([]*retryablehttp.Request, 0, len(kbs))
 	for _, kb := range kbs {
-		g.Go(func() error {
-			defer func() {
-				time.Sleep(opts.wait)
-				_ = bar.Add(1)
-			}()
-
-			req, err := utilhttp.NewRequest(http.MethodHead, fmt.Sprintf(opts.helpURL, kb))
-			if err != nil {
-				return errors.Wrapf(err, "new request for %s", kb)
-			}
-
-			resp, err := client.Do(req)
-			if err != nil {
-				return errors.Wrapf(err, "head %s", kb)
-			}
-			defer resp.Body.Close()
-			_, _ = io.Copy(io.Discard, resp.Body)
-
-			if resp.StatusCode != http.StatusOK {
-				slog.Warn("unexpected status", slog.String("kb", kb), slog.Int("status", resp.StatusCode))
-				return nil
-			}
-
-			a, ok := parsePath(resp.Request.URL)
-			if !ok {
-				// Pre-2018 KBs and hub pages stay on /help/<KB> or land on a
-				// product landing page. There is no series to read there.
-				slog.Warn("not a servicing article", slog.String("kb", kb), slog.String("url", resp.Request.URL.String()))
-				return nil
-			}
-			a.url = resp.Request.URL.String()
-
-			articleChan <- a
-
-			return nil
-		})
+		req, err := utilhttp.NewRequest(http.MethodHead, fmt.Sprintf(opts.helpURL, kb))
+		if err != nil {
+			return nil, errors.Wrapf(err, "new request for %s", kb)
+		}
+		reqs = append(reqs, req)
 	}
-	if err := g.Wait(); err != nil {
-		return nil, errors.Wrap(err, "err in goroutine")
+
+	articleChan := make(chan article, len(kbs))
+	if err := client.PipelineDo(reqs, opts.concurrency, opts.wait, false, func(resp *http.Response) error {
+		defer resp.Body.Close()
+		_, _ = io.Copy(io.Discard, resp.Body)
+
+		if resp.StatusCode != http.StatusOK {
+			slog.Warn("unexpected status", slog.String("url", resp.Request.URL.String()), slog.Int("status", resp.StatusCode))
+			return nil
+		}
+
+		a, ok := parsePath(resp.Request.URL)
+		if !ok {
+			// Pre-2018 KBs and hub pages stay on /help/<KB> or land on a product
+			// landing page. There is no series to read there.
+			slog.Warn("not a servicing article", slog.String("url", resp.Request.URL.String()))
+			return nil
+		}
+		a.url = resp.Request.URL.String()
+
+		articleChan <- a
+
+		return nil
+	}); err != nil {
+		return nil, errors.Wrap(err, "pipeline do")
 	}
 	close(articleChan)
-	_ = bar.Close()
 
 	articles := make([]article, 0, len(kbs))
 	for a := range articleChan {
@@ -351,8 +338,14 @@ func (opts options) resolve(client *utilhttp.Client, kbs []string) ([]article, e
 	return articles, nil
 }
 
-// discover stores the articles asked for and reports the ones their listings
-// name that are still missing.
+// discover reads the listing on each article asked for and reports every
+// article to store: the ones asked for, and the rest of the series each names.
+//
+// Nothing is written here. Reading a listing means retrieving the article
+// carrying it, and keeping those bytes would make this the second place that
+// writes origin/ -- one that writes some articles while collect writes the
+// others. Retrieving them again there costs one request per KB asked for and
+// leaves one function answering for the tree.
 //
 // Only these listings are read. Following them further would not find anything
 // in the same series -- the listing is identical on every article of one -- but
@@ -360,135 +353,119 @@ func (opts options) resolve(client *utilhttp.Client, kbs []string) ([]article, e
 // os/windows-8-1/2024/01/end-of-support, and reading that article's listing in
 // turn would drag in the whole of Windows 8.1. One hop keeps a request for a
 // series to that series and whatever it points at directly.
-//
-// What comes back is deduplicated against what went out, because a listing
-// names its whole series and one was read per KB asked for: three members of
-// os/windows-11 name its 300 articles 900 times between them, those three
-// included. Every article named more than once is one article, so the caller is
-// told about it once, and about the seeds not at all.
 func (opts options) discover(client *utilhttp.Client, seeds []article) ([]article, error) {
 	slog.Info("Discover series", slog.Int("articles", len(seeds)))
 
-	stored := make(map[string]struct{}, len(seeds))
-	bar := progressbar.Default(int64(len(seeds)))
-	targetChan := make(chan []article, len(seeds))
-	var g errgroup.Group
-	g.SetLimit(opts.concurrency)
+	us := make([]string, 0, len(seeds))
 	for _, a := range seeds {
-		if _, ok := stored[a.name()]; ok {
-			_ = bar.Add(1)
-			continue
+		// The URL the redirect landed on is used as-is rather than rebuilt from
+		// the parsed segments: rebuilding would silently diverge the moment
+		// Microsoft changes a locale prefix or adds a path level.
+		us = append(us, a.url)
+	}
+
+	articleChan := make(chan []article, len(seeds))
+	if err := client.PipelineGet(us, opts.concurrency, opts.wait, false, func(resp *http.Response) error {
+		defer resp.Body.Close()
+
+		if resp.StatusCode != http.StatusOK {
+			_, _ = io.Copy(io.Discard, resp.Body)
+			return errors.Errorf("error response with status code %d, url: %s", resp.StatusCode, resp.Request.URL)
 		}
-		stored[a.name()] = struct{}{}
 
-		g.Go(func() error {
-			defer func() {
-				time.Sleep(opts.wait)
-				_ = bar.Add(1)
-			}()
+		bs, err := io.ReadAll(resp.Body)
+		if err != nil {
+			return errors.Wrapf(err, "read %s", resp.Request.URL)
+		}
 
-			bs, err := opts.store(client, a)
-			if err != nil {
-				return errors.Wrapf(err, "store %s", a.url)
-			}
+		// The seed is reported alongside what its listing names, since a series
+		// of one -- or one rendering no listing at all, as os/windows does --
+		// would otherwise be discovered by nothing.
+		a, ok := parsePath(resp.Request.URL)
+		if !ok {
+			return errors.Errorf("unexpected url. expected: %q, actual: %q", "/<locale>/servicing/<product>/.../<article>", resp.Request.URL)
+		}
+		a.url = resp.Request.URL.String()
+		articles := []article{a}
 
-			var targets []article
-			for _, e := range parseSidebar(string(bs)) {
-				if e.href == "" {
-					continue
-				}
-				b, ok := resolveHref(a, e.href)
-				if !ok {
-					slog.Warn("unexpected listing target", slog.String("href", e.href), slog.String("from", a.url))
-					continue
-				}
-				targets = append(targets, b)
-			}
-
-			targetChan <- targets
-
-			return nil
-		})
-	}
-	if err := g.Wait(); err != nil {
-		return nil, errors.Wrap(err, "err in goroutine")
-	}
-	close(targetChan)
-	_ = bar.Close()
-
-	var targets []article
-	for t := range targetChan {
-		for _, a := range t {
-			if _, ok := stored[a.name()]; ok {
+		for _, e := range parseSidebar(string(bs)) {
+			if e.href == "" {
 				continue
 			}
-			stored[a.name()] = struct{}{}
-			targets = append(targets, a)
+			b, ok := resolveHref(resp.Request.URL, e.href)
+			if !ok {
+				slog.Warn("unexpected listing target", slog.String("href", e.href), slog.String("from", resp.Request.URL.String()))
+				continue
+			}
+			articles = append(articles, b)
+		}
+
+		articleChan <- articles
+
+		return nil
+	}); err != nil {
+		return nil, errors.Wrap(err, "pipeline get")
+	}
+	close(articleChan)
+
+	// A listing names its whole series and one was read per KB asked for, so
+	// three members of os/windows-11 name its 300 articles 900 times between
+	// them. Each is one article and is stored once.
+	seen := make(map[string]struct{}, len(seeds))
+	var articles []article
+	for as := range articleChan {
+		for _, a := range as {
+			if _, ok := seen[a.name()]; ok {
+				continue
+			}
+			seen[a.name()] = struct{}{}
+			articles = append(articles, a)
 		}
 	}
 
-	return targets, nil
+	return articles, nil
 }
 
-// collect stores the rest of the series. Their listings are not read: they say
-// what discover has already been told.
-func (opts options) collect(client *utilhttp.Client, targets []article) error {
-	slog.Info("Collect series", slog.Int("articles", len(targets)))
+// collect stores every article discover reported. Their listings are not read:
+// they say what discover has already been told.
+func (opts options) collect(client *utilhttp.Client, articles []article) error {
+	slog.Info("Collect articles", slog.Int("articles", len(articles)))
 
-	bar := progressbar.Default(int64(len(targets)))
-	var g errgroup.Group
-	g.SetLimit(opts.concurrency)
-	for _, a := range targets {
-		g.Go(func() error {
-			defer func() {
-				time.Sleep(opts.wait)
-				_ = bar.Add(1)
-			}()
-
-			if _, err := opts.store(client, a); err != nil {
-				return errors.Wrapf(err, "store %s", a.url)
-			}
-
-			return nil
-		})
+	us := make([]string, 0, len(articles))
+	for _, a := range articles {
+		us = append(us, a.url)
 	}
-	if err := g.Wait(); err != nil {
-		return errors.Wrap(err, "err in goroutine")
+
+	if err := client.PipelineGet(us, opts.concurrency, opts.wait, false, func(resp *http.Response) error {
+		defer resp.Body.Close()
+
+		if resp.StatusCode != http.StatusOK {
+			_, _ = io.Copy(io.Discard, resp.Body)
+			return errors.Errorf("error response with status code %d, url: %s", resp.StatusCode, resp.Request.URL)
+		}
+
+		bs, err := io.ReadAll(resp.Body)
+		if err != nil {
+			return errors.Wrapf(err, "read %s", resp.Request.URL)
+		}
+
+		// Taken from the response rather than carried in from the caller, so
+		// where a page is stored follows the URL it was actually served at.
+		a, ok := parsePath(resp.Request.URL)
+		if !ok {
+			return errors.Errorf("unexpected url. expected: %q, actual: %q", "/<locale>/servicing/<product>/.../<article>", resp.Request.URL)
+		}
+
+		if err := writeOrigin(opts.dir, a.name(), flightingPattern.ReplaceAll(bs, nil)); err != nil {
+			return errors.Wrapf(err, "write %s", a.name())
+		}
+
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "pipeline get")
 	}
-	_ = bar.Close()
 
 	return nil
-}
-
-// store retrieves one article, writes it to origin/ and reports the KBs its
-// sidebar accounts for.
-func (opts options) store(client *utilhttp.Client, a article) ([]byte, error) {
-	// The URL the redirect landed on is used as-is rather than rebuilt from the
-	// parsed segments: rebuilding would silently diverge the moment Microsoft
-	// changes a locale prefix or adds a path level.
-	resp, err := client.Get(a.url)
-	if err != nil {
-		return nil, errors.Wrapf(err, "get %s", a.url)
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		_, _ = io.Copy(io.Discard, resp.Body)
-		return nil, errors.Errorf("error response with status code %d, url: %s", resp.StatusCode, a.url)
-	}
-
-	bs, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, errors.Wrapf(err, "read %s", a.url)
-	}
-
-	bs = flightingPattern.ReplaceAll(bs, nil)
-
-	if err := writeOrigin(opts.dir, a.name(), bs); err != nil {
-		return nil, errors.Wrapf(err, "write %s", a.name())
-	}
-
-	return bs, nil
 }
 
 // convert reads origin/ back and writes raw/, one file per stored article so
@@ -570,12 +547,7 @@ func writeOrigin(dir, name string, content []byte) error {
 
 // resolveHref turns a listing href, which is relative to the article it was
 // read from, into the article it points at.
-func resolveHref(from article, href string) (article, bool) {
-	base, err := url.Parse(from.url)
-	if err != nil {
-		return article{}, false
-	}
-
+func resolveHref(base *url.URL, href string) (article, bool) {
 	ref, err := url.Parse(href)
 	if err != nil {
 		return article{}, false
