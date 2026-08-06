@@ -31,7 +31,9 @@ const baseURL = "https://support.apple.com/en-us/100100"
 // pre-2011 advisories: their list rows survive, but no advisories/<id>.json
 // is written for them, which downstream stages should treat as normal. The
 // contents survive on the Wayback Machine and could be recovered in a
-// follow-up with a committed table of pinned snapshot URLs.
+// follow-up with a committed table of pinned snapshot URLs; see
+// https://github.com/MaineK00n/vuls-data-update/pull/914#discussion_r3727277181
+// for the verified plan.
 var (
 	// inlineAdvisoryPageIDs are the archive index pages that inline pre-2005
 	// advisory content directly instead of listing links to per-release pages.
