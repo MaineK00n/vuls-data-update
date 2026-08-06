@@ -12,7 +12,13 @@
 					}
 				],
 				"published": "2026-07-27T00:00:00Z"
-			}
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe",
+					"tag": "macOS Tahoe 26.6"
+				}
+			]
 		}
 	],
 	"vulnerabilities": [
@@ -25,7 +31,13 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2026-40765"
 					}
 				]
-			}
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe",
+					"tag": "macOS Tahoe 26.6"
+				}
+			]
 		},
 		{
 			"content": {
@@ -36,7 +48,45 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2026-43819"
 					}
 				]
-			}
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe",
+					"tag": "macOS Tahoe 26.6"
+				}
+			]
+		}
+	],
+	"detections": [
+		{
+			"ecosystem": "cpe",
+			"conditions": [
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"cpe": "cpe:2.3:o:apple:macos:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "version",
+										"lt": "26.6"
+									},
+									"fixed": [
+										"26.6"
+									]
+								}
+							}
+						]
+					},
+					"tag": "macOS Tahoe 26.6"
+				}
+			]
 		}
 	],
 	"data_source": {
