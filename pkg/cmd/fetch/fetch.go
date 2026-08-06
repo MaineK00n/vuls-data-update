@@ -90,6 +90,7 @@ import (
 	microsoftDeployment "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/deployment"
 	microsoftMSUC "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/msuc"
 	microsoftProduct "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/product"
+	microsoftServicing "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/servicing"
 	microsoftVEX "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/vex"
 	microsoftVulnerability "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/vulnerability"
 	microsoftWSUSSCN2 "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/wsusscn2"
@@ -252,7 +253,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdLinuxOSV(),
 		newCmdMageiaOSV(),
 		newCmdMavenGHSA(), newCmdMavenGLSA(), newCmdMavenOSV(),
-		newCmdMicrosoftBulletin(), newCmdMicrosoftCVRF(), newCmdMicrosoftCSAF(), newCmdMicrosoftMSUC(), newCmdMicrosoftAdvisory(), newCmdMicrosoftVulnerability(), newCmdMicrosoftProduct(), newCmdMicrosoftDeployment(), newCmdMicrosoftVEX(), newCmdMicrosoftWSUSSCN2(), newCmdMicrosoftAzureOVAL(),
+		newCmdMicrosoftBulletin(), newCmdMicrosoftCVRF(), newCmdMicrosoftCSAF(), newCmdMicrosoftMSUC(), newCmdMicrosoftServicing(), newCmdMicrosoftAdvisory(), newCmdMicrosoftVulnerability(), newCmdMicrosoftProduct(), newCmdMicrosoftDeployment(), newCmdMicrosoftVEX(), newCmdMicrosoftWSUSSCN2(), newCmdMicrosoftAzureOVAL(),
 		newCmdMinimOSOSV(), newCmdMinimOSSecDB(),
 		newCmdMitreATTACK(), newCmdMitreCAPEC(), newCmdMitreCVRF(), newCmdMitreCWE(), newCmdMitreEMB3D(), newCmdMitreV4(), newCmdMitreV5(),
 		newCmdMSF(),
@@ -2618,6 +2619,70 @@ func newCmdMicrosoftMSUC() *cobra.Command {
 		RunE: func(_ *cobra.Command, args []string) error {
 			if err := microsoftMSUC.Fetch(args, microsoftMSUC.WithDir(options.dir), microsoftMSUC.WithRetry(options.retry), microsoftMSUC.WithConcurrency(options.concurrency), microsoftMSUC.WithWait(options.wait)); err != nil {
 				return errors.Wrap(err, "failed to fetch microsoft msuc")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrent http requests")
+	cmd.Flags().DurationVarP(&options.wait, "wait", "", options.wait, "wait duration")
+
+	return cmd
+}
+
+func newCmdMicrosoftServicing() *cobra.Command {
+	options := &struct {
+		base
+		concurrency int
+		wait        time.Duration
+	}{
+		base: base{
+			dir:   filepath.Join(util.CacheDir(), "fetch", "microsoft", "servicing"),
+			retry: 10,
+		},
+		concurrency: 2,
+		wait:        1 * time.Second,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "microsoft-servicing <KBID>...",
+		Short: "Fetch Microsoft Servicing Article data source",
+		Long: heredoc.Doc(`
+			Fetch Microsoft servicing articles as HTML into <dir>/origin, and what each
+			one states about itself into <dir>/raw.
+
+			A servicing article outlives the update it describes. Once Microsoft expires
+			an update the Update Catalog stops serving it and wsusscn2.cab drops it, but
+			the article stays, and every article in a series carries a sidebar listing the
+			whole series — expired updates included. That sidebar is the only remaining
+			record of which updates a series had.
+
+			Each KB is resolved through support.microsoft.com/help/<KB> to discover its
+			series, those articles are retrieved and their sidebars read, and every
+			article a sidebar names is then retrieved too: the sidebar can be pruned the
+			way the Catalog's replaces list was, so each article is kept as its own
+			record.
+
+			Sidebars are read only on the articles asked for. One repeated on every
+			article of a series has nothing further to add, and following it beyond that
+			leaves the series -- a Windows Server 2008 sidebar links into Windows 8.1.
+
+			Which articles form a series is the directory they sit in, so the sidebar
+			itself is not stored.
+
+			raw/ holds one file per stored article, at the path its origin/ counterpart
+			has. Only the heading and the canonical link are read out of the page; the
+			prose sections stay in origin/ for a later pass.
+		`),
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch microsoft-servicing KB5101004 KB5066835
+		`),
+		Args: cobra.MinimumNArgs(1),
+		RunE: func(_ *cobra.Command, args []string) error {
+			if err := microsoftServicing.Fetch(args, microsoftServicing.WithDir(options.dir), microsoftServicing.WithRetry(options.retry), microsoftServicing.WithConcurrency(options.concurrency), microsoftServicing.WithWait(options.wait)); err != nil {
+				return errors.Wrap(err, "failed to fetch microsoft servicing")
 			}
 			return nil
 		},
