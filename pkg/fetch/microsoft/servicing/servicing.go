@@ -504,17 +504,21 @@ func (opts options) convert() error {
 			return errors.Wrapf(err, "read %s", p)
 		}
 
+		// Every servicing article carries its title in an h1 -- 20 of 20 sampled
+		// across os/windows-11, os/server-2008, dotnetframework and the one-off
+		// notices under os/windows, down to "End of support". A stored page
+		// without one therefore means either that it is not an article, and
+		// collect wrote something parsePath should not have accepted, or that
+		// this heading is no longer where the title lives. Both apply to every
+		// page at once, so skipping would leave raw/ empty beside a full origin/
+		// with the run green.
 		a, ok := parseArticle(string(bs))
 		if !ok {
-			// A page with no heading is not an article. It is stored either way,
-			// so nothing is lost by having no JSON beside it.
-			slog.Warn("no heading", slog.String("path", filepath.ToSlash(rel)))
-			return nil
+			return errors.Errorf("no heading in %s", p)
 		}
 
-		n := fmt.Sprintf("%s.json", strings.TrimSuffix(filepath.ToSlash(rel), ".html"))
-		if err := util.Write(filepath.Join(opts.dir, "raw", filepath.FromSlash(n)), a); err != nil {
-			return errors.Wrapf(err, "write %s", n)
+		if err := util.Write(filepath.Join(opts.dir, "raw", fmt.Sprintf("%s.json", strings.TrimSuffix(rel, ".html"))), a); err != nil {
+			return errors.Wrapf(err, "write %s", filepath.Join(opts.dir, "raw", fmt.Sprintf("%s.json", strings.TrimSuffix(rel, ".html"))))
 		}
 
 		return nil
