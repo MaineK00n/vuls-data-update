@@ -13,9 +13,14 @@ import (
 // dotnetframework/windows-11/22h2 carries no build numbers, so its six are
 // ordered by the date in the title -- which four of them file under a folder
 // month that is not their release month, the shape the path must not be trusted
-// for. Two of the six share a release date, from the months this line ran as a
-// 22H2 and a 23H2 package before merging back: they take the month before them
-// each, and neither supersedes the other.
+// for.
+//
+// Two of the six share a release date, from the months this directory held two
+// lines: a 22H2 and a 23H2 package, run side by side before merging back. They
+// do not supersede each other, and the August article before them is taken up
+// by the 22H2 of September alone, which is the edge msuc records -- the title's
+// products decide which of a shared date links, because the directory has said
+// they are one line and is wrong.
 //
 // 25h2 and 26h1 are filed with no month at all, which is what the series has to
 // read the path carefully enough to see. They are lines of their own, and the
