@@ -60,11 +60,21 @@ import (
 )
 
 var (
-	kbPattern = regexp.MustCompile(`KB(\d{6,})`)
+	// kbPattern allows the space Microsoft has left after KB once, in
+	// "January 26, 2017-KB 3216755 (OS Build 14393.726)". Without it that
+	// article reads as naming no KB and is dropped as though it were a hub page.
+	kbPattern = regexp.MustCompile(`KB ?(\d{6,})`)
 
 	// datePattern is the release date every article that names a KB opens with,
-	// in any of the separators Microsoft has used between it and the KB.
-	datePattern = regexp.MustCompile(`^([A-Z][a-z]+ \d{1,2}, \d{4})`)
+	// in any of the separators Microsoft has used between it and the KB. The
+	// comma is optional for the same reason: "March 18 2021-KB5001633" is
+	// missing it, alone in 2,549 articles.
+	datePattern = regexp.MustCompile(`^([A-Z][a-z]+ \d{1,2},? \d{4})`)
+
+	// yearPattern and monthPattern recognise the yyyy/mm directories Microsoft
+	// files most, but not all, articles beneath.
+	yearPattern  = regexp.MustCompile(`^(19|20)\d{2}$`)
+	monthPattern = regexp.MustCompile(`^(0[1-9]|1[0-2])$`)
 
 	// buildsPattern is the parenthetical Microsoft puts OS builds in, singular
 	// for one and plural for the several an update ships to at once:
@@ -245,24 +255,31 @@ func parse(a servicing.Article, rel string) (article, bool) {
 
 	dm := datePattern.FindStringSubmatch(a.Title)
 	if dm == nil {
-		// Every article naming a KB carries a date -- 264 of 264 sampled -- so
-		// one without is a title shape this has not seen rather than an update
-		// that has no date. Ordering it by guesswork would put an edge where
-		// there may be none.
+		// Every article naming a KB carries a date -- 2,550 of 2,550 -- so one
+		// without is a title shape this has not seen rather than an update that
+		// has no date. Ordering it by guesswork would put an edge where there
+		// may be none.
 		slog.Warn("no date in title", slog.String("path", rel), slog.String("title", a.Title))
 		return article{}, false
 	}
 	date, err := time.Parse("January 2, 2006", dm[1])
 	if err != nil {
+		date, err = time.Parse("January 2 2006", dm[1])
+	}
+	if err != nil {
 		slog.Warn("unexpected date", slog.String("path", rel), slog.String("date", dm[1]))
 		return article{}, false
 	}
 
-	// The series is where the article sits, minus the year, month and slug.
-	segs := strings.Split(rel, "/")
-	if len(segs) < 4 {
-		slog.Warn("unexpected path", slog.String("path", rel))
-		return article{}, false
+	line := series(rel)
+	if !strings.Contains(line, "/") {
+		// Every series but one names its product in the path. The exception is
+		// the thirteen under dotnetframework/2026/07/, where Microsoft has
+		// dropped the product segment from the newer .NET URLs and the title
+		// alone says which line the article belongs to. They are recorded and
+		// left to chain among themselves, which -- sharing one release date --
+		// comes to nothing rather than to guesswork.
+		slog.Warn("no product in path, article is left to a series of its own", slog.String("path", rel), slog.String("title", a.Title))
 	}
 
 	var builds []build
@@ -284,11 +301,32 @@ func parse(a servicing.Article, rel string) (article, bool) {
 		kbID:   m[1],
 		url:    a.URL,
 		date:   date,
-		line:   strings.Join(segs[:len(segs)-3], "/"),
+		line:   line,
 		track:  track(a.Title),
 		builds: builds,
 		raw:    rel,
 	}, true
+}
+
+// series is the product line an article was filed under: its directory, minus
+// the yyyy/mm Microsoft files most but not all articles beneath.
+//
+// The month cannot be taken off by counting segments. Three shapes exist --
+// dotnetframework/windows-10/1809/2026/07/<slug>, dotnetframework/2026/07/<slug>
+// with no product, and dotnetframework/windows-11/25h2/<slug> with no month --
+// and dropping a fixed three from the end reads the product of the third as a
+// date and loses it. Fifteen articles under windows-11/25h2, 26h1 and 3-5 were
+// collapsed onto one another that way.
+func series(rel string) string {
+	segs := strings.Split(rel, "/")
+	if len(segs) < 2 {
+		return rel
+	}
+	segs = segs[:len(segs)-1]
+	if len(segs) >= 2 && yearPattern.MatchString(segs[len(segs)-2]) && monthPattern.MatchString(segs[len(segs)-1]) {
+		segs = segs[:len(segs)-2]
+	}
+	return strings.Join(segs, "/")
 }
 
 // track tells apart the lines a legacy series runs at once. os/server-2008
