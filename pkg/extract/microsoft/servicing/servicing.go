@@ -291,22 +291,27 @@ func parse(a servicing.Article, rel string) (article, bool) {
 // reason, that "Microsoft does NOT consistently record cross-track supersession"
 // while "the broader-track update is functionally a superset of the narrower".
 //
-// A Preview is not a track of its own: it is the next month's rollup released
-// early, cumulative like it. It sits in the rollup line by date, which puts it
-// after the rollup it follows and before the one it previews. The second of
-// those is confirmed 14 times out of 14; the first is recorded nowhere, though
-// a cumulative update must contain what came before it -- one of the gaps this
-// source exists to fill.
+// A Preview is a line of its own, not part of the rollup one. Chained to each
+// other they confirm 13 of 13, and each is superseded by the rollup of the
+// month it previews, 14 of 14. Ordering them into the rollup line by date
+// instead loses the first of those and asserts what the second denies -- that a
+// preview supersedes the rollup before it, which no source records at all,
+// 0 of 14.
 func track(title string) string {
-	if strings.Contains(title, "Security-only") || strings.Contains(title, "Security Only") {
+	switch {
+	case strings.Contains(title, "Security-only"), strings.Contains(title, "Security Only"):
 		return trackSecurityOnly
+	case strings.Contains(title, "Preview"):
+		return trackPreview
+	default:
+		return trackRollup
 	}
-	return trackRollup
 }
 
 const (
 	trackRollup       = "rollup"
 	trackSecurityOnly = "security-only"
+	trackPreview      = "preview"
 )
 
 // chain turns the articles into KB records, chained into supersedence.
@@ -377,16 +382,28 @@ func chain(as []article) []microsoftkbTypes.KB {
 		}
 		byMonth[month{series: a.line, year: a.date.Year(), month: int(a.date.Month())}] = append(byMonth[month{series: a.line, year: a.date.Year(), month: int(a.date.Month())}], a)
 	}
-	for _, group := range byMonth {
+	for m, group := range byMonth {
 		for _, older := range group {
-			if older.track != trackSecurityOnly {
-				continue
-			}
-			for _, newer := range group {
-				if newer.track == trackSecurityOnly {
-					continue
+			switch older.track {
+			case trackSecurityOnly:
+				// The rollup of the same month carries the same fixes.
+				for _, newer := range group {
+					if newer.track == trackRollup {
+						links = append(links, link{older: older.kbID, newer: newer.kbID})
+					}
 				}
-				links = append(links, link{older: older.kbID, newer: newer.kbID})
+			case trackPreview:
+				// A preview is of the month that follows it, and that month's
+				// rollup is what ships it for real.
+				next := m
+				if next.month++; next.month > 12 {
+					next.year, next.month = next.year+1, 1
+				}
+				for _, newer := range byMonth[next] {
+					if newer.track == trackRollup {
+						links = append(links, link{older: older.kbID, newer: newer.kbID})
+					}
+				}
 			}
 		}
 	}

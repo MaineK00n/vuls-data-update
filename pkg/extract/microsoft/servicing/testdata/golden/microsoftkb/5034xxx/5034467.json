@@ -4,11 +4,6 @@
 	"products": [
 		"dotnetframework/windows-11/22h2"
 	],
-	"superseded_by": [
-		{
-			"kb_id": "5036035"
-		}
-	],
 	"supersedes": [
 		{
 			"kb_id": "5033920"
