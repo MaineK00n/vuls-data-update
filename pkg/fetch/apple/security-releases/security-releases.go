@@ -186,12 +186,17 @@ func (opts options) fetchIndex(client *utilhttp.Client, root *url.URL) ([]*url.U
 		return nil, errors.Wrap(err, "parse html")
 	}
 
-	list, archives, err := parseList(doc, articleID(resp.Request.URL), resp.Request.URL, root)
+	list, err := parseList(doc, articleID(resp.Request.URL), resp.Request.URL)
 	if err != nil {
 		return nil, errors.Wrapf(err, "parse list. URL: %s", root)
 	}
 	if len(list.Releases) == 0 {
 		return nil, errors.Errorf("no releases found in list page. URL: %s", root)
+	}
+
+	archives, err := parseArchives(doc, list.ID, resp.Request.URL, root)
+	if err != nil {
+		return nil, errors.Wrapf(err, "parse archives. URL: %s", root)
 	}
 	// the index authoritatively lists every archive page; none matching
 	// would mean upstream restructured the navigation, and following it
@@ -273,9 +278,13 @@ func (opts options) fetchLists(client *utilhttp.Client, root *url.URL, pages []*
 			// lists are keyed by the canonical (redirect-resolved) article
 			// ID, unlike advisories, whose file names keep the linked ID for
 			// the join with list rows
-			list, archives, err := parseList(doc, articleID(final), final, root)
+			list, err := parseList(doc, articleID(final), final)
 			if err != nil {
 				return errors.Wrapf(err, "parse list. URL: %s", requested)
+			}
+			archives, err := parseArchives(doc, list.ID, final, root)
+			if err != nil {
+				return errors.Wrapf(err, "parse archives. URL: %s", requested)
 			}
 			page := parsed{requested: requested, final: final, list: list, archives: archives}
 
@@ -524,10 +533,10 @@ func contentRoot(doc *goquery.Document) (*goquery.Selection, error) {
 	return s, nil
 }
 
-func parseList(doc *goquery.Document, id string, pageURL, root *url.URL) (List, []*url.URL, error) {
+func parseList(doc *goquery.Document, id string, pageURL *url.URL) (List, error) {
 	s, err := contentRoot(doc)
 	if err != nil {
-		return List{}, nil, err
+		return List{}, err
 	}
 
 	list := List{ID: id, URL: pageURL.String()}
@@ -540,7 +549,7 @@ func parseList(doc *goquery.Document, id string, pageURL, root *url.URL) (List, 
 			}
 		case "table":
 			if err := list.parseTable(b.sel, pageURL); err != nil {
-				return List{}, nil, errors.Wrap(err, "parse table")
+				return List{}, errors.Wrap(err, "parse table")
 			}
 		case "p":
 			if strings.HasPrefix(normText(b.sel), "Name and information link") {
@@ -552,10 +561,21 @@ func parseList(doc *goquery.Document, id string, pageURL, root *url.URL) (List, 
 			}
 			pendingList = false
 			if err := list.parseListItems(b.sel, pageURL); err != nil {
-				return List{}, nil, errors.Wrap(err, "parse list items")
+				return List{}, errors.Wrap(err, "parse list items")
 			}
 		default:
 		}
+	}
+
+	return list, nil
+}
+
+// parseArchives collects the "Apple security updates" navigation links of a
+// list page, which point at other archive pages.
+func parseArchives(doc *goquery.Document, id string, pageURL, root *url.URL) ([]*url.URL, error) {
+	s, err := contentRoot(doc)
+	if err != nil {
+		return nil, err
 	}
 
 	var archives []*url.URL
@@ -569,11 +589,11 @@ func parseList(doc *goquery.Document, id string, pageURL, root *url.URL) (List, 
 		}
 		u, err := pageURL.Parse(href)
 		if err != nil {
-			return List{}, nil, errors.Wrapf(err, "parse archive link %s. list: %s", href, id)
+			return nil, errors.Wrapf(err, "parse archive link %s. list: %s", href, id)
 		}
 		if u.Host != root.Host {
 			if !slices.Contains(retiredHosts, u.Host) {
-				return List{}, nil, errors.Errorf("unexpected archive link host. expected: %q, actual: %q. URL: %s", root.Host, u.Host, u)
+				return nil, errors.Errorf("unexpected archive link host. expected: %q, actual: %q. URL: %s", root.Host, u.Host, u)
 			}
 			// nav links to the retired info.apple.com on pre-2011 pages
 			continue
@@ -583,7 +603,7 @@ func parseList(doc *goquery.Document, id string, pageURL, root *url.URL) (List, 
 		archives = append(archives, u)
 	}
 
-	return list, archives, nil
+	return archives, nil
 }
 
 func (l *List) parseTable(tab *goquery.Selection, pageURL *url.URL) error {
