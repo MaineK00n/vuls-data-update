@@ -378,7 +378,5 @@ func chain(as []article) []microsoftkbTypes.KB {
 	for _, kb := range kbs {
 		out = append(out, *kb)
 	}
-	slices.SortFunc(out, microsoftkbTypes.Compare)
-
 	return out
 }
