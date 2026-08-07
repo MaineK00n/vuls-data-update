@@ -1,0 +1,144 @@
+{
+	"id": "106354",
+	"advisories": [
+		{
+			"content": {
+				"id": "106354",
+				"title": "About the security content of Rapid Security Responses for iOS 16.5.1 and iPadOS 16.5.1",
+				"references": [
+					{
+						"source": "support.apple.com",
+						"url": "https://support.apple.com/en-us/106354"
+					}
+				],
+				"published": "2023-07-10T00:00:00Z"
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe",
+					"tag": "iOS 16.5.1 (a) and iPadOS 16.5.1 (a)"
+				},
+				{
+					"ecosystem": "cpe",
+					"tag": "iOS 16.5.1 (c) and iPadOS 16.5.1 (c)"
+				}
+			]
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-2023-37450",
+				"references": [
+					{
+						"source": "support.apple.com",
+						"url": "https://www.cve.org/CVERecord?id=CVE-2023-37450"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe",
+					"tag": "iOS 16.5.1 (a) and iPadOS 16.5.1 (a)"
+				}
+			]
+		}
+	],
+	"detections": [
+		{
+			"ecosystem": "cpe",
+			"conditions": [
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"cpe": "cpe:2.3:o:apple:ipados:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "version",
+										"lt": "16.5.1"
+									},
+									"fixed": [
+										"16.5.1"
+									]
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"cpe": "cpe:2.3:o:apple:iphone_os:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "version",
+										"lt": "16.5.1"
+									},
+									"fixed": [
+										"16.5.1"
+									]
+								}
+							}
+						]
+					},
+					"tag": "iOS 16.5.1 (a) and iPadOS 16.5.1 (a)"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"cpe": "cpe:2.3:o:apple:ipados:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "version",
+										"lt": "16.5.1"
+									},
+									"fixed": [
+										"16.5.1"
+									]
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"cpe": "cpe:2.3:o:apple:iphone_os:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "version",
+										"lt": "16.5.1"
+									},
+									"fixed": [
+										"16.5.1"
+									]
+								}
+							}
+						]
+					},
+					"tag": "iOS 16.5.1 (c) and iPadOS 16.5.1 (c)"
+				}
+			]
+		}
+	],
+	"data_source": {
+		"id": "apple-security-releases",
+		"raws": [
+			"fixtures/advisories/HT213823.json"
+		]
+	}
+}

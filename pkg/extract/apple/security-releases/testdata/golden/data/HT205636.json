@@ -15,8 +15,7 @@
 			},
 			"segments": [
 				{
-					"ecosystem": "cpe",
-					"tag": "Safari 9.0.2"
+					"ecosystem": "cpe"
 				}
 			]
 		}
@@ -34,8 +33,7 @@
 			},
 			"segments": [
 				{
-					"ecosystem": "cpe",
-					"tag": "Safari 9.0.2"
+					"ecosystem": "cpe"
 				}
 			]
 		},
@@ -51,8 +49,7 @@
 			},
 			"segments": [
 				{
-					"ecosystem": "cpe",
-					"tag": "Safari 9.0.2"
+					"ecosystem": "cpe"
 				}
 			]
 		},
@@ -68,8 +65,7 @@
 			},
 			"segments": [
 				{
-					"ecosystem": "cpe",
-					"tag": "Safari 9.0.2"
+					"ecosystem": "cpe"
 				}
 			]
 		}
@@ -100,8 +96,7 @@
 								}
 							}
 						]
-					},
-					"tag": "Safari 9.0.2"
+					}
 				}
 			]
 		}
