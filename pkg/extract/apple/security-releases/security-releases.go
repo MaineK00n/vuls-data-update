@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"io/fs"
 	"log/slog"
-	"maps"
 	"net/url"
 	"path"
 	"path/filepath"
@@ -98,9 +97,6 @@ func Extract(args string, opts ...Option) error {
 		return errors.Wrap(err, "read lists")
 	}
 
-	// the same page may be linked under different article IDs across lists;
-	// accumulate by root ID and merge before writing
-	datas := make(map[dataTypes.RootID]dataTypes.Data)
 	if err := filepath.WalkDir(filepath.Join(args, "advisories"), func(p string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
@@ -133,22 +129,13 @@ func Extract(args string, opts ...Option) error {
 			return errors.Wrapf(err, "extract %s", p)
 		}
 
-		if base, ok := datas[extracted.ID]; ok {
-			base.Merge(extracted)
-			datas[extracted.ID] = base
-			return nil
+		if err := util.Write(filepath.Join(options.dir, "data", fmt.Sprintf("%s.json", extracted.ID)), extracted, true); err != nil {
+			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "data", fmt.Sprintf("%s.json", extracted.ID)))
 		}
-		datas[extracted.ID] = extracted
 
 		return nil
 	}); err != nil {
 		return errors.Wrapf(err, "walk %s", filepath.Join(args, "advisories"))
-	}
-
-	for _, id := range slices.Sorted(maps.Keys(datas)) {
-		if err := util.Write(filepath.Join(options.dir, "data", fmt.Sprintf("%s.json", id)), datas[id], true); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "data", fmt.Sprintf("%s.json", id)))
-		}
 	}
 
 	if err := util.Write(filepath.Join(options.dir, "datasource.json"), datasourceTypes.DataSource{
