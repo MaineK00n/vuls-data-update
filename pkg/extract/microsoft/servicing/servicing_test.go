@@ -44,6 +44,11 @@ import (
 // os/windows-7 holds the one "(Monthly rollup)" Microsoft has spelled in lower
 // case, against the November rollup that supersedes it.
 //
+// os/windows holds the two Microsoft filed away from their build lines, which
+// run in full under os/windows-10. Nothing about either article is wrong, so
+// they are read correctly and chain to nothing -- the failure no other warning
+// can see, and the reason there is one that can.
+//
 // Two articles name no KB. A series listing carries its hub page and its end of
 // servicing statement alongside the updates, and neither is one.
 func TestExtract(t *testing.T) {
