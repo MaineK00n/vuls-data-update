@@ -21,10 +21,6 @@ import (
 // read the path carefully enough to see. They are lines of their own, and the
 // May 2026 article of each shares its date with the other's without joining it.
 //
-// os/windows-10 holds the two titles that are punctuated like no others, "KB
-// 3216755" spaced and "March 18 2021" without its comma, both of which read as
-// no update at all if taken literally.
-//
 // os/windows-11 carries build numbers, and holds three lines at once. 26200 and
 // 26100 run together; 28000 is a version of its own and links to neither. The
 // cumulative update of the second Tuesday and the out-of-band and Preview that
@@ -36,7 +32,14 @@ import (
 // Server 2025 is 26100 as Windows 11 24H2 is, with its own KB at a revision
 // Windows 11 also ships. It belongs to neither of the other chains.
 //
-// The last two name no KB. A series listing carries its hub page and its end of
+// os/windows-10 holds the two titles that are punctuated like no others, "KB
+// 3216755" spaced and "March 18 2021" without its comma, both of which read as
+// no update at all if taken literally.
+//
+// os/windows-7 holds the one "(Monthly rollup)" Microsoft has spelled in lower
+// case, against the November rollup that supersedes it.
+//
+// Two articles name no KB. A series listing carries its hub page and its end of
 // servicing statement alongside the updates, and neither is one.
 func TestExtract(t *testing.T) {
 	tests := []struct {
