@@ -269,18 +269,45 @@ func parse(a servicing.Article, rel string) (article, bool) {
 	}, true
 }
 
-// track separates the lines a legacy series runs at once. A Security-only
-// update and a Monthly Rollup ship the same month and supersede along their own
-// lines, so an edge between them would say one contains the other.
+// track tells apart the lines a legacy series runs at once. os/server-2008
+// alone carries 64 Monthly Rollups, 64 Security-only updates and 14 Previews of
+// Monthly Rollup, interleaved by date.
 //
-// A Preview is not a track of its own: it is the next rollup released early,
-// and the rollup that follows supersedes it.
+// Only the rollup line is cumulative, and it is the only one chained. Taking
+// each track's consecutive pairs and asking whether any of msuc, wsusscn2 or
+// cvrf records supersedence between them:
+//
+//	rollup          64 pairs, 63 confirmed   98%
+//	security-only   64 pairs,  2 confirmed    3%
+//
+// A Security-only update carries one month's fixes and nothing before it, so
+// ordering them by date and joining them would assert 62 replacements that no
+// source records and that do not happen. They are recorded as KBs and left
+// unchained.
+//
+// It is superseded across tracks instead, by the rollup of its own month, which
+// carries the same fixes and the months before them. No source records that --
+// 0 of 64 same-month pairs -- but msuc synthesises the same edge for the same
+// reason, that "Microsoft does NOT consistently record cross-track supersession"
+// while "the broader-track update is functionally a superset of the narrower".
+//
+// A Preview is not a track of its own: it is the next month's rollup released
+// early, cumulative like it. It sits in the rollup line by date, which puts it
+// after the rollup it follows and before the one it previews. The second of
+// those is confirmed 14 times out of 14; the first is recorded nowhere, though
+// a cumulative update must contain what came before it -- one of the gaps this
+// source exists to fill.
 func track(title string) string {
 	if strings.Contains(title, "Security-only") || strings.Contains(title, "Security Only") {
-		return "security-only"
+		return trackSecurityOnly
 	}
-	return "rollup"
+	return trackRollup
 }
+
+const (
+	trackRollup       = "rollup"
+	trackSecurityOnly = "security-only"
+)
 
 // chain turns the articles into KB records, chained into supersedence.
 //
@@ -320,7 +347,7 @@ func chain(as []article) []microsoftkbTypes.KB {
 	type line struct{ series, track string }
 	byLine := make(map[line][]article)
 	for _, a := range as {
-		if len(a.builds) > 0 {
+		if len(a.builds) > 0 || a.track == trackSecurityOnly {
 			continue
 		}
 		l := line{series: a.line, track: a.track}
@@ -332,6 +359,35 @@ func chain(as []article) []microsoftkbTypes.KB {
 		})
 		for i := 1; i < len(group); i++ {
 			links = append(links, link{older: group[i-1].kbID, newer: group[i].kbID})
+		}
+	}
+
+	// Across tracks, within one month: the rollup carries what the Security-only
+	// update of that month carries, so it supersedes it. This is the edge msuc
+	// synthesises rather than reads, for the same reason.
+	type month struct {
+		series string
+		year   int
+		month  int
+	}
+	byMonth := make(map[month][]article)
+	for _, a := range as {
+		if len(a.builds) > 0 {
+			continue
+		}
+		byMonth[month{series: a.line, year: a.date.Year(), month: int(a.date.Month())}] = append(byMonth[month{series: a.line, year: a.date.Year(), month: int(a.date.Month())}], a)
+	}
+	for _, group := range byMonth {
+		for _, older := range group {
+			if older.track != trackSecurityOnly {
+				continue
+			}
+			for _, newer := range group {
+				if newer.track == trackSecurityOnly {
+					continue
+				}
+				links = append(links, link{older: older.kbID, newer: newer.kbID})
+			}
 		}
 	}
 
