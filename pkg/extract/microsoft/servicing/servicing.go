@@ -97,6 +97,15 @@ var (
 	// "(OS Build 28000.2525)", "(OS Builds 26200.8973 and 26100.8973)".
 	buildsPattern = regexp.MustCompile(`OS Builds? ([^)]+)`)
 	buildPattern  = regexp.MustCompile(`(\d+)\.(\d+)`)
+
+	// productsPattern is what a .NET title names after its version list, the
+	// products the update is for: "for .NET Framework 3.5 and 4.8.1 for Windows
+	// 11, version 22H2 and Windows 11, version 23H2". versionPattern picks the
+	// releases out of that -- 22H2, 24H2, 1809, 2019 -- which is the part that
+	// tells two of one directory apart. The OS series name none: their titles
+	// carry the kind and leave the product to the directory.
+	productsPattern = regexp.MustCompile(`\.NET Framework .*? for (.*)`)
+	versionPattern  = regexp.MustCompile(`(?i)\d{2}h\d|\d{4}`)
 )
 
 type options struct {
@@ -136,6 +145,10 @@ type article struct {
 
 	// track keeps a Monthly Rollup from superseding a Security-only update.
 	track string
+
+	// products are the OS releases the title names, which tell two lines apart
+	// where one directory holds both. Empty where the title names none.
+	products []string
 
 	builds []build
 
@@ -328,14 +341,43 @@ func parse(a servicing.Article, rel string) (article, bool) {
 	}
 
 	return article{
-		kbID:   m[1],
-		url:    a.URL,
-		date:   date,
-		line:   line,
-		track:  track(a.Title),
-		builds: builds,
-		raw:    rel,
+		kbID:     m[1],
+		url:      a.URL,
+		date:     date,
+		line:     line,
+		track:    track(a.Title),
+		products: products(a.Title),
+		builds:   builds,
+		raw:      rel,
 	}, true
+}
+
+// products are the OS releases a title names, lowercased. Nothing is returned
+// for the titles that name none.
+func products(title string) []string {
+	m := productsPattern.FindStringSubmatch(title)
+	if m == nil {
+		return nil
+	}
+	return versionPattern.FindAllString(strings.ToLower(m[1]), -1)
+}
+
+// sameLine reports whether two articles of one date and one directory belong to
+// the same product line, which is what their titles have to settle: the
+// directory has already said they are together and it is wrong.
+//
+// A title naming no product answers yes, which is what every OS series does and
+// is the behaviour there was before there was anything to compare.
+func sameLine(x, y article) bool {
+	if len(x.products) == 0 || len(y.products) == 0 {
+		return true
+	}
+	for _, p := range x.products {
+		if slices.Contains(y.products, p) {
+			return true
+		}
+	}
+	return false
 }
 
 // series is the product line an article was filed under: its directory, minus
@@ -566,16 +608,35 @@ func chain(as []article) []microsoftkbTypes.KB {
 			return cmp.Or(x.date.Compare(y.date), cmp.Compare(x.kbID, y.kbID))
 		})
 		// It is the date that links, not the article. Two of one date are
-		// releases beside each other -- the same line ships to two products for
-		// a month or two before merging back, and the .NET version sets go out
-		// together -- so ordering them by KB number and joining them asserts a
-		// replacement between updates that shipped the same morning. Of 2,149
-		// such pairs across the tree, msuc, wsusscn2 and cvrf record five. Each
-		// date supersedes the one before it entire.
+		// releases beside each other -- so ordering them by KB number and
+		// joining them asserts a replacement between updates that shipped the
+		// same morning, which of 2,149 such pairs msuc, wsusscn2 and cvrf record
+		// five of. Each date links to the one before it instead.
+		//
+		// Which of them link is then a question, because a date that ships twice
+		// is a directory holding two lines rather than one line shipping twice.
+		// dotnetframework/windows-11/22h2 ran a 22H2 and a 23H2 package side by
+		// side through September and October 2023 before merging them back, and
+		// joining every article of one date to every article of the next crosses
+		// them: msuc records KB5028948 superseded by the 22H2 of September and
+		// not the 23H2, and the two Octobers by neither. So where a date holds
+		// more than one, the products their titles name decide.
+		//
+		// Where a date holds one, it links whatever it is called. The directory
+		// is the line and the title drifts along it -- "Microsoft server
+		// operating system version 21H2" became "Windows Server 2022" between
+		// two consecutive articles of one chain, an edge msuc records and
+		// comparing products would refuse.
 		days := dates(group)
 		for i := 1; i < len(days); i++ {
-			for _, older := range days[i-1] {
-				for _, newer := range days[i] {
+			prev, cur := days[i-1], days[i]
+			for _, older := range prev {
+				for _, newer := range cur {
+					if len(prev) > 1 || len(cur) > 1 {
+						if !sameLine(older, newer) {
+							continue
+						}
+					}
 					links = append(links, link{older: older.kbID, newer: newer.kbID})
 				}
 			}
