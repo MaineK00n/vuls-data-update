@@ -1,0 +1,32 @@
+{
+	"id": "128999",
+	"url": "https://support.apple.com/en-us/128999",
+	"title": "About the security content of macOS Zion 27.1",
+	"sections": [
+		{
+			"name": "macOS Zion 27.1",
+			"entries": [
+				{
+					"notes": [
+						"Released April 1, 2027"
+					]
+				},
+				{
+					"component": "Kernel",
+					"available_for": [
+						"macOS Zion"
+					],
+					"impact": [
+						"An app may be able to execute arbitrary code with kernel privileges."
+					],
+					"description": [
+						"The issue was addressed with improved memory handling."
+					],
+					"ids": [
+						"CVE-2027-99999: an anonymous researcher"
+					]
+				}
+			]
+		}
+	]
+}

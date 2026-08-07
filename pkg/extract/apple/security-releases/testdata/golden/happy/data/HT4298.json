@@ -42,8 +42,8 @@
 	"data_source": {
 		"id": "apple-security-releases",
 		"raws": [
-			"fixtures/advisories/HT4298.json",
-			"fixtures/lists/103813.json"
+			"happy/advisories/HT4298.json",
+			"happy/lists/103813.json"
 		]
 	}
 }

@@ -1,14 +1,14 @@
 {
-	"id": "101682",
+	"id": "104191",
 	"advisories": [
 		{
 			"content": {
-				"id": "101682",
-				"title": "Apple security updates (03-Oct-2003 to 11-Jan-2005)",
+				"id": "104191",
+				"title": "Apple security updates (August, 2003 and earlier)",
 				"references": [
 					{
 						"source": "support.apple.com",
-						"url": "https://support.apple.com/en-us/101682"
+						"url": "https://support.apple.com/en-us/104191"
 					}
 				]
 			}
@@ -17,44 +17,44 @@
 	"vulnerabilities": [
 		{
 			"content": {
-				"id": "CVE-2004-0488",
+				"id": "CVE-2002-1366",
 				"references": [
 					{
 						"source": "support.apple.com",
-						"url": "https://www.cve.org/CVERecord?id=CVE-2004-0488"
+						"url": "https://www.cve.org/CVERecord?id=CVE-2002-1366"
 					}
 				]
 			}
 		},
 		{
 			"content": {
-				"id": "CVE-2004-0493",
+				"id": "CVE-2002-1383",
 				"references": [
 					{
 						"source": "support.apple.com",
-						"url": "https://www.cve.org/CVERecord?id=CVE-2004-0493"
+						"url": "https://www.cve.org/CVERecord?id=CVE-2002-1383"
 					}
 				]
 			}
 		},
 		{
 			"content": {
-				"id": "CVE-2004-0988",
+				"id": "CVE-2003-0466",
 				"references": [
 					{
 						"source": "support.apple.com",
-						"url": "https://www.cve.org/CVERecord?id=CVE-2004-0988"
+						"url": "https://www.cve.org/CVERecord?id=CVE-2003-0466"
 					}
 				]
 			}
 		},
 		{
 			"content": {
-				"id": "CVE-2005-0043",
+				"id": "CVE-2003-0601",
 				"references": [
 					{
 						"source": "support.apple.com",
-						"url": "https://www.cve.org/CVERecord?id=CVE-2005-0043"
+						"url": "https://www.cve.org/CVERecord?id=CVE-2003-0601"
 					}
 				]
 			}
@@ -63,7 +63,7 @@
 	"data_source": {
 		"id": "apple-security-releases",
 		"raws": [
-			"fixtures/advisories/101682.json"
+			"happy/advisories/104191.json"
 		]
 	}
 }
