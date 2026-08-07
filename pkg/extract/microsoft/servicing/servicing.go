@@ -303,8 +303,10 @@ func track(title string) string {
 		return trackSecurityOnly
 	case strings.Contains(title, "Preview"):
 		return trackPreview
-	default:
+	case strings.Contains(title, "Monthly Rollup"), strings.Contains(title, "Cumulative Update"):
 		return trackRollup
+	default:
+		return trackUnknown
 	}
 }
 
@@ -312,6 +314,7 @@ const (
 	trackRollup       = "rollup"
 	trackSecurityOnly = "security-only"
 	trackPreview      = "preview"
+	trackUnknown      = ""
 )
 
 // chain turns the articles into KB records, chained into supersedence.
@@ -352,7 +355,7 @@ func chain(as []article) []microsoftkbTypes.KB {
 	type line struct{ series, track string }
 	byLine := make(map[line][]article)
 	for _, a := range as {
-		if len(a.builds) > 0 || a.track == trackSecurityOnly {
+		if len(a.builds) > 0 || a.track == trackSecurityOnly || a.track == trackUnknown {
 			continue
 		}
 		l := line{series: a.line, track: a.track}
