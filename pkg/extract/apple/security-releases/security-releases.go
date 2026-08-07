@@ -393,18 +393,22 @@ func parseDate(v string) *time.Time {
 // YYYY-NNN", ...) yield no detection on purpose: the advisory and
 // vulnerability contents are still extracted, and widening the detection
 // scope is a matter of adding patterns here.
+//
+// Submatch 1 is the version; submatch 2 is the Rapid Security Response
+// letter (" (a)" in "iOS 16.5.1 (a)"), which Apple appends to the base OS
+// version it patches.
 var releasePatterns = []struct {
 	re  *regexp.Regexp
 	cpe string
 }{
-	{regexp.MustCompile(`^macOS(?: (?:Sierra|High Sierra|Mojave|Catalina|Big Sur|Monterey|Ventura|Sonoma|Sequoia|Tahoe))? v?([0-9][0-9.]*[0-9]|[0-9])(?: \([a-z]\))?$`), "cpe:2.3:o:apple:macos:*:*:*:*:*:*:*:*"},
-	{regexp.MustCompile(`^(?:Mac )?OS X(?: (?:Lion|Mountain Lion|Mavericks|Yosemite|El Capitan))? v?([0-9][0-9.]*[0-9]|[0-9])(?: \([a-z]\))?$`), "cpe:2.3:o:apple:mac_os_x:*:*:*:*:*:*:*:*"},
-	{regexp.MustCompile(`^iOS v?([0-9][0-9.]*[0-9]|[0-9])(?: \([a-z]\))?$`), "cpe:2.3:o:apple:iphone_os:*:*:*:*:*:*:*:*"},
-	{regexp.MustCompile(`^iPadOS v?([0-9][0-9.]*[0-9]|[0-9])(?: \([a-z]\))?$`), "cpe:2.3:o:apple:ipados:*:*:*:*:*:*:*:*"},
-	{regexp.MustCompile(`^(?:watchOS|Watch OS) v?([0-9][0-9.]*[0-9]|[0-9])(?: \([a-z]\))?$`), "cpe:2.3:o:apple:watchos:*:*:*:*:*:*:*:*"},
-	{regexp.MustCompile(`^tvOS v?([0-9][0-9.]*[0-9]|[0-9])(?: \([a-z]\))?$`), "cpe:2.3:o:apple:tvos:*:*:*:*:*:*:*:*"},
-	{regexp.MustCompile(`^visionOS v?([0-9][0-9.]*[0-9]|[0-9])(?: \([a-z]\))?$`), "cpe:2.3:o:apple:visionos:*:*:*:*:*:*:*:*"},
-	{regexp.MustCompile(`^Safari v?([0-9][0-9.]*[0-9]|[0-9])(?: \([a-z]\))?$`), "cpe:2.3:a:apple:safari:*:*:*:*:*:*:*:*"},
+	{regexp.MustCompile(`^macOS(?: (?:Sierra|High Sierra|Mojave|Catalina|Big Sur|Monterey|Ventura|Sonoma|Sequoia|Tahoe))? v?([0-9][0-9.]*[0-9]|[0-9])( \([a-z]\))?$`), "cpe:2.3:o:apple:macos:*:*:*:*:*:*:*:*"},
+	{regexp.MustCompile(`^(?:Mac )?OS X(?: (?:Lion|Mountain Lion|Mavericks|Yosemite|El Capitan))? v?([0-9][0-9.]*[0-9]|[0-9])( \([a-z]\))?$`), "cpe:2.3:o:apple:mac_os_x:*:*:*:*:*:*:*:*"},
+	{regexp.MustCompile(`^iOS v?([0-9][0-9.]*[0-9]|[0-9])( \([a-z]\))?$`), "cpe:2.3:o:apple:iphone_os:*:*:*:*:*:*:*:*"},
+	{regexp.MustCompile(`^iPadOS v?([0-9][0-9.]*[0-9]|[0-9])( \([a-z]\))?$`), "cpe:2.3:o:apple:ipados:*:*:*:*:*:*:*:*"},
+	{regexp.MustCompile(`^(?:watchOS|Watch OS) v?([0-9][0-9.]*[0-9]|[0-9])( \([a-z]\))?$`), "cpe:2.3:o:apple:watchos:*:*:*:*:*:*:*:*"},
+	{regexp.MustCompile(`^tvOS v?([0-9][0-9.]*[0-9]|[0-9])( \([a-z]\))?$`), "cpe:2.3:o:apple:tvos:*:*:*:*:*:*:*:*"},
+	{regexp.MustCompile(`^visionOS v?([0-9][0-9.]*[0-9]|[0-9])( \([a-z]\))?$`), "cpe:2.3:o:apple:visionos:*:*:*:*:*:*:*:*"},
+	{regexp.MustCompile(`^Safari v?([0-9][0-9.]*[0-9]|[0-9])( \([a-z]\))?$`), "cpe:2.3:a:apple:safari:*:*:*:*:*:*:*:*"},
 }
 
 // releaseNameSeparators split a combined release name such as
@@ -443,11 +447,25 @@ func releaseCriterions(name string) ([]criterionTypes.Criterion, error) {
 					Vulnerable: true,
 					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
 					CPE:        ccTypes.CPE(p.cpe),
-					Range: &ccRangeTypes.Range{
-						Type:     ccRangeTypes.RangeTypeVersion,
-						LessThan: m[1],
-					},
-					Fixed: []string{m[1]},
+					Range: func() *ccRangeTypes.Range {
+						// a Rapid Security Response patches vulnerabilities
+						// present in the base version it suffixes, so the
+						// base itself is vulnerable: the range is inclusive.
+						// The suffixed form is not usable as a comparison
+						// bound (the version comparator cannot parse it) but
+						// is kept verbatim in Fixed
+						if m[2] != "" {
+							return &ccRangeTypes.Range{
+								Type:      ccRangeTypes.RangeTypeVersion,
+								LessEqual: m[1],
+							}
+						}
+						return &ccRangeTypes.Range{
+							Type:     ccRangeTypes.RangeTypeVersion,
+							LessThan: m[1],
+						}
+					}(),
+					Fixed: []string{m[1] + m[2]},
 				},
 			})
 			break
