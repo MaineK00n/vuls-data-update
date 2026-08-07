@@ -144,12 +144,12 @@ func Fetch(opts ...Option) error {
 		return errors.Wrapf(err, "parse %s", options.baseURL)
 	}
 
-	archives, err := options.fetchIndex(client, root)
+	pages, err := options.fetchIndex(client, root)
 	if err != nil {
 		return errors.Wrap(err, "fetch index")
 	}
 
-	advisories, err := options.fetchLists(client, root, append([]*url.URL{root}, archives...))
+	advisories, err := options.fetchLists(client, root, pages)
 	if err != nil {
 		return errors.Wrap(err, "fetch lists")
 	}
@@ -161,12 +161,13 @@ func Fetch(opts ...Option) error {
 	return nil
 }
 
-// fetchIndex answers one question: which archive pages exist? It fetches the
+// fetchIndex answers one question: which list pages exist? It fetches the
 // security releases index page, which authoritatively lists every archive
-// page, validates it, and returns the archive page URLs. The index is then
-// crawled again by fetchLists as an ordinary list page; the duplicate fetch
-// is one request out of roughly 1,240 per run, paid so that list-page
-// handling exists in exactly one place.
+// page, validates it, and returns the index itself together with the
+// archive page URLs. The index is then crawled again by fetchLists as an
+// ordinary list page; the duplicate fetch is one request out of roughly
+// 1,240 per run, paid so that list-page handling exists in exactly one
+// place.
 func (opts options) fetchIndex(client *utilhttp.Client, root *url.URL) ([]*url.URL, error) {
 	slog.Info("Fetch security releases index", slog.String("url", root.String()))
 
@@ -205,7 +206,7 @@ func (opts options) fetchIndex(client *utilhttp.Client, root *url.URL) ([]*url.U
 		return nil, errors.Errorf("no archive pages found in index page. URL: %s", root)
 	}
 
-	return archives, nil
+	return append([]*url.URL{root}, archives...), nil
 }
 
 // fetchLists fetches the list pages — the index and its archive pages —
