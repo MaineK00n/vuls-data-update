@@ -7,9 +7,8 @@
 // it out is this package's job.
 //
 // The order comes from two things, both in the title. Where Microsoft gives OS
-// build numbers, they decide it outright: a cumulative update at 26100.8973
-// contains 26100.8894, so revision order within a build is supersedence with
-// nothing inferred. Where it does not -- .NET Framework and the pre-Windows-10
+// build numbers, revision order within one build and one release cadence is
+// supersedence. Where it does not -- .NET Framework and the pre-Windows-10
 // rollups -- the release date decides it, within one series and one track.
 //
 // Neither the directory an article sits in nor the series as a whole can be
@@ -377,6 +376,27 @@ const (
 	trackUnknown      = ""
 )
 
+// isPatchTuesday reports whether t is the second Tuesday of its month, the day
+// Microsoft ships the cumulative update the build line is carried by. A Tuesday
+// falling on the 8th through the 14th is the second one of its month.
+func isPatchTuesday(t time.Time) bool {
+	return t.Weekday() == time.Tuesday && t.Day() >= 8 && t.Day() <= 14
+}
+
+// dates splits a date-sorted group into the runs that share one date.
+func dates(group []article) [][]article {
+	var out [][]article
+	for i := 0; i < len(group); {
+		j := i + 1
+		for j < len(group) && group[j].date.Equal(group[i].date) {
+			j++
+		}
+		out = append(out, group[i:j])
+		i = j
+	}
+	return out
+}
+
 // chain turns the articles into KB records, chained into supersedence.
 //
 // An update ships to more than one build at a time -- "(OS Builds 26200.8973
@@ -392,19 +412,30 @@ func chain(as []article) []microsoftkbTypes.KB {
 	// A build number is not unique across series -- Windows 11 24H2 and Windows
 	// Server 2025 are both 26100, shipping their own KBs at the same revisions --
 	// so the series has to be part of the key or the two interleave into one
-	// chain and each claims to supersede the other's updates.
+	// chain and each claims to supersede the other's updates. Keyed this way
+	// os/windows-server confirms 156 of 156.
 	//
-	// The track is not, and must not be: a build-numbered article is cumulative
-	// whatever its title says, so the Preview at .8973 does supersede the
-	// Out-of-band at .8894. That is one line, and splitting it by track breaks it.
+	// A build line runs two releases a month and only one of them is the line.
+	// The cumulative update of the second Tuesday is what the next month's
+	// builds on; the optional releases of the weeks after it, and the
+	// out-of-band ones, carry the same fixes to the same build without the
+	// following month ever taking them up. Microsoft's revision numbers
+	// interleave the two, so ordering by revision alone threads them into one
+	// chain -- msuc has KB4022727 of June 13th superseded by KB4025338 of July
+	// 11th, and KB4032695 of June 27th, whose revision falls between them,
+	// superseded by neither of them but by the next month's optional release.
+	// Splitting the two takes the build chains from 771 of 1,198 confirmed to
+	// 1,122 of 1,183.
 	type buildLine struct {
-		series string
-		major  int
+		series  string
+		major   int
+		monthly bool
 	}
 	byBuild := make(map[buildLine][]article)
 	for _, a := range as {
 		for _, b := range a.builds {
-			byBuild[buildLine{series: a.line, major: b.major}] = append(byBuild[buildLine{series: a.line, major: b.major}], a)
+			bl := buildLine{series: a.line, major: b.major, monthly: isPatchTuesday(a.date)}
+			byBuild[bl] = append(byBuild[bl], a)
 		}
 	}
 	for bl, group := range byBuild {
@@ -438,8 +469,20 @@ func chain(as []article) []microsoftkbTypes.KB {
 		slices.SortFunc(group, func(x, y article) int {
 			return cmp.Or(x.date.Compare(y.date), cmp.Compare(x.kbID, y.kbID))
 		})
-		for i := 1; i < len(group); i++ {
-			links = append(links, link{older: group[i-1].kbID, newer: group[i].kbID})
+		// It is the date that links, not the article. Two of one date are
+		// releases beside each other -- the same line ships to two products for
+		// a month or two before merging back, and the .NET version sets go out
+		// together -- so ordering them by KB number and joining them asserts a
+		// replacement between updates that shipped the same morning. Of 2,149
+		// such pairs across the tree, msuc, wsusscn2 and cvrf record five. Each
+		// date supersedes the one before it entire.
+		days := dates(group)
+		for i := 1; i < len(days); i++ {
+			for _, older := range days[i-1] {
+				for _, newer := range days[i] {
+					links = append(links, link{older: older.kbID, newer: newer.kbID})
+				}
+			}
 		}
 	}
 
