@@ -185,6 +185,20 @@ func Extract(args string, opts ...Option) error {
 		slog.Warn("articles of an unrecognised kind are left unchained", slog.String("series", line), slog.Int("count", unchained[line]), slog.String("example", example[line]))
 	}
 
+	// Two articles of one date in one track are releases beside each other, and
+	// chain as such rather than into one another. That they exist at all is
+	// worth saying: a date-ordered series is meant to be one line, so a date it
+	// ships twice on is usually a directory holding two -- dotnetframework's
+	// windows-11/22h2 ran a 22H2 and a 23H2 package side by side for two months
+	// before merging them back. The edges are not wrong, but the series is a
+	// coarser thing than it looks and the page is worth reading.
+	together := coreleased(as)
+	for _, line := range slices.Sorted(maps.Keys(together)) {
+		for _, d := range together[line] {
+			slog.Warn("a series released more than one article of a track on one date", slog.String("series", line), slog.String("date", d.date), slog.Int("count", d.count), slog.String("example", d.example))
+		}
+	}
+
 	for _, kb := range chain(as) {
 		if err := util.Write(filepath.Join(options.dir, "microsoftkb", fmt.Sprintf("%sxxx", kb.KBID[:len(kb.KBID)-3]), fmt.Sprintf("%s.json", kb.KBID)), kb, true); err != nil {
 			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "microsoftkb", fmt.Sprintf("%sxxx", kb.KBID[:len(kb.KBID)-3]), fmt.Sprintf("%s.json", kb.KBID)))
@@ -418,6 +432,47 @@ func isPatchTuesday(t time.Time) bool {
 	return t.Weekday() == time.Tuesday && t.Day() >= 8 && t.Day() <= 14
 }
 
+// sameDay is one date a series shipped more than one article of a track on.
+type sameDay struct {
+	date    string
+	count   int
+	example string
+}
+
+// coreleased finds the dates a date-ordered series shipped more than one
+// article of one track on, by series and in date order. Articles carrying build
+// numbers are ordered by those and share a date freely, so they are not counted.
+func coreleased(as []article) map[string][]sameDay {
+	type key struct {
+		line, track string
+		date        time.Time
+	}
+	days := make(map[key][]article)
+	for _, a := range as {
+		if len(a.builds) > 0 || a.track == trackUnknown {
+			continue
+		}
+		k := key{line: a.line, track: a.track, date: a.date}
+		days[k] = append(days[k], a)
+	}
+
+	out := make(map[string][]sameDay)
+	for k, group := range days {
+		if len(group) < 2 {
+			continue
+		}
+		out[k.line] = append(out[k.line], sameDay{
+			date:    k.date.Format(time.DateOnly),
+			count:   len(group),
+			example: slices.MinFunc(group, func(x, y article) int { return cmp.Compare(x.raw, y.raw) }).raw,
+		})
+	}
+	for line := range out {
+		slices.SortFunc(out[line], func(x, y sameDay) int { return cmp.Compare(x.date, y.date) })
+	}
+	return out
+}
+
 // dates splits a date-sorted group into the runs that share one date.
 func dates(group []article) [][]article {
 	var out [][]article
@@ -482,8 +537,14 @@ func chain(as []article) []microsoftkbTypes.KB {
 			}
 			return 0
 		}
+		// Two articles do share a revision, where Microsoft has re-released a
+		// build: KB3185611 and KB3193821 are both 10240.17113, a week apart. The
+		// release date decides those, and the KB number only where even that
+		// ties -- ordering by the number alone would be right here by the
+		// accident that Microsoft allocates them in order, and wrong the first
+		// time it does not.
 		slices.SortFunc(group, func(x, y article) int {
-			return cmp.Or(cmp.Compare(revision(x), revision(y)), cmp.Compare(x.kbID, y.kbID))
+			return cmp.Or(cmp.Compare(revision(x), revision(y)), x.date.Compare(y.date), cmp.Compare(x.kbID, y.kbID))
 		})
 		for i := 1; i < len(group); i++ {
 			links = append(links, link{older: group[i-1].kbID, newer: group[i].kbID})
