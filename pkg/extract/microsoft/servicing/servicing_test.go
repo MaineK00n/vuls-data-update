@@ -14,6 +14,14 @@ import (
 // date in the title -- which two of them file under a folder month that is not
 // their release month, the shape the path must not be trusted for.
 //
+// 25h2 and 26h1 are filed with no month at all, which is what the series has to
+// read the path carefully enough to see. They are lines of their own, and the
+// May 2026 article of each shares its date with the other's without joining it.
+//
+// os/windows-10 holds the two titles that are punctuated like no others, "KB
+// 3216755" spaced and "March 18 2021" without its comma, both of which read as
+// no update at all if taken literally.
+//
 // os/windows-11 carries them, and holds three lines at once. 26200 and 26100
 // run together through four revisions; 28000 is a version of its own and links
 // to neither, though all four sit in one series and two share a month.

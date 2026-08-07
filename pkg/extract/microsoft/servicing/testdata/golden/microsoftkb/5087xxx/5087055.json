@@ -1,0 +1,13 @@
+{
+	"kb_id": "5087055",
+	"url": "https://support.microsoft.com/en-us/servicing/dotnetframework/windows-11/26h1/may-12-2026-kb5087055-cumulative-update-for-net-framework-4-8-1-for-windows-11-version-26h1",
+	"products": [
+		"dotnetframework/windows-11/26h1"
+	],
+	"data_source": {
+		"id": "microsoft-servicing",
+		"raws": [
+			"dotnetframework/windows-11/26h1/may-12-2026-kb5087055-cumulative-update-for-net-framework-4-8-1-for-windows-11-version-26h1.json"
+		]
+	}
+}
