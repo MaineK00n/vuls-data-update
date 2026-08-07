@@ -144,19 +144,14 @@ func Fetch(opts ...Option) error {
 		return errors.Wrapf(err, "parse %s", options.baseURL)
 	}
 
-	archives, advisories, err := options.fetchIndex(client, root)
+	archives, err := options.fetchIndex(client, root)
 	if err != nil {
 		return errors.Wrap(err, "fetch index")
 	}
 
-	listAdvisories, err := options.fetchLists(client, root, archives)
+	advisories, err := options.fetchLists(client, root, append([]*url.URL{root}, archives...))
 	if err != nil {
 		return errors.Wrap(err, "fetch lists")
-	}
-	for id, u := range listAdvisories {
-		if _, ok := advisories[id]; !ok {
-			advisories[id] = u
-		}
 	}
 
 	if err := options.fetchAdvisories(client, advisories); err != nil {
@@ -166,64 +161,59 @@ func Fetch(opts ...Option) error {
 	return nil
 }
 
-// fetchIndex fetches the security releases index page, which authoritatively
-// lists every archive page, writes it as lists/<id>.json, and returns the
-// archive page URLs together with the advisory URLs of its release rows.
-func (opts options) fetchIndex(client *utilhttp.Client, root *url.URL) ([]*url.URL, map[string]*url.URL, error) {
+// fetchIndex answers one question: which archive pages exist? It fetches the
+// security releases index page, which authoritatively lists every archive
+// page, validates it, and returns the archive page URLs. The index is then
+// crawled again by fetchLists as an ordinary list page; the duplicate fetch
+// is one request out of roughly 1,240 per run, paid so that list-page
+// handling exists in exactly one place.
+func (opts options) fetchIndex(client *utilhttp.Client, root *url.URL) ([]*url.URL, error) {
 	slog.Info("Fetch security releases index", slog.String("url", root.String()))
 
 	resp, err := client.Get(root.String())
 	if err != nil {
-		return nil, nil, errors.Wrapf(err, "get %s", root)
+		return nil, errors.Wrapf(err, "get %s", root)
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		_, _ = io.Copy(io.Discard, resp.Body)
-		return nil, nil, errors.Errorf("error response with status code %d. URL: %s", resp.StatusCode, root)
+		return nil, errors.Errorf("error response with status code %d. URL: %s", resp.StatusCode, root)
 	}
 
 	doc, err := goquery.NewDocumentFromReader(resp.Body)
 	if err != nil {
-		return nil, nil, errors.Wrap(err, "parse html")
+		return nil, errors.Wrap(err, "parse html")
 	}
 
 	list, archives, err := parseList(doc, articleID(resp.Request.URL), resp.Request.URL, root)
 	if err != nil {
-		return nil, nil, errors.Wrapf(err, "parse list. URL: %s", root)
+		return nil, errors.Wrapf(err, "parse list. URL: %s", root)
 	}
 	if len(list.Releases) == 0 {
-		return nil, nil, errors.Errorf("no releases found in list page. URL: %s", root)
+		return nil, errors.Errorf("no releases found in list page. URL: %s", root)
 	}
 	// the index authoritatively lists every archive page; none matching
 	// would mean upstream restructured the navigation, and following it
 	// silently would drop all historical release rows
 	if len(archives) == 0 {
-		return nil, nil, errors.Errorf("no archive pages found in index page. URL: %s", root)
+		return nil, errors.Errorf("no archive pages found in index page. URL: %s", root)
 	}
 
-	if err := util.Write(filepath.Join(opts.dir, "lists", fmt.Sprintf("%s.json", list.ID)), list); err != nil {
-		return nil, nil, errors.Wrapf(err, "write %s", filepath.Join(opts.dir, "lists", fmt.Sprintf("%s.json", list.ID)))
-	}
-
-	advisories, err := advisoryURLs(list, root)
-	if err != nil {
-		return nil, nil, errors.Wrap(err, "collect advisory urls")
-	}
-
-	return archives, advisories, nil
+	return archives, nil
 }
 
-// fetchLists fetches the archive pages level by level with PipelineGet and
-// returns the advisory URLs of their release rows. The index already lists
-// every archive page, so the crawl normally ends after one level; following
-// the archive pages' own navigation links is kept only as a safety net for a
-// future archive that is linked solely from another archive. Each page is
+// fetchLists fetches the list pages — the index and its archive pages —
+// level by level with PipelineGet and returns the advisory URLs of their
+// release rows. The index already lists every archive page, so the crawl
+// normally ends after one level; following the pages' own navigation links
+// is kept only as a safety net for a future archive that is linked solely
+// from another archive. Each page is
 // written as lists/<canonical id>.json; the pre-2005 pages that inline
 // advisory content instead of listing links are written as
 // advisories/<id>.json instead.
-func (opts options) fetchLists(client *utilhttp.Client, root *url.URL, archives []*url.URL) (map[string]*url.URL, error) {
-	// the crawl is expected to end after two levels (the archives, then
+func (opts options) fetchLists(client *utilhttp.Client, root *url.URL, pages []*url.URL) (map[string]*url.URL, error) {
+	// the crawl is expected to end after two levels (the list pages, then
 	// their alias links); processed prevents revisits, so a deeper graph
 	// means upstream keeps producing links to fresh article IDs in a way
 	// this crawler does not understand
@@ -239,12 +229,9 @@ func (opts options) fetchLists(client *utilhttp.Client, root *url.URL, archives 
 		advisory  *Advisory
 	}
 
-	// seeded with the requested ID of the index; should the index itself
-	// ever redirect, its canonical alias would be fetched once more in a
-	// level and converge via the canonical check below
-	processed := map[string]struct{}{articleID(root): {}}
+	processed := make(map[string]struct{})
 	advisories := make(map[string]*url.URL)
-	level := nextLevel(archives, processed, nil)
+	level := nextLevel(pages, processed, nil)
 	for n := 1; len(level) > 0; n++ {
 		if n > maxLevel {
 			return nil, errors.Errorf("archive crawl did not converge within %d levels", maxLevel)
