@@ -9,11 +9,6 @@
 			"kb_id": "5101684"
 		}
 	],
-	"supersedes": [
-		{
-			"kb_id": "5101650"
-		}
-	],
 	"data_source": {
 		"id": "microsoft-servicing",
 		"raws": [

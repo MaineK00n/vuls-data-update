@@ -4,11 +4,6 @@
 	"products": [
 		"os/windows-11"
 	],
-	"superseded_by": [
-		{
-			"kb_id": "5121767"
-		}
-	],
 	"supersedes": [
 		{
 			"kb_id": "5089549"
