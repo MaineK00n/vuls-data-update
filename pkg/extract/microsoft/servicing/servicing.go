@@ -37,6 +37,7 @@ import (
 	"fmt"
 	"io/fs"
 	"log/slog"
+	"maps"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -135,6 +136,27 @@ func Extract(args string, opts ...Option) error {
 	as, err := read(args)
 	if err != nil {
 		return errors.Wrapf(err, "read %s", args)
+	}
+
+	// An unrecognised track is recorded and left unchained, which does not show
+	// in the output -- the KB is there, only its edges are missing. A product
+	// family arriving as a kind this has not seen would otherwise extract clean
+	// with no supersedence at all, so it is reported per series with a page to
+	// go and look at. Articles carrying build numbers are chained by those and
+	// never consult the track, so they are not counted.
+	unchained := make(map[string]int)
+	example := make(map[string]string)
+	for _, a := range as {
+		if a.track != trackUnknown || len(a.builds) > 0 {
+			continue
+		}
+		unchained[a.line]++
+		if _, ok := example[a.line]; !ok {
+			example[a.line] = a.raw
+		}
+	}
+	for _, series := range slices.Sorted(maps.Keys(unchained)) {
+		slog.Warn("articles of an unrecognised kind are left unchained", slog.String("series", series), slog.Int("count", unchained[series]), slog.String("example", example[series]))
 	}
 
 	for _, kb := range chain(as) {
