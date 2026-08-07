@@ -348,18 +348,31 @@ func chain(as []article) []microsoftkbTypes.KB {
 	type link struct{ older, newer string }
 	var links []link
 
-	// By build where Microsoft gives one. Revision order is supersedence: a
-	// cumulative update at .8973 contains .8894.
-	byBuild := make(map[int][]article)
+	// By build where Microsoft gives one, within one series. Revision order is
+	// supersedence: a cumulative update at .8973 contains .8894.
+	//
+	// A build number is not unique across series -- Windows 11 24H2 and Windows
+	// Server 2025 are both 26100, shipping their own KBs at the same revisions --
+	// so the series has to be part of the key or the two interleave into one
+	// chain and each claims to supersede the other's updates.
+	//
+	// The track is not, and must not be: a build-numbered article is cumulative
+	// whatever its title says, so the Preview at .8973 does supersede the
+	// Out-of-band at .8894. That is one line, and splitting it by track breaks it.
+	type buildLine struct {
+		series string
+		major  int
+	}
+	byBuild := make(map[buildLine][]article)
 	for _, a := range as {
 		for _, b := range a.builds {
-			byBuild[b.major] = append(byBuild[b.major], a)
+			byBuild[buildLine{series: a.line, major: b.major}] = append(byBuild[buildLine{series: a.line, major: b.major}], a)
 		}
 	}
-	for major, group := range byBuild {
+	for bl, group := range byBuild {
 		revision := func(a article) int {
 			for _, b := range a.builds {
-				if b.major == major {
+				if b.major == bl.major {
 					return b.revision
 				}
 			}
