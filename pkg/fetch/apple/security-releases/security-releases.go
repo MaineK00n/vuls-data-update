@@ -195,7 +195,7 @@ func (opts options) fetchIndex(client *utilhttp.Client, root *url.URL) ([]*url.U
 		return nil, errors.Errorf("no releases found in list page. URL: %s", root)
 	}
 
-	archives, err := parseArchives(doc, list.ID, resp.Request.URL, root)
+	archives, err := parseArchives(doc, resp.Request.URL, root)
 	if err != nil {
 		return nil, errors.Wrapf(err, "parse archives. URL: %s", root)
 	}
@@ -283,7 +283,7 @@ func (opts options) fetchLists(client *utilhttp.Client, root *url.URL, pages []*
 			if err != nil {
 				return errors.Wrapf(err, "parse list. URL: %s", requested)
 			}
-			archives, err := parseArchives(doc, list.ID, final, root)
+			archives, err := parseArchives(doc, final, root)
 			if err != nil {
 				return errors.Wrapf(err, "parse archives. URL: %s", requested)
 			}
@@ -573,7 +573,7 @@ func parseList(doc *goquery.Document, id string, pageURL *url.URL) (List, error)
 
 // parseArchives collects the "Apple security updates" navigation links of a
 // list page, which point at other archive pages.
-func parseArchives(doc *goquery.Document, id string, pageURL, root *url.URL) ([]*url.URL, error) {
+func parseArchives(doc *goquery.Document, pageURL, root *url.URL) ([]*url.URL, error) {
 	s, err := contentRoot(doc)
 	if err != nil {
 		return nil, errors.Wrap(err, "find content root")
@@ -590,7 +590,7 @@ func parseArchives(doc *goquery.Document, id string, pageURL, root *url.URL) ([]
 		}
 		u, err := pageURL.Parse(href)
 		if err != nil {
-			return nil, errors.Wrapf(err, "parse archive link %s. list: %s", href, id)
+			return nil, errors.Wrapf(err, "parse archive link %s", href)
 		}
 		if u.Host != root.Host {
 			if !slices.Contains(retiredHosts, u.Host) {
