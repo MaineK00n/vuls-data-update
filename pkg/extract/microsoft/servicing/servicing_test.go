@@ -18,6 +18,10 @@ import (
 // run together through four revisions; 28000 is a version of its own and links
 // to neither, though all four sit in one series and two share a month.
 //
+// os/windows-server is there for the build number that is not unique: Windows
+// Server 2025 is 26100 as Windows 11 24H2 is, with its own KB at a revision
+// Windows 11 also ships. It belongs to neither of the other chains.
+//
 // The last two name no KB. A series listing carries its hub page and its end of
 // servicing statement alongside the updates, and neither is one.
 func TestExtract(t *testing.T) {
