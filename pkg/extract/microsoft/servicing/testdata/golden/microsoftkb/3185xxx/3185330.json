@@ -1,0 +1,18 @@
+{
+	"kb_id": "3185330",
+	"url": "https://support.microsoft.com/en-us/servicing/os/windows-7/2016/10/october-11-2016-kb3185330-monthly-rollup",
+	"products": [
+		"os/windows-7"
+	],
+	"superseded_by": [
+		{
+			"kb_id": "3197868"
+		}
+	],
+	"data_source": {
+		"id": "microsoft-servicing",
+		"raws": [
+			"os/windows-7/2016/10/october-11-2016-kb3185330-monthly-rollup.json"
+		]
+	}
+}

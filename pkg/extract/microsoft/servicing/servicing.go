@@ -18,16 +18,33 @@
 //     22621 has nothing to do with one to 26100, and only the build number says
 //     so.
 //   - The directory is not the release date. It disagrees with the date in the
-//     title on 35 of 263 sampled articles -- .../2022/12/january-26-2023-... --
-//     so it is the title that is read, never the path. The two dates the title
-//     and the slug carry agree on every one of those 263.
+//     title on 272 of the 2,535 articles filed under one -- and the shape is
+//     always .../2022/12/january-26-2023-..., the month the work was done
+//     against the month it shipped -- so it is the title that is read, never
+//     the path.
 //   - A legacy series runs two tracks side by side, a Monthly Rollup and a
 //     Security-only update. They supersede along their own lines and are kept
 //     apart.
 //
-// Articles naming no KB are not updates and are skipped: the six "Windows 11,
-// version NNHN update history" hub pages and "End of servicing statement" in a
-// 271-article sample, which are exactly the seven carrying no date either.
+// What the directory does say is which product line an article belongs to, and
+// there it is better than the title. Microsoft renames products under a stable
+// path -- "Microsoft server operating system version 21H2" became "Windows
+// Server 2022" in the titles of dotnetframework/microsoft-server/2022 -- and
+// widens and narrows the list of products a .NET article names while the line
+// runs on. Reading the line out of the title instead loses those, so the path
+// is what is read and the title is what is measured against.
+//
+// Articles naming no KB are not updates and are skipped: the "Windows 10 update
+// history" and "Windows 11, version NNHN update history" hub pages, "End of
+// servicing statement" and the support-lifecycle notices, 30 in 2,580.
+//
+// The rules are checked by taking the pairs each would produce and asking
+// whether msuc, wsusscn2 or cvrf records supersedence between them, counting
+// only the pairs whose two KBs both appear in that union -- roughly half of the
+// .NET ones do not, and a pair with an unknown end can neither confirm nor
+// deny. An edge is confirmed if the union records it or reaches it, since the
+// union holds direct edges where a chain holds a transitive reduction. Over the
+// whole 2,580-article tree that comes to 1,853 of 2,118.
 package servicing
 
 import (
@@ -164,8 +181,8 @@ func Extract(args string, opts ...Option) error {
 			example[a.line] = a.raw
 		}
 	}
-	for _, series := range slices.Sorted(maps.Keys(unchained)) {
-		slog.Warn("articles of an unrecognised kind are left unchained", slog.String("series", series), slog.Int("count", unchained[series]), slog.String("example", example[series]))
+	for _, line := range slices.Sorted(maps.Keys(unchained)) {
+		slog.Warn("articles of an unrecognised kind are left unchained", slog.String("series", line), slog.Int("count", unchained[line]), slog.String("example", example[line]))
 	}
 
 	for _, kb := range chain(as) {
@@ -328,41 +345,59 @@ func series(rel string) string {
 	return strings.Join(segs, "/")
 }
 
-// track tells apart the lines a legacy series runs at once. os/server-2008
-// alone carries 64 Monthly Rollups, 64 Security-only updates and 14 Previews of
-// Monthly Rollup, interleaved by date.
+// track tells apart the lines a legacy series runs at once. The four of them --
+// server-2008, server-2012, windows-7 and windows-8-1 -- carry a Monthly
+// Rollup, a Security-only update and a Preview of Monthly Rollup, interleaved
+// by date.
 //
 // Only the rollup line is cumulative, and it is the only one chained. Taking
-// each track's consecutive pairs and asking whether any of msuc, wsusscn2 or
-// cvrf records supersedence between them:
+// each track's pairs across all four series and asking whether msuc, wsusscn2
+// or cvrf records supersedence between them:
 //
-//	rollup          64 pairs, 63 confirmed   98%
-//	security-only   64 pairs,  2 confirmed    3%
+//	rollup          386 pairs, 384 confirmed   99%
+//	security-only   165 pairs,   6 confirmed    4%
 //
 // A Security-only update carries one month's fixes and nothing before it, so
-// ordering them by date and joining them would assert 62 replacements that no
+// ordering them by date and joining them would assert 159 replacements that no
 // source records and that do not happen. They are recorded as KBs and left
-// unchained.
+// unchained. os/windows-8-1 is the plainest case: 65 pairs, none recorded.
 //
 // It is superseded across tracks instead, by the rollup of its own month, which
-// carries the same fixes and the months before them. No source records that --
-// 0 of 64 same-month pairs -- but msuc synthesises the same edge for the same
-// reason, that "Microsoft does NOT consistently record cross-track supersession"
-// while "the broader-track update is functionally a superset of the narrower".
+// carries the same fixes and the months before them. Almost no source records
+// that -- 5 of 187 same-month pairs -- but msuc synthesises the same edge for
+// the same reason, that "Microsoft does NOT consistently record cross-track
+// supersession" while "the broader-track update is functionally a superset of
+// the narrower".
 //
 // A Preview is a line of its own, not part of the rollup one. Chained to each
-// other they confirm 13 of 13, and each is superseded by the rollup of the
-// month it previews, 14 of 14. Ordering them into the rollup line by date
+// other they confirm 116 of 116, and each is superseded by the rollup of the
+// month it previews, 136 of 137. Ordering them into the rollup line by date
 // instead loses the first of those and asserts what the second denies -- that a
-// preview supersedes the rollup before it, which no source records at all,
-// 0 of 14.
+// preview supersedes the rollup of its own month, which no source records at
+// all, 0 of 130.
+//
+// The names are matched as Microsoft writes them, case and all, with the one
+// casing slip it has made -- "(Monthly rollup)", once in 2,549 articles --
+// spelled out rather than folded away. Folding the case would also take in the
+// three .NET articles titled "Cumulative update", and those do not belong to
+// the line they sit in: msuc has KB4483452 superseding both KB4480056 of
+// January 8th and KB4481031 of January 22nd, which makes the second a release
+// beside the first rather than after it. Chaining them would assert an edge
+// that the record contradicts.
+//
+// "Security and Quality Rollup" is the .NET legacy line's own name for its
+// cumulative track. It has no pairs to check -- Microsoft files seven articles
+// under it, all of one date, and none of the predecessors msuc names for them
+// are in this source -- so it is recorded on the evidence of what it is, and
+// produces nothing until a second date arrives.
 func track(title string) string {
 	switch {
 	case strings.Contains(title, "Security-only"), strings.Contains(title, "Security Only"):
 		return trackSecurityOnly
 	case strings.Contains(title, "Preview"):
 		return trackPreview
-	case strings.Contains(title, "Monthly Rollup"), strings.Contains(title, "Cumulative Update"):
+	case strings.Contains(title, "Monthly Rollup"), strings.Contains(title, "Monthly rollup"),
+		strings.Contains(title, "Cumulative Update"), strings.Contains(title, "Security and Quality Rollup"):
 		return trackRollup
 	default:
 		return trackUnknown
