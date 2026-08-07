@@ -287,6 +287,18 @@ func extract(fetched securityreleases.Advisory, releases []release, raws []strin
 	slices.Sort(cves)
 	cves = slices.Compact(cves)
 
+	// a lone condition pairs with its vulnerabilities unambiguously; tags
+	// are kept only when multiple release sections yield conditions, as on
+	// the combined multi-product pages
+	if len(conditions) == 1 {
+		conditions[0].Tag = ""
+		for c, ts := range tagsByCVE {
+			if len(ts) > 0 {
+				tagsByCVE[c] = []segmentTypes.DetectionTag{""}
+			}
+		}
+	}
+
 	segments := func(tags []segmentTypes.DetectionTag) []segmentTypes.Segment {
 		ss := make([]segmentTypes.Segment, 0, len(tags))
 		for _, t := range tags {

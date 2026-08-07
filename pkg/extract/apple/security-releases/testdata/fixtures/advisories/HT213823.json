@@ -1,0 +1,67 @@
+{
+	"id": "HT213823",
+	"url": "https://support.apple.com/en-us/106354",
+	"title": "About the security content of Rapid Security Responses for iOS 16.5.1 and iPadOS 16.5.1",
+	"sections": [
+		{
+			"entries": [
+				{
+					"others": [
+						"This document describes the content of Rapid Security Responses."
+					]
+				}
+			]
+		},
+		{
+			"name": "About Rapid Security Responses",
+			"entries": [
+				{
+					"others": [
+						"Rapid Security Responses deliver important security improvements between software updates and are available only for the latest versions of iOS, iPadOS, and macOS. Learn more about Rapid Security Responses.",
+						"Apple security documents reference vulnerabilities by CVE-ID when possible.",
+						"Recent releases are listed on the Apple security releases page."
+					]
+				}
+			]
+		},
+		{
+			"name": "iOS 16.5.1 (a) and iPadOS 16.5.1 (a)",
+			"entries": [
+				{
+					"notes": [
+						"Released July 10, 2023"
+					]
+				},
+				{
+					"component": "WebKit",
+					"available_for": [
+						"iOS 16.5.1 and iPadOS 16.5.1"
+					],
+					"impact": [
+						"Processing web content may lead to arbitrary code execution. Apple is aware of a report that this issue may have been actively exploited."
+					],
+					"description": [
+						"The issue was addressed with improved checks."
+					],
+					"ids": [
+						"CVE-2023-37450: an anonymous researcher"
+					]
+				}
+			]
+		},
+		{
+			"name": "iOS 16.5.1 (c) and iPadOS 16.5.1 (c)",
+			"entries": [
+				{
+					"notes": [
+						"Released July 12, 2023"
+					],
+					"others": [
+						"Rapid Security Responses iOS 16.5.1 (c) and iPadOS 16.5.1 (c) include the security content of Rapid Security Responses iOS 16.5.1 (a) and iPadOS 16.5.1 (a) and fix an issue that prevents some websites from displaying properly.",
+						"Information about products not manufactured by Apple, or independent websites not controlled or tested by Apple, is provided without recommendation or endorsement. Apple assumes no responsibility with regard to the selection, performance, or use of third-party websites or products. Apple makes no representations regarding third-party website accuracy or reliability. Contact the vendor for additional information."
+					]
+				}
+			]
+		}
+	]
+}

@@ -15,8 +15,7 @@
 			},
 			"segments": [
 				{
-					"ecosystem": "cpe",
-					"tag": "macOS Tahoe 26.6"
+					"ecosystem": "cpe"
 				}
 			]
 		}
@@ -34,8 +33,7 @@
 			},
 			"segments": [
 				{
-					"ecosystem": "cpe",
-					"tag": "macOS Tahoe 26.6"
+					"ecosystem": "cpe"
 				}
 			]
 		},
@@ -51,8 +49,7 @@
 			},
 			"segments": [
 				{
-					"ecosystem": "cpe",
-					"tag": "macOS Tahoe 26.6"
+					"ecosystem": "cpe"
 				}
 			]
 		}
@@ -83,8 +80,7 @@
 								}
 							}
 						]
-					},
-					"tag": "macOS Tahoe 26.6"
+					}
 				}
 			]
 		}
