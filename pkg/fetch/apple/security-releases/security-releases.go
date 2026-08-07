@@ -537,7 +537,7 @@ func contentRoot(doc *goquery.Document) (*goquery.Selection, error) {
 func parseList(doc *goquery.Document, id string, pageURL *url.URL) (List, error) {
 	s, err := contentRoot(doc)
 	if err != nil {
-		return List{}, err
+		return List{}, errors.Wrap(err, "find content root")
 	}
 
 	list := List{ID: id, URL: pageURL.String()}
@@ -576,7 +576,7 @@ func parseList(doc *goquery.Document, id string, pageURL *url.URL) (List, error)
 func parseArchives(doc *goquery.Document, id string, pageURL, root *url.URL) ([]*url.URL, error) {
 	s, err := contentRoot(doc)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "find content root")
 	}
 
 	var archives []*url.URL
@@ -687,7 +687,7 @@ func (l *List) parseListItems(ul *goquery.Selection, pageURL *url.URL) error {
 func parseAdvisory(doc *goquery.Document, id, pageURL string) (Advisory, error) {
 	s, err := contentRoot(doc)
 	if err != nil {
-		return Advisory{}, err
+		return Advisory{}, errors.Wrap(err, "find content root")
 	}
 
 	advisory := Advisory{ID: id, URL: pageURL}
