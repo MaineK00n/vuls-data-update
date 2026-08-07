@@ -1,0 +1,121 @@
+package securityreleases_test
+
+import (
+	"bytes"
+	"fmt"
+	"io/fs"
+	"net/http"
+	"net/http/httptest"
+	"os"
+	"path"
+	"path/filepath"
+	"strings"
+	"testing"
+
+	"github.com/google/go-cmp/cmp"
+
+	securityreleases "github.com/MaineK00n/vuls-data-update/pkg/fetch/apple/security-releases"
+)
+
+func TestFetch(t *testing.T) {
+	tests := []struct {
+		name     string
+		hasError bool
+	}{
+		{
+			name: "happy",
+		},
+		{
+			name:     "unexpected_notfound",
+			hasError: true,
+		},
+		{
+			name:     "unexpected_host",
+			hasError: true,
+		},
+		{
+			name:     "unexpected_empty_list",
+			hasError: true,
+		},
+		{
+			name:     "unexpected_table",
+			hasError: true,
+		},
+		{
+			// a 6-deep chain of archive pages each linking the next
+			name:     "unexpected_deep_crawl",
+			hasError: true,
+		},
+		{
+			// an index page whose navigation lists no archive pages
+			name:     "unexpected_no_archives",
+			hasError: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				switch {
+				case strings.HasPrefix(r.URL.Path, "/en-us/"):
+					http.ServeFile(w, r, filepath.Join("testdata", "fixtures", tt.name, "en-us", path.Base(r.URL.Path)))
+				case r.URL.Path == "/kb/HT201222":
+					http.Redirect(w, r, "/en-us/100100", http.StatusFound)
+				case strings.HasPrefix(r.URL.Path, "/kb/"):
+					if _, err := os.Stat(filepath.Join("testdata", "fixtures", tt.name, "en-us", path.Base(r.URL.Path))); err != nil {
+						http.NotFound(w, r)
+						return
+					}
+					http.Redirect(w, r, path.Join("/en-us", path.Base(r.URL.Path)), http.StatusFound)
+				default:
+					http.NotFound(w, r)
+				}
+			}))
+			defer ts.Close()
+
+			dir := t.TempDir()
+			err := securityreleases.Fetch(securityreleases.WithBaseURL(fmt.Sprintf("%s/en-us/100100", ts.URL)), securityreleases.WithDir(dir), securityreleases.WithRetry(0), securityreleases.WithConcurrency(2), securityreleases.WithWait(0))
+			switch {
+			case err != nil && !tt.hasError:
+				t.Error("unexpected error:", err)
+			case err == nil && tt.hasError:
+				t.Error("expected error has not occurred")
+			case err != nil && tt.hasError:
+			default:
+				if err := filepath.WalkDir(dir, func(p string, d fs.DirEntry, err error) error {
+					if err != nil {
+						return err
+					}
+
+					if d.IsDir() {
+						return nil
+					}
+
+					rel, err := filepath.Rel(dir, p)
+					if err != nil {
+						return err
+					}
+
+					want, err := os.ReadFile(filepath.Join("testdata", "golden", tt.name, rel))
+					if err != nil {
+						return err
+					}
+
+					got, err := os.ReadFile(p)
+					if err != nil {
+						return err
+					}
+					got = bytes.ReplaceAll(got, []byte(ts.URL), []byte("https://support.apple.com"))
+
+					if diff := cmp.Diff(string(want), string(got)); diff != "" {
+						t.Errorf("Fetch(). (-expected +got):\n%s", diff)
+					}
+
+					return nil
+				}); err != nil {
+					t.Error("walk error:", err)
+				}
+			}
+		})
+	}
+}

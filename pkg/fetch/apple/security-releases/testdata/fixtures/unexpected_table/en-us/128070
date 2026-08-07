@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head><title>About the security content of macOS Tahoe 26.7 - Apple Support</title></head>
+<body>
+<div class="main section viewport-content" role="main" id="content">
+    <div id="sections">
+        <div class="alignment">
+            <h1 class="gb-header">About the security content of macOS Tahoe 26.7</h1>
+        </div>
+        <div class="alignment">
+            <h2 class="gb-header">macOS Tahoe 26.7</h2>
+        </div>
+        <div class="alignment">
+            <div class="table-wrapper gb-table">
+                <table class="gb-table">
+                    <tbody>
+                        <tr>
+                            <td class="gb-table-cell">
+                                <p class="gb-paragraph">Component</p>
+                            </td>
+                            <td class="gb-table-cell">
+                                <p class="gb-paragraph">CVE</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="gb-table-cell">
+                                <p class="gb-paragraph">WebKit</p>
+                            </td>
+                            <td class="gb-table-cell">
+                                <p class="gb-paragraph">CVE-2026-99999</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

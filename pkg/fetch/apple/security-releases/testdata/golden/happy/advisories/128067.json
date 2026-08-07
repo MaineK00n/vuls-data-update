@@ -1,0 +1,82 @@
+{
+	"id": "128067",
+	"url": "https://support.apple.com/en-us/128067",
+	"title": "About the security content of macOS Tahoe 26.6",
+	"sections": [
+		{
+			"entries": [
+				{
+					"others": [
+						"This document describes the security content of macOS Tahoe 26.6."
+					]
+				}
+			]
+		},
+		{
+			"name": "About Apple security updates",
+			"entries": [
+				{
+					"others": [
+						"For our customers' protection, Apple doesn't disclose, discuss, or confirm security issues until an investigation has occurred and patches or releases are available.",
+						"Apple security documents reference vulnerabilities by CVE-ID when possible."
+					]
+				}
+			]
+		},
+		{
+			"name": "macOS Tahoe 26.6",
+			"entries": [
+				{
+					"notes": [
+						"Released July 27, 2026"
+					]
+				},
+				{
+					"component": "Accounts",
+					"available_for": [
+						"macOS Tahoe"
+					],
+					"impact": [
+						"An app may be able to access sensitive user data"
+					],
+					"description": [
+						"An access issue was addressed with additional sandbox restrictions."
+					],
+					"ids": [
+						"CVE-2026-43819: Omar Cerrito"
+					]
+				},
+				{
+					"component": "WebKit",
+					"available_for": [
+						"macOS Tahoe"
+					],
+					"impact": [
+						"Processing maliciously crafted web content may lead to an unexpected Safari crash"
+					],
+					"description": [
+						"The issue was addressed with improved memory handling."
+					],
+					"ids": [
+						"WebKit Bugzilla: 259231",
+						"CVE-2026-40765: an anonymous researcher"
+					],
+					"notes": [
+						"Entry added August 1, 2026"
+					]
+				}
+			]
+		},
+		{
+			"name": "Additional recognition",
+			"entries": [
+				{
+					"component": "CoreServices",
+					"others": [
+						"We would like to acknowledge an anonymous researcher for their assistance."
+					]
+				}
+			]
+		}
+	]
+}
