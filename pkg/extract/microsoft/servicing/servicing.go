@@ -145,7 +145,7 @@ func Extract(args string, opts ...Option) error {
 
 	if err := util.Write(filepath.Join(options.dir, "datasource.json"), datasourceTypes.DataSource{
 		ID:   sourceTypes.MicrosoftServicing,
-		Name: func() *string { s := "Microsoft Servicing Articles"; return &s }(),
+		Name: new("Microsoft Servicing Articles"),
 		Raw: func() []repositoryTypes.Repository {
 			r, _ := utilgit.GetDataSourceRepository(args)
 			if r == nil {
@@ -317,12 +317,14 @@ func chain(as []article) []microsoftkbTypes.KB {
 	}
 
 	// By date for the series Microsoft numbers no builds in, within one track.
-	byLine := make(map[string][]article)
+	type line struct{ series, track string }
+	byLine := make(map[line][]article)
 	for _, a := range as {
 		if len(a.builds) > 0 {
 			continue
 		}
-		byLine[fmt.Sprintf("%s\x00%s", a.line, a.track)] = append(byLine[fmt.Sprintf("%s\x00%s", a.line, a.track)], a)
+		l := line{series: a.line, track: a.track}
+		byLine[l] = append(byLine[l], a)
 	}
 	for _, group := range byLine {
 		slices.SortFunc(group, func(x, y article) int {
