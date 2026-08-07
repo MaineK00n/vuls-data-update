@@ -266,7 +266,10 @@ func extract(fetched securityreleases.Advisory, releases []release, raws []strin
 		if slices.Contains(inlineAdvisoryPageIDs, rootID) {
 			continue
 		}
-		cs := releaseCriterions(s.Name)
+		cs, err := releaseCriterions(s.Name)
+		if err != nil {
+			return dataTypes.Data{}, errors.Wrapf(err, "release criterions. root: %s", rootID)
+		}
 		if len(cs) == 0 {
 			continue
 		}
@@ -422,19 +425,31 @@ var releasePatterns = []struct {
 // Update 2017-005 El Capitan" or "iOS 26.6 and iPadOS 26.6" into its parts.
 var releaseNameSeparators = regexp.MustCompile(`, and |; and |, |; | and | / `)
 
+// unknownMacOSReleasePattern matches the shape of a macOS OS release —
+// "macOS <Marketing Name> <version>", version closing the name — so that a
+// marketing name missing from releasePatterns fails loudly instead of
+// silently losing its detections when Apple ships the release after Tahoe.
+// macOS is the only family whose enumeration can go stale: the OS X names
+// are historical and closed, and the other families do not carry marketing
+// names. "macOS Server <version>" is the one known lookalike of this shape
+// and is excluded where the pattern is applied.
+var unknownMacOSReleasePattern = regexp.MustCompile(`^macOS (?:[A-Z][A-Za-z]+ )+([0-9][0-9.]*[0-9]|[0-9])(?: \([a-z]\))?$`)
+
 // releaseCriterions maps a release name to CPE criterions, one per part of
 // the name that names an OS release or Safari: the release fixes the listed
 // vulnerabilities, so versions below it are vulnerable.
-func releaseCriterions(name string) []criterionTypes.Criterion {
+func releaseCriterions(name string) ([]criterionTypes.Criterion, error) {
 	var cs []criterionTypes.Criterion
 	for _, part := range releaseNameSeparators.Split(name, -1) {
 		// a trailing asterisk is a footnote marker, e.g. "Safari 14.1*"
 		part = strings.TrimSpace(strings.TrimSuffix(strings.TrimSpace(part), "*"))
+		var matched bool
 		for _, p := range releasePatterns {
 			m := p.re.FindStringSubmatch(part)
 			if m == nil {
 				continue
 			}
+			matched = true
 			cs = append(cs, criterionTypes.Criterion{
 				Type: criterionTypes.CriterionTypeCPE,
 				CPE: &ccTypes.Criterion{
@@ -450,6 +465,9 @@ func releaseCriterions(name string) []criterionTypes.Criterion {
 			})
 			break
 		}
+		if !matched && unknownMacOSReleasePattern.MatchString(part) && !strings.HasPrefix(part, "macOS Server ") {
+			return nil, errors.Errorf("unexpected macOS marketing name. expected: enumerated in releasePatterns, actual: %q", part)
+		}
 	}
-	return cs
+	return cs, nil
 }

@@ -1,17 +1,17 @@
 {
-	"id": "HT205636",
+	"id": "128067",
 	"advisories": [
 		{
 			"content": {
-				"id": "HT205636",
-				"title": "About the security content of Safari 9.0.2",
+				"id": "128067",
+				"title": "About the security content of macOS Tahoe 26.6",
 				"references": [
 					{
 						"source": "support.apple.com",
-						"url": "https://support.apple.com/en-us/HT205636"
+						"url": "https://support.apple.com/en-us/128067"
 					}
 				],
-				"published": "2015-12-08T00:00:00Z"
+				"published": "2026-07-27T00:00:00Z"
 			},
 			"segments": [
 				{
@@ -23,11 +23,11 @@
 	"vulnerabilities": [
 		{
 			"content": {
-				"id": "CVE-2015-7048",
+				"id": "CVE-2026-40765",
 				"references": [
 					{
 						"source": "support.apple.com",
-						"url": "https://www.cve.org/CVERecord?id=CVE-2015-7048"
+						"url": "https://www.cve.org/CVERecord?id=CVE-2026-40765"
 					}
 				]
 			},
@@ -39,27 +39,11 @@
 		},
 		{
 			"content": {
-				"id": "CVE-2015-7093",
+				"id": "CVE-2026-43819",
 				"references": [
 					{
 						"source": "support.apple.com",
-						"url": "https://www.cve.org/CVERecord?id=CVE-2015-7093"
-					}
-				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
-		},
-		{
-			"content": {
-				"id": "CVE-2015-7095",
-				"references": [
-					{
-						"source": "support.apple.com",
-						"url": "https://www.cve.org/CVERecord?id=CVE-2015-7095"
+						"url": "https://www.cve.org/CVERecord?id=CVE-2026-43819"
 					}
 				]
 			},
@@ -85,13 +69,13 @@
 									"fix_status": {
 										"class": "fixed"
 									},
-									"cpe": "cpe:2.3:a:apple:safari:*:*:*:*:*:*:*:*",
+									"cpe": "cpe:2.3:o:apple:macos:*:*:*:*:*:*:*:*",
 									"range": {
 										"type": "version",
-										"lt": "9.0.2"
+										"lt": "26.6"
 									},
 									"fixed": [
-										"9.0.2"
+										"26.6"
 									]
 								}
 							}
@@ -104,9 +88,8 @@
 	"data_source": {
 		"id": "apple-security-releases",
 		"raws": [
-			"fixtures/advisories/HT205636.json",
-			"fixtures/lists/100100.json",
-			"fixtures/lists/103813.json"
+			"happy/advisories/128067.json",
+			"happy/lists/100100.json"
 		]
 	}
 }
