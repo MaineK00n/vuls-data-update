@@ -212,7 +212,43 @@ func Extract(args string, opts ...Option) error {
 		}
 	}
 
-	for _, kb := range chain(as) {
+	kbs := chain(as)
+
+	// A series of several articles that comes out with no supersedence at all is
+	// the failure this cannot otherwise see. The warnings above catch an article
+	// whose kind is unrecognised and a path that names no product, but an
+	// article can be read perfectly and still chain to nothing -- by being filed
+	// away from the rest of its line, where there is nothing to chain it to.
+	// os/windows holds two, KB5070882 at 14393.8524 and KB5070883 at 17763.7922,
+	// while os/windows-10 runs 191 articles of one build and 164 of the other.
+	// Nothing about either article is wrong, so nothing else reports them.
+	//
+	// A series of one is not counted: it has no second article to link to and
+	// says nothing by having no edges.
+	linked := make(map[string]bool, len(kbs))
+	for _, kb := range kbs {
+		if len(kb.Supersedes) > 0 || len(kb.SupersededBy) > 0 {
+			linked[kb.KBID] = true
+		}
+	}
+	held := make(map[string]map[string]struct{})
+	for _, a := range as {
+		if held[a.line] == nil {
+			held[a.line] = make(map[string]struct{})
+		}
+		held[a.line][a.kbID] = struct{}{}
+	}
+	for _, line := range slices.Sorted(maps.Keys(held)) {
+		if len(held[line]) < 2 {
+			continue
+		}
+		if slices.ContainsFunc(slices.Collect(maps.Keys(held[line])), func(k string) bool { return linked[k] }) {
+			continue
+		}
+		slog.Warn("a series of several articles came out with no supersedence at all", slog.String("series", line), slog.Int("count", len(held[line])))
+	}
+
+	for _, kb := range kbs {
 		if err := util.Write(filepath.Join(options.dir, "microsoftkb", fmt.Sprintf("%sxxx", kb.KBID[:len(kb.KBID)-3]), fmt.Sprintf("%s.json", kb.KBID)), kb, true); err != nil {
 			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "microsoftkb", fmt.Sprintf("%sxxx", kb.KBID[:len(kb.KBID)-3]), fmt.Sprintf("%s.json", kb.KBID)))
 		}
