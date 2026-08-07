@@ -187,14 +187,6 @@ func (opts options) fetchIndex(client *utilhttp.Client, root *url.URL) ([]*url.U
 		return nil, errors.Wrap(err, "parse html")
 	}
 
-	list, err := parseList(doc, articleID(resp.Request.URL), resp.Request.URL)
-	if err != nil {
-		return nil, errors.Wrapf(err, "parse list. URL: %s", root)
-	}
-	if len(list.Releases) == 0 {
-		return nil, errors.Errorf("no releases found in list page. URL: %s", root)
-	}
-
 	archives, err := parseArchives(doc, resp.Request.URL, root)
 	if err != nil {
 		return nil, errors.Wrapf(err, "parse archives. URL: %s", root)
