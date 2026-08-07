@@ -1,0 +1,18 @@
+{
+	"kb_id": "5089549",
+	"url": "https://support.microsoft.com/en-us/servicing/os/windows-11/2026/05/may-12-2026-kb5089549-os-builds-26200-8457-and-26100-8457",
+	"products": [
+		"os/windows-11"
+	],
+	"superseded_by": [
+		{
+			"kb_id": "5101650"
+		}
+	],
+	"data_source": {
+		"id": "microsoft-servicing",
+		"raws": [
+			"os/windows-11/2026/05/may-12-2026-kb5089549-os-builds-26200-8457-and-26100-8457.json"
+		]
+	}
+}

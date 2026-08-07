@@ -1,0 +1,13 @@
+{
+	"kb_id": "5101651",
+	"url": "https://support.microsoft.com/en-us/servicing/os/windows-server/2026/07/july-14-2026-kb5101651-os-build-26100-8875",
+	"products": [
+		"os/windows-server"
+	],
+	"data_source": {
+		"id": "microsoft-servicing",
+		"raws": [
+			"os/windows-server/2026/07/july-14-2026-kb5101651-os-build-26100-8875.json"
+		]
+	}
+}

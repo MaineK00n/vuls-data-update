@@ -1,0 +1,18 @@
+{
+	"kb_id": "5028948",
+	"url": "https://support.microsoft.com/en-us/servicing/dotnetframework/windows-11/22h2/2023/06/august-8-2023-kb5028948-cumulative-update-for-net-framework-3-5-and-4-8-1-for-windows-11-version-22h",
+	"products": [
+		"dotnetframework/windows-11/22h2"
+	],
+	"superseded_by": [
+		{
+			"kb_id": "5031217"
+		}
+	],
+	"data_source": {
+		"id": "microsoft-servicing",
+		"raws": [
+			"dotnetframework/windows-11/22h2/2023/06/august-8-2023-kb5028948-cumulative-update-for-net-framework-3-5-and-4-8-1-for-windows-11-version-22h.json"
+		]
+	}
+}

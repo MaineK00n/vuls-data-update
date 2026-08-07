@@ -1,0 +1,18 @@
+{
+	"kb_id": "3216755",
+	"url": "https://support.microsoft.com/en-us/servicing/os/windows-10/2017/01/january-26-2017-kb-3216755-os-build-14393-726",
+	"products": [
+		"os/windows-10"
+	],
+	"superseded_by": [
+		{
+			"kb_id": "5001633"
+		}
+	],
+	"data_source": {
+		"id": "microsoft-servicing",
+		"raws": [
+			"os/windows-10/2017/01/january-26-2017-kb-3216755-os-build-14393-726.json"
+		]
+	}
+}

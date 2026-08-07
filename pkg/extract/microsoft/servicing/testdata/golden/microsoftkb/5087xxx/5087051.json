@@ -1,0 +1,18 @@
+{
+	"kb_id": "5087051",
+	"url": "https://support.microsoft.com/en-us/servicing/dotnetframework/windows-11/25h2/may-12-2026-kb5087051-cumulative-update-for-net-framework-3-5-and-4-8-1-for-windows-11-version-25h2",
+	"products": [
+		"dotnetframework/windows-11/25h2"
+	],
+	"supersedes": [
+		{
+			"kb_id": "5066128"
+		}
+	],
+	"data_source": {
+		"id": "microsoft-servicing",
+		"raws": [
+			"dotnetframework/windows-11/25h2/may-12-2026-kb5087051-cumulative-update-for-net-framework-3-5-and-4-8-1-for-windows-11-version-25h2.json"
+		]
+	}
+}
