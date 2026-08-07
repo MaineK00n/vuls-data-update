@@ -1,0 +1,31 @@
+{
+	"id": "HT4298",
+	"url": "https://support.apple.com/en-us/HT4298",
+	"title": "About the security content of Time Capsule and AirPort Base Station (802.11n) Firmware 7.5.2",
+	"sections": [
+		{
+			"name": "Time Capsule and AirPort Base Station (802.11n) Firmware 7.5.2",
+			"entries": [
+				{
+					"component": "AirPort Extreme Base Station with 802.11n, AirPort Express Base Station with 802.11n, Time Capsule",
+					"available_for": [
+						"AirPort Extreme Base Station with 802.11n, AirPort Express Base Station with 802.11n, Time Capsule",
+						"AirPort Extreme Base Station with 802.11n, AirPort Express Base Station with 802.11n, Time Capsule"
+					],
+					"impact": [
+						"A remote attacker may terminate the operation of the SNMP service",
+						"Receiving a large number of IPv6 Router Advertisement (RA) and Neighbor Discovery (ND) packets may cause the base station to restart"
+					],
+					"description": [
+						"An integer overflow exists in the netsnmp_create_subtree_cache function.",
+						"A resource consumption issue exists in the base station's handling of Router Advertisement and Neighbor Discovery packets."
+					],
+					"ids": [
+						"CVE-ID: CVE-2008-4309",
+						"CVE-ID: CVE-2009-2189"
+					]
+				}
+			]
+		}
+	]
+}

@@ -1,0 +1,95 @@
+{
+	"id": "128067",
+	"advisories": [
+		{
+			"content": {
+				"id": "128067",
+				"title": "About the security content of macOS Tahoe 26.6",
+				"references": [
+					{
+						"source": "support.apple.com",
+						"url": "https://support.apple.com/en-us/128067"
+					}
+				],
+				"published": "2026-07-27T00:00:00Z"
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe"
+				}
+			]
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-2026-40765",
+				"references": [
+					{
+						"source": "support.apple.com",
+						"url": "https://www.cve.org/CVERecord?id=CVE-2026-40765"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2026-43819",
+				"references": [
+					{
+						"source": "support.apple.com",
+						"url": "https://www.cve.org/CVERecord?id=CVE-2026-43819"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe"
+				}
+			]
+		}
+	],
+	"detections": [
+		{
+			"ecosystem": "cpe",
+			"conditions": [
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"cpe": "cpe:2.3:o:apple:macos:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "version",
+										"lt": "26.6"
+									},
+									"fixed": [
+										"26.6"
+									]
+								}
+							}
+						]
+					}
+				}
+			]
+		}
+	],
+	"data_source": {
+		"id": "apple-security-releases",
+		"raws": [
+			"happy/advisories/128067.json",
+			"happy/lists/100100.json"
+		]
+	}
+}
