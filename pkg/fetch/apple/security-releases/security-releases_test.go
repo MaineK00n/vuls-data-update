@@ -46,6 +46,11 @@ func TestFetch(t *testing.T) {
 			name:     "unexpected_deep_crawl",
 			hasError: true,
 		},
+		{
+			// an index page whose navigation lists no archive pages
+			name:     "unexpected_no_archives",
+			hasError: true,
+		},
 	}
 
 	for _, tt := range tests {

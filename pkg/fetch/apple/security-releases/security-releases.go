@@ -195,6 +195,12 @@ func (opts options) fetchIndex(client *utilhttp.Client, root *url.URL) ([]*url.U
 	if len(list.Releases) == 0 {
 		return nil, nil, errors.Errorf("no releases found in list page. URL: %s", root)
 	}
+	// the index authoritatively lists every archive page; none matching
+	// would mean upstream restructured the navigation, and following it
+	// silently would drop all historical release rows
+	if len(archives) == 0 {
+		return nil, nil, errors.Errorf("no archive pages found in index page. URL: %s", root)
+	}
 
 	if err := util.Write(filepath.Join(opts.dir, "lists", fmt.Sprintf("%s.json", list.ID)), list); err != nil {
 		return nil, nil, errors.Wrapf(err, "write %s", filepath.Join(opts.dir, "lists", fmt.Sprintf("%s.json", list.ID)))
@@ -233,6 +239,9 @@ func (opts options) fetchLists(client *utilhttp.Client, root *url.URL, archives 
 		advisory  *Advisory
 	}
 
+	// seeded with the requested ID of the index; should the index itself
+	// ever redirect, its canonical alias would be fetched once more in a
+	// level and converge via the canonical check below
 	processed := map[string]struct{}{articleID(root): {}}
 	advisories := make(map[string]*url.URL)
 	level := nextLevel(archives, processed, nil)
