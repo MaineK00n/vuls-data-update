@@ -437,30 +437,20 @@ func releaseCriterions(name string) ([]criterionTypes.Criterion, error) {
 				continue
 			}
 			matched = true
+			// the apple comparator understands the RSR letter, so the fixed
+			// version is the exclusive bound verbatim: for "iOS 16.5.1 (a)"
+			// the vulnerable base 16.5.1 sorts below the bound and matches,
+			// while the patched 16.5.1 (a) does not
 			cs = append(cs, criterionTypes.Criterion{
 				Type: criterionTypes.CriterionTypeCPE,
 				CPE: &ccTypes.Criterion{
 					Vulnerable: true,
 					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
 					CPE:        ccTypes.CPE(p.cpe),
-					Range: func() *ccRangeTypes.Range {
-						// a Rapid Security Response patches vulnerabilities
-						// present in the base version it suffixes, so the
-						// base itself is vulnerable: the range is inclusive.
-						// The suffixed form is not usable as a comparison
-						// bound (the version comparator cannot parse it) but
-						// is kept verbatim in Fixed
-						if m[2] != "" {
-							return &ccRangeTypes.Range{
-								Type:      ccRangeTypes.RangeTypeVersion,
-								LessEqual: m[1],
-							}
-						}
-						return &ccRangeTypes.Range{
-							Type:     ccRangeTypes.RangeTypeVersion,
-							LessThan: m[1],
-						}
-					}(),
+					Range: &ccRangeTypes.Range{
+						Type:     ccRangeTypes.RangeTypeApple,
+						LessThan: m[1] + m[2],
+					},
 					Fixed: []string{m[1] + m[2]},
 				},
 			})

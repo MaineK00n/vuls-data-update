@@ -71,7 +71,7 @@
 									},
 									"cpe": "cpe:2.3:o:apple:macos:*:*:*:*:*:*:*:*",
 									"range": {
-										"type": "version",
+										"type": "apple",
 										"lt": "26.6"
 									},
 									"fixed": [

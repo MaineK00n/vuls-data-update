@@ -87,7 +87,7 @@
 									},
 									"cpe": "cpe:2.3:a:apple:safari:*:*:*:*:*:*:*:*",
 									"range": {
-										"type": "version",
+										"type": "apple",
 										"lt": "9.0.2"
 									},
 									"fixed": [

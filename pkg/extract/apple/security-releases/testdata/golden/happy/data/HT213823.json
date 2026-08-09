@@ -61,8 +61,8 @@
 									},
 									"cpe": "cpe:2.3:o:apple:ipados:*:*:*:*:*:*:*:*",
 									"range": {
-										"type": "version",
-										"le": "16.5.1"
+										"type": "apple",
+										"lt": "16.5.1 (a)"
 									},
 									"fixed": [
 										"16.5.1 (a)"
@@ -78,8 +78,8 @@
 									},
 									"cpe": "cpe:2.3:o:apple:iphone_os:*:*:*:*:*:*:*:*",
 									"range": {
-										"type": "version",
-										"le": "16.5.1"
+										"type": "apple",
+										"lt": "16.5.1 (a)"
 									},
 									"fixed": [
 										"16.5.1 (a)"
@@ -103,8 +103,8 @@
 									},
 									"cpe": "cpe:2.3:o:apple:ipados:*:*:*:*:*:*:*:*",
 									"range": {
-										"type": "version",
-										"le": "16.5.1"
+										"type": "apple",
+										"lt": "16.5.1 (c)"
 									},
 									"fixed": [
 										"16.5.1 (c)"
@@ -120,8 +120,8 @@
 									},
 									"cpe": "cpe:2.3:o:apple:iphone_os:*:*:*:*:*:*:*:*",
 									"range": {
-										"type": "version",
-										"le": "16.5.1"
+										"type": "apple",
+										"lt": "16.5.1 (c)"
 									},
 									"fixed": [
 										"16.5.1 (c)"
