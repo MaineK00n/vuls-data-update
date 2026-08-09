@@ -209,15 +209,11 @@ func readLists(args string) (map[string][]release, error) {
 }
 
 func extract(fetched securityreleases.Advisory, releases []release, raws []string) (dataTypes.Data, error) {
-	// the root ID is the canonical article ID: the last segment of the
-	// redirect-resolved URL. legacy kb/HTxxxx and kb/TAxxxxx links redirect
-	// to the current en-us/<id> form, and lists may still link the legacy ID,
-	// so the file name (linked ID) is not stable enough to be the root
-	u, err := url.Parse(fetched.URL)
-	if err != nil {
-		return dataTypes.Data{}, errors.Wrapf(err, "parse %s", fetched.URL)
-	}
-	rootID := path.Base(u.Path)
+	// the root ID is the raw advisory's ID as fetched, so data/<root>.json
+	// always sits next to the raw advisories/<id>.json of the same name.
+	// Resolving legacy HT/TA IDs to the canonical numeric form is the fetch
+	// stage's business, not derived here
+	rootID := fetched.ID
 
 	title := fetched.Title
 	if title == "" && len(releases) > 0 {
