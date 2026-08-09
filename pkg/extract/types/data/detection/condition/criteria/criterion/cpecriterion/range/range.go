@@ -4,6 +4,9 @@ import (
 	"cmp"
 	stderrors "errors"
 	"fmt"
+	"regexp"
+	"strconv"
+	"strings"
 
 	panosVersion "github.com/MaineK00n/go-paloalto-version/pan-os"
 	"github.com/hashicorp/go-version"
@@ -41,6 +44,13 @@ const (
 	RangeTypeVersion RangeType = "version"
 	RangeTypeSEMVER  RangeType = "semver"
 	RangeTypePANOS   RangeType = "pan-os"
+
+	// Apple products (iOS, iPadOS, macOS, watchOS, tvOS, visionOS, Safari)
+	// share one version grammar — numeric dotted segments optionally
+	// followed by a Rapid Security Response letter, e.g. "16.5.1 (a)" — so
+	// one type covers the vendor; a per-product split can be added later,
+	// additively, should a product ever diverge.
+	RangeTypeApple RangeType = "apple"
 
 	// Fortinet uses one RangeType per product. RangeType.CompareVersions receives only
 	// the two version strings (no product context), so a product whose
@@ -146,6 +156,7 @@ func RangeTypes() []RangeType {
 		RangeTypeVersion,
 		RangeTypeSEMVER,
 		RangeTypePANOS,
+		RangeTypeApple,
 		RangeTypeFortinetAntivirusEngine,
 		RangeTypeFortinetAscenLink,
 		RangeTypeFortinetConnect,
@@ -374,6 +385,21 @@ func (t RangeType) CompareVersions(v1, v2 string) (int, error) {
 			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
 		}
 		return va.Compare(vb), nil
+	case RangeTypeApple:
+		// Apple versions are numeric dotted segments optionally followed by
+		// a Rapid Security Response letter ("16.5.1 (a)"), which is released
+		// after the base version it patches: 16.5.1 < 16.5.1 (a) < 16.5.1
+		// (c) < 16.5.2. hashicorp comparators cannot parse the letter form
+		// at all, hence the dedicated comparator.
+		va, err := newAppleVersion(v1)
+		if err != nil {
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
+		}
+		vb, err := newAppleVersion(v2)
+		if err != nil {
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
+		}
+		return va.Compare(vb), nil
 	case RangeTypeFortinetFortiSASE:
 		// FortiSASE uses the non-numeric (milestone-letter) version scheme.
 		// NewVersion rejecting a wrong-scheme/malformed version and Compare's
@@ -511,6 +537,52 @@ func (t RangeType) CompareVersions(v1, v2 string) (int, error) {
 		// detection on an old binary.
 		return 0, &CompareError{Err: &UnsupportedRangeTypeError{RangeType: t}}
 	}
+}
+
+// appleVersionPattern matches the version form Apple uses across its
+// products: numeric dotted segments optionally followed by a Rapid Security
+// Response letter, e.g. "16.5.1" or "16.5.1 (a)".
+var appleVersionPattern = regexp.MustCompile(`^([0-9]+(?:\.[0-9]+)*)( \([a-z]\))?$`)
+
+type appleVersion struct {
+	segments []int
+	rsr      string
+}
+
+func newAppleVersion(s string) (appleVersion, error) {
+	m := appleVersionPattern.FindStringSubmatch(s)
+	if m == nil {
+		return appleVersion{}, errors.Errorf("unexpected apple version format. expected: %q, actual: %q", "<major>[.<minor>[...]][ (<rsr letter>)]", s)
+	}
+	parts := strings.Split(m[1], ".")
+	segments := make([]int, 0, len(parts))
+	for _, p := range parts {
+		n, err := strconv.Atoi(p)
+		if err != nil {
+			return appleVersion{}, errors.Wrapf(err, "parse segment %q", p)
+		}
+		segments = append(segments, n)
+	}
+	return appleVersion{segments: segments, rsr: m[2]}, nil
+}
+
+// Compare orders by the numeric segments (a missing segment counts as 0, so
+// 16.4 == 16.4.0), then by the Rapid Security Response letter: an RSR is
+// released after the base version it patches, so "" < " (a)" < " (b)" < ...
+func (v appleVersion) Compare(u appleVersion) int {
+	for i := range max(len(v.segments), len(u.segments)) {
+		var a, b int
+		if i < len(v.segments) {
+			a = v.segments[i]
+		}
+		if i < len(u.segments) {
+			b = u.segments[i]
+		}
+		if c := cmp.Compare(a, b); c != 0 {
+			return c
+		}
+	}
+	return cmp.Compare(v.rsr, u.rsr)
 }
 
 // Accept returns true when v satisfies every non-empty bound on r, comparing
