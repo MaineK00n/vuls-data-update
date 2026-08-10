@@ -1,0 +1,18 @@
+{
+	"kb_id": "5001633",
+	"url": "https://support.microsoft.com/en-us/servicing/os/windows-10/2021/03/march-18-2021-kb5001633-os-build-14393-4288-out-of-band",
+	"products": [
+		"os/windows-10"
+	],
+	"supersedes": [
+		{
+			"kb_id": "3216755"
+		}
+	],
+	"data_source": {
+		"id": "microsoft-servicing",
+		"raws": [
+			"os/windows-10/2021/03/march-18-2021-kb5001633-os-build-14393-4288-out-of-band.json"
+		]
+	}
+}

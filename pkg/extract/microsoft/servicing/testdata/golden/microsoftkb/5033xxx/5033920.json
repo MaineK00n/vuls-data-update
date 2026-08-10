@@ -1,0 +1,26 @@
+{
+	"kb_id": "5033920",
+	"url": "https://support.microsoft.com/en-us/servicing/dotnetframework/windows-11/22h2/2023/11/january-9-2024-kb5033920-cumulative-update-for-net-framework-3-5-and-4-8-1-for-windows-11-version-22",
+	"products": [
+		"dotnetframework/windows-11/22h2"
+	],
+	"superseded_by": [
+		{
+			"kb_id": "5034467"
+		}
+	],
+	"supersedes": [
+		{
+			"kb_id": "5031086"
+		},
+		{
+			"kb_id": "5031217"
+		}
+	],
+	"data_source": {
+		"id": "microsoft-servicing",
+		"raws": [
+			"dotnetframework/windows-11/22h2/2023/11/january-9-2024-kb5033920-cumulative-update-for-net-framework-3-5-and-4-8-1-for-windows-11-version-22.json"
+		]
+	}
+}

@@ -1,0 +1,18 @@
+{
+	"kb_id": "5066128",
+	"url": "https://support.microsoft.com/en-us/servicing/dotnetframework/windows-11/25h2/october-14-2025-kb5066128-cumulative-update-for-net-framework-3-5-and-4-8-1-for-windows-11-version-2",
+	"products": [
+		"dotnetframework/windows-11/25h2"
+	],
+	"superseded_by": [
+		{
+			"kb_id": "5087051"
+		}
+	],
+	"data_source": {
+		"id": "microsoft-servicing",
+		"raws": [
+			"dotnetframework/windows-11/25h2/october-14-2025-kb5066128-cumulative-update-for-net-framework-3-5-and-4-8-1-for-windows-11-version-2.json"
+		]
+	}
+}

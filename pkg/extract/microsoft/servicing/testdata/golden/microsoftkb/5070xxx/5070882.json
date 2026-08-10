@@ -1,0 +1,13 @@
+{
+	"kb_id": "5070882",
+	"url": "https://support.microsoft.com/en-us/servicing/os/windows/2025/10/october-23-2025-kb5070882-os-build-14393-8524-out-of-band",
+	"products": [
+		"os/windows"
+	],
+	"data_source": {
+		"id": "microsoft-servicing",
+		"raws": [
+			"os/windows/2025/10/october-23-2025-kb5070882-os-build-14393-8524-out-of-band.json"
+		]
+	}
+}
