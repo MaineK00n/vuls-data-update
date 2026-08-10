@@ -1,5 +1,6 @@
 ---
 description: "Commit message format and PR workflow conventions — enriched from 100+ commit analysis"
+applyTo: "**"
 ---
 # Commit & PR Conventions
 

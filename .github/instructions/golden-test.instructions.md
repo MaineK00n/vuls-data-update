@@ -1,5 +1,6 @@
 ---
 description: "Test conventions: golden tests (fixtures/golden), inline table-driven tests, cmp.Diff, httptest patterns"
+applyTo: "**/*.go"
 ---
 # Test Conventions
 
