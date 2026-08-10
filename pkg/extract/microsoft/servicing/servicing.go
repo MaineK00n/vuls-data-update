@@ -104,8 +104,15 @@ var (
 	// releases out of that -- 22H2, 24H2, 1809, 2019 -- which is the part that
 	// tells two of one directory apart. The OS series name none: their titles
 	// carry the kind and leave the product to the directory.
-	productsPattern = regexp.MustCompile(`\.NET Framework .*? for (.*)`)
-	versionPattern  = regexp.MustCompile(`(?i)\d{2}h\d|\d{4}`)
+	//
+	// buildSuffixPattern is cut out first. "for Windows 11, version 26H1 (build
+	// 28000) and later" names one release and would otherwise yield two, the
+	// second being the first four digits of a build number. Since two products
+	// count as one line on any overlap at all, a spurious release can only ever
+	// join lines that should be apart, and would do it silently.
+	productsPattern    = regexp.MustCompile(`\.NET Framework .*? for (.*)`)
+	buildSuffixPattern = regexp.MustCompile(`(?i)\(build [^)]*\)`)
+	versionPattern     = regexp.MustCompile(`(?i)\b\d{2}h\d\b|\b\d{4}\b`)
 )
 
 type options struct {
@@ -395,7 +402,7 @@ func products(title string) []string {
 	if m == nil {
 		return nil
 	}
-	return versionPattern.FindAllString(strings.ToLower(m[1]), -1)
+	return versionPattern.FindAllString(strings.ToLower(buildSuffixPattern.ReplaceAllString(m[1], " ")), -1)
 }
 
 // sameLine reports whether two articles of one date and one directory belong to
@@ -615,12 +622,13 @@ func chain(as []article) []microsoftkbTypes.KB {
 			}
 			return 0
 		}
-		// Two articles do share a revision, where Microsoft has re-released a
-		// build: KB3185611 and KB3193821 are both 10240.17113, a week apart. The
-		// release date decides those, and the KB number only where even that
-		// ties -- ordering by the number alone would be right here by the
-		// accident that Microsoft allocates them in order, and wrong the first
-		// time it does not.
+		// Two articles do share a revision, where Microsoft has shipped a build
+		// twice off the same cadence: KB4075199 of January 18th and KB4077735 of
+		// the 31st are both 10240.17741. The release date decides those, and the
+		// KB number only where even that ties -- ordering by the number alone
+		// would be right on both pairs this fires on by the accident that
+		// Microsoft allocates them in order, and wrong the first time it does
+		// not.
 		slices.SortFunc(group, func(x, y article) int {
 			return cmp.Or(cmp.Compare(revision(x), revision(y)), x.date.Compare(y.date), cmp.Compare(x.kbID, y.kbID))
 		})

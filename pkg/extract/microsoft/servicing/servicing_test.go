@@ -4,6 +4,8 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/google/go-cmp/cmp"
+
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/microsoft/servicing"
 	utiltest "github.com/MaineK00n/vuls-data-update/pkg/extract/util/test"
 )
@@ -83,6 +85,62 @@ func TestExtract(t *testing.T) {
 					t.Error("unexpected error:", err)
 				}
 				utiltest.Diff(t, ep, gp)
+			}
+		})
+	}
+}
+
+// The products a title names are only ever consulted to tell two articles of
+// one date and one directory apart, and two count as one line on any overlap at
+// all. So a release read out of a title that does not name one can only join
+// lines that should be apart, and would do it silently -- there is no output to
+// notice it in. These are the shapes that decide it.
+func TestProducts(t *testing.T) {
+	tests := []struct {
+		name  string
+		title string
+		want  []string
+	}{
+		{
+			name:  "one release",
+			title: "October 14, 2025-KB5066128 Cumulative Update for .NET Framework 3.5 and 4.8.1 for Windows 11, version 25H2",
+			want:  []string{"25h2"},
+		},
+		{
+			name:  "two releases, the shape a shared date has to be told apart by",
+			title: "November 14, 2023-KB5032007 Cumulative Update for .NET Framework 3.5 and 4.8.1 for Windows 11, version 22H2 and Windows 11, version 23H2",
+			want:  []string{"22h2", "23h2"},
+		},
+		{
+			name:  "a build number is not a release",
+			title: "April 14, 2026-KB5084165 Cumulative Update for .NET Framework 3.5 for Windows 11, version 26H1 (build 28000) and later",
+			want:  []string{"26h1"},
+		},
+		{
+			name:  "nor is a build number with a revision",
+			title: "April 14, 2026-KB5084165 Cumulative Update for .NET Framework 3.5 for Windows 11, version 26H1 (build 28000.2525) and later",
+			want:  []string{"26h1"},
+		},
+		{
+			name:  "a year-shaped release still is",
+			title: "July 14, 2026-KB5101005 Cumulative Update for .NET Framework 3.5 and 4.8.1 for Windows Server 2022",
+			want:  []string{"2022"},
+		},
+		{
+			name:  "the version list is not the product list",
+			title: "July 14, 2026-Security and Quality Rollup for .NET Framework 3.5, 4.6.2, 4.7, 4.7.1, 4.7.2, 4.8 for Windows Server 2012 R2 (KB5102205)",
+			want:  []string{"2012"},
+		},
+		{
+			name:  "an OS title names none, and leaves the product to the directory",
+			title: "October 11, 2016 — KB3185330 (Monthly rollup)",
+			want:  nil,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if diff := cmp.Diff(tt.want, servicing.Products(tt.title)); diff != "" {
+				t.Errorf("products(). (-expected +got):\n%s", diff)
 			}
 		})
 	}
