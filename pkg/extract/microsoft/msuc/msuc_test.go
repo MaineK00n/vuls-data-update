@@ -785,7 +785,7 @@ func TestKBArticle(t *testing.T) {
 			want: "2781551",
 		},
 		{
-			name: "n/a falls back to title suffix",
+			name: "n/a hits the fallback map",
 			update: fetchTypes.Update{
 				UpdateID:  "0f570fdb-bf48-4bec-bc70-7f0df08f8f99",
 				Title:     "Update Rollup for Microsoft Lync Server 2013 Conferencing Server (KB2781551)",
@@ -794,19 +794,10 @@ func TestKBArticle(t *testing.T) {
 			want: "2781551",
 		},
 		{
-			name: "n/a without title suffix errors",
+			name: "n/a not in map errors",
 			update: fetchTypes.Update{
 				UpdateID:  "00000000-0000-0000-0000-000000000000",
-				Title:     "Update Rollup without KB number",
-				KBArticle: "n/a",
-			},
-			hasError: true,
-		},
-		{
-			name: "n/a with too-short title KB number errors",
-			update: fetchTypes.Update{
-				UpdateID:  "00000000-0000-0000-0000-000000000000",
-				Title:     "Update Rollup (KB12345)",
+				Title:     "Update Rollup for Microsoft Lync Server 2013 Conferencing Server (KB2781551)",
 				KBArticle: "n/a",
 			},
 			hasError: true,

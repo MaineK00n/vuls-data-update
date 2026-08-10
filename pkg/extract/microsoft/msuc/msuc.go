@@ -11,6 +11,7 @@ import (
 	"regexp"
 	"runtime"
 	"slices"
+	"strconv"
 	"strings"
 	"time"
 
@@ -305,32 +306,32 @@ func (o options) extract(root string, updateIDMap map[string]string) error {
 	return nil
 }
 
-// titleKBRE extracts the KB number from an update title ("... (KB2781551)")
-// for the rare catalog entry whose "KB article number" field is literally
-// "n/a" (e.g. update 0f570fdb-bf48-4bec-bc70-7f0df08f8f99, "Update Rollup for
-// Microsoft Lync Server 2013 Conferencing Server (KB2781551)"). The number is
-// required to be 6 or 7 digits — every KB number in the catalog data is —
-// so that a title with a truncated or otherwise bogus KB suffix errors
-// loudly instead of being filed under a wrong KBID.
-var titleKBRE = regexp.MustCompile(`\(KB(\d{6,7})\)$`)
+// kbArticleFallbacks maps update ID -> KB number for the rare catalog entry
+// whose "KB article number" field is not a KB number. Keyed on the update ID
+// rather than recovered from the title's "(KB<number>)" suffix: that suffix
+// disagrees with the scraped field for 11 updates in the raw dataset, so it is
+// not authoritative, and a lenient pattern would silently file a future
+// malformed entry under a guessed KBID. An unknown one fails the extract loudly
+// instead.
+var kbArticleFallbacks = map[string]string{
+	// "n/a" since the 2026-08-07 fetch. The sibling entry
+	// 83c7b7e2-c04b-416c-94f1-4fe20696b7da for the same rollup (title without
+	// the "Microsoft" prefix) carries 2781551.
+	"0f570fdb-bf48-4bec-bc70-7f0df08f8f99": "2781551",
+}
 
 // kbArticle resolves the KB number of an update: normally the scraped KB
-// article field, falling back to the (KB<number>) suffix of the title when the
-// field is "n/a". An update whose KB number cannot be resolved is an error —
-// the msuc dataset is keyed by KBID, so there is nothing to file it under.
+// article field, falling back to kbArticleFallbacks when the field is not a KB
+// number. An update whose KB number cannot be resolved is an error — the msuc
+// dataset is keyed by KBID, so there is nothing to file it under.
 func kbArticle(u msuc.Update) (string, error) {
-	switch u.KBArticle {
-	case "":
-		return "", errors.Errorf("KB article not found for update ID: %s", u.UpdateID)
-	case "n/a":
-		m := titleKBRE.FindStringSubmatch(u.Title)
-		if m == nil {
-			return "", errors.Errorf("KB article is \"n/a\" and title carries no (KB<number>) suffix. title: %q, update ID: %s", u.Title, u.UpdateID)
-		}
-		return m[1], nil
-	default:
+	if _, err := strconv.Atoi(u.KBArticle); err == nil {
 		return u.KBArticle, nil
 	}
+	if kbid, ok := kbArticleFallbacks[u.UpdateID]; ok {
+		return kbid, nil
+	}
+	return "", errors.Errorf("unexpected KB article. expected: KB number or known fallback, actual: %q, update ID: %s", u.KBArticle, u.UpdateID)
 }
 
 func (e extractor) extract(path string, updateIDMap map[string]string) (microsoftkbTypes.KB, error) {
