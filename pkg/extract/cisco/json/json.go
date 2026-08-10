@@ -520,8 +520,9 @@ var productConversions = []productConversion{
 
 // knownUnparseableProductNames lists product names whose version string the
 // go-cisco-version parsers reject but which are known, accepted artifacts of
-// the upstream data (a truncated version, or a letter-suffixed build that the
-// parser does not model). These are skipped silently. Any OTHER parse failure
+// the upstream data (a truncated version, a letter-suffixed build that the
+// parser does not model, or a misspelled family-level entry carrying no
+// version at all). These are skipped silently. Any OTHER parse failure
 // is treated as a hard error (see convertProductName) so that a newly
 // introduced malformed pattern surfaces loudly instead of being dropped.
 var knownUnparseableProductNames = map[string]struct{}{
