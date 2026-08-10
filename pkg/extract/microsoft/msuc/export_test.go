@@ -1,3 +1,6 @@
 package msuc
 
-var DeriveCrossTrackSupersedes = deriveCrossTrackSupersedes
+var (
+	DeriveCrossTrackSupersedes = deriveCrossTrackSupersedes
+	KBArticle                  = kbArticle
+)

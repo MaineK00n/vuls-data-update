@@ -14,6 +14,7 @@ import (
 	microsoftkbSupersedesTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/microsoftkb/supersedes"
 	microsoftkbUpdateTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/microsoftkb/update"
 	utiltest "github.com/MaineK00n/vuls-data-update/pkg/extract/util/test"
+	fetchTypes "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/msuc"
 )
 
 func TestExtract(t *testing.T) {
@@ -762,6 +763,47 @@ func TestDeriveCrossTrackSupersedes(t *testing.T) {
 				}),
 			); diff != "" {
 				t.Errorf("msuc.DeriveCrossTrackSupersedes() mismatch (-want +got):\n%s", diff)
+			}
+		})
+	}
+}
+
+func TestKBArticle(t *testing.T) {
+	tests := []struct {
+		name     string
+		update   fetchTypes.Update
+		want     string
+		hasError bool
+	}{
+		{
+			name:   "kb article field set",
+			update: fetchTypes.Update{UpdateID: "83c7b7e2-c04b-416c-94f1-4fe20696b7da", Title: "Update Rollup for Lync Server 2013 Conferencing Server (KB2781551)", KBArticle: "2781551"},
+			want:   "2781551",
+		},
+		{
+			name:   "n/a falls back to title suffix",
+			update: fetchTypes.Update{UpdateID: "0f570fdb-bf48-4bec-bc70-7f0df08f8f99", Title: "Update Rollup for Microsoft Lync Server 2013 Conferencing Server (KB2781551)", KBArticle: "n/a"},
+			want:   "2781551",
+		},
+		{
+			name:     "n/a without title suffix errors",
+			update:   fetchTypes.Update{UpdateID: "00000000-0000-0000-0000-000000000000", Title: "Update Rollup without KB number", KBArticle: "n/a"},
+			hasError: true,
+		},
+		{
+			name:     "empty kb article errors",
+			update:   fetchTypes.Update{UpdateID: "00000000-0000-0000-0000-000000000000", Title: "Update Rollup (KB1234567)"},
+			hasError: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := msuc.KBArticle(tt.update)
+			if (err != nil) != tt.hasError {
+				t.Errorf("KBArticle() error = %v, wantErr %v", err, tt.hasError)
+			}
+			if got != tt.want {
+				t.Errorf("KBArticle() = %v, want %v", got, tt.want)
 			}
 		})
 	}

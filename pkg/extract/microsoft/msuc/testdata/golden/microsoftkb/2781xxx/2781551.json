@@ -1,0 +1,31 @@
+{
+	"kb_id": "2781551",
+	"url": "https://support.microsoft.com/help/2781551",
+	"updates": [
+		{
+			"update_id": "0f570fdb-bf48-4bec-bc70-7f0df08f8f99",
+			"title": "Update Rollup for Microsoft Lync Server 2013 Conferencing Server (KB2781551)",
+			"description": "n/a",
+			"products": [
+				"MicrosoftLyncServer2013",
+				"UpdateRollups"
+			],
+			"languages": [
+				"all"
+			],
+			"more_info_url": "https://microsoft.com/",
+			"support_url": "https://microsoft.com/",
+			"reboot_behavior": "Never restarts",
+			"user_input": "No",
+			"connectivity": "No",
+			"last_modified": "2013-03-26T00:00:00Z",
+			"catalog_url": "https://www.catalog.update.microsoft.com/ScopedViewInline.aspx?updateid=0f570fdb-bf48-4bec-bc70-7f0df08f8f99"
+		}
+	],
+	"data_source": {
+		"id": "microsoft-msuc",
+		"raws": [
+			"happy/0f570fdb-bf48-4bec-bc70-7f0df08f8f99.json"
+		]
+	}
+}

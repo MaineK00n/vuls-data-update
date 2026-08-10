@@ -305,14 +305,40 @@ func (o options) extract(root string, updateIDMap map[string]string) error {
 	return nil
 }
 
+// titleKBRE extracts the KB number from an update title ("... (KB2781551)")
+// for the rare catalog entry whose "KB article number" field is literally
+// "n/a" (e.g. update 0f570fdb-bf48-4bec-bc70-7f0df08f8f99, "Update Rollup for
+// Microsoft Lync Server 2013 Conferencing Server (KB2781551)").
+var titleKBRE = regexp.MustCompile(`\(KB(\d+)\)$`)
+
+// kbArticle resolves the KB number of an update: normally the scraped KB
+// article field, falling back to the (KB<number>) suffix of the title when the
+// field is "n/a". An update whose KB number cannot be resolved is an error —
+// the msuc dataset is keyed by KBID, so there is nothing to file it under.
+func kbArticle(u msuc.Update) (string, error) {
+	switch u.KBArticle {
+	case "":
+		return "", errors.Errorf("KB article not found for update ID: %s", u.UpdateID)
+	case "n/a":
+		m := titleKBRE.FindStringSubmatch(u.Title)
+		if m == nil {
+			return "", errors.Errorf("KB article is \"n/a\" and title carries no (KB<number>) suffix. title: %q, update ID: %s", u.Title, u.UpdateID)
+		}
+		return m[1], nil
+	default:
+		return u.KBArticle, nil
+	}
+}
+
 func (e extractor) extract(path string, updateIDMap map[string]string) (microsoftkbTypes.KB, error) {
 	var u msuc.Update
 	if err := e.r.Read(path, e.baseDir, &u); err != nil {
 		return microsoftkbTypes.KB{}, errors.Wrapf(err, "read %s", path)
 	}
 
-	if u.KBArticle == "" {
-		return microsoftkbTypes.KB{}, errors.Errorf("KB article not found for update ID: %s", u.UpdateID)
+	kbid, err := kbArticle(u)
+	if err != nil {
+		return microsoftkbTypes.KB{}, err
 	}
 
 	ss := make([]microsoftkbSupersededByTypes.SupersededBy, 0, len(u.Supersededby))
@@ -327,13 +353,14 @@ func (e extractor) extract(path string, updateIDMap map[string]string) (microsof
 			return microsoftkbTypes.KB{}, errors.Wrapf(err, "read %s", path)
 		}
 
-		if su.KBArticle == "" {
-			return microsoftkbTypes.KB{}, errors.Errorf("KB article not found for update ID: %s", su.UpdateID)
+		skbid, err := kbArticle(su)
+		if err != nil {
+			return microsoftkbTypes.KB{}, err
 		}
 
 		ss = append(ss, microsoftkbSupersededByTypes.SupersededBy{
 			UpdateID: su.UpdateID,
-			KBID:     su.KBArticle,
+			KBID:     skbid,
 		})
 	}
 
@@ -343,8 +370,8 @@ func (e extractor) extract(path string, updateIDMap map[string]string) (microsof
 	}
 
 	return microsoftkbTypes.KB{
-		KBID: u.KBArticle,
-		URL:  fmt.Sprintf("https://support.microsoft.com/help/%s", u.KBArticle),
+		KBID: kbid,
+		URL:  fmt.Sprintf("https://support.microsoft.com/help/%s", kbid),
 		Updates: []microsoftkbUpdateTypes.Update{{
 			UpdateID:         u.UpdateID,
 			Title:            u.Title,
