@@ -11,6 +11,7 @@ import (
 	"regexp"
 	"runtime"
 	"slices"
+	"strconv"
 	"strings"
 	"time"
 
@@ -305,14 +306,43 @@ func (o options) extract(root string, updateIDMap map[string]string) error {
 	return nil
 }
 
+// kbArticleFallbacks maps update ID -> KB number for the rare catalog entry
+// whose "KB article number" field is not a KB number. Keyed on the update ID
+// rather than recovered from the title's "(KB<number>)" suffix: that suffix
+// disagrees with the scraped field for 11 updates in the raw dataset, so it is
+// not authoritative, and a lenient pattern would silently file a future
+// malformed entry under a guessed KBID. An unknown one fails the extract loudly
+// instead.
+var kbArticleFallbacks = map[string]string{
+	// "n/a" since the 2026-08-07 fetch. The sibling entry
+	// 83c7b7e2-c04b-416c-94f1-4fe20696b7da for the same rollup (title without
+	// the "Microsoft" prefix) carries 2781551.
+	"0f570fdb-bf48-4bec-bc70-7f0df08f8f99": "2781551",
+}
+
+// kbArticle resolves the KB number of an update: normally the scraped KB
+// article field, falling back to kbArticleFallbacks when the field is not a KB
+// number. An update whose KB number cannot be resolved is an error — the msuc
+// dataset is keyed by KBID, so there is nothing to file it under.
+func kbArticle(u msuc.Update) (string, error) {
+	if _, err := strconv.Atoi(u.KBArticle); err == nil {
+		return u.KBArticle, nil
+	}
+	if kbid, ok := kbArticleFallbacks[u.UpdateID]; ok {
+		return kbid, nil
+	}
+	return "", errors.Errorf("unexpected KB article. expected: KB number or known fallback, actual: %q, update ID: %s", u.KBArticle, u.UpdateID)
+}
+
 func (e extractor) extract(path string, updateIDMap map[string]string) (microsoftkbTypes.KB, error) {
 	var u msuc.Update
 	if err := e.r.Read(path, e.baseDir, &u); err != nil {
 		return microsoftkbTypes.KB{}, errors.Wrapf(err, "read %s", path)
 	}
 
-	if u.KBArticle == "" {
-		return microsoftkbTypes.KB{}, errors.Errorf("KB article not found for update ID: %s", u.UpdateID)
+	kbid, err := kbArticle(u)
+	if err != nil {
+		return microsoftkbTypes.KB{}, errors.Wrap(err, "resolve KB article")
 	}
 
 	ss := make([]microsoftkbSupersededByTypes.SupersededBy, 0, len(u.Supersededby))
@@ -327,13 +357,14 @@ func (e extractor) extract(path string, updateIDMap map[string]string) (microsof
 			return microsoftkbTypes.KB{}, errors.Wrapf(err, "read %s", path)
 		}
 
-		if su.KBArticle == "" {
-			return microsoftkbTypes.KB{}, errors.Errorf("KB article not found for update ID: %s", su.UpdateID)
+		skbid, err := kbArticle(su)
+		if err != nil {
+			return microsoftkbTypes.KB{}, errors.Wrap(err, "resolve superseding KB article")
 		}
 
 		ss = append(ss, microsoftkbSupersededByTypes.SupersededBy{
 			UpdateID: su.UpdateID,
-			KBID:     su.KBArticle,
+			KBID:     skbid,
 		})
 	}
 
@@ -343,8 +374,8 @@ func (e extractor) extract(path string, updateIDMap map[string]string) (microsof
 	}
 
 	return microsoftkbTypes.KB{
-		KBID: u.KBArticle,
-		URL:  fmt.Sprintf("https://support.microsoft.com/help/%s", u.KBArticle),
+		KBID: kbid,
+		URL:  fmt.Sprintf("https://support.microsoft.com/help/%s", kbid),
 		Updates: []microsoftkbUpdateTypes.Update{{
 			UpdateID:         u.UpdateID,
 			Title:            u.Title,
