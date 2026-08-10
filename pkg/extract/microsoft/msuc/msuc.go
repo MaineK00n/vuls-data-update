@@ -342,7 +342,7 @@ func (e extractor) extract(path string, updateIDMap map[string]string) (microsof
 
 	kbid, err := kbArticle(u)
 	if err != nil {
-		return microsoftkbTypes.KB{}, err
+		return microsoftkbTypes.KB{}, errors.Wrap(err, "resolve KB article")
 	}
 
 	ss := make([]microsoftkbSupersededByTypes.SupersededBy, 0, len(u.Supersededby))
@@ -359,7 +359,7 @@ func (e extractor) extract(path string, updateIDMap map[string]string) (microsof
 
 		skbid, err := kbArticle(su)
 		if err != nil {
-			return microsoftkbTypes.KB{}, err
+			return microsoftkbTypes.KB{}, errors.Wrap(err, "resolve superseding KB article")
 		}
 
 		ss = append(ss, microsoftkbSupersededByTypes.SupersededBy{
