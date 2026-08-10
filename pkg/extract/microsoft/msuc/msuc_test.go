@@ -791,6 +791,11 @@ func TestKBArticle(t *testing.T) {
 			hasError: true,
 		},
 		{
+			name:     "n/a with too-short title KB number errors",
+			update:   fetchTypes.Update{UpdateID: "00000000-0000-0000-0000-000000000000", Title: "Update Rollup (KB123)", KBArticle: "n/a"},
+			hasError: true,
+		},
+		{
 			name:     "empty kb article errors",
 			update:   fetchTypes.Update{UpdateID: "00000000-0000-0000-0000-000000000000", Title: "Update Rollup (KB1234567)"},
 			hasError: true,

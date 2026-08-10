@@ -308,8 +308,10 @@ func (o options) extract(root string, updateIDMap map[string]string) error {
 // titleKBRE extracts the KB number from an update title ("... (KB2781551)")
 // for the rare catalog entry whose "KB article number" field is literally
 // "n/a" (e.g. update 0f570fdb-bf48-4bec-bc70-7f0df08f8f99, "Update Rollup for
-// Microsoft Lync Server 2013 Conferencing Server (KB2781551)").
-var titleKBRE = regexp.MustCompile(`\(KB(\d+)\)$`)
+// Microsoft Lync Server 2013 Conferencing Server (KB2781551)"). The number is
+// required to be at least 4 digits, matching the KBID validation (len > 3)
+// shared by the microsoft extractors.
+var titleKBRE = regexp.MustCompile(`\(KB(\d{4,})\)$`)
 
 // kbArticle resolves the KB number of an update: normally the scraped KB
 // article field, falling back to the (KB<number>) suffix of the title when the
