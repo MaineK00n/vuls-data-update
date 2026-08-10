@@ -776,28 +776,47 @@ func TestKBArticle(t *testing.T) {
 		hasError bool
 	}{
 		{
-			name:   "kb article field set",
-			update: fetchTypes.Update{UpdateID: "83c7b7e2-c04b-416c-94f1-4fe20696b7da", Title: "Update Rollup for Lync Server 2013 Conferencing Server (KB2781551)", KBArticle: "2781551"},
-			want:   "2781551",
+			name: "kb article field set",
+			update: fetchTypes.Update{
+				UpdateID:  "83c7b7e2-c04b-416c-94f1-4fe20696b7da",
+				Title:     "Update Rollup for Lync Server 2013 Conferencing Server (KB2781551)",
+				KBArticle: "2781551",
+			},
+			want: "2781551",
 		},
 		{
-			name:   "n/a falls back to title suffix",
-			update: fetchTypes.Update{UpdateID: "0f570fdb-bf48-4bec-bc70-7f0df08f8f99", Title: "Update Rollup for Microsoft Lync Server 2013 Conferencing Server (KB2781551)", KBArticle: "n/a"},
-			want:   "2781551",
+			name: "n/a falls back to title suffix",
+			update: fetchTypes.Update{
+				UpdateID:  "0f570fdb-bf48-4bec-bc70-7f0df08f8f99",
+				Title:     "Update Rollup for Microsoft Lync Server 2013 Conferencing Server (KB2781551)",
+				KBArticle: "n/a",
+			},
+			want: "2781551",
 		},
 		{
-			name:     "n/a without title suffix errors",
-			update:   fetchTypes.Update{UpdateID: "00000000-0000-0000-0000-000000000000", Title: "Update Rollup without KB number", KBArticle: "n/a"},
+			name: "n/a without title suffix errors",
+			update: fetchTypes.Update{
+				UpdateID:  "00000000-0000-0000-0000-000000000000",
+				Title:     "Update Rollup without KB number",
+				KBArticle: "n/a",
+			},
 			hasError: true,
 		},
 		{
-			name:     "n/a with too-short title KB number errors",
-			update:   fetchTypes.Update{UpdateID: "00000000-0000-0000-0000-000000000000", Title: "Update Rollup (KB123)", KBArticle: "n/a"},
+			name: "n/a with too-short title KB number errors",
+			update: fetchTypes.Update{
+				UpdateID:  "00000000-0000-0000-0000-000000000000",
+				Title:     "Update Rollup (KB12345)",
+				KBArticle: "n/a",
+			},
 			hasError: true,
 		},
 		{
-			name:     "empty kb article errors",
-			update:   fetchTypes.Update{UpdateID: "00000000-0000-0000-0000-000000000000", Title: "Update Rollup (KB1234567)"},
+			name: "empty kb article errors",
+			update: fetchTypes.Update{
+				UpdateID: "00000000-0000-0000-0000-000000000000",
+				Title:    "Update Rollup (KB1234567)",
+			},
 			hasError: true,
 		},
 	}
