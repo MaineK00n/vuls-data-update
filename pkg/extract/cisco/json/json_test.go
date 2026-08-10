@@ -89,6 +89,14 @@ func TestConvertProductName(t *testing.T) {
 			product: "Cisco Wireless LAN Controller (WLC) 3.6.0E",
 		},
 		{
+			name:    "known truncated IOS XE version is skipped",
+			product: "Cisco IOS XE Software (3)S2.1",
+		},
+		{
+			name:    "known IOS XG typo family is skipped",
+			product: "Cisco IOS XG Software ",
+		},
+		{
 			name:     "unknown unparseable version errors",
 			product:  "Cisco Wireless LAN Controller (WLC) 9.9.9Z",
 			hasError: true,
