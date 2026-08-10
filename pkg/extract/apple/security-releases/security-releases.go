@@ -44,8 +44,13 @@ import (
 var vulnerabilityIDPattern = regexp.MustCompile(`(CVE|CAN)-[0-9]{4}-[0-9]{4,}`)
 
 // inlineAdvisoryPageIDs are the pre-2005 archive pages the fetch stage stores
-// under advisories/: their sections are prose bundles of dozens of releases,
-// not release sections, so no detections are derived from them.
+// under advisories/: bundles of dozens of releases whose whole-bold headings
+// flatten into entry components, release headings ("Security Update
+// 2004-12-02") side by side with the components fixed inside them ("Apache").
+// Deriving detections would take a positional reconstruction of that
+// hierarchy and recover only about a dozen plain "Mac OS X 10.x.y" releases
+// of the CAN era, so these pages deliberately yield vulnerabilities but no
+// detections.
 var inlineAdvisoryPageIDs = []string{"101682", "104191"}
 
 // trailingDatePattern matches the release date at the end of a list-format
@@ -385,8 +390,11 @@ func parseDate(v string) *time.Time {
 // lookalikes such as "OS X NTP Security Update 1.0" or "macOS Server 5.2"
 // never match, and the version must close the name so that derived releases
 // such as "macOS Catalina 10.15.7 Supplemental Update" fall through. Names
-// outside these patterns (applications, firmware, "Security Update
-// YYYY-NNN", ...) yield no detection on purpose: the advisory and
+// outside these patterns yield no detection on purpose — applications
+// ("iTunes 12.9 for Windows"), firmware, the version-less "Security Update
+// YYYY-NNN" releases (installing one does not change the OS version, so no
+// version range can express it), and the pre-2015 spellings of current
+// products ("Apple TV 7.2", "iOS 4.3.5 Software Update") — the advisory and
 // vulnerability contents are still extracted, and widening the detection
 // scope is a matter of adding patterns here.
 //
