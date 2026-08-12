@@ -2,15 +2,14 @@ package util_test
 
 import (
 	"encoding/json/v2"
-	"io/fs"
 	"os"
 	"path/filepath"
 	"reflect"
+	"strings"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
-	"github.com/pkg/errors"
 
 	microsoftkbTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/microsoftkb"
 	microsoftkbUpdateTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/microsoftkb/update"
@@ -44,56 +43,109 @@ func TestUnique(t *testing.T) {
 func TestRemoveAll(t *testing.T) {
 	type args struct {
 		root string
+		opts []util.RemoveOption
 	}
 	tests := []struct {
-		name    string
-		args    args
+		name string
+		args args
+		// entries are created directly under root before the call; each is a
+		// directory when it ends in "/" and a file otherwise.
+		entries []string
+		want    []string
 		wantErr bool
 	}{
 		{
+			// README.md is no longer spared. The two extractors that publish
+			// one write it immediately after this call, so keeping it only ever
+			// preserved a copy about to be overwritten.
 			name: "happy",
 			args: args{
 				root: "happy",
 			},
+			entries: []string{".git/", "README.md", "test.json"},
+			want:    []string{".git"},
+		},
+		{
+			// The option states the whole set, so .git has to be named to
+			// survive alongside what the call adds.
+			name: "keep",
+			args: args{
+				root: "keep",
+				opts: []util.RemoveOption{util.WithKeep(".git", "README.md")},
+			},
+			entries: []string{".git/", "README.md", "data/", "test.json"},
+			want:    []string{".git", "README.md"},
+		},
+		{
+			// Which is also what makes .git droppable, the one way to empty a
+			// tree completely.
+			name: "keep nothing",
+			args: args{
+				root: "nothing",
+				opts: []util.RemoveOption{util.WithKeep()},
+			},
+			entries: []string{".git/", "README.md", "data/", "test.json"},
+			want:    []string{},
+		},
+		{
+			// Repeating the option replaces rather than accumulates.
+			name: "last option wins",
+			args: args{
+				root: "last",
+				opts: []util.RemoveOption{util.WithKeep(".git"), util.WithKeep("README.md")},
+			},
+			entries: []string{".git/", "README.md", "test.json"},
+			want:    []string{"README.md"},
+		},
+		{
+			// A kept name is the entry's own name, not a suffix of it: keeping
+			// "README.md" must not spare "OLD-README.md", nor ".git" spare
+			// "bare.git".
+			name: "keeps are not suffix matches",
+			args: args{
+				root: "exact",
+				opts: []util.RemoveOption{util.WithKeep(".git", "README.md")},
+			},
+			entries: []string{".git/", "bare.git/", "README.md", "OLD-README.md"},
+			want:    []string{".git", "README.md"},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			d := filepath.Join(t.TempDir(), tt.args.root)
 			if err := os.MkdirAll(d, 0750); err != nil {
-				t.Error("unexpected error:", err)
+				t.Fatal("unexpected error:", err)
 			}
 
-			if err := os.Mkdir(filepath.Join(d, ".git"), 0750); err != nil {
-				t.Error("unexpected error:", err)
+			for _, e := range tt.entries {
+				if name, ok := strings.CutSuffix(e, "/"); ok {
+					if err := os.Mkdir(filepath.Join(d, name), 0750); err != nil {
+						t.Fatal("unexpected error:", err)
+					}
+					continue
+				}
+				f, err := os.Create(filepath.Join(d, e))
+				if err != nil {
+					t.Fatal("unexpected error:", err)
+				}
+				f.Close()
 			}
 
-			f, err := os.Create(filepath.Join(d, "README.md"))
-			if err != nil {
-				t.Error("unexpected error:", err)
-			}
-			defer f.Close()
-
-			f, err = os.Create(filepath.Join(d, "test.json"))
-			if err != nil {
-				t.Error("unexpected error:", err)
-			}
-			defer f.Close()
-
-			if err := util.RemoveAll(d); (err != nil) != tt.wantErr {
+			if err := util.RemoveAll(d, tt.args.opts...); (err != nil) != tt.wantErr {
 				t.Errorf("RemoveAll() error = %v, wantErr %v", err, tt.wantErr)
 			}
 
-			if _, err := os.Stat(filepath.Join(d, ".git")); errors.Is(err, fs.ErrNotExist) {
-				t.Error(".git is not exist")
+			es, err := os.ReadDir(d)
+			if err != nil {
+				t.Fatal("unexpected error:", err)
+			}
+			got := make([]string, 0, len(es))
+			for _, e := range es {
+				got = append(got, e.Name())
 			}
 
-			if _, err := os.Stat(filepath.Join(d, "README.md")); errors.Is(err, fs.ErrNotExist) {
-				t.Error("README.md is not exist")
-			}
-
-			if _, err := os.Stat(filepath.Join(d, "test.json")); err == nil {
-				t.Error("test.json is exist")
+			if diff := cmp.Diff(tt.want, got, cmpopts.SortSlices(func(x, y string) bool { return x < y })); diff != "" {
+				t.Errorf("RemoveAll(). (-expected +got):\n%s", diff)
 			}
 		})
 	}
