@@ -14,6 +14,7 @@ import (
 	warningTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/warning"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/internal/enum"
 	appleVersion "github.com/MaineK00n/vuls-data-update/pkg/extract/types/internal/version/apple"
+	opensshVersion "github.com/MaineK00n/vuls-data-update/pkg/extract/types/internal/version/openssh"
 )
 
 // RangeType selects the version comparator used by CompareVersions / Accept
@@ -49,6 +50,11 @@ const (
 	// one type covers the vendor; a per-product split can be added later,
 	// additively, should a product ever diverge.
 	RangeTypeApple RangeType = "apple"
+
+	// OpenSSH releases carry a portable suffix — 9.9p1 is the portable build
+	// of 9.9 and ships after it — which the general-purpose comparators order
+	// backwards, reading "p1" as a pre-release.
+	RangeTypeOpenSSH RangeType = "openssh"
 
 	// Fortinet uses one RangeType per product. RangeType.CompareVersions receives only
 	// the two version strings (no product context), so a product whose
@@ -155,6 +161,7 @@ func RangeTypes() []RangeType {
 		RangeTypeSEMVER,
 		RangeTypePANOS,
 		RangeTypeApple,
+		RangeTypeOpenSSH,
 		RangeTypeFortinetAntivirusEngine,
 		RangeTypeFortinetAscenLink,
 		RangeTypeFortinetConnect,
@@ -402,6 +409,21 @@ func (t RangeType) CompareVersions(v1, v2 string) (int, error) {
 			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
 		}
 		vb, err := appleVersion.NewVersion(v2)
+		if err != nil {
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
+		}
+		return va.Compare(vb), nil
+	case RangeTypeOpenSSH:
+		// OpenSSH versions are <major>.<minor>[.<patch>][p<portable>], and the
+		// same caveat applies as for pan-os above: hashicorp reads "pN" as a
+		// prerelease and inverts the order (9.9p1 < 9.9), while the portable
+		// release ships after its base (9.9 < 9.9p1). Left inverted, an
+		// advisory bounded at 9.9p1 covers the 9.9p2 that fixes it.
+		va, err := opensshVersion.NewVersion(v1)
+		if err != nil {
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
+		}
+		vb, err := opensshVersion.NewVersion(v2)
 		if err != nil {
 			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
 		}
