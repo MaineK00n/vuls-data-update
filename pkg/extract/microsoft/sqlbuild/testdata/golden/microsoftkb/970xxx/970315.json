@@ -1,0 +1,13 @@
+{
+	"kb_id": "970315",
+	"url": "https://support.microsoft.com/help/970315",
+	"products": [
+		"SQL Server 2008"
+	],
+	"data_source": {
+		"id": "microsoft-sqlbuild",
+		"raws": [
+			"support/sql/releases/download-and-install-latest-updates.json"
+		]
+	}
+}
