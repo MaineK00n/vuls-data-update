@@ -1,0 +1,293 @@
+{
+	"url": "https://learn.microsoft.com/en-us/windows/release-health/windows-server-release-info",
+	"tables": [
+		{
+			"label": "Windows Server 2025 (OS build 26100)",
+			"header": [
+				"Servicing option",
+				"Update type",
+				"Availability date",
+				"Build",
+				"KB article"
+			],
+			"rows": [
+				[
+					{
+						"text": "LTSC"
+					},
+					{
+						"text": "2026-08 B"
+					},
+					{
+						"text": "2026-08-11"
+					},
+					{
+						"text": "26100.33296"
+					},
+					{
+						"text": "KB5120233",
+						"href": "https://support.microsoft.com/help/5120233"
+					}
+				],
+				[
+					{
+						"text": "LTSC"
+					},
+					{
+						"text": "2026-07 B"
+					},
+					{
+						"text": "2026-07-14"
+					},
+					{
+						"text": "26100.33158"
+					},
+					{
+						"text": "KB5099536",
+						"href": "https://support.microsoft.com/help/5099536"
+					}
+				],
+				[
+					{
+						"text": "LTSC"
+					},
+					{
+						"text": "2026-06 B"
+					},
+					{
+						"text": "2026-06-09"
+					},
+					{
+						"text": "26100.32995"
+					},
+					{
+						"text": "KB5094125",
+						"href": "https://support.microsoft.com/help/5094125"
+					}
+				],
+				[
+					{
+						"text": "LTSC"
+					},
+					{
+						"text": "2026-04 OOB"
+					},
+					{
+						"text": "2026-04-19"
+					},
+					{
+						"text": "26100.32698"
+					},
+					{
+						"text": "KB5091157",
+						"href": "https://support.microsoft.com/help/5091157"
+					}
+				],
+				[
+					{
+						"text": "LTSC"
+					},
+					{
+						"text": "2026-01 OOB"
+					},
+					{
+						"text": "2026-01-24"
+					},
+					{
+						"text": "26100.32236"
+					},
+					{
+						"text": "KB5078135",
+						"href": "https://support.microsoft.com/help/5078135"
+					}
+				],
+				[
+					{
+						"text": "LTSC"
+					},
+					{
+						"text": "2024-10 A"
+					},
+					{
+						"text": "2024-11-01"
+					},
+					{
+						"text": "26100.1742"
+					},
+					{}
+				]
+			]
+		},
+		{
+			"label": "Calendar year 2026",
+			"header": [
+				"Month",
+				"Update type",
+				"Type",
+				"Availability date",
+				"Build",
+				"KB article"
+			],
+			"rows": [
+				[
+					{
+						"text": "April"
+					},
+					{
+						"text": "2026.04 B"
+					},
+					{
+						"text": "Baseline (Restart)"
+					},
+					{
+						"text": "2026-04-14"
+					},
+					{
+						"text": "26100.32690"
+					},
+					{
+						"text": "KB5082063",
+						"href": "https://support.microsoft.com/help/5082063"
+					}
+				],
+				[
+					{
+						"text": "May"
+					},
+					{
+						"text": "2026.05 B"
+					},
+					{
+						"text": "Hotpatch"
+					},
+					{
+						"text": "2026-05-12"
+					},
+					{
+						"text": "26100.32772"
+					},
+					{
+						"text": "KB5087423",
+						"href": "https://support.microsoft.com/help/5087423"
+					},
+					{}
+				],
+				[
+					{
+						"text": "June"
+					},
+					{
+						"text": "2026.06 B"
+					},
+					{
+						"text": "Baseline (Restart)"
+					},
+					{
+						"text": "2026-06-09"
+					},
+					{
+						"text": "26100.32995"
+					},
+					{
+						"text": "KB5094125",
+						"href": "https://support.microsoft.com/help/5094125"
+					}
+				],
+				[
+					{
+						"text": "July"
+					},
+					{
+						"text": "2026.07 B"
+					},
+					{
+						"text": "Hotpatch"
+					},
+					{
+						"text": "2026-07-14"
+					},
+					{
+						"text": "26100.32860"
+					},
+					{}
+				]
+			]
+		},
+		{
+			"label": "Calendar year 2024",
+			"header": [
+				"Month",
+				"Update type",
+				"Type",
+				"Availability date",
+				"Build",
+				"KB article"
+			],
+			"rows": [
+				[
+					{
+						"text": "July"
+					},
+					{
+						"text": "2024.07 B"
+					},
+					{
+						"text": "Baseline (Restart)"
+					},
+					{
+						"text": "2024-07-09"
+					},
+					{
+						"text": "20348.2582"
+					},
+					{
+						"text": "KB5040437",
+						"href": "https://support.microsoft.com/help/5040437"
+					}
+				],
+				[
+					{
+						"text": "August"
+					},
+					{
+						"text": "2024.08 B *"
+					},
+					{
+						"text": "Baseline (Restart)"
+					},
+					{
+						"text": "2024-08-13"
+					},
+					{
+						"text": "20348.2655"
+					},
+					{
+						"text": "KB5041160",
+						"href": "https://support.microsoft.com/help/5041160"
+					}
+				],
+				[
+					{
+						"text": "September"
+					},
+					{
+						"text": "2024.09 B"
+					},
+					{
+						"text": "Hotpatch"
+					},
+					{
+						"text": "2024-09-10"
+					},
+					{
+						"text": "20348.2695"
+					},
+					{
+						"text": "KB5042880",
+						"href": "https://support.microsoft.com/help/5042880"
+					}
+				]
+			]
+		}
+	]
+}

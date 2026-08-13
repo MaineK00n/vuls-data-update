@@ -1,0 +1,18 @@
+{
+	"kb_id": "3081424",
+	"url": "https://support.microsoft.com/help/3081424",
+	"products": [
+		"Windows 10 Version 1507 (RTM)"
+	],
+	"superseded_by": [
+		{
+			"kb_id": "3081438"
+		}
+	],
+	"data_source": {
+		"id": "microsoft-releaseinfo",
+		"raws": [
+			"windows-10.json"
+		]
+	}
+}
