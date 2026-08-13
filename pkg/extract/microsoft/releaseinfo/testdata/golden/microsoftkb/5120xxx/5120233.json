@@ -1,0 +1,18 @@
+{
+	"kb_id": "5120233",
+	"url": "https://support.microsoft.com/help/5120233",
+	"products": [
+		"Windows Server 2025"
+	],
+	"supersedes": [
+		{
+			"kb_id": "5099536"
+		}
+	],
+	"data_source": {
+		"id": "microsoft-releaseinfo",
+		"raws": [
+			"windows-server.json"
+		]
+	}
+}
