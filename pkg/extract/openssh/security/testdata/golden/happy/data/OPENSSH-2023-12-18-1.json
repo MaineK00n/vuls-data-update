@@ -28,17 +28,7 @@
 	"vulnerabilities": [
 		{
 			"content": {
-				"id": "CVE-2023-48795",
-				"references": [
-					{
-						"source": "openssh.com",
-						"url": "https://www.cve.org/CVERecord?id=CVE-2023-48795"
-					},
-					{
-						"source": "openssh.com",
-						"url": "https://www.openssh.com/txt/release-9.6"
-					}
-				]
+				"id": "CVE-2023-48795"
 			},
 			"segments": [
 				{

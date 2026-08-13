@@ -223,20 +223,17 @@ func extract(fetched security.Advisory, raws []string) (dataTypes.Data, error) {
 		Vulnerabilities: func() []vulnerabilityTypes.Vulnerability {
 			vs := make([]vulnerabilityTypes.Vulnerability, 0, len(cl.cves))
 			for _, c := range cl.cves {
-				rs := []referenceTypes.Reference{{
-					Source: source,
-					URL:    fmt.Sprintf("https://www.cve.org/CVERecord?id=%s", c),
-				}}
-				// An annotated ID carries the document that named it. The page
-				// did not, so a record that pointed only at cve.org would give
-				// no way back to why this entry is filed under this CVE.
-				for _, u := range cl.sources[c] {
-					rs = append(rs, referenceTypes.Reference{Source: source, URL: u})
-				}
+				// The ID and nothing else. Everything this package emits is
+				// attributed to the page, so a reference here would have to be
+				// one the page carries -- and where it carries one for a CVE it
+				// names, that link is already on the advisory. The rest would
+				// be built rather than read: a cve.org URL is derivable from
+				// the ID and locates nothing, and for an annotated ID the
+				// document that named it is recorded where it can be checked,
+				// on the annotation in raw/, with the sentence it was read off.
 				vs = append(vs, vulnerabilityTypes.Vulnerability{
 					Content: vulnerabilityContentTypes.Content{
-						ID:         vulnerabilityContentTypes.VulnerabilityID(c),
-						References: rs,
+						ID: vulnerabilityContentTypes.VulnerabilityID(c),
 					},
 					Segments: []segmentTypes.Segment{{Ecosystem: ecosystemTypes.EcosystemTypeCPE}},
 				})
@@ -260,13 +257,15 @@ const (
 // claims is what the record asserts about one entry once its annotations are
 // folded in: the CVE IDs and fix releases the page states, plus the ones read
 // off the documents it links to.
+//
+// The values and nothing else. Which document an annotated one came from is
+// not carried through, because nothing downstream emits it -- and that
+// provenance is not lost by dropping it here: it is on the annotation in raw/,
+// beside the quote that makes it checkable, which is the only place it can be
+// checked at all.
 type claims struct {
 	cves  []string
 	fixed []string
-	// sources maps an annotated value to the documents it was read from. Only
-	// annotated values appear here -- a page-stated one is already attributed
-	// by the entry itself.
-	sources map[string][]string
 }
 
 // claim folds an advisory's annotations into the fields they are about.
@@ -284,9 +283,8 @@ type claims struct {
 // entries that state a fix release and link the release notes that confirm it.
 func claim(fetched security.Advisory) (claims, error) {
 	c := claims{
-		cves:    slices.Clone(fetched.CVEs),
-		fixed:   slices.Clone(fetched.Fixed),
-		sources: make(map[string][]string),
+		cves:  slices.Clone(fetched.CVEs),
+		fixed: slices.Clone(fetched.Fixed),
 	}
 
 	for _, a := range fetched.Annotations {
@@ -349,9 +347,6 @@ func claim(fetched security.Advisory) (claims, error) {
 
 		if !slices.Contains(*vs, a.Value) {
 			*vs = append(*vs, a.Value)
-			if u := a.Source.URL; u != "" {
-				c.sources[a.Value] = append(c.sources[a.Value], u)
-			}
 		}
 	}
 
