@@ -1,0 +1,23 @@
+{
+	"kb_id": "4073290",
+	"url": "https://support.microsoft.com/help/4073290",
+	"products": [
+		"Windows 10 Version 1709"
+	],
+	"superseded_by": [
+		{
+			"kb_id": "4073291"
+		}
+	],
+	"supersedes": [
+		{
+			"kb_id": "4051963"
+		}
+	],
+	"data_source": {
+		"id": "microsoft-releaseinfo",
+		"raws": [
+			"windows-10.json"
+		]
+	}
+}

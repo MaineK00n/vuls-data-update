@@ -1,0 +1,18 @@
+{
+	"kb_id": "5074109",
+	"url": "https://support.microsoft.com/help/5074109",
+	"products": [
+		"Windows 11 Version 24H2"
+	],
+	"superseded_by": [
+		{
+			"kb_id": "5077212"
+		}
+	],
+	"data_source": {
+		"id": "microsoft-releaseinfo",
+		"raws": [
+			"windows-11.json"
+		]
+	}
+}

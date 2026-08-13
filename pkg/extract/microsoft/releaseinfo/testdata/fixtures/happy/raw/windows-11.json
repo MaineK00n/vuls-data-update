@@ -1,0 +1,231 @@
+{
+	"url": "https://learn.microsoft.com/en-us/windows/release-health/windows11-release-information",
+	"tables": [
+		{
+			"label": "Version 25H2 (OS build 26200)",
+			"header": [
+				"Servicing option",
+				"Update type",
+				"Availability date",
+				"Build",
+				"KB article"
+			],
+			"rows": [
+				[
+					{
+						"text": "General Availability Channel"
+					},
+					{
+						"text": "2026-08 B"
+					},
+					{
+						"text": "2026-08-11"
+					},
+					{
+						"text": "26200.9168"
+					},
+					{
+						"text": "KB5121003",
+						"href": "https://support.microsoft.com/help/5121003"
+					}
+				],
+				[
+					{
+						"text": "General Availability Channel"
+					},
+					{
+						"text": "2026-07 D"
+					},
+					{
+						"text": "2026-07-28"
+					},
+					{
+						"text": "26200.8973"
+					},
+					{
+						"text": "KB5101684",
+						"href": "https://support.microsoft.com/help/5101684"
+					}
+				],
+				[
+					{
+						"text": "General Availability Channel"
+					},
+					{
+						"text": "2026-07 OOB"
+					},
+					{
+						"text": "2026-07-18"
+					},
+					{
+						"text": "26200.8894"
+					},
+					{
+						"text": "KB5121767",
+						"href": "https://support.microsoft.com/help/5121767"
+					}
+				],
+				[
+					{
+						"text": "General Availability Channel"
+					},
+					{
+						"text": "2026-07 B"
+					},
+					{
+						"text": "2026-07-14"
+					},
+					{
+						"text": "26200.8875"
+					},
+					{
+						"text": "KB5101650",
+						"href": "https://support.microsoft.com/help/5101650"
+					}
+				]
+			]
+		},
+		{
+			"label": "Version 24H2 (OS build 26100)",
+			"header": [
+				"Servicing option",
+				"Update type",
+				"Availability date",
+				"Build",
+				"KB article"
+			],
+			"rows": [
+				[
+					{
+						"text": "LTSC • General Availability Channel"
+					},
+					{
+						"text": "2026-08 B"
+					},
+					{
+						"text": "2026-08-11"
+					},
+					{
+						"text": "26100.9168"
+					},
+					{
+						"text": "KB5121003",
+						"href": "https://support.microsoft.com/help/5121003"
+					}
+				],
+				[
+					{
+						"text": "LTSC • General Availability Channel"
+					},
+					{
+						"text": "2026-07 D"
+					},
+					{
+						"text": "2026-07-28"
+					},
+					{
+						"text": "26100.8973"
+					},
+					{
+						"text": "KB5101684",
+						"href": "https://support.microsoft.com/help/5101684"
+					}
+				],
+				[
+					{
+						"text": "LTSC • General Availability Channel"
+					},
+					{
+						"text": "2026-07 OOB"
+					},
+					{
+						"text": "2026-07-18"
+					},
+					{
+						"text": "26100.8894"
+					},
+					{
+						"text": "KB5121767",
+						"href": "https://support.microsoft.com/help/5121767"
+					}
+				]
+			]
+		},
+		{
+			"label": "Calendar year 2026",
+			"header": [
+				"Month",
+				"Update type",
+				"Type",
+				"Availability date",
+				"Build",
+				"KB article"
+			],
+			"rows": [
+				[
+					{
+						"text": "January"
+					},
+					{
+						"text": "2026.01 B"
+					},
+					{
+						"text": "Baseline (Restart)"
+					},
+					{
+						"text": "2026-01-13"
+					},
+					{
+						"text": "26100.7623"
+					},
+					{
+						"text": "KB5074109",
+						"href": "https://support.microsoft.com/help/5074109"
+					}
+				],
+				[
+					{
+						"text": "February"
+					},
+					{
+						"text": "2026.02 B"
+					},
+					{
+						"text": "Hotpatch"
+					},
+					{
+						"text": "2026-02-10"
+					},
+					{
+						"text": "26100.7781"
+					},
+					{
+						"text": "KB5077212",
+						"href": "https://support.microsoft.com/help/5077212"
+					}
+				],
+				[
+					{
+						"text": "March"
+					},
+					{
+						"text": "2026.03 B"
+					},
+					{
+						"text": "Hotpatch"
+					},
+					{
+						"text": "2026-03-10"
+					},
+					{
+						"text": "26100.7979"
+					},
+					{
+						"text": "KB5079420",
+						"href": "https://support.microsoft.com/help/5079420"
+					}
+				]
+			]
+		}
+	]
+}
