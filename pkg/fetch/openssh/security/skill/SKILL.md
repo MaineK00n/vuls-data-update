@@ -36,6 +36,7 @@ Run from the root of a `vuls-data-raw-openssh-security` checkout:
 ```sh
 ls origin/security.html   # the input; if missing, run the fetch first
 ls origin/txt/            # the documents the page cites; evidence for §7
+ls origin/mitre/          # the CVE records for OpenSSH; evidence for §7
 ls raw/                   # your output; may be empty on a first run
 ```
 
@@ -267,10 +268,23 @@ the one place you may record something the page does not say — and only under
 the same terms, which is that the claim names the document it came from and
 quotes the sentence it was read off.
 
-It exists because the page is a poor citation index of itself. Six entries name
-a CVE ID; the other 49 leave it to the release notes they link to, and several
-of the fix releases are stated the same way. Those documents are in
-`origin/txt/`, so the claim can be checked without leaving the repository.
+It exists because the page cannot state its own CVE IDs. OpenSSH is not a CNA:
+the IDs are assigned by Red Hat or by MITRE, so the project's own documents
+mostly predate or ignore them. Six of the 55 entries name an ID; of the other
+49, exactly one has a linked release note that names any — and that one,
+CVE-2020-14871 in `release-8.5`, is Solaris' PAM bug, not the entry's. So
+`origin/txt/` supplies fix releases and detail, and almost no CVE IDs.
+
+The IDs are in `origin/mitre/`, one file per CVE the CVE List has for OpenSSH.
+Matching an entry to one is a reading, not a lookup — which is why it is an
+annotation, recorded once with its evidence rather than re-derived every time.
+
+**Two sources, two jobs:**
+
+| | holds | annotate from it for |
+| --- | --- | --- |
+| `origin/txt/` | OpenSSH's release notes and advisories | `fixed`, occasionally detail |
+| `origin/mitre/` | CVE records (`CVE-yyyy-nnnn.json`) | `cves` |
 
 **`cves` and `fixed` stay page-only.** An annotation never edits them. That
 keeps §8.4 and §8.5 true — every value in those fields is still readable off
@@ -300,12 +314,20 @@ them here.
   merely go missing, it reads as never having been looked at.
 - **`value`** takes the field's form: a CVE ID, or a release as the source
   writes it (`9.8`, `9.3p2` — §6's rules on version strings apply unchanged).
-- **`source.url`** is the document as the entry links to it.
-- **`source.origin`** is the stored copy's path. Set it whenever the document is
-  under `origin/txt/`; leave it out for anything else, which marks the claim as
-  one nobody can check offline.
+- **`source.url`** is the document: as the entry links to it for `origin/txt/`,
+  or `https://www.cve.org/CVERecord?id=<ID>` for a CVE record.
+- **`source.origin`** is the stored copy's path — `origin/txt/release-9.8`,
+  `origin/mitre/CVE-2024-6387.json`. Set it always; every document you may read
+  is stored, so an annotation without it is one you had no business writing.
 - **`source.quote`** is the sentence, verbatim from the stored file. It must
-  appear in that file — that is what makes the annotation checkable at all.
+  appear in that file — that is what makes the annotation checkable at all. For
+  a CVE record that means a sentence of its **description**, since the file is
+  JSON and the description is where the prose lives:
+  ```sh
+  jq -r '.containers.cna.descriptions[]?.value' origin/mitre/CVE-2024-6387.json
+  ```
+  Quote from that output, not from the raw JSON, or backslash escaping will put
+  characters in your quote that are not in the prose.
 - **`source.retrieved`** is the fetch date of `origin/` (`git log -1
   --format=%ad --date=short -- origin/`), not today's date.
 - **`"absent": true`**, with no `value`, records that you read the document and
@@ -326,17 +348,31 @@ So three outcomes, and each is worth writing down:
 | names nothing for the field | `absent: true` |
 | names a value that is **not** this entry's | `value` + `inapplicable: true` |
 
-Read only what the entry itself links to. A release note for some other version
-is not evidence about this entry, however tempting the version arithmetic.
+In `origin/txt/`, read only what the entry itself links to. A release note for
+some other version is not evidence about this entry, however tempting the
+version arithmetic.
+
+`origin/mitre/` is different, and has to be: no entry links a CVE record, so
+there is nothing to follow. Read them by their description and match on what the
+bug *is*. The descriptions are specific enough for this to be a reading rather
+than a guess — `DisableForwarding directive does not adhere to the
+documentation`, `ssh-add ... without the intended per-hop destination
+constraints`, `sshd 9.1 introduced a double-free`. Where two entries could both
+fit a record, see the second rule below.
+
+Version bounds are the weakest evidence available here and should not decide a
+match on their own. The CVE record's own affected range is empty for most
+pre-2020 IDs, and the description's version — `before 9.3p2`, `before 7.1p2` —
+is usually the *fixed* release, not the affected range the entry states.
 
 Two things annotation must not do:
 
 - **Don't fold a CVE into an `unaffected` entry.** Those records exist to say
   the vulnerability never applied to OpenSSH, so a CVE ID claimed for one
-  inverts its meaning — and the linked kb.cert.org notes name CVE IDs against
-  SSH the protocol, which is exactly the trap. Extraction refuses it, so this
-  fails loudly rather than shipping. It is not a reason to leave the document
-  unread: what those notes name goes in as `inapplicable`, ID and quote
+  inverts its meaning — and the CVE List does carry IDs for SSH-the-protocol
+  weaknesses that those entries describe, which is exactly the trap. Extraction
+  refuses it, so this fails loudly rather than shipping. It is not a reason to
+  leave the record unread: what it names goes in as `inapplicable`, ID and quote
   included, which is the whole reason that outcome exists.
 - **Don't resolve an ambiguity by guessing.** Three entries share 2023-02-02 and
   all three are fixed in 9.2; if a document names a CVE without naming which of
@@ -367,7 +403,13 @@ Two things annotation must not do:
    shopt -s globstar
    jq -r '.annotations[]? | select(.source.origin != null and .source.quote != null)
           | [.source.origin, .source.quote] | @tsv' raw/**/*.json |
-     while IFS=$'\t' read -r f q; do grep -qF -- "$q" "$f" || echo "MISSING $f: $q"; done
+     while IFS=$'\t' read -r f q; do
+       case "$f" in
+         # a CVE record is JSON: check the prose, not the escaped bytes
+         */mitre/*) jq -r '.containers.cna.descriptions[]?.value' "$f" ;;
+         *)         cat "$f" ;;
+       esac | grep -qF -- "$q" || echo "MISSING $f: $q"
+     done
    ```
    A quote that no longer appears means the document was revised under you.
    Check `git log origin/txt/` before changing anything: if the evidence moved,

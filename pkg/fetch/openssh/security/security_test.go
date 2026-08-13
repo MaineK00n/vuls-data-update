@@ -1,11 +1,13 @@
 package security_test
 
 import (
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
@@ -17,6 +19,54 @@ import (
 // case lives at testdata/fixtures/<case>/<pageFilename>. A case with no such
 // directory is how the 404 is produced.
 const pageFilename = "security.html"
+
+// serve stands in for the three hosts a fetch talks to, all out of one case's
+// fixture directory: the page and the /txt/ documents it cites, the NVD query
+// that says which CVE IDs are OpenSSH's, and the CVE records themselves.
+func serve(name string) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		dir := filepath.Join("testdata", "fixtures", name)
+		switch p := filepath.Clean(r.URL.Path); {
+		case p == string(filepath.Separator)+"nvd":
+			// A case that pages serves nvd-<startIndex>.json; one that does not
+			// serves the same nvd.json whatever the index.
+			if f := filepath.Join(dir, fmt.Sprintf("nvd-%s.json", r.URL.Query().Get("startIndex"))); fileExists(f) {
+				http.ServeFile(w, r, f)
+				return
+			}
+			http.ServeFile(w, r, filepath.Join(dir, "nvd.json"))
+		case strings.HasPrefix(p, string(filepath.Separator)+"cve"+string(filepath.Separator)):
+			http.ServeFile(w, r, filepath.Join(dir, "mitre", filepath.Base(p)+".json"))
+		default:
+			http.ServeFile(w, r, filepath.Join(dir, p))
+		}
+	})
+}
+
+func fileExists(p string) bool {
+	_, err := os.Stat(p)
+	return err == nil
+}
+
+// urls returns the three endpoint options pointed at ts.
+func urls(t *testing.T, ts *httptest.Server) (string, security.Option, security.Option) {
+	t.Helper()
+
+	page, err := url.JoinPath(ts.URL, pageFilename)
+	if err != nil {
+		t.Fatal("unexpected error:", err)
+	}
+	nvd, err := url.JoinPath(ts.URL, "nvd")
+	if err != nil {
+		t.Fatal("unexpected error:", err)
+	}
+	cve, err := url.JoinPath(ts.URL, "cve")
+	if err != nil {
+		t.Fatal("unexpected error:", err)
+	}
+
+	return page, security.WithNVDURL(nvd), security.WithCVEURL(cve)
+}
 
 func TestFetch(t *testing.T) {
 	tests := []struct {
@@ -49,18 +99,13 @@ func TestFetch(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				http.ServeFile(w, r, filepath.Join("testdata", "fixtures", tt.name, filepath.Clean(r.URL.Path)))
-			}))
+			ts := httptest.NewServer(serve(tt.name))
 			defer ts.Close()
 
-			u, err := url.JoinPath(ts.URL, pageFilename)
-			if err != nil {
-				t.Fatal("unexpected error:", err)
-			}
+			u, nvd, cve := urls(t, ts)
 
 			dir := t.TempDir()
-			err = security.Fetch(security.WithURL(u), security.WithDir(dir), security.WithRetry(0))
+			err := security.Fetch(security.WithURL(u), nvd, cve, security.WithDir(dir), security.WithRetry(0), security.WithConcurrency(1), security.WithWait(0))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)
@@ -116,15 +161,36 @@ func TestFetch(t *testing.T) {
 					}
 				}
 
+				// The CVE records the page cannot state itself. OpenSSH is not
+				// a CNA, so an entry's ID is only knowable from the CVE List,
+				// which makes these the evidence for that one claim.
+				for _, id := range []string{"CVE-1999-0001", "CVE-1999-0002"} {
+					want, err := os.ReadFile(filepath.Join("testdata", "fixtures", tt.name, "mitre", id+".json"))
+					if err != nil {
+						t.Fatal("unexpected error:", err)
+					}
+					got, err := os.ReadFile(filepath.Join(dir, "origin", "mitre", id+".json"))
+					if err != nil {
+						t.Fatal("unexpected error:", err)
+					}
+					if diff := cmp.Diff(string(want), string(got)); diff != "" {
+						t.Errorf("Fetch() %s. (-expected +got):\n%s", id, diff)
+					}
+				}
+
 				// What must not be stored, and why each is cited in the
 				// fixture: a /txt/ document the site no longer serves, which
 				// the fetch skips rather than failing over; a link to another
 				// host; and two outside /txt/, one of them reaching upwards.
+				// CVE-1999-0003 is the same for a record: NVD lists the ID and
+				// cve.org does not serve it, which is one record missing rather
+				// than a failed run.
 				for _, p := range [][]string{
 					{"origin", "txt", "gone"},
 					{"origin", "txt", "elsewhere"},
 					{"origin", "notes", "other"},
 					{"origin", "escape"},
+					{"origin", "mitre", "CVE-1999-0003.json"},
 				} {
 					if _, err := os.Stat(filepath.Join(append([]string{dir}, p...)...)); !os.IsNotExist(err) {
 						t.Errorf("stored a document outside the cited set: %s", filepath.Join(p...))
@@ -135,21 +201,43 @@ func TestFetch(t *testing.T) {
 	}
 }
 
+// TestFetch_pagesCVEIDs pins that the ID list is read to the end rather than
+// one page deep.
+//
+// Both NVD queries answer in one page today -- 134 and 177 against a 2,000
+// ceiling -- so this is about what happens when they stop. Reading one page
+// would not fail then: it would return a short list, and the advisories whose
+// IDs fell off it would simply have no record to be annotated from, with
+// nothing to say any were missed.
+func TestFetch_pagesCVEIDs(t *testing.T) {
+	ts := httptest.NewServer(serve("paged"))
+	defer ts.Close()
+
+	u, nvd, cve := urls(t, ts)
+
+	dir := t.TempDir()
+	if err := security.Fetch(security.WithURL(u), nvd, cve, security.WithDir(dir), security.WithRetry(0), security.WithConcurrency(1), security.WithWait(0), security.WithResultsPerPage(2)); err != nil {
+		t.Fatal("unexpected error:", err)
+	}
+
+	// The third ID is only on the second page.
+	for _, id := range []string{"CVE-1999-0001", "CVE-1999-0002", "CVE-1999-0003"} {
+		if _, err := os.Stat(filepath.Join(dir, "origin", "mitre", id+".json")); err != nil {
+			t.Errorf("record missing, so its page was not read: %s", id)
+		}
+	}
+}
+
 // TestFetch_keepsRaw pins the one way this fetcher differs from every other:
 // it replaces origin/ and leaves the rest of the tree alone. raw/ holds records
 // converted from the page by hand and no fetch can rebuild them, so wiping the
 // output directory -- what util.RemoveAll(dir) does elsewhere -- would discard
 // the whole point of the source.
 func TestFetch_keepsRaw(t *testing.T) {
-	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, filepath.Join("testdata", "fixtures", "happy", pageFilename))
-	}))
+	ts := httptest.NewServer(serve("happy"))
 	defer ts.Close()
 
-	u, err := url.JoinPath(ts.URL, pageFilename)
-	if err != nil {
-		t.Fatal("unexpected error:", err)
-	}
+	u, nvd, cve := urls(t, ts)
 
 	dir := t.TempDir()
 
@@ -177,7 +265,7 @@ func TestFetch_keepsRaw(t *testing.T) {
 		}
 	}
 
-	if err := security.Fetch(security.WithURL(u), security.WithDir(dir), security.WithRetry(0)); err != nil {
+	if err := security.Fetch(security.WithURL(u), nvd, cve, security.WithDir(dir), security.WithRetry(0), security.WithConcurrency(1), security.WithWait(0)); err != nil {
 		t.Fatal("unexpected error:", err)
 	}
 

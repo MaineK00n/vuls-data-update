@@ -23,13 +23,19 @@
 // leaving the repository, and re-running the conversion against an unchanged
 // origin/ must produce no diff.
 //
-// Which is also why origin/ holds more than the page. Six of the 55 entries
-// name a CVE ID; the rest leave it to the release notes they link to, and the
-// same goes for several of the fix releases. Those documents are stored under
-// origin/txt/ so that a raw/ record can cite one and stay checkable on the
-// terms above -- an annotation quotes a sentence, and the sentence is in the
-// repository. Storing only the page would leave every such claim resting on a
-// document that may since have been revised, with nothing here to notice.
+// Which is also why origin/ holds more than the page: a raw/ record may cite a
+// document, and it can only stay checkable on the terms above if the document
+// is here too. An annotation quotes a sentence, and the sentence has to be in
+// the repository.
+//
+// Two kinds are stored, for two different gaps. The release notes and
+// advisories the page links, under origin/txt/, carry the fix releases and the
+// detail the entries compress. The CVE records, under origin/mitre/, carry the
+// IDs -- which the project's own documents almost never do, because OpenSSH is
+// not a CNA and the IDs are assigned elsewhere. Measured over the whole page:
+// six of the 55 entries name an ID, and of the other 49 exactly one has a
+// linked release note that names any, which turns out on reading to be
+// Solaris' rather than OpenSSH's.
 //
 // Hence what Fetch is careful about: it replaces origin/ and leaves everything
 // else in the output directory alone. raw/ is the expensive part of this tree
@@ -39,14 +45,20 @@ package security
 import (
 	"bytes"
 	_ "embed"
+	"encoding/json/v2"
 	"fmt"
 	"io"
 	"log/slog"
+	"maps"
 	"net/http"
 	"net/url"
 	"os"
+	"path"
 	"path/filepath"
+	"regexp"
+	"slices"
 	"strings"
+	"time"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/pkg/errors"
@@ -55,7 +67,25 @@ import (
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
-const defaultURL = "https://www.openssh.com/security.html"
+const (
+	defaultURL = "https://www.openssh.com/security.html"
+
+	// nvdURL enumerates which CVE IDs are about OpenSSH; cveURL is where each
+	// record is then read from.
+	//
+	// The split is not a preference between the two. cve.org holds the record
+	// as the assigning CNA wrote it -- for OpenSSH that is a third party, since
+	// the project is not a CNA, and the CNA states the affected range in the
+	// page's own terms ("8.5p1", lessThanOrEqual "9.7p1", versionType custom)
+	// where NVD's CPE re-encoding cannot and loses the portable release. But
+	// cve.org has no product index to ask "which CVEs are OpenSSH's", and NVD
+	// does. So the list comes from one and the content from the other.
+	defaultNVDURL = "https://services.nvd.nist.gov/rest/json/cves/2.0"
+	defaultCVEURL = "https://cveawg.mitre.org/api/cve"
+)
+
+// nvdResultsPerPageMax is the largest page the NVD API serves.
+const nvdResultsPerPageMax = 2_000
 
 // minEntries is the floor a stored page has to clear. The list holds 55 entries
 // and only grows: entries are added at the top and none has ever been removed,
@@ -77,9 +107,14 @@ var skillPath = filepath.Join(".claude", "skills", "openssh-security-raw", "SKIL
 var skill []byte
 
 type options struct {
-	url   string
-	dir   string
-	retry int
+	url            string
+	nvdURL         string
+	cveURL         string
+	dir            string
+	retry          int
+	concurrency    int
+	wait           time.Duration
+	resultsPerPage int
 }
 
 type Option interface {
@@ -94,6 +129,56 @@ func (u urlOption) apply(opts *options) {
 
 func WithURL(url string) Option {
 	return urlOption(url)
+}
+
+type nvdURLOption string
+
+func (u nvdURLOption) apply(opts *options) {
+	opts.nvdURL = string(u)
+}
+
+func WithNVDURL(url string) Option {
+	return nvdURLOption(url)
+}
+
+type cveURLOption string
+
+func (u cveURLOption) apply(opts *options) {
+	opts.cveURL = string(u)
+}
+
+func WithCVEURL(url string) Option {
+	return cveURLOption(url)
+}
+
+type concurrencyOption int
+
+func (c concurrencyOption) apply(opts *options) {
+	opts.concurrency = int(c)
+}
+
+func WithConcurrency(concurrency int) Option {
+	return concurrencyOption(concurrency)
+}
+
+type waitOption time.Duration
+
+func (w waitOption) apply(opts *options) {
+	opts.wait = time.Duration(w)
+}
+
+func WithWait(wait time.Duration) Option {
+	return waitOption(wait)
+}
+
+type resultsPerPageOption int
+
+func (r resultsPerPageOption) apply(opts *options) {
+	opts.resultsPerPage = int(r)
+}
+
+func WithResultsPerPage(resultsPerPage int) Option {
+	return resultsPerPageOption(resultsPerPage)
 }
 
 type dirOption string
@@ -118,9 +203,14 @@ func WithRetry(retry int) Option {
 
 func Fetch(opts ...Option) error {
 	options := &options{
-		url:   defaultURL,
-		dir:   filepath.Join(util.CacheDir(), "fetch", "openssh", "security"),
-		retry: 3,
+		url:            defaultURL,
+		nvdURL:         defaultNVDURL,
+		cveURL:         defaultCVEURL,
+		dir:            filepath.Join(util.CacheDir(), "fetch", "openssh", "security"),
+		retry:          3,
+		concurrency:    5,
+		wait:           1 * time.Second,
+		resultsPerPage: nvdResultsPerPageMax,
 	}
 
 	for _, o := range opts {
@@ -203,9 +293,159 @@ func (opts options) fetch() error {
 		}
 	}
 
+	if err := opts.fetchCVEs(client); err != nil {
+		return errors.Wrap(err, "fetch cve records")
+	}
+
 	return nil
 }
 
+// fetchCVEs stores the CVE records for OpenSSH under origin/mitre/.
+//
+// They are here because the page does not carry CVE IDs and neither do the
+// documents it links: six of the 55 entries name one, and of the remaining 49
+// exactly one has a linked release note that names an ID -- and that one,
+// CVE-2020-14871 in release-8.5, is Solaris' rather than OpenSSH's. The reason
+// is structural: OpenSSH is not a CNA, so the IDs are assigned elsewhere, by
+// Red Hat or by MITRE, and the project's own documents predate or ignore them.
+// The ID an advisory is filed under is therefore only knowable from the CVE
+// list, which is what makes this the evidence for that one claim.
+//
+// Enumeration failure is fatal, unlike a single missing record. The tree was
+// emptied before this ran, so continuing past it would commit an origin/mitre/
+// that is empty for a reason no reader could distinguish from OpenSSH having
+// no CVEs at all -- and would break every annotation already resting on it.
+func (opts options) fetchCVEs(client *utilhttp.Client) error {
+	ids, err := opts.cveIDs(client)
+	if err != nil {
+		return errors.Wrap(err, "list cve ids")
+	}
+
+	slog.Info("Fetch CVE records", slog.Int("count", len(ids)))
+
+	us := make([]string, 0, len(ids))
+	for _, id := range ids {
+		u, err := url.JoinPath(opts.cveURL, id)
+		if err != nil {
+			return errors.Wrapf(err, "join %s and %s", opts.cveURL, id)
+		}
+		us = append(us, u)
+	}
+
+	if err := client.PipelineGet(us, opts.concurrency, opts.wait, false, func(resp *http.Response) error {
+		defer resp.Body.Close()
+
+		id := path.Base(resp.Request.URL.Path)
+
+		if resp.StatusCode != http.StatusOK {
+			_, _ = io.Copy(io.Discard, resp.Body)
+			// One record being unavailable is not the run's problem: the ID
+			// came from NVD and cve.org may not serve it (a reserved or
+			// rejected record). The conversion step sees it for itself, since
+			// it cites what is under origin/.
+			slog.Warn("skip cve record", slog.String("id", id), slog.Int("status", resp.StatusCode))
+			return nil
+		}
+
+		bs, err := io.ReadAll(resp.Body)
+		if err != nil {
+			return errors.Wrapf(err, "read %s", resp.Request.URL)
+		}
+
+		if err := write(filepath.Join(opts.dir, "origin", "mitre", fmt.Sprintf("%s.json", id)), bs); err != nil {
+			return errors.Wrapf(err, "write %s", filepath.Join(opts.dir, "origin", "mitre", fmt.Sprintf("%s.json", id)))
+		}
+
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "pipeline get")
+	}
+
+	return nil
+}
+
+// cveIDs asks NVD which CVE IDs are OpenSSH's, by CPE and by keyword, and
+// returns the union.
+//
+// Both are needed. The CPE query is the precise one -- it asks for records NVD
+// has matched to cpe:2.3:a:openbsd:openssh -- but that matching is analyst work
+// NVD has been behind on since 2024, and a record awaiting it is simply absent:
+// CVE-2024-39894, the ObscureKeystrokeTiming advisory of 2024-07-01, is one.
+// The keyword query catches those and is the wider net, at the cost of records
+// that merely mention OpenSSH in passing. Storing a few extra records costs a
+// file each; missing one costs an advisory its ID, with nothing to show that it
+// was missed.
+func (opts options) cveIDs(client *utilhttp.Client) ([]string, error) {
+	ids := make(map[string]struct{})
+	for _, q := range []string{
+		fmt.Sprintf("virtualMatchString=%s", url.QueryEscape("cpe:2.3:a:openbsd:openssh")),
+		fmt.Sprintf("keywordSearch=%s", url.QueryEscape("OpenSSH")),
+	} {
+		// Paged, though both queries answer in one page today -- 134 and 177
+		// against a 2,000 ceiling. The margin is wide but it is not a reason to
+		// read one page and stop: what a truncated list costs is not an error
+		// but a set of advisories that quietly cannot be annotated, and the
+		// keyword query grows with every CVE that so much as mentions OpenSSH.
+		for startIndex := 0; ; {
+			u := fmt.Sprintf("%s?%s&startIndex=%d&resultsPerPage=%d", opts.nvdURL, q, startIndex, opts.resultsPerPage)
+
+			bs, err := get(client, u)
+			if err != nil {
+				return nil, errors.Wrapf(err, "fetch %s", u)
+			}
+
+			var r nvdResponse
+			if err := json.Unmarshal(bs, &r); err != nil {
+				return nil, errors.Wrapf(err, "decode %s", u)
+			}
+
+			for _, v := range r.Vulnerabilities {
+				if cveIDPattern.MatchString(v.CVE.ID) {
+					ids[v.CVE.ID] = struct{}{}
+				}
+			}
+
+			startIndex += len(r.Vulnerabilities)
+			if startIndex >= r.TotalResults {
+				break
+			}
+
+			// A page that advances nothing while claiming more would spin here
+			// forever.
+			if len(r.Vulnerabilities) == 0 {
+				return nil, errors.Errorf("unexpected empty page. expected: %q, actual: %q", fmt.Sprintf("some of the %d results remaining after %d", r.TotalResults, startIndex), "none")
+			}
+
+			time.Sleep(opts.wait)
+		}
+
+		time.Sleep(opts.wait)
+	}
+
+	return slices.Sorted(maps.Keys(ids)), nil
+}
+
+// nvdResponse is the part of the NVD API's answer this needs: the IDs, and
+// enough to tell a complete page from a truncated one.
+type nvdResponse struct {
+	TotalResults    int `json:"totalResults"`
+	Vulnerabilities []struct {
+		CVE struct {
+			ID string `json:"id"`
+		} `json:"cve"`
+	} `json:"vulnerabilities"`
+}
+
+// cveIDPattern is the shape an ID has to have before it becomes a path element.
+var cveIDPattern = regexp.MustCompile(`^CVE-[0-9]{4}-[0-9]{4,}$`)
+
+// get returns a response body.
+//
+// It returns the bytes rather than decoding, or handing back the response for
+// the caller to stream: what goes to origin/ has to be what was served, so two
+// of the three callers need the bytes, and a second helper for the third would
+// split the status check across both. The one body it only decodes is an NVD
+// page of a few hundred kilobytes, which is not worth a second shape for.
 func get(client *utilhttp.Client, u string) ([]byte, error) {
 	resp, err := client.Get(u)
 	if err != nil {
