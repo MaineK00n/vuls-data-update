@@ -1,0 +1,35 @@
+{
+	"id": "OPENSSH-2023-12-18-1",
+	"date": "2023-12-18",
+	"title": "Weakness in initial key exchange (\"Terrapin Attack\")",
+	"description": "ssh(1), sshd(8) in OpenSSH prior to version 9.6.",
+	"status": "affected",
+	"affected": [
+		{
+			"product": "OpenSSH",
+			"component": "ssh(1)",
+			"versions": [
+				{
+					"lt": "9.6"
+				}
+			]
+		}
+	],
+	"fixed": [
+		"9.6"
+	],
+	"annotations": [
+		{
+			"field": "cvss",
+			"absent": true,
+			"source": {
+				"url": "https://www.openssh.com/txt/release-9.6",
+				"origin": "origin/txt/release-9.6",
+				"retrieved": "2026-08-13"
+			}
+		}
+	],
+	"origin": {
+		"url": "https://www.openssh.com/security.html"
+	}
+}

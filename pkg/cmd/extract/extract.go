@@ -93,6 +93,7 @@ import (
 	nvdFeedCPEMATCHv2 "github.com/MaineK00n/vuls-data-update/pkg/extract/nvd/feed/cpematch/v2"
 	nvdFeedCVEv1 "github.com/MaineK00n/vuls-data-update/pkg/extract/nvd/feed/cve/v1"
 	nvdFeedCVEv2 "github.com/MaineK00n/vuls-data-update/pkg/extract/nvd/feed/cve/v2"
+	opensshSecurity "github.com/MaineK00n/vuls-data-update/pkg/extract/openssh/security"
 	oracleLinux "github.com/MaineK00n/vuls-data-update/pkg/extract/oracle/linux"
 	ossFuzzOSV "github.com/MaineK00n/vuls-data-update/pkg/extract/oss-fuzz/osv"
 	paloaltoJSON "github.com/MaineK00n/vuls-data-update/pkg/extract/paloalto/json"
@@ -190,6 +191,7 @@ func NewCmdExtract() *cobra.Command {
 		newCmdNugetGHSA(), newCmdNugetGLSA(), newCmdNugetOSV(),
 		newCmdNucleiRepository(),
 		newCmdNVDAPICVE(), newCmdNVDAPICPE(), newCmdNVDFeedCVEv1(), newCmdNVDFeedCPEv1(), newCmdNVDFeedCPEMATCHv1(), newCmdNVDFeedCVEv2(), newCmdNVDFeedCPEv2(), newCmdNVDFeedCPEMATCHv2(),
+		newCmdOpenSSHSecurity(),
 		newCmdOracleLinux(),
 		newCmdOSSFuzzOSV(),
 		newCmdPaloAltoJSON(),
@@ -2347,6 +2349,31 @@ func newCmdNVDFeedCPEMATCHv2() *cobra.Command {
 		RunE: func(_ *cobra.Command, args []string) error {
 			if err := nvdFeedCPEMATCHv2.Extract(args[0], nvdFeedCPEMATCHv2.WithDir(options.dir)); err != nil {
 				return errors.Wrap(err, "failed to extract nvd cpematch feed v2")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
+
+	return cmd
+}
+
+func newCmdOpenSSHSecurity() *cobra.Command {
+	options := &base{
+		dir: filepath.Join(util.CacheDir(), "extract", "openssh", "security"),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "openssh-security <Raw OpenSSH Security Repository PATH>",
+		Short: "Extract OpenSSH Security Advisory data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update extract openssh-security vuls-data-raw-openssh-security
+		`),
+		Args: cobra.ExactArgs(1),
+		RunE: func(_ *cobra.Command, args []string) error {
+			if err := opensshSecurity.Extract(args[0], opensshSecurity.WithDir(options.dir)); err != nil {
+				return errors.Wrap(err, "failed to extract openssh security")
 			}
 			return nil
 		},

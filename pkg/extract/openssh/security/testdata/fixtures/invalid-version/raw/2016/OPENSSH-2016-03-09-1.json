@@ -1,0 +1,20 @@
+{
+	"id": "OPENSSH-2016-03-09-1",
+	"date": "2016-03-09",
+	"title": "Missing sanitisation of untrusted input allows command injection to xauth(1).",
+	"description": "All versions of OpenSSH prior to 7.2p2 with X11Forwarding enabled.",
+	"status": "affected",
+	"affected": [
+		{
+			"product": "OpenSSH",
+			"versions": [
+				{
+					"lt": "prior to 7.2p2"
+				}
+			]
+		}
+	],
+	"origin": {
+		"url": "https://www.openssh.com/security.html"
+	}
+}

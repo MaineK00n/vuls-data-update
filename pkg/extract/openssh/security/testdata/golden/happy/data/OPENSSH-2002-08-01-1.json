@@ -1,0 +1,63 @@
+{
+	"id": "OPENSSH-2002-08-01-1",
+	"advisories": [
+		{
+			"content": {
+				"id": "OPENSSH-2002-08-01-1",
+				"title": "Distribution tarballs were trojaned on the OpenBSD FTP server.",
+				"description": "OpenSSH version 3.2.2p1, 3.4p1 and 3.4 were trojaned on the OpenBSD FTP server and potentially propagated via the normal mirroring process to other FTP servers. The code was inserted some time between the 30th and 31th of July. We replaced the trojaned files with their originals at 7AM MDT, August 1st: OpenBSD Advisory.",
+				"references": [
+					{
+						"source": "openssh.com",
+						"url": "https://www.openbsd.org/advisories/ssh_trojan.txt"
+					},
+					{
+						"source": "openssh.com",
+						"url": "https://www.openssh.com/security.html"
+					}
+				],
+				"published": "2002-08-01T00:00:00Z"
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe"
+				}
+			]
+		}
+	],
+	"detections": [
+		{
+			"ecosystem": "cpe",
+			"conditions": [
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:a:openbsd:openssh:*:*:*:*:*:*:*:*",
+									"cpe_matches": [
+										"cpe:2.3:a:openbsd:openssh:3.2.2:p1:*:*:*:*:*:*",
+										"cpe:2.3:a:openbsd:openssh:3.4:*:*:*:*:*:*:*",
+										"cpe:2.3:a:openbsd:openssh:3.4:p1:*:*:*:*:*:*"
+									]
+								}
+							}
+						]
+					}
+				}
+			]
+		}
+	],
+	"data_source": {
+		"id": "openssh-security",
+		"raws": [
+			"happy/raw/2002/OPENSSH-2002-08-01-1.json"
+		]
+	}
+}

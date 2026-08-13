@@ -1,0 +1,65 @@
+{
+	"id": "OPENSSH-2023-02-02-3",
+	"advisories": [
+		{
+			"content": {
+				"id": "OPENSSH-2023-02-02-3",
+				"title": "Double-free memory fault in pre-authentication sshd process.",
+				"description": "sshd in OpenSSH 9.1 (only).\n\nDouble-free memory fault in pre-authentication sshd process.\n\nsshd(8) contained a network-reachable pre-authentication double-free memory fault introduced in OpenSSH 9.1. This is not believed to be exploitable, and it occurs in the unprivileged pre-auth process that is subject to chroot(2) and is further sandboxed on most major platforms.\n\nThis bug is corrected in OpenSSH 9.2.\n\nFor more information, please refer to the release notes.",
+				"references": [
+					{
+						"source": "openssh.com",
+						"url": "https://www.openssh.com/security.html"
+					},
+					{
+						"source": "openssh.com",
+						"url": "https://www.openssh.com/txt/release-9.2"
+					}
+				],
+				"published": "2023-02-02T00:00:00Z"
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe"
+				}
+			]
+		}
+	],
+	"detections": [
+		{
+			"ecosystem": "cpe",
+			"conditions": [
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed",
+										"vendor": "openssh.com"
+									},
+									"cpe": "cpe:2.3:a:openbsd:openssh:*:*:*:*:*:*:*:*",
+									"cpe_matches": [
+										"cpe:2.3:a:openbsd:openssh:9.1:*:*:*:*:*:*:*"
+									],
+									"fixed": [
+										"9.2"
+									]
+								}
+							}
+						]
+					}
+				}
+			]
+		}
+	],
+	"data_source": {
+		"id": "openssh-security",
+		"raws": [
+			"happy/raw/2023/OPENSSH-2023-02-02-3.json"
+		]
+	}
+}

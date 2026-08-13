@@ -1,0 +1,85 @@
+{
+	"id": "OPENSSH-2015-08-11-1",
+	"advisories": [
+		{
+			"content": {
+				"id": "OPENSSH-2015-08-11-1",
+				"title": "Weak TTY device permissions; MaxAuthTries circumvention in keyboard-interactive authentication.",
+				"description": "OpenSSH 6.7 through 6.9 assign weak permissions to TTY devices.\n\nKeyboard-interactive authentication in OpenSSH prior to 7.0 may allow circumvention of MaxAuthTries.\n\nThese bugs are corrected in OpenSSH 7.0. For more information, please refer to the release notes",
+				"references": [
+					{
+						"source": "openssh.com",
+						"url": "https://www.openssh.com/security.html"
+					},
+					{
+						"source": "openssh.com",
+						"url": "https://www.openssh.com/txt/release-7.0"
+					}
+				],
+				"published": "2015-08-11T00:00:00Z"
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe"
+				}
+			]
+		}
+	],
+	"detections": [
+		{
+			"ecosystem": "cpe",
+			"conditions": [
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed",
+										"vendor": "openssh.com"
+									},
+									"cpe": "cpe:2.3:a:openbsd:openssh:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "openssh",
+										"lt": "7.0"
+									},
+									"fixed": [
+										"7.0"
+									]
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed",
+										"vendor": "openssh.com"
+									},
+									"cpe": "cpe:2.3:a:openbsd:openssh:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "openssh",
+										"ge": "6.7",
+										"le": "6.9"
+									},
+									"fixed": [
+										"7.0"
+									]
+								}
+							}
+						]
+					}
+				}
+			]
+		}
+	],
+	"data_source": {
+		"id": "openssh-security",
+		"raws": [
+			"happy/raw/2015/OPENSSH-2015-08-11-1.json"
+		]
+	}
+}

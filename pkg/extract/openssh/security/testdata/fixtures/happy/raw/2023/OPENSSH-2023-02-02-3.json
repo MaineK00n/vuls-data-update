@@ -1,0 +1,31 @@
+{
+	"id": "OPENSSH-2023-02-02-3",
+	"date": "2023-02-02",
+	"title": "Double-free memory fault in pre-authentication sshd process.",
+	"description": "sshd in OpenSSH 9.1 (only).\n\nDouble-free memory fault in pre-authentication sshd process.\n\nsshd(8) contained a network-reachable pre-authentication double-free memory fault introduced in OpenSSH 9.1. This is not believed to be exploitable, and it occurs in the unprivileged pre-auth process that is subject to chroot(2) and is further sandboxed on most major platforms.\n\nThis bug is corrected in OpenSSH 9.2.\n\nFor more information, please refer to the release notes.",
+	"status": "affected",
+	"affected": [
+		{
+			"product": "OpenSSH",
+			"component": "sshd",
+			"versions": [
+				{
+					"eq": "9.1"
+				}
+			]
+		}
+	],
+	"fixed": [
+		"9.2"
+	],
+	"references": [
+		{
+			"url": "https://www.openssh.com/txt/release-9.2",
+			"text": "release notes"
+		}
+	],
+	"origin": {
+		"url": "https://www.openssh.com/security.html",
+		"html": "<li><p><b>February 2, 2023</b><br>\n    sshd in OpenSSH 9.1 (only).\n    <br>\n\tDouble-free memory fault in pre-authentication sshd process.\n    <br>\n        sshd(8) contained a network-reachable pre-authentication double-free\n        memory fault introduced in OpenSSH 9.1. This is not believed to be\n        exploitable, and it occurs in the unprivileged pre-auth process that is\n        subject to chroot(2) and is further sandboxed on most major\n        platforms.\n    <br>\n\tThis bug is corrected in OpenSSH 9.2.\n    <br>\n    For more information, please refer to the\n    <a href=\"txt/release-9.2\">release notes</a>.\n\n"
+	}
+}

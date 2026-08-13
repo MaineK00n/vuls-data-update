@@ -120,6 +120,7 @@ const (
 	NVDFeedCVEv2               SourceID = "nvd-feed-cve-v2"
 	OpenEulerCSAF              SourceID = "openeuler-csaf"
 	OpenEulerCVRF              SourceID = "openeuler-cvrf"
+	OpenSSHSecurity            SourceID = "openssh-security"
 	Oracle                     SourceID = "oracle"
 	OSSFuzzOSV                 SourceID = "oss-fuzz-osv"
 	PaloAltoCSAF               SourceID = "paloalto-csaf"

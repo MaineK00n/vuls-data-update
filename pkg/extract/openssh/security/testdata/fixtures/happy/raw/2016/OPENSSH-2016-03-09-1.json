@@ -1,0 +1,38 @@
+{
+	"id": "OPENSSH-2016-03-09-1",
+	"date": "2016-03-09",
+	"title": "Missing sanitisation of untrusted input allows an authenticated user who is able to request X11 forwarding to inject commands to xauth(1).",
+	"description": "All versions of OpenSSH prior to 7.2p2 with X11Forwarding enabled. Missing sanitisation of untrusted input allows an authenticated user who is able to request X11 forwarding to inject commands to xauth(1).\n\nMitigate by setting X11Forwarding=no in sshd_config, or on the commandline. This is the default, but some vendors enable the feature.\n\nFor more information see the advisory.\n\nThis bug is corrected in OpenSSH 7.2p2 and in OpenBSD's stable branch. For more information, please refer to the release notes.",
+	"status": "affected",
+	"affected": [
+		{
+			"product": "OpenSSH",
+			"versions": [
+				{
+					"lt": "7.2p2"
+				}
+			],
+			"condition": "X11Forwarding enabled"
+		}
+	],
+	"fixed": [
+		"7.2p2"
+	],
+	"mitigations": [
+		"Mitigate by setting X11Forwarding=no in sshd_config, or on the commandline."
+	],
+	"references": [
+		{
+			"url": "https://www.openssh.com/txt/x11fwd.adv",
+			"text": "the advisory"
+		},
+		{
+			"url": "https://www.openssh.com/txt/release-7.2p2",
+			"text": "release notes"
+		}
+	],
+	"origin": {
+		"url": "https://www.openssh.com/security.html",
+		"html": "<li><p><b>March 9, 2016</b><br>\n    All versions of OpenSSH prior to 7.2p2 with X11Forwarding\n    enabled.\n    Missing sanitisation of untrusted input allows an\n    authenticated user who is able to request X11 forwarding\n    to inject commands to xauth(1).\n    <p>\n    Mitigate by setting <b>X11Forwarding=no</b> in sshd_config, or on the\n    commandline. This is the default, but some vendors enable the feature.\n    <p>\n    For more information see <a href=\"txt/x11fwd.adv\">the advisory</a>.\n    <br>\n    This bug is corrected in OpenSSH 7.2p2 and in OpenBSD's stable branch.\n    For more information, please\n    refer to the <a href=\"txt/release-7.2p2\">release notes</a>.\n\n"
+	}
+}
