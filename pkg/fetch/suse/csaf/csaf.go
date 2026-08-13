@@ -10,6 +10,7 @@ import (
 	"log/slog"
 	"net/http"
 	"path/filepath"
+	"slices"
 	"strings"
 	"time"
 
@@ -111,20 +112,34 @@ func Fetch(opts ...Option) error {
 			return errors.Wrap(err, "decode json")
 		}
 
-		splitted, err := util.Split(adv.Document.Tracking.ID, "-", "-")
-		if err != nil {
-			return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "(SUSE|openSUSE)-(SU|RU|FU|OU)-.*", adv.Document.Tracking.ID)
+		var splitted []string
+		switch prefix, _, _ := strings.Cut(adv.Document.Tracking.ID, "-"); prefix {
+		case "SUSE", "openSUSE":
+			// e.g. SUSE-SU-2015:0011-2, openSUSE-SU-2016:1623-1, SUSE-EL-9-Client-Tools-2023-2185, SUSE-SU-403
+			splitted, err = util.Split(adv.Document.Tracking.ID, "-", "-")
+			if err != nil {
+				return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "(SUSE|openSUSE)-(SU|RU|FU|OU|EL)-.*", adv.Document.Tracking.ID)
+			}
+		case "ESBA", "ESEA", "ESSA", "RHBA", "RHEA", "RHSA":
+			// SUSE Liberty Linux advisories have no vendor prefix.
+			// e.g. ESBA-2024:0591, ESEA-2023:0047, ESSA-2022:0008, RHBA-2019:1992, RHEA-2019:3072, RHSA-2019:2079
+			splitted, err = util.Split(adv.Document.Tracking.ID, "-")
+			if err != nil {
+				return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "(ESBA|ESEA|ESSA|RHBA|RHEA|RHSA)-.*", adv.Document.Tracking.ID)
+			}
+		default:
+			return errors.Errorf("unexpected ID prefix. expected: %q, actual: %q", []string{"SUSE", "openSUSE", "ESBA", "ESEA", "ESSA", "RHBA", "RHEA", "RHSA"}, prefix)
 		}
 
 		y := "others"
-		if lhs, _, ok := strings.Cut(splitted[2], ":"); ok {
+		if lhs, _, ok := strings.Cut(splitted[len(splitted)-1], ":"); ok {
 			if _, err := time.Parse("2006", lhs); err == nil {
 				y = lhs
 			}
 		}
 
-		if err := util.Write(filepath.Join(options.dir, splitted[0], splitted[1], y, fmt.Sprintf("%s.json", adv.Document.Tracking.ID)), adv); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, splitted[0], splitted[1], y, fmt.Sprintf("%s.json", adv.Document.Tracking.ID)))
+		if err := util.Write(filepath.Join(slices.Concat([]string{options.dir}, splitted[:len(splitted)-1], []string{y, fmt.Sprintf("%s.json", adv.Document.Tracking.ID)})...), adv); err != nil {
+			return errors.Wrapf(err, "write %s", filepath.Join(slices.Concat([]string{options.dir}, splitted[:len(splitted)-1], []string{y, fmt.Sprintf("%s.json", adv.Document.Tracking.ID)})...))
 		}
 	}
 
