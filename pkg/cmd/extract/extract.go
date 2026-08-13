@@ -65,6 +65,7 @@ import (
 	mavenOSV "github.com/MaineK00n/vuls-data-update/pkg/extract/maven/osv"
 	microsoftBulletin "github.com/MaineK00n/vuls-data-update/pkg/extract/microsoft/bulletin"
 	microsoftCVRF "github.com/MaineK00n/vuls-data-update/pkg/extract/microsoft/cvrf"
+	microsoftExchange "github.com/MaineK00n/vuls-data-update/pkg/extract/microsoft/exchange"
 	microsoftMSUC "github.com/MaineK00n/vuls-data-update/pkg/extract/microsoft/msuc"
 	microsoftServicing "github.com/MaineK00n/vuls-data-update/pkg/extract/microsoft/servicing"
 	microsoftWSUSSCN2 "github.com/MaineK00n/vuls-data-update/pkg/extract/microsoft/wsusscn2"
@@ -180,7 +181,7 @@ func NewCmdExtract() *cobra.Command {
 		newCmdJVNFeedDetail(), newCmdJVNFeedProduct(), newCmdJVNFeedRSS(),
 		newCmdLinuxOSV(),
 		newCmdMavenGHSA(), newCmdMavenGLSA(), newCmdMavenOSV(),
-		newCmdMicrosoftBulletin(), newCmdMicrosoftCVRF(), newCmdMicrosoftMSUC(), newCmdMicrosoftServicing(), newCmdMicrosoftWSUSSCN2(),
+		newCmdMicrosoftBulletin(), newCmdMicrosoftCVRF(), newCmdMicrosoftExchange(), newCmdMicrosoftMSUC(), newCmdMicrosoftServicing(), newCmdMicrosoftWSUSSCN2(),
 		newCmdMitreATTACK(), newCmdMitreCAPEC(), newCmdMitreCVRF(), newCmdMitreCWE(), newCmdMitreV4(), newCmdMitreV5(),
 		newCmdMSF(),
 		newCmdNetBSD(),
@@ -1631,6 +1632,31 @@ func newCmdMicrosoftCVRF() *cobra.Command {
 		RunE: func(_ *cobra.Command, args []string) error {
 			if err := microsoftCVRF.Extract(args[0], microsoftCVRF.WithDir(options.dir)); err != nil {
 				return errors.Wrap(err, "failed to extract microsoft cvrf")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
+
+	return cmd
+}
+
+func newCmdMicrosoftExchange() *cobra.Command {
+	options := &base{
+		dir: filepath.Join(util.CacheDir(), "extract", "microsoft", "exchange"),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "microsoft-exchange <Raw Microsoft Exchange Repository PATH>",
+		Short: "Extract Microsoft Exchange Build Numbers and Release Dates data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update extract microsoft-exchange vuls-data-raw-microsoft-exchange
+		`),
+		Args: cobra.ExactArgs(1),
+		RunE: func(_ *cobra.Command, args []string) error {
+			if err := microsoftExchange.Extract(args[0], microsoftExchange.WithDir(options.dir)); err != nil {
+				return errors.Wrap(err, "failed to extract microsoft exchange")
 			}
 			return nil
 		},
