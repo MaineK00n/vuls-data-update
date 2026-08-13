@@ -1,0 +1,531 @@
+{
+	"url": "https://learn.microsoft.com/en-us/officeupdates/sharepoint-updates",
+	"tables": [
+		{
+			"heading": "SharePoint Server Subscription Edition update history",
+			"header": [
+				"Package Name",
+				"KB Number",
+				"Version",
+				"Release Date"
+			],
+			"rows": [
+				[
+					{
+						"lines": [
+							{
+								"text": "SharePoint Server Subscription Edition"
+							}
+						]
+					},
+					{
+						"lines": [
+							{
+								"text": "KB 5002893",
+								"href": "https://support.microsoft.com/help/5002893"
+							}
+						]
+					},
+					{
+						"lines": [
+							{
+								"text": "16.0.19725.20522"
+							}
+						]
+					},
+					{
+						"lines": [
+							{
+								"text": "August 11, 2026"
+							}
+						]
+					}
+				],
+				[
+					{
+						"lines": [
+							{
+								"text": "SharePoint Server Subscription Edition"
+							}
+						]
+					},
+					{
+						"lines": [
+							{
+								"text": "KB 5002882",
+								"href": "https://support.microsoft.com/help/5002882"
+							}
+						]
+					},
+					{
+						"lines": [
+							{
+								"text": "16.0.19725.20434"
+							}
+						]
+					},
+					{
+						"lines": [
+							{
+								"text": "July 14, 2026"
+							}
+						]
+					}
+				]
+			]
+		},
+		{
+			"heading": "SharePoint 2019 update history",
+			"header": [
+				"Package Name",
+				"KB Number",
+				"Version",
+				"Release Date"
+			],
+			"rows": [
+				[
+					{
+						"lines": [
+							{
+								"text": "SharePoint Server 2019"
+							},
+							{
+								"text": "SharePoint Server 2019 MUI/language patch"
+							}
+						]
+					},
+					{
+						"lines": [
+							{
+								"text": "KB 5002894",
+								"href": "https://support.microsoft.com/help/5002894"
+							},
+							{
+								"text": "KB 5002896",
+								"href": "https://support.microsoft.com/help/5002896"
+							}
+						]
+					},
+					{
+						"lines": [
+							{
+								"text": "16.0.10417.20198"
+							}
+						]
+					},
+					{
+						"lines": [
+							{
+								"text": "August 11, 2026"
+							}
+						]
+					}
+				],
+				[
+					{
+						"lines": [
+							{
+								"text": "SharePoint Server 2019"
+							},
+							{
+								"text": "SharePoint Server 2019 MUI/language patch"
+							}
+						]
+					},
+					{
+						"lines": [
+							{
+								"text": "KB 5002883",
+								"href": "https://support.microsoft.com/help/5002883"
+							},
+							{
+								"text": "KB 5002885",
+								"href": "https://support.microsoft.com/help/5002885"
+							}
+						]
+					},
+					{
+						"lines": [
+							{
+								"text": "16.0.10417.20175"
+							}
+						]
+					},
+					{
+						"lines": [
+							{
+								"text": "July 14, 2026"
+							}
+						]
+					}
+				]
+			]
+		},
+		{
+			"heading": "SharePoint 2016 update history",
+			"header": [
+				"Package Name",
+				"KB Number",
+				"Version",
+				"Release Date"
+			],
+			"rows": [
+				[
+					{
+						"lines": [
+							{
+								"text": "SharePoint Server 2016"
+							},
+							{
+								"text": "SharePoint Server 2016 MUI/language patch"
+							}
+						]
+					},
+					{
+						"lines": [
+							{
+								"text": "KB 5002905",
+								"href": "https://support.microsoft.com/help/5002905"
+							},
+							{
+								"text": "KB 5002906",
+								"href": "https://support.microsoft.com/help/5002906"
+							}
+						]
+					},
+					{
+						"lines": [
+							{
+								"text": "16.0.5565.1001"
+							},
+							{
+								"text": "16.0.5565.1001"
+							}
+						]
+					},
+					{
+						"lines": [
+							{
+								"text": "August 11, 2026"
+							}
+						]
+					}
+				],
+				[
+					{
+						"lines": [
+							{
+								"text": "SharePoint Server 2016"
+							},
+							{
+								"text": "SharePoint Server 2016 MUI/language patch"
+							}
+						]
+					},
+					{
+						"lines": [
+							{
+								"text": "KB 5002891",
+								"href": "https://support.microsoft.com/help/5002891"
+							},
+							{
+								"text": "KB 5002892",
+								"href": "https://support.microsoft.com/help/5002892"
+							}
+						]
+					},
+					{
+						"lines": [
+							{
+								"text": "16.0.5561.1001"
+							},
+							{
+								"text": "16.0.5561.1001"
+							}
+						]
+					},
+					{
+						"lines": [
+							{
+								"text": "July 14, 2026"
+							}
+						]
+					}
+				]
+			]
+		},
+		{
+			"heading": "SharePoint 2013 update history",
+			"header": [
+				"Package Name",
+				"KB Number",
+				"Version",
+				"Release Date"
+			],
+			"rows": [
+				[
+					{
+						"lines": [
+							{
+								"text": "SharePoint Foundation 2013"
+							},
+							{
+								"text": "SharePoint Server 2013"
+							}
+						]
+					},
+					{
+						"lines": [
+							{
+								"text": "KB 5002379",
+								"href": "https://support.microsoft.com/help/5002379"
+							},
+							{
+								"text": "KB 5002381",
+								"href": "https://support.microsoft.com/help/5002381"
+							}
+						]
+					},
+					{
+						"lines": [
+							{
+								"text": "15.0.5545.1000"
+							}
+						]
+					},
+					{
+						"lines": [
+							{
+								"text": "April 2023"
+							}
+						]
+					}
+				],
+				[
+					{
+						"lines": [
+							{
+								"text": "SharePoint Foundation 2013"
+							},
+							{
+								"text": "SharePoint Server 2013"
+							}
+						]
+					},
+					{
+						"lines": [
+							{
+								"text": "KB 5002363",
+								"href": "https://support.microsoft.com/help/5002363"
+							},
+							{
+								"text": "KB 5002366",
+								"href": "https://support.microsoft.com/help/5002366"
+							}
+						]
+					},
+					{
+						"lines": [
+							{
+								"text": "15.0.5537.1000"
+							}
+						]
+					},
+					{
+						"lines": [
+							{
+								"text": "March 2023"
+							}
+						]
+					}
+				]
+			]
+		},
+		{
+			"heading": "SharePoint 2010 update history",
+			"header": [
+				"Package Name",
+				"KB Number",
+				"Version",
+				"Release Date"
+			],
+			"rows": [
+				[
+					{
+						"lines": [
+							{
+								"text": "SharePoint Foundation 2010"
+							},
+							{
+								"text": "SharePoint Server 2010"
+							}
+						]
+					},
+					{
+						"lines": [
+							{
+								"text": "KB 4504709",
+								"href": "https://support.microsoft.com/help/4504709"
+							},
+							{
+								"text": "KB 4504742"
+							}
+						]
+					},
+					{
+						"lines": [
+							{
+								"text": "14.0.7268.5000"
+							}
+						]
+					},
+					{
+						"lines": [
+							{
+								"text": "April 2021"
+							}
+						]
+					}
+				],
+				[
+					{
+						"lines": [
+							{
+								"text": "SharePoint Server 2010"
+							}
+						]
+					},
+					{
+						"lines": [
+							{
+								"text": "KB 4504706"
+							}
+						]
+					},
+					{
+						"lines": [
+							{
+								"text": "14.0.7267.5000"
+							}
+						]
+					},
+					{
+						"lines": [
+							{
+								"text": "March 2021"
+							}
+						]
+					}
+				],
+				[
+					{
+						"lines": [
+							{
+								"text": "SharePoint Foundation 2010"
+							},
+							{
+								"text": "SharePoint Server 2010"
+							}
+						]
+					},
+					{
+						"lines": [
+							{
+								"text": "No update for June."
+							},
+							{
+								"text": "KB 3054880"
+							}
+						]
+					},
+					{
+						"lines": [
+							{
+								"text": "14.0.7151.5001"
+							}
+						]
+					},
+					{
+						"lines": [
+							{
+								"text": "June 2015"
+							}
+						]
+					}
+				],
+				[
+					{
+						"lines": [
+							{
+								"text": "SharePoint Foundation 2010"
+							},
+							{
+								"text": "SharePoint Server 2010"
+							}
+						]
+					},
+					{
+						"lines": [
+							{
+								"text": "KB 2965293"
+							},
+							{
+								"text": "KB 2965294"
+							}
+						]
+					},
+					{
+						"lines": [
+							{
+								"text": "14.0.7147.5000"
+							}
+						]
+					},
+					{
+						"lines": [
+							{
+								"text": "April 2015"
+							}
+						]
+					}
+				],
+				[
+					{
+						"lines": [
+							{
+								"text": "SharePoint Foundation 2010"
+							},
+							{
+								"text": "SharePoint Server 2010"
+							}
+						]
+					},
+					{
+						"lines": [
+							{
+								"text": "KB 2687453"
+							},
+							{
+								"text": "KB 2687464"
+							}
+						]
+					},
+					{
+						"lines": [
+							{
+								"text": "14.0.7015.1000"
+							}
+						]
+					},
+					{
+						"lines": [
+							{
+								"text": "Service Pack 2 July 2013"
+							}
+						]
+					}
+				]
+			]
+		}
+	]
+}
