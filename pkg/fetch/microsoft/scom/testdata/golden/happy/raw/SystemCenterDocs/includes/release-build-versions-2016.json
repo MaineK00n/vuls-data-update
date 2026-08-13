@@ -1,0 +1,168 @@
+{
+	"path": "SystemCenterDocs/includes/release-build-versions-2016.md",
+	"tables": [
+		{
+			"heading": "Management Server (and other components*)",
+			"header": [
+				"Build Number",
+				"KB",
+				"Release Date",
+				"Description"
+			],
+			"rows": [
+				[
+					{
+						"text": "7.2.11719.0"
+					},
+					{},
+					{
+						"text": "September 2016"
+					},
+					{
+						"text": "General Availability release"
+					}
+				],
+				[
+					{
+						"text": "7.2.11759.0"
+					},
+					{
+						"text": "3190029",
+						"href": "https://support.microsoft.com/kb/3190029"
+					},
+					{
+						"text": "October 2016"
+					},
+					{
+						"text": "Update Rollup 1"
+					}
+				],
+				[
+					{
+						"text": "7.2.11822.0"
+					},
+					{
+						"text": "3209591",
+						"href": "https://support.microsoft.com/kb/3209591"
+					},
+					{
+						"text": "February 2017"
+					},
+					{
+						"text": "Update Rollup 2"
+					}
+				]
+			]
+		},
+		{
+			"heading": "Agent and Gateway",
+			"header": [
+				"Build Number",
+				"KB",
+				"Release Date",
+				"Description"
+			],
+			"rows": [
+				[
+					{
+						"text": "8.0.10918.0"
+					},
+					{},
+					{
+						"text": "September 2016"
+					},
+					{
+						"text": "General Availability release"
+					}
+				],
+				[
+					{
+						"text": "8.0.10931.0"
+					},
+					{
+						"text": "3190029",
+						"href": "https://support.microsoft.com/kb/3190029"
+					},
+					{
+						"text": "October 2016"
+					},
+					{
+						"text": "Update Rollup 1"
+					}
+				],
+				[
+					{
+						"text": "8.0.10949.0"
+					},
+					{
+						"text": "3209591",
+						"href": "https://support.microsoft.com/kb/3209591"
+					},
+					{
+						"text": "February 2017"
+					},
+					{
+						"text": "Update Rollup 2"
+					}
+				]
+			]
+		},
+		{
+			"heading": "SCX Agent",
+			"header": [
+				"Build Number",
+				"KB",
+				"Release Date",
+				"Agent Version",
+				"Description"
+			],
+			"rows": [
+				[
+					{
+						"text": "7.6.1064.0"
+					},
+					{},
+					{
+						"text": "September 2016"
+					},
+					{
+						"text": "1.6.2-336"
+					},
+					{
+						"text": "General Availability release"
+					}
+				],
+				[
+					{
+						"text": "7.6.1067.0"
+					},
+					{},
+					{
+						"text": "October 2016"
+					},
+					{
+						"text": "1.6.2-337"
+					},
+					{
+						"text": "Update Rollup 1"
+					}
+				],
+				[
+					{
+						"text": "7.6.1072.0"
+					},
+					{},
+					{
+						"text": "February 2017"
+					},
+					{
+						"text": "1.6.2-338"
+					},
+					{
+						"text": "Update Rollup 2"
+					}
+				]
+			]
+		}
+	]
+}
