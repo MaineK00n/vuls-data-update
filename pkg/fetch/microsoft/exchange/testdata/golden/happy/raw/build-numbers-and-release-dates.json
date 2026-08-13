@@ -1,0 +1,295 @@
+{
+	"url": "https://learn.microsoft.com/en-us/exchange/new-features/build-numbers-and-release-dates",
+	"tables": [
+		{
+			"heading": "Exchange Server SE",
+			"header": [
+				"Product name",
+				"Release date",
+				"Build number (short format)",
+				"Build number (long format)"
+			],
+			"rows": [
+				[
+					{
+						"text": "Exchange Server SE RTM Aug26SU",
+						"href": "https://support.microsoft.com/help/5121573"
+					},
+					{
+						"text": "August 11, 2026"
+					},
+					{
+						"text": "15.2.2562.46"
+					},
+					{
+						"text": "15.02.2562.046"
+					}
+				],
+				[
+					{
+						"text": "Exchange Server SE RTM Jul26SU",
+						"href": "https://support.microsoft.com/help/5103212"
+					},
+					{
+						"text": "July 14, 2026"
+					},
+					{
+						"text": "15.2.2562.45"
+					},
+					{
+						"text": "15.02.2562.045"
+					}
+				],
+				[
+					{
+						"text": "Exchange Server SE RTM",
+						"href": "https://www.microsoft.com/download/details.aspx?id=105683"
+					},
+					{
+						"text": "July 1, 2025"
+					},
+					{
+						"text": "15.2.2562.17"
+					},
+					{
+						"text": "15.02.2562.017"
+					}
+				]
+			]
+		},
+		{
+			"heading": "Exchange Server 2019",
+			"header": [
+				"Product name",
+				"Release date",
+				"Build number (short format)",
+				"Build number (long format)"
+			],
+			"rows": [
+				[
+					{
+						"text": "Exchange Server 2019 CU15 Aug26SU",
+						"href": "https://support.microsoft.com/help/5121574"
+					},
+					{
+						"text": "August 11, 2026"
+					},
+					{
+						"text": "15.2.1748.49"
+					},
+					{
+						"text": "15.02.1748.049"
+					}
+				],
+				[
+					{
+						"text": "Exchange Server 2019 CU14 Aug26SU",
+						"href": "https://support.microsoft.com/help/5121575"
+					},
+					{
+						"text": "August 11, 2026"
+					},
+					{
+						"text": "15.2.1544.44"
+					},
+					{
+						"text": "15.02.1544.044"
+					}
+				],
+				[
+					{
+						"text": "Exchange Server 2019 CU15 Jul26SU",
+						"href": "https://support.microsoft.com/help/5103213"
+					},
+					{
+						"text": "July 14, 2026"
+					},
+					{
+						"text": "15.2.1748.48"
+					},
+					{
+						"text": "15.02.1748.048"
+					}
+				],
+				[
+					{
+						"text": "Exchange Server 2019 CU14 Jul26SU",
+						"href": "https://support.microsoft.com/help/5103214"
+					},
+					{
+						"text": "July 14, 2026"
+					},
+					{
+						"text": "15.2.1544.43"
+					},
+					{
+						"text": "15.02.1544.043"
+					}
+				],
+				[
+					{
+						"text": "Exchange Server 2019 CU15 (2025H1)",
+						"href": "https://www.microsoft.com/download/details.aspx?id=105682"
+					},
+					{
+						"text": "February 10, 2025"
+					},
+					{
+						"text": "15.2.1748.10"
+					},
+					{
+						"text": "15.02.1748.010"
+					}
+				],
+				[
+					{
+						"text": "Exchange Server 2019 CU8 Mar21SU",
+						"href": "https://support.microsoft.com/help/5000871"
+					},
+					{
+						"text": "March 2, 2021"
+					},
+					{
+						"text": "15.2.792.10"
+					},
+					{
+						"text": "15.02.0792.010"
+					}
+				],
+				[
+					{
+						"text": "Exchange Server 2019 CU7 Mar21SU",
+						"href": "https://support.microsoft.com/help/5000871"
+					},
+					{
+						"text": "March 2, 2021"
+					},
+					{
+						"text": "15.2.721.13"
+					},
+					{
+						"text": "15.02.0721.013"
+					}
+				]
+			]
+		},
+		{
+			"heading": "Exchange Server 2016",
+			"header": [
+				"Product name",
+				"Release date",
+				"Build number (short format)",
+				"Build number (long format)"
+			],
+			"rows": [
+				[
+					{
+						"text": "Exchange Server 2016 CU23 Aug26SU",
+						"href": "https://support.microsoft.com/help/5121576"
+					},
+					{
+						"text": "August 11, 2026"
+					},
+					{
+						"text": "15.1.2507.72"
+					},
+					{
+						"text": "15.01.2507.072"
+					}
+				],
+				[
+					{
+						"text": "Exchange Server 2016 CU19 Mar21SU",
+						"href": "https://support.microsoft.com/help/5000871"
+					},
+					{
+						"text": "March 2, 2021"
+					},
+					{
+						"text": "15.1.2176.9"
+					},
+					{
+						"text": "15.01.2176.009"
+					}
+				]
+			]
+		},
+		{
+			"heading": "Exchange Server 2013",
+			"header": [
+				"Product name",
+				"Release date",
+				"Build number (short format)",
+				"Build number (long format)"
+			],
+			"rows": [
+				[
+					{
+						"text": "Exchange Server 2013 CU23 Mar23SU",
+						"href": "https://support.microsoft.com/help/5024296"
+					},
+					{
+						"text": "March 14, 2023"
+					},
+					{
+						"text": "15.0.1497.48"
+					},
+					{
+						"text": "15.00.1497.048"
+					}
+				],
+				[
+					{
+						"text": "Exchange Server 2013 CU23 Mar21SU",
+						"href": "https://support.microsoft.com/help/5000871"
+					},
+					{
+						"text": "March 2, 2021"
+					},
+					{
+						"text": "15.0.1497.12"
+					},
+					{
+						"text": "15.00.1497.012"
+					}
+				],
+				[
+					{
+						"text": "Exchange Server 2013 SP1 Mar21SU",
+						"href": "https://support.microsoft.com/help/5000871"
+					},
+					{
+						"text": "March 2, 2021"
+					},
+					{
+						"text": "15.0.847.64"
+					},
+					{
+						"text": "15.00.0847.064"
+					}
+				]
+			]
+		},
+		{
+			"heading": "Exchange Server 2003",
+			"header": [
+				"Product name",
+				"Release date",
+				"Build number"
+			],
+			"rows": [
+				[
+					{
+						"text": "Exchange Server 2003 post-SP2"
+					},
+					{
+						"text": "August 2006"
+					},
+					{
+						"text": "6.5.7683.0"
+					}
+				]
+			]
+		}
+	]
+}

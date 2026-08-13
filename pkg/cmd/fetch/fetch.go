@@ -89,6 +89,7 @@ import (
 	microsoftCSAF "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/csaf"
 	microsoftCVRF "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/cvrf"
 	microsoftDeployment "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/deployment"
+	microsoftExchange "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/exchange"
 	microsoftMSUC "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/msuc"
 	microsoftProduct "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/product"
 	microsoftServicing "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/servicing"
@@ -255,7 +256,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdLinuxOSV(),
 		newCmdMageiaOSV(),
 		newCmdMavenGHSA(), newCmdMavenGLSA(), newCmdMavenOSV(),
-		newCmdMicrosoftBulletin(), newCmdMicrosoftCVRF(), newCmdMicrosoftCSAF(), newCmdMicrosoftMSUC(), newCmdMicrosoftServicing(), newCmdMicrosoftAdvisory(), newCmdMicrosoftVulnerability(), newCmdMicrosoftProduct(), newCmdMicrosoftDeployment(), newCmdMicrosoftVEX(), newCmdMicrosoftWSUSSCN2(), newCmdMicrosoftAzureOVAL(),
+		newCmdMicrosoftBulletin(), newCmdMicrosoftCVRF(), newCmdMicrosoftCSAF(), newCmdMicrosoftExchange(), newCmdMicrosoftMSUC(), newCmdMicrosoftServicing(), newCmdMicrosoftAdvisory(), newCmdMicrosoftVulnerability(), newCmdMicrosoftProduct(), newCmdMicrosoftDeployment(), newCmdMicrosoftVEX(), newCmdMicrosoftWSUSSCN2(), newCmdMicrosoftAzureOVAL(),
 		newCmdMinimOSOSV(), newCmdMinimOSSecDB(),
 		newCmdMitreATTACK(), newCmdMitreCAPEC(), newCmdMitreCVRF(), newCmdMitreCWE(), newCmdMitreEMB3D(), newCmdMitreV4(), newCmdMitreV5(),
 		newCmdMSF(),
@@ -2629,6 +2630,51 @@ func newCmdMicrosoftCSAF() *cobra.Command {
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
 	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrent http requests")
+	cmd.Flags().DurationVarP(&options.wait, "wait", "", options.wait, "wait duration")
+
+	return cmd
+}
+
+func newCmdMicrosoftExchange() *cobra.Command {
+	options := &struct {
+		base
+		wait time.Duration
+	}{
+		base: base{
+			dir:   filepath.Join(util.CacheDir(), "fetch", "microsoft", "exchange"),
+			retry: 3,
+		},
+		wait: 1 * time.Second,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "microsoft-exchange",
+		Short: "Fetch Microsoft Exchange Build Numbers and Release Dates data source",
+		Long: heredoc.Doc(`
+			Fetch the Exchange Server build numbers and release dates page as HTML into
+			<dir>/origin, and the tables it carries into <dir>/raw.
+
+			The page lists every build Exchange has shipped, from Exchange Server 4.0
+			to the Subscription Edition. The builds that name a KB are the security
+			updates; a cumulative update ships as a download and carries none.
+
+			The KB is not in a column -- it is the link on the product's name -- so the
+			link every cell carries is stored alongside its text.
+		`),
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch microsoft-exchange
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := microsoftExchange.Fetch(microsoftExchange.WithDir(options.dir), microsoftExchange.WithRetry(options.retry), microsoftExchange.WithWait(options.wait)); err != nil {
+				return errors.Wrap(err, "failed to fetch microsoft exchange")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
 	cmd.Flags().DurationVarP(&options.wait, "wait", "", options.wait, "wait duration")
 
 	return cmd
