@@ -1,0 +1,18 @@
+{
+	"kb_id": "5002363",
+	"url": "https://support.microsoft.com/help/5002363",
+	"products": [
+		"SharePoint Foundation 2013"
+	],
+	"superseded_by": [
+		{
+			"kb_id": "5002379"
+		}
+	],
+	"data_source": {
+		"id": "microsoft-sharepoint",
+		"raws": [
+			"sharepoint-updates.json"
+		]
+	}
+}

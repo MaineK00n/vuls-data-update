@@ -90,6 +90,7 @@ const (
 	MicrosoftMSUC              SourceID = "microsoft-msuc"
 	MicrosoftProduct           SourceID = "microsoft-product"
 	MicrosoftServicing         SourceID = "microsoft-servicing"
+	MicrosoftSharePoint        SourceID = "microsoft-sharepoint"
 	MicrosoftVulnerability     SourceID = "microsoft-vulnerability"
 	MicrosoftWSUSSCN2          SourceID = "microsoft-wsusscn2"
 	MinimosSecDB               SourceID = "minimos-secdb"

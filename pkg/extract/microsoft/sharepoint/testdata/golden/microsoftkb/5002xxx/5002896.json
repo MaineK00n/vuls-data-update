@@ -1,0 +1,18 @@
+{
+	"kb_id": "5002896",
+	"url": "https://support.microsoft.com/help/5002896",
+	"products": [
+		"SharePoint Server 2019 MUI/language patch"
+	],
+	"supersedes": [
+		{
+			"kb_id": "5002885"
+		}
+	],
+	"data_source": {
+		"id": "microsoft-sharepoint",
+		"raws": [
+			"sharepoint-updates.json"
+		]
+	}
+}

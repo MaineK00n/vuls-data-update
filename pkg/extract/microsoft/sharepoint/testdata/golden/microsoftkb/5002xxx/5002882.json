@@ -1,0 +1,18 @@
+{
+	"kb_id": "5002882",
+	"url": "https://support.microsoft.com/help/5002882",
+	"products": [
+		"SharePoint Server Subscription Edition"
+	],
+	"superseded_by": [
+		{
+			"kb_id": "5002893"
+		}
+	],
+	"data_source": {
+		"id": "microsoft-sharepoint",
+		"raws": [
+			"sharepoint-updates.json"
+		]
+	}
+}
