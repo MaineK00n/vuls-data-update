@@ -1,0 +1,19 @@
+{
+	"kb_id": "5016714",
+	"url": "https://support.microsoft.com/help/5016714",
+	"products": [
+		"Lync Server 2013 update history",
+		"Skype for Business Server 2019 update history"
+	],
+	"supersedes": [
+		{
+			"kb_id": "5012681"
+		}
+	],
+	"data_source": {
+		"id": "microsoft-sfb",
+		"raws": [
+			"sfb-server-updates.json"
+		]
+	}
+}
