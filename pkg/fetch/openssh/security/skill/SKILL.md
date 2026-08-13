@@ -309,9 +309,7 @@ them here.
 ```
 
 - **`field`** is `cves` or `fixed`. Nothing else — extraction fails on an
-  unrecognized name rather than dropping the claim. This holds for `absent`
-  annotations too, and matters most there: misfiled, an absent record does not
-  merely go missing, it reads as never having been looked at.
+  unrecognized name rather than dropping the claim.
 - **`value`** takes the field's form: a CVE ID, or a release as the source
   writes it (`9.8`, `9.3p2` — §6's rules on version strings apply unchanged).
 - **`source.url`** is the document: as the entry links to it for `origin/txt/`,
@@ -330,23 +328,28 @@ them here.
   characters in your quote that are not in the prose.
 - **`source.retrieved`** is the fetch date of `origin/` (`git log -1
   --format=%ad --date=short -- origin/`), not today's date.
-- **`"absent": true`**, with no `value`, records that you read the document and
-  it states nothing for that field. Write these: most of the 49 CVE-less entries
-  predate CVE IDs, and without the record the next pass re-reads every one of
-  those documents to rediscover that there is nothing there.
 - **`"inapplicable": true`**, with the `value`, records that the document states
   something and it is not this entry's. Keep the value and the quote — they are
-  the record. `absent` is not a substitute: it asserts the document says
-  nothing, which here is false, and a record that misdescribes its own evidence
-  is worse than none.
+  the record.
 
-So three outcomes, and each is worth writing down:
+So two outcomes are worth writing down, and a third is not:
 
 | You read the document and it… | write |
 | --- | --- |
 | names a value that is this entry's | `value` |
-| names nothing for the field | `absent: true` |
 | names a value that is **not** this entry's | `value` + `inapplicable: true` |
+| names nothing for the field | nothing |
+
+That last row is deliberate. Recording "read it, nothing there" sounds like it
+saves the next pass a reading, but on this page it saves a `grep`: five of the
+35 documents under `origin/txt/` name a CVE ID and the other thirty do not, and
+`grep -l 'CVE-[0-9]' origin/txt/*` answers that faster and more reliably than a
+stored record can. It would also be the only annotation with no quote, which
+makes it the only one nothing can check — if a document were revised to name an
+ID, the record would quietly become false with no verification to catch it.
+
+Every annotation you write therefore carries a `value` and a `quote`, without
+exception, which is what makes §8.7 a check on all of them.
 
 In `origin/txt/`, read only what the entry itself links to. A release note for
 some other version is not evidence about this entry, however tempting the
@@ -395,14 +398,11 @@ Two things annotation must not do:
 5. Every `versions[]` version string appears literally in `origin.html`.
 6. `status` is `affected` or `unaffected`, never empty.
 7. Every annotation's `source.quote` appears literally in the file named by
-   `source.origin`, and that file exists. Only annotations that have both are
-   checkable — an `absent` one has no quote, and one citing a document outside
-   `origin/txt/` has no stored copy — so the filter is part of the check, not a
-   convenience:
+   `source.origin`, and that file exists. Every annotation has both, so this
+   covers all of them — a missing `quote` or `origin` is itself the failure:
    ```sh
    shopt -s globstar
-   jq -r '.annotations[]? | select(.source.origin != null and .source.quote != null)
-          | [.source.origin, .source.quote] | @tsv' raw/**/*.json |
+   jq -r '.annotations[]? | [.source.origin, .source.quote] | @tsv' raw/**/*.json |
      while IFS=$'\t' read -r f q; do
        case "$f" in
          # a CVE record is JSON: check the prose, not the escaped bytes

@@ -36,16 +36,6 @@ func TestExtract(t *testing.T) {
 			hasError: true,
 		},
 		{
-			// And the field is checked before absent is honoured, because that
-			// is the case where a misfiled annotation does its damage: an
-			// absent record says the document was read and states nothing, so
-			// filed where nothing looks for it, it reads as never having been
-			// looked at and the next pass re-reads the document.
-			name:     "absent-invalid-field",
-			args:     "./testdata/fixtures/absent-invalid-field",
-			hasError: true,
-		},
-		{
 			// A CVE folded into an entry recording that no release was ever
 			// vulnerable inverts what the entry says, and those entries are
 			// exactly the ones linking notes about SSH at large. Marking it
@@ -56,19 +46,12 @@ func TestExtract(t *testing.T) {
 			hasError: true,
 		},
 		{
-			// An inapplicable annotation without the value it is about records
-			// only that something did not apply, leaving the next pass to
-			// re-read the document to find out what.
-			name:     "inapplicable-no-value",
-			args:     "./testdata/fixtures/inapplicable-no-value",
-			hasError: true,
-		},
-		{
-			// The two outcomes describe the evidence differently -- states
-			// nothing versus states something that is not ours -- so a record
-			// claiming both describes nothing.
-			name:     "absent-and-inapplicable",
-			args:     "./testdata/fixtures/absent-and-inapplicable",
+			// An annotation with no value records only that something was
+			// looked at, leaving the next pass to re-read the document to find
+			// out what -- which is what an annotation exists to prevent. The
+			// fixture marks it inapplicable, where the value is the record.
+			name:     "no-value",
+			args:     "./testdata/fixtures/no-value",
 			hasError: true,
 		},
 	}

@@ -288,15 +288,10 @@ func claim(fetched security.Advisory) (claims, error) {
 	}
 
 	for _, a := range fetched.Annotations {
-		// The field is checked before anything else about the annotation,
-		// absent ones included. Stopped rather than skipped, for the reason the
-		// version pattern is: these records are model-produced, and a claim
-		// filed under a field name nothing reads would be dropped in silence --
-		// which looks exactly like the source having nothing to say. That is
-		// most true of an absent annotation, whose whole purpose is to say the
-		// source was read and states nothing: misfiled, it is not merely lost
-		// but reads as never having been looked at, and the next pass re-reads
-		// the document to rediscover the nothing.
+		// Stopped rather than skipped, for the reason the version pattern is:
+		// these records are model-produced, and a claim filed under a field
+		// name nothing reads would be dropped in silence -- which looks exactly
+		// like the source having nothing to say.
 		var vs *[]string
 		switch a.Field {
 		case annotationFieldCVEs:
@@ -307,31 +302,17 @@ func claim(fetched security.Advisory) (claims, error) {
 			return claims{}, errors.Errorf("unexpected annotation field. expected: %q, actual: %q", []string{annotationFieldCVEs, annotationFieldFixed}, a.Field)
 		}
 
-		if a.Absent && a.Inapplicable {
-			return claims{}, errors.Errorf("unexpected annotation. expected: %q, actual: %q", "at most one of absent and inapplicable", "both")
-		}
-
-		// Neither outcome folds in, and both are results rather than claims:
-		// absent is what keeps "read it, there is nothing there" from reading
-		// like "not looked at yet", and inapplicable does the same for "read
-		// it, what it names is not this entry's". They are kept apart because
-		// they describe the evidence differently, and a record that
-		// misdescribes its own evidence is worse than no record.
-		if a.Absent {
-			continue
-		}
-		if a.Inapplicable {
-			// The value is what makes it a record at all: without it, the next
-			// pass has only "something here does not apply" and re-reads the
-			// document to find out what.
-			if a.Value == "" {
-				return claims{}, errors.Errorf("unexpected annotation. expected: %q, actual: %q", "a value on an inapplicable annotation", "none")
-			}
-			continue
-		}
-
+		// Every annotation carries a value, whether or not it folds in. Without
+		// one there is no record: the next pass has only "something here" and
+		// re-reads the document to find out what.
 		if a.Value == "" {
-			return claims{}, errors.Errorf("unexpected annotation. expected: %q, actual: %q", "a value, or absent set", "neither")
+			return claims{}, errors.Errorf("unexpected annotation. expected: %q, actual: %q", "a value", "none")
+		}
+
+		// Read, and what it names is not this entry's. Recorded rather than
+		// folded, so that the reading is not made again.
+		if a.Inapplicable {
+			continue
 		}
 
 		// A CVE on an entry that exists to record that no OpenSSH release was

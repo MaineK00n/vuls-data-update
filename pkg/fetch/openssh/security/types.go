@@ -135,34 +135,21 @@ type Annotation struct {
 	// extract rather than being skipped, for the same reason a malformed
 	// version does. These records are model-produced, and a claim filed under a
 	// field nothing reads would be silently lost.
-	//
-	// The check runs before Absent is honoured, because that is where a
-	// misfiled annotation does its damage: an absent record misfiled is not
-	// merely lost, it reads as never having been looked at, which is the one
-	// thing it exists to rule out.
 	Field string `json:"field"`
 
 	// Value is what the source states, in the form the field takes: a CVE ID
-	// for "cves", a release for "fixed". Empty when Absent is set, and required
-	// when Inapplicable is -- there, it is the whole point of the record.
-	Value string `json:"value,omitempty"`
+	// for "cves", a release for "fixed". Always set -- an annotation exists to
+	// record a value, including when Inapplicable says it is not this entry's,
+	// where it is the whole point of the record.
+	Value string `json:"value"`
 
-	// Absent records the second of three outcomes: the source was read and
-	// states nothing for Field. It is worth a record because the alternative is
-	// indistinguishable from not having looked -- 49 entries name no CVE, many
-	// of them predate CVE IDs entirely, and without this every later pass would
-	// re-read the same documents to rediscover that there is nothing there.
-	Absent bool `json:"absent,omitempty"`
-
-	// Inapplicable records the third: the source states Value for Field, and it
-	// is not this entry's.
+	// Inapplicable records the second of the two outcomes worth writing down:
+	// the source states Value for Field, and it is not this entry's.
 	//
-	// Absent cannot stand in for this. It asserts the document says nothing,
-	// which here would be false, and a record that misdescribes its own
-	// evidence is worse than no record. Nor can the value simply be omitted:
-	// that is the "not looked at yet" this whole type exists to rule out, and
-	// it costs the same document being re-read and the same judgement being
-	// made again, with nothing written down either time.
+	// Omitting the value instead is not the same record. That is the "not
+	// looked at yet" this type exists to rule out, and it costs the same
+	// document being re-read and the same judgement being made again, with
+	// nothing written down either time.
 	//
 	// It has two occasions on this source. A page entry recording that OpenSSH
 	// was never vulnerable links notes about SSH at large, which do name CVE
@@ -173,8 +160,15 @@ type Annotation struct {
 	// either but no annotation at all, since the reading was inconclusive
 	// rather than negative.
 	//
-	// Extraction folds in neither this nor Absent. The difference between them
-	// is for whoever reads raw/ next.
+	// Extraction does not fold it in; it is for whoever reads raw/ next.
+	//
+	// There is deliberately no counterpart for "the source was read and states
+	// nothing". On this page that outcome is a grep over origin/txt/ away --
+	// five of the 35 stored documents name a CVE ID and the rest do not -- so
+	// recording it caches an answer that is cheaper and more reliable to
+	// recompute. It is also the one record that carries no quote, which makes
+	// it the only kind nothing can check: were a document revised to name an ID,
+	// the record would quietly become false with no verification to catch it.
 	Inapplicable bool `json:"inapplicable,omitempty"`
 
 	// Source is the document the claim was read from.
