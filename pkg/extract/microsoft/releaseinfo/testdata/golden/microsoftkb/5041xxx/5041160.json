@@ -1,0 +1,20 @@
+{
+	"kb_id": "5041160",
+	"url": "https://support.microsoft.com/help/5041160",
+	"superseded_by": [
+		{
+			"kb_id": "5042880"
+		}
+	],
+	"supersedes": [
+		{
+			"kb_id": "5040437"
+		}
+	],
+	"data_source": {
+		"id": "microsoft-releaseinfo",
+		"raws": [
+			"windows-server.json"
+		]
+	}
+}
