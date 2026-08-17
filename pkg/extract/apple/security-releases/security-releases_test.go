@@ -21,8 +21,13 @@ func TestExtract(t *testing.T) {
 			golden: "./testdata/golden/happy",
 		},
 		{
-			name:     "unexpected_macos_marketing_name",
-			args:     "./testdata/fixtures/unexpected_macos_marketing_name",
+			name:     "unexpected_macos_major",
+			args:     "./testdata/fixtures/unexpected_macos_major",
+			hasError: true,
+		},
+		{
+			name:     "unexpected_os_family",
+			args:     "./testdata/fixtures/unexpected_os_family",
 			hasError: true,
 		},
 	}

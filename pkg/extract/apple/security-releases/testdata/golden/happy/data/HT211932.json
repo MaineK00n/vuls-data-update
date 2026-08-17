@@ -1,0 +1,37 @@
+{
+	"id": "HT211932",
+	"advisories": [
+		{
+			"content": {
+				"id": "HT211932",
+				"title": "About the security content of macOS Server 5.11",
+				"references": [
+					{
+						"source": "support.apple.com",
+						"url": "https://support.apple.com/en-us/103041"
+					}
+				],
+				"published": "2020-12-14T00:00:00Z"
+			}
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-2020-9995",
+				"references": [
+					{
+						"source": "support.apple.com",
+						"url": "https://www.cve.org/CVERecord?id=CVE-2020-9995"
+					}
+				]
+			}
+		}
+	],
+	"data_source": {
+		"id": "apple-security-releases",
+		"raws": [
+			"happy/advisories/HT211932.json"
+		]
+	}
+}

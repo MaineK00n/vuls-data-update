@@ -9,6 +9,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"slices"
+	"strconv"
 	"strings"
 	"time"
 
@@ -398,37 +399,45 @@ func parseDate(v string) *time.Time {
 // vulnerability contents are still extracted, and widening the detection
 // scope is a matter of adding patterns here.
 //
-// Submatch 1 is the version; submatch 2 is the Rapid Security Response
-// letter (" (a)" in "iOS 16.5.1 (a)"), which Apple appends to the base OS
-// version it patches.
+// Submatch 1 is the version and submatch 2 the Rapid Security Response
+// letter (" (a)" in "iOS 16.5.1 (a)"): the version fragment is
+// AppleVersionPattern, so a captured bound is by construction what the
+// apple comparator accepts.
 var releasePatterns = []struct {
 	re  *regexp.Regexp
 	cpe string
 }{
-	{regexp.MustCompile(`^macOS(?: (?:Sierra|High Sierra|Mojave|Catalina|Big Sur|Monterey|Ventura|Sonoma|Sequoia|Tahoe))? v?([0-9][0-9.]*[0-9]|[0-9])( \([a-z]\))?$`), "cpe:2.3:o:apple:macos:*:*:*:*:*:*:*:*"},
-	{regexp.MustCompile(`^(?:Mac )?OS X(?: (?:Lion|Mountain Lion|Mavericks|Yosemite|El Capitan))? v?([0-9][0-9.]*[0-9]|[0-9])( \([a-z]\))?$`), "cpe:2.3:o:apple:mac_os_x:*:*:*:*:*:*:*:*"},
-	{regexp.MustCompile(`^iOS v?([0-9][0-9.]*[0-9]|[0-9])( \([a-z]\))?$`), "cpe:2.3:o:apple:iphone_os:*:*:*:*:*:*:*:*"},
-	{regexp.MustCompile(`^iPadOS v?([0-9][0-9.]*[0-9]|[0-9])( \([a-z]\))?$`), "cpe:2.3:o:apple:ipados:*:*:*:*:*:*:*:*"},
-	{regexp.MustCompile(`^(?:watchOS|Watch OS) v?([0-9][0-9.]*[0-9]|[0-9])( \([a-z]\))?$`), "cpe:2.3:o:apple:watchos:*:*:*:*:*:*:*:*"},
-	{regexp.MustCompile(`^tvOS v?([0-9][0-9.]*[0-9]|[0-9])( \([a-z]\))?$`), "cpe:2.3:o:apple:tvos:*:*:*:*:*:*:*:*"},
-	{regexp.MustCompile(`^visionOS v?([0-9][0-9.]*[0-9]|[0-9])( \([a-z]\))?$`), "cpe:2.3:o:apple:visionos:*:*:*:*:*:*:*:*"},
-	{regexp.MustCompile(`^Safari v?([0-9][0-9.]*[0-9]|[0-9])( \([a-z]\))?$`), "cpe:2.3:a:apple:safari:*:*:*:*:*:*:*:*"},
+	{regexp.MustCompile(`^(?:Mac )?OS X(?: (?:Lion|Mountain Lion|Mavericks|Yosemite|El Capitan))? v?` + ccRangeTypes.AppleVersionPattern + `$`), "cpe:2.3:o:apple:mac_os_x:*:*:*:*:*:*:*:*"},
+	{regexp.MustCompile(`^iOS v?` + ccRangeTypes.AppleVersionPattern + `$`), "cpe:2.3:o:apple:iphone_os:*:*:*:*:*:*:*:*"},
+	{regexp.MustCompile(`^iPadOS v?` + ccRangeTypes.AppleVersionPattern + `$`), "cpe:2.3:o:apple:ipados:*:*:*:*:*:*:*:*"},
+	{regexp.MustCompile(`^(?:watchOS|Watch OS) v?` + ccRangeTypes.AppleVersionPattern + `$`), "cpe:2.3:o:apple:watchos:*:*:*:*:*:*:*:*"},
+	{regexp.MustCompile(`^tvOS v?` + ccRangeTypes.AppleVersionPattern + `$`), "cpe:2.3:o:apple:tvos:*:*:*:*:*:*:*:*"},
+	{regexp.MustCompile(`^visionOS v?` + ccRangeTypes.AppleVersionPattern + `$`), "cpe:2.3:o:apple:visionos:*:*:*:*:*:*:*:*"},
+	{regexp.MustCompile(`^Safari v?` + ccRangeTypes.AppleVersionPattern + `$`), "cpe:2.3:a:apple:safari:*:*:*:*:*:*:*:*"},
 }
+
+// macOSReleasePattern matches a macOS OS release of any marketing name:
+// "macOS[ <Name>] <version>[ (<rsr letter>)]", the version closing the
+// name. The name is not captured — it carries no information the version
+// does not, since both the CPE product and the range's lower bound are
+// decided by the major in macOSCriterion — so a new marketing name is a
+// no-op here instead of a yearly enumeration update. "macOS Server
+// <version>" shares the shape and is skipped by macOSCriterion on its
+// major.
+var macOSReleasePattern = regexp.MustCompile(`^macOS(?: [A-Z][A-Za-z]+)* v?` + ccRangeTypes.AppleVersionPattern + `$`)
+
+// osFamilyPattern matches the shape of an OS-family release this extractor
+// does not know — a future "homeOS 1.0" — so that a family Apple adds next
+// to visionOS fails loudly instead of silently losing its detections, the
+// same treatment an unexpected macOS major gets. The historical spellings
+// ("Mac OS X v10.4", "OS X Server 3.0") have a different shape and do not
+// reach it; the known families are matched by releasePatterns first.
+var osFamilyPattern = regexp.MustCompile(`^[A-Za-z]+OS(?: [A-Z][A-Za-z]+)* v?` + ccRangeTypes.AppleVersionPattern + `$`)
 
 // releaseNameSeparators split a combined release name such as
 // "macOS High Sierra 10.13.2, Security Update 2017-002 Sierra, and Security
 // Update 2017-005 El Capitan" or "iOS 26.6 and iPadOS 26.6" into its parts.
 var releaseNameSeparators = regexp.MustCompile(`, and |; and |, |; | and | / `)
-
-// unknownMacOSReleasePattern matches the shape of a macOS OS release —
-// "macOS <Marketing Name> <version>", version closing the name — so that a
-// marketing name missing from releasePatterns fails loudly instead of
-// silently losing its detections when Apple ships the release after Tahoe.
-// macOS is the only family whose enumeration can go stale: the OS X names
-// are historical and closed, and the other families do not carry marketing
-// names. "macOS Server <version>" is the one known lookalike of this shape
-// and is excluded where the pattern is applied.
-var unknownMacOSReleasePattern = regexp.MustCompile(`^macOS (?:[A-Z][A-Za-z]+ )+([0-9][0-9.]*[0-9]|[0-9])(?: \([a-z]\))?$`)
 
 // releaseCriterions maps a release name to CPE criterions, one per part of
 // the name that names an OS release or Safari: the release fixes the listed
@@ -438,6 +447,18 @@ func releaseCriterions(name string) ([]criterionTypes.Criterion, error) {
 	for _, part := range releaseNameSeparators.Split(name, -1) {
 		// a trailing asterisk is a footnote marker, e.g. "Safari 14.1*"
 		part = strings.TrimSpace(strings.TrimSuffix(strings.TrimSpace(part), "*"))
+
+		if m := macOSReleasePattern.FindStringSubmatch(part); m != nil {
+			c, err := macOSCriterion(part, m[1], m[2])
+			if err != nil {
+				return nil, err
+			}
+			if c != nil {
+				cs = append(cs, *c)
+			}
+			continue
+		}
+
 		var matched bool
 		for _, p := range releasePatterns {
 			m := p.re.FindStringSubmatch(part)
@@ -449,24 +470,77 @@ func releaseCriterions(name string) ([]criterionTypes.Criterion, error) {
 			// version is the exclusive bound verbatim: for "iOS 16.5.1 (a)"
 			// the vulnerable base 16.5.1 sorts below the bound and matches,
 			// while the patched 16.5.1 (a) does not
-			cs = append(cs, criterionTypes.Criterion{
-				Type: criterionTypes.CriterionTypeCPE,
-				CPE: &ccTypes.Criterion{
-					Vulnerable: true,
-					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
-					CPE:        ccTypes.CPE(p.cpe),
-					Range: &ccRangeTypes.Range{
-						Type:     ccRangeTypes.RangeTypeApple,
-						LessThan: m[1] + m[2],
-					},
-					Fixed: []string{m[1] + m[2]},
-				},
-			})
+			cs = append(cs, releaseCriterion(p.cpe, &ccRangeTypes.Range{
+				Type:     ccRangeTypes.RangeTypeApple,
+				LessThan: m[1] + m[2],
+			}, m[1]+m[2]))
 			break
 		}
-		if !matched && unknownMacOSReleasePattern.MatchString(part) && !strings.HasPrefix(part, "macOS Server ") {
-			return nil, errors.Errorf("unexpected macOS marketing name. expected: enumerated in releasePatterns, actual: %q", part)
+		if !matched && osFamilyPattern.MatchString(part) {
+			return nil, errors.Errorf("unexpected OS family release name. expected: matched by releasePatterns, actual: %q", part)
 		}
 	}
 	return cs, nil
+}
+
+// macOSCriterion maps a macOS release to its criterion, deciding both the
+// CPE product and the range by the major version.
+//
+// The product split follows NVD, which files Apple's desktop OS under
+// apple:mac_os_x through 10.15 and under apple:macos from 11.0 — not at the
+// Sierra rename: the NVD feed uses mac_os_x roughly 99:1 for the 10.12-10.15
+// generations, so criteria under apple:macos there would never meet a query
+// CPE derived from the NVD dictionary. Majors of 11 and later also carry the
+// lower bound ge <major>.0: Apple ships one advisory per supported major on
+// the same day, and with an upper bound alone a host on an older major would
+// match every newer major's advisory. NVD models the same per-major
+// intervals (versionStartIncluding 13.0 / 14.0 / 15.0 / ...), and every
+// lower bound it uses for apple:macos is such a major boundary. The 10.x
+// generations stay upper-only like the other families, matching NVD's
+// modeling of their era.
+//
+// "macOS Server <version>" shares the release-name shape and is skipped;
+// any other major outside the known macOS ones — 10.12 through 10.15 and 11
+// or later — is unexpected and errors loudly.
+func macOSCriterion(part, version, rsr string) (*criterionTypes.Criterion, error) {
+	major, rest, _ := strings.Cut(version, ".")
+	switch n, err := strconv.Atoi(major); {
+	case err != nil:
+		return nil, errors.Wrapf(err, "parse major of %q", version)
+	case n >= 11:
+		c := releaseCriterion("cpe:2.3:o:apple:macos:*:*:*:*:*:*:*:*", &ccRangeTypes.Range{
+			Type:         ccRangeTypes.RangeTypeApple,
+			GreaterEqual: fmt.Sprintf("%d.0", n),
+			LessThan:     version + rsr,
+		}, version+rsr)
+		return &c, nil
+	case n == 10:
+		minor, _, _ := strings.Cut(rest, ".")
+		if mn, err := strconv.Atoi(minor); err == nil && mn >= 12 && mn <= 15 {
+			c := releaseCriterion("cpe:2.3:o:apple:mac_os_x:*:*:*:*:*:*:*:*", &ccRangeTypes.Range{
+				Type:     ccRangeTypes.RangeTypeApple,
+				LessThan: version + rsr,
+			}, version+rsr)
+			return &c, nil
+		}
+		fallthrough
+	default:
+		if strings.HasPrefix(part, "macOS Server ") {
+			return nil, nil
+		}
+		return nil, errors.Errorf("unexpected macOS major. expected: 10.12-10.15 or >= 11, actual: %q", part)
+	}
+}
+
+func releaseCriterion(cpe string, r *ccRangeTypes.Range, fixed string) criterionTypes.Criterion {
+	return criterionTypes.Criterion{
+		Type: criterionTypes.CriterionTypeCPE,
+		CPE: &ccTypes.Criterion{
+			Vulnerable: true,
+			FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
+			CPE:        ccTypes.CPE(cpe),
+			Range:      r,
+			Fixed:      []string{fixed},
+		},
+	}
 }

@@ -4,9 +4,9 @@
 	"title": "Apple security releases",
 	"releases": [
 		{
-			"name": "macOS Zion 27.1",
-			"url": "https://support.apple.com/en-us/128999",
-			"available_for": "macOS Zion",
+			"name": "homeOS 1.0",
+			"url": "https://support.apple.com/en-us/128997",
+			"available_for": "HomePod hub",
 			"release_date": "01 Apr 2027"
 		}
 	]

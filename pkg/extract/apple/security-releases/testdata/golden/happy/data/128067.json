@@ -72,6 +72,7 @@
 									"cpe": "cpe:2.3:o:apple:macos:*:*:*:*:*:*:*:*",
 									"range": {
 										"type": "apple",
+										"ge": "26.0",
 										"lt": "26.6"
 									},
 									"fixed": [

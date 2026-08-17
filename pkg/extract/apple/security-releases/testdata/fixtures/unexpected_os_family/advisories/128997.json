@@ -1,10 +1,10 @@
 {
-	"id": "128999",
-	"url": "https://support.apple.com/en-us/128999",
-	"title": "About the security content of macOS Zion 27.1",
+	"id": "128997",
+	"url": "https://support.apple.com/en-us/128997",
+	"title": "About the security content of homeOS 1.0",
 	"sections": [
 		{
-			"name": "macOS Zion 27.1",
+			"name": "homeOS 1.0",
 			"entries": [
 				{
 					"notes": [
@@ -14,7 +14,7 @@
 				{
 					"component": "Kernel",
 					"available_for": [
-						"macOS Zion"
+						"HomePod hub"
 					],
 					"impact": [
 						"An app may be able to execute arbitrary code with kernel privileges."
@@ -23,7 +23,7 @@
 						"The issue was addressed with improved memory handling."
 					],
 					"ids": [
-						"CVE-2027-99999: an anonymous researcher"
+						"CVE-2027-99998: an anonymous researcher"
 					]
 				}
 			]
