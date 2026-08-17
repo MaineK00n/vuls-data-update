@@ -258,6 +258,48 @@ func TestBuildFixedBuildCriterion(t *testing.T) {
 			},
 			want: nil,
 		},
+		{
+			name: "Visual Studio 2026 Version 18.8",
+			args: args{
+				cveID:         "CVE-2026-62871",
+				productName:   "Microsoft Visual Studio 2026 Version 18.8",
+				rawFixedBuild: "18.8.3",
+			},
+			want: &criterionTypes.Criterion{
+				Type: criterionTypes.CriterionTypeVersion,
+				Version: &vcTypes.Criterion{
+					Vulnerable: true,
+					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
+					Package: packageTypes.Package{
+						Type:   packageTypes.PackageTypeBinary,
+						Binary: &binaryTypes.Package{Name: "Microsoft Visual Studio 2026 Version 18.8"},
+					},
+					Affected: &affectedTypes.Affected{
+						Type:  affectedrangeTypes.RangeTypeMicrosoftVisualStudio,
+						Range: []affectedrangeTypes.Range{{LessThan: "18.8.3"}},
+						Fixed: []string{"18.8.3"},
+					},
+				},
+			},
+		},
+		{
+			name: "CVE-2021-34448 Windows 7 IE Cumulative 1.001 skipped",
+			args: args{
+				cveID:         "CVE-2021-34448",
+				productName:   "Windows 7 for 32-bit Systems Service Pack 1",
+				rawFixedBuild: "1.001",
+			},
+			want: nil,
+		},
+		{
+			name: "CVE-2021-40444 Windows Server 2012 R2 Server Core IE Cumulative 1.001 skipped",
+			args: args{
+				cveID:         "CVE-2021-40444",
+				productName:   "Windows Server 2012 R2 (Server Core installation)",
+				rawFixedBuild: "1.001",
+			},
+			want: nil,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -307,6 +349,21 @@ func TestFixedBuildOverrides(t *testing.T) {
 		{
 			name: "CVE-2026-50480 Windows Server 2012 R2 Server Core",
 			key:  [3]string{"CVE-2026-50480", "Windows Server 2012 R2 (Server Core installation)", "1.000"},
+			want: "",
+		},
+		{
+			name: "CVE-2021-34446 Windows 7 32-bit",
+			key:  [3]string{"CVE-2021-34446", "Windows 7 for 32-bit Systems Service Pack 1", "1.001"},
+			want: "",
+		},
+		{
+			name: "CVE-2021-34480 Windows 8.1 x64",
+			key:  [3]string{"CVE-2021-34480", "Windows 8.1 for x64-based Systems", "1.001"},
+			want: "",
+		},
+		{
+			name: "CVE-2021-40444 Windows Server 2008 R2 Server Core",
+			key:  [3]string{"CVE-2021-40444", "Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)", "1.001"},
 			want: "",
 		},
 		// Branch-leaked Windows OS FixedBuild (sibling-servicing-branch leak in
