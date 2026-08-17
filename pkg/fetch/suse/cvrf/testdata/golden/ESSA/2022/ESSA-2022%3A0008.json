@@ -1,0 +1,223 @@
+{
+	"document_title": "SLES ES build of RHSA-2022:0258",
+	"document_type": "SUSE Patch",
+	"document_publisher": {
+		"type": "Vendor",
+		"contact_details": "security@suse.de",
+		"issuing_authority": "SUSE Security Team"
+	},
+	"document_tracking": {
+		"identification": {
+			"id": "ESSA-2022:0008"
+		},
+		"status": "Final",
+		"version": "1",
+		"revision_history": {
+			"revision": {
+				"number": "1",
+				"date": "2022-01-26T02:37:20Z",
+				"description": "current"
+			}
+		},
+		"initial_release_date": "2022-01-26T02:37:20Z",
+		"current_release_date": "2022-01-26T02:37:20Z",
+		"generator": {
+			"engine": "cve-database/bin/generate-cvrf.pl",
+			"date": "2017-02-24T01:00:00Z"
+		}
+	},
+	"document_notes": [
+		{
+			"text": "SLES ES build of RHSA-2022:0258",
+			"title": "Topic",
+			"type": "Summary"
+		},
+		{
+			"text": "SLES Expanded Support platform 8 update: 0258",
+			"title": "Details",
+			"type": "General"
+		},
+		{
+			"text": "The CVRF data is provided by SUSE under the Creative Commons License 4.0 with Attribution (CC-BY-4.0).",
+			"title": "Terms of Use",
+			"type": "Legal Disclaimer"
+		},
+		{
+			"text": "ESSA-2022:0008",
+			"title": "Patchnames",
+			"type": "Details"
+		}
+	],
+	"documentdistribution": "Copyright SUSE LLC under the Creative Commons License 4.0 with Attribution (CC-BY-4.0)",
+	"document_references": [
+		{
+			"type": "Self",
+			"url": "https://www.suse.com/support/security/rating/",
+			"description": "SUSE Security Ratings"
+		}
+	],
+	"product_tree": {
+		"branch": [
+			{
+				"type": "Product Family",
+				"name": "SUSE Liberty Linux 8",
+				"branch": [
+					{
+						"type": "Product Name",
+						"name": "SUSE Liberty Linux 8",
+						"full_product_name": {
+							"text": "SUSE Liberty Linux 8",
+							"product_id": "SUSE Liberty Linux 8",
+							"cpe": "cpe:/o:suse:sll:8"
+						}
+					}
+				]
+			},
+			{
+				"type": "Product Version",
+				"name": "httpd-2.4.37-43.module+el8.5.0+13806+b30d9eec.1",
+				"full_product_name": {
+					"text": "httpd-2.4.37-43.module+el8.5.0+13806+b30d9eec.1",
+					"product_id": "httpd-2.4.37-43.module+el8.5.0+13806+b30d9eec.1"
+				}
+			},
+			{
+				"type": "Product Version",
+				"name": "httpd-devel-2.4.37-43.module+el8.5.0+13806+b30d9eec.1",
+				"full_product_name": {
+					"text": "httpd-devel-2.4.37-43.module+el8.5.0+13806+b30d9eec.1",
+					"product_id": "httpd-devel-2.4.37-43.module+el8.5.0+13806+b30d9eec.1"
+				}
+			},
+			{
+				"type": "Product Version",
+				"name": "httpd-filesystem-2.4.37-43.module+el8.5.0+13806+b30d9eec.1",
+				"full_product_name": {
+					"text": "httpd-filesystem-2.4.37-43.module+el8.5.0+13806+b30d9eec.1",
+					"product_id": "httpd-filesystem-2.4.37-43.module+el8.5.0+13806+b30d9eec.1"
+				}
+			},
+			{
+				"type": "Product Version",
+				"name": "httpd-manual-2.4.37-43.module+el8.5.0+13806+b30d9eec.1",
+				"full_product_name": {
+					"text": "httpd-manual-2.4.37-43.module+el8.5.0+13806+b30d9eec.1",
+					"product_id": "httpd-manual-2.4.37-43.module+el8.5.0+13806+b30d9eec.1"
+				}
+			},
+			{
+				"type": "Product Version",
+				"name": "httpd-tools-2.4.37-43.module+el8.5.0+13806+b30d9eec.1",
+				"full_product_name": {
+					"text": "httpd-tools-2.4.37-43.module+el8.5.0+13806+b30d9eec.1",
+					"product_id": "httpd-tools-2.4.37-43.module+el8.5.0+13806+b30d9eec.1"
+				}
+			},
+			{
+				"type": "Product Version",
+				"name": "mod_http2-1.15.7-3.module+el8.4.0+8625+d397f3da",
+				"full_product_name": {
+					"text": "mod_http2-1.15.7-3.module+el8.4.0+8625+d397f3da",
+					"product_id": "mod_http2-1.15.7-3.module+el8.4.0+8625+d397f3da"
+				}
+			},
+			{
+				"type": "Product Version",
+				"name": "mod_ldap-2.4.37-43.module+el8.5.0+13806+b30d9eec.1",
+				"full_product_name": {
+					"text": "mod_ldap-2.4.37-43.module+el8.5.0+13806+b30d9eec.1",
+					"product_id": "mod_ldap-2.4.37-43.module+el8.5.0+13806+b30d9eec.1"
+				}
+			},
+			{
+				"type": "Product Version",
+				"name": "mod_md-2.0.8-8.module+el8.3.0+6814+67d1e611",
+				"full_product_name": {
+					"text": "mod_md-2.0.8-8.module+el8.3.0+6814+67d1e611",
+					"product_id": "mod_md-2.0.8-8.module+el8.3.0+6814+67d1e611"
+				}
+			},
+			{
+				"type": "Product Version",
+				"name": "mod_proxy_html-2.4.37-43.module+el8.5.0+13806+b30d9eec.1",
+				"full_product_name": {
+					"text": "mod_proxy_html-2.4.37-43.module+el8.5.0+13806+b30d9eec.1",
+					"product_id": "mod_proxy_html-2.4.37-43.module+el8.5.0+13806+b30d9eec.1"
+				}
+			},
+			{
+				"type": "Product Version",
+				"name": "mod_session-2.4.37-43.module+el8.5.0+13806+b30d9eec.1",
+				"full_product_name": {
+					"text": "mod_session-2.4.37-43.module+el8.5.0+13806+b30d9eec.1",
+					"product_id": "mod_session-2.4.37-43.module+el8.5.0+13806+b30d9eec.1"
+				}
+			},
+			{
+				"type": "Product Version",
+				"name": "mod_ssl-2.4.37-43.module+el8.5.0+13806+b30d9eec.1",
+				"full_product_name": {
+					"text": "mod_ssl-2.4.37-43.module+el8.5.0+13806+b30d9eec.1",
+					"product_id": "mod_ssl-2.4.37-43.module+el8.5.0+13806+b30d9eec.1"
+				}
+			}
+		],
+		"relationship": [
+			{
+				"product_reference": "httpd-2.4.37-43.module+el8.5.0+13806+b30d9eec.1",
+				"relation_type": "Default Component Of",
+				"relates_to_product_reference": "SUSE Liberty Linux 8"
+			},
+			{
+				"product_reference": "httpd-devel-2.4.37-43.module+el8.5.0+13806+b30d9eec.1",
+				"relation_type": "Default Component Of",
+				"relates_to_product_reference": "SUSE Liberty Linux 8"
+			},
+			{
+				"product_reference": "httpd-filesystem-2.4.37-43.module+el8.5.0+13806+b30d9eec.1",
+				"relation_type": "Default Component Of",
+				"relates_to_product_reference": "SUSE Liberty Linux 8"
+			},
+			{
+				"product_reference": "httpd-manual-2.4.37-43.module+el8.5.0+13806+b30d9eec.1",
+				"relation_type": "Default Component Of",
+				"relates_to_product_reference": "SUSE Liberty Linux 8"
+			},
+			{
+				"product_reference": "httpd-tools-2.4.37-43.module+el8.5.0+13806+b30d9eec.1",
+				"relation_type": "Default Component Of",
+				"relates_to_product_reference": "SUSE Liberty Linux 8"
+			},
+			{
+				"product_reference": "mod_http2-1.15.7-3.module+el8.4.0+8625+d397f3da",
+				"relation_type": "Default Component Of",
+				"relates_to_product_reference": "SUSE Liberty Linux 8"
+			},
+			{
+				"product_reference": "mod_ldap-2.4.37-43.module+el8.5.0+13806+b30d9eec.1",
+				"relation_type": "Default Component Of",
+				"relates_to_product_reference": "SUSE Liberty Linux 8"
+			},
+			{
+				"product_reference": "mod_md-2.0.8-8.module+el8.3.0+6814+67d1e611",
+				"relation_type": "Default Component Of",
+				"relates_to_product_reference": "SUSE Liberty Linux 8"
+			},
+			{
+				"product_reference": "mod_proxy_html-2.4.37-43.module+el8.5.0+13806+b30d9eec.1",
+				"relation_type": "Default Component Of",
+				"relates_to_product_reference": "SUSE Liberty Linux 8"
+			},
+			{
+				"product_reference": "mod_session-2.4.37-43.module+el8.5.0+13806+b30d9eec.1",
+				"relation_type": "Default Component Of",
+				"relates_to_product_reference": "SUSE Liberty Linux 8"
+			},
+			{
+				"product_reference": "mod_ssl-2.4.37-43.module+el8.5.0+13806+b30d9eec.1",
+				"relation_type": "Default Component Of",
+				"relates_to_product_reference": "SUSE Liberty Linux 8"
+			}
+		]
+	}
+}
