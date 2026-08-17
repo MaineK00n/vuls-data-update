@@ -13,6 +13,7 @@ import (
 
 	warningTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/warning"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/internal/enum"
+	appleVersion "github.com/MaineK00n/vuls-data-update/pkg/extract/types/internal/version/apple"
 )
 
 // RangeType selects the version comparator used by CompareVersions / Accept
@@ -250,6 +251,14 @@ func (t RangeType) Compare(u RangeType) int {
 
 var vocabulary = enum.NewVocabulary(RangeTypes())
 
+// AppleVersionPattern re-exports the apple version-shape regexp fragment
+// (submatch 1 the dotted numeric version, submatch 2 the optional Rapid
+// Security Response letter) for producers outside types/ —
+// internal/version/apple is not importable there. The apple extractor embeds
+// it in its release-name patterns so that what it captures as a bound is by
+// construction what the apple comparator accepts.
+const AppleVersionPattern = appleVersion.Pattern
+
 // Range is a version constraint for a CPE criterion. Type selects the
 // comparator; bounds are inclusive (Greater/LessEqual) or exclusive
 // (Greater/LessThan). Unlike versioncriterion/affected/Range there is no
@@ -388,11 +397,11 @@ func (t RangeType) CompareVersions(v1, v2 string) (int, error) {
 		// after the base version it patches: 16.5.1 < 16.5.1 (a) < 16.5.1
 		// (c) < 16.5.2. hashicorp comparators cannot parse the letter form
 		// at all, hence the dedicated comparator.
-		va, err := newAppleVersion(v1)
+		va, err := appleVersion.NewVersion(v1)
 		if err != nil {
 			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
 		}
-		vb, err := newAppleVersion(v2)
+		vb, err := appleVersion.NewVersion(v2)
 		if err != nil {
 			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
 		}
