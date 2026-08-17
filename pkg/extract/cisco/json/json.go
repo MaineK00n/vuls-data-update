@@ -520,13 +520,21 @@ var productConversions = []productConversion{
 
 // knownUnparseableProductNames lists product names whose version string the
 // go-cisco-version parsers reject but which are known, accepted artifacts of
-// the upstream data (a truncated version, or a letter-suffixed build that the
-// parser does not model). These are skipped silently. Any OTHER parse failure
+// the upstream data (a truncated version, a letter-suffixed build that the
+// parser does not model, or a misspelled family-level entry carrying no
+// version at all). These are skipped silently. Any OTHER parse failure
 // is treated as a hard error (see convertProductName) so that a newly
 // introduced malformed pattern surfaces loudly instead of being dropped.
 var knownUnparseableProductNames = map[string]struct{}{
 	"Cisco IOS XE Software .0":                   {}, // cisco-sa-20170201-cbr
 	"Cisco IOS XE Software .1":                   {}, // cisco-sa-20170201-cbr
+	"Cisco IOS XE Software (3)S":                 {}, // cisco-sa-hardening-iosxe-V8NMuMZJ
+	"Cisco IOS XE Software (3)S1":                {}, // cisco-sa-hardening-iosxe-V8NMuMZJ
+	"Cisco IOS XE Software (3)S2":                {}, // cisco-sa-hardening-iosxe-V8NMuMZJ
+	"Cisco IOS XE Software (3)S2.1":              {}, // cisco-sa-hardening-iosxe-V8NMuMZJ
+	"Cisco IOS XE Software 3)S":                  {}, // cisco-sa-hardening-iosxe-V8NMuMZJ
+	"Cisco IOS XE Software (1.14)T":              {}, // cisco-sa-hardening-iosxe-V8NMuMZJ
+	"Cisco IOS XG Software ":                     {}, // cisco-sa-webui-dos-qdc7qx3 ("IOS XG" is an upstream typo; family-level entry with no version)
 	"Cisco Wireless LAN Controller (WLC) 3.6.0E": {}, // cisco-sa-20181017-wlc-gui-privesc, cisco-sa-20160831-wlc-2, cisco-sa-20160831-wlc-1
 }
 
