@@ -2,14 +2,13 @@ package util_test
 
 import (
 	"fmt"
-	"io/fs"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
-	"github.com/pkg/errors"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
 )
@@ -39,10 +38,15 @@ func TestUnique(t *testing.T) {
 func TestRemoveAll(t *testing.T) {
 	type args struct {
 		root string
+		opts []util.RemoveOption
 	}
 	tests := []struct {
-		name    string
-		args    args
+		name string
+		args args
+		// entries are created directly under root before the call; each is a
+		// directory when it ends in "/" and a file otherwise.
+		entries []string
+		want    []string
 		wantErr bool
 	}{
 		{
@@ -50,35 +54,98 @@ func TestRemoveAll(t *testing.T) {
 			args: args{
 				root: "happy",
 			},
+			entries: []string{".git/", "test.json"},
+			want:    []string{".git"},
+		},
+		{
+			// The option states the whole set, so .git has to be named to
+			// survive alongside what the call adds.
+			name: "keep",
+			args: args{
+				root: "keep",
+				opts: []util.RemoveOption{util.WithKeep(".git", "raw")},
+			},
+			entries: []string{".git/", "raw/", "origin/", ".claude/", "test.json"},
+			want:    []string{".git", "raw"},
+		},
+		{
+			// Which is also what makes .git droppable, the one way to empty a
+			// tree completely.
+			name: "keep nothing",
+			args: args{
+				root: "nothing",
+				opts: []util.RemoveOption{util.WithKeep()},
+			},
+			entries: []string{".git/", "raw/", "test.json"},
+			want:    []string{},
+		},
+		{
+			// Repeating the option replaces rather than accumulates.
+			name: "last option wins",
+			args: args{
+				root: "last",
+				opts: []util.RemoveOption{util.WithKeep(".git"), util.WithKeep("raw")},
+			},
+			entries: []string{".git/", "raw/", "test.json"},
+			want:    []string{"raw"},
+		},
+		{
+			// A kept name is the entry's own name, not a suffix of it: keeping
+			// "raw" must not spare "rawdata".
+			name: "keep is not a suffix match",
+			args: args{
+				root: "keep-exact",
+				opts: []util.RemoveOption{util.WithKeep("raw")},
+			},
+			entries: []string{"raw/", "rawdata/", "vuls-data-raw/"},
+			want:    []string{"raw"},
+		},
+		{
+			// Same for the implicit .git.
+			name: "git is not a suffix match",
+			args: args{
+				root: "git-exact",
+			},
+			entries: []string{".git/", "bare.git/"},
+			want:    []string{".git"},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			d := filepath.Join(t.TempDir(), tt.args.root)
 			if err := os.MkdirAll(d, 0750); err != nil {
-				t.Error("unexpected error:", err)
+				t.Fatal("unexpected error:", err)
 			}
 
-			if err := os.Mkdir(filepath.Join(d, ".git"), 0750); err != nil {
-				t.Error("unexpected error:", err)
+			for _, e := range tt.entries {
+				if name, ok := strings.CutSuffix(e, "/"); ok {
+					if err := os.Mkdir(filepath.Join(d, name), 0750); err != nil {
+						t.Fatal("unexpected error:", err)
+					}
+					continue
+				}
+				f, err := os.Create(filepath.Join(d, e))
+				if err != nil {
+					t.Fatal("unexpected error:", err)
+				}
+				f.Close()
 			}
 
-			f, err := os.Create(filepath.Join(d, "test.json"))
-			if err != nil {
-				t.Error("unexpected error:", err)
-			}
-			defer f.Close()
-
-			if err := util.RemoveAll(d); (err != nil) != tt.wantErr {
+			if err := util.RemoveAll(d, tt.args.opts...); (err != nil) != tt.wantErr {
 				t.Errorf("RemoveAll() error = %v, wantErr %v", err, tt.wantErr)
 			}
 
-			if _, err := os.Stat(filepath.Join(d, ".git")); errors.Is(err, fs.ErrNotExist) {
-				t.Error(".git is not exist")
+			es, err := os.ReadDir(d)
+			if err != nil {
+				t.Fatal("unexpected error:", err)
+			}
+			got := make([]string, 0, len(es))
+			for _, e := range es {
+				got = append(got, e.Name())
 			}
 
-			if _, err := os.Stat(filepath.Join(d, "test.json")); err == nil {
-				t.Error("test.json is exist")
+			if diff := cmp.Diff(tt.want, got, cmpopts.SortSlices(func(x, y string) bool { return x < y })); diff != "" {
+				t.Errorf("RemoveAll(). (-expected +got):\n%s", diff)
 			}
 		})
 	}

@@ -26,7 +26,7 @@ GOEXPERIMENT=jsonv2 go test ./...
 - **Deterministic JSON**: Use `encoding/json/v2` with `json.Deterministic(true)` and tab indent via `util.Write()`
 - **Sort/Compare**: `Sort()` recursively normalizes nested slices; map key ordering is provided by `json.Deterministic(true)` during encoding
 - **Golden tests**: Fixtures in `testdata/fixtures/`, golden output in `testdata/golden/`. Use `pkg/extract/util/test` helpers
-- **Cleanup**: Use `util.RemoveAll(dir)` — preserves `README.md` and `.git`
+- **Cleanup**: Use `util.RemoveAll(dir)` — preserves `.git`. Pass `util.WithKeep(...)` to state a different keep set; it replaces the default rather than adding to it, so name `.git` to retain it
 - **Cache**: `util.CacheDir()` defaults to `<os.UserCacheDir()>/vuls-data-update` (with a temp-dir fallback)
 
 ## Rules & Docs

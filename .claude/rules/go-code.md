@@ -80,7 +80,9 @@
 
 ## Cleanup Helpers
 
-- Use `util.RemoveAll(dir)` when cleaning output trees — it preserves `README.md` and `.git` directories
+- Use `util.RemoveAll(dir)` when cleaning output trees — it preserves `.git`
+- Pass `util.WithKeep(...)` when part of the tree is not produced by the step doing the cleaning and cannot be rebuilt by it. It states the whole keep set rather than adding to the default, so name `.git` alongside whatever else is kept: `util.RemoveAll(dir, util.WithKeep(".git", "raw"))`. Names match an entry's own name, not a suffix of the path
+- Prefer that over narrowing the call to a subdirectory. Narrowing spares the rest of the tree from being swept at all, so a file an older version of the step wrote and the current one does not will sit there indefinitely
 - `util.CacheDir()` defaults to `<os.UserCacheDir()>/vuls-data-update` (with a temp-dir fallback if the user cache directory is unavailable)
 
 ## Consistency With Surrounding Code
