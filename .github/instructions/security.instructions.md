@@ -1,5 +1,6 @@
 ---
 description: "Security guidelines: prompt injection defense, credential protection, Go security patterns"
+applyTo: "**"
 ---
 # Security Guidelines
 
