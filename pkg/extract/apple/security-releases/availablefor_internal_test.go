@@ -8,14 +8,15 @@ import (
 
 func TestParseAvailableFor(t *testing.T) {
 	tests := []struct {
-		name string
-		arg  string
-		want *availableFor
+		name     string
+		arg      string
+		want     *availableFor
+		hasError bool
 	}{
 		{
 			name: "a line with no version, the shape a third of the macOS entries use",
 			arg:  "macOS Sonoma",
-			want: &availableFor{line: "14", low: "14"},
+			want: &availableFor{line: "14"},
 		},
 		{
 			name: "a version closes the range itself",
@@ -40,7 +41,7 @@ func TestParseAvailableFor(t *testing.T) {
 		{
 			name: "or later states the lower end only",
 			arg:  "Mac OS X v10.6.2 or later",
-			want: &availableFor{line: "10.6", low: "10.6.2"},
+			want: &availableFor{line: "10.6", low: "10.6.2", orLater: true},
 		},
 		{
 			name: "server sits after the system name",
@@ -58,14 +59,24 @@ func TestParseAvailableFor(t *testing.T) {
 			want: &availableFor{line: "10.3", high: "10.3.9"},
 		},
 		{
-			name: "an x stands in for the patch level",
+			name: "an x stands in for every patch level, naming the line",
 			arg:  "Mac OS X v10.3.x",
-			want: &availableFor{line: "10.3", high: "10.3"},
+			want: &availableFor{line: "10.3", low: "10.3"},
 		},
 		{
 			name: "a stray Impact paragraph is folded into the field",
 			arg:  "OS X Lion v10.7.3\nImpact: The Java browser plugin",
 			want: &availableFor{line: "10.7", high: "10.7.3"},
+		},
+		{
+			name: "and later states the lower end too",
+			arg:  "OS X Mountain Lion 10.8 and later",
+			want: &availableFor{line: "10.8", low: "10.8", orLater: true},
+		},
+		{
+			name: "a version equal to the start of its line names the line",
+			arg:  "macOS Catalina 10.15",
+			want: &availableFor{line: "10.15", low: "10.15"},
 		},
 		{
 			name: "hardware names no system",
@@ -77,10 +88,23 @@ func TestParseAvailableFor(t *testing.T) {
 			arg:  "Mac OS X",
 			want: nil,
 		},
+		{
+			name:     "a marketing name this does not know",
+			arg:      "macOS Ridgecrest",
+			hasError: true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := parseAvailableFor(tt.arg)
+			got, err := parseAvailableFor(tt.arg)
+			switch {
+			case err != nil && !tt.hasError:
+				t.Error("unexpected error:", err)
+			case err == nil && tt.hasError:
+				t.Error("expected error has not occurred")
+			case err != nil && tt.hasError:
+				return
+			}
 			if diff := cmp.Diff(tt.want, got, cmp.AllowUnexported(availableFor{})); diff != "" {
 				t.Errorf("parseAvailableFor(). (-expected +got):\n%s", diff)
 			}

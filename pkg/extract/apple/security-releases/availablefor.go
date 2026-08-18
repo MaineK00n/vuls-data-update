@@ -1,12 +1,15 @@
 package securityreleases
 
 import (
+	"cmp"
 	"fmt"
 	"reflect"
 	"regexp"
 	"slices"
 	"strconv"
 	"strings"
+
+	"github.com/pkg/errors"
 
 	criterionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion"
 	ccRangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/cpecriterion/range"
@@ -56,34 +59,54 @@ const (
 )
 
 var (
-	osWordPattern     = regexp.MustCompile(`(?i)` + osWord)
-	serverWordPattern = regexp.MustCompile(`(?i)\bserver\b`)
-	osWordAtStart     = regexp.MustCompile(`(?i)^` + osWord + `\b`)
-	serverAtStart     = regexp.MustCompile(serverWord)
-	afRangePattern    = regexp.MustCompile(`(?i)^` + afVersion + `\s+(?:through|to)\s+(?:` + osWord + `\s+)?(?:server\s+)?` + afVersion)
-	afOrLaterPattern  = regexp.MustCompile(`(?i)^` + afVersion + `\s+or later\b`)
-	afVersionPattern  = regexp.MustCompile(`^` + afVersion + `(?:\s|$)`)
-	availableForSplit = regexp.MustCompile(`(?i),|\band\b`)
+	osWordPattern         = regexp.MustCompile(`(?i)` + osWord)
+	serverWordPattern     = regexp.MustCompile(`(?i)\bserver\b`)
+	osWordAtStart         = regexp.MustCompile(`(?i)^` + osWord + `\b`)
+	serverAtStart         = regexp.MustCompile(serverWord)
+	afRangePattern        = regexp.MustCompile(`(?i)^` + afVersion + `\s+(?:through|to)\s+(?:` + osWord + `\s+)?(?:server\s+)?` + afVersion)
+	afOrLaterPattern      = regexp.MustCompile(`(?i)^` + afVersion + `\s+(?:or|and) later\b`)
+	afVersionPattern      = regexp.MustCompile(`^` + afVersion + `(?:\s|$)`)
+	availableForSeparator = regexp.MustCompile(`(?i),|\band\b`)
 )
 
 // availableFor is one macOS system named in an "Available for" field.
 type availableFor struct {
-	line   string // first version of the line the entry is about, e.g. "10.13" or "14"
-	low    string // stated lower end, empty when the line's own start is it
-	high   string // stated upper end, inclusive; empty when only the fix bounds it
-	server bool   // the server edition, which has its own CPE and is not extracted
+	line    string // first version of the line the entry is about, e.g. "10.13" or "14"
+	low     string // stated lower end, empty when the field states no version
+	high    string // stated upper end, inclusive; empty when only the fix bounds it
+	orLater bool   // "and later", which names every line from low on, not just its own
+	server  bool   // the server edition, which has its own CPE and is not extracted
 }
 
-// parseAvailableFor reads one comma- or "and"-separated piece of an
-// "Available for" field. It returns nil for a piece that names no macOS
-// system — hardware, Windows, or a bare "Mac OS X" with no version at all.
-func parseAvailableFor(s string) *availableFor {
+// splitAvailableFor cuts a field into the systems it names. "and" separates
+// them — "macOS Monterey and macOS Ventura" — but it also opens the
+// lower-end form "10.8 and later", where cutting would leave the version
+// looking like an upper end and invert the range, so that one is rejoined.
+func splitAvailableFor(s string) []string {
+	parts := availableForSeparator.Split(s, -1)
+	out := make([]string, 0, len(parts))
+	for _, part := range parts {
+		if len(out) > 0 && strings.HasPrefix(strings.ToLower(strings.TrimSpace(part)), "later") {
+			out[len(out)-1] += " and " + strings.TrimSpace(part)
+			continue
+		}
+		out = append(out, part)
+	}
+	return out
+}
+
+// parseAvailableFor reads one piece of an "Available for" field. It returns
+// nil for a piece that names no macOS system — hardware, Windows, or a bare
+// "Mac OS X" with no version at all — and an error for one that names a
+// system it cannot read.
+func parseAvailableFor(s string) (*availableFor, error) {
 	// a stray "Impact:" paragraph is folded into the field on a few 2012
 	// pages, so read only up to the first newline
 	t := strings.TrimSuffix(strings.TrimSpace(strings.SplitN(s, "\n", 2)[0]), ".")
 	loc := osWordPattern.FindStringIndex(t)
 	if loc == nil {
-		return nil
+		// hardware, Windows, or a family of its own: nothing macOS here
+		return nil, nil
 	}
 	af := availableFor{server: serverWordPattern.MatchString(t)}
 
@@ -113,14 +136,34 @@ func parseAvailableFor(s string) *availableFor {
 		m := afRangePattern.FindStringSubmatch(body)
 		af.low, af.high = m[1], m[2]
 	case afOrLaterPattern.MatchString(body):
-		af.low = afOrLaterPattern.FindStringSubmatch(body)[1]
+		af.low, af.orLater = afOrLaterPattern.FindStringSubmatch(body)[1], true
 	case afVersionPattern.MatchString(body):
-		af.high = afVersionPattern.FindStringSubmatch(body)[1]
+		v := afVersionPattern.FindStringSubmatch(body)[1]
+		l := af.line
+		if l == "" {
+			var err error
+			if l, err = lineOf(v); err != nil {
+				return nil, err
+			}
+		}
+		// "macOS Catalina 10.15" spells the line out in full, the way
+		// "macOS Mojave 10.14.6" names one version of it: Catalina is
+		// 10.15. A version equal to the start of its own line therefore
+		// names the line and is closed by the fix, not by itself. "10.3.x"
+		// arrives here as 10.3 for the same reason, the x standing in for
+		// every patch level of the line
+		if v == l {
+			af.low = v
+		} else {
+			af.high = v
+		}
 	case af.line != "":
-		af.low = af.line
-	default:
+		// the name alone, which is the whole line and states no version
+	case strings.TrimSpace(body) == "":
 		// "Mac OS X" with nothing after it names no version at all
-		return nil
+		return nil, nil
+	default:
+		return nil, errors.Errorf("unexpected Available for. expected: a macOS line or version, actual: %q", s)
 	}
 
 	if af.line == "" {
@@ -130,11 +173,11 @@ func parseAvailableFor(s string) *availableFor {
 		}
 		l, err := lineOf(v)
 		if err != nil {
-			return nil
+			return nil, err
 		}
 		af.line = l
 	}
-	return &af
+	return &af, nil
 }
 
 // lineOf reduces a version to the first version of its line: 10.13.6 is
@@ -144,32 +187,34 @@ func lineOf(v string) (string, error) {
 	major, rest, _ := strings.Cut(v, ".")
 	n, err := strconv.Atoi(major)
 	if err != nil {
-		return "", fmt.Errorf("parse major of %q", v)
+		return "", errors.Wrapf(err, "parse major of %q", v)
 	}
 	if n != 10 {
 		return major, nil
 	}
 	minor, _, _ := strings.Cut(rest, ".")
 	if _, err := strconv.Atoi(minor); err != nil {
-		return "", fmt.Errorf("parse minor of %q", v)
+		return "", errors.Wrapf(err, "parse minor of %q", v)
 	}
 	return fmt.Sprintf("10.%s", minor), nil
 }
 
 // macOSCriterionsFor turns the macOS systems an entry names in "Available
-// for" into criterions. The upper end comes from the field when it states one
-// — "macOS High Sierra 10.13.6" and the ranges close inclusively, since a
-// Security Update or a Supplemental Update fixes the named version in place
-// and leaves its number alone — and otherwise from the release of the same
-// line in the section heading, which is what fixes it. A line the heading
-// does not fix and the field does not close yields nothing rather than a
-// range open at the top, and so does the server edition, which is a product
-// of its own.
-func macOSCriterionsFor(availableFors []string, fixesByLine map[string]string) []criterionTypes.Criterion {
+// for" into criterions. What the field states is vulnerable and what the
+// section heading states is the fix, so the two ends come from different
+// places, and a piece naming a system this does not understand is an error
+// rather than a silent drop: more than a third of the macOS entries name
+// their line and no version, so the marketing names have to be enumerated,
+// and the first advisory for the name after Tahoe would otherwise lose its
+// detections without saying so.
+func macOSCriterionsFor(availableFors []string, fixesByLine map[string]string) ([]criterionTypes.Criterion, error) {
 	var cs []criterionTypes.Criterion
 	for _, a := range availableFors {
-		for _, part := range availableForSplit.Split(a, -1) {
-			af := parseAvailableFor(part)
+		for _, part := range splitAvailableFor(a) {
+			af, err := parseAvailableFor(part)
+			if err != nil {
+				return nil, err
+			}
 			if af == nil || af.server {
 				continue
 			}
@@ -178,22 +223,37 @@ func macOSCriterionsFor(availableFors []string, fixesByLine map[string]string) [
 				cpe = macOSXCPE
 			}
 			r := ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeApple, GreaterEqual: af.line}
-			fixed := af.high
+			if af.low != "" {
+				r.GreaterEqual = af.low
+			}
+			fixed := fixesByLine[af.line]
 			switch {
 			case af.high != "":
-				if af.low != "" {
-					r.GreaterEqual = af.low
-				}
+				// the update is for the version the field names, so that
+				// version is still vulnerable and only le can say so
 				r.LessEqual = af.high
-			default:
-				fix, ok := fixesByLine[af.line]
-				if !ok {
+			case fixed != "":
+				// the heading fixes this very line, and the line stops below it
+				r.LessThan = fixed
+			case af.orLater:
+				// "10.8 and later" on the page of a newer release: the fix
+				// ships only in that release, so the older lines stop below
+				// it. Only within the same product, a range from mac_os_x
+				// into macos being no range at all
+				above := highestFixAbove(fixesByLine, af.line)
+				if above == "" || strings.HasPrefix(af.line, "10.") != strings.HasPrefix(above, "10.") {
 					continue
 				}
-				if af.low != "" {
-					r.GreaterEqual = af.low
-				}
-				r.LessThan, fixed = fix, fix
+				fixed = above
+				r.LessThan = above
+			case af.low != "":
+				// a Supplemental Update fixes the named version in place and
+				// leaves its number alone, so the version is both ends of it
+				r.LessEqual = af.low
+			default:
+				// naming the line and nothing else, with no fix to close it,
+				// would leave the range open at the top
+				continue
 			}
 			c := releaseCriterion(cpe, &r, fixed)
 			if !slices.ContainsFunc(cs, func(x criterionTypes.Criterion) bool { return reflect.DeepEqual(x, c) }) {
@@ -201,7 +261,48 @@ func macOSCriterionsFor(availableFors []string, fixesByLine map[string]string) [
 			}
 		}
 	}
-	return cs
+	return cs, nil
+}
+
+// highestFixAbove returns the newest release the section heading fixes among
+// the lines above the given one, empty when the heading fixes none of them.
+func highestFixAbove(fixesByLine map[string]string, line string) string {
+	var newest string
+	for l := range fixesByLine {
+		if compareLines(l, line) <= 0 {
+			continue
+		}
+		if newest == "" || compareLines(l, newest) > 0 {
+			newest = l
+		}
+	}
+	if newest == "" {
+		return ""
+	}
+	return fixesByLine[newest]
+}
+
+// compareLines orders two lines, which are "10.15" up to Catalina and "11"
+// from Big Sur on. The 10.x minor plays the part a major plays from 11.
+func compareLines(a, b string) int {
+	f := func(l string) (int, int) {
+		major, rest, _ := strings.Cut(l, ".")
+		m, err := strconv.Atoi(major)
+		if err != nil {
+			return 0, 0
+		}
+		n, err := strconv.Atoi(rest)
+		if err != nil {
+			return m, 0
+		}
+		return m, n
+	}
+	am, an := f(a)
+	bm, bn := f(b)
+	if am != bm {
+		return cmp.Compare(am, bm)
+	}
+	return cmp.Compare(an, bn)
 }
 
 // hasNamePrefix reports whether body opens with the marketing name, compared

@@ -306,8 +306,11 @@ func extract(fetched securityreleases.Advisory, releases []release, raws []strin
 					}
 				}
 				slices.Sort(entryCVEs)
-				add(segmentTypes.DetectionTag(strings.Join(e.AvailableFor, ", ")),
-					macOSCriterionsFor(e.AvailableFor, fixes), slices.Compact(entryCVEs))
+				mcs, err := macOSCriterionsFor(e.AvailableFor, fixes)
+				if err != nil {
+					return dataTypes.Data{}, errors.Wrapf(err, "macOS criterions. root: %s", rootID)
+				}
+				add(segmentTypes.DetectionTag(strings.Join(e.AvailableFor, ", ")), mcs, slices.Compact(entryCVEs))
 			}
 		}
 	}
@@ -611,7 +614,14 @@ func releaseCriterion(cpe string, r *ccRangeTypes.Range, fixed string) criterion
 			FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
 			CPE:        ccTypes.CPE(cpe),
 			Range:      r,
-			Fixed:      []string{fixed},
+			// a page fixing one line can name an older line as affected, and
+			// then the version that fixes the older one lives on its own page
+			Fixed: func() []string {
+				if fixed == "" {
+					return nil
+				}
+				return []string{fixed}
+			}(),
 		},
 	}
 }
