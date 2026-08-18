@@ -132,7 +132,7 @@ func TestFetch(t *testing.T) {
 
 				// The conversion instructions ship with the data they
 				// describe, and are the ones this build embeds.
-				wantSkill, err := os.ReadFile(filepath.Join("skill", "SKILL.md"))
+				wantSkill, err := os.ReadFile(filepath.Join("openssh-security-raw", "SKILL.md"))
 				if err != nil {
 					t.Fatal("unexpected error:", err)
 				}

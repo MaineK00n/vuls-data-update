@@ -8,7 +8,7 @@ package security
 // author reached for. There is no parser for that, which is why this type is
 // not produced by the fetcher. The fetcher stores the page under origin/ and
 // the conversion to this shape is a separate, model-driven step (see
-// skill/SKILL.md) whose output lands under raw/.
+// openssh-security-raw/SKILL.md) whose output lands under raw/.
 //
 // What that arrangement asks of this type is that it stay *transcription*, not
 // interpretation. Every field is either read off the entry or absent — nothing

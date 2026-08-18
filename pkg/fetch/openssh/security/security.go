@@ -16,7 +16,7 @@
 // does not parse. It stores the page under origin/ and stops.
 //
 // The conversion to raw/ is a separate, model-driven step, run by hand against
-// the stored copy (see skill/SKILL.md, which Fetch writes into the output tree
+// the stored copy (see openssh-security-raw/SKILL.md, which Fetch writes into the output tree
 // so the instructions travel with the data they describe). What makes that
 // trustworthy rather than a black box is that each raw/ record carries the <li>
 // it was read from: every field can be checked against its source without
@@ -110,7 +110,7 @@ const defaultNVDWait = 6 * time.Second
 // arrive with a 200.
 const minEntries = 40
 
-//go:embed skill/SKILL.md
+//go:embed openssh-security-raw/SKILL.md
 var skill []byte
 
 type options struct {
@@ -594,7 +594,7 @@ func validate(bs []byte) error {
 // the raw schema they produce are versioned together in vuls-data-update, and a
 // tree carrying last year's instructions beside this year's fetcher is the
 // failure this avoids. Local edits are overwritten -- the file is output, and
-// belongs upstream in skill/SKILL.md.
+// belongs upstream in openssh-security-raw/SKILL.md.
 // The .claude/skills/<name>/SKILL.md layout is what makes an agent started in
 // the raw repository discover them on its own, which is the point of writing
 // them here rather than leaving them in vuls-data-update: the conversion runs in

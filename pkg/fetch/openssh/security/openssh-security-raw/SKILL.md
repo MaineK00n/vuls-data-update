@@ -40,6 +40,14 @@ ls origin/mitre/          # the CVE records for OpenSSH; evidence for §7
 ls raw/                   # your output; may be empty on a first run
 ```
 
+**Run this in a session of its own**, with this repository and this skill as its
+context and nothing else. Not as a side task in a session that has been reading
+vuls-data-update's fixtures or extractor source: a conversion done that way
+anchors on what it just read rather than on the page, and under-records the
+fields it happens to know are not evaluated downstream. Measured against four
+clean-room runs, one such session annotated 24 entries where they annotated
+47 to 52.
+
 If `origin/security.html` is absent, stop and tell the user to run
 `vuls-data-update fetch openssh-security -d <this directory>`. Do not fetch the
 page yourself — the whole point of `origin/` is that raw/ is derived from a
@@ -77,12 +85,25 @@ Nine dates carry more than one entry — 2025-02-18, 2024-07-01, 2023-12-18,
 2023-02-02 (three), 2006-09-27, 2005-09-01, 2003-09-16, 2001-05-21 and
 2000-11-06 (three) — so ordinals are not decoration.
 
-**When `raw/` is not empty, existing IDs win.** Match each entry you segmented
-to an existing file by its `origin.html`, and keep that file's `id`. Only
-entries with no match are new, and only they get freshly assigned ordinals.
-Upstream adds entries at the top under a new date, so in practice existing IDs
-never move — but re-deriving ordinals from scratch is what would move them, and
-a moved ID silently rewrites history downstream.
+**When `raw/` is not empty, existing records win — whole, not just their IDs.**
+Match each entry you segmented to an existing file by its `origin.html`. Where
+one matches and the `origin.html` is unchanged, **keep that file byte for
+byte**: its `id`, its `title`, its `description`, its annotations and their
+quotes. Convert only the entries whose `origin.html` changed and the ones with
+no match at all. Annotations may be added to a kept record; existing ones are
+not reworded.
+
+The ID is the sharpest case — re-deriving ordinals from scratch would move them,
+and a moved ID silently rewrites history downstream — but it is not the only
+one. A title written from an entry's first clause, and which sentence of a
+document a quote is taken from, are choices with more than one defensible
+answer: converted twice from the same page they will differ, and each
+difference is a diff §8.9 says should not exist. Keeping what is already there
+is what makes that rule achievable rather than aspirational.
+
+This is also why a borderline judgement, once made, stays made. Which
+annotations to reject at the edges is genuinely arguable; re-arguing it every
+run would churn `raw/` without ever settling.
 
 ## 4. Write one file per entry
 
@@ -143,17 +164,25 @@ Field by field:
   which is a different claim: not "the page says this" but "this document does".
 - **`affected`** — see §6. Empty for `unaffected` entries, and empty for an
   affected entry that states no version bound.
-- **`fixed`** — releases the entry names as carrying the fix. Two forms count,
-  and only these two:
+- **`fixed`** — releases the entry names as carrying the fix. Three forms
+  count, and only these three:
   - the sentence, "This bug is corrected in OpenSSH 9.2." → `["9.2"]`;
   - a linked `txt/release-<version>`, whose version *is* the statement —
     `<a href="txt/release-9.9p2">release notes</a>` → `["9.9p2"]`. The entries
     from 2024 on carry no sentence at all and this link is their only fix
-    signal, so ignoring it would empty the field exactly where it matters most.
+    signal, so ignoring it would empty the field exactly where it matters most;
+  - **the fix-boundary phrasing itself**: "OpenSSH 4.4 and newer is not
+    vulnerable to ..." names 4.4 as the release that fixes it, which is the
+    same reading §5 already applies to get `{"lt": "4.4"}` — the two come from
+    one sentence and you cannot take one without the other. It counts whether
+    or not a release note is linked: twelve of these entries, 2000 to 2003,
+    link an advisory or nothing at all, and the boundary is the whole of what
+    they state.
 
-  Both may be present and agree; list the release once. Nothing else counts —
-  in particular, do not derive a fix from `affected`'s upper bound, and do not
-  reach for a release you happen to know shipped the patch.
+  More than one may be present and agree; list the release once. Nothing else
+  counts — in particular, do not derive a fix from `affected`'s upper bound
+  where the entry does not phrase it as a boundary, and do not reach for a
+  release you happen to know shipped the patch.
 - **`mitigations`** — workarounds the entry offers, one string per measure,
   as stated. "Mitigate by setting X11Forwarding=no in sshd_config, or on the
   commandline." is one. A sentence merely noting the feature is off by default
@@ -260,6 +289,14 @@ Rules:
   a conditional entry still yields a version-only detection.
 - If an entry gives **no version bound at all** and is still `affected`, leave
   `affected` empty rather than guessing a bound. `fixed` may still be set.
+- **When in doubt about `component` or `condition`, record it.** Neither
+  narrows a detection — a criterion selects on CPE attributes, and no scan
+  reports which program carries the bug or what `sshd_config` enables — so
+  recording one costs nothing downstream, while leaving it out loses what the
+  entry said. Anything the entry names as a program (`scp(1)`, `sftp-server`)
+  or states as a prerequisite (`X11UseLocalhost=no`, `public key
+  authentication permitted`) goes in. Only a sentence that merely observes a
+  default stays out; that belongs to `description`.
 
 ## 7. Annotate from `origin/txt/`
 
@@ -286,6 +323,19 @@ annotation, recorded once with its evidence rather than re-derived every time.
 | `origin/txt/` | OpenSSH's release notes and advisories | `fixed`, occasionally detail |
 | `origin/mitre/` | CVE records (`CVE-yyyy-nnnn.json`) | `cves` |
 
+**Never annotate a value the entry already states.** If the ID is already in
+`cves`, or the release already in `fixed`, the page is its own evidence and the
+annotation adds nothing. Extraction dedupes on fold, so writing it would not
+change the published output — it would change `raw/`, and two conversions
+disagreeing about whether to write it is exactly what §8.9 forbids. This is the
+common case rather than a corner: the entries that name a CVE inline are also
+the ones whose release notes name it again.
+
+The mirror of that rule: an advisory that names a release the entry does not —
+`sshpam.adv`, `buffer.adv` and `preauth.adv` each say "Upgrade to ..." — **is**
+worth a `fixed` annotation. That is the case this section exists for, a
+document stating something the page leaves out.
+
 **`cves` and `fixed` stay page-only.** An annotation never edits them. That
 keeps §8.4 and §8.5 true — every value in those fields is still readable off
 the stored `<li>` — and it keeps the two questions apart: what OpenSSH said,
@@ -297,16 +347,20 @@ them here.
 "annotations": [
   {
     "field": "cves",
-    "value": "CVE-2024-6387",
+    "value": "CVE-2025-26465",
     "source": {
-      "url": "https://www.openssh.com/txt/release-9.8",
-      "origin": "origin/txt/release-9.8",
-      "quote": "This release contains fixes for ... CVE-2024-6387 ...",
-      "retrieved": "2026-08-13"
+      "url": "https://www.openssh.com/txt/release-9.9p2",
+      "origin": "origin/txt/release-9.9p2",
+      "quote": "Fix CVE-2025-26465 - ssh(1) in OpenSSH versions 6.8p1 to 9.9p1",
+      "retrieved": "2026-08-18"
     }
   }
 ]
 ```
+
+That quote is in `origin/txt/release-9.9p2` as written. Check any example here
+against the tree before copying its shape: an example is only worth having if
+it survives the check in §8.7.
 
 - **`field`** is `cves` or `fixed`. Nothing else — extraction fails on an
   unrecognized name rather than dropping the claim.
