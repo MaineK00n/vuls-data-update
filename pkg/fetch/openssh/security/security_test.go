@@ -100,6 +100,14 @@ func TestFetch(t *testing.T) {
 			name:     "not-openssh",
 			hasError: true,
 		},
+		{
+			// Truncated to 30 entries, each carrying a nested list: 90 list
+			// items in all. Counted naively that clears the floor, which is the
+			// miscount the skill warns the conversion against and the one this
+			// guard must not make either.
+			name:     "nested-truncated",
+			hasError: true,
+		},
 	}
 
 	for _, tt := range tests {

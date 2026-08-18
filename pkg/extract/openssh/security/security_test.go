@@ -68,6 +68,16 @@ func TestExtract(t *testing.T) {
 			args:     "./testdata/fixtures/invalid-cve",
 			hasError: true,
 		},
+		{
+			// The quieter half of the same contradiction: a release that fixes
+			// what was never broken. Folded, it would reach only detections,
+			// which returns early for an unaffected entry -- so without this it
+			// would neither error nor appear, and the contradiction would sit
+			// in raw/ unread.
+			name:     "unaffected-fixed-annotation",
+			args:     "./testdata/fixtures/unaffected-fixed-annotation",
+			hasError: true,
+		},
 	}
 
 	for _, tt := range tests {

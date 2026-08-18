@@ -330,15 +330,21 @@ func claim(fetched security.Advisory) (claims, error) {
 			continue
 		}
 
-		// A CVE on an entry that exists to record that no OpenSSH release was
-		// ever vulnerable inverts what the entry says. It is also the easiest
-		// annotation to reach for wrongly: those entries are the ones carrying
-		// kb.cert.org links, and those notes are about SSH at large. The skill
-		// warns against it; this is where the warning binds -- and the warning
-		// is not that the document must go unread, but that what it names is
-		// the protocol's, which is what an inapplicable annotation records.
-		if a.Field == annotationFieldCVEs && fetched.Status != security.StatusAffected {
-			return claims{}, errors.Errorf("unexpected annotation. expected: %q, actual: %q", fmt.Sprintf("no folded %s annotation on a %s advisory (mark it inapplicable if the source names one that is not this entry's)", annotationFieldCVEs, fetched.Status), fmt.Sprintf("%s=%s", a.Field, a.Value))
+		// An entry that exists to record that no OpenSSH release was ever
+		// vulnerable has nothing to be folded into: a CVE inverts what it says,
+		// and so does a release that fixes what was never broken. Neither field
+		// is exempt, and the one that would slip through is the quieter of the
+		// two -- a folded fixed reaches only detections, which returns early
+		// here, so it would neither error nor appear, just sit in raw/ as a
+		// contradiction nothing reads.
+		//
+		// The CVE is the easiest to reach for wrongly, since these are the
+		// entries carrying kb.cert.org links and those notes are about SSH at
+		// large. The warning is not that the document must go unread: what it
+		// names is the protocol's, which is what an inapplicable annotation
+		// records.
+		if fetched.Status != security.StatusAffected {
+			return claims{}, errors.Errorf("unexpected annotation. expected: %q, actual: %q", fmt.Sprintf("no folded annotation on a %s advisory (mark it inapplicable if the source names something that is not this entry's)", fetched.Status), fmt.Sprintf("%s=%s", a.Field, a.Value))
 		}
 
 		if !slices.Contains(*vs, a.Value) {

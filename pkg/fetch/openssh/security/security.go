@@ -580,7 +580,12 @@ func validate(bs []byte) error {
 		return errors.Errorf("unexpected title. expected: %q, actual: %q", "a title naming OpenSSH", title)
 	}
 
-	if n := d.Find("li").Length(); n < minEntries {
+	// Entries are the top-level items. Counting every <li> would count the two
+	// nested inside the 2023-07-19 entry as entries of their own, which is the
+	// same miscount the skill warns the conversion against -- and here it would
+	// let a page truncated below the floor pass on the strength of list items
+	// that are not entries at all.
+	if n := d.Find("li").Length() - d.Find("li li").Length(); n < minEntries {
 		return errors.Errorf("unexpected number of entries. expected: %q, actual: %d", fmt.Sprintf(">= %d", minEntries), n)
 	}
 
