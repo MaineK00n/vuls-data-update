@@ -14,12 +14,16 @@ import (
 )
 
 // supplementTable (supplement_data.go) carries the affected-product data for
-// the historical CVRF advisories (2012 through 2022) whose
-// product_statuses/product_tree are empty upstream, so the CVRF document
-// itself yields no detection. The gap is historical — from 2022 on Fortinet
-// populates product_statuses (and publishes CSAF) — but the rows are not
-// frozen: they state what the advisory says, and an advisory whose note is
-// read differently later is re-read.
+// the CVRF advisories whose product_statuses/product_tree are empty upstream,
+// so the CVRF document itself yields no detection. Fortinet did not switch
+// over on a date, so the two shapes overlap: filled documents go as far back
+// as FG-IR-16-035, but through 2021 they are the exception (21 filled against
+// 123 empty), 2022 is where it flips (155 filled against 13 empty), and from
+// FG-IR-23-* on every document carries product_statuses. That leaves the 427
+// advisories numbered FG-IR-012-* through FG-IR-22-* in this table, a set
+// that only shrinks if Fortinet backfills an old document. The rows are not
+// frozen either: they state what the advisory says, and an advisory whose
+// note is read differently later is re-read.
 //
 // A row's authority is the advisory's own Affected Products note, with the
 // affected-version data Fortinet publishes as a CNA in its cvelistV5 records
