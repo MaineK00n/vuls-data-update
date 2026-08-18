@@ -294,9 +294,7 @@ func extract(fetched securityreleases.Advisory, releases []release, raws []strin
 		// is not consulted to decide whether to look: a Supplemental Update
 		// heading names no version of its own, yet its entries state the
 		// version they are for
-		if slices.ContainsFunc(releaseNameSeparators.Split(s.Name, -1), func(part string) bool {
-			return macOSSectionPattern.MatchString(strings.TrimSpace(strings.TrimSuffix(strings.TrimSpace(part), "*")))
-		}) {
+		if isMacOSSection(s.Name) {
 			for _, e := range s.Entries {
 				if len(e.AvailableFor) == 0 {
 					continue
@@ -467,13 +465,32 @@ var releasePatterns = []struct {
 var macOSReleasePattern = regexp.MustCompile(fmt.Sprintf(`^macOS(?: [A-Z][A-Za-z]+)* v?%s$`, ccRangeTypes.AppleVersionPattern))
 
 // macOSSectionPattern matches a heading that names a macOS release, with or
-// without a version and with or without the "Supplemental Update" and
-// "Security Update ..." suffixes the combined pages carry. Only under such a
-// heading does "Available for" name the affected systems: under an
-// application heading — "Xcode 16", "OS X Server v4.1", "Safari 17.5" — the
-// same field names what the application runs on, which is the requirement to
-// install it and not a statement that the system is vulnerable.
-var macOSSectionPattern = regexp.MustCompile(`^(?:macOS(?: [A-Z][A-Za-z]+)*|(?:Mac )?OS X(?: [A-Z][A-Za-z]+)*)(?: v?\d[\d.]*)?(?: \(\w\))?(?: (?:Supplemental )?Update(?: \d+)?)?$`)
+// without a version and with or without the "Supplemental Update" suffix the
+// combined pages carry. Only under such a heading does "Available for" name
+// the affected systems: under an application heading — "Xcode 16", "Safari
+// 17.5", "Java for Mac OS X 10.6 Update 5" — the same field names what the
+// application runs on, which is the requirement to install it and not a
+// statement that the system is vulnerable.
+//
+// "OS X Server v4.1" has the shape of a release and is excluded by name: the
+// server edition is a product of its own, its versions are not macOS
+// versions, and its field states what it runs on like any other application.
+var (
+	macOSSectionPattern = regexp.MustCompile(`^(?:macOS|(?:Mac )?OS X)(?: [A-Z][A-Za-z]+)*(?: v?\d[\d.]*)?(?: \(\w\))?(?: (?:Supplemental )?Update(?: \d+)?)?$`)
+	serverSectionPrefix = regexp.MustCompile(`^(?:macOS|(?:Mac )?OS X) Server\b`)
+)
+
+// isMacOSSection reports whether a heading names a macOS release rather than
+// an application that runs on one.
+func isMacOSSection(name string) bool {
+	for _, part := range releaseNameSeparators.Split(name, -1) {
+		part = strings.TrimSpace(strings.TrimSuffix(strings.TrimSpace(part), "*"))
+		if macOSSectionPattern.MatchString(part) && !serverSectionPrefix.MatchString(part) {
+			return true
+		}
+	}
+	return false
+}
 
 // osFamilyPattern matches the shape of an OS-family release this extractor
 // does not know — a future "homeOS 1.0" — so that a family Apple adds next

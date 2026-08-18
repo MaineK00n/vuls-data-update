@@ -87,3 +87,28 @@ func TestParseAvailableFor(t *testing.T) {
 		})
 	}
 }
+
+func TestIsMacOSSection(t *testing.T) {
+	tests := []struct {
+		name string
+		arg  string
+		want bool
+	}{
+		{name: "a release", arg: "macOS Sonoma 14.7.5", want: true},
+		{name: "the older spelling", arg: "OS X Yosemite v10.10.2", want: true},
+		{name: "an update that leaves the version alone", arg: "macOS High Sierra 10.13.3 Supplemental Update", want: true},
+		{name: "a page covering several lines", arg: "macOS Mojave 10.14.1, Security Update 2018-002 High Sierra", want: true},
+		{name: "the server edition has the shape of a release", arg: "OS X Server v4.1", want: false},
+		{name: "the server edition, newer spelling", arg: "macOS Server 5.11", want: false},
+		{name: "an application", arg: "Xcode 16", want: false},
+		{name: "an application that names the system", arg: "Java for Mac OS X 10.6 Update 5", want: false},
+		{name: "another family", arg: "Safari 17.5", want: false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := isMacOSSection(tt.arg); got != tt.want {
+				t.Errorf("isMacOSSection(%q). expected: %v, actual: %v", tt.arg, tt.want, got)
+			}
+		})
+	}
+}

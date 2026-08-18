@@ -57,6 +57,7 @@ const (
 
 var (
 	osWordPattern     = regexp.MustCompile(`(?i)` + osWord)
+	serverWordPattern = regexp.MustCompile(`(?i)\bserver\b`)
 	osWordAtStart     = regexp.MustCompile(`(?i)^` + osWord + `\b`)
 	serverAtStart     = regexp.MustCompile(serverWord)
 	afRangePattern    = regexp.MustCompile(`(?i)^` + afVersion + `\s+(?:through|to)\s+(?:` + osWord + `\s+)?(?:server\s+)?` + afVersion)
@@ -84,7 +85,7 @@ func parseAvailableFor(s string) *availableFor {
 	if loc == nil {
 		return nil
 	}
-	af := availableFor{server: regexp.MustCompile(`(?i)\bserver\b`).MatchString(t)}
+	af := availableFor{server: serverWordPattern.MatchString(t)}
 
 	// drop whatever precedes the system name ("QuickTime 7.1.3 on ...") and
 	// the system word itself
@@ -92,13 +93,19 @@ func parseAvailableFor(s string) *availableFor {
 	// "Server" sits on either side of the marketing name: "Mac OS X Server
 	// v10.5.8" but "OS X Lion Server v10.7.3"
 	body = strings.TrimSpace(serverAtStart.ReplaceAllString(body, ""))
-	for name, line := range macOSLines {
-		if m := regexp.MustCompile(`(?i)^` + regexp.QuoteMeta(name) + `\b`).FindString(body); m != "" {
-			af.line = line
-			body = strings.TrimSpace(body[len(m):])
-			body = strings.TrimSpace(serverAtStart.ReplaceAllString(body, ""))
-			break
+	// the names overlap — "sierra" is a prefix of nothing but "lion" is of
+	// "lion server" and a suffix of "mountain lion" — so the longest match
+	// wins, and a match must end on a word boundary
+	var matched string
+	for name := range macOSLines {
+		if len(name) > len(matched) && hasNamePrefix(body, name) {
+			matched = name
 		}
+	}
+	if matched != "" {
+		af.line = macOSLines[matched]
+		body = strings.TrimSpace(body[len(matched):])
+		body = strings.TrimSpace(serverAtStart.ReplaceAllString(body, ""))
 	}
 
 	switch {
@@ -195,4 +202,22 @@ func macOSCriterionsFor(availableFors []string, fixesByLine map[string]string) [
 		}
 	}
 	return cs
+}
+
+// hasNamePrefix reports whether body opens with the marketing name, compared
+// without case and ending on a word boundary so that "Sierra 10.12.6" is not
+// read as the start of "Sierra Nevada".
+func hasNamePrefix(body, name string) bool {
+	if len(body) < len(name) || !strings.EqualFold(body[:len(name)], name) {
+		return false
+	}
+	if len(body) == len(name) {
+		return true
+	}
+	switch c := body[len(name)]; {
+	case c >= 'a' && c <= 'z', c >= 'A' && c <= 'Z', c >= '0' && c <= '9', c == '_':
+		return false
+	default:
+		return true
+	}
 }
