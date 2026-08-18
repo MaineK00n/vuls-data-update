@@ -73,9 +73,18 @@ import (
 // attributed to: all of them are read off the one page.
 const source = "openssh.com"
 
-// productCPE is the criterion's CPE. OpenSSH is filed under the openbsd vendor
-// in NVD, which is what a query CPE will carry.
-const productCPE = "cpe:2.3:a:openbsd:openssh:*:*:*:*:*:*:*:*"
+// cpeFormat is the shape of every CPE this package emits, leaving the version
+// and update attributes to the caller. OpenSSH is filed under the openbsd
+// vendor in NVD, which is what a query CPE will carry.
+//
+// One format because there are two callers, and they have to agree: a criterion
+// selects on the attributes its CPE fixes, so a vendor or product written one
+// way here and another way there would simply never match the same scan. Both
+// would still bind, and nothing would say so.
+const cpeFormat = "cpe:2.3:a:openbsd:openssh:%s:%s:*:*:*:*:*:*"
+
+// productCPE fixes the product and leaves the version to the criterion's range.
+var productCPE = ccTypes.CPE(fmt.Sprintf(cpeFormat, "*", "*"))
 
 // versionPattern is what a version string in raw/ has to look like: a dotted
 // release, optionally carrying the portable suffix — "9.9", "9.9p1", "3.7.1p2".
@@ -557,7 +566,7 @@ func exactCPE(v string) (ccTypes.CPE, error) {
 		update = "*"
 	}
 
-	c := fmt.Sprintf("cpe:2.3:a:openbsd:openssh:%s:%s:*:*:*:*:*:*", base, update)
+	c := fmt.Sprintf(cpeFormat, base, update)
 
 	// Bound versions never reach a CPE, so this is the one place a version
 	// string is bound -- and an unbindable CPE would make Accept error at
