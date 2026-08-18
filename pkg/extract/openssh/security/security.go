@@ -89,6 +89,12 @@ const productCPE = "cpe:2.3:a:openbsd:openssh:*:*:*:*:*:*:*:*"
 // they stop the extract where they can still be fixed at the source.
 var versionPattern = regexp.MustCompile(`^([0-9]+(?:\.[0-9]+)*)(p[0-9]+)?$`)
 
+// cveIDPattern is the shape a CVE ID has to have, per the CVE Record Format.
+// It is applied for the same reason versionPattern is: an ID that is two IDs
+// in one field, or lowercase, or trailing prose, becomes a vulnerability ID
+// downstream and joins to nothing, silently.
+var cveIDPattern = regexp.MustCompile(`^CVE-[0-9]{4}-[0-9]{4,}$`)
+
 type options struct {
 	dir string
 }
@@ -331,6 +337,23 @@ func claim(fetched security.Advisory) (claims, error) {
 		}
 	}
 
+	// Both sets are checked here rather than at each point of use, because both
+	// arrive the same way. A page-stated value and an annotated one are equally
+	// model-produced, and the folded set is the last place they are still
+	// together -- after this, cves becomes a vulnerability ID and fixed becomes
+	// remediation text, neither of which is consulted by Accept, so an
+	// unchecked value would not fail to match. It would publish.
+	for _, v := range c.cves {
+		if !cveIDPattern.MatchString(v) {
+			return claims{}, errors.Errorf("unexpected cve id. expected: %q, actual: %q", cveIDPattern.String(), v)
+		}
+	}
+	for _, v := range c.fixed {
+		if _, _, err := splitVersion(v); err != nil {
+			return claims{}, errors.Wrapf(err, "fixed release %q", v)
+		}
+	}
+
 	return c, nil
 }
 
@@ -365,9 +388,8 @@ func references(fetched security.Advisory) []referenceTypes.Reference {
 //
 // fixed is passed in rather than read off fetched because it is the folded set
 // -- the releases the entry names together with any an annotation adds. It
-// still goes through the same version check on the way into a criterion, so an
-// annotated release is held to what a release has to look like exactly as a
-// transcribed one is.
+// arrives checked, by claim, which holds an annotated release to what a release
+// has to look like exactly as it holds a transcribed one.
 func detections(fetched security.Advisory, fixed []string) ([]detectionTypes.Detection, error) {
 	if fetched.Status != security.StatusAffected {
 		return nil, nil

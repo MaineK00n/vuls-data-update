@@ -54,6 +54,20 @@ func TestExtract(t *testing.T) {
 			args:     "./testdata/fixtures/no-value",
 			hasError: true,
 		},
+		{
+			// A folded value is checked the same way a bound is. Neither of
+			// these two is consulted by Accept once extracted -- a fix release
+			// is remediation text and a CVE ID is a join key -- so an
+			// unchecked one would not fail to match, it would publish.
+			name:     "invalid-fixed",
+			args:     "./testdata/fixtures/invalid-fixed",
+			hasError: true,
+		},
+		{
+			name:     "invalid-cve",
+			args:     "./testdata/fixtures/invalid-cve",
+			hasError: true,
+		},
 	}
 
 	for _, tt := range tests {
