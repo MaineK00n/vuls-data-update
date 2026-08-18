@@ -1,0 +1,13 @@
+{
+	"id": "100100",
+	"url": "https://support.apple.com/en-us/100100",
+	"title": "Apple security releases",
+	"releases": [
+		{
+			"name": "homeOS 1.0",
+			"url": "https://support.apple.com/en-us/128997",
+			"available_for": "HomePod hub",
+			"release_date": "01 Apr 2027"
+		}
+	]
+}

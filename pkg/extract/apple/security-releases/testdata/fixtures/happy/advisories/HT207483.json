@@ -1,0 +1,199 @@
+{
+	"id": "HT207483",
+	"url": "https://support.apple.com/en-us/103439",
+	"title": "About the security content of macOS Sierra 10.12.3",
+	"sections": [
+		{
+			"entries": [
+				{
+					"others": [
+						"This document describes the security content of macOS Sierra 10.12.3."
+					]
+				}
+			]
+		},
+		{
+			"name": "About Apple security updates",
+			"entries": [
+				{
+					"others": [
+						"For our customers' protection, Apple doesn't disclose, discuss, or confirm security issues until an investigation has occurred and patches or releases are available. Recent releases are listed on the Apple security updates page.",
+						"For more information about security, see the Apple Product Security page. You can encrypt communications with Apple using the Apple Product Security PGP Key.",
+						"Apple security documents reference vulnerabilities by CVE-ID when possible."
+					]
+				}
+			]
+		},
+		{
+			"name": "macOS Sierra 10.12.3",
+			"entries": [
+				{
+					"notes": [
+						"Released January 23, 2017"
+					]
+				},
+				{
+					"component": "APNs Server",
+					"available_for": [
+						"macOS Sierra 10.12.2"
+					],
+					"impact": [
+						"An attacker in a privileged network position can track a user's activity"
+					],
+					"description": [
+						"A client certificate was sent in plaintext. This issue was addressed through improved certificate handling."
+					],
+					"ids": [
+						"CVE-2017-2383: Matthias Wachs and Quirin Scheitle of Technical University Munich (TUM)"
+					],
+					"notes": [
+						"Entry added March 28, 2017"
+					]
+				},
+				{
+					"component": "apache_mod_php",
+					"available_for": [
+						"macOS Sierra 10.12.2"
+					],
+					"impact": [
+						"Multiple issues in PHP"
+					],
+					"description": [
+						"Multiple issues were addressed by updating to PHP version 5.6.28."
+					],
+					"ids": [
+						"CVE-2016-8670",
+						"CVE-2016-9933",
+						"CVE-2016-9934"
+					]
+				},
+				{
+					"component": "Bluetooth",
+					"available_for": [
+						"macOS Sierra 10.12.2"
+					],
+					"impact": [
+						"An application may be able to execute arbitrary code with kernel privileges"
+					],
+					"description": [
+						"A use after free issue was addressed through improved memory management."
+					],
+					"ids": [
+						"CVE-2017-2353: Ian Beer of Google Project Zero"
+					]
+				},
+				{
+					"component": "Graphics Drivers",
+					"available_for": [
+						"macOS Sierra 10.12.2"
+					],
+					"impact": [
+						"An application may be able to execute arbitrary code with kernel privileges"
+					],
+					"description": [
+						"A memory corruption issue was addressed through improved input validation."
+					],
+					"ids": [
+						"CVE-2017-2358: Team Pangu and lokihardt at PwnFest 2016"
+					]
+				},
+				{
+					"component": "Help Viewer",
+					"available_for": [
+						"macOS Sierra 10.12.2"
+					],
+					"impact": [
+						"Processing maliciously crafted web content may lead to arbitrary code execution"
+					],
+					"description": [
+						"A cross-site scripting issue was addressed through improved URL validation."
+					],
+					"ids": [
+						"CVE-2017-2361: lokihardt of Google Project Zero"
+					]
+				},
+				{
+					"component": "IOAudioFamily",
+					"available_for": [
+						"macOS Sierra 10.12.2"
+					],
+					"impact": [
+						"An application may be able to determine kernel memory layout"
+					],
+					"description": [
+						"An uninitialized memory issue was addressed through improved memory management."
+					],
+					"ids": [
+						"CVE-2017-2357: Team Pangu and lokihardt at PwnFest 2016"
+					]
+				},
+				{
+					"component": "Kernel",
+					"available_for": [
+						"macOS Sierra 10.12.2"
+					],
+					"impact": [
+						"An application may be able to execute arbitrary code with kernel privileges"
+					],
+					"description": [
+						"A buffer overflow issue was addressed through improved memory handling."
+					],
+					"ids": [
+						"CVE-2017-2370: Ian Beer of Google Project Zero"
+					]
+				},
+				{
+					"component": "Kernel",
+					"available_for": [
+						"macOS Sierra 10.12.2"
+					],
+					"impact": [
+						"An application may be able to execute arbitrary code with kernel privileges"
+					],
+					"description": [
+						"A use after free issue was addressed through improved memory management."
+					],
+					"ids": [
+						"CVE-2017-2360: Ian Beer of Google Project Zero"
+					]
+				},
+				{
+					"component": "libarchive",
+					"available_for": [
+						"macOS Sierra 10.12.2"
+					],
+					"impact": [
+						"Unpacking a maliciously crafted archive may lead to arbitrary code execution"
+					],
+					"description": [
+						"A buffer overflow issue was addressed through improved memory handling."
+					],
+					"ids": [
+						"CVE-2016-8687: Agostino Sarubbo of Gentoo"
+					]
+				},
+				{
+					"component": "Vim",
+					"available_for": [
+						"macOS Sierra 10.12.2"
+					],
+					"impact": [
+						"Opening a maliciously crafted file may lead to unexpected application termination or arbitrary code execution"
+					],
+					"description": [
+						"An input validation issue existed in modelines. This was addressed through improved input validation."
+					],
+					"ids": [
+						"CVE-2016-1248: Florian Larysch"
+					],
+					"notes": [
+						"macOS Sierra 10.12.3 includes the security content of Safari 10.0.3."
+					],
+					"others": [
+						"Information about products not manufactured by Apple, or independent websites not controlled or tested by Apple, is provided without recommendation or endorsement. Apple assumes no responsibility with regard to the selection, performance, or use of third-party websites or products. Apple makes no representations regarding third-party website accuracy or reliability. Contact the vendor for additional information."
+					]
+				}
+			]
+		}
+	]
+}

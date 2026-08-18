@@ -1,0 +1,112 @@
+{
+	"id": "HT205636",
+	"advisories": [
+		{
+			"content": {
+				"id": "HT205636",
+				"title": "About the security content of Safari 9.0.2",
+				"references": [
+					{
+						"source": "support.apple.com",
+						"url": "https://support.apple.com/en-us/HT205636"
+					}
+				],
+				"published": "2015-12-08T00:00:00Z"
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe"
+				}
+			]
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-2015-7048",
+				"references": [
+					{
+						"source": "support.apple.com",
+						"url": "https://www.cve.org/CVERecord?id=CVE-2015-7048"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2015-7093",
+				"references": [
+					{
+						"source": "support.apple.com",
+						"url": "https://www.cve.org/CVERecord?id=CVE-2015-7093"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2015-7095",
+				"references": [
+					{
+						"source": "support.apple.com",
+						"url": "https://www.cve.org/CVERecord?id=CVE-2015-7095"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe"
+				}
+			]
+		}
+	],
+	"detections": [
+		{
+			"ecosystem": "cpe",
+			"conditions": [
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"cpe": "cpe:2.3:a:apple:safari:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "apple",
+										"lt": "9.0.2"
+									},
+									"fixed": [
+										"9.0.2"
+									]
+								}
+							}
+						]
+					}
+				}
+			]
+		}
+	],
+	"data_source": {
+		"id": "apple-security-releases",
+		"raws": [
+			"happy/advisories/HT205636.json",
+			"happy/lists/100100.json",
+			"happy/lists/103813.json"
+		]
+	}
+}

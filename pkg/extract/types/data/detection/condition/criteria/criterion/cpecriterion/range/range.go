@@ -13,6 +13,7 @@ import (
 
 	warningTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/warning"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/internal/enum"
+	appleVersion "github.com/MaineK00n/vuls-data-update/pkg/extract/types/internal/version/apple"
 )
 
 // RangeType selects the version comparator used by CompareVersions / Accept
@@ -41,6 +42,13 @@ const (
 	RangeTypeVersion RangeType = "version"
 	RangeTypeSEMVER  RangeType = "semver"
 	RangeTypePANOS   RangeType = "pan-os"
+
+	// Apple products (iOS, iPadOS, macOS, watchOS, tvOS, visionOS, Safari)
+	// share one version grammar — numeric dotted segments optionally
+	// followed by a Rapid Security Response letter, e.g. "16.5.1 (a)" — so
+	// one type covers the vendor; a per-product split can be added later,
+	// additively, should a product ever diverge.
+	RangeTypeApple RangeType = "apple"
 
 	// Fortinet uses one RangeType per product. RangeType.CompareVersions receives only
 	// the two version strings (no product context), so a product whose
@@ -146,6 +154,7 @@ func RangeTypes() []RangeType {
 		RangeTypeVersion,
 		RangeTypeSEMVER,
 		RangeTypePANOS,
+		RangeTypeApple,
 		RangeTypeFortinetAntivirusEngine,
 		RangeTypeFortinetAscenLink,
 		RangeTypeFortinetConnect,
@@ -241,6 +250,14 @@ func (t RangeType) Compare(u RangeType) int {
 }
 
 var vocabulary = enum.NewVocabulary(RangeTypes())
+
+// AppleVersionPattern re-exports the apple version-shape regexp fragment
+// (submatch 1 the dotted numeric version, submatch 2 the optional Rapid
+// Security Response letter) for producers outside types/ —
+// internal/version/apple is not importable there. The apple extractor embeds
+// it in its release-name patterns so that what it captures as a bound is by
+// construction what the apple comparator accepts.
+const AppleVersionPattern = appleVersion.Pattern
 
 // Range is a version constraint for a CPE criterion. Type selects the
 // comparator; bounds are inclusive (Greater/LessEqual) or exclusive
@@ -370,6 +387,21 @@ func (t RangeType) CompareVersions(v1, v2 string) (int, error) {
 			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
 		}
 		vb, err := panosVersion.NewVersion(v2)
+		if err != nil {
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
+		}
+		return va.Compare(vb), nil
+	case RangeTypeApple:
+		// Apple versions are numeric dotted segments optionally followed by
+		// a Rapid Security Response letter ("16.5.1 (a)"), which is released
+		// after the base version it patches: 16.5.1 < 16.5.1 (a) < 16.5.1
+		// (c) < 16.5.2. hashicorp comparators cannot parse the letter form
+		// at all, hence the dedicated comparator.
+		va, err := appleVersion.NewVersion(v1)
+		if err != nil {
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
+		}
+		vb, err := appleVersion.NewVersion(v2)
 		if err != nil {
 			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
 		}

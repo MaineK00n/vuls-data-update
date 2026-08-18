@@ -312,6 +312,22 @@ func TestRangeType_CompareVersions(t *testing.T) {
 		{name: "fortinet: letter+digits milestone → CompareError (25.1.a10 vs 25.1)", t: ccRangeTypes.RangeTypeFortinetFortiSASE, v1: "25.1.a10", v2: "25.1", wantErr: true},
 		{name: "version (loose): 4-segment v1 < v2", t: ccRangeTypes.RangeTypeVersion, v1: "9.16.19.0", v2: "9.16.20.0", want: -1},
 		{name: "version (loose): v1 unparseable → CompareError", t: ccRangeTypes.RangeTypeVersion, v1: "x.y.z.w.q", v2: "1.0", wantErr: true},
+		// Apple versions: numeric dotted segments plus an optional Rapid
+		// Security Response letter, which is released after the base version
+		// it patches.
+		{name: "apple: v1 < v2", t: ccRangeTypes.RangeTypeApple, v1: "16.5", v2: "16.5.1", want: -1},
+		{name: "apple: equal", t: ccRangeTypes.RangeTypeApple, v1: "16.5.1", v2: "16.5.1", want: 0},
+		{name: "apple: missing segment counts as 0 (16.4 == 16.4.0)", t: ccRangeTypes.RangeTypeApple, v1: "16.4", v2: "16.4.0", want: 0},
+		{name: "apple: segments compare numerically (10.9 < 10.10)", t: ccRangeTypes.RangeTypeApple, v1: "10.9", v2: "10.10", want: -1},
+		{name: "apple: base < its RSR (16.5.1 < 16.5.1 (a))", t: ccRangeTypes.RangeTypeApple, v1: "16.5.1", v2: "16.5.1 (a)", want: -1},
+		{name: "apple: RSR letters order sequentially (16.5.1 (a) < 16.5.1 (c))", t: ccRangeTypes.RangeTypeApple, v1: "16.5.1 (a)", v2: "16.5.1 (c)", want: -1},
+		{name: "apple: RSR < next patch (16.5.1 (c) < 16.5.2)", t: ccRangeTypes.RangeTypeApple, v1: "16.5.1 (c)", v2: "16.5.2", want: -1},
+		{name: "apple: RSR equal", t: ccRangeTypes.RangeTypeApple, v1: "16.5.1 (a)", v2: "16.5.1 (a)", want: 0},
+		{name: "apple: RSR above prev patch (16.5.1 (a) > 16.5)", t: ccRangeTypes.RangeTypeApple, v1: "16.5.1 (a)", v2: "16.5", want: 1},
+		{name: "apple: letter without space → CompareError (16.5.1(a))", t: ccRangeTypes.RangeTypeApple, v1: "16.5.1(a)", v2: "16.5.1", wantErr: true},
+		{name: "apple: multi-char letter → CompareError (16.5.1 (aa))", t: ccRangeTypes.RangeTypeApple, v1: "16.5.1 (aa)", v2: "16.5.1", wantErr: true},
+		{name: "apple: non-version → CompareError", t: ccRangeTypes.RangeTypeApple, v1: "Sierra", v2: "16.5.1", wantErr: true},
+		{name: "apple: trailing dot → CompareError (16.5. vs 16.5)", t: ccRangeTypes.RangeTypeApple, v1: "16.5.", v2: "16.5", wantErr: true},
 		{name: "pan-os: base < hotfix (hashicorp prerelease order would invert this)", t: ccRangeTypes.RangeTypePANOS, v1: "11.2.4", v2: "11.2.4-h1", want: -1},
 		{name: "pan-os: hotfix numeric order", t: ccRangeTypes.RangeTypePANOS, v1: "10.2.4-h2", v2: "10.2.4-h10", want: -1},
 		{name: "pan-os: equal", t: ccRangeTypes.RangeTypePANOS, v1: "10.2.4-h10", v2: "10.2.4-h10", want: 0},

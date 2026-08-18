@@ -1,0 +1,2006 @@
+{
+	"id": "HT213488",
+	"url": "https://support.apple.com/en-us/102853",
+	"title": "About the security content of macOS Ventura 13",
+	"sections": [
+		{
+			"entries": [
+				{
+					"others": [
+						"This document describes the security content of macOS Ventura 13."
+					]
+				}
+			]
+		},
+		{
+			"name": "About Apple security updates",
+			"entries": [
+				{
+					"others": [
+						"For our customers' protection, Apple doesn't disclose, discuss, or confirm security issues until an investigation has occurred and patches or releases are available. Recent releases are listed on the Apple security updates page.",
+						"Apple security documents reference vulnerabilities by CVE-ID when possible.",
+						"For more information about security, see the Apple Product Security page."
+					]
+				}
+			]
+		},
+		{
+			"name": "macOS Ventura 13",
+			"entries": [
+				{
+					"notes": [
+						"Released October 24, 2022"
+					]
+				},
+				{
+					"component": "Accelerate Framework",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"Processing a maliciously crafted image may lead to arbitrary code execution"
+					],
+					"description": [
+						"A memory consumption issue was addressed with improved memory handling."
+					],
+					"ids": [
+						"CVE-2022-42795: ryuzaki"
+					]
+				},
+				{
+					"component": "APFS",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"An app may be able to access user-sensitive data"
+					],
+					"description": [
+						"An access issue was addressed with improved access restrictions."
+					],
+					"ids": [
+						"CVE-2022-48577: Csaba Fitzl (@theevilbit) of Offensive Security"
+					],
+					"notes": [
+						"Entry added December 21, 2023"
+					]
+				},
+				{
+					"component": "Apple Neural Engine",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"An app may be able to leak sensitive kernel state"
+					],
+					"description": [
+						"The issue was addressed with improved memory handling."
+					],
+					"ids": [
+						"CVE-2022-32858: Mohamed Ghannam (@_simo36)"
+					]
+				},
+				{
+					"component": "Apple Neural Engine",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"An app may be able to execute arbitrary code with kernel privileges"
+					],
+					"description": [
+						"The issue was addressed with improved memory handling."
+					],
+					"ids": [
+						"CVE-2022-32898: Mohamed Ghannam (@_simo36)",
+						"CVE-2022-32899: Mohamed Ghannam (@_simo36)",
+						"CVE-2022-46721: Mohamed Ghannam (@_simo36)",
+						"CVE-2022-47915: Mohamed Ghannam (@_simo36)",
+						"CVE-2022-47965: Mohamed Ghannam (@_simo36)",
+						"CVE-2022-32889: Mohamed Ghannam (@_simo36)"
+					],
+					"notes": [
+						"Entry updated December 21, 2023"
+					]
+				},
+				{
+					"component": "AppleAVD",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"An app may be able to execute arbitrary code with kernel privileges"
+					],
+					"description": [
+						"This issue was addressed with improved checks."
+					],
+					"ids": [
+						"CVE-2022-32907: Yinyi Wu, ABC Research s.r.o, Natalie Silvanovich of Google Project Zero, Tommaso Bianco (@cutesmilee__), Antonio Zekic (@antoniozekic), and John Aakerblom (@jaakerblom)"
+					],
+					"notes": [
+						"Entry added March 16, 2023"
+					]
+				},
+				{
+					"component": "AppleAVD",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"An app may be able to cause a denial-of-service"
+					],
+					"description": [
+						"A memory corruption issue was addressed with improved state management."
+					],
+					"ids": [
+						"CVE-2022-32827: Antonio Zekic (@antoniozekic), Natalie Silvanovich of Google Project Zero, and an anonymous researcher"
+					]
+				},
+				{
+					"component": "AppleMobileFileIntegrity",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"An app may be able to access user-sensitive data"
+					],
+					"description": [
+						"A configuration issue was addressed with additional restrictions."
+					],
+					"ids": [
+						"CVE-2022-32877: Wojciech Reguła (@_r3ggi) of SecuRing"
+					],
+					"notes": [
+						"Entry added March 16, 2023"
+					]
+				},
+				{
+					"component": "AppleMobileFileIntegrity",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"An app may be able to access user-sensitive data"
+					],
+					"description": [
+						"An issue in code signature validation was addressed with improved checks."
+					],
+					"ids": [
+						"CVE-2022-42789: Koh M. Nakagawa of FFRI Security, Inc."
+					]
+				},
+				{
+					"component": "AppleMobileFileIntegrity",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"An app may be able to modify protected parts of the file system"
+					],
+					"description": [
+						"This issue was addressed by removing additional entitlements."
+					],
+					"ids": [
+						"CVE-2022-42825: Mickey Jin (@patch1t)"
+					]
+				},
+				{
+					"component": "Assets",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"An app may be able to modify protected parts of the file system"
+					],
+					"description": [
+						"A logic issue was addressed with improved checks."
+					],
+					"ids": [
+						"CVE-2022-46722: Mickey Jin (@patch1t)"
+					],
+					"notes": [
+						"Entry added August 1, 2023"
+					]
+				},
+				{
+					"component": "ATS",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"An app may be able to bypass Privacy preferences"
+					],
+					"description": [
+						"A logic issue was addressed with improved state management."
+					],
+					"ids": [
+						"CVE-2022-32902: Mickey Jin (@patch1t)"
+					]
+				},
+				{
+					"component": "ATS",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"An app may be able to access user-sensitive data"
+					],
+					"description": [
+						"An access issue was addressed with additional sandbox restrictions."
+					],
+					"ids": [
+						"CVE-2022-32904: Mickey Jin (@patch1t)"
+					]
+				},
+				{
+					"component": "ATS",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"A sandboxed process may be able to circumvent sandbox restrictions"
+					],
+					"description": [
+						"A logic issue was addressed with improved checks."
+					],
+					"ids": [
+						"CVE-2022-32890: Mickey Jin (@patch1t)"
+					]
+				},
+				{
+					"component": "Audio",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"An app may be able to gain elevated privileges"
+					],
+					"description": [
+						"This issue was addressed by removing the vulnerable code."
+					],
+					"ids": [
+						"CVE-2022-42796: Mickey Jin (@patch1t)"
+					],
+					"notes": [
+						"Entry updated March 16, 2023"
+					]
+				},
+				{
+					"component": "Audio",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"Parsing a maliciously crafted audio file may lead to disclosure of user information"
+					],
+					"description": [
+						"The issue was addressed with improved memory handling."
+					],
+					"ids": [
+						"CVE-2022-42798: Anonymous working with Trend Micro Zero Day Initiative"
+					],
+					"notes": [
+						"Entry added October 27, 2022"
+					]
+				},
+				{
+					"component": "AVEVideoEncoder",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"An app may be able to execute arbitrary code with kernel privileges"
+					],
+					"description": [
+						"The issue was addressed with improved bounds checks."
+					],
+					"ids": [
+						"CVE-2022-32940: ABC Research s.r.o."
+					]
+				},
+				{
+					"component": "Beta Access Utility",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"An app may be able to modify protected parts of the file system"
+					],
+					"description": [
+						"A logic issue was addressed with improved state management."
+					],
+					"ids": [
+						"CVE-2022-42816: Mickey Jin (@patch1t)"
+					],
+					"notes": [
+						"Entry added December 21, 2023"
+					]
+				},
+				{
+					"component": "BOM",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"An app may bypass Gatekeeper checks"
+					],
+					"description": [
+						"A logic issue was addressed with improved checks."
+					],
+					"ids": [
+						"CVE-2022-42821: Jonathan Bar Or of Microsoft"
+					],
+					"notes": [
+						"Entry added December 13, 2022"
+					]
+				},
+				{
+					"component": "Boot Camp",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"An app may be able to modify protected parts of the file system"
+					],
+					"description": [
+						"This issue was addressed with improved checks to prevent unauthorized actions."
+					],
+					"ids": [
+						"CVE-2022-42860: Mickey Jin (@patch1t) of Trend Micro"
+					],
+					"notes": [
+						"Entry added March 16, 2023"
+					]
+				},
+				{
+					"component": "Calendar",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"An app may be able to read sensitive location information"
+					],
+					"description": [
+						"An access issue was addressed with improved access restrictions."
+					],
+					"ids": [
+						"CVE-2022-42819: an anonymous researcher"
+					]
+				},
+				{
+					"component": "CFNetwork",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"Processing a maliciously crafted certificate may lead to arbitrary code execution"
+					],
+					"description": [
+						"A certificate validation issue existed in the handling of WKWebView. This issue was addressed with improved validation."
+					],
+					"ids": [
+						"CVE-2022-42813: Jonathan Zhang of Open Computing Facility (ocf.berkeley.edu)"
+					]
+				},
+				{
+					"component": "ColorSync",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"Processing a maliciously crafted image may lead to arbitrary code execution"
+					],
+					"description": [
+						"A memory corruption issue existed in the processing of ICC profiles. This issue was addressed with improved input validation."
+					],
+					"ids": [
+						"CVE-2022-26730: David Hoyt of Hoyt LLC"
+					]
+				},
+				{
+					"component": "Core Bluetooth",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"An app may be able to record audio with paired AirPods"
+					],
+					"description": [
+						"An access issue was addressed with additional sandbox restrictions on third-party apps."
+					],
+					"ids": [
+						"CVE-2022-32945: Guilherme Rambo of Best Buddy Apps (rambo.codes)"
+					],
+					"notes": [
+						"Entry added November 9, 2022"
+					]
+				},
+				{
+					"component": "CoreMedia",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"A camera extension may be able to continue receiving video after the app which activated was closed"
+					],
+					"description": [
+						"An issue with app access to camera data was addressed with improved logic."
+					],
+					"ids": [
+						"CVE-2022-42838: Halle Winkler (@hallewinkler) of Politepix"
+					],
+					"notes": [
+						"Entry added December 22, 2022"
+					]
+				},
+				{
+					"component": "CoreServices",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"An app may be able to break out of its sandbox"
+					],
+					"description": [
+						"An access issue was addressed with additional sandbox restrictions."
+					],
+					"ids": [
+						"CVE-2022-48683: Thijs Alkemade of Computest Sector 7, Wojciech Reguła (@_r3ggi) of SecuRing, and Arsenii Kostromin"
+					],
+					"notes": [
+						"Entry added May 29, 2024"
+					]
+				},
+				{
+					"component": "CoreTypes",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"A malicious application may bypass Gatekeeper checks"
+					],
+					"description": [
+						"This issue was addressed with improved checks to prevent unauthorized actions."
+					],
+					"ids": [
+						"CVE-2022-22663: Arsenii Kostromin (0x3c3e)"
+					],
+					"notes": [
+						"Entry added March 16, 2023"
+					]
+				},
+				{
+					"component": "Crash Reporter",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"A user with physical access to an iOS device may be able to read past diagnostic logs"
+					],
+					"description": [
+						"This issue was addressed with improved data protection."
+					],
+					"ids": [
+						"CVE-2022-32867: Kshitij Kumar and Jai Musunuri of Crowdstrike"
+					]
+				},
+				{
+					"component": "curl",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"Multiple issues in curl"
+					],
+					"description": [
+						"Multiple issues were addressed by updating to curl version 7.84.0."
+					],
+					"ids": [
+						"CVE-2022-32205",
+						"CVE-2022-32206",
+						"CVE-2022-32207",
+						"CVE-2022-32208"
+					]
+				},
+				{
+					"component": "Directory Utility",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"An app may be able to access user-sensitive data"
+					],
+					"description": [
+						"A logic issue was addressed with improved checks."
+					],
+					"ids": [
+						"CVE-2022-42814: Sergii Kryvoblotskyi of MacPaw Inc."
+					]
+				},
+				{
+					"component": "DriverKit",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"An app may be able to execute arbitrary code with kernel privileges"
+					],
+					"description": [
+						"The issue was addressed with improved memory handling."
+					],
+					"ids": [
+						"CVE-2022-32865: Linus Henze of Pinauten GmbH (pinauten.de)"
+					]
+				},
+				{
+					"component": "DriverKit",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"An app may be able to execute arbitrary code with kernel privileges"
+					],
+					"description": [
+						"A type confusion issue was addressed with improved checks."
+					],
+					"ids": [
+						"CVE-2022-32915: Tommy Muir (@Muirey03)"
+					]
+				},
+				{
+					"component": "Exchange",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"A user in a privileged network position may be able to intercept mail credentials"
+					],
+					"description": [
+						"A logic issue was addressed with improved restrictions."
+					],
+					"ids": [
+						"CVE-2022-32928: Jiří Vinopal (@vinopaljiri) of Check Point Research"
+					],
+					"notes": [
+						"Entry updated March 16, 2023"
+					]
+				},
+				{
+					"component": "FaceTime",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"A user may send audio and video in a FaceTime call without knowing that they have done so"
+					],
+					"description": [
+						"This issue was addressed with improved checks."
+					],
+					"ids": [
+						"CVE-2022-22643: Sonali Luthar of the University of Virginia, Michael Liao of the University of Illinois at Urbana-Champaign, Rohan Pahwa of Rutgers University, and Bao Nguyen of University of Florida"
+					],
+					"notes": [
+						"Entry added March 16, 2023"
+					]
+				},
+				{
+					"component": "FaceTime",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"A user may be able to view restricted content from the lock screen"
+					],
+					"description": [
+						"A lock screen issue was addressed with improved state management."
+					],
+					"ids": [
+						"CVE-2022-32935: Bistrit Dahal"
+					],
+					"notes": [
+						"Entry added October 27, 2022"
+					]
+				},
+				{
+					"component": "Find My",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"A malicious application may be able to read sensitive location information"
+					],
+					"description": [
+						"A permissions issue existed. This issue was addressed with improved permission validation."
+					],
+					"ids": [
+						"CVE-2022-42788: Csaba Fitzl (@theevilbit) of Offensive Security, Wojciech Reguła of SecuRing (wojciechregula.blog)"
+					]
+				},
+				{
+					"component": "Find My",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"An app may be able to access user-sensitive data"
+					],
+					"description": [
+						"The issue was addressed with improved handling of caches."
+					],
+					"ids": [
+						"CVE-2022-48504: Csaba Fitzl (@theevilbit) of Offensive Security"
+					],
+					"notes": [
+						"Entry added December 21, 2023"
+					]
+				},
+				{
+					"component": "Finder",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"Processing a maliciously crafted DMG file may lead to arbitrary code execution with system privileges"
+					],
+					"description": [
+						"This issue was addressed with improved validation of symlinks."
+					],
+					"ids": [
+						"CVE-2022-32905: Ron Masas (breakpoint.sh) of BreakPoint Technologies LTD"
+					]
+				},
+				{
+					"component": "GPU Drivers",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"An app may be able to execute arbitrary code with kernel privileges"
+					],
+					"description": [
+						"An out-of-bounds read was addressed with improved input validation."
+					],
+					"ids": [
+						"CVE-2022-42833: Pan ZhenPeng (@Peterpan0927)"
+					],
+					"notes": [
+						"Entry added December 22, 2022"
+					]
+				},
+				{
+					"component": "GPU Drivers",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"An app may be able to execute arbitrary code with kernel privileges"
+					],
+					"description": [
+						"The issue was addressed with improved memory handling."
+					],
+					"ids": [
+						"CVE-2022-32947: Asahi Lina (@LinaAsahi)"
+					]
+				},
+				{
+					"component": "Grapher",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"Processing a maliciously crafted gcx file may lead to unexpected app termination or arbitrary code execution"
+					],
+					"description": [
+						"The issue was addressed with improved memory handling."
+					],
+					"ids": [
+						"CVE-2022-42809: Yutao Wang (@Jack) and Yu Zhou (@yuzhou6666)"
+					]
+				},
+				{
+					"component": "Heimdal",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"A user may be able to cause unexpected app termination or arbitrary code execution"
+					],
+					"description": [
+						"This issue was addressed with improved checks."
+					],
+					"ids": [
+						"CVE-2022-3437: Evgeny Legerov of Intevydis"
+					],
+					"notes": [
+						"Entry added October 25, 2022"
+					]
+				},
+				{
+					"component": "iCloud Photo Library",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"An app may be able to access user-sensitive data"
+					],
+					"description": [
+						"An information disclosure issue was addressed by removing the vulnerable code."
+					],
+					"ids": [
+						"CVE-2022-32849: Joshua Jones"
+					],
+					"notes": [
+						"Entry added November 9, 2022"
+					]
+				},
+				{
+					"component": "Image Processing",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"A sandboxed app may be able to determine which app is currently using the camera"
+					],
+					"description": [
+						"The issue was addressed with additional restrictions on the observability of app states."
+					],
+					"ids": [
+						"CVE-2022-32913: Yiğit Can YILMAZ (@yilmazcanyigit)"
+					]
+				},
+				{
+					"component": "ImageIO",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"Processing an image may lead to a denial-of-service"
+					],
+					"description": [
+						"An out-of-bounds read was addressed with improved input validation."
+					],
+					"ids": [
+						"CVE-2022-32809: Mickey Jin (@patch1t)"
+					],
+					"notes": [
+						"Entry added August 1, 2023"
+					]
+				},
+				{
+					"component": "ImageIO",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"Processing an image may lead to a denial-of-service"
+					],
+					"description": [
+						"A denial-of-service issue was addressed with improved validation."
+					],
+					"ids": [
+						"CVE-2022-1622"
+					]
+				},
+				{
+					"component": "Intel Graphics Driver",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"An app may be able to disclose kernel memory"
+					],
+					"description": [
+						"An out-of-bounds read was addressed with improved input validation."
+					],
+					"ids": [
+						"CVE-2022-32936: Antonio Zekic (@antoniozekic)"
+					]
+				},
+				{
+					"component": "IOHIDFamily",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"An app may cause unexpected app termination or arbitrary code execution"
+					],
+					"description": [
+						"A memory corruption issue was addressed with improved state management."
+					],
+					"ids": [
+						"CVE-2022-42820: Peter Pan ZhenPeng of STAR Labs"
+					]
+				},
+				{
+					"component": "IOKit",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"An app may be able to execute arbitrary code with kernel privileges"
+					],
+					"description": [
+						"A race condition was addressed with improved locking."
+					],
+					"ids": [
+						"CVE-2022-42806: Tingting Yin of Tsinghua University"
+					]
+				},
+				{
+					"component": "Kernel",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"An app may be able to disclose kernel memory"
+					],
+					"description": [
+						"The issue was addressed with improved memory handling."
+					],
+					"ids": [
+						"CVE-2022-32864: Linus Henze of Pinauten GmbH (pinauten.de)"
+					]
+				},
+				{
+					"component": "Kernel",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"An app may be able to execute arbitrary code with kernel privileges"
+					],
+					"description": [
+						"The issue was addressed with improved memory handling."
+					],
+					"ids": [
+						"CVE-2022-32866: Linus Henze of Pinauten GmbH (pinauten.de)",
+						"CVE-2022-32911: Zweig of Kunlun Lab",
+						"CVE-2022-32924: Ian Beer of Google Project Zero"
+					]
+				},
+				{
+					"component": "Kernel",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"An app may be able to execute arbitrary code with kernel privileges"
+					],
+					"description": [
+						"A use after free issue was addressed with improved memory management."
+					],
+					"ids": [
+						"CVE-2022-32914: Zweig of Kunlun Lab"
+					]
+				},
+				{
+					"component": "Kernel",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"A remote user may be able to cause kernel code execution"
+					],
+					"description": [
+						"An out-of-bounds write issue was addressed with improved bounds checking."
+					],
+					"ids": [
+						"CVE-2022-42808: Zweig of Kunlun Lab"
+					]
+				},
+				{
+					"component": "Kernel",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"An app may be able to execute arbitrary code with kernel privileges"
+					],
+					"description": [
+						"A memory corruption issue was addressed with improved state management."
+					],
+					"ids": [
+						"CVE-2022-32944: Tim Michaud (@TimGMichaud) of Moveworks.ai"
+					],
+					"notes": [
+						"Entry added October 27, 2022"
+					]
+				},
+				{
+					"component": "Kernel",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"An app may be able to execute arbitrary code with kernel privileges"
+					],
+					"description": [
+						"A race condition was addressed with improved locking."
+					],
+					"ids": [
+						"CVE-2022-42803: Xinru Chi of Pangu Lab, John Aakerblom (@jaakerblom)"
+					],
+					"notes": [
+						"Entry added October 27, 2022"
+					]
+				},
+				{
+					"component": "Kernel",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"An app with root privileges may be able to execute arbitrary code with kernel privileges"
+					],
+					"description": [
+						"The issue was addressed with improved bounds checks."
+					],
+					"ids": [
+						"CVE-2022-32926: Tim Michaud (@TimGMichaud) of Moveworks.ai"
+					],
+					"notes": [
+						"Entry added October 27, 2022"
+					]
+				},
+				{
+					"component": "Kernel",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"An app may be able to execute arbitrary code with kernel privileges"
+					],
+					"description": [
+						"A logic issue was addressed with improved checks."
+					],
+					"ids": [
+						"CVE-2022-42801: Ian Beer of Google Project Zero"
+					],
+					"notes": [
+						"Entry added October 27, 2022"
+					]
+				},
+				{
+					"component": "Kernel",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"An app may be able to cause unexpected system termination or potentially execute code with kernel privileges"
+					],
+					"description": [
+						"A use after free issue was addressed with improved memory management."
+					],
+					"ids": [
+						"CVE-2022-46712: Tommy Muir (@Muirey03)"
+					],
+					"notes": [
+						"Entry added February 20, 2023"
+					]
+				},
+				{
+					"component": "Mail",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"An app may be able to access user-sensitive data"
+					],
+					"description": [
+						"This issue was addressed with improved data protection."
+					],
+					"ids": [
+						"CVE-2022-42815: Csaba Fitzl (@theevilbit) of Offensive Security"
+					]
+				},
+				{
+					"component": "Mail",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"An app may be able to access mail folder attachments through a temporary directory used during compression"
+					],
+					"description": [
+						"An access issue was addressed with improved access restrictions."
+					],
+					"ids": [
+						"CVE-2022-42834: Wojciech Reguła (@_r3ggi) of SecuRing"
+					],
+					"notes": [
+						"Entry added May 1, 2023"
+					]
+				},
+				{
+					"component": "Maps",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"An app may be able to read sensitive location information"
+					],
+					"description": [
+						"This issue was addressed with improved restrictions around sensitive information."
+					],
+					"ids": [
+						"CVE-2022-46707: Csaba Fitzl (@theevilbit) of Offensive Security"
+					],
+					"notes": [
+						"Entry added August 1, 2023"
+					]
+				},
+				{
+					"component": "Maps",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"An app may be able to read sensitive location information"
+					],
+					"description": [
+						"A logic issue was addressed with improved restrictions."
+					],
+					"ids": [
+						"CVE-2022-32883: Ron Masas of breakpointhq.com"
+					]
+				},
+				{
+					"component": "MediaLibrary",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"A user may be able to elevate privileges"
+					],
+					"description": [
+						"A memory corruption issue was addressed with improved input validation."
+					],
+					"ids": [
+						"CVE-2022-32908: an anonymous researcher"
+					]
+				},
+				{
+					"component": "Model I/O",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"Processing a maliciously crafted USD file may disclose memory contents"
+					],
+					"description": [
+						"The issue was addressed with improved memory handling."
+					],
+					"ids": [
+						"CVE-2022-42810: Xingwei Lin (@xwlin_roy) and Yinyi Wu of Ant Security Light-Year Lab"
+					],
+					"notes": [
+						"Entry added October 27, 2022"
+					]
+				},
+				{
+					"component": "ncurses",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"A user may be able to cause unexpected app termination or arbitrary code execution"
+					],
+					"description": [
+						"A buffer overflow was addressed with improved bounds checking."
+					],
+					"ids": [
+						"CVE-2021-39537"
+					]
+				},
+				{
+					"component": "ncurses",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"Processing a maliciously crafted file may lead to a denial-of-service or potentially disclose memory contents"
+					],
+					"description": [
+						"A denial-of-service issue was addressed with improved validation."
+					],
+					"ids": [
+						"CVE-2022-29458"
+					]
+				},
+				{
+					"component": "Notes",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"A user in a privileged network position may be able to track user activity"
+					],
+					"description": [
+						"This issue was addressed with improved data protection."
+					],
+					"ids": [
+						"CVE-2022-42818: Gustav Hansen from WithSecure"
+					]
+				},
+				{
+					"component": "Notifications",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"A user with physical access to a device may be able to access contacts from the lock screen"
+					],
+					"description": [
+						"A logic issue was addressed with improved state management."
+					],
+					"ids": [
+						"CVE-2022-32879: Ubeydullah Sümer"
+					]
+				},
+				{
+					"component": "PackageKit",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"An app may be able to modify protected parts of the file system"
+					],
+					"description": [
+						"A race condition was addressed with improved state handling."
+					],
+					"ids": [
+						"CVE-2022-32895: Mickey Jin (@patch1t) of Trend Micro, Mickey Jin (@patch1t)"
+					]
+				},
+				{
+					"component": "PackageKit",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"An app may be able to modify protected parts of the file system"
+					],
+					"description": [
+						"A race condition was addressed with additional validation."
+					],
+					"ids": [
+						"CVE-2022-46713: Mickey Jin (@patch1t) of Trend Micro"
+					],
+					"notes": [
+						"Entry added February 20, 2023"
+					]
+				},
+				{
+					"component": "Photos",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"A user may accidentally add a participant to a Shared Album by pressing the Delete key"
+					],
+					"description": [
+						"A logic issue was addressed with improved state management."
+					],
+					"ids": [
+						"CVE-2022-42807: Ezekiel Elin"
+					],
+					"notes": [
+						"Entry added May 1, 2023, updated August 1, 2023"
+					]
+				},
+				{
+					"component": "Photos",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"An app may be able to bypass Privacy preferences"
+					],
+					"description": [
+						"This issue was addressed with improved data protection."
+					],
+					"ids": [
+						"CVE-2022-32918: Ashwani Rajput of Nagarro Software Pvt. Ltd, Srijan Shivam Mishra of The Hack Report, Jugal Goradia of Aastha Technologies, Evan Ricafort (evanricafort.com) of Invalid Web Security, Shesha Sai C (linkedin.com/in/shesha-sai-c-18585b125), and Amod Raghunath Patwardhan of Pune, India"
+					],
+					"notes": [
+						"Entry updated March 16, 2023"
+					]
+				},
+				{
+					"component": "ppp",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"An app with root privileges may be able to execute arbitrary code with kernel privileges"
+					],
+					"description": [
+						"A use after free issue was addressed with improved memory management."
+					],
+					"ids": [
+						"CVE-2022-42829: an anonymous researcher"
+					]
+				},
+				{
+					"component": "ppp",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"An app with root privileges may be able to execute arbitrary code with kernel privileges"
+					],
+					"description": [
+						"The issue was addressed with improved memory handling."
+					],
+					"ids": [
+						"CVE-2022-42830: an anonymous researcher"
+					]
+				},
+				{
+					"component": "ppp",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"An app with root privileges may be able to execute arbitrary code with kernel privileges"
+					],
+					"description": [
+						"A race condition was addressed with improved locking."
+					],
+					"ids": [
+						"CVE-2022-42831: an anonymous researcher",
+						"CVE-2022-42832: an anonymous researcher"
+					]
+				},
+				{
+					"component": "ppp",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"A buffer overflow may result in arbitrary code execution"
+					],
+					"description": [
+						"The issue was addressed with improved bounds checks."
+					],
+					"ids": [
+						"CVE-2022-32941: an anonymous researcher"
+					],
+					"notes": [
+						"Entry added October 27, 2022"
+					]
+				},
+				{
+					"component": "Ruby",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"A remote user may be able to cause unexpected app termination or arbitrary code execution"
+					],
+					"description": [
+						"A memory corruption issue was addressed by updating Ruby to version 2.6.10."
+					],
+					"ids": [
+						"CVE-2022-28739"
+					]
+				},
+				{
+					"component": "Sandbox",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"An app may be able to modify protected parts of the file system"
+					],
+					"description": [
+						"A logic issue was addressed with improved restrictions."
+					],
+					"ids": [
+						"CVE-2022-32881: Csaba Fitzl (@theevilbit) of Offensive Security"
+					]
+				},
+				{
+					"component": "Sandbox",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"An app with root privileges may be able to access private information"
+					],
+					"description": [
+						"This issue was addressed with improved data protection."
+					],
+					"ids": [
+						"CVE-2022-32862: Rohit Chatterjee of University of Illinois Urbana-Champaign",
+						"CVE-2022-32931: an anonymous researcher"
+					],
+					"notes": [
+						"Entry updated March 16, 2023, updated December 21, 2023"
+					]
+				},
+				{
+					"component": "Sandbox",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"An app may be able to access user-sensitive data"
+					],
+					"description": [
+						"An access issue was addressed with additional sandbox restrictions."
+					],
+					"ids": [
+						"CVE-2022-42811: Justin Bui (@slyd0g) of Snowflake"
+					]
+				},
+				{
+					"component": "Security",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"An app may be able to bypass code signing checks"
+					],
+					"description": [
+						"An issue in code signature validation was addressed with improved checks."
+					],
+					"ids": [
+						"CVE-2022-42793: Linus Henze of Pinauten GmbH (pinauten.de)"
+					]
+				},
+				{
+					"component": "Shortcuts",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"A shortcut may be able to view the hidden photos album without authentication"
+					],
+					"description": [
+						"A logic issue was addressed with improved restrictions."
+					],
+					"ids": [
+						"CVE-2022-32876: an anonymous researcher"
+					],
+					"notes": [
+						"Entry added August 1, 2023"
+					]
+				},
+				{
+					"component": "Shortcuts",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"A shortcut may be able to check the existence of an arbitrary path on the file system"
+					],
+					"description": [
+						"A parsing issue in the handling of directory paths was addressed with improved path validation."
+					],
+					"ids": [
+						"CVE-2022-32938: Cristian Dinca of Tudor Vianu National High School of Computer Science of. Romania"
+					]
+				},
+				{
+					"component": "Sidecar",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"A user may be able to view restricted content from the lock screen"
+					],
+					"description": [
+						"A logic issue was addressed with improved state management."
+					],
+					"ids": [
+						"CVE-2022-42790: Om kothawade of Zaprico Digital"
+					]
+				},
+				{
+					"component": "Siri",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"A user with physical access to a device may be able to use Siri to obtain some call history information"
+					],
+					"description": [
+						"A logic issue was addressed with improved state management."
+					],
+					"ids": [
+						"CVE-2022-32870: Andrew Goldberg of The McCombs School of Business, The University of Texas at Austin (linkedin.com/in/andrew-goldberg-/)"
+					]
+				},
+				{
+					"component": "SMB",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"A remote user may be able to cause kernel code execution"
+					],
+					"description": [
+						"The issue was addressed with improved memory handling."
+					],
+					"ids": [
+						"CVE-2022-32934: Felix Poulin-Belanger"
+					]
+				},
+				{
+					"component": "Software Update",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"An app may be able to execute arbitrary code with kernel privileges"
+					],
+					"description": [
+						"A race condition was addressed with improved state handling."
+					],
+					"ids": [
+						"CVE-2022-42791: Mickey Jin (@patch1t) of Trend Micro"
+					]
+				},
+				{
+					"component": "SQLite",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"A remote user may be able to cause a denial-of-service"
+					],
+					"description": [
+						"This issue was addressed with improved checks."
+					],
+					"ids": [
+						"CVE-2021-36690"
+					]
+				},
+				{
+					"component": "System Settings",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"An app may be able to modify protected parts of the file system"
+					],
+					"description": [
+						"This issue was addressed with improved data protection."
+					],
+					"ids": [
+						"CVE-2022-48505: Adam Chester from TrustedSec and Thijs Alkemade (@xnyhps) of Computest Sector 7"
+					],
+					"notes": [
+						"Entry added June 26, 2023"
+					]
+				},
+				{
+					"component": "TCC",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"An app may be able to cause a denial-of-service to Endpoint Security clients"
+					],
+					"description": [
+						"A logic issue was addressed with improved state management."
+					],
+					"ids": [
+						"CVE-2022-26699: Csaba Fitzl (@theevilbit) of Offensive Security"
+					],
+					"notes": [
+						"Entry added August 1, 2023"
+					]
+				},
+				{
+					"component": "Vim",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"Multiple issues in Vim"
+					],
+					"description": [
+						"Multiple issues were addressed by updating Vim."
+					],
+					"ids": [
+						"CVE-2022-0261",
+						"CVE-2022-0318",
+						"CVE-2022-0319",
+						"CVE-2022-0351",
+						"CVE-2022-0359",
+						"CVE-2022-0361",
+						"CVE-2022-0368",
+						"CVE-2022-0392",
+						"CVE-2022-0554",
+						"CVE-2022-0572",
+						"CVE-2022-0629",
+						"CVE-2022-0685",
+						"CVE-2022-0696",
+						"CVE-2022-0714",
+						"CVE-2022-0729",
+						"CVE-2022-0943",
+						"CVE-2022-1381",
+						"CVE-2022-1420",
+						"CVE-2022-1725",
+						"CVE-2022-1616",
+						"CVE-2022-1619",
+						"CVE-2022-1620",
+						"CVE-2022-1621",
+						"CVE-2022-1629",
+						"CVE-2022-1674",
+						"CVE-2022-1733",
+						"CVE-2022-1735",
+						"CVE-2022-1769",
+						"CVE-2022-1927",
+						"CVE-2022-1942",
+						"CVE-2022-1968",
+						"CVE-2022-1851",
+						"CVE-2022-1897",
+						"CVE-2022-1898",
+						"CVE-2022-1720",
+						"CVE-2022-2000",
+						"CVE-2022-2042",
+						"CVE-2022-2124",
+						"CVE-2022-2125",
+						"CVE-2022-2126"
+					]
+				},
+				{
+					"component": "VPN",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"An app may be able to execute arbitrary code with kernel privileges"
+					],
+					"description": [
+						"The issue was addressed with improved memory handling."
+					],
+					"ids": [
+						"CVE-2022-42828: an anonymous researcher"
+					],
+					"notes": [
+						"Entry added August 1, 2023"
+					]
+				},
+				{
+					"component": "Weather",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"An app may be able to read sensitive location information"
+					],
+					"description": [
+						"A logic issue was addressed with improved state management."
+					],
+					"ids": [
+						"CVE-2022-32875: an anonymous researcher"
+					]
+				},
+				{
+					"component": "WebKit",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"Processing maliciously crafted web content may lead to arbitrary code execution"
+					],
+					"description": [
+						"A use after free issue was addressed with improved memory management."
+					],
+					"ids": [
+						"CVE-2022-42826: Francisco Alonso (@revskills)"
+					],
+					"notes": [
+						"WebKit Bugzilla: 246669",
+						"Entry added December 22, 2022"
+					]
+				},
+				{
+					"component": "WebKit",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"Processing maliciously crafted web content may lead to arbitrary code execution"
+					],
+					"description": [
+						"A buffer overflow issue was addressed with improved memory handling."
+					],
+					"ids": [
+						"CVE-2022-32886: P1umer (@p1umer), afang (@afang5472), xmzyshypnc (@xmzyshypnc1)"
+					],
+					"notes": [
+						"WebKit Bugzilla: 241969"
+					]
+				},
+				{
+					"component": "WebKit",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"Processing maliciously crafted web content may lead to arbitrary code execution"
+					],
+					"description": [
+						"An out-of-bounds write issue was addressed with improved bounds checking."
+					],
+					"ids": [
+						"CVE-2022-32888: P1umer (@p1umer)"
+					],
+					"notes": [
+						"WebKit Bugzilla: 242047"
+					]
+				},
+				{
+					"component": "WebKit",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"Processing maliciously crafted web content may lead to arbitrary code execution"
+					],
+					"description": [
+						"An out-of-bounds read was addressed with improved bounds checking."
+					],
+					"ids": [
+						"CVE-2022-32912: Jeonghoon Shin (@singi21a) at Theori working with Trend Micro Zero Day Initiative"
+					],
+					"notes": [
+						"WebKit Bugzilla: 242762"
+					]
+				},
+				{
+					"component": "WebKit",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"Visiting a malicious website may lead to user interface spoofing"
+					],
+					"description": [
+						"The issue was addressed with improved UI handling."
+					],
+					"ids": [
+						"CVE-2022-42799: Jihwan Kim (@gPayl0ad), Dohyun Lee (@l33d0hyun)"
+					],
+					"notes": [
+						"WebKit Bugzilla: 243693"
+					]
+				},
+				{
+					"component": "WebKit",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"Processing maliciously crafted web content may lead to arbitrary code execution"
+					],
+					"description": [
+						"A type confusion issue was addressed with improved memory handling."
+					],
+					"ids": [
+						"CVE-2022-42823: Dohyun Lee (@l33d0hyun) of SSD Labs"
+					],
+					"notes": [
+						"WebKit Bugzilla: 244622"
+					]
+				},
+				{
+					"component": "WebKit",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"Processing maliciously crafted web content may disclose sensitive user information"
+					],
+					"description": [
+						"A logic issue was addressed with improved state management."
+					],
+					"ids": [
+						"CVE-2022-42824: Abdulrahman Alqabandi of Microsoft Browser Vulnerability Research, Ryan Shin of IAAI SecLab at Korea University, Dohyun Lee (@l33d0hyun) of DNSLab at Korea University"
+					],
+					"notes": [
+						"WebKit Bugzilla: 245058"
+					]
+				},
+				{
+					"component": "WebKit",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"Processing maliciously crafted web content may disclose internal states of the app"
+					],
+					"description": [
+						"A correctness issue in the JIT was addressed with improved checks."
+					],
+					"ids": [
+						"CVE-2022-32923: Wonyoung Jung (@nonetype_pwn) of KAIST Hacking Lab"
+					],
+					"notes": [
+						"WebKit Bugzilla: 242964",
+						"Entry added October 27, 2022"
+					]
+				},
+				{
+					"component": "WebKit PDF",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"Processing maliciously crafted web content may lead to arbitrary code execution"
+					],
+					"description": [
+						"A use after free issue was addressed with improved memory management."
+					],
+					"ids": [
+						"CVE-2022-32922: Yonghwi Jin (@jinmo123) at Theori working with Trend Micro Zero Day Initiative"
+					],
+					"notes": [
+						"WebKit Bugzilla: 242781"
+					]
+				},
+				{
+					"component": "WebKit Sandboxing",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"A sandboxed process may be able to circumvent sandbox restrictions"
+					],
+					"description": [
+						"An access issue was addressed with improvements to the sandbox."
+					],
+					"ids": [
+						"CVE-2022-32892: @18楼梦想改造家 and @jq0904 of DBAppSecurity's WeBin lab"
+					],
+					"notes": [
+						"WebKit Bugzilla: 243181"
+					]
+				},
+				{
+					"component": "WebKit Storage",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"An app may be able to bypass Privacy preferences"
+					],
+					"description": [
+						"The issue was addressed with improved handling of caches."
+					],
+					"ids": [
+						"CVE-2022-32833: Csaba Fitzl (@theevilbit) of Offensive Security, Jeff Johnson"
+					],
+					"notes": [
+						"Entry added December 22, 2022"
+					]
+				},
+				{
+					"component": "Wi-Fi",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"An app may be able to execute arbitrary code with kernel privileges"
+					],
+					"description": [
+						"A memory corruption issue was addressed with improved state management."
+					],
+					"ids": [
+						"CVE-2022-46709: Wang Yu of Cyberserval"
+					],
+					"notes": [
+						"Entry added March 16, 2023"
+					]
+				},
+				{
+					"component": "zlib",
+					"available_for": [
+						"Mac Studio (2022), Mac Pro (2019 and later), MacBook Air (2018 and later), MacBook Pro (2017 and later), Mac mini (2018 and later), iMac (2017 and later), MacBook (2017), and iMac Pro (2017)"
+					],
+					"impact": [
+						"A user may be able to cause unexpected app termination or arbitrary code execution"
+					],
+					"description": [
+						"This issue was addressed with improved checks."
+					],
+					"ids": [
+						"CVE-2022-37434: Evgeny Legerov",
+						"CVE-2022-42800: Evgeny Legerov"
+					],
+					"notes": [
+						"Entry added October 27, 2022"
+					]
+				}
+			]
+		},
+		{
+			"name": "Additional recognition",
+			"entries": [
+				{
+					"component": "AirPort",
+					"others": [
+						"We would like to acknowledge Joseph Salazar Acuña and Renato Llamoca of Intrado-Life & Safety/Globant for their assistance."
+					]
+				},
+				{
+					"component": "apache",
+					"notes": [
+						"Entry added March 16, 2023"
+					],
+					"others": [
+						"We would like to acknowledge Tricia Lee of Enterprise Service Center for their assistance."
+					]
+				},
+				{
+					"component": "AppleCredentialManager",
+					"others": [
+						"We would like to acknowledge @jonathandata1 for their assistance."
+					]
+				},
+				{
+					"component": "ATS",
+					"notes": [
+						"Entry added August 1, 2023"
+					],
+					"others": [
+						"We would like to acknowledge Mickey Jin (@patch1t) for their assistance."
+					]
+				},
+				{
+					"component": "FaceTime",
+					"others": [
+						"We would like to acknowledge an anonymous researcher for their assistance."
+					]
+				},
+				{
+					"component": "FileVault",
+					"others": [
+						"We would like to acknowledge Timothy Perfitt of Twocanoes Software for their assistance."
+					]
+				},
+				{
+					"component": "Find My",
+					"others": [
+						"We would like to acknowledge an anonymous researcher for their assistance."
+					]
+				},
+				{
+					"component": "Identity Services",
+					"others": [
+						"We would like to acknowledge Joshua Jones for their assistance."
+					]
+				},
+				{
+					"component": "IOAcceleratorFamily",
+					"others": [
+						"We would like to acknowledge Antonio Zekic (@antoniozekic) for their assistance."
+					]
+				},
+				{
+					"component": "IOGPUFamily",
+					"notes": [
+						"Entry added November 9, 2022"
+					],
+					"others": [
+						"We would like to acknowledge Wang Yu of cyberserval for their assistance."
+					]
+				},
+				{
+					"component": "Kernel",
+					"others": [
+						"We would like to acknowledge Peter Nguyen of STAR Labs, Tim Michaud (@TimGMichaud) of Moveworks.ai, Tingting Yin of Tsinghua University, and Min Zheng of Ant Group, Tommy Muir (@Muirey03), and an anonymous researcher for their assistance."
+					]
+				},
+				{
+					"component": "Login Window",
+					"notes": [
+						"Entry added November 9, 2022"
+					],
+					"others": [
+						"We would like to acknowledge Simon Tang (simontang.dev) for their assistance."
+					]
+				},
+				{
+					"component": "Mail",
+					"notes": [
+						"Entry updated December 21, 2023"
+					],
+					"others": [
+						"We would like to acknowledge Taavi Eomäe from Zone Media OÜ and an anonymous researcher for their assistance."
+					]
+				},
+				{
+					"component": "Mail Drafts",
+					"others": [
+						"We would like to acknowledge an anonymous researcher for their assistance."
+					]
+				},
+				{
+					"component": "Networking",
+					"others": [
+						"We would like to acknowledge Tim Michaud (@TimGMichaud) of Zoom Video Communications for their assistance."
+					]
+				},
+				{
+					"component": "Photo Booth",
+					"others": [
+						"We would like to acknowledge Prashanth Kannan of Dremio for their assistance."
+					]
+				},
+				{
+					"component": "Quick Look",
+					"others": [
+						"We would like to acknowledge Hilary “It’s off by a Pixel” Street for their assistance."
+					]
+				},
+				{
+					"component": "Safari",
+					"notes": [
+						"Entry added March 16, 2023"
+					],
+					"others": [
+						"We would like to acknowledge Scott Hatfield of Sub-Zero Group for their assistance."
+					]
+				},
+				{
+					"component": "Sandbox",
+					"others": [
+						"We would like to acknowledge Csaba Fitzl (@theevilbit) of Offensive Security for their assistance."
+					]
+				},
+				{
+					"component": "SecurityAgent",
+					"notes": [
+						"Entry added December 21, 2023"
+					],
+					"others": [
+						"We would like to acknowledge Security Team Netservice de Toekomst, an anonymous researcher for their assistance."
+					]
+				},
+				{
+					"component": "smbx",
+					"others": [
+						"We would like to acknowledge HD Moore of runZero Asset Inventory for their assistance."
+					]
+				},
+				{
+					"component": "System",
+					"others": [
+						"We would like to acknowledge Mickey Jin (@patch1t) of Trend Micro for their assistance."
+					]
+				},
+				{
+					"component": "System Settings",
+					"others": [
+						"We would like to acknowledge Bjorn Hellenbrand for their assistance."
+					]
+				},
+				{
+					"component": "UIKit",
+					"others": [
+						"We would like to acknowledge Aleczander Ewing for their assistance."
+					]
+				},
+				{
+					"component": "WebKit",
+					"others": [
+						"We would like to acknowledge Maddie Stone of Google Project Zero, Narendra Bhati (@imnarendrabhati) of Suma Soft Pvt. Ltd., and an anonymous researcher for their assistance."
+					]
+				},
+				{
+					"component": "WebRTC",
+					"others": [
+						"We would like to acknowledge an anonymous researcher for their assistance.",
+						"Information about products not manufactured by Apple, or independent websites not controlled or tested by Apple, is provided without recommendation or endorsement. Apple assumes no responsibility with regard to the selection, performance, or use of third-party websites or products. Apple makes no representations regarding third-party website accuracy or reliability. Contact the vendor for additional information."
+					]
+				}
+			]
+		}
+	]
+}

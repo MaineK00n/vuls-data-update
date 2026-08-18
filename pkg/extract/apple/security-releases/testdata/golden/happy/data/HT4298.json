@@ -1,0 +1,49 @@
+{
+	"id": "HT4298",
+	"advisories": [
+		{
+			"content": {
+				"id": "HT4298",
+				"title": "About the security content of Time Capsule and AirPort Base Station (802.11n) Firmware 7.5.2",
+				"references": [
+					{
+						"source": "support.apple.com",
+						"url": "https://support.apple.com/en-us/HT4298"
+					}
+				],
+				"published": "2010-12-09T00:00:00Z"
+			}
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-2008-4309",
+				"references": [
+					{
+						"source": "support.apple.com",
+						"url": "https://www.cve.org/CVERecord?id=CVE-2008-4309"
+					}
+				]
+			}
+		},
+		{
+			"content": {
+				"id": "CVE-2009-2189",
+				"references": [
+					{
+						"source": "support.apple.com",
+						"url": "https://www.cve.org/CVERecord?id=CVE-2009-2189"
+					}
+				]
+			}
+		}
+	],
+	"data_source": {
+		"id": "apple-security-releases",
+		"raws": [
+			"happy/advisories/HT4298.json",
+			"happy/lists/103813.json"
+		]
+	}
+}

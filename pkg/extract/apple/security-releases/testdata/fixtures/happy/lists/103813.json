@@ -1,0 +1,35 @@
+{
+	"id": "103813",
+	"url": "https://support.apple.com/en-us/103813",
+	"title": "Apple security updates (2015)",
+	"releases": [
+		{
+			"name": "Safari 9.0.2",
+			"url": "https://support.apple.com/kb/HT205636",
+			"text": "- OS X Mavericks v10.9.5, OS X Yosemite v10.10.5, and OS X El Capitan v10.11.2 - 8 Dec 2015"
+		},
+		{
+			"name": "Mac OS X v10.6.5 / Security Update 2010-007",
+			"url": "https://support.apple.com/kb/HT4435",
+			"text": "- Mac OS X v10.5.8, Mac OS X v10.6 - v10.6.4 - 10 Nov 2010"
+		},
+		{
+			"name": "Mac OS X 10.4.6 Update (PowerPC)",
+			"url": "https://support.apple.com/kb/TA23081",
+			"text": "- Mac OS X v10.4 - v10.4.5 - 03 Apr 2006"
+		},
+		{
+			"name": "Time Capsule and AirPort Base Station (802.11n) Firmware 7.5.2",
+			"url": "https://support.apple.com/kb/HT4298",
+			"text": "- AirPort Extreme, AirPort Express, Time Capsule - 09 Dec 2010"
+		},
+		{
+			"name": "AppleTV 7.1",
+			"url": "https://support.apple.com/kb/HT204426",
+			"text": "- Apple TV 3rd generation and later - 09 Mar 2015"
+		},
+		{
+			"name": "The Software Update preference"
+		}
+	]
+}

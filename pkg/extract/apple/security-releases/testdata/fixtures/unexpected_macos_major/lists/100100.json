@@ -1,0 +1,13 @@
+{
+	"id": "100100",
+	"url": "https://support.apple.com/en-us/100100",
+	"title": "Apple security releases",
+	"releases": [
+		{
+			"name": "macOS Zion 9.1",
+			"url": "https://support.apple.com/en-us/128998",
+			"available_for": "macOS Zion",
+			"release_date": "01 Apr 2027"
+		}
+	]
+}
