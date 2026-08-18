@@ -130,6 +130,7 @@ import (
 	openeulerCSAF "github.com/MaineK00n/vuls-data-update/pkg/fetch/openeuler/csaf"
 	openeulerCVRF "github.com/MaineK00n/vuls-data-update/pkg/fetch/openeuler/cvrf"
 	openeulerOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/openeuler/osv"
+	opensshSecurity "github.com/MaineK00n/vuls-data-update/pkg/fetch/openssh/security"
 	opensslSecJSON "github.com/MaineK00n/vuls-data-update/pkg/fetch/openssl/secjson"
 	oracleLinux "github.com/MaineK00n/vuls-data-update/pkg/fetch/oracle/linux"
 	oracleOLAM "github.com/MaineK00n/vuls-data-update/pkg/fetch/oracle/olam"
@@ -268,6 +269,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdNVDAPICVE(), newCmdNVDAPICVEHistory(), newCmdNVDAPICPE(), newCmdNVDAPICPEMatch(), newCmdNVDFeedCVEv1(), newCmdNVDFeedCPEv1(), newCmdNVDFeedCPEMATCHv1(), newCmdNVDFeedCVEv2(), newCmdNVDFeedCPEv2(), newCmdNVDFeedCPEMATCHv2(),
 		newCmdOcamlOSV(),
 		newCmdOpenEulerCVRF(), newCmdOpenEulerCSAF(), newCmdOpenEulerOSV(),
+		newCmdOpenSSHSecurity(),
 		newCmdOpenSSLSecJSON(),
 		newCmdOracleLinux(), newCmdOracleOLAM(), newCmdOracleOpenStack(), newCmdOracleVM(),
 		newCmdOSSFuzzOSV(),
@@ -4131,6 +4133,44 @@ func newCmdOpenEulerOSV() *cobra.Command {
 	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
 	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrent http requests")
 	cmd.Flags().DurationVarP(&options.wait, "wait", "", options.wait, "wait duration")
+
+	return cmd
+}
+
+func newCmdOpenSSHSecurity() *cobra.Command {
+	options := &base{
+		dir:   filepath.Join(util.CacheDir(), "fetch", "openssh", "security"),
+		retry: 3,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "openssh-security",
+		Short: "Fetch OpenSSH Security Advisory data source",
+		Long: heredoc.Doc(`
+			Fetch OpenSSH Security Advisory data source.
+
+			The advisory page is prose, so this command stores it, and the documents
+			it cites, under origin/. It also writes the instructions for converting
+			them into raw/ (as .claude/skills/openssh-security-raw/SKILL.md).
+
+			Producing raw/ is a separate, model-driven step run against the stored
+			copies, so raw/ is the one thing this command leaves alone: everything
+			else under the output directory is replaced.
+		`),
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch openssh-security
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := opensshSecurity.Fetch(opensshSecurity.WithDir(options.dir), opensshSecurity.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch openssh security")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
 
 	return cmd
 }

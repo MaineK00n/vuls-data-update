@@ -1,0 +1,40 @@
+{
+	"id": "OPENSSH-2025-02-18-1",
+	"date": "2025-02-18",
+	"title": "VerifyHostKeyDNS server impersonation.",
+	"description": "ssh(1) in OpenSSH versions 6.8p1 to 9.9p1 (inclusive).\n\nVerifyHostKeyDNS server impersonation.\n\nA logic error in ssh(1) allowed an on-path attacker to impersonate any server when the VerifyHostKeyDNS option is enabled. This option is disabled by default. This vulnerability has been assigned CVE-2025-26465.\n\nFor more information, please refer to the release notes and the report from the Qualys Security Advisory Team who discovered the bug.",
+	"status": "affected",
+	"cves": [
+		"CVE-2025-26465"
+	],
+	"affected": [
+		{
+			"product": "OpenSSH",
+			"component": "ssh(1)",
+			"versions": [
+				{
+					"ge": "6.8p1",
+					"le": "9.9p1"
+				}
+			],
+			"condition": "VerifyHostKeyDNS enabled"
+		}
+	],
+	"fixed": [
+		"9.9p2"
+	],
+	"references": [
+		{
+			"url": "https://www.openssh.com/txt/release-9.9p2",
+			"text": "release notes"
+		},
+		{
+			"url": "https://www.qualys.com/2025/02/18/openssh-mitm-dos.txt",
+			"text": "Qualys Security Advisory Team"
+		}
+	],
+	"origin": {
+		"url": "https://www.openssh.com/security.html",
+		"html": "<li><p><b>February 18, 2025</b><br>\n        ssh(1) in OpenSSH versions 6.8p1 to 9.9p1 (inclusive).\n    <br>\n       VerifyHostKeyDNS server impersonation.\n    <br>\n\tA logic error in ssh(1) allowed an on-path attacker to impersonate\n\tany server when the <code>VerifyHostKeyDNS</code> option is enabled.\n\tThis option is disabled by default. This vulnerability has been assigned\n\tCVE-2025-26465.\n    <br>\n    For more information, please refer to the\n    <a href=\"txt/release-9.9p2\">release notes</a> and the report from the\n    <a href=\"https://www.qualys.com/2025/02/18/openssh-mitm-dos.txt\">Qualys Security Advisory Team</a> who discovered the bug.\n\n"
+	}
+}

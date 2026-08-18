@@ -1,0 +1,42 @@
+{
+	"id": "OPENSSH-2006-09-27-1",
+	"date": "2006-09-27",
+	"title": "Unsafe signal handler vulnerability.",
+	"description": "OpenSSH 4.4 and newer is not vulnerable to the unsafe signal handler vulnerability described in the OpenSSH 4.4 release notes.",
+	"status": "affected",
+	"affected": [
+		{
+			"product": "OpenSSH",
+			"versions": [
+				{
+					"lt": "4.4"
+				}
+			]
+		}
+	],
+	"fixed": [
+		"4.4"
+	],
+	"references": [
+		{
+			"url": "https://www.openssh.com/txt/release-4.4",
+			"text": "OpenSSH 4.4 release notes"
+		}
+	],
+	"annotations": [
+		{
+			"field": "fixed",
+			"value": "4.4",
+			"source": {
+				"url": "https://www.openssh.com/txt/release-4.4",
+				"origin": "origin/txt/release-4.4",
+				"quote": "This release fixes the unsafe signal handler issue.",
+				"retrieved": "2026-08-13"
+			}
+		}
+	],
+	"origin": {
+		"url": "https://www.openssh.com/security.html",
+		"html": "<li><p><b>September 27, 2006:</b><br>\n    OpenSSH 4.4 and newer is not vulnerable to the unsafe signal handler\n    vulnerability described in the\n    <a href=\"https://www.openssh.com/txt/release-4.4\">OpenSSH 4.4 release notes</a>.\n\n"
+	}
+}

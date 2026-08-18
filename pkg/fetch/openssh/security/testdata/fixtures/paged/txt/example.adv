@@ -1,0 +1,4 @@
+OpenSSH Security Advisory (fixture): example.adv
+
+The example issue affects OpenSSH releases prior to 1.0 and is corrected in
+OpenSSH 1.1.

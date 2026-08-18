@@ -1,0 +1,28 @@
+{
+	"id": "OPENSSH-UNDATED-1",
+	"title": "OpenSSH was never vulnerable to the SSH-1 Brute Force Password Vulnerability.",
+	"description": "OpenSSH was never vulnerable to the \"Feb 5, 2001: SSH-1 Brute Force Password Vulnerability\", Crimelabs Security Note CLABS200101.",
+	"status": "unaffected",
+	"references": [
+		{
+			"url": "http://www.crimelabs.net/",
+			"text": "Crimelabs Security Note CLABS200101"
+		}
+	],
+	"annotations": [
+		{
+			"field": "cves",
+			"value": "CVE-2001-0144",
+			"inapplicable": true,
+			"source": {
+				"url": "http://www.crimelabs.net/",
+				"quote": "SSH-1 Brute Force Password Vulnerability",
+				"retrieved": "2026-08-13"
+			}
+		}
+	],
+	"origin": {
+		"url": "https://www.openssh.com/security.html",
+		"html": "<li><p>OpenSSH was never vulnerable to the\n    \"Feb 5, 2001: SSH-1 Brute Force Password Vulnerability\",\n    <a href=\"http://www.crimelabs.net/\">Crimelabs Security Note CLABS200101</a>.\n\n"
+	}
+}

@@ -1,0 +1,66 @@
+{
+	"id": "OPENSSH-2006-09-27-1",
+	"advisories": [
+		{
+			"content": {
+				"id": "OPENSSH-2006-09-27-1",
+				"title": "Unsafe signal handler vulnerability.",
+				"description": "OpenSSH 4.4 and newer is not vulnerable to the unsafe signal handler vulnerability described in the OpenSSH 4.4 release notes.",
+				"references": [
+					{
+						"source": "openssh.com",
+						"url": "https://www.openssh.com/security.html"
+					},
+					{
+						"source": "openssh.com",
+						"url": "https://www.openssh.com/txt/release-4.4"
+					}
+				],
+				"published": "2006-09-27T00:00:00Z"
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe"
+				}
+			]
+		}
+	],
+	"detections": [
+		{
+			"ecosystem": "cpe",
+			"conditions": [
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed",
+										"vendor": "openssh.com"
+									},
+									"cpe": "cpe:2.3:a:openbsd:openssh:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "openssh",
+										"lt": "4.4"
+									},
+									"fixed": [
+										"4.4"
+									]
+								}
+							}
+						]
+					}
+				}
+			]
+		}
+	],
+	"data_source": {
+		"id": "openssh-security",
+		"raws": [
+			"happy/raw/2006/OPENSSH-2006-09-27-1.json"
+		]
+	}
+}

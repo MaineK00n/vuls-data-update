@@ -1,0 +1,21 @@
+{
+	"id": "OPENSSH-UNDATED-1",
+	"title": "OpenSSH was never vulnerable to the SSH-1 Brute Force Password Vulnerability.",
+	"description": "OpenSSH was never vulnerable to the \"Feb 5, 2001: SSH-1 Brute Force Password Vulnerability\", Crimelabs Security Note CLABS200101.",
+	"status": "unaffected",
+	"annotations": [
+		{
+			"field": "fixed",
+			"value": "3.4",
+			"source": {
+				"url": "https://www.openssh.com/txt/preauth.adv",
+				"origin": "origin/txt/preauth.adv",
+				"quote": "Upgrade to OpenSSH 3.4",
+				"retrieved": "2026-08-18"
+			}
+		}
+	],
+	"origin": {
+		"url": "https://www.openssh.com/security.html"
+	}
+}

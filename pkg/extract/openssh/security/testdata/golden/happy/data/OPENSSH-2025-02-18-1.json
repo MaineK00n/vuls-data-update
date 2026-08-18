@@ -1,0 +1,83 @@
+{
+	"id": "OPENSSH-2025-02-18-1",
+	"advisories": [
+		{
+			"content": {
+				"id": "OPENSSH-2025-02-18-1",
+				"title": "VerifyHostKeyDNS server impersonation.",
+				"description": "ssh(1) in OpenSSH versions 6.8p1 to 9.9p1 (inclusive).\n\nVerifyHostKeyDNS server impersonation.\n\nA logic error in ssh(1) allowed an on-path attacker to impersonate any server when the VerifyHostKeyDNS option is enabled. This option is disabled by default. This vulnerability has been assigned CVE-2025-26465.\n\nFor more information, please refer to the release notes and the report from the Qualys Security Advisory Team who discovered the bug.",
+				"references": [
+					{
+						"source": "openssh.com",
+						"url": "https://www.openssh.com/security.html"
+					},
+					{
+						"source": "openssh.com",
+						"url": "https://www.openssh.com/txt/release-9.9p2"
+					},
+					{
+						"source": "openssh.com",
+						"url": "https://www.qualys.com/2025/02/18/openssh-mitm-dos.txt"
+					}
+				],
+				"published": "2025-02-18T00:00:00Z"
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe"
+				}
+			]
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-2025-26465"
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe"
+				}
+			]
+		}
+	],
+	"detections": [
+		{
+			"ecosystem": "cpe",
+			"conditions": [
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed",
+										"vendor": "openssh.com"
+									},
+									"cpe": "cpe:2.3:a:openbsd:openssh:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "openssh",
+										"ge": "6.8p1",
+										"le": "9.9p1"
+									},
+									"fixed": [
+										"9.9p2"
+									]
+								}
+							}
+						]
+					}
+				}
+			]
+		}
+	],
+	"data_source": {
+		"id": "openssh-security",
+		"raws": [
+			"happy/raw/2025/OPENSSH-2025-02-18-1.json"
+		]
+	}
+}

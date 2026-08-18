@@ -1,0 +1,106 @@
+package security_test
+
+import (
+	"path/filepath"
+	"testing"
+
+	"github.com/MaineK00n/vuls-data-update/pkg/extract/openssh/security"
+	utiltest "github.com/MaineK00n/vuls-data-update/pkg/extract/util/test"
+)
+
+func TestExtract(t *testing.T) {
+	tests := []struct {
+		name     string
+		args     string
+		golden   string
+		hasError bool
+	}{
+		{
+			name:   "happy",
+			args:   "./testdata/fixtures/happy",
+			golden: "./testdata/golden/happy",
+		},
+		{
+			// raw/ is model-produced, so a version that is not one has to stop
+			// the extract rather than pass through as an unmatchable bound.
+			name:     "invalid-version",
+			args:     "./testdata/fixtures/invalid-version",
+			hasError: true,
+		},
+		{
+			// Same reasoning for an annotation filed under a field nothing
+			// dispatches on: dropping it would look exactly like the annotated
+			// document having stated nothing.
+			name:     "invalid-annotation",
+			args:     "./testdata/fixtures/invalid-annotation",
+			hasError: true,
+		},
+		{
+			// A CVE folded into an entry recording that no release was ever
+			// vulnerable inverts what the entry says, and those entries are
+			// exactly the ones linking notes about SSH at large. Marking it
+			// inapplicable is the way to record such a reading, and the happy
+			// fixture carries one.
+			name:     "unaffected-cve-annotation",
+			args:     "./testdata/fixtures/unaffected-cve-annotation",
+			hasError: true,
+		},
+		{
+			// An annotation with no value records only that something was
+			// looked at, leaving the next pass to re-read the document to find
+			// out what -- which is what an annotation exists to prevent. The
+			// fixture marks it inapplicable, where the value is the record.
+			name:     "no-value",
+			args:     "./testdata/fixtures/no-value",
+			hasError: true,
+		},
+		{
+			// A folded value is checked the same way a bound is. Neither of
+			// these two is consulted by Accept once extracted -- a fix release
+			// is remediation text and a CVE ID is a join key -- so an
+			// unchecked one would not fail to match, it would publish.
+			name:     "invalid-fixed",
+			args:     "./testdata/fixtures/invalid-fixed",
+			hasError: true,
+		},
+		{
+			name:     "invalid-cve",
+			args:     "./testdata/fixtures/invalid-cve",
+			hasError: true,
+		},
+		{
+			// The quieter half of the same contradiction: a release that fixes
+			// what was never broken. Folded, it would reach only detections,
+			// which returns early for an unaffected entry -- so without this it
+			// would neither error nor appear, and the contradiction would sit
+			// in raw/ unread.
+			name:     "unaffected-fixed-annotation",
+			args:     "./testdata/fixtures/unaffected-fixed-annotation",
+			hasError: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			dir := t.TempDir()
+			err := security.Extract(tt.args, security.WithDir(dir))
+			switch {
+			case err != nil && !tt.hasError:
+				t.Error("unexpected error:", err)
+			case err == nil && tt.hasError:
+				t.Error("expected error has not occurred")
+			case tt.hasError:
+			default:
+				ep, err := filepath.Abs(tt.golden)
+				if err != nil {
+					t.Error("unexpected error:", err)
+				}
+				gp, err := filepath.Abs(dir)
+				if err != nil {
+					t.Error("unexpected error:", err)
+				}
+				utiltest.Diff(t, ep, gp)
+			}
+		})
+	}
+}

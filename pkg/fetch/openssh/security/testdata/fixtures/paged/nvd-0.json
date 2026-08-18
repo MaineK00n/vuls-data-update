@@ -1,0 +1,7 @@
+{
+	"totalResults": 3,
+	"vulnerabilities": [
+		{"cve": {"id": "CVE-1999-0001"}},
+		{"cve": {"id": "CVE-1999-0002"}}
+	]
+}

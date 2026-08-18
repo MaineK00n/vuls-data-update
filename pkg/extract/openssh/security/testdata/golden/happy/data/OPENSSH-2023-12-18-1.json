@@ -1,0 +1,78 @@
+{
+	"id": "OPENSSH-2023-12-18-1",
+	"advisories": [
+		{
+			"content": {
+				"id": "OPENSSH-2023-12-18-1",
+				"title": "Weakness in initial key exchange (\"Terrapin Attack\")",
+				"description": "ssh(1), sshd(8) in OpenSSH prior to version 9.6.\n\nWeakness in initial key exchange (\"Terrapin Attack\")\n\nA weakness in the initial SSH protocol key exchange allows an on-path attacker to delete a number of consecutive messages from the early encrypted protocol without detection. While cryptographically novel, there is no discernable impact on the integrity of SSH traffic beyond giving the attacker the ability to delete the message that enables some features related to keystroke timing obfuscation.\n\nThis attack is prevented by a new protocol extension in OpenSSH 9.6.\n\nFor more information, please refer to the release notes.",
+				"references": [
+					{
+						"source": "openssh.com",
+						"url": "https://www.openssh.com/security.html"
+					},
+					{
+						"source": "openssh.com",
+						"url": "https://www.openssh.com/txt/release-9.6"
+					}
+				],
+				"published": "2023-12-18T00:00:00Z"
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe"
+				}
+			]
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-2023-48795"
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe"
+				}
+			]
+		}
+	],
+	"detections": [
+		{
+			"ecosystem": "cpe",
+			"conditions": [
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed",
+										"vendor": "openssh.com"
+									},
+									"cpe": "cpe:2.3:a:openbsd:openssh:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "openssh",
+										"lt": "9.6"
+									},
+									"fixed": [
+										"9.6"
+									]
+								}
+							}
+						]
+					}
+				}
+			]
+		}
+	],
+	"data_source": {
+		"id": "openssh-security",
+		"raws": [
+			"happy/raw/2023/OPENSSH-2023-12-18-1.json"
+		]
+	}
+}

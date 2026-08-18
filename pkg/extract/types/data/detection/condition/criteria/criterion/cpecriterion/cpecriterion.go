@@ -332,6 +332,17 @@ func (c Criterion) Accept(query Query) (MatchQuality, error) {
 					qVersion = fmt.Sprintf("%s-%s", qVersion, strings.ToLower(u))
 				}
 			}
+			// OpenSSH splits the same way, and NVD is the side that splits it:
+			// 9.9p1 is published as version="9.9", update="p1". Unfolded, every
+			// portable release of one base reads as that base, so an advisory
+			// bounded at "<= 9.9p1" would accept the 9.9p2 that fixes it.
+			// Scoped to the openssh range type; a query already carrying the
+			// suffix in the version has UPDATE as ANY and nothing is folded.
+			if c.Range.Type == rangeTypes.RangeTypeOpenSSH && !opensshPortableVersion.MatchString(qVersion) {
+				if u := unescapeWFN(qWFN.GetString(common.AttributeUpdate)); opensshPortableUpdate.MatchString(u) {
+					qVersion = fmt.Sprintf("%s%s", qVersion, strings.ToLower(u))
+				}
+			}
 			isAccepted, err := c.Range.Accept(qVersion)
 			if err != nil {
 				return MatchQualityUnknown, errors.Wrap(err, "range accept")
@@ -374,6 +385,16 @@ func (c Criterion) Accept(query Query) (MatchQuality, error) {
 // instead carries the hotfix in the version attribute ("10.1.14-h11"); both
 // must reach the pan-os comparator as the full "X.Y.Z-hN" release.
 var panosHotfixUpdate = regexp.MustCompile(`^[hH][0-9]+$`)
+
+// opensshPortableUpdate matches an OpenSSH portable release encoded in the WFN
+// UPDATE attribute ("p1"), which is how NVD publishes it, and
+// opensshPortableVersion recognises the form that already carries it in the
+// version ("9.9p1"). Either must reach the openssh comparator as the full
+// release.
+var (
+	opensshPortableUpdate  = regexp.MustCompile(`^[pP][0-9]+$`)
+	opensshPortableVersion = regexp.MustCompile(`[pP][0-9]+$`)
+)
 
 // unescapeWFN reverses WFN attribute escaping: a backslash escapes the
 // character that follows it (e.g. "10\.1\.3\-h1" -> "10.1.3-h1"). The escape
