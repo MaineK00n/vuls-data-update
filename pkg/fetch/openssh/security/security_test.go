@@ -6,8 +6,8 @@ import (
 	"net/http/httptest"
 	"net/url"
 	"os"
+	"path"
 	"path/filepath"
-	"strings"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
@@ -26,8 +26,13 @@ const pageFilename = "security.html"
 func serve(name string) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		dir := filepath.Join("testdata", "fixtures", name)
-		switch p := filepath.Clean(r.URL.Path); {
-		case p == string(filepath.Separator)+"nvd":
+
+		// path rather than filepath for the request: a URL path is
+		// slash-separated whatever the OS. Clean before matching, so that a
+		// request reaching upwards is answered from inside the fixture
+		// directory or not at all.
+		switch p := path.Clean(r.URL.Path); {
+		case p == "/nvd":
 			// A case that pages serves nvd-<startIndex>.json; one that does not
 			// serves the same nvd.json whatever the index.
 			if f := filepath.Join(dir, fmt.Sprintf("nvd-%s.json", r.URL.Query().Get("startIndex"))); fileExists(f) {
@@ -35,10 +40,10 @@ func serve(name string) http.Handler {
 				return
 			}
 			http.ServeFile(w, r, filepath.Join(dir, "nvd.json"))
-		case strings.HasPrefix(p, string(filepath.Separator)+"cve"+string(filepath.Separator)):
-			http.ServeFile(w, r, filepath.Join(dir, "mitre", filepath.Base(p)+".json"))
+		case path.Dir(p) == "/cve":
+			http.ServeFile(w, r, filepath.Join(dir, "mitre", fmt.Sprintf("%s.json", path.Base(p))))
 		default:
-			http.ServeFile(w, r, filepath.Join(dir, p))
+			http.ServeFile(w, r, filepath.Join(dir, filepath.FromSlash(p)))
 		}
 	})
 }
