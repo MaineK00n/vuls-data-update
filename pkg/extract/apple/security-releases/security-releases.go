@@ -496,9 +496,12 @@ func releaseCriterions(name string) ([]criterionTypes.Criterion, error) {
 // the same day, and with an upper bound alone a host on an older major would
 // match every newer major's advisory. NVD models the same per-major
 // intervals (versionStartIncluding 13.0 / 14.0 / 15.0 / ...), and every
-// lower bound it uses for apple:macos is such a major boundary. The
-// initial release of a major and the 10.x generations stay upper-only
-// like the other families, matching NVD's modeling.
+// lower bound it uses for apple:macos is such a major boundary. The 10.x
+// generations get the same treatment with the line as the boundary — ge
+// 10.<minor> — because they behave the same way: Apple ships Catalina
+// 10.15.7 and Mojave 10.14.6 together, and an upper bound alone would let
+// the Catalina advisory match a Mojave or High Sierra host. Only the
+// initial release of a line stays upper-only.
 //
 // "macOS Server <version>" shares the release-name shape and is skipped —
 // by the same major check rather than by name: its majors are 2 through 5
@@ -513,27 +516,41 @@ func macOSCriterion(part, version, rsr string) (*criterionTypes.Criterion, error
 	case err != nil:
 		return nil, errors.Wrapf(err, "parse major of %q", version)
 	case n >= 11:
-		r := &ccRangeTypes.Range{
-			Type:     ccRangeTypes.RangeTypeApple,
+		c := releaseCriterion("cpe:2.3:o:apple:macos:*:*:*:*:*:*:*:*", &ccRangeTypes.Range{
+			Type: ccRangeTypes.RangeTypeApple,
+			GreaterEqual: func() string {
+				// an initial release — "macOS Ventura 13", also spellable
+				// "13.0" — fixes bugs whose vulnerable population is the
+				// previous major line, so there is nothing below it inside
+				// its own major to bound: ge would make the range empty
+				// ([15.0, 15) with 15 == 15.0 under the comparator), and NVD
+				// leaves exactly these advisories unbounded below. The lower
+				// bound goes on only when the fixed version sorts strictly
+				// above <major>.0
+				if rsr == "" && !slices.ContainsFunc(strings.Split(rest, "."), func(s string) bool { return s != "" && s != "0" }) {
+					return ""
+				}
+				return fmt.Sprintf("%d.0", n)
+			}(),
 			LessThan: fixed,
-		}
-		// an initial release — "macOS Ventura 13", also spellable "13.0" —
-		// fixes bugs whose vulnerable population is the previous major
-		// line, so there is nothing below it inside its own major to
-		// bound: ge would make the range empty ([15.0, 15) with 15 ==
-		// 15.0 under the comparator), and NVD leaves exactly these
-		// advisories unbounded below. The lower bound goes on only when
-		// the fixed version sorts strictly above <major>.0
-		if rsr != "" || slices.ContainsFunc(strings.Split(rest, "."), func(s string) bool { return s != "" && s != "0" }) {
-			r.GreaterEqual = fmt.Sprintf("%d.0", n)
-		}
-		c := releaseCriterion("cpe:2.3:o:apple:macos:*:*:*:*:*:*:*:*", r, fixed)
+		}, fixed)
 		return &c, nil
 	case n == 10:
-		minor, _, _ := strings.Cut(rest, ".")
+		minor, patch, _ := strings.Cut(rest, ".")
 		if mn, err := strconv.Atoi(minor); err == nil && mn >= 12 && mn <= 15 {
 			c := releaseCriterion("cpe:2.3:o:apple:mac_os_x:*:*:*:*:*:*:*:*", &ccRangeTypes.Range{
-				Type:     ccRangeTypes.RangeTypeApple,
+				Type: ccRangeTypes.RangeTypeApple,
+				GreaterEqual: func() string {
+					// the 10.x line plays the part a major plays from 11 on,
+					// so the bound is the line: "macOS Catalina 10.15.7" is
+					// ge 10.15, which keeps it off a Mojave or High Sierra
+					// host. As above, the initial release of the line has
+					// nothing below it inside the line to bound
+					if !slices.ContainsFunc(strings.Split(patch, "."), func(s string) bool { return s != "" && s != "0" }) {
+						return ""
+					}
+					return fmt.Sprintf("10.%d", mn)
+				}(),
 				LessThan: fixed,
 			}, fixed)
 			return &c, nil

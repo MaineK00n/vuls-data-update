@@ -232,6 +232,7 @@
 									"cpe": "cpe:2.3:o:apple:mac_os_x:*:*:*:*:*:*:*:*",
 									"range": {
 										"type": "apple",
+										"ge": "10.12",
 										"lt": "10.12.3"
 									},
 									"fixed": [
