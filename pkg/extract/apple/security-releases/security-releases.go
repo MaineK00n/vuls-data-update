@@ -230,7 +230,10 @@ func extract(fetched securityreleases.Advisory, releases []release, raws []strin
 
 	// one condition per release section, tagged with the raw section name;
 	// the sections of the pre-2005 inline archive pages are not releases,
-	// and only names releaseCriterions maps to a CPE yield a condition
+	// and only names releaseCriterions maps to a CPE yield a condition.
+	// macOS is the exception: its criterions come from each entry's
+	// "Available for", so a section splits into one condition per distinct
+	// field value, tagged with the field
 	var conditions []conditionTypes.Condition
 	tagsByCVE := make(map[string][]segmentTypes.DetectionTag)
 	var cves []string
@@ -255,28 +258,58 @@ func extract(fetched securityreleases.Advisory, releases []release, raws []strin
 		if slices.Contains(inlineAdvisoryPageIDs, rootID) {
 			continue
 		}
-		cs, err := releaseCriterions(s.Name)
+		cs, fixes, err := releaseCriterions(s.Name)
 		if err != nil {
 			return dataTypes.Data{}, errors.Wrapf(err, "release criterions. root: %s", rootID)
 		}
-		if len(cs) == 0 {
-			continue
+
+		add := func(tag segmentTypes.DetectionTag, cs []criterionTypes.Criterion, tagged []string) {
+			if len(cs) == 0 {
+				return
+			}
+			// combined pages may repeat a section name, e.g. "Safari 11.0.2"
+			// twice; the same name maps to the same criterions, so keep the
+			// first
+			if !slices.ContainsFunc(conditions, func(c conditionTypes.Condition) bool { return c.Tag == tag }) {
+				conditions = append(conditions, conditionTypes.Condition{
+					Criteria: criteriaTypes.Criteria{
+						Operator:   criteriaTypes.CriteriaOperatorTypeOR,
+						Criterions: cs,
+					},
+					Tag: tag,
+				})
+			}
+			for _, c := range tagged {
+				if !slices.Contains(tagsByCVE[c], tag) {
+					tagsByCVE[c] = append(tagsByCVE[c], tag)
+				}
+			}
 		}
-		tag := segmentTypes.DetectionTag(s.Name)
-		// combined pages may repeat a section name, e.g. "Safari 11.0.2"
-		// twice; the same name maps to the same criterions, so keep the first
-		if !slices.ContainsFunc(conditions, func(c conditionTypes.Condition) bool { return c.Tag == tag }) {
-			conditions = append(conditions, conditionTypes.Condition{
-				Criteria: criteriaTypes.Criteria{
-					Operator:   criteriaTypes.CriteriaOperatorTypeOR,
-					Criterions: cs,
-				},
-				Tag: tag,
-			})
-		}
-		for _, c := range sectionCVEs {
-			if !slices.Contains(tagsByCVE[c], tag) {
-				tagsByCVE[c] = append(tagsByCVE[c], tag)
+
+		add(segmentTypes.DetectionTag(s.Name), cs, sectionCVEs)
+
+		// macOS takes its criterions from each entry's "Available for", so a
+		// section carrying several distinct fields splits into one condition
+		// per field. Entries sharing a field share a condition. The heading
+		// is not consulted to decide whether to look: a Supplemental Update
+		// heading names no version of its own, yet its entries state the
+		// version they are for
+		if slices.ContainsFunc(releaseNameSeparators.Split(s.Name, -1), func(part string) bool {
+			return macOSSectionPattern.MatchString(strings.TrimSpace(strings.TrimSuffix(strings.TrimSpace(part), "*")))
+		}) {
+			for _, e := range s.Entries {
+				if len(e.AvailableFor) == 0 {
+					continue
+				}
+				var entryCVEs []string
+				for _, t := range slices.Concat(e.IDs, e.Others) {
+					for _, m := range vulnerabilityIDPattern.FindAllString(t, -1) {
+						entryCVEs = append(entryCVEs, strings.Replace(m, "CAN-", "CVE-", 1))
+					}
+				}
+				slices.Sort(entryCVEs)
+				add(segmentTypes.DetectionTag(strings.Join(e.AvailableFor, ", ")),
+					macOSCriterionsFor(e.AvailableFor, fixes), slices.Compact(entryCVEs))
 			}
 		}
 	}
@@ -403,11 +436,18 @@ func parseDate(v string) *time.Time {
 // letter (" (a)" in "iOS 16.5.1 (a)"): the version fragment is
 // AppleVersionPattern, so a captured bound is by construction what the
 // apple comparator accepts.
+// macOSXCPE and macOSCPE are the two products the desktop OS is filed under,
+// split at 10.15/11.0 the way NVD splits it.
+const (
+	macOSXCPE = "cpe:2.3:o:apple:mac_os_x:*:*:*:*:*:*:*:*"
+	macOSCPE  = "cpe:2.3:o:apple:macos:*:*:*:*:*:*:*:*"
+)
+
 var releasePatterns = []struct {
 	re  *regexp.Regexp
 	cpe string
 }{
-	{regexp.MustCompile(fmt.Sprintf(`^(?:Mac )?OS X(?: (?:Lion|Mountain Lion|Mavericks|Yosemite|El Capitan))? v?%s$`, ccRangeTypes.AppleVersionPattern)), "cpe:2.3:o:apple:mac_os_x:*:*:*:*:*:*:*:*"},
+	{regexp.MustCompile(fmt.Sprintf(`^(?:Mac )?OS X(?: (?:Lion|Mountain Lion|Mavericks|Yosemite|El Capitan))? v?%s$`, ccRangeTypes.AppleVersionPattern)), macOSXCPE},
 	{regexp.MustCompile(fmt.Sprintf(`^iOS v?%s$`, ccRangeTypes.AppleVersionPattern)), "cpe:2.3:o:apple:iphone_os:*:*:*:*:*:*:*:*"},
 	{regexp.MustCompile(fmt.Sprintf(`^iPadOS v?%s$`, ccRangeTypes.AppleVersionPattern)), "cpe:2.3:o:apple:ipados:*:*:*:*:*:*:*:*"},
 	{regexp.MustCompile(fmt.Sprintf(`^(?:watchOS|Watch OS) v?%s$`, ccRangeTypes.AppleVersionPattern)), "cpe:2.3:o:apple:watchos:*:*:*:*:*:*:*:*"},
@@ -426,6 +466,15 @@ var releasePatterns = []struct {
 // major.
 var macOSReleasePattern = regexp.MustCompile(fmt.Sprintf(`^macOS(?: [A-Z][A-Za-z]+)* v?%s$`, ccRangeTypes.AppleVersionPattern))
 
+// macOSSectionPattern matches a heading that names a macOS release, with or
+// without a version and with or without the "Supplemental Update" and
+// "Security Update ..." suffixes the combined pages carry. Only under such a
+// heading does "Available for" name the affected systems: under an
+// application heading — "Xcode 16", "OS X Server v4.1", "Safari 17.5" — the
+// same field names what the application runs on, which is the requirement to
+// install it and not a statement that the system is vulnerable.
+var macOSSectionPattern = regexp.MustCompile(`^(?:macOS(?: [A-Z][A-Za-z]+)*|(?:Mac )?OS X(?: [A-Z][A-Za-z]+)*)(?: v?\d[\d.]*)?(?: \(\w\))?(?: (?:Supplemental )?Update(?: \d+)?)?$`)
+
 // osFamilyPattern matches the shape of an OS-family release this extractor
 // does not know — a future "homeOS 1.0" — so that a family Apple adds next
 // to visionOS fails loudly instead of silently losing its detections, the
@@ -442,19 +491,18 @@ var releaseNameSeparators = regexp.MustCompile(`, and |; and |, |; | and | / `)
 // releaseCriterions maps a release name to CPE criterions, one per part of
 // the name that names an OS release or Safari: the release fixes the listed
 // vulnerabilities, so versions below it are vulnerable.
-func releaseCriterions(name string) ([]criterionTypes.Criterion, error) {
+func releaseCriterions(name string) ([]criterionTypes.Criterion, map[string]string, error) {
 	var cs []criterionTypes.Criterion
+	fixes := make(map[string]string)
 	for _, part := range releaseNameSeparators.Split(name, -1) {
 		// a trailing asterisk is a footnote marker, e.g. "Safari 14.1*"
 		part = strings.TrimSpace(strings.TrimSuffix(strings.TrimSpace(part), "*"))
 
 		if m := macOSReleasePattern.FindStringSubmatch(part); m != nil {
-			c, err := macOSCriterion(part, m[1], m[2])
-			if err != nil {
-				return nil, err
-			}
-			if c != nil {
-				cs = append(cs, *c)
+			// the heading fixes this line; what it affects comes from the
+			// entries' "Available for", so record the fix and emit nothing
+			if err := recordFix(fixes, part, m[1]); err != nil {
+				return nil, nil, err
 			}
 			continue
 		}
@@ -471,6 +519,16 @@ func releaseCriterions(name string) ([]criterionTypes.Criterion, error) {
 			// the vulnerable base 16.5.1 sorts below the bound and matches,
 			// while the patched 16.5.1 (a) does not
 			fixed := fmt.Sprintf("%s%s", m[1], m[2])
+			// the desktop OS is spelled both ways across the eras — "macOS
+			// Sonoma 14.7.5" and "OS X Yosemite v10.10.2" — and both are the
+			// same thing to "Available for", so both record a fix here
+			// instead of a criterion
+			if p.cpe == macOSXCPE {
+				if err := recordFix(fixes, part, m[1]); err != nil {
+					return nil, nil, err
+				}
+				break
+			}
 			cs = append(cs, releaseCriterion(p.cpe, &ccRangeTypes.Range{
 				Type:     ccRangeTypes.RangeTypeApple,
 				LessThan: fixed,
@@ -478,89 +536,49 @@ func releaseCriterions(name string) ([]criterionTypes.Criterion, error) {
 			break
 		}
 		if !matched && osFamilyPattern.MatchString(part) {
-			return nil, errors.Errorf("unexpected OS family release name. expected: matched by releasePatterns, actual: %q", part)
+			return nil, nil, errors.Errorf("unexpected OS family release name. expected: matched by releasePatterns, actual: %q", part)
 		}
 	}
-	return cs, nil
+	return cs, fixes, nil
 }
 
-// macOSCriterion maps a macOS release to its criterion, deciding both the
-// CPE product and the range by the major version.
+// recordFix notes which macOS line a release name fixes, keyed by the first
+// version of that line. A heading may fix several at once — "macOS Catalina
+// 10.15.7, Security Update 2020-005 High Sierra, Security Update 2020-005
+// Mojave" — though only the parts carrying a version reach here; the rest of
+// that page's lines are named in the entries' "Available for", which closes
+// them itself.
 //
-// The product split follows NVD, which files Apple's desktop OS under
-// apple:mac_os_x through 10.15 and under apple:macos from 11.0 — not at the
-// Sierra rename: the NVD feed uses mac_os_x roughly 99:1 for the 10.12-10.15
-// generations, so criteria under apple:macos there would never meet a query
-// CPE derived from the NVD dictionary. Majors of 11 and later also carry the
-// lower bound ge <major>.0: Apple ships one advisory per supported major on
-// the same day, and with an upper bound alone a host on an older major would
-// match every newer major's advisory. NVD models the same per-major
-// intervals (versionStartIncluding 13.0 / 14.0 / 15.0 / ...), and every
-// lower bound it uses for apple:macos is such a major boundary. The 10.x
-// generations get the same treatment with the line as the boundary — ge
-// 10.<minor> — because they behave the same way: Apple ships Catalina
-// 10.15.7 and Mojave 10.14.6 together, and an upper bound alone would let
-// the Catalina advisory match a Mojave or High Sierra host. Only the
-// initial release of a line stays upper-only.
-//
-// "macOS Server <version>" shares the release-name shape and is skipped —
-// by the same major check rather than by name: its majors are 2 through 5
-// (discontinued at 5.12), so it lands in the default arm; a hypothetical
-// Server 11 would be filed as macOS. Any other major outside the known
-// macOS ones — 10.12 through 10.15 and 11 or later — is unexpected and
-// errors loudly.
-func macOSCriterion(part, version, rsr string) (*criterionTypes.Criterion, error) {
-	fixed := fmt.Sprintf("%s%s", version, rsr)
+// The 10.x generations and the majors from 11 on are both accepted, a 10.x
+// minor playing the part a major plays later. "macOS Server <version>"
+// shares the release-name shape and is skipped by the same major check rather
+// than by name: its majors are 2 through 5 (discontinued at 5.12), so it
+// lands in the default arm; a hypothetical Server 11 would be filed as macOS.
+// Any other major — outside 10.12 through 10.15 and 11 or later — is
+// unexpected and errors loudly.
+func recordFix(fixes map[string]string, part, version string) error {
 	major, rest, _ := strings.Cut(version, ".")
 	switch n, err := strconv.Atoi(major); {
 	case err != nil:
-		return nil, errors.Wrapf(err, "parse major of %q", version)
+		return errors.Wrapf(err, "parse major of %q", version)
 	case n >= 11:
-		c := releaseCriterion("cpe:2.3:o:apple:macos:*:*:*:*:*:*:*:*", &ccRangeTypes.Range{
-			Type: ccRangeTypes.RangeTypeApple,
-			GreaterEqual: func() string {
-				// an initial release — "macOS Ventura 13", also spellable
-				// "13.0" — fixes bugs whose vulnerable population is the
-				// previous major line, so there is nothing below it inside
-				// its own major to bound: ge would make the range empty
-				// ([15.0, 15) with 15 == 15.0 under the comparator), and NVD
-				// leaves exactly these advisories unbounded below. The lower
-				// bound goes on only when the fixed version sorts strictly
-				// above <major>.0
-				if rsr == "" && !slices.ContainsFunc(strings.Split(rest, "."), func(s string) bool { return s != "" && s != "0" }) {
-					return ""
-				}
-				return fmt.Sprintf("%d.0", n)
-			}(),
-			LessThan: fixed,
-		}, fixed)
-		return &c, nil
+		fixes[major] = version
+		return nil
 	case n == 10:
-		minor, patch, _ := strings.Cut(rest, ".")
-		if mn, err := strconv.Atoi(minor); err == nil && mn >= 12 && mn <= 15 {
-			c := releaseCriterion("cpe:2.3:o:apple:mac_os_x:*:*:*:*:*:*:*:*", &ccRangeTypes.Range{
-				Type: ccRangeTypes.RangeTypeApple,
-				GreaterEqual: func() string {
-					// the 10.x line plays the part a major plays from 11 on,
-					// so the bound is the line: "macOS Catalina 10.15.7" is
-					// ge 10.15, which keeps it off a Mojave or High Sierra
-					// host. As above, the initial release of the line has
-					// nothing below it inside the line to bound
-					if !slices.ContainsFunc(strings.Split(patch, "."), func(s string) bool { return s != "" && s != "0" }) {
-						return ""
-					}
-					return fmt.Sprintf("10.%d", mn)
-				}(),
-				LessThan: fixed,
-			}, fixed)
-			return &c, nil
+		minor, _, _ := strings.Cut(rest, ".")
+		// the heading spells the older generations too — "OS X Yosemite
+		// v10.10.2" — and they bound an "Available for" the same way, so the
+		// accepted minors run from Cheetah rather than from Sierra
+		if mn, err := strconv.Atoi(minor); err == nil && mn >= 0 && mn <= 15 {
+			fixes[fmt.Sprintf("10.%d", mn)] = version
+			return nil
 		}
 		fallthrough
 	default:
 		if strings.HasPrefix(part, "macOS Server ") {
-			return nil, nil
+			return nil
 		}
-		return nil, errors.Errorf("unexpected macOS major. expected: 10.12-10.15 or >= 11, actual: %q", part)
+		return errors.Errorf("unexpected macOS major. expected: 10.x or >= 11, actual: %q", part)
 	}
 }
 
