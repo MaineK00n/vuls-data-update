@@ -35,8 +35,9 @@ import (
 //	QuickTime 7.1.3 on Mac OS X v10.3.9             a component, then the system
 //
 // Other families state hardware there — "iPhone 6s and later", "Apple Watch
-// Series 6 and later" — which carries no version, so only macOS and Safari
-// entries are read.
+// Series 6 and later" — which carries no version, so nothing but macOS is
+// read from the field. The other families take their versions from the
+// section heading, which states them.
 
 // macOSLines maps a marketing name to the first version of its line. The
 // names are enumerated because the field uses them alone, without a version,
