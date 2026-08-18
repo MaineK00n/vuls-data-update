@@ -89,6 +89,7 @@ var wholeProductAudited = map[advisoryProduct]struct{}{
 	{"FG-IR-15-007", "FortiMail"}:          {},
 	{"FG-IR-16-041", "FortiClientSSLVPN"}:  {},
 	{"FG-IR-16-069", "FortiClientSSLVPN"}:  {},
+	{"FG-IR-16-090", "FortiOS"}:            {},
 }
 
 // supplementCriterions builds the detection criterions for an advisory from
