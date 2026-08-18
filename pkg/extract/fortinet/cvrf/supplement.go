@@ -16,16 +16,40 @@ import (
 // supplementTable (supplement_data.go) carries the affected-product data for
 // the historical CVRF advisories (2012 through 2022) whose
 // product_statuses/product_tree are empty upstream, so the CVRF document
-// itself yields no detection. The rows were generated once from two
-// Fortinet-authored sources and then frozen: the curated version ranges of
-// the legacy vuls-data-raw-fortinet (handmade) dataset, and the
-// affected-version data Fortinet publishes as a CNA in its cvelistV5 records.
-// Where both sources cover an advisory, handmade rows win per product
-// (curated ranges) and CNA rows fill the products handmade misses;
-// disagreements were reviewed by hand. The gap is historical — from 2022 on
-// Fortinet populates product_statuses (and publishes CSAF) — so the table is
-// a frozen asset, not a maintained feed (mirroring how microsoft/bulletin
-// compiles its frozen archive amendments in).
+// itself yields no detection. The gap is historical — from 2022 on Fortinet
+// populates product_statuses (and publishes CSAF) — but the rows are not
+// frozen: they state what the advisory says, and an advisory whose note is
+// read differently later is re-read.
+//
+// A row's authority is the advisory's own Affected Products note, with the
+// affected-version data Fortinet publishes as a CNA in its cvelistV5 records
+// as the second source: a row covers what the note claims, plus what the CNA
+// record adds for that product. Of the 721 rows, 549 have a version in their
+// note, 34 rest on the CNA record alone, and 138 have neither — the note
+// names the product without a version, or gives no version at all — and keep
+// the ranges the table was seeded with. That seed was the curated ranges of
+// the legacy vuls-data-raw-fortinet (handmade) dataset, which is no longer a
+// source: it expressed "<v> and below" as an open-ended bound and stopped
+// "<train> all versions" at whatever release existed when it was curated,
+// neither of which is what the advisories say.
+//
+// How the notes' wording maps onto rows:
+//
+//   - "<v> and below/earlier" bounds the train it names — ge <train>.0,
+//     le <v>. Fortinet's own CNA records read it that way: across the
+//     records for these advisories, 58 entries bound their lowest affected
+//     train explicitly against 4 that leave it open.
+//   - "<train> all versions" / "<train>.x" is the whole train, in the shape
+//     product.TrainRange emits for the CSAF source (ge "6.0", lt "6.1"), so
+//     a later release of an EOL train cannot fall out of range.
+//   - "all versions below <v>" is open-ended below, and "<a> through <b>"
+//     is exactly that.
+//
+// A handful of notes cannot be expressed in versions at all — an impact
+// scoped to hardware models (FG-IR-19-224 to the FortiSwitch 424E/426E/448E,
+// FG-IR-20-036 to the FortiAnalyzer models that manage a FortiRecorder) or
+// to a configuration (FG-IR-16-090 to the default TCP timestamp setting).
+// Those rows carry the version bound the note gives and say so in a comment.
 //
 // Scope: rows are advisory-granular; per-CVE attribution is deliberately
 // not modeled. A few multi-CVE advisories scope products per CVE in their

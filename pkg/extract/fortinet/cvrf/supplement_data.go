@@ -1,7 +1,8 @@
-// The initial content of this table was machine-generated from the
-// legacy handmade dataset, Fortinet's CNA records and the advisory
-// notes, then arbitrated by hand; it is maintained as ordinary source.
-// See supplement.go for what this table is and how it was derived.
+// The rows state what each advisory's Affected Products note says, plus
+// what the Fortinet CNA record for the same CVEs adds; they are generated
+// from those two sources and arbitrated by hand, and maintained as
+// ordinary source. See supplement.go for the wording conventions and for
+// why the legacy handmade dataset is not a source.
 
 package cvrf
 
