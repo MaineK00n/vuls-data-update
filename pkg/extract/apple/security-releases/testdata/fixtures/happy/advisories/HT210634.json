@@ -1,0 +1,41 @@
+{
+	"id": "HT210634",
+	"url": "https://support.apple.com/en-us/106323",
+	"title": "About the security content of macOS Catalina 10.15",
+	"sections": [
+		{
+			"entries": [
+				{
+					"others": [
+						"This document describes the security content of macOS Catalina 10.15."
+					]
+				}
+			]
+		},
+		{
+			"name": "macOS Catalina 10.15",
+			"entries": [
+				{
+					"notes": [
+						"Released October 7, 2019"
+					]
+				},
+				{
+					"component": "AppleFirmwareUpdateKext",
+					"available_for": [
+						"macOS Mojave 10.14.6"
+					],
+					"impact": [
+						"An application may be able to execute arbitrary code with system privileges"
+					],
+					"description": [
+						"A memory corruption issue was addressed with improved memory handling."
+					],
+					"ids": [
+						"CVE-2019-8747"
+					]
+				}
+			]
+		}
+	]
+}
