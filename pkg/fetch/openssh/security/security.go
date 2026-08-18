@@ -87,6 +87,21 @@ const (
 // nvdResultsPerPageMax is the largest page the NVD API serves.
 const nvdResultsPerPageMax = 2_000
 
+// defaultNVDWait is the gap left between NVD requests, and the backoff before
+// retrying one. NVD allows a caller without an API key 5 requests in a rolling
+// 30-second window and asks for roughly this interval; it is what
+// pkg/fetch/nvd/api/cve uses for the same reason.
+//
+// It is deliberately not opts.wait. That paces the CVE records, and 183
+// requests to cve.org at six seconds apart would cost twenty minutes to space
+// out two requests to a different host.
+//
+// The backoff matters as much as the interval. Two requests are comfortably
+// inside the window only while they succeed: retried at the client's default
+// second apart, one 429 turns two requests into eight inside the window that
+// produced it.
+const defaultNVDWait = 6 * time.Second
+
 // minEntries is the floor a stored page has to clear. The list holds 55 entries
 // and only grows: entries are added at the top and none has ever been removed,
 // so a body carrying fewer is not this page. The floor sits well under the
@@ -94,14 +109,6 @@ const nvdResultsPerPageMax = 2_000
 // bumped, while still rejecting the error pages and portal interstitials that
 // arrive with a 200.
 const minEntries = 40
-
-// skillPath is where the conversion instructions are written, relative to the
-// output directory. The .claude/skills/<name>/SKILL.md layout is what makes an
-// agent started in the raw repository discover them on its own, which is the
-// point of shipping them here rather than leaving them in vuls-data-update: the
-// conversion runs in the data repository, and the instructions that describe
-// this fetcher's output should be the ones that shipped with it.
-var skillPath = filepath.Join(".claude", "skills", "openssh-security-raw", "SKILL.md")
 
 //go:embed skill/SKILL.md
 var skill []byte
@@ -114,6 +121,7 @@ type options struct {
 	retry          int
 	concurrency    int
 	wait           time.Duration
+	nvdWait        time.Duration
 	resultsPerPage int
 }
 
@@ -171,6 +179,19 @@ func WithWait(wait time.Duration) Option {
 	return waitOption(wait)
 }
 
+type nvdWaitOption time.Duration
+
+func (w nvdWaitOption) apply(opts *options) {
+	opts.nvdWait = time.Duration(w)
+}
+
+// WithNVDWait sets the gap between NVD requests, and the backoff before
+// retrying one. It is separate from WithWait because the two pace different
+// hosts with different limits; see defaultNVDWait.
+func WithNVDWait(wait time.Duration) Option {
+	return nvdWaitOption(wait)
+}
+
 type resultsPerPageOption int
 
 func (r resultsPerPageOption) apply(opts *options) {
@@ -210,6 +231,7 @@ func Fetch(opts ...Option) error {
 		retry:          3,
 		concurrency:    5,
 		wait:           1 * time.Second,
+		nvdWait:        defaultNVDWait,
 		resultsPerPage: nvdResultsPerPageMax,
 	}
 
@@ -316,7 +338,7 @@ func (opts options) fetch() error {
 // that is empty for a reason no reader could distinguish from OpenSSH having
 // no CVEs at all -- and would break every annotation already resting on it.
 func (opts options) fetchCVEs(client *utilhttp.Client) error {
-	ids, err := opts.cveIDs(client)
+	ids, err := opts.cveIDs()
 	if err != nil {
 		return errors.Wrap(err, "list cve ids")
 	}
@@ -375,7 +397,11 @@ func (opts options) fetchCVEs(client *utilhttp.Client) error {
 // that merely mention OpenSSH in passing. Storing a few extra records costs a
 // file each; missing one costs an advisory its ID, with nothing to show that it
 // was missed.
-func (opts options) cveIDs(client *utilhttp.Client) ([]string, error) {
+func (opts options) cveIDs() ([]string, error) {
+	// Its own client: the retry backoff below is what keeps a failed request
+	// from breaching the rate limit, and it must not slow the CVE records.
+	client := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry), utilhttp.WithClientRetryWaitMin(opts.nvdWait))
+
 	ids := make(map[string]struct{})
 	for _, q := range []string{
 		fmt.Sprintf("virtualMatchString=%s", url.QueryEscape("cpe:2.3:a:openbsd:openssh")),
@@ -416,10 +442,10 @@ func (opts options) cveIDs(client *utilhttp.Client) ([]string, error) {
 				return nil, errors.Errorf("unexpected empty page. expected: %q, actual: %q", fmt.Sprintf("some of the %d results remaining after %d", r.TotalResults, startIndex), "none")
 			}
 
-			time.Sleep(opts.wait)
+			time.Sleep(opts.nvdWait)
 		}
 
-		time.Sleep(opts.wait)
+		time.Sleep(opts.nvdWait)
 	}
 
 	return slices.Sorted(maps.Keys(ids)), nil
@@ -569,10 +595,18 @@ func validate(bs []byte) error {
 // tree carrying last year's instructions beside this year's fetcher is the
 // failure this avoids. Local edits are overwritten -- the file is output, and
 // belongs upstream in skill/SKILL.md.
+// The .claude/skills/<name>/SKILL.md layout is what makes an agent started in
+// the raw repository discover them on its own, which is the point of writing
+// them here rather than leaving them in vuls-data-update: the conversion runs in
+// the data repository, and the instructions that describe this fetcher's output
+// should be the ones that shipped with it.
 func (opts options) writeSkill() error {
-	if err := write(filepath.Join(opts.dir, skillPath), skill); err != nil {
-		return errors.Wrapf(err, "write %s", filepath.Join(opts.dir, skillPath))
+	path := filepath.Join(opts.dir, ".claude", "skills", "openssh-security-raw", "SKILL.md")
+
+	if err := write(path, skill); err != nil {
+		return errors.Wrapf(err, "write %s", path)
 	}
+
 	return nil
 }
 

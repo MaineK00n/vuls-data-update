@@ -105,7 +105,7 @@ func TestFetch(t *testing.T) {
 			u, nvd, cve := urls(t, ts)
 
 			dir := t.TempDir()
-			err := security.Fetch(security.WithURL(u), nvd, cve, security.WithDir(dir), security.WithRetry(0), security.WithConcurrency(1), security.WithWait(0))
+			err := security.Fetch(security.WithURL(u), nvd, cve, security.WithDir(dir), security.WithRetry(0), security.WithConcurrency(1), security.WithWait(0), security.WithNVDWait(0))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)
@@ -216,7 +216,7 @@ func TestFetch_pagesCVEIDs(t *testing.T) {
 	u, nvd, cve := urls(t, ts)
 
 	dir := t.TempDir()
-	if err := security.Fetch(security.WithURL(u), nvd, cve, security.WithDir(dir), security.WithRetry(0), security.WithConcurrency(1), security.WithWait(0), security.WithResultsPerPage(2)); err != nil {
+	if err := security.Fetch(security.WithURL(u), nvd, cve, security.WithDir(dir), security.WithRetry(0), security.WithConcurrency(1), security.WithWait(0), security.WithNVDWait(0), security.WithResultsPerPage(2)); err != nil {
 		t.Fatal("unexpected error:", err)
 	}
 
@@ -265,7 +265,7 @@ func TestFetch_keepsRaw(t *testing.T) {
 		}
 	}
 
-	if err := security.Fetch(security.WithURL(u), nvd, cve, security.WithDir(dir), security.WithRetry(0), security.WithConcurrency(1), security.WithWait(0)); err != nil {
+	if err := security.Fetch(security.WithURL(u), nvd, cve, security.WithDir(dir), security.WithRetry(0), security.WithConcurrency(1), security.WithWait(0), security.WithNVDWait(0)); err != nil {
 		t.Fatal("unexpected error:", err)
 	}
 
