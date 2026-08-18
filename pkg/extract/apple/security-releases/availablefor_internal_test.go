@@ -105,11 +105,10 @@ func TestParseAvailableFor(t *testing.T) {
 				t.Error("unexpected error:", err)
 			case err == nil && tt.hasError:
 				t.Error("expected error has not occurred")
-			case err != nil && tt.hasError:
-				return
-			}
-			if diff := cmp.Diff(tt.want, got, cmp.AllowUnexported(availableFor{})); diff != "" {
-				t.Errorf("parseAvailableFor(). (-expected +got):\n%s", diff)
+			default:
+				if diff := cmp.Diff(tt.want, got, cmp.AllowUnexported(availableFor{})); diff != "" {
+					t.Errorf("parseAvailableFor(). (-expected +got):\n%s", diff)
+				}
 			}
 		})
 	}
@@ -255,11 +254,10 @@ func TestMacOSCriterionsFor(t *testing.T) {
 				t.Error("unexpected error:", err)
 			case err == nil && tt.hasError:
 				t.Error("expected error has not occurred")
-			case err != nil && tt.hasError:
-				return
-			}
-			if diff := cmp.Diff(tt.want, got); diff != "" {
-				t.Errorf("macOSCriterionsFor(). (-expected +got):\n%s", diff)
+			default:
+				if diff := cmp.Diff(tt.want, got); diff != "" {
+					t.Errorf("macOSCriterionsFor(). (-expected +got):\n%s", diff)
+				}
 			}
 		})
 	}
