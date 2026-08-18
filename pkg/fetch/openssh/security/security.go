@@ -476,20 +476,21 @@ type document struct {
 // cited returns the documents linked from the page that are stored beside it.
 //
 // It is scoped to the page's own host and to /txt/, where OpenSSH keeps its
-// release notes and advisories -- the 35 documents that between them state the
-// CVE IDs and fix releases the entries themselves mostly leave out. The scope
-// is a boundary rather than a shortcut. These are published by the project that
-// publishes the page, so a diff against a stored copy carries the same meaning
-// here as it does for the page; whereas the entries also link a dozen
-// third-party hosts, several long dead (bindview, corest, cpni), whose
+// release notes and advisories -- the 35 documents that carry the fix releases
+// and the detail the entries compress. Not the CVE IDs: five of the 35 name one
+// at all, and those five are the ones the page already names itself. Those come
+// from the CVE List instead, stored under origin/mitre/ by fetchCVEs, for the
+// structural reason given there.
+//
+// The scope is a boundary rather than a shortcut. These are published by the
+// project that publishes the page, so a diff against a stored copy carries the
+// same meaning here as it does for the page; whereas the entries also link a
+// dozen third-party hosts, several long dead (bindview, corest, cpni), whose
 // retrieval would fail or vary run to run without adding evidence -- a
 // cve.mitre.org link states the CVE ID that is already its own anchor text, and
 // the kb.cert.org notes are about SSH at large, mostly attached to the entries
 // recording that OpenSSH was never affected and which must therefore gain no
 // CVE at all.
-//
-// A document outside the scope can still be cited by an annotation, which names
-// a URL whether or not it is stored here. What it cannot be is offline-checkable.
 func cited(page []byte, base string) ([]document, error) {
 	b, err := url.Parse(base)
 	if err != nil {

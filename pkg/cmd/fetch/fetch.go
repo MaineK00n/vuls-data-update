@@ -4149,11 +4149,13 @@ func newCmdOpenSSHSecurity() *cobra.Command {
 		Long: heredoc.Doc(`
 			Fetch OpenSSH Security Advisory data source.
 
-			The advisory page is prose, so this command stores it under origin/ and
-			writes the instructions for converting it into raw/ (as
-			.claude/skills/openssh-security-raw/SKILL.md). Producing raw/ is a
-			separate, model-driven step run against the stored page; nothing outside
-			origin/ is touched here.
+			The advisory page is prose, so this command stores it, and the documents
+			it cites, under origin/. It also writes the instructions for converting
+			them into raw/ (as .claude/skills/openssh-security-raw/SKILL.md).
+
+			Producing raw/ is a separate, model-driven step run against the stored
+			copies, so raw/ is the one thing this command leaves alone: everything
+			else under the output directory is replaced.
 		`),
 		Example: heredoc.Doc(`
 			$ vuls-data-update fetch openssh-security
