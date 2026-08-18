@@ -124,6 +124,7 @@ func TestIsMacOSSection(t *testing.T) {
 		{name: "a page covering several lines", arg: "macOS Mojave 10.14.1, Security Update 2018-002 High Sierra", want: true},
 		{name: "the server edition has the shape of a release", arg: "OS X Server v4.1", want: false},
 		{name: "the server edition, newer spelling", arg: "macOS Server 5.11", want: false},
+		{name: "the server edition with the word in the middle", arg: "OS X Lion Server v10.7.3", want: false},
 		{name: "an application", arg: "Xcode 16", want: false},
 		{name: "an application that names the system", arg: "Java for Mac OS X 10.6 Update 5", want: false},
 		{name: "another family", arg: "Safari 17.5", want: false},

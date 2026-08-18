@@ -480,15 +480,17 @@ var macOSReleasePattern = regexp.MustCompile(fmt.Sprintf(`^macOS(?: [A-Z][A-Za-z
 // versions, and its field states what it runs on like any other application.
 var (
 	macOSSectionPattern = regexp.MustCompile(`^(?:macOS|(?:Mac )?OS X)(?: [A-Z][A-Za-z]+)*(?: v?\d[\d.]*)?(?: \(\w\))?(?: (?:Supplemental )?Update(?: \d+)?)?$`)
-	serverSectionPrefix = regexp.MustCompile(`^(?:macOS|(?:Mac )?OS X) Server\b`)
 )
 
 // isMacOSSection reports whether a heading names a macOS release rather than
-// an application that runs on one.
+// an application that runs on one. The server edition has the same shape as a
+// release — "OS X Server v4.1" — and is excluded by the word wherever it sits,
+// since it also sits in the middle ("OS X Lion Server v10.7.3"), and no macOS
+// release is named with it.
 func isMacOSSection(name string) bool {
 	for _, part := range releaseNameSeparators.Split(name, -1) {
 		part = strings.TrimSpace(strings.TrimSuffix(strings.TrimSpace(part), "*"))
-		if macOSSectionPattern.MatchString(part) && !serverSectionPrefix.MatchString(part) {
+		if macOSSectionPattern.MatchString(part) && !serverWordPattern.MatchString(part) {
 			return true
 		}
 	}
@@ -577,7 +579,7 @@ func releaseCriterions(name string) ([]criterionTypes.Criterion, map[string]stri
 // shares the release-name shape and is skipped by the same major check rather
 // than by name: its majors are 2 through 5 (discontinued at 5.12), so it
 // lands in the default arm; a hypothetical Server 11 would be filed as macOS.
-// Any other major — outside 10.12 through 10.15 and 11 or later — is
+// Any other major — outside 10.0 through 10.15 and 11 or later — is
 // unexpected and errors loudly.
 func recordFix(fixes map[string]string, part, version, rsr string) error {
 	fixed := fmt.Sprintf("%s%s", version, rsr)
