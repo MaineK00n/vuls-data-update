@@ -458,9 +458,9 @@ var releasePatterns = []struct {
 // "macOS[ <Name>] <version>[ (<rsr letter>)]", the version closing the
 // name. The name is not captured — it carries no information the version
 // does not, since both the CPE product and the range's lower bound are
-// decided by the major in macOSCriterion — so a new marketing name is a
+// decided by the major in recordFix — so a new marketing name is a
 // no-op here instead of a yearly enumeration update. "macOS Server
-// <version>" shares the shape and is skipped by macOSCriterion on its
+// <version>" shares the shape and is skipped by recordFix on its
 // major.
 var macOSReleasePattern = regexp.MustCompile(fmt.Sprintf(`^macOS(?: [A-Z][A-Za-z]+)* v?%s$`, ccRangeTypes.AppleVersionPattern))
 
@@ -517,8 +517,11 @@ func releaseCriterions(name string) ([]criterionTypes.Criterion, map[string]stri
 
 		if m := macOSReleasePattern.FindStringSubmatch(part); m != nil {
 			// the heading fixes this line; what it affects comes from the
-			// entries' "Available for", so record the fix and emit nothing
-			if err := recordFix(fixes, part, m[1]); err != nil {
+			// entries' "Available for", so record the fix and emit nothing.
+			// The Rapid Security Response letter rides along, the comparator
+			// understanding it, so a host on the base version sorts below the
+			// bound and matches while the responded one does not
+			if err := recordFix(fixes, part, m[1], m[2]); err != nil {
 				return nil, nil, err
 			}
 			continue
@@ -541,7 +544,7 @@ func releaseCriterions(name string) ([]criterionTypes.Criterion, map[string]stri
 			// same thing to "Available for", so both record a fix here
 			// instead of a criterion
 			if p.cpe == macOSXCPE {
-				if err := recordFix(fixes, part, m[1]); err != nil {
+				if err := recordFix(fixes, part, m[1], m[2]); err != nil {
 					return nil, nil, err
 				}
 				break
@@ -573,13 +576,14 @@ func releaseCriterions(name string) ([]criterionTypes.Criterion, map[string]stri
 // lands in the default arm; a hypothetical Server 11 would be filed as macOS.
 // Any other major — outside 10.12 through 10.15 and 11 or later — is
 // unexpected and errors loudly.
-func recordFix(fixes map[string]string, part, version string) error {
+func recordFix(fixes map[string]string, part, version, rsr string) error {
+	fixed := fmt.Sprintf("%s%s", version, rsr)
 	major, rest, _ := strings.Cut(version, ".")
 	switch n, err := strconv.Atoi(major); {
 	case err != nil:
 		return errors.Wrapf(err, "parse major of %q", version)
 	case n >= 11:
-		fixes[major] = version
+		fixes[major] = fixed
 		return nil
 	case n == 10:
 		minor, _, _ := strings.Cut(rest, ".")
@@ -587,7 +591,7 @@ func recordFix(fixes map[string]string, part, version string) error {
 		// v10.10.2" — and they bound an "Available for" the same way, so the
 		// accepted minors run from Cheetah rather than from Sierra
 		if mn, err := strconv.Atoi(minor); err == nil && mn >= 0 && mn <= 15 {
-			fixes[fmt.Sprintf("10.%d", mn)] = version
+			fixes[fmt.Sprintf("10.%d", mn)] = fixed
 			return nil
 		}
 		fallthrough

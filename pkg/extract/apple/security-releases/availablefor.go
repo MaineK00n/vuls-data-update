@@ -138,8 +138,8 @@ func parseAvailableFor(s string) *availableFor {
 }
 
 // lineOf reduces a version to the first version of its line: 10.13.6 is
-// 10.13, 14.7.5 is 14. The split matches the one macOSCriterion makes, where
-// a 10.x minor plays the part a major plays from 11 on.
+// 10.13, 14.7.5 is 14. The split matches the one recordFix makes, where a
+// 10.x minor plays the part a major plays from 11 on.
 func lineOf(v string) (string, error) {
 	major, rest, _ := strings.Cut(v, ".")
 	n, err := strconv.Atoi(major)
