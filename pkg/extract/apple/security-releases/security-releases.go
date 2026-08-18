@@ -495,24 +495,37 @@ func releaseCriterions(name string) ([]criterionTypes.Criterion, error) {
 // the same day, and with an upper bound alone a host on an older major would
 // match every newer major's advisory. NVD models the same per-major
 // intervals (versionStartIncluding 13.0 / 14.0 / 15.0 / ...), and every
-// lower bound it uses for apple:macos is such a major boundary. The 10.x
-// generations stay upper-only like the other families, matching NVD's
-// modeling of their era.
+// lower bound it uses for apple:macos is such a major boundary. The
+// initial release of a major and the 10.x generations stay upper-only
+// like the other families, matching NVD's modeling.
 //
-// "macOS Server <version>" shares the release-name shape and is skipped;
-// any other major outside the known macOS ones — 10.12 through 10.15 and 11
-// or later — is unexpected and errors loudly.
+// "macOS Server <version>" shares the release-name shape and is skipped —
+// by the same major check rather than by name: its majors are 2 through 5
+// (discontinued at 5.12), so it lands in the default arm; a hypothetical
+// Server 11 would be filed as macOS. Any other major outside the known
+// macOS ones — 10.12 through 10.15 and 11 or later — is unexpected and
+// errors loudly.
 func macOSCriterion(part, version, rsr string) (*criterionTypes.Criterion, error) {
 	major, rest, _ := strings.Cut(version, ".")
 	switch n, err := strconv.Atoi(major); {
 	case err != nil:
 		return nil, errors.Wrapf(err, "parse major of %q", version)
 	case n >= 11:
-		c := releaseCriterion("cpe:2.3:o:apple:macos:*:*:*:*:*:*:*:*", &ccRangeTypes.Range{
-			Type:         ccRangeTypes.RangeTypeApple,
-			GreaterEqual: fmt.Sprintf("%d.0", n),
-			LessThan:     version + rsr,
-		}, version+rsr)
+		r := &ccRangeTypes.Range{
+			Type:     ccRangeTypes.RangeTypeApple,
+			LessThan: version + rsr,
+		}
+		// an initial release — "macOS Ventura 13", also spellable "13.0" —
+		// fixes bugs whose vulnerable population is the previous major
+		// line, so there is nothing below it inside its own major to
+		// bound: ge would make the range empty ([15.0, 15) with 15 ==
+		// 15.0 under the comparator), and NVD leaves exactly these
+		// advisories unbounded below. The lower bound goes on only when
+		// the fixed version sorts strictly above <major>.0
+		if rsr != "" || slices.ContainsFunc(strings.Split(rest, "."), func(s string) bool { return s != "" && s != "0" }) {
+			r.GreaterEqual = fmt.Sprintf("%d.0", n)
+		}
+		c := releaseCriterion("cpe:2.3:o:apple:macos:*:*:*:*:*:*:*:*", r, version+rsr)
 		return &c, nil
 	case n == 10:
 		minor, _, _ := strings.Cut(rest, ".")
