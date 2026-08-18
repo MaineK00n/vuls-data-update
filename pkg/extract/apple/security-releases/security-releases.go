@@ -470,10 +470,11 @@ func releaseCriterions(name string) ([]criterionTypes.Criterion, error) {
 			// version is the exclusive bound verbatim: for "iOS 16.5.1 (a)"
 			// the vulnerable base 16.5.1 sorts below the bound and matches,
 			// while the patched 16.5.1 (a) does not
+			fixed := fmt.Sprintf("%s%s", m[1], m[2])
 			cs = append(cs, releaseCriterion(p.cpe, &ccRangeTypes.Range{
 				Type:     ccRangeTypes.RangeTypeApple,
-				LessThan: m[1] + m[2],
-			}, m[1]+m[2]))
+				LessThan: fixed,
+			}, fixed))
 			break
 		}
 		if !matched && osFamilyPattern.MatchString(part) {
@@ -506,6 +507,7 @@ func releaseCriterions(name string) ([]criterionTypes.Criterion, error) {
 // macOS ones — 10.12 through 10.15 and 11 or later — is unexpected and
 // errors loudly.
 func macOSCriterion(part, version, rsr string) (*criterionTypes.Criterion, error) {
+	fixed := fmt.Sprintf("%s%s", version, rsr)
 	major, rest, _ := strings.Cut(version, ".")
 	switch n, err := strconv.Atoi(major); {
 	case err != nil:
@@ -513,7 +515,7 @@ func macOSCriterion(part, version, rsr string) (*criterionTypes.Criterion, error
 	case n >= 11:
 		r := &ccRangeTypes.Range{
 			Type:     ccRangeTypes.RangeTypeApple,
-			LessThan: version + rsr,
+			LessThan: fixed,
 		}
 		// an initial release — "macOS Ventura 13", also spellable "13.0" —
 		// fixes bugs whose vulnerable population is the previous major
@@ -525,15 +527,15 @@ func macOSCriterion(part, version, rsr string) (*criterionTypes.Criterion, error
 		if rsr != "" || slices.ContainsFunc(strings.Split(rest, "."), func(s string) bool { return s != "" && s != "0" }) {
 			r.GreaterEqual = fmt.Sprintf("%d.0", n)
 		}
-		c := releaseCriterion("cpe:2.3:o:apple:macos:*:*:*:*:*:*:*:*", r, version+rsr)
+		c := releaseCriterion("cpe:2.3:o:apple:macos:*:*:*:*:*:*:*:*", r, fixed)
 		return &c, nil
 	case n == 10:
 		minor, _, _ := strings.Cut(rest, ".")
 		if mn, err := strconv.Atoi(minor); err == nil && mn >= 12 && mn <= 15 {
 			c := releaseCriterion("cpe:2.3:o:apple:mac_os_x:*:*:*:*:*:*:*:*", &ccRangeTypes.Range{
 				Type:     ccRangeTypes.RangeTypeApple,
-				LessThan: version + rsr,
-			}, version+rsr)
+				LessThan: fixed,
+			}, fixed)
 			return &c, nil
 		}
 		fallthrough
