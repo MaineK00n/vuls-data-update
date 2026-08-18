@@ -3,7 +3,6 @@ package securityreleases
 import (
 	"cmp"
 	"fmt"
-	"reflect"
 	"regexp"
 	"slices"
 	"strconv"
@@ -256,7 +255,7 @@ func macOSCriterionsFor(availableFors []string, fixesByLine map[string]string) (
 				continue
 			}
 			c := releaseCriterion(cpe, &r, fixed)
-			if !slices.ContainsFunc(cs, func(x criterionTypes.Criterion) bool { return reflect.DeepEqual(x, c) }) {
+			if !slices.ContainsFunc(cs, func(x criterionTypes.Criterion) bool { return criterionTypes.Compare(x, c) == 0 }) {
 				cs = append(cs, c)
 			}
 		}
