@@ -407,13 +407,13 @@ var releasePatterns = []struct {
 	re  *regexp.Regexp
 	cpe string
 }{
-	{regexp.MustCompile(`^(?:Mac )?OS X(?: (?:Lion|Mountain Lion|Mavericks|Yosemite|El Capitan))? v?` + ccRangeTypes.AppleVersionPattern + `$`), "cpe:2.3:o:apple:mac_os_x:*:*:*:*:*:*:*:*"},
-	{regexp.MustCompile(`^iOS v?` + ccRangeTypes.AppleVersionPattern + `$`), "cpe:2.3:o:apple:iphone_os:*:*:*:*:*:*:*:*"},
-	{regexp.MustCompile(`^iPadOS v?` + ccRangeTypes.AppleVersionPattern + `$`), "cpe:2.3:o:apple:ipados:*:*:*:*:*:*:*:*"},
-	{regexp.MustCompile(`^(?:watchOS|Watch OS) v?` + ccRangeTypes.AppleVersionPattern + `$`), "cpe:2.3:o:apple:watchos:*:*:*:*:*:*:*:*"},
-	{regexp.MustCompile(`^tvOS v?` + ccRangeTypes.AppleVersionPattern + `$`), "cpe:2.3:o:apple:tvos:*:*:*:*:*:*:*:*"},
-	{regexp.MustCompile(`^visionOS v?` + ccRangeTypes.AppleVersionPattern + `$`), "cpe:2.3:o:apple:visionos:*:*:*:*:*:*:*:*"},
-	{regexp.MustCompile(`^Safari v?` + ccRangeTypes.AppleVersionPattern + `$`), "cpe:2.3:a:apple:safari:*:*:*:*:*:*:*:*"},
+	{regexp.MustCompile(fmt.Sprintf(`^(?:Mac )?OS X(?: (?:Lion|Mountain Lion|Mavericks|Yosemite|El Capitan))? v?%s$`, ccRangeTypes.AppleVersionPattern)), "cpe:2.3:o:apple:mac_os_x:*:*:*:*:*:*:*:*"},
+	{regexp.MustCompile(fmt.Sprintf(`^iOS v?%s$`, ccRangeTypes.AppleVersionPattern)), "cpe:2.3:o:apple:iphone_os:*:*:*:*:*:*:*:*"},
+	{regexp.MustCompile(fmt.Sprintf(`^iPadOS v?%s$`, ccRangeTypes.AppleVersionPattern)), "cpe:2.3:o:apple:ipados:*:*:*:*:*:*:*:*"},
+	{regexp.MustCompile(fmt.Sprintf(`^(?:watchOS|Watch OS) v?%s$`, ccRangeTypes.AppleVersionPattern)), "cpe:2.3:o:apple:watchos:*:*:*:*:*:*:*:*"},
+	{regexp.MustCompile(fmt.Sprintf(`^tvOS v?%s$`, ccRangeTypes.AppleVersionPattern)), "cpe:2.3:o:apple:tvos:*:*:*:*:*:*:*:*"},
+	{regexp.MustCompile(fmt.Sprintf(`^visionOS v?%s$`, ccRangeTypes.AppleVersionPattern)), "cpe:2.3:o:apple:visionos:*:*:*:*:*:*:*:*"},
+	{regexp.MustCompile(fmt.Sprintf(`^Safari v?%s$`, ccRangeTypes.AppleVersionPattern)), "cpe:2.3:a:apple:safari:*:*:*:*:*:*:*:*"},
 }
 
 // macOSReleasePattern matches a macOS OS release of any marketing name:
@@ -424,7 +424,7 @@ var releasePatterns = []struct {
 // no-op here instead of a yearly enumeration update. "macOS Server
 // <version>" shares the shape and is skipped by macOSCriterion on its
 // major.
-var macOSReleasePattern = regexp.MustCompile(`^macOS(?: [A-Z][A-Za-z]+)* v?` + ccRangeTypes.AppleVersionPattern + `$`)
+var macOSReleasePattern = regexp.MustCompile(fmt.Sprintf(`^macOS(?: [A-Z][A-Za-z]+)* v?%s$`, ccRangeTypes.AppleVersionPattern))
 
 // osFamilyPattern matches the shape of an OS-family release this extractor
 // does not know — a future "homeOS 1.0" — so that a family Apple adds next
@@ -432,7 +432,7 @@ var macOSReleasePattern = regexp.MustCompile(`^macOS(?: [A-Z][A-Za-z]+)* v?` + c
 // same treatment an unexpected macOS major gets. The historical spellings
 // ("Mac OS X v10.4", "OS X Server 3.0") have a different shape and do not
 // reach it; the known families are matched by releasePatterns first.
-var osFamilyPattern = regexp.MustCompile(`^[A-Za-z]+OS(?: [A-Z][A-Za-z]+)* v?` + ccRangeTypes.AppleVersionPattern + `$`)
+var osFamilyPattern = regexp.MustCompile(fmt.Sprintf(`^[A-Za-z]+OS(?: [A-Z][A-Za-z]+)* v?%s$`, ccRangeTypes.AppleVersionPattern))
 
 // releaseNameSeparators split a combined release name such as
 // "macOS High Sierra 10.13.2, Security Update 2017-002 Sierra, and Security

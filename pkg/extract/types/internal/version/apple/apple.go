@@ -20,6 +20,7 @@ package apple
 
 import (
 	"cmp"
+	"fmt"
 	"regexp"
 	"strconv"
 	"strings"
@@ -38,7 +39,7 @@ const Pattern = `([0-9]+(?:\.[0-9]+)*)( \([a-z]\))?`
 // this package is reached from Accept with whatever version a scan reported,
 // and a string that is not an Apple version must be a parse error the caller
 // can degrade to a non-match, never a silently mis-ordered comparison.
-var pattern = regexp.MustCompile(`^` + Pattern + `$`)
+var pattern = regexp.MustCompile(fmt.Sprintf(`^%s$`, Pattern))
 
 // Version is a parsed Apple version.
 type Version struct {
