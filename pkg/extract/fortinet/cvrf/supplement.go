@@ -35,7 +35,10 @@ import (
 // the legacy vuls-data-raw-fortinet (handmade) dataset, which is no longer a
 // source: it expressed "<v> and below" as an open-ended bound and stopped
 // "<train> all versions" at whatever release existed when it was curated,
-// neither of which is what the advisories say.
+// neither of which is what the advisories say. Those 138 are a deliberate
+// hold rather than an oversight: making them whole-product rows would flag
+// every release of the product, and dropping them would take away the only
+// detection their advisories have.
 //
 // How the notes' wording maps onto rows:
 //
@@ -48,6 +51,15 @@ import (
 //     a later release of an EOL train cannot fall out of range.
 //   - "all versions below <v>" is open-ended below, and "<a> through <b>"
 //     is exactly that.
+//   - The CNA record may add versions the note is silent about — typically an
+//     EOL train Fortinet stopped enumerating — but never a release the same
+//     advisory calls a fix. An advisory that caps a product at the very
+//     release its own Solutions note tells you to install contradicts itself,
+//     and the fix wins: the cap is the release before it. FG-IR-20-171 says
+//     "3.2.2 and earlier" against "Upgrade to 3.2.2 or later", and its other
+//     pair in the same note — "3.1.4 and earlier" against "upgrade to 3.1.5"
+//     — shows which half is the slip (FG-IR-17-073, FG-IR-20-222 and
+//     FG-IR-21-023 are the same shape).
 //
 // A handful of notes cannot be expressed in versions at all — an impact
 // scoped to hardware models (FG-IR-19-224 to the FortiSwitch 424E/426E/448E,
