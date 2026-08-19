@@ -86,7 +86,7 @@ var supplementTable = map[string][]supplementProduct{
 	},
 	"FG-IR-14-031": {
 		{Product: "FortiADC"}, // whole product, audited: POODLE: default-config, no version bound in the note
-		{Product: "FortiAnalyzer", Ranges: []supplementRange{{GreaterEqual: "5.0.0", LessEqual: "5.0.9"}, {GreaterEqual: "5.2.0", LessEqual: "5.2.1"}}},
+		{Product: "FortiAnalyzer", Versions: []string{"5.0.9", "5.2.1"}},
 		{Product: "FortiAuthenticator", Ranges: []supplementRange{{GreaterEqual: "3.0.0", LessEqual: "3.0.3"}}},
 		{Product: "FortiCache", Ranges: []supplementRange{{GreaterEqual: "2.2.0", LessEqual: "3.0.8"}}},
 		{Product: "FortiClientWindows"}, // whole product, audited: POODLE: default-config, no version bound in the note
@@ -1137,7 +1137,7 @@ var supplementTable = map[string][]supplementProduct{
 	},
 	"FG-IR-21-023": {
 		{Product: "FortiMail", Ranges: []supplementRange{{GreaterEqual: "5.0.0", LessEqual: "5.0.11"}, {GreaterEqual: "5.1.0", LessEqual: "5.1.7"}, {GreaterEqual: "5.2.0", LessEqual: "5.2.10"}, {GreaterEqual: "5.3.0", LessEqual: "5.3.10"}, {GreaterEqual: "5.3.12", LessEqual: "5.3.13"}, {GreaterEqual: "5.4.0", LessEqual: "5.4.12"}, {GreaterEqual: "6.0.0", LessEqual: "6.0.10"}, {GreaterEqual: "6.2.0", LessEqual: "6.2.6"}, {GreaterEqual: "6.4.0", LessThan: "6.4.5"}}},
-		{Product: "FortiNDR", Ranges: []supplementRange{{GreaterEqual: "1.1", LessThan: "1.2"}, {GreaterEqual: "1.2", LessThan: "1.3"}, {GreaterEqual: "1.3", LessThan: "1.4"}, {GreaterEqual: "1.4", LessThan: "1.5"}, {GreaterEqual: "1.5", LessThan: "1.6"}, {GreaterEqual: "7.0", LessThan: "7.1"}, {GreaterEqual: "7.1", LessThan: "7.2"}, {GreaterEqual: "7.2.0", LessEqual: "7.2.1"}}},
+		{Product: "FortiNDR", Versions: []string{"7.2.0"}, Ranges: []supplementRange{{GreaterEqual: "1.1", LessThan: "1.2"}, {GreaterEqual: "1.2", LessThan: "1.3"}, {GreaterEqual: "1.3", LessThan: "1.4"}, {GreaterEqual: "1.4", LessThan: "1.5"}, {GreaterEqual: "1.5", LessThan: "1.6"}, {GreaterEqual: "7.0", LessThan: "7.1"}, {GreaterEqual: "7.1", LessThan: "7.2"}}},
 	},
 	"FG-IR-21-026": {
 		{Product: "FortiSwitch", Ranges: []supplementRange{{GreaterEqual: "3.6", LessThan: "3.7"}, {GreaterEqual: "6.0", LessThan: "6.1"}, {GreaterEqual: "6.2.0", LessEqual: "6.2.6"}, {GreaterEqual: "6.4.0", LessEqual: "6.4.6"}}},
@@ -1332,8 +1332,8 @@ var supplementTable = map[string][]supplementProduct{
 	},
 	"FG-IR-21-132": {
 		{Product: "FortiADC", Versions: []string{"7.0.0"}, Ranges: []supplementRange{{GreaterEqual: "5.0", LessThan: "5.1"}, {GreaterEqual: "5.1", LessThan: "5.2"}, {GreaterEqual: "5.2", LessThan: "5.3"}, {GreaterEqual: "5.3", LessThan: "5.4"}, {GreaterEqual: "5.4", LessThan: "5.5"}, {GreaterEqual: "6.0", LessThan: "6.1"}, {GreaterEqual: "6.1.0", LessEqual: "6.1.6"}, {GreaterEqual: "6.2.0", LessEqual: "6.2.2"}}},
-		{Product: "FortiDDoS", Versions: []string{"5.7.0"}, Ranges: []supplementRange{{GreaterEqual: "4.4", LessThan: "4.5"}, {GreaterEqual: "4.5", LessThan: "4.6"}, {GreaterEqual: "4.6", LessThan: "4.7"}, {GreaterEqual: "4.7", LessThan: "4.8"}, {GreaterEqual: "5.0", LessThan: "5.1"}, {GreaterEqual: "5.1", LessThan: "5.2"}, {GreaterEqual: "5.2", LessThan: "5.3"}, {GreaterEqual: "5.3.0", LessEqual: "5.3.2"}, {GreaterEqual: "5.4.0", LessEqual: "5.4.3"}, {GreaterEqual: "5.5.0", LessEqual: "5.5.1"}, {GreaterEqual: "5.6.0", LessEqual: "5.6.1"}}},
-		{Product: "FortiDDoS-CM", Ranges: []supplementRange{{GreaterEqual: "4.7", LessThan: "4.8"}, {GreaterEqual: "5.0", LessThan: "5.1"}, {GreaterEqual: "5.1", LessThan: "5.2"}, {GreaterEqual: "5.2", LessThan: "5.3"}, {GreaterEqual: "5.3.0", LessEqual: "5.3.1"}, {GreaterEqual: "5.4.0", LessEqual: "5.4.3"}, {GreaterEqual: "5.5.0", LessEqual: "5.5.1"}}},
+		{Product: "FortiDDoS", Versions: []string{"5.7.0"}, Ranges: []supplementRange{{GreaterEqual: "4.4", LessThan: "4.5"}, {GreaterEqual: "4.5", LessThan: "4.6"}, {GreaterEqual: "4.6", LessThan: "4.7"}, {GreaterEqual: "4.7", LessThan: "4.8"}, {GreaterEqual: "5.0", LessThan: "5.1"}, {GreaterEqual: "5.1", LessThan: "5.2"}, {GreaterEqual: "5.2", LessThan: "5.3"}, {GreaterEqual: "5.3.0", LessEqual: "5.3.1"}, {GreaterEqual: "5.4.0", LessEqual: "5.4.2"}, {GreaterEqual: "5.5.0", LessEqual: "5.5.1"}, {GreaterEqual: "5.6.0", LessEqual: "5.6.1"}}},
+		{Product: "FortiDDoS-CM", Ranges: []supplementRange{{GreaterEqual: "4.7", LessThan: "4.8"}, {GreaterEqual: "5.0", LessThan: "5.1"}, {GreaterEqual: "5.1", LessThan: "5.2"}, {GreaterEqual: "5.2", LessThan: "5.3"}, {GreaterEqual: "5.3.0", LessEqual: "5.3.1"}, {GreaterEqual: "5.4.0", LessEqual: "5.4.2"}, {GreaterEqual: "5.5.0", LessEqual: "5.5.1"}}},
 		{Product: "FortiDDoS-F", Versions: []string{"6.3.0"}, Ranges: []supplementRange{{GreaterEqual: "6.1.0", LessEqual: "6.1.4"}, {GreaterEqual: "6.2.0", LessEqual: "6.2.2"}}},
 		{Product: "FortiFone", Ranges: []supplementRange{{GreaterEqual: "3.0.0", LessEqual: "3.0.11"}}},
 		{Product: "FortiMail", Ranges: []supplementRange{{GreaterEqual: "5.4", LessThan: "5.5"}, {GreaterEqual: "6.0", LessThan: "6.1"}, {GreaterEqual: "6.2.0", LessEqual: "6.2.8"}, {GreaterEqual: "6.4.0", LessEqual: "6.4.6"}, {GreaterEqual: "7.0.0", LessEqual: "7.0.2"}}},
@@ -1528,7 +1528,7 @@ var supplementTable = map[string][]supplementProduct{
 		{Product: "FortiClientWindows", Ranges: []supplementRange{{GreaterEqual: "6.0.0", LessEqual: "6.0.10"}, {GreaterEqual: "6.2.0", LessEqual: "6.2.9"}, {GreaterEqual: "6.4.0", LessEqual: "6.4.7"}, {GreaterEqual: "7.0.0", LessEqual: "7.0.3"}}},
 	},
 	"FG-IR-22-046": {
-		{Product: "FortiADC", Ranges: []supplementRange{{GreaterEqual: "5.0", LessThan: "5.1"}, {GreaterEqual: "5.1", LessThan: "5.2"}, {GreaterEqual: "5.2", LessThan: "5.3"}, {GreaterEqual: "5.3", LessThan: "5.4"}, {GreaterEqual: "5.4", LessThan: "5.5"}, {GreaterEqual: "6.0", LessThan: "6.1"}, {GreaterEqual: "6.1", LessThan: "6.2"}, {GreaterEqual: "6.2.0", LessEqual: "6.2.3"}, {GreaterEqual: "7.0.0", LessEqual: "7.0.2"}}},
+		{Product: "FortiADC", Ranges: []supplementRange{{GreaterEqual: "5.0", LessThan: "5.1"}, {GreaterEqual: "5.1", LessThan: "5.2"}, {GreaterEqual: "5.2", LessThan: "5.3"}, {GreaterEqual: "5.3", LessThan: "5.4"}, {GreaterEqual: "5.4", LessThan: "5.5"}, {GreaterEqual: "6.0", LessThan: "6.1"}, {GreaterEqual: "6.1", LessThan: "6.2"}, {GreaterEqual: "6.2.0", LessEqual: "6.2.3"}, {GreaterEqual: "7.0.0", LessEqual: "7.0.1"}}},
 	},
 	"FG-IR-22-050": {
 		{Product: "FortiAuthenticator", Ranges: []supplementRange{{GreaterEqual: "6.3.0", LessEqual: "6.3.3"}, {GreaterEqual: "6.4.0", LessEqual: "6.4.1"}}},
@@ -1580,6 +1580,6 @@ var supplementTable = map[string][]supplementProduct{
 		{Product: "FortiSandbox", Versions: []string{"4.2.0"}, Ranges: []supplementRange{{GreaterEqual: "3.0.1", LessEqual: "3.0.7"}, {GreaterEqual: "3.1", LessThan: "3.2"}, {GreaterEqual: "3.2.0", LessEqual: "3.2.3"}, {GreaterEqual: "4.0.0", LessEqual: "4.0.2"}}},
 	},
 	"FG-IR-22-061": {
-		{Product: "FortiADC", Ranges: []supplementRange{{GreaterEqual: "5.4.0", LessEqual: "5.4.5"}, {GreaterEqual: "6.0", LessThan: "6.1"}, {GreaterEqual: "6.1", LessThan: "6.2"}, {GreaterEqual: "6.2.0", LessEqual: "6.2.3"}, {GreaterEqual: "7.0.0", LessEqual: "7.0.2"}}},
+		{Product: "FortiADC", Ranges: []supplementRange{{GreaterEqual: "5.4.0", LessEqual: "5.4.5"}, {GreaterEqual: "6.0", LessThan: "6.1"}, {GreaterEqual: "6.1", LessThan: "6.2"}, {GreaterEqual: "6.2.0", LessEqual: "6.2.3"}, {GreaterEqual: "7.0.0", LessEqual: "7.0.1"}}},
 	},
 }

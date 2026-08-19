@@ -58,8 +58,16 @@ import (
 //     and the fix wins: the cap is the release before it. FG-IR-20-171 says
 //     "3.2.2 and earlier" against "Upgrade to 3.2.2 or later", and its other
 //     pair in the same note — "3.1.4 and earlier" against "upgrade to 3.1.5"
-//     — shows which half is the slip (FG-IR-17-073, FG-IR-20-222 and
-//     FG-IR-21-023 are the same shape).
+//     — shows which half is the slip (FG-IR-17-073, FG-IR-20-222, FG-IR-21-023,
+//     FG-IR-21-132, FG-IR-22-046 and FG-IR-22-061 are the same shape).
+//     Three kinds of overlap are not that slip and stay as they are: an
+//     advisory that scopes per CVE, where a release fixed for one CVE is
+//     affected by another (FG-IR-17-214, FG-IR-19-107, FG-IR-19-238); a
+//     remediation that is a setting rather than a release, so the named
+//     version is both affected and the one to run it on (FG-IR-14-031's
+//     "Upgrade to 5.0.9 or 5.2.1 and apply the settings"); and a target
+//     given for particular hardware (FG-IR-20-131 and FG-IR-21-049 send the
+//     high-end F-series models to 6.2.9 while 6.2.9 is affected elsewhere).
 //
 // A handful of notes cannot be expressed in versions at all — an impact
 // scoped to hardware models (FG-IR-19-224 to the FortiSwitch 424E/426E/448E,
