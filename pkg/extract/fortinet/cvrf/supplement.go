@@ -42,13 +42,15 @@ import (
 //
 // How the notes' wording maps onto rows:
 //
-//   - "<v> and below/earlier" bounds the train it names — ge <train>.0,
-//     le <v>. Fortinet's own CNA records read it that way: across the
-//     records for these advisories, 58 entries bound their lowest affected
-//     train explicitly against 4 that leave it open.
+//   - "<v> and below/earlier" bounds the train it names: ge "<train>.0",
+//     le "<v>" — the floor is what keeps the cap from reaching into the
+//     trains below it. Fortinet's own CNA records read it that way: across
+//     the records for these advisories, 58 entries bound their lowest
+//     affected train explicitly against 4 that leave it open.
 //   - "<train> all versions" / "<train>.x" is the whole train, in the shape
-//     product.TrainRange emits for the CSAF source (ge "6.0", lt "6.1"), so
-//     a later release of an EOL train cannot fall out of range.
+//     product.TrainRange emits for the CSAF source — ge "6.0", lt "6.1",
+//     bare train bounds rather than the "6.0.0" floor a cap carries — so a
+//     later release of an EOL train cannot fall out of range.
 //   - "all versions below <v>" is open-ended below, and "<a> through <b>"
 //     is exactly that.
 //   - The CNA record may add versions the note is silent about — typically an
