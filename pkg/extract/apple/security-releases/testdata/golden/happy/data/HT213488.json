@@ -12,12 +12,7 @@
 					}
 				],
 				"published": "2022-10-24T00:00:00Z"
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		}
 	],
 	"vulnerabilities": [
@@ -30,12 +25,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2021-36690"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -46,12 +36,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2021-39537"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -62,12 +47,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-0261"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -78,12 +58,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-0318"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -94,12 +69,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-0319"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -110,12 +80,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-0351"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -126,12 +91,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-0359"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -142,12 +102,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-0361"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -158,12 +113,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-0368"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -174,12 +124,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-0392"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -190,12 +135,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-0554"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -206,12 +146,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-0572"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -222,12 +157,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-0629"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -238,12 +168,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-0685"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -254,12 +179,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-0696"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -270,12 +190,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-0714"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -286,12 +201,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-0729"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -302,12 +212,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-0943"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -318,12 +223,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-1381"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -334,12 +234,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-1420"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -350,12 +245,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-1616"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -366,12 +256,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-1619"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -382,12 +267,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-1620"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -398,12 +278,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-1621"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -414,12 +289,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-1622"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -430,12 +300,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-1629"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -446,12 +311,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-1674"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -462,12 +322,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-1720"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -478,12 +333,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-1725"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -494,12 +344,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-1733"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -510,12 +355,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-1735"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -526,12 +366,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-1769"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -542,12 +377,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-1851"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -558,12 +388,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-1897"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -574,12 +399,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-1898"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -590,12 +410,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-1927"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -606,12 +421,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-1942"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -622,12 +432,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-1968"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -638,12 +443,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-2000"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -654,12 +454,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-2042"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -670,12 +465,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-2124"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -686,12 +476,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-2125"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -702,12 +487,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-2126"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -718,12 +498,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-22643"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -734,12 +509,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-22663"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -750,12 +520,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-26699"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -766,12 +531,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-26730"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -782,12 +542,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-28739"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -798,12 +553,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-29458"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -814,12 +564,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-32205"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -830,12 +575,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-32206"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -846,12 +586,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-32207"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -862,12 +597,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-32208"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -878,12 +608,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-32809"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -894,12 +619,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-32827"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -910,12 +630,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-32833"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -926,12 +641,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-32849"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -942,12 +652,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-32858"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -958,12 +663,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-32862"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -974,12 +674,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-32864"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -990,12 +685,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-32865"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -1006,12 +696,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-32866"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -1022,12 +707,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-32867"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -1038,12 +718,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-32870"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -1054,12 +729,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-32875"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -1070,12 +740,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-32876"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -1086,12 +751,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-32877"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -1102,12 +762,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-32879"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -1118,12 +773,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-32881"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -1134,12 +784,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-32883"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -1150,12 +795,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-32886"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -1166,12 +806,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-32888"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -1182,12 +817,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-32889"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -1198,12 +828,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-32890"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -1214,12 +839,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-32892"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -1230,12 +850,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-32895"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -1246,12 +861,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-32898"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -1262,12 +872,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-32899"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -1278,12 +883,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-32902"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -1294,12 +894,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-32904"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -1310,12 +905,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-32905"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -1326,12 +916,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-32907"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -1342,12 +927,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-32908"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -1358,12 +938,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-32911"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -1374,12 +949,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-32912"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -1390,12 +960,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-32913"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -1406,12 +971,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-32914"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -1422,12 +982,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-32915"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -1438,12 +993,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-32918"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -1454,12 +1004,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-32922"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -1470,12 +1015,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-32923"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -1486,12 +1026,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-32924"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -1502,12 +1037,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-32926"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -1518,12 +1048,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-32928"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -1534,12 +1059,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-32931"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -1550,12 +1070,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-32934"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -1566,12 +1081,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-32935"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -1582,12 +1092,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-32936"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -1598,12 +1103,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-32938"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -1614,12 +1114,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-32940"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -1630,12 +1125,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-32941"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -1646,12 +1136,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-32944"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -1662,12 +1147,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-32945"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -1678,12 +1158,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-32947"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -1694,12 +1169,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-3437"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -1710,12 +1180,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-37434"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -1726,12 +1191,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-42788"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -1742,12 +1202,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-42789"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -1758,12 +1213,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-42790"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -1774,12 +1224,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-42791"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -1790,12 +1235,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-42793"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -1806,12 +1246,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-42795"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -1822,12 +1257,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-42796"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -1838,12 +1268,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-42798"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -1854,12 +1279,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-42799"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -1870,12 +1290,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-42800"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -1886,12 +1301,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-42801"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -1902,12 +1312,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-42803"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -1918,12 +1323,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-42806"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -1934,12 +1334,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-42807"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -1950,12 +1345,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-42808"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -1966,12 +1356,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-42809"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -1982,12 +1367,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-42810"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -1998,12 +1378,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-42811"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -2014,12 +1389,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-42813"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -2030,12 +1400,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-42814"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -2046,12 +1411,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-42815"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -2062,12 +1422,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-42816"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -2078,12 +1433,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-42818"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -2094,12 +1444,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-42819"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -2110,12 +1455,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-42820"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -2126,12 +1466,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-42821"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -2142,12 +1477,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-42823"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -2158,12 +1488,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-42824"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -2174,12 +1499,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-42825"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -2190,12 +1510,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-42826"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -2206,12 +1521,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-42828"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -2222,12 +1532,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-42829"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -2238,12 +1543,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-42830"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -2254,12 +1554,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-42831"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -2270,12 +1565,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-42832"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -2286,12 +1576,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-42833"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -2302,12 +1587,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-42834"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -2318,12 +1598,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-42838"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -2334,12 +1609,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-42860"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -2350,12 +1620,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-46707"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -2366,12 +1631,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-46709"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -2382,12 +1642,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-46712"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -2398,12 +1653,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-46713"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -2414,12 +1664,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-46721"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -2430,12 +1675,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-46722"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -2446,12 +1686,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-47915"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -2462,12 +1697,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-47965"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -2478,12 +1708,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-48504"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -2494,12 +1719,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-48505"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -2510,12 +1730,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-48577"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
+			}
 		},
 		{
 			"content": {
@@ -2526,43 +1741,7 @@
 						"url": "https://www.cve.org/CVERecord?id=CVE-2022-48683"
 					}
 				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
-		}
-	],
-	"detections": [
-		{
-			"ecosystem": "cpe",
-			"conditions": [
-				{
-					"criteria": {
-						"operator": "OR",
-						"criterions": [
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "fixed"
-									},
-									"cpe": "cpe:2.3:o:apple:macos:*:*:*:*:*:*:*:*",
-									"range": {
-										"type": "apple",
-										"lt": "13"
-									},
-									"fixed": [
-										"13"
-									]
-								}
-							}
-						]
-					}
-				}
-			]
+			}
 		}
 	],
 	"data_source": {
