@@ -293,14 +293,16 @@ func TestSupplementCriterions(t *testing.T) {
 			},
 		},
 		{
-			// "FortiIsolator version 2.3.2 and below" — enumerated releases.
-			name: "production row: enumerated versions (FG-IR-21-040)",
-			args: args{table: cvrf.SupplementTable, id: "FG-IR-21-040"},
+			// "FortiClientMAC 6.0.1, 6.0.2, 6.0.3 and 6.0.4" — the advisory
+			// enumerates the releases, so the row does too.
+			name: "production row: enumerated versions (FG-IR-19-003)",
+			args: args{table: cvrf.SupplementTable, id: "FG-IR-19-003"},
 			want: []criterionTypes.Criterion{
-				supplementCPECriterion("cpe:2.3:o:fortinet:fortiisolator:*:*:*:*:*:*:*:*", []ccTypes.CPE{
-					"cpe:2.3:o:fortinet:fortiisolator:2.3.0:*:*:*:*:*:*:*",
-					"cpe:2.3:o:fortinet:fortiisolator:2.3.1:*:*:*:*:*:*:*",
-					"cpe:2.3:o:fortinet:fortiisolator:2.3.2:*:*:*:*:*:*:*",
+				supplementCPECriterion("cpe:2.3:a:fortinet:forticlient:*:*:*:*:*:*:*:*", []ccTypes.CPE{
+					"cpe:2.3:a:fortinet:forticlient:6.0.1:*:*:*:*:*:*:*",
+					"cpe:2.3:a:fortinet:forticlient:6.0.2:*:*:*:*:*:*:*",
+					"cpe:2.3:a:fortinet:forticlient:6.0.3:*:*:*:*:*:*:*",
+					"cpe:2.3:a:fortinet:forticlient:6.0.4:*:*:*:*:*:*:*",
 				}, nil),
 			},
 		},

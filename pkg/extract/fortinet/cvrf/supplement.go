@@ -14,18 +14,68 @@ import (
 )
 
 // supplementTable (supplement_data.go) carries the affected-product data for
-// the historical CVRF advisories (2012 through 2022) whose
-// product_statuses/product_tree are empty upstream, so the CVRF document
-// itself yields no detection. The rows were generated once from two
-// Fortinet-authored sources and then frozen: the curated version ranges of
-// the legacy vuls-data-raw-fortinet (handmade) dataset, and the
-// affected-version data Fortinet publishes as a CNA in its cvelistV5 records.
-// Where both sources cover an advisory, handmade rows win per product
-// (curated ranges) and CNA rows fill the products handmade misses;
-// disagreements were reviewed by hand. The gap is historical — from 2022 on
-// Fortinet populates product_statuses (and publishes CSAF) — so the table is
-// a frozen asset, not a maintained feed (mirroring how microsoft/bulletin
-// compiles its frozen archive amendments in).
+// the CVRF advisories whose product_statuses/product_tree are empty upstream,
+// so the CVRF document itself yields no detection. Fortinet did not switch
+// over on a date, so the two shapes overlap: filled documents go as far back
+// as FG-IR-16-035, but through 2021 they are the exception (21 filled against
+// 123 empty), 2022 is where it flips (155 filled against 13 empty), and from
+// FG-IR-23-* on every document carries product_statuses. That leaves the 427
+// advisories numbered FG-IR-012-* through FG-IR-22-* in this table, a set
+// that only shrinks if Fortinet backfills an old document. The rows are not
+// frozen either: they state what the advisory says, and an advisory whose
+// note is read differently later is re-read.
+//
+// A row's authority is the advisory's own Affected Products note, with the
+// affected-version data Fortinet publishes as a CNA in its cvelistV5 records
+// as the second source: a row covers what the note claims, plus what the CNA
+// record adds for that product. Of the 721 rows, 555 have a version in their
+// note, 34 rest on the CNA record alone, and 132 have neither — the note
+// names the product without a version, or gives no version at all — and keep
+// the ranges the table was seeded with. That seed was the curated ranges of
+// the legacy vuls-data-raw-fortinet (handmade) dataset, which is no longer a
+// source: it expressed "<v> and below" as an open-ended bound and stopped
+// "<train> all versions" at whatever release existed when it was curated,
+// neither of which is what the advisories say. Those 132 are a deliberate
+// hold rather than an oversight: making them whole-product rows would flag
+// every release of the product, and dropping them would take away the only
+// detection their advisories have.
+//
+// How the notes' wording maps onto rows:
+//
+//   - "<v> and below/earlier" bounds the train it names: ge "<train>.0",
+//     le "<v>" — the floor is what keeps the cap from reaching into the
+//     trains below it. Fortinet's own CNA records read it that way: across
+//     the records for these advisories, 58 entries bound their lowest
+//     affected train explicitly against 4 that leave it open.
+//   - "<train> all versions" / "<train>.x" is the whole train, in the shape
+//     product.TrainRange emits for the CSAF source — ge "6.0", lt "6.1",
+//     bare train bounds rather than the "6.0.0" floor a cap carries — so a
+//     later release of an EOL train cannot fall out of range.
+//   - "all versions below <v>" is open-ended below, and "<a> through <b>"
+//     is exactly that.
+//   - The CNA record may add versions the note is silent about — typically an
+//     EOL train Fortinet stopped enumerating — but never a release the same
+//     advisory calls a fix. An advisory that caps a product at the very
+//     release its own Solutions note tells you to install contradicts itself,
+//     and the fix wins: the cap is the release before it. FG-IR-20-171 says
+//     "3.2.2 and earlier" against "Upgrade to 3.2.2 or later", and its other
+//     pair in the same note — "3.1.4 and earlier" against "upgrade to 3.1.5"
+//     — shows which half is the slip (FG-IR-17-073, FG-IR-20-222, FG-IR-21-023,
+//     FG-IR-21-132, FG-IR-22-046 and FG-IR-22-061 are the same shape).
+//     Three kinds of overlap are not that slip and stay as they are: an
+//     advisory that scopes per CVE, where a release fixed for one CVE is
+//     affected by another (FG-IR-17-214, FG-IR-19-107, FG-IR-19-238); a
+//     remediation that is a setting rather than a release, so the named
+//     version is both affected and the one to run it on (FG-IR-14-031's
+//     "Upgrade to 5.0.9 or 5.2.1 and apply the settings"); and a target
+//     given for particular hardware (FG-IR-20-131 and FG-IR-21-049 send the
+//     high-end F-series models to 6.2.9 while 6.2.9 is affected elsewhere).
+//
+// A handful of notes cannot be expressed in versions at all — an impact
+// scoped to hardware models (FG-IR-19-224 to the FortiSwitch 424E/426E/448E,
+// FG-IR-20-036 to the FortiAnalyzer models that manage a FortiRecorder) or
+// to a configuration (FG-IR-16-090 to the default TCP timestamp setting).
+// Those rows carry the version bound the note gives and say so in a comment.
 //
 // Scope: rows are advisory-granular; per-CVE attribution is deliberately
 // not modeled. A few multi-CVE advisories scope products per CVE in their
@@ -89,6 +139,7 @@ var wholeProductAudited = map[advisoryProduct]struct{}{
 	{"FG-IR-15-007", "FortiMail"}:          {},
 	{"FG-IR-16-041", "FortiClientSSLVPN"}:  {},
 	{"FG-IR-16-069", "FortiClientSSLVPN"}:  {},
+	{"FG-IR-16-090", "FortiOS"}:            {},
 }
 
 // supplementCriterions builds the detection criterions for an advisory from

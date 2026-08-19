@@ -51,8 +51,8 @@
 									"cpe": "cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*",
 									"range": {
 										"type": "fortinet-fortios",
-										"ge": "4.2.0",
-										"le": "4.2.16"
+										"ge": "4.2",
+										"lt": "4.3"
 									}
 								}
 							},
