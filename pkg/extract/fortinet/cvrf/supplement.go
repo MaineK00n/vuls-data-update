@@ -28,14 +28,14 @@ import (
 // A row's authority is the advisory's own Affected Products note, with the
 // affected-version data Fortinet publishes as a CNA in its cvelistV5 records
 // as the second source: a row covers what the note claims, plus what the CNA
-// record adds for that product. Of the 721 rows, 549 have a version in their
-// note, 34 rest on the CNA record alone, and 138 have neither — the note
+// record adds for that product. Of the 721 rows, 555 have a version in their
+// note, 34 rest on the CNA record alone, and 132 have neither — the note
 // names the product without a version, or gives no version at all — and keep
 // the ranges the table was seeded with. That seed was the curated ranges of
 // the legacy vuls-data-raw-fortinet (handmade) dataset, which is no longer a
 // source: it expressed "<v> and below" as an open-ended bound and stopped
 // "<train> all versions" at whatever release existed when it was curated,
-// neither of which is what the advisories say. Those 138 are a deliberate
+// neither of which is what the advisories say. Those 132 are a deliberate
 // hold rather than an oversight: making them whole-product rows would flag
 // every release of the product, and dropping them would take away the only
 // detection their advisories have.
