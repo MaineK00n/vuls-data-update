@@ -1874,6 +1874,25 @@ var fixedBuildOverrides = map[[3]string]string{
 	// 2026-Mar (Edge 145.0.3800.99, FixedBuild "145.3800.99" has only 3 segments instead of 4)
 	{"CVE-2026-3537", "Microsoft Edge (Chromium-based)", "145.3800.99"}: "145.0.3800.99",
 
+	// Microsoft Exchange Server
+	// 2021-Mar (CVE-2021-26855 / 26857 / 26858 / 27065, the HAFNIUM CVEs): three Exchange Server 2019
+	// FixedBuild values are wrong upstream. CU1 carries a 15.1-series value that matches no Exchange
+	// 2019 build at all, and CU4 and CU6 have their values swapped. Left as-is, CU1 and CU6 never
+	// satisfy LessThan (false negative) and a patched CU4 always does (false positive). Corrected
+	// against the Mar21SU rows of https://learn.microsoft.com/en-us/exchange/new-features/build-numbers-and-release-dates
+	{"CVE-2021-26855", "Microsoft Exchange Server 2019 Cumulative Update 1", "15.01.1979.006"}: "15.02.0330.011",
+	{"CVE-2021-26855", "Microsoft Exchange Server 2019 Cumulative Update 4", "15.02.0659.012"}: "15.02.0529.013",
+	{"CVE-2021-26855", "Microsoft Exchange Server 2019 Cumulative Update 6", "15.02.0529.013"}: "15.02.0659.012",
+	{"CVE-2021-26857", "Microsoft Exchange Server 2019 Cumulative Update 1", "15.01.1979.006"}: "15.02.0330.011",
+	{"CVE-2021-26857", "Microsoft Exchange Server 2019 Cumulative Update 4", "15.02.0659.012"}: "15.02.0529.013",
+	{"CVE-2021-26857", "Microsoft Exchange Server 2019 Cumulative Update 6", "15.02.0529.013"}: "15.02.0659.012",
+	{"CVE-2021-26858", "Microsoft Exchange Server 2019 Cumulative Update 1", "15.01.1979.006"}: "15.02.0330.011",
+	{"CVE-2021-26858", "Microsoft Exchange Server 2019 Cumulative Update 4", "15.02.0659.012"}: "15.02.0529.013",
+	{"CVE-2021-26858", "Microsoft Exchange Server 2019 Cumulative Update 6", "15.02.0529.013"}: "15.02.0659.012",
+	{"CVE-2021-27065", "Microsoft Exchange Server 2019 Cumulative Update 1", "15.01.1979.006"}: "15.02.0330.011",
+	{"CVE-2021-27065", "Microsoft Exchange Server 2019 Cumulative Update 4", "15.02.0659.012"}: "15.02.0529.013",
+	{"CVE-2021-27065", "Microsoft Exchange Server 2019 Cumulative Update 6", "15.02.0529.013"}: "15.02.0659.012",
+
 	// Microsoft Office / Excel / Office Online Server / Office Web Apps Server
 	// 2021-Sep (FixedBuild "5381.1000" / "5215.1000" / "10378.20000" missing "15.0." or "16.0." prefix)
 	{"CVE-2021-38646", "Microsoft Office 2013 RT Service Pack 1", "5381.1000"}:                "15.0.5381.1000",

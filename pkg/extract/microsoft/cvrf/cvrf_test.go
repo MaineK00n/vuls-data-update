@@ -469,6 +469,78 @@ func TestBuildFixedBuildCriterion(t *testing.T) {
 			},
 		},
 		{
+			name: "CVE-2021-26855 Exchange Server 2019 CU1 bogus 15.1-series FixedBuild corrected",
+			args: args{
+				cveID:         "CVE-2021-26855",
+				productName:   "Microsoft Exchange Server 2019 Cumulative Update 1",
+				rawFixedBuild: "15.01.1979.006",
+			},
+			want: &criterionTypes.Criterion{
+				Type: criterionTypes.CriterionTypeVersion,
+				Version: &vcTypes.Criterion{
+					Vulnerable: true,
+					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
+					Package: packageTypes.Package{
+						Type:   packageTypes.PackageTypeBinary,
+						Binary: &binaryTypes.Package{Name: "Microsoft Exchange Server 2019 Cumulative Update 1"},
+					},
+					Affected: &affectedTypes.Affected{
+						Type:  affectedrangeTypes.RangeTypeMicrosoftExchange,
+						Range: []affectedrangeTypes.Range{{LessThan: "15.02.0330.011"}},
+						Fixed: []string{"15.02.0330.011"},
+					},
+				},
+			},
+		},
+		{
+			name: "CVE-2021-26858 Exchange Server 2019 CU4 swapped FixedBuild corrected",
+			args: args{
+				cveID:         "CVE-2021-26858",
+				productName:   "Microsoft Exchange Server 2019 Cumulative Update 4",
+				rawFixedBuild: "15.02.0659.012",
+			},
+			want: &criterionTypes.Criterion{
+				Type: criterionTypes.CriterionTypeVersion,
+				Version: &vcTypes.Criterion{
+					Vulnerable: true,
+					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
+					Package: packageTypes.Package{
+						Type:   packageTypes.PackageTypeBinary,
+						Binary: &binaryTypes.Package{Name: "Microsoft Exchange Server 2019 Cumulative Update 4"},
+					},
+					Affected: &affectedTypes.Affected{
+						Type:  affectedrangeTypes.RangeTypeMicrosoftExchange,
+						Range: []affectedrangeTypes.Range{{LessThan: "15.02.0529.013"}},
+						Fixed: []string{"15.02.0529.013"},
+					},
+				},
+			},
+		},
+		{
+			name: "CVE-2021-27065 Exchange Server 2019 CU6 swapped FixedBuild corrected",
+			args: args{
+				cveID:         "CVE-2021-27065",
+				productName:   "Microsoft Exchange Server 2019 Cumulative Update 6",
+				rawFixedBuild: "15.02.0529.013",
+			},
+			want: &criterionTypes.Criterion{
+				Type: criterionTypes.CriterionTypeVersion,
+				Version: &vcTypes.Criterion{
+					Vulnerable: true,
+					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
+					Package: packageTypes.Package{
+						Type:   packageTypes.PackageTypeBinary,
+						Binary: &binaryTypes.Package{Name: "Microsoft Exchange Server 2019 Cumulative Update 6"},
+					},
+					Affected: &affectedTypes.Affected{
+						Type:  affectedrangeTypes.RangeTypeMicrosoftExchange,
+						Range: []affectedrangeTypes.Range{{LessThan: "15.02.0659.012"}},
+						Fixed: []string{"15.02.0659.012"},
+					},
+				},
+			},
+		},
+		{
 			name: "Internet Explorer 11 on Windows 10 Version 1903 for x64-based Systems",
 			args: args{
 				cveID:         "CVE-2021-26411",
@@ -600,6 +672,66 @@ func TestFixedBuildOverrides(t *testing.T) {
 			name: "Win Server 2025 Server Core with 25H2 build major (CVE-2025-49735)",
 			key:  [3]string{"CVE-2025-49735", "Windows Server 2025 (Server Core installation)", "10.0.26200.4349"},
 			want: "10.0.26100.4349",
+		},
+		{
+			name: "Exchange Server 2019 Cumulative Update 1 Mar21SU (CVE-2021-26855)",
+			key:  [3]string{"CVE-2021-26855", "Microsoft Exchange Server 2019 Cumulative Update 1", "15.01.1979.006"},
+			want: "15.02.0330.011",
+		},
+		{
+			name: "Exchange Server 2019 Cumulative Update 4 Mar21SU (CVE-2021-26855)",
+			key:  [3]string{"CVE-2021-26855", "Microsoft Exchange Server 2019 Cumulative Update 4", "15.02.0659.012"},
+			want: "15.02.0529.013",
+		},
+		{
+			name: "Exchange Server 2019 Cumulative Update 6 Mar21SU (CVE-2021-26855)",
+			key:  [3]string{"CVE-2021-26855", "Microsoft Exchange Server 2019 Cumulative Update 6", "15.02.0529.013"},
+			want: "15.02.0659.012",
+		},
+		{
+			name: "Exchange Server 2019 Cumulative Update 1 Mar21SU (CVE-2021-26857)",
+			key:  [3]string{"CVE-2021-26857", "Microsoft Exchange Server 2019 Cumulative Update 1", "15.01.1979.006"},
+			want: "15.02.0330.011",
+		},
+		{
+			name: "Exchange Server 2019 Cumulative Update 4 Mar21SU (CVE-2021-26857)",
+			key:  [3]string{"CVE-2021-26857", "Microsoft Exchange Server 2019 Cumulative Update 4", "15.02.0659.012"},
+			want: "15.02.0529.013",
+		},
+		{
+			name: "Exchange Server 2019 Cumulative Update 6 Mar21SU (CVE-2021-26857)",
+			key:  [3]string{"CVE-2021-26857", "Microsoft Exchange Server 2019 Cumulative Update 6", "15.02.0529.013"},
+			want: "15.02.0659.012",
+		},
+		{
+			name: "Exchange Server 2019 Cumulative Update 1 Mar21SU (CVE-2021-26858)",
+			key:  [3]string{"CVE-2021-26858", "Microsoft Exchange Server 2019 Cumulative Update 1", "15.01.1979.006"},
+			want: "15.02.0330.011",
+		},
+		{
+			name: "Exchange Server 2019 Cumulative Update 4 Mar21SU (CVE-2021-26858)",
+			key:  [3]string{"CVE-2021-26858", "Microsoft Exchange Server 2019 Cumulative Update 4", "15.02.0659.012"},
+			want: "15.02.0529.013",
+		},
+		{
+			name: "Exchange Server 2019 Cumulative Update 6 Mar21SU (CVE-2021-26858)",
+			key:  [3]string{"CVE-2021-26858", "Microsoft Exchange Server 2019 Cumulative Update 6", "15.02.0529.013"},
+			want: "15.02.0659.012",
+		},
+		{
+			name: "Exchange Server 2019 Cumulative Update 1 Mar21SU (CVE-2021-27065)",
+			key:  [3]string{"CVE-2021-27065", "Microsoft Exchange Server 2019 Cumulative Update 1", "15.01.1979.006"},
+			want: "15.02.0330.011",
+		},
+		{
+			name: "Exchange Server 2019 Cumulative Update 4 Mar21SU (CVE-2021-27065)",
+			key:  [3]string{"CVE-2021-27065", "Microsoft Exchange Server 2019 Cumulative Update 4", "15.02.0659.012"},
+			want: "15.02.0529.013",
+		},
+		{
+			name: "Exchange Server 2019 Cumulative Update 6 Mar21SU (CVE-2021-27065)",
+			key:  [3]string{"CVE-2021-27065", "Microsoft Exchange Server 2019 Cumulative Update 6", "15.02.0529.013"},
+			want: "15.02.0659.012",
 		},
 	}
 	for _, tt := range tests {
