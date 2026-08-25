@@ -117,37 +117,59 @@ func Fetch(args []string, opts ...Option) error {
 		o.apply(options)
 	}
 
+	// An argument is an advisory ID, optionally carrying the title to resolve
+	// it by. A CSAF is named after its advisory's title, and an advisory no
+	// CSAF is held for has no title here to name it with, so a caller reaching
+	// for one it holds nothing of says which title to reach by.
+	ids := make([]string, 0, len(args))
+	given := make(map[string]string, len(args))
+	for _, arg := range args {
+		id, title, _ := strings.Cut(arg, "=")
+		if id == "" {
+			return errors.Errorf("unexpected argument. expected: %q, actual: %q", "<Fortinet Advisory ID>[=<title>]", arg)
+		}
+		ids = append(ids, id)
+		if title != "" {
+			given[id] = title
+		}
+	}
+
 	// Read the held advisories before the tree is swept: their titles name the
 	// CSAF files, and the sweep is what would lose them.
-	titles, err := options.storedTitles(args)
+	held, err := readHeldTitles(options.dir, ids)
 	if err != nil {
-		return errors.Wrapf(err, "collect stored titles in %s", options.dir)
+		return errors.Wrapf(err, "read held titles in %s", options.dir)
 	}
 
 	if err := util.RemoveAll(options.dir); err != nil {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	if err := options.fetch(args, titles); err != nil {
+	if err := options.fetch(ids, held, given); err != nil {
 		return errors.Wrap(err, "fetch")
 	}
 
 	return nil
 }
 
-// storedTitles maps each requested advisory ID that the output directory
-// already holds to the title recorded in it.
-func (opts options) storedTitles(ids []string) (map[string]string, error) {
+// readHeldTitles maps each requested advisory ID the output directory already
+// holds a CSAF for to the title recorded in it.
+func readHeldTitles(dir string, ids []string) (map[string]string, error) {
 	titles := make(map[string]string, len(ids))
 
-	if _, err := os.Stat(opts.dir); err != nil {
+	if _, err := os.Stat(dir); err != nil {
 		if os.IsNotExist(err) {
 			return titles, nil
 		}
-		return nil, errors.Wrapf(err, "stat %s", opts.dir)
+		return nil, errors.Wrapf(err, "stat %s", dir)
 	}
 
-	if err := filepath.WalkDir(opts.dir, func(path string, d fs.DirEntry, err error) error {
+	want := make(map[string]struct{}, len(ids))
+	for _, id := range ids {
+		want[id] = struct{}{}
+	}
+
+	if err := filepath.WalkDir(dir, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return errors.Wrapf(err, "walk %s", path)
 		}
@@ -182,19 +204,19 @@ func (opts options) storedTitles(ids []string) (map[string]string, error) {
 			return nil
 		}
 
-		if slices.Contains(ids, a.Document.Tracking.ID) {
+		if _, ok := want[a.Document.Tracking.ID]; ok {
 			titles[a.Document.Tracking.ID] = a.Document.Title
 		}
 
 		return nil
 	}); err != nil {
-		return nil, errors.Wrapf(err, "walk %s", opts.dir)
+		return nil, errors.Wrapf(err, "walk %s", dir)
 	}
 
 	return titles, nil
 }
 
-func (opts options) fetch(ids []string, titles map[string]string) error {
+func (opts options) fetch(ids []string, held, given map[string]string) error {
 	slog.Info("Fetch Fortinet CSAF")
 
 	client := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry))
@@ -209,7 +231,7 @@ func (opts options) fetch(ids []string, titles map[string]string) error {
 				_ = bar.Add(1)
 			}()
 
-			a, err := opts.fetchAdvisory(client, id, titles[id])
+			a, err := opts.fetchAdvisory(client, id, held[id], given[id])
 			if err != nil {
 				return errors.Wrapf(err, "fetch %s", id)
 			}
@@ -234,34 +256,54 @@ func (opts options) fetch(ids []string, titles map[string]string) error {
 }
 
 // fetchAdvisory resolves the advisory's CSAF from its title, returning nil when
-// no file answers to any name the title yields.
+// no file answers to any name any title it can reach yields.
 //
 // Fortinet names a CSAF after the title the advisory carried when the file was
-// written, so a title already on disk resolves it without a request. The CVRF
-// carries the current title, which is the only one available for an advisory
-// not held yet and the one that answers after a rename.
-func (opts options) fetchAdvisory(client *utilhttp.Client, id, storedTitle string) (*CSAF, error) {
-	if storedTitle != "" {
-		a, err := opts.fetchByTitle(client, id, storedTitle)
+// written, so the title in a CSAF already held resolves it without a request. A
+// title given with the ID covers the advisories no CSAF is held for. The CVRF
+// over the wire is the last resort: it carries the current title, which is what
+// answers after a rename, and it is all there is for an advisory given none.
+func (opts options) fetchAdvisory(client *utilhttp.Client, id, held, given string) (*CSAF, error) {
+	tried := make(map[string]struct{}, 2)
+
+	for _, title := range []string{held, given} {
+		if title == "" {
+			continue
+		}
+		if _, ok := tried[title]; ok {
+			continue
+		}
+		tried[title] = struct{}{}
+
+		a, err := opts.fetchByTitle(client, id, title)
 		if err != nil {
-			return nil, errors.Wrapf(err, "fetch by the stored title %q", storedTitle)
+			return nil, errors.Wrapf(err, "fetch by the title %q", title)
 		}
 		if a != nil {
 			return a, nil
 		}
 	}
 
+	// A given title is current already, so asking upstream for one would only
+	// repeat it. Ask when the ID came without one.
+	if given != "" {
+		return nil, nil
+	}
+
 	title, err := opts.fetchCVRFTitle(client, id)
 	if err != nil {
 		return nil, errors.Wrap(err, "fetch cvrf title")
 	}
-	if title == "" || title == storedTitle {
+	if title == "" {
+		return nil, nil
+	}
+	if _, ok := tried[title]; ok {
 		return nil, nil
 	}
 
 	a, err := opts.fetchByTitle(client, id, title)
 	if err != nil {
-		return nil, errors.Wrapf(err, "fetch by the cvrf title %q", title)
+		return nil, errors.Wrapf(err, "fetch by the current title %q", title)
 	}
 	return a, nil
 }
@@ -361,7 +403,9 @@ func (opts options) fetchCVRFTitle(client *utilhttp.Client, id string) (string, 
 		}
 
 		return a.DocumentTitle, nil
-	case http.StatusNotFound:
+	// Fortinet answers 422 for an advisory ID it holds no CVRF for, which the
+	// nine advisories numbered FG-IR-0yy-nnn are. Read it as the 404 it means.
+	case http.StatusNotFound, http.StatusUnprocessableEntity:
 		_, _ = io.Copy(io.Discard, resp.Body)
 		return "", nil
 	default:
@@ -375,7 +419,7 @@ func (opts options) write(a CSAF) error {
 	if err != nil {
 		return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "FG-IR-yy-\\d+", a.Document.Tracking.ID)
 	}
-	t, err := time.Parse("06", ss[2])
+	t, err := time.Parse("06", strings.TrimPrefix(ss[2], "0"))
 	if err != nil {
 		return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "FG-IR-yy-\\d+", a.Document.Tracking.ID)
 	}

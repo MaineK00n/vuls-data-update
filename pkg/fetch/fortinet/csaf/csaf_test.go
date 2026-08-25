@@ -26,7 +26,10 @@ func TestFetch(t *testing.T) {
 		args args
 		// seed is a fixture directory laid into the output directory before the
 		// fetch, standing in for the advisories a previous run left there.
-		seed     string
+		seed string
+		// status answers the named request with a status code instead of a
+		// fixture.
+		status   map[string]int
 		hasError bool
 	}{
 		{
@@ -45,6 +48,22 @@ func TestFetch(t *testing.T) {
 			seed: "seed",
 		},
 		{
+			// The title comes with the ID for an advisory no CSAF is held for,
+			// and no CVRF is served: the fetch has to resolve it off the
+			// argument alone.
+			name: "given-title",
+			args: args{
+				args: []string{"FG-IR-25-756=Authenticated Heap Overflow in SSL-VPN bookmarks"},
+			},
+		},
+		{
+			name: "no-id",
+			args: args{
+				args: []string{"=Authenticated Heap Overflow in SSL-VPN bookmarks"},
+			},
+			hasError: true,
+		},
+		{
 			name: "invalid-csaf",
 			args: args{
 				args: []string{"FG-IR-25-771"},
@@ -58,6 +77,15 @@ func TestFetch(t *testing.T) {
 			args: args{
 				args: []string{"FG-IR-24-437"},
 			},
+		},
+		{
+			// Fortinet answers 422, not 404, for an advisory ID it holds no
+			// CVRF for. That is still an advisory to skip, not a run to fail.
+			name: "unprocessable-cvrf",
+			args: args{
+				args: []string{"FG-IR-012-001"},
+			},
+			status: map[string]int{"FG-IR-012-001": http.StatusUnprocessableEntity},
 		},
 		{
 			// The name carrying the ID leaves no room for another advisory to
@@ -90,6 +118,11 @@ func TestFetch(t *testing.T) {
 					}
 					return path.Base(r.URL.Path), "application/json"
 				}()
+
+				if code, ok := tt.status[name]; ok {
+					w.WriteHeader(code)
+					return
+				}
 
 				bs, err := os.ReadFile(filepath.Join(fixtures, name))
 				if err != nil {
