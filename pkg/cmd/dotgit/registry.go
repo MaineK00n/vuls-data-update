@@ -4,6 +4,7 @@ import (
 	"encoding/json/jsontext"
 	"encoding/json/v2"
 	"os"
+	"slices"
 	"strings"
 
 	"github.com/MakeNowJust/heredoc"
@@ -18,6 +19,7 @@ import (
 	"github.com/MaineK00n/vuls-data-update/pkg/dotgit/registry/status"
 	"github.com/MaineK00n/vuls-data-update/pkg/dotgit/registry/tag"
 	"github.com/MaineK00n/vuls-data-update/pkg/dotgit/registry/untag"
+	utilGitHub "github.com/MaineK00n/vuls-data-update/pkg/dotgit/registry/util/github"
 )
 
 func newCmdRegistry() *cobra.Command {
@@ -43,6 +45,23 @@ func newCmdRegistry() *cobra.Command {
 	return cmd
 }
 
+// checkTokenScopes checks that the token has the scopes required to operate on the given images.
+// Images in a registry other than ghcr.io are ignored since the scopes are GitHub specific.
+func checkTokenScopes(token string, images []string, required ...string) error {
+	if !slices.ContainsFunc(images, func(image string) bool {
+		registry, _, _ := strings.Cut(image, "/")
+		return registry == "ghcr.io"
+	}) {
+		return nil
+	}
+
+	if err := utilGitHub.CheckScopes(token, required); err != nil {
+		return errors.Wrap(err, "failed to check GitHub token scopes")
+	}
+
+	return nil
+}
+
 func newCmdRegistryLs() *cobra.Command {
 	options := &struct {
 		repositories []string
@@ -64,6 +83,10 @@ func newCmdRegistryLs() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := checkTokenScopes(options.token, options.repositories, utilGitHub.ScopeReadPackages); err != nil {
+				return err
+			}
+
 			rs := make([]ls.Repository, 0, len(options.repositories))
 			for _, r := range options.repositories {
 				repo, err := remote.NewRepository(r)
@@ -151,6 +174,10 @@ func newCmdRegistryPush() *cobra.Command {
 		`),
 		Args: cobra.ExactArgs(2),
 		RunE: func(_ *cobra.Command, args []string) error {
+			if err := checkTokenScopes(options.token, []string{args[0]}, utilGitHub.ScopeWritePackages); err != nil {
+				return err
+			}
+
 			if err := push.Push(args[0], args[1], options.token, push.WithForce(options.force)); err != nil {
 				return errors.Wrap(err, "failed to push dotgit image")
 			}
@@ -179,6 +206,10 @@ func newCmdRegistryDelete() *cobra.Command {
 		`),
 		Args: cobra.ExactArgs(1),
 		RunE: func(_ *cobra.Command, args []string) error {
+			if err := checkTokenScopes(options.token, []string{args[0]}, utilGitHub.ScopeReadPackages, utilGitHub.ScopeDeletePackages); err != nil {
+				return err
+			}
+
 			if err := delete.Delete(args[0], options.token); err != nil {
 				return errors.Wrap(err, "failed to delete registry dotgit image")
 			}
@@ -208,6 +239,10 @@ func newCmdRegistryCp() *cobra.Command {
 		`),
 		Args: cobra.ExactArgs(2),
 		RunE: func(_ *cobra.Command, args []string) error {
+			if err := checkTokenScopes(options.token, []string{args[1]}, utilGitHub.ScopeWritePackages); err != nil {
+				return err
+			}
+
 			if err := cp.Copy(args[0], args[1], options.token, cp.WithForce(options.force)); err != nil {
 				return errors.Wrap(err, "failed to copy registry dotgit image")
 			}
@@ -237,6 +272,10 @@ func newCmdRegistryTag() *cobra.Command {
 		`),
 		Args: cobra.ExactArgs(2),
 		RunE: func(_ *cobra.Command, args []string) error {
+			if err := checkTokenScopes(options.token, []string{args[0]}, utilGitHub.ScopeWritePackages); err != nil {
+				return err
+			}
+
 			if err := tag.Tag(args[0], args[1], options.token); err != nil {
 				return errors.Wrap(err, "failed to add tag")
 			}
@@ -264,6 +303,10 @@ func newCmdRegistryUntag() *cobra.Command {
 		`),
 		Args: cobra.ExactArgs(1),
 		RunE: func(_ *cobra.Command, args []string) error {
+			if err := checkTokenScopes(options.token, []string{args[0]}, utilGitHub.ScopeWritePackages, utilGitHub.ScopeDeletePackages); err != nil {
+				return err
+			}
+
 			if err := untag.Untag(args[0], options.token); err != nil {
 				return errors.Wrap(err, "failed to remove tag")
 			}
