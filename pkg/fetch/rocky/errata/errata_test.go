@@ -27,7 +27,7 @@ func TestFetch(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			ts := httptest.NewTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				fmt.Println(r.URL.Path)
 				switch r.URL.Path {
 				case "/api/v3/advisories/":
@@ -36,10 +36,8 @@ func TestFetch(t *testing.T) {
 					http.NotFound(w, r)
 				}
 			}))
-			defer ts.Close()
-
 			dir := t.TempDir()
-			err := errata.Fetch(errata.WithBaseURL(ts.URL), errata.WithDir(dir), errata.WithRetry(0))
+			err := errata.Fetch(errata.WithHTTPClient(ts.Client()), errata.WithDir(dir), errata.WithRetry(0))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)

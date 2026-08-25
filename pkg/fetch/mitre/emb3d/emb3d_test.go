@@ -4,7 +4,6 @@ import (
 	"io/fs"
 	"net/http"
 	"net/http/httptest"
-	"net/url"
 	"os"
 	"path"
 	"path/filepath"
@@ -27,19 +26,12 @@ func TestFetch(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			ts := httptest.NewTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				http.ServeFile(w, r, filepath.Join("testdata", "fixtures", tt.name, path.Base(r.URL.Path)))
 
 			}))
-			defer ts.Close()
-
-			u, err := url.JoinPath(ts.URL, "mitre/emb3d/raw/refs/heads/main/_data/")
-			if err != nil {
-				t.Error("unexpected error:", err)
-			}
-
 			dir := t.TempDir()
-			err = emb3d.Fetch(emb3d.WithBaseURL(u), emb3d.WithDir(dir), emb3d.WithRetry(1))
+			err := emb3d.Fetch(emb3d.WithHTTPClient(ts.Client()), emb3d.WithDir(dir), emb3d.WithRetry(1))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)

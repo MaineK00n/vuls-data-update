@@ -47,13 +47,11 @@ func TestFetch(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			ts := httptest.NewTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				http.ServeFile(w, r, filepath.Join("testdata", "fixtures", tt.name, r.URL.Path))
 			}))
-			defer ts.Close()
-
 			dir := t.TempDir()
-			opts := append([]updateinfo.Option{updateinfo.WithBaseURL(ts.URL), updateinfo.WithDir(dir), updateinfo.WithWait(0)}, tt.args.opts...)
+			opts := append([]updateinfo.Option{updateinfo.WithHTTPClient(ts.Client()), updateinfo.WithDir(dir), updateinfo.WithWait(0)}, tt.args.opts...)
 			err := updateinfo.Fetch(opts...)
 			switch {
 			case err != nil && !tt.hasError:

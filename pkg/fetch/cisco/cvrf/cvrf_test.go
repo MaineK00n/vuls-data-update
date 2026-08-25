@@ -2,7 +2,6 @@ package cvrf_test
 
 import (
 	"bytes"
-	"fmt"
 	"io/fs"
 	"net/http"
 	"net/http/httptest"
@@ -49,7 +48,7 @@ func TestFetch(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			ts := httptest.NewTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				switch {
 				case strings.HasPrefix(r.URL.Path, "/security/center/contentxml/CiscoSecurityAdvisory/"):
 					bs, _ := os.ReadFile(filepath.Join("testdata", "fixtures", path.Base(r.URL.Path)))
@@ -58,10 +57,8 @@ func TestFetch(t *testing.T) {
 					http.NotFound(w, r)
 				}
 			}))
-			defer ts.Close()
-
 			dir := t.TempDir()
-			err := cvrf.Fetch(tt.args.ids, cvrf.WithDataURL(fmt.Sprintf("%s/security/center/contentxml/CiscoSecurityAdvisory/%%s/cvrf/%%s_cvrf.xml", ts.URL)), cvrf.WithDir(dir), cvrf.WithRetry(1))
+			err := cvrf.Fetch(tt.args.ids, cvrf.WithHTTPClient(ts.Client()), cvrf.WithDir(dir), cvrf.WithRetry(1))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)

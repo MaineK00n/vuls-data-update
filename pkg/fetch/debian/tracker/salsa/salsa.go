@@ -79,20 +79,14 @@ type options struct {
 	dir     string
 	retry   int
 	mirror  Mirror
+
+	// httpClient is only ever set by WithHTTPClient, which lives in
+	// export_test.go and is therefore absent from the production build.
+	httpClient *http.Client
 }
 
 type Option interface {
 	apply(*options)
-}
-
-type dataURLOption string
-
-func (u dataURLOption) apply(opts *options) {
-	opts.dataURL = string(u)
-}
-
-func WithDataURL(url string) Option {
-	return dataURLOption(url)
 }
 
 type dirOption string
@@ -124,16 +118,6 @@ type Mirror struct {
 	ArchiveBackport string
 }
 
-type mirrorOption Mirror
-
-func (m mirrorOption) apply(opts *options) {
-	opts.mirror = Mirror(m)
-}
-
-func WithMirror(m Mirror) Option {
-	return mirrorOption(m)
-}
-
 func Fetch(opts ...Option) error {
 	options := &options{
 		dataURL: dataURL,
@@ -158,7 +142,7 @@ func Fetch(opts ...Option) error {
 	}
 
 	slog.Info("Fetch Debian Security Tracker Salsa repository")
-	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.dataURL)
+	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry), utilhttp.WithClientHTTPClient(options.httpClient)).Get(options.dataURL)
 	if err != nil {
 		return errors.Wrap(err, "fetch salsa repository")
 	}
@@ -787,7 +771,7 @@ func (opts *options) fetchSource(codename string, archived bool) (map[string]map
 		backportURL = opts.mirror.ArchiveBackport
 	}
 
-	client := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry))
+	client := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry), utilhttp.WithClientHTTPClient(opts.httpClient))
 
 	slog.Info("Fetch Debian stable", slog.String("codename", codename))
 	sections, err := fetchRelease(client, fmt.Sprintf("%s/dists/%s/Release", stableURL, codename))

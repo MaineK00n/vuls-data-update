@@ -22,20 +22,14 @@ type options struct {
 	baseURL string
 	dir     string
 	retry   int
+
+	// httpClient is only ever set by WithHTTPClient, which lives in
+	// export_test.go and is therefore absent from the production build.
+	httpClient *http.Client
 }
 
 type Option interface {
 	apply(*options)
-}
-
-type baseURLOption string
-
-func (u baseURLOption) apply(o *options) {
-	o.baseURL = string(u)
-}
-
-func WithBaseURL(baseURL string) Option {
-	return baseURLOption(baseURL)
 }
 
 type dirOption string
@@ -93,7 +87,7 @@ Red Hat, as the licensor of this document, waives the right to enforce, and agre
 		return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "README.md"))
 	}
 
-	c := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry))
+	c := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry), utilhttp.WithClientHTTPClient(options.httpClient))
 
 	for _, major := range majors {
 		slog.Info("Fetch RHEL Package Manifest", slog.String("version", major))

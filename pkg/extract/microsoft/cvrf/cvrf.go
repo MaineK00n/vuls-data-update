@@ -2834,8 +2834,8 @@ var kbCumulativeTwins = map[[2]string]string{
 	{"Microsoft Edge (EdgeHTML-based) on Windows Server 2016", "4338814"}:                                           "4346877",
 	{"Windows 10 Version 1607 for 32-bit Systems", "4338814"}:                                                       "4346877",
 	{"Windows 10 Version 1607 for x64-based Systems", "4338814"}:                                                    "4346877",
-	{"Windows Server 2016", "4338814"}:                                                                              "4346877",
-	{"Windows Server 2016 (Server Core installation)", "4338814"}:                                                   "4346877",
+	{"Windows Server 2016", "4338814"}:                            "4346877",
+	{"Windows Server 2016 (Server Core installation)", "4338814"}: "4346877",
 
 	// 2018-Jul (SecurityOnly→MonthlyRollup)
 	{"Windows 8.1 for 32-bit Systems", "4338824"}:                                                         "4338815",

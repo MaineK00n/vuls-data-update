@@ -4,7 +4,6 @@ import (
 	"io/fs"
 	"net/http"
 	"net/http/httptest"
-	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
@@ -28,44 +27,22 @@ func TestFetch(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				http.ServeFile(w, r, strings.TrimPrefix(r.URL.Path, "/"))
+			ts := httptest.NewTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				// The in-memory network routes every mirror host here, so the
+				// fixtures are keyed by the production host and path.
+				rel := filepath.FromSlash(strings.TrimPrefix(r.URL.Path, "/"))
+				switch r.Host {
+				case "salsa.debian.org":
+					http.ServeFile(w, r, tt.testdata)
+				case "archive.debian.org":
+					http.ServeFile(w, r, filepath.Join("testdata", "fixtures", "archive", rel))
+				default:
+					http.ServeFile(w, r, filepath.Join("testdata", "fixtures", "release", rel))
+				}
 			}))
-			defer ts.Close()
-
-			u, err := url.JoinPath(ts.URL, tt.testdata)
-			if err != nil {
-				t.Error("unexpected error:", err)
-			}
-
-			var m salsa.Mirror
-			m.ReleaseStable, err = url.JoinPath(ts.URL, "testdata", "fixtures", "release", "debian")
-			if err != nil {
-				t.Error("unexpected error:", err)
-			}
-			m.ReleaseSecurity, err = url.JoinPath(ts.URL, "testdata", "fixtures", "release", "debian-security")
-			if err != nil {
-				t.Error("unexpected error:", err)
-			}
-			m.ReleaseBackport, err = url.JoinPath(ts.URL, "testdata", "fixtures", "release", "debian")
-			if err != nil {
-				t.Error("unexpected error:", err)
-			}
-			m.ArchiveStable, err = url.JoinPath(ts.URL, "testdata", "fixtures", "archive", "debian")
-			if err != nil {
-				t.Error("unexpected error:", err)
-			}
-			m.ArchiveSecurity, err = url.JoinPath(ts.URL, "testdata", "fixtures", "archive", "debian-security")
-			if err != nil {
-				t.Error("unexpected error:", err)
-			}
-			m.ArchiveBackport, err = url.JoinPath(ts.URL, "testdata", "fixtures", "archive", "debian-backports")
-			if err != nil {
-				t.Error("unexpected error:", err)
-			}
 
 			dir := t.TempDir()
-			err = salsa.Fetch(salsa.WithDataURL(u), salsa.WithDir(dir), salsa.WithRetry(0), salsa.WithMirror(m))
+			err := salsa.Fetch(salsa.WithHTTPClient(ts.Client()), salsa.WithDir(dir), salsa.WithRetry(0))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)

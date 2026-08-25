@@ -27,20 +27,14 @@ type options struct {
 	retry       int
 	concurrency int
 	wait        time.Duration
+
+	// httpClient is only ever set by WithHTTPClient, which lives in
+	// export_test.go and is therefore absent from the production build.
+	httpClient *http.Client
 }
 
 type Option interface {
 	apply(*options)
-}
-
-type msucURLOption string
-
-func (u msucURLOption) apply(opts *options) {
-	opts.msucURL = string(u)
-}
-
-func WithMSUCURL(url string) Option {
-	return msucURLOption(url)
 }
 
 type dirOption string
@@ -102,7 +96,7 @@ func Fetch(queries []string, opts ...Option) error {
 
 	slog.Info("Fetch Windows Microsoft Software Update Catalog")
 
-	client := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry))
+	client := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry), utilhttp.WithClientHTTPClient(options.httpClient))
 	uids, err := options.search(client, util.Unique(queries))
 	if err != nil {
 		return errors.Wrap(err, "search")

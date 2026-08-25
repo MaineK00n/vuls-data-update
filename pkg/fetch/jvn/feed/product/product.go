@@ -26,20 +26,14 @@ type options struct {
 	dataURL string
 	dir     string
 	retry   int
+
+	// httpClient is only ever set by WithHTTPClient, which lives in
+	// export_test.go and is therefore absent from the production build.
+	httpClient *http.Client
 }
 
 type Option interface {
 	apply(*options)
-}
-
-type dataURLOption string
-
-func (u dataURLOption) apply(opts *options) {
-	opts.dataURL = string(u)
-}
-
-func WithDataURL(url string) Option {
-	return dataURLOption(url)
 }
 
 type dirOption string
@@ -78,7 +72,7 @@ func Fetch(opts ...Option) error {
 	}
 
 	slog.Info("Fetch JVNDB Product")
-	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry), utilhttp.WithClientCheckRetry(jvnutil.CheckRetry)).Get(options.dataURL)
+	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry), utilhttp.WithClientHTTPClient(options.httpClient), utilhttp.WithClientCheckRetry(jvnutil.CheckRetry)).Get(options.dataURL)
 	if err != nil {
 		return errors.Wrap(err, "get checksum")
 	}
@@ -117,7 +111,7 @@ func Fetch(opts ...Option) error {
 	})
 
 	slog.Info("Fetch JVNDB Product Feed", slog.String("feed", filtered[len(filtered)-1].Filename))
-	resp, err = utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(filtered[len(filtered)-1].URL)
+	resp, err = utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry), utilhttp.WithClientHTTPClient(options.httpClient)).Get(filtered[len(filtered)-1].URL)
 	if err != nil {
 		return errors.Wrap(err, "fetch jvndb product")
 	}

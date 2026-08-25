@@ -1,7 +1,6 @@
 package epss_test
 
 import (
-	"fmt"
 	"io/fs"
 	"net/http"
 	"net/http/httptest"
@@ -34,13 +33,11 @@ func TestFetch(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			ts := httptest.NewTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				http.ServeFile(w, r, filepath.Join("testdata", "fixtures", strings.TrimPrefix(r.URL.Path, "/")))
 			}))
-			defer ts.Close()
-
 			dir := t.TempDir()
-			err := epss.Fetch(tt.args, epss.WithDataURL(fmt.Sprintf("%s/epss_scores-%%s.csv.gz", ts.URL)), epss.WithDir(dir), epss.WithRetry(0), epss.WithConcurrency(1), epss.WithWait(0))
+			err := epss.Fetch(tt.args, epss.WithHTTPClient(ts.Client()), epss.WithDir(dir), epss.WithRetry(0), epss.WithConcurrency(1), epss.WithWait(0))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)

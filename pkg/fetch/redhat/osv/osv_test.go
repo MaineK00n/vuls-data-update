@@ -29,18 +29,12 @@ func TestFetch(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				http.ServeFile(w, r, strings.TrimPrefix(r.URL.Path, "/"))
+			ts := httptest.NewTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				http.ServeFile(w, r, tt.testdata)
 			}))
-			defer ts.Close()
-
-			u, err := url.JoinPath(ts.URL, tt.testdata)
-			if err != nil {
-				t.Error("unexpected error:", err)
-			}
 
 			dir := t.TempDir()
-			err = osv.Fetch(osv.WithDataURL(u), osv.WithDir(dir), osv.WithRetry(0))
+			err := osv.Fetch(osv.WithHTTPClient(ts.Client()), osv.WithDir(dir), osv.WithRetry(0))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)

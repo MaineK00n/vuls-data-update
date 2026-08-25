@@ -7,7 +7,6 @@ import (
 	"io/fs"
 	"net/http"
 	"net/http/httptest"
-	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
@@ -94,7 +93,7 @@ func TestFetch(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			ts := httptest.NewTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				startIndex := "0"
 				if value := r.URL.Query().Get("startIndex"); value != "" {
 					startIndex = value
@@ -169,15 +168,8 @@ func TestFetch(t *testing.T) {
 					http.ServeFile(w, r, filepath.Join("testdata", "fixtures", tt.fixturePrefix, fmt.Sprintf("%s-%s.json", startIndex, resultsPerPage)))
 				}
 			}))
-			defer ts.Close()
-
-			u, err := url.JoinPath(ts.URL, "/rest/json/cvehistory/2.0")
-			if err != nil {
-				t.Error("unexpected error:", err)
-			}
-
 			dir := t.TempDir()
-			err = cvehistory.Fetch(append(tt.args, cvehistory.WithBaseURL(u), cvehistory.WithDir(dir), cvehistory.WithRetry(0), cvehistory.WithConcurrency(3), cvehistory.WithWait(0), cvehistory.WithResultsPerPage(3))...)
+			err := cvehistory.Fetch(append(tt.args, cvehistory.WithHTTPClient(ts.Client()), cvehistory.WithDir(dir), cvehistory.WithRetry(0), cvehistory.WithConcurrency(3), cvehistory.WithWait(0), cvehistory.WithResultsPerPage(3))...)
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)

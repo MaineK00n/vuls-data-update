@@ -36,7 +36,14 @@ type options struct {
 	retry       int
 	concurrency int
 	wait        time.Duration
+
+	// rowsPerPage is only ever set by WithRowsPerPage, which lives in export_test.go
+	// and is therefore absent from the production build.
 	rowsPerPage int
+
+	// httpClient is only ever set by WithHTTPClient, which lives in
+	// export_test.go and is therefore absent from the production build.
+	httpClient *http.Client
 }
 
 type Option interface {
@@ -48,16 +55,6 @@ type DataURL struct {
 	Advisory string
 	Package  string
 	Bugzilla string
-}
-
-type dataURLOption DataURL
-
-func (u dataURLOption) apply(opts *options) {
-	opts.dataURL = DataURL(u)
-}
-
-func WithDataURL(url DataURL) Option {
-	return dataURLOption(url)
 }
 
 type dirOption string
@@ -100,16 +97,6 @@ func WithWait(wait time.Duration) Option {
 	return waitOption(wait)
 }
 
-type rowsPerPageOption int
-
-func (r rowsPerPageOption) apply(opts *options) {
-	opts.rowsPerPage = int(r)
-}
-
-func WithRowsPerPage(rowsPerPage int) Option {
-	return rowsPerPageOption(rowsPerPage)
-}
-
 func Fetch(releases []string, opts ...Option) error {
 	options := &options{
 		dataURL: DataURL{
@@ -133,7 +120,7 @@ func Fetch(releases []string, opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	client := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry))
+	client := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry), utilhttp.WithClientHTTPClient(options.httpClient))
 	extracted, err := options.releases(client, releases)
 	if err != nil {
 		return errors.Wrap(err, "extract release")

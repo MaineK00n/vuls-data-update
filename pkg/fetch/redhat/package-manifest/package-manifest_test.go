@@ -31,15 +31,13 @@ func TestFetch(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			ts := httptest.NewTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				major := strings.TrimSuffix(strings.TrimPrefix(r.URL.Path, "/en/documentation/red_hat_enterprise_linux/"), "/html-single/package_manifest/index")
 				http.ServeFile(w, r, filepath.Join(tt.testdata, fmt.Sprintf("%s.html", major)))
 			}))
-			defer ts.Close()
-
 			dir := t.TempDir()
 
-			err := packageManifest.Fetch(tt.args, packageManifest.WithBaseURL(fmt.Sprintf("%s/en/documentation/red_hat_enterprise_linux/%%s/html-single/package_manifest/index", ts.URL)), packageManifest.WithDir(dir))
+			err := packageManifest.Fetch(tt.args, packageManifest.WithHTTPClient(ts.Client()), packageManifest.WithDir(dir))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)

@@ -37,6 +37,12 @@ type clientHTTPClientOption struct {
 }
 
 func (c clientHTTPClientOption) apply(opts *clientOptions) {
+	// A nil client leaves the pooled default in place, so callers can
+	// forward an optional *http.Client (e.g. a test server's client)
+	// unconditionally instead of branching on it.
+	if c.Client == nil {
+		return
+	}
 	opts.httpClient = c.Client
 }
 

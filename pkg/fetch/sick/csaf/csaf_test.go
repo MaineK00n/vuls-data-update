@@ -6,7 +6,6 @@ import (
 	"io/fs"
 	"net/http"
 	"net/http/httptest"
-	"net/url"
 	"os"
 	"path"
 	"path/filepath"
@@ -30,7 +29,7 @@ func TestFetch(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			ts := httptest.NewTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				switch path.Base(r.URL.Path) {
 				case "csaf-feed-tlp-white.json":
 					f, err := os.Open(filepath.Join("testdata", "fixtures", tt.name, path.Base(r.URL.Path)))
@@ -51,15 +50,8 @@ func TestFetch(t *testing.T) {
 					http.ServeFile(w, r, filepath.Join("testdata", "fixtures", tt.name, path.Base(r.URL.Path)))
 				}
 			}))
-			defer ts.Close()
-
-			u, err := url.JoinPath(ts.URL, ".well-known/csaf/white/csaf-feed-tlp-white.json")
-			if err != nil {
-				t.Error("unexpected error:", err)
-			}
-
 			dir := t.TempDir()
-			err = csaf.Fetch(csaf.WithDataURL(u), csaf.WithDir(dir), csaf.WithRetry(1))
+			err := csaf.Fetch(csaf.WithHTTPClient(ts.Client()), csaf.WithDir(dir), csaf.WithRetry(1))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)

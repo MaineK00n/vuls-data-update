@@ -1,8 +1,6 @@
 package securityreleases_test
 
 import (
-	"bytes"
-	"fmt"
 	"io/fs"
 	"net/http"
 	"net/http/httptest"
@@ -55,7 +53,7 @@ func TestFetch(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			ts := httptest.NewTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				switch {
 				case strings.HasPrefix(r.URL.Path, "/en-us/"):
 					http.ServeFile(w, r, filepath.Join("testdata", "fixtures", tt.name, "en-us", path.Base(r.URL.Path)))
@@ -71,10 +69,9 @@ func TestFetch(t *testing.T) {
 					http.NotFound(w, r)
 				}
 			}))
-			defer ts.Close()
 
 			dir := t.TempDir()
-			err := securityreleases.Fetch(securityreleases.WithBaseURL(fmt.Sprintf("%s/en-us/100100", ts.URL)), securityreleases.WithDir(dir), securityreleases.WithRetry(0), securityreleases.WithConcurrency(2), securityreleases.WithWait(0))
+			err := securityreleases.Fetch(securityreleases.WithHTTPClient(ts.Client()), securityreleases.WithDir(dir), securityreleases.WithRetry(0), securityreleases.WithConcurrency(2), securityreleases.WithWait(0))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)
@@ -105,7 +102,6 @@ func TestFetch(t *testing.T) {
 					if err != nil {
 						return err
 					}
-					got = bytes.ReplaceAll(got, []byte(ts.URL), []byte("https://support.apple.com"))
 
 					if diff := cmp.Diff(string(want), string(got)); diff != "" {
 						t.Errorf("Fetch(). (-expected +got):\n%s", diff)

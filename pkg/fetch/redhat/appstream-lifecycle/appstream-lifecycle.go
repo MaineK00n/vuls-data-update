@@ -23,20 +23,14 @@ type options struct {
 	baseURL string
 	dir     string
 	retry   int
+
+	// httpClient is only ever set by WithHTTPClient, which lives in
+	// export_test.go and is therefore absent from the production build.
+	httpClient *http.Client
 }
 
 type Option interface {
 	apply(*options)
-}
-
-type baseURLOption string
-
-func (u baseURLOption) apply(o *options) {
-	o.baseURL = string(u)
-}
-
-func WithBaseURL(baseURL string) Option {
-	return baseURLOption(baseURL)
 }
 
 type dirOption string
@@ -76,7 +70,7 @@ func Fetch(opts ...Option) error {
 
 	slog.Info("Fetch RHEL Application Streams Life Cycle")
 
-	c := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry))
+	c := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry), utilhttp.WithClientHTTPClient(options.httpClient))
 	if err := options.extractAppStream(c); err != nil {
 		return errors.Wrap(err, "extract appstream")
 	}

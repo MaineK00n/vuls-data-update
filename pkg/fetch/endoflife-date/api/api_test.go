@@ -4,7 +4,6 @@ import (
 	"io/fs"
 	"net/http"
 	"net/http/httptest"
-	"net/url"
 	"os"
 	"path"
 	"path/filepath"
@@ -26,18 +25,11 @@ func TestFetch(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ts := httptest.NewTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			http.ServeFile(w, r, filepath.Join("testdata", "fixtures", tt.name, path.Base(r.URL.Path)))
 		}))
-		defer ts.Close()
-
-		u, err := url.JoinPath(ts.URL, "api/v1/products/full")
-		if err != nil {
-			t.Error("unexpected error:", err)
-		}
-
 		dir := t.TempDir()
-		err = api.Fetch(api.WithBaseURL(u), api.WithDir(dir), api.WithRetry(0), api.WithConcurrency(1), api.WithWait(0))
+		err := api.Fetch(api.WithHTTPClient(ts.Client()), api.WithDir(dir), api.WithRetry(0), api.WithConcurrency(1), api.WithWait(0))
 		switch {
 		case err != nil && !tt.hasError:
 			t.Error("unexpected error:", err)

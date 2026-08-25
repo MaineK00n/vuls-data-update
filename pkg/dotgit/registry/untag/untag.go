@@ -20,40 +20,23 @@ import (
 	utilGitHub "github.com/MaineK00n/vuls-data-update/pkg/dotgit/registry/util/github"
 )
 
+const (
+	registryHost = "ghcr.io"
+	githubAPIURL = "https://api.github.com"
+)
+
 type options struct {
-	registryHost string
-	githubAPIURL string
+	// httpClient is only ever set by WithHTTPClient, which lives in
+	// export_test.go and is therefore absent from the production build.
+	httpClient *http.Client
 }
 
 type Option interface {
 	apply(*options)
 }
 
-type githubAPIURLOption string
-
-func (u githubAPIURLOption) apply(opts *options) {
-	opts.githubAPIURL = string(u)
-}
-
-func WithGitHubAPIURL(url string) Option {
-	return githubAPIURLOption(url)
-}
-
-type registryHostOption string
-
-func (u registryHostOption) apply(opts *options) {
-	opts.registryHost = string(u)
-}
-
-func WithRegistryHost(host string) Option {
-	return registryHostOption(host)
-}
-
 func Untag(imageRef, token string, opts ...Option) error {
-	options := &options{
-		githubAPIURL: "https://api.github.com",
-		registryHost: "ghcr.io",
-	}
+	options := &options{}
 
 	for _, o := range opts {
 		o.apply(options)
@@ -63,24 +46,22 @@ func Untag(imageRef, token string, opts ...Option) error {
 
 	ctx := context.TODO()
 
-	index := strings.LastIndex(imageRef, ":")
-	if index == -1 {
+	repoRef, rest, ok := strings.CutLast(imageRef, ":")
+	if !ok {
 		return errors.Errorf("unexpected image format. expected: %q, actual: %q", "ghcr.io/<owner>/<package>:tag", imageRef)
 	}
-
-	repoRef := imageRef[:index]
-	tag, _, _ := strings.Cut(imageRef[index+1:], "@")
+	tag, _, _ := strings.Cut(rest, "@")
 
 	ss := strings.SplitN(repoRef, "/", 3)
 	if len(ss) != 3 {
 		return errors.Errorf("unexpected repository format. expected: %q, actual: %q", "ghcr.io/<owner>/<package>", repoRef)
 	}
-	if ss[0] != "ghcr.io" {
+	if ss[0] != registryHost {
 		return errors.Errorf("only ghcr.io is supported. repository: %s", repoRef)
 	}
 
 	var repoType string
-	if err := utilGitHub.Do(http.MethodGet, fmt.Sprintf("%s/users/%s", options.githubAPIURL, ss[1]), token, func(resp *http.Response) error {
+	if err := utilGitHub.Do(options.httpClient, http.MethodGet, fmt.Sprintf("%s/users/%s", githubAPIURL, ss[1]), token, func(resp *http.Response) error {
 		switch resp.StatusCode {
 		case http.StatusOK:
 			type users struct {
@@ -119,9 +100,9 @@ func Untag(imageRef, token string, opts ...Option) error {
 }
 
 func (o options) moveTagToDummy(ctx context.Context, owner, pack, tag, token string) (ocispec.Descriptor, error) {
-	dst, err := remote.NewRepository(fmt.Sprintf("%s/%s/%s", o.registryHost, owner, pack))
+	dst, err := remote.NewRepository(fmt.Sprintf("%s/%s/%s", registryHost, owner, pack))
 	if err != nil {
-		return ocispec.Descriptor{}, errors.Wrapf(err, "new repository. URL: %s", fmt.Sprintf("%s/%s/%s", o.registryHost, owner, pack))
+		return ocispec.Descriptor{}, errors.Wrapf(err, "new repository. URL: %s", fmt.Sprintf("%s/%s/%s", registryHost, owner, pack))
 	}
 
 	dst.Client = &auth.Client{
@@ -154,7 +135,7 @@ func (o options) moveTagToDummy(ctx context.Context, owner, pack, tag, token str
 }
 
 func (o options) deleteDummy(repoType, owner, pack, token string, dummyDesc ocispec.Descriptor) error {
-	rs, err := ls.List([]ls.Repository{{Type: repoType, Registry: "ghcr.io", Owner: owner, Package: pack}}, token, ls.WithbaseURL(o.githubAPIURL))
+	rs, err := ls.List([]ls.Repository{{Type: repoType, Registry: registryHost, Owner: owner, Package: pack}}, token, ls.WithHTTPClient(o.httpClient))
 	if err != nil {
 		return errors.Wrapf(err, "list versions")
 	}
@@ -166,7 +147,7 @@ func (o options) deleteDummy(repoType, owner, pack, token string, dummyDesc ocis
 		return errors.Errorf("dummy version not found. digest: %s", dummyDesc.Digest.String())
 	}
 
-	if err := utilGitHub.Do(http.MethodDelete, fmt.Sprintf("%s/%s/%s/packages/container/%s/versions/%d", o.githubAPIURL, repoType, owner, pack, rs[i].ID), token, func(resp *http.Response) error {
+	if err := utilGitHub.Do(o.httpClient, http.MethodDelete, fmt.Sprintf("%s/%s/%s/packages/container/%s/versions/%d", githubAPIURL, repoType, owner, pack, rs[i].ID), token, func(resp *http.Response) error {
 		switch resp.StatusCode {
 		case http.StatusNoContent:
 			return nil

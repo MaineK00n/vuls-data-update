@@ -111,12 +111,10 @@ func TestFetch(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewServer(handler(t))
-			defer ts.Close()
-
+			ts := httptest.NewTestServer(t, handler(t))
 			dir := t.TempDir()
 			err := servicing.Fetch(tt.kbs,
-				servicing.WithHelpURL(ts.URL+"/help/%s"),
+				servicing.WithHTTPClient(ts.Client()),
 				servicing.WithDir(dir),
 				servicing.WithRetry(0),
 				servicing.WithConcurrency(2),
@@ -160,7 +158,7 @@ func TestFetchRetriesThrottle(t *testing.T) {
 			throttled := map[string]bool{}
 
 			inner := handler(t)
-			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			ts := httptest.NewTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				mu.Lock()
 				first := !throttled[r.URL.Path]
 				throttled[r.URL.Path] = true
@@ -172,11 +170,9 @@ func TestFetchRetriesThrottle(t *testing.T) {
 				}
 				inner(w, r)
 			}))
-			defer ts.Close()
-
 			dir := t.TempDir()
 			err := servicing.Fetch([]string{"KB5101649"},
-				servicing.WithHelpURL(ts.URL+"/help/%s"),
+				servicing.WithHTTPClient(ts.Client()),
 				servicing.WithDir(dir),
 				servicing.WithRetry(tt.retry),
 				servicing.WithConcurrency(1),

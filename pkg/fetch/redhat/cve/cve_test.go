@@ -1,12 +1,11 @@
 package cve_test
 
 import (
+	"bytes"
 	"encoding/json/v2"
-	"fmt"
 	"io/fs"
 	"net/http"
 	"net/http/httptest"
-	"net/url"
 	"os"
 	"path"
 	"path/filepath"
@@ -23,20 +22,18 @@ import (
 func TestFetch(t *testing.T) {
 	tests := []struct {
 		name     string
-		listfile string
 		hasError bool
 	}{
 		{
-			name:     "happy",
-			listfile: "testdata/fixtures/cve.json",
+			name: "happy",
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			ts := httptest.NewTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				switch path.Base(r.URL.Path) {
 				case "cve.json":
-					f, err := os.Open(strings.TrimPrefix(r.URL.Path, "/"))
+					f, err := os.Open(filepath.Join("testdata", "fixtures", "cve.json"))
 					if err != nil {
 						http.NotFound(w, r)
 					}
@@ -90,23 +87,14 @@ func TestFetch(t *testing.T) {
 						http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 					}
 
-					s := strings.ReplaceAll(string(bs), "https://access.redhat.com/hydra/rest/securitydata/cve/", fmt.Sprintf("http://%s/testdata/fixtures/", r.Host))
-
-					http.ServeContent(w, r, "cve.json", time.Now(), strings.NewReader(s))
+					http.ServeContent(w, r, "cve.json", time.Now(), bytes.NewReader(bs))
 				default:
-					http.ServeFile(w, r, strings.TrimPrefix(r.URL.Path, "/"))
+					http.ServeFile(w, r, filepath.Join("testdata", "fixtures", path.Base(r.URL.Path)))
 				}
 			}))
-			defer ts.Close()
-
-			u, err := url.JoinPath(ts.URL, tt.listfile)
-			if err != nil {
-				t.Error("unexpected error:", err)
-			}
-			u = fmt.Sprintf("%s?page=%%d&after=%%s&before=%%s&per_page=2", u)
 
 			dir := t.TempDir()
-			err = cve.Fetch(cve.WithDataURL(u), cve.WithDir(dir), cve.WithRetry(0), cve.WithConcurrency(1), cve.WithWait(0))
+			err := cve.Fetch(cve.WithHTTPClient(ts.Client()), cve.WithPerPage(2), cve.WithDir(dir), cve.WithRetry(0), cve.WithConcurrency(1), cve.WithWait(0))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)

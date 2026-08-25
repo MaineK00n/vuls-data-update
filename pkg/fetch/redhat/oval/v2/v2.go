@@ -25,20 +25,14 @@ type options struct {
 	feedURL string
 	dir     string
 	retry   int
+
+	// httpClient is only ever set by WithHTTPClient, which lives in
+	// export_test.go and is therefore absent from the production build.
+	httpClient *http.Client
 }
 
 type Option interface {
 	apply(*options)
-}
-
-type feedURLOption string
-
-func (u feedURLOption) apply(opts *options) {
-	opts.feedURL = string(u)
-}
-
-func WithFeedURL(u string) Option {
-	return feedURLOption(u)
 }
 
 type dirOption string
@@ -77,7 +71,7 @@ func Fetch(opts ...Option) error {
 	}
 
 	slog.Info("Fetch RedHat OVAL")
-	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.feedURL)
+	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry), utilhttp.WithClientHTTPClient(options.httpClient)).Get(options.feedURL)
 	if err != nil {
 		return errors.Wrap(err, "fetch feed")
 	}
@@ -105,7 +99,7 @@ func Fetch(opts ...Option) error {
 
 		slog.Info("Fetch RedHat OVAL", slog.String("version", v), slog.String("name", name))
 		r, err := func() (*root, error) {
-			resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(u)
+			resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry), utilhttp.WithClientHTTPClient(options.httpClient)).Get(u)
 			if err != nil {
 				return nil, errors.Wrap(err, "fetch advisory")
 			}

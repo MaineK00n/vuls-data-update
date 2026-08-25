@@ -1,7 +1,6 @@
 package json_test
 
 import (
-	"fmt"
 	"io/fs"
 	"net/http"
 	"net/http/httptest"
@@ -57,7 +56,7 @@ func TestFetch(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			ts := httptest.NewTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				switch {
 				case strings.HasPrefix(r.URL.Path, "/json/"):
 					switch path.Base(r.URL.Path) {
@@ -72,10 +71,8 @@ func TestFetch(t *testing.T) {
 					http.NotFound(w, r)
 				}
 			}))
-			defer ts.Close()
-
 			dir := t.TempDir()
-			err := json.Fetch(tt.args.ids, json.WithDataURL(fmt.Sprintf("%s/json/%%s", ts.URL)), json.WithDir(dir), json.WithRetry(1))
+			err := json.Fetch(tt.args.ids, json.WithHTTPClient(ts.Client()), json.WithDir(dir), json.WithRetry(1))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)

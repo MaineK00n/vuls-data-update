@@ -18,28 +18,25 @@ import (
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
-const dataURL = "https://access.redhat.com/hydra/rest/securitydata/cve.json?page=%d&after=%s&before=%s&per_page=1000"
+const (
+	dataURLFormat  = "https://access.redhat.com/hydra/rest/securitydata/cve.json?page=%d&after=%s&before=%s&per_page=%d"
+	defaultPerPage = 1000
+)
 
 type options struct {
-	dataURL     string
 	dir         string
 	retry       int
 	concurrency int
 	wait        time.Duration
+
+	// perPage and httpClient are only ever set by the options in
+	// export_test.go and are therefore absent from the production build.
+	perPage    int
+	httpClient *http.Client
 }
 
 type Option interface {
 	apply(*options)
-}
-
-type dataURLOption string
-
-func (u dataURLOption) apply(opts *options) {
-	opts.dataURL = string(u)
-}
-
-func WithDataURL(url string) Option {
-	return dataURLOption(url)
 }
 
 type dirOption string
@@ -84,11 +81,11 @@ func WithWait(wait time.Duration) Option {
 
 func Fetch(opts ...Option) error {
 	options := &options{
-		dataURL:     dataURL,
 		dir:         filepath.Join(util.CacheDir(), "fetch", "redhat", "cve"),
 		retry:       20,
 		concurrency: 15,
 		wait:        1 * time.Second,
+		perPage:     defaultPerPage,
 	}
 
 	for _, o := range opts {
@@ -100,7 +97,7 @@ func Fetch(opts ...Option) error {
 	}
 
 	slog.Info("Fetch RedHat CVE API")
-	client := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry))
+	client := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry), utilhttp.WithClientHTTPClient(options.httpClient))
 
 	slog.Info("Fetch RedHat CVEs", slog.Int("from", 1996), slog.Int("to", time.Now().Year()))
 	urls, err := options.list(client)
@@ -168,10 +165,11 @@ func (opts options) list(client *utilhttp.Client) ([]string, error) {
 
 			var us []string
 			for page := 1; ; page++ {
+				u := fmt.Sprintf(dataURLFormat, page, time.Date(y, 1, 1, 0, 0, 0, 0, time.UTC).Format("2006-01-02"), time.Date(y+1, 1, 1, 0, 0, 0, 0, time.UTC).Format("2006-01-02"), opts.perPage)
 				es, err := func() ([]entry, error) {
-					resp, err := client.Get(fmt.Sprintf(opts.dataURL, page, time.Date(y, 1, 1, 0, 0, 0, 0, time.UTC).Format("2006-01-02"), time.Date(y+1, 1, 1, 0, 0, 0, 0, time.UTC).Format("2006-01-02")))
+					resp, err := client.Get(u)
 					if err != nil {
-						return nil, errors.Wrapf(err, "fetch %s", fmt.Sprintf(opts.dataURL, page, time.Date(y, 1, 1, 0, 0, 0, 0, time.UTC).Format("2006-01-02"), time.Date(y+1, 1, 1, 0, 0, 0, 0, time.UTC).Format("2006-01-02")))
+						return nil, errors.Wrapf(err, "fetch %s", u)
 					}
 					defer resp.Body.Close()
 

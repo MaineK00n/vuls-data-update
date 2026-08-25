@@ -44,7 +44,7 @@ func TestFetch(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			ts := httptest.NewTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				switch r.URL.Path {
 				case "/news/secjson/":
 					http.ServeFile(w, r, filepath.Join("testdata", "fixtures", tt.name, "indexof.html"))
@@ -52,15 +52,8 @@ func TestFetch(t *testing.T) {
 					http.ServeFile(w, r, filepath.Join("testdata", "fixtures", tt.name, path.Base(r.URL.Path)))
 				}
 			}))
-			defer ts.Close()
-
-			u, err := url.JoinPath(ts.URL, "news/secjson/")
-			if err != nil {
-				t.Error("unexpected error:", err)
-			}
-
 			dir := t.TempDir()
-			err = secjson.Fetch(secjson.WithBaseURL(u), secjson.WithDir(dir), secjson.WithRetry(0), secjson.WithConcurrency(1), secjson.WithWait(0))
+			err := secjson.Fetch(secjson.WithHTTPClient(ts.Client()), secjson.WithDir(dir), secjson.WithRetry(0), secjson.WithConcurrency(1), secjson.WithWait(0))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)

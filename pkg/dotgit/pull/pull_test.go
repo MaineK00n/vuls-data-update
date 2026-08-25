@@ -7,7 +7,6 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
-	"net/url"
 	"os"
 	"path/filepath"
 	"testing"
@@ -158,25 +157,21 @@ func TestPull(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewTLSServer(registry.New())
-			defer ts.Close()
+			// The in-memory network routes every host, ghcr.io included, to
+			// the test server, so the fixtures keep their production image
+			// references.
+			ts := httptest.NewTestServer(t, registry.New())
 
 			originalTransport := http.DefaultTransport
 			http.DefaultTransport = ts.Client().Transport
-			defer func() {
+			t.Cleanup(func() {
 				http.DefaultTransport = originalTransport
-			}()
-
-			u, err := url.Parse(ts.URL)
-			if err != nil {
-				t.Fatalf("parse url. err: %v", err)
-			}
+			})
 
 			repo, err := remote.NewRepository(tt.args.repository)
 			if err != nil {
 				t.Fatalf("new repository: %v", err)
 			}
-			repo.Reference.Registry = u.Host
 
 			if err := setup(fmt.Sprintf("%s/%s", repo.Reference.Registry, repo.Reference.Repository)); err != nil {
 				t.Fatalf("setup: %v", err)
@@ -191,12 +186,12 @@ func TestPull(t *testing.T) {
 				t.Error("expected error has not occurred")
 			default:
 				var got []string
-				if err := filepath.WalkDir(filepath.Join(dir, u.Host, "vulsio", "vuls-data-db"), func(path string, d os.DirEntry, err error) error {
+				if err := filepath.WalkDir(filepath.Join(dir, "ghcr.io", "vulsio", "vuls-data-db"), func(path string, d os.DirEntry, err error) error {
 					if err != nil {
 						return err
 					}
 
-					p, err := filepath.Rel(filepath.Join(dir, u.Host, "vulsio", "vuls-data-db"), path)
+					p, err := filepath.Rel(filepath.Join(dir, "ghcr.io", "vulsio", "vuls-data-db"), path)
 					if err != nil {
 						return err
 					}

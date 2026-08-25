@@ -91,7 +91,7 @@ func TestFetch(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			ts := httptest.NewTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				switch {
 				case strings.HasSuffix(r.URL.Path, "/extras-catalog.json"):
 					http.ServeFile(w, r, tt.extra)
@@ -169,22 +169,9 @@ func TestFetch(t *testing.T) {
 					}
 				}
 			}))
-			defer ts.Close()
-
 			dir := t.TempDir()
 			err := amazon.Fetch(
-				amazon.WithMirrorURLs(map[string]amazon.MirrorURL{
-					"1": {Core: fmt.Sprintf("%s/2018.03/updates/x86_64/mirror.list", ts.URL)},
-					"2": {
-						Core:  fmt.Sprintf("%s/2/core/latest/x86_64/mirror.list", ts.URL),
-						Extra: fmt.Sprintf("%s/2/extras-catalog.json", ts.URL)},
-					"2022": {Core: fmt.Sprintf("%s/al2022/core/mirrors/latest/x86_64/mirror.list", ts.URL)},
-					"2023": {
-						Core:            fmt.Sprintf("%s/al2023/core/mirrors/latest/x86_64/mirror.list", ts.URL),
-						KernelLivePatch: fmt.Sprintf("%s/al2023/kernel-livepatch/mirrors/latest/x86_64/mirror.list", ts.URL),
-						Nvidia:          fmt.Sprintf("%s/al2023/nvidia/mirrors/latest/x86_64/mirror.list", ts.URL),
-					},
-				}),
+				amazon.WithHTTPClient(ts.Client()),
 				amazon.WithDir(dir), amazon.WithRetry(0))
 			switch {
 			case err != nil && !tt.hasError:

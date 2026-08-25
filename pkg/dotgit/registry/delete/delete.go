@@ -15,46 +15,20 @@ import (
 	utilGitHub "github.com/MaineK00n/vuls-data-update/pkg/dotgit/registry/util/github"
 )
 
+const githubAPIURL = "https://api.github.com"
+
 type options struct {
-	apiEndpoint APIEndpoint
+	// httpClient is only ever set by WithHTTPClient, which lives in
+	// export_test.go and is therefore absent from the production build.
+	httpClient *http.Client
 }
 
 type Option interface {
 	apply(*options)
 }
 
-type apiOption struct {
-	APIEndpoint APIEndpoint
-}
-
-type APIEndpoint struct {
-	GitHub *GitHub
-}
-
-type GitHub struct {
-	BaseURL string
-	Type    string
-}
-
-func (a apiOption) apply(opts *options) {
-	opts.apiEndpoint = a.APIEndpoint
-}
-
-func WithAPIEndpoint(a APIEndpoint) Option {
-	return apiOption{APIEndpoint: a}
-}
-
 func Delete(image, token string, opts ...Option) error {
-	options := &options{
-		apiEndpoint: APIEndpoint{
-			GitHub: func() *GitHub {
-				if !strings.HasPrefix(image, "ghcr.io") {
-					return nil
-				}
-				return &GitHub{BaseURL: "https://api.github.com"}
-			}(),
-		},
-	}
+	options := &options{}
 
 	for _, o := range opts {
 		o.apply(options)
@@ -70,55 +44,39 @@ func Delete(image, token string, opts ...Option) error {
 
 	switch repo.Reference.Registry {
 	case "ghcr.io":
-		owner, pack, err := func() (string, string, error) {
-			switch repo.Reference.Registry {
-			case "ghcr.io":
-				lhs, rhs, ok := strings.Cut(repo.Reference.Repository, "/")
-				if !ok {
-					return "", "", errors.Errorf("unexpected repository format. expected: %q, actual: %q", "<registry>/<owner>/<package>", image)
+		owner, pack, ok := strings.Cut(repo.Reference.Repository, "/")
+		if !ok {
+			return errors.Errorf("unexpected repository format. expected: %q, actual: %q", "<registry>/<owner>/<package>", image)
+		}
+
+		var repoType string
+		if err := utilGitHub.Do(options.httpClient, http.MethodGet, fmt.Sprintf("%s/users/%s", githubAPIURL, owner), token, func(resp *http.Response) error {
+			switch resp.StatusCode {
+			case http.StatusOK:
+				type users struct {
+					Type string `json:"type"`
 				}
-				return lhs, rhs, nil
-			default:
-				return "", "", nil
-			}
-		}()
-		if err != nil {
-			return errors.Wrap(err, "parse repository")
-		}
-
-		if options.apiEndpoint.GitHub == nil {
-			return errors.Errorf("GitHub API configuration is required for registry %q", repo.Reference.Registry)
-		}
-
-		if options.apiEndpoint.GitHub.Type == "" {
-			if err := utilGitHub.Do(http.MethodGet, fmt.Sprintf("%s/users/%s", options.apiEndpoint.GitHub.BaseURL, owner), token, func(resp *http.Response) error {
-				switch resp.StatusCode {
-				case http.StatusOK:
-					type users struct {
-						Type string `json:"type"`
-					}
-					var us users
-					if err := json.UnmarshalRead(resp.Body, &us); err != nil {
-						return errors.Wrap(err, "decode response")
-					}
-					switch us.Type {
-					case "Organization":
-						options.apiEndpoint.GitHub.Type = "orgs"
-					case "User":
-						options.apiEndpoint.GitHub.Type = "users"
-					default:
-						return errors.Errorf("unexpected repository type. expected: %q, actual: %s", []string{"Organization", "User"}, us.Type)
-					}
-					return nil
+				var us users
+				if err := json.UnmarshalRead(resp.Body, &us); err != nil {
+					return errors.Wrap(err, "decode response")
+				}
+				switch us.Type {
+				case "Organization":
+					repoType = "orgs"
+				case "User":
+					repoType = "users"
 				default:
-					return errors.Errorf("unexpected response status. expected: %d, actual: %d", []int{http.StatusOK}, resp.StatusCode)
+					return errors.Errorf("unexpected repository type. expected: %q, actual: %s", []string{"Organization", "User"}, us.Type)
 				}
-			}); err != nil {
-				return errors.Wrap(err, "call GitHub API")
+				return nil
+			default:
+				return errors.Errorf("unexpected response status. expected: %d, actual: %d", []int{http.StatusOK}, resp.StatusCode)
 			}
+		}); err != nil {
+			return errors.Wrap(err, "call GitHub API")
 		}
 
-		rs, err := ls.List([]ls.Repository{{Type: options.apiEndpoint.GitHub.Type, Registry: repo.Reference.Registry, Owner: owner, Package: pack}}, token, ls.WithbaseURL(options.apiEndpoint.GitHub.BaseURL))
+		rs, err := ls.List([]ls.Repository{{Type: repoType, Registry: repo.Reference.Registry, Owner: owner, Package: pack}}, token, ls.WithHTTPClient(options.httpClient))
 		if err != nil {
 			return errors.Wrap(err, "list versions")
 		}
@@ -133,15 +91,15 @@ func Delete(image, token string, opts ...Option) error {
 			return errors.Errorf("no matching digest: %q found in %s", repo.Reference.Reference, repo.Reference.Repository)
 		}
 
-		u, err := url.Parse(options.apiEndpoint.GitHub.BaseURL)
+		u, err := url.Parse(githubAPIURL)
 		if err != nil {
 			return errors.Wrap(err, "parse url")
 		}
-		switch options.apiEndpoint.GitHub.Type {
+		switch repoType {
 		case "orgs", "users":
 			for _, id := range ids {
-				uu := u.JoinPath(options.apiEndpoint.GitHub.Type, owner, "packages", "container", pack, "versions", fmt.Sprintf("%d", id))
-				if err := utilGitHub.Do(http.MethodDelete, uu.String(), token, func(resp *http.Response) error {
+				uu := u.JoinPath(repoType, owner, "packages", "container", pack, "versions", fmt.Sprintf("%d", id))
+				if err := utilGitHub.Do(options.httpClient, http.MethodDelete, uu.String(), token, func(resp *http.Response) error {
 					switch resp.StatusCode {
 					case http.StatusNoContent:
 						slog.Info("Deleted", slog.String("repository", repo.Reference.Repository), slog.String("reference", repo.Reference.Reference), slog.Int("id", id))
@@ -156,7 +114,7 @@ func Delete(image, token string, opts ...Option) error {
 
 			return nil
 		default:
-			return errors.Errorf("unexpected registry type. expected: %q, actual: %q", []string{"orgs", "users"}, options.apiEndpoint.GitHub.Type)
+			return errors.Errorf("unexpected registry type. expected: %q, actual: %q", []string{"orgs", "users"}, repoType)
 		}
 	default:
 		return errors.Errorf("unexpected registry. expected: %q, actual: %q", []string{"ghcr.io"}, repo.Reference.Registry)

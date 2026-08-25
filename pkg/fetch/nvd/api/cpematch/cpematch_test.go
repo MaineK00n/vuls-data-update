@@ -7,7 +7,6 @@ import (
 	"io/fs"
 	"net/http"
 	"net/http/httptest"
-	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
@@ -72,7 +71,7 @@ func TestFetch(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			ts := httptest.NewTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				startIndex := "0"
 				if value := r.URL.Query().Get("startIndex"); value != "" {
 					startIndex = value
@@ -147,15 +146,8 @@ func TestFetch(t *testing.T) {
 					http.ServeFile(w, r, filepath.Join("testdata", "fixtures", tt.fixturePrefix, fmt.Sprintf("%s-%s.json", startIndex, resultsPerPage)))
 				}
 			}))
-			defer ts.Close()
-
-			u, err := url.JoinPath(ts.URL, "/rest/json/cpematch/2.0")
-			if err != nil {
-				t.Error("unexpected error:", err)
-			}
-
 			dir := t.TempDir()
-			err = cpematch.Fetch(append(tt.args, cpematch.WithBaseURL(u), cpematch.WithDir(dir), cpematch.WithRetry(0), cpematch.WithConcurrency(3), cpematch.WithWait(0), cpematch.WithResultsPerPage(3))...)
+			err := cpematch.Fetch(append(tt.args, cpematch.WithHTTPClient(ts.Client()), cpematch.WithDir(dir), cpematch.WithRetry(0), cpematch.WithConcurrency(3), cpematch.WithWait(0), cpematch.WithResultsPerPage(3))...)
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)

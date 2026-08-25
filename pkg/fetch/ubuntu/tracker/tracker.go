@@ -20,23 +20,16 @@ import (
 const defaultRepoURL = "git://git.launchpad.net/ubuntu-cve-tracker"
 
 type options struct {
+	dir   string
+	retry int
+
+	// repoURL is only ever set by WithRepoURL, which lives in export_test.go
+	// and is therefore absent from the production build.
 	repoURL string
-	dir     string
-	retry   int
 }
 
 type Option interface {
 	apply(*options)
-}
-
-type repoURLOption string
-
-func (u repoURLOption) apply(opts *options) {
-	opts.repoURL = string(u)
-}
-
-func WithRepoURL(repoURL string) Option {
-	return repoURLOption(repoURL)
 }
 
 type dirOption string

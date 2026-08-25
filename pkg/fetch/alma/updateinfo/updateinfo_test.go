@@ -48,13 +48,11 @@ func TestFetch(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			ts := httptest.NewTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				http.ServeFile(w, r, filepath.Join("testdata", "fixtures", tt.name, r.URL.Path))
 			}))
-			defer ts.Close()
-
 			dir := t.TempDir()
-			opts := append([]updateinfo.Option{updateinfo.WithBaseURL(ts.URL), updateinfo.WithDir(dir), updateinfo.WithWait(0)}, tt.args.opts...)
+			opts := append([]updateinfo.Option{updateinfo.WithHTTPClient(ts.Client()), updateinfo.WithDir(dir), updateinfo.WithWait(0)}, tt.args.opts...)
 			err := updateinfo.Fetch(opts...)
 			switch {
 			case err != nil && !tt.hasError:
@@ -99,16 +97,14 @@ func TestFetch_cyclicTree(t *testing.T) {
 	// Every directory listing links a self-descending "loop/" entry and never a
 	// repodata/, simulating a cyclic (self-referential symlink) tree. The walk
 	// must reach maxDepth and fail rather than loop or return a partial set.
-	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+	ts := httptest.NewTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		w.Header().Set("Content-Type", "text/html")
 		if _, err := fmt.Fprint(w, `<html><body><a href="../">../</a><a href="loop/">loop/</a></body></html>`); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
 	}))
-	defer ts.Close()
-
 	dir := t.TempDir()
-	err := updateinfo.Fetch(updateinfo.WithBaseURL(ts.URL), updateinfo.WithDir(dir), updateinfo.WithWait(0))
+	err := updateinfo.Fetch(updateinfo.WithHTTPClient(ts.Client()), updateinfo.WithDir(dir), updateinfo.WithWait(0))
 	if err == nil {
 		t.Error("expected error for a cyclic tree that never terminates, got nil")
 	}

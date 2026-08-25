@@ -45,7 +45,7 @@ func TestFetch(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			ts := httptest.NewTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				f, ok := tt.files[r.URL.Path]
 				if !ok {
 					http.NotFound(w, r)
@@ -53,10 +53,8 @@ func TestFetch(t *testing.T) {
 				}
 				http.ServeFile(w, r, f)
 			}))
-			defer ts.Close()
-
 			dir := t.TempDir()
-			err := secdb.Fetch(secdb.WithBaseURL(ts.URL), secdb.WithDir(dir), secdb.WithRetry(0))
+			err := secdb.Fetch(secdb.WithHTTPClient(ts.Client()), secdb.WithDir(dir), secdb.WithRetry(0))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)

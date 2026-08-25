@@ -51,7 +51,7 @@ func TestFetch(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			ts := httptest.NewTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				switch r.URL.Path {
 				case "/oauth2/default/v1/token":
 					if err := r.ParseForm(); err != nil {
@@ -105,10 +105,8 @@ func TestFetch(t *testing.T) {
 					http.NotFound(w, r)
 				}
 			}))
-			defer ts.Close()
-
 			dir := t.TempDir()
-			err := json.Fetch(tt.args.id, tt.args.secret, json.WithAccessTokenURL(fmt.Sprintf("%s/oauth2/default/v1/token", ts.URL)), json.WithAPIURL(fmt.Sprintf("%s/security/advisories/v2/all", ts.URL)), json.WithDir(dir), json.WithRetry(0))
+			err := json.Fetch(tt.args.id, tt.args.secret, json.WithHTTPClient(ts.Client()), json.WithHTTPClient(ts.Client()), json.WithDir(dir), json.WithRetry(0))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)

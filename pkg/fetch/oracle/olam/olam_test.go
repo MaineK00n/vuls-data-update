@@ -28,18 +28,11 @@ func TestFetch(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			ts := httptest.NewTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				http.ServeFile(w, r, filepath.Join("testdata", "fixtures", tt.name, path.Base(r.URL.Path)))
 			}))
-			defer ts.Close()
-
-			u, err := url.JoinPath(ts.URL, "security/oval/com.oracle.olamsa-all.xml.bz2")
-			if err != nil {
-				t.Error("unexpected error:", err)
-			}
-
 			dir := t.TempDir()
-			err = olam.Fetch(olam.WithBaseURL(u), olam.WithDir(dir), olam.WithRetry(0))
+			err := olam.Fetch(olam.WithHTTPClient(ts.Client()), olam.WithDir(dir), olam.WithRetry(0))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)

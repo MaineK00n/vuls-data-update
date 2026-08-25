@@ -28,23 +28,16 @@ func TestFetch(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			ts := httptest.NewTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				switch r.URL.Path {
-				case "/security/oval/":
+				case "/oval/":
 					http.ServeFile(w, r, filepath.Join("testdata", "fixtures", tt.name, "indexof.html"))
 				default:
 					http.ServeFile(w, r, filepath.Join("testdata", "fixtures", tt.name, path.Base(r.URL.Path)))
 				}
 			}))
-			defer ts.Close()
-
-			u, err := url.JoinPath(ts.URL, "security/oval/")
-			if err != nil {
-				t.Error("unexpected error:", err)
-			}
-
 			dir := t.TempDir()
-			err = openstack.Fetch(openstack.WithBaseURL(u), openstack.WithDir(dir), openstack.WithRetry(0), openstack.WithConcurrency(1), openstack.WithWait(0))
+			err := openstack.Fetch(openstack.WithHTTPClient(ts.Client()), openstack.WithDir(dir), openstack.WithRetry(0), openstack.WithConcurrency(1), openstack.WithWait(0))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)

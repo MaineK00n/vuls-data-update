@@ -23,20 +23,14 @@ type options struct {
 	dataURL string
 	dir     string
 	retry   int
+
+	// httpClient is only ever set by WithHTTPClient, which lives in
+	// export_test.go and is therefore absent from the production build.
+	httpClient *http.Client
 }
 
 type Option interface {
 	apply(*options)
-}
-
-type dataURLOption string
-
-func (u dataURLOption) apply(opts *options) {
-	opts.dataURL = string(u)
-}
-
-func WithDataURL(url string) Option {
-	return dataURLOption(url)
 }
 
 type dirOption string
@@ -77,7 +71,7 @@ func Fetch(opts ...Option) error {
 	slog.Info("Fetch Palo Alto Networks Security Advisories (list)")
 
 	var advs []Advisory
-	client := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry))
+	client := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry), utilhttp.WithClientHTTPClient(options.httpClient))
 	for i := 1; ; i++ {
 		as, err := func() ([]Advisory, error) {
 			resp, err := client.Get(fmt.Sprintf(options.dataURL, i))

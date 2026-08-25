@@ -4,7 +4,6 @@ import (
 	"io/fs"
 	"net/http"
 	"net/http/httptest"
-	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
@@ -12,7 +11,7 @@ import (
 
 	"github.com/google/go-cmp/cmp"
 
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/vex/v2"
+	v2 "github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/vex/v2"
 )
 
 func TestFetch(t *testing.T) {
@@ -28,18 +27,17 @@ func TestFetch(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				http.ServeFile(w, r, strings.TrimPrefix(r.URL.Path, "/"))
+			ts := httptest.NewTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				rel, ok := strings.CutPrefix(r.URL.Path, "/data/csaf/v2/vex-feed/")
+				if !ok {
+					http.NotFound(w, r)
+					return
+				}
+				http.ServeFile(w, r, filepath.Join(tt.testdata, rel))
 			}))
-			defer ts.Close()
-
-			u, err := url.JoinPath(ts.URL, tt.testdata)
-			if err != nil {
-				t.Error("unexpected error:", err)
-			}
 
 			dir := t.TempDir()
-			err = v2.Fetch(v2.WithBaseURL(u), v2.WithDir(dir), v2.WithRetry(0))
+			err := v2.Fetch(v2.WithHTTPClient(ts.Client()), v2.WithDir(dir), v2.WithRetry(0))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)

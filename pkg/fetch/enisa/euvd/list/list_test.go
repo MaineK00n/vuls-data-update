@@ -5,7 +5,6 @@ import (
 	"io/fs"
 	"net/http"
 	"net/http/httptest"
-	"net/url"
 	"os"
 	"path"
 	"path/filepath"
@@ -35,7 +34,7 @@ func TestFetch(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			ts := httptest.NewTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				switch path.Base(r.URL.Path) {
 				case "search":
 					http.ServeFile(w, r, filepath.Join("testdata", "fixtures", tt.name, fmt.Sprintf("%s_%s.json", r.URL.Query().Get("page"), r.URL.Query().Get("size"))))
@@ -43,16 +42,9 @@ func TestFetch(t *testing.T) {
 					http.NotFound(w, r)
 				}
 			}))
-			defer ts.Close()
-
-			u, err := url.JoinPath(ts.URL, "api", "search")
-			if err != nil {
-				t.Error("unexpected error:", err)
-			}
-
 			dir := t.TempDir()
-			opts := append([]list.Option{list.WithBaseURL(u), list.WithDir(dir)}, tt.args.opts...)
-			err = list.Fetch(opts...)
+			opts := append([]list.Option{list.WithHTTPClient(ts.Client()), list.WithDir(dir)}, tt.args.opts...)
+			err := list.Fetch(opts...)
 			switch {
 			case err != nil && !tt.wantErr:
 				t.Error("unexpected error:", err)

@@ -44,17 +44,15 @@ func TestFetch(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			ts := httptest.NewTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				if tt.testdata == "" {
 					http.NotFound(w, r)
 					return
 				}
 				http.ServeFile(w, r, tt.testdata)
 			}))
-			defer ts.Close()
-
 			dir := t.TempDir()
-			err := linux.Fetch(linux.WithAdvisoryURL(ts.URL), linux.WithDir(dir), linux.WithRetry(0))
+			err := linux.Fetch(linux.WithHTTPClient(ts.Client()), linux.WithDir(dir), linux.WithRetry(0))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)

@@ -40,7 +40,7 @@ func TestFetch(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			ts := httptest.NewTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				switch path.Base(r.URL.Path) {
 				case "FG-IR-24-259":
 					w.Header().Set("Content-Type", "text/html")
@@ -56,13 +56,11 @@ eval(function(p,a,c,k,e,d){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
 						t.Errorf("unexpected error: %v", err)
 					}
 				default:
-					http.ServeFile(w, r, filepath.Join("testdata", "fixtures", fmt.Sprintf("%s.xml", strings.TrimPrefix(r.URL.Path, "/"))))
+					http.ServeFile(w, r, filepath.Join("testdata", "fixtures", fmt.Sprintf("%s.xml", path.Base(r.URL.Path))))
 				}
 			}))
-			defer ts.Close()
-
 			dir := t.TempDir()
-			err := cvrf.Fetch(tt.args, cvrf.WithDataURL(fmt.Sprintf("%s/%%s", ts.URL)), cvrf.WithDir(dir), cvrf.WithRetry(0), cvrf.WithConcurrency(1), cvrf.WithWait(0))
+			err := cvrf.Fetch(tt.args, cvrf.WithHTTPClient(ts.Client()), cvrf.WithDir(dir), cvrf.WithRetry(0), cvrf.WithConcurrency(1), cvrf.WithWait(0))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)

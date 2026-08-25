@@ -26,13 +26,11 @@ func TestFetch(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			ts := httptest.NewTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				http.ServeFile(w, r, filepath.Join("testdata", "fixtures", tt.name, fmt.Sprintf("%s_%s.json", r.URL.Query().Get("offset"), r.URL.Query().Get("limit"))))
 			}))
-			defer ts.Close()
-
 			dir := t.TempDir()
-			err := notice.Fetch(notice.WithBaseURL(fmt.Sprintf("%s/security/notices.json?limit=%%d&offset=%%d&order=oldest&show_hidden=true", ts.URL)), notice.WithDir(dir), notice.WithRetry(0), notice.WithConcurrency(1), notice.WithWait(0))
+			err := notice.Fetch(notice.WithHTTPClient(ts.Client()), notice.WithDir(dir), notice.WithRetry(0), notice.WithConcurrency(1), notice.WithWait(0))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)

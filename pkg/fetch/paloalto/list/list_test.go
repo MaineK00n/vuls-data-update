@@ -34,7 +34,7 @@ func TestFetch(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			ts := httptest.NewTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				p := r.URL.Query().Get("page")
 				if p == "" {
 					http.NotFound(w, r)
@@ -77,10 +77,8 @@ func TestFetch(t *testing.T) {
 					http.ServeFile(w, r, filepath.Join("testdata", "fixtures", tt.name, fmt.Sprintf("page%s.json", p)))
 				}
 			}))
-			defer ts.Close()
-
 			dir := t.TempDir()
-			err := list.Fetch(list.WithDataURL(fmt.Sprintf("%s/json/?page=%%d&limit=100&sort=doc", ts.URL)), list.WithDir(dir), list.WithRetry(0))
+			err := list.Fetch(list.WithHTTPClient(ts.Client()), list.WithDir(dir), list.WithRetry(0))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)

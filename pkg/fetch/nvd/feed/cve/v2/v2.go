@@ -7,12 +7,9 @@ import (
 	"io"
 	"log/slog"
 	"net/http"
-	"net/url"
 	"os"
-	"path"
 	"path/filepath"
 	"strconv"
-	"strings"
 	"time"
 
 	"github.com/pkg/errors"
@@ -28,23 +25,17 @@ const (
 )
 
 type options struct {
-	baseURLs []string
-	dir      string
-	retry    int
+	feeds []string
+	dir   string
+	retry int
+
+	// httpClient is only ever set by WithHTTPClient, which lives in
+	// export_test.go and is therefore absent from the production build.
+	httpClient *http.Client
 }
 
 type Option interface {
 	apply(*options)
-}
-
-type baseURLsOption []string
-
-func (u baseURLsOption) apply(opts *options) {
-	opts.baseURLs = u
-}
-
-func WithBaseURLs(urls []string) Option {
-	return baseURLsOption(urls)
 }
 
 type dirOption string
@@ -68,18 +59,15 @@ func WithRetry(retry int) Option {
 }
 
 func Fetch(opts ...Option) error {
-	us := []string{
-		fmt.Sprintf(baseURLFormat, "modified"),
-		fmt.Sprintf(baseURLFormat, "recent"),
-	}
+	feeds := []string{"modified", "recent"}
 	for y := oldestYear; y <= time.Now().Year(); y++ {
-		us = append(us, fmt.Sprintf(baseURLFormat, strconv.Itoa(y)))
+		feeds = append(feeds, strconv.Itoa(y))
 	}
 
 	options := &options{
-		baseURLs: us,
-		dir:      filepath.Join(util.CacheDir(), "fetch", "nvd", "feed", "cve", "v2"),
-		retry:    3,
+		feeds: feeds,
+		dir:   filepath.Join(util.CacheDir(), "fetch", "nvd", "feed", "cve", "v2"),
+		retry: 3,
 	}
 
 	for _, o := range opts {
@@ -90,17 +78,11 @@ func Fetch(opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	for _, u := range options.baseURLs {
-		uu, err := url.Parse(u)
+	for _, feed := range options.feeds {
+		slog.Info("Fetch NVD CVE Feed 2.0", slog.String("feed", feed))
+		cves, err := options.fetch(fmt.Sprintf(baseURLFormat, feed))
 		if err != nil {
-			return errors.Wrap(err, "parse url")
-		}
-		feedname := strings.TrimSuffix(strings.TrimPrefix(path.Base(uu.Path), "nvdcve-2.0-"), ".json.gz")
-
-		slog.Info("Fetch NVD CVE Feed 2.0", slog.String("feed", feedname))
-		cves, err := options.fetch(u)
-		if err != nil {
-			return errors.Wrapf(err, "fetch nvd cve %s feed 2.0", feedname)
+			return errors.Wrapf(err, "fetch nvd cve %s feed 2.0", feed)
 		}
 
 		bar := progressbar.Default(int64(len(cves)))
@@ -136,7 +118,7 @@ func Fetch(opts ...Option) error {
 }
 
 func (opts options) fetch(feedURL string) ([]CVE, error) {
-	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry)).Get(feedURL)
+	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry), utilhttp.WithClientHTTPClient(opts.httpClient)).Get(feedURL)
 	if err != nil {
 		return nil, errors.Wrap(err, "fetch nvd cve feed")
 	}

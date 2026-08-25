@@ -1,7 +1,6 @@
 package appstreamlifecycle_test
 
 import (
-	"fmt"
 	"io/fs"
 	"net/http"
 	"net/http/httptest"
@@ -29,7 +28,7 @@ func TestFetch(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			ts := httptest.NewTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				switch r.URL.Path {
 				case "/support/policy/updates/rhel-app-streams-life-cycle":
 					http.ServeFile(w, r, filepath.Join(tt.testdata, "rhel-app-streams-life-cycle.html"))
@@ -39,10 +38,8 @@ func TestFetch(t *testing.T) {
 					http.NotFound(w, r)
 				}
 			}))
-			defer ts.Close()
-
 			dir := t.TempDir()
-			err := appstreamlifecycle.Fetch(appstreamlifecycle.WithBaseURL(fmt.Sprintf("%s/support/policy/updates/", ts.URL)), appstreamlifecycle.WithDir(dir), appstreamlifecycle.WithRetry(0))
+			err := appstreamlifecycle.Fetch(appstreamlifecycle.WithHTTPClient(ts.Client()), appstreamlifecycle.WithDir(dir), appstreamlifecycle.WithRetry(0))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)

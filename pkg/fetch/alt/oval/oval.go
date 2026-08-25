@@ -25,20 +25,14 @@ type options struct {
 	baseURL string
 	dir     string
 	retry   int
+
+	// httpClient is only ever set by WithHTTPClient, which lives in
+	// export_test.go and is therefore absent from the production build.
+	httpClient *http.Client
 }
 
 type Option interface {
 	apply(*options)
-}
-
-type baseURLOption string
-
-func (u baseURLOption) apply(opts *options) {
-	opts.baseURL = string(u)
-}
-
-func WithBaseURL(url string) Option {
-	return baseURLOption(url)
 }
 
 type dirOption string
@@ -98,7 +92,7 @@ func (opts options) fetchBranches() ([]string, error) {
 		return nil, errors.Wrap(err, "join url path")
 	}
 
-	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry)).Get(u)
+	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry), utilhttp.WithClientHTTPClient(opts.httpClient)).Get(u)
 	if err != nil {
 		return nil, errors.Wrap(err, "fetch branches")
 	}
@@ -123,7 +117,7 @@ func (opts options) fetch(branch string) error {
 		return errors.Wrap(err, "join url path")
 	}
 
-	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry)).Get(u)
+	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry), utilhttp.WithClientHTTPClient(opts.httpClient)).Get(u)
 	if err != nil {
 		return errors.Wrapf(err, "fetch %s", u)
 	}

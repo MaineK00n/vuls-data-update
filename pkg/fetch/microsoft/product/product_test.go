@@ -6,7 +6,6 @@ import (
 	"io/fs"
 	"net/http"
 	"net/http/httptest"
-	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
@@ -28,7 +27,7 @@ func TestFetch(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			ts := httptest.NewTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				n := r.URL.Query().Get("$skip")
 				if n == "" {
 					n = "0"
@@ -44,15 +43,8 @@ func TestFetch(t *testing.T) {
 					http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 				}
 			}))
-			defer ts.Close()
-
-			u, err := url.JoinPath(ts.URL, "sug/v2.0/sugodata/v2.0/en-US/affectedProduct?$skip=0")
-			if err != nil {
-				t.Error("unexpected error:", err)
-			}
-
 			dir := t.TempDir()
-			err = product.Fetch(product.WithDataURL(u), product.WithDir(dir), product.WithRetry(0))
+			err := product.Fetch(product.WithHTTPClient(ts.Client()), product.WithDir(dir), product.WithRetry(0))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)
