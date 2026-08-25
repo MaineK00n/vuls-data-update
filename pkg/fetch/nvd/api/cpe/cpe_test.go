@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json/v2"
 	"fmt"
-	"io/fs"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -13,9 +12,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/google/go-cmp/cmp"
-
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/nvd/api/cpe"
+	utiltest "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/test"
 )
 
 func TestFetch(t *testing.T) {
@@ -154,39 +152,8 @@ func TestFetch(t *testing.T) {
 			case err == nil && tt.hasError:
 				t.Error("expected error has not occurred")
 			default:
-				actualCount := 0
-				if err := filepath.WalkDir(dir, func(path string, d fs.DirEntry, err error) error {
-					if err != nil {
-						return err
-					}
-
-					if d.IsDir() {
-						return nil
-					}
-
-					dir, file := filepath.Split(path)
-					want, err := os.ReadFile(filepath.Join("testdata", "golden", tt.fixturePrefix, filepath.Base(dir), file))
-					if err != nil {
-						return err
-					}
-
-					got, err := os.ReadFile(path)
-					if err != nil {
-						return err
-					}
-
-					if diff := cmp.Diff(want, got); diff != "" {
-						t.Errorf("Fetch(). %s (-expected +got):\n%s", file, diff)
-					}
-
-					actualCount++
-					return nil
-				}); err != nil {
-					t.Error("walk error:", err)
-				}
-
-				if actualCount != tt.expectedCount {
-					t.Errorf("unexpected #files, expected: %d, actual: %d", tt.expectedCount, actualCount)
+				if n := utiltest.Diff(t, filepath.Join("testdata", "golden", tt.fixturePrefix), dir); n != tt.expectedCount {
+					t.Errorf("unexpected #files, expected: %d, actual: %d", tt.expectedCount, n)
 				}
 			}
 		})

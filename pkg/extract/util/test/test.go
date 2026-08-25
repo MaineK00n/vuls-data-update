@@ -160,6 +160,42 @@ func Diff(t *testing.T, expectedAbsPath, gotAbsPath string) {
 			t.Error("walk error:", err)
 		}
 	}
+
+	// Also walk golden -> got, so a file the extract failed to produce is
+	// caught and not just the mismatched content of files that happen to
+	// exist. The loop above skips a top-level name that is missing from got
+	// entirely, so without this an extract that produced nothing would pass.
+	if err := filepath.WalkDir(expectedAbsPath, func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			if os.IsNotExist(err) {
+				return nil
+			}
+			return err
+		}
+
+		if d.IsDir() {
+			return nil
+		}
+
+		rel, err := filepath.Rel(expectedAbsPath, path)
+		if err != nil {
+			return err
+		}
+
+		dir, file := filepath.Split(rel)
+		unescaped, err := url.QueryUnescape(file)
+		if err != nil {
+			return err
+		}
+
+		if _, err := os.Stat(filepath.Join(gotAbsPath, dir, unescaped)); err != nil {
+			t.Errorf("Extract(). expected output file is missing: %s", rel)
+		}
+
+		return nil
+	}); err != nil && !os.IsNotExist(err) {
+		t.Error("walk error:", err)
+	}
 }
 
 // QueryUnescapeFileTree copies a file tree at fixturePath to a temp directory by query-unescaping file names.

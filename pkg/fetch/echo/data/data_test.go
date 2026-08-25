@@ -2,19 +2,16 @@ package data_test
 
 import (
 	"encoding/json/v2"
-	"io/fs"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"path"
 	"path/filepath"
-	"strings"
 	"testing"
 
-	"github.com/google/go-cmp/cmp"
-	"github.com/google/go-cmp/cmp/cmpopts"
-
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/echo/data"
+	utiltest "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/test"
+	"github.com/google/go-cmp/cmp/cmpopts"
 )
 
 func TestFetch(t *testing.T) {
@@ -53,34 +50,10 @@ func TestFetch(t *testing.T) {
 					return v, nil
 				}
 
-				if err := filepath.WalkDir(dir, func(path string, d fs.DirEntry, err error) error {
-					if err != nil {
-						return err
-					}
-
-					if d.IsDir() {
-						return nil
-					}
-
-					dir, file := filepath.Split(strings.TrimPrefix(path, dir))
-					want, err := fn(filepath.Join("testdata", "golden", dir, file))
-					if err != nil {
-						return err
-					}
-
-					got, err := fn(path)
-					if err != nil {
-						return err
-					}
-
-					if diff := cmp.Diff(want, got, cmpopts.SortSlices(func(i, j data.Vulnerability) bool { return i.ID < j.ID })); diff != "" {
-						t.Errorf("Fetch(). (-expected +got):\n%s", diff)
-					}
-
-					return nil
-				}); err != nil {
-					t.Error("walk error:", err)
-				}
+				// The fetcher emits vulnerabilities in a nondeterministic
+				// order, so the files are compared decoded.
+				utiltest.DiffFunc(t, filepath.Join("testdata", "golden"), dir, fn,
+					cmpopts.SortSlices(func(i, j data.Vulnerability) bool { return i.ID < j.ID }))
 			}
 		})
 	}

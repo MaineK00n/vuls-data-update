@@ -3,19 +3,16 @@ package updateinfo_test
 import (
 	"bytes"
 	"io"
-	"io/fs"
 	"net/http"
 	"net/http/httptest"
-	"net/url"
 	"os"
 	"path/filepath"
-	"strings"
 	"testing"
 
-	"github.com/google/go-cmp/cmp"
 	"gopkg.in/yaml.v3"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/rocky/updateinfo"
+	utiltest "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/test"
 )
 
 func TestFetch(t *testing.T) {
@@ -59,34 +56,7 @@ func TestFetch(t *testing.T) {
 			case err == nil && tt.hasError:
 				t.Error("expected error has not occurred")
 			default:
-				if err := filepath.WalkDir(dir, func(path string, d fs.DirEntry, err error) error {
-					if err != nil {
-						return err
-					}
-
-					if d.IsDir() {
-						return nil
-					}
-
-					dir, file := filepath.Split(strings.TrimPrefix(path, dir))
-					want, err := os.ReadFile(filepath.Join("testdata", "golden", tt.name, dir, url.QueryEscape(file)))
-					if err != nil {
-						return err
-					}
-
-					got, err := os.ReadFile(path)
-					if err != nil {
-						return err
-					}
-
-					if diff := cmp.Diff(want, got); diff != "" {
-						t.Errorf("Fetch(). (-expected +got):\n%s", diff)
-					}
-
-					return nil
-				}); err != nil {
-					t.Error("walk error:", err)
-				}
+				utiltest.Diff(t, filepath.Join("testdata", "golden", tt.name), dir)
 			}
 		})
 	}

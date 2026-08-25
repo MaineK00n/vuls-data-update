@@ -1,18 +1,15 @@
 package cvrf_test
 
 import (
-	"io/fs"
 	"net/http"
 	"net/http/httptest"
-	"os"
 	"path/filepath"
 	"strings"
 	"testing"
 	"time"
 
-	"github.com/google/go-cmp/cmp"
-
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/cvrf"
+	utiltest "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/test"
 )
 
 func TestFetch(t *testing.T) {
@@ -78,60 +75,7 @@ func TestFetch(t *testing.T) {
 			case err == nil && tt.hasError:
 				t.Error("expected error has not occurred")
 			default:
-				if err := filepath.WalkDir(dir, func(path string, d fs.DirEntry, err error) error {
-					if err != nil {
-						return err
-					}
-
-					if d.IsDir() {
-						return nil
-					}
-
-					dir, file := filepath.Split(strings.TrimPrefix(path, dir))
-					want, err := os.ReadFile(filepath.Join(tt.golden, dir, file))
-					if err != nil {
-						return err
-					}
-
-					got, err := os.ReadFile(path)
-					if err != nil {
-						return err
-					}
-
-					if diff := cmp.Diff(want, got); diff != "" {
-						t.Errorf("Fetch(). (-expected +got):\n%s", diff)
-					}
-
-					return nil
-				}); err != nil {
-					t.Error("walk error:", err)
-				}
-
-				// Also walk golden→output so a missing file (e.g. a month that
-				// supplement failed to recover) is caught, not just mismatched
-				// content of files that happen to exist.
-				goldenRoot := tt.golden
-				if err := filepath.WalkDir(goldenRoot, func(path string, d fs.DirEntry, err error) error {
-					if err != nil {
-						return err
-					}
-
-					if d.IsDir() {
-						return nil
-					}
-
-					rel, err := filepath.Rel(goldenRoot, path)
-					if err != nil {
-						return err
-					}
-					if _, err := os.Stat(filepath.Join(dir, rel)); err != nil {
-						t.Errorf("expected output file is missing: %s", rel)
-					}
-
-					return nil
-				}); err != nil {
-					t.Error("walk error:", err)
-				}
+				utiltest.Diff(t, tt.golden, dir)
 			}
 		})
 	}
