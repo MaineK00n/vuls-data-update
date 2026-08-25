@@ -60,13 +60,23 @@ func TestFetch(t *testing.T) {
 			},
 		},
 		{
-			// A derived name is a guess, so a file answering to it that tracks
-			// another advisory must not be written as this one.
+			// The name carrying the ID leaves no room for another advisory to
+			// own it, so a file answering to it that tracks a different one means
+			// upstream contradicts itself.
 			name: "id-mismatch",
 			args: args{
 				args: []string{"FG-IR-25-756"},
 			},
 			hasError: true,
+		},
+		{
+			// Titles repeat, so the name without the ID is shared ground: the
+			// advisory that holds it answers for everyone whose title slugs to
+			// it. That is this advisory missing its CSAF, not a run to fail.
+			name: "title-collision",
+			args: args{
+				args: []string{"FG-IR-25-756"},
+			},
 		},
 	}
 	for _, tt := range tests {

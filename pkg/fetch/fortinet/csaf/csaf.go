@@ -275,13 +275,16 @@ func (opts options) fetchByTitle(client *utilhttp.Client, id, title string) (*CS
 		return nil, nil
 	}
 
-	for _, name := range []string{
-		fmt.Sprintf("csaf_%s_%s.json", s, strings.ToLower(id)),
-		fmt.Sprintf("csaf_%s.json", s),
+	for _, n := range []struct {
+		name   string
+		pinsID bool
+	}{
+		{name: fmt.Sprintf("csaf_%s_%s.json", s, strings.ToLower(id)), pinsID: true},
+		{name: fmt.Sprintf("csaf_%s.json", s), pinsID: false},
 	} {
-		a, err := opts.fetchCSAF(client, fmt.Sprintf(opts.csafURL, name))
+		a, err := opts.fetchCSAF(client, fmt.Sprintf(opts.csafURL, n.name))
 		if err != nil {
-			return nil, errors.Wrapf(err, "fetch %s", fmt.Sprintf(opts.csafURL, name))
+			return nil, errors.Wrapf(err, "fetch %s", fmt.Sprintf(opts.csafURL, n.name))
 		}
 		if a == nil {
 			continue
@@ -290,7 +293,16 @@ func (opts options) fetchByTitle(client *utilhttp.Client, id, title string) (*CS
 		// The name is derived, so confirm the file that answered to it is the
 		// advisory that was asked for rather than trusting the derivation.
 		if a.Document.Tracking.ID != id {
-			return nil, errors.Errorf("unexpected advisory ID in %s. expected: %q, actual: %q", name, id, a.Document.Tracking.ID)
+			// A name carrying the ID leaves no room for another advisory to own
+			// it, so a mismatch there is upstream contradicting itself. The name
+			// without it is shared ground -- titles repeat, and "OS command
+			// injection" alone covers five advisories -- so a mismatch there only
+			// means this advisory is not the one that holds the name.
+			if n.pinsID {
+				return nil, errors.Errorf("unexpected advisory ID in %s. expected: %q, actual: %q", n.name, id, a.Document.Tracking.ID)
+			}
+
+			continue
 		}
 
 		return a, nil
@@ -308,6 +320,12 @@ func (opts options) fetchCSAF(client *utilhttp.Client, url string) (*CSAF, error
 
 	switch resp.StatusCode {
 	case http.StatusOK:
+		var a CSAF
+		if err := json.UnmarshalRead(resp.Body, &a); err != nil {
+			return nil, errors.Wrap(err, "decode json")
+		}
+
+		return &a, nil
 	case http.StatusNotFound:
 		_, _ = io.Copy(io.Discard, resp.Body)
 		return nil, nil
@@ -315,13 +333,6 @@ func (opts options) fetchCSAF(client *utilhttp.Client, url string) (*CSAF, error
 		_, _ = io.Copy(io.Discard, resp.Body)
 		return nil, errors.Errorf("error response with status code %d", resp.StatusCode)
 	}
-
-	var a CSAF
-	if err := json.UnmarshalRead(resp.Body, &a); err != nil {
-		return nil, errors.Wrap(err, "decode json")
-	}
-
-	return &a, nil
 }
 
 func (opts options) fetchCVRFTitle(client *utilhttp.Client, id string) (string, error) {
@@ -333,6 +344,23 @@ func (opts options) fetchCVRFTitle(client *utilhttp.Client, id string) (string, 
 
 	switch resp.StatusCode {
 	case http.StatusOK:
+		mediaType, _, err := mime.ParseMediaType(resp.Header.Get("Content-Type"))
+		if err != nil {
+			return "", errors.Wrapf(err, "parse media type %q", resp.Header.Get("Content-Type"))
+		}
+		if !slices.Contains([]string{"application/xml", "text/xml"}, mediaType) {
+			bs, _ := io.ReadAll(resp.Body)
+			return "", errors.Errorf("unexpected media type %q. response body: %q", mediaType, string(bs))
+		}
+
+		var a struct {
+			DocumentTitle string `xml:"DocumentTitle"`
+		}
+		if err := xml.NewDecoder(resp.Body).Decode(&a); err != nil {
+			return "", errors.Wrap(err, "decode xml")
+		}
+
+		return a.DocumentTitle, nil
 	case http.StatusNotFound:
 		_, _ = io.Copy(io.Discard, resp.Body)
 		return "", nil
@@ -340,24 +368,6 @@ func (opts options) fetchCVRFTitle(client *utilhttp.Client, id string) (string, 
 		_, _ = io.Copy(io.Discard, resp.Body)
 		return "", errors.Errorf("error response with status code %d", resp.StatusCode)
 	}
-
-	mediaType, _, err := mime.ParseMediaType(resp.Header.Get("Content-Type"))
-	if err != nil {
-		return "", errors.Wrapf(err, "parse media type %q", resp.Header.Get("Content-Type"))
-	}
-	if !slices.Contains([]string{"application/xml", "text/xml"}, mediaType) {
-		bs, _ := io.ReadAll(resp.Body)
-		return "", errors.Errorf("unexpected media type %q. response body: %q", mediaType, string(bs))
-	}
-
-	var a struct {
-		DocumentTitle string `xml:"DocumentTitle"`
-	}
-	if err := xml.NewDecoder(resp.Body).Decode(&a); err != nil {
-		return "", errors.Wrap(err, "decode xml")
-	}
-
-	return a.DocumentTitle, nil
 }
 
 func (opts options) write(a CSAF) error {
