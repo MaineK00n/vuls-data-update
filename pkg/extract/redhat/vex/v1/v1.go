@@ -400,7 +400,35 @@ func walkProductTree(trackingID string, pt v1.ProductTree, c2r map[string][]stri
 							default:
 								ss := strings.Split(rpmmod, ":")
 								if len(ss) < 2 {
-									return nil, errors.Errorf("unexpected purl format. expected: %q, actual: %q", "pkg:rpm/redhat/<name>@<version>?arch=<arch>(&epoch=<epoch>)&rpmmod=<<module>:<stream>:<version>:<context>(:<arch>)>", fpn.ProductIdentificationHelper.PURL)
+									// The Red Hat Satellite 6 SRPMs candlepin
+									// and openvox-server in CVE-2026-10051 and
+									// CVE-2026-68494 are plain, non-modular RPMs,
+									// yet SDEngine emits them as product_id
+									// "el8/<name>.src" / "el9/<name>.src" with
+									// rpmmod="el8" / "el9" — the el<N> build-target
+									// prefix mistaken for a module NSVCA. A bare
+									// module name cannot form a module:stream
+									// modularitylabel, and upstream already lists
+									// the same packages under the prefix-less
+									// "red_hat_satellite_6:<name>.src" product ids,
+									// so skip these rather than emit a package
+									// under a bogus modularitylabel. Nothing is
+									// lost either way: cpe:/a:redhat:satellite:6
+									// maps to no repository and matches no major
+									// heuristic, so every red_hat_satellite_6
+									// product already resolves to zero majors and
+									// is dropped before it reaches the output.
+									// Scope the exception to the exact vetted
+									// (advisory, value) pairs so the same rpmmod
+									// resurfacing in another advisory still fails
+									// loudly for a human to review.
+									switch {
+									case (trackingID == "CVE-2026-10051" || trackingID == "CVE-2026-68494") && (rpmmod == "el8" || rpmmod == "el9"):
+										slog.Warn("skipping non-modular Satellite SRPM whose rpmmod is an el<N> build-target prefix", slog.String("cve", trackingID), slog.String("purl", fpn.ProductIdentificationHelper.PURL))
+										return nil, nil
+									default:
+										return nil, errors.Errorf("unexpected purl format. expected: %q, actual: %q", "pkg:rpm/redhat/<name>@<version>?arch=<arch>(&epoch=<epoch>)&rpmmod=<<module>:<stream>:<version>:<context>(:<arch>)>", fpn.ProductIdentificationHelper.PURL)
+									}
 								}
 								// Some RedHat CSAF entries (e.g. the redhat-ds
 								// module in CVE-2026-11611) carry a versioned

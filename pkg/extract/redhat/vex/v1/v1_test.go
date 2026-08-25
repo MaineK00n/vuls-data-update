@@ -36,6 +36,17 @@ func TestExtract(t *testing.T) {
 			},
 			hasError: true,
 		},
+		{
+			// An el<N> rpmmod on a versioned purl is tolerated only for the
+			// vetted CVE-2026-10051 / CVE-2026-68494 Satellite SRPMs; the same
+			// value in any other advisory must fail loudly.
+			name: "el<N> rpmmod on a versioned purl outside the vetted advisories errors",
+			args: args{
+				vex:            "./testdata/fixtures/vex_rpmmod_versioned_error",
+				repository2cpe: "./testdata/fixtures/repository2cpe",
+			},
+			hasError: true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
