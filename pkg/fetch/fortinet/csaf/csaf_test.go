@@ -1,7 +1,6 @@
 package csaf_test
 
 import (
-	"bytes"
 	"fmt"
 	"io/fs"
 	"net/http"
@@ -9,9 +8,9 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"slices"
 	"strings"
 	"testing"
-	"time"
 
 	"github.com/google/go-cmp/cmp"
 
@@ -23,8 +22,11 @@ func TestFetch(t *testing.T) {
 		args []string
 	}
 	tests := []struct {
-		name     string
-		args     args
+		name string
+		args args
+		// seed is a fixture directory laid into the output directory before the
+		// fetch, standing in for the advisories a previous run left there.
+		seed     string
 		hasError bool
 	}{
 		{
@@ -34,10 +36,13 @@ func TestFetch(t *testing.T) {
 			},
 		},
 		{
-			name: "cvrf-only",
+			// The title on disk names the CSAF, so no CVRF is served here: the
+			// fetch has to resolve the advisory without asking for one.
+			name: "stored-title",
 			args: args{
-				args: []string{"FG-IR-24-437"},
+				args: []string{"FG-IR-25-756"},
 			},
+			seed: "seed",
 		},
 		{
 			name: "invalid-csaf",
@@ -45,61 +50,133 @@ func TestFetch(t *testing.T) {
 				args: []string{"FG-IR-25-771"},
 			},
 		},
+		{
+			// No CSAF answers to any name the title yields -- the advisory
+			// carries none, or its CSAF has been renamed. Neither is an error;
+			// the advisory is skipped and the caller keeps what it holds.
+			name: "not-found",
+			args: args{
+				args: []string{"FG-IR-24-437"},
+			},
+		},
+		{
+			// A derived name is a guess, so a file answering to it that tracks
+			// another advisory must not be written as this one.
+			name: "id-mismatch",
+			args: args{
+				args: []string{"FG-IR-25-756"},
+			},
+			hasError: true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			fixtures := filepath.Join("testdata", "fixtures", tt.name)
+
 			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				switch {
-				case strings.HasPrefix(r.URL.Path, "/psirt/"):
-					bs, err := os.ReadFile(filepath.Join("testdata", "fixtures", tt.name, path.Base(r.URL.Path)))
-					if err != nil {
-						http.Error(w, err.Error(), http.StatusInternalServerError)
-						return
+				name, contentType := func() (string, string) {
+					if rest, ok := strings.CutPrefix(r.URL.Path, "/psirt/cvrf/"); ok {
+						return rest, "application/xml"
 					}
-					http.ServeContent(w, r, path.Base(r.URL.Path), time.Now(), bytes.NewReader(bytes.ReplaceAll(bs, []byte("?csaf_url=https://filestore.fortinet.com"), fmt.Appendf(nil, "?csaf_url=http://%s", r.Host))))
-				default:
-					http.ServeFile(w, r, filepath.Join("testdata", "fixtures", tt.name, path.Base(r.URL.Path)))
+					return path.Base(r.URL.Path), "application/json"
+				}()
+
+				bs, err := os.ReadFile(filepath.Join(fixtures, name))
+				if err != nil {
+					http.NotFound(w, r)
+					return
 				}
+
+				w.Header().Set("Content-Type", contentType)
+				_, _ = w.Write(bs)
 			}))
 			defer ts.Close()
 
 			dir := t.TempDir()
-			err := csaf.Fetch(tt.args.args, csaf.WithBaseURL(fmt.Sprintf("%s/psirt/%%s", ts.URL)), csaf.WithDir(dir), csaf.WithRetry(0), csaf.WithConcurrency(2))
+			if tt.seed != "" {
+				if err := os.CopyFS(dir, os.DirFS(filepath.Join(fixtures, tt.seed))); err != nil {
+					t.Fatal("seed error:", err)
+				}
+			}
+
+			err := csaf.Fetch(tt.args.args,
+				csaf.WithCSAFURL(fmt.Sprintf("%s/fortiguard/psirt/%%s", ts.URL)),
+				csaf.WithCVRFURL(fmt.Sprintf("%s/psirt/cvrf/%%s", ts.URL)),
+				csaf.WithDir(dir), csaf.WithRetry(0), csaf.WithConcurrency(2))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)
 			case err == nil && tt.hasError:
 				t.Error("expected error has not occurred")
+			case tt.hasError:
 			default:
-				if err := filepath.WalkDir(dir, func(path string, d fs.DirEntry, err error) error {
+				golden := filepath.Join("testdata", "golden", tt.name)
+
+				want, got := files(t, golden), files(t, dir)
+				if diff := cmp.Diff(want, got); diff != "" {
+					t.Errorf("Fetch() files. (-expected +got):\n%s", diff)
+				}
+
+				for _, name := range got {
+					if !slices.Contains(want, name) {
+						continue
+					}
+
+					expected, err := os.ReadFile(filepath.Join(golden, name))
 					if err != nil {
-						return err
+						t.Error("read error:", err)
+						continue
 					}
 
-					if d.IsDir() {
-						return nil
-					}
-
-					dir, file := filepath.Split(strings.TrimPrefix(path, dir))
-					want, err := os.ReadFile(filepath.Join("testdata", "golden", dir, file))
+					actual, err := os.ReadFile(filepath.Join(dir, name))
 					if err != nil {
-						return err
+						t.Error("read error:", err)
+						continue
 					}
 
-					got, err := os.ReadFile(path)
-					if err != nil {
-						return err
+					if diff := cmp.Diff(expected, actual); diff != "" {
+						t.Errorf("Fetch() %s. (-expected +got):\n%s", name, diff)
 					}
-
-					if diff := cmp.Diff(want, got); diff != "" {
-						t.Errorf("Fetch(). (-expected +got):\n%s", diff)
-					}
-
-					return nil
-				}); err != nil {
-					t.Error("walk error:", err)
 				}
 			}
 		})
 	}
+}
+
+// files lists the paths under root, relative to it and sorted. A root that does
+// not exist holds none, which is how a case that expects no output says so.
+func files(t *testing.T, root string) []string {
+	t.Helper()
+
+	if _, err := os.Stat(root); err != nil {
+		if os.IsNotExist(err) {
+			return nil
+		}
+		t.Fatal("stat error:", err)
+	}
+
+	var paths []string
+	if err := filepath.WalkDir(root, func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+
+		if d.IsDir() {
+			return nil
+		}
+
+		rel, err := filepath.Rel(root, path)
+		if err != nil {
+			return err
+		}
+		paths = append(paths, rel)
+
+		return nil
+	}); err != nil {
+		t.Fatal("walk error:", err)
+	}
+
+	slices.Sort(paths)
+
+	return paths
 }

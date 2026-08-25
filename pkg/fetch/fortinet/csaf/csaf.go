@@ -3,15 +3,20 @@ package csaf
 import (
 	"context"
 	"encoding/json/v2"
+	"encoding/xml"
 	"fmt"
 	"io"
+	"io/fs"
 	"log/slog"
+	"mime"
 	"net/http"
+	"os"
 	"path/filepath"
+	"regexp"
+	"slices"
 	"strings"
 	"time"
 
-	"github.com/PuerkitoBio/goquery"
 	"github.com/pkg/errors"
 	"github.com/schollz/progressbar/v3"
 	"golang.org/x/sync/errgroup"
@@ -20,10 +25,14 @@ import (
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
-const baseURL = "https://fortiguard.fortinet.com/psirt/%s"
+const (
+	csafURL = "https://filestore.fortinet.com/fortiguard/psirt/%s"
+	cvrfURL = "https://www.fortiguard.com/psirt/cvrf/%s"
+)
 
 type options struct {
-	baseURL     string
+	csafURL     string
+	cvrfURL     string
 	dir         string
 	retry       int
 	concurrency int
@@ -34,14 +43,24 @@ type Option interface {
 	apply(*options)
 }
 
-type baseURLOption string
+type csafURLOption string
 
-func (u baseURLOption) apply(opts *options) {
-	opts.baseURL = string(u)
+func (u csafURLOption) apply(opts *options) {
+	opts.csafURL = string(u)
 }
 
-func WithBaseURL(url string) Option {
-	return baseURLOption(url)
+func WithCSAFURL(url string) Option {
+	return csafURLOption(url)
+}
+
+type cvrfURLOption string
+
+func (u cvrfURLOption) apply(opts *options) {
+	opts.cvrfURL = string(u)
+}
+
+func WithCVRFURL(url string) Option {
+	return cvrfURLOption(url)
 }
 
 type dirOption string
@@ -86,7 +105,8 @@ func WithWait(wait time.Duration) Option {
 
 func Fetch(args []string, opts ...Option) error {
 	options := &options{
-		baseURL:     baseURL,
+		csafURL:     csafURL,
+		cvrfURL:     cvrfURL,
 		dir:         filepath.Join(util.CacheDir(), "fetch", "fortinet", "csaf"),
 		retry:       3,
 		concurrency: 3,
@@ -97,18 +117,84 @@ func Fetch(args []string, opts ...Option) error {
 		o.apply(options)
 	}
 
+	// Read the held advisories before the tree is swept: their titles name the
+	// CSAF files, and the sweep is what would lose them.
+	titles, err := options.storedTitles(args)
+	if err != nil {
+		return errors.Wrapf(err, "collect stored titles in %s", options.dir)
+	}
+
 	if err := util.RemoveAll(options.dir); err != nil {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	if err := options.fetch(args); err != nil {
+	if err := options.fetch(args, titles); err != nil {
 		return errors.Wrap(err, "fetch")
 	}
 
 	return nil
 }
 
-func (opts options) fetch(ids []string) error {
+// storedTitles maps each requested advisory ID that the output directory
+// already holds to the title recorded in it.
+func (opts options) storedTitles(ids []string) (map[string]string, error) {
+	titles := make(map[string]string, len(ids))
+
+	if _, err := os.Stat(opts.dir); err != nil {
+		if os.IsNotExist(err) {
+			return titles, nil
+		}
+		return nil, errors.Wrapf(err, "stat %s", opts.dir)
+	}
+
+	if err := filepath.WalkDir(opts.dir, func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return errors.Wrapf(err, "walk %s", path)
+		}
+
+		if d.IsDir() {
+			if d.Name() == ".git" {
+				return fs.SkipDir
+			}
+			return nil
+		}
+
+		if filepath.Ext(path) != ".json" {
+			return nil
+		}
+
+		f, err := os.Open(path)
+		if err != nil {
+			return errors.Wrapf(err, "open %s", path)
+		}
+		defer f.Close()
+
+		var a struct {
+			Document struct {
+				Title    string `json:"title"`
+				Tracking struct {
+					ID string `json:"id"`
+				} `json:"tracking"`
+			} `json:"document"`
+		}
+		if err := json.UnmarshalRead(f, &a); err != nil {
+			slog.Warn("skip a file that does not decode as CSAF", "path", path, "err", err)
+			return nil
+		}
+
+		if slices.Contains(ids, a.Document.Tracking.ID) {
+			titles[a.Document.Tracking.ID] = a.Document.Title
+		}
+
+		return nil
+	}); err != nil {
+		return nil, errors.Wrapf(err, "walk %s", opts.dir)
+	}
+
+	return titles, nil
+}
+
+func (opts options) fetch(ids []string, titles map[string]string) error {
 	slog.Info("Fetch Fortinet CSAF")
 
 	client := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry))
@@ -123,18 +209,17 @@ func (opts options) fetch(ids []string) error {
 				_ = bar.Add(1)
 			}()
 
-			u, err := opts.fetchCSAFURL(client, id)
+			a, err := opts.fetchAdvisory(client, id, titles[id])
 			if err != nil {
-				return errors.Wrap(err, "fetch csaf url")
+				return errors.Wrapf(err, "fetch %s", id)
 			}
-			if u == "" {
+			if a == nil {
+				slog.Warn("no CSAF found for the advisory. it either carries no CSAF or its CSAF has been renamed", "id", id)
 				return nil
 			}
 
-			time.Sleep(opts.wait)
-
-			if err := opts.fetchCSAF(client, u); err != nil {
-				return errors.Wrap(err, "fetch csaf")
+			if err := opts.write(*a); err != nil {
+				return errors.Wrapf(err, "write %s", id)
 			}
 
 			return nil
@@ -148,74 +233,134 @@ func (opts options) fetch(ids []string) error {
 	return nil
 }
 
-func (opts options) fetchCSAFURL(client *utilhttp.Client, id string) (string, error) {
-	resp, err := client.Get(fmt.Sprintf(opts.baseURL, id))
-	if err != nil {
-		return "", errors.Wrapf(err, "fetch %s", fmt.Sprintf(opts.baseURL, id))
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		_, _ = io.Copy(io.Discard, resp.Body)
-		return "", errors.Errorf("error response with status code %d", resp.StatusCode)
-	}
-
-	doc, err := goquery.NewDocumentFromReader(resp.Body)
-	if err != nil {
-		return "", errors.Wrap(err, "create new document from reader")
-	}
-
-	var u string
-	for _, tr := range doc.Find("div.sidebar table tr").EachIter() {
-		td := tr.Find("td")
-		if td.Length() != 2 {
-			return "", errors.Errorf("unexpected table data cell length. expected: %d, actual: %d", 2, td.Length())
+// fetchAdvisory resolves the advisory's CSAF from its title, returning nil when
+// no file answers to any name the title yields.
+//
+// Fortinet names a CSAF after the title the advisory carried when the file was
+// written, so a title already on disk resolves it without a request. The CVRF
+// carries the current title, which is the only one available for an advisory
+// not held yet and the one that answers after a rename.
+func (opts options) fetchAdvisory(client *utilhttp.Client, id, storedTitle string) (*CSAF, error) {
+	if storedTitle != "" {
+		a, err := opts.fetchByTitle(client, id, storedTitle)
+		if err != nil {
+			return nil, errors.Wrapf(err, "fetch by the stored title %q", storedTitle)
 		}
-		switch td.Eq(0).Text() {
-		case "Download":
-			for _, a := range td.Find("p > a").EachIter() {
-				href, ok := a.Attr("href")
-				if !ok {
-					return "", errors.New("href attribute not found in anchor tag")
-				}
-
-				switch {
-				case strings.HasPrefix(href, "/psirt/cvrf/"), strings.HasPrefix(href, "/psirt/stix/"):
-					continue
-				case strings.HasPrefix(href, "/psirt/csaf/"):
-					_, rhs, ok := strings.Cut(href, "?csaf_url=")
-					if !ok {
-						return "", errors.Errorf("unexpected CSAF href format. expected: %q, actual: %q", "/psirt/csaf/<Advisory ID>?csaf_url=<CSAF URL>", href)
-					}
-					u = rhs
-				default:
-					return "", errors.Errorf("unexpected download href format. expected: %q, actual: %q", []string{"/psirt/cvrf/<Advisory ID>", "/psirt/csaf/<Advisory ID>?csaf_url=<CSAF URL>", "/psirt/stix/<Advisory ID>?stix_url=<STIX URL>"}, href)
-				}
-			}
-		default:
-			continue
+		if a != nil {
+			return a, nil
 		}
 	}
-	return u, nil
+
+	title, err := opts.fetchCVRFTitle(client, id)
+	if err != nil {
+		return nil, errors.Wrap(err, "fetch cvrf title")
+	}
+	if title == "" || title == storedTitle {
+		return nil, nil
+	}
+
+	a, err := opts.fetchByTitle(client, id, title)
+	if err != nil {
+		return nil, errors.Wrapf(err, "fetch by the cvrf title %q", title)
+	}
+	return a, nil
 }
 
-func (opts options) fetchCSAF(client *utilhttp.Client, url string) error {
+// fetchByTitle tries the names Fortinet builds a CSAF filename from:
+// csaf_<title slug>_<advisory id>.json, and csaf_<title slug>.json for the
+// advisories named before the ID was appended.
+func (opts options) fetchByTitle(client *utilhttp.Client, id, title string) (*CSAF, error) {
+	s := slug(title)
+	if s == "" {
+		return nil, nil
+	}
+
+	for _, name := range []string{
+		fmt.Sprintf("csaf_%s_%s.json", s, strings.ToLower(id)),
+		fmt.Sprintf("csaf_%s.json", s),
+	} {
+		a, err := opts.fetchCSAF(client, fmt.Sprintf(opts.csafURL, name))
+		if err != nil {
+			return nil, errors.Wrapf(err, "fetch %s", fmt.Sprintf(opts.csafURL, name))
+		}
+		if a == nil {
+			continue
+		}
+
+		// The name is derived, so confirm the file that answered to it is the
+		// advisory that was asked for rather than trusting the derivation.
+		if a.Document.Tracking.ID != id {
+			return nil, errors.Errorf("unexpected advisory ID in %s. expected: %q, actual: %q", name, id, a.Document.Tracking.ID)
+		}
+
+		return a, nil
+	}
+
+	return nil, nil
+}
+
+func (opts options) fetchCSAF(client *utilhttp.Client, url string) (*CSAF, error) {
 	resp, err := client.Get(url)
 	if err != nil {
-		return errors.Wrapf(err, "fetch %s", url)
+		return nil, errors.Wrapf(err, "fetch %s", url)
 	}
 	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
+	switch resp.StatusCode {
+	case http.StatusOK:
+	case http.StatusNotFound:
 		_, _ = io.Copy(io.Discard, resp.Body)
-		return errors.Errorf("error response with status code %d", resp.StatusCode)
+		return nil, nil
+	default:
+		_, _ = io.Copy(io.Discard, resp.Body)
+		return nil, errors.Errorf("error response with status code %d", resp.StatusCode)
 	}
 
 	var a CSAF
 	if err := json.UnmarshalRead(resp.Body, &a); err != nil {
-		return errors.Wrap(err, "decode json")
+		return nil, errors.Wrap(err, "decode json")
 	}
 
+	return &a, nil
+}
+
+func (opts options) fetchCVRFTitle(client *utilhttp.Client, id string) (string, error) {
+	resp, err := client.Get(fmt.Sprintf(opts.cvrfURL, id))
+	if err != nil {
+		return "", errors.Wrapf(err, "fetch %s", fmt.Sprintf(opts.cvrfURL, id))
+	}
+	defer resp.Body.Close()
+
+	switch resp.StatusCode {
+	case http.StatusOK:
+	case http.StatusNotFound:
+		_, _ = io.Copy(io.Discard, resp.Body)
+		return "", nil
+	default:
+		_, _ = io.Copy(io.Discard, resp.Body)
+		return "", errors.Errorf("error response with status code %d", resp.StatusCode)
+	}
+
+	mediaType, _, err := mime.ParseMediaType(resp.Header.Get("Content-Type"))
+	if err != nil {
+		return "", errors.Wrapf(err, "parse media type %q", resp.Header.Get("Content-Type"))
+	}
+	if !slices.Contains([]string{"application/xml", "text/xml"}, mediaType) {
+		bs, _ := io.ReadAll(resp.Body)
+		return "", errors.Errorf("unexpected media type %q. response body: %q", mediaType, string(bs))
+	}
+
+	var a struct {
+		DocumentTitle string `xml:"DocumentTitle"`
+	}
+	if err := xml.NewDecoder(resp.Body).Decode(&a); err != nil {
+		return "", errors.Wrap(err, "decode xml")
+	}
+
+	return a.DocumentTitle, nil
+}
+
+func (opts options) write(a CSAF) error {
 	ss, err := util.Split(a.Document.Tracking.ID, "-", "-", "-")
 	if err != nil {
 		return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "FG-IR-yy-\\d+", a.Document.Tracking.ID)
@@ -230,4 +375,10 @@ func (opts options) fetchCSAF(client *utilhttp.Client, url string) error {
 	}
 
 	return nil
+}
+
+var nonAlphanumeric = regexp.MustCompile(`[^a-z0-9]+`)
+
+func slug(title string) string {
+	return strings.Trim(nonAlphanumeric.ReplaceAllString(strings.ToLower(title), "-"), "-")
 }
