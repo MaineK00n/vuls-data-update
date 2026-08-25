@@ -424,7 +424,7 @@ func walkProductTree(trackingID string, pt v1.ProductTree, c2r map[string][]stri
 									// loudly for a human to review.
 									switch {
 									case (trackingID == "CVE-2026-10051" || trackingID == "CVE-2026-68494") && (rpmmod == "el8" || rpmmod == "el9"):
-										slog.Warn("skipping non-modular Satellite SRPM whose rpmmod is an el<N> build-target prefix", slog.String("cve", trackingID), slog.String("purl", fpn.ProductIdentificationHelper.PURL))
+										slog.Warn("skipping non-modular Satellite SRPM whose rpmmod is an el<N> build-target prefix", slog.String("vulnerability_id", trackingID), slog.String("rpmmod", rpmmod), slog.String("purl", fpn.ProductIdentificationHelper.PURL))
 										return nil, nil
 									default:
 										return nil, errors.Errorf("unexpected purl format. expected: %q, actual: %q", "pkg:rpm/redhat/<name>@<version>?arch=<arch>(&epoch=<epoch>)&rpmmod=<<module>:<stream>:<version>:<context>(:<arch>)>", fpn.ProductIdentificationHelper.PURL)
