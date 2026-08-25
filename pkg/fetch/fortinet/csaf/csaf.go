@@ -116,33 +116,60 @@ func Fetch(args []string, opts ...Option) error {
 		o.apply(options)
 	}
 
+	// An argument is an advisory ID, optionally carrying the title to resolve it
+	// by. A CSAF is named after its advisory's title, so an ID given on its own
+	// costs a CVRF request to find out what that title is; one given with the
+	// title goes straight to the file.
+	given := make(map[string]string, len(args))
+	for _, arg := range args {
+		id, title, _ := strings.Cut(arg, "=")
+		if id == "" {
+			return errors.Errorf("unexpected argument. expected: %q, actual: %q", "<Fortinet Advisory ID>[=<title>]", arg)
+		}
+
+		// Fortinet writes its advisory IDs in upper case and so does everything
+		// keyed on one here: the file name, the title-only list, the check that
+		// the CSAF tracks the advisory asked for. Fold the case once, so an ID
+		// typed in lower case is not told it tracks a different advisory.
+		id = strings.ToUpper(id)
+
+		// Two mentions of one advisory can disagree on the title, and nothing
+		// here can tell which of them the caller meant. A caller assembling the
+		// list from several sources -- as the full refresh does -- settles that
+		// before it asks.
+		if _, ok := given[id]; ok {
+			return errors.Errorf("duplicate argument for the advisory %s", id)
+		}
+		given[id] = title
+	}
+
 	if err := util.RemoveAll(options.dir); err != nil {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	if err := options.fetch(args); err != nil {
+	if err := options.fetch(given); err != nil {
 		return errors.Wrap(err, "fetch")
 	}
 
 	return nil
 }
 
-func (opts options) fetch(ids []string) error {
+func (opts options) fetch(given map[string]string) error {
 	slog.Info("Fetch Fortinet CSAF")
 
 	client := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry))
 
-	bar := progressbar.Default(int64(len(ids)))
+	bar := progressbar.Default(int64(len(given)))
 	g, _ := errgroup.WithContext(context.TODO())
 	g.SetLimit(opts.concurrency)
-	for _, id := range ids {
+	for id, title := range given {
 		g.Go(func() error {
 			defer func() {
 				time.Sleep(opts.wait)
 				_ = bar.Add(1)
 			}()
 
-			a, err := opts.fetchAdvisory(client, id)
+			a, err := opts.fetchAdvisory(client, id, title)
 			if err != nil {
 				return errors.Wrapf(err, "fetch %s", id)
 			}
@@ -169,22 +196,27 @@ func (opts options) fetch(ids []string) error {
 // fetchAdvisory resolves the advisory's CSAF from its title, returning nil when
 // no file answers to the name that title yields.
 //
-// The title comes from the CVRF over the wire, which carries the advisory's
-// current title -- what names the CSAF after a rename.
-func (opts options) fetchAdvisory(client *utilhttp.Client, id string) (*CSAF, error) {
-	// The CVRF carries the advisory's current title, which is what names its
-	// CSAF.
-	title, err := opts.fetchCVRFTitle(client, id)
-	if err != nil {
-		return nil, errors.Wrap(err, "fetch cvrf title")
-	}
-
-	// The one empty title left is a 422: an ID the endpoint will not route, which
-	// the nine FG-IR-0yy-nnn advisories are. They are real advisories with no
-	// title to be had here, so nothing can name their CSAF and they are skipped
-	// the way one whose name resolves to no file is.
+// The title comes with the ID when the caller has one. Otherwise it comes from
+// the CVRF over the wire, which carries the advisory's current title -- what
+// names the CSAF after a rename, and all there is for an ID given on its own.
+func (opts options) fetchAdvisory(client *utilhttp.Client, id, title string) (*CSAF, error) {
+	// An ID that came without a title: the CVRF carries the current one, which
+	// is what names the CSAF after a rename.
 	if title == "" {
-		return nil, nil
+		t, err := opts.fetchCVRFTitle(client, id)
+		if err != nil {
+			return nil, errors.Wrap(err, "fetch cvrf title")
+		}
+
+		// The one empty title left is a 422: an ID the endpoint will not route,
+		// which the nine FG-IR-0yy-nnn advisories are. They are real advisories
+		// with no title to be had here, so nothing can name their CSAF and they
+		// are skipped the way one whose name resolves to no file is.
+		if t == "" {
+			return nil, nil
+		}
+
+		title = t
 	}
 
 	a, err := opts.fetchByTitle(client, id, title)
@@ -315,7 +347,15 @@ func (opts options) write(a CSAF) error {
 	if err != nil {
 		return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "FG-IR-yy-\\d+", a.Document.Tracking.ID)
 	}
-	t, err := time.Parse("06", ss[2])
+	// The nine FG-IR-0yy-nnn advisories carry a three digit year; every other ID
+	// carries two. Trim the legacy form alone, so a two digit year is never cut
+	// down to a single digit that will not parse.
+	y := ss[2]
+	if len(y) == 3 {
+		y = strings.TrimPrefix(y, "0")
+	}
+
+	t, err := time.Parse("06", y)
 	if err != nil {
 		return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "FG-IR-yy-\\d+", a.Document.Tracking.ID)
 	}

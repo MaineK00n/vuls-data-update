@@ -26,7 +26,10 @@ func TestFetch(t *testing.T) {
 		args args
 		// seed is a fixture directory laid into the output directory before the
 		// fetch, standing in for the advisories a previous run left there.
-		seed     string
+		seed string
+		// status answers the named request with a status code instead of a
+		// fixture.
+		status   map[string]int
 		hasError bool
 	}{
 		{
@@ -44,6 +47,39 @@ func TestFetch(t *testing.T) {
 				args: []string{"FG-IR-24-437"},
 			},
 			seed: "seed",
+		},
+		{
+			// The title comes with the ID for an advisory no CSAF is held for,
+			// and no CVRF is served: the fetch has to resolve it off the
+			// argument alone.
+			name: "given-title",
+			args: args{
+				args: []string{"FG-IR-25-756=Authenticated Heap Overflow in SSL-VPN bookmarks"},
+			},
+		},
+		{
+			// Two mentions of one advisory can carry two titles, so the fetch says
+			// so rather than picking one of them.
+			name: "duplicate-id",
+			args: args{
+				args: []string{"FG-IR-25-756=Authenticated Heap Overflow in SSL-VPN bookmarks", "FG-IR-25-756"},
+			},
+			hasError: true,
+		},
+		{
+			// Fortinet writes its IDs in upper case. One typed in lower case names
+			// the same advisory, and must not be told it tracks a different one.
+			name: "lowercase-id",
+			args: args{
+				args: []string{"fg-ir-25-756=Authenticated Heap Overflow in SSL-VPN bookmarks"},
+			},
+		},
+		{
+			name: "no-id",
+			args: args{
+				args: []string{"=Authenticated Heap Overflow in SSL-VPN bookmarks"},
+			},
+			hasError: true,
 		},
 		{
 			name: "invalid-csaf",
@@ -89,6 +125,15 @@ func TestFetch(t *testing.T) {
 			hasError: true,
 		},
 		{
+			// Fortinet answers 422 for an ID it will not route, which the nine
+			// FG-IR-0yy-nnn advisories are. They are real, so they are skipped.
+			name: "unprocessable-cvrf",
+			args: args{
+				args: []string{"FG-IR-012-001"},
+			},
+			status: map[string]int{"FG-IR-012-001": http.StatusUnprocessableEntity},
+		},
+		{
 			// The name carrying the ID leaves no room for another advisory to
 			// own it, so a file answering to it that tracks a different one means
 			// upstream contradicts itself.
@@ -126,6 +171,11 @@ func TestFetch(t *testing.T) {
 					}
 					return path.Base(r.URL.Path), "application/json"
 				}()
+
+				if code, ok := tt.status[name]; ok {
+					w.WriteHeader(code)
+					return
+				}
 
 				bs, err := os.ReadFile(filepath.Join(fixtures, name))
 				if err != nil {
