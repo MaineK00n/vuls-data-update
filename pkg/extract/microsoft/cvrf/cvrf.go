@@ -1178,18 +1178,41 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 			return rangeTypes.RangeTypeMicrosoftWindows, nil
 
 		// Microsoft Exchange Server
-		case "Microsoft Exchange Server 2013 Cumulative Update 23",
+		case "Microsoft Exchange Server 2010 Service Pack 3",
+			"Microsoft Exchange Server 2013 Cumulative Update 21",
+			"Microsoft Exchange Server 2013 Cumulative Update 22",
+			"Microsoft Exchange Server 2013 Cumulative Update 23",
+			"Microsoft Exchange Server 2013 Service Pack 1",
+			"Microsoft Exchange Server 2016 Cumulative Update 10",
+			"Microsoft Exchange Server 2016 Cumulative Update 11",
+			"Microsoft Exchange Server 2016 Cumulative Update 12",
+			"Microsoft Exchange Server 2016 Cumulative Update 13",
+			"Microsoft Exchange Server 2016 Cumulative Update 14",
+			"Microsoft Exchange Server 2016 Cumulative Update 15",
+			"Microsoft Exchange Server 2016 Cumulative Update 16",
+			"Microsoft Exchange Server 2016 Cumulative Update 17",
+			"Microsoft Exchange Server 2016 Cumulative Update 18",
 			"Microsoft Exchange Server 2016 Cumulative Update 19",
 			"Microsoft Exchange Server 2016 Cumulative Update 20",
 			"Microsoft Exchange Server 2016 Cumulative Update 21",
 			"Microsoft Exchange Server 2016 Cumulative Update 22",
 			"Microsoft Exchange Server 2016 Cumulative Update 23",
+			"Microsoft Exchange Server 2016 Cumulative Update 8",
+			"Microsoft Exchange Server 2016 Cumulative Update 9",
+			"Microsoft Exchange Server 2019",
+			"Microsoft Exchange Server 2019 Cumulative Update 1",
 			"Microsoft Exchange Server 2019 Cumulative Update 10",
 			"Microsoft Exchange Server 2019 Cumulative Update 11",
 			"Microsoft Exchange Server 2019 Cumulative Update 12",
 			"Microsoft Exchange Server 2019 Cumulative Update 13",
 			"Microsoft Exchange Server 2019 Cumulative Update 14",
 			"Microsoft Exchange Server 2019 Cumulative Update 15",
+			"Microsoft Exchange Server 2019 Cumulative Update 2",
+			"Microsoft Exchange Server 2019 Cumulative Update 3",
+			"Microsoft Exchange Server 2019 Cumulative Update 4",
+			"Microsoft Exchange Server 2019 Cumulative Update 5",
+			"Microsoft Exchange Server 2019 Cumulative Update 6",
+			"Microsoft Exchange Server 2019 Cumulative Update 7",
 			"Microsoft Exchange Server 2019 Cumulative Update 8",
 			"Microsoft Exchange Server 2019 Cumulative Update 9",
 			"Microsoft Exchange Server Subscription Edition RTM":
@@ -1210,13 +1233,17 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 			return rangeTypes.RangeTypeMicrosoftOfficeMac, nil
 
 		// Microsoft Office for Windows
-		case "Microsoft Excel 2013 RT Service Pack 1",
+		case "Microsoft Excel 2010 Service Pack 2 (32-bit editions)",
+			"Microsoft Excel 2010 Service Pack 2 (64-bit editions)",
+			"Microsoft Excel 2013 RT Service Pack 1",
 			"Microsoft Excel 2013 Service Pack 1 (32-bit editions)",
 			"Microsoft Excel 2013 Service Pack 1 (64-bit editions)",
 			"Microsoft Excel 2016 (32-bit edition)",
 			"Microsoft Excel 2016 (64-bit edition)",
 			"Microsoft Excel 2016 Click-to-Run (C2R) for 32-bit editions",
 			"Microsoft Excel 2016 Click-to-Run (C2R) for 64-bit editions",
+			"Microsoft Office 2010 Service Pack 2 (32-bit editions)",
+			"Microsoft Office 2010 Service Pack 2 (64-bit editions)",
 			"Microsoft Office 2013 Click-to-Run (C2R) for 32-bit editions",
 			"Microsoft Office 2013 Click-to-Run (C2R) for 64-bit editions",
 			"Microsoft Office 2013 RT Service Pack 1",
@@ -1230,6 +1257,7 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 			"Microsoft Office LTSC 2021 for 64-bit editions",
 			"Microsoft Office LTSC 2024 for 32-bit editions",
 			"Microsoft Office LTSC 2024 for 64-bit editions",
+			"Microsoft Office Web Apps 2013 Service Pack 1",
 			"Microsoft Office Web Apps Server 2013 Service Pack 1",
 			"Microsoft Outlook 2013 (32-bit editions)",
 			"Microsoft Outlook 2013 (64-bit editions)",
@@ -1238,6 +1266,8 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 			"Microsoft Outlook 2013 Service Pack 1 (64-bit editions)",
 			"Microsoft Outlook 2016 (32-bit edition)",
 			"Microsoft Outlook 2016 (64-bit edition)",
+			"Microsoft PowerPoint 2010 Service Pack 2 (32-bit editions)",
+			"Microsoft PowerPoint 2010 Service Pack 2 (64-bit editions)",
 			"Microsoft PowerPoint 2013 RT Service Pack 1",
 			"Microsoft PowerPoint 2013 Service Pack 1 (32-bit editions)",
 			"Microsoft PowerPoint 2013 Service Pack 1 (64-bit editions)",
@@ -1514,6 +1544,8 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 			"Internet Explorer 11 on Windows 10 Version 1809 for 32-bit Systems",
 			"Internet Explorer 11 on Windows 10 Version 1809 for ARM64-based Systems",
 			"Internet Explorer 11 on Windows 10 Version 1809 for x64-based Systems",
+			"Internet Explorer 11 on Windows 10 Version 1903 for ARM64-based Systems",
+			"Internet Explorer 11 on Windows 10 Version 1903 for x64-based Systems",
 			"Internet Explorer 11 on Windows 10 Version 1909 for 32-bit Systems",
 			"Internet Explorer 11 on Windows 10 Version 1909 for ARM64-based Systems",
 			"Internet Explorer 11 on Windows 10 Version 1909 for x64-based Systems",
@@ -1841,6 +1873,25 @@ var fixedBuildOverrides = map[[3]string]string{
 	{"CVE-2025-4372", "Microsoft Edge (Chromium-based)", "v136.0.3240.64"}: "136.0.3240.64",
 	// 2026-Mar (Edge 145.0.3800.99, FixedBuild "145.3800.99" has only 3 segments instead of 4)
 	{"CVE-2026-3537", "Microsoft Edge (Chromium-based)", "145.3800.99"}: "145.0.3800.99",
+
+	// Microsoft Exchange Server
+	// 2021-Mar (CVE-2021-26855 / 26857 / 26858 / 27065, the HAFNIUM CVEs): three Exchange Server 2019
+	// FixedBuild values are wrong upstream. CU1 carries a 15.1-series value that matches no Exchange
+	// 2019 build at all, and CU4 and CU6 have their values swapped. Left as-is, CU1 and CU6 never
+	// satisfy LessThan (false negative) and a patched CU4 always does (false positive). Corrected
+	// against the Mar21SU rows of https://learn.microsoft.com/en-us/exchange/new-features/build-numbers-and-release-dates
+	{"CVE-2021-26855", "Microsoft Exchange Server 2019 Cumulative Update 1", "15.01.1979.006"}: "15.02.0330.011",
+	{"CVE-2021-26855", "Microsoft Exchange Server 2019 Cumulative Update 4", "15.02.0659.012"}: "15.02.0529.013",
+	{"CVE-2021-26855", "Microsoft Exchange Server 2019 Cumulative Update 6", "15.02.0529.013"}: "15.02.0659.012",
+	{"CVE-2021-26857", "Microsoft Exchange Server 2019 Cumulative Update 1", "15.01.1979.006"}: "15.02.0330.011",
+	{"CVE-2021-26857", "Microsoft Exchange Server 2019 Cumulative Update 4", "15.02.0659.012"}: "15.02.0529.013",
+	{"CVE-2021-26857", "Microsoft Exchange Server 2019 Cumulative Update 6", "15.02.0529.013"}: "15.02.0659.012",
+	{"CVE-2021-26858", "Microsoft Exchange Server 2019 Cumulative Update 1", "15.01.1979.006"}: "15.02.0330.011",
+	{"CVE-2021-26858", "Microsoft Exchange Server 2019 Cumulative Update 4", "15.02.0659.012"}: "15.02.0529.013",
+	{"CVE-2021-26858", "Microsoft Exchange Server 2019 Cumulative Update 6", "15.02.0529.013"}: "15.02.0659.012",
+	{"CVE-2021-27065", "Microsoft Exchange Server 2019 Cumulative Update 1", "15.01.1979.006"}: "15.02.0330.011",
+	{"CVE-2021-27065", "Microsoft Exchange Server 2019 Cumulative Update 4", "15.02.0659.012"}: "15.02.0529.013",
+	{"CVE-2021-27065", "Microsoft Exchange Server 2019 Cumulative Update 6", "15.02.0529.013"}: "15.02.0659.012",
 
 	// Microsoft Office / Excel / Office Online Server / Office Web Apps Server
 	// 2021-Sep (FixedBuild "5381.1000" / "5215.1000" / "10378.20000" missing "15.0." or "16.0." prefix)
