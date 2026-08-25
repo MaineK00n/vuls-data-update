@@ -300,6 +300,198 @@ func TestBuildFixedBuildCriterion(t *testing.T) {
 			},
 			want: nil,
 		},
+		{
+			name: "Microsoft Office 2010 Service Pack 2 (32-bit editions)",
+			args: args{
+				cveID:         "CVE-2021-24108",
+				productName:   "Microsoft Office 2010 Service Pack 2 (32-bit editions)",
+				rawFixedBuild: "14.0.7266.5000",
+			},
+			want: &criterionTypes.Criterion{
+				Type: criterionTypes.CriterionTypeVersion,
+				Version: &vcTypes.Criterion{
+					Vulnerable: true,
+					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
+					Package: packageTypes.Package{
+						Type:   packageTypes.PackageTypeBinary,
+						Binary: &binaryTypes.Package{Name: "Microsoft Office 2010 Service Pack 2 (32-bit editions)"},
+					},
+					Affected: &affectedTypes.Affected{
+						Type:  affectedrangeTypes.RangeTypeMicrosoftOfficeWindows,
+						Range: []affectedrangeTypes.Range{{LessThan: "14.0.7266.5000"}},
+						Fixed: []string{"14.0.7266.5000"},
+					},
+				},
+			},
+		},
+		{
+			name: "Microsoft Excel 2010 Service Pack 2 (64-bit editions)",
+			args: args{
+				cveID:         "CVE-2021-27053",
+				productName:   "Microsoft Excel 2010 Service Pack 2 (64-bit editions)",
+				rawFixedBuild: "14.0.7266.5000",
+			},
+			want: &criterionTypes.Criterion{
+				Type: criterionTypes.CriterionTypeVersion,
+				Version: &vcTypes.Criterion{
+					Vulnerable: true,
+					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
+					Package: packageTypes.Package{
+						Type:   packageTypes.PackageTypeBinary,
+						Binary: &binaryTypes.Package{Name: "Microsoft Excel 2010 Service Pack 2 (64-bit editions)"},
+					},
+					Affected: &affectedTypes.Affected{
+						Type:  affectedrangeTypes.RangeTypeMicrosoftOfficeWindows,
+						Range: []affectedrangeTypes.Range{{LessThan: "14.0.7266.5000"}},
+						Fixed: []string{"14.0.7266.5000"},
+					},
+				},
+			},
+		},
+		{
+			name: "Microsoft PowerPoint 2010 Service Pack 2 (32-bit editions)",
+			args: args{
+				cveID:         "CVE-2021-27056",
+				productName:   "Microsoft PowerPoint 2010 Service Pack 2 (32-bit editions)",
+				rawFixedBuild: "14.0.7266.5000",
+			},
+			want: &criterionTypes.Criterion{
+				Type: criterionTypes.CriterionTypeVersion,
+				Version: &vcTypes.Criterion{
+					Vulnerable: true,
+					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
+					Package: packageTypes.Package{
+						Type:   packageTypes.PackageTypeBinary,
+						Binary: &binaryTypes.Package{Name: "Microsoft PowerPoint 2010 Service Pack 2 (32-bit editions)"},
+					},
+					Affected: &affectedTypes.Affected{
+						Type:  affectedrangeTypes.RangeTypeMicrosoftOfficeWindows,
+						Range: []affectedrangeTypes.Range{{LessThan: "14.0.7266.5000"}},
+						Fixed: []string{"14.0.7266.5000"},
+					},
+				},
+			},
+		},
+		{
+			name: "Microsoft Office Web Apps 2013 Service Pack 1",
+			args: args{
+				cveID:         "CVE-2021-27057",
+				productName:   "Microsoft Office Web Apps 2013 Service Pack 1",
+				rawFixedBuild: "15.0.5327.1000",
+			},
+			want: &criterionTypes.Criterion{
+				Type: criterionTypes.CriterionTypeVersion,
+				Version: &vcTypes.Criterion{
+					Vulnerable: true,
+					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
+					Package: packageTypes.Package{
+						Type:   packageTypes.PackageTypeBinary,
+						Binary: &binaryTypes.Package{Name: "Microsoft Office Web Apps 2013 Service Pack 1"},
+					},
+					Affected: &affectedTypes.Affected{
+						Type:  affectedrangeTypes.RangeTypeMicrosoftOfficeWindows,
+						Range: []affectedrangeTypes.Range{{LessThan: "15.0.5327.1000"}},
+						Fixed: []string{"15.0.5327.1000"},
+					},
+				},
+			},
+		},
+		{
+			name: "Microsoft Exchange Server 2010 Service Pack 3",
+			args: args{
+				cveID:         "CVE-2021-26857",
+				productName:   "Microsoft Exchange Server 2010 Service Pack 3",
+				rawFixedBuild: "14.03.0513.000",
+			},
+			want: &criterionTypes.Criterion{
+				Type: criterionTypes.CriterionTypeVersion,
+				Version: &vcTypes.Criterion{
+					Vulnerable: true,
+					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
+					Package: packageTypes.Package{
+						Type:   packageTypes.PackageTypeBinary,
+						Binary: &binaryTypes.Package{Name: "Microsoft Exchange Server 2010 Service Pack 3"},
+					},
+					Affected: &affectedTypes.Affected{
+						Type:  affectedrangeTypes.RangeTypeMicrosoftExchange,
+						Range: []affectedrangeTypes.Range{{LessThan: "14.03.0513.000"}},
+						Fixed: []string{"14.03.0513.000"},
+					},
+				},
+			},
+		},
+		{
+			name: "Microsoft Exchange Server 2016 Cumulative Update 18",
+			args: args{
+				cveID:         "CVE-2021-26855",
+				productName:   "Microsoft Exchange Server 2016 Cumulative Update 18",
+				rawFixedBuild: "15.01.2106.013",
+			},
+			want: &criterionTypes.Criterion{
+				Type: criterionTypes.CriterionTypeVersion,
+				Version: &vcTypes.Criterion{
+					Vulnerable: true,
+					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
+					Package: packageTypes.Package{
+						Type:   packageTypes.PackageTypeBinary,
+						Binary: &binaryTypes.Package{Name: "Microsoft Exchange Server 2016 Cumulative Update 18"},
+					},
+					Affected: &affectedTypes.Affected{
+						Type:  affectedrangeTypes.RangeTypeMicrosoftExchange,
+						Range: []affectedrangeTypes.Range{{LessThan: "15.01.2106.013"}},
+						Fixed: []string{"15.01.2106.013"},
+					},
+				},
+			},
+		},
+		{
+			name: "Microsoft Exchange Server 2019 RTM",
+			args: args{
+				cveID:         "CVE-2021-26855",
+				productName:   "Microsoft Exchange Server 2019",
+				rawFixedBuild: "15.02.0221.018",
+			},
+			want: &criterionTypes.Criterion{
+				Type: criterionTypes.CriterionTypeVersion,
+				Version: &vcTypes.Criterion{
+					Vulnerable: true,
+					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
+					Package: packageTypes.Package{
+						Type:   packageTypes.PackageTypeBinary,
+						Binary: &binaryTypes.Package{Name: "Microsoft Exchange Server 2019"},
+					},
+					Affected: &affectedTypes.Affected{
+						Type:  affectedrangeTypes.RangeTypeMicrosoftExchange,
+						Range: []affectedrangeTypes.Range{{LessThan: "15.02.0221.018"}},
+						Fixed: []string{"15.02.0221.018"},
+					},
+				},
+			},
+		},
+		{
+			name: "Internet Explorer 11 on Windows 10 Version 1903 for x64-based Systems",
+			args: args{
+				cveID:         "CVE-2021-26411",
+				productName:   "Internet Explorer 11 on Windows 10 Version 1903 for x64-based Systems",
+				rawFixedBuild: "10.0.18363.1440",
+			},
+			want: &criterionTypes.Criterion{
+				Type: criterionTypes.CriterionTypeVersion,
+				Version: &vcTypes.Criterion{
+					Vulnerable: true,
+					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
+					Package: packageTypes.Package{
+						Type:   packageTypes.PackageTypeBinary,
+						Binary: &binaryTypes.Package{Name: "Internet Explorer 11 on Windows 10 Version 1903 for x64-based Systems"},
+					},
+					Affected: &affectedTypes.Affected{
+						Type:  affectedrangeTypes.RangeTypeMicrosoftWindows,
+						Range: []affectedrangeTypes.Range{{LessThan: "10.0.18363.1440"}},
+						Fixed: []string{"10.0.18363.1440"},
+					},
+				},
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
