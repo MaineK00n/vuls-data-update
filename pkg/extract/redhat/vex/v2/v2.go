@@ -518,12 +518,15 @@ func majorFromCPE(cpe string) string {
 func isRHELProduct(p string) bool {
 	switch p {
 	case "enterprise_linux", "enterprise_linux_eus",
-		"rhel_eus", "rhel_aus", "rhel_els", "rhel_e4s", "rhel_tus",
-		"rhel_extras", "rhel_extras_oracle_java", "rhel_extras_sap", "rhel_extras_rt", "rhel_extras_sap_hana",
+		"rhel_eus", "rhel_eus_long_life", "rhel_aus", "rhel_els", "rhel_e4s", "rhel_e6s", "rhel_tus",
+		"rhel_extras", "rhel_extras_other", "rhel_extras_oracle_java", "rhel_extras_sap", "rhel_extras_rt", "rhel_extras_rt_els", "rhel_extras_sap_hana", "rhel_extras_sap_hana_els",
 		"rhel_software_collections",
 		"rhel_atomic",
 		"rhel_dotnet", "rhel_dotnet_eus",
 		"rhel_cluster", "rhel_cluster_storage",
+		"rhel_virtualization",
+		"rhel_productivity",
+		"rhel_rhn_tools",
 		"rhel_mission_critical":
 		return true
 	}
