@@ -473,8 +473,10 @@ func parseProductNameCPE(cpe string) *nameInfo {
 }
 
 // majorFromCPE returns the RHEL major version implied by a VEX-GA CPE, or "" when
-// the CPE is not RHEL-related. The channel suffix `::el<N>` takes priority over the
-// product version (so e.g. cpe:/a:redhat:rhel_dotnet:6.0::el7 → "7", not "6").
+// the CPE does not imply one. The channel suffix `::el<N>` takes priority over the
+// product version (so e.g. cpe:/a:redhat:rhel_dotnet:6.0::el7 → "7", not "6") and
+// is the only thing that can date a layered product, whose own version says
+// nothing about the RHEL it runs on.
 func majorFromCPE(cpe string) string {
 	base, suffix, _ := strings.Cut(cpe, "::")
 
@@ -499,6 +501,15 @@ func majorFromCPE(cpe string) string {
 	if !isRHELProduct(product) {
 		return ""
 	}
+	// A layered product versions itself, not the RHEL underneath it:
+	// rhel_software_collections:3 is RHSCL 3, which ships for RHEL 6 and 7, and
+	// rhel_dotnet:3.1 is .NET Core 3.1. Reading those as RHEL 3 files their
+	// packages under an ecosystem no host can ever be. Only the `::el<N>`
+	// suffix handled above can date them, and these CPEs map to no repository
+	// either, so without it there is nothing left to derive.
+	if isLayeredProduct(product) {
+		return ""
+	}
 	version := strings.ReplaceAll(wfn.GetString(common.AttributeVersion), `\.`, ".")
 	if version == "" || version == "ANY" {
 		return ""
@@ -515,6 +526,10 @@ func majorFromCPE(cpe string) string {
 	return major
 }
 
+// isRHELProduct reports whether the CPE product names a RHEL release — one
+// whose CPE version is the RHEL version itself, so a major can be read off it.
+// Products layered on top of RHEL are listed here too when their version
+// tracks RHEL; the ones that version themselves belong in isLayeredProduct.
 func isRHELProduct(p string) bool {
 	switch p {
 	case "enterprise_linux", "enterprise_linux_eus",
@@ -528,6 +543,19 @@ func isRHELProduct(p string) bool {
 		"rhel_productivity",
 		"rhel_rhn_tools",
 		"rhel_mission_critical":
+		return true
+	}
+	return false
+}
+
+// isLayeredProduct reports whether the CPE product is layered on RHEL and
+// carries its own version, so that version must not be read as a RHEL major.
+// These are kept inside isRHELProduct rather than dropped from it because the
+// `::el<N>` form of the same CPE is a legitimate RHEL reference.
+func isLayeredProduct(p string) bool {
+	switch p {
+	case "rhel_software_collections",
+		"rhel_dotnet", "rhel_dotnet_eus":
 		return true
 	}
 	return false

@@ -26,6 +26,21 @@ func TestMajorFromCPE(t *testing.T) {
 			want: "7",
 		},
 		{
+			name: "a layered product's own version is not a RHEL major",
+			arg:  "cpe:/a:redhat:rhel_dotnet:6.0",
+			want: "",
+		},
+		{
+			name: "RHSCL 3 ships for RHEL 6 and 7, so it is not RHEL 3",
+			arg:  "cpe:/a:redhat:rhel_software_collections:3",
+			want: "",
+		},
+		{
+			name: "the same RHSCL release is datable through its channel",
+			arg:  "cpe:/a:redhat:rhel_software_collections:3::el7",
+			want: "7",
+		},
+		{
 			name: "e6s is RHEL 8.10, the only CPE rhel-8.10.z ever gets",
 			arg:  "cpe:/a:redhat:rhel_e6s:8.10",
 			want: "8",
