@@ -457,7 +457,7 @@ func parseRPMPurl(trackingID, s string) (*versionInfo, error) {
 			switch {
 			// The RHEL 10 flatpak SRPMs firefox-flatpak and thunderbird-flatpak.
 			case trackingID == "CVE-2026-7323" && rpmmod == "rhel10":
-				slog.Warn("skipping CVE-2026-7323 flatpak SRPM with bare-module rpmmod", slog.String("purl", s))
+				slog.Warn("skipping flatpak SRPM with bare-module rpmmod", slog.String("vulnerability_id", trackingID), slog.String("rpmmod", rpmmod), slog.String("purl", s))
 				return nil, nil
 			// The Satellite 6.16 candlepin and openvox-server SRPMs, whose
 			// module slot holds the el<N> build target of the Satellite build
