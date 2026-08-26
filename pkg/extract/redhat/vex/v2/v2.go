@@ -213,6 +213,7 @@ type product struct {
 	version         string
 	arch            string
 	modularitylabel string
+	srcName         string
 	cpe             string
 	repositories    []string
 }
@@ -284,6 +285,7 @@ type versionInfo struct {
 	version         string
 	arch            string
 	modularitylabel string
+	srcName         string
 }
 
 // walkProductTree converts a CSAF VEX product_tree into a map of product_id ->
@@ -371,6 +373,7 @@ func walkProductTree(trackingID string, pt v2.ProductTree, c2r map[string][]stri
 			version:         vi.version,
 			arch:            vi.arch,
 			modularitylabel: vi.modularitylabel,
+			srcName:         vi.srcName,
 			cpe:             ni.cpe,
 			repositories:    c2r[ni.cpe],
 		})
@@ -411,21 +414,19 @@ func parseRPMPurl(trackingID, s string) (*versionInfo, error) {
 		return nil, errors.Wrapf(err, "parse %q", s)
 	}
 	quals := instance.Qualifiers.Map()
-	// repository_id (src RPMs only, info also reachable via CPE→repository2cpe),
-	// distro (observed only on non-RHEL "Hummingbird" products that are
-	// filtered out downstream) and upstream are intentionally
-	// parsed-but-ignored. A brand-new key errors out so a human decides whether
-	// the new metadata should be processed — silent data loss is worse than a
-	// loud failure.
+	// repository_id (src RPMs only, info also reachable via CPE→repository2cpe)
+	// and distro (observed only on non-RHEL "Hummingbird" products that are
+	// filtered out downstream) are intentionally parsed-but-ignored. A
+	// brand-new key errors out so a human decides whether the new metadata
+	// should be processed — silent data loss is worse than a loud failure.
 	//
 	// upstream names the source RPM a binary RPM was built from. CSAF Generator
 	// 3.3.1 added it, together with an "<source>/" prefix on the binary
 	// product_id, so that a binary is identified per source package instead of
-	// per name alone (SECDATA-1316). Detection keys on the binary package name,
-	// which the purl already carries, so the qualifier itself is not needed —
-	// but the disambiguation it comes with is what lets two source RPMs
-	// building same-named binaries hold different fix states, which now surface
-	// as separate criteria rather than one contradictory entry.
+	// per name alone (SECDATA-1316). It is carried onto the criterion as
+	// SrcName rather than ignored: two source RPMs building same-named binaries
+	// hold different fix states, and this is the only thing that tells the
+	// resulting criteria apart.
 	for k := range quals {
 		switch k {
 		case "arch", "epoch", "rpmmod", "repository_id", "distro", "upstream":
@@ -434,8 +435,9 @@ func parseRPMPurl(trackingID, s string) (*versionInfo, error) {
 		}
 	}
 	out := &versionInfo{
-		name: instance.Name,
-		arch: quals["arch"],
+		name:    instance.Name,
+		arch:    quals["arch"],
+		srcName: normalizeUpstream(quals["upstream"]),
 	}
 	if instance.Version != "" {
 		epoch, ok := quals["epoch"]
@@ -477,6 +479,29 @@ func parseRPMPurl(trackingID, s string) (*versionInfo, error) {
 		out.modularitylabel = fmt.Sprintf("%s:%s", parts[0], parts[1])
 	}
 	return out, nil
+}
+
+// normalizeUpstream converts the "upstream" purl qualifier — the source package
+// a binary RPM was built from — into the shape this extractor already uses for
+// package names.
+//
+// Most values are a bare source package name ("kernel-alt"). Modular and
+// flatpak sources carry the grouping the binary product_id is prefixed with
+// ("pki-core:10.6/pki-core", "libreoffice:flatpak/libreoffice"), which is the
+// same module:stream this extractor renders as "<modularitylabel>::<name>" on
+// the package name itself, so render it the same way here. Red Hat also emits
+// a build-target prefix for some Satellite SRPMs ("el8/candlepin"); it is not
+// a module, but those products carry no RHEL major and are dropped before they
+// reach the output, so they need no separate rule.
+func normalizeUpstream(upstream string) string {
+	if upstream == "" {
+		return ""
+	}
+	prefix, name, found := strings.Cut(upstream, "/")
+	if !found {
+		return upstream
+	}
+	return fmt.Sprintf("%s::%s", prefix, name)
 }
 
 // parseProductNameCPE builds a nameInfo from a CSAF product_name CPE. Returns
@@ -747,6 +772,7 @@ type product2 struct {
 	name            string
 	version         string
 	modularitylabel string
+	srcName         string
 	cpe             string
 	repositories    []string
 	archs           []string
@@ -806,6 +832,7 @@ func buildDataComponents(doc v2.Document, baseVulnerability vulnerabilityContent
 							name:            p.name,
 							version:         p.version,
 							modularitylabel: p.modularitylabel,
+							srcName:         p.srcName,
 							cpe:             p.cpe,
 							archs:           []string{p.arch},
 							repositories:    p.repositories,
@@ -815,13 +842,14 @@ func buildDataComponents(doc v2.Document, baseVulnerability vulnerabilityContent
 			} else {
 				pmax.maxPid = v2.ProductID(slices.Max([]string{string(pmax.maxPid), string(pid)}))
 				switch i := slices.IndexFunc(pmax.p2sm[p.cpe], func(p2 product2) bool {
-					return p2.name == p.name && p2.version == p.version && p2.modularitylabel == p.modularitylabel
+					return p2.name == p.name && p2.version == p.version && p2.modularitylabel == p.modularitylabel && p2.srcName == p.srcName
 				}); i {
 				case -1:
 					pmax.p2sm[p.cpe] = append(pmax.p2sm[p.cpe], product2{
 						name:            p.name,
 						version:         p.version,
 						modularitylabel: p.modularitylabel,
+						srcName:         p.srcName,
 						cpe:             p.cpe,
 						archs:           []string{p.arch},
 						repositories:    p.repositories,
@@ -948,6 +976,7 @@ func buildVersionCriterion(p2 product2, assessment assessment) ([]vcTypes.Criter
 							}
 							return p2.name
 						}(),
+						SrcName: p2.srcName,
 					},
 				},
 				Affected: &affectedTypes.Affected{
@@ -988,6 +1017,7 @@ func buildVersionCriterion(p2 product2, assessment assessment) ([]vcTypes.Criter
 							}
 							return p2.name
 						}(),
+						SrcName: p2.srcName,
 					},
 				},
 			})
