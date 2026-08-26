@@ -447,18 +447,28 @@ func parseRPMPurl(trackingID, s string) (*versionInfo, error) {
 	if rpmmod := quals["rpmmod"]; rpmmod != "" {
 		parts := strings.Split(rpmmod, ":")
 		if len(parts) < 2 {
-			// The RHEL 10 flatpak SRPMs firefox-flatpak and thunderbird-flatpak
-			// in CVE-2026-7323 carry rpmmod="rhel10", a bare module name with no
-			// ":<stream>" suffix. It is the only 1-part rpmmod in the feed and
-			// cannot form a module:stream modularitylabel, so the entry is
-			// malformed and unusable for version detection — skip it rather than
-			// emit a bogus package. Scope the exception to this exact vetted
-			// (advisory, value) pair so any other colonless rpmmod, or
-			// rpmmod="rhel10" resurfacing in a different advisory, still fails
-			// loudly for a human to review.
+			// A rpmmod with no ":<stream>" suffix cannot form a module:stream
+			// modularitylabel, so the entry is malformed and unusable for
+			// version detection — skip it rather than emit a bogus package.
+			// Each exception is scoped to the exact vetted (advisory, value)
+			// pair so a colonless rpmmod nobody has looked at yet, or a known
+			// one resurfacing in a different advisory, still fails loudly for
+			// a human to review.
 			switch {
+			// The RHEL 10 flatpak SRPMs firefox-flatpak and thunderbird-flatpak.
 			case trackingID == "CVE-2026-7323" && rpmmod == "rhel10":
 				slog.Warn("skipping CVE-2026-7323 flatpak SRPM with bare-module rpmmod", slog.String("purl", s))
+				return nil, nil
+			// The Satellite 6.16 candlepin and openvox-server SRPMs, whose
+			// module slot holds the el<N> build target of the Satellite build
+			// instead of a module name — Satellite 6.17 and later ship the same
+			// packages with no rpmmod at all. Skipping loses nothing: the only
+			// product_name these relate to is Satellite 6.16, whose CPE has no
+			// RHEL major, so walkProductTree drops the relationship either way.
+			// Matches the pairs pkg/extract/redhat/vex/v1 vets for the same
+			// SRPMs in the SDEngine feed (#948).
+			case (trackingID == "CVE-2026-10051" || trackingID == "CVE-2026-68494") && (rpmmod == "el8" || rpmmod == "el9"):
+				slog.Warn("skipping non-modular Satellite SRPM whose rpmmod is an el<N> build-target prefix", slog.String("vulnerability_id", trackingID), slog.String("rpmmod", rpmmod), slog.String("purl", s))
 				return nil, nil
 			default:
 				return nil, errors.Errorf("unexpected rpmmod format. expected: %q, actual: %q", "<module>:<stream>[:<version>:<context>]", rpmmod)
