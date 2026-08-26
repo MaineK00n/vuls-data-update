@@ -411,14 +411,24 @@ func parseRPMPurl(trackingID, s string) (*versionInfo, error) {
 		return nil, errors.Wrapf(err, "parse %q", s)
 	}
 	quals := instance.Qualifiers.Map()
-	// repository_id (src RPMs only, info also reachable via CPE→repository2cpe)
-	// and distro (observed only on non-RHEL "Hummingbird" products that are
-	// filtered out downstream) are intentionally parsed-but-ignored. A
-	// brand-new key errors out so a human decides whether the new metadata
-	// should be processed — silent data loss is worse than a loud failure.
+	// repository_id (src RPMs only, info also reachable via CPE→repository2cpe),
+	// distro (observed only on non-RHEL "Hummingbird" products that are
+	// filtered out downstream) and upstream are intentionally
+	// parsed-but-ignored. A brand-new key errors out so a human decides whether
+	// the new metadata should be processed — silent data loss is worse than a
+	// loud failure.
+	//
+	// upstream names the source RPM a binary RPM was built from. CSAF Generator
+	// 3.3.1 added it, together with an "<source>/" prefix on the binary
+	// product_id, so that a binary is identified per source package instead of
+	// per name alone (SECDATA-1316). Detection keys on the binary package name,
+	// which the purl already carries, so the qualifier itself is not needed —
+	// but the disambiguation it comes with is what lets two source RPMs
+	// building same-named binaries hold different fix states, which now surface
+	// as separate criteria rather than one contradictory entry.
 	for k := range quals {
 		switch k {
-		case "arch", "epoch", "rpmmod", "repository_id", "distro":
+		case "arch", "epoch", "rpmmod", "repository_id", "distro", "upstream":
 		default:
 			return nil, errors.Errorf("unexpected purl qualifier %q in %q", k, s)
 		}
