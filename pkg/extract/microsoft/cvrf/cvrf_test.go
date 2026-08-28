@@ -733,6 +733,21 @@ func TestFixedBuildOverrides(t *testing.T) {
 			key:  [3]string{"CVE-2021-27065", "Microsoft Exchange Server 2019 Cumulative Update 6", "15.02.0529.013"},
 			want: "15.02.0659.012",
 		},
+		{
+			name: "Edge 2026-Jul Chromium 150.0.7871.46/47 batch (FixedBuild empty upstream)",
+			key:  [3]string{"CVE-2026-14006", "Microsoft Edge (Chromium-based)", ""},
+			want: "150.0.4078.48",
+		},
+		{
+			name: "Edge 2026-Jul Chromium 150.0.7871.125 respin (FixedBuild empty upstream)",
+			key:  [3]string{"CVE-2026-15764", "Microsoft Edge (Chromium-based)", ""},
+			want: "150.0.4078.80",
+		},
+		{
+			name: "Edge 2026-Jul null-Remediations shape (CVE-2026-57990, FAQ-backed value)",
+			key:  [3]string{"CVE-2026-57990", "Microsoft Edge (Chromium-based)", ""},
+			want: "150.0.4078.99",
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -885,6 +900,11 @@ func TestExtract(t *testing.T) {
 		{
 			name: "happy",
 			args: "./testdata/fixtures",
+		},
+		{
+			name:     "microsoft edge (chromium-based) vendor fix without FixedBuild",
+			args:     "./testdata/fixtures-edge-missing-fixedbuild",
+			hasError: true,
 		},
 	}
 	for _, tt := range tests {
