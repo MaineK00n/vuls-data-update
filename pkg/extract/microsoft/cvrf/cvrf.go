@@ -132,6 +132,7 @@ func Extract(args string, opts ...Option) error {
 	}
 
 	slog.Info("Extract Microsoft CVRF")
+	var missingEdgeFixedBuilds []string
 	if err := filepath.WalkDir(args, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
@@ -162,10 +163,11 @@ func Extract(args string, opts ...Option) error {
 			return nil
 		}
 
-		datas, kbs, err := e.extract(c)
+		datas, kbs, missing, err := e.extract(c)
 		if err != nil {
 			return errors.Wrapf(err, "extract %s", path)
 		}
+		missingEdgeFixedBuilds = append(missingEdgeFixedBuilds, missing...)
 
 		for _, data := range datas {
 			var dir string
@@ -239,6 +241,11 @@ func Extract(args string, opts ...Option) error {
 		return errors.Wrapf(err, "walk %s", args)
 	}
 
+	if len(missingEdgeFixedBuilds) > 0 {
+		slices.Sort(missingEdgeFixedBuilds)
+		return errors.Errorf("FixedBuild is missing for %q, not listed in fixedBuildOverrides, please add it (map to the fixed Microsoft Edge build, or to \"\" to intentionally skip)", slices.Compact(missingEdgeFixedBuilds))
+	}
+
 	if err := util.Write(filepath.Join(options.dir, "datasource.json"), datasourceTypes.DataSource{
 		ID:   sourceTypes.MicrosoftCVRF,
 		Name: func() *string { s := "Microsoft CVRF"; return &s }(),
@@ -264,7 +271,8 @@ func Extract(args string, opts ...Option) error {
 	return nil
 }
 
-func (e extractor) extract(c cvrf.CVRF) ([]dataTypes.Data, []microsoftkbTypes.KB, error) {
+func (e extractor) extract(c cvrf.CVRF) ([]dataTypes.Data, []microsoftkbTypes.KB, []string, error) {
+	var missingEdgeFixedBuilds []string
 	products := collectProducts(c.ProductTree)
 
 	var datas []dataTypes.Data
@@ -284,7 +292,7 @@ func (e extractor) extract(c cvrf.CVRF) ([]dataTypes.Data, []microsoftkbTypes.KB
 
 		productInfoMap, err := buildProductInfoMap(v)
 		if err != nil {
-			return nil, nil, errors.Wrapf(err, "build product info map for %s", v.CVE)
+			return nil, nil, nil, errors.Wrapf(err, "build product info map for %s", v.CVE)
 		}
 
 		var advisories []advisoryTypes.Advisory
@@ -294,24 +302,25 @@ func (e extractor) extract(c cvrf.CVRF) ([]dataTypes.Data, []microsoftkbTypes.KB
 		case strings.HasPrefix(v.CVE, "CVE-"):
 			vulns, err = buildVulnerabilities(v, c, products, productInfoMap, description)
 			if err != nil {
-				return nil, nil, errors.Wrapf(err, "build vulnerabilities for %s", v.CVE)
+				return nil, nil, nil, errors.Wrapf(err, "build vulnerabilities for %s", v.CVE)
 			}
 		case strings.HasPrefix(v.CVE, "ADV"):
 			advisories, err = buildAdvisories(v, c, products, productInfoMap, description)
 			if err != nil {
-				return nil, nil, errors.Wrapf(err, "build advisories for %s", v.CVE)
+				return nil, nil, nil, errors.Wrapf(err, "build advisories for %s", v.CVE)
 			}
 		default:
-			return nil, nil, errors.Errorf("unexpected ID prefix. expected: %q, actual: %q", []string{"CVE-", "ADV"}, v.CVE)
+			return nil, nil, nil, errors.Errorf("unexpected ID prefix. expected: %q, actual: %q", []string{"CVE-", "ADV"}, v.CVE)
 		}
 
-		conditionsByEcosystem, err := buildDetections(v, products)
+		conditionsByEcosystem, missing, err := buildDetections(v, products)
 		if err != nil {
-			return nil, nil, errors.Wrapf(err, "build detections for %s", v.CVE)
+			return nil, nil, nil, errors.Wrapf(err, "build detections for %s", v.CVE)
 		}
+		missingEdgeFixedBuilds = append(missingEdgeFixedBuilds, missing...)
 
 		if err := e.collectKBs(v, products, kbm); err != nil {
-			return nil, nil, errors.Wrapf(err, "collect KBs for %s", v.CVE)
+			return nil, nil, nil, errors.Wrapf(err, "collect KBs for %s", v.CVE)
 		}
 
 		datas = append(datas, dataTypes.Data{
@@ -340,7 +349,7 @@ func (e extractor) extract(c cvrf.CVRF) ([]dataTypes.Data, []microsoftkbTypes.KB
 
 	kbs := slices.Collect(maps.Values(kbm))
 	microsoftutil.DeriveSupersedes(kbs)
-	return datas, kbs, nil
+	return datas, kbs, missingEdgeFixedBuilds, nil
 }
 func collectProducts(pt cvrf.ProductTree) map[string]string {
 	m := make(map[string]string)
@@ -816,8 +825,9 @@ func appendOrMergeSegment[T any](
 	return append(items, newItem)
 }
 
-func buildDetections(v cvrf.Vulnerability, products map[string]string) (map[ecosystemTypes.Ecosystem][]conditionTypes.Condition, error) {
+func buildDetections(v cvrf.Vulnerability, products map[string]string) (map[ecosystemTypes.Ecosystem][]conditionTypes.Condition, []string, error) {
 	conditionsByEcosystem := make(map[ecosystemTypes.Ecosystem][]conditionTypes.Condition)
+	var missingEdgeFixedBuilds []string
 
 	// Track which product IDs are covered by Vendor Fix remediations.
 	coveredProductIDs := make(map[string]struct{})
@@ -828,7 +838,7 @@ func buildDetections(v cvrf.Vulnerability, products map[string]string) (map[ecos
 			for _, pid := range r.ProductID {
 				productName, ok := products[pid]
 				if !ok {
-					return nil, errors.Errorf("product ID %q not found in product tree for %s", pid, v.CVE)
+					return nil, nil, errors.Errorf("product ID %q not found in product tree for %s", pid, v.CVE)
 				}
 
 				if isCBLMarinerOrAzureLinux(productName) {
@@ -848,10 +858,29 @@ func buildDetections(v cvrf.Vulnerability, products map[string]string) (map[ecos
 				kbCriterion := buildKBCriterion(criterionProductName, r.Description)
 				fixedBuildCriterion, err := buildFixedBuildCriterion(v.CVE, criterionProductName, r.FixedBuild)
 				if err != nil {
-					return nil, errors.Wrap(err, "build fixed build criterion")
+					return nil, nil, errors.Wrap(err, "build fixed build criterion")
 				}
 
 				if kbCriterion == nil && fixedBuildCriterion == nil {
+					// A Vendor Fix that yields no criterion is normally fine (the
+					// product is fixed via an auto-update channel, e.g. Office
+					// Click to Run). For the Microsoft Edge (Chromium-based)
+					// browser however the CVE becomes silently undetectable: the
+					// covered mark above also suppresses the ProductStatuses
+					// unfixed fallback. Require an explicit fixedBuildOverrides
+					// entry ("" to intentionally skip) so that upstream
+					// FixedBuild gaps fail the extraction instead of silently
+					// dropping detections (e.g. the 2026-Jul document shipped
+					// 79 Chromium CVEs without a usable FixedBuild). Limited to
+					// the version-comparable browser products; tool products
+					// such as the Updater are intentionally skipped by
+					// buildFixedBuildCriterion and stay exempt.
+					switch criterionProductName {
+					case "Microsoft Edge (Chromium-based)", "Microsoft Edge (Chromium-based) Extended Stable":
+						if _, ok := fixedBuildOverrides[[3]string{v.CVE, criterionProductName, cleanFixedBuild(r.FixedBuild)}]; !ok {
+							missingEdgeFixedBuilds = append(missingEdgeFixedBuilds, fmt.Sprintf("%s (%s)", v.CVE, criterionProductName))
+						}
+					}
 					continue
 				}
 
@@ -870,7 +899,7 @@ func buildDetections(v cvrf.Vulnerability, products map[string]string) (map[ecos
 			}
 		case "Release Notes", "Known Issue", "Mitigation", "Workaround":
 		default:
-			return nil, errors.Errorf("unexpected remediation type. expected: %q, actual: %q", []string{"Vendor Fix", "Release Notes", "Known Issue", "Mitigation", "Workaround"}, r.Type)
+			return nil, nil, errors.Errorf("unexpected remediation type. expected: %q, actual: %q", []string{"Vendor Fix", "Release Notes", "Known Issue", "Mitigation", "Workaround"}, r.Type)
 		}
 	}
 
@@ -884,7 +913,7 @@ func buildDetections(v cvrf.Vulnerability, products map[string]string) (map[ecos
 
 		productName, ok := products[pid]
 		if !ok {
-			return nil, errors.Errorf("product ID %q not found in product tree for %s", pid, v.CVE)
+			return nil, nil, errors.Errorf("product ID %q not found in product tree for %s", pid, v.CVE)
 		}
 
 		if isCBLMarinerOrAzureLinux(productName) {
@@ -896,7 +925,7 @@ func buildDetections(v cvrf.Vulnerability, products map[string]string) (map[ecos
 
 		fixedBuildCriterion, err := buildFixedBuildCriterion(v.CVE, criterionProductName, "")
 		if err != nil {
-			return nil, errors.Wrap(err, "build fixed build criterion")
+			return nil, nil, errors.Wrap(err, "build fixed build criterion")
 		}
 
 		if fixedBuildCriterion != nil {
@@ -932,7 +961,7 @@ func buildDetections(v cvrf.Vulnerability, products map[string]string) (map[ecos
 		criterionProductName := microsoftutil.NormalizeProductName(mp.Product)
 		fixedBuildCriterion, err := buildFixedBuildCriterion(v.CVE, criterionProductName, mp.FixedBuild)
 		if err != nil {
-			return nil, errors.Wrapf(err, "build fixed build criterion for missing product %q", mp.Product)
+			return nil, nil, errors.Wrapf(err, "build fixed build criterion for missing product %q", mp.Product)
 		}
 		if fixedBuildCriterion == nil {
 			continue
@@ -940,7 +969,7 @@ func buildDetections(v cvrf.Vulnerability, products map[string]string) (map[ecos
 		appendConditions(conditionsByEcosystem, tag, []criterionTypes.Criterion{*fixedBuildCriterion})
 	}
 
-	return conditionsByEcosystem, nil
+	return conditionsByEcosystem, missingEdgeFixedBuilds, nil
 }
 
 func appendConditions(conditionsByEcosystem map[ecosystemTypes.Ecosystem][]conditionTypes.Condition, tag segmentTypes.DetectionTag, cns []criterionTypes.Criterion) {
@@ -985,14 +1014,21 @@ func appendConditions(conditionsByEcosystem map[ecosystemTypes.Ecosystem][]condi
 
 	conditionsByEcosystem[ecosystemTypes.EcosystemTypeMicrosoft] = conditions
 }
-func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criterionTypes.Criterion, error) {
-	// Generic cleanup
+
+// cleanFixedBuild applies the generic cleanup to a raw CVRF FixedBuild value.
+// It is shared between buildFixedBuildCriterion and the missing-FixedBuild
+// check in buildDetections so that both agree on the fixedBuildOverrides key.
+func cleanFixedBuild(rawFixedBuild string) string {
 	fixedBuild := strings.TrimSpace(rawFixedBuild)
 	fixedBuild = strings.TrimRight(fixedBuild, ".")
 	fixedBuild = strings.TrimPrefix(fixedBuild, "Fixed Version ")
 
 	// Remove zero-width spaces (U+200B)
-	fixedBuild = strings.ReplaceAll(fixedBuild, "\u200b", "")
+	return strings.ReplaceAll(fixedBuild, "\u200b", "")
+}
+
+func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criterionTypes.Criterion, error) {
+	fixedBuild := cleanFixedBuild(rawFixedBuild)
 
 	// Apply FixedBuild overrides for known data issues
 	if fb, ok := fixedBuildOverrides[[3]string{cveID, productName, fixedBuild}]; ok {
@@ -1665,6 +1701,10 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 // fixedBuildOverrides maps (CVE ID, product name, incorrect FixedBuild) to corrected FixedBuild values
 // for known data issues in CVRF.
 // The key is [3]string{CVE ID, raw product name, incorrect FixedBuild value after generic cleanup}.
+// An empty value means "intentionally no criterion": the entry acknowledges the upstream data gap
+// and skips criterion generation. For Microsoft Edge (Chromium-based), a Vendor Fix that yields no
+// criterion and has no entry here fails the extraction (see buildDetections), because such CVEs
+// would otherwise become silently undetectable.
 var fixedBuildOverrides = map[[3]string]string{
 	// .NET Core / .NET 5+ (FixedBuild has pre-release suffix that the parser doesn't accept)
 	// 2021-May (FixedBuild "5.0.6-servicing.21220.11" / "3.1.15-servicing.21214.3" has pre-release suffix)
@@ -1873,6 +1913,88 @@ var fixedBuildOverrides = map[[3]string]string{
 	{"CVE-2025-4372", "Microsoft Edge (Chromium-based)", "v136.0.3240.64"}: "136.0.3240.64",
 	// 2026-Mar (Edge 145.0.3800.99, FixedBuild "145.3800.99" has only 3 segments instead of 4)
 	{"CVE-2026-3537", "Microsoft Edge (Chromium-based)", "145.3800.99"}: "145.0.3800.99",
+	// 2026-Jul (Chromium 150 batch CVEs published without FixedBuild; mapped to the
+	// Edge 150 security releases via the NVD Chrome fixed versions, cross-checked
+	// against sibling entries in the same CVRF document that do carry FixedBuild:
+	// Chrome 150.0.7871.46/47 -> Edge 150.0.4078.48, Chrome 150.0.7871.125 -> Edge 150.0.4078.80)
+	{"CVE-2026-13918", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
+	{"CVE-2026-13973", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
+	{"CVE-2026-13989", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
+	{"CVE-2026-14006", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
+	{"CVE-2026-14016", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
+	{"CVE-2026-14027", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
+	{"CVE-2026-14034", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
+	{"CVE-2026-14035", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
+	{"CVE-2026-14036", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
+	{"CVE-2026-14037", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
+	{"CVE-2026-14038", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
+	{"CVE-2026-14039", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
+	{"CVE-2026-14040", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
+	{"CVE-2026-14041", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
+	{"CVE-2026-14042", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
+	{"CVE-2026-14043", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
+	{"CVE-2026-14044", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
+	{"CVE-2026-14045", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
+	{"CVE-2026-14046", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
+	{"CVE-2026-14047", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
+	{"CVE-2026-14048", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
+	{"CVE-2026-14049", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
+	{"CVE-2026-14050", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
+	{"CVE-2026-14051", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
+	{"CVE-2026-14052", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
+	{"CVE-2026-14053", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
+	{"CVE-2026-14054", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
+	{"CVE-2026-14055", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
+	{"CVE-2026-14056", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
+	{"CVE-2026-14057", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
+	{"CVE-2026-14058", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
+	{"CVE-2026-14059", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
+	{"CVE-2026-14060", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
+	{"CVE-2026-14061", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
+	{"CVE-2026-14062", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
+	{"CVE-2026-14063", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
+	{"CVE-2026-14064", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
+	{"CVE-2026-14065", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
+	{"CVE-2026-14068", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
+	{"CVE-2026-14069", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
+	{"CVE-2026-14070", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
+	{"CVE-2026-14071", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
+	{"CVE-2026-14072", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
+	{"CVE-2026-14073", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
+	{"CVE-2026-14074", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
+	{"CVE-2026-14076", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
+	{"CVE-2026-14077", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
+	{"CVE-2026-14078", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
+	{"CVE-2026-14079", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
+	{"CVE-2026-14080", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
+	{"CVE-2026-14081", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
+	{"CVE-2026-14082", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
+	{"CVE-2026-14083", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
+	{"CVE-2026-14084", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
+	{"CVE-2026-14085", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
+	{"CVE-2026-14086", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
+	{"CVE-2026-14087", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
+	{"CVE-2026-14088", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
+	{"CVE-2026-14089", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
+	{"CVE-2026-14090", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
+	{"CVE-2026-14091", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
+	{"CVE-2026-14092", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
+	{"CVE-2026-14093", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
+	{"CVE-2026-14094", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
+	{"CVE-2026-14095", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
+	{"CVE-2026-14097", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
+	{"CVE-2026-14105", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
+	{"CVE-2026-14116", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
+	{"CVE-2026-14130", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
+	{"CVE-2026-14142", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
+	{"CVE-2026-14153", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
+	{"CVE-2026-14397", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
+	{"CVE-2026-15764", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.80",
+	{"CVE-2026-15765", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.80",
+	{"CVE-2026-15766", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.80",
+	{"CVE-2026-15768", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.80",
+	{"CVE-2026-15769", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.80",
+	{"CVE-2026-15770", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.80",
 
 	// Microsoft Exchange Server
 	// 2021-Mar (CVE-2021-26855 / 26857 / 26858 / 27065, the HAFNIUM CVEs): three Exchange Server 2019
@@ -2885,8 +3007,8 @@ var kbCumulativeTwins = map[[2]string]string{
 	{"Microsoft Edge (EdgeHTML-based) on Windows Server 2016", "4338814"}:                                           "4346877",
 	{"Windows 10 Version 1607 for 32-bit Systems", "4338814"}:                                                       "4346877",
 	{"Windows 10 Version 1607 for x64-based Systems", "4338814"}:                                                    "4346877",
-	{"Windows Server 2016", "4338814"}:                                                                              "4346877",
-	{"Windows Server 2016 (Server Core installation)", "4338814"}:                                                   "4346877",
+	{"Windows Server 2016", "4338814"}:                            "4346877",
+	{"Windows Server 2016 (Server Core installation)", "4338814"}: "4346877",
 
 	// 2018-Jul (SecurityOnly→MonthlyRollup)
 	{"Windows 8.1 for 32-bit Systems", "4338824"}:                                                         "4338815",
