@@ -243,7 +243,7 @@ func Extract(args string, opts ...Option) error {
 
 	if len(missingEdgeFixedBuilds) > 0 {
 		slices.Sort(missingEdgeFixedBuilds)
-		return errors.Errorf("FixedBuild is missing for %q, not listed in fixedBuildOverrides, please add it (map to the fixed Microsoft Edge build, or to \"\" to intentionally skip)", slices.Compact(missingEdgeFixedBuilds))
+		return errors.Errorf("no usable FixedBuild for %q, not listed in fixedBuildOverrides, please add it (map to the fixed Microsoft Edge build, or to \"\" to intentionally skip)", slices.Compact(missingEdgeFixedBuilds))
 	}
 
 	if err := util.Write(filepath.Join(options.dir, "datasource.json"), datasourceTypes.DataSource{
