@@ -132,7 +132,7 @@ func Extract(args string, opts ...Option) error {
 	}
 
 	slog.Info("Extract Microsoft CVRF")
-	var missingEdgeFixedBuilds []string
+	var missingFixedBuilds []string
 	if err := filepath.WalkDir(args, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
@@ -167,7 +167,7 @@ func Extract(args string, opts ...Option) error {
 		if err != nil {
 			return errors.Wrapf(err, "extract %s", path)
 		}
-		missingEdgeFixedBuilds = append(missingEdgeFixedBuilds, missing...)
+		missingFixedBuilds = append(missingFixedBuilds, missing...)
 
 		for _, data := range datas {
 			var dir string
@@ -241,9 +241,9 @@ func Extract(args string, opts ...Option) error {
 		return errors.Wrapf(err, "walk %s", args)
 	}
 
-	if len(missingEdgeFixedBuilds) > 0 {
-		slices.Sort(missingEdgeFixedBuilds)
-		return errors.Errorf("no usable FixedBuild for %q, not listed in fixedBuildOverrides, please add it (map to the fixed Microsoft Edge build, or to \"\" to intentionally skip)", slices.Compact(missingEdgeFixedBuilds))
+	if len(missingFixedBuilds) > 0 {
+		slices.Sort(missingFixedBuilds)
+		return errors.Errorf("no usable FixedBuild for %q, not listed in fixedBuildOverrides, please add it (map to the fixed build, or to \"\" to intentionally skip)", slices.Compact(missingFixedBuilds))
 	}
 
 	if err := util.Write(filepath.Join(options.dir, "datasource.json"), datasourceTypes.DataSource{
@@ -272,7 +272,7 @@ func Extract(args string, opts ...Option) error {
 }
 
 func (e extractor) extract(c cvrf.CVRF) ([]dataTypes.Data, []microsoftkbTypes.KB, []string, error) {
-	var missingEdgeFixedBuilds []string
+	var missingFixedBuilds []string
 	products := collectProducts(c.ProductTree)
 
 	var datas []dataTypes.Data
@@ -317,7 +317,7 @@ func (e extractor) extract(c cvrf.CVRF) ([]dataTypes.Data, []microsoftkbTypes.KB
 		if err != nil {
 			return nil, nil, nil, errors.Wrapf(err, "build detections for %s", v.CVE)
 		}
-		missingEdgeFixedBuilds = append(missingEdgeFixedBuilds, missing...)
+		missingFixedBuilds = append(missingFixedBuilds, missing...)
 
 		if err := e.collectKBs(v, products, kbm); err != nil {
 			return nil, nil, nil, errors.Wrapf(err, "collect KBs for %s", v.CVE)
@@ -349,7 +349,7 @@ func (e extractor) extract(c cvrf.CVRF) ([]dataTypes.Data, []microsoftkbTypes.KB
 
 	kbs := slices.Collect(maps.Values(kbm))
 	microsoftutil.DeriveSupersedes(kbs)
-	return datas, kbs, missingEdgeFixedBuilds, nil
+	return datas, kbs, missingFixedBuilds, nil
 }
 func collectProducts(pt cvrf.ProductTree) map[string]string {
 	m := make(map[string]string)
@@ -827,7 +827,7 @@ func appendOrMergeSegment[T any](
 
 func buildDetections(v cvrf.Vulnerability, products map[string]string) (map[ecosystemTypes.Ecosystem][]conditionTypes.Condition, []string, error) {
 	conditionsByEcosystem := make(map[ecosystemTypes.Ecosystem][]conditionTypes.Condition)
-	var missingEdgeFixedBuilds []string
+	var missingFixedBuilds []string
 
 	// Track which product IDs are covered by Vendor Fix remediations.
 	coveredProductIDs := make(map[string]struct{})
@@ -878,7 +878,7 @@ func buildDetections(v cvrf.Vulnerability, products map[string]string) (map[ecos
 					switch criterionProductName {
 					case "Microsoft Edge (Chromium-based)", "Microsoft Edge (Chromium-based) Extended Stable":
 						if _, ok := fixedBuildOverrides[[3]string{v.CVE, criterionProductName, cleanFixedBuild(r.FixedBuild)}]; !ok {
-							missingEdgeFixedBuilds = append(missingEdgeFixedBuilds, fmt.Sprintf("%s (%s)", v.CVE, criterionProductName))
+							missingFixedBuilds = append(missingFixedBuilds, fmt.Sprintf("%s (%s)", v.CVE, criterionProductName))
 						}
 					}
 					continue
@@ -969,7 +969,7 @@ func buildDetections(v cvrf.Vulnerability, products map[string]string) (map[ecos
 		appendConditions(conditionsByEcosystem, tag, []criterionTypes.Criterion{*fixedBuildCriterion})
 	}
 
-	return conditionsByEcosystem, missingEdgeFixedBuilds, nil
+	return conditionsByEcosystem, missingFixedBuilds, nil
 }
 
 func appendConditions(conditionsByEcosystem map[ecosystemTypes.Ecosystem][]conditionTypes.Condition, tag segmentTypes.DetectionTag, cns []criterionTypes.Criterion) {
