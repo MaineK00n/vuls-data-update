@@ -1995,6 +1995,11 @@ var fixedBuildOverrides = map[[3]string]string{
 	{"CVE-2026-15768", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.80",
 	{"CVE-2026-15769", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.80",
 	{"CVE-2026-15770", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.80",
+	// CVE-2026-57990 carries no Remediations at all, so it reaches the
+	// ProductStatuses fallback instead of the Vendor Fix guard; its FAQ version
+	// table gives 150.0.4078.99 (07/24/2026, Chromium 150.0.7871.187), matching
+	// the FixedBuild carried by CVE-2026-57978/57989 in the same document
+	{"CVE-2026-57990", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.99",
 
 	// Microsoft Exchange Server
 	// 2021-Mar (CVE-2021-26855 / 26857 / 26858 / 27065, the HAFNIUM CVEs): three Exchange Server 2019

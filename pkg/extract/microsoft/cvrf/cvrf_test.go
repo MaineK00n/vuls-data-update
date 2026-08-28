@@ -743,6 +743,11 @@ func TestFixedBuildOverrides(t *testing.T) {
 			key:  [3]string{"CVE-2026-15764", "Microsoft Edge (Chromium-based)", ""},
 			want: "150.0.4078.80",
 		},
+		{
+			name: "Edge 2026-Jul null-Remediations shape (CVE-2026-57990, FAQ-backed value)",
+			key:  [3]string{"CVE-2026-57990", "Microsoft Edge (Chromium-based)", ""},
+			want: "150.0.4078.99",
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
