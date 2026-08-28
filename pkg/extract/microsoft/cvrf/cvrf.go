@@ -1700,7 +1700,7 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 
 // fixedBuildOverrides maps (CVE ID, product name, incorrect FixedBuild) to corrected FixedBuild values
 // for known data issues in CVRF.
-// The key is [3]string{CVE ID, raw product name, incorrect FixedBuild value after generic cleanup}.
+// The key is [3]string{CVE ID, product name after microsoftutil.NormalizeProductName, incorrect FixedBuild value after generic cleanup}.
 // An empty value means "intentionally no criterion": the entry acknowledges the upstream data gap
 // and skips criterion generation. For Microsoft Edge (Chromium-based), a Vendor Fix that yields no
 // criterion and has no entry here fails the extraction (see buildDetections), because such CVEs
