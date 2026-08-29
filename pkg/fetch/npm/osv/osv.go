@@ -24,20 +24,14 @@ type options struct {
 	dataURL string
 	dir     string
 	retry   int
+
+	// httpClient is only ever set by WithHTTPClient, which lives in
+	// export_test.go and is therefore absent from the production build.
+	httpClient *http.Client
 }
 
 type Option interface {
 	apply(*options)
-}
-
-type dataURLOption string
-
-func (u dataURLOption) apply(opts *options) {
-	opts.dataURL = string(u)
-}
-
-func WithDataURL(url string) Option {
-	return dataURLOption(url)
 }
 
 type dirOption string
@@ -76,7 +70,7 @@ func Fetch(opts ...Option) error {
 	}
 
 	slog.Info("Fetch NPM OSV")
-	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.dataURL)
+	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry), utilhttp.WithClientHTTPClient(options.httpClient)).Get(options.dataURL)
 	if err != nil {
 		return errors.Wrap(err, "fetch osv data")
 	}

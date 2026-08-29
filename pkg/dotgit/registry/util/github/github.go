@@ -8,7 +8,15 @@ import (
 	"github.com/pkg/errors"
 )
 
-func Do(method, apiurl, token string, fn func(resp *http.Response) error) error {
+// Do sends the request with client, or with [http.DefaultClient] when it is
+// nil. Tests pass the client of an httptest.NewTestServer, whose in-memory
+// network routes every request to the test server regardless of host, so the
+// caller keeps using the production API URL.
+func Do(client *http.Client, method, apiurl, token string, fn func(resp *http.Response) error) error {
+	if client == nil {
+		client = http.DefaultClient
+	}
+
 	u, err := url.Parse(apiurl)
 	if err != nil {
 		return errors.Wrap(err, "parse url")
@@ -25,7 +33,7 @@ func Do(method, apiurl, token string, fn func(resp *http.Response) error) error 
 	}
 	req.Header = header
 
-	resp, err := http.DefaultClient.Do(req)
+	resp, err := client.Do(req)
 	if err != nil {
 		return errors.Wrapf(err, "%s: %s", method, u.String())
 	}

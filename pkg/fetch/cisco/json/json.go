@@ -29,30 +29,14 @@ type options struct {
 	apiURL         string
 	dir            string
 	retry          int
+
+	// httpClient is only ever set by WithHTTPClient, which lives in
+	// export_test.go and is therefore absent from the production build.
+	httpClient *http.Client
 }
 
 type Option interface {
 	apply(*options)
-}
-
-type accesstokenURLOption string
-
-func (u accesstokenURLOption) apply(opts *options) {
-	opts.accesstokenURL = string(u)
-}
-
-func WithAccessTokenURL(url string) Option {
-	return accesstokenURLOption(url)
-}
-
-type apiURLOption string
-
-func (u apiURLOption) apply(opts *options) {
-	opts.apiURL = string(u)
-}
-
-func WithAPIURL(url string) Option {
-	return apiURLOption(url)
 }
 
 type dirOption string
@@ -92,7 +76,7 @@ func Fetch(id, secret string, opts ...Option) error {
 
 	slog.Info("Fetch Cisco Security Advisories (JSON)", slog.String("dir", options.dir))
 
-	client := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry))
+	client := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry), utilhttp.WithClientHTTPClient(options.httpClient))
 
 	token, err := fetchAccessToken(client, options.accesstokenURL, id, secret)
 	if err != nil {

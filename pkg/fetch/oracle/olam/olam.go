@@ -22,20 +22,14 @@ type options struct {
 	baseURL string
 	dir     string
 	retry   int
+
+	// httpClient is only ever set by WithHTTPClient, which lives in
+	// export_test.go and is therefore absent from the production build.
+	httpClient *http.Client
 }
 
 type Option interface {
 	apply(*options)
-}
-
-type baseURLOption string
-
-func (u baseURLOption) apply(opts *options) {
-	opts.baseURL = string(u)
-}
-
-func WithBaseURL(url string) Option {
-	return baseURLOption(url)
 }
 
 type dirOption string
@@ -74,7 +68,7 @@ func Fetch(opts ...Option) error {
 	}
 
 	slog.Info("Fetch Oracle Linux Automation Manager")
-	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.baseURL)
+	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry), utilhttp.WithClientHTTPClient(options.httpClient)).Get(options.baseURL)
 	if err != nil {
 		return errors.Wrap(err, "fetch advisory")
 	}

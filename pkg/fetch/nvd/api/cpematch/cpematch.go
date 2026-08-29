@@ -40,21 +40,18 @@ type options struct {
 	apiKey           string
 
 	// test purpose only
+
+	// resultsPerPage is only ever set by WithResultsPerPage, which lives in export_test.go
+	// and is therefore absent from the production build.
 	resultsPerPage int
+
+	// httpClient is only ever set by WithHTTPClient, which lives in
+	// export_test.go and is therefore absent from the production build.
+	httpClient *http.Client
 }
 
 type Option interface {
 	apply(*options)
-}
-
-type baseURLOption string
-
-func (u baseURLOption) apply(opts *options) {
-	opts.baseURL = string(u)
-}
-
-func WithBaseURL(url string) Option {
-	return baseURLOption(url)
 }
 
 type dirOption string
@@ -151,16 +148,6 @@ func WithAPIKey(apiKey string) Option {
 	return apiKeyOption(apiKey)
 }
 
-type resultsPerPageOption int
-
-func (r resultsPerPageOption) apply(opts *options) {
-	opts.resultsPerPage = int(r)
-}
-
-func WithResultsPerPage(resultsPerPage int) Option {
-	return resultsPerPageOption(resultsPerPage)
-}
-
 func Fetch(opts ...Option) error {
 	options := &options{
 		baseURL:        apiURL,
@@ -183,7 +170,7 @@ func Fetch(opts ...Option) error {
 
 	slog.Info("Fetch NVD CPE match API", slog.String("dir", options.dir))
 
-	c := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry), utilhttp.WithClientRetryWaitMin(options.retryWaitMin), utilhttp.WithClientRetryWaitMax(options.retryWaitMax), utilhttp.WithClientCheckRetry(nvdutil.CheckRetry), utilhttp.WithClientBackoff(nvdutil.Backoff))
+	c := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry), utilhttp.WithClientHTTPClient(options.httpClient), utilhttp.WithClientRetryWaitMin(options.retryWaitMin), utilhttp.WithClientRetryWaitMax(options.retryWaitMax), utilhttp.WithClientCheckRetry(nvdutil.CheckRetry), utilhttp.WithClientBackoff(nvdutil.Backoff))
 
 	h := make(http.Header)
 	if options.apiKey != "" {

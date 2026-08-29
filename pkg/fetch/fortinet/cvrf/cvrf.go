@@ -26,20 +26,14 @@ type options struct {
 	retry       int
 	concurrency int
 	wait        time.Duration
+
+	// httpClient is only ever set by WithHTTPClient, which lives in
+	// export_test.go and is therefore absent from the production build.
+	httpClient *http.Client
 }
 
 type Option interface {
 	apply(*options)
-}
-
-type dataURLOption string
-
-func (u dataURLOption) apply(opts *options) {
-	opts.dataURL = string(u)
-}
-
-func WithDataURL(url string) Option {
-	return dataURLOption(url)
 }
 
 type dirOption string
@@ -106,7 +100,7 @@ func Fetch(args []string, opts ...Option) error {
 		urls = append(urls, fmt.Sprintf(options.dataURL, arg))
 	}
 
-	if err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).PipelineGet(urls, options.concurrency, options.wait, false, func(resp *http.Response) error {
+	if err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry), utilhttp.WithClientHTTPClient(options.httpClient)).PipelineGet(urls, options.concurrency, options.wait, false, func(resp *http.Response) error {
 		defer resp.Body.Close()
 
 		if resp.StatusCode != http.StatusOK {

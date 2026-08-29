@@ -26,20 +26,14 @@ type options struct {
 	baseURL string
 	dir     string
 	retry   int
+
+	// httpClient is only ever set by WithHTTPClient, which lives in
+	// export_test.go and is therefore absent from the production build.
+	httpClient *http.Client
 }
 
 type Option interface {
 	apply(*options)
-}
-
-type baseURLOption string
-
-func (u baseURLOption) apply(opts *options) {
-	opts.baseURL = string(u)
-}
-
-func WithBaseURL(url string) Option {
-	return baseURLOption(url)
 }
 
 type dirOption string
@@ -108,7 +102,7 @@ func Fetch(opts ...Option) error {
 func (opts options) fetch() (map[string][]CpeMatchItem, error) {
 	cpes := make(map[string][]CpeMatchItem)
 
-	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry)).Get(opts.baseURL)
+	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry), utilhttp.WithClientHTTPClient(opts.httpClient)).Get(opts.baseURL)
 	if err != nil {
 		return nil, errors.Wrap(err, "fetch cpe match")
 	}

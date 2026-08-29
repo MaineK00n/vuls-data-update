@@ -22,20 +22,14 @@ type options struct {
 	advisoryURL string
 	dir         string
 	retry       int
+
+	// httpClient is only ever set by WithHTTPClient, which lives in
+	// export_test.go and is therefore absent from the production build.
+	httpClient *http.Client
 }
 
 type Option interface {
 	apply(*options)
-}
-
-type advisoryURLOption string
-
-func (a advisoryURLOption) apply(opts *options) {
-	opts.advisoryURL = string(a)
-}
-
-func WithAdvisoryURL(advisoryURL string) Option {
-	return advisoryURLOption(advisoryURL)
 }
 
 type dirOption string
@@ -74,7 +68,7 @@ func Fetch(opts ...Option) error {
 	}
 
 	slog.Info("Fetch Oracle Linux")
-	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.advisoryURL)
+	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry), utilhttp.WithClientHTTPClient(options.httpClient)).Get(options.advisoryURL)
 	if err != nil {
 		return errors.Wrap(err, "fetch advisory")
 	}

@@ -24,20 +24,14 @@ type options struct {
 	retry       int
 	concurrency int
 	wait        time.Duration
+
+	// httpClient is only ever set by WithHTTPClient, which lives in
+	// export_test.go and is therefore absent from the production build.
+	httpClient *http.Client
 }
 
 type Option interface {
 	apply(*options)
-}
-
-type baseURLOption string
-
-func (u baseURLOption) apply(opts *options) {
-	opts.baseURL = string(u)
-}
-
-func WithBaseURL(url string) Option {
-	return baseURLOption(url)
 }
 
 type dirOption string
@@ -97,7 +91,7 @@ func Fetch(opts ...Option) error {
 	}
 
 	slog.Info("Fetch openEuler Security Advisories (OSV)")
-	client := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry))
+	client := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry), utilhttp.WithClientHTTPClient(options.httpClient))
 	ids, err := options.fetchList(client)
 	if err != nil {
 		return errors.Wrap(err, "fetch list")

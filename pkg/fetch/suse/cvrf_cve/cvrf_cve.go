@@ -27,20 +27,14 @@ type options struct {
 	baseURL string
 	dir     string
 	retry   int
+
+	// httpClient is only ever set by WithHTTPClient, which lives in
+	// export_test.go and is therefore absent from the production build.
+	httpClient *http.Client
 }
 
 type Option interface {
 	apply(*options)
-}
-
-type baseURLOption string
-
-func (u baseURLOption) apply(opts *options) {
-	opts.baseURL = string(u)
-}
-
-func WithBaseURL(url string) Option {
-	return baseURLOption(url)
 }
 
 type dirOption string
@@ -79,7 +73,7 @@ func Fetch(opts ...Option) error {
 	}
 
 	slog.Info("Fetch SUSE CVRF CVE")
-	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry), utilhttp.WithClientCheckRetry(checkRetry)).Get(options.baseURL)
+	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry), utilhttp.WithClientHTTPClient(options.httpClient), utilhttp.WithClientCheckRetry(checkRetry)).Get(options.baseURL)
 	if err != nil {
 		return errors.Wrap(err, "fetch suse cvrf cve")
 	}

@@ -4,7 +4,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/redhat/vex/v2"
+	v2 "github.com/MaineK00n/vuls-data-update/pkg/extract/redhat/vex/v2"
 	utiltest "github.com/MaineK00n/vuls-data-update/pkg/extract/util/test"
 )
 

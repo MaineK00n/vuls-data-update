@@ -23,20 +23,14 @@ type options struct {
 	repoURL string
 	dir     string
 	retry   int
+
+	// httpClient is only ever set by WithHTTPClient, which lives in
+	// export_test.go and is therefore absent from the production build.
+	httpClient *http.Client
 }
 
 type Option interface {
 	apply(*options)
-}
-
-type repoURLOption string
-
-func (u repoURLOption) apply(opts *options) {
-	opts.repoURL = string(u)
-}
-
-func WithRepoURL(repoURL string) Option {
-	return repoURLOption(repoURL)
 }
 
 type dirOption string
@@ -75,7 +69,7 @@ func Fetch(opts ...Option) error {
 	}
 
 	slog.Info("Fetch Pip GLSA")
-	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.repoURL)
+	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry), utilhttp.WithClientHTTPClient(options.httpClient)).Get(options.repoURL)
 	if err != nil {
 		return errors.Wrap(err, "fetch repository")
 	}

@@ -26,20 +26,14 @@ type options struct {
 	baseURL string
 	dir     string
 	retry   int
+
+	// httpClient is only ever set by WithHTTPClient, which lives in
+	// export_test.go and is therefore absent from the production build.
+	httpClient *http.Client
 }
 
 type Option interface {
 	apply(*options)
-}
-
-type baseURLOption string
-
-func (u baseURLOption) apply(opts *options) {
-	opts.baseURL = string(u)
-}
-
-func WithBaseURL(url string) Option {
-	return baseURLOption(url)
 }
 
 type dirOption string
@@ -98,7 +92,7 @@ Notably, you must show "prominent attribution" to show the data is from VulnChec
 		return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "README.md"))
 	}
 
-	client := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry))
+	client := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry), utilhttp.WithClientHTTPClient(options.httpClient))
 	u, err := fetchBackupURL(client, options.baseURL, apiToken)
 	if err != nil {
 		return errors.Wrap(err, "fetch backup url")

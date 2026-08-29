@@ -21,23 +21,17 @@ const urlFormat = "https://errata.almalinux.org/%s/errata.full.json"
 var versions = []string{"8", "9", "10"}
 
 type options struct {
-	urls  map[string]string
-	dir   string
-	retry int
+	versions []string
+	dir      string
+	retry    int
+
+	// httpClient is only ever set by WithHTTPClient, which lives in
+	// export_test.go and is therefore absent from the production build.
+	httpClient *http.Client
 }
 
 type Option interface {
 	apply(*options)
-}
-
-type urlOption map[string]string
-
-func (u urlOption) apply(opts *options) {
-	opts.urls = u
-}
-
-func WithURLs(urls map[string]string) Option {
-	return urlOption(urls)
 }
 
 type dirOption string
@@ -61,15 +55,10 @@ func WithRetry(retry int) Option {
 }
 
 func Fetch(opts ...Option) error {
-	urls := make(map[string]string)
-	for _, v := range versions {
-		urls[v] = fmt.Sprintf(urlFormat, v)
-	}
-
 	options := &options{
-		urls:  urls,
-		dir:   filepath.Join(util.CacheDir(), "fetch", "alma", "errata"),
-		retry: 3,
+		versions: versions,
+		dir:      filepath.Join(util.CacheDir(), "fetch", "alma", "errata"),
+		retry:    3,
 	}
 
 	for _, o := range opts {
@@ -80,10 +69,10 @@ func Fetch(opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	for v, url := range options.urls {
+	for _, v := range options.versions {
 		slog.Info("Fetch AlmaLinux", slog.String("version", v))
 		advs, err := func() ([]Erratum, error) {
-			resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(url)
+			resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry), utilhttp.WithClientHTTPClient(options.httpClient)).Get(fmt.Sprintf(urlFormat, v))
 			if err != nil {
 				return nil, errors.Wrapf(err, "fetch almalinux %s errata", v)
 			}

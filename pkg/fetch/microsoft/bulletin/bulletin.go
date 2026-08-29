@@ -26,20 +26,14 @@ type options struct {
 	dataURLs []string
 	dir      string
 	retry    int
+
+	// httpClient is only ever set by WithHTTPClient, which lives in
+	// export_test.go and is therefore absent from the production build.
+	httpClient *http.Client
 }
 
 type Option interface {
 	apply(*options)
-}
-
-type dataURLsOption []string
-
-func (u dataURLsOption) apply(opts *options) {
-	opts.dataURLs = u
-}
-
-func WithDataURLs(urls []string) Option {
-	return dataURLsOption(urls)
 }
 
 type dirOption string
@@ -82,7 +76,7 @@ func Fetch(opts ...Option) error {
 	bulletins := make(map[string][]Bulletin)
 	for _, u := range options.dataURLs {
 		if err := func() error {
-			resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(u)
+			resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry), utilhttp.WithClientHTTPClient(options.httpClient)).Get(u)
 			if err != nil {
 				return errors.Wrap(err, "fetch bulletin data")
 			}

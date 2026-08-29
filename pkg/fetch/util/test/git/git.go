@@ -31,10 +31,8 @@ func Populate(dir, datapath string) (string, error) {
 	}
 
 	r, err := git.PlainInitWithOptions(filepath.Join(dir, filepath.Base(datapath)), &git.PlainInitOptions{
-		InitOptions: git.InitOptions{
-			DefaultBranch: plumbing.NewBranchReferenceName("main"),
-		},
-		Bare: false,
+		DefaultBranch: plumbing.NewBranchReferenceName("main"),
+		Bare:          false,
 	})
 	if err != nil {
 		return "", errors.Wrapf(err, "git init %s", filepath.Join(dir, filepath.Base(datapath)))

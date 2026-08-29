@@ -74,7 +74,7 @@ func TestDo(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ts := httptest.NewTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			switch r.Method {
 			case http.MethodGet:
 				switch r.URL.Path {
@@ -96,23 +96,12 @@ func TestDo(t *testing.T) {
 				http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 			}
 		}))
-		defer ts.Close()
-
-		u, err := url.Parse(tt.args.apiurl)
-		if err != nil {
-			t.Fatal("unexpected error:", err)
-		}
-
-		uu, err := url.Parse(ts.URL)
-		if err != nil {
-			t.Fatal("unexpected error:", err)
-		}
-
-		u.Scheme = uu.Scheme
-		u.Host = uu.Host
+		// The in-memory network routes api.github.com to the test server, so
+		// the production API URL is used as-is.
+		client := ts.Client()
 
 		t.Run(tt.name, func(t *testing.T) {
-			if err := github.Do(tt.args.method, u.String(), tt.args.token, tt.args.fn); (err != nil) != tt.wantErr {
+			if err := github.Do(client, tt.args.method, tt.args.apiurl, tt.args.token, tt.args.fn); (err != nil) != tt.wantErr {
 				t.Errorf("Do() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})

@@ -37,14 +37,13 @@ func TestTag(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			repo, _, _ := strings.Cut(strings.TrimPrefix(tt.args.imageRef, "ghcr.io/"), ":")
-			ts := httptest.NewTLSServer(registry.New())
-			defer ts.Close()
+			ts := httptest.NewTestServer(t, registry.New())
 
 			originalTransport := http.DefaultTransport
 			http.DefaultTransport = ts.Client().Transport
-			defer func() {
+			t.Cleanup(func() {
 				http.DefaultTransport = originalTransport
-			}()
+			})
 
 			for tag, content := range map[string]string{
 				"existing-tag": "bar",
@@ -69,7 +68,7 @@ func TestTag(t *testing.T) {
 				}
 			}
 
-			err := tag.Tag(strings.Replace(tt.args.imageRef, "ghcr.io", strings.TrimPrefix(ts.URL, "https://"), 1), tt.args.newTag, tt.args.token)
+			err := tag.Tag(tt.args.imageRef, tt.args.newTag, tt.args.token)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Tag() error = %v, wantErr %v", err, tt.wantErr)
 				return

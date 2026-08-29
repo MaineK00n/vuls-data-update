@@ -100,20 +100,14 @@ type options struct {
 	retry       int
 	concurrency int
 	wait        time.Duration
+
+	// httpClient is only ever set by WithHTTPClient, which lives in
+	// export_test.go and is therefore absent from the production build.
+	httpClient *http.Client
 }
 
 type Option interface {
 	apply(*options)
-}
-
-type helpURLOption string
-
-func (u helpURLOption) apply(opts *options) {
-	opts.helpURL = string(u)
-}
-
-func WithHelpURL(url string) Option {
-	return helpURLOption(url)
 }
 
 type dirOption string
@@ -280,7 +274,7 @@ func Fetch(kbs []string, opts ...Option) error {
 func (opts options) fetch(kbs []string) error {
 	slog.Info("Fetch Microsoft Servicing Articles")
 
-	client := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry), utilhttp.WithClientCheckRetry(retryPolicy))
+	client := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry), utilhttp.WithClientHTTPClient(opts.httpClient), utilhttp.WithClientCheckRetry(retryPolicy))
 
 	seeds, err := opts.resolve(client, kbs)
 	if err != nil {

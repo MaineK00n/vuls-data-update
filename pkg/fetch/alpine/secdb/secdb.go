@@ -23,20 +23,14 @@ type options struct {
 	baseURL string
 	dir     string
 	retry   int
+
+	// httpClient is only ever set by WithHTTPClient, which lives in
+	// export_test.go and is therefore absent from the production build.
+	httpClient *http.Client
 }
 
 type Option interface {
 	apply(*options)
-}
-
-type baseURLOption string
-
-func (u baseURLOption) apply(opts *options) {
-	opts.baseURL = string(u)
-}
-
-func WithBaseURL(url string) Option {
-	return baseURLOption(url)
 }
 
 type dirOption string
@@ -93,7 +87,7 @@ func Fetch(opts ...Option) error {
 			}
 
 			a, err := func() (*Advisory, error) {
-				resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(u)
+				resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry), utilhttp.WithClientHTTPClient(options.httpClient)).Get(u)
 				if err != nil {
 					return nil, errors.Wrapf(err, "fetch alpine linux %s %s", r, f)
 				}
@@ -133,7 +127,7 @@ func Fetch(opts ...Option) error {
 }
 
 func (opts options) walkIndexOf() ([]string, error) {
-	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry)).Get(opts.baseURL)
+	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry), utilhttp.WithClientHTTPClient(opts.httpClient)).Get(opts.baseURL)
 	if err != nil {
 		return nil, errors.Wrap(err, "fetch index of")
 	}
@@ -166,7 +160,7 @@ func (opts options) walkDistroVersion(release string) ([]string, error) {
 		return nil, errors.Wrap(err, "join url path")
 	}
 
-	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry)).Get(u)
+	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry), utilhttp.WithClientHTTPClient(opts.httpClient)).Get(u)
 	if err != nil {
 		return nil, errors.Wrapf(err, "fetch alpine linux %s index of", release)
 	}

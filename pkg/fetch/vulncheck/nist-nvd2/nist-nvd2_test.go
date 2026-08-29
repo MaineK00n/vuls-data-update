@@ -4,19 +4,15 @@ import (
 	"bytes"
 	"encoding/json/v2"
 	"fmt"
-	"io/fs"
 	"net/http"
 	"net/http/httptest"
-	"net/url"
-	"os"
 	"path"
 	"path/filepath"
 	"strings"
 	"testing"
 	"time"
 
-	"github.com/google/go-cmp/cmp"
-
+	utiltest "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/test"
 	nistnvd2 "github.com/MaineK00n/vuls-data-update/pkg/fetch/vulncheck/nist-nvd2"
 )
 
@@ -38,7 +34,7 @@ func TestFetch(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			ts := httptest.NewTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				switch {
 				case strings.HasSuffix(r.URL.Path, "backup/nist-nvd2"):
 					if s := r.Header.Get("Authorization"); s != "Bearer vulncheck_token" {
@@ -95,49 +91,15 @@ func TestFetch(t *testing.T) {
 					http.ServeFile(w, r, filepath.Join("testdata", "fixtures", tt.name, path.Base(r.URL.Path)))
 				}
 			}))
-			defer ts.Close()
-
-			u, err := url.JoinPath(ts.URL, "v3/backup/nist-nvd2")
-			if err != nil {
-				t.Error("unexpected error:", err)
-			}
-
 			dir := t.TempDir()
-			err = nistnvd2.Fetch(tt.args.apiToken, nistnvd2.WithBaseURL(u), nistnvd2.WithDir(dir), nistnvd2.WithRetry(0))
+			err := nistnvd2.Fetch(tt.args.apiToken, nistnvd2.WithHTTPClient(ts.Client()), nistnvd2.WithDir(dir), nistnvd2.WithRetry(0))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)
 			case err == nil && tt.hasError:
 				t.Error("expected error has not occurred")
-			default:
-				if err := filepath.WalkDir(dir, func(path string, d fs.DirEntry, err error) error {
-					if err != nil {
-						return err
-					}
-
-					if d.IsDir() {
-						return nil
-					}
-
-					dir, file := filepath.Split(strings.TrimPrefix(path, dir))
-					want, err := os.ReadFile(filepath.Join("testdata", "golden", dir, file))
-					if err != nil {
-						return err
-					}
-
-					got, err := os.ReadFile(path)
-					if err != nil {
-						return err
-					}
-
-					if diff := cmp.Diff(want, got); diff != "" {
-						t.Errorf("Fetch(). (-expected +got):\n%s", diff)
-					}
-
-					return nil
-				}); err != nil {
-					t.Error("walk error:", err)
-				}
+			case err == nil:
+				utiltest.Diff(t, filepath.Join("testdata", "golden"), dir)
 			}
 		})
 	}

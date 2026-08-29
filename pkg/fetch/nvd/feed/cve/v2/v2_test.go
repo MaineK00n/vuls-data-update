@@ -1,88 +1,43 @@
 package v2_test
 
 import (
-	"io/fs"
 	"net/http"
 	"net/http/httptest"
-	"net/url"
-	"os"
+	"path"
 	"path/filepath"
-	"strings"
 	"testing"
 
-	"github.com/google/go-cmp/cmp"
-
 	v2 "github.com/MaineK00n/vuls-data-update/pkg/fetch/nvd/feed/cve/v2"
+	utiltest "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/test"
 )
 
 func TestFetch(t *testing.T) {
 	tests := []struct {
 		name     string
-		testdata []string
+		feeds    []string
 		hasError bool
 	}{
 		{
-			name: "happy path",
-			testdata: []string{
-				"testdata/fixtures/nvdcve-2.0-2002.json.gz",
-				"testdata/fixtures/nvdcve-2.0-2021.json.gz",
-				"testdata/fixtures/nvdcve-2.0-modified.json.gz",
-			},
+			name:  "happy path",
+			feeds: []string{"2002", "2021", "modified"},
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				http.ServeFile(w, r, strings.TrimPrefix(r.URL.Path, "/"))
+			ts := httptest.NewTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				http.ServeFile(w, r, filepath.Join("testdata", "fixtures", path.Base(r.URL.Path)))
 			}))
-			defer ts.Close()
-
-			urls := make([]string, 0, len(tt.testdata))
-			for _, c := range tt.testdata {
-				u, err := url.JoinPath(ts.URL, c)
-				if err != nil {
-					t.Error("unexpected error:", err)
-				}
-				urls = append(urls, u)
-			}
 
 			dir := t.TempDir()
-			err := v2.Fetch(v2.WithBaseURLs(urls), v2.WithDir(dir), v2.WithRetry(0))
+			err := v2.Fetch(v2.WithHTTPClient(ts.Client()), v2.WithFeeds(tt.feeds), v2.WithDir(dir), v2.WithRetry(0))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)
 			case err == nil && tt.hasError:
 				t.Error("expected error has not occurred")
-			default:
-				if err := filepath.WalkDir(dir, func(path string, d fs.DirEntry, err error) error {
-					if err != nil {
-						return err
-					}
-
-					if d.IsDir() {
-						return nil
-					}
-
-					dir, file := filepath.Split(strings.TrimPrefix(path, dir))
-					want, err := os.ReadFile(filepath.Join("testdata", "golden", dir, file))
-					if err != nil {
-						return err
-					}
-
-					got, err := os.ReadFile(path)
-					if err != nil {
-						return err
-					}
-
-					if diff := cmp.Diff(want, got); diff != "" {
-						t.Errorf("Fetch(). (-expected +got):\n%s", diff)
-					}
-
-					return nil
-				}); err != nil {
-					t.Error("walk error:", err)
-				}
+			case err == nil:
+				utiltest.Diff(t, filepath.Join("testdata", "golden"), dir)
 			}
 		})
 	}

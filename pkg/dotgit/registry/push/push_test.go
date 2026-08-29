@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
-	"net/url"
 	"os"
 	"testing"
 
@@ -109,26 +108,21 @@ func TestPush(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewTLSServer(registry.New())
-			defer ts.Close()
+			// The in-memory network routes every host, ghcr.io included, to
+			// the test server, so the fixtures keep their production image
+			// references.
+			ts := httptest.NewTestServer(t, registry.New())
 
 			originalTransport := http.DefaultTransport
 			http.DefaultTransport = ts.Client().Transport
-			defer func() {
+			t.Cleanup(func() {
 				http.DefaultTransport = originalTransport
-			}()
-
-			u, err := url.Parse(ts.URL)
-			if err != nil {
-				t.Fatalf("parse url: %v", err)
-			}
+			})
 
 			repo, err := remote.NewRepository(tt.args.image)
 			if err != nil {
 				t.Fatalf("new repository: %v", err)
 			}
-			repo.Reference.Registry = u.Host
-
 			if err := setup(fmt.Sprintf("%s/%s", repo.Reference.Registry, repo.Reference.Repository)); err != nil {
 				t.Fatalf("setup(): %v", err)
 			}

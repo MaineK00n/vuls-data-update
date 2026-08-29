@@ -25,6 +25,10 @@ type options struct {
 	mirrorURLs map[string]MirrorURL
 	dir        string
 	retry      int
+
+	// httpClient is only ever set by WithHTTPClient, which lives in
+	// export_test.go and is therefore absent from the production build.
+	httpClient *http.Client
 }
 
 type MirrorURL struct {
@@ -37,16 +41,6 @@ type MirrorURL struct {
 
 type Option interface {
 	apply(*options)
-}
-
-type mirrorURLsOption map[string]MirrorURL
-
-func (m mirrorURLsOption) apply(opts *options) {
-	opts.mirrorURLs = m
-}
-
-func WithMirrorURLs(u map[string]MirrorURL) Option {
-	return mirrorURLsOption(u)
 }
 
 type dirOption string
@@ -109,7 +103,7 @@ func Fetch(opts ...Option) error {
 			}
 			advs[getPackageRepository(options.mirrorURLs[v].Core)] = us
 		case "2":
-			resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.mirrorURLs[v].Extra)
+			resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry), utilhttp.WithClientHTTPClient(options.httpClient)).Get(options.mirrorURLs[v].Extra)
 			if err != nil {
 				return errors.Wrapf(err, "fetch %s", options.mirrorURLs[v].Extra)
 			}
@@ -217,7 +211,7 @@ func Fetch(opts ...Option) error {
 }
 
 func (opts options) fetch(mirror string) ([]Update, error) {
-	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry)).Get(mirror)
+	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry), utilhttp.WithClientHTTPClient(opts.httpClient)).Get(mirror)
 	if err != nil {
 		return nil, errors.Wrap(err, "fetch mirror list")
 	}
@@ -267,7 +261,7 @@ func (opts options) fetch(mirror string) ([]Update, error) {
 var ErrNoUpdateInfo = errors.New("no updateinfo field")
 
 func (opts options) fetchUpdateInfoPath(repomdURL string) (string, error) {
-	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry)).Get(repomdURL)
+	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry), utilhttp.WithClientHTTPClient(opts.httpClient)).Get(repomdURL)
 	if err != nil {
 		return "", errors.Wrap(err, "fetch repomd")
 	}
@@ -297,7 +291,7 @@ func (opts options) fetchUpdateInfoPath(repomdURL string) (string, error) {
 }
 
 func (opts options) fetchUpdateInfo(updateinfoURL string) ([]Update, error) {
-	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry)).Get(updateinfoURL)
+	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry), utilhttp.WithClientHTTPClient(opts.httpClient)).Get(updateinfoURL)
 	if err != nil {
 		return nil, errors.Wrap(err, "fetch updateinfo")
 	}

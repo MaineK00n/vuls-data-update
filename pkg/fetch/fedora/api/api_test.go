@@ -6,7 +6,6 @@ import (
 	"encoding/xml"
 	"fmt"
 	"io"
-	"io/fs"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -16,32 +15,24 @@ import (
 	"testing"
 	"time"
 
-	"github.com/google/go-cmp/cmp"
-
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/fedora/api"
+	utiltest "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/test"
 )
 
 func TestFetch(t *testing.T) {
 	tests := []struct {
 		name     string
-		testdata api.DataURL
 		hasError bool
 	}{
 		{
 			name: "happy",
-			testdata: api.DataURL{
-				Release:  "testdata/fixtures/releases?page=%d&rows_per_page=%d",
-				Advisory: "testdata/fixtures/updates/?releases=%s&type=security&page=%d&rows_per_page=%d",
-				Package:  "testdata/fixtures/kojihub",
-				Bugzilla: "testdata/fixtures/bugzilla/show_bug.cgi?ctype=xml&id=%s",
-			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			ts := httptest.NewTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				switch {
-				case strings.HasPrefix(r.URL.Path, "/testdata/fixtures/releases"):
+				case strings.HasPrefix(r.URL.Path, "/releases"):
 					type releasePage struct {
 						Releases    []any `json:"releases"`
 						Page        int   `json:"page"`
@@ -96,7 +87,7 @@ func TestFetch(t *testing.T) {
 						return
 					}
 					http.ServeContent(w, r, fmt.Sprintf("index.html?page=%d&rows_per_page=%d", page, rows), time.Now(), bytes.NewReader(bs))
-				case strings.HasPrefix(r.URL.Path, "/testdata/fixtures/updates"):
+				case strings.HasPrefix(r.URL.Path, "/updates"):
 					type advisoryPage struct {
 						Updates        []any `json:"updates"`
 						Page           int   `json:"page"`
@@ -165,7 +156,7 @@ func TestFetch(t *testing.T) {
 						return
 					}
 					http.ServeContent(w, r, fmt.Sprintf("index.html?releases=%s&type=security&page=%d&rows_per_page=%d", release, page, rows), time.Now(), bytes.NewReader(buf.Bytes()))
-				case strings.HasPrefix(r.URL.Path, "/testdata/fixtures/kojihub"):
+				case strings.HasPrefix(r.URL.Path, "/kojihub"):
 					bs, err := io.ReadAll(r.Body)
 					if err != nil {
 						http.Error(w, "Internal Server Error", http.StatusInternalServerError)
@@ -270,56 +261,22 @@ func TestFetch(t *testing.T) {
 						http.Error(w, "Bad Request", http.StatusBadRequest)
 						return
 					}
-				case strings.HasPrefix(r.URL.Path, "/testdata/fixtures/bugzilla"):
+				case strings.HasPrefix(r.URL.Path, "/show_bug.cgi"):
 					http.ServeFile(w, r, fmt.Sprintf("testdata/fixtures/bugzilla/%s.xml", r.URL.Query().Get("id")))
 				default:
 					http.NotFound(w, r)
 				}
 			}))
-			defer ts.Close()
-
 			dir := t.TempDir()
 			err := api.Fetch([]string{"__current__", "__pending__", "__archived__"},
-				api.WithDataURL(api.DataURL{
-					Release:  fmt.Sprintf("%s/%s", ts.URL, tt.testdata.Release),
-					Advisory: fmt.Sprintf("%s/%s", ts.URL, tt.testdata.Advisory),
-					Package:  fmt.Sprintf("%s/%s", ts.URL, tt.testdata.Package),
-					Bugzilla: fmt.Sprintf("%s/%s", ts.URL, tt.testdata.Bugzilla),
-				}), api.WithDir(dir), api.WithRetry(0), api.WithConcurrency(1), api.WithWait(0), api.WithRowsPerPage(2))
+				api.WithHTTPClient(ts.Client()), api.WithDir(dir), api.WithRetry(0), api.WithConcurrency(1), api.WithWait(0), api.WithRowsPerPage(2))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)
 			case err == nil && tt.hasError:
 				t.Error("expected error has not occurred")
-			default:
-				if err := filepath.WalkDir(dir, func(path string, d fs.DirEntry, err error) error {
-					if err != nil {
-						return err
-					}
-
-					if d.IsDir() {
-						return nil
-					}
-
-					dir, file := filepath.Split(strings.TrimPrefix(path, dir))
-					want, err := os.ReadFile(filepath.Join("testdata", "golden", dir, file))
-					if err != nil {
-						return err
-					}
-
-					got, err := os.ReadFile(path)
-					if err != nil {
-						return err
-					}
-
-					if diff := cmp.Diff(want, got); diff != "" {
-						t.Errorf("Fetch(). (-expected +got):\n%s", diff)
-					}
-
-					return nil
-				}); err != nil {
-					t.Error("walk error:", err)
-				}
+			case err == nil:
+				utiltest.Diff(t, filepath.Join("testdata", "golden"), dir)
 			}
 		})
 	}

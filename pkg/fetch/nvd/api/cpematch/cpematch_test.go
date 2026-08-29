@@ -4,19 +4,16 @@ import (
 	"bytes"
 	"encoding/json/v2"
 	"fmt"
-	"io/fs"
 	"net/http"
 	"net/http/httptest"
-	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
 	"time"
 
-	"github.com/google/go-cmp/cmp"
-
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/nvd/api/cpematch"
+	utiltest "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/test"
 )
 
 func TestFetch(t *testing.T) {
@@ -72,7 +69,7 @@ func TestFetch(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			ts := httptest.NewTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				startIndex := "0"
 				if value := r.URL.Query().Get("startIndex"); value != "" {
 					startIndex = value
@@ -147,54 +144,16 @@ func TestFetch(t *testing.T) {
 					http.ServeFile(w, r, filepath.Join("testdata", "fixtures", tt.fixturePrefix, fmt.Sprintf("%s-%s.json", startIndex, resultsPerPage)))
 				}
 			}))
-			defer ts.Close()
-
-			u, err := url.JoinPath(ts.URL, "/rest/json/cpematch/2.0")
-			if err != nil {
-				t.Error("unexpected error:", err)
-			}
-
 			dir := t.TempDir()
-			err = cpematch.Fetch(append(tt.args, cpematch.WithBaseURL(u), cpematch.WithDir(dir), cpematch.WithRetry(0), cpematch.WithConcurrency(3), cpematch.WithWait(0), cpematch.WithResultsPerPage(3))...)
+			err := cpematch.Fetch(append(tt.args, cpematch.WithHTTPClient(ts.Client()), cpematch.WithDir(dir), cpematch.WithRetry(0), cpematch.WithConcurrency(3), cpematch.WithWait(0), cpematch.WithResultsPerPage(3))...)
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)
 			case err == nil && tt.hasError:
 				t.Error("expected error has not occurred")
 			default:
-				actualCount := 0
-				if err := filepath.WalkDir(dir, func(path string, d fs.DirEntry, err error) error {
-					if err != nil {
-						return err
-					}
-
-					if d.IsDir() {
-						return nil
-					}
-
-					dir, file := filepath.Split(path)
-					want, err := os.ReadFile(filepath.Join("testdata", "golden", tt.fixturePrefix, filepath.Base(dir), file))
-					if err != nil {
-						return err
-					}
-
-					got, err := os.ReadFile(path)
-					if err != nil {
-						return err
-					}
-
-					if diff := cmp.Diff(want, got); diff != "" {
-						t.Errorf("Fetch(). %s (-expected +got):\n%s", file, diff)
-					}
-
-					actualCount++
-					return nil
-				}); err != nil {
-					t.Error("walk error:", err)
-				}
-
-				if actualCount != tt.expectedCount {
-					t.Errorf("unexpected #files, expected: %d, actual: %d", tt.expectedCount, actualCount)
+				if n := utiltest.Diff(t, filepath.Join("testdata", "golden", tt.fixturePrefix), dir); n != tt.expectedCount {
+					t.Errorf("unexpected #files, expected: %d, actual: %d", tt.expectedCount, n)
 				}
 			}
 		})

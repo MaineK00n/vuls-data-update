@@ -68,7 +68,7 @@ func TestDelete(t *testing.T) {
 				},
 			}
 
-			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			ts := httptest.NewTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				switch r.URL.Path {
 				case "/users/vulsio":
 					switch r.Method {
@@ -160,13 +160,13 @@ func TestDelete(t *testing.T) {
 					http.NotFound(w, r)
 				}
 			}))
-			defer ts.Close()
-
-			if err := delete.Delete(tt.args.image, tt.args.token, delete.WithAPIEndpoint(delete.APIEndpoint{GitHub: &delete.GitHub{BaseURL: ts.URL}})); (err != nil) != tt.wantErr {
+			// The in-memory network routes api.github.com to the test server,
+			// so the default production base URL is used.
+			if err := delete.Delete(tt.args.image, tt.args.token, delete.WithHTTPClient(ts.Client())); (err != nil) != tt.wantErr {
 				t.Errorf("Delete() error = %v, wantErr %v", err, tt.wantErr)
 			}
 
-			rs, err := ls.List([]ls.Repository{{Type: "orgs", Registry: "ghcr.io", Owner: "vulsio", Package: "vuls-data-db"}}, tt.args.token, ls.WithbaseURL(ts.URL))
+			rs, err := ls.List([]ls.Repository{{Type: "orgs", Registry: "ghcr.io", Owner: "vulsio", Package: "vuls-data-db"}}, tt.args.token, ls.WithHTTPClient(ts.Client()))
 			if err != nil {
 				t.Errorf("List() error = %v", err)
 			}

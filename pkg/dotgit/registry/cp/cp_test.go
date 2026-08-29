@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
-	"net/url"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
@@ -133,32 +132,25 @@ func TestCopy(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewTLSServer(registry.New())
-			defer ts.Close()
+			// The in-memory network routes every host, ghcr.io included, to
+			// the test server, so the fixtures keep their production image
+			// references.
+			ts := httptest.NewTestServer(t, registry.New())
 
 			originalTransport := http.DefaultTransport
 			http.DefaultTransport = ts.Client().Transport
-			defer func() {
+			t.Cleanup(func() {
 				http.DefaultTransport = originalTransport
-			}()
-
-			u, err := url.Parse(ts.URL)
-			if err != nil {
-				t.Fatalf("parse url. err: %v", err)
-			}
+			})
 
 			fr, err := remote.NewRepository(tt.args.from)
 			if err != nil {
 				t.Fatalf("new repository: %v", err)
 			}
-			fr.Reference.Registry = u.Host
-
 			tr, err := remote.NewRepository(tt.args.to)
 			if err != nil {
 				t.Fatalf("new repository: %v", err)
 			}
-			tr.Reference.Registry = u.Host
-
 			if err := push.Push(fmt.Sprintf("%s/%s:vuls-data-raw-example", fr.Reference.Registry, fr.Reference.Repository), "testdata/fixtures/vuls-data-raw-example.tar.zst", ""); err != nil {
 				t.Fatalf("push to %s: %v", fmt.Sprintf("%s/%s:vuls-data-raw-example", fr.Reference.Registry, fr.Reference.Repository), err)
 			}

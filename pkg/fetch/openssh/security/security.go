@@ -114,49 +114,26 @@ const minEntries = 40
 var skill []byte
 
 type options struct {
-	url            string
-	nvdURL         string
-	cveURL         string
-	dir            string
-	retry          int
-	concurrency    int
-	wait           time.Duration
-	nvdWait        time.Duration
+	url         string
+	nvdURL      string
+	cveURL      string
+	dir         string
+	retry       int
+	concurrency int
+	wait        time.Duration
+	nvdWait     time.Duration
+
+	// resultsPerPage is only ever set by WithResultsPerPage, which lives in export_test.go
+	// and is therefore absent from the production build.
 	resultsPerPage int
+
+	// httpClient is only ever set by WithHTTPClient, which lives in
+	// export_test.go and is therefore absent from the production build.
+	httpClient *http.Client
 }
 
 type Option interface {
 	apply(*options)
-}
-
-type urlOption string
-
-func (u urlOption) apply(opts *options) {
-	opts.url = string(u)
-}
-
-func WithURL(url string) Option {
-	return urlOption(url)
-}
-
-type nvdURLOption string
-
-func (u nvdURLOption) apply(opts *options) {
-	opts.nvdURL = string(u)
-}
-
-func WithNVDURL(url string) Option {
-	return nvdURLOption(url)
-}
-
-type cveURLOption string
-
-func (u cveURLOption) apply(opts *options) {
-	opts.cveURL = string(u)
-}
-
-func WithCVEURL(url string) Option {
-	return cveURLOption(url)
 }
 
 type concurrencyOption int
@@ -190,16 +167,6 @@ func (w nvdWaitOption) apply(opts *options) {
 // hosts with different limits; see defaultNVDWait.
 func WithNVDWait(wait time.Duration) Option {
 	return nvdWaitOption(wait)
-}
-
-type resultsPerPageOption int
-
-func (r resultsPerPageOption) apply(opts *options) {
-	opts.resultsPerPage = int(r)
-}
-
-func WithResultsPerPage(resultsPerPage int) Option {
-	return resultsPerPageOption(resultsPerPage)
 }
 
 type dirOption string
@@ -268,7 +235,7 @@ func Fetch(opts ...Option) error {
 }
 
 func (opts options) fetch() error {
-	client := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry))
+	client := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry), utilhttp.WithClientHTTPClient(opts.httpClient))
 
 	bs, err := get(client, opts.url)
 	if err != nil {
@@ -400,7 +367,7 @@ func (opts options) fetchCVEs(client *utilhttp.Client) error {
 func (opts options) cveIDs() ([]string, error) {
 	// Its own client: the retry backoff below is what keeps a failed request
 	// from breaching the rate limit, and it must not slow the CVE records.
-	client := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry), utilhttp.WithClientRetryWaitMin(opts.nvdWait))
+	client := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry), utilhttp.WithClientHTTPClient(opts.httpClient), utilhttp.WithClientRetryWaitMin(opts.nvdWait))
 
 	ids := make(map[string]struct{})
 	for _, q := range []string{

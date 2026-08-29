@@ -2,20 +2,16 @@ package servicing_test
 
 import (
 	"encoding/json"
-	"io/fs"
-	"maps"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"path/filepath"
-	"slices"
 	"strings"
 	"sync"
 	"testing"
 
-	"github.com/google/go-cmp/cmp"
-
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/servicing"
+	utiltest "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/test"
 )
 
 func TestFetch(t *testing.T) {
@@ -111,12 +107,10 @@ func TestFetch(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewServer(handler(t))
-			defer ts.Close()
-
+			ts := httptest.NewTestServer(t, handler(t))
 			dir := t.TempDir()
 			err := servicing.Fetch(tt.kbs,
-				servicing.WithHelpURL(ts.URL+"/help/%s"),
+				servicing.WithHTTPClient(ts.Client()),
 				servicing.WithDir(dir),
 				servicing.WithRetry(0),
 				servicing.WithConcurrency(2),
@@ -131,7 +125,7 @@ func TestFetch(t *testing.T) {
 				return
 			}
 
-			diff(t, filepath.Join("testdata", "golden", tt.golden), dir)
+			utiltest.Diff(t, filepath.Join("testdata", "golden", tt.golden), dir)
 		})
 	}
 }
@@ -160,7 +154,7 @@ func TestFetchRetriesThrottle(t *testing.T) {
 			throttled := map[string]bool{}
 
 			inner := handler(t)
-			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			ts := httptest.NewTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				mu.Lock()
 				first := !throttled[r.URL.Path]
 				throttled[r.URL.Path] = true
@@ -172,11 +166,9 @@ func TestFetchRetriesThrottle(t *testing.T) {
 				}
 				inner(w, r)
 			}))
-			defer ts.Close()
-
 			dir := t.TempDir()
 			err := servicing.Fetch([]string{"KB5101649"},
-				servicing.WithHelpURL(ts.URL+"/help/%s"),
+				servicing.WithHTTPClient(ts.Client()),
 				servicing.WithDir(dir),
 				servicing.WithRetry(tt.retry),
 				servicing.WithConcurrency(1),
@@ -191,7 +183,7 @@ func TestFetchRetriesThrottle(t *testing.T) {
 				return
 			}
 
-			diff(t, filepath.Join("testdata", "golden", tt.golden), dir)
+			utiltest.Diff(t, filepath.Join("testdata", "golden", tt.golden), dir)
 		})
 	}
 }
@@ -237,63 +229,4 @@ func handler(t *testing.T) http.HandlerFunc {
 		}
 		_, _ = w.Write(bs)
 	}
-}
-
-// diff compares the produced tree against golden byte for byte. Bytes rather
-// than parsed content: origin/ is only worth keeping if
-// it reproduces exactly, and raw/ is written deterministically, so any
-// difference at all is a regression.
-func diff(t *testing.T, golden, got string) {
-	t.Helper()
-
-	want := walk(t, golden)
-	have := walk(t, got)
-
-	if d := cmp.Diff(slices.Sorted(maps.Keys(want)), slices.Sorted(maps.Keys(have))); d != "" {
-		t.Errorf("files (-expected +got):\n%s", d)
-	}
-
-	for n, w := range want {
-		h, ok := have[n]
-		if !ok {
-			continue
-		}
-		if d := cmp.Diff(string(w), string(h)); d != "" {
-			t.Errorf("%s (-expected +got):\n%s", n, d)
-		}
-	}
-}
-
-func walk(t *testing.T, root string) map[string][]byte {
-	t.Helper()
-
-	out := make(map[string][]byte)
-	if err := filepath.WalkDir(root, func(p string, d fs.DirEntry, err error) error {
-		if err != nil {
-			if os.IsNotExist(err) {
-				return nil
-			}
-			return err
-		}
-		if d.IsDir() {
-			return nil
-		}
-
-		rel, err := filepath.Rel(root, p)
-		if err != nil {
-			return err
-		}
-
-		bs, err := os.ReadFile(p)
-		if err != nil {
-			return err
-		}
-
-		out[filepath.ToSlash(rel)] = bs
-		return nil
-	}); err != nil && !os.IsNotExist(err) {
-		t.Fatalf("walk %s. err: %v", root, err)
-	}
-
-	return out
 }
