@@ -2,19 +2,16 @@ package api_test
 
 import (
 	"encoding/json/v2"
-	"io/fs"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
 	"os"
 	"path/filepath"
 	"strconv"
-	"strings"
 	"testing"
 
-	"github.com/google/go-cmp/cmp"
-
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/nuclei/api"
+	utiltest "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/test"
 )
 
 type response struct {
@@ -164,35 +161,11 @@ func TestFetch(t *testing.T) {
 				t.Error("unexpected error:", err)
 			case err == nil && tt.hasError:
 				t.Error("expected error has not occurred")
+			case err != nil && tt.hasError:
+				// error was expected and occurred, test passed
+				return
 			default:
-				if err := filepath.WalkDir(dir, func(path string, d fs.DirEntry, err error) error {
-					if err != nil {
-						return err
-					}
-
-					if d.IsDir() {
-						return nil
-					}
-
-					dir, file := filepath.Split(strings.TrimPrefix(path, dir))
-					want, err := os.ReadFile(filepath.Join("testdata", "golden", dir, file))
-					if err != nil {
-						return err
-					}
-
-					got, err := os.ReadFile(path)
-					if err != nil {
-						return err
-					}
-
-					if diff := cmp.Diff(want, got); diff != "" {
-						t.Errorf("Fetch(). (-expected +got):\n%s", diff)
-					}
-
-					return nil
-				}); err != nil {
-					t.Error("walk error:", err)
-				}
+				utiltest.Diff(t, filepath.Join("testdata", "golden"), dir)
 			}
 		})
 	}
