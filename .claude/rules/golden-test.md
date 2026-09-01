@@ -10,9 +10,11 @@
 
 ### Test Helpers
 
-Use helpers from `pkg/extract/util/test/test.go`:
+Extractors use helpers from `pkg/extract/util/test/test.go`:
 - `QueryUnescapeFileTree()` — materializes fixtures with URL-escaped filenames
-- `Diff()` — compares output against golden files (`datasource.json`, `data/`, `cpe/`, etc.)
+- `Diff()` — compares output against golden (`datasource.json`, `data/`, `cpe/`, etc.), asserting both which files exist and their content
+
+Fetchers use `pkg/fetch/util/test/test.go`, described under Fetch Golden Tests below.
 
 ### URL-Escaped Filenames
 
@@ -24,6 +26,31 @@ If a change causes widespread golden diffs:
 1. **Check determinism**: Verify `util.Write` and `types/*/Sort` are correct
 2. **Check sorting**: Ensure `Sort()`/`Compare()` are updated for any new or modified types
 3. **Update golden files**: If the diff is intentional, run the relevant extractor and copy the output into `testdata/golden/`. This repo does not provide a generic test flag for updating golden files.
+
+### Fetch Golden Tests
+
+Fetchers compare with `pkg/fetch/util/test/test.go`:
+
+```go
+switch {
+case err != nil && !tt.hasError:
+    t.Error("unexpected error:", err)
+case err == nil && tt.hasError:
+    t.Error("expected error has not occurred")
+case err != nil && tt.hasError:
+    // error was expected and occurred, test passed
+    return
+default:
+    utiltest.Diff(t, filepath.Join("testdata", "golden"), dir)
+}
+```
+
+- `Diff()` reads both trees whole and compares them as maps, so **which files exist is part of the assertion**. Never walk only the output tree and look each file up in golden: that passes a run that wrote nothing.
+- **The error cases need their own arm.** Without it they fall into the comparison and fail with the whole golden tree reported missing.
+- **Multi-case**: pass `filepath.Join("testdata", "golden", tt.name)`, or name the tree in a `golden` field when the case name is not filename-safe. Give each case its own tree unless every case produces the same output — a case producing a subset of a shared tree cannot be compared whole.
+- A case whose expected output is nothing at all simply has no golden directory; `Diff()` reads a missing directory as an empty tree, since git cannot carry an empty one.
+- Golden names are URL-escaped and `Diff()` escapes the output side to match, so no per-package handling is needed.
+- `WithReplace(old, new)` rewrites the output side before comparing. It is for the `httptest` server's own URL, which reaches the output and changes on every run — not for papering over a fetcher's non-deterministic output, which is a bug in the fetcher.
 
 ### Writing New Golden Tests
 
@@ -58,7 +85,7 @@ for _, tt := range tests {
 
 ### Where Used
 
-`pkg/extract/<domain>/<name>/` (extractors), `pkg/dotgit/` (pull, log, ls, cat, find, grep etc.)
+`pkg/fetch/<domain>/<name>/` (fetchers), `pkg/extract/<domain>/<name>/` (extractors), `pkg/dotgit/` (pull, log, ls, cat, find, grep etc.)
 
 ## Inline Unit Tests (table-driven)
 
