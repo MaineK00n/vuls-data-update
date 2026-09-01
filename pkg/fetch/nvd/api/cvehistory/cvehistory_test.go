@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json/v2"
 	"fmt"
-	"io/fs"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -14,9 +13,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/google/go-cmp/cmp"
-
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/nvd/api/cvehistory"
+	utiltest "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/test"
 )
 
 func TestFetch(t *testing.T) {
@@ -24,47 +22,39 @@ func TestFetch(t *testing.T) {
 		name          string
 		args          []cvehistory.Option
 		fixturePrefix string
-		expectedCount int
 		hasError      bool
 	}{
 		{
 			name:          "empty",
 			fixturePrefix: "empty",
-			expectedCount: 0,
 		},
 		{
 			name:          "1 item",
 			fixturePrefix: "1_item",
-			expectedCount: 1,
 		},
 		{
 			// oldValue and newValue are not always a string
 			name:          "detail values in array and object",
 			fixturePrefix: "nonstring_values",
-			expectedCount: 1,
 		},
 		{
 			name:          "Precisely single page",
 			fixturePrefix: "3_items",
-			expectedCount: 3,
 		},
 		{
 			// Change events of a CVE are spread over the pages.
 			name:          "Multiple pages",
 			fixturePrefix: "3_pages",
-			expectedCount: 8,
 		},
 		{
 			// The totalResults is 7 initially, but increases to 8 after 2nd page.
 			name:          "Total count increase in the middle of command execution",
 			fixturePrefix: "increase",
-			expectedCount: 8,
 		},
 		{
 			name:          "With API Key",
 			args:          []cvehistory.Option{cvehistory.WithAPIKey("foobar")},
 			fixturePrefix: "3_pages",
-			expectedCount: 8,
 		},
 		{
 			name: "specify start and end change date",
@@ -73,7 +63,6 @@ func TestFetch(t *testing.T) {
 				cvehistory.WithChangeEndDate(new(time.Date(2024, time.October, 1, 0, 0, 0, 0, time.UTC))),
 			},
 			fixturePrefix: "changedate",
-			expectedCount: 3,
 		},
 		{
 			// Both IDs are used as path elements, so a malformed one must not be written
@@ -183,49 +172,12 @@ func TestFetch(t *testing.T) {
 				t.Error("unexpected error:", err)
 			case err == nil && tt.hasError:
 				t.Error("expected error has not occurred")
+			case err != nil && tt.hasError:
+				// error was expected and occurred, test passed
+				return
 			default:
-				if tt.hasError {
-					return
-				}
+				utiltest.Diff(t, filepath.Join("testdata", "golden", tt.fixturePrefix), dir)
 
-				actualCount := 0
-				if err := filepath.WalkDir(dir, func(path string, d fs.DirEntry, err error) error {
-					if err != nil {
-						return err
-					}
-
-					if d.IsDir() {
-						return nil
-					}
-
-					rel, err := filepath.Rel(dir, path)
-					if err != nil {
-						return err
-					}
-
-					want, err := os.ReadFile(filepath.Join("testdata", "golden", tt.fixturePrefix, rel))
-					if err != nil {
-						return err
-					}
-
-					got, err := os.ReadFile(path)
-					if err != nil {
-						return err
-					}
-
-					if diff := cmp.Diff(want, got); diff != "" {
-						t.Errorf("Fetch(). %s (-expected +got):\n%s", rel, diff)
-					}
-
-					actualCount++
-					return nil
-				}); err != nil {
-					t.Error("walk error:", err)
-				}
-
-				if actualCount != tt.expectedCount {
-					t.Errorf("unexpected #files, expected: %d, actual: %d", actualCount, tt.expectedCount)
-				}
 			}
 		})
 	}

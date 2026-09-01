@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json/v2"
 	"fmt"
-	"io/fs"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -14,9 +13,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/google/go-cmp/cmp"
-
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/nvd/api/cpematch"
+	utiltest "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/test"
 )
 
 func TestFetch(t *testing.T) {
@@ -24,40 +22,33 @@ func TestFetch(t *testing.T) {
 		name          string
 		args          []cpematch.Option
 		fixturePrefix string
-		expectedCount int
 		hasError      bool
 	}{
 		{
 			name:          "empty",
 			fixturePrefix: "empty",
-			expectedCount: 0,
 		},
 		{
 			name:          "1 item",
 			fixturePrefix: "1_item",
-			expectedCount: 1,
 		},
 		{
 			name:          "Precisely single page",
 			fixturePrefix: "3_items",
-			expectedCount: 3,
 		},
 		{
 			name:          "Multiple pages",
 			fixturePrefix: "3_pages",
-			expectedCount: 8,
 		},
 		{
 			// The totalResults is 7 initially, but increases to 8 after 2nd page.
 			name:          "Total count increase in the middle of command execution",
 			fixturePrefix: "increase",
-			expectedCount: 8,
 		},
 		{
 			name:          "With API Key",
 			args:          []cpematch.Option{cpematch.WithAPIKey("foobar")},
 			fixturePrefix: "3_pages",
-			expectedCount: 8,
 		},
 		{
 			name: "specify start and end mod date",
@@ -66,7 +57,6 @@ func TestFetch(t *testing.T) {
 				cpematch.WithLastModEndDate(new(time.Date(2023, time.November, 15, 23, 30, 0, 0, time.UTC))),
 			},
 			fixturePrefix: "moddate",
-			expectedCount: 3,
 		},
 	}
 
@@ -161,41 +151,12 @@ func TestFetch(t *testing.T) {
 				t.Error("unexpected error:", err)
 			case err == nil && tt.hasError:
 				t.Error("expected error has not occurred")
+			case err != nil && tt.hasError:
+				// error was expected and occurred, test passed
+				return
 			default:
-				actualCount := 0
-				if err := filepath.WalkDir(dir, func(path string, d fs.DirEntry, err error) error {
-					if err != nil {
-						return err
-					}
+				utiltest.Diff(t, filepath.Join("testdata", "golden", tt.fixturePrefix), dir)
 
-					if d.IsDir() {
-						return nil
-					}
-
-					dir, file := filepath.Split(path)
-					want, err := os.ReadFile(filepath.Join("testdata", "golden", tt.fixturePrefix, filepath.Base(dir), file))
-					if err != nil {
-						return err
-					}
-
-					got, err := os.ReadFile(path)
-					if err != nil {
-						return err
-					}
-
-					if diff := cmp.Diff(want, got); diff != "" {
-						t.Errorf("Fetch(). %s (-expected +got):\n%s", file, diff)
-					}
-
-					actualCount++
-					return nil
-				}); err != nil {
-					t.Error("walk error:", err)
-				}
-
-				if actualCount != tt.expectedCount {
-					t.Errorf("unexpected #files, expected: %d, actual: %d", tt.expectedCount, actualCount)
-				}
 			}
 		})
 	}
