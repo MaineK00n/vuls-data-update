@@ -199,6 +199,12 @@ func (opts options) crawl(client *utilhttp.Client, uids []string) ([]string, []s
 		case "Thanks.aspx":
 			switch id := resp.Request.URL.Query().Get("id"); id {
 			case "190":
+				// Nothing here to parse, but a connection only goes back to the
+				// pool once its body has reached EOF, and the crawl carries on
+				// from this one. The branches below end the run, so they need
+				// not bother.
+				_, _ = io.Copy(io.Discard, resp.Body)
+
 				unavailableChan <- requestUpdateID(resp.Request)
 				return nil
 			default:
