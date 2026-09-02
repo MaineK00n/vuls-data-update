@@ -18,6 +18,7 @@ type Vulnerability struct {
 	ShortDescription           string   `json:"shortDescription,omitempty"`
 	RequiredAction             string   `json:"requiredAction,omitempty"`
 	KnownRansomwareCampaignUse string   `json:"knownRansomwareCampaignUse,omitempty"`
+	ForensicTriage             string   `json:"forensicTriage,omitempty"`
 	Notes                      string   `json:"notes,omitempty"`
 	DateAdded                  string   `json:"dateAdded,omitempty"`
 	DueDate                    string   `json:"dueDate,omitempty"`

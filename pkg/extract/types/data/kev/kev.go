@@ -13,6 +13,7 @@ type KEV struct {
 	Product                    string    `json:"product,omitempty"`
 	RequiredAction             string    `json:"required_action,omitempty"`
 	KnownRansomwareCampaignUse string    `json:"known_ransomware_campaign_use,omitempty"`
+	ForensicTriage             string    `json:"forensic_triage,omitempty"`
 	Notes                      string    `json:"notes,omitempty"`
 	DateAdded                  time.Time `json:"date_added,omitzero"`
 	DueDate                    time.Time `json:"due_date,omitzero"`
@@ -33,6 +34,7 @@ func Compare(x, y KEV) int {
 		cmp.Compare(x.Product, y.Product),
 		cmp.Compare(x.RequiredAction, y.RequiredAction),
 		cmp.Compare(x.KnownRansomwareCampaignUse, y.KnownRansomwareCampaignUse),
+		cmp.Compare(x.ForensicTriage, y.ForensicTriage),
 		cmp.Compare(x.Notes, y.Notes),
 		x.DateAdded.Compare(y.DateAdded),
 		x.DueDate.Compare(y.DueDate),

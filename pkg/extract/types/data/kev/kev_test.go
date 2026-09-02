@@ -105,6 +105,14 @@ func TestCompare(t *testing.T) {
 			want: +1,
 		},
 		{
+			name: "x:forensic_triage > y:forensic_triage",
+			args: args{
+				x: kevTypes.KEV{VendorProject: "ownCloud", Product: "ownCloud", ForensicTriage: "Yes"},
+				y: kevTypes.KEV{VendorProject: "ownCloud", Product: "ownCloud", ForensicTriage: "No"},
+			},
+			want: +1,
+		},
+		{
 			name: "x:date_added < y:date_added",
 			args: args{
 				x: kevTypes.KEV{
