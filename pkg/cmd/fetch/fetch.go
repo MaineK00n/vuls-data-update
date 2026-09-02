@@ -1887,10 +1887,11 @@ func newCmdFortinetCSAF() *cobra.Command {
 	}
 
 	cmd := &cobra.Command{
-		Use:   "fortinet-csaf <Fortinet Advisory ID>...",
+		Use:   "fortinet-csaf <Fortinet Advisory ID>[=<title>]...",
 		Short: "Fetch Fortinet CSAF data source",
 		Example: heredoc.Doc(`
 			$ vuls-data-update fetch fortinet-csaf FG-IR-25-756
+			$ vuls-data-update fetch fortinet-csaf "FG-IR-25-756=Authenticated Heap Overflow in SSL-VPN bookmarks"
 		`),
 		Args: cobra.MinimumNArgs(1),
 		RunE: func(_ *cobra.Command, args []string) error {
