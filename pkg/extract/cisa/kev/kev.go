@@ -140,6 +140,7 @@ func extract(fetched kev.Vulnerability, raws []string) dataTypes.Data {
 					Product:                    fetched.Product,
 					RequiredAction:             fetched.RequiredAction,
 					KnownRansomwareCampaignUse: fetched.KnownRansomwareCampaignUse,
+					ForensicTriage:             fetched.ForensicTriage,
 					Notes:                      fetched.Notes,
 					DateAdded: func() time.Time {
 						if t := utiltime.Parse([]string{"2006-01-02"}, fetched.DateAdded); t != nil {
