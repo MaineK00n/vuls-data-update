@@ -1,0 +1,177 @@
+{
+	"path": "SystemCenterDocs/includes/release-build-versions-2025.md",
+	"tables": [
+		{
+			"heading": "Management Server (and other components*)",
+			"header": [
+				"Build Number",
+				"KB",
+				"Release Date",
+				"Description"
+			],
+			"rows": [
+				[
+					{
+						"text": "10.25.10132.0"
+					},
+					{
+						"text": "-"
+					},
+					{
+						"text": "November 2024"
+					},
+					{
+						"text": "General Availability"
+					}
+				],
+				[
+					{
+						"text": "10.25.10324.0"
+					},
+					{
+						"text": "5068304",
+						"href": "https://support.microsoft.com/kb/5068304"
+					},
+					{
+						"text": "November 2025"
+					},
+					{
+						"text": "Update Rollup 1"
+					}
+				],
+				[
+					{
+						"text": "10.25.10377.0"
+					},
+					{
+						"text": "5073079",
+						"href": "https://support.microsoft.com/kb/5073079"
+					},
+					{
+						"text": "March 2026"
+					},
+					{
+						"text": "Update Rollup 1 MSRC Hotfix"
+					}
+				],
+				[
+					{
+						"text": "10.25.10644.0"
+					},
+					{
+						"text": "5080648",
+						"href": "https://support.microsoft.com/kb/5080648"
+					},
+					{
+						"text": "March 2026"
+					},
+					{
+						"text": "Update Rollup 1 Hotfix"
+					}
+				]
+			]
+		},
+		{
+			"heading": "Agent and Gateway",
+			"header": [
+				"Build Number",
+				"KB",
+				"Release Date",
+				"Description"
+			],
+			"rows": [
+				[
+					{
+						"text": "10.25.10079.0"
+					},
+					{
+						"text": "-"
+					},
+					{
+						"text": "November 2024"
+					},
+					{
+						"text": "General Availability"
+					}
+				],
+				[
+					{
+						"text": "10.25.10994.0"
+					},
+					{
+						"text": "5068304",
+						"href": "https://support.microsoft.com/kb/5068304"
+					},
+					{
+						"text": "November 2025"
+					},
+					{
+						"text": "Update Rollup 1"
+					}
+				],
+				[
+					{
+						"text": "10.25.11182.0"
+					},
+					{
+						"text": "5080648",
+						"href": "https://support.microsoft.com/kb/5080648"
+					},
+					{
+						"text": "March 2026"
+					},
+					{
+						"text": "Update Rollup 1 Hotfix"
+					}
+				]
+			]
+		},
+		{
+			"heading": "SCX Agent",
+			"header": [
+				"Build Number",
+				"KB",
+				"Release Date",
+				"Agent Version",
+				"Description"
+			],
+			"rows": [
+				[
+					{
+						"text": "10.25.1005.0"
+					},
+					{
+						"text": "-"
+					},
+					{
+						"text": "November 2024"
+					},
+					{
+						"text": "1.9.1-0"
+					},
+					{
+						"text": "General Availability"
+					}
+				],
+				[
+					{
+						"text": "10.25.1016.0"
+					},
+					{
+						"text": "5068304",
+						"href": "https://support.microsoft.com/kb/5068304"
+					},
+					{
+						"text": "November 2025"
+					},
+					{
+						"text": "1.9.3-0"
+					},
+					{
+						"text": "Update Rollup 1"
+					}
+				]
+			]
+		}
+	]
+}

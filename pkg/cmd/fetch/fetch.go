@@ -91,6 +91,7 @@ import (
 	microsoftDeployment "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/deployment"
 	microsoftMSUC "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/msuc"
 	microsoftProduct "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/product"
+	microsoftSCOM "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/scom"
 	microsoftServicing "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/servicing"
 	microsoftVEX "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/vex"
 	microsoftVulnerability "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/vulnerability"
@@ -256,7 +257,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdLinuxOSV(),
 		newCmdMageiaOSV(),
 		newCmdMavenGHSA(), newCmdMavenGLSA(), newCmdMavenOSV(),
-		newCmdMicrosoftBulletin(), newCmdMicrosoftCVRF(), newCmdMicrosoftCSAF(), newCmdMicrosoftMSUC(), newCmdMicrosoftServicing(), newCmdMicrosoftAdvisory(), newCmdMicrosoftVulnerability(), newCmdMicrosoftProduct(), newCmdMicrosoftDeployment(), newCmdMicrosoftVEX(), newCmdMicrosoftWSUSSCN2(), newCmdMicrosoftAzureOVAL(),
+		newCmdMicrosoftBulletin(), newCmdMicrosoftCVRF(), newCmdMicrosoftCSAF(), newCmdMicrosoftMSUC(), newCmdMicrosoftSCOM(), newCmdMicrosoftServicing(), newCmdMicrosoftAdvisory(), newCmdMicrosoftVulnerability(), newCmdMicrosoftProduct(), newCmdMicrosoftDeployment(), newCmdMicrosoftVEX(), newCmdMicrosoftWSUSSCN2(), newCmdMicrosoftAzureOVAL(),
 		newCmdMinimOSOSV(), newCmdMinimOSSecDB(),
 		newCmdMitreATTACK(), newCmdMitreCAPEC(), newCmdMitreCVRF(), newCmdMitreCWE(), newCmdMitreEMB3D(), newCmdMitreV4(), newCmdMitreV5(),
 		newCmdMSF(),
@@ -2668,6 +2669,53 @@ func newCmdMicrosoftMSUC() *cobra.Command {
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
 	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrent http requests")
+	cmd.Flags().DurationVarP(&options.wait, "wait", "", options.wait, "wait duration")
+
+	return cmd
+}
+
+func newCmdMicrosoftSCOM() *cobra.Command {
+	options := &struct {
+		base
+		wait time.Duration
+	}{
+		base: base{
+			dir:   filepath.Join(util.CacheDir(), "fetch", "microsoft", "scom"),
+			retry: 3,
+		},
+		wait: 1 * time.Second,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "microsoft-scom",
+		Short: "Fetch Microsoft System Center Operations Manager Build Versions data source",
+		Long: heredoc.Doc(`
+			Fetch the System Center Operations Manager build versions article as
+			Markdown into <dir>/origin, and the tables it carries into <dir>/raw.
+
+			The article lists every update rollup the product has shipped, from
+			Operations Manager 2016 to 2025. It is fetched from
+			MicrosoftDocs/SystemCenterDocs because the repository is public and keeps
+			the article's history.
+
+			The article holds no tables of its own: it is four INCLUDE directives, one
+			per product version. Those are read out of it and fetched too, one hop and
+			no further, and every file is stored at the path it has in the repository.
+		`),
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch microsoft-scom
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := microsoftSCOM.Fetch(microsoftSCOM.WithDir(options.dir), microsoftSCOM.WithRetry(options.retry), microsoftSCOM.WithWait(options.wait)); err != nil {
+				return errors.Wrap(err, "failed to fetch microsoft scom")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
 	cmd.Flags().DurationVarP(&options.wait, "wait", "", options.wait, "wait duration")
 
 	return cmd

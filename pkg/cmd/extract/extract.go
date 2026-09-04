@@ -67,6 +67,7 @@ import (
 	microsoftBulletin "github.com/MaineK00n/vuls-data-update/pkg/extract/microsoft/bulletin"
 	microsoftCVRF "github.com/MaineK00n/vuls-data-update/pkg/extract/microsoft/cvrf"
 	microsoftMSUC "github.com/MaineK00n/vuls-data-update/pkg/extract/microsoft/msuc"
+	microsoftSCOM "github.com/MaineK00n/vuls-data-update/pkg/extract/microsoft/scom"
 	microsoftServicing "github.com/MaineK00n/vuls-data-update/pkg/extract/microsoft/servicing"
 	microsoftWSUSSCN2 "github.com/MaineK00n/vuls-data-update/pkg/extract/microsoft/wsusscn2"
 	mitreATTACK "github.com/MaineK00n/vuls-data-update/pkg/extract/mitre/attack"
@@ -183,7 +184,7 @@ func NewCmdExtract() *cobra.Command {
 		newCmdJVNFeedDetail(), newCmdJVNFeedProduct(), newCmdJVNFeedRSS(),
 		newCmdLinuxOSV(),
 		newCmdMavenGHSA(), newCmdMavenGLSA(), newCmdMavenOSV(),
-		newCmdMicrosoftBulletin(), newCmdMicrosoftCVRF(), newCmdMicrosoftMSUC(), newCmdMicrosoftServicing(), newCmdMicrosoftWSUSSCN2(),
+		newCmdMicrosoftBulletin(), newCmdMicrosoftCVRF(), newCmdMicrosoftMSUC(), newCmdMicrosoftSCOM(), newCmdMicrosoftServicing(), newCmdMicrosoftWSUSSCN2(),
 		newCmdMitreATTACK(), newCmdMitreCAPEC(), newCmdMitreCVRF(), newCmdMitreCWE(), newCmdMitreV4(), newCmdMitreV5(),
 		newCmdMSF(),
 		newCmdNetBSD(),
@@ -1685,6 +1686,31 @@ func newCmdMicrosoftMSUC() *cobra.Command {
 		RunE: func(_ *cobra.Command, args []string) error {
 			if err := microsoftMSUC.Extract(args[0], microsoftMSUC.WithDir(options.dir)); err != nil {
 				return errors.Wrap(err, "failed to extract microsoft msuc")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
+
+	return cmd
+}
+
+func newCmdMicrosoftSCOM() *cobra.Command {
+	options := &base{
+		dir: filepath.Join(util.CacheDir(), "extract", "microsoft", "scom"),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "microsoft-scom <Raw Microsoft System Center Operations Manager Repository PATH>",
+		Short: "Extract Microsoft System Center Operations Manager Build Versions data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update extract microsoft-scom vuls-data-raw-microsoft-scom
+		`),
+		Args: cobra.ExactArgs(1),
+		RunE: func(_ *cobra.Command, args []string) error {
+			if err := microsoftSCOM.Extract(args[0], microsoftSCOM.WithDir(options.dir)); err != nil {
+				return errors.Wrap(err, "failed to extract microsoft scom")
 			}
 			return nil
 		},
