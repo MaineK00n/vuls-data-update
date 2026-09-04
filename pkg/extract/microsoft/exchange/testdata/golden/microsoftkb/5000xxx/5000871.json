@@ -1,0 +1,20 @@
+{
+	"kb_id": "5000871",
+	"url": "https://support.microsoft.com/help/5000871",
+	"products": [
+		"Exchange Server 2013",
+		"Exchange Server 2016",
+		"Exchange Server 2019"
+	],
+	"superseded_by": [
+		{
+			"kb_id": "5024296"
+		}
+	],
+	"data_source": {
+		"id": "microsoft-exchange",
+		"raws": [
+			"build-numbers-and-release-dates.json"
+		]
+	}
+}
