@@ -68,6 +68,7 @@ import (
 	microsoftCVRF "github.com/MaineK00n/vuls-data-update/pkg/extract/microsoft/cvrf"
 	microsoftMSUC "github.com/MaineK00n/vuls-data-update/pkg/extract/microsoft/msuc"
 	microsoftServicing "github.com/MaineK00n/vuls-data-update/pkg/extract/microsoft/servicing"
+	microsoftSharePoint "github.com/MaineK00n/vuls-data-update/pkg/extract/microsoft/sharepoint"
 	microsoftWSUSSCN2 "github.com/MaineK00n/vuls-data-update/pkg/extract/microsoft/wsusscn2"
 	mitreATTACK "github.com/MaineK00n/vuls-data-update/pkg/extract/mitre/attack"
 	mitreCAPEC "github.com/MaineK00n/vuls-data-update/pkg/extract/mitre/capec"
@@ -183,7 +184,7 @@ func NewCmdExtract() *cobra.Command {
 		newCmdJVNFeedDetail(), newCmdJVNFeedProduct(), newCmdJVNFeedRSS(),
 		newCmdLinuxOSV(),
 		newCmdMavenGHSA(), newCmdMavenGLSA(), newCmdMavenOSV(),
-		newCmdMicrosoftBulletin(), newCmdMicrosoftCVRF(), newCmdMicrosoftMSUC(), newCmdMicrosoftServicing(), newCmdMicrosoftWSUSSCN2(),
+		newCmdMicrosoftBulletin(), newCmdMicrosoftCVRF(), newCmdMicrosoftMSUC(), newCmdMicrosoftServicing(), newCmdMicrosoftSharePoint(), newCmdMicrosoftWSUSSCN2(),
 		newCmdMitreATTACK(), newCmdMitreCAPEC(), newCmdMitreCVRF(), newCmdMitreCWE(), newCmdMitreV4(), newCmdMitreV5(),
 		newCmdMSF(),
 		newCmdNetBSD(),
@@ -1685,6 +1686,31 @@ func newCmdMicrosoftMSUC() *cobra.Command {
 		RunE: func(_ *cobra.Command, args []string) error {
 			if err := microsoftMSUC.Extract(args[0], microsoftMSUC.WithDir(options.dir)); err != nil {
 				return errors.Wrap(err, "failed to extract microsoft msuc")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
+
+	return cmd
+}
+
+func newCmdMicrosoftSharePoint() *cobra.Command {
+	options := &base{
+		dir: filepath.Join(util.CacheDir(), "extract", "microsoft", "sharepoint"),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "microsoft-sharepoint <Raw Microsoft SharePoint Update History Repository PATH>",
+		Short: "Extract Microsoft SharePoint Update History data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update extract microsoft-sharepoint vuls-data-raw-microsoft-sharepoint
+		`),
+		Args: cobra.ExactArgs(1),
+		RunE: func(_ *cobra.Command, args []string) error {
+			if err := microsoftSharePoint.Extract(args[0], microsoftSharePoint.WithDir(options.dir)); err != nil {
+				return errors.Wrap(err, "failed to extract microsoft sharepoint")
 			}
 			return nil
 		},

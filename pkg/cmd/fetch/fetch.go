@@ -92,6 +92,7 @@ import (
 	microsoftMSUC "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/msuc"
 	microsoftProduct "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/product"
 	microsoftServicing "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/servicing"
+	microsoftSharePoint "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/sharepoint"
 	microsoftVEX "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/vex"
 	microsoftVulnerability "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/vulnerability"
 	microsoftWSUSSCN2 "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/wsusscn2"
@@ -256,7 +257,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdLinuxOSV(),
 		newCmdMageiaOSV(),
 		newCmdMavenGHSA(), newCmdMavenGLSA(), newCmdMavenOSV(),
-		newCmdMicrosoftBulletin(), newCmdMicrosoftCVRF(), newCmdMicrosoftCSAF(), newCmdMicrosoftMSUC(), newCmdMicrosoftServicing(), newCmdMicrosoftAdvisory(), newCmdMicrosoftVulnerability(), newCmdMicrosoftProduct(), newCmdMicrosoftDeployment(), newCmdMicrosoftVEX(), newCmdMicrosoftWSUSSCN2(), newCmdMicrosoftAzureOVAL(),
+		newCmdMicrosoftBulletin(), newCmdMicrosoftCVRF(), newCmdMicrosoftCSAF(), newCmdMicrosoftMSUC(), newCmdMicrosoftServicing(), newCmdMicrosoftSharePoint(), newCmdMicrosoftAdvisory(), newCmdMicrosoftVulnerability(), newCmdMicrosoftProduct(), newCmdMicrosoftDeployment(), newCmdMicrosoftVEX(), newCmdMicrosoftWSUSSCN2(), newCmdMicrosoftAzureOVAL(),
 		newCmdMinimOSOSV(), newCmdMinimOSSecDB(),
 		newCmdMitreATTACK(), newCmdMitreCAPEC(), newCmdMitreCVRF(), newCmdMitreCWE(), newCmdMitreEMB3D(), newCmdMitreV4(), newCmdMitreV5(),
 		newCmdMSF(),
@@ -2668,6 +2669,54 @@ func newCmdMicrosoftMSUC() *cobra.Command {
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
 	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrent http requests")
+	cmd.Flags().DurationVarP(&options.wait, "wait", "", options.wait, "wait duration")
+
+	return cmd
+}
+
+func newCmdMicrosoftSharePoint() *cobra.Command {
+	options := &struct {
+		base
+		wait time.Duration
+	}{
+		base: base{
+			dir:   filepath.Join(util.CacheDir(), "fetch", "microsoft", "sharepoint"),
+			retry: 3,
+		},
+		wait: 1 * time.Second,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "microsoft-sharepoint",
+		Short: "Fetch Microsoft SharePoint Update History data source",
+		Long: heredoc.Doc(`
+			Fetch the SharePoint Server update history as HTML into <dir>/origin, and
+			the tables it carries into <dir>/raw.
+
+			The page lists every public update SharePoint has shipped, from SharePoint
+			2010 to the Subscription Edition, and the Update Catalog no longer serves
+			all of them.
+
+			A row describes more than one package: a server and its language pack, or
+			SharePoint Foundation beside SharePoint Server, named one per line with
+			their KBs one per line beside them. The lines are kept apart in raw/ so
+			that extract can match them by position; read as one string they would run
+			together with nothing to say which KB belongs to which package.
+		`),
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch microsoft-sharepoint
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := microsoftSharePoint.Fetch(microsoftSharePoint.WithDir(options.dir), microsoftSharePoint.WithRetry(options.retry), microsoftSharePoint.WithWait(options.wait)); err != nil {
+				return errors.Wrap(err, "failed to fetch microsoft sharepoint")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
 	cmd.Flags().DurationVarP(&options.wait, "wait", "", options.wait, "wait duration")
 
 	return cmd
