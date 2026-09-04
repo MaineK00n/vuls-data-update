@@ -213,6 +213,7 @@ type product struct {
 	version         string
 	arch            string
 	modularitylabel string
+	srcName         string
 	cpe             string
 	repositories    []string
 }
@@ -284,6 +285,7 @@ type versionInfo struct {
 	version         string
 	arch            string
 	modularitylabel string
+	srcName         string
 }
 
 // walkProductTree converts a CSAF VEX product_tree into a map of product_id ->
@@ -371,6 +373,7 @@ func walkProductTree(trackingID string, pt v2.ProductTree, c2r map[string][]stri
 			version:         vi.version,
 			arch:            vi.arch,
 			modularitylabel: vi.modularitylabel,
+			srcName:         vi.srcName,
 			cpe:             ni.cpe,
 			repositories:    c2r[ni.cpe],
 		})
@@ -416,16 +419,25 @@ func parseRPMPurl(trackingID, s string) (*versionInfo, error) {
 	// filtered out downstream) are intentionally parsed-but-ignored. A
 	// brand-new key errors out so a human decides whether the new metadata
 	// should be processed — silent data loss is worse than a loud failure.
+	//
+	// upstream names the source RPM a binary RPM was built from. CSAF Generator
+	// 3.3.1 added it, together with an "<source>/" prefix on the binary
+	// product_id, so that a binary is identified per source package instead of
+	// per name alone (SECDATA-1316). It is carried onto the criterion as
+	// SrcName rather than ignored: two source RPMs building same-named binaries
+	// hold different fix states, and this is the only thing that tells the
+	// resulting criteria apart.
 	for k := range quals {
 		switch k {
-		case "arch", "epoch", "rpmmod", "repository_id", "distro":
+		case "arch", "epoch", "rpmmod", "repository_id", "distro", "upstream":
 		default:
 			return nil, errors.Errorf("unexpected purl qualifier %q in %q", k, s)
 		}
 	}
 	out := &versionInfo{
-		name: instance.Name,
-		arch: quals["arch"],
+		name:    instance.Name,
+		arch:    quals["arch"],
+		srcName: normalizeUpstream(quals["upstream"]),
 	}
 	if instance.Version != "" {
 		epoch, ok := quals["epoch"]
@@ -437,18 +449,28 @@ func parseRPMPurl(trackingID, s string) (*versionInfo, error) {
 	if rpmmod := quals["rpmmod"]; rpmmod != "" {
 		parts := strings.Split(rpmmod, ":")
 		if len(parts) < 2 {
-			// The RHEL 10 flatpak SRPMs firefox-flatpak and thunderbird-flatpak
-			// in CVE-2026-7323 carry rpmmod="rhel10", a bare module name with no
-			// ":<stream>" suffix. It is the only 1-part rpmmod in the feed and
-			// cannot form a module:stream modularitylabel, so the entry is
-			// malformed and unusable for version detection — skip it rather than
-			// emit a bogus package. Scope the exception to this exact vetted
-			// (advisory, value) pair so any other colonless rpmmod, or
-			// rpmmod="rhel10" resurfacing in a different advisory, still fails
-			// loudly for a human to review.
+			// A rpmmod with no ":<stream>" suffix cannot form a module:stream
+			// modularitylabel, so the entry is malformed and unusable for
+			// version detection — skip it rather than emit a bogus package.
+			// Each exception is scoped to the exact vetted (advisory, value)
+			// pair so a colonless rpmmod nobody has looked at yet, or a known
+			// one resurfacing in a different advisory, still fails loudly for
+			// a human to review.
 			switch {
+			// The RHEL 10 flatpak SRPMs firefox-flatpak and thunderbird-flatpak.
 			case trackingID == "CVE-2026-7323" && rpmmod == "rhel10":
-				slog.Warn("skipping CVE-2026-7323 flatpak SRPM with bare-module rpmmod", slog.String("purl", s))
+				slog.Warn("skipping flatpak SRPM with bare-module rpmmod", slog.String("vulnerability_id", trackingID), slog.String("rpmmod", rpmmod), slog.String("purl", s))
+				return nil, nil
+			// The Satellite 6.16 candlepin and openvox-server SRPMs, whose
+			// module slot holds the el<N> build target of the Satellite build
+			// instead of a module name — Satellite 6.17 and later ship the same
+			// packages with no rpmmod at all. Skipping loses nothing: the only
+			// product_name these relate to is Satellite 6.16, whose CPE has no
+			// RHEL major, so walkProductTree drops the relationship either way.
+			// Matches the pairs pkg/extract/redhat/vex/v1 vets for the same
+			// SRPMs in the SDEngine feed (#948).
+			case (trackingID == "CVE-2026-10051" || trackingID == "CVE-2026-68494") && (rpmmod == "el8" || rpmmod == "el9"):
+				slog.Warn("skipping non-modular Satellite SRPM whose rpmmod is an el<N> build-target prefix", slog.String("vulnerability_id", trackingID), slog.String("rpmmod", rpmmod), slog.String("purl", s))
 				return nil, nil
 			default:
 				return nil, errors.Errorf("unexpected rpmmod format. expected: %q, actual: %q", "<module>:<stream>[:<version>:<context>]", rpmmod)
@@ -457,6 +479,29 @@ func parseRPMPurl(trackingID, s string) (*versionInfo, error) {
 		out.modularitylabel = fmt.Sprintf("%s:%s", parts[0], parts[1])
 	}
 	return out, nil
+}
+
+// normalizeUpstream converts the "upstream" purl qualifier — the source package
+// a binary RPM was built from — into the shape this extractor already uses for
+// package names.
+//
+// Most values are a bare source package name ("kernel-alt"). Modular and
+// flatpak sources carry the grouping the binary product_id is prefixed with
+// ("pki-core:10.6/pki-core", "libreoffice:flatpak/libreoffice"), which is the
+// same module:stream this extractor renders as "<modularitylabel>::<name>" on
+// the package name itself, so render it the same way here. Red Hat also emits
+// a build-target prefix for some Satellite SRPMs ("el8/candlepin"); it is not
+// a module, but those products carry no RHEL major and are dropped before they
+// reach the output, so they need no separate rule.
+func normalizeUpstream(upstream string) string {
+	if upstream == "" {
+		return ""
+	}
+	prefix, name, found := strings.Cut(upstream, "/")
+	if !found {
+		return upstream
+	}
+	return fmt.Sprintf("%s::%s", prefix, name)
 }
 
 // parseProductNameCPE builds a nameInfo from a CSAF product_name CPE. Returns
@@ -727,6 +772,7 @@ type product2 struct {
 	name            string
 	version         string
 	modularitylabel string
+	srcName         string
 	cpe             string
 	repositories    []string
 	archs           []string
@@ -786,6 +832,7 @@ func buildDataComponents(doc v2.Document, baseVulnerability vulnerabilityContent
 							name:            p.name,
 							version:         p.version,
 							modularitylabel: p.modularitylabel,
+							srcName:         p.srcName,
 							cpe:             p.cpe,
 							archs:           []string{p.arch},
 							repositories:    p.repositories,
@@ -795,13 +842,14 @@ func buildDataComponents(doc v2.Document, baseVulnerability vulnerabilityContent
 			} else {
 				pmax.maxPid = v2.ProductID(slices.Max([]string{string(pmax.maxPid), string(pid)}))
 				switch i := slices.IndexFunc(pmax.p2sm[p.cpe], func(p2 product2) bool {
-					return p2.name == p.name && p2.version == p.version && p2.modularitylabel == p.modularitylabel
+					return p2.name == p.name && p2.version == p.version && p2.modularitylabel == p.modularitylabel && p2.srcName == p.srcName
 				}); i {
 				case -1:
 					pmax.p2sm[p.cpe] = append(pmax.p2sm[p.cpe], product2{
 						name:            p.name,
 						version:         p.version,
 						modularitylabel: p.modularitylabel,
+						srcName:         p.srcName,
 						cpe:             p.cpe,
 						archs:           []string{p.arch},
 						repositories:    p.repositories,
@@ -928,6 +976,7 @@ func buildVersionCriterion(p2 product2, assessment assessment) ([]vcTypes.Criter
 							}
 							return p2.name
 						}(),
+						SrcName: p2.srcName,
 					},
 				},
 				Affected: &affectedTypes.Affected{
@@ -968,6 +1017,7 @@ func buildVersionCriterion(p2 product2, assessment assessment) ([]vcTypes.Criter
 							}
 							return p2.name
 						}(),
+						SrcName: p2.srcName,
 					},
 				},
 			})
