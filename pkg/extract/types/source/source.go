@@ -90,6 +90,7 @@ const (
 	MicrosoftDeployment        SourceID = "microsoft-deployment"
 	MicrosoftMSUC              SourceID = "microsoft-msuc"
 	MicrosoftProduct           SourceID = "microsoft-product"
+	MicrosoftReleaseInfo       SourceID = "microsoft-releaseinfo"
 	MicrosoftServicing         SourceID = "microsoft-servicing"
 	MicrosoftVulnerability     SourceID = "microsoft-vulnerability"
 	MicrosoftWSUSSCN2          SourceID = "microsoft-wsusscn2"

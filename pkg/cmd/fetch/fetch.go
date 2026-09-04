@@ -91,6 +91,7 @@ import (
 	microsoftDeployment "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/deployment"
 	microsoftMSUC "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/msuc"
 	microsoftProduct "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/product"
+	microsoftReleaseInfo "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/releaseinfo"
 	microsoftServicing "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/servicing"
 	microsoftVEX "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/vex"
 	microsoftVulnerability "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/vulnerability"
@@ -256,7 +257,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdLinuxOSV(),
 		newCmdMageiaOSV(),
 		newCmdMavenGHSA(), newCmdMavenGLSA(), newCmdMavenOSV(),
-		newCmdMicrosoftBulletin(), newCmdMicrosoftCVRF(), newCmdMicrosoftCSAF(), newCmdMicrosoftMSUC(), newCmdMicrosoftServicing(), newCmdMicrosoftAdvisory(), newCmdMicrosoftVulnerability(), newCmdMicrosoftProduct(), newCmdMicrosoftDeployment(), newCmdMicrosoftVEX(), newCmdMicrosoftWSUSSCN2(), newCmdMicrosoftAzureOVAL(),
+		newCmdMicrosoftBulletin(), newCmdMicrosoftCVRF(), newCmdMicrosoftCSAF(), newCmdMicrosoftMSUC(), newCmdMicrosoftReleaseInfo(), newCmdMicrosoftServicing(), newCmdMicrosoftAdvisory(), newCmdMicrosoftVulnerability(), newCmdMicrosoftProduct(), newCmdMicrosoftDeployment(), newCmdMicrosoftVEX(), newCmdMicrosoftWSUSSCN2(), newCmdMicrosoftAzureOVAL(),
 		newCmdMinimOSOSV(), newCmdMinimOSSecDB(),
 		newCmdMitreATTACK(), newCmdMitreCAPEC(), newCmdMitreCVRF(), newCmdMitreCWE(), newCmdMitreEMB3D(), newCmdMitreV4(), newCmdMitreV5(),
 		newCmdMSF(),
@@ -2660,6 +2661,58 @@ func newCmdMicrosoftMSUC() *cobra.Command {
 		RunE: func(_ *cobra.Command, args []string) error {
 			if err := microsoftMSUC.Fetch(args, microsoftMSUC.WithDir(options.dir), microsoftMSUC.WithRetry(options.retry), microsoftMSUC.WithConcurrency(options.concurrency), microsoftMSUC.WithWait(options.wait)); err != nil {
 				return errors.Wrap(err, "failed to fetch microsoft msuc")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrent http requests")
+	cmd.Flags().DurationVarP(&options.wait, "wait", "", options.wait, "wait duration")
+
+	return cmd
+}
+
+func newCmdMicrosoftReleaseInfo() *cobra.Command {
+	options := &struct {
+		base
+		concurrency int
+		wait        time.Duration
+	}{
+		base: base{
+			dir:   filepath.Join(util.CacheDir(), "fetch", "microsoft", "releaseinfo"),
+			retry: 3,
+		},
+		concurrency: 1,
+		wait:        1 * time.Second,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "microsoft-releaseinfo",
+		Short: "Fetch Microsoft Windows Release Information data source",
+		Long: heredoc.Doc(`
+			Fetch the Windows 10, Windows 11 and Windows Server release-information
+			pages as HTML into <dir>/origin, and the tables they carry into <dir>/raw.
+
+			Each page lists, per release, every monthly update it has shipped: the OS
+			build, the availability date, the release-cadence letter and the KB. The
+			Update Catalog drops an update outright once Microsoft expires it and
+			wsusscn2.cab drops it too; these tables keep it.
+
+			The tables are stored as served -- the label each sits under, its column
+			names and its cells, with the link every cell carries -- and are not read
+			apart here. Which column means what varies between a release history and a
+			hotpatch calendar, and the set is not fixed, so reading them belongs in
+			extract where a change is handled by rerunning against origin/.
+		`),
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch microsoft-releaseinfo
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := microsoftReleaseInfo.Fetch(microsoftReleaseInfo.WithDir(options.dir), microsoftReleaseInfo.WithRetry(options.retry), microsoftReleaseInfo.WithConcurrency(options.concurrency), microsoftReleaseInfo.WithWait(options.wait)); err != nil {
+				return errors.Wrap(err, "failed to fetch microsoft releaseinfo")
 			}
 			return nil
 		},
