@@ -107,6 +107,7 @@ import (
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/msf"
 	ncscCSAF "github.com/MaineK00n/vuls-data-update/pkg/fetch/ncsc/csaf"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/netbsd"
+	nginxSecurityAdvisories "github.com/MaineK00n/vuls-data-update/pkg/fetch/nginx/security-advisories"
 	nozominetworksCSAF "github.com/MaineK00n/vuls-data-update/pkg/fetch/nozominetworks/csaf"
 	npmGHSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/npm/ghsa"
 	npmGLSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/npm/glsa"
@@ -262,6 +263,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdMSF(),
 		newCmdNCSCCSAF(),
 		newCmdNetBSD(),
+		newCmdNginxSecurityAdvisories(),
 		newCmdNozomiNetworksCSAF(),
 		newCmdNpmGHSA(), newCmdNpmGLSA(), newCmdNpmOSV(), newCmdNpmDB(),
 		newCmdNucleiAPI(), newCmdNucleiRepository(),
@@ -3266,6 +3268,33 @@ func newCmdNetBSD() *cobra.Command {
 		RunE: func(_ *cobra.Command, _ []string) error {
 			if err := netbsd.Fetch(netbsd.WithDir(options.dir), netbsd.WithRetry(options.retry)); err != nil {
 				return errors.Wrap(err, "failed to fetch netbsd")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+
+	return cmd
+}
+
+func newCmdNginxSecurityAdvisories() *cobra.Command {
+	options := &base{
+		dir:   filepath.Join(util.CacheDir(), "fetch", "nginx", "security-advisories"),
+		retry: 3,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "nginx-security-advisories",
+		Short: "Fetch nginx Security Advisories data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch nginx-security-advisories
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := nginxSecurityAdvisories.Fetch(nginxSecurityAdvisories.WithDir(options.dir), nginxSecurityAdvisories.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch nginx security advisories")
 			}
 			return nil
 		},
