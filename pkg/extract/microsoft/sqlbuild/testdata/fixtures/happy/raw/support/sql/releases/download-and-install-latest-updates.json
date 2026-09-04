@@ -1,0 +1,679 @@
+{
+	"path": "support/sql/releases/download-and-install-latest-updates.md",
+	"tables": [
+		{
+			"heading": "Latest updates for Microsoft SQL Server",
+			"header": [
+				"Version",
+				"Latest service pack",
+				"Latest GDR",
+				"Latest cumulative update"
+			],
+			"rows": [
+				[
+					{
+						"text": "SQL Server 2025"
+					},
+					{
+						"text": "None"
+					},
+					{
+						"text": "GDR",
+						"href": "https://support.microsoft.com/help/5102333"
+					},
+					{
+						"text": "CU7 for 2025",
+						"href": "https://support.microsoft.com/help/5096981"
+					}
+				]
+			]
+		},
+		{
+			"heading": "SQL Server 2025",
+			"header": [
+				"Build number or version",
+				"Service pack",
+				"Update",
+				"Knowledge Base number",
+				"Release date"
+			],
+			"rows": [
+				[
+					{
+						"text": "17.0.4065.4"
+					},
+					{
+						"text": "None"
+					},
+					{
+						"text": "CU7"
+					},
+					{
+						"text": "KB5096981",
+						"href": "https://support.microsoft.com/help/5096981"
+					},
+					{
+						"text": "July 16, 2026"
+					}
+				],
+				[
+					{
+						"text": "17.0.4055.5"
+					},
+					{
+						"text": "None"
+					},
+					{
+						"text": "CU6"
+					},
+					{
+						"text": "KB5093421",
+						"href": "sqlserver-2025/cumulativeupdate6.md"
+					},
+					{
+						"text": "June 17, 2026"
+					}
+				],
+				[
+					{
+						"text": "17.0.1000.7"
+					},
+					{
+						"text": "None"
+					},
+					{
+						"text": "RTM/GA"
+					},
+					{
+						"text": "NA"
+					},
+					{
+						"text": "November 05, 2025"
+					}
+				]
+			]
+		},
+		{
+			"heading": "SQL Server 2019",
+			"header": [
+				"Build number or version",
+				"Service pack",
+				"Update",
+				"Knowledge Base number",
+				"Release date"
+			],
+			"rows": [
+				[
+					{
+						"text": "15.0.4480.2"
+					},
+					{
+						"text": "None"
+					},
+					{
+						"text": "CU32 + GDR"
+					},
+					{
+						"text": "KB5102335",
+						"href": "https://support.microsoft.com/help/5102335"
+					},
+					{
+						"text": "July 14, 2026"
+					}
+				],
+				[
+					{
+						"text": "15.0.2180.2"
+					},
+					{
+						"text": "None"
+					},
+					{
+						"text": "GDR"
+					},
+					{
+						"text": "KB5102336",
+						"href": "https://support.microsoft.com/help/5102336"
+					},
+					{
+						"text": "July 14, 2026"
+					}
+				],
+				[
+					{
+						"text": "15.0.4470.1"
+					},
+					{
+						"text": "None"
+					},
+					{
+						"text": "CU32 + GDR"
+					},
+					{
+						"text": "KB5090407",
+						"href": "https://support.microsoft.com/help/5090407"
+					},
+					{
+						"text": "May 12, 2026"
+					}
+				],
+				[
+					{
+						"text": "15.0.2170.1"
+					},
+					{
+						"text": "None"
+					},
+					{
+						"text": "GDR"
+					},
+					{
+						"text": "KB5090408",
+						"href": "https://support.microsoft.com/help/5090408"
+					},
+					{
+						"text": "May 12, 2026"
+					}
+				],
+				[
+					{
+						"text": "15.0.2000.5"
+					},
+					{
+						"text": "None"
+					},
+					{
+						"text": "RTM"
+					},
+					{
+						"text": "NA"
+					},
+					{
+						"text": "November 04, 2019"
+					}
+				]
+			]
+		},
+		{
+			"heading": "SQL Server 2016",
+			"header": [
+				"Build number or version",
+				"Service pack",
+				"Update",
+				"Knowledge Base number",
+				"Release date"
+			],
+			"rows": [
+				[
+					{
+						"text": "13.0.7085.1"
+					},
+					{
+						"text": "None"
+					},
+					{
+						"text": "Azure Connect Pack + GDR"
+					},
+					{
+						"text": "KB5089270",
+						"href": "https://support.microsoft.com/help/5089270"
+					},
+					{
+						"text": "May 12, 2026"
+					}
+				],
+				[
+					{
+						"text": "13.0.7024.30"
+					},
+					{
+						"text": "SP3"
+					},
+					{
+						"text": "Azure Connect pack + GDR"
+					},
+					{
+						"text": "KB5021128",
+						"href": "https://support.microsoft.com/help/5021128"
+					},
+					{
+						"text": "February 14, 2023"
+					}
+				],
+				[
+					{
+						"text": "13.0.7016.1"
+					},
+					{
+						"text": "SP3"
+					},
+					{
+						"text": "Azure Connect pack + GDR"
+					},
+					{
+						"text": "KB5015371",
+						"href": "https://support.microsoft.com/help/5015371"
+					},
+					{
+						"text": "June 14, 2022"
+					}
+				],
+				[
+					{
+						"text": "13.0.7000.253"
+					},
+					{
+						"text": "SP3"
+					},
+					{
+						"text": "Azure Connect pack"
+					},
+					{
+						"text": "KB5014242",
+						"href": "sqlserver-2016/servicepack3-azureconnect.md"
+					},
+					{
+						"text": "May 19, 2022"
+					}
+				],
+				[
+					{
+						"text": "13.0.5153.0"
+					},
+					{
+						"text": "SP2"
+					},
+					{
+						"text": "CU2"
+					},
+					{
+						"text": "KB4340355",
+						"href": "sqlserver-2016/servicepack2-cumulativeupdate2.md"
+					},
+					{
+						"text": "July 16 2018"
+					}
+				],
+				[
+					{
+						"text": "13.0.4411.0"
+					},
+					{
+						"text": "SP1"
+					},
+					{
+						"text": "CU1"
+					},
+					{
+						"text": "KB3208177",
+						"href": "sqlserver-2016/servicepack1-cumulativeupdate1.md"
+					},
+					{
+						"text": "January 17, 2017"
+					}
+				],
+				[
+					{
+						"text": "13.0.4206.0"
+					},
+					{
+						"text": "SP1"
+					},
+					{
+						"text": "GDR"
+					},
+					{
+						"text": "KB4019089",
+						"href": "https://support.microsoft.com/help/4019089"
+					},
+					{
+						"text": "August 08, 2017"
+					}
+				],
+				[
+					{
+						"text": "13.0.4001.0"
+					},
+					{
+						"text": "SP1"
+					},
+					{
+						"text": "RTW/PCU1"
+					},
+					{
+						"text": "KB3182545",
+						"href": "sqlserver-2016/servicepack1.md"
+					},
+					{
+						"text": "November 16, 2016"
+					}
+				],
+				[
+					{
+						"text": "13.0.4202.2"
+					},
+					{
+						"text": "RTM"
+					},
+					{
+						"text": "GDR"
+					},
+					{
+						"text": "KB3210089",
+						"href": "https://support.microsoft.com/help/3210089"
+					},
+					{
+						"text": "December 16, 2016"
+					}
+				],
+				[
+					{
+						"text": "13.0.1745.2"
+					},
+					{
+						"text": "RTM"
+					},
+					{
+						"text": "GDR"
+					},
+					{
+						"text": "KB4058560",
+						"href": "https://support.microsoft.com/help/4058560"
+					},
+					{
+						"text": "January 06, 2018"
+					}
+				],
+				[
+					{
+						"text": "13.0.1601.5"
+					},
+					{
+						"text": "None"
+					},
+					{
+						"text": "RTM"
+					},
+					{
+						"text": "NA"
+					},
+					{
+						"text": "June 01, 2016"
+					}
+				]
+			]
+		},
+		{
+			"heading": "SQL Server 2014",
+			"header": [
+				"Build number or version",
+				"Service pack",
+				"Update",
+				"Knowledge Base number",
+				"Release date"
+			],
+			"rows": [
+				[
+					{
+						"text": "12.0.2370.0"
+					},
+					{
+						"text": "RTM"
+					},
+					{
+						"text": "CU2"
+					},
+					{
+						"text": "KB2967546",
+						"href": "https://support.microsoft.com/help/2967546"
+					},
+					{
+						"text": "Friday, June 27, 2014"
+					}
+				],
+				[
+					{
+						"text": "12.0.2342.0"
+					},
+					{
+						"text": "RTM"
+					},
+					{
+						"text": "CU1"
+					},
+					{
+						"text": "KB2931693",
+						"href": "https://support.microsoft.com/help/2931693"
+					},
+					{
+						"text": "April 21, 2014"
+					}
+				]
+			]
+		},
+		{
+			"heading": "SQL Server 2012",
+			"header": [
+				"Build number or version",
+				"Service pack",
+				"Update",
+				"Knowledge Base number",
+				"Release date"
+			],
+			"rows": [
+				[
+					{
+						"text": "11.0.6523.0"
+					},
+					{
+						"text": "SP3"
+					},
+					{
+						"text": "CU2"
+					},
+					{
+						"text": "KB3137746",
+						"href": "https://support.microsoft.com/help/3137746"
+					},
+					{
+						"text": "March 21,2016"
+					}
+				],
+				[
+					{
+						"text": "11.0.6518.0"
+					},
+					{
+						"text": "SP3"
+					},
+					{
+						"text": "CU1"
+					},
+					{
+						"text": "KB3123299",
+						"href": "https://support.microsoft.com/help/3123299"
+					},
+					{
+						"text": "January 19, 2016"
+					}
+				]
+			]
+		},
+		{
+			"heading": "SQL Server 2008",
+			"header": [
+				"Build number or version",
+				"Service pack",
+				"Update",
+				"Knowledge Base number",
+				"Release date"
+			],
+			"rows": [
+				[
+					{
+						"text": "10.00.5867.0"
+					},
+					{
+						"text": "(on-demand update package)"
+					},
+					{},
+					{
+						"text": "KB2877204",
+						"href": "https://support.microsoft.com/help/2877204"
+					},
+					{
+						"text": "October 16, 2013"
+					}
+				],
+				[
+					{
+						"text": "10.00.2710.0"
+					},
+					{
+						"text": "SP1"
+					},
+					{
+						"text": "CU2"
+					},
+					{
+						"text": "KB970315",
+						"href": "https://support.microsoft.com/help/970315"
+					},
+					{
+						"text": "April 16, 2009"
+					}
+				],
+				[
+					{
+						"text": "10.00.2531.0"
+					},
+					{
+						"text": "SP1"
+					},
+					{
+						"text": "RTW / PCU 1"
+					},
+					{},
+					{
+						"text": "April 07, 2009"
+					}
+				],
+				[
+					{
+						"text": "10.00.1835.0"
+					},
+					{
+						"text": "RTM"
+					},
+					{
+						"text": "CU9"
+					},
+					{
+						"text": "KB2083921",
+						"href": "https://support.microsoft.com/help/2083921"
+					},
+					{
+						"text": "March 15, 2010"
+					}
+				],
+				[
+					{
+						"text": "10.00.1798.0"
+					},
+					{
+						"text": "RTM"
+					},
+					{
+						"text": "CU5"
+					},
+					{
+						"text": "KB975977",
+						"href": "https://support.microsoft.com/help/975977"
+					},
+					{
+						"text": "July 20, 2009"
+					}
+				]
+			]
+		},
+		{
+			"heading": "SQL Server 2005",
+			"header": [
+				"Build number or version",
+				"Service pack",
+				"Update",
+				"Knowledge Base number",
+				"Release date"
+			],
+			"rows": [
+				[
+					{
+						"text": "9.00.5324"
+					},
+					{
+						"text": "SP4"
+					},
+					{
+						"text": "MS12-070: QFE Security update"
+					},
+					{
+						"text": "KB2716427",
+						"href": "https://support.microsoft.com/help/2716427"
+					},
+					{
+						"text": "October 09, 2012"
+					}
+				],
+				[
+					{
+						"text": "9.00.5292"
+					},
+					{
+						"text": "SP4"
+					},
+					{
+						"text": "MS11-049: QFE Security update"
+					},
+					{
+						"text": "KB2494123",
+						"href": "https://support.microsoft.com/help/2494123"
+					},
+					{
+						"text": "June 14, 2011"
+					}
+				],
+				[
+					{
+						"text": "9.00.3042"
+					},
+					{
+						"text": "SP2"
+					},
+					{},
+					{
+						"text": "KB937137",
+						"href": "https://support.microsoft.com/help/937137"
+					},
+					{}
+				]
+			]
+		},
+		{
+			"heading": "SQL Server 2000",
+			"header": [
+				"Build number or version",
+				"Version description, (KB number for that update), release date"
+			],
+			"rows": [
+				[
+					{
+						"text": "8.00.2283"
+					},
+					{
+						"text": "Post-SP4 hotfix for MS09-004 (971524)"
+					}
+				]
+			]
+		}
+	]
+}

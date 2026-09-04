@@ -92,6 +92,7 @@ import (
 	microsoftMSUC "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/msuc"
 	microsoftProduct "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/product"
 	microsoftServicing "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/servicing"
+	microsoftSQLBuild "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/sqlbuild"
 	microsoftVEX "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/vex"
 	microsoftVulnerability "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/vulnerability"
 	microsoftWSUSSCN2 "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/wsusscn2"
@@ -256,7 +257,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdLinuxOSV(),
 		newCmdMageiaOSV(),
 		newCmdMavenGHSA(), newCmdMavenGLSA(), newCmdMavenOSV(),
-		newCmdMicrosoftBulletin(), newCmdMicrosoftCVRF(), newCmdMicrosoftCSAF(), newCmdMicrosoftMSUC(), newCmdMicrosoftServicing(), newCmdMicrosoftAdvisory(), newCmdMicrosoftVulnerability(), newCmdMicrosoftProduct(), newCmdMicrosoftDeployment(), newCmdMicrosoftVEX(), newCmdMicrosoftWSUSSCN2(), newCmdMicrosoftAzureOVAL(),
+		newCmdMicrosoftBulletin(), newCmdMicrosoftCVRF(), newCmdMicrosoftCSAF(), newCmdMicrosoftMSUC(), newCmdMicrosoftServicing(), newCmdMicrosoftSQLBuild(), newCmdMicrosoftAdvisory(), newCmdMicrosoftVulnerability(), newCmdMicrosoftProduct(), newCmdMicrosoftDeployment(), newCmdMicrosoftVEX(), newCmdMicrosoftWSUSSCN2(), newCmdMicrosoftAzureOVAL(),
 		newCmdMinimOSOSV(), newCmdMinimOSSecDB(),
 		newCmdMitreATTACK(), newCmdMitreCAPEC(), newCmdMitreCVRF(), newCmdMitreCWE(), newCmdMitreEMB3D(), newCmdMitreV4(), newCmdMitreV5(),
 		newCmdMSF(),
@@ -2668,6 +2669,56 @@ func newCmdMicrosoftMSUC() *cobra.Command {
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
 	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrent http requests")
+	cmd.Flags().DurationVarP(&options.wait, "wait", "", options.wait, "wait duration")
+
+	return cmd
+}
+
+func newCmdMicrosoftSQLBuild() *cobra.Command {
+	options := &struct {
+		base
+		wait time.Duration
+	}{
+		base: base{
+			dir:   filepath.Join(util.CacheDir(), "fetch", "microsoft", "sqlbuild"),
+			retry: 3,
+		},
+		wait: 1 * time.Second,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "microsoft-sqlbuild",
+		Short: "Fetch Microsoft SQL Server Build Versions data source",
+		Long: heredoc.Doc(`
+			Fetch the SQL Server build-versions article as Markdown into <dir>/origin,
+			and the tables it carries into <dir>/raw.
+
+			The article lists, per product version, every build SQL Server has shipped:
+			the build number, the service pack, the kind of update and the KB. It runs
+			from SQL Server 2005 to the current release, and the Update Catalog no
+			longer serves most of what it names.
+
+			It is fetched from MicrosoftDocs/SupportArticles-docs rather than from the
+			rendered page, because the repository is public and keeps the article's
+			history, so a row Microsoft removes stays recoverable afterwards.
+
+			The tables are stored as authored and are not read apart here; that belongs
+			in extract, where a change is handled by rerunning against origin/.
+		`),
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch microsoft-sqlbuild
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := microsoftSQLBuild.Fetch(microsoftSQLBuild.WithDir(options.dir), microsoftSQLBuild.WithRetry(options.retry), microsoftSQLBuild.WithWait(options.wait)); err != nil {
+				return errors.Wrap(err, "failed to fetch microsoft sqlbuild")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
 	cmd.Flags().DurationVarP(&options.wait, "wait", "", options.wait, "wait duration")
 
 	return cmd
