@@ -1,12 +1,14 @@
 package data
 
 import (
+	"cmp"
 	"encoding/json/v2"
 	"fmt"
 	"io"
 	"log/slog"
 	"net/http"
 	"path/filepath"
+	"slices"
 
 	"github.com/pkg/errors"
 
@@ -99,6 +101,11 @@ func Fetch(opts ...Option) error {
 				FixedVersion: v.FixedVersion,
 			})
 		}
+		// The advisories arrive as a map, so the order they are ranged in is
+		// not stable. Sort before writing: without it the same input produces a
+		// different file on every run.
+		slices.SortFunc(p.Vulnerabilities, func(a, b Vulnerability) int { return cmp.Compare(a.ID, b.ID) })
+
 		if err := util.Write(filepath.Join(options.dir, p.Name[:1], fmt.Sprintf("%s.json", p.Name)), p); err != nil {
 			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, p.Name[:1], fmt.Sprintf("%s.json", p.Name)))
 		}
