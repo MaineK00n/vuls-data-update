@@ -42,6 +42,7 @@ import (
 
 	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment/ecosystem"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/internal/enum"
+	ipsVersion "github.com/MaineK00n/vuls-data-update/pkg/extract/types/internal/version/ips"
 )
 
 // RangeType selects the version comparator used by CompareVersions (the
@@ -89,6 +90,7 @@ const (
 	RangeTypeMicrosoftVisualStudio                 RangeType = "microsoft-visualstudio"
 	RangeTypeMicrosoftVSCode                       RangeType = "microsoft-vscode"
 	RangeTypeMicrosoftWindows                      RangeType = "microsoft-windows"
+	RangeTypeSolarisIPS                            RangeType = "solaris-ips"
 
 	RangeTypeUnknown RangeType = "unknown"
 )
@@ -134,6 +136,7 @@ func RangeTypes() []RangeType {
 		RangeTypeMicrosoftVisualStudio,
 		RangeTypeMicrosoftVSCode,
 		RangeTypeMicrosoftWindows,
+		RangeTypeSolarisIPS,
 		RangeTypeUnknown,
 	}
 }
@@ -579,6 +582,18 @@ func (t RangeType) CompareVersions(family ecosystemTypes.Ecosystem, v1, v2 strin
 			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
 		}
 		vb, err := microsoftwindows.NewVersion(v2)
+		if err != nil {
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
+		}
+		return va.Compare(vb), nil
+	case RangeTypeSolarisIPS:
+		// IPS (pkg(7)) versions of Oracle Solaris 11 and the illumos
+		// distributions; see internal/version/ips for the order.
+		va, err := ipsVersion.NewVersion(v1)
+		if err != nil {
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
+		}
+		vb, err := ipsVersion.NewVersion(v2)
 		if err != nil {
 			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
 		}
