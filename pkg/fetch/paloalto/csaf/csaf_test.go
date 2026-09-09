@@ -12,9 +12,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/google/go-cmp/cmp"
-
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/paloalto/csaf"
+	utiltest "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/test"
 )
 
 func TestFetch(t *testing.T) {
@@ -24,6 +23,7 @@ func TestFetch(t *testing.T) {
 	tests := []struct {
 		name     string
 		args     args
+		golden   string
 		hasError bool
 	}{
 		{
@@ -34,6 +34,7 @@ func TestFetch(t *testing.T) {
 					"PAN-SA-2025-0007",
 				},
 			},
+			golden: filepath.Join("testdata", "golden", "happy"),
 		},
 		{
 			name: "include non-existent",
@@ -43,6 +44,7 @@ func TestFetch(t *testing.T) {
 					"PAN-SA-0000-0000",
 				},
 			},
+			golden: filepath.Join("testdata", "golden", "include-non-existent"),
 		},
 	}
 	for _, tt := range tests {
@@ -75,35 +77,11 @@ func TestFetch(t *testing.T) {
 				t.Error("unexpected error:", err)
 			case err == nil && tt.hasError:
 				t.Error("expected error has not occurred")
+			case err != nil && tt.hasError:
+				// error was expected and occurred, test passed
+				return
 			default:
-				if err := filepath.WalkDir(dir, func(path string, d fs.DirEntry, err error) error {
-					if err != nil {
-						return err
-					}
-
-					if d.IsDir() {
-						return nil
-					}
-
-					dir, file := filepath.Split(strings.TrimPrefix(path, dir))
-					want, err := os.ReadFile(filepath.Join("testdata", "golden", dir, file))
-					if err != nil {
-						return err
-					}
-
-					got, err := os.ReadFile(path)
-					if err != nil {
-						return err
-					}
-
-					if diff := cmp.Diff(want, got); diff != "" {
-						t.Errorf("Fetch(). (-expected +got):\n%s", diff)
-					}
-
-					return nil
-				}); err != nil {
-					t.Error("walk error:", err)
-				}
+				utiltest.Diff(t, tt.golden, dir)
 			}
 		})
 	}

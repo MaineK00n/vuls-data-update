@@ -1,9 +1,7 @@
 package securityreleases_test
 
 import (
-	"bytes"
 	"fmt"
-	"io/fs"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -12,9 +10,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/google/go-cmp/cmp"
-
 	securityreleases "github.com/MaineK00n/vuls-data-update/pkg/fetch/apple/security-releases"
+	utiltest "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/test"
 )
 
 func TestFetch(t *testing.T) {
@@ -81,40 +78,10 @@ func TestFetch(t *testing.T) {
 			case err == nil && tt.hasError:
 				t.Error("expected error has not occurred")
 			case err != nil && tt.hasError:
+				// error was expected and occurred, test passed
+				return
 			default:
-				if err := filepath.WalkDir(dir, func(p string, d fs.DirEntry, err error) error {
-					if err != nil {
-						return err
-					}
-
-					if d.IsDir() {
-						return nil
-					}
-
-					rel, err := filepath.Rel(dir, p)
-					if err != nil {
-						return err
-					}
-
-					want, err := os.ReadFile(filepath.Join("testdata", "golden", tt.name, rel))
-					if err != nil {
-						return err
-					}
-
-					got, err := os.ReadFile(p)
-					if err != nil {
-						return err
-					}
-					got = bytes.ReplaceAll(got, []byte(ts.URL), []byte("https://support.apple.com"))
-
-					if diff := cmp.Diff(string(want), string(got)); diff != "" {
-						t.Errorf("Fetch(). (-expected +got):\n%s", diff)
-					}
-
-					return nil
-				}); err != nil {
-					t.Error("walk error:", err)
-				}
+				utiltest.Diff(t, filepath.Join("testdata", "golden", tt.name), dir, utiltest.WithReplace(ts.URL, "https://support.apple.com"))
 			}
 		})
 	}

@@ -2,12 +2,14 @@ package test
 
 import (
 	"encoding/json/v2"
+	"errors"
 	"fmt"
 	"io"
 	"io/fs"
 	"net/url"
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 	"testing"
 
@@ -25,7 +27,16 @@ import (
 
 func Diff(t *testing.T, expectedAbsPath, gotAbsPath string) {
 	for _, name := range []string{"datasource.json", "README.md", "data", "cpe", "cwe", "capec", "attack", "microsoftkb", "eol"} {
-		if _, err := os.Stat(filepath.Join(gotAbsPath, name)); err != nil {
+		_, goterr := os.Stat(filepath.Join(gotAbsPath, name))
+		_, wanterr := os.Stat(filepath.Join(expectedAbsPath, name))
+		if goterr != nil && wanterr != nil {
+			continue
+		}
+
+		// Which files exist is part of the assertion: comparing only the files
+		// the extractor wrote passes a run that wrote none of them.
+		if diff := cmp.Diff(paths(t, filepath.Join(expectedAbsPath, name), false), paths(t, filepath.Join(gotAbsPath, name), true)); diff != "" {
+			t.Errorf("Extract(). %s (-expected +got):\n%s", name, diff)
 			continue
 		}
 
@@ -160,6 +171,48 @@ func Diff(t *testing.T, expectedAbsPath, gotAbsPath string) {
 			t.Error("walk error:", err)
 		}
 	}
+}
+
+// paths lists the files under root as slash-separated paths relative to it, so
+// that a golden tree and an output tree can be compared by which files they
+// hold. Golden file names are URL-escaped and the extractors' output is not, so
+// the got side is escaped to match; a root that does not exist reads as empty.
+func paths(t *testing.T, root string, escape bool) []string {
+	t.Helper()
+
+	var ps []string
+	if _, err := os.Stat(root); errors.Is(err, fs.ErrNotExist) {
+		return ps
+	}
+
+	if err := filepath.WalkDir(root, func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+
+		if d.IsDir() {
+			return nil
+		}
+
+		rel, err := filepath.Rel(root, path)
+		if err != nil {
+			return err
+		}
+
+		if escape {
+			dir, file := filepath.Split(rel)
+			rel = filepath.Join(dir, url.QueryEscape(file))
+		}
+		ps = append(ps, filepath.ToSlash(rel))
+
+		return nil
+	}); err != nil {
+		t.Fatalf("walk %s: %s", root, err)
+	}
+
+	slices.Sort(ps)
+
+	return ps
 }
 
 // QueryUnescapeFileTree copies a file tree at fixturePath to a temp directory by query-unescaping file names.
