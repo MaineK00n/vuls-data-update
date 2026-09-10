@@ -140,6 +140,24 @@ func TestPull(t *testing.T) {
 			golden: "testdata/golden/vuls-data-raw-test-restored.tar.zst",
 		},
 		{
+			// A fetch that writes nothing back leaves every file deleted, and
+			// the pull that would put them back has to survive that state.
+			name: "vuls-data-raw-test-emptied restore: true, native git",
+			args: args{
+				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test-emptied",
+				opts:       []pull.Option{pull.WithRestore(true), pull.WithUseNativeGit(true)},
+			},
+			golden: "testdata/golden/vuls-data-raw-test-emptied.tar.zst",
+		},
+		{
+			name: "vuls-data-raw-test-emptied restore: true, go-git",
+			args: args{
+				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test-emptied",
+				opts:       []pull.Option{pull.WithRestore(true), pull.WithUseNativeGit(false)},
+			},
+			golden: "testdata/golden/vuls-data-raw-test-emptied.tar.zst",
+		},
+		{
 			name: "vuls-data-raw-test checkout: main, restore: true, go-git",
 			args: args{
 				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test",
@@ -255,30 +273,40 @@ func setup(url string) error {
 		return errors.Wrapf(err, "create client for %s", url)
 	}
 
-	bs, err := os.ReadFile("testdata/fixtures/vuls-data-raw-test.tar.zst")
-	if err != nil {
-		return errors.Wrapf(err, "read %q", "testdata/fixtures/vuls-data-raw-test.tar.zst")
-	}
+	for _, f := range []struct {
+		fixture string
+		tags    []string
+	}{
+		{fixture: "vuls-data-raw-test", tags: []string{"vuls-data-raw-test", "vuls-data-raw-test-archive-1"}},
+		// A repository whose HEAD deletes every file, which is the state a
+		// fetch that wrote nothing back leaves behind.
+		{fixture: "vuls-data-raw-test-emptied", tags: []string{"vuls-data-raw-test-emptied"}},
+	} {
+		bs, err := os.ReadFile(filepath.Join("testdata", "fixtures", fmt.Sprintf("%s.tar.zst", f.fixture)))
+		if err != nil {
+			return errors.Wrapf(err, "read %q", filepath.Join("testdata", "fixtures", fmt.Sprintf("%s.tar.zst", f.fixture)))
+		}
 
-	layerDescriptor, err := oras.PushBytes(ctx, repo, "application/vnd.vulsio.vuls-data-db.dotgit.layer.v1.tar+zstd", []byte(bs))
-	if err != nil {
-		return errors.Wrap(err, "push dotgit layer")
-	}
-	if layerDescriptor.Annotations == nil {
-		layerDescriptor.Annotations = make(map[string]string)
-	}
-	if _, ok := layerDescriptor.Annotations[ocispec.AnnotationTitle]; !ok {
-		layerDescriptor.Annotations[ocispec.AnnotationTitle] = "vuls-data-raw-test.tar.zst"
-	}
+		layerDescriptor, err := oras.PushBytes(ctx, repo, "application/vnd.vulsio.vuls-data-db.dotgit.layer.v1.tar+zstd", []byte(bs))
+		if err != nil {
+			return errors.Wrap(err, "push dotgit layer")
+		}
+		if layerDescriptor.Annotations == nil {
+			layerDescriptor.Annotations = make(map[string]string)
+		}
+		if _, ok := layerDescriptor.Annotations[ocispec.AnnotationTitle]; !ok {
+			layerDescriptor.Annotations[ocispec.AnnotationTitle] = fmt.Sprintf("%s.tar.zst", f.fixture)
+		}
 
-	desc, err := oras.PackManifest(ctx, repo, oras.PackManifestVersion1_1, "application/vnd.vulsio.vuls-data-db.dotgit+type", oras.PackManifestOptions{Layers: []ocispec.Descriptor{layerDescriptor}})
-	if err != nil {
-		return errors.Wrap(err, "pack manifest")
-	}
+		desc, err := oras.PackManifest(ctx, repo, oras.PackManifestVersion1_1, "application/vnd.vulsio.vuls-data-db.dotgit+type", oras.PackManifestOptions{Layers: []ocispec.Descriptor{layerDescriptor}})
+		if err != nil {
+			return errors.Wrap(err, "pack manifest")
+		}
 
-	for _, tag := range []string{"vuls-data-raw-test", "vuls-data-raw-test-archive-1"} {
-		if err := repo.Tag(ctx, desc, tag); err != nil {
-			return errors.Wrapf(err, "tagged %q for %+v", tag, desc)
+		for _, tag := range f.tags {
+			if err := repo.Tag(ctx, desc, tag); err != nil {
+				return errors.Wrapf(err, "tagged %q for %+v", tag, desc)
+			}
 		}
 	}
 

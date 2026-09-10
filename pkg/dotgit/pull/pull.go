@@ -195,9 +195,23 @@ func Pull(repository string, opts ...Option) error {
 
 	if options.restore {
 		if options.useNativeGit {
-			cmd := exec.Command("git", "-C", filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference), "restore", ".")
-			if err := cmd.Run(); err != nil {
+			// A repository whose every file has been deleted has nothing to
+			// restore, and "git restore ." reads a pathspec that matches
+			// nothing as fatal. Nothing to do is not a failure, and this is
+			// the repository a pull most needs to survive: it is what a fetch
+			// that wrote nothing back leaves behind, and putting the files
+			// back is what the pull is for.
+			cmd := exec.Command("git", "-C", filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference), "ls-files")
+			bs, err := cmd.Output()
+			if err != nil {
 				return errors.Wrapf(err, "exec %q", cmd.String())
+			}
+
+			if len(bs) > 0 {
+				cmd := exec.Command("git", "-C", filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference), "restore", ".")
+				if err := cmd.Run(); err != nil {
+					return errors.Wrapf(err, "exec %q", cmd.String())
+				}
 			}
 		} else {
 			r, err := git.PlainOpen(filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference))
