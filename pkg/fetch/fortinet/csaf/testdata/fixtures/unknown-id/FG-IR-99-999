@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cvrf:cvrfdoc xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:cvrf-common="http://docs.oasis-open.org/csaf/ns/csaf-cvrf/v1.2/common" xmlns:cvrf="http://docs.oasis-open.org/csaf/ns/csaf-cvrf/v1.2/cvrf">
+    <cvrf:DocumentTitle></cvrf:DocumentTitle>
+    <cvrf:DocumentType>Fortinet PSIRT Advisories</cvrf:DocumentType>
+    <cvrf:DocumentPublisher Type="Vendor">
+        <cvrf:ContactDetails>
+            Fortinet PSIRT Contact:
+            Website: https://fortiguard.fortinet.com/faq/psirt-contact
+        </cvrf:ContactDetails>
+     </cvrf:DocumentPublisher>
+    <cvrf:DocumentTracking>
+        <cvrf:Status>Final</cvrf:Status>
+        <cvrf:Version>1</cvrf:Version>
+        <cvrf:RevisionHistory>
+            <cvrf:Revision>
+                <cvrf:Number>1</cvrf:Number>
+                <cvrf:Description>Current version</cvrf:Description>
+        </cvrf:Revision>
+       </cvrf:RevisionHistory>
+    </cvrf:DocumentTracking>
+    <cvrf:DocumentNotes>
+    </cvrf:DocumentNotes>
+    <Vulnerability Ordinal="1">
+        <Title></Title>
+        <References Type="Self">
+            <Reference>
+                <URL>https://fortiguard.fortinet.com/psirt/</URL>
+                <Description></Description>
+            </Reference>Reference>
+        </References>
+    </Vulnerability>
+</cvrf:cvrfdoc>

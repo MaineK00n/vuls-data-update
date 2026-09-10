@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <cvrf:cvrfdoc xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:cvrf-common="http://docs.oasis-open.org/csaf/ns/csaf-cvrf/v1.2/common" xmlns:cvrf="http://docs.oasis-open.org/csaf/ns/csaf-cvrf/v1.2/cvrf">
-    <cvrf:DocumentTitle>Authenticated Heap Overflow in SSL-VPN bookmarks</cvrf:DocumentTitle>
+    <cvrf:DocumentTitle>Buffer overflow in TFTP client library of CLI</cvrf:DocumentTitle>
     <cvrf:DocumentType>Fortinet PSIRT Advisories</cvrf:DocumentType>
     <cvrf:DocumentPublisher Type="Vendor">
         <cvrf:ContactDetails>

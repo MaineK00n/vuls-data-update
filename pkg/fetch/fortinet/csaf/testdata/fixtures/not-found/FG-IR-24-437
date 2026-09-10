@@ -1,0 +1,830 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cvrf:cvrfdoc xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:cvrf-common="http://docs.oasis-open.org/csaf/ns/csaf-cvrf/v1.2/common" xmlns:cvrf="http://docs.oasis-open.org/csaf/ns/csaf-cvrf/v1.2/cvrf">
+    <cvrf:DocumentTitle>SQL injection in forward module</cvrf:DocumentTitle>
+    <cvrf:DocumentType>Fortinet PSIRT Advisories</cvrf:DocumentType>
+    <cvrf:DocumentPublisher Type="Vendor">
+        <cvrf:ContactDetails>
+            Fortinet PSIRT Contact:
+            Website: https://fortiguard.fortinet.com/faq/psirt-contact
+        </cvrf:ContactDetails>
+     </cvrf:DocumentPublisher>
+    <cvrf:DocumentTracking>
+        <cvrf:Identification>
+            <cvrf:ID>FG-IR-24-437</cvrf:ID>
+        </cvrf:Identification>
+        <cvrf:Status>Final</cvrf:Status>
+        <cvrf:Version>1</cvrf:Version>
+        <cvrf:RevisionHistory>
+            <cvrf:Revision>
+                <cvrf:Number>1</cvrf:Number>
+                <cvrf:Date>2025-07-08T00:00:00</cvrf:Date>
+                <cvrf:Description>Current version</cvrf:Description>
+        </cvrf:Revision>
+       </cvrf:RevisionHistory>
+        <cvrf:InitialReleaseDate>2025-07-08T00:00:00</cvrf:InitialReleaseDate>
+        <cvrf:CurrentReleaseDate>2025-07-09T00:00:00</cvrf:CurrentReleaseDate>
+    </cvrf:DocumentTracking>
+    <cvrf:DocumentNotes>
+        <cvrf:Note Title="Summary" Type="Summary" Ordinal="1">
+            An Improper Neutralization of Special Elements used in an SQL Command (&#39;SQL Injection&#39;) vulnerability [CWE-89] in FortiManager and FortiAnalyzer may allow an authenticated attacker with high privilege to extract database information via crafted requests.
+        </cvrf:Note>
+        <cvrf:Note Title="Description" Type="General" Ordinal="2">
+            None
+        </cvrf:Note>
+        <cvrf:Note Title="Impact" Type="General" Ordinal="3">
+            Execute unauthorized code or commands
+        </cvrf:Note>
+        <cvrf:Note Title="Solutions" Type="General" Ordinal="4">
+            None
+        </cvrf:Note>
+    </cvrf:DocumentNotes>
+    <cvrf:Acknowledgments>
+        <cvrf:Acknowledgment>
+            <cvrf:Description>Internally discovered and reported by Jaguar Perlas of Fortinet Burnaby InfoSec team.</cvrf:Description>
+        </cvrf:Acknowledgment>
+    </cvrf:Acknowledgments>
+    <ProductTree>
+        <Branch Name="Fortinet" Type="Vendor">
+            <Branch Name="FortiAnalyzer" Type="Product Name">
+                <Branch Name="7.6.1" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer-7.6.1">FortiAnalyzer 7.6.1</FullProductName>
+                </Branch>
+                <Branch Name="7.6.0" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer-7.6.0">FortiAnalyzer 7.6.0</FullProductName>
+                </Branch>
+                <Branch Name="7.4.6" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer-7.4.6">FortiAnalyzer 7.4.6</FullProductName>
+                </Branch>
+                <Branch Name="7.4.5" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer-7.4.5">FortiAnalyzer 7.4.5</FullProductName>
+                </Branch>
+                <Branch Name="7.4.4" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer-7.4.4">FortiAnalyzer 7.4.4</FullProductName>
+                </Branch>
+                <Branch Name="7.4.3" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer-7.4.3">FortiAnalyzer 7.4.3</FullProductName>
+                </Branch>
+                <Branch Name="7.4.2" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer-7.4.2">FortiAnalyzer 7.4.2</FullProductName>
+                </Branch>
+                <Branch Name="7.4.1" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer-7.4.1">FortiAnalyzer 7.4.1</FullProductName>
+                </Branch>
+                <Branch Name="7.4.0" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer-7.4.0">FortiAnalyzer 7.4.0</FullProductName>
+                </Branch>
+                <Branch Name="7.2.12" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer-7.2.12">FortiAnalyzer 7.2.12</FullProductName>
+                </Branch>
+                <Branch Name="7.2.11" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer-7.2.11">FortiAnalyzer 7.2.11</FullProductName>
+                </Branch>
+                <Branch Name="7.2.10" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer-7.2.10">FortiAnalyzer 7.2.10</FullProductName>
+                </Branch>
+                <Branch Name="7.2.9" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer-7.2.9">FortiAnalyzer 7.2.9</FullProductName>
+                </Branch>
+                <Branch Name="7.2.8" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer-7.2.8">FortiAnalyzer 7.2.8</FullProductName>
+                </Branch>
+                <Branch Name="7.2.7" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer-7.2.7">FortiAnalyzer 7.2.7</FullProductName>
+                </Branch>
+                <Branch Name="7.2.6" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer-7.2.6">FortiAnalyzer 7.2.6</FullProductName>
+                </Branch>
+                <Branch Name="7.2.5" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer-7.2.5">FortiAnalyzer 7.2.5</FullProductName>
+                </Branch>
+                <Branch Name="7.2.4" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer-7.2.4">FortiAnalyzer 7.2.4</FullProductName>
+                </Branch>
+                <Branch Name="7.2.3" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer-7.2.3">FortiAnalyzer 7.2.3</FullProductName>
+                </Branch>
+                <Branch Name="7.2.2" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer-7.2.2">FortiAnalyzer 7.2.2</FullProductName>
+                </Branch>
+                <Branch Name="7.2.1" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer-7.2.1">FortiAnalyzer 7.2.1</FullProductName>
+                </Branch>
+                <Branch Name="7.2.0" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer-7.2.0">FortiAnalyzer 7.2.0</FullProductName>
+                </Branch>
+                <Branch Name="7.0.16" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer-7.0.16">FortiAnalyzer 7.0.16</FullProductName>
+                </Branch>
+                <Branch Name="7.0.15" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer-7.0.15">FortiAnalyzer 7.0.15</FullProductName>
+                </Branch>
+                <Branch Name="7.0.14" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer-7.0.14">FortiAnalyzer 7.0.14</FullProductName>
+                </Branch>
+                <Branch Name="7.0.13" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer-7.0.13">FortiAnalyzer 7.0.13</FullProductName>
+                </Branch>
+                <Branch Name="7.0.12" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer-7.0.12">FortiAnalyzer 7.0.12</FullProductName>
+                </Branch>
+                <Branch Name="7.0.11" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer-7.0.11">FortiAnalyzer 7.0.11</FullProductName>
+                </Branch>
+                <Branch Name="7.0.10" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer-7.0.10">FortiAnalyzer 7.0.10</FullProductName>
+                </Branch>
+                <Branch Name="7.0.9" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer-7.0.9">FortiAnalyzer 7.0.9</FullProductName>
+                </Branch>
+                <Branch Name="7.0.8" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer-7.0.8">FortiAnalyzer 7.0.8</FullProductName>
+                </Branch>
+                <Branch Name="7.0.7" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer-7.0.7">FortiAnalyzer 7.0.7</FullProductName>
+                </Branch>
+                <Branch Name="7.0.6" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer-7.0.6">FortiAnalyzer 7.0.6</FullProductName>
+                </Branch>
+                <Branch Name="7.0.5" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer-7.0.5">FortiAnalyzer 7.0.5</FullProductName>
+                </Branch>
+                <Branch Name="7.0.4" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer-7.0.4">FortiAnalyzer 7.0.4</FullProductName>
+                </Branch>
+                <Branch Name="7.0.3" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer-7.0.3">FortiAnalyzer 7.0.3</FullProductName>
+                </Branch>
+                <Branch Name="7.0.2" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer-7.0.2">FortiAnalyzer 7.0.2</FullProductName>
+                </Branch>
+                <Branch Name="7.0.1" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer-7.0.1">FortiAnalyzer 7.0.1</FullProductName>
+                </Branch>
+                <Branch Name="7.0.0" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer-7.0.0">FortiAnalyzer 7.0.0</FullProductName>
+                </Branch>
+                <Branch Name="6.4.15" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer-6.4.15">FortiAnalyzer 6.4.15</FullProductName>
+                </Branch>
+                <Branch Name="6.4.14" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer-6.4.14">FortiAnalyzer 6.4.14</FullProductName>
+                </Branch>
+                <Branch Name="6.4.13" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer-6.4.13">FortiAnalyzer 6.4.13</FullProductName>
+                </Branch>
+                <Branch Name="6.4.12" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer-6.4.12">FortiAnalyzer 6.4.12</FullProductName>
+                </Branch>
+                <Branch Name="6.4.11" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer-6.4.11">FortiAnalyzer 6.4.11</FullProductName>
+                </Branch>
+                <Branch Name="6.4.10" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer-6.4.10">FortiAnalyzer 6.4.10</FullProductName>
+                </Branch>
+                <Branch Name="6.4.9" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer-6.4.9">FortiAnalyzer 6.4.9</FullProductName>
+                </Branch>
+                <Branch Name="6.4.8" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer-6.4.8">FortiAnalyzer 6.4.8</FullProductName>
+                </Branch>
+                <Branch Name="6.4.7" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer-6.4.7">FortiAnalyzer 6.4.7</FullProductName>
+                </Branch>
+                <Branch Name="6.4.6" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer-6.4.6">FortiAnalyzer 6.4.6</FullProductName>
+                </Branch>
+                <Branch Name="6.4.5" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer-6.4.5">FortiAnalyzer 6.4.5</FullProductName>
+                </Branch>
+                <Branch Name="6.4.4" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer-6.4.4">FortiAnalyzer 6.4.4</FullProductName>
+                </Branch>
+                <Branch Name="6.4.3" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer-6.4.3">FortiAnalyzer 6.4.3</FullProductName>
+                </Branch>
+                <Branch Name="6.4.2" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer-6.4.2">FortiAnalyzer 6.4.2</FullProductName>
+                </Branch>
+                <Branch Name="6.4.1" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer-6.4.1">FortiAnalyzer 6.4.1</FullProductName>
+                </Branch>
+                <Branch Name="6.4.0" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer-6.4.0">FortiAnalyzer 6.4.0</FullProductName>
+                </Branch>
+            </Branch>
+            <Branch Name="FortiAnalyzer Cloud" Type="Product Name">
+                <Branch Name="7.4.6" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer Cloud-7.4.6">FortiAnalyzer Cloud 7.4.6</FullProductName>
+                </Branch>
+                <Branch Name="7.4.5" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer Cloud-7.4.5">FortiAnalyzer Cloud 7.4.5</FullProductName>
+                </Branch>
+                <Branch Name="7.4.4" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer Cloud-7.4.4">FortiAnalyzer Cloud 7.4.4</FullProductName>
+                </Branch>
+                <Branch Name="7.4.3" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer Cloud-7.4.3">FortiAnalyzer Cloud 7.4.3</FullProductName>
+                </Branch>
+                <Branch Name="7.4.2" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer Cloud-7.4.2">FortiAnalyzer Cloud 7.4.2</FullProductName>
+                </Branch>
+                <Branch Name="7.4.1" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer Cloud-7.4.1">FortiAnalyzer Cloud 7.4.1</FullProductName>
+                </Branch>
+                <Branch Name="7.2.12" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer Cloud-7.2.12">FortiAnalyzer Cloud 7.2.12</FullProductName>
+                </Branch>
+                <Branch Name="7.2.11" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer Cloud-7.2.11">FortiAnalyzer Cloud 7.2.11</FullProductName>
+                </Branch>
+                <Branch Name="7.2.10" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer Cloud-7.2.10">FortiAnalyzer Cloud 7.2.10</FullProductName>
+                </Branch>
+                <Branch Name="7.2.9" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer Cloud-7.2.9">FortiAnalyzer Cloud 7.2.9</FullProductName>
+                </Branch>
+                <Branch Name="7.2.8" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer Cloud-7.2.8">FortiAnalyzer Cloud 7.2.8</FullProductName>
+                </Branch>
+                <Branch Name="7.2.7" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer Cloud-7.2.7">FortiAnalyzer Cloud 7.2.7</FullProductName>
+                </Branch>
+                <Branch Name="7.2.6" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer Cloud-7.2.6">FortiAnalyzer Cloud 7.2.6</FullProductName>
+                </Branch>
+                <Branch Name="7.2.5" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer Cloud-7.2.5">FortiAnalyzer Cloud 7.2.5</FullProductName>
+                </Branch>
+                <Branch Name="7.2.4" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer Cloud-7.2.4">FortiAnalyzer Cloud 7.2.4</FullProductName>
+                </Branch>
+                <Branch Name="7.2.3" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer Cloud-7.2.3">FortiAnalyzer Cloud 7.2.3</FullProductName>
+                </Branch>
+                <Branch Name="7.2.2" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer Cloud-7.2.2">FortiAnalyzer Cloud 7.2.2</FullProductName>
+                </Branch>
+                <Branch Name="7.2.1" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer Cloud-7.2.1">FortiAnalyzer Cloud 7.2.1</FullProductName>
+                </Branch>
+                <Branch Name="7.0.15" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer Cloud-7.0.15">FortiAnalyzer Cloud 7.0.15</FullProductName>
+                </Branch>
+                <Branch Name="7.0.14" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer Cloud-7.0.14">FortiAnalyzer Cloud 7.0.14</FullProductName>
+                </Branch>
+                <Branch Name="7.0.13" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer Cloud-7.0.13">FortiAnalyzer Cloud 7.0.13</FullProductName>
+                </Branch>
+                <Branch Name="7.0.12" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer Cloud-7.0.12">FortiAnalyzer Cloud 7.0.12</FullProductName>
+                </Branch>
+                <Branch Name="7.0.11" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer Cloud-7.0.11">FortiAnalyzer Cloud 7.0.11</FullProductName>
+                </Branch>
+                <Branch Name="7.0.10" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer Cloud-7.0.10">FortiAnalyzer Cloud 7.0.10</FullProductName>
+                </Branch>
+                <Branch Name="7.0.9" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer Cloud-7.0.9">FortiAnalyzer Cloud 7.0.9</FullProductName>
+                </Branch>
+                <Branch Name="7.0.8" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer Cloud-7.0.8">FortiAnalyzer Cloud 7.0.8</FullProductName>
+                </Branch>
+                <Branch Name="7.0.7" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer Cloud-7.0.7">FortiAnalyzer Cloud 7.0.7</FullProductName>
+                </Branch>
+                <Branch Name="7.0.6" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer Cloud-7.0.6">FortiAnalyzer Cloud 7.0.6</FullProductName>
+                </Branch>
+                <Branch Name="7.0.5" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer Cloud-7.0.5">FortiAnalyzer Cloud 7.0.5</FullProductName>
+                </Branch>
+                <Branch Name="7.0.4" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer Cloud-7.0.4">FortiAnalyzer Cloud 7.0.4</FullProductName>
+                </Branch>
+                <Branch Name="7.0.3" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer Cloud-7.0.3">FortiAnalyzer Cloud 7.0.3</FullProductName>
+                </Branch>
+                <Branch Name="7.0.2" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer Cloud-7.0.2">FortiAnalyzer Cloud 7.0.2</FullProductName>
+                </Branch>
+                <Branch Name="7.0.1" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer Cloud-7.0.1">FortiAnalyzer Cloud 7.0.1</FullProductName>
+                </Branch>
+                <Branch Name="6.4.7" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer Cloud-6.4.7">FortiAnalyzer Cloud 6.4.7</FullProductName>
+                </Branch>
+                <Branch Name="6.4.6" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer Cloud-6.4.6">FortiAnalyzer Cloud 6.4.6</FullProductName>
+                </Branch>
+                <Branch Name="6.4.5" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer Cloud-6.4.5">FortiAnalyzer Cloud 6.4.5</FullProductName>
+                </Branch>
+                <Branch Name="6.4.4" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer Cloud-6.4.4">FortiAnalyzer Cloud 6.4.4</FullProductName>
+                </Branch>
+                <Branch Name="6.4.3" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer Cloud-6.4.3">FortiAnalyzer Cloud 6.4.3</FullProductName>
+                </Branch>
+                <Branch Name="6.4.2" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer Cloud-6.4.2">FortiAnalyzer Cloud 6.4.2</FullProductName>
+                </Branch>
+                <Branch Name="6.4.1" Type="Product Version">
+                    <FullProductName ProductID="FortiAnalyzer Cloud-6.4.1">FortiAnalyzer Cloud 6.4.1</FullProductName>
+                </Branch>
+            </Branch>
+            <Branch Name="FortiManager" Type="Product Name">
+                <Branch Name="7.6.1" Type="Product Version">
+                    <FullProductName ProductID="FortiManager-7.6.1">FortiManager 7.6.1</FullProductName>
+                </Branch>
+                <Branch Name="7.6.0" Type="Product Version">
+                    <FullProductName ProductID="FortiManager-7.6.0">FortiManager 7.6.0</FullProductName>
+                </Branch>
+                <Branch Name="7.4.6" Type="Product Version">
+                    <FullProductName ProductID="FortiManager-7.4.6">FortiManager 7.4.6</FullProductName>
+                </Branch>
+                <Branch Name="7.4.5" Type="Product Version">
+                    <FullProductName ProductID="FortiManager-7.4.5">FortiManager 7.4.5</FullProductName>
+                </Branch>
+                <Branch Name="7.4.4" Type="Product Version">
+                    <FullProductName ProductID="FortiManager-7.4.4">FortiManager 7.4.4</FullProductName>
+                </Branch>
+                <Branch Name="7.4.3" Type="Product Version">
+                    <FullProductName ProductID="FortiManager-7.4.3">FortiManager 7.4.3</FullProductName>
+                </Branch>
+                <Branch Name="7.4.2" Type="Product Version">
+                    <FullProductName ProductID="FortiManager-7.4.2">FortiManager 7.4.2</FullProductName>
+                </Branch>
+                <Branch Name="7.4.1" Type="Product Version">
+                    <FullProductName ProductID="FortiManager-7.4.1">FortiManager 7.4.1</FullProductName>
+                </Branch>
+                <Branch Name="7.4.0" Type="Product Version">
+                    <FullProductName ProductID="FortiManager-7.4.0">FortiManager 7.4.0</FullProductName>
+                </Branch>
+                <Branch Name="7.2.12" Type="Product Version">
+                    <FullProductName ProductID="FortiManager-7.2.12">FortiManager 7.2.12</FullProductName>
+                </Branch>
+                <Branch Name="7.2.11" Type="Product Version">
+                    <FullProductName ProductID="FortiManager-7.2.11">FortiManager 7.2.11</FullProductName>
+                </Branch>
+                <Branch Name="7.2.10" Type="Product Version">
+                    <FullProductName ProductID="FortiManager-7.2.10">FortiManager 7.2.10</FullProductName>
+                </Branch>
+                <Branch Name="7.2.9" Type="Product Version">
+                    <FullProductName ProductID="FortiManager-7.2.9">FortiManager 7.2.9</FullProductName>
+                </Branch>
+                <Branch Name="7.2.8" Type="Product Version">
+                    <FullProductName ProductID="FortiManager-7.2.8">FortiManager 7.2.8</FullProductName>
+                </Branch>
+                <Branch Name="7.2.7" Type="Product Version">
+                    <FullProductName ProductID="FortiManager-7.2.7">FortiManager 7.2.7</FullProductName>
+                </Branch>
+                <Branch Name="7.2.6" Type="Product Version">
+                    <FullProductName ProductID="FortiManager-7.2.6">FortiManager 7.2.6</FullProductName>
+                </Branch>
+                <Branch Name="7.2.5" Type="Product Version">
+                    <FullProductName ProductID="FortiManager-7.2.5">FortiManager 7.2.5</FullProductName>
+                </Branch>
+                <Branch Name="7.2.4" Type="Product Version">
+                    <FullProductName ProductID="FortiManager-7.2.4">FortiManager 7.2.4</FullProductName>
+                </Branch>
+                <Branch Name="7.2.3" Type="Product Version">
+                    <FullProductName ProductID="FortiManager-7.2.3">FortiManager 7.2.3</FullProductName>
+                </Branch>
+                <Branch Name="7.2.2" Type="Product Version">
+                    <FullProductName ProductID="FortiManager-7.2.2">FortiManager 7.2.2</FullProductName>
+                </Branch>
+                <Branch Name="7.2.1" Type="Product Version">
+                    <FullProductName ProductID="FortiManager-7.2.1">FortiManager 7.2.1</FullProductName>
+                </Branch>
+                <Branch Name="7.2.0" Type="Product Version">
+                    <FullProductName ProductID="FortiManager-7.2.0">FortiManager 7.2.0</FullProductName>
+                </Branch>
+                <Branch Name="7.0.16" Type="Product Version">
+                    <FullProductName ProductID="FortiManager-7.0.16">FortiManager 7.0.16</FullProductName>
+                </Branch>
+                <Branch Name="7.0.15" Type="Product Version">
+                    <FullProductName ProductID="FortiManager-7.0.15">FortiManager 7.0.15</FullProductName>
+                </Branch>
+                <Branch Name="7.0.14" Type="Product Version">
+                    <FullProductName ProductID="FortiManager-7.0.14">FortiManager 7.0.14</FullProductName>
+                </Branch>
+                <Branch Name="7.0.13" Type="Product Version">
+                    <FullProductName ProductID="FortiManager-7.0.13">FortiManager 7.0.13</FullProductName>
+                </Branch>
+                <Branch Name="7.0.12" Type="Product Version">
+                    <FullProductName ProductID="FortiManager-7.0.12">FortiManager 7.0.12</FullProductName>
+                </Branch>
+                <Branch Name="7.0.11" Type="Product Version">
+                    <FullProductName ProductID="FortiManager-7.0.11">FortiManager 7.0.11</FullProductName>
+                </Branch>
+                <Branch Name="7.0.10" Type="Product Version">
+                    <FullProductName ProductID="FortiManager-7.0.10">FortiManager 7.0.10</FullProductName>
+                </Branch>
+                <Branch Name="7.0.9" Type="Product Version">
+                    <FullProductName ProductID="FortiManager-7.0.9">FortiManager 7.0.9</FullProductName>
+                </Branch>
+                <Branch Name="7.0.8" Type="Product Version">
+                    <FullProductName ProductID="FortiManager-7.0.8">FortiManager 7.0.8</FullProductName>
+                </Branch>
+                <Branch Name="7.0.7" Type="Product Version">
+                    <FullProductName ProductID="FortiManager-7.0.7">FortiManager 7.0.7</FullProductName>
+                </Branch>
+                <Branch Name="7.0.6" Type="Product Version">
+                    <FullProductName ProductID="FortiManager-7.0.6">FortiManager 7.0.6</FullProductName>
+                </Branch>
+                <Branch Name="7.0.5" Type="Product Version">
+                    <FullProductName ProductID="FortiManager-7.0.5">FortiManager 7.0.5</FullProductName>
+                </Branch>
+                <Branch Name="7.0.4" Type="Product Version">
+                    <FullProductName ProductID="FortiManager-7.0.4">FortiManager 7.0.4</FullProductName>
+                </Branch>
+                <Branch Name="7.0.3" Type="Product Version">
+                    <FullProductName ProductID="FortiManager-7.0.3">FortiManager 7.0.3</FullProductName>
+                </Branch>
+                <Branch Name="7.0.2" Type="Product Version">
+                    <FullProductName ProductID="FortiManager-7.0.2">FortiManager 7.0.2</FullProductName>
+                </Branch>
+                <Branch Name="7.0.1" Type="Product Version">
+                    <FullProductName ProductID="FortiManager-7.0.1">FortiManager 7.0.1</FullProductName>
+                </Branch>
+                <Branch Name="7.0.0" Type="Product Version">
+                    <FullProductName ProductID="FortiManager-7.0.0">FortiManager 7.0.0</FullProductName>
+                </Branch>
+                <Branch Name="6.4.15" Type="Product Version">
+                    <FullProductName ProductID="FortiManager-6.4.15">FortiManager 6.4.15</FullProductName>
+                </Branch>
+                <Branch Name="6.4.14" Type="Product Version">
+                    <FullProductName ProductID="FortiManager-6.4.14">FortiManager 6.4.14</FullProductName>
+                </Branch>
+                <Branch Name="6.4.13" Type="Product Version">
+                    <FullProductName ProductID="FortiManager-6.4.13">FortiManager 6.4.13</FullProductName>
+                </Branch>
+                <Branch Name="6.4.12" Type="Product Version">
+                    <FullProductName ProductID="FortiManager-6.4.12">FortiManager 6.4.12</FullProductName>
+                </Branch>
+                <Branch Name="6.4.11" Type="Product Version">
+                    <FullProductName ProductID="FortiManager-6.4.11">FortiManager 6.4.11</FullProductName>
+                </Branch>
+                <Branch Name="6.4.10" Type="Product Version">
+                    <FullProductName ProductID="FortiManager-6.4.10">FortiManager 6.4.10</FullProductName>
+                </Branch>
+                <Branch Name="6.4.9" Type="Product Version">
+                    <FullProductName ProductID="FortiManager-6.4.9">FortiManager 6.4.9</FullProductName>
+                </Branch>
+                <Branch Name="6.4.8" Type="Product Version">
+                    <FullProductName ProductID="FortiManager-6.4.8">FortiManager 6.4.8</FullProductName>
+                </Branch>
+                <Branch Name="6.4.7" Type="Product Version">
+                    <FullProductName ProductID="FortiManager-6.4.7">FortiManager 6.4.7</FullProductName>
+                </Branch>
+                <Branch Name="6.4.6" Type="Product Version">
+                    <FullProductName ProductID="FortiManager-6.4.6">FortiManager 6.4.6</FullProductName>
+                </Branch>
+                <Branch Name="6.4.5" Type="Product Version">
+                    <FullProductName ProductID="FortiManager-6.4.5">FortiManager 6.4.5</FullProductName>
+                </Branch>
+                <Branch Name="6.4.4" Type="Product Version">
+                    <FullProductName ProductID="FortiManager-6.4.4">FortiManager 6.4.4</FullProductName>
+                </Branch>
+                <Branch Name="6.4.3" Type="Product Version">
+                    <FullProductName ProductID="FortiManager-6.4.3">FortiManager 6.4.3</FullProductName>
+                </Branch>
+                <Branch Name="6.4.2" Type="Product Version">
+                    <FullProductName ProductID="FortiManager-6.4.2">FortiManager 6.4.2</FullProductName>
+                </Branch>
+                <Branch Name="6.4.1" Type="Product Version">
+                    <FullProductName ProductID="FortiManager-6.4.1">FortiManager 6.4.1</FullProductName>
+                </Branch>
+                <Branch Name="6.4.0" Type="Product Version">
+                    <FullProductName ProductID="FortiManager-6.4.0">FortiManager 6.4.0</FullProductName>
+                </Branch>
+            </Branch>
+            <Branch Name="FortiManager Cloud" Type="Product Name">
+                <Branch Name="7.4.6" Type="Product Version">
+                    <FullProductName ProductID="FortiManager Cloud-7.4.6">FortiManager Cloud 7.4.6</FullProductName>
+                </Branch>
+                <Branch Name="7.4.5" Type="Product Version">
+                    <FullProductName ProductID="FortiManager Cloud-7.4.5">FortiManager Cloud 7.4.5</FullProductName>
+                </Branch>
+                <Branch Name="7.4.4" Type="Product Version">
+                    <FullProductName ProductID="FortiManager Cloud-7.4.4">FortiManager Cloud 7.4.4</FullProductName>
+                </Branch>
+                <Branch Name="7.4.3" Type="Product Version">
+                    <FullProductName ProductID="FortiManager Cloud-7.4.3">FortiManager Cloud 7.4.3</FullProductName>
+                </Branch>
+                <Branch Name="7.4.2" Type="Product Version">
+                    <FullProductName ProductID="FortiManager Cloud-7.4.2">FortiManager Cloud 7.4.2</FullProductName>
+                </Branch>
+                <Branch Name="7.4.1" Type="Product Version">
+                    <FullProductName ProductID="FortiManager Cloud-7.4.1">FortiManager Cloud 7.4.1</FullProductName>
+                </Branch>
+                <Branch Name="7.2.12" Type="Product Version">
+                    <FullProductName ProductID="FortiManager Cloud-7.2.12">FortiManager Cloud 7.2.12</FullProductName>
+                </Branch>
+                <Branch Name="7.2.11" Type="Product Version">
+                    <FullProductName ProductID="FortiManager Cloud-7.2.11">FortiManager Cloud 7.2.11</FullProductName>
+                </Branch>
+                <Branch Name="7.2.10" Type="Product Version">
+                    <FullProductName ProductID="FortiManager Cloud-7.2.10">FortiManager Cloud 7.2.10</FullProductName>
+                </Branch>
+                <Branch Name="7.2.9" Type="Product Version">
+                    <FullProductName ProductID="FortiManager Cloud-7.2.9">FortiManager Cloud 7.2.9</FullProductName>
+                </Branch>
+                <Branch Name="7.2.8" Type="Product Version">
+                    <FullProductName ProductID="FortiManager Cloud-7.2.8">FortiManager Cloud 7.2.8</FullProductName>
+                </Branch>
+                <Branch Name="7.2.7" Type="Product Version">
+                    <FullProductName ProductID="FortiManager Cloud-7.2.7">FortiManager Cloud 7.2.7</FullProductName>
+                </Branch>
+                <Branch Name="7.2.6" Type="Product Version">
+                    <FullProductName ProductID="FortiManager Cloud-7.2.6">FortiManager Cloud 7.2.6</FullProductName>
+                </Branch>
+                <Branch Name="7.2.5" Type="Product Version">
+                    <FullProductName ProductID="FortiManager Cloud-7.2.5">FortiManager Cloud 7.2.5</FullProductName>
+                </Branch>
+                <Branch Name="7.2.4" Type="Product Version">
+                    <FullProductName ProductID="FortiManager Cloud-7.2.4">FortiManager Cloud 7.2.4</FullProductName>
+                </Branch>
+                <Branch Name="7.2.3" Type="Product Version">
+                    <FullProductName ProductID="FortiManager Cloud-7.2.3">FortiManager Cloud 7.2.3</FullProductName>
+                </Branch>
+                <Branch Name="7.2.2" Type="Product Version">
+                    <FullProductName ProductID="FortiManager Cloud-7.2.2">FortiManager Cloud 7.2.2</FullProductName>
+                </Branch>
+                <Branch Name="7.2.1" Type="Product Version">
+                    <FullProductName ProductID="FortiManager Cloud-7.2.1">FortiManager Cloud 7.2.1</FullProductName>
+                </Branch>
+                <Branch Name="7.0.13" Type="Product Version">
+                    <FullProductName ProductID="FortiManager Cloud-7.0.13">FortiManager Cloud 7.0.13</FullProductName>
+                </Branch>
+                <Branch Name="7.0.12" Type="Product Version">
+                    <FullProductName ProductID="FortiManager Cloud-7.0.12">FortiManager Cloud 7.0.12</FullProductName>
+                </Branch>
+                <Branch Name="7.0.11" Type="Product Version">
+                    <FullProductName ProductID="FortiManager Cloud-7.0.11">FortiManager Cloud 7.0.11</FullProductName>
+                </Branch>
+                <Branch Name="7.0.10" Type="Product Version">
+                    <FullProductName ProductID="FortiManager Cloud-7.0.10">FortiManager Cloud 7.0.10</FullProductName>
+                </Branch>
+                <Branch Name="7.0.9" Type="Product Version">
+                    <FullProductName ProductID="FortiManager Cloud-7.0.9">FortiManager Cloud 7.0.9</FullProductName>
+                </Branch>
+                <Branch Name="7.0.8" Type="Product Version">
+                    <FullProductName ProductID="FortiManager Cloud-7.0.8">FortiManager Cloud 7.0.8</FullProductName>
+                </Branch>
+                <Branch Name="7.0.7" Type="Product Version">
+                    <FullProductName ProductID="FortiManager Cloud-7.0.7">FortiManager Cloud 7.0.7</FullProductName>
+                </Branch>
+                <Branch Name="7.0.6" Type="Product Version">
+                    <FullProductName ProductID="FortiManager Cloud-7.0.6">FortiManager Cloud 7.0.6</FullProductName>
+                </Branch>
+                <Branch Name="7.0.5" Type="Product Version">
+                    <FullProductName ProductID="FortiManager Cloud-7.0.5">FortiManager Cloud 7.0.5</FullProductName>
+                </Branch>
+                <Branch Name="7.0.4" Type="Product Version">
+                    <FullProductName ProductID="FortiManager Cloud-7.0.4">FortiManager Cloud 7.0.4</FullProductName>
+                </Branch>
+                <Branch Name="7.0.3" Type="Product Version">
+                    <FullProductName ProductID="FortiManager Cloud-7.0.3">FortiManager Cloud 7.0.3</FullProductName>
+                </Branch>
+                <Branch Name="7.0.2" Type="Product Version">
+                    <FullProductName ProductID="FortiManager Cloud-7.0.2">FortiManager Cloud 7.0.2</FullProductName>
+                </Branch>
+                <Branch Name="7.0.1" Type="Product Version">
+                    <FullProductName ProductID="FortiManager Cloud-7.0.1">FortiManager Cloud 7.0.1</FullProductName>
+                </Branch>
+                <Branch Name="6.4.7" Type="Product Version">
+                    <FullProductName ProductID="FortiManager Cloud-6.4.7">FortiManager Cloud 6.4.7</FullProductName>
+                </Branch>
+                <Branch Name="6.4.6" Type="Product Version">
+                    <FullProductName ProductID="FortiManager Cloud-6.4.6">FortiManager Cloud 6.4.6</FullProductName>
+                </Branch>
+                <Branch Name="6.4.5" Type="Product Version">
+                    <FullProductName ProductID="FortiManager Cloud-6.4.5">FortiManager Cloud 6.4.5</FullProductName>
+                </Branch>
+                <Branch Name="6.4.4" Type="Product Version">
+                    <FullProductName ProductID="FortiManager Cloud-6.4.4">FortiManager Cloud 6.4.4</FullProductName>
+                </Branch>
+                <Branch Name="6.4.3" Type="Product Version">
+                    <FullProductName ProductID="FortiManager Cloud-6.4.3">FortiManager Cloud 6.4.3</FullProductName>
+                </Branch>
+                <Branch Name="6.4.2" Type="Product Version">
+                    <FullProductName ProductID="FortiManager Cloud-6.4.2">FortiManager Cloud 6.4.2</FullProductName>
+                </Branch>
+                <Branch Name="6.4.1" Type="Product Version">
+                    <FullProductName ProductID="FortiManager Cloud-6.4.1">FortiManager Cloud 6.4.1</FullProductName>
+                </Branch>
+            </Branch>
+        </Branch>
+    </ProductTree>
+    <Vulnerability Ordinal="1">
+        <Title>SQL injection in forward module</Title>
+        <cvrf:CVE>CVE-2025-24474</cvrf:CVE>
+        <ProductStatuses>
+            <Status Type="Known Affected">
+                <ProductID>FortiAnalyzer-7.6.1</ProductID>
+                <ProductID>FortiAnalyzer-7.6.0</ProductID>
+                <ProductID>FortiAnalyzer-7.4.6</ProductID>
+                <ProductID>FortiAnalyzer-7.4.5</ProductID>
+                <ProductID>FortiAnalyzer-7.4.4</ProductID>
+                <ProductID>FortiAnalyzer-7.4.3</ProductID>
+                <ProductID>FortiAnalyzer-7.4.2</ProductID>
+                <ProductID>FortiAnalyzer-7.4.1</ProductID>
+                <ProductID>FortiAnalyzer-7.4.0</ProductID>
+                <ProductID>FortiAnalyzer-7.2.12</ProductID>
+                <ProductID>FortiAnalyzer-7.2.11</ProductID>
+                <ProductID>FortiAnalyzer-7.2.10</ProductID>
+                <ProductID>FortiAnalyzer-7.2.9</ProductID>
+                <ProductID>FortiAnalyzer-7.2.8</ProductID>
+                <ProductID>FortiAnalyzer-7.2.7</ProductID>
+                <ProductID>FortiAnalyzer-7.2.6</ProductID>
+                <ProductID>FortiAnalyzer-7.2.5</ProductID>
+                <ProductID>FortiAnalyzer-7.2.4</ProductID>
+                <ProductID>FortiAnalyzer-7.2.3</ProductID>
+                <ProductID>FortiAnalyzer-7.2.2</ProductID>
+                <ProductID>FortiAnalyzer-7.2.1</ProductID>
+                <ProductID>FortiAnalyzer-7.2.0</ProductID>
+                <ProductID>FortiAnalyzer-7.0.16</ProductID>
+                <ProductID>FortiAnalyzer-7.0.15</ProductID>
+                <ProductID>FortiAnalyzer-7.0.14</ProductID>
+                <ProductID>FortiAnalyzer-7.0.13</ProductID>
+                <ProductID>FortiAnalyzer-7.0.12</ProductID>
+                <ProductID>FortiAnalyzer-7.0.11</ProductID>
+                <ProductID>FortiAnalyzer-7.0.10</ProductID>
+                <ProductID>FortiAnalyzer-7.0.9</ProductID>
+                <ProductID>FortiAnalyzer-7.0.8</ProductID>
+                <ProductID>FortiAnalyzer-7.0.7</ProductID>
+                <ProductID>FortiAnalyzer-7.0.6</ProductID>
+                <ProductID>FortiAnalyzer-7.0.5</ProductID>
+                <ProductID>FortiAnalyzer-7.0.4</ProductID>
+                <ProductID>FortiAnalyzer-7.0.3</ProductID>
+                <ProductID>FortiAnalyzer-7.0.2</ProductID>
+                <ProductID>FortiAnalyzer-7.0.1</ProductID>
+                <ProductID>FortiAnalyzer-7.0.0</ProductID>
+                <ProductID>FortiAnalyzer-6.4.15</ProductID>
+                <ProductID>FortiAnalyzer-6.4.14</ProductID>
+                <ProductID>FortiAnalyzer-6.4.13</ProductID>
+                <ProductID>FortiAnalyzer-6.4.12</ProductID>
+                <ProductID>FortiAnalyzer-6.4.11</ProductID>
+                <ProductID>FortiAnalyzer-6.4.10</ProductID>
+                <ProductID>FortiAnalyzer-6.4.9</ProductID>
+                <ProductID>FortiAnalyzer-6.4.8</ProductID>
+                <ProductID>FortiAnalyzer-6.4.7</ProductID>
+                <ProductID>FortiAnalyzer-6.4.6</ProductID>
+                <ProductID>FortiAnalyzer-6.4.5</ProductID>
+                <ProductID>FortiAnalyzer-6.4.4</ProductID>
+                <ProductID>FortiAnalyzer-6.4.3</ProductID>
+                <ProductID>FortiAnalyzer-6.4.2</ProductID>
+                <ProductID>FortiAnalyzer-6.4.1</ProductID>
+                <ProductID>FortiAnalyzer-6.4.0</ProductID>
+                <ProductID>FortiAnalyzer Cloud-7.4.6</ProductID>
+                <ProductID>FortiAnalyzer Cloud-7.4.5</ProductID>
+                <ProductID>FortiAnalyzer Cloud-7.4.4</ProductID>
+                <ProductID>FortiAnalyzer Cloud-7.4.3</ProductID>
+                <ProductID>FortiAnalyzer Cloud-7.4.2</ProductID>
+                <ProductID>FortiAnalyzer Cloud-7.4.1</ProductID>
+                <ProductID>FortiAnalyzer Cloud-7.2.12</ProductID>
+                <ProductID>FortiAnalyzer Cloud-7.2.11</ProductID>
+                <ProductID>FortiAnalyzer Cloud-7.2.10</ProductID>
+                <ProductID>FortiAnalyzer Cloud-7.2.9</ProductID>
+                <ProductID>FortiAnalyzer Cloud-7.2.8</ProductID>
+                <ProductID>FortiAnalyzer Cloud-7.2.7</ProductID>
+                <ProductID>FortiAnalyzer Cloud-7.2.6</ProductID>
+                <ProductID>FortiAnalyzer Cloud-7.2.5</ProductID>
+                <ProductID>FortiAnalyzer Cloud-7.2.4</ProductID>
+                <ProductID>FortiAnalyzer Cloud-7.2.3</ProductID>
+                <ProductID>FortiAnalyzer Cloud-7.2.2</ProductID>
+                <ProductID>FortiAnalyzer Cloud-7.2.1</ProductID>
+                <ProductID>FortiAnalyzer Cloud-7.0.15</ProductID>
+                <ProductID>FortiAnalyzer Cloud-7.0.14</ProductID>
+                <ProductID>FortiAnalyzer Cloud-7.0.13</ProductID>
+                <ProductID>FortiAnalyzer Cloud-7.0.12</ProductID>
+                <ProductID>FortiAnalyzer Cloud-7.0.11</ProductID>
+                <ProductID>FortiAnalyzer Cloud-7.0.10</ProductID>
+                <ProductID>FortiAnalyzer Cloud-7.0.9</ProductID>
+                <ProductID>FortiAnalyzer Cloud-7.0.8</ProductID>
+                <ProductID>FortiAnalyzer Cloud-7.0.7</ProductID>
+                <ProductID>FortiAnalyzer Cloud-7.0.6</ProductID>
+                <ProductID>FortiAnalyzer Cloud-7.0.5</ProductID>
+                <ProductID>FortiAnalyzer Cloud-7.0.4</ProductID>
+                <ProductID>FortiAnalyzer Cloud-7.0.3</ProductID>
+                <ProductID>FortiAnalyzer Cloud-7.0.2</ProductID>
+                <ProductID>FortiAnalyzer Cloud-7.0.1</ProductID>
+                <ProductID>FortiAnalyzer Cloud-6.4.7</ProductID>
+                <ProductID>FortiAnalyzer Cloud-6.4.6</ProductID>
+                <ProductID>FortiAnalyzer Cloud-6.4.5</ProductID>
+                <ProductID>FortiAnalyzer Cloud-6.4.4</ProductID>
+                <ProductID>FortiAnalyzer Cloud-6.4.3</ProductID>
+                <ProductID>FortiAnalyzer Cloud-6.4.2</ProductID>
+                <ProductID>FortiAnalyzer Cloud-6.4.1</ProductID>
+                <ProductID>FortiManager-7.6.1</ProductID>
+                <ProductID>FortiManager-7.6.0</ProductID>
+                <ProductID>FortiManager-7.4.6</ProductID>
+                <ProductID>FortiManager-7.4.5</ProductID>
+                <ProductID>FortiManager-7.4.4</ProductID>
+                <ProductID>FortiManager-7.4.3</ProductID>
+                <ProductID>FortiManager-7.4.2</ProductID>
+                <ProductID>FortiManager-7.4.1</ProductID>
+                <ProductID>FortiManager-7.4.0</ProductID>
+                <ProductID>FortiManager-7.2.12</ProductID>
+                <ProductID>FortiManager-7.2.11</ProductID>
+                <ProductID>FortiManager-7.2.10</ProductID>
+                <ProductID>FortiManager-7.2.9</ProductID>
+                <ProductID>FortiManager-7.2.8</ProductID>
+                <ProductID>FortiManager-7.2.7</ProductID>
+                <ProductID>FortiManager-7.2.6</ProductID>
+                <ProductID>FortiManager-7.2.5</ProductID>
+                <ProductID>FortiManager-7.2.4</ProductID>
+                <ProductID>FortiManager-7.2.3</ProductID>
+                <ProductID>FortiManager-7.2.2</ProductID>
+                <ProductID>FortiManager-7.2.1</ProductID>
+                <ProductID>FortiManager-7.2.0</ProductID>
+                <ProductID>FortiManager-7.0.16</ProductID>
+                <ProductID>FortiManager-7.0.15</ProductID>
+                <ProductID>FortiManager-7.0.14</ProductID>
+                <ProductID>FortiManager-7.0.13</ProductID>
+                <ProductID>FortiManager-7.0.12</ProductID>
+                <ProductID>FortiManager-7.0.11</ProductID>
+                <ProductID>FortiManager-7.0.10</ProductID>
+                <ProductID>FortiManager-7.0.9</ProductID>
+                <ProductID>FortiManager-7.0.8</ProductID>
+                <ProductID>FortiManager-7.0.7</ProductID>
+                <ProductID>FortiManager-7.0.6</ProductID>
+                <ProductID>FortiManager-7.0.5</ProductID>
+                <ProductID>FortiManager-7.0.4</ProductID>
+                <ProductID>FortiManager-7.0.3</ProductID>
+                <ProductID>FortiManager-7.0.2</ProductID>
+                <ProductID>FortiManager-7.0.1</ProductID>
+                <ProductID>FortiManager-7.0.0</ProductID>
+                <ProductID>FortiManager-6.4.15</ProductID>
+                <ProductID>FortiManager-6.4.14</ProductID>
+                <ProductID>FortiManager-6.4.13</ProductID>
+                <ProductID>FortiManager-6.4.12</ProductID>
+                <ProductID>FortiManager-6.4.11</ProductID>
+                <ProductID>FortiManager-6.4.10</ProductID>
+                <ProductID>FortiManager-6.4.9</ProductID>
+                <ProductID>FortiManager-6.4.8</ProductID>
+                <ProductID>FortiManager-6.4.7</ProductID>
+                <ProductID>FortiManager-6.4.6</ProductID>
+                <ProductID>FortiManager-6.4.5</ProductID>
+                <ProductID>FortiManager-6.4.4</ProductID>
+                <ProductID>FortiManager-6.4.3</ProductID>
+                <ProductID>FortiManager-6.4.2</ProductID>
+                <ProductID>FortiManager-6.4.1</ProductID>
+                <ProductID>FortiManager-6.4.0</ProductID>
+                <ProductID>FortiManager Cloud-7.4.6</ProductID>
+                <ProductID>FortiManager Cloud-7.4.5</ProductID>
+                <ProductID>FortiManager Cloud-7.4.4</ProductID>
+                <ProductID>FortiManager Cloud-7.4.3</ProductID>
+                <ProductID>FortiManager Cloud-7.4.2</ProductID>
+                <ProductID>FortiManager Cloud-7.4.1</ProductID>
+                <ProductID>FortiManager Cloud-7.2.12</ProductID>
+                <ProductID>FortiManager Cloud-7.2.11</ProductID>
+                <ProductID>FortiManager Cloud-7.2.10</ProductID>
+                <ProductID>FortiManager Cloud-7.2.9</ProductID>
+                <ProductID>FortiManager Cloud-7.2.8</ProductID>
+                <ProductID>FortiManager Cloud-7.2.7</ProductID>
+                <ProductID>FortiManager Cloud-7.2.6</ProductID>
+                <ProductID>FortiManager Cloud-7.2.5</ProductID>
+                <ProductID>FortiManager Cloud-7.2.4</ProductID>
+                <ProductID>FortiManager Cloud-7.2.3</ProductID>
+                <ProductID>FortiManager Cloud-7.2.2</ProductID>
+                <ProductID>FortiManager Cloud-7.2.1</ProductID>
+                <ProductID>FortiManager Cloud-7.0.13</ProductID>
+                <ProductID>FortiManager Cloud-7.0.12</ProductID>
+                <ProductID>FortiManager Cloud-7.0.11</ProductID>
+                <ProductID>FortiManager Cloud-7.0.10</ProductID>
+                <ProductID>FortiManager Cloud-7.0.9</ProductID>
+                <ProductID>FortiManager Cloud-7.0.8</ProductID>
+                <ProductID>FortiManager Cloud-7.0.7</ProductID>
+                <ProductID>FortiManager Cloud-7.0.6</ProductID>
+                <ProductID>FortiManager Cloud-7.0.5</ProductID>
+                <ProductID>FortiManager Cloud-7.0.4</ProductID>
+                <ProductID>FortiManager Cloud-7.0.3</ProductID>
+                <ProductID>FortiManager Cloud-7.0.2</ProductID>
+                <ProductID>FortiManager Cloud-7.0.1</ProductID>
+                <ProductID>FortiManager Cloud-6.4.7</ProductID>
+                <ProductID>FortiManager Cloud-6.4.6</ProductID>
+                <ProductID>FortiManager Cloud-6.4.5</ProductID>
+                <ProductID>FortiManager Cloud-6.4.4</ProductID>
+                <ProductID>FortiManager Cloud-6.4.3</ProductID>
+                <ProductID>FortiManager Cloud-6.4.2</ProductID>
+                <ProductID>FortiManager Cloud-6.4.1</ProductID>
+            </Status>
+        </ProductStatuses>
+        <CVSSScoreSets>
+            <ScoreSetV3>
+                <BaseScoreV3>2.6</BaseScoreV3>
+                <VectorV3>CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:U/C:L/I:N/A:N/E:P/RL:X/RC:C</VectorV3>
+            </ScoreSetV3>
+        </CVSSScoreSets>
+        <References Type="Self">
+            <Reference>
+                <URL>https://fortiguard.fortinet.com/psirt/FG-IR-24-437</URL>
+                <Description>SQL injection in forward module</Description>
+            </Reference>Reference>
+        </References>
+    </Vulnerability>
+</cvrf:cvrfdoc>
