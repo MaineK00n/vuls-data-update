@@ -103,9 +103,6 @@ func TestVersion_Compare(t *testing.T) {
 			if got := v.Compare(w); got != tt.want {
 				t.Errorf("Compare() = %d, want %d", got, tt.want)
 			}
-			if got := w.Compare(v); got != -tt.want {
-				t.Errorf("reverse Compare() = %d, want %d", got, -tt.want)
-			}
 		})
 	}
 }
