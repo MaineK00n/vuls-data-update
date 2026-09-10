@@ -51,7 +51,6 @@ type Version struct {
 	buildRelease []int  // parsed for validation only; pkg(7) ignores it when ordering
 	branch       []int  // nil when absent
 	timestamp    string // "" when absent; ISO 8601 basic, so string order is time order
-	original     string
 }
 
 // NewVersion parses an IPS version string. Anything that pkg(7) would reject
@@ -78,7 +77,7 @@ func NewVersion(v string) (Version, error) {
 		return Version{}, errors.Errorf("version must have a release value. actual: %q", v)
 	}
 
-	ver := Version{original: v}
+	var ver Version
 
 	var err error
 	if ver.release, err = parseDotSequence(release); err != nil {
@@ -142,21 +141,25 @@ func parseDotSequence(s string) ([]int, error) {
 // is meant for testing one version against one bound; do not use it as the
 // comparator of sort or max over a mixed set of versions.
 func (v Version) Compare(w Version) int {
-	if c := slices.Compare(v.release, w.release); c != 0 {
-		return c
-	}
-	if v.branch != nil && w.branch != nil {
-		if c := slices.Compare(v.branch, w.branch); c != 0 {
-			return c
-		}
-	}
-	if v.timestamp != "" && w.timestamp != "" {
-		return cmp.Compare(v.timestamp, w.timestamp)
-	}
-	return 0
+	return cmp.Or(
+		slices.Compare(v.release, w.release),
+		compareBranch(v.branch, w.branch),
+		compareTimestamp(v.timestamp, w.timestamp),
+	)
 }
 
-// String returns the version as it was given to NewVersion.
-func (v Version) String() string {
-	return v.original
+// compareBranch is 0 when either side has no branch (don't care).
+func compareBranch(a, b []int) int {
+	if a == nil || b == nil {
+		return 0
+	}
+	return slices.Compare(a, b)
+}
+
+// compareTimestamp is 0 when either side has no timestamp (don't care).
+func compareTimestamp(a, b string) int {
+	if a == "" || b == "" {
+		return 0
+	}
+	return cmp.Compare(a, b)
 }
