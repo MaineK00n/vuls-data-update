@@ -2,10 +2,15 @@ package ecosystem
 
 import (
 	"fmt"
+	"regexp"
 	"strings"
 
 	"github.com/pkg/errors"
 )
+
+// solarisReleaseRe is a dotted sequence of numbers, the shape of a Solaris
+// release ("10", "10.11.0", "11.4").
+var solarisReleaseRe = regexp.MustCompile(`^[0-9]+(\.[0-9]+)*$`)
 
 type Ecosystem string
 
@@ -98,12 +103,10 @@ func GetEcosystem(family, release string) (Ecosystem, error) {
 		// of minor releases (11.3, 11.4, ...) that are supported and
 		// updated independently, so the minor is part of the ecosystem
 		// and anything after it is dropped.
-		ss := strings.Split(release, ".")
-		for _, s := range ss {
-			if s == "" || strings.Trim(s, "0123456789") != "" {
-				return "", errors.Errorf("unexpected release format. expected: %q, actual: %q", "10(.<n>...) or 11.<minor>(.<n>...)", release)
-			}
+		if !solarisReleaseRe.MatchString(release) {
+			return "", errors.Errorf("unexpected release format. expected: %q, actual: %q", "10(.<n>...) or 11.<minor>(.<n>...)", release)
 		}
+		ss := strings.Split(release, ".")
 		switch {
 		case ss[0] == "10":
 			return Ecosystem(fmt.Sprintf("%s:%s", family, ss[0])), nil
