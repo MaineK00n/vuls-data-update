@@ -49,7 +49,7 @@ const timestampLayout = "20060102T150405Z"
 type Version struct {
 	release      []int
 	buildRelease []int  // parsed for validation only; pkg(7) ignores it when ordering
-	branch       []int  // nil when absent
+	branch       []int  // empty when absent
 	timestamp    string // "" when absent; ISO 8601 basic, so string order is time order
 }
 
@@ -150,7 +150,7 @@ func (v Version) Compare(w Version) int {
 
 // compareBranch is 0 when either side has no branch (don't care).
 func compareBranch(a, b []int) int {
-	if a == nil || b == nil {
+	if len(a) == 0 || len(b) == 0 {
 		return 0
 	}
 	return slices.Compare(a, b)
