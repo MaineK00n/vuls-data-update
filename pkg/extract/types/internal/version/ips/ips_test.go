@@ -43,6 +43,8 @@ func TestNewVersion(t *testing.T) {
 		{name: "timestamp date only", v: "1.0:20161018", wantErr: true},
 		{name: "timestamp without Z", v: "1.0:20161018T000000", wantErr: true},
 		{name: "timestamp impossible date", v: "1.0:20161340T000000Z", wantErr: true},
+		{name: "timestamp with fractional seconds", v: "1.0:20161018T000000.123Z", wantErr: true},
+		{name: "timestamp with a lowercase z", v: "1.0:20161018T000000z", wantErr: true},
 		{name: "timestamp with offset", v: "1.0:20161018T000000+0900", wantErr: true},
 		{name: "semver", v: "1.0.0-beta.1", wantErr: true},
 		{name: "rpm", v: "1.0.2k-8.el7", wantErr: true},
