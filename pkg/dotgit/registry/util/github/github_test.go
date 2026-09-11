@@ -118,3 +118,117 @@ func TestDo(t *testing.T) {
 		})
 	}
 }
+
+func TestCheckScopes(t *testing.T) {
+	type args struct {
+		token    string
+		required []string
+	}
+	tests := []struct {
+		name    string
+		args    args
+		status  int
+		scopes  *string
+		wantErr bool
+	}{
+		{
+			name: "happy",
+			args: args{
+				token:    "token",
+				required: []string{github.ScopeReadPackages, github.ScopeDeletePackages},
+			},
+			status: http.StatusOK,
+			scopes: new("delete:packages, gist, read:org, repo, workflow, write:packages"),
+		},
+		{
+			name: "insufficient scopes",
+			args: args{
+				token:    "token",
+				required: []string{github.ScopeWritePackages},
+			},
+			status:  http.StatusOK,
+			scopes:  new("read:packages, repo"),
+			wantErr: true,
+		},
+		{
+			name: "no required scopes",
+			args: args{
+				token: "token",
+			},
+			status: http.StatusOK,
+			scopes: new(""),
+		},
+		{
+			name: "token has no scopes",
+			args: args{
+				token:    "token",
+				required: []string{github.ScopeWritePackages},
+			},
+			status:  http.StatusOK,
+			scopes:  new(""),
+			wantErr: true,
+		},
+		{
+			name: "scopes are not reported",
+			args: args{
+				token:    "token",
+				required: []string{github.ScopeWritePackages},
+			},
+			status:  http.StatusOK,
+			wantErr: true,
+		},
+		{
+			name: "token is not set",
+			args: args{
+				required: []string{github.ScopeReadPackages},
+			},
+			status:  http.StatusOK,
+			wantErr: true,
+		},
+		{
+			name: "token is invalid",
+			args: args{
+				token:    "token",
+				required: []string{github.ScopeReadPackages},
+			},
+			status:  http.StatusUnauthorized,
+			wantErr: true,
+		},
+		{
+			name: "scopes cannot be fetched",
+			args: args{
+				token:    "token",
+				required: []string{github.ScopeReadPackages},
+			},
+			status: http.StatusForbidden,
+		},
+		{
+			name: "unexpected response status",
+			args: args{
+				token:    "token",
+				required: []string{github.ScopeReadPackages},
+			},
+			status: http.StatusInternalServerError,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				switch {
+				case r.Method == http.MethodGet && r.URL.Path == "/user":
+					if tt.scopes != nil {
+						w.Header().Set("X-OAuth-Scopes", *tt.scopes)
+					}
+					w.WriteHeader(tt.status)
+				default:
+					http.NotFound(w, r)
+				}
+			}))
+			defer ts.Close()
+
+			if err := github.CheckScopes(tt.args.token, tt.args.required, github.WithBaseURL(ts.URL)); (err != nil) != tt.wantErr {
+				t.Errorf("CheckScopes() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
