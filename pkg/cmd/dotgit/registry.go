@@ -55,11 +55,7 @@ func checkTokenScopes(token string, images []string, required ...string) error {
 		return nil
 	}
 
-	if err := utilGitHub.CheckScopes(token, required); err != nil {
-		return errors.Wrap(err, "failed to check GitHub token scopes")
-	}
-
-	return nil
+	return utilGitHub.CheckScopes(token, required)
 }
 
 func newCmdRegistryLs() *cobra.Command {
@@ -84,7 +80,7 @@ func newCmdRegistryLs() *cobra.Command {
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
 			if err := checkTokenScopes(options.token, options.repositories, utilGitHub.ScopeReadPackages); err != nil {
-				return err
+				return errors.Wrap(err, "failed to check GitHub token scopes")
 			}
 
 			rs := make([]ls.Repository, 0, len(options.repositories))
@@ -175,7 +171,7 @@ func newCmdRegistryPush() *cobra.Command {
 		Args: cobra.ExactArgs(2),
 		RunE: func(_ *cobra.Command, args []string) error {
 			if err := checkTokenScopes(options.token, []string{args[0]}, utilGitHub.ScopeWritePackages); err != nil {
-				return err
+				return errors.Wrap(err, "failed to check GitHub token scopes")
 			}
 
 			if err := push.Push(args[0], args[1], options.token, push.WithForce(options.force)); err != nil {
@@ -207,7 +203,7 @@ func newCmdRegistryDelete() *cobra.Command {
 		Args: cobra.ExactArgs(1),
 		RunE: func(_ *cobra.Command, args []string) error {
 			if err := checkTokenScopes(options.token, []string{args[0]}, utilGitHub.ScopeReadPackages, utilGitHub.ScopeDeletePackages); err != nil {
-				return err
+				return errors.Wrap(err, "failed to check GitHub token scopes")
 			}
 
 			if err := delete.Delete(args[0], options.token); err != nil {
@@ -240,7 +236,7 @@ func newCmdRegistryCp() *cobra.Command {
 		Args: cobra.ExactArgs(2),
 		RunE: func(_ *cobra.Command, args []string) error {
 			if err := checkTokenScopes(options.token, []string{args[1]}, utilGitHub.ScopeWritePackages); err != nil {
-				return err
+				return errors.Wrap(err, "failed to check GitHub token scopes")
 			}
 
 			if err := cp.Copy(args[0], args[1], options.token, cp.WithForce(options.force)); err != nil {
@@ -273,7 +269,7 @@ func newCmdRegistryTag() *cobra.Command {
 		Args: cobra.ExactArgs(2),
 		RunE: func(_ *cobra.Command, args []string) error {
 			if err := checkTokenScopes(options.token, []string{args[0]}, utilGitHub.ScopeWritePackages); err != nil {
-				return err
+				return errors.Wrap(err, "failed to check GitHub token scopes")
 			}
 
 			if err := tag.Tag(args[0], args[1], options.token); err != nil {
@@ -304,7 +300,7 @@ func newCmdRegistryUntag() *cobra.Command {
 		Args: cobra.ExactArgs(1),
 		RunE: func(_ *cobra.Command, args []string) error {
 			if err := checkTokenScopes(options.token, []string{args[0]}, utilGitHub.ScopeWritePackages, utilGitHub.ScopeDeletePackages); err != nil {
-				return err
+				return errors.Wrap(err, "failed to check GitHub token scopes")
 			}
 
 			if err := untag.Untag(args[0], options.token); err != nil {
