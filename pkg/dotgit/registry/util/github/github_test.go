@@ -138,10 +138,7 @@ func TestCheckScopes(t *testing.T) {
 				required: []string{github.ScopeReadPackages, github.ScopeDeletePackages},
 			},
 			status: http.StatusOK,
-			scopes: func() *string {
-				s := "delete:packages, gist, read:org, repo, workflow, write:packages"
-				return &s
-			}(),
+			scopes: new("delete:packages, gist, read:org, repo, workflow, write:packages"),
 		},
 		{
 			name: "insufficient scopes",
@@ -149,11 +146,8 @@ func TestCheckScopes(t *testing.T) {
 				token:    "token",
 				required: []string{github.ScopeWritePackages},
 			},
-			status: http.StatusOK,
-			scopes: func() *string {
-				s := "read:packages, repo"
-				return &s
-			}(),
+			status:  http.StatusOK,
+			scopes:  new("read:packages, repo"),
 			wantErr: true,
 		},
 		{
@@ -162,10 +156,7 @@ func TestCheckScopes(t *testing.T) {
 				token: "token",
 			},
 			status: http.StatusOK,
-			scopes: func() *string {
-				s := ""
-				return &s
-			}(),
+			scopes: new(""),
 		},
 		{
 			name: "token has no scopes",
@@ -173,11 +164,8 @@ func TestCheckScopes(t *testing.T) {
 				token:    "token",
 				required: []string{github.ScopeWritePackages},
 			},
-			status: http.StatusOK,
-			scopes: func() *string {
-				s := ""
-				return &s
-			}(),
+			status:  http.StatusOK,
+			scopes:  new(""),
 			wantErr: true,
 		},
 		{
