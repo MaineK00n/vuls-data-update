@@ -330,7 +330,20 @@ func extract(fetched tracker.Advisory, paths []string) (dataTypes.Data, error) {
 		}(),
 	}
 
+	// Every pocket of one release lands in the same ecosystem and is told
+	// apart only by the tag, so a consumer evaluating the pockets
+	// independently compares an installed version against fixed versions from
+	// build lineages it never came from. repositories carries the tracker's
+	// own release key (noble, esm-apps/noble, fips-updates/xenial, ...) so the
+	// generic repository gate can do that matching instead: a scanner that
+	// reports which pocket an installed build came from — mapping every
+	// archive suite of the release (noble, noble-updates, noble-security,
+	// noble-backports, ...) onto the plain key, and each Ubuntu Pro / FIPS
+	// service onto its own — then only ever matches the pocket that actually
+	// published the build it has. Scanners that report no repository are
+	// unaffected: the gate passes when either side is empty.
 	m := make(map[segmentTypes.Segment][]criterionTypes.Criterion)
+	repositories := make(map[segmentTypes.Segment][]string)
 	for rn, pm := range rpm {
 		v, err := func(release string) (string, error) {
 			rtov := map[string]string{
@@ -434,6 +447,7 @@ func extract(fetched tracker.Advisory, paths []string) (dataTypes.Data, error) {
 			}
 
 			m[seg] = append(m[seg], rp.criterion)
+			repositories[seg] = []string{rn}
 		}
 	}
 
@@ -446,8 +460,9 @@ func extract(fetched tracker.Advisory, paths []string) (dataTypes.Data, error) {
 				Ecosystem: seg.Ecosystem,
 				Conditions: []conditionTypes.Condition{{
 					Criteria: criteriaTypes.Criteria{
-						Operator:   criteriaTypes.CriteriaOperatorTypeOR,
-						Criterions: cns,
+						Operator:     criteriaTypes.CriteriaOperatorTypeOR,
+						Criterions:   cns,
+						Repositories: repositories[seg],
 					},
 					Tag: seg.Tag,
 				}},
@@ -455,8 +470,9 @@ func extract(fetched tracker.Advisory, paths []string) (dataTypes.Data, error) {
 		default:
 			extracted.Detections[i].Conditions = append(extracted.Detections[i].Conditions, conditionTypes.Condition{
 				Criteria: criteriaTypes.Criteria{
-					Operator:   criteriaTypes.CriteriaOperatorTypeOR,
-					Criterions: cns,
+					Operator:     criteriaTypes.CriteriaOperatorTypeOR,
+					Criterions:   cns,
+					Repositories: repositories[seg],
 				},
 				Tag: seg.Tag,
 			})
