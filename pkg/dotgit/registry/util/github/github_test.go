@@ -168,12 +168,26 @@ func TestCheckScopes(t *testing.T) {
 			}(),
 		},
 		{
-			name: "scopes are not reported",
+			name: "token has no scopes",
 			args: args{
 				token:    "token",
 				required: []string{github.ScopeWritePackages},
 			},
 			status: http.StatusOK,
+			scopes: func() *string {
+				s := ""
+				return &s
+			}(),
+			wantErr: true,
+		},
+		{
+			name: "scopes are not reported",
+			args: args{
+				token:    "token",
+				required: []string{github.ScopeWritePackages},
+			},
+			status:  http.StatusOK,
+			wantErr: true,
 		},
 		{
 			name: "token is not set",
@@ -199,6 +213,14 @@ func TestCheckScopes(t *testing.T) {
 				required: []string{github.ScopeReadPackages},
 			},
 			status: http.StatusForbidden,
+		},
+		{
+			name: "unexpected response status",
+			args: args{
+				token:    "token",
+				required: []string{github.ScopeReadPackages},
+			},
+			status: http.StatusInternalServerError,
 		},
 	}
 	for _, tt := range tests {

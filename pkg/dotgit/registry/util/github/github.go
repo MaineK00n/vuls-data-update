@@ -76,10 +76,13 @@ func Do(method, apiurl, token string, fn func(resp *http.Response) error) error 
 
 // CheckScopes reports whether the token is set and has the required scopes.
 //
-// The granted scopes are taken from the X-OAuth-Scopes header of the "GET /user" response, which is
-// only returned for OAuth tokens and personal access tokens (classic). A fine-grained personal
-// access token or a GitHub App installation token has no scopes to report, so in that case the
-// check is skipped with a warning instead of failing.
+// The granted scopes are taken from the X-OAuth-Scopes header of the "GET /user" response. Apart from
+// GITHUB_TOKEN in GitHub Actions, GitHub Packages only supports a personal access token (classic), so a
+// token reporting no scopes, e.g. a fine-grained personal access token, is rejected as well.
+// GITHUB_TOKEN cannot access "GET /user" and gets 403 instead, and its permissions are granted by the
+// workflow rather than by scopes, so the check is skipped with a warning when the scopes cannot be fetched.
+//
+// ref. https://docs.github.com/en/packages/learn-github-packages/about-permissions-for-github-packages
 func CheckScopes(token string, required []string, opts ...Option) error {
 	options := &options{
 		baseURL: baseURL,
@@ -97,7 +100,10 @@ func CheckScopes(token string, required []string, opts ...Option) error {
 		return nil
 	}
 
-	var granted []string
+	var (
+		granted []string
+		fetched bool
+	)
 	if err := Do(http.MethodGet, fmt.Sprintf("%s/user", options.baseURL), token, func(resp *http.Response) error {
 		switch resp.StatusCode {
 		case http.StatusOK:
@@ -106,21 +112,19 @@ func CheckScopes(token string, required []string, opts ...Option) error {
 					granted = append(granted, s)
 				}
 			}
+			fetched = true
 			return nil
 		case http.StatusUnauthorized:
 			return errors.New("token is invalid or expired")
-		case http.StatusForbidden:
-			return nil
 		default:
-			slog.Warn("Unexpected response status while fetching the token scopes, skip checking the token scopes", slog.Int("status", resp.StatusCode))
+			slog.Warn("Failed to fetch the token scopes, skip checking the token scopes", slog.Int("status", resp.StatusCode))
 			return nil
 		}
 	}); err != nil {
 		return errors.Wrap(err, "call GitHub API")
 	}
 
-	if len(granted) == 0 {
-		slog.Warn("The token does not report its scopes, skip checking the token scopes", slog.Any("required", required))
+	if !fetched {
 		return nil
 	}
 
@@ -133,7 +137,7 @@ func CheckScopes(token string, required []string, opts ...Option) error {
 		}
 	}
 	if len(missing) > 0 {
-		return errors.Errorf("insufficient token scopes. missing: %q, required: %q, actual: %q. ref. https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/scopes-for-oauth-apps", missing, required, granted)
+		return errors.Errorf("insufficient token scopes. missing: %q, required: %q, actual: %q. use a personal access token (classic) with the required scopes. ref. https://docs.github.com/en/packages/learn-github-packages/about-permissions-for-github-packages", missing, required, granted)
 	}
 
 	return nil
