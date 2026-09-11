@@ -100,19 +100,28 @@ func CheckScopes(token string, required []string, opts ...Option) error {
 		return nil
 	}
 
-	var (
-		granted []string
-		fetched bool
-	)
 	if err := Do(http.MethodGet, fmt.Sprintf("%s/user", options.baseURL), token, func(resp *http.Response) error {
 		switch resp.StatusCode {
 		case http.StatusOK:
+			var granted []string
 			for s := range strings.SplitSeq(resp.Header.Get("X-OAuth-Scopes"), ",") {
 				if s := strings.TrimSpace(s); s != "" {
 					granted = append(granted, s)
 				}
 			}
-			fetched = true
+
+			missing := make([]string, 0, len(required))
+			for _, r := range required {
+				if !slices.ContainsFunc(granted, func(g string) bool {
+					return g == r || slices.Contains(impliedScopes[g], r)
+				}) {
+					missing = append(missing, r)
+				}
+			}
+			if len(missing) > 0 {
+				return errors.Errorf("insufficient token scopes. missing: %q, required: %q, actual: %q. use a personal access token (classic) with the required scopes. ref. https://docs.github.com/en/packages/learn-github-packages/about-permissions-for-github-packages", missing, required, granted)
+			}
+
 			return nil
 		case http.StatusUnauthorized:
 			return errors.New("token is invalid or expired")
@@ -122,22 +131,6 @@ func CheckScopes(token string, required []string, opts ...Option) error {
 		}
 	}); err != nil {
 		return errors.Wrap(err, "call GitHub API")
-	}
-
-	if !fetched {
-		return nil
-	}
-
-	missing := make([]string, 0, len(required))
-	for _, r := range required {
-		if !slices.ContainsFunc(granted, func(g string) bool {
-			return g == r || slices.Contains(impliedScopes[g], r)
-		}) {
-			missing = append(missing, r)
-		}
-	}
-	if len(missing) > 0 {
-		return errors.Errorf("insufficient token scopes. missing: %q, required: %q, actual: %q. use a personal access token (classic) with the required scopes. ref. https://docs.github.com/en/packages/learn-github-packages/about-permissions-for-github-packages", missing, required, granted)
 	}
 
 	return nil
