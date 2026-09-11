@@ -34,6 +34,7 @@ package ips
 
 import (
 	"cmp"
+	"regexp"
 	"slices"
 	"strconv"
 	"strings"
@@ -42,8 +43,11 @@ import (
 	"github.com/pkg/errors"
 )
 
-// timestampLayout is the pkg(7) timestamp format, always UTC.
+// timestampLayout is the pkg(7) timestamp format, always UTC. timestampRe
+// pins its exact shape (time.Parse alone would also take fractional seconds).
 const timestampLayout = "20060102T150405Z"
+
+var timestampRe = regexp.MustCompile(`^[0-9]{8}T[0-9]{6}Z$`)
 
 // Version is a parsed IPS version.
 type Version struct {
@@ -94,6 +98,12 @@ func NewVersion(v string) (Version, error) {
 		}
 	}
 	if hasTimestamp {
+		// time.Parse accepts a fractional second after the seconds field even
+		// when the layout has none, so pin the shape before checking the
+		// calendar.
+		if !timestampRe.MatchString(timestamp) {
+			return Version{}, errors.Errorf("parse timestamp of %q. expected: %q, actual: %q", v, "YYYYMMDDThhmmssZ", timestamp)
+		}
 		if _, err := time.Parse(timestampLayout, timestamp); err != nil {
 			return Version{}, errors.Wrapf(err, "parse timestamp of %q. expected: %q", v, "YYYYMMDDThhmmssZ")
 		}
