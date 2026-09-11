@@ -36,6 +36,13 @@ func TestFetch(t *testing.T) {
 			args:     []string{"FG-IR-24-259"},
 			hasError: true,
 		},
+		{
+			// A real advisory, with its ID intact and its title emptied: CVRF
+			// requires one, so this is not a document to write.
+			name:     "no DocumentTitle",
+			args:     []string{"FG-IR-23-999"},
+			hasError: true,
+		},
 	}
 
 	for _, tt := range tests {

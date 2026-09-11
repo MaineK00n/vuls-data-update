@@ -138,6 +138,14 @@ func Fetch(args []string, opts ...Option) error {
 			return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "FG-IR-yy-\\d+", a.DocumentTracking.Identification.ID)
 		}
 
+		// CVRF requires a DocumentTitle and does not allow it to be empty, so a
+		// document without one is not valid CVRF. The title is also what names
+		// the advisory's CSAF, so writing the record anyway would only hand the
+		// problem to whoever reads it next.
+		if strings.TrimSpace(a.DocumentTitle) == "" {
+			return errors.Errorf("no DocumentTitle in the CVRF for %s, which CVRF requires", a.DocumentTracking.Identification.ID)
+		}
+
 		if err := util.Write(filepath.Join(options.dir, t.Format("2006"), fmt.Sprintf("%s.json", a.DocumentTracking.Identification.ID)), a); err != nil {
 			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, t.Format("2006"), fmt.Sprintf("%s.json", a.DocumentTracking.Identification.ID)))
 		}

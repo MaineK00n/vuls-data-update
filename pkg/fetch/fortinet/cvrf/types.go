@@ -1,7 +1,10 @@
 package cvrf
 
 type CVRF struct {
-	DocumentTitle     string `xml:"DocumentTitle" json:"document_title,omitempty"`
+	// CVRF requires DocumentTitle and does not allow it to be empty, and Fetch
+	// rejects a document without one, so it is written without omitempty: the
+	// field is always there.
+	DocumentTitle     string `xml:"DocumentTitle" json:"document_title"`
 	DocumentType      string `xml:"DocumentType" json:"document_type,omitempty"`
 	DocumentPublisher struct {
 		Type           string `xml:"Type,attr" json:"type,omitempty"`
