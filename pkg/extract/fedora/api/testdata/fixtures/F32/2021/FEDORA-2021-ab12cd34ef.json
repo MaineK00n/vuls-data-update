@@ -1,0 +1,84 @@
+{
+	"alias": "FEDORA-2021-ab12cd34ef",
+	"bugs": [
+		{
+			"bug_id": 1930001,
+			"security": true,
+			"title": "CVE-2021-1001 examplepkg: refused tracking bug [fedora-all]",
+			"bugzilla": {
+				"bug_id": "1930001",
+				"error": "NotPermitted"
+			}
+		},
+		{
+			"bug_id": 1930002,
+			"security": true,
+			"title": "CVE-2021-1002 examplepkg: parent CVE bug refused [fedora-all]",
+			"bugzilla": {
+				"bug_id": "1930002",
+				"creation_ts": "2021-02-10 12:34:56 +0000",
+				"short_desc": "CVE-2021-1002 examplepkg: parent CVE bug refused [fedora-all]",
+				"delta_ts": "2021-02-11 01:02:03 +0000",
+				"bug_severity": "important",
+				"blocked": [
+					{
+						"bug_id": "1930012",
+						"error": "NotPermitted"
+					}
+				]
+			}
+		},
+		{
+			"bug_id": 1930003,
+			"security": true,
+			"title": "CVE-2021-1003 CVE-2021-1004 ... examplepkg: various flaws [fedora-all]",
+			"bugzilla": {
+				"bug_id": "1930003",
+				"error": "NotPermitted"
+			}
+		},
+		{
+			"bug_id": 1930004,
+			"security": true,
+			"title": "CVE-2021-1005 examplepkg: readable bug [fedora-all]",
+			"bugzilla": {
+				"bug_id": "1930004",
+				"alias": [
+					"CVE-2021-1005"
+				],
+				"creation_ts": "2021-02-12 12:34:56 +0000",
+				"short_desc": "CVE-2021-1005 examplepkg: readable bug",
+				"delta_ts": "2021-02-13 01:02:03 +0000",
+				"bug_severity": "low"
+			}
+		},
+		{
+			"bug_id": 1930005,
+			"security": true,
+			"title": "CVE-2021-1005 examplepkg: refused duplicate of a readable bug [fedora-all]",
+			"bugzilla": {
+				"bug_id": "1930005",
+				"error": "NotPermitted"
+			}
+		}
+	],
+	"builds": [
+		{
+			"nvr": "examplepkg-flatpak-1-1.fc32",
+			"release_id": 57,
+			"signed": true,
+			"type": "flatpak"
+		}
+	],
+	"date_submitted": "2021-02-09 08:07:06",
+	"notes": "Regression fixture for Bugzilla records refused with NotPermitted.",
+	"release": {
+		"id_prefix": "FEDORA",
+		"name": "F32",
+		"version": "32"
+	},
+	"severity": "moderate",
+	"title": "examplepkg-flatpak-1-1.fc32",
+	"url": "https://bodhi.fedoraproject.org/updates/FEDORA-2021-ab12cd34ef",
+	"updateid": "FEDORA-2021-ab12cd34ef"
+}

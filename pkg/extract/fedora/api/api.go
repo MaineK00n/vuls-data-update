@@ -148,6 +148,14 @@ func Extract(args string, opts ...Option) error {
 
 var cveIDPattern = regexp.MustCompile(`CVE-\d{4}-\d{4,}`)
 
+// isRestricted reports whether Bugzilla refused b or any bug it blocks. Such a
+// record arrives as a bare bug ID, so the alias the CVE ID is read from is gone
+// -- whether the refused bug is the Fedora tracking bug itself or the parent CVE
+// bug it blocks.
+func isRestricted(b api.Bugzilla) bool {
+	return b.Error == "NotPermitted" || slices.ContainsFunc(b.Blocked, isRestricted)
+}
+
 func extract(fetched api.Advisory, raws []string) (*dataTypes.Data, error) {
 	switch ct := func() string {
 		if fetched.ContentType == nil {
@@ -362,6 +370,35 @@ func extract(fetched api.Advisory, raws []string) (*dataTypes.Data, error) {
 									}},
 									Published: utiltime.Parse([]string{"2006-01-02 15:04:05 -0700"}, b.CreationTs),
 									Modified:  utiltime.Parse([]string{"2006-01-02 15:04:05 -0700"}, b.DeltaTs),
+								},
+								Segments: []segmentTypes.Segment{{Ecosystem: eco}},
+							})
+						}
+					}
+				}
+
+				// Bugzilla has restricted a growing number of Fedora security bugs,
+				// dropping every CVE ID the refused records used to contribute. Recover
+				// them from the Bodhi bug title, which the restriction leaves intact.
+				// A stopgap, not an equivalent source: Bugzilla truncates a long summary,
+				// so a roll-up bug ("... chromium: various flaws") names only the first
+				// few of its CVEs. Drop this once the bugs are readable again.
+				for _, bug := range fetched.Bugs {
+					if bug.Title == nil || !isRestricted(bug.Bugzilla) {
+						continue
+					}
+					for _, cveid := range cveIDPattern.FindAllString(*bug.Title, -1) {
+						if !slices.ContainsFunc(vs, func(e vulnerabilityTypes.Vulnerability) bool {
+							return e.Content.ID == vulnerabilityContentTypes.VulnerabilityID(cveid)
+						}) {
+							vs = append(vs, vulnerabilityTypes.Vulnerability{
+								Content: vulnerabilityContentTypes.Content{
+									ID:    vulnerabilityContentTypes.VulnerabilityID(cveid),
+									Title: *bug.Title,
+									References: []referenceTypes.Reference{{
+										Source: "fedoraproject.org",
+										URL:    fmt.Sprintf("https://bugzilla.redhat.com/show_bug.cgi?id=%d", bug.BugID),
+									}},
 								},
 								Segments: []segmentTypes.Segment{{Ecosystem: eco}},
 							})

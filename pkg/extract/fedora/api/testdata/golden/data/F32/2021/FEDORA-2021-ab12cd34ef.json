@@ -1,0 +1,133 @@
+{
+	"id": "FEDORA-2021-ab12cd34ef",
+	"advisories": [
+		{
+			"content": {
+				"id": "FEDORA-2021-ab12cd34ef",
+				"title": "examplepkg-flatpak-1-1.fc32",
+				"description": "Regression fixture for Bugzilla records refused with NotPermitted.",
+				"severity": [
+					{
+						"type": "vendor",
+						"source": "fedoraproject.org",
+						"vendor": "moderate"
+					}
+				],
+				"references": [
+					{
+						"source": "fedoraproject.org",
+						"url": "https://bodhi.fedoraproject.org/updates/FEDORA-2021-ab12cd34ef"
+					}
+				],
+				"published": "2021-02-09T08:07:06Z"
+			},
+			"segments": [
+				{
+					"ecosystem": "fedora:32"
+				}
+			]
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-2021-1001",
+				"title": "CVE-2021-1001 examplepkg: refused tracking bug [fedora-all]",
+				"references": [
+					{
+						"source": "fedoraproject.org",
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=1930001"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "fedora:32"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2021-1002",
+				"title": "CVE-2021-1002 examplepkg: parent CVE bug refused [fedora-all]",
+				"references": [
+					{
+						"source": "fedoraproject.org",
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=1930002"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "fedora:32"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2021-1003",
+				"title": "CVE-2021-1003 CVE-2021-1004 ... examplepkg: various flaws [fedora-all]",
+				"references": [
+					{
+						"source": "fedoraproject.org",
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=1930003"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "fedora:32"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2021-1004",
+				"title": "CVE-2021-1003 CVE-2021-1004 ... examplepkg: various flaws [fedora-all]",
+				"references": [
+					{
+						"source": "fedoraproject.org",
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=1930003"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "fedora:32"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2021-1005",
+				"title": "CVE-2021-1005 examplepkg: readable bug",
+				"severity": [
+					{
+						"type": "vendor",
+						"source": "fedoraproject.org",
+						"vendor": "low"
+					}
+				],
+				"references": [
+					{
+						"source": "fedoraproject.org",
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=1930004"
+					}
+				],
+				"published": "2021-02-12T12:34:56Z",
+				"modified": "2021-02-13T01:02:03Z"
+			},
+			"segments": [
+				{
+					"ecosystem": "fedora:32"
+				}
+			]
+		}
+	],
+	"data_source": {
+		"id": "fedora-api",
+		"raws": [
+			"fixtures/F32/2021/FEDORA-2021-ab12cd34ef.json"
+		]
+	}
+}
