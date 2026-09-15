@@ -83,6 +83,11 @@ func Do(method, apiurl, token string, fn func(resp *http.Response) error) error 
 // workflow rather than by scopes, so 403 is logged at Info and the check is skipped. Any other unexpected
 // status warns and skips the check as well.
 //
+// Every endpoint returns X-OAuth-Scopes for a personal access token (classic), so a cheaper one such as
+// "GET /rate_limit" would do for reading the scopes. "GET /user" is used because it is the only one that
+// answers GITHUB_TOKEN with 403 instead of 200 without the header, which is what tells a token that cannot
+// report its scopes apart from a classic token that reports none.
+//
 // ref. https://docs.github.com/en/packages/learn-github-packages/about-permissions-for-github-packages
 func CheckScopes(token string, required []string, opts ...Option) error {
 	options := &options{
