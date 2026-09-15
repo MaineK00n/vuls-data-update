@@ -119,7 +119,7 @@ func CheckScopes(token string, required []string, opts ...Option) error {
 				}
 			}
 			if len(missing) > 0 {
-				return errors.Errorf("insufficient token scopes. missing: %q, required: %q, actual: %q. use a personal access token (classic) with the required scopes. ref. https://docs.github.com/en/packages/learn-github-packages/about-permissions-for-github-packages", missing, required, granted)
+				return errors.Errorf("insufficient token scopes. missing: %q, required: %q, actual: %q. use a personal access token (classic) with the required scopes. ref. https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/scopes-for-oauth-apps, https://docs.github.com/en/packages/learn-github-packages/about-permissions-for-github-packages", missing, required, granted)
 			}
 
 			return nil
