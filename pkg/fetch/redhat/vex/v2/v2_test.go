@@ -1,6 +1,7 @@
 package v2_test
 
 import (
+	"errors"
 	"io/fs"
 	"net/http"
 	"net/http/httptest"
@@ -19,11 +20,16 @@ func TestFetch(t *testing.T) {
 	tests := []struct {
 		name     string
 		testdata string
+		deleted  []string
 		hasError bool
 	}{
 		{
 			name:     "happy",
 			testdata: "testdata/fixtures/",
+			// retired by deletions.csv after the archive was taken; the
+			// golden tree only covers what Fetch writes, so absence needs
+			// its own assertion
+			deleted: []string{filepath.Join("2023", "CVE-2023-6237.json")},
 		},
 	}
 	for _, tt := range tests {
@@ -39,7 +45,7 @@ func TestFetch(t *testing.T) {
 			}
 
 			dir := t.TempDir()
-			err = v2.Fetch(v2.WithBaseURL(u), v2.WithDir(dir), v2.WithRetry(0))
+			err = v2.Fetch(v2.WithBaseURL(u), v2.WithDir(dir), v2.WithRetry(0), v2.WithConcurrency(1), v2.WithWait(0))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)
@@ -73,6 +79,12 @@ func TestFetch(t *testing.T) {
 					return nil
 				}); err != nil {
 					t.Error("walk error:", err)
+				}
+
+				for _, p := range tt.deleted {
+					if _, err := os.Stat(filepath.Join(dir, p)); !errors.Is(err, fs.ErrNotExist) {
+						t.Errorf("Fetch(). %s exists, want deleted", p)
+					}
 				}
 			}
 		})
