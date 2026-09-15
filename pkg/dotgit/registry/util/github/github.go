@@ -76,12 +76,14 @@ func Do(method, apiurl, token string, fn func(resp *http.Response) error) error 
 
 // CheckScopes reports whether the token is set and has the required scopes.
 //
-// The granted scopes are taken from the X-OAuth-Scopes header of the "GET /user" response. Apart from
-// GITHUB_TOKEN in GitHub Actions, GitHub Packages only supports a personal access token (classic), so a
-// token reporting no scopes, e.g. a fine-grained personal access token, is rejected as well.
-// GITHUB_TOKEN cannot access "GET /user" and gets 403 instead, and its permissions are granted by the
-// workflow rather than by scopes, so 403 is logged at Info and the check is skipped. Any other unexpected
-// status warns and skips the check as well.
+// The granted scopes are taken from the X-OAuth-Scopes header of the "GET /user" response. Apart from a
+// GitHub App installation token, GitHub Packages only supports a personal access token (classic), so a
+// token answering 200 while reporting no scopes is rejected as well.
+//
+// An installation token, GITHUB_TOKEN in GitHub Actions included, cannot access "GET /user" and gets 403
+// instead, and its permissions for GitHub Packages are granted by the workflow rather than by scopes, so
+// 403 is logged at Info and the check is skipped. A rate limited token is answered with 403 or 429 too,
+// and any other unexpected status skips the check with a warning.
 //
 // Every endpoint returns X-OAuth-Scopes for a personal access token (classic), so a cheaper one such as
 // "GET /rate_limit" would do for reading the scopes. "GET /user" is used because it is the only one that
