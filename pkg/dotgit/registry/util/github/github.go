@@ -80,7 +80,8 @@ func Do(method, apiurl, token string, fn func(resp *http.Response) error) error 
 // GITHUB_TOKEN in GitHub Actions, GitHub Packages only supports a personal access token (classic), so a
 // token reporting no scopes, e.g. a fine-grained personal access token, is rejected as well.
 // GITHUB_TOKEN cannot access "GET /user" and gets 403 instead, and its permissions are granted by the
-// workflow rather than by scopes, so the check is skipped with a warning when the scopes cannot be fetched.
+// workflow rather than by scopes, so 403 is logged at Info and the check is skipped. Any other unexpected
+// status warns and skips the check as well.
 //
 // ref. https://docs.github.com/en/packages/learn-github-packages/about-permissions-for-github-packages
 func CheckScopes(token string, required []string, opts ...Option) error {
@@ -125,6 +126,11 @@ func CheckScopes(token string, required []string, opts ...Option) error {
 			return nil
 		case http.StatusUnauthorized:
 			return errors.New("token is invalid or expired")
+		case http.StatusForbidden:
+			// GITHUB_TOKEN in GitHub Actions gets "Resource not accessible by integration" here, and its
+			// permissions for GitHub Packages come from the workflow rather than from scopes, so this is expected
+			slog.Info("The token cannot fetch its scopes, skip checking the token scopes", slog.Int("status", resp.StatusCode))
+			return nil
 		default:
 			slog.Warn("Failed to fetch the token scopes, skip checking the token scopes", slog.Int("status", resp.StatusCode))
 			return nil
