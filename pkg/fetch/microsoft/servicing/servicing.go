@@ -95,11 +95,13 @@ var (
 )
 
 type options struct {
-	helpURL     string
-	dir         string
-	retry       int
-	concurrency int
-	wait        time.Duration
+	helpURL      string
+	dir          string
+	retry        int
+	retryWaitMin time.Duration
+	retryWaitMax time.Duration
+	concurrency  int
+	wait         time.Duration
 }
 
 type Option interface {
@@ -134,6 +136,26 @@ func (r retryOption) apply(opts *options) {
 
 func WithRetry(retry int) Option {
 	return retryOption(retry)
+}
+
+type retryWaitMinOption time.Duration
+
+func (w retryWaitMinOption) apply(opts *options) {
+	opts.retryWaitMin = time.Duration(w)
+}
+
+func WithRetryWaitMin(wait time.Duration) Option {
+	return retryWaitMinOption(wait)
+}
+
+type retryWaitMaxOption time.Duration
+
+func (w retryWaitMaxOption) apply(opts *options) {
+	opts.retryWaitMax = time.Duration(w)
+}
+
+func WithRetryWaitMax(wait time.Duration) Option {
+	return retryWaitMaxOption(wait)
 }
 
 type concurrencyOption int
@@ -247,11 +269,13 @@ func (a article) name() string {
 // API that throttles the same way, allows 20.
 func Fetch(kbs []string, opts ...Option) error {
 	options := &options{
-		helpURL:     helpURL,
-		dir:         filepath.Join(util.CacheDir(), "fetch", "microsoft", "servicing"),
-		retry:       10,
-		concurrency: 2,
-		wait:        1 * time.Second,
+		helpURL:      helpURL,
+		dir:          filepath.Join(util.CacheDir(), "fetch", "microsoft", "servicing"),
+		retry:        10,
+		retryWaitMin: 1 * time.Second,
+		retryWaitMax: 5 * time.Minute,
+		concurrency:  2,
+		wait:         1 * time.Second,
 	}
 
 	for _, o := range opts {
@@ -280,7 +304,7 @@ func Fetch(kbs []string, opts ...Option) error {
 func (opts options) fetch(kbs []string) error {
 	slog.Info("Fetch Microsoft Servicing Articles")
 
-	client := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry), utilhttp.WithClientCheckRetry(retryPolicy))
+	client := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry), utilhttp.WithClientRetryWaitMin(opts.retryWaitMin), utilhttp.WithClientRetryWaitMax(opts.retryWaitMax), utilhttp.WithClientCheckRetry(retryPolicy))
 
 	seeds, err := opts.resolve(client, kbs)
 	if err != nil {
