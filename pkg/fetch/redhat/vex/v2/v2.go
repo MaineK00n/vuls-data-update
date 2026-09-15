@@ -373,6 +373,11 @@ func (o options) fetchDeletions(client *utilhttp.Client, archived time.Time) err
 		if len(record) != 2 {
 			return errors.Errorf("unexpected deletions.csv record format. expected: %q, actual: %q", []string{"<path>", "<datetime>"}, record)
 		}
+		// The path decides which file is removed, so a row escaping the
+		// fetch tree would delete something this fetcher never wrote.
+		if !filepath.IsLocal(record[0]) {
+			return errors.Errorf("unexpected deletions.csv path. expected: %q, actual: %q", "<year>/<cve>.json", record[0])
+		}
 
 		rt, err := time.Parse(time.RFC3339, record[1])
 		if err != nil {
