@@ -19,6 +19,7 @@ import (
 	"github.com/schollz/progressbar/v3"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
+	utilfilepath "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/filepath"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
@@ -113,7 +114,11 @@ func Fetch(opts ...Option) error {
 				return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", cve.Cve.CVEDataMeta.ID)
 			}
 
-			p := filepath.Join(options.dir, splitted[1], fmt.Sprintf("%s.json", cve.Cve.CVEDataMeta.ID))
+			p, err := utilfilepath.Join(options.dir, splitted[1], fmt.Sprintf("%s.json", cve.Cve.CVEDataMeta.ID))
+			if err != nil {
+				return errors.Wrap(err, "join")
+			}
+
 			newer, err := isNewer(p, cve.LastModifiedDate)
 			if err != nil {
 				return errors.Wrapf(err, "check lastModifiedDate %s", cve.Cve.CVEDataMeta.ID)

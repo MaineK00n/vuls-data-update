@@ -15,6 +15,7 @@ import (
 	eolTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/eol"
 	sourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/source"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/util"
+	utilfilepath "github.com/MaineK00n/vuls-data-update/pkg/extract/util/filepath"
 	utilgit "github.com/MaineK00n/vuls-data-update/pkg/extract/util/git"
 )
 
@@ -90,8 +91,13 @@ func Extract(opts ...Option) error {
 				m[v] = eol
 			}
 
-			if err := util.Write(filepath.Join(options.dir, "eol", c, fmt.Sprintf("%s.json", e)), m, true); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "eol", c, fmt.Sprintf("%s.json", e)))
+			p, err := utilfilepath.Join(options.dir, "eol", c, fmt.Sprintf("%s.json", e))
+			if err != nil {
+				return errors.Wrap(err, "join")
+			}
+
+			if err := util.Write(p, m, true); err != nil {
+				return errors.Wrapf(err, "write %s", p)
 			}
 		}
 	}

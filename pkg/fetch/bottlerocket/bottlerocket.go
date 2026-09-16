@@ -13,6 +13,7 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
+	utilfilepath "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/filepath"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
@@ -102,8 +103,13 @@ func Fetch(opts ...Option) error {
 			return errors.Wrap(err, "parse time")
 		}
 
-		if err := util.Write(filepath.Join(options.dir, fmt.Sprintf("%d", t.Year()), fmt.Sprintf("%s.json", u.ID)), u); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, fmt.Sprintf("%d", t.Year()), fmt.Sprintf("%s.json", u.ID)))
+		p, err := utilfilepath.Join(options.dir, fmt.Sprintf("%d", t.Year()), fmt.Sprintf("%s.json", u.ID))
+		if err != nil {
+			return errors.Wrap(err, "join")
+		}
+
+		if err := util.Write(p, u); err != nil {
+			return errors.Wrapf(err, "write %s", p)
 		}
 	}
 

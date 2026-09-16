@@ -17,6 +17,7 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
+	utilfilepath "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/filepath"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
@@ -185,8 +186,13 @@ func (opts options) crawl(client *utilhttp.Client, uids []string) ([]string, []s
 				return errors.Wrap(err, "parse view")
 			}
 
-			if err := util.Write(filepath.Join(opts.dir, fmt.Sprintf("%s.json", v.UpdateID)), v); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(opts.dir, fmt.Sprintf("%s.json", v.UpdateID)))
+			p, err := utilfilepath.Join(opts.dir, fmt.Sprintf("%s.json", v.UpdateID))
+			if err != nil {
+				return errors.Wrap(err, "join")
+			}
+
+			if err := util.Write(p, v); err != nil {
+				return errors.Wrapf(err, "write %s", p)
 			}
 
 			var next []string

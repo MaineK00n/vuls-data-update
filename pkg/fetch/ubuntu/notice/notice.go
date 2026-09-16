@@ -14,6 +14,7 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
+	utilfilepath "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/filepath"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
@@ -155,8 +156,13 @@ func Fetch(opts ...Option) error {
 					return errors.Errorf("unexpected ID format. expected: %q, actual: %q", "(USN|LSN|SSN)-\\d{1,5}-\\d{1,2}", n.ID)
 				}
 
-				if err := util.Write(filepath.Join(options.dir, splitted[0], splitted[1], fmt.Sprintf("%s.json", n.ID)), n); err != nil {
-					return errors.Wrapf(err, "write %s", filepath.Join(options.dir, splitted[0], splitted[1], fmt.Sprintf("%s.json", n.ID)))
+				p, err := utilfilepath.Join(options.dir, splitted[0], splitted[1], fmt.Sprintf("%s.json", n.ID))
+				if err != nil {
+					return errors.Wrap(err, "join")
+				}
+
+				if err := util.Write(p, n); err != nil {
+					return errors.Wrapf(err, "write %s", p)
 				}
 			default:
 				splitted, err := util.Split(n.ID, "-")
@@ -164,8 +170,13 @@ func Fetch(opts ...Option) error {
 					return errors.Errorf("unexpected ID format. expected: %q, actual: %q", "\\d{1,5}-\\d{1,2}", n.ID)
 				}
 
-				if err := util.Write(filepath.Join(options.dir, "UNKNWON", splitted[0], fmt.Sprintf("%s.json", n.ID)), n); err != nil {
-					return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "UNKNWON", splitted[0], fmt.Sprintf("%s.json", n.ID)))
+				p, err := utilfilepath.Join(options.dir, "UNKNWON", splitted[0], fmt.Sprintf("%s.json", n.ID))
+				if err != nil {
+					return errors.Wrap(err, "join")
+				}
+
+				if err := util.Write(p, n); err != nil {
+					return errors.Wrapf(err, "write %s", p)
 				}
 			}
 		}

@@ -14,6 +14,7 @@ import (
 	"gopkg.in/yaml.v3"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
+	utilfilepath "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/filepath"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
@@ -120,8 +121,13 @@ func Fetch(opts ...Option) error {
 			return errors.Errorf("unexpected package_slug format. expected: %q, actual: %q", "nuget/<package name>", adv.PackageSlug)
 		}
 
-		if err := util.Write(filepath.Join(options.dir, name, fmt.Sprintf("%s.json", strings.TrimSuffix(filepath.Base(hdr.Name), ".yml"))), adv); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, name, filepath.Base(hdr.Name)))
+		p, err := utilfilepath.Join(options.dir, name, fmt.Sprintf("%s.json", strings.TrimSuffix(filepath.Base(hdr.Name), ".yml")))
+		if err != nil {
+			return errors.Wrap(err, "join")
+		}
+
+		if err := util.Write(p, adv); err != nil {
+			return errors.Wrapf(err, "write %s", p)
 		}
 	}
 

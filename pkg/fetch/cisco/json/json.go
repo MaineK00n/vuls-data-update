@@ -13,6 +13,7 @@ import (
 	"github.com/schollz/progressbar/v3"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
+	utilfilepath "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/filepath"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
@@ -131,8 +132,13 @@ func Fetch(id, secret string, opts ...Option) error {
 			return errors.Errorf("unexpected published format. expected: %q, actual: %q", "2006-01-02T15:04:05", a.FirstPublished)
 		}
 
-		if err := util.Write(filepath.Join(options.dir, fmt.Sprintf("%d", t.Year()), fmt.Sprintf("%s.json", a.AdvisoryID)), a); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, fmt.Sprintf("%d", t.Year()), fmt.Sprintf("%s.json", a.AdvisoryID)))
+		p, err := utilfilepath.Join(options.dir, fmt.Sprintf("%d", t.Year()), fmt.Sprintf("%s.json", a.AdvisoryID))
+		if err != nil {
+			return errors.Wrap(err, "join")
+		}
+
+		if err := util.Write(p, a); err != nil {
+			return errors.Wrapf(err, "write %s", p)
 		}
 
 		_ = bar.Add(1)

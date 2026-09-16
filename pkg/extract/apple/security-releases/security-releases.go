@@ -34,6 +34,7 @@ import (
 	repositoryTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/datasource/repository"
 	sourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/source"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/util"
+	utilfilepath "github.com/MaineK00n/vuls-data-update/pkg/extract/util/filepath"
 	utilgit "github.com/MaineK00n/vuls-data-update/pkg/extract/util/git"
 	utiljson "github.com/MaineK00n/vuls-data-update/pkg/extract/util/json"
 	utiltime "github.com/MaineK00n/vuls-data-update/pkg/extract/util/time"
@@ -135,8 +136,13 @@ func Extract(args string, opts ...Option) error {
 			return errors.Wrapf(err, "extract %s", p)
 		}
 
-		if err := util.Write(filepath.Join(options.dir, "data", fmt.Sprintf("%s.json", extracted.ID)), extracted, true); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "data", fmt.Sprintf("%s.json", extracted.ID)))
+		dst, err := utilfilepath.Join(options.dir, "data", fmt.Sprintf("%s.json", extracted.ID))
+		if err != nil {
+			return errors.Wrap(err, "join")
+		}
+
+		if err := util.Write(dst, extracted, true); err != nil {
+			return errors.Wrapf(err, "write %s", dst)
 		}
 
 		return nil

@@ -71,6 +71,7 @@ import (
 	microsoftkbSupersedesTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/microsoftkb/supersedes"
 	sourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/source"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/util"
+	utilfilepath "github.com/MaineK00n/vuls-data-update/pkg/extract/util/filepath"
 	utilgit "github.com/MaineK00n/vuls-data-update/pkg/extract/util/git"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/servicing"
 )
@@ -256,8 +257,13 @@ func Extract(args string, opts ...Option) error {
 	}
 
 	for _, kb := range kbs {
-		if err := util.Write(filepath.Join(options.dir, "microsoftkb", fmt.Sprintf("%sxxx", kb.KBID[:len(kb.KBID)-3]), fmt.Sprintf("%s.json", kb.KBID)), kb, true); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "microsoftkb", fmt.Sprintf("%sxxx", kb.KBID[:len(kb.KBID)-3]), fmt.Sprintf("%s.json", kb.KBID)))
+		p, err := utilfilepath.Join(options.dir, "microsoftkb", fmt.Sprintf("%sxxx", kb.KBID[:len(kb.KBID)-3]), fmt.Sprintf("%s.json", kb.KBID))
+		if err != nil {
+			return errors.Wrap(err, "join")
+		}
+
+		if err := util.Write(p, kb, true); err != nil {
+			return errors.Wrapf(err, "write %s", p)
 		}
 	}
 

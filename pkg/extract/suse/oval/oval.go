@@ -45,6 +45,7 @@ import (
 	repositoryTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/datasource/repository"
 	sourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/source"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/util"
+	utilfilepath "github.com/MaineK00n/vuls-data-update/pkg/extract/util/filepath"
 	utilgit "github.com/MaineK00n/vuls-data-update/pkg/extract/util/git"
 	utiljson "github.com/MaineK00n/vuls-data-update/pkg/extract/util/json"
 	utiltime "github.com/MaineK00n/vuls-data-update/pkg/extract/util/time"
@@ -260,7 +261,11 @@ func (e extractor) extract(path, outdir string) error {
 	// then no concurrency issue should happen in the bunch.
 	// Other "definitions/" directorries are processed in sequentially in Extract function.
 	// So, no locks are required here.
-	filename := filepath.Join(outdir, "data", splitted[1], fmt.Sprintf("%s.json", data.ID))
+	filename, err := utilfilepath.Join(outdir, "data", splitted[1], fmt.Sprintf("%s.json", data.ID))
+	if err != nil {
+		return errors.Wrap(err, "join")
+	}
+
 	if _, err := os.Stat(filename); err == nil {
 		f, err := os.Open(filename)
 		if err != nil {

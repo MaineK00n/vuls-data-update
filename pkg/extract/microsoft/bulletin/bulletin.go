@@ -35,6 +35,7 @@ import (
 	microsoftkbSupersededByTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/microsoftkb/supersededby"
 	sourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/source"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/util"
+	utilfilepath "github.com/MaineK00n/vuls-data-update/pkg/extract/util/filepath"
 	utilgit "github.com/MaineK00n/vuls-data-update/pkg/extract/util/git"
 	utiljson "github.com/MaineK00n/vuls-data-update/pkg/extract/util/json"
 	utiltime "github.com/MaineK00n/vuls-data-update/pkg/extract/util/time"
@@ -122,8 +123,13 @@ func Extract(args string, opts ...Option) error {
 				return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "MS<yy>-<nnn>", data.ID)
 			}
 
-			if err := util.Write(filepath.Join(options.dir, "data", splitted[0], fmt.Sprintf("%s.json", data.ID)), data, true); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "data", splitted[0], fmt.Sprintf("%s.json", data.ID)))
+			p, err := utilfilepath.Join(options.dir, "data", splitted[0], fmt.Sprintf("%s.json", data.ID))
+			if err != nil {
+				return errors.Wrap(err, "join")
+			}
+
+			if err := util.Write(p, data, true); err != nil {
+				return errors.Wrapf(err, "write %s", p)
 			}
 		}
 
@@ -136,7 +142,11 @@ func Extract(args string, opts ...Option) error {
 				return errors.Errorf("unexpected KBID format. expected: len > 3, actual: %q, path: %q", kb.KBID, path)
 			}
 
-			filename := filepath.Join(options.dir, "microsoftkb", fmt.Sprintf("%sxxx", kb.KBID[:len(kb.KBID)-3]), fmt.Sprintf("%s.json", kb.KBID))
+			filename, err := utilfilepath.Join(options.dir, "microsoftkb", fmt.Sprintf("%sxxx", kb.KBID[:len(kb.KBID)-3]), fmt.Sprintf("%s.json", kb.KBID))
+			if err != nil {
+				return errors.Wrap(err, "join")
+			}
+
 			if _, err := os.Stat(filename); err == nil {
 				if err := func() error {
 					f, err := os.Open(filename)

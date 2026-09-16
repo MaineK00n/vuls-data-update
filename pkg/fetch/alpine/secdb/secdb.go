@@ -14,6 +14,7 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
+	utilfilepath "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/filepath"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
@@ -116,7 +117,12 @@ func Fetch(opts ...Option) error {
 			}
 
 			for _, p := range a.Packages {
-				if err := util.Write(filepath.Join(options.dir, strings.TrimPrefix(r, "v"), a.Reponame, fmt.Sprintf("%s.json", p.Pkg.Name)), Advisory{
+				dst, err := utilfilepath.Join(options.dir, strings.TrimPrefix(r, "v"), a.Reponame, fmt.Sprintf("%s.json", p.Pkg.Name))
+				if err != nil {
+					return errors.Wrap(err, "join")
+				}
+
+				if err := util.Write(dst, Advisory{
 					Apkurl:        a.Apkurl,
 					Archs:         a.Archs,
 					Reponame:      a.Reponame,
@@ -124,7 +130,7 @@ func Fetch(opts ...Option) error {
 					Distroversion: a.Distroversion,
 					Packages:      []Package{p},
 				}); err != nil {
-					return errors.Wrapf(err, "write %s", filepath.Join(options.dir, strings.TrimPrefix(r, "v"), a.Reponame, fmt.Sprintf("%s.json", p.Pkg.Name)))
+					return errors.Wrapf(err, "write %s", dst)
 				}
 			}
 		}

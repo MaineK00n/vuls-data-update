@@ -17,6 +17,7 @@ import (
 	"github.com/schollz/progressbar/v3"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
+	utilfilepath "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/filepath"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
@@ -94,8 +95,13 @@ func Fetch(opts ...Option) error {
 			d = hash32(fmt.Appendf(nil, "%s:%s", wfn.GetString(common.AttributeVendor), wfn.GetString(common.AttributeProduct)))
 		}
 
-		if err := util.Write(filepath.Join(options.dir, fmt.Sprintf("%x", d), fmt.Sprintf("%x.json", hash64([]byte(cpe.Name)))), cpe); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, fmt.Sprintf("%x", d), fmt.Sprintf("%x.json", hash64([]byte(cpe.Name)))))
+		p, err := utilfilepath.Join(options.dir, fmt.Sprintf("%x", d), fmt.Sprintf("%x.json", hash64([]byte(cpe.Name))))
+		if err != nil {
+			return errors.Wrap(err, "join")
+		}
+
+		if err := util.Write(p, cpe); err != nil {
+			return errors.Wrapf(err, "write %s", p)
 		}
 
 		_ = bar.Add(1)

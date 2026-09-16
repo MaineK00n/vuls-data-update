@@ -14,6 +14,7 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
+	utilfilepath "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/filepath"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
@@ -169,8 +170,13 @@ func (o options) fetchCVRF(client *utilhttp.Client, kind string, is []string) er
 			return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "openEuler-(SA|HotPatchSA)-yyyy-\\d+", cvrf.DocumentTracking.Identification.ID)
 		}
 
-		if err := util.Write(filepath.Join(o.dir, splitted[1], splitted[2], fmt.Sprintf("%s.json", cvrf.DocumentTracking.Identification.ID)), cvrf); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(o.dir, splitted[1], splitted[2], fmt.Sprintf("%s.json", cvrf.DocumentTracking.Identification.ID)))
+		p, err := utilfilepath.Join(o.dir, splitted[1], splitted[2], fmt.Sprintf("%s.json", cvrf.DocumentTracking.Identification.ID))
+		if err != nil {
+			return errors.Wrap(err, "join")
+		}
+
+		if err := util.Write(p, cvrf); err != nil {
+			return errors.Wrapf(err, "write %s", p)
 		}
 
 		return nil

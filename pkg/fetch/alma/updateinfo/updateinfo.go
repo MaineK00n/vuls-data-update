@@ -26,6 +26,7 @@ import (
 	"gopkg.in/yaml.v3"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
+	utilfilepath "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/filepath"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
@@ -450,8 +451,13 @@ func (o options) fetchUpdateinfo(client *utilhttp.Client, u string) error {
 			return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "<prefix>-yyyy:<sequence>", u.ID)
 		}
 
-		if err := util.Write(filepath.Join(o.dir, d, splitted[0], splitted[1], fmt.Sprintf("%s.json", u.ID)), u); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(o.dir, d, splitted[0], splitted[1], fmt.Sprintf("%s.json", u.ID)))
+		p, err := utilfilepath.Join(o.dir, d, splitted[0], splitted[1], fmt.Sprintf("%s.json", u.ID))
+		if err != nil {
+			return errors.Wrap(err, "join")
+		}
+
+		if err := util.Write(p, u); err != nil {
+			return errors.Wrapf(err, "write %s", p)
 		}
 	}
 
@@ -502,8 +508,13 @@ func (o options) fetchModules(client *utilhttp.Client, u string) error {
 						return errors.Wrap(err, "decode yaml")
 					}
 
-					if err := util.Write(filepath.Join(o.dir, d, fmt.Sprintf("%s-%s-%d.%s.json", md.Name, md.Stream, md.Version, md.Context)), md); err != nil {
-						return errors.Wrapf(err, "write %s", filepath.Join(o.dir, d, fmt.Sprintf("%s-%s-%d.%s.json", md.Name, md.Stream, md.Version, md.Context)))
+					p, err := utilfilepath.Join(o.dir, d, fmt.Sprintf("%s-%s-%d.%s.json", md.Name, md.Stream, md.Version, md.Context))
+					if err != nil {
+						return errors.Wrap(err, "join")
+					}
+
+					if err := util.Write(p, md); err != nil {
+						return errors.Wrapf(err, "write %s", p)
 					}
 				default:
 					return errors.Errorf("unexpected modulemd version. expected: %q, actual: %q", "2", fmt.Sprintf("%d", ms.Version))
