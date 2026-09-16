@@ -1,6 +1,7 @@
 package test
 
 import (
+	"bytes"
 	"io/fs"
 	"net/url"
 	"os"
@@ -9,6 +10,27 @@ import (
 	"github.com/google/go-cmp/cmp"
 	"github.com/pkg/errors"
 )
+
+type options struct {
+	replaces [][2]string
+}
+
+type Option interface {
+	apply(*options)
+}
+
+type replaceOption [2]string
+
+func (r replaceOption) apply(opts *options) {
+	opts.replaces = append(opts.replaces, r)
+}
+
+// WithReplace rewrites old to new in every file the fetcher wrote, before it is
+// compared. It is for the one value a fixture cannot hold fixed: the test
+// server's own base URL, which lands in the output and changes on every run.
+func WithReplace(old, new string) Option {
+	return replaceOption{old, new}
+}
 
 // Diff compares the tree a fetcher wrote under gotDir against the golden tree
 // at goldenDir, and reports the difference as an error. Both trees are read
@@ -28,13 +50,18 @@ import (
 //
 // A goldenDir that does not exist reads as an empty tree, for the test case
 // whose expected output is nothing at all: git cannot carry an empty directory.
-func Diff(goldenDir, gotDir string) error {
-	want, err := readTree(goldenDir)
+func Diff(goldenDir, gotDir string, opts ...Option) error {
+	options := &options{}
+	for _, o := range opts {
+		o.apply(options)
+	}
+
+	want, err := readTree(goldenDir, nil)
 	if err != nil {
 		return errors.Wrapf(err, "read %s", goldenDir)
 	}
 
-	got, err := readTree(gotDir)
+	got, err := readTree(gotDir, options.replaces)
 	if err != nil {
 		return errors.Wrapf(err, "read %s", gotDir)
 	}
@@ -46,7 +73,7 @@ func Diff(goldenDir, gotDir string) error {
 	return nil
 }
 
-func readTree(root string) (map[string]string, error) {
+func readTree(root string, replaces [][2]string) (map[string]string, error) {
 	tree := make(map[string]string)
 
 	switch ok, err := exists(root); {
@@ -73,6 +100,9 @@ func readTree(root string) (map[string]string, error) {
 		bs, err := os.ReadFile(path)
 		if err != nil {
 			return errors.Wrapf(err, "read %s", path)
+		}
+		for _, r := range replaces {
+			bs = bytes.ReplaceAll(bs, []byte(r[0]), []byte(r[1]))
 		}
 		tree[rel] = string(bs)
 

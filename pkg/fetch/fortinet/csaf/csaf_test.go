@@ -2,19 +2,16 @@ package csaf_test
 
 import (
 	"fmt"
-	"io/fs"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"path"
 	"path/filepath"
-	"slices"
 	"strings"
 	"testing"
 
-	"github.com/google/go-cmp/cmp"
-
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/fortinet/csaf"
+	utiltest "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/test"
 )
 
 func TestFetch(t *testing.T) {
@@ -204,75 +201,14 @@ func TestFetch(t *testing.T) {
 				t.Error("unexpected error:", err)
 			case err == nil && tt.hasError:
 				t.Error("expected error has not occurred")
-			case tt.hasError:
+			case err != nil && tt.hasError:
+				// error was expected and occurred, test passed
+				return
 			default:
-				golden := filepath.Join("testdata", "golden", tt.name)
-
-				want, got := files(t, golden), files(t, dir)
-				if diff := cmp.Diff(want, got); diff != "" {
-					t.Errorf("Fetch() files. (-expected +got):\n%s", diff)
-				}
-
-				for _, name := range got {
-					if !slices.Contains(want, name) {
-						continue
-					}
-
-					expected, err := os.ReadFile(filepath.Join(golden, name))
-					if err != nil {
-						t.Error("read error:", err)
-						continue
-					}
-
-					actual, err := os.ReadFile(filepath.Join(dir, name))
-					if err != nil {
-						t.Error("read error:", err)
-						continue
-					}
-
-					if diff := cmp.Diff(expected, actual); diff != "" {
-						t.Errorf("Fetch() %s. (-expected +got):\n%s", name, diff)
-					}
+				if err := utiltest.Diff(filepath.Join("testdata", "golden", tt.name), dir); err != nil {
+					t.Error("unexpected error:", err)
 				}
 			}
 		})
 	}
-}
-
-// files lists the paths under root, relative to it and sorted. A root that does
-// not exist holds none, which is how a case that expects no output says so.
-func files(t *testing.T, root string) []string {
-	t.Helper()
-
-	if _, err := os.Stat(root); err != nil {
-		if os.IsNotExist(err) {
-			return nil
-		}
-		t.Fatal("stat error:", err)
-	}
-
-	var paths []string
-	if err := filepath.WalkDir(root, func(path string, d fs.DirEntry, err error) error {
-		if err != nil {
-			return err
-		}
-
-		if d.IsDir() {
-			return nil
-		}
-
-		rel, err := filepath.Rel(root, path)
-		if err != nil {
-			return err
-		}
-		paths = append(paths, rel)
-
-		return nil
-	}); err != nil {
-		t.Fatal("walk error:", err)
-	}
-
-	slices.Sort(paths)
-
-	return paths
 }

@@ -24,6 +24,7 @@ func TestDiff(t *testing.T) {
 		noGolden bool
 		golden   []file
 		got      []file
+		opts     []utiltest.Option
 		// wantErr lists substrings the reported error must contain. Empty means
 		// the trees must compare equal.
 		wantErr []string
@@ -67,6 +68,19 @@ func TestDiff(t *testing.T) {
 			got:      []file{{path: "2024/CVE-2024-0001.json", content: "{}"}},
 			wantErr:  []string{"2024/CVE-2024-0001.json"},
 		},
+		{
+			name:   "test server URL replaced before comparing",
+			golden: []file{{path: "2024/CVE-2024-0001.json", content: `{"url": "https://example.com/a"}`}},
+			got:    []file{{path: "2024/CVE-2024-0001.json", content: `{"url": "http://127.0.0.1:34567/a"}`}},
+			opts:   []utiltest.Option{utiltest.WithReplace("http://127.0.0.1:34567", "https://example.com")},
+		},
+		{
+			name:    "replacement does not hide a real difference",
+			golden:  []file{{path: "2024/CVE-2024-0001.json", content: `{"url": "https://example.com/a"}`}},
+			got:     []file{{path: "2024/CVE-2024-0001.json", content: `{"url": "http://127.0.0.1:34567/b"}`}},
+			opts:    []utiltest.Option{utiltest.WithReplace("http://127.0.0.1:34567", "https://example.com")},
+			wantErr: []string{"(-expected +got)"},
+		},
 	}
 
 	for _, tt := range tests {
@@ -85,7 +99,7 @@ func TestDiff(t *testing.T) {
 				t.Fatal("unexpected error:", err)
 			}
 
-			err := utiltest.Diff(goldenDir, gotDir)
+			err := utiltest.Diff(goldenDir, gotDir, tt.opts...)
 			switch {
 			case err != nil && len(tt.wantErr) == 0:
 				t.Error("unexpected error:", err)
