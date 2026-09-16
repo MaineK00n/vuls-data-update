@@ -258,6 +258,15 @@ func (c *Client) Do(req *retryablehttp.Request) (*http.Response, error) {
 }
 
 func (c *Client) PipelineDo(reqs []*retryablehttp.Request, concurrency int, wait time.Duration, noProgress bool, cont func(resp *http.Response) error) error {
+	// errgroup reads a negative limit as "no limit" and a positive one as
+	// the limit itself, but gives zero an unbuffered semaphore, so the
+	// first Go call blocks with nothing able to release it. Left alone, a
+	// caller that passes zero hangs for as long as it has a request to
+	// make, instead of failing.
+	if concurrency == 0 {
+		return errors.Errorf("unexpected concurrency. expected: %s, actual: %d", "a non-zero number", concurrency)
+	}
+
 	reqChan := make(chan *retryablehttp.Request)
 	go func() {
 		defer close(reqChan)
