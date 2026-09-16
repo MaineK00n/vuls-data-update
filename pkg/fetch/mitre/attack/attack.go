@@ -13,6 +13,7 @@ import (
 	"github.com/schollz/progressbar/v3"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
+	utilfilepath "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/filepath"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
@@ -117,136 +118,221 @@ func fetchDomain(opts *options, domain string) error {
 			if err := json.Unmarshal(raw, &o); err != nil {
 				return errors.Wrapf(err, "decode %s %s", head.Type, head.ID)
 			}
-			if err := util.Write(filepath.Join(opts.dir, domain, head.Type, fmt.Sprintf("%s.json", head.ID)), o); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(opts.dir, domain, head.Type, fmt.Sprintf("%s.json", head.ID)))
+			p, err := utilfilepath.Join(opts.dir, domain, head.Type, fmt.Sprintf("%s.json", head.ID))
+			if err != nil {
+				return errors.Wrap(err, "join")
+			}
+
+			if err := util.Write(p, o); err != nil {
+				return errors.Wrapf(err, "write %s", p)
 			}
 		case "campaign":
 			var o Campaign
 			if err := json.Unmarshal(raw, &o); err != nil {
 				return errors.Wrapf(err, "decode %s %s", head.Type, head.ID)
 			}
-			if err := util.Write(filepath.Join(opts.dir, domain, head.Type, fmt.Sprintf("%s.json", head.ID)), o); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(opts.dir, domain, head.Type, fmt.Sprintf("%s.json", head.ID)))
+			p, err := utilfilepath.Join(opts.dir, domain, head.Type, fmt.Sprintf("%s.json", head.ID))
+			if err != nil {
+				return errors.Wrap(err, "join")
+			}
+
+			if err := util.Write(p, o); err != nil {
+				return errors.Wrapf(err, "write %s", p)
 			}
 		case "course-of-action":
 			var o CourseOfAction
 			if err := json.Unmarshal(raw, &o); err != nil {
 				return errors.Wrapf(err, "decode %s %s", head.Type, head.ID)
 			}
-			if err := util.Write(filepath.Join(opts.dir, domain, head.Type, fmt.Sprintf("%s.json", head.ID)), o); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(opts.dir, domain, head.Type, fmt.Sprintf("%s.json", head.ID)))
+			p, err := utilfilepath.Join(opts.dir, domain, head.Type, fmt.Sprintf("%s.json", head.ID))
+			if err != nil {
+				return errors.Wrap(err, "join")
+			}
+
+			if err := util.Write(p, o); err != nil {
+				return errors.Wrapf(err, "write %s", p)
 			}
 		case "intrusion-set":
 			var o IntrusionSet
 			if err := json.Unmarshal(raw, &o); err != nil {
 				return errors.Wrapf(err, "decode %s %s", head.Type, head.ID)
 			}
-			if err := util.Write(filepath.Join(opts.dir, domain, head.Type, fmt.Sprintf("%s.json", head.ID)), o); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(opts.dir, domain, head.Type, fmt.Sprintf("%s.json", head.ID)))
+			p, err := utilfilepath.Join(opts.dir, domain, head.Type, fmt.Sprintf("%s.json", head.ID))
+			if err != nil {
+				return errors.Wrap(err, "join")
+			}
+
+			if err := util.Write(p, o); err != nil {
+				return errors.Wrapf(err, "write %s", p)
 			}
 		case "malware":
 			var o Malware
 			if err := json.Unmarshal(raw, &o); err != nil {
 				return errors.Wrapf(err, "decode %s %s", head.Type, head.ID)
 			}
-			if err := util.Write(filepath.Join(opts.dir, domain, head.Type, fmt.Sprintf("%s.json", head.ID)), o); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(opts.dir, domain, head.Type, fmt.Sprintf("%s.json", head.ID)))
+			p, err := utilfilepath.Join(opts.dir, domain, head.Type, fmt.Sprintf("%s.json", head.ID))
+			if err != nil {
+				return errors.Wrap(err, "join")
+			}
+
+			if err := util.Write(p, o); err != nil {
+				return errors.Wrapf(err, "write %s", p)
 			}
 		case "tool":
 			var o Tool
 			if err := json.Unmarshal(raw, &o); err != nil {
 				return errors.Wrapf(err, "decode %s %s", head.Type, head.ID)
 			}
-			if err := util.Write(filepath.Join(opts.dir, domain, head.Type, fmt.Sprintf("%s.json", head.ID)), o); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(opts.dir, domain, head.Type, fmt.Sprintf("%s.json", head.ID)))
+			p, err := utilfilepath.Join(opts.dir, domain, head.Type, fmt.Sprintf("%s.json", head.ID))
+			if err != nil {
+				return errors.Wrap(err, "join")
+			}
+
+			if err := util.Write(p, o); err != nil {
+				return errors.Wrapf(err, "write %s", p)
 			}
 		case "relationship":
 			var o Relationship
 			if err := json.Unmarshal(raw, &o); err != nil {
 				return errors.Wrapf(err, "decode %s %s", head.Type, head.ID)
 			}
-			if err := util.Write(filepath.Join(opts.dir, domain, head.Type, fmt.Sprintf("%s.json", head.ID)), o); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(opts.dir, domain, head.Type, fmt.Sprintf("%s.json", head.ID)))
+			p, err := utilfilepath.Join(opts.dir, domain, head.Type, fmt.Sprintf("%s.json", head.ID))
+			if err != nil {
+				return errors.Wrap(err, "join")
+			}
+
+			if err := util.Write(p, o); err != nil {
+				return errors.Wrapf(err, "write %s", p)
 			}
 		case "x-mitre-tactic":
 			var o XMitreTactic
 			if err := json.Unmarshal(raw, &o); err != nil {
 				return errors.Wrapf(err, "decode %s %s", head.Type, head.ID)
 			}
-			if err := util.Write(filepath.Join(opts.dir, domain, head.Type, fmt.Sprintf("%s.json", head.ID)), o); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(opts.dir, domain, head.Type, fmt.Sprintf("%s.json", head.ID)))
+			p, err := utilfilepath.Join(opts.dir, domain, head.Type, fmt.Sprintf("%s.json", head.ID))
+			if err != nil {
+				return errors.Wrap(err, "join")
+			}
+
+			if err := util.Write(p, o); err != nil {
+				return errors.Wrapf(err, "write %s", p)
 			}
 		case "identity":
 			var o Identity
 			if err := json.Unmarshal(raw, &o); err != nil {
 				return errors.Wrapf(err, "decode %s %s", head.Type, head.ID)
 			}
-			if err := util.Write(filepath.Join(opts.dir, domain, head.Type, fmt.Sprintf("%s.json", head.ID)), o); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(opts.dir, domain, head.Type, fmt.Sprintf("%s.json", head.ID)))
+			p, err := utilfilepath.Join(opts.dir, domain, head.Type, fmt.Sprintf("%s.json", head.ID))
+			if err != nil {
+				return errors.Wrap(err, "join")
+			}
+
+			if err := util.Write(p, o); err != nil {
+				return errors.Wrapf(err, "write %s", p)
 			}
 		case "marking-definition":
 			var o MarkingDefinition
 			if err := json.Unmarshal(raw, &o); err != nil {
 				return errors.Wrapf(err, "decode %s %s", head.Type, head.ID)
 			}
-			if err := util.Write(filepath.Join(opts.dir, domain, head.Type, fmt.Sprintf("%s.json", head.ID)), o); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(opts.dir, domain, head.Type, fmt.Sprintf("%s.json", head.ID)))
+			p, err := utilfilepath.Join(opts.dir, domain, head.Type, fmt.Sprintf("%s.json", head.ID))
+			if err != nil {
+				return errors.Wrap(err, "join")
+			}
+
+			if err := util.Write(p, o); err != nil {
+				return errors.Wrapf(err, "write %s", p)
 			}
 		case "x-mitre-analytic":
 			var o XMitreAnalytic
 			if err := json.Unmarshal(raw, &o); err != nil {
 				return errors.Wrapf(err, "decode %s %s", head.Type, head.ID)
 			}
-			if err := util.Write(filepath.Join(opts.dir, domain, head.Type, fmt.Sprintf("%s.json", head.ID)), o); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(opts.dir, domain, head.Type, fmt.Sprintf("%s.json", head.ID)))
+			p, err := utilfilepath.Join(opts.dir, domain, head.Type, fmt.Sprintf("%s.json", head.ID))
+			if err != nil {
+				return errors.Wrap(err, "join")
+			}
+
+			if err := util.Write(p, o); err != nil {
+				return errors.Wrapf(err, "write %s", p)
 			}
 		case "x-mitre-asset":
 			var o XMitreAsset
 			if err := json.Unmarshal(raw, &o); err != nil {
 				return errors.Wrapf(err, "decode %s %s", head.Type, head.ID)
 			}
-			if err := util.Write(filepath.Join(opts.dir, domain, head.Type, fmt.Sprintf("%s.json", head.ID)), o); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(opts.dir, domain, head.Type, fmt.Sprintf("%s.json", head.ID)))
+			p, err := utilfilepath.Join(opts.dir, domain, head.Type, fmt.Sprintf("%s.json", head.ID))
+			if err != nil {
+				return errors.Wrap(err, "join")
+			}
+
+			if err := util.Write(p, o); err != nil {
+				return errors.Wrapf(err, "write %s", p)
 			}
 		case "x-mitre-collection":
 			var o XMitreCollection
 			if err := json.Unmarshal(raw, &o); err != nil {
 				return errors.Wrapf(err, "decode %s %s", head.Type, head.ID)
 			}
-			if err := util.Write(filepath.Join(opts.dir, domain, head.Type, fmt.Sprintf("%s.json", head.ID)), o); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(opts.dir, domain, head.Type, fmt.Sprintf("%s.json", head.ID)))
+			p, err := utilfilepath.Join(opts.dir, domain, head.Type, fmt.Sprintf("%s.json", head.ID))
+			if err != nil {
+				return errors.Wrap(err, "join")
+			}
+
+			if err := util.Write(p, o); err != nil {
+				return errors.Wrapf(err, "write %s", p)
 			}
 		case "x-mitre-data-component":
 			var o XMitreDataComponent
 			if err := json.Unmarshal(raw, &o); err != nil {
 				return errors.Wrapf(err, "decode %s %s", head.Type, head.ID)
 			}
-			if err := util.Write(filepath.Join(opts.dir, domain, head.Type, fmt.Sprintf("%s.json", head.ID)), o); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(opts.dir, domain, head.Type, fmt.Sprintf("%s.json", head.ID)))
+			p, err := utilfilepath.Join(opts.dir, domain, head.Type, fmt.Sprintf("%s.json", head.ID))
+			if err != nil {
+				return errors.Wrap(err, "join")
+			}
+
+			if err := util.Write(p, o); err != nil {
+				return errors.Wrapf(err, "write %s", p)
 			}
 		case "x-mitre-data-source":
 			var o XMitreDataSource
 			if err := json.Unmarshal(raw, &o); err != nil {
 				return errors.Wrapf(err, "decode %s %s", head.Type, head.ID)
 			}
-			if err := util.Write(filepath.Join(opts.dir, domain, head.Type, fmt.Sprintf("%s.json", head.ID)), o); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(opts.dir, domain, head.Type, fmt.Sprintf("%s.json", head.ID)))
+			p, err := utilfilepath.Join(opts.dir, domain, head.Type, fmt.Sprintf("%s.json", head.ID))
+			if err != nil {
+				return errors.Wrap(err, "join")
+			}
+
+			if err := util.Write(p, o); err != nil {
+				return errors.Wrapf(err, "write %s", p)
 			}
 		case "x-mitre-detection-strategy":
 			var o XMitreDetectionStrategy
 			if err := json.Unmarshal(raw, &o); err != nil {
 				return errors.Wrapf(err, "decode %s %s", head.Type, head.ID)
 			}
-			if err := util.Write(filepath.Join(opts.dir, domain, head.Type, fmt.Sprintf("%s.json", head.ID)), o); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(opts.dir, domain, head.Type, fmt.Sprintf("%s.json", head.ID)))
+			p, err := utilfilepath.Join(opts.dir, domain, head.Type, fmt.Sprintf("%s.json", head.ID))
+			if err != nil {
+				return errors.Wrap(err, "join")
+			}
+
+			if err := util.Write(p, o); err != nil {
+				return errors.Wrapf(err, "write %s", p)
 			}
 		case "x-mitre-matrix":
 			var o XMitreMatrix
 			if err := json.Unmarshal(raw, &o); err != nil {
 				return errors.Wrapf(err, "decode %s %s", head.Type, head.ID)
 			}
-			if err := util.Write(filepath.Join(opts.dir, domain, head.Type, fmt.Sprintf("%s.json", head.ID)), o); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(opts.dir, domain, head.Type, fmt.Sprintf("%s.json", head.ID)))
+			p, err := utilfilepath.Join(opts.dir, domain, head.Type, fmt.Sprintf("%s.json", head.ID))
+			if err != nil {
+				return errors.Wrap(err, "join")
+			}
+
+			if err := util.Write(p, o); err != nil {
+				return errors.Wrapf(err, "write %s", p)
 			}
 		default:
 			return errors.Errorf("unexpected STIX object type %q in %s", head.Type, head.ID)

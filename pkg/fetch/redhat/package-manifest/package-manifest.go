@@ -13,6 +13,7 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
+	utilfilepath "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/filepath"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
@@ -176,8 +177,13 @@ func writeTable(major string, s *goquery.Selection, rootDir string) error {
 			Type:      "package",
 			Packages:  ps,
 		}
-		if err := util.Write(filepath.Join(rootDir, "package", major, fmt.Sprintf("%s.json", ref)), t); err != nil {
-			return errors.Wrapf(err, "write package table. file: %s", filepath.Join(rootDir, "package", major, fmt.Sprintf("%s.json", ref)))
+		p, err := utilfilepath.Join(rootDir, "package", major, fmt.Sprintf("%s.json", ref))
+		if err != nil {
+			return errors.Wrap(err, "join")
+		}
+
+		if err := util.Write(p, t); err != nil {
+			return errors.Wrapf(err, "write package table. file: %s", p)
 		}
 
 		return nil
@@ -224,8 +230,13 @@ func writeTable(major string, s *goquery.Selection, rootDir string) error {
 			Reference: ref,
 			Modules:   ms,
 		}
-		if err := util.Write(filepath.Join(rootDir, "module", major, fmt.Sprintf("%s.json", ref)), t); err != nil {
-			return errors.Wrapf(err, "write module table. file: %s", filepath.Join(rootDir, "module", major, fmt.Sprintf("%s.json", ref)))
+		p, err := utilfilepath.Join(rootDir, "module", major, fmt.Sprintf("%s.json", ref))
+		if err != nil {
+			return errors.Wrap(err, "join")
+		}
+
+		if err := util.Write(p, t); err != nil {
+			return errors.Wrapf(err, "write module table. file: %s", p)
 		}
 
 		return nil

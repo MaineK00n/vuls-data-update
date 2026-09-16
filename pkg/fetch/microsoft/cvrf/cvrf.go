@@ -17,6 +17,7 @@ import (
 	"github.com/schollz/progressbar/v3"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
+	utilfilepath "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/filepath"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
@@ -227,8 +228,13 @@ func writeCVRF(dir string, c *CVRF) error {
 			d = splitted[1]
 		}
 
-		if err := util.Write(filepath.Join(dir, c.DocumentTracking.Identification.ID, d, fmt.Sprintf("%s.json", vc.DocumentTracking.Identification.ID)), vc); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(dir, c.DocumentTracking.Identification.ID, d, fmt.Sprintf("%s.json", vc.DocumentTracking.Identification.ID)))
+		p, err := utilfilepath.Join(dir, c.DocumentTracking.Identification.ID, d, fmt.Sprintf("%s.json", vc.DocumentTracking.Identification.ID))
+		if err != nil {
+			return errors.Wrap(err, "join")
+		}
+
+		if err := util.Write(p, vc); err != nil {
+			return errors.Wrapf(err, "write %s", p)
 		}
 
 		_ = bar.Add(1)

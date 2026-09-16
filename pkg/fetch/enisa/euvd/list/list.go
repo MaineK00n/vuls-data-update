@@ -17,6 +17,7 @@ import (
 	"golang.org/x/sync/errgroup"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
+	utilfilepath "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/filepath"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
@@ -154,8 +155,13 @@ func (opts options) fetch() error {
 						return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "EUVD-yyyy-\\d{4,}", item.ID)
 					}
 
-					if err := util.Write(filepath.Join(opts.dir, ss[1], fmt.Sprintf("%s.json", item.ID)), item); err != nil {
-						return errors.Wrapf(err, "write %s", filepath.Join(opts.dir, ss[1], fmt.Sprintf("%s.json", item.ID)))
+					p, err := utilfilepath.Join(opts.dir, ss[1], fmt.Sprintf("%s.json", item.ID))
+					if err != nil {
+						return errors.Wrap(err, "join")
+					}
+
+					if err := util.Write(p, item); err != nil {
+						return errors.Wrapf(err, "write %s", p)
 					}
 				}
 

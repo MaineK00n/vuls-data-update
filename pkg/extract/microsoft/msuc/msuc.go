@@ -27,6 +27,7 @@ import (
 	microsoftkbUpdateTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/microsoftkb/update"
 	sourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/source"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/util"
+	utilfilepath "github.com/MaineK00n/vuls-data-update/pkg/extract/util/filepath"
 	utilgit "github.com/MaineK00n/vuls-data-update/pkg/extract/util/git"
 	utiljson "github.com/MaineK00n/vuls-data-update/pkg/extract/util/json"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/msuc"
@@ -229,7 +230,11 @@ func (o options) extract(root string, updateIDMap map[string]string) error {
 				return errors.Errorf("unexpected KBID format. expected: len > 3, actual: %q", kb.KBID)
 			}
 
-			filename := filepath.Join(o.dir, "microsoftkb", fmt.Sprintf("%sxxx", kb.KBID[:len(kb.KBID)-3]), fmt.Sprintf("%s.json", kb.KBID))
+			filename, err := utilfilepath.Join(o.dir, "microsoftkb", fmt.Sprintf("%sxxx", kb.KBID[:len(kb.KBID)-3]), fmt.Sprintf("%s.json", kb.KBID))
+			if err != nil {
+				return errors.Wrap(err, "join")
+			}
+
 			if _, err := os.Stat(filename); err == nil {
 				f, err := os.Open(filename)
 				if err != nil {
@@ -298,8 +303,13 @@ func (o options) extract(root string, updateIDMap map[string]string) error {
 	deriveCrossTrackSupersedes(kbs)
 
 	for _, kb := range kbs {
-		if err := util.Write(filepath.Join(o.dir, "microsoftkb", fmt.Sprintf("%sxxx", kb.KBID[:len(kb.KBID)-3]), fmt.Sprintf("%s.json", kb.KBID)), kb, true); err != nil {
-			return errors.Wrapf(err, "write %s", kb.KBID)
+		p, err := utilfilepath.Join(o.dir, "microsoftkb", fmt.Sprintf("%sxxx", kb.KBID[:len(kb.KBID)-3]), fmt.Sprintf("%s.json", kb.KBID))
+		if err != nil {
+			return errors.Wrap(err, "join")
+		}
+
+		if err := util.Write(p, kb, true); err != nil {
+			return errors.Wrapf(err, "write %s", p)
 		}
 	}
 

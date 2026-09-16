@@ -14,6 +14,7 @@ import (
 	"github.com/schollz/progressbar/v3"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
+	utilfilepath "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/filepath"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
@@ -121,8 +122,13 @@ func Fetch(opts ...Option) error {
 
 	bar := progressbar.Default(int64(len(weaknesses)))
 	for _, w := range weaknesses {
-		if err := util.Write(filepath.Join(options.dir, "weakness", fmt.Sprintf("%s.json", w.ID)), w); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "weakness", fmt.Sprintf("%s.json", w.ID)))
+		p, err := utilfilepath.Join(options.dir, "weakness", fmt.Sprintf("%s.json", w.ID))
+		if err != nil {
+			return errors.Wrap(err, "join")
+		}
+
+		if err := util.Write(p, w); err != nil {
+			return errors.Wrapf(err, "write %s", p)
 		}
 
 		_ = bar.Add(1)
@@ -134,8 +140,13 @@ func Fetch(opts ...Option) error {
 
 	bar = progressbar.Default(int64(len(categories)))
 	for _, c := range categories {
-		if err := util.Write(filepath.Join(options.dir, "category", fmt.Sprintf("%s.json", c.ID)), c); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "category", fmt.Sprintf("%s.json", c.ID)))
+		p, err := utilfilepath.Join(options.dir, "category", fmt.Sprintf("%s.json", c.ID))
+		if err != nil {
+			return errors.Wrap(err, "join")
+		}
+
+		if err := util.Write(p, c); err != nil {
+			return errors.Wrapf(err, "write %s", p)
 		}
 
 		_ = bar.Add(1)
@@ -147,8 +158,13 @@ func Fetch(opts ...Option) error {
 
 	bar = progressbar.Default(int64(len(views)))
 	for _, v := range views {
-		if err := util.Write(filepath.Join(options.dir, "view", fmt.Sprintf("%s.json", v.ID)), v); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "view", fmt.Sprintf("%s.json", v.ID)))
+		p, err := utilfilepath.Join(options.dir, "view", fmt.Sprintf("%s.json", v.ID))
+		if err != nil {
+			return errors.Wrap(err, "join")
+		}
+
+		if err := util.Write(p, v); err != nil {
+			return errors.Wrapf(err, "write %s", p)
 		}
 
 		_ = bar.Add(1)

@@ -17,6 +17,7 @@ import (
 	"golang.org/x/net/html/charset"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
+	utilfilepath "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/filepath"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
@@ -95,8 +96,13 @@ func Fetch(opts ...Option) error {
 		slog.Info("Fetch AlmaLinux Definitions", slog.String("version", ver))
 		bar := progressbar.Default(int64(len(root.Definitions.Definition)))
 		for _, def := range root.Definitions.Definition {
-			if err := util.Write(filepath.Join(options.dir, ver, "definitions", fmt.Sprintf("%s.json", def.ID)), def); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, ver, "definitions", fmt.Sprintf("%s.json", def.ID)))
+			p, err := utilfilepath.Join(options.dir, ver, "definitions", fmt.Sprintf("%s.json", def.ID))
+			if err != nil {
+				return errors.Wrap(err, "join")
+			}
+
+			if err := util.Write(p, def); err != nil {
+				return errors.Wrapf(err, "write %s", p)
 			}
 			_ = bar.Add(1)
 		}
@@ -105,26 +111,46 @@ func Fetch(opts ...Option) error {
 		slog.Info("Fetch AlmaLinux Tests", slog.String("version", ver))
 		bar = progressbar.Default(int64(len(root.Tests.RpminfoTest) + len(root.Tests.RpmverifyfileTest) + len(root.Tests.Textfilecontent54Test) + len(root.Tests.UnameTest)))
 		for _, test := range root.Tests.RpminfoTest {
-			if err := util.Write(filepath.Join(options.dir, ver, "tests", "rpminfo_test", fmt.Sprintf("%s.json", test.ID)), test); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, ver, "tests", "rpminfo_test", fmt.Sprintf("%s.json", test.ID)))
+			p, err := utilfilepath.Join(options.dir, ver, "tests", "rpminfo_test", fmt.Sprintf("%s.json", test.ID))
+			if err != nil {
+				return errors.Wrap(err, "join")
+			}
+
+			if err := util.Write(p, test); err != nil {
+				return errors.Wrapf(err, "write %s", p)
 			}
 			_ = bar.Add(1)
 		}
 		for _, test := range root.Tests.RpmverifyfileTest {
-			if err := util.Write(filepath.Join(options.dir, ver, "tests", "rpmverifyfile_test", fmt.Sprintf("%s.json", test.ID)), test); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, ver, "tests", "rpmverifyfile_test", fmt.Sprintf("%s.json", test.ID)))
+			p, err := utilfilepath.Join(options.dir, ver, "tests", "rpmverifyfile_test", fmt.Sprintf("%s.json", test.ID))
+			if err != nil {
+				return errors.Wrap(err, "join")
+			}
+
+			if err := util.Write(p, test); err != nil {
+				return errors.Wrapf(err, "write %s", p)
 			}
 			_ = bar.Add(1)
 		}
 		for _, test := range root.Tests.Textfilecontent54Test {
-			if err := util.Write(filepath.Join(options.dir, ver, "tests", "textfilecontent54_test", fmt.Sprintf("%s.json", test.ID)), test); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, ver, "tests", "textfilecontent54_test", fmt.Sprintf("%s.json", test.ID)))
+			p, err := utilfilepath.Join(options.dir, ver, "tests", "textfilecontent54_test", fmt.Sprintf("%s.json", test.ID))
+			if err != nil {
+				return errors.Wrap(err, "join")
+			}
+
+			if err := util.Write(p, test); err != nil {
+				return errors.Wrapf(err, "write %s", p)
 			}
 			_ = bar.Add(1)
 		}
 		for _, test := range root.Tests.UnameTest {
-			if err := util.Write(filepath.Join(options.dir, ver, "tests", "uname_test", fmt.Sprintf("%s.json", test.ID)), test); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, ver, "tests", "uname_test", fmt.Sprintf("%s.json", test.ID)))
+			p, err := utilfilepath.Join(options.dir, ver, "tests", "uname_test", fmt.Sprintf("%s.json", test.ID))
+			if err != nil {
+				return errors.Wrap(err, "join")
+			}
+
+			if err := util.Write(p, test); err != nil {
+				return errors.Wrapf(err, "write %s", p)
 			}
 			_ = bar.Add(1)
 		}
@@ -133,26 +159,46 @@ func Fetch(opts ...Option) error {
 		slog.Info("Fetch AlmaLinux Objects", slog.String("version", ver))
 		bar = progressbar.Default(int64(len(root.Objects.RpminfoObject) + len(root.Objects.RpmverifyfileObject) + len(root.Objects.Textfilecontent54Object) + 1))
 		for _, object := range root.Objects.RpminfoObject {
-			if err := util.Write(filepath.Join(options.dir, ver, "objects", "rpminfo_object", fmt.Sprintf("%s.json", object.ID)), object); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, ver, "objects", "rpminfo_object", fmt.Sprintf("%s.json", object.ID)))
+			p, err := utilfilepath.Join(options.dir, ver, "objects", "rpminfo_object", fmt.Sprintf("%s.json", object.ID))
+			if err != nil {
+				return errors.Wrap(err, "join")
+			}
+
+			if err := util.Write(p, object); err != nil {
+				return errors.Wrapf(err, "write %s", p)
 			}
 			_ = bar.Add(1)
 		}
 		for _, object := range root.Objects.RpmverifyfileObject {
-			if err := util.Write(filepath.Join(options.dir, ver, "objects", "rpmverifyfile_object", fmt.Sprintf("%s.json", object.ID)), object); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, ver, "objects", "rpmverifyfile_object", fmt.Sprintf("%s.json", object.ID)))
+			p, err := utilfilepath.Join(options.dir, ver, "objects", "rpmverifyfile_object", fmt.Sprintf("%s.json", object.ID))
+			if err != nil {
+				return errors.Wrap(err, "join")
+			}
+
+			if err := util.Write(p, object); err != nil {
+				return errors.Wrapf(err, "write %s", p)
 			}
 			_ = bar.Add(1)
 		}
 		for _, object := range root.Objects.Textfilecontent54Object {
-			if err := util.Write(filepath.Join(options.dir, ver, "objects", "textfilecontent54_object", fmt.Sprintf("%s.json", object.ID)), object); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, ver, "objects", "textfilecontent54_object", fmt.Sprintf("%s.json", object.ID)))
+			p, err := utilfilepath.Join(options.dir, ver, "objects", "textfilecontent54_object", fmt.Sprintf("%s.json", object.ID))
+			if err != nil {
+				return errors.Wrap(err, "join")
+			}
+
+			if err := util.Write(p, object); err != nil {
+				return errors.Wrapf(err, "write %s", p)
 			}
 			_ = bar.Add(1)
 		}
 		if root.Objects.UnameObject.ID != "" {
-			if err := util.Write(filepath.Join(options.dir, ver, "objects", "uname_object", fmt.Sprintf("%s.json", root.Objects.UnameObject.ID)), root.Objects.UnameObject); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, ver, "objects", "uname_object", fmt.Sprintf("%s.json", root.Objects.UnameObject.ID)))
+			p, err := utilfilepath.Join(options.dir, ver, "objects", "uname_object", fmt.Sprintf("%s.json", root.Objects.UnameObject.ID))
+			if err != nil {
+				return errors.Wrap(err, "join")
+			}
+
+			if err := util.Write(p, root.Objects.UnameObject); err != nil {
+				return errors.Wrapf(err, "write %s", p)
 			}
 		}
 		_ = bar.Add(1)
@@ -161,26 +207,46 @@ func Fetch(opts ...Option) error {
 		slog.Info("Fetch AlmaLinux States", slog.String("version", ver))
 		bar = progressbar.Default(int64(len(root.States.RpminfoState) + len(root.States.RpmverifyfileState) + len(root.States.Textfilecontent54State) + len(root.States.UnameState)))
 		for _, state := range root.States.RpminfoState {
-			if err := util.Write(filepath.Join(options.dir, ver, "states", "rpminfo_state", fmt.Sprintf("%s.json", state.ID)), state); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, ver, "states", "rpminfo_state", fmt.Sprintf("%s.json", state.ID)))
+			p, err := utilfilepath.Join(options.dir, ver, "states", "rpminfo_state", fmt.Sprintf("%s.json", state.ID))
+			if err != nil {
+				return errors.Wrap(err, "join")
+			}
+
+			if err := util.Write(p, state); err != nil {
+				return errors.Wrapf(err, "write %s", p)
 			}
 			_ = bar.Add(1)
 		}
 		for _, state := range root.States.RpmverifyfileState {
-			if err := util.Write(filepath.Join(options.dir, ver, "states", "rpmverifyfile_state", fmt.Sprintf("%s.json", state.ID)), state); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, ver, "states", "rpmverifyfile_state", fmt.Sprintf("%s.json", state.ID)))
+			p, err := utilfilepath.Join(options.dir, ver, "states", "rpmverifyfile_state", fmt.Sprintf("%s.json", state.ID))
+			if err != nil {
+				return errors.Wrap(err, "join")
+			}
+
+			if err := util.Write(p, state); err != nil {
+				return errors.Wrapf(err, "write %s", p)
 			}
 			_ = bar.Add(1)
 		}
 		for _, state := range root.States.Textfilecontent54State {
-			if err := util.Write(filepath.Join(options.dir, ver, "states", "textfilecontent54_state", fmt.Sprintf("%s.json", state.ID)), state); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, ver, "states", "textfilecontent54_state", fmt.Sprintf("%s.json", state.ID)))
+			p, err := utilfilepath.Join(options.dir, ver, "states", "textfilecontent54_state", fmt.Sprintf("%s.json", state.ID))
+			if err != nil {
+				return errors.Wrap(err, "join")
+			}
+
+			if err := util.Write(p, state); err != nil {
+				return errors.Wrapf(err, "write %s", p)
 			}
 			_ = bar.Add(1)
 		}
 		for _, state := range root.States.UnameState {
-			if err := util.Write(filepath.Join(options.dir, ver, "states", "uname_state", fmt.Sprintf("%s.json", state.ID)), state); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, ver, "states", "uname_state", fmt.Sprintf("%s.json", state.ID)))
+			p, err := utilfilepath.Join(options.dir, ver, "states", "uname_state", fmt.Sprintf("%s.json", state.ID))
+			if err != nil {
+				return errors.Wrap(err, "join")
+			}
+
+			if err := util.Write(p, state); err != nil {
+				return errors.Wrapf(err, "write %s", p)
 			}
 			_ = bar.Add(1)
 		}
@@ -189,8 +255,13 @@ func Fetch(opts ...Option) error {
 		slog.Info("Fetch AlmaLinux Variables", slog.String("version", ver))
 		bar = progressbar.Default(1)
 		if root.Variables.LocalVariable.ID != "" {
-			if err := util.Write(filepath.Join(options.dir, ver, "variables", "local_variable", fmt.Sprintf("%s.json", root.Variables.LocalVariable.ID)), root.Variables.LocalVariable); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, ver, "variables", "local_variable", fmt.Sprintf("%s.json", root.Variables.LocalVariable.ID)))
+			p, err := utilfilepath.Join(options.dir, ver, "variables", "local_variable", fmt.Sprintf("%s.json", root.Variables.LocalVariable.ID))
+			if err != nil {
+				return errors.Wrap(err, "join")
+			}
+
+			if err := util.Write(p, root.Variables.LocalVariable); err != nil {
+				return errors.Wrapf(err, "write %s", p)
 			}
 		}
 		_ = bar.Add(1)

@@ -16,6 +16,7 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
+	utilfilepath "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/filepath"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
@@ -127,8 +128,13 @@ func Fetch(ids []string, opts ...Option) error {
 					return errors.Errorf("unexpected ID format. expected: %q, actual: %q", "PAN-SA-yyyy-\\d{4,}", csaf.Document.Tracking.ID)
 				}
 
-				if err := util.Write(filepath.Join(options.dir, splitted[0], fmt.Sprintf("%s.json", csaf.Document.Tracking.ID)), csaf); err != nil {
-					return errors.Wrapf(err, "write %s", filepath.Join(options.dir, splitted[0], fmt.Sprintf("%s.json", csaf.Document.Tracking.ID)))
+				p, err := utilfilepath.Join(options.dir, splitted[0], fmt.Sprintf("%s.json", csaf.Document.Tracking.ID))
+				if err != nil {
+					return errors.Wrap(err, "join")
+				}
+
+				if err := util.Write(p, csaf); err != nil {
+					return errors.Wrapf(err, "write %s", p)
 				}
 			case strings.HasPrefix(csaf.Document.Tracking.ID, "CVE-"):
 				splitted, err := util.Split(strings.TrimPrefix(csaf.Document.Tracking.ID, "CVE-"), "-")
@@ -139,8 +145,13 @@ func Fetch(ids []string, opts ...Option) error {
 					return errors.Errorf("unexpected ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", csaf.Document.Tracking.ID)
 				}
 
-				if err := util.Write(filepath.Join(options.dir, splitted[0], fmt.Sprintf("%s.json", csaf.Document.Tracking.ID)), csaf); err != nil {
-					return errors.Wrapf(err, "write %s", filepath.Join(options.dir, splitted[0], fmt.Sprintf("%s.json", csaf.Document.Tracking.ID)))
+				p, err := utilfilepath.Join(options.dir, splitted[0], fmt.Sprintf("%s.json", csaf.Document.Tracking.ID))
+				if err != nil {
+					return errors.Wrap(err, "join")
+				}
+
+				if err := util.Write(p, csaf); err != nil {
+					return errors.Wrapf(err, "write %s", p)
 				}
 			default:
 				return errors.Errorf("unexpected ID prefix. expected: %q, actual: %q", []string{"PAN-SA-", "CVE-"}, csaf.Document.Tracking.ID)

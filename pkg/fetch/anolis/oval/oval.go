@@ -15,6 +15,7 @@ import (
 	"github.com/schollz/progressbar/v3"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
+	utilfilepath "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/filepath"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
@@ -93,8 +94,13 @@ func Fetch(opts ...Option) error {
 		slog.Info("Fetch Anolis OS Definitions", slog.String("version", ver))
 		bar := progressbar.Default(int64(len(root.Definitions.Definition)))
 		for _, def := range root.Definitions.Definition {
-			if err := util.Write(filepath.Join(options.dir, ver, "definitions", fmt.Sprintf("%s.json", def.ID)), def); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, ver, "definitions", fmt.Sprintf("%s.json", def.ID)))
+			p, err := utilfilepath.Join(options.dir, ver, "definitions", fmt.Sprintf("%s.json", def.ID))
+			if err != nil {
+				return errors.Wrap(err, "join")
+			}
+
+			if err := util.Write(p, def); err != nil {
+				return errors.Wrapf(err, "write %s", p)
 			}
 			_ = bar.Add(1)
 		}
@@ -103,14 +109,24 @@ func Fetch(opts ...Option) error {
 		slog.Info("Fetch Anolis OS Tests", slog.String("version", ver))
 		bar = progressbar.Default(int64(len(root.Tests.RpminfoTest) + len(root.Tests.Textfilecontent54Test)))
 		for _, test := range root.Tests.RpminfoTest {
-			if err := util.Write(filepath.Join(options.dir, ver, "tests", "rpminfo_test", fmt.Sprintf("%s.json", test.ID)), test); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, ver, "tests", "rpminfo_test", fmt.Sprintf("%s.json", test.ID)))
+			p, err := utilfilepath.Join(options.dir, ver, "tests", "rpminfo_test", fmt.Sprintf("%s.json", test.ID))
+			if err != nil {
+				return errors.Wrap(err, "join")
+			}
+
+			if err := util.Write(p, test); err != nil {
+				return errors.Wrapf(err, "write %s", p)
 			}
 			_ = bar.Add(1)
 		}
 		for _, test := range root.Tests.Textfilecontent54Test {
-			if err := util.Write(filepath.Join(options.dir, ver, "tests", "textfilecontent54_test", fmt.Sprintf("%s.json", test.ID)), test); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, ver, "tests", "textfilecontent54_test", fmt.Sprintf("%s.json", test.ID)))
+			p, err := utilfilepath.Join(options.dir, ver, "tests", "textfilecontent54_test", fmt.Sprintf("%s.json", test.ID))
+			if err != nil {
+				return errors.Wrap(err, "join")
+			}
+
+			if err := util.Write(p, test); err != nil {
+				return errors.Wrapf(err, "write %s", p)
 			}
 			_ = bar.Add(1)
 		}
@@ -119,14 +135,24 @@ func Fetch(opts ...Option) error {
 		slog.Info("Fetch Anolis OS Objects", slog.String("version", ver))
 		bar = progressbar.Default(int64(len(root.Objects.RpminfoObject) + len(root.Objects.Textfilecontent54Object)))
 		for _, object := range root.Objects.RpminfoObject {
-			if err := util.Write(filepath.Join(options.dir, ver, "objects", "rpminfo_object", fmt.Sprintf("%s.json", object.ID)), object); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, ver, "objects", "rpminfo_object", fmt.Sprintf("%s.json", object.ID)))
+			p, err := utilfilepath.Join(options.dir, ver, "objects", "rpminfo_object", fmt.Sprintf("%s.json", object.ID))
+			if err != nil {
+				return errors.Wrap(err, "join")
+			}
+
+			if err := util.Write(p, object); err != nil {
+				return errors.Wrapf(err, "write %s", p)
 			}
 			_ = bar.Add(1)
 		}
 		for _, object := range root.Objects.Textfilecontent54Object {
-			if err := util.Write(filepath.Join(options.dir, ver, "objects", "textfilecontent54_object", fmt.Sprintf("%s.json", object.ID)), object); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, ver, "objects", "textfilecontent54_object", fmt.Sprintf("%s.json", object.ID)))
+			p, err := utilfilepath.Join(options.dir, ver, "objects", "textfilecontent54_object", fmt.Sprintf("%s.json", object.ID))
+			if err != nil {
+				return errors.Wrap(err, "join")
+			}
+
+			if err := util.Write(p, object); err != nil {
+				return errors.Wrapf(err, "write %s", p)
 			}
 			_ = bar.Add(1)
 		}
@@ -135,14 +161,24 @@ func Fetch(opts ...Option) error {
 		slog.Info("Fetch Anolis OS States", slog.String("version", ver))
 		bar = progressbar.Default(int64(len(root.States.RpminfoState) + len(root.States.Textfilecontent54State)))
 		for _, state := range root.States.RpminfoState {
-			if err := util.Write(filepath.Join(options.dir, ver, "states", "rpminfo_state", fmt.Sprintf("%s.json", state.ID)), state); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, ver, "states", "rpminfo_state", fmt.Sprintf("%s.json", state.ID)))
+			p, err := utilfilepath.Join(options.dir, ver, "states", "rpminfo_state", fmt.Sprintf("%s.json", state.ID))
+			if err != nil {
+				return errors.Wrap(err, "join")
+			}
+
+			if err := util.Write(p, state); err != nil {
+				return errors.Wrapf(err, "write %s", p)
 			}
 			_ = bar.Add(1)
 		}
 		for _, state := range root.States.Textfilecontent54State {
-			if err := util.Write(filepath.Join(options.dir, ver, "states", "textfilecontent54_state", fmt.Sprintf("%s.json", state.ID)), state); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, ver, "states", "textfilecontent54_state", fmt.Sprintf("%s.json", state.ID)))
+			p, err := utilfilepath.Join(options.dir, ver, "states", "textfilecontent54_state", fmt.Sprintf("%s.json", state.ID))
+			if err != nil {
+				return errors.Wrap(err, "join")
+			}
+
+			if err := util.Write(p, state); err != nil {
+				return errors.Wrapf(err, "write %s", p)
 			}
 			_ = bar.Add(1)
 		}

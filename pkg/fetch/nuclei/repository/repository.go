@@ -15,6 +15,7 @@ import (
 	"gopkg.in/yaml.v3"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
+	utilfilepath "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/filepath"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
@@ -118,8 +119,13 @@ func Fetch(opts ...Option) error {
 			return errors.Errorf("unexpected template path. expected: %q, actual: %q", "nuclei-templates-main/<category>/.../<template>.yaml", hdr.Name)
 		}
 
-		if err := util.Write(filepath.Join(options.dir, filepath.Join(ss[1:]...), fmt.Sprintf("%s.json", template.ID)), template); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, filepath.Join(ss[1:]...), fmt.Sprintf("%s.json", template.ID)))
+		p, err := utilfilepath.Join(options.dir, filepath.Join(ss[1:]...), fmt.Sprintf("%s.json", template.ID))
+		if err != nil {
+			return errors.Wrap(err, "join")
+		}
+
+		if err := util.Write(p, template); err != nil {
+			return errors.Wrapf(err, "write %s", p)
 		}
 
 	}

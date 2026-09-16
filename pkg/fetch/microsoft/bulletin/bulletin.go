@@ -14,6 +14,7 @@ import (
 	"github.com/tealeg/xlsx"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
+	utilfilepath "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/filepath"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
@@ -138,8 +139,13 @@ func Fetch(opts ...Option) error {
 			return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "[mM][sS]yy-\\d{3}", bid)
 		}
 
-		if err := util.Write(filepath.Join(options.dir, splitted[0], fmt.Sprintf("%s.json", strings.ToUpper(bid))), bs); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, splitted[0], fmt.Sprintf("%s.json", strings.ToUpper(bid))))
+		p, err := utilfilepath.Join(options.dir, splitted[0], fmt.Sprintf("%s.json", strings.ToUpper(bid)))
+		if err != nil {
+			return errors.Wrap(err, "join")
+		}
+
+		if err := util.Write(p, bs); err != nil {
+			return errors.Wrapf(err, "write %s", p)
 		}
 		_ = bar.Add(1)
 	}

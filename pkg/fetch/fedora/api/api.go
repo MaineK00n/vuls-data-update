@@ -20,6 +20,7 @@ import (
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/fedora/api/xmlrpc"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
+	utilfilepath "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/filepath"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
@@ -177,8 +178,13 @@ func Fetch(releases []string, opts ...Option) error {
 					return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "<ID Prefix>-yyyy-.+", adv.Alias)
 				}
 
-				if err := util.Write(filepath.Join(options.dir, release, splitted[1], fmt.Sprintf("%s.json", adv.Alias)), adv); err != nil {
-					return errors.Wrapf(err, "write %s", filepath.Join(options.dir, release, fmt.Sprintf("%s.json", adv.Alias)))
+				p, err := utilfilepath.Join(options.dir, release, splitted[1], fmt.Sprintf("%s.json", adv.Alias))
+				if err != nil {
+					return errors.Wrap(err, "join")
+				}
+
+				if err := util.Write(p, adv); err != nil {
+					return errors.Wrapf(err, "write %s", p)
 				}
 
 				select {

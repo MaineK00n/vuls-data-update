@@ -43,6 +43,7 @@ import (
 	repositoryTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/datasource/repository"
 	sourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/source"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/util"
+	utilfilepath "github.com/MaineK00n/vuls-data-update/pkg/extract/util/filepath"
 	utilgit "github.com/MaineK00n/vuls-data-update/pkg/extract/util/git"
 	utiljson "github.com/MaineK00n/vuls-data-update/pkg/extract/util/json"
 	utiltime "github.com/MaineK00n/vuls-data-update/pkg/extract/util/time"
@@ -241,8 +242,13 @@ func extract(cvePath, cveDir, outputDir string) error {
 		return errors.Errorf("unexpected CVE ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", data.ID)
 	}
 
-	if err := util.Write(filepath.Join(e.outputDir, "data", splitted[1], fmt.Sprintf("%s.json", data.ID)), data, true); err != nil {
-		return errors.Wrapf(err, "write %s", filepath.Join(e.outputDir, "data", splitted[1], fmt.Sprintf("%s.json", data.ID)))
+	p, err := utilfilepath.Join(e.outputDir, "data", splitted[1], fmt.Sprintf("%s.json", data.ID))
+	if err != nil {
+		return errors.Wrap(err, "join")
+	}
+
+	if err := util.Write(p, data, true); err != nil {
+		return errors.Wrapf(err, "write %s", p)
 	}
 	return nil
 }

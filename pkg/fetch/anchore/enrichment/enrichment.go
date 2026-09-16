@@ -14,6 +14,7 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
+	utilfilepath "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/filepath"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
@@ -116,8 +117,13 @@ func Fetch(opts ...Option) error {
 			return errors.Wrapf(err, "unmarshal %s", hdr.Name)
 		}
 
-		if err := util.Write(filepath.Join(options.dir, ss[3], ss[4]), e); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, ss[3], ss[4]))
+		p, err := utilfilepath.Join(options.dir, ss[3], ss[4])
+		if err != nil {
+			return errors.Wrap(err, "join")
+		}
+
+		if err := util.Write(p, e); err != nil {
+			return errors.Wrapf(err, "write %s", p)
 		}
 	}
 

@@ -14,6 +14,7 @@ import (
 	"github.com/schollz/progressbar/v3"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
+	utilfilepath "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/filepath"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
@@ -124,8 +125,13 @@ func Fetch(opts ...Option) error {
 				return errors.Errorf("unexpected ID format. expected: %q, actual: %q", "PAN-SA-yyyy-\\d{4,}", a.ID)
 			}
 
-			if err := util.Write(filepath.Join(options.dir, splitted[0], fmt.Sprintf("%s.json", a.ID)), a); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, splitted[0], fmt.Sprintf("%s.json", a.ID)))
+			p, err := utilfilepath.Join(options.dir, splitted[0], fmt.Sprintf("%s.json", a.ID))
+			if err != nil {
+				return errors.Wrap(err, "join")
+			}
+
+			if err := util.Write(p, a); err != nil {
+				return errors.Wrapf(err, "write %s", p)
 			}
 		case strings.HasPrefix(a.ID, "CVE-"):
 			splitted, err := util.Split(strings.TrimPrefix(a.ID, "CVE-"), "-")
@@ -136,8 +142,13 @@ func Fetch(opts ...Option) error {
 				return errors.Errorf("unexpected ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", a.ID)
 			}
 
-			if err := util.Write(filepath.Join(options.dir, splitted[0], fmt.Sprintf("%s.json", a.ID)), a); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, splitted[0], fmt.Sprintf("%s.json", a.ID)))
+			p, err := utilfilepath.Join(options.dir, splitted[0], fmt.Sprintf("%s.json", a.ID))
+			if err != nil {
+				return errors.Wrap(err, "join")
+			}
+
+			if err := util.Write(p, a); err != nil {
+				return errors.Wrapf(err, "write %s", p)
 			}
 		default:
 			return errors.Errorf("unexpected ID prefix. expected: %q, actual: %q", []string{"PAN-SA-", "CVE-"}, a.ID)

@@ -13,6 +13,7 @@ import (
 	"github.com/schollz/progressbar/v3"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
+	utilfilepath "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/filepath"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
@@ -92,8 +93,13 @@ func Fetch(opts ...Option) error {
 
 	bar := progressbar.Default(int64(len(vuxml.Vuln)))
 	for _, v := range vuxml.Vuln {
-		if err := util.Write(filepath.Join(options.dir, fmt.Sprintf("%s.json", v.Vid)), v); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, fmt.Sprintf("%s.json", v.Vid)))
+		p, err := utilfilepath.Join(options.dir, fmt.Sprintf("%s.json", v.Vid))
+		if err != nil {
+			return errors.Wrap(err, "join")
+		}
+
+		if err := util.Write(p, v); err != nil {
+			return errors.Wrapf(err, "write %s", p)
 		}
 
 		_ = bar.Add(1)

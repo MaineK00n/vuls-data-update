@@ -13,6 +13,7 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
+	utilfilepath "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/filepath"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
@@ -165,8 +166,13 @@ func (o options) fetchOSV(client *utilhttp.Client, ids []string) error {
 			return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "OESA-yyyy-\\d+", osv.ID)
 		}
 
-		if err := util.Write(filepath.Join(o.dir, splitted[1], fmt.Sprintf("%s.json", osv.ID)), osv); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(o.dir, splitted[1], fmt.Sprintf("%s.json", osv.ID)))
+		p, err := utilfilepath.Join(o.dir, splitted[1], fmt.Sprintf("%s.json", osv.ID))
+		if err != nil {
+			return errors.Wrap(err, "join")
+		}
+
+		if err := util.Write(p, osv); err != nil {
+			return errors.Wrapf(err, "write %s", p)
 		}
 
 		return nil

@@ -12,6 +12,7 @@ import (
 	"github.com/schollz/progressbar/v3"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
+	utilfilepath "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/filepath"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
@@ -105,8 +106,13 @@ func Fetch(opts ...Option) error {
 			if err != nil {
 				return errors.Errorf("unexpected ID format. expected: %q, actual: %q", "00000000-0000-0000-0000-000000000000", v.ID)
 			}
-			if err := util.Write(filepath.Join(options.dir, splitted[0], splitted[1], splitted[2], splitted[3], fmt.Sprintf("%s.json", v.ID)), v); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, splitted[0], splitted[1], splitted[2], splitted[3], fmt.Sprintf("%s.json", v.ID)))
+			p, err := utilfilepath.Join(options.dir, splitted[0], splitted[1], splitted[2], splitted[3], fmt.Sprintf("%s.json", v.ID))
+			if err != nil {
+				return errors.Wrap(err, "join")
+			}
+
+			if err := util.Write(p, v); err != nil {
+				return errors.Wrapf(err, "write %s", p)
 			}
 
 			_ = bar.Add(1)

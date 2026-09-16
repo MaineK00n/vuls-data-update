@@ -15,6 +15,7 @@ import (
 	"gopkg.in/yaml.v3"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
+	utilfilepath "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/filepath"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
@@ -128,8 +129,13 @@ func Fetch(opts ...Option) error {
 			return errors.Wrap(err, "unmarshal yaml")
 		}
 
-		if err := util.Write(filepath.Join(options.dir, product.Category, fmt.Sprintf("%s.json", strings.TrimSuffix(filepath.Base(hdr.Name), ".md"))), product); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, product.Category, fmt.Sprintf("%s.json", strings.TrimSuffix(filepath.Base(hdr.Name), ".md"))))
+		p, err := utilfilepath.Join(options.dir, product.Category, fmt.Sprintf("%s.json", strings.TrimSuffix(filepath.Base(hdr.Name), ".md")))
+		if err != nil {
+			return errors.Wrap(err, "join")
+		}
+
+		if err := util.Write(p, product); err != nil {
+			return errors.Wrapf(err, "write %s", p)
 		}
 	}
 

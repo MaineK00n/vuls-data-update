@@ -64,6 +64,7 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
+	utilfilepath "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/filepath"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
@@ -310,8 +311,13 @@ func (opts options) fetch() error {
 			continue
 		}
 
-		if err := write(filepath.Join(opts.dir, "origin", d.path), bs); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(opts.dir, "origin", d.path))
+		dst, err := utilfilepath.Join(opts.dir, "origin", d.path)
+		if err != nil {
+			return errors.Wrap(err, "join")
+		}
+
+		if err := write(dst, bs); err != nil {
+			return errors.Wrapf(err, "write %s", dst)
 		}
 	}
 
@@ -374,8 +380,13 @@ func (opts options) fetchCVEs(client *utilhttp.Client) error {
 			return errors.Wrapf(err, "read %s", resp.Request.URL)
 		}
 
-		if err := write(filepath.Join(opts.dir, "origin", "mitre", fmt.Sprintf("%s.json", id)), bs); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(opts.dir, "origin", "mitre", fmt.Sprintf("%s.json", id)))
+		dst, err := utilfilepath.Join(opts.dir, "origin", "mitre", fmt.Sprintf("%s.json", id))
+		if err != nil {
+			return errors.Wrap(err, "join")
+		}
+
+		if err := write(dst, bs); err != nil {
+			return errors.Wrapf(err, "write %s", dst)
 		}
 
 		return nil

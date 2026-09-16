@@ -13,6 +13,7 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
+	utilfilepath "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/filepath"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
@@ -111,12 +112,22 @@ func Fetch(opts ...Option) error {
 						return errors.Errorf("unexpected ID format. expected: %q, actual: %q", []string{"CVE-yyyy-\\d{4,}", "BDSA-yyyy-\\d{4,}"}, c.CVEID)
 					}
 
-					if err := util.Write(filepath.Join(options.dir, v, c.Pkg, splitted[1], fmt.Sprintf("%s.json", c.CVEID)), c); err != nil {
-						return errors.Wrapf(err, "write %s", filepath.Join(options.dir, v, c.Pkg, splitted[1], fmt.Sprintf("%s.json", c.CVEID)))
+					p, err := utilfilepath.Join(options.dir, v, c.Pkg, splitted[1], fmt.Sprintf("%s.json", c.CVEID))
+					if err != nil {
+						return errors.Wrap(err, "join")
+					}
+
+					if err := util.Write(p, c); err != nil {
+						return errors.Wrapf(err, "write %s", p)
 					}
 				case strings.HasPrefix(c.CVEID, "UNK-"), c.CVEID == "Re":
-					if err := util.Write(filepath.Join(options.dir, v, c.Pkg, "Others", fmt.Sprintf("%s.json", c.CVEID)), c); err != nil {
-						return errors.Wrapf(err, "write %s", filepath.Join(options.dir, v, c.Pkg, "Others", fmt.Sprintf("%s.json", c.CVEID)))
+					p, err := utilfilepath.Join(options.dir, v, c.Pkg, "Others", fmt.Sprintf("%s.json", c.CVEID))
+					if err != nil {
+						return errors.Wrap(err, "join")
+					}
+
+					if err := util.Write(p, c); err != nil {
+						return errors.Wrapf(err, "write %s", p)
 					}
 				default:
 					return errors.Errorf("unexpected ID format. expected: %q, actual: %q", []string{"CVE-yyyy-\\d{4,}", "BDSA-yyyy-\\d{4,}", "UNK-\\d+", "Re"}, c.CVEID)
