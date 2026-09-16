@@ -2677,15 +2677,19 @@ func newCmdMicrosoftMSUC() *cobra.Command {
 func newCmdMicrosoftServicing() *cobra.Command {
 	options := &struct {
 		base
-		concurrency int
-		wait        time.Duration
+		retryWaitMin time.Duration
+		retryWaitMax time.Duration
+		concurrency  int
+		wait         time.Duration
 	}{
 		base: base{
 			dir:   filepath.Join(util.CacheDir(), "fetch", "microsoft", "servicing"),
 			retry: 10,
 		},
-		concurrency: 2,
-		wait:        1 * time.Second,
+		retryWaitMin: 1 * time.Second,
+		retryWaitMax: 5 * time.Minute,
+		concurrency:  2,
+		wait:         1 * time.Second,
 	}
 
 	cmd := &cobra.Command{
@@ -2723,7 +2727,7 @@ func newCmdMicrosoftServicing() *cobra.Command {
 		`),
 		Args: cobra.MinimumNArgs(1),
 		RunE: func(_ *cobra.Command, args []string) error {
-			if err := microsoftServicing.Fetch(args, microsoftServicing.WithDir(options.dir), microsoftServicing.WithRetry(options.retry), microsoftServicing.WithConcurrency(options.concurrency), microsoftServicing.WithWait(options.wait)); err != nil {
+			if err := microsoftServicing.Fetch(args, microsoftServicing.WithDir(options.dir), microsoftServicing.WithRetry(options.retry), microsoftServicing.WithRetryWaitMin(options.retryWaitMin), microsoftServicing.WithRetryWaitMax(options.retryWaitMax), microsoftServicing.WithConcurrency(options.concurrency), microsoftServicing.WithWait(options.wait)); err != nil {
 				return errors.Wrap(err, "failed to fetch microsoft servicing")
 			}
 			return nil
@@ -2732,6 +2736,8 @@ func newCmdMicrosoftServicing() *cobra.Command {
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+	cmd.Flags().DurationVarP(&options.retryWaitMin, "retry-wait-min", "", options.retryWaitMin, "number of minimum time to retry wait")
+	cmd.Flags().DurationVarP(&options.retryWaitMax, "retry-wait-max", "", options.retryWaitMax, "number of maximum time to retry wait")
 	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrent http requests")
 	cmd.Flags().DurationVarP(&options.wait, "wait", "", options.wait, "wait duration")
 
