@@ -32,21 +32,21 @@ func WithReplace(old, new string) Option {
 	return replaceOption{old, new}
 }
 
-// Diff compares the tree a fetcher wrote under gotDir against the golden tree
+// Diff compares the tree a fetcher or extractor wrote under gotDir against the golden tree
 // at goldenDir, and reports the difference as an error. Both trees are read
 // whole and compared as maps keyed by path relative to their roots, so which
 // files exist is part of the comparison: a file the fetcher failed to write is
 // reported missing, and one it wrote that golden does not describe is reported
 // extra.
 //
-// Golden stores file names URL-escaped and the fetchers write them raw, so the
+// Golden stores file names URL-escaped and the writers do not, so the
 // output tree is brought into golden's domain before the two are compared.
 //
-// Files are compared byte for byte rather than as parsed content: what a
-// fetcher writes is either upstream content worth keeping only if it reproduces
+// Files are compared byte for byte rather than as parsed content: what is
+// written is either upstream content worth keeping only if it reproduces
 // exactly, or JSON written deterministically, so any difference at all is a
 // regression. A test that needs its output sorted before it will compare is
-// reporting a non-deterministic fetcher, not a comparison too strict.
+// reporting a non-deterministic writer, not a comparison too strict.
 //
 // A goldenDir that does not exist reads as an empty tree, for the test case
 // whose expected output is nothing at all: git cannot carry an empty directory.
