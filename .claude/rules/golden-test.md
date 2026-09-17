@@ -10,11 +10,11 @@
 
 ### Test Helpers
 
-Extractors use helpers from `pkg/extract/util/test/test.go`:
-- `QueryUnescapeFileTree(dir, fixturePath)` — materializes fixtures with URL-escaped filenames into `dir` (pass `t.TempDir()`), returning the path and an error
-- `Diff()` — compares output against golden (`datasource.json`, `data/`, `cpe/`, etc.), covering both which files exist and their content, and returns the difference as an error
+`pkg/{fetch,extract}/util/test/test.go` hold the comparison, and are **byte-identical copies** — as `pkg/{fetch,dotgit}/util/test/git/git.go` already are. Change one and change the other; a diff between them is the check.
+- `Diff(goldenDir, gotDir, opts...)` — compares the two trees whole, covering both which files exist and their content, and returns the difference as an error
 
-Fetchers use `pkg/fetch/util/test/test.go`, described under Fetch Golden Tests below.
+`pkg/extract/util/test/fixture.go` holds what is particular to extraction:
+- `QueryUnescapeFileTree(dir, fixturePath)` — materializes fixtures with URL-escaped filenames into `dir` (pass `t.TempDir()`), returning the path and an error
 
 ### URL-Escaped Filenames
 
@@ -27,9 +27,9 @@ If a change causes widespread golden diffs:
 2. **Check sorting**: Ensure `Sort()`/`Compare()` are updated for any new or modified types
 3. **Update golden files**: If the diff is intentional, run the relevant extractor and copy the output into `testdata/golden/`. This repo does not provide a generic test flag for updating golden files.
 
-### Fetch Golden Tests
+### Comparing Against Golden
 
-Fetchers compare with `pkg/fetch/util/test/test.go`:
+Both fetch and extract tests compare the same way:
 
 ```go
 switch {
@@ -48,6 +48,7 @@ default:
 ```
 
 - `Diff()` reads both trees whole, compares them as maps and **reports the difference as an error**, so **which files exist is part of the assertion**. Never walk only the output tree and look each file up in golden: that passes a run that wrote nothing.
+- Files are compared **byte for byte**. `util.Write` is deterministic, so any difference at all is a regression. A comparison that has to parse and sort before it will agree is reporting a non-deterministic writer, not a comparison that is too strict — fix the writer, or the golden it is being compared against.
 - **The error cases need their own arm.** Without it they fall into the comparison and fail with the whole golden tree reported missing.
 - **Multi-case**: pass `filepath.Join("testdata", "golden", tt.name)`, or name the tree in a `golden` field when the case name is not filename-safe. Give each case its own tree unless every case produces the same output — a case producing a subset of a shared tree cannot be compared whole.
 - A case whose expected output is nothing at all simply has no golden directory; `Diff()` reads a missing directory as an empty tree, since git cannot carry an empty one.
