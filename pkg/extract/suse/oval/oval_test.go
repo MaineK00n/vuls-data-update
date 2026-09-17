@@ -22,7 +22,13 @@ func TestExtract(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			dir := t.TempDir()
-			err := oval.Extract(utiltest.QueryUnescapeFileTree(t, tt.args), oval.WithDir(dir))
+
+			fixturePath, err := utiltest.QueryUnescapeFileTree(t.TempDir(), tt.args)
+			if err != nil {
+				t.Fatal("unexpected error:", err)
+			}
+
+			err = oval.Extract(fixturePath, oval.WithDir(dir))
 			switch {
 			case err == nil && tt.hasError:
 				t.Error("expected error has not occurred")
@@ -39,7 +45,9 @@ func TestExtract(t *testing.T) {
 				if err != nil {
 					t.Error("unexpected error:", err)
 				}
-				utiltest.Diff(t, ep, gp)
+				if err := utiltest.Diff(ep, gp); err != nil {
+					t.Error("unexpected error:", err)
+				}
 			}
 		})
 	}

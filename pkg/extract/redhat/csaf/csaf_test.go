@@ -29,7 +29,13 @@ func TestExtract(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			dir := t.TempDir()
-			err := csaf.Extract(utiltest.QueryUnescapeFileTree(t, tt.args.csaf), tt.args.repository2cpe, csaf.WithDir(dir))
+
+			fixturePath, err := utiltest.QueryUnescapeFileTree(t.TempDir(), tt.args.csaf)
+			if err != nil {
+				t.Fatal("unexpected error:", err)
+			}
+
+			err = csaf.Extract(fixturePath, tt.args.repository2cpe, csaf.WithDir(dir))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)
@@ -47,7 +53,9 @@ func TestExtract(t *testing.T) {
 				if err != nil {
 					t.Error("unexpected error:", err)
 				}
-				utiltest.Diff(t, ep, gp)
+				if err := utiltest.Diff(ep, gp); err != nil {
+					t.Error("unexpected error:", err)
+				}
 			}
 		})
 	}
