@@ -14,13 +14,15 @@ applyTo: "**/*.go"
 
 ### Test Helpers
 
-Use helpers from `pkg/extract/util/test/test.go`:
-- `QueryUnescapeFileTree()` — materializes fixtures with URL-escaped filenames
-- `Diff()` — compares output against golden files (`datasource.json`, `data/`, `cpe/`, etc.)
+Extractors use helpers from `pkg/extract/util/test/test.go`:
+- `QueryUnescapeFileTree(dir, fixturePath)` — materializes fixtures with URL-escaped filenames into `dir` (pass `t.TempDir()`), returning the path and an error
+- `Diff()` — compares output against golden (`datasource.json`, `data/`, `cpe/`, etc.), covering both which files exist and their content, and returns the difference as an error
+
+Fetchers use `pkg/fetch/util/test/test.go`, described under Fetch Golden Tests below.
 
 ### URL-Escaped Filenames
 
-Golden filenames may be URL-escaped (e.g., `%2F` for `/`). This is intentional for filesystem compatibility. Always use `QueryUnescapeFileTree()` when materializing fixtures.
+Golden filenames may be URL-escaped (e.g., `%2F` for `/`). This is intentional for filesystem compatibility. Always use `QueryUnescapeFileTree()` when materializing fixtures. On the golden side the escaping is a storage detail, so the comparison brings the output into golden's domain — `escapeNames()` in each helper is the single place that knows the convention.
 
 ### When Golden Diffs Appear
 
@@ -28,6 +30,34 @@ If a change causes widespread golden diffs:
 1. **Check determinism**: Verify `util.Write` and `types/*/Sort` are correct
 2. **Check sorting**: Ensure `Sort()`/`Compare()` are updated for any new or modified types
 3. **Update golden files**: If the diff is intentional, run the relevant extractor and copy the output into `testdata/golden/`. This repo does not provide a generic test flag for updating golden files.
+
+### Fetch Golden Tests
+
+Fetchers compare with `pkg/fetch/util/test/test.go`:
+
+```go
+switch {
+case err != nil && !tt.hasError:
+    t.Error("unexpected error:", err)
+case err == nil && tt.hasError:
+    t.Error("expected error has not occurred")
+case err != nil && tt.hasError:
+    // error was expected and occurred, test passed
+    return
+default:
+    if err := utiltest.Diff(filepath.Join("testdata", "golden"), dir); err != nil {
+        t.Error("unexpected error:", err)
+    }
+}
+```
+
+- `Diff()` reads both trees whole, compares them as maps and **reports the difference as an error**, so **which files exist is part of the assertion**. Never walk only the output tree and look each file up in golden: that passes a run that wrote nothing.
+- **The error cases need their own arm.** Without it they fall into the comparison and fail with the whole golden tree reported missing.
+- **Multi-case**: pass `filepath.Join("testdata", "golden", tt.name)`, or name the tree in a `golden` field when the case name is not filename-safe. Give each case its own tree unless every case produces the same output — a case producing a subset of a shared tree cannot be compared whole.
+- A case whose expected output is nothing at all simply has no golden directory; `Diff()` reads a missing directory as an empty tree, since git cannot carry an empty one.
+- Golden names are URL-escaped and `Diff()` escapes the output side to match, so no per-package handling is needed.
+- The helpers **return an error rather than taking `*testing.T`**, so the test decides how to report and the helper itself can be tested (`test_test.go` beside each). Local setup helpers inside a test file follow the same rule.
+- `WithReplace(old, new)` rewrites the output side before comparing. It is for the `httptest` server's own URL, which reaches the output and changes on every run — not for papering over a fetcher's non-deterministic output, which is a bug in the fetcher.
 
 ### Writing New Golden Tests
 
@@ -52,7 +82,9 @@ for _, tt := range tests {
         // ... error check ...
         ep, _ := filepath.Abs(tt.golden)
         gp, _ := filepath.Abs(dir)
-        utiltest.Diff(t, ep, gp)
+        if err := utiltest.Diff(ep, gp); err != nil {
+            t.Error("unexpected error:", err)
+        }
     })
 }
 ```
@@ -62,7 +94,7 @@ for _, tt := range tests {
 
 ### Where Used
 
-`pkg/extract/<domain>/<name>/` (extractors), `pkg/dotgit/` (pull, log, ls, cat, find, grep etc.)
+`pkg/fetch/<domain>/<name>/` (fetchers), `pkg/extract/<domain>/<name>/` (extractors), `pkg/dotgit/` (pull, log, ls, cat, find, grep etc.)
 
 ## Inline Unit Tests (table-driven)
 

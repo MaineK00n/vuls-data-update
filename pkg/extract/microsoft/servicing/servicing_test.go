@@ -84,7 +84,9 @@ func TestExtract(t *testing.T) {
 				if err != nil {
 					t.Error("unexpected error:", err)
 				}
-				utiltest.Diff(t, ep, gp)
+				if err := utiltest.Diff(ep, gp); err != nil {
+					t.Error("unexpected error:", err)
+				}
 			}
 		})
 	}
