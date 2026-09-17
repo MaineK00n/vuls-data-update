@@ -196,8 +196,11 @@ func extract(fetched errata.Erratum, osver string, raws []string) dataTypes.Data
 					}
 					return slices.Collect(maps.Keys(m))
 				}(),
-				Published: new(time.Unix(int64(fetched.IssuedDate), 0)),
-				Modified:  new(time.Unix(int64(fetched.UpdatedDate), 0)),
+				// UTC: time.Unix returns the instant in the machine's own zone,
+				// which would put that zone in the output and make what is
+				// written depend on where it ran.
+				Published: new(time.Unix(int64(fetched.IssuedDate), 0).UTC()),
+				Modified:  new(time.Unix(int64(fetched.UpdatedDate), 0).UTC()),
 			},
 			Segments: []segmentTypes.Segment{{
 				Ecosystem: ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeAlma, osver)),
