@@ -1,7 +1,6 @@
 package cve_test
 
 import (
-	"path/filepath"
 	"testing"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/nvd/api/cve"
@@ -59,15 +58,7 @@ func TestExtract(t *testing.T) {
 				// error was expected and occurred, test passed
 				return
 			default:
-				ep, err := filepath.Abs(tt.golden)
-				if err != nil {
-					t.Error("unexpected error:", err)
-				}
-				gp, err := filepath.Abs(dir)
-				if err != nil {
-					t.Error("unexpected error:", err)
-				}
-				if err := utiltest.Diff(ep, gp); err != nil {
+				if err := utiltest.Diff(tt.golden, dir); err != nil {
 					t.Error("unexpected error:", err)
 				}
 			}

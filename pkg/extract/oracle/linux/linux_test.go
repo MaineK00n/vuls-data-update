@@ -1,7 +1,6 @@
 package linux_test
 
 import (
-	"path/filepath"
 	"testing"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/oracle/linux"
@@ -56,15 +55,7 @@ func TestExtract(t *testing.T) {
 				// error was expected and occurred, test passed
 				return
 			default:
-				ep, err := filepath.Abs(tt.goldenPath)
-				if err != nil {
-					t.Error("unexpected error:", err)
-				}
-				gp, err := filepath.Abs(outputDir)
-				if err != nil {
-					t.Error("unexpected error:", err)
-				}
-				if err := utiltest.Diff(ep, gp); err != nil {
+				if err := utiltest.Diff(tt.goldenPath, outputDir); err != nil {
 					t.Error("unexpected error:", err)
 				}
 			}
