@@ -91,6 +91,22 @@ func TestDiff(t *testing.T) {
 			gotEmptyDirs: []string{"data"},
 		},
 		{
+			// The typed comparison knows a fixed set of top-level names, so
+			// anything else would go unlooked at on both sides at once.
+			name:    "output holds a top-level entry the comparison does not know",
+			golden:  []file{{path: "data/2024/CVE-2024-0001.json", content: "{}"}},
+			got:     []file{{path: "data/2024/CVE-2024-0001.json", content: "{}"}, {path: "debug.json", content: "{}"}},
+			wantErr: []string{"debug.json"},
+		},
+		{
+			// Same on the golden side: an entry golden describes and the
+			// extractor stopped writing is not silently dropped either.
+			name:    "golden holds a top-level entry the comparison does not know",
+			golden:  []file{{path: "data/2024/CVE-2024-0001.json", content: "{}"}, {path: "debug.json", content: "{}"}},
+			got:     []file{{path: "data/2024/CVE-2024-0001.json", content: "{}"}},
+			wantErr: []string{"debug.json"},
+		},
+		{
 			name: "nothing on either side",
 		},
 	}

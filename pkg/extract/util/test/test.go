@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"io/fs"
+	"maps"
 	"net/url"
 	"os"
 	"path/filepath"
@@ -31,7 +32,17 @@ import (
 func Diff(expectedAbsPath, gotAbsPath string) error {
 	var diffs []string
 
-	for _, name := range []string{"datasource.json", "README.md", "data", "cpe", "cwe", "capec", "attack", "microsoftkb", "eol"} {
+	names := []string{"datasource.json", "README.md", "data", "cpe", "cwe", "capec", "attack", "microsoftkb", "eol"}
+
+	unknown, err := unknownTopLevel(names, expectedAbsPath, gotAbsPath)
+	if err != nil {
+		return errors.Wrap(err, "list top level")
+	}
+	for _, n := range unknown {
+		diffs = append(diffs, fmt.Sprintf("top level entry the comparison does not know: %q", n))
+	}
+
+	for _, name := range names {
 		gotExists, err := exists(filepath.Join(gotAbsPath, name))
 		if err != nil {
 			return errors.Wrapf(err, "check %s", filepath.Join(gotAbsPath, name))
@@ -262,6 +273,48 @@ func escapeNames(ps []string) []string {
 	slices.Sort(escaped)
 
 	return escaped
+}
+
+// unknownTopLevel lists what sits at the top of either tree that is not one of
+// names, sorted and without repeats. The comparison below knows only those
+// names, so anything else would go unlooked at on both sides at once.
+//
+// A directory holding no files is not one of them: git cannot carry an empty
+// directory, so golden has no way to describe one the extractor creates.
+func unknownTopLevel(names []string, expectedAbsPath, gotAbsPath string) ([]string, error) {
+	seen := make(map[string]struct{})
+
+	for _, root := range []string{expectedAbsPath, gotAbsPath} {
+		switch ok, err := exists(root); {
+		case err != nil:
+			return nil, errors.Wrapf(err, "check %s", root)
+		case !ok:
+			continue
+		}
+
+		des, err := os.ReadDir(root)
+		if err != nil {
+			return nil, errors.Wrapf(err, "read dir %s", root)
+		}
+
+		for _, de := range des {
+			if slices.Contains(names, de.Name()) {
+				continue
+			}
+
+			ps, err := paths(filepath.Join(root, de.Name()))
+			if err != nil {
+				return nil, errors.Wrapf(err, "list %s", filepath.Join(root, de.Name()))
+			}
+			if len(ps) == 0 {
+				continue
+			}
+
+			seen[de.Name()] = struct{}{}
+		}
+	}
+
+	return slices.Sorted(maps.Keys(seen)), nil
 }
 
 // exists reports whether path is there. Only its absence is an answer: any
