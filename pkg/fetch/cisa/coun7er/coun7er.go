@@ -11,6 +11,7 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
+	utilfilepath "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/filepath"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
@@ -89,13 +90,23 @@ func Fetch(opts ...Option) error {
 	}
 
 	for _, item := range doc.Items {
-		if err := util.Write(filepath.Join(options.dir, "items", fmt.Sprintf("%s.json", item.ID)), item); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "items", fmt.Sprintf("%s.json", item.ID)))
+		p, err := utilfilepath.Join(options.dir, "items", fmt.Sprintf("%s.json", item.ID))
+		if err != nil {
+			return errors.Wrap(err, "join")
+		}
+
+		if err := util.Write(p, item); err != nil {
+			return errors.Wrapf(err, "write %s", p)
 		}
 	}
 	for _, template := range doc.Templates {
-		if err := util.Write(filepath.Join(options.dir, "templates", fmt.Sprintf("%s.json", template.ID)), template); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "templates", fmt.Sprintf("%s.json", template.ID)))
+		p, err := utilfilepath.Join(options.dir, "templates", fmt.Sprintf("%s.json", template.ID))
+		if err != nil {
+			return errors.Wrap(err, "join")
+		}
+
+		if err := util.Write(p, template); err != nil {
+			return errors.Wrapf(err, "write %s", p)
 		}
 	}
 

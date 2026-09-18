@@ -16,6 +16,7 @@ import (
 
 	nvdutil "github.com/MaineK00n/vuls-data-update/pkg/fetch/nvd/api/util"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
+	utilfilepath "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/filepath"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
@@ -274,8 +275,13 @@ func Fetch(opts ...Option) error {
 				d = hash32(fmt.Appendf(nil, "%s:%s", wfn.GetString(common.AttributeVendor), wfn.GetString(common.AttributeProduct)))
 			}
 
-			if err := util.Write(filepath.Join(options.dir, fmt.Sprintf("%x", d), fmt.Sprintf("%s.json", m.MatchCriteria.MatchCriteriaID)), m.MatchCriteria); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, fmt.Sprintf("%x", d), fmt.Sprintf("%s.json", m.MatchCriteria.MatchCriteriaID)))
+			p, err := utilfilepath.Join(options.dir, fmt.Sprintf("%x", d), fmt.Sprintf("%s.json", m.MatchCriteria.MatchCriteriaID))
+			if err != nil {
+				return errors.Wrap(err, "join")
+			}
+
+			if err := util.Write(p, m.MatchCriteria); err != nil {
+				return errors.Wrapf(err, "write %s", p)
 			}
 		}
 		return nil

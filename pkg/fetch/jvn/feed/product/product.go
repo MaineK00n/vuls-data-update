@@ -17,6 +17,7 @@ import (
 
 	jvnutil "github.com/MaineK00n/vuls-data-update/pkg/fetch/jvn/feed/util"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
+	utilfilepath "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/filepath"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
@@ -149,8 +150,13 @@ func Fetch(opts ...Option) error {
 
 	bar := progressbar.Default(int64(len(ps)))
 	for _, p := range ps {
-		if err := util.Write(filepath.Join(options.dir, p.Vid, fmt.Sprintf("%s.json", p.Pid)), p); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, p.Vid, fmt.Sprintf("%s.json", p.Pid)))
+		dst, err := utilfilepath.Join(options.dir, p.Vid, fmt.Sprintf("%s.json", p.Pid))
+		if err != nil {
+			return errors.Wrap(err, "join")
+		}
+
+		if err := util.Write(dst, p); err != nil {
+			return errors.Wrapf(err, "write %s", dst)
 		}
 
 		_ = bar.Add(1)

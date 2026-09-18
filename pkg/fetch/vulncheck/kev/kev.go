@@ -16,6 +16,7 @@ import (
 	"github.com/schollz/progressbar/v3"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
+	utilfilepath "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/filepath"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
@@ -147,8 +148,13 @@ Notably, you must show "prominent attribution" to show the data is from VulnChec
 
 		bar := progressbar.Default(int64(len(ks)))
 		for _, k := range ks {
-			if err := util.Write(filepath.Join(options.dir, k.DateAdded.Format("2006"), fmt.Sprintf("%x.json", md5.Sum(fmt.Appendf(nil, "%s %q", k.Name, k.CVE)))), k); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, k.DateAdded.Format("2006"), fmt.Sprintf("%x.json", md5.Sum(fmt.Appendf(nil, "%s %q", k.Name, k.CVE)))))
+			p, err := utilfilepath.Join(options.dir, k.DateAdded.Format("2006"), fmt.Sprintf("%x.json", md5.Sum(fmt.Appendf(nil, "%s %q", k.Name, k.CVE))))
+			if err != nil {
+				return errors.Wrap(err, "join")
+			}
+
+			if err := util.Write(p, k); err != nil {
+				return errors.Wrapf(err, "write %s", p)
 			}
 			_ = bar.Add(1)
 		}

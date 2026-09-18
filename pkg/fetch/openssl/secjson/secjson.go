@@ -17,6 +17,7 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
+	utilfilepath "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/filepath"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
@@ -150,8 +151,13 @@ func (opts options) fetch() error {
 			return errors.Errorf("unexpected ID format. expected: %q, actual: %q", cveIDPattern.String(), v.CVEMetadata.CVEID)
 		}
 
-		if err := util.Write(filepath.Join(opts.dir, m[1], fmt.Sprintf("%s.json", v.CVEMetadata.CVEID)), v); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(opts.dir, m[1], fmt.Sprintf("%s.json", v.CVEMetadata.CVEID)))
+		p, err := utilfilepath.Join(opts.dir, m[1], fmt.Sprintf("%s.json", v.CVEMetadata.CVEID))
+		if err != nil {
+			return errors.Wrap(err, "join")
+		}
+
+		if err := util.Write(p, v); err != nil {
+			return errors.Wrapf(err, "write %s", p)
 		}
 
 		return nil
@@ -234,8 +240,13 @@ func (opts options) fetchStatements(client *utilhttp.Client, u string) error {
 		return errors.Wrap(err, "decode json")
 	}
 
-	if err := util.Write(filepath.Join(opts.dir, statementsFilename), ss); err != nil {
-		return errors.Wrapf(err, "write %s", filepath.Join(opts.dir, statementsFilename))
+	p, err := utilfilepath.Join(opts.dir, statementsFilename)
+	if err != nil {
+		return errors.Wrap(err, "join")
+	}
+
+	if err := util.Write(p, ss); err != nil {
+		return errors.Wrapf(err, "write %s", p)
 	}
 
 	return nil

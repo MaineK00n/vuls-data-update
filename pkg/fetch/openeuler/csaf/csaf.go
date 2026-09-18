@@ -16,6 +16,7 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
+	utilfilepath "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/filepath"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
@@ -182,8 +183,13 @@ func (o options) fetchCSAF(client *utilhttp.Client, kind string, is []string) er
 					return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "CVE-yyyy-\\d+", csaf.Document.Tracking.ID)
 				}
 
-				if err := util.Write(filepath.Join(o.dir, splitted[0], splitted[1], fmt.Sprintf("%s.json", csaf.Document.Tracking.ID)), csaf); err != nil {
-					return errors.Wrapf(err, "write %s", filepath.Join(o.dir, splitted[0], splitted[1], fmt.Sprintf("%s.json", csaf.Document.Tracking.ID)))
+				p, err := utilfilepath.Join(o.dir, splitted[0], splitted[1], fmt.Sprintf("%s.json", csaf.Document.Tracking.ID))
+				if err != nil {
+					return errors.Wrap(err, "join")
+				}
+
+				if err := util.Write(p, csaf); err != nil {
+					return errors.Wrapf(err, "write %s", p)
 				}
 			case "advisories":
 				splitted, err := util.Split(csaf.Document.Tracking.ID, "-", "-", "-")
@@ -191,8 +197,13 @@ func (o options) fetchCSAF(client *utilhttp.Client, kind string, is []string) er
 					return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "openEuler-SA-yyyy-\\d+", csaf.Document.Tracking.ID)
 				}
 
-				if err := util.Write(filepath.Join(o.dir, splitted[1], splitted[2], fmt.Sprintf("%s.json", csaf.Document.Tracking.ID)), csaf); err != nil {
-					return errors.Wrapf(err, "write %s", filepath.Join(o.dir, splitted[1], splitted[2], fmt.Sprintf("%s.json", csaf.Document.Tracking.ID)))
+				p, err := utilfilepath.Join(o.dir, splitted[1], splitted[2], fmt.Sprintf("%s.json", csaf.Document.Tracking.ID))
+				if err != nil {
+					return errors.Wrap(err, "join")
+				}
+
+				if err := util.Write(p, csaf); err != nil {
+					return errors.Wrapf(err, "write %s", p)
 				}
 			default:
 				return errors.Errorf("unexpected kind. expected: %q, actual: %q", []string{"cve", "advisories"}, kind)

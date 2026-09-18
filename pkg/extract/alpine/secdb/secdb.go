@@ -31,6 +31,7 @@ import (
 	repositoryTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/datasource/repository"
 	sourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/source"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/util"
+	utilfilepath "github.com/MaineK00n/vuls-data-update/pkg/extract/util/filepath"
 	utilgit "github.com/MaineK00n/vuls-data-update/pkg/extract/util/git"
 	utiljson "github.com/MaineK00n/vuls-data-update/pkg/extract/util/json"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/alpine/secdb"
@@ -91,23 +92,28 @@ func Extract(args string, opts ...Option) error {
 		}
 
 		for _, data := range extract(fetched, r.Paths()) {
-			if _, err := os.Stat(filepath.Join(options.dir, "data", fmt.Sprintf("%s.json", data.ID))); err == nil {
-				f, err := os.Open(filepath.Join(options.dir, "data", fmt.Sprintf("%s.json", data.ID)))
+			p, err := utilfilepath.Join(options.dir, "data", fmt.Sprintf("%s.json", data.ID))
+			if err != nil {
+				return errors.Wrap(err, "join")
+			}
+
+			if _, err := os.Stat(p); err == nil {
+				f, err := os.Open(p)
 				if err != nil {
-					return errors.Wrapf(err, "open %s", filepath.Join(options.dir, "data", fmt.Sprintf("%s.json", data.ID)))
+					return errors.Wrapf(err, "open %s", p)
 				}
 				defer f.Close()
 
 				var base dataTypes.Data
 				if err := json.UnmarshalRead(f, &base); err != nil {
-					return errors.Wrapf(err, "decode %s", filepath.Join(options.dir, "data", fmt.Sprintf("%s.json", data.ID)))
+					return errors.Wrapf(err, "decode %s", p)
 				}
 
 				data.Merge(base)
 			}
 
-			if err := util.Write(filepath.Join(options.dir, "data", fmt.Sprintf("%s.json", data.ID)), data, true); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "data", fmt.Sprintf("%s.json", data.ID)))
+			if err := util.Write(p, data, true); err != nil {
+				return errors.Wrapf(err, "write %s", p)
 			}
 		}
 

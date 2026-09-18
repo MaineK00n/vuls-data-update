@@ -42,6 +42,7 @@ import (
 	repositoryTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/datasource/repository"
 	sourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/source"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/util"
+	utilfilepath "github.com/MaineK00n/vuls-data-update/pkg/extract/util/filepath"
 	utilgit "github.com/MaineK00n/vuls-data-update/pkg/extract/util/git"
 	utiljson "github.com/MaineK00n/vuls-data-update/pkg/extract/util/json"
 	fetched "github.com/MaineK00n/vuls-data-update/pkg/fetch/debian/tracker/salsa"
@@ -308,12 +309,22 @@ func (o options) walkCVE(root string, pkgs map[string]map[string]distribution) e
 
 				switch splitted[0] {
 				case "CVE":
-					if err := util.Write(filepath.Join(o.dir, "data", "CVE", splitted[1], fmt.Sprintf("%s.json", d.ID)), d, true); err != nil {
-						return errors.Wrapf(err, "write %s", filepath.Join(o.dir, "data", "CVE", splitted[1], fmt.Sprintf("%s.json", d.ID)))
+					p, err := utilfilepath.Join(o.dir, "data", "CVE", splitted[1], fmt.Sprintf("%s.json", d.ID))
+					if err != nil {
+						return errors.Wrap(err, "join")
+					}
+
+					if err := util.Write(p, d, true); err != nil {
+						return errors.Wrapf(err, "write %s", p)
 					}
 				case "TEMP":
-					if err := util.Write(filepath.Join(o.dir, "data", splitted[0], fmt.Sprintf("%s.json", d.ID)), d, true); err != nil {
-						return errors.Wrapf(err, "write %s", filepath.Join(o.dir, "data", splitted[0], fmt.Sprintf("%s.json", d.ID)))
+					p, err := utilfilepath.Join(o.dir, "data", splitted[0], fmt.Sprintf("%s.json", d.ID))
+					if err != nil {
+						return errors.Wrap(err, "join")
+					}
+
+					if err := util.Write(p, d, true); err != nil {
+						return errors.Wrapf(err, "write %s", p)
 					}
 				default:
 					return errors.Errorf("unexpected vulnerability id format. expected: %q, actual: %q", []string{"CVE-yyyy-\\d{4,}", "TEMP-\\d+-\\d+"}, d.ID)
@@ -379,8 +390,13 @@ func (o options) walkAdvisory(root string) error {
 
 					switch splitted[0] {
 					case "DSA", "DLA", "DTSA":
-						if err := util.Write(filepath.Join(o.dir, "data", splitted[0], fmt.Sprintf("%s.json", d.ID)), d, true); err != nil {
-							return errors.Wrapf(err, "write %s", filepath.Join(o.dir, "data", splitted[0], fmt.Sprintf("%s.json", d.ID)))
+						p, err := utilfilepath.Join(o.dir, "data", splitted[0], fmt.Sprintf("%s.json", d.ID))
+						if err != nil {
+							return errors.Wrap(err, "join")
+						}
+
+						if err := util.Write(p, d, true); err != nil {
+							return errors.Wrapf(err, "write %s", p)
 						}
 					default:
 						return errors.Errorf("unexpected advisory id format. expected: %q, actual: %q", []string{"DSA-\\d+(-\\d+)?", "DLA-\\d+-\\d+", "DTSA-\\d+-\\d+"}, d.ID)

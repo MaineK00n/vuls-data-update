@@ -15,6 +15,7 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
+	utilfilepath "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/filepath"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
@@ -124,8 +125,13 @@ func Fetch(ids []string, opts ...Option) error {
 			return errors.Wrapf(err, "unexpected published format. expected: %q, actual: %q", "2006-01-02T15:04:05", cvrf.DocumentTracking.InitialReleaseDate)
 		}
 
-		if err := util.Write(filepath.Join(options.dir, fmt.Sprintf("%d", t.Year()), fmt.Sprintf("%s.json", cvrf.DocumentTracking.Identification.ID)), cvrf); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, fmt.Sprintf("%d", t.Year()), fmt.Sprintf("%s.json", cvrf.DocumentTracking.Identification.ID)))
+		p, err := utilfilepath.Join(options.dir, fmt.Sprintf("%d", t.Year()), fmt.Sprintf("%s.json", cvrf.DocumentTracking.Identification.ID))
+		if err != nil {
+			return errors.Wrap(err, "join")
+		}
+
+		if err := util.Write(p, cvrf); err != nil {
+			return errors.Wrapf(err, "write %s", p)
 		}
 
 		return nil

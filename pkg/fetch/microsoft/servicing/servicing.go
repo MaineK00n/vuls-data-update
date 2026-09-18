@@ -51,6 +51,7 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
+	utilfilepath "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/filepath"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
@@ -564,8 +565,13 @@ func (opts options) convert() error {
 			return errors.Errorf("no heading in %s", p)
 		}
 
-		if err := util.Write(filepath.Join(opts.dir, "raw", fmt.Sprintf("%s.json", strings.TrimSuffix(rel, ".html"))), a); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(opts.dir, "raw", fmt.Sprintf("%s.json", strings.TrimSuffix(rel, ".html"))))
+		dst, err := utilfilepath.Join(opts.dir, "raw", fmt.Sprintf("%s.json", strings.TrimSuffix(rel, ".html")))
+		if err != nil {
+			return errors.Wrap(err, "join")
+		}
+
+		if err := util.Write(dst, a); err != nil {
+			return errors.Wrapf(err, "write %s", dst)
 		}
 
 		return nil
@@ -583,7 +589,10 @@ func (opts options) convert() error {
 // article does not, and would turn every fetch into a diff, drowning the signal
 // this tree exists to carry: that Microsoft revised the article.
 func writeOrigin(dir, name string, content []byte) error {
-	path := filepath.Join(dir, "origin", name)
+	path, err := utilfilepath.Join(dir, "origin", name)
+	if err != nil {
+		return errors.Wrap(err, "join")
+	}
 
 	if err := os.MkdirAll(filepath.Dir(path), os.ModePerm); err != nil {
 		return errors.Wrapf(err, "mkdir %s", filepath.Dir(path))

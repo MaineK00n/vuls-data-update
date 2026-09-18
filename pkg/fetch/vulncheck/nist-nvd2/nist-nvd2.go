@@ -17,6 +17,7 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
+	utilfilepath "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/filepath"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
@@ -161,8 +162,13 @@ Notably, you must show "prominent attribution" to show the data is from VulnChec
 				return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", v.CVE.ID)
 			}
 
-			if err := util.Write(filepath.Join(options.dir, splitted[1], fmt.Sprintf("%s.json", v.CVE.ID)), v.CVE); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, splitted[1], fmt.Sprintf("%s.json", v.CVE.ID)))
+			p, err := utilfilepath.Join(options.dir, splitted[1], fmt.Sprintf("%s.json", v.CVE.ID))
+			if err != nil {
+				return errors.Wrap(err, "join")
+			}
+
+			if err := util.Write(p, v.CVE); err != nil {
+				return errors.Wrapf(err, "write %s", p)
 			}
 		}
 	}

@@ -18,6 +18,7 @@ import (
 	"golang.org/x/sync/errgroup"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
+	utilfilepath "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/filepath"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
@@ -262,8 +263,13 @@ func (opts options) save(root string) error {
 				return errors.Wrap(err, "parse uint")
 			}
 
-			if err := util.Write(filepath.Join(opts.dir, "u", fmt.Sprintf("%s.json", u.RevisionID)), u); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(opts.dir, "u", fmt.Sprintf("%s.json", u.RevisionID)))
+			p, err := utilfilepath.Join(opts.dir, "u", fmt.Sprintf("%s.json", u.RevisionID))
+			if err != nil {
+				return errors.Wrap(err, "join")
+			}
+
+			if err := util.Write(p, u); err != nil {
+				return errors.Wrapf(err, "write %s", p)
 			}
 
 			pname, err := func() (string, error) {
@@ -305,8 +311,13 @@ func (opts options) save(root string) error {
 				return errors.WithStack(err)
 			}
 			if c != nil {
-				if err := util.Write(filepath.Join(opts.dir, "c", fmt.Sprintf("%s.json", u.RevisionID)), *c); err != nil {
-					return errors.Wrapf(err, "write %s", filepath.Join(opts.dir, "c", fmt.Sprintf("%s.json", u.RevisionID)))
+				p, err := utilfilepath.Join(opts.dir, "c", fmt.Sprintf("%s.json", u.RevisionID))
+				if err != nil {
+					return errors.Wrap(err, "join")
+				}
+
+				if err := util.Write(p, *c); err != nil {
+					return errors.Wrapf(err, "write %s", p)
 				}
 			}
 
@@ -331,8 +342,13 @@ func (opts options) save(root string) error {
 				return errors.WithStack(err)
 			}
 			if x != nil {
-				if err := util.Write(filepath.Join(opts.dir, "x", fmt.Sprintf("%s.json", u.RevisionID)), *x); err != nil {
-					return errors.Wrapf(err, "write %s", filepath.Join(opts.dir, "x", fmt.Sprintf("%s.json", u.RevisionID)))
+				p, err := utilfilepath.Join(opts.dir, "x", fmt.Sprintf("%s.json", u.RevisionID))
+				if err != nil {
+					return errors.Wrap(err, "join")
+				}
+
+				if err := util.Write(p, *x); err != nil {
+					return errors.Wrapf(err, "write %s", p)
 				}
 			}
 
@@ -357,8 +373,13 @@ func (opts options) save(root string) error {
 				return errors.WithStack(err)
 			}
 			if l != nil {
-				if err := util.Write(filepath.Join(opts.dir, "l", fmt.Sprintf("%s.json", u.RevisionID)), *l); err != nil {
-					return errors.Wrapf(err, "write %s", filepath.Join(opts.dir, "l", fmt.Sprintf("%s.json", u.RevisionID)))
+				p, err := utilfilepath.Join(opts.dir, "l", fmt.Sprintf("%s.json", u.RevisionID))
+				if err != nil {
+					return errors.Wrap(err, "join")
+				}
+
+				if err := util.Write(p, *l); err != nil {
+					return errors.Wrapf(err, "write %s", p)
 				}
 			}
 

@@ -16,6 +16,7 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
+	utilfilepath "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/filepath"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
@@ -170,41 +171,76 @@ func (opts options) fetch(branch string) error {
 		name := strings.TrimSuffix(filepath.Base(zf.Name), ".xml")
 
 		for _, def := range r.Definitions.Definition {
-			if err := util.Write(filepath.Join(opts.dir, branch, name, "definitions", fmt.Sprintf("%s.json", def.ID)), def); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(opts.dir, branch, name, "definitions", fmt.Sprintf("%s.json", def.ID)))
+			p, err := utilfilepath.Join(opts.dir, branch, name, "definitions", fmt.Sprintf("%s.json", def.ID))
+			if err != nil {
+				return errors.Wrap(err, "join")
+			}
+
+			if err := util.Write(p, def); err != nil {
+				return errors.Wrapf(err, "write %s", p)
 			}
 		}
 
 		for _, test := range r.Tests.RpminfoTest {
-			if err := util.Write(filepath.Join(opts.dir, branch, name, "tests", "rpminfo_test", fmt.Sprintf("%s.json", test.ID)), test); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(opts.dir, branch, name, "tests", "rpminfo_test", fmt.Sprintf("%s.json", test.ID)))
+			p, err := utilfilepath.Join(opts.dir, branch, name, "tests", "rpminfo_test", fmt.Sprintf("%s.json", test.ID))
+			if err != nil {
+				return errors.Wrap(err, "join")
+			}
+
+			if err := util.Write(p, test); err != nil {
+				return errors.Wrapf(err, "write %s", p)
 			}
 		}
 		for _, test := range r.Tests.Textfilecontent54Test {
-			if err := util.Write(filepath.Join(opts.dir, branch, name, "tests", "textfilecontent54_test", fmt.Sprintf("%s.json", test.ID)), test); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(opts.dir, branch, name, "tests", "textfilecontent54_test", fmt.Sprintf("%s.json", test.ID)))
+			p, err := utilfilepath.Join(opts.dir, branch, name, "tests", "textfilecontent54_test", fmt.Sprintf("%s.json", test.ID))
+			if err != nil {
+				return errors.Wrap(err, "join")
+			}
+
+			if err := util.Write(p, test); err != nil {
+				return errors.Wrapf(err, "write %s", p)
 			}
 		}
 
 		for _, object := range r.Objects.RpminfoObject {
-			if err := util.Write(filepath.Join(opts.dir, branch, name, "objects", "rpminfo_object", fmt.Sprintf("%s.json", object.ID)), object); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(opts.dir, branch, name, "objects", "rpminfo_object", fmt.Sprintf("%s.json", object.ID)))
+			p, err := utilfilepath.Join(opts.dir, branch, name, "objects", "rpminfo_object", fmt.Sprintf("%s.json", object.ID))
+			if err != nil {
+				return errors.Wrap(err, "join")
+			}
+
+			if err := util.Write(p, object); err != nil {
+				return errors.Wrapf(err, "write %s", p)
 			}
 		}
 		for _, object := range r.Objects.Textfilecontent54Object {
-			if err := util.Write(filepath.Join(opts.dir, branch, name, "objects", "textfilecontent54_object", fmt.Sprintf("%s.json", object.ID)), object); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(opts.dir, branch, name, "objects", "textfilecontent54_object", fmt.Sprintf("%s.json", object.ID)))
+			p, err := utilfilepath.Join(opts.dir, branch, name, "objects", "textfilecontent54_object", fmt.Sprintf("%s.json", object.ID))
+			if err != nil {
+				return errors.Wrap(err, "join")
+			}
+
+			if err := util.Write(p, object); err != nil {
+				return errors.Wrapf(err, "write %s", p)
 			}
 		}
 
 		for _, state := range r.States.RpminfoState {
-			if err := util.Write(filepath.Join(opts.dir, branch, name, "states", "rpminfo_state", fmt.Sprintf("%s.json", state.ID)), state); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(opts.dir, branch, name, "states", "rpminfo_state", fmt.Sprintf("%s.json", state.ID)))
+			p, err := utilfilepath.Join(opts.dir, branch, name, "states", "rpminfo_state", fmt.Sprintf("%s.json", state.ID))
+			if err != nil {
+				return errors.Wrap(err, "join")
+			}
+
+			if err := util.Write(p, state); err != nil {
+				return errors.Wrapf(err, "write %s", p)
 			}
 		}
 		for _, state := range r.States.Textfilecontent54State {
-			if err := util.Write(filepath.Join(opts.dir, branch, name, "states", "textfilecontent54_state", fmt.Sprintf("%s.json", state.ID)), state); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(opts.dir, branch, name, "states", "textfilecontent54_state", fmt.Sprintf("%s.json", state.ID)))
+			p, err := utilfilepath.Join(opts.dir, branch, name, "states", "textfilecontent54_state", fmt.Sprintf("%s.json", state.ID))
+			if err != nil {
+				return errors.Wrap(err, "join")
+			}
+
+			if err := util.Write(p, state); err != nil {
+				return errors.Wrapf(err, "write %s", p)
 			}
 		}
 	}

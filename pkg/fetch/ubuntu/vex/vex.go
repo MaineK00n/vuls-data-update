@@ -14,6 +14,7 @@ import (
 	"github.com/ulikunitz/xz"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
+	utilfilepath "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/filepath"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
@@ -110,8 +111,13 @@ func Fetch(opts ...Option) error {
 			return errors.Wrap(err, "decode json")
 		}
 
-		if err := util.Write(filepath.Join(options.dir, fmt.Sprintf("%s.json", strings.TrimPrefix(vex.Metadata.ID, "https://github.com/canonical/ubuntu-security-notices/blob/main/vex/"))), vex); err != nil {
-			return errors.Wrapf(err, "write %s", fmt.Sprintf("%s.json", strings.TrimPrefix(vex.Metadata.ID, "https://github.com/canonical/ubuntu-security-notices/blob/main/vex/")))
+		p, err := utilfilepath.Join(options.dir, fmt.Sprintf("%s.json", strings.TrimPrefix(vex.Metadata.ID, "https://github.com/canonical/ubuntu-security-notices/blob/main/vex/")))
+		if err != nil {
+			return errors.Wrap(err, "join")
+		}
+
+		if err := util.Write(p, vex); err != nil {
+			return errors.Wrapf(err, "write %s", p)
 		}
 	}
 

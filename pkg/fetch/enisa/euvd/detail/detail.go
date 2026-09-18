@@ -16,6 +16,7 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
+	utilfilepath "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/filepath"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
@@ -144,8 +145,13 @@ func (opts options) fetch(r io.Reader) error {
 				return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "EUVD-yyyy-\\d{4,}", resp.Request.URL.Query().Get("id"))
 			}
 
-			if err := util.Write(filepath.Join(opts.dir, ss[1], fmt.Sprintf("%s.json", resp.Request.URL.Query().Get("id"))), a); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(opts.dir, ss[1], fmt.Sprintf("%s.json", resp.Request.URL.Query().Get("id"))))
+			p, err := utilfilepath.Join(opts.dir, ss[1], fmt.Sprintf("%s.json", resp.Request.URL.Query().Get("id")))
+			if err != nil {
+				return errors.Wrap(err, "join")
+			}
+
+			if err := util.Write(p, a); err != nil {
+				return errors.Wrapf(err, "write %s", p)
 			}
 
 			return nil

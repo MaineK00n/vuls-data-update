@@ -13,6 +13,7 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
+	utilfilepath "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/filepath"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
@@ -122,7 +123,11 @@ func (o options) fetch(apikey string) error {
 			}
 
 			for _, r := range r.Results {
-				p := filepath.Join(append(append([]string{o.dir}, strings.Split(r.Dir, "/")...), fmt.Sprintf("%s.json", r.ID))...)
+				p, err := utilfilepath.Join(o.dir, append(strings.Split(r.Dir, "/"), fmt.Sprintf("%s.json", r.ID))...)
+				if err != nil {
+					return errors.Wrap(err, "join")
+				}
+
 				if err := util.Write(p, r); err != nil {
 					return errors.Wrapf(err, "write %s", p)
 				}
