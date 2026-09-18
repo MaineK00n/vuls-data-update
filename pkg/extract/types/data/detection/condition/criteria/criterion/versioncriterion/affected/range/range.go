@@ -136,8 +136,8 @@ func RangeTypes() []RangeType {
 		RangeTypeMicrosoftVisualStudio,
 		RangeTypeMicrosoftVSCode,
 		RangeTypeMicrosoftWindows,
-		RangeTypeSolarisIPS,
 		RangeTypeUnknown,
+		RangeTypeSolarisIPS,
 	}
 }
 
