@@ -16,7 +16,9 @@
 //
 // Ordering follows pkg(7): release first, then branch, then timestamp;
 // build_release never takes part. Dot sequences compare element by element as
-// integers and a sequence that is a proper prefix of another sorts before it
+// integers (of any size: an element is kept as its decimal digits, which,
+// with zero padding rejected, order numerically by length and then by
+// digits) and a sequence that is a proper prefix of another sorts before it
 // (11.4.94 < 11.4.94.0.1.113.1), which differs from the "missing element is
 // zero" reading most version schemes use.
 //
@@ -36,7 +38,6 @@ import (
 	"cmp"
 	"regexp"
 	"slices"
-	"strconv"
 	"strings"
 	"time"
 
@@ -51,10 +52,28 @@ var timestampRe = regexp.MustCompile(`^[0-9]{8}T[0-9]{6}Z$`)
 
 // Version is a parsed IPS version.
 type Version struct {
-	release      []int
-	buildRelease []int  // parsed for validation only; pkg(7) ignores it when ordering
-	branch       []int  // empty when absent
-	timestamp    string // "" when absent; ISO 8601 basic, so string order is time order
+	release      dotSequence
+	buildRelease dotSequence // parsed for validation only; pkg(7) ignores it when ordering
+	branch       dotSequence // empty when absent
+	timestamp    string      // "" when absent; ISO 8601 basic, so string order is time order
+}
+
+// dotSequence holds the elements of a pkg(7) dot sequence as their decimal
+// digits. parseDotSequence admits only unsigned digits without zero padding,
+// so an element orders numerically by its length and then by its digits, with
+// no bound on its size (pkg(7) puts none; the reference client uses Python
+// integers).
+type dotSequence []string
+
+// compareElement orders two canonical decimal elements numerically.
+func compareElement(a, b string) int {
+	return cmp.Or(cmp.Compare(len(a), len(b)), cmp.Compare(a, b))
+}
+
+// compare orders two dot sequences element by element; a proper prefix sorts
+// before the longer sequence.
+func (s dotSequence) compare(t dotSequence) int {
+	return slices.CompareFunc(s, t, compareElement)
 }
 
 // NewVersion parses an IPS version string. Anything that pkg(7) would reject
@@ -114,13 +133,14 @@ func NewVersion(v string) (Version, error) {
 }
 
 // parseDotSequence mirrors pkg.version.DotSequence: every element is a
-// non-negative integer with no zero padding (a lone "0" is fine).
-func parseDotSequence(s string) ([]int, error) {
+// non-negative integer with no zero padding (a lone "0" is fine). Elements
+// are kept as digits, so their size is unbounded.
+func parseDotSequence(s string) (dotSequence, error) {
 	if s == "" {
 		return nil, errors.New("dot sequence cannot be empty")
 	}
 	elems := strings.Split(s, ".")
-	seq := make([]int, 0, len(elems))
+	seq := make(dotSequence, 0, len(elems))
 	for _, e := range elems {
 		if e == "" {
 			return nil, errors.Errorf("empty element in %q", s)
@@ -128,14 +148,13 @@ func parseDotSequence(s string) ([]int, error) {
 		if e[0] == '-' || e[0] == '+' {
 			return nil, errors.Errorf("signed element %q in %q", e, s)
 		}
-		n, err := strconv.Atoi(e)
-		if err != nil {
-			return nil, errors.Wrapf(err, "parse %q in %q as number", e, s)
+		if strings.ContainsFunc(e, func(r rune) bool { return r < '0' || r > '9' }) {
+			return nil, errors.Errorf("non-numeric element %q in %q", e, s)
 		}
 		if len(e) > 1 && e[0] == '0' {
 			return nil, errors.Errorf("zero padded element %q in %q", e, s)
 		}
-		seq = append(seq, n)
+		seq = append(seq, e)
 	}
 	return seq, nil
 }
@@ -152,18 +171,18 @@ func parseDotSequence(s string) ([]int, error) {
 // comparator of sort or max over a mixed set of versions.
 func (v Version) Compare(w Version) int {
 	return cmp.Or(
-		slices.Compare(v.release, w.release),
+		v.release.compare(w.release),
 		compareBranch(v.branch, w.branch),
 		compareTimestamp(v.timestamp, w.timestamp),
 	)
 }
 
 // compareBranch is 0 when either side has no branch (don't care).
-func compareBranch(a, b []int) int {
+func compareBranch(a, b dotSequence) int {
 	if len(a) == 0 || len(b) == 0 {
 		return 0
 	}
-	return slices.Compare(a, b)
+	return a.compare(b)
 }
 
 // compareTimestamp is 0 when either side has no timestamp (don't care).

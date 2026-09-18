@@ -39,6 +39,8 @@ func TestNewVersion(t *testing.T) {
 		{name: "zero padded element", v: "11.04", wantErr: true},
 		{name: "zero padded zero", v: "11.00", wantErr: true},
 		{name: "lone zero", v: "0.5.11", wantErr: false},
+		{name: "element beyond the int range", v: "11.99999999999999999999999", wantErr: false},
+		{name: "non numeric element after digits", v: "11.4x", wantErr: true},
 		{name: "zero padded branch element", v: "11.4-11.04", wantErr: true},
 		{name: "timestamp date only", v: "1.0:20161018", wantErr: true},
 		{name: "timestamp without Z", v: "1.0:20161018T000000", wantErr: true},
@@ -70,6 +72,8 @@ func TestVersion_Compare(t *testing.T) {
 		{name: "release element", v: "11.3", w: "11.4", want: -1},
 		{name: "release element is numeric, not lexical", v: "11.4.9", w: "11.4.10", want: -1},
 		{name: "shorter release is a prefix and sorts first", v: "11.4", w: "11.4.0", want: -1},
+		{name: "elements beyond the int range compare numerically", v: "11.99999999999999999999999", w: "11.100000000000000000000000", want: -1},
+		{name: "element beyond the int range is greater than a small one", v: "11.100000000000000000000000", w: "11.9", want: 1},
 		{name: "release decides before branch", v: "11.3-11.3.99", w: "11.4-11.4.1", want: -1},
 		{name: "release decides before timestamp", v: "0.5.11:20261231T235959Z", w: "0.5.12:20150101T000000Z", want: -1},
 		// build_release is not part of the order
