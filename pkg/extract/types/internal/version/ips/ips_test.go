@@ -40,6 +40,8 @@ func TestNewVersion(t *testing.T) {
 		{name: "zero padded zero", v: "11.00", wantErr: true},
 		{name: "lone zero", v: "0.5.11", wantErr: false},
 		{name: "element beyond the int range", v: "11.99999999999999999999999", wantErr: false},
+		{name: "timestamp year 0000", v: "1.0:00000101T000000Z", wantErr: true},
+		{name: "timestamp year 0001", v: "1.0:00010101T000000Z", wantErr: false},
 		{name: "non numeric element after digits", v: "11.4x", wantErr: true},
 		{name: "zero padded branch element", v: "11.4-11.04", wantErr: true},
 		{name: "timestamp date only", v: "1.0:20161018", wantErr: true},
