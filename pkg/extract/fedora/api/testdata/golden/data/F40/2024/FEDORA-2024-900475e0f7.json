@@ -128,45 +128,12 @@
 										"binary": {
 											"name": "netatalk",
 											"architectures": [
-												"x86_64",
 												"aarch64",
 												"i686",
 												"ppc64le",
 												"s390x",
-												"src"
-											]
-										}
-									},
-									"affected": {
-										"type": "rpm",
-										"range": [
-											{
-												"lt": "5:3.2.1-1.fc40"
-											}
-										],
-										"fixed": [
-											"5:3.2.1-1.fc40"
-										]
-									}
-								}
-							},
-							{
-								"type": "version",
-								"version": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "fixed"
-									},
-									"package": {
-										"type": "binary",
-										"binary": {
-											"name": "netatalk-debugsource",
-											"architectures": [
-												"i686",
-												"ppc64le",
-												"s390x",
-												"x86_64",
-												"aarch64"
+												"src",
+												"x86_64"
 											]
 										}
 									},
@@ -195,11 +162,44 @@
 										"binary": {
 											"name": "netatalk-debuginfo",
 											"architectures": [
+												"aarch64",
 												"i686",
 												"ppc64le",
 												"s390x",
-												"x86_64",
-												"aarch64"
+												"x86_64"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "5:3.2.1-1.fc40"
+											}
+										],
+										"fixed": [
+											"5:3.2.1-1.fc40"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "netatalk-debugsource",
+											"architectures": [
+												"aarch64",
+												"i686",
+												"ppc64le",
+												"s390x",
+												"x86_64"
 											]
 										}
 									},
@@ -228,11 +228,11 @@
 										"binary": {
 											"name": "netatalk-devel",
 											"architectures": [
+												"aarch64",
 												"i686",
 												"ppc64le",
 												"s390x",
-												"x86_64",
-												"aarch64"
+												"x86_64"
 											]
 										}
 									},

@@ -1,7 +1,6 @@
 package security_test
 
 import (
-	"path/filepath"
 	"testing"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/openssh/security"
@@ -91,15 +90,7 @@ func TestExtract(t *testing.T) {
 				t.Error("expected error has not occurred")
 			case tt.hasError:
 			default:
-				ep, err := filepath.Abs(tt.golden)
-				if err != nil {
-					t.Error("unexpected error:", err)
-				}
-				gp, err := filepath.Abs(dir)
-				if err != nil {
-					t.Error("unexpected error:", err)
-				}
-				if err := utiltest.Diff(ep, gp); err != nil {
+				if err := utiltest.Diff(tt.golden, dir); err != nil {
 					t.Error("unexpected error:", err)
 				}
 			}

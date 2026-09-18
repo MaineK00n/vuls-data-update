@@ -35,7 +35,7 @@ func TestDiff(t *testing.T) {
 			got:    []file{{path: "2024/CVE-2024-0001.json", content: "{}"}},
 		},
 		{
-			name:    "file the fetcher did not write",
+			name:    "file the writer did not write",
 			golden:  []file{{path: "2024/CVE-2024-0001.json", content: "{}"}, {path: "2024/CVE-2024-0002.json", content: "{}"}},
 			got:     []file{{path: "2024/CVE-2024-0001.json", content: "{}"}},
 			wantErr: []string{"2024/CVE-2024-0002.json"},

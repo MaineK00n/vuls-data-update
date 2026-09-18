@@ -1,15 +1,10 @@
 package test_test
 
 import (
-	"io/fs"
-	"slices"
-
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
-
-	"github.com/google/go-cmp/cmp"
 
 	"github.com/pkg/errors"
 
@@ -24,90 +19,67 @@ type file struct {
 func TestDiff(t *testing.T) {
 	tests := []struct {
 		name string
-		// gotParent places the output tree under an extra path component, for
-		// the case where that component is named after one of the categories.
-		gotParent string
-		golden    []file
-		got       []file
-		// gotEmptyDirs are directories created in the output holding no files,
-		// which git cannot carry on the golden side.
-		gotEmptyDirs []string
+		// noGolden leaves the golden directory uncreated, for the case whose
+		// expected output is nothing at all.
+		noGolden bool
+		golden   []file
+		got      []file
+		opts     []utiltest.Option
 		// wantErr lists substrings the reported error must contain. Empty means
 		// the trees must compare equal.
 		wantErr []string
 	}{
 		{
 			name:   "equal trees",
-			golden: []file{{path: "README.md", content: "# title\n"}, {path: "data/2024/CVE-2024-0001.json", content: "{}"}},
-			got:    []file{{path: "README.md", content: "# title\n"}, {path: "data/2024/CVE-2024-0001.json", content: "{}"}},
+			golden: []file{{path: "2024/CVE-2024-0001.json", content: "{}"}},
+			got:    []file{{path: "2024/CVE-2024-0001.json", content: "{}"}},
 		},
 		{
-			name:    "file the extractor did not write",
-			golden:  []file{{path: "data/2024/CVE-2024-0001.json", content: "{}"}, {path: "data/2024/CVE-2024-0002.json", content: "{}"}},
-			got:     []file{{path: "data/2024/CVE-2024-0001.json", content: "{}"}},
-			wantErr: []string{"data", "CVE-2024-0002.json"},
+			name:    "file the writer did not write",
+			golden:  []file{{path: "2024/CVE-2024-0001.json", content: "{}"}, {path: "2024/CVE-2024-0002.json", content: "{}"}},
+			got:     []file{{path: "2024/CVE-2024-0001.json", content: "{}"}},
+			wantErr: []string{"2024/CVE-2024-0002.json"},
 		},
 		{
 			name:    "file golden does not describe",
-			golden:  []file{{path: "data/2024/CVE-2024-0001.json", content: "{}"}},
-			got:     []file{{path: "data/2024/CVE-2024-0001.json", content: "{}"}, {path: "data/2024/CVE-2024-0002.json", content: "{}"}},
-			wantErr: []string{"data", "CVE-2024-0002.json"},
-		},
-		{
-			// The regression this guards: Diff used to skip a name the output
-			// lacked entirely, so an extractor that wrote no data/ at all had
-			// the whole category pass unchecked.
-			name:    "output holds no data at all",
-			golden:  []file{{path: "data/2024/CVE-2024-0001.json", content: "{}"}},
-			got:     []file{{path: "README.md", content: "# title\n"}},
-			wantErr: []string{"data", "CVE-2024-0001.json"},
+			golden:  []file{{path: "2024/CVE-2024-0001.json", content: "{}"}},
+			got:     []file{{path: "2024/CVE-2024-0001.json", content: "{}"}, {path: "2024/CVE-2024-0002.json", content: "{}"}},
+			wantErr: []string{"2024/CVE-2024-0002.json"},
 		},
 		{
 			name:    "content differs",
-			golden:  []file{{path: "README.md", content: "# title\n"}},
-			got:     []file{{path: "README.md", content: "# other\n"}},
-			wantErr: []string{"README.md", "(-expected +got)"},
+			golden:  []file{{path: "2024/CVE-2024-0001.json", content: `{"id": "CVE-2024-0001"}`}},
+			got:     []file{{path: "2024/CVE-2024-0001.json", content: `{"id": "CVE-2024-9999"}`}},
+			wantErr: []string{"(-expected +got)", "CVE-2024-9999"},
 		},
 		{
+			// Golden carries the escaped name, the fetcher writes the raw one.
 			name:   "golden name is URL-escaped",
-			golden: []file{{path: "data/oval%3Acom.redhat.rhba%3Aste%3A20070331002.json", content: "{}"}},
-			got:    []file{{path: "data/oval:com.redhat.rhba:ste:20070331002.json", content: "{}"}},
+			golden: []file{{path: "states/oval%3Acom.redhat.rhba%3Aste%3A20070331002.json", content: "{}"}},
+			got:    []file{{path: "states/oval:com.redhat.rhba:ste:20070331002.json", content: "{}"}},
 		},
 		{
-			// The output root is a temp directory the test does not choose, and
-			// a component of it can be named after a category. The path of a
-			// file inside the category must be taken relative to the category's
-			// own root, not from the first place its name turns up.
-			name:      "output path contains a component named after the category",
-			gotParent: "data",
-			golden:    []file{{path: "data/2024/CVE-2024-0001.json", content: "{}"}},
-			got:       []file{{path: "data/2024/CVE-2024-0001.json", content: "{}"}},
+			name:     "no golden directory and nothing written",
+			noGolden: true,
 		},
 		{
-			// An extractor that creates its output directory and then has
-			// nothing to write for a case leaves the category there but empty.
-			// Golden cannot say that, so the two must compare equal.
-			name:         "category directory exists but holds nothing",
-			gotEmptyDirs: []string{"data"},
+			name:     "no golden directory but something written",
+			noGolden: true,
+			got:      []file{{path: "2024/CVE-2024-0001.json", content: "{}"}},
+			wantErr:  []string{"2024/CVE-2024-0001.json"},
 		},
 		{
-			// The typed comparison knows a fixed set of top-level names, so
-			// anything else would go unlooked at on both sides at once.
-			name:    "output holds a top-level entry the comparison does not know",
-			golden:  []file{{path: "data/2024/CVE-2024-0001.json", content: "{}"}},
-			got:     []file{{path: "data/2024/CVE-2024-0001.json", content: "{}"}, {path: "debug.json", content: "{}"}},
-			wantErr: []string{"debug.json"},
+			name:   "test server URL replaced before comparing",
+			golden: []file{{path: "2024/CVE-2024-0001.json", content: `{"url": "https://example.com/a"}`}},
+			got:    []file{{path: "2024/CVE-2024-0001.json", content: `{"url": "http://127.0.0.1:34567/a"}`}},
+			opts:   []utiltest.Option{utiltest.WithReplace("http://127.0.0.1:34567", "https://example.com")},
 		},
 		{
-			// Same on the golden side: an entry golden describes and the
-			// extractor stopped writing is not silently dropped either.
-			name:    "golden holds a top-level entry the comparison does not know",
-			golden:  []file{{path: "data/2024/CVE-2024-0001.json", content: "{}"}, {path: "debug.json", content: "{}"}},
-			got:     []file{{path: "data/2024/CVE-2024-0001.json", content: "{}"}},
-			wantErr: []string{"debug.json"},
-		},
-		{
-			name: "nothing on either side",
+			name:    "replacement does not hide a real difference",
+			golden:  []file{{path: "2024/CVE-2024-0001.json", content: `{"url": "https://example.com/a"}`}},
+			got:     []file{{path: "2024/CVE-2024-0001.json", content: `{"url": "http://127.0.0.1:34567/b"}`}},
+			opts:    []utiltest.Option{utiltest.WithReplace("http://127.0.0.1:34567", "https://example.com")},
+			wantErr: []string{"(-expected +got)"},
 		},
 	}
 
@@ -116,21 +88,18 @@ func TestDiff(t *testing.T) {
 			root := t.TempDir()
 
 			goldenDir := filepath.Join(root, "golden")
-			if err := write(goldenDir, tt.golden); err != nil {
-				t.Fatal("unexpected error:", err)
-			}
-
-			gotDir := filepath.Join(root, tt.gotParent, "got")
-			if err := write(gotDir, tt.got); err != nil {
-				t.Fatal("unexpected error:", err)
-			}
-			for _, d := range tt.gotEmptyDirs {
-				if err := os.MkdirAll(filepath.Join(gotDir, d), os.ModePerm); err != nil {
+			if !tt.noGolden {
+				if err := write(goldenDir, tt.golden); err != nil {
 					t.Fatal("unexpected error:", err)
 				}
 			}
 
-			err := utiltest.Diff(goldenDir, gotDir)
+			gotDir := filepath.Join(root, "got")
+			if err := write(gotDir, tt.got); err != nil {
+				t.Fatal("unexpected error:", err)
+			}
+
+			err := utiltest.Diff(goldenDir, gotDir, tt.opts...)
 			switch {
 			case err != nil && len(tt.wantErr) == 0:
 				t.Error("unexpected error:", err)
@@ -165,86 +134,4 @@ func write(root string, files []file) error {
 	}
 
 	return nil
-}
-
-func TestQueryUnescapeFileTree(t *testing.T) {
-	tests := []struct {
-		name     string
-		fixtures []file
-		want     []string
-		hasError bool
-	}{
-		{
-			name:     "escaped names are decoded",
-			fixtures: []file{{path: "definitions/oval%3Aorg.almalinux.alsa%3Adef%3A20227071.json", content: "{}"}},
-			want:     []string{"definitions/oval:org.almalinux.alsa:def:20227071.json"},
-		},
-		{
-			name:     "names needing no decoding are copied as they are",
-			fixtures: []file{{path: "2024/CVE-2024-0001.json", content: "{}"}},
-			want:     []string{"2024/CVE-2024-0001.json"},
-		},
-		{
-			// A lone % is not an escape sequence, and a fixture named that way
-			// is a mistake worth reporting rather than copying through.
-			name:     "name is not a valid escape sequence",
-			fixtures: []file{{path: "100%.json", content: "{}"}},
-			hasError: true,
-		},
-		{
-			// Materializing this one would put it outside the directory the
-			// test asked for, where the test would neither find it nor clean
-			// it up.
-			name:     "name unescapes to a path outside the destination",
-			fixtures: []file{{path: "%2e%2e%2foutside.json", content: "{}"}},
-			hasError: true,
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			fixtureDir := filepath.Join(t.TempDir(), "fixtures")
-			if err := write(fixtureDir, tt.fixtures); err != nil {
-				t.Fatal("unexpected error:", err)
-			}
-
-			p, err := utiltest.QueryUnescapeFileTree(t.TempDir(), fixtureDir)
-			switch {
-			case err != nil && !tt.hasError:
-				t.Error("unexpected error:", err)
-			case err == nil && tt.hasError:
-				t.Error("expected error has not occurred")
-			case err != nil && tt.hasError:
-				// error was expected and occurred, test passed
-				return
-			default:
-				if filepath.Base(p) != filepath.Base(fixtureDir) {
-					t.Errorf("QueryUnescapeFileTree() = %q, want it to end in %q", p, filepath.Base(fixtureDir))
-				}
-
-				var got []string
-				if err := filepath.WalkDir(p, func(path string, d fs.DirEntry, err error) error {
-					if err != nil {
-						return err
-					}
-					if d.IsDir() {
-						return nil
-					}
-					rel, err := filepath.Rel(p, path)
-					if err != nil {
-						return err
-					}
-					got = append(got, filepath.ToSlash(rel))
-					return nil
-				}); err != nil {
-					t.Fatal("walk error:", err)
-				}
-				slices.Sort(got)
-
-				if diff := cmp.Diff(tt.want, got); diff != "" {
-					t.Errorf("QueryUnescapeFileTree(). (-expected +got):\n%s", diff)
-				}
-			}
-		})
-	}
 }
