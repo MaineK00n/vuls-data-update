@@ -90,9 +90,13 @@ const (
 	RangeTypeMicrosoftVisualStudio                 RangeType = "microsoft-visualstudio"
 	RangeTypeMicrosoftVSCode                       RangeType = "microsoft-vscode"
 	RangeTypeMicrosoftWindows                      RangeType = "microsoft-windows"
-	RangeTypeSolarisIPS                            RangeType = "solaris-ips"
 
 	RangeTypeUnknown RangeType = "unknown"
+
+	// Values added after the unknown sentinel keep the vocabulary rank of every
+	// earlier value, unknown included, so a build that does not know them
+	// orders them the same way (after every value it knows).
+	RangeTypeSolarisIPS RangeType = "solaris-ips"
 )
 
 // RangeTypes returns every RangeType this build knows, in declaration order.

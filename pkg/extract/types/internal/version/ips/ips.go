@@ -126,6 +126,11 @@ func NewVersion(v string) (Version, error) {
 		if _, err := time.Parse(timestampLayout, timestamp); err != nil {
 			return Version{}, errors.Wrapf(err, "parse timestamp of %q. expected: %q", v, "YYYYMMDDThhmmssZ")
 		}
+		// time.Parse takes year 0000; the reference client goes through
+		// datetime.datetime, whose years start at 1.
+		if strings.HasPrefix(timestamp, "0000") {
+			return Version{}, errors.Errorf("parse timestamp of %q. year 0000 is not a calendar year", v)
+		}
 		ver.timestamp = timestamp
 	}
 
