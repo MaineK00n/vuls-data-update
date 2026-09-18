@@ -1,0 +1,199 @@
+// Package ips compares package versions of the Image Packaging System (IPS),
+// the package system of Oracle Solaris 11 and the illumos distributions.
+//
+// An IPS version, as documented in pkg(7) and implemented by
+// pkg.version.Version in the reference client (oracle/solaris-ips,
+// src/modules/version.py), is
+//
+//	release[,build_release][-branch][:timestamp]
+//
+// where release, build_release and branch are dot sequences (non-negative
+// integers separated by dots, no negative numbers, no zero padding) and the
+// timestamp is an ISO 8601 basic UTC instant, YYYYMMDDThhmmssZ. Only the
+// release is mandatory. Examples of what a repository or an installed image
+// reports: 0.5.11,5.11-0.175.3.13.0.4.0:20160929T175502Z,
+// 11.4-11.4.0.0.1.15.0:20180817T004203Z, 1.8.0.181.12:20180711T215531Z.
+//
+// Ordering follows pkg(7): release first, then branch, then timestamp;
+// build_release never takes part. Dot sequences compare element by element as
+// integers (of any size: an element is kept as its decimal digits, which,
+// with zero padding rejected, order numerically by length and then by
+// digits) and a sequence that is a proper prefix of another sorts before it
+// (11.4.94 < 11.4.94.0.1.113.1), which differs from the "missing element is
+// zero" reading most version schemes use.
+//
+// Where this package deliberately departs from a strict total order is a
+// component present on one side only. pkg(7) orders a missing branch or
+// timestamp before any present one; that is the right answer for choosing the
+// newest package in a repository, but the wrong one for testing a version
+// against a bound: a bound that names only a release, or only a release and a
+// timestamp, would then never be reached by an installed version that carries
+// a branch. Compare therefore treats a component missing on either side as
+// "don't care" and skips it, in the spirit of the CONSTRAINT_AUTO matching
+// policy of the same client, so that a bound states exactly the components it
+// wants compared.
+package ips
+
+import (
+	"cmp"
+	"regexp"
+	"slices"
+	"strings"
+	"time"
+
+	"github.com/pkg/errors"
+)
+
+// timestampLayout is the pkg(7) timestamp format, always UTC. timestampRe
+// pins its exact shape (time.Parse alone would also take fractional seconds).
+const timestampLayout = "20060102T150405Z"
+
+var timestampRe = regexp.MustCompile(`^[0-9]{8}T[0-9]{6}Z$`)
+
+// Version is a parsed IPS version.
+type Version struct {
+	release      dotSequence
+	buildRelease dotSequence // parsed for validation only; pkg(7) ignores it when ordering
+	branch       dotSequence // empty when absent
+	timestamp    string      // "" when absent; ISO 8601 basic, so string order is time order
+}
+
+// dotSequence holds the elements of a pkg(7) dot sequence as their decimal
+// digits. parseDotSequence admits only unsigned digits without zero padding,
+// so an element orders numerically by its length and then by its digits, with
+// no bound on its size (pkg(7) puts none; the reference client uses Python
+// integers).
+type dotSequence []string
+
+// compareElement orders two canonical decimal elements numerically.
+func compareElement(a, b string) int {
+	return cmp.Or(cmp.Compare(len(a), len(b)), cmp.Compare(a, b))
+}
+
+// compare orders two dot sequences element by element; a proper prefix sorts
+// before the longer sequence.
+func (s dotSequence) compare(t dotSequence) int {
+	return slices.CompareFunc(s, t, compareElement)
+}
+
+// NewVersion parses an IPS version string. Anything that pkg(7) would reject
+// is an error: an empty release, a signalled-but-empty component such as
+// "1.0-" or "1.0:", a non-numeric, negative or zero-padded dot sequence
+// element, or a timestamp that is not a valid YYYYMMDDThhmmssZ instant. A
+// string that is not an IPS version must be a parse error the caller can
+// degrade to a non-match, never a silently mis-ordered comparison.
+func NewVersion(v string) (Version, error) {
+	s := strings.TrimSpace(v)
+	if s == "" {
+		return Version{}, errors.New("version cannot be empty")
+	}
+
+	// Cut at the first ':' (timestamp), then the first '-' (branch), then
+	// the first ',' (build release), the order pkg.version.Version.__init__
+	// looks for them. A second separator is left inside the component that
+	// follows it and fails that component's parse, so nothing lax gets in.
+	rest, timestamp, hasTimestamp := strings.Cut(s, ":")
+	rest, branch, hasBranch := strings.Cut(rest, "-")
+	release, buildRelease, hasBuild := strings.Cut(rest, ",")
+
+	if release == "" {
+		return Version{}, errors.Errorf("version must have a release value. actual: %q", v)
+	}
+
+	var ver Version
+
+	var err error
+	if ver.release, err = parseDotSequence(release); err != nil {
+		return Version{}, errors.Wrapf(err, "parse release of %q", v)
+	}
+	if hasBuild {
+		if ver.buildRelease, err = parseDotSequence(buildRelease); err != nil {
+			return Version{}, errors.Wrapf(err, "parse build_release of %q", v)
+		}
+	}
+	if hasBranch {
+		if ver.branch, err = parseDotSequence(branch); err != nil {
+			return Version{}, errors.Wrapf(err, "parse branch of %q", v)
+		}
+	}
+	if hasTimestamp {
+		// time.Parse accepts a fractional second after the seconds field even
+		// when the layout has none, so pin the shape before checking the
+		// calendar.
+		if !timestampRe.MatchString(timestamp) {
+			return Version{}, errors.Errorf("parse timestamp of %q. expected: %q, actual: %q", v, "YYYYMMDDThhmmssZ", timestamp)
+		}
+		if _, err := time.Parse(timestampLayout, timestamp); err != nil {
+			return Version{}, errors.Wrapf(err, "parse timestamp of %q. expected: %q", v, "YYYYMMDDThhmmssZ")
+		}
+		// time.Parse takes year 0000; the reference client goes through
+		// datetime.datetime, whose years start at 1.
+		if strings.HasPrefix(timestamp, "0000") {
+			return Version{}, errors.Errorf("parse timestamp of %q. year 0000 is not a calendar year", v)
+		}
+		ver.timestamp = timestamp
+	}
+
+	return ver, nil
+}
+
+// parseDotSequence mirrors pkg.version.DotSequence: every element is a
+// non-negative integer with no zero padding (a lone "0" is fine). Elements
+// are kept as digits, so their size is unbounded.
+func parseDotSequence(s string) (dotSequence, error) {
+	if s == "" {
+		return nil, errors.New("dot sequence cannot be empty")
+	}
+	elems := strings.Split(s, ".")
+	seq := make(dotSequence, 0, len(elems))
+	for _, e := range elems {
+		if e == "" {
+			return nil, errors.Errorf("empty element in %q", s)
+		}
+		if e[0] == '-' || e[0] == '+' {
+			return nil, errors.Errorf("signed element %q in %q", e, s)
+		}
+		if strings.ContainsFunc(e, func(r rune) bool { return r < '0' || r > '9' }) {
+			return nil, errors.Errorf("non-numeric element %q in %q", e, s)
+		}
+		if len(e) > 1 && e[0] == '0' {
+			return nil, errors.Errorf("zero padded element %q in %q", e, s)
+		}
+		seq = append(seq, e)
+	}
+	return seq, nil
+}
+
+// Compare returns -1 when v sorts before w, 0 when they are the same version,
+// and +1 when v sorts after w, under the pkg(7) order
+// (release, then branch, then timestamp; build_release ignored) with a
+// component that is missing on either side skipped as "don't care". See the
+// package documentation for why.
+//
+// Because of the don't-care rule this is not a total order: "11.4" compares
+// equal to both "11.4-11.4.1" and "11.4-11.4.94" while those two differ. It
+// is meant for testing one version against one bound; do not use it as the
+// comparator of sort or max over a mixed set of versions.
+func (v Version) Compare(w Version) int {
+	return cmp.Or(
+		v.release.compare(w.release),
+		compareBranch(v.branch, w.branch),
+		compareTimestamp(v.timestamp, w.timestamp),
+	)
+}
+
+// compareBranch is 0 when either side has no branch (don't care).
+func compareBranch(a, b dotSequence) int {
+	if len(a) == 0 || len(b) == 0 {
+		return 0
+	}
+	return a.compare(b)
+}
+
+// compareTimestamp is 0 when either side has no timestamp (don't care).
+func compareTimestamp(a, b string) int {
+	if a == "" || b == "" {
+		return 0
+	}
+	return cmp.Compare(a, b)
+}
