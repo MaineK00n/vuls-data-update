@@ -8,6 +8,7 @@ func TestPackage_Sort(t *testing.T) {
 	type fields struct {
 		Name          string
 		Architectures []string
+		SrcName       string
 	}
 	tests := []struct {
 		name   string
@@ -20,6 +21,7 @@ func TestPackage_Sort(t *testing.T) {
 			p := &Package{
 				Name:          tt.fields.Name,
 				Architectures: tt.fields.Architectures,
+				SrcName:       tt.fields.SrcName,
 			}
 			p.Sort()
 		})
@@ -51,6 +53,7 @@ func TestPackage_Accept(t *testing.T) {
 	type fields struct {
 		Name          string
 		Architectures []string
+		SrcName       string
 	}
 	type args struct {
 		query        Query
@@ -236,12 +239,67 @@ func TestPackage_Accept(t *testing.T) {
 			},
 			want: true,
 		},
+		{
+			name: "accept: name, src name",
+			fields: fields{
+				Name:    "name",
+				SrcName: "src",
+			},
+			args: args{
+				query: Query{
+					Name:    "name",
+					SrcName: "src",
+				},
+			},
+			want: true,
+		},
+		{
+			name: "not accept: name, src name",
+			fields: fields{
+				Name:    "name",
+				SrcName: "src",
+			},
+			args: args{
+				query: Query{
+					Name:    "name",
+					SrcName: "src2",
+				},
+			},
+			want: false,
+		},
+		{
+			name: "accept: src name only in package",
+			fields: fields{
+				Name:    "name",
+				SrcName: "src",
+			},
+			args: args{
+				query: Query{
+					Name: "name",
+				},
+			},
+			want: true,
+		},
+		{
+			name: "accept: src name only in query",
+			fields: fields{
+				Name: "name",
+			},
+			args: args{
+				query: Query{
+					Name:    "name",
+					SrcName: "src",
+				},
+			},
+			want: true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			p := Package{
 				Name:          tt.fields.Name,
 				Architectures: tt.fields.Architectures,
+				SrcName:       tt.fields.SrcName,
 			}
 			got, err := p.Accept(tt.args.query, tt.args.repositories)
 			if (err != nil) != tt.wantErr {

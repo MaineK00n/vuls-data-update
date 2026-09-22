@@ -80,6 +80,7 @@ type QueryBinary struct {
 	Name         string
 	Version      string
 	Arch         string
+	SrcName      string
 	Repositories []string
 }
 
@@ -108,6 +109,7 @@ func (c Criterion) Accept(query Query, repositories []string) (bool, error) {
 			Binary: &binaryTypes.Query{
 				Name:         query.Binary.Name,
 				Arch:         query.Binary.Arch,
+				SrcName:      query.Binary.SrcName,
 				Repositories: query.Binary.Repositories,
 			},
 		}, repositories)
