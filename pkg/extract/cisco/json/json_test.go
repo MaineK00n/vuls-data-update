@@ -91,6 +91,26 @@ func TestConvertProductName(t *testing.T) {
 			product: "Cisco IOS XG Software ",
 		},
 		{
+			name:    "IOS XR family-level Base entry is skipped",
+			product: "Cisco IOS XR Software Base",
+		},
+		{
+			name:    "known unparseable IOS XR build is skipped",
+			product: "Cisco IOS XR Software 5.1.1.K9SEC",
+		},
+		{
+			name:    "known ED-designated ASA release is skipped",
+			product: "Cisco Secure Firewall Adaptive Security Appliance (ASA) Software 9.0.1.ED",
+		},
+		{
+			name:    "known SMP.ED-designated ASA release is skipped",
+			product: "Cisco Secure Firewall Adaptive Security Appliance (ASA) Software 9.1.6.SMP.ED",
+		},
+		{
+			name:    "known FTD hotfix entry is skipped",
+			product: "Cisco Secure Firewall Threat Defense (FTD) Software 6.2.1 Hotfix",
+		},
+		{
 			name:     "unknown unparseable version errors",
 			product:  "Cisco Wireless LAN Controller (WLC) 9.9.9Z",
 			hasError: true,
