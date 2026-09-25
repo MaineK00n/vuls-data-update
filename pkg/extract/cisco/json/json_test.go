@@ -99,16 +99,35 @@ func TestConvertProductName(t *testing.T) {
 			product: "Cisco IOS XR Software 5.1.1.K9SEC",
 		},
 		{
-			name:    "known ED-designated ASA release is skipped",
-			product: "Cisco Secure Firewall Adaptive Security Appliance (ASA) Software 9.0.1.ED",
+			name:    "known four-part IOS XR name is skipped",
+			product: "Cisco IOS XR Software 6.0.2.01",
 		},
 		{
-			name:    "known SMP.ED-designated ASA release is skipped",
-			product: "Cisco Secure Firewall Adaptive Security Appliance (ASA) Software 9.1.6.SMP.ED",
-		},
-		{
-			name:    "known FTD hotfix entry is skipped",
+			name:    "known FTD hotfix placeholder is skipped",
 			product: "Cisco Secure Firewall Threat Defense (FTD) Software 6.2.1 Hotfix",
+		},
+		{
+			name:         "asa ED designator is stripped",
+			product:      "Cisco Secure Firewall Adaptive Security Appliance (ASA) Software 9.0.1.ED",
+			wantBase:     "cpe:2.3:o:cisco:adaptive_security_appliance_software:*:*:*:*:*:*:*:*",
+			wantConcrete: "cpe:2.3:o:cisco:adaptive_security_appliance_software:9.0.1.0:*:*:*:*:*:*:*",
+		},
+		{
+			name:         "asa SMP.ED designators are stripped",
+			product:      "Cisco Secure Firewall Adaptive Security Appliance (ASA) Software 9.1.6.SMP.ED",
+			wantBase:     "cpe:2.3:o:cisco:adaptive_security_appliance_software:*:*:*:*:*:*:*:*",
+			wantConcrete: "cpe:2.3:o:cisco:adaptive_security_appliance_software:9.1.6.0:*:*:*:*:*:*:*",
+		},
+		{
+			name:         "asa SMP designator on a four-part release is stripped",
+			product:      "Cisco Adaptive Security Appliance (ASA) Software 9.2.2.4.SMP",
+			wantBase:     "cpe:2.3:o:cisco:adaptive_security_appliance_software:*:*:*:*:*:*:*:*",
+			wantConcrete: "cpe:2.3:o:cisco:adaptive_security_appliance_software:9.2.2.4:*:*:*:*:*:*:*",
+		},
+		{
+			name:     "asa unknown letter suffix still errors",
+			product:  "Cisco Adaptive Security Appliance (ASA) Software 9.1.6.FOO",
+			hasError: true,
 		},
 		{
 			name:     "unknown unparseable version errors",
