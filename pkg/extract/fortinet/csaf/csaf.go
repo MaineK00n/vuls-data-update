@@ -447,7 +447,13 @@ func rehomeFortiManagerCloud(refMap map[string]productRef) (map[string]productRe
 		if ref.productName != "FortiManager" {
 			return nil, errors.Errorf("version leaf %q of product %q carries a %q prefix; only FortiManager's misfiled leaves are expected", pid, ref.productName, "cloud")
 		}
-		refMap[pid] = productRef{productName: "FortiManager Cloud", versionExp: strings.TrimSpace(exp)}
+		// An empty remainder would resolve as the whole product (resolveVersion
+		// reads "" as "all versions"), silently widening a malformed leaf.
+		exp = strings.TrimSpace(exp)
+		if exp == "" {
+			return nil, errors.Errorf("version leaf %q carries only the %q prefix and no version expression", pid, "cloud")
+		}
+		refMap[pid] = productRef{productName: "FortiManager Cloud", versionExp: exp}
 		n++
 	}
 	if n == 0 {

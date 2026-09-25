@@ -711,6 +711,15 @@ func TestBuildProductRefs(t *testing.T) {
 			wantErr: true,
 		},
 		{
+			// "cloud " with nothing after it would become the whole product.
+			name: "FG-IR-24-125: cloud prefix with no version expression rejected",
+			args: args{
+				id:       "FG-IR-24-125",
+				branches: []csafTypes.Branch{product("FortiManager", leaf("FortiManager/cloud ", "FortiManager cloud "))},
+			},
+			wantErr: true,
+		},
+		{
 			// The repair is bound to the one advisory; elsewhere the leaf is
 			// mapped as written and left for toCriterion to reject.
 			name: "other advisory: cloud-prefixed leaf mapped as written",
