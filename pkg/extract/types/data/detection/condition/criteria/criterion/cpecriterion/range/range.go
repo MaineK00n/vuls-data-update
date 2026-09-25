@@ -109,7 +109,6 @@ const (
 	RangeTypeFortinetFortiMail                                   RangeType = "fortinet-fortimail"
 	RangeTypeFortinetFortiManager                                RangeType = "fortinet-fortimanager"
 	RangeTypeFortinetFortiManagerCloud                           RangeType = "fortinet-fortimanager_cloud"
-	RangeTypeFortinetFortiMonitorOnSight                         RangeType = "fortinet-fortimonitoronsight"
 	RangeTypeFortinetFortiNAC                                    RangeType = "fortinet-fortinac"
 	RangeTypeFortinetFortiNACF                                   RangeType = "fortinet-fortinac-f"
 	RangeTypeFortinetFortiNDR                                    RangeType = "fortinet-fortindr"
@@ -117,7 +116,6 @@ const (
 	RangeTypeFortinetFortiOS6k7k                                 RangeType = "fortinet-fortios-6k7k"
 	RangeTypeFortinetFortiOSIPSEngine                            RangeType = "fortinet-fortios_ips_engine"
 	RangeTypeFortinetFortiPAM                                    RangeType = "fortinet-fortipam"
-	RangeTypeFortinetFortiPAMChromeExtension                     RangeType = "fortinet-fortipam_chrome_extension"
 	RangeTypeFortinetFortiPortal                                 RangeType = "fortinet-fortiportal"
 	RangeTypeFortinetFortiPresence                               RangeType = "fortinet-fortipresence"
 	RangeTypeFortinetFortiProxy                                  RangeType = "fortinet-fortiproxy"
@@ -148,6 +146,12 @@ const (
 	RangeTypeFortinetFortiWLCSD                                  RangeType = "fortinet-fortiwlc-sd"
 	RangeTypeFortinetFortiWLM                                    RangeType = "fortinet-fortiwlm"
 	RangeTypeFortinetMeru                                        RangeType = "fortinet-meru"
+	// Appended after the Fortinet block rather than slotted alphabetically:
+	// RangeTypes() is the vocabulary order that Compare ranks by, and an older
+	// build sorts values it does not know after every known one, so appending
+	// keeps both builds ordering the same data the same way.
+	RangeTypeFortinetFortiMonitorOnSight     RangeType = "fortinet-fortimonitoronsight"
+	RangeTypeFortinetFortiPAMChromeExtension RangeType = "fortinet-fortipam_chrome_extension"
 
 	RangeTypeUnknown RangeType = "unknown"
 )
@@ -209,7 +213,6 @@ func RangeTypes() []RangeType {
 		RangeTypeFortinetFortiMail,
 		RangeTypeFortinetFortiManager,
 		RangeTypeFortinetFortiManagerCloud,
-		RangeTypeFortinetFortiMonitorOnSight,
 		RangeTypeFortinetFortiNAC,
 		RangeTypeFortinetFortiNACF,
 		RangeTypeFortinetFortiNDR,
@@ -217,7 +220,6 @@ func RangeTypes() []RangeType {
 		RangeTypeFortinetFortiOS6k7k,
 		RangeTypeFortinetFortiOSIPSEngine,
 		RangeTypeFortinetFortiPAM,
-		RangeTypeFortinetFortiPAMChromeExtension,
 		RangeTypeFortinetFortiPortal,
 		RangeTypeFortinetFortiPresence,
 		RangeTypeFortinetFortiProxy,
@@ -248,6 +250,8 @@ func RangeTypes() []RangeType {
 		RangeTypeFortinetFortiWLCSD,
 		RangeTypeFortinetFortiWLM,
 		RangeTypeFortinetMeru,
+		RangeTypeFortinetFortiMonitorOnSight,
+		RangeTypeFortinetFortiPAMChromeExtension,
 		RangeTypeUnknown,
 	}
 }
@@ -499,7 +503,6 @@ func (t RangeType) CompareVersions(v1, v2 string) (int, error) {
 		RangeTypeFortinetFortiMail,
 		RangeTypeFortinetFortiManager,
 		RangeTypeFortinetFortiManagerCloud,
-		RangeTypeFortinetFortiMonitorOnSight,
 		RangeTypeFortinetFortiNAC,
 		RangeTypeFortinetFortiNACF,
 		RangeTypeFortinetFortiNDR,
@@ -507,7 +510,6 @@ func (t RangeType) CompareVersions(v1, v2 string) (int, error) {
 		RangeTypeFortinetFortiOS6k7k,
 		RangeTypeFortinetFortiOSIPSEngine,
 		RangeTypeFortinetFortiPAM,
-		RangeTypeFortinetFortiPAMChromeExtension,
 		RangeTypeFortinetFortiPortal,
 		RangeTypeFortinetFortiPresence,
 		RangeTypeFortinetFortiProxy,
@@ -536,7 +538,9 @@ func (t RangeType) CompareVersions(v1, v2 string) (int, error) {
 		RangeTypeFortinetFortiWLC,
 		RangeTypeFortinetFortiWLCSD,
 		RangeTypeFortinetFortiWLM,
-		RangeTypeFortinetMeru:
+		RangeTypeFortinetMeru,
+		RangeTypeFortinetFortiMonitorOnSight,
+		RangeTypeFortinetFortiPAMChromeExtension:
 		// Every other Fortinet product uses the purely numeric scheme. A
 		// malformed or wrong-scheme version is rejected by NewVersion and wrapped
 		// in *CompareError so Range.Accept treats it as a safe non-match.
