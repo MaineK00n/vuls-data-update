@@ -12,6 +12,7 @@ import (
 	ccRangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/cpecriterion/range"
 	fixstatusTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/fixstatus"
 	utiltest "github.com/MaineK00n/vuls-data-update/pkg/extract/util/test"
+	csafTypes "github.com/MaineK00n/vuls-data-update/pkg/fetch/fortinet/csaf"
 )
 
 func TestExtract(t *testing.T) {
@@ -405,6 +406,242 @@ func TestToCriterion(t *testing.T) {
 			},
 			wantErr: true,
 		},
+		{
+			// A parenthesized remark after "<train> all versions" qualifies how
+			// the train is affected, not which versions; it is dropped.
+			name: "train all versions with parenthesized remark → train range",
+			args: args{
+				productID: "FortiOS 6.0 all versions (need to be authenticated to provoke a crash)",
+				refMap: map[string]csaf.ProductRef{
+					"FortiOS 6.0 all versions (need to be authenticated to provoke a crash)": csaf.NewProductRef("FortiOS", "6.0 all versions (need to be authenticated to provoke a crash)"),
+				},
+			},
+			want: criterionTypes.Criterion{
+				Type: criterionTypes.CriterionTypeCPE,
+				CPE: &ccTypes.Criterion{
+					Vulnerable: true,
+					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
+					CPE:        ccTypes.CPE("cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*"),
+					Range: &ccRangeTypes.Range{
+						Type:         ccRangeTypes.RangeTypeFortinetFortiOS,
+						GreaterEqual: "6.0",
+						LessThan:     "6.1",
+					},
+				},
+			},
+		},
+		{
+			// FG-IR-23-001 carries the other remark wording on five trains; each
+			// leaf is its own known_affected entry (no list syntax).
+			name: "train all versions with special-note remark → train range",
+			args: args{
+				productID: "FortiOS 5.0 all versions (special note for fortios in additional note section)",
+				refMap: map[string]csaf.ProductRef{
+					"FortiOS 5.0 all versions (special note for fortios in additional note section)": csaf.NewProductRef("FortiOS", "5.0 all versions (special note for fortios in additional note section)"),
+				},
+			},
+			want: criterionTypes.Criterion{
+				Type: criterionTypes.CriterionTypeCPE,
+				CPE: &ccTypes.Criterion{
+					Vulnerable: true,
+					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
+					CPE:        ccTypes.CPE("cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*"),
+					Range: &ccRangeTypes.Range{
+						Type:         ccRangeTypes.RangeTypeFortinetFortiOS,
+						GreaterEqual: "5.0",
+						LessThan:     "5.1",
+					},
+				},
+			},
+		},
+		{
+			// A remark after a bare "all versions" (no train) could be the only
+			// place the versions are stated; it is not dropped, so the
+			// expression falls through and is rejected instead of widening to
+			// the whole product.
+			name: "bare all versions with remark rejected",
+			args: args{
+				productID: "FortiOS all versions (7.0 and 7.2)",
+				refMap: map[string]csaf.ProductRef{
+					"FortiOS all versions (7.0 and 7.2)": csaf.NewProductRef("FortiOS", "all versions (7.0 and 7.2)"),
+				},
+			},
+			wantErr: true,
+		},
+		{
+			// Only one parenthesized group closing the expression is a remark;
+			// text after it, a second group, or an empty group is malformed
+			// input and must not be reduced to the train.
+			name: "remark followed by trailing text rejected",
+			args: args{
+				productID: "FortiOS 7.0 all versions (note) trailing)",
+				refMap: map[string]csaf.ProductRef{
+					"FortiOS 7.0 all versions (note) trailing)": csaf.NewProductRef("FortiOS", "7.0 all versions (note) trailing)"),
+				},
+			},
+			wantErr: true,
+		},
+		{
+			name: "two remarks rejected",
+			args: args{
+				productID: "FortiOS 7.0 all versions (note) (other)",
+				refMap: map[string]csaf.ProductRef{
+					"FortiOS 7.0 all versions (note) (other)": csaf.NewProductRef("FortiOS", "7.0 all versions (note) (other)"),
+				},
+			},
+			wantErr: true,
+		},
+		{
+			name: "empty remark rejected",
+			args: args{
+				productID: "FortiOS 7.0 all versions ()",
+				refMap: map[string]csaf.ProductRef{
+					"FortiOS 7.0 all versions ()": csaf.NewProductRef("FortiOS", "7.0 all versions ()"),
+				},
+			},
+			wantErr: true,
+		},
+		{
+			name: "remark before all versions rejected",
+			args: args{
+				productID: "FortiOS 6.0 (note) all versions",
+				refMap: map[string]csaf.ProductRef{
+					"FortiOS 6.0 (note) all versions": csaf.NewProductRef("FortiOS", "6.0 (note) all versions"),
+				},
+			},
+			wantErr: true,
+		},
+		{
+			// Dropping the remark must not let a leaked product name through.
+			name: "leaked product name with remark still rejected",
+			args: args{
+				productID: "FortiOS FortiClient iOS all versions (note)",
+				refMap: map[string]csaf.ProductRef{
+					"FortiOS FortiClient iOS all versions (note)": csaf.NewProductRef("FortiOS", "FortiClient iOS all versions (note)"),
+				},
+			},
+			wantErr: true,
+		},
+		{
+			name: "through range → inclusive range",
+			args: args{
+				productID: "FortiAnalyzer-BigData 7.2.0 through 7.2.7",
+				refMap: map[string]csaf.ProductRef{
+					"FortiAnalyzer-BigData 7.2.0 through 7.2.7": csaf.NewProductRef("FortiAnalyzer-BigData", "7.2.0 through 7.2.7"),
+				},
+			},
+			want: criterionTypes.Criterion{
+				Type: criterionTypes.CriterionTypeCPE,
+				CPE: &ccTypes.Criterion{
+					Vulnerable: true,
+					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
+					CPE:        ccTypes.CPE("cpe:2.3:o:fortinet:fortianalyzer-bigdata:*:*:*:*:*:*:*:*"),
+					Range: &ccRangeTypes.Range{
+						Type:         ccRangeTypes.RangeTypeFortinetFortiAnalyzerBigData,
+						GreaterEqual: "7.2.0",
+						LessEqual:    "7.2.7",
+					},
+				},
+			},
+		},
+		{
+			// FG-IR-24-098 spells it "though".
+			name: "though (typo of through) range → inclusive range",
+			args: args{
+				productID: "FortiAnalyzer-BigData 7.2.0 though 7.2.7",
+				refMap: map[string]csaf.ProductRef{
+					"FortiAnalyzer-BigData 7.2.0 though 7.2.7": csaf.NewProductRef("FortiAnalyzer-BigData", "7.2.0 though 7.2.7"),
+				},
+			},
+			want: criterionTypes.Criterion{
+				Type: criterionTypes.CriterionTypeCPE,
+				CPE: &ccTypes.Criterion{
+					Vulnerable: true,
+					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
+					CPE:        ccTypes.CPE("cpe:2.3:o:fortinet:fortianalyzer-bigdata:*:*:*:*:*:*:*:*"),
+					Range: &ccRangeTypes.Range{
+						Type:         ccRangeTypes.RangeTypeFortinetFortiAnalyzerBigData,
+						GreaterEqual: "7.2.0",
+						LessEqual:    "7.2.7",
+					},
+				},
+			},
+		},
+		{
+			// A train end would stop at 7.4 instead of covering the 7.4 train.
+			name: "through range with train end rejected",
+			args: args{
+				productID: "FortiOS 7.2 through 7.4",
+				refMap: map[string]csaf.ProductRef{
+					"FortiOS 7.2 through 7.4": csaf.NewProductRef("FortiOS", "7.2 through 7.4"),
+				},
+			},
+			wantErr: true,
+		},
+		{
+			name: "through range with missing end rejected",
+			args: args{
+				productID: "FortiOS 7.2.0 through ",
+				refMap: map[string]csaf.ProductRef{
+					"FortiOS 7.2.0 through ": csaf.NewProductRef("FortiOS", "7.2.0 through "),
+				},
+			},
+			wantErr: true,
+		},
+		{
+			name: "through range with non-numeric end rejected",
+			args: args{
+				productID: "FortiOS 7.2.0 through 7.2.x",
+				refMap: map[string]csaf.ProductRef{
+					"FortiOS 7.2.0 through 7.2.x": csaf.NewProductRef("FortiOS", "7.2.0 through 7.2.x"),
+				},
+			},
+			wantErr: true,
+		},
+		{
+			name: "FortiMonitorOnSight resolves to its CNA CPE and range type",
+			args: args{
+				productID: "FortiMonitorOnSight >=7.2.4|<=7.2.7",
+				refMap: map[string]csaf.ProductRef{
+					"FortiMonitorOnSight >=7.2.4|<=7.2.7": csaf.NewProductRef("FortiMonitorOnSight", ">=7.2.4|<=7.2.7"),
+				},
+			},
+			want: criterionTypes.Criterion{
+				Type: criterionTypes.CriterionTypeCPE,
+				CPE: &ccTypes.Criterion{
+					Vulnerable: true,
+					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
+					CPE:        ccTypes.CPE("cpe:2.3:a:fortinet:fortimonitoronsight:*:*:*:*:*:*:*:*"),
+					Range: &ccRangeTypes.Range{
+						Type:         ccRangeTypes.RangeTypeFortinetFortiMonitorOnSight,
+						GreaterEqual: "7.2.4",
+						LessEqual:    "7.2.7",
+					},
+				},
+			},
+		},
+		{
+			name: "FortiPAM Chrome Extension resolves to its CNA CPE and range type",
+			args: args{
+				productID: "FortiPAM Chrome Extension 8.0 all versions",
+				refMap: map[string]csaf.ProductRef{
+					"FortiPAM Chrome Extension 8.0 all versions": csaf.NewProductRef("FortiPAM Chrome Extension", "8.0 all versions"),
+				},
+			},
+			want: criterionTypes.Criterion{
+				Type: criterionTypes.CriterionTypeCPE,
+				CPE: &ccTypes.Criterion{
+					Vulnerable: true,
+					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
+					CPE:        ccTypes.CPE("cpe:2.3:a:fortinet:fortipam_chrome_extension:*:*:*:*:*:*:*:*"),
+					Range: &ccRangeTypes.Range{
+						Type:         ccRangeTypes.RangeTypeFortinetFortiPAMChromeExtension,
+						GreaterEqual: "8.0",
+						LessThan:     "8.1",
+					},
+				},
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -417,6 +654,95 @@ func TestToCriterion(t *testing.T) {
 			}
 			if diff := cmp.Diff(tt.want, got); diff != "" {
 				t.Errorf("ToCriterion(%q) (-want +got):\n%s", tt.args.productID, diff)
+			}
+		})
+	}
+}
+
+// TestBuildProductRefs covers the advisory-bound repair of FG-IR-24-125's
+// product tree, whose "FortiManager Cloud" leaves sit under "FortiManager"
+// with "cloud" carried into the version expression.
+func TestBuildProductRefs(t *testing.T) {
+	leaf := func(name, pid string) csafTypes.Branch {
+		return csafTypes.Branch{Category: "product_version_range", Name: name, Product: &csafTypes.FullProductName{Name: name, ProductID: csafTypes.ProductID(pid)}}
+	}
+	product := func(name string, leaves ...csafTypes.Branch) csafTypes.Branch {
+		return csafTypes.Branch{Category: "product", Name: name, Branches: leaves}
+	}
+	type args struct {
+		id       string
+		branches []csafTypes.Branch
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    map[string]csaf.ProductRef
+		wantErr bool
+	}{
+		{
+			name: "FG-IR-24-125: misfiled FortiManager/cloud leaves re-homed to FortiManager Cloud",
+			args: args{
+				id: "FG-IR-24-125",
+				branches: []csafTypes.Branch{product("FortiManager",
+					leaf("FortiManager/cloud 7.0 all versions", "FortiManager cloud 7.0 all versions"),
+					leaf("FortiManager/7.0 all versions", "FortiManager 7.0 all versions"),
+				)},
+			},
+			want: map[string]csaf.ProductRef{
+				"FortiManager cloud 7.0 all versions": csaf.NewProductRef("FortiManager Cloud", "7.0 all versions"),
+				"FortiManager 7.0 all versions":       csaf.NewProductRef("FortiManager", "7.0 all versions"),
+			},
+		},
+		{
+			// Fortinet correcting the tree must retire the exception loudly.
+			name: "FG-IR-24-125: no misfiled leaf → stale exception rejected",
+			args: args{
+				id:       "FG-IR-24-125",
+				branches: []csafTypes.Branch{product("FortiManager", leaf("FortiManager/7.0 all versions", "FortiManager 7.0 all versions"))},
+			},
+			wantErr: true,
+		},
+		{
+			name: "FG-IR-24-125: cloud prefix under another product rejected",
+			args: args{
+				id:       "FG-IR-24-125",
+				branches: []csafTypes.Branch{product("FortiAnalyzer", leaf("FortiAnalyzer/cloud 7.0 all versions", "FortiAnalyzer cloud 7.0 all versions"))},
+			},
+			wantErr: true,
+		},
+		{
+			// "cloud " with nothing after it would become the whole product.
+			name: "FG-IR-24-125: cloud prefix with no version expression rejected",
+			args: args{
+				id:       "FG-IR-24-125",
+				branches: []csafTypes.Branch{product("FortiManager", leaf("FortiManager/cloud ", "FortiManager cloud "))},
+			},
+			wantErr: true,
+		},
+		{
+			// The repair is bound to the one advisory; elsewhere the leaf is
+			// mapped as written and left for toCriterion to reject.
+			name: "other advisory: cloud-prefixed leaf mapped as written",
+			args: args{
+				id:       "FG-IR-24-999",
+				branches: []csafTypes.Branch{product("FortiManager", leaf("FortiManager/cloud 7.0 all versions", "FortiManager cloud 7.0 all versions"))},
+			},
+			want: map[string]csaf.ProductRef{
+				"FortiManager cloud 7.0 all versions": csaf.NewProductRef("FortiManager", "cloud 7.0 all versions"),
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := csaf.BuildProductRefs(tt.args.id, tt.args.branches)
+			if (err != nil) != tt.wantErr {
+				t.Fatalf("BuildProductRefs(%q) error = %v, wantErr %v", tt.args.id, err, tt.wantErr)
+			}
+			if tt.wantErr {
+				return
+			}
+			if diff := cmp.Diff(tt.want, got, cmp.AllowUnexported(csaf.ProductRef{})); diff != "" {
+				t.Errorf("BuildProductRefs(%q) (-want +got):\n%s", tt.args.id, diff)
 			}
 		})
 	}

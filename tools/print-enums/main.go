@@ -13,10 +13,11 @@
 //	  <(go run github.com/MaineK00n/vuls-data-update/tools/print-enums@main)
 //
 // Values are printed in declaration (vocabulary) order, which is also the
-// canonical sort order of extracted data. The vocabularies are append-only,
-// so an added value appends one line — and because the order itself is
-// semantic, the diff additionally catches reordering or mid-list insertion
-// (an append-only violation that would reorder extracted data).
+// sort order of the data the build writes. Values are never removed or
+// renamed, so the diff only ever shows added lines; where a value is declared
+// is free (it is slotted into its vendor block, see cpecriterion/range
+// RangeTypes), so an added line may land mid-list. The consumer only needs to
+// know that a value was added, which a plain diff reports either way.
 package main
 
 import (

@@ -1,0 +1,384 @@
+{
+	"document": {
+		"acknowledgments": [
+			{
+				"summary": "Internally discovered and reported by Théo Leleu of Fortinet Product Security team."
+			}
+		],
+		"category": "Fortinet PSIRT Advisories",
+		"csaf_version": "2.0",
+		"publisher": {
+			"category": "vendor",
+			"contact_details": "https://fortiguard.fortinet.com/faq/psirt-contact",
+			"issuing_authority": "Fortinet PSIRT",
+			"name": "Fortinet PSIRT",
+			"namespace": "https://fortiguard.fortinet.com/psirt"
+		},
+		"title": "Stack buffer overflow in CLI command",
+		"tracking": {
+			"current_release_date": "2024-11-12T00:00:00",
+			"id": "FG-IR-24-098",
+			"initial_release_date": "2024-11-12T00:00:00",
+			"revision_history": [
+				{
+					"date": "2024-11-12T00:00:00",
+					"number": "1",
+					"summary": "Initial Publication"
+				}
+			],
+			"status": "final",
+			"version": "0"
+		}
+	},
+	"product_tree": {
+		"branches": [
+			{
+				"branches": [
+					{
+						"branches": [
+							{
+								"category": "product_version_range",
+								"name": "FortiAnalyzer/>=7.4.0|<=7.4.2",
+								"product": {
+									"name": "FortiAnalyzer",
+									"product_id": "FortiAnalyzer >=7.4.0|<=7.4.2"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiAnalyzer/>=7.2.0|<=7.2.5",
+								"product": {
+									"name": "FortiAnalyzer",
+									"product_id": "FortiAnalyzer >=7.2.0|<=7.2.5"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiAnalyzer/7.0 all versions",
+								"product": {
+									"name": "FortiAnalyzer",
+									"product_id": "FortiAnalyzer 7.0 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiAnalyzer/6.4 all versions",
+								"product": {
+									"name": "FortiAnalyzer",
+									"product_id": "FortiAnalyzer 6.4 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiAnalyzer/6.2 all versions",
+								"product": {
+									"name": "FortiAnalyzer",
+									"product_id": "FortiAnalyzer 6.2 all versions"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiAnalyzer"
+					},
+					{
+						"branches": [
+							{
+								"category": "product_version",
+								"name": "FortiAnalyzer-BigData/7.4.0",
+								"product": {
+									"name": "FortiAnalyzer-BigData",
+									"product_id": "FortiAnalyzer-BigData 7.4.0"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "FortiAnalyzer-BigData/7.2.0 though 7.2.7",
+								"product": {
+									"name": "FortiAnalyzer-BigData",
+									"product_id": "FortiAnalyzer-BigData 7.2.0 though 7.2.7"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiAnalyzer-BigData/7.0 all versions",
+								"product": {
+									"name": "FortiAnalyzer-BigData",
+									"product_id": "FortiAnalyzer-BigData 7.0 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiAnalyzer-BigData/6.4 all versions",
+								"product": {
+									"name": "FortiAnalyzer-BigData",
+									"product_id": "FortiAnalyzer-BigData 6.4 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiAnalyzer-BigData/6.2 all versions",
+								"product": {
+									"name": "FortiAnalyzer-BigData",
+									"product_id": "FortiAnalyzer-BigData 6.2 all versions"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiAnalyzer-BigData"
+					},
+					{
+						"branches": [
+							{
+								"category": "product_version_range",
+								"name": "FortiManager/>=7.4.0|<=7.4.2",
+								"product": {
+									"name": "FortiManager",
+									"product_id": "FortiManager >=7.4.0|<=7.4.2"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiManager/>=7.2.0|<=7.2.5",
+								"product": {
+									"name": "FortiManager",
+									"product_id": "FortiManager >=7.2.0|<=7.2.5"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiManager/7.0 all versions",
+								"product": {
+									"name": "FortiManager",
+									"product_id": "FortiManager 7.0 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiManager/6.4 all versions",
+								"product": {
+									"name": "FortiManager",
+									"product_id": "FortiManager 6.4 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiManager/6.2 all versions",
+								"product": {
+									"name": "FortiManager",
+									"product_id": "FortiManager 6.2 all versions"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiManager"
+					}
+				],
+				"category": "vendor",
+				"name": "Fortinet PSIRT"
+			}
+		]
+	},
+	"vulnerabilities": [
+		{
+			"cve": "CVE-2024-31496",
+			"cwe": {
+				"id": "CWE-121",
+				"name": "Stack-based Buffer Overflow"
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "Stack-based buffer overflow vulnerability in FortiManager, FortiAnalyzer and FortiAnalyzer-BigData\n\n",
+					"title": "Summary"
+				},
+				{
+					"category": "general",
+					"text": "N/A",
+					"title": "Workarounds"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiAnalyzer >=7.4.0|<=7.4.2",
+					"FortiAnalyzer >=7.2.0|<=7.2.5",
+					"FortiAnalyzer 7.0 all versions",
+					"FortiAnalyzer 6.4 all versions",
+					"FortiAnalyzer 6.2 all versions"
+				],
+				"known_not_affected": [
+					"FortiAnalyzer-7.4.3",
+					"FortiAnalyzer-7.2.6"
+				]
+			},
+			"references": [
+				{
+					"summary": "A stack-based buffer overflow vulnerability [CWE-121] in FortiManager, FortiAnalyzer and FortiAnalyzer-BigData CLI may allow a privileged attacker to execute unauthorized code or commands via crafted CLI requests.",
+					"url": "https://fortiguard.fortinet.com/psirt/FG-IR-24-098"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiAnalyzer 7.4: Upgrade to 7.4.3 or above\nFortiAnalyzer 7.2: Upgrade to 7.2.6 or above\nFortiAnalyzer 7.0: Migrate to a fixed release\nFortiAnalyzer 6.4: Migrate to a fixed release\nFortiAnalyzer 6.2: Migrate to a fixed release",
+					"product_ids": [
+						"FortiAnalyzer"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 6.3,
+						"baseSeverity": "MEDIUM",
+						"vectorString": "CVSS:3.1/AV:L/AC:L/PR:H/UI:N/S:U/C:H/I:H/A:H/E:P/RL:U/RC:C",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiAnalyzer"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Execute unauthorized code or commands"
+				}
+			],
+			"title": "FortiAnalyzer - MEDIUM - FG-IR-24-098"
+		},
+		{
+			"cve": "CVE-2024-31496",
+			"cwe": {
+				"id": "CWE-121",
+				"name": "Stack-based Buffer Overflow"
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "Stack-based buffer overflow vulnerability in FortiManager, FortiAnalyzer and FortiAnalyzer-BigData\n\n",
+					"title": "Summary"
+				},
+				{
+					"category": "general",
+					"text": "N/A",
+					"title": "Workarounds"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiAnalyzer-BigData 7.4.0",
+					"FortiAnalyzer-BigData 7.2.0 though 7.2.7",
+					"FortiAnalyzer-BigData 7.0 all versions",
+					"FortiAnalyzer-BigData 6.4 all versions",
+					"FortiAnalyzer-BigData 6.2 all versions"
+				],
+				"known_not_affected": [
+					"FortiAnalyzer-BigData-7.4.1",
+					"FortiAnalyzer-BigData-7.2.8"
+				]
+			},
+			"references": [
+				{
+					"summary": "A stack-based buffer overflow vulnerability [CWE-121] in FortiManager, FortiAnalyzer and FortiAnalyzer-BigData CLI may allow a privileged attacker to execute unauthorized code or commands via crafted CLI requests.",
+					"url": "https://fortiguard.fortinet.com/psirt/FG-IR-24-098"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiAnalyzer-BigData 7.4: Upgrade to 7.4.1 or above\nFortiAnalyzer-BigData 7.2: Upgrade to 7.2.8 or above\nFortiAnalyzer-BigData 7.0: Migrate to a fixed release\nFortiAnalyzer-BigData 6.4: Migrate to a fixed release\nFortiAnalyzer-BigData 6.2: Migrate to a fixed release",
+					"product_ids": [
+						"FortiAnalyzer-BigData"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 6.3,
+						"baseSeverity": "MEDIUM",
+						"vectorString": "CVSS:3.1/AV:L/AC:L/PR:H/UI:N/S:U/C:H/I:H/A:H/E:P/RL:U/RC:C",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiAnalyzer-BigData"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Execute unauthorized code or commands"
+				}
+			],
+			"title": "FortiAnalyzer-BigData - MEDIUM - FG-IR-24-098"
+		},
+		{
+			"cve": "CVE-2024-31496",
+			"cwe": {
+				"id": "CWE-121",
+				"name": "Stack-based Buffer Overflow"
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "Stack-based buffer overflow vulnerability in FortiManager, FortiAnalyzer and FortiAnalyzer-BigData\n\n",
+					"title": "Summary"
+				},
+				{
+					"category": "general",
+					"text": "N/A",
+					"title": "Workarounds"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiManager >=7.4.0|<=7.4.2",
+					"FortiManager >=7.2.0|<=7.2.5",
+					"FortiManager 7.0 all versions",
+					"FortiManager 6.4 all versions",
+					"FortiManager 6.2 all versions"
+				],
+				"known_not_affected": [
+					"FortiManager-7.4.3",
+					"FortiManager-7.2.6"
+				]
+			},
+			"references": [
+				{
+					"summary": "A stack-based buffer overflow vulnerability [CWE-121] in FortiManager, FortiAnalyzer and FortiAnalyzer-BigData CLI may allow a privileged attacker to execute unauthorized code or commands via crafted CLI requests.",
+					"url": "https://fortiguard.fortinet.com/psirt/FG-IR-24-098"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiManager 7.4: Upgrade to 7.4.3 or above\nFortiManager 7.2: Upgrade to 7.2.6 or above\nFortiManager 7.0: Migrate to a fixed release\nFortiManager 6.4: Migrate to a fixed release\nFortiManager 6.2: Migrate to a fixed release",
+					"product_ids": [
+						"FortiManager"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 6.3,
+						"baseSeverity": "MEDIUM",
+						"vectorString": "CVSS:3.1/AV:L/AC:L/PR:H/UI:N/S:U/C:H/I:H/A:H/E:P/RL:U/RC:C",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiManager"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Execute unauthorized code or commands"
+				}
+			],
+			"title": "FortiManager - MEDIUM - FG-IR-24-098"
+		}
+	]
+}

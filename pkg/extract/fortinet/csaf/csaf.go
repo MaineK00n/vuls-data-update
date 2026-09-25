@@ -152,14 +152,15 @@ type productRef struct {
 
 // keyAcc accumulates one vulnerability key — a CVE, or the advisory ID when a
 // CSAF vulnerability object carries no CVE (a few older Fortinet advisories are
-// published without one). description/cwe/references/workarounds are CVE-level
-// (shared across the key); severity and criterions live per severity group
-// (see sevGroup). String slices are deduped on emit.
+// published without one). description/cwe/references/workarounds/mitigations
+// are CVE-level (shared across the key); severity and criterions live per
+// severity group (see sevGroup). String slices are deduped on emit.
 type keyAcc struct {
 	description string
 	cwe         []string
 	references  []string
 	workarounds []string
+	mitigations []string
 	groups      map[sevKey]*sevGroup
 }
 
@@ -246,10 +247,19 @@ func extract(fetched csafTypes.CSAF, raws []string) (dataTypes.Data, error) {
 				// 7.4.8" — is already encoded structurally in the detection version
 				// range, and the CVRF extractor likewise carries no fix text. Don't
 				// duplicate it as a mitigation: it is the fix, not a mitigation or
-				// workaround, and the schema has no fix bucket. The switch is kept
-				// so a future non-vendor_fix category (a real mitigation/workaround)
-				// surfaces in default and gets routed to the right field then.
+				// workaround, and the schema has no fix bucket.
+			case "mitigation":
+				// A measure short of the fix (FG-IR-26-157 points at a FortiGuard
+				// IPS virtual patch) has a schema home, so carry it the way the
+				// Workarounds note is carried: per key, deduped on emit.
+				if !placeholderNote(rem.Details) {
+					a.mitigations = append(a.mitigations, strings.TrimSpace(rem.Details))
+				}
 			default:
+				// "workaround", "no_fix_planned" and "none_available" have not
+				// appeared in the corpus. Keep them loud so the first one is routed
+				// deliberately (a workaround into Workarounds; the no-fix pair would
+				// need a fix-status decision) rather than dropped.
 				return dataTypes.Data{}, errors.Errorf("unexpected remediation category %q (advisory %s, %s)", rem.Category, id, key)
 			}
 		}
@@ -329,13 +339,8 @@ func extract(fetched csafTypes.CSAF, raws []string) (dataTypes.Data, error) {
 						}
 						return []cweTypes.CWE{{Source: "fortiguard.fortinet.com", CWE: cwes}}
 					}(),
-					Workarounds: func() []remediationTypes.Remediation {
-						var rs []remediationTypes.Remediation
-						for _, w := range slices.Compact(slices.Sorted(slices.Values(a.workarounds))) {
-							rs = append(rs, remediationTypes.Remediation{Source: "fortiguard.fortinet.com", Description: w})
-						}
-						return rs
-					}(),
+					Mitigations: remediations(a.mitigations),
+					Workarounds: remediations(a.workarounds),
 					References: func() []referenceTypes.Reference {
 						var rs []referenceTypes.Reference
 						for _, u := range slices.Compact(slices.Sorted(slices.Values(a.references))) {
@@ -402,13 +407,59 @@ func extract(fetched csafTypes.CSAF, raws []string) (dataTypes.Data, error) {
 // legacy-format advisory, surfaces loudly instead of being silently mis-parsed.
 // The name → CPE whitelist is resolved and enforced later at the known_affected
 // use-site (toCriterion).
+//
+// A second advisory-bound exception, FG-IR-24-125, is a standard-dialect tree
+// with two misfiled leaves; it is switched on the same way and repaired after
+// the standard walk (rehomeFortiManagerCloud).
 func buildProductRefs(id string, branches []csafTypes.Branch) (map[string]productRef, error) {
 	switch id {
 	case "FG-IR-21-173":
 		return buildProductRefsLegacy(branches)
+	case "FG-IR-24-125":
+		refMap, err := buildProductRefsStandard(branches)
+		if err != nil {
+			return nil, err
+		}
+		return rehomeFortiManagerCloud(refMap)
 	default:
 		return buildProductRefsStandard(branches)
 	}
+}
+
+// rehomeFortiManagerCloud repairs the one product tree (FG-IR-24-125) whose
+// "FortiManager Cloud" version leaves are filed under the "FortiManager"
+// product node with the word carried into the version expression
+// ("FortiManager/cloud 7.0 all versions"), while the same tree files
+// "FortiAnalyzer Cloud" correctly. The advisory's own vendor_fix text
+// ("FortiManager Cloud 7.0: Migrate to a fixed release") and NVD's
+// configuration for CVE-2024-33505 (fortimanager_cloud 6.4.1–7.2.7) both name
+// the intended product. It hard-errors when no such leaf exists, so Fortinet
+// correcting the tree retires this exception loudly rather than leaving it
+// dead, and when the prefix turns up under any other product, which this
+// repair has no evidence for.
+func rehomeFortiManagerCloud(refMap map[string]productRef) (map[string]productRef, error) {
+	n := 0
+	for pid, ref := range refMap {
+		exp, ok := strings.CutPrefix(ref.versionExp, "cloud ")
+		if !ok {
+			continue
+		}
+		if ref.productName != "FortiManager" {
+			return nil, errors.Errorf("version leaf %q of product %q carries a %q prefix; only FortiManager's misfiled leaves are expected", pid, ref.productName, "cloud")
+		}
+		// An empty remainder would resolve as the whole product (resolveVersion
+		// reads "" as "all versions"), silently widening a malformed leaf.
+		exp = strings.TrimSpace(exp)
+		if exp == "" {
+			return nil, errors.Errorf("version leaf %q carries only the %q prefix and no version expression", pid, "cloud")
+		}
+		refMap[pid] = productRef{productName: "FortiManager Cloud", versionExp: exp}
+		n++
+	}
+	if n == 0 {
+		return nil, errors.Errorf("no misfiled %q version leaf; the FG-IR-24-125 exception is stale", "FortiManager/cloud ...")
+	}
+	return refMap, nil
 }
 
 // buildProductRefsStandard maps a standard-dialect product tree: product nodes
@@ -596,7 +647,13 @@ func toCriterion(productID string, refMap map[string]productRef) (criterionTypes
 // (e.g. a product name leaked into the version, "FortiClient iOS all
 // versions") is not silently widened to whole product — it hard-errors, since
 // it never legitimately appears in known_affected data.
+//
+// Two shapes the historical corpus uses are read as well: a parenthesized
+// remark after "<train> all versions" is dropped first (trimTrainRemark), and
+// an inclusive range spelled "<lo> through <hi>" — or Fortinet's "though" typo
+// of it — becomes ge lo, le hi.
 func resolveVersion(productName, exp string) (*ccRangeTypes.Range, string, error) {
+	exp = trimTrainRemark(exp)
 	switch {
 	case exp == "" || exp == "all versions":
 		return nil, "", nil
@@ -625,6 +682,26 @@ func resolveVersion(productName, exp string) (*ccRangeTypes.Range, string, error
 		}
 		// Type is set by the caller (toCriterion), which knows the product.
 		return &ccRangeTypes.Range{GreaterEqual: ge}, "", nil
+	case strings.Contains(exp, " through ") || strings.Contains(exp, " though "):
+		// Inclusive range spelled out, "7.2.0 through 7.2.7". "though" is
+		// Fortinet's typo of it in FG-IR-24-098, the corpus' only instance,
+		// which NVD reads the same way (fortianalyzer_big_data 7.2.0 ≤ v ≤
+		// 7.2.7 for CVE-2024-31496). Both ends must be concrete releases: a
+		// train end ("7.2 through 7.4") would stop at 7.4 instead of covering
+		// the 7.4 train, so it is rejected rather than guessed at. Numeric
+		// validation of the bounds happens in toCriterion.
+		sep := " through "
+		if !strings.Contains(exp, sep) {
+			sep = " though "
+		}
+		lo, hi, _ := strings.Cut(exp, sep)
+		lo, hi = strings.TrimSpace(lo), strings.TrimSpace(hi)
+		for _, b := range []string{lo, hi} {
+			if !product.IsExactVersion(productName, b) {
+				return nil, "", errors.Errorf("expected concrete versions on both sides of %q in %q, got %q", strings.TrimSpace(sep), exp, b)
+			}
+		}
+		return &ccRangeTypes.Range{GreaterEqual: lo, LessEqual: hi}, "", nil
 	case strings.ContainsAny(exp, "<>"):
 		r := ccRangeTypes.Range{}
 		for part := range strings.SplitSeq(exp, "|") {
@@ -664,6 +741,48 @@ func resolveVersion(productName, exp string) (*ccRangeTypes.Range, string, error
 		// Concrete version → bake into the CPE.
 		return nil, exp, nil
 	}
+}
+
+// trimTrainRemark drops the parenthesized remark Fortinet occasionally appends
+// to a train expression — "6.0 all versions (need to be authenticated to
+// provoke a crash)" (FG-IR-22-086), "5.6 all versions (special note for
+// fortios in additional note section)" (FG-IR-23-001) — leaving "<train> all
+// versions". The remark qualifies how the train is affected, not which
+// versions are (NVD ranges the same trains as affected, and the advisory
+// carries no note with the remark's substance), and a criterion has no field
+// for it, so it is dropped. Only exactly that shape is dropped: one
+// non-empty parenthesized group, with no parenthesis inside it, that closes
+// the expression, right after "<train> all versions". Any other shape — a
+// remark elsewhere in the expression, after something other than "all
+// versions", after a bare "all versions" with no train in front of it, two
+// remarks, or text after the closing parenthesis — is returned unchanged and
+// flows into the strict grammar, which rejects it. The bare case is kept
+// loud on purpose: nothing in the corpus has it, and a remark there could be
+// the only place the versions are stated ("all versions (7.0 and 7.2)"),
+// which dropping it would silently widen to the whole product.
+func trimTrainRemark(exp string) string {
+	before, remark, ok := strings.Cut(exp, " (")
+	if !ok {
+		return exp
+	}
+	remark, ok = strings.CutSuffix(remark, ")")
+	if !ok || strings.TrimSpace(remark) == "" || strings.ContainsAny(remark, "()") {
+		return exp
+	}
+	train, ok := strings.CutSuffix(before, "all versions")
+	if !ok || strings.TrimSpace(train) == "" {
+		return exp
+	}
+	return before
+}
+
+// remediations emits one Remediation per distinct text, sorted.
+func remediations(texts []string) []remediationTypes.Remediation {
+	var rs []remediationTypes.Remediation
+	for _, t := range slices.Compact(slices.Sorted(slices.Values(texts))) {
+		rs = append(rs, remediationTypes.Remediation{Source: "fortiguard.fortinet.com", Description: t})
+	}
+	return rs
 }
 
 // vulnSeverity returns the severities for one CSAF vulnerability object (its

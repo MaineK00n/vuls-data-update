@@ -1,0 +1,125 @@
+{
+	"id": "FG-IR-26-168",
+	"advisories": [
+		{
+			"content": {
+				"id": "FG-IR-26-168",
+				"title": "Improper Authentication of FortiPAM Server",
+				"references": [
+					{
+						"source": "fortiguard.fortinet.com",
+						"url": "https://fortiguard.fortinet.com/psirt/FG-IR-26-168"
+					}
+				],
+				"published": "2026-09-08T00:00:00Z",
+				"modified": "2026-09-08T00:00:00Z"
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe",
+					"tag": "CVE-2026-84388"
+				}
+			]
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-2026-84388",
+				"title": "Improper Authentication of FortiPAM Server",
+				"description": "Improper Authentication in Fortinet Privileged Access Agent Chrome Extension",
+				"severity": [
+					{
+						"type": "vendor",
+						"source": "fortiguard.fortinet.com",
+						"vendor": "Information disclosure"
+					},
+					{
+						"type": "cvss_v31",
+						"source": "fortiguard.fortinet.com",
+						"cvss_v31": {
+							"vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:H/I:H/A:L/E:P/RL:O/RC:C",
+							"base_score": 9.6,
+							"base_severity": "CRITICAL",
+							"temporal_score": 8.6,
+							"temporal_severity": "HIGH",
+							"environmental_score": 8.6,
+							"environmental_severity": "HIGH"
+						}
+					}
+				],
+				"cwe": [
+					{
+						"source": "fortiguard.fortinet.com",
+						"cwe": [
+							"CWE-1021"
+						]
+					}
+				],
+				"references": [
+					{
+						"source": "fortiguard.fortinet.com",
+						"url": "https://fortiguard.fortinet.com/psirt/FG-IR-26-168"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe",
+					"tag": "CVE-2026-84388"
+				}
+			]
+		}
+	],
+	"detections": [
+		{
+			"ecosystem": "cpe",
+			"conditions": [
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:a:fortinet:fortipam_chrome_extension:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet-fortipam_chrome_extension",
+										"ge": "7.4",
+										"lt": "7.5"
+									}
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:a:fortinet:fortipam_chrome_extension:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet-fortipam_chrome_extension",
+										"ge": "8.0",
+										"lt": "8.1"
+									}
+								}
+							}
+						]
+					},
+					"tag": "CVE-2026-84388"
+				}
+			]
+		}
+	],
+	"data_source": {
+		"id": "fortinet-csaf",
+		"raws": [
+			"fixtures/2026/FG-IR-26-168.json"
+		]
+	}
+}

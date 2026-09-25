@@ -1,0 +1,130 @@
+{
+	"document": {
+		"acknowledgments": [
+			{
+				"summary": "Fortinet is pleased to thank Kevin Joensen from Baldur Security, Eric Brandel from Target, Dan Rosenqvist from Shelltrail, and James Arnott from Bay Area Labs (https://amibeingpwned.com/) for reporting this vulnerability under responsible disclosure."
+			}
+		],
+		"category": "Fortinet PSIRT Advisories",
+		"csaf_version": "2.0",
+		"publisher": {
+			"category": "vendor",
+			"contact_details": "https://fortiguard.fortinet.com/faq/psirt-contact",
+			"issuing_authority": "Fortinet PSIRT",
+			"name": "Fortinet PSIRT",
+			"namespace": "https://fortiguard.fortinet.com/psirt"
+		},
+		"title": "Improper Authentication of FortiPAM Server",
+		"tracking": {
+			"current_release_date": "2026-09-08T00:00:00",
+			"id": "FG-IR-26-168",
+			"initial_release_date": "2026-09-08T00:00:00",
+			"revision_history": [
+				{
+					"date": "2026-09-08T00:00:00",
+					"number": "1",
+					"summary": "Initial Publication"
+				}
+			],
+			"status": "final",
+			"version": "0"
+		}
+	},
+	"product_tree": {
+		"branches": [
+			{
+				"branches": [
+					{
+						"branches": [
+							{
+								"category": "product_version_range",
+								"name": "FortiPAM Chrome Extension/8.0 all versions",
+								"product": {
+									"name": "FortiPAM Chrome Extension",
+									"product_id": "FortiPAM Chrome Extension 8.0 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiPAM Chrome Extension/7.4 all versions",
+								"product": {
+									"name": "FortiPAM Chrome Extension",
+									"product_id": "FortiPAM Chrome Extension 7.4 all versions"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiPAM Chrome Extension"
+					}
+				],
+				"category": "vendor",
+				"name": "Fortinet PSIRT"
+			}
+		]
+	},
+	"vulnerabilities": [
+		{
+			"cve": "CVE-2026-84388",
+			"cwe": {
+				"id": "CWE-1021",
+				"name": "Improper Restriction of Rendered UI Layers or Frames"
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "Improper Authentication in Fortinet Privileged Access Agent Chrome Extension\n\n",
+					"title": "Summary"
+				},
+				{
+					"category": "general",
+					"text": "N/A",
+					"title": "Workarounds"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiPAM Chrome Extension 8.0 all versions",
+					"FortiPAM Chrome Extension 7.4 all versions"
+				],
+				"known_not_affected": [
+					"FortiPAM Chrome Extension-8.0.1.123"
+				]
+			},
+			"references": [
+				{
+					"summary": "An improper authentication vulnerability [CWE-287] in the Fortinet Privileged Access Agent Chrome Extension may allow a remote unauthenticated attacker to proxy a user's browser traffic through attacker controlled servers if the user visits a malicious website.\n",
+					"url": "https://fortiguard.fortinet.com/psirt/FG-IR-26-168"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiPAM Chrome Extension 8.0: Upgrade to 8.0.1.123 or above\nFortiPAM Chrome Extension 7.4: Migrate to a fixed release",
+					"product_ids": [
+						"FortiPAM Chrome Extension"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 9.1,
+						"baseSeverity": "CRITICAL",
+						"vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:H/I:H/A:L/E:P/RL:O/RC:C",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiPAM Chrome Extension"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Information disclosure"
+				}
+			],
+			"title": "FortiPAM Chrome Extension - CRITICAL - FG-IR-26-168"
+		}
+	]
+}
