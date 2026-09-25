@@ -109,6 +109,7 @@ const (
 	RangeTypeFortinetFortiMail                                   RangeType = "fortinet-fortimail"
 	RangeTypeFortinetFortiManager                                RangeType = "fortinet-fortimanager"
 	RangeTypeFortinetFortiManagerCloud                           RangeType = "fortinet-fortimanager_cloud"
+	RangeTypeFortinetFortiMonitorOnSight                         RangeType = "fortinet-fortimonitoronsight"
 	RangeTypeFortinetFortiNAC                                    RangeType = "fortinet-fortinac"
 	RangeTypeFortinetFortiNACF                                   RangeType = "fortinet-fortinac-f"
 	RangeTypeFortinetFortiNDR                                    RangeType = "fortinet-fortindr"
@@ -116,6 +117,7 @@ const (
 	RangeTypeFortinetFortiOS6k7k                                 RangeType = "fortinet-fortios-6k7k"
 	RangeTypeFortinetFortiOSIPSEngine                            RangeType = "fortinet-fortios_ips_engine"
 	RangeTypeFortinetFortiPAM                                    RangeType = "fortinet-fortipam"
+	RangeTypeFortinetFortiPAMChromeExtension                     RangeType = "fortinet-fortipam_chrome_extension"
 	RangeTypeFortinetFortiPortal                                 RangeType = "fortinet-fortiportal"
 	RangeTypeFortinetFortiPresence                               RangeType = "fortinet-fortipresence"
 	RangeTypeFortinetFortiProxy                                  RangeType = "fortinet-fortiproxy"
@@ -208,6 +210,7 @@ func RangeTypes() []RangeType {
 		RangeTypeFortinetFortiMail,
 		RangeTypeFortinetFortiManager,
 		RangeTypeFortinetFortiManagerCloud,
+		RangeTypeFortinetFortiMonitorOnSight,
 		RangeTypeFortinetFortiNAC,
 		RangeTypeFortinetFortiNACF,
 		RangeTypeFortinetFortiNDR,
@@ -215,6 +218,7 @@ func RangeTypes() []RangeType {
 		RangeTypeFortinetFortiOS6k7k,
 		RangeTypeFortinetFortiOSIPSEngine,
 		RangeTypeFortinetFortiPAM,
+		RangeTypeFortinetFortiPAMChromeExtension,
 		RangeTypeFortinetFortiPortal,
 		RangeTypeFortinetFortiPresence,
 		RangeTypeFortinetFortiProxy,
@@ -497,6 +501,7 @@ func (t RangeType) CompareVersions(v1, v2 string) (int, error) {
 		RangeTypeFortinetFortiMail,
 		RangeTypeFortinetFortiManager,
 		RangeTypeFortinetFortiManagerCloud,
+		RangeTypeFortinetFortiMonitorOnSight,
 		RangeTypeFortinetFortiNAC,
 		RangeTypeFortinetFortiNACF,
 		RangeTypeFortinetFortiNDR,
@@ -504,6 +509,7 @@ func (t RangeType) CompareVersions(v1, v2 string) (int, error) {
 		RangeTypeFortinetFortiOS6k7k,
 		RangeTypeFortinetFortiOSIPSEngine,
 		RangeTypeFortinetFortiPAM,
+		RangeTypeFortinetFortiPAMChromeExtension,
 		RangeTypeFortinetFortiPortal,
 		RangeTypeFortinetFortiPresence,
 		RangeTypeFortinetFortiProxy,
