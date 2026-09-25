@@ -15,3 +15,7 @@ func NewProductRef(productName, versionExp string) ProductRef {
 
 // ToCriterion exposes toCriterion for whitelist-enforcement tests.
 var ToCriterion = toCriterion
+
+// BuildProductRefs exposes buildProductRefs for the advisory-bound product
+// tree repairs.
+var BuildProductRefs = buildProductRefs
