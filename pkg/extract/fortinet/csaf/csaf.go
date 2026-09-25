@@ -745,14 +745,22 @@ func resolveVersion(productName, exp string) (*ccRangeTypes.Range, string, error
 // versions are (NVD ranges the same trains as affected, and the advisory
 // carries no note with the remark's substance), and a criterion has no field
 // for it, so it is dropped. Any other shape — a remark elsewhere in the
-// expression, or after something other than "all versions" — is returned
-// unchanged and flows into the strict grammar, which rejects it.
+// expression, after something other than "all versions", or after a bare
+// "all versions" with no train in front of it — is returned unchanged and
+// flows into the strict grammar, which rejects it. The bare case is kept
+// loud on purpose: nothing in the corpus has it, and a remark there could be
+// the only place the versions are stated ("all versions (7.0 and 7.2)"),
+// which dropping it would silently widen to the whole product.
 func trimTrainRemark(exp string) string {
 	if !strings.HasSuffix(exp, ")") {
 		return exp
 	}
 	before, _, ok := strings.Cut(exp, " (")
-	if !ok || !strings.HasSuffix(before, "all versions") {
+	if !ok {
+		return exp
+	}
+	train, ok := strings.CutSuffix(before, "all versions")
+	if !ok || strings.TrimSpace(train) == "" {
 		return exp
 	}
 	return before

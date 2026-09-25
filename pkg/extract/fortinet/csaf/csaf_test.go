@@ -455,6 +455,20 @@ func TestToCriterion(t *testing.T) {
 			},
 		},
 		{
+			// A remark after a bare "all versions" (no train) could be the only
+			// place the versions are stated; it is not dropped, so the
+			// expression falls through and is rejected instead of widening to
+			// the whole product.
+			name: "bare all versions with remark rejected",
+			args: args{
+				productID: "FortiOS all versions (7.0 and 7.2)",
+				refMap: map[string]csaf.ProductRef{
+					"FortiOS all versions (7.0 and 7.2)": csaf.NewProductRef("FortiOS", "all versions (7.0 and 7.2)"),
+				},
+			},
+			wantErr: true,
+		},
+		{
 			name: "remark before all versions rejected",
 			args: args{
 				productID: "FortiOS 6.0 (note) all versions",
