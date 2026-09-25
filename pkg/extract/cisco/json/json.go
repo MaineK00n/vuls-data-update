@@ -5,6 +5,7 @@ import (
 	"io/fs"
 	"log/slog"
 	"path/filepath"
+	"regexp"
 	"slices"
 	"strings"
 
@@ -294,6 +295,25 @@ type productConversion struct {
 	parse  func(string) (string, error)
 }
 
+// asaDesignator matches the release designators Cisco appends to legacy ASA
+// releases in its bulk hardening advisories: "ED" (Early Deployment, a
+// release-lifecycle label) and "SMP" (the symmetric-multiprocessing image
+// line for the 5585-X class), alone or combined ("9.1.6.SMP.ED"). Neither is
+// a version component — NVD and the Software Checker key the release as
+// "9.1.6" — so they are stripped before parsing and the designated form binds
+// to the same concrete CPE as the plain release. The stripping is anchored, so
+// any other letter suffix still fails to parse and surfaces as a hard error.
+var asaDesignator = regexp.MustCompile(`(\.SMP)?(\.ED)?$`)
+
+// parseASAVersion parses an ASA release, ignoring its release designators.
+func parseASAVersion(s string) (string, error) {
+	v, err := asaVersion.NewVersion(asaDesignator.ReplaceAllString(s, ""))
+	if err != nil {
+		return "", err
+	}
+	return v.String(), nil
+}
+
 // productConversions maps Cisco product name prefixes to CPE bases. Order
 // matters: more specific prefixes (e.g. "Cisco IOS XE ...") must come before
 // less specific ones (e.g. "Cisco IOS "). The table mirrors
@@ -304,25 +324,13 @@ var productConversions = []productConversion{
 		prefix: "Cisco Adaptive Security Appliance (ASA) Software ",
 		skips:  []string{"", "Base"},
 		cpe:    "cpe:2.3:o:cisco:adaptive_security_appliance_software:*:*:*:*:*:*:*:*",
-		parse: func(s string) (string, error) {
-			v, err := asaVersion.NewVersion(s)
-			if err != nil {
-				return "", err
-			}
-			return v.String(), nil
-		},
+		parse:  parseASAVersion,
 	},
 	{
 		prefix: "Cisco Secure Firewall Adaptive Security Appliance (ASA) Software ",
 		skips:  []string{"", "Base"},
 		cpe:    "cpe:2.3:o:cisco:adaptive_security_appliance_software:*:*:*:*:*:*:*:*",
-		parse: func(s string) (string, error) {
-			v, err := asaVersion.NewVersion(s)
-			if err != nil {
-				return "", err
-			}
-			return v.String(), nil
-		},
+		parse:  parseASAVersion,
 	},
 	{
 		prefix: "Cisco Firepower Extensible Operating System (FXOS) ",
@@ -521,10 +529,13 @@ var productConversions = []productConversion{
 // knownUnparseableProductNames lists product names whose version string the
 // go-cisco-version parsers reject but which are known, accepted artifacts of
 // the upstream data (a truncated version, a letter-suffixed build that the
-// parser does not model, or a misspelled family-level entry carrying no
-// version at all). These are skipped silently. Any OTHER parse failure
-// is treated as a hard error (see convertProductName) so that a newly
-// introduced malformed pattern surfaces loudly instead of being dropped.
+// parser does not model, a misspelled family-level entry carrying no version
+// at all, a package name or hotfix placeholder standing where a release
+// should be). These are skipped silently. Any OTHER parse failure is treated
+// as a hard error (see convertProductName) so that a newly introduced
+// malformed pattern surfaces loudly instead of being dropped. A recurring,
+// well-defined label that merely decorates a valid release belongs in the
+// family's parser instead (see asaDesignator), not here.
 var knownUnparseableProductNames = map[string]struct{}{
 	"Cisco IOS XE Software .0":                   {}, // cisco-sa-20170201-cbr
 	"Cisco IOS XE Software .1":                   {}, // cisco-sa-20170201-cbr
@@ -537,37 +548,22 @@ var knownUnparseableProductNames = map[string]struct{}{
 	"Cisco IOS XG Software ":                     {}, // cisco-sa-webui-dos-qdc7qx3 ("IOS XG" is an upstream typo; family-level entry with no version)
 	"Cisco Wireless LAN Controller (WLC) 3.6.0E": {}, // cisco-sa-20181017-wlc-gui-privesc, cisco-sa-20160831-wlc-2, cisco-sa-20160831-wlc-1
 
-	// cisco-sa-hardening-asaftdfmc-uvpPROhN lists legacy ASA 9.0-9.3 releases with an
-	// ED / SMP designator that the ASA parser does not model. Every one of them has
-	// a plain numeric twin (e.g. "9.0.1") in the same advisory, so skipping the
-	// designated form loses no version coverage.
-	"Cisco Secure Firewall Adaptive Security Appliance (ASA) Software 9.0.1.ED":     {},
-	"Cisco Secure Firewall Adaptive Security Appliance (ASA) Software 9.0.2.ED":     {},
-	"Cisco Secure Firewall Adaptive Security Appliance (ASA) Software 9.0.3.ED":     {},
-	"Cisco Secure Firewall Adaptive Security Appliance (ASA) Software 9.0.4.ED":     {},
-	"Cisco Secure Firewall Adaptive Security Appliance (ASA) Software 9.1.1.ED":     {},
-	"Cisco Secure Firewall Adaptive Security Appliance (ASA) Software 9.1.2.ED":     {},
-	"Cisco Secure Firewall Adaptive Security Appliance (ASA) Software 9.1.3.ED":     {},
-	"Cisco Secure Firewall Adaptive Security Appliance (ASA) Software 9.1.4.ED":     {},
-	"Cisco Secure Firewall Adaptive Security Appliance (ASA) Software 9.1.5.ED":     {},
-	"Cisco Secure Firewall Adaptive Security Appliance (ASA) Software 9.1.1.SMP.ED": {},
-	"Cisco Secure Firewall Adaptive Security Appliance (ASA) Software 9.1.2.SMP.ED": {},
-	"Cisco Secure Firewall Adaptive Security Appliance (ASA) Software 9.1.3.SMP.ED": {},
-	"Cisco Secure Firewall Adaptive Security Appliance (ASA) Software 9.1.4.SMP.ED": {},
-	"Cisco Secure Firewall Adaptive Security Appliance (ASA) Software 9.1.5.SMP.ED": {},
-	"Cisco Secure Firewall Adaptive Security Appliance (ASA) Software 9.1.6.SMP":    {},
-	"Cisco Secure Firewall Adaptive Security Appliance (ASA) Software 9.1.6.SMP.ED": {},
-	"Cisco Secure Firewall Adaptive Security Appliance (ASA) Software 9.2.1.ED":     {},
-	"Cisco Secure Firewall Adaptive Security Appliance (ASA) Software 9.2.2.ED":     {},
-	"Cisco Secure Firewall Adaptive Security Appliance (ASA) Software 9.2.1.SMP.ED": {},
-	"Cisco Secure Firewall Adaptive Security Appliance (ASA) Software 9.2.2.SMP.ED": {},
-	"Cisco Secure Firewall Adaptive Security Appliance (ASA) Software 9.2.3.SMP":    {},
-	"Cisco Secure Firewall Adaptive Security Appliance (ASA) Software 9.2.4.SMP":    {},
-	"Cisco Secure Firewall Adaptive Security Appliance (ASA) Software 9.2.2.4.SMP":  {},
-	"Cisco Secure Firewall Adaptive Security Appliance (ASA) Software 9.3.1.SMP":    {},
-	"Cisco Secure Firewall Threat Defense (FTD) Software 6.2.1 Hotfix":              {}, // cisco-sa-hardening-asaftdfmc-uvpPROhN
-	"Cisco IOS XR Software 5.1.1.K9SEC":                                             {}, // cisco-sa-hardening-iosxr-qg64NcM
-	"Cisco IOS XR Software 6.0.2.01":                                                {}, // cisco-sa-hardening-iosxr-qg64NcM
+	// cisco-sa-hardening-iosxr-qg64NcM: "k9sec" is the name of the IOS XR
+	// security (crypto) package PIE (e.g. asr9k-k9sec-px.pie-5.1.1), so this
+	// entry names a package of release 5.1.1 rather than a release. The plain
+	// "5.1.1" sits three lines above it in the same advisory.
+	"Cisco IOS XR Software 5.1.1.K9SEC": {},
+	// cisco-sa-hardening-iosxr-qg64NcM: IOS XR releases are named X.Y.Z; the
+	// taxonomy defines no fourth component and this is the only four-part IOS
+	// XR name in the whole dataset, so "01" cannot be interpreted. The plain
+	// "6.0.2" precedes it in the same advisory.
+	"Cisco IOS XR Software 6.0.2.01": {},
+	// cisco-sa-hardening-asaftdfmc-uvpPROhN: FTD hotfixes are identified by a
+	// letter code ("Hotfix AB"); with none given this is a version-less
+	// placeholder for "some hotfix of 6.2.1", which the same advisory also
+	// lists as the plain "6.2.1". Not folded into "6.2.1" because a hotfix is
+	// a fix applied on top of that release, not another name for it.
+	"Cisco Secure Firewall Threat Defense (FTD) Software 6.2.1 Hotfix": {},
 }
 
 // wfnVersionEscaper escapes characters that are special in a CPE WFN version
