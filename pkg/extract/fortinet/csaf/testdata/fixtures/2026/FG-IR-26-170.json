@@ -1,0 +1,131 @@
+{
+	"document": {
+		"acknowledgments": [
+			{
+				"summary": "Internally discovered by Cameron Milstead of Fortinet TAC"
+			}
+		],
+		"category": "Fortinet PSIRT Advisories",
+		"csaf_version": "2.0",
+		"publisher": {
+			"category": "vendor",
+			"contact_details": "https://fortiguard.fortinet.com/faq/psirt-contact",
+			"issuing_authority": "Fortinet PSIRT",
+			"name": "Fortinet PSIRT",
+			"namespace": "https://fortiguard.fortinet.com/psirt"
+		},
+		"title": "JWT used for authentication in web GUI signed with static key",
+		"tracking": {
+			"current_release_date": "2026-09-08T00:00:00",
+			"id": "FG-IR-26-170",
+			"initial_release_date": "2026-09-08T00:00:00",
+			"revision_history": [
+				{
+					"date": "2026-09-08T00:00:00",
+					"number": "1",
+					"summary": "Initial Publication"
+				}
+			],
+			"status": "final",
+			"version": "0"
+		}
+	},
+	"product_tree": {
+		"branches": [
+			{
+				"branches": [
+					{
+						"branches": [
+							{
+								"category": "product_version_range",
+								"name": "FortiMonitorOnSight/>=7.2.4|<=7.2.7",
+								"product": {
+									"name": "FortiMonitorOnSight",
+									"product_id": "FortiMonitorOnSight >=7.2.4|<=7.2.7"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiMonitorOnSight/>=7.2.0|<=7.2.2",
+								"product": {
+									"name": "FortiMonitorOnSight",
+									"product_id": "FortiMonitorOnSight >=7.2.0|<=7.2.2"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiMonitorOnSight"
+					}
+				],
+				"category": "vendor",
+				"name": "Fortinet PSIRT"
+			}
+		]
+	},
+	"vulnerabilities": [
+		{
+			"cve": "CVE-2026-84390",
+			"cwe": {
+				"id": "CWE-540",
+				"name": "Inclusion of Sensitive Information in Source Code"
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "Inclusion of Sensitive Information in Source Code in Fortinet FortiMonitorOnSight web portal\n\n",
+					"title": "Summary"
+				},
+				{
+					"category": "general",
+					"text": "N/A",
+					"title": "Workarounds"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiMonitorOnSight >=7.2.4|<=7.2.7",
+					"FortiMonitorOnSight >=7.2.0|<=7.2.2"
+				],
+				"known_not_affected": [
+					"FortiMonitorOnSight-7.2.8",
+					"FortiMonitorOnSight-7.2.8"
+				]
+			},
+			"references": [
+				{
+					"summary": "An Inclusion of Sensitive Information in Source Code vulnerability [CWE-540] in FortiMonitorOnSight web portal may allow a remote unauthenticated attacker to bypass authentication via forged or reused JWT",
+					"url": "https://fortiguard.fortinet.com/psirt/FG-IR-26-170"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiMonitorOnSight 7.2: Upgrade to 7.2.8 or above\nFortiMonitorOnSight 7.2: Upgrade to 7.2.8 or above",
+					"product_ids": [
+						"FortiMonitorOnSight"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 9.6,
+						"baseSeverity": "CRITICAL",
+						"vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H/E:F/RL:O/RC:C",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiMonitorOnSight"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Improper access control"
+				}
+			],
+			"title": "FortiMonitorOnSight - CRITICAL - FG-IR-26-170"
+		}
+	]
+}
