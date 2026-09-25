@@ -1,0 +1,56 @@
+{
+	"id": "FG-IR-26-170",
+	"advisories": [
+		{
+			"content": {
+				"id": "FG-IR-26-170",
+				"title": "JWT used for authentication in web GUI signed with static key",
+				"description": "An Inclusion of Sensitive Information in Source Code vulnerability [CWE-540] in FortiMonitorOnSight web portal may allow a remote unauthenticated attacker to bypass authentication via forged or reused JWT",
+				"severity": [
+					{
+						"type": "cvss_v31",
+						"source": "fortiguard.fortinet.com",
+						"cvss_v31": {
+							"vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H/E:F/RL:O/RC:C",
+							"base_score": 9.8,
+							"base_severity": "CRITICAL",
+							"temporal_score": 9.1,
+							"temporal_severity": "CRITICAL",
+							"environmental_score": 9.1,
+							"environmental_severity": "CRITICAL"
+						}
+					}
+				],
+				"cwe": [
+					{
+						"source": "fortiguard.fortinet.com",
+						"cwe": [
+							"CWE-540"
+						]
+					}
+				],
+				"references": [
+					{
+						"source": "fortiguard.fortinet.com",
+						"url": "https://fortiguard.fortinet.com/psirt/FG-IR-26-170"
+					}
+				],
+				"published": "2026-09-08T00:00:00Z",
+				"modified": "2026-09-08T00:00:00Z"
+			}
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-2026-84390"
+			}
+		}
+	],
+	"data_source": {
+		"id": "fortinet-cvrf",
+		"raws": [
+			"fixtures/2026/FG-IR-26-170.json"
+		]
+	}
+}

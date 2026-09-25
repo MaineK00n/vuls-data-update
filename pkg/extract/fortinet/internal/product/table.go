@@ -5,6 +5,21 @@
 // string (wildcard version) and its per-product cpecriterion range type. A
 // name missing here makes the CSAF/CVRF extractor hard-error on the affected
 // product rather than silently drop it, so add new Fortinet products here.
+//
+// For a product that neither the handmade dataset nor the NVD CPE dictionary
+// names yet, take the CPE Fortinet itself publishes as CNA in the CVE record
+// (containers.cna.affected[].cpes on cve.org). It is the only machine-readable
+// CPE for the product until NVD analyzes the CVE, and VulnCheck NVD++ carries
+// it verbatim, so the fortinet-csaf/cvrf and vulncheck-nist-nvd2 sources in
+// one vuls DB agree on the CPE. NVD may later pick another slug (it folded
+// FortiSIEMWindowsAgent into fortisiem + windows where the CNA wrote
+// fortisiemwindowsagent); that name is then matched by the NVD source. The
+// rule is not applied retroactively: entries that predate it keep their
+// handmade/NVD CPEs, which differ from the CNA's in places (the CNA files
+// most products under part "o"). Entries taken from the CNA so far:
+// FortiMonitorOnSight (CVE-2026-84390, FG-IR-26-170) and FortiPAM Chrome
+// Extension (CVE-2026-84388, FG-IR-26-168 — its own product, not a fortipam
+// alias: the server is on 1.x while the extension is on 7.4/8.0).
 package product
 
 import (
@@ -99,12 +114,14 @@ var nameToProduct = map[string]productInfo{
 	"FortiMail":                            {cpe: "cpe:2.3:o:fortinet:fortimail:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiMail},
 	"FortiManager":                         {cpe: "cpe:2.3:o:fortinet:fortimanager:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiManager},
 	"FortiManager Cloud":                   {cpe: "cpe:2.3:a:fortinet:fortimanager_cloud:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiManagerCloud},
+	"FortiMonitorOnSight":                  {cpe: "cpe:2.3:a:fortinet:fortimonitoronsight:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiMonitorOnSight},
 	"FortiNAC":                             {cpe: "cpe:2.3:o:fortinet:fortinac:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiNAC},
 	"FortiNAC-F":                           {cpe: "cpe:2.3:o:fortinet:fortinac-f:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiNACF},
 	"FortiNDR":                             {cpe: "cpe:2.3:o:fortinet:fortindr:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiNDR},
 	"FortiOS":                              {cpe: "cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiOS},
 	"FortiOS-6K7K":                         {cpe: "cpe:2.3:o:fortinet:fortios-6k7k:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiOS6k7k},
 	"FortiPAM":                             {cpe: "cpe:2.3:a:fortinet:fortipam:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiPAM},
+	"FortiPAM Chrome Extension":            {cpe: "cpe:2.3:a:fortinet:fortipam_chrome_extension:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiPAMChromeExtension},
 	"FortiPortal":                          {cpe: "cpe:2.3:a:fortinet:fortiportal:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiPortal},
 	"FortiPresence":                        {cpe: "cpe:2.3:a:fortinet:fortipresence:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiPresence},
 	"FortiProxy":                           {cpe: "cpe:2.3:o:fortinet:fortiproxy:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiProxy},
