@@ -744,19 +744,23 @@ func resolveVersion(productName, exp string) (*ccRangeTypes.Range, string, error
 // versions". The remark qualifies how the train is affected, not which
 // versions are (NVD ranges the same trains as affected, and the advisory
 // carries no note with the remark's substance), and a criterion has no field
-// for it, so it is dropped. Any other shape — a remark elsewhere in the
-// expression, after something other than "all versions", or after a bare
-// "all versions" with no train in front of it — is returned unchanged and
+// for it, so it is dropped. Only exactly that shape is dropped: one
+// non-empty parenthesized group, with no parenthesis inside it, that closes
+// the expression, right after "<train> all versions". Any other shape — a
+// remark elsewhere in the expression, after something other than "all
+// versions", after a bare "all versions" with no train in front of it, two
+// remarks, or text after the closing parenthesis — is returned unchanged and
 // flows into the strict grammar, which rejects it. The bare case is kept
 // loud on purpose: nothing in the corpus has it, and a remark there could be
 // the only place the versions are stated ("all versions (7.0 and 7.2)"),
 // which dropping it would silently widen to the whole product.
 func trimTrainRemark(exp string) string {
-	if !strings.HasSuffix(exp, ")") {
+	before, remark, ok := strings.Cut(exp, " (")
+	if !ok {
 		return exp
 	}
-	before, _, ok := strings.Cut(exp, " (")
-	if !ok {
+	remark, ok = strings.CutSuffix(remark, ")")
+	if !ok || strings.TrimSpace(remark) == "" || strings.ContainsAny(remark, "()") {
 		return exp
 	}
 	train, ok := strings.CutSuffix(before, "all versions")

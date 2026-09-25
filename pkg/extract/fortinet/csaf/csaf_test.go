@@ -469,6 +469,39 @@ func TestToCriterion(t *testing.T) {
 			wantErr: true,
 		},
 		{
+			// Only one parenthesized group closing the expression is a remark;
+			// text after it, a second group, or an empty group is malformed
+			// input and must not be reduced to the train.
+			name: "remark followed by trailing text rejected",
+			args: args{
+				productID: "FortiOS 7.0 all versions (note) trailing)",
+				refMap: map[string]csaf.ProductRef{
+					"FortiOS 7.0 all versions (note) trailing)": csaf.NewProductRef("FortiOS", "7.0 all versions (note) trailing)"),
+				},
+			},
+			wantErr: true,
+		},
+		{
+			name: "two remarks rejected",
+			args: args{
+				productID: "FortiOS 7.0 all versions (note) (other)",
+				refMap: map[string]csaf.ProductRef{
+					"FortiOS 7.0 all versions (note) (other)": csaf.NewProductRef("FortiOS", "7.0 all versions (note) (other)"),
+				},
+			},
+			wantErr: true,
+		},
+		{
+			name: "empty remark rejected",
+			args: args{
+				productID: "FortiOS 7.0 all versions ()",
+				refMap: map[string]csaf.ProductRef{
+					"FortiOS 7.0 all versions ()": csaf.NewProductRef("FortiOS", "7.0 all versions ()"),
+				},
+			},
+			wantErr: true,
+		},
+		{
 			name: "remark before all versions rejected",
 			args: args{
 				productID: "FortiOS 6.0 (note) all versions",
