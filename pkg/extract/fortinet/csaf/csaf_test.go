@@ -431,6 +431,30 @@ func TestToCriterion(t *testing.T) {
 			},
 		},
 		{
+			// FG-IR-23-001 carries the other remark wording on five trains; each
+			// leaf is its own known_affected entry (no list syntax).
+			name: "train all versions with special-note remark → train range",
+			args: args{
+				productID: "FortiOS 5.0 all versions (special note for fortios in additional note section)",
+				refMap: map[string]csaf.ProductRef{
+					"FortiOS 5.0 all versions (special note for fortios in additional note section)": csaf.NewProductRef("FortiOS", "5.0 all versions (special note for fortios in additional note section)"),
+				},
+			},
+			want: criterionTypes.Criterion{
+				Type: criterionTypes.CriterionTypeCPE,
+				CPE: &ccTypes.Criterion{
+					Vulnerable: true,
+					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
+					CPE:        ccTypes.CPE("cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*"),
+					Range: &ccRangeTypes.Range{
+						Type:         ccRangeTypes.RangeTypeFortinetFortiOS,
+						GreaterEqual: "5.0",
+						LessThan:     "5.1",
+					},
+				},
+			},
+		},
+		{
 			name: "remark before all versions rejected",
 			args: args{
 				productID: "FortiOS 6.0 (note) all versions",
