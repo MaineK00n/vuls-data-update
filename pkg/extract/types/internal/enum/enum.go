@@ -41,9 +41,11 @@ func (v Vocabulary[T]) Contains(t T) bool {
 // order). This deliberately preserves the canonical output order from the
 // enums' int (iota) era, so converting them to strings does not reorder
 // extracted data. Values outside the vocabulary sort after every known
-// value — consistent with where an older build places values a newer
-// vuls-data-update appended (the vocabularies are append-only) — and
-// lexicographically among themselves.
+// value, and lexicographically among themselves. The order is only a
+// property of the build doing the sorting: a value declared in the middle of
+// a newer vocabulary ranks last for a build that does not know it, which is
+// fine because no consumer compares ranks across builds — each sorts what it
+// writes or compares by itself.
 func (v Vocabulary[T]) Compare(x, y T) int {
 	xi, xok := v.rank[x]
 	yi, yok := v.rank[y]
