@@ -44,11 +44,11 @@ import (
 	"github.com/pkg/errors"
 )
 
-// timestampLayout is the pkg(7) timestamp format, always UTC. timestampRe
+// timestampLayout is the pkg(7) timestamp format, always UTC. timestampPattern
 // pins its exact shape (time.Parse alone would also take fractional seconds).
 const timestampLayout = "20060102T150405Z"
 
-var timestampRe = regexp.MustCompile(`^[0-9]{8}T[0-9]{6}Z$`)
+var timestampPattern = regexp.MustCompile(`^[0-9]{8}T[0-9]{6}Z$`)
 
 // Version is a parsed IPS version.
 type Version struct {
@@ -64,17 +64,6 @@ type Version struct {
 // no bound on its size (pkg(7) puts none; the reference client uses Python
 // integers).
 type dotSequence []string
-
-// compareElement orders two canonical decimal elements numerically.
-func compareElement(a, b string) int {
-	return cmp.Or(cmp.Compare(len(a), len(b)), cmp.Compare(a, b))
-}
-
-// compare orders two dot sequences element by element; a proper prefix sorts
-// before the longer sequence.
-func (s dotSequence) compare(t dotSequence) int {
-	return slices.CompareFunc(s, t, compareElement)
-}
 
 // NewVersion parses an IPS version string. Anything that pkg(7) would reject
 // is an error: an empty release, a signalled-but-empty component such as
@@ -120,7 +109,7 @@ func NewVersion(v string) (Version, error) {
 		// time.Parse accepts a fractional second after the seconds field even
 		// when the layout has none, so pin the shape before checking the
 		// calendar.
-		if !timestampRe.MatchString(timestamp) {
+		if !timestampPattern.MatchString(timestamp) {
 			return Version{}, errors.Errorf("parse timestamp of %q. expected: %q, actual: %q", v, "YYYYMMDDThhmmssZ", timestamp)
 		}
 		if _, err := time.Parse(timestampLayout, timestamp); err != nil {
@@ -175,25 +164,26 @@ func parseDotSequence(s string) (dotSequence, error) {
 // is meant for testing one version against one bound; do not use it as the
 // comparator of sort or max over a mixed set of versions.
 func (v Version) Compare(w Version) int {
+	// An element is canonical decimal digits, so it orders by length and then
+	// by digits; a dot sequence that is a proper prefix of another sorts
+	// before it.
+	element := func(a, b string) int { return cmp.Or(cmp.Compare(len(a), len(b)), cmp.Compare(a, b)) }
+
 	return cmp.Or(
-		v.release.compare(w.release),
-		compareBranch(v.branch, w.branch),
-		compareTimestamp(v.timestamp, w.timestamp),
+		slices.CompareFunc(v.release, w.release, element),
+		func() int {
+			// A branch on one side only is "don't care".
+			if len(v.branch) == 0 || len(w.branch) == 0 {
+				return 0
+			}
+			return slices.CompareFunc(v.branch, w.branch, element)
+		}(),
+		func() int {
+			// A timestamp on one side only is "don't care".
+			if v.timestamp == "" || w.timestamp == "" {
+				return 0
+			}
+			return cmp.Compare(v.timestamp, w.timestamp)
+		}(),
 	)
-}
-
-// compareBranch is 0 when either side has no branch (don't care).
-func compareBranch(a, b dotSequence) int {
-	if len(a) == 0 || len(b) == 0 {
-		return 0
-	}
-	return a.compare(b)
-}
-
-// compareTimestamp is 0 when either side has no timestamp (don't care).
-func compareTimestamp(a, b string) int {
-	if a == "" || b == "" {
-		return 0
-	}
-	return cmp.Compare(a, b)
 }

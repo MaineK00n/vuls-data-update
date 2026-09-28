@@ -8,9 +8,13 @@ import (
 	"github.com/pkg/errors"
 )
 
-// solarisReleaseRe is a dotted sequence of numbers, the shape of a Solaris
-// release ("10", "10.11.0", "11.4").
-var solarisReleaseRe = regexp.MustCompile(`^[0-9]+(\.[0-9]+)*$`)
+// solarisReleasePattern is the shape of a Solaris release, capturing the part
+// that keys the ecosystem. Solaris 10 is one release, so anything after the
+// major (an update number a scanner may record) is dropped. Solaris 11 is a
+// family of minor releases (11.3, 11.4, ...) that are supported and updated
+// independently, so the minor keys the ecosystem and anything after it is
+// dropped.
+var solarisReleasePattern = regexp.MustCompile(`^(10|11\.(?:0|[1-9][0-9]*))(?:\.[0-9]+)*$`)
 
 type Ecosystem string
 
@@ -98,23 +102,11 @@ func GetEcosystem(family, release string) (Ecosystem, error) {
 	case EcosystemTypeRocky:
 		return Ecosystem(fmt.Sprintf("%s:%s", family, strings.Split(release, ".")[0])), nil
 	case EcosystemTypeSolaris:
-		// Solaris 10 is one release: anything after the major (an update
-		// number a scanner may record) is dropped. Solaris 11 is a family
-		// of minor releases (11.3, 11.4, ...) that are supported and
-		// updated independently, so the minor is part of the ecosystem
-		// and anything after it is dropped.
-		if !solarisReleaseRe.MatchString(release) {
+		m := solarisReleasePattern.FindStringSubmatch(release)
+		if m == nil {
 			return "", errors.Errorf("unexpected release format. expected: %q, actual: %q", "10(.<n>...) or 11.<minor>(.<n>...)", release)
 		}
-		ss := strings.Split(release, ".")
-		switch {
-		case ss[0] == "10":
-			return Ecosystem(fmt.Sprintf("%s:%s", family, ss[0])), nil
-		case ss[0] == "11" && len(ss) >= 2:
-			return Ecosystem(fmt.Sprintf("%s:%s.%s", family, ss[0], ss[1])), nil
-		default:
-			return "", errors.Errorf("unexpected release format. expected: %q, actual: %q", "10(.<n>...) or 11.<minor>(.<n>...)", release)
-		}
+		return Ecosystem(fmt.Sprintf("%s:%s", family, m[1])), nil
 	case EcosystemTypeOpenSUSE:
 		return Ecosystem(fmt.Sprintf("%s:%s", family, release)), nil
 	case EcosystemTypeOpenSUSELeap:

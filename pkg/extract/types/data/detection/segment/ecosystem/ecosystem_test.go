@@ -169,6 +169,14 @@ func TestGetEcosystem(t *testing.T) {
 			},
 			wantErr: true,
 		},
+		{
+			name: "solaris 11 with zero padded minor",
+			args: args{
+				family:  "solaris",
+				release: "11.04",
+			},
+			wantErr: true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
