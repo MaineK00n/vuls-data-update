@@ -13,7 +13,9 @@ import (
 // major (an update number a scanner may record) is dropped. Solaris 11 is a
 // family of minor releases (11.3, 11.4, ...) that are supported and updated
 // independently, so the minor keys the ecosystem and anything after it is
-// dropped.
+// dropped. Zero padding is rejected only where it would key an ecosystem of
+// its own: "11.04" is not "11.4", while "10.04" is Solaris 10 like any other
+// update level.
 var solarisReleasePattern = regexp.MustCompile(`^(10|11\.(?:0|[1-9][0-9]*))(?:\.[0-9]+)*$`)
 
 type Ecosystem string
@@ -104,7 +106,7 @@ func GetEcosystem(family, release string) (Ecosystem, error) {
 	case EcosystemTypeSolaris:
 		m := solarisReleasePattern.FindStringSubmatch(release)
 		if m == nil {
-			return "", errors.Errorf("unexpected release format. expected: %q, actual: %q", "10(.<n>...) or 11.<minor>(.<n>...)", release)
+			return "", errors.Errorf("unexpected release format. expected: %q, actual: %q", "10(.<n>...) or 11.<minor>(.<n>...), <minor> without zero padding", release)
 		}
 		return Ecosystem(fmt.Sprintf("%s:%s", family, m[1])), nil
 	case EcosystemTypeOpenSUSE:

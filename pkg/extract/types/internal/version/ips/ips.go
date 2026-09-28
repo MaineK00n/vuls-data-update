@@ -123,31 +123,20 @@ func NewVersion(v string) (Version, error) {
 	return ver, nil
 }
 
-// parseDotSequence mirrors pkg.version.DotSequence: every element is a
-// non-negative integer with no zero padding (a lone "0" is fine). Elements
-// are kept as digits, so their size is unbounded.
+// parseDotSequence keeps the elements as digits, so their size is unbounded
+// (pkg(7) puts no bound on an element; the reference client uses Python
+// integers). It is stricter than pkg.version.DotSequence, which goes through
+// Python int() and so also takes "00" and "+11"; nothing a repository
+// publishes looks like that, and rejecting it degrades to a non-match rather
+// than a mis-ordering.
 func parseDotSequence(s string) (dotSequence, error) {
-	if s == "" {
-		return nil, errors.New("dot sequence cannot be empty")
-	}
 	elems := strings.Split(s, ".")
-	seq := make(dotSequence, 0, len(elems))
 	for _, e := range elems {
-		if e == "" {
-			return nil, errors.Errorf("empty element in %q", s)
+		if e == "" || (len(e) > 1 && e[0] == '0') || strings.ContainsFunc(e, func(r rune) bool { return r < '0' || r > '9' }) {
+			return nil, errors.Errorf("unexpected element. expected: %q, actual: %q", "non-negative integer without zero padding", e)
 		}
-		if e[0] == '-' || e[0] == '+' {
-			return nil, errors.Errorf("signed element %q in %q", e, s)
-		}
-		if strings.ContainsFunc(e, func(r rune) bool { return r < '0' || r > '9' }) {
-			return nil, errors.Errorf("non-numeric element %q in %q", e, s)
-		}
-		if len(e) > 1 && e[0] == '0' {
-			return nil, errors.Errorf("zero padded element %q in %q", e, s)
-		}
-		seq = append(seq, e)
 	}
-	return seq, nil
+	return elems, nil
 }
 
 // Compare returns -1 when v sorts before w, 0 when they are the same version,
