@@ -326,6 +326,18 @@ func (t RangeType) CompareVersions(family ecosystemTypes.Ecosystem, v1, v2 strin
 			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
 		}
 		return va.Compare(vb), nil
+	case RangeTypeSolarisIPS:
+		// IPS (pkg(7)) versions of Oracle Solaris 11 and the illumos
+		// distributions; see internal/version/ips for the order.
+		va, err := ipsVersion.NewVersion(v1)
+		if err != nil {
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
+		}
+		vb, err := ipsVersion.NewVersion(v2)
+		if err != nil {
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
+		}
+		return va.Compare(vb), nil
 	case RangeTypeNPM:
 		va, err := npm.NewVersion(v1)
 		if err != nil {
@@ -582,18 +594,6 @@ func (t RangeType) CompareVersions(family ecosystemTypes.Ecosystem, v1, v2 strin
 			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
 		}
 		vb, err := microsoftwindows.NewVersion(v2)
-		if err != nil {
-			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
-		}
-		return va.Compare(vb), nil
-	case RangeTypeSolarisIPS:
-		// IPS (pkg(7)) versions of Oracle Solaris 11 and the illumos
-		// distributions; see internal/version/ips for the order.
-		va, err := ipsVersion.NewVersion(v1)
-		if err != nil {
-			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
-		}
-		vb, err := ipsVersion.NewVersion(v2)
 		if err != nil {
 			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
 		}
