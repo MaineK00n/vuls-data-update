@@ -302,7 +302,7 @@ func (t RangeType) CompareVersions(family ecosystemTypes.Ecosystem, bound, v str
 			return rpm.NewVersion(bound).Compare(rpm.NewVersion(v)), nil
 		case ecosystemTypes.EcosystemTypeOracle:
 			if extractOracleKsplice(bound) != extractOracleKsplice(v) {
-				return 0, &CompareError{Err: &CannotCompareError{Reason: fmt.Sprintf("v1: %q and v2: %q do not match ksplice number", bound, v)}}
+				return 0, &CompareError{Err: &CannotCompareError{Reason: fmt.Sprintf("bound: %q and v: %q do not match ksplice number", bound, v)}}
 			}
 			if strings.HasSuffix(bound, "_fips") != strings.HasSuffix(v, "_fips") {
 				return 0, &CompareError{Err: &CannotCompareError{Reason: fmt.Sprintf("non fips package and fips package cannot be compared. bound: %q, v: %q", bound, v)}}
