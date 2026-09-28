@@ -1,0 +1,140 @@
+{
+	"__comment__": "This content is licensed under the Creative Commons Attribution 4.0 International License (https://creativecommons.org/licenses/by/4.0/). If you distribute this content you must provide attribution to Intel Corporation and provide a link to the original.",
+	"document": {
+		"acknowledgments": [
+			{
+				"names": [
+					"This issue was found externally. Intel, and nearly the entire technology industry, follows a disclosure practice called Coordinated Disclosure, under which a cybersecurity vulnerability is generally publicly disclosed only after mitigations are available."
+				]
+			}
+		],
+		"category": "csaf_security_advisory",
+		"csaf_version": "2.0",
+		"distribution": {
+			"text": "Copyright © Intel Corporation All rights reserved.",
+			"tlp": {
+				"label": "WHITE",
+				"url": "https://www.first.org/tlp/"
+			}
+		},
+		"lang": "en",
+		"notes": [
+			{
+				"category": "summary",
+				"text": "A potential security vulnerability in some Intel® Wireless Bluetooth® and Killer™ Bluetooth® products may allow escalation of privilege. Intel is releasing firmware updates to mitigate this potential vulnerability.",
+				"title": "Summary"
+			},
+			{
+				"category": "legal_disclaimer",
+				"text": "Intel provides these materials as-is, with no express or implied warranties.\\r\\nAll products, dates, and figures specified are preliminary based on current expectations, and are subject to change without notice. \\r\\nIntel products and services described may contain design defects or errors known as errata, which may cause the product to deviate from published specifications. Current characterized errata are available on request.\\r\\nIntel products that have met their End of Servicing Updates may no longer receive functional and security updates. For additional details on support and servicing, please see this help article. (https://www.intel.com/content/www/us/en/support/articles/000022396/processors.html)\\r\\nIntel technologies' features and benefits depend on system configuration and may require enabled hardware, software or service activation. Performance varies depending on system configuration. No product or component can be absolutely secure. Check with your system manufacturer or retailer or learn more at http://intel.com.(http://intel.com) \\r\\nSome results have been estimated or simulated using internal Intel analysis or architecture simulation or modeling, and provided to you for informational purposes. Any differences in your system hardware, software or configuration may affect your actual performance. \\r\\nIntel and the Intel logo are trademarks of Intel Corporation or its subsidiaries in the United States and other countries. \\r\\n© Intel Corporation. Intel, the Intel logo, and other Intel marks are trademarks of Intel Corporation or its subsidiaries. Other names and brands may be claimed as the property of others.",
+				"title": "Legal Notices and Disclaimers"
+			},
+			{
+				"category": "details",
+				"text": "Intel recommends updating the affected Intel® Wireless Bluetooth® and Killer™ Bluetooth® products to version 22.100 or later.\r\nWindows 10 and Windows 11 updates are available for download at this location:\r\nhttps://www.intel.com/content/www/us/en/download/18649/intel-wireless-bluetooth-for-windows-10-and-windows-11.html\r\n \r\nFor the latest Linux updates refer to the links below:\r\nLinux software Driver: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/\r\nLinux firmware: link\r\nProduct Discontinuation Notice: \r\nIntel has issued a Product Discontinuation Notice for:\r\nIntel® Dual Band Wireless-AC 8265 and Intel® Dual Band Wireless-AC 8260 as of February 2023. The Intel® Dual Band Wireless-AC 8265 and Intel® Dual Band Wireless-AC 8260 are not supported with any additional functional, security, or other updates. Intel recommends that users discontinue use and migrate to the newer generation product listed in Recommendations as soon as possible.Intel® Dual Band Wireless-AC 3168, Intel® Wireless 7265 (Rev D) Family and Intel® Dual Band Wireless-AC 3165 as of April 2024. The Intel® Dual Band Wireless-AC 3168, Intel® Wireless 7265 (Rev D) Family and Intel® Dual Band Wireless-AC 3165 are not supported with any additional functional, security, or other updates. Intel recommends that users discontinue use and migrate to the newer generation product listed in Recommendations as soon as possible.\r\n\r\nReference Documentation:\r\nLinux* Support for Intel® Wireless Adapters:  https://www.intel.com/content/www/us/en/support/articles/000005511/wireless.html",
+				"title": "Recommendation"
+			},
+			{
+				"category": "details",
+				"text": "Medium",
+				"title": "Severity rating"
+			},
+			{
+				"category": "details",
+				"text": "Firmware",
+				"title": "Advisory Category"
+			},
+			{
+				"category": "details",
+				"text": "Escalation of Privilege",
+				"title": "Impact of vulnerability"
+			},
+			{
+				"category": "details",
+				"text": "Contact Intel PSIRT at mailto:secure@intel.com with any questions, requests for technical details, or proposed coordination with other parties. Please encrypt any sensitive details using our PGP key, which can be found at https://www.intel.com/content/www/us/en/security-center/pgp-public-key.html.",
+				"title": "Contact"
+			}
+		],
+		"publisher": {
+			"category": "vendor",
+			"contact_details": "secure@intel.com",
+			"issuing_authority": "Intel Corporation is responsible for vulnerability handling across all Intel offerings.",
+			"name": "Intel Corporation",
+			"namespace": "https://www.intel.com"
+		},
+		"references": [
+			{
+				"summary": "Security Center",
+				"url": "https://www.intel.com/content/www/us/en/security-center/advisory/intel-sa-00606.html"
+			}
+		],
+		"title": "Intel® Wireless Bluetooth® and Killer™ Bluetooth® Advisory",
+		"tracking": {
+			"current_release_date": "2025-02-11T00:00:00+00:00",
+			"id": "INTEL-SA-00606",
+			"initial_release_date": "2025-02-11T00:00:00+00:00",
+			"revision_history": [
+				{
+					"date": "2025-02-11T00:00:00+00:00",
+					"number": "1.0.0",
+					"summary": "Initial release."
+				}
+			],
+			"status": "final",
+			"version": "1.0.0"
+		}
+	},
+	"vulnerabilities": [
+		{
+			"cve": "CVE-2021-37577",
+			"cwe": {
+				"id": "CWE-284",
+				"name": "Improper Access Control"
+			},
+			"product_status": {
+				"known_affected": [
+					"See reference."
+				]
+			},
+			"scores": [
+				{
+					"cvss_v3": {
+						"attackComplexity": "LOW",
+						"attackVector": "ADJACENT_NETWORK",
+						"availabilityImpact": "NONE",
+						"baseScore": 4.6,
+						"baseSeverity": "MEDIUM",
+						"confidentialityImpact": "LOW",
+						"integrityImpact": "LOW",
+						"privilegesRequired": "NONE",
+						"scope": "UNCHANGED",
+						"userInteraction": "REQUIRED",
+						"vectorString": "CVSS:3.1/AV:A/AC:L/PR:N/UI:R/S:U/C:L/I:L/A:N",
+						"version": "3.1"
+					},
+					"cvss_v4": {
+						"attackComplexity": "LOW",
+						"attackRequirements": "NONE",
+						"attackVector": "ADJACENT",
+						"baseScore": 5.3,
+						"baseSeverity": "MEDIUM",
+						"privilegesRequired": "NONE",
+						"subAvailabilityImpact": "NONE",
+						"subConfidentialityImpact": "NONE",
+						"subIntegrityImpact": "NONE",
+						"userInteraction": "NONE",
+						"vectorString": "CVSS:4.0/AV:A/AC:L/AT:N/PR:N/UI:N/VC:L/VI:L/VA:N/SC:N/SI:N/SA:N",
+						"version": "4.0",
+						"vulnAvailabilityImpact": "NONE",
+						"vulnConfidentialityImpact": "LOW",
+						"vulnIntegrityImpact": "LOW"
+					},
+					"products": [
+						"See reference."
+					]
+				}
+			],
+			"title": "Improper access control in the firmware for some Intel® Wireless Bluetooth® and Killer™ Bluetooth® products before version 22.100 may allow an unauthenticated user to potentially enable escalation of privilege via adjacent access."
+		}
+	]
+}

@@ -1,0 +1,460 @@
+{
+	"document": {
+		"acknowledgments": [
+			{
+				"names": [
+					"CVE-2024-24984 was found externally. The remaining issues were found internally by Intel employees."
+				]
+			}
+		],
+		"category": "csaf_security_advisory",
+		"csaf_version": "2.0",
+		"distribution": {
+			"text": "Copyright © Intel Corporation All rights reserved.",
+			"tlp": {
+				"label": "AMBER",
+				"url": "https://www.first.org/tlp/"
+			}
+		},
+		"lang": "en",
+		"notes": [
+			{
+				"category": "summary",
+				"text": "Potential security vulnerabilities in some Intel® PROSet/Wireless Software, Intel® Killer™ Wi-Fi  and Intel® Wireless Bluetooth® may allow denial of service or information disclosure. Intel is releasing software updates to mitigate these potential vulnerabilities.",
+				"title": "Summary"
+			},
+			{
+				"category": "legal_disclaimer",
+				"text": "Intel provides these materials as-is, with no express or implied warranties.\\r\\nAll products, dates, and figures specified are preliminary based on current expectations, and are subject to change without notice. \\r\\nIntel products and services described may contain design defects or errors known as errata, which may cause the product to deviate from published specifications. Current characterized errata are available on request.\\r\\nIntel products that have met their End of Servicing Updates may no longer receive functional and security updates. For additional details on support and servicing, please see this help article. (https://www.intel.com/content/www/us/en/support/articles/000022396/processors.html)\\r\\nIntel technologies' features and benefits depend on system configuration and may require enabled hardware, software or service activation. Performance varies depending on system configuration. No product or component can be absolutely secure. Check with your system manufacturer or retailer or learn more at http://intel.com.(http://intel.com) \\r\\nSome results have been estimated or simulated using internal Intel analysis or architecture simulation or modeling, and provided to you for informational purposes. Any differences in your system hardware, software or configuration may affect your actual performance. \\r\\nIntel and the Intel logo are trademarks of Intel Corporation or its subsidiaries in the United States and other countries. \\r\\n© Intel Corporation. Intel, the Intel logo, and other Intel marks are trademarks of Intel Corporation or its subsidiaries. Other names and brands may be claimed as the property of others.",
+				"title": "Legal Notices and Disclaimers"
+			},
+			{
+				"category": "details",
+				"text": "Intel recommends updating Intel® PROSet/Wireless Software, Intel® Killer™ Wi-Fi and Intel® Wireless Bluetooth® to version 23.40 or later. \r\nUpdates are available for download at this location:\r\nWi-Fi update Kit: 818005 \r\nBluetooth® update Kit: 818008",
+				"title": "Recommendation"
+			},
+			{
+				"category": "details",
+				"text": "Medium",
+				"title": "Severity rating"
+			},
+			{
+				"category": "details",
+				"text": "Software",
+				"title": "Advisory Category"
+			},
+			{
+				"category": "details",
+				"text": "Denial of Service",
+				"title": "Impact of vulnerability"
+			},
+			{
+				"category": "details",
+				"text": "Contact Intel PSIRT at mailto:secure@intel.com with any questions, requests for technical details, or proposed coordination with other parties. Please encrypt any sensitive details using our PGP key, which can be found at https://www.intel.com/content/www/us/en/security-center/pgp-public-key.html.",
+				"title": "Contact"
+			},
+			{
+				"category": "details",
+				"text": "Intel is interested in fostering a coordinated release of external communications. Intel requests that customers hold external communications per the disclosure plans defined in /document/tracking/initial_release_date and document/tracking/current_release_date. This information is Intel Confidential and is shared under NDA. Access to this information should be restricted to only those in your organization with a need to know, such as those involved in the analysis, validation, and deployment of security updates. If you believe any additional external communication is required before the target date for Intels public disclosure, please contact Intel PSIRT (secure@intel.com)",
+				"title": "External Communications"
+			}
+		],
+		"publisher": {
+			"category": "vendor",
+			"contact_details": "secure@intel.com",
+			"issuing_authority": "Intel Corporation is responsible for vulnerability handling across all Intel offerings.",
+			"name": "Intel Corporation - Intel Confidential",
+			"namespace": "https://www.intel.com"
+		},
+		"references": [
+			{
+				"category": "self",
+				"summary": "RDC#818104",
+				"url": "https://cdrdv2.intel.com/v1/dl/getContent/818104"
+			}
+		],
+		"title": "Intel® PROSet/Wireless Wi-Fi Software and Intel® Wireless Bluetooth® Advisory",
+		"tracking": {
+			"current_release_date": "2024-11-07T00:00:00+00:00",
+			"id": "INTEL-TA-01108",
+			"initial_release_date": "2024-04-02T00:00:00+00:00",
+			"revision_history": [
+				{
+					"date": "2024-04-02T00:00:00+00:00",
+					"number": "1.0.0",
+					"summary": "Initial release"
+				},
+				{
+					"date": "2024-06-26T00:00:00+00:00",
+					"number": "1.1.0",
+					"summary": "Revised target public disclosure date"
+				},
+				{
+					"date": "2024-11-07T00:00:00+00:00",
+					"number": "1.2.0",
+					"summary": "Corrected product names"
+				}
+			],
+			"status": "final",
+			"version": "1.2.0"
+		}
+	},
+	"vulnerabilities": [
+		{
+			"cve": "CVE-2024-28049",
+			"cwe": {
+				"id": "CWE-20",
+				"name": "Improper Input Validation"
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "The product receives input or data, but it does not validate or incorrectly validates that the input has the properties that are required to process the data safely and correctly.",
+					"title": "Root Cause Summary"
+				},
+				{
+					"category": "details",
+					"text": "An unskilled user with no authentication via adjacent network access can potentially impact availability (high) through denial of service by means of improper input validation in Intel® PROSet/Wireless Software and Intel® Killer™ Wi-Fi firmware. ",
+					"title": "Vulnerability Overview"
+				},
+				{
+					"category": "details",
+					"text": "CVE-2024-28049: Improper input validation in wireless firmware, may allow firmware crash.",
+					"title": "High Level Technical Summary"
+				},
+				{
+					"category": "details",
+					"text": "None expected.",
+					"title": "Power and Performance Impacts"
+				},
+				{
+					"category": "details",
+					"text": "None.",
+					"title": "OS Dependencies"
+				},
+				{
+					"category": "details",
+					"text": "None.",
+					"title": "Possible Alternative Workarounds"
+				},
+				{
+					"category": "details",
+					"text": "See reference.",
+					"title": "Mitigation Requirements"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"See reference."
+				]
+			},
+			"release_date": "2024-11-12T00:00:00+00:00",
+			"scores": [
+				{
+					"cvss_v3": {
+						"attackComplexity": "LOW",
+						"attackVector": "ADJACENT_NETWORK",
+						"availabilityImpact": "HIGH",
+						"baseScore": 5.7,
+						"baseSeverity": "MEDIUM",
+						"confidentialityImpact": "NONE",
+						"integrityImpact": "NONE",
+						"privilegesRequired": "NONE",
+						"scope": "UNCHANGED",
+						"userInteraction": "REQUIRED",
+						"vectorString": "CVSS:3.1/AV:A/AC:L/PR:N/UI:R/S:U/C:N/I:N/A:H",
+						"version": "3.1"
+					},
+					"cvss_v4": {
+						"attackComplexity": "LOW",
+						"attackRequirements": "NONE",
+						"attackVector": "ADJACENT",
+						"baseScore": 6.8,
+						"baseSeverity": "MEDIUM",
+						"privilegesRequired": "NONE",
+						"subAvailabilityImpact": "NONE",
+						"subConfidentialityImpact": "NONE",
+						"subIntegrityImpact": "NONE",
+						"userInteraction": "ACTIVE",
+						"vectorString": "CVSS:4.0/AV:A/AC:L/AT:N/PR:N/UI:A/VC:N/VI:N/VA:H/SC:N/SI:N/SA:N",
+						"version": "4.0",
+						"vulnAvailabilityImpact": "HIGH",
+						"vulnConfidentialityImpact": "NONE",
+						"vulnIntegrityImpact": "NONE"
+					},
+					"products": [
+						"See reference."
+					]
+				}
+			],
+			"title": "Improper input validation in firmware for some Intel® PROSet/Wireless Software and Intel® Killer™ Wi-Fi wireless products before version 23.40 may allow an unauthenticated user to enable denial of service via adjacent access. "
+		},
+		{
+			"cve": "CVE-2024-24984",
+			"cwe": {
+				"id": "CWE-20",
+				"name": "Improper Input Validation"
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "The product receives input or data, but it does not validate or incorrectly validates that the input has the properties that are required to process the data safely and correctly.",
+					"title": "Root Cause Summary"
+				},
+				{
+					"category": "details",
+					"text": "An unskilled user with no authentication via adjacent network access can potentially impact availability (high) through denial of service by means of improper input validation in some Intel® Wireless Bluetooth products for Windows within Ring 1: Device Drivers.",
+					"title": "Vulnerability Overview"
+				},
+				{
+					"category": "details",
+					"text": "CVE-2024-24984: Improper input validation of certain packets in Intel® Wireless Bluetooth® may allow temporary DoS against the firmware, recoverable after a platform reset.",
+					"title": "High Level Technical Summary"
+				},
+				{
+					"category": "details",
+					"text": "None expected.",
+					"title": "Power and Performance Impacts"
+				},
+				{
+					"category": "details",
+					"text": "None.",
+					"title": "OS Dependencies"
+				},
+				{
+					"category": "details",
+					"text": "None.",
+					"title": "Possible Alternative Workarounds"
+				},
+				{
+					"category": "details",
+					"text": "See reference.",
+					"title": "Mitigation Requirements"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"See reference."
+				]
+			},
+			"release_date": "2024-11-12T00:00:00+00:00",
+			"scores": [
+				{
+					"cvss_v3": {
+						"attackComplexity": "LOW",
+						"attackVector": "ADJACENT_NETWORK",
+						"availabilityImpact": "HIGH",
+						"baseScore": 6.5,
+						"baseSeverity": "MEDIUM",
+						"confidentialityImpact": "NONE",
+						"integrityImpact": "NONE",
+						"privilegesRequired": "NONE",
+						"scope": "UNCHANGED",
+						"userInteraction": "NONE",
+						"vectorString": "CVSS:3.1/AV:A/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+						"version": "3.1"
+					},
+					"cvss_v4": {
+						"attackComplexity": "LOW",
+						"attackRequirements": "NONE",
+						"attackVector": "ADJACENT",
+						"baseScore": 6.8,
+						"baseSeverity": "MEDIUM",
+						"privilegesRequired": "NONE",
+						"subAvailabilityImpact": "NONE",
+						"subConfidentialityImpact": "NONE",
+						"subIntegrityImpact": "NONE",
+						"userInteraction": "ACTIVE",
+						"vectorString": "CVSS:4.0/AV:A/AC:L/AT:N/PR:N/UI:A/VC:N/VI:N/VA:H/SC:N/SI:N/SA:N",
+						"version": "4.0",
+						"vulnAvailabilityImpact": "HIGH",
+						"vulnConfidentialityImpact": "NONE",
+						"vulnIntegrityImpact": "NONE"
+					},
+					"products": [
+						"See reference."
+					]
+				}
+			],
+			"title": "Improper input validation for some Intel® Wireless Bluetooth® products for Windows before version 23.40 may allow an unauthenticated user to potentially enable denial of service via adjacent access. "
+		},
+		{
+			"cve": "CVE-2024-23198",
+			"cwe": {
+				"id": "CWE-20",
+				"name": "Improper Input Validation"
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "The product receives input or data, but it does not validate or incorrectly validates that the input has the properties that are required to process the data safely and correctly.",
+					"title": "Root Cause Summary"
+				},
+				{
+					"category": "details",
+					"text": "An unskilled user with no authentication via adjacent network access can potentially impact availability (high) through denial of service by means of improper input validation in some Intel® PROSet/Wireless Software and Intel® Killer™ Wi-Fi firmware.",
+					"title": "Vulnerability Overview"
+				},
+				{
+					"category": "details",
+					"text": "CVE-2024-23198, CVE-2024-28049: Improper input validation in wireless firmware, may allow firmware crash.",
+					"title": "High Level Technical Summary"
+				},
+				{
+					"category": "details",
+					"text": "None expected.",
+					"title": "Power and Performance Impacts"
+				},
+				{
+					"category": "details",
+					"text": "None.",
+					"title": "OS Dependencies"
+				},
+				{
+					"category": "details",
+					"text": "None.",
+					"title": "Possible Alternative Workarounds"
+				},
+				{
+					"category": "details",
+					"text": "See reference.",
+					"title": "Mitigation Requirements"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"See reference."
+				]
+			},
+			"release_date": "2024-11-12T00:00:00+00:00",
+			"scores": [
+				{
+					"cvss_v3": {
+						"attackComplexity": "LOW",
+						"attackVector": "ADJACENT_NETWORK",
+						"availabilityImpact": "HIGH",
+						"baseScore": 6.6,
+						"baseSeverity": "MEDIUM",
+						"confidentialityImpact": "NONE",
+						"integrityImpact": "NONE",
+						"privilegesRequired": "NONE",
+						"scope": "CHANGED",
+						"userInteraction": "REQUIRED",
+						"vectorString": "CVSS:3.1/AV:A/AC:L/PR:N/UI:R/S:C/C:N/I:N/A:H",
+						"version": "3.1"
+					},
+					"cvss_v4": {
+						"attackComplexity": "LOW",
+						"attackRequirements": "NONE",
+						"attackVector": "ADJACENT",
+						"baseScore": 6.8,
+						"baseSeverity": "MEDIUM",
+						"privilegesRequired": "NONE",
+						"subAvailabilityImpact": "NONE",
+						"subConfidentialityImpact": "NONE",
+						"subIntegrityImpact": "NONE",
+						"userInteraction": "ACTIVE",
+						"vectorString": "CVSS:4.0/AV:A/AC:L/AT:N/PR:N/UI:A/VC:N/VI:N/VA:H/SC:N/SI:N/SA:N",
+						"version": "4.0",
+						"vulnAvailabilityImpact": "HIGH",
+						"vulnConfidentialityImpact": "NONE",
+						"vulnIntegrityImpact": "NONE"
+					},
+					"products": [
+						"See reference."
+					]
+				}
+			],
+			"title": "Improper input validation in firmware for some Intel® PROSet/Wireless Software and Intel® Killer™ Wi-Fi products before version 23.40 may allow an unauthenticated user to enable denial of service via adjacent access. "
+		},
+		{
+			"cve": "CVE-2024-25563",
+			"cwe": {
+				"id": "CWE-665",
+				"name": "Improper Initialization"
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "The product does not initialize or incorrectly initializes a resource, which might leave the resource in an unexpected state when it is accessed or used.",
+					"title": "Root Cause Summary"
+				},
+				{
+					"category": "details",
+					"text": "An unskilled user with enhanced user authentication via local operating system access can potentially impact availability (high) through denial of service by means of improper initialization in some Intel® PROSet/Wireless Software and Intel® Killer™ Wi-Fi firmware. ",
+					"title": "Vulnerability Overview"
+				},
+				{
+					"category": "details",
+					"text": "CVE-2024-25563: Improper initialization of device memory access may allow information disclosure of some Wireless LAN association keys.",
+					"title": "High Level Technical Summary"
+				},
+				{
+					"category": "details",
+					"text": "None expected.",
+					"title": "Power and Performance Impacts"
+				},
+				{
+					"category": "details",
+					"text": "None.",
+					"title": "OS Dependencies"
+				},
+				{
+					"category": "details",
+					"text": "None.",
+					"title": "Possible Alternative Workarounds"
+				},
+				{
+					"category": "details",
+					"text": "See reference.",
+					"title": "Mitigation Requirements"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"See reference."
+				]
+			},
+			"release_date": "2024-11-12T00:00:00+00:00",
+			"scores": [
+				{
+					"cvss_v3": {
+						"attackComplexity": "LOW",
+						"attackVector": "LOCAL",
+						"availabilityImpact": "NONE",
+						"baseScore": 3.4,
+						"baseSeverity": "LOW",
+						"confidentialityImpact": "LOW",
+						"integrityImpact": "LOW",
+						"privilegesRequired": "HIGH",
+						"scope": "UNCHANGED",
+						"userInteraction": "NONE",
+						"vectorString": "CVSS:3.1/AV:L/AC:L/PR:H/UI:N/S:U/C:L/I:L/A:N",
+						"version": "3.1"
+					},
+					"cvss_v4": {
+						"attackComplexity": "LOW",
+						"attackRequirements": "NONE",
+						"attackVector": "LOCAL",
+						"baseScore": 4.6,
+						"baseSeverity": "MEDIUM",
+						"privilegesRequired": "HIGH",
+						"subAvailabilityImpact": "NONE",
+						"subConfidentialityImpact": "NONE",
+						"subIntegrityImpact": "NONE",
+						"userInteraction": "NONE",
+						"vectorString": "CVSS:4.0/AV:L/AC:L/AT:N/PR:H/UI:N/VC:L/VI:L/VA:N/SC:N/SI:N/SA:N",
+						"version": "4.0",
+						"vulnAvailabilityImpact": "NONE",
+						"vulnConfidentialityImpact": "LOW",
+						"vulnIntegrityImpact": "LOW"
+					},
+					"products": [
+						"See reference."
+					]
+				}
+			],
+			"title": "Improper initialization in firmware for some Intel® PROSet/Wireless Software and Intel® Killer™ Wi-Fi before version 23.40 may allow a privileged user to potentially enable information disclosure via local access. "
+		}
+	]
+}
