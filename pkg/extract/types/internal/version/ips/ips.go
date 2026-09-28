@@ -25,13 +25,15 @@
 // Where this package deliberately departs from a strict total order is a
 // component present on one side only. pkg(7) orders a missing branch or
 // timestamp before any present one; that is the right answer for choosing the
-// newest package in a repository, but the wrong one for testing a version
+// newest package in a repository, but the wrong one for testing a candidate
 // against a bound: a bound that names only a release, or only a release and a
 // timestamp, would then never be reached by an installed version that carries
-// a branch. Compare therefore treats a component missing on either side as
-// "don't care" and skips it, in the spirit of the CONSTRAINT_AUTO matching
-// policy of the same client, so that a bound states exactly the components it
-// wants compared.
+// a branch. Compare therefore takes its receiver as the bound and skips a
+// component the bound omits as "don't care", in the spirit of the
+// CONSTRAINT_AUTO matching policy of the same client, so that a bound states
+// exactly the components it wants compared. The other direction is not
+// skipped: a component the bound names but the candidate lacks is an error,
+// which the caller degrades to a non-match.
 package ips
 
 import (
@@ -139,17 +141,26 @@ func parseDotSequence(s string) (dotSequence, error) {
 	return elems, nil
 }
 
-// Compare returns -1 when v sorts before w, 0 when they are the same version,
-// and +1 when v sorts after w, under the pkg(7) order
-// (release, then branch, then timestamp; build_release ignored) with a
-// component that is missing on either side skipped as "don't care". See the
-// package documentation for why.
+// Compare orders the bound v against the candidate w under the pkg(7) order
+// (release, then branch, then timestamp; build_release ignored) and returns
+// -1, 0 or +1. A component the bound omits is "don't care" and skipped, so a
+// bound states exactly the components it wants compared. A component the
+// bound names but the candidate lacks cannot be compared and is an error, for
+// the caller to degrade to a non-match; CONSTRAINT_AUTO is asymmetric in the
+// same way. See the package documentation for why.
 //
-// Because of the don't-care rule this is not a total order: "11.4" compares
-// equal to both "11.4-11.4.1" and "11.4-11.4.94" while those two differ. It
-// is meant for testing one version against one bound; do not use it as the
-// comparator of sort or max over a mixed set of versions.
-func (v Version) Compare(w Version) int {
+// Because of the don't-care rule this is not a total order: the bound "11.4"
+// compares equal to both "11.4-11.4.1" and "11.4-11.4.94" while those two
+// differ. It is meant for testing one candidate against one bound; do not use
+// it as the comparator of sort or max over a mixed set of versions.
+func (v Version) Compare(w Version) (int, error) {
+	if len(v.branch) != 0 && len(w.branch) == 0 {
+		return 0, errors.New("the bound names a branch the candidate lacks")
+	}
+	if v.timestamp != "" && w.timestamp == "" {
+		return 0, errors.New("the bound names a timestamp the candidate lacks")
+	}
+
 	// An element is canonical decimal digits, so it orders by length and then
 	// by digits; a dot sequence that is a proper prefix of another sorts
 	// before it.
@@ -158,18 +169,18 @@ func (v Version) Compare(w Version) int {
 	return cmp.Or(
 		slices.CompareFunc(v.release, w.release, element),
 		func() int {
-			// A branch on one side only is "don't care".
-			if len(v.branch) == 0 || len(w.branch) == 0 {
+			// A branch the bound omits is "don't care".
+			if len(v.branch) == 0 {
 				return 0
 			}
 			return slices.CompareFunc(v.branch, w.branch, element)
 		}(),
 		func() int {
-			// A timestamp on one side only is "don't care".
-			if v.timestamp == "" || w.timestamp == "" {
+			// A timestamp the bound omits is "don't care".
+			if v.timestamp == "" {
 				return 0
 			}
 			return cmp.Compare(v.timestamp, w.timestamp)
 		}(),
-	)
+	), nil
 }

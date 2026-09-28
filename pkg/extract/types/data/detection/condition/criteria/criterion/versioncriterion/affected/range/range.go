@@ -601,7 +601,13 @@ func (t RangeType) CompareVersions(family ecosystemTypes.Ecosystem, v1, v2 strin
 		if err != nil {
 			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
 		}
-		return va.Compare(vb), nil
+		// v1 is the bound and v2 the candidate: a component the bound omits
+		// is skipped, one it names but the candidate lacks cannot be compared.
+		n, err := va.Compare(vb)
+		if err != nil {
+			return 0, &CompareError{Err: &CannotCompareError{Reason: fmt.Sprintf("%s. v1: %q, v2: %q", err, v1, v2)}}
+		}
+		return n, nil
 	case RangeTypeUnknown:
 		// The declared "unknown" vocabulary value is normal data (e.g. NVD
 		// emits it for ranges it cannot express); it quietly cannot evaluate.
