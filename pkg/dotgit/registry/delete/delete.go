@@ -6,6 +6,7 @@ import (
 	"log/slog"
 	"net/http"
 	"net/url"
+	"slices"
 	"strings"
 
 	"github.com/pkg/errors"
@@ -17,6 +18,7 @@ import (
 
 type options struct {
 	apiEndpoint APIEndpoint
+	force       bool
 }
 
 type Option interface {
@@ -44,6 +46,16 @@ func WithAPIEndpoint(a APIEndpoint) Option {
 	return apiOption{APIEndpoint: a}
 }
 
+type forceOption bool
+
+func (f forceOption) apply(opts *options) {
+	opts.force = bool(f)
+}
+
+func WithForce(force bool) Option {
+	return forceOption(force)
+}
+
 func Delete(image, token string, opts ...Option) error {
 	options := &options{
 		apiEndpoint: APIEndpoint{
@@ -54,6 +66,7 @@ func Delete(image, token string, opts ...Option) error {
 				return &GitHub{BaseURL: "https://api.github.com"}
 			}(),
 		},
+		force: false,
 	}
 
 	for _, o := range opts {
@@ -123,14 +136,35 @@ func Delete(image, token string, opts ...Option) error {
 			return errors.Wrap(err, "list versions")
 		}
 
-		var ids []int
+		// ls reports a version once per tag, and once with an empty name when
+		// it has none, so a digest can match several rows of the same version.
+		matched := make([]ls.Response, 0, len(rs))
 		for _, r := range rs {
 			if r.Digest == repo.Reference.Reference {
-				ids = append(ids, r.ID)
+				matched = append(matched, r)
 			}
 		}
-		if len(ids) == 0 {
+		if len(matched) == 0 {
 			return errors.Errorf("no matching digest: %q found in %s", repo.Reference.Reference, repo.Reference.Repository)
+		}
+
+		tags := make([]string, 0, len(matched))
+		for _, r := range matched {
+			if r.Name != "" {
+				tags = append(tags, r.Name)
+			}
+		}
+		// The listing a caller sweeping untagged versions based its decision on
+		// is a snapshot, and a version that was untagged when it was taken may
+		// carry a tag by the time its turn comes. Deleting it takes the tag
+		// with it and nothing puts it back. GHCR has no conditional delete, so
+		// the listing above, taken immediately before the delete, is as close
+		// to the delete as the tags can be read.
+		if len(tags) > 0 {
+			if !options.force {
+				return errors.Errorf("refuse to delete a tagged version. digest: %q, tags: %q", repo.Reference.Reference, tags)
+			}
+			slog.Warn("Deleting a tagged version", slog.String("repository", repo.Reference.Repository), slog.String("reference", repo.Reference.Reference), slog.Any("tags", tags))
 		}
 
 		u, err := url.Parse(options.apiEndpoint.GitHub.BaseURL)
@@ -139,12 +173,19 @@ func Delete(image, token string, opts ...Option) error {
 		}
 		switch options.apiEndpoint.GitHub.Type {
 		case "orgs", "users":
-			for _, id := range ids {
-				uu := u.JoinPath(options.apiEndpoint.GitHub.Type, owner, "packages", "container", pack, "versions", fmt.Sprintf("%d", id))
+			// Every row of a version carries the same id, and GHCR answers 404
+			// to the second delete of one.
+			var deleted []int
+			for _, r := range matched {
+				if slices.Contains(deleted, r.ID) {
+					continue
+				}
+
+				uu := u.JoinPath(options.apiEndpoint.GitHub.Type, owner, "packages", "container", pack, "versions", fmt.Sprintf("%d", r.ID))
 				if err := utilGitHub.Do(http.MethodDelete, uu.String(), token, func(resp *http.Response) error {
 					switch resp.StatusCode {
 					case http.StatusNoContent:
-						slog.Info("Deleted", slog.String("repository", repo.Reference.Repository), slog.String("reference", repo.Reference.Reference), slog.Int("id", id))
+						slog.Info("Deleted", slog.String("repository", repo.Reference.Repository), slog.String("reference", repo.Reference.Reference), slog.Int("id", r.ID))
 						return nil
 					default:
 						return errors.Errorf("unexpected response status. expected: %d, actual: %d", []int{http.StatusNoContent}, resp.StatusCode)
@@ -152,6 +193,8 @@ func Delete(image, token string, opts ...Option) error {
 				}); err != nil {
 					return errors.Wrap(err, "call GitHub API")
 				}
+
+				deleted = append(deleted, r.ID)
 			}
 
 			return nil

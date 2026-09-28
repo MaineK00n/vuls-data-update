@@ -189,8 +189,10 @@ func newCmdRegistryPush() *cobra.Command {
 
 func newCmdRegistryDelete() *cobra.Command {
 	options := &struct {
+		force bool
 		token string
 	}{
+		force: false,
 		token: os.Getenv("GITHUB_TOKEN"),
 	}
 
@@ -206,13 +208,14 @@ func newCmdRegistryDelete() *cobra.Command {
 				return errors.Wrap(err, "failed to check GitHub token scopes")
 			}
 
-			if err := delete.Delete(args[0], options.token); err != nil {
+			if err := delete.Delete(args[0], options.token, delete.WithForce(options.force)); err != nil {
 				return errors.Wrap(err, "failed to delete registry dotgit image")
 			}
 			return nil
 		},
 	}
 
+	cmd.Flags().BoolVarP(&options.force, "force", "f", options.force, "delete even if the version is tagged")
 	cmd.Flags().StringVarP(&options.token, "token", "", options.token, "specify GitHub token")
 
 	return cmd
