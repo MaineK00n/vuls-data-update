@@ -36,7 +36,7 @@ func TestFetch(t *testing.T) {
 			}
 
 			dir := t.TempDir()
-			err = v2.Fetch(v2.WithBaseURL(u), v2.WithDir(dir), v2.WithRetry(0))
+			err = v2.Fetch(v2.WithBaseURL(u), v2.WithDir(dir), v2.WithRetry(0), v2.WithConcurrency(1), v2.WithWait(0))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)
