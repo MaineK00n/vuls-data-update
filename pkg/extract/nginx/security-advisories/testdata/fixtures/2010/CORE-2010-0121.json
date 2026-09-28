@@ -1,0 +1,18 @@
+{
+	"id": "CORE-2010-0121",
+	"title": "Vulnerabilities with Windows 8.3 filename pseudonyms",
+	"severity": "major",
+	"not_vulnerable": [
+		"0.8.33+",
+		"0.7.65+"
+	],
+	"vulnerable": [
+		"nginx/Windows 0.7.52-0.8.32"
+	],
+	"references": [
+		{
+			"text": "CORE-2010-0121",
+			"url": "http://www.coresecurity.com/content/filename-pseudonyms-vulnerabilities"
+		}
+	]
+}

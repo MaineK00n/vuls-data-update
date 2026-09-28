@@ -77,6 +77,7 @@ import (
 	mitreCWE "github.com/MaineK00n/vuls-data-update/pkg/extract/mitre/cwe"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/msf"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/netbsd"
+	nginxSecurityAdvisories "github.com/MaineK00n/vuls-data-update/pkg/extract/nginx/security-advisories"
 	npmDB "github.com/MaineK00n/vuls-data-update/pkg/extract/npm/db"
 	npmGHSA "github.com/MaineK00n/vuls-data-update/pkg/extract/npm/ghsa"
 	npmGLSA "github.com/MaineK00n/vuls-data-update/pkg/extract/npm/glsa"
@@ -187,6 +188,7 @@ func NewCmdExtract() *cobra.Command {
 		newCmdMitreATTACK(), newCmdMitreCAPEC(), newCmdMitreCVRF(), newCmdMitreCWE(), newCmdMitreV4(), newCmdMitreV5(),
 		newCmdMSF(),
 		newCmdNetBSD(),
+		newCmdNginxSecurityAdvisories(),
 		newCmdNpmGHSA(), newCmdNpmGLSA(), newCmdNpmOSV(), newCmdNpmDB(),
 		newCmdNugetGHSA(), newCmdNugetGLSA(), newCmdNugetOSV(),
 		newCmdNucleiRepository(),
@@ -1935,6 +1937,31 @@ func newCmdNetBSD() *cobra.Command {
 		RunE: func(_ *cobra.Command, args []string) error {
 			if err := netbsd.Extract(args[0], netbsd.WithDir(options.dir)); err != nil {
 				return errors.Wrap(err, "failed to extract netbsd")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
+
+	return cmd
+}
+
+func newCmdNginxSecurityAdvisories() *cobra.Command {
+	options := &base{
+		dir: filepath.Join(util.CacheDir(), "extract", "nginx", "security-advisories"),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "nginx-security-advisories <Raw nginx Security Advisories Repository PATH>",
+		Short: "Extract nginx Security Advisories data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update extract nginx-security-advisories vuls-data-raw-nginx-security-advisories
+		`),
+		Args: cobra.ExactArgs(1),
+		RunE: func(_ *cobra.Command, args []string) error {
+			if err := nginxSecurityAdvisories.Extract(args[0], nginxSecurityAdvisories.WithDir(options.dir)); err != nil {
+				return errors.Wrap(err, "failed to extract nginx security advisories")
 			}
 			return nil
 		},
