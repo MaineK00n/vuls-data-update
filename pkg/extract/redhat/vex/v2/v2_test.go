@@ -19,6 +19,17 @@ func TestExtract(t *testing.T) {
 		hasError bool
 	}{
 		{
+			// The 2019 fixture is CVE-2019-14821 cut down to the rhel-7.8.els
+			// products, taken from the feed after CSAF Generator 3.3.1: it
+			// carries the "upstream" purl qualifier and the "<source>/" binary
+			// product_id prefix, so kernel.src ("Affected") and kernel-alt.src
+			// ("Will not fix") keep their own fix state for the kernel,
+			// kernel-debug, perf and python-perf binaries they both build.
+			//
+			// The 2026 CVE-2026-10051 and CVE-2026-68494 fixtures are cut down
+			// to their Satellite 6.16 and RHEL products: they pair the
+			// bare-module rpmmod SRPMs parseRPMPurl skips with well-formed
+			// modular SRPMs that must survive.
 			name: "happy",
 			args: args{
 				vex:            "./testdata/fixtures/vex",
