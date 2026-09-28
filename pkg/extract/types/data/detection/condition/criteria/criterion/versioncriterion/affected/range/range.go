@@ -614,7 +614,7 @@ func (t RangeType) CompareVersions(family ecosystemTypes.Ecosystem, bound, v str
 		// lacks cannot be compared.
 		n, err := b.Compare(w)
 		if err != nil {
-			return 0, &CompareError{Err: &CannotCompareError{Reason: fmt.Sprintf("%s. v1: %q, v2: %q", err, bound, v)}}
+			return 0, &CompareError{Err: &CannotCompareError{Reason: fmt.Sprintf("%s. bound: %q, v: %q", err, bound, v)}}
 		}
 		return n, nil
 	case RangeTypeUnknown:
