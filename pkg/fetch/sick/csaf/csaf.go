@@ -12,6 +12,7 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
+	utilfilepath "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/filepath"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
@@ -151,8 +152,13 @@ func (opts options) fetchCSAF(client *utilhttp.Client, urls []string) error {
 			return errors.Wrapf(err, "unexpected published format. expected: %q, actual: %q", "2006-01-02T15:04:05.000Z", csaf.Document.Tracking.InitialReleaseDate)
 		}
 
-		if err := util.Write(filepath.Join(opts.dir, fmt.Sprintf("%d", t.Year()), fmt.Sprintf("%s.json", csaf.Document.Tracking.ID)), csaf); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(opts.dir, fmt.Sprintf("%d", t.Year()), fmt.Sprintf("%s.json", csaf.Document.Tracking.ID)))
+		p, err := utilfilepath.Join(opts.dir, fmt.Sprintf("%d", t.Year()), fmt.Sprintf("%s.json", csaf.Document.Tracking.ID))
+		if err != nil {
+			return errors.Wrap(err, "join")
+		}
+
+		if err := util.Write(p, csaf); err != nil {
+			return errors.Wrapf(err, "write %s", p)
 		}
 
 		return nil

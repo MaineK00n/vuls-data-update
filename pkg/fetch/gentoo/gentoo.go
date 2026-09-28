@@ -15,6 +15,7 @@ import (
 	"github.com/schollz/progressbar/v3"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
+	utilfilepath "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/filepath"
 )
 
 const defaultRepoURL = "https://anongit.gentoo.org/git/data/glsa.git"
@@ -128,8 +129,13 @@ func Fetch(opts ...Option) error {
 			return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "yyyymm-\\d{2,}", a.ID)
 		}
 
-		if err := util.Write(filepath.Join(options.dir, splitted[0][:4], fmt.Sprintf("GLSA-%s.json", a.ID)), a); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, splitted[0][:4], fmt.Sprintf("GLSA-%s.json", a.ID)))
+		p, err := utilfilepath.Join(options.dir, splitted[0][:4], fmt.Sprintf("GLSA-%s.json", a.ID))
+		if err != nil {
+			return errors.Wrap(err, "join")
+		}
+
+		if err := util.Write(p, a); err != nil {
+			return errors.Wrapf(err, "write %s", p)
 		}
 
 		_ = bar.Add(1)

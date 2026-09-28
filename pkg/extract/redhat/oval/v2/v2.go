@@ -42,6 +42,7 @@ import (
 	repositoryTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/datasource/repository"
 	sourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/source"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/util"
+	utilfilepath "github.com/MaineK00n/vuls-data-update/pkg/extract/util/filepath"
 	utilgit "github.com/MaineK00n/vuls-data-update/pkg/extract/util/git"
 	utiljson "github.com/MaineK00n/vuls-data-update/pkg/extract/util/json"
 	utiltime "github.com/MaineK00n/vuls-data-update/pkg/extract/util/time"
@@ -164,23 +165,28 @@ func Extract(ovalDir, repository2cpeDir string, opts ...Option) error {
 						return errors.Wrap(err, "parse id")
 					}
 
-					if _, err := os.Stat(filepath.Join(options.dir, "data", prefix, y, fmt.Sprintf("%s.json", extracted.ID))); err == nil {
-						f, err := os.Open(filepath.Join(options.dir, "data", prefix, y, fmt.Sprintf("%s.json", extracted.ID)))
+					p, err := utilfilepath.Join(options.dir, "data", prefix, y, fmt.Sprintf("%s.json", extracted.ID))
+					if err != nil {
+						return errors.Wrap(err, "join")
+					}
+
+					if _, err := os.Stat(p); err == nil {
+						f, err := os.Open(p)
 						if err != nil {
-							return errors.Wrapf(err, "open %s", filepath.Join(options.dir, "data", prefix, y, fmt.Sprintf("%s.json", extracted.ID)))
+							return errors.Wrapf(err, "open %s", p)
 						}
 						defer f.Close()
 
 						var base dataTypes.Data
 						if err := json.UnmarshalRead(f, &base); err != nil {
-							return errors.Wrapf(err, "decode %s", filepath.Join(options.dir, "data", prefix, y, fmt.Sprintf("%s.json", extracted.ID)))
+							return errors.Wrapf(err, "decode %s", p)
 						}
 
 						extracted.Merge(base)
 					}
 
-					if err := util.Write(filepath.Join(options.dir, "data", prefix, y, fmt.Sprintf("%s.json", extracted.ID)), extracted, true); err != nil {
-						return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "data", prefix, y, fmt.Sprintf("%s.json", extracted.ID)))
+					if err := util.Write(p, extracted, true); err != nil {
+						return errors.Wrapf(err, "write %s", p)
 					}
 
 					return nil

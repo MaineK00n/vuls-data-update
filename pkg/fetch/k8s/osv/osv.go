@@ -14,6 +14,7 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
+	utilfilepath "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/filepath"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
@@ -120,8 +121,13 @@ func Fetch(opts ...Option) error {
 			return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", v.ID)
 		}
 
-		if err := util.Write(filepath.Join(options.dir, splitted[1], fmt.Sprintf("%s.json", v.ID)), v); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, splitted[1], fmt.Sprintf("%s.json", v.ID)))
+		p, err := utilfilepath.Join(options.dir, splitted[1], fmt.Sprintf("%s.json", v.ID))
+		if err != nil {
+			return errors.Wrap(err, "join")
+		}
+
+		if err := util.Write(p, v); err != nil {
+			return errors.Wrapf(err, "write %s", p)
 		}
 	}
 

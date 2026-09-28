@@ -26,6 +26,7 @@ import (
 	"github.com/ulikunitz/xz"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
+	utilfilepath "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/filepath"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
@@ -209,8 +210,13 @@ func Fetch(opts ...Option) error {
 						slog.Info("Fetched Debian", slog.String("codename", codename), slog.String("repo", repo), slog.String("section", section))
 						bar := progressbar.Default(int64(len(mmm)))
 						for name, source := range mmm {
-							if err := util.Write(filepath.Join(options.dir, "packages", codename, repo, section, name[:1], fmt.Sprintf("%s.json", name)), source, util.WithAllowInvalidUTF8(true)); err != nil {
-								return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "packages", codename, repo, section, name[:1], fmt.Sprintf("%s.json", name)))
+							p, err := utilfilepath.Join(options.dir, "packages", codename, repo, section, name[:1], fmt.Sprintf("%s.json", name))
+							if err != nil {
+								return errors.Wrap(err, "join")
+							}
+
+							if err := util.Write(p, source, util.WithAllowInvalidUTF8(true)); err != nil {
+								return errors.Wrapf(err, "write %s", p)
 							}
 							_ = bar.Add(1)
 						}
@@ -229,8 +235,13 @@ func Fetch(opts ...Option) error {
 
 				bar := progressbar.Default(int64(len(cpes)))
 				for _, cpe := range cpes {
-					if err := util.Write(filepath.Join(options.dir, "CPE", cpe.Package[:1], fmt.Sprintf("%s.json", cpe.Package)), cpe); err != nil {
-						return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "CPE", cpe.Package[:1], fmt.Sprintf("%s.json", cpe.Package)))
+					p, err := utilfilepath.Join(options.dir, "CPE", cpe.Package[:1], fmt.Sprintf("%s.json", cpe.Package))
+					if err != nil {
+						return errors.Wrap(err, "join")
+					}
+
+					if err := util.Write(p, cpe); err != nil {
+						return errors.Wrapf(err, "write %s", p)
 					}
 					_ = bar.Add(1)
 				}
@@ -247,13 +258,23 @@ func Fetch(opts ...Option) error {
 					switch {
 					case strings.HasPrefix(bug.Header.Name, "CVE-"):
 						y := strings.Split(bug.Header.Name, "-")[1]
-						if err := util.Write(filepath.Join(options.dir, "CVE", y, fmt.Sprintf("%s.json", bug.Header.Name)), bug); err != nil {
-							return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "CVE", y, fmt.Sprintf("%s.json", bug.Header.Name)))
+						p, err := utilfilepath.Join(options.dir, "CVE", y, fmt.Sprintf("%s.json", bug.Header.Name))
+						if err != nil {
+							return errors.Wrap(err, "join")
+						}
+
+						if err := util.Write(p, bug); err != nil {
+							return errors.Wrapf(err, "write %s", p)
 						}
 						_ = bar.Add(1)
 					case strings.HasPrefix(bug.Header.Name, "TEMP-"):
-						if err := util.Write(filepath.Join(options.dir, "CVE", "TEMP", fmt.Sprintf("%s.json", bug.Header.Name)), bug); err != nil {
-							return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "CVE", "TEMP", fmt.Sprintf("%s.json", bug.Header.Name)))
+						p, err := utilfilepath.Join(options.dir, "CVE", "TEMP", fmt.Sprintf("%s.json", bug.Header.Name))
+						if err != nil {
+							return errors.Wrap(err, "join")
+						}
+
+						if err := util.Write(p, bug); err != nil {
+							return errors.Wrapf(err, "write %s", p)
 						}
 						_ = bar.Add(1)
 					default:
@@ -270,8 +291,13 @@ func Fetch(opts ...Option) error {
 
 				bar := progressbar.Default(int64(len(bugs)))
 				for _, bug := range bugs {
-					if err := util.Write(filepath.Join(options.dir, "DLA", fmt.Sprintf("%s.json", bug.Header.Name)), bug); err != nil {
-						return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "DLA", fmt.Sprintf("%s.json", bug.Header.Name)))
+					p, err := utilfilepath.Join(options.dir, "DLA", fmt.Sprintf("%s.json", bug.Header.Name))
+					if err != nil {
+						return errors.Wrap(err, "join")
+					}
+
+					if err := util.Write(p, bug); err != nil {
+						return errors.Wrapf(err, "write %s", p)
 					}
 					_ = bar.Add(1)
 				}
@@ -285,8 +311,13 @@ func Fetch(opts ...Option) error {
 
 				bar := progressbar.Default(int64(len(bugs)))
 				for _, bug := range bugs {
-					if err := util.Write(filepath.Join(options.dir, "DSA", fmt.Sprintf("%s.json", bug.Header.Name)), bug); err != nil {
-						return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "DSA", fmt.Sprintf("%s.json", bug.Header.Name)))
+					p, err := utilfilepath.Join(options.dir, "DSA", fmt.Sprintf("%s.json", bug.Header.Name))
+					if err != nil {
+						return errors.Wrap(err, "join")
+					}
+
+					if err := util.Write(p, bug); err != nil {
+						return errors.Wrapf(err, "write %s", p)
 					}
 					_ = bar.Add(1)
 				}
@@ -300,8 +331,13 @@ func Fetch(opts ...Option) error {
 
 				bar := progressbar.Default(int64(len(bugs)))
 				for _, bug := range bugs {
-					if err := util.Write(filepath.Join(options.dir, "DTSA", fmt.Sprintf("%s.json", bug.Header.Name)), bug); err != nil {
-						return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "DTSA", fmt.Sprintf("%s.json", bug.Header.Name)))
+					p, err := utilfilepath.Join(options.dir, "DTSA", fmt.Sprintf("%s.json", bug.Header.Name))
+					if err != nil {
+						return errors.Wrap(err, "join")
+					}
+
+					if err := util.Write(p, bug); err != nil {
+						return errors.Wrapf(err, "write %s", p)
 					}
 					_ = bar.Add(1)
 				}

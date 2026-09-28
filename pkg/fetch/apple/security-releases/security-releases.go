@@ -19,6 +19,7 @@ import (
 	"golang.org/x/net/html"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
+	utilfilepath "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/filepath"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
@@ -320,14 +321,24 @@ func (opts options) fetchLists(client *utilhttp.Client, root *url.URL, pages []*
 			next = nextLevel(page.archives, processed, next)
 
 			if page.advisory != nil {
-				if err := util.Write(filepath.Join(opts.dir, "advisories", fmt.Sprintf("%s.json", page.advisory.ID)), page.advisory); err != nil {
-					return nil, errors.Wrapf(err, "write %s", filepath.Join(opts.dir, "advisories", fmt.Sprintf("%s.json", page.advisory.ID)))
+				p, err := utilfilepath.Join(opts.dir, "advisories", fmt.Sprintf("%s.json", page.advisory.ID))
+				if err != nil {
+					return nil, errors.Wrap(err, "join")
+				}
+
+				if err := util.Write(p, page.advisory); err != nil {
+					return nil, errors.Wrapf(err, "write %s", p)
 				}
 				continue
 			}
 
-			if err := util.Write(filepath.Join(opts.dir, "lists", fmt.Sprintf("%s.json", page.list.ID)), page.list); err != nil {
-				return nil, errors.Wrapf(err, "write %s", filepath.Join(opts.dir, "lists", fmt.Sprintf("%s.json", page.list.ID)))
+			p, err := utilfilepath.Join(opts.dir, "lists", fmt.Sprintf("%s.json", page.list.ID))
+			if err != nil {
+				return nil, errors.Wrap(err, "join")
+			}
+
+			if err := util.Write(p, page.list); err != nil {
+				return nil, errors.Wrapf(err, "write %s", p)
 			}
 
 			as, err := advisoryURLs(page.list, root)
@@ -427,8 +438,13 @@ func (opts options) fetchAdvisories(client *utilhttp.Client, advisories map[stri
 			return errors.Wrapf(err, "parse advisory. URL: %s", originalURL(resp))
 		}
 
-		if err := util.Write(filepath.Join(opts.dir, "advisories", fmt.Sprintf("%s.json", id)), advisory); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(opts.dir, "advisories", fmt.Sprintf("%s.json", id)))
+		p, err := utilfilepath.Join(opts.dir, "advisories", fmt.Sprintf("%s.json", id))
+		if err != nil {
+			return errors.Wrap(err, "join")
+		}
+
+		if err := util.Write(p, advisory); err != nil {
+			return errors.Wrapf(err, "write %s", p)
 		}
 		return nil
 	})

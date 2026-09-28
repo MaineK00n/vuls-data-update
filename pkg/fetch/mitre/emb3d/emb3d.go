@@ -12,6 +12,7 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
+	utilfilepath "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/filepath"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
@@ -113,8 +114,13 @@ func (opts options) fetchThreats(client *utilhttp.Client) error {
 	}
 
 	for _, t := range ts.Threats {
-		if err := util.Write(filepath.Join(opts.dir, "threats", fmt.Sprintf("%s.json", t.ID)), t); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(opts.dir, "threats", fmt.Sprintf("%s.json", t.ID)))
+		dst, err := utilfilepath.Join(opts.dir, "threats", fmt.Sprintf("%s.json", t.ID))
+		if err != nil {
+			return errors.Wrap(err, "join")
+		}
+
+		if err := util.Write(dst, t); err != nil {
+			return errors.Wrapf(err, "write %s", dst)
 		}
 	}
 
@@ -144,8 +150,13 @@ func (opts options) fetchMitigations(client *utilhttp.Client) error {
 	}
 
 	for _, m := range ms.Mitigations {
-		if err := util.Write(filepath.Join(opts.dir, "mitigations", fmt.Sprintf("%s.json", m.ID)), m); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(opts.dir, "mitigations", fmt.Sprintf("%s.json", m.ID)))
+		dst, err := utilfilepath.Join(opts.dir, "mitigations", fmt.Sprintf("%s.json", m.ID))
+		if err != nil {
+			return errors.Wrap(err, "join")
+		}
+
+		if err := util.Write(dst, m); err != nil {
+			return errors.Wrapf(err, "write %s", dst)
 		}
 	}
 
@@ -175,8 +186,13 @@ func (opts options) fetchProperties(client *utilhttp.Client) error {
 	}
 
 	for _, p := range ps.Properties {
-		if err := util.Write(filepath.Join(opts.dir, "properties", fmt.Sprintf("%s.json", p.ID)), p); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(opts.dir, "properties", fmt.Sprintf("%s.json", p.ID)))
+		dst, err := utilfilepath.Join(opts.dir, "properties", fmt.Sprintf("%s.json", p.ID))
+		if err != nil {
+			return errors.Wrap(err, "join")
+		}
+
+		if err := util.Write(dst, p); err != nil {
+			return errors.Wrapf(err, "write %s", dst)
 		}
 	}
 

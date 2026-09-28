@@ -15,6 +15,7 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
+	utilfilepath "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/filepath"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
@@ -146,8 +147,13 @@ func Fetch(args []string, opts ...Option) error {
 			return errors.Errorf("no DocumentTitle in the CVRF for %s, which CVRF requires", a.DocumentTracking.Identification.ID)
 		}
 
-		if err := util.Write(filepath.Join(options.dir, t.Format("2006"), fmt.Sprintf("%s.json", a.DocumentTracking.Identification.ID)), a); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, t.Format("2006"), fmt.Sprintf("%s.json", a.DocumentTracking.Identification.ID)))
+		p, err := utilfilepath.Join(options.dir, t.Format("2006"), fmt.Sprintf("%s.json", a.DocumentTracking.Identification.ID))
+		if err != nil {
+			return errors.Wrap(err, "join")
+		}
+
+		if err := util.Write(p, a); err != nil {
+			return errors.Wrapf(err, "write %s", p)
 		}
 
 		return nil

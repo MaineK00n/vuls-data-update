@@ -19,6 +19,7 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
+	utilfilepath "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/filepath"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
@@ -218,8 +219,13 @@ func (o options) fetchArchive(client *utilhttp.Client, archived time.Time) error
 			return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", vex.Document.Tracking.ID)
 		}
 
-		if err := util.Write(filepath.Join(o.dir, splitted[1], fmt.Sprintf("%s.json", vex.Document.Tracking.ID)), vex); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(o.dir, splitted[1], fmt.Sprintf("%s.json", vex.Document.Tracking.ID)))
+		p, err := utilfilepath.Join(o.dir, splitted[1], fmt.Sprintf("%s.json", vex.Document.Tracking.ID))
+		if err != nil {
+			return errors.Wrap(err, "join")
+		}
+
+		if err := util.Write(p, vex); err != nil {
+			return errors.Wrapf(err, "write %s", p)
 		}
 	}
 
@@ -289,8 +295,13 @@ func (o options) fetchChanges(client *utilhttp.Client, archived time.Time) error
 				return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", vex.Document.Tracking.ID)
 			}
 
-			if err := util.Write(filepath.Join(o.dir, splitted[1], fmt.Sprintf("%s.json", vex.Document.Tracking.ID)), vex); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(o.dir, splitted[1], fmt.Sprintf("%s.json", vex.Document.Tracking.ID)))
+			p, err := utilfilepath.Join(o.dir, splitted[1], fmt.Sprintf("%s.json", vex.Document.Tracking.ID))
+			if err != nil {
+				return errors.Wrap(err, "join")
+			}
+
+			if err := util.Write(p, vex); err != nil {
+				return errors.Wrapf(err, "write %s", p)
 			}
 
 			return nil
@@ -347,8 +358,13 @@ func (o options) fetchDeletions(client *utilhttp.Client, archived time.Time) err
 			// NOTE: a file that does not exist in .tar.zst may be written to deletions.csv.
 			// e.g. https://github.com/MaineK00n/vuls-data-update/actions/runs/10653815586/job/29529368312#step:9:61
 			d, f := filepath.Split(record[0])
-			if err := os.Remove(filepath.Join(o.dir, d, fmt.Sprintf("%s.json", strings.ToUpper(strings.TrimSuffix(f, ".json"))))); err != nil && !errors.Is(err, fs.ErrNotExist) {
-				return errors.Wrapf(err, "remove %s", filepath.Join(o.dir, d, fmt.Sprintf("%s.json", strings.ToUpper(strings.TrimSuffix(f, ".json")))))
+			p, err := utilfilepath.Join(o.dir, d, fmt.Sprintf("%s.json", strings.ToUpper(strings.TrimSuffix(f, ".json"))))
+			if err != nil {
+				return errors.Wrap(err, "join")
+			}
+
+			if err := os.Remove(p); err != nil && !errors.Is(err, fs.ErrNotExist) {
+				return errors.Wrapf(err, "remove %s", p)
 			}
 		}
 	}

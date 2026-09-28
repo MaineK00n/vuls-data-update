@@ -12,6 +12,7 @@ import (
 	"github.com/schollz/progressbar/v3"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
+	utilfilepath "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/filepath"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
@@ -95,7 +96,11 @@ func Fetch(opts ...Option) error {
 		if err := json.Unmarshal(raw, &head); err != nil {
 			return errors.Wrap(err, "decode stix object envelope")
 		}
-		path := filepath.Join(options.dir, head.Type, fmt.Sprintf("%s.json", head.ID))
+		path, err := utilfilepath.Join(options.dir, head.Type, fmt.Sprintf("%s.json", head.ID))
+		if err != nil {
+			return errors.Wrap(err, "join")
+		}
+
 		switch head.Type {
 		case "attack-pattern":
 			var o AttackPattern

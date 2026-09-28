@@ -12,6 +12,7 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
+	utilfilepath "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/filepath"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
@@ -121,8 +122,13 @@ LOOP:
 	for k, v := range m {
 		sum := sha256.Sum256([]byte(k))
 
-		if err := util.Write(filepath.Join(options.dir, fmt.Sprintf("%x", sum[:1]), fmt.Sprintf("%x.json", sum)), v); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, fmt.Sprintf("%x", sum[:4]), fmt.Sprintf("%x.json", sum)))
+		p, err := utilfilepath.Join(options.dir, fmt.Sprintf("%x", sum[:1]), fmt.Sprintf("%x.json", sum))
+		if err != nil {
+			return errors.Wrap(err, "join")
+		}
+
+		if err := util.Write(p, v); err != nil {
+			return errors.Wrapf(err, "write %s", p)
 		}
 	}
 

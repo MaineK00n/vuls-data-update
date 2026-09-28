@@ -17,6 +17,7 @@ import (
 
 	nvdutil "github.com/MaineK00n/vuls-data-update/pkg/fetch/nvd/api/util"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
+	utilfilepath "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/filepath"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
@@ -286,8 +287,13 @@ func Fetch(opts ...Option) error {
 				return errors.Errorf("unexpected change ID format. expected: %q, actual: %q", cveChangeIDPattern.String(), ch.Change.CVEChangeID)
 			}
 
-			if err := util.Write(filepath.Join(options.dir, m[1], ch.Change.CVEID, fmt.Sprintf("%s.json", ch.Change.CVEChangeID)), ch.Change); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, m[1], ch.Change.CVEID, fmt.Sprintf("%s.json", ch.Change.CVEChangeID)))
+			p, err := utilfilepath.Join(options.dir, m[1], ch.Change.CVEID, fmt.Sprintf("%s.json", ch.Change.CVEChangeID))
+			if err != nil {
+				return errors.Wrap(err, "join")
+			}
+
+			if err := util.Write(p, ch.Change); err != nil {
+				return errors.Wrapf(err, "write %s", p)
 			}
 		}
 		return nil
