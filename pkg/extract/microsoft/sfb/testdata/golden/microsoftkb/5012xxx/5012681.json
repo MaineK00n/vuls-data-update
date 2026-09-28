@@ -1,0 +1,23 @@
+{
+	"kb_id": "5012681",
+	"url": "https://support.microsoft.com/help/5012681",
+	"products": [
+		"Lync Server 2013 update history"
+	],
+	"superseded_by": [
+		{
+			"kb_id": "5016714"
+		}
+	],
+	"supersedes": [
+		{
+			"kb_id": "5003729"
+		}
+	],
+	"data_source": {
+		"id": "microsoft-sfb",
+		"raws": [
+			"sfb-server-updates.json"
+		]
+	}
+}

@@ -1,0 +1,225 @@
+{
+	"url": "https://learn.microsoft.com/en-us/skypeforbusiness/sfb-server-updates",
+	"tables": [
+		{
+			"heading": "Skype for Business Server Subscription Edition (SE) update history",
+			"header": [
+				"Package name",
+				"KB number",
+				"Build number",
+				"Release date"
+			],
+			"rows": [
+				[
+					{
+						"text": "Skype for Business Server Subscription Edition (SE), Cumulative Update 1"
+					},
+					{
+						"text": "KB 5065372",
+						"href": "https://support.microsoft.com/help/5065372"
+					},
+					{
+						"text": "7.0.2046.849"
+					},
+					{
+						"text": "June 2026"
+					}
+				],
+				[
+					{
+						"text": "Skype for Business Server Subscription Edition (SE) RTM, Hotfix 1"
+					},
+					{
+						"text": "KB 5065372",
+						"href": "https://support.microsoft.com/help/5065372"
+					},
+					{
+						"text": "7.0.2046.826"
+					},
+					{
+						"text": "August 2025"
+					}
+				]
+			]
+		},
+		{
+			"heading": "Skype for Business Server 2019 update history",
+			"header": [
+				"Package name",
+				"KB number",
+				"Release date"
+			],
+			"rows": [
+				[
+					{
+						"text": "Skype for Business Server 2019 Cumulative Update 8, Hotfix 2"
+					},
+					{
+						"text": "KB 4470124",
+						"href": "https://support.microsoft.com/help/4470124"
+					},
+					{
+						"text": "August 2025"
+					}
+				],
+				[
+					{
+						"text": "Skype for Business Server 2019 Cumulative Update 8, Hotfix 1"
+					},
+					{
+						"text": "KB 4470124",
+						"href": "https://support.microsoft.com/help/4470124"
+					},
+					{
+						"text": "March 2025"
+					}
+				],
+				[
+					{
+						"text": "Description of the security update for Skype for Business Server and Lync Server: July 12, 2022"
+					},
+					{
+						"text": "KB 5016714",
+						"href": "https://support.microsoft.com/help/5016714"
+					},
+					{
+						"text": "July 2022"
+					}
+				]
+			]
+		},
+		{
+			"heading": "Skype for Business Server 2019 tools",
+			"header": [
+				"Package name",
+				"Release date"
+			],
+			"rows": [
+				[
+					{
+						"text": "Lync Server 2013 Debugging Tools"
+					},
+					{
+						"text": "October 2012"
+					}
+				]
+			]
+		},
+		{
+			"heading": "Lync Server 2013 update history",
+			"header": [
+				"Package name",
+				"KB number",
+				"Release date"
+			],
+			"rows": [
+				[
+					{
+						"text": "Description of the security update for Skype for Business Server and Lync Server: July 12, 2022"
+					},
+					{
+						"text": "KB 5016714",
+						"href": "https://support.microsoft.com/help/5016714"
+					},
+					{
+						"text": "July 2022"
+					}
+				],
+				[
+					{
+						"text": "Description of the security update for Skype for Business Lync Server 2013: April 12, 2022"
+					},
+					{
+						"text": "KB 5012681",
+						"href": "https://support.microsoft.com/help/5012681"
+					},
+					{
+						"text": "April 2022"
+					}
+				],
+				[
+					{
+						"text": "Lync Server 2013 Cumulative Update 10, Hotfix 6"
+					},
+					{
+						"text": "KB 5003729",
+						"href": "https://support.microsoft.com/help/5003729"
+					},
+					{
+						"text": "May 11, 2021"
+					}
+				],
+				[
+					{
+						"text": "Lync Server 2013 Cumulative Update 10, Hotfix 5"
+					},
+					{
+						"text": "KB 5000675 , KB 5000688",
+						"href": "https://support.microsoft.com/help/5000675"
+					},
+					{
+						"text": "February 9, 2021"
+					}
+				],
+				[
+					{
+						"text": "Lync Server 2013 Cumulative Update 5, Hotfix 2"
+					},
+					{
+						"text": "KB 2987511",
+						"href": "https://support.microsoft.com/help/2987511"
+					},
+					{
+						"text": "Sept 2014"
+					}
+				]
+			]
+		},
+		{
+			"heading": "Lync Server 2010 update history",
+			"header": [
+				"Package name",
+				"KB number",
+				"Release date"
+			],
+			"rows": [
+				[
+					{
+						"text": "Lync Server 2010 Cumulative Update 18 Hotfix 1"
+					},
+					{
+						"text": "KB 2493736",
+						"href": "https://support.microsoft.com/help/2493736"
+					},
+					{
+						"text": "June 2019"
+					}
+				],
+				[
+					{
+						"text": "Lync Server 2010 Cumulative Update 18"
+					},
+					{
+						"text": "KB 2493736",
+						"href": "https://support.microsoft.com/help/2493736"
+					},
+					{
+						"text": "January 2019"
+					}
+				],
+				[
+					{
+						"text": "Lync Server 2010 Cumulative Update 13"
+					},
+					{
+						"text": "KB 2982385 KB 2982388",
+						"href": "https://support.microsoft.com/help/2982385"
+					},
+					{
+						"text": "September 2014"
+					}
+				]
+			]
+		}
+	]
+}

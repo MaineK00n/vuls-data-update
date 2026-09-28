@@ -1,0 +1,22 @@
+{
+	"kb_id": "5000688",
+	"products": [
+		"Lync Server 2013 update history"
+	],
+	"superseded_by": [
+		{
+			"kb_id": "5003729"
+		}
+	],
+	"supersedes": [
+		{
+			"kb_id": "2987511"
+		}
+	],
+	"data_source": {
+		"id": "microsoft-sfb",
+		"raws": [
+			"sfb-server-updates.json"
+		]
+	}
+}
