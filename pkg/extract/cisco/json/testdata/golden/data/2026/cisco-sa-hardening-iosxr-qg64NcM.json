@@ -1,0 +1,411 @@
+{
+	"id": "cisco-sa-hardening-iosxr-qg64NcM",
+	"advisories": [
+		{
+			"content": {
+				"id": "cisco-sa-hardening-iosxr-qg64NcM",
+				"title": "Cisco IOS XR Software Security Hardening Release: September 2026",
+				"description": "<p>As part of Cisco's ongoing commitment to proactive security and product quality, the Cisco IOS XR Software engineering team has conducted a comprehensive internal security review. This review resulted in software hardening releases that address multiple internally discovered vulnerabilities. &nbsp;</p>\r\n<p>These vulnerabilities were found during internal testing and are not known to be actively exploited. To assist customers in patching and streamline the disclosure process, Cisco has grouped these issues by their underlying vulnerability class &mdash; Common Weakness Enumeration (CWE) &mdash; and assigned a single Common Vulnerabilities and Exposures identifier (CVE ID) to each CWE grouping.</p>\r\n<p>Cisco has released software updates that address these vulnerabilities. There are no workarounds that address these vulnerabilities.</p>\r\n<p>This advisory is available at the following link:<br><a href=\"https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-hardening-iosxr-qg64NcM\" target=\"_blank\" rel=\"noopener\">https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-hardening-iosxr-qg64NcM</a></p>",
+				"severity": [
+					{
+						"type": "vendor",
+						"source": "cisco.com",
+						"vendor": "Critical"
+					}
+				],
+				"cwe": [
+					{
+						"source": "cisco.com",
+						"cwe": [
+							"CWE-284",
+							"CWE-664",
+							"CWE-682",
+							"CWE-691",
+							"CWE-693",
+							"CWE-703",
+							"CWE-707"
+						]
+					}
+				],
+				"references": [
+					{
+						"source": "cisco.com",
+						"url": "https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-hardening-iosxr-qg64NcM"
+					},
+					{
+						"source": "cisco.com",
+						"url": "https://sec.cloudapps.cisco.com/security/center/contentjson/CiscoSecurityAdvisory/cisco-sa-hardening-iosxr-qg64NcM/csaf/cisco-sa-hardening-iosxr-qg64NcM.json"
+					},
+					{
+						"source": "cisco.com",
+						"url": "https://sec.cloudapps.cisco.com/security/center/contentxml/CiscoSecurityAdvisory/cisco-sa-hardening-iosxr-qg64NcM/cvrf/cisco-sa-hardening-iosxr-qg64NcM_cvrf.xml"
+					}
+				],
+				"published": "2026-09-02T16:00:00Z",
+				"modified": "2026-09-17T21:13:28Z"
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe"
+				}
+			]
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-2026-20274"
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2026-20275"
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2026-20276"
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2026-20277"
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2026-20278"
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2026-20279"
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2026-20280"
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe"
+				}
+			]
+		}
+	],
+	"detections": [
+		{
+			"ecosystem": "cpe",
+			"conditions": [
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"cpe": "cpe:2.3:o:cisco:ios_xr:*:*:*:*:*:*:*:*",
+									"cpe_matches": [
+										"cpe:2.3:o:cisco:ios_xr:2.0.0:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:24.1.1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:24.1.2:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:24.2.11:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:24.2.1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:24.2.20:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:24.2.21:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:24.2.2:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:24.3.1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:24.3.20:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:24.3.2:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:24.3.30:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:24.4.10:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:24.4.15:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:24.4.1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:24.4.2:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:24.4.30:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:25.1.1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:25.1.2:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:25.1.30:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:25.2.1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:25.2.2:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:25.2.30:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:25.3.15:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:25.3.1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:25.4.1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:25.4.201:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:25.4.2:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:25.4.30:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:26.1.1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:26.1.2:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:26.2.100:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:26.2.101:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:26.2.1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:3.0.0:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:3.0.1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:3.2.0:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:3.2.1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:3.2.2:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:3.2.3:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:3.2.4:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:3.2.50:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:3.2.6:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:3.3.0:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:3.3.1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:3.3.2:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:3.3.3:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:3.3.4:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:3.4.0:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:3.4.1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:3.4.2:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:3.4.3:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:3.5.0:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:3.5.2:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:3.5.3:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:3.5.4:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:3.6.0:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:3.6.1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:3.6.2:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:3.6.3:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:3.7.0:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:3.7.1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:3.7.2:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:3.7.3:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:3.8.0:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:3.8.1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:3.8.2:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:3.8.3:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:3.8.4:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:3.9.0:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:3.9.1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:3.9.2:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:3.9.3:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:4.0.0:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:4.0.11:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:4.0.1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:4.0.2:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:4.0.3:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:4.0.4:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:4.1.0:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:4.1.1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:4.1.2:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:4.2.0:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:4.2.1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:4.2.2:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:4.2.3:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:4.2.4:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:4.3.0:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:4.3.1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:4.3.2:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:4.3.3:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:4.3.4:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:5.0.0:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:5.0.1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:5.1.0:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:5.1.11:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:5.1.12:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:5.1.1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:5.1.2:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:5.1.3:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:5.1.4:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:5.2.0:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:5.2.1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:5.2.21:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:5.2.2:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:5.2.3:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:5.2.47:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:5.2.4:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:5.2.5:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:5.2.6:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:5.3.0:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:5.3.1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:5.3.2:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:5.3.31:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:5.3.3:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:5.3.4:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:6.0.0:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:6.0.1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:6.0.2:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:6.1.0:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:6.1.11:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:6.1.12:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:6.1.1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:6.1.21:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:6.1.22:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:6.1.2:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:6.1.31:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:6.1.32:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:6.1.33:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:6.1.36:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:6.1.3:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:6.1.42:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:6.1.45:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:6.1.4:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:6.2.0:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:6.2.11:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:6.2.1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:6.2.25:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:6.2.2:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:6.2.3:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:6.2.8:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:6.2.9:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:6.3.0:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:6.3.15:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:6.3.1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:6.3.2:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:6.3.3:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:6.4.0:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:6.4.1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:6.4.2:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:6.4.3:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:6.4.9999:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:6.5.0:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:6.5.15:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:6.5.1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:6.5.25:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:6.5.26:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:6.5.28:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:6.5.29:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:6.5.2:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:6.5.31:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:6.5.32:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:6.5.33:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:6.5.351:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:6.5.352:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:6.5.353:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:6.5.35:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:6.5.36:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:6.5.3:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:6.5.90:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:6.5.92:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:6.5.93:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:6.6.0:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:6.6.11:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:6.6.12:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:6.6.1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:6.6.25:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:6.6.2:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:6.6.3:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:6.6.406:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:6.6.4:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:6.6.560:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:6.6.90:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:6.7.0:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:6.7.1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:6.7.2:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:6.7.35:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:6.7.3:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:6.7.4:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:6.8.1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:6.8.2:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:6.9.1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:6.9.2:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:7.0.0:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:7.0.11:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:7.0.12:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:7.0.14:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:7.0.1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:7.0.208:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:7.0.213:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:7.0.216:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:7.0.219:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:7.0.220:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:7.0.2:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:7.0.90:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:7.1.0:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:7.1.119:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:7.1.122:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:7.1.15:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:7.1.1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:7.1.25:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:7.1.2:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:7.1.3:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:7.10.1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:7.10.2:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:7.11.1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:7.11.21:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:7.11.2:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:7.2.0:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:7.2.12:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:7.2.141:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:7.2.1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:7.2.2:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:7.3.15:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:7.3.16:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:7.3.1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:7.3.27:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:7.3.2:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:7.3.3:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:7.3.4:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:7.3.5:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:7.3.6:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:7.4.15:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:7.4.16:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:7.4.1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:7.4.2:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:7.5.12:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:7.5.1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:7.5.2:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:7.5.3:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:7.5.4:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:7.5.5:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:7.6.15:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:7.6.1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:7.6.2:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:7.6.3:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:7.7.1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:7.7.21:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:7.7.2:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:7.8.1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:7.8.22:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:7.8.23:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:7.8.2:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:7.9.1:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:7.9.21:*:*:*:*:*:*:*",
+										"cpe:2.3:o:cisco:ios_xr:7.9.2:*:*:*:*:*:*:*"
+									]
+								}
+							}
+						]
+					}
+				}
+			]
+		}
+	],
+	"data_source": {
+		"id": "cisco-json",
+		"raws": [
+			"fixtures/2026/cisco-sa-hardening-iosxr-qg64NcM.json"
+		]
+	}
+}
