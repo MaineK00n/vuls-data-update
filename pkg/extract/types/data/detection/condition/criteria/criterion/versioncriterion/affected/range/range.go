@@ -64,6 +64,7 @@ const (
 	RangeTypeDPKG                                  RangeType = "dpkg"
 	RangeTypePacman                                RangeType = "pacman"
 	RangeTypeFreeBSDPkg                            RangeType = "freebsd-pkg"
+	RangeTypeSolarisIPS                            RangeType = "solaris-ips"
 	RangeTypeNPM                                   RangeType = "npm"
 	RangeTypeRubyGems                              RangeType = "rubygems"
 	RangeTypePyPI                                  RangeType = "pypi"
@@ -92,11 +93,6 @@ const (
 	RangeTypeMicrosoftWindows                      RangeType = "microsoft-windows"
 
 	RangeTypeUnknown RangeType = "unknown"
-
-	// Values added after the unknown sentinel keep the vocabulary rank of every
-	// earlier value, unknown included, so a build that does not know them
-	// orders them the same way (after every value it knows).
-	RangeTypeSolarisIPS RangeType = "solaris-ips"
 )
 
 // RangeTypes returns every RangeType this build knows, in declaration order.
@@ -114,6 +110,7 @@ func RangeTypes() []RangeType {
 		RangeTypeDPKG,
 		RangeTypePacman,
 		RangeTypeFreeBSDPkg,
+		RangeTypeSolarisIPS,
 		RangeTypeNPM,
 		RangeTypeRubyGems,
 		RangeTypePyPI,
@@ -141,7 +138,6 @@ func RangeTypes() []RangeType {
 		RangeTypeMicrosoftVSCode,
 		RangeTypeMicrosoftWindows,
 		RangeTypeUnknown,
-		RangeTypeSolarisIPS,
 	}
 }
 
