@@ -298,7 +298,7 @@ func TestAffected_Accept(t *testing.T) {
 			want: false,
 		},
 		{
-			name: "solaris-ips 11.4 without a branch [< 11.4-11.4.94]: the bound names a branch the version lacks, no match",
+			name: "solaris-ips 11.4 without a branch [< 11.4-11.4.94]: the pattern names a branch the version lacks, no match",
 			fields: fields{
 				Type:  affectedrangeTypes.RangeTypeSolarisIPS,
 				Range: []affectedrangeTypes.Range{{LessThan: "11.4-11.4.94"}},
@@ -316,7 +316,7 @@ func TestAffected_Accept(t *testing.T) {
 			want: true,
 		},
 		{
-			name: "solaris-ips 1.8.0.181.12:20180711T215531Z [< 1.8.0.471]: a release-only bound reaches a version with a timestamp",
+			name: "solaris-ips 1.8.0.181.12:20180711T215531Z [< 1.8.0.471]: a release-only pattern reaches a version with a timestamp",
 			fields: fields{
 				Type:  affectedrangeTypes.RangeTypeSolarisIPS,
 				Range: []affectedrangeTypes.Range{{LessThan: "1.8.0.471"}},

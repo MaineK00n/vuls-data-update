@@ -50,7 +50,7 @@ func (a Affected) Accept(family ecosystemTypes.Ecosystem, v string) (bool, error
 			return false, &warningTypes.UnevaluableError{Warning: warningTypes.Warning{Kind: warningTypes.KindEmptyRange}}
 		}
 		if r.Equal != "" {
-			n, err := testBound(a.Type, family, r.Equal, v)
+			n, err := testPattern(a.Type, family, r.Equal, v)
 			if err != nil {
 				if w, ok := stderrors.AsType[warningTypes.Warnable](err); ok {
 					return false, &warningTypes.UnevaluableError{Warning: w.Warning(), Err: err}
@@ -65,7 +65,7 @@ func (a Affected) Accept(family ecosystemTypes.Ecosystem, v string) (bool, error
 			}
 		}
 		if r.GreaterEqual != "" {
-			n, err := testBound(a.Type, family, r.GreaterEqual, v)
+			n, err := testPattern(a.Type, family, r.GreaterEqual, v)
 			if err != nil {
 				if w, ok := stderrors.AsType[warningTypes.Warnable](err); ok {
 					return false, &warningTypes.UnevaluableError{Warning: w.Warning(), Err: err}
@@ -80,7 +80,7 @@ func (a Affected) Accept(family ecosystemTypes.Ecosystem, v string) (bool, error
 			}
 		}
 		if r.GreaterThan != "" {
-			n, err := testBound(a.Type, family, r.GreaterThan, v)
+			n, err := testPattern(a.Type, family, r.GreaterThan, v)
 			if err != nil {
 				if w, ok := stderrors.AsType[warningTypes.Warnable](err); ok {
 					return false, &warningTypes.UnevaluableError{Warning: w.Warning(), Err: err}
@@ -95,7 +95,7 @@ func (a Affected) Accept(family ecosystemTypes.Ecosystem, v string) (bool, error
 			}
 		}
 		if r.LessEqual != "" {
-			n, err := testBound(a.Type, family, r.LessEqual, v)
+			n, err := testPattern(a.Type, family, r.LessEqual, v)
 			if err != nil {
 				if w, ok := stderrors.AsType[warningTypes.Warnable](err); ok {
 					return false, &warningTypes.UnevaluableError{Warning: w.Warning(), Err: err}
@@ -110,7 +110,7 @@ func (a Affected) Accept(family ecosystemTypes.Ecosystem, v string) (bool, error
 			}
 		}
 		if r.LessThan != "" {
-			n, err := testBound(a.Type, family, r.LessThan, v)
+			n, err := testPattern(a.Type, family, r.LessThan, v)
 			if err != nil {
 				if w, ok := stderrors.AsType[warningTypes.Warnable](err); ok {
 					return false, &warningTypes.UnevaluableError{Warning: w.Warning(), Err: err}
@@ -129,31 +129,33 @@ func (a Affected) Accept(family ecosystemTypes.Ecosystem, v string) (bool, error
 	return false, nil
 }
 
-// testBound tells where the version v falls against the bound of a range
-// under t: -1 before it, 0 on it, +1 after it. For every type but one that is
-// the sign of t.CompareVersions(bound, v), with its errors. A solaris-ips
-// bound is a pattern that names only the components it wants compared, not a
-// version, so it is not put through the version order: ips.Bound.Test answers
-// the same question, skipping a component the bound omits; one it names but
-// v lacks cannot be tested and is a *rangeTypes.CompareError, so the range is
-// a non-match. CompareVersions itself stays an order between two versions.
-func testBound(t rangeTypes.RangeType, family ecosystemTypes.Ecosystem, bound, v string) (int, error) {
+// testPattern tells where the version v falls against pattern, the string
+// an operator of a Range carries, under t: -1 before it, 0 on it, +1 after
+// it. For every type but one the pattern is a full version and this is the
+// sign of t.CompareVersions(pattern, v), with its errors. A solaris-ips
+// pattern names only the components it wants compared (a level such as
+// 11.4-11.4.94), so it is not put through the version order: ips.Pattern.Test
+// answers the same question, skipping a component the pattern omits; one it
+// names but v lacks cannot be tested and is a *rangeTypes.CompareError, so
+// the range is a non-match. CompareVersions itself stays an order between two
+// versions.
+func testPattern(t rangeTypes.RangeType, family ecosystemTypes.Ecosystem, pattern, v string) (int, error) {
 	switch t {
 	case rangeTypes.RangeTypeSolarisIPS:
-		b, err := ipsVersion.NewBound(bound)
+		p, err := ipsVersion.NewPattern(pattern)
 		if err != nil {
-			return 0, &rangeTypes.CompareError{Err: &rangeTypes.NewVersionError{RangeType: t, Version: bound, Err: err}}
+			return 0, &rangeTypes.CompareError{Err: &rangeTypes.NewVersionError{RangeType: t, Version: pattern, Err: err}}
 		}
 		w, err := ipsVersion.NewVersion(v)
 		if err != nil {
 			return 0, &rangeTypes.CompareError{Err: &rangeTypes.NewVersionError{RangeType: t, Version: v, Err: err}}
 		}
-		n, err := b.Test(w)
+		n, err := p.Test(w)
 		if err != nil {
-			return 0, &rangeTypes.CompareError{Err: &rangeTypes.CannotCompareError{Reason: fmt.Sprintf("%s. bound: %q, v: %q", err, bound, v)}}
+			return 0, &rangeTypes.CompareError{Err: &rangeTypes.CannotCompareError{Reason: fmt.Sprintf("%s. pattern: %q, v: %q", err, pattern, v)}}
 		}
 		return n, nil
 	default:
-		return t.CompareVersions(family, bound, v)
+		return t.CompareVersions(family, pattern, v)
 	}
 }

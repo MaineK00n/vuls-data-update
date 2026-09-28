@@ -26,13 +26,15 @@
 // for a component present on one side only: a missing branch or timestamp
 // sorts before any present one (Version.__lt__). That is the right answer for
 // choosing the newest package in a repository, but the wrong one for testing
-// a version against a bound: a bound that names only a release, or only a
+// a version against a pattern: a pattern that names only a release, or only a
 // release and a timestamp, would then never be reached by an installed
-// version that carries a branch. Bound.Test is that test, in the spirit of
-// the CONSTRAINT_AUTO matching policy of the same client: the bound decides
+// version that carries a branch. Pattern.Test is that test, in the spirit of
+// the CONSTRAINT_AUTO matching policy of the same client: the pattern decides
 // which components are compared, a component it omits is "don't care", and a
 // component it names but the version lacks is not a match. The two are kept
-// apart because the test is asymmetric and the order is not.
+// apart because the test is asymmetric and the order is not. Every Version
+// is also a Pattern (one that names every component), so for a full pattern
+// Test and Compare agree.
 package ips
 
 import (
@@ -63,21 +65,22 @@ type Version struct {
 // integers).
 type dotSequence []string
 
-// Bound is the boundary of a range, written in the IPS version grammar as a
-// pattern: it names only the components it wants compared, the way
-// "pkg install entire@11.4-11.4.94" names a level rather than a version.
-// Test tells whether a Version falls before, on or after it.
-type Bound struct {
+// Pattern is a version pattern, written in the IPS version grammar: it names
+// only the components it wants compared, the way "pkg install
+// entire@11.4-11.4.94" names a level rather than a version (pkg(1) calls the
+// whole thing a pkg_fmri_pattern). A range endpoint of this type is a
+// Pattern. Test tells whether a Version falls before, on or after it.
+type Pattern struct {
 	v Version
 }
 
-// NewBound parses a range boundary. The grammar is that of NewVersion.
-func NewBound(s string) (Bound, error) {
+// NewPattern parses a version pattern. The grammar is that of NewVersion.
+func NewPattern(s string) (Pattern, error) {
 	v, err := NewVersion(s)
 	if err != nil {
-		return Bound{}, errors.Wrap(err, "parse bound")
+		return Pattern{}, errors.Wrap(err, "parse pattern")
 	}
-	return Bound{v: v}, nil
+	return Pattern{v: v}, nil
 }
 
 // NewVersion parses an IPS version string. Anything that pkg(7) would reject
@@ -170,7 +173,7 @@ func element(a, b string) int {
 // then timestamp, build_release ignored, and a branch or timestamp missing on
 // one side sorting before a present one (an empty sequence is a prefix of any
 // other, and "" is below any timestamp). This is a total order, fit for sort
-// or max; for testing a version against a bound see Bound.Test.
+// or max; for testing a version against a pattern see Pattern.Test.
 func (v Version) Compare(w Version) int {
 	return cmp.Or(
 		slices.CompareFunc(v.release, w.release, element),
@@ -179,27 +182,26 @@ func (v Version) Compare(w Version) int {
 	)
 }
 
-// Test tells where the version w falls against the bound b: -1 before it, 0
-// on it, +1 after it, under the pkg(7) order as Version.Compare, except that
-// only the bound decides which components take part. It is a match test, not
-// an order: a bound is a pattern, not a version. A component the bound omits
-// is "don't care"; a
-// component the bound names but the version lacks cannot be compared and is
+// Test tells where the version w falls against the pattern p: -1 before it,
+// 0 on it, +1 after it, under the pkg(7) order as Version.Compare, except
+// that only the pattern decides which components take part. It is a match
+// test, not an order. A component the pattern omits is "don't care"; a
+// component the pattern names but the version lacks cannot be tested and is
 // an error, for the caller to degrade to a non-match (CONSTRAINT_AUTO is
 // asymmetric in the same way). That error is raised only once the components
-// before it are equal: the release alone orders "11.3" against the bound
+// before it are equal: the release alone places "11.3" against the pattern
 // "11.4:20180817T004203Z", so the missing timestamp never comes into it.
-func (b Bound) Test(w Version) (int, error) {
-	v := b.v
+func (p Pattern) Test(w Version) (int, error) {
+	v := p.v
 	if n := slices.CompareFunc(v.release, w.release, element); n != 0 {
 		return n, nil
 	}
 
-	// A branch the bound omits is "don't care"; one it names, the version
-	// must have for the comparison to go on.
+	// A branch the pattern omits is "don't care"; one it names, the version
+	// must have for the test to go on.
 	if len(v.branch) != 0 {
 		if len(w.branch) == 0 {
-			return 0, errors.New("the bound names a branch the version lacks")
+			return 0, errors.New("the pattern names a branch the version lacks")
 		}
 		if n := slices.CompareFunc(v.branch, w.branch, element); n != 0 {
 			return n, nil
@@ -209,7 +211,7 @@ func (b Bound) Test(w Version) (int, error) {
 	// Likewise for the timestamp.
 	if v.timestamp != "" {
 		if w.timestamp == "" {
-			return 0, errors.New("the bound names a timestamp the version lacks")
+			return 0, errors.New("the pattern names a timestamp the version lacks")
 		}
 		return cmp.Compare(v.timestamp, w.timestamp), nil
 	}
