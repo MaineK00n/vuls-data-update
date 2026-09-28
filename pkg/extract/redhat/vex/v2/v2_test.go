@@ -19,6 +19,13 @@ func TestExtract(t *testing.T) {
 		hasError bool
 	}{
 		{
+			// The 2025 fixture is CVE-2025-40190 cut down to rhel-8.10.z, whose
+			// only CPE is cpe:/a:redhat:rhel_e6s:8.10 — a RHEL release
+			// majorFromCPE used to read as no RHEL at all, dropping every
+			// package under it. The 2016 fixture is CVE-2016-8620 cut down to
+			// the two Software Collections products: the bare RHSCL 3 CPE must
+			// yield no major (RHSCL 3 ships for RHEL 6 and 7, it is not RHEL 3)
+			// while the ::el7 form of the same release still resolves.
 			name: "happy",
 			args: args{
 				vex:            "./testdata/fixtures/vex",
