@@ -235,7 +235,8 @@ var ErrRangeTypeUnknown = errors.New("unknown range type")
 // for v1 > v2.
 //
 // v1 is the bound of a range and v2 the version tested against it, which is
-// how Affected.Accept and the CPE range call it. Most comparators are
+// how Affected.Accept calls it; the CPE range keeps the same convention for
+// its own CompareVersions. Most comparators are
 // indifferent to the order, but not all: solaris-ips lets the bound name only
 // the components it wants compared, so its result depends on which side is
 // the bound, and a bound naming a component the version lacks is a
