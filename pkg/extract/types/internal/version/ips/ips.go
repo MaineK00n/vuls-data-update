@@ -28,12 +28,15 @@
 // newest package in a repository, but the wrong one for testing a candidate
 // against a bound: a bound that names only a release, or only a release and a
 // timestamp, would then never be reached by an installed version that carries
-// a branch. The comparison is therefore asymmetric and the types say so: a
-// Bound compares a Version, never the other way round. A component the bound
-// omits is "don't care" and skipped, in the spirit of the CONSTRAINT_AUTO
-// matching policy of the same client, so that a bound states exactly the
-// components it wants compared; a component the bound names but the version
-// lacks is an error, which the caller degrades to a non-match.
+// a branch. Version.Compare therefore treats a component missing on either
+// side as "don't care" and skips it, so that a bound states exactly the
+// components it wants compared; it is indifferent to which side is the bound.
+//
+// Testing a version against a bound is asymmetric, though, in the spirit of
+// the CONSTRAINT_AUTO matching policy of the same client: the bound decides
+// which components are compared, and a component the bound names but the
+// version lacks is not a match. Bound.Compare is that comparison; Version
+// against Version has no such rule and skips the component from either side.
 package ips
 
 import (
@@ -65,8 +68,8 @@ type Version struct {
 type dotSequence []string
 
 // Bound is the boundary of a range, written in the IPS version grammar. It
-// names only the components it wants compared, so it is not a Version and
-// has no order of its own; it compares a Version, see Compare.
+// names only the components it wants compared; Compare tests a Version
+// against it from the bound's side.
 type Bound struct {
 	v Version
 }
@@ -158,30 +161,53 @@ func parseDotSequence(s string) (dotSequence, error) {
 	return elems, nil
 }
 
-// Compare orders the bound b against the version w under the pkg(7) order
-// (release, then branch, then timestamp; build_release ignored) and returns
-// -1, 0 or +1. A component the bound omits is "don't care" and skipped, so a
-// bound states exactly the components it wants compared. A component the
-// bound names but the version lacks cannot be compared and is an error, for
-// the caller to degrade to a non-match; CONSTRAINT_AUTO is asymmetric in the
-// same way. That error is raised only once the components before it are
-// equal: the release alone orders "11.3" against the bound
-// "11.4:20180817T004203Z", so the missing timestamp never comes into it. See
-// the package documentation for why.
+// element orders two canonical decimal elements: by length and then by
+// digits, since parseDotSequence admits no zero padding. A dot sequence that
+// is a proper prefix of another sorts before it (slices.CompareFunc).
+func element(a, b string) int {
+	return cmp.Or(cmp.Compare(len(a), len(b)), cmp.Compare(a, b))
+}
+
+// Compare returns -1 when v sorts before w, 0 when they are the same version,
+// and +1 when v sorts after w, under the pkg(7) order
+// (release, then branch, then timestamp; build_release ignored) with a
+// component that is missing on either side skipped as "don't care". It is
+// indifferent to which side is the bound; see Bound.Compare for the test of a
+// version against a bound.
 //
-// Because of the don't-care rule this is not an order over versions: the
-// bound "11.4" compares equal to both "11.4-11.4.1" and "11.4-11.4.94" while
-// those two differ. There is deliberately no Version.Compare; sorting or
-// picking a maximum needs the plain pkg(7) order, which this package does not
-// provide.
+// Because of the don't-care rule this is not a total order: "11.4" compares
+// equal to both "11.4-11.4.1" and "11.4-11.4.94" while those two differ. Do
+// not use it as the comparator of sort or max over a mixed set of versions.
+func (v Version) Compare(w Version) int {
+	return cmp.Or(
+		slices.CompareFunc(v.release, w.release, element),
+		func() int {
+			// A branch on one side only is "don't care".
+			if len(v.branch) == 0 || len(w.branch) == 0 {
+				return 0
+			}
+			return slices.CompareFunc(v.branch, w.branch, element)
+		}(),
+		func() int {
+			// A timestamp on one side only is "don't care".
+			if v.timestamp == "" || w.timestamp == "" {
+				return 0
+			}
+			return cmp.Compare(v.timestamp, w.timestamp)
+		}(),
+	)
+}
+
+// Compare tests the version w against the bound b: -1, 0 or +1 under the
+// pkg(7) order as Version.Compare, except that only the bound decides which
+// components take part. A component the bound omits is "don't care"; a
+// component the bound names but the version lacks cannot be compared and is
+// an error, for the caller to degrade to a non-match (CONSTRAINT_AUTO is
+// asymmetric in the same way). That error is raised only once the components
+// before it are equal: the release alone orders "11.3" against the bound
+// "11.4:20180817T004203Z", so the missing timestamp never comes into it.
 func (b Bound) Compare(w Version) (int, error) {
 	v := b.v
-
-	// An element is canonical decimal digits, so it orders by length and then
-	// by digits; a dot sequence that is a proper prefix of another sorts
-	// before it.
-	element := func(a, b string) int { return cmp.Or(cmp.Compare(len(a), len(b)), cmp.Compare(a, b)) }
-
 	if n := slices.CompareFunc(v.release, w.release, element); n != 0 {
 		return n, nil
 	}

@@ -279,6 +279,60 @@ func TestAffected_Accept(t *testing.T) {
 			want:    false,
 			wantErr: true,
 		},
+		{
+			name: "solaris-ips 11.4-11.4.93.0.1.110.0:20260101T000000Z [< 11.4-11.4.94]",
+			fields: fields{
+				Type:  affectedrangeTypes.RangeTypeSolarisIPS,
+				Range: []affectedrangeTypes.Range{{LessThan: "11.4-11.4.94"}},
+			},
+			args: args{family: ecosystemTypes.Ecosystem("solaris:11.4"), v: "11.4-11.4.93.0.1.110.0:20260101T000000Z"},
+			want: true,
+		},
+		{
+			name: "solaris-ips 11.4-11.4.94.0.1.113.1:20260201T000000Z [< 11.4-11.4.94]",
+			fields: fields{
+				Type:  affectedrangeTypes.RangeTypeSolarisIPS,
+				Range: []affectedrangeTypes.Range{{LessThan: "11.4-11.4.94"}},
+			},
+			args: args{family: ecosystemTypes.Ecosystem("solaris:11.4"), v: "11.4-11.4.94.0.1.113.1:20260201T000000Z"},
+			want: false,
+		},
+		{
+			name: "solaris-ips 11.4 without a branch [< 11.4-11.4.94]: the bound names a branch the version lacks, no match",
+			fields: fields{
+				Type:  affectedrangeTypes.RangeTypeSolarisIPS,
+				Range: []affectedrangeTypes.Range{{LessThan: "11.4-11.4.94"}},
+			},
+			args: args{family: ecosystemTypes.Ecosystem("solaris:11.4"), v: "11.4"},
+			want: false,
+		},
+		{
+			name: "solaris-ips 11.3 [<= 11.4:20180817T004203Z]: the release orders before the missing timestamp matters",
+			fields: fields{
+				Type:  affectedrangeTypes.RangeTypeSolarisIPS,
+				Range: []affectedrangeTypes.Range{{LessEqual: "11.4:20180817T004203Z"}},
+			},
+			args: args{family: ecosystemTypes.Ecosystem("solaris:11.4"), v: "11.3"},
+			want: true,
+		},
+		{
+			name: "solaris-ips 1.8.0.181.12:20180711T215531Z [< 1.8.0.471]: a release-only bound reaches a version with a timestamp",
+			fields: fields{
+				Type:  affectedrangeTypes.RangeTypeSolarisIPS,
+				Range: []affectedrangeTypes.Range{{LessThan: "1.8.0.471"}},
+			},
+			args: args{family: ecosystemTypes.Ecosystem("solaris:11.4"), v: "1.8.0.181.12:20180711T215531Z"},
+			want: true,
+		},
+		{
+			name: "solaris-ips not an ips version [< 11.4-11.4.94]: no match, no error",
+			fields: fields{
+				Type:  affectedrangeTypes.RangeTypeSolarisIPS,
+				Range: []affectedrangeTypes.Range{{LessThan: "11.4-11.4.94"}},
+			},
+			args: args{family: ecosystemTypes.Ecosystem("solaris:11.4"), v: "1.0.2k-8.el7"},
+			want: false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

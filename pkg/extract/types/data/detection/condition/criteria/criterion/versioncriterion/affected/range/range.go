@@ -233,390 +233,375 @@ var ErrRangeTypeUnknown = errors.New("unknown range type")
 // CompareVersions returns an integer comparing v1 and v2 under the
 // comparator selected by t: negative for v1 < v2, zero for equal, positive
 // for v1 > v2.
-//
-// bound is the boundary of a range and v the version tested against it, which
-// is how Affected.Accept calls it; the CPE range keeps the same convention for
-// its own CompareVersions. Most comparators are indifferent to the order, but
-// not all: solaris-ips lets the bound name only the components it wants
-// compared, so its result depends on which side is the bound, and a bound
-// naming a component the version lacks is a *CompareError rather than an
-// order. CompareVersions is therefore not a total order over arbitrary pairs
-// and is not for sorting or picking a maximum.
-func (t RangeType) CompareVersions(family ecosystemTypes.Ecosystem, bound, v string) (int, error) {
+func (t RangeType) CompareVersions(family ecosystemTypes.Ecosystem, v1, v2 string) (int, error) {
 	switch t {
 	case RangeTypeVersion:
-		va, err := version.NewVersion(bound)
+		va, err := version.NewVersion(v1)
 		if err != nil {
-			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: bound, Err: err}}
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
 		}
-		vb, err := version.NewVersion(v)
+		vb, err := version.NewVersion(v2)
 		if err != nil {
-			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v, Err: err}}
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
 		}
 		return va.Compare(vb), nil
 	case RangeTypeSEMVER:
-		va, err := version.NewSemver(bound)
+		va, err := version.NewSemver(v1)
 		if err != nil {
-			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: bound, Err: err}}
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
 		}
-		vb, err := version.NewSemver(v)
+		vb, err := version.NewSemver(v2)
 		if err != nil {
-			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v, Err: err}}
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
 		}
 		return va.Compare(vb), nil
 	case RangeTypeAPK:
-		va, err := apk.NewVersion(bound)
+		va, err := apk.NewVersion(v1)
 		if err != nil {
-			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: bound, Err: err}}
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
 		}
-		vb, err := apk.NewVersion(v)
+		vb, err := apk.NewVersion(v2)
 		if err != nil {
-			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v, Err: err}}
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
 		}
 		return va.Compare(vb), nil
 	case RangeTypeRPM:
 		switch family {
 		case ecosystemTypes.EcosystemTypeCentOS:
-			if strings.Contains(bound, ".centos") != strings.Contains(v, ".centos") {
-				return 0, &CompareError{Err: &CannotCompareError{Reason: fmt.Sprintf("non centos package and centos package cannot be compared. bound: %q, v: %q", bound, v)}}
+			if strings.Contains(v1, ".centos") != strings.Contains(v2, ".centos") {
+				return 0, &CompareError{Err: &CannotCompareError{Reason: fmt.Sprintf("non centos package and centos package cannot be compared. v1: %q, v2: %q", v1, v2)}}
 			}
-			if strings.Contains(bound, ".module_el") != strings.Contains(v, ".module_el") {
-				return 0, &CompareError{Err: &CannotCompareError{Reason: fmt.Sprintf("non modular package and modular package cannot be compared. bound: %q, v: %q", bound, v)}}
+			if strings.Contains(v1, ".module_el") != strings.Contains(v2, ".module_el") {
+				return 0, &CompareError{Err: &CannotCompareError{Reason: fmt.Sprintf("non modular package and modular package cannot be compared. v1: %q, v2: %q", v1, v2)}}
 			}
-			if extractRedHatMajorVersion(bound) != extractRedHatMajorVersion(v) {
-				return 0, &CompareError{Err: &CannotCompareError{Reason: fmt.Sprintf("different major versions cannot be compared. bound: %q, v: %q", bound, v)}}
+			if extractRedHatMajorVersion(v1) != extractRedHatMajorVersion(v2) {
+				return 0, &CompareError{Err: &CannotCompareError{Reason: fmt.Sprintf("different major versions cannot be compared. v1: %q, v2: %q", v1, v2)}}
 			}
-			return rpm.NewVersion(bound).Compare(rpm.NewVersion(v)), nil
+			return rpm.NewVersion(v1).Compare(rpm.NewVersion(v2)), nil
 		case ecosystemTypes.EcosystemTypeAlma:
-			if strings.Contains(bound, ".module_el") != strings.Contains(v, ".module_el") {
-				return 0, &CompareError{Err: &CannotCompareError{Reason: fmt.Sprintf("non modular package and modular package cannot be compared. bound: %q, v: %q", bound, v)}}
+			if strings.Contains(v1, ".module_el") != strings.Contains(v2, ".module_el") {
+				return 0, &CompareError{Err: &CannotCompareError{Reason: fmt.Sprintf("non modular package and modular package cannot be compared. v1: %q, v2: %q", v1, v2)}}
 			}
-			return rpm.NewVersion(bound).Compare(rpm.NewVersion(v)), nil
+			return rpm.NewVersion(v1).Compare(rpm.NewVersion(v2)), nil
 		case ecosystemTypes.EcosystemTypeRocky:
-			if strings.Contains(bound, ".cloud") != strings.Contains(v, ".cloud") {
-				return 0, &CompareError{Err: &CannotCompareError{Reason: fmt.Sprintf("Rocky Linux package and Rocky Linux SIG Cloud package cannot be compared. bound: %q, v: %q", bound, v)}}
+			if strings.Contains(v1, ".cloud") != strings.Contains(v2, ".cloud") {
+				return 0, &CompareError{Err: &CannotCompareError{Reason: fmt.Sprintf("Rocky Linux package and Rocky Linux SIG Cloud package cannot be compared. v1: %q, v2: %q", v1, v2)}}
 			}
-			if strings.Contains(bound, ".module+el") != strings.Contains(v, ".module+el") {
-				return 0, &CompareError{Err: &CannotCompareError{Reason: fmt.Sprintf("non modular package and modular package cannot be compared. bound: %q, v: %q", bound, v)}}
+			if strings.Contains(v1, ".module+el") != strings.Contains(v2, ".module+el") {
+				return 0, &CompareError{Err: &CannotCompareError{Reason: fmt.Sprintf("non modular package and modular package cannot be compared. v1: %q, v2: %q", v1, v2)}}
 			}
-			return rpm.NewVersion(bound).Compare(rpm.NewVersion(v)), nil
+			return rpm.NewVersion(v1).Compare(rpm.NewVersion(v2)), nil
 		case ecosystemTypes.EcosystemTypeOracle:
-			if extractOracleKsplice(bound) != extractOracleKsplice(v) {
-				return 0, &CompareError{Err: &CannotCompareError{Reason: fmt.Sprintf("bound: %q and v: %q do not match ksplice number", bound, v)}}
+			if extractOracleKsplice(v1) != extractOracleKsplice(v2) {
+				return 0, &CompareError{Err: &CannotCompareError{Reason: fmt.Sprintf("v1: %q and v2: %q do not match ksplice number", v1, v2)}}
 			}
-			if strings.HasSuffix(bound, "_fips") != strings.HasSuffix(v, "_fips") {
-				return 0, &CompareError{Err: &CannotCompareError{Reason: fmt.Sprintf("non fips package and fips package cannot be compared. bound: %q, v: %q", bound, v)}}
+			if strings.HasSuffix(v1, "_fips") != strings.HasSuffix(v2, "_fips") {
+				return 0, &CompareError{Err: &CannotCompareError{Reason: fmt.Sprintf("non fips package and fips package cannot be compared. v1: %q, v2: %q", v1, v2)}}
 			}
-			if strings.Contains(bound, ".module+el") != strings.Contains(v, ".module+el") {
-				return 0, &CompareError{Err: &CannotCompareError{Reason: fmt.Sprintf("non modular package and modular package cannot be compared. bound: %q, v: %q", bound, v)}}
+			if strings.Contains(v1, ".module+el") != strings.Contains(v2, ".module+el") {
+				return 0, &CompareError{Err: &CannotCompareError{Reason: fmt.Sprintf("non modular package and modular package cannot be compared. v1: %q, v2: %q", v1, v2)}}
 			}
-			return rpm.NewVersion(bound).Compare(rpm.NewVersion(v)), nil
+			return rpm.NewVersion(v1).Compare(rpm.NewVersion(v2)), nil
 		case ecosystemTypes.EcosystemTypeFedora:
-			if strings.Contains(bound, ".module_f") != strings.Contains(v, ".module_f") {
-				return 0, &CompareError{Err: &CannotCompareError{Reason: fmt.Sprintf("non modular package and modular package cannot be compared. bound: %q, v: %q", bound, v)}}
+			if strings.Contains(v1, ".module_f") != strings.Contains(v2, ".module_f") {
+				return 0, &CompareError{Err: &CannotCompareError{Reason: fmt.Sprintf("non modular package and modular package cannot be compared. v1: %q, v2: %q", v1, v2)}}
 			}
-			return rpm.NewVersion(bound).Compare(rpm.NewVersion(v)), nil
+			return rpm.NewVersion(v1).Compare(rpm.NewVersion(v2)), nil
 		default:
-			if strings.Contains(bound, ".module+el") != strings.Contains(v, ".module+el") {
-				return 0, &CompareError{Err: &CannotCompareError{Reason: fmt.Sprintf("non modular package and modular package cannot be compared. bound: %q, v: %q", bound, v)}}
+			if strings.Contains(v1, ".module+el") != strings.Contains(v2, ".module+el") {
+				return 0, &CompareError{Err: &CannotCompareError{Reason: fmt.Sprintf("non modular package and modular package cannot be compared. v1: %q, v2: %q", v1, v2)}}
 			}
-			if extractRedHatMajorVersion(bound) != extractRedHatMajorVersion(v) {
-				return 0, &CompareError{Err: &CannotCompareError{Reason: fmt.Sprintf("different major versions cannot be compared. bound: %q, v: %q", bound, v)}}
+			if extractRedHatMajorVersion(v1) != extractRedHatMajorVersion(v2) {
+				return 0, &CompareError{Err: &CannotCompareError{Reason: fmt.Sprintf("different major versions cannot be compared. v1: %q, v2: %q", v1, v2)}}
 			}
-			return rpm.NewVersion(bound).Compare(rpm.NewVersion(v)), nil
+			return rpm.NewVersion(v1).Compare(rpm.NewVersion(v2)), nil
 		}
 	case RangeTypeRPMVersionOnly:
-		va := rpm.NewVersion(bound)
-		vb := rpm.NewVersion(v)
+		va := rpm.NewVersion(v1)
+		vb := rpm.NewVersion(v2)
 		return rpm.NewVersion(va.Version()).Compare(rpm.NewVersion(vb.Version())), nil
 	case RangeTypeDPKG:
-		va, err := deb.NewVersion(bound)
+		va, err := deb.NewVersion(v1)
 		if err != nil {
-			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: bound, Err: err}}
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
 		}
-		vb, err := deb.NewVersion(v)
+		vb, err := deb.NewVersion(v2)
 		if err != nil {
-			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v, Err: err}}
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
 		}
 		return va.Compare(vb), nil
 	case RangeTypeNPM:
-		va, err := npm.NewVersion(bound)
+		va, err := npm.NewVersion(v1)
 		if err != nil {
-			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: bound, Err: err}}
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
 		}
-		vb, err := npm.NewVersion(v)
+		vb, err := npm.NewVersion(v2)
 		if err != nil {
-			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v, Err: err}}
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
 		}
 		return va.Compare(vb), nil
 	case RangeTypeRubyGems:
-		va, err := gem.NewVersion(bound)
+		va, err := gem.NewVersion(v1)
 		if err != nil {
-			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: bound, Err: err}}
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
 		}
-		vb, err := gem.NewVersion(v)
+		vb, err := gem.NewVersion(v2)
 		if err != nil {
-			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v, Err: err}}
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
 		}
 		return va.Compare(vb), nil
 	case RangeTypePyPI:
-		va, err := pep440.Parse(bound)
+		va, err := pep440.Parse(v1)
 		if err != nil {
-			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: bound, Err: err}}
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
 		}
-		vb, err := pep440.Parse(v)
+		vb, err := pep440.Parse(v2)
 		if err != nil {
-			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v, Err: err}}
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
 		}
 		return va.Compare(vb), nil
 	case RangeTypeMaven:
-		va, err := mvn.NewVersion(bound)
+		va, err := mvn.NewVersion(v1)
 		if err != nil {
-			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: bound, Err: err}}
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
 		}
-		vb, err := mvn.NewVersion(v)
+		vb, err := mvn.NewVersion(v2)
 		if err != nil {
-			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v, Err: err}}
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
 		}
 		return va.Compare(vb), nil
 	case RangeTypeMicrosoftDefenderAndroid:
-		va, err := microsoftdefenderandroid.NewVersion(bound)
+		va, err := microsoftdefenderandroid.NewVersion(v1)
 		if err != nil {
-			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: bound, Err: err}}
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
 		}
-		vb, err := microsoftdefenderandroid.NewVersion(v)
+		vb, err := microsoftdefenderandroid.NewVersion(v2)
 		if err != nil {
-			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v, Err: err}}
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
 		}
 		return va.Compare(vb), nil
 	case RangeTypeMicrosoftDefenderIOS:
-		va, err := microsoftdefenderios.NewVersion(bound)
+		va, err := microsoftdefenderios.NewVersion(v1)
 		if err != nil {
-			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: bound, Err: err}}
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
 		}
-		vb, err := microsoftdefenderios.NewVersion(v)
+		vb, err := microsoftdefenderios.NewVersion(v2)
 		if err != nil {
-			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v, Err: err}}
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
 		}
 		return va.Compare(vb), nil
 	case RangeTypeMicrosoftDefenderIoT:
-		va, err := microsoftdefenderiot.NewVersion(bound)
+		va, err := microsoftdefenderiot.NewVersion(v1)
 		if err != nil {
-			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: bound, Err: err}}
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
 		}
-		vb, err := microsoftdefenderiot.NewVersion(v)
+		vb, err := microsoftdefenderiot.NewVersion(v2)
 		if err != nil {
-			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v, Err: err}}
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
 		}
 		return va.Compare(vb), nil
 	case RangeTypeMicrosoftDefenderLinux:
-		va, err := microsoftdefenderlinux.NewVersion(bound)
+		va, err := microsoftdefenderlinux.NewVersion(v1)
 		if err != nil {
-			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: bound, Err: err}}
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
 		}
-		vb, err := microsoftdefenderlinux.NewVersion(v)
+		vb, err := microsoftdefenderlinux.NewVersion(v2)
 		if err != nil {
-			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v, Err: err}}
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
 		}
 		return va.Compare(vb), nil
 	case RangeTypeMicrosoftDefenderMac:
-		va, err := microsoftdefendermac.NewVersion(bound)
+		va, err := microsoftdefendermac.NewVersion(v1)
 		if err != nil {
-			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: bound, Err: err}}
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
 		}
-		vb, err := microsoftdefendermac.NewVersion(v)
+		vb, err := microsoftdefendermac.NewVersion(v2)
 		if err != nil {
-			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v, Err: err}}
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
 		}
 		return va.Compare(vb), nil
 	case RangeTypeMicrosoftDefenderSecurityIntelligence:
-		va, err := microsoftdefendersi.NewVersion(bound)
+		va, err := microsoftdefendersi.NewVersion(v1)
 		if err != nil {
-			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: bound, Err: err}}
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
 		}
-		vb, err := microsoftdefendersi.NewVersion(v)
+		vb, err := microsoftdefendersi.NewVersion(v2)
 		if err != nil {
-			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v, Err: err}}
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
 		}
 		return va.Compare(vb), nil
 	case RangeTypeMicrosoftDefenderWindows:
-		va, err := microsoftdefenderwindows.NewVersion(bound)
+		va, err := microsoftdefenderwindows.NewVersion(v1)
 		if err != nil {
-			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: bound, Err: err}}
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
 		}
-		vb, err := microsoftdefenderwindows.NewVersion(v)
+		vb, err := microsoftdefenderwindows.NewVersion(v2)
 		if err != nil {
-			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v, Err: err}}
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
 		}
 		return va.Compare(vb), nil
 	case RangeTypeMicrosoftDotNetCore:
-		va, err := microsoftdotnetcore.NewVersion(bound)
+		va, err := microsoftdotnetcore.NewVersion(v1)
 		if err != nil {
-			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: bound, Err: err}}
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
 		}
-		vb, err := microsoftdotnetcore.NewVersion(v)
+		vb, err := microsoftdotnetcore.NewVersion(v2)
 		if err != nil {
-			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v, Err: err}}
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
 		}
 		return va.Compare(vb), nil
 	case RangeTypeMicrosoftEdge:
-		va, err := microsoftedge.NewVersion(bound)
+		va, err := microsoftedge.NewVersion(v1)
 		if err != nil {
-			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: bound, Err: err}}
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
 		}
-		vb, err := microsoftedge.NewVersion(v)
+		vb, err := microsoftedge.NewVersion(v2)
 		if err != nil {
-			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v, Err: err}}
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
 		}
 		return va.Compare(vb), nil
 	case RangeTypeMicrosoftExchange:
-		va, err := microsoftexchange.NewVersion(bound)
+		va, err := microsoftexchange.NewVersion(v1)
 		if err != nil {
-			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: bound, Err: err}}
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
 		}
-		vb, err := microsoftexchange.NewVersion(v)
+		vb, err := microsoftexchange.NewVersion(v2)
 		if err != nil {
-			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v, Err: err}}
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
 		}
 		return va.Compare(vb), nil
 	case RangeTypeMicrosoftOfficeMac:
-		va, err := microsoftofficemac.NewVersion(bound)
+		va, err := microsoftofficemac.NewVersion(v1)
 		if err != nil {
-			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: bound, Err: err}}
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
 		}
-		vb, err := microsoftofficemac.NewVersion(v)
+		vb, err := microsoftofficemac.NewVersion(v2)
 		if err != nil {
-			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v, Err: err}}
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
 		}
 		return va.Compare(vb), nil
 	case RangeTypeMicrosoftOfficeWindows:
-		va, err := microsoftofficewindows.NewVersion(bound)
+		va, err := microsoftofficewindows.NewVersion(v1)
 		if err != nil {
-			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: bound, Err: err}}
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
 		}
-		vb, err := microsoftofficewindows.NewVersion(v)
+		vb, err := microsoftofficewindows.NewVersion(v2)
 		if err != nil {
-			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v, Err: err}}
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
 		}
 		return va.Compare(vb), nil
 	case RangeTypeMicrosoftSharePoint:
-		va, err := microsoftsharepoint.NewVersion(bound)
+		va, err := microsoftsharepoint.NewVersion(v1)
 		if err != nil {
-			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: bound, Err: err}}
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
 		}
-		vb, err := microsoftsharepoint.NewVersion(v)
+		vb, err := microsoftsharepoint.NewVersion(v2)
 		if err != nil {
-			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v, Err: err}}
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
 		}
 		return va.Compare(vb), nil
 	case RangeTypeMicrosoftSQLServer:
-		va, err := microsoftsqlserver.NewVersion(bound)
+		va, err := microsoftsqlserver.NewVersion(v1)
 		if err != nil {
-			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: bound, Err: err}}
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
 		}
-		vb, err := microsoftsqlserver.NewVersion(v)
+		vb, err := microsoftsqlserver.NewVersion(v2)
 		if err != nil {
-			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v, Err: err}}
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
 		}
 		return va.Compare(vb), nil
 	case RangeTypeMicrosoftTeamsAndroid:
-		va, err := microsoftteamsandroid.NewVersion(bound)
+		va, err := microsoftteamsandroid.NewVersion(v1)
 		if err != nil {
-			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: bound, Err: err}}
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
 		}
-		vb, err := microsoftteamsandroid.NewVersion(v)
+		vb, err := microsoftteamsandroid.NewVersion(v2)
 		if err != nil {
-			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v, Err: err}}
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
 		}
 		return va.Compare(vb), nil
 	case RangeTypeMicrosoftTeamsClient:
-		va, err := microsoftteamsclient.NewVersion(bound)
+		va, err := microsoftteamsclient.NewVersion(v1)
 		if err != nil {
-			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: bound, Err: err}}
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
 		}
-		vb, err := microsoftteamsclient.NewVersion(v)
+		vb, err := microsoftteamsclient.NewVersion(v2)
 		if err != nil {
-			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v, Err: err}}
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
 		}
 		return va.Compare(vb), nil
 	case RangeTypeMicrosoftTeamsDesktop:
-		va, err := microsoftteamsdesktop.NewVersion(bound)
+		va, err := microsoftteamsdesktop.NewVersion(v1)
 		if err != nil {
-			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: bound, Err: err}}
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
 		}
-		vb, err := microsoftteamsdesktop.NewVersion(v)
+		vb, err := microsoftteamsdesktop.NewVersion(v2)
 		if err != nil {
-			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v, Err: err}}
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
 		}
 		return va.Compare(vb), nil
 	case RangeTypeMicrosoftTeamsIOS:
-		va, err := microsoftteamsios.NewVersion(bound)
+		va, err := microsoftteamsios.NewVersion(v1)
 		if err != nil {
-			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: bound, Err: err}}
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
 		}
-		vb, err := microsoftteamsios.NewVersion(v)
+		vb, err := microsoftteamsios.NewVersion(v2)
 		if err != nil {
-			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v, Err: err}}
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
 		}
 		return va.Compare(vb), nil
 	case RangeTypeMicrosoftTeamsMac:
-		va, err := microsoftteamsmac.NewVersion(bound)
+		va, err := microsoftteamsmac.NewVersion(v1)
 		if err != nil {
-			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: bound, Err: err}}
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
 		}
-		vb, err := microsoftteamsmac.NewVersion(v)
+		vb, err := microsoftteamsmac.NewVersion(v2)
 		if err != nil {
-			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v, Err: err}}
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
 		}
 		return va.Compare(vb), nil
 	case RangeTypeMicrosoftVisualStudio:
-		va, err := microsoftvisualstudio.NewVersion(bound)
+		va, err := microsoftvisualstudio.NewVersion(v1)
 		if err != nil {
-			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: bound, Err: err}}
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
 		}
-		vb, err := microsoftvisualstudio.NewVersion(v)
+		vb, err := microsoftvisualstudio.NewVersion(v2)
 		if err != nil {
-			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v, Err: err}}
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
 		}
 		return va.Compare(vb), nil
 	case RangeTypeMicrosoftVSCode:
-		va, err := microsoftvscode.NewVersion(bound)
+		va, err := microsoftvscode.NewVersion(v1)
 		if err != nil {
-			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: bound, Err: err}}
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
 		}
-		vb, err := microsoftvscode.NewVersion(v)
+		vb, err := microsoftvscode.NewVersion(v2)
 		if err != nil {
-			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v, Err: err}}
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
 		}
 		return va.Compare(vb), nil
 	case RangeTypeMicrosoftWindows:
-		va, err := microsoftwindows.NewVersion(bound)
+		va, err := microsoftwindows.NewVersion(v1)
 		if err != nil {
-			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: bound, Err: err}}
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
 		}
-		vb, err := microsoftwindows.NewVersion(v)
+		vb, err := microsoftwindows.NewVersion(v2)
 		if err != nil {
-			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v, Err: err}}
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
 		}
 		return va.Compare(vb), nil
 	case RangeTypeSolarisIPS:
 		// IPS (pkg(7)) versions of Oracle Solaris 11 and the illumos
 		// distributions; see internal/version/ips for the order.
-		b, err := ipsVersion.NewBound(bound)
+		va, err := ipsVersion.NewVersion(v1)
 		if err != nil {
-			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: bound, Err: err}}
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
 		}
-		w, err := ipsVersion.NewVersion(v)
+		vb, err := ipsVersion.NewVersion(v2)
 		if err != nil {
-			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v, Err: err}}
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
 		}
-		// A component the bound omits is skipped; one it names but the version
-		// lacks cannot be compared.
-		n, err := b.Compare(w)
-		if err != nil {
-			return 0, &CompareError{Err: &CannotCompareError{Reason: fmt.Sprintf("%s. bound: %q, v: %q", err, bound, v)}}
-		}
-		return n, nil
+		return va.Compare(vb), nil
 	case RangeTypeUnknown:
 		// The declared "unknown" vocabulary value is normal data (e.g. NVD
 		// emits it for ranges it cannot express); it quietly cannot evaluate.

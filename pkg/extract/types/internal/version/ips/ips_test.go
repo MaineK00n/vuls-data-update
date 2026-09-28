@@ -63,6 +63,63 @@ func TestNewVersion(t *testing.T) {
 	}
 }
 
+func TestVersion_Compare(t *testing.T) {
+	tests := []struct {
+		name string
+		v    string
+		w    string
+		want int
+	}{
+		// release
+		{name: "equal release", v: "11.4", w: "11.4", want: 0},
+		{name: "release element", v: "11.3", w: "11.4", want: -1},
+		{name: "release element is numeric, not lexical", v: "11.4.9", w: "11.4.10", want: -1},
+		{name: "shorter release is a prefix and sorts first", v: "11.4", w: "11.4.0", want: -1},
+		{name: "elements beyond the int range compare numerically", v: "11.99999999999999999999999", w: "11.100000000000000000000000", want: -1},
+		{name: "element beyond the int range is greater than a small one", v: "11.100000000000000000000000", w: "11.9", want: 1},
+		{name: "release decides before branch", v: "11.3-11.3.99", w: "11.4-11.4.1", want: -1},
+		{name: "release decides before timestamp", v: "0.5.11:20261231T235959Z", w: "0.5.12:20150101T000000Z", want: -1},
+		// build_release is not part of the order
+		{name: "build release ignored", v: "0.5.11,5.11", w: "0.5.11,5.12", want: 0},
+		{name: "build release ignored, one side only", v: "0.5.11,5.11-0.175.3.1.0.3.0", w: "0.5.11-0.175.3.1.0.3.0", want: 0},
+		// branch
+		{name: "branch element", v: "11.4-11.4.93.0.1.110.0", w: "11.4-11.4.94.0.1.113.1", want: -1},
+		{name: "branch prefix sorts first", v: "11.4-11.4.94", w: "11.4-11.4.94.0.1.113.1", want: -1},
+		{name: "same branch prefix and beyond", v: "11.4-11.4.94.0.1.113.1", w: "11.4-11.4.94.0.1.113.1", want: 0},
+		{name: "branch decides before timestamp", v: "11.4-11.4.2:20261231T235959Z", w: "11.4-11.4.3:20150101T000000Z", want: -1},
+		{name: "branch element is numeric, not lexical", v: "0.5.11-0.175.3.9.0.3.0", w: "0.5.11-0.175.3.13.0.4.0", want: -1},
+		// timestamp
+		{name: "timestamp", v: "0.5.11-0.175.3.13.0.4.0:20160929T175502Z", w: "0.5.11-0.175.3.13.0.4.0:20161018T000000Z", want: -1},
+		{name: "timestamp equal", v: "11.4:20180817T004203Z", w: "11.4:20180817T004203Z", want: 0},
+		// don't care: a component the bound v omits is skipped
+		{name: "branch missing on one side", v: "0.5.11:20161018T000000Z", w: "0.5.11,5.11-0.175.3.13.0.4.0:20160929T175502Z", want: 1},
+		{name: "branch missing, timestamp decides the other way", v: "0.5.11:20161018T000000Z", w: "0.5.11,5.11-0.175.3.14.0.6.0:20161118T000000Z", want: -1},
+		{name: "timestamp missing on one side", v: "11.4-11.4.94", w: "11.4-11.4.93.0.1.110.0:20260101T000000Z", want: 1},
+		{name: "branch and timestamp missing on one side", v: "1.8.0.471", w: "1.8.0.181.12:20180711T215531Z", want: 1},
+		{name: "release only both sides", v: "1.8.0.471", w: "1.8.0.501.8", want: -1},
+		{name: "only the release is shared and it is equal", v: "11.4", w: "11.4-11.4.0.0.1.15.0:20180817T004203Z", want: 0},
+		// ... on either side: Version.Compare is indifferent to which is the bound
+		{name: "branch on the left side only", v: "11.4-11.4.94", w: "11.4", want: 0},
+		{name: "timestamp on the left side only", v: "11.4:20180817T004203Z", w: "11.4-11.4.0.0.1.15.0", want: 0},
+		{name: "release decides before a one-sided branch", v: "11.4-11.4.94", w: "11.3", want: 1},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			v, err := ips.NewVersion(tt.v)
+			if err != nil {
+				t.Fatalf("NewVersion(%q) error = %v", tt.v, err)
+			}
+			w, err := ips.NewVersion(tt.w)
+			if err != nil {
+				t.Fatalf("NewVersion(%q) error = %v", tt.w, err)
+			}
+			if got := v.Compare(w); got != tt.want {
+				t.Errorf("Compare() = %d, want %d", got, tt.want)
+			}
+		})
+	}
+}
+
 func TestBound_Compare(t *testing.T) {
 	tests := []struct {
 		name    string

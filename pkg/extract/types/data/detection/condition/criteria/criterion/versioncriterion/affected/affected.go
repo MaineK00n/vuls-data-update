@@ -3,6 +3,7 @@ package affected
 import (
 	"cmp"
 	stderrors "errors"
+	"fmt"
 	"slices"
 
 	"github.com/pkg/errors"
@@ -10,6 +11,7 @@ import (
 	rangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/affected/range"
 	warningTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/warning"
 	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment/ecosystem"
+	ipsVersion "github.com/MaineK00n/vuls-data-update/pkg/extract/types/internal/version/ips"
 )
 
 type Affected struct {
@@ -48,7 +50,7 @@ func (a Affected) Accept(family ecosystemTypes.Ecosystem, v string) (bool, error
 			return false, &warningTypes.UnevaluableError{Warning: warningTypes.Warning{Kind: warningTypes.KindEmptyRange}}
 		}
 		if r.Equal != "" {
-			n, err := a.Type.CompareVersions(family, r.Equal, v)
+			n, err := compareVersions(a.Type, family, r.Equal, v)
 			if err != nil {
 				if w, ok := stderrors.AsType[warningTypes.Warnable](err); ok {
 					return false, &warningTypes.UnevaluableError{Warning: w.Warning(), Err: err}
@@ -63,7 +65,7 @@ func (a Affected) Accept(family ecosystemTypes.Ecosystem, v string) (bool, error
 			}
 		}
 		if r.GreaterEqual != "" {
-			n, err := a.Type.CompareVersions(family, r.GreaterEqual, v)
+			n, err := compareVersions(a.Type, family, r.GreaterEqual, v)
 			if err != nil {
 				if w, ok := stderrors.AsType[warningTypes.Warnable](err); ok {
 					return false, &warningTypes.UnevaluableError{Warning: w.Warning(), Err: err}
@@ -78,7 +80,7 @@ func (a Affected) Accept(family ecosystemTypes.Ecosystem, v string) (bool, error
 			}
 		}
 		if r.GreaterThan != "" {
-			n, err := a.Type.CompareVersions(family, r.GreaterThan, v)
+			n, err := compareVersions(a.Type, family, r.GreaterThan, v)
 			if err != nil {
 				if w, ok := stderrors.AsType[warningTypes.Warnable](err); ok {
 					return false, &warningTypes.UnevaluableError{Warning: w.Warning(), Err: err}
@@ -93,7 +95,7 @@ func (a Affected) Accept(family ecosystemTypes.Ecosystem, v string) (bool, error
 			}
 		}
 		if r.LessEqual != "" {
-			n, err := a.Type.CompareVersions(family, r.LessEqual, v)
+			n, err := compareVersions(a.Type, family, r.LessEqual, v)
 			if err != nil {
 				if w, ok := stderrors.AsType[warningTypes.Warnable](err); ok {
 					return false, &warningTypes.UnevaluableError{Warning: w.Warning(), Err: err}
@@ -108,7 +110,7 @@ func (a Affected) Accept(family ecosystemTypes.Ecosystem, v string) (bool, error
 			}
 		}
 		if r.LessThan != "" {
-			n, err := a.Type.CompareVersions(family, r.LessThan, v)
+			n, err := compareVersions(a.Type, family, r.LessThan, v)
 			if err != nil {
 				if w, ok := stderrors.AsType[warningTypes.Warnable](err); ok {
 					return false, &warningTypes.UnevaluableError{Warning: w.Warning(), Err: err}
@@ -125,4 +127,32 @@ func (a Affected) Accept(family ecosystemTypes.Ecosystem, v string) (bool, error
 		return true, nil
 	}
 	return false, nil
+}
+
+// compareVersions orders the bound of a range against the version v under t,
+// with the same result and errors as t.CompareVersions, which is what every
+// type goes through except one. A solaris-ips bound names only the components
+// it wants compared, so the comparison is taken from the bound's side
+// (ips.Bound): a component the bound omits is skipped, and one it names but
+// v lacks cannot be compared and is a *rangeTypes.CompareError, so the range
+// is a non-match. CompareVersions itself stays indifferent to the sides.
+func compareVersions(t rangeTypes.RangeType, family ecosystemTypes.Ecosystem, bound, v string) (int, error) {
+	switch t {
+	case rangeTypes.RangeTypeSolarisIPS:
+		b, err := ipsVersion.NewBound(bound)
+		if err != nil {
+			return 0, &rangeTypes.CompareError{Err: &rangeTypes.NewVersionError{RangeType: t, Version: bound, Err: err}}
+		}
+		w, err := ipsVersion.NewVersion(v)
+		if err != nil {
+			return 0, &rangeTypes.CompareError{Err: &rangeTypes.NewVersionError{RangeType: t, Version: v, Err: err}}
+		}
+		n, err := b.Compare(w)
+		if err != nil {
+			return 0, &rangeTypes.CompareError{Err: &rangeTypes.CannotCompareError{Reason: fmt.Sprintf("%s. bound: %q, v: %q", err, bound, v)}}
+		}
+		return n, nil
+	default:
+		return t.CompareVersions(family, bound, v)
+	}
 }
