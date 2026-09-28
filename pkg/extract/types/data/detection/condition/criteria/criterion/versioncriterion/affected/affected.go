@@ -129,13 +129,14 @@ func (a Affected) Accept(family ecosystemTypes.Ecosystem, v string) (bool, error
 	return false, nil
 }
 
-// compareVersions orders the bound of a range against the version v under t,
+// compareVersions places the version v against the bound of a range under t,
 // with the same result and errors as t.CompareVersions, which is what every
-// type goes through except one. A solaris-ips bound names only the components
-// it wants compared, so the comparison is taken from the bound's side
-// (ips.Bound): a component the bound omits is skipped, and one it names but
-// v lacks cannot be compared and is a *rangeTypes.CompareError, so the range
-// is a non-match. CompareVersions itself stays indifferent to the sides.
+// type goes through except one. A solaris-ips bound is a pattern that names
+// only the components it wants compared, not a version, so it is not put
+// through the version order: ips.Bound.Test tells whether v falls before, on
+// or after it, skipping a component the bound omits; one it names but v lacks
+// cannot be tested and is a *rangeTypes.CompareError, so the range is a
+// non-match. CompareVersions itself stays an order between two versions.
 func compareVersions(t rangeTypes.RangeType, family ecosystemTypes.Ecosystem, bound, v string) (int, error) {
 	switch t {
 	case rangeTypes.RangeTypeSolarisIPS:
@@ -147,7 +148,7 @@ func compareVersions(t rangeTypes.RangeType, family ecosystemTypes.Ecosystem, bo
 		if err != nil {
 			return 0, &rangeTypes.CompareError{Err: &rangeTypes.NewVersionError{RangeType: t, Version: v, Err: err}}
 		}
-		n, err := b.Compare(w)
+		n, err := b.Test(w)
 		if err != nil {
 			return 0, &rangeTypes.CompareError{Err: &rangeTypes.CannotCompareError{Reason: fmt.Sprintf("%s. bound: %q, v: %q", err, bound, v)}}
 		}

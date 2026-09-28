@@ -120,7 +120,7 @@ func TestVersion_Compare(t *testing.T) {
 	}
 }
 
-func TestBound_Compare(t *testing.T) {
+func TestBound_Test(t *testing.T) {
 	tests := []struct {
 		name    string
 		v       string
@@ -177,13 +177,13 @@ func TestBound_Compare(t *testing.T) {
 			if err != nil {
 				t.Fatalf("NewVersion(%q) error = %v", tt.w, err)
 			}
-			got, err := b.Compare(w)
+			got, err := b.Test(w)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("Compare() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("Test() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if got != tt.want {
-				t.Errorf("Compare() = %d, want %d", got, tt.want)
+				t.Errorf("Test() = %d, want %d", got, tt.want)
 			}
 		})
 	}

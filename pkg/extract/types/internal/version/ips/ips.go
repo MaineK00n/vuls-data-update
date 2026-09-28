@@ -28,7 +28,7 @@
 // choosing the newest package in a repository, but the wrong one for testing
 // a version against a bound: a bound that names only a release, or only a
 // release and a timestamp, would then never be reached by an installed
-// version that carries a branch. Bound.Compare is that test, in the spirit of
+// version that carries a branch. Bound.Test is that test, in the spirit of
 // the CONSTRAINT_AUTO matching policy of the same client: the bound decides
 // which components are compared, a component it omits is "don't care", and a
 // component it names but the version lacks is not a match. The two are kept
@@ -63,9 +63,10 @@ type Version struct {
 // integers).
 type dotSequence []string
 
-// Bound is the boundary of a range, written in the IPS version grammar. It
-// names only the components it wants compared; Compare tests a Version
-// against it from the bound's side.
+// Bound is the boundary of a range, written in the IPS version grammar as a
+// pattern: it names only the components it wants compared, the way
+// "pkg install entire@11.4-11.4.94" names a level rather than a version.
+// Test tells whether a Version falls before, on or after it.
 type Bound struct {
 	v Version
 }
@@ -169,7 +170,7 @@ func element(a, b string) int {
 // then timestamp, build_release ignored, and a branch or timestamp missing on
 // one side sorting before a present one (an empty sequence is a prefix of any
 // other, and "" is below any timestamp). This is a total order, fit for sort
-// or max; for testing a version against a bound see Bound.Compare.
+// or max; for testing a version against a bound see Bound.Test.
 func (v Version) Compare(w Version) int {
 	return cmp.Or(
 		slices.CompareFunc(v.release, w.release, element),
@@ -178,15 +179,17 @@ func (v Version) Compare(w Version) int {
 	)
 }
 
-// Compare tests the version w against the bound b: -1, 0 or +1 under the
-// pkg(7) order as Version.Compare, except that only the bound decides which
-// components take part. A component the bound omits is "don't care"; a
+// Test tells where the version w falls against the bound b: -1 before it, 0
+// on it, +1 after it, under the pkg(7) order as Version.Compare, except that
+// only the bound decides which components take part. It is a match test, not
+// an order: a bound is a pattern, not a version. A component the bound omits
+// is "don't care"; a
 // component the bound names but the version lacks cannot be compared and is
 // an error, for the caller to degrade to a non-match (CONSTRAINT_AUTO is
 // asymmetric in the same way). That error is raised only once the components
 // before it are equal: the release alone orders "11.3" against the bound
 // "11.4:20180817T004203Z", so the missing timestamp never comes into it.
-func (b Bound) Compare(w Version) (int, error) {
+func (b Bound) Test(w Version) (int, error) {
 	v := b.v
 	if n := slices.CompareFunc(v.release, w.release, element); n != 0 {
 		return n, nil
