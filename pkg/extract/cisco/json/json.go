@@ -5,7 +5,6 @@ import (
 	"io/fs"
 	"log/slog"
 	"path/filepath"
-	"regexp"
 	"slices"
 	"strings"
 
@@ -301,19 +300,17 @@ type productConversion struct {
 	parse  func(string) (string, error)
 }
 
-// asaDesignator matches the release designators Cisco appends to legacy ASA
-// releases in its bulk hardening advisories: "ED" (Early Deployment, a
-// release-lifecycle label) and "SMP" (the symmetric-multiprocessing image
-// line for the 5585-X class), alone or combined ("9.1.6.SMP.ED"). Neither is
-// a version component — NVD and the Software Checker key the release as
-// "9.1.6" — so they are stripped before parsing and the designated form binds
-// to the same concrete CPE as the plain release. The stripping is anchored, so
-// any other letter suffix still fails to parse and surfaces as a hard error.
-var asaDesignator = regexp.MustCompile(`(\.SMP)?(\.ED)?$`)
-
-// parseASAVersion parses an ASA release, ignoring its release designators.
+// parseASAVersion parses an ASA release, ignoring the release designators
+// Cisco appends to legacy ASA releases in its bulk hardening advisories: "ED"
+// (Early Deployment, a release-lifecycle label) and "SMP" (the
+// symmetric-multiprocessing image line for the 5585-X class), alone or
+// combined ("9.1.6.SMP.ED"). Neither is a version component — NVD and the
+// Software Checker key the release as "9.1.6" — so they are stripped before
+// parsing and the designated form binds to the same concrete CPE as the plain
+// release. Only these trailing designators are removed, so any other letter
+// suffix still fails to parse and surfaces as a hard error.
 func parseASAVersion(s string) (string, error) {
-	v, err := asaVersion.NewVersion(asaDesignator.ReplaceAllString(s, ""))
+	v, err := asaVersion.NewVersion(strings.TrimSuffix(strings.TrimSuffix(s, ".ED"), ".SMP"))
 	if err != nil {
 		return "", err
 	}
@@ -541,7 +538,7 @@ var productConversions = []productConversion{
 // as a hard error (see convertProductName) so that a newly introduced
 // malformed pattern surfaces loudly instead of being dropped. A recurring,
 // well-defined label that merely decorates a valid release belongs in the
-// family's parser instead (see asaDesignator), not here.
+// family's parser instead (see parseASAVersion), not here.
 var knownUnparseableProductNames = map[string]struct{}{
 	"Cisco IOS XE Software .0":                   {}, // cisco-sa-20170201-cbr
 	"Cisco IOS XE Software .1":                   {}, // cisco-sa-20170201-cbr
