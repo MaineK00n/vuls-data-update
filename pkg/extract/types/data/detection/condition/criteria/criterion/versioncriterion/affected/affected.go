@@ -132,8 +132,8 @@ func (a Affected) Accept(family ecosystemTypes.Ecosystem, v string) (bool, error
 // testPattern tells where the version v falls against pattern, the string
 // an operator of a Range carries, under t: -1 before it, 0 on it, +1 after
 // it. For every type but one the pattern is a full version and this is the
-// sign of t.CompareVersions(pattern, v), with its errors. A solaris-ips
-// pattern names only the components it wants compared (a level such as
+// sign of t.CompareVersions(pattern, v), with its errors. A solaris-ips-pattern
+// endpoint names only the components it wants compared (a level such as
 // 11.4-11.4.94), so it is not put through the version order: ips.Pattern.Test
 // answers the same question, skipping a component the pattern omits; one it
 // names but v lacks cannot be tested and is a *rangeTypes.CompareError, so
@@ -141,7 +141,7 @@ func (a Affected) Accept(family ecosystemTypes.Ecosystem, v string) (bool, error
 // versions.
 func testPattern(t rangeTypes.RangeType, family ecosystemTypes.Ecosystem, pattern, v string) (int, error) {
 	switch t {
-	case rangeTypes.RangeTypeSolarisIPS:
+	case rangeTypes.RangeTypeSolarisIPSPattern:
 		p, err := ipsVersion.NewPattern(pattern)
 		if err != nil {
 			return 0, &rangeTypes.CompareError{Err: &rangeTypes.NewVersionError{RangeType: t, Version: pattern, Err: err}}

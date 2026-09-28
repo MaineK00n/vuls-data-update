@@ -1233,8 +1233,8 @@ func TestRangeType_CompareVersions(t *testing.T) {
 			wantErr: true,
 		},
 		{
-			name: "solaris-ips branch",
-			rt:   affectedrangeTypes.RangeTypeSolarisIPS,
+			name: "solaris-ips-pattern branch",
+			rt:   affectedrangeTypes.RangeTypeSolarisIPSPattern,
 			args: args{
 				family: ecosystemTypes.Ecosystem("solaris:11.4"),
 				v1:     "11.4-11.4.94",
@@ -1243,8 +1243,8 @@ func TestRangeType_CompareVersions(t *testing.T) {
 			want: 1,
 		},
 		{
-			name: "solaris-ips branch prefix",
-			rt:   affectedrangeTypes.RangeTypeSolarisIPS,
+			name: "solaris-ips-pattern branch prefix",
+			rt:   affectedrangeTypes.RangeTypeSolarisIPSPattern,
 			args: args{
 				family: ecosystemTypes.Ecosystem("solaris:11.4"),
 				v1:     "11.4-11.4.94",
@@ -1253,8 +1253,8 @@ func TestRangeType_CompareVersions(t *testing.T) {
 			want: -1,
 		},
 		{
-			name: "solaris-ips missing branch sorts first",
-			rt:   affectedrangeTypes.RangeTypeSolarisIPS,
+			name: "solaris-ips-pattern missing branch sorts first",
+			rt:   affectedrangeTypes.RangeTypeSolarisIPSPattern,
 			args: args{
 				family: ecosystemTypes.Ecosystem("solaris:11.3"),
 				v1:     "0.5.11:20161018T000000Z",
@@ -1263,8 +1263,8 @@ func TestRangeType_CompareVersions(t *testing.T) {
 			want: -1,
 		},
 		{
-			name: "solaris-ips release only against full version",
-			rt:   affectedrangeTypes.RangeTypeSolarisIPS,
+			name: "solaris-ips-pattern release only against full version",
+			rt:   affectedrangeTypes.RangeTypeSolarisIPSPattern,
 			args: args{
 				family: ecosystemTypes.Ecosystem("solaris:11.4"),
 				v1:     "1.8.0.471",
@@ -1273,8 +1273,8 @@ func TestRangeType_CompareVersions(t *testing.T) {
 			want: 1,
 		},
 		{
-			name: "solaris-ips present branch sorts after a missing one",
-			rt:   affectedrangeTypes.RangeTypeSolarisIPS,
+			name: "solaris-ips-pattern present branch sorts after a missing one",
+			rt:   affectedrangeTypes.RangeTypeSolarisIPSPattern,
 			args: args{
 				family: ecosystemTypes.Ecosystem("solaris:11.4"),
 				v1:     "11.4-11.4.94",
@@ -1283,8 +1283,8 @@ func TestRangeType_CompareVersions(t *testing.T) {
 			want: 1,
 		},
 		{
-			name: "solaris-ips v1: not an ips version",
-			rt:   affectedrangeTypes.RangeTypeSolarisIPS,
+			name: "solaris-ips-pattern v1: not an ips version",
+			rt:   affectedrangeTypes.RangeTypeSolarisIPSPattern,
 			args: args{
 				family: ecosystemTypes.Ecosystem("solaris:11.4"),
 				v1:     "1.0.2k-8.el7",
@@ -1293,8 +1293,8 @@ func TestRangeType_CompareVersions(t *testing.T) {
 			wantErr: true,
 		},
 		{
-			name: "solaris-ips v2: not an ips version",
-			rt:   affectedrangeTypes.RangeTypeSolarisIPS,
+			name: "solaris-ips-pattern v2: not an ips version",
+			rt:   affectedrangeTypes.RangeTypeSolarisIPSPattern,
 			args: args{
 				family: ecosystemTypes.Ecosystem("solaris:11.4"),
 				v1:     "11.4-11.4.94",

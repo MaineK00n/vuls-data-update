@@ -64,7 +64,7 @@ const (
 	RangeTypeDPKG                                  RangeType = "dpkg"
 	RangeTypePacman                                RangeType = "pacman"
 	RangeTypeFreeBSDPkg                            RangeType = "freebsd-pkg"
-	RangeTypeSolarisIPS                            RangeType = "solaris-ips"
+	RangeTypeSolarisIPSPattern                            RangeType = "solaris-ips-pattern"
 	RangeTypeNPM                                   RangeType = "npm"
 	RangeTypeRubyGems                              RangeType = "rubygems"
 	RangeTypePyPI                                  RangeType = "pypi"
@@ -110,7 +110,7 @@ func RangeTypes() []RangeType {
 		RangeTypeDPKG,
 		RangeTypePacman,
 		RangeTypeFreeBSDPkg,
-		RangeTypeSolarisIPS,
+		RangeTypeSolarisIPSPattern,
 		RangeTypeNPM,
 		RangeTypeRubyGems,
 		RangeTypePyPI,
@@ -326,9 +326,12 @@ func (t RangeType) CompareVersions(family ecosystemTypes.Ecosystem, v1, v2 strin
 			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
 		}
 		return va.Compare(vb), nil
-	case RangeTypeSolarisIPS:
+	case RangeTypeSolarisIPSPattern:
 		// IPS (pkg(7)) versions of Oracle Solaris 11 and the illumos
-		// distributions; see internal/version/ips for the order.
+		// distributions, ordered as internal/version/ips does. The endpoints
+		// of a range of this type are patterns rather than versions (hence
+		// the name); Affected.Accept tests a version against them with
+		// ips.Pattern.Test, and this order is for two versions.
 		va, err := ipsVersion.NewVersion(v1)
 		if err != nil {
 			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
