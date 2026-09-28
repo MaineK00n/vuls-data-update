@@ -64,7 +64,7 @@ const (
 	RangeTypeDPKG                                  RangeType = "dpkg"
 	RangeTypePacman                                RangeType = "pacman"
 	RangeTypeFreeBSDPkg                            RangeType = "freebsd-pkg"
-	RangeTypeSolarisIPSPattern                            RangeType = "solaris-ips-pattern"
+	RangeTypeSolarisIPSPattern                     RangeType = "solaris-ips-pattern"
 	RangeTypeNPM                                   RangeType = "npm"
 	RangeTypeRubyGems                              RangeType = "rubygems"
 	RangeTypePyPI                                  RangeType = "pypi"
