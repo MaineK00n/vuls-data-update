@@ -1,0 +1,18 @@
+{
+	"kb_id": "975977",
+	"url": "https://support.microsoft.com/help/975977",
+	"products": [
+		"SQL Server 2008"
+	],
+	"superseded_by": [
+		{
+			"kb_id": "2083921"
+		}
+	],
+	"data_source": {
+		"id": "microsoft-sqlbuild",
+		"raws": [
+			"support/sql/releases/download-and-install-latest-updates.json"
+		]
+	}
+}

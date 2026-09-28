@@ -1,0 +1,18 @@
+{
+	"kb_id": "5089270",
+	"url": "https://support.microsoft.com/help/5089270",
+	"products": [
+		"SQL Server 2016"
+	],
+	"supersedes": [
+		{
+			"kb_id": "5021128"
+		}
+	],
+	"data_source": {
+		"id": "microsoft-sqlbuild",
+		"raws": [
+			"support/sql/releases/download-and-install-latest-updates.json"
+		]
+	}
+}

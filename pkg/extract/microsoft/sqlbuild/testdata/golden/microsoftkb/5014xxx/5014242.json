@@ -1,0 +1,17 @@
+{
+	"kb_id": "5014242",
+	"products": [
+		"SQL Server 2016"
+	],
+	"superseded_by": [
+		{
+			"kb_id": "5015371"
+		}
+	],
+	"data_source": {
+		"id": "microsoft-sqlbuild",
+		"raws": [
+			"support/sql/releases/download-and-install-latest-updates.json"
+		]
+	}
+}

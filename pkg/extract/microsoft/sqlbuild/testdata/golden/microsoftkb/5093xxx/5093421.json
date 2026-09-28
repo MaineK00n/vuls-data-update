@@ -1,0 +1,17 @@
+{
+	"kb_id": "5093421",
+	"products": [
+		"SQL Server 2025"
+	],
+	"superseded_by": [
+		{
+			"kb_id": "5096981"
+		}
+	],
+	"data_source": {
+		"id": "microsoft-sqlbuild",
+		"raws": [
+			"support/sql/releases/download-and-install-latest-updates.json"
+		]
+	}
+}

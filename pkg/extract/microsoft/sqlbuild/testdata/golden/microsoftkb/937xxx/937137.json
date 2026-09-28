@@ -1,0 +1,13 @@
+{
+	"kb_id": "937137",
+	"url": "https://support.microsoft.com/help/937137",
+	"products": [
+		"SQL Server 2005"
+	],
+	"data_source": {
+		"id": "microsoft-sqlbuild",
+		"raws": [
+			"support/sql/releases/download-and-install-latest-updates.json"
+		]
+	}
+}

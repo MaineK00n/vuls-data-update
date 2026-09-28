@@ -1,0 +1,18 @@
+{
+	"kb_id": "2967546",
+	"url": "https://support.microsoft.com/help/2967546",
+	"products": [
+		"SQL Server 2014"
+	],
+	"supersedes": [
+		{
+			"kb_id": "2931693"
+		}
+	],
+	"data_source": {
+		"id": "microsoft-sqlbuild",
+		"raws": [
+			"support/sql/releases/download-and-install-latest-updates.json"
+		]
+	}
+}
