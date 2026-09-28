@@ -1253,14 +1253,14 @@ func TestRangeType_CompareVersions(t *testing.T) {
 			want: -1,
 		},
 		{
-			name: "solaris-ips timestamp, branch on one side only",
+			name: "solaris-ips missing branch sorts first",
 			rt:   affectedrangeTypes.RangeTypeSolarisIPS,
 			args: args{
 				family: ecosystemTypes.Ecosystem("solaris:11.3"),
 				v1:     "0.5.11:20161018T000000Z",
 				v2:     "0.5.11,5.11-0.175.3.13.0.4.0:20160929T175502Z",
 			},
-			want: 1,
+			want: -1,
 		},
 		{
 			name: "solaris-ips release only against full version",
@@ -1273,14 +1273,14 @@ func TestRangeType_CompareVersions(t *testing.T) {
 			want: 1,
 		},
 		{
-			name: "solaris-ips branch on one side only is don't care, either side",
+			name: "solaris-ips present branch sorts after a missing one",
 			rt:   affectedrangeTypes.RangeTypeSolarisIPS,
 			args: args{
 				family: ecosystemTypes.Ecosystem("solaris:11.4"),
 				v1:     "11.4-11.4.94",
 				v2:     "11.4",
 			},
-			want: 0,
+			want: 1,
 		},
 		{
 			name: "solaris-ips v1: not an ips version",

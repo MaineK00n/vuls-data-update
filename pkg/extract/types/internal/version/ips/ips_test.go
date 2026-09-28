@@ -91,17 +91,14 @@ func TestVersion_Compare(t *testing.T) {
 		// timestamp
 		{name: "timestamp", v: "0.5.11-0.175.3.13.0.4.0:20160929T175502Z", w: "0.5.11-0.175.3.13.0.4.0:20161018T000000Z", want: -1},
 		{name: "timestamp equal", v: "11.4:20180817T004203Z", w: "11.4:20180817T004203Z", want: 0},
-		// don't care: a component the bound v omits is skipped
-		{name: "branch missing on one side", v: "0.5.11:20161018T000000Z", w: "0.5.11,5.11-0.175.3.13.0.4.0:20160929T175502Z", want: 1},
-		{name: "branch missing, timestamp decides the other way", v: "0.5.11:20161018T000000Z", w: "0.5.11,5.11-0.175.3.14.0.6.0:20161118T000000Z", want: -1},
-		{name: "timestamp missing on one side", v: "11.4-11.4.94", w: "11.4-11.4.93.0.1.110.0:20260101T000000Z", want: 1},
-		{name: "branch and timestamp missing on one side", v: "1.8.0.471", w: "1.8.0.181.12:20180711T215531Z", want: 1},
+		// a component missing on one side sorts before a present one (Version.__lt__ of the reference client)
+		{name: "missing branch sorts first", v: "0.5.11:20161018T000000Z", w: "0.5.11,5.11-0.175.3.13.0.4.0:20160929T175502Z", want: -1},
+		{name: "missing branch sorts first, whatever the timestamps", v: "0.5.11:20261231T235959Z", w: "0.5.11-0.175.3.13.0.4.0:20150101T000000Z", want: -1},
+		{name: "missing timestamp sorts first", v: "11.4-11.4.94", w: "11.4-11.4.94:20260101T000000Z", want: -1},
+		{name: "missing branch and timestamp sort first", v: "11.4", w: "11.4-11.4.0.0.1.15.0:20180817T004203Z", want: -1},
+		{name: "present branch sorts after a missing one", v: "11.4-11.4.94", w: "11.4", want: 1},
+		{name: "release decides before a missing branch", v: "1.8.0.471", w: "1.8.0.181.12:20180711T215531Z", want: 1},
 		{name: "release only both sides", v: "1.8.0.471", w: "1.8.0.501.8", want: -1},
-		{name: "only the release is shared and it is equal", v: "11.4", w: "11.4-11.4.0.0.1.15.0:20180817T004203Z", want: 0},
-		// ... on either side: Version.Compare is indifferent to which is the bound
-		{name: "branch on the left side only", v: "11.4-11.4.94", w: "11.4", want: 0},
-		{name: "timestamp on the left side only", v: "11.4:20180817T004203Z", w: "11.4-11.4.0.0.1.15.0", want: 0},
-		{name: "release decides before a one-sided branch", v: "11.4-11.4.94", w: "11.3", want: 1},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -115,6 +112,9 @@ func TestVersion_Compare(t *testing.T) {
 			}
 			if got := v.Compare(w); got != tt.want {
 				t.Errorf("Compare() = %d, want %d", got, tt.want)
+			}
+			if got := w.Compare(v); got != -tt.want {
+				t.Errorf("Compare() the other way = %d, want %d", got, -tt.want)
 			}
 		})
 	}

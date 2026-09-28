@@ -22,21 +22,17 @@
 // (11.4.94 < 11.4.94.0.1.113.1), which differs from the "missing element is
 // zero" reading most version schemes use.
 //
-// Where this package deliberately departs from a strict total order is a
-// component present on one side only. pkg(7) orders a missing branch or
-// timestamp before any present one; that is the right answer for choosing the
-// newest package in a repository, but the wrong one for testing a candidate
-// against a bound: a bound that names only a release, or only a release and a
-// timestamp, would then never be reached by an installed version that carries
-// a branch. Version.Compare therefore treats a component missing on either
-// side as "don't care" and skips it, so that a bound states exactly the
-// components it wants compared; it is indifferent to which side is the bound.
-//
-// Testing a version against a bound is asymmetric, though, in the spirit of
+// Version.Compare is that order, complete with the reference client's rule
+// for a component present on one side only: a missing branch or timestamp
+// sorts before any present one (Version.__lt__). That is the right answer for
+// choosing the newest package in a repository, but the wrong one for testing
+// a version against a bound: a bound that names only a release, or only a
+// release and a timestamp, would then never be reached by an installed
+// version that carries a branch. Bound.Compare is that test, in the spirit of
 // the CONSTRAINT_AUTO matching policy of the same client: the bound decides
-// which components are compared, and a component the bound names but the
-// version lacks is not a match. Bound.Compare is that comparison; Version
-// against Version has no such rule and skips the component from either side.
+// which components are compared, a component it omits is "don't care", and a
+// component it names but the version lacks is not a match. The two are kept
+// apart because the test is asymmetric and the order is not.
 package ips
 
 import (
@@ -169,32 +165,16 @@ func element(a, b string) int {
 }
 
 // Compare returns -1 when v sorts before w, 0 when they are the same version,
-// and +1 when v sorts after w, under the pkg(7) order
-// (release, then branch, then timestamp; build_release ignored) with a
-// component that is missing on either side skipped as "don't care". It is
-// indifferent to which side is the bound; see Bound.Compare for the test of a
-// version against a bound.
-//
-// Because of the don't-care rule this is not a total order: "11.4" compares
-// equal to both "11.4-11.4.1" and "11.4-11.4.94" while those two differ. Do
-// not use it as the comparator of sort or max over a mixed set of versions.
+// and +1 when v sorts after w, under the pkg(7) order: release, then branch,
+// then timestamp, build_release ignored, and a branch or timestamp missing on
+// one side sorting before a present one (an empty sequence is a prefix of any
+// other, and "" is below any timestamp). This is a total order, fit for sort
+// or max; for testing a version against a bound see Bound.Compare.
 func (v Version) Compare(w Version) int {
 	return cmp.Or(
 		slices.CompareFunc(v.release, w.release, element),
-		func() int {
-			// A branch on one side only is "don't care".
-			if len(v.branch) == 0 || len(w.branch) == 0 {
-				return 0
-			}
-			return slices.CompareFunc(v.branch, w.branch, element)
-		}(),
-		func() int {
-			// A timestamp on one side only is "don't care".
-			if v.timestamp == "" || w.timestamp == "" {
-				return 0
-			}
-			return cmp.Compare(v.timestamp, w.timestamp)
-		}(),
+		slices.CompareFunc(v.branch, w.branch, element),
+		cmp.Compare(v.timestamp, w.timestamp),
 	)
 }
 
