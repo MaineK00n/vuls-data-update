@@ -1293,6 +1293,16 @@ func TestRangeType_CompareVersions(t *testing.T) {
 			wantErr: true,
 		},
 		{
+			name: "solaris-ips v1 names a timestamp, v2 is an older release",
+			rt:   affectedrangeTypes.RangeTypeSolarisIPS,
+			args: args{
+				family: ecosystemTypes.Ecosystem("solaris:11.4"),
+				v1:     "11.4:20180817T004203Z",
+				v2:     "11.3",
+			},
+			want: 1,
+		},
+		{
 			name: "solaris-ips v1: not an ips version",
 			rt:   affectedrangeTypes.RangeTypeSolarisIPS,
 			args: args{

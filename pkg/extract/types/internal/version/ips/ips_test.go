@@ -104,6 +104,11 @@ func TestBound_Compare(t *testing.T) {
 		{name: "bound names a branch the version lacks, timestamp present", v: "11.4-11.4.94", w: "11.4:20180817T004203Z", wantErr: true},
 		{name: "bound names a timestamp the version lacks", v: "11.4:20180817T004203Z", w: "11.4-11.4.0.0.1.15.0", wantErr: true},
 		{name: "bound names a branch and a timestamp the version lacks", v: "0.5.11-0.175.3.13.0.4.0:20160929T175502Z", w: "0.5.11", wantErr: true},
+		// ... but only once the components before it are equal
+		{name: "release orders before a missing branch matters", v: "11.4-11.4.94", w: "11.3", want: 1},
+		{name: "release orders before a missing timestamp matters", v: "11.4:20180817T004203Z", w: "11.3", want: 1},
+		{name: "release orders before a missing branch matters, the other way", v: "11.4-11.4.94", w: "11.5", want: -1},
+		{name: "branch orders before a missing timestamp matters", v: "11.4-11.4.94:20260101T000000Z", w: "11.4-11.4.93.0.1.110.0", want: 1},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

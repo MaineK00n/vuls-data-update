@@ -164,7 +164,10 @@ func parseDotSequence(s string) (dotSequence, error) {
 // bound states exactly the components it wants compared. A component the
 // bound names but the version lacks cannot be compared and is an error, for
 // the caller to degrade to a non-match; CONSTRAINT_AUTO is asymmetric in the
-// same way. See the package documentation for why.
+// same way. That error is raised only once the components before it are
+// equal: the release alone orders "11.3" against the bound
+// "11.4:20180817T004203Z", so the missing timestamp never comes into it. See
+// the package documentation for why.
 //
 // Because of the don't-care rule this is not an order over versions: the
 // bound "11.4" compares equal to both "11.4-11.4.1" and "11.4-11.4.94" while
@@ -173,33 +176,33 @@ func parseDotSequence(s string) (dotSequence, error) {
 // provide.
 func (b Bound) Compare(w Version) (int, error) {
 	v := b.v
-	if len(v.branch) != 0 && len(w.branch) == 0 {
-		return 0, errors.New("the bound names a branch the version lacks")
-	}
-	if v.timestamp != "" && w.timestamp == "" {
-		return 0, errors.New("the bound names a timestamp the version lacks")
-	}
 
 	// An element is canonical decimal digits, so it orders by length and then
 	// by digits; a dot sequence that is a proper prefix of another sorts
 	// before it.
 	element := func(a, b string) int { return cmp.Or(cmp.Compare(len(a), len(b)), cmp.Compare(a, b)) }
 
-	return cmp.Or(
-		slices.CompareFunc(v.release, w.release, element),
-		func() int {
-			// A branch the bound omits is "don't care".
-			if len(v.branch) == 0 {
-				return 0
-			}
-			return slices.CompareFunc(v.branch, w.branch, element)
-		}(),
-		func() int {
-			// A timestamp the bound omits is "don't care".
-			if v.timestamp == "" {
-				return 0
-			}
-			return cmp.Compare(v.timestamp, w.timestamp)
-		}(),
-	), nil
+	if n := slices.CompareFunc(v.release, w.release, element); n != 0 {
+		return n, nil
+	}
+
+	// A branch the bound omits is "don't care"; one it names, the version
+	// must have for the comparison to go on.
+	if len(v.branch) != 0 {
+		if len(w.branch) == 0 {
+			return 0, errors.New("the bound names a branch the version lacks")
+		}
+		if n := slices.CompareFunc(v.branch, w.branch, element); n != 0 {
+			return n, nil
+		}
+	}
+
+	// Likewise for the timestamp.
+	if v.timestamp != "" {
+		if w.timestamp == "" {
+			return 0, errors.New("the bound names a timestamp the version lacks")
+		}
+		return cmp.Compare(v.timestamp, w.timestamp), nil
+	}
+	return 0, nil
 }
