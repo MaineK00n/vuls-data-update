@@ -36,7 +36,6 @@ package ips
 
 import (
 	"cmp"
-	"regexp"
 	"slices"
 	"strings"
 	"time"
@@ -44,11 +43,8 @@ import (
 	"github.com/pkg/errors"
 )
 
-// timestampLayout is the pkg(7) timestamp format, always UTC. timestampPattern
-// pins its exact shape (time.Parse alone would also take fractional seconds).
+// timestampLayout is the pkg(7) timestamp format, always UTC.
 const timestampLayout = "20060102T150405Z"
-
-var timestampPattern = regexp.MustCompile(`^[0-9]{8}T[0-9]{6}Z$`)
 
 // Version is a parsed IPS version.
 type Version struct {
@@ -106,18 +102,19 @@ func NewVersion(v string) (Version, error) {
 		}
 	}
 	if hasTimestamp {
-		// time.Parse accepts a fractional second after the seconds field even
-		// when the layout has none, so pin the shape before checking the
-		// calendar.
-		if !timestampPattern.MatchString(timestamp) {
-			return Version{}, errors.Errorf("parse timestamp of %q. expected: %q, actual: %q", v, "YYYYMMDDThhmmssZ", timestamp)
-		}
-		if _, err := time.Parse(timestampLayout, timestamp); err != nil {
+		t, err := time.Parse(timestampLayout, timestamp)
+		if err != nil {
 			return Version{}, errors.Wrapf(err, "parse timestamp of %q. expected: %q", v, "YYYYMMDDThhmmssZ")
+		}
+		// time.Parse accepts a fractional second after the seconds field even
+		// when the layout has none, so require the instant to format back to
+		// what came in.
+		if t.Format(timestampLayout) != timestamp {
+			return Version{}, errors.Errorf("parse timestamp of %q. expected: %q, actual: %q", v, "YYYYMMDDThhmmssZ", timestamp)
 		}
 		// time.Parse takes year 0000; the reference client goes through
 		// datetime.datetime, whose years start at 1.
-		if strings.HasPrefix(timestamp, "0000") {
+		if t.Year() < 1 {
 			return Version{}, errors.Errorf("parse timestamp of %q. year 0000 is not a calendar year", v)
 		}
 		ver.timestamp = timestamp
