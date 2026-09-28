@@ -28,12 +28,12 @@
 // newest package in a repository, but the wrong one for testing a candidate
 // against a bound: a bound that names only a release, or only a release and a
 // timestamp, would then never be reached by an installed version that carries
-// a branch. Compare therefore takes its receiver as the bound and skips a
-// component the bound omits as "don't care", in the spirit of the
-// CONSTRAINT_AUTO matching policy of the same client, so that a bound states
-// exactly the components it wants compared. The other direction is not
-// skipped: a component the bound names but the candidate lacks is an error,
-// which the caller degrades to a non-match.
+// a branch. The comparison is therefore asymmetric and the types say so: a
+// Bound compares a Version, never the other way round. A component the bound
+// omits is "don't care" and skipped, in the spirit of the CONSTRAINT_AUTO
+// matching policy of the same client, so that a bound states exactly the
+// components it wants compared; a component the bound names but the version
+// lacks is an error, which the caller degrades to a non-match.
 package ips
 
 import (
@@ -48,7 +48,8 @@ import (
 // timestampLayout is the pkg(7) timestamp format, always UTC.
 const timestampLayout = "20060102T150405Z"
 
-// Version is a parsed IPS version.
+// Version is a parsed IPS version: what a repository or an installed image
+// reports.
 type Version struct {
 	release      dotSequence
 	buildRelease dotSequence // parsed for validation only; pkg(7) ignores it when ordering
@@ -62,6 +63,22 @@ type Version struct {
 // no bound on its size (pkg(7) puts none; the reference client uses Python
 // integers).
 type dotSequence []string
+
+// Bound is the boundary of a range, written in the IPS version grammar. It
+// names only the components it wants compared, so it is not a Version and
+// has no order of its own; it compares a Version, see Compare.
+type Bound struct {
+	v Version
+}
+
+// NewBound parses a range boundary. The grammar is that of NewVersion.
+func NewBound(s string) (Bound, error) {
+	v, err := NewVersion(s)
+	if err != nil {
+		return Bound{}, errors.Wrap(err, "parse bound")
+	}
+	return Bound{v: v}, nil
+}
 
 // NewVersion parses an IPS version string. Anything that pkg(7) would reject
 // is an error: an empty release, a signalled-but-empty component such as
@@ -141,24 +158,26 @@ func parseDotSequence(s string) (dotSequence, error) {
 	return elems, nil
 }
 
-// Compare orders the bound v against the candidate w under the pkg(7) order
+// Compare orders the bound b against the version w under the pkg(7) order
 // (release, then branch, then timestamp; build_release ignored) and returns
 // -1, 0 or +1. A component the bound omits is "don't care" and skipped, so a
 // bound states exactly the components it wants compared. A component the
-// bound names but the candidate lacks cannot be compared and is an error, for
+// bound names but the version lacks cannot be compared and is an error, for
 // the caller to degrade to a non-match; CONSTRAINT_AUTO is asymmetric in the
 // same way. See the package documentation for why.
 //
-// Because of the don't-care rule this is not a total order: the bound "11.4"
-// compares equal to both "11.4-11.4.1" and "11.4-11.4.94" while those two
-// differ. It is meant for testing one candidate against one bound; do not use
-// it as the comparator of sort or max over a mixed set of versions.
-func (v Version) Compare(w Version) (int, error) {
+// Because of the don't-care rule this is not an order over versions: the
+// bound "11.4" compares equal to both "11.4-11.4.1" and "11.4-11.4.94" while
+// those two differ. There is deliberately no Version.Compare; sorting or
+// picking a maximum needs the plain pkg(7) order, which this package does not
+// provide.
+func (b Bound) Compare(w Version) (int, error) {
+	v := b.v
 	if len(v.branch) != 0 && len(w.branch) == 0 {
-		return 0, errors.New("the bound names a branch the candidate lacks")
+		return 0, errors.New("the bound names a branch the version lacks")
 	}
 	if v.timestamp != "" && w.timestamp == "" {
-		return 0, errors.New("the bound names a timestamp the candidate lacks")
+		return 0, errors.New("the bound names a timestamp the version lacks")
 	}
 
 	// An element is canonical decimal digits, so it orders by length and then

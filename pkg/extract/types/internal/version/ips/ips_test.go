@@ -63,7 +63,7 @@ func TestNewVersion(t *testing.T) {
 	}
 }
 
-func TestVersion_Compare(t *testing.T) {
+func TestBound_Compare(t *testing.T) {
 	tests := []struct {
 		name    string
 		v       string
@@ -99,23 +99,23 @@ func TestVersion_Compare(t *testing.T) {
 		{name: "branch and timestamp missing on one side", v: "1.8.0.471", w: "1.8.0.181.12:20180711T215531Z", want: 1},
 		{name: "release only both sides", v: "1.8.0.471", w: "1.8.0.501.8", want: -1},
 		{name: "only the release is shared and it is equal", v: "11.4", w: "11.4-11.4.0.0.1.15.0:20180817T004203Z", want: 0},
-		// not the other way round: a component the bound names but the candidate w lacks is an error
-		{name: "bound names a branch the candidate lacks", v: "11.4-11.4.94", w: "11.4", wantErr: true},
-		{name: "bound names a branch the candidate lacks, timestamp present", v: "11.4-11.4.94", w: "11.4:20180817T004203Z", wantErr: true},
-		{name: "bound names a timestamp the candidate lacks", v: "11.4:20180817T004203Z", w: "11.4-11.4.0.0.1.15.0", wantErr: true},
-		{name: "bound names a branch and a timestamp the candidate lacks", v: "0.5.11-0.175.3.13.0.4.0:20160929T175502Z", w: "0.5.11", wantErr: true},
+		// not the other way round: a component the bound names but the version w lacks is an error
+		{name: "bound names a branch the version lacks", v: "11.4-11.4.94", w: "11.4", wantErr: true},
+		{name: "bound names a branch the version lacks, timestamp present", v: "11.4-11.4.94", w: "11.4:20180817T004203Z", wantErr: true},
+		{name: "bound names a timestamp the version lacks", v: "11.4:20180817T004203Z", w: "11.4-11.4.0.0.1.15.0", wantErr: true},
+		{name: "bound names a branch and a timestamp the version lacks", v: "0.5.11-0.175.3.13.0.4.0:20160929T175502Z", w: "0.5.11", wantErr: true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			v, err := ips.NewVersion(tt.v)
+			b, err := ips.NewBound(tt.v)
 			if err != nil {
-				t.Fatalf("NewVersion(%q) error = %v", tt.v, err)
+				t.Fatalf("NewBound(%q) error = %v", tt.v, err)
 			}
 			w, err := ips.NewVersion(tt.w)
 			if err != nil {
 				t.Fatalf("NewVersion(%q) error = %v", tt.w, err)
 			}
-			got, err := v.Compare(w)
+			got, err := b.Compare(w)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Compare() error = %v, wantErr %v", err, tt.wantErr)
 				return
