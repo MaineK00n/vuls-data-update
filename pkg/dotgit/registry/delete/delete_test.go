@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"path"
 	"slices"
 	"strconv"
 	"strings"
@@ -18,6 +19,7 @@ func TestDelete(t *testing.T) {
 	type args struct {
 		image string
 		token string
+		opts  []delete.Option
 	}
 	tests := []struct {
 		name    string
@@ -25,10 +27,27 @@ func TestDelete(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name: "happy",
+			name: "untagged",
 			args: args{
 				image: "ghcr.io/vulsio/vuls-data-db@sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb",
 				token: "token",
+			},
+			wantErr: false,
+		},
+		{
+			name: "tagged",
+			args: args{
+				image: "ghcr.io/vulsio/vuls-data-db@sha256:6413c62920ab027e680d7adf44bec195e9f2ec7a299140ff9a5d2193a626b673",
+				token: "token",
+			},
+			wantErr: true,
+		},
+		{
+			name: "tagged, but force",
+			args: args{
+				image: "ghcr.io/vulsio/vuls-data-db@sha256:6413c62920ab027e680d7adf44bec195e9f2ec7a299140ff9a5d2193a626b673",
+				token: "token",
+				opts:  []delete.Option{delete.WithForce(true)},
 			},
 			wantErr: false,
 		},
@@ -47,7 +66,7 @@ func TestDelete(t *testing.T) {
 					Metadata: &ls.Metadata{
 						PackageType: "container",
 						Container: &ls.Container{
-							Tags: []string{"vuls-data-raw-suse-oval"},
+							Tags: []string{"vuls-data-raw-suse-oval", "vuls-data-raw-suse-oval-alias"},
 						},
 					},
 				},
@@ -61,9 +80,7 @@ func TestDelete(t *testing.T) {
 					HTMLURL:        new("https://github.com/orgs/vulsio/packages/container/vuls-data-db/460898773"),
 					Metadata: &ls.Metadata{
 						PackageType: "container",
-						Container: &ls.Container{
-							Tags: []string{"vuls-data-raw-ubuntu-vex"},
-						},
+						Container:   &ls.Container{},
 					},
 				},
 			}
@@ -146,12 +163,26 @@ func TestDelete(t *testing.T) {
 					default:
 						http.Error(w, "Bad Request", http.StatusBadRequest)
 					}
-				case "/orgs/vulsio/packages/container/vuls-data-db/versions/460898773":
+				case "/orgs/vulsio/packages/container/vuls-data-db/versions/460898773",
+					"/orgs/vulsio/packages/container/vuls-data-db/versions/460898921":
 					switch r.Method {
 					case http.MethodDelete:
+						id, err := strconv.Atoi(path.Base(r.URL.Path))
+						if err != nil {
+							http.Error(w, fmt.Sprintf("unexpected error: %v", err), http.StatusInternalServerError)
+							return
+						}
+						// As GHCR does, answer 404 for a version that is
+						// already gone, so that deleting one twice fails here
+						// the way it fails in production.
+						before := len(vs)
 						vs = slices.DeleteFunc(vs, func(v ls.Version) bool {
-							return v.ID == 460898773
+							return v.ID == id
 						})
+						if len(vs) == before {
+							http.NotFound(w, r)
+							return
+						}
 						w.WriteHeader(http.StatusNoContent)
 					default:
 						http.Error(w, "Bad Request", http.StatusBadRequest)
@@ -162,7 +193,7 @@ func TestDelete(t *testing.T) {
 			}))
 			defer ts.Close()
 
-			if err := delete.Delete(tt.args.image, tt.args.token, delete.WithAPIEndpoint(delete.APIEndpoint{GitHub: &delete.GitHub{BaseURL: ts.URL}})); (err != nil) != tt.wantErr {
+			if err := delete.Delete(tt.args.image, tt.args.token, append(tt.args.opts, delete.WithAPIEndpoint(delete.APIEndpoint{GitHub: &delete.GitHub{BaseURL: ts.URL}}))...); (err != nil) != tt.wantErr {
 				t.Errorf("Delete() error = %v, wantErr %v", err, tt.wantErr)
 			}
 
@@ -171,8 +202,11 @@ func TestDelete(t *testing.T) {
 				t.Errorf("List() error = %v", err)
 			}
 
-			if slices.ContainsFunc(rs, func(r ls.Response) bool { return strings.HasSuffix(tt.args.image, r.Digest) }) {
-				t.Errorf("Delete() seems not to have deleted the version with digest %q, remaining versions: %+v", tt.args.image, rs)
+			// Delete removes the digest exactly when it returns nil: it has one
+			// version to delete and reports whatever the registry answered.
+			wantDeleted := !tt.wantErr
+			if slices.ContainsFunc(rs, func(r ls.Response) bool { return strings.HasSuffix(tt.args.image, r.Digest) }) == wantDeleted {
+				t.Errorf("Delete() deleted the version with digest %q = %t, want %t, remaining versions: %+v", tt.args.image, !wantDeleted, wantDeleted, rs)
 			}
 		})
 	}
