@@ -1,0 +1,18 @@
+{
+	"kb_id": "5002366",
+	"url": "https://support.microsoft.com/help/5002366",
+	"products": [
+		"SharePoint Server 2013"
+	],
+	"superseded_by": [
+		{
+			"kb_id": "5002381"
+		}
+	],
+	"data_source": {
+		"id": "microsoft-sharepoint",
+		"raws": [
+			"sharepoint-updates.json"
+		]
+	}
+}

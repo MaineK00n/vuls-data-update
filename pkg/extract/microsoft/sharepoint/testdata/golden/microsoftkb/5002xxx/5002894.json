@@ -1,0 +1,18 @@
+{
+	"kb_id": "5002894",
+	"url": "https://support.microsoft.com/help/5002894",
+	"products": [
+		"SharePoint Server 2019"
+	],
+	"supersedes": [
+		{
+			"kb_id": "5002883"
+		}
+	],
+	"data_source": {
+		"id": "microsoft-sharepoint",
+		"raws": [
+			"sharepoint-updates.json"
+		]
+	}
+}
