@@ -330,8 +330,8 @@ func (t RangeType) CompareVersions(family ecosystemTypes.Ecosystem, v1, v2 strin
 		// IPS (pkg(7)) versions of Oracle Solaris 11 and the illumos
 		// distributions, ordered as internal/version/ips does. The endpoints
 		// of a range of this type are patterns rather than versions (hence
-		// the name); TestEndpoint cuts a version to their shape first, and
-		// this order is for two versions of the same shape.
+		// the name); TestEndpoint cuts a version to their shape before it
+		// comes here, and this order sees two versions of one shape.
 		va, err := ipsVersion.NewVersion(v1)
 		if err != nil {
 			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
@@ -618,18 +618,18 @@ func (t RangeType) CompareVersions(family ecosystemTypes.Ecosystem, v1, v2 strin
 }
 
 // TestEndpoint compares endpoint, the value one operator of a Range of this
-// type carries, to version, with the sign of CompareVersions(family,
-// endpoint, version): -1 when the endpoint sorts before the version, 0 when
-// the version is on it, +1 when the endpoint sorts after the version. For
-// every type but one the endpoint is a full version and this is exactly
-// CompareVersions, errors included.
+// type carries, to version: it is CompareVersions(family, endpoint, version),
+// sign and errors included, so -1 when the endpoint sorts before the version,
+// 0 when the version is on it, +1 when the endpoint sorts after the version.
 //
+// The one thing it adds is for the type whose endpoints are not versions.
 // The endpoints of a solaris-ips-pattern Range are patterns: they name only
 // the components they want compared (a level such as 11.4-11.4.94), so the
 // version is first cut down to the components the endpoint names
-// (ips.Version.Truncate) and the two, then of the same shape, are ordered as
-// any other type. A component the version cannot supply is a *CompareError,
-// which versioncriterion/affected.Accept degrades to a non-match.
+// (ips.Version.Truncate) and reaches CompareVersions with the endpoint's
+// shape, where the order does the rest. A component the version cannot
+// supply is a *CompareError, which versioncriterion/affected.Accept degrades
+// to a non-match.
 func (t RangeType) TestEndpoint(family ecosystemTypes.Ecosystem, endpoint, version string) (int, error) {
 	switch t {
 	case RangeTypeSolarisIPSPattern:
@@ -641,16 +641,13 @@ func (t RangeType) TestEndpoint(family ecosystemTypes.Ecosystem, endpoint, versi
 		if err != nil {
 			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: version, Err: err}}
 		}
-		// The endpoint is a pattern: cut the version down to the components
-		// it names, then order the two as any other type.
 		v, err = v.Truncate(p)
 		if err != nil {
 			return 0, &CompareError{Err: &CannotCompareError{Reason: fmt.Sprintf("%s. endpoint: %q, version: %q", err, endpoint, version)}}
 		}
-		return p.Compare(v), nil
-	default:
-		return t.CompareVersions(family, endpoint, version)
+		version = v.String()
 	}
+	return t.CompareVersions(family, endpoint, version)
 }
 
 func extractRedHatMajorVersion(v string) string {

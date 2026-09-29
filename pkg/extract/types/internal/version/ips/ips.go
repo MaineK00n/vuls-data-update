@@ -130,6 +130,27 @@ func NewVersion(v string) (Version, error) {
 	return ver, nil
 }
 
+// String is v in the pkg(7) grammar, release[,build_release][-branch][:timestamp]:
+// what NewVersion parsed, without the surrounding whitespace it tolerates, so
+// NewVersion(v.String()) is v again.
+func (v Version) String() string {
+	var b strings.Builder
+	b.WriteString(strings.Join(v.release, "."))
+	if len(v.buildRelease) != 0 {
+		b.WriteString(",")
+		b.WriteString(strings.Join(v.buildRelease, "."))
+	}
+	if len(v.branch) != 0 {
+		b.WriteString("-")
+		b.WriteString(strings.Join(v.branch, "."))
+	}
+	if v.timestamp != "" {
+		b.WriteString(":")
+		b.WriteString(v.timestamp)
+	}
+	return b.String()
+}
+
 // parseDotSequence keeps the elements as digits, so their size is unbounded
 // (pkg(7) puts no bound on an element; the reference client uses Python
 // integers). It is stricter than pkg.version.DotSequence, which goes through
