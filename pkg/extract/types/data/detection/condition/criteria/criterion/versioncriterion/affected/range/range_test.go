@@ -1243,6 +1243,16 @@ func TestRangeType_CompareVersions(t *testing.T) {
 			want: 1,
 		},
 		{
+			name: "solaris-ips-pattern orders as solaris-ips",
+			rt:   affectedrangeTypes.RangeTypeSolarisIPSPattern,
+			args: args{
+				family: ecosystemTypes.Ecosystem("solaris:11.4"),
+				v1:     "11.4-11.4.94",
+				v2:     "11.4-11.4.94.0.1.113.1:20260201T000000Z",
+			},
+			want: -1,
+		},
+		{
 			name: "solaris-ips branch prefix",
 			rt:   affectedrangeTypes.RangeTypeSolarisIPS,
 			args: args{
@@ -1347,33 +1357,45 @@ func TestRangeType_TestEndpoint(t *testing.T) {
 			want: -1,
 		},
 		{
-			name: "solaris-ips: a level is met by a version on it",
-			rt:   affectedrangeTypes.RangeTypeSolarisIPS,
+			name: "solaris-ips-pattern: a level is met by a version on it",
+			rt:   affectedrangeTypes.RangeTypeSolarisIPSPattern,
 			args: args{family: ecosystemTypes.EcosystemTypeSolaris, endpoint: "11.4-11.4.94", version: "11.4-11.4.94.0.1.113.1:20260201T000000Z"},
 			want: 0,
 		},
 		{
-			name: "solaris-ips: a level after the version",
-			rt:   affectedrangeTypes.RangeTypeSolarisIPS,
+			name: "solaris-ips-pattern: a level after the version",
+			rt:   affectedrangeTypes.RangeTypeSolarisIPSPattern,
 			args: args{family: ecosystemTypes.EcosystemTypeSolaris, endpoint: "11.4-11.4.94", version: "11.4-11.4.93.0.1.110.0:20260101T000000Z"},
 			want: +1,
 		},
 		{
-			name:    "solaris-ips: the pattern names a branch the version lacks",
-			rt:      affectedrangeTypes.RangeTypeSolarisIPS,
+			name:    "solaris-ips-pattern: the pattern names a branch the version lacks",
+			rt:      affectedrangeTypes.RangeTypeSolarisIPSPattern,
 			args:    args{family: ecosystemTypes.EcosystemTypeSolaris, endpoint: "11.4-11.4.94", version: "11.4"},
 			wantErr: true,
 		},
 		{
-			name:    "solaris-ips: the pattern names a branch the version lacks, whatever the release",
-			rt:      affectedrangeTypes.RangeTypeSolarisIPS,
+			name:    "solaris-ips-pattern: the pattern names a branch the version lacks, whatever the release",
+			rt:      affectedrangeTypes.RangeTypeSolarisIPSPattern,
 			args:    args{family: ecosystemTypes.EcosystemTypeSolaris, endpoint: "11.4-11.4.94", version: "11.3"},
 			wantErr: true,
 		},
 		{
-			name: "solaris-ips: a release-only endpoint against a full version",
-			rt:   affectedrangeTypes.RangeTypeSolarisIPS,
+			name: "solaris-ips-pattern: a release-only endpoint against a full version",
+			rt:   affectedrangeTypes.RangeTypeSolarisIPSPattern,
 			args: args{family: ecosystemTypes.EcosystemTypeSolaris, endpoint: "1.8.0.471", version: "1.8.0.181.12-11.4.0.0.1.13.0:20180711T215531Z"},
+			want: +1,
+		},
+		{
+			name: "solaris-ips: the endpoint is a version, so a build of a level sorts after it",
+			rt:   affectedrangeTypes.RangeTypeSolarisIPS,
+			args: args{family: ecosystemTypes.EcosystemTypeSolaris, endpoint: "11.4-11.4.94", version: "11.4-11.4.94.0.1.113.1:20260201T000000Z"},
+			want: -1,
+		},
+		{
+			name: "solaris-ips: a version without a branch is ordered, not refused",
+			rt:   affectedrangeTypes.RangeTypeSolarisIPS,
+			args: args{family: ecosystemTypes.EcosystemTypeSolaris, endpoint: "11.4-11.4.94", version: "11.4"},
 			want: +1,
 		},
 	}

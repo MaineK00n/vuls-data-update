@@ -65,6 +65,7 @@ const (
 	RangeTypePacman                                RangeType = "pacman"
 	RangeTypeFreeBSDPkg                            RangeType = "freebsd-pkg"
 	RangeTypeSolarisIPS                            RangeType = "solaris-ips"
+	RangeTypeSolarisIPSPattern                     RangeType = "solaris-ips-pattern"
 	RangeTypeNPM                                   RangeType = "npm"
 	RangeTypeRubyGems                              RangeType = "rubygems"
 	RangeTypePyPI                                  RangeType = "pypi"
@@ -111,6 +112,7 @@ func RangeTypes() []RangeType {
 		RangeTypePacman,
 		RangeTypeFreeBSDPkg,
 		RangeTypeSolarisIPS,
+		RangeTypeSolarisIPSPattern,
 		RangeTypeNPM,
 		RangeTypeRubyGems,
 		RangeTypePyPI,
@@ -326,12 +328,12 @@ func (t RangeType) CompareVersions(family ecosystemTypes.Ecosystem, v1, v2 strin
 			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
 		}
 		return va.Compare(vb), nil
-	case RangeTypeSolarisIPS:
+	case RangeTypeSolarisIPS, RangeTypeSolarisIPSPattern:
 		// IPS (pkg(7)) versions of Oracle Solaris 11 and the illumos
-		// distributions, ordered as internal/version/ips does. The endpoints
-		// of a range of this type are patterns rather than versions;
-		// TestEndpoint cuts a version to their shape before it comes here,
-		// and this order sees two versions of one shape.
+		// distributions, ordered as internal/version/ips does. The two
+		// types share the order; they differ in what a range endpoint is,
+		// a version for solaris-ips and a pattern for solaris-ips-pattern,
+		// which TestEndpoint settles before anything reaches this order.
 		va, err := ipsVersion.NewVersion(v1)
 		if err != nil {
 			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
@@ -623,16 +625,17 @@ func (t RangeType) CompareVersions(family ecosystemTypes.Ecosystem, v1, v2 strin
 // 0 when the version is on it, +1 when the endpoint sorts after the version.
 //
 // The one thing it adds is for the type whose endpoints are not versions.
-// The endpoints of a solaris-ips Range are patterns: they name only
+// The endpoints of a solaris-ips-pattern Range are patterns: they name only
 // the components they want compared (a level such as 11.4-11.4.94), so the
 // version is first cut down to the components the endpoint names
 // (ips.Version.Truncate) and reaches CompareVersions with the endpoint's
 // shape, where the order does the rest. A component the version cannot
 // supply is a *CompareError, which versioncriterion/affected.Accept degrades
-// to a non-match.
+// to a non-match. The endpoints of a solaris-ips Range are versions, so that
+// type goes straight through like every other.
 func (t RangeType) TestEndpoint(family ecosystemTypes.Ecosystem, endpoint, version string) (int, error) {
 	switch t {
-	case RangeTypeSolarisIPS:
+	case RangeTypeSolarisIPSPattern:
 		p, err := ipsVersion.NewVersion(endpoint)
 		if err != nil {
 			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: endpoint, Err: err}}
