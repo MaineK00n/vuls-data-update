@@ -280,63 +280,63 @@ func TestAffected_Accept(t *testing.T) {
 			wantErr: true,
 		},
 		{
-			name: "solaris-ips-pattern 11.4-11.4.93.0.1.110.0:20260101T000000Z [< 11.4-11.4.94]",
+			name: "solaris-ips 11.4-11.4.93.0.1.110.0:20260101T000000Z [< 11.4-11.4.94]",
 			fields: fields{
-				Type:  affectedrangeTypes.RangeTypeSolarisIPSPattern,
+				Type:  affectedrangeTypes.RangeTypeSolarisIPS,
 				Range: []affectedrangeTypes.Range{{LessThan: "11.4-11.4.94"}},
 			},
 			args: args{family: ecosystemTypes.Ecosystem("solaris:11.4"), v: "11.4-11.4.93.0.1.110.0:20260101T000000Z"},
 			want: true,
 		},
 		{
-			name: "solaris-ips-pattern 11.4-11.4.94.0.1.113.1:20260201T000000Z [< 11.4-11.4.94]",
+			name: "solaris-ips 11.4-11.4.94.0.1.113.1:20260201T000000Z [< 11.4-11.4.94]",
 			fields: fields{
-				Type:  affectedrangeTypes.RangeTypeSolarisIPSPattern,
+				Type:  affectedrangeTypes.RangeTypeSolarisIPS,
 				Range: []affectedrangeTypes.Range{{LessThan: "11.4-11.4.94"}},
 			},
 			args: args{family: ecosystemTypes.Ecosystem("solaris:11.4"), v: "11.4-11.4.94.0.1.113.1:20260201T000000Z"},
 			want: false,
 		},
 		{
-			name: "solaris-ips-pattern 11.4-11.4.94.0.1.113.1:20260201T000000Z [<= 11.4-11.4.94]: a level is met by every build on it",
+			name: "solaris-ips 11.4-11.4.94.0.1.113.1:20260201T000000Z [<= 11.4-11.4.94]: a level is met by every build on it",
 			fields: fields{
-				Type:  affectedrangeTypes.RangeTypeSolarisIPSPattern,
+				Type:  affectedrangeTypes.RangeTypeSolarisIPS,
 				Range: []affectedrangeTypes.Range{{LessEqual: "11.4-11.4.94"}},
 			},
 			args: args{family: ecosystemTypes.Ecosystem("solaris:11.4"), v: "11.4-11.4.94.0.1.113.1:20260201T000000Z"},
 			want: true,
 		},
 		{
-			name: "solaris-ips-pattern 11.4 without a branch [< 11.4-11.4.94]: the pattern names a branch the version lacks, no match",
+			name: "solaris-ips 11.4 without a branch [< 11.4-11.4.94]: the pattern names a branch the version lacks, no match",
 			fields: fields{
-				Type:  affectedrangeTypes.RangeTypeSolarisIPSPattern,
+				Type:  affectedrangeTypes.RangeTypeSolarisIPS,
 				Range: []affectedrangeTypes.Range{{LessThan: "11.4-11.4.94"}},
 			},
 			args: args{family: ecosystemTypes.Ecosystem("solaris:11.4"), v: "11.4"},
 			want: false,
 		},
 		{
-			name: "solaris-ips-pattern 11.3 [<= 11.4:20180817T004203Z]: the pattern names a timestamp the version lacks, no match whatever the release",
+			name: "solaris-ips 11.3 [<= 11.4:20180817T004203Z]: the pattern names a timestamp the version lacks, no match whatever the release",
 			fields: fields{
-				Type:  affectedrangeTypes.RangeTypeSolarisIPSPattern,
+				Type:  affectedrangeTypes.RangeTypeSolarisIPS,
 				Range: []affectedrangeTypes.Range{{LessEqual: "11.4:20180817T004203Z"}},
 			},
 			args: args{family: ecosystemTypes.Ecosystem("solaris:11.4"), v: "11.3"},
 			want: false,
 		},
 		{
-			name: "solaris-ips-pattern 1.8.0.181.12:20180711T215531Z [< 1.8.0.471]: a release-only pattern reaches a version with a timestamp",
+			name: "solaris-ips 1.8.0.181.12:20180711T215531Z [< 1.8.0.471]: a release-only pattern reaches a version with a timestamp",
 			fields: fields{
-				Type:  affectedrangeTypes.RangeTypeSolarisIPSPattern,
+				Type:  affectedrangeTypes.RangeTypeSolarisIPS,
 				Range: []affectedrangeTypes.Range{{LessThan: "1.8.0.471"}},
 			},
 			args: args{family: ecosystemTypes.Ecosystem("solaris:11.4"), v: "1.8.0.181.12:20180711T215531Z"},
 			want: true,
 		},
 		{
-			name: "solaris-ips-pattern not an ips version [< 11.4-11.4.94]: no match, no error",
+			name: "solaris-ips not an ips version [< 11.4-11.4.94]: no match, no error",
 			fields: fields{
-				Type:  affectedrangeTypes.RangeTypeSolarisIPSPattern,
+				Type:  affectedrangeTypes.RangeTypeSolarisIPS,
 				Range: []affectedrangeTypes.Range{{LessThan: "11.4-11.4.94"}},
 			},
 			args: args{family: ecosystemTypes.Ecosystem("solaris:11.4"), v: "1.0.2k-8.el7"},
