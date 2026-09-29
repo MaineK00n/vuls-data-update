@@ -1327,6 +1327,69 @@ func TestRangeType_CompareVersions(t *testing.T) {
 	}
 }
 
+func TestRangeType_TestEndpoint(t *testing.T) {
+	type args struct {
+		family   ecosystemTypes.Ecosystem
+		endpoint string
+		version  string
+	}
+	tests := []struct {
+		name    string
+		rt      affectedrangeTypes.RangeType
+		args    args
+		want    int
+		wantErr bool
+	}{
+		{
+			name: "a type whose endpoints are versions goes through CompareVersions",
+			rt:   affectedrangeTypes.RangeTypeSEMVER,
+			args: args{endpoint: "1.2.3", version: "1.2.4"},
+			want: -1,
+		},
+		{
+			name: "solaris-ips-pattern: a level is met by a version on it",
+			rt:   affectedrangeTypes.RangeTypeSolarisIPSPattern,
+			args: args{family: ecosystemTypes.EcosystemTypeSolaris, endpoint: "11.4-11.4.94", version: "11.4-11.4.94.0.1.113.1:20260201T000000Z"},
+			want: 0,
+		},
+		{
+			name: "solaris-ips-pattern: a level after the version",
+			rt:   affectedrangeTypes.RangeTypeSolarisIPSPattern,
+			args: args{family: ecosystemTypes.EcosystemTypeSolaris, endpoint: "11.4-11.4.94", version: "11.4-11.4.93.0.1.110.0:20260101T000000Z"},
+			want: +1,
+		},
+		{
+			name:    "solaris-ips-pattern: the pattern names a branch the version lacks",
+			rt:      affectedrangeTypes.RangeTypeSolarisIPSPattern,
+			args:    args{family: ecosystemTypes.EcosystemTypeSolaris, endpoint: "11.4-11.4.94", version: "11.4"},
+			wantErr: true,
+		},
+		{
+			name: "solaris-ips-pattern: the release decides before a missing branch matters",
+			rt:   affectedrangeTypes.RangeTypeSolarisIPSPattern,
+			args: args{family: ecosystemTypes.EcosystemTypeSolaris, endpoint: "11.4-11.4.94", version: "11.3"},
+			want: +1,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := tt.rt.TestEndpoint(tt.args.family, tt.args.endpoint, tt.args.version)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("RangeType.TestEndpoint() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if err != nil {
+				if _, ok := stderrors.AsType[*affectedrangeTypes.CompareError](err); !ok {
+					t.Errorf("RangeType.TestEndpoint() error = %v, want *CompareError", err)
+				}
+			}
+			if got != tt.want {
+				t.Errorf("RangeType.TestEndpoint() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
 func TestRangeTypes_HaveComparator(t *testing.T) {
 	// Documentation of pre-existing debt, not a template: pacman and
 	// freebsd-pkg are in the vocabulary but have never had a comparator, so

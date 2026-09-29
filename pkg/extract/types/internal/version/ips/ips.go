@@ -26,15 +26,15 @@
 // for a component present on one side only: a missing branch or timestamp
 // sorts before any present one (Version.__lt__). That is the right answer for
 // choosing the newest package in a repository, but the wrong one for testing
-// a version against a pattern: a pattern that names only a release, or only a
-// release and a timestamp, would then never be reached by an installed
-// version that carries a branch. Pattern.Test is that test, in the spirit of
-// the CONSTRAINT_AUTO matching policy of the same client: the pattern decides
-// which components are compared, a component it omits is "don't care", and a
-// component it names but the version lacks is not a match. The two are kept
-// apart because the test is asymmetric and the order is not. Every Version
-// is also a Pattern (one that names every component), so for a full pattern
-// Test and Compare agree.
+// a version against a pattern, a version that names only the components it
+// wants compared, the way "pkg install entire@11.4-11.4.94" names a level
+// (pkg(1) calls the whole thing a pkg_fmri_pattern): the pattern would never
+// be reached by an installed version that carries a branch it does not name.
+// Test is that test, in the spirit of the CONSTRAINT_AUTO matching policy of
+// the same client: the pattern decides which components take part, a dot
+// sequence it names matches the same depth of the version's, and a component
+// it names but the version cannot supply is an error. A pattern that names
+// every component in full tests exactly as the order compares.
 package ips
 
 import (
@@ -64,24 +64,6 @@ type Version struct {
 // no bound on its size (pkg(7) puts none; the reference client uses Python
 // integers).
 type dotSequence []string
-
-// Pattern is a version pattern, written in the IPS version grammar: it names
-// only the components it wants compared, the way "pkg install
-// entire@11.4-11.4.94" names a level rather than a version (pkg(1) calls the
-// whole thing a pkg_fmri_pattern). A range endpoint of this type is a
-// Pattern. Test tells whether a Version falls before, on or after it.
-type Pattern struct {
-	v Version
-}
-
-// NewPattern parses a version pattern. The grammar is that of NewVersion.
-func NewPattern(s string) (Pattern, error) {
-	v, err := NewVersion(s)
-	if err != nil {
-		return Pattern{}, errors.Wrap(err, "parse pattern")
-	}
-	return Pattern{v: v}, nil
-}
 
 // NewVersion parses an IPS version string. Anything that pkg(7) would reject
 // is an error: an empty release, a signalled-but-empty component such as
@@ -173,7 +155,7 @@ func element(a, b string) int {
 // then timestamp, build_release ignored, and a branch or timestamp missing on
 // one side sorting before a present one (an empty sequence is a prefix of any
 // other, and "" is below any timestamp). This is a total order, fit for sort
-// or max; for testing a version against a pattern see Pattern.Test.
+// or max; for testing a version against a pattern see Test.
 func (v Version) Compare(w Version) int {
 	return cmp.Or(
 		slices.CompareFunc(v.release, w.release, element),
@@ -182,38 +164,64 @@ func (v Version) Compare(w Version) int {
 	)
 }
 
-// Test tells where the version w falls against the pattern p: -1 before it,
-// 0 on it, +1 after it, under the pkg(7) order as Version.Compare, except
-// that only the pattern decides which components take part. It is a match
-// test, not an order. A component the pattern omits is "don't care"; a
-// component the pattern names but the version lacks cannot be tested and is
-// an error, for the caller to degrade to a non-match (CONSTRAINT_AUTO is
-// asymmetric in the same way). That error is raised only once the components
-// before it are equal: the release alone places "11.3" against the pattern
-// "11.4:20180817T004203Z", so the missing timestamp never comes into it.
-func (p Pattern) Test(w Version) (int, error) {
-	v := p.v
-	if n := slices.CompareFunc(v.release, w.release, element); n != 0 {
+// Test tells where the version v falls against pattern: -1 before it, 0 on
+// it, +1 after it. A pattern names only the components it wants compared, the
+// way "pkg install entire@11.4-11.4.94" names a level rather than a version,
+// so this is a match test rather than the order:
+//
+//   - a component the pattern omits is "don't care" and takes no part;
+//   - a dot sequence it names is matched against the same depth of the
+//     version's, so the level 11.4-11.4.94 is met by 11.4-11.4.94.0.1.113.1;
+//   - a component the pattern names but the version cannot supply cannot be
+//     tested and is an error, for the caller to degrade to a non-match.
+//
+// The error is raised only once the components before it are equal: the
+// release alone places "11.3" against the pattern "11.4:20180817T004203Z", so
+// the missing timestamp never comes into it. CONSTRAINT_AUTO in the reference
+// client matches the same way (DotSequence.is_subsequence for the sequences,
+// a component absent from the candidate refusing the match).
+func Test(pattern, v Version) (int, error) {
+	n, ok := testSequence(pattern.release, v.release)
+	switch {
+	case n != 0:
 		return n, nil
+	case !ok:
+		return 0, errors.Errorf("the version's release %q does not reach the pattern's %q", strings.Join(v.release, "."), strings.Join(pattern.release, "."))
 	}
 
 	// A branch the pattern omits is "don't care"; one it names, the version
-	// must have for the test to go on.
-	if len(v.branch) != 0 {
-		if len(w.branch) == 0 {
+	// must supply for the test to go on.
+	if len(pattern.branch) != 0 {
+		if len(v.branch) == 0 {
 			return 0, errors.New("the pattern names a branch the version lacks")
 		}
-		if n := slices.CompareFunc(v.branch, w.branch, element); n != 0 {
+		n, ok := testSequence(pattern.branch, v.branch)
+		switch {
+		case n != 0:
 			return n, nil
+		case !ok:
+			return 0, errors.Errorf("the version's branch %q does not reach the pattern's %q", strings.Join(v.branch, "."), strings.Join(pattern.branch, "."))
 		}
 	}
 
-	// Likewise for the timestamp.
-	if v.timestamp != "" {
-		if w.timestamp == "" {
+	// Likewise for the timestamp, which the pattern either names in full or
+	// not at all.
+	if pattern.timestamp != "" {
+		if v.timestamp == "" {
 			return 0, errors.New("the pattern names a timestamp the version lacks")
 		}
-		return cmp.Compare(v.timestamp, w.timestamp), nil
+		return cmp.Compare(pattern.timestamp, v.timestamp), nil
 	}
 	return 0, nil
+}
+
+// testSequence orders the pattern's dot sequence against the version's, over
+// the depth they share. ok is false when the pattern names a deeper level than
+// the version reaches, which the shared elements did not already decide.
+func testSequence(pattern, v dotSequence) (int, bool) {
+	n := min(len(pattern), len(v))
+	if c := slices.CompareFunc(pattern[:n], v[:n], element); c != 0 {
+		return c, true
+	}
+	return 0, len(pattern) <= len(v)
 }

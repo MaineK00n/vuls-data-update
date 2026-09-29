@@ -298,6 +298,15 @@ func TestAffected_Accept(t *testing.T) {
 			want: false,
 		},
 		{
+			name: "solaris-ips-pattern 11.4-11.4.94.0.1.113.1:20260201T000000Z [<= 11.4-11.4.94]: a level is met by every build on it",
+			fields: fields{
+				Type:  affectedrangeTypes.RangeTypeSolarisIPSPattern,
+				Range: []affectedrangeTypes.Range{{LessEqual: "11.4-11.4.94"}},
+			},
+			args: args{family: ecosystemTypes.Ecosystem("solaris:11.4"), v: "11.4-11.4.94.0.1.113.1:20260201T000000Z"},
+			want: true,
+		},
+		{
 			name: "solaris-ips-pattern 11.4 without a branch [< 11.4-11.4.94]: the pattern names a branch the version lacks, no match",
 			fields: fields{
 				Type:  affectedrangeTypes.RangeTypeSolarisIPSPattern,

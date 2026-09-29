@@ -120,7 +120,7 @@ func TestVersion_Compare(t *testing.T) {
 	}
 }
 
-func TestPattern_Test(t *testing.T) {
+func TestTest(t *testing.T) {
 	tests := []struct {
 		name    string
 		v       string
@@ -132,7 +132,7 @@ func TestPattern_Test(t *testing.T) {
 		{name: "equal release", v: "11.4", w: "11.4", want: 0},
 		{name: "release element", v: "11.3", w: "11.4", want: -1},
 		{name: "release element is numeric, not lexical", v: "11.4.9", w: "11.4.10", want: -1},
-		{name: "shorter release is a prefix and sorts first", v: "11.4", w: "11.4.0", want: -1},
+		{name: "a shorter release is a level the version is on", v: "11.4", w: "11.4.0", want: 0},
 		{name: "elements beyond the int range compare numerically", v: "11.99999999999999999999999", w: "11.100000000000000000000000", want: -1},
 		{name: "element beyond the int range is greater than a small one", v: "11.100000000000000000000000", w: "11.9", want: 1},
 		{name: "release decides before branch", v: "11.3-11.3.99", w: "11.4-11.4.1", want: -1},
@@ -142,7 +142,7 @@ func TestPattern_Test(t *testing.T) {
 		{name: "build release ignored, one side only", v: "0.5.11,5.11-0.175.3.1.0.3.0", w: "0.5.11-0.175.3.1.0.3.0", want: 0},
 		// branch
 		{name: "branch element", v: "11.4-11.4.93.0.1.110.0", w: "11.4-11.4.94.0.1.113.1", want: -1},
-		{name: "branch prefix sorts first", v: "11.4-11.4.94", w: "11.4-11.4.94.0.1.113.1", want: -1},
+		{name: "a shorter branch is a level the version is on", v: "11.4-11.4.94", w: "11.4-11.4.94.0.1.113.1", want: 0},
 		{name: "same branch prefix and beyond", v: "11.4-11.4.94.0.1.113.1", w: "11.4-11.4.94.0.1.113.1", want: 0},
 		{name: "branch decides before timestamp", v: "11.4-11.4.2:20261231T235959Z", w: "11.4-11.4.3:20150101T000000Z", want: -1},
 		{name: "branch element is numeric, not lexical", v: "0.5.11-0.175.3.9.0.3.0", w: "0.5.11-0.175.3.13.0.4.0", want: -1},
@@ -161,6 +161,9 @@ func TestPattern_Test(t *testing.T) {
 		{name: "pattern names a branch the version lacks, timestamp present", v: "11.4-11.4.94", w: "11.4:20180817T004203Z", wantErr: true},
 		{name: "pattern names a timestamp the version lacks", v: "11.4:20180817T004203Z", w: "11.4-11.4.0.0.1.15.0", wantErr: true},
 		{name: "pattern names a branch and a timestamp the version lacks", v: "0.5.11-0.175.3.13.0.4.0:20160929T175502Z", w: "0.5.11", wantErr: true},
+		// a level the version does not reach cannot be tested either
+		{name: "release deeper than the version reaches", v: "1.0.2.20", w: "1.0.2", wantErr: true},
+		{name: "branch deeper than the version reaches", v: "11.4-11.4.94.0.1", w: "11.4-11.4.94", wantErr: true},
 		// ... but only once the components before it are equal
 		{name: "release orders before a missing branch matters", v: "11.4-11.4.94", w: "11.3", want: 1},
 		{name: "release orders before a missing timestamp matters", v: "11.4:20180817T004203Z", w: "11.3", want: 1},
@@ -169,15 +172,15 @@ func TestPattern_Test(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			p, err := ips.NewPattern(tt.v)
+			pattern, err := ips.NewVersion(tt.v)
 			if err != nil {
-				t.Fatalf("NewPattern(%q) error = %v", tt.v, err)
+				t.Fatalf("NewVersion(%q) error = %v", tt.v, err)
 			}
-			w, err := ips.NewVersion(tt.w)
+			v, err := ips.NewVersion(tt.w)
 			if err != nil {
 				t.Fatalf("NewVersion(%q) error = %v", tt.w, err)
 			}
-			got, err := p.Test(w)
+			got, err := ips.Test(pattern, v)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Test() error = %v, wantErr %v", err, tt.wantErr)
 				return
