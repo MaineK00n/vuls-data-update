@@ -328,13 +328,9 @@ func (t RangeType) CompareVersions(family ecosystemTypes.Ecosystem, v1, v2 strin
 			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
 		}
 		return va.Compare(vb), nil
-	case RangeTypeSolarisIPS, RangeTypeSolarisIPSPattern:
+	case RangeTypeSolarisIPS:
 		// IPS (pkg(7)) versions of Oracle Solaris 11 and the illumos
-		// distributions, ordered as internal/version/ips does. The two
-		// types share the order; they differ in what a range endpoint is,
-		// a version for solaris-ips and a pattern for solaris-ips-pattern,
-		// which TestEndpoint cuts the version down to before ordering the
-		// two as solaris-ips. Two versions of either type order the same.
+		// distributions, ordered as internal/version/ips does.
 		va, err := ipsVersion.NewVersion(v1)
 		if err != nil {
 			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
@@ -344,6 +340,12 @@ func (t RangeType) CompareVersions(family ecosystemTypes.Ecosystem, v1, v2 strin
 			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
 		}
 		return va.Compare(vb), nil
+	case RangeTypeSolarisIPSPattern:
+		// The endpoints of a range of this type are patterns, not versions,
+		// so two values of it are not put through the version order: a
+		// version is tested against an endpoint by TestEndpoint, and two
+		// versions are ordered as solaris-ips.
+		return 0, &CompareError{Err: &CannotCompareError{Reason: fmt.Sprintf("the endpoints of %s are patterns. test a version against one with TestEndpoint, or order two versions as %s", t, RangeTypeSolarisIPS)}}
 	case RangeTypeNPM:
 		va, err := npm.NewVersion(v1)
 		if err != nil {
@@ -632,8 +634,9 @@ func (t RangeType) CompareVersions(family ecosystemTypes.Ecosystem, v1, v2 strin
 // (ips.Version.Truncate) and the two, then versions of one shape, are
 // ordered as solaris-ips orders versions. A component the version cannot
 // supply is a *CompareError, which versioncriterion/affected.Accept degrades
-// to a non-match. The endpoints of a solaris-ips Range are versions, so that
-// type goes straight through like every other.
+// to a non-match. This is the only way a value of that type is compared;
+// CompareVersions refuses it. The endpoints of a solaris-ips Range are
+// versions, so that type goes straight through like every other.
 func (t RangeType) TestEndpoint(family ecosystemTypes.Ecosystem, endpoint, version string) (int, error) {
 	switch t {
 	case RangeTypeSolarisIPSPattern:

@@ -1243,14 +1243,14 @@ func TestRangeType_CompareVersions(t *testing.T) {
 			want: 1,
 		},
 		{
-			name: "solaris-ips-pattern orders as solaris-ips",
+			name: "solaris-ips-pattern: its endpoints are patterns, so two of its values are refused",
 			rt:   affectedrangeTypes.RangeTypeSolarisIPSPattern,
 			args: args{
 				family: ecosystemTypes.Ecosystem("solaris:11.4"),
 				v1:     "11.4-11.4.94",
 				v2:     "11.4-11.4.94.0.1.113.1:20260201T000000Z",
 			},
-			want: -1,
+			wantErr: true,
 		},
 		{
 			name: "solaris-ips branch prefix",
@@ -1425,6 +1425,12 @@ func TestRangeTypes_HaveComparator(t *testing.T) {
 	// evaluation surfaces as an unevaluable warning. Implementing a
 	// comparator makes this test fail — then remove the entry here. Do not
 	// add new types; a new RangeType must ship with its comparator.
+	//
+	// The same sweep runs through TestEndpoint, the entry point Accept uses,
+	// which must agree on which types are unsupported: a type whose
+	// CompareVersions refuses its values by design (solaris-ips-pattern,
+	// whose endpoints are patterns) is not unsupported there. That it
+	// evaluates is TestRangeType_TestEndpoint's business.
 	noComparator := map[affectedrangeTypes.RangeType]bool{
 		affectedrangeTypes.RangeTypePacman:     true,
 		affectedrangeTypes.RangeTypeFreeBSDPkg: true,
@@ -1438,6 +1444,10 @@ func TestRangeTypes_HaveComparator(t *testing.T) {
 				} else {
 					t.Errorf("%q has a comparator now; drop it from noComparator", rt)
 				}
+			}
+			_, err = rt.TestEndpoint(ecosystemTypes.EcosystemTypeRedHat, "1.0.0", "2.0.0")
+			if _, unsupported := stderrors.AsType[*affectedrangeTypes.UnsupportedRangeTypeError](err); unsupported != noComparator[rt] {
+				t.Errorf("TestEndpoint() unsupported = %v for %q, want %v", unsupported, rt, noComparator[rt])
 			}
 		})
 	}
