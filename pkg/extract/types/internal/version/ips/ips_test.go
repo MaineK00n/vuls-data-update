@@ -120,73 +120,63 @@ func TestVersion_Compare(t *testing.T) {
 	}
 }
 
-func TestTest(t *testing.T) {
+func TestVersion_Truncate(t *testing.T) {
 	tests := []struct {
 		name    string
 		v       string
-		w       string
-		want    int
+		shape   string
+		want    string
 		wantErr bool
 	}{
-		// release
-		{name: "equal release", v: "11.4", w: "11.4", want: 0},
-		{name: "release element", v: "11.3", w: "11.4", want: -1},
-		{name: "release element is numeric, not lexical", v: "11.4.9", w: "11.4.10", want: -1},
-		{name: "a shorter release is a level the version is on", v: "11.4", w: "11.4.0", want: 0},
-		{name: "elements beyond the int range compare numerically", v: "11.99999999999999999999999", w: "11.100000000000000000000000", want: -1},
-		{name: "element beyond the int range is greater than a small one", v: "11.100000000000000000000000", w: "11.9", want: 1},
-		{name: "release decides before branch", v: "11.3-11.3.99", w: "11.4-11.4.1", want: -1},
-		{name: "release decides before timestamp", v: "0.5.11:20261231T235959Z", w: "0.5.12:20150101T000000Z", want: -1},
-		// build_release is not part of the order
-		{name: "build release ignored", v: "0.5.11,5.11", w: "0.5.11,5.12", want: 0},
-		{name: "build release ignored, one side only", v: "0.5.11,5.11-0.175.3.1.0.3.0", w: "0.5.11-0.175.3.1.0.3.0", want: 0},
-		// branch
-		{name: "branch element", v: "11.4-11.4.93.0.1.110.0", w: "11.4-11.4.94.0.1.113.1", want: -1},
-		{name: "a shorter branch is a level the version is on", v: "11.4-11.4.94", w: "11.4-11.4.94.0.1.113.1", want: 0},
-		{name: "same branch prefix and beyond", v: "11.4-11.4.94.0.1.113.1", w: "11.4-11.4.94.0.1.113.1", want: 0},
-		{name: "branch decides before timestamp", v: "11.4-11.4.2:20261231T235959Z", w: "11.4-11.4.3:20150101T000000Z", want: -1},
-		{name: "branch element is numeric, not lexical", v: "0.5.11-0.175.3.9.0.3.0", w: "0.5.11-0.175.3.13.0.4.0", want: -1},
-		// timestamp
-		{name: "timestamp", v: "0.5.11-0.175.3.13.0.4.0:20160929T175502Z", w: "0.5.11-0.175.3.13.0.4.0:20161018T000000Z", want: -1},
-		{name: "timestamp equal", v: "11.4:20180817T004203Z", w: "11.4:20180817T004203Z", want: 0},
-		// don't care: a component the pattern v omits is skipped
-		{name: "branch missing on one side", v: "0.5.11:20161018T000000Z", w: "0.5.11,5.11-0.175.3.13.0.4.0:20160929T175502Z", want: 1},
-		{name: "branch missing, timestamp decides the other way", v: "0.5.11:20161018T000000Z", w: "0.5.11,5.11-0.175.3.14.0.6.0:20161118T000000Z", want: -1},
-		{name: "timestamp missing on one side", v: "11.4-11.4.94", w: "11.4-11.4.93.0.1.110.0:20260101T000000Z", want: 1},
-		{name: "branch and timestamp missing on one side", v: "1.8.0.471", w: "1.8.0.181.12:20180711T215531Z", want: 1},
-		{name: "release only both sides", v: "1.8.0.471", w: "1.8.0.501.8", want: -1},
-		{name: "only the release is shared and it is equal", v: "11.4", w: "11.4-11.4.0.0.1.15.0:20180817T004203Z", want: 0},
-		// not the other way round: a component the pattern names but the version w lacks is an error
-		{name: "pattern names a branch the version lacks", v: "11.4-11.4.94", w: "11.4", wantErr: true},
-		{name: "pattern names a branch the version lacks, timestamp present", v: "11.4-11.4.94", w: "11.4:20180817T004203Z", wantErr: true},
-		{name: "pattern names a timestamp the version lacks", v: "11.4:20180817T004203Z", w: "11.4-11.4.0.0.1.15.0", wantErr: true},
-		{name: "pattern names a branch and a timestamp the version lacks", v: "0.5.11-0.175.3.13.0.4.0:20160929T175502Z", w: "0.5.11", wantErr: true},
-		// a level the version does not reach cannot be tested either
-		{name: "release deeper than the version reaches", v: "1.0.2.20", w: "1.0.2", wantErr: true},
-		{name: "branch deeper than the version reaches", v: "11.4-11.4.94.0.1", w: "11.4-11.4.94", wantErr: true},
-		// ... but only once the components before it are equal
-		{name: "release orders before a missing branch matters", v: "11.4-11.4.94", w: "11.3", want: 1},
-		{name: "release orders before a missing timestamp matters", v: "11.4:20180817T004203Z", w: "11.3", want: 1},
-		{name: "release orders before a missing branch matters, the other way", v: "11.4-11.4.94", w: "11.5", want: -1},
-		{name: "branch orders before a missing timestamp matters", v: "11.4-11.4.94:20260101T000000Z", w: "11.4-11.4.93.0.1.110.0", want: 1},
+		// a component the shape omits is dropped
+		{name: "release only shape drops the branch and the timestamp", v: "11.4-11.4.94.0.1.113.1:20260201T000000Z", shape: "11.4", want: "11.4"},
+		{name: "release and branch shape drops the timestamp", v: "11.4-11.4.94.0.1.113.1:20260201T000000Z", shape: "11.4-11.4.0", want: "11.4-11.4.94"},
+		{name: "release and timestamp shape drops the branch", v: "11.4-11.4.94.0.1.113.1:20260201T000000Z", shape: "11.4:20180817T004203Z", want: "11.4:20260201T000000Z"},
+		{name: "full shape leaves the version as it is", v: "11.4-11.4.94.0.1.113.1:20260201T000000Z", shape: "11.4-11.4.93.0.1.110.0:20260101T000000Z", want: "11.4-11.4.94.0.1.113.1:20260201T000000Z"},
+		{name: "same shape already", v: "1.8.0.471", shape: "1.8.0.501", want: "1.8.0.471"},
+		// a dot sequence the shape names is cut to the same depth
+		{name: "release cut to the shape's depth", v: "11.4.0", shape: "11.4", want: "11.4"},
+		{name: "branch cut to the shape's depth", v: "11.4-11.4.94.0.1.113.1", shape: "11.4-11.4.94", want: "11.4-11.4.94"},
+		{name: "release cut, the value beyond it is not looked at", v: "11.4.99", shape: "11.4", want: "11.4"},
+		// build_release never takes part
+		{name: "build release dropped", v: "0.5.11,5.11-0.175.3.1.0.3.0", shape: "0.5.11-0.175.3", want: "0.5.11-0.175.3"},
+		{name: "build release of the shape asks nothing of the version", v: "0.5.11-0.175.3.1.0.3.0", shape: "0.5.11,5.11-0.175.3", want: "0.5.11-0.175.3"},
+		// a component the shape names but the version cannot supply is an error
+		{name: "shape names a branch the version lacks", v: "11.4", shape: "11.4-11.4.94", wantErr: true},
+		{name: "shape names a branch the version lacks, timestamp present", v: "11.4:20180817T004203Z", shape: "11.4-11.4.94", wantErr: true},
+		{name: "shape names a timestamp the version lacks", v: "11.4-11.4.0.0.1.15.0", shape: "11.4:20180817T004203Z", wantErr: true},
+		{name: "shape names a branch and a timestamp the version lacks", v: "0.5.11", shape: "0.5.11-0.175.3.13.0.4.0:20160929T175502Z", wantErr: true},
+		{name: "release deeper than the version reaches", v: "1.0.2", shape: "1.0.2.20", wantErr: true},
+		{name: "branch deeper than the version reaches", v: "11.4-11.4.94", shape: "11.4-11.4.94.0.1", wantErr: true},
+		// ... whatever the components before it would have said
+		{name: "shape names a branch the version lacks, release differs", v: "11.3", shape: "11.4-11.4.94", wantErr: true},
+		{name: "shape names a timestamp the version lacks, release differs", v: "11.3", shape: "11.4:20180817T004203Z", wantErr: true},
+		{name: "shape names a timestamp the version lacks, branch differs", v: "11.4-11.4.93.0.1.110.0", shape: "11.4-11.4.94:20260101T000000Z", wantErr: true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			pattern, err := ips.NewVersion(tt.v)
+			v, err := ips.NewVersion(tt.v)
 			if err != nil {
 				t.Fatalf("NewVersion(%q) error = %v", tt.v, err)
 			}
-			v, err := ips.NewVersion(tt.w)
+			shape, err := ips.NewVersion(tt.shape)
 			if err != nil {
-				t.Fatalf("NewVersion(%q) error = %v", tt.w, err)
+				t.Fatalf("NewVersion(%q) error = %v", tt.shape, err)
 			}
-			got, err := ips.Test(pattern, v)
+			got, err := v.Truncate(shape)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("Test() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("Truncate() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			if got != tt.want {
-				t.Errorf("Test() = %d, want %d", got, tt.want)
+			if err != nil {
+				return
+			}
+			want, err := ips.NewVersion(tt.want)
+			if err != nil {
+				t.Fatalf("NewVersion(%q) error = %v", tt.want, err)
+			}
+			if got.Compare(want) != 0 {
+				t.Errorf("Truncate() = %+v, want %+v", got, want)
 			}
 		})
 	}

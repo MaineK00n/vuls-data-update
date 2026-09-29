@@ -1365,9 +1365,15 @@ func TestRangeType_TestEndpoint(t *testing.T) {
 			wantErr: true,
 		},
 		{
-			name: "solaris-ips-pattern: the release decides before a missing branch matters",
+			name:    "solaris-ips-pattern: the pattern names a branch the version lacks, whatever the release",
+			rt:      affectedrangeTypes.RangeTypeSolarisIPSPattern,
+			args:    args{family: ecosystemTypes.EcosystemTypeSolaris, endpoint: "11.4-11.4.94", version: "11.3"},
+			wantErr: true,
+		},
+		{
+			name: "solaris-ips-pattern: a release-only endpoint against a full version",
 			rt:   affectedrangeTypes.RangeTypeSolarisIPSPattern,
-			args: args{family: ecosystemTypes.EcosystemTypeSolaris, endpoint: "11.4-11.4.94", version: "11.3"},
+			args: args{family: ecosystemTypes.EcosystemTypeSolaris, endpoint: "1.8.0.471", version: "1.8.0.181.12-11.4.0.0.1.13.0:20180711T215531Z"},
 			want: +1,
 		},
 	}

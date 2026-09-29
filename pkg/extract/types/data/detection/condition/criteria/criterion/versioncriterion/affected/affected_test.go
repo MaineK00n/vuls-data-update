@@ -316,13 +316,13 @@ func TestAffected_Accept(t *testing.T) {
 			want: false,
 		},
 		{
-			name: "solaris-ips-pattern 11.3 [<= 11.4:20180817T004203Z]: the release orders before the missing timestamp matters",
+			name: "solaris-ips-pattern 11.3 [<= 11.4:20180817T004203Z]: the pattern names a timestamp the version lacks, no match whatever the release",
 			fields: fields{
 				Type:  affectedrangeTypes.RangeTypeSolarisIPSPattern,
 				Range: []affectedrangeTypes.Range{{LessEqual: "11.4:20180817T004203Z"}},
 			},
 			args: args{family: ecosystemTypes.Ecosystem("solaris:11.4"), v: "11.3"},
-			want: true,
+			want: false,
 		},
 		{
 			name: "solaris-ips-pattern 1.8.0.181.12:20180711T215531Z [< 1.8.0.471]: a release-only pattern reaches a version with a timestamp",

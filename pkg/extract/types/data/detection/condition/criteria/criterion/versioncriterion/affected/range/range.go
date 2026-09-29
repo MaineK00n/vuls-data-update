@@ -330,8 +330,8 @@ func (t RangeType) CompareVersions(family ecosystemTypes.Ecosystem, v1, v2 strin
 		// IPS (pkg(7)) versions of Oracle Solaris 11 and the illumos
 		// distributions, ordered as internal/version/ips does. The endpoints
 		// of a range of this type are patterns rather than versions (hence
-		// the name); TestEndpoint puts a version against them with ips.Test,
-		// and this order is for two versions.
+		// the name); TestEndpoint cuts a version to their shape first, and
+		// this order is for two versions of the same shape.
 		va, err := ipsVersion.NewVersion(v1)
 		if err != nil {
 			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
@@ -626,9 +626,10 @@ func (t RangeType) CompareVersions(family ecosystemTypes.Ecosystem, v1, v2 strin
 //
 // The endpoints of a solaris-ips-pattern Range are patterns: they name only
 // the components they want compared (a level such as 11.4-11.4.94), so the
-// version is put against them with ips.Test rather than through the version
-// order. A component the version cannot supply is a *CompareError, which
-// versioncriterion/affected.Accept degrades to a non-match.
+// version is first cut down to the components the endpoint names
+// (ips.Version.Truncate) and the two, then of the same shape, are ordered as
+// any other type. A component the version cannot supply is a *CompareError,
+// which versioncriterion/affected.Accept degrades to a non-match.
 func (t RangeType) TestEndpoint(family ecosystemTypes.Ecosystem, endpoint, version string) (int, error) {
 	switch t {
 	case RangeTypeSolarisIPSPattern:
@@ -640,11 +641,13 @@ func (t RangeType) TestEndpoint(family ecosystemTypes.Ecosystem, endpoint, versi
 		if err != nil {
 			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: version, Err: err}}
 		}
-		n, err := ipsVersion.Test(p, v)
+		// The endpoint is a pattern: cut the version down to the components
+		// it names, then order the two as any other type.
+		v, err = v.Truncate(p)
 		if err != nil {
 			return 0, &CompareError{Err: &CannotCompareError{Reason: fmt.Sprintf("%s. endpoint: %q, version: %q", err, endpoint, version)}}
 		}
-		return n, nil
+		return p.Compare(v), nil
 	default:
 		return t.CompareVersions(family, endpoint, version)
 	}

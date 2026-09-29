@@ -30,11 +30,14 @@
 // wants compared, the way "pkg install entire@11.4-11.4.94" names a level
 // (pkg(1) calls the whole thing a pkg_fmri_pattern): the pattern would never
 // be reached by an installed version that carries a branch it does not name.
-// Test is that test, in the spirit of the CONSTRAINT_AUTO matching policy of
-// the same client: the pattern decides which components take part, a dot
-// sequence it names matches the same depth of the version's, and a component
-// it names but the version cannot supply is an error. A pattern that names
-// every component in full tests exactly as the order compares.
+// Version.Truncate makes that test the order's business: it cuts a version
+// down to the shape of the pattern (a component the pattern omits is dropped,
+// a dot sequence it names is cut to the same depth), after which the two have
+// the same shape and Compare is the level match, in the spirit of the
+// CONSTRAINT_AUTO matching policy of the same client. A component the pattern
+// names but the version cannot supply is an error, for the caller to degrade
+// to a non-match. A pattern that names every component in full leaves the
+// version as it is.
 package ips
 
 import (
@@ -155,7 +158,8 @@ func element(a, b string) int {
 // then timestamp, build_release ignored, and a branch or timestamp missing on
 // one side sorting before a present one (an empty sequence is a prefix of any
 // other, and "" is below any timestamp). This is a total order, fit for sort
-// or max; for testing a version against a pattern see Test.
+// or max; a version is put against a pattern by cutting it to the pattern's
+// shape with Truncate first.
 func (v Version) Compare(w Version) int {
 	return cmp.Or(
 		slices.CompareFunc(v.release, w.release, element),
@@ -164,68 +168,52 @@ func (v Version) Compare(w Version) int {
 	)
 }
 
-// Test compares pattern to the version v with the sign of Version.Compare
-// called on the pattern: -1 when the pattern sorts before v, 0 when v is on
-// the pattern, +1 when the pattern sorts after v (Test(11.4, 11.3) is +1). It
-// is the sign a range endpoint is read with, so a caller checks a "less than
-// pattern" bound the way it checks any other type's endpoint. A pattern names
-// only the components it wants compared, the way "pkg install
-// entire@11.4-11.4.94" names a level rather than a version, so this is a
-// match test rather than the order:
+// Truncate returns v cut down to the components shape names: one shape omits
+// is dropped, a dot sequence shape names is cut to the same depth, and the
+// timestamp is kept when shape has one. It is an error when v cannot supply a
+// component, because it has none or its dot sequence is shallower than the
+// one shape names, for the caller to degrade to a non-match. build_release is
+// always dropped, since pkg(7) ignores it when ordering.
 //
-//   - a component the pattern omits is "don't care" and takes no part;
-//   - a dot sequence it names is matched against the same depth of the
-//     version's, so the level 11.4-11.4.94 is met by 11.4-11.4.94.0.1.113.1;
-//   - a component the pattern names but the version cannot supply cannot be
-//     tested and is an error, for the caller to degrade to a non-match.
-//
-// The error is raised only once the components before it are equal: the
-// release alone places "11.3" against the pattern "11.4:20180817T004203Z", so
-// the missing timestamp never comes into it. CONSTRAINT_AUTO in the reference
-// client matches the same way (DotSequence.is_subsequence for the sequences,
-// a component absent from the candidate refusing the match).
-func Test(pattern, v Version) (int, error) {
-	n, ok := testSequence(pattern.release, v.release)
-	switch {
-	case n != 0:
-		return n, nil
-	case !ok:
-		return 0, errors.Errorf("the version's release %q does not reach the pattern's %q", strings.Join(v.release, "."), strings.Join(pattern.release, "."))
+// The result has exactly the shape of shape, so Compare between the two has
+// no missing component left to order and reads as the level match: the level
+// 11.4-11.4.94 is met by 11.4-11.4.94.0.1.113.1 (as "pkg install
+// entire@11.4-11.4.94" reads it), and "11.3" cannot be cut to the shape of
+// 11.4-11.4.94 at all, whatever its release says. CONSTRAINT_AUTO in the
+// reference client refuses a candidate in the same way (a component the
+// pattern names and the candidate lacks fails the match before any ordering).
+func (v Version) Truncate(shape Version) (Version, error) {
+	var t Version
+
+	var err error
+	if t.release, err = truncateSequence(v.release, shape.release); err != nil {
+		return Version{}, errors.Wrap(err, "truncate release")
 	}
 
-	// A branch the pattern omits is "don't care"; one it names, the version
-	// must supply for the test to go on.
-	if len(pattern.branch) != 0 {
+	if len(shape.branch) != 0 {
 		if len(v.branch) == 0 {
-			return 0, errors.New("the pattern names a branch the version lacks")
+			return Version{}, errors.New("the shape names a branch the version lacks")
 		}
-		n, ok := testSequence(pattern.branch, v.branch)
-		switch {
-		case n != 0:
-			return n, nil
-		case !ok:
-			return 0, errors.Errorf("the version's branch %q does not reach the pattern's %q", strings.Join(v.branch, "."), strings.Join(pattern.branch, "."))
+		if t.branch, err = truncateSequence(v.branch, shape.branch); err != nil {
+			return Version{}, errors.Wrap(err, "truncate branch")
 		}
 	}
 
-	// Likewise for the timestamp, which the pattern either names in full or
-	// not at all.
-	if pattern.timestamp != "" {
+	if shape.timestamp != "" {
 		if v.timestamp == "" {
-			return 0, errors.New("the pattern names a timestamp the version lacks")
+			return Version{}, errors.New("the shape names a timestamp the version lacks")
 		}
-		return cmp.Compare(pattern.timestamp, v.timestamp), nil
+		t.timestamp = v.timestamp
 	}
-	return 0, nil
+
+	return t, nil
 }
 
-// testSequence orders the pattern's dot sequence against the version's, over
-// the depth they share. ok is false when the pattern names a deeper level than
-// the version reaches, which the shared elements did not already decide.
-func testSequence(pattern, v dotSequence) (int, bool) {
-	n := min(len(pattern), len(v))
-	if c := slices.CompareFunc(pattern[:n], v[:n], element); c != 0 {
-		return c, true
+// truncateSequence cuts v to the depth of shape, or fails when v does not
+// reach it.
+func truncateSequence(v, shape dotSequence) (dotSequence, error) {
+	if len(shape) > len(v) {
+		return nil, errors.Errorf("%q does not reach the depth of %q", strings.Join(v, "."), strings.Join(shape, "."))
 	}
-	return 0, len(pattern) <= len(v)
+	return v[:len(shape)], nil
 }
