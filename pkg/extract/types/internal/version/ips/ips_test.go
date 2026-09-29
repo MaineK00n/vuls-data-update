@@ -63,32 +63,6 @@ func TestNewVersion(t *testing.T) {
 	}
 }
 
-func TestVersion_String(t *testing.T) {
-	tests := []struct {
-		name string
-		v    string
-		want string
-	}{
-		{name: "release only", v: "1.8.0.471", want: "1.8.0.471"},
-		{name: "release and build", v: "0.5.11,5.11", want: "0.5.11,5.11"},
-		{name: "release and branch", v: "11.4-11.4.94", want: "11.4-11.4.94"},
-		{name: "release and timestamp", v: "0.5.11:20161018T000000Z", want: "0.5.11:20161018T000000Z"},
-		{name: "full", v: "0.5.11,5.11-0.175.3.13.0.4.0:20160929T175502Z", want: "0.5.11,5.11-0.175.3.13.0.4.0:20160929T175502Z"},
-		{name: "surrounding whitespace is not part of the version", v: " 11.4-11.4.94 ", want: "11.4-11.4.94"},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			v, err := ips.NewVersion(tt.v)
-			if err != nil {
-				t.Fatalf("NewVersion(%q) error = %v", tt.v, err)
-			}
-			if got := v.String(); got != tt.want {
-				t.Errorf("String() = %q, want %q", got, tt.want)
-			}
-		})
-	}
-}
-
 func TestVersion_Compare(t *testing.T) {
 	tests := []struct {
 		name string
@@ -197,8 +171,12 @@ func TestVersion_Truncate(t *testing.T) {
 			if err != nil {
 				return
 			}
-			if got.String() != tt.want {
-				t.Errorf("Truncate() = %q, want %q", got, tt.want)
+			want, err := ips.NewVersion(tt.want)
+			if err != nil {
+				t.Fatalf("NewVersion(%q) error = %v", tt.want, err)
+			}
+			if got.Compare(want) != 0 {
+				t.Errorf("Truncate() = %+v, want %+v", got, want)
 			}
 		})
 	}

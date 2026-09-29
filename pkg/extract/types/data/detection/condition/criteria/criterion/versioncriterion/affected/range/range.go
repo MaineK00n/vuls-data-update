@@ -632,7 +632,8 @@ func (t RangeType) CompareVersions(family ecosystemTypes.Ecosystem, v1, v2 strin
 // the components they want compared (a level such as 11.4-11.4.94), so the
 // version is first cut down to the components the endpoint names
 // (ips.Version.Truncate) and the two, then versions of one shape, are
-// ordered as solaris-ips orders versions. A component the version cannot
+// ordered as solaris-ips orders versions (ips.Version.Compare, in place). A
+// component the version cannot
 // supply is a *CompareError, which versioncriterion/affected.Accept degrades
 // to a non-match. This is the only way a value of that type is compared;
 // CompareVersions refuses it. The endpoints of a solaris-ips Range are
@@ -652,7 +653,7 @@ func (t RangeType) TestEndpoint(family ecosystemTypes.Ecosystem, endpoint, versi
 		if err != nil {
 			return 0, &CompareError{Err: &CannotCompareError{Reason: fmt.Sprintf("%s. endpoint: %q, version: %q", err, endpoint, version)}}
 		}
-		return RangeTypeSolarisIPS.CompareVersions(family, endpoint, v.String())
+		return p.Compare(v), nil
 	default:
 		return t.CompareVersions(family, endpoint, version)
 	}
