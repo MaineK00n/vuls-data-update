@@ -39,11 +39,12 @@ func (a Affected) Accept(family ecosystemTypes.Ecosystem, v string) (bool, error
 		// this build's unmarshal drops. Either way the criterion cannot be
 		// evaluated: report it as a non-fatal empty-range warning rather
 		// than aborting detection in the field. Whether a Type is evaluable
-		// is otherwise derived from CompareVersions itself on the bound
-		// comparisons below: anything it has no comparator for (unset,
-		// newer-data values, comparator-less vocabulary debt like pacman)
-		// answers with *UnsupportedRangeTypeError and is reported as a
-		// non-fatal *warning.UnevaluableError.
+		// is otherwise derived from TestEndpoint (CompareVersions
+		// underneath) on the endpoint tests below: anything it has no
+		// comparator for (unset, newer-data values, comparator-less
+		// vocabulary debt like pacman) answers with
+		// *UnsupportedRangeTypeError and is reported as a non-fatal
+		// *warning.UnevaluableError.
 		if r == (rangeTypes.Range{}) {
 			return false, &warningTypes.UnevaluableError{Warning: warningTypes.Warning{Kind: warningTypes.KindEmptyRange}}
 		}
