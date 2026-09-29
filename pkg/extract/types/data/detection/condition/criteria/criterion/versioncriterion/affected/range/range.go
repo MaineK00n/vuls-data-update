@@ -42,6 +42,7 @@ import (
 
 	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment/ecosystem"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/internal/enum"
+	ipsVersion "github.com/MaineK00n/vuls-data-update/pkg/extract/types/internal/version/ips"
 )
 
 // RangeType selects the version comparator used by CompareVersions (the
@@ -63,6 +64,8 @@ const (
 	RangeTypeDPKG                                  RangeType = "dpkg"
 	RangeTypePacman                                RangeType = "pacman"
 	RangeTypeFreeBSDPkg                            RangeType = "freebsd-pkg"
+	RangeTypeSolarisIPS                            RangeType = "solaris-ips"
+	RangeTypeSolarisIPSPattern                     RangeType = "solaris-ips-pattern"
 	RangeTypeNPM                                   RangeType = "npm"
 	RangeTypeRubyGems                              RangeType = "rubygems"
 	RangeTypePyPI                                  RangeType = "pypi"
@@ -108,6 +111,8 @@ func RangeTypes() []RangeType {
 		RangeTypeDPKG,
 		RangeTypePacman,
 		RangeTypeFreeBSDPkg,
+		RangeTypeSolarisIPS,
+		RangeTypeSolarisIPSPattern,
 		RangeTypeNPM,
 		RangeTypeRubyGems,
 		RangeTypePyPI,
@@ -323,6 +328,24 @@ func (t RangeType) CompareVersions(family ecosystemTypes.Ecosystem, v1, v2 strin
 			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
 		}
 		return va.Compare(vb), nil
+	case RangeTypeSolarisIPS:
+		// IPS (pkg(7)) versions of Oracle Solaris 11 and the illumos
+		// distributions, ordered as internal/version/ips does.
+		va, err := ipsVersion.NewVersion(v1)
+		if err != nil {
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
+		}
+		vb, err := ipsVersion.NewVersion(v2)
+		if err != nil {
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
+		}
+		return va.Compare(vb), nil
+	case RangeTypeSolarisIPSPattern:
+		// The endpoints of a range of this type are patterns, not versions,
+		// so two values of it are not put through the version order: a
+		// version is tested against an endpoint by TestEndpoint, and two
+		// versions are ordered as solaris-ips.
+		return 0, &CompareError{Err: &CannotCompareError{Reason: fmt.Sprintf("the endpoints of %s are patterns. test a version against one with TestEndpoint, or order two versions as %s", t, RangeTypeSolarisIPS)}}
 	case RangeTypeNPM:
 		va, err := npm.NewVersion(v1)
 		if err != nil {
@@ -596,6 +619,43 @@ func (t RangeType) CompareVersions(family ecosystemTypes.Ecosystem, v1, v2 strin
 		// versioncriterion/affected.Accept degrade to a safe non-match
 		// instead of aborting detection on an old binary.
 		return 0, &CompareError{Err: &UnsupportedRangeTypeError{RangeType: t}}
+	}
+}
+
+// TestEndpoint compares endpoint, the value one operator of a Range of this
+// type carries, to version: it is CompareVersions(family, endpoint, version),
+// sign and errors included, so -1 when the endpoint sorts before the version,
+// 0 when the version is on it, +1 when the endpoint sorts after the version.
+//
+// The one thing it adds is for the type whose endpoints are not versions.
+// The endpoints of a solaris-ips-pattern Range are patterns: they name only
+// the components they want compared (a level such as 11.4-11.4.94), so the
+// version is first cut down to the components the endpoint names
+// (ips.Version.Truncate) and the two, then versions of one shape, are
+// ordered as solaris-ips orders versions (ips.Version.Compare, in place). A
+// component the version cannot
+// supply is a *CompareError, which versioncriterion/affected.Accept degrades
+// to a non-match. This is the only way a value of that type is compared;
+// CompareVersions refuses it. The endpoints of a solaris-ips Range are
+// versions, so that type goes straight through like every other.
+func (t RangeType) TestEndpoint(family ecosystemTypes.Ecosystem, endpoint, version string) (int, error) {
+	switch t {
+	case RangeTypeSolarisIPSPattern:
+		p, err := ipsVersion.NewVersion(endpoint)
+		if err != nil {
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: endpoint, Err: err}}
+		}
+		v, err := ipsVersion.NewVersion(version)
+		if err != nil {
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: version, Err: err}}
+		}
+		v, err = v.Truncate(p)
+		if err != nil {
+			return 0, &CompareError{Err: &CannotCompareError{Reason: fmt.Sprintf("%s. endpoint: %q, version: %q", err, endpoint, version)}}
+		}
+		return p.Compare(v), nil
+	default:
+		return t.CompareVersions(family, endpoint, version)
 	}
 }
 

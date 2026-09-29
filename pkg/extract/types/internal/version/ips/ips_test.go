@@ -1,0 +1,183 @@
+package ips_test
+
+import (
+	"testing"
+
+	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/internal/version/ips"
+)
+
+func TestNewVersion(t *testing.T) {
+	tests := []struct {
+		name    string
+		v       string
+		wantErr bool
+	}{
+		{name: "release only", v: "1.8.0.471"},
+		{name: "one element", v: "3"},
+		{name: "release and build", v: "0.5.11,5.11"},
+		{name: "release and branch", v: "11.4-11.4.94"},
+		{name: "release and timestamp", v: "0.5.11:20161018T000000Z"},
+		{name: "release, branch and timestamp", v: "11.4-11.4.0.0.1.15.0:20180817T004203Z"},
+		{name: "full", v: "0.5.11,5.11-0.175.3.13.0.4.0:20160929T175502Z"},
+		{name: "release and timestamp, no branch", v: "1.8.0.181.12:20180711T215531Z"},
+		{name: "zero element", v: "0.5.11-0.175.0.0.0.2.0"},
+		{name: "surrounding whitespace", v: " 11.4 "},
+		{name: "empty", v: "", wantErr: true},
+		{name: "prose", v: "prior to 11.4", wantErr: true},
+		{name: "no release", v: ",5.11-0.175", wantErr: true},
+		{name: "no release, branch only", v: "-0.175", wantErr: true},
+		{name: "empty build", v: "1.0,", wantErr: true},
+		{name: "empty branch", v: "1.0-", wantErr: true},
+		{name: "empty branch before timestamp", v: "1.0-:20180817T004203Z", wantErr: true},
+		{name: "empty timestamp", v: "1.0:", wantErr: true},
+		{name: "trailing dot", v: "11.4.", wantErr: true},
+		{name: "leading dot", v: ".11.4", wantErr: true},
+		{name: "double dot", v: "11..4", wantErr: true},
+		{name: "non numeric", v: "11.4a", wantErr: true},
+		{name: "hyphen leaves the release with a trailing dot", v: "11.-4", wantErr: true},
+		{name: "negative branch element", v: "1.0--2", wantErr: true},
+		{name: "signed element", v: "+11.4", wantErr: true},
+		{name: "zero padded element", v: "11.04", wantErr: true},
+		{name: "zero padded zero", v: "11.00", wantErr: true},
+		{name: "lone zero", v: "0.5.11", wantErr: false},
+		{name: "element beyond the int range", v: "11.99999999999999999999999", wantErr: false},
+		{name: "timestamp year 0000", v: "1.0:00000101T000000Z", wantErr: true},
+		{name: "timestamp year 0001", v: "1.0:00010101T000000Z", wantErr: false},
+		{name: "non numeric element after digits", v: "11.4x", wantErr: true},
+		{name: "zero padded branch element", v: "11.4-11.04", wantErr: true},
+		{name: "timestamp date only", v: "1.0:20161018", wantErr: true},
+		{name: "timestamp without Z", v: "1.0:20161018T000000", wantErr: true},
+		{name: "timestamp impossible date", v: "1.0:20161340T000000Z", wantErr: true},
+		{name: "timestamp with fractional seconds", v: "1.0:20161018T000000.123Z", wantErr: true},
+		{name: "timestamp with a lowercase z", v: "1.0:20161018T000000z", wantErr: true},
+		{name: "timestamp with offset", v: "1.0:20161018T000000+0900", wantErr: true},
+		{name: "semver", v: "1.0.0-beta.1", wantErr: true},
+		{name: "rpm", v: "1.0.2k-8.el7", wantErr: true},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if _, err := ips.NewVersion(tt.v); (err != nil) != tt.wantErr {
+				t.Errorf("NewVersion() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
+
+func TestVersion_Compare(t *testing.T) {
+	tests := []struct {
+		name string
+		v    string
+		w    string
+		want int
+	}{
+		// release
+		{name: "equal release", v: "11.4", w: "11.4", want: 0},
+		{name: "release element", v: "11.3", w: "11.4", want: -1},
+		{name: "release element is numeric, not lexical", v: "11.4.9", w: "11.4.10", want: -1},
+		{name: "shorter release is a prefix and sorts first", v: "11.4", w: "11.4.0", want: -1},
+		{name: "elements beyond the int range compare numerically", v: "11.99999999999999999999999", w: "11.100000000000000000000000", want: -1},
+		{name: "element beyond the int range is greater than a small one", v: "11.100000000000000000000000", w: "11.9", want: 1},
+		{name: "release decides before branch", v: "11.3-11.3.99", w: "11.4-11.4.1", want: -1},
+		{name: "release decides before timestamp", v: "0.5.11:20261231T235959Z", w: "0.5.12:20150101T000000Z", want: -1},
+		// build_release is not part of the order
+		{name: "build release ignored", v: "0.5.11,5.11", w: "0.5.11,5.12", want: 0},
+		{name: "build release ignored, one side only", v: "0.5.11,5.11-0.175.3.1.0.3.0", w: "0.5.11-0.175.3.1.0.3.0", want: 0},
+		// branch
+		{name: "branch element", v: "11.4-11.4.93.0.1.110.0", w: "11.4-11.4.94.0.1.113.1", want: -1},
+		{name: "branch prefix sorts first", v: "11.4-11.4.94", w: "11.4-11.4.94.0.1.113.1", want: -1},
+		{name: "same branch prefix and beyond", v: "11.4-11.4.94.0.1.113.1", w: "11.4-11.4.94.0.1.113.1", want: 0},
+		{name: "branch decides before timestamp", v: "11.4-11.4.2:20261231T235959Z", w: "11.4-11.4.3:20150101T000000Z", want: -1},
+		{name: "branch element is numeric, not lexical", v: "0.5.11-0.175.3.9.0.3.0", w: "0.5.11-0.175.3.13.0.4.0", want: -1},
+		// timestamp
+		{name: "timestamp", v: "0.5.11-0.175.3.13.0.4.0:20160929T175502Z", w: "0.5.11-0.175.3.13.0.4.0:20161018T000000Z", want: -1},
+		{name: "timestamp equal", v: "11.4:20180817T004203Z", w: "11.4:20180817T004203Z", want: 0},
+		// a component missing on one side sorts before a present one (Version.__lt__ of the reference client)
+		{name: "missing branch sorts first", v: "0.5.11:20161018T000000Z", w: "0.5.11,5.11-0.175.3.13.0.4.0:20160929T175502Z", want: -1},
+		{name: "missing branch sorts first, whatever the timestamps", v: "0.5.11:20261231T235959Z", w: "0.5.11-0.175.3.13.0.4.0:20150101T000000Z", want: -1},
+		{name: "missing timestamp sorts first", v: "11.4-11.4.94", w: "11.4-11.4.94:20260101T000000Z", want: -1},
+		{name: "missing branch and timestamp sort first", v: "11.4", w: "11.4-11.4.0.0.1.15.0:20180817T004203Z", want: -1},
+		{name: "present branch sorts after a missing one", v: "11.4-11.4.94", w: "11.4", want: 1},
+		{name: "release decides before a missing branch", v: "1.8.0.471", w: "1.8.0.181.12:20180711T215531Z", want: 1},
+		{name: "release only both sides", v: "1.8.0.471", w: "1.8.0.501.8", want: -1},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			v, err := ips.NewVersion(tt.v)
+			if err != nil {
+				t.Fatalf("NewVersion(%q) error = %v", tt.v, err)
+			}
+			w, err := ips.NewVersion(tt.w)
+			if err != nil {
+				t.Fatalf("NewVersion(%q) error = %v", tt.w, err)
+			}
+			if got := v.Compare(w); got != tt.want {
+				t.Errorf("Compare() = %d, want %d", got, tt.want)
+			}
+			if got := w.Compare(v); got != -tt.want {
+				t.Errorf("Compare() the other way = %d, want %d", got, -tt.want)
+			}
+		})
+	}
+}
+
+func TestVersion_Truncate(t *testing.T) {
+	tests := []struct {
+		name    string
+		v       string
+		shape   string
+		want    string
+		wantErr bool
+	}{
+		// a component the shape omits is dropped
+		{name: "release only shape drops the branch and the timestamp", v: "11.4-11.4.94.0.1.113.1:20260201T000000Z", shape: "11.4", want: "11.4"},
+		{name: "release and branch shape drops the timestamp", v: "11.4-11.4.94.0.1.113.1:20260201T000000Z", shape: "11.4-11.4.0", want: "11.4-11.4.94"},
+		{name: "release and timestamp shape drops the branch", v: "11.4-11.4.94.0.1.113.1:20260201T000000Z", shape: "11.4:20180817T004203Z", want: "11.4:20260201T000000Z"},
+		{name: "full shape leaves the version as it is", v: "11.4-11.4.94.0.1.113.1:20260201T000000Z", shape: "11.4-11.4.93.0.1.110.0:20260101T000000Z", want: "11.4-11.4.94.0.1.113.1:20260201T000000Z"},
+		{name: "same shape already", v: "1.8.0.471", shape: "1.8.0.501", want: "1.8.0.471"},
+		// a dot sequence the shape names is cut to the same depth
+		{name: "release cut to the shape's depth", v: "11.4.0", shape: "11.4", want: "11.4"},
+		{name: "branch cut to the shape's depth", v: "11.4-11.4.94.0.1.113.1", shape: "11.4-11.4.94", want: "11.4-11.4.94"},
+		{name: "release cut, the value beyond it is not looked at", v: "11.4.99", shape: "11.4", want: "11.4"},
+		// build_release never takes part
+		{name: "build release dropped", v: "0.5.11,5.11-0.175.3.1.0.3.0", shape: "0.5.11-0.175.3", want: "0.5.11-0.175.3"},
+		{name: "build release of the shape asks nothing of the version", v: "0.5.11-0.175.3.1.0.3.0", shape: "0.5.11,5.11-0.175.3", want: "0.5.11-0.175.3"},
+		// a component the shape names but the version cannot supply is an error
+		{name: "shape names a branch the version lacks", v: "11.4", shape: "11.4-11.4.94", wantErr: true},
+		{name: "shape names a branch the version lacks, timestamp present", v: "11.4:20180817T004203Z", shape: "11.4-11.4.94", wantErr: true},
+		{name: "shape names a timestamp the version lacks", v: "11.4-11.4.0.0.1.15.0", shape: "11.4:20180817T004203Z", wantErr: true},
+		{name: "shape names a branch and a timestamp the version lacks", v: "0.5.11", shape: "0.5.11-0.175.3.13.0.4.0:20160929T175502Z", wantErr: true},
+		{name: "release deeper than the version reaches", v: "1.0.2", shape: "1.0.2.20", wantErr: true},
+		{name: "branch deeper than the version reaches", v: "11.4-11.4.94", shape: "11.4-11.4.94.0.1", wantErr: true},
+		// ... whatever the components before it would have said
+		{name: "shape names a branch the version lacks, release differs", v: "11.3", shape: "11.4-11.4.94", wantErr: true},
+		{name: "shape names a timestamp the version lacks, release differs", v: "11.3", shape: "11.4:20180817T004203Z", wantErr: true},
+		{name: "shape names a timestamp the version lacks, branch differs", v: "11.4-11.4.93.0.1.110.0", shape: "11.4-11.4.94:20260101T000000Z", wantErr: true},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			v, err := ips.NewVersion(tt.v)
+			if err != nil {
+				t.Fatalf("NewVersion(%q) error = %v", tt.v, err)
+			}
+			shape, err := ips.NewVersion(tt.shape)
+			if err != nil {
+				t.Fatalf("NewVersion(%q) error = %v", tt.shape, err)
+			}
+			got, err := v.Truncate(shape)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Truncate() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if err != nil {
+				return
+			}
+			want, err := ips.NewVersion(tt.want)
+			if err != nil {
+				t.Fatalf("NewVersion(%q) error = %v", tt.want, err)
+			}
+			if got.Compare(want) != 0 {
+				t.Errorf("Truncate() = %+v, want %+v", got, want)
+			}
+		})
+	}
+}

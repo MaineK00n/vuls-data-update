@@ -2,10 +2,21 @@ package ecosystem
 
 import (
 	"fmt"
+	"regexp"
 	"strings"
 
 	"github.com/pkg/errors"
 )
+
+// solarisReleasePattern is the shape of a Solaris release, capturing the part
+// that keys the ecosystem. Solaris 10 is one release, so anything after the
+// major (an update number a scanner may record) is dropped. Solaris 11 is a
+// family of minor releases (11.3, 11.4, ...) that are supported and updated
+// independently, so the minor keys the ecosystem and anything after it is
+// dropped. Zero padding is rejected only where it would key an ecosystem of
+// its own: "11.04" is not "11.4", while "10.04" is Solaris 10 like any other
+// update level.
+var solarisReleasePattern = regexp.MustCompile(`^(10|11\.(?:0|[1-9][0-9]*))(?:\.[0-9]+)*$`)
 
 type Ecosystem string
 
@@ -26,6 +37,7 @@ const (
 	EcosystemTypeOracle              = "oracle"
 	EcosystemTypeRedHat              = "redhat"
 	EcosystemTypeRocky               = "rocky"
+	EcosystemTypeSolaris             = "solaris"
 	EcosystemTypeOpenSUSE            = "opensuse"
 	EcosystemTypeOpenSUSELeap        = "opensuse.leap"
 	EcosystemTypeOpenSUSELeapMicro   = "opensuse.leap.micro"
@@ -91,6 +103,12 @@ func GetEcosystem(family, release string) (Ecosystem, error) {
 		return Ecosystem(fmt.Sprintf("%s:%s", family, strings.Split(release, ".")[0])), nil
 	case EcosystemTypeRocky:
 		return Ecosystem(fmt.Sprintf("%s:%s", family, strings.Split(release, ".")[0])), nil
+	case EcosystemTypeSolaris:
+		m := solarisReleasePattern.FindStringSubmatch(release)
+		if m == nil {
+			return "", errors.Errorf("unexpected release format. expected: %q, actual: %q", "10(.<n>...) or 11.<minor>(.<n>...), <minor> without zero padding", release)
+		}
+		return Ecosystem(fmt.Sprintf("%s:%s", family, m[1])), nil
 	case EcosystemTypeOpenSUSE:
 		return Ecosystem(fmt.Sprintf("%s:%s", family, release)), nil
 	case EcosystemTypeOpenSUSELeap:
@@ -146,6 +164,6 @@ func GetEcosystem(family, release string) (Ecosystem, error) {
 	case EcosystemTypeSwift:
 		return Ecosystem(family), nil
 	default:
-		return "", errors.Errorf("unexpected family. expected: %q, actual: %q", []Ecosystem{EcosystemTypeAlma, EcosystemTypeAlpine, EcosystemTypeAmazon, EcosystemTypeArch, EcosystemTypeCentOS, EcosystemTypeDebian, EcosystemTypeEPEL, EcosystemTypeFedora, EcosystemTypeFreeBSD, EcosystemTypeGentoo, EcosystemTypeMicrosoft, EcosystemTypeNetBSD, EcosystemTypeOracle, EcosystemTypeRedHat, EcosystemTypeRocky, EcosystemTypeOpenSUSE, EcosystemTypeOpenSUSELeap, EcosystemTypeOpenSUSELeapMicro, EcosystemTypeOpenSUSETumbleweed, EcosystemTypeSUSELinuxEnterprise, EcosystemTypeSUSELinuxMicro, EcosystemTypeUbuntu, EcosystemTypeCPE, EcosystemTypeFortinet, EcosystemTypeCargo, EcosystemTypeComposer, EcosystemTypeConan, EcosystemTypeErlang, EcosystemTypeGolang, EcosystemTypeHaskell, EcosystemTypeMaven, EcosystemTypeNpm, EcosystemTypeNuget, EcosystemTypePerl, EcosystemTypePip, EcosystemTypePub, EcosystemTypeR, EcosystemTypeRubygems, EcosystemTypeSwift}, family)
+		return "", errors.Errorf("unexpected family. expected: %q, actual: %q", []Ecosystem{EcosystemTypeAlma, EcosystemTypeAlpine, EcosystemTypeAmazon, EcosystemTypeArch, EcosystemTypeCentOS, EcosystemTypeDebian, EcosystemTypeEPEL, EcosystemTypeFedora, EcosystemTypeFreeBSD, EcosystemTypeGentoo, EcosystemTypeMicrosoft, EcosystemTypeNetBSD, EcosystemTypeOracle, EcosystemTypeRedHat, EcosystemTypeRocky, EcosystemTypeSolaris, EcosystemTypeOpenSUSE, EcosystemTypeOpenSUSELeap, EcosystemTypeOpenSUSELeapMicro, EcosystemTypeOpenSUSETumbleweed, EcosystemTypeSUSELinuxEnterprise, EcosystemTypeSUSELinuxMicro, EcosystemTypeUbuntu, EcosystemTypeCPE, EcosystemTypeFortinet, EcosystemTypeCargo, EcosystemTypeComposer, EcosystemTypeConan, EcosystemTypeErlang, EcosystemTypeGolang, EcosystemTypeHaskell, EcosystemTypeMaven, EcosystemTypeNpm, EcosystemTypeNuget, EcosystemTypePerl, EcosystemTypePip, EcosystemTypePub, EcosystemTypeR, EcosystemTypeRubygems, EcosystemTypeSwift}, family)
 	}
 }

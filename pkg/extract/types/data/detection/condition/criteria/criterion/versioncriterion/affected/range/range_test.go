@@ -1232,6 +1232,86 @@ func TestRangeType_CompareVersions(t *testing.T) {
 			},
 			wantErr: true,
 		},
+		{
+			name: "solaris-ips branch",
+			rt:   affectedrangeTypes.RangeTypeSolarisIPS,
+			args: args{
+				family: ecosystemTypes.Ecosystem("solaris:11.4"),
+				v1:     "11.4-11.4.94",
+				v2:     "11.4-11.4.93.0.1.110.0:20260101T000000Z",
+			},
+			want: 1,
+		},
+		{
+			name: "solaris-ips-pattern: its endpoints are patterns, so two of its values are refused",
+			rt:   affectedrangeTypes.RangeTypeSolarisIPSPattern,
+			args: args{
+				family: ecosystemTypes.Ecosystem("solaris:11.4"),
+				v1:     "11.4-11.4.94",
+				v2:     "11.4-11.4.94.0.1.113.1:20260201T000000Z",
+			},
+			wantErr: true,
+		},
+		{
+			name: "solaris-ips branch prefix",
+			rt:   affectedrangeTypes.RangeTypeSolarisIPS,
+			args: args{
+				family: ecosystemTypes.Ecosystem("solaris:11.4"),
+				v1:     "11.4-11.4.94",
+				v2:     "11.4-11.4.94.0.1.113.1:20260201T000000Z",
+			},
+			want: -1,
+		},
+		{
+			name: "solaris-ips missing branch sorts first",
+			rt:   affectedrangeTypes.RangeTypeSolarisIPS,
+			args: args{
+				family: ecosystemTypes.Ecosystem("solaris:11.3"),
+				v1:     "0.5.11:20161018T000000Z",
+				v2:     "0.5.11,5.11-0.175.3.13.0.4.0:20160929T175502Z",
+			},
+			want: -1,
+		},
+		{
+			name: "solaris-ips release only against full version",
+			rt:   affectedrangeTypes.RangeTypeSolarisIPS,
+			args: args{
+				family: ecosystemTypes.Ecosystem("solaris:11.4"),
+				v1:     "1.8.0.471",
+				v2:     "1.8.0.181.12:20180711T215531Z",
+			},
+			want: 1,
+		},
+		{
+			name: "solaris-ips present branch sorts after a missing one",
+			rt:   affectedrangeTypes.RangeTypeSolarisIPS,
+			args: args{
+				family: ecosystemTypes.Ecosystem("solaris:11.4"),
+				v1:     "11.4-11.4.94",
+				v2:     "11.4",
+			},
+			want: 1,
+		},
+		{
+			name: "solaris-ips v1: not an ips version",
+			rt:   affectedrangeTypes.RangeTypeSolarisIPS,
+			args: args{
+				family: ecosystemTypes.Ecosystem("solaris:11.4"),
+				v1:     "1.0.2k-8.el7",
+				v2:     "11.4-11.4.94",
+			},
+			wantErr: true,
+		},
+		{
+			name: "solaris-ips v2: not an ips version",
+			rt:   affectedrangeTypes.RangeTypeSolarisIPS,
+			args: args{
+				family: ecosystemTypes.Ecosystem("solaris:11.4"),
+				v1:     "11.4-11.4.94",
+				v2:     "",
+			},
+			wantErr: true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -1257,6 +1337,87 @@ func TestRangeType_CompareVersions(t *testing.T) {
 	}
 }
 
+func TestRangeType_TestEndpoint(t *testing.T) {
+	type args struct {
+		family   ecosystemTypes.Ecosystem
+		endpoint string
+		version  string
+	}
+	tests := []struct {
+		name    string
+		rt      affectedrangeTypes.RangeType
+		args    args
+		want    int
+		wantErr bool
+	}{
+		{
+			name: "a type whose endpoints are versions goes through CompareVersions",
+			rt:   affectedrangeTypes.RangeTypeSEMVER,
+			args: args{endpoint: "1.2.3", version: "1.2.4"},
+			want: -1,
+		},
+		{
+			name: "solaris-ips-pattern: a level is met by a version on it",
+			rt:   affectedrangeTypes.RangeTypeSolarisIPSPattern,
+			args: args{family: ecosystemTypes.EcosystemTypeSolaris, endpoint: "11.4-11.4.94", version: "11.4-11.4.94.0.1.113.1:20260201T000000Z"},
+			want: 0,
+		},
+		{
+			name: "solaris-ips-pattern: a level after the version",
+			rt:   affectedrangeTypes.RangeTypeSolarisIPSPattern,
+			args: args{family: ecosystemTypes.EcosystemTypeSolaris, endpoint: "11.4-11.4.94", version: "11.4-11.4.93.0.1.110.0:20260101T000000Z"},
+			want: +1,
+		},
+		{
+			name:    "solaris-ips-pattern: the pattern names a branch the version lacks",
+			rt:      affectedrangeTypes.RangeTypeSolarisIPSPattern,
+			args:    args{family: ecosystemTypes.EcosystemTypeSolaris, endpoint: "11.4-11.4.94", version: "11.4"},
+			wantErr: true,
+		},
+		{
+			name:    "solaris-ips-pattern: the pattern names a branch the version lacks, whatever the release",
+			rt:      affectedrangeTypes.RangeTypeSolarisIPSPattern,
+			args:    args{family: ecosystemTypes.EcosystemTypeSolaris, endpoint: "11.4-11.4.94", version: "11.3"},
+			wantErr: true,
+		},
+		{
+			name: "solaris-ips-pattern: a release-only endpoint against a full version",
+			rt:   affectedrangeTypes.RangeTypeSolarisIPSPattern,
+			args: args{family: ecosystemTypes.EcosystemTypeSolaris, endpoint: "1.8.0.471", version: "1.8.0.181.12-11.4.0.0.1.13.0:20180711T215531Z"},
+			want: +1,
+		},
+		{
+			name: "solaris-ips: the endpoint is a version, so a build of a level sorts after it",
+			rt:   affectedrangeTypes.RangeTypeSolarisIPS,
+			args: args{family: ecosystemTypes.EcosystemTypeSolaris, endpoint: "11.4-11.4.94", version: "11.4-11.4.94.0.1.113.1:20260201T000000Z"},
+			want: -1,
+		},
+		{
+			name: "solaris-ips: a version without a branch is ordered, not refused",
+			rt:   affectedrangeTypes.RangeTypeSolarisIPS,
+			args: args{family: ecosystemTypes.EcosystemTypeSolaris, endpoint: "11.4-11.4.94", version: "11.4"},
+			want: +1,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := tt.rt.TestEndpoint(tt.args.family, tt.args.endpoint, tt.args.version)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("RangeType.TestEndpoint() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if err != nil {
+				if _, ok := stderrors.AsType[*affectedrangeTypes.CompareError](err); !ok {
+					t.Errorf("RangeType.TestEndpoint() error = %v, want *CompareError", err)
+				}
+			}
+			if got != tt.want {
+				t.Errorf("RangeType.TestEndpoint() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
 func TestRangeTypes_HaveComparator(t *testing.T) {
 	// Documentation of pre-existing debt, not a template: pacman and
 	// freebsd-pkg are in the vocabulary but have never had a comparator, so
@@ -1264,6 +1425,12 @@ func TestRangeTypes_HaveComparator(t *testing.T) {
 	// evaluation surfaces as an unevaluable warning. Implementing a
 	// comparator makes this test fail — then remove the entry here. Do not
 	// add new types; a new RangeType must ship with its comparator.
+	//
+	// The same sweep runs through TestEndpoint, the entry point Accept uses,
+	// which must agree on which types are unsupported: a type whose
+	// CompareVersions refuses its values by design (solaris-ips-pattern,
+	// whose endpoints are patterns) is not unsupported there. That it
+	// evaluates is TestRangeType_TestEndpoint's business.
 	noComparator := map[affectedrangeTypes.RangeType]bool{
 		affectedrangeTypes.RangeTypePacman:     true,
 		affectedrangeTypes.RangeTypeFreeBSDPkg: true,
@@ -1277,6 +1444,10 @@ func TestRangeTypes_HaveComparator(t *testing.T) {
 				} else {
 					t.Errorf("%q has a comparator now; drop it from noComparator", rt)
 				}
+			}
+			_, err = rt.TestEndpoint(ecosystemTypes.EcosystemTypeRedHat, "1.0.0", "2.0.0")
+			if _, unsupported := stderrors.AsType[*affectedrangeTypes.UnsupportedRangeTypeError](err); unsupported != noComparator[rt] {
+				t.Errorf("TestEndpoint() unsupported = %v for %q, want %v", unsupported, rt, noComparator[rt])
 			}
 		})
 	}
