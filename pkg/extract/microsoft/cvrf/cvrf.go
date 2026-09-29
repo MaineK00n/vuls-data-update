@@ -1056,9 +1056,12 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 	//    package names (e.g. "regex-1.8.4", "h2-0.3.26"), KB references (e.g. "KB5032921")
 	//  - Placeholder versions containing "x" (e.g. "15.0.5415.xxxxxx", "5.64.x")
 	//  - Values without dots that are not parseable version numbers (e.g. "25060212643")
-	//  - Semicolon-separated compound versions (e.g. "3.0.6920.8954; 2.0.50727.8970")
-	//    used by .NET Framework products bundling multiple framework versions
-	if fixedBuild[0] < '0' || fixedBuild[0] > '9' || strings.Contains(fixedBuild, "x") || !strings.Contains(fixedBuild, ".") || strings.Contains(fixedBuild, ";") {
+	//  - Semicolon- or comma-separated compound versions (e.g. "3.0.6920.8954; 2.0.50727.8970"
+	//    used by .NET Framework products bundling multiple framework versions, or
+	//    "8.0.130, 8.0.424" pairing the fixed .NET SDK feature bands, 2026-Sep)
+	//  - Values containing a space: "&"/"and" compounds (e.g. "2.0.50727.9182 & 3.0.30729.9168")
+	//    and prerelease tags (e.g. "11.0 RC1", 2026-Sep)
+	if fixedBuild[0] < '0' || fixedBuild[0] > '9' || strings.Contains(fixedBuild, "x") || !strings.Contains(fixedBuild, ".") || strings.ContainsAny(fixedBuild, ";, ") {
 		return nil, nil
 	}
 
@@ -1185,6 +1188,9 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 			".NET 10.0 installed on Linux",
 			".NET 10.0 installed on Mac OS",
 			".NET 10.0 installed on Windows",
+			".NET 11.0 installed on Linux",
+			".NET 11.0 installed on Mac OS",
+			".NET 11.0 installed on Windows",
 			".NET Core 2.1",
 			".NET Core 3.1":
 			if _, err := dotnetcoreversion.NewVersion(fixedBuild); err != nil {
@@ -1384,6 +1390,7 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 			"Microsoft SQL Server 2022 for x64-based Systems (CU 23)",
 			"Microsoft SQL Server 2022 for x64-based Systems (CU 24)",
 			"Microsoft SQL Server 2022 for x64-based Systems (CU 25)",
+			"Microsoft SQL Server 2022 for x64-based Systems (CU 26)",
 			"Microsoft SQL Server 2022 for x64-based Systems (CU 5)",
 			"Microsoft SQL Server 2022 for x64-based Systems (CU 8)",
 			"Microsoft SQL Server 2022 for x64-based Systems (GDR)",
@@ -1391,11 +1398,13 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 			"Microsoft SQL Server 2025 for x64-based Systems (CU3)",
 			"Microsoft SQL Server 2025 for x64-based Systems (CU4)",
 			"Microsoft SQL Server 2025 for x64-based Systems (CU6)",
+			"Microsoft SQL Server 2025 for x64-based Systems (CU8)",
 			"Microsoft SQL Server 2025 for x64-based Systems (GDR)",
 			"SQL Server 2019 for Linux Containers",
 			"SQL Server Integration Services for Visual Studio 2019",
 			"SQL Server Integration Services for Visual Studio 2022",
-			"SQL Server Management Studio 20.2":
+			"SQL Server Management Studio 20.2",
+			"SQL Server Management Studio 22":
 			if _, err := sqlserverversion.NewVersion(fixedBuild); err != nil {
 				return rangeTypes.RangeTypeUnknown, errors.Wrap(err, "sqlserverversion.NewVersion")
 			}
@@ -1466,7 +1475,8 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 			"Microsoft Visual Studio 2026 Version 18.5",
 			"Microsoft Visual Studio 2026 Version 18.6",
 			"Microsoft Visual Studio 2026 Version 18.7",
-			"Microsoft Visual Studio 2026 Version 18.8":
+			"Microsoft Visual Studio 2026 Version 18.8",
+			"Microsoft Visual Studio 2026 Version 18.9":
 			if _, err := visualstudioversion.NewVersion(fixedBuild); err != nil {
 				return rangeTypes.RangeTypeUnknown, errors.Wrap(err, "visualstudioversion.NewVersion")
 			}
@@ -1716,6 +1726,11 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 // criterion and has no entry here fails the extraction (see buildDetections), because such CVEs
 // would otherwise become silently undetectable.
 var fixedBuildOverrides = map[[3]string]string{
+	// SQL Server Management Studio 22 versions itself as <major>.<minor>.<patch>
+	// (unlike SSMS 20.2, whose FixedBuild was 4-part); pad to the 4-part form
+	// sqlserverversion expects. 2026-Sep
+	{"CVE-2026-65669", "SQL Server Management Studio 22", "22.8.2"}: "22.8.2.0",
+
 	// .NET Core / .NET 5+ (FixedBuild has pre-release suffix that the parser doesn't accept)
 	// 2021-May (FixedBuild "5.0.6-servicing.21220.11" / "3.1.15-servicing.21214.3" has pre-release suffix)
 	{"CVE-2021-31204", ".NET 5.0", "5.0.6-servicing.21220.11"}:      "5.0.6",
