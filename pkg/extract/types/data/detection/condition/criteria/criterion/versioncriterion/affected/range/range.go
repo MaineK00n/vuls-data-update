@@ -333,7 +333,8 @@ func (t RangeType) CompareVersions(family ecosystemTypes.Ecosystem, v1, v2 strin
 		// distributions, ordered as internal/version/ips does. The two
 		// types share the order; they differ in what a range endpoint is,
 		// a version for solaris-ips and a pattern for solaris-ips-pattern,
-		// which TestEndpoint settles before anything reaches this order.
+		// which TestEndpoint cuts the version down to before ordering the
+		// two as solaris-ips. Two versions of either type order the same.
 		va, err := ipsVersion.NewVersion(v1)
 		if err != nil {
 			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
@@ -628,8 +629,8 @@ func (t RangeType) CompareVersions(family ecosystemTypes.Ecosystem, v1, v2 strin
 // The endpoints of a solaris-ips-pattern Range are patterns: they name only
 // the components they want compared (a level such as 11.4-11.4.94), so the
 // version is first cut down to the components the endpoint names
-// (ips.Version.Truncate) and reaches CompareVersions with the endpoint's
-// shape, where the order does the rest. A component the version cannot
+// (ips.Version.Truncate) and the two, then versions of one shape, are
+// ordered as solaris-ips orders versions. A component the version cannot
 // supply is a *CompareError, which versioncriterion/affected.Accept degrades
 // to a non-match. The endpoints of a solaris-ips Range are versions, so that
 // type goes straight through like every other.
@@ -648,9 +649,10 @@ func (t RangeType) TestEndpoint(family ecosystemTypes.Ecosystem, endpoint, versi
 		if err != nil {
 			return 0, &CompareError{Err: &CannotCompareError{Reason: fmt.Sprintf("%s. endpoint: %q, version: %q", err, endpoint, version)}}
 		}
-		version = v.String()
+		return RangeTypeSolarisIPS.CompareVersions(family, endpoint, v.String())
+	default:
+		return t.CompareVersions(family, endpoint, version)
 	}
-	return t.CompareVersions(family, endpoint, version)
 }
 
 func extractRedHatMajorVersion(v string) string {
