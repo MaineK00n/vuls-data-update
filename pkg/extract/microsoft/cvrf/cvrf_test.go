@@ -388,6 +388,78 @@ func TestBuildFixedBuildCriterion(t *testing.T) {
 			want: nil,
 		},
 		{
+			name: ".NET 11.0 installed on Windows (parseable FixedBuild reaches the new switch entry)",
+			args: args{
+				cveID:         "CVE-2026-58649",
+				productName:   ".NET 11.0 installed on Windows",
+				rawFixedBuild: "11.0.1",
+			},
+			want: &criterionTypes.Criterion{
+				Type: criterionTypes.CriterionTypeVersion,
+				Version: &vcTypes.Criterion{
+					Vulnerable: true,
+					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
+					Package: packageTypes.Package{
+						Type:   packageTypes.PackageTypeBinary,
+						Binary: &binaryTypes.Package{Name: ".NET 11.0 installed on Windows"},
+					},
+					Affected: &affectedTypes.Affected{
+						Type:  affectedrangeTypes.RangeTypeMicrosoftDotNetCore,
+						Range: []affectedrangeTypes.Range{{LessThan: "11.0.1"}},
+						Fixed: []string{"11.0.1"},
+					},
+				},
+			},
+		},
+		{
+			name: ".NET 11.0 installed on Linux (parseable FixedBuild reaches the new switch entry)",
+			args: args{
+				cveID:         "CVE-2026-58649",
+				productName:   ".NET 11.0 installed on Linux",
+				rawFixedBuild: "11.0.1",
+			},
+			want: &criterionTypes.Criterion{
+				Type: criterionTypes.CriterionTypeVersion,
+				Version: &vcTypes.Criterion{
+					Vulnerable: true,
+					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
+					Package: packageTypes.Package{
+						Type:   packageTypes.PackageTypeBinary,
+						Binary: &binaryTypes.Package{Name: ".NET 11.0 installed on Linux"},
+					},
+					Affected: &affectedTypes.Affected{
+						Type:  affectedrangeTypes.RangeTypeMicrosoftDotNetCore,
+						Range: []affectedrangeTypes.Range{{LessThan: "11.0.1"}},
+						Fixed: []string{"11.0.1"},
+					},
+				},
+			},
+		},
+		{
+			name: ".NET 11.0 installed on Mac OS (parseable FixedBuild reaches the new switch entry)",
+			args: args{
+				cveID:         "CVE-2026-58649",
+				productName:   ".NET 11.0 installed on Mac OS",
+				rawFixedBuild: "11.0.1",
+			},
+			want: &criterionTypes.Criterion{
+				Type: criterionTypes.CriterionTypeVersion,
+				Version: &vcTypes.Criterion{
+					Vulnerable: true,
+					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
+					Package: packageTypes.Package{
+						Type:   packageTypes.PackageTypeBinary,
+						Binary: &binaryTypes.Package{Name: ".NET 11.0 installed on Mac OS"},
+					},
+					Affected: &affectedTypes.Affected{
+						Type:  affectedrangeTypes.RangeTypeMicrosoftDotNetCore,
+						Range: []affectedrangeTypes.Range{{LessThan: "11.0.1"}},
+						Fixed: []string{"11.0.1"},
+					},
+				},
+			},
+		},
+		{
 			name: ".NET 11.0 prerelease tag skipped (CVE-2026-58649)",
 			args: args{
 				cveID:         "CVE-2026-58649",
