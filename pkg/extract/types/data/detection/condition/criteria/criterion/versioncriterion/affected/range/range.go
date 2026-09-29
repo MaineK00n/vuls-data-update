@@ -617,10 +617,12 @@ func (t RangeType) CompareVersions(family ecosystemTypes.Ecosystem, v1, v2 strin
 	}
 }
 
-// TestEndpoint tells where the version falls against endpoint, the value one
-// operator of a Range of this type carries: -1 before it, 0 on it, +1 after
-// it. For every type but one the endpoint is a full version and this is
-// CompareVersions(family, endpoint, version), errors included.
+// TestEndpoint compares endpoint, the value one operator of a Range of this
+// type carries, to version, with the sign of CompareVersions(family,
+// endpoint, version): -1 when the endpoint sorts before the version, 0 when
+// the version is on it, +1 when the endpoint sorts after the version. For
+// every type but one the endpoint is a full version and this is exactly
+// CompareVersions, errors included.
 //
 // The endpoints of a solaris-ips-pattern Range are patterns: they name only
 // the components they want compared (a level such as 11.4-11.4.94), so the

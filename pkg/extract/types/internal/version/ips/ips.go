@@ -164,10 +164,14 @@ func (v Version) Compare(w Version) int {
 	)
 }
 
-// Test tells where the version v falls against pattern: -1 before it, 0 on
-// it, +1 after it. A pattern names only the components it wants compared, the
-// way "pkg install entire@11.4-11.4.94" names a level rather than a version,
-// so this is a match test rather than the order:
+// Test compares pattern to the version v with the sign of Version.Compare
+// called on the pattern: -1 when the pattern sorts before v, 0 when v is on
+// the pattern, +1 when the pattern sorts after v (Test(11.4, 11.3) is +1). It
+// is the sign a range endpoint is read with, so a caller checks a "less than
+// pattern" bound the way it checks any other type's endpoint. A pattern names
+// only the components it wants compared, the way "pkg install
+// entire@11.4-11.4.94" names a level rather than a version, so this is a
+// match test rather than the order:
 //
 //   - a component the pattern omits is "don't care" and takes no part;
 //   - a dot sequence it names is matched against the same depth of the
