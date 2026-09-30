@@ -15,6 +15,3 @@ func NewProductRef(productName, versionExp string) ProductRef {
 
 // ToCriterion exposes toCriterion for whitelist-enforcement tests.
 var ToCriterion = toCriterion
-
-// ExtractCSAF exposes extract for tests that build a CSAF document inline.
-var ExtractCSAF = extract

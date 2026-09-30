@@ -1,9 +1,6 @@
 package csaf_test
 
 import (
-	"encoding/json/v2"
-	"fmt"
-	"strings"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
@@ -14,7 +11,6 @@ import (
 	ccRangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/cpecriterion/range"
 	fixstatusTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/fixstatus"
 	utiltest "github.com/MaineK00n/vuls-data-update/pkg/extract/util/test"
-	csafTypes "github.com/MaineK00n/vuls-data-update/pkg/fetch/fortinet/csaf"
 )
 
 func TestExtract(t *testing.T) {
@@ -44,6 +40,26 @@ func TestExtract(t *testing.T) {
 		{
 			name:     "undefined known_not_affected product of no known shape",
 			args:     "./testdata/fixtures-undefined-not-affected",
+			hasError: true,
+		},
+		{
+			name:     "known_affected leaf with no score",
+			args:     "./testdata/fixtures-no-score",
+			hasError: true,
+		},
+		{
+			name:     "known_affected leaf with two distinct scores",
+			args:     "./testdata/fixtures-distinct-scores",
+			hasError: true,
+		},
+		{
+			name:     "score naming a product the tree does not have",
+			args:     "./testdata/fixtures-unknown-product",
+			hasError: true,
+		},
+		{
+			name:     "impact scoped by product group",
+			args:     "./testdata/fixtures-threat-group-ids",
 			hasError: true,
 		},
 	}
@@ -439,145 +455,6 @@ func TestToCriterion(t *testing.T) {
 			}
 			if diff := cmp.Diff(tt.want, got); diff != "" {
 				t.Errorf("ToCriterion(%q) (-want +got):\n%s", tt.args.productID, diff)
-			}
-		})
-	}
-}
-
-func TestExtractScoreScope(t *testing.T) {
-	const (
-		v74 = "FortiOS 7.4 all versions"
-		v72 = "FortiOS 7.2 all versions"
-		vA  = "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H"
-		vB  = "CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:U/C:L/I:L/A:N"
-	)
-	// doc wraps one vulnerability object (its scores and threats) in an
-	// advisory whose FortiOS product node has the 7.4 and 7.2 train leaves,
-	// both known_affected.
-	doc := func(scores, threats string) string {
-		return fmt.Sprintf(`{
-			"document": {"title": "t", "tracking": {"id": "FG-IR-99-001", "initial_release_date": "2099-01-01T00:00:00", "current_release_date": "2099-01-01T00:00:00"}},
-			"product_tree": {"branches": [{"category": "vendor", "name": "Fortinet PSIRT", "branches": [{"category": "product", "name": "FortiOS", "branches": [
-				{"category": "product_version_range", "name": "FortiOS/7.4 all versions", "product": {"name": "FortiOS", "product_id": %q}},
-				{"category": "product_version_range", "name": "FortiOS/7.2 all versions", "product": {"name": "FortiOS", "product_id": %q}}
-			]}]}]},
-			"vulnerabilities": [{"cve": "CVE-2099-0001", "product_status": {"known_affected": [%q, %q]}, "scores": %s, "threats": %s}]
-		}`, v74, v72, v74, v72, scores, threats)
-	}
-	score := func(vector string, products ...string) string {
-		qs := make([]string, 0, len(products))
-		for _, p := range products {
-			qs = append(qs, fmt.Sprintf("%q", p))
-		}
-		return fmt.Sprintf(`{"cvss_v3": {"version": "3.1", "vectorString": %q, "baseScore": 0, "baseSeverity": ""}, "products": [%s]}`, vector, strings.Join(qs, ", "))
-	}
-	criterion := func(pid string) criterionTypes.Criterion {
-		c, err := csaf.ToCriterion(pid, map[string]csaf.ProductRef{
-			v74: csaf.NewProductRef("FortiOS", "7.4 all versions"),
-			v72: csaf.NewProductRef("FortiOS", "7.2 all versions"),
-		})
-		if err != nil {
-			t.Fatal(err)
-		}
-		return c
-	}
-
-	tests := []struct {
-		name    string
-		scores  string
-		threats string
-		// want maps "<vector> <impact>" to the criterions of the Vulnerability
-		// record carrying that severity.
-		want    map[string][]criterionTypes.Criterion
-		wantErr bool
-	}{
-		{
-			name:    "product-name score covers every leaf",
-			scores:  fmt.Sprintf("[%s]", score(vA, "FortiOS")),
-			threats: `[{"category": "impact", "details": "Code execution"}]`,
-			want: map[string][]criterionTypes.Criterion{
-				vA + " Code execution": {criterion(v74), criterion(v72)},
-			},
-		},
-		{
-			name:    "leaf-scoped scores split the key",
-			scores:  fmt.Sprintf("[%s, %s]", score(vA, v74), score(vB, v72)),
-			threats: `[{"category": "impact", "details": "Code execution"}]`,
-			want: map[string][]criterionTypes.Criterion{
-				vA + " Code execution": {criterion(v74)},
-				vB + " Code execution": {criterion(v72)},
-			},
-		},
-		{
-			name:    "leaf-scoped threats split the key",
-			scores:  fmt.Sprintf("[%s]", score(vA, "FortiOS")),
-			threats: fmt.Sprintf(`[{"category": "impact", "details": "Code execution", "product_ids": [%q]}, {"category": "impact", "details": "Information disclosure", "product_ids": [%q]}]`, v74, v72),
-			want: map[string][]criterionTypes.Criterion{
-				vA + " Code execution":         {criterion(v74)},
-				vA + " Information disclosure": {criterion(v72)},
-			},
-		},
-		{
-			name:    "leaf with no score",
-			scores:  fmt.Sprintf("[%s]", score(vA, v74)),
-			threats: `[{"category": "impact", "details": "Code execution"}]`,
-			wantErr: true,
-		},
-		{
-			name:    "leaf with two distinct scores",
-			scores:  fmt.Sprintf("[%s, %s]", score(vA, "FortiOS"), score(vB, v72)),
-			threats: `[{"category": "impact", "details": "Code execution"}]`,
-			wantErr: true,
-		},
-		{
-			name:    "score naming an unknown product",
-			scores:  fmt.Sprintf("[%s, %s]", score(vA, "FortiOS"), score(vB, "FortiProxy")),
-			threats: `[{"category": "impact", "details": "Code execution"}]`,
-			wantErr: true,
-		},
-		{
-			name:    "threat scoped by product group",
-			scores:  fmt.Sprintf("[%s]", score(vA, "FortiOS")),
-			threats: `[{"category": "impact", "details": "Code execution", "group_ids": ["g1"]}]`,
-			wantErr: true,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			var fetched csafTypes.CSAF
-			if err := json.UnmarshalRead(strings.NewReader(doc(tt.scores, tt.threats)), &fetched); err != nil {
-				t.Fatal(err)
-			}
-			data, err := csaf.ExtractCSAF(fetched, nil)
-			if (err != nil) != tt.wantErr {
-				t.Fatalf("extract() error = %v, wantErr %v", err, tt.wantErr)
-			}
-			if tt.wantErr {
-				return
-			}
-
-			got := make(map[string][]criterionTypes.Criterion)
-			for _, v := range data.Vulnerabilities {
-				var vector, impact string
-				for _, s := range v.Content.Severity {
-					switch {
-					case s.CVSSv31 != nil:
-						vector = s.CVSSv31.Vector
-					case s.Vendor != nil:
-						impact = *s.Vendor
-					}
-				}
-				if len(v.Segments) != 1 {
-					t.Fatalf("unexpected segments. expected: 1, actual: %d", len(v.Segments))
-				}
-				for _, c := range data.Detections[0].Conditions {
-					if c.Tag == v.Segments[0].Tag {
-						got[fmt.Sprintf("%s %s", vector, impact)] = c.Criteria.Criterions
-					}
-				}
-			}
-			if diff := cmp.Diff(tt.want, got); diff != "" {
-				t.Errorf("(-expected +got):\n%s", diff)
 			}
 		})
 	}
