@@ -17,11 +17,11 @@
 			"segments": [
 				{
 					"ecosystem": "cpe",
-					"tag": "CVE-2026-27316_3cf3c98b"
+					"tag": "CVE-2026-27316_07e222da"
 				},
 				{
 					"ecosystem": "cpe",
-					"tag": "CVE-2026-27316_d2c42ffb"
+					"tag": "CVE-2026-27316_4f437df8"
 				}
 			]
 		}
@@ -70,7 +70,7 @@
 			"segments": [
 				{
 					"ecosystem": "cpe",
-					"tag": "CVE-2026-27316_d2c42ffb"
+					"tag": "CVE-2026-27316_4f437df8"
 				}
 			]
 		},
@@ -117,7 +117,7 @@
 			"segments": [
 				{
 					"ecosystem": "cpe",
-					"tag": "CVE-2026-27316_3cf3c98b"
+					"tag": "CVE-2026-27316_07e222da"
 				}
 			]
 		}
@@ -147,7 +147,7 @@
 							}
 						]
 					},
-					"tag": "CVE-2026-27316_3cf3c98b"
+					"tag": "CVE-2026-27316_07e222da"
 				},
 				{
 					"criteria": {
@@ -185,7 +185,7 @@
 							}
 						]
 					},
-					"tag": "CVE-2026-27316_d2c42ffb"
+					"tag": "CVE-2026-27316_4f437df8"
 				}
 			]
 		}

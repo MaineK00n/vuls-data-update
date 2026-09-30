@@ -201,10 +201,18 @@ type profileKey struct {
 	impact string
 }
 
+// hash returns a digest of the profile, telling the profiles of one key apart
+// in their tags.
+func (pk profileKey) hash() uint32 {
+	h := fnv.New32a()
+	// hash.Hash.Write is documented never to return an error.
+	_, _ = fmt.Fprintf(h, "%s\x00%s", pk.cvss, pk.impact)
+	return h.Sum32()
+}
+
 // affectedProduct is one known_affected product of a key: its criterion and
 // the profile it gets.
 type affectedProduct struct {
-	pid       string
 	criterion criterionTypes.Criterion
 	profile   profileKey
 }
@@ -277,7 +285,7 @@ func extract(fetched csafTypes.CSAF, raws []string) (dataTypes.Data, error) {
 				return dataTypes.Data{}, errors.Wrapf(err, "severity of %q for advisory %s, %s", string(pid), id, key)
 			}
 			addProfile(sevs, pk)
-			a.affected = append(a.affected, affectedProduct{pid: string(pid), criterion: cn, profile: pk})
+			a.affected = append(a.affected, affectedProduct{criterion: cn, profile: pk})
 		}
 		for _, rem := range v.Remediations {
 			switch rem.Category {
@@ -302,36 +310,28 @@ func extract(fetched csafTypes.CSAF, raws []string) (dataTypes.Data, error) {
 	)
 	for key, a := range accs {
 		// Profile iteration order is irrelevant: each tag is derived from the
-		// profile's own product set (below), and util.Write re-sorts every output
-		// slice by a content-based total order, so the append order never
-		// reaches the output.
+		// profile itself (below), and util.Write re-sorts every output slice by a
+		// content-based total order, so the append order never reaches the
+		// output.
 		for pk, p := range a.profiles {
-			var (
-				criterions []criterionTypes.Criterion
-				pids       []string
-			)
+			var criterions []criterionTypes.Criterion
 			for _, ap := range a.affected {
 				if ap.profile == pk {
 					criterions = append(criterions, ap.criterion)
-					pids = append(pids, ap.pid)
 				}
 			}
 
 			// One profile → the tag is the bare key (CVE / advisory ID), keeping
 			// the common single-profile output stable. Multiple profiles within
-			// one key → suffix each tag with a hash of the largest product_id
-			// getting it (the profiles partition the products, so the maxima
-			// differ).
-			// Keying the suffix on the product set, not on a positional index or
-			// the profile value, keeps the tag stable across data updates (it
-			// only moves if that group's products change), minimizing extracted
-			// diff — mirroring redhat/csaf's calculateTag.
+			// one key → suffix each tag with a hash of the profile. The profiles
+			// of a key are distinct by construction, so the tags are too, whatever
+			// the data; and a tag moves only when its profile's content does,
+			// which changes the Vulnerability record anyway. A product-based
+			// suffix would move with every version range Fortinet edits into a
+			// product_id, and could collide if a family split across profiles.
 			tag := segmentTypes.DetectionTag(key)
-			if len(a.profiles) > 1 && len(pids) > 0 {
-				h := fnv.New32a()
-				// hash.Hash.Write is documented never to return an error.
-				_, _ = h.Write([]byte(slices.Max(pids)))
-				tag = segmentTypes.DetectionTag(fmt.Sprintf("%s_%08x", key, h.Sum32()))
+			if len(a.profiles) > 1 {
+				tag = segmentTypes.DetectionTag(fmt.Sprintf("%s_%08x", key, pk.hash()))
 			}
 			seg := segmentTypes.Segment{Ecosystem: ecosystemTypes.EcosystemTypeCPE, Tag: tag}
 
