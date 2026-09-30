@@ -167,37 +167,46 @@ type productRef struct {
 // keyAcc accumulates one vulnerability key — a CVE, or the advisory ID when a
 // CSAF vulnerability object carries no CVE (a few older Fortinet advisories are
 // published without one). description/cwe/references/workarounds are CVE-level
-// (shared across the key); severity and criterions live per profile group
-// (see profileGroup). String slices are deduped on emit.
+// (shared across the key). The rest is scoped to products: each known_affected
+// product is recorded with the profile it gets, and products sharing a
+// profile are grouped only on emit, into one segment / condition /
+// Vulnerability record each. String slices are deduped on emit.
 type keyAcc struct {
 	description string
 	cwe         []string
 	references  []string
 	workarounds []string
-	groups      map[profileKey]*profileGroup
+	profiles    map[profileKey]profile
+	affected    []affectedProduct
 }
 
-// profileKey groups the known_affected products of one key by their profile:
-// the content CSAF scopes to products, which may therefore differ between the
-// products of one key — today the severity (CVSS vector + vendor impact).
-// CSAF scopes scores to .products and threats to .product_ids, so each product
-// gets the score and impact that list it (see vulnSeverity); Fortinet
-// replicates one CVE across one object per product family. Today every family
-// shares the same profile, so a key collapses to a single group and the
+// profile is the content CSAF scopes to products, which may therefore differ
+// between the products of one key — today the severity (CVSS vector + vendor
+// impact). CSAF scopes scores to .products and threats to .product_ids, so
+// each product gets the score and impact that list it (see vulnSeverity);
+// Fortinet replicates one CVE across one object per product family. Today
+// every family shares the same profile, so a key has a single profile and the
 // per-CVE output is unchanged — but distinct profiles (which CSAF permits)
 // split into separate segments/conditions rather than being over-attributed
 // to every product.
+type profile struct {
+	severities []severityTypes.Severity
+}
+
+// profileKey is a profile in comparable form, to key keyAcc.profiles and
+// affectedProduct.profile by: a profile holds slices and pointers, which a map
+// key cannot.
 type profileKey struct {
 	cvss   string
 	impact string
 }
 
-// profileGroup holds the products of one key sharing a profileKey, with the
-// profile content emitted on their Vulnerability record.
-type profileGroup struct {
-	severities []severityTypes.Severity
-	criterions []criterionTypes.Criterion
-	pids       []string // known_affected product_ids, for a stable split tag suffix
+// affectedProduct is one known_affected product of a key: its criterion and
+// the profile it gets.
+type affectedProduct struct {
+	pid       string
+	criterion criterionTypes.Criterion
+	profile   profileKey
 }
 
 func extract(fetched csafTypes.CSAF, raws []string) (dataTypes.Data, error) {
@@ -224,7 +233,7 @@ func extract(fetched csafTypes.CSAF, raws []string) (dataTypes.Data, error) {
 		}
 		a := accs[key]
 		if a == nil {
-			a = &keyAcc{groups: make(map[profileKey]*profileGroup)}
+			a = &keyAcc{profiles: make(map[profileKey]profile)}
 			accs[key] = a
 		}
 
@@ -243,13 +252,10 @@ func extract(fetched csafTypes.CSAF, raws []string) (dataTypes.Data, error) {
 			a.references = append(a.references, strings.Fields(r.URL)...)
 		}
 
-		group := func(sevs []severityTypes.Severity, pk profileKey) *profileGroup {
-			g := a.groups[pk]
-			if g == nil {
-				g = &profileGroup{severities: sevs}
-				a.groups[pk] = g
+		addProfile := func(sevs []severityTypes.Severity, pk profileKey) {
+			if _, ok := a.profiles[pk]; !ok {
+				a.profiles[pk] = profile{severities: sevs}
 			}
-			return g
 		}
 		// An object with no known_affected (known_not_affected only) still
 		// carries its severity on the Vulnerability record, so take every score
@@ -259,7 +265,7 @@ func extract(fetched csafTypes.CSAF, raws []string) (dataTypes.Data, error) {
 			if err != nil {
 				return dataTypes.Data{}, errors.Wrapf(err, "severity for advisory %s, %s", id, key)
 			}
-			group(sevs, pk)
+			addProfile(sevs, pk)
 		}
 		for _, pid := range v.ProductStatus.KnownAffected {
 			cn, err := toCriterion(string(pid), refMap)
@@ -270,9 +276,8 @@ func extract(fetched csafTypes.CSAF, raws []string) (dataTypes.Data, error) {
 			if err != nil {
 				return dataTypes.Data{}, errors.Wrapf(err, "severity of %q for advisory %s, %s", string(pid), id, key)
 			}
-			g := group(sevs, pk)
-			g.criterions = append(g.criterions, cn)
-			g.pids = append(g.pids, string(pid))
+			addProfile(sevs, pk)
+			a.affected = append(a.affected, affectedProduct{pid: string(pid), criterion: cn, profile: pk})
 		}
 		for _, rem := range v.Remediations {
 			switch rem.Category {
@@ -296,39 +301,52 @@ func extract(fetched csafTypes.CSAF, raws []string) (dataTypes.Data, error) {
 		segments   []segmentTypes.Segment
 	)
 	for key, a := range accs {
-		// Group iteration order is irrelevant: each tag is derived from the group's
-		// own product set (below), and util.Write re-sorts every output slice by a
-		// content-based total order, so the append order never reaches the output.
-		for _, g := range a.groups {
-			// One profile group → the tag is the bare key (CVE / advisory ID),
-			// keeping the common single-group output stable. Multiple groups
-			// within one key → suffix each tag with a hash of the group's largest
-			// product_id (the groups partition the products, so the maxima differ).
+		// Profile iteration order is irrelevant: each tag is derived from the
+		// profile's own product set (below), and util.Write re-sorts every output
+		// slice by a content-based total order, so the append order never
+		// reaches the output.
+		for pk, p := range a.profiles {
+			var (
+				criterions []criterionTypes.Criterion
+				pids       []string
+			)
+			for _, ap := range a.affected {
+				if ap.profile == pk {
+					criterions = append(criterions, ap.criterion)
+					pids = append(pids, ap.pid)
+				}
+			}
+
+			// One profile → the tag is the bare key (CVE / advisory ID), keeping
+			// the common single-profile output stable. Multiple profiles within
+			// one key → suffix each tag with a hash of the largest product_id
+			// getting it (the profiles partition the products, so the maxima
+			// differ).
 			// Keying the suffix on the product set, not on a positional index or
 			// the profile value, keeps the tag stable across data updates (it
 			// only moves if that group's products change), minimizing extracted
 			// diff — mirroring redhat/csaf's calculateTag.
 			tag := segmentTypes.DetectionTag(key)
-			if len(a.groups) > 1 && len(g.pids) > 0 {
+			if len(a.profiles) > 1 && len(pids) > 0 {
 				h := fnv.New32a()
 				// hash.Hash.Write is documented never to return an error.
-				_, _ = h.Write([]byte(slices.Max(g.pids)))
+				_, _ = h.Write([]byte(slices.Max(pids)))
 				tag = segmentTypes.DetectionTag(fmt.Sprintf("%s_%08x", key, h.Sum32()))
 			}
 			seg := segmentTypes.Segment{Ecosystem: ecosystemTypes.EcosystemTypeCPE, Tag: tag}
 
 			// Only carry the tagged segment when it has a matching detection
-			// condition. A group with no known_affected (e.g. known_not_affected
+			// condition. A profile with no known_affected (e.g. known_not_affected
 			// only) otherwise leaves a dangling segment tag with no condition or
 			// advisory segment, producing an internally inconsistent dataset.
 			var vsegs []segmentTypes.Segment
-			if len(g.criterions) > 0 {
+			if len(criterions) > 0 {
 				segments = append(segments, seg)
 				vsegs = []segmentTypes.Segment{seg}
 				conditions = append(conditions, conditionTypes.Condition{
 					Criteria: criteriaTypes.Criteria{
 						Operator:   criteriaTypes.CriteriaOperatorTypeOR,
-						Criterions: g.criterions,
+						Criterions: criterions,
 					},
 					Tag: tag,
 				})
@@ -351,7 +369,7 @@ func extract(fetched csafTypes.CSAF, raws []string) (dataTypes.Data, error) {
 					Title:       fetched.Document.Title,
 					Description: a.description,
 					Severity: func() []severityTypes.Severity {
-						ss := slices.Clone(g.severities)
+						ss := slices.Clone(p.severities)
 						slices.SortFunc(ss, severityTypes.Compare)
 						return slices.CompactFunc(ss, func(x, y severityTypes.Severity) bool {
 							return severityTypes.Compare(x, y) == 0
@@ -797,10 +815,10 @@ func (pb productBranches) expand(ids []csafTypes.ProductID) ([]csafTypes.Product
 // product_id pid: the CVSS v3.1 score whose .products lists pid, and the
 // vendor impact whose .product_ids lists pid or which has none (and so covers
 // the whole object); an empty pid takes every score and impact of the object.
-// It returns them together with the profileKey that groups products of the
-// same key by identical profile. Fortinet emits exactly one cvss vector and
-// one impact per product; anything else (zero or multiple distinct) is a hard
-// error (see below), not silently handled.
+// It returns them together with the profileKey of that profile. Fortinet
+// emits exactly one cvss vector and one impact per product; anything else
+// (zero or multiple distinct) is a hard error (see below), not silently
+// handled.
 func vulnSeverity(v csafTypes.Vulnerability, pid string) ([]severityTypes.Severity, profileKey, error) {
 	// Fortinet emits exactly one cvss vector and one impact per vulnerability
 	// object (verified across the corpus), so each product gets one of each.
