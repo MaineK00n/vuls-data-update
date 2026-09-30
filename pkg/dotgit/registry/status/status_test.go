@@ -1,11 +1,9 @@
 package status_test
 
 import (
-	"context"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
-	"os"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
@@ -14,9 +12,9 @@ import (
 	"github.com/opencontainers/image-spec/specs-go"
 	ocispec "github.com/opencontainers/image-spec/specs-go/v1"
 	"github.com/pkg/errors"
-	"oras.land/oras-go/v2"
 	"oras.land/oras-go/v2/registry/remote"
 
+	"github.com/MaineK00n/vuls-data-update/pkg/dotgit/registry/push"
 	"github.com/MaineK00n/vuls-data-update/pkg/dotgit/registry/status"
 )
 
@@ -92,37 +90,11 @@ func TestStatus(t *testing.T) {
 	}
 }
 
-func setup(url string) error {
-	ctx := context.TODO()
-
-	repo, err := remote.NewRepository(url)
-	if err != nil {
-		return errors.Wrapf(err, "create client for %s", url)
-	}
-
-	bs, err := os.ReadFile("testdata/fixtures/vuls-data-raw-test.tar.zst")
-	if err != nil {
-		return errors.Wrapf(err, "read %q", "testdata/fixtures/vuls-data-raw-test.tar.zst")
-	}
-
-	layerDescriptor, err := oras.PushBytes(ctx, repo, "application/vnd.vulsio.vuls-data-db.dotgit.layer.v1.tar+zstd", []byte(bs))
-	if err != nil {
-		return errors.Wrap(err, "push dotgit layer")
-	}
-	if layerDescriptor.Annotations == nil {
-		layerDescriptor.Annotations = make(map[string]string)
-	}
-	if _, ok := layerDescriptor.Annotations[ocispec.AnnotationTitle]; !ok {
-		layerDescriptor.Annotations[ocispec.AnnotationTitle] = "vuls-data-raw-test.tar.zst"
-	}
-
-	desc, err := oras.PackManifest(ctx, repo, oras.PackManifestVersion1_1, "application/vnd.vulsio.vuls-data-db.dotgit+type", oras.PackManifestOptions{Layers: []ocispec.Descriptor{layerDescriptor}})
-	if err != nil {
-		return errors.Wrap(err, "pack manifest")
-	}
-
-	if err := repo.Tag(ctx, desc, "vuls-data-raw-test"); err != nil {
-		return errors.Wrapf(err, "tagged for %+v", desc)
+// setup puts the image there the way vuls-data-update puts one there, rather
+// than assembling an equivalent by hand.
+func setup(image string) error {
+	if err := push.Push(image, "testdata/fixtures/vuls-data-raw-test.tar.zst", "gho_xxx"); err != nil {
+		return errors.Wrapf(err, "push %q", image)
 	}
 
 	return nil
