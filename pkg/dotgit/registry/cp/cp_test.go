@@ -1,10 +1,12 @@
 package cp_test
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
+	"sync"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
@@ -183,5 +185,69 @@ func TestCopy(t *testing.T) {
 				}
 			}
 		})
+	}
+}
+
+// TestCopyReference covers the two ends separately. Copy resolves the source,
+// so a digest names it perfectly well. The destination is what the manifest is
+// PUT under, and under a digest the version is born with no tag — the version
+// an untagged-image cleanup deletes.
+func TestCopyReference(t *testing.T) {
+	var (
+		mu       sync.Mutex
+		requests int
+	)
+	h := registry.New()
+	ts := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		mu.Lock()
+		requests++
+		mu.Unlock()
+		h.ServeHTTP(w, r)
+	}))
+	defer ts.Close()
+
+	originalTransport := http.DefaultTransport
+	http.DefaultTransport = ts.Client().Transport
+	defer func() {
+		http.DefaultTransport = originalTransport
+	}()
+
+	u, err := url.Parse(ts.URL)
+	if err != nil {
+		t.Fatalf("parse url: %v", err)
+	}
+
+	src := fmt.Sprintf("%s/vulsio/vuls-data-db:vuls-data-raw-example", u.Host)
+	if err := push.Push(src, "testdata/fixtures/vuls-data-raw-example.tar.zst", ""); err != nil {
+		t.Fatalf("push to %s: %v", src, err)
+	}
+
+	repo, err := remote.NewRepository(src)
+	if err != nil {
+		t.Fatalf("new repository: %v", err)
+	}
+	desc, err := repo.Resolve(context.TODO(), repo.Reference.Reference)
+	if err != nil {
+		t.Fatalf("resolve %s: %v", src, err)
+	}
+
+	if err := cp.Copy(fmt.Sprintf("%s/vulsio/vuls-data-db@%s", u.Host, desc.Digest), fmt.Sprintf("%s/vulsio/vuls-data-db-backup:vuls-data-raw-example", u.Host), "token"); err != nil {
+		t.Errorf("Copy() from a digest: %v", err)
+	}
+
+	// A repository the digest is not in, so that nothing but the destination
+	// reference itself can turn this copy away.
+	mu.Lock()
+	requests = 0
+	mu.Unlock()
+
+	if err := cp.Copy(src, fmt.Sprintf("%s/vulsio/vuls-data-db-archive@%s", u.Host, desc.Digest), "token"); err == nil {
+		t.Error("Copy() to a digest: error = nil, want an error")
+	}
+
+	mu.Lock()
+	defer mu.Unlock()
+	if requests != 0 {
+		t.Errorf("Copy() made %d requests, want none before the destination is rejected", requests)
 	}
 }
