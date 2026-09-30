@@ -167,30 +167,34 @@ type productRef struct {
 // keyAcc accumulates one vulnerability key — a CVE, or the advisory ID when a
 // CSAF vulnerability object carries no CVE (a few older Fortinet advisories are
 // published without one). description/cwe/references/workarounds are CVE-level
-// (shared across the key); severity and criterions live per severity group
-// (see sevGroup). String slices are deduped on emit.
+// (shared across the key); severity and criterions live per profile group
+// (see profileGroup). String slices are deduped on emit.
 type keyAcc struct {
 	description string
 	cwe         []string
 	references  []string
 	workarounds []string
-	groups      map[sevKey]*sevGroup
+	groups      map[profileKey]*profileGroup
 }
 
-// sevKey groups the known_affected products of one key by their severity
-// profile (CVSS vector + vendor impact). CSAF scopes scores to .products and
-// threats to .product_ids, so each product gets the score and impact that list
-// it (see vulnSeverity); Fortinet replicates one CVE across one object per
-// product family. Today every family shares the same severity, so a key
-// collapses to a single group and the per-CVE output is unchanged — but
-// distinct severities (which CSAF permits) split into separate
-// segments/conditions rather than being over-attributed to every product.
-type sevKey struct {
+// profileKey groups the known_affected products of one key by their profile:
+// the content CSAF scopes to products, which may therefore differ between the
+// products of one key — today the severity (CVSS vector + vendor impact).
+// CSAF scopes scores to .products and threats to .product_ids, so each product
+// gets the score and impact that list it (see vulnSeverity); Fortinet
+// replicates one CVE across one object per product family. Today every family
+// shares the same profile, so a key collapses to a single group and the
+// per-CVE output is unchanged — but distinct profiles (which CSAF permits)
+// split into separate segments/conditions rather than being over-attributed
+// to every product.
+type profileKey struct {
 	cvss   string
 	impact string
 }
 
-type sevGroup struct {
+// profileGroup holds the products of one key sharing a profileKey, with the
+// profile content emitted on their Vulnerability record.
+type profileGroup struct {
 	severities []severityTypes.Severity
 	criterions []criterionTypes.Criterion
 	pids       []string // known_affected product_ids, for a stable split tag suffix
@@ -220,7 +224,7 @@ func extract(fetched csafTypes.CSAF, raws []string) (dataTypes.Data, error) {
 		}
 		a := accs[key]
 		if a == nil {
-			a = &keyAcc{groups: make(map[sevKey]*sevGroup)}
+			a = &keyAcc{groups: make(map[profileKey]*profileGroup)}
 			accs[key] = a
 		}
 
@@ -239,11 +243,11 @@ func extract(fetched csafTypes.CSAF, raws []string) (dataTypes.Data, error) {
 			a.references = append(a.references, strings.Fields(r.URL)...)
 		}
 
-		group := func(sevs []severityTypes.Severity, sk sevKey) *sevGroup {
-			g := a.groups[sk]
+		group := func(sevs []severityTypes.Severity, pk profileKey) *profileGroup {
+			g := a.groups[pk]
 			if g == nil {
-				g = &sevGroup{severities: sevs}
-				a.groups[sk] = g
+				g = &profileGroup{severities: sevs}
+				a.groups[pk] = g
 			}
 			return g
 		}
@@ -251,22 +255,22 @@ func extract(fetched csafTypes.CSAF, raws []string) (dataTypes.Data, error) {
 		// carries its severity on the Vulnerability record, so take every score
 		// and threat of the object for it, as before scoping.
 		if len(v.ProductStatus.KnownAffected) == 0 {
-			sevs, sk, err := vulnSeverity(v, "")
+			sevs, pk, err := vulnSeverity(v, "")
 			if err != nil {
 				return dataTypes.Data{}, errors.Wrapf(err, "severity for advisory %s, %s", id, key)
 			}
-			group(sevs, sk)
+			group(sevs, pk)
 		}
 		for _, pid := range v.ProductStatus.KnownAffected {
 			cn, err := toCriterion(string(pid), refMap)
 			if err != nil {
 				return dataTypes.Data{}, errors.Wrapf(err, "resolve known_affected %q (advisory %s, %s)", string(pid), id, key)
 			}
-			sevs, sk, err := vulnSeverity(v, string(pid))
+			sevs, pk, err := vulnSeverity(v, string(pid))
 			if err != nil {
 				return dataTypes.Data{}, errors.Wrapf(err, "severity of %q for advisory %s, %s", string(pid), id, key)
 			}
-			g := group(sevs, sk)
+			g := group(sevs, pk)
 			g.criterions = append(g.criterions, cn)
 			g.pids = append(g.pids, string(pid))
 		}
@@ -296,12 +300,12 @@ func extract(fetched csafTypes.CSAF, raws []string) (dataTypes.Data, error) {
 		// own product set (below), and util.Write re-sorts every output slice by a
 		// content-based total order, so the append order never reaches the output.
 		for _, g := range a.groups {
-			// One severity group → the tag is the bare key (CVE / advisory ID),
+			// One profile group → the tag is the bare key (CVE / advisory ID),
 			// keeping the common single-group output stable. Multiple groups
 			// within one key → suffix each tag with a hash of the group's largest
 			// product_id (the groups partition the products, so the maxima differ).
 			// Keying the suffix on the product set, not on a positional index or
-			// the severity value, keeps the tag stable across data updates (it
+			// the profile value, keeps the tag stable across data updates (it
 			// only moves if that group's products change), minimizing extracted
 			// diff — mirroring redhat/csaf's calculateTag.
 			tag := segmentTypes.DetectionTag(key)
@@ -793,11 +797,11 @@ func (pb productBranches) expand(ids []csafTypes.ProductID) ([]csafTypes.Product
 // product_id pid: the CVSS v3.1 score whose .products lists pid, and the
 // vendor impact whose .product_ids lists pid or which has none (and so covers
 // the whole object); an empty pid takes every score and impact of the object.
-// It returns them together with the sevKey that groups products of the same
-// key by identical severity profile. Fortinet emits exactly one cvss vector and
+// It returns them together with the profileKey that groups products of the
+// same key by identical profile. Fortinet emits exactly one cvss vector and
 // one impact per product; anything else (zero or multiple distinct) is a hard
 // error (see below), not silently handled.
-func vulnSeverity(v csafTypes.Vulnerability, pid string) ([]severityTypes.Severity, sevKey, error) {
+func vulnSeverity(v csafTypes.Vulnerability, pid string) ([]severityTypes.Severity, profileKey, error) {
 	// Fortinet emits exactly one cvss vector and one impact per vulnerability
 	// object (verified across the corpus), so each product gets one of each.
 	// Hold a single value and fail loudly on a second distinct one (a duplicate
@@ -811,22 +815,22 @@ func vulnSeverity(v csafTypes.Vulnerability, pid string) ([]severityTypes.Severi
 			continue
 		}
 		if vector != "" && vector != sc.CvssV3.VectorString {
-			return nil, sevKey{}, errors.Errorf("vulnerability %q has multiple distinct cvss vectors (%q, %q)", v.CVE, vector, sc.CvssV3.VectorString)
+			return nil, profileKey{}, errors.Errorf("vulnerability %q has multiple distinct cvss vectors (%q, %q)", v.CVE, vector, sc.CvssV3.VectorString)
 		}
 		vector = sc.CvssV3.VectorString
 	}
 	if vector == "" {
-		return nil, sevKey{}, errors.Errorf("vulnerability %q has no cvss vector", v.CVE)
+		return nil, profileKey{}, errors.Errorf("vulnerability %q has no cvss vector", v.CVE)
 	}
 	// Every cvss_v3 score in the corpus is CVSS:3.1 and parseable. A non-3.1
 	// vector or one that fails to parse is malformed/unexpected upstream data, not
 	// a known shape we choose to skip — hard-error rather than silently drop it.
 	if !strings.HasPrefix(vector, "CVSS:3.1/") {
-		return nil, sevKey{}, errors.Errorf("unexpected non-3.1 cvss vector %q", vector)
+		return nil, profileKey{}, errors.Errorf("unexpected non-3.1 cvss vector %q", vector)
 	}
 	c, err := v31Types.Parse(vector)
 	if err != nil {
-		return nil, sevKey{}, errors.Wrapf(err, "parse cvss vector %q", vector)
+		return nil, profileKey{}, errors.Wrapf(err, "parse cvss vector %q", vector)
 	}
 
 	var impact string
@@ -835,19 +839,19 @@ func vulnSeverity(v csafTypes.Vulnerability, pid string) ([]severityTypes.Severi
 			continue
 		}
 		if impact != "" && impact != t.Details {
-			return nil, sevKey{}, errors.Errorf("vulnerability %q has multiple distinct impacts (%q, %q)", v.CVE, impact, t.Details)
+			return nil, profileKey{}, errors.Errorf("vulnerability %q has multiple distinct impacts (%q, %q)", v.CVE, impact, t.Details)
 		}
 		impact = t.Details
 	}
 	if impact == "" {
-		return nil, sevKey{}, errors.Errorf("vulnerability %q has no impact", v.CVE)
+		return nil, profileKey{}, errors.Errorf("vulnerability %q has no impact", v.CVE)
 	}
 
 	ss := []severityTypes.Severity{
 		{Type: severityTypes.SeverityTypeCVSSv31, Source: "fortiguard.fortinet.com", CVSSv31: c},
 		{Type: severityTypes.SeverityTypeVendor, Source: "fortiguard.fortinet.com", Vendor: new(impact)},
 	}
-	return ss, sevKey{cvss: vector, impact: impact}, nil
+	return ss, profileKey{cvss: vector, impact: impact}, nil
 }
 
 func noteText(notes []csafTypes.Note, title string) string {
