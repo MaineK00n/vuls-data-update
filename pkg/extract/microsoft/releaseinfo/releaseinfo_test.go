@@ -80,15 +80,9 @@ func TestExtract(t *testing.T) {
 			case err != nil && tt.hasError:
 				return
 			default:
-				ep, err := filepath.Abs(filepath.Join("testdata", "golden"))
-				if err != nil {
+				if err := utiltest.Diff(filepath.Join("testdata", "golden"), dir); err != nil {
 					t.Error("unexpected error:", err)
 				}
-				gp, err := filepath.Abs(dir)
-				if err != nil {
-					t.Error("unexpected error:", err)
-				}
-				utiltest.Diff(t, ep, gp)
 			}
 		})
 	}
