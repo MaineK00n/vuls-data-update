@@ -2,14 +2,14 @@
 	"document": {
 		"category": "csaf_security_advisory",
 		"csaf_version": "2.0",
-		"title": "Synthetic advisory: a known_affected leaf with no score",
+		"title": "Synthetic advisory: an impact scoped by product_ids",
 		"publisher": {
 			"category": "vendor",
 			"name": "Fortinet PSIRT",
 			"namespace": "https://www.fortiguard.com/"
 		},
 		"tracking": {
-			"id": "FG-IR-99-003",
+			"id": "FG-IR-99-006",
 			"initial_release_date": "2099-01-01T00:00:00",
 			"current_release_date": "2099-01-01T00:00:00",
 			"status": "final",
@@ -40,13 +40,19 @@
 									"name": "FortiOS",
 									"product_id": "FortiOS 7.4 all versions"
 								}
-							},
+							}
+						]
+					},
+					{
+						"category": "product",
+						"name": "FortiProxy",
+						"branches": [
 							{
 								"category": "product_version_range",
-								"name": "FortiOS/7.2 all versions",
+								"name": "FortiProxy/7.4 all versions",
 								"product": {
-									"name": "FortiOS",
-									"product_id": "FortiOS 7.2 all versions"
+									"name": "FortiProxy",
+									"product_id": "FortiProxy 7.4 all versions"
 								}
 							}
 						]
@@ -62,13 +68,13 @@
 				{
 					"category": "summary",
 					"title": "Summary",
-					"text": "a known_affected leaf with no score"
+					"text": "an impact scoped by product_ids"
 				}
 			],
 			"product_status": {
 				"known_affected": [
 					"FortiOS 7.4 all versions",
-					"FortiOS 7.2 all versions"
+					"FortiProxy 7.4 all versions"
 				]
 			},
 			"scores": [
@@ -80,14 +86,18 @@
 						"version": "3.1"
 					},
 					"products": [
-						"FortiOS 7.4 all versions"
+						"FortiOS",
+						"FortiProxy"
 					]
 				}
 			],
 			"threats": [
 				{
 					"category": "impact",
-					"details": "Execute unauthorized code or commands"
+					"details": "Execute unauthorized code or commands",
+					"product_ids": [
+						"FortiOS 7.4 all versions"
+					]
 				}
 			]
 		}

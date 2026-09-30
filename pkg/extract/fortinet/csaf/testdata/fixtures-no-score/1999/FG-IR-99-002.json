@@ -2,7 +2,7 @@
 	"document": {
 		"category": "csaf_security_advisory",
 		"csaf_version": "2.0",
-		"title": "Synthetic advisory: impacts scoped to leaves, one per train",
+		"title": "Synthetic advisory: a product branch with no score",
 		"publisher": {
 			"category": "vendor",
 			"name": "Fortinet PSIRT",
@@ -40,13 +40,19 @@
 									"name": "FortiOS",
 									"product_id": "FortiOS 7.4 all versions"
 								}
-							},
+							}
+						]
+					},
+					{
+						"category": "product",
+						"name": "FortiProxy",
+						"branches": [
 							{
 								"category": "product_version_range",
-								"name": "FortiOS/7.2 all versions",
+								"name": "FortiProxy/7.4 all versions",
 								"product": {
-									"name": "FortiOS",
-									"product_id": "FortiOS 7.2 all versions"
+									"name": "FortiProxy",
+									"product_id": "FortiProxy 7.4 all versions"
 								}
 							}
 						]
@@ -62,13 +68,13 @@
 				{
 					"category": "summary",
 					"title": "Summary",
-					"text": "impacts scoped to leaves, one per train"
+					"text": "a product branch with no score"
 				}
 			],
 			"product_status": {
 				"known_affected": [
 					"FortiOS 7.4 all versions",
-					"FortiOS 7.2 all versions"
+					"FortiProxy 7.4 all versions"
 				]
 			},
 			"scores": [
@@ -87,17 +93,7 @@
 			"threats": [
 				{
 					"category": "impact",
-					"details": "Execute unauthorized code or commands",
-					"product_ids": [
-						"FortiOS 7.4 all versions"
-					]
-				},
-				{
-					"category": "impact",
-					"details": "Information disclosure",
-					"product_ids": [
-						"FortiOS 7.2 all versions"
-					]
+					"details": "Execute unauthorized code or commands"
 				}
 			]
 		}

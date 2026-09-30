@@ -174,9 +174,9 @@ type keyAcc struct {
 }
 
 // sevKey groups the known_affected products of one key by their severity
-// profile (CVSS vector + vendor impact). CSAF scopes scores to .products and
-// threats to .product_ids, so each product gets the score and impact that name
-// it (see vulnSeverity); Fortinet replicates one CVE across one object per
+// profile (CVSS vector + vendor impact). CSAF scopes scores to .products, so
+// each product gets the score that names its branch (see scoreScopes), and
+// the object's impact; Fortinet replicates one CVE across one object per
 // product family. Today every family shares the same severity, so a key
 // collapses to a single group and the per-CVE output is unchanged — but
 // distinct severities (which CSAF permits) split into separate
@@ -203,7 +203,7 @@ func extract(fetched csafTypes.CSAF, raws []string) (dataTypes.Data, error) {
 		return dataTypes.Data{}, errors.Wrap(err, "build product refs")
 	}
 
-	products := indexProducts(fetched.ProductTree.Branches)
+	branches := indexBranches(fetched.ProductTree.Branches)
 
 	// Merge the per-family CSAF vulnerability objects by key (CVE, or advisory
 	// ID when a object has no CVE), distributing each score / impact to the
@@ -236,7 +236,7 @@ func extract(fetched csafTypes.CSAF, raws []string) (dataTypes.Data, error) {
 			a.references = append(a.references, strings.Fields(r.URL)...)
 		}
 
-		scope, err := products.scope(v)
+		scopes, err := branches.scoreScopes(v)
 		if err != nil {
 			return dataTypes.Data{}, errors.Wrapf(err, "resolve product references (advisory %s, %s)", id, key)
 		}
@@ -252,7 +252,7 @@ func extract(fetched csafTypes.CSAF, raws []string) (dataTypes.Data, error) {
 		// carries its severity on the Vulnerability record, so take every score
 		// and threat of the object for it, as before scoping.
 		if len(v.ProductStatus.KnownAffected) == 0 {
-			sevs, sk, err := vulnSeverity(v, scope, "")
+			sevs, sk, err := vulnSeverity(v, scopes, "")
 			if err != nil {
 				return dataTypes.Data{}, errors.Wrapf(err, "severity for advisory %s, %s", id, key)
 			}
@@ -263,7 +263,7 @@ func extract(fetched csafTypes.CSAF, raws []string) (dataTypes.Data, error) {
 			if err != nil {
 				return dataTypes.Data{}, errors.Wrapf(err, "resolve known_affected %q (advisory %s, %s)", string(pid), id, key)
 			}
-			sevs, sk, err := vulnSeverity(v, scope, string(pid))
+			sevs, sk, err := vulnSeverity(v, scopes, string(pid))
 			if err != nil {
 				return dataTypes.Data{}, errors.Wrapf(err, "severity of %q for advisory %s, %s", string(pid), id, key)
 			}
@@ -698,25 +698,22 @@ func resolveVersion(productName, exp string) (*ccRangeTypes.Range, string, error
 	}
 }
 
-// productIndex resolves the product references of a CSAF vulnerability object
-// (scores[].products, threats[].product_ids) to the product_ids they cover.
-// CSAF has a reference name a product_id the product tree defines, but
-// Fortinet names the product branch instead ("FortiWeb"): a branch carries no
-// product, so the name is not a product_id at all, and it stands for every
-// leaf under the branch. The index expands such a name to those leaves, so the
-// caller compares product_ids only, whichever way the reference is spelled.
-type productIndex struct {
-	defined  map[string]bool     // every product_id the tree defines
-	branches map[string][]string // product branch name → product_ids under it
-}
+// productBranches maps each product branch name of the product tree to the
+// product_ids of the leaves under it. Fortinet scopes scores[].products and
+// remediations[].product_ids by the branch name ("FortiWeb"), not by a
+// product_id as CSAF has it: a branch carries no product, so the name is not a
+// product_id at all, and it stands for every leaf under the branch. Every
+// reference in the corpus (546 CSAF advisories as of 2026-09) is spelled that
+// way, and no branch name equals a product_id.
+type productBranches map[string][]string
 
-// indexProducts walks the product tree as published, before buildProductRefs'
+// indexBranches walks the product tree as published, before buildProductRefs'
 // repairs, so a reference keeps resolving to the branch the advisory filed its
 // leaves under even when a repair rehomes a leaf to another product. A branch
 // name may repeat (one branch per leaf in some advisories); its leaves
 // accumulate.
-func indexProducts(branches []csafTypes.Branch) productIndex {
-	idx := productIndex{defined: make(map[string]bool), branches: make(map[string][]string)}
+func indexBranches(branches []csafTypes.Branch) productBranches {
+	pb := make(productBranches)
 	var walk func(bs []csafTypes.Branch, names []string)
 	walk = func(bs []csafTypes.Branch, names []string) {
 		for _, b := range bs {
@@ -727,88 +724,75 @@ func indexProducts(branches []csafTypes.Branch) productIndex {
 			default:
 			}
 			if b.Product != nil && b.Product.ProductID != "" {
-				pid := string(b.Product.ProductID)
-				idx.defined[pid] = true
 				for _, n := range ns {
-					idx.branches[n] = append(idx.branches[n], pid)
+					pb[n] = append(pb[n], string(b.Product.ProductID))
 				}
 			}
 			walk(b.Branches, ns)
 		}
 	}
 	walk(branches, nil)
-	return idx
+	return pb
 }
 
-// expand returns the product_ids a reference list covers: a defined product_id
-// as itself, a product branch name as every product_id under it. It
-// hard-errors on a reference that is neither, which would otherwise cover
-// nothing and drop what it scopes for the products it was meant for.
-func (idx productIndex) expand(ids []csafTypes.ProductID) (map[string]bool, error) {
-	pids := make(map[string]bool)
+// expand returns the product_ids under the branches a reference list names.
+// It hard-errors on a reference that is not a branch name — a product_id
+// included: the corpus has none, so Fortinet starting to reference leaves (or
+// anything else) is a format change to route deliberately, not to guess at.
+func (pb productBranches) expand(ids []csafTypes.ProductID) (map[string]struct{}, error) {
+	pids := make(map[string]struct{})
 	for _, id := range ids {
-		switch {
-		case idx.defined[string(id)]:
-			pids[string(id)] = true
-		case len(idx.branches[string(id)]) > 0:
-			for _, pid := range idx.branches[string(id)] {
-				pids[pid] = true
-			}
-		default:
-			return nil, errors.Errorf("unknown product %q", string(id))
+		leaves, ok := pb[string(id)]
+		if !ok {
+			return nil, errors.Errorf("unexpected product reference %q. expected: a product branch name", string(id))
+		}
+		for _, pid := range leaves {
+			pids[pid] = struct{}{}
 		}
 	}
 	return pids, nil
 }
 
-// objectScope holds, per score and per threat of one vulnerability object, the
-// product_ids it covers. A threat without product_ids covers the whole object
-// and is held as nil.
-type objectScope struct {
-	scores  []map[string]bool
-	threats []map[string]bool
+// scoreScopes returns, per score of v, the product_ids its .products cover.
+// It also hard-errors on a threat scoped by .product_ids or .group_ids: no
+// threat in the corpus is, so each impact covers the whole object, and a
+// scoped one is left for when its spelling is known.
+func (pb productBranches) scoreScopes(v csafTypes.Vulnerability) ([]map[string]struct{}, error) {
+	for _, t := range v.Threats {
+		if len(t.ProductIDs) > 0 || len(t.GroupIDs) > 0 {
+			return nil, errors.Errorf("unexpected scoped threat (product_ids: %q, group_ids: %q)", t.ProductIDs, t.GroupIDs)
+		}
+	}
+	scopes := make([]map[string]struct{}, 0, len(v.Scores))
+	for _, sc := range v.Scores {
+		pids, err := pb.expand(sc.Products)
+		if err != nil {
+			return nil, errors.Wrap(err, "scores.products")
+		}
+		scopes = append(scopes, pids)
+	}
+	return scopes, nil
 }
 
-// scope expands every score and threat reference of v. It hard-errors on a
-// reference expand rejects and on threats.group_ids, which the index does not
-// resolve.
-func (idx productIndex) scope(v csafTypes.Vulnerability) (objectScope, error) {
-	sc := objectScope{
-		scores:  make([]map[string]bool, 0, len(v.Scores)),
-		threats: make([]map[string]bool, 0, len(v.Threats)),
+// covers reports whether a score scope includes pid; an empty pid (an object
+// with no known_affected) is covered by every scope.
+func covers(scope map[string]struct{}, pid string) bool {
+	if pid == "" {
+		return true
 	}
-	for _, s := range v.Scores {
-		pids, err := idx.expand(s.Products)
-		if err != nil {
-			return objectScope{}, errors.Wrap(err, "scores.products")
-		}
-		sc.scores = append(sc.scores, pids)
-	}
-	for _, t := range v.Threats {
-		if len(t.GroupIDs) > 0 {
-			return objectScope{}, errors.Errorf("unexpected threats.group_ids %q", t.GroupIDs)
-		}
-		if len(t.ProductIDs) == 0 {
-			sc.threats = append(sc.threats, nil)
-			continue
-		}
-		pids, err := idx.expand(t.ProductIDs)
-		if err != nil {
-			return objectScope{}, errors.Wrap(err, "threats.product_ids")
-		}
-		sc.threats = append(sc.threats, pids)
-	}
-	return sc, nil
+	_, ok := scope[pid]
+	return ok
 }
 
 // vulnSeverity returns the severities of one CSAF vulnerability object for the
-// product_id pid: the CVSS v3.1 score and the vendor impact whose scope covers
-// pid, where an empty pid takes every score and threat of the object. It
+// product_id pid: the CVSS v3.1 score whose scope (scoreScopes) covers pid,
+// where an empty pid takes every score of the object, and the vendor impact,
+// which covers the whole object. It
 // returns them together with the sevKey that groups products of the same key
 // by identical severity profile. Fortinet emits exactly one cvss vector and
 // one impact per product; anything else (zero or multiple distinct) is a hard
 // error (see below), not silently handled.
-func vulnSeverity(v csafTypes.Vulnerability, scope objectScope, pid string) ([]severityTypes.Severity, sevKey, error) {
+func vulnSeverity(v csafTypes.Vulnerability, scopes []map[string]struct{}, pid string) ([]severityTypes.Severity, sevKey, error) {
 	// Fortinet emits exactly one cvss vector and one impact per vulnerability
 	// object (verified across the corpus), so each product gets one of each.
 	// Hold a single value and fail loudly on a second distinct one (a duplicate
@@ -818,7 +802,7 @@ func vulnSeverity(v csafTypes.Vulnerability, scope objectScope, pid string) ([]s
 	// the grouping.
 	var vector string
 	for i, sc := range v.Scores {
-		if sc.CvssV3 == nil || sc.CvssV3.VectorString == "" || (pid != "" && !scope.scores[i][pid]) {
+		if sc.CvssV3 == nil || sc.CvssV3.VectorString == "" || !covers(scopes[i], pid) {
 			continue
 		}
 		if vector != "" && vector != sc.CvssV3.VectorString {
@@ -841,8 +825,8 @@ func vulnSeverity(v csafTypes.Vulnerability, scope objectScope, pid string) ([]s
 	}
 
 	var impact string
-	for i, t := range v.Threats {
-		if t.Category != "impact" || t.Details == "" || (pid != "" && scope.threats[i] != nil && !scope.threats[i][pid]) {
+	for _, t := range v.Threats {
+		if t.Category != "impact" || t.Details == "" {
 			continue
 		}
 		if impact != "" && impact != t.Details {

@@ -2,14 +2,14 @@
 	"document": {
 		"category": "csaf_security_advisory",
 		"csaf_version": "2.0",
-		"title": "Synthetic advisory: an impact scoped by product group",
+		"title": "Synthetic advisory: an impact scoped by group_ids",
 		"publisher": {
 			"category": "vendor",
 			"name": "Fortinet PSIRT",
 			"namespace": "https://www.fortiguard.com/"
 		},
 		"tracking": {
-			"id": "FG-IR-99-006",
+			"id": "FG-IR-99-007",
 			"initial_release_date": "2099-01-01T00:00:00",
 			"current_release_date": "2099-01-01T00:00:00",
 			"status": "final",
@@ -40,13 +40,19 @@
 									"name": "FortiOS",
 									"product_id": "FortiOS 7.4 all versions"
 								}
-							},
+							}
+						]
+					},
+					{
+						"category": "product",
+						"name": "FortiProxy",
+						"branches": [
 							{
 								"category": "product_version_range",
-								"name": "FortiOS/7.2 all versions",
+								"name": "FortiProxy/7.4 all versions",
 								"product": {
-									"name": "FortiOS",
-									"product_id": "FortiOS 7.2 all versions"
+									"name": "FortiProxy",
+									"product_id": "FortiProxy 7.4 all versions"
 								}
 							}
 						]
@@ -62,13 +68,13 @@
 				{
 					"category": "summary",
 					"title": "Summary",
-					"text": "an impact scoped by product group"
+					"text": "an impact scoped by group_ids"
 				}
 			],
 			"product_status": {
 				"known_affected": [
 					"FortiOS 7.4 all versions",
-					"FortiOS 7.2 all versions"
+					"FortiProxy 7.4 all versions"
 				]
 			},
 			"scores": [
@@ -80,7 +86,8 @@
 						"version": "3.1"
 					},
 					"products": [
-						"FortiOS"
+						"FortiOS",
+						"FortiProxy"
 					]
 				}
 			],

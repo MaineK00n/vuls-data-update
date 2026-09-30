@@ -4,7 +4,7 @@
 		{
 			"content": {
 				"id": "FG-IR-99-001",
-				"title": "Synthetic advisory: scores scoped to leaves, one per train",
+				"title": "Synthetic advisory: one score per product branch",
 				"references": [
 					{
 						"source": "fortiguard.fortinet.com",
@@ -17,11 +17,11 @@
 			"segments": [
 				{
 					"ecosystem": "cpe",
-					"tag": "CVE-2099-0001_ad81f91a"
+					"tag": "CVE-2099-0001_46a8a30a"
 				},
 				{
 					"ecosystem": "cpe",
-					"tag": "CVE-2099-0001_e06437bc"
+					"tag": "CVE-2099-0001_ad81f91a"
 				}
 			]
 		}
@@ -30,8 +30,8 @@
 		{
 			"content": {
 				"id": "CVE-2099-0001",
-				"title": "Synthetic advisory: scores scoped to leaves, one per train",
-				"description": "scores scoped to leaves, one per train",
+				"title": "Synthetic advisory: one score per product branch",
+				"description": "one score per product branch",
 				"severity": [
 					{
 						"type": "vendor",
@@ -56,15 +56,15 @@
 			"segments": [
 				{
 					"ecosystem": "cpe",
-					"tag": "CVE-2099-0001_e06437bc"
+					"tag": "CVE-2099-0001_46a8a30a"
 				}
 			]
 		},
 		{
 			"content": {
 				"id": "CVE-2099-0001",
-				"title": "Synthetic advisory: scores scoped to leaves, one per train",
-				"description": "scores scoped to leaves, one per train",
+				"title": "Synthetic advisory: one score per product branch",
+				"description": "one score per product branch",
 				"severity": [
 					{
 						"type": "vendor",
@@ -109,9 +109,9 @@
 									"fix_status": {
 										"class": "unknown"
 									},
-									"cpe": "cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*",
+									"cpe": "cpe:2.3:o:fortinet:fortiproxy:*:*:*:*:*:*:*:*",
 									"range": {
-										"type": "fortinet-fortios",
+										"type": "fortinet-fortiproxy",
 										"ge": "7.4",
 										"lt": "7.5"
 									}
@@ -119,7 +119,7 @@
 							}
 						]
 					},
-					"tag": "CVE-2099-0001_ad81f91a"
+					"tag": "CVE-2099-0001_46a8a30a"
 				},
 				{
 					"criteria": {
@@ -135,14 +135,14 @@
 									"cpe": "cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*",
 									"range": {
 										"type": "fortinet-fortios",
-										"ge": "7.2",
-										"lt": "7.3"
+										"ge": "7.4",
+										"lt": "7.5"
 									}
 								}
 							}
 						]
 					},
-					"tag": "CVE-2099-0001_e06437bc"
+					"tag": "CVE-2099-0001_ad81f91a"
 				}
 			]
 		}

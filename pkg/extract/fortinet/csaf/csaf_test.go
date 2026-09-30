@@ -43,12 +43,12 @@ func TestExtract(t *testing.T) {
 			hasError: true,
 		},
 		{
-			name:     "known_affected leaf with no score",
+			name:     "product branch with no score",
 			args:     "./testdata/fixtures-no-score",
 			hasError: true,
 		},
 		{
-			name:     "known_affected leaf with two distinct scores",
+			name:     "product branch with two distinct scores",
 			args:     "./testdata/fixtures-distinct-scores",
 			hasError: true,
 		},
@@ -58,7 +58,17 @@ func TestExtract(t *testing.T) {
 			hasError: true,
 		},
 		{
-			name:     "impact scoped by product group",
+			name:     "score naming a leaf product_id",
+			args:     "./testdata/fixtures-leaf-reference",
+			hasError: true,
+		},
+		{
+			name:     "impact scoped by product_ids",
+			args:     "./testdata/fixtures-threat-product-ids",
+			hasError: true,
+		},
+		{
+			name:     "impact scoped by group_ids",
 			args:     "./testdata/fixtures-threat-group-ids",
 			hasError: true,
 		},

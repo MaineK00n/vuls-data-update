@@ -2,7 +2,7 @@
 	"document": {
 		"category": "csaf_security_advisory",
 		"csaf_version": "2.0",
-		"title": "Synthetic advisory: a known_affected leaf with two distinct scores",
+		"title": "Synthetic advisory: a score naming a product the tree does not have",
 		"publisher": {
 			"category": "vendor",
 			"name": "Fortinet PSIRT",
@@ -40,13 +40,19 @@
 									"name": "FortiOS",
 									"product_id": "FortiOS 7.4 all versions"
 								}
-							},
+							}
+						]
+					},
+					{
+						"category": "product",
+						"name": "FortiProxy",
+						"branches": [
 							{
 								"category": "product_version_range",
-								"name": "FortiOS/7.2 all versions",
+								"name": "FortiProxy/7.4 all versions",
 								"product": {
-									"name": "FortiOS",
-									"product_id": "FortiOS 7.2 all versions"
+									"name": "FortiProxy",
+									"product_id": "FortiProxy 7.4 all versions"
 								}
 							}
 						]
@@ -62,13 +68,13 @@
 				{
 					"category": "summary",
 					"title": "Summary",
-					"text": "a known_affected leaf with two distinct scores"
+					"text": "a score naming a product the tree does not have"
 				}
 			],
 			"product_status": {
 				"known_affected": [
 					"FortiOS 7.4 all versions",
-					"FortiOS 7.2 all versions"
+					"FortiProxy 7.4 all versions"
 				]
 			},
 			"scores": [
@@ -80,7 +86,8 @@
 						"version": "3.1"
 					},
 					"products": [
-						"FortiOS"
+						"FortiOS",
+						"FortiProxy"
 					]
 				},
 				{
@@ -91,7 +98,7 @@
 						"version": "3.1"
 					},
 					"products": [
-						"FortiOS 7.2 all versions"
+						"FortiWeb"
 					]
 				}
 			],

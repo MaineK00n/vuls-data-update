@@ -2,14 +2,14 @@
 	"document": {
 		"category": "csaf_security_advisory",
 		"csaf_version": "2.0",
-		"title": "Synthetic advisory: one score per product branch",
+		"title": "Synthetic advisory: a score naming a leaf product_id",
 		"publisher": {
 			"category": "vendor",
 			"name": "Fortinet PSIRT",
 			"namespace": "https://www.fortiguard.com/"
 		},
 		"tracking": {
-			"id": "FG-IR-99-001",
+			"id": "FG-IR-99-005",
 			"initial_release_date": "2099-01-01T00:00:00",
 			"current_release_date": "2099-01-01T00:00:00",
 			"status": "final",
@@ -68,7 +68,7 @@
 				{
 					"category": "summary",
 					"title": "Summary",
-					"text": "one score per product branch"
+					"text": "a score naming a leaf product_id"
 				}
 			],
 			"product_status": {
@@ -97,7 +97,7 @@
 						"version": "3.1"
 					},
 					"products": [
-						"FortiProxy"
+						"FortiProxy 7.4 all versions"
 					]
 				}
 			],
