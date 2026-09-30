@@ -63,6 +63,11 @@ func TestExtract(t *testing.T) {
 			hasError: true,
 		},
 		{
+			name:     "product getting two profiles",
+			args:     "./testdata/fixtures-conflicting-profiles",
+			hasError: true,
+		},
+		{
 			name:     "impact scoped by product_ids",
 			args:     "./testdata/fixtures-threat-product-ids",
 			hasError: true,
