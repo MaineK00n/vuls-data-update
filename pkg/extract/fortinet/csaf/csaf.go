@@ -104,6 +104,10 @@ func Extract(args string, opts ...Option) error {
 			return errors.Wrapf(err, "fix product tree %s", path)
 		}
 
+		if err := normalizeProductRefs(&fetched); err != nil {
+			return errors.Wrapf(err, "normalize product references %s", path)
+		}
+
 		data, err := extract(fetched, r.Paths())
 		if err != nil {
 			return errors.Wrapf(err, "extract %s", path)
@@ -174,9 +178,9 @@ type keyAcc struct {
 }
 
 // sevKey groups the known_affected products of one key by their severity
-// profile (CVSS vector + vendor impact). CSAF scopes scores to .products, so
-// each product gets the score that names its branch (see scoreScopes), and
-// the object's impact; Fortinet replicates one CVE across one object per
+// profile (CVSS vector + vendor impact). CSAF scopes scores to .products and
+// threats to .product_ids, so each product gets the score and impact that list
+// it (see vulnSeverity); Fortinet replicates one CVE across one object per
 // product family. Today every family shares the same severity, so a key
 // collapses to a single group and the per-CVE output is unchanged — but
 // distinct severities (which CSAF permits) split into separate
@@ -203,12 +207,11 @@ func extract(fetched csafTypes.CSAF, raws []string) (dataTypes.Data, error) {
 		return dataTypes.Data{}, errors.Wrap(err, "build product refs")
 	}
 
-	branches := indexBranches(fetched.ProductTree.Branches)
-
 	// Merge the per-family CSAF vulnerability objects by key (CVE, or advisory
 	// ID when a object has no CVE), distributing each score / impact to the
 	// known_affected products it names and grouping products by severity
-	// profile.
+	// profile. Product references are read as CSAF has them, product_ids; the
+	// Fortinet spelling is rewritten to that by normalizeProductRefs.
 	accs := make(map[string]*keyAcc)
 	for _, v := range fetched.Vulnerabilities {
 		key := v.CVE
@@ -236,10 +239,6 @@ func extract(fetched csafTypes.CSAF, raws []string) (dataTypes.Data, error) {
 			a.references = append(a.references, strings.Fields(r.URL)...)
 		}
 
-		scopes, err := branches.scoreScopes(v)
-		if err != nil {
-			return dataTypes.Data{}, errors.Wrapf(err, "resolve product references (advisory %s, %s)", id, key)
-		}
 		group := func(sevs []severityTypes.Severity, sk sevKey) *sevGroup {
 			g := a.groups[sk]
 			if g == nil {
@@ -252,7 +251,7 @@ func extract(fetched csafTypes.CSAF, raws []string) (dataTypes.Data, error) {
 		// carries its severity on the Vulnerability record, so take every score
 		// and threat of the object for it, as before scoping.
 		if len(v.ProductStatus.KnownAffected) == 0 {
-			sevs, sk, err := vulnSeverity(v, scopes, "")
+			sevs, sk, err := vulnSeverity(v, "")
 			if err != nil {
 				return dataTypes.Data{}, errors.Wrapf(err, "severity for advisory %s, %s", id, key)
 			}
@@ -263,7 +262,7 @@ func extract(fetched csafTypes.CSAF, raws []string) (dataTypes.Data, error) {
 			if err != nil {
 				return dataTypes.Data{}, errors.Wrapf(err, "resolve known_affected %q (advisory %s, %s)", string(pid), id, key)
 			}
-			sevs, sk, err := vulnSeverity(v, scopes, string(pid))
+			sevs, sk, err := vulnSeverity(v, string(pid))
 			if err != nil {
 				return dataTypes.Data{}, errors.Wrapf(err, "severity of %q for advisory %s, %s", string(pid), id, key)
 			}
@@ -698,20 +697,56 @@ func resolveVersion(productName, exp string) (*ccRangeTypes.Range, string, error
 	}
 }
 
-// productBranches maps each product branch name of the product tree to the
-// product_ids of the leaves under it. Fortinet scopes scores[].products and
-// remediations[].product_ids by the branch name ("FortiWeb"), not by a
-// product_id as CSAF has it: a branch carries no product, so the name is not a
-// product_id at all, and it stands for every leaf under the branch. Every
-// reference in the corpus (546 CSAF advisories as of 2026-09) is spelled that
-// way, and no branch name equals a product_id.
-type productBranches map[string][]string
+// normalizeProductRefs rewrites the product references of doc to product_ids,
+// the way CSAF has them, so extract reads the document as specified. Fortinet
+// scopes scores[].products and remediations[].product_ids by the product
+// branch name ("FortiWeb") instead: a branch carries no product, so the name
+// is not a product_id at all, and it stands for every leaf under the branch.
+// Every such reference in the corpus (546 CSAF advisories as of 2026-09) is
+// spelled that way, no branch name equals a product_id, and no remediation or
+// threat is scoped by group_ids, nor any threat by product_ids.
+//
+// Anything else hard-errors — a reference that is not a branch name, a leaf
+// product_id included, and a scoped threat — since it would be a change of
+// Fortinet's format, to route deliberately rather than guess at. The branches
+// are indexed from the tree as published; buildProductRefs' later repairs
+// work on the product_ids, which this leaves as they are.
+func normalizeProductRefs(doc *csafTypes.CSAF) error {
+	branches := indexBranches(doc.ProductTree.Branches)
+	for i := range doc.Vulnerabilities {
+		v := &doc.Vulnerabilities[i]
+		for j := range v.Scores {
+			pids, err := branches.expand(v.Scores[j].Products)
+			if err != nil {
+				return errors.Wrapf(err, "scores.products of %q", v.CVE)
+			}
+			v.Scores[j].Products = pids
+		}
+		for j := range v.Remediations {
+			if len(v.Remediations[j].GroupIDs) > 0 {
+				return errors.Errorf("unexpected remediations.group_ids %q of %q", v.Remediations[j].GroupIDs, v.CVE)
+			}
+			pids, err := branches.expand(v.Remediations[j].ProductIDs)
+			if err != nil {
+				return errors.Wrapf(err, "remediations.product_ids of %q", v.CVE)
+			}
+			v.Remediations[j].ProductIDs = pids
+		}
+		for _, t := range v.Threats {
+			if len(t.ProductIDs) > 0 || len(t.GroupIDs) > 0 {
+				return errors.Errorf("unexpected scoped threat of %q (product_ids: %q, group_ids: %q)", v.CVE, t.ProductIDs, t.GroupIDs)
+			}
+		}
+	}
+	return nil
+}
 
-// indexBranches walks the product tree as published, before buildProductRefs'
-// repairs, so a reference keeps resolving to the branch the advisory filed its
-// leaves under even when a repair rehomes a leaf to another product. A branch
-// name may repeat (one branch per leaf in some advisories); its leaves
-// accumulate.
+// productBranches maps each product branch name of a product tree to the
+// product_ids of the leaves under it.
+type productBranches map[string][]csafTypes.ProductID
+
+// indexBranches walks a product tree. A branch name may repeat (one branch per
+// leaf in some advisories); its leaves accumulate.
 func indexBranches(branches []csafTypes.Branch) productBranches {
 	pb := make(productBranches)
 	var walk func(bs []csafTypes.Branch, names []string)
@@ -725,7 +760,7 @@ func indexBranches(branches []csafTypes.Branch) productBranches {
 			}
 			if b.Product != nil && b.Product.ProductID != "" {
 				for _, n := range ns {
-					pb[n] = append(pb[n], string(b.Product.ProductID))
+					pb[n] = append(pb[n], b.Product.ProductID)
 				}
 			}
 			walk(b.Branches, ns)
@@ -735,64 +770,34 @@ func indexBranches(branches []csafTypes.Branch) productBranches {
 	return pb
 }
 
-// expand returns the product_ids under the branches a reference list names.
-// It hard-errors on a reference that is not a branch name — a product_id
-// included: the corpus has none, so Fortinet starting to reference leaves (or
-// anything else) is a format change to route deliberately, not to guess at.
-func (pb productBranches) expand(ids []csafTypes.ProductID) (map[string]struct{}, error) {
-	pids := make(map[string]struct{})
+// expand returns the product_ids under the branches a reference list names,
+// each once, in tree order. It hard-errors on a reference that is not a
+// branch name.
+func (pb productBranches) expand(ids []csafTypes.ProductID) ([]csafTypes.ProductID, error) {
+	var pids []csafTypes.ProductID
 	for _, id := range ids {
 		leaves, ok := pb[string(id)]
 		if !ok {
 			return nil, errors.Errorf("unexpected product reference %q. expected: a product branch name", string(id))
 		}
 		for _, pid := range leaves {
-			pids[pid] = struct{}{}
+			if !slices.Contains(pids, pid) {
+				pids = append(pids, pid)
+			}
 		}
 	}
 	return pids, nil
 }
 
-// scoreScopes returns, per score of v, the product_ids its .products cover.
-// It also hard-errors on a threat scoped by .product_ids or .group_ids: no
-// threat in the corpus is, so each impact covers the whole object, and a
-// scoped one is left for when its spelling is known.
-func (pb productBranches) scoreScopes(v csafTypes.Vulnerability) ([]map[string]struct{}, error) {
-	for _, t := range v.Threats {
-		if len(t.ProductIDs) > 0 || len(t.GroupIDs) > 0 {
-			return nil, errors.Errorf("unexpected scoped threat (product_ids: %q, group_ids: %q)", t.ProductIDs, t.GroupIDs)
-		}
-	}
-	scopes := make([]map[string]struct{}, 0, len(v.Scores))
-	for _, sc := range v.Scores {
-		pids, err := pb.expand(sc.Products)
-		if err != nil {
-			return nil, errors.Wrap(err, "scores.products")
-		}
-		scopes = append(scopes, pids)
-	}
-	return scopes, nil
-}
-
-// covers reports whether a score scope includes pid; an empty pid (an object
-// with no known_affected) is covered by every scope.
-func covers(scope map[string]struct{}, pid string) bool {
-	if pid == "" {
-		return true
-	}
-	_, ok := scope[pid]
-	return ok
-}
-
 // vulnSeverity returns the severities of one CSAF vulnerability object for the
-// product_id pid: the CVSS v3.1 score whose scope (scoreScopes) covers pid,
-// where an empty pid takes every score of the object, and the vendor impact,
-// which covers the whole object. It
-// returns them together with the sevKey that groups products of the same key
-// by identical severity profile. Fortinet emits exactly one cvss vector and
+// product_id pid: the CVSS v3.1 score whose .products lists pid, and the
+// vendor impact whose .product_ids lists pid or which has none (and so covers
+// the whole object); an empty pid takes every score and impact of the object.
+// It returns them together with the sevKey that groups products of the same
+// key by identical severity profile. Fortinet emits exactly one cvss vector and
 // one impact per product; anything else (zero or multiple distinct) is a hard
 // error (see below), not silently handled.
-func vulnSeverity(v csafTypes.Vulnerability, scopes []map[string]struct{}, pid string) ([]severityTypes.Severity, sevKey, error) {
+func vulnSeverity(v csafTypes.Vulnerability, pid string) ([]severityTypes.Severity, sevKey, error) {
 	// Fortinet emits exactly one cvss vector and one impact per vulnerability
 	// object (verified across the corpus), so each product gets one of each.
 	// Hold a single value and fail loudly on a second distinct one (a duplicate
@@ -801,8 +806,8 @@ func vulnSeverity(v csafTypes.Vulnerability, scopes []map[string]struct{}, pid s
 	// silent fallback would go unnoticed — a hard error is the signal to revisit
 	// the grouping.
 	var vector string
-	for i, sc := range v.Scores {
-		if sc.CvssV3 == nil || sc.CvssV3.VectorString == "" || !covers(scopes[i], pid) {
+	for _, sc := range v.Scores {
+		if sc.CvssV3 == nil || sc.CvssV3.VectorString == "" || (pid != "" && !slices.Contains(sc.Products, csafTypes.ProductID(pid))) {
 			continue
 		}
 		if vector != "" && vector != sc.CvssV3.VectorString {
@@ -826,7 +831,7 @@ func vulnSeverity(v csafTypes.Vulnerability, scopes []map[string]struct{}, pid s
 
 	var impact string
 	for _, t := range v.Threats {
-		if t.Category != "impact" || t.Details == "" {
+		if t.Category != "impact" || t.Details == "" || (pid != "" && len(t.ProductIDs) > 0 && !slices.Contains(t.ProductIDs, csafTypes.ProductID(pid))) {
 			continue
 		}
 		if impact != "" && impact != t.Details {
