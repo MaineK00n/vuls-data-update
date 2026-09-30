@@ -100,6 +100,10 @@ func Extract(args string, opts ...Option) error {
 			return errors.Wrapf(err, "read %s", path)
 		}
 
+		if err := fixProductTree(&fetched); err != nil {
+			return errors.Wrapf(err, "fix product tree %s", path)
+		}
+
 		data, err := extract(fetched, r.Paths())
 		if err != nil {
 			return errors.Wrapf(err, "extract %s", path)
