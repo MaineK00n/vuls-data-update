@@ -1,0 +1,159 @@
+{
+	"document": {
+		"acknowledgments": [
+			{
+				"summary": "Fortinet is pleased to thank Jason McFadyen from Trend Research of Trend Micro for reporting this vulnerability under responsible disclosure."
+			}
+		],
+		"category": "Fortinet PSIRT Advisories",
+		"csaf_version": "2.0",
+		"publisher": {
+			"category": "vendor",
+			"contact_details": "https://fortiguard.fortinet.com/faq/psirt-contact",
+			"issuing_authority": "Fortinet PSIRT",
+			"name": "Fortinet PSIRT",
+			"namespace": "https://fortiguard.fortinet.com/psirt"
+		},
+		"title": "Path traversal in policy scripting",
+		"tracking": {
+			"current_release_date": "2026-01-14T00:00:00",
+			"id": "FG-IR-25-512",
+			"initial_release_date": "2025-09-09T00:00:00",
+			"revision_history": [
+				{
+					"date": "2025-09-09T00:00:00",
+					"number": "1",
+					"summary": "Initial Publication"
+				}
+			],
+			"status": "final",
+			"version": "0"
+		}
+	},
+	"product_tree": {
+		"branches": [
+			{
+				"branches": [
+					{
+						"branches": [
+							{
+								"category": "product_version_range",
+								"name": "FortiWeb/ 8.0 all versions",
+								"product": {
+									"name": "FortiWeb",
+									"product_id": "FortiWeb/ 8.0 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiWeb/>=7.6.0|<=7.6.4",
+								"product": {
+									"name": "FortiWeb",
+									"product_id": "FortiWeb >=7.6.0|<=7.6.4"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiWeb/>=7.4.0|<=7.4.8",
+								"product": {
+									"name": "FortiWeb",
+									"product_id": "FortiWeb >=7.4.0|<=7.4.8"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiWeb/>=7.2.0|<=7.2.11",
+								"product": {
+									"name": "FortiWeb",
+									"product_id": "FortiWeb >=7.2.0|<=7.2.11"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiWeb/>=7.0.2|<=7.0.11",
+								"product": {
+									"name": "FortiWeb",
+									"product_id": "FortiWeb >=7.0.2|<=7.0.11"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiWeb"
+					}
+				],
+				"category": "vendor",
+				"name": "Fortinet PSIRT"
+			}
+		]
+	},
+	"vulnerabilities": [
+		{
+			"cve": "CVE-2025-53609",
+			"cwe": {
+				"id": "CWE-23",
+				"name": "Relative Path Traversal"
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "Arbitrary file read via path traversal\n\n",
+					"title": "Summary"
+				},
+				{
+					"category": "general",
+					"text": "N/A",
+					"title": "Workarounds"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiWeb >=7.6.0|<=7.6.4",
+					"FortiWeb >=7.4.0|<=7.4.8",
+					"FortiWeb >=7.2.0|<=7.2.11",
+					"FortiWeb >=7.0.2|<=7.0.11"
+				],
+				"known_not_affected": [
+					"FortiWeb/ 8.0 all versions",
+					"FortiWeb-7.6.5",
+					"FortiWeb-7.4.9",
+					"FortiWeb-upcoming version 7.2.12"
+				]
+			},
+			"references": [
+				{
+					"summary": "A Relative Path Traversal vulnerability [CWE-23] in FortiWeb may allow an authenticated attacker to perform an arbitrary file read on the underlying system via crafted requests.",
+					"url": "https://fortiguard.fortinet.com/psirt/FG-IR-25-512"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiWeb 8.0: Not Applicable\nFortiWeb 7.6: Upgrade to 7.6.5 or above\nFortiWeb 7.4: Upgrade to 7.4.9 or above\nFortiWeb 7.2: Upgrade to upcoming version 7.2.12 or above\nFortiWeb 7.0: Migrate to a fixed release",
+					"product_ids": [
+						"FortiWeb"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 4.7,
+						"baseSeverity": "MEDIUM",
+						"vectorString": "CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:U/C:H/I:N/A:N/E:P/RL:X/RC:C",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiWeb"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Information disclosure"
+				}
+			],
+			"title": "FortiWeb - MEDIUM - FG-IR-25-512"
+		}
+	]
+}

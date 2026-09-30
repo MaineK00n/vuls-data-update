@@ -1,0 +1,257 @@
+{
+	"document": {
+		"acknowledgments": [
+			{
+				"summary": "Internally discovered and reported by Shripal Rawal of Fortinet PSIRT team."
+			}
+		],
+		"category": "Fortinet PSIRT Advisories",
+		"csaf_version": "2.0",
+		"publisher": {
+			"category": "vendor",
+			"contact_details": "https://fortiguard.fortinet.com/faq/psirt-contact",
+			"issuing_authority": "Fortinet PSIRT",
+			"name": "Fortinet PSIRT",
+			"namespace": "https://fortiguard.fortinet.com/psirt"
+		},
+		"title": "Path Traversal on File Content Extraction connector",
+		"tracking": {
+			"current_release_date": "2026-04-14T00:00:00",
+			"id": "FG-IR-26-116",
+			"initial_release_date": "2026-04-14T00:00:00",
+			"revision_history": [
+				{
+					"date": "2026-04-14T00:00:00",
+					"number": "1",
+					"summary": "Initial Publication"
+				}
+			],
+			"status": "final",
+			"version": "0"
+		}
+	},
+	"product_tree": {
+		"branches": [
+			{
+				"branches": [
+					{
+						"branches": [
+							{
+								"category": "product_version_range",
+								"name": "FortiSOAR PaaS/>=7.6.0|<=7.6.3",
+								"product": {
+									"name": "FortiSOAR PaaS",
+									"product_id": "FortiSOAR PaaS >=7.6.0|<=7.6.3"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiSOAR PaaS/7.5 all versions",
+								"product": {
+									"name": "FortiSOAR PaaS",
+									"product_id": "FortiSOAR PaaS 7.5 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiSOAR PaaS/7.4 all versions",
+								"product": {
+									"name": "FortiSOAR PaaS",
+									"product_id": "FortiSOAR PaaS 7.4 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiSOAR PaaS/7.3 all versions",
+								"product": {
+									"name": "FortiSOAR PaaS",
+									"product_id": "FortiSOAR PaaS 7.3 all versions"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiSOAR PaaS"
+					},
+					{
+						"branches": [
+							{
+								"category": "product_version_range",
+								"name": "FortiSOAR on-premise/>=7.6.0|<=7.6.3",
+								"product": {
+									"name": "FortiSOAR on-premise",
+									"product_id": "FortiSOAR on-premise >=7.6.0|<=7.6.3"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiSOAR on-premise/7.5 all versions",
+								"product": {
+									"name": "FortiSOAR on-premise",
+									"product_id": "FortiSOAR on-premise 7.5 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiSOAR on-premise/7.4 all versions",
+								"product": {
+									"name": "FortiSOAR on-premise",
+									"product_id": "FortiSOAR on-premise 7.4 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiSOAR on-premise/7.3 all versions",
+								"product": {
+									"name": "FortiSOAR on-premise",
+									"product_id": "FortiSOAR on-premise 7.3 all versions"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiSOAR on-premise"
+					}
+				],
+				"category": "vendor",
+				"name": "Fortinet PSIRT"
+			}
+		]
+	},
+	"vulnerabilities": [
+		{
+			"cve": "CVE-2026-22573",
+			"cwe": {
+				"id": "CWE-22",
+				"name": "Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')"
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "Path traversal in File Content Extraction connector\n\n",
+					"title": "Summary"
+				},
+				{
+					"category": "general",
+					"text": "N/A",
+					"title": "Workarounds"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiSOAR PaaS >=7.6.0|<=7.6.3",
+					"FortiSOAR PaaS 7.5 all versions",
+					"FortiSOAR PaaS 7.4 all versions",
+					"FortiSOAR PaaS 7.3 all versions"
+				],
+				"known_not_affected": [
+					"FortiSOAR PaaS-f",
+					"FortiSOAR PaaS-f",
+					"FortiSOAR PaaS-f",
+					"FortiSOAR PaaS-f"
+				]
+			},
+			"references": [
+				{
+					"summary": "An Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal') vulnerability [CWE-22] in FortiSOAR may allow an authenticated remote attacker to perform path traversal attack via File Content Extraction actions.",
+					"url": "https://fortiguard.fortinet.com/psirt/FG-IR-26-116"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiSOAR PaaS 7.6: Upgrade to FortiSOAR File Content Extraction Connector Version 1.3.1 or above\nFortiSOAR PaaS 7.5: Upgrade to FortiSOAR File Content Extraction Connector Version 1.3.1 or above\nFortiSOAR PaaS 7.4: Upgrade to FortiSOAR File Content Extraction Connector Version 1.3.1 or above\nFortiSOAR PaaS 7.3: Upgrade to FortiSOAR File Content Extraction Connector Version 1.3.1 or above",
+					"product_ids": [
+						"FortiSOAR PaaS"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 6.2,
+						"baseSeverity": "MEDIUM",
+						"vectorString": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:N/A:N/E:H/RL:O/RC:C",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiSOAR PaaS"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Information disclosure"
+				}
+			],
+			"title": "FortiSOAR PaaS - MEDIUM - FG-IR-26-116"
+		},
+		{
+			"cve": "CVE-2026-22573",
+			"cwe": {
+				"id": "CWE-22",
+				"name": "Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')"
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "Path traversal in File Content Extraction connector\n\n",
+					"title": "Summary"
+				},
+				{
+					"category": "general",
+					"text": "N/A",
+					"title": "Workarounds"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiSOAR on-premise >=7.6.0|<=7.6.3",
+					"FortiSOAR on-premise 7.5 all versions",
+					"FortiSOAR on-premise 7.4 all versions",
+					"FortiSOAR on-premise 7.3 all versions"
+				],
+				"known_not_affected": [
+					"FortiSOAR on-premise-f",
+					"FortiSOAR on-premise-f",
+					"FortiSOAR on-premise-f",
+					"FortiSOAR on-premise-f"
+				]
+			},
+			"references": [
+				{
+					"summary": "An Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal') vulnerability [CWE-22] in FortiSOAR may allow an authenticated remote attacker to perform path traversal attack via File Content Extraction actions.",
+					"url": "https://fortiguard.fortinet.com/psirt/FG-IR-26-116"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiSOAR on-premise 7.6: Upgrade to FortiSOAR File Content Extraction Connector Version 1.3.1 or above\nFortiSOAR on-premise 7.5: Upgrade to FortiSOAR File Content Extraction Connector Version 1.3.1 or above\nFortiSOAR on-premise 7.4: Upgrade to FortiSOAR File Content Extraction Connector Version 1.3.1 or above\nFortiSOAR on-premise 7.3: Upgrade to FortiSOAR File Content Extraction Connector Version 1.3.1 or above",
+					"product_ids": [
+						"FortiSOAR on-premise"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 6.2,
+						"baseSeverity": "MEDIUM",
+						"vectorString": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:N/A:N/E:H/RL:O/RC:C",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiSOAR on-premise"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Information disclosure"
+				}
+			],
+			"title": "FortiSOAR on-premise - MEDIUM - FG-IR-26-116"
+		}
+	]
+}

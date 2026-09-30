@@ -1,0 +1,374 @@
+{
+	"document": {
+		"acknowledgments": [
+			{
+				"summary": "Internally discovered and reported by Adham El karn of Fortinet Product Security team."
+			}
+		],
+		"category": "Fortinet PSIRT Advisories",
+		"csaf_version": "2.0",
+		"publisher": {
+			"category": "vendor",
+			"contact_details": "https://fortiguard.fortinet.com/faq/psirt-contact",
+			"issuing_authority": "Fortinet PSIRT",
+			"name": "Fortinet PSIRT",
+			"namespace": "https://fortiguard.fortinet.com/psirt"
+		},
+		"title": "Incorrect global authorization",
+		"tracking": {
+			"current_release_date": "2026-05-12T00:00:00",
+			"id": "FG-IR-26-136",
+			"initial_release_date": "2026-05-12T00:00:00",
+			"revision_history": [
+				{
+					"date": "2026-05-12T00:00:00",
+					"number": "1",
+					"summary": "Initial Publication"
+				}
+			],
+			"status": "final",
+			"version": "0"
+		}
+	},
+	"product_tree": {
+		"branches": [
+			{
+				"branches": [
+					{
+						"branches": [
+							{
+								"category": "product_version_range",
+								"name": "FortiSandbox/>=5.0.0|<=5.0.1",
+								"product": {
+									"name": "FortiSandbox",
+									"product_id": "FortiSandbox >=5.0.0|<=5.0.1"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiSandbox/>=4.4.0|<=4.4.8",
+								"product": {
+									"name": "FortiSandbox",
+									"product_id": "FortiSandbox >=4.4.0|<=4.4.8"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiSandbox"
+					},
+					{
+						"branches": [
+							{
+								"category": "product_version_range",
+								"name": "FortiSandbox Cloud/all versions",
+								"product": {
+									"name": "FortiSandbox Cloud",
+									"product_id": "FortiSandbox Cloud all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiSandbox Cloud/all versions",
+								"product": {
+									"name": "FortiSandbox Cloud",
+									"product_id": "FortiSandbox Cloud all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiSandbox Cloud/>=5.0.2|<=5.0.5",
+								"product": {
+									"name": "FortiSandbox Cloud",
+									"product_id": "FortiSandbox Cloud >=5.0.2|<=5.0.5"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiSandbox Cloud"
+					},
+					{
+						"branches": [
+							{
+								"category": "product_version_range",
+								"name": "FortiSandbox PaaS/23.4 all versions",
+								"product": {
+									"name": "FortiSandbox PaaS",
+									"product_id": "FortiSandbox PaaS 23.4 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiSandbox PaaS/23.3 all versions",
+								"product": {
+									"name": "FortiSandbox PaaS",
+									"product_id": "FortiSandbox PaaS 23.3 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiSandbox PaaS/23.1 all versions",
+								"product": {
+									"name": "FortiSandbox PaaS",
+									"product_id": "FortiSandbox PaaS 23.1 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiSandbox PaaS/22.2 all versions",
+								"product": {
+									"name": "FortiSandbox PaaS",
+									"product_id": "FortiSandbox PaaS 22.2 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiSandbox PaaS/22.1 all versions",
+								"product": {
+									"name": "FortiSandbox PaaS",
+									"product_id": "FortiSandbox PaaS 22.1 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiSandbox PaaS/21.4 all versions",
+								"product": {
+									"name": "FortiSandbox PaaS",
+									"product_id": "FortiSandbox PaaS 21.4 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiSandbox PaaS/21.3 all versions",
+								"product": {
+									"name": "FortiSandbox PaaS",
+									"product_id": "FortiSandbox PaaS 21.3 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiSandbox PaaS/>=5.0.0|<=5.0.1",
+								"product": {
+									"name": "FortiSandbox PaaS",
+									"product_id": "FortiSandbox PaaS >=5.0.0|<=5.0.1"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiSandbox PaaS/>=4.4.5|<=4.4.8",
+								"product": {
+									"name": "FortiSandbox PaaS",
+									"product_id": "FortiSandbox PaaS >=4.4.5|<=4.4.8"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiSandbox PaaS"
+					}
+				],
+				"category": "vendor",
+				"name": "Fortinet PSIRT"
+			}
+		]
+	},
+	"vulnerabilities": [
+		{
+			"cve": "CVE-2026-26083",
+			"cwe": {
+				"id": "CWE-862",
+				"name": "Missing Authorization"
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "Missing authorization on GUI features.\n\n",
+					"title": "Summary"
+				},
+				{
+					"category": "general",
+					"text": "N/A",
+					"title": "Workarounds"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiSandbox >=5.0.0|<=5.0.1",
+					"FortiSandbox >=4.4.0|<=4.4.8"
+				],
+				"known_not_affected": [
+					"FortiSandbox-5.0.2",
+					"FortiSandbox-4.4.9"
+				]
+			},
+			"references": [
+				{
+					"summary": "A missing authorization vulnerability [CWE-862] in FortiSandbox, FortiSandbox Cloud and FortiSandbox PaaS WEB UI may allow an unauthenticated attacker to execute unauthorized code or commands via HTTP requests.",
+					"url": "https://fortiguard.fortinet.com/psirt/FG-IR-26-136"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiSandbox 5.0: Upgrade to 5.0.2 or above\nFortiSandbox 4.4: Upgrade to 4.4.9 or above",
+					"product_ids": [
+						"FortiSandbox"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 9.1,
+						"baseSeverity": "CRITICAL",
+						"vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H/E:F/RL:O/RC:C",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiSandbox"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Execute unauthorized code or commands"
+				}
+			],
+			"title": "FortiSandbox - CRITICAL - FG-IR-26-136"
+		},
+		{
+			"cve": "CVE-2026-26083",
+			"cwe": {
+				"id": "CWE-862",
+				"name": "Missing Authorization"
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "Missing authorization on GUI features.\n\n",
+					"title": "Summary"
+				},
+				{
+					"category": "general",
+					"text": "N/A",
+					"title": "Workarounds"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiSandbox Cloud all versions",
+					"FortiSandbox Cloud all versions",
+					"FortiSandbox Cloud >=5.0.2|<=5.0.5"
+				],
+				"known_not_affected": [
+					"FortiSandbox Cloud-5.0.6"
+				]
+			},
+			"references": [
+				{
+					"summary": "A missing authorization vulnerability [CWE-862] in FortiSandbox, FortiSandbox Cloud and FortiSandbox PaaS WEB UI may allow an unauthenticated attacker to execute unauthorized code or commands via HTTP requests.",
+					"url": "https://fortiguard.fortinet.com/psirt/FG-IR-26-136"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiSandbox Cloud 24: Migrate to a fixed release\nFortiSandbox Cloud 23: Migrate to a fixed release\nFortiSandbox Cloud 5.0: Upgrade to 5.0.6 or above",
+					"product_ids": [
+						"FortiSandbox Cloud"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 9.1,
+						"baseSeverity": "CRITICAL",
+						"vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H/E:F/RL:O/RC:C",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiSandbox Cloud"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Execute unauthorized code or commands"
+				}
+			],
+			"title": "FortiSandbox Cloud - CRITICAL - FG-IR-26-136"
+		},
+		{
+			"cve": "CVE-2026-26083",
+			"cwe": {
+				"id": "CWE-862",
+				"name": "Missing Authorization"
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "Missing authorization on GUI features.\n\n",
+					"title": "Summary"
+				},
+				{
+					"category": "general",
+					"text": "N/A",
+					"title": "Workarounds"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiSandbox PaaS 23.4 all versions",
+					"FortiSandbox PaaS 23.3 all versions",
+					"FortiSandbox PaaS 23.1 all versions",
+					"FortiSandbox PaaS 22.2 all versions",
+					"FortiSandbox PaaS 22.1 all versions",
+					"FortiSandbox PaaS 21.4 all versions",
+					"FortiSandbox PaaS 21.3 all versions",
+					"FortiSandbox PaaS >=5.0.0|<=5.0.1",
+					"FortiSandbox PaaS >=4.4.5|<=4.4.8"
+				],
+				"known_not_affected": [
+					"FortiSandbox PaaS-5.0.2",
+					"FortiSandbox PaaS-4.4.9"
+				]
+			},
+			"references": [
+				{
+					"summary": "A missing authorization vulnerability [CWE-862] in FortiSandbox, FortiSandbox Cloud and FortiSandbox PaaS WEB UI may allow an unauthenticated attacker to execute unauthorized code or commands via HTTP requests.",
+					"url": "https://fortiguard.fortinet.com/psirt/FG-IR-26-136"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiSandbox PaaS 23.4: Migrate to a fixed release\nFortiSandbox PaaS 23.3: Migrate to a fixed release\nFortiSandbox PaaS 23.1: Migrate to a fixed release\nFortiSandbox PaaS 22.2: Migrate to a fixed release\nFortiSandbox PaaS 22.1: Migrate to a fixed release\nFortiSandbox PaaS 21.4: Migrate to a fixed release\nFortiSandbox PaaS 21.3: Migrate to a fixed release\nFortiSandbox PaaS 5.0: Upgrade to 5.0.2 or above\nFortiSandbox PaaS 4.4: Upgrade to 4.4.9 or above",
+					"product_ids": [
+						"FortiSandbox PaaS"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 9.1,
+						"baseSeverity": "CRITICAL",
+						"vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H/E:F/RL:O/RC:C",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiSandbox PaaS"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Execute unauthorized code or commands"
+				}
+			],
+			"title": "FortiSandbox PaaS - CRITICAL - FG-IR-26-136"
+		}
+	]
+}

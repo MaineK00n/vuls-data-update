@@ -24,6 +24,16 @@ func TestExtract(t *testing.T) {
 			name: "happy",
 			args: "./testdata/fixtures",
 		},
+		{
+			name:     "tree fix no longer matching the advisory",
+			args:     "./testdata/fixtures-stale-tree-fix",
+			hasError: true,
+		},
+		{
+			name:     "undefined known_not_affected product of no known shape",
+			args:     "./testdata/fixtures-undefined-not-affected",
+			hasError: true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
