@@ -173,12 +173,13 @@ type keyAcc struct {
 	groups      map[sevKey]*sevGroup
 }
 
-// sevKey groups the per-family CSAF vulnerability objects of one key by their
-// severity profile (CVSS vector(s) + vendor impact). CSAF scopes scores to
-// .products and impact threats to .product_ids; Fortinet replicates one CVE
-// across one object per product family. Today every family shares the same
-// severity, so a key collapses to a single group and the per-CVE output is
-// unchanged — but distinct severities (which CSAF permits) split into separate
+// sevKey groups the known_affected products of one key by their severity
+// profile (CVSS vector + vendor impact). CSAF scopes scores to .products and
+// threats to .product_ids, so each product gets the score and impact that name
+// it (see vulnSeverity); Fortinet replicates one CVE across one object per
+// product family. Today every family shares the same severity, so a key
+// collapses to a single group and the per-CVE output is unchanged — but
+// distinct severities (which CSAF permits) split into separate
 // segments/conditions rather than being over-attributed to every product.
 type sevKey struct {
 	cvss   string
@@ -202,9 +203,17 @@ func extract(fetched csafTypes.CSAF, raws []string) (dataTypes.Data, error) {
 		return dataTypes.Data{}, errors.Wrap(err, "build product refs")
 	}
 
+	// Product names that a score or threat may reference in place of a leaf
+	// product_id (see appliesTo).
+	names := make(map[string]bool)
+	for _, ref := range refMap {
+		names[ref.productName] = true
+	}
+
 	// Merge the per-family CSAF vulnerability objects by key (CVE, or advisory
-	// ID when a object has no CVE), distributing each object's score / impact to
-	// its own family and grouping families by severity profile.
+	// ID when a object has no CVE), distributing each score / impact to the
+	// known_affected products it names and grouping products by severity
+	// profile.
 	accs := make(map[string]*keyAcc)
 	for _, v := range fetched.Vulnerabilities {
 		key := v.CVE
@@ -232,20 +241,39 @@ func extract(fetched csafTypes.CSAF, raws []string) (dataTypes.Data, error) {
 			a.references = append(a.references, strings.Fields(r.URL)...)
 		}
 
-		sevs, sk, err := vulnSeverity(v)
-		if err != nil {
-			return dataTypes.Data{}, errors.Wrapf(err, "severity for advisory %s, %s", id, key)
+		if err := checkProductRefs(v, refMap, names); err != nil {
+			return dataTypes.Data{}, errors.Wrapf(err, "check product references (advisory %s, %s)", id, key)
 		}
-		g := a.groups[sk]
-		if g == nil {
-			g = &sevGroup{severities: sevs}
-			a.groups[sk] = g
+		group := func(sevs []severityTypes.Severity, sk sevKey) *sevGroup {
+			g := a.groups[sk]
+			if g == nil {
+				g = &sevGroup{severities: sevs}
+				a.groups[sk] = g
+			}
+			return g
+		}
+		// An object with no known_affected (known_not_affected only) still
+		// carries its severity on the Vulnerability record, so take every score
+		// and threat of the object for it, as before scoping.
+		if len(v.ProductStatus.KnownAffected) == 0 {
+			sevs, sk, err := vulnSeverity(v, func([]csafTypes.ProductID) bool { return true })
+			if err != nil {
+				return dataTypes.Data{}, errors.Wrapf(err, "severity for advisory %s, %s", id, key)
+			}
+			group(sevs, sk)
 		}
 		for _, pid := range v.ProductStatus.KnownAffected {
 			cn, err := toCriterion(string(pid), refMap)
 			if err != nil {
 				return dataTypes.Data{}, errors.Wrapf(err, "resolve known_affected %q (advisory %s, %s)", string(pid), id, key)
 			}
+			sevs, sk, err := vulnSeverity(v, func(ids []csafTypes.ProductID) bool {
+				return appliesTo(ids, string(pid), refMap[string(pid)])
+			})
+			if err != nil {
+				return dataTypes.Data{}, errors.Wrapf(err, "severity of %q for advisory %s, %s", string(pid), id, key)
+			}
+			g := group(sevs, sk)
 			g.criterions = append(g.criterions, cn)
 			g.pids = append(g.pids, string(pid))
 		}
@@ -676,21 +704,67 @@ func resolveVersion(productName, exp string) (*ccRangeTypes.Range, string, error
 	}
 }
 
-// vulnSeverity returns the severities for one CSAF vulnerability object (its
-// per-family CVSS v3.1 score and vendor impact) together with the sevKey that
-// groups families of the same key by identical severity profile. Fortinet emits
-// exactly one cvss vector and one impact per object; anything else (zero or
-// multiple distinct) is a hard error (see below), not silently handled.
-func vulnSeverity(v csafTypes.Vulnerability) ([]severityTypes.Severity, sevKey, error) {
+// appliesTo reports whether a CSAF product reference list (scores[].products,
+// threats[].product_ids) covers the known_affected leaf pid. Fortinet does not
+// reference the leaf: it names the product ("FortiWeb"), which the product
+// tree defines only as a branch name, not as a product_id, and which stands
+// for every leaf under it. So a reference covers pid when it is pid itself, as
+// CSAF has it, or the name of pid's product.
+func appliesTo(ids []csafTypes.ProductID, pid string, ref productRef) bool {
+	return slices.ContainsFunc(ids, func(id csafTypes.ProductID) bool {
+		return string(id) == pid || string(id) == ref.productName
+	})
+}
+
+// checkProductRefs hard-errors when a score or threat of v references a
+// product that is neither a leaf product_id nor a product name of the tree, or
+// scopes itself by product group. Either would leave the reference covering
+// nothing (appliesTo), dropping the score or threat for the products it was
+// meant for instead of failing.
+func checkProductRefs(v csafTypes.Vulnerability, refMap map[string]productRef, names map[string]bool) error {
+	check := func(ids []csafTypes.ProductID) error {
+		for _, id := range ids {
+			if _, ok := refMap[string(id)]; !ok && !names[string(id)] {
+				return errors.Errorf("unknown product %q", string(id))
+			}
+		}
+		return nil
+	}
+	for _, sc := range v.Scores {
+		if err := check(sc.Products); err != nil {
+			return errors.Wrap(err, "scores.products")
+		}
+	}
+	for _, t := range v.Threats {
+		if len(t.GroupIDs) > 0 {
+			return errors.Errorf("unexpected threats.group_ids %q", t.GroupIDs)
+		}
+		if err := check(t.ProductIDs); err != nil {
+			return errors.Wrap(err, "threats.product_ids")
+		}
+	}
+	return nil
+}
+
+// vulnSeverity returns the severities of one CSAF vulnerability object for the
+// products applies accepts: the CVSS v3.1 score whose .products it accepts, and
+// the vendor impact whose .product_ids it accepts (or which has none, and so
+// covers the whole object). It returns them together with the sevKey that
+// groups products of the same key by identical severity profile. Fortinet
+// emits exactly one cvss vector and one impact per product; anything else
+// (zero or multiple distinct) is a hard error (see below), not silently
+// handled.
+func vulnSeverity(v csafTypes.Vulnerability, applies func([]csafTypes.ProductID) bool) ([]severityTypes.Severity, sevKey, error) {
 	// Fortinet emits exactly one cvss vector and one impact per vulnerability
-	// object (verified across the corpus). Hold a single value and fail loudly on
-	// a second distinct one (a duplicate of the same value is tolerated); zero, or
-	// more than one distinct, of either would drop or mis-map a severity. This
-	// path only runs in CI, so a silent fallback would go unnoticed — a hard error
-	// is the signal to revisit the per-family grouping.
+	// object (verified across the corpus), so each product gets one of each.
+	// Hold a single value and fail loudly on a second distinct one (a duplicate
+	// of the same value is tolerated); zero, or more than one distinct, of
+	// either would drop or mis-map a severity. This path only runs in CI, so a
+	// silent fallback would go unnoticed — a hard error is the signal to revisit
+	// the grouping.
 	var vector string
 	for _, sc := range v.Scores {
-		if sc.CvssV3 == nil || sc.CvssV3.VectorString == "" {
+		if sc.CvssV3 == nil || sc.CvssV3.VectorString == "" || !applies(sc.Products) {
 			continue
 		}
 		if vector != "" && vector != sc.CvssV3.VectorString {
@@ -714,7 +788,7 @@ func vulnSeverity(v csafTypes.Vulnerability) ([]severityTypes.Severity, sevKey, 
 
 	var impact string
 	for _, t := range v.Threats {
-		if t.Category != "impact" || t.Details == "" {
+		if t.Category != "impact" || t.Details == "" || (len(t.ProductIDs) > 0 && !applies(t.ProductIDs)) {
 			continue
 		}
 		if impact != "" && impact != t.Details {
