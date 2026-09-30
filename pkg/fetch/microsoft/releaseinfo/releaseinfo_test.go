@@ -1,18 +1,14 @@
 package releaseinfo_test
 
 import (
-	"io/fs"
-	"maps"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"path/filepath"
-	"slices"
 	"testing"
 
-	"github.com/google/go-cmp/cmp"
-
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/releaseinfo"
+	utiltest "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/test"
 )
 
 // The fixtures are the pages as served, cut down to the tables that decide what
@@ -81,11 +77,13 @@ func TestFetch(t *testing.T) {
 				t.Fatalf("unexpected error. err: %v", err)
 			case err == nil && tt.hasError:
 				t.Fatal("expected error has not occurred")
-			case err != nil:
+			case err != nil && tt.hasError:
 				return
+			default:
+				if err := utiltest.Diff(filepath.Join("testdata", "golden", tt.golden), dir); err != nil {
+					t.Error("unexpected error:", err)
+				}
 			}
-
-			diff(t, filepath.Join("testdata", "golden", tt.golden), dir)
 		})
 	}
 }
@@ -103,63 +101,4 @@ func handler(t *testing.T, fixture string) http.HandlerFunc {
 		}
 		_, _ = w.Write(bs)
 	}
-}
-
-// diff compares the produced tree against golden byte for byte. Bytes rather
-// than parsed content: origin/ is only worth keeping if it reproduces exactly,
-// and raw/ is written deterministically, so any difference at all is a
-// regression.
-func diff(t *testing.T, golden, got string) {
-	t.Helper()
-
-	want := walk(t, golden)
-	have := walk(t, got)
-
-	if d := cmp.Diff(slices.Sorted(maps.Keys(want)), slices.Sorted(maps.Keys(have))); d != "" {
-		t.Errorf("files (-expected +got):\n%s", d)
-	}
-
-	for n, w := range want {
-		h, ok := have[n]
-		if !ok {
-			continue
-		}
-		if d := cmp.Diff(string(w), string(h)); d != "" {
-			t.Errorf("%s (-expected +got):\n%s", n, d)
-		}
-	}
-}
-
-func walk(t *testing.T, root string) map[string][]byte {
-	t.Helper()
-
-	out := make(map[string][]byte)
-	if err := filepath.WalkDir(root, func(p string, d fs.DirEntry, err error) error {
-		if err != nil {
-			if os.IsNotExist(err) {
-				return nil
-			}
-			return err
-		}
-		if d.IsDir() {
-			return nil
-		}
-
-		rel, err := filepath.Rel(root, p)
-		if err != nil {
-			return err
-		}
-
-		bs, err := os.ReadFile(p)
-		if err != nil {
-			return err
-		}
-
-		out[filepath.ToSlash(rel)] = bs
-		return nil
-	}); err != nil && !os.IsNotExist(err) {
-		t.Fatalf("walk %s. err: %v", root, err)
-	}
-
-	return out
 }
