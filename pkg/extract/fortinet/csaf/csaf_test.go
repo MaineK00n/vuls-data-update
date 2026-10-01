@@ -109,6 +109,13 @@ func TestExtract(t *testing.T) {
 			args:     "./testdata/fixtures-threat-group-ids",
 			hasError: true,
 		},
+		{
+			// The texts are held NUL-joined in the profile; one containing a
+			// NUL would come back as two mitigations.
+			name:     "mitigation text containing a NUL",
+			args:     "./testdata/fixtures-mitigation-nul",
+			hasError: true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
