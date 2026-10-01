@@ -53,6 +53,17 @@
 // both tables -- 22 of the 54 hotpatch KBs on the Windows Server page -- and it
 // takes its place in both chains, which is what a baseline is.
 //
+// Supersedence here is replacement, as it is in the Update Catalog: an update
+// supersedes another when installing it leaves the other unneeded. It is not
+// containment. A hotpatch carries its baseline's fixes, but it does not replace
+// the baseline -- it installs only on top of it, and the baseline stays -- so
+// the hotpatch line runs from one hotpatch to the next and from the last of a
+// quarter into the next baseline, and never from a baseline into a hotpatch.
+// Reading it as containment would not even be safe: a hotpatch is not the
+// security content of its month's cumulative update, the November 2022 one
+// having shipped without the fix for CVE-2022-37966 because that fix could not
+// be hotpatched.
+//
 // Rows naming no KB are the months a calendar has reached but Microsoft has not
 // shipped yet, and are skipped.
 package releaseinfo
@@ -165,6 +176,10 @@ type update struct {
 	letter string
 
 	hotpatch bool
+
+	// baseline marks the Baseline (Restart) rows of a hotpatch calendar, the
+	// ones a hotpatch installs on top of rather than in place of.
+	baseline bool
 
 	// raw is the path this was read from, recorded on the KB so a record can be
 	// traced back to the page it came from.
@@ -362,6 +377,9 @@ func parsePage(page releaseinfo.Page, name, raw string) []update {
 			}
 			u.hotpatch = hotpatch
 			if hotpatch {
+				u.baseline = isBaseline(t, row, raw, u.kbID)
+			}
+			if hotpatch {
 				u.release = releases[u.major]
 			}
 			us = append(us, u)
@@ -448,6 +466,29 @@ func parseRow(t releaseinfo.Table, row []releaseinfo.Cell, name, raw string) (up
 	}, true
 }
 
+// isBaseline reads a hotpatch calendar row's Type.
+//
+// A Type this does not recognise is read as a hotpatch. Mistaking a baseline
+// for one costs the edge from the baseline before it; mistaking a hotpatch for
+// a baseline would claim it replaces the baseline it is installed on top of,
+// and cut the next hotpatch loose from it.
+func isBaseline(t releaseinfo.Table, row []releaseinfo.Cell, raw, kbID string) bool {
+	var typ string
+	if i := slices.Index(t.Header, columnHotpatchType); i >= 0 && i < len(row) {
+		typ = row[i].Text
+	}
+
+	switch {
+	case strings.HasPrefix(typ, "Baseline"):
+		return true
+	case typ == "Hotpatch":
+		return false
+	default:
+		slog.Warn("unexpected hotpatch type, update is read as a hotpatch", slog.String("path", raw), slog.String("kb", kbID), slog.String("type", typ))
+		return false
+	}
+}
+
 // release names the line a table covers, as a reader would say it.
 //
 // The Windows Server labels name their product in full; the Windows 10 and 11
@@ -503,6 +544,10 @@ func chain(us []update) []microsoftkbTypes.KB {
 			return cmp.Or(cmp.Compare(x.revision, y.revision), x.date.Compare(y.date), cmp.Compare(x.kbID, y.kbID))
 		})
 		for i := 1; i < len(group); i++ {
+			// A hotpatch does not replace the baseline it installs on top of.
+			if group[i-1].baseline && group[i].hotpatch && !group[i].baseline {
+				continue
+			}
 			links = append(links, link{older: group[i-1].kbID, newer: group[i].kbID})
 		}
 	}
