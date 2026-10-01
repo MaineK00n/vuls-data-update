@@ -1,0 +1,315 @@
+{
+	"url": "https://learn.microsoft.com/en-us/windows/release-health/release-information",
+	"tables": [
+		{
+			"label": "Servicing channels",
+			"header": [
+				"Version",
+				"Servicing option",
+				"Availability date",
+				"Latest update for ESU",
+				"Latest revision date",
+				"Latest build"
+			],
+			"rows": [
+				[
+					{
+						"text": "22H2"
+					},
+					{
+						"text": "General Availability Channel"
+					},
+					{
+						"text": "2022-10-18"
+					},
+					{
+						"text": "2026-08 B",
+						"href": "https://support.microsoft.com/help/5120249"
+					},
+					{
+						"text": "2026-08-11"
+					},
+					{
+						"text": "19045.7663"
+					}
+				]
+			]
+		},
+		{
+			"label": "Version 1709 (OS build 16299)",
+			"header": [
+				"Servicing option",
+				"Update type",
+				"Availability date",
+				"Build",
+				"KB article"
+			],
+			"rows": [
+				[
+					{
+						"text": "Semi-Annual Channel • Semi-Annual Channel (Targeted)"
+					},
+					{
+						"text": "2018-01 D"
+					},
+					{
+						"text": "2018-01-31"
+					},
+					{
+						"text": "16299.214"
+					},
+					{
+						"text": "KB4058258",
+						"href": "https://support.microsoft.com/help/4058258"
+					}
+				],
+				[
+					{
+						"text": "Semi-Annual Channel • Semi-Annual Channel (Targeted)"
+					},
+					{
+						"text": "2018-01 OOB"
+					},
+					{
+						"text": "2018-01-18"
+					},
+					{
+						"text": "16299.201"
+					},
+					{
+						"text": "KB4073291",
+						"href": "https://support.microsoft.com/help/4073291"
+					}
+				],
+				[
+					{
+						"text": "Semi-Annual Channel • Semi-Annual Channel (Targeted)"
+					},
+					{
+						"text": "2018-01 OOB"
+					},
+					{
+						"text": "2018-01-17"
+					},
+					{
+						"text": "16299.194"
+					},
+					{
+						"text": "KB4073290",
+						"href": "https://support.microsoft.com/help/4073290"
+					}
+				],
+				[
+					{
+						"text": "Semi-Annual Channel • Semi-Annual Channel (Targeted)"
+					},
+					{
+						"text": "2018-01 B"
+					},
+					{
+						"text": "2018-01-03"
+					},
+					{
+						"text": "16299.192"
+					},
+					{
+						"text": "KB4056892",
+						"href": "https://support.microsoft.com/help/4056892"
+					}
+				],
+				[
+					{
+						"text": "Semi-Annual Channel • Semi-Annual Channel (Targeted)"
+					},
+					{
+						"text": "2017-12 B"
+					},
+					{
+						"text": "2017-12-12"
+					},
+					{
+						"text": "16299.125"
+					},
+					{
+						"text": "KB4054517",
+						"href": "https://support.microsoft.com/help/4054517"
+					}
+				],
+				[
+					{
+						"text": "Semi-Annual Channel (Targeted)"
+					},
+					{
+						"text": "2017-11 D"
+					},
+					{
+						"text": "2017-11-30"
+					},
+					{
+						"text": "16299.98"
+					},
+					{
+						"text": "KB4051963",
+						"href": "https://support.microsoft.com/help/4051963"
+					}
+				],
+				[
+					{
+						"text": "Semi-Annual Channel (Targeted)"
+					},
+					{
+						"text": "2017-11 B"
+					},
+					{
+						"text": "2017-11-14"
+					},
+					{
+						"text": "16299.64"
+					},
+					{
+						"text": "KB4048955",
+						"href": "https://support.microsoft.com/help/4048955"
+					}
+				]
+			]
+		},
+		{
+			"label": "Version 1507 (RTM) (OS build 10240)",
+			"header": [
+				"Servicing option",
+				"Update type",
+				"Availability date",
+				"Build",
+				"KB article"
+			],
+			"rows": [
+				[
+					{
+						"text": "LTSB • CB • CBB"
+					},
+					{
+						"text": "2015-09 D"
+					},
+					{
+						"text": "2015-09-30"
+					},
+					{
+						"text": "10240.16520"
+					},
+					{
+						"text": "KB3093266",
+						"href": "https://support.microsoft.com/help/3093266"
+					}
+				],
+				[
+					{
+						"text": "LTSB • CB • CBB"
+					},
+					{
+						"text": "2015-09 B"
+					},
+					{
+						"text": "2015-09-08"
+					},
+					{
+						"text": "10240.16487"
+					},
+					{
+						"text": "KB3081455",
+						"href": "https://support.microsoft.com/help/3081455"
+					}
+				],
+				[
+					{
+						"text": "LTSB • CB • CBB"
+					},
+					{
+						"text": "2015-08 D"
+					},
+					{
+						"text": "2015-08-27"
+					},
+					{
+						"text": "10240.16463"
+					},
+					{
+						"text": "KB3081448",
+						"href": "https://support.microsoft.com/help/3081448"
+					}
+				],
+				[
+					{
+						"text": "LTSB • CB • CBB"
+					},
+					{
+						"text": "2015-08 C"
+					},
+					{
+						"text": "2015-08-18"
+					},
+					{
+						"text": "10240.16445"
+					},
+					{
+						"text": "KB3081444",
+						"href": "https://support.microsoft.com/help/3081444"
+					}
+				],
+				[
+					{
+						"text": "LTSB • CB • CBB"
+					},
+					{
+						"text": "2015-08 OOB"
+					},
+					{
+						"text": "2015-08-14"
+					},
+					{
+						"text": "10240.16433"
+					},
+					{
+						"text": "KB3081438",
+						"href": "https://support.microsoft.com/help/3081438"
+					}
+				],
+				[
+					{
+						"text": "LTSB • CB • CBB"
+					},
+					{
+						"text": "2015-08 B"
+					},
+					{
+						"text": "2015-08-11"
+					},
+					{
+						"text": "10240.16430"
+					},
+					{
+						"text": "KB3081436",
+						"href": "https://support.microsoft.com/help/3081436"
+					}
+				],
+				[
+					{
+						"text": "LTSB • CB • CBB"
+					},
+					{
+						"text": "2015-08 A"
+					},
+					{
+						"text": "2015-08-05"
+					},
+					{
+						"text": "10240.16413"
+					},
+					{
+						"text": "KB3081424",
+						"href": "https://support.microsoft.com/help/3081424"
+					}
+				]
+			]
+		}
+	]
+}

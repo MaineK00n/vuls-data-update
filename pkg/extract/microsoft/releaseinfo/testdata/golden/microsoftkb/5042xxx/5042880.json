@@ -1,0 +1,10 @@
+{
+	"kb_id": "5042880",
+	"url": "https://support.microsoft.com/help/5042880",
+	"data_source": {
+		"id": "microsoft-releaseinfo",
+		"raws": [
+			"windows-server.json"
+		]
+	}
+}
