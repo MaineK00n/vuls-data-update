@@ -140,7 +140,7 @@ func (o options) moveTagToDummy(ctx context.Context, owner, pack, tag, token str
 	}
 	defer r.Close()
 	slog.Info("Original digest", slog.String("digest", original.Digest.String()))
-	slog.Info("If you made a mistake, run the following command", slog.String("cmd", fmt.Sprintf("vuls-data-update dotgit remote tag ghcr.io/%s/%s@%s %s --token $(gh auth token)", owner, pack, original.Digest.String(), tag)))
+	slog.Info("If you made a mistake, run the following command", slog.String("cmd", fmt.Sprintf("vuls-data-update dotgit registry tag ghcr.io/%s/%s@%s %s --token $(gh auth token)", owner, pack, original.Digest.String(), tag)))
 
 	// Pack the dummy locally and copy it, so that oras.Copy PUTs the manifest
 	// under the tag. Packing straight into the repository PUTs it under its
