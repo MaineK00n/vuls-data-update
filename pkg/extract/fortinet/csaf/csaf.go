@@ -1,6 +1,7 @@
 package csaf
 
 import (
+	"cmp"
 	"fmt"
 	"hash/fnv"
 	"io/fs"
@@ -636,13 +637,14 @@ func toCriterion(productID string, refMap map[string]productRef) (criterionTypes
 	// rt (the product's per-product range type, resolved above) selects the
 	// detect-time comparator; it is only consulted on the range/bake paths below.
 	//
-	// Range-bound invariants. These two asserts keep a non-numeric-versioned
+	// Range-bound invariants. The first two asserts keep a non-numeric-versioned
 	// product's comparator safe at detect time: they guarantee a non-numeric
 	// version (FortiSASE "25.2.a") is only ever compared against a numeric bound
 	// that runs out of components before the letter, never against a numeric
-	// component at the same position (the comparator's "incomparable" case). If
-	// Fortinet's data ever breaks an invariant, this fails loudly at extract
-	// rather than silently mis-detecting later.
+	// component at the same position (the comparator's "incomparable" case). The
+	// third keeps the range satisfiable. If Fortinet's data ever breaks an
+	// invariant, this fails loudly at extract rather than silently
+	// mis-detecting later.
 	if r != nil {
 		r.Type = rt
 		for _, b := range []string{r.GreaterEqual, r.GreaterThan, r.LessEqual, r.LessThan} {
@@ -663,6 +665,35 @@ func toCriterion(productID string, refMap map[string]productRef) (criterionTypes
 			// alphabetic case — so reject it here.
 			if rt == ccRangeTypes.RangeTypeFortinetFortiSASE && strings.Count(b, ".") >= 2 {
 				return criterionTypes.Criterion{}, errors.Errorf("product %q is non-numeric-versioned and must use a train range (bound dot<=1), got bound %q (expr %q)", productID, b, ref.versionExp)
+			}
+		}
+		// (3) A lower bound above the upper bound (">=7.2.7|<=7.2.0") makes the
+		// criterion unsatisfiable: extraction succeeds and the detector never
+		// matches, a silent false negative. So do equal bounds when either side
+		// is exclusive (">7.2.0|<7.2.0", ">7.2.0|<=7.2.0"): Range.Accept rejects
+		// the bound value itself for gt/lt. Reject both, the same way the CVRF
+		// supplement rejects its inverted rows. Equal inclusive bounds
+		// (">=7.2.0|<=7.2.0") are a one-version range and stay allowed.
+		// resolveVersion sets at most one bound per side, so reading one field
+		// of each is the whole range.
+		if lo, hi := cmp.Or(r.GreaterEqual, r.GreaterThan), cmp.Or(r.LessEqual, r.LessThan); lo != "" && hi != "" {
+			vlo, err := numericVersion.NewVersion(lo)
+			if err != nil {
+				return criterionTypes.Criterion{}, errors.Wrapf(err, "parse lower bound %q for %q (expr %q)", lo, productID, ref.versionExp)
+			}
+			vhi, err := numericVersion.NewVersion(hi)
+			if err != nil {
+				return criterionTypes.Criterion{}, errors.Wrapf(err, "parse upper bound %q for %q (expr %q)", hi, productID, ref.versionExp)
+			}
+			c, err := vlo.Compare(vhi)
+			if err != nil {
+				return criterionTypes.Criterion{}, errors.Wrapf(err, "compare bounds %q, %q for %q (expr %q)", lo, hi, productID, ref.versionExp)
+			}
+			switch {
+			case c > 0:
+				return criterionTypes.Criterion{}, errors.Errorf("inverted range for %q: lower bound %q > upper bound %q (expr %q)", productID, lo, hi, ref.versionExp)
+			case c == 0 && (r.GreaterThan != "" || r.LessThan != ""):
+				return criterionTypes.Criterion{}, errors.Errorf("empty range for %q: bounds %q and %q are equal but not both inclusive (expr %q)", productID, lo, hi, ref.versionExp)
 			}
 		}
 	}
@@ -747,22 +778,32 @@ func resolveVersion(productName, exp string) (*ccRangeTypes.Range, string, error
 		return &ccRangeTypes.Range{GreaterEqual: ge}, "", nil
 	case strings.ContainsAny(exp, "<>"):
 		r := ccRangeTypes.Range{}
+		// At most one bound per side. A repeated side (">7.2.7|>=7.2.0|<=7.2.5",
+		// ">=7.0.0|>=7.2.0") would either set both fields of that side, and the
+		// order check in toCriterion reads only one of them, or overwrite the
+		// first value with the second; either way the emitted range is not the
+		// one written, so reject it rather than pick a bound.
+		seen := make(map[string]bool, 2)
 		for part := range strings.SplitSeq(exp, "|") {
 			part = strings.TrimSpace(part)
 			var bound *string
-			var op string
+			var op, side string
 			switch {
 			case strings.HasPrefix(part, ">="):
-				op, bound = ">=", &r.GreaterEqual
+				op, bound, side = ">=", &r.GreaterEqual, "lower"
 			case strings.HasPrefix(part, ">"):
-				op, bound = ">", &r.GreaterThan
+				op, bound, side = ">", &r.GreaterThan, "lower"
 			case strings.HasPrefix(part, "<="):
-				op, bound = "<=", &r.LessEqual
+				op, bound, side = "<=", &r.LessEqual, "upper"
 			case strings.HasPrefix(part, "<"):
-				op, bound = "<", &r.LessThan
+				op, bound, side = "<", &r.LessThan, "upper"
 			default:
 				return nil, "", errors.Errorf("unexpected bound %q in %q", part, exp)
 			}
+			if seen[side] {
+				return nil, "", errors.Errorf("more than one %s bound in %q", side, exp)
+			}
+			seen[side] = true
 			// An empty version after the operator (e.g. ">" or ">=7.0.0|<=") would
 			// be silently treated as "no constraint" by Range.Accept and over-match,
 			// so reject it rather than emit an open-ended range.

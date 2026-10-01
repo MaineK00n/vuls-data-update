@@ -465,6 +465,96 @@ func TestToCriterion(t *testing.T) {
 			},
 			wantErr: true,
 		},
+		{
+			// A lower bound above the upper bound can never match; reject it
+			// instead of emitting a criterion that is silently dead.
+			name: "reversed range rejected",
+			args: args{
+				productID: "FortiOS >=7.2.7|<=7.2.0",
+				refMap: map[string]csaf.ProductRef{
+					"FortiOS >=7.2.7|<=7.2.0": csaf.NewProductRef("FortiOS", ">=7.2.7|<=7.2.0"),
+				},
+			},
+			wantErr: true,
+		},
+		{
+			// Equal bounds with an exclusive operator admit no version at all
+			// (Range.Accept rejects the bound value for gt/lt).
+			name: "equal strict bounds rejected",
+			args: args{
+				productID: "FortiOS >7.2.0|<7.2.0",
+				refMap: map[string]csaf.ProductRef{
+					"FortiOS >7.2.0|<7.2.0": csaf.NewProductRef("FortiOS", ">7.2.0|<7.2.0"),
+				},
+			},
+			wantErr: true,
+		},
+		{
+			name: "equal bounds with one strict side rejected",
+			args: args{
+				productID: "FortiOS >7.2.0|<=7.2.0",
+				refMap: map[string]csaf.ProductRef{
+					"FortiOS >7.2.0|<=7.2.0": csaf.NewProductRef("FortiOS", ">7.2.0|<=7.2.0"),
+				},
+			},
+			wantErr: true,
+		},
+		{
+			// Both sides inclusive: one version, allowed.
+			name: "equal inclusive bounds → one-version range",
+			args: args{
+				productID: "FortiOS >=7.2.0|<=7.2.0",
+				refMap: map[string]csaf.ProductRef{
+					"FortiOS >=7.2.0|<=7.2.0": csaf.NewProductRef("FortiOS", ">=7.2.0|<=7.2.0"),
+				},
+			},
+			want: criterionTypes.Criterion{
+				Type: criterionTypes.CriterionTypeCPE,
+				CPE: &ccTypes.Criterion{
+					Vulnerable: true,
+					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
+					CPE:        ccTypes.CPE("cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*"),
+					Range: &ccRangeTypes.Range{
+						Type:         ccRangeTypes.RangeTypeFortinetFortiOS,
+						GreaterEqual: "7.2.0",
+						LessEqual:    "7.2.0",
+					},
+				},
+			},
+		},
+		{
+			// A repeated side is ambiguous: here the strict lower bound makes the
+			// range empty, but the order check reads one field per side.
+			name: "two lower bounds of different operators rejected",
+			args: args{
+				productID: "FortiOS >7.2.7|>=7.2.0|<=7.2.5",
+				refMap: map[string]csaf.ProductRef{
+					"FortiOS >7.2.7|>=7.2.0|<=7.2.5": csaf.NewProductRef("FortiOS", ">7.2.7|>=7.2.0|<=7.2.5"),
+				},
+			},
+			wantErr: true,
+		},
+		{
+			// The same operator twice would silently keep only the last value.
+			name: "two lower bounds of the same operator rejected",
+			args: args{
+				productID: "FortiOS >=7.0.0|>=7.2.0|<=7.2.5",
+				refMap: map[string]csaf.ProductRef{
+					"FortiOS >=7.0.0|>=7.2.0|<=7.2.5": csaf.NewProductRef("FortiOS", ">=7.0.0|>=7.2.0|<=7.2.5"),
+				},
+			},
+			wantErr: true,
+		},
+		{
+			name: "two upper bounds rejected",
+			args: args{
+				productID: "FortiOS >=7.2.0|<7.2.5|<=7.2.3",
+				refMap: map[string]csaf.ProductRef{
+					"FortiOS >=7.2.0|<7.2.5|<=7.2.3": csaf.NewProductRef("FortiOS", ">=7.2.0|<7.2.5|<=7.2.3"),
+				},
+			},
+			wantErr: true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
