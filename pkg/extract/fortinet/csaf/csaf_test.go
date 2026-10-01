@@ -42,6 +42,26 @@ func TestExtract(t *testing.T) {
 			args:     "./testdata/fixtures-undefined-not-affected",
 			hasError: true,
 		},
+		{
+			name:     "score naming a product the tree does not have",
+			args:     "./testdata/fixtures-unknown-product",
+			hasError: true,
+		},
+		{
+			name:     "score naming a leaf product_id",
+			args:     "./testdata/fixtures-leaf-reference",
+			hasError: true,
+		},
+		{
+			name:     "impact scoped by product_ids",
+			args:     "./testdata/fixtures-threat-product-ids",
+			hasError: true,
+		},
+		{
+			name:     "impact scoped by group_ids",
+			args:     "./testdata/fixtures-threat-group-ids",
+			hasError: true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

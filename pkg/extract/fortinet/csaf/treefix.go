@@ -10,25 +10,75 @@ import (
 	csafTypes "github.com/MaineK00n/vuls-data-update/pkg/fetch/fortinet/csaf"
 )
 
-// fixProductTree repairs the product tree of doc, and the product_status lists
-// that reference it, where the published advisory gets them wrong, so the
-// rest of the extractor reads a tree that says what the advisory means. It
-// runs on the document as fetched, before anything else reads it.
+// fixProductTree repairs doc where the published advisory gets its product
+// tree wrong, and rewrites its product references to product_ids, so the
+// rest of the extractor reads a CSAF document that says what the advisory
+// means. It runs on the document as fetched, before anything else reads it.
+//
+// Two things are kept apart: where a leaf sits in the tree, which says what
+// product it is, and which references cover it, which says what score,
+// threat or remediation applies to it. Fortinet scopes references by product
+// branch name (see resolveReferences), written for the leaves it published
+// under that branch, so coverage follows where a leaf was published, wherever
+// a repair moves it.
 //
 // First the advisory-bound repairs of treeFixes, each written out in full and
 // hard-erroring when the advisory no longer matches it. Then every
 // known_not_affected product_id the tree does not define is defined (see
-// defineNotAffected).
+// defineNotAffected). Last, the references are resolved to product_ids.
 func fixProductTree(doc *csafTypes.CSAF) error {
-	if fix, ok := treeFixes[doc.Document.Tracking.ID]; ok {
-		if err := fix.apply(doc); err != nil {
-			return errors.Wrapf(err, "apply the tree fix of %s", doc.Document.Tracking.ID)
-		}
+	// An advisory without an entry repairs nothing of its own, but still gets
+	// its known_not_affected products defined and its references resolved.
+	return treeFixes[doc.Document.Tracking.ID].repair(doc)
+}
+
+// repair applies f to doc, then defines its known_not_affected products and
+// resolves its references (see fixProductTree).
+func (f treeFix) repair(doc *csafTypes.CSAF) error {
+	cov := indexCoverage(doc.ProductTree.Branches)
+	renamed := make(map[csafTypes.ProductID]csafTypes.ProductID)
+	if err := f.apply(doc, cov, renamed); err != nil {
+		return errors.Wrapf(err, "apply the tree fix of %s", doc.Document.Tracking.ID)
 	}
-	if err := defineNotAffected(doc); err != nil {
+	if err := defineNotAffected(doc, cov, renamed); err != nil {
 		return errors.Wrap(err, "define known_not_affected products")
 	}
+	if err := resolveReferences(doc, cov); err != nil {
+		return errors.Wrap(err, "resolve product references")
+	}
 	return nil
+}
+
+// coverage maps each product branch name to the product_ids that a reference
+// naming the branch covers: the leaves published under it, under their
+// repaired product_ids wherever a repair moves them, and the
+// known_not_affected products defined from an entry spelled after it.
+type coverage map[string][]csafTypes.ProductID
+
+// indexCoverage records the leaves under each product branch of the tree as
+// published. A branch name may repeat (one branch per leaf in some
+// advisories); its leaves accumulate.
+func indexCoverage(branches []csafTypes.Branch) coverage {
+	cov := make(coverage)
+	var walk func(bs []csafTypes.Branch, names []string)
+	walk = func(bs []csafTypes.Branch, names []string) {
+		for _, b := range bs {
+			ns := names
+			switch b.Category {
+			case "product", "product_name":
+				ns = append(slices.Clip(names), b.Name)
+			default:
+			}
+			if b.Product != nil && b.Product.ProductID != "" {
+				for _, n := range ns {
+					cov[n] = append(cov[n], b.Product.ProductID)
+				}
+			}
+			walk(b.Branches, ns)
+		}
+	}
+	walk(branches, nil)
+	return cov
 }
 
 // treeFix is the repair of one advisory: product branches whose leaves are
@@ -42,11 +92,9 @@ type treeFix struct {
 // branchFix rewrites leaves of one product branch. leaves is the branch's
 // every leaf name as published, in order, so any change to the branch retires
 // the fix loudly instead of repairing the wrong leaf; to maps a leaf's index
-// to what it is. A leaf moved to another product goes to a sibling branch of
-// that name, which must not exist in the published tree: a reference naming
-// the original branch is extended to name the new one too (it was written for
-// the leaves under the original), which would wrongly also cover a branch that
-// already had leaves of its own.
+// to what it is. A leaf moved to another product goes to the branch of that
+// name, a sibling created if the tree has none, and stays covered by the
+// references naming the branch it was published under.
 type branchFix struct {
 	name   string
 	leaves []string
@@ -100,31 +148,34 @@ func (l statusList) of(v *csafTypes.Vulnerability) (*[]csafTypes.ProductID, erro
 	}
 }
 
-func (f treeFix) apply(doc *csafTypes.CSAF) error {
+// apply repairs doc, keeping cov in step with the leaves it renames and
+// recording in renamed, for each product_status entry it rewrites, the entry
+// as published.
+func (f treeFix) apply(doc *csafTypes.CSAF, cov coverage, renamed map[csafTypes.ProductID]csafTypes.ProductID) error {
 	for _, bf := range f.branches {
-		if err := bf.apply(doc); err != nil {
+		if err := bf.apply(doc, cov); err != nil {
 			return errors.Wrapf(err, "branch %q", bf.name)
 		}
 	}
 	for _, sf := range f.statuses {
-		if err := sf.apply(doc); err != nil {
+		if err := sf.apply(doc, renamed); err != nil {
 			return errors.Wrapf(err, "%s %q", sf.list, sf.from)
 		}
 	}
 	return nil
 }
 
-func (bf branchFix) apply(doc *csafTypes.CSAF) error {
-	parent, i, err := findProductBranch(&doc.ProductTree.Branches, bf.name)
-	if err != nil {
-		return errors.Wrap(err, "find branch")
-	}
-	branch := &(*parent)[i]
+func (bf branchFix) apply(doc *csafTypes.CSAF, cov coverage) error {
 	for j := range bf.to {
 		if j < 0 || j >= len(bf.leaves) {
 			return errors.Errorf("leaf %d is out of the %d published", j, len(bf.leaves))
 		}
 	}
+	parent, i, err := findProductBranch(&doc.ProductTree.Branches, bf.name)
+	if err != nil {
+		return errors.Wrap(err, "find branch")
+	}
+	branch := &(*parent)[i]
 	if names := func() []string {
 		ns := make([]string, 0, len(branch.Branches))
 		for _, b := range branch.Branches {
@@ -138,16 +189,22 @@ func (bf branchFix) apply(doc *csafTypes.CSAF) error {
 	defined := productIDs(doc.ProductTree.Branches)
 
 	// moved keeps the leaves per target product; products keeps the targets in
-	// the order their first leaf comes, so the new branches follow the tree.
+	// the order their first leaf comes, so new branches follow the tree. The
+	// branch's coverage is rebuilt with every leaf it published, moved or not,
+	// under its repaired product_id.
 	var (
 		kept     []csafTypes.Branch
 		moved    = make(map[string][]csafTypes.Branch)
 		products []string
+		covered  = make([]csafTypes.ProductID, 0, len(branch.Branches))
 	)
 	for j, leaf := range branch.Branches {
 		t, ok := bf.to[j]
 		if !ok {
 			kept = append(kept, leaf)
+			if leaf.Product != nil {
+				covered = append(covered, leaf.Product.ProductID)
+			}
 			continue
 		}
 		if leaf.Product == nil {
@@ -160,6 +217,7 @@ func (bf branchFix) apply(doc *csafTypes.CSAF) error {
 		leaf.Name = fmt.Sprintf("%s/%s", t.product, t.version)
 		leaf.Product.Name = t.product
 		leaf.Product.ProductID = pid
+		covered = append(covered, pid)
 		if t.product == bf.name {
 			kept = append(kept, leaf)
 			continue
@@ -170,18 +228,22 @@ func (bf branchFix) apply(doc *csafTypes.CSAF) error {
 		moved[t.product] = append(moved[t.product], leaf)
 	}
 	branch.Branches = kept
+	cov[bf.name] = covered
 
 	for _, product := range products {
-		if _, _, err := findProductBranch(&doc.ProductTree.Branches, product); err == nil {
-			return errors.Errorf("branch %q to move leaves to already exists", product)
+		switch p, k, err := findProductBranch(&doc.ProductTree.Branches, product); {
+		case err == nil:
+			(*p)[k].Branches = append((*p)[k].Branches, moved[product]...)
+		default:
+			*parent = append(*parent, csafTypes.Branch{Category: "product", Name: product, Branches: moved[product]})
 		}
-		*parent = append(*parent, csafTypes.Branch{Category: "product", Name: product, Branches: moved[product]})
-		extendReferences(doc, bf.name, product)
 	}
 	return nil
 }
 
-func (sf statusFix) apply(doc *csafTypes.CSAF) error {
+// apply rewrites the list in every vulnerability object carrying it, and
+// records in renamed, for each entry it replaces, the entry as published.
+func (sf statusFix) apply(doc *csafTypes.CSAF, renamed map[csafTypes.ProductID]csafTypes.ProductID) error {
 	for j, t := range sf.to {
 		if j < 0 || j >= len(sf.from) {
 			return errors.Errorf("entry %d is out of the %d published", j, len(sf.from))
@@ -199,6 +261,7 @@ func (sf statusFix) apply(doc *csafTypes.CSAF) error {
 		case t.drop:
 		default:
 			fixed = append(fixed, t.productID)
+			renamed[t.productID] = pid
 		}
 	}
 
@@ -267,30 +330,6 @@ func productIDs(bs []csafTypes.Branch) map[csafTypes.ProductID]struct{} {
 	return ids
 }
 
-// extendReferences adds to to every score, threat and remediation reference
-// list naming from, so the leaves moved from branch from to branch to stay
-// covered by what was written for them.
-func extendReferences(doc *csafTypes.CSAF, from, to string) {
-	extend := func(ids []csafTypes.ProductID) []csafTypes.ProductID {
-		if slices.Contains(ids, csafTypes.ProductID(from)) && !slices.Contains(ids, csafTypes.ProductID(to)) {
-			return append(ids, csafTypes.ProductID(to))
-		}
-		return ids
-	}
-	for i := range doc.Vulnerabilities {
-		v := &doc.Vulnerabilities[i]
-		for j := range v.Scores {
-			v.Scores[j].Products = extend(v.Scores[j].Products)
-		}
-		for j := range v.Threats {
-			v.Threats[j].ProductIDs = extend(v.Threats[j].ProductIDs)
-		}
-		for j := range v.Remediations {
-			v.Remediations[j].ProductIDs = extend(v.Remediations[j].ProductIDs)
-		}
-	}
-}
-
 // fixedRelease returns the version of the fixed release that a
 // known_not_affected product_id the tree leaves undefined names under branch.
 // Fortinet builds those product_ids from the vendor_fix text, as
@@ -327,13 +366,43 @@ func trimUpcoming(s string) string {
 	return s
 }
 
+// branchOf returns the one product branch of branches under which pid names a
+// fixed release (see fixedRelease), and that release.
+func branchOf(pid csafTypes.ProductID, branches []string) (string, string, error) {
+	var (
+		branch, version string
+		n               int
+	)
+	for _, b := range branches {
+		if ver, ok := fixedRelease(pid, b); ok {
+			branch, version = b, ver
+			n++
+		}
+	}
+	switch n {
+	case 0:
+		return "", "", errors.Errorf("unexpected undefined known_not_affected product %q", pid)
+	case 1:
+		return branch, version, nil
+	default:
+		return "", "", errors.Errorf("undefined known_not_affected product %q matches %d branches", pid, n)
+	}
+}
+
 // defineNotAffected defines, as a product_version leaf under its product
 // branch, every known_not_affected product_id that the tree does not define.
 // Fortinet lists the fixed releases that way (2083 of the 3723
 // known_not_affected entries across the corpus as of 2026-09); defining them
 // makes the tree say what the list names. A product_id of any other shape, or
 // whose branch the tree lacks, hard-errors.
-func defineNotAffected(doc *csafTypes.CSAF) error {
+//
+// The leaf sits under the branch its product_id names, and is covered by the
+// references naming the branch the entry named as published: a fixed Cloud
+// release the advisory listed as "FortiManager-7.4.3" and treeFixes renamed
+// "FortiManager Cloud-7.4.3" is a FortiManager Cloud leaf, scored by what was
+// written for FortiManager. An entry as published of no known shape (repaired
+// in treeFixes to one) is covered by the branch it sits under.
+func defineNotAffected(doc *csafTypes.CSAF, cov coverage, renamed map[csafTypes.ProductID]csafTypes.ProductID) error {
 	defined := productIDs(doc.ProductTree.Branches)
 	var branches []string
 	var walk func(bs []csafTypes.Branch)
@@ -352,36 +421,99 @@ func defineNotAffected(doc *csafTypes.CSAF) error {
 			if _, ok := defined[pid]; ok {
 				continue
 			}
-			var (
-				branch, version string
-				n               int
-			)
-			for _, b := range branches {
-				if ver, ok := fixedRelease(pid, b); ok {
-					branch, version = b, ver
-					n++
+			branch, version, err := branchOf(pid, branches)
+			if err != nil {
+				return errors.Wrapf(err, "place a product of %q", v.CVE)
+			}
+			coveredBy := branch
+			if published, ok := renamed[pid]; ok {
+				if b, _, err := branchOf(published, branches); err == nil {
+					coveredBy = b
 				}
 			}
-			switch n {
-			case 0:
-				return errors.Errorf("unexpected undefined known_not_affected product %q of %q", pid, v.CVE)
-			case 1:
-				parent, i, err := findProductBranch(&doc.ProductTree.Branches, branch)
-				if err != nil {
-					return errors.Wrapf(err, "find branch of %q", pid)
-				}
-				(*parent)[i].Branches = append((*parent)[i].Branches, csafTypes.Branch{
-					Category: "product_version",
-					Name:     fmt.Sprintf("%s/%s", branch, version),
-					Product:  &csafTypes.FullProductName{Name: branch, ProductID: pid},
-				})
-				defined[pid] = struct{}{}
-			default:
-				return errors.Errorf("undefined known_not_affected product %q of %q matches %d branches", pid, v.CVE, n)
+			parent, i, err := findProductBranch(&doc.ProductTree.Branches, branch)
+			if err != nil {
+				return errors.Wrapf(err, "find branch of %q", pid)
+			}
+			(*parent)[i].Branches = append((*parent)[i].Branches, csafTypes.Branch{
+				Category: "product_version",
+				Name:     fmt.Sprintf("%s/%s", branch, version),
+				Product:  &csafTypes.FullProductName{Name: branch, ProductID: pid},
+			})
+			cov[coveredBy] = append(cov[coveredBy], pid)
+			defined[pid] = struct{}{}
+		}
+	}
+	return nil
+}
+
+// resolveReferences rewrites the product references of doc to product_ids,
+// the way CSAF has them. Fortinet scopes scores[].products and
+// remediations[].product_ids by the product branch name ("FortiWeb")
+// instead: a branch carries no product, so the name is not a product_id at
+// all, and it stands for every leaf it covers (see coverage). Every such
+// reference in the corpus (546 CSAF advisories as of 2026-09) is spelled that
+// way, no branch name equals a product_id, and no remediation or threat is
+// scoped by group_ids, nor any threat by product_ids. Every score and
+// remediation is scoped: CSAF requires scores[].products, and
+// remediations[].product_ids or group_ids.
+//
+// Anything else hard-errors — a reference that is not a branch name, a leaf
+// product_id included, an unscoped score or remediation, and a scoped threat —
+// since it would be a change of Fortinet's format, to route deliberately
+// rather than guess at.
+func resolveReferences(doc *csafTypes.CSAF, cov coverage) error {
+	for i := range doc.Vulnerabilities {
+		v := &doc.Vulnerabilities[i]
+		for j := range v.Scores {
+			if len(v.Scores[j].Products) == 0 {
+				return errors.Errorf("unexpected unscoped score of %q", v.CVE)
+			}
+			pids, err := cov.expand(v.Scores[j].Products)
+			if err != nil {
+				return errors.Wrapf(err, "scores.products of %q", v.CVE)
+			}
+			v.Scores[j].Products = pids
+		}
+		for j := range v.Remediations {
+			if len(v.Remediations[j].GroupIDs) > 0 {
+				return errors.Errorf("unexpected remediations.group_ids %q of %q", v.Remediations[j].GroupIDs, v.CVE)
+			}
+			if len(v.Remediations[j].ProductIDs) == 0 {
+				return errors.Errorf("unexpected unscoped remediation of %q", v.CVE)
+			}
+			pids, err := cov.expand(v.Remediations[j].ProductIDs)
+			if err != nil {
+				return errors.Wrapf(err, "remediations.product_ids of %q", v.CVE)
+			}
+			v.Remediations[j].ProductIDs = pids
+		}
+		for _, t := range v.Threats {
+			if len(t.ProductIDs) > 0 || len(t.GroupIDs) > 0 {
+				return errors.Errorf("unexpected scoped threat of %q (product_ids: %q, group_ids: %q)", v.CVE, t.ProductIDs, t.GroupIDs)
 			}
 		}
 	}
 	return nil
+}
+
+// expand returns the product_ids the branches a reference list names cover,
+// each once, in order. It hard-errors on a reference that is not a branch
+// name.
+func (cov coverage) expand(ids []csafTypes.ProductID) ([]csafTypes.ProductID, error) {
+	var pids []csafTypes.ProductID
+	for _, id := range ids {
+		covered, ok := cov[string(id)]
+		if !ok {
+			return nil, errors.Errorf("unexpected product reference %q. expected: a product branch name", string(id))
+		}
+		for _, pid := range covered {
+			if !slices.Contains(pids, pid) {
+				pids = append(pids, pid)
+			}
+		}
+	}
+	return pids, nil
 }
 
 // treeFixes lists the advisories whose product tree, or the product_status
