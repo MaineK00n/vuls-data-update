@@ -169,17 +169,26 @@ type productRef struct {
 // CSAF vulnerability object carries no CVE (a few older Fortinet advisories are
 // published without one). description/cwe/references/workarounds are CVE-level
 // (shared across the key). The rest is scoped to products: collection records,
-// as read from the CSAF, which profile each known_affected product gets; emit
-// groups the products by profile, into one segment / condition /
-// Vulnerability record each, and converts both to the output types. String
-// slices are deduped on emit.
+// as read from the CSAF, whether each listed product is affected and which
+// profile it gets; emit groups the products by profile, into one segment /
+// condition / Vulnerability record each, and converts both to the output
+// types. String slices are deduped on emit.
 type keyAcc struct {
 	description string
 	cwe         []string
 	references  []string
 	workarounds []string
-	profiles    map[profile]struct{} // every profile of the key, a product's or not
-	affected    map[string]profile   // known_affected product_id → its profile
+	products    map[string]productStatus // listed product_id → what the CSAF says of it
+}
+
+// productStatus is what the CSAF says of one product of a key: whether it is
+// listed known_affected or known_not_affected, and the profile it gets. A
+// known_not_affected product is emitted as a not-affected criterion beside the
+// affected ones of its profile, the way the Ubuntu and Debian extractors carry
+// theirs, so a key whose products are all not affected still has a segment.
+type productStatus struct {
+	affected bool
+	profile  profile
 }
 
 // profile is the content CSAF scopes to products, which may therefore differ
@@ -243,7 +252,7 @@ func extract(fetched csafTypes.CSAF, raws []string) (dataTypes.Data, error) {
 		}
 		a := accs[key]
 		if a == nil {
-			a = &keyAcc{profiles: make(map[profile]struct{}), affected: make(map[string]profile)}
+			a = &keyAcc{products: make(map[string]productStatus)}
 			accs[key] = a
 		}
 
@@ -262,29 +271,33 @@ func extract(fetched csafTypes.CSAF, raws []string) (dataTypes.Data, error) {
 			a.references = append(a.references, strings.Fields(r.URL)...)
 		}
 
-		// An object with no known_affected (known_not_affected only) still
-		// carries its severity on the Vulnerability record, so take every score
-		// and threat of the object for it, as before scoping.
-		if len(v.ProductStatus.KnownAffected) == 0 {
-			p, err := vulnProfile(v, "")
-			if err != nil {
-				return dataTypes.Data{}, errors.Wrapf(err, "profile for advisory %s, %s", id, key)
-			}
-			a.profiles[p] = struct{}{}
+		// Every object lists its products as known_affected or
+		// known_not_affected; one listing neither would carry a profile no
+		// product gets, so that hard-errors. A product_id listed twice (a few
+		// trees define a leaf twice) is one product; listed with two statuses or
+		// getting two profiles, it would contradict itself, so that hard-errors
+		// rather than picking one.
+		if len(v.ProductStatus.KnownAffected) == 0 && len(v.ProductStatus.KnownNotAffected) == 0 {
+			return dataTypes.Data{}, errors.Errorf("vulnerability object lists neither known_affected nor known_not_affected products (advisory %s, %s)", id, key)
 		}
-		// A product_id listed twice (a few trees define a leaf twice) is one
-		// product; getting two profiles would contradict itself, so that
-		// hard-errors rather than picking one.
-		for _, pid := range v.ProductStatus.KnownAffected {
-			p, err := vulnProfile(v, string(pid))
-			if err != nil {
-				return dataTypes.Data{}, errors.Wrapf(err, "profile of %q for advisory %s, %s", string(pid), id, key)
+		for _, l := range []struct {
+			pids     []csafTypes.ProductID
+			affected bool
+		}{
+			{pids: v.ProductStatus.KnownAffected, affected: true},
+			{pids: v.ProductStatus.KnownNotAffected, affected: false},
+		} {
+			for _, pid := range l.pids {
+				p, err := vulnProfile(v, string(pid))
+				if err != nil {
+					return dataTypes.Data{}, errors.Wrapf(err, "profile of %q for advisory %s, %s", string(pid), id, key)
+				}
+				ps := productStatus{affected: l.affected, profile: p}
+				if prev, ok := a.products[string(pid)]; ok && prev != ps {
+					return dataTypes.Data{}, errors.Errorf("product %q is listed twice, contradicting itself (%+v, %+v) (advisory %s, %s)", string(pid), prev, ps, id, key)
+				}
+				a.products[string(pid)] = ps
 			}
-			if prev, ok := a.affected[string(pid)]; ok && prev != p {
-				return dataTypes.Data{}, errors.Errorf("known_affected %q gets two profiles (%+v, %+v) (advisory %s, %s)", string(pid), prev, p, id, key)
-			}
-			a.affected[string(pid)] = p
-			a.profiles[p] = struct{}{}
 		}
 		for _, rem := range v.Remediations {
 			switch rem.Category {
@@ -312,17 +325,26 @@ func extract(fetched csafTypes.CSAF, raws []string) (dataTypes.Data, error) {
 		// profile itself (below), and util.Write re-sorts every output slice by a
 		// content-based total order, so the append order never reaches the
 		// output.
-		for p := range a.profiles {
+		profiles := make(map[profile]struct{})
+		for _, ps := range a.products {
+			profiles[ps.profile] = struct{}{}
+		}
+		for p := range profiles {
 			// Sorted so that, of several unresolvable products, the same one is
 			// reported every run.
 			var criterions []criterionTypes.Criterion
-			for _, pid := range slices.Sorted(maps.Keys(a.affected)) {
-				if a.affected[pid] != p {
+			for _, pid := range slices.Sorted(maps.Keys(a.products)) {
+				ps := a.products[pid]
+				if ps.profile != p {
 					continue
 				}
 				cn, err := toCriterion(pid, refMap)
 				if err != nil {
-					return dataTypes.Data{}, errors.Wrapf(err, "resolve known_affected %q (advisory %s, %s)", pid, id, key)
+					return dataTypes.Data{}, errors.Wrapf(err, "resolve product %q (advisory %s, %s)", pid, id, key)
+				}
+				if !ps.affected {
+					cn.CPE.Vulnerable = false
+					cn.CPE.FixStatus = &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassNotAffected}
 				}
 				criterions = append(criterions, cn)
 			}
@@ -340,27 +362,21 @@ func extract(fetched csafTypes.CSAF, raws []string) (dataTypes.Data, error) {
 			// suffix would move with every version range Fortinet edits into a
 			// product_id, and could collide if a family split across profiles.
 			tag := segmentTypes.DetectionTag(key)
-			if len(a.profiles) > 1 {
+			if len(profiles) > 1 {
 				tag = segmentTypes.DetectionTag(fmt.Sprintf("%s_%08x", key, p.hash()))
 			}
 			seg := segmentTypes.Segment{Ecosystem: ecosystemTypes.EcosystemTypeCPE, Tag: tag}
 
-			// Only carry the tagged segment when it has a matching detection
-			// condition. A profile with no known_affected (e.g. known_not_affected
-			// only) otherwise leaves a dangling segment tag with no condition or
-			// advisory segment, producing an internally inconsistent dataset.
-			var vsegs []segmentTypes.Segment
-			if len(criterions) > 0 {
-				segments = append(segments, seg)
-				vsegs = []segmentTypes.Segment{seg}
-				conditions = append(conditions, conditionTypes.Condition{
-					Criteria: criteriaTypes.Criteria{
-						Operator:   criteriaTypes.CriteriaOperatorTypeOR,
-						Criterions: criterions,
-					},
-					Tag: tag,
-				})
-			}
+			// Every profile comes from a listed product, so each has criterions
+			// and its segment a matching condition.
+			segments = append(segments, seg)
+			conditions = append(conditions, conditionTypes.Condition{
+				Criteria: criteriaTypes.Criteria{
+					Operator:   criteriaTypes.CriteriaOperatorTypeOR,
+					Criterions: criterions,
+				},
+				Tag: tag,
+			})
 
 			// A no-CVE key (the advisory ID) emits only the advisory segment and
 			// detection condition above — no Vulnerability record. The consumer
@@ -407,7 +423,7 @@ func extract(fetched csafTypes.CSAF, raws []string) (dataTypes.Data, error) {
 						return rs
 					}(),
 				},
-				Segments: vsegs,
+				Segments: []segmentTypes.Segment{seg},
 			})
 		}
 	}
@@ -564,7 +580,7 @@ func buildProductRefsLegacy(branches []csafTypes.Branch) (map[string]productRef,
 func toCriterion(productID string, refMap map[string]productRef) (criterionTypes.Criterion, error) {
 	ref, ok := refMap[productID]
 	if !ok {
-		return criterionTypes.Criterion{}, errors.Errorf("cannot resolve known_affected %q to a product_version in the tree", productID)
+		return criterionTypes.Criterion{}, errors.Errorf("cannot resolve %q to a product_version in the tree", productID)
 	}
 
 	cpe, rt, ok := product.Resolve(ref.productName)
@@ -736,18 +752,23 @@ func resolveVersion(productName, exp string) (*ccRangeTypes.Range, string, error
 // is not a product_id at all, and it stands for every leaf under the branch.
 // Every such reference in the corpus (546 CSAF advisories as of 2026-09) is
 // spelled that way, no branch name equals a product_id, and no remediation or
-// threat is scoped by group_ids, nor any threat by product_ids.
+// threat is scoped by group_ids, nor any threat by product_ids. Every score
+// and remediation is scoped: CSAF requires scores[].products, and
+// remediations[].product_ids or group_ids.
 //
 // Anything else hard-errors — a reference that is not a branch name, a leaf
-// product_id included, and a scoped threat — since it would be a change of
-// Fortinet's format, to route deliberately rather than guess at. The branches
-// are indexed from the tree as published; buildProductRefs' later repairs
-// work on the product_ids, which this leaves as they are.
+// product_id included, an unscoped score or remediation, and a scoped threat —
+// since it would be a change of Fortinet's format, to route deliberately
+// rather than guess at. The branches are indexed from the tree as
+// fixProductTree leaves it.
 func normalizeProductRefs(doc *csafTypes.CSAF) error {
 	branches := indexBranches(doc.ProductTree.Branches)
 	for i := range doc.Vulnerabilities {
 		v := &doc.Vulnerabilities[i]
 		for j := range v.Scores {
+			if len(v.Scores[j].Products) == 0 {
+				return errors.Errorf("unexpected unscoped score of %q", v.CVE)
+			}
 			pids, err := branches.expand(v.Scores[j].Products)
 			if err != nil {
 				return errors.Wrapf(err, "scores.products of %q", v.CVE)
@@ -757,6 +778,9 @@ func normalizeProductRefs(doc *csafTypes.CSAF) error {
 		for j := range v.Remediations {
 			if len(v.Remediations[j].GroupIDs) > 0 {
 				return errors.Errorf("unexpected remediations.group_ids %q of %q", v.Remediations[j].GroupIDs, v.CVE)
+			}
+			if len(v.Remediations[j].ProductIDs) == 0 {
+				return errors.Errorf("unexpected unscoped remediation of %q", v.CVE)
 			}
 			pids, err := branches.expand(v.Remediations[j].ProductIDs)
 			if err != nil {
@@ -824,10 +848,9 @@ func (pb productBranches) expand(ids []csafTypes.ProductID) ([]csafTypes.Product
 // vulnProfile returns the profile of one CSAF vulnerability object for the
 // product_id pid: the CVSS v3.1 vector of the score whose .products lists pid,
 // and the vendor impact whose .product_ids lists pid or which has none (and so
-// covers the whole object); an empty pid takes every score and impact of the
-// object. Fortinet emits exactly one cvss vector and one impact per product;
-// anything else (zero or multiple distinct) is a hard error (see below), not
-// silently handled.
+// covers the whole object). Fortinet emits exactly one cvss vector and one
+// impact per product; anything else (zero or multiple distinct) is a hard
+// error (see below), not silently handled.
 func vulnProfile(v csafTypes.Vulnerability, pid string) (profile, error) {
 	// Fortinet emits exactly one cvss vector and one impact per vulnerability
 	// object (verified across the corpus), so each product gets one of each.
@@ -838,7 +861,7 @@ func vulnProfile(v csafTypes.Vulnerability, pid string) (profile, error) {
 	// the grouping.
 	var vector string
 	for _, sc := range v.Scores {
-		if sc.CvssV3 == nil || sc.CvssV3.VectorString == "" || (pid != "" && !slices.Contains(sc.Products, csafTypes.ProductID(pid))) {
+		if sc.CvssV3 == nil || sc.CvssV3.VectorString == "" || !slices.Contains(sc.Products, csafTypes.ProductID(pid)) {
 			continue
 		}
 		if vector != "" && vector != sc.CvssV3.VectorString {
@@ -859,7 +882,7 @@ func vulnProfile(v csafTypes.Vulnerability, pid string) (profile, error) {
 
 	var impact string
 	for _, t := range v.Threats {
-		if t.Category != "impact" || t.Details == "" || (pid != "" && len(t.ProductIDs) > 0 && !slices.Contains(t.ProductIDs, csafTypes.ProductID(pid))) {
+		if t.Category != "impact" || t.Details == "" || (len(t.ProductIDs) > 0 && !slices.Contains(t.ProductIDs, csafTypes.ProductID(pid))) {
 			continue
 		}
 		if impact != "" && impact != t.Details {
