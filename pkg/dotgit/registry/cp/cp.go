@@ -52,8 +52,12 @@ func Copy(from, to, token string, opts ...Option) error {
 	if err != nil {
 		return errors.Wrapf(err, "create client for %s", to)
 	}
-	if tr.Reference.Reference == "" {
-		return errors.Errorf("unexpected repository format. expected: %q, actual: %q", []string{"<repository>:<tag>"}, to)
+	// Copy resolves the source, so a digest names it perfectly well, but the
+	// destination reference is what the manifest is PUT under. Only a tag will
+	// do: under a digest the version is born with no tag, which is what a
+	// cleanup deletes.
+	if err := tr.Reference.ValidateReferenceAsTag(); err != nil {
+		return errors.Wrapf(err, "unexpected repository format. expected: %q, actual: %q", []string{"<repository>:<tag>"}, to)
 	}
 
 	tr.Client = &auth.Client{

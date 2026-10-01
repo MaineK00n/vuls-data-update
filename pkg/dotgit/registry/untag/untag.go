@@ -12,6 +12,7 @@ import (
 	ocispec "github.com/opencontainers/image-spec/specs-go/v1"
 	"github.com/pkg/errors"
 	"oras.land/oras-go/v2"
+	"oras.land/oras-go/v2/content/memory"
 	"oras.land/oras-go/v2/registry/remote"
 	"oras.land/oras-go/v2/registry/remote/auth"
 	"oras.land/oras-go/v2/registry/remote/retry"
@@ -139,15 +140,26 @@ func (o options) moveTagToDummy(ctx context.Context, owner, pack, tag, token str
 	}
 	defer r.Close()
 	slog.Info("Original digest", slog.String("digest", original.Digest.String()))
-	slog.Info("If you made a mistake, run the following command", slog.String("cmd", fmt.Sprintf("vuls-data-update dotgit remote tag ghcr.io/%s/%s@%s %s --token $(gh auth token)", owner, pack, original.Digest.String(), tag)))
+	slog.Info("If you made a mistake, run the following command", slog.String("cmd", fmt.Sprintf("vuls-data-update dotgit registry tag ghcr.io/%s/%s@%s %s --token $(gh auth token)", owner, pack, original.Digest.String(), tag)))
 
-	dummyDesc, err := oras.PackManifest(ctx, dst, oras.PackManifestVersion1_1, "application/vnd.vulsio.vuls-data-db.dotgit.dummy.artifact.v1", oras.PackManifestOptions{})
+	// Pack the dummy locally and copy it, so that oras.Copy PUTs the manifest
+	// under the tag. Packing straight into the repository PUTs it under its
+	// digest first, and until the tag PUT lands the dummy is an untagged
+	// version that a concurrent cleanup is free to delete before deleteDummy
+	// gets to it.
+	store := memory.New()
+
+	dummyDesc, err := oras.PackManifest(ctx, store, oras.PackManifestVersion1_1, "application/vnd.vulsio.vuls-data-db.dotgit.dummy.artifact.v1", oras.PackManifestOptions{})
 	if err != nil {
 		return ocispec.Descriptor{}, errors.Wrapf(err, "pack manifest")
 	}
 
-	if err := dst.Tag(ctx, dummyDesc, tag); err != nil {
+	if err := store.Tag(ctx, dummyDesc, tag); err != nil {
 		return ocispec.Descriptor{}, errors.Wrapf(err, "tag. manifest: %s", dummyDesc.Digest.String())
+	}
+
+	if _, err := oras.Copy(ctx, store, tag, dst, tag, oras.DefaultCopyOptions); err != nil {
+		return ocispec.Descriptor{}, errors.Wrapf(err, "copy dummy. manifest: %s", dummyDesc.Digest.String())
 	}
 
 	return dummyDesc, nil

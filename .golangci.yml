@@ -9,6 +9,7 @@ linters:
         - (*archive/tar.Writer).Close
         - (*github.com/klauspost/compress/zstd.Encoder).Close
         - (*os.File).Close
+        - (*oras.land/oras-go/v2/content/file.Store).Close
         - (*archive/zip.File).Close
         - (*compress/gzip.Reader).Close
         - (*database/sql.DB).Close

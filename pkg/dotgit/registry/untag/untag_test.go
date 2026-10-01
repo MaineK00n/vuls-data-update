@@ -11,6 +11,7 @@ import (
 	"net/url"
 	"slices"
 	"strings"
+	"sync"
 	"testing"
 
 	"github.com/google/go-containerregistry/pkg/registry"
@@ -55,9 +56,20 @@ func TestUntag(t *testing.T) {
 			ms := make(map[string]manifest)
 			tag2digest := make(map[string]string)
 
+			var (
+				mu              sync.Mutex
+				manifestPutRefs []string
+			)
+
 			reg := registry.New()
 
 			h := func(w http.ResponseWriter, r *http.Request) {
+				if ref, ok := strings.CutPrefix(r.URL.Path, fmt.Sprintf("/v2/%s/%s/manifests/", owner, pack)); ok && r.Method == http.MethodPut {
+					mu.Lock()
+					manifestPutRefs = append(manifestPutRefs, ref)
+					mu.Unlock()
+				}
+
 				switch {
 				case r.URL.Path == fmt.Sprintf("/users/%s", owner):
 					switch r.Method {
@@ -180,10 +192,26 @@ func TestUntag(t *testing.T) {
 				}
 			}
 
+			mu.Lock()
+			manifestPutRefs = nil
+			mu.Unlock()
+
 			err := untag.Untag(tt.args.imageRef, tt.args.token, untag.WithGitHubAPIURL(ts.URL), untag.WithRegistryHost(strings.TrimPrefix(ts.URL, "https://")))
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Untag() error = %v, wantErr %v", err, tt.wantErr)
 				return
+			}
+
+			// The dummy takes the tag over in one PUT. Putting it under its
+			// digest first would leave it an untagged version until the tag PUT
+			// lands, which a cleanup listing the package in that window deletes
+			// before deleteDummy can.
+			_, tag, _ := strings.Cut(strings.TrimPrefix(tt.args.imageRef, "ghcr.io/"), ":")
+			mu.Lock()
+			gotManifestPuts := manifestPutRefs
+			mu.Unlock()
+			if !slices.Equal(gotManifestPuts, []string{tag}) {
+				t.Errorf("Untag() manifest PUT references = %v, want %v", gotManifestPuts, []string{tag})
 			}
 
 			rs, err := ls.List([]ls.Repository{{Type: "orgs", Registry: "ghcr.io", Owner: owner, Package: pack}}, tt.args.token, ls.WithbaseURL(ts.URL))
