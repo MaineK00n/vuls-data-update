@@ -112,6 +112,7 @@ var nameToProduct = map[string]productInfo{
 	"FortiSASE":                            {cpe: "cpe:2.3:a:fortinet:fortisase:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiSASE},
 	"FortiSDNConnector":                    {cpe: "cpe:2.3:a:fortinet:fortisdnconnector:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiSDNConnector},
 	"FortiSIEM":                            {cpe: "cpe:2.3:o:fortinet:fortisiem:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiSIEM},
+	"FortiSIEM Cloud":                      {cpe: "cpe:2.3:a:fortinet:fortisiem_cloud:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiSIEMCloud},
 	"FortiSIEMWindowsAgent":                {cpe: "cpe:2.3:a:fortinet:fortisiem_windows_agent:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiSIEMWindowsAgent},
 	"FortiSOAR Agent Communication Bridge": {cpe: "cpe:2.3:a:fortinet:fortisoar_agent_communication_bridge:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiSOARAgentCommunicationBridge},
 	"FortiSOAR PaaS":                       {cpe: "cpe:2.3:a:fortinet:fortisoar:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiSOAR},
