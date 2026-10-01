@@ -4,11 +4,6 @@
 	"products": [
 		"Windows 11 Version 24H2"
 	],
-	"superseded_by": [
-		{
-			"kb_id": "5077212"
-		}
-	],
 	"data_source": {
 		"id": "microsoft-releaseinfo",
 		"raws": [

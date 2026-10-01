@@ -4,11 +4,6 @@
 	"products": [
 		"Windows Server 2025"
 	],
-	"superseded_by": [
-		{
-			"kb_id": "5087423"
-		}
-	],
 	"data_source": {
 		"id": "microsoft-releaseinfo",
 		"raws": [

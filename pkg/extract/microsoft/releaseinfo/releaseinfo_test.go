@@ -38,6 +38,12 @@ import (
 // in both chains, which is what a baseline is: it supersedes May's hotpatch and
 // May's cumulative update, and neither of those touches the other.
 //
+// April's baseline does not supersede May's hotpatch, nor January's February's
+// on Windows 11, nor August 2024's September's on Windows Server 2022. A
+// hotpatch installs on top of its baseline rather than in place of it, so the
+// quarter's hotpatch line starts at its first hotpatch and joins the baseline
+// only at the end, where the next one replaces it.
+//
 // Server 2025 also runs an optional line through the same builds, and it is not
 // the hotpatch one. KB5091157 is .32698, between April's baseline at .32690 and
 // May's hotpatch at .32772, so a chain that took "not the second Tuesday" for
