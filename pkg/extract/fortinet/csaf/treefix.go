@@ -231,11 +231,14 @@ func (bf branchFix) apply(doc *csafTypes.CSAF, cov coverage) error {
 	cov[bf.name] = covered
 
 	for _, product := range products {
-		switch p, k, err := findProductBranch(&doc.ProductTree.Branches, product); {
+		p, k, err := findProductBranch(&doc.ProductTree.Branches, product)
+		switch {
 		case err == nil:
 			(*p)[k].Branches = append((*p)[k].Branches, moved[product]...)
-		default:
+		case errors.Is(err, errNoProductBranch):
 			*parent = append(*parent, csafTypes.Branch{Category: "product", Name: product, Branches: moved[product]})
+		default:
+			return errors.Wrap(err, "find branch to move leaves to")
 		}
 	}
 	return nil
@@ -282,10 +285,13 @@ func (sf statusFix) apply(doc *csafTypes.CSAF, renamed map[csafTypes.ProductID]c
 	return nil
 }
 
+// errNoProductBranch reports that the tree has no product branch of a name.
+var errNoProductBranch = errors.New("no product branch")
+
 // findProductBranch returns the slice holding the one product branch named
 // name, at whatever depth of bs it sits, and its index there. The slice is
 // the tree's own, so appending to it adds a sibling in the tree. It errors
-// when there is none, or more than one.
+// when there is none (errNoProductBranch), or more than one.
 func findProductBranch(bs *[]csafTypes.Branch, name string) (*[]csafTypes.Branch, int, error) {
 	var (
 		found *[]csafTypes.Branch
@@ -306,7 +312,7 @@ func findProductBranch(bs *[]csafTypes.Branch, name string) (*[]csafTypes.Branch
 	walk(bs)
 	switch n {
 	case 0:
-		return nil, 0, errors.Errorf("no product branch %q", name)
+		return nil, 0, errors.Wrapf(errNoProductBranch, "%q", name)
 	case 1:
 		return found, at, nil
 	default:
