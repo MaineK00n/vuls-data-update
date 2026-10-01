@@ -78,12 +78,16 @@ const (
 	knownNotAffected
 )
 
-func (l statusList) of(v *csafTypes.Vulnerability) *[]csafTypes.ProductID {
+// of returns the product_status list of v that l names. It errors on any
+// other value, rather than defaulting to one of the lists.
+func (l statusList) of(v *csafTypes.Vulnerability) (*[]csafTypes.ProductID, error) {
 	switch l {
 	case knownAffected:
-		return &v.ProductStatus.KnownAffected
+		return &v.ProductStatus.KnownAffected, nil
+	case knownNotAffected:
+		return &v.ProductStatus.KnownNotAffected, nil
 	default:
-		return &v.ProductStatus.KnownNotAffected
+		return nil, errors.Errorf("unexpected product_status list. expected: %q, actual: %d", []string{"known_affected", "known_not_affected"}, l)
 	}
 }
 
@@ -96,7 +100,10 @@ func (f treeFix) apply(doc *csafTypes.CSAF) error {
 	for _, sf := range f.statuses {
 		n := 0
 		for i := range doc.Vulnerabilities {
-			l := sf.list.of(&doc.Vulnerabilities[i])
+			l, err := sf.list.of(&doc.Vulnerabilities[i])
+			if err != nil {
+				return errors.Wrap(err, "select product_status list")
+			}
 			if slices.Equal(*l, sf.from) {
 				*l = slices.Clone(sf.to)
 				n++
