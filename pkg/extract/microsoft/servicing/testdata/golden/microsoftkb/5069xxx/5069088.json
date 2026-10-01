@@ -1,0 +1,13 @@
+{
+	"kb_id": "5069088",
+	"url": "https://support.microsoft.com/en-us/servicing/os/hotpatch/windows-11/2025/october-14-2025-baseline",
+	"products": [
+		"os/hotpatch/windows-11"
+	],
+	"data_source": {
+		"id": "microsoft-servicing",
+		"raws": [
+			"os/hotpatch/windows-11/2025/october-14-2025-baseline.json"
+		]
+	}
+}

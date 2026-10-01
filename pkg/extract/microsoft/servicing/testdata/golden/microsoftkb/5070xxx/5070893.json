@@ -1,0 +1,13 @@
+{
+	"kb_id": "5070893",
+	"url": "https://support.microsoft.com/en-us/servicing/os/hotpatch/windows-server-2025/2025/october-24-2025-kb5070893-os-build-26100-6905-security-update-for-windows-server-update-services",
+	"products": [
+		"os/hotpatch/windows-server-2025"
+	],
+	"data_source": {
+		"id": "microsoft-servicing",
+		"raws": [
+			"os/hotpatch/windows-server-2025/2025/october-24-2025-kb5070893-os-build-26100-6905-security-update-for-windows-server-update-services.json"
+		]
+	}
+}

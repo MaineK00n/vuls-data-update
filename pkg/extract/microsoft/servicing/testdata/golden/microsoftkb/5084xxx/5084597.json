@@ -1,0 +1,18 @@
+{
+	"kb_id": "5084597",
+	"url": "https://support.microsoft.com/en-us/servicing/os/hotpatch/windows-11/2026/march-13-2026-hotpatch-kb5084597-os-builds-26200-7982-and-26100-7982-out-of-band",
+	"products": [
+		"os/hotpatch/windows-11"
+	],
+	"supersedes": [
+		{
+			"kb_id": "5077212"
+		}
+	],
+	"data_source": {
+		"id": "microsoft-servicing",
+		"raws": [
+			"os/hotpatch/windows-11/2026/march-13-2026-hotpatch-kb5084597-os-builds-26200-7982-and-26100-7982-out-of-band.json"
+		]
+	}
+}

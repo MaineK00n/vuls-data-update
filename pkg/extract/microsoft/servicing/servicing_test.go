@@ -51,6 +51,20 @@ import (
 // they are read correctly and chain to nothing -- the failure no other warning
 // can see, and the reason there is one that can.
 //
+// os/hotpatch/windows-11 carries build numbers and is not ordered by them. A
+// hotpatch supersedes the hotpatches before it back to the last baseline and no
+// further, so December's supersedes November's and February's supersedes
+// nothing -- the January baseline between them is what restarts the series, and
+// it names no KB, which is why a baseline is read whether or not it does. The
+// March out-of-band sits beside March's monthly hotpatch, superseding February's
+// as it does, and the out-of-band ones of November and January are superseded
+// by nothing. The directory is the year alone, and the series has to lose it
+// for December and February to be in one series at all.
+//
+// os/hotpatch/windows-server-2025 holds a Security Update for Windows Server
+// Update Services filed among the hotpatches. It is neither a hotpatch nor a
+// baseline, and is recorded and left unchained.
+//
 // Two articles name no KB. A series listing carries its hub page and its end of
 // servicing statement alongside the updates, and neither is one.
 func TestExtract(t *testing.T) {
