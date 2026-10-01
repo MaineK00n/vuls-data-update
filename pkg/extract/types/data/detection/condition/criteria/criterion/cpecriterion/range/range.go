@@ -155,9 +155,14 @@ const (
 
 // RangeTypes returns every RangeType this build knows, in declaration order.
 // Consumers (vuls2, vuls0) diff this list against a newer vuls-data-update in
-// CI to detect enum additions that require a dependency bump. The known set
-// must be append-only: removing or renaming a value would leave already
-// extracted data undetectable by builds that follow the removal.
+// CI to detect enum additions that require a dependency bump. Values are never
+// removed or renamed: either would leave already extracted data undetectable
+// by builds that follow. Where a new value is declared is free — slot it into
+// its vendor block alphabetically. The declaration order only fixes the
+// output order of the build that writes the data (Sort via Compare); nothing
+// ranks values across builds (vuls2's db add stores data as written, and its
+// diff db re-sorts both sides with one binary), so a value's rank need not
+// agree between a build that knows it and one that does not.
 func RangeTypes() []RangeType {
 	return []RangeType{
 		RangeTypeVersion,
