@@ -82,6 +82,111 @@
 							{
 								"type": "cpe",
 								"cpe": {
+									"vulnerable": false,
+									"fix_status": {
+										"class": "not-affected"
+									},
+									"cpe": "cpe:2.3:o:fortinet:fortios:6.2.11:*:*:*:*:*:*:*"
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": false,
+									"fix_status": {
+										"class": "not-affected"
+									},
+									"cpe": "cpe:2.3:o:fortinet:fortios:6.4.10:*:*:*:*:*:*:*"
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": false,
+									"fix_status": {
+										"class": "not-affected"
+									},
+									"cpe": "cpe:2.3:o:fortinet:fortios:7.0.6:*:*:*:*:*:*:*"
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": false,
+									"fix_status": {
+										"class": "not-affected"
+									},
+									"cpe": "cpe:2.3:o:fortinet:fortios:7.2.1:*:*:*:*:*:*:*"
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": false,
+									"fix_status": {
+										"class": "not-affected"
+									},
+									"cpe": "cpe:2.3:o:fortinet:fortiproxy:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet-fortiproxy",
+										"ge": "1.0",
+										"lt": "1.1"
+									}
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": false,
+									"fix_status": {
+										"class": "not-affected"
+									},
+									"cpe": "cpe:2.3:o:fortinet:fortiproxy:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet-fortiproxy",
+										"ge": "1.1",
+										"lt": "1.2"
+									}
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": false,
+									"fix_status": {
+										"class": "not-affected"
+									},
+									"cpe": "cpe:2.3:o:fortinet:fortiproxy:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet-fortiproxy",
+										"ge": "7.2",
+										"lt": "7.3"
+									}
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": false,
+									"fix_status": {
+										"class": "not-affected"
+									},
+									"cpe": "cpe:2.3:o:fortinet:fortiproxy:2.0.10:*:*:*:*:*:*:*"
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": false,
+									"fix_status": {
+										"class": "not-affected"
+									},
+									"cpe": "cpe:2.3:o:fortinet:fortiproxy:7.0.5:*:*:*:*:*:*:*"
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
 									"vulnerable": true,
 									"fix_status": {
 										"class": "unknown"
