@@ -43,6 +43,21 @@ func TestExtract(t *testing.T) {
 			hasError: true,
 		},
 		{
+			name:     "product branch with no score",
+			args:     "./testdata/fixtures-no-score",
+			hasError: true,
+		},
+		{
+			name:     "product branch with two distinct scores",
+			args:     "./testdata/fixtures-distinct-scores",
+			hasError: true,
+		},
+		{
+			name:     "product getting two profiles",
+			args:     "./testdata/fixtures-conflicting-profiles",
+			hasError: true,
+		},
+		{
 			name:     "score naming a product the tree does not have",
 			args:     "./testdata/fixtures-unknown-product",
 			hasError: true,

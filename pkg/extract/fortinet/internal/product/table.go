@@ -138,6 +138,7 @@ var nameToProduct = map[string]productInfo{
 	"FortiSASE":                            {cpes: []string{"cpe:2.3:a:fortinet:fortisase:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiSASE},
 	"FortiSDNConnector":                    {cpes: []string{"cpe:2.3:a:fortinet:fortisdnconnector:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiSDNConnector},
 	"FortiSIEM":                            {cpes: []string{"cpe:2.3:a:fortinet:fortisiem:*:*:*:*:*:*:*:*", "cpe:2.3:o:fortinet:fortisiem:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiSIEM},
+	"FortiSIEM Cloud":                      {cpes: []string{"cpe:2.3:a:fortinet:fortisiemcloud:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiSIEMCloud},
 	"FortiSIEMWindowsAgent":                {cpes: []string{"cpe:2.3:a:fortinet:fortisiemwindowsagent:*:*:*:*:*:*:*:*", "cpe:2.3:a:fortinet:fortisiem_windows_agent:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiSIEMWindowsAgent},
 	"FortiSOAR":                            {cpes: []string{"cpe:2.3:a:fortinet:fortisoar:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiSOAR},
 	"FortiSOAR Agent Communication Bridge": {cpes: []string{"cpe:2.3:a:fortinet:fortisoaragentcommunicationbridge:*:*:*:*:*:*:*:*", "cpe:2.3:a:fortinet:fortisoar_agent_communication_bridge:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiSOARAgentCommunicationBridge},

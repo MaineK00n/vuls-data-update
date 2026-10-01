@@ -126,6 +126,7 @@ const (
 	RangeTypeFortinetFortiSASE                                   RangeType = "fortinet-fortisase"
 	RangeTypeFortinetFortiSDNConnector                           RangeType = "fortinet-fortisdnconnector"
 	RangeTypeFortinetFortiSIEM                                   RangeType = "fortinet-fortisiem"
+	RangeTypeFortinetFortiSIEMCloud                              RangeType = "fortinet-fortisiem_cloud"
 	RangeTypeFortinetFortiSIEMWindowsAgent                       RangeType = "fortinet-fortisiem_windows_agent"
 	RangeTypeFortinetFortiSOAR                                   RangeType = "fortinet-fortisoar"
 	RangeTypeFortinetFortiSOARAgentCommunicationBridge           RangeType = "fortinet-fortisoar_agent_communication_bridge"
@@ -224,6 +225,7 @@ func RangeTypes() []RangeType {
 		RangeTypeFortinetFortiSASE,
 		RangeTypeFortinetFortiSDNConnector,
 		RangeTypeFortinetFortiSIEM,
+		RangeTypeFortinetFortiSIEMCloud,
 		RangeTypeFortinetFortiSIEMWindowsAgent,
 		RangeTypeFortinetFortiSOAR,
 		RangeTypeFortinetFortiSOARAgentCommunicationBridge,
@@ -511,6 +513,7 @@ func (t RangeType) CompareVersions(v1, v2 string) (int, error) {
 		RangeTypeFortinetFortiSandboxPaaS,
 		RangeTypeFortinetFortiSDNConnector,
 		RangeTypeFortinetFortiSIEM,
+		RangeTypeFortinetFortiSIEMCloud,
 		RangeTypeFortinetFortiSIEMWindowsAgent,
 		RangeTypeFortinetFortiSOAR,
 		RangeTypeFortinetFortiSOARAgentCommunicationBridge,

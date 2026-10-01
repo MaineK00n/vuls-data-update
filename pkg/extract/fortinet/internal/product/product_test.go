@@ -165,6 +165,9 @@ func TestResolve(t *testing.T) {
 		{name: "FortiSOAR PaaS", wantCPEs: []string{"cpe:2.3:a:fortinet:fortisoarpaas:*:*:*:*:*:*:*:*", "cpe:2.3:a:fortinet:fortisoar:*:*:*:*:*:*:*:*"}, wantRange: ccRangeTypes.RangeTypeFortinetFortiSOAR, wantOK: true},
 		// The agent takes NVD's product for it, not FortiAuthenticator's.
 		{name: "FortiAuthenticator OutlookAgent", wantCPEs: []string{"cpe:2.3:a:fortinet:fortiauthenticatoroutlookagent:*:*:*:*:*:*:*:*", "cpe:2.3:a:fortinet:fortiauthenticator_agent_for_microsoft_outlook_web_access:*:*:*:*:*:*:*:*"}, wantRange: ccRangeTypes.RangeTypeFortinetFortiAuthenticator, wantOK: true},
+		// No Fortinet CVE record gives FortiSIEM Cloud a CPE yet, nor does NVD:
+		// the CNA's naming rule, and "a" for a service.
+		{name: "FortiSIEM Cloud", wantCPEs: []string{"cpe:2.3:a:fortinet:fortisiemcloud:*:*:*:*:*:*:*:*"}, wantRange: ccRangeTypes.RangeTypeFortinetFortiSIEMCloud, wantOK: true},
 		{name: "Nonexistent Product", wantOK: false},
 	}
 	for _, tt := range tests {
