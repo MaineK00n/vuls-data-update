@@ -1,0 +1,476 @@
+{
+	"document": {
+		"acknowledgments": [
+			{
+				"summary": "Internally discovered and reported by Gwendal Guégniaud of Fortinet Product Security Team."
+			}
+		],
+		"category": "Fortinet PSIRT Advisories",
+		"csaf_version": "2.0",
+		"publisher": {
+			"category": "vendor",
+			"contact_details": "https://fortiguard.fortinet.com/faq/psirt-contact",
+			"issuing_authority": "Fortinet PSIRT",
+			"name": "Fortinet PSIRT",
+			"namespace": "https://fortiguard.fortinet.com/psirt"
+		},
+		"title": "Multiple privilege escalation",
+		"tracking": {
+			"current_release_date": "2025-01-14T00:00:00",
+			"id": "FG-IR-24-127",
+			"initial_release_date": "2025-01-14T00:00:00",
+			"revision_history": [
+				{
+					"date": "2025-01-14T00:00:00",
+					"number": "1",
+					"summary": "Initial Publication"
+				}
+			],
+			"status": "final",
+			"version": "0"
+		}
+	},
+	"product_tree": {
+		"branches": [
+			{
+				"branches": [
+					{
+						"branches": [
+							{
+								"category": "product_version_range",
+								"name": "FortiAnalyzer/ 7.6 all versions",
+								"product": {
+									"name": "FortiAnalyzer",
+									"product_id": "FortiAnalyzer/ 7.6 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiAnalyzer/>=7.4.0|<=7.4.3",
+								"product": {
+									"name": "FortiAnalyzer",
+									"product_id": "FortiAnalyzer >=7.4.0|<=7.4.3"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiAnalyzer/>=7.2.0|<=7.2.5",
+								"product": {
+									"name": "FortiAnalyzer",
+									"product_id": "FortiAnalyzer >=7.2.0|<=7.2.5"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiAnalyzer/7.0 all versions",
+								"product": {
+									"name": "FortiAnalyzer",
+									"product_id": "FortiAnalyzer 7.0 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiAnalyzer/6.4 all versions",
+								"product": {
+									"name": "FortiAnalyzer",
+									"product_id": "FortiAnalyzer 6.4 all versions"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiAnalyzer"
+					},
+					{
+						"branches": [
+							{
+								"category": "product_version_range",
+								"name": "FortiAnalyzer Cloud/>=7.4.1|<=7.4.2",
+								"product": {
+									"name": "FortiAnalyzer Cloud",
+									"product_id": "FortiAnalyzer Cloud >=7.4.1|<=7.4.2"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiAnalyzer Cloud/>=7.2.1|<=7.2.6",
+								"product": {
+									"name": "FortiAnalyzer Cloud",
+									"product_id": "FortiAnalyzer Cloud >=7.2.1|<=7.2.6"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiAnalyzer Cloud/7.0 all versions",
+								"product": {
+									"name": "FortiAnalyzer Cloud",
+									"product_id": "FortiAnalyzer Cloud 7.0 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiAnalyzer Cloud/6.4 all versions",
+								"product": {
+									"name": "FortiAnalyzer Cloud",
+									"product_id": "FortiAnalyzer Cloud 6.4 all versions"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiAnalyzer Cloud"
+					},
+					{
+						"branches": [
+							{
+								"category": "product_version_range",
+								"name": "FortiManager/>=7.4.1|<=7.4.3",
+								"product": {
+									"name": "FortiManager",
+									"product_id": "FortiManager >=7.4.1|<=7.4.3"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiManager/>=7.2.1|<=7.2.5",
+								"product": {
+									"name": "FortiManager",
+									"product_id": "FortiManager >=7.2.1|<=7.2.5"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiManager/7.0 all versions",
+								"product": {
+									"name": "FortiManager",
+									"product_id": "FortiManager 7.0 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiManager/ 7.6 all versions",
+								"product": {
+									"name": "FortiManager",
+									"product_id": "FortiManager/ 7.6 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiManager/>=7.4.0|<=7.4.3",
+								"product": {
+									"name": "FortiManager",
+									"product_id": "FortiManager >=7.4.0|<=7.4.3"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiManager/>=7.2.0|<=7.2.5",
+								"product": {
+									"name": "FortiManager",
+									"product_id": "FortiManager >=7.2.0|<=7.2.5"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiManager/7.0 all versions",
+								"product": {
+									"name": "FortiManager",
+									"product_id": "FortiManager 7.0 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiManager/6.4 all versions",
+								"product": {
+									"name": "FortiManager",
+									"product_id": "FortiManager 6.4 all versions"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiManager"
+					}
+				],
+				"category": "vendor",
+				"name": "Fortinet PSIRT"
+			}
+		]
+	},
+	"vulnerabilities": [
+		{
+			"cve": "CVE-2024-45331",
+			"cwe": {
+				"id": "CWE-266",
+				"name": "Incorrect Privilege Assignment"
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "Improper Privilege Management in FortiManager and FortiAnalyzer filesystem\n\n",
+					"title": "Summary"
+				},
+				{
+					"category": "general",
+					"text": "N/A",
+					"title": "Workarounds"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiAnalyzer >=7.4.0|<=7.4.3",
+					"FortiAnalyzer >=7.2.0|<=7.2.5",
+					"FortiAnalyzer 7.0 all versions",
+					"FortiAnalyzer 6.4 all versions"
+				],
+				"known_not_affected": [
+					"FortiAnalyzer/ 7.6 all versions",
+					"FortiAnalyzer-7.4.4",
+					"FortiAnalyzer-7.2.6"
+				]
+			},
+			"references": [
+				{
+					"summary": "An improper privilege management vulnerability [CWE 269] in FortiManager and FortiAnalyzer may allow a local attacker to escalate their privileges by abusing incorrect filesystem permissions",
+					"url": "https://fortiguard.fortinet.com/psirt/FG-IR-24-127"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiAnalyzer 7.6: Not Applicable\nFortiAnalyzer 7.4: Upgrade to 7.4.4 or above\nFortiAnalyzer 7.2: Upgrade to 7.2.6 or above\nFortiAnalyzer 7.0: Migrate to a fixed release\nFortiAnalyzer 6.4: Migrate to a fixed release",
+					"product_ids": [
+						"FortiAnalyzer"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 6.9,
+						"baseSeverity": "MEDIUM",
+						"vectorString": "CVSS:3.1/AV:L/AC:L/PR:L/UI:R/S:U/C:H/I:H/A:H/E:P/RL:O/RC:C",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiAnalyzer"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Escalation of privilege"
+				}
+			],
+			"title": "FortiAnalyzer - MEDIUM - FG-IR-24-127"
+		},
+		{
+			"cve": "CVE-2024-45331",
+			"cwe": {
+				"id": "CWE-266",
+				"name": "Incorrect Privilege Assignment"
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "Improper Privilege Management in FortiManager and FortiAnalyzer filesystem\n\n",
+					"title": "Summary"
+				},
+				{
+					"category": "general",
+					"text": "N/A",
+					"title": "Workarounds"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiAnalyzer Cloud >=7.4.1|<=7.4.2",
+					"FortiAnalyzer Cloud >=7.2.1|<=7.2.6",
+					"FortiAnalyzer Cloud 7.0 all versions",
+					"FortiAnalyzer Cloud 6.4 all versions"
+				],
+				"known_not_affected": [
+					"FortiAnalyzer Cloud-7.4.3",
+					"FortiAnalyzer Cloud-7.2.7"
+				]
+			},
+			"references": [
+				{
+					"summary": "An improper privilege management vulnerability [CWE 269] in FortiManager and FortiAnalyzer may allow a local attacker to escalate their privileges by abusing incorrect filesystem permissions",
+					"url": "https://fortiguard.fortinet.com/psirt/FG-IR-24-127"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiAnalyzer Cloud 7.4: Upgrade to 7.4.3 or above\nFortiAnalyzer Cloud 7.2: Upgrade to 7.2.7 or above\nFortiAnalyzer Cloud 7.0: Migrate to a fixed release\nFortiAnalyzer Cloud 6.4: Migrate to a fixed release",
+					"product_ids": [
+						"FortiAnalyzer Cloud"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 6.9,
+						"baseSeverity": "MEDIUM",
+						"vectorString": "CVSS:3.1/AV:L/AC:L/PR:L/UI:R/S:U/C:H/I:H/A:H/E:P/RL:O/RC:C",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiAnalyzer Cloud"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Escalation of privilege"
+				}
+			],
+			"title": "FortiAnalyzer Cloud - MEDIUM - FG-IR-24-127"
+		},
+		{
+			"cve": "CVE-2024-33503",
+			"cwe": {
+				"id": "CWE-266",
+				"name": "Incorrect Privilege Assignment"
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "Improper Privilege Management in FortiManager and FortiAnalyzer filesystem\n\n",
+					"title": "Summary"
+				},
+				{
+					"category": "general",
+					"text": "N/A",
+					"title": "Workarounds"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiManager >=7.4.1|<=7.4.3",
+					"FortiManager >=7.2.1|<=7.2.5",
+					"FortiManager 7.0 all versions",
+					"FortiManager >=7.4.0|<=7.4.3",
+					"FortiManager >=7.2.0|<=7.2.5",
+					"FortiManager 7.0 all versions",
+					"FortiManager 6.4 all versions"
+				],
+				"known_not_affected": [
+					"FortiManager-7.4.4",
+					"FortiManager-7.2.7",
+					"FortiManager/ 7.6 all versions",
+					"FortiManager-7.4.4",
+					"FortiManager-7.2.6"
+				]
+			},
+			"references": [
+				{
+					"summary": "An improper privilege management vulnerability [CWE 269] in FortiManager and FortiAnalyzer may allow a local attacker to escalate their privileges by abusing incorrect filesystem permissions",
+					"url": "https://fortiguard.fortinet.com/psirt/FG-IR-24-127"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiManager Cloud 7.4: Upgrade to 7.4.4 or above\nFortiManager Cloud 7.2: Upgrade to 7.2.7 or above\nFortiManager Cloud 7.0: Migrate to a fixed release\nFortiManager 7.6: Not Applicable\nFortiManager 7.4: Upgrade to 7.4.4 or above\nFortiManager 7.2: Upgrade to 7.2.6 or above\nFortiManager 7.0: Migrate to a fixed release\nFortiManager 6.4: Migrate to a fixed release",
+					"product_ids": [
+						"FortiManager"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 6.7,
+						"baseSeverity": "MEDIUM",
+						"vectorString": "CVSS:3.1/AV:L/AC:L/PR:H/UI:N/S:U/C:H/I:H/A:H/E:H/RL:O/RC:C",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiManager"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Escalation of privilege"
+				}
+			],
+			"title": "FortiManager - MEDIUM - FG-IR-24-127"
+		},
+		{
+			"cve": "CVE-2024-45331",
+			"cwe": {
+				"id": "CWE-266",
+				"name": "Incorrect Privilege Assignment"
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "Improper Privilege Management in FortiManager and FortiAnalyzer filesystem\n\n",
+					"title": "Summary"
+				},
+				{
+					"category": "general",
+					"text": "N/A",
+					"title": "Workarounds"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiManager >=7.4.1|<=7.4.3",
+					"FortiManager >=7.2.1|<=7.2.5",
+					"FortiManager 7.0 all versions",
+					"FortiManager >=7.4.0|<=7.4.3",
+					"FortiManager >=7.2.0|<=7.2.5",
+					"FortiManager 7.0 all versions",
+					"FortiManager 6.4 all versions"
+				],
+				"known_not_affected": [
+					"FortiManager-7.4.4",
+					"FortiManager-7.2.7",
+					"FortiManager/ 7.6 all versions",
+					"FortiManager-7.4.4",
+					"FortiManager-7.2.6"
+				]
+			},
+			"references": [
+				{
+					"summary": "An improper privilege management vulnerability [CWE 269] in FortiManager and FortiAnalyzer may allow a local attacker to escalate their privileges by abusing incorrect filesystem permissions",
+					"url": "https://fortiguard.fortinet.com/psirt/FG-IR-24-127"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiManager Cloud 7.4: Upgrade to 7.4.4 or above\nFortiManager Cloud 7.2: Upgrade to 7.2.7 or above\nFortiManager Cloud 7.0: Migrate to a fixed release\nFortiManager 7.6: Not Applicable\nFortiManager 7.4: Upgrade to 7.4.4 or above\nFortiManager 7.2: Upgrade to 7.2.6 or above\nFortiManager 7.0: Migrate to a fixed release\nFortiManager 6.4: Migrate to a fixed release",
+					"product_ids": [
+						"FortiManager"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 6.9,
+						"baseSeverity": "MEDIUM",
+						"vectorString": "CVSS:3.1/AV:L/AC:L/PR:L/UI:R/S:U/C:H/I:H/A:H/E:P/RL:O/RC:C",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiManager"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Escalation of privilege"
+				}
+			],
+			"title": "FortiManager - MEDIUM - FG-IR-24-127"
+		}
+	]
+}

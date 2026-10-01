@@ -19,12 +19,13 @@ func TestTreeFixRepair(t *testing.T) {
 	}
 
 	tests := []struct {
-		name       string
-		doc        string
-		fix        treeFix
-		wantLeaves []leafOf
-		wantScores [][]csafTypes.ProductID
-		wantErr    bool
+		name             string
+		doc              string
+		fix              treeFix
+		wantLeaves       []leafOf
+		wantScores       [][]csafTypes.ProductID
+		wantRemediations [][]csafTypes.ProductID
+		wantErr          bool
 	}{
 		{
 			// A Cloud leaf filed under FortiManager while the tree already has a
@@ -50,11 +51,13 @@ func TestTreeFixRepair(t *testing.T) {
 							"known_affected": ["FortiManager >=7.4.1|<=7.4.2", "FortiManager >=7.4.0|<=7.4.3"],
 							"known_not_affected": ["FortiManager-7.4.3", "FortiManager-7.4.4"]
 						},
-						"scores": [{"products": ["FortiManager"]}]
+						"scores": [{"products": ["FortiManager"]}],
+						"remediations": [{"category": "vendor_fix", "product_ids": ["FortiManager"]}]
 					},
 					{
 						"product_status": {"known_affected": ["FortiManager Cloud >=7.2.1|<=7.2.3"]},
-						"scores": [{"products": ["FortiManager Cloud"]}]
+						"scores": [{"products": ["FortiManager Cloud"]}],
+						"remediations": [{"category": "vendor_fix", "product_ids": ["FortiManager Cloud"]}]
 					}
 				]
 			}`,
@@ -88,6 +91,10 @@ func TestTreeFixRepair(t *testing.T) {
 				{"FortiManager Cloud >=7.4.1|<=7.4.2", "FortiManager >=7.4.0|<=7.4.3", "FortiManager Cloud-7.4.3", "FortiManager-7.4.4"},
 				{"FortiManager Cloud >=7.2.1|<=7.2.3"},
 			},
+			wantRemediations: [][]csafTypes.ProductID{
+				{"FortiManager Cloud >=7.4.1|<=7.4.2", "FortiManager >=7.4.0|<=7.4.3", "FortiManager Cloud-7.4.3", "FortiManager-7.4.4"},
+				{"FortiManager Cloud >=7.2.1|<=7.2.3"},
+			},
 		},
 		{
 			// Two branchFixes of one advisory move leaves into the same new
@@ -107,11 +114,13 @@ func TestTreeFixRepair(t *testing.T) {
 				"vulnerabilities": [
 					{
 						"product_status": {"known_affected": ["FortiAnalyzer cloud 7.4 all versions", "FortiAnalyzer 7.4 all versions"]},
-						"scores": [{"products": ["FortiAnalyzer"]}]
+						"scores": [{"products": ["FortiAnalyzer"]}],
+						"remediations": [{"category": "vendor_fix", "product_ids": ["FortiAnalyzer"]}]
 					},
 					{
 						"product_status": {"known_affected": ["FortiAnalyzer-BigData cloud 7.2 all versions"]},
-						"scores": [{"products": ["FortiAnalyzer-BigData"]}]
+						"scores": [{"products": ["FortiAnalyzer-BigData"]}],
+						"remediations": [{"category": "vendor_fix", "product_ids": ["FortiAnalyzer-BigData"]}]
 					}
 				]
 			}`,
@@ -147,6 +156,10 @@ func TestTreeFixRepair(t *testing.T) {
 				{branch: "FortiAnalyzer Cloud", pid: "FortiAnalyzer Cloud 7.2 all versions"},
 			},
 			wantScores: [][]csafTypes.ProductID{
+				{"FortiAnalyzer Cloud 7.4 all versions", "FortiAnalyzer 7.4 all versions"},
+				{"FortiAnalyzer Cloud 7.2 all versions"},
+			},
+			wantRemediations: [][]csafTypes.ProductID{
 				{"FortiAnalyzer Cloud 7.4 all versions", "FortiAnalyzer 7.4 all versions"},
 				{"FortiAnalyzer Cloud 7.2 all versions"},
 			},
@@ -192,6 +205,16 @@ func TestTreeFixRepair(t *testing.T) {
 			}
 			if diff := cmp.Diff(tt.wantScores, gotScores); diff != "" {
 				t.Errorf("scores (-expected +got):\n%s", diff)
+			}
+
+			var gotRemediations [][]csafTypes.ProductID
+			for _, v := range doc.Vulnerabilities {
+				for _, r := range v.Remediations {
+					gotRemediations = append(gotRemediations, r.ProductIDs)
+				}
+			}
+			if diff := cmp.Diff(tt.wantRemediations, gotRemediations); diff != "" {
+				t.Errorf("remediations (-expected +got):\n%s", diff)
 			}
 		})
 	}

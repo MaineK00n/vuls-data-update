@@ -1,0 +1,125 @@
+{
+	"id": "FG-IR-24-222",
+	"advisories": [
+		{
+			"content": {
+				"id": "FG-IR-24-222",
+				"title": "Command injection in csfd daemon",
+				"references": [
+					{
+						"source": "fortiguard.fortinet.com",
+						"url": "https://fortiguard.fortinet.com/psirt/FG-IR-24-222"
+					}
+				],
+				"published": "2025-01-14T00:00:00Z",
+				"modified": "2025-01-14T00:00:00Z"
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe",
+					"tag": "CVE-2024-46662"
+				}
+			]
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-2024-46662",
+				"title": "Command injection in csfd daemon",
+				"description": "An authenticated attacker could inject arbitrary commands in csfd daemon",
+				"severity": [
+					{
+						"type": "vendor",
+						"source": "fortiguard.fortinet.com",
+						"vendor": "Escalation of privilege"
+					},
+					{
+						"type": "cvss_v31",
+						"source": "fortiguard.fortinet.com",
+						"cvss_v31": {
+							"vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H/E:F/RL:W/RC:C",
+							"base_score": 8.8,
+							"base_severity": "HIGH",
+							"temporal_score": 8.3,
+							"temporal_severity": "HIGH",
+							"environmental_score": 8.3,
+							"environmental_severity": "HIGH"
+						}
+					}
+				],
+				"cwe": [
+					{
+						"source": "fortiguard.fortinet.com",
+						"cwe": [
+							"CWE-77"
+						]
+					}
+				],
+				"references": [
+					{
+						"source": "fortiguard.fortinet.com",
+						"url": "https://fortiguard.fortinet.com/psirt/FG-IR-24-222"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe",
+					"tag": "CVE-2024-46662"
+				}
+			]
+		}
+	],
+	"detections": [
+		{
+			"ecosystem": "cpe",
+			"conditions": [
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:a:fortinet:fortimanager_cloud:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet-fortimanager_cloud",
+										"ge": "7.4.1",
+										"le": "7.4.3"
+									}
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:o:fortinet:fortimanager:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet-fortimanager",
+										"ge": "7.4.1",
+										"le": "7.4.3"
+									}
+								}
+							}
+						]
+					},
+					"tag": "CVE-2024-46662"
+				}
+			]
+		}
+	],
+	"data_source": {
+		"id": "fortinet-csaf",
+		"raws": [
+			"fixtures/2024/FG-IR-24-222.json"
+		]
+	}
+}

@@ -1,0 +1,337 @@
+{
+	"document": {
+		"acknowledgments": [
+			{
+				"summary": "Internally discovered and reported by Gwendal Guégniaud of Fortinet Product Security Team."
+			}
+		],
+		"category": "Fortinet PSIRT Advisories",
+		"csaf_version": "2.0",
+		"publisher": {
+			"category": "vendor",
+			"contact_details": "https://fortiguard.fortinet.com/faq/psirt-contact",
+			"issuing_authority": "Fortinet PSIRT",
+			"name": "Fortinet PSIRT",
+			"namespace": "https://fortiguard.fortinet.com/psirt"
+		},
+		"title": "Out-of-bounds Write in sndproxy",
+		"tracking": {
+			"current_release_date": "2025-01-14T00:00:00",
+			"id": "FG-IR-24-106",
+			"initial_release_date": "2025-01-14T00:00:00",
+			"revision_history": [
+				{
+					"date": "2025-01-14T00:00:00",
+					"number": "1",
+					"summary": "Initial Publication"
+				}
+			],
+			"status": "final",
+			"version": "0"
+		}
+	},
+	"product_tree": {
+		"branches": [
+			{
+				"branches": [
+					{
+						"branches": [
+							{
+								"category": "product_version_range",
+								"name": "FortiAnalyzer/ 7.6 all versions",
+								"product": {
+									"name": "FortiAnalyzer",
+									"product_id": "FortiAnalyzer/ 7.6 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiAnalyzer/>=7.4.0|<=7.4.3",
+								"product": {
+									"name": "FortiAnalyzer",
+									"product_id": "FortiAnalyzer >=7.4.0|<=7.4.3"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiAnalyzer/ 7.2 all versions",
+								"product": {
+									"name": "FortiAnalyzer",
+									"product_id": "FortiAnalyzer/ 7.2 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiAnalyzer/ 7.0 all versions",
+								"product": {
+									"name": "FortiAnalyzer",
+									"product_id": "FortiAnalyzer/ 7.0 all versions"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiAnalyzer"
+					},
+					{
+						"branches": [
+							{
+								"category": "product_version_range",
+								"name": "FortiAnalyzer Cloud/>=7.4.1|<=7.4.2",
+								"product": {
+									"name": "FortiAnalyzer Cloud",
+									"product_id": "FortiAnalyzer Cloud >=7.4.1|<=7.4.2"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiAnalyzer Cloud"
+					},
+					{
+						"branches": [
+							{
+								"category": "product_version_range",
+								"name": "FortiManager/>=7.4.1|<=7.4.2",
+								"product": {
+									"name": "FortiManager",
+									"product_id": "FortiManager >=7.4.1|<=7.4.2"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiManager/ 7.6 all versions",
+								"product": {
+									"name": "FortiManager",
+									"product_id": "FortiManager/ 7.6 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiManager/>=7.4.0|<=7.4.2",
+								"product": {
+									"name": "FortiManager",
+									"product_id": "FortiManager >=7.4.0|<=7.4.2"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiManager/ 7.2 all versions",
+								"product": {
+									"name": "FortiManager",
+									"product_id": "FortiManager/ 7.2 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiManager/ 7.0 all versions",
+								"product": {
+									"name": "FortiManager",
+									"product_id": "FortiManager/ 7.0 all versions"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiManager"
+					}
+				],
+				"category": "vendor",
+				"name": "Fortinet PSIRT"
+			}
+		]
+	},
+	"vulnerabilities": [
+		{
+			"cve": "CVE-2024-35273",
+			"cwe": {
+				"id": "CWE-787",
+				"name": "Out-of-bounds Write"
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "Out-of-bounds write vulnerability in FortiManager and FortiAnalyzer sdnproxy daemon\n\n",
+					"title": "Summary"
+				},
+				{
+					"category": "general",
+					"text": "N/A",
+					"title": "Workarounds"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiAnalyzer >=7.4.0|<=7.4.3"
+				],
+				"known_not_affected": [
+					"FortiAnalyzer/ 7.6 all versions",
+					"FortiAnalyzer-7.4.4",
+					"FortiAnalyzer/ 7.2 all versions",
+					"FortiAnalyzer/ 7.0 all versions"
+				]
+			},
+			"references": [
+				{
+					"summary": "An out-of-bounds write vulnerability [CWE-787] in FortiManager and FortiAnalyzer sndproxy daemon may allow an authenticated attacker to execute arbitrary code or commands via specially crafted HTTP requests.",
+					"url": "https://fortiguard.fortinet.com/psirt/FG-IR-24-106"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiAnalyzer 7.6: Not Applicable\nFortiAnalyzer 7.4: Upgrade to 7.4.4 or above\nFortiAnalyzer 7.2: Not Applicable\nFortiAnalyzer 7.0: Not Applicable",
+					"product_ids": [
+						"FortiAnalyzer"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 7,
+						"baseSeverity": "HIGH",
+						"vectorString": "CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:U/C:H/I:H/A:H/E:F/RL:U/RC:C",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiAnalyzer"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Escalation of privilege"
+				}
+			],
+			"title": "FortiAnalyzer - HIGH - FG-IR-24-106"
+		},
+		{
+			"cve": "CVE-2024-35273",
+			"cwe": {
+				"id": "CWE-787",
+				"name": "Out-of-bounds Write"
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "Out-of-bounds write vulnerability in FortiManager and FortiAnalyzer sdnproxy daemon\n\n",
+					"title": "Summary"
+				},
+				{
+					"category": "general",
+					"text": "N/A",
+					"title": "Workarounds"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiAnalyzer Cloud >=7.4.1|<=7.4.2"
+				],
+				"known_not_affected": [
+					"FortiAnalyzer Cloud-7.4.3"
+				]
+			},
+			"references": [
+				{
+					"summary": "An out-of-bounds write vulnerability [CWE-787] in FortiManager and FortiAnalyzer sndproxy daemon may allow an authenticated attacker to execute arbitrary code or commands via specially crafted HTTP requests.",
+					"url": "https://fortiguard.fortinet.com/psirt/FG-IR-24-106"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiAnalyzer Cloud 7.4: Upgrade to 7.4.3 or above",
+					"product_ids": [
+						"FortiAnalyzer Cloud"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 7,
+						"baseSeverity": "HIGH",
+						"vectorString": "CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:U/C:H/I:H/A:H/E:F/RL:U/RC:C",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiAnalyzer Cloud"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Escalation of privilege"
+				}
+			],
+			"title": "FortiAnalyzer Cloud - HIGH - FG-IR-24-106"
+		},
+		{
+			"cve": "CVE-2024-35273",
+			"cwe": {
+				"id": "CWE-787",
+				"name": "Out-of-bounds Write"
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "Out-of-bounds write vulnerability in FortiManager and FortiAnalyzer sdnproxy daemon\n\n",
+					"title": "Summary"
+				},
+				{
+					"category": "general",
+					"text": "N/A",
+					"title": "Workarounds"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiManager >=7.4.1|<=7.4.2",
+					"FortiManager >=7.4.0|<=7.4.2"
+				],
+				"known_not_affected": [
+					"FortiManager-7.4.3",
+					"FortiManager/ 7.6 all versions",
+					"FortiManager-7.4.3",
+					"FortiManager/ 7.2 all versions",
+					"FortiManager/ 7.0 all versions"
+				]
+			},
+			"references": [
+				{
+					"summary": "An out-of-bounds write vulnerability [CWE-787] in FortiManager and FortiAnalyzer sndproxy daemon may allow an authenticated attacker to execute arbitrary code or commands via specially crafted HTTP requests.",
+					"url": "https://fortiguard.fortinet.com/psirt/FG-IR-24-106"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiManager Cloud 7.4: Upgrade to 7.4.3 or above\nFortiManager 7.6: Not Applicable\nFortiManager 7.4: Upgrade to 7.4.3 or above\nFortiManager 7.2: Not Applicable\nFortiManager 7.0: Not Applicable",
+					"product_ids": [
+						"FortiManager"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 7,
+						"baseSeverity": "HIGH",
+						"vectorString": "CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:U/C:H/I:H/A:H/E:F/RL:U/RC:C",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiManager"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Escalation of privilege"
+				}
+			],
+			"title": "FortiManager - HIGH - FG-IR-24-106"
+		}
+	]
+}

@@ -1,0 +1,158 @@
+{
+	"document": {
+		"acknowledgments": [
+			{
+				"summary": "Internally discovered and reported by Gwendal Guégniaud of Fortinet Product Security Team."
+			}
+		],
+		"category": "Fortinet PSIRT Advisories",
+		"csaf_version": "2.0",
+		"publisher": {
+			"category": "vendor",
+			"contact_details": "https://fortiguard.fortinet.com/faq/psirt-contact",
+			"issuing_authority": "Fortinet PSIRT",
+			"name": "Fortinet PSIRT",
+			"namespace": "https://fortiguard.fortinet.com/psirt"
+		},
+		"title": "Command injection in csfd daemon",
+		"tracking": {
+			"current_release_date": "2025-01-14T00:00:00",
+			"id": "FG-IR-24-222",
+			"initial_release_date": "2025-01-14T00:00:00",
+			"revision_history": [
+				{
+					"date": "2025-01-14T00:00:00",
+					"number": "1",
+					"summary": "Initial Publication"
+				}
+			],
+			"status": "final",
+			"version": "0"
+		}
+	},
+	"product_tree": {
+		"branches": [
+			{
+				"branches": [
+					{
+						"branches": [
+							{
+								"category": "product_version_range",
+								"name": "FortiManager/>=7.4.1|<=7.4.3",
+								"product": {
+									"name": "FortiManager",
+									"product_id": "FortiManager >=7.4.1|<=7.4.3"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiManager/ 7.6 all versions",
+								"product": {
+									"name": "FortiManager",
+									"product_id": "FortiManager/ 7.6 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiManager/>=7.4.1|<=7.4.3",
+								"product": {
+									"name": "FortiManager",
+									"product_id": "FortiManager >=7.4.1|<=7.4.3"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiManager/ 7.2 all versions",
+								"product": {
+									"name": "FortiManager",
+									"product_id": "FortiManager/ 7.2 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiManager/ 7.0 all versions",
+								"product": {
+									"name": "FortiManager",
+									"product_id": "FortiManager/ 7.0 all versions"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiManager"
+					}
+				],
+				"category": "vendor",
+				"name": "Fortinet PSIRT"
+			}
+		]
+	},
+	"vulnerabilities": [
+		{
+			"cve": "CVE-2024-46662",
+			"cwe": {
+				"id": "CWE-77",
+				"name": "Improper Neutralization of Special Elements used in a Command ('Command Injection')"
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "An authenticated attacker could inject arbitrary commands in csfd daemon\n\n",
+					"title": "Summary"
+				},
+				{
+					"category": "general",
+					"text": "N/A",
+					"title": "Workarounds"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiManager >=7.4.1|<=7.4.3",
+					"FortiManager >=7.4.1|<=7.4.3"
+				],
+				"known_not_affected": [
+					"FortiManager-7.4.4",
+					"FortiManager/ 7.6 all versions",
+					"FortiManager-7.4.4",
+					"FortiManager/ 7.2 all versions",
+					"FortiManager/ 7.0 all versions"
+				]
+			},
+			"references": [
+				{
+					"summary": "An improper neutralization of special elements used in an OS command vulnerability [CWE-78] in FortiManager csfd daemon may allow an authenticated attacker to execute unauthorized commands via specifically crafted packets",
+					"url": "https://fortiguard.fortinet.com/psirt/FG-IR-24-222"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiManager Cloud 7.4: Upgrade to 7.4.4 or above\nFortiManager 7.6: Not Applicable\nFortiManager 7.4: Upgrade to 7.4.4 or above\nFortiManager 7.2: Not Applicable\nFortiManager 7.0: Not Applicable",
+					"product_ids": [
+						"FortiManager"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 8.3,
+						"baseSeverity": "HIGH",
+						"vectorString": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H/E:F/RL:W/RC:C",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiManager"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Escalation of privilege"
+				}
+			],
+			"title": "FortiManager - HIGH - FG-IR-24-222"
+		}
+	]
+}
