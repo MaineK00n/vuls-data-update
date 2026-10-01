@@ -1,0 +1,954 @@
+{
+	"document": {
+		"acknowledgments": [
+			{
+				"summary": "Internally discovered and reported by Kai Ni from Burnaby InfoSec team."
+			}
+		],
+		"category": "Fortinet PSIRT Advisories",
+		"csaf_version": "2.0",
+		"publisher": {
+			"category": "vendor",
+			"contact_details": "https://fortiguard.fortinet.com/faq/psirt-contact",
+			"issuing_authority": "Fortinet PSIRT",
+			"name": "Fortinet PSIRT",
+			"namespace": "https://fortiguard.fortinet.com/psirt"
+		},
+		"title": "Heap buffer underflow in administrative interface",
+		"tracking": {
+			"current_release_date": "2025-07-23T00:00:00",
+			"id": "FG-IR-23-001",
+			"initial_release_date": "2023-03-07T00:00:00",
+			"revision_history": [
+				{
+					"date": "2023-03-07T00:00:00",
+					"number": "1",
+					"summary": "Initial Publication"
+				}
+			],
+			"status": "final",
+			"version": "0"
+		}
+	},
+	"product_tree": {
+		"branches": [
+			{
+				"branches": [
+					{
+						"branches": [
+							{
+								"category": "product_version",
+								"name": "FortiAnalyzer/7.2.0",
+								"product": {
+									"name": "FortiAnalyzer",
+									"product_id": "FortiAnalyzer 7.2.0"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiAnalyzer/>=7.0.0|<=7.0.4",
+								"product": {
+									"name": "FortiAnalyzer",
+									"product_id": "FortiAnalyzer >=7.0.0|<=7.0.4"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiAnalyzer/>=6.4.0|<=6.4.11",
+								"product": {
+									"name": "FortiAnalyzer",
+									"product_id": "FortiAnalyzer >=6.4.0|<=6.4.11"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiAnalyzer/>=6.2.0|<=6.2.10",
+								"product": {
+									"name": "FortiAnalyzer",
+									"product_id": "FortiAnalyzer >=6.2.0|<=6.2.10"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiAnalyzer/>=6.0.0|<=6.0.11",
+								"product": {
+									"name": "FortiAnalyzer",
+									"product_id": "FortiAnalyzer >=6.0.0|<=6.0.11"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiAnalyzer"
+					},
+					{
+						"branches": [
+							{
+								"category": "product_version",
+								"name": "FortiManager/7.2.0",
+								"product": {
+									"name": "FortiManager",
+									"product_id": "FortiManager 7.2.0"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiManager/>=7.0.0|<=7.0.4",
+								"product": {
+									"name": "FortiManager",
+									"product_id": "FortiManager >=7.0.0|<=7.0.4"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiManager/>=6.4.0|<=6.4.11",
+								"product": {
+									"name": "FortiManager",
+									"product_id": "FortiManager >=6.4.0|<=6.4.11"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiManager/>=6.2.0|<=6.2.10",
+								"product": {
+									"name": "FortiManager",
+									"product_id": "FortiManager >=6.2.0|<=6.2.10"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiManager/>=6.0.0|<=6.0.11",
+								"product": {
+									"name": "FortiManager",
+									"product_id": "FortiManager >=6.0.0|<=6.0.11"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiManager"
+					},
+					{
+						"branches": [
+							{
+								"category": "product_version_range",
+								"name": "FortiOS/>=7.2.0|<=7.2.3",
+								"product": {
+									"name": "FortiOS",
+									"product_id": "FortiOS >=7.2.0|<=7.2.3"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiOS/>=7.0.0|<=7.0.9",
+								"product": {
+									"name": "FortiOS",
+									"product_id": "FortiOS >=7.0.0|<=7.0.9"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiOS/>=6.4.0|<=6.4.11",
+								"product": {
+									"name": "FortiOS",
+									"product_id": "FortiOS >=6.4.0|<=6.4.11"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiOS/>=6.2.0|<=6.2.12",
+								"product": {
+									"name": "FortiOS",
+									"product_id": "FortiOS >=6.2.0|<=6.2.12"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiOS/6.0 all versions (special note for fortios in additional note section)",
+								"product": {
+									"name": "FortiOS",
+									"product_id": "FortiOS 6.0 all versions (special note for fortios in additional note section)"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiOS/5.6 all versions (special note for fortios in additional note section)",
+								"product": {
+									"name": "FortiOS",
+									"product_id": "FortiOS 5.6 all versions (special note for fortios in additional note section)"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiOS/5.4 all versions (special note for fortios in additional note section)",
+								"product": {
+									"name": "FortiOS",
+									"product_id": "FortiOS 5.4 all versions (special note for fortios in additional note section)"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiOS/5.2 all versions (special note for fortios in additional note section)",
+								"product": {
+									"name": "FortiOS",
+									"product_id": "FortiOS 5.2 all versions (special note for fortios in additional note section)"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiOS/5.0 all versions (special note for fortios in additional note section)",
+								"product": {
+									"name": "FortiOS",
+									"product_id": "FortiOS 5.0 all versions (special note for fortios in additional note section)"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiOS"
+					},
+					{
+						"branches": [
+							{
+								"category": "product_version",
+								"name": "FortiOS-6K7K/7.0.5",
+								"product": {
+									"name": "FortiOS-6K7K",
+									"product_id": "FortiOS-6K7K 7.0.5"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "FortiOS-6K7K/6.4.10",
+								"product": {
+									"name": "FortiOS-6K7K",
+									"product_id": "FortiOS-6K7K 6.4.10"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "FortiOS-6K7K/6.4.8",
+								"product": {
+									"name": "FortiOS-6K7K",
+									"product_id": "FortiOS-6K7K 6.4.8"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "FortiOS-6K7K/6.4.6",
+								"product": {
+									"name": "FortiOS-6K7K",
+									"product_id": "FortiOS-6K7K 6.4.6"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "FortiOS-6K7K/6.4.2",
+								"product": {
+									"name": "FortiOS-6K7K",
+									"product_id": "FortiOS-6K7K 6.4.2"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiOS-6K7K/>=6.2.9|<=6.2.12",
+								"product": {
+									"name": "FortiOS-6K7K",
+									"product_id": "FortiOS-6K7K >=6.2.9|<=6.2.12"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiOS-6K7K/>=6.2.6|<=6.2.7",
+								"product": {
+									"name": "FortiOS-6K7K",
+									"product_id": "FortiOS-6K7K >=6.2.6|<=6.2.7"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "FortiOS-6K7K/6.2.4",
+								"product": {
+									"name": "FortiOS-6K7K",
+									"product_id": "FortiOS-6K7K 6.2.4"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiOS-6K7K/6.0 all versions",
+								"product": {
+									"name": "FortiOS-6K7K",
+									"product_id": "FortiOS-6K7K 6.0 all versions"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiOS-6K7K"
+					},
+					{
+						"branches": [
+							{
+								"category": "product_version_range",
+								"name": "FortiProxy/>=7.2.0|<=7.2.2",
+								"product": {
+									"name": "FortiProxy",
+									"product_id": "FortiProxy >=7.2.0|<=7.2.2"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiProxy/>=7.0.0|<=7.0.8",
+								"product": {
+									"name": "FortiProxy",
+									"product_id": "FortiProxy >=7.0.0|<=7.0.8"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiProxy/2.0 all versions",
+								"product": {
+									"name": "FortiProxy",
+									"product_id": "FortiProxy 2.0 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiProxy/1.2 all versions",
+								"product": {
+									"name": "FortiProxy",
+									"product_id": "FortiProxy 1.2 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiProxy/1.1 all versions",
+								"product": {
+									"name": "FortiProxy",
+									"product_id": "FortiProxy 1.1 all versions"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiProxy"
+					},
+					{
+						"branches": [
+							{
+								"category": "product_version_range",
+								"name": "FortiSwitch/ 7.4 all versions",
+								"product": {
+									"name": "FortiSwitch",
+									"product_id": "FortiSwitch/ 7.4 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiSwitch/>=7.2.0|<=7.2.3",
+								"product": {
+									"name": "FortiSwitch",
+									"product_id": "FortiSwitch >=7.2.0|<=7.2.3"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiSwitch/>=7.0.0|<=7.0.6",
+								"product": {
+									"name": "FortiSwitch",
+									"product_id": "FortiSwitch >=7.0.0|<=7.0.6"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiSwitch/6.4 all versions",
+								"product": {
+									"name": "FortiSwitch",
+									"product_id": "FortiSwitch 6.4 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiSwitch/ 6.2 all versions",
+								"product": {
+									"name": "FortiSwitch",
+									"product_id": "FortiSwitch/ 6.2 all versions"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiSwitch"
+					},
+					{
+						"branches": [
+							{
+								"category": "product_version_range",
+								"name": "FortiSwitchManager/>=7.2.0|<=7.2.1",
+								"product": {
+									"name": "FortiSwitchManager",
+									"product_id": "FortiSwitchManager >=7.2.0|<=7.2.1"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiSwitchManager/>=7.0.0|<=7.0.1",
+								"product": {
+									"name": "FortiSwitchManager",
+									"product_id": "FortiSwitchManager >=7.0.0|<=7.0.1"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiSwitchManager"
+					},
+					{
+						"branches": [
+							{
+								"category": "product_version_range",
+								"name": "FortiWeb/>=7.2.0|<=7.2.1",
+								"product": {
+									"name": "FortiWeb",
+									"product_id": "FortiWeb >=7.2.0|<=7.2.1"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiWeb/>=7.0.0|<=7.0.6",
+								"product": {
+									"name": "FortiWeb",
+									"product_id": "FortiWeb >=7.0.0|<=7.0.6"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiWeb/>=6.4.0|<=6.4.2",
+								"product": {
+									"name": "FortiWeb",
+									"product_id": "FortiWeb >=6.4.0|<=6.4.2"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiWeb/>=6.3.0|<=6.3.22",
+								"product": {
+									"name": "FortiWeb",
+									"product_id": "FortiWeb >=6.3.0|<=6.3.22"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiWeb/>=6.2.0|<=6.2.7",
+								"product": {
+									"name": "FortiWeb",
+									"product_id": "FortiWeb >=6.2.0|<=6.2.7"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiWeb/>=6.1.0|<=6.1.3",
+								"product": {
+									"name": "FortiWeb",
+									"product_id": "FortiWeb >=6.1.0|<=6.1.3"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiWeb"
+					}
+				],
+				"category": "vendor",
+				"name": "Fortinet PSIRT"
+			}
+		]
+	},
+	"vulnerabilities": [
+		{
+			"cve": "CVE-2023-25610",
+			"cwe": {
+				"id": "CWE-124",
+				"name": "Buffer Underwrite ('Buffer Underflow')"
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "Heap Buffer Underflow Vulnerability in FortiOS, FortiProxy, FortiManager, FortiAnalyzer, FortiWeb and FortiSwitchManager\n\n",
+					"title": "Summary"
+				},
+				{
+					"category": "general",
+					"text": "N/A",
+					"title": "Workarounds"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiAnalyzer 7.2.0",
+					"FortiAnalyzer >=7.0.0|<=7.0.4",
+					"FortiAnalyzer >=6.4.0|<=6.4.11",
+					"FortiAnalyzer >=6.2.0|<=6.2.10",
+					"FortiAnalyzer >=6.0.0|<=6.0.11"
+				],
+				"known_not_affected": [
+					"FortiAnalyzer-7.2.1",
+					"FortiAnalyzer-7.0.5",
+					"FortiAnalyzer-6.4.12",
+					"FortiAnalyzer-6.2.11",
+					"FortiAnalyzer-6.0.12"
+				]
+			},
+			"references": [
+				{
+					"summary": "A buffer underwrite (\"buffer underflow\") vulnerability in FortiOS, FortiManager, FortiAnalyzer, FortiWeb, FortiProxy & FortiSwitchManager administrative interface may allow a remote unauthenticated attacker to execute arbitrary code on the device and/or perform a DoS on the GUI, via specifically crafted requests.\r\n\r\n\r\n## Exploitation status:\r\n\r\n\r\nFortinet is not aware of any instance where this vulnerability was exploited in the wild. We continuously review and test the security of our products, and this vulnerability was internally discovered within that frame.\r\n\r\n",
+					"url": "https://fortiguard.fortinet.com/psirt/FG-IR-23-001"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiAnalyzer 7.2: Upgrade to 7.2.1 or above\nFortiAnalyzer 7.0: Upgrade to 7.0.5 or above\nFortiAnalyzer 6.4: Upgrade to 6.4.12 or above\nFortiAnalyzer 6.2: Upgrade to 6.2.11 or above\nFortiAnalyzer 6.0: Upgrade to 6.0.12 or above",
+					"product_ids": [
+						"FortiAnalyzer"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 9.3,
+						"baseSeverity": "CRITICAL",
+						"vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H/E:P/RL:U/RC:C",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiAnalyzer"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Execute unauthorized code or commands"
+				}
+			],
+			"title": "FortiAnalyzer - CRITICAL - FG-IR-23-001"
+		},
+		{
+			"cve": "CVE-2023-25610",
+			"cwe": {
+				"id": "CWE-124",
+				"name": "Buffer Underwrite ('Buffer Underflow')"
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "Heap Buffer Underflow Vulnerability in FortiOS, FortiProxy, FortiManager, FortiAnalyzer, FortiWeb and FortiSwitchManager\n\n",
+					"title": "Summary"
+				},
+				{
+					"category": "general",
+					"text": "N/A",
+					"title": "Workarounds"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiManager 7.2.0",
+					"FortiManager >=7.0.0|<=7.0.4",
+					"FortiManager >=6.4.0|<=6.4.11",
+					"FortiManager >=6.2.0|<=6.2.10",
+					"FortiManager >=6.0.0|<=6.0.11"
+				],
+				"known_not_affected": [
+					"FortiManager-7.2.1",
+					"FortiManager-7.0.5",
+					"FortiManager-6.4.12",
+					"FortiManager-6.2.11",
+					"FortiManager-6.0.12"
+				]
+			},
+			"references": [
+				{
+					"summary": "A buffer underwrite (\"buffer underflow\") vulnerability in FortiOS, FortiManager, FortiAnalyzer, FortiWeb, FortiProxy & FortiSwitchManager administrative interface may allow a remote unauthenticated attacker to execute arbitrary code on the device and/or perform a DoS on the GUI, via specifically crafted requests.\r\n\r\n\r\n## Exploitation status:\r\n\r\n\r\nFortinet is not aware of any instance where this vulnerability was exploited in the wild. We continuously review and test the security of our products, and this vulnerability was internally discovered within that frame.\r\n\r\n",
+					"url": "https://fortiguard.fortinet.com/psirt/FG-IR-23-001"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiManager 7.2: Upgrade to 7.2.1 or above\nFortiManager 7.0: Upgrade to 7.0.5 or above\nFortiManager 6.4: Upgrade to 6.4.12 or above\nFortiManager 6.2: Upgrade to 6.2.11 or above\nFortiManager 6.0: Upgrade to 6.0.12 or above",
+					"product_ids": [
+						"FortiManager"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 9.3,
+						"baseSeverity": "CRITICAL",
+						"vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H/E:P/RL:U/RC:C",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiManager"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Execute unauthorized code or commands"
+				}
+			],
+			"title": "FortiManager - CRITICAL - FG-IR-23-001"
+		},
+		{
+			"cve": "CVE-2023-25610",
+			"cwe": {
+				"id": "CWE-124",
+				"name": "Buffer Underwrite ('Buffer Underflow')"
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "Heap Buffer Underflow Vulnerability in FortiOS, FortiProxy, FortiManager, FortiAnalyzer, FortiWeb and FortiSwitchManager\n\n",
+					"title": "Summary"
+				},
+				{
+					"category": "general",
+					"text": "N/A",
+					"title": "Workarounds"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiOS >=7.2.0|<=7.2.3",
+					"FortiOS >=7.0.0|<=7.0.9",
+					"FortiOS >=6.4.0|<=6.4.11",
+					"FortiOS >=6.2.0|<=6.2.12",
+					"FortiOS 6.0 all versions (special note for fortios in additional note section)",
+					"FortiOS 5.6 all versions (special note for fortios in additional note section)",
+					"FortiOS 5.4 all versions (special note for fortios in additional note section)",
+					"FortiOS 5.2 all versions (special note for fortios in additional note section)",
+					"FortiOS 5.0 all versions (special note for fortios in additional note section)"
+				],
+				"known_not_affected": [
+					"FortiOS-7.2.4",
+					"FortiOS-7.0.10",
+					"FortiOS-6.4.12",
+					"FortiOS-6.2.13"
+				]
+			},
+			"references": [
+				{
+					"summary": "A buffer underwrite (\"buffer underflow\") vulnerability in FortiOS, FortiManager, FortiAnalyzer, FortiWeb, FortiProxy & FortiSwitchManager administrative interface may allow a remote unauthenticated attacker to execute arbitrary code on the device and/or perform a DoS on the GUI, via specifically crafted requests.\r\n\r\n\r\n## Exploitation status:\r\n\r\n\r\nFortinet is not aware of any instance where this vulnerability was exploited in the wild. We continuously review and test the security of our products, and this vulnerability was internally discovered within that frame.\r\n\r\n",
+					"url": "https://fortiguard.fortinet.com/psirt/FG-IR-23-001"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiOS 7.2: Upgrade to 7.2.4 or above\nFortiOS 7.0: Upgrade to 7.0.10 or above\nFortiOS 6.4: Upgrade to 6.4.12 or above\nFortiOS 6.2: Upgrade to 6.2.13 or above\nFortiOS 6.0: Migrate to a fixed release\nFortiOS 5.6: Migrate to a fixed release\nFortiOS 5.4: Migrate to a fixed release\nFortiOS 5.2: Migrate to a fixed release\nFortiOS 5.0: Migrate to a fixed release",
+					"product_ids": [
+						"FortiOS"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 9.3,
+						"baseSeverity": "CRITICAL",
+						"vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H/E:P/RL:U/RC:C",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiOS"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Execute unauthorized code or commands"
+				}
+			],
+			"title": "FortiOS - CRITICAL - FG-IR-23-001"
+		},
+		{
+			"cve": "CVE-2023-25610",
+			"cwe": {
+				"id": "CWE-124",
+				"name": "Buffer Underwrite ('Buffer Underflow')"
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "Heap Buffer Underflow Vulnerability in FortiOS, FortiProxy, FortiManager, FortiAnalyzer, FortiWeb and FortiSwitchManager\n\n",
+					"title": "Summary"
+				},
+				{
+					"category": "general",
+					"text": "N/A",
+					"title": "Workarounds"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiOS-6K7K 7.0.5",
+					"FortiOS-6K7K 6.4.10",
+					"FortiOS-6K7K 6.4.8",
+					"FortiOS-6K7K 6.4.6",
+					"FortiOS-6K7K 6.4.2",
+					"FortiOS-6K7K >=6.2.9|<=6.2.12",
+					"FortiOS-6K7K >=6.2.6|<=6.2.7",
+					"FortiOS-6K7K 6.2.4",
+					"FortiOS-6K7K 6.0 all versions"
+				],
+				"known_not_affected": [
+					"FortiOS-6K7K-7.0.10",
+					"FortiOS-6K7K-6.4.12",
+					"FortiOS-6K7K-6.4.12",
+					"FortiOS-6K7K-6.4.12",
+					"FortiOS-6K7K-6.4.12",
+					"FortiOS-6K7K-6.2.13",
+					"FortiOS-6K7K-6.2.13",
+					"FortiOS-6K7K-6.2.13"
+				]
+			},
+			"references": [
+				{
+					"summary": "A buffer underwrite (\"buffer underflow\") vulnerability in FortiOS, FortiManager, FortiAnalyzer, FortiWeb, FortiProxy & FortiSwitchManager administrative interface may allow a remote unauthenticated attacker to execute arbitrary code on the device and/or perform a DoS on the GUI, via specifically crafted requests.\r\n\r\n\r\n## Exploitation status:\r\n\r\n\r\nFortinet is not aware of any instance where this vulnerability was exploited in the wild. We continuously review and test the security of our products, and this vulnerability was internally discovered within that frame.\r\n\r\n",
+					"url": "https://fortiguard.fortinet.com/psirt/FG-IR-23-001"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiOS-6K7K 7.0: Upgrade to 7.0.10 or above\nFortiOS-6K7K 6.4: Upgrade to 6.4.12 or above\nFortiOS-6K7K 6.4: Upgrade to 6.4.12 or above\nFortiOS-6K7K 6.4: Upgrade to 6.4.12 or above\nFortiOS-6K7K 6.4: Upgrade to 6.4.12 or above\nFortiOS-6K7K 6.2: Upgrade to 6.2.13 or above\nFortiOS-6K7K 6.2: Upgrade to 6.2.13 or above\nFortiOS-6K7K 6.2: Upgrade to 6.2.13 or above\nFortiOS-6K7K 6.0: Migrate to a fixed release",
+					"product_ids": [
+						"FortiOS-6K7K"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 9.3,
+						"baseSeverity": "CRITICAL",
+						"vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H/E:P/RL:U/RC:C",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiOS-6K7K"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Execute unauthorized code or commands"
+				}
+			],
+			"title": "FortiOS-6K7K - CRITICAL - FG-IR-23-001"
+		},
+		{
+			"cve": "CVE-2023-25610",
+			"cwe": {
+				"id": "CWE-124",
+				"name": "Buffer Underwrite ('Buffer Underflow')"
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "Heap Buffer Underflow Vulnerability in FortiOS, FortiProxy, FortiManager, FortiAnalyzer, FortiWeb and FortiSwitchManager\n\n",
+					"title": "Summary"
+				},
+				{
+					"category": "general",
+					"text": "N/A",
+					"title": "Workarounds"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiProxy >=7.2.0|<=7.2.2",
+					"FortiProxy >=7.0.0|<=7.0.8",
+					"FortiProxy 2.0 all versions",
+					"FortiProxy 1.2 all versions",
+					"FortiProxy 1.1 all versions"
+				],
+				"known_not_affected": [
+					"FortiProxy-7.2.3",
+					"FortiProxy-7.0.9"
+				]
+			},
+			"references": [
+				{
+					"summary": "A buffer underwrite (\"buffer underflow\") vulnerability in FortiOS, FortiManager, FortiAnalyzer, FortiWeb, FortiProxy & FortiSwitchManager administrative interface may allow a remote unauthenticated attacker to execute arbitrary code on the device and/or perform a DoS on the GUI, via specifically crafted requests.\r\n\r\n\r\n## Exploitation status:\r\n\r\n\r\nFortinet is not aware of any instance where this vulnerability was exploited in the wild. We continuously review and test the security of our products, and this vulnerability was internally discovered within that frame.\r\n\r\n",
+					"url": "https://fortiguard.fortinet.com/psirt/FG-IR-23-001"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiProxy 7.2: Upgrade to 7.2.3 or above\nFortiProxy 7.0: Upgrade to 7.0.9 or above\nFortiProxy 2.0: Migrate to a fixed release\nFortiProxy 1.2: Migrate to a fixed release\nFortiProxy 1.1: Migrate to a fixed release",
+					"product_ids": [
+						"FortiProxy"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 9.3,
+						"baseSeverity": "CRITICAL",
+						"vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H/E:P/RL:U/RC:C",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiProxy"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Execute unauthorized code or commands"
+				}
+			],
+			"title": "FortiProxy - CRITICAL - FG-IR-23-001"
+		},
+		{
+			"cve": "CVE-2023-25610",
+			"cwe": {
+				"id": "CWE-124",
+				"name": "Buffer Underwrite ('Buffer Underflow')"
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "Heap Buffer Underflow Vulnerability in FortiOS, FortiProxy, FortiManager, FortiAnalyzer, FortiWeb and FortiSwitchManager\n\n",
+					"title": "Summary"
+				},
+				{
+					"category": "general",
+					"text": "N/A",
+					"title": "Workarounds"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiSwitchManager >=7.2.0|<=7.2.1",
+					"FortiSwitchManager >=7.0.0|<=7.0.1"
+				],
+				"known_not_affected": [
+					"FortiSwitchManager-7.2.2",
+					"FortiSwitchManager-7.0.2"
+				]
+			},
+			"references": [
+				{
+					"summary": "A buffer underwrite (\"buffer underflow\") vulnerability in FortiOS, FortiManager, FortiAnalyzer, FortiWeb, FortiProxy & FortiSwitchManager administrative interface may allow a remote unauthenticated attacker to execute arbitrary code on the device and/or perform a DoS on the GUI, via specifically crafted requests.\r\n\r\n\r\n## Exploitation status:\r\n\r\n\r\nFortinet is not aware of any instance where this vulnerability was exploited in the wild. We continuously review and test the security of our products, and this vulnerability was internally discovered within that frame.\r\n\r\n",
+					"url": "https://fortiguard.fortinet.com/psirt/FG-IR-23-001"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiSwitchManager 7.2: Upgrade to 7.2.2 or above\nFortiSwitchManager 7.0: Upgrade to 7.0.2 or above",
+					"product_ids": [
+						"FortiSwitchManager"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 9.3,
+						"baseSeverity": "CRITICAL",
+						"vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H/E:P/RL:U/RC:C",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiSwitchManager"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Execute unauthorized code or commands"
+				}
+			],
+			"title": "FortiSwitchManager - CRITICAL - FG-IR-23-001"
+		},
+		{
+			"cve": "CVE-2023-25610",
+			"cwe": {
+				"id": "CWE-124",
+				"name": "Buffer Underwrite ('Buffer Underflow')"
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "Heap Buffer Underflow Vulnerability in FortiOS, FortiProxy, FortiManager, FortiAnalyzer, FortiWeb and FortiSwitchManager\n\n",
+					"title": "Summary"
+				},
+				{
+					"category": "general",
+					"text": "N/A",
+					"title": "Workarounds"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiWeb >=7.2.0|<=7.2.1",
+					"FortiWeb >=7.0.0|<=7.0.6",
+					"FortiWeb >=6.4.0|<=6.4.2",
+					"FortiWeb >=6.3.0|<=6.3.22",
+					"FortiWeb >=6.2.0|<=6.2.7",
+					"FortiWeb >=6.1.0|<=6.1.3"
+				],
+				"known_not_affected": [
+					"FortiWeb-7.2.2",
+					"FortiWeb-7.0.7",
+					"FortiWeb-6.4.3",
+					"FortiWeb-6.3.23",
+					"FortiWeb-6.2.8",
+					"FortiWeb-6.1.4"
+				]
+			},
+			"references": [
+				{
+					"summary": "A buffer underwrite (\"buffer underflow\") vulnerability in FortiOS, FortiManager, FortiAnalyzer, FortiWeb, FortiProxy & FortiSwitchManager administrative interface may allow a remote unauthenticated attacker to execute arbitrary code on the device and/or perform a DoS on the GUI, via specifically crafted requests.\r\n\r\n\r\n## Exploitation status:\r\n\r\n\r\nFortinet is not aware of any instance where this vulnerability was exploited in the wild. We continuously review and test the security of our products, and this vulnerability was internally discovered within that frame.\r\n\r\n",
+					"url": "https://fortiguard.fortinet.com/psirt/FG-IR-23-001"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiWeb 7.2: Upgrade to 7.2.2 or above\nFortiWeb 7.0: Upgrade to 7.0.7 or above\nFortiWeb 6.4: Upgrade to 6.4.3 or above\nFortiWeb 6.3: Upgrade to 6.3.23 or above\nFortiWeb 6.2: Upgrade to 6.2.8 or above\nFortiWeb 6.1: Upgrade to 6.1.4 or above",
+					"product_ids": [
+						"FortiWeb"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 9.3,
+						"baseSeverity": "CRITICAL",
+						"vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H/E:P/RL:U/RC:C",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiWeb"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Execute unauthorized code or commands"
+				}
+			],
+			"title": "FortiWeb - CRITICAL - FG-IR-23-001"
+		}
+	]
+}
