@@ -366,19 +366,19 @@ func defineNotAffected(doc *csafTypes.CSAF) error {
 			case 0:
 				return errors.Errorf("unexpected undefined known_not_affected product %q of %q", pid, v.CVE)
 			case 1:
+				parent, i, err := findProductBranch(&doc.ProductTree.Branches, branch)
+				if err != nil {
+					return errors.Wrapf(err, "find branch of %q", pid)
+				}
+				(*parent)[i].Branches = append((*parent)[i].Branches, csafTypes.Branch{
+					Category: "product_version",
+					Name:     fmt.Sprintf("%s/%s", branch, version),
+					Product:  &csafTypes.FullProductName{Name: branch, ProductID: pid},
+				})
+				defined[pid] = struct{}{}
 			default:
 				return errors.Errorf("undefined known_not_affected product %q of %q matches %d branches", pid, v.CVE, n)
 			}
-			parent, i, err := findProductBranch(&doc.ProductTree.Branches, branch)
-			if err != nil {
-				return errors.Wrapf(err, "find branch of %q", pid)
-			}
-			(*parent)[i].Branches = append((*parent)[i].Branches, csafTypes.Branch{
-				Category: "product_version",
-				Name:     fmt.Sprintf("%s/%s", branch, version),
-				Product:  &csafTypes.FullProductName{Name: branch, ProductID: pid},
-			})
-			defined[pid] = struct{}{}
 		}
 	}
 	return nil
