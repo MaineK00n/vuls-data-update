@@ -1,0 +1,163 @@
+{
+	"document": {
+		"acknowledgments": [
+			{
+				"summary": "Fortinet is pleased to thank ANSSI for reporting this vulnerability under responsible disclosure."
+			}
+		],
+		"category": "Fortinet PSIRT Advisories",
+		"csaf_version": "2.0",
+		"publisher": {
+			"category": "vendor",
+			"contact_details": "https://fortiguard.fortinet.com/faq/psirt-contact",
+			"issuing_authority": "Fortinet PSIRT",
+			"name": "Fortinet PSIRT",
+			"namespace": "https://fortiguard.fortinet.com/psirt"
+		},
+		"title": "Improper Neutralization of Special Elements used in a Command in DAS component",
+		"tracking": {
+			"current_release_date": "2024-09-10T00:00:00",
+			"id": "FG-IR-24-123",
+			"initial_release_date": "2024-09-10T00:00:00",
+			"revision_history": [
+				{
+					"date": "2024-09-10T00:00:00",
+					"number": "1",
+					"summary": "Initial Publication"
+				}
+			],
+			"status": "final",
+			"version": "0"
+		}
+	},
+	"product_tree": {
+		"branches": [
+			{
+				"branches": [
+					{
+						"category": "product_version_range",
+						"name": "FortiClientEMS/ Cloud 7.4 all versions",
+						"product": {
+							"name": "FortiClientEMS",
+							"product_id": "FortiClientEMS/ Cloud 7.4 all versions"
+						}
+					},
+					{
+						"category": "product_version_range",
+						"name": "FortiClientEMS/>=7.2.0|<=7.2.4",
+						"product": {
+							"name": "FortiClientEMS",
+							"product_id": "FortiClientEMS >=7.2.0|<=7.2.4"
+						}
+					},
+					{
+						"category": "product_version_range",
+						"name": "FortiClientEMS/>=7.0.0|<=7.0.12",
+						"product": {
+							"name": "FortiClientEMS",
+							"product_id": "FortiClientEMS >=7.0.0|<=7.0.12"
+						}
+					},
+					{
+						"category": "product_version_range",
+						"name": "FortiClientEMS/ 7.4 all versions",
+						"product": {
+							"name": "FortiClientEMS",
+							"product_id": "FortiClientEMS/ 7.4 all versions"
+						}
+					},
+					{
+						"category": "product_version_range",
+						"name": "FortiClientEMS/>=7.2.0|<=7.2.4",
+						"product": {
+							"name": "FortiClientEMS",
+							"product_id": "FortiClientEMS >=7.2.0|<=7.2.4"
+						}
+					},
+					{
+						"category": "product_version_range",
+						"name": "FortiClientEMS/>=7.0.0|<=7.0.12",
+						"product": {
+							"name": "FortiClientEMS",
+							"product_id": "FortiClientEMS >=7.0.0|<=7.0.12"
+						}
+					}
+				],
+				"category": "product",
+				"name": "FortiClientEMS"
+			}
+		]
+	},
+	"vulnerabilities": [
+		{
+			"cve": "CVE-2024-33508",
+			"cwe": {
+				"id": "CWE-77",
+				"name": "Improper Neutralization of Special Elements used in a Command ('Command Injection')"
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "JSON injection in DAS messages\n\n",
+					"title": "Summary"
+				},
+				{
+					"category": "general",
+					"text": "N/A",
+					"title": "Workarounds"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiClientEMS >=7.2.0|<=7.2.4",
+					"FortiClientEMS >=7.0.0|<=7.0.12",
+					"FortiClientEMS >=7.2.0|<=7.2.4",
+					"FortiClientEMS >=7.0.0|<=7.0.12"
+				],
+				"known_not_affected": [
+					"FortiClientEMS/ Cloud 7.4 all versions",
+					"FortiClientEMS-7.2.5",
+					"FortiClientEMS-7.0.13",
+					"FortiClientEMS/ 7.4 all versions",
+					"FortiClientEMS-7.2.5",
+					"FortiClientEMS-7.0.13"
+				]
+			},
+			"references": [
+				{
+					"summary": "An improper neutralization of special elements used in a command ('Command Injection') vulnerability [CWE-77] in FortiClientEMS may allow an unauthenticated attacker to execute limited and temporary operations on the underlying database  via crafted requests.",
+					"url": "https://fortiguard.fortinet.com/psirt/FG-IR-24-123"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiClientEMS Cloud 7.4: Not Applicable\nFortiClientEMS Cloud 7.2: Upgrade to 7.2.5 or above\nFortiClientEMS Cloud 7.0: Upgrade to 7.0.13 or above\nFortiClientEMS 7.4: Not Applicable\nFortiClientEMS 7.2: Upgrade to 7.2.5 or above\nFortiClientEMS 7.0: Upgrade to 7.0.13 or above",
+					"product_ids": [
+						"FortiClientEMS"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 6.9,
+						"baseSeverity": "MEDIUM",
+						"vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:L/E:P/RL:X/RC:C",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiClientEMS"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Execute unauthorized code or commands"
+				}
+			],
+			"title": "FortiClientEMS - MEDIUM - FG-IR-24-123"
+		}
+	]
+}

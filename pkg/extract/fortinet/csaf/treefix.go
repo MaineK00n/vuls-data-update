@@ -2,7 +2,6 @@ package csaf
 
 import (
 	"fmt"
-	"maps"
 	"slices"
 	"strings"
 
@@ -107,7 +106,7 @@ func (f treeFix) apply(doc *csafTypes.CSAF) error {
 }
 
 func (bf branchFix) apply(doc *csafTypes.CSAF) error {
-	parent, i, err := findProductBranch(doc.ProductTree.Branches, bf.name)
+	parent, i, err := findProductBranch(&doc.ProductTree.Branches, bf.name)
 	if err != nil {
 		return errors.Wrap(err, "find branch")
 	}
@@ -122,9 +121,12 @@ func (bf branchFix) apply(doc *csafTypes.CSAF) error {
 		return errors.Errorf("unexpected leaves. expected: %q, actual: %q; the tree fix is stale", bf.leaves, names)
 	}
 
+	// moved keeps the leaves per target product; products keeps the targets in
+	// the order their first leaf comes, so the new branches follow the tree.
 	var (
-		kept  []csafTypes.Branch
-		moved = make(map[string][]csafTypes.Branch)
+		kept     []csafTypes.Branch
+		moved    = make(map[string][]csafTypes.Branch)
+		products []string
 	)
 	for j, leaf := range branch.Branches {
 		t, ok := bf.to[j]
@@ -142,12 +144,15 @@ func (bf branchFix) apply(doc *csafTypes.CSAF) error {
 			kept = append(kept, leaf)
 			continue
 		}
+		if _, ok := moved[t.product]; !ok {
+			products = append(products, t.product)
+		}
 		moved[t.product] = append(moved[t.product], leaf)
 	}
 	branch.Branches = kept
 
-	for _, product := range slices.Sorted(maps.Keys(moved)) {
-		if _, _, err := findProductBranch(doc.ProductTree.Branches, product); err == nil {
+	for _, product := range products {
+		if _, _, err := findProductBranch(&doc.ProductTree.Branches, product); err == nil {
 			return errors.Errorf("branch %q to move leaves to already exists", product)
 		}
 		*parent = append(*parent, csafTypes.Branch{Category: "product", Name: product, Branches: moved[product]})
@@ -175,8 +180,10 @@ func (sf statusFix) apply(doc *csafTypes.CSAF) error {
 }
 
 // findProductBranch returns the slice holding the one product branch named
-// name, and its index there. It errors when there is none, or more than one.
-func findProductBranch(bs []csafTypes.Branch, name string) (*[]csafTypes.Branch, int, error) {
+// name, at whatever depth of bs it sits, and its index there. The slice is
+// the tree's own, so appending to it adds a sibling in the tree. It errors
+// when there is none, or more than one.
+func findProductBranch(bs *[]csafTypes.Branch, name string) (*[]csafTypes.Branch, int, error) {
 	var (
 		found *[]csafTypes.Branch
 		at    int
@@ -193,7 +200,7 @@ func findProductBranch(bs []csafTypes.Branch, name string) (*[]csafTypes.Branch,
 			walk(&b.Branches)
 		}
 	}
-	walk(&bs)
+	walk(bs)
 	switch n {
 	case 0:
 		return nil, 0, errors.Errorf("no product branch %q", name)
@@ -298,7 +305,7 @@ func defineNotAffected(doc *csafTypes.CSAF) error {
 			default:
 				return errors.Errorf("undefined known_not_affected product %q of %q matches %d branches", pid, v.CVE, n)
 			}
-			parent, i, err := findProductBranch(doc.ProductTree.Branches, branch)
+			parent, i, err := findProductBranch(&doc.ProductTree.Branches, branch)
 			if err != nil {
 				return errors.Wrapf(err, "find branch of %q", pid)
 			}
