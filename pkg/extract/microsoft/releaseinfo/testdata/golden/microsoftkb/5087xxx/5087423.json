@@ -9,11 +9,6 @@
 			"kb_id": "5094125"
 		}
 	],
-	"supersedes": [
-		{
-			"kb_id": "5082063"
-		}
-	],
 	"data_source": {
 		"id": "microsoft-releaseinfo",
 		"raws": [
