@@ -104,36 +104,6 @@
 									"cpe": "cpe:2.3:a:fortinet:fortisoar:*:*:*:*:*:*:*:*",
 									"range": {
 										"type": "fortinet-fortisoar",
-										"ge": "7.3",
-										"lt": "7.4"
-									}
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "unknown"
-									},
-									"cpe": "cpe:2.3:a:fortinet:fortisoar:*:*:*:*:*:*:*:*",
-									"range": {
-										"type": "fortinet-fortisoar",
-										"ge": "7.4",
-										"lt": "7.5"
-									}
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "unknown"
-									},
-									"cpe": "cpe:2.3:a:fortinet:fortisoar:*:*:*:*:*:*:*:*",
-									"range": {
-										"type": "fortinet-fortisoar",
 										"ge": "7.4",
 										"lt": "7.5"
 									}
@@ -151,36 +121,6 @@
 										"type": "fortinet-fortisoar",
 										"ge": "7.5",
 										"lt": "7.6"
-									}
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "unknown"
-									},
-									"cpe": "cpe:2.3:a:fortinet:fortisoar:*:*:*:*:*:*:*:*",
-									"range": {
-										"type": "fortinet-fortisoar",
-										"ge": "7.5",
-										"lt": "7.6"
-									}
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "unknown"
-									},
-									"cpe": "cpe:2.3:a:fortinet:fortisoar:*:*:*:*:*:*:*:*",
-									"range": {
-										"type": "fortinet-fortisoar",
-										"ge": "7.6.0",
-										"le": "7.6.3"
 									}
 								}
 							},

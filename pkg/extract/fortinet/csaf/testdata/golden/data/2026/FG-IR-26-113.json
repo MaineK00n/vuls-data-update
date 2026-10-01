@@ -133,6 +133,16 @@
 							{
 								"type": "cpe",
 								"cpe": {
+									"vulnerable": false,
+									"fix_status": {
+										"class": "not-affected"
+									},
+									"cpe": "cpe:2.3:a:fortinet:fortisandbox_paas:5.0.6:*:*:*:*:*:*:*"
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
 									"vulnerable": true,
 									"fix_status": {
 										"class": "unknown"
@@ -153,6 +163,16 @@
 					"criteria": {
 						"operator": "OR",
 						"criterions": [
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": false,
+									"fix_status": {
+										"class": "not-affected"
+									},
+									"cpe": "cpe:2.3:o:fortinet:fortisandbox:5.0.6:*:*:*:*:*:*:*"
+								}
+							},
 							{
 								"type": "cpe",
 								"cpe": {

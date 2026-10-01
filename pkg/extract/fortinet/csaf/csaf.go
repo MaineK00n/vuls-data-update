@@ -348,6 +348,14 @@ func extract(fetched csafTypes.CSAF, raws []string) (dataTypes.Data, error) {
 				}
 				criterions = append(criterions, cn)
 			}
+			// Distinct products can resolve to one criterion — the FortiClient
+			// platforms share the forticlient CPE, and a product the tree
+			// defines twice resolves twice — so keep each criterion once; the
+			// sort is what lets Compact find the repeats.
+			slices.SortFunc(criterions, criterionTypes.Compare)
+			criterions = slices.CompactFunc(criterions, func(x, y criterionTypes.Criterion) bool {
+				return criterionTypes.Compare(x, y) == 0
+			})
 			sevs, err := p.severities()
 			if err != nil {
 				return dataTypes.Data{}, errors.Wrapf(err, "severity for advisory %s, %s", id, key)
