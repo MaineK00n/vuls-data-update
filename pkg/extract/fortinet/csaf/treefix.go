@@ -60,14 +60,23 @@ type leafTarget struct {
 	version string
 }
 
-// statusFix replaces a product_status list written out in full as published
-// with the list it is read as, in every vulnerability object carrying it.
-// Positions matter where a product_id repeats: a list names the Cloud and the
+// statusFix rewrites entries of a product_status list, in every
+// vulnerability object carrying it. from is the list written out in full as
+// published, so any change to it retires the fix loudly instead of rewriting
+// the wrong entry; to maps an entry's index to what becomes of it. Positions
+// matter where a product_id repeats: a list names the Cloud and the
 // on-premise leaf with one product_id in the same order as the tree.
 type statusFix struct {
 	list statusList
 	from []csafTypes.ProductID
-	to   []csafTypes.ProductID
+	to   map[int]statusTarget
+}
+
+// statusTarget is what becomes of a product_status entry: replaced by
+// productID, or dropped.
+type statusTarget struct {
+	productID csafTypes.ProductID
+	drop      bool
 }
 
 // statusList names a product_status list by its CSAF field name.
@@ -111,6 +120,11 @@ func (bf branchFix) apply(doc *csafTypes.CSAF) error {
 		return errors.Wrap(err, "find branch")
 	}
 	branch := &(*parent)[i]
+	for j := range bf.to {
+		if j < 0 || j >= len(bf.leaves) {
+			return errors.Errorf("leaf %d is out of the %d published", j, len(bf.leaves))
+		}
+	}
 	if names := func() []string {
 		ns := make([]string, 0, len(branch.Branches))
 		for _, b := range branch.Branches {
@@ -162,6 +176,26 @@ func (bf branchFix) apply(doc *csafTypes.CSAF) error {
 }
 
 func (sf statusFix) apply(doc *csafTypes.CSAF) error {
+	for j, t := range sf.to {
+		if j < 0 || j >= len(sf.from) {
+			return errors.Errorf("entry %d is out of the %d published", j, len(sf.from))
+		}
+		if t.drop == (t.productID != "") {
+			return errors.Errorf("entry %d must either be dropped or get a product_id, not %+v", j, t)
+		}
+	}
+	fixed := make([]csafTypes.ProductID, 0, len(sf.from))
+	for j, pid := range sf.from {
+		t, ok := sf.to[j]
+		switch {
+		case !ok:
+			fixed = append(fixed, pid)
+		case t.drop:
+		default:
+			fixed = append(fixed, t.productID)
+		}
+	}
+
 	n := 0
 	for i := range doc.Vulnerabilities {
 		l, err := sf.list.of(&doc.Vulnerabilities[i])
@@ -169,7 +203,7 @@ func (sf statusFix) apply(doc *csafTypes.CSAF) error {
 			return errors.Wrap(err, "select product_status list")
 		}
 		if slices.Equal(*l, sf.from) {
-			*l = slices.Clone(sf.to)
+			*l = slices.Clone(fixed)
 			n++
 		}
 	}
@@ -347,12 +381,16 @@ var treeFixes = map[string]treeFix{
 			{
 				list: knownAffected,
 				from: []csafTypes.ProductID{"FortiManager >=7.4.1|<=7.4.2", "FortiManager >=7.4.0|<=7.4.2"},
-				to:   []csafTypes.ProductID{"FortiManager Cloud >=7.4.1|<=7.4.2", "FortiManager >=7.4.0|<=7.4.2"},
+				to: map[int]statusTarget{
+					0: {productID: "FortiManager Cloud >=7.4.1|<=7.4.2"},
+				},
 			},
 			{
 				list: knownNotAffected,
 				from: []csafTypes.ProductID{"FortiManager-7.4.3", "FortiManager/ 7.6 all versions", "FortiManager-7.4.3", "FortiManager/ 7.2 all versions", "FortiManager/ 7.0 all versions"},
-				to:   []csafTypes.ProductID{"FortiManager Cloud-7.4.3", "FortiManager/ 7.6 all versions", "FortiManager-7.4.3", "FortiManager/ 7.2 all versions", "FortiManager/ 7.0 all versions"},
+				to: map[int]statusTarget{
+					0: {productID: "FortiManager Cloud-7.4.3"},
+				},
 			},
 		},
 	},
@@ -375,12 +413,16 @@ var treeFixes = map[string]treeFix{
 			{
 				list: knownAffected,
 				from: []csafTypes.ProductID{"FortiManager >=7.4.1|<=7.4.2", "FortiManager >=7.4.0|<=7.4.2"},
-				to:   []csafTypes.ProductID{"FortiManager Cloud >=7.4.1|<=7.4.2", "FortiManager >=7.4.0|<=7.4.2"},
+				to: map[int]statusTarget{
+					0: {productID: "FortiManager Cloud >=7.4.1|<=7.4.2"},
+				},
 			},
 			{
 				list: knownNotAffected,
 				from: []csafTypes.ProductID{"FortiManager-7.4.3", "FortiManager/ 7.6 all versions", "FortiManager-7.4.3", "FortiManager/ 7.2 all versions", "FortiManager/ 7.0 all versions"},
-				to:   []csafTypes.ProductID{"FortiManager Cloud-7.4.3", "FortiManager/ 7.6 all versions", "FortiManager-7.4.3", "FortiManager/ 7.2 all versions", "FortiManager/ 7.0 all versions"},
+				to: map[int]statusTarget{
+					0: {productID: "FortiManager Cloud-7.4.3"},
+				},
 			},
 		},
 	},
@@ -408,12 +450,19 @@ var treeFixes = map[string]treeFix{
 			{
 				list: knownAffected,
 				from: []csafTypes.ProductID{"FortiClientEMS >=7.2.0|<=7.2.4", "FortiClientEMS >=7.0.0|<=7.0.12", "FortiClientEMS >=7.2.0|<=7.2.4", "FortiClientEMS >=7.0.0|<=7.0.12"},
-				to:   []csafTypes.ProductID{"FortiClientEMS Cloud >=7.2.0|<=7.2.4", "FortiClientEMS Cloud >=7.0.0|<=7.0.12", "FortiClientEMS >=7.2.0|<=7.2.4", "FortiClientEMS >=7.0.0|<=7.0.12"},
+				to: map[int]statusTarget{
+					0: {productID: "FortiClientEMS Cloud >=7.2.0|<=7.2.4"},
+					1: {productID: "FortiClientEMS Cloud >=7.0.0|<=7.0.12"},
+				},
 			},
 			{
 				list: knownNotAffected,
 				from: []csafTypes.ProductID{"FortiClientEMS/ Cloud 7.4 all versions", "FortiClientEMS-7.2.5", "FortiClientEMS-7.0.13", "FortiClientEMS/ 7.4 all versions", "FortiClientEMS-7.2.5", "FortiClientEMS-7.0.13"},
-				to:   []csafTypes.ProductID{"FortiClientEMS Cloud 7.4 all versions", "FortiClientEMS Cloud-7.2.5", "FortiClientEMS Cloud-7.0.13", "FortiClientEMS/ 7.4 all versions", "FortiClientEMS-7.2.5", "FortiClientEMS-7.0.13"},
+				to: map[int]statusTarget{
+					0: {productID: "FortiClientEMS Cloud 7.4 all versions"},
+					1: {productID: "FortiClientEMS Cloud-7.2.5"},
+					2: {productID: "FortiClientEMS Cloud-7.0.13"},
+				},
 			},
 		},
 	},
@@ -447,12 +496,20 @@ var treeFixes = map[string]treeFix{
 			{
 				list: knownAffected,
 				from: []csafTypes.ProductID{"FortiManager cloud 7.0 all versions", "FortiManager cloud 6.4 all versions", "FortiManager >=7.4.0|<=7.4.2", "FortiManager >=7.4.1|<=7.4.2", "FortiManager >=7.2.0|<=7.2.5", "FortiManager >=7.2.1|<=7.2.6", "FortiManager 7.0 all versions", "FortiManager 6.4 all versions", "FortiManager 6.2 all versions", "FortiManager 6.0 all versions"},
-				to:   []csafTypes.ProductID{"FortiManager Cloud 7.0 all versions", "FortiManager Cloud 6.4 all versions", "FortiManager >=7.4.0|<=7.4.2", "FortiManager Cloud >=7.4.1|<=7.4.2", "FortiManager >=7.2.0|<=7.2.5", "FortiManager Cloud >=7.2.1|<=7.2.6", "FortiManager 7.0 all versions", "FortiManager 6.4 all versions", "FortiManager 6.2 all versions", "FortiManager 6.0 all versions"},
+				to: map[int]statusTarget{
+					0: {productID: "FortiManager Cloud 7.0 all versions"},
+					1: {productID: "FortiManager Cloud 6.4 all versions"},
+					3: {productID: "FortiManager Cloud >=7.4.1|<=7.4.2"},
+					5: {productID: "FortiManager Cloud >=7.2.1|<=7.2.6"},
+				},
 			},
 			{
 				list: knownNotAffected,
 				from: []csafTypes.ProductID{"FortiManager-7.4.3", "FortiManager-7.4.3", "FortiManager-7.2.6", "FortiManager-7.2.7"},
-				to:   []csafTypes.ProductID{"FortiManager-7.4.3", "FortiManager Cloud-7.4.3", "FortiManager-7.2.6", "FortiManager Cloud-7.2.7"},
+				to: map[int]statusTarget{
+					1: {productID: "FortiManager Cloud-7.4.3"},
+					3: {productID: "FortiManager Cloud-7.2.7"},
+				},
 			},
 		},
 	},
@@ -481,12 +538,19 @@ var treeFixes = map[string]treeFix{
 			{
 				list: knownAffected,
 				from: []csafTypes.ProductID{"FortiManager >=7.4.1|<=7.4.3", "FortiManager >=7.2.1|<=7.2.5", "FortiManager 7.0 all versions", "FortiManager >=7.4.0|<=7.4.3", "FortiManager >=7.2.0|<=7.2.5", "FortiManager 7.0 all versions", "FortiManager 6.4 all versions"},
-				to:   []csafTypes.ProductID{"FortiManager Cloud >=7.4.1|<=7.4.3", "FortiManager Cloud >=7.2.1|<=7.2.5", "FortiManager Cloud 7.0 all versions", "FortiManager >=7.4.0|<=7.4.3", "FortiManager >=7.2.0|<=7.2.5", "FortiManager 7.0 all versions", "FortiManager 6.4 all versions"},
+				to: map[int]statusTarget{
+					0: {productID: "FortiManager Cloud >=7.4.1|<=7.4.3"},
+					1: {productID: "FortiManager Cloud >=7.2.1|<=7.2.5"},
+					2: {productID: "FortiManager Cloud 7.0 all versions"},
+				},
 			},
 			{
 				list: knownNotAffected,
 				from: []csafTypes.ProductID{"FortiManager-7.4.4", "FortiManager-7.2.7", "FortiManager/ 7.6 all versions", "FortiManager-7.4.4", "FortiManager-7.2.6"},
-				to:   []csafTypes.ProductID{"FortiManager Cloud-7.4.4", "FortiManager Cloud-7.2.7", "FortiManager/ 7.6 all versions", "FortiManager-7.4.4", "FortiManager-7.2.6"},
+				to: map[int]statusTarget{
+					0: {productID: "FortiManager Cloud-7.4.4"},
+					1: {productID: "FortiManager Cloud-7.2.7"},
+				},
 			},
 		},
 	},
@@ -514,12 +578,20 @@ var treeFixes = map[string]treeFix{
 			{
 				list: knownAffected,
 				from: []csafTypes.ProductID{"FortiManager >=7.4.1|<=7.4.2", "FortiManager >=7.2.1|<=7.2.5", "FortiManager >=7.0.1|<=7.0.12", "FortiManager >=7.4.0|<=7.4.2", "FortiManager >=7.2.0|<=7.2.5", "FortiManager >=7.0.0|<=7.0.12", "FortiManager >=6.4.0|<=6.4.14"},
-				to:   []csafTypes.ProductID{"FortiManager Cloud >=7.4.1|<=7.4.2", "FortiManager Cloud >=7.2.1|<=7.2.5", "FortiManager Cloud >=7.0.1|<=7.0.12", "FortiManager >=7.4.0|<=7.4.2", "FortiManager >=7.2.0|<=7.2.5", "FortiManager >=7.0.0|<=7.0.12", "FortiManager >=6.4.0|<=6.4.14"},
+				to: map[int]statusTarget{
+					0: {productID: "FortiManager Cloud >=7.4.1|<=7.4.2"},
+					1: {productID: "FortiManager Cloud >=7.2.1|<=7.2.5"},
+					2: {productID: "FortiManager Cloud >=7.0.1|<=7.0.12"},
+				},
 			},
 			{
 				list: knownNotAffected,
 				from: []csafTypes.ProductID{"FortiManager-7.4.3", "FortiManager-7.2.7", "FortiManager-7.0.13", "FortiManager/ 7.6 all versions", "FortiManager-7.4.3", "FortiManager-7.2.6", "FortiManager-7.0.13", "FortiManager-6.4.15"},
-				to:   []csafTypes.ProductID{"FortiManager Cloud-7.4.3", "FortiManager Cloud-7.2.7", "FortiManager Cloud-7.0.13", "FortiManager/ 7.6 all versions", "FortiManager-7.4.3", "FortiManager-7.2.6", "FortiManager-7.0.13", "FortiManager-6.4.15"},
+				to: map[int]statusTarget{
+					0: {productID: "FortiManager Cloud-7.4.3"},
+					1: {productID: "FortiManager Cloud-7.2.7"},
+					2: {productID: "FortiManager Cloud-7.0.13"},
+				},
 			},
 		},
 	},
@@ -543,12 +615,16 @@ var treeFixes = map[string]treeFix{
 			{
 				list: knownAffected,
 				from: []csafTypes.ProductID{"FortiAnalyzer >=7.4.1|<=7.4.3", "FortiAnalyzer >=7.6.0|<=7.6.1", "FortiAnalyzer >=7.4.1|<=7.4.3"},
-				to:   []csafTypes.ProductID{"FortiAnalyzer Cloud >=7.4.1|<=7.4.3", "FortiAnalyzer >=7.6.0|<=7.6.1", "FortiAnalyzer >=7.4.1|<=7.4.3"},
+				to: map[int]statusTarget{
+					0: {productID: "FortiAnalyzer Cloud >=7.4.1|<=7.4.3"},
+				},
 			},
 			{
 				list: knownNotAffected,
 				from: []csafTypes.ProductID{"FortiAnalyzer-7.4.4", "FortiAnalyzer-7.6.2", "FortiAnalyzer-7.4.4", "FortiAnalyzer/ 7.2 all versions", "FortiAnalyzer/ 7.0 all versions"},
-				to:   []csafTypes.ProductID{"FortiAnalyzer Cloud-7.4.4", "FortiAnalyzer-7.6.2", "FortiAnalyzer-7.4.4", "FortiAnalyzer/ 7.2 all versions", "FortiAnalyzer/ 7.0 all versions"},
+				to: map[int]statusTarget{
+					0: {productID: "FortiAnalyzer Cloud-7.4.4"},
+				},
 			},
 		},
 	},
@@ -571,12 +647,16 @@ var treeFixes = map[string]treeFix{
 			{
 				list: knownAffected,
 				from: []csafTypes.ProductID{"FortiManager >=7.4.1|<=7.4.3", "FortiManager >=7.4.1|<=7.4.3"},
-				to:   []csafTypes.ProductID{"FortiManager Cloud >=7.4.1|<=7.4.3", "FortiManager >=7.4.1|<=7.4.3"},
+				to: map[int]statusTarget{
+					0: {productID: "FortiManager Cloud >=7.4.1|<=7.4.3"},
+				},
 			},
 			{
 				list: knownNotAffected,
 				from: []csafTypes.ProductID{"FortiManager-7.4.4", "FortiManager/ 7.6 all versions", "FortiManager-7.4.4", "FortiManager/ 7.2 all versions", "FortiManager/ 7.0 all versions"},
-				to:   []csafTypes.ProductID{"FortiManager Cloud-7.4.4", "FortiManager/ 7.6 all versions", "FortiManager-7.4.4", "FortiManager/ 7.2 all versions", "FortiManager/ 7.0 all versions"},
+				to: map[int]statusTarget{
+					0: {productID: "FortiManager Cloud-7.4.4"},
+				},
 			},
 		},
 	},
@@ -603,12 +683,20 @@ var treeFixes = map[string]treeFix{
 			{
 				list: knownAffected,
 				from: []csafTypes.ProductID{"FortiManager >=7.6.0|<=7.6.1", "FortiManager >=7.4.0|<=7.4.4", "FortiManager >=7.2.2|<=7.2.7", "FortiManager >=7.6.0|<=7.6.1", "FortiManager >=7.4.0|<=7.4.5", "FortiManager >=7.2.1|<=7.2.8"},
-				to:   []csafTypes.ProductID{"FortiManager Cloud >=7.6.0|<=7.6.1", "FortiManager Cloud >=7.4.0|<=7.4.4", "FortiManager Cloud >=7.2.2|<=7.2.7", "FortiManager >=7.6.0|<=7.6.1", "FortiManager >=7.4.0|<=7.4.5", "FortiManager >=7.2.1|<=7.2.8"},
+				to: map[int]statusTarget{
+					0: {productID: "FortiManager Cloud >=7.6.0|<=7.6.1"},
+					1: {productID: "FortiManager Cloud >=7.4.0|<=7.4.4"},
+					2: {productID: "FortiManager Cloud >=7.2.2|<=7.2.7"},
+				},
 			},
 			{
 				list: knownNotAffected,
 				from: []csafTypes.ProductID{"FortiManager-7.6.2", "FortiManager-7.4.5", "FortiManager-7.2.8", "FortiManager-7.6.2", "FortiManager-7.4.6", "FortiManager-7.2.9", "FortiManager/ 7.0 all versions"},
-				to:   []csafTypes.ProductID{"FortiManager Cloud-7.6.2", "FortiManager Cloud-7.4.5", "FortiManager Cloud-7.2.8", "FortiManager-7.6.2", "FortiManager-7.4.6", "FortiManager-7.2.9", "FortiManager/ 7.0 all versions"},
+				to: map[int]statusTarget{
+					0: {productID: "FortiManager Cloud-7.6.2"},
+					1: {productID: "FortiManager Cloud-7.4.5"},
+					2: {productID: "FortiManager Cloud-7.2.8"},
+				},
 			},
 		},
 	},
@@ -631,7 +719,10 @@ var treeFixes = map[string]treeFix{
 			{
 				list: knownAffected,
 				from: []csafTypes.ProductID{"FortiSandbox Cloud all versions", "FortiSandbox Cloud all versions", "FortiSandbox Cloud >=5.0.2|<=5.0.5"},
-				to:   []csafTypes.ProductID{"FortiSandbox Cloud 24 all versions", "FortiSandbox Cloud 23 all versions", "FortiSandbox Cloud >=5.0.2|<=5.0.5"},
+				to: map[int]statusTarget{
+					0: {productID: "FortiSandbox Cloud 24 all versions"},
+					1: {productID: "FortiSandbox Cloud 23 all versions"},
+				},
 			},
 		},
 	},
@@ -644,12 +735,22 @@ var treeFixes = map[string]treeFix{
 			{
 				list: knownNotAffected,
 				from: []csafTypes.ProductID{"FortiSOAR PaaS-f", "FortiSOAR PaaS-f", "FortiSOAR PaaS-f", "FortiSOAR PaaS-f"},
-				to:   []csafTypes.ProductID{},
+				to: map[int]statusTarget{
+					0: {drop: true},
+					1: {drop: true},
+					2: {drop: true},
+					3: {drop: true},
+				},
 			},
 			{
 				list: knownNotAffected,
 				from: []csafTypes.ProductID{"FortiSOAR on-premise-f", "FortiSOAR on-premise-f", "FortiSOAR on-premise-f", "FortiSOAR on-premise-f"},
-				to:   []csafTypes.ProductID{},
+				to: map[int]statusTarget{
+					0: {drop: true},
+					1: {drop: true},
+					2: {drop: true},
+					3: {drop: true},
+				},
 			},
 		},
 	},
@@ -659,7 +760,9 @@ var treeFixes = map[string]treeFix{
 			{
 				list: knownNotAffected,
 				from: []csafTypes.ProductID{"FortiWeb/ 8.0 all versions", "FortiWeb-7.6.5", "FortiWeb-7.4.9", "FortiWeb-upcoming version 7.2.12"},
-				to:   []csafTypes.ProductID{"FortiWeb/ 8.0 all versions", "FortiWeb-7.6.5", "FortiWeb-7.4.9", "FortiWeb-upcoming 7.2.12"},
+				to: map[int]statusTarget{
+					3: {productID: "FortiWeb-upcoming 7.2.12"},
+				},
 			},
 		},
 	},
@@ -744,7 +847,40 @@ var treeFixes = map[string]treeFix{
 			{
 				list: knownNotAffected,
 				from: []csafTypes.ProductID{"FortiNAC-F/FortiWeb Manager all versions", "FortiNAC-F/FortiWeb all versions", "FortiNAC-F/FortiVoice all versions", "FortiNAC-F/FortiTester all versions", "FortiNAC-F/FortiSwitch all versions", "FortiNAC-F/FortiSandbox all versions", "FortiNAC-F/FortiSOAR all versions", "FortiNAC-F/FortiSIEM all versions", "FortiNAC-F/FortiRecorder all versions", "FortiNAC-F/FortiProxy all versions", "FortiNAC-F/FortiPortal all versions", "FortiNAC-F/FortiOS all versions", "FortiNAC-F/ all versions", "FortiNAC-F/FortiNAC all versions", "FortiNAC-F/FortiManager all versions", "FortiNAC-F/FortiMail all versions", "FortiNAC-F/FortiExtender all versions", "FortiNAC-F/FortiDDoS all versions", "FortiNAC-F/FortiConverter all versions", "FortiNAC-F/FortiCloud all versions", "FortiNAC-F/FortiClient iOS all versions", "FortiNAC-F/FortiClient Windows all versions", "FortiNAC-F/FortiClient MacOS all versions", "FortiNAC-F/FortiClient Linux all versions", "FortiNAC-F/FortiClient EMS all versions", "FortiNAC-F/FortiClient Android all versions", "FortiNAC-F/FortiAuthenticator all versions", "FortiNAC-F/FortiAnalyzer all versions", "FortiNAC-F/FortiAP-W2 all versions", "FortiNAC-F/FortiAP-U all versions", "FortiNAC-F/FortiAP all versions", "FortiNAC-F/FortiADC Manager all versions", "FortiNAC-F/FortiADC all versions"},
-				to:   []csafTypes.ProductID{"FortiWebManager all versions", "FortiWeb all versions", "FortiVoice all versions", "FortiTester all versions", "FortiSwitch all versions", "FortiSandbox all versions", "FortiSOAR on-premise all versions", "FortiSIEM all versions", "FortiRecorder all versions", "FortiProxy all versions", "FortiPortal all versions", "FortiOS all versions", "FortiNAC-F/ all versions", "FortiNAC all versions", "FortiManager all versions", "FortiMail all versions", "FortiExtender all versions", "FortiDDoS all versions", "FortiConverter all versions", "FortiCloud all versions", "FortiClientiOS all versions", "FortiClientWindows all versions", "FortiClientMac all versions", "FortiClientLinux all versions", "FortiClientEMS all versions", "FortiClientAndroid all versions", "FortiAuthenticator all versions", "FortiAnalyzer all versions", "FortiAP-W2 all versions", "FortiAP-U all versions", "FortiAP all versions", "FortiADCManager all versions", "FortiADC all versions"},
+				to: map[int]statusTarget{
+					0:  {productID: "FortiWebManager all versions"},
+					1:  {productID: "FortiWeb all versions"},
+					2:  {productID: "FortiVoice all versions"},
+					3:  {productID: "FortiTester all versions"},
+					4:  {productID: "FortiSwitch all versions"},
+					5:  {productID: "FortiSandbox all versions"},
+					6:  {productID: "FortiSOAR on-premise all versions"},
+					7:  {productID: "FortiSIEM all versions"},
+					8:  {productID: "FortiRecorder all versions"},
+					9:  {productID: "FortiProxy all versions"},
+					10: {productID: "FortiPortal all versions"},
+					11: {productID: "FortiOS all versions"},
+					13: {productID: "FortiNAC all versions"},
+					14: {productID: "FortiManager all versions"},
+					15: {productID: "FortiMail all versions"},
+					16: {productID: "FortiExtender all versions"},
+					17: {productID: "FortiDDoS all versions"},
+					18: {productID: "FortiConverter all versions"},
+					19: {productID: "FortiCloud all versions"},
+					20: {productID: "FortiClientiOS all versions"},
+					21: {productID: "FortiClientWindows all versions"},
+					22: {productID: "FortiClientMac all versions"},
+					23: {productID: "FortiClientLinux all versions"},
+					24: {productID: "FortiClientEMS all versions"},
+					25: {productID: "FortiClientAndroid all versions"},
+					26: {productID: "FortiAuthenticator all versions"},
+					27: {productID: "FortiAnalyzer all versions"},
+					28: {productID: "FortiAP-W2 all versions"},
+					29: {productID: "FortiAP-U all versions"},
+					30: {productID: "FortiAP all versions"},
+					31: {productID: "FortiADCManager all versions"},
+					32: {productID: "FortiADC all versions"},
+				},
 			},
 		},
 	},
@@ -771,7 +907,9 @@ var treeFixes = map[string]treeFix{
 			{
 				list: knownNotAffected,
 				from: []csafTypes.ProductID{"FortiSIEM/ Cloud all versions", "FortiSIEM/ 7.5 all versions", "FortiSIEM-7.4.1", "FortiSIEM-7.3.5", "FortiSIEM-7.2.7", "FortiSIEM-7.1.9"},
-				to:   []csafTypes.ProductID{"FortiSIEM Cloud all versions", "FortiSIEM/ 7.5 all versions", "FortiSIEM-7.4.1", "FortiSIEM-7.3.5", "FortiSIEM-7.2.7", "FortiSIEM-7.1.9"},
+				to: map[int]statusTarget{
+					0: {productID: "FortiSIEM Cloud all versions"},
+				},
 			},
 		},
 	},
