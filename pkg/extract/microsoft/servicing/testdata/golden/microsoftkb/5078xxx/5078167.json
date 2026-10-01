@@ -1,0 +1,13 @@
+{
+	"kb_id": "5078167",
+	"url": "https://support.microsoft.com/en-us/servicing/os/hotpatch/windows-11/2026/january-24-2026-hotpatch-kb5078167-os-builds-26200-7634-and-26100-7634-out-of-band",
+	"products": [
+		"os/hotpatch/windows-11"
+	],
+	"data_source": {
+		"id": "microsoft-servicing",
+		"raws": [
+			"os/hotpatch/windows-11/2026/january-24-2026-hotpatch-kb5078167-os-builds-26200-7634-and-26100-7634-out-of-band.json"
+		]
+	}
+}

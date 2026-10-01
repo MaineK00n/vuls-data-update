@@ -1,0 +1,18 @@
+{
+	"kb_id": "5079420",
+	"url": "https://support.microsoft.com/en-us/servicing/os/hotpatch/windows-11/2026/march-10-2026-hotpatch-kb5079420-os-builds-26200-7979-and-26100-7979",
+	"products": [
+		"os/hotpatch/windows-11"
+	],
+	"supersedes": [
+		{
+			"kb_id": "5077212"
+		}
+	],
+	"data_source": {
+		"id": "microsoft-servicing",
+		"raws": [
+			"os/hotpatch/windows-11/2026/march-10-2026-hotpatch-kb5079420-os-builds-26200-7979-and-26100-7979.json"
+		]
+	}
+}
