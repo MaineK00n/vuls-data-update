@@ -1,0 +1,165 @@
+{
+	"document": {
+		"acknowledgments": [
+			{
+				"summary": "Fortinet is pleased to thank Rui Xi (@Cycloctane) from Beijing University of Posts and Telecommunications for reporting this vulnerability under responsible disclosure. "
+			}
+		],
+		"category": "Fortinet PSIRT Advisories",
+		"csaf_version": "2.0",
+		"publisher": {
+			"category": "vendor",
+			"contact_details": "https://fortiguard.fortinet.com/faq/psirt-contact",
+			"issuing_authority": "Fortinet PSIRT",
+			"name": "Fortinet PSIRT",
+			"namespace": "https://fortiguard.fortinet.com/psirt"
+		},
+		"title": "Content-Encoding WAF Evasion",
+		"tracking": {
+			"current_release_date": "2026-09-03T00:00:00",
+			"id": "FG-IR-26-157",
+			"initial_release_date": "2026-08-12T00:00:00",
+			"revision_history": [
+				{
+					"date": "2026-08-12T00:00:00",
+					"number": "1",
+					"summary": "Initial Publication"
+				}
+			],
+			"status": "final",
+			"version": "0"
+		}
+	},
+	"product_tree": {
+		"branches": [
+			{
+				"branches": [
+					{
+						"branches": [
+							{
+								"category": "product_version_range",
+								"name": "FortiWeb/>=8.0.0|<=8.0.2",
+								"product": {
+									"name": "FortiWeb",
+									"product_id": "FortiWeb >=8.0.0|<=8.0.2"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiWeb/>=7.6.0|<=7.6.5",
+								"product": {
+									"name": "FortiWeb",
+									"product_id": "FortiWeb >=7.6.0|<=7.6.5"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiWeb/7.4 all versions",
+								"product": {
+									"name": "FortiWeb",
+									"product_id": "FortiWeb 7.4 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiWeb/7.2 all versions",
+								"product": {
+									"name": "FortiWeb",
+									"product_id": "FortiWeb 7.2 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiWeb/7.0 all versions",
+								"product": {
+									"name": "FortiWeb",
+									"product_id": "FortiWeb 7.0 all versions"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiWeb"
+					}
+				],
+				"category": "vendor",
+				"name": "Fortinet PSIRT"
+			}
+		]
+	},
+	"vulnerabilities": [
+		{
+			"cve": "CVE-2026-70466",
+			"cwe": {
+				"id": "CWE-184",
+				"name": "Incomplete List of Disallowed Inputs"
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "WAF policy bypass\n\n",
+					"title": "Summary"
+				},
+				{
+					"category": "general",
+					"text": "N/A",
+					"title": "Workarounds"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiWeb >=8.0.0|<=8.0.2",
+					"FortiWeb >=7.6.0|<=7.6.5",
+					"FortiWeb 7.4 all versions",
+					"FortiWeb 7.2 all versions",
+					"FortiWeb 7.0 all versions"
+				],
+				"known_not_affected": [
+					"FortiWeb-8.0.3",
+					"FortiWeb-7.6.6"
+				]
+			},
+			"references": [
+				{
+					"summary": "An incomplete list of disallowed inputs [CWE-184] in FortiWeb WAF may allow an unauthenticated attacker to bypass policies via specifically crafted requests.",
+					"url": "https://fortiguard.fortinet.com/psirt/FG-IR-26-157"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiWeb 8.0: Upgrade to 8.0.3 or above\nFortiWeb 7.6: Upgrade to 7.6.6 or above\nFortiWeb 7.4: Migrate to a fixed release\nFortiWeb 7.2: Migrate to a fixed release\nFortiWeb 7.0: Migrate to a fixed release",
+					"product_ids": [
+						"FortiWeb"
+					]
+				},
+				{
+					"category": "mitigation",
+					"details": "A virtual patch is available. FortiGuard IPS signature package: Virtual Patch named \"FG-VD-10009598.0day.\" is available in FMWP db update 26.071.",
+					"product_ids": [
+						"FortiWeb"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 4.8,
+						"baseSeverity": "MEDIUM",
+						"vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:N/E:P/RL:O/RC:C",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiWeb"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Improper access control"
+				}
+			],
+			"title": "FortiWeb - MEDIUM - FG-IR-26-157"
+		}
+	]
+}
