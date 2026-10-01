@@ -71,11 +71,12 @@ type statusFix struct {
 	to   []csafTypes.ProductID
 }
 
-type statusList int
+// statusList names a product_status list by its CSAF field name.
+type statusList string
 
 const (
-	knownAffected statusList = iota
-	knownNotAffected
+	knownAffected    statusList = "known_affected"
+	knownNotAffected statusList = "known_not_affected"
 )
 
 // of returns the product_status list of v that l names. It errors on any
@@ -87,7 +88,7 @@ func (l statusList) of(v *csafTypes.Vulnerability) (*[]csafTypes.ProductID, erro
 	case knownNotAffected:
 		return &v.ProductStatus.KnownNotAffected, nil
 	default:
-		return nil, errors.Errorf("unexpected product_status list. expected: %q, actual: %d", []string{"known_affected", "known_not_affected"}, l)
+		return nil, errors.Errorf("unexpected product_status list. expected: %q, actual: %q", []statusList{knownAffected, knownNotAffected}, l)
 	}
 }
 
@@ -98,19 +99,8 @@ func (f treeFix) apply(doc *csafTypes.CSAF) error {
 		}
 	}
 	for _, sf := range f.statuses {
-		n := 0
-		for i := range doc.Vulnerabilities {
-			l, err := sf.list.of(&doc.Vulnerabilities[i])
-			if err != nil {
-				return errors.Wrap(err, "select product_status list")
-			}
-			if slices.Equal(*l, sf.from) {
-				*l = slices.Clone(sf.to)
-				n++
-			}
-		}
-		if n == 0 {
-			return errors.Errorf("no vulnerability has the product_status list %q; the tree fix is stale", sf.from)
+		if err := sf.apply(doc); err != nil {
+			return errors.Wrapf(err, "%s %q", sf.list, sf.from)
 		}
 	}
 	return nil
@@ -162,6 +152,24 @@ func (bf branchFix) apply(doc *csafTypes.CSAF) error {
 		}
 		*parent = append(*parent, csafTypes.Branch{Category: "product", Name: product, Branches: moved[product]})
 		extendReferences(doc, bf.name, product)
+	}
+	return nil
+}
+
+func (sf statusFix) apply(doc *csafTypes.CSAF) error {
+	n := 0
+	for i := range doc.Vulnerabilities {
+		l, err := sf.list.of(&doc.Vulnerabilities[i])
+		if err != nil {
+			return errors.Wrap(err, "select product_status list")
+		}
+		if slices.Equal(*l, sf.from) {
+			*l = slices.Clone(sf.to)
+			n++
+		}
+	}
+	if n == 0 {
+		return errors.New("no vulnerability has the list; the tree fix is stale")
 	}
 	return nil
 }
