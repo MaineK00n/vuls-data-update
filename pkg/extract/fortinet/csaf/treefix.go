@@ -3,7 +3,6 @@ package csaf
 import (
 	"fmt"
 	"maps"
-	"regexp"
 	"slices"
 	"strings"
 
@@ -214,12 +213,30 @@ func extendReferences(doc *csafTypes.CSAF, from, to string) {
 	}
 }
 
-// notAffectedPattern is Fortinet's spelling of a known_not_affected product the
-// tree leaves undefined: "<branch>-<version>", the fixed release
-// ("FortiOS-7.4.8"), or "<branch>-upcoming <version>", the fixed release yet
-// to ship ("FortiWeb-upcoming  7.2.13"). The branch name is matched against
-// the tree, since product names carry hyphens too ("FortiNAC-F").
-var notAffectedPattern = regexp.MustCompile(`^-(?:upcoming +)?([0-9]+(?:\.[0-9]+)*)$`)
+// notAffectedVersion returns the version that a known_not_affected product_id
+// the tree leaves undefined names under branch, in one of the two spellings
+// Fortinet uses: "<branch>-<version>", the fixed release ("FortiOS-7.4.8"),
+// and "<branch>-upcoming <version>", the fixed release yet to ship
+// ("FortiWeb-upcoming  7.2.13"; two spaces, one in FG-IR-23-385), left
+// unchanged once it ships. Anything else reports false, so a new spelling is
+// added here or repaired in treeFixes by hand rather than read by shape. The
+// branch is given, not parsed, since product names carry hyphens too
+// ("FortiNAC-F").
+func notAffectedVersion(pid csafTypes.ProductID, branch string) (string, bool) {
+	rest, ok := strings.CutPrefix(string(pid), fmt.Sprintf("%s-", branch))
+	if !ok {
+		return "", false
+	}
+	if after, ok := strings.CutPrefix(rest, "upcoming "); ok {
+		rest = strings.TrimLeft(after, " ")
+	}
+	for c := range strings.SplitSeq(rest, ".") {
+		if c == "" || strings.Trim(c, "0123456789") != "" {
+			return "", false
+		}
+	}
+	return rest, true
+}
 
 // defineNotAffected defines, as a product_version leaf under its product
 // branch, every known_not_affected product_id that the tree does not define.
@@ -254,12 +271,8 @@ func defineNotAffected(doc *csafTypes.CSAF) error {
 				n               int
 			)
 			for _, b := range branches {
-				rest, ok := strings.CutPrefix(string(pid), b)
-				if !ok {
-					continue
-				}
-				if m := notAffectedPattern.FindStringSubmatch(rest); m != nil {
-					branch, version = b, m[1]
+				if ver, ok := notAffectedVersion(pid, b); ok {
+					branch, version = b, ver
 					n++
 				}
 			}
