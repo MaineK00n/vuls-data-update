@@ -135,6 +135,8 @@ func (bf branchFix) apply(doc *csafTypes.CSAF) error {
 		return errors.Errorf("unexpected leaves. expected: %q, actual: %q; the tree fix is stale", bf.leaves, names)
 	}
 
+	defined := productIDs(doc.ProductTree.Branches)
+
 	// moved keeps the leaves per target product; products keeps the targets in
 	// the order their first leaf comes, so the new branches follow the tree.
 	var (
@@ -151,9 +153,13 @@ func (bf branchFix) apply(doc *csafTypes.CSAF) error {
 		if leaf.Product == nil {
 			return errors.Errorf("leaf %q has no product", leaf.Name)
 		}
+		pid := csafTypes.ProductID(fmt.Sprintf("%s %s", t.product, t.version))
+		if _, ok := defined[pid]; ok && pid != leaf.Product.ProductID {
+			return errors.Errorf("leaf %q would become %q, which the tree already defines", leaf.Name, pid)
+		}
 		leaf.Name = fmt.Sprintf("%s/%s", t.product, t.version)
 		leaf.Product.Name = t.product
-		leaf.Product.ProductID = csafTypes.ProductID(fmt.Sprintf("%s %s", t.product, t.version))
+		leaf.Product.ProductID = pid
 		if t.product == bf.name {
 			kept = append(kept, leaf)
 			continue
@@ -245,6 +251,22 @@ func findProductBranch(bs *[]csafTypes.Branch, name string) (*[]csafTypes.Branch
 	}
 }
 
+// productIDs returns every product_id the tree defines.
+func productIDs(bs []csafTypes.Branch) map[csafTypes.ProductID]struct{} {
+	ids := make(map[csafTypes.ProductID]struct{})
+	var walk func(bs []csafTypes.Branch)
+	walk = func(bs []csafTypes.Branch) {
+		for _, b := range bs {
+			if b.Product != nil {
+				ids[b.Product.ProductID] = struct{}{}
+			}
+			walk(b.Branches)
+		}
+	}
+	walk(bs)
+	return ids
+}
+
 // extendReferences adds to to every score, threat and remediation reference
 // list naming from, so the leaves moved from branch from to branch to stay
 // covered by what was written for them.
@@ -301,14 +323,11 @@ func notAffectedVersion(pid csafTypes.ProductID, branch string) (string, bool) {
 // makes the tree say what the list names. A product_id of any other shape, or
 // whose branch the tree lacks, hard-errors.
 func defineNotAffected(doc *csafTypes.CSAF) error {
-	defined := make(map[csafTypes.ProductID]struct{})
+	defined := productIDs(doc.ProductTree.Branches)
 	var branches []string
 	var walk func(bs []csafTypes.Branch)
 	walk = func(bs []csafTypes.Branch) {
 		for _, b := range bs {
-			if b.Product != nil {
-				defined[b.Product.ProductID] = struct{}{}
-			}
 			if b.Category == "product" {
 				branches = append(branches, b.Name)
 			}
@@ -909,6 +928,103 @@ var treeFixes = map[string]treeFix{
 				from: []csafTypes.ProductID{"FortiSIEM/ Cloud all versions", "FortiSIEM/ 7.5 all versions", "FortiSIEM-7.4.1", "FortiSIEM-7.3.5", "FortiSIEM-7.2.7", "FortiSIEM-7.1.9"},
 				to: map[int]statusTarget{
 					0: {productID: "FortiSIEM Cloud all versions"},
+				},
+			},
+		},
+	},
+	// A free-text remark was left on the leaf when the advisory table was
+	// converted ("6.0 all versions (need to be authenticated to provoke a
+	// crash)"). It qualifies how the train is affected, not which versions are:
+	// NVD treats the whole train as affected too, and a criterion has no field
+	// for it.
+	"FG-IR-22-086": {
+		branches: []branchFix{{
+			name: "FortiOS",
+			leaves: []string{
+				"FortiOS/7.2.0",
+				"FortiOS/>=7.0.0|<=7.0.5",
+				"FortiOS/>=6.4.0|<=6.4.9",
+				"FortiOS/>=6.2.0|<=6.2.10",
+				"FortiOS/6.0 all versions (need to be authenticated to provoke a crash)",
+			},
+			to: map[int]leafTarget{
+				4: {product: "FortiOS", version: "6.0 all versions"},
+			},
+		}},
+		statuses: []statusFix{
+			{
+				list: knownAffected,
+				from: []csafTypes.ProductID{"FortiOS 7.2.0", "FortiOS >=7.0.0|<=7.0.5", "FortiOS >=6.4.0|<=6.4.9", "FortiOS >=6.2.0|<=6.2.10", "FortiOS 6.0 all versions (need to be authenticated to provoke a crash)"},
+				to: map[int]statusTarget{
+					4: {productID: "FortiOS 6.0 all versions"},
+				},
+			},
+		},
+	},
+	// Same as FG-IR-22-086, on five trains ("5.0 all versions (special note for
+	// fortios in additional note section)"); NVD treats the trains as affected
+	// (CVE-2023-25610: fortios 5.0.0 to 6.2.13).
+	"FG-IR-23-001": {
+		branches: []branchFix{{
+			name: "FortiOS",
+			leaves: []string{
+				"FortiOS/>=7.2.0|<=7.2.3",
+				"FortiOS/>=7.0.0|<=7.0.9",
+				"FortiOS/>=6.4.0|<=6.4.11",
+				"FortiOS/>=6.2.0|<=6.2.12",
+				"FortiOS/6.0 all versions (special note for fortios in additional note section)",
+				"FortiOS/5.6 all versions (special note for fortios in additional note section)",
+				"FortiOS/5.4 all versions (special note for fortios in additional note section)",
+				"FortiOS/5.2 all versions (special note for fortios in additional note section)",
+				"FortiOS/5.0 all versions (special note for fortios in additional note section)",
+			},
+			to: map[int]leafTarget{
+				4: {product: "FortiOS", version: "6.0 all versions"},
+				5: {product: "FortiOS", version: "5.6 all versions"},
+				6: {product: "FortiOS", version: "5.4 all versions"},
+				7: {product: "FortiOS", version: "5.2 all versions"},
+				8: {product: "FortiOS", version: "5.0 all versions"},
+			},
+		}},
+		statuses: []statusFix{
+			{
+				list: knownAffected,
+				from: []csafTypes.ProductID{"FortiOS >=7.2.0|<=7.2.3", "FortiOS >=7.0.0|<=7.0.9", "FortiOS >=6.4.0|<=6.4.11", "FortiOS >=6.2.0|<=6.2.12", "FortiOS 6.0 all versions (special note for fortios in additional note section)", "FortiOS 5.6 all versions (special note for fortios in additional note section)", "FortiOS 5.4 all versions (special note for fortios in additional note section)", "FortiOS 5.2 all versions (special note for fortios in additional note section)", "FortiOS 5.0 all versions (special note for fortios in additional note section)"},
+				to: map[int]statusTarget{
+					4: {productID: "FortiOS 6.0 all versions"},
+					5: {productID: "FortiOS 5.6 all versions"},
+					6: {productID: "FortiOS 5.4 all versions"},
+					7: {productID: "FortiOS 5.2 all versions"},
+					8: {productID: "FortiOS 5.0 all versions"},
+				},
+			},
+		},
+	},
+	// The advisory table reads "7.2.0 though 7.2.7", a typo of "through", so the
+	// conversion that turns "<lo> through <hi>" into ">=<lo>|<=<hi>" (as it did
+	// for FortiAnalyzer and FortiManager in the same advisory) left it as text.
+	// NVD reads it the same way (fortianalyzer_big_data 7.2.0 ≤ v ≤ 7.2.7 for
+	// CVE-2024-31496).
+	"FG-IR-24-098": {
+		branches: []branchFix{{
+			name: "FortiAnalyzer-BigData",
+			leaves: []string{
+				"FortiAnalyzer-BigData/7.4.0",
+				"FortiAnalyzer-BigData/7.2.0 though 7.2.7",
+				"FortiAnalyzer-BigData/7.0 all versions",
+				"FortiAnalyzer-BigData/6.4 all versions",
+				"FortiAnalyzer-BigData/6.2 all versions",
+			},
+			to: map[int]leafTarget{
+				1: {product: "FortiAnalyzer-BigData", version: ">=7.2.0|<=7.2.7"},
+			},
+		}},
+		statuses: []statusFix{
+			{
+				list: knownAffected,
+				from: []csafTypes.ProductID{"FortiAnalyzer-BigData 7.4.0", "FortiAnalyzer-BigData 7.2.0 though 7.2.7", "FortiAnalyzer-BigData 7.0 all versions", "FortiAnalyzer-BigData 6.4 all versions", "FortiAnalyzer-BigData 6.2 all versions"},
+				to: map[int]statusTarget{
+					1: {productID: "FortiAnalyzer-BigData >=7.2.0|<=7.2.7"},
 				},
 			},
 		},
