@@ -8,6 +8,7 @@ import (
 	"maps"
 	"os"
 	"path/filepath"
+	"regexp"
 	"slices"
 	"strings"
 	"time"
@@ -1037,6 +1038,10 @@ func cleanFixedBuild(rawFixedBuild string) string {
 	return strings.ReplaceAll(fixedBuild, "\u200b", "")
 }
 
+// releaseCandidateTagRE matches a FixedBuild that is exactly a dotted number
+// followed by " RC<digits>" (e.g. "11.0 RC1").
+var releaseCandidateTagRE = regexp.MustCompile(`^\d+(\.\d+)+ RC\d+$`)
+
 func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criterionTypes.Criterion, error) {
 	fixedBuild := cleanFixedBuild(rawFixedBuild)
 
@@ -1056,9 +1061,14 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 	//    package names (e.g. "regex-1.8.4", "h2-0.3.26"), KB references (e.g. "KB5032921")
 	//  - Placeholder versions containing "x" (e.g. "15.0.5415.xxxxxx", "5.64.x")
 	//  - Values without dots that are not parseable version numbers (e.g. "25060212643")
-	//  - Semicolon-separated compound versions (e.g. "3.0.6920.8954; 2.0.50727.8970")
-	//    used by .NET Framework products bundling multiple framework versions
-	if fixedBuild[0] < '0' || fixedBuild[0] > '9' || strings.Contains(fixedBuild, "x") || !strings.Contains(fixedBuild, ".") || strings.Contains(fixedBuild, ";") {
+	//  - Semicolon- or comma-separated compound versions (e.g. "3.0.6920.8954; 2.0.50727.8970"
+	//    used by .NET Framework products bundling multiple framework versions, or
+	//    "8.0.130, 8.0.424" pairing the fixed .NET SDK feature bands, 2026-Sep)
+	//  - Release-candidate tags of the exact form "<dotted number> RC<digits>" (e.g.
+	//    "11.0 RC1", 2026-Sep). Other values containing a space are not skipped: on
+	//    version-compared products they have been recoverable typos (e.g. "96.0 1954.29"),
+	//    which should fail and get a fixedBuildOverrides entry
+	if fixedBuild[0] < '0' || fixedBuild[0] > '9' || strings.Contains(fixedBuild, "x") || !strings.Contains(fixedBuild, ".") || strings.ContainsAny(fixedBuild, ";,") || releaseCandidateTagRE.MatchString(fixedBuild) {
 		return nil, nil
 	}
 
@@ -1185,6 +1195,9 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 			".NET 10.0 installed on Linux",
 			".NET 10.0 installed on Mac OS",
 			".NET 10.0 installed on Windows",
+			".NET 11.0 installed on Linux",
+			".NET 11.0 installed on Mac OS",
+			".NET 11.0 installed on Windows",
 			".NET Core 2.1",
 			".NET Core 3.1":
 			if _, err := dotnetcoreversion.NewVersion(fixedBuild); err != nil {
@@ -1384,6 +1397,7 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 			"Microsoft SQL Server 2022 for x64-based Systems (CU 23)",
 			"Microsoft SQL Server 2022 for x64-based Systems (CU 24)",
 			"Microsoft SQL Server 2022 for x64-based Systems (CU 25)",
+			"Microsoft SQL Server 2022 for x64-based Systems (CU 26)",
 			"Microsoft SQL Server 2022 for x64-based Systems (CU 5)",
 			"Microsoft SQL Server 2022 for x64-based Systems (CU 8)",
 			"Microsoft SQL Server 2022 for x64-based Systems (GDR)",
@@ -1391,11 +1405,13 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 			"Microsoft SQL Server 2025 for x64-based Systems (CU3)",
 			"Microsoft SQL Server 2025 for x64-based Systems (CU4)",
 			"Microsoft SQL Server 2025 for x64-based Systems (CU6)",
+			"Microsoft SQL Server 2025 for x64-based Systems (CU8)",
 			"Microsoft SQL Server 2025 for x64-based Systems (GDR)",
 			"SQL Server 2019 for Linux Containers",
 			"SQL Server Integration Services for Visual Studio 2019",
 			"SQL Server Integration Services for Visual Studio 2022",
-			"SQL Server Management Studio 20.2":
+			"SQL Server Management Studio 20.2",
+			"SQL Server Management Studio 22":
 			if _, err := sqlserverversion.NewVersion(fixedBuild); err != nil {
 				return rangeTypes.RangeTypeUnknown, errors.Wrap(err, "sqlserverversion.NewVersion")
 			}
@@ -1466,7 +1482,8 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 			"Microsoft Visual Studio 2026 Version 18.5",
 			"Microsoft Visual Studio 2026 Version 18.6",
 			"Microsoft Visual Studio 2026 Version 18.7",
-			"Microsoft Visual Studio 2026 Version 18.8":
+			"Microsoft Visual Studio 2026 Version 18.8",
+			"Microsoft Visual Studio 2026 Version 18.9":
 			if _, err := visualstudioversion.NewVersion(fixedBuild); err != nil {
 				return rangeTypes.RangeTypeUnknown, errors.Wrap(err, "visualstudioversion.NewVersion")
 			}
@@ -2072,6 +2089,17 @@ var fixedBuildOverrides = map[[3]string]string{
 	{"CVE-2022-44693", "Microsoft SharePoint Server 2019", "10393.20000"}:                 "16.0.10393.20000",
 	{"CVE-2022-44690", "Microsoft SharePoint Server Subscription Edition", "15601.20316"}: "16.0.15601.20316",
 	{"CVE-2022-44693", "Microsoft SharePoint Server Subscription Edition", "15601.20316"}: "16.0.15601.20316",
+
+	// SQL Server Management Studio
+	// 2026-Sep (CVE-2026-65669): FixedBuild "22.8.2" is the SSMS release number, not the build
+	// number that installs report. SSMS 22 builds are 22.1.<Visual Studio build>: the 22.8.2
+	// release notes say "Updated to Visual Studio 18.8.2 [12023.21]"
+	// (https://learn.microsoft.com/en-us/ssms/release-notes-22), and
+	// https://sqlserverbuilds.blogspot.com/2018/01/sql-server-management-studio-ssms.html maps
+	// 22.8.2 to 22.1.12023.21. Left as a release number, every later build (e.g. 22.1.12210.168
+	// for 22.10.1) would compare as older than the fix. SSMS 20.2's FixedBuild ("20.2.37.0",
+	// CVE-2025-29803) was already a build number
+	{"CVE-2026-65669", "SQL Server Management Studio 22", "22.8.2"}: "22.1.12023.21",
 
 	// Microsoft Teams for Android (FixedBuild "1416/..." has numeric prefix before slash)
 	// 2022-Feb (CVE-2022-21965, FixedBuild "1416/..." has numeric prefix)

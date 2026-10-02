@@ -283,6 +283,246 @@ func TestBuildFixedBuildCriterion(t *testing.T) {
 			},
 		},
 		{
+			name: "Visual Studio 2026 Version 18.9",
+			args: args{
+				cveID:         "CVE-2025-70873",
+				productName:   "Microsoft Visual Studio 2026 Version 18.9",
+				rawFixedBuild: "18.9.3",
+			},
+			want: &criterionTypes.Criterion{
+				Type: criterionTypes.CriterionTypeVersion,
+				Version: &vcTypes.Criterion{
+					Vulnerable: true,
+					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
+					Package: packageTypes.Package{
+						Type:   packageTypes.PackageTypeBinary,
+						Binary: &binaryTypes.Package{Name: "Microsoft Visual Studio 2026 Version 18.9"},
+					},
+					Affected: &affectedTypes.Affected{
+						Type:  affectedrangeTypes.RangeTypeMicrosoftVisualStudio,
+						Range: []affectedrangeTypes.Range{{LessThan: "18.9.3"}},
+						Fixed: []string{"18.9.3"},
+					},
+				},
+			},
+		},
+		{
+			name: "SQL Server 2022 CU 26",
+			args: args{
+				cveID:         "CVE-2026-47297",
+				productName:   "Microsoft SQL Server 2022 for x64-based Systems (CU 26)",
+				rawFixedBuild: "16.0.4275.2",
+			},
+			want: &criterionTypes.Criterion{
+				Type: criterionTypes.CriterionTypeVersion,
+				Version: &vcTypes.Criterion{
+					Vulnerable: true,
+					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
+					Package: packageTypes.Package{
+						Type:   packageTypes.PackageTypeBinary,
+						Binary: &binaryTypes.Package{Name: "Microsoft SQL Server 2022 for x64-based Systems (CU 26)"},
+					},
+					Affected: &affectedTypes.Affected{
+						Type:  affectedrangeTypes.RangeTypeMicrosoftSQLServer,
+						Range: []affectedrangeTypes.Range{{LessThan: "16.0.4275.2"}},
+						Fixed: []string{"16.0.4275.2"},
+					},
+				},
+			},
+		},
+		{
+			name: "SQL Server 2025 CU8",
+			args: args{
+				cveID:         "CVE-2026-47297",
+				productName:   "Microsoft SQL Server 2025 for x64-based Systems (CU8)",
+				rawFixedBuild: "17.0.4085.5",
+			},
+			want: &criterionTypes.Criterion{
+				Type: criterionTypes.CriterionTypeVersion,
+				Version: &vcTypes.Criterion{
+					Vulnerable: true,
+					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
+					Package: packageTypes.Package{
+						Type:   packageTypes.PackageTypeBinary,
+						Binary: &binaryTypes.Package{Name: "Microsoft SQL Server 2025 for x64-based Systems (CU8)"},
+					},
+					Affected: &affectedTypes.Affected{
+						Type:  affectedrangeTypes.RangeTypeMicrosoftSQLServer,
+						Range: []affectedrangeTypes.Range{{LessThan: "17.0.4085.5"}},
+						Fixed: []string{"17.0.4085.5"},
+					},
+				},
+			},
+		},
+		{
+			name: "SQL Server Management Studio 22",
+			args: args{
+				cveID:         "CVE-2026-65669",
+				productName:   "SQL Server Management Studio 22",
+				rawFixedBuild: "22.8.2",
+			},
+			want: &criterionTypes.Criterion{
+				Type: criterionTypes.CriterionTypeVersion,
+				Version: &vcTypes.Criterion{
+					Vulnerable: true,
+					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
+					Package: packageTypes.Package{
+						Type:   packageTypes.PackageTypeBinary,
+						Binary: &binaryTypes.Package{Name: "SQL Server Management Studio 22"},
+					},
+					Affected: &affectedTypes.Affected{
+						Type:  affectedrangeTypes.RangeTypeMicrosoftSQLServer,
+						Range: []affectedrangeTypes.Range{{LessThan: "22.1.12023.21"}},
+						Fixed: []string{"22.1.12023.21"},
+					},
+				},
+			},
+		},
+		{
+			name: ".NET 8.0 SDK feature-band pair skipped (CVE-2026-58649)",
+			args: args{
+				cveID:         "CVE-2026-58649",
+				productName:   ".NET 8.0 installed on Windows",
+				rawFixedBuild: "8.0.130, 8.0.424",
+			},
+			want: nil,
+		},
+		{
+			name: ".NET 11.0 installed on Windows (parseable FixedBuild reaches the new switch entry)",
+			args: args{
+				cveID:         "CVE-2026-58649",
+				productName:   ".NET 11.0 installed on Windows",
+				rawFixedBuild: "11.0.1",
+			},
+			want: &criterionTypes.Criterion{
+				Type: criterionTypes.CriterionTypeVersion,
+				Version: &vcTypes.Criterion{
+					Vulnerable: true,
+					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
+					Package: packageTypes.Package{
+						Type:   packageTypes.PackageTypeBinary,
+						Binary: &binaryTypes.Package{Name: ".NET 11.0 installed on Windows"},
+					},
+					Affected: &affectedTypes.Affected{
+						Type:  affectedrangeTypes.RangeTypeMicrosoftDotNetCore,
+						Range: []affectedrangeTypes.Range{{LessThan: "11.0.1"}},
+						Fixed: []string{"11.0.1"},
+					},
+				},
+			},
+		},
+		{
+			name: ".NET 11.0 installed on Linux (parseable FixedBuild reaches the new switch entry)",
+			args: args{
+				cveID:         "CVE-2026-58649",
+				productName:   ".NET 11.0 installed on Linux",
+				rawFixedBuild: "11.0.1",
+			},
+			want: &criterionTypes.Criterion{
+				Type: criterionTypes.CriterionTypeVersion,
+				Version: &vcTypes.Criterion{
+					Vulnerable: true,
+					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
+					Package: packageTypes.Package{
+						Type:   packageTypes.PackageTypeBinary,
+						Binary: &binaryTypes.Package{Name: ".NET 11.0 installed on Linux"},
+					},
+					Affected: &affectedTypes.Affected{
+						Type:  affectedrangeTypes.RangeTypeMicrosoftDotNetCore,
+						Range: []affectedrangeTypes.Range{{LessThan: "11.0.1"}},
+						Fixed: []string{"11.0.1"},
+					},
+				},
+			},
+		},
+		{
+			name: ".NET 11.0 installed on Mac OS (parseable FixedBuild reaches the new switch entry)",
+			args: args{
+				cveID:         "CVE-2026-58649",
+				productName:   ".NET 11.0 installed on Mac OS",
+				rawFixedBuild: "11.0.1",
+			},
+			want: &criterionTypes.Criterion{
+				Type: criterionTypes.CriterionTypeVersion,
+				Version: &vcTypes.Criterion{
+					Vulnerable: true,
+					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
+					Package: packageTypes.Package{
+						Type:   packageTypes.PackageTypeBinary,
+						Binary: &binaryTypes.Package{Name: ".NET 11.0 installed on Mac OS"},
+					},
+					Affected: &affectedTypes.Affected{
+						Type:  affectedrangeTypes.RangeTypeMicrosoftDotNetCore,
+						Range: []affectedrangeTypes.Range{{LessThan: "11.0.1"}},
+						Fixed: []string{"11.0.1"},
+					},
+				},
+			},
+		},
+		{
+			name: ".NET 11.0 prerelease tag skipped (CVE-2026-58649)",
+			args: args{
+				cveID:         "CVE-2026-58649",
+				productName:   ".NET 11.0 installed on Windows",
+				rawFixedBuild: "11.0 RC1",
+			},
+			want: nil,
+		},
+		{
+			name: "RC tag followed by more text is not skipped",
+			args: args{
+				cveID:         "CVE-2099-0001",
+				productName:   ".NET 11.0 installed on Windows",
+				rawFixedBuild: "11.0 RC1 build 3",
+			},
+			wantErr: true,
+		},
+		{
+			name: "RC tag without a number is not skipped",
+			args: args{
+				cveID:         "CVE-2099-0001",
+				productName:   ".NET 11.0 installed on Windows",
+				rawFixedBuild: "11.0 RC",
+			},
+			wantErr: true,
+		},
+		{
+			name: "repeated RC tag is not skipped",
+			args: args{
+				cveID:         "CVE-2099-0001",
+				productName:   ".NET 11.0 installed on Windows",
+				rawFixedBuild: "11.0 RC1 RC2",
+			},
+			wantErr: true,
+		},
+		{
+			name: "RC tag after a malformed dotted number is not skipped",
+			args: args{
+				cveID:         "CVE-2099-0001",
+				productName:   ".NET 11.0 installed on Windows",
+				rawFixedBuild: "11..0 RC1",
+			},
+			wantErr: true,
+		},
+		{
+			name: "RC tag after a non-numeric prefix is not skipped",
+			args: args{
+				cveID:         "CVE-2099-0001",
+				productName:   ".NET 11.0 installed on Windows",
+				rawFixedBuild: "11.0 build RC1",
+			},
+			wantErr: true,
+		},
+		{
+			name: "space typo without an override is not skipped",
+			args: args{
+				cveID:         "CVE-2099-0001",
+				productName:   "Microsoft Edge (Chromium-based)",
+				rawFixedBuild: "96.0 1954.29",
+			},
+			wantErr: true,
+		},
+		{
 			name: "CVE-2021-34448 Windows 7 IE Cumulative 1.001 skipped",
 			args: args{
 				cveID:         "CVE-2021-34448",
