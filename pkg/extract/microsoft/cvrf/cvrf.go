@@ -1037,6 +1037,12 @@ func cleanFixedBuild(rawFixedBuild string) string {
 	return strings.ReplaceAll(fixedBuild, "\u200b", "")
 }
 
+// hasReleaseCandidateSuffix reports whether fixedBuild ends in " RC<digits>".
+func hasReleaseCandidateSuffix(fixedBuild string) bool {
+	_, n, ok := strings.Cut(fixedBuild, " RC")
+	return ok && isAllDigits(n)
+}
+
 func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criterionTypes.Criterion, error) {
 	fixedBuild := cleanFixedBuild(rawFixedBuild)
 
@@ -1059,10 +1065,11 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 	//  - Semicolon- or comma-separated compound versions (e.g. "3.0.6920.8954; 2.0.50727.8970"
 	//    used by .NET Framework products bundling multiple framework versions, or
 	//    "8.0.130, 8.0.424" pairing the fixed .NET SDK feature bands, 2026-Sep)
-	//  - Release-candidate tags (e.g. "11.0 RC1", 2026-Sep). Other values containing a
-	//    space are not skipped: on version-compared products they have been recoverable
-	//    typos (e.g. "96.0 1954.29"), which should fail and get a fixedBuildOverrides entry
-	if fixedBuild[0] < '0' || fixedBuild[0] > '9' || strings.Contains(fixedBuild, "x") || !strings.Contains(fixedBuild, ".") || strings.ContainsAny(fixedBuild, ";,") || strings.Contains(fixedBuild, " RC") {
+	//  - Release-candidate tags, i.e. values ending in " RC<digits>" (e.g. "11.0 RC1",
+	//    2026-Sep). Other values containing a space are not skipped: on version-compared
+	//    products they have been recoverable typos (e.g. "96.0 1954.29"), which should
+	//    fail and get a fixedBuildOverrides entry
+	if fixedBuild[0] < '0' || fixedBuild[0] > '9' || strings.Contains(fixedBuild, "x") || !strings.Contains(fixedBuild, ".") || strings.ContainsAny(fixedBuild, ";,") || hasReleaseCandidateSuffix(fixedBuild) {
 		return nil, nil
 	}
 

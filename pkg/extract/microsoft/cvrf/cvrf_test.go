@@ -469,6 +469,24 @@ func TestBuildFixedBuildCriterion(t *testing.T) {
 			want: nil,
 		},
 		{
+			name: "RC tag followed by more text is not skipped",
+			args: args{
+				cveID:         "CVE-2099-0001",
+				productName:   ".NET 11.0 installed on Windows",
+				rawFixedBuild: "11.0 RC1 build 3",
+			},
+			wantErr: true,
+		},
+		{
+			name: "RC tag without a number is not skipped",
+			args: args{
+				cveID:         "CVE-2099-0001",
+				productName:   ".NET 11.0 installed on Windows",
+				rawFixedBuild: "11.0 RC",
+			},
+			wantErr: true,
+		},
+		{
 			name: "space typo without an override is not skipped",
 			args: args{
 				cveID:         "CVE-2099-0001",
