@@ -487,6 +487,24 @@ func TestBuildFixedBuildCriterion(t *testing.T) {
 			wantErr: true,
 		},
 		{
+			name: "repeated RC tag is not skipped",
+			args: args{
+				cveID:         "CVE-2099-0001",
+				productName:   ".NET 11.0 installed on Windows",
+				rawFixedBuild: "11.0 RC1 RC2",
+			},
+			wantErr: true,
+		},
+		{
+			name: "RC tag after a non-numeric prefix is not skipped",
+			args: args{
+				cveID:         "CVE-2099-0001",
+				productName:   ".NET 11.0 installed on Windows",
+				rawFixedBuild: "11.0 build RC1",
+			},
+			wantErr: true,
+		},
+		{
 			name: "space typo without an override is not skipped",
 			args: args{
 				cveID:         "CVE-2099-0001",
