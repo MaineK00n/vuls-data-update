@@ -2090,9 +2090,16 @@ var fixedBuildOverrides = map[[3]string]string{
 	{"CVE-2022-44690", "Microsoft SharePoint Server Subscription Edition", "15601.20316"}: "16.0.15601.20316",
 	{"CVE-2022-44693", "Microsoft SharePoint Server Subscription Edition", "15601.20316"}: "16.0.15601.20316",
 
-	// SQL Server Management Studio (FixedBuild is 3-part, parser expects 4-part)
-	// 2026-Sep (CVE-2026-65669, FixedBuild "22.8.2" lacks the revision segment; SSMS 20.2's was 4-part)
-	{"CVE-2026-65669", "SQL Server Management Studio 22", "22.8.2"}: "22.8.2.0",
+	// SQL Server Management Studio
+	// 2026-Sep (CVE-2026-65669): FixedBuild "22.8.2" is the SSMS release number, not the build
+	// number that installs report. SSMS 22 builds are 22.1.<Visual Studio build>: the 22.8.2
+	// release notes say "Updated to Visual Studio 18.8.2 [12023.21]"
+	// (https://learn.microsoft.com/en-us/ssms/release-notes-22), and
+	// https://sqlserverbuilds.blogspot.com/2018/01/sql-server-management-studio-ssms.html maps
+	// 22.8.2 to 22.1.12023.21. Left as a release number, every later build (e.g. 22.1.12210.168
+	// for 22.10.1) would compare as older than the fix. SSMS 20.2's FixedBuild ("20.2.37.0",
+	// CVE-2025-29803) was already a build number
+	{"CVE-2026-65669", "SQL Server Management Studio 22", "22.8.2"}: "22.1.12023.21",
 
 	// Microsoft Teams for Android (FixedBuild "1416/..." has numeric prefix before slash)
 	// 2022-Feb (CVE-2022-21965, FixedBuild "1416/..." has numeric prefix)

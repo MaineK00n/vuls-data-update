@@ -372,8 +372,8 @@ func TestBuildFixedBuildCriterion(t *testing.T) {
 					},
 					Affected: &affectedTypes.Affected{
 						Type:  affectedrangeTypes.RangeTypeMicrosoftSQLServer,
-						Range: []affectedrangeTypes.Range{{LessThan: "22.8.2.0"}},
-						Fixed: []string{"22.8.2.0"},
+						Range: []affectedrangeTypes.Range{{LessThan: "22.1.12023.21"}},
+						Fixed: []string{"22.1.12023.21"},
 					},
 				},
 			},
