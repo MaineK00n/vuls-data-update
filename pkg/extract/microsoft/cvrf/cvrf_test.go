@@ -469,6 +469,15 @@ func TestBuildFixedBuildCriterion(t *testing.T) {
 			want: nil,
 		},
 		{
+			name: "space typo without an override is not skipped",
+			args: args{
+				cveID:         "CVE-2099-0001",
+				productName:   "Microsoft Edge (Chromium-based)",
+				rawFixedBuild: "96.0 1954.29",
+			},
+			wantErr: true,
+		},
+		{
 			name: "CVE-2021-34448 Windows 7 IE Cumulative 1.001 skipped",
 			args: args{
 				cveID:         "CVE-2021-34448",

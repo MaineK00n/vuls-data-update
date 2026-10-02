@@ -1059,9 +1059,10 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 	//  - Semicolon- or comma-separated compound versions (e.g. "3.0.6920.8954; 2.0.50727.8970"
 	//    used by .NET Framework products bundling multiple framework versions, or
 	//    "8.0.130, 8.0.424" pairing the fixed .NET SDK feature bands, 2026-Sep)
-	//  - Values containing a space: "&"/"and" compounds (e.g. "2.0.50727.9182 & 3.0.30729.9168")
-	//    and prerelease tags (e.g. "11.0 RC1", 2026-Sep)
-	if fixedBuild[0] < '0' || fixedBuild[0] > '9' || strings.Contains(fixedBuild, "x") || !strings.Contains(fixedBuild, ".") || strings.ContainsAny(fixedBuild, ";, ") {
+	//  - Release-candidate tags (e.g. "11.0 RC1", 2026-Sep). Other values containing a
+	//    space are not skipped: on version-compared products they have been recoverable
+	//    typos (e.g. "96.0 1954.29"), which should fail and get a fixedBuildOverrides entry
+	if fixedBuild[0] < '0' || fixedBuild[0] > '9' || strings.Contains(fixedBuild, "x") || !strings.Contains(fixedBuild, ".") || strings.ContainsAny(fixedBuild, ";,") || strings.Contains(fixedBuild, " RC") {
 		return nil, nil
 	}
 
