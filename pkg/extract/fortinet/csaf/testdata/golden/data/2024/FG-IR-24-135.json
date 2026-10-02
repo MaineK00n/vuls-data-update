@@ -82,6 +82,91 @@
 							{
 								"type": "cpe",
 								"cpe": {
+									"vulnerable": false,
+									"fix_status": {
+										"class": "not-affected"
+									},
+									"cpe": "cpe:2.3:a:fortinet:fortimanager_cloud:7.0.13:*:*:*:*:*:*:*"
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": false,
+									"fix_status": {
+										"class": "not-affected"
+									},
+									"cpe": "cpe:2.3:a:fortinet:fortimanager_cloud:7.2.7:*:*:*:*:*:*:*"
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": false,
+									"fix_status": {
+										"class": "not-affected"
+									},
+									"cpe": "cpe:2.3:a:fortinet:fortimanager_cloud:7.4.3:*:*:*:*:*:*:*"
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": false,
+									"fix_status": {
+										"class": "not-affected"
+									},
+									"cpe": "cpe:2.3:o:fortinet:fortimanager:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet-fortimanager",
+										"ge": "7.6",
+										"lt": "7.7"
+									}
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": false,
+									"fix_status": {
+										"class": "not-affected"
+									},
+									"cpe": "cpe:2.3:o:fortinet:fortimanager:6.4.15:*:*:*:*:*:*:*"
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": false,
+									"fix_status": {
+										"class": "not-affected"
+									},
+									"cpe": "cpe:2.3:o:fortinet:fortimanager:7.0.13:*:*:*:*:*:*:*"
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": false,
+									"fix_status": {
+										"class": "not-affected"
+									},
+									"cpe": "cpe:2.3:o:fortinet:fortimanager:7.2.6:*:*:*:*:*:*:*"
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": false,
+									"fix_status": {
+										"class": "not-affected"
+									},
+									"cpe": "cpe:2.3:o:fortinet:fortimanager:7.4.3:*:*:*:*:*:*:*"
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
 									"vulnerable": true,
 									"fix_status": {
 										"class": "unknown"
