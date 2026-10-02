@@ -1,0 +1,777 @@
+{
+	"document": {
+		"acknowledgments": [
+			{
+				"summary": "Internally discovered and reported by Gwendal Guégniaud of Fortinet Product Security Team."
+			}
+		],
+		"category": "Fortinet PSIRT Advisories",
+		"csaf_version": "2.0",
+		"publisher": {
+			"category": "vendor",
+			"contact_details": "https://fortiguard.fortinet.com/faq/psirt-contact",
+			"issuing_authority": "Fortinet PSIRT",
+			"name": "Fortinet PSIRT",
+			"namespace": "https://fortiguard.fortinet.com/psirt"
+		},
+		"title": "Weak Authentication in csfd daemon",
+		"tracking": {
+			"current_release_date": "2025-01-14T00:00:00",
+			"id": "FG-IR-24-221",
+			"initial_release_date": "2025-01-14T00:00:00",
+			"revision_history": [
+				{
+					"date": "2025-01-14T00:00:00",
+					"number": "1",
+					"summary": "Initial Publication"
+				}
+			],
+			"status": "final",
+			"version": "0"
+		}
+	},
+	"product_tree": {
+		"branches": [
+			{
+				"branches": [
+					{
+						"branches": [
+							{
+								"category": "product_version_range",
+								"name": "FortiAnalyzer/>=7.4.1|<=7.4.3",
+								"product": {
+									"name": "FortiAnalyzer",
+									"product_id": "FortiAnalyzer >=7.4.1|<=7.4.3"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiAnalyzer/>=7.6.0|<=7.6.1",
+								"product": {
+									"name": "FortiAnalyzer",
+									"product_id": "FortiAnalyzer >=7.6.0|<=7.6.1"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiAnalyzer/>=7.4.1|<=7.4.3",
+								"product": {
+									"name": "FortiAnalyzer",
+									"product_id": "FortiAnalyzer >=7.4.1|<=7.4.3"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiAnalyzer/ 7.2 all versions",
+								"product": {
+									"name": "FortiAnalyzer",
+									"product_id": "FortiAnalyzer/ 7.2 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiAnalyzer/ 7.0 all versions",
+								"product": {
+									"name": "FortiAnalyzer",
+									"product_id": "FortiAnalyzer/ 7.0 all versions"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiAnalyzer"
+					},
+					{
+						"branches": [
+							{
+								"category": "product_version_range",
+								"name": "FortiAuthenticator/ 6.6 all versions",
+								"product": {
+									"name": "FortiAuthenticator",
+									"product_id": "FortiAuthenticator/ 6.6 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiAuthenticator/ 6.5 all versions",
+								"product": {
+									"name": "FortiAuthenticator",
+									"product_id": "FortiAuthenticator/ 6.5 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiAuthenticator/ 6.4 all versions",
+								"product": {
+									"name": "FortiAuthenticator",
+									"product_id": "FortiAuthenticator/ 6.4 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiAuthenticator/ 6.3 all versions",
+								"product": {
+									"name": "FortiAuthenticator",
+									"product_id": "FortiAuthenticator/ 6.3 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiAuthenticator/ 6.2 all versions",
+								"product": {
+									"name": "FortiAuthenticator",
+									"product_id": "FortiAuthenticator/ 6.2 all versions"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiAuthenticator"
+					},
+					{
+						"branches": [
+							{
+								"category": "product_version_range",
+								"name": "FortiManager/>=7.6.0|<=7.6.1",
+								"product": {
+									"name": "FortiManager",
+									"product_id": "FortiManager >=7.6.0|<=7.6.1"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiManager/>=7.4.1|<=7.4.3",
+								"product": {
+									"name": "FortiManager",
+									"product_id": "FortiManager >=7.4.1|<=7.4.3"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiManager/ 7.2 all versions",
+								"product": {
+									"name": "FortiManager",
+									"product_id": "FortiManager/ 7.2 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiManager/ 7.0 all versions",
+								"product": {
+									"name": "FortiManager",
+									"product_id": "FortiManager/ 7.0 all versions"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiManager"
+					},
+					{
+						"branches": [
+							{
+								"category": "product_version_range",
+								"name": "FortiManager Cloud/>=7.4.1|<=7.4.3",
+								"product": {
+									"name": "FortiManager Cloud",
+									"product_id": "FortiManager Cloud >=7.4.1|<=7.4.3"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiManager Cloud"
+					},
+					{
+						"branches": [
+							{
+								"category": "product_version_range",
+								"name": "FortiOS/ 7.6 all versions",
+								"product": {
+									"name": "FortiOS",
+									"product_id": "FortiOS/ 7.6 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiOS/>=7.4.0|<=7.4.4",
+								"product": {
+									"name": "FortiOS",
+									"product_id": "FortiOS >=7.4.0|<=7.4.4"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiOS/>=7.2.0|<=7.2.8",
+								"product": {
+									"name": "FortiOS",
+									"product_id": "FortiOS >=7.2.0|<=7.2.8"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiOS/>=7.0.0|<=7.0.15",
+								"product": {
+									"name": "FortiOS",
+									"product_id": "FortiOS >=7.0.0|<=7.0.15"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiOS/6.4 all versions",
+								"product": {
+									"name": "FortiOS",
+									"product_id": "FortiOS 6.4 all versions"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiOS"
+					},
+					{
+						"branches": [
+							{
+								"category": "product_version_range",
+								"name": "FortiProxy/ 7.6 all versions",
+								"product": {
+									"name": "FortiProxy",
+									"product_id": "FortiProxy/ 7.6 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiProxy/>=7.4.0|<=7.4.4",
+								"product": {
+									"name": "FortiProxy",
+									"product_id": "FortiProxy >=7.4.0|<=7.4.4"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiProxy/>=7.2.0|<=7.2.10",
+								"product": {
+									"name": "FortiProxy",
+									"product_id": "FortiProxy >=7.2.0|<=7.2.10"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiProxy/>=7.0.0|<=7.0.17",
+								"product": {
+									"name": "FortiProxy",
+									"product_id": "FortiProxy >=7.0.0|<=7.0.17"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiProxy/>=2.0.0|<=2.0.14",
+								"product": {
+									"name": "FortiProxy",
+									"product_id": "FortiProxy >=2.0.0|<=2.0.14"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiProxy"
+					},
+					{
+						"branches": [
+							{
+								"category": "product_version_range",
+								"name": "FortiSASE/ 24.4 all versions",
+								"product": {
+									"name": "FortiSASE",
+									"product_id": "FortiSASE/ 24.4 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiSASE/ 23.3 all versions",
+								"product": {
+									"name": "FortiSASE",
+									"product_id": "FortiSASE/ 23.3 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiSASE/ 23.2 all versions",
+								"product": {
+									"name": "FortiSASE",
+									"product_id": "FortiSASE/ 23.2 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiSASE/ 23.1 all versions",
+								"product": {
+									"name": "FortiSASE",
+									"product_id": "FortiSASE/ 23.1 all versions"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiSASE"
+					}
+				],
+				"category": "vendor",
+				"name": "Fortinet PSIRT"
+			}
+		]
+	},
+	"vulnerabilities": [
+		{
+			"cve": "CVE-2024-50563",
+			"cwe": {
+				"id": "CWE-1390",
+				"name": "Weak Authentication"
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "Weak Authentication in csfd daemon\n\n",
+					"title": "Summary"
+				},
+				{
+					"category": "general",
+					"text": "N/A",
+					"title": "Workarounds"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiAnalyzer >=7.4.1|<=7.4.3",
+					"FortiAnalyzer >=7.6.0|<=7.6.1",
+					"FortiAnalyzer >=7.4.1|<=7.4.3"
+				],
+				"known_not_affected": [
+					"FortiAnalyzer-7.4.4",
+					"FortiAnalyzer-7.6.2",
+					"FortiAnalyzer-7.4.4",
+					"FortiAnalyzer/ 7.2 all versions",
+					"FortiAnalyzer/ 7.0 all versions"
+				]
+			},
+			"references": [
+				{
+					"summary": "A Weak Authentication vulnerability [CWE 1390] in FortiOS, FortiPAM and FortiProxy csfd daemon may allow an unauthenticated attacker with access to the Security Fabric interface and port to bruteforce the authentication process in the Security Fabric protocol and take control of the devices of the Fabric.\n\nA Weak Authentication vulnerability [CWE 1390] of the same nature in Fortimanager csfd daemon may allow an unauthenticated attacker with access to the Security Fabric interface and port to bypass the authentication process and access a restricted list of features.",
+					"url": "https://fortiguard.fortinet.com/psirt/FG-IR-24-221"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiAnalyzer Cloud 7.4: Upgrade to 7.4.4 or above\nFortiAnalyzer 7.6: Upgrade to 7.6.2 or above\nFortiAnalyzer 7.4: Upgrade to 7.4.4 or above\nFortiAnalyzer 7.2: Not Applicable\nFortiAnalyzer 7.0: Not Applicable",
+					"product_ids": [
+						"FortiAnalyzer"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 6.7,
+						"baseSeverity": "MEDIUM",
+						"vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:L/E:P/RL:W/RC:C",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiAnalyzer"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Execute unauthorized code or commands"
+				}
+			],
+			"title": "FortiAnalyzer - MEDIUM - FG-IR-24-221"
+		},
+		{
+			"cve": "CVE-2024-48886",
+			"cwe": {
+				"id": "CWE-1390",
+				"name": "Weak Authentication"
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "Weak Authentication in csfd daemon\n\n",
+					"title": "Summary"
+				},
+				{
+					"category": "general",
+					"text": "N/A",
+					"title": "Workarounds"
+				}
+			],
+			"product_status": {
+				"known_not_affected": [
+					"FortiAuthenticator/ 6.6 all versions",
+					"FortiAuthenticator/ 6.5 all versions",
+					"FortiAuthenticator/ 6.4 all versions",
+					"FortiAuthenticator/ 6.3 all versions",
+					"FortiAuthenticator/ 6.2 all versions"
+				]
+			},
+			"references": [
+				{
+					"summary": "A Weak Authentication vulnerability [CWE 1390] in FortiOS, FortiPAM and FortiProxy csfd daemon may allow an unauthenticated attacker with access to the Security Fabric interface and port to bruteforce the authentication process in the Security Fabric protocol and take control of the devices of the Fabric.\n\nA Weak Authentication vulnerability [CWE 1390] of the same nature in Fortimanager csfd daemon may allow an unauthenticated attacker with access to the Security Fabric interface and port to bypass the authentication process and access a restricted list of features.",
+					"url": "https://fortiguard.fortinet.com/psirt/FG-IR-24-221"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiAuthenticator 6.6: Not Applicable\nFortiAuthenticator 6.5: Not Applicable\nFortiAuthenticator 6.4: Not Applicable\nFortiAuthenticator 6.3: Not Applicable\nFortiAuthenticator 6.2: Not Applicable",
+					"product_ids": [
+						"FortiAuthenticator"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 8,
+						"baseSeverity": "HIGH",
+						"vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:C/C:H/I:H/A:H/E:F/RL:O/RC:R",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiAuthenticator"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Execute unauthorized code or commands"
+				}
+			],
+			"title": "FortiAuthenticator - HIGH - FG-IR-24-221"
+		},
+		{
+			"cve": "CVE-2024-50563",
+			"cwe": {
+				"id": "CWE-1390",
+				"name": "Weak Authentication"
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "Weak Authentication in csfd daemon\n\n",
+					"title": "Summary"
+				},
+				{
+					"category": "general",
+					"text": "N/A",
+					"title": "Workarounds"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiManager >=7.6.0|<=7.6.1",
+					"FortiManager >=7.4.1|<=7.4.3"
+				],
+				"known_not_affected": [
+					"FortiManager-7.6.2",
+					"FortiManager-7.4.4",
+					"FortiManager/ 7.2 all versions",
+					"FortiManager/ 7.0 all versions"
+				]
+			},
+			"references": [
+				{
+					"summary": "A Weak Authentication vulnerability [CWE 1390] in FortiOS, FortiPAM and FortiProxy csfd daemon may allow an unauthenticated attacker with access to the Security Fabric interface and port to bruteforce the authentication process in the Security Fabric protocol and take control of the devices of the Fabric.\n\nA Weak Authentication vulnerability [CWE 1390] of the same nature in Fortimanager csfd daemon may allow an unauthenticated attacker with access to the Security Fabric interface and port to bypass the authentication process and access a restricted list of features.",
+					"url": "https://fortiguard.fortinet.com/psirt/FG-IR-24-221"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiManager 7.6: Upgrade to 7.6.2 or above\nFortiManager 7.4: Upgrade to 7.4.4 or above\nFortiManager 7.2: Not Applicable\nFortiManager 7.0: Not Applicable",
+					"product_ids": [
+						"FortiManager"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 6.7,
+						"baseSeverity": "MEDIUM",
+						"vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:L/E:P/RL:W/RC:C",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiManager"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Execute unauthorized code or commands"
+				}
+			],
+			"title": "FortiManager - MEDIUM - FG-IR-24-221"
+		},
+		{
+			"cve": "CVE-2024-50563",
+			"cwe": {
+				"id": "CWE-1390",
+				"name": "Weak Authentication"
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "Weak Authentication in csfd daemon\n\n",
+					"title": "Summary"
+				},
+				{
+					"category": "general",
+					"text": "N/A",
+					"title": "Workarounds"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiManager Cloud >=7.4.1|<=7.4.3"
+				],
+				"known_not_affected": [
+					"FortiManager Cloud-7.4.4"
+				]
+			},
+			"references": [
+				{
+					"summary": "A Weak Authentication vulnerability [CWE 1390] in FortiOS, FortiPAM and FortiProxy csfd daemon may allow an unauthenticated attacker with access to the Security Fabric interface and port to bruteforce the authentication process in the Security Fabric protocol and take control of the devices of the Fabric.\n\nA Weak Authentication vulnerability [CWE 1390] of the same nature in Fortimanager csfd daemon may allow an unauthenticated attacker with access to the Security Fabric interface and port to bypass the authentication process and access a restricted list of features.",
+					"url": "https://fortiguard.fortinet.com/psirt/FG-IR-24-221"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiManager Cloud 7.4: Upgrade to 7.4.4 or above",
+					"product_ids": [
+						"FortiManager Cloud"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 6.7,
+						"baseSeverity": "MEDIUM",
+						"vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:L/E:P/RL:W/RC:C",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiManager Cloud"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Execute unauthorized code or commands"
+				}
+			],
+			"title": "FortiManager Cloud - MEDIUM - FG-IR-24-221"
+		},
+		{
+			"cve": "CVE-2024-48886",
+			"cwe": {
+				"id": "CWE-1390",
+				"name": "Weak Authentication"
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "Weak Authentication in csfd daemon\n\n",
+					"title": "Summary"
+				},
+				{
+					"category": "general",
+					"text": "N/A",
+					"title": "Workarounds"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiOS >=7.4.0|<=7.4.4",
+					"FortiOS >=7.2.0|<=7.2.8",
+					"FortiOS >=7.0.0|<=7.0.15",
+					"FortiOS 6.4 all versions"
+				],
+				"known_not_affected": [
+					"FortiOS/ 7.6 all versions",
+					"FortiOS-7.4.5",
+					"FortiOS-7.2.9",
+					"FortiOS-7.0.16"
+				]
+			},
+			"references": [
+				{
+					"summary": "A Weak Authentication vulnerability [CWE 1390] in FortiOS, FortiPAM and FortiProxy csfd daemon may allow an unauthenticated attacker with access to the Security Fabric interface and port to bruteforce the authentication process in the Security Fabric protocol and take control of the devices of the Fabric.\n\nA Weak Authentication vulnerability [CWE 1390] of the same nature in Fortimanager csfd daemon may allow an unauthenticated attacker with access to the Security Fabric interface and port to bypass the authentication process and access a restricted list of features.",
+					"url": "https://fortiguard.fortinet.com/psirt/FG-IR-24-221"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiOS 7.6: Not Applicable\nFortiOS 7.4: Upgrade to 7.4.5 or above\nFortiOS 7.2: Upgrade to 7.2.9 or above\nFortiOS 7.0: Upgrade to 7.0.16 or above\nFortiOS 6.4: Migrate to a fixed release",
+					"product_ids": [
+						"FortiOS"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 8,
+						"baseSeverity": "HIGH",
+						"vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:C/C:H/I:H/A:H/E:F/RL:O/RC:R",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiOS"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Execute unauthorized code or commands"
+				}
+			],
+			"title": "FortiOS - HIGH - FG-IR-24-221"
+		},
+		{
+			"cve": "CVE-2024-48886",
+			"cwe": {
+				"id": "CWE-1390",
+				"name": "Weak Authentication"
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "Weak Authentication in csfd daemon\n\n",
+					"title": "Summary"
+				},
+				{
+					"category": "general",
+					"text": "N/A",
+					"title": "Workarounds"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiProxy >=7.4.0|<=7.4.4",
+					"FortiProxy >=7.2.0|<=7.2.10",
+					"FortiProxy >=7.0.0|<=7.0.17",
+					"FortiProxy >=2.0.0|<=2.0.14"
+				],
+				"known_not_affected": [
+					"FortiProxy/ 7.6 all versions",
+					"FortiProxy-7.4.5",
+					"FortiProxy-7.2.11",
+					"FortiProxy-7.0.18",
+					"FortiProxy-2.0.15"
+				]
+			},
+			"references": [
+				{
+					"summary": "A Weak Authentication vulnerability [CWE 1390] in FortiOS, FortiPAM and FortiProxy csfd daemon may allow an unauthenticated attacker with access to the Security Fabric interface and port to bruteforce the authentication process in the Security Fabric protocol and take control of the devices of the Fabric.\n\nA Weak Authentication vulnerability [CWE 1390] of the same nature in Fortimanager csfd daemon may allow an unauthenticated attacker with access to the Security Fabric interface and port to bypass the authentication process and access a restricted list of features.",
+					"url": "https://fortiguard.fortinet.com/psirt/FG-IR-24-221"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiProxy 7.6: Not Applicable\nFortiProxy 7.4: Upgrade to 7.4.5 or above\nFortiProxy 7.2: Upgrade to 7.2.11 or above\nFortiProxy 7.0: Upgrade to 7.0.18 or above\nFortiProxy 2.0: Upgrade to 2.0.15 or above",
+					"product_ids": [
+						"FortiProxy"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 8,
+						"baseSeverity": "HIGH",
+						"vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:C/C:H/I:H/A:H/E:F/RL:O/RC:R",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiProxy"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Execute unauthorized code or commands"
+				}
+			],
+			"title": "FortiProxy - HIGH - FG-IR-24-221"
+		},
+		{
+			"cve": "CVE-2024-48886",
+			"cwe": {
+				"id": "CWE-1390",
+				"name": "Weak Authentication"
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "Weak Authentication in csfd daemon\n\n",
+					"title": "Summary"
+				},
+				{
+					"category": "general",
+					"text": "N/A",
+					"title": "Workarounds"
+				}
+			],
+			"product_status": {
+				"known_not_affected": [
+					"FortiSASE/ 24.4 all versions",
+					"FortiSASE/ 23.3 all versions",
+					"FortiSASE/ 23.2 all versions",
+					"FortiSASE/ 23.1 all versions"
+				]
+			},
+			"references": [
+				{
+					"summary": "A Weak Authentication vulnerability [CWE 1390] in FortiOS, FortiPAM and FortiProxy csfd daemon may allow an unauthenticated attacker with access to the Security Fabric interface and port to bruteforce the authentication process in the Security Fabric protocol and take control of the devices of the Fabric.\n\nA Weak Authentication vulnerability [CWE 1390] of the same nature in Fortimanager csfd daemon may allow an unauthenticated attacker with access to the Security Fabric interface and port to bypass the authentication process and access a restricted list of features.",
+					"url": "https://fortiguard.fortinet.com/psirt/FG-IR-24-221"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiSASE 24.4: Not Applicable\nFortiSASE 23.3: Not Applicable\nFortiSASE 23.2: Not Applicable\nFortiSASE 23.1: Not Applicable",
+					"product_ids": [
+						"FortiSASE"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 8,
+						"baseSeverity": "HIGH",
+						"vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:C/C:H/I:H/A:H/E:F/RL:O/RC:R",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiSASE"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Execute unauthorized code or commands"
+				}
+			],
+			"title": "FortiSASE - HIGH - FG-IR-24-221"
+		}
+	]
+}

@@ -1,0 +1,175 @@
+{
+	"document": {
+		"category": "Fortinet PSIRT Advisories",
+		"csaf_version": "2.0",
+		"publisher": {
+			"category": "vendor",
+			"contact_details": "https://fortiguard.fortinet.com/faq/psirt-contact",
+			"issuing_authority": "Fortinet PSIRT",
+			"name": "Fortinet PSIRT",
+			"namespace": "https://fortiguard.fortinet.com/psirt"
+		},
+		"title": "OS Command Injection",
+		"tracking": {
+			"current_release_date": "2026-01-15T00:00:00",
+			"id": "FG-IR-24-463",
+			"initial_release_date": "2025-01-14T00:00:00",
+			"revision_history": [
+				{
+					"date": "2025-01-14T00:00:00",
+					"number": "1",
+					"summary": "Initial Publication"
+				}
+			],
+			"status": "final",
+			"version": "0"
+		}
+	},
+	"product_tree": {
+		"branches": [
+			{
+				"branches": [
+					{
+						"branches": [
+							{
+								"category": "product_version_range",
+								"name": "FortiManager/>=7.6.0|<=7.6.1",
+								"product": {
+									"name": "FortiManager",
+									"product_id": "FortiManager >=7.6.0|<=7.6.1"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiManager/>=7.4.0|<=7.4.4",
+								"product": {
+									"name": "FortiManager",
+									"product_id": "FortiManager >=7.4.0|<=7.4.4"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiManager/>=7.2.2|<=7.2.7",
+								"product": {
+									"name": "FortiManager",
+									"product_id": "FortiManager >=7.2.2|<=7.2.7"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiManager/>=7.6.0|<=7.6.1",
+								"product": {
+									"name": "FortiManager",
+									"product_id": "FortiManager >=7.6.0|<=7.6.1"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiManager/>=7.4.0|<=7.4.5",
+								"product": {
+									"name": "FortiManager",
+									"product_id": "FortiManager >=7.4.0|<=7.4.5"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiManager/>=7.2.1|<=7.2.8",
+								"product": {
+									"name": "FortiManager",
+									"product_id": "FortiManager >=7.2.1|<=7.2.8"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiManager/ 7.0 all versions",
+								"product": {
+									"name": "FortiManager",
+									"product_id": "FortiManager/ 7.0 all versions"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiManager"
+					}
+				],
+				"category": "vendor",
+				"name": "Fortinet PSIRT"
+			}
+		]
+	},
+	"vulnerabilities": [
+		{
+			"cve": "CVE-2024-50566",
+			"cwe": {
+				"id": "CWE-78",
+				"name": "Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')"
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "OS command injection in FGFM\n\n",
+					"title": "Summary"
+				},
+				{
+					"category": "general",
+					"text": "N/A",
+					"title": "Workarounds"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiManager >=7.6.0|<=7.6.1",
+					"FortiManager >=7.4.0|<=7.4.4",
+					"FortiManager >=7.2.2|<=7.2.7",
+					"FortiManager >=7.6.0|<=7.6.1",
+					"FortiManager >=7.4.0|<=7.4.5",
+					"FortiManager >=7.2.1|<=7.2.8"
+				],
+				"known_not_affected": [
+					"FortiManager-7.6.2",
+					"FortiManager-7.4.5",
+					"FortiManager-7.2.8",
+					"FortiManager-7.6.2",
+					"FortiManager-7.4.6",
+					"FortiManager-7.2.9",
+					"FortiManager/ 7.0 all versions"
+				]
+			},
+			"references": [
+				{
+					"summary": "An Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection') vulnerability [CWE-78] in FortiManager may allow an authenticated remote attacker to execute unauthorized code via FGFM crafted requests.",
+					"url": "https://fortiguard.fortinet.com/psirt/FG-IR-24-463"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiManager Cloud 7.6: Upgrade to 7.6.2 or above\nFortiManager Cloud 7.4: Upgrade to 7.4.5 or above\nFortiManager Cloud 7.2: Upgrade to 7.2.8 or above\nFortiManager 7.6: Upgrade to 7.6.2 or above\nFortiManager 7.4: Upgrade to 7.4.6 or above\nFortiManager 7.2: Upgrade to 7.2.9 or above\nFortiManager 7.0: Not Applicable",
+					"product_ids": [
+						"FortiManager"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 7.2,
+						"baseSeverity": "HIGH",
+						"vectorString": "CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:U/C:H/I:H/A:H/E:H/RL:U/RC:X",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiManager"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Execute unauthorized code or commands"
+				}
+			],
+			"title": "FortiManager - HIGH - FG-IR-24-463"
+		}
+	]
+}

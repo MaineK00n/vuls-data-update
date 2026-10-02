@@ -1,7 +1,6 @@
 package csaf_test
 
 import (
-	"path/filepath"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
@@ -18,11 +17,50 @@ func TestExtract(t *testing.T) {
 	tests := []struct {
 		name     string
 		args     string
+		golden   string
 		hasError bool
 	}{
 		{
-			name: "happy",
-			args: "./testdata/fixtures",
+			name:   "happy",
+			args:   "./testdata/fixtures",
+			golden: "./testdata/golden",
+		},
+		{
+			// A product branch at the top of the tree, with no vendor branch
+			// above it: the leaves moved out of it must land in the tree.
+			name:   "tree fix on a tree without a vendor branch",
+			args:   "./testdata/fixtures-no-vendor",
+			golden: "./testdata/golden-no-vendor",
+		},
+		{
+			name:     "tree fix no longer matching the advisory",
+			args:     "./testdata/fixtures-stale-tree-fix",
+			hasError: true,
+		},
+		{
+			name:     "undefined known_not_affected product of no known shape",
+			args:     "./testdata/fixtures-undefined-not-affected",
+			hasError: true,
+		},
+		{
+			name:     "score naming a product the tree does not have",
+			args:     "./testdata/fixtures-unknown-product",
+			hasError: true,
+		},
+		{
+			name:     "score naming a leaf product_id",
+			args:     "./testdata/fixtures-leaf-reference",
+			hasError: true,
+		},
+		{
+			name:     "impact scoped by product_ids",
+			args:     "./testdata/fixtures-threat-product-ids",
+			hasError: true,
+		},
+		{
+			name:     "impact scoped by group_ids",
+			args:     "./testdata/fixtures-threat-group-ids",
+			hasError: true,
 		},
 	}
 	for _, tt := range tests {
@@ -37,7 +75,7 @@ func TestExtract(t *testing.T) {
 			case err != nil && tt.hasError:
 				return
 			default:
-				if err := utiltest.Diff(filepath.Join("testdata", "golden"), dir); err != nil {
+				if err := utiltest.Diff(tt.golden, dir); err != nil {
 					t.Error("unexpected error:", err)
 				}
 			}

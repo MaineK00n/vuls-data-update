@@ -1,0 +1,187 @@
+{
+	"document": {
+		"acknowledgments": [
+			{
+				"summary": "Fortinet is pleased to thank security researchers Zach Hanley (@hacks_zach) of Horizon3.ai for discovering and reporting this vulnerability under responsible disclosure."
+			}
+		],
+		"category": "Fortinet PSIRT Advisories",
+		"csaf_version": "2.0",
+		"publisher": {
+			"category": "vendor",
+			"contact_details": "https://fortiguard.fortinet.com/faq/psirt-contact",
+			"issuing_authority": "Fortinet PSIRT",
+			"name": "Fortinet PSIRT",
+			"namespace": "https://fortiguard.fortinet.com/psirt"
+		},
+		"title": "Unauthenticated remote command injection",
+		"tracking": {
+			"current_release_date": "2026-01-14T00:00:00",
+			"id": "FG-IR-25-772",
+			"initial_release_date": "2026-01-13T00:00:00",
+			"revision_history": [
+				{
+					"date": "2026-01-13T00:00:00",
+					"number": "1",
+					"summary": "Initial Publication"
+				}
+			],
+			"status": "final",
+			"version": "0"
+		}
+	},
+	"product_tree": {
+		"branches": [
+			{
+				"branches": [
+					{
+						"branches": [
+							{
+								"category": "product_version_range",
+								"name": "FortiSIEM/ Cloud all versions",
+								"product": {
+									"name": "FortiSIEM",
+									"product_id": "FortiSIEM/ Cloud all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiSIEM/ 7.5 all versions",
+								"product": {
+									"name": "FortiSIEM",
+									"product_id": "FortiSIEM/ 7.5 all versions"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "FortiSIEM/7.4.0",
+								"product": {
+									"name": "FortiSIEM",
+									"product_id": "FortiSIEM 7.4.0"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiSIEM/>=7.3.0|<=7.3.4",
+								"product": {
+									"name": "FortiSIEM",
+									"product_id": "FortiSIEM >=7.3.0|<=7.3.4"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiSIEM/>=7.2.0|<=7.2.6",
+								"product": {
+									"name": "FortiSIEM",
+									"product_id": "FortiSIEM >=7.2.0|<=7.2.6"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiSIEM/>=7.1.0|<=7.1.8",
+								"product": {
+									"name": "FortiSIEM",
+									"product_id": "FortiSIEM >=7.1.0|<=7.1.8"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiSIEM/>=7.0.0|<=7.0.4",
+								"product": {
+									"name": "FortiSIEM",
+									"product_id": "FortiSIEM >=7.0.0|<=7.0.4"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiSIEM/>=6.7.0|<=6.7.10",
+								"product": {
+									"name": "FortiSIEM",
+									"product_id": "FortiSIEM >=6.7.0|<=6.7.10"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiSIEM"
+					}
+				],
+				"category": "vendor",
+				"name": "Fortinet PSIRT"
+			}
+		]
+	},
+	"vulnerabilities": [
+		{
+			"cve": "CVE-2025-64155",
+			"cwe": {
+				"id": "CWE-78",
+				"name": "Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')"
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "OS command injection vulnerability in FortiSIEM\n\n",
+					"title": "Summary"
+				},
+				{
+					"category": "general",
+					"text": "N/A",
+					"title": "Workarounds"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiSIEM 7.4.0",
+					"FortiSIEM >=7.3.0|<=7.3.4",
+					"FortiSIEM >=7.2.0|<=7.2.6",
+					"FortiSIEM >=7.1.0|<=7.1.8",
+					"FortiSIEM >=7.0.0|<=7.0.4",
+					"FortiSIEM >=6.7.0|<=6.7.10"
+				],
+				"known_not_affected": [
+					"FortiSIEM/ Cloud all versions",
+					"FortiSIEM/ 7.5 all versions",
+					"FortiSIEM-7.4.1",
+					"FortiSIEM-7.3.5",
+					"FortiSIEM-7.2.7",
+					"FortiSIEM-7.1.9"
+				]
+			},
+			"references": [
+				{
+					"summary": "An improper neutralization of special elements used in an OS command ('OS Command Injection') vulnerability [CWE-78] in FortiSIEM may allow an unauthenticated attacker to execute unauthorized code or commands via crafted TCP requests.",
+					"url": "https://fortiguard.fortinet.com/psirt/FG-IR-25-772"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiSIEM Cloud: Not Applicable\nFortiSIEM 7.5: Not Applicable\nFortiSIEM 7.4: Upgrade to 7.4.1 or above\nFortiSIEM 7.3: Upgrade to 7.3.5 or above\nFortiSIEM 7.2: Upgrade to 7.2.7 or above\nFortiSIEM 7.1: Upgrade to 7.1.9 or above\nFortiSIEM 7.0: Migrate to a fixed release\nFortiSIEM 6.7: Migrate to a fixed release",
+					"product_ids": [
+						"FortiSIEM"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 9.4,
+						"baseSeverity": "CRITICAL",
+						"vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H/E:H/RL:O/RC:C",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiSIEM"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Execute unauthorized code or commands"
+				}
+			],
+			"title": "FortiSIEM - CRITICAL - FG-IR-25-772"
+		}
+	]
+}

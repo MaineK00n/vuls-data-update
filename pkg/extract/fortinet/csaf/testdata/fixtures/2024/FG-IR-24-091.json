@@ -1,0 +1,337 @@
+{
+	"document": {
+		"acknowledgments": [
+			{
+				"summary": "Internally discovered and reported by Gwendal Guégniaud of Fortinet Product Security team."
+			}
+		],
+		"category": "Fortinet PSIRT Advisories",
+		"csaf_version": "2.0",
+		"publisher": {
+			"category": "vendor",
+			"contact_details": "https://fortiguard.fortinet.com/faq/psirt-contact",
+			"issuing_authority": "Fortinet PSIRT",
+			"name": "Fortinet PSIRT",
+			"namespace": "https://fortiguard.fortinet.com/psirt"
+		},
+		"title": "SQL injections in sdnproxy daemon",
+		"tracking": {
+			"current_release_date": "2025-01-14T00:00:00",
+			"id": "FG-IR-24-091",
+			"initial_release_date": "2025-01-14T00:00:00",
+			"revision_history": [
+				{
+					"date": "2025-01-14T00:00:00",
+					"number": "1",
+					"summary": "Initial Publication"
+				}
+			],
+			"status": "final",
+			"version": "0"
+		}
+	},
+	"product_tree": {
+		"branches": [
+			{
+				"branches": [
+					{
+						"branches": [
+							{
+								"category": "product_version_range",
+								"name": "FortiAnalyzer/ 7.6 all versions",
+								"product": {
+									"name": "FortiAnalyzer",
+									"product_id": "FortiAnalyzer/ 7.6 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiAnalyzer/>=7.4.0|<=7.4.3",
+								"product": {
+									"name": "FortiAnalyzer",
+									"product_id": "FortiAnalyzer >=7.4.0|<=7.4.3"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiAnalyzer/ 7.2 all versions",
+								"product": {
+									"name": "FortiAnalyzer",
+									"product_id": "FortiAnalyzer/ 7.2 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiAnalyzer/ 7.0 all versions",
+								"product": {
+									"name": "FortiAnalyzer",
+									"product_id": "FortiAnalyzer/ 7.0 all versions"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiAnalyzer"
+					},
+					{
+						"branches": [
+							{
+								"category": "product_version_range",
+								"name": "FortiAnalyzer Cloud/>=7.4.1|<=7.4.2",
+								"product": {
+									"name": "FortiAnalyzer Cloud",
+									"product_id": "FortiAnalyzer Cloud >=7.4.1|<=7.4.2"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiAnalyzer Cloud"
+					},
+					{
+						"branches": [
+							{
+								"category": "product_version_range",
+								"name": "FortiManager/>=7.4.1|<=7.4.2",
+								"product": {
+									"name": "FortiManager",
+									"product_id": "FortiManager >=7.4.1|<=7.4.2"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiManager/ 7.6 all versions",
+								"product": {
+									"name": "FortiManager",
+									"product_id": "FortiManager/ 7.6 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiManager/>=7.4.0|<=7.4.2",
+								"product": {
+									"name": "FortiManager",
+									"product_id": "FortiManager >=7.4.0|<=7.4.2"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiManager/ 7.2 all versions",
+								"product": {
+									"name": "FortiManager",
+									"product_id": "FortiManager/ 7.2 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiManager/ 7.0 all versions",
+								"product": {
+									"name": "FortiManager",
+									"product_id": "FortiManager/ 7.0 all versions"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiManager"
+					}
+				],
+				"category": "vendor",
+				"name": "Fortinet PSIRT"
+			}
+		]
+	},
+	"vulnerabilities": [
+		{
+			"cve": "CVE-2024-35275",
+			"cwe": {
+				"id": "CWE-89",
+				"name": "Improper Neutralization of Special Elements used in an SQL Command ('SQL Injection')"
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "Authenticated SQL injection in sdnproxy daemon\n\n",
+					"title": "Summary"
+				},
+				{
+					"category": "general",
+					"text": "N/A",
+					"title": "Workarounds"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiAnalyzer >=7.4.0|<=7.4.3"
+				],
+				"known_not_affected": [
+					"FortiAnalyzer/ 7.6 all versions",
+					"FortiAnalyzer-7.4.4",
+					"FortiAnalyzer/ 7.2 all versions",
+					"FortiAnalyzer/ 7.0 all versions"
+				]
+			},
+			"references": [
+				{
+					"summary": "An improper neutralization of special elements used in an SQL Command (&#39;SQL Injection&#39;) vulnerability [CWE-89] in FortiManager and FortiAnalyzer may allow an authenticated attacker to execute unauthorized code or commands via specifically crafted requests.",
+					"url": "https://fortiguard.fortinet.com/psirt/FG-IR-24-091"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiAnalyzer 7.6: Not Applicable\nFortiAnalyzer 7.4: Upgrade to 7.4.4 or above\nFortiAnalyzer 7.2: Not Applicable\nFortiAnalyzer 7.0: Not Applicable",
+					"product_ids": [
+						"FortiAnalyzer"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 6.5,
+						"baseSeverity": "MEDIUM",
+						"vectorString": "CVSS:3.1/AV:N/AC:H/PR:H/UI:N/S:U/C:H/I:H/A:H/E:F/RL:U/RC:C",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiAnalyzer"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Escalation of privilege"
+				}
+			],
+			"title": "FortiAnalyzer - MEDIUM - FG-IR-24-091"
+		},
+		{
+			"cve": "CVE-2024-35275",
+			"cwe": {
+				"id": "CWE-89",
+				"name": "Improper Neutralization of Special Elements used in an SQL Command ('SQL Injection')"
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "Authenticated SQL injection in sdnproxy daemon\n\n",
+					"title": "Summary"
+				},
+				{
+					"category": "general",
+					"text": "N/A",
+					"title": "Workarounds"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiAnalyzer Cloud >=7.4.1|<=7.4.2"
+				],
+				"known_not_affected": [
+					"FortiAnalyzer Cloud-7.4.3"
+				]
+			},
+			"references": [
+				{
+					"summary": "An improper neutralization of special elements used in an SQL Command (&#39;SQL Injection&#39;) vulnerability [CWE-89] in FortiManager and FortiAnalyzer may allow an authenticated attacker to execute unauthorized code or commands via specifically crafted requests.",
+					"url": "https://fortiguard.fortinet.com/psirt/FG-IR-24-091"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiAnalyzer Cloud 7.4: Upgrade to 7.4.3 or above",
+					"product_ids": [
+						"FortiAnalyzer Cloud"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 6.5,
+						"baseSeverity": "MEDIUM",
+						"vectorString": "CVSS:3.1/AV:N/AC:H/PR:H/UI:N/S:U/C:H/I:H/A:H/E:F/RL:U/RC:C",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiAnalyzer Cloud"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Escalation of privilege"
+				}
+			],
+			"title": "FortiAnalyzer Cloud - MEDIUM - FG-IR-24-091"
+		},
+		{
+			"cve": "CVE-2024-35275",
+			"cwe": {
+				"id": "CWE-89",
+				"name": "Improper Neutralization of Special Elements used in an SQL Command ('SQL Injection')"
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "Authenticated SQL injection in sdnproxy daemon\n\n",
+					"title": "Summary"
+				},
+				{
+					"category": "general",
+					"text": "N/A",
+					"title": "Workarounds"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiManager >=7.4.1|<=7.4.2",
+					"FortiManager >=7.4.0|<=7.4.2"
+				],
+				"known_not_affected": [
+					"FortiManager-7.4.3",
+					"FortiManager/ 7.6 all versions",
+					"FortiManager-7.4.3",
+					"FortiManager/ 7.2 all versions",
+					"FortiManager/ 7.0 all versions"
+				]
+			},
+			"references": [
+				{
+					"summary": "An improper neutralization of special elements used in an SQL Command (&#39;SQL Injection&#39;) vulnerability [CWE-89] in FortiManager and FortiAnalyzer may allow an authenticated attacker to execute unauthorized code or commands via specifically crafted requests.",
+					"url": "https://fortiguard.fortinet.com/psirt/FG-IR-24-091"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiManager Cloud 7.4: Upgrade to 7.4.3 or above\nFortiManager 7.6: Not Applicable\nFortiManager 7.4: Upgrade to 7.4.3 or above\nFortiManager 7.2: Not Applicable\nFortiManager 7.0: Not Applicable",
+					"product_ids": [
+						"FortiManager"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 6.5,
+						"baseSeverity": "MEDIUM",
+						"vectorString": "CVSS:3.1/AV:N/AC:H/PR:H/UI:N/S:U/C:H/I:H/A:H/E:F/RL:U/RC:C",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiManager"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Escalation of privilege"
+				}
+			],
+			"title": "FortiManager - MEDIUM - FG-IR-24-091"
+		}
+	]
+}

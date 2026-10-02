@@ -1,0 +1,413 @@
+{
+	"document": {
+		"acknowledgments": [
+			{
+				"summary": "Internally discovered and reported by Gwendal Guégniaud of Fortinet Product Security team."
+			}
+		],
+		"category": "Fortinet PSIRT Advisories",
+		"csaf_version": "2.0",
+		"publisher": {
+			"category": "vendor",
+			"contact_details": "https://fortiguard.fortinet.com/faq/psirt-contact",
+			"issuing_authority": "Fortinet PSIRT",
+			"name": "Fortinet PSIRT",
+			"namespace": "https://fortiguard.fortinet.com/psirt"
+		},
+		"title": "Heap buffer overflow in httpd",
+		"tracking": {
+			"current_release_date": "2024-11-15T00:00:00",
+			"id": "FG-IR-24-125",
+			"initial_release_date": "2024-11-12T00:00:00",
+			"revision_history": [
+				{
+					"date": "2024-11-12T00:00:00",
+					"number": "1",
+					"summary": "Initial Publication"
+				}
+			],
+			"status": "final",
+			"version": "0"
+		}
+	},
+	"product_tree": {
+		"branches": [
+			{
+				"branches": [
+					{
+						"branches": [
+							{
+								"category": "product_version_range",
+								"name": "FortiAnalyzer/>=7.4.0|<=7.4.2",
+								"product": {
+									"name": "FortiAnalyzer",
+									"product_id": "FortiAnalyzer >=7.4.0|<=7.4.2"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiAnalyzer/>=7.2.0|<=7.2.5",
+								"product": {
+									"name": "FortiAnalyzer",
+									"product_id": "FortiAnalyzer >=7.2.0|<=7.2.5"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiAnalyzer/7.0 all versions",
+								"product": {
+									"name": "FortiAnalyzer",
+									"product_id": "FortiAnalyzer 7.0 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiAnalyzer/6.4 all versions",
+								"product": {
+									"name": "FortiAnalyzer",
+									"product_id": "FortiAnalyzer 6.4 all versions"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiAnalyzer"
+					},
+					{
+						"branches": [
+							{
+								"category": "product_version_range",
+								"name": "FortiAnalyzer Cloud/>=7.4.1|<=7.4.2",
+								"product": {
+									"name": "FortiAnalyzer Cloud",
+									"product_id": "FortiAnalyzer Cloud >=7.4.1|<=7.4.2"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiAnalyzer Cloud/>=7.2.1|<=7.2.6",
+								"product": {
+									"name": "FortiAnalyzer Cloud",
+									"product_id": "FortiAnalyzer Cloud >=7.2.1|<=7.2.6"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiAnalyzer Cloud/7.0 all versions",
+								"product": {
+									"name": "FortiAnalyzer Cloud",
+									"product_id": "FortiAnalyzer Cloud 7.0 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiAnalyzer Cloud/6.4 all versions",
+								"product": {
+									"name": "FortiAnalyzer Cloud",
+									"product_id": "FortiAnalyzer Cloud 6.4 all versions"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiAnalyzer Cloud"
+					},
+					{
+						"branches": [
+							{
+								"category": "product_version_range",
+								"name": "FortiManager/cloud 7.0 all versions",
+								"product": {
+									"name": "FortiManager",
+									"product_id": "FortiManager cloud 7.0 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiManager/cloud 6.4 all versions",
+								"product": {
+									"name": "FortiManager",
+									"product_id": "FortiManager cloud 6.4 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiManager/>=7.4.0|<=7.4.2",
+								"product": {
+									"name": "FortiManager",
+									"product_id": "FortiManager >=7.4.0|<=7.4.2"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiManager/>=7.4.1|<=7.4.2",
+								"product": {
+									"name": "FortiManager",
+									"product_id": "FortiManager >=7.4.1|<=7.4.2"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiManager/>=7.2.0|<=7.2.5",
+								"product": {
+									"name": "FortiManager",
+									"product_id": "FortiManager >=7.2.0|<=7.2.5"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiManager/>=7.2.1|<=7.2.6",
+								"product": {
+									"name": "FortiManager",
+									"product_id": "FortiManager >=7.2.1|<=7.2.6"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiManager/7.0 all versions",
+								"product": {
+									"name": "FortiManager",
+									"product_id": "FortiManager 7.0 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiManager/6.4 all versions",
+								"product": {
+									"name": "FortiManager",
+									"product_id": "FortiManager 6.4 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiManager/6.2 all versions",
+								"product": {
+									"name": "FortiManager",
+									"product_id": "FortiManager 6.2 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiManager/6.0 all versions",
+								"product": {
+									"name": "FortiManager",
+									"product_id": "FortiManager 6.0 all versions"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiManager"
+					}
+				],
+				"category": "vendor",
+				"name": "Fortinet PSIRT"
+			}
+		]
+	},
+	"vulnerabilities": [
+		{
+			"cve": "CVE-2024-33505",
+			"cwe": {
+				"id": "CWE-122",
+				"name": "Heap-based Buffer Overflow"
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "Heap-based buffer overflow vulnerability in FortiManager and FortiAnalyzer httpd daemon\n\n",
+					"title": "Summary"
+				},
+				{
+					"category": "general",
+					"text": "N/A",
+					"title": "Workarounds"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiAnalyzer >=7.4.0|<=7.4.2",
+					"FortiAnalyzer >=7.2.0|<=7.2.5",
+					"FortiAnalyzer 7.0 all versions",
+					"FortiAnalyzer 6.4 all versions"
+				],
+				"known_not_affected": [
+					"FortiAnalyzer-7.4.3",
+					"FortiAnalyzer-7.2.6"
+				]
+			},
+			"references": [
+				{
+					"summary": "A heap-based buffer overflow vulnerability [CWE-122] in FortiManager and FortiAnalyzer httpd daemon may allow a remote unauthenticated attacker to execute arbitrary code or commands as a low priivileged user via specifically crafted requests.",
+					"url": "https://fortiguard.fortinet.com/psirt/FG-IR-24-125"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiAnalyzer 7.4: Upgrade to 7.4.3 or above\nFortiAnalyzer 7.2: Upgrade to 7.2.6 or above\nFortiAnalyzer 7.0: Migrate to a fixed release\nFortiAnalyzer 6.4: Migrate to a fixed release",
+					"product_ids": [
+						"FortiAnalyzer"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 5.3,
+						"baseSeverity": "MEDIUM",
+						"vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:L/I:L/A:L/E:P/RL:U/RC:C",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiAnalyzer"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Escalation of privilege"
+				}
+			],
+			"title": "FortiAnalyzer - MEDIUM - FG-IR-24-125"
+		},
+		{
+			"cve": "CVE-2024-33505",
+			"cwe": {
+				"id": "CWE-122",
+				"name": "Heap-based Buffer Overflow"
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "Heap-based buffer overflow vulnerability in FortiManager and FortiAnalyzer httpd daemon\n\n",
+					"title": "Summary"
+				},
+				{
+					"category": "general",
+					"text": "N/A",
+					"title": "Workarounds"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiAnalyzer Cloud >=7.4.1|<=7.4.2",
+					"FortiAnalyzer Cloud >=7.2.1|<=7.2.6",
+					"FortiAnalyzer Cloud 7.0 all versions",
+					"FortiAnalyzer Cloud 6.4 all versions"
+				],
+				"known_not_affected": [
+					"FortiAnalyzer Cloud-7.4.3",
+					"FortiAnalyzer Cloud-7.2.7"
+				]
+			},
+			"references": [
+				{
+					"summary": "A heap-based buffer overflow vulnerability [CWE-122] in FortiManager and FortiAnalyzer httpd daemon may allow a remote unauthenticated attacker to execute arbitrary code or commands as a low priivileged user via specifically crafted requests.",
+					"url": "https://fortiguard.fortinet.com/psirt/FG-IR-24-125"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiAnalyzer Cloud 7.4: Upgrade to 7.4.3 or above\nFortiAnalyzer Cloud 7.2: Upgrade to 7.2.7 or above\nFortiAnalyzer Cloud 7.0: Migrate to a fixed release\nFortiAnalyzer Cloud 6.4: Migrate to a fixed release",
+					"product_ids": [
+						"FortiAnalyzer Cloud"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 5.3,
+						"baseSeverity": "MEDIUM",
+						"vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:L/I:L/A:L/E:P/RL:U/RC:C",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiAnalyzer Cloud"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Escalation of privilege"
+				}
+			],
+			"title": "FortiAnalyzer Cloud - MEDIUM - FG-IR-24-125"
+		},
+		{
+			"cve": "CVE-2024-33505",
+			"cwe": {
+				"id": "CWE-122",
+				"name": "Heap-based Buffer Overflow"
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "Heap-based buffer overflow vulnerability in FortiManager and FortiAnalyzer httpd daemon\n\n",
+					"title": "Summary"
+				},
+				{
+					"category": "general",
+					"text": "N/A",
+					"title": "Workarounds"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiManager cloud 7.0 all versions",
+					"FortiManager cloud 6.4 all versions",
+					"FortiManager >=7.4.0|<=7.4.2",
+					"FortiManager >=7.4.1|<=7.4.2",
+					"FortiManager >=7.2.0|<=7.2.5",
+					"FortiManager >=7.2.1|<=7.2.6",
+					"FortiManager 7.0 all versions",
+					"FortiManager 6.4 all versions",
+					"FortiManager 6.2 all versions",
+					"FortiManager 6.0 all versions"
+				],
+				"known_not_affected": [
+					"FortiManager-7.4.3",
+					"FortiManager-7.4.3",
+					"FortiManager-7.2.6",
+					"FortiManager-7.2.7"
+				]
+			},
+			"references": [
+				{
+					"summary": "A heap-based buffer overflow vulnerability [CWE-122] in FortiManager and FortiAnalyzer httpd daemon may allow a remote unauthenticated attacker to execute arbitrary code or commands as a low priivileged user via specifically crafted requests.",
+					"url": "https://fortiguard.fortinet.com/psirt/FG-IR-24-125"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiManager Cloud 7.0: Migrate to a fixed release\nFortiManager Cloud 6.4: Migrate to a fixed release\nFortiManager 7.4: Upgrade to 7.4.3 or above\nFortiManager 7.4: Upgrade to 7.4.3 or above\nFortiManager 7.2: Upgrade to 7.2.6 or above\nFortiManager 7.2: Upgrade to 7.2.7 or above\nFortiManager 7.0: Migrate to a fixed release\nFortiManager 6.4: Migrate to a fixed release\nFortiManager 6.2: Migrate to a fixed release\nFortiManager 6.0: Migrate to a fixed release",
+					"product_ids": [
+						"FortiManager"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 5.3,
+						"baseSeverity": "MEDIUM",
+						"vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:L/I:L/A:L/E:P/RL:U/RC:C",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiManager"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Escalation of privilege"
+				}
+			],
+			"title": "FortiManager - MEDIUM - FG-IR-24-125"
+		}
+	]
+}
