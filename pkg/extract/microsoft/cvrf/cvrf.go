@@ -1727,11 +1727,6 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 // criterion and has no entry here fails the extraction (see buildDetections), because such CVEs
 // would otherwise become silently undetectable.
 var fixedBuildOverrides = map[[3]string]string{
-	// SQL Server Management Studio 22 versions itself as <major>.<minor>.<patch>
-	// (unlike SSMS 20.2, whose FixedBuild was 4-part); pad to the 4-part form
-	// sqlserverversion expects. 2026-Sep
-	{"CVE-2026-65669", "SQL Server Management Studio 22", "22.8.2"}: "22.8.2.0",
-
 	// .NET Core / .NET 5+ (FixedBuild has pre-release suffix that the parser doesn't accept)
 	// 2021-May (FixedBuild "5.0.6-servicing.21220.11" / "3.1.15-servicing.21214.3" has pre-release suffix)
 	{"CVE-2021-31204", ".NET 5.0", "5.0.6-servicing.21220.11"}:      "5.0.6",
@@ -2088,6 +2083,10 @@ var fixedBuildOverrides = map[[3]string]string{
 	{"CVE-2022-44693", "Microsoft SharePoint Server 2019", "10393.20000"}:                 "16.0.10393.20000",
 	{"CVE-2022-44690", "Microsoft SharePoint Server Subscription Edition", "15601.20316"}: "16.0.15601.20316",
 	{"CVE-2022-44693", "Microsoft SharePoint Server Subscription Edition", "15601.20316"}: "16.0.15601.20316",
+
+	// SQL Server Management Studio (FixedBuild is 3-part, parser expects 4-part)
+	// 2026-Sep (CVE-2026-65669, FixedBuild "22.8.2" lacks the revision segment; SSMS 20.2's was 4-part)
+	{"CVE-2026-65669", "SQL Server Management Studio 22", "22.8.2"}: "22.8.2.0",
 
 	// Microsoft Teams for Android (FixedBuild "1416/..." has numeric prefix before slash)
 	// 2022-Feb (CVE-2022-21965, FixedBuild "1416/..." has numeric prefix)
