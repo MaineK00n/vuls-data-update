@@ -56,8 +56,7 @@ func (f treeFix) repair(doc *csafTypes.CSAF) error {
 type coverage map[string][]csafTypes.ProductID
 
 // indexCoverage records the leaves under each product branch of the tree as
-// published. A branch name may repeat (one branch per leaf in some
-// advisories); its leaves accumulate.
+// published.
 func indexCoverage(branches []csafTypes.Branch) coverage {
 	cov := make(coverage)
 	var walk func(bs []csafTypes.Branch, names []string)
@@ -410,6 +409,12 @@ func branchOf(pid csafTypes.ProductID, branches []string) (string, string, error
 // in treeFixes to one) is covered by the branch it sits under.
 func defineNotAffected(doc *csafTypes.CSAF, cov coverage, renamed map[csafTypes.ProductID]csafTypes.ProductID) error {
 	defined := productIDs(doc.ProductTree.Branches)
+	// Only the standard dialect's "product" branches: the leaf defined below is
+	// named "<branch>/<version>", which buildProductRefsLegacy rejects, and
+	// findProductBranch looks for "product" branches only. The one
+	// legacy-dialect advisory, FG-IR-21-173, defines all its known_not_affected
+	// products in the tree, so it never gets here; a legacy-dialect advisory
+	// that does not errors below as an unexpected undefined product.
 	var branches []string
 	var walk func(bs []csafTypes.Branch)
 	walk = func(bs []csafTypes.Branch) {
@@ -635,9 +640,10 @@ var treeFixes = map[string]treeFix{
 		},
 	},
 	// Two leaves carry "cloud" in the version. Two more are Cloud with the word
-	// dropped even from the vendor_fix text: >=7.4.1|<=7.4.2 and >=7.2.1|<=7.2.6
-	// (fixed in 7.2.7) repeat the FortiAnalyzer Cloud ranges and fix of the same
-	// advisory, beside the on-premise >=7.4.0|<=7.4.2 and >=7.2.0|<=7.2.5 (7.2.6).
+	// dropped from the leaf and the vendor_fix text alike, though not from the
+	// advisory page, which reads "FortiManager 7.4 Cloud | Cloud 7.4.1 through
+	// 7.4.2" and "FortiManager 7.2 Cloud | Cloud 7.2.1 through 7.2.6" (fixed in
+	// 7.2.7), beside the on-premise 7.4.0 through 7.4.2 and 7.2.0 through 7.2.5.
 	"FG-IR-24-125": {
 		branches: []branchFix{{
 			name: "FortiManager",
