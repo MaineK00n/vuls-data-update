@@ -8,6 +8,7 @@ import (
 	"maps"
 	"os"
 	"path/filepath"
+	"regexp"
 	"slices"
 	"strings"
 	"time"
@@ -1037,12 +1038,9 @@ func cleanFixedBuild(rawFixedBuild string) string {
 	return strings.ReplaceAll(fixedBuild, "\u200b", "")
 }
 
-// isReleaseCandidateTag reports whether fixedBuild is exactly a dotted number
+// releaseCandidateTagRE matches a FixedBuild that is exactly a dotted number
 // followed by " RC<digits>" (e.g. "11.0 RC1").
-func isReleaseCandidateTag(fixedBuild string) bool {
-	v, n, ok := strings.Cut(fixedBuild, " RC")
-	return ok && isAllDigits(strings.ReplaceAll(v, ".", "")) && isAllDigits(n)
-}
+var releaseCandidateTagRE = regexp.MustCompile(`^\d+(\.\d+)+ RC\d+$`)
 
 func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criterionTypes.Criterion, error) {
 	fixedBuild := cleanFixedBuild(rawFixedBuild)
@@ -1070,7 +1068,7 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 	//    "11.0 RC1", 2026-Sep). Other values containing a space are not skipped: on
 	//    version-compared products they have been recoverable typos (e.g. "96.0 1954.29"),
 	//    which should fail and get a fixedBuildOverrides entry
-	if fixedBuild[0] < '0' || fixedBuild[0] > '9' || strings.Contains(fixedBuild, "x") || !strings.Contains(fixedBuild, ".") || strings.ContainsAny(fixedBuild, ";,") || isReleaseCandidateTag(fixedBuild) {
+	if fixedBuild[0] < '0' || fixedBuild[0] > '9' || strings.Contains(fixedBuild, "x") || !strings.Contains(fixedBuild, ".") || strings.ContainsAny(fixedBuild, ";,") || releaseCandidateTagRE.MatchString(fixedBuild) {
 		return nil, nil
 	}
 
