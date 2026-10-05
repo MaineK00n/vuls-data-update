@@ -14,7 +14,11 @@
 // "fortisoaron-premise"), target_sw never set — and give each product one
 // part across every record (FortiOS, FortiAnalyzer, FortiManager, FortiDDoS,
 // FortiDDoS-F and FortiPAM "o"; FortiADC and FortiADCManager "h"; the rest
-// "a"). Each product maps to that one CPE, whatever the advisory.
+// "a"). The one exception to the naming is "FortiPAM Chrome Extension",
+// which CVE-2026-84388 names "fortipam_chrome_extension", spaces turned into
+// underscores: take a product's slug from its records whenever they give
+// one, and derive it only when none does. Each product maps to that one
+// CPE, whatever the advisory.
 //
 // For a product none of Fortinet's CVE records give a CPE yet, the CPE's
 // product component (the slug) follows the same rule, and its part is NVD's
