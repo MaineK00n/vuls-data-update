@@ -4,6 +4,8 @@ import (
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
+	"github.com/knqyf263/go-cpe/common"
+	"github.com/knqyf263/go-cpe/naming"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/fortinet/internal/product"
 	ccRangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/cpecriterion/range"
@@ -144,22 +146,65 @@ func TestTrainRange(t *testing.T) {
 func TestResolve(t *testing.T) {
 	tests := []struct {
 		name      string
-		wantCPE   string
+		wantCPEs  []string
 		wantRange ccRangeTypes.RangeType
 		wantOK    bool
 	}{
-		{name: "FortiOS", wantCPE: "cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*", wantRange: ccRangeTypes.RangeTypeFortinetFortiOS, wantOK: true},
-		{name: "FortiSASE", wantCPE: "cpe:2.3:a:fortinet:fortisase:*:*:*:*:*:*:*:*", wantRange: ccRangeTypes.RangeTypeFortinetFortiSASE, wantOK: true},
-		{name: "FortiClientWindows", wantCPE: "cpe:2.3:a:fortinet:forticlient:*:*:*:*:*:*:*:*", wantRange: ccRangeTypes.RangeTypeFortinetFortiClient, wantOK: true},
-		{name: "  FortiProxy  ", wantCPE: "cpe:2.3:o:fortinet:fortiproxy:*:*:*:*:*:*:*:*", wantRange: ccRangeTypes.RangeTypeFortinetFortiProxy, wantOK: true},
+		// Fortinet's CNA CPE and NVD's agree.
+		{name: "FortiOS", wantCPEs: []string{"cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*"}, wantRange: ccRangeTypes.RangeTypeFortinetFortiOS, wantOK: true},
+		{name: "FortiSASE", wantCPEs: []string{"cpe:2.3:a:fortinet:fortisase:*:*:*:*:*:*:*:*"}, wantRange: ccRangeTypes.RangeTypeFortinetFortiSASE, wantOK: true},
+		// The CNA CPE first, then the CPE published before it.
+		{name: "  FortiProxy  ", wantCPEs: []string{"cpe:2.3:a:fortinet:fortiproxy:*:*:*:*:*:*:*:*", "cpe:2.3:o:fortinet:fortiproxy:*:*:*:*:*:*:*:*"}, wantRange: ccRangeTypes.RangeTypeFortinetFortiProxy, wantOK: true},
+		// A platform variant takes NVD's product with NVD's target_sw, Mac
+		// both the current and the older one.
+		{name: "FortiClientWindows", wantCPEs: []string{"cpe:2.3:a:fortinet:forticlientwindows:*:*:*:*:*:*:*:*", "cpe:2.3:a:fortinet:forticlient:*:*:*:*:*:windows:*:*"}, wantRange: ccRangeTypes.RangeTypeFortinetFortiClient, wantOK: true},
+		{name: "FortiClientMac", wantCPEs: []string{"cpe:2.3:a:fortinet:forticlientmac:*:*:*:*:*:*:*:*", "cpe:2.3:a:fortinet:forticlient:*:*:*:*:*:macos:*:*", "cpe:2.3:a:fortinet:forticlient:*:*:*:*:*:mac_os_x:*:*"}, wantRange: ccRangeTypes.RangeTypeFortinetFortiClient, wantOK: true},
+		// Fortinet's records name FortiSOAR apart from its PaaS and on-premise
+		// deployments, which NVD folds into FortiSOAR.
+		{name: "FortiSOAR", wantCPEs: []string{"cpe:2.3:a:fortinet:fortisoar:*:*:*:*:*:*:*:*"}, wantRange: ccRangeTypes.RangeTypeFortinetFortiSOAR, wantOK: true},
+		{name: "FortiSOAR PaaS", wantCPEs: []string{"cpe:2.3:a:fortinet:fortisoarpaas:*:*:*:*:*:*:*:*", "cpe:2.3:a:fortinet:fortisoar:*:*:*:*:*:*:*:*"}, wantRange: ccRangeTypes.RangeTypeFortinetFortiSOAR, wantOK: true},
+		// The agent takes NVD's product for it, not FortiAuthenticator's.
+		{name: "FortiAuthenticator OutlookAgent", wantCPEs: []string{"cpe:2.3:a:fortinet:fortiauthenticatoroutlookagent:*:*:*:*:*:*:*:*", "cpe:2.3:a:fortinet:fortiauthenticator_agent_for_microsoft_outlook_web_access:*:*:*:*:*:*:*:*"}, wantRange: ccRangeTypes.RangeTypeFortinetFortiAuthenticator, wantOK: true},
 		{name: "Nonexistent Product", wantOK: false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			cpe, rt, ok := product.Resolve(tt.name)
-			if ok != tt.wantOK || cpe != tt.wantCPE || rt != tt.wantRange {
-				t.Errorf("Resolve(%q) = (%q, %v, %v), want (%q, %v, %v)", tt.name, cpe, rt, ok, tt.wantCPE, tt.wantRange, tt.wantOK)
+			cpes, rt, ok := product.Resolve(tt.name)
+			if ok != tt.wantOK || rt != tt.wantRange {
+				t.Errorf("Resolve(%q) = (_, %v, %v), want (_, %v, %v)", tt.name, rt, ok, tt.wantRange, tt.wantOK)
+			}
+			if diff := cmp.Diff(tt.wantCPEs, cpes); diff != "" {
+				t.Errorf("Resolve(%q) cpes (-want +got):\n%s", tt.name, diff)
 			}
 		})
+	}
+}
+
+// Every product's CPEs are well-formed, fortinet's, version-wildcarded and
+// unrepeated.
+func TestTableCPEs(t *testing.T) {
+	for _, name := range product.Names() {
+		cpes, _, _ := product.Resolve(name)
+		if len(cpes) == 0 {
+			t.Errorf("%q: no CPE", name)
+		}
+		seen := make(map[string]bool, len(cpes))
+		for _, cpe := range cpes {
+			if seen[cpe] {
+				t.Errorf("%q: CPE %q repeated", name, cpe)
+			}
+			seen[cpe] = true
+			wfn, err := naming.UnbindFS(cpe)
+			if err != nil {
+				t.Errorf("%q: unbind %q: %v", name, cpe, err)
+				continue
+			}
+			if v, ok := wfn.Get(common.AttributeVendor).(string); !ok || v != "fortinet" {
+				t.Errorf("%q: CPE %q vendor is not fortinet", name, cpe)
+			}
+			if _, ok := wfn.Get(common.AttributeVersion).(common.LogicalValue); !ok {
+				t.Errorf("%q: CPE %q pins a version", name, cpe)
+			}
+		}
 	}
 }

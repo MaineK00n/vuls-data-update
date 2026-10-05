@@ -78,37 +78,79 @@
 				{
 					"criteria": {
 						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "OR",
+								"criterions": [
+									{
+										"type": "cpe",
+										"cpe": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "unknown"
+											},
+											"cpe": "cpe:2.3:a:fortinet:fortianalyzer_cloud:*:*:*:*:*:*:*:*",
+											"range": {
+												"type": "fortinet-fortianalyzer_cloud",
+												"ge": "7.4.1",
+												"le": "7.4.2"
+											}
+										}
+									},
+									{
+										"type": "cpe",
+										"cpe": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "unknown"
+											},
+											"cpe": "cpe:2.3:a:fortinet:fortianalyzercloud:*:*:*:*:*:*:*:*",
+											"range": {
+												"type": "fortinet-fortianalyzer_cloud",
+												"ge": "7.4.1",
+												"le": "7.4.2"
+											}
+										}
+									}
+								]
+							},
+							{
+								"operator": "OR",
+								"criterions": [
+									{
+										"type": "cpe",
+										"cpe": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "unknown"
+											},
+											"cpe": "cpe:2.3:a:fortinet:fortimanager_cloud:*:*:*:*:*:*:*:*",
+											"range": {
+												"type": "fortinet-fortimanager_cloud",
+												"ge": "7.4.1",
+												"le": "7.4.2"
+											}
+										}
+									},
+									{
+										"type": "cpe",
+										"cpe": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "unknown"
+											},
+											"cpe": "cpe:2.3:a:fortinet:fortimanagercloud:*:*:*:*:*:*:*:*",
+											"range": {
+												"type": "fortinet-fortimanager_cloud",
+												"ge": "7.4.1",
+												"le": "7.4.2"
+											}
+										}
+									}
+								]
+							}
+						],
 						"criterions": [
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "unknown"
-									},
-									"cpe": "cpe:2.3:a:fortinet:fortianalyzer_cloud:*:*:*:*:*:*:*:*",
-									"range": {
-										"type": "fortinet-fortianalyzer_cloud",
-										"ge": "7.4.1",
-										"le": "7.4.2"
-									}
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "unknown"
-									},
-									"cpe": "cpe:2.3:a:fortinet:fortimanager_cloud:*:*:*:*:*:*:*:*",
-									"range": {
-										"type": "fortinet-fortimanager_cloud",
-										"ge": "7.4.1",
-										"le": "7.4.2"
-									}
-								}
-							},
 							{
 								"type": "cpe",
 								"cpe": {

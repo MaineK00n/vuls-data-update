@@ -3,6 +3,7 @@
 package product
 
 import (
+	"slices"
 	"strconv"
 	"strings"
 
@@ -13,14 +14,16 @@ import (
 	ccRangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/cpecriterion/range"
 )
 
-// Resolve returns the CPE 2.3 formatted string (wildcard version) and the
-// per-product cpecriterion range type for a Fortinet product name, or ok=false
-// when the name is not in the table. Fortinet uses one range type per product,
-// so a product whose versioning scheme later diverges gets its own comparator
-// without affecting any other product.
-func Resolve(name string) (cpe string, rangeType ccRangeTypes.RangeType, ok bool) {
+// Resolve returns the CPE 2.3 formatted strings (wildcard version) a host
+// running a Fortinet product may be recorded under — the CPE Fortinet assigns
+// as CNA first, then the others, none repeated — and the product's
+// cpecriterion range type, or ok=false when the name is not in the table. A
+// detection matches a host recorded under any of the CPEs. Fortinet uses one
+// range type per product, so a product whose versioning scheme later diverges
+// gets its own comparator without affecting any other product.
+func Resolve(name string) (cpes []string, rangeType ccRangeTypes.RangeType, ok bool) {
 	p, ok := nameToProduct[strings.TrimSpace(name)]
-	return p.cpe, p.rangeType, ok
+	return slices.Clone(p.cpes), p.rangeType, ok
 }
 
 // versionEscaper escapes the CPE WFN special characters (dots and hyphens) in a

@@ -83,7 +83,7 @@ func TestExtract(t *testing.T) {
 	}
 }
 
-func TestToCriterion(t *testing.T) {
+func TestToCriterions(t *testing.T) {
 	type args struct {
 		productID string
 		refMap    map[string]csaf.ProductRef
@@ -91,7 +91,7 @@ func TestToCriterion(t *testing.T) {
 	tests := []struct {
 		name    string
 		args    args
-		want    criterionTypes.Criterion
+		want    []criterionTypes.Criterion
 		wantErr bool
 	}{
 		{
@@ -102,12 +102,74 @@ func TestToCriterion(t *testing.T) {
 					"FortiOS 7.4.3": csaf.NewProductRef("FortiOS", "7.4.3"),
 				},
 			},
-			want: criterionTypes.Criterion{
+			want: []criterionTypes.Criterion{{
 				Type: criterionTypes.CriterionTypeCPE,
 				CPE: &ccTypes.Criterion{
 					Vulnerable: true,
 					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
 					CPE:        ccTypes.CPE("cpe:2.3:o:fortinet:fortios:7.4.3:*:*:*:*:*:*:*"),
+				},
+			}},
+		},
+		{
+			// One criterion per CPE the product may be recorded under, each with
+			// the same range.
+			name: "product recorded under several CPEs",
+			args: args{
+				productID: "FortiClientMac >=7.0.0|<=7.0.5",
+				refMap: map[string]csaf.ProductRef{
+					"FortiClientMac >=7.0.0|<=7.0.5": csaf.NewProductRef("FortiClientMac", ">=7.0.0|<=7.0.5"),
+				},
+			},
+			want: func() []criterionTypes.Criterion {
+				var cns []criterionTypes.Criterion
+				for _, cpe := range []string{
+					"cpe:2.3:a:fortinet:forticlientmac:*:*:*:*:*:*:*:*",
+					"cpe:2.3:a:fortinet:forticlient:*:*:*:*:*:macos:*:*",
+					"cpe:2.3:a:fortinet:forticlient:*:*:*:*:*:mac_os_x:*:*",
+				} {
+					cns = append(cns, criterionTypes.Criterion{
+						Type: criterionTypes.CriterionTypeCPE,
+						CPE: &ccTypes.Criterion{
+							Vulnerable: true,
+							FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
+							CPE:        ccTypes.CPE(cpe),
+							Range: &ccRangeTypes.Range{
+								Type:         ccRangeTypes.RangeTypeFortinetFortiClient,
+								GreaterEqual: "7.0.0",
+								LessEqual:    "7.0.5",
+							},
+						},
+					})
+				}
+				return cns
+			}(),
+		},
+		{
+			// A baked version lands in every CPE.
+			name: "concrete version baked into every CPE",
+			args: args{
+				productID: "FortiClientWindows 7.2.4",
+				refMap: map[string]csaf.ProductRef{
+					"FortiClientWindows 7.2.4": csaf.NewProductRef("FortiClientWindows", "7.2.4"),
+				},
+			},
+			want: []criterionTypes.Criterion{
+				{
+					Type: criterionTypes.CriterionTypeCPE,
+					CPE: &ccTypes.Criterion{
+						Vulnerable: true,
+						FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
+						CPE:        ccTypes.CPE("cpe:2.3:a:fortinet:forticlientwindows:7.2.4:*:*:*:*:*:*:*"),
+					},
+				},
+				{
+					Type: criterionTypes.CriterionTypeCPE,
+					CPE: &ccTypes.Criterion{
+						Vulnerable: true,
+						FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
+						CPE:        ccTypes.CPE("cpe:2.3:a:fortinet:forticlient:7.2.4:*:*:*:*:windows:*:*"),
+					},
 				},
 			},
 		},
@@ -119,7 +181,7 @@ func TestToCriterion(t *testing.T) {
 					"FortiOS >=7.0.0|<=7.0.5": csaf.NewProductRef("FortiOS", ">=7.0.0|<=7.0.5"),
 				},
 			},
-			want: criterionTypes.Criterion{
+			want: []criterionTypes.Criterion{{
 				Type: criterionTypes.CriterionTypeCPE,
 				CPE: &ccTypes.Criterion{
 					Vulnerable: true,
@@ -131,7 +193,7 @@ func TestToCriterion(t *testing.T) {
 						LessEqual:    "7.0.5",
 					},
 				},
-			},
+			}},
 		},
 		{
 			name: "whole product (all versions)",
@@ -141,14 +203,14 @@ func TestToCriterion(t *testing.T) {
 					"FortiOS all versions": csaf.NewProductRef("FortiOS", "all versions"),
 				},
 			},
-			want: criterionTypes.Criterion{
+			want: []criterionTypes.Criterion{{
 				Type: criterionTypes.CriterionTypeCPE,
 				CPE: &ccTypes.Criterion{
 					Vulnerable: true,
 					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
 					CPE:        ccTypes.CPE("cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*"),
 				},
-			},
+			}},
 		},
 		{
 			name: "product_id not in tree map rejected",
@@ -166,7 +228,7 @@ func TestToCriterion(t *testing.T) {
 					"FortiOS >=7.0.0|<=7.0.5": csaf.NewProductRef("FortiOS", ">=7.0.0|<=7.0.5"),
 				},
 			},
-			want: criterionTypes.Criterion{
+			want: []criterionTypes.Criterion{{
 				Type: criterionTypes.CriterionTypeCPE,
 				CPE: &ccTypes.Criterion{
 					Vulnerable: true,
@@ -178,7 +240,7 @@ func TestToCriterion(t *testing.T) {
 						LessEqual:    "7.0.5",
 					},
 				},
-			},
+			}},
 		},
 		{
 			name: "X.Y all versions → train range, wildcard cpe",
@@ -188,7 +250,7 @@ func TestToCriterion(t *testing.T) {
 					"FortiOS 7.0 all versions": csaf.NewProductRef("FortiOS", "7.0 all versions"),
 				},
 			},
-			want: criterionTypes.Criterion{
+			want: []criterionTypes.Criterion{{
 				Type: criterionTypes.CriterionTypeCPE,
 				CPE: &ccTypes.Criterion{
 					Vulnerable: true,
@@ -200,7 +262,7 @@ func TestToCriterion(t *testing.T) {
 						LessThan:     "7.1",
 					},
 				},
-			},
+			}},
 		},
 		{
 			name: "numeric and above ok (numeric product)",
@@ -210,7 +272,7 @@ func TestToCriterion(t *testing.T) {
 					"FortiOS 7.0.0 and above": csaf.NewProductRef("FortiOS", "7.0.0 and above"),
 				},
 			},
-			want: criterionTypes.Criterion{
+			want: []criterionTypes.Criterion{{
 				Type: criterionTypes.CriterionTypeCPE,
 				CPE: &ccTypes.Criterion{
 					Vulnerable: true,
@@ -221,7 +283,7 @@ func TestToCriterion(t *testing.T) {
 						GreaterEqual: "7.0.0",
 					},
 				},
-			},
+			}},
 		},
 		{
 			name: "non-numeric product train range ok",
@@ -231,7 +293,7 @@ func TestToCriterion(t *testing.T) {
 					"FortiSASE 25.2 all versions": csaf.NewProductRef("FortiSASE", "25.2 all versions"),
 				},
 			},
-			want: criterionTypes.Criterion{
+			want: []criterionTypes.Criterion{{
 				Type: criterionTypes.CriterionTypeCPE,
 				CPE: &ccTypes.Criterion{
 					Vulnerable: true,
@@ -243,7 +305,7 @@ func TestToCriterion(t *testing.T) {
 						LessThan:     "25.3",
 					},
 				},
-			},
+			}},
 		},
 		{
 			name: "non-numeric product whole-product ok",
@@ -253,14 +315,14 @@ func TestToCriterion(t *testing.T) {
 					"FortiSASE all versions": csaf.NewProductRef("FortiSASE", "all versions"),
 				},
 			},
-			want: criterionTypes.Criterion{
+			want: []criterionTypes.Criterion{{
 				Type: criterionTypes.CriterionTypeCPE,
 				CPE: &ccTypes.Criterion{
 					Vulnerable: true,
 					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
 					CPE:        ccTypes.CPE("cpe:2.3:a:fortinet:fortisase:*:*:*:*:*:*:*:*"),
 				},
-			},
+			}},
 		},
 		{
 			name: "non-numeric concrete version baked, not a bound",
@@ -270,14 +332,14 @@ func TestToCriterion(t *testing.T) {
 					"FortiSASE 25.2.a": csaf.NewProductRef("FortiSASE", "25.2.a"),
 				},
 			},
-			want: criterionTypes.Criterion{
+			want: []criterionTypes.Criterion{{
 				Type: criterionTypes.CriterionTypeCPE,
 				CPE: &ccTypes.Criterion{
 					Vulnerable: true,
 					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
 					CPE:        ccTypes.CPE("cpe:2.3:a:fortinet:fortisase:25.2.a:*:*:*:*:*:*:*"),
 				},
-			},
+			}},
 		},
 		{
 			name: "product in tree but not whitelisted → hard error",
@@ -446,15 +508,15 @@ func TestToCriterion(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := csaf.ToCriterion(tt.args.productID, tt.args.refMap)
+			got, err := csaf.ToCriterions(tt.args.productID, tt.args.refMap)
 			if (err != nil) != tt.wantErr {
-				t.Fatalf("ToCriterion(%q) error = %v, wantErr %v", tt.args.productID, err, tt.wantErr)
+				t.Fatalf("ToCriterions(%q) error = %v, wantErr %v", tt.args.productID, err, tt.wantErr)
 			}
 			if tt.wantErr {
 				return
 			}
 			if diff := cmp.Diff(tt.want, got); diff != "" {
-				t.Errorf("ToCriterion(%q) (-want +got):\n%s", tt.args.productID, diff)
+				t.Errorf("ToCriterions(%q) (-want +got):\n%s", tt.args.productID, diff)
 			}
 		})
 	}

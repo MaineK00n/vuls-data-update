@@ -152,16 +152,17 @@ func extract(fetched cvrfTypes.CVRF, raws []string) (dataTypes.Data, error) {
 
 	// Detection: a single untagged OR over the Known Affected products. The
 	// status is shared across the advisory's CVEs, so it is not partitioned per
-	// CVE. Versions are grouped per product — one criterion whose main CPE pins
-	// part/vendor/product (version wildcard) and whose CPEMatches enumerate the
-	// exact affected versions.
+	// CVE. Versions are grouped per product — one criterion per CPE the product
+	// may be recorded under, whose main CPE pins part/vendor/product (version
+	// wildcard) and whose CPEMatches enumerate the exact affected versions; a
+	// product with several CPEs is a nested OR of its criterions.
 	//
 	// CVRF carries a single product status whose only observed type across the
 	// corpus is "Known Affected". Advisories without it — the 2012-2022
 	// historical corpus — fall back to the embedded supplement table (see
 	// supplement.go); those in neither are content-only. Any other type is
 	// unexpected — fail loudly rather than silently emit no detection.
-	var criterions []criterionTypes.Criterion
+	var criteria criteriaTypes.Criteria
 	switch status := fetched.Vulnerability.ProductStatuses.Status; status.Type {
 	case "Known Affected":
 		// The symmetric counterpart of the products-without-a-type guard
@@ -173,11 +174,11 @@ func extract(fetched cvrfTypes.CVRF, raws []string) (dataTypes.Data, error) {
 		if len(status.ProductID) == 0 {
 			return dataTypes.Data{}, errors.Errorf("product status type %q lists no products", status.Type)
 		}
-		cs, err := knownAffectedCriterions(status.ProductID, buildProductMap(fetched))
+		c, err := knownAffectedCriteria(status.ProductID, buildProductMap(fetched))
 		if err != nil {
-			return dataTypes.Data{}, errors.Wrap(err, "build known affected criterions")
+			return dataTypes.Data{}, errors.Wrap(err, "build known affected criteria")
 		}
-		criterions = cs
+		criteria = c
 	case "":
 		// No product status type. A typed status is the only thing that lists
 		// products, so a missing type must come with no products; products
@@ -186,11 +187,11 @@ func extract(fetched cvrfTypes.CVRF, raws []string) (dataTypes.Data, error) {
 		if len(status.ProductID) > 0 {
 			return dataTypes.Data{}, errors.Errorf("product status lists %d product(s) but has no type", len(status.ProductID))
 		}
-		cs, err := supplementCriterions(supplementTable, id)
+		c, err := supplementCriteria(supplementTable, id)
 		if err != nil {
-			return dataTypes.Data{}, errors.Wrap(err, "build supplement criterions")
+			return dataTypes.Data{}, errors.Wrap(err, "build supplement criteria")
 		}
-		criterions = cs
+		criteria = c
 	default:
 		return dataTypes.Data{}, errors.Errorf("unexpected product status type %q (expected %q or none)", status.Type, "Known Affected")
 	}
@@ -202,14 +203,11 @@ func extract(fetched cvrfTypes.CVRF, raws []string) (dataTypes.Data, error) {
 		detections []detectionTypes.Detection
 		segs       []segmentTypes.Segment
 	)
-	if len(criterions) > 0 {
+	if len(criteria.Criterions) > 0 || len(criteria.Criterias) > 0 {
 		detections = []detectionTypes.Detection{{
 			Ecosystem: ecosystemTypes.EcosystemTypeCPE,
 			Conditions: []conditionTypes.Condition{{
-				Criteria: criteriaTypes.Criteria{
-					Operator:   criteriaTypes.CriteriaOperatorTypeOR,
-					Criterions: criterions,
-				},
+				Criteria: criteria,
 			}},
 		}}
 		segs = []segmentTypes.Segment{{Ecosystem: ecosystemTypes.EcosystemTypeCPE}}
@@ -300,14 +298,16 @@ func buildProductMap(fetched cvrfTypes.CVRF) map[string]productVersion {
 	return m
 }
 
-// knownAffectedCriterions resolves the Known Affected product_ids into one CPE
-// criterion per product: the product CPE (version wildcard) as the main CPE,
-// with the exact affected versions enumerated in CPEMatches. With a non-empty
-// CPEMatches the "no narrowing" path is closed, so a query with a concrete
-// version matches only when it is one of the enumerated versions — the wildcard
-// main CPE does not over-detect the whole product. (A version-less query still
-// follows the usual cpecriterion semantics: ANY matches, NA is
-// version-unconfirmed.)
+// knownAffectedCriteria resolves the Known Affected product_ids into an OR
+// with one CPE criterion per CPE a product may be recorded under (see
+// productpkg.Resolve): the CPE (version wildcard) as the main CPE, with the
+// exact affected versions, baked into that CPE, enumerated in CPEMatches. With
+// a non-empty CPEMatches the "no narrowing" path is closed, so a query with a
+// concrete version matches only when it is one of the enumerated versions —
+// the wildcard main CPE does not over-detect the whole product. (A
+// version-less query still follows the usual cpecriterion semantics: ANY
+// matches, NA is version-unconfirmed.) A product with several CPEs is a
+// nested OR of its criterions (see productCriteria).
 //
 // Only concrete versions are kept. CVRF enumerates affected versions
 // explicitly, so a coarse train (e.g. "5.0" for FortiOS) is dropped rather
@@ -321,22 +321,22 @@ func buildProductMap(fetched cvrfTypes.CVRF) map[string]productVersion {
 // It hard-errors when a product_id is absent from the tree or the product is
 // not whitelisted — a new Fortinet product or a resolver bug must fail the
 // extract, not silently drop coverage.
-func knownAffectedCriterions(productIDs []string, prodMap map[string]productVersion) ([]criterionTypes.Criterion, error) {
+func knownAffectedCriteria(productIDs []string, prodMap map[string]productVersion) (criteriaTypes.Criteria, error) {
 	type product struct {
-		cpe      string
-		versions []ccTypes.CPE // baked exact-version CPEs, deduped
+		cpes     []string
+		versions []string // exact versions, deduped
 	}
 	products := make(map[string]product)
-	var order []string // product CPEs in first-seen order
+	var order []string // product names in first-seen order
 	for _, pid := range productIDs {
 		pv, ok := prodMap[pid]
 		if !ok {
-			return nil, errors.Errorf("known affected %q not found in product tree", pid)
+			return criteriaTypes.Criteria{}, errors.Errorf("known affected %q not found in product tree", pid)
 		}
 
-		cpe, _, ok := productpkg.Resolve(pv.productName)
+		cpes, _, ok := productpkg.Resolve(pv.productName)
 		if !ok {
-			return nil, errors.Errorf("unknown fortinet product %q (whitelist miss; add it to internal/product)", pv.productName)
+			return criteriaTypes.Criteria{}, errors.Errorf("unknown fortinet product %q (whitelist miss; add it to internal/product)", pv.productName)
 		}
 
 		// The version branch name occasionally carries the product name as a
@@ -352,36 +352,64 @@ func knownAffectedCriterions(productIDs []string, prodMap map[string]productVers
 			continue
 		}
 
-		baked, err := productpkg.BakeVersion(cpe, ver)
-		if err != nil {
-			return nil, errors.Wrapf(err, "bake version for %q", pid)
-		}
-
-		p, ok := products[cpe]
+		p, ok := products[pv.productName]
 		if !ok {
-			p.cpe = cpe
-			order = append(order, cpe)
+			p.cpes = cpes
+			order = append(order, pv.productName)
 		}
-		if !slices.Contains(p.versions, ccTypes.CPE(baked)) {
-			p.versions = append(p.versions, ccTypes.CPE(baked))
+		if !slices.Contains(p.versions, ver) {
+			p.versions = append(p.versions, ver)
 		}
-		products[cpe] = p
+		products[pv.productName] = p
 	}
 
-	criterions := make([]criterionTypes.Criterion, 0, len(order))
-	for _, cpe := range order {
-		p := products[cpe]
-		criterions = append(criterions, criterionTypes.Criterion{
-			Type: criterionTypes.CriterionTypeCPE,
-			CPE: &ccTypes.Criterion{
-				Vulnerable: true,
-				FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
-				CPE:        ccTypes.CPE(p.cpe),
-				CPEMatches: p.versions,
-			},
-		})
+	criterions := make([][]criterionTypes.Criterion, 0, len(order))
+	for _, name := range order {
+		p := products[name]
+		cns := make([]criterionTypes.Criterion, 0, len(p.cpes))
+		for _, cpe := range p.cpes {
+			baked := make([]ccTypes.CPE, 0, len(p.versions))
+			for _, v := range p.versions {
+				b, err := productpkg.BakeVersion(cpe, v)
+				if err != nil {
+					return criteriaTypes.Criteria{}, errors.Wrapf(err, "bake version %q for %q", v, name)
+				}
+				baked = append(baked, ccTypes.CPE(b))
+			}
+			cns = append(cns, criterionTypes.Criterion{
+				Type: criterionTypes.CriterionTypeCPE,
+				CPE: &ccTypes.Criterion{
+					Vulnerable: true,
+					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
+					CPE:        ccTypes.CPE(cpe),
+					CPEMatches: baked,
+				},
+			})
+		}
+		criterions = append(criterions, cns)
 	}
-	return criterions, nil
+	return productCriteria(criterions), nil
+}
+
+// productCriteria ORs the criterions of each product: a product with one
+// criterion joins the OR directly, and a product with several (one per CPE it
+// may be recorded under) joins as a nested OR of them, so each product stays
+// one unit even where two products share a CPE.
+func productCriteria(products [][]criterionTypes.Criterion) criteriaTypes.Criteria {
+	c := criteriaTypes.Criteria{Operator: criteriaTypes.CriteriaOperatorTypeOR}
+	for _, cns := range products {
+		switch len(cns) {
+		case 0:
+		case 1:
+			c.Criterions = append(c.Criterions, cns[0])
+		default:
+			c.Criterias = append(c.Criterias, criteriaTypes.Criteria{
+				Operator:   criteriaTypes.CriteriaOperatorTypeOR,
+				Criterions: cns,
+			})
+		}
+	}
+	return c
 }
 
 // advisorySeverity returns the advisory's CVSS severity. CVRF carries a single

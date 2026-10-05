@@ -11,6 +11,7 @@ import (
 
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/fortinet/cvrf"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/fortinet/internal/product"
+	criteriaTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria"
 	criterionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion"
 	ccTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/cpecriterion"
 	ccRangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/cpecriterion/range"
@@ -53,7 +54,7 @@ func TestExtract(t *testing.T) {
 
 // Whitelist enforcement: a Known Affected product that is absent from the tree
 // or not in the product table must hard-error rather than be silently dropped.
-func TestKnownAffectedCriterionsWhitelist(t *testing.T) {
+func TestKnownAffectedCriteriaWhitelist(t *testing.T) {
 	tests := []struct {
 		name      string
 		productID string
@@ -80,9 +81,9 @@ func TestKnownAffectedCriterionsWhitelist(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			_, err := cvrf.KnownAffectedCriterions([]string{tt.productID}, tt.prodMap)
+			_, err := cvrf.KnownAffectedCriteria([]string{tt.productID}, tt.prodMap)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("KnownAffectedCriterions(%q) error = %v, wantErr %v", tt.productID, err, tt.wantErr)
+				t.Errorf("KnownAffectedCriteria(%q) error = %v, wantErr %v", tt.productID, err, tt.wantErr)
 			}
 		})
 	}
@@ -175,7 +176,7 @@ func TestExtractReferenceURLs(t *testing.T) {
 	}
 }
 
-// supplementCPECriterion builds the criterion shape supplementCriterions
+// supplementCPECriterion builds the criterion shape supplementCriteria
 // emits — a vulnerable CPE criterion with fix status unknown — narrowed by
 // exact-version matches and/or a range when given.
 func supplementCPECriterion(cpe string, matches []ccTypes.CPE, r *ccRangeTypes.Range) criterionTypes.Criterion {
@@ -191,16 +192,18 @@ func supplementCPECriterion(cpe string, matches []ccTypes.CPE, r *ccRangeTypes.R
 	}
 }
 
-// supplementCriterions turns supplement rows into criterions: exact versions
+// supplementCriteria turns supplement rows into criteria: exact versions
 // bake into CPEMatches, ranges pick up the product's per-product range type,
-// and an audited whole-product row emits the bare product CPE. Everything
+// and an audited whole-product row emits the bare product CPE, each once per
+// CPE the product may be recorded under, a row whose product has several CPEs
+// being a nested OR. Everything
 // malformed is a hard error rather than a silent detection gap: an unknown
 // product, a non-numeric version or bound, a bound-less or inverted range
 // (criterions that never match), and a whole-product row outside the audited
 // allowlist (a criterion that matches everything). Most cases inject
 // synthetic tables; the "production row" cases run against the embedded
 // table, pinning one real row per shape in full.
-func TestSupplementCriterions(t *testing.T) {
+func TestSupplementCriteria(t *testing.T) {
 	type args struct {
 		table map[string][]cvrf.SupplementProduct
 		id    string
@@ -208,7 +211,7 @@ func TestSupplementCriterions(t *testing.T) {
 	tests := []struct {
 		name    string
 		args    args
-		want    []criterionTypes.Criterion
+		want    criteriaTypes.Criteria
 		wantErr bool
 	}{
 		{
@@ -217,11 +220,14 @@ func TestSupplementCriterions(t *testing.T) {
 				table: map[string][]cvrf.SupplementProduct{"FG-IR-24-001": {{Product: "FortiOS", Versions: []string{"7.4.3", "7.4.4"}}}},
 				id:    "FG-IR-24-001",
 			},
-			want: []criterionTypes.Criterion{
-				supplementCPECriterion("cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*", []ccTypes.CPE{
-					"cpe:2.3:o:fortinet:fortios:7.4.3:*:*:*:*:*:*:*",
-					"cpe:2.3:o:fortinet:fortios:7.4.4:*:*:*:*:*:*:*",
-				}, nil),
+			want: criteriaTypes.Criteria{
+				Operator: criteriaTypes.CriteriaOperatorTypeOR,
+				Criterions: []criterionTypes.Criterion{
+					supplementCPECriterion("cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*", []ccTypes.CPE{
+						"cpe:2.3:o:fortinet:fortios:7.4.3:*:*:*:*:*:*:*",
+						"cpe:2.3:o:fortinet:fortios:7.4.4:*:*:*:*:*:*:*",
+					}, nil),
+				},
 			},
 		},
 		{
@@ -230,9 +236,12 @@ func TestSupplementCriterions(t *testing.T) {
 				table: map[string][]cvrf.SupplementProduct{"FG-IR-24-001": {{Product: "FortiOS", Ranges: []cvrf.SupplementRange{{GreaterEqual: "7.0.0", LessThan: "7.4.4"}}}}},
 				id:    "FG-IR-24-001",
 			},
-			want: []criterionTypes.Criterion{
-				supplementCPECriterion("cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*", nil,
-					&ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeFortinetFortiOS, GreaterEqual: "7.0.0", LessThan: "7.4.4"}),
+			want: criteriaTypes.Criteria{
+				Operator: criteriaTypes.CriteriaOperatorTypeOR,
+				Criterions: []criterionTypes.Criterion{
+					supplementCPECriterion("cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*", nil,
+						&ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeFortinetFortiOS, GreaterEqual: "7.0.0", LessThan: "7.4.4"}),
+				},
 			},
 		},
 		{
@@ -241,10 +250,13 @@ func TestSupplementCriterions(t *testing.T) {
 				table: map[string][]cvrf.SupplementProduct{"FG-IR-24-001": {{Product: "FortiOS", Versions: []string{"7.4.3"}, Ranges: []cvrf.SupplementRange{{LessEqual: "7.0.17"}}}}},
 				id:    "FG-IR-24-001",
 			},
-			want: []criterionTypes.Criterion{
-				supplementCPECriterion("cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*", []ccTypes.CPE{"cpe:2.3:o:fortinet:fortios:7.4.3:*:*:*:*:*:*:*"}, nil),
-				supplementCPECriterion("cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*", nil,
-					&ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeFortinetFortiOS, LessEqual: "7.0.17"}),
+			want: criteriaTypes.Criteria{
+				Operator: criteriaTypes.CriteriaOperatorTypeOR,
+				Criterions: []criterionTypes.Criterion{
+					supplementCPECriterion("cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*", []ccTypes.CPE{"cpe:2.3:o:fortinet:fortios:7.4.3:*:*:*:*:*:*:*"}, nil),
+					supplementCPECriterion("cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*", nil,
+						&ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeFortinetFortiOS, LessEqual: "7.0.17"}),
+				},
 			},
 		},
 		{
@@ -257,18 +269,25 @@ func TestSupplementCriterions(t *testing.T) {
 				table: map[string][]cvrf.SupplementProduct{"FG-IR-14-010": {{Product: "FortiBalancer"}}},
 				id:    "FG-IR-14-010",
 			},
-			want: []criterionTypes.Criterion{
-				supplementCPECriterion("cpe:2.3:o:fortinet:fortibalancer:*:*:*:*:*:*:*:*", nil, nil),
+			want: criteriaTypes.Criteria{
+				Operator: criteriaTypes.CriteriaOperatorTypeOR,
+				Criterias: []criteriaTypes.Criteria{{
+					Operator: criteriaTypes.CriteriaOperatorTypeOR,
+					Criterions: []criterionTypes.Criterion{
+						supplementCPECriterion("cpe:2.3:h:fortinet:fortibalancer:*:*:*:*:*:*:*:*", nil, nil),
+						supplementCPECriterion("cpe:2.3:o:fortinet:fortibalancer:*:*:*:*:*:*:*:*", nil, nil),
+					},
+				}},
 			},
 		},
 		{
 			// Not an error — the caller falls back to content-only extraction.
-			name: "advisory not in the table yields nil",
+			name: "advisory not in the table yields an empty criteria",
 			args: args{
 				table: map[string][]cvrf.SupplementProduct{"FG-IR-24-001": {{Product: "FortiOS", Versions: []string{"7.4.3"}}}},
 				id:    "FG-IR-99-999",
 			},
-			want: nil,
+			want: criteriaTypes.Criteria{},
 		},
 		// The three production-table cases below pin one real row of each
 		// shape against expectations hand-written from the advisory notes,
@@ -279,11 +298,14 @@ func TestSupplementCriterions(t *testing.T) {
 			// above / 4.3 and lower branches are not affected".
 			name: "production row: ranges (FG-IR-16-003)",
 			args: args{table: cvrf.SupplementTable, id: "FG-IR-16-003"},
-			want: []criterionTypes.Criterion{
-				supplementCPECriterion("cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*", nil,
-					&ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeFortinetFortiOS, GreaterEqual: "5.0.0", LessThan: "5.0.13"}),
-				supplementCPECriterion("cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*", nil,
-					&ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeFortinetFortiOS, GreaterEqual: "5.2.0", LessThan: "5.2.4"}),
+			want: criteriaTypes.Criteria{
+				Operator: criteriaTypes.CriteriaOperatorTypeOR,
+				Criterions: []criterionTypes.Criterion{
+					supplementCPECriterion("cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*", nil,
+						&ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeFortinetFortiOS, GreaterEqual: "5.0.0", LessThan: "5.0.13"}),
+					supplementCPECriterion("cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*", nil,
+						&ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeFortinetFortiOS, GreaterEqual: "5.2.0", LessThan: "5.2.4"}),
+				},
 			},
 		},
 		{
@@ -291,13 +313,31 @@ func TestSupplementCriterions(t *testing.T) {
 			// enumerates the releases, so the row does too.
 			name: "production row: enumerated versions (FG-IR-19-003)",
 			args: args{table: cvrf.SupplementTable, id: "FG-IR-19-003"},
-			want: []criterionTypes.Criterion{
-				supplementCPECriterion("cpe:2.3:a:fortinet:forticlient:*:*:*:*:*:*:*:*", []ccTypes.CPE{
-					"cpe:2.3:a:fortinet:forticlient:6.0.1:*:*:*:*:*:*:*",
-					"cpe:2.3:a:fortinet:forticlient:6.0.2:*:*:*:*:*:*:*",
-					"cpe:2.3:a:fortinet:forticlient:6.0.3:*:*:*:*:*:*:*",
-					"cpe:2.3:a:fortinet:forticlient:6.0.4:*:*:*:*:*:*:*",
-				}, nil),
+			want: criteriaTypes.Criteria{
+				Operator: criteriaTypes.CriteriaOperatorTypeOR,
+				Criterias: []criteriaTypes.Criteria{{
+					Operator: criteriaTypes.CriteriaOperatorTypeOR,
+					Criterions: []criterionTypes.Criterion{
+						supplementCPECriterion("cpe:2.3:a:fortinet:forticlientmac:*:*:*:*:*:*:*:*", []ccTypes.CPE{
+							"cpe:2.3:a:fortinet:forticlientmac:6.0.1:*:*:*:*:*:*:*",
+							"cpe:2.3:a:fortinet:forticlientmac:6.0.2:*:*:*:*:*:*:*",
+							"cpe:2.3:a:fortinet:forticlientmac:6.0.3:*:*:*:*:*:*:*",
+							"cpe:2.3:a:fortinet:forticlientmac:6.0.4:*:*:*:*:*:*:*",
+						}, nil),
+						supplementCPECriterion("cpe:2.3:a:fortinet:forticlient:*:*:*:*:*:macos:*:*", []ccTypes.CPE{
+							"cpe:2.3:a:fortinet:forticlient:6.0.1:*:*:*:*:macos:*:*",
+							"cpe:2.3:a:fortinet:forticlient:6.0.2:*:*:*:*:macos:*:*",
+							"cpe:2.3:a:fortinet:forticlient:6.0.3:*:*:*:*:macos:*:*",
+							"cpe:2.3:a:fortinet:forticlient:6.0.4:*:*:*:*:macos:*:*",
+						}, nil),
+						supplementCPECriterion("cpe:2.3:a:fortinet:forticlient:*:*:*:*:*:mac_os_x:*:*", []ccTypes.CPE{
+							"cpe:2.3:a:fortinet:forticlient:6.0.1:*:*:*:*:mac_os_x:*:*",
+							"cpe:2.3:a:fortinet:forticlient:6.0.2:*:*:*:*:mac_os_x:*:*",
+							"cpe:2.3:a:fortinet:forticlient:6.0.3:*:*:*:*:mac_os_x:*:*",
+							"cpe:2.3:a:fortinet:forticlient:6.0.4:*:*:*:*:mac_os_x:*:*",
+						}, nil),
+					},
+				}},
 			},
 		},
 		{
@@ -305,8 +345,15 @@ func TestSupplementCriterions(t *testing.T) {
 			// bounds) — the bare wildcard CPE with no narrowing.
 			name: "production row: audited whole product (FG-IR-16-041)",
 			args: args{table: cvrf.SupplementTable, id: "FG-IR-16-041"},
-			want: []criterionTypes.Criterion{
-				supplementCPECriterion("cpe:2.3:a:fortinet:forticlient_ssl_vpn:*:*:*:*:*:*:*:*", nil, nil),
+			want: criteriaTypes.Criteria{
+				Operator: criteriaTypes.CriteriaOperatorTypeOR,
+				Criterias: []criteriaTypes.Criteria{{
+					Operator: criteriaTypes.CriteriaOperatorTypeOR,
+					Criterions: []criterionTypes.Criterion{
+						supplementCPECriterion("cpe:2.3:a:fortinet:forticlientsslvpn:*:*:*:*:*:*:*:*", nil, nil),
+						supplementCPECriterion("cpe:2.3:a:fortinet:forticlient_ssl_vpn:*:*:*:*:*:*:*:*", nil, nil),
+					},
+				}},
 			},
 		},
 		{
@@ -360,9 +407,9 @@ func TestSupplementCriterions(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := cvrf.SupplementCriterions(tt.args.table, tt.args.id)
+			got, err := cvrf.SupplementCriteria(tt.args.table, tt.args.id)
 			if (err != nil) != tt.wantErr {
-				t.Fatalf("SupplementCriterions(%q) error = %v, wantErr %v", tt.args.id, err, tt.wantErr)
+				t.Fatalf("SupplementCriteria(%q) error = %v, wantErr %v", tt.args.id, err, tt.wantErr)
 			}
 			if tt.wantErr {
 				return
@@ -378,12 +425,14 @@ func TestSupplementCriterions(t *testing.T) {
 // exercises the builder's hard errors (unknown product, non-numeric version,
 // empty or inverted range, unaudited whole-product row), and the shape
 // invariants pin what those errors cannot see: each row yields exactly its
-// criterions (one CPEMatches criterion when it enumerates versions, one range
-// criterion per range, one bare criterion for an audited whole-product row),
-// every range criterion carries at least one bound and the range type the
-// product table assigns to the row's product, no advisory lists a product
-// twice, and every key is a plausible advisory ID (an ID typo would orphan
-// the entry — the CVRF document it supplements could never reference it).
+// criterions, once per CPE its product may be recorded under (one CPEMatches
+// criterion when it enumerates versions, one range criterion per range, one
+// bare criterion for an audited whole-product row), as a nested OR when the
+// product has more than one CPE, every range criterion carries at least one bound and the
+// range type the product table assigns to the row's product, no advisory
+// lists a product twice, and every key is a plausible advisory ID (an ID typo
+// would orphan the entry — the CVRF document it supplements could never
+// reference it).
 func TestSupplementTableInvariants(t *testing.T) {
 	if len(cvrf.SupplementTable) == 0 {
 		t.Fatal("supplement table is empty")
@@ -395,72 +444,106 @@ func TestSupplementTableInvariants(t *testing.T) {
 				t.Errorf("advisory ID %q does not match the FG-IR shape", id)
 			}
 			rows := cvrf.SupplementTable[id]
-			cs, err := cvrf.SupplementCriterions(cvrf.SupplementTable, id)
+			c, err := cvrf.SupplementCriteria(cvrf.SupplementTable, id)
 			if err != nil {
 				t.Fatalf("unexpected error: %v", err)
 			}
-			// Criterions come out in row order (versions criterion first
-			// within a row), so walk both in lockstep: each criterion is
-			// checked against the row that produced it. A CPE-keyed lookup
-			// would go wrong for the product families that share one CPE
-			// (FortiClient*, FortiToken Mobile, ...) if a family ever split
-			// its range types — and the final index comparison subsumes the
-			// criterion count check.
-			i := 0
-			next := func(row cvrf.SupplementProduct, cpe string) criterionTypes.Criterion {
-				t.Helper()
-				if i >= len(cs) {
-					t.Fatalf("criterion count = %d, want more (missing for row %q)", len(cs), row.Product)
-				}
-				c := cs[i]
-				i++
-				if c.Type != criterionTypes.CriterionTypeCPE || c.CPE == nil {
-					t.Fatalf("row %q: not a CPE criterion: %+v", row.Product, c)
-				}
-				if !c.CPE.Vulnerable || string(c.CPE.CPE) != cpe {
-					t.Errorf("row %q: criterion CPE = %q vulnerable = %t, want %q vulnerable = true", row.Product, c.CPE.CPE, c.CPE.Vulnerable, cpe)
-				}
-				return c
+			if c.Operator != criteriaTypes.CriteriaOperatorTypeOR {
+				t.Errorf("operator = %q, want %q", c.Operator, criteriaTypes.CriteriaOperatorTypeOR)
 			}
+			// Rows come out in order, a one-CPE row's criterions among the
+			// criterions and a several-CPE row's as one of the nested
+			// criterias, so walk both in lockstep with the rows: each
+			// criterion is checked against the row that produced it, and the
+			// final index comparisons subsume the count checks.
+			var ci, cai int
 			seen := make(map[string]bool, len(rows))
 			for _, row := range rows {
 				if seen[row.Product] {
 					t.Errorf("duplicate product %q", row.Product)
 				}
 				seen[row.Product] = true
-				cpe, rt, ok := product.Resolve(row.Product)
+				cpes, rt, ok := product.Resolve(row.Product)
 				if !ok {
 					t.Fatalf("product %q not in the product table", row.Product)
 				}
+
+				n := len(row.Ranges)
+				if len(row.Versions) > 0 || len(row.Ranges) == 0 {
+					n++
+				}
+				n *= len(cpes)
+				var cs []criterionTypes.Criterion
+				switch len(cpes) {
+				case 1:
+					if ci+n > len(c.Criterions) {
+						t.Fatalf("criterion count = %d, want more (missing for row %q)", len(c.Criterions), row.Product)
+					}
+					cs = c.Criterions[ci : ci+n]
+					ci += n
+				default:
+					if cai >= len(c.Criterias) {
+						t.Fatalf("criteria count = %d, want more (missing for row %q)", len(c.Criterias), row.Product)
+					}
+					ca := c.Criterias[cai]
+					cai++
+					if ca.Operator != criteriaTypes.CriteriaOperatorTypeOR || len(ca.Criterias) != 0 || len(ca.Criterions) != n {
+						t.Fatalf("row %q: nested criteria is %q with %d criterias and %d criterions, want %q with 0 and %d", row.Product, ca.Operator, len(ca.Criterias), len(ca.Criterions), criteriaTypes.CriteriaOperatorTypeOR, n)
+					}
+					cs = ca.Criterions
+				}
+
+				i := 0
+				next := func(cpe string) criterionTypes.Criterion {
+					t.Helper()
+					c := cs[i]
+					i++
+					if c.Type != criterionTypes.CriterionTypeCPE || c.CPE == nil {
+						t.Fatalf("row %q: not a CPE criterion: %+v", row.Product, c)
+					}
+					if !c.CPE.Vulnerable || string(c.CPE.CPE) != cpe {
+						t.Errorf("row %q: criterion CPE = %q vulnerable = %t, want %q vulnerable = true", row.Product, c.CPE.CPE, c.CPE.Vulnerable, cpe)
+					}
+					return c
+				}
 				if len(row.Versions) > 0 {
-					c := next(row, cpe)
-					if len(c.CPE.CPEMatches) != len(row.Versions) || c.CPE.Range != nil {
-						t.Errorf("row %q: versions criterion has %d matches (want %d) and range %v (want none)", row.Product, len(c.CPE.CPEMatches), len(row.Versions), c.CPE.Range)
+					for _, cpe := range cpes {
+						c := next(cpe)
+						if len(c.CPE.CPEMatches) != len(row.Versions) || c.CPE.Range != nil {
+							t.Errorf("row %q: versions criterion has %d matches (want %d) and range %v (want none)", row.Product, len(c.CPE.CPEMatches), len(row.Versions), c.CPE.Range)
+						}
 					}
 				}
 				for range row.Ranges {
-					c := next(row, cpe)
-					r := c.CPE.Range
-					if r == nil {
-						t.Errorf("row %q: range criterion has no range", row.Product)
-						continue
-					}
-					if r.GreaterEqual == "" && r.GreaterThan == "" && r.LessEqual == "" && r.LessThan == "" {
-						t.Errorf("row %q: range criterion has no bounds", row.Product)
-					}
-					if r.Type != rt {
-						t.Errorf("row %q: range type = %q, want %q", row.Product, r.Type, rt)
+					for _, cpe := range cpes {
+						c := next(cpe)
+						r := c.CPE.Range
+						if r == nil {
+							t.Errorf("row %q: range criterion has no range", row.Product)
+							continue
+						}
+						if r.GreaterEqual == "" && r.GreaterThan == "" && r.LessEqual == "" && r.LessThan == "" {
+							t.Errorf("row %q: range criterion has no bounds", row.Product)
+						}
+						if r.Type != rt {
+							t.Errorf("row %q: range type = %q, want %q", row.Product, r.Type, rt)
+						}
 					}
 				}
 				if len(row.Versions) == 0 && len(row.Ranges) == 0 {
-					c := next(row, cpe)
-					if len(c.CPE.CPEMatches) != 0 || c.CPE.Range != nil {
-						t.Errorf("row %q: whole-product criterion carries narrowing: %+v", row.Product, c.CPE)
+					for _, cpe := range cpes {
+						c := next(cpe)
+						if len(c.CPE.CPEMatches) != 0 || c.CPE.Range != nil {
+							t.Errorf("row %q: whole-product criterion carries narrowing: %+v", row.Product, c.CPE)
+						}
 					}
 				}
 			}
-			if i != len(cs) {
-				t.Errorf("criterion count = %d, want %d", len(cs), i)
+			if ci != len(c.Criterions) {
+				t.Errorf("criterion count = %d, want %d", len(c.Criterions), ci)
+			}
+			if cai != len(c.Criterias) {
+				t.Errorf("criteria count = %d, want %d", len(c.Criterias), cai)
 			}
 		})
 	}
