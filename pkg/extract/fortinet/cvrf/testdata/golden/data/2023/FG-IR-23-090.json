@@ -72,11 +72,11 @@
 									"fix_status": {
 										"class": "unknown"
 									},
-									"cpe": "cpe:2.3:a:fortinet:fortios_ips_engine:*:*:*:*:*:*:*:*",
+									"cpe": "cpe:2.3:a:fortinet:ipsengine:*:*:*:*:*:*:*:*",
 									"cpe_matches": [
-										"cpe:2.3:a:fortinet:fortios_ips_engine:6.158:*:*:*:*:*:*:*",
-										"cpe:2.3:a:fortinet:fortios_ips_engine:7.166:*:*:*:*:*:*:*",
-										"cpe:2.3:a:fortinet:fortios_ips_engine:7.321:*:*:*:*:*:*:*"
+										"cpe:2.3:a:fortinet:ipsengine:6.158:*:*:*:*:*:*:*",
+										"cpe:2.3:a:fortinet:ipsengine:7.166:*:*:*:*:*:*:*",
+										"cpe:2.3:a:fortinet:ipsengine:7.321:*:*:*:*:*:*:*"
 									]
 								}
 							},

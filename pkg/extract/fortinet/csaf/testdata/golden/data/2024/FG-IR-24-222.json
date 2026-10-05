@@ -86,7 +86,7 @@
 									"fix_status": {
 										"class": "unknown"
 									},
-									"cpe": "cpe:2.3:a:fortinet:fortimanager_cloud:*:*:*:*:*:*:*:*",
+									"cpe": "cpe:2.3:a:fortinet:fortimanagercloud:*:*:*:*:*:*:*:*",
 									"range": {
 										"type": "fortinet-fortimanager_cloud",
 										"ge": "7.4.1",

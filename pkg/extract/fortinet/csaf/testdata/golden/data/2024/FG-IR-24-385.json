@@ -86,6 +86,65 @@
 									"fix_status": {
 										"class": "unknown"
 									},
+									"cpe": "cpe:2.3:a:fortinet:fortiproxy:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet-fortiproxy",
+										"ge": "7.0.5"
+									}
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:a:fortinet:fortiproxy:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet-fortiproxy",
+										"ge": "7.2",
+										"lt": "7.3"
+									}
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:a:fortinet:fortiproxy:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet-fortiproxy",
+										"ge": "7.4.0",
+										"le": "7.4.8"
+									}
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:a:fortinet:fortiproxy:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet-fortiproxy",
+										"ge": "7.6.0",
+										"le": "7.6.2"
+									}
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
 									"cpe": "cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*",
 									"range": {
 										"type": "fortinet-fortios",
@@ -120,65 +179,6 @@
 										"type": "fortinet-fortios",
 										"ge": "7.4.0",
 										"le": "7.4.7"
-									}
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "unknown"
-									},
-									"cpe": "cpe:2.3:o:fortinet:fortiproxy:*:*:*:*:*:*:*:*",
-									"range": {
-										"type": "fortinet-fortiproxy",
-										"ge": "7.0.5"
-									}
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "unknown"
-									},
-									"cpe": "cpe:2.3:o:fortinet:fortiproxy:*:*:*:*:*:*:*:*",
-									"range": {
-										"type": "fortinet-fortiproxy",
-										"ge": "7.2",
-										"lt": "7.3"
-									}
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "unknown"
-									},
-									"cpe": "cpe:2.3:o:fortinet:fortiproxy:*:*:*:*:*:*:*:*",
-									"range": {
-										"type": "fortinet-fortiproxy",
-										"ge": "7.4.0",
-										"le": "7.4.8"
-									}
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "unknown"
-									},
-									"cpe": "cpe:2.3:o:fortinet:fortiproxy:*:*:*:*:*:*:*:*",
-									"range": {
-										"type": "fortinet-fortiproxy",
-										"ge": "7.6.0",
-										"le": "7.6.2"
 									}
 								}
 							}

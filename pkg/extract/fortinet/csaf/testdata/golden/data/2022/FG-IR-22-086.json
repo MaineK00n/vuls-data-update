@@ -86,6 +86,51 @@
 									"fix_status": {
 										"class": "unknown"
 									},
+									"cpe": "cpe:2.3:a:fortinet:fortiproxy:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet-fortiproxy",
+										"ge": "1.2.6",
+										"le": "1.2.13"
+									}
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:a:fortinet:fortiproxy:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet-fortiproxy",
+										"ge": "2.0.0",
+										"le": "2.0.9"
+									}
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:a:fortinet:fortiproxy:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet-fortiproxy",
+										"ge": "7.0.0",
+										"le": "7.0.4"
+									}
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
 									"cpe": "cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*",
 									"range": {
 										"type": "fortinet-fortios",
@@ -147,51 +192,6 @@
 										"class": "unknown"
 									},
 									"cpe": "cpe:2.3:o:fortinet:fortios:7.2.0:*:*:*:*:*:*:*"
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "unknown"
-									},
-									"cpe": "cpe:2.3:o:fortinet:fortiproxy:*:*:*:*:*:*:*:*",
-									"range": {
-										"type": "fortinet-fortiproxy",
-										"ge": "1.2.6",
-										"le": "1.2.13"
-									}
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "unknown"
-									},
-									"cpe": "cpe:2.3:o:fortinet:fortiproxy:*:*:*:*:*:*:*:*",
-									"range": {
-										"type": "fortinet-fortiproxy",
-										"ge": "2.0.0",
-										"le": "2.0.9"
-									}
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "unknown"
-									},
-									"cpe": "cpe:2.3:o:fortinet:fortiproxy:*:*:*:*:*:*:*:*",
-									"range": {
-										"type": "fortinet-fortiproxy",
-										"ge": "7.0.0",
-										"le": "7.0.4"
-									}
 								}
 							}
 						]

@@ -86,7 +86,7 @@
 									"fix_status": {
 										"class": "unknown"
 									},
-									"cpe": "cpe:2.3:o:fortinet:fortianalyzer-bigdata:*:*:*:*:*:*:*:*",
+									"cpe": "cpe:2.3:a:fortinet:fortianalyzer-bigdata:*:*:*:*:*:*:*:*",
 									"range": {
 										"type": "fortinet-fortianalyzer-bigdata",
 										"ge": "6.2",
@@ -101,7 +101,7 @@
 									"fix_status": {
 										"class": "unknown"
 									},
-									"cpe": "cpe:2.3:o:fortinet:fortianalyzer-bigdata:*:*:*:*:*:*:*:*",
+									"cpe": "cpe:2.3:a:fortinet:fortianalyzer-bigdata:*:*:*:*:*:*:*:*",
 									"range": {
 										"type": "fortinet-fortianalyzer-bigdata",
 										"ge": "6.4",
@@ -116,7 +116,7 @@
 									"fix_status": {
 										"class": "unknown"
 									},
-									"cpe": "cpe:2.3:o:fortinet:fortianalyzer-bigdata:*:*:*:*:*:*:*:*",
+									"cpe": "cpe:2.3:a:fortinet:fortianalyzer-bigdata:*:*:*:*:*:*:*:*",
 									"range": {
 										"type": "fortinet-fortianalyzer-bigdata",
 										"ge": "7.0",
@@ -131,7 +131,7 @@
 									"fix_status": {
 										"class": "unknown"
 									},
-									"cpe": "cpe:2.3:o:fortinet:fortianalyzer-bigdata:*:*:*:*:*:*:*:*",
+									"cpe": "cpe:2.3:a:fortinet:fortianalyzer-bigdata:*:*:*:*:*:*:*:*",
 									"range": {
 										"type": "fortinet-fortianalyzer-bigdata",
 										"ge": "7.2.0",
@@ -146,7 +146,7 @@
 									"fix_status": {
 										"class": "unknown"
 									},
-									"cpe": "cpe:2.3:o:fortinet:fortianalyzer-bigdata:7.4.0:*:*:*:*:*:*:*"
+									"cpe": "cpe:2.3:a:fortinet:fortianalyzer-bigdata:7.4.0:*:*:*:*:*:*:*"
 								}
 							},
 							{

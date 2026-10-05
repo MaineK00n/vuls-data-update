@@ -86,7 +86,7 @@
 									"fix_status": {
 										"class": "unknown"
 									},
-									"cpe": "cpe:2.3:o:fortinet:fortisiem:*:*:*:*:*:*:*:*",
+									"cpe": "cpe:2.3:a:fortinet:fortisiem:*:*:*:*:*:*:*:*",
 									"range": {
 										"type": "fortinet-fortisiem",
 										"ge": "6.7.0",
@@ -101,7 +101,7 @@
 									"fix_status": {
 										"class": "unknown"
 									},
-									"cpe": "cpe:2.3:o:fortinet:fortisiem:*:*:*:*:*:*:*:*",
+									"cpe": "cpe:2.3:a:fortinet:fortisiem:*:*:*:*:*:*:*:*",
 									"range": {
 										"type": "fortinet-fortisiem",
 										"ge": "7.0.0",
@@ -116,7 +116,7 @@
 									"fix_status": {
 										"class": "unknown"
 									},
-									"cpe": "cpe:2.3:o:fortinet:fortisiem:*:*:*:*:*:*:*:*",
+									"cpe": "cpe:2.3:a:fortinet:fortisiem:*:*:*:*:*:*:*:*",
 									"range": {
 										"type": "fortinet-fortisiem",
 										"ge": "7.1.0",
@@ -131,7 +131,7 @@
 									"fix_status": {
 										"class": "unknown"
 									},
-									"cpe": "cpe:2.3:o:fortinet:fortisiem:*:*:*:*:*:*:*:*",
+									"cpe": "cpe:2.3:a:fortinet:fortisiem:*:*:*:*:*:*:*:*",
 									"range": {
 										"type": "fortinet-fortisiem",
 										"ge": "7.2.0",
@@ -146,7 +146,7 @@
 									"fix_status": {
 										"class": "unknown"
 									},
-									"cpe": "cpe:2.3:o:fortinet:fortisiem:*:*:*:*:*:*:*:*",
+									"cpe": "cpe:2.3:a:fortinet:fortisiem:*:*:*:*:*:*:*:*",
 									"range": {
 										"type": "fortinet-fortisiem",
 										"ge": "7.3.0",
@@ -161,7 +161,7 @@
 									"fix_status": {
 										"class": "unknown"
 									},
-									"cpe": "cpe:2.3:o:fortinet:fortisiem:7.4.0:*:*:*:*:*:*:*"
+									"cpe": "cpe:2.3:a:fortinet:fortisiem:7.4.0:*:*:*:*:*:*:*"
 								}
 							}
 						]

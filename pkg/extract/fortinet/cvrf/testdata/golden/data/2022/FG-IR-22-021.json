@@ -72,10 +72,10 @@
 									"fix_status": {
 										"class": "unknown"
 									},
-									"cpe": "cpe:2.3:a:fortinet:fortiauthenticator:*:*:*:*:*:*:*:*",
+									"cpe": "cpe:2.3:a:fortinet:fortiauthenticatoroutlookagent:*:*:*:*:*:*:*:*",
 									"cpe_matches": [
-										"cpe:2.3:a:fortinet:fortiauthenticator:2.1:*:*:*:*:*:*:*",
-										"cpe:2.3:a:fortinet:fortiauthenticator:2.2:*:*:*:*:*:*:*"
+										"cpe:2.3:a:fortinet:fortiauthenticatoroutlookagent:2.1:*:*:*:*:*:*:*",
+										"cpe:2.3:a:fortinet:fortiauthenticatoroutlookagent:2.2:*:*:*:*:*:*:*"
 									]
 								}
 							}

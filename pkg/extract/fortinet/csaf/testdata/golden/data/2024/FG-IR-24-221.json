@@ -137,6 +137,66 @@
 									"fix_status": {
 										"class": "unknown"
 									},
+									"cpe": "cpe:2.3:a:fortinet:fortiproxy:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet-fortiproxy",
+										"ge": "2.0.0",
+										"le": "2.0.14"
+									}
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:a:fortinet:fortiproxy:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet-fortiproxy",
+										"ge": "7.0.0",
+										"le": "7.0.17"
+									}
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:a:fortinet:fortiproxy:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet-fortiproxy",
+										"ge": "7.2.0",
+										"le": "7.2.10"
+									}
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:a:fortinet:fortiproxy:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet-fortiproxy",
+										"ge": "7.4.0",
+										"le": "7.4.4"
+									}
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
 									"cpe": "cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*",
 									"range": {
 										"type": "fortinet-fortios",
@@ -189,66 +249,6 @@
 										"le": "7.4.4"
 									}
 								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "unknown"
-									},
-									"cpe": "cpe:2.3:o:fortinet:fortiproxy:*:*:*:*:*:*:*:*",
-									"range": {
-										"type": "fortinet-fortiproxy",
-										"ge": "2.0.0",
-										"le": "2.0.14"
-									}
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "unknown"
-									},
-									"cpe": "cpe:2.3:o:fortinet:fortiproxy:*:*:*:*:*:*:*:*",
-									"range": {
-										"type": "fortinet-fortiproxy",
-										"ge": "7.0.0",
-										"le": "7.0.17"
-									}
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "unknown"
-									},
-									"cpe": "cpe:2.3:o:fortinet:fortiproxy:*:*:*:*:*:*:*:*",
-									"range": {
-										"type": "fortinet-fortiproxy",
-										"ge": "7.2.0",
-										"le": "7.2.10"
-									}
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "unknown"
-									},
-									"cpe": "cpe:2.3:o:fortinet:fortiproxy:*:*:*:*:*:*:*:*",
-									"range": {
-										"type": "fortinet-fortiproxy",
-										"ge": "7.4.0",
-										"le": "7.4.4"
-									}
-								}
 							}
 						]
 					},
@@ -265,7 +265,7 @@
 									"fix_status": {
 										"class": "unknown"
 									},
-									"cpe": "cpe:2.3:a:fortinet:fortianalyzer_cloud:*:*:*:*:*:*:*:*",
+									"cpe": "cpe:2.3:a:fortinet:fortianalyzercloud:*:*:*:*:*:*:*:*",
 									"range": {
 										"type": "fortinet-fortianalyzer_cloud",
 										"ge": "7.4.1",
@@ -280,7 +280,7 @@
 									"fix_status": {
 										"class": "unknown"
 									},
-									"cpe": "cpe:2.3:a:fortinet:fortimanager_cloud:*:*:*:*:*:*:*:*",
+									"cpe": "cpe:2.3:a:fortinet:fortimanagercloud:*:*:*:*:*:*:*:*",
 									"range": {
 										"type": "fortinet-fortimanager_cloud",
 										"ge": "7.4.1",

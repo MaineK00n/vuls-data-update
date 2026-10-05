@@ -258,7 +258,7 @@ func TestSupplementCriterions(t *testing.T) {
 				id:    "FG-IR-14-010",
 			},
 			want: []criterionTypes.Criterion{
-				supplementCPECriterion("cpe:2.3:o:fortinet:fortibalancer:*:*:*:*:*:*:*:*", nil, nil),
+				supplementCPECriterion("cpe:2.3:h:fortinet:fortibalancer:*:*:*:*:*:*:*:*", nil, nil),
 			},
 		},
 		{
@@ -292,11 +292,11 @@ func TestSupplementCriterions(t *testing.T) {
 			name: "production row: enumerated versions (FG-IR-19-003)",
 			args: args{table: cvrf.SupplementTable, id: "FG-IR-19-003"},
 			want: []criterionTypes.Criterion{
-				supplementCPECriterion("cpe:2.3:a:fortinet:forticlient:*:*:*:*:*:*:*:*", []ccTypes.CPE{
-					"cpe:2.3:a:fortinet:forticlient:6.0.1:*:*:*:*:*:*:*",
-					"cpe:2.3:a:fortinet:forticlient:6.0.2:*:*:*:*:*:*:*",
-					"cpe:2.3:a:fortinet:forticlient:6.0.3:*:*:*:*:*:*:*",
-					"cpe:2.3:a:fortinet:forticlient:6.0.4:*:*:*:*:*:*:*",
+				supplementCPECriterion("cpe:2.3:a:fortinet:forticlientmac:*:*:*:*:*:*:*:*", []ccTypes.CPE{
+					"cpe:2.3:a:fortinet:forticlientmac:6.0.1:*:*:*:*:*:*:*",
+					"cpe:2.3:a:fortinet:forticlientmac:6.0.2:*:*:*:*:*:*:*",
+					"cpe:2.3:a:fortinet:forticlientmac:6.0.3:*:*:*:*:*:*:*",
+					"cpe:2.3:a:fortinet:forticlientmac:6.0.4:*:*:*:*:*:*:*",
 				}, nil),
 			},
 		},
@@ -306,7 +306,7 @@ func TestSupplementCriterions(t *testing.T) {
 			name: "production row: audited whole product (FG-IR-16-041)",
 			args: args{table: cvrf.SupplementTable, id: "FG-IR-16-041"},
 			want: []criterionTypes.Criterion{
-				supplementCPECriterion("cpe:2.3:a:fortinet:forticlient_ssl_vpn:*:*:*:*:*:*:*:*", nil, nil),
+				supplementCPECriterion("cpe:2.3:a:fortinet:forticlientsslvpn:*:*:*:*:*:*:*:*", nil, nil),
 			},
 		},
 		{

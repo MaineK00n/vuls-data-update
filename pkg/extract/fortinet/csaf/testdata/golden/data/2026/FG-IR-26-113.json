@@ -137,7 +137,7 @@
 									"fix_status": {
 										"class": "unknown"
 									},
-									"cpe": "cpe:2.3:a:fortinet:fortisandbox_paas:*:*:*:*:*:*:*:*",
+									"cpe": "cpe:2.3:a:fortinet:fortisandboxpaas:*:*:*:*:*:*:*:*",
 									"range": {
 										"type": "fortinet-fortisandbox_paas",
 										"ge": "5.0.1",
@@ -160,7 +160,7 @@
 									"fix_status": {
 										"class": "unknown"
 									},
-									"cpe": "cpe:2.3:o:fortinet:fortisandbox:*:*:*:*:*:*:*:*",
+									"cpe": "cpe:2.3:a:fortinet:fortisandbox:*:*:*:*:*:*:*:*",
 									"range": {
 										"type": "fortinet-fortisandbox",
 										"ge": "4.4",
@@ -175,7 +175,7 @@
 									"fix_status": {
 										"class": "unknown"
 									},
-									"cpe": "cpe:2.3:o:fortinet:fortisandbox:*:*:*:*:*:*:*:*",
+									"cpe": "cpe:2.3:a:fortinet:fortisandbox:*:*:*:*:*:*:*:*",
 									"range": {
 										"type": "fortinet-fortisandbox",
 										"ge": "5.0.0",

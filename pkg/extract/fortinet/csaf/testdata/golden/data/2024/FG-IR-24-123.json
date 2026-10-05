@@ -86,7 +86,7 @@
 									"fix_status": {
 										"class": "unknown"
 									},
-									"cpe": "cpe:2.3:a:fortinet:forticlient_enterprise_management_server:*:*:*:*:*:*:*:*",
+									"cpe": "cpe:2.3:a:fortinet:forticlientems:*:*:*:*:*:*:*:*",
 									"range": {
 										"type": "fortinet-forticlient_enterprise_management_server",
 										"ge": "7.0.0",
@@ -101,7 +101,7 @@
 									"fix_status": {
 										"class": "unknown"
 									},
-									"cpe": "cpe:2.3:a:fortinet:forticlient_enterprise_management_server:*:*:*:*:*:*:*:*",
+									"cpe": "cpe:2.3:a:fortinet:forticlientems:*:*:*:*:*:*:*:*",
 									"range": {
 										"type": "fortinet-forticlient_enterprise_management_server",
 										"ge": "7.2.0",
@@ -116,7 +116,7 @@
 									"fix_status": {
 										"class": "unknown"
 									},
-									"cpe": "cpe:2.3:a:fortinet:forticlient_enterprise_management_server_cloud:*:*:*:*:*:*:*:*",
+									"cpe": "cpe:2.3:a:fortinet:forticlientemscloud:*:*:*:*:*:*:*:*",
 									"range": {
 										"type": "fortinet-forticlient_enterprise_management_server_cloud",
 										"ge": "7.0.0",
@@ -131,7 +131,7 @@
 									"fix_status": {
 										"class": "unknown"
 									},
-									"cpe": "cpe:2.3:a:fortinet:forticlient_enterprise_management_server_cloud:*:*:*:*:*:*:*:*",
+									"cpe": "cpe:2.3:a:fortinet:forticlientemscloud:*:*:*:*:*:*:*:*",
 									"range": {
 										"type": "fortinet-forticlient_enterprise_management_server_cloud",
 										"ge": "7.2.0",

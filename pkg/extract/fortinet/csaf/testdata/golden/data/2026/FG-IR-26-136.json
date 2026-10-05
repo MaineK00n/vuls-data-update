@@ -86,187 +86,7 @@
 									"fix_status": {
 										"class": "unknown"
 									},
-									"cpe": "cpe:2.3:a:fortinet:fortisandbox_cloud:*:*:*:*:*:*:*:*",
-									"range": {
-										"type": "fortinet-fortisandbox_cloud",
-										"ge": "23",
-										"lt": "24"
-									}
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "unknown"
-									},
-									"cpe": "cpe:2.3:a:fortinet:fortisandbox_cloud:*:*:*:*:*:*:*:*",
-									"range": {
-										"type": "fortinet-fortisandbox_cloud",
-										"ge": "24",
-										"lt": "25"
-									}
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "unknown"
-									},
-									"cpe": "cpe:2.3:a:fortinet:fortisandbox_cloud:*:*:*:*:*:*:*:*",
-									"range": {
-										"type": "fortinet-fortisandbox_cloud",
-										"ge": "5.0.2",
-										"le": "5.0.5"
-									}
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "unknown"
-									},
-									"cpe": "cpe:2.3:a:fortinet:fortisandbox_paas:*:*:*:*:*:*:*:*",
-									"range": {
-										"type": "fortinet-fortisandbox_paas",
-										"ge": "21.3",
-										"lt": "21.4"
-									}
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "unknown"
-									},
-									"cpe": "cpe:2.3:a:fortinet:fortisandbox_paas:*:*:*:*:*:*:*:*",
-									"range": {
-										"type": "fortinet-fortisandbox_paas",
-										"ge": "21.4",
-										"lt": "21.5"
-									}
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "unknown"
-									},
-									"cpe": "cpe:2.3:a:fortinet:fortisandbox_paas:*:*:*:*:*:*:*:*",
-									"range": {
-										"type": "fortinet-fortisandbox_paas",
-										"ge": "22.1",
-										"lt": "22.2"
-									}
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "unknown"
-									},
-									"cpe": "cpe:2.3:a:fortinet:fortisandbox_paas:*:*:*:*:*:*:*:*",
-									"range": {
-										"type": "fortinet-fortisandbox_paas",
-										"ge": "22.2",
-										"lt": "22.3"
-									}
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "unknown"
-									},
-									"cpe": "cpe:2.3:a:fortinet:fortisandbox_paas:*:*:*:*:*:*:*:*",
-									"range": {
-										"type": "fortinet-fortisandbox_paas",
-										"ge": "23.1",
-										"lt": "23.2"
-									}
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "unknown"
-									},
-									"cpe": "cpe:2.3:a:fortinet:fortisandbox_paas:*:*:*:*:*:*:*:*",
-									"range": {
-										"type": "fortinet-fortisandbox_paas",
-										"ge": "23.3",
-										"lt": "23.4"
-									}
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "unknown"
-									},
-									"cpe": "cpe:2.3:a:fortinet:fortisandbox_paas:*:*:*:*:*:*:*:*",
-									"range": {
-										"type": "fortinet-fortisandbox_paas",
-										"ge": "23.4",
-										"lt": "23.5"
-									}
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "unknown"
-									},
-									"cpe": "cpe:2.3:a:fortinet:fortisandbox_paas:*:*:*:*:*:*:*:*",
-									"range": {
-										"type": "fortinet-fortisandbox_paas",
-										"ge": "4.4.5",
-										"le": "4.4.8"
-									}
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "unknown"
-									},
-									"cpe": "cpe:2.3:a:fortinet:fortisandbox_paas:*:*:*:*:*:*:*:*",
-									"range": {
-										"type": "fortinet-fortisandbox_paas",
-										"ge": "5.0.0",
-										"le": "5.0.1"
-									}
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "unknown"
-									},
-									"cpe": "cpe:2.3:o:fortinet:fortisandbox:*:*:*:*:*:*:*:*",
+									"cpe": "cpe:2.3:a:fortinet:fortisandbox:*:*:*:*:*:*:*:*",
 									"range": {
 										"type": "fortinet-fortisandbox",
 										"ge": "4.4.0",
@@ -281,9 +101,189 @@
 									"fix_status": {
 										"class": "unknown"
 									},
-									"cpe": "cpe:2.3:o:fortinet:fortisandbox:*:*:*:*:*:*:*:*",
+									"cpe": "cpe:2.3:a:fortinet:fortisandbox:*:*:*:*:*:*:*:*",
 									"range": {
 										"type": "fortinet-fortisandbox",
+										"ge": "5.0.0",
+										"le": "5.0.1"
+									}
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:a:fortinet:fortisandboxcloud:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet-fortisandbox_cloud",
+										"ge": "23",
+										"lt": "24"
+									}
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:a:fortinet:fortisandboxcloud:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet-fortisandbox_cloud",
+										"ge": "24",
+										"lt": "25"
+									}
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:a:fortinet:fortisandboxcloud:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet-fortisandbox_cloud",
+										"ge": "5.0.2",
+										"le": "5.0.5"
+									}
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:a:fortinet:fortisandboxpaas:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet-fortisandbox_paas",
+										"ge": "21.3",
+										"lt": "21.4"
+									}
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:a:fortinet:fortisandboxpaas:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet-fortisandbox_paas",
+										"ge": "21.4",
+										"lt": "21.5"
+									}
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:a:fortinet:fortisandboxpaas:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet-fortisandbox_paas",
+										"ge": "22.1",
+										"lt": "22.2"
+									}
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:a:fortinet:fortisandboxpaas:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet-fortisandbox_paas",
+										"ge": "22.2",
+										"lt": "22.3"
+									}
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:a:fortinet:fortisandboxpaas:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet-fortisandbox_paas",
+										"ge": "23.1",
+										"lt": "23.2"
+									}
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:a:fortinet:fortisandboxpaas:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet-fortisandbox_paas",
+										"ge": "23.3",
+										"lt": "23.4"
+									}
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:a:fortinet:fortisandboxpaas:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet-fortisandbox_paas",
+										"ge": "23.4",
+										"lt": "23.5"
+									}
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:a:fortinet:fortisandboxpaas:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet-fortisandbox_paas",
+										"ge": "4.4.5",
+										"le": "4.4.8"
+									}
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:a:fortinet:fortisandboxpaas:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet-fortisandbox_paas",
 										"ge": "5.0.0",
 										"le": "5.0.1"
 									}

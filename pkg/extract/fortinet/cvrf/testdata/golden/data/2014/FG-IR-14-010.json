@@ -68,7 +68,7 @@
 									"fix_status": {
 										"class": "unknown"
 									},
-									"cpe": "cpe:2.3:o:fortinet:fortibalancer:*:*:*:*:*:*:*:*"
+									"cpe": "cpe:2.3:h:fortinet:fortibalancer:*:*:*:*:*:*:*:*"
 								}
 							}
 						]
