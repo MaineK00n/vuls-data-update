@@ -152,6 +152,10 @@ func TestResolve(t *testing.T) {
 		{name: "FortiSASE", wantCPE: "cpe:2.3:a:fortinet:fortisase:*:*:*:*:*:*:*:*", wantRange: ccRangeTypes.RangeTypeFortinetFortiSASE, wantOK: true},
 		{name: "FortiClientWindows", wantCPE: "cpe:2.3:a:fortinet:forticlientwindows:*:*:*:*:*:*:*:*", wantRange: ccRangeTypes.RangeTypeFortinetFortiClient, wantOK: true},
 		{name: "  FortiProxy  ", wantCPE: "cpe:2.3:a:fortinet:fortiproxy:*:*:*:*:*:*:*:*", wantRange: ccRangeTypes.RangeTypeFortinetFortiProxy, wantOK: true},
+		// Fortinet's records name FortiSOAR apart from its PaaS and on-premise
+		// deployments.
+		{name: "FortiSOAR", wantCPE: "cpe:2.3:a:fortinet:fortisoar:*:*:*:*:*:*:*:*", wantRange: ccRangeTypes.RangeTypeFortinetFortiSOAR, wantOK: true},
+		{name: "FortiSOAR PaaS", wantCPE: "cpe:2.3:a:fortinet:fortisoarpaas:*:*:*:*:*:*:*:*", wantRange: ccRangeTypes.RangeTypeFortinetFortiSOAR, wantOK: true},
 		{name: "Nonexistent Product", wantOK: false},
 	}
 	for _, tt := range tests {

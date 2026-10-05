@@ -942,8 +942,9 @@ var treeFixes = map[string]treeFix{
 	},
 	// The OpenSSL advisory files every product it rules out under the FortiNAC-F
 	// branch ("FortiNAC-F/FortiOS all versions"). Each goes to its own product,
-	// spelled as the product table has it; "FortiSOAR" covers both FortiSOAR
-	// products, which share one CPE, so it goes to "FortiSOAR on-premise".
+	// spelled as the product table has it; "FortiSOAR", naming neither
+	// deployment, goes to the "FortiSOAR" product Fortinet's own CVE records
+	// carry beside "FortiSOAR PaaS" and "FortiSOAR on-premise".
 	"FG-IR-26-076": {
 		branches: []branchFix{{
 			name: "FortiNAC-F",
@@ -989,7 +990,7 @@ var treeFixes = map[string]treeFix{
 				3:  {product: "FortiTester", version: "all versions"},
 				4:  {product: "FortiSwitch", version: "all versions"},
 				5:  {product: "FortiSandbox", version: "all versions"},
-				6:  {product: "FortiSOAR on-premise", version: "all versions"},
+				6:  {product: "FortiSOAR", version: "all versions"},
 				7:  {product: "FortiSIEM", version: "all versions"},
 				8:  {product: "FortiRecorder", version: "all versions"},
 				9:  {product: "FortiProxy", version: "all versions"},
@@ -1028,7 +1029,7 @@ var treeFixes = map[string]treeFix{
 					3:  {productID: "FortiTester all versions"},
 					4:  {productID: "FortiSwitch all versions"},
 					5:  {productID: "FortiSandbox all versions"},
-					6:  {productID: "FortiSOAR on-premise all versions"},
+					6:  {productID: "FortiSOAR all versions"},
 					7:  {productID: "FortiSIEM all versions"},
 					8:  {productID: "FortiRecorder all versions"},
 					9:  {productID: "FortiProxy all versions"},
