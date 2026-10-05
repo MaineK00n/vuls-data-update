@@ -16,14 +16,14 @@
 // FortiDDoS-F and FortiPAM "o"; FortiADC and FortiADCManager "h"; the rest
 // "a"). Each product maps to that one CPE, whatever the advisory.
 //
-// For a product none of Fortinet's CVE records give a CPE yet, the product
-// part follows the same rule, and the part is NVD's where NVD has the
-// product. Otherwise it is set from what the advisories scope: "a" for
-// software and services, "o" where they scope firmware versions (FortiFone:
-// "FortiFone versions 3.0.11 and below"), "h" where they scope device models
-// (FortiBalancer: "FortiBalancer 400, 1000, 2000 and 3000. All software
-// versions are affected."). The range types keep the names they were
-// published under, which follow earlier CPEs.
+// For a product none of Fortinet's CVE records give a CPE yet, the CPE's
+// product component (the slug) follows the same rule, and its part is NVD's
+// where NVD has the product. Otherwise the part is set from what the
+// advisories scope: "a" for software and services, "o" where they scope
+// firmware versions (FortiFone: "FortiFone versions 3.0.11 and below"), "h"
+// where they scope device models (FortiBalancer: "FortiBalancer 400, 1000,
+// 2000 and 3000. All software versions are affected."). The range types keep
+// the names they were published under, which follow earlier CPEs.
 package product
 
 import (
@@ -75,21 +75,10 @@ var nameToProduct = map[string]productInfo{
 	"FortiCache":                      {cpe: "cpe:2.3:a:fortinet:forticache:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiCache},
 	"FortiCamera":                     {cpe: "cpe:2.3:a:fortinet:forticamera:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiCamera},
 	"FortiClient Lite":                {cpe: "cpe:2.3:a:fortinet:forticlientlite:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiClientLite},
-	// The FortiClient platform variants (Windows/Mac/Linux/iOS/Android) share
-	// one CPE on purpose: neither the NVD dictionary nor the legacy handmade
-	// dataset gives them distinct product slugs — both express the platform
-	// in the target_sw attribute instead, which cpecriterion matching does
-	// honor (concrete target_sw values must agree; ANY matches anything).
-	// The table still leaves target_sw wildcarded: qualifying it needs a
-	// spelling policy first (the NVD itself mixes ios/iphone_os and
-	// linux/linux_kernel, and a concrete criteria value misses queries using
-	// the other spelling), and it would change the CSAF/CVRF known-affected
-	// paths and their goldens as well. The cost of the wildcard is bounded:
-	// when an advisory's platforms carry different ranges (e.g.
-	// FG-IR-22-059), the OR across that advisory's rows over-matches the
-	// narrower platforms by the difference. The same reasoning covers the
-	// other shared-CPE families below (FortiToken Mobile's Android/iOS/WP
-	// names, FortiSOAR PaaS/on-premise, FortiAuthenticator/OutlookAgent).
+	// The FortiClient platform variants (Windows/Mac/Linux/iOS/Android) each
+	// take the CPE Fortinet gives the platform, and share one range type, as
+	// do the other platform or deployment variants below (FortiToken Mobile,
+	// FortiSOAR PaaS/on-premise).
 	"FortiClientAndroid":                   {cpe: "cpe:2.3:a:fortinet:forticlientandroid:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiClient},
 	"FortiClientEMS":                       {cpe: "cpe:2.3:a:fortinet:forticlientems:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiClientEnterpriseManagementServer},
 	"FortiClientEMS Cloud":                 {cpe: "cpe:2.3:a:fortinet:forticlientemscloud:*:*:*:*:*:*:*:*", rangeType: ccRangeTypes.RangeTypeFortinetFortiClientEnterpriseManagementServerCloud},
