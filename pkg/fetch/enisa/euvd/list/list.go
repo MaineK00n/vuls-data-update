@@ -127,9 +127,12 @@ func (opts options) fetch() error {
 				q := u.Query()
 				q.Set("size", "100")
 				q.Set("page", fmt.Sprintf("%d", p))
-				u.RawQuery = q.Encode()
+				// u is shared by every goroutine: setting the query on it lets
+				// another one overwrite the page before this one reads it back.
+				pu := *u
+				pu.RawQuery = q.Encode()
 
-				resp, err := client.Get(u.String())
+				resp, err := client.Get(pu.String())
 				if err != nil {
 					return errors.Wrap(err, "fetch")
 				}
