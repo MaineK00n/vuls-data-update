@@ -7,6 +7,7 @@ import (
 	numericVersion "github.com/vulsio/go-fortinet-version/numeric"
 
 	productpkg "github.com/MaineK00n/vuls-data-update/pkg/extract/fortinet/internal/product"
+	criteriaTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria"
 	criterionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion"
 	ccTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/cpecriterion"
 	ccRangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/cpecriterion/range"
@@ -142,53 +143,60 @@ var wholeProductAudited = map[advisoryProduct]struct{}{
 	{"FG-IR-16-090", "FortiOS"}:            {},
 }
 
-// supplementCriterions builds the detection criterions for an advisory from
-// the given supplement table (supplementTable in production; tests inject
-// synthetic tables), or nil when the advisory has no entry.
-// Exact versions become CPEMatches on a wildcard-version product CPE (the
-// same shape knownAffectedCriterions emits) and ranges become one range
-// criterion each with the product's per-product range type (the same shape
-// the CSAF extractor emits). The whitelist + hard-error policy applies: a
+// supplementCriteria builds the detection criteria for an advisory from the
+// given supplement table (supplementTable in production; tests inject
+// synthetic tables), or an empty criteria when the advisory has no entry.
+// For each CPE the row's product may be recorded under, exact versions become
+// CPEMatches on that wildcard-version CPE (the same shape
+// knownAffectedCriteria emits) and ranges become one range criterion each with
+// the product's per-product range type (the same shape the CSAF extractor
+// emits); a row whose product has several CPEs is a nested OR of its
+// criterions (see productCriteria). The whitelist + hard-error policy applies: a
 // table row whose product is missing from internal/product or whose version
 // fails the numeric scheme fails the extract rather than silently dropping
 // an affected product.
-func supplementCriterions(table map[string][]supplementProduct, id string) ([]criterionTypes.Criterion, error) {
+func supplementCriteria(table map[string][]supplementProduct, id string) (criteriaTypes.Criteria, error) {
 	rows, ok := table[id]
 	if !ok {
-		return nil, nil
+		return criteriaTypes.Criteria{}, nil
 	}
 
-	criterions := make([]criterionTypes.Criterion, 0, len(rows))
+	products := make([][]criterionTypes.Criterion, 0, len(rows))
 	for _, row := range rows {
-		cpe, rt, ok := productpkg.Resolve(row.Product)
+		var cns []criterionTypes.Criterion
+		cpes, rt, ok := productpkg.Resolve(row.Product)
 		if !ok {
-			return nil, errors.Errorf("unknown fortinet product %q in supplement entry %q (add it to internal/product)", row.Product, id)
+			return criteriaTypes.Criteria{}, errors.Errorf("unknown fortinet product %q in supplement entry %q (add it to internal/product)", row.Product, id)
 		}
 
 		if len(row.Versions) > 0 {
-			baked := make([]ccTypes.CPE, 0, len(row.Versions))
 			for _, v := range row.Versions {
 				// Every supplement version is numeric (validated at generation
 				// time); re-assert here so a bad table edit fails the extract
 				// instead of baking a version no scanner reports.
 				if _, err := numericVersion.NewVersion(v); err != nil {
-					return nil, errors.Wrapf(err, "unexpected version %q for %q in supplement entry %q", v, row.Product, id)
+					return criteriaTypes.Criteria{}, errors.Wrapf(err, "unexpected version %q for %q in supplement entry %q", v, row.Product, id)
 				}
-				b, err := productpkg.BakeVersion(cpe, v)
-				if err != nil {
-					return nil, errors.Wrapf(err, "bake version %q for %q in supplement entry %q", v, row.Product, id)
-				}
-				baked = append(baked, ccTypes.CPE(b))
 			}
-			criterions = append(criterions, criterionTypes.Criterion{
-				Type: criterionTypes.CriterionTypeCPE,
-				CPE: &ccTypes.Criterion{
-					Vulnerable: true,
-					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
-					CPE:        ccTypes.CPE(cpe),
-					CPEMatches: baked,
-				},
-			})
+			for _, cpe := range cpes {
+				baked := make([]ccTypes.CPE, 0, len(row.Versions))
+				for _, v := range row.Versions {
+					b, err := productpkg.BakeVersion(cpe, v)
+					if err != nil {
+						return criteriaTypes.Criteria{}, errors.Wrapf(err, "bake version %q for %q in supplement entry %q", v, row.Product, id)
+					}
+					baked = append(baked, ccTypes.CPE(b))
+				}
+				cns = append(cns, criterionTypes.Criterion{
+					Type: criterionTypes.CriterionTypeCPE,
+					CPE: &ccTypes.Criterion{
+						Vulnerable: true,
+						FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
+						CPE:        ccTypes.CPE(cpe),
+						CPEMatches: baked,
+					},
+				})
+			}
 		}
 
 		for _, sr := range row.Ranges {
@@ -205,14 +213,14 @@ func supplementCriterions(table map[string][]supplementProduct, id string) ([]cr
 			// inverted range, and the likeliest shape of a hand edit that
 			// blanks a row's constraints without deleting the range.
 			if cmp.Or(r.GreaterEqual, r.GreaterThan, r.LessEqual, r.LessThan) == "" {
-				return nil, errors.Errorf("empty range for %q in supplement entry %q: no bounds set", row.Product, id)
+				return criteriaTypes.Criteria{}, errors.Errorf("empty range for %q in supplement entry %q: no bounds set", row.Product, id)
 			}
 			for _, b := range []string{r.GreaterEqual, r.GreaterThan, r.LessEqual, r.LessThan} {
 				if b == "" {
 					continue
 				}
 				if _, err := numericVersion.NewVersion(b); err != nil {
-					return nil, errors.Wrapf(err, "unexpected range bound %q for %q in supplement entry %q", b, row.Product, id)
+					return criteriaTypes.Criteria{}, errors.Wrapf(err, "unexpected range bound %q for %q in supplement entry %q", b, row.Product, id)
 				}
 			}
 			// A lower bound above the upper bound makes the criterion
@@ -227,29 +235,32 @@ func supplementCriterions(table map[string][]supplementProduct, id string) ([]cr
 			if lo, hi := cmp.Or(r.GreaterEqual, r.GreaterThan), cmp.Or(r.LessEqual, r.LessThan); lo != "" && hi != "" {
 				vlo, err := numericVersion.NewVersion(lo)
 				if err != nil {
-					return nil, errors.Wrapf(err, "parse lower bound %q for %q in supplement entry %q", lo, row.Product, id)
+					return criteriaTypes.Criteria{}, errors.Wrapf(err, "parse lower bound %q for %q in supplement entry %q", lo, row.Product, id)
 				}
 				vhi, err := numericVersion.NewVersion(hi)
 				if err != nil {
-					return nil, errors.Wrapf(err, "parse upper bound %q for %q in supplement entry %q", hi, row.Product, id)
+					return criteriaTypes.Criteria{}, errors.Wrapf(err, "parse upper bound %q for %q in supplement entry %q", hi, row.Product, id)
 				}
 				c, err := vlo.Compare(vhi)
 				if err != nil {
-					return nil, errors.Wrapf(err, "compare bounds %q, %q for %q in supplement entry %q", lo, hi, row.Product, id)
+					return criteriaTypes.Criteria{}, errors.Wrapf(err, "compare bounds %q, %q for %q in supplement entry %q", lo, hi, row.Product, id)
 				}
 				if c > 0 {
-					return nil, errors.Errorf("inverted range for %q in supplement entry %q: lower bound %q > upper bound %q", row.Product, id, lo, hi)
+					return criteriaTypes.Criteria{}, errors.Errorf("inverted range for %q in supplement entry %q: lower bound %q > upper bound %q", row.Product, id, lo, hi)
 				}
 			}
-			criterions = append(criterions, criterionTypes.Criterion{
-				Type: criterionTypes.CriterionTypeCPE,
-				CPE: &ccTypes.Criterion{
-					Vulnerable: true,
-					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
-					CPE:        ccTypes.CPE(cpe),
-					Range:      &r,
-				},
-			})
+			for _, cpe := range cpes {
+				rc := r // each criterion gets its own copy, so no two share a Range
+				cns = append(cns, criterionTypes.Criterion{
+					Type: criterionTypes.CriterionTypeCPE,
+					CPE: &ccTypes.Criterion{
+						Vulnerable: true,
+						FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
+						CPE:        ccTypes.CPE(cpe),
+						Range:      &rc,
+					},
+				})
+			}
 		}
 
 		if len(row.Versions) == 0 && len(row.Ranges) == 0 {
@@ -257,17 +268,29 @@ func supplementCriterions(table map[string][]supplementProduct, id string) ([]cr
 			// only the audited pairs may take this branch (see
 			// wholeProductAudited).
 			if _, ok := wholeProductAudited[advisoryProduct{Advisory: id, Product: row.Product}]; !ok {
-				return nil, errors.Errorf("unaudited whole-product row for %q in supplement entry %q (add versions or ranges, or audit it into wholeProductAudited)", row.Product, id)
+				return criteriaTypes.Criteria{}, errors.Errorf("unaudited whole-product row for %q in supplement entry %q (add versions or ranges, or audit it into wholeProductAudited)", row.Product, id)
 			}
-			criterions = append(criterions, criterionTypes.Criterion{
-				Type: criterionTypes.CriterionTypeCPE,
-				CPE: &ccTypes.Criterion{
-					Vulnerable: true,
-					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
-					CPE:        ccTypes.CPE(cpe),
-				},
-			})
+			for _, cpe := range cpes {
+				cns = append(cns, criterionTypes.Criterion{
+					Type: criterionTypes.CriterionTypeCPE,
+					CPE: &ccTypes.Criterion{
+						Vulnerable: true,
+						FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
+						CPE:        ccTypes.CPE(cpe),
+					},
+				})
+			}
+		}
+		// Only a product recorded under several CPEs is nested; a product
+		// with one CPE keeps each of its criterions directly in the OR.
+		switch len(cpes) {
+		case 1:
+			for _, cn := range cns {
+				products = append(products, []criterionTypes.Criterion{cn})
+			}
+		default:
+			products = append(products, cns)
 		}
 	}
-	return criterions, nil
+	return productCriteria(products), nil
 }

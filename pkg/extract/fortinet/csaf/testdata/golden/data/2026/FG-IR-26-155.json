@@ -78,21 +78,41 @@
 				{
 					"criteria": {
 						"operator": "OR",
-						"criterions": [
+						"criterias": [
 							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "unknown"
+								"operator": "OR",
+								"criterions": [
+									{
+										"type": "cpe",
+										"cpe": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "unknown"
+											},
+											"cpe": "cpe:2.3:a:fortinet:fortisiem_windows_agent:*:*:*:*:*:*:*:*",
+											"range": {
+												"type": "fortinet-fortisiem_windows_agent",
+												"ge": "7.4.0",
+												"le": "7.4.1"
+											}
+										}
 									},
-									"cpe": "cpe:2.3:a:fortinet:fortisiemwindowsagent:*:*:*:*:*:*:*:*",
-									"range": {
-										"type": "fortinet-fortisiem_windows_agent",
-										"ge": "7.4.0",
-										"le": "7.4.1"
+									{
+										"type": "cpe",
+										"cpe": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "unknown"
+											},
+											"cpe": "cpe:2.3:a:fortinet:fortisiemwindowsagent:*:*:*:*:*:*:*:*",
+											"range": {
+												"type": "fortinet-fortisiem_windows_agent",
+												"ge": "7.4.0",
+												"le": "7.4.1"
+											}
+										}
 									}
-								}
+								]
 							}
 						]
 					},

@@ -64,22 +64,44 @@
 				{
 					"criteria": {
 						"operator": "OR",
-						"criterions": [
+						"criterias": [
 							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "unknown"
+								"operator": "OR",
+								"criterions": [
+									{
+										"type": "cpe",
+										"cpe": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "unknown"
+											},
+											"cpe": "cpe:2.3:a:fortinet:fortios_ips_engine:*:*:*:*:*:*:*:*",
+											"cpe_matches": [
+												"cpe:2.3:a:fortinet:fortios_ips_engine:6.158:*:*:*:*:*:*:*",
+												"cpe:2.3:a:fortinet:fortios_ips_engine:7.166:*:*:*:*:*:*:*",
+												"cpe:2.3:a:fortinet:fortios_ips_engine:7.321:*:*:*:*:*:*:*"
+											]
+										}
 									},
-									"cpe": "cpe:2.3:a:fortinet:ipsengine:*:*:*:*:*:*:*:*",
-									"cpe_matches": [
-										"cpe:2.3:a:fortinet:ipsengine:6.158:*:*:*:*:*:*:*",
-										"cpe:2.3:a:fortinet:ipsengine:7.166:*:*:*:*:*:*:*",
-										"cpe:2.3:a:fortinet:ipsengine:7.321:*:*:*:*:*:*:*"
-									]
-								}
-							},
+									{
+										"type": "cpe",
+										"cpe": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "unknown"
+											},
+											"cpe": "cpe:2.3:a:fortinet:ipsengine:*:*:*:*:*:*:*:*",
+											"cpe_matches": [
+												"cpe:2.3:a:fortinet:ipsengine:6.158:*:*:*:*:*:*:*",
+												"cpe:2.3:a:fortinet:ipsengine:7.166:*:*:*:*:*:*:*",
+												"cpe:2.3:a:fortinet:ipsengine:7.321:*:*:*:*:*:*:*"
+											]
+										}
+									}
+								]
+							}
+						],
+						"criterions": [
 							{
 								"type": "cpe",
 								"cpe": {

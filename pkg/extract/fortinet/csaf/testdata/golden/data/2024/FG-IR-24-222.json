@@ -78,22 +78,44 @@
 				{
 					"criteria": {
 						"operator": "OR",
-						"criterions": [
+						"criterias": [
 							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "unknown"
+								"operator": "OR",
+								"criterions": [
+									{
+										"type": "cpe",
+										"cpe": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "unknown"
+											},
+											"cpe": "cpe:2.3:a:fortinet:fortimanager_cloud:*:*:*:*:*:*:*:*",
+											"range": {
+												"type": "fortinet-fortimanager_cloud",
+												"ge": "7.4.1",
+												"le": "7.4.3"
+											}
+										}
 									},
-									"cpe": "cpe:2.3:a:fortinet:fortimanagercloud:*:*:*:*:*:*:*:*",
-									"range": {
-										"type": "fortinet-fortimanager_cloud",
-										"ge": "7.4.1",
-										"le": "7.4.3"
+									{
+										"type": "cpe",
+										"cpe": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "unknown"
+											},
+											"cpe": "cpe:2.3:a:fortinet:fortimanagercloud:*:*:*:*:*:*:*:*",
+											"range": {
+												"type": "fortinet-fortimanager_cloud",
+												"ge": "7.4.1",
+												"le": "7.4.3"
+											}
+										}
 									}
-								}
-							},
+								]
+							}
+						],
+						"criterions": [
 							{
 								"type": "cpe",
 								"cpe": {

@@ -64,20 +64,39 @@
 				{
 					"criteria": {
 						"operator": "OR",
-						"criterions": [
+						"criterias": [
 							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "unknown"
+								"operator": "OR",
+								"criterions": [
+									{
+										"type": "cpe",
+										"cpe": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "unknown"
+											},
+											"cpe": "cpe:2.3:a:fortinet:fortiauthenticator_agent_for_microsoft_outlook_web_access:*:*:*:*:*:*:*:*",
+											"cpe_matches": [
+												"cpe:2.3:a:fortinet:fortiauthenticator_agent_for_microsoft_outlook_web_access:2.1:*:*:*:*:*:*:*",
+												"cpe:2.3:a:fortinet:fortiauthenticator_agent_for_microsoft_outlook_web_access:2.2:*:*:*:*:*:*:*"
+											]
+										}
 									},
-									"cpe": "cpe:2.3:a:fortinet:fortiauthenticatoroutlookagent:*:*:*:*:*:*:*:*",
-									"cpe_matches": [
-										"cpe:2.3:a:fortinet:fortiauthenticatoroutlookagent:2.1:*:*:*:*:*:*:*",
-										"cpe:2.3:a:fortinet:fortiauthenticatoroutlookagent:2.2:*:*:*:*:*:*:*"
-									]
-								}
+									{
+										"type": "cpe",
+										"cpe": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "unknown"
+											},
+											"cpe": "cpe:2.3:a:fortinet:fortiauthenticatoroutlookagent:*:*:*:*:*:*:*:*",
+											"cpe_matches": [
+												"cpe:2.3:a:fortinet:fortiauthenticatoroutlookagent:2.1:*:*:*:*:*:*:*",
+												"cpe:2.3:a:fortinet:fortiauthenticatoroutlookagent:2.2:*:*:*:*:*:*:*"
+											]
+										}
+									}
+								]
 							}
 						]
 					}

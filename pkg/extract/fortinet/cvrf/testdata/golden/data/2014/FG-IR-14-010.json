@@ -60,16 +60,31 @@
 				{
 					"criteria": {
 						"operator": "OR",
-						"criterions": [
+						"criterias": [
 							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "unknown"
+								"operator": "OR",
+								"criterions": [
+									{
+										"type": "cpe",
+										"cpe": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "unknown"
+											},
+											"cpe": "cpe:2.3:h:fortinet:fortibalancer:*:*:*:*:*:*:*:*"
+										}
 									},
-									"cpe": "cpe:2.3:h:fortinet:fortibalancer:*:*:*:*:*:*:*:*"
-								}
+									{
+										"type": "cpe",
+										"cpe": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "unknown"
+											},
+											"cpe": "cpe:2.3:o:fortinet:fortibalancer:*:*:*:*:*:*:*:*"
+										}
+									}
+								]
 							}
 						]
 					}

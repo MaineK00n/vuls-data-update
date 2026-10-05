@@ -3,7 +3,7 @@ package cvrf
 // Exports for the cvrf_test package.
 
 // ProductVersion aliases the unexported productVersion so external tests can
-// build a product map for ToCriterion.
+// build a product map for KnownAffectedCriteria.
 type ProductVersion = productVersion
 
 // NewProductVersion constructs a ProductVersion from a product name and a
@@ -12,9 +12,9 @@ func NewProductVersion(productName, version string) ProductVersion {
 	return productVersion{productName: productName, version: version}
 }
 
-// KnownAffectedCriterions exposes knownAffectedCriterions for
+// KnownAffectedCriteria exposes knownAffectedCriteria for
 // whitelist-enforcement tests.
-var KnownAffectedCriterions = knownAffectedCriterions
+var KnownAffectedCriteria = knownAffectedCriteria
 
 // ExtractData exposes the per-advisory extract function for status-type
 // validation tests.
@@ -23,10 +23,10 @@ var ExtractData = extract
 // ExtractReferenceURLs exposes extractReferenceURLs for reference-parsing tests.
 var ExtractReferenceURLs = extractReferenceURLs
 
-// SupplementCriterions exposes supplementCriterions for whole-table
+// SupplementCriteria exposes supplementCriteria for whole-table
 // validation tests; guard tests pass synthetic tables instead of mutating
 // the production one.
-var SupplementCriterions = supplementCriterions
+var SupplementCriteria = supplementCriteria
 
 // SupplementTable exposes the production table as a read-only view for the
 // whole-table validation tests.

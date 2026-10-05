@@ -33,73 +33,173 @@
 				{
 					"criteria": {
 						"operator": "OR",
-						"criterions": [
+						"criterias": [
 							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "unknown"
+								"operator": "OR",
+								"criterions": [
+									{
+										"type": "cpe",
+										"cpe": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "unknown"
+											},
+											"cpe": "cpe:2.3:a:fortinet:forticlient:*:*:*:*:*:mac_os_x:*:*",
+											"cpe_matches": [
+												"cpe:2.3:a:fortinet:forticlient:4.0.2:*:*:*:*:mac_os_x:*:*"
+											]
+										}
 									},
-									"cpe": "cpe:2.3:a:fortinet:forticlientlite:*:*:*:*:*:*:*:*",
-									"cpe_matches": [
-										"cpe:2.3:a:fortinet:forticlientlite:4.3.3.445:*:*:*:*:*:*:*"
-									]
-								}
-							},
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "unknown"
+									{
+										"type": "cpe",
+										"cpe": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "unknown"
+											},
+											"cpe": "cpe:2.3:a:fortinet:forticlient:*:*:*:*:*:macos:*:*",
+											"cpe_matches": [
+												"cpe:2.3:a:fortinet:forticlient:4.0.2:*:*:*:*:macos:*:*"
+											]
+										}
 									},
-									"cpe": "cpe:2.3:a:fortinet:forticlientlite:*:*:*:*:*:*:*:*",
-									"range": {
-										"type": "fortinet-forticlient_lite",
-										"ge": "2.0",
-										"lt": "2.1"
+									{
+										"type": "cpe",
+										"cpe": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "unknown"
+											},
+											"cpe": "cpe:2.3:a:fortinet:forticlientmac:*:*:*:*:*:*:*:*",
+											"cpe_matches": [
+												"cpe:2.3:a:fortinet:forticlientmac:4.0.2:*:*:*:*:*:*:*"
+											]
+										}
 									}
-								}
+								]
 							},
 							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "unknown"
+								"operator": "OR",
+								"criterions": [
+									{
+										"type": "cpe",
+										"cpe": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "unknown"
+											},
+											"cpe": "cpe:2.3:a:fortinet:forticlient:*:*:*:*:*:windows:*:*",
+											"cpe_matches": [
+												"cpe:2.3:a:fortinet:forticlient:4.3.3.445:*:*:*:*:windows:*:*"
+											]
+										}
 									},
-									"cpe": "cpe:2.3:a:fortinet:forticlientmac:*:*:*:*:*:*:*:*",
-									"cpe_matches": [
-										"cpe:2.3:a:fortinet:forticlientmac:4.0.2:*:*:*:*:*:*:*"
-									]
-								}
+									{
+										"type": "cpe",
+										"cpe": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "unknown"
+											},
+											"cpe": "cpe:2.3:a:fortinet:forticlientwindows:*:*:*:*:*:*:*:*",
+											"cpe_matches": [
+												"cpe:2.3:a:fortinet:forticlientwindows:4.3.3.445:*:*:*:*:*:*:*"
+											]
+										}
+									}
+								]
 							},
 							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "unknown"
+								"operator": "OR",
+								"criterions": [
+									{
+										"type": "cpe",
+										"cpe": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "unknown"
+											},
+											"cpe": "cpe:2.3:a:fortinet:forticlient_lite:*:*:*:*:*:*:*:*",
+											"cpe_matches": [
+												"cpe:2.3:a:fortinet:forticlient_lite:4.3.3.445:*:*:*:*:*:*:*"
+											]
+										}
 									},
-									"cpe": "cpe:2.3:a:fortinet:forticlientsslvpn:*:*:*:*:*:*:*:*",
-									"cpe_matches": [
-										"cpe:2.3:a:fortinet:forticlientsslvpn:4.0.2012:*:*:*:*:*:*:*"
-									]
-								}
+									{
+										"type": "cpe",
+										"cpe": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "unknown"
+											},
+											"cpe": "cpe:2.3:a:fortinet:forticlient_lite:*:*:*:*:*:*:*:*",
+											"range": {
+												"type": "fortinet-forticlient_lite",
+												"ge": "2.0",
+												"lt": "2.1"
+											}
+										}
+									},
+									{
+										"type": "cpe",
+										"cpe": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "unknown"
+											},
+											"cpe": "cpe:2.3:a:fortinet:forticlientlite:*:*:*:*:*:*:*:*",
+											"cpe_matches": [
+												"cpe:2.3:a:fortinet:forticlientlite:4.3.3.445:*:*:*:*:*:*:*"
+											]
+										}
+									},
+									{
+										"type": "cpe",
+										"cpe": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "unknown"
+											},
+											"cpe": "cpe:2.3:a:fortinet:forticlientlite:*:*:*:*:*:*:*:*",
+											"range": {
+												"type": "fortinet-forticlient_lite",
+												"ge": "2.0",
+												"lt": "2.1"
+											}
+										}
+									}
+								]
 							},
 							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "unknown"
+								"operator": "OR",
+								"criterions": [
+									{
+										"type": "cpe",
+										"cpe": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "unknown"
+											},
+											"cpe": "cpe:2.3:a:fortinet:forticlient_ssl_vpn:*:*:*:*:*:*:*:*",
+											"cpe_matches": [
+												"cpe:2.3:a:fortinet:forticlient_ssl_vpn:4.0.2012:*:*:*:*:*:*:*"
+											]
+										}
 									},
-									"cpe": "cpe:2.3:a:fortinet:forticlientwindows:*:*:*:*:*:*:*:*",
-									"cpe_matches": [
-										"cpe:2.3:a:fortinet:forticlientwindows:4.3.3.445:*:*:*:*:*:*:*"
-									]
-								}
+									{
+										"type": "cpe",
+										"cpe": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "unknown"
+											},
+											"cpe": "cpe:2.3:a:fortinet:forticlientsslvpn:*:*:*:*:*:*:*:*",
+											"cpe_matches": [
+												"cpe:2.3:a:fortinet:forticlientsslvpn:4.0.2012:*:*:*:*:*:*:*"
+											]
+										}
+									}
+								]
 							}
 						]
 					}

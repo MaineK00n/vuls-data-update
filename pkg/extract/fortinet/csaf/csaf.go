@@ -153,7 +153,7 @@ func Extract(args string, opts ...Option) error {
 
 // productRef is a product_tree leaf's ancestor product name plus the version
 // expression carried in its branch name (the part after "<product>/"). The name
-// is resolved to a CPE at the use site (toCriterion), which also enforces the
+// is resolved to a CPE at the use site (toCriterions), which also enforces the
 // whitelist.
 type productRef struct {
 	productName string
@@ -188,7 +188,8 @@ type sevKey struct {
 type sevGroup struct {
 	severities []severityTypes.Severity
 	criterions []criterionTypes.Criterion
-	pids       []string // known_affected product_ids, for a stable split tag suffix
+	criterias  []criteriaTypes.Criteria // products recorded under more than one CPE
+	pids       []string                 // known_affected product_ids, for a stable split tag suffix
 }
 
 func extract(fetched csafTypes.CSAF, raws []string) (dataTypes.Data, error) {
@@ -242,11 +243,21 @@ func extract(fetched csafTypes.CSAF, raws []string) (dataTypes.Data, error) {
 			a.groups[sk] = g
 		}
 		for _, pid := range v.ProductStatus.KnownAffected {
-			cn, err := toCriterion(string(pid), refMap)
+			cns, err := toCriterions(string(pid), refMap)
 			if err != nil {
 				return dataTypes.Data{}, errors.Wrapf(err, "resolve known_affected %q (advisory %s, %s)", string(pid), id, key)
 			}
-			g.criterions = append(g.criterions, cn)
+			// A product recorded under several CPEs is one OR of its criterions,
+			// so each product stays one unit even where two products share a CPE.
+			switch len(cns) {
+			case 1:
+				g.criterions = append(g.criterions, cns[0])
+			default:
+				g.criterias = append(g.criterias, criteriaTypes.Criteria{
+					Operator:   criteriaTypes.CriteriaOperatorTypeOR,
+					Criterions: cns,
+				})
+			}
 			g.pids = append(g.pids, string(pid))
 		}
 		for _, rem := range v.Remediations {
@@ -297,12 +308,13 @@ func extract(fetched csafTypes.CSAF, raws []string) (dataTypes.Data, error) {
 			// only) otherwise leaves a dangling segment tag with no condition or
 			// advisory segment, producing an internally inconsistent dataset.
 			var vsegs []segmentTypes.Segment
-			if len(g.criterions) > 0 {
+			if len(g.criterions) > 0 || len(g.criterias) > 0 {
 				segments = append(segments, seg)
 				vsegs = []segmentTypes.Segment{seg}
 				conditions = append(conditions, conditionTypes.Condition{
 					Criteria: criteriaTypes.Criteria{
 						Operator:   criteriaTypes.CriteriaOperatorTypeOR,
+						Criterias:  g.criterias,
 						Criterions: g.criterions,
 					},
 					Tag: tag,
@@ -411,7 +423,7 @@ func extract(fetched csafTypes.CSAF, raws []string) (dataTypes.Data, error) {
 // its assumption is violated — so Fortinet standardizing FG-IR-21-173, or a new
 // legacy-format advisory, surfaces loudly instead of being silently mis-parsed.
 // The name → CPE whitelist is resolved and enforced later at the known_affected
-// use-site (toCriterion).
+// use-site (toCriterions).
 func buildProductRefs(id string, branches []csafTypes.Branch) (map[string]productRef, error) {
 	switch id {
 	case "FG-IR-21-173":
@@ -503,25 +515,27 @@ func buildProductRefsLegacy(branches []csafTypes.Branch) (map[string]productRef,
 	return refMap, nil
 }
 
-// toCriterion resolves a known_affected product_id to a CPE criterion using the
-// product tree map. It hard-errors when the product is not in the whitelist or
-// its version cannot be parsed — a new Fortinet product, a new version grammar,
-// or a resolver bug must fail the extract, not silently drop an affected
-// product (which would be a detection false negative).
-func toCriterion(productID string, refMap map[string]productRef) (criterionTypes.Criterion, error) {
+// toCriterions resolves a known_affected product_id to CPE criterions using
+// the product tree map, one per CPE the product may be recorded under (see
+// product.Resolve), each with the same version constraint. It hard-errors when
+// the product is not in the whitelist or its version cannot be parsed — a new
+// Fortinet product, a new version grammar, or a resolver bug must fail the
+// extract, not silently drop an affected product (which would be a detection
+// false negative).
+func toCriterions(productID string, refMap map[string]productRef) ([]criterionTypes.Criterion, error) {
 	ref, ok := refMap[productID]
 	if !ok {
-		return criterionTypes.Criterion{}, errors.Errorf("cannot resolve known_affected %q to a product_version in the tree", productID)
+		return nil, errors.Errorf("cannot resolve known_affected %q to a product_version in the tree", productID)
 	}
 
-	cpe, rt, ok := product.Resolve(ref.productName)
+	cpes, rt, ok := product.Resolve(ref.productName)
 	if !ok {
-		return criterionTypes.Criterion{}, errors.Errorf("unknown fortinet product %q (known_affected %q; add it to internal/product)", ref.productName, productID)
+		return nil, errors.Errorf("unknown fortinet product %q (known_affected %q; add it to internal/product)", ref.productName, productID)
 	}
 
 	r, bakeVersion, err := resolveVersion(ref.productName, ref.versionExp)
 	if err != nil {
-		return criterionTypes.Criterion{}, errors.Wrapf(err, "resolve version for %q", productID)
+		return nil, errors.Wrapf(err, "resolve version for %q", productID)
 	}
 	// rt (the product's per-product range type, resolved above) selects the
 	// detect-time comparator; it is only consulted on the range/bake paths below.
@@ -544,7 +558,7 @@ func toCriterion(productID string, refMap map[string]productRef) (criterionTypes
 			// enumerated concrete version, never as a bound) signals an upstream
 			// format change or a parsing bug.
 			if _, err := numericVersion.NewVersion(b); err != nil {
-				return criterionTypes.Criterion{}, errors.Wrapf(err, "unexpected non-numeric range bound %q for %q (expr %q)", b, productID, ref.versionExp)
+				return nil, errors.Wrapf(err, "unexpected non-numeric range bound %q for %q (expr %q)", b, productID, ref.versionExp)
 			}
 			// (2) A non-numeric-versioned product (e.g. FortiSASE) keeps its ranges
 			// train-granular (bound dot <= 1: "25.2", not "25.2.0"). A
@@ -552,7 +566,7 @@ func toCriterion(productID string, refMap map[string]productRef) (criterionTypes
 			// such a version's letter — the comparator's undefined numeric-vs-
 			// alphabetic case — so reject it here.
 			if rt == ccRangeTypes.RangeTypeFortinetFortiSASE && strings.Count(b, ".") >= 2 {
-				return criterionTypes.Criterion{}, errors.Errorf("product %q is non-numeric-versioned and must use a train range (bound dot<=1), got bound %q (expr %q)", productID, b, ref.versionExp)
+				return nil, errors.Errorf("product %q is non-numeric-versioned and must use a train range (bound dot<=1), got bound %q (expr %q)", productID, b, ref.versionExp)
 			}
 		}
 	}
@@ -567,29 +581,42 @@ func toCriterion(productID string, refMap map[string]productRef) (criterionTypes
 		switch rt {
 		case ccRangeTypes.RangeTypeFortinetFortiSASE:
 			if _, err := nonnumericVersion.NewVersion(bakeVersion); err != nil {
-				return criterionTypes.Criterion{}, errors.Wrapf(err, "unexpected concrete version %q for %q (expr %q)", bakeVersion, productID, ref.versionExp)
+				return nil, errors.Wrapf(err, "unexpected concrete version %q for %q (expr %q)", bakeVersion, productID, ref.versionExp)
 			}
 		default:
 			if _, err := numericVersion.NewVersion(bakeVersion); err != nil {
-				return criterionTypes.Criterion{}, errors.Wrapf(err, "unexpected concrete version %q for %q (expr %q)", bakeVersion, productID, ref.versionExp)
+				return nil, errors.Wrapf(err, "unexpected concrete version %q for %q (expr %q)", bakeVersion, productID, ref.versionExp)
 			}
 		}
-		baked, err := product.BakeVersion(cpe, bakeVersion)
-		if err != nil {
-			return criterionTypes.Criterion{}, errors.Wrapf(err, "bake version for %q", productID)
+		for i, cpe := range cpes {
+			baked, err := product.BakeVersion(cpe, bakeVersion)
+			if err != nil {
+				return nil, errors.Wrapf(err, "bake version for %q", productID)
+			}
+			cpes[i] = baked
 		}
-		cpe = baked
 	}
 
-	return criterionTypes.Criterion{
-		Type: criterionTypes.CriterionTypeCPE,
-		CPE: &ccTypes.Criterion{
-			Vulnerable: true,
-			FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
-			CPE:        ccTypes.CPE(cpe),
-			Range:      r,
-		},
-	}, nil
+	cns := make([]criterionTypes.Criterion, 0, len(cpes))
+	for _, cpe := range cpes {
+		cns = append(cns, criterionTypes.Criterion{
+			Type: criterionTypes.CriterionTypeCPE,
+			CPE: &ccTypes.Criterion{
+				Vulnerable: true,
+				FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
+				CPE:        ccTypes.CPE(cpe),
+				// Each criterion gets its own copy, so no two share a Range.
+				Range: func() *ccRangeTypes.Range {
+					if r == nil {
+						return nil
+					}
+					c := *r
+					return &c
+				}(),
+			},
+		})
+	}
+	return cns, nil
 }
 
 // resolveVersion interprets a CSAF Fortinet version expression for the named
@@ -633,7 +660,7 @@ func resolveVersion(productName, exp string) (*ccRangeTypes.Range, string, error
 			// "no constraint" and widen to the whole product, so reject it.
 			return nil, "", errors.Errorf("empty lower bound in %q", exp)
 		}
-		// Type is set by the caller (toCriterion), which knows the product.
+		// Type is set by the caller (toCriterions), which knows the product.
 		return &ccRangeTypes.Range{GreaterEqual: ge}, "", nil
 	case strings.ContainsAny(exp, "<>"):
 		r := ccRangeTypes.Range{}
