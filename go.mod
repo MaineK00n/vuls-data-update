@@ -1,6 +1,6 @@
 module github.com/MaineK00n/vuls-data-update
 
-go 1.26
+go 1.27
 
 require (
 	github.com/MaineK00n/go-cisco-version v0.0.0-20250611084427-015c6492ef23
