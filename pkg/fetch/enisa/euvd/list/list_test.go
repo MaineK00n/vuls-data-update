@@ -72,8 +72,13 @@ func TestFetch(t *testing.T) {
 // The goroutines page through the list in parallel, each taking every
 // concurrency-th page. Every page has to be requested exactly once: one
 // requested twice is another one never requested, and its items never written.
+//
+// A few pages are enough. A page going astray needs two goroutines to build
+// their URL at the same instant, which this many pages rarely does, but the
+// race detector reports the unsynchronized access whenever it happens at all,
+// and the tests run under -race.
 func TestFetch_concurrent(t *testing.T) {
-	const pages = 2000
+	const pages = 20
 
 	var mu sync.Mutex
 	requested := make(map[int]int)
