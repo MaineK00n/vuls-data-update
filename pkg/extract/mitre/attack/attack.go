@@ -1159,21 +1159,21 @@ type stixPeek struct {
 	XMitreDomains []string `json:"x_mitre_domains,omitempty"`
 
 	// Kind-specific cross-ref fields. Each sub-struct's JSON fields
-	// are inlined at the parent level (json:",embed"), matching STIX's
+	// are inlined at the parent level (json:",inline"), matching STIX's
 	// flat schema while keeping Stage 1/2 access sites obvious about
 	// which Kind they're touching.
 	Tactic struct {
 		XMitreShortname string `json:"x_mitre_shortname,omitempty"`
-	} `json:",embed"`
+	} `json:",inline"`
 	Technique struct {
 		KillChainPhases []attack.KillChainPhase `json:"kill_chain_phases,omitempty"`
-	} `json:",embed"`
+	} `json:",inline"`
 	DetectStrategy struct {
 		XMitreAnalyticRefs []string `json:"x_mitre_analytic_refs,omitempty"`
-	} `json:",embed"`
+	} `json:",inline"`
 	DataComponent struct {
 		XMitreDataSourceRef *string `json:"x_mitre_data_source_ref,omitempty"`
-	} `json:",embed"`
+	} `json:",inline"`
 }
 
 // bundleInfo carries the ATT&CK bundle identity for a file: its
