@@ -96,10 +96,14 @@ func TestFetch_concurrent(t *testing.T) {
 			mu.Unlock()
 
 			if p >= pages {
-				_, _ = fmt.Fprintf(w, `{"items":[],"total":%d}`, pages)
+				if _, err := fmt.Fprintf(w, `{"items":[],"total":%d}`, pages); err != nil {
+					http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+				}
 				return
 			}
-			_, _ = fmt.Fprintf(w, `{"items":[{"id":"EUVD-2025-%d"}],"total":%d}`, 100000+p, pages)
+			if _, err := fmt.Fprintf(w, `{"items":[{"id":"EUVD-2025-%d"}],"total":%d}`, 100000+p, pages); err != nil {
+				http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			}
 		default:
 			http.NotFound(w, r)
 		}
