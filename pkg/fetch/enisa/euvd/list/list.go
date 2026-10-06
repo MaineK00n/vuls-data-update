@@ -129,7 +129,7 @@ func (opts options) fetch() error {
 				q.Set("page", fmt.Sprintf("%d", p))
 				// u is shared by every goroutine: setting the query on it lets
 				// another one overwrite the page before this one reads it back.
-				pageURL := u.Clone()
+				pageURL := *u
 				pageURL.RawQuery = q.Encode()
 
 				resp, err := client.Get(pageURL.String())
