@@ -129,8 +129,8 @@ func (opts options) fetch() error {
 				q.Set("page", fmt.Sprintf("%d", p))
 				// u is shared by every goroutine: setting the query on it lets
 				// another one overwrite the page before this one reads it back.
-				// A shallow copy is enough, as the only pointer in a URL is the
-				// immutable *Userinfo. From Go 1.27 on, u.Clone() says the same.
+				// A struct copy rather than u.Clone(), which needs Go 1.27. It is
+				// enough: the only pointer in a URL is the immutable *Userinfo.
 				pageURL := *u
 				pageURL.RawQuery = q.Encode()
 
