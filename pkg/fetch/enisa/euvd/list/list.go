@@ -134,20 +134,27 @@ func (opts options) fetch() error {
 				pageURL := *u
 				pageURL.RawQuery = q.Encode()
 
-				resp, err := client.Get(pageURL.String())
+				res, err := func() (response, error) {
+					resp, err := client.Get(pageURL.String())
+					if err != nil {
+						return response{}, errors.Wrap(err, "fetch")
+					}
+					defer resp.Body.Close()
+
+					if resp.StatusCode != http.StatusOK {
+						_, _ = io.Copy(io.Discard, resp.Body)
+						return response{}, errors.Errorf("error response with status code %d", resp.StatusCode)
+					}
+
+					var res response
+					if err := json.UnmarshalRead(resp.Body, &res); err != nil {
+						return response{}, errors.Wrap(err, "decode json")
+					}
+
+					return res, nil
+				}()
 				if err != nil {
-					return errors.Wrap(err, "fetch")
-				}
-				defer resp.Body.Close()
-
-				if resp.StatusCode != http.StatusOK {
-					_, _ = io.Copy(io.Discard, resp.Body)
-					return errors.Errorf("error response with status code %d", resp.StatusCode)
-				}
-
-				var res response
-				if err := json.UnmarshalRead(resp.Body, &res); err != nil {
-					return errors.Wrap(err, "decode json")
+					return errors.Wrapf(err, "fetch page %d", p)
 				}
 
 				if len(res.Items) == 0 {

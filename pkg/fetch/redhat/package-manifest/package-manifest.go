@@ -100,20 +100,27 @@ Red Hat, as the licensor of this document, waives the right to enforce, and agre
 		slog.Info("Fetch RHEL Package Manifest", slog.String("version", major))
 		u := fmt.Sprintf(options.baseURL, major)
 
-		resp, err := c.Get(u)
-		if err != nil {
-			return errors.Wrapf(err, "get document. URL: %s", u)
-		}
-		defer resp.Body.Close()
+		doc, err := func() (*goquery.Document, error) {
+			resp, err := c.Get(u)
+			if err != nil {
+				return nil, errors.Wrapf(err, "get document. URL: %s", u)
+			}
+			defer resp.Body.Close()
 
-		if resp.StatusCode != http.StatusOK {
-			_, _ = io.Copy(io.Discard, resp.Body)
-			return errors.Errorf("error response with status code %d", resp.StatusCode)
-		}
+			if resp.StatusCode != http.StatusOK {
+				_, _ = io.Copy(io.Discard, resp.Body)
+				return nil, errors.Errorf("error response with status code %d", resp.StatusCode)
+			}
 
-		doc, err := goquery.NewDocumentFromReader(resp.Body)
+			doc, err := goquery.NewDocumentFromReader(resp.Body)
+			if err != nil {
+				return nil, errors.Wrap(err, "parse html")
+			}
+
+			return doc, nil
+		}()
 		if err != nil {
-			return errors.Wrap(err, "parse html")
+			return errors.Wrapf(err, "fetch RHEL %s package manifest", major)
 		}
 
 		for idx, s := range doc.Find("table").EachIter() {

@@ -186,57 +186,63 @@ func (o options) fetchFullFileTimeList(client *utilhttp.Client) ([]string, error
 			return nil, errors.Wrap(err, "join url path")
 		}
 
-		resp, err := client.Get(mu)
-		if err != nil {
-			return nil, errors.Wrapf(err, "fetch %s", mu)
-		}
-		defer resp.Body.Close()
+		if err := func() error {
+			resp, err := client.Get(mu)
+			if err != nil {
+				return errors.Wrap(err, "get")
+			}
+			defer resp.Body.Close()
 
-		if resp.StatusCode != http.StatusOK {
-			_, _ = io.Copy(io.Discard, resp.Body)
-			return nil, errors.Errorf("error response with status code %d", resp.StatusCode)
-		}
+			if resp.StatusCode != http.StatusOK {
+				_, _ = io.Copy(io.Discard, resp.Body)
+				return errors.Errorf("error response with status code %d", resp.StatusCode)
+			}
 
-		// 	```
-		// [Version]
-		// 2
-		//
-		// [Files]
-		// 1779964652	f	3194	rocky/10.1/devel/ppc64le/os/repodata/repomd.xml
-		// 1779964652	d	6144	rocky/10.1/devel/ppc64le/os/repodata
-		//
-		// [Checksums SHA256]
-		//
-		// [End]
-		// 	```
-		//
-		// Entries are relative to t.dir (the manifest's directory).
-		scanner := bufio.NewScanner(resp.Body)
-		isFilesSection := false
-		for scanner.Scan() {
-			switch s := strings.TrimSpace(scanner.Text()); {
-			case strings.HasPrefix(s, "[") && strings.HasSuffix(s, "]"):
-				isFilesSection = s == "[Files]"
-			default:
-				if !isFilesSection || s == "" {
-					continue
-				}
-
-				fields := strings.Fields(s)
-				if len(fields) != 4 {
-					return nil, errors.Errorf("unexpected fullfiletimelist Files format. expected: %q, actual: %q", "<unixtime>\t<filetype>\t<size>\t<filepath>", s)
-				}
-				if strings.HasSuffix(fields[3], "repomd.xml") {
-					r, err := url.JoinPath(o.baseURL, t.dir, fields[3])
-					if err != nil {
-						return nil, errors.Wrap(err, "join url path")
+			// 	```
+			// [Version]
+			// 2
+			//
+			// [Files]
+			// 1779964652	f	3194	rocky/10.1/devel/ppc64le/os/repodata/repomd.xml
+			// 1779964652	d	6144	rocky/10.1/devel/ppc64le/os/repodata
+			//
+			// [Checksums SHA256]
+			//
+			// [End]
+			// 	```
+			//
+			// Entries are relative to t.dir (the manifest's directory).
+			scanner := bufio.NewScanner(resp.Body)
+			isFilesSection := false
+			for scanner.Scan() {
+				switch s := strings.TrimSpace(scanner.Text()); {
+				case strings.HasPrefix(s, "[") && strings.HasSuffix(s, "]"):
+					isFilesSection = s == "[Files]"
+				default:
+					if !isFilesSection || s == "" {
+						continue
 					}
-					us = append(us, r)
+
+					fields := strings.Fields(s)
+					if len(fields) != 4 {
+						return errors.Errorf("unexpected fullfiletimelist Files format. expected: %q, actual: %q", "<unixtime>\t<filetype>\t<size>\t<filepath>", s)
+					}
+					if strings.HasSuffix(fields[3], "repomd.xml") {
+						r, err := url.JoinPath(o.baseURL, t.dir, fields[3])
+						if err != nil {
+							return errors.Wrap(err, "join url path")
+						}
+						us = append(us, r)
+					}
 				}
 			}
-		}
-		if err := scanner.Err(); err != nil {
-			return nil, errors.Wrap(err, "scanner encounter error")
+			if err := scanner.Err(); err != nil {
+				return errors.Wrap(err, "scanner encounter error")
+			}
+
+			return nil
+		}(); err != nil {
+			return nil, errors.Wrapf(err, "fetch %s", mu)
 		}
 	}
 

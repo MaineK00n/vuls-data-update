@@ -137,69 +137,75 @@ func (o options) fetchFullFileTimeList(client *utilhttp.Client) ([]string, error
 			return nil, errors.Wrap(err, "join url path")
 		}
 
-		resp, err := client.Get(u)
-		if err != nil {
-			return nil, errors.Wrapf(err, "fetch %s", u)
-		}
-		defer resp.Body.Close()
+		if err := func() error {
+			resp, err := client.Get(u)
+			if err != nil {
+				return errors.Wrap(err, "get")
+			}
+			defer resp.Body.Close()
 
-		if resp.StatusCode != http.StatusOK {
-			_, _ = io.Copy(io.Discard, resp.Body)
-			return nil, errors.Errorf("error response with status code %d", resp.StatusCode)
-		}
+			if resp.StatusCode != http.StatusOK {
+				_, _ = io.Copy(io.Discard, resp.Body)
+				return errors.Errorf("error response with status code %d", resp.StatusCode)
+			}
 
-		// 	```
-		// [Version]
-		//
-		// [Files]
-		// 1767700953      f       282     linux/extras/README
-		// 1366880149      d       4096    linux/extras
-		// 1182178200      d       4096    linux/core/development
-		// 1767700953      f       282     linux/core/updates/README
-		//
-		// [Checksums SHA1]
-		//
-		// [Checksums MD5]
-		//
-		// [Checksums SHA256]
-		//
-		// [Checksums SHA512]
-		//
-		// [End]
-		// ```
+			// 	```
+			// [Version]
+			//
+			// [Files]
+			// 1767700953      f       282     linux/extras/README
+			// 1366880149      d       4096    linux/extras
+			// 1182178200      d       4096    linux/core/development
+			// 1767700953      f       282     linux/core/updates/README
+			//
+			// [Checksums SHA1]
+			//
+			// [Checksums MD5]
+			//
+			// [Checksums SHA256]
+			//
+			// [Checksums SHA512]
+			//
+			// [End]
+			// ```
 
-		scanner := bufio.NewScanner(resp.Body)
-		isFilesSection := false
-		for scanner.Scan() {
-			s := strings.TrimSpace(scanner.Text())
-			switch {
-			case strings.HasPrefix(s, "[") && strings.HasSuffix(s, "]"):
-				switch s {
-				case "[Files]":
-					isFilesSection = true
-				default:
-					isFilesSection = false
-				}
-			default:
-				if !isFilesSection || s == "" {
-					continue
-				}
-
-				fields := strings.Fields(s)
-				if len(fields) != 4 {
-					return nil, errors.Errorf("unexpected fullfiletimelist Files format. expected: %q, actual: %q", "<unixtime>      <filetype>       <size>    <filepath>", s)
-				}
-				if strings.HasSuffix(fields[3], "repomd.xml") {
-					u, err := url.JoinPath(o.baseURL, d, fields[3])
-					if err != nil {
-						return nil, errors.Wrap(err, "join url path")
+			scanner := bufio.NewScanner(resp.Body)
+			isFilesSection := false
+			for scanner.Scan() {
+				s := strings.TrimSpace(scanner.Text())
+				switch {
+				case strings.HasPrefix(s, "[") && strings.HasSuffix(s, "]"):
+					switch s {
+					case "[Files]":
+						isFilesSection = true
+					default:
+						isFilesSection = false
 					}
-					us = append(us, u)
+				default:
+					if !isFilesSection || s == "" {
+						continue
+					}
+
+					fields := strings.Fields(s)
+					if len(fields) != 4 {
+						return errors.Errorf("unexpected fullfiletimelist Files format. expected: %q, actual: %q", "<unixtime>      <filetype>       <size>    <filepath>", s)
+					}
+					if strings.HasSuffix(fields[3], "repomd.xml") {
+						u, err := url.JoinPath(o.baseURL, d, fields[3])
+						if err != nil {
+							return errors.Wrap(err, "join url path")
+						}
+						us = append(us, u)
+					}
 				}
 			}
-		}
-		if err := scanner.Err(); err != nil {
-			return nil, errors.Wrap(err, "scanner encounter error")
+			if err := scanner.Err(); err != nil {
+				return errors.Wrap(err, "scanner encounter error")
+			}
+
+			return nil
+		}(); err != nil {
+			return nil, errors.Wrapf(err, "fetch %s", u)
 		}
 	}
 
