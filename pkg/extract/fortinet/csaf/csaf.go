@@ -197,8 +197,8 @@ type productStatus struct {
 // distinct profiles (which CSAF permits) split into separate
 // segments/conditions rather than being over-attributed to every product.
 type profile struct {
-	cvss   string // CVSS v3.1 vector
-	impact string
+	cvss   string // CVSS v3.1 vector, empty when no score lists the product
+	impact string // empty when no impact threat covers the product
 }
 
 // hash returns a digest of the profile, telling the profiles of one key apart
@@ -211,17 +211,23 @@ func (p profile) hash() uint32 {
 }
 
 // severities converts the profile to the severities of its Vulnerability
-// record. The CVSS vector is parsed here, once; a vector that does not parse
-// is malformed upstream data and hard-errors rather than being dropped.
+// record: one for each of the CVSS vector and the impact the profile has, so
+// none for a profile with neither. The CVSS vector is parsed here, once; a
+// vector that does not parse is malformed upstream data and hard-errors rather
+// than being dropped.
 func (p profile) severities() ([]severityTypes.Severity, error) {
-	c, err := v31Types.Parse(p.cvss)
-	if err != nil {
-		return nil, errors.Wrapf(err, "parse cvss vector %q", p.cvss)
+	var ss []severityTypes.Severity
+	if p.cvss != "" {
+		c, err := v31Types.Parse(p.cvss)
+		if err != nil {
+			return nil, errors.Wrapf(err, "parse cvss vector %q", p.cvss)
+		}
+		ss = append(ss, severityTypes.Severity{Type: severityTypes.SeverityTypeCVSSv31, Source: "fortiguard.fortinet.com", CVSSv31: c})
 	}
-	return []severityTypes.Severity{
-		{Type: severityTypes.SeverityTypeCVSSv31, Source: "fortiguard.fortinet.com", CVSSv31: c},
-		{Type: severityTypes.SeverityTypeVendor, Source: "fortiguard.fortinet.com", Vendor: new(p.impact)},
-	}, nil
+	if p.impact != "" {
+		ss = append(ss, severityTypes.Severity{Type: severityTypes.SeverityTypeVendor, Source: "fortiguard.fortinet.com", Vendor: new(p.impact)})
+	}
+	return ss, nil
 }
 
 func extract(fetched csafTypes.CSAF, raws []string) (dataTypes.Data, error) {
@@ -771,17 +777,15 @@ func resolveVersion(productName, exp string) (*ccRangeTypes.Range, string, error
 // vulnProfile returns the profile of one CSAF vulnerability object for the
 // product_id pid: the CVSS v3.1 vector of the score whose .products lists pid,
 // and the vendor impact whose .product_ids lists pid or which has none (and so
-// covers the whole object). Fortinet emits exactly one cvss vector and one
-// impact per product; anything else (zero or multiple distinct) is a hard
-// error (see below), not silently handled.
+// covers the whole object). CSAF requires neither a score nor a threat, so
+// either, or both, may be missing, leaving that part of the profile empty;
+// more than one distinct of either is a hard error (see below).
 func vulnProfile(v csafTypes.Vulnerability, pid string) (profile, error) {
-	// Fortinet emits exactly one cvss vector and one impact per vulnerability
-	// object (verified across the corpus), so each product gets one of each.
-	// Hold a single value and fail loudly on a second distinct one (a duplicate
-	// of the same value is tolerated); zero, or more than one distinct, of
-	// either would drop or mis-map a severity. This path only runs in CI, so a
-	// silent fallback would go unnoticed — a hard error is the signal to revisit
-	// the grouping.
+	// Fortinet emits at most one cvss vector and one impact per product. Hold a
+	// single value and fail loudly on a second distinct one (a duplicate of the
+	// same value is tolerated): picking one would mis-map a severity, and this
+	// path only runs in CI, so a silent fallback would go unnoticed — a hard
+	// error is the signal to revisit the grouping.
 	var vector string
 	for _, sc := range v.Scores {
 		if sc.CvssV3 == nil || sc.CvssV3.VectorString == "" || !slices.Contains(sc.Products, csafTypes.ProductID(pid)) {
@@ -792,14 +796,11 @@ func vulnProfile(v csafTypes.Vulnerability, pid string) (profile, error) {
 		}
 		vector = sc.CvssV3.VectorString
 	}
-	if vector == "" {
-		return profile{}, errors.Errorf("vulnerability %q has no cvss vector", v.CVE)
-	}
 	// Every cvss_v3 score in the corpus is CVSS:3.1 and parseable. A non-3.1
 	// vector is unexpected upstream data, not a known shape we choose to skip —
 	// hard-error rather than silently drop it (one that fails to parse errors
 	// on emit, in profile.severities).
-	if !strings.HasPrefix(vector, "CVSS:3.1/") {
+	if vector != "" && !strings.HasPrefix(vector, "CVSS:3.1/") {
 		return profile{}, errors.Errorf("unexpected non-3.1 cvss vector %q", vector)
 	}
 
@@ -813,10 +814,6 @@ func vulnProfile(v csafTypes.Vulnerability, pid string) (profile, error) {
 		}
 		impact = t.Details
 	}
-	if impact == "" {
-		return profile{}, errors.Errorf("vulnerability %q has no impact", v.CVE)
-	}
-
 	return profile{cvss: vector, impact: impact}, nil
 }
 

@@ -43,11 +43,6 @@ func TestExtract(t *testing.T) {
 			hasError: true,
 		},
 		{
-			name:     "product branch with no score",
-			args:     "./testdata/fixtures-no-score",
-			hasError: true,
-		},
-		{
 			name:     "product branch with two distinct scores",
 			args:     "./testdata/fixtures-distinct-scores",
 			hasError: true,

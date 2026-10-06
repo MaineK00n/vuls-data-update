@@ -2,14 +2,14 @@
 	"document": {
 		"category": "csaf_security_advisory",
 		"csaf_version": "2.0",
-		"title": "Synthetic advisory: a product branch with no score",
+		"title": "Synthetic advisory: a product branch with an impact but no score",
 		"publisher": {
 			"category": "vendor",
 			"name": "Fortinet PSIRT",
 			"namespace": "https://www.fortiguard.com/"
 		},
 		"tracking": {
-			"id": "FG-IR-99-002",
+			"id": "FG-IR-99-004",
 			"initial_release_date": "2099-01-01T00:00:00",
 			"current_release_date": "2099-01-01T00:00:00",
 			"status": "final",
