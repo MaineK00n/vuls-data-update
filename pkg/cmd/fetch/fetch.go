@@ -1545,7 +1545,7 @@ func newCmdENISAEUVDList() *cobra.Command {
 			dir:   filepath.Join(util.CacheDir(), "fetch", "enisa", "euvd", "list"),
 			retry: 5,
 		},
-		concurrency: 5,
+		concurrency: 2,
 		wait:        1 * time.Second,
 	}
 

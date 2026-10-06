@@ -90,7 +90,7 @@ func Fetch(opts ...Option) error {
 		baseURL:     baseURL,
 		dir:         filepath.Join(util.CacheDir(), "fetch", "enisa", "euvd", "list"),
 		retry:       5,
-		concurrency: 5,
+		concurrency: 2,
 		wait:        1 * time.Second,
 	}
 
@@ -127,9 +127,14 @@ func (opts options) fetch() error {
 				q := u.Query()
 				q.Set("size", "100")
 				q.Set("page", fmt.Sprintf("%d", p))
-				u.RawQuery = q.Encode()
+				// u is shared by every goroutine: setting the query on it lets
+				// another one overwrite the page before this one reads it back.
+				// A shallow copy is enough, as the only pointer in a URL is the
+				// immutable *Userinfo. From Go 1.27 on, u.Clone() says the same.
+				pageURL := *u
+				pageURL.RawQuery = q.Encode()
 
-				resp, err := client.Get(u.String())
+				resp, err := client.Get(pageURL.String())
 				if err != nil {
 					return errors.Wrap(err, "fetch")
 				}
