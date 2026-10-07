@@ -1,0 +1,13 @@
+{
+	"kb_id": "5089466",
+	"url": "https://support.microsoft.com/help/5089466",
+	"products": [
+		"Windows 11 Version 24H2 for x64-based Systems"
+	],
+	"data_source": {
+		"id": "microsoft-cvrf",
+		"raws": [
+			"fixtures/2026-May/2026/CVE-2026-42825.json"
+		]
+	}
+}

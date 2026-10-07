@@ -843,6 +843,12 @@ func buildDetections(v cvrf.Vulnerability, products map[string]string) (map[ecos
 	// Track which product IDs are covered by Vendor Fix remediations.
 	coveredProductIDs := make(map[string]struct{})
 
+	// Vendor Fix criteria are collected per detection tag first and emitted
+	// after all remediations are seen, because a tag offering a hotpatch
+	// needs every fix of the tag to build its version gates.
+	var tags []segmentTypes.DetectionTag
+	fixesByTag := make(map[segmentTypes.DetectionTag][]vendorFix)
+
 	for _, r := range v.Remediations.Remediation {
 		switch r.Type {
 		case "Vendor Fix":
@@ -895,22 +901,31 @@ func buildDetections(v cvrf.Vulnerability, products map[string]string) (map[ecos
 					continue
 				}
 
-				var cns []criterionTypes.Criterion
+				f := vendorFix{
+					hotpatch: isHotpatchSubType(r.SubType),
+					version:  fixedBuildCriterion,
+				}
 				if kbCriterion != nil {
-					cns = append(cns, *kbCriterion)
+					f.kbs = append(f.kbs, *kbCriterion)
 				}
 				if twinKBID, ok := kbCumulativeTwins[[2]string{criterionProductName, r.Description}]; ok {
-					cns = append(cns, *buildKBCriterion(criterionProductName, twinKBID))
-				}
-				if fixedBuildCriterion != nil {
-					cns = append(cns, *fixedBuildCriterion)
+					f.kbs = append(f.kbs, *buildKBCriterion(criterionProductName, twinKBID))
 				}
 
-				appendConditions(conditionsByEcosystem, tag, cns)
+				if _, ok := fixesByTag[tag]; !ok {
+					tags = append(tags, tag)
+				}
+				fixesByTag[tag] = append(fixesByTag[tag], f)
 			}
 		case "Release Notes", "Known Issue", "Mitigation", "Workaround":
 		default:
 			return nil, nil, errors.Errorf("unexpected remediation type. expected: %q, actual: %q", []string{"Vendor Fix", "Release Notes", "Known Issue", "Mitigation", "Workaround"}, r.Type)
+		}
+	}
+
+	for _, tag := range tags {
+		if err := appendVendorFixConditions(conditionsByEcosystem, tag, fixesByTag[tag]); err != nil {
+			return nil, nil, errors.Wrapf(err, "append vendor fix conditions for %s (%s)", v.CVE, tag)
 		}
 	}
 
@@ -1003,15 +1018,17 @@ func appendConditions(conditionsByEcosystem map[ecosystemTypes.Ecosystem][]condi
 			// KB criterions go under a nested AND sub-criteria so that
 			// dual-track KBs (Monthly Rollup + Security Only) require ALL
 			// to be unapplied before reporting a vulnerability.
-			if len(conditions[idx].Criteria.Criterias) == 0 {
-				conditions[idx].Criteria.Criterias = []criteriaTypes.Criteria{{
+			kbIdx := slices.IndexFunc(conditions[idx].Criteria.Criterias, isKBCriteria)
+			if kbIdx == -1 {
+				conditions[idx].Criteria.Criterias = append(conditions[idx].Criteria.Criterias, criteriaTypes.Criteria{
 					Operator: criteriaTypes.CriteriaOperatorTypeAND,
-				}}
+				})
+				kbIdx = len(conditions[idx].Criteria.Criterias) - 1
 			}
-			if !slices.ContainsFunc(conditions[idx].Criteria.Criterias[0].Criterions, func(e criterionTypes.Criterion) bool {
+			if !slices.ContainsFunc(conditions[idx].Criteria.Criterias[kbIdx].Criterions, func(e criterionTypes.Criterion) bool {
 				return criterionTypes.Compare(e, cn) == 0
 			}) {
-				conditions[idx].Criteria.Criterias[0].Criterions = append(conditions[idx].Criteria.Criterias[0].Criterions, cn)
+				conditions[idx].Criteria.Criterias[kbIdx].Criterions = append(conditions[idx].Criteria.Criterias[kbIdx].Criterions, cn)
 			}
 		default:
 			// Version criterions go directly under the top-level OR.
@@ -1021,6 +1038,148 @@ func appendConditions(conditionsByEcosystem map[ecosystemTypes.Ecosystem][]condi
 				conditions[idx].Criteria.Criterions = append(conditions[idx].Criteria.Criterions, cn)
 			}
 		}
+	}
+
+	conditionsByEcosystem[ecosystemTypes.EcosystemTypeMicrosoft] = conditions
+}
+
+// isKBCriteria reports whether ca is the nested AND sub-criteria that holds
+// a condition's KB criterions (see appendConditions). A gated version
+// sub-criteria (see appendVendorFixConditions) also is an AND, but it holds a
+// version criterion, so it never matches.
+func isKBCriteria(ca criteriaTypes.Criteria) bool {
+	return ca.Operator == criteriaTypes.CriteriaOperatorTypeAND && len(ca.Criterias) == 0 && !slices.ContainsFunc(ca.Criterions, func(cn criterionTypes.Criterion) bool {
+		return cn.Type != criterionTypes.CriterionTypeKB
+	})
+}
+
+// vendorFix holds the criterions built from one Vendor Fix remediation for
+// one product.
+type vendorFix struct {
+	hotpatch bool
+	kbs      []criterionTypes.Criterion
+	version  *criterionTypes.Criterion
+}
+
+// isHotpatchSubType reports whether a remediation SubType denotes a hotpatch.
+// CVRF spells it both "Security Hotpatch Update" and "SecurityHotpatchUpdate".
+func isHotpatchSubType(subType string) bool {
+	return strings.ReplaceAll(subType, " ", "") == "SecurityHotpatchUpdate"
+}
+
+// appendVendorFixConditions appends the criterions of all Vendor Fix
+// remediations of one detection tag.
+//
+// Without a hotpatch, every version criterion goes directly under the
+// top-level OR, as before.
+//
+// With a hotpatch, a host is fixed by whichever servicing track it follows:
+// a hotpatch-enrolled host sits at the hotpatch build, which is below the
+// fixed build of the cumulative update released alongside it, so an ungated
+// "version < <cumulative update build>" reports it although it applied the
+// hotpatch that Microsoft lists as the fix. The version criterions are
+// therefore ordered by fixed build, and each one is ANDed with the KB
+// criterions of every fix whose build is lower ("those KBs are unapplied"):
+//
+//	OR
+//	├─ AND( KB(f1) unapplied, ..., KB(fn) unapplied )
+//	├─ version < f1
+//	├─ AND( KB(f1) unapplied, version < f2 )
+//	└─ AND( KB(f1) unapplied, KB(f2) unapplied, version < f3 )
+//
+// The lowest build stays ungated: no other fix can have fixed a host below
+// it, and keeping it plain retains version-based detection for hosts whose
+// KB state is unknown. Ordering is by build, not by SubType, because
+// Microsoft has shipped hotpatches whose build is above the cumulative
+// update's (e.g. Windows Server 2022 in 2022-Feb: 10.0.20348.525 vs .524).
+func appendVendorFixConditions(conditionsByEcosystem map[ecosystemTypes.Ecosystem][]conditionTypes.Condition, tag segmentTypes.DetectionTag, fixes []vendorFix) error {
+	if !slices.ContainsFunc(fixes, func(f vendorFix) bool { return f.hotpatch }) {
+		for _, f := range fixes {
+			cns := slices.Clone(f.kbs)
+			if f.version != nil {
+				cns = append(cns, *f.version)
+			}
+			appendConditions(conditionsByEcosystem, tag, cns)
+		}
+		return nil
+	}
+
+	type versionedFix struct {
+		build windowsversion.Version
+		fix   vendorFix
+	}
+	vfs := make([]versionedFix, 0, len(fixes))
+	for _, f := range fixes {
+		appendConditions(conditionsByEcosystem, tag, f.kbs)
+
+		if f.version == nil {
+			continue
+		}
+		if f.version.Version.Affected.Type != rangeTypes.RangeTypeMicrosoftWindows {
+			return errors.Errorf("unexpected range type for a product offering a hotpatch. expected: %q, actual: %q", rangeTypes.RangeTypeMicrosoftWindows, f.version.Version.Affected.Type)
+		}
+		b, err := windowsversion.NewVersion(f.version.Version.Affected.Range[0].LessThan)
+		if err != nil {
+			return errors.Wrapf(err, "parse fixed build %q", f.version.Version.Affected.Range[0].LessThan)
+		}
+		vfs = append(vfs, versionedFix{build: b, fix: f})
+	}
+
+	// Ordering builds across servicing branches is meaningless, and a build
+	// leaked from a sibling branch would gate the real one. Such values need
+	// a fixedBuildOverrides entry.
+	for _, vf := range vfs {
+		if vf.build.Major != vfs[0].build.Major || vf.build.Minor != vfs[0].build.Minor || vf.build.Build != vfs[0].build.Build {
+			return errors.Errorf("unexpected servicing branch mix among fixed builds. expected: %q, actual: %q, please add fixedBuildOverrides", vfs[0].build.String(), vf.build.String())
+		}
+	}
+
+	for _, vf := range vfs {
+		var gates []criterionTypes.Criterion
+		for _, lower := range vfs {
+			if lower.build.Compare(vf.build) >= 0 {
+				continue
+			}
+			for _, kb := range lower.fix.kbs {
+				if !slices.ContainsFunc(gates, func(e criterionTypes.Criterion) bool { return criterionTypes.Compare(e, kb) == 0 }) {
+					gates = append(gates, kb)
+				}
+			}
+		}
+
+		if len(gates) == 0 {
+			appendConditions(conditionsByEcosystem, tag, []criterionTypes.Criterion{*vf.fix.version})
+			continue
+		}
+		appendGatedCondition(conditionsByEcosystem, tag, criteriaTypes.Criteria{
+			Operator:   criteriaTypes.CriteriaOperatorTypeAND,
+			Criterions: append(gates, *vf.fix.version),
+		})
+	}
+
+	return nil
+}
+
+// appendGatedCondition appends a gated version sub-criteria (see
+// appendVendorFixConditions) under the top-level OR of the tag's condition.
+func appendGatedCondition(conditionsByEcosystem map[ecosystemTypes.Ecosystem][]conditionTypes.Condition, tag segmentTypes.DetectionTag, ca criteriaTypes.Criteria) {
+	conditions := conditionsByEcosystem[ecosystemTypes.EcosystemTypeMicrosoft]
+
+	idx := slices.IndexFunc(conditions, func(c conditionTypes.Condition) bool {
+		return c.Tag == tag
+	})
+	if idx == -1 {
+		conditions = append(conditions, conditionTypes.Condition{
+			Criteria: criteriaTypes.Criteria{Operator: criteriaTypes.CriteriaOperatorTypeOR},
+			Tag:      tag,
+		})
+		idx = len(conditions) - 1
+	}
+
+	if !slices.ContainsFunc(conditions[idx].Criteria.Criterias, func(e criteriaTypes.Criteria) bool {
+		return criteriaTypes.Compare(e, ca) == 0
+	}) {
+		conditions[idx].Criteria.Criterias = append(conditions[idx].Criteria.Criterias, ca)
 	}
 
 	conditionsByEcosystem[ecosystemTypes.EcosystemTypeMicrosoft] = conditions
@@ -2650,6 +2809,8 @@ var fixedBuildOverrides = map[[3]string]string{
 	{"CVE-2026-25172", "Windows 11 Version 25H2 for ARM64-based Systems", "10.0.26100.7982"}: "10.0.26200.7982",
 	{"CVE-2026-25173", "Windows 11 Version 25H2 for ARM64-based Systems", "10.0.26100.7982"}: "10.0.26200.7982",
 	{"CVE-2026-26111", "Windows 11 Version 25H2 for ARM64-based Systems", "10.0.26100.7982"}: "10.0.26200.7982",
+	// 2026-Aug (Win11 24H2 (ARM64) hotpatch tagged 10.0.26200.x)
+	{"CVE-2026-62727", "Windows 11 Version 24H2 for ARM64-based Systems", "10.0.26200.9106"}: "10.0.26100.9106",
 }
 
 // missingProductOverride describes a product that Microsoft omitted from a
