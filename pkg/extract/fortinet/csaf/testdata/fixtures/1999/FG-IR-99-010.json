@@ -1,0 +1,112 @@
+{
+	"document": {
+		"category": "csaf_security_advisory",
+		"csaf_version": "2.0",
+		"title": "Synthetic advisory: an impact per product branch",
+		"publisher": {
+			"category": "vendor",
+			"name": "Fortinet PSIRT",
+			"namespace": "https://www.fortiguard.com/"
+		},
+		"tracking": {
+			"id": "FG-IR-99-010",
+			"initial_release_date": "2099-01-01T00:00:00",
+			"current_release_date": "2099-01-01T00:00:00",
+			"status": "final",
+			"version": "1",
+			"revision_history": [
+				{
+					"date": "2099-01-01T00:00:00",
+					"number": "1",
+					"summary": "Initial Publication"
+				}
+			]
+		}
+	},
+	"product_tree": {
+		"branches": [
+			{
+				"category": "vendor",
+				"name": "Fortinet PSIRT",
+				"branches": [
+					{
+						"category": "product",
+						"name": "FortiOS",
+						"branches": [
+							{
+								"category": "product_version_range",
+								"name": "FortiOS/7.4 all versions",
+								"product": {
+									"name": "FortiOS",
+									"product_id": "FortiOS 7.4 all versions"
+								}
+							}
+						]
+					},
+					{
+						"category": "product",
+						"name": "FortiProxy",
+						"branches": [
+							{
+								"category": "product_version_range",
+								"name": "FortiProxy/7.4 all versions",
+								"product": {
+									"name": "FortiProxy",
+									"product_id": "FortiProxy 7.4 all versions"
+								}
+							}
+						]
+					}
+				]
+			}
+		]
+	},
+	"vulnerabilities": [
+		{
+			"cve": "CVE-2099-0001",
+			"notes": [
+				{
+					"category": "summary",
+					"title": "Summary",
+					"text": "an impact per product branch"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiOS 7.4 all versions",
+					"FortiProxy 7.4 all versions"
+				]
+			},
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 0,
+						"baseSeverity": "",
+						"vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiOS",
+						"FortiProxy"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Execute unauthorized code or commands",
+					"product_ids": [
+						"FortiOS"
+					]
+				},
+				{
+					"category": "impact",
+					"details": "Information disclosure",
+					"product_ids": [
+						"FortiProxy"
+					]
+				}
+			]
+		}
+	]
+}

@@ -80,7 +80,7 @@ func TestExtract(t *testing.T) {
 			hasError: true,
 		},
 		{
-			name:     "impact scoped by product_ids",
+			name:     "impact naming a leaf product_id",
 			args:     "./testdata/fixtures-threat-product-ids",
 			hasError: true,
 		},
