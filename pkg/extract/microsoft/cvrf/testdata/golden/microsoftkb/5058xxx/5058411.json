@@ -1,0 +1,18 @@
+{
+	"kb_id": "5058411",
+	"url": "https://support.microsoft.com/help/5058411",
+	"products": [
+		"Windows 11 Version 24H2 for x64-based Systems"
+	],
+	"supersedes": [
+		{
+			"kb_id": "5055523"
+		}
+	],
+	"data_source": {
+		"id": "microsoft-cvrf",
+		"raws": [
+			"fixtures/2025-May/2025/CVE-2025-29971.json"
+		]
+	}
+}

@@ -1,0 +1,19 @@
+{
+	"kb_id": "5030216",
+	"url": "https://support.microsoft.com/help/5030216",
+	"products": [
+		"Windows Server 2022",
+		"Windows Server 2022 (Server Core installation)"
+	],
+	"supersedes": [
+		{
+			"kb_id": "5029250"
+		}
+	],
+	"data_source": {
+		"id": "microsoft-cvrf",
+		"raws": [
+			"fixtures/2023-Sep/2023/CVE-2023-38140.json"
+		]
+	}
+}

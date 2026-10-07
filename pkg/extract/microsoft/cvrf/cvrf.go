@@ -999,18 +999,7 @@ func buildDetections(v cvrf.Vulnerability, products map[string]string) (map[ecos
 }
 
 func appendConditions(conditionsByEcosystem map[ecosystemTypes.Ecosystem][]conditionTypes.Condition, tag segmentTypes.DetectionTag, cns []criterionTypes.Criterion) {
-	conditions := conditionsByEcosystem[ecosystemTypes.EcosystemTypeMicrosoft]
-
-	idx := slices.IndexFunc(conditions, func(c conditionTypes.Condition) bool {
-		return c.Tag == tag
-	})
-	if idx == -1 {
-		conditions = append(conditions, conditionTypes.Condition{
-			Criteria: criteriaTypes.Criteria{Operator: criteriaTypes.CriteriaOperatorTypeOR},
-			Tag:      tag,
-		})
-		idx = len(conditions) - 1
-	}
+	conditions, idx := conditionIndex(conditionsByEcosystem[ecosystemTypes.EcosystemTypeMicrosoft], tag)
 
 	for _, cn := range cns {
 		switch cn.Type {
@@ -1043,6 +1032,21 @@ func appendConditions(conditionsByEcosystem map[ecosystemTypes.Ecosystem][]condi
 	conditionsByEcosystem[ecosystemTypes.EcosystemTypeMicrosoft] = conditions
 }
 
+// conditionIndex returns the index of the tag's condition, appending an
+// empty top-level OR condition for the tag when there is none yet.
+func conditionIndex(conditions []conditionTypes.Condition, tag segmentTypes.DetectionTag) ([]conditionTypes.Condition, int) {
+	if idx := slices.IndexFunc(conditions, func(c conditionTypes.Condition) bool {
+		return c.Tag == tag
+	}); idx != -1 {
+		return conditions, idx
+	}
+	conditions = append(conditions, conditionTypes.Condition{
+		Criteria: criteriaTypes.Criteria{Operator: criteriaTypes.CriteriaOperatorTypeOR},
+		Tag:      tag,
+	})
+	return conditions, len(conditions) - 1
+}
+
 // isKBCriteria reports whether ca is the nested AND sub-criteria that holds
 // a condition's KB criterions (see appendConditions). A gated version
 // sub-criteria (see appendVendorFixConditions) also is an AND, but it holds a
@@ -1062,9 +1066,10 @@ type vendorFix struct {
 }
 
 // isHotpatchSubType reports whether a remediation SubType denotes a hotpatch.
-// CVRF spells it both "Security Hotpatch Update" and "SecurityHotpatchUpdate".
+// CVRF spells it "Security Hotpatch Update", "SecurityHotpatchUpdate",
+// "Security HotPatch Update" (2025-May) and "AzureHotpatch" (2023-Sep).
 func isHotpatchSubType(subType string) bool {
-	return strings.ReplaceAll(subType, " ", "") == "SecurityHotpatchUpdate"
+	return strings.Contains(strings.ToLower(subType), "hotpatch")
 }
 
 // appendVendorFixConditions appends the criterions of all Vendor Fix
@@ -1077,9 +1082,9 @@ func isHotpatchSubType(subType string) bool {
 // a hotpatch-enrolled host sits at the hotpatch build, which is below the
 // fixed build of the cumulative update released alongside it, so an ungated
 // "version < <cumulative update build>" reports it although it applied the
-// hotpatch that Microsoft lists as the fix. The version criterions are
-// therefore ordered by fixed build, and each one is ANDed with the KB
-// criterions of every fix whose build is lower ("those KBs are unapplied"):
+// hotpatch that Microsoft lists as the fix. Each version criterion is
+// therefore ANDed with the KB criterions of every fix whose fixed build is
+// strictly lower ("those KBs are unapplied"):
 //
 //	OR
 //	├─ AND( KB(f1) unapplied, ..., KB(fn) unapplied )
@@ -1110,7 +1115,9 @@ func appendVendorFixConditions(conditionsByEcosystem map[ecosystemTypes.Ecosyste
 	}
 	vfs := make([]versionedFix, 0, len(fixes))
 	for _, f := range fixes {
-		appendConditions(conditionsByEcosystem, tag, f.kbs)
+		if len(f.kbs) > 0 {
+			appendConditions(conditionsByEcosystem, tag, f.kbs)
+		}
 
 		if f.version == nil {
 			continue
@@ -1163,18 +1170,7 @@ func appendVendorFixConditions(conditionsByEcosystem map[ecosystemTypes.Ecosyste
 // appendGatedCondition appends a gated version sub-criteria (see
 // appendVendorFixConditions) under the top-level OR of the tag's condition.
 func appendGatedCondition(conditionsByEcosystem map[ecosystemTypes.Ecosystem][]conditionTypes.Condition, tag segmentTypes.DetectionTag, ca criteriaTypes.Criteria) {
-	conditions := conditionsByEcosystem[ecosystemTypes.EcosystemTypeMicrosoft]
-
-	idx := slices.IndexFunc(conditions, func(c conditionTypes.Condition) bool {
-		return c.Tag == tag
-	})
-	if idx == -1 {
-		conditions = append(conditions, conditionTypes.Condition{
-			Criteria: criteriaTypes.Criteria{Operator: criteriaTypes.CriteriaOperatorTypeOR},
-			Tag:      tag,
-		})
-		idx = len(conditions) - 1
-	}
+	conditions, idx := conditionIndex(conditionsByEcosystem[ecosystemTypes.EcosystemTypeMicrosoft], tag)
 
 	if !slices.ContainsFunc(conditions[idx].Criteria.Criterias, func(e criteriaTypes.Criteria) bool {
 		return criteriaTypes.Compare(e, ca) == 0

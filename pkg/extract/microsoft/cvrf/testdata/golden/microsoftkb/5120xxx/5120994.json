@@ -1,0 +1,15 @@
+{
+	"kb_id": "5120994",
+	"url": "https://support.microsoft.com/help/5120994",
+	"products": [
+		"Windows 11 Version 24H2 for ARM64-based Systems",
+		"Windows 11 Version 24H2 for x64-based Systems"
+	],
+	"data_source": {
+		"id": "microsoft-cvrf",
+		"raws": [
+			"fixtures/2026-Aug/2026/CVE-2026-62727.json",
+			"fixtures/2026-Aug/2026/CVE-2026-6726.json"
+		]
+	}
+}
