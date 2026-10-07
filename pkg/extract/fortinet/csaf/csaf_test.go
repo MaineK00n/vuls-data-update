@@ -53,6 +53,23 @@ func TestExtract(t *testing.T) {
 			hasError: true,
 		},
 		{
+			name:     "score listing a product without a cvss_v3 vector",
+			args:     "./testdata/fixtures-score-without-vector",
+			hasError: true,
+		},
+		{
+			name:     "impact without details",
+			args:     "./testdata/fixtures-impact-without-details",
+			hasError: true,
+		},
+		{
+			// impact-162789 and impact-379192, with no CVSS, both hash to
+			// 275a5ccb.
+			name:     "two profiles hashing to one tag",
+			args:     "./testdata/fixtures-tag-collision",
+			hasError: true,
+		},
+		{
 			name:     "score naming a product the tree does not have",
 			args:     "./testdata/fixtures-unknown-product",
 			hasError: true,

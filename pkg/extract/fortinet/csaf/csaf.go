@@ -332,7 +332,30 @@ func extract(fetched csafTypes.CSAF, raws []string) (dataTypes.Data, error) {
 		for _, ps := range a.products {
 			profiles[ps.profile] = struct{}{}
 		}
+
+		// One profile → the tag is the bare key (CVE / advisory ID), keeping the
+		// common single-profile output stable. Multiple profiles within one key →
+		// suffix each tag with a hash of the profile, so a tag moves only when its
+		// profile's content does, which changes the Vulnerability record anyway.
+		// A product-based suffix would move with every version range Fortinet
+		// edits into a product_id. Distinct profiles may still hash alike, and two
+		// sharing a tag would tie each one's condition to the other's record, so a
+		// collision hard-errors rather than picking one.
+		tags := make(map[profile]segmentTypes.DetectionTag, len(profiles))
 		for p := range profiles {
+			tag := segmentTypes.DetectionTag(key)
+			if len(profiles) > 1 {
+				tag = segmentTypes.DetectionTag(fmt.Sprintf("%s_%08x", key, p.hash()))
+			}
+			for q, t := range tags {
+				if t == tag {
+					return dataTypes.Data{}, errors.Errorf("profiles %+v and %+v hash to one tag %q (advisory %s, %s)", q, p, tag, id, key)
+				}
+			}
+			tags[p] = tag
+		}
+
+		for p, tag := range tags {
 			// Sorted so that, of several unresolvable products, the same one is
 			// reported every run.
 			var (
@@ -372,18 +395,6 @@ func extract(fetched csafTypes.CSAF, raws []string) (dataTypes.Data, error) {
 				return dataTypes.Data{}, errors.Wrapf(err, "severity for advisory %s, %s", id, key)
 			}
 
-			// One profile → the tag is the bare key (CVE / advisory ID), keeping
-			// the common single-profile output stable. Multiple profiles within
-			// one key → suffix each tag with a hash of the profile. The profiles
-			// of a key are distinct by construction, so the tags are too, whatever
-			// the data; and a tag moves only when its profile's content does,
-			// which changes the Vulnerability record anyway. A product-based
-			// suffix would move with every version range Fortinet edits into a
-			// product_id, and could collide if a family split across profiles.
-			tag := segmentTypes.DetectionTag(key)
-			if len(profiles) > 1 {
-				tag = segmentTypes.DetectionTag(fmt.Sprintf("%s_%08x", key, p.hash()))
-			}
 			seg := segmentTypes.Segment{Ecosystem: ecosystemTypes.EcosystemTypeCPE, Tag: tag}
 
 			// Every profile comes from a listed product, so each has criterions
@@ -788,8 +799,13 @@ func vulnProfile(v csafTypes.Vulnerability, pid string) (profile, error) {
 	// error is the signal to revisit the grouping.
 	var vector string
 	for _, sc := range v.Scores {
-		if sc.CvssV3 == nil || sc.CvssV3.VectorString == "" || !slices.Contains(sc.Products, csafTypes.ProductID(pid)) {
+		if !slices.Contains(sc.Products, csafTypes.ProductID(pid)) {
 			continue
+		}
+		// A score may be missing, but one that lists the product carries its
+		// vector: without it the severity would be dropped unnoticed.
+		if sc.CvssV3 == nil || sc.CvssV3.VectorString == "" {
+			return profile{}, errors.Errorf("score of %q listing %q has no cvss_v3 vector", v.CVE, pid)
 		}
 		if vector != "" && vector != sc.CvssV3.VectorString {
 			return profile{}, errors.Errorf("vulnerability %q has multiple distinct cvss vectors (%q, %q)", v.CVE, vector, sc.CvssV3.VectorString)
@@ -806,8 +822,13 @@ func vulnProfile(v csafTypes.Vulnerability, pid string) (profile, error) {
 
 	var impact string
 	for _, t := range v.Threats {
-		if t.Category != "impact" || t.Details == "" || (len(t.ProductIDs) > 0 && !slices.Contains(t.ProductIDs, csafTypes.ProductID(pid))) {
+		if t.Category != "impact" || (len(t.ProductIDs) > 0 && !slices.Contains(t.ProductIDs, csafTypes.ProductID(pid))) {
 			continue
+		}
+		// Likewise an impact that covers the product carries its details
+		// (CSAF requires them).
+		if t.Details == "" {
+			return profile{}, errors.Errorf("impact of %q covering %q has no details", v.CVE, pid)
 		}
 		if impact != "" && impact != t.Details {
 			return profile{}, errors.Errorf("vulnerability %q has multiple distinct impacts (%q, %q)", v.CVE, impact, t.Details)
