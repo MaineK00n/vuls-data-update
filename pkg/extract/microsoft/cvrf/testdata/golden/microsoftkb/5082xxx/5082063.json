@@ -1,0 +1,22 @@
+{
+	"kb_id": "5082063",
+	"url": "https://support.microsoft.com/help/5082063",
+	"products": [
+		"Windows 11 Version 24H2 for x64-based Systems",
+		"Windows Server 2025"
+	],
+	"superseded_by": [
+		{
+			"kb_id": "5087539"
+		},
+		{
+			"kb_id": "5089549"
+		}
+	],
+	"data_source": {
+		"id": "microsoft-cvrf",
+		"raws": [
+			"fixtures/2026-May/2026/CVE-2026-42825.json"
+		]
+	}
+}

@@ -1,0 +1,13 @@
+{
+	"kb_id": "5014677",
+	"url": "https://support.microsoft.com/help/5014677",
+	"products": [
+		"Windows Server 2022"
+	],
+	"data_source": {
+		"id": "microsoft-cvrf",
+		"raws": [
+			"fixtures/2022-Jun/2022/CVE-2022-21123.json"
+		]
+	}
+}
