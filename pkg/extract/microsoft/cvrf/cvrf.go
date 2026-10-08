@@ -848,7 +848,7 @@ func buildDetections(v cvrf.Vulnerability, products map[string]string) (map[ecos
 	// needs every fix of the tag to build its version gates.
 	var tags []segmentTypes.DetectionTag
 	fixesByTag := make(map[segmentTypes.DetectionTag][]vendorFix)
-	overriddenTags := make(map[segmentTypes.DetectionTag]struct{})
+	excludedTags := make(map[segmentTypes.DetectionTag]struct{})
 
 	for _, r := range v.Remediations.Remediation {
 		switch r.Type {
@@ -875,8 +875,8 @@ func buildDetections(v cvrf.Vulnerability, products map[string]string) (map[ecos
 
 				fixedBuild, hotpatch := r.FixedBuild, isHotpatchSubType(r.SubType)
 				if o, ok := vendorFixOverrides[[3]string{v.CVE, criterionProductName, r.Description}]; ok {
-					overriddenTags[tag] = struct{}{}
 					if o.exclude {
+						excludedTags[tag] = struct{}{}
 						continue
 					}
 					if o.fixedBuild != "" {
@@ -936,7 +936,7 @@ func buildDetections(v cvrf.Vulnerability, products map[string]string) (map[ecos
 		}
 	}
 
-	for tag := range overriddenTags {
+	for _, tag := range slices.Sorted(maps.Keys(excludedTags)) {
 		if _, ok := fixesByTag[tag]; !ok {
 			// Every Vendor Fix of the product was excluded. The product is
 			// covered, so the ProductStatuses fallback skips it as well and
@@ -946,8 +946,8 @@ func buildDetections(v cvrf.Vulnerability, products map[string]string) (map[ecos
 	}
 
 	for _, tag := range tags {
-		if _, ok := overriddenTags[tag]; !ok && needsHotpatchReview(fixesByTag[tag]) {
-			if _, ok := hotpatchFixesReviewed[[2]string{v.CVE, string(tag)}]; !ok {
+		if _, ok := excludedTags[tag]; !ok && needsHotpatchReview(fixesByTag[tag]) {
+			if _, ok := hotpatchFixesReviewed[[2]string{v.CVE, microsoftutil.NormalizeProductName(string(tag))}]; !ok {
 				// A hotpatch's follow-up update listed side by side with it
 				// gates its fixed build and hides hosts that applied only the
 				// hotpatch (see vendorFixOverrides), so fail like the
@@ -1170,7 +1170,8 @@ var vendorFixOverrides = map[[3]string]vendorFixOverride{
 }
 
 // hotpatchFixesReviewed acknowledges detection tags, keyed by [2]string{CVE
-// ID, product name as in CVRF}, that offer a hotpatch and list more than two
+// ID, product name after microsoftutil.NormalizeProductName} like
+// vendorFixOverrides, that offer a hotpatch and list more than two
 // KBs (see needsHotpatchReview) but were checked against the CVE FAQ and the
 // KB articles and need no vendorFixOverrides entry.
 var hotpatchFixesReviewed = map[[2]string]struct{}{}
