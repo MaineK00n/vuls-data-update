@@ -397,6 +397,24 @@ func TestSupplementCriteria(t *testing.T) {
 			wantErr: true,
 		},
 		{
+			// Both fields of one side set: the order check reads one, Range.Accept
+			// applies both.
+			name: "two lower bounds → error",
+			args: args{
+				table: map[string][]cvrf.SupplementProduct{"FG-IR-24-001": {{Product: "FortiOS", Ranges: []cvrf.SupplementRange{{GreaterEqual: "7.0.0", GreaterThan: "7.5.0", LessEqual: "7.3.0"}}}}},
+				id:    "FG-IR-24-001",
+			},
+			wantErr: true,
+		},
+		{
+			name: "two upper bounds → error",
+			args: args{
+				table: map[string][]cvrf.SupplementProduct{"FG-IR-24-001": {{Product: "FortiOS", Ranges: []cvrf.SupplementRange{{GreaterEqual: "7.0.0", LessEqual: "7.3.0", LessThan: "7.2.0"}}}}},
+				id:    "FG-IR-24-001",
+			},
+			wantErr: true,
+		},
+		{
 			// Equal bounds with an exclusive side admit no version at all
 			// (Range.Accept rejects the bound value for gt/lt).
 			name: "equal strict bounds → error",
