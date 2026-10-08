@@ -1277,6 +1277,11 @@ func TestExtract(t *testing.T) {
 			args:     "./testdata/fixtures-hotpatch-all-excluded",
 			hasError: true,
 		},
+		{
+			name:     "hotpatch product with a Vendor Fix without FixedBuild",
+			args:     "./testdata/fixtures-hotpatch-missing-fixedbuild",
+			hasError: true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

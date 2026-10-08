@@ -1243,7 +1243,16 @@ func appendVendorFixConditions(conditionsByEcosystem map[ecosystemTypes.Ecosyste
 		}
 
 		if f.version == nil {
-			continue
+			// Without a fixed build the fix cannot be ordered, so its KB
+			// would never gate the other fixes' builds. Such a value needs a
+			// vendorFixOverrides fixedBuild.
+			return errors.Errorf("unexpected Vendor Fix without a usable FixedBuild for a product offering a hotpatch. expected: a fixed build for KBs %q, actual: none, please add vendorFixOverrides", func() []string {
+				ids := make([]string, 0, len(f.kbs))
+				for _, kb := range f.kbs {
+					ids = append(ids, kb.KB.KBID)
+				}
+				return ids
+			}())
 		}
 		if f.version.Version.Affected.Type != rangeTypes.RangeTypeMicrosoftWindows {
 			return errors.Errorf("unexpected range type for a product offering a hotpatch. expected: %q, actual: %q", rangeTypes.RangeTypeMicrosoftWindows, f.version.Version.Affected.Type)
