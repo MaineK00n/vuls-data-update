@@ -160,15 +160,22 @@ func Fetch(opts ...Option) error {
 
 			scanner := bufio.NewScanner(indexf)
 			for scanner.Scan() {
-				f, err := os.Open(filepath.Join(tempDir, "csaf_files", p, scanner.Text()))
-				if err != nil {
-					return errors.Wrapf(err, "open %s", filepath.Join(tempDir, scanner.Text()))
-				}
-				defer f.Close()
+				advisory, err := func() (CSAF, error) {
+					f, err := os.Open(filepath.Join(tempDir, "csaf_files", p, scanner.Text()))
+					if err != nil {
+						return CSAF{}, errors.Wrap(err, "open")
+					}
+					defer f.Close()
 
-				var advisory CSAF
-				if err := json.UnmarshalRead(f, &advisory); err != nil {
-					return errors.Wrap(err, "decode json")
+					var advisory CSAF
+					if err := json.UnmarshalRead(f, &advisory); err != nil {
+						return CSAF{}, errors.Wrap(err, "decode json")
+					}
+
+					return advisory, nil
+				}()
+				if err != nil {
+					return errors.Wrapf(err, "read %s", scanner.Text())
 				}
 
 				t, err := time.Parse(time.RFC3339, advisory.Document.Tracking.InitialReleaseDate)

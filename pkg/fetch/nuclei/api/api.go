@@ -101,25 +101,32 @@ func (o options) fetch(apikey string) error {
 			q.Set("limit", "100")
 			u.RawQuery = q.Encode()
 
-			req, err := utilhttp.NewRequest(http.MethodGet, u.String(), utilhttp.WithRequestHeader(header))
+			r, err := func() (response, error) {
+				req, err := utilhttp.NewRequest(http.MethodGet, u.String(), utilhttp.WithRequestHeader(header))
+				if err != nil {
+					return response{}, errors.Wrap(err, "new request")
+				}
+
+				resp, err := client.Do(req)
+				if err != nil {
+					return response{}, errors.Wrap(err, "fetch nuclei api")
+				}
+				defer resp.Body.Close()
+
+				if resp.StatusCode != http.StatusOK {
+					_, _ = io.Copy(io.Discard, resp.Body)
+					return response{}, errors.Errorf("error response with status code %d", resp.StatusCode)
+				}
+
+				var r response
+				if err := json.UnmarshalRead(resp.Body, &r); err != nil {
+					return response{}, errors.Wrap(err, "decode json")
+				}
+
+				return r, nil
+			}()
 			if err != nil {
-				return errors.Wrap(err, "new request")
-			}
-
-			resp, err := client.Do(req)
-			if err != nil {
-				return errors.Wrap(err, "fetch nuclei api")
-			}
-			defer resp.Body.Close()
-
-			if resp.StatusCode != http.StatusOK {
-				_, _ = io.Copy(io.Discard, resp.Body)
-				return errors.Errorf("error response with status code %d", resp.StatusCode)
-			}
-
-			var r response
-			if err := json.UnmarshalRead(resp.Body, &r); err != nil {
-				return errors.Wrap(err, "decode json")
+				return errors.Wrapf(err, "fetch %s", u.String())
 			}
 
 			for _, r := range r.Results {

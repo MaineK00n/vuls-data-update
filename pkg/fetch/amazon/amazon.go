@@ -110,20 +110,27 @@ func Fetch(opts ...Option) error {
 			}
 			advs[getPackageRepository(options.mirrorURLs[v].Core)] = us
 		case "2":
-			resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.mirrorURLs[v].Extra)
+			c, err := func() (catalog, error) {
+				resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.mirrorURLs[v].Extra)
+				if err != nil {
+					return catalog{}, errors.Wrapf(err, "fetch %s", options.mirrorURLs[v].Extra)
+				}
+				defer resp.Body.Close()
+
+				if resp.StatusCode != http.StatusOK {
+					_, _ = io.Copy(io.Discard, resp.Body)
+					return catalog{}, errors.Errorf("error response with status code %d", resp.StatusCode)
+				}
+
+				var c catalog
+				if err := json.UnmarshalRead(resp.Body, &c); err != nil {
+					return catalog{}, errors.Wrap(err, "decode json")
+				}
+
+				return c, nil
+			}()
 			if err != nil {
-				return errors.Wrapf(err, "fetch %s", options.mirrorURLs[v].Extra)
-			}
-			defer resp.Body.Close()
-
-			if resp.StatusCode != http.StatusOK {
-				_, _ = io.Copy(io.Discard, resp.Body)
-				return errors.Errorf("error response with status code %d", resp.StatusCode)
-			}
-
-			var c catalog
-			if err := json.UnmarshalRead(resp.Body, &c); err != nil {
-				return errors.Wrap(err, "decode json")
+				return errors.Wrap(err, "fetch extras catalog")
 			}
 
 			m := options.mirrorURLs[v]

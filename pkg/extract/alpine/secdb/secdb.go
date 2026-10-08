@@ -98,15 +98,22 @@ func Extract(args string, opts ...Option) error {
 			}
 
 			if _, err := os.Stat(p); err == nil {
-				f, err := os.Open(p)
-				if err != nil {
-					return errors.Wrapf(err, "open %s", p)
-				}
-				defer f.Close()
+				base, err := func() (dataTypes.Data, error) {
+					f, err := os.Open(p)
+					if err != nil {
+						return dataTypes.Data{}, errors.Wrapf(err, "open %s", p)
+					}
+					defer f.Close()
 
-				var base dataTypes.Data
-				if err := json.UnmarshalRead(f, &base); err != nil {
-					return errors.Wrapf(err, "decode %s", p)
+					var base dataTypes.Data
+					if err := json.UnmarshalRead(f, &base); err != nil {
+						return dataTypes.Data{}, errors.Wrapf(err, "decode %s", p)
+					}
+
+					return base, nil
+				}()
+				if err != nil {
+					return errors.Wrap(err, "read existing data")
 				}
 
 				data.Merge(base)
