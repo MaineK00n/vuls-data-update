@@ -68,6 +68,11 @@ func TestExtract(t *testing.T) {
 			hasError: true,
 		},
 		{
+			name:     "mitigation naming none of the listed products",
+			args:     "./testdata/fixtures-mitigation-naming-no-listed-product",
+			hasError: true,
+		},
+		{
 			name:     "impact naming none of the listed products",
 			args:     "./testdata/fixtures-impact-naming-no-listed-product",
 			hasError: true,

@@ -342,6 +342,13 @@ func extract(fetched csafTypes.CSAF, raws []string) (dataTypes.Data, error) {
 				return dataTypes.Data{}, errors.Errorf("impact of %q names none of the listed products (product_ids: %q, listed: %q) (advisory %s)", key, t.ProductIDs, listed, id)
 			}
 		}
+		// A mitigation is read the same way, so one naming none of the listed
+		// products would be dropped unnoticed as well.
+		for _, rem := range v.Remediations {
+			if rem.Category == "mitigation" && !reachesListed(rem.ProductIDs) {
+				return dataTypes.Data{}, errors.Errorf("mitigation of %q names none of the listed products (product_ids: %q, listed: %q) (advisory %s)", key, rem.ProductIDs, listed, id)
+			}
+		}
 		for _, l := range []struct {
 			pids     []csafTypes.ProductID
 			affected bool
