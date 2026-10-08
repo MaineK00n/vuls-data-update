@@ -851,7 +851,7 @@ func resolveVersion(productName, exp string) (*ccRangeTypes.Range, string, error
 		r := ccRangeTypes.Range{}
 		// At most one bound per side. A repeated side (">7.2.7|>=7.2.0|<=7.2.5",
 		// ">=7.0.0|>=7.2.0") would either set both fields of that side, and the
-		// order check in toCriterion reads only one of them, or overwrite the
+		// order check in toCriterions reads only one of them, or overwrite the
 		// first value with the second; either way the emitted range is not the
 		// one written, so reject it rather than pick a bound.
 		seen := make(map[string]bool, 2)

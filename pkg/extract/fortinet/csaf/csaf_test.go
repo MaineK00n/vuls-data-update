@@ -634,7 +634,8 @@ func TestToCriterions(t *testing.T) {
 			wantErr: true,
 		},
 		{
-			// The same operator twice would silently keep only the last value.
+			// Without the one-bound-per-side check, the same operator twice would
+			// silently keep only the last value.
 			name: "two lower bounds of the same operator rejected",
 			args: args{
 				productID: "FortiOS >=7.0.0|>=7.2.0|<=7.2.5",
