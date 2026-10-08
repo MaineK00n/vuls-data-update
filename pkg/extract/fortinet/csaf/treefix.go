@@ -467,12 +467,14 @@ func defineNotAffected(doc *csafTypes.CSAF, cov coverage, renamed map[csafTypes.
 // way, no branch name equals a product_id, and no remediation or threat is
 // scoped by group_ids, nor any threat by product_ids. Every score and
 // remediation is scoped: CSAF requires scores[].products, and
-// remediations[].product_ids or group_ids.
+// remediations[].product_ids or group_ids. A threat need not be: one without
+// product_ids covers the whole vulnerability object. A threat's product_ids,
+// should Fortinet scope one, are read the way its scores are.
 //
 // Anything else hard-errors — a reference that is not a branch name, a leaf
-// product_id included, an unscoped score or remediation, and a scoped threat —
-// since it would be a change of Fortinet's format, to route deliberately
-// rather than guess at.
+// product_id included, an unscoped score or remediation, and group_ids on a
+// remediation or threat — since it would be a change of Fortinet's format, to
+// route deliberately rather than guess at.
 func resolveReferences(doc *csafTypes.CSAF, cov coverage) error {
 	for i := range doc.Vulnerabilities {
 		v := &doc.Vulnerabilities[i]
@@ -499,10 +501,18 @@ func resolveReferences(doc *csafTypes.CSAF, cov coverage) error {
 			}
 			v.Remediations[j].ProductIDs = pids
 		}
-		for _, t := range v.Threats {
-			if len(t.ProductIDs) > 0 || len(t.GroupIDs) > 0 {
-				return errors.Errorf("unexpected scoped threat of %q (product_ids: %q, group_ids: %q)", v.CVE, t.ProductIDs, t.GroupIDs)
+		for j := range v.Threats {
+			if len(v.Threats[j].GroupIDs) > 0 {
+				return errors.Errorf("unexpected threats.group_ids %q of %q", v.Threats[j].GroupIDs, v.CVE)
 			}
+			if len(v.Threats[j].ProductIDs) == 0 {
+				continue
+			}
+			pids, err := cov.expand(v.Threats[j].ProductIDs)
+			if err != nil {
+				return errors.Wrapf(err, "threats.product_ids of %q", v.CVE)
+			}
+			v.Threats[j].ProductIDs = pids
 		}
 	}
 	return nil

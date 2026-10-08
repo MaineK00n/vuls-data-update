@@ -17,11 +17,11 @@
 			"segments": [
 				{
 					"ecosystem": "cpe",
-					"tag": "CVE-2026-27316_3cf3c98b"
+					"tag": "CVE-2026-27316_07e222da"
 				},
 				{
 					"ecosystem": "cpe",
-					"tag": "CVE-2026-27316_d2c42ffb"
+					"tag": "CVE-2026-27316_4f437df8"
 				}
 			]
 		}
@@ -70,7 +70,7 @@
 			"segments": [
 				{
 					"ecosystem": "cpe",
-					"tag": "CVE-2026-27316_d2c42ffb"
+					"tag": "CVE-2026-27316_4f437df8"
 				}
 			]
 		},
@@ -117,7 +117,7 @@
 			"segments": [
 				{
 					"ecosystem": "cpe",
-					"tag": "CVE-2026-27316_3cf3c98b"
+					"tag": "CVE-2026-27316_07e222da"
 				}
 			]
 		}
@@ -130,6 +130,31 @@
 					"criteria": {
 						"operator": "OR",
 						"criterias": [
+							{
+								"operator": "OR",
+								"criterions": [
+									{
+										"type": "cpe",
+										"cpe": {
+											"vulnerable": false,
+											"fix_status": {
+												"class": "not-affected"
+											},
+											"cpe": "cpe:2.3:a:fortinet:fortisandbox_paas:5.0.6:*:*:*:*:*:*:*"
+										}
+									},
+									{
+										"type": "cpe",
+										"cpe": {
+											"vulnerable": false,
+											"fix_status": {
+												"class": "not-affected"
+											},
+											"cpe": "cpe:2.3:a:fortinet:fortisandboxpaas:5.0.6:*:*:*:*:*:*:*"
+										}
+									}
+								]
+							},
 							{
 								"operator": "OR",
 								"criterions": [
@@ -167,12 +192,37 @@
 							}
 						]
 					},
-					"tag": "CVE-2026-27316_3cf3c98b"
+					"tag": "CVE-2026-27316_07e222da"
 				},
 				{
 					"criteria": {
 						"operator": "OR",
 						"criterias": [
+							{
+								"operator": "OR",
+								"criterions": [
+									{
+										"type": "cpe",
+										"cpe": {
+											"vulnerable": false,
+											"fix_status": {
+												"class": "not-affected"
+											},
+											"cpe": "cpe:2.3:a:fortinet:fortisandbox:5.0.6:*:*:*:*:*:*:*"
+										}
+									},
+									{
+										"type": "cpe",
+										"cpe": {
+											"vulnerable": false,
+											"fix_status": {
+												"class": "not-affected"
+											},
+											"cpe": "cpe:2.3:o:fortinet:fortisandbox:5.0.6:*:*:*:*:*:*:*"
+										}
+									}
+								]
+							},
 							{
 								"operator": "OR",
 								"criterions": [
@@ -245,7 +295,7 @@
 							}
 						]
 					},
-					"tag": "CVE-2026-27316_d2c42ffb"
+					"tag": "CVE-2026-27316_4f437df8"
 				}
 			]
 		}

@@ -15,15 +15,16 @@ import (
 )
 
 // Resolve returns the CPE 2.3 formatted strings (wildcard version) a host
-// running a Fortinet product may be recorded under — the CPE Fortinet assigns
-// as CNA first, then the others, none repeated — and the product's
-// cpecriterion range type, or ok=false when the name is not in the table. A
-// detection matches a host recorded under any of the CPEs. Fortinet uses one
-// range type per product, so a product whose versioning scheme later diverges
-// gets its own comparator without affecting any other product.
+// running a Fortinet product may be recorded under — the CPEs Fortinet assigns
+// as CNA first, then the ones this table published before, none repeated —
+// and the product's cpecriterion range type, or ok=false when the name is not
+// in the table. A detection matches a host recorded under any of the CPEs.
+// Fortinet uses one range type per product, so a product whose versioning
+// scheme later diverges gets its own comparator without affecting any other
+// product.
 func Resolve(name string) (cpes []string, rangeType ccRangeTypes.RangeType, ok bool) {
 	p, ok := nameToProduct[strings.TrimSpace(name)]
-	return slices.Clone(p.cpes), p.rangeType, ok
+	return slices.Concat(p.cna, p.nvd), p.rangeType, ok
 }
 
 // versionEscaper escapes the CPE WFN special characters (dots and hyphens) in a

@@ -6,11 +6,12 @@
 // Fortinet products here.
 //
 // A product carries two kinds of CPE, and the extractors match a host
-// recorded under any of them. The first is the one Fortinet itself assigns,
-// as CNA, in its CVE records (containers.cna.affected[].cpes on cve.org). The
-// rest are the ones the CNA CPE would otherwise replace: the CPE this table
-// published before, which follows NVD's enrichment where NVD has the
-// product, so a host recorded the way NVD names the product keeps matching.
+// recorded under any of them. cna is the one Fortinet itself assigns, as CNA,
+// in its CVE records (containers.cna.affected[].cpes on cve.org). nvd is the
+// one the CNA CPE would otherwise replace: the CPE this table published
+// before, which follows NVD's enrichment where NVD has the product, so a host
+// recorded the way NVD names the product keeps matching. nvd is left out
+// where it is the CNA CPE.
 //
 // Fortinet names each product apart (FortiClientWindows / FortiClientMac,
 // FortiSOAR PaaS / on-premise) where NVD folds them into one product told
@@ -46,11 +47,16 @@ import (
 	ccRangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/cpecriterion/range"
 )
 
-// productInfo is a product's CPEs and its per-product range type. cpes holds
-// the CNA CPE first, then each other CPE a host running the product may be
-// recorded under (see the file comment), none repeated. Each product carries
-// its own range type so a product whose version scheme later diverges gets its
-// own comparator without affecting any other (see cpecriterion/range).
+// productInfo is a product's CPEs and its per-product range type. cna holds
+// the CPEs Fortinet assigns the product as CNA — one today for every product,
+// but a list, since the CNA derives each record's CPE from the product name as
+// typed into that record and nothing keeps two records from spelling it
+// apart — or, for a product none of its records give a CPE yet, the one its
+// rule derives. nvd holds the CPEs this table published before, NVD's where
+// NVD has the product (see the file comment), so a host recorded the way NVD
+// names it keeps matching. No CPE appears twice across the two. Each product
+// carries its own range type so a product whose version scheme later diverges
+// gets its own comparator without affecting any other (see cpecriterion/range).
 // twoComponentVersions marks products for which a two-component token ("X.Y",
 // e.g. IPS Engine "7.166") is itself a concrete release rather than a train;
 // for them only a bare major is a train (see IsExactVersion). It does NOT
@@ -64,106 +70,108 @@ import (
 // very tokens ("23.4.4350", "5.0.4"), so their two-component tokens are
 // trains and they must NOT be marked.
 type productInfo struct {
-	cpes                 []string
+	cna                  []string
+	nvd                  []string
 	rangeType            ccRangeTypes.RangeType
 	twoComponentVersions bool
 }
 
 var nameToProduct = map[string]productInfo{
-	"AV Engine":                       {cpes: []string{"cpe:2.3:a:fortinet:avengine:*:*:*:*:*:*:*:*", "cpe:2.3:a:fortinet:antivirus_engine:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetAntivirusEngine, twoComponentVersions: true},
-	"AscenLink":                       {cpes: []string{"cpe:2.3:a:fortinet:ascenlink:*:*:*:*:*:*:*:*", "cpe:2.3:o:fortinet:ascenlink:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetAscenLink},
-	"Connect":                         {cpes: []string{"cpe:2.3:a:fortinet:connect:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetConnect},
-	"FSSO":                            {cpes: []string{"cpe:2.3:a:fortinet:fsso:*:*:*:*:*:*:*:*", "cpe:2.3:a:fortinet:fortinet_single_sign-on:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFSSO},
-	"FSSO CA":                         {cpes: []string{"cpe:2.3:a:fortinet:fssoca:*:*:*:*:*:*:*:*", "cpe:2.3:a:fortinet:fsso_ca:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFSSOCA},
-	"FortiADC":                        {cpes: []string{"cpe:2.3:h:fortinet:fortiadc:*:*:*:*:*:*:*:*", "cpe:2.3:o:fortinet:fortiadc:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiADC},
-	"FortiADCManager":                 {cpes: []string{"cpe:2.3:h:fortinet:fortiadcmanager:*:*:*:*:*:*:*:*", "cpe:2.3:a:fortinet:fortiadc_manager:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiADCManager},
-	"FortiAIOps":                      {cpes: []string{"cpe:2.3:a:fortinet:fortiaiops:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiAIOps},
-	"FortiAP":                         {cpes: []string{"cpe:2.3:a:fortinet:fortiap:*:*:*:*:*:*:*:*", "cpe:2.3:o:fortinet:fortiap:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiAP},
-	"FortiAP-C":                       {cpes: []string{"cpe:2.3:a:fortinet:fortiap-c:*:*:*:*:*:*:*:*", "cpe:2.3:o:fortinet:fortiap-c:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiAPC},
-	"FortiAP-S":                       {cpes: []string{"cpe:2.3:a:fortinet:fortiap-s:*:*:*:*:*:*:*:*", "cpe:2.3:o:fortinet:fortiap-s:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiAPS},
-	"FortiAP-U":                       {cpes: []string{"cpe:2.3:a:fortinet:fortiap-u:*:*:*:*:*:*:*:*", "cpe:2.3:o:fortinet:fortiap-u:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiAPU},
-	"FortiAP-W2":                      {cpes: []string{"cpe:2.3:a:fortinet:fortiap-w2:*:*:*:*:*:*:*:*", "cpe:2.3:o:fortinet:fortiap-w2:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiAPW2},
-	"FortiAnalyzer":                   {cpes: []string{"cpe:2.3:o:fortinet:fortianalyzer:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiAnalyzer},
-	"FortiAnalyzer Cloud":             {cpes: []string{"cpe:2.3:a:fortinet:fortianalyzercloud:*:*:*:*:*:*:*:*", "cpe:2.3:a:fortinet:fortianalyzer_cloud:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiAnalyzerCloud},
-	"FortiAnalyzer-BigData":           {cpes: []string{"cpe:2.3:a:fortinet:fortianalyzer-bigdata:*:*:*:*:*:*:*:*", "cpe:2.3:o:fortinet:fortianalyzer-bigdata:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiAnalyzerBigData},
-	"FortiAuthenticator":              {cpes: []string{"cpe:2.3:a:fortinet:fortiauthenticator:*:*:*:*:*:*:*:*", "cpe:2.3:o:fortinet:fortiauthenticator:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiAuthenticator},
-	"FortiAuthenticator OutlookAgent": {cpes: []string{"cpe:2.3:a:fortinet:fortiauthenticatoroutlookagent:*:*:*:*:*:*:*:*", "cpe:2.3:a:fortinet:fortiauthenticator_agent_for_microsoft_outlook_web_access:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiAuthenticator, twoComponentVersions: true},
-	"FortiBalancer":                   {cpes: []string{"cpe:2.3:h:fortinet:fortibalancer:*:*:*:*:*:*:*:*", "cpe:2.3:o:fortinet:fortibalancer:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiBalancer},
-	"FortiCASB":                       {cpes: []string{"cpe:2.3:a:fortinet:forticasb:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiCASB},
-	"FortiCache":                      {cpes: []string{"cpe:2.3:a:fortinet:forticache:*:*:*:*:*:*:*:*", "cpe:2.3:o:fortinet:forticache:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiCache},
-	"FortiCamera":                     {cpes: []string{"cpe:2.3:a:fortinet:forticamera:*:*:*:*:*:*:*:*", "cpe:2.3:o:fortinet:forticamera:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiCamera},
-	"FortiClient Lite":                {cpes: []string{"cpe:2.3:a:fortinet:forticlientlite:*:*:*:*:*:*:*:*", "cpe:2.3:a:fortinet:forticlient_lite:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiClientLite},
+	"AV Engine":                       {cna: []string{"cpe:2.3:a:fortinet:avengine:*:*:*:*:*:*:*:*"}, nvd: []string{"cpe:2.3:a:fortinet:antivirus_engine:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetAntivirusEngine, twoComponentVersions: true},
+	"AscenLink":                       {cna: []string{"cpe:2.3:a:fortinet:ascenlink:*:*:*:*:*:*:*:*"}, nvd: []string{"cpe:2.3:o:fortinet:ascenlink:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetAscenLink},
+	"Connect":                         {cna: []string{"cpe:2.3:a:fortinet:connect:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetConnect},
+	"FSSO":                            {cna: []string{"cpe:2.3:a:fortinet:fsso:*:*:*:*:*:*:*:*"}, nvd: []string{"cpe:2.3:a:fortinet:fortinet_single_sign-on:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFSSO},
+	"FSSO CA":                         {cna: []string{"cpe:2.3:a:fortinet:fssoca:*:*:*:*:*:*:*:*"}, nvd: []string{"cpe:2.3:a:fortinet:fsso_ca:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFSSOCA},
+	"FortiADC":                        {cna: []string{"cpe:2.3:h:fortinet:fortiadc:*:*:*:*:*:*:*:*"}, nvd: []string{"cpe:2.3:o:fortinet:fortiadc:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiADC},
+	"FortiADCManager":                 {cna: []string{"cpe:2.3:h:fortinet:fortiadcmanager:*:*:*:*:*:*:*:*"}, nvd: []string{"cpe:2.3:a:fortinet:fortiadc_manager:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiADCManager},
+	"FortiAIOps":                      {cna: []string{"cpe:2.3:a:fortinet:fortiaiops:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiAIOps},
+	"FortiAP":                         {cna: []string{"cpe:2.3:a:fortinet:fortiap:*:*:*:*:*:*:*:*"}, nvd: []string{"cpe:2.3:o:fortinet:fortiap:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiAP},
+	"FortiAP-C":                       {cna: []string{"cpe:2.3:a:fortinet:fortiap-c:*:*:*:*:*:*:*:*"}, nvd: []string{"cpe:2.3:o:fortinet:fortiap-c:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiAPC},
+	"FortiAP-S":                       {cna: []string{"cpe:2.3:a:fortinet:fortiap-s:*:*:*:*:*:*:*:*"}, nvd: []string{"cpe:2.3:o:fortinet:fortiap-s:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiAPS},
+	"FortiAP-U":                       {cna: []string{"cpe:2.3:a:fortinet:fortiap-u:*:*:*:*:*:*:*:*"}, nvd: []string{"cpe:2.3:o:fortinet:fortiap-u:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiAPU},
+	"FortiAP-W2":                      {cna: []string{"cpe:2.3:a:fortinet:fortiap-w2:*:*:*:*:*:*:*:*"}, nvd: []string{"cpe:2.3:o:fortinet:fortiap-w2:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiAPW2},
+	"FortiAnalyzer":                   {cna: []string{"cpe:2.3:o:fortinet:fortianalyzer:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiAnalyzer},
+	"FortiAnalyzer Cloud":             {cna: []string{"cpe:2.3:a:fortinet:fortianalyzercloud:*:*:*:*:*:*:*:*"}, nvd: []string{"cpe:2.3:a:fortinet:fortianalyzer_cloud:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiAnalyzerCloud},
+	"FortiAnalyzer-BigData":           {cna: []string{"cpe:2.3:a:fortinet:fortianalyzer-bigdata:*:*:*:*:*:*:*:*"}, nvd: []string{"cpe:2.3:o:fortinet:fortianalyzer-bigdata:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiAnalyzerBigData},
+	"FortiAuthenticator":              {cna: []string{"cpe:2.3:a:fortinet:fortiauthenticator:*:*:*:*:*:*:*:*"}, nvd: []string{"cpe:2.3:o:fortinet:fortiauthenticator:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiAuthenticator},
+	"FortiAuthenticator OutlookAgent": {cna: []string{"cpe:2.3:a:fortinet:fortiauthenticatoroutlookagent:*:*:*:*:*:*:*:*"}, nvd: []string{"cpe:2.3:a:fortinet:fortiauthenticator_agent_for_microsoft_outlook_web_access:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiAuthenticator, twoComponentVersions: true},
+	"FortiBalancer":                   {cna: []string{"cpe:2.3:h:fortinet:fortibalancer:*:*:*:*:*:*:*:*"}, nvd: []string{"cpe:2.3:o:fortinet:fortibalancer:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiBalancer},
+	"FortiCASB":                       {cna: []string{"cpe:2.3:a:fortinet:forticasb:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiCASB},
+	"FortiCache":                      {cna: []string{"cpe:2.3:a:fortinet:forticache:*:*:*:*:*:*:*:*"}, nvd: []string{"cpe:2.3:o:fortinet:forticache:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiCache},
+	"FortiCamera":                     {cna: []string{"cpe:2.3:a:fortinet:forticamera:*:*:*:*:*:*:*:*"}, nvd: []string{"cpe:2.3:o:fortinet:forticamera:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiCamera},
+	"FortiClient Lite":                {cna: []string{"cpe:2.3:a:fortinet:forticlientlite:*:*:*:*:*:*:*:*"}, nvd: []string{"cpe:2.3:a:fortinet:forticlient_lite:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiClientLite},
 	// The FortiClient platform variants (Windows/Mac/Linux/iOS/Android) each
 	// take the CPE Fortinet gives the platform and NVD's for it, and share one
 	// range type, as do the other platform or deployment variants below
 	// (FortiToken Mobile, FortiSOAR PaaS/on-premise).
-	"FortiClientAndroid":                   {cpes: []string{"cpe:2.3:a:fortinet:forticlientandroid:*:*:*:*:*:*:*:*", "cpe:2.3:a:fortinet:forticlient:*:*:*:*:*:android:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiClient},
-	"FortiClientEMS":                       {cpes: []string{"cpe:2.3:a:fortinet:forticlientems:*:*:*:*:*:*:*:*", "cpe:2.3:a:fortinet:forticlient_enterprise_management_server:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiClientEnterpriseManagementServer},
-	"FortiClientEMS Cloud":                 {cpes: []string{"cpe:2.3:a:fortinet:forticlientemscloud:*:*:*:*:*:*:*:*", "cpe:2.3:a:fortinet:forticlient_enterprise_management_server_cloud:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiClientEnterpriseManagementServerCloud},
-	"FortiClientLinux":                     {cpes: []string{"cpe:2.3:a:fortinet:forticlientlinux:*:*:*:*:*:*:*:*", "cpe:2.3:a:fortinet:forticlient:*:*:*:*:*:linux:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiClient},
-	"FortiClientMac":                       {cpes: []string{"cpe:2.3:a:fortinet:forticlientmac:*:*:*:*:*:*:*:*", "cpe:2.3:a:fortinet:forticlient:*:*:*:*:*:macos:*:*", "cpe:2.3:a:fortinet:forticlient:*:*:*:*:*:mac_os_x:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiClient},
-	"FortiClientSSLVPN":                    {cpes: []string{"cpe:2.3:a:fortinet:forticlientsslvpn:*:*:*:*:*:*:*:*", "cpe:2.3:a:fortinet:forticlient_ssl_vpn:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiClientSSLVPN},
-	"FortiClientWindows":                   {cpes: []string{"cpe:2.3:a:fortinet:forticlientwindows:*:*:*:*:*:*:*:*", "cpe:2.3:a:fortinet:forticlient:*:*:*:*:*:windows:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiClient},
-	"FortiClientiOS":                       {cpes: []string{"cpe:2.3:a:fortinet:forticlientios:*:*:*:*:*:*:*:*", "cpe:2.3:a:fortinet:forticlient:*:*:*:*:*:iphone_os:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiClient},
-	"FortiCloud":                           {cpes: []string{"cpe:2.3:a:fortinet:forticloud:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiCloud},
-	"FortiConverter":                       {cpes: []string{"cpe:2.3:a:fortinet:forticonverter:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiConverter},
-	"FortiDB":                              {cpes: []string{"cpe:2.3:a:fortinet:fortidb:*:*:*:*:*:*:*:*", "cpe:2.3:o:fortinet:fortidb:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiDB},
-	"FortiDDoS":                            {cpes: []string{"cpe:2.3:o:fortinet:fortiddos:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiDDoS},
-	"FortiDDoS-CM":                         {cpes: []string{"cpe:2.3:a:fortinet:fortiddos-cm:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiDDoSCM},
-	"FortiDDoS-F":                          {cpes: []string{"cpe:2.3:o:fortinet:fortiddos-f:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiDDoSF},
-	"FortiDLP":                             {cpes: []string{"cpe:2.3:a:fortinet:fortidlp:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiDLP},
-	"FortiDeceptor":                        {cpes: []string{"cpe:2.3:a:fortinet:fortideceptor:*:*:*:*:*:*:*:*", "cpe:2.3:o:fortinet:fortideceptor:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiDeceptor},
-	"FortiEDR":                             {cpes: []string{"cpe:2.3:a:fortinet:fortiedr:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiEDR},
-	"FortiEDR CollectorWindows":            {cpes: []string{"cpe:2.3:a:fortinet:fortiedrcollectorwindows:*:*:*:*:*:*:*:*", "cpe:2.3:a:fortinet:fortiedr:*:*:*:*:*:windows:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiEDR},
-	"FortiEDR Manager":                     {cpes: []string{"cpe:2.3:a:fortinet:fortiedrmanager:*:*:*:*:*:*:*:*", "cpe:2.3:a:fortinet:fortiedr_manager:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiEDRManager},
-	"FortiExplorer":                        {cpes: []string{"cpe:2.3:a:fortinet:fortiexplorer:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiExplorer},
-	"FortiExtender":                        {cpes: []string{"cpe:2.3:a:fortinet:fortiextender:*:*:*:*:*:*:*:*", "cpe:2.3:o:fortinet:fortiextender:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiExtender},
-	"FortiFone":                            {cpes: []string{"cpe:2.3:o:fortinet:fortifone:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiFone},
-	"FortiGate Cloud":                      {cpes: []string{"cpe:2.3:a:fortinet:fortigatecloud:*:*:*:*:*:*:*:*", "cpe:2.3:a:fortinet:fortigate_cloud:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiGateCloud},
-	"FortiGuest":                           {cpes: []string{"cpe:2.3:a:fortinet:fortiguest:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiGuest},
-	"FortiIsolator":                        {cpes: []string{"cpe:2.3:a:fortinet:fortiisolator:*:*:*:*:*:*:*:*", "cpe:2.3:o:fortinet:fortiisolator:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiIsolator},
-	"FortiMail":                            {cpes: []string{"cpe:2.3:a:fortinet:fortimail:*:*:*:*:*:*:*:*", "cpe:2.3:o:fortinet:fortimail:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiMail},
-	"FortiManager":                         {cpes: []string{"cpe:2.3:o:fortinet:fortimanager:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiManager},
-	"FortiManager Cloud":                   {cpes: []string{"cpe:2.3:a:fortinet:fortimanagercloud:*:*:*:*:*:*:*:*", "cpe:2.3:a:fortinet:fortimanager_cloud:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiManagerCloud},
-	"FortiNAC":                             {cpes: []string{"cpe:2.3:a:fortinet:fortinac:*:*:*:*:*:*:*:*", "cpe:2.3:o:fortinet:fortinac:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiNAC},
-	"FortiNAC-F":                           {cpes: []string{"cpe:2.3:a:fortinet:fortinac-f:*:*:*:*:*:*:*:*", "cpe:2.3:o:fortinet:fortinac-f:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiNACF},
-	"FortiNDR":                             {cpes: []string{"cpe:2.3:a:fortinet:fortindr:*:*:*:*:*:*:*:*", "cpe:2.3:o:fortinet:fortindr:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiNDR},
-	"FortiOS":                              {cpes: []string{"cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiOS},
-	"FortiOS-6K7K":                         {cpes: []string{"cpe:2.3:a:fortinet:fortios-6k7k:*:*:*:*:*:*:*:*", "cpe:2.3:o:fortinet:fortios-6k7k:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiOS6k7k},
-	"FortiPAM":                             {cpes: []string{"cpe:2.3:o:fortinet:fortipam:*:*:*:*:*:*:*:*", "cpe:2.3:a:fortinet:fortipam:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiPAM},
-	"FortiPortal":                          {cpes: []string{"cpe:2.3:a:fortinet:fortiportal:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiPortal},
-	"FortiPresence":                        {cpes: []string{"cpe:2.3:a:fortinet:fortipresence:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiPresence},
-	"FortiProxy":                           {cpes: []string{"cpe:2.3:a:fortinet:fortiproxy:*:*:*:*:*:*:*:*", "cpe:2.3:o:fortinet:fortiproxy:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiProxy},
-	"FortiRecorder":                        {cpes: []string{"cpe:2.3:a:fortinet:fortirecorder:*:*:*:*:*:*:*:*", "cpe:2.3:o:fortinet:fortirecorder:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiRecorder},
-	"FortiSASE":                            {cpes: []string{"cpe:2.3:a:fortinet:fortisase:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiSASE},
-	"FortiSDNConnector":                    {cpes: []string{"cpe:2.3:a:fortinet:fortisdnconnector:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiSDNConnector},
-	"FortiSIEM":                            {cpes: []string{"cpe:2.3:a:fortinet:fortisiem:*:*:*:*:*:*:*:*", "cpe:2.3:o:fortinet:fortisiem:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiSIEM},
-	"FortiSIEMWindowsAgent":                {cpes: []string{"cpe:2.3:a:fortinet:fortisiemwindowsagent:*:*:*:*:*:*:*:*", "cpe:2.3:a:fortinet:fortisiem_windows_agent:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiSIEMWindowsAgent},
-	"FortiSOAR":                            {cpes: []string{"cpe:2.3:a:fortinet:fortisoar:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiSOAR},
-	"FortiSOAR Agent Communication Bridge": {cpes: []string{"cpe:2.3:a:fortinet:fortisoaragentcommunicationbridge:*:*:*:*:*:*:*:*", "cpe:2.3:a:fortinet:fortisoar_agent_communication_bridge:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiSOARAgentCommunicationBridge},
-	"FortiSOAR PaaS":                       {cpes: []string{"cpe:2.3:a:fortinet:fortisoarpaas:*:*:*:*:*:*:*:*", "cpe:2.3:a:fortinet:fortisoar:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiSOAR},
-	"FortiSOAR on-premise":                 {cpes: []string{"cpe:2.3:a:fortinet:fortisoaron-premise:*:*:*:*:*:*:*:*", "cpe:2.3:a:fortinet:fortisoar:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiSOAR},
-	"FortiSRA":                             {cpes: []string{"cpe:2.3:a:fortinet:fortisra:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiSRA},
-	"FortiSandbox":                         {cpes: []string{"cpe:2.3:a:fortinet:fortisandbox:*:*:*:*:*:*:*:*", "cpe:2.3:o:fortinet:fortisandbox:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiSandbox},
-	"FortiSandbox Cloud":                   {cpes: []string{"cpe:2.3:a:fortinet:fortisandboxcloud:*:*:*:*:*:*:*:*", "cpe:2.3:a:fortinet:fortisandbox_cloud:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiSandboxCloud},
-	"FortiSandbox PaaS":                    {cpes: []string{"cpe:2.3:a:fortinet:fortisandboxpaas:*:*:*:*:*:*:*:*", "cpe:2.3:a:fortinet:fortisandbox_paas:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiSandboxPaaS},
-	"FortiSwitch":                          {cpes: []string{"cpe:2.3:a:fortinet:fortiswitch:*:*:*:*:*:*:*:*", "cpe:2.3:o:fortinet:fortiswitch:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiSwitch},
-	"FortiSwitch-EFX":                      {cpes: []string{"cpe:2.3:a:fortinet:fortiswitch-efx:*:*:*:*:*:*:*:*", "cpe:2.3:o:fortinet:fortiswitch-efx:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiSwitchEFX},
-	"FortiSwitchAXFixed":                   {cpes: []string{"cpe:2.3:a:fortinet:fortiswitchaxfixed:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiSwitchAXFixed},
-	"FortiSwitchManager":                   {cpes: []string{"cpe:2.3:a:fortinet:fortiswitchmanager:*:*:*:*:*:*:*:*", "cpe:2.3:o:fortinet:fortiswitchmanager:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiSwitchManager},
-	"FortiTester":                          {cpes: []string{"cpe:2.3:a:fortinet:fortitester:*:*:*:*:*:*:*:*", "cpe:2.3:o:fortinet:fortitester:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiTester},
-	"FortiTokenAndroid":                    {cpes: []string{"cpe:2.3:a:fortinet:fortitokenandroid:*:*:*:*:*:*:*:*", "cpe:2.3:a:fortinet:fortitoken_mobile:*:*:*:*:*:android:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiTokenMobile},
-	"FortiTokenIOS":                        {cpes: []string{"cpe:2.3:a:fortinet:fortitokenios:*:*:*:*:*:*:*:*", "cpe:2.3:a:fortinet:fortitoken_mobile:*:*:*:*:*:iphone_os:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiTokenMobile},
-	"FortiTokenMobileWP":                   {cpes: []string{"cpe:2.3:a:fortinet:fortitokenmobilewp:*:*:*:*:*:*:*:*", "cpe:2.3:a:fortinet:fortitoken_mobile:*:*:*:*:*:windows:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiTokenMobile},
-	"FortiVoice":                           {cpes: []string{"cpe:2.3:a:fortinet:fortivoice:*:*:*:*:*:*:*:*", "cpe:2.3:o:fortinet:fortivoice:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiVoice},
-	"FortiVoiceUCDesktop":                  {cpes: []string{"cpe:2.3:a:fortinet:fortivoiceucdesktop:*:*:*:*:*:*:*:*", "cpe:2.3:a:fortinet:fortivoice_cloud_unified_communications_desktop:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiVoiceCloudUnifiedCommunicationsDesktop},
-	"FortiWAN":                             {cpes: []string{"cpe:2.3:a:fortinet:fortiwan:*:*:*:*:*:*:*:*", "cpe:2.3:o:fortinet:fortiwan:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiWAN},
-	"FortiWAN-Manager":                     {cpes: []string{"cpe:2.3:a:fortinet:fortiwan-manager:*:*:*:*:*:*:*:*", "cpe:2.3:a:fortinet:fortiwan_manager:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiWANManager},
-	"FortiWLC":                             {cpes: []string{"cpe:2.3:a:fortinet:fortiwlc:*:*:*:*:*:*:*:*", "cpe:2.3:o:fortinet:fortiwlc:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiWLC},
-	"FortiWLC-SD":                          {cpes: []string{"cpe:2.3:a:fortinet:fortiwlc-sd:*:*:*:*:*:*:*:*", "cpe:2.3:o:fortinet:fortiwlc-sd:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiWLCSD},
-	"FortiWLM":                             {cpes: []string{"cpe:2.3:a:fortinet:fortiwlm:*:*:*:*:*:*:*:*", "cpe:2.3:o:fortinet:fortiwlm:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiWLM},
-	"FortiWeb":                             {cpes: []string{"cpe:2.3:a:fortinet:fortiweb:*:*:*:*:*:*:*:*", "cpe:2.3:o:fortinet:fortiweb:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiWeb},
-	"FortiWebManager":                      {cpes: []string{"cpe:2.3:a:fortinet:fortiwebmanager:*:*:*:*:*:*:*:*", "cpe:2.3:a:fortinet:fortiweb_manager:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiWebManager},
-	"IPS Engine":                           {cpes: []string{"cpe:2.3:a:fortinet:ipsengine:*:*:*:*:*:*:*:*", "cpe:2.3:a:fortinet:fortios_ips_engine:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiOSIPSEngine, twoComponentVersions: true},
-	"Meru AP":                              {cpes: []string{"cpe:2.3:h:fortinet:meruap:*:*:*:*:*:*:*:*", "cpe:2.3:a:fortinet:meru:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetMeru},
+	"FortiClientAndroid":                   {cna: []string{"cpe:2.3:a:fortinet:forticlientandroid:*:*:*:*:*:*:*:*"}, nvd: []string{"cpe:2.3:a:fortinet:forticlient:*:*:*:*:*:android:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiClient},
+	"FortiClientEMS":                       {cna: []string{"cpe:2.3:a:fortinet:forticlientems:*:*:*:*:*:*:*:*"}, nvd: []string{"cpe:2.3:a:fortinet:forticlient_enterprise_management_server:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiClientEnterpriseManagementServer},
+	"FortiClientEMS Cloud":                 {cna: []string{"cpe:2.3:a:fortinet:forticlientemscloud:*:*:*:*:*:*:*:*"}, nvd: []string{"cpe:2.3:a:fortinet:forticlient_enterprise_management_server_cloud:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiClientEnterpriseManagementServerCloud},
+	"FortiClientLinux":                     {cna: []string{"cpe:2.3:a:fortinet:forticlientlinux:*:*:*:*:*:*:*:*"}, nvd: []string{"cpe:2.3:a:fortinet:forticlient:*:*:*:*:*:linux:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiClient},
+	"FortiClientMac":                       {cna: []string{"cpe:2.3:a:fortinet:forticlientmac:*:*:*:*:*:*:*:*"}, nvd: []string{"cpe:2.3:a:fortinet:forticlient:*:*:*:*:*:macos:*:*", "cpe:2.3:a:fortinet:forticlient:*:*:*:*:*:mac_os_x:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiClient},
+	"FortiClientSSLVPN":                    {cna: []string{"cpe:2.3:a:fortinet:forticlientsslvpn:*:*:*:*:*:*:*:*"}, nvd: []string{"cpe:2.3:a:fortinet:forticlient_ssl_vpn:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiClientSSLVPN},
+	"FortiClientWindows":                   {cna: []string{"cpe:2.3:a:fortinet:forticlientwindows:*:*:*:*:*:*:*:*"}, nvd: []string{"cpe:2.3:a:fortinet:forticlient:*:*:*:*:*:windows:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiClient},
+	"FortiClientiOS":                       {cna: []string{"cpe:2.3:a:fortinet:forticlientios:*:*:*:*:*:*:*:*"}, nvd: []string{"cpe:2.3:a:fortinet:forticlient:*:*:*:*:*:iphone_os:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiClient},
+	"FortiCloud":                           {cna: []string{"cpe:2.3:a:fortinet:forticloud:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiCloud},
+	"FortiConverter":                       {cna: []string{"cpe:2.3:a:fortinet:forticonverter:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiConverter},
+	"FortiDB":                              {cna: []string{"cpe:2.3:a:fortinet:fortidb:*:*:*:*:*:*:*:*"}, nvd: []string{"cpe:2.3:o:fortinet:fortidb:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiDB},
+	"FortiDDoS":                            {cna: []string{"cpe:2.3:o:fortinet:fortiddos:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiDDoS},
+	"FortiDDoS-CM":                         {cna: []string{"cpe:2.3:a:fortinet:fortiddos-cm:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiDDoSCM},
+	"FortiDDoS-F":                          {cna: []string{"cpe:2.3:o:fortinet:fortiddos-f:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiDDoSF},
+	"FortiDLP":                             {cna: []string{"cpe:2.3:a:fortinet:fortidlp:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiDLP},
+	"FortiDeceptor":                        {cna: []string{"cpe:2.3:a:fortinet:fortideceptor:*:*:*:*:*:*:*:*"}, nvd: []string{"cpe:2.3:o:fortinet:fortideceptor:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiDeceptor},
+	"FortiEDR":                             {cna: []string{"cpe:2.3:a:fortinet:fortiedr:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiEDR},
+	"FortiEDR CollectorWindows":            {cna: []string{"cpe:2.3:a:fortinet:fortiedrcollectorwindows:*:*:*:*:*:*:*:*"}, nvd: []string{"cpe:2.3:a:fortinet:fortiedr:*:*:*:*:*:windows:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiEDR},
+	"FortiEDR Manager":                     {cna: []string{"cpe:2.3:a:fortinet:fortiedrmanager:*:*:*:*:*:*:*:*"}, nvd: []string{"cpe:2.3:a:fortinet:fortiedr_manager:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiEDRManager},
+	"FortiExplorer":                        {cna: []string{"cpe:2.3:a:fortinet:fortiexplorer:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiExplorer},
+	"FortiExtender":                        {cna: []string{"cpe:2.3:a:fortinet:fortiextender:*:*:*:*:*:*:*:*"}, nvd: []string{"cpe:2.3:o:fortinet:fortiextender:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiExtender},
+	"FortiFone":                            {cna: []string{"cpe:2.3:o:fortinet:fortifone:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiFone},
+	"FortiGate Cloud":                      {cna: []string{"cpe:2.3:a:fortinet:fortigatecloud:*:*:*:*:*:*:*:*"}, nvd: []string{"cpe:2.3:a:fortinet:fortigate_cloud:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiGateCloud},
+	"FortiGuest":                           {cna: []string{"cpe:2.3:a:fortinet:fortiguest:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiGuest},
+	"FortiIsolator":                        {cna: []string{"cpe:2.3:a:fortinet:fortiisolator:*:*:*:*:*:*:*:*"}, nvd: []string{"cpe:2.3:o:fortinet:fortiisolator:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiIsolator},
+	"FortiMail":                            {cna: []string{"cpe:2.3:a:fortinet:fortimail:*:*:*:*:*:*:*:*"}, nvd: []string{"cpe:2.3:o:fortinet:fortimail:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiMail},
+	"FortiManager":                         {cna: []string{"cpe:2.3:o:fortinet:fortimanager:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiManager},
+	"FortiManager Cloud":                   {cna: []string{"cpe:2.3:a:fortinet:fortimanagercloud:*:*:*:*:*:*:*:*"}, nvd: []string{"cpe:2.3:a:fortinet:fortimanager_cloud:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiManagerCloud},
+	"FortiNAC":                             {cna: []string{"cpe:2.3:a:fortinet:fortinac:*:*:*:*:*:*:*:*"}, nvd: []string{"cpe:2.3:o:fortinet:fortinac:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiNAC},
+	"FortiNAC-F":                           {cna: []string{"cpe:2.3:a:fortinet:fortinac-f:*:*:*:*:*:*:*:*"}, nvd: []string{"cpe:2.3:o:fortinet:fortinac-f:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiNACF},
+	"FortiNDR":                             {cna: []string{"cpe:2.3:a:fortinet:fortindr:*:*:*:*:*:*:*:*"}, nvd: []string{"cpe:2.3:o:fortinet:fortindr:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiNDR},
+	"FortiOS":                              {cna: []string{"cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiOS},
+	"FortiOS-6K7K":                         {cna: []string{"cpe:2.3:a:fortinet:fortios-6k7k:*:*:*:*:*:*:*:*"}, nvd: []string{"cpe:2.3:o:fortinet:fortios-6k7k:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiOS6k7k},
+	"FortiPAM":                             {cna: []string{"cpe:2.3:o:fortinet:fortipam:*:*:*:*:*:*:*:*"}, nvd: []string{"cpe:2.3:a:fortinet:fortipam:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiPAM},
+	"FortiPortal":                          {cna: []string{"cpe:2.3:a:fortinet:fortiportal:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiPortal},
+	"FortiPresence":                        {cna: []string{"cpe:2.3:a:fortinet:fortipresence:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiPresence},
+	"FortiProxy":                           {cna: []string{"cpe:2.3:a:fortinet:fortiproxy:*:*:*:*:*:*:*:*"}, nvd: []string{"cpe:2.3:o:fortinet:fortiproxy:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiProxy},
+	"FortiRecorder":                        {cna: []string{"cpe:2.3:a:fortinet:fortirecorder:*:*:*:*:*:*:*:*"}, nvd: []string{"cpe:2.3:o:fortinet:fortirecorder:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiRecorder},
+	"FortiSASE":                            {cna: []string{"cpe:2.3:a:fortinet:fortisase:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiSASE},
+	"FortiSDNConnector":                    {cna: []string{"cpe:2.3:a:fortinet:fortisdnconnector:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiSDNConnector},
+	"FortiSIEM":                            {cna: []string{"cpe:2.3:a:fortinet:fortisiem:*:*:*:*:*:*:*:*"}, nvd: []string{"cpe:2.3:o:fortinet:fortisiem:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiSIEM},
+	"FortiSIEM Cloud":                      {cna: []string{"cpe:2.3:a:fortinet:fortisiemcloud:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiSIEMCloud},
+	"FortiSIEMWindowsAgent":                {cna: []string{"cpe:2.3:a:fortinet:fortisiemwindowsagent:*:*:*:*:*:*:*:*"}, nvd: []string{"cpe:2.3:a:fortinet:fortisiem_windows_agent:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiSIEMWindowsAgent},
+	"FortiSOAR":                            {cna: []string{"cpe:2.3:a:fortinet:fortisoar:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiSOAR},
+	"FortiSOAR Agent Communication Bridge": {cna: []string{"cpe:2.3:a:fortinet:fortisoaragentcommunicationbridge:*:*:*:*:*:*:*:*"}, nvd: []string{"cpe:2.3:a:fortinet:fortisoar_agent_communication_bridge:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiSOARAgentCommunicationBridge},
+	"FortiSOAR PaaS":                       {cna: []string{"cpe:2.3:a:fortinet:fortisoarpaas:*:*:*:*:*:*:*:*"}, nvd: []string{"cpe:2.3:a:fortinet:fortisoar:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiSOAR},
+	"FortiSOAR on-premise":                 {cna: []string{"cpe:2.3:a:fortinet:fortisoaron-premise:*:*:*:*:*:*:*:*"}, nvd: []string{"cpe:2.3:a:fortinet:fortisoar:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiSOAR},
+	"FortiSRA":                             {cna: []string{"cpe:2.3:a:fortinet:fortisra:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiSRA},
+	"FortiSandbox":                         {cna: []string{"cpe:2.3:a:fortinet:fortisandbox:*:*:*:*:*:*:*:*"}, nvd: []string{"cpe:2.3:o:fortinet:fortisandbox:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiSandbox},
+	"FortiSandbox Cloud":                   {cna: []string{"cpe:2.3:a:fortinet:fortisandboxcloud:*:*:*:*:*:*:*:*"}, nvd: []string{"cpe:2.3:a:fortinet:fortisandbox_cloud:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiSandboxCloud},
+	"FortiSandbox PaaS":                    {cna: []string{"cpe:2.3:a:fortinet:fortisandboxpaas:*:*:*:*:*:*:*:*"}, nvd: []string{"cpe:2.3:a:fortinet:fortisandbox_paas:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiSandboxPaaS},
+	"FortiSwitch":                          {cna: []string{"cpe:2.3:a:fortinet:fortiswitch:*:*:*:*:*:*:*:*"}, nvd: []string{"cpe:2.3:o:fortinet:fortiswitch:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiSwitch},
+	"FortiSwitch-EFX":                      {cna: []string{"cpe:2.3:a:fortinet:fortiswitch-efx:*:*:*:*:*:*:*:*"}, nvd: []string{"cpe:2.3:o:fortinet:fortiswitch-efx:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiSwitchEFX},
+	"FortiSwitchAXFixed":                   {cna: []string{"cpe:2.3:a:fortinet:fortiswitchaxfixed:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiSwitchAXFixed},
+	"FortiSwitchManager":                   {cna: []string{"cpe:2.3:a:fortinet:fortiswitchmanager:*:*:*:*:*:*:*:*"}, nvd: []string{"cpe:2.3:o:fortinet:fortiswitchmanager:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiSwitchManager},
+	"FortiTester":                          {cna: []string{"cpe:2.3:a:fortinet:fortitester:*:*:*:*:*:*:*:*"}, nvd: []string{"cpe:2.3:o:fortinet:fortitester:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiTester},
+	"FortiTokenAndroid":                    {cna: []string{"cpe:2.3:a:fortinet:fortitokenandroid:*:*:*:*:*:*:*:*"}, nvd: []string{"cpe:2.3:a:fortinet:fortitoken_mobile:*:*:*:*:*:android:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiTokenMobile},
+	"FortiTokenIOS":                        {cna: []string{"cpe:2.3:a:fortinet:fortitokenios:*:*:*:*:*:*:*:*"}, nvd: []string{"cpe:2.3:a:fortinet:fortitoken_mobile:*:*:*:*:*:iphone_os:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiTokenMobile},
+	"FortiTokenMobileWP":                   {cna: []string{"cpe:2.3:a:fortinet:fortitokenmobilewp:*:*:*:*:*:*:*:*"}, nvd: []string{"cpe:2.3:a:fortinet:fortitoken_mobile:*:*:*:*:*:windows:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiTokenMobile},
+	"FortiVoice":                           {cna: []string{"cpe:2.3:a:fortinet:fortivoice:*:*:*:*:*:*:*:*"}, nvd: []string{"cpe:2.3:o:fortinet:fortivoice:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiVoice},
+	"FortiVoiceUCDesktop":                  {cna: []string{"cpe:2.3:a:fortinet:fortivoiceucdesktop:*:*:*:*:*:*:*:*"}, nvd: []string{"cpe:2.3:a:fortinet:fortivoice_cloud_unified_communications_desktop:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiVoiceCloudUnifiedCommunicationsDesktop},
+	"FortiWAN":                             {cna: []string{"cpe:2.3:a:fortinet:fortiwan:*:*:*:*:*:*:*:*"}, nvd: []string{"cpe:2.3:o:fortinet:fortiwan:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiWAN},
+	"FortiWAN-Manager":                     {cna: []string{"cpe:2.3:a:fortinet:fortiwan-manager:*:*:*:*:*:*:*:*"}, nvd: []string{"cpe:2.3:a:fortinet:fortiwan_manager:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiWANManager},
+	"FortiWLC":                             {cna: []string{"cpe:2.3:a:fortinet:fortiwlc:*:*:*:*:*:*:*:*"}, nvd: []string{"cpe:2.3:o:fortinet:fortiwlc:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiWLC},
+	"FortiWLC-SD":                          {cna: []string{"cpe:2.3:a:fortinet:fortiwlc-sd:*:*:*:*:*:*:*:*"}, nvd: []string{"cpe:2.3:o:fortinet:fortiwlc-sd:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiWLCSD},
+	"FortiWLM":                             {cna: []string{"cpe:2.3:a:fortinet:fortiwlm:*:*:*:*:*:*:*:*"}, nvd: []string{"cpe:2.3:o:fortinet:fortiwlm:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiWLM},
+	"FortiWeb":                             {cna: []string{"cpe:2.3:a:fortinet:fortiweb:*:*:*:*:*:*:*:*"}, nvd: []string{"cpe:2.3:o:fortinet:fortiweb:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiWeb},
+	"FortiWebManager":                      {cna: []string{"cpe:2.3:a:fortinet:fortiwebmanager:*:*:*:*:*:*:*:*"}, nvd: []string{"cpe:2.3:a:fortinet:fortiweb_manager:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiWebManager},
+	"IPS Engine":                           {cna: []string{"cpe:2.3:a:fortinet:ipsengine:*:*:*:*:*:*:*:*"}, nvd: []string{"cpe:2.3:a:fortinet:fortios_ips_engine:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiOSIPSEngine, twoComponentVersions: true},
+	"Meru AP":                              {cna: []string{"cpe:2.3:h:fortinet:meruap:*:*:*:*:*:*:*:*"}, nvd: []string{"cpe:2.3:a:fortinet:meru:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetMeru},
 }

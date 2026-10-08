@@ -43,6 +43,53 @@ func TestExtract(t *testing.T) {
 			hasError: true,
 		},
 		{
+			name:     "product branch with two distinct scores",
+			args:     "./testdata/fixtures-distinct-scores",
+			hasError: true,
+		},
+		{
+			name:     "product getting two profiles",
+			args:     "./testdata/fixtures-conflicting-profiles",
+			hasError: true,
+		},
+		{
+			name:     "product listed both affected and not affected",
+			args:     "./testdata/fixtures-contradicting-status",
+			hasError: true,
+		},
+		{
+			name:     "product listed under another product_status category",
+			args:     "./testdata/fixtures-fixed-status",
+			hasError: true,
+		},
+		{
+			name:     "score naming none of the listed products",
+			args:     "./testdata/fixtures-score-naming-no-listed-product",
+			hasError: true,
+		},
+		{
+			name:     "impact naming none of the listed products",
+			args:     "./testdata/fixtures-impact-naming-no-listed-product",
+			hasError: true,
+		},
+		{
+			name:     "score listing a product without a cvss_v3 vector",
+			args:     "./testdata/fixtures-score-without-vector",
+			hasError: true,
+		},
+		{
+			name:     "impact without details",
+			args:     "./testdata/fixtures-impact-without-details",
+			hasError: true,
+		},
+		{
+			// impact-162789 and impact-379192, with no CVSS, both hash to
+			// 275a5ccb.
+			name:     "two profiles hashing to one tag",
+			args:     "./testdata/fixtures-tag-collision",
+			hasError: true,
+		},
+		{
 			name:     "score naming a product the tree does not have",
 			args:     "./testdata/fixtures-unknown-product",
 			hasError: true,
@@ -53,7 +100,7 @@ func TestExtract(t *testing.T) {
 			hasError: true,
 		},
 		{
-			name:     "impact scoped by product_ids",
+			name:     "impact naming a leaf product_id",
 			args:     "./testdata/fixtures-threat-product-ids",
 			hasError: true,
 		},

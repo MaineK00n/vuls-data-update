@@ -1,6 +1,7 @@
 package product_test
 
 import (
+	"slices"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
@@ -165,6 +166,9 @@ func TestResolve(t *testing.T) {
 		{name: "FortiSOAR PaaS", wantCPEs: []string{"cpe:2.3:a:fortinet:fortisoarpaas:*:*:*:*:*:*:*:*", "cpe:2.3:a:fortinet:fortisoar:*:*:*:*:*:*:*:*"}, wantRange: ccRangeTypes.RangeTypeFortinetFortiSOAR, wantOK: true},
 		// The agent takes NVD's product for it, not FortiAuthenticator's.
 		{name: "FortiAuthenticator OutlookAgent", wantCPEs: []string{"cpe:2.3:a:fortinet:fortiauthenticatoroutlookagent:*:*:*:*:*:*:*:*", "cpe:2.3:a:fortinet:fortiauthenticator_agent_for_microsoft_outlook_web_access:*:*:*:*:*:*:*:*"}, wantRange: ccRangeTypes.RangeTypeFortinetFortiAuthenticator, wantOK: true},
+		// No Fortinet CVE record gives FortiSIEM Cloud a CPE yet, nor does NVD:
+		// the CNA's naming rule, and "a" for a service.
+		{name: "FortiSIEM Cloud", wantCPEs: []string{"cpe:2.3:a:fortinet:fortisiemcloud:*:*:*:*:*:*:*:*"}, wantRange: ccRangeTypes.RangeTypeFortinetFortiSIEMCloud, wantOK: true},
 		{name: "Nonexistent Product", wantOK: false},
 	}
 	for _, tt := range tests {
@@ -180,16 +184,16 @@ func TestResolve(t *testing.T) {
 	}
 }
 
-// Every product's CPEs are well-formed, fortinet's, version-wildcarded and
-// unrepeated.
+// Every product has a CNA CPE, and its CPEs are well-formed, Fortinet's,
+// version-wildcarded and unrepeated.
 func TestTableCPEs(t *testing.T) {
 	for _, name := range product.Names() {
-		cpes, _, _ := product.Resolve(name)
-		if len(cpes) == 0 {
-			t.Errorf("%q: no CPE", name)
+		cna, nvd := product.CPEs(name)
+		if len(cna) == 0 {
+			t.Errorf("%q: no CNA CPE", name)
 		}
-		seen := make(map[string]bool, len(cpes))
-		for _, cpe := range cpes {
+		seen := make(map[string]bool, len(cna)+len(nvd))
+		for _, cpe := range slices.Concat(cna, nvd) {
 			if seen[cpe] {
 				t.Errorf("%q: CPE %q repeated", name, cpe)
 			}
@@ -202,8 +206,10 @@ func TestTableCPEs(t *testing.T) {
 			if v, ok := wfn.Get(common.AttributeVendor).(string); !ok || v != "fortinet" {
 				t.Errorf("%q: CPE %q vendor is not fortinet", name, cpe)
 			}
-			if _, ok := wfn.Get(common.AttributeVersion).(common.LogicalValue); !ok {
-				t.Errorf("%q: CPE %q pins a version", name, cpe)
+			// ANY, not just any logical value: NA ("-") would claim the
+			// product has no version.
+			if v, ok := wfn.Get(common.AttributeVersion).(common.LogicalValue); !ok || !v.IsANY() {
+				t.Errorf("%q: CPE %q version is not ANY", name, cpe)
 			}
 		}
 	}

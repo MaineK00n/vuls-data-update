@@ -1,0 +1,108 @@
+{
+	"document": {
+		"category": "csaf_security_advisory",
+		"csaf_version": "2.0",
+		"title": "Synthetic advisory: two profiles hashing to one tag",
+		"publisher": {
+			"category": "vendor",
+			"name": "Fortinet PSIRT",
+			"namespace": "https://www.fortiguard.com/"
+		},
+		"tracking": {
+			"id": "FG-IR-99-009",
+			"initial_release_date": "2099-01-01T00:00:00",
+			"current_release_date": "2099-01-01T00:00:00",
+			"status": "final",
+			"version": "1",
+			"revision_history": [
+				{
+					"date": "2099-01-01T00:00:00",
+					"number": "1",
+					"summary": "Initial Publication"
+				}
+			]
+		}
+	},
+	"product_tree": {
+		"branches": [
+			{
+				"category": "vendor",
+				"name": "Fortinet PSIRT",
+				"branches": [
+					{
+						"category": "product",
+						"name": "FortiOS",
+						"branches": [
+							{
+								"category": "product_version_range",
+								"name": "FortiOS/7.4 all versions",
+								"product": {
+									"name": "FortiOS",
+									"product_id": "FortiOS 7.4 all versions"
+								}
+							}
+						]
+					},
+					{
+						"category": "product",
+						"name": "FortiProxy",
+						"branches": [
+							{
+								"category": "product_version_range",
+								"name": "FortiProxy/7.4 all versions",
+								"product": {
+									"name": "FortiProxy",
+									"product_id": "FortiProxy 7.4 all versions"
+								}
+							}
+						]
+					}
+				]
+			}
+		]
+	},
+	"vulnerabilities": [
+		{
+			"cve": "CVE-2099-0001",
+			"notes": [
+				{
+					"category": "summary",
+					"title": "Summary",
+					"text": "two profiles hashing to one tag"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiOS 7.4 all versions"
+				]
+			},
+			"threats": [
+				{
+					"category": "impact",
+					"details": "impact-162789"
+				}
+			]
+		},
+		{
+			"cve": "CVE-2099-0001",
+			"notes": [
+				{
+					"category": "summary",
+					"title": "Summary",
+					"text": "two profiles hashing to one tag"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiProxy 7.4 all versions"
+				]
+			},
+			"threats": [
+				{
+					"category": "impact",
+					"details": "impact-379192"
+				}
+			]
+		}
+	]
+}
