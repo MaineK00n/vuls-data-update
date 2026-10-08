@@ -7,4 +7,5 @@ var (
 	IsHotpatchSubType        = isHotpatchSubType
 	IsKBCriteria             = isKBCriteria
 	KBCumulativeTwins        = kbCumulativeTwins
+	VendorFixOverrides       = vendorFixOverrides
 )
