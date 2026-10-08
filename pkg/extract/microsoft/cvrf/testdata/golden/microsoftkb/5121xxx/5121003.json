@@ -14,6 +14,7 @@
 		"id": "microsoft-cvrf",
 		"raws": [
 			"fixtures/2026-Aug/2026/CVE-2026-62727.json",
+			"fixtures/2026-Aug/2026/CVE-2026-66804.json",
 			"fixtures/2026-Aug/2026/CVE-2026-6726.json"
 		]
 	}
