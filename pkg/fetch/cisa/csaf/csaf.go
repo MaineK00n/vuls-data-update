@@ -163,7 +163,7 @@ func Fetch(opts ...Option) error {
 				advisory, err := func() (CSAF, error) {
 					f, err := os.Open(filepath.Join(tempDir, "csaf_files", p, scanner.Text()))
 					if err != nil {
-						return CSAF{}, errors.Wrapf(err, "open %s", filepath.Join(tempDir, scanner.Text()))
+						return CSAF{}, errors.Wrap(err, "open")
 					}
 					defer f.Close()
 

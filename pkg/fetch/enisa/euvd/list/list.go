@@ -137,7 +137,7 @@ func (opts options) fetch() error {
 				res, err := func() (response, error) {
 					resp, err := client.Get(pageURL.String())
 					if err != nil {
-						return response{}, errors.Wrap(err, "fetch")
+						return response{}, errors.Wrap(err, "get")
 					}
 					defer resp.Body.Close()
 
