@@ -245,8 +245,14 @@ func supplementCriteria(table map[string][]supplementProduct, id string) (criter
 				if err != nil {
 					return criteriaTypes.Criteria{}, errors.Wrapf(err, "compare bounds %q, %q for %q in supplement entry %q", lo, hi, row.Product, id)
 				}
-				if c > 0 {
+				switch {
+				case c > 0:
 					return criteriaTypes.Criteria{}, errors.Errorf("inverted range for %q in supplement entry %q: lower bound %q > upper bound %q", row.Product, id, lo, hi)
+				case c == 0 && (r.GreaterThan != "" || r.LessThan != ""):
+					// Equal bounds with an exclusive side admit no version either
+					// (Range.Accept rejects the bound value for gt/lt); equal
+					// inclusive bounds are a one-version range and stay allowed.
+					return criteriaTypes.Criteria{}, errors.Errorf("empty range for %q in supplement entry %q: bounds %q and %q are equal but not both inclusive", row.Product, id, lo, hi)
 				}
 			}
 			for _, cpe := range cpes {
