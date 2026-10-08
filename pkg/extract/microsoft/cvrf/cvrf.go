@@ -872,6 +872,10 @@ func buildDetections(v cvrf.Vulnerability, products map[string]string) (map[ecos
 				tag := segmentTypes.DetectionTag(productName)
 				criterionProductName := microsoftutil.NormalizeProductName(productName)
 
+				if _, ok := vendorFixExclusions[[3]string{v.CVE, criterionProductName, r.Description}]; ok {
+					continue
+				}
+
 				kbCriterion := buildKBCriterion(criterionProductName, r.Description)
 				fixedBuildCriterion, err := buildFixedBuildCriterion(v.CVE, criterionProductName, r.FixedBuild)
 				if err != nil {
@@ -924,6 +928,9 @@ func buildDetections(v cvrf.Vulnerability, products map[string]string) (map[ecos
 	}
 
 	for _, tag := range tags {
+		if needsHotpatchReview(v.CVE, fixesByTag[tag]) {
+			slog.Warn("hotpatch product lists more than one fix besides the cumulative update; check the CVE FAQ and the KB articles for updates that are prerequisites or additions of each other, and add vendorFixExclusions if needed", slog.String("id", v.CVE), slog.String("tag", string(tag)))
+		}
 		if err := appendVendorFixConditions(conditionsByEcosystem, tag, fixesByTag[tag]); err != nil {
 			return nil, nil, errors.Wrapf(err, "append vendor fix conditions for %s (%s)", v.CVE, tag)
 		}
@@ -1070,6 +1077,67 @@ type vendorFix struct {
 // "Security HotPatch Update" (2025-May) and "AzureHotpatch" (2023-Sep).
 func isHotpatchSubType(subType string) bool {
 	return strings.Contains(strings.ToLower(subType), "hotpatch")
+}
+
+// vendorFixExclusions lists Vendor Fix remediations that Microsoft lists as a
+// fix in CVRF but that do not fix the CVE on their own, keyed by [3]string{CVE
+// ID, product name after microsoftutil.NormalizeProductName, KB ID}. CVRF
+// remediations cannot express that one update is a prerequisite of another, so
+// a monthly hotpatch whose CVE is only fixed by a follow-up update is listed
+// side by side with that update; kept, it would gate the follow-up's fixed
+// build (see appendVendorFixConditions) and hide hosts that applied only the
+// monthly hotpatch. The excluded product stays covered by its other Vendor
+// Fix remediations, so it never falls back to unfixed.
+var vendorFixExclusions = map[[3]string]struct{}{
+	// 2026-Aug: KB5123607 (and KB5123273 for Pluton-as-TPM devices), "offered
+	// after the August 2026 security hotpatch update (KB5120994) is installed",
+	// fix CVE-2026-6726 and CVE-2026-66804 on hotpatch-enrolled devices
+	// (CVE-2026-6726 FAQ "Do I need to do anything additional ...";
+	// https://support.microsoft.com/help/5123607,
+	// https://support.microsoft.com/help/5123273). CVRF of CVE-2026-66804 does
+	// not list either follow-up update.
+	{"CVE-2026-6726", "Windows 11 Version 24H2 for ARM64-based Systems", "5120994"}:  {},
+	{"CVE-2026-6726", "Windows 11 Version 24H2 for x64-based Systems", "5120994"}:    {},
+	{"CVE-2026-6726", "Windows 11 Version 25H2 for ARM64-based Systems", "5120994"}:  {},
+	{"CVE-2026-6726", "Windows 11 Version 25H2 for x64-based Systems", "5120994"}:    {},
+	{"CVE-2026-66804", "Windows 11 Version 24H2 for ARM64-based Systems", "5120994"}: {},
+	{"CVE-2026-66804", "Windows 11 Version 24H2 for x64-based Systems", "5120994"}:   {},
+	{"CVE-2026-66804", "Windows 11 Version 25H2 for ARM64-based Systems", "5120994"}: {},
+	{"CVE-2026-66804", "Windows 11 Version 25H2 for x64-based Systems", "5120994"}:   {},
+	// 2026-Aug: KB5123303, "offered after the August 2026 security hotpatch
+	// update (KB5120229) is installed", fixes CVE-2026-6726, CVE-2026-6727 and
+	// CVE-2026-66799 on hotpatch-enrolled Windows Server 2022 (CVE-2026-6726 /
+	// CVE-2026-6727 FAQ; https://support.microsoft.com/help/5123303).
+	{"CVE-2026-6726", "Windows Server 2022", "5120229"}:                             {},
+	{"CVE-2026-6726", "Windows Server 2022 (Server Core installation)", "5120229"}:  {},
+	{"CVE-2026-6727", "Windows Server 2022", "5120229"}:                             {},
+	{"CVE-2026-6727", "Windows Server 2022 (Server Core installation)", "5120229"}:  {},
+	{"CVE-2026-66799", "Windows Server 2022", "5120229"}:                            {},
+	{"CVE-2026-66799", "Windows Server 2022 (Server Core installation)", "5120229"}: {},
+}
+
+// needsHotpatchReview reports whether a detection tag offering a hotpatch
+// lists more than two distinct KBs, i.e. more than the usual hotpatch and
+// cumulative update pair, for a CVE without vendorFixExclusions entries. Such
+// extra updates have been follow-ups that require the monthly hotpatch first
+// (2026-Aug), which CVRF cannot express; they need a human to read the CVE FAQ
+// and the KB articles.
+func needsHotpatchReview(cveID string, fixes []vendorFix) bool {
+	if !slices.ContainsFunc(fixes, func(f vendorFix) bool { return f.hotpatch }) {
+		return false
+	}
+	for k := range vendorFixExclusions {
+		if k[0] == cveID {
+			return false
+		}
+	}
+	kbIDs := make(map[string]struct{})
+	for _, f := range fixes {
+		for _, kb := range f.kbs {
+			kbIDs[kb.KB.KBID] = struct{}{}
+		}
+	}
+	return len(kbIDs) > 2
 }
 
 // appendVendorFixConditions appends the criterions of all Vendor Fix

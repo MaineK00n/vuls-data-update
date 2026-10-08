@@ -7,11 +7,15 @@
 	"superseded_by": [
 		{
 			"kb_id": "5087545"
+		},
+		{
+			"kb_id": "5120242"
 		}
 	],
 	"data_source": {
 		"id": "microsoft-cvrf",
 		"raws": [
+			"fixtures/2026-Aug/2026/CVE-2026-6726.json",
 			"fixtures/2026-May/2026/CVE-2026-42825.json"
 		]
 	}
