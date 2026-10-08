@@ -88,8 +88,18 @@ func TestExtract(t *testing.T) {
 			hasError: true,
 		},
 		{
-			// impact-162789 and impact-379192, with no CVSS, both hash to
-			// 275a5ccb.
+			name:     "mitigation without details",
+			args:     "./testdata/fixtures-mitigation-without-details",
+			hasError: true,
+		},
+		{
+			name:     "product given two distinct mitigations",
+			args:     "./testdata/fixtures-distinct-mitigations",
+			hasError: true,
+		},
+		{
+			// impact-162789 and impact-379192, with no CVSS and no mitigation,
+			// both hash to be401391.
 			name:     "two profiles hashing to one tag",
 			args:     "./testdata/fixtures-tag-collision",
 			hasError: true,
@@ -112,13 +122,6 @@ func TestExtract(t *testing.T) {
 		{
 			name:     "impact scoped by group_ids",
 			args:     "./testdata/fixtures-threat-group-ids",
-			hasError: true,
-		},
-		{
-			// The texts are held NUL-joined in the profile; one containing a
-			// NUL would come back as two mitigations.
-			name:     "mitigation text containing a NUL",
-			args:     "./testdata/fixtures-mitigation-nul",
 			hasError: true,
 		},
 	}

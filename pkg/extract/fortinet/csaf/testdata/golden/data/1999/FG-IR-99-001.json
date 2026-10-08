@@ -17,11 +17,11 @@
 			"segments": [
 				{
 					"ecosystem": "cpe",
-					"tag": "CVE-2099-0001_02a59e35"
+					"tag": "CVE-2099-0001_5fb80d6f"
 				},
 				{
 					"ecosystem": "cpe",
-					"tag": "CVE-2099-0001_19496105"
+					"tag": "CVE-2099-0001_d383badf"
 				}
 			]
 		}
@@ -56,7 +56,7 @@
 			"segments": [
 				{
 					"ecosystem": "cpe",
-					"tag": "CVE-2099-0001_19496105"
+					"tag": "CVE-2099-0001_d383badf"
 				}
 			]
 		},
@@ -89,7 +89,7 @@
 			"segments": [
 				{
 					"ecosystem": "cpe",
-					"tag": "CVE-2099-0001_02a59e35"
+					"tag": "CVE-2099-0001_5fb80d6f"
 				}
 			]
 		}
@@ -119,7 +119,7 @@
 							}
 						]
 					},
-					"tag": "CVE-2099-0001_02a59e35"
+					"tag": "CVE-2099-0001_5fb80d6f"
 				},
 				{
 					"criteria": {
@@ -162,7 +162,7 @@
 							}
 						]
 					},
-					"tag": "CVE-2099-0001_19496105"
+					"tag": "CVE-2099-0001_d383badf"
 				}
 			]
 		}

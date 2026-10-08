@@ -17,7 +17,7 @@
 			"segments": [
 				{
 					"ecosystem": "cpe",
-					"tag": "CVE-2099-0001_02a59e35"
+					"tag": "CVE-2099-0001_5fb80d6f"
 				},
 				{
 					"ecosystem": "cpe",
@@ -56,7 +56,7 @@
 			"segments": [
 				{
 					"ecosystem": "cpe",
-					"tag": "CVE-2099-0001_02a59e35"
+					"tag": "CVE-2099-0001_5fb80d6f"
 				}
 			]
 		},
@@ -125,7 +125,7 @@
 							}
 						]
 					},
-					"tag": "CVE-2099-0001_02a59e35"
+					"tag": "CVE-2099-0001_5fb80d6f"
 				},
 				{
 					"criteria": {

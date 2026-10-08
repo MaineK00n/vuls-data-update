@@ -2,14 +2,14 @@
 	"document": {
 		"category": "csaf_security_advisory",
 		"csaf_version": "2.0",
-		"title": "Synthetic advisory: a mitigation text containing NUL",
+		"title": "Synthetic advisory: a mitigation without details",
 		"publisher": {
 			"category": "vendor",
 			"name": "Fortinet PSIRT",
 			"namespace": "https://www.fortiguard.com/"
 		},
 		"tracking": {
-			"id": "FG-IR-99-011",
+			"id": "FG-IR-99-018",
 			"initial_release_date": "2099-01-01T00:00:00",
 			"current_release_date": "2099-01-01T00:00:00",
 			"status": "final",
@@ -68,7 +68,7 @@
 				{
 					"category": "summary",
 					"title": "Summary",
-					"text": "a mitigation text containing NUL"
+					"text": "a mitigation for one product branch"
 				}
 			],
 			"product_status": {
@@ -88,7 +88,7 @@
 				},
 				{
 					"category": "mitigation",
-					"details": "Disable the HTTP/HTTPS administrative interface.\u0000Restrict it to trusted hosts.",
+					"details": "",
 					"product_ids": [
 						"FortiProxy"
 					]

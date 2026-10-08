@@ -189,21 +189,18 @@ type productStatus struct {
 
 // profile is the content CSAF scopes to products, which may therefore differ
 // between the products of one key — the severity (CVSS vector + vendor
-// impact) and the mitigations, held as read so that it compares and keys a
+// impact) and the mitigation, held as read so that it compares and keys a
 // map. CSAF scopes scores to .products, and threats and remediations to
-// .product_ids, so each product gets the score, impact and mitigations that
+// .product_ids, so each product gets the score, impact and mitigation that
 // list it (see vulnProfile); Fortinet replicates one CVE across one object per
 // product family. Today every family shares the same profile, so a key has a
 // single profile and the per-CVE output is unchanged — but distinct profiles
 // (which CSAF permits) split into separate segments/conditions rather than
 // being over-attributed to every product.
 type profile struct {
-	cvss   string // CVSS v3.1 vector, empty when no score lists the product
-	impact string // empty when no impact threat covers the product
-	// mitigations is the texts of the "mitigation" remediations listing the
-	// product: distinct, sorted and NUL-joined, so that the profile stays
-	// comparable. Empty for a product no mitigation lists.
-	mitigations string
+	cvss       string // CVSS v3.1 vector, empty when no score lists the product
+	impact     string // empty when no impact threat covers the product
+	mitigation string // text of the "mitigation" remediation, empty when none lists the product
 }
 
 // hash returns a digest of the profile, telling the profiles of one key apart
@@ -211,27 +208,18 @@ type profile struct {
 func (p profile) hash() uint32 {
 	h := fnv.New32a()
 	// hash.Hash.Write is documented never to return an error.
-	_, _ = fmt.Fprintf(h, "%s\x00%s", p.cvss, p.impact)
-	// Written only when present, so that a profile without mitigations keeps
-	// the digest, and with it the tag, it had before profiles carried them.
-	if p.mitigations != "" {
-		_, _ = fmt.Fprintf(h, "\x00%s", p.mitigations)
-	}
+	_, _ = fmt.Fprintf(h, "%s\x00%s\x00%s", p.cvss, p.impact, p.mitigation)
 	return h.Sum32()
 }
 
-// mitigationRecords converts the profile's mitigations to the Mitigations of
-// its Vulnerability record, one per text, in the sorted order they are held
-// in.
-func (p profile) mitigationRecords() []remediationTypes.Remediation {
-	if p.mitigations == "" {
+// mitigations converts the profile to the Mitigations of its Vulnerability
+// record: one for the mitigation the profile has, so none for a profile
+// without one.
+func (p profile) mitigations() []remediationTypes.Remediation {
+	if p.mitigation == "" {
 		return nil
 	}
-	var rs []remediationTypes.Remediation
-	for m := range strings.SplitSeq(p.mitigations, "\x00") {
-		rs = append(rs, remediationTypes.Remediation{Source: "fortiguard.fortinet.com", Description: m})
-	}
-	return rs
+	return []remediationTypes.Remediation{{Source: "fortiguard.fortinet.com", Description: p.mitigation}}
 }
 
 // severities converts the profile to the severities of its Vulnerability
@@ -503,7 +491,7 @@ func extract(fetched csafTypes.CSAF, raws []string) (dataTypes.Data, error) {
 						}
 						return []cweTypes.CWE{{Source: "fortiguard.fortinet.com", CWE: cwes}}
 					}(),
-					Mitigations: p.mitigationRecords(),
+					Mitigations: p.mitigations(),
 					Workarounds: func() []remediationTypes.Remediation {
 						var rs []remediationTypes.Remediation
 						for _, w := range slices.Compact(slices.Sorted(slices.Values(a.workarounds))) {
@@ -902,11 +890,10 @@ func resolveVersion(productName, exp string) (*ccRangeTypes.Range, string, error
 // vulnProfile returns the profile of one CSAF vulnerability object for the
 // product_id pid: the CVSS v3.1 vector of the score whose .products lists pid,
 // the vendor impact whose .product_ids lists pid or which has none (and so
-// covers the whole object), and the texts of the "mitigation" remediations
-// whose .product_ids lists pid. CSAF requires neither a score nor a threat, so
-// either, or both, may be missing, leaving that part of the profile empty;
-// more than one distinct of either is a hard error (see below). Mitigations
-// are optional and any number may list a product.
+// covers the whole object), and the text of the "mitigation" remediation
+// whose .product_ids lists pid. CSAF requires none of the three, so any may
+// be missing, leaving that part of the profile empty; more than one distinct
+// of any is a hard error (see below).
 func vulnProfile(v csafTypes.Vulnerability, pid string) (profile, error) {
 	// Fortinet emits at most one cvss vector and one impact per product. Hold a
 	// single value and fail loudly on a second distinct one (a duplicate of the
@@ -951,26 +938,27 @@ func vulnProfile(v csafTypes.Vulnerability, pid string) (profile, error) {
 		}
 		impact = t.Details
 	}
-	// A placeholder text ("N/A") is no mitigation and is dropped, as it is for
-	// the Workarounds note. A NUL in a text would split it in two when the
-	// joined texts are read back on emit, so that hard-errors.
-	var mitigations []string
+	// Likewise at most one mitigation per product, held trimmed, since Fortinet
+	// ends the text with a newline: the corpus has one (FG-IR-26-157, FortiWeb),
+	// so a second distinct one is a shape to widen to deliberately rather than
+	// pick from or merge. One that lists the product carries its details (CSAF
+	// requires them on a remediation).
+	var mitigation string
 	for _, rem := range v.Remediations {
 		if rem.Category != "mitigation" || !slices.Contains(rem.ProductIDs, csafTypes.ProductID(pid)) {
 			continue
 		}
 		m := strings.TrimSpace(rem.Details)
-		if placeholderNote(m) {
-			continue
+		if m == "" {
+			return profile{}, errors.Errorf("mitigation of %q listing %q has no details", v.CVE, pid)
 		}
-		if strings.Contains(m, "\x00") {
-			return profile{}, errors.Errorf("vulnerability %q has a mitigation containing a NUL character", v.CVE)
+		if mitigation != "" && mitigation != m {
+			return profile{}, errors.Errorf("vulnerability %q has multiple distinct mitigations for %q (%q, %q)", v.CVE, pid, mitigation, m)
 		}
-		mitigations = append(mitigations, m)
+		mitigation = m
 	}
-	slices.Sort(mitigations)
 
-	return profile{cvss: vector, impact: impact, mitigations: strings.Join(slices.Compact(mitigations), "\x00")}, nil
+	return profile{cvss: vector, impact: impact, mitigation: mitigation}, nil
 }
 
 func noteText(notes []csafTypes.Note, title string) string {
