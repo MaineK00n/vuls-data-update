@@ -63,6 +63,16 @@ func TestExtract(t *testing.T) {
 			hasError: true,
 		},
 		{
+			name:     "score naming none of the listed products",
+			args:     "./testdata/fixtures-score-naming-no-listed-product",
+			hasError: true,
+		},
+		{
+			name:     "impact naming none of the listed products",
+			args:     "./testdata/fixtures-impact-naming-no-listed-product",
+			hasError: true,
+		},
+		{
 			name:     "score listing a product without a cvss_v3 vector",
 			args:     "./testdata/fixtures-score-without-vector",
 			hasError: true,

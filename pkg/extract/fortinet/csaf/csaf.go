@@ -298,6 +298,25 @@ func extract(fetched csafTypes.CSAF, raws []string) (dataTypes.Data, error) {
 				return dataTypes.Data{}, errors.Errorf("unexpected product_status.%s %q (advisory %s, %s)", name, pids, id, key)
 			}
 		}
+		// Each score, and each impact scoped to products, is read for the
+		// listed products it names (see vulnProfile). One naming none of them —
+		// filed in the wrong object, say — would be read for no product and its
+		// severity lost unnoticed, now that a product may lack a score or an
+		// impact, so that hard-errors.
+		listed := slices.Concat(v.ProductStatus.KnownAffected, v.ProductStatus.KnownNotAffected)
+		reachesListed := func(pids []csafTypes.ProductID) bool {
+			return slices.ContainsFunc(pids, func(pid csafTypes.ProductID) bool { return slices.Contains(listed, pid) })
+		}
+		for _, sc := range v.Scores {
+			if !reachesListed(sc.Products) {
+				return dataTypes.Data{}, errors.Errorf("score of %q names none of the listed products (products: %q, listed: %q) (advisory %s)", key, sc.Products, listed, id)
+			}
+		}
+		for _, t := range v.Threats {
+			if t.Category == "impact" && len(t.ProductIDs) > 0 && !reachesListed(t.ProductIDs) {
+				return dataTypes.Data{}, errors.Errorf("impact of %q names none of the listed products (product_ids: %q, listed: %q) (advisory %s)", key, t.ProductIDs, listed, id)
+			}
+		}
 		for _, l := range []struct {
 			pids     []csafTypes.ProductID
 			affected bool
