@@ -724,15 +724,16 @@ func toCriterions(productID string, refMap map[string]productRef) ([]criterionTy
 				return nil, errors.Errorf("product %q is non-numeric-versioned and must use a train range (bound dot<=1), got bound %q (expr %q)", productID, b, ref.versionExp)
 			}
 		}
-		// (3) A lower bound above the upper bound (">=7.2.7|<=7.2.0") makes the
-		// criterion unsatisfiable: extraction succeeds and the detector never
-		// matches, a silent false negative. So do equal bounds when either side
-		// is exclusive (">7.2.0|<7.2.0", ">7.2.0|<=7.2.0"): Range.Accept rejects
-		// the bound value itself for gt/lt. Reject both, the same way the CVRF
-		// supplement rejects its inverted rows. Equal inclusive bounds
-		// (">=7.2.0|<=7.2.0") are a one-version range and stay allowed.
+		// (3) Reject a range no version can satisfy: extraction would succeed
+		// and the detector never match, a silent false negative. Two shapes: a
+		// lower bound above the upper one (">=7.2.7|<=7.2.0"), and equal bounds
+		// with an exclusive side (">7.2.0|<7.2.0", ">7.2.0|<=7.2.0"), since
+		// Range.Accept rejects the bound value itself for gt/lt. Equal inclusive
+		// bounds (">=7.2.0|<=7.2.0") are a one-version range and stay allowed.
+		// The CVRF supplement rejects the same shapes.
+		//
 		// resolveVersion sets at most one bound per side, so reading one field
-		// of each is the whole range.
+		// of each side is the whole range.
 		if lo, hi := cmp.Or(r.GreaterEqual, r.GreaterThan), cmp.Or(r.LessEqual, r.LessThan); lo != "" && hi != "" {
 			vlo, err := numericVersion.NewVersion(lo)
 			if err != nil {
