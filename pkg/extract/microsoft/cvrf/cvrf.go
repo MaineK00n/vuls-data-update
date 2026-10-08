@@ -1238,15 +1238,18 @@ func appendVendorFixConditions(conditionsByEcosystem map[ecosystemTypes.Ecosyste
 	}
 	vfs := make([]versionedFix, 0, len(fixes))
 	for _, f := range fixes {
-		if len(f.kbs) > 0 {
-			appendConditions(conditionsByEcosystem, tag, f.kbs)
+		if len(f.kbs) == 0 {
+			// Without a KB the fix cannot gate the builds of the fixes above
+			// it, which brings back the false positive the gating removes.
+			return errors.Errorf("unexpected Vendor Fix without a numeric KB ID for a product offering a hotpatch. expected: a KB ID, actual: none, please exclude the fix via vendorFixOverrides if it does not fix the CVE on its own")
 		}
+		appendConditions(conditionsByEcosystem, tag, f.kbs)
 
 		if f.version == nil {
 			// Without a fixed build the fix cannot be ordered, so its KB
 			// would never gate the other fixes' builds. Such a value needs a
 			// vendorFixOverrides fixedBuild.
-			return errors.Errorf("unexpected Vendor Fix without a usable FixedBuild for a product offering a hotpatch. expected: a fixed build for KBs %q, actual: none, please add vendorFixOverrides", func() []string {
+			return errors.Errorf("unexpected Vendor Fix without a usable FixedBuild for a product offering a hotpatch. expected: a fixed build for KBs %q, actual: none, please add a vendorFixOverrides fixedBuild", func() []string {
 				ids := make([]string, 0, len(f.kbs))
 				for _, kb := range f.kbs {
 					ids = append(ids, kb.KB.KBID)
