@@ -5,7 +5,6 @@ import (
 	"hash/fnv"
 	"io/fs"
 	"log/slog"
-	"maps"
 	"path/filepath"
 	"slices"
 	"strings"
@@ -283,6 +282,22 @@ func extract(fetched csafTypes.CSAF, raws []string) (dataTypes.Data, error) {
 		if len(v.ProductStatus.KnownAffected) == 0 && len(v.ProductStatus.KnownNotAffected) == 0 {
 			return dataTypes.Data{}, errors.Errorf("vulnerability object lists neither known_affected nor known_not_affected products (advisory %s, %s)", id, key)
 		}
+		// Fortinet uses no other product_status category (546 CSAF advisories
+		// as of 2026-09). A product listed under one would be dropped unnoticed
+		// — fixed releases moved out of known_not_affected, say, taking their
+		// not-affected criterions with them — so any of them hard-errors.
+		for name, pids := range map[string][]csafTypes.ProductID{
+			"first_affected":      v.ProductStatus.FirstAffected,
+			"first_fixed":         v.ProductStatus.FirstFixed,
+			"fixed":               v.ProductStatus.Fixed,
+			"last_affected":       v.ProductStatus.LastAffected,
+			"recommended":         v.ProductStatus.Recommended,
+			"under_investigation": v.ProductStatus.UnderInvestigation,
+		} {
+			if len(pids) > 0 {
+				return dataTypes.Data{}, errors.Errorf("unexpected product_status.%s %q (advisory %s, %s)", name, pids, id, key)
+			}
+		}
 		for _, l := range []struct {
 			pids     []csafTypes.ProductID
 			affected bool
@@ -324,13 +339,42 @@ func extract(fetched csafTypes.CSAF, raws []string) (dataTypes.Data, error) {
 		segments   []segmentTypes.Segment
 	)
 	for key, a := range accs {
-		// Profile iteration order is irrelevant: each tag is derived from the
-		// profile itself (below), and util.Write re-sorts every output slice by a
-		// content-based total order, so the append order never reaches the
-		// output.
-		profiles := make(map[profile]struct{})
-		for _, ps := range a.products {
-			profiles[ps.profile] = struct{}{}
+		// Group the products' criterions by profile. Iteration order is
+		// irrelevant: each tag is derived from the profile itself (below), and
+		// util.Write re-sorts every output slice by a content-based total order,
+		// so the append order never reaches the output.
+		type group struct {
+			criterions []criterionTypes.Criterion
+			criterias  []criteriaTypes.Criteria
+		}
+		profiles := make(map[profile]*group)
+		for pid, ps := range a.products {
+			cns, err := toCriterions(pid, refMap)
+			if err != nil {
+				return dataTypes.Data{}, errors.Wrapf(err, "resolve product %q (advisory %s, %s)", pid, id, key)
+			}
+			if !ps.affected {
+				for _, cn := range cns {
+					cn.CPE.Vulnerable = false
+					cn.CPE.FixStatus = &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassNotAffected}
+				}
+			}
+			g := profiles[ps.profile]
+			if g == nil {
+				g = &group{}
+				profiles[ps.profile] = g
+			}
+			// A product recorded under several CPEs is one OR of its criterions,
+			// so each product stays one unit even where two products share a CPE.
+			switch len(cns) {
+			case 1:
+				g.criterions = append(g.criterions, cns[0])
+			default:
+				g.criterias = append(g.criterias, criteriaTypes.Criteria{
+					Operator:   criteriaTypes.CriteriaOperatorTypeOR,
+					Criterions: cns,
+				})
+			}
 		}
 
 		// One profile → the tag is the bare key (CVE / advisory ID), keeping the
@@ -355,41 +399,8 @@ func extract(fetched csafTypes.CSAF, raws []string) (dataTypes.Data, error) {
 			tags[p] = tag
 		}
 
-		for p, tag := range tags {
-			// Sorted so that, of several unresolvable products, the same one is
-			// reported every run.
-			var (
-				criterions []criterionTypes.Criterion
-				criterias  []criteriaTypes.Criteria
-			)
-			for _, pid := range slices.Sorted(maps.Keys(a.products)) {
-				ps := a.products[pid]
-				if ps.profile != p {
-					continue
-				}
-				cns, err := toCriterions(pid, refMap)
-				if err != nil {
-					return dataTypes.Data{}, errors.Wrapf(err, "resolve product %q (advisory %s, %s)", pid, id, key)
-				}
-				if !ps.affected {
-					for _, cn := range cns {
-						cn.CPE.Vulnerable = false
-						cn.CPE.FixStatus = &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassNotAffected}
-					}
-				}
-				// A product recorded under several CPEs is one OR of its
-				// criterions, so each product stays one unit even where two
-				// products share a CPE.
-				switch len(cns) {
-				case 1:
-					criterions = append(criterions, cns[0])
-				default:
-					criterias = append(criterias, criteriaTypes.Criteria{
-						Operator:   criteriaTypes.CriteriaOperatorTypeOR,
-						Criterions: cns,
-					})
-				}
-			}
+		for p, g := range profiles {
+			tag := tags[p]
 			sevs, err := p.severities()
 			if err != nil {
 				return dataTypes.Data{}, errors.Wrapf(err, "severity for advisory %s, %s", id, key)
@@ -403,8 +414,8 @@ func extract(fetched csafTypes.CSAF, raws []string) (dataTypes.Data, error) {
 			conditions = append(conditions, conditionTypes.Condition{
 				Criteria: criteriaTypes.Criteria{
 					Operator:   criteriaTypes.CriteriaOperatorTypeOR,
-					Criterias:  criterias,
-					Criterions: criterions,
+					Criterias:  g.criterias,
+					Criterions: g.criterions,
 				},
 				Tag: tag,
 			})
@@ -504,8 +515,8 @@ func extract(fetched csafTypes.CSAF, raws []string) (dataTypes.Data, error) {
 // the exception is explicit and bounded, and have each dialect hard-error when
 // its assumption is violated — so Fortinet standardizing FG-IR-21-173, or a new
 // legacy-format advisory, surfaces loudly instead of being silently mis-parsed.
-// The name → CPE whitelist is resolved and enforced later at the known_affected
-// use-site (toCriterions).
+// The name → CPE whitelist is resolved and enforced later, for each listed
+// product, at the use-site (toCriterions).
 func buildProductRefs(id string, branches []csafTypes.Branch) (map[string]productRef, error) {
 	switch id {
 	case "FG-IR-21-173":
@@ -597,13 +608,14 @@ func buildProductRefsLegacy(branches []csafTypes.Branch) (map[string]productRef,
 	return refMap, nil
 }
 
-// toCriterions resolves a product_id to CPE criterions using
-// the product tree map, one per CPE the product may be recorded under (see
-// product.Resolve), each with the same version constraint. It hard-errors when
-// the product is not in the whitelist or its version cannot be parsed — a new
-// Fortinet product, a new version grammar, or a resolver bug must fail the
-// extract, not silently drop an affected product (which would be a detection
-// false negative).
+// toCriterions resolves a listed product_id, known_affected or
+// known_not_affected, to CPE criterions using the product tree map, one per
+// CPE the product may be recorded under (see product.Resolve), each with the
+// same version constraint. It hard-errors when the product is not in the
+// whitelist or its version cannot be parsed — a new Fortinet product, a new
+// version grammar, or a resolver bug must fail the extract, not silently drop
+// a listed product (an affected one dropped would be a detection false
+// negative, a not-affected one a lost exclusion).
 func toCriterions(productID string, refMap map[string]productRef) ([]criterionTypes.Criterion, error) {
 	ref, ok := refMap[productID]
 	if !ok {
@@ -714,7 +726,7 @@ func toCriterions(productID string, refMap map[string]productRef) ([]criterionTy
 // covers an empty/"all versions" expression. A non-numeric "<x> all versions"
 // (e.g. a product name leaked into the version, "FortiClient iOS all
 // versions") is not silently widened to whole product — it hard-errors, since
-// it never legitimately appears in known_affected data.
+// it never legitimately appears in a listed product's version.
 func resolveVersion(productName, exp string) (*ccRangeTypes.Range, string, error) {
 	switch {
 	case exp == "" || exp == "all versions":
@@ -723,8 +735,9 @@ func resolveVersion(productName, exp string) (*ccRangeTypes.Range, string, error
 		// "<train> all versions" → the whole X.Y train (e.g. "7.0 all versions").
 		// The prefix must be a numeric train. Anything else — an empty prefix, or
 		// a product name leaked into the version like "FortiClient iOS all
-		// versions" — is unexpected in known_affected data, so hard-error rather
-		// than silently widen to the whole product (which would mask the leak).
+		// versions" — is unexpected in a listed product's version, so
+		// hard-error rather than silently widen to the whole product (which
+		// would mask the leak).
 		train := strings.TrimSpace(strings.TrimSuffix(exp, "all versions"))
 		if _, err := numericVersion.NewVersion(train); err != nil {
 			return nil, "", errors.Wrapf(err, "unexpected non-numeric train %q in %q", train, exp)

@@ -53,6 +53,16 @@ func TestExtract(t *testing.T) {
 			hasError: true,
 		},
 		{
+			name:     "product listed both affected and not affected",
+			args:     "./testdata/fixtures-contradicting-status",
+			hasError: true,
+		},
+		{
+			name:     "product listed under another product_status category",
+			args:     "./testdata/fixtures-fixed-status",
+			hasError: true,
+		},
+		{
 			name:     "score listing a product without a cvss_v3 vector",
 			args:     "./testdata/fixtures-score-without-vector",
 			hasError: true,
