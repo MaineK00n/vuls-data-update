@@ -256,7 +256,10 @@ func Extract(args string, opts ...Option) error {
 		slog.Warn("a release ran every update on one line", slog.String("release", release), slog.String("line", slices.Collect(maps.Keys(kinds[release]))[0]), slog.Int("count", total))
 	}
 
-	kbs := chain(us)
+	kbs, err := chain(us)
+	if err != nil {
+		return errors.Wrap(err, "chain")
+	}
 
 	for _, kb := range kbs {
 		p, err := utilfilepath.Join(options.dir, "microsoftkb", fmt.Sprintf("%sxxx", kb.KBID[:len(kb.KBID)-3]), fmt.Sprintf("%s.json", kb.KBID))
@@ -345,21 +348,37 @@ func parsePage(page releaseinfo.Page, name, raw string) ([]update, error) {
 	// product, and a page runs two of them at once. It is taken from the release
 	// history covering the same build, which is on the same page and says it in
 	// full. The histories are read first for that reason.
+	//
+	// The label is the only thing tying a history to its release, and nothing
+	// downstream would notice it pointing at the wrong one: a <strong> picked up
+	// from the prose, a label naming another build, or a calendar whose Type
+	// column was renamed and so reads as a history would each name KBs after the
+	// wrong release -- the last also chaining a baseline into the hotpatch after
+	// it. So a history's label has to name its build, and its rows have to be of
+	// that build.
 	releases := make(map[int]string)
-	for _, t := range page.Tables {
+	// majors is the build each release history covers, by its index in Tables.
+	majors := make(map[int]int)
+	for i, t := range page.Tables {
 		if !slices.Contains(t.Header, columnKB) || slices.Contains(t.Header, columnHotpatchType) {
 			continue
 		}
-		if m := buildSuffixPattern.FindStringSubmatch(t.Label); m != nil {
-			major, err := strconv.Atoi(m[1])
-			if err != nil {
-				continue
-			}
-			releases[major] = release(name, t.Label)
+		m := buildSuffixPattern.FindStringSubmatch(t.Label)
+		if m == nil {
+			return nil, errors.Errorf("unexpected release history label. expected: %q, actual: %q", "<release> (OS build <major>)", t.Label)
 		}
+		major, err := strconv.Atoi(m[1])
+		if err != nil {
+			return nil, errors.Wrapf(err, "parse build in %q", t.Label)
+		}
+		if _, ok := releases[major]; ok {
+			return nil, errors.Errorf("two release histories for build %d. label: %q", major, t.Label)
+		}
+		releases[major] = release(name, t.Label)
+		majors[i] = major
 	}
 
-	for _, t := range page.Tables {
+	for i, t := range page.Tables {
 		if !slices.Contains(t.Header, columnKB) {
 			// A lifecycle table. It states support dates rather than a history,
 			// and names only the latest update of each release, which the
@@ -390,6 +409,9 @@ func parsePage(page releaseinfo.Page, name, raw string) ([]update, error) {
 				continue
 			}
 			u.hotpatch = hotpatch
+			if !hotpatch && u.major != majors[i] {
+				return nil, errors.Errorf("unexpected build in release history. expected: %d.<revision>, actual: %d.%d, label: %q, kb: %s", majors[i], u.major, u.revision, t.Label, u.kbID)
+			}
 			if hotpatch {
 				u.baseline = isBaseline(t, row, raw, u.kbID)
 
@@ -539,7 +561,7 @@ func release(page, label string) string {
 // An update ships to more than one release at a time -- KB5121003 is 26200.9168
 // on one line and 26100.9168 on another -- so it takes its place in each of
 // their chains and ends up with the edges of both.
-func chain(us []update) []microsoftkbTypes.KB {
+func chain(us []update) ([]microsoftkbTypes.KB, error) {
 	type buildLine struct {
 		page  string
 		major int
@@ -563,6 +585,18 @@ func chain(us []update) []microsoftkbTypes.KB {
 		slices.SortFunc(group, func(x, y update) int {
 			return cmp.Or(cmp.Compare(x.revision, y.revision), x.date.Compare(y.date), cmp.Compare(x.kbID, y.kbID))
 		})
+		// A KB occupies one place on a line. Listed twice with another update
+		// between -- re-released at a later build -- it would supersede and be
+		// superseded by that update at once, and which place is the real one is
+		// not something the table says.
+		at := make(map[string]int)
+		for i, u := range group {
+			if j, ok := at[u.kbID]; ok && j != i-1 {
+				return nil, errors.Errorf("KB%s is listed twice on one line with another update between. page: %s, build: %d, line: %s, revisions: %d.%d, %d.%d", u.kbID, u.page, u.major, u.kind(), u.major, group[j].revision, u.major, u.revision)
+			}
+			at[u.kbID] = i
+		}
+
 		for i := 1; i < len(group); i++ {
 			// A hotpatch does not replace the baseline it installs on top of.
 			if group[i-1].baseline && group[i].hotpatch && !group[i].baseline {
@@ -615,5 +649,5 @@ func chain(us []update) []microsoftkbTypes.KB {
 	for _, kb := range kbs {
 		out = append(out, *kb)
 	}
-	return out
+	return out, nil
 }

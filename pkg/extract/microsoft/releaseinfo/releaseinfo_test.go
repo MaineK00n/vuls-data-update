@@ -54,6 +54,13 @@ import (
 // The Server 2025 RTM row names no KB, being the release rather than an update
 // to it. Rows like that are not the hotpatch calendars' alone.
 //
+// KB3185611 and KB3193821 are both 10240.17113, a week apart under one B, so
+// the revision cannot order them and the release date does. The KB numbers run
+// the same way here, as they do in all five pairs of this kind on the pages, so
+// the fixture cannot tell the date from the number falling back behind it.
+// KB5061977 is on the Windows 11 and the Windows Server page alike, and its
+// record carries both pages as its raws.
+//
 // KB5101684 and KB5121767 are the pair whose KB numbers run backwards against
 // their builds -- the July 28th preview at .8973 supersedes the July 18th
 // out-of-band at .8894 -- so a chain that fell back on the number would invert
@@ -79,6 +86,29 @@ func TestExtract(t *testing.T) {
 			// its KBs would be written unnamed and off their monthly chain.
 			name:     "hotpatch calendar without its release history",
 			args:     "./testdata/fixtures/hotpatch-without-history",
+			hasError: true,
+		},
+		{
+			// A history's label is the only thing naming its release. One that
+			// names another build than its rows would name every KB after the
+			// wrong release.
+			name:     "release history labelled with another build",
+			args:     "./testdata/fixtures/label-mismatch",
+			hasError: true,
+		},
+		{
+			// A hotpatch calendar whose Type column is renamed reads as a
+			// history, which would chain each baseline into the hotpatch after
+			// it. Its "Calendar year" label names no build, and that stops it.
+			name:     "hotpatch calendar without its Type column",
+			args:     "./testdata/fixtures/type-renamed",
+			hasError: true,
+		},
+		{
+			// July's KB listed again at a build past August's would have it and
+			// August's superseding each other.
+			name:     "KB listed twice on one line",
+			args:     "./testdata/fixtures/duplicate-kb",
 			hasError: true,
 		},
 		{
