@@ -119,6 +119,90 @@
 			]
 		},
 		{
+			"label": "Windows Server 2022 (OS build 20348)",
+			"header": [
+				"Servicing option",
+				"Update type",
+				"Availability date",
+				"Build",
+				"KB article"
+			],
+			"rows": [
+				[
+					{
+						"text": "LTSC"
+					},
+					{
+						"text": "2025-01 OOB"
+					},
+					{
+						"text": "2025-01-18"
+					},
+					{
+						"text": "20348.3095"
+					},
+					{
+						"text": "KB5052819",
+						"href": "https://support.microsoft.com/help/5052819"
+					}
+				],
+				[
+					{
+						"text": "LTSC"
+					},
+					{
+						"text": "2024-09 B"
+					},
+					{
+						"text": "2024-09-10"
+					},
+					{
+						"text": "20348.2700"
+					},
+					{
+						"text": "KB5042881",
+						"href": "https://support.microsoft.com/help/5042881"
+					}
+				],
+				[
+					{
+						"text": "LTSC"
+					},
+					{
+						"text": "2024-08 B"
+					},
+					{
+						"text": "2024-08-13"
+					},
+					{
+						"text": "20348.2655"
+					},
+					{
+						"text": "KB5041160",
+						"href": "https://support.microsoft.com/help/5041160"
+					}
+				],
+				[
+					{
+						"text": "LTSC"
+					},
+					{
+						"text": "2024-07 B"
+					},
+					{
+						"text": "2024-07-09"
+					},
+					{
+						"text": "20348.2582"
+					},
+					{
+						"text": "KB5040437",
+						"href": "https://support.microsoft.com/help/5040437"
+					}
+				]
+			]
+		},
+		{
 			"label": "Calendar year 2026",
 			"header": [
 				"Month",
