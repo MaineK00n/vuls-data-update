@@ -188,6 +188,42 @@
 						"text": "LTSB • CB • CBB"
 					},
 					{
+						"text": "2016-09 B"
+					},
+					{
+						"text": "2016-09-20"
+					},
+					{
+						"text": "10240.17113"
+					},
+					{
+						"text": "KB3193821",
+						"href": "https://support.microsoft.com/help/3193821"
+					}
+				],
+				[
+					{
+						"text": "LTSB • CB • CBB"
+					},
+					{
+						"text": "2016-09 B"
+					},
+					{
+						"text": "2016-09-13"
+					},
+					{
+						"text": "10240.17113"
+					},
+					{
+						"text": "KB3185611",
+						"href": "https://support.microsoft.com/help/3185611"
+					}
+				],
+				[
+					{
+						"text": "LTSB • CB • CBB"
+					},
+					{
 						"text": "2015-09 D"
 					},
 					{

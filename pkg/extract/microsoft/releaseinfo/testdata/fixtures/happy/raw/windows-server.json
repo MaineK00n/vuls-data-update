@@ -106,6 +106,24 @@
 						"text": "LTSC"
 					},
 					{
+						"text": "2025-05 OOB"
+					},
+					{
+						"text": "2025-05-27"
+					},
+					{
+						"text": "26100.4066"
+					},
+					{
+						"text": "KB5061977",
+						"href": "https://support.microsoft.com/topic/may-27-2025-kb5061977-os-build-26100-4066-out-of-band-80725b43-c0a1-48a4-9b82-058efffb6228"
+					}
+				],
+				[
+					{
+						"text": "LTSC"
+					},
+					{
 						"text": "2024-10 A"
 					},
 					{
