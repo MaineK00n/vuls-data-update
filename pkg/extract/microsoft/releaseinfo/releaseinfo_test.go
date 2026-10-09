@@ -73,6 +73,21 @@ func TestExtract(t *testing.T) {
 			name: "happy",
 			args: "./testdata/fixtures/happy",
 		},
+		{
+			// A hotpatch calendar is named after the release history covering
+			// its build. Without one, that history is gone from the page, and
+			// its KBs would be written unnamed and off their monthly chain.
+			name:     "hotpatch calendar without its release history",
+			args:     "./testdata/fixtures/hotpatch-without-history",
+			hasError: true,
+		},
+		{
+			// Every table skipped, here for a renamed KB column, reads as no
+			// updates at all. That is not a dataset to replace the last one with.
+			name:     "no update read",
+			args:     "./testdata/fixtures/no-update",
+			hasError: true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

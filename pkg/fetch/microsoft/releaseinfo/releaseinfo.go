@@ -206,9 +206,9 @@ func (opts options) fetch() error {
 		// one it landed on: learn.microsoft.com appends a ?view= to some paths
 		// on redirect, and a page stored under a name that moves with it would
 		// double the tree the first time it does.
-		name, ok := names[resp.Request.URL.String()]
+		name, ok := names[originalURL(resp).String()]
 		if !ok {
-			return errors.Errorf("unexpected url. expected: one of %q, actual: %q", us, resp.Request.URL)
+			return errors.Errorf("unexpected url. expected: one of %q, actual: %q", us, originalURL(resp))
 		}
 
 		if err := writeOrigin(opts.dir, fmt.Sprintf("%s.html", name), bs); err != nil {
@@ -221,6 +221,16 @@ func (opts options) fetch() error {
 	}
 
 	return nil
+}
+
+// originalURL returns the URL the request chain started from, walking back
+// through redirects.
+func originalURL(resp *http.Response) *url.URL {
+	req := resp.Request
+	for req.Response != nil && req.Response.Request != nil {
+		req = req.Response.Request
+	}
+	return req.URL
 }
 
 // convert reads origin/ back and writes raw/, one file per stored page so that
@@ -317,7 +327,13 @@ func parsePage(r io.Reader) (Page, error) {
 	var base *url.URL
 	if u, ok := doc.Find(`link[rel="canonical"]`).First().Attr("href"); ok {
 		page.URL = text(u)
-		base, _ = url.Parse(page.URL)
+		// The canonical link is what every relative href is resolved against.
+		// One that does not parse would leave those stored as served, unusable
+		// away from the page, with nothing in raw/ to say so.
+		base, err = url.Parse(page.URL)
+		if err != nil {
+			return Page{}, errors.Wrapf(err, "parse canonical %q", page.URL)
+		}
 	}
 
 	// Only the article body. The page chrome carries tables of its own -- the
