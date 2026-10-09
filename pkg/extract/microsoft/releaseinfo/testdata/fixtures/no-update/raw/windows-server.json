@@ -8,7 +8,7 @@
 				"Update type",
 				"Availability date",
 				"Build",
-				"KB article"
+				"KB"
 			],
 			"rows": [
 				[
@@ -125,7 +125,7 @@
 				"Update type",
 				"Availability date",
 				"Build",
-				"KB article"
+				"KB"
 			],
 			"rows": [
 				[
@@ -210,7 +210,7 @@
 				"Type",
 				"Availability date",
 				"Build",
-				"KB article"
+				"KB"
 			],
 			"rows": [
 				[
@@ -305,7 +305,7 @@
 				"Type",
 				"Availability date",
 				"Build",
-				"KB article"
+				"KB"
 			],
 			"rows": [
 				[

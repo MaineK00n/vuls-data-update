@@ -1,6 +1,9 @@
 {
 	"kb_id": "5040437",
 	"url": "https://support.microsoft.com/help/5040437",
+	"products": [
+		"Windows Server 2022"
+	],
 	"superseded_by": [
 		{
 			"kb_id": "5041160"
