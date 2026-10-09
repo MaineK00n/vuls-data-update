@@ -207,15 +207,25 @@ func Extract(args string, opts ...Option) error {
 		o.apply(options)
 	}
 
-	if err := util.RemoveAll(options.dir); err != nil {
-		return errors.Wrapf(err, "remove %s", options.dir)
-	}
-
 	slog.Info("Extract Microsoft Release Information")
 
+	// The raw tree is read before the output is cleared, so a run that cannot
+	// read it leaves the last good output where it was.
 	us, err := read(args)
 	if err != nil {
 		return errors.Wrapf(err, "read %s", args)
+	}
+
+	// Three pages that between them have carried every Windows release since
+	// 1507 do not hold no updates. Reading none is every table having been
+	// skipped -- a column renamed, a header restyled -- and writing that out
+	// would replace the dataset with an empty one, with the run green.
+	if len(us) == 0 {
+		return errors.Errorf("no update in %s", filepath.Join(args, "raw"))
+	}
+
+	if err := util.RemoveAll(options.dir); err != nil {
+		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
 	// A release whose updates all landed on one line is a line that was not
@@ -312,7 +322,11 @@ func read(args string) ([]update, error) {
 		}
 		rel = filepath.ToSlash(rel)
 
-		us = append(us, parsePage(page, strings.TrimSuffix(rel, ".json"), rel)...)
+		pus, err := parsePage(page, strings.TrimSuffix(rel, ".json"), rel)
+		if err != nil {
+			return errors.Wrapf(err, "parse %s", p)
+		}
+		us = append(us, pus...)
 
 		return nil
 	}); err != nil {
@@ -323,7 +337,7 @@ func read(args string) ([]update, error) {
 }
 
 // parsePage reads one page's tables for the rows that are updates.
-func parsePage(page releaseinfo.Page, name, raw string) []update {
+func parsePage(page releaseinfo.Page, name, raw string) ([]update, error) {
 	var us []update
 
 	// The release name of a hotpatch calendar is not in its label -- Microsoft
@@ -378,15 +392,21 @@ func parsePage(page releaseinfo.Page, name, raw string) []update {
 			u.hotpatch = hotpatch
 			if hotpatch {
 				u.baseline = isBaseline(t, row, raw, u.kbID)
-			}
-			if hotpatch {
-				u.release = releases[u.major]
+
+				// Every hotpatch calendar covers a release whose history is on
+				// the same page. One without is that history lost or relabelled,
+				// which costs its KBs their monthly chain as well as the name.
+				r, ok := releases[u.major]
+				if !ok {
+					return nil, errors.Errorf("no release history for hotpatch build %d. label: %q, kb: %s", u.major, t.Label, u.kbID)
+				}
+				u.release = r
 			}
 			us = append(us, u)
 		}
 	}
 
-	return us
+	return us, nil
 }
 
 // parseRow reads one row, reporting false for the ones that are not updates.
