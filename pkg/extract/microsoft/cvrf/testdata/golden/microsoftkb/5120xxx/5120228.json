@@ -1,0 +1,13 @@
+{
+	"kb_id": "5120228",
+	"url": "https://support.microsoft.com/help/5120228",
+	"products": [
+		"Windows Server 2025 (Server Core installation)"
+	],
+	"data_source": {
+		"id": "microsoft-cvrf",
+		"raws": [
+			"fixtures/2026-Aug/2026/CVE-2026-6726.json"
+		]
+	}
+}

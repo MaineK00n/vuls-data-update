@@ -1,0 +1,18 @@
+{
+	"kb_id": "5075943",
+	"url": "https://support.microsoft.com/help/5075943",
+	"products": [
+		"Windows Server 2022"
+	],
+	"superseded_by": [
+		{
+			"kb_id": "5078737"
+		}
+	],
+	"data_source": {
+		"id": "microsoft-cvrf",
+		"raws": [
+			"fixtures/2026-May/2026/CVE-2026-42825.json"
+		]
+	}
+}

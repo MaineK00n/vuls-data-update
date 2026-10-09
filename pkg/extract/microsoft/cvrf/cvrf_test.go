@@ -1,12 +1,16 @@
 package cvrf_test
 
 import (
+	"fmt"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/microsoft/cvrf"
+	microsoftutil "github.com/MaineK00n/vuls-data-update/pkg/extract/microsoft/util"
+	criteriaTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria"
 	criterionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion"
 	kbcTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/kbcriterion"
 	vcTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion"
@@ -988,6 +992,11 @@ func TestFixedBuildOverrides(t *testing.T) {
 			key:  [3]string{"CVE-2026-57990", "Microsoft Edge (Chromium-based)", ""},
 			want: "150.0.4078.99",
 		},
+		{
+			name: "Win11 24H2 ARM64 hotpatch tagged 10.0.26200.x (CVE-2026-62727)",
+			key:  [3]string{"CVE-2026-62727", "Windows 11 Version 24H2 for ARM64-based Systems", "10.0.26200.9106"},
+			want: "10.0.26100.9106",
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -1049,6 +1058,113 @@ func TestBuildKBCriterion(t *testing.T) {
 			got := cvrf.BuildKBCriterion(tt.args.product, tt.args.kbID)
 			if diff := cmp.Diff(tt.want, got); diff != "" {
 				t.Errorf("BuildKBCriterion() mismatch (-want +got):\n%s", diff)
+			}
+		})
+	}
+}
+
+func TestIsHotpatchSubType(t *testing.T) {
+	tests := []struct {
+		name    string
+		subType string
+		want    bool
+	}{
+		{name: "Security Hotpatch Update", subType: "Security Hotpatch Update", want: true},
+		{name: "SecurityHotpatchUpdate", subType: "SecurityHotpatchUpdate", want: true},
+		{name: "Security HotPatch Update (2025-May)", subType: "Security HotPatch Update", want: true},
+		{name: "AzureHotpatch (2023-Sep)", subType: "AzureHotpatch", want: true},
+		{name: "Security Update", subType: "Security Update", want: false},
+		{name: "Monthly Rollup", subType: "Monthly Rollup", want: false},
+		{name: "empty", subType: "", want: false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := cvrf.IsHotpatchSubType(tt.subType); got != tt.want {
+				t.Errorf("IsHotpatchSubType(%q) = %v, want %v", tt.subType, got, tt.want)
+			}
+		})
+	}
+}
+
+func TestIsKBCriteria(t *testing.T) {
+	kb := criterionTypes.Criterion{
+		Type: criterionTypes.CriterionTypeKB,
+		KB:   &kbcTypes.Criterion{Product: "Windows Server 2025", KBID: "5087423"},
+	}
+	version := criterionTypes.Criterion{
+		Type: criterionTypes.CriterionTypeVersion,
+		Version: &vcTypes.Criterion{
+			Vulnerable: true,
+			Package: packageTypes.Package{
+				Type:   packageTypes.PackageTypeBinary,
+				Binary: &binaryTypes.Package{Name: "Windows Server 2025"},
+			},
+			Affected: &affectedTypes.Affected{
+				Type:  affectedrangeTypes.RangeTypeMicrosoftWindows,
+				Range: []affectedrangeTypes.Range{{LessThan: "10.0.26100.32860"}},
+				Fixed: []string{"10.0.26100.32860"},
+			},
+		},
+	}
+
+	tests := []struct {
+		name string
+		ca   criteriaTypes.Criteria
+		want bool
+	}{
+		{
+			name: "AND of KB criterions",
+			ca:   criteriaTypes.Criteria{Operator: criteriaTypes.CriteriaOperatorTypeAND, Criterions: []criterionTypes.Criterion{kb}},
+			want: true,
+		},
+		{
+			name: "freshly created empty AND",
+			ca:   criteriaTypes.Criteria{Operator: criteriaTypes.CriteriaOperatorTypeAND},
+			want: true,
+		},
+		{
+			name: "gated version AND",
+			ca:   criteriaTypes.Criteria{Operator: criteriaTypes.CriteriaOperatorTypeAND, Criterions: []criterionTypes.Criterion{kb, version}},
+			want: false,
+		},
+		{
+			name: "OR of KB criterions",
+			ca:   criteriaTypes.Criteria{Operator: criteriaTypes.CriteriaOperatorTypeOR, Criterions: []criterionTypes.Criterion{kb}},
+			want: false,
+		},
+		{
+			name: "AND with nested criterias",
+			ca: criteriaTypes.Criteria{
+				Operator:   criteriaTypes.CriteriaOperatorTypeAND,
+				Criterias:  []criteriaTypes.Criteria{{Operator: criteriaTypes.CriteriaOperatorTypeAND, Criterions: []criterionTypes.Criterion{kb}}},
+				Criterions: []criterionTypes.Criterion{kb},
+			},
+			want: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := cvrf.IsKBCriteria(tt.ca); got != tt.want {
+				t.Errorf("IsKBCriteria() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+// TestVendorFixOverridesKeys guards the entries against typos that would make
+// them silently miss: the product must already be normalized and the KB ID
+// must be the bare number CVRF uses in the remediation Description.
+func TestVendorFixOverridesKeys(t *testing.T) {
+	for k := range cvrf.VendorFixOverrides {
+		t.Run(fmt.Sprintf("%s %s %s", k[0], k[1], k[2]), func(t *testing.T) {
+			if !strings.HasPrefix(k[0], "CVE-") {
+				t.Errorf("unexpected CVE ID. expected: %q prefix, actual: %q", "CVE-", k[0])
+			}
+			if got := microsoftutil.NormalizeProductName(k[1]); got != k[1] {
+				t.Errorf("product name is not normalized. expected: %q, actual: %q", got, k[1])
+			}
+			if cvrf.BuildKBCriterion(k[1], k[2]) == nil {
+				t.Errorf("unexpected KB ID. expected: digits only, actual: %q", k[2])
 			}
 		})
 	}
@@ -1144,6 +1260,31 @@ func TestExtract(t *testing.T) {
 		{
 			name:     "microsoft edge (chromium-based) vendor fix without FixedBuild",
 			args:     "./testdata/fixtures-edge-missing-fixedbuild",
+			hasError: true,
+		},
+		{
+			name:     "hotpatch fixed builds from different servicing branches",
+			args:     "./testdata/fixtures-hotpatch-branch-mismatch",
+			hasError: true,
+		},
+		{
+			name:     "hotpatch product listing more than two KBs without review",
+			args:     "./testdata/fixtures-hotpatch-unreviewed",
+			hasError: true,
+		},
+		{
+			name:     "vendorFixOverrides excluding every Vendor Fix of a product",
+			args:     "./testdata/fixtures-hotpatch-all-excluded",
+			hasError: true,
+		},
+		{
+			name:     "hotpatch product with a Vendor Fix without FixedBuild",
+			args:     "./testdata/fixtures-hotpatch-missing-fixedbuild",
+			hasError: true,
+		},
+		{
+			name:     "hotpatch product with a Vendor Fix without KB ID",
+			args:     "./testdata/fixtures-hotpatch-missing-kb",
 			hasError: true,
 		},
 	}
