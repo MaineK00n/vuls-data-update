@@ -148,6 +148,24 @@
 						"text": "KB5121767",
 						"href": "https://support.microsoft.com/help/5121767"
 					}
+				],
+				[
+					{
+						"text": "LTSC • General Availability Channel"
+					},
+					{
+						"text": "2025-05 OOB"
+					},
+					{
+						"text": "2025-05-27"
+					},
+					{
+						"text": "26100.4066"
+					},
+					{
+						"text": "KB5061977",
+						"href": "https://support.microsoft.com/help/5061977"
+					}
 				]
 			]
 		},

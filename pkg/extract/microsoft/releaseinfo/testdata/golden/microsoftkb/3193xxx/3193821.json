@@ -1,17 +1,12 @@
 {
-	"kb_id": "3081455",
-	"url": "https://support.microsoft.com/help/3081455",
+	"kb_id": "3193821",
+	"url": "https://support.microsoft.com/help/3193821",
 	"products": [
 		"Windows 10 Version 1507 (RTM)"
 	],
-	"superseded_by": [
-		{
-			"kb_id": "3185611"
-		}
-	],
 	"supersedes": [
 		{
-			"kb_id": "3081436"
+			"kb_id": "3185611"
 		}
 	],
 	"data_source": {

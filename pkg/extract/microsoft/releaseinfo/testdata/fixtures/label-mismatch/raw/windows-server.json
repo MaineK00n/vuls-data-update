@@ -2,7 +2,7 @@
 	"url": "https://learn.microsoft.com/en-us/windows/release-health/windows-server-release-info",
 	"tables": [
 		{
-			"label": "Windows Server 2025 (OS build 26100)",
+			"label": "Windows Server 2022 (OS build 20348)",
 			"header": [
 				"Servicing option",
 				"Update type",

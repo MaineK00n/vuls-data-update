@@ -1,22 +1,22 @@
 {
-	"kb_id": "5078135",
-	"url": "https://support.microsoft.com/help/5078135",
+	"kb_id": "5061977",
+	"url": "https://support.microsoft.com/help/5061977",
 	"products": [
+		"Windows 11 Version 24H2",
 		"Windows Server 2025"
 	],
 	"superseded_by": [
 		{
-			"kb_id": "5091157"
-		}
-	],
-	"supersedes": [
+			"kb_id": "5078135"
+		},
 		{
-			"kb_id": "5061977"
+			"kb_id": "5121767"
 		}
 	],
 	"data_source": {
 		"id": "microsoft-releaseinfo",
 		"raws": [
+			"windows-11.json",
 			"windows-server.json"
 		]
 	}
