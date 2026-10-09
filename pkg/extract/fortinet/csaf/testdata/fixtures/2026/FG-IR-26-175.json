@@ -1,0 +1,151 @@
+{
+	"document": {
+		"acknowledgments": [
+			{
+				"summary": "Internally discovered and reported by Gwendal Guégniaud of Fortinet Product Security team"
+			}
+		],
+		"category": "Fortinet PSIRT Advisories",
+		"csaf_version": "2.0",
+		"publisher": {
+			"category": "vendor",
+			"contact_details": "https://fortiguard.fortinet.com/faq/psirt-contact",
+			"issuing_authority": "Fortinet PSIRT",
+			"name": "Fortinet PSIRT",
+			"namespace": "https://fortiguard.fortinet.com/psirt"
+		},
+		"title": "Improper limitation of a pathname to a restricted directory",
+		"tracking": {
+			"current_release_date": "2026-10-05T00:00:00",
+			"id": "FG-IR-26-175",
+			"initial_release_date": "2026-10-01T00:00:00",
+			"revision_history": [
+				{
+					"date": "2026-10-01T00:00:00",
+					"number": "1",
+					"summary": "Initial Publication"
+				}
+			],
+			"status": "final",
+			"version": "0"
+		}
+	},
+	"product_tree": {
+		"branches": [
+			{
+				"branches": [
+					{
+						"branches": [
+							{
+								"category": "product_version_range",
+								"name": "FortiMail/>=8.0.0|<=8.0.1",
+								"product": {
+									"name": "FortiMail",
+									"product_id": "FortiMail >=8.0.0|<=8.0.1"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiMail/>=7.6.0|<=7.6.6",
+								"product": {
+									"name": "FortiMail",
+									"product_id": "FortiMail >=7.6.0|<=7.6.6"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiMail/>=7.4.0|<=7.4.8",
+								"product": {
+									"name": "FortiMail",
+									"product_id": "FortiMail >=7.4.0|<=7.4.8"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiMail/>=7.2.0|<=7.2.9",
+								"product": {
+									"name": "FortiMail",
+									"product_id": "FortiMail >=7.2.0|<=7.2.9"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiMail"
+					}
+				],
+				"category": "vendor",
+				"name": "Fortinet PSIRT"
+			}
+		]
+	},
+	"vulnerabilities": [
+		{
+			"cve": "CVE-2026-104286",
+			"cwe": {
+				"id": "CWE-22",
+				"name": "Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')"
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "Improper limitation of a pathname to a restricted directory vulnerability in FortiMail\n\n",
+					"title": "Summary"
+				},
+				{
+					"category": "general",
+					"text": "Please note that Fortinet has remediated this issue on oct 05, 2026 in FortiMail Cloud by updating all the firmwares to v7.6.7 GA or v8.0.2 GA, hence the FortiMail Cloud customers need not perform any action.\n\nWorkaround:\n\nDisable the IBE feature support via the GUI ( Encryption -> IBE -> IBE Service 'off' ) or with the following CLI command:\n\nconfig system encryption ibe\nset status disable\nend\n\nAlternatively:\n- Disable access to the FortiMail webmail interface from the internet or limit the access only from trusted private network\n- Or if there is a Web Application Firewall in front of FortiMail, block POST requests to /ibe that contain '../'\n\nIndicators of Compromise (IoC):\n\nIPs:\n\n79[.]141.169.187\n45[.]129.0.192\n\nSystem Event Logs:\n\n- type=event subtype=system pri=debug user=system ui=cron msg=\"(root) CMD (/bin/sh -c 'O=/migadmin ...\n- type=kevent subtype=admin pri=information user=admin ui=(null) action=logout status=success reason=unknown msg=\"User admin logged out from (null).\"\n- type=kevent subtype=config pri=information user=admin ui=cli module=unknown submodule=unknown msg=\"Added 'archive234' to 'archive account' : rotation-size[50]rotation-time[1] rotation-hour[14]destination[remote]remote-ip[79.141.169.187]remote-username[archive234]remote-password[***]remote-directory[/uploads] (user: admin, from: cli)\"\n\nEncryption Logs:\n\n- FortiMail::IBE::DecrypterMediaIn::DecrypterMediaIn(FortiMail::MediaIn&, const FortiMail::IBE::KeyFinder&, const FortiMail::EmailAddress&, const FortiMail::Buffer&, FortiMail::IBE::DecrypterMediaIn::Version): Caught BufferException(2), BufferImpl.cpp:973, 'Invalid Base64 Encoding at pos 0. Character=0x2a'\n- Internal user *@domain.tld<mailto:*@domain.tld> failed to log in.",
+					"title": "Additional info"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiMail >=8.0.0|<=8.0.1",
+					"FortiMail >=7.6.0|<=7.6.6",
+					"FortiMail >=7.4.0|<=7.4.8",
+					"FortiMail >=7.2.0|<=7.2.9"
+				],
+				"known_not_affected": [
+					"FortiMail-8.0.2",
+					"FortiMail-7.6.7",
+					"FortiMail-7.4.9",
+					"FortiMail-branch 7.4"
+				]
+			},
+			"references": [
+				{
+					"summary": "An Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')  [CWE-22] and Improper Neutralization of NULL Byte or NULL Character [CWE-158] vulnerability may allow an unauthenticated attacker to write arbitrary files on the underlying system via crafted HTTP or HTTPS requests.\n\nThis has been reported to be exploited in the wild, customers are urged to apply the workaround below.",
+					"url": "https://fortiguard.fortinet.com/psirt/FG-IR-26-175"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiMail 8.0: Upgrade to 8.0.2 or above\nFortiMail 7.6: Upgrade to 7.6.7 or above\nFortiMail 7.4: Upgrade to 7.4.9 or above\nFortiMail 7.2: Upgrade to branch 7.4 or above",
+					"product_ids": [
+						"FortiMail"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 9.8,
+						"baseSeverity": "CRITICAL",
+						"vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H/E:P/RL:O/RC:C",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiMail"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Execute unauthorized code or commands"
+				}
+			],
+			"title": "FortiMail - CRITICAL - FG-IR-26-175"
+		}
+	]
+}

@@ -950,6 +950,20 @@ var treeFixes = map[string]treeFix{
 			},
 		},
 	},
+	// "FortiMail 7.2: Upgrade to branch 7.4 or above" names no release; the
+	// last known_not_affected entry is that text cut short, and the 7.4 fix it
+	// points at, 7.4.9, is listed on its own.
+	"FG-IR-26-175": {
+		statuses: []statusFix{
+			{
+				list: knownNotAffected,
+				from: []csafTypes.ProductID{"FortiMail-8.0.2", "FortiMail-7.6.7", "FortiMail-7.4.9", "FortiMail-branch 7.4"},
+				to: map[int]statusTarget{
+					3: {drop: true},
+				},
+			},
+		},
+	},
 	// The OpenSSL advisory files every product it rules out under the FortiNAC-F
 	// branch ("FortiNAC-F/FortiOS all versions"). Each goes to its own product,
 	// spelled as the product table has it; "FortiSOAR", naming neither

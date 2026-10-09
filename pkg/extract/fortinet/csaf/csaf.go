@@ -1,6 +1,7 @@
 package csaf
 
 import (
+	"cmp"
 	"fmt"
 	"hash/fnv"
 	"io/fs"
@@ -187,17 +188,19 @@ type productStatus struct {
 }
 
 // profile is the content CSAF scopes to products, which may therefore differ
-// between the products of one key — today the severity (CVSS vector + vendor
-// impact), held as read so that it compares and keys a map. CSAF scopes scores
-// to .products and threats to .product_ids, so each product gets the score and
-// impact that list it (see vulnProfile); Fortinet replicates one CVE across
-// one object per product family. Today every family shares the same profile,
-// so a key has a single profile and the per-CVE output is unchanged — but
-// distinct profiles (which CSAF permits) split into separate
-// segments/conditions rather than being over-attributed to every product.
+// between the products of one key — the severity (CVSS vector + vendor
+// impact) and the mitigation, held as read so that it compares and keys a
+// map. CSAF scopes scores to .products, and threats and remediations to
+// .product_ids, so each product gets the score, impact and mitigation that
+// list it (see vulnProfile); Fortinet replicates one CVE across one object per
+// product family. Today every family shares the same profile, so a key has a
+// single profile and the per-CVE output is unchanged — but distinct profiles
+// (which CSAF permits) split into separate segments/conditions rather than
+// being over-attributed to every product.
 type profile struct {
-	cvss   string // CVSS v3.1 vector, empty when no score lists the product
-	impact string // empty when no impact threat covers the product
+	cvss       string // CVSS v3.1 vector, empty when no score lists the product
+	impact     string // empty when no impact threat covers the product
+	mitigation string // text of the "mitigation" remediation, empty when none lists the product
 }
 
 // hash returns a digest of the profile, telling the profiles of one key apart
@@ -205,8 +208,18 @@ type profile struct {
 func (p profile) hash() uint32 {
 	h := fnv.New32a()
 	// hash.Hash.Write is documented never to return an error.
-	_, _ = fmt.Fprintf(h, "%s\x00%s", p.cvss, p.impact)
+	_, _ = fmt.Fprintf(h, "%s\x00%s\x00%s", p.cvss, p.impact, p.mitigation)
 	return h.Sum32()
+}
+
+// mitigations converts the profile to the Mitigations of its Vulnerability
+// record: one for the mitigation the profile has, so none for a profile
+// without one.
+func (p profile) mitigations() []remediationTypes.Remediation {
+	if p.mitigation == "" {
+		return nil
+	}
+	return []remediationTypes.Remediation{{Source: "fortiguard.fortinet.com", Description: p.mitigation}}
 }
 
 // severities converts the profile to the severities of its Vulnerability
@@ -317,6 +330,13 @@ func extract(fetched csafTypes.CSAF, raws []string) (dataTypes.Data, error) {
 				return dataTypes.Data{}, errors.Errorf("impact of %q names none of the listed products (product_ids: %q, listed: %q) (advisory %s)", key, t.ProductIDs, listed, id)
 			}
 		}
+		// A mitigation is read the same way, so one naming none of the listed
+		// products would be dropped unnoticed as well.
+		for _, rem := range v.Remediations {
+			if rem.Category == "mitigation" && !reachesListed(rem.ProductIDs) {
+				return dataTypes.Data{}, errors.Errorf("mitigation of %q names none of the listed products (product_ids: %q, listed: %q) (advisory %s)", key, rem.ProductIDs, listed, id)
+			}
+		}
 		for _, l := range []struct {
 			pids     []csafTypes.ProductID
 			affected bool
@@ -343,9 +363,17 @@ func extract(fetched csafTypes.CSAF, raws []string) (dataTypes.Data, error) {
 				// 7.4.8" — is already encoded structurally in the detection version
 				// range, and the CVRF extractor likewise carries no fix text. Don't
 				// duplicate it as a mitigation: it is the fix, not a mitigation or
-				// workaround, and the schema has no fix bucket. The switch is kept
-				// so a future non-vendor_fix category (a real mitigation/workaround)
-				// surfaces in default and gets routed to the right field then.
+				// workaround, and the schema has no fix bucket.
+			case "mitigation":
+				// A measure short of the fix, e.g. the FortiGuard IPS virtual
+				// patch of FG-IR-26-157. Its text is carried per product: it
+				// is part of the profile of each product it lists (vulnProfile)
+				// and emitted as the Mitigations of that profile's
+				// Vulnerability record, so a mitigation for one family does
+				// not reach the others. This case only admits the category.
+				// "workaround", "no_fix_planned" and "none_available" have not
+				// appeared in the corpus and stay in default, so the first one
+				// is routed deliberately.
 			default:
 				return dataTypes.Data{}, errors.Errorf("unexpected remediation category %q (advisory %s, %s)", rem.Category, id, key)
 			}
@@ -463,6 +491,7 @@ func extract(fetched csafTypes.CSAF, raws []string) (dataTypes.Data, error) {
 						}
 						return []cweTypes.CWE{{Source: "fortiguard.fortinet.com", CWE: cwes}}
 					}(),
+					Mitigations: p.mitigations(),
 					Workarounds: func() []remediationTypes.Remediation {
 						var rs []remediationTypes.Remediation
 						for _, w := range slices.Compact(slices.Sorted(slices.Values(a.workarounds))) {
@@ -653,13 +682,14 @@ func toCriterions(productID string, refMap map[string]productRef) ([]criterionTy
 	// rt (the product's per-product range type, resolved above) selects the
 	// detect-time comparator; it is only consulted on the range/bake paths below.
 	//
-	// Range-bound invariants. These two asserts keep a non-numeric-versioned
+	// Range-bound invariants. The first two asserts keep a non-numeric-versioned
 	// product's comparator safe at detect time: they guarantee a non-numeric
 	// version (FortiSASE "25.2.a") is only ever compared against a numeric bound
 	// that runs out of components before the letter, never against a numeric
-	// component at the same position (the comparator's "incomparable" case). If
-	// Fortinet's data ever breaks an invariant, this fails loudly at extract
-	// rather than silently mis-detecting later.
+	// component at the same position (the comparator's "incomparable" case). The
+	// third keeps the range satisfiable. If Fortinet's data ever breaks an
+	// invariant, this fails loudly at extract rather than silently
+	// mis-detecting later.
 	if r != nil {
 		r.Type = rt
 		for _, b := range []string{r.GreaterEqual, r.GreaterThan, r.LessEqual, r.LessThan} {
@@ -680,6 +710,36 @@ func toCriterions(productID string, refMap map[string]productRef) ([]criterionTy
 			// alphabetic case — so reject it here.
 			if rt == ccRangeTypes.RangeTypeFortinetFortiSASE && strings.Count(b, ".") >= 2 {
 				return nil, errors.Errorf("product %q is non-numeric-versioned and must use a train range (bound dot<=1), got bound %q (expr %q)", productID, b, ref.versionExp)
+			}
+		}
+		// (3) Reject a range no version can satisfy: extraction would succeed
+		// and the detector never match, a silent false negative. Two shapes: a
+		// lower bound above the upper one (">=7.2.7|<=7.2.0"), and equal bounds
+		// with an exclusive side (">7.2.0|<7.2.0", ">7.2.0|<=7.2.0"), since
+		// Range.Accept rejects the bound value itself for gt/lt. Equal inclusive
+		// bounds (">=7.2.0|<=7.2.0") are a one-version range and stay allowed.
+		// The CVRF supplement rejects the same shapes.
+		//
+		// resolveVersion sets at most one bound per side, so reading one field
+		// of each side is the whole range.
+		if lo, hi := cmp.Or(r.GreaterEqual, r.GreaterThan), cmp.Or(r.LessEqual, r.LessThan); lo != "" && hi != "" {
+			vlo, err := numericVersion.NewVersion(lo)
+			if err != nil {
+				return nil, errors.Wrapf(err, "parse lower bound %q for %q (expr %q)", lo, productID, ref.versionExp)
+			}
+			vhi, err := numericVersion.NewVersion(hi)
+			if err != nil {
+				return nil, errors.Wrapf(err, "parse upper bound %q for %q (expr %q)", hi, productID, ref.versionExp)
+			}
+			c, err := vlo.Compare(vhi)
+			if err != nil {
+				return nil, errors.Wrapf(err, "compare bounds %q, %q for %q (expr %q)", lo, hi, productID, ref.versionExp)
+			}
+			switch {
+			case c > 0:
+				return nil, errors.Errorf("inverted range for %q: lower bound %q > upper bound %q (expr %q)", productID, lo, hi, ref.versionExp)
+			case c == 0 && (r.GreaterThan != "" || r.LessThan != ""):
+				return nil, errors.Errorf("empty range for %q: bounds %q and %q are equal but not both inclusive (expr %q)", productID, lo, hi, ref.versionExp)
 			}
 		}
 	}
@@ -778,22 +838,32 @@ func resolveVersion(productName, exp string) (*ccRangeTypes.Range, string, error
 		return &ccRangeTypes.Range{GreaterEqual: ge}, "", nil
 	case strings.ContainsAny(exp, "<>"):
 		r := ccRangeTypes.Range{}
+		// At most one bound per side. A repeated side (">7.2.7|>=7.2.0|<=7.2.5",
+		// ">=7.0.0|>=7.2.0") would either set both fields of that side, and the
+		// order check in toCriterions reads only one of them, or overwrite the
+		// first value with the second; either way the emitted range is not the
+		// one written, so reject it rather than pick a bound.
+		seen := make(map[string]bool, 2)
 		for part := range strings.SplitSeq(exp, "|") {
 			part = strings.TrimSpace(part)
 			var bound *string
-			var op string
+			var op, side string
 			switch {
 			case strings.HasPrefix(part, ">="):
-				op, bound = ">=", &r.GreaterEqual
+				op, bound, side = ">=", &r.GreaterEqual, "lower"
 			case strings.HasPrefix(part, ">"):
-				op, bound = ">", &r.GreaterThan
+				op, bound, side = ">", &r.GreaterThan, "lower"
 			case strings.HasPrefix(part, "<="):
-				op, bound = "<=", &r.LessEqual
+				op, bound, side = "<=", &r.LessEqual, "upper"
 			case strings.HasPrefix(part, "<"):
-				op, bound = "<", &r.LessThan
+				op, bound, side = "<", &r.LessThan, "upper"
 			default:
 				return nil, "", errors.Errorf("unexpected bound %q in %q", part, exp)
 			}
+			if seen[side] {
+				return nil, "", errors.Errorf("more than one %s bound in %q", side, exp)
+			}
+			seen[side] = true
 			// An empty version after the operator (e.g. ">" or ">=7.0.0|<=") would
 			// be silently treated as "no constraint" by Range.Accept and over-match,
 			// so reject it rather than emit an open-ended range.
@@ -819,10 +889,11 @@ func resolveVersion(productName, exp string) (*ccRangeTypes.Range, string, error
 
 // vulnProfile returns the profile of one CSAF vulnerability object for the
 // product_id pid: the CVSS v3.1 vector of the score whose .products lists pid,
-// and the vendor impact whose .product_ids lists pid or which has none (and so
-// covers the whole object). CSAF requires neither a score nor a threat, so
-// either, or both, may be missing, leaving that part of the profile empty;
-// more than one distinct of either is a hard error (see below).
+// the vendor impact whose .product_ids lists pid or which has none (and so
+// covers the whole object), and the text of the "mitigation" remediation
+// whose .product_ids lists pid. CSAF requires none of the three, so any may
+// be missing, leaving that part of the profile empty; more than one distinct
+// of any is a hard error (see below).
 func vulnProfile(v csafTypes.Vulnerability, pid string) (profile, error) {
 	// Fortinet emits at most one cvss vector and one impact per product. Hold a
 	// single value and fail loudly on a second distinct one (a duplicate of the
@@ -867,7 +938,27 @@ func vulnProfile(v csafTypes.Vulnerability, pid string) (profile, error) {
 		}
 		impact = t.Details
 	}
-	return profile{cvss: vector, impact: impact}, nil
+	// Likewise at most one mitigation per product, held trimmed, since Fortinet
+	// ends the text with a newline: the corpus has one (FG-IR-26-157, FortiWeb),
+	// so a second distinct one is a shape to widen to deliberately rather than
+	// pick from or merge. One that lists the product carries its details (CSAF
+	// requires them on a remediation).
+	var mitigation string
+	for _, rem := range v.Remediations {
+		if rem.Category != "mitigation" || !slices.Contains(rem.ProductIDs, csafTypes.ProductID(pid)) {
+			continue
+		}
+		m := strings.TrimSpace(rem.Details)
+		if m == "" {
+			return profile{}, errors.Errorf("mitigation of %q listing %q has no details", v.CVE, pid)
+		}
+		if mitigation != "" && mitigation != m {
+			return profile{}, errors.Errorf("vulnerability %q has multiple distinct mitigations for %q (%q, %q)", v.CVE, pid, mitigation, m)
+		}
+		mitigation = m
+	}
+
+	return profile{cvss: vector, impact: impact, mitigation: mitigation}, nil
 }
 
 func noteText(notes []csafTypes.Note, title string) string {

@@ -17,11 +17,11 @@
 			"segments": [
 				{
 					"ecosystem": "cpe",
-					"tag": "CVE-2099-0001_02a59e35"
+					"tag": "CVE-2099-0001_51b68654"
 				},
 				{
 					"ecosystem": "cpe",
-					"tag": "CVE-2099-0001_3461a4dc"
+					"tag": "CVE-2099-0001_5fb80d6f"
 				}
 			]
 		}
@@ -43,7 +43,7 @@
 			"segments": [
 				{
 					"ecosystem": "cpe",
-					"tag": "CVE-2099-0001_3461a4dc"
+					"tag": "CVE-2099-0001_51b68654"
 				}
 			]
 		},
@@ -76,7 +76,7 @@
 			"segments": [
 				{
 					"ecosystem": "cpe",
-					"tag": "CVE-2099-0001_02a59e35"
+					"tag": "CVE-2099-0001_5fb80d6f"
 				}
 			]
 		}
@@ -85,29 +85,6 @@
 		{
 			"ecosystem": "cpe",
 			"conditions": [
-				{
-					"criteria": {
-						"operator": "OR",
-						"criterions": [
-							{
-								"type": "cpe",
-								"cpe": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "unknown"
-									},
-									"cpe": "cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*",
-									"range": {
-										"type": "fortinet-fortios",
-										"ge": "7.4",
-										"lt": "7.5"
-									}
-								}
-							}
-						]
-					},
-					"tag": "CVE-2099-0001_02a59e35"
-				},
 				{
 					"criteria": {
 						"operator": "OR",
@@ -149,7 +126,30 @@
 							}
 						]
 					},
-					"tag": "CVE-2099-0001_3461a4dc"
+					"tag": "CVE-2099-0001_51b68654"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"cpe": "cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "fortinet-fortios",
+										"ge": "7.4",
+										"lt": "7.5"
+									}
+								}
+							}
+						]
+					},
+					"tag": "CVE-2099-0001_5fb80d6f"
 				}
 			]
 		}

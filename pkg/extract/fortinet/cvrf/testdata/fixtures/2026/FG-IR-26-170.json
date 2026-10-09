@@ -1,0 +1,120 @@
+{
+	"document_title": "JWT used for authentication in web GUI signed with static key",
+	"document_type": "Fortinet PSIRT Advisories",
+	"documentpublisher": {
+		"type": "Vendor",
+		"contact_details": "\n            Fortinet PSIRT Contact:\n            Website: https://fortiguard.fortinet.com/faq/psirt-contact\n        "
+	},
+	"documenttracking": {
+		"identification": {
+			"id": "FG-IR-26-170"
+		},
+		"status": "Final",
+		"version": "1",
+		"revisionhistory": {
+			"revision": {
+				"number": "1",
+				"date": "2026-09-08T00:00:00",
+				"description": "Initial publication"
+			}
+		},
+		"initial_release_date": "2026-09-08T00:00:00",
+		"current_release_date": "2026-09-08T00:00:00"
+	},
+	"documentnotes": {
+		"note": [
+			{
+				"text": "\n            An Inclusion of Sensitive Information in Source Code vulnerability [CWE-540] in FortiMonitorOnSight web portal may allow a remote unauthenticated attacker to bypass authentication via forged or reused JWT\n        ",
+				"title": "Summary",
+				"type": "Summary",
+				"ordinal": "1"
+			},
+			{
+				"text": "\n            None\n        ",
+				"title": "Description",
+				"type": "General",
+				"ordinal": "2"
+			},
+			{
+				"text": "\n            Improper access control\n        ",
+				"title": "Impact",
+				"type": "General",
+				"ordinal": "3"
+			},
+			{
+				"text": "\n            None\n        ",
+				"title": "Solutions",
+				"type": "General",
+				"ordinal": "4"
+			}
+		]
+	},
+	"acknowledgments": {
+		"acknowledgment": [
+			{
+				"description": "Internally discovered by Cameron Milstead of Fortinet TAC"
+			}
+		]
+	},
+	"vulnerability": {
+		"ordinal": "1",
+		"title": "JWT used for authentication in web GUI signed with static key",
+		"references": {
+			"type": "Self",
+			"reference": [
+				{
+					"url": "https://fortiguard.fortinet.com/psirt/FG-IR-26-170",
+					"description": "JWT used for authentication in web GUI signed with static key"
+				}
+			]
+		},
+		"cve": [
+			"CVE-2026-84390"
+		],
+		"product_statuses": {
+			"status": {
+				"type": "Known Affected",
+				"product_id": [
+					"FortiMonitorOnSight-FortiMonitorOnSight 7.2",
+					"FortiMonitorOnSight-FortiMonitorOnSight 7.2"
+				]
+			}
+		},
+		"cvss_scoresets": {
+			"scoreset_v3": {
+				"base_score_v3": "9.6",
+				"vector_v3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H/E:F/RL:O/RC:C"
+			}
+		}
+	},
+	"product_tree": {
+		"branch": {
+			"name": "Fortinet",
+			"type": "Vendor",
+			"branch": [
+				{
+					"name": "FortiMonitorOnSight",
+					"type": "Product Name",
+					"branch": [
+						{
+							"name": "FortiMonitorOnSight 7.2",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiMonitorOnSight FortiMonitorOnSight 7.2",
+								"product_id": "FortiMonitorOnSight-FortiMonitorOnSight 7.2"
+							}
+						},
+						{
+							"name": "FortiMonitorOnSight 7.2",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiMonitorOnSight FortiMonitorOnSight 7.2",
+								"product_id": "FortiMonitorOnSight-FortiMonitorOnSight 7.2"
+							}
+						}
+					]
+				}
+			]
+		}
+	}
+}

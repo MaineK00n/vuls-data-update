@@ -223,6 +223,17 @@ func supplementCriteria(table map[string][]supplementProduct, id string) (criter
 					return criteriaTypes.Criteria{}, errors.Wrapf(err, "unexpected range bound %q for %q in supplement entry %q", b, row.Product, id)
 				}
 			}
+			// At most one bound per side. A row setting both fields of a side
+			// ({GreaterEqual: "7.0.0", GreaterThan: "7.5.0", LessEqual: "7.3.0"})
+			// would pass the order check below, which reads one field per side,
+			// while Range.Accept applies every bound — the same silent false
+			// negative the CSAF extractor rejects in resolveVersion.
+			if r.GreaterEqual != "" && r.GreaterThan != "" {
+				return criteriaTypes.Criteria{}, errors.Errorf("more than one lower bound for %q in supplement entry %q: >=%s and >%s", row.Product, id, r.GreaterEqual, r.GreaterThan)
+			}
+			if r.LessEqual != "" && r.LessThan != "" {
+				return criteriaTypes.Criteria{}, errors.Errorf("more than one upper bound for %q in supplement entry %q: <=%s and <%s", row.Product, id, r.LessEqual, r.LessThan)
+			}
 			// A lower bound above the upper bound makes the criterion
 			// unsatisfiable — a silent detection false negative. The source
 			// data really carried such rows (the legacy dataset had
@@ -245,8 +256,14 @@ func supplementCriteria(table map[string][]supplementProduct, id string) (criter
 				if err != nil {
 					return criteriaTypes.Criteria{}, errors.Wrapf(err, "compare bounds %q, %q for %q in supplement entry %q", lo, hi, row.Product, id)
 				}
-				if c > 0 {
+				switch {
+				case c > 0:
 					return criteriaTypes.Criteria{}, errors.Errorf("inverted range for %q in supplement entry %q: lower bound %q > upper bound %q", row.Product, id, lo, hi)
+				case c == 0 && (r.GreaterThan != "" || r.LessThan != ""):
+					// Equal bounds with an exclusive side admit no version either
+					// (Range.Accept rejects the bound value for gt/lt); equal
+					// inclusive bounds are a one-version range and stay allowed.
+					return criteriaTypes.Criteria{}, errors.Errorf("empty range for %q in supplement entry %q: bounds %q and %q are equal but not both inclusive", row.Product, id, lo, hi)
 				}
 			}
 			for _, cpe := range cpes {
