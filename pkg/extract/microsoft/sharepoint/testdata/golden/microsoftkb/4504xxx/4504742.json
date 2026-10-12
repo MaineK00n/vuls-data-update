@@ -1,0 +1,17 @@
+{
+	"kb_id": "4504742",
+	"products": [
+		"SharePoint Server 2010"
+	],
+	"supersedes": [
+		{
+			"kb_id": "4504706"
+		}
+	],
+	"data_source": {
+		"id": "microsoft-sharepoint",
+		"raws": [
+			"sharepoint-updates.json"
+		]
+	}
+}
