@@ -1,0 +1,13 @@
+{
+	"kb_id": "5121576",
+	"url": "https://support.microsoft.com/help/5121576",
+	"products": [
+		"Exchange Server 2016"
+	],
+	"data_source": {
+		"id": "microsoft-exchange",
+		"raws": [
+			"build-numbers-and-release-dates.json"
+		]
+	}
+}
