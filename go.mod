@@ -1,6 +1,6 @@
 module github.com/MaineK00n/vuls-data-update
 
-go 1.26
+go 1.26.0
 
 require (
 	github.com/MaineK00n/go-cisco-version v0.0.0-20250611084427-015c6492ef23
@@ -34,7 +34,7 @@ require (
 	github.com/ulikunitz/xz v0.5.16
 	github.com/vulsio/go-fortinet-version v0.0.0-20260629092944-998bd70fcdc5
 	golang.org/x/net v0.58.0
-	golang.org/x/sync v0.22.0
+	golang.org/x/sync v0.23.0
 	gopkg.in/yaml.v3 v3.0.1
 	modernc.org/sqlite v1.58.0
 	oras.land/oras-go/v2 v2.6.2
