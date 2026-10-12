@@ -1,0 +1,18 @@
+{
+	"kb_id": "3190029",
+	"url": "https://support.microsoft.com/kb/3190029",
+	"products": [
+		"System Center 2016 - Operations Manager"
+	],
+	"superseded_by": [
+		{
+			"kb_id": "3209591"
+		}
+	],
+	"data_source": {
+		"id": "microsoft-scom",
+		"raws": [
+			"SystemCenterDocs/includes/release-build-versions-2016.json"
+		]
+	}
+}
