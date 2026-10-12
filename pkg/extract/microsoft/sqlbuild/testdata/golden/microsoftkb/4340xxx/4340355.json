@@ -1,0 +1,12 @@
+{
+	"kb_id": "4340355",
+	"products": [
+		"SQL Server 2016"
+	],
+	"data_source": {
+		"id": "microsoft-sqlbuild",
+		"raws": [
+			"support/sql/releases/download-and-install-latest-updates.json"
+		]
+	}
+}
