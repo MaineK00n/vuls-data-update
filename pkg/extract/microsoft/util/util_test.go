@@ -27,6 +27,21 @@ func TestNormalizeProductName(t *testing.T) {
 			want: "Windows 10 Version 1607 for x64-based Systems",
 		},
 		{
+			name: "SQL Server 2017 unspaced CU31 (2026-Oct) to the spaced form",
+			args: args{s: "Microsoft SQL Server 2017 for x64-based Systems (CU31)"},
+			want: "Microsoft SQL Server 2017 for x64-based Systems (CU 31)",
+		},
+		{
+			name: "SQL Server 2019 unspaced CU32 (2026-Oct) to the spaced form",
+			args: args{s: "Microsoft SQL Server 2019 for x64-based Systems (CU32)"},
+			want: "Microsoft SQL Server 2019 for x64-based Systems (CU 32)",
+		},
+		{
+			name: "SQL Server 2022 unspaced CU27 (2026-Oct) to the spaced form",
+			args: args{s: "Microsoft SQL Server 2022 for x64-based Systems (CU27)"},
+			want: "Microsoft SQL Server 2022 for x64-based Systems (CU 27)",
+		},
+		{
 			name: "whitespace normalization",
 			args: args{s: "Windows Server 2016  (Server Core installation)"},
 			want: "Windows Server 2016 (Server Core installation)",

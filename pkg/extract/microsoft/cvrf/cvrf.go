@@ -1039,8 +1039,10 @@ func cleanFixedBuild(rawFixedBuild string) string {
 }
 
 // releaseCandidateTagRE matches a FixedBuild that is exactly a dotted number
-// followed by " RC<digits>" (e.g. "11.0 RC1").
-var releaseCandidateTagRE = regexp.MustCompile(`^\d+(\.\d+)+ RC\d+$`)
+// followed by a release-candidate tag: either " RC<digits>" (e.g. "11.0 RC1")
+// or the semver-style "-rc.<digits>" with an optional build suffix (e.g.
+// "11.0.0-rc.2", "11.0.100-rc.2", "11.0.0-rc.2.26504.105").
+var releaseCandidateTagRE = regexp.MustCompile(`^\d+(\.\d+)+( RC\d+|-rc\.\d+(\.\d+)*)$`)
 
 func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criterionTypes.Criterion, error) {
 	fixedBuild := cleanFixedBuild(rawFixedBuild)
@@ -1065,9 +1067,12 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 	//    used by .NET Framework products bundling multiple framework versions, or
 	//    "8.0.130, 8.0.424" pairing the fixed .NET SDK feature bands, 2026-Sep)
 	//  - Release-candidate tags of the exact form "<dotted number> RC<digits>" (e.g.
-	//    "11.0 RC1", 2026-Sep). Other values containing a space are not skipped: on
-	//    version-compared products they have been recoverable typos (e.g. "96.0 1954.29"),
-	//    which should fail and get a fixedBuildOverrides entry
+	//    "11.0 RC1", 2026-Sep) or "<dotted number>-rc.<digits>[.<build>]" (e.g.
+	//    "11.0.0-rc.2", "11.0.0-rc.2.26504.105", 2026-Oct): the fix only exists in a
+	//    prerelease. Other values containing a space or a hyphen are not skipped: on
+	//    version-compared products they have been recoverable typos (e.g. "96.0 1954.29")
+	//    or servicing builds (e.g. "5.0.6-servicing.21220.11"), which should fail and
+	//    get a fixedBuildOverrides entry
 	if fixedBuild[0] < '0' || fixedBuild[0] > '9' || strings.Contains(fixedBuild, "x") || !strings.Contains(fixedBuild, ".") || strings.ContainsAny(fixedBuild, ";,") || releaseCandidateTagRE.MatchString(fixedBuild) {
 		return nil, nil
 	}
@@ -1116,8 +1121,11 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 			}
 			return rangeTypes.RangeTypeMicrosoftDefenderSecurityIntelligence, nil
 
-		// Microsoft Defender Antimalware Platform
-		case "Microsoft Defender Antimalware Platform":
+		// Microsoft Defender Antimalware Platform. The bare "Microsoft Defender for
+		// Endpoint for Windows" (no "on Windows ..." suffix, 2026-Oct) carries the
+		// antimalware platform version (e.g. 4.18.26060.3008), not an OS build.
+		case "Microsoft Defender Antimalware Platform",
+			"Microsoft Defender for Endpoint for Windows":
 			if _, err := defenderwindowsversion.NewVersion(fixedBuild); err != nil {
 				return rangeTypes.RangeTypeUnknown, errors.Wrap(err, "defenderwindowsversion.NewVersion")
 			}
@@ -1398,6 +1406,7 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 			"Microsoft SQL Server 2022 for x64-based Systems (CU 24)",
 			"Microsoft SQL Server 2022 for x64-based Systems (CU 25)",
 			"Microsoft SQL Server 2022 for x64-based Systems (CU 26)",
+			"Microsoft SQL Server 2022 for x64-based Systems (CU 27)",
 			"Microsoft SQL Server 2022 for x64-based Systems (CU 5)",
 			"Microsoft SQL Server 2022 for x64-based Systems (CU 8)",
 			"Microsoft SQL Server 2022 for x64-based Systems (GDR)",
@@ -1406,6 +1415,7 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 			"Microsoft SQL Server 2025 for x64-based Systems (CU4)",
 			"Microsoft SQL Server 2025 for x64-based Systems (CU6)",
 			"Microsoft SQL Server 2025 for x64-based Systems (CU8)",
+			"Microsoft SQL Server 2025 for x64-based Systems (CU9)",
 			"Microsoft SQL Server 2025 for x64-based Systems (GDR)",
 			"SQL Server 2019 for Linux Containers",
 			"SQL Server Integration Services for Visual Studio 2019",
@@ -1483,7 +1493,8 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 			"Microsoft Visual Studio 2026 Version 18.6",
 			"Microsoft Visual Studio 2026 Version 18.7",
 			"Microsoft Visual Studio 2026 Version 18.8",
-			"Microsoft Visual Studio 2026 Version 18.9":
+			"Microsoft Visual Studio 2026 Version 18.9",
+			"Microsoft Visual Studio 2026 Version 18.10":
 			if _, err := visualstudioversion.NewVersion(fixedBuild); err != nil {
 				return rangeTypes.RangeTypeUnknown, errors.Wrap(err, "visualstudioversion.NewVersion")
 			}
@@ -1559,6 +1570,8 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 			"Windows 11 Version 25H2 for x64-based Systems",
 			"Windows 11 Version 26H1 for ARM64-based Systems",
 			"Windows 11 Version 26H1 for x64-based Systems",
+			"Windows 11 Version 26H2 for ARM64-based Systems",
+			"Windows 11 Version 26H2 for x64-based Systems",
 			"Windows 7 for 32-bit Systems Service Pack 1",
 			"Windows 7 for x64-based Systems Service Pack 1",
 			"Windows 8.1 for 32-bit Systems",

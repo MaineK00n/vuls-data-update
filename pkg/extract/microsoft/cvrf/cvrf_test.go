@@ -523,6 +523,204 @@ func TestBuildFixedBuildCriterion(t *testing.T) {
 			wantErr: true,
 		},
 		{
+			name: ".NET 11.0 semver rc tag skipped (2026-Oct)",
+			args: args{
+				cveID:         "CVE-2026-58280",
+				productName:   ".NET 11.0 installed on Windows",
+				rawFixedBuild: "11.0.0-rc.2",
+			},
+			want: nil,
+		},
+		{
+			name: ".NET 11.0 semver rc tag with build suffix skipped (2026-Oct)",
+			args: args{
+				cveID:         "CVE-2026-105016",
+				productName:   ".NET 11.0 installed on Windows",
+				rawFixedBuild: "11.0.0-rc.2.26504.105",
+			},
+			want: nil,
+		},
+		{
+			name: ".NET 11.0 SDK band semver rc tag skipped (2026-Oct)",
+			args: args{
+				cveID:         "CVE-2026-70161",
+				productName:   ".NET 11.0 installed on Windows",
+				rawFixedBuild: "11.0.100-rc.2",
+			},
+			want: nil,
+		},
+		{
+			name: "semver rc tag without a number is not skipped",
+			args: args{
+				cveID:         "CVE-2026-58280",
+				productName:   ".NET 11.0 installed on Windows",
+				rawFixedBuild: "11.0.0-rc",
+			},
+			wantErr: true,
+		},
+		{
+			name: "semver rc tag followed by a non-numeric suffix is not skipped",
+			args: args{
+				cveID:         "CVE-2026-58280",
+				productName:   ".NET 11.0 installed on Windows",
+				rawFixedBuild: "11.0.0-rc.2-final",
+			},
+			wantErr: true,
+		},
+		{
+			name: "servicing suffix without an override is not skipped",
+			args: args{
+				cveID:         "CVE-2026-58280",
+				productName:   ".NET 11.0 installed on Windows",
+				rawFixedBuild: "11.0.0-servicing.26504.105",
+			},
+			wantErr: true,
+		},
+		{
+			name: "Windows 11 Version 26H2 x64 (2026-Oct)",
+			args: args{
+				cveID:         "CVE-2026-100200",
+				productName:   "Windows 11 Version 26H2 for x64-based Systems",
+				rawFixedBuild: "10.0.26300.9711",
+			},
+			want: &criterionTypes.Criterion{
+				Type: criterionTypes.CriterionTypeVersion,
+				Version: &vcTypes.Criterion{
+					Vulnerable: true,
+					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
+					Package: packageTypes.Package{
+						Type:   packageTypes.PackageTypeBinary,
+						Binary: &binaryTypes.Package{Name: "Windows 11 Version 26H2 for x64-based Systems"},
+					},
+					Affected: &affectedTypes.Affected{
+						Type:  affectedrangeTypes.RangeTypeMicrosoftWindows,
+						Range: []affectedrangeTypes.Range{{LessThan: "10.0.26300.9711"}},
+						Fixed: []string{"10.0.26300.9711"},
+					},
+				},
+			},
+		},
+		{
+			name: "Windows 11 Version 26H2 ARM64 (2026-Oct)",
+			args: args{
+				cveID:         "CVE-2026-100200",
+				productName:   "Windows 11 Version 26H2 for ARM64-based Systems",
+				rawFixedBuild: "10.0.26300.9711",
+			},
+			want: &criterionTypes.Criterion{
+				Type: criterionTypes.CriterionTypeVersion,
+				Version: &vcTypes.Criterion{
+					Vulnerable: true,
+					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
+					Package: packageTypes.Package{
+						Type:   packageTypes.PackageTypeBinary,
+						Binary: &binaryTypes.Package{Name: "Windows 11 Version 26H2 for ARM64-based Systems"},
+					},
+					Affected: &affectedTypes.Affected{
+						Type:  affectedrangeTypes.RangeTypeMicrosoftWindows,
+						Range: []affectedrangeTypes.Range{{LessThan: "10.0.26300.9711"}},
+						Fixed: []string{"10.0.26300.9711"},
+					},
+				},
+			},
+		},
+		{
+			name: "Visual Studio 2026 Version 18.10 (2026-Oct)",
+			args: args{
+				cveID:         "CVE-2026-102869",
+				productName:   "Microsoft Visual Studio 2026 Version 18.10",
+				rawFixedBuild: "18.10.4",
+			},
+			want: &criterionTypes.Criterion{
+				Type: criterionTypes.CriterionTypeVersion,
+				Version: &vcTypes.Criterion{
+					Vulnerable: true,
+					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
+					Package: packageTypes.Package{
+						Type:   packageTypes.PackageTypeBinary,
+						Binary: &binaryTypes.Package{Name: "Microsoft Visual Studio 2026 Version 18.10"},
+					},
+					Affected: &affectedTypes.Affected{
+						Type:  affectedrangeTypes.RangeTypeMicrosoftVisualStudio,
+						Range: []affectedrangeTypes.Range{{LessThan: "18.10.4"}},
+						Fixed: []string{"18.10.4"},
+					},
+				},
+			},
+		},
+		{
+			name: "SQL Server 2022 CU 27 (2026-Oct)",
+			args: args{
+				cveID:         "CVE-2026-65674",
+				productName:   "Microsoft SQL Server 2022 for x64-based Systems (CU 27)",
+				rawFixedBuild: "16.0.4305.5",
+			},
+			want: &criterionTypes.Criterion{
+				Type: criterionTypes.CriterionTypeVersion,
+				Version: &vcTypes.Criterion{
+					Vulnerable: true,
+					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
+					Package: packageTypes.Package{
+						Type:   packageTypes.PackageTypeBinary,
+						Binary: &binaryTypes.Package{Name: "Microsoft SQL Server 2022 for x64-based Systems (CU 27)"},
+					},
+					Affected: &affectedTypes.Affected{
+						Type:  affectedrangeTypes.RangeTypeMicrosoftSQLServer,
+						Range: []affectedrangeTypes.Range{{LessThan: "16.0.4305.5"}},
+						Fixed: []string{"16.0.4305.5"},
+					},
+				},
+			},
+		},
+		{
+			name: "SQL Server 2025 CU9 (2026-Oct)",
+			args: args{
+				cveID:         "CVE-2026-65674",
+				productName:   "Microsoft SQL Server 2025 for x64-based Systems (CU9)",
+				rawFixedBuild: "17.0.5015.4",
+			},
+			want: &criterionTypes.Criterion{
+				Type: criterionTypes.CriterionTypeVersion,
+				Version: &vcTypes.Criterion{
+					Vulnerable: true,
+					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
+					Package: packageTypes.Package{
+						Type:   packageTypes.PackageTypeBinary,
+						Binary: &binaryTypes.Package{Name: "Microsoft SQL Server 2025 for x64-based Systems (CU9)"},
+					},
+					Affected: &affectedTypes.Affected{
+						Type:  affectedrangeTypes.RangeTypeMicrosoftSQLServer,
+						Range: []affectedrangeTypes.Range{{LessThan: "17.0.5015.4"}},
+						Fixed: []string{"17.0.5015.4"},
+					},
+				},
+			},
+		},
+		{
+			name: "Defender for Endpoint for Windows platform version (2026-Oct)",
+			args: args{
+				cveID:         "CVE-2026-105726",
+				productName:   "Microsoft Defender for Endpoint for Windows",
+				rawFixedBuild: "4.18.26060.3008",
+			},
+			want: &criterionTypes.Criterion{
+				Type: criterionTypes.CriterionTypeVersion,
+				Version: &vcTypes.Criterion{
+					Vulnerable: true,
+					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
+					Package: packageTypes.Package{
+						Type:   packageTypes.PackageTypeBinary,
+						Binary: &binaryTypes.Package{Name: "Microsoft Defender for Endpoint for Windows"},
+					},
+					Affected: &affectedTypes.Affected{
+						Type:  affectedrangeTypes.RangeTypeMicrosoftDefenderWindows,
+						Range: []affectedrangeTypes.Range{{LessThan: "4.18.26060.3008"}},
+						Fixed: []string{"4.18.26060.3008"},
+					},
+				},
+			},
+		},
+		{
 			name: "CVE-2021-34448 Windows 7 IE Cumulative 1.001 skipped",
 			args: args{
 				cveID:         "CVE-2021-34448",
