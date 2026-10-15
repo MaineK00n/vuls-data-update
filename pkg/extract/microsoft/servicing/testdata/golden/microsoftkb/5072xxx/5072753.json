@@ -1,0 +1,13 @@
+{
+	"kb_id": "5072753",
+	"url": "https://support.microsoft.com/en-us/servicing/os/hotpatch/windows-11/2025/november-20-2025-hotpatch-kb5072753-os-build-26200-7093-out-of-band",
+	"products": [
+		"os/hotpatch/windows-11"
+	],
+	"data_source": {
+		"id": "microsoft-servicing",
+		"raws": [
+			"os/hotpatch/windows-11/2025/november-20-2025-hotpatch-kb5072753-os-build-26200-7093-out-of-band.json"
+		]
+	}
+}

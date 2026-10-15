@@ -1,12 +1,19 @@
 package servicing_test
 
 import (
+	"bytes"
+	"encoding/json/v2"
+	"log/slog"
+	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/microsoft/servicing"
+	microsoftkbTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/microsoftkb"
+	microsoftkbSupersedesTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/microsoftkb/supersedes"
 	utiltest "github.com/MaineK00n/vuls-data-update/pkg/extract/util/test"
 )
 
@@ -50,6 +57,29 @@ import (
 // run in full under os/windows-10. Nothing about either article is wrong, so
 // they are read correctly and chain to nothing -- the failure no other warning
 // can see, and the reason there is one that can.
+//
+// os/hotpatch/windows-11 carries build numbers and is not ordered by them. A
+// hotpatch supersedes the hotpatches before it back to the last baseline and no
+// further, so December's supersedes November's and February's supersedes
+// nothing -- the January baseline between them is what restarts the series, and
+// it names no KB, which is why a baseline is read whether or not it does. The
+// October and April baselines do name one, and are not recorded under it: the
+// KB is the announcement's own, not an update anything installs. The March
+// out-of-band sits beside March's monthly hotpatch, superseding February's as it
+// does, and the out-of-band ones of November and January are superseded by
+// nothing. The directory is the year alone, and the series has to lose it for
+// December and February to be in one series at all.
+//
+// os/hotpatch/windows-server-2025 files November's and December's under the
+// same KBs as Windows 11, which take the edge in both series and name both, and
+// its own February hotpatch after a January baseline of its own. It also holds
+// a Security Update for Windows Server Update Services filed among the
+// hotpatches, which is neither a hotpatch nor a baseline, and is recorded and
+// left unchained.
+//
+// os/hotpatch/preview/windows-11 is a level deeper and has to lose its year the
+// same way. Its January 2025 baseline is filed under 2024, and it still parts
+// December's preview from February's.
 //
 // Two articles name no KB. A series listing carries its hub page and its end of
 // servicing statement alongside the updates, and neither is one.
@@ -135,6 +165,91 @@ func TestProducts(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if diff := cmp.Diff(tt.want, servicing.Products(tt.title)); diff != "" {
 				t.Errorf("products(). (-expected +got):\n%s", diff)
+			}
+		})
+	}
+}
+
+// A baseline that went unread leaves two hotpatches of different quarters
+// looking like one, and the gap between them is all there is to tell. No
+// series on record has one, so the articles here are made up: a January
+// baseline and then hotpatches with no baseline after it. Two months apart is
+// let through; three is a quarter, and is left unlinked and reported.
+func TestExtractHotpatchGap(t *testing.T) {
+	type article struct {
+		name  string
+		title string
+	}
+	tests := []struct {
+		name           string
+		articles       []article
+		wantSupersedes []microsoftkbSupersedesTypes.Supersedes
+		wantLog        bool
+	}{
+		{
+			name: "two months apart",
+			articles: []article{
+				{name: "january-13-2026-baseline", title: "January 13, 2026—Hotpatch baseline for Windows 11 Enterprise"},
+				{name: "february-10-2026-hotpatch-kb5900001", title: "February 10, 2026—Hotpatch KB5900001 (OS Build 26100.7781)"},
+				{name: "april-14-2026-hotpatch-kb5900002", title: "April 14, 2026—Hotpatch KB5900002 (OS Build 26100.8246)"},
+			},
+			wantSupersedes: []microsoftkbSupersedesTypes.Supersedes{{KBID: "5900001"}},
+		},
+		{
+			name: "three months apart",
+			articles: []article{
+				{name: "january-13-2026-baseline", title: "January 13, 2026—Hotpatch baseline for Windows 11 Enterprise"},
+				{name: "february-10-2026-hotpatch-kb5900001", title: "February 10, 2026—Hotpatch KB5900001 (OS Build 26100.7781)"},
+				{name: "may-12-2026-hotpatch-kb5900002", title: "May 12, 2026—Hotpatch KB5900002 (OS Build 26100.8390)"},
+			},
+			wantSupersedes: nil,
+			wantLog:        true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			args := t.TempDir()
+			for _, a := range tt.articles {
+				p := filepath.Join(args, "raw", "os", "hotpatch", "windows-11", "2026", a.name+".json")
+				if err := os.MkdirAll(filepath.Dir(p), 0o755); err != nil {
+					t.Fatal("unexpected error:", err)
+				}
+				bs, err := json.Marshal(map[string]string{
+					"url":   "https://support.microsoft.com/en-us/servicing/os/hotpatch/windows-11/2026/" + a.name,
+					"title": a.title,
+				})
+				if err != nil {
+					t.Fatal("unexpected error:", err)
+				}
+				if err := os.WriteFile(p, bs, 0o644); err != nil {
+					t.Fatal("unexpected error:", err)
+				}
+			}
+
+			var logs bytes.Buffer
+			prev := slog.Default()
+			slog.SetDefault(slog.New(slog.NewTextHandler(&logs, nil)))
+			t.Cleanup(func() { slog.SetDefault(prev) })
+
+			dir := t.TempDir()
+			if err := servicing.Extract(args, servicing.WithDir(dir)); err != nil {
+				t.Fatal("unexpected error:", err)
+			}
+
+			bs, err := os.ReadFile(filepath.Join(dir, "microsoftkb", "5900xxx", "5900002.json"))
+			if err != nil {
+				t.Fatal("unexpected error:", err)
+			}
+			var kb microsoftkbTypes.KB
+			if err := json.Unmarshal(bs, &kb); err != nil {
+				t.Fatal("unexpected error:", err)
+			}
+			if diff := cmp.Diff(tt.wantSupersedes, kb.Supersedes); diff != "" {
+				t.Errorf("supersedes. (-expected +got):\n%s", diff)
+			}
+
+			if got := strings.Contains(logs.String(), "hotpatches further apart than a quarter"); got != tt.wantLog {
+				t.Errorf("warning logged = %v, want %v, log:\n%s", got, tt.wantLog, logs.String())
 			}
 		})
 	}

@@ -1,0 +1,18 @@
+{
+	"kb_id": "5046696",
+	"url": "https://support.microsoft.com/en-us/servicing/os/hotpatch/preview/windows-11/2024/november-19-2024-hotpatch-public-preview-kb5046696-os-build-26100-2240",
+	"products": [
+		"os/hotpatch/preview/windows-11"
+	],
+	"superseded_by": [
+		{
+			"kb_id": "5048794"
+		}
+	],
+	"data_source": {
+		"id": "microsoft-servicing",
+		"raws": [
+			"os/hotpatch/preview/windows-11/2024/november-19-2024-hotpatch-public-preview-kb5046696-os-build-26100-2240.json"
+		]
+	}
+}

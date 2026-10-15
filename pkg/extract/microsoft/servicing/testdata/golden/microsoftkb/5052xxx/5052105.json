@@ -1,0 +1,13 @@
+{
+	"kb_id": "5052105",
+	"url": "https://support.microsoft.com/en-us/servicing/os/hotpatch/preview/windows-11/2025/february-11-2025-hotpatch-public-preview-kb5052105-os-build-26100-3107",
+	"products": [
+		"os/hotpatch/preview/windows-11"
+	],
+	"data_source": {
+		"id": "microsoft-servicing",
+		"raws": [
+			"os/hotpatch/preview/windows-11/2025/february-11-2025-hotpatch-public-preview-kb5052105-os-build-26100-3107.json"
+		]
+	}
+}
