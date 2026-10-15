@@ -649,10 +649,10 @@ func TestBuildFixedBuildCriterion(t *testing.T) {
 			},
 		},
 		{
-			name: "SQL Server 2022 CU 27 (2026-Oct)",
+			name: "SQL Server 2022 CU27 (2026-Oct)",
 			args: args{
 				cveID:         "CVE-2026-65674",
-				productName:   "Microsoft SQL Server 2022 for x64-based Systems (CU 27)",
+				productName:   "Microsoft SQL Server 2022 for x64-based Systems (CU27)",
 				rawFixedBuild: "16.0.4305.5",
 			},
 			want: &criterionTypes.Criterion{
@@ -662,7 +662,7 @@ func TestBuildFixedBuildCriterion(t *testing.T) {
 					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
 					Package: packageTypes.Package{
 						Type:   packageTypes.PackageTypeBinary,
-						Binary: &binaryTypes.Package{Name: "Microsoft SQL Server 2022 for x64-based Systems (CU 27)"},
+						Binary: &binaryTypes.Package{Name: "Microsoft SQL Server 2022 for x64-based Systems (CU27)"},
 					},
 					Affected: &affectedTypes.Affected{
 						Type:  affectedrangeTypes.RangeTypeMicrosoftSQLServer,
@@ -692,30 +692,6 @@ func TestBuildFixedBuildCriterion(t *testing.T) {
 						Type:  affectedrangeTypes.RangeTypeMicrosoftSQLServer,
 						Range: []affectedrangeTypes.Range{{LessThan: "17.0.5015.4"}},
 						Fixed: []string{"17.0.5015.4"},
-					},
-				},
-			},
-		},
-		{
-			name: "Defender for Endpoint for Windows platform version (2026-Oct)",
-			args: args{
-				cveID:         "CVE-2026-105726",
-				productName:   "Microsoft Defender for Endpoint for Windows",
-				rawFixedBuild: "4.18.26060.3008",
-			},
-			want: &criterionTypes.Criterion{
-				Type: criterionTypes.CriterionTypeVersion,
-				Version: &vcTypes.Criterion{
-					Vulnerable: true,
-					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
-					Package: packageTypes.Package{
-						Type:   packageTypes.PackageTypeBinary,
-						Binary: &binaryTypes.Package{Name: "Microsoft Defender for Endpoint for Windows"},
-					},
-					Affected: &affectedTypes.Affected{
-						Type:  affectedrangeTypes.RangeTypeMicrosoftDefenderWindows,
-						Range: []affectedrangeTypes.Range{{LessThan: "4.18.26060.3008"}},
-						Fixed: []string{"4.18.26060.3008"},
 					},
 				},
 			},

@@ -1121,11 +1121,8 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 			}
 			return rangeTypes.RangeTypeMicrosoftDefenderSecurityIntelligence, nil
 
-		// Microsoft Defender Antimalware Platform. The bare "Microsoft Defender for
-		// Endpoint for Windows" (no "on Windows ..." suffix, 2026-Oct) carries the
-		// antimalware platform version (e.g. 4.18.26060.3008), not an OS build.
-		case "Microsoft Defender Antimalware Platform",
-			"Microsoft Defender for Endpoint for Windows":
+		// Microsoft Defender Antimalware Platform
+		case "Microsoft Defender Antimalware Platform":
 			if _, err := defenderwindowsversion.NewVersion(fixedBuild); err != nil {
 				return rangeTypes.RangeTypeUnknown, errors.Wrap(err, "defenderwindowsversion.NewVersion")
 			}
@@ -1406,9 +1403,9 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 			"Microsoft SQL Server 2022 for x64-based Systems (CU 24)",
 			"Microsoft SQL Server 2022 for x64-based Systems (CU 25)",
 			"Microsoft SQL Server 2022 for x64-based Systems (CU 26)",
-			"Microsoft SQL Server 2022 for x64-based Systems (CU 27)",
 			"Microsoft SQL Server 2022 for x64-based Systems (CU 5)",
 			"Microsoft SQL Server 2022 for x64-based Systems (CU 8)",
+			"Microsoft SQL Server 2022 for x64-based Systems (CU27)",
 			"Microsoft SQL Server 2022 for x64-based Systems (GDR)",
 			"Microsoft SQL Server 2025 for x64-based Systems (CU2)",
 			"Microsoft SQL Server 2025 for x64-based Systems (CU3)",

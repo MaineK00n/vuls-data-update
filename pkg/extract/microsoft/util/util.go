@@ -27,12 +27,16 @@ var canonicalProductNames = map[string]string{
 	"Microsoft Teams for Mac, New Edition":                                                            "Microsoft Teams for Mac",
 	"Azure File Sync v18":                                                                             "Azure File Sync v18.0",
 	"Windows Defender Antimalware Platform":                                                           "Microsoft Defender Antimalware Platform",
-	// 2026-Oct dropped the space in "(CU N)" for SQL Server 2017/2019/2022; the
-	// 2017 CU31 and 2019 CU32 entries name the same CU as the spaced form used
-	// in earlier months. SQL Server 2025 has always used the unspaced form.
+	// 2026-Oct spells the SQL Server 2017 CU31 and 2019 CU32 entries without the
+	// space; they are the same CUs earlier months listed as "(CU 31)" / "(CU 32)"
+	// (2017 since 2023-Feb), so keep one package name. CUs that only ever appeared
+	// unspaced (2022 CU27, 2025 CU9) are listed directly in buildFixedBuildCriterion.
 	"Microsoft SQL Server 2017 for x64-based Systems (CU31)": "Microsoft SQL Server 2017 for x64-based Systems (CU 31)",
 	"Microsoft SQL Server 2019 for x64-based Systems (CU32)": "Microsoft SQL Server 2019 for x64-based Systems (CU 32)",
-	"Microsoft SQL Server 2022 for x64-based Systems (CU27)": "Microsoft SQL Server 2022 for x64-based Systems (CU 27)",
+	// The bare name (2026-Oct, CVE-2026-105726) carries the antimalware platform
+	// version (4.18.26060.3008), not an OS build like the "... on Windows ..."
+	// variants, so fold it into the platform product.
+	"Microsoft Defender for Endpoint for Windows": "Microsoft Defender Antimalware Platform",
 
 	// Bulletin→CVRF product name unification (legacy products with "Microsoft " prefix)
 	"Microsoft Azure Kubernetes Service":                          "Azure Kubernetes Service",
