@@ -341,20 +341,32 @@ func read(args string) ([]article, map[string][]time.Time, error) {
 		if err != nil {
 			return errors.Wrapf(err, "rel %s", p)
 		}
+		rel = filepath.ToSlash(rel)
+		line := series(rel)
 
-		// A baseline is read whether or not it names a KB. Half of them do not
-		// -- "January 13, 2026—Hotpatch baseline for Windows 11 Enterprise" --
-		// and a baseline that went unread would join the quarters either side
-		// of it into one.
-		if line, date, ok := baseline(a, filepath.ToSlash(rel)); ok {
+		// A baseline is an announcement, not an update: "The April 2026 security
+		// baseline will be available starting April 14, 2026. For more
+		// information, see KB5082063." What installs is the cumulative update
+		// it points to, and the KB some of them carry in the title -- KB5086656
+		// on that one -- is the article's own, in no catalog and no advisory.
+		// So it is read for its date and never recorded, KB or not; half of
+		// them name none, and one that went unread would join the quarters
+		// either side of it into one.
+		if strings.HasPrefix(line, hotpatchPrefix) && strings.Contains(strings.ToLower(a.Title), "baseline") {
+			date, ok := releaseDate(a.Title)
+			if !ok {
+				slog.Warn("no date in baseline title", slog.String("path", rel), slog.String("title", a.Title))
+				return nil
+			}
 			baselines[line] = append(baselines[line], date)
+			return nil
 		}
 
-		parsed, ok := parse(a, filepath.ToSlash(rel))
+		parsed, ok := parse(a, rel, line)
 		if !ok {
 			// A hub page or a servicing statement rather than an update. There
 			// is no KB to record and no place in any chain.
-			slog.Debug("not an update", slog.String("path", filepath.ToSlash(rel)), slog.String("title", a.Title))
+			slog.Debug("not an update", slog.String("path", rel), slog.String("title", a.Title))
 			return nil
 		}
 
@@ -366,22 +378,6 @@ func read(args string) ([]article, map[string][]time.Time, error) {
 	}
 
 	return as, baselines, nil
-}
-
-// baseline reports the series and date of an article that is a hotpatch
-// baseline: the cumulative update a hotpatch series restarts from, quarterly
-// and whenever a fix cannot ship as a hotpatch.
-func baseline(a servicing.Article, rel string) (string, time.Time, bool) {
-	line := series(rel)
-	if !strings.HasPrefix(line, hotpatchPrefix) || !strings.Contains(strings.ToLower(a.Title), "baseline") {
-		return "", time.Time{}, false
-	}
-	date, ok := releaseDate(a.Title)
-	if !ok {
-		slog.Warn("no date in baseline title", slog.String("path", rel), slog.String("title", a.Title))
-		return "", time.Time{}, false
-	}
-	return line, date, true
 }
 
 // releaseDate reads the date a title opens with.
@@ -402,14 +398,14 @@ func releaseDate(title string) (time.Time, bool) {
 
 // parse reads an article for what decides its place in a chain, reporting false
 // for the pages that are not updates.
-func parse(a servicing.Article, rel string) (article, bool) {
+func parse(a servicing.Article, rel, line string) (article, bool) {
 	m := kbPattern.FindStringSubmatch(a.Title)
 	if m == nil {
 		return article{}, false
 	}
 
-	dm := datePattern.FindStringSubmatch(a.Title)
-	if dm == nil {
+	date, ok := releaseDate(a.Title)
+	if !ok {
 		// Every article naming a KB carries a date -- 2,550 of 2,550 -- so one
 		// without is a title shape this has not seen rather than an update that
 		// has no date. Ordering it by guesswork would put an edge where there
@@ -417,16 +413,7 @@ func parse(a servicing.Article, rel string) (article, bool) {
 		slog.Warn("no date in title", slog.String("path", rel), slog.String("title", a.Title))
 		return article{}, false
 	}
-	date, err := time.Parse("January 2, 2006", dm[1])
-	if err != nil {
-		date, err = time.Parse("January 2 2006", dm[1])
-	}
-	if err != nil {
-		slog.Warn("unexpected date", slog.String("path", rel), slog.String("date", dm[1]))
-		return article{}, false
-	}
 
-	line := series(rel)
 	if !strings.Contains(line, "/") {
 		// Every series but one names its product in the path. The exception is
 		// the thirteen under dotnetframework/2026/07/, where Microsoft has
@@ -465,16 +452,14 @@ func parse(a servicing.Article, rel string) (article, bool) {
 	}, true
 }
 
-// hotpatch tells apart what a hotpatch series files. The baseline is checked
-// first because Microsoft titles some "Hotpatch baseline".
+// hotpatch tells apart what a hotpatch series files, other than the baselines
+// read already.
 func hotpatch(line, title string) string {
 	if !strings.HasPrefix(line, hotpatchPrefix) {
 		return ""
 	}
 	lower := strings.ToLower(title)
 	switch {
-	case strings.Contains(lower, "baseline"):
-		return hotpatchBaseline
 	case !strings.Contains(lower, "hotpatch"):
 		return hotpatchOther
 	case strings.Contains(lower, "out-of-band"):
@@ -487,7 +472,6 @@ func hotpatch(line, title string) string {
 const (
 	hotpatchMonthly   = "monthly"
 	hotpatchOutOfBand = "out-of-band"
-	hotpatchBaseline  = "baseline"
 	hotpatchOther     = "other"
 )
 
@@ -542,7 +526,7 @@ func series(rel string) string {
 	if len(segs) >= 2 && yearPattern.MatchString(segs[len(segs)-2]) && monthPattern.MatchString(segs[len(segs)-1]) {
 		segs = segs[:len(segs)-2]
 	}
-	if len(segs) >= 1 && yearPattern.MatchString(segs[len(segs)-1]) && strings.HasPrefix(strings.Join(segs, "/")+"/", hotpatchPrefix) {
+	if strings.HasPrefix(rel, hotpatchPrefix) && len(segs) >= 1 && yearPattern.MatchString(segs[len(segs)-1]) {
 		segs = segs[:len(segs)-1]
 	}
 	return strings.Join(segs, "/")
@@ -893,77 +877,85 @@ func chain(as []article, baselines map[string][]time.Time) []microsoftkbTypes.KB
 // installed over -- the cumulative update Microsoft ships every quarter, and in
 // any month a fix cannot ship as a hotpatch -- and the series restarts at every
 // baseline. So a hotpatch supersedes the hotpatches before it back to the last
-// baseline and nothing earlier. Checked against cvrf, which records
-// supersedence on 52 of the hotpatch KBs:
+// baseline and nothing earlier. cvrf has records for 52 of the hotpatch KBs and
+// names a predecessor for 15 of them; counting the pairs whose two KBs both
+// appear there:
 //
 //	within a quarter      20 pairs, 14 recorded
 //	across a baseline     21 pairs,  0 recorded
 //
-// The six within a quarter it does not record are ones it records nothing for
-// at all, the Windows Server 2022 hotpatches of 2022 and 2023 among them.
+// The six within a quarter it does not record are KBs it names no predecessor
+// for at all, the Windows Server 2022 hotpatches of 2022 and 2023 among them.
 // Chained by build number instead, as the other OS series are, every one of the
 // second kind would be asserted -- December's hotpatch replacing September's
 // over the October baseline between them.
 //
-// An out-of-band hotpatch sits beside the monthly one of its month rather than
-// after it. cvrf has KB5084597 of March 13th, 2026 superseding February's
-// KB5077212, as KB5079420 of March 10th does, and not KB5079420. Nor does it
-// have the next month's hotpatch superseding an out-of-band one -- KB5060841 of
-// June 2025 supersedes May's monthly KB5058497 and not KB5061258 of May 16th --
-// so an out-of-band hotpatch takes the edge its month's monthly one would, and
-// is superseded by nothing.
+// An out-of-band hotpatch is a fix shipped over the baseline or the month's
+// hotpatch -- KB5121768 installs without a restart "provided they have already
+// installed the July 2026 security update KB5101650", the baseline of four days
+// before -- and Microsoft calls it cumulative, with builds that keep rising
+// through it: 26100.7623 at the January 2026 baseline, .7634 out-of-band, .7781
+// in February. But nothing records where one sits in a chain. cvrf names a
+// single predecessor per update, and for KB5084597 of March 13th, 2026 it names
+// February's KB5077212 -- the predecessor of March 10th's KB5079420, not
+// KB5079420 itself. It names none for the other out-of-band hotpatches, and
+// nothing for the hotpatch that follows one. So an out-of-band hotpatch takes
+// the edge its month's monthly one would, which is the edge cvrf records, and
+// is superseded by nothing, as the build lines leave theirs out of the next
+// month's chain.
 func chainHotpatch(as []article, baselines map[string][]time.Time) [][2]string {
-	byLine := make(map[string][]article)
+	var hs []article
 	for _, a := range as {
 		if a.hotpatch == hotpatchMonthly || a.hotpatch == hotpatchOutOfBand {
-			byLine[a.line] = append(byLine[a.line], a)
+			hs = append(hs, a)
 		}
 	}
 
 	months := func(t time.Time) int { return t.Year()*12 + int(t.Month()) - 1 }
 
-	var links [][2]string
-	for _, line := range slices.Sorted(maps.Keys(byLine)) {
-		group := byLine[line]
-		slices.SortFunc(group, func(x, y article) int {
-			return cmp.Or(x.date.Compare(y.date), cmp.Compare(x.kbID, y.kbID))
-		})
-
-		// quarter is which baseline an article was installed over: how many of
-		// them came out on or before it.
-		quarter := func(a article) int {
-			n := 0
-			for _, b := range baselines[line] {
-				if !b.After(a.date) {
-					n++
-				}
+	// quarter is which baseline an article was installed over: how many of its
+	// series' baselines came out on or before it.
+	quarter := func(a article) int {
+		n := 0
+		for _, b := range baselines[a.line] {
+			if !b.After(a.date) {
+				n++
 			}
-			return n
 		}
+		return n
+	}
 
-		for i, newer := range group {
-			// The monthly hotpatch of the latest month before this one, back
-			// to the baseline.
-			var older *article
-			for j := i - 1; j >= 0; j-- {
-				if quarter(group[j]) != quarter(newer) {
-					break
-				}
-				if group[j].hotpatch == hotpatchMonthly && months(group[j].date) < months(newer.date) {
-					older = &group[j]
-					break
-				}
-			}
-			if older == nil {
+	var links [][2]string
+	for _, newer := range hs {
+		// The monthly hotpatches of the latest month before this one, back to
+		// the baseline. Every one of them is taken, so that two of one month
+		// would both be superseded rather than whichever came first.
+		var olders []article
+		for _, older := range hs {
+			if older.hotpatch != hotpatchMonthly || older.line != newer.line || months(older.date) >= months(newer.date) || quarter(older) != quarter(newer) {
 				continue
 			}
-			// A quarter holds two hotpatch months, so two hotpatches further
-			// apart than that have a baseline between them that was not read.
-			// Linking them would assert the edge this exists to refuse.
-			if months(newer.date)-months(older.date) > 2 {
-				slog.Warn("hotpatches further apart than a quarter with no baseline between them, left unlinked", slog.String("series", line), slog.String("older", older.raw), slog.String("newer", newer.raw))
-				continue
+			switch {
+			case len(olders) == 0 || months(older.date) > months(olders[0].date):
+				olders = []article{older}
+			case months(older.date) == months(olders[0].date):
+				olders = append(olders, older)
 			}
+		}
+		if len(olders) == 0 {
+			continue
+		}
+		// A baseline comes at least once a quarter, so two hotpatches of one
+		// baseline further apart than that have one between them that went
+		// unread -- an article missing, or titled without "baseline". Linking
+		// them would assert the edge this exists to refuse. Every pair on
+		// record is a month apart; a gap of two is let through, which a single
+		// unread baseline between two hotpatch months also produces.
+		if months(newer.date)-months(olders[0].date) > 2 {
+			slog.Warn("hotpatches further apart than a quarter with no baseline between them, left unlinked", slog.String("series", newer.line), slog.String("older", olders[0].raw), slog.String("newer", newer.raw))
+			continue
+		}
+		for _, older := range olders {
 			links = append(links, [2]string{older.kbID, newer.kbID})
 		}
 	}

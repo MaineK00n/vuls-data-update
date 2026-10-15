@@ -56,14 +56,23 @@ import (
 // further, so December's supersedes November's and February's supersedes
 // nothing -- the January baseline between them is what restarts the series, and
 // it names no KB, which is why a baseline is read whether or not it does. The
-// March out-of-band sits beside March's monthly hotpatch, superseding February's
-// as it does, and the out-of-band ones of November and January are superseded
-// by nothing. The directory is the year alone, and the series has to lose it
-// for December and February to be in one series at all.
+// October and April baselines do name one, and are not recorded under it: the
+// KB is the announcement's own, not an update anything installs. The March
+// out-of-band sits beside March's monthly hotpatch, superseding February's as it
+// does, and the out-of-band ones of November and January are superseded by
+// nothing. The directory is the year alone, and the series has to lose it for
+// December and February to be in one series at all.
 //
-// os/hotpatch/windows-server-2025 holds a Security Update for Windows Server
-// Update Services filed among the hotpatches. It is neither a hotpatch nor a
-// baseline, and is recorded and left unchained.
+// os/hotpatch/windows-server-2025 files November's and December's under the
+// same KBs as Windows 11, which take the edge in both series and name both, and
+// its own February hotpatch after a January baseline of its own. It also holds
+// a Security Update for Windows Server Update Services filed among the
+// hotpatches, which is neither a hotpatch nor a baseline, and is recorded and
+// left unchained.
+//
+// os/hotpatch/preview/windows-11 is a level deeper and has to lose its year the
+// same way. Its January 2025 baseline is filed under 2024, and it still parts
+// December's preview from February's.
 //
 // Two articles name no KB. A series listing carries its hub page and its end of
 // servicing statement alongside the updates, and neither is one.
