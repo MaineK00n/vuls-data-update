@@ -1,12 +1,19 @@
 package servicing_test
 
 import (
+	"bytes"
+	"encoding/json/v2"
+	"log/slog"
+	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/microsoft/servicing"
+	microsoftkbTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/microsoftkb"
+	microsoftkbSupersedesTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/microsoftkb/supersedes"
 	utiltest "github.com/MaineK00n/vuls-data-update/pkg/extract/util/test"
 )
 
@@ -158,6 +165,91 @@ func TestProducts(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if diff := cmp.Diff(tt.want, servicing.Products(tt.title)); diff != "" {
 				t.Errorf("products(). (-expected +got):\n%s", diff)
+			}
+		})
+	}
+}
+
+// A baseline that went unread leaves two hotpatches of different quarters
+// looking like one, and the gap between them is all there is to tell. No
+// series on record has one, so the articles here are made up: a January
+// baseline and then hotpatches with no baseline after it. Two months apart is
+// let through; three is a quarter, and is left unlinked and reported.
+func TestExtractHotpatchGap(t *testing.T) {
+	type article struct {
+		name  string
+		title string
+	}
+	tests := []struct {
+		name           string
+		articles       []article
+		wantSupersedes []microsoftkbSupersedesTypes.Supersedes
+		wantLog        bool
+	}{
+		{
+			name: "two months apart",
+			articles: []article{
+				{name: "january-13-2026-baseline", title: "January 13, 2026—Hotpatch baseline for Windows 11 Enterprise"},
+				{name: "february-10-2026-hotpatch-kb5900001", title: "February 10, 2026—Hotpatch KB5900001 (OS Build 26100.7781)"},
+				{name: "april-14-2026-hotpatch-kb5900002", title: "April 14, 2026—Hotpatch KB5900002 (OS Build 26100.8246)"},
+			},
+			wantSupersedes: []microsoftkbSupersedesTypes.Supersedes{{KBID: "5900001"}},
+		},
+		{
+			name: "three months apart",
+			articles: []article{
+				{name: "january-13-2026-baseline", title: "January 13, 2026—Hotpatch baseline for Windows 11 Enterprise"},
+				{name: "february-10-2026-hotpatch-kb5900001", title: "February 10, 2026—Hotpatch KB5900001 (OS Build 26100.7781)"},
+				{name: "may-12-2026-hotpatch-kb5900002", title: "May 12, 2026—Hotpatch KB5900002 (OS Build 26100.8390)"},
+			},
+			wantSupersedes: nil,
+			wantLog:        true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			args := t.TempDir()
+			for _, a := range tt.articles {
+				p := filepath.Join(args, "raw", "os", "hotpatch", "windows-11", "2026", a.name+".json")
+				if err := os.MkdirAll(filepath.Dir(p), 0o755); err != nil {
+					t.Fatal("unexpected error:", err)
+				}
+				bs, err := json.Marshal(map[string]string{
+					"url":   "https://support.microsoft.com/en-us/servicing/os/hotpatch/windows-11/2026/" + a.name,
+					"title": a.title,
+				})
+				if err != nil {
+					t.Fatal("unexpected error:", err)
+				}
+				if err := os.WriteFile(p, bs, 0o644); err != nil {
+					t.Fatal("unexpected error:", err)
+				}
+			}
+
+			var logs bytes.Buffer
+			prev := slog.Default()
+			slog.SetDefault(slog.New(slog.NewTextHandler(&logs, nil)))
+			t.Cleanup(func() { slog.SetDefault(prev) })
+
+			dir := t.TempDir()
+			if err := servicing.Extract(args, servicing.WithDir(dir)); err != nil {
+				t.Fatal("unexpected error:", err)
+			}
+
+			bs, err := os.ReadFile(filepath.Join(dir, "microsoftkb", "5900xxx", "5900002.json"))
+			if err != nil {
+				t.Fatal("unexpected error:", err)
+			}
+			var kb microsoftkbTypes.KB
+			if err := json.Unmarshal(bs, &kb); err != nil {
+				t.Fatal("unexpected error:", err)
+			}
+			if diff := cmp.Diff(tt.wantSupersedes, kb.Supersedes); diff != "" {
+				t.Errorf("supersedes. (-expected +got):\n%s", diff)
+			}
+
+			if got := strings.Contains(logs.String(), "hotpatches further apart than a quarter"); got != tt.wantLog {
+				t.Errorf("warning logged = %v, want %v, log:\n%s", got, tt.wantLog, logs.String())
 			}
 		})
 	}
