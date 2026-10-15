@@ -899,9 +899,10 @@ func chain(as []article, baselines map[string][]time.Time) []microsoftkbTypes.KB
 // single predecessor per update, and for KB5084597 of March 13th, 2026 it names
 // February's KB5077212 -- the predecessor of March 10th's KB5079420, not
 // KB5079420 itself. It names none for the other out-of-band hotpatches, and
-// nothing for the hotpatch that follows one. So an out-of-band hotpatch takes
-// the edge its month's monthly one would, which is the edge cvrf records, and
-// is superseded by nothing, as the build lines leave theirs out of the next
+// for the hotpatch that follows one it names the month's monthly hotpatch or
+// nothing, never the out-of-band. So an out-of-band hotpatch takes the edge
+// its month's monthly one would, which is the edge cvrf records, and is
+// superseded by nothing, as the build lines leave theirs out of the next
 // month's chain.
 func chainHotpatch(as []article, baselines map[string][]time.Time) [][2]string {
 	var hs []article
