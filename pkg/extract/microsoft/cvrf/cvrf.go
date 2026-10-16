@@ -1176,7 +1176,9 @@ var vendorFixExclusions = map[[3]string]struct{}{
 	{"CVE-2026-66799", "Windows Server 2022 (Server Core installation)", "5123303"}: {},
 }
 
-// vendorFixAddition is a Vendor Fix remediation added to one product.
+// vendorFixAddition is a Vendor Fix remediation added to one product. Like
+// CVRF's own, it may lack a KB ID or a fixed build, but not both; a product
+// offering a hotpatch needs both (see appendVendorFixConditions).
 type vendorFixAddition struct {
 	kbID       string
 	fixedBuild string
@@ -1266,6 +1268,9 @@ func addVendorFixes(cveID string, tags []segmentTypes.DetectionTag, excludedTags
 			f := vendorFix{hotpatch: a.hotpatch, version: version}
 			if kb := buildKBCriterion(product, a.kbID); kb != nil {
 				f.kbs = append(f.kbs, *kb)
+			}
+			if len(f.kbs) == 0 && f.version == nil {
+				return nil, nil, errors.Errorf("unexpected vendorFixAdditions for %s (%s). expected: a numeric KB ID or a usable fixed build, actual: KB ID %q, fixed build %q", cveID, k[1], a.kbID, a.fixedBuild)
 			}
 			fixesByTag[tag] = append(fixesByTag[tag], f)
 			addedKBIDs = append(addedKBIDs, a.kbID)
