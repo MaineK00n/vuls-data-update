@@ -1116,6 +1116,10 @@ type vendorFixOverride struct {
 	// hotpatch marks the remediation as a hotpatch-track update regardless of
 	// its SubType.
 	hotpatch bool
+	// baseline, on a hotpatch that is the only fix of its product, is the KB
+	// of the baseline that followed it, added beside the hotpatch's KB (see
+	// placeHotpatchOnlyTags).
+	baseline string
 }
 
 // vendorFixOverrides corrects Vendor Fix remediations, keyed by [3]string{CVE
@@ -1129,9 +1133,33 @@ type vendorFixOverride struct {
 // hotpatch, so it is excluded. An excluded product stays covered by its other
 // Vendor Fix remediations; buildDetections fails when none is left.
 //
+// A hotpatch is otherwise listed beside its month's cumulative update, which
+// fixes the hosts that do not take hotpatches. Where it is the only fix,
+// nothing such a host can install satisfies the KB criterion, and the CVE is
+// reported on it for good. The baseline that followed the hotpatch is added
+// as the other way to be fixed: it is what a hotpatch-enrolled host installs
+// next, and it carries the fixes of the hotpatches before it, otherwise the
+// host would lose them on taking it and every hotpatch after it would have to
+// ship them again. Only its KB is added; a fixed build at the baseline's would
+// report hosts between the hotpatch's build and the baseline's.
+//
 // fixedBuildOverrides cannot express these corrections: its key is the
 // FixedBuild, which a follow-up update may share with the cumulative update.
 var vendorFixOverrides = map[[3]string]vendorFixOverride{
+	// CVE-2023-24898 — Windows SMB Denial of Service Vulnerability. Its FAQ:
+	// "This vulnerability only affects the hotpatch version of Windows Server
+	// 2022. If you are not running this version of the operating system, no
+	// action is required for this vulnerability." The May 2023 hotpatch
+	// KB5026456 is followed by the June one (KB5027319) and then by the July
+	// 2023 baseline, KB5028171.
+	// The vulnerability is in what the hotpatch version runs and the other
+	// does not, so the May 2023 cumulative update KB5026370 does not fix it:
+	// a host on it is not affected, rather than fixed. Listing it would claim
+	// a fix nothing records. The baseline is where a hotpatched host stays
+	// fixed, so it is taken, as for any later entry; the hosts left reported
+	// are those still on a May or June 2023 cumulative update.
+	{"CVE-2023-24898", "Windows Server 2022", "5026456"}:                            {baseline: "5028171"},
+	{"CVE-2023-24898", "Windows Server 2022 (Server Core installation)", "5026456"}: {baseline: "5028171"},
 	// 2026-Aug Windows 11: KB5123607 ("OS Builds 26100.9165 and 26200.9165";
 	// and KB5123273 for Pluton-as-TPM devices), "offered after the August 2026
 	// security hotpatch update (KB5120994) is installed", fix CVE-2026-6726 and
@@ -1186,39 +1214,6 @@ var vendorFixOverrides = map[[3]string]vendorFixOverride{
 // KB articles and need no vendorFixOverrides entry.
 var hotpatchFixesReviewed = map[[2]string]struct{}{}
 
-// hotpatchNextBaselines maps [3]string{CVE ID, product name after
-// microsoftutil.NormalizeProductName, hotpatch KB ID} to the baseline that
-// followed the hotpatch, for the products on which the hotpatch is the only
-// fix CVRF lists.
-//
-// Everywhere else a hotpatch is listed beside its month's cumulative update,
-// and a host that does not take hotpatches is fixed by the cumulative update.
-// Where only the hotpatch is listed, nothing such a host can install
-// satisfies the KB criterion, and the CVE is reported on it for good. The
-// baseline is what a hotpatch-enrolled host installs next, and it carries the
-// fixes of the hotpatches before it: otherwise the host would lose them on
-// taking it, and every hotpatch after it would have to ship them again. It is
-// added as the other way to be fixed, beside the hotpatch's KB.
-//
-// Only the KB criterion is added. A fixed build at the baseline's would report
-// hosts between the hotpatch's build and the baseline's.
-var hotpatchNextBaselines = map[[3]string]string{
-	// CVE-2023-24898 — Windows SMB Denial of Service Vulnerability. Its FAQ:
-	// "This vulnerability only affects the hotpatch version of Windows Server
-	// 2022. If you are not running this version of the operating system, no
-	// action is required for this vulnerability." The May 2023 hotpatch
-	// KB5026456 is followed by the June one (KB5027319) and then by the July
-	// 2023 baseline, KB5028171.
-	// The vulnerability is in what the hotpatch version runs and the other
-	// does not, so the May 2023 cumulative update KB5026370 does not fix it:
-	// a host on it is not affected, rather than fixed. Listing it would claim
-	// a fix nothing records. The baseline is where a hotpatched host stays
-	// fixed, so it is taken, as for any later entry; the hosts left reported
-	// are those still on a May or June 2023 cumulative update.
-	{"CVE-2023-24898", "Windows Server 2022", "5026456"}:                            "5028171",
-	{"CVE-2023-24898", "Windows Server 2022 (Server Core installation)", "5026456"}: "5028171",
-}
-
 // needsHotpatchReview reports whether a detection tag offering a hotpatch
 // lists more than two distinct KBs, i.e. more than the usual hotpatch and
 // cumulative update pair. Such extra updates have been follow-ups offered only
@@ -1247,8 +1242,8 @@ func needsHotpatchReview(fixes []vendorFix) bool {
 // the hotpatch under the Azure Edition, a product NormalizeProductName merges
 // into the one the cumulative update is listed under: such a tag's fixes move
 // to the tag holding the product's other fixes. Where no other fix is listed
-// (CVE-2023-24898), the baseline that followed the hotpatch is added from
-// hotpatchNextBaselines, and a hotpatch missing from it fails the extraction.
+// (CVE-2023-24898), the baseline that followed the hotpatch is added from its
+// vendorFixOverrides entry, and a hotpatch without one fails the extraction.
 func placeHotpatchOnlyTags(cveID string, tags []segmentTypes.DetectionTag, fixesByTag map[segmentTypes.DetectionTag][]vendorFix) ([]segmentTypes.DetectionTag, error) {
 	hasOtherFix := func(tag segmentTypes.DetectionTag) bool {
 		return slices.ContainsFunc(fixesByTag[tag], func(f vendorFix) bool { return !f.hotpatch })
@@ -1277,9 +1272,9 @@ func placeHotpatchOnlyTags(cveID string, tags []segmentTypes.DetectionTag, fixes
 					continue
 				}
 				kbID := f.kbs[0].KB.KBID
-				baselineKBID, ok := hotpatchNextBaselines[[3]string{cveID, product, kbID}]
-				if !ok {
-					return nil, errors.Errorf("unexpected fixes for %s (%s). expected: a fix other than a hotpatch, or a hotpatchNextBaselines entry for hotpatch KB%s, actual: hotpatches only, please add the baseline that followed the hotpatch", cveID, tag, kbID)
+				baselineKBID := vendorFixOverrides[[3]string{cveID, product, kbID}].baseline
+				if baselineKBID == "" {
+					return nil, errors.Errorf("unexpected fixes for %s (%s). expected: a fix other than a hotpatch, or a vendorFixOverrides baseline for hotpatch KB%s, actual: hotpatches only, please add the baseline that followed the hotpatch", cveID, tag, kbID)
 				}
 				fixesByTag[tag][i].kbs = append(fixesByTag[tag][i].kbs, *buildKBCriterion(product, baselineKBID))
 			}

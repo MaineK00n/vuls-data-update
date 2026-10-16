@@ -1340,24 +1340,8 @@ func TestVendorFixOverridesKeys(t *testing.T) {
 			if cvrf.BuildKBCriterion(k[1], k[2]) == nil {
 				t.Errorf("unexpected KB ID. expected: digits only, actual: %q", k[2])
 			}
-		})
-	}
-}
-
-func TestHotpatchNextBaselinesKeys(t *testing.T) {
-	for k, v := range cvrf.HotpatchNextBaselines {
-		t.Run(fmt.Sprintf("%s %s %s", k[0], k[1], k[2]), func(t *testing.T) {
-			if !strings.HasPrefix(k[0], "CVE-") {
-				t.Errorf("unexpected CVE ID. expected: %q prefix, actual: %q", "CVE-", k[0])
-			}
-			if got := microsoftutil.NormalizeProductName(k[1]); got != k[1] {
-				t.Errorf("product name is not normalized. expected: %q, actual: %q", got, k[1])
-			}
-			if cvrf.BuildKBCriterion(k[1], k[2]) == nil {
-				t.Errorf("unexpected hotpatch KB ID. expected: digits only, actual: %q", k[2])
-			}
-			if cvrf.BuildKBCriterion(k[1], v) == nil {
-				t.Errorf("unexpected baseline KB ID. expected: digits only, actual: %q", v)
+			if b := cvrf.VendorFixOverrideBaseline(k); b != "" && cvrf.BuildKBCriterion(k[1], b) == nil {
+				t.Errorf("unexpected baseline KB ID. expected: digits only, actual: %q", b)
 			}
 		})
 	}
@@ -1481,7 +1465,7 @@ func TestExtract(t *testing.T) {
 			hasError: true,
 		},
 		{
-			name:     "hotpatch as the only fix, not listed in hotpatchNextBaselines",
+			name:     "hotpatch as the only fix, without a vendorFixOverrides baseline",
 			args:     "./testdata/fixtures-hotpatch-only-fix",
 			hasError: true,
 		},
