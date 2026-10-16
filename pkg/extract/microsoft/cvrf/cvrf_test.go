@@ -1343,6 +1343,9 @@ func TestVendorFixOverridesKeys(t *testing.T) {
 			if b := o.Baseline(); b != "" && cvrf.BuildKBCriterion(k[1], b) == nil {
 				t.Errorf("unexpected baseline KB ID. expected: digits only, actual: %q", b)
 			}
+			if tag := o.Tag(); tag != "" && microsoftutil.NormalizeProductName(tag) != k[1] {
+				t.Errorf("unexpected tag. expected: a name of %q, actual: %q", k[1], tag)
+			}
 		})
 	}
 }
