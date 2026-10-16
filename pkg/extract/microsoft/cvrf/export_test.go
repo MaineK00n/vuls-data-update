@@ -15,3 +15,7 @@ var (
 func (o vendorFixOverride) Baseline() string {
 	return o.baseline
 }
+
+func (o vendorFixOverride) Tag() string {
+	return o.tag
+}
