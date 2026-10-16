@@ -1345,8 +1345,9 @@ func TestVendorFixExclusionsKeys(t *testing.T) {
 }
 
 // TestVendorFixAdditionsEntries guards the entries against values that would
-// add a fix without a criterion: the KB ID must be the bare number and the
-// fixed build must parse. A product CVRF does not list fails the extraction.
+// silently add nothing: a KB ID given must be the bare number, a fixed build
+// given must yield a criterion, and one of the two must be given. A product
+// CVRF does not list fails the extraction.
 func TestVendorFixAdditionsEntries(t *testing.T) {
 	for k, as := range cvrf.VendorFixAdditions {
 		t.Run(fmt.Sprintf("%s %s", k[0], k[1]), func(t *testing.T) {
@@ -1354,11 +1355,16 @@ func TestVendorFixAdditionsEntries(t *testing.T) {
 				t.Errorf("unexpected CVE ID. expected: %q prefix, actual: %q", "CVE-", k[0])
 			}
 			for _, a := range as {
-				if cvrf.BuildKBCriterion(k[1], a.KBID()) == nil {
+				if a.KBID() == "" && a.FixedBuild() == "" {
+					t.Errorf("unexpected addition. expected: a KB ID or a fixed build, actual: neither")
+				}
+				if a.KBID() != "" && cvrf.BuildKBCriterion(k[1], a.KBID()) == nil {
 					t.Errorf("unexpected KB ID. expected: digits only, actual: %q", a.KBID())
 				}
-				if c, err := cvrf.BuildFixedBuildCriterion(k[0], microsoftutil.NormalizeProductName(k[1]), a.FixedBuild()); err != nil || c == nil {
-					t.Errorf("unexpected fixed build. expected: a criterion, actual: %v, err: %v", c, err)
+				if a.FixedBuild() != "" {
+					if c, err := cvrf.BuildFixedBuildCriterion(k[0], microsoftutil.NormalizeProductName(k[1]), a.FixedBuild()); err != nil || c == nil {
+						t.Errorf("unexpected fixed build. expected: a criterion, actual: %v, err: %v", c, err)
+					}
 				}
 			}
 		})
