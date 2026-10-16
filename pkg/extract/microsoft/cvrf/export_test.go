@@ -7,13 +7,14 @@ var (
 	IsHotpatchSubType        = isHotpatchSubType
 	IsKBCriteria             = isKBCriteria
 	KBCumulativeTwins        = kbCumulativeTwins
-	VendorFixOverrides       = vendorFixOverrides
+	VendorFixAdditions       = vendorFixAdditions
+	VendorFixExclusions      = vendorFixExclusions
 )
 
-func (o vendorFixOverride) Baseline() string {
-	return o.baseline
+func (a vendorFixAddition) KBID() string {
+	return a.kbID
 }
 
-func (o vendorFixOverride) Tag() string {
-	return o.tag
+func (a vendorFixAddition) FixedBuild() string {
+	return a.fixedBuild
 }
