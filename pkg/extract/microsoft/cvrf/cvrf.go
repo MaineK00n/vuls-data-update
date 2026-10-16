@@ -1134,6 +1134,12 @@ var vendorFixOverrides = map[[3]string]vendorFixOverride{
 	// CVE-2026-66804 on hotpatch-enrolled devices (CVE-2026-6726 FAQ "Do I need
 	// to do anything additional ..."; https://support.microsoft.com/help/5123607,
 	// https://support.microsoft.com/help/5123273).
+	// Known gap, accepted: KB5123273 is required *in addition* to KB5123607 on
+	// Pluton-as-TPM devices only, and whether a host is one is not in the scan
+	// result, so either KB clears a host and a Pluton host with KB5123607 but
+	// not KB5123273 is missed. Requiring both instead would report every
+	// non-Pluton hotpatch host, which is never offered KB5123273, until its
+	// next update.
 	{"CVE-2026-6726", "Windows 11 Version 24H2 for ARM64-based Systems", "5120994"}: {exclude: true},
 	{"CVE-2026-6726", "Windows 11 Version 24H2 for x64-based Systems", "5120994"}:   {exclude: true},
 	{"CVE-2026-6726", "Windows 11 Version 25H2 for ARM64-based Systems", "5120994"}: {exclude: true},
