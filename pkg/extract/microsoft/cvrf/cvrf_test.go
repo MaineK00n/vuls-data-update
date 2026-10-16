@@ -1329,7 +1329,7 @@ func TestIsKBCriteria(t *testing.T) {
 // them silently miss: the product must already be normalized and the KB ID
 // must be the bare number CVRF uses in the remediation Description.
 func TestVendorFixOverridesKeys(t *testing.T) {
-	for k := range cvrf.VendorFixOverrides {
+	for k, o := range cvrf.VendorFixOverrides {
 		t.Run(fmt.Sprintf("%s %s %s", k[0], k[1], k[2]), func(t *testing.T) {
 			if !strings.HasPrefix(k[0], "CVE-") {
 				t.Errorf("unexpected CVE ID. expected: %q prefix, actual: %q", "CVE-", k[0])
@@ -1340,7 +1340,7 @@ func TestVendorFixOverridesKeys(t *testing.T) {
 			if cvrf.BuildKBCriterion(k[1], k[2]) == nil {
 				t.Errorf("unexpected KB ID. expected: digits only, actual: %q", k[2])
 			}
-			if b := cvrf.VendorFixOverrideBaseline(k); b != "" && cvrf.BuildKBCriterion(k[1], b) == nil {
+			if b := o.Baseline(); b != "" && cvrf.BuildKBCriterion(k[1], b) == nil {
 				t.Errorf("unexpected baseline KB ID. expected: digits only, actual: %q", b)
 			}
 		})
