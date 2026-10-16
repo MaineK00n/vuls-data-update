@@ -1209,6 +1209,12 @@ var hotpatchNextBaselines = map[[3]string]string{
 	// action is required for this vulnerability." The May 2023 hotpatch
 	// KB5026456 is followed by the June one (KB5027319) and then by the July
 	// 2023 baseline, KB5028171.
+	// The vulnerability is in what the hotpatch version runs and the other
+	// does not, so the May 2023 cumulative update KB5026370 does not fix it:
+	// a host on it is not affected, rather than fixed. Listing it would claim
+	// a fix nothing records. The baseline is where a hotpatched host stays
+	// fixed, so it is taken, as for any later entry; the hosts left reported
+	// are those still on a May or June 2023 cumulative update.
 	{"CVE-2023-24898", "Windows Server 2022", "5026456"}:                            "5028171",
 	{"CVE-2023-24898", "Windows Server 2022 (Server Core installation)", "5026456"}: "5028171",
 }
