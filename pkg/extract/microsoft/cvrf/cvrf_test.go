@@ -1325,11 +1325,11 @@ func TestIsKBCriteria(t *testing.T) {
 	}
 }
 
-// TestVendorFixOverridesKeys guards the entries against typos that would make
+// TestVendorFixExclusionsKeys guards the entries against typos that would make
 // them silently miss: the product must already be normalized and the KB ID
 // must be the bare number CVRF uses in the remediation Description.
-func TestVendorFixOverridesKeys(t *testing.T) {
-	for k, o := range cvrf.VendorFixOverrides {
+func TestVendorFixExclusionsKeys(t *testing.T) {
+	for k := range cvrf.VendorFixExclusions {
 		t.Run(fmt.Sprintf("%s %s %s", k[0], k[1], k[2]), func(t *testing.T) {
 			if !strings.HasPrefix(k[0], "CVE-") {
 				t.Errorf("unexpected CVE ID. expected: %q prefix, actual: %q", "CVE-", k[0])
@@ -1340,11 +1340,26 @@ func TestVendorFixOverridesKeys(t *testing.T) {
 			if cvrf.BuildKBCriterion(k[1], k[2]) == nil {
 				t.Errorf("unexpected KB ID. expected: digits only, actual: %q", k[2])
 			}
-			if b := o.Baseline(); b != "" && cvrf.BuildKBCriterion(k[1], b) == nil {
-				t.Errorf("unexpected baseline KB ID. expected: digits only, actual: %q", b)
+		})
+	}
+}
+
+// TestVendorFixAdditionsEntries guards the entries against values that would
+// add a fix without a criterion: the KB ID must be the bare number and the
+// fixed build must parse. A product CVRF does not list fails the extraction.
+func TestVendorFixAdditionsEntries(t *testing.T) {
+	for k, as := range cvrf.VendorFixAdditions {
+		t.Run(fmt.Sprintf("%s %s", k[0], k[1]), func(t *testing.T) {
+			if !strings.HasPrefix(k[0], "CVE-") {
+				t.Errorf("unexpected CVE ID. expected: %q prefix, actual: %q", "CVE-", k[0])
 			}
-			if tag := o.Tag(); tag != "" && microsoftutil.NormalizeProductName(tag) != k[1] {
-				t.Errorf("unexpected tag. expected: a name of %q, actual: %q", k[1], tag)
+			for _, a := range as {
+				if cvrf.BuildKBCriterion(k[1], a.KBID()) == nil {
+					t.Errorf("unexpected KB ID. expected: digits only, actual: %q", a.KBID())
+				}
+				if c, err := cvrf.BuildFixedBuildCriterion(k[0], microsoftutil.NormalizeProductName(k[1]), a.FixedBuild()); err != nil || c == nil {
+					t.Errorf("unexpected fixed build. expected: a criterion, actual: %v, err: %v", c, err)
+				}
 			}
 		})
 	}
@@ -1453,7 +1468,7 @@ func TestExtract(t *testing.T) {
 			hasError: true,
 		},
 		{
-			name:     "vendorFixOverrides excluding every Vendor Fix of a product",
+			name:     "vendorFixExclusions excluding every Vendor Fix of a product",
 			args:     "./testdata/fixtures-hotpatch-all-excluded",
 			hasError: true,
 		},
@@ -1468,8 +1483,13 @@ func TestExtract(t *testing.T) {
 			hasError: true,
 		},
 		{
-			name:     "hotpatch as the only fix, without a vendorFixOverrides baseline",
+			name:     "hotpatch as the only fix, without vendorFixAdditions",
 			args:     "./testdata/fixtures-hotpatch-only-fix",
+			hasError: true,
+		},
+		{
+			name:     "vendorFixAdditions for a product CVRF does not list",
+			args:     "./testdata/fixtures-vendorfix-addition-unlisted",
 			hasError: true,
 		},
 	}
