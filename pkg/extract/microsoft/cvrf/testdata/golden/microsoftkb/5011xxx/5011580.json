@@ -1,0 +1,13 @@
+{
+	"kb_id": "5011580",
+	"url": "https://support.microsoft.com/help/5011580",
+	"products": [
+		"Microsoft Defender for Endpoint for Windows on Windows Server 2022"
+	],
+	"data_source": {
+		"id": "microsoft-cvrf",
+		"raws": [
+			"fixtures/2022-Mar/2022/CVE-2022-23278.json"
+		]
+	}
+}

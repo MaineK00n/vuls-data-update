@@ -1461,6 +1461,11 @@ func TestExtract(t *testing.T) {
 			args:     "./testdata/fixtures-hotpatch-missing-kb",
 			hasError: true,
 		},
+		{
+			name:     "hotpatch as the only fix, not listed in hotpatchNextBaselines",
+			args:     "./testdata/fixtures-hotpatch-only-fix",
+			hasError: true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

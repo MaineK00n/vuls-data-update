@@ -1,0 +1,19 @@
+{
+	"kb_id": "5011493",
+	"url": "https://support.microsoft.com/help/5011493",
+	"products": [
+		"Microsoft Defender for Endpoint for Windows on Windows 11 Version 21H2 for ARM64-based Systems",
+		"Microsoft Defender for Endpoint for Windows on Windows 11 Version 21H2 for x64-based Systems"
+	],
+	"supersedes": [
+		{
+			"kb_id": "5010386"
+		}
+	],
+	"data_source": {
+		"id": "microsoft-cvrf",
+		"raws": [
+			"fixtures/2022-Mar/2022/CVE-2022-23278.json"
+		]
+	}
+}
