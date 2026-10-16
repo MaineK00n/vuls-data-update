@@ -12,6 +12,6 @@ var (
 	VendorFixOverrides       = vendorFixOverrides
 )
 
-func VendorFixOverrideBaseline(k [3]string) string {
-	return vendorFixOverrides[k].baseline
+func (o vendorFixOverride) Baseline() string {
+	return o.baseline
 }
