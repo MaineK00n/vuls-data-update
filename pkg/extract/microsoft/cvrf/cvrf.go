@@ -1241,7 +1241,9 @@ func appendVendorFixConditions(conditionsByEcosystem map[ecosystemTypes.Ecosyste
 		if len(f.kbs) == 0 {
 			// Without a KB the fix cannot gate the builds of the fixes above
 			// it, which brings back the false positive the gating removes.
-			return errors.Errorf("unexpected Vendor Fix without a numeric KB ID for a product offering a hotpatch. expected: a KB ID, actual: none, please exclude the fix via vendorFixOverrides if it does not fix the CVE on its own")
+			// A Vendor Fix yielding neither criterion never reaches here, so
+			// the fix has a fixed build to locate it by.
+			return errors.Errorf("unexpected Vendor Fix without a numeric KB ID for a product offering a hotpatch. expected: a KB ID for the fix at %q, actual: none, please exclude the fix via vendorFixOverrides if it does not fix the CVE on its own", f.version.Version.Affected.Range[0].LessThan)
 		}
 		appendConditions(conditionsByEcosystem, tag, f.kbs)
 
