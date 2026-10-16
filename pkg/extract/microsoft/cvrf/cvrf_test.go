@@ -1344,6 +1344,25 @@ func TestVendorFixOverridesKeys(t *testing.T) {
 	}
 }
 
+func TestHotpatchNextBaselinesKeys(t *testing.T) {
+	for k, v := range cvrf.HotpatchNextBaselines {
+		t.Run(fmt.Sprintf("%s %s %s", k[0], k[1], k[2]), func(t *testing.T) {
+			if !strings.HasPrefix(k[0], "CVE-") {
+				t.Errorf("unexpected CVE ID. expected: %q prefix, actual: %q", "CVE-", k[0])
+			}
+			if got := microsoftutil.NormalizeProductName(k[1]); got != k[1] {
+				t.Errorf("product name is not normalized. expected: %q, actual: %q", got, k[1])
+			}
+			if cvrf.BuildKBCriterion(k[1], k[2]) == nil {
+				t.Errorf("unexpected hotpatch KB ID. expected: digits only, actual: %q", k[2])
+			}
+			if cvrf.BuildKBCriterion(k[1], v) == nil {
+				t.Errorf("unexpected baseline KB ID. expected: digits only, actual: %q", v)
+			}
+		})
+	}
+}
+
 func TestKBCumulativeTwins(t *testing.T) {
 	type args struct {
 		product string
