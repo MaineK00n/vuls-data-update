@@ -4,7 +4,6 @@ var (
 	BuildFixedBuildCriterion = buildFixedBuildCriterion
 	BuildKBCriterion         = buildKBCriterion
 	FixedBuildOverrides      = fixedBuildOverrides
-	HotpatchNextBaselines    = hotpatchNextBaselines
 	IsHotpatchSubType        = isHotpatchSubType
 	IsKBCriteria             = isKBCriteria
 	NormalizeProductName     = normalizeProductName
@@ -12,3 +11,7 @@ var (
 	KBCumulativeTwins        = kbCumulativeTwins
 	VendorFixOverrides       = vendorFixOverrides
 )
+
+func VendorFixOverrideBaseline(k [3]string) string {
+	return vendorFixOverrides[k].baseline
+}
