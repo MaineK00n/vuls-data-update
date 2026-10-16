@@ -850,6 +850,31 @@ func buildDetections(v cvrf.Vulnerability, products map[string]string) (map[ecos
 	fixesByTag := make(map[segmentTypes.DetectionTag][]vendorFix)
 	excludedTags := make(map[segmentTypes.DetectionTag]struct{})
 
+	// A hotpatch is another way to fix the product its cumulative update
+	// fixes, so it goes to the tag the cumulative update goes to. Microsoft
+	// lists it under the same product everywhere but in CVE-2022-23278, which
+	// lists it under the Azure Edition, a product NormalizeProductName merges
+	// into the one the cumulative update is listed under. nonHotpatchTags is
+	// the tag of each product's other fixes, by normalized name.
+	nonHotpatchTags := make(map[string]segmentTypes.DetectionTag)
+	for _, r := range v.Remediations.Remediation {
+		if r.Type != "Vendor Fix" {
+			continue
+		}
+		for _, pid := range r.ProductID {
+			productName, ok := products[pid]
+			if !ok {
+				continue
+			}
+			criterionProductName := microsoftutil.NormalizeProductName(productName)
+			o := vendorFixOverrides[[3]string{v.CVE, criterionProductName, r.Description}]
+			if o.exclude || o.hotpatch || isHotpatchSubType(r.SubType) {
+				continue
+			}
+			nonHotpatchTags[criterionProductName] = segmentTypes.DetectionTag(productName)
+		}
+	}
+
 	for _, r := range v.Remediations.Remediation {
 		switch r.Type {
 		case "Vendor Fix":
@@ -923,6 +948,17 @@ func buildDetections(v cvrf.Vulnerability, products map[string]string) (map[ecos
 				}
 				if twinKBID, ok := kbCumulativeTwins[[2]string{criterionProductName, r.Description}]; ok {
 					f.kbs = append(f.kbs, *buildKBCriterion(criterionProductName, twinKBID))
+				}
+				if hotpatch && kbCriterion != nil {
+					if t, ok := nonHotpatchTags[criterionProductName]; ok {
+						tag = t
+					} else {
+						baselineKBID, ok := hotpatchNextBaselines[[3]string{v.CVE, criterionProductName, r.Description}]
+						if !ok {
+							return nil, nil, errors.Errorf("hotpatch KB%s is the only fix for %q in %s, not listed in hotpatchNextBaselines, please add the baseline that followed it", r.Description, criterionProductName, v.CVE)
+						}
+						f.kbs = append(f.kbs, *buildKBCriterion(criterionProductName, baselineKBID))
+					}
 				}
 
 				if _, ok := fixesByTag[tag]; !ok {
@@ -1181,6 +1217,33 @@ var vendorFixOverrides = map[[3]string]vendorFixOverride{
 // KBs (see needsHotpatchReview) but were checked against the CVE FAQ and the
 // KB articles and need no vendorFixOverrides entry.
 var hotpatchFixesReviewed = map[[2]string]struct{}{}
+
+// hotpatchNextBaselines maps [3]string{CVE ID, product name after
+// microsoftutil.NormalizeProductName, hotpatch KB ID} to the baseline that
+// followed the hotpatch, for the products on which the hotpatch is the only
+// fix CVRF lists.
+//
+// Everywhere else a hotpatch is listed beside its month's cumulative update,
+// and a host that does not take hotpatches is fixed by the cumulative update.
+// Where only the hotpatch is listed, nothing such a host can install
+// satisfies the KB criterion, and the CVE is reported on it for good. The
+// baseline is what a hotpatch-enrolled host installs next, and it carries the
+// fixes of the hotpatches before it: otherwise the host would lose them on
+// taking it, and every hotpatch after it would have to ship them again. It is
+// added as the other way to be fixed, beside the hotpatch's KB.
+//
+// Only the KB criterion is added. A fixed build at the baseline's would report
+// hosts between the hotpatch's build and the baseline's.
+var hotpatchNextBaselines = map[[3]string]string{
+	// CVE-2023-24898 — Windows SMB Denial of Service Vulnerability. Its FAQ:
+	// "This vulnerability only affects the hotpatch version of Windows Server
+	// 2022. If you are not running this version of the operating system, no
+	// action is required for this vulnerability." The May 2023 hotpatch
+	// KB5026456 is followed by the June one (KB5027319) and then by the July
+	// 2023 baseline, KB5028171.
+	{"CVE-2023-24898", "Windows Server 2022", "5026456"}:                            "5028171",
+	{"CVE-2023-24898", "Windows Server 2022 (Server Core installation)", "5026456"}: "5028171",
+}
 
 // needsHotpatchReview reports whether a detection tag offering a hotpatch
 // lists more than two distinct KBs, i.e. more than the usual hotpatch and

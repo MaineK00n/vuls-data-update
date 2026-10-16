@@ -1,0 +1,22 @@
+{
+	"kb_id": "5011503",
+	"url": "https://support.microsoft.com/help/5011503",
+	"products": [
+		"Microsoft Defender for Endpoint for Windows on Windows 10 Version 1809 for 32-bit Systems",
+		"Microsoft Defender for Endpoint for Windows on Windows 10 Version 1809 for ARM64-based Systems",
+		"Microsoft Defender for Endpoint for Windows on Windows 10 Version 1809 for x64-based Systems",
+		"Microsoft Defender for Endpoint for Windows on Windows Server 2019",
+		"Microsoft Defender for Endpoint for Windows on Windows Server 2019 (Server Core installation)"
+	],
+	"supersedes": [
+		{
+			"kb_id": "5010351"
+		}
+	],
+	"data_source": {
+		"id": "microsoft-cvrf",
+		"raws": [
+			"fixtures/2022-Mar/2022/CVE-2022-23278.json"
+		]
+	}
+}
