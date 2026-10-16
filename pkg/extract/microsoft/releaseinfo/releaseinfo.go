@@ -48,17 +48,22 @@
 // cumulative ones. A hotpatch quarter opens with a Baseline (Restart) and runs
 // two hotpatch months on top of it before the next baseline rebases it, so the
 // hotpatch of one month does not supersede the cumulative update of that month
-// and is not superseded by the next one. The baseline is the join: Microsoft
-// ships it as that month's ordinary cumulative update too, so its KB appears in
-// both tables -- 22 of the 54 hotpatch KBs on the Windows Server page -- and it
-// takes its place in both chains, which is what a baseline is.
+// and is not superseded by the next one. The baseline belongs to the cumulative
+// line: Microsoft ships it as that month's ordinary cumulative update, so its
+// KB appears in both tables -- 22 of the 54 hotpatch KBs on the Windows Server
+// page -- and it is chained there, from the cumulative update before it to the
+// one after.
 //
 // Supersedence here is replacement, as it is in the Update Catalog: an update
 // supersedes another when installing it leaves the other unneeded. It is not
 // containment. A hotpatch carries its baseline's fixes, but it does not replace
 // the baseline -- it installs only on top of it, and the baseline stays -- so
-// the hotpatch line runs from one hotpatch to the next and from the last of a
-// quarter into the next baseline, and never from a baseline into a hotpatch.
+// no edge runs from a baseline into a hotpatch. Nor does one run from a
+// hotpatch into the next baseline: the baseline does not continue the hotpatch
+// series but restarts it, and Microsoft records no such edge, cvrf naming a
+// hotpatch only for the predecessor of a hotpatch of the same quarter. The
+// hotpatch line runs from one hotpatch to the next within a quarter and stops at
+// each baseline, as the servicing extractor chains the same series.
 // Reading it as containment would not even be safe: a hotpatch is not the
 // security content of its month's cumulative update, the November 2022 one
 // having shipped without the fix for CVE-2022-37966 because that fix could not
@@ -178,7 +183,8 @@ type update struct {
 	hotpatch bool
 
 	// baseline marks the Baseline (Restart) rows of a hotpatch calendar, the
-	// ones a hotpatch installs on top of rather than in place of.
+	// ones a hotpatch installs on top of rather than in place of, and where
+	// the hotpatch line stops.
 	baseline bool
 
 	// raw is the path this was read from, recorded on the KB so a record can be
@@ -353,8 +359,8 @@ func parsePage(page releaseinfo.Page, name, raw string) ([]update, error) {
 	// downstream would notice it pointing at the wrong one: a <strong> picked up
 	// from the prose, a label naming another build, or a calendar whose Type
 	// column was renamed and so reads as a history would each name KBs after the
-	// wrong release -- the last also chaining a baseline into the hotpatch after
-	// it. So a history's label has to name its build, and its rows have to be of
+	// wrong release -- the last also chaining its hotpatches across the
+	// baselines between them. So a history's label has to name its build, and its rows have to be of
 	// that build.
 	releases := make(map[int]string)
 	// majors is the build each release history covers, by its index in Tables.
@@ -510,10 +516,10 @@ func parseRow(t releaseinfo.Table, row []releaseinfo.Cell, name, raw string) (up
 
 // isBaseline reads a hotpatch calendar row's Type.
 //
-// A Type this does not recognise is read as a hotpatch. Mistaking a baseline
-// for one costs the edge from the baseline before it; mistaking a hotpatch for
-// a baseline would claim it replaces the baseline it is installed on top of,
-// and cut the next hotpatch loose from it.
+// A Type this does not recognise is read as a baseline. Mistaking a hotpatch
+// for one costs the edges either side of it; mistaking a baseline for a
+// hotpatch would join the quarters either side of it into one, chaining the
+// last hotpatch before it to the first after.
 func isBaseline(t releaseinfo.Table, row []releaseinfo.Cell, raw, kbID string) bool {
 	var typ string
 	if i := slices.Index(t.Header, columnHotpatchType); i >= 0 && i < len(row) {
@@ -526,8 +532,8 @@ func isBaseline(t releaseinfo.Table, row []releaseinfo.Cell, raw, kbID string) b
 	case typ == "Hotpatch":
 		return false
 	default:
-		slog.Warn("unexpected hotpatch type, update is read as a hotpatch", slog.String("path", raw), slog.String("kb", kbID), slog.String("type", typ))
-		return false
+		slog.Warn("unexpected hotpatch type, update is read as a baseline", slog.String("path", raw), slog.String("kb", kbID), slog.String("type", typ))
+		return true
 	}
 }
 
@@ -598,8 +604,10 @@ func chain(us []update) ([]microsoftkbTypes.KB, error) {
 		}
 
 		for i := 1; i < len(group); i++ {
-			// A hotpatch does not replace the baseline it installs on top of.
-			if group[i-1].baseline && group[i].hotpatch && !group[i].baseline {
+			// A hotpatch does not replace the baseline it installs on top of,
+			// and the next baseline restarts the hotpatch series rather than
+			// continuing it.
+			if group[i-1].baseline || group[i].baseline {
 				continue
 			}
 			links = append(links, link{older: group[i-1].kbID, newer: group[i].kbID})

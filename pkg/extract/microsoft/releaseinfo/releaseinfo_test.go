@@ -34,15 +34,16 @@ import (
 // other's updates.
 //
 // The Server hotpatch calendar shares KB5094125 with its release history, being
-// the June baseline and the June cumulative update at once. It takes its place
-// in both chains, which is what a baseline is: it supersedes May's hotpatch and
-// May's cumulative update, and neither of those touches the other.
+// the June baseline and the June cumulative update at once. It is chained as the
+// cumulative update: it supersedes May's cumulative update and not May's
+// hotpatch, which nothing supersedes.
 //
 // April's baseline does not supersede May's hotpatch, nor January's February's
 // on Windows 11, nor August 2024's September's on Windows Server 2022. A
-// hotpatch installs on top of its baseline rather than in place of it, so the
-// quarter's hotpatch line starts at its first hotpatch and joins the baseline
-// only at the end, where the next one replaces it.
+// hotpatch installs on top of its baseline rather than in place of it, and the
+// next baseline restarts the series rather than continuing it, so the
+// quarter's hotpatch line runs from its first hotpatch to its last and touches
+// no baseline.
 //
 // Server 2025 also runs an optional line through the same builds, and it is not
 // the hotpatch one. KB5091157 is .32698, between April's baseline at .32690 and
@@ -98,8 +99,8 @@ func TestExtract(t *testing.T) {
 		},
 		{
 			// A hotpatch calendar whose Type column is renamed reads as a
-			// history, which would chain each baseline into the hotpatch after
-			// it. Its "Calendar year" label names no build, and that stops it.
+			// history, which would chain its hotpatches across the baselines
+			// between them. Its "Calendar year" label names no build, and that stops it.
 			name:     "hotpatch calendar without its Type column",
 			args:     "./testdata/fixtures/type-renamed",
 			hasError: true,
