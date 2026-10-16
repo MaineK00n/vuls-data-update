@@ -883,6 +883,9 @@ func buildDetections(v cvrf.Vulnerability, products map[string]string) (map[ecos
 						fixedBuild = o.fixedBuild
 					}
 					hotpatch = hotpatch || o.hotpatch
+					if o.tag != "" {
+						tag = segmentTypes.DetectionTag(o.tag)
+					}
 				}
 
 				kbCriterion := buildKBCriterion(criterionProductName, r.Description)
@@ -944,9 +947,8 @@ func buildDetections(v cvrf.Vulnerability, products map[string]string) (map[ecos
 		}
 	}
 
-	tags, err := placeHotpatchOnlyTags(v.CVE, tags, fixesByTag)
-	if err != nil {
-		return nil, nil, errors.Wrap(err, "place hotpatch only tags")
+	if err := addHotpatchOnlyBaselines(v.CVE, tags, fixesByTag); err != nil {
+		return nil, nil, errors.Wrap(err, "add hotpatch only baselines")
 	}
 
 	for _, tag := range tags {
@@ -1118,8 +1120,11 @@ type vendorFixOverride struct {
 	hotpatch bool
 	// baseline, on a hotpatch that is the only fix of its product, is the KB
 	// of the baseline that followed it, added beside the hotpatch's KB (see
-	// placeHotpatchOnlyTags).
+	// addHotpatchOnlyBaselines).
 	baseline string
+	// tag, when non-empty, is the detection tag the remediation goes to in
+	// place of its product's own.
+	tag string
 }
 
 // vendorFixOverrides corrects Vendor Fix remediations, keyed by [3]string{CVE
@@ -1146,6 +1151,13 @@ type vendorFixOverride struct {
 // fixedBuildOverrides cannot express these corrections: its key is the
 // FixedBuild, which a follow-up update may share with the cumulative update.
 var vendorFixOverrides = map[[3]string]vendorFixOverride{
+	// CVE-2022-23278 — Microsoft Defender for Endpoint Spoofing Vulnerability.
+	// The hotpatch KB5011580 is listed under "Microsoft Defender for Endpoint
+	// for Windows on Windows Server 2022 Datacenter: Azure Edition", apart
+	// from the cumulative update KB5011497 under the product it normalizes
+	// to. Everywhere else CVRF lists a hotpatch under the same product as its
+	// cumulative update, so it is moved there, under the same AND.
+	{"CVE-2022-23278", "Microsoft Defender for Endpoint for Windows on Windows Server 2022", "5011580"}: {tag: "Microsoft Defender for Endpoint for Windows on Windows Server 2022"},
 	// CVE-2023-24898 — Windows SMB Denial of Service Vulnerability. Its FAQ:
 	// "This vulnerability only affects the hotpatch version of Windows Server
 	// 2022. If you are not running this version of the operating system, no
@@ -1233,60 +1245,32 @@ func needsHotpatchReview(fixes []vendorFix) bool {
 	return len(kbIDs) > 2
 }
 
-// placeHotpatchOnlyTags gives a home to the detection tags whose fixes are all
-// hotpatches, and returns the tags left.
-//
-// A hotpatch is another way to fix the product its cumulative update fixes,
-// so it belongs with the cumulative update under one AND. Microsoft lists the
-// two under the same product everywhere but in CVE-2022-23278, which lists
-// the hotpatch under the Azure Edition, a product NormalizeProductName merges
-// into the one the cumulative update is listed under: such a tag's fixes move
-// to the tag holding the product's other fixes. Where no other fix is listed
-// (CVE-2023-24898), the baseline that followed the hotpatch is added from its
-// vendorFixOverrides entry, and a hotpatch without one fails the extraction.
-func placeHotpatchOnlyTags(cveID string, tags []segmentTypes.DetectionTag, fixesByTag map[segmentTypes.DetectionTag][]vendorFix) ([]segmentTypes.DetectionTag, error) {
-	hasOtherFix := func(tag segmentTypes.DetectionTag) bool {
-		return slices.ContainsFunc(fixesByTag[tag], func(f vendorFix) bool { return !f.hotpatch })
-	}
-
-	kept := make([]segmentTypes.DetectionTag, 0, len(tags))
+// addHotpatchOnlyBaselines adds, to each detection tag whose fixes are all
+// hotpatches, the baseline that followed each hotpatch, taken from its
+// vendorFixOverrides entry (see there). A hotpatch without one fails the
+// extraction: the CVE FAQ and the KB articles decide between a baseline and a
+// tag that moves the hotpatch beside its product's cumulative update.
+func addHotpatchOnlyBaselines(cveID string, tags []segmentTypes.DetectionTag, fixesByTag map[segmentTypes.DetectionTag][]vendorFix) error {
 	for _, tag := range tags {
-		if hasOtherFix(tag) {
-			kept = append(kept, tag)
+		fixes := fixesByTag[tag]
+		if slices.ContainsFunc(fixes, func(f vendorFix) bool { return !f.hotpatch }) {
 			continue
 		}
-
 		product := microsoftutil.NormalizeProductName(string(tag))
-		var others []segmentTypes.DetectionTag
-		for _, t := range tags {
-			if t != tag && hasOtherFix(t) && microsoftutil.NormalizeProductName(string(t)) == product {
-				others = append(others, t)
+		for i, f := range fixes {
+			if len(f.kbs) == 0 {
+				// appendVendorFixConditions reports a hotpatch without a KB.
+				continue
 			}
-		}
-
-		switch len(others) {
-		case 0:
-			for i, f := range fixesByTag[tag] {
-				if len(f.kbs) == 0 {
-					// appendVendorFixConditions reports a hotpatch without a KB.
-					continue
-				}
-				kbID := f.kbs[0].KB.KBID
-				baselineKBID := vendorFixOverrides[[3]string{cveID, product, kbID}].baseline
-				if baselineKBID == "" {
-					return nil, errors.Errorf("unexpected fixes for %s (%s). expected: a fix other than a hotpatch, or a vendorFixOverrides baseline for hotpatch KB%s, actual: hotpatches only, please add the baseline that followed the hotpatch", cveID, tag, kbID)
-				}
-				fixesByTag[tag][i].kbs = append(fixesByTag[tag][i].kbs, *buildKBCriterion(product, baselineKBID))
+			kbID := f.kbs[0].KB.KBID
+			baselineKBID := vendorFixOverrides[[3]string{cveID, product, kbID}].baseline
+			if baselineKBID == "" {
+				return errors.Errorf("unexpected fixes for %s (%s). expected: a fix other than a hotpatch, or a vendorFixOverrides baseline or tag for hotpatch KB%s, actual: hotpatches only, please check the CVE FAQ and the KB articles", cveID, tag, kbID)
 			}
-			kept = append(kept, tag)
-		case 1:
-			fixesByTag[others[0]] = append(fixesByTag[others[0]], fixesByTag[tag]...)
-			delete(fixesByTag, tag)
-		default:
-			return nil, errors.Errorf("unexpected tags for the hotpatch of %s (%s). expected: one tag listing another fix of %q, actual: %q", cveID, tag, product, others)
+			fixesByTag[tag][i].kbs = append(fixesByTag[tag][i].kbs, *buildKBCriterion(product, baselineKBID))
 		}
 	}
-	return kept, nil
+	return nil
 }
 
 // appendVendorFixConditions appends the criterions of all Vendor Fix
