@@ -28,7 +28,6 @@ func TestFetch(t *testing.T) {
 				"2":                     "testdata/fixtures/repomd_valid.xml",
 				"2-emacs":               "testdata/fixtures/repomd_noupdateinfo.xml",
 				"2-kernel-5.15":         "testdata/fixtures/repomd_valid.xml",
-				"2022":                  "testdata/fixtures/repomd_valid.xml",
 				"2023":                  "testdata/fixtures/repomd_valid.xml",
 				"2023-kernel-livepatch": "testdata/fixtures/repomd_valid.xml",
 				"2023-nvidia":           "testdata/fixtures/repomd_valid.xml",
@@ -37,7 +36,6 @@ func TestFetch(t *testing.T) {
 				"1":                     "testdata/fixtures/updateinfo_1.xml.gz",
 				"2":                     "testdata/fixtures/updateinfo_2.xml.gz",
 				"2-kernel-5.15":         "testdata/fixtures/updateinfo_2_kernel-5.15.xml.gz",
-				"2022":                  "testdata/fixtures/updateinfo_2022.xml.gz",
 				"2023":                  "testdata/fixtures/updateinfo_2023.xml.gz",
 				"2023-kernel-livepatch": "testdata/fixtures/updateinfo_2023_kernel-livepatch.xml.gz",
 				"2023-nvidia":           "testdata/fixtures/updateinfo_2023_nvidia.xml.gz",
@@ -110,10 +108,6 @@ func TestFetch(t *testing.T) {
 						if _, err := fmt.Fprintf(w, "http://%s/2/extras/kernel-5.15/stable/x86_64/3cea6107e9fffdc60f8ca99c7dac421b427d2ea06003cf5eb970344e4c2e18f4", r.Host); err != nil {
 							t.Error("unexpected error:", err)
 						}
-					case strings.HasPrefix(r.URL.Path, "/al2022"):
-						if _, err := fmt.Fprintf(w, "http://%s/al2022/core/guids/b9dbfbda87c463b53ce6de759cc6cb527efa01fc5976bb654b201f294c2d099f/x86_64/", r.Host); err != nil {
-							t.Error("unexpected error:", err)
-						}
 					case strings.HasPrefix(r.URL.Path, "/al2023/core"):
 						if _, err := fmt.Fprintf(w, "http://%s/al2023/core/guids/b9dbfbda87c463b53ce6de759cc6cb527efa01fc5976bb654b201f294c2d099f/x86_64/", r.Host); err != nil {
 							t.Error("unexpected error:", err)
@@ -138,8 +132,6 @@ func TestFetch(t *testing.T) {
 						http.ServeFile(w, r, tt.repomd["2-emacs"])
 					case strings.HasPrefix(r.URL.Path, "/2/extras/kernel-5.15"):
 						http.ServeFile(w, r, tt.repomd["2-kernel-5.15"])
-					case strings.HasPrefix(r.URL.Path, "/al2022/"):
-						http.ServeFile(w, r, tt.repomd["2022"])
 					case strings.HasPrefix(r.URL.Path, "/al2023/core"):
 						http.ServeFile(w, r, tt.repomd["2023"])
 					case strings.HasPrefix(r.URL.Path, "/al2023/kernel-livepatch"):
@@ -155,8 +147,6 @@ func TestFetch(t *testing.T) {
 						http.ServeFile(w, r, tt.updateinfos["2"])
 					case strings.HasPrefix(r.URL.Path, "/2/extras/kernel-5.15"):
 						http.ServeFile(w, r, tt.updateinfos["2-kernel-5.15"])
-					case strings.HasPrefix(r.URL.Path, "/al2022/"):
-						http.ServeFile(w, r, tt.updateinfos["2022"])
 					case strings.HasPrefix(r.URL.Path, "/al2023/core"):
 						http.ServeFile(w, r, tt.updateinfos["2023"])
 					case strings.HasPrefix(r.URL.Path, "/al2023/kernel-livepatch"):
@@ -175,7 +165,6 @@ func TestFetch(t *testing.T) {
 					"2": {
 						Core:  fmt.Sprintf("%s/2/core/latest/x86_64/mirror.list", ts.URL),
 						Extra: fmt.Sprintf("%s/2/extras-catalog.json", ts.URL)},
-					"2022": {Core: fmt.Sprintf("%s/al2022/core/mirrors/latest/x86_64/mirror.list", ts.URL)},
 					"2023": {
 						Core:            fmt.Sprintf("%s/al2023/core/mirrors/latest/x86_64/mirror.list", ts.URL),
 						KernelLivePatch: fmt.Sprintf("%s/al2023/kernel-livepatch/mirrors/latest/x86_64/mirror.list", ts.URL),

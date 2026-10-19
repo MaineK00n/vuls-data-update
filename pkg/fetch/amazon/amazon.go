@@ -78,9 +78,6 @@ func Fetch(opts ...Option) error {
 				Core:  "https://cdn.amazonlinux.com/2/core/latest/x86_64/mirror.list",
 				Extra: "https://cdn.amazonlinux.com/2/extras-catalog.json",
 			},
-			"2022": {
-				Core: "https://cdn.amazonlinux.com/al2022/core/mirrors/latest/x86_64/mirror.list",
-			},
 			"2023": {
 				Core:            "https://cdn.amazonlinux.com/al2023/core/mirrors/latest/x86_64/mirror.list",
 				KernelLivePatch: "https://cdn.amazonlinux.com/al2023/kernel-livepatch/mirrors/latest/x86_64/mirror.list",
@@ -103,7 +100,7 @@ func Fetch(opts ...Option) error {
 		slog.Info("Fetch Amazon Linux", slog.String("version", v))
 		advs := make(map[string][]Update)
 		switch v {
-		case "1", "2022":
+		case "1":
 			us, err := options.fetch(options.mirrorURLs[v].Core)
 			if err != nil {
 				return errors.Wrapf(err, "fetch %s", options.mirrorURLs[v].Core)
@@ -173,7 +170,7 @@ func Fetch(opts ...Option) error {
 			}
 			advs[getPackageRepository(options.mirrorURLs[v].Nvidia)] = us
 		default:
-			return errors.Errorf("unexpected version. accepts %q, received %q", []string{"1", "2", "2022", "2023"}, v)
+			return errors.Errorf("unexpected version. accepts %q, received %q", []string{"1", "2", "2023"}, v)
 		}
 
 		for r, us := range advs {
@@ -185,10 +182,10 @@ func Fetch(opts ...Option) error {
 					case 3:
 						splitted, err := util.Split(u.ID, "-", "-")
 						if err != nil {
-							return "", errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "ALAS(1|2|2022|2023)-yyyy-\\d{3}", u.ID)
+							return "", errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "ALAS(1|2|2023)-yyyy-\\d{3}", u.ID)
 						}
 						if _, err := time.Parse("2006", splitted[1]); err != nil {
-							return "", errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "ALAS(1|2|2022|2023)-yyyy-\\d{3}", u.ID)
+							return "", errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "ALAS(1|2|2023)-yyyy-\\d{3}", u.ID)
 						}
 						return splitted[1], nil
 					case 4:
@@ -204,7 +201,7 @@ func Fetch(opts ...Option) error {
 						}
 						return splitted[2], nil
 					default:
-						return "", errors.Errorf("unexpected ID format. expected: %q, actual: %q", []string{"ALAS(1|2|2022|2023)-yyyy-\\d{3}", "ALAS2.+-.+-yyyy-\\d{3}"}, u.ID)
+						return "", errors.Errorf("unexpected ID format. expected: %q, actual: %q", []string{"ALAS(1|2|2023)-yyyy-\\d{3}", "ALAS2.+-.+-yyyy-\\d{3}"}, u.ID)
 					}
 				}()
 				if err != nil {

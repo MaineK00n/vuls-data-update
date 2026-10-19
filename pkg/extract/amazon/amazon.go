@@ -146,8 +146,6 @@ func extract(fetched amazon.Update, raws []string) dataTypes.Data {
 			switch {
 			case strings.HasPrefix(fetched.ID, "ALAS2023"):
 				return "2023"
-			case strings.HasPrefix(fetched.ID, "ALAS2022"):
-				return "2022"
 			case strings.HasPrefix(fetched.ID, "ALAS2"):
 				return "2"
 			default:
@@ -207,8 +205,6 @@ func extract(fetched amazon.Update, raws []string) dataTypes.Data {
 							return []string{repo}
 						}
 						return []string{"amazonlinux"}
-					case strings.HasPrefix(fetched.ID, "ALAS2022"):
-						return []string{"amazonlinux"}
 					case strings.HasPrefix(fetched.ID, "ALAS2"):
 						if repo, ok := strings.CutPrefix(fetched.Pkglist.Collection.Short, "amazon-linux-2---"); ok {
 							return []string{fmt.Sprintf("amzn2extra-%s", repo)}
@@ -252,8 +248,6 @@ func extract(fetched amazon.Update, raws []string) dataTypes.Data {
 							switch {
 							case strings.HasPrefix(fetched.ID, "ALAS2023"):
 								return fmt.Sprintf("https://alas.aws.amazon.com/AL2023/ALAS%s.html", strings.TrimPrefix(fetched.ID, "ALAS2023"))
-							case strings.HasPrefix(fetched.ID, "ALAS2022"):
-								return fmt.Sprintf("https://alas.aws.amazon.com/AL2022/ALAS%s.html", strings.TrimPrefix(fetched.ID, "ALAS2022"))
 							case strings.HasPrefix(fetched.ID, "ALAS2"):
 								return fmt.Sprintf("https://alas.aws.amazon.com/AL2/ALAS%s.html", strings.TrimPrefix(fetched.ID, "ALAS2"))
 							default:
