@@ -19,7 +19,7 @@ require (
 	github.com/hashicorp/go-version v1.9.0
 	github.com/klauspost/compress v1.19.2
 	github.com/knqyf263/go-apk-version v0.0.0-20200609155635-041fdbb8563f
-	github.com/knqyf263/go-cpe v0.0.0-20230627041855-cb0794d06872
+	github.com/knqyf263/go-cpe v0.0.0-20261015082322-2cb8736448ff
 	github.com/knqyf263/go-deb-version v0.0.0-20230223133812-3ed183d23422
 	github.com/knqyf263/go-rpm-version v0.0.0-20220614171824-631e686d1075
 	github.com/masahiro331/go-mvn-version v0.0.0-20210429150710-d3157d602a08

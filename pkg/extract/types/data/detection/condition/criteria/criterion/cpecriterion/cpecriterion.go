@@ -136,57 +136,14 @@ type Query struct {
 	CPE string
 }
 
-// concretelyDisjoint reports whether two WFNs disagree byte-wise on any
-// concrete (non-ANY/NA) attribute. It exists to work around an upstream
-// go-cpe matching bug: matching.IsDisjoint returns false (and
-// matching.IsSuperset returns true) for two concrete values where the
-// trailing numeric segment of one is a numeric prefix of the other —
-// e.g. version "5.15.10" is reported as a "superset" of "5.15.103",
-// or "5.15" of "5.150". Alphabetic substrings ("linux_kernel" vs
-// "linux_kernel_extra") and dot-boundary segment additions ("5.15" vs
-// "5.15.10") are NOT affected. The bug let exact-match criteria fire
-// on unrelated concrete versions and produced false positives during
-// vuls-compare runs against linux_kernel.
-//
-// Tracked upstream as knqyf263/go-cpe#3 (issue) with a fix proposed in
-// knqyf263/go-cpe#9; this spot-check can be dropped once that fix lands
-// and we bump the dependency.
-//
-// The check runs on every attribute (not just version) for robustness
-// against future go-cpe regressions; wildcard / ANY / NA values fall
-// through unchanged so legitimate broad-criterion matches still hit.
-func concretelyDisjoint(qWFN, cWFN common.WellFormedName) bool {
-	for _, a := range []string{
-		common.AttributePart,
-		common.AttributeVendor,
-		common.AttributeProduct,
-		common.AttributeVersion,
-		common.AttributeUpdate,
-		common.AttributeEdition,
-		common.AttributeLanguage,
-		common.AttributeSwEdition,
-		common.AttributeTargetSw,
-		common.AttributeTargetHw,
-		common.AttributeOther,
-	} {
-		qv := qWFN.GetString(a)
-		cv := cWFN.GetString(a)
-		if qv == "ANY" || qv == "NA" || cv == "ANY" || cv == "NA" {
-			continue
-		}
-		if qv != cv {
-			return true
-		}
-	}
-	return false
-}
-
 // overlaps reports whether two WFNs are non-disjoint — their attribute sets
 // intersect, so the CPEs can refer to the same thing. It is matching.IsDisjoint
-// negated and corrected with the concretelyDisjoint bug-guard: the basic
-// "these two CPEs match on attributes" test used throughout Accept.
+// negated: the basic "these two CPEs match on attributes" test used throughout
+// Accept. Requires go-cpe at or after knqyf263/go-cpe#9, which fixed IsDisjoint
+// reporting false for concrete values where one trailing numeric segment is a
+// numeric prefix of the other ("5.15.10" vs "5.15.103").
 func overlaps(a, b common.WellFormedName) bool {
-	return !matching.IsDisjoint(a, b) && !concretelyDisjoint(a, b)
+	return !matching.IsDisjoint(a, b)
 }
 
 // MatchQuality describes how strongly a Criterion matched a Query. It is a

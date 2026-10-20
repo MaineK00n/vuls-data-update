@@ -94,6 +94,68 @@ func TestCriterion_Accept(t *testing.T) {
 			want: ccTypes.MatchQualityExact,
 		},
 		{
+			// A partial wildcard in the query version ("12.*", unquoted "*")
+			// is a legitimate CPE name-matching pattern (NIST IR 7696): it is
+			// a superset of every concrete "12.x", so a concrete criterion it
+			// covers is accepted on attribute match alone.
+			name: "concrete criterion, query version partial wildcard covering it, no range -> Exact",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:12.3:*:*:*:*:*:*:*",
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:12.*:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityExact,
+		},
+		{
+			name: "concrete criterion, query version partial wildcard not covering it, no range -> None",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:13.0:*:*:*:*:*:*:*",
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:12.*:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityNone,
+		},
+		{
+			// The same pattern matching applies along the CPEMatches
+			// enumeration (a non-semver range's concrete list).
+			name: "CPEMatches-only criterion, query version partial wildcard covering an entry -> Exact",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
+				CPEMatches: []ccTypes.CPE{
+					"cpe:2.3:a:vendor:product:12.0:*:*:*:*:*:*:*",
+					"cpe:2.3:a:vendor:product:12.4:*:*:*:*:*:*:*",
+				},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:12.*:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityExact,
+		},
+		{
+			// A range cannot be evaluated against a wildcard (the comparator
+			// rejects "12.*"), so the query falls through to the CPEMatches
+			// enumeration, where name matching applies.
+			name: "range criterion, query version partial wildcard, covered by a CPEMatches entry -> Exact",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
+				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeSEMVER, LessThan: "14.23"},
+				CPEMatches: []ccTypes.CPE{"cpe:2.3:a:vendor:product:12.0:beta1:*:*:*:*:*:*"},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:12.*:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityExact,
+		},
+		{
+			name: "range criterion, query version partial wildcard, no CPEMatches entry covered -> None",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
+				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeSEMVER, LessThan: "14.23"},
+				CPEMatches: []ccTypes.CPE{"cpe:2.3:a:vendor:product:12.0:beta1:*:*:*:*:*:*"},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:15.*:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityNone,
+		},
+		{
 			name: "version=* criterion with range, query version NA -> VersionUnconfirmed",
 			fields: fields{
 				Vulnerable: true,
@@ -466,12 +528,23 @@ func TestCriterion_Accept(t *testing.T) {
 			want: ccTypes.MatchQualityExact,
 		},
 		{
-			// go-cpe matching mis-classifies pairs of concrete values where one
-			// trailing numeric segment is a numeric prefix of the other — e.g.
-			// IsDisjoint("5.15.10", "5.15.103") returns false. The
-			// concretelyDisjoint spot-check rescues the byte-wise truth so
-			// the main CPE path does not falsely match.
-			name: "go-cpe over-match guard: main CPE concrete-vs-concrete substring -> None",
+			// go-cpe before knqyf263/go-cpe#9 mis-classified pairs of concrete
+			// values where one trailing numeric segment is a numeric prefix of
+			// the other: IsDisjoint(source "5.15.10", target "5.15.103")
+			// returned false. Accept passes the query as the source, so the
+			// over-match fired for a scanned "5.15.10" against a "5.15.103"
+			// criterion. Pinned in both directions so a go-cpe downgrade cannot
+			// silently bring it back on the main CPE path.
+			name: "go-cpe over-match regression: main CPE, query is a numeric prefix of the criterion -> None",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:o:linux:linux_kernel:5.15.103:*:*:*:*:*:*:*",
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:o:linux:linux_kernel:5.15.10:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityNone,
+		},
+		{
+			name: "go-cpe over-match regression: main CPE, criterion is a numeric prefix of the query -> None",
 			fields: fields{
 				Vulnerable: true,
 				CPE:        "cpe:2.3:o:linux:linux_kernel:5.15.10:*:*:*:*:*:*:*",
@@ -480,9 +553,19 @@ func TestCriterion_Accept(t *testing.T) {
 			want: ccTypes.MatchQualityNone,
 		},
 		{
-			// Same over-match guard applied along the CPEMatches loop — a
-			// cpematch entry "5.15.10" must NOT swallow a "5.15.103" query.
-			name: "go-cpe over-match guard: CPEMatches concrete-vs-concrete substring -> None",
+			// Same regression pinned along the CPEMatches loop, in both
+			// directions.
+			name: "go-cpe over-match regression: CPEMatches, query is a numeric prefix of the entry -> None",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:o:linux:linux_kernel:*:*:*:*:*:*:*:*",
+				CPEMatches: []ccTypes.CPE{"cpe:2.3:o:linux:linux_kernel:5.15.103:*:*:*:*:*:*:*"},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:o:linux:linux_kernel:5.15.10:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityNone,
+		},
+		{
+			name: "go-cpe over-match regression: CPEMatches, entry is a numeric prefix of the query -> None",
 			fields: fields{
 				Vulnerable: true,
 				CPE:        "cpe:2.3:o:linux:linux_kernel:*:*:*:*:*:*:*:*",
