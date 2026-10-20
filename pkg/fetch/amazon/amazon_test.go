@@ -13,28 +13,6 @@ import (
 	utiltest "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/test"
 )
 
-// The fixture set the happy path serves, shared with the keep-set case.
-var (
-	happyExtra  = "testdata/fixtures/extras-catalog_valid.json"
-	happyRepomd = map[string]string{
-		"1":                     "testdata/fixtures/repomd_valid.xml",
-		"2":                     "testdata/fixtures/repomd_valid.xml",
-		"2-emacs":               "testdata/fixtures/repomd_noupdateinfo.xml",
-		"2-kernel-5.15":         "testdata/fixtures/repomd_valid.xml",
-		"2023":                  "testdata/fixtures/repomd_valid.xml",
-		"2023-kernel-livepatch": "testdata/fixtures/repomd_valid.xml",
-		"2023-nvidia":           "testdata/fixtures/repomd_valid.xml",
-	}
-	happyUpdateinfos = map[string]string{
-		"1":                     "testdata/fixtures/updateinfo_1.xml.gz",
-		"2":                     "testdata/fixtures/updateinfo_2.xml.gz",
-		"2-kernel-5.15":         "testdata/fixtures/updateinfo_2_kernel-5.15.xml.gz",
-		"2023":                  "testdata/fixtures/updateinfo_2023.xml.gz",
-		"2023-kernel-livepatch": "testdata/fixtures/updateinfo_2023_kernel-livepatch.xml.gz",
-		"2023-nvidia":           "testdata/fixtures/updateinfo_2023_nvidia.xml.gz",
-	}
-)
-
 func TestFetch(t *testing.T) {
 	tests := []struct {
 		name        string
@@ -49,10 +27,25 @@ func TestFetch(t *testing.T) {
 		hasError bool
 	}{
 		{
-			name:        "happy path",
-			extra:       happyExtra,
-			repomd:      happyRepomd,
-			updateinfos: happyUpdateinfos,
+			name:  "happy path",
+			extra: "testdata/fixtures/extras-catalog_valid.json",
+			repomd: map[string]string{
+				"1":                     "testdata/fixtures/repomd_valid.xml",
+				"2":                     "testdata/fixtures/repomd_valid.xml",
+				"2-emacs":               "testdata/fixtures/repomd_noupdateinfo.xml",
+				"2-kernel-5.15":         "testdata/fixtures/repomd_valid.xml",
+				"2023":                  "testdata/fixtures/repomd_valid.xml",
+				"2023-kernel-livepatch": "testdata/fixtures/repomd_valid.xml",
+				"2023-nvidia":           "testdata/fixtures/repomd_valid.xml",
+			},
+			updateinfos: map[string]string{
+				"1":                     "testdata/fixtures/updateinfo_1.xml.gz",
+				"2":                     "testdata/fixtures/updateinfo_2.xml.gz",
+				"2-kernel-5.15":         "testdata/fixtures/updateinfo_2_kernel-5.15.xml.gz",
+				"2023":                  "testdata/fixtures/updateinfo_2023.xml.gz",
+				"2023-kernel-livepatch": "testdata/fixtures/updateinfo_2023_kernel-livepatch.xml.gz",
+				"2023-nvidia":           "testdata/fixtures/updateinfo_2023_nvidia.xml.gz",
+			},
 		},
 		{
 			// The AL2022 repository is gone from cdn.amazonlinux.com and this
@@ -61,10 +54,25 @@ func TestFetch(t *testing.T) {
 			// populated checkout has to leave 2022/ and .git in place while still
 			// sweeping whatever else an earlier run wrote and this one does not:
 			// keeping 2022/ must not turn into keeping everything.
-			name:        "keeps the retired 2022/ tree and .git",
-			extra:       happyExtra,
-			repomd:      happyRepomd,
-			updateinfos: happyUpdateinfos,
+			name:  "keeps the retired 2022/ tree and .git",
+			extra: "testdata/fixtures/extras-catalog_valid.json",
+			repomd: map[string]string{
+				"1":                     "testdata/fixtures/repomd_valid.xml",
+				"2":                     "testdata/fixtures/repomd_valid.xml",
+				"2-emacs":               "testdata/fixtures/repomd_noupdateinfo.xml",
+				"2-kernel-5.15":         "testdata/fixtures/repomd_valid.xml",
+				"2023":                  "testdata/fixtures/repomd_valid.xml",
+				"2023-kernel-livepatch": "testdata/fixtures/repomd_valid.xml",
+				"2023-nvidia":           "testdata/fixtures/repomd_valid.xml",
+			},
+			updateinfos: map[string]string{
+				"1":                     "testdata/fixtures/updateinfo_1.xml.gz",
+				"2":                     "testdata/fixtures/updateinfo_2.xml.gz",
+				"2-kernel-5.15":         "testdata/fixtures/updateinfo_2_kernel-5.15.xml.gz",
+				"2023":                  "testdata/fixtures/updateinfo_2023.xml.gz",
+				"2023-kernel-livepatch": "testdata/fixtures/updateinfo_2023_kernel-livepatch.xml.gz",
+				"2023-nvidia":           "testdata/fixtures/updateinfo_2023_nvidia.xml.gz",
+			},
 			seed: map[string]string{
 				"2022/core/2021/ALAS2022-2021-001.json": `{"ID": "ALAS2022-2021-001"}`,
 				".git/HEAD":                             "ref: refs/heads/main\n",
