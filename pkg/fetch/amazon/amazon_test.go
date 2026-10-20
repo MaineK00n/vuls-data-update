@@ -16,19 +16,22 @@ import (
 func TestFetch(t *testing.T) {
 	tests := []struct {
 		name        string
+		existing    string
 		extra       string
 		repomd      map[string]string
 		updateinfos map[string]string
-		// seed is written into the output directory before Fetch, as if left by
-		// an earlier run; keep names the seeded paths Fetch must leave in place
-		// byte for byte. Everything else seeded must be gone afterwards.
-		seed     map[string]string
-		keep     []string
-		hasError bool
+		hasError    bool
 	}{
 		{
-			name:  "happy path",
-			extra: "testdata/fixtures/extras-catalog_valid.json",
+			// The output tree an earlier run left behind. 2022/ has to survive: the
+			// AL2022 repository is gone from cdn.amazonlinux.com, this fetcher no
+			// longer fetches it, and nothing can rebuild it. Everything else in
+			// there has to be swept -- keeping 2022/ must not turn into keeping
+			// everything. Both show up in the one Diff against golden. .git, the
+			// rest of the keep set, is pinned by TestRemoveAll in pkg/fetch/util.
+			name:     "happy path",
+			existing: "testdata/fixtures/existing",
+			extra:    "testdata/fixtures/extras-catalog_valid.json",
 			repomd: map[string]string{
 				"1":                     "testdata/fixtures/repomd_valid.xml",
 				"2":                     "testdata/fixtures/repomd_valid.xml",
@@ -46,40 +49,6 @@ func TestFetch(t *testing.T) {
 				"2023-kernel-livepatch": "testdata/fixtures/updateinfo_2023_kernel-livepatch.xml.gz",
 				"2023-nvidia":           "testdata/fixtures/updateinfo_2023_nvidia.xml.gz",
 			},
-		},
-		{
-			// The AL2022 repository is gone from cdn.amazonlinux.com and this
-			// fetcher no longer fetches it, so an existing 2022/ is the last copy
-			// of those advisories and nothing can rebuild it. A run against a
-			// populated checkout has to leave 2022/ and .git in place while still
-			// sweeping whatever else an earlier run wrote and this one does not:
-			// keeping 2022/ must not turn into keeping everything.
-			name:  "keeps the retired 2022/ tree and .git",
-			extra: "testdata/fixtures/extras-catalog_valid.json",
-			repomd: map[string]string{
-				"1":                     "testdata/fixtures/repomd_valid.xml",
-				"2":                     "testdata/fixtures/repomd_valid.xml",
-				"2-emacs":               "testdata/fixtures/repomd_noupdateinfo.xml",
-				"2-kernel-5.15":         "testdata/fixtures/repomd_valid.xml",
-				"2023":                  "testdata/fixtures/repomd_valid.xml",
-				"2023-kernel-livepatch": "testdata/fixtures/repomd_valid.xml",
-				"2023-nvidia":           "testdata/fixtures/repomd_valid.xml",
-			},
-			updateinfos: map[string]string{
-				"1":                     "testdata/fixtures/updateinfo_1.xml.gz",
-				"2":                     "testdata/fixtures/updateinfo_2.xml.gz",
-				"2-kernel-5.15":         "testdata/fixtures/updateinfo_2_kernel-5.15.xml.gz",
-				"2023":                  "testdata/fixtures/updateinfo_2023.xml.gz",
-				"2023-kernel-livepatch": "testdata/fixtures/updateinfo_2023_kernel-livepatch.xml.gz",
-				"2023-nvidia":           "testdata/fixtures/updateinfo_2023_nvidia.xml.gz",
-			},
-			seed: map[string]string{
-				"2022/core/2021/ALAS2022-2021-001.json": `{"ID": "ALAS2022-2021-001"}`,
-				".git/HEAD":                             "ref: refs/heads/main\n",
-				"2/core/2000/ALAS2-2000-001.json":       "stale",
-				"2024/core/2024/ALAS2024-2024-001.json": "stale",
-			},
-			keep: []string{"2022/core/2021/ALAS2022-2021-001.json", ".git/HEAD"},
 		},
 		{
 			name:  "invalid extras-catalog",
@@ -199,11 +168,8 @@ func TestFetch(t *testing.T) {
 			defer ts.Close()
 
 			dir := t.TempDir()
-			for name, content := range tt.seed {
-				if err := os.MkdirAll(filepath.Dir(filepath.Join(dir, name)), os.ModePerm); err != nil {
-					t.Fatal("unexpected error:", err)
-				}
-				if err := os.WriteFile(filepath.Join(dir, name), []byte(content), 0666); err != nil {
+			if tt.existing != "" {
+				if err := os.CopyFS(dir, os.DirFS(tt.existing)); err != nil {
 					t.Fatal("unexpected error:", err)
 				}
 			}
@@ -230,27 +196,7 @@ func TestFetch(t *testing.T) {
 				// error was expected and occurred, test passed
 				return
 			default:
-				// The expected tree is golden plus whatever was seeded and must
-				// survive. Building it in a temp dir rather than in testdata keeps
-				// .git out of the repository, which git refuses to track anyway,
-				// and lets one Diff cover all three outcomes: a kept file missing
-				// or altered, and a stale file left behind.
-				want := filepath.Join("testdata", "golden")
-				if len(tt.keep) > 0 {
-					want = t.TempDir()
-					if err := os.CopyFS(want, os.DirFS(filepath.Join("testdata", "golden"))); err != nil {
-						t.Fatal("unexpected error:", err)
-					}
-					for _, name := range tt.keep {
-						if err := os.MkdirAll(filepath.Dir(filepath.Join(want, name)), os.ModePerm); err != nil {
-							t.Fatal("unexpected error:", err)
-						}
-						if err := os.WriteFile(filepath.Join(want, name), []byte(tt.seed[name]), 0666); err != nil {
-							t.Fatal("unexpected error:", err)
-						}
-					}
-				}
-				if err := utiltest.Diff(want, dir); err != nil {
+				if err := utiltest.Diff(filepath.Join("testdata", "golden"), dir); err != nil {
 					t.Error("unexpected error:", err)
 				}
 			}
