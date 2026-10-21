@@ -374,6 +374,9 @@ func (c Criterion) Accept(query Query) (MatchQuality, error) {
 	// CPEMatches: tried when (a) main CPE matched but neither NA short-circuit
 	// nor Range accepted (out-of-Range exceptions), or (b) main CPE was
 	// disjoint (defensive — covers edition-divergence cases in source data).
+	// The strongest match over all entries wins, so the result does not
+	// depend on entry order.
+	quality := MatchQualityNone
 	for _, m := range c.CPEMatches {
 		mWFN, err := naming.UnbindFS(string(m))
 		if err != nil {
@@ -385,15 +388,17 @@ func (c Criterion) Accept(query Query) (MatchQuality, error) {
 			// and a confirmed concrete query are Exact, and so is query=NA
 			// against an NA entry (EQUAL, as for the main CPE). Any other entry
 			// a query=NA overlaps is version=* (a concrete entry is DISJOINT
-			// from NA), which leaves no version to confirm.
+			// from NA), which leaves no version to confirm; keep looking for
+			// an exact entry.
 			if qv == "NA" && mWFN.GetString(common.AttributeVersion) != "NA" {
-				return MatchQualityVersionUnconfirmed, nil
+				quality = MatchQualityVersionUnconfirmed
+				continue
 			}
 			return MatchQualityExact, nil
 		}
 	}
 
-	return MatchQualityNone, nil
+	return quality, nil
 }
 
 // panosHotfixUpdate matches a PAN-OS hotfix encoded in the WFN UPDATE

@@ -158,6 +158,44 @@ func TestCriterion_Accept(t *testing.T) {
 			want: ccTypes.MatchQualityExact,
 		},
 		{
+			// Sort() puts "*" before "-", so a wildcard entry must not hide a
+			// later NA entry: the strongest match wins in either order.
+			name: "cpematches wildcard then NA entry, query NA, main CPE disjoint -> Exact",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:-:*:*:*:*:windows:*:*",
+				CPEMatches: []ccTypes.CPE{
+					"cpe:2.3:a:vendor:product:*:*:*:*:*:linux:*:*",
+					"cpe:2.3:a:vendor:product:-:*:*:*:*:linux:*:*",
+				},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:-:*:*:*:*:linux:*:*"}},
+			want: ccTypes.MatchQualityExact,
+		},
+		{
+			name: "cpematches NA then wildcard entry, query NA, main CPE disjoint -> Exact",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:-:*:*:*:*:windows:*:*",
+				CPEMatches: []ccTypes.CPE{
+					"cpe:2.3:a:vendor:product:-:*:*:*:*:linux:*:*",
+					"cpe:2.3:a:vendor:product:*:*:*:*:*:linux:*:*",
+				},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:-:*:*:*:*:linux:*:*"}},
+			want: ccTypes.MatchQualityExact,
+		},
+		{
+			name: "cpematches wildcard entry only, query NA, main CPE disjoint -> VersionUnconfirmed",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:-:*:*:*:*:windows:*:*",
+				CPEMatches: []ccTypes.CPE{"cpe:2.3:a:vendor:product:*:*:*:*:*:linux:*:*"},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:-:*:*:*:*:linux:*:*"}},
+			want: ccTypes.MatchQualityVersionUnconfirmed,
+		},
+		{
 			name: "criterion version NA with range (range ignored), query wildcard -> Exact (query=ANY)",
 			fields: fields{
 				Vulnerable: true,
