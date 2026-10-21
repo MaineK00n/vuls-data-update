@@ -37,6 +37,9 @@ type CPE string
 //     also covers — used for entries that fall OUTSIDE Range (e.g. NVD listed
 //     versions that don't satisfy the bounds) or that Range cannot evaluate
 //     at all (RangeTypeUnknown / non-parseable versions)
+//   - CPEMatchesPacked: optional compact enumeration of the concrete CPE
+//     strings INSIDE Range, which a concrete query never needs (Range
+//     answers for it) but a pattern query ("12.*") can only match by name
 //
 // Fixed lives at the end as a separate concern (which versions fix the
 // vulnerability), kept off the affected path:
@@ -77,7 +80,11 @@ type Criterion struct {
 	CPE        CPE                       `json:"cpe,omitempty"`
 	Range      *rangeTypes.Range         `json:"range,omitempty"`
 	CPEMatches []CPE                     `json:"cpe_matches,omitempty"`
-	Fixed      []string                  `json:"fixed,omitempty"`
+	// CPEMatchesPacked: optional compact enumeration of the concrete CPEs the
+	// Range already covers, consulted only for a query whose version is a
+	// name-matching pattern (see CPEMatchesPacked and Accept)
+	CPEMatchesPacked *CPEMatchesPacked `json:"cpe_matches_packed,omitempty"`
+	Fixed            []string          `json:"fixed,omitempty"`
 }
 
 func (c *Criterion) Sort() {
@@ -123,6 +130,7 @@ func Compare(x, y Criterion) int {
 			}
 		}(),
 		slices.Compare(x.CPEMatches, y.CPEMatches),
+		comparePacked(x.CPEMatchesPacked, y.CPEMatchesPacked),
 		slices.Compare(x.Fixed, y.Fixed),
 	)
 }
@@ -358,6 +366,26 @@ func (c Criterion) Accept(query Query) (MatchQuality, error) {
 				return MatchQualityVersionUnconfirmed, nil
 			}
 			return MatchQualityExact, nil
+		}
+	}
+
+	// CPEMatchesPacked: the enumeration inside Range, consulted only when the
+	// query version is a name-matching pattern (an unquoted wildcard), which
+	// no Range can evaluate. A concrete query stops at Range and CPEMatches
+	// above, so the packed set is never decoded for it.
+	if c.CPEMatchesPacked != nil && common.ContainsWildcards(qv) {
+		ms, err := c.CPEMatchesPacked.Unpack(c.CPE)
+		if err != nil {
+			return MatchQualityUnknown, errors.Wrap(err, "unpack cpe matches")
+		}
+		for _, m := range ms {
+			mWFN, err := naming.UnbindFS(string(m))
+			if err != nil {
+				return MatchQualityUnknown, errors.Wrapf(err, "unbind %q to WFN", string(m))
+			}
+			if overlaps(qWFN, mWFN) {
+				return MatchQualityExact, nil
+			}
 		}
 	}
 
