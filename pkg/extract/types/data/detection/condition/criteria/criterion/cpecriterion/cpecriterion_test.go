@@ -156,6 +156,79 @@ func TestCriterion_Accept(t *testing.T) {
 			want: ccTypes.MatchQualityNone,
 		},
 		{
+			// go-cpe evaluates patterns on the source (query) side only; a
+			// pattern on the criterion side compares as UNDEFINED, which must
+			// not be taken as an overlap. The roles are swapped for such
+			// attributes, so the pattern is checked against the query value.
+			name: "criterion version partial wildcard covering a concrete query, no range -> Exact",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:12.*:*:*:*:*:*:*:*",
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:12.3:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityExact,
+		},
+		{
+			name: "criterion version partial wildcard not covering a concrete query, no range -> None",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:12.*:*:*:*:*:*:*:*",
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:13.0:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityNone,
+		},
+		{
+			// Two different patterns have no defined relation; only equal
+			// patterns overlap.
+			name: "criterion and query version both partial wildcards, different -> None",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:12.*:*:*:*:*:*:*:*",
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:13.*:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityNone,
+		},
+		{
+			name: "criterion and query version both partial wildcards, equal -> Exact",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:12.*:*:*:*:*:*:*:*",
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:12.*:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityExact,
+		},
+		{
+			// Same handling along the CPEMatches loop.
+			name: "CPEMatches entry partial wildcard covering a concrete query -> Exact",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
+				CPEMatches: []ccTypes.CPE{"cpe:2.3:a:vendor:product:12.*:*:*:*:*:*:*:*"},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:12.3:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityExact,
+		},
+		{
+			name: "CPEMatches entry partial wildcard not covering a concrete query -> None",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
+				CPEMatches: []ccTypes.CPE{"cpe:2.3:a:vendor:product:12.*:*:*:*:*:*:*:*"},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:13.0:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityNone,
+		},
+		{
+			name: "CPEMatches entry partial wildcard vs a different query pattern -> None",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
+				CPEMatches: []ccTypes.CPE{"cpe:2.3:a:vendor:product:12.*:*:*:*:*:*:*:*"},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:13.*:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityNone,
+		},
+		{
 			name: "version=* criterion with range, query version NA -> VersionUnconfirmed",
 			fields: fields{
 				Vulnerable: true,
