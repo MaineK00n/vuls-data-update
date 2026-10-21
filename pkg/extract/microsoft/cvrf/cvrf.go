@@ -1132,6 +1132,9 @@ func isHotpatchSubType(subType string) bool {
 //
 // fixedBuildOverrides cannot express these corrections: its key is the
 // FixedBuild, which a follow-up update may share with the cumulative update.
+//
+// A key that matches nothing is silently ignored, so every CVE here has a
+// TestExtract fixture whose golden shows the entry taking effect.
 var vendorFixExclusions = map[[3]string]struct{}{
 	// CVE-2022-23278: see vendorFixAdditions.
 	{"CVE-2022-23278", "Microsoft Defender for Endpoint for Windows on Windows Server 2022", "5011580"}: {},
@@ -1199,6 +1202,8 @@ type vendorFixAddition struct {
 // host would lose them on taking it and every hotpatch after it would have to
 // ship them again. Its fixed build is gated on the hotpatch's KB (see
 // appendVendorFixConditions), so a hotpatched host below it is not reported.
+//
+// Like vendorFixExclusions, every CVE here has a TestExtract fixture.
 var vendorFixAdditions = map[[2]string][]vendorFixAddition{
 	// CVE-2022-23278 — Microsoft Defender for Endpoint Spoofing Vulnerability.
 	// The hotpatch KB5011580 is listed under "Microsoft Defender for Endpoint

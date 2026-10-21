@@ -1,15 +1,12 @@
 package cvrf_test
 
 import (
-	"fmt"
 	"path/filepath"
-	"strings"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/microsoft/cvrf"
-	microsoftutil "github.com/MaineK00n/vuls-data-update/pkg/extract/microsoft/util"
 	criteriaTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria"
 	criterionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion"
 	kbcTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/kbcriterion"
@@ -1320,52 +1317,6 @@ func TestIsKBCriteria(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := cvrf.IsKBCriteria(tt.ca); got != tt.want {
 				t.Errorf("IsKBCriteria() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-// TestVendorFixExclusionsKeys guards the entries against typos that would make
-// them silently miss: the product must already be normalized and the KB ID
-// must be the bare number CVRF uses in the remediation Description.
-func TestVendorFixExclusionsKeys(t *testing.T) {
-	for k := range cvrf.VendorFixExclusions {
-		t.Run(fmt.Sprintf("%s %s %s", k[0], k[1], k[2]), func(t *testing.T) {
-			if !strings.HasPrefix(k[0], "CVE-") {
-				t.Errorf("unexpected CVE ID. expected: %q prefix, actual: %q", "CVE-", k[0])
-			}
-			if got := microsoftutil.NormalizeProductName(k[1]); got != k[1] {
-				t.Errorf("product name is not normalized. expected: %q, actual: %q", got, k[1])
-			}
-			if cvrf.BuildKBCriterion(k[1], k[2]) == nil {
-				t.Errorf("unexpected KB ID. expected: digits only, actual: %q", k[2])
-			}
-		})
-	}
-}
-
-// TestVendorFixAdditionsEntries guards the entries against values that would
-// silently add nothing: a KB ID given must be the bare number, a fixed build
-// given must yield a criterion, and one of the two must be given. A product
-// CVRF does not list fails the extraction.
-func TestVendorFixAdditionsEntries(t *testing.T) {
-	for k, as := range cvrf.VendorFixAdditions {
-		t.Run(fmt.Sprintf("%s %s", k[0], k[1]), func(t *testing.T) {
-			if !strings.HasPrefix(k[0], "CVE-") {
-				t.Errorf("unexpected CVE ID. expected: %q prefix, actual: %q", "CVE-", k[0])
-			}
-			for _, a := range as {
-				if a.KBID() == "" && a.FixedBuild() == "" {
-					t.Errorf("unexpected addition. expected: a KB ID or a fixed build, actual: neither")
-				}
-				if a.KBID() != "" && cvrf.BuildKBCriterion(k[1], a.KBID()) == nil {
-					t.Errorf("unexpected KB ID. expected: digits only, actual: %q", a.KBID())
-				}
-				if a.FixedBuild() != "" {
-					if c, err := cvrf.BuildFixedBuildCriterion(k[0], microsoftutil.NormalizeProductName(k[1]), a.FixedBuild()); err != nil || c == nil {
-						t.Errorf("unexpected fixed build. expected: a criterion, actual: %v, err: %v", c, err)
-					}
-				}
 			}
 		})
 	}
