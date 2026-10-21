@@ -257,10 +257,12 @@ func (c Criterion) Accept(query Query) (MatchQuality, error) {
 	switch {
 	case cv == "NA":
 		// A version=NA criterion fixes the product but not the version: it
-		// matches any scan whose non-version attributes are compatible, at
-		// version-unconfirmed quality. This mirrors go-cve-dictionary's
-		// VendorProductMatch for "-" entries, where NA often means "all
-		// versions" (e.g. linux_kernel:- on a classic all-versions CVE). The
+		// matches any scan whose non-version attributes are compatible, and
+		// the quality depends on the query version (see the switch below).
+		// The version-unconfirmed result for a concrete query mirrors
+		// go-cve-dictionary's VendorProductMatch for "-" entries, where NA
+		// often means "all versions" (e.g. linux_kernel:- on a classic
+		// all-versions CVE). The
 		// criterion version is neutralised to ANY because go-cpe's IsDisjoint
 		// would otherwise reject a concrete scan version against NA; other
 		// concrete attributes (target_sw, edition, ...) must still agree.
@@ -380,9 +382,11 @@ func (c Criterion) Accept(query Query) (MatchQuality, error) {
 		if overlaps(qWFN, mWFN) {
 			// Reached with a version-less query only via the main-CPE-disjoint
 			// path (the matched path returns above). query=ANY (all versions)
-			// and a confirmed concrete query are Exact; query=NA has no version
-			// to confirm against the enumerated concrete CPE.
-			if qv == "NA" {
+			// and a confirmed concrete query are Exact, and so is query=NA
+			// against an NA entry (EQUAL, as for the main CPE). Any other entry
+			// a query=NA overlaps is version=* (a concrete entry is DISJOINT
+			// from NA), which leaves no version to confirm.
+			if qv == "NA" && mWFN.GetString(common.AttributeVersion) != "NA" {
 				return MatchQualityVersionUnconfirmed, nil
 			}
 			return MatchQualityExact, nil
