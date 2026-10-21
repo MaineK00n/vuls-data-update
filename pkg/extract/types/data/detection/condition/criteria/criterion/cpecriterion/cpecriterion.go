@@ -136,14 +136,41 @@ type Query struct {
 	CPE string
 }
 
-// overlaps reports whether two WFNs are non-disjoint — their attribute sets
-// intersect, so the CPEs can refer to the same thing. It is matching.IsDisjoint
-// negated: the basic "these two CPEs match on attributes" test used throughout
-// Accept. Requires go-cpe at or after knqyf263/go-cpe#9, which fixed IsDisjoint
-// reporting false for concrete values where one trailing numeric segment is a
-// numeric prefix of the other ("5.15.10" vs "5.15.103").
-func overlaps(a, b common.WellFormedName) bool {
-	return !matching.IsDisjoint(a, b)
+// overlaps reports whether the query and criterion WFNs are non-disjoint —
+// their attribute sets intersect, so the CPEs can refer to the same thing. It
+// is the basic "these two CPEs match on attributes" test used throughout
+// Accept. Requires go-cpe at or after knqyf263/go-cpe#9, which fixed the
+// comparison reporting a false overlap for concrete values where one trailing
+// numeric segment is a numeric prefix of the other ("5.15.10" vs "5.15.103").
+//
+// go-cpe evaluates unquoted wildcards on the source side only: an attribute
+// whose TARGET value carries one compares as UNDEFINED, which IsDisjoint would
+// let through as an overlap. The query is passed as the source, so a pattern
+// on the criterion side (version "12.*") hits that case; such attributes are
+// re-compared with the roles swapped so the pattern is evaluated against the
+// concrete query value. When both sides are patterns the relation is undefined
+// either way, and only equal patterns count as overlapping.
+func overlaps(q, c common.WellFormedName) bool {
+	fwd := matching.CompareWFNs(q, c)
+	var rev map[string]matching.Relation
+	for attr, rel := range fwd {
+		if rel == matching.UNDEFINED {
+			if rev == nil {
+				rev = matching.CompareWFNs(c, q)
+			}
+			rel = rev[attr]
+			if rel == matching.UNDEFINED {
+				if strings.EqualFold(q.GetString(attr), c.GetString(attr)) {
+					continue
+				}
+				return false
+			}
+		}
+		if rel == matching.DISJOINT {
+			return false
+		}
+	}
+	return true
 }
 
 // MatchQuality describes how strongly a Criterion matched a Query. It is a
