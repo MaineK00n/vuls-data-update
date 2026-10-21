@@ -1,7 +1,6 @@
 package cvrf
 
 import (
-	"cmp"
 	"encoding/json/v2"
 	"fmt"
 	"io/fs"
@@ -941,8 +940,13 @@ func buildDetections(v cvrf.Vulnerability, products map[string]string) (map[ecos
 		// Every Vendor Fix of the product was excluded. The product is
 		// covered, so the ProductStatuses fallback skips it as well and the
 		// CVE would become silently undetectable on it, unless each fix was
-		// moved to another product by vendorFixAdditions.
-		if !slices.ContainsFunc(excludedTags[tag], func(kbID string) bool { return !slices.Contains(addedKBIDs, kbID) }) {
+		// moved by vendorFixAdditions to another raw product of the same name
+		// after microsoftutil.NormalizeProductName.
+		product := microsoftutil.NormalizeProductName(string(tag))
+		if !slices.ContainsFunc(excludedTags[tag], func(kbID string) bool {
+			_, ok := addedKBIDs[[2]string{product, kbID}]
+			return !ok
+		}) {
 			continue
 		}
 		return nil, nil, errors.Errorf("unexpected vendorFixExclusions for %s (%s). expected: at least one Vendor Fix kept, actual: all excluded", v.CVE, tag)
@@ -1133,8 +1137,8 @@ func isHotpatchSubType(subType string) bool {
 // fixedBuildOverrides cannot express these corrections: its key is the
 // FixedBuild, which a follow-up update may share with the cumulative update.
 //
-// A key that matches nothing is silently ignored, so every CVE here has a
-// TestExtract fixture whose golden shows the entry taking effect.
+// A key that matches nothing is silently ignored, so every entry here takes
+// effect in a TestExtract golden.
 var vendorFixExclusions = map[[3]string]struct{}{
 	// CVE-2022-23278: see vendorFixAdditions.
 	{"CVE-2022-23278", "Microsoft Defender for Endpoint for Windows on Windows Server 2022", "5011580"}: {},
@@ -1163,35 +1167,30 @@ var vendorFixExclusions = map[[3]string]struct{}{
 	{"CVE-2026-66804", "Windows 11 Version 25H2 for ARM64-based Systems", "5120994"}: {},
 	{"CVE-2026-66804", "Windows 11 Version 25H2 for x64-based Systems", "5120994"}:   {},
 	// 2026-Aug Windows Server 2022: the monthly hotpatch KB5120229 is followed
-	// by KB5123303; see vendorFixAdditions. KB5123303 itself is listed wrong
-	// and added back corrected there.
+	// by KB5123303; see vendorFixAdditions.
 	{"CVE-2026-6726", "Windows Server 2022", "5120229"}:                             {},
 	{"CVE-2026-6726", "Windows Server 2022 (Server Core installation)", "5120229"}:  {},
 	{"CVE-2026-6727", "Windows Server 2022", "5120229"}:                             {},
 	{"CVE-2026-6727", "Windows Server 2022 (Server Core installation)", "5120229"}:  {},
 	{"CVE-2026-66799", "Windows Server 2022", "5120229"}:                            {},
 	{"CVE-2026-66799", "Windows Server 2022 (Server Core installation)", "5120229"}: {},
-	{"CVE-2026-6726", "Windows Server 2022", "5123303"}:                             {},
-	{"CVE-2026-6726", "Windows Server 2022 (Server Core installation)", "5123303"}:  {},
-	{"CVE-2026-6727", "Windows Server 2022", "5123303"}:                             {},
-	{"CVE-2026-6727", "Windows Server 2022 (Server Core installation)", "5123303"}:  {},
-	{"CVE-2026-66799", "Windows Server 2022", "5123303"}:                            {},
-	{"CVE-2026-66799", "Windows Server 2022 (Server Core installation)", "5123303"}: {},
 }
 
-// vendorFixAddition is a Vendor Fix remediation added to one product. Like
-// CVRF's own, it may lack a KB ID or a fixed build, but not both; a product
-// offering a hotpatch needs both (see appendVendorFixConditions).
+// vendorFixAddition is a Vendor Fix remediation added to one product, named
+// as CVRF lists it. Like CVRF's own, it may lack a KB ID or a fixed build, but
+// not both; a product offering a hotpatch needs both (see
+// appendVendorFixConditions).
 type vendorFixAddition struct {
+	product    string
 	kbID       string
 	fixedBuild string
 	hotpatch   bool
 }
 
-// vendorFixAdditions adds Vendor Fix remediations, keyed by [2]string{CVE ID,
-// product name as CVRF lists it}, to a product CVRF lists with a Vendor Fix of
-// its own; buildDetections fails on one it does not. Products CVRF omits
-// altogether are missingProductOverrides's.
+// vendorFixAdditions maps a CVE ID to Vendor Fix remediations to add, each to
+// a product CVRF lists with a Vendor Fix of its own; buildDetections fails on
+// one it does not. Products CVRF omits altogether are
+// missingProductOverrides's.
 //
 // A hotpatch is otherwise listed beside its month's cumulative update, which
 // fixes the hosts that do not take hotpatches. Where it is the only fix,
@@ -1203,15 +1202,18 @@ type vendorFixAddition struct {
 // ship them again. Its fixed build is gated on the hotpatch's KB (see
 // appendVendorFixConditions), so a hotpatched host below it is not reported.
 //
-// Like vendorFixExclusions, every CVE here has a TestExtract fixture.
-var vendorFixAdditions = map[[2]string][]vendorFixAddition{
+// Like vendorFixExclusions, every entry here takes effect in a TestExtract
+// golden.
+var vendorFixAdditions = map[string][]vendorFixAddition{
 	// CVE-2022-23278 — Microsoft Defender for Endpoint Spoofing Vulnerability.
 	// The hotpatch KB5011580 is listed under "Microsoft Defender for Endpoint
 	// for Windows on Windows Server 2022 Datacenter: Azure Edition", apart
 	// from the cumulative update KB5011497. Everywhere else CVRF lists a
 	// hotpatch under the same product as its cumulative update, so it is
 	// moved there.
-	{"CVE-2022-23278", "Microsoft Defender for Endpoint for Windows on Windows Server 2022"}: {{kbID: "5011580", fixedBuild: "10.0.20348.580", hotpatch: true}},
+	"CVE-2022-23278": {
+		{product: "Microsoft Defender for Endpoint for Windows on Windows Server 2022", kbID: "5011580", fixedBuild: "10.0.20348.580", hotpatch: true},
+	},
 	// CVE-2023-24898 — Windows SMB Denial of Service Vulnerability. Its FAQ:
 	// "This vulnerability only affects the hotpatch version of Windows Server
 	// 2022. If you are not running this version of the operating system, no
@@ -1224,8 +1226,10 @@ var vendorFixAdditions = map[[2]string][]vendorFixAddition{
 	// a fix nothing records. The baseline is where a hotpatched host stays
 	// fixed, so it is taken, as for any later entry; the hosts left reported
 	// are those still on a May or June 2023 cumulative update.
-	{"CVE-2023-24898", "Windows Server 2022"}:                            {{kbID: "5028171", fixedBuild: "10.0.20348.1850"}},
-	{"CVE-2023-24898", "Windows Server 2022 (Server Core installation)"}: {{kbID: "5028171", fixedBuild: "10.0.20348.1850"}},
+	"CVE-2023-24898": {
+		{product: "Windows Server 2022", kbID: "5028171", fixedBuild: "10.0.20348.1850"},
+		{product: "Windows Server 2022 (Server Core installation)", kbID: "5028171", fixedBuild: "10.0.20348.1850"},
+	},
 	// 2026-Aug Windows Server 2022: KB5123303 ("OS Build 20348.5440"),
 	// "offered after the August 2026 security hotpatch update (KB5120229) is
 	// installed" and applying "only to Windows Server, version 2022 devices
@@ -1233,53 +1237,55 @@ var vendorFixAdditions = map[[2]string][]vendorFixAddition{
 	// CVE-2026-66799 (CVE-2026-6726 / CVE-2026-6727 FAQ;
 	// https://support.microsoft.com/help/5123303). CVRF lists it as a
 	// "Security Update" with the cumulative update's FixedBuild .5499; it is
-	// taken as the hotpatch-track fix at its article's build instead, so a host
-	// that installed it is cleared by its KB whether or not the build moves.
-	{"CVE-2026-6726", "Windows Server 2022"}:                             {{kbID: "5123303", fixedBuild: "10.0.20348.5440", hotpatch: true}},
-	{"CVE-2026-6726", "Windows Server 2022 (Server Core installation)"}:  {{kbID: "5123303", fixedBuild: "10.0.20348.5440", hotpatch: true}},
-	{"CVE-2026-6727", "Windows Server 2022"}:                             {{kbID: "5123303", fixedBuild: "10.0.20348.5440", hotpatch: true}},
-	{"CVE-2026-6727", "Windows Server 2022 (Server Core installation)"}:  {{kbID: "5123303", fixedBuild: "10.0.20348.5440", hotpatch: true}},
-	{"CVE-2026-66799", "Windows Server 2022"}:                            {{kbID: "5123303", fixedBuild: "10.0.20348.5440", hotpatch: true}},
-	{"CVE-2026-66799", "Windows Server 2022 (Server Core installation)"}: {{kbID: "5123303", fixedBuild: "10.0.20348.5440", hotpatch: true}},
+	// added as the hotpatch-track fix at its article's build, so a host that
+	// installed it is cleared by its KB whether or not the build moves. The
+	// row CVRF lists is left: at the cumulative update's build, it adds
+	// nothing beside it.
+	"CVE-2026-6726": {
+		{product: "Windows Server 2022", kbID: "5123303", fixedBuild: "10.0.20348.5440", hotpatch: true},
+		{product: "Windows Server 2022 (Server Core installation)", kbID: "5123303", fixedBuild: "10.0.20348.5440", hotpatch: true},
+	},
+	"CVE-2026-6727": {
+		{product: "Windows Server 2022", kbID: "5123303", fixedBuild: "10.0.20348.5440", hotpatch: true},
+		{product: "Windows Server 2022 (Server Core installation)", kbID: "5123303", fixedBuild: "10.0.20348.5440", hotpatch: true},
+	},
+	"CVE-2026-66799": {
+		{product: "Windows Server 2022", kbID: "5123303", fixedBuild: "10.0.20348.5440", hotpatch: true},
+		{product: "Windows Server 2022 (Server Core installation)", kbID: "5123303", fixedBuild: "10.0.20348.5440", hotpatch: true},
+	},
 }
 
 // addVendorFixes appends the vendorFixAdditions of a CVE to the fixes of
-// their products, and returns the tags with fixes and the KB IDs added. A
-// product is one CVRF lists with a Vendor Fix, kept or excluded.
-func addVendorFixes(cveID string, tags []segmentTypes.DetectionTag, excludedTags map[segmentTypes.DetectionTag][]string, fixesByTag map[segmentTypes.DetectionTag][]vendorFix) ([]segmentTypes.DetectionTag, []string, error) {
-	var addedKBIDs []string
-	for _, k := range slices.SortedFunc(maps.Keys(vendorFixAdditions), func(a, b [2]string) int {
-		return cmp.Or(cmp.Compare(a[0], b[0]), cmp.Compare(a[1], b[1]))
-	}) {
-		if k[0] != cveID {
-			continue
-		}
-		tag := segmentTypes.DetectionTag(k[1])
+// their products, and returns the tags with fixes and the KB IDs added, keyed
+// by [2]string{product name after microsoftutil.NormalizeProductName, KB ID}.
+// A product is one CVRF lists with a Vendor Fix, kept or excluded.
+func addVendorFixes(cveID string, tags []segmentTypes.DetectionTag, excludedTags map[segmentTypes.DetectionTag][]string, fixesByTag map[segmentTypes.DetectionTag][]vendorFix) ([]segmentTypes.DetectionTag, map[[2]string]struct{}, error) {
+	addedKBIDs := make(map[[2]string]struct{})
+	for _, a := range vendorFixAdditions[cveID] {
+		tag := segmentTypes.DetectionTag(a.product)
 		_, kept := fixesByTag[tag]
 		_, excluded := excludedTags[tag]
 		if !kept && !excluded {
-			return nil, nil, errors.Errorf("unexpected vendorFixAdditions for %s. expected: a product listed with a Vendor Fix, actual: %q, please add it to missingProductOverrides if CVRF omits it", cveID, k[1])
+			return nil, nil, errors.Errorf("unexpected vendorFixAdditions for %s. expected: a product listed with a Vendor Fix, actual: %q, please add it to missingProductOverrides if CVRF omits it", cveID, a.product)
 		}
 		if !kept {
 			tags = append(tags, tag)
 		}
 
-		product := microsoftutil.NormalizeProductName(k[1])
-		for _, a := range vendorFixAdditions[k] {
-			version, err := buildFixedBuildCriterion(cveID, product, a.fixedBuild)
-			if err != nil {
-				return nil, nil, errors.Wrap(err, "build fixed build criterion")
-			}
-			f := vendorFix{hotpatch: a.hotpatch, version: version}
-			if kb := buildKBCriterion(product, a.kbID); kb != nil {
-				f.kbs = append(f.kbs, *kb)
-			}
-			if len(f.kbs) == 0 && f.version == nil {
-				return nil, nil, errors.Errorf("unexpected vendorFixAdditions for %s (%s). expected: a numeric KB ID or a usable fixed build, actual: KB ID %q, fixed build %q", cveID, k[1], a.kbID, a.fixedBuild)
-			}
-			fixesByTag[tag] = append(fixesByTag[tag], f)
-			addedKBIDs = append(addedKBIDs, a.kbID)
+		product := microsoftutil.NormalizeProductName(a.product)
+		version, err := buildFixedBuildCriterion(cveID, product, a.fixedBuild)
+		if err != nil {
+			return nil, nil, errors.Wrap(err, "build fixed build criterion")
 		}
+		f := vendorFix{hotpatch: a.hotpatch, version: version}
+		if kb := buildKBCriterion(product, a.kbID); kb != nil {
+			f.kbs = append(f.kbs, *kb)
+		}
+		if len(f.kbs) == 0 && f.version == nil {
+			return nil, nil, errors.Errorf("unexpected vendorFixAdditions for %s (%s). expected: a numeric KB ID or a usable fixed build, actual: KB ID %q, fixed build %q", cveID, a.product, a.kbID, a.fixedBuild)
+		}
+		fixesByTag[tag] = append(fixesByTag[tag], f)
+		addedKBIDs[[2]string{product, a.kbID}] = struct{}{}
 	}
 	return tags, addedKBIDs, nil
 }
@@ -1358,7 +1364,7 @@ func appendVendorFixConditions(conditionsByEcosystem map[ecosystemTypes.Ecosyste
 			// it, which brings back the false positive the gating removes.
 			// A Vendor Fix yielding neither criterion never reaches here, so
 			// the fix has a fixed build to locate it by.
-			return errors.Errorf("unexpected Vendor Fix without a numeric KB ID for a product offering a hotpatch. expected: a KB ID for the fix at %q, actual: none, please exclude the fix via vendorFixExclusions if it does not fix the CVE on its own", f.version.Version.Affected.Range[0].LessThan)
+			return errors.Errorf("unexpected Vendor Fix without a numeric KB ID for a product offering a hotpatch. expected: a KB ID for the fix at %q, actual: none, please exclude the fix via vendorFixExclusions if it does not fix the CVE on its own, or give the vendorFixAdditions entry a KB ID", f.version.Version.Affected.Range[0].LessThan)
 		}
 		appendConditions(conditionsByEcosystem, tag, f.kbs)
 
@@ -1366,7 +1372,7 @@ func appendVendorFixConditions(conditionsByEcosystem map[ecosystemTypes.Ecosyste
 			// Without a fixed build the fix cannot be ordered, so its KB
 			// would never gate the other fixes' builds. Such a fix needs
 			// adding back with a fixed build by vendorFixAdditions.
-			return errors.Errorf("unexpected Vendor Fix without a usable FixedBuild for a product offering a hotpatch. expected: a fixed build for KBs %q, actual: none, please exclude the fix via vendorFixExclusions and add it with a fixed build via vendorFixAdditions", func() []string {
+			return errors.Errorf("unexpected Vendor Fix without a usable FixedBuild for a product offering a hotpatch. expected: a fixed build for KBs %q, actual: none, please exclude the fix via vendorFixExclusions and add it with a fixed build via vendorFixAdditions, or give the vendorFixAdditions entry a fixed build", func() []string {
 				ids := make([]string, 0, len(f.kbs))
 				for _, kb := range f.kbs {
 					ids = append(ids, kb.KB.KBID)
