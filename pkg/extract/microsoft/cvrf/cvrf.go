@@ -284,7 +284,7 @@ func Extract(args string, opts ...Option) error {
 
 func (e extractor) extract(c cvrf.CVRF) ([]dataTypes.Data, []microsoftkbTypes.KB, []string, error) {
 	var missingFixedBuilds []string
-	products := collectProducts(c.ProductTree)
+	docProducts := collectProducts(c.ProductTree)
 
 	var datas []dataTypes.Data
 	kbm := make(map[string]microsoftkbTypes.KB)
@@ -300,6 +300,8 @@ func (e extractor) extract(c cvrf.CVRF) ([]dataTypes.Data, []microsoftkbTypes.KB
 				break
 			}
 		}
+
+		products := applyProductNameOverrides(v.CVE, docProducts)
 
 		productInfoMap, err := buildProductInfoMap(v)
 		if err != nil {
@@ -362,6 +364,40 @@ func (e extractor) extract(c cvrf.CVRF) ([]dataTypes.Data, []microsoftkbTypes.KB
 	microsoftutil.DeriveSupersedes(kbs)
 	return datas, kbs, missingFixedBuilds, nil
 }
+
+// productNameOverrides maps (CVE ID, CVRF product name) to the product the
+// advisory actually affects, for advisories that attribute the fix to the
+// wrong product.
+var productNameOverrides = map[[2]string]string{
+	// CVE-2025-47967 — Microsoft Edge (Chromium-based) for Android Spoofing
+	// Vulnerability (2025-Sep). The title, the description and the FAQ version
+	// table (140.0.3485.71, released only for Android per the Edge security
+	// release notes, Sep 16, 2025) all name Edge for Android, but CVRF lists
+	// Microsoft Edge (Chromium-based), whose Stable channel never shipped
+	// 140.0.3485.71 (140.0.3485.66 on Sep 11, 140.0.3485.81 on Sep 19).
+	{"CVE-2025-47967", "Microsoft Edge (Chromium-based)"}: "Microsoft Edge for Android",
+}
+
+// applyProductNameOverrides returns the product ID to name map for cveID,
+// with productNameOverrides applied. products itself is never modified.
+func applyProductNameOverrides(cveID string, products map[string]string) map[string]string {
+	var m map[string]string
+	for pid, name := range products {
+		to, ok := productNameOverrides[[2]string{cveID, name}]
+		if !ok {
+			continue
+		}
+		if m == nil {
+			m = maps.Clone(products)
+		}
+		m[pid] = to
+	}
+	if m == nil {
+		return products
+	}
+	return m
+}
+
 func collectProducts(pt cvrf.ProductTree) map[string]string {
 	m := make(map[string]string)
 	for _, p := range pt.FullProductName {
@@ -899,7 +935,9 @@ func buildDetections(v cvrf.Vulnerability, products map[string]string) (map[ecos
 					// such as the Updater are intentionally skipped by
 					// buildFixedBuildCriterion and stay exempt.
 					switch criterionProductName {
-					case "Microsoft Edge (Chromium-based)", "Microsoft Edge (Chromium-based) Extended Stable":
+					case "Microsoft Edge (Chromium-based)", "Microsoft Edge (Chromium-based) Extended Stable",
+						"Microsoft Edge for Windows", "Microsoft Edge for MAC", "Microsoft Edge for Linux",
+						"Microsoft Edge for Android", "Microsoft Edge for iOS":
 						if _, ok := fixedBuildOverrides[[3]string{v.CVE, criterionProductName, cleanFixedBuild(r.FixedBuild)}]; !ok {
 							missingFixedBuilds = append(missingFixedBuilds, fmt.Sprintf("%s (%s)", v.CVE, criterionProductName))
 						}
@@ -1624,8 +1662,15 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 			return rangeTypes.RangeTypeMicrosoftDotNetCore, nil
 
 		// Microsoft Edge (Chromium-based)
+		// The platform products (Microsoft Edge for Windows/MAC/Linux, 2026-Aug~, and
+		// Microsoft Edge for Android/iOS) use the same version scheme
 		case "Microsoft Edge (Chromium-based)",
-			"Microsoft Edge (Chromium-based) Extended Stable":
+			"Microsoft Edge (Chromium-based) Extended Stable",
+			"Microsoft Edge for Windows",
+			"Microsoft Edge for MAC",
+			"Microsoft Edge for Linux",
+			"Microsoft Edge for Android",
+			"Microsoft Edge for iOS":
 			if _, err := edgeversion.NewVersion(fixedBuild); err != nil {
 				return rangeTypes.RangeTypeUnknown, errors.Wrap(err, "edgeversion.NewVersion")
 			}
@@ -2092,6 +2137,7 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 				"Microsoft Defender ",
 				"Windows Defender ",
 				"Microsoft Edge (Chromium-based)",
+				"Microsoft Edge for ",
 				"Microsoft Exchange Server",
 				"Microsoft Office ",
 				"Office Online Server",
@@ -2282,7 +2328,9 @@ var fixedBuildOverrides = map[[3]string]string{
 	{"CVE-2021-21221", "Microsoft Edge (Chromium-based)", ""}: "90.0.818.39",
 	{"CVE-2021-21222", "Microsoft Edge (Chromium-based)", ""}: "90.0.818.46",
 	{"CVE-2021-21223", "Microsoft Edge (Chromium-based)", ""}: "90.0.818.46",
-	{"CVE-2021-21224", "Microsoft Edge (Chromium-based)", ""}: "90.0.818.46",
+	// CVE-2021-21224 (exploited in the wild) shipped in 90.0.818.41 per the Edge security release
+	// notes (Apr 16, 2021); the FAQ version table gives the later 90.0.818.46 with a 4/15/2021 date
+	{"CVE-2021-21224", "Microsoft Edge (Chromium-based)", ""}: "90.0.818.41",
 	{"CVE-2021-21225", "Microsoft Edge (Chromium-based)", ""}: "90.0.818.46",
 	{"CVE-2021-21226", "Microsoft Edge (Chromium-based)", ""}: "90.0.818.46",
 	{"CVE-2021-21227", "Microsoft Edge (Chromium-based)", ""}: "90.0.818.51",
@@ -2319,28 +2367,30 @@ var fixedBuildOverrides = map[[3]string]string{
 	{"CVE-2021-30551", "Microsoft Edge (Chromium-based)", ""}: "91.0.864.48",
 	{"CVE-2021-30552", "Microsoft Edge (Chromium-based)", ""}: "91.0.864.48",
 	{"CVE-2021-30553", "Microsoft Edge (Chromium-based)", ""}: "91.0.864.48",
-	// 2021-Nov (Edge 96.0.1954.29, FixedBuild has typo "96.0 1954.29")
-	{"CVE-2021-38005", "Microsoft Edge (Chromium-based)", "96.0 1954.29"}: "96.0.1954.29",
-	{"CVE-2021-38006", "Microsoft Edge (Chromium-based)", "96.0 1954.29"}: "96.0.1954.29",
-	{"CVE-2021-38007", "Microsoft Edge (Chromium-based)", "96.0 1954.29"}: "96.0.1954.29",
-	{"CVE-2021-38008", "Microsoft Edge (Chromium-based)", "96.0 1954.29"}: "96.0.1954.29",
-	{"CVE-2021-38009", "Microsoft Edge (Chromium-based)", "96.0 1954.29"}: "96.0.1954.29",
-	{"CVE-2021-38010", "Microsoft Edge (Chromium-based)", "96.0 1954.29"}: "96.0.1954.29",
-	{"CVE-2021-38011", "Microsoft Edge (Chromium-based)", "96.0 1954.29"}: "96.0.1954.29",
-	{"CVE-2021-38012", "Microsoft Edge (Chromium-based)", "96.0 1954.29"}: "96.0.1954.29",
-	{"CVE-2021-38013", "Microsoft Edge (Chromium-based)", "96.0 1954.29"}: "96.0.1954.29",
-	{"CVE-2021-38014", "Microsoft Edge (Chromium-based)", "96.0 1954.29"}: "96.0.1954.29",
-	{"CVE-2021-38015", "Microsoft Edge (Chromium-based)", "96.0 1954.29"}: "96.0.1954.29",
-	{"CVE-2021-38016", "Microsoft Edge (Chromium-based)", "96.0 1954.29"}: "96.0.1954.29",
-	{"CVE-2021-38017", "Microsoft Edge (Chromium-based)", "96.0 1954.29"}: "96.0.1954.29",
-	{"CVE-2021-38018", "Microsoft Edge (Chromium-based)", "96.0 1954.29"}: "96.0.1954.29",
-	{"CVE-2021-38019", "Microsoft Edge (Chromium-based)", "96.0 1954.29"}: "96.0.1954.29",
-	{"CVE-2021-38020", "Microsoft Edge (Chromium-based)", "96.0 1954.29"}: "96.0.1954.29",
-	{"CVE-2021-38021", "Microsoft Edge (Chromium-based)", "96.0 1954.29"}: "96.0.1954.29",
-	{"CVE-2021-38022", "Microsoft Edge (Chromium-based)", "96.0 1954.29"}: "96.0.1954.29",
-	{"CVE-2021-42308", "Microsoft Edge (Chromium-based)", "96.0 1954.29"}: "96.0.1954.29",
-	{"CVE-2021-43220", "Microsoft Edge (Chromium-based)", "96.0 1954.29"}: "96.0.1954.29",
-	{"CVE-2021-43221", "Microsoft Edge (Chromium-based)", "96.0 1954.29"}: "96.0.1954.29",
+	// 2021-Nov (Edge 96.0.1054.29, FixedBuild has typo "96.0 1954.29"; the FAQ version table
+	// repeats it as 96.0.1954.29, but the Edge 96 branch is 1054 per the Edge security release
+	// notes, Nov 19, 2021)
+	{"CVE-2021-38005", "Microsoft Edge (Chromium-based)", "96.0 1954.29"}: "96.0.1054.29",
+	{"CVE-2021-38006", "Microsoft Edge (Chromium-based)", "96.0 1954.29"}: "96.0.1054.29",
+	{"CVE-2021-38007", "Microsoft Edge (Chromium-based)", "96.0 1954.29"}: "96.0.1054.29",
+	{"CVE-2021-38008", "Microsoft Edge (Chromium-based)", "96.0 1954.29"}: "96.0.1054.29",
+	{"CVE-2021-38009", "Microsoft Edge (Chromium-based)", "96.0 1954.29"}: "96.0.1054.29",
+	{"CVE-2021-38010", "Microsoft Edge (Chromium-based)", "96.0 1954.29"}: "96.0.1054.29",
+	{"CVE-2021-38011", "Microsoft Edge (Chromium-based)", "96.0 1954.29"}: "96.0.1054.29",
+	{"CVE-2021-38012", "Microsoft Edge (Chromium-based)", "96.0 1954.29"}: "96.0.1054.29",
+	{"CVE-2021-38013", "Microsoft Edge (Chromium-based)", "96.0 1954.29"}: "96.0.1054.29",
+	{"CVE-2021-38014", "Microsoft Edge (Chromium-based)", "96.0 1954.29"}: "96.0.1054.29",
+	{"CVE-2021-38015", "Microsoft Edge (Chromium-based)", "96.0 1954.29"}: "96.0.1054.29",
+	{"CVE-2021-38016", "Microsoft Edge (Chromium-based)", "96.0 1954.29"}: "96.0.1054.29",
+	{"CVE-2021-38017", "Microsoft Edge (Chromium-based)", "96.0 1954.29"}: "96.0.1054.29",
+	{"CVE-2021-38018", "Microsoft Edge (Chromium-based)", "96.0 1954.29"}: "96.0.1054.29",
+	{"CVE-2021-38019", "Microsoft Edge (Chromium-based)", "96.0 1954.29"}: "96.0.1054.29",
+	{"CVE-2021-38020", "Microsoft Edge (Chromium-based)", "96.0 1954.29"}: "96.0.1054.29",
+	{"CVE-2021-38021", "Microsoft Edge (Chromium-based)", "96.0 1954.29"}: "96.0.1054.29",
+	{"CVE-2021-38022", "Microsoft Edge (Chromium-based)", "96.0 1954.29"}: "96.0.1054.29",
+	{"CVE-2021-42308", "Microsoft Edge (Chromium-based)", "96.0 1954.29"}: "96.0.1054.29",
+	{"CVE-2021-43220", "Microsoft Edge for iOS", "96.0 1954.29"}:          "96.0.1054.29",
+	{"CVE-2021-43221", "Microsoft Edge (Chromium-based)", "96.0 1954.29"}: "96.0.1054.29",
 	// 2023-Feb (Edge 109.0.1518.78, FixedBuild has typo "109.0.15.18.78")
 	{"CVE-2023-21720", "Microsoft Edge (Chromium-based)", "109.0.15.18.78"}: "109.0.1518.78",
 	// 2023-Apr (Edge 112.0.1722.34, FixedBuild has Chromium version "112.0.5615.49/50" instead of Edge version)
@@ -2359,6 +2409,7 @@ var fixedBuildOverrides = map[[3]string]string{
 	{"CVE-2023-1822", "Microsoft Edge (Chromium-based)", "112.0.5615.49/50"}:  "112.0.1722.34",
 	{"CVE-2023-1823", "Microsoft Edge (Chromium-based)", "112.0.5615.49/50"}:  "112.0.1722.34",
 	{"CVE-2023-24935", "Microsoft Edge (Chromium-based)", "112.0.5615.49/50"}: "112.0.1722.34",
+	{"CVE-2023-28301", "Microsoft Edge for Android", "112.0.5615.49/50"}:      "112.0.1722.34",
 	// 2025-May (Edge 136.0.3240.64, FixedBuild has "v" prefix "v136.0.3240.64")
 	{"CVE-2025-4372", "Microsoft Edge (Chromium-based)", "v136.0.3240.64"}: "136.0.3240.64",
 	// 2026-Mar (Edge 145.0.3800.99, FixedBuild "145.3800.99" has only 3 segments instead of 4)
@@ -2450,6 +2501,109 @@ var fixedBuildOverrides = map[[3]string]string{
 	// table gives 150.0.4078.99 (07/24/2026, Chromium 150.0.7871.187), matching
 	// the FixedBuild carried by CVE-2026-57978/57989 in the same document
 	{"CVE-2026-57990", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.99",
+	// 2026-Aug (Edge 152, Microsoft-CNA CVEs): FixedBuild "152.0.4191.52" matches no
+	// release; the FAQ version table and the Edge security release notes (Aug 27, 2026)
+	// give 152.0.4191.53, as does CVE-2026-72984's own Chromium-based Vendor Fix.
+	// CVE-2026-58616/62904/66798 list Chromium-based as Known Affected but attach the
+	// Vendor Fix only to the platform products, so it reaches the ProductStatuses fallback
+	{"CVE-2026-58616", "Microsoft Edge (Chromium-based)", ""}:              "152.0.4191.53",
+	{"CVE-2026-58616", "Microsoft Edge for Linux", "152.0.4191.52"}:        "152.0.4191.53",
+	{"CVE-2026-58616", "Microsoft Edge for MAC", "152.0.4191.52"}:          "152.0.4191.53",
+	{"CVE-2026-58616", "Microsoft Edge for Windows", "152.0.4191.52"}:      "152.0.4191.53",
+	{"CVE-2026-62904", "Microsoft Edge (Chromium-based)", ""}:              "152.0.4191.53",
+	{"CVE-2026-62904", "Microsoft Edge for Linux", "152.0.4191.52"}:        "152.0.4191.53",
+	{"CVE-2026-62904", "Microsoft Edge for MAC", "152.0.4191.52"}:          "152.0.4191.53",
+	{"CVE-2026-62904", "Microsoft Edge for Windows", "152.0.4191.52"}:      "152.0.4191.53",
+	{"CVE-2026-66323", "Microsoft Edge for Linux", "152.0.4191.52"}:        "152.0.4191.53",
+	{"CVE-2026-66323", "Microsoft Edge for MAC", "152.0.4191.52"}:          "152.0.4191.53",
+	{"CVE-2026-66323", "Microsoft Edge for Windows", "152.0.4191.52"}:      "152.0.4191.53",
+	{"CVE-2026-66324", "Microsoft Edge for Linux", "152.0.4191.52"}:        "152.0.4191.53",
+	{"CVE-2026-66324", "Microsoft Edge for MAC", "152.0.4191.52"}:          "152.0.4191.53",
+	{"CVE-2026-66324", "Microsoft Edge for Windows", "152.0.4191.52"}:      "152.0.4191.53",
+	{"CVE-2026-66798", "Microsoft Edge (Chromium-based)", ""}:              "152.0.4191.53",
+	{"CVE-2026-66798", "Microsoft Edge for Linux", "152.0.4191.52"}:        "152.0.4191.53",
+	{"CVE-2026-66798", "Microsoft Edge for MAC", "152.0.4191.52"}:          "152.0.4191.53",
+	{"CVE-2026-66798", "Microsoft Edge for Windows", "152.0.4191.52"}:      "152.0.4191.53",
+	{"CVE-2026-70341", "Microsoft Edge (Chromium-based)", "152.0.4191.52"}: "152.0.4191.53",
+	{"CVE-2026-70341", "Microsoft Edge for Linux", "152.0.4191.52"}:        "152.0.4191.53",
+	{"CVE-2026-70341", "Microsoft Edge for MAC", "152.0.4191.52"}:          "152.0.4191.53",
+	{"CVE-2026-72984", "Microsoft Edge for Linux", "152.0.4191.52"}:        "152.0.4191.53",
+	{"CVE-2026-72984", "Microsoft Edge for MAC", "152.0.4191.52"}:          "152.0.4191.53",
+	{"CVE-2026-72984", "Microsoft Edge for Windows", "152.0.4191.52"}:      "152.0.4191.53",
+	// 2026-Aug Android/iOS: FixedBuild "152.0.4191.52" matches no release either; the Edge security
+	// release notes (Aug 31, 2026) give 152.0.4191.53 for Microsoft Edge for Android and iOS
+	{"CVE-2026-58616", "Microsoft Edge for Android", "152.0.4191.52"}: "152.0.4191.53",
+	{"CVE-2026-58616", "Microsoft Edge for iOS", "152.0.4191.52"}:     "152.0.4191.53",
+	{"CVE-2026-62904", "Microsoft Edge for Android", "152.0.4191.52"}: "152.0.4191.53",
+	{"CVE-2026-62904", "Microsoft Edge for iOS", "152.0.4191.52"}:     "152.0.4191.53",
+	{"CVE-2026-66323", "Microsoft Edge for Android", "152.0.4191.52"}: "152.0.4191.53",
+	{"CVE-2026-66323", "Microsoft Edge for iOS", "152.0.4191.52"}:     "152.0.4191.53",
+	{"CVE-2026-66324", "Microsoft Edge for Android", "152.0.4191.52"}: "152.0.4191.53",
+	{"CVE-2026-66324", "Microsoft Edge for iOS", "152.0.4191.52"}:     "152.0.4191.53",
+	{"CVE-2026-66798", "Microsoft Edge for Android", "152.0.4191.52"}: "152.0.4191.53",
+	{"CVE-2026-66798", "Microsoft Edge for iOS", "152.0.4191.52"}:     "152.0.4191.53",
+	{"CVE-2026-70341", "Microsoft Edge for Android", "152.0.4191.52"}: "152.0.4191.53",
+	{"CVE-2026-70341", "Microsoft Edge for iOS", "152.0.4191.52"}:     "152.0.4191.53",
+	{"CVE-2026-72984", "Microsoft Edge for Android", "152.0.4191.52"}: "152.0.4191.53",
+	{"CVE-2026-72984", "Microsoft Edge for iOS", "152.0.4191.52"}:     "152.0.4191.53",
+
+	// Stable FixedBuild corrections against the Edge security release notes
+	// (https://learn.microsoft.com/en-us/deployedge/microsoft-edge-relnotes-security), each
+	// agreeing with the CVE FAQ version table unless noted.
+	// 2021-Sep: FixedBuild is the Chromium version (93.0.4577.82); Edge shipped 93.0.961.47 (Sep 11, 2021)
+	{"CVE-2021-30632", "Microsoft Edge (Chromium-based)", "93.0.4577.82"}: "93.0.961.47",
+	// 2022-Apr: exploited in the wild, fixed in 100.0.1185.44 (Apr 15, 2022), not the earlier 100.0.1185.29
+	{"CVE-2022-1364", "Microsoft Edge (Chromium-based)", "100.0.1185.29"}: "100.0.1185.44",
+	// 2023-Sep: FixedBuild is the Extended Stable version; Stable shipped 117.0.2045.47 (Sep 29, 2023).
+	// The Extended Stable fix (116.0.1938.98) comes from missingProductOverrides
+	{"CVE-2023-5186", "Microsoft Edge (Chromium-based)", "116.0.1938.98"}: "117.0.2045.47",
+	{"CVE-2023-5187", "Microsoft Edge (Chromium-based)", "116.0.1938.98"}: "117.0.2045.47",
+	{"CVE-2023-5217", "Microsoft Edge (Chromium-based)", "116.0.1938.98"}: "117.0.2045.47",
+	// 2024-Feb: 121.0.2277.113 matches no release; Stable shipped 121.0.2277.112 (Feb 8, 2024)
+	{"CVE-2024-1283", "Microsoft Edge (Chromium-based)", "121.0.2277.113"}: "121.0.2277.112",
+	{"CVE-2024-1284", "Microsoft Edge (Chromium-based)", "121.0.2277.113"}: "121.0.2277.112",
+	// 2024-Jan: the release notes credit CVE-2024-21388 to 121.0.2277.83 (Jan 26, 2024); the FAQ also
+	// carries a second table for the Feb 1 release (121.0.2277.98), which the FixedBuild took
+	{"CVE-2024-21388", "Microsoft Edge (Chromium-based)", "121.0.2277.98"}: "121.0.2277.83",
+	// 2024-Jun: FixedBuild "126.0.2592.8" is truncated; Stable shipped 126.0.2592.81 (Jun 27, 2024)
+	{"CVE-2024-34122", "Microsoft Edge (Chromium-based)", "126.0.2592.8"}: "126.0.2592.81",
+	{"CVE-2024-6290", "Microsoft Edge (Chromium-based)", "126.0.2592.8"}:  "126.0.2592.81",
+	{"CVE-2024-6291", "Microsoft Edge (Chromium-based)", "126.0.2592.8"}:  "126.0.2592.81",
+	{"CVE-2024-6292", "Microsoft Edge (Chromium-based)", "126.0.2592.8"}:  "126.0.2592.81",
+	{"CVE-2024-6293", "Microsoft Edge (Chromium-based)", "126.0.2592.8"}:  "126.0.2592.81",
+	// 2025-Apr: Stable shipped the fix in 135.0.3179.73 (Apr 11, 2025), not 134.0.3124.93
+	{"CVE-2025-29834", "Microsoft Edge (Chromium-based)", "134.0.3124.93"}: "135.0.3179.73",
+	// 2026-May: FixedBuild is the Android/iOS version (148.0.3967.55, May 11, 2026); Stable shipped
+	// 148.0.3967.54 (May 7, 2026). The Android/iOS fix comes from missingProductOverrides
+	{"CVE-2026-40416", "Microsoft Edge (Chromium-based)", "148.0.3967.55"}: "148.0.3967.54",
+	{"CVE-2026-41107", "Microsoft Edge (Chromium-based)", "148.0.3967.55"}: "148.0.3967.54",
+	{"CVE-2026-42838", "Microsoft Edge (Chromium-based)", "148.0.3967.55"}: "148.0.3967.54",
+	// 2026-Sep: Stable shipped the fix in 152.0.4191.66 (Sep 4, 2026), not 153.0.4234.32
+	{"CVE-2026-87491", "Microsoft Edge (Chromium-based)", "153.0.4234.32"}: "152.0.4191.66",
+
+	// Microsoft Edge (Chromium-based) Extended Stable FixedBuild corrections, against the CVE FAQ
+	// version table and the Edge security release notes
+	// 2023-Mar: FixedBuild is the Chromium version; Extended Stable shipped 110.0.1587.69 (Mar 13, 2023)
+	{"CVE-2023-1214", "Microsoft Edge (Chromium-based) Extended Stable", "110.0.5481.192"}: "110.0.1587.69",
+	{"CVE-2023-1215", "Microsoft Edge (Chromium-based) Extended Stable", "110.0.5481.192"}: "110.0.1587.69",
+	{"CVE-2023-1216", "Microsoft Edge (Chromium-based) Extended Stable", "110.0.5481.192"}: "110.0.1587.69",
+	{"CVE-2023-1217", "Microsoft Edge (Chromium-based) Extended Stable", "110.0.5481.192"}: "110.0.1587.69",
+	{"CVE-2023-1220", "Microsoft Edge (Chromium-based) Extended Stable", "110.0.5481.192"}: "110.0.1587.69",
+	{"CVE-2023-1228", "Microsoft Edge (Chromium-based) Extended Stable", "110.0.5481.192"}: "110.0.1587.69",
+	// 2023-Jul: FixedBuild is the Stable version (the FAQ has the typo 114.0.1901.183); Extended
+	// Stable shipped 114.0.1823.90 (Jul 21, 2023)
+	{"CVE-2023-3728", "Microsoft Edge (Chromium-based) Extended Stable", "115.0.1901.183"}: "114.0.1823.90",
+	{"CVE-2023-3730", "Microsoft Edge (Chromium-based) Extended Stable", "115.0.1901.183"}: "114.0.1823.90",
+	// 2024-Mar: FixedBuild is the Chromium version; Extended Stable shipped 122.0.2365.113 (Mar 27, 2024)
+	{"CVE-2024-2883", "Microsoft Edge (Chromium-based) Extended Stable", "122.0.6261.148"}: "122.0.2365.113",
+	{"CVE-2024-2885", "Microsoft Edge (Chromium-based) Extended Stable", "122.0.6261.148"}: "122.0.2365.113",
+	{"CVE-2024-2886", "Microsoft Edge (Chromium-based) Extended Stable", "122.0.6261.148"}: "122.0.2365.113",
+	{"CVE-2024-2887", "Microsoft Edge (Chromium-based) Extended Stable", "122.0.6261.148"}: "122.0.2365.113",
+
+	// Microsoft Edge for Android / iOS
+	// 2026-Mar: FixedBuild "145.3800.99" drops the minor version (the release notes repeat it, Mar 9, 2026)
+	{"CVE-2026-26133", "Microsoft Edge for Android", "145.3800.99"}: "145.0.3800.99",
+	{"CVE-2026-26133", "Microsoft Edge for iOS", "145.3800.99"}:     "145.0.3800.99",
 
 	// Microsoft Exchange Server
 	// 2021-Mar (CVE-2021-26855 / 26857 / 26858 / 27065, the HAFNIUM CVEs): three Exchange Server 2019
@@ -3106,6 +3260,178 @@ var missingProductOverrides = map[string][]missingProductOverride{
 	// https://learn.microsoft.com/en-us/deployedge/microsoft-edge-relnotes-security
 	"CVE-2023-21796": {
 		{Product: "Microsoft Edge (Chromium-based)", FixedBuild: "109.0.1518.49"},
+	},
+	// CVE-2026-66323 / CVE-2026-66324 — Microsoft Edge (Chromium-based) Remote Code
+	// Execution / Spoofing Vulnerability (2026-Aug). CVRF lists only the platform
+	// products (Microsoft Edge for Windows/MAC/Linux/Android/iOS) in ProductStatuses /
+	// Remediations, unlike the other Microsoft-CNA Edge CVEs of the same release, while
+	// the Microsoft Edge Stable Release Notes (Aug 27, 2026) credit both to 152.0.4191.53.
+	// https://learn.microsoft.com/en-us/deployedge/microsoft-edge-relnotes-security
+	"CVE-2026-66323": {
+		{Product: "Microsoft Edge (Chromium-based)", FixedBuild: "152.0.4191.53"},
+	},
+	"CVE-2026-66324": {
+		{Product: "Microsoft Edge (Chromium-based)", FixedBuild: "152.0.4191.53"},
+	},
+	// Microsoft Edge (Chromium-based) Extended Stable: CVRF lists only the Stable product, while the
+	// CVE FAQ version table also gives the Extended Stable release. Each value matches the Edge branch
+	// of its major version, and the Edge security release notes where they list the CVE. Exceptions:
+	//   - 2023-Jul: the FAQ has the typo 114.0.1901.183; Extended Stable shipped 114.0.1823.90 (Jul 21, 2023)
+	//   - CVE-2023-4863: the release notes credit 116.0.1938.81 (Sep 12, 2023), the FAQ the later 116.0.1938.98
+	//   - CVE-2024-21388: the release notes credit 120.0.2210.160 (Jan 26, 2024), the FAQ also lists 120.0.2210.167
+	"CVE-2022-3075":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "104.0.1293.81"}},
+	"CVE-2022-3723":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "106.0.1370.61"}},
+	"CVE-2022-3885":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "106.0.1370.72"}},
+	"CVE-2022-3886":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "106.0.1370.72"}},
+	"CVE-2022-3887":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "106.0.1370.72"}},
+	"CVE-2022-3888":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "106.0.1370.72"}},
+	"CVE-2022-3889":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "106.0.1370.72"}},
+	"CVE-2022-3890":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "106.0.1370.72"}},
+	"CVE-2022-4135":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "106.0.1370.86"}},
+	"CVE-2023-1213":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "110.0.1587.69"}},
+	"CVE-2023-1219":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "110.0.1587.69"}},
+	"CVE-2023-1221":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "110.0.1587.69"}},
+	"CVE-2023-1222":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "110.0.1587.69"}},
+	"CVE-2023-1223":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "110.0.1587.69"}},
+	"CVE-2023-1224":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "110.0.1587.69"}},
+	"CVE-2023-1229":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "110.0.1587.69"}},
+	"CVE-2023-1230":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "110.0.1587.69"}},
+	"CVE-2023-1231":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "110.0.1587.69"}},
+	"CVE-2023-1233":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "110.0.1587.69"}},
+	"CVE-2023-1234":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "110.0.1587.69"}},
+	"CVE-2023-1235":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "110.0.1587.69"}},
+	"CVE-2023-1236":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "110.0.1587.69"}},
+	"CVE-2023-1530":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "110.0.1587.78"}},
+	"CVE-2023-1531":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "110.0.1587.78"}},
+	"CVE-2023-1533":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "110.0.1587.78"}},
+	"CVE-2023-2459":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "112.0.1722.71"}},
+	"CVE-2023-2460":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "112.0.1722.71"}},
+	"CVE-2023-2462":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "112.0.1722.71"}},
+	"CVE-2023-2463":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "112.0.1722.71"}},
+	"CVE-2023-2464":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "112.0.1722.71"}},
+	"CVE-2023-2465":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "112.0.1722.71"}},
+	"CVE-2023-2466":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "112.0.1722.71"}},
+	"CVE-2023-2467":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "112.0.1722.71"}},
+	"CVE-2023-2468":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "112.0.1722.71"}},
+	"CVE-2023-3727":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "114.0.1823.90"}},
+	"CVE-2023-3732":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "114.0.1823.90"}},
+	"CVE-2023-3733":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "114.0.1823.90"}},
+	"CVE-2023-3734":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "114.0.1823.90"}},
+	"CVE-2023-3735":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "114.0.1823.90"}},
+	"CVE-2023-3736":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "114.0.1823.90"}},
+	"CVE-2023-3737":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "114.0.1823.90"}},
+	"CVE-2023-3738":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "114.0.1823.90"}},
+	"CVE-2023-3740":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "114.0.1823.90"}},
+	"CVE-2023-4863":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "116.0.1938.81"}},
+	"CVE-2023-5186":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "116.0.1938.98"}},
+	"CVE-2023-5187":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "116.0.1938.98"}},
+	"CVE-2023-5217":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "116.0.1938.98"}},
+	"CVE-2023-6345":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "118.0.2088.122"}},
+	"CVE-2023-6346":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "118.0.2088.122"}},
+	"CVE-2023-6347":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "118.0.2088.122"}},
+	"CVE-2023-6348":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "118.0.2088.122"}},
+	"CVE-2023-6350":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "118.0.2088.122"}},
+	"CVE-2023-6351":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "118.0.2088.122"}},
+	"CVE-2023-29350": {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "112.0.1722.71"}},
+	"CVE-2023-29354": {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "112.0.1722.71"}},
+	"CVE-2023-35392": {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "114.0.1823.90"}},
+	"CVE-2023-36014": {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "118.0.2088.102"}},
+	"CVE-2023-38187": {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "114.0.1823.90"}},
+	"CVE-2024-0804":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "120.0.2210.160"}},
+	"CVE-2024-0805":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "120.0.2210.160"}},
+	"CVE-2024-0806":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "120.0.2210.160"}},
+	"CVE-2024-0807":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "120.0.2210.160"}},
+	"CVE-2024-0808":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "120.0.2210.160"}},
+	"CVE-2024-0809":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "120.0.2210.160"}},
+	"CVE-2024-0810":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "120.0.2210.160"}},
+	"CVE-2024-0811":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "120.0.2210.160"}},
+	"CVE-2024-0812":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "120.0.2210.160"}},
+	"CVE-2024-0813":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "120.0.2210.160"}},
+	"CVE-2024-0814":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "120.0.2210.160"}},
+	"CVE-2024-1059":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "120.0.2210.167"}},
+	"CVE-2024-1060":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "120.0.2210.167"}},
+	"CVE-2024-1077":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "120.0.2210.167"}},
+	"CVE-2024-2400":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "122.0.2365.92"}},
+	"CVE-2024-5830":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "126.0.2592.56"}},
+	"CVE-2024-5831":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "126.0.2592.56"}},
+	"CVE-2024-5832":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "126.0.2592.56"}},
+	"CVE-2024-5833":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "126.0.2592.56"}},
+	"CVE-2024-5834":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "126.0.2592.56"}},
+	"CVE-2024-5835":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "126.0.2592.56"}},
+	"CVE-2024-5836":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "126.0.2592.56"}},
+	"CVE-2024-5837":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "126.0.2592.56"}},
+	"CVE-2024-5838":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "126.0.2592.56"}},
+	"CVE-2024-5839":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "126.0.2592.56"}},
+	"CVE-2024-5840":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "126.0.2592.56"}},
+	"CVE-2024-5841":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "126.0.2592.56"}},
+	"CVE-2024-5842":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "126.0.2592.56"}},
+	"CVE-2024-5843":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "126.0.2592.56"}},
+	"CVE-2024-5844":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "126.0.2592.56"}},
+	"CVE-2024-5845":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "126.0.2592.56"}},
+	"CVE-2024-5846":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "126.0.2592.56"}},
+	"CVE-2024-5847":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "126.0.2592.56"}},
+	"CVE-2024-9120":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "128.0.2739.97"}},
+	"CVE-2024-21326": {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "120.0.2210.160"}},
+	"CVE-2024-21336": {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "120.0.2210.160"}},
+	"CVE-2024-21382": {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "120.0.2210.160"}},
+	"CVE-2024-21383": {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "120.0.2210.160"}},
+	"CVE-2024-21385": {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "120.0.2210.160"}},
+	"CVE-2024-21388": {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "120.0.2210.160"}},
+	"CVE-2024-21399": {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "120.0.2210.167"}},
+	"CVE-2024-30058": {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "126.0.2592.56"}},
+
+	// Microsoft Edge (Chromium-based) Extended Stable, where the CVE FAQ gives a single version but
+	// the Edge security release notes credit the fix to an Extended Stable release as well (date of
+	// that release)
+	"CVE-2023-29345": {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "114.0.1823.37"}},  // Jun 2, 2023
+	"CVE-2023-33143": {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "114.0.1823.37"}},  // Jun 2, 2023
+	"CVE-2023-33145": {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "114.0.1823.51"}},  // Jun 15, 2023
+	"CVE-2023-36887": {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "114.0.1823.82"}},  // Jul 13, 2023
+	"CVE-2023-38157": {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "114.0.1823.106"}}, // Aug 7, 2023
+	"CVE-2023-38158": {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "116.0.1938.54"}},  // Aug 21, 2023
+	"CVE-2023-36787": {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "116.0.1938.54"}},  // Aug 21, 2023
+	"CVE-2024-4761":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "124.0.2478.105"}}, // May 14, 2024
+	"CVE-2024-4947":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "124.0.2478.109"}}, // May 16, 2024
+	"CVE-2024-30056": {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "124.0.2478.109"}}, // May 16, 2024
+	"CVE-2024-5274":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "124.0.2478.127"}}, // May 24, 2024
+	"CVE-2024-38218": {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "126.0.2592.137"}}, // Aug 8, 2024
+	"CVE-2024-38219": {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "126.0.2592.137"}}, // Aug 8, 2024
+	"CVE-2024-38221": {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "128.0.2739.90"}},  // Sep 19, 2024
+	"CVE-2024-43489": {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "128.0.2739.90"}},  // Sep 19, 2024
+	"CVE-2024-43496": {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "128.0.2739.90"}},  // Sep 19, 2024
+	"CVE-2025-21279": {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "132.0.2957.171"}}, // Feb 20, 2025
+	"CVE-2025-21283": {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "132.0.2957.171"}}, // Feb 20, 2025
+	"CVE-2025-21342": {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "132.0.2957.171"}}, // Feb 20, 2025
+	"CVE-2025-21408": {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "132.0.2957.171"}}, // Feb 20, 2025
+	"CVE-2025-5419":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "136.0.3240.115"}}, // Jun 4, 2025
+	"CVE-2026-2441":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "144.0.3719.130"}}, // Feb 17, 2026
+
+	// Microsoft Edge for Android / iOS: CVRF lists only Microsoft Edge (Chromium-based), while the
+	// Edge security release notes also credit the fix to the Android and iOS releases
+	// CVE-2026-40416: 148.0.3967.55 (May 11, 2026)
+	"CVE-2026-40416": {
+		{Product: "Microsoft Edge for Android", FixedBuild: "148.0.3967.55"},
+		{Product: "Microsoft Edge for iOS", FixedBuild: "148.0.3967.55"},
+	},
+	// CVE-2026-41107: 148.0.3967.55 (May 11, 2026)
+	"CVE-2026-41107": {
+		{Product: "Microsoft Edge for Android", FixedBuild: "148.0.3967.55"},
+		{Product: "Microsoft Edge for iOS", FixedBuild: "148.0.3967.55"},
+	},
+	// CVE-2026-42838: 148.0.3967.55 (May 11, 2026)
+	"CVE-2026-42838": {
+		{Product: "Microsoft Edge for Android", FixedBuild: "148.0.3967.55"},
+		{Product: "Microsoft Edge for iOS", FixedBuild: "148.0.3967.55"},
+	},
+	// CVE-2026-45495: 148.0.3967.70 (Android May 21, iOS May 19, 2026)
+	"CVE-2026-45495": {
+		{Product: "Microsoft Edge for Android", FixedBuild: "148.0.3967.70"},
+		{Product: "Microsoft Edge for iOS", FixedBuild: "148.0.3967.70"},
+	},
+	// CVE-2026-72970: 151.0.4129.86 (Aug 17, 2026)
+	"CVE-2026-72970": {
+		{Product: "Microsoft Edge for Android", FixedBuild: "151.0.4129.86"},
+		{Product: "Microsoft Edge for iOS", FixedBuild: "151.0.4129.86"},
 	},
 }
 
