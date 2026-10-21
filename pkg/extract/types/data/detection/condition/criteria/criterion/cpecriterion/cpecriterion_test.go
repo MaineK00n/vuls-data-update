@@ -145,6 +145,26 @@ func TestCriterion_Accept(t *testing.T) {
 			want: ccTypes.MatchQualityVersionUnconfirmed,
 		},
 		{
+			// NA vs NA is EQUAL under CPE name matching: a genuinely
+			// version-less product scanned as such is a confident match.
+			name: "criterion version NA, query version NA -> Exact",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:o:vendor:product_firmware:-:*:*:*:*:*:*:*",
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:o:vendor:product_firmware:-:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityExact,
+		},
+		{
+			name: "criterion version NA, query version NA, disjoint update -> None",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:o:vendor:product:-:sp1:*:*:*:*:*:*",
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:o:vendor:product:-:sp2:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityNone,
+		},
+		{
 			// A version=NA criterion still gates on non-version attributes:
 			// a disjoint target_sw is not a match.
 			name: "criterion version NA, disjoint target_sw -> None",

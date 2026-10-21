@@ -204,15 +204,18 @@ const (
 	// MatchQualityExact means the criterion accepts the query with sufficient
 	// version evidence: a concrete query version confirmed by equality, range,
 	// or enumeration; a version=* criterion with no range/cpematches (every
-	// version of the product is affected); OR a query whose version is ANY —
-	// the scan asks for all versions of the product, so any match is reported
-	// with full confidence (respecting the intent of whoever wrote the query).
+	// version of the product is affected); a version=NA criterion against a
+	// version=NA query (CPE name matching: NA vs NA is EQUAL); OR a query whose
+	// version is ANY — the scan asks for all versions of the product, so any
+	// match is reported with full confidence (respecting the intent of whoever
+	// wrote the query).
 	MatchQualityExact
 	// MatchQualityVersionUnconfirmed means the criterion accepts the query on
 	// attribute equality but the query's concrete version cannot be confirmed
 	// affected: the query version is NA against a version-bearing criterion, or
-	// the criterion version is NA matched against a concrete/NA query. (A query
-	// version of ANY is Exact instead — see MatchQualityExact.)
+	// the criterion version is NA matched against a concrete query. (A query
+	// version of ANY, or NA against an NA criterion, is Exact instead — see
+	// MatchQualityExact.)
 	MatchQualityVersionUnconfirmed
 )
 
@@ -270,12 +273,21 @@ func (c Criterion) Accept(query Query) (MatchQuality, error) {
 			return MatchQualityUnknown, errors.Wrap(err, "neutralise criterion version")
 		}
 		if overlaps(qWFN, cAnyVer) {
-			// query=ANY asks for all versions → Exact; otherwise there is no
-			// concrete version to confirm against a no-version criterion.
-			if qv == "ANY" {
+			switch qv {
+			case "ANY":
+				// query=ANY asks for all versions → Exact.
 				return MatchQualityExact, nil
+			case "NA":
+				// NA vs NA is EQUAL under CPE name matching: the product
+				// genuinely has no version (e.g. windows_7:-, *_firmware:-),
+				// and the scan says the same, so nothing is left unconfirmed.
+				return MatchQualityExact, nil
+			default:
+				// A concrete scan version is DISJOINT from NA under CPE name
+				// matching; it is accepted only as the "-" = "all versions"
+				// relaxation above, so the version stays unconfirmed.
+				return MatchQualityVersionUnconfirmed, nil
 			}
-			return MatchQualityVersionUnconfirmed, nil
 		}
 		// Non-version attributes disagree; fall through to CPEMatches.
 	case overlaps(qWFN, cWFN):
