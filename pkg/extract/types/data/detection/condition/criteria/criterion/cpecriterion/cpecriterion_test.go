@@ -123,6 +123,41 @@ func TestCriterion_Accept(t *testing.T) {
 			want: ccTypes.MatchQualityExact,
 		},
 		{
+			name: "criterion version NA with range (range ignored), query NA -> Exact (NA vs NA is EQUAL)",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:-:*:*:*:*:*:*:*",
+				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeSEMVER, LessThan: "0.0.2"},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:-:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityExact,
+		},
+		{
+			// Non-version SUBSET/SUPERSET does not demote the NA/NA pair, as
+			// for every other Exact path (e.g. a concrete target_sw against
+			// a wildcard one).
+			name: "criterion version NA with target_sw, query NA with wildcard target_sw -> Exact",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:-:*:*:*:*:windows:*:*",
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:-:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityExact,
+		},
+		{
+			// The main CPE is disjoint (target_sw), so only CPEMatches can
+			// match; an NA entry against an NA query is EQUAL, like the main
+			// CPE.
+			name: "cpematches NA entry, query NA, main CPE disjoint -> Exact",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:-:*:*:*:*:windows:*:*",
+				CPEMatches: []ccTypes.CPE{"cpe:2.3:a:vendor:product:-:*:*:*:*:linux:*:*"},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:-:*:*:*:*:linux:*:*"}},
+			want: ccTypes.MatchQualityExact,
+		},
+		{
 			name: "criterion version NA with range (range ignored), query wildcard -> Exact (query=ANY)",
 			fields: fields{
 				Vulnerable: true,
