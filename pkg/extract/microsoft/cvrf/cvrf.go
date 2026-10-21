@@ -1,7 +1,6 @@
 package cvrf
 
 import (
-	"cmp"
 	"encoding/json/v2"
 	"fmt"
 	"io/fs"
@@ -97,28 +96,9 @@ func WithDir(dir string) Option {
 }
 
 type extractor struct {
-	inputDir string
-	r        *utiljson.JSONReader
-}
-
-// cvrfExcludedIDs lists vulnerability IDs (the cvrf.Vulnerability.CVE value)
-// that Microsoft published but that must not be extracted: malformed or
-// explicitly-deprecated entries whose ID is not a usable CVE identifier. The
-// advisory text of these flags them as unusable (e.g. a duplicate placeholder
-// titled "... do not use this one"), so extracting them would surface a bogus,
-// uncorrelatable vulnerability ID. Matching entries are skipped in extract()
-// before any processing, so they contribute neither data nor KB aggregation.
-var cvrfExcludedIDs = map[string]struct{}{
-	"CVE-2023-38039 mariner - do not use this one": {},
-	// "-M" duplicates: Microsoft re-published these open-source component CVEs
-	// — already extracted under their canonical CVE IDs — with a CBL-Mariner /
-	// Azure Linux-only product set and a malformed "-M" ID. After the
-	// CBL-Mariner / Azure Linux product skip they yield zero detection
-	// segments, so keeping them only adds a bogus, uncorrelatable CVE ID.
-	"CVE-2022-2601-M":    {},
-	"CVE-2022-3775-M":    {},
-	"CVE-2023-32002 - M": {},
-	"CVE-2024-0132-M":    {},
+	inputDir  string
+	r         *utiljson.JSONReader
+	overrides *overrideUsage
 }
 
 func Extract(args string, opts ...Option) error {
@@ -136,6 +116,7 @@ func Extract(args string, opts ...Option) error {
 
 	slog.Info("Extract Microsoft CVRF")
 	var missingFixedBuilds []string
+	usage := newOverrideUsage()
 	if err := filepath.WalkDir(args, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
@@ -153,8 +134,9 @@ func Extract(args string, opts ...Option) error {
 		}
 
 		e := extractor{
-			inputDir: args,
-			r:        utiljson.NewJSONReader(),
+			inputDir:  args,
+			r:         utiljson.NewJSONReader(),
+			overrides: usage,
 		}
 
 		var c cvrf.CVRF
@@ -255,7 +237,11 @@ func Extract(args string, opts ...Option) error {
 
 	if len(missingFixedBuilds) > 0 {
 		slices.Sort(missingFixedBuilds)
-		return errors.Errorf("no usable FixedBuild for %q, not listed in fixedBuildOverrides, please add it (map to the fixed build, or to \"\" to intentionally skip)", slices.Compact(missingFixedBuilds))
+		return errors.Errorf("no usable FixedBuild for %q, please add an overrideFixedBuild to cvrfOverrides (or an overrideNoFixedBuild to intentionally skip)", slices.Compact(missingFixedBuilds))
+	}
+
+	if unused := usage.unused(); len(unused) > 0 {
+		return errUnusedOverrides(unused)
 	}
 
 	if err := util.Write(filepath.Join(options.dir, "datasource.json"), datasourceTypes.DataSource{
@@ -291,7 +277,7 @@ func (e extractor) extract(c cvrf.CVRF) ([]dataTypes.Data, []microsoftkbTypes.KB
 	kbm := make(map[string]microsoftkbTypes.KB)
 
 	for _, v := range c.Vulnerability {
-		if _, ok := cvrfExcludedIDs[v.CVE]; ok {
+		if e.overrides.excluded(v.CVE) {
 			continue
 		}
 		var description string
@@ -302,9 +288,9 @@ func (e extractor) extract(c cvrf.CVRF) ([]dataTypes.Data, []microsoftkbTypes.KB
 			}
 		}
 
-		products := applyProductNameOverrides(v.CVE, docProducts)
+		o := applyOverrides(v, docProducts, e.overrides)
 
-		productInfoMap, err := buildProductInfoMap(v)
+		productInfoMap, err := buildProductInfoMap(o.v)
 		if err != nil {
 			return nil, nil, nil, errors.Wrapf(err, "build product info map for %s", v.CVE)
 		}
@@ -314,12 +300,12 @@ func (e extractor) extract(c cvrf.CVRF) ([]dataTypes.Data, []microsoftkbTypes.KB
 
 		switch {
 		case strings.HasPrefix(v.CVE, "CVE-"):
-			vulns, err = buildVulnerabilities(v, c, products, productInfoMap, description)
+			vulns, err = buildVulnerabilities(o.v, c, o.products, productInfoMap, description)
 			if err != nil {
 				return nil, nil, nil, errors.Wrapf(err, "build vulnerabilities for %s", v.CVE)
 			}
 		case strings.HasPrefix(v.CVE, "ADV"):
-			advisories, err = buildAdvisories(v, c, products, productInfoMap, description)
+			advisories, err = buildAdvisories(o.v, c, o.products, productInfoMap, description)
 			if err != nil {
 				return nil, nil, nil, errors.Wrapf(err, "build advisories for %s", v.CVE)
 			}
@@ -327,13 +313,13 @@ func (e extractor) extract(c cvrf.CVRF) ([]dataTypes.Data, []microsoftkbTypes.KB
 			return nil, nil, nil, errors.Errorf("unexpected ID prefix. expected: %q, actual: %q", []string{"CVE-", "ADV"}, v.CVE)
 		}
 
-		conditionsByEcosystem, missing, err := buildDetections(v, products)
+		conditionsByEcosystem, missing, err := buildDetections(o)
 		if err != nil {
 			return nil, nil, nil, errors.Wrapf(err, "build detections for %s", v.CVE)
 		}
 		missingFixedBuilds = append(missingFixedBuilds, missing...)
 
-		if err := e.collectKBs(v, products, kbm); err != nil {
+		if err := e.collectKBs(o.v, o.products, kbm); err != nil {
 			return nil, nil, nil, errors.Wrapf(err, "collect KBs for %s", v.CVE)
 		}
 
@@ -364,39 +350,6 @@ func (e extractor) extract(c cvrf.CVRF) ([]dataTypes.Data, []microsoftkbTypes.KB
 	kbs := slices.Collect(maps.Values(kbm))
 	microsoftutil.DeriveSupersedes(kbs)
 	return datas, kbs, missingFixedBuilds, nil
-}
-
-// productNameOverrides maps (CVE ID, CVRF product name) to the product the
-// advisory actually affects, for advisories that attribute the fix to the
-// wrong product.
-var productNameOverrides = map[[2]string]string{
-	// CVE-2025-47967 — Microsoft Edge (Chromium-based) for Android Spoofing
-	// Vulnerability (2025-Sep). The title, the description and the FAQ version
-	// table (140.0.3485.71, released only for Android per the Edge security
-	// release notes, Sep 16, 2025) all name Edge for Android, but CVRF lists
-	// Microsoft Edge (Chromium-based), whose Stable channel never shipped
-	// 140.0.3485.71 (140.0.3485.66 on Sep 11, 140.0.3485.81 on Sep 19).
-	{"CVE-2025-47967", "Microsoft Edge (Chromium-based)"}: "Microsoft Edge for Android",
-}
-
-// applyProductNameOverrides returns the product ID to name map for cveID,
-// with productNameOverrides applied. products itself is never modified.
-func applyProductNameOverrides(cveID string, products map[string]string) map[string]string {
-	var m map[string]string
-	for pid, name := range products {
-		to, ok := productNameOverrides[[2]string{cveID, name}]
-		if !ok {
-			continue
-		}
-		if m == nil {
-			m = maps.Clone(products)
-		}
-		m[pid] = to
-	}
-	if m == nil {
-		return products
-	}
-	return m
 }
 
 func collectProducts(pt cvrf.ProductTree) map[string]string {
@@ -583,57 +536,6 @@ func buildVulnerabilities(v cvrf.Vulnerability, c cvrf.CVRF, products map[string
 		)
 	}
 
-	// Apply missing-product overrides: products Microsoft omitted from CVRF
-	// but documented elsewhere as affected. Build Content from CVE-level data
-	// only — per-product fields (severity, impact, mitigations, workarounds)
-	// are unknown for the missing product since Microsoft did not publish them.
-	// Skip when an existing vuln already carries a segment for the same tag —
-	// that means CVRF now lists the product (e.g. after re-publication) and we
-	// must defer to its data to avoid emitting a duplicate vuln entry.
-	// appendOrMergeSegment otherwise:
-	//   - merges into an existing vuln with matching Content (rare), or
-	//   - appends a fresh vuln entry — including the len(vulns) == 0 case.
-	for _, mp := range missingProductOverrides[v.CVE] {
-		if isCBLMarinerOrAzureLinux(mp.Product) {
-			continue
-		}
-		tag := segmentTypes.DetectionTag(mp.Product)
-		if slices.ContainsFunc(vulns, func(it vulnerabilityTypes.Vulnerability) bool {
-			return slices.ContainsFunc(it.Segments, func(s segmentTypes.Segment) bool { return s.Tag == tag })
-		}) {
-			continue
-		}
-		vc := vulnerabilityContentTypes.Content{
-			ID:          vulnerabilityContentTypes.VulnerabilityID(v.CVE),
-			Title:       v.Title,
-			Description: description,
-			CWE:         cwes,
-			References:  refs,
-			Published:   published,
-			Modified:    modified,
-			// exploitability is CVE-scoped, so carry it onto the synthesized
-			// override segment too; per-product impact / exploit_status do not apply.
-			Optional: func() map[string]any {
-				for _, t := range v.Threats.Threat {
-					if t.Type == "Exploit Status" && t.ProductID == "" && t.Description != "" {
-						return map[string]any{"exploitability": t.Description}
-					}
-				}
-				return nil
-			}(),
-		}
-		vulns = appendOrMergeSegment(vulns,
-			vulnerabilityTypes.Vulnerability{
-				Content:  vc,
-				Segments: []segmentTypes.Segment{{Ecosystem: ecosystemTypes.EcosystemTypeMicrosoft, Tag: tag}},
-			},
-			func(item vulnerabilityTypes.Vulnerability) int {
-				return vulnerabilityContentTypes.Compare(item.Content, vc)
-			},
-			func(item *vulnerabilityTypes.Vulnerability) *[]segmentTypes.Segment { return &item.Segments },
-		)
-	}
-
 	// If all products were CBL-Mariner/Azure Linux, emit product-independent metadata.
 	if len(vulns) == 0 {
 		vulns = append(vulns, vulnerabilityTypes.Vulnerability{
@@ -705,53 +607,6 @@ func buildAdvisories(v cvrf.Vulnerability, c cvrf.CVRF, products map[string]stri
 			advisoryTypes.Advisory{
 				Content:  ac,
 				Segments: []segmentTypes.Segment{{Ecosystem: ecosystemTypes.EcosystemTypeMicrosoft, Tag: segmentTypes.DetectionTag(productName)}},
-			},
-			func(item advisoryTypes.Advisory) int {
-				return advisoryContentTypes.Compare(item.Content, ac)
-			},
-			func(item *advisoryTypes.Advisory) *[]segmentTypes.Segment { return &item.Segments },
-		)
-	}
-
-	// Apply missing-product overrides: products Microsoft omitted from CVRF
-	// but documented elsewhere as affected. Build Content from CVE-level data
-	// only — per-product fields (severity, impact, mitigations, workarounds)
-	// are unknown for the missing product since Microsoft did not publish them.
-	// Skip when an existing advisory already carries a segment for the same
-	// tag — CVRF now lists the product and we defer to its data.
-	for _, mp := range missingProductOverrides[v.CVE] {
-		if isCBLMarinerOrAzureLinux(mp.Product) {
-			continue
-		}
-		tag := segmentTypes.DetectionTag(mp.Product)
-		if slices.ContainsFunc(advisories, func(it advisoryTypes.Advisory) bool {
-			return slices.ContainsFunc(it.Segments, func(s segmentTypes.Segment) bool { return s.Tag == tag })
-		}) {
-			continue
-		}
-		ac := advisoryContentTypes.Content{
-			ID:          advisoryContentTypes.AdvisoryID(v.CVE),
-			Title:       v.Title,
-			Description: description,
-			CWE:         cwes,
-			References:  refs,
-			Published:   published,
-			Modified:    modified,
-			// exploitability is CVE-scoped, so carry it onto the synthesized
-			// override segment too; per-product impact / exploit_status do not apply.
-			Optional: func() map[string]any {
-				for _, t := range v.Threats.Threat {
-					if t.Type == "Exploit Status" && t.ProductID == "" && t.Description != "" {
-						return map[string]any{"exploitability": t.Description}
-					}
-				}
-				return nil
-			}(),
-		}
-		advisories = appendOrMergeSegment(advisories,
-			advisoryTypes.Advisory{
-				Content:  ac,
-				Segments: []segmentTypes.Segment{{Ecosystem: ecosystemTypes.EcosystemTypeMicrosoft, Tag: tag}},
 			},
 			func(item advisoryTypes.Advisory) int {
 				return advisoryContentTypes.Compare(item.Content, ac)
@@ -846,11 +701,12 @@ func buildOptional(pi productInfo) map[string]any {
 // compare equal and the incoming item's Optional is dropped on merge. This is
 // safe for the "exploitability" carry only because every path that builds
 // Content for a given CVE derives the same value: the per-product path via
-// pi.exploitability (broadcast across products in buildProductInfoMap) and the
-// missing-product override / product-independent fallback paths by reading the
-// product-less "Exploit Status" threat directly. If those reads are ever
-// allowed to diverge — or another advisory-scoped Optional key is added with
-// different values per path — the differing value would be lost here silently.
+// pi.exploitability (broadcast across products in buildProductInfoMap,
+// including those an overrideAddProduct lists) and the product-independent
+// fallback path by reading the product-less "Exploit Status" threat directly.
+// If those reads are ever allowed to diverge — or another advisory-scoped
+// Optional key is added with different values per path — the differing value
+// would be lost here silently.
 func appendOrMergeSegment[T any](
 	items []T,
 	newItem T,
@@ -873,7 +729,8 @@ func appendOrMergeSegment[T any](
 	return append(items, newItem)
 }
 
-func buildDetections(v cvrf.Vulnerability, products map[string]string) (map[ecosystemTypes.Ecosystem][]conditionTypes.Condition, []string, error) {
+func buildDetections(o overriddenVulnerability) (map[ecosystemTypes.Ecosystem][]conditionTypes.Condition, []string, error) {
+	v, products := o.v, o.products
 	conditionsByEcosystem := make(map[ecosystemTypes.Ecosystem][]conditionTypes.Condition)
 	var missingFixedBuilds []string
 
@@ -887,7 +744,7 @@ func buildDetections(v cvrf.Vulnerability, products map[string]string) (map[ecos
 	fixesByTag := make(map[segmentTypes.DetectionTag][]vendorFix)
 	excludedTags := make(map[segmentTypes.DetectionTag][]string)
 
-	for _, r := range v.Remediations.Remediation {
+	for ri, r := range v.Remediations.Remediation {
 		switch r.Type {
 		case "Vendor Fix":
 			for _, pid := range r.ProductID {
@@ -910,7 +767,7 @@ func buildDetections(v cvrf.Vulnerability, products map[string]string) (map[ecos
 				tag := segmentTypes.DetectionTag(productName)
 				criterionProductName := microsoftutil.NormalizeProductName(productName)
 
-				if _, ok := vendorFixExclusions[[3]string{v.CVE, criterionProductName, r.Description}]; ok {
+				if o.vendorFixExcluded(productName, r.Description) {
 					excludedTags[tag] = append(excludedTags[tag], r.Description)
 					continue
 				}
@@ -927,8 +784,8 @@ func buildDetections(v cvrf.Vulnerability, products map[string]string) (map[ecos
 					// Click to Run). For the Microsoft Edge (Chromium-based)
 					// browser however the CVE becomes silently undetectable: the
 					// covered mark above also suppresses the ProductStatuses
-					// unfixed fallback. Require an explicit fixedBuildOverrides
-					// entry ("" to intentionally skip) so that upstream
+					// unfixed fallback. Require an explicit overrideFixedBuild
+					// (overrideNoFixedBuild to intentionally skip) so that upstream
 					// FixedBuild gaps fail the extraction instead of silently
 					// dropping detections (e.g. the 2026-Jul document shipped
 					// 79 Chromium CVEs without a usable FixedBuild). Limited to
@@ -939,7 +796,7 @@ func buildDetections(v cvrf.Vulnerability, products map[string]string) (map[ecos
 					case "Microsoft Edge (Chromium-based)", "Microsoft Edge (Chromium-based) Extended Stable",
 						"Microsoft Edge for Windows", "Microsoft Edge for MAC", "Microsoft Edge for Linux",
 						"Microsoft Edge for Android", "Microsoft Edge for iOS":
-						if _, ok := fixedBuildOverrides[[3]string{v.CVE, criterionProductName, cleanFixedBuild(r.FixedBuild)}]; !ok {
+						if _, ok := o.noFixedBuild[ri]; !ok {
 							missingFixedBuilds = append(missingFixedBuilds, fmt.Sprintf("%s (%s)", v.CVE, criterionProductName))
 						}
 					}
@@ -967,7 +824,7 @@ func buildDetections(v cvrf.Vulnerability, products map[string]string) (map[ecos
 		}
 	}
 
-	tags, addedKBIDs, err := addVendorFixes(v.CVE, tags, excludedTags, fixesByTag)
+	tags, addedKBIDs, err := addVendorFixes(o, tags, excludedTags, fixesByTag)
 	if err != nil {
 		return nil, nil, errors.Wrap(err, "add vendor fixes")
 	}
@@ -979,11 +836,11 @@ func buildDetections(v cvrf.Vulnerability, products map[string]string) (map[ecos
 		// Every Vendor Fix of the product was excluded. The product is
 		// covered, so the ProductStatuses fallback skips it as well and the
 		// CVE would become silently undetectable on it, unless each fix was
-		// moved to another product by vendorFixAdditions.
+		// moved to another product by overrideAddVendorFix.
 		if !slices.ContainsFunc(excludedTags[tag], func(kbID string) bool { return !slices.Contains(addedKBIDs, kbID) }) {
 			continue
 		}
-		return nil, nil, errors.Errorf("unexpected vendorFixExclusions for %s (%s). expected: at least one Vendor Fix kept, actual: all excluded", v.CVE, tag)
+		return nil, nil, errors.Errorf("unexpected overrideExcludeVendorFix for %s (%s). expected: at least one Vendor Fix kept, actual: all excluded", v.CVE, tag)
 	}
 
 	for _, tag := range tags {
@@ -993,7 +850,7 @@ func buildDetections(v cvrf.Vulnerability, products map[string]string) (map[ecos
 		// A hotpatch is otherwise listed beside its month's cumulative update.
 		// Alone, nothing a host that does not take hotpatches can install
 		// satisfies its KB criterion, and the CVE is reported on it for good.
-		return nil, nil, errors.Errorf("unexpected fixes for %s (%s). expected: a fix other than a hotpatch, actual: hotpatches only, please check the CVE FAQ and the KB articles and add vendorFixAdditions", v.CVE, tag)
+		return nil, nil, errors.Errorf("unexpected fixes for %s (%s). expected: a fix other than a hotpatch, actual: hotpatches only, please check the CVE FAQ and the KB articles and add an overrideAddVendorFix", v.CVE, tag)
 	}
 
 	for _, tag := range tags {
@@ -1001,9 +858,9 @@ func buildDetections(v cvrf.Vulnerability, products map[string]string) (map[ecos
 			if _, ok := hotpatchFixesReviewed[[2]string{v.CVE, microsoftutil.NormalizeProductName(string(tag))}]; !ok {
 				// A hotpatch's follow-up update listed side by side with it
 				// gates its fixed build and hides hosts that applied only the
-				// hotpatch (see vendorFixExclusions), so fail like the
+				// hotpatch (see overrideExcludeVendorFix), so fail like the
 				// FixedBuild checks above rather than log and move on.
-				return nil, nil, errors.Errorf("unexpected number of KBs for %s (%s), a product offering a hotpatch. expected: <= 2, actual: > 2, please check the CVE FAQ and the KB articles and add vendorFixExclusions or hotpatchFixesReviewed", v.CVE, tag)
+				return nil, nil, errors.Errorf("unexpected number of KBs for %s (%s), a product offering a hotpatch. expected: <= 2, actual: > 2, please check the CVE FAQ and the KB articles and add an overrideExcludeVendorFix or hotpatchFixesReviewed", v.CVE, tag)
 			}
 		}
 		if err := appendVendorFixConditions(conditionsByEcosystem, tag, fixesByTag[tag]); err != nil {
@@ -1011,9 +868,9 @@ func buildDetections(v cvrf.Vulnerability, products map[string]string) (map[ecos
 		}
 	}
 
-	// For products listed in ProductStatuses but not covered by any Vendor Fix
-	// remediation, use fixedBuildOverrides if available (e.g. Edge), otherwise
-	// register as unfixed.
+	// Products listed in ProductStatuses but not covered by any Vendor Fix
+	// remediation are registered as unfixed. An overrideFixedBuild from "" has
+	// already given such a product the Vendor Fix it lacks.
 	for _, pid := range v.ProductStatuses.Status.ProductID {
 		if _, ok := coveredProductIDs[pid]; ok {
 			continue
@@ -1031,16 +888,6 @@ func buildDetections(v cvrf.Vulnerability, products map[string]string) (map[ecos
 		tag := segmentTypes.DetectionTag(productName)
 		criterionProductName := microsoftutil.NormalizeProductName(productName)
 
-		fixedBuildCriterion, err := buildFixedBuildCriterion(v.CVE, criterionProductName, "")
-		if err != nil {
-			return nil, nil, errors.Wrap(err, "build fixed build criterion")
-		}
-
-		if fixedBuildCriterion != nil {
-			appendConditions(conditionsByEcosystem, tag, []criterionTypes.Criterion{*fixedBuildCriterion})
-			continue
-		}
-
 		appendConditions(conditionsByEcosystem, tag, []criterionTypes.Criterion{{
 			Type: criterionTypes.CriterionTypeVersion,
 			Version: &vcTypes.Criterion{
@@ -1052,29 +899,6 @@ func buildDetections(v cvrf.Vulnerability, products map[string]string) (map[ecos
 				},
 			},
 		}})
-	}
-
-	// Apply missing-product overrides: products Microsoft omitted from CVRF
-	// for this advisory but documented elsewhere as affected. Synthesise a
-	// FixedBuild criterion so detection still fires. Skip when an existing
-	// condition already targets the same tag — that means CVRF now lists the
-	// product (e.g. after re-publication) and we must defer to its data to
-	// avoid emitting a stale FixedBuild side-by-side with the canonical one.
-	for _, mp := range missingProductOverrides[v.CVE] {
-		tag := segmentTypes.DetectionTag(mp.Product)
-		if slices.ContainsFunc(conditionsByEcosystem[ecosystemTypes.EcosystemTypeMicrosoft],
-			func(c conditionTypes.Condition) bool { return c.Tag == tag }) {
-			continue
-		}
-		criterionProductName := microsoftutil.NormalizeProductName(mp.Product)
-		fixedBuildCriterion, err := buildFixedBuildCriterion(v.CVE, criterionProductName, mp.FixedBuild)
-		if err != nil {
-			return nil, nil, errors.Wrapf(err, "build fixed build criterion for missing product %q", mp.Product)
-		}
-		if fixedBuildCriterion == nil {
-			continue
-		}
-		appendConditions(conditionsByEcosystem, tag, []criterionTypes.Criterion{*fixedBuildCriterion})
 	}
 
 	return conditionsByEcosystem, missingFixedBuilds, nil
@@ -1154,152 +978,27 @@ func isHotpatchSubType(subType string) bool {
 	return strings.Contains(strings.ToLower(subType), "hotpatch")
 }
 
-// vendorFixExclusions drops Vendor Fix remediations, keyed by [3]string{CVE
-// ID, product name after microsoftutil.NormalizeProductName, KB ID}.
-//
-// CVRF remediations cannot express that one update is a prerequisite of
-// another, so a monthly hotpatch whose CVE is only fixed by a follow-up
-// update is listed side by side with that update as if either one fixed it.
-// Kept, the monthly hotpatch would gate the follow-up's fixed build (see
-// appendVendorFixConditions) and hide hosts that applied only the monthly
-// hotpatch, so it is excluded. An excluded product stays covered by its other
-// Vendor Fix remediations; buildDetections fails when none is left.
-//
-// A remediation CVRF gets wrong is excluded here and added back corrected by
-// vendorFixAdditions.
-//
-// fixedBuildOverrides cannot express these corrections: its key is the
-// FixedBuild, which a follow-up update may share with the cumulative update.
-var vendorFixExclusions = map[[3]string]struct{}{
-	// CVE-2022-23278: see vendorFixAdditions.
-	{"CVE-2022-23278", "Microsoft Defender for Endpoint for Windows on Windows Server 2022", "5011580"}: {},
-	// 2026-Aug Windows 11: KB5123607 ("OS Builds 26100.9165 and 26200.9165";
-	// and KB5123273 for Pluton-as-TPM devices), "offered after the August 2026
-	// security hotpatch update (KB5120994) is installed", fix CVE-2026-6726 and
-	// CVE-2026-66804 on hotpatch-enrolled devices (CVE-2026-6726 FAQ "Do I need
-	// to do anything additional ..."; https://support.microsoft.com/help/5123607,
-	// https://support.microsoft.com/help/5123273).
-	// Known gap, accepted: KB5123273 is required *in addition* to KB5123607 on
-	// Pluton-as-TPM devices only, and whether a host is one is not in the scan
-	// result, so either KB clears a host and a Pluton host with KB5123607 but
-	// not KB5123273 is missed. Requiring both instead would report every
-	// non-Pluton hotpatch host, which is never offered KB5123273, until its
-	// next update.
-	{"CVE-2026-6726", "Windows 11 Version 24H2 for ARM64-based Systems", "5120994"}: {},
-	{"CVE-2026-6726", "Windows 11 Version 24H2 for x64-based Systems", "5120994"}:   {},
-	{"CVE-2026-6726", "Windows 11 Version 25H2 for ARM64-based Systems", "5120994"}: {},
-	{"CVE-2026-6726", "Windows 11 Version 25H2 for x64-based Systems", "5120994"}:   {},
-	// CVRF of CVE-2026-66804 does not list either follow-up update, so only the
-	// cumulative update remains: hotpatch-enrolled hosts that installed
-	// KB5123607 (.9165) are reported by "version < .9168" until their next
-	// update. Accepted: reporting them beats hiding hosts with only KB5120994.
-	{"CVE-2026-66804", "Windows 11 Version 24H2 for ARM64-based Systems", "5120994"}: {},
-	{"CVE-2026-66804", "Windows 11 Version 24H2 for x64-based Systems", "5120994"}:   {},
-	{"CVE-2026-66804", "Windows 11 Version 25H2 for ARM64-based Systems", "5120994"}: {},
-	{"CVE-2026-66804", "Windows 11 Version 25H2 for x64-based Systems", "5120994"}:   {},
-	// 2026-Aug Windows Server 2022: the monthly hotpatch KB5120229 is followed
-	// by KB5123303; see vendorFixAdditions. KB5123303 itself is listed wrong
-	// and added back corrected there.
-	{"CVE-2026-6726", "Windows Server 2022", "5120229"}:                             {},
-	{"CVE-2026-6726", "Windows Server 2022 (Server Core installation)", "5120229"}:  {},
-	{"CVE-2026-6727", "Windows Server 2022", "5120229"}:                             {},
-	{"CVE-2026-6727", "Windows Server 2022 (Server Core installation)", "5120229"}:  {},
-	{"CVE-2026-66799", "Windows Server 2022", "5120229"}:                            {},
-	{"CVE-2026-66799", "Windows Server 2022 (Server Core installation)", "5120229"}: {},
-	{"CVE-2026-6726", "Windows Server 2022", "5123303"}:                             {},
-	{"CVE-2026-6726", "Windows Server 2022 (Server Core installation)", "5123303"}:  {},
-	{"CVE-2026-6727", "Windows Server 2022", "5123303"}:                             {},
-	{"CVE-2026-6727", "Windows Server 2022 (Server Core installation)", "5123303"}:  {},
-	{"CVE-2026-66799", "Windows Server 2022", "5123303"}:                            {},
-	{"CVE-2026-66799", "Windows Server 2022 (Server Core installation)", "5123303"}: {},
-}
-
-// vendorFixAddition is a Vendor Fix remediation added to one product. Like
-// CVRF's own, it may lack a KB ID or a fixed build, but not both; a product
-// offering a hotpatch needs both (see appendVendorFixConditions).
-type vendorFixAddition struct {
-	kbID       string
-	fixedBuild string
-	hotpatch   bool
-}
-
-// vendorFixAdditions adds Vendor Fix remediations, keyed by [2]string{CVE ID,
-// product name as CVRF lists it}, to a product CVRF lists with a Vendor Fix of
-// its own; buildDetections fails on one it does not. Products CVRF omits
-// altogether are missingProductOverrides's.
-//
-// A hotpatch is otherwise listed beside its month's cumulative update, which
-// fixes the hosts that do not take hotpatches. Where it is the only fix,
-// nothing such a host can install satisfies the KB criterion, and the CVE is
-// reported on it for good. The baseline that followed the hotpatch is added
-// as the other way to be fixed: it is what a hotpatch-enrolled host installs
-// next, and it carries the fixes of the hotpatches before it, otherwise the
-// host would lose them on taking it and every hotpatch after it would have to
-// ship them again. Its fixed build is gated on the hotpatch's KB (see
-// appendVendorFixConditions), so a hotpatched host below it is not reported.
-var vendorFixAdditions = map[[2]string][]vendorFixAddition{
-	// CVE-2022-23278 — Microsoft Defender for Endpoint Spoofing Vulnerability.
-	// The hotpatch KB5011580 is listed under "Microsoft Defender for Endpoint
-	// for Windows on Windows Server 2022 Datacenter: Azure Edition", apart
-	// from the cumulative update KB5011497. Everywhere else CVRF lists a
-	// hotpatch under the same product as its cumulative update, so it is
-	// moved there.
-	{"CVE-2022-23278", "Microsoft Defender for Endpoint for Windows on Windows Server 2022"}: {{kbID: "5011580", fixedBuild: "10.0.20348.580", hotpatch: true}},
-	// CVE-2023-24898 — Windows SMB Denial of Service Vulnerability. Its FAQ:
-	// "This vulnerability only affects the hotpatch version of Windows Server
-	// 2022. If you are not running this version of the operating system, no
-	// action is required for this vulnerability." The May 2023 hotpatch
-	// KB5026456 is followed by the June one (KB5027319) and then by the July
-	// 2023 baseline, KB5028171 (10.0.20348.1850).
-	// The vulnerability is in what the hotpatch version runs and the other
-	// does not, so the May 2023 cumulative update KB5026370 does not fix it:
-	// a host on it is not affected, rather than fixed. Listing it would claim
-	// a fix nothing records. The baseline is where a hotpatched host stays
-	// fixed, so it is taken, as for any later entry; the hosts left reported
-	// are those still on a May or June 2023 cumulative update.
-	{"CVE-2023-24898", "Windows Server 2022"}:                            {{kbID: "5028171", fixedBuild: "10.0.20348.1850"}},
-	{"CVE-2023-24898", "Windows Server 2022 (Server Core installation)"}: {{kbID: "5028171", fixedBuild: "10.0.20348.1850"}},
-	// 2026-Aug Windows Server 2022: KB5123303 ("OS Build 20348.5440"),
-	// "offered after the August 2026 security hotpatch update (KB5120229) is
-	// installed" and applying "only to Windows Server, version 2022 devices
-	// enrolled in hotpatch updates", fixes CVE-2026-6726, CVE-2026-6727 and
-	// CVE-2026-66799 (CVE-2026-6726 / CVE-2026-6727 FAQ;
-	// https://support.microsoft.com/help/5123303). CVRF lists it as a
-	// "Security Update" with the cumulative update's FixedBuild .5499; it is
-	// taken as the hotpatch-track fix at its article's build instead, so a host
-	// that installed it is cleared by its KB whether or not the build moves.
-	{"CVE-2026-6726", "Windows Server 2022"}:                             {{kbID: "5123303", fixedBuild: "10.0.20348.5440", hotpatch: true}},
-	{"CVE-2026-6726", "Windows Server 2022 (Server Core installation)"}:  {{kbID: "5123303", fixedBuild: "10.0.20348.5440", hotpatch: true}},
-	{"CVE-2026-6727", "Windows Server 2022"}:                             {{kbID: "5123303", fixedBuild: "10.0.20348.5440", hotpatch: true}},
-	{"CVE-2026-6727", "Windows Server 2022 (Server Core installation)"}:  {{kbID: "5123303", fixedBuild: "10.0.20348.5440", hotpatch: true}},
-	{"CVE-2026-66799", "Windows Server 2022"}:                            {{kbID: "5123303", fixedBuild: "10.0.20348.5440", hotpatch: true}},
-	{"CVE-2026-66799", "Windows Server 2022 (Server Core installation)"}: {{kbID: "5123303", fixedBuild: "10.0.20348.5440", hotpatch: true}},
-}
-
-// addVendorFixes appends the vendorFixAdditions of a CVE to the fixes of
-// their products, and returns the tags with fixes and the KB IDs added. A
+// addVendorFixes appends the overrideAddVendorFix of the entry to the fixes
+// of their products, and returns the tags with fixes and the KB IDs added. A
 // product is one CVRF lists with a Vendor Fix, kept or excluded.
-func addVendorFixes(cveID string, tags []segmentTypes.DetectionTag, excludedTags map[segmentTypes.DetectionTag][]string, fixesByTag map[segmentTypes.DetectionTag][]vendorFix) ([]segmentTypes.DetectionTag, []string, error) {
+func addVendorFixes(o overriddenVulnerability, tags []segmentTypes.DetectionTag, excludedTags map[segmentTypes.DetectionTag][]string, fixesByTag map[segmentTypes.DetectionTag][]vendorFix) ([]segmentTypes.DetectionTag, []string, error) {
 	var addedKBIDs []string
-	for _, k := range slices.SortedFunc(maps.Keys(vendorFixAdditions), func(a, b [2]string) int {
-		return cmp.Or(cmp.Compare(a[0], b[0]), cmp.Compare(a[1], b[1]))
-	}) {
-		if k[0] != cveID {
-			continue
-		}
-		tag := segmentTypes.DetectionTag(k[1])
+	ps, additions := o.addedVendorFixes()
+	for _, p := range ps {
+		tag := segmentTypes.DetectionTag(p)
 		_, kept := fixesByTag[tag]
 		_, excluded := excludedTags[tag]
 		if !kept && !excluded {
-			return nil, nil, errors.Errorf("unexpected vendorFixAdditions for %s. expected: a product listed with a Vendor Fix, actual: %q, please add it to missingProductOverrides if CVRF omits it", cveID, k[1])
+			return nil, nil, errors.Errorf("unexpected overrideAddVendorFix for %s. expected: a product listed with a Vendor Fix, actual: %q, please use an overrideAddProduct if CVRF omits it", o.v.CVE, p)
 		}
 		if !kept {
 			tags = append(tags, tag)
 		}
 
-		product := microsoftutil.NormalizeProductName(k[1])
-		for _, a := range vendorFixAdditions[k] {
-			version, err := buildFixedBuildCriterion(cveID, product, a.fixedBuild)
+		product := microsoftutil.NormalizeProductName(p)
+		for _, i := range additions[p] {
+			a := cvrfOverrides[i]
+			version, err := buildFixedBuildCriterion(o.v.CVE, product, a.fixedBuild)
 			if err != nil {
 				return nil, nil, errors.Wrap(err, "build fixed build criterion")
 			}
@@ -1308,27 +1007,28 @@ func addVendorFixes(cveID string, tags []segmentTypes.DetectionTag, excludedTags
 				f.kbs = append(f.kbs, *kb)
 			}
 			if len(f.kbs) == 0 && f.version == nil {
-				return nil, nil, errors.Errorf("unexpected vendorFixAdditions for %s (%s). expected: a numeric KB ID or a usable fixed build, actual: KB ID %q, fixed build %q", cveID, k[1], a.kbID, a.fixedBuild)
+				return nil, nil, errors.Errorf("unexpected overrideAddVendorFix for %s (%s). expected: a numeric KB ID or a usable fixed build, actual: KB ID %q, fixed build %q", o.v.CVE, p, a.kbID, a.fixedBuild)
 			}
 			fixesByTag[tag] = append(fixesByTag[tag], f)
 			addedKBIDs = append(addedKBIDs, a.kbID)
+			o.usage.use(i)
 		}
 	}
 	return tags, addedKBIDs, nil
 }
 
 // hotpatchFixesReviewed acknowledges detection tags, keyed by [2]string{CVE
-// ID, product name after microsoftutil.NormalizeProductName} like
-// vendorFixExclusions, that offer a hotpatch and list more than two
-// KBs (see needsHotpatchReview) but were checked against the CVE FAQ and the
-// KB articles and need no vendorFixExclusions entry.
+// ID, product name after microsoftutil.NormalizeProductName}, that offer a
+// hotpatch and list more than two KBs (see needsHotpatchReview) but were
+// checked against the CVE FAQ and the KB articles and need no
+// overrideExcludeVendorFix.
 var hotpatchFixesReviewed = map[[2]string]struct{}{}
 
 // needsHotpatchReview reports whether a detection tag offering a hotpatch
 // lists more than two distinct KBs, i.e. more than the usual hotpatch and
 // cumulative update pair. Such extra updates have been follow-ups offered only
 // after the monthly hotpatch (2026-Aug), which CVRF cannot express; reading
-// the CVE FAQ and the KB articles decides between vendorFixExclusions and
+// the CVE FAQ and the KB articles decides between overrideExcludeVendorFix and
 // hotpatchFixesReviewed.
 func needsHotpatchReview(fixes []vendorFix) bool {
 	if !slices.ContainsFunc(fixes, func(f vendorFix) bool { return f.hotpatch }) {
@@ -1391,15 +1091,15 @@ func appendVendorFixConditions(conditionsByEcosystem map[ecosystemTypes.Ecosyste
 			// it, which brings back the false positive the gating removes.
 			// A Vendor Fix yielding neither criterion never reaches here, so
 			// the fix has a fixed build to locate it by.
-			return errors.Errorf("unexpected Vendor Fix without a numeric KB ID for a product offering a hotpatch. expected: a KB ID for the fix at %q, actual: none, please exclude the fix via vendorFixExclusions if it does not fix the CVE on its own", f.version.Version.Affected.Range[0].LessThan)
+			return errors.Errorf("unexpected Vendor Fix without a numeric KB ID for a product offering a hotpatch. expected: a KB ID for the fix at %q, actual: none, please exclude the fix via an overrideExcludeVendorFix if it does not fix the CVE on its own", f.version.Version.Affected.Range[0].LessThan)
 		}
 		appendConditions(conditionsByEcosystem, tag, f.kbs)
 
 		if f.version == nil {
 			// Without a fixed build the fix cannot be ordered, so its KB
 			// would never gate the other fixes' builds. Such a fix needs
-			// adding back with a fixed build by vendorFixAdditions.
-			return errors.Errorf("unexpected Vendor Fix without a usable FixedBuild for a product offering a hotpatch. expected: a fixed build for KBs %q, actual: none, please exclude the fix via vendorFixExclusions and add it with a fixed build via vendorFixAdditions", func() []string {
+			// adding back with a fixed build by an overrideAddVendorFix.
+			return errors.Errorf("unexpected Vendor Fix without a usable FixedBuild for a product offering a hotpatch. expected: a fixed build for KBs %q, actual: none, please exclude the fix via an overrideExcludeVendorFix and add it with a fixed build via an overrideAddVendorFix", func() []string {
 				ids := make([]string, 0, len(f.kbs))
 				for _, kb := range f.kbs {
 					ids = append(ids, kb.KB.KBID)
@@ -1419,10 +1119,10 @@ func appendVendorFixConditions(conditionsByEcosystem map[ecosystemTypes.Ecosyste
 
 	// Ordering builds across servicing branches is meaningless, and a build
 	// leaked from a sibling branch would gate the real one. Such values need
-	// a fixedBuildOverrides entry.
+	// an overrideFixedBuild.
 	for _, vf := range vfs {
 		if vf.build.Major != vfs[0].build.Major || vf.build.Minor != vfs[0].build.Minor || vf.build.Build != vfs[0].build.Build {
-			return errors.Errorf("unexpected servicing branch mix among fixed builds. expected: %q, actual: %q, please add fixedBuildOverrides", vfs[0].build.String(), vf.build.String())
+			return errors.Errorf("unexpected servicing branch mix among fixed builds. expected: %q, actual: %q, please add an overrideFixedBuild", vfs[0].build.String(), vf.build.String())
 		}
 	}
 
@@ -1468,7 +1168,7 @@ func appendGatedCondition(conditionsByEcosystem map[ecosystemTypes.Ecosystem][]c
 
 // cleanFixedBuild applies the generic cleanup to a raw CVRF FixedBuild value.
 // It is shared between buildFixedBuildCriterion and the missing-FixedBuild
-// check in buildDetections so that both agree on the fixedBuildOverrides key.
+// check in applyOverrides so that both agree on the overrideFixedBuild key.
 func cleanFixedBuild(rawFixedBuild string) string {
 	fixedBuild := strings.TrimSpace(rawFixedBuild)
 	fixedBuild = strings.TrimRight(fixedBuild, ".")
@@ -1486,11 +1186,6 @@ var releaseCandidateTagRE = regexp.MustCompile(`^\d+(\.\d+)+( RC\d+|-rc\.\d+(\.\
 
 func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criterionTypes.Criterion, error) {
 	fixedBuild := cleanFixedBuild(rawFixedBuild)
-
-	// Apply FixedBuild overrides for known data issues
-	if fb, ok := fixedBuildOverrides[[3]string{cveID, productName, fixedBuild}]; ok {
-		fixedBuild = fb
-	}
 
 	if fixedBuild == "" {
 		return nil, nil
@@ -1512,7 +1207,7 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 	//    prerelease. Other values containing a space or a hyphen are not skipped: on
 	//    version-compared products they have been recoverable typos (e.g. "96.0 1954.29")
 	//    or servicing builds (e.g. "5.0.6-servicing.21220.11"), which should fail and
-	//    get a fixedBuildOverrides entry
+	//    get an overrideFixedBuild
 	if fixedBuild[0] < '0' || fixedBuild[0] > '9' || strings.Contains(fixedBuild, "x") || !strings.Contains(fixedBuild, ".") || strings.ContainsAny(fixedBuild, ";,") || releaseCandidateTagRE.MatchString(fixedBuild) {
 		return nil, nil
 	}
@@ -2183,1247 +1878,6 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 	}, nil
 }
 
-// fixedBuildOverrides maps (CVE ID, product name, incorrect FixedBuild) to corrected FixedBuild values
-// for known data issues in CVRF.
-// The key is [3]string{CVE ID, product name after microsoftutil.NormalizeProductName, incorrect FixedBuild value after generic cleanup}.
-// An empty value means "intentionally no criterion": the entry acknowledges the upstream data gap
-// and skips criterion generation. For Microsoft Edge (Chromium-based), a Vendor Fix that yields no
-// criterion and has no entry here fails the extraction (see buildDetections), because such CVEs
-// would otherwise become silently undetectable.
-var fixedBuildOverrides = map[[3]string]string{
-	// .NET Core / .NET 5+ (FixedBuild has pre-release suffix that the parser doesn't accept)
-	// 2021-May (FixedBuild "5.0.6-servicing.21220.11" / "3.1.15-servicing.21214.3" has pre-release suffix)
-	{"CVE-2021-31204", ".NET 5.0", "5.0.6-servicing.21220.11"}:      "5.0.6",
-	{"CVE-2021-31204", ".NET Core 3.1", "3.1.15-servicing.21214.3"}: "3.1.15",
-
-	// Microsoft Defender for Endpoint for Linux (FixedBuild is 4-part, parser expects 3-part)
-	// 2026-Feb (CVE-2026-21537, FixedBuild "1.0.9.0" has extra revision segment)
-	{"CVE-2026-21537", "Microsoft Defender for Endpoint for Linux", "1.0.9.0"}: "1.0.9",
-
-	// Microsoft Edge (Chromium-based)
-	// 2020-May (Edge 83)
-	{"CVE-2020-1195", "Microsoft Edge (Chromium-based)", ""}: "83.0.478.37",
-	// 2020-Jul (Edge 84)
-	{"CVE-2020-1341", "Microsoft Edge (Chromium-based)", ""}: "84.0.522.40",
-	// 2020-Sep (Edge 85)
-	{"CVE-2020-16884", "Microsoft Edge (Chromium-based)", ""}: "85.0.564.44",
-	// 2021-Jan (Edge 88.0.705.50)
-	{"CVE-2020-16044", "Microsoft Edge (Chromium-based)", ""}: "88.0.705.50",
-	{"CVE-2021-21118", "Microsoft Edge (Chromium-based)", ""}: "88.0.705.50",
-	{"CVE-2021-21119", "Microsoft Edge (Chromium-based)", ""}: "88.0.705.50",
-	{"CVE-2021-21120", "Microsoft Edge (Chromium-based)", ""}: "88.0.705.50",
-	{"CVE-2021-21121", "Microsoft Edge (Chromium-based)", ""}: "88.0.705.50",
-	{"CVE-2021-21122", "Microsoft Edge (Chromium-based)", ""}: "88.0.705.50",
-	{"CVE-2021-21123", "Microsoft Edge (Chromium-based)", ""}: "88.0.705.50",
-	{"CVE-2021-21124", "Microsoft Edge (Chromium-based)", ""}: "88.0.705.50",
-	{"CVE-2021-21125", "Microsoft Edge (Chromium-based)", ""}: "88.0.705.50",
-	{"CVE-2021-21126", "Microsoft Edge (Chromium-based)", ""}: "88.0.705.50",
-	{"CVE-2021-21127", "Microsoft Edge (Chromium-based)", ""}: "88.0.705.50",
-	{"CVE-2021-21128", "Microsoft Edge (Chromium-based)", ""}: "88.0.705.50",
-	{"CVE-2021-21129", "Microsoft Edge (Chromium-based)", ""}: "88.0.705.50",
-	{"CVE-2021-21130", "Microsoft Edge (Chromium-based)", ""}: "88.0.705.50",
-	{"CVE-2021-21131", "Microsoft Edge (Chromium-based)", ""}: "88.0.705.50",
-	{"CVE-2021-21132", "Microsoft Edge (Chromium-based)", ""}: "88.0.705.50",
-	{"CVE-2021-21133", "Microsoft Edge (Chromium-based)", ""}: "88.0.705.50",
-	{"CVE-2021-21134", "Microsoft Edge (Chromium-based)", ""}: "88.0.705.50",
-	{"CVE-2021-21135", "Microsoft Edge (Chromium-based)", ""}: "88.0.705.50",
-	{"CVE-2021-21136", "Microsoft Edge (Chromium-based)", ""}: "88.0.705.50",
-	{"CVE-2021-21137", "Microsoft Edge (Chromium-based)", ""}: "88.0.705.50",
-	{"CVE-2021-21139", "Microsoft Edge (Chromium-based)", ""}: "88.0.705.50",
-	{"CVE-2021-21140", "Microsoft Edge (Chromium-based)", ""}: "88.0.705.50",
-	{"CVE-2021-21141", "Microsoft Edge (Chromium-based)", ""}: "88.0.705.50",
-	// 2021-Feb (Edge 88.0.705.62, 88.0.705.63, 88.0.705.74)
-	{"CVE-2021-21142", "Microsoft Edge (Chromium-based)", ""}: "88.0.705.62",
-	{"CVE-2021-21143", "Microsoft Edge (Chromium-based)", ""}: "88.0.705.62",
-	{"CVE-2021-21144", "Microsoft Edge (Chromium-based)", ""}: "88.0.705.62",
-	{"CVE-2021-21145", "Microsoft Edge (Chromium-based)", ""}: "88.0.705.62",
-	{"CVE-2021-21146", "Microsoft Edge (Chromium-based)", ""}: "88.0.705.62",
-	{"CVE-2021-21147", "Microsoft Edge (Chromium-based)", ""}: "88.0.705.62",
-	{"CVE-2021-24113", "Microsoft Edge (Chromium-based)", ""}: "88.0.705.62",
-	{"CVE-2021-21148", "Microsoft Edge (Chromium-based)", ""}: "88.0.705.63",
-	{"CVE-2021-21149", "Microsoft Edge (Chromium-based)", ""}: "88.0.705.74",
-	{"CVE-2021-21150", "Microsoft Edge (Chromium-based)", ""}: "88.0.705.74",
-	{"CVE-2021-21151", "Microsoft Edge (Chromium-based)", ""}: "88.0.705.74",
-	{"CVE-2021-21152", "Microsoft Edge (Chromium-based)", ""}: "88.0.705.74",
-	{"CVE-2021-21153", "Microsoft Edge (Chromium-based)", ""}: "88.0.705.74",
-	{"CVE-2021-21154", "Microsoft Edge (Chromium-based)", ""}: "88.0.705.74",
-	{"CVE-2021-21155", "Microsoft Edge (Chromium-based)", ""}: "88.0.705.74",
-	{"CVE-2021-21156", "Microsoft Edge (Chromium-based)", ""}: "88.0.705.74",
-	{"CVE-2021-21157", "Microsoft Edge (Chromium-based)", ""}: "88.0.705.74",
-	// 2021-Mar (Edge 89.0.774.45, 89.0.774.54)
-	{"CVE-2020-27844", "Microsoft Edge (Chromium-based)", ""}: "89.0.774.45",
-	{"CVE-2021-21159", "Microsoft Edge (Chromium-based)", ""}: "89.0.774.45",
-	{"CVE-2021-21160", "Microsoft Edge (Chromium-based)", ""}: "89.0.774.45",
-	{"CVE-2021-21161", "Microsoft Edge (Chromium-based)", ""}: "89.0.774.45",
-	{"CVE-2021-21162", "Microsoft Edge (Chromium-based)", ""}: "89.0.774.45",
-	{"CVE-2021-21163", "Microsoft Edge (Chromium-based)", ""}: "89.0.774.45",
-	{"CVE-2021-21164", "Microsoft Edge (Chromium-based)", ""}: "89.0.774.45",
-	{"CVE-2021-21165", "Microsoft Edge (Chromium-based)", ""}: "89.0.774.45",
-	{"CVE-2021-21166", "Microsoft Edge (Chromium-based)", ""}: "89.0.774.45",
-	{"CVE-2021-21167", "Microsoft Edge (Chromium-based)", ""}: "89.0.774.45",
-	{"CVE-2021-21168", "Microsoft Edge (Chromium-based)", ""}: "89.0.774.45",
-	{"CVE-2021-21169", "Microsoft Edge (Chromium-based)", ""}: "89.0.774.45",
-	{"CVE-2021-21170", "Microsoft Edge (Chromium-based)", ""}: "89.0.774.45",
-	{"CVE-2021-21171", "Microsoft Edge (Chromium-based)", ""}: "89.0.774.45",
-	{"CVE-2021-21172", "Microsoft Edge (Chromium-based)", ""}: "89.0.774.45",
-	{"CVE-2021-21173", "Microsoft Edge (Chromium-based)", ""}: "89.0.774.45",
-	{"CVE-2021-21174", "Microsoft Edge (Chromium-based)", ""}: "89.0.774.45",
-	{"CVE-2021-21175", "Microsoft Edge (Chromium-based)", ""}: "89.0.774.45",
-	{"CVE-2021-21176", "Microsoft Edge (Chromium-based)", ""}: "89.0.774.45",
-	{"CVE-2021-21177", "Microsoft Edge (Chromium-based)", ""}: "89.0.774.45",
-	{"CVE-2021-21178", "Microsoft Edge (Chromium-based)", ""}: "89.0.774.45",
-	{"CVE-2021-21179", "Microsoft Edge (Chromium-based)", ""}: "89.0.774.45",
-	{"CVE-2021-21180", "Microsoft Edge (Chromium-based)", ""}: "89.0.774.45",
-	{"CVE-2021-21181", "Microsoft Edge (Chromium-based)", ""}: "89.0.774.45",
-	{"CVE-2021-21182", "Microsoft Edge (Chromium-based)", ""}: "89.0.774.45",
-	{"CVE-2021-21183", "Microsoft Edge (Chromium-based)", ""}: "89.0.774.45",
-	{"CVE-2021-21184", "Microsoft Edge (Chromium-based)", ""}: "89.0.774.45",
-	{"CVE-2021-21185", "Microsoft Edge (Chromium-based)", ""}: "89.0.774.45",
-	{"CVE-2021-21186", "Microsoft Edge (Chromium-based)", ""}: "89.0.774.45",
-	{"CVE-2021-21187", "Microsoft Edge (Chromium-based)", ""}: "89.0.774.45",
-	{"CVE-2021-21188", "Microsoft Edge (Chromium-based)", ""}: "89.0.774.45",
-	{"CVE-2021-21189", "Microsoft Edge (Chromium-based)", ""}: "89.0.774.45",
-	{"CVE-2021-21190", "Microsoft Edge (Chromium-based)", ""}: "89.0.774.45",
-	{"CVE-2021-21191", "Microsoft Edge (Chromium-based)", ""}: "89.0.774.54",
-	{"CVE-2021-21192", "Microsoft Edge (Chromium-based)", ""}: "89.0.774.54",
-	{"CVE-2021-21193", "Microsoft Edge (Chromium-based)", ""}: "89.0.774.54",
-	// 2021-Apr (Edge 89.0.774.68, 89.0.774.77, 90.0.818.39, 90.0.818.46, 90.0.818.51)
-	{"CVE-2021-21194", "Microsoft Edge (Chromium-based)", ""}: "89.0.774.68",
-	{"CVE-2021-21195", "Microsoft Edge (Chromium-based)", ""}: "89.0.774.68",
-	{"CVE-2021-21196", "Microsoft Edge (Chromium-based)", ""}: "89.0.774.68",
-	{"CVE-2021-21197", "Microsoft Edge (Chromium-based)", ""}: "89.0.774.68",
-	{"CVE-2021-21198", "Microsoft Edge (Chromium-based)", ""}: "89.0.774.68",
-	{"CVE-2021-21199", "Microsoft Edge (Chromium-based)", ""}: "89.0.774.68",
-	{"CVE-2021-21206", "Microsoft Edge (Chromium-based)", ""}: "89.0.774.77",
-	{"CVE-2021-21220", "Microsoft Edge (Chromium-based)", ""}: "89.0.774.77",
-	{"CVE-2021-21201", "Microsoft Edge (Chromium-based)", ""}: "90.0.818.39",
-	{"CVE-2021-21202", "Microsoft Edge (Chromium-based)", ""}: "90.0.818.39",
-	{"CVE-2021-21203", "Microsoft Edge (Chromium-based)", ""}: "90.0.818.39",
-	{"CVE-2021-21204", "Microsoft Edge (Chromium-based)", ""}: "90.0.818.39",
-	{"CVE-2021-21205", "Microsoft Edge (Chromium-based)", ""}: "90.0.818.39",
-	{"CVE-2021-21207", "Microsoft Edge (Chromium-based)", ""}: "90.0.818.39",
-	{"CVE-2021-21208", "Microsoft Edge (Chromium-based)", ""}: "90.0.818.39",
-	{"CVE-2021-21209", "Microsoft Edge (Chromium-based)", ""}: "90.0.818.39",
-	{"CVE-2021-21210", "Microsoft Edge (Chromium-based)", ""}: "90.0.818.39",
-	{"CVE-2021-21211", "Microsoft Edge (Chromium-based)", ""}: "90.0.818.39",
-	{"CVE-2021-21212", "Microsoft Edge (Chromium-based)", ""}: "90.0.818.39",
-	{"CVE-2021-21213", "Microsoft Edge (Chromium-based)", ""}: "90.0.818.39",
-	{"CVE-2021-21214", "Microsoft Edge (Chromium-based)", ""}: "90.0.818.39",
-	{"CVE-2021-21215", "Microsoft Edge (Chromium-based)", ""}: "90.0.818.39",
-	{"CVE-2021-21216", "Microsoft Edge (Chromium-based)", ""}: "90.0.818.39",
-	{"CVE-2021-21217", "Microsoft Edge (Chromium-based)", ""}: "90.0.818.39",
-	{"CVE-2021-21218", "Microsoft Edge (Chromium-based)", ""}: "90.0.818.39",
-	{"CVE-2021-21219", "Microsoft Edge (Chromium-based)", ""}: "90.0.818.39",
-	{"CVE-2021-21221", "Microsoft Edge (Chromium-based)", ""}: "90.0.818.39",
-	{"CVE-2021-21222", "Microsoft Edge (Chromium-based)", ""}: "90.0.818.46",
-	{"CVE-2021-21223", "Microsoft Edge (Chromium-based)", ""}: "90.0.818.46",
-	// CVE-2021-21224 (exploited in the wild) shipped in 90.0.818.41 per the Edge security release
-	// notes (Apr 16, 2021); the FAQ version table gives the later 90.0.818.46 with a 4/15/2021 date
-	{"CVE-2021-21224", "Microsoft Edge (Chromium-based)", ""}: "90.0.818.41",
-	{"CVE-2021-21225", "Microsoft Edge (Chromium-based)", ""}: "90.0.818.46",
-	{"CVE-2021-21226", "Microsoft Edge (Chromium-based)", ""}: "90.0.818.46",
-	{"CVE-2021-21227", "Microsoft Edge (Chromium-based)", ""}: "90.0.818.51",
-	{"CVE-2021-21228", "Microsoft Edge (Chromium-based)", ""}: "90.0.818.51",
-	{"CVE-2021-21229", "Microsoft Edge (Chromium-based)", ""}: "90.0.818.51",
-	{"CVE-2021-21230", "Microsoft Edge (Chromium-based)", ""}: "90.0.818.51",
-	{"CVE-2021-21231", "Microsoft Edge (Chromium-based)", ""}: "90.0.818.51",
-	{"CVE-2021-21232", "Microsoft Edge (Chromium-based)", ""}: "90.0.818.51",
-	{"CVE-2021-21233", "Microsoft Edge (Chromium-based)", ""}: "90.0.818.51",
-	// 2021-May (Edge 90.0.818.62)
-	{"CVE-2021-30506", "Microsoft Edge (Chromium-based)", ""}: "90.0.818.62",
-	{"CVE-2021-30507", "Microsoft Edge (Chromium-based)", ""}: "90.0.818.62",
-	{"CVE-2021-30508", "Microsoft Edge (Chromium-based)", ""}: "90.0.818.62",
-	{"CVE-2021-30509", "Microsoft Edge (Chromium-based)", ""}: "90.0.818.62",
-	{"CVE-2021-30510", "Microsoft Edge (Chromium-based)", ""}: "90.0.818.62",
-	{"CVE-2021-30511", "Microsoft Edge (Chromium-based)", ""}: "90.0.818.62",
-	{"CVE-2021-30512", "Microsoft Edge (Chromium-based)", ""}: "90.0.818.62",
-	{"CVE-2021-30513", "Microsoft Edge (Chromium-based)", ""}: "90.0.818.62",
-	{"CVE-2021-30514", "Microsoft Edge (Chromium-based)", ""}: "90.0.818.62",
-	{"CVE-2021-30515", "Microsoft Edge (Chromium-based)", ""}: "90.0.818.62",
-	{"CVE-2021-30516", "Microsoft Edge (Chromium-based)", ""}: "90.0.818.62",
-	{"CVE-2021-30517", "Microsoft Edge (Chromium-based)", ""}: "90.0.818.62",
-	{"CVE-2021-30518", "Microsoft Edge (Chromium-based)", ""}: "90.0.818.62",
-	{"CVE-2021-30519", "Microsoft Edge (Chromium-based)", ""}: "90.0.818.62",
-	{"CVE-2021-30520", "Microsoft Edge (Chromium-based)", ""}: "90.0.818.62",
-	// 2021-Jun (Edge 91.0.864.48)
-	{"CVE-2021-30544", "Microsoft Edge (Chromium-based)", ""}: "91.0.864.48",
-	{"CVE-2021-30545", "Microsoft Edge (Chromium-based)", ""}: "91.0.864.48",
-	{"CVE-2021-30546", "Microsoft Edge (Chromium-based)", ""}: "91.0.864.48",
-	{"CVE-2021-30547", "Microsoft Edge (Chromium-based)", ""}: "91.0.864.48",
-	{"CVE-2021-30548", "Microsoft Edge (Chromium-based)", ""}: "91.0.864.48",
-	{"CVE-2021-30549", "Microsoft Edge (Chromium-based)", ""}: "91.0.864.48",
-	{"CVE-2021-30550", "Microsoft Edge (Chromium-based)", ""}: "91.0.864.48",
-	{"CVE-2021-30551", "Microsoft Edge (Chromium-based)", ""}: "91.0.864.48",
-	{"CVE-2021-30552", "Microsoft Edge (Chromium-based)", ""}: "91.0.864.48",
-	{"CVE-2021-30553", "Microsoft Edge (Chromium-based)", ""}: "91.0.864.48",
-	// 2021-Nov (Edge 96.0.1054.29, FixedBuild has typo "96.0 1954.29"; the FAQ version table
-	// repeats it as 96.0.1954.29, but the Edge 96 branch is 1054 per the Edge security release
-	// notes, Nov 19, 2021)
-	{"CVE-2021-38005", "Microsoft Edge (Chromium-based)", "96.0 1954.29"}: "96.0.1054.29",
-	{"CVE-2021-38006", "Microsoft Edge (Chromium-based)", "96.0 1954.29"}: "96.0.1054.29",
-	{"CVE-2021-38007", "Microsoft Edge (Chromium-based)", "96.0 1954.29"}: "96.0.1054.29",
-	{"CVE-2021-38008", "Microsoft Edge (Chromium-based)", "96.0 1954.29"}: "96.0.1054.29",
-	{"CVE-2021-38009", "Microsoft Edge (Chromium-based)", "96.0 1954.29"}: "96.0.1054.29",
-	{"CVE-2021-38010", "Microsoft Edge (Chromium-based)", "96.0 1954.29"}: "96.0.1054.29",
-	{"CVE-2021-38011", "Microsoft Edge (Chromium-based)", "96.0 1954.29"}: "96.0.1054.29",
-	{"CVE-2021-38012", "Microsoft Edge (Chromium-based)", "96.0 1954.29"}: "96.0.1054.29",
-	{"CVE-2021-38013", "Microsoft Edge (Chromium-based)", "96.0 1954.29"}: "96.0.1054.29",
-	{"CVE-2021-38014", "Microsoft Edge (Chromium-based)", "96.0 1954.29"}: "96.0.1054.29",
-	{"CVE-2021-38015", "Microsoft Edge (Chromium-based)", "96.0 1954.29"}: "96.0.1054.29",
-	{"CVE-2021-38016", "Microsoft Edge (Chromium-based)", "96.0 1954.29"}: "96.0.1054.29",
-	{"CVE-2021-38017", "Microsoft Edge (Chromium-based)", "96.0 1954.29"}: "96.0.1054.29",
-	{"CVE-2021-38018", "Microsoft Edge (Chromium-based)", "96.0 1954.29"}: "96.0.1054.29",
-	{"CVE-2021-38019", "Microsoft Edge (Chromium-based)", "96.0 1954.29"}: "96.0.1054.29",
-	{"CVE-2021-38020", "Microsoft Edge (Chromium-based)", "96.0 1954.29"}: "96.0.1054.29",
-	{"CVE-2021-38021", "Microsoft Edge (Chromium-based)", "96.0 1954.29"}: "96.0.1054.29",
-	{"CVE-2021-38022", "Microsoft Edge (Chromium-based)", "96.0 1954.29"}: "96.0.1054.29",
-	{"CVE-2021-42308", "Microsoft Edge (Chromium-based)", "96.0 1954.29"}: "96.0.1054.29",
-	{"CVE-2021-43220", "Microsoft Edge for iOS", "96.0 1954.29"}:          "96.0.1054.29",
-	{"CVE-2021-43221", "Microsoft Edge (Chromium-based)", "96.0 1954.29"}: "96.0.1054.29",
-	// 2023-Feb (Edge 109.0.1518.78, FixedBuild has typo "109.0.15.18.78")
-	{"CVE-2023-21720", "Microsoft Edge (Chromium-based)", "109.0.15.18.78"}: "109.0.1518.78",
-	// 2023-Apr (Edge 112.0.1722.34, FixedBuild has Chromium version "112.0.5615.49/50" instead of Edge version)
-	{"CVE-2023-1810", "Microsoft Edge (Chromium-based)", "112.0.5615.49/50"}:  "112.0.1722.34",
-	{"CVE-2023-1811", "Microsoft Edge (Chromium-based)", "112.0.5615.49/50"}:  "112.0.1722.34",
-	{"CVE-2023-1812", "Microsoft Edge (Chromium-based)", "112.0.5615.49/50"}:  "112.0.1722.34",
-	{"CVE-2023-1813", "Microsoft Edge (Chromium-based)", "112.0.5615.49/50"}:  "112.0.1722.34",
-	{"CVE-2023-1814", "Microsoft Edge (Chromium-based)", "112.0.5615.49/50"}:  "112.0.1722.34",
-	{"CVE-2023-1815", "Microsoft Edge (Chromium-based)", "112.0.5615.49/50"}:  "112.0.1722.34",
-	{"CVE-2023-1816", "Microsoft Edge (Chromium-based)", "112.0.5615.49/50"}:  "112.0.1722.34",
-	{"CVE-2023-1817", "Microsoft Edge (Chromium-based)", "112.0.5615.49/50"}:  "112.0.1722.34",
-	{"CVE-2023-1818", "Microsoft Edge (Chromium-based)", "112.0.5615.49/50"}:  "112.0.1722.34",
-	{"CVE-2023-1819", "Microsoft Edge (Chromium-based)", "112.0.5615.49/50"}:  "112.0.1722.34",
-	{"CVE-2023-1820", "Microsoft Edge (Chromium-based)", "112.0.5615.49/50"}:  "112.0.1722.34",
-	{"CVE-2023-1821", "Microsoft Edge (Chromium-based)", "112.0.5615.49/50"}:  "112.0.1722.34",
-	{"CVE-2023-1822", "Microsoft Edge (Chromium-based)", "112.0.5615.49/50"}:  "112.0.1722.34",
-	{"CVE-2023-1823", "Microsoft Edge (Chromium-based)", "112.0.5615.49/50"}:  "112.0.1722.34",
-	{"CVE-2023-24935", "Microsoft Edge (Chromium-based)", "112.0.5615.49/50"}: "112.0.1722.34",
-	{"CVE-2023-28301", "Microsoft Edge for Android", "112.0.5615.49/50"}:      "112.0.1722.34",
-	// 2025-May (Edge 136.0.3240.64, FixedBuild has "v" prefix "v136.0.3240.64")
-	{"CVE-2025-4372", "Microsoft Edge (Chromium-based)", "v136.0.3240.64"}: "136.0.3240.64",
-	// 2026-Mar (Edge 145.0.3800.99, FixedBuild "145.3800.99" has only 3 segments instead of 4)
-	{"CVE-2026-3537", "Microsoft Edge (Chromium-based)", "145.3800.99"}: "145.0.3800.99",
-	// 2026-Jul (Chromium 150 batch CVEs published without FixedBuild; mapped to the
-	// Edge 150 security releases via the NVD Chrome fixed versions, cross-checked
-	// against sibling entries in the same CVRF document that do carry FixedBuild:
-	// Chrome 150.0.7871.46/47 -> Edge 150.0.4078.48, Chrome 150.0.7871.125 -> Edge 150.0.4078.80)
-	{"CVE-2026-13918", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
-	{"CVE-2026-13973", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
-	{"CVE-2026-13989", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
-	{"CVE-2026-14006", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
-	{"CVE-2026-14016", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
-	{"CVE-2026-14027", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
-	{"CVE-2026-14034", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
-	{"CVE-2026-14035", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
-	{"CVE-2026-14036", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
-	{"CVE-2026-14037", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
-	{"CVE-2026-14038", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
-	{"CVE-2026-14039", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
-	{"CVE-2026-14040", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
-	{"CVE-2026-14041", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
-	{"CVE-2026-14042", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
-	{"CVE-2026-14043", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
-	{"CVE-2026-14044", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
-	{"CVE-2026-14045", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
-	{"CVE-2026-14046", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
-	{"CVE-2026-14047", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
-	{"CVE-2026-14048", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
-	{"CVE-2026-14049", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
-	{"CVE-2026-14050", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
-	{"CVE-2026-14051", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
-	{"CVE-2026-14052", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
-	{"CVE-2026-14053", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
-	{"CVE-2026-14054", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
-	{"CVE-2026-14055", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
-	{"CVE-2026-14056", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
-	{"CVE-2026-14057", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
-	{"CVE-2026-14058", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
-	{"CVE-2026-14059", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
-	{"CVE-2026-14060", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
-	{"CVE-2026-14061", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
-	{"CVE-2026-14062", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
-	{"CVE-2026-14063", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
-	{"CVE-2026-14064", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
-	{"CVE-2026-14065", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
-	{"CVE-2026-14068", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
-	{"CVE-2026-14069", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
-	{"CVE-2026-14070", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
-	{"CVE-2026-14071", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
-	{"CVE-2026-14072", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
-	{"CVE-2026-14073", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
-	{"CVE-2026-14074", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
-	{"CVE-2026-14076", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
-	{"CVE-2026-14077", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
-	{"CVE-2026-14078", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
-	{"CVE-2026-14079", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
-	{"CVE-2026-14080", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
-	{"CVE-2026-14081", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
-	{"CVE-2026-14082", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
-	{"CVE-2026-14083", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
-	{"CVE-2026-14084", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
-	{"CVE-2026-14085", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
-	{"CVE-2026-14086", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
-	{"CVE-2026-14087", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
-	{"CVE-2026-14088", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
-	{"CVE-2026-14089", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
-	{"CVE-2026-14090", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
-	{"CVE-2026-14091", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
-	{"CVE-2026-14092", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
-	{"CVE-2026-14093", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
-	{"CVE-2026-14094", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
-	{"CVE-2026-14095", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
-	{"CVE-2026-14097", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
-	{"CVE-2026-14105", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
-	{"CVE-2026-14116", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
-	{"CVE-2026-14130", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
-	{"CVE-2026-14142", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
-	{"CVE-2026-14153", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
-	{"CVE-2026-14397", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.48",
-	{"CVE-2026-15764", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.80",
-	{"CVE-2026-15765", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.80",
-	{"CVE-2026-15766", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.80",
-	{"CVE-2026-15768", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.80",
-	{"CVE-2026-15769", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.80",
-	{"CVE-2026-15770", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.80",
-	// CVE-2026-57990 carries no Remediations at all, so it reaches the
-	// ProductStatuses fallback instead of the Vendor Fix guard; its FAQ version
-	// table gives 150.0.4078.99 (07/24/2026, Chromium 150.0.7871.187), matching
-	// the FixedBuild carried by CVE-2026-57978/57989 in the same document
-	{"CVE-2026-57990", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.99",
-	// 2026-Aug (Edge 152, Microsoft-CNA CVEs): FixedBuild "152.0.4191.52" matches no
-	// release; the FAQ version table and the Edge security release notes (Aug 27, 2026)
-	// give 152.0.4191.53, as does CVE-2026-72984's own Chromium-based Vendor Fix.
-	// CVE-2026-58616/62904/66798 list Chromium-based as Known Affected but attach the
-	// Vendor Fix only to the platform products, so it reaches the ProductStatuses fallback
-	{"CVE-2026-58616", "Microsoft Edge (Chromium-based)", ""}:              "152.0.4191.53",
-	{"CVE-2026-58616", "Microsoft Edge for Linux", "152.0.4191.52"}:        "152.0.4191.53",
-	{"CVE-2026-58616", "Microsoft Edge for MAC", "152.0.4191.52"}:          "152.0.4191.53",
-	{"CVE-2026-58616", "Microsoft Edge for Windows", "152.0.4191.52"}:      "152.0.4191.53",
-	{"CVE-2026-62904", "Microsoft Edge (Chromium-based)", ""}:              "152.0.4191.53",
-	{"CVE-2026-62904", "Microsoft Edge for Linux", "152.0.4191.52"}:        "152.0.4191.53",
-	{"CVE-2026-62904", "Microsoft Edge for MAC", "152.0.4191.52"}:          "152.0.4191.53",
-	{"CVE-2026-62904", "Microsoft Edge for Windows", "152.0.4191.52"}:      "152.0.4191.53",
-	{"CVE-2026-66323", "Microsoft Edge for Linux", "152.0.4191.52"}:        "152.0.4191.53",
-	{"CVE-2026-66323", "Microsoft Edge for MAC", "152.0.4191.52"}:          "152.0.4191.53",
-	{"CVE-2026-66323", "Microsoft Edge for Windows", "152.0.4191.52"}:      "152.0.4191.53",
-	{"CVE-2026-66324", "Microsoft Edge for Linux", "152.0.4191.52"}:        "152.0.4191.53",
-	{"CVE-2026-66324", "Microsoft Edge for MAC", "152.0.4191.52"}:          "152.0.4191.53",
-	{"CVE-2026-66324", "Microsoft Edge for Windows", "152.0.4191.52"}:      "152.0.4191.53",
-	{"CVE-2026-66798", "Microsoft Edge (Chromium-based)", ""}:              "152.0.4191.53",
-	{"CVE-2026-66798", "Microsoft Edge for Linux", "152.0.4191.52"}:        "152.0.4191.53",
-	{"CVE-2026-66798", "Microsoft Edge for MAC", "152.0.4191.52"}:          "152.0.4191.53",
-	{"CVE-2026-66798", "Microsoft Edge for Windows", "152.0.4191.52"}:      "152.0.4191.53",
-	{"CVE-2026-70341", "Microsoft Edge (Chromium-based)", "152.0.4191.52"}: "152.0.4191.53",
-	{"CVE-2026-70341", "Microsoft Edge for Linux", "152.0.4191.52"}:        "152.0.4191.53",
-	{"CVE-2026-70341", "Microsoft Edge for MAC", "152.0.4191.52"}:          "152.0.4191.53",
-	{"CVE-2026-72984", "Microsoft Edge for Linux", "152.0.4191.52"}:        "152.0.4191.53",
-	{"CVE-2026-72984", "Microsoft Edge for MAC", "152.0.4191.52"}:          "152.0.4191.53",
-	{"CVE-2026-72984", "Microsoft Edge for Windows", "152.0.4191.52"}:      "152.0.4191.53",
-	// 2026-Aug Android/iOS: FixedBuild "152.0.4191.52" matches no release either; the Edge security
-	// release notes (Aug 31, 2026) give 152.0.4191.53 for Microsoft Edge for Android and iOS
-	{"CVE-2026-58616", "Microsoft Edge for Android", "152.0.4191.52"}: "152.0.4191.53",
-	{"CVE-2026-58616", "Microsoft Edge for iOS", "152.0.4191.52"}:     "152.0.4191.53",
-	{"CVE-2026-62904", "Microsoft Edge for Android", "152.0.4191.52"}: "152.0.4191.53",
-	{"CVE-2026-62904", "Microsoft Edge for iOS", "152.0.4191.52"}:     "152.0.4191.53",
-	{"CVE-2026-66323", "Microsoft Edge for Android", "152.0.4191.52"}: "152.0.4191.53",
-	{"CVE-2026-66323", "Microsoft Edge for iOS", "152.0.4191.52"}:     "152.0.4191.53",
-	{"CVE-2026-66324", "Microsoft Edge for Android", "152.0.4191.52"}: "152.0.4191.53",
-	{"CVE-2026-66324", "Microsoft Edge for iOS", "152.0.4191.52"}:     "152.0.4191.53",
-	{"CVE-2026-66798", "Microsoft Edge for Android", "152.0.4191.52"}: "152.0.4191.53",
-	{"CVE-2026-66798", "Microsoft Edge for iOS", "152.0.4191.52"}:     "152.0.4191.53",
-	{"CVE-2026-70341", "Microsoft Edge for Android", "152.0.4191.52"}: "152.0.4191.53",
-	{"CVE-2026-70341", "Microsoft Edge for iOS", "152.0.4191.52"}:     "152.0.4191.53",
-	{"CVE-2026-72984", "Microsoft Edge for Android", "152.0.4191.52"}: "152.0.4191.53",
-	{"CVE-2026-72984", "Microsoft Edge for iOS", "152.0.4191.52"}:     "152.0.4191.53",
-
-	// Stable FixedBuild corrections against the Edge security release notes
-	// (https://learn.microsoft.com/en-us/deployedge/microsoft-edge-relnotes-security), each
-	// agreeing with the CVE FAQ version table unless noted.
-	// 2021-Sep: FixedBuild is the Chromium version (93.0.4577.82); Edge shipped 93.0.961.47 (Sep 11, 2021)
-	{"CVE-2021-30632", "Microsoft Edge (Chromium-based)", "93.0.4577.82"}: "93.0.961.47",
-	// 2022-Apr: exploited in the wild, fixed in 100.0.1185.44 (Apr 15, 2022), not the earlier 100.0.1185.29
-	{"CVE-2022-1364", "Microsoft Edge (Chromium-based)", "100.0.1185.29"}: "100.0.1185.44",
-	// 2023-Sep: FixedBuild is the Extended Stable version; Stable shipped 117.0.2045.47 (Sep 29, 2023).
-	// The Extended Stable fix (116.0.1938.98) comes from missingProductOverrides
-	{"CVE-2023-5186", "Microsoft Edge (Chromium-based)", "116.0.1938.98"}: "117.0.2045.47",
-	{"CVE-2023-5187", "Microsoft Edge (Chromium-based)", "116.0.1938.98"}: "117.0.2045.47",
-	{"CVE-2023-5217", "Microsoft Edge (Chromium-based)", "116.0.1938.98"}: "117.0.2045.47",
-	// 2024-Feb: 121.0.2277.113 matches no release; Stable shipped 121.0.2277.112 (Feb 8, 2024)
-	{"CVE-2024-1283", "Microsoft Edge (Chromium-based)", "121.0.2277.113"}: "121.0.2277.112",
-	{"CVE-2024-1284", "Microsoft Edge (Chromium-based)", "121.0.2277.113"}: "121.0.2277.112",
-	// 2024-Jan: the release notes credit CVE-2024-21388 to 121.0.2277.83 (Jan 26, 2024); the FAQ also
-	// carries a second table for the Feb 1 release (121.0.2277.98), which the FixedBuild took
-	{"CVE-2024-21388", "Microsoft Edge (Chromium-based)", "121.0.2277.98"}: "121.0.2277.83",
-	// 2024-Jun: FixedBuild "126.0.2592.8" is truncated; Stable shipped 126.0.2592.81 (Jun 27, 2024)
-	{"CVE-2024-34122", "Microsoft Edge (Chromium-based)", "126.0.2592.8"}: "126.0.2592.81",
-	{"CVE-2024-6290", "Microsoft Edge (Chromium-based)", "126.0.2592.8"}:  "126.0.2592.81",
-	{"CVE-2024-6291", "Microsoft Edge (Chromium-based)", "126.0.2592.8"}:  "126.0.2592.81",
-	{"CVE-2024-6292", "Microsoft Edge (Chromium-based)", "126.0.2592.8"}:  "126.0.2592.81",
-	{"CVE-2024-6293", "Microsoft Edge (Chromium-based)", "126.0.2592.8"}:  "126.0.2592.81",
-	// 2025-Apr: Stable shipped the fix in 135.0.3179.73 (Apr 11, 2025), not 134.0.3124.93
-	{"CVE-2025-29834", "Microsoft Edge (Chromium-based)", "134.0.3124.93"}: "135.0.3179.73",
-	// 2026-May: FixedBuild is the Android/iOS version (148.0.3967.55, May 11, 2026); Stable shipped
-	// 148.0.3967.54 (May 7, 2026). The Android/iOS fix comes from missingProductOverrides
-	{"CVE-2026-40416", "Microsoft Edge (Chromium-based)", "148.0.3967.55"}: "148.0.3967.54",
-	{"CVE-2026-41107", "Microsoft Edge (Chromium-based)", "148.0.3967.55"}: "148.0.3967.54",
-	{"CVE-2026-42838", "Microsoft Edge (Chromium-based)", "148.0.3967.55"}: "148.0.3967.54",
-	// 2026-Sep: Stable shipped the fix in 152.0.4191.66 (Sep 4, 2026), not 153.0.4234.32
-	{"CVE-2026-87491", "Microsoft Edge (Chromium-based)", "153.0.4234.32"}: "152.0.4191.66",
-
-	// Microsoft Edge (Chromium-based) Extended Stable FixedBuild corrections, against the CVE FAQ
-	// version table and the Edge security release notes
-	// 2023-Mar: FixedBuild is the Chromium version; Extended Stable shipped 110.0.1587.69 (Mar 13, 2023)
-	{"CVE-2023-1214", "Microsoft Edge (Chromium-based) Extended Stable", "110.0.5481.192"}: "110.0.1587.69",
-	{"CVE-2023-1215", "Microsoft Edge (Chromium-based) Extended Stable", "110.0.5481.192"}: "110.0.1587.69",
-	{"CVE-2023-1216", "Microsoft Edge (Chromium-based) Extended Stable", "110.0.5481.192"}: "110.0.1587.69",
-	{"CVE-2023-1217", "Microsoft Edge (Chromium-based) Extended Stable", "110.0.5481.192"}: "110.0.1587.69",
-	{"CVE-2023-1220", "Microsoft Edge (Chromium-based) Extended Stable", "110.0.5481.192"}: "110.0.1587.69",
-	{"CVE-2023-1228", "Microsoft Edge (Chromium-based) Extended Stable", "110.0.5481.192"}: "110.0.1587.69",
-	// 2023-Jul: FixedBuild is the Stable version (the FAQ has the typo 114.0.1901.183); Extended
-	// Stable shipped 114.0.1823.90 (Jul 21, 2023)
-	{"CVE-2023-3728", "Microsoft Edge (Chromium-based) Extended Stable", "115.0.1901.183"}: "114.0.1823.90",
-	{"CVE-2023-3730", "Microsoft Edge (Chromium-based) Extended Stable", "115.0.1901.183"}: "114.0.1823.90",
-	// 2024-Mar: FixedBuild is the Chromium version; Extended Stable shipped 122.0.2365.113 (Mar 27, 2024)
-	{"CVE-2024-2883", "Microsoft Edge (Chromium-based) Extended Stable", "122.0.6261.148"}: "122.0.2365.113",
-	{"CVE-2024-2885", "Microsoft Edge (Chromium-based) Extended Stable", "122.0.6261.148"}: "122.0.2365.113",
-	{"CVE-2024-2886", "Microsoft Edge (Chromium-based) Extended Stable", "122.0.6261.148"}: "122.0.2365.113",
-	{"CVE-2024-2887", "Microsoft Edge (Chromium-based) Extended Stable", "122.0.6261.148"}: "122.0.2365.113",
-
-	// Microsoft Edge for Android / iOS
-	// 2026-Mar: FixedBuild "145.3800.99" drops the minor version (the release notes repeat it, Mar 9, 2026)
-	{"CVE-2026-26133", "Microsoft Edge for Android", "145.3800.99"}: "145.0.3800.99",
-	{"CVE-2026-26133", "Microsoft Edge for iOS", "145.3800.99"}:     "145.0.3800.99",
-
-	// Microsoft Exchange Server
-	// 2021-Mar (CVE-2021-26855 / 26857 / 26858 / 27065, the HAFNIUM CVEs): three Exchange Server 2019
-	// FixedBuild values are wrong upstream. CU1 carries a 15.1-series value that matches no Exchange
-	// 2019 build at all, and CU4 and CU6 have their values swapped. Left as-is, CU1 and CU6 never
-	// satisfy LessThan (false negative) and a patched CU4 always does (false positive). Corrected
-	// against the Mar21SU rows of https://learn.microsoft.com/en-us/exchange/new-features/build-numbers-and-release-dates
-	{"CVE-2021-26855", "Microsoft Exchange Server 2019 Cumulative Update 1", "15.01.1979.006"}: "15.02.0330.011",
-	{"CVE-2021-26855", "Microsoft Exchange Server 2019 Cumulative Update 4", "15.02.0659.012"}: "15.02.0529.013",
-	{"CVE-2021-26855", "Microsoft Exchange Server 2019 Cumulative Update 6", "15.02.0529.013"}: "15.02.0659.012",
-	{"CVE-2021-26857", "Microsoft Exchange Server 2019 Cumulative Update 1", "15.01.1979.006"}: "15.02.0330.011",
-	{"CVE-2021-26857", "Microsoft Exchange Server 2019 Cumulative Update 4", "15.02.0659.012"}: "15.02.0529.013",
-	{"CVE-2021-26857", "Microsoft Exchange Server 2019 Cumulative Update 6", "15.02.0529.013"}: "15.02.0659.012",
-	{"CVE-2021-26858", "Microsoft Exchange Server 2019 Cumulative Update 1", "15.01.1979.006"}: "15.02.0330.011",
-	{"CVE-2021-26858", "Microsoft Exchange Server 2019 Cumulative Update 4", "15.02.0659.012"}: "15.02.0529.013",
-	{"CVE-2021-26858", "Microsoft Exchange Server 2019 Cumulative Update 6", "15.02.0529.013"}: "15.02.0659.012",
-	{"CVE-2021-27065", "Microsoft Exchange Server 2019 Cumulative Update 1", "15.01.1979.006"}: "15.02.0330.011",
-	{"CVE-2021-27065", "Microsoft Exchange Server 2019 Cumulative Update 4", "15.02.0659.012"}: "15.02.0529.013",
-	{"CVE-2021-27065", "Microsoft Exchange Server 2019 Cumulative Update 6", "15.02.0529.013"}: "15.02.0659.012",
-
-	// Microsoft Office / Excel / Office Online Server / Office Web Apps Server
-	// 2021-Sep (FixedBuild "5381.1000" / "5215.1000" / "10378.20000" missing "15.0." or "16.0." prefix)
-	{"CVE-2021-38646", "Microsoft Office 2013 RT Service Pack 1", "5381.1000"}:                "15.0.5381.1000",
-	{"CVE-2021-38646", "Microsoft Office 2013 Service Pack 1 (32-bit editions)", "5381.1000"}: "15.0.5381.1000",
-	{"CVE-2021-38646", "Microsoft Office 2013 Service Pack 1 (64-bit editions)", "5381.1000"}: "15.0.5381.1000",
-	{"CVE-2021-38650", "Microsoft Office 2013 RT Service Pack 1", "5381.1000"}:                "15.0.5381.1000",
-	{"CVE-2021-38650", "Microsoft Office 2013 Service Pack 1 (32-bit editions)", "5381.1000"}: "15.0.5381.1000",
-	{"CVE-2021-38650", "Microsoft Office 2013 Service Pack 1 (64-bit editions)", "5381.1000"}: "15.0.5381.1000",
-	{"CVE-2021-38658", "Microsoft Office 2013 RT Service Pack 1", "5381.1000"}:                "15.0.5381.1000",
-	{"CVE-2021-38658", "Microsoft Office 2013 Service Pack 1 (32-bit editions)", "5381.1000"}: "15.0.5381.1000",
-	{"CVE-2021-38658", "Microsoft Office 2013 Service Pack 1 (64-bit editions)", "5381.1000"}: "15.0.5381.1000",
-	{"CVE-2021-38658", "Microsoft Office 2016 (32-bit edition)", "5215.1000"}:                 "16.0.5215.1000",
-	{"CVE-2021-38658", "Microsoft Office 2016 (64-bit edition)", "5215.1000"}:                 "16.0.5215.1000",
-	{"CVE-2021-38646", "Microsoft Office 2016 (32-bit edition)", "5215.1000"}:                 "16.0.5215.1000",
-	{"CVE-2021-38646", "Microsoft Office 2016 (64-bit edition)", "5215.1000"}:                 "16.0.5215.1000",
-	{"CVE-2021-38650", "Microsoft Office 2016 (32-bit edition)", "5215.1000"}:                 "16.0.5215.1000",
-	{"CVE-2021-38650", "Microsoft Office 2016 (64-bit edition)", "5215.1000"}:                 "16.0.5215.1000",
-	{"CVE-2021-38655", "Microsoft Excel 2013 RT Service Pack 1", "5381.1000"}:                 "15.0.5381.1000",
-	{"CVE-2021-38655", "Microsoft Excel 2013 Service Pack 1 (32-bit editions)", "5381.1000"}:  "15.0.5381.1000",
-	{"CVE-2021-38655", "Microsoft Excel 2013 Service Pack 1 (64-bit editions)", "5381.1000"}:  "15.0.5381.1000",
-	{"CVE-2021-38660", "Microsoft Excel 2013 RT Service Pack 1", "5381.1000"}:                 "15.0.5381.1000",
-	{"CVE-2021-38660", "Microsoft Excel 2013 Service Pack 1 (32-bit editions)", "5381.1000"}:  "15.0.5381.1000",
-	{"CVE-2021-38660", "Microsoft Excel 2013 Service Pack 1 (64-bit editions)", "5381.1000"}:  "15.0.5381.1000",
-	{"CVE-2021-38655", "Microsoft Excel 2016 (32-bit edition)", "5215.1000"}:                  "16.0.5215.1000",
-	{"CVE-2021-38655", "Microsoft Excel 2016 (64-bit edition)", "5215.1000"}:                  "16.0.5215.1000",
-	{"CVE-2021-38655", "Office Online Server", "10378.20000"}:                                 "16.0.10378.20000",
-	{"CVE-2021-38655", "Microsoft Office Web Apps Server 2013 Service Pack 1", "5381.1000"}:   "15.0.5381.1000",
-	// 2021-Jul (Office 2019 for Mac, FixedBuild "16.51.210711.01" has extra dot in build segment, should be "16.51.21071101")
-	{"CVE-2021-34501", "Microsoft Office 2019 for Mac", "16.51.210711.01"}: "16.51.21071101",
-
-	// Microsoft SharePoint
-	// 2021-Sep (FixedBuild "5381.1000" / "5215.1000" / "10378.20002" missing "15.0." or "16.0." prefix)
-	{"CVE-2021-38651", "Microsoft SharePoint Foundation 2013 Service Pack 1", "5381.1000"}: "15.0.5381.1000",
-	{"CVE-2021-38652", "Microsoft SharePoint Foundation 2013 Service Pack 1", "5381.1000"}: "15.0.5381.1000",
-	{"CVE-2021-38651", "Microsoft SharePoint Enterprise Server 2016", "5215.1000"}:         "16.0.5215.1000",
-	{"CVE-2021-38652", "Microsoft SharePoint Enterprise Server 2016", "5215.1000"}:         "16.0.5215.1000",
-	{"CVE-2021-38651", "Microsoft SharePoint Server 2019", "10378.20002"}:                  "16.0.10378.20002",
-	// 2022-Dec (FixedBuild "10393.20000" / "15601.20316" missing "16.0." prefix)
-	{"CVE-2022-44690", "Microsoft SharePoint Server 2019", "10393.20000"}:                 "16.0.10393.20000",
-	{"CVE-2022-44693", "Microsoft SharePoint Server 2019", "10393.20000"}:                 "16.0.10393.20000",
-	{"CVE-2022-44690", "Microsoft SharePoint Server Subscription Edition", "15601.20316"}: "16.0.15601.20316",
-	{"CVE-2022-44693", "Microsoft SharePoint Server Subscription Edition", "15601.20316"}: "16.0.15601.20316",
-
-	// SQL Server Management Studio
-	// 2026-Sep (CVE-2026-65669): FixedBuild "22.8.2" is the SSMS release number, not the build
-	// number that installs report. SSMS 22 builds are 22.1.<Visual Studio build>: the 22.8.2
-	// release notes say "Updated to Visual Studio 18.8.2 [12023.21]"
-	// (https://learn.microsoft.com/en-us/ssms/release-notes-22), and
-	// https://sqlserverbuilds.blogspot.com/2018/01/sql-server-management-studio-ssms.html maps
-	// 22.8.2 to 22.1.12023.21. Left as a release number, every later build (e.g. 22.1.12210.168
-	// for 22.10.1) would compare as older than the fix. SSMS 20.2's FixedBuild ("20.2.37.0",
-	// CVE-2025-29803) was already a build number
-	{"CVE-2026-65669", "SQL Server Management Studio 22", "22.8.2"}: "22.1.12023.21",
-
-	// Microsoft Teams for Android (FixedBuild "1416/..." has numeric prefix before slash)
-	// 2022-Feb (CVE-2022-21965, FixedBuild "1416/..." has numeric prefix)
-	{"CVE-2022-21965", "Microsoft Teams for Android", "1416/1.0.0.2021040701"}: "1.0.0.2021040701",
-	// 2025-Aug (CVE-2025-53783, FixedBuild "1416/..." has numeric prefix)
-	{"CVE-2025-53783", "Microsoft Teams for Android", "1416/1.0.0.2025102802"}: "1.0.0.2025102802",
-
-	// Teams Panels / Phones (FixedBuild "1449/..." has numeric prefix before slash)
-	// 2025-Aug (CVE-2025-53783, FixedBuild "1449/..." has numeric prefix)
-	{"CVE-2025-53783", "Teams Panels", "1449/1.0.97.2025102203"}: "1.0.97.2025102203",
-	{"CVE-2025-53783", "Teams Phones", "1449/1.0.94.2025168802"}: "1.0.94.2025168802",
-
-	// Microsoft Teams for iOS (FixedBuild has trailing parenthetical build ID)
-	// 2025-Jul (CVE-2025-49731, FixedBuild has trailing parenthetical build ID)
-	{"CVE-2025-49731", "Microsoft Teams for iOS", "7.10.1 (100772025102901)"}: "7.10.1",
-	// 2025-Aug (CVE-2025-53783, FixedBuild has trailing parenthetical build ID)
-	{"CVE-2025-53783", "Microsoft Teams for iOS", "7.10.1 (100772025102901)"}: "7.10.1",
-
-	// Microsoft Visual Studio
-	// 2021-Nov (VS 2015 Update 3 14.0.27550.0, FixedBuild "27550.00" missing "14.0." prefix)
-	{"CVE-2021-42277", "Microsoft Visual Studio 2015 Update 3", "27550.00"}: "14.0.27550.0",
-	// 2022-Jan (VS 2015 Update 3 14.0.27551.0, FixedBuild "27551.00" missing "14.0." prefix)
-	{"CVE-2022-21871", "Microsoft Visual Studio 2015 Update 3", "27551.00"}: "14.0.27551.0",
-
-	// Visual Studio Code
-	// 2021-May (VS Code 1.56.0, FixedBuild "1.56" missing ".0" suffix)
-	{"CVE-2021-31211", "Visual Studio Code", "1.56"}: "1.56.0",
-	{"CVE-2021-31214", "Visual Studio Code", "1.56"}: "1.56.0",
-	// 2021-Jul (VS Code 1.58.0, FixedBuild "1.58" missing ".0" suffix)
-	{"CVE-2021-34479", "Visual Studio Code", "1.58"}: "1.58.0",
-	{"CVE-2021-34528", "Visual Studio Code", "1.58"}: "1.58.0",
-	// 2023-Jun (VS Code 1.79.0, FixedBuild "1.79" missing ".0" suffix)
-	{"CVE-2023-33144", "Visual Studio Code", "1.79"}: "1.79.0",
-
-	// Windows / Internet Explorer
-	// 2020-Feb (UEFI/Secure Boot firmware, FixedBuild "1.002" is a revision number, not a Windows OS build)
-	{"CVE-2020-0689", "Windows 10 for x64-based Systems", "1.002"}: "",
-	// 2020-Jul (UEFI/Secure Boot firmware, FixedBuild "1.002" is a revision number, not a Windows OS build)
-	{"ADV200011", "Windows 10 for 32-bit Systems", "1.002"}:    "",
-	{"ADV200011", "Windows 10 for x64-based Systems", "1.002"}: "",
-	// 2021-May (IE Cumulative, FixedBuild "6.0"/"6.1"/"6.2" matches OS major.minor but is a truncated IE revision)
-	{"CVE-2021-26419", "Internet Explorer 9 on Windows Server 2008 for 32-bit Systems Service Pack 2", "6.0"}:        "",
-	{"CVE-2021-26419", "Internet Explorer 9 on Windows Server 2008 for x64-based Systems Service Pack 2", "6.0"}:     "",
-	{"CVE-2021-26419", "Internet Explorer 11 on Windows 7 for 32-bit Systems Service Pack 1", "6.1"}:                 "",
-	{"CVE-2021-26419", "Internet Explorer 11 on Windows 7 for x64-based Systems Service Pack 1", "6.1"}:              "",
-	{"CVE-2021-26419", "Internet Explorer 11 on Windows Server 2008 R2 for x64-based Systems Service Pack 1", "6.1"}: "",
-	{"CVE-2021-26419", "Internet Explorer 11 on Windows Server 2012", "6.2"}:                                         "",
-	// 2021-Jun (IE Cumulative, FixedBuild "1.0.0.0" is a revision number, not a Windows OS build)
-	{"CVE-2021-31959", "Windows 8.1 for 32-bit Systems", "1.0.0.0"}:    "",
-	{"CVE-2021-31959", "Windows 8.1 for x64-based Systems", "1.0.0.0"}: "",
-	{"CVE-2021-31959", "Windows Server 2012", "1.0.0.0"}:               "",
-	{"CVE-2021-31959", "Windows Server 2012 R2", "1.0.0.0"}:            "",
-	{"CVE-2021-31971", "Windows 8.1 for 32-bit Systems", "1.0.0.0"}:    "",
-	{"CVE-2021-31971", "Windows 8.1 for x64-based Systems", "1.0.0.0"}: "",
-	{"CVE-2021-31971", "Windows Server 2012", "1.0.0.0"}:               "",
-	{"CVE-2021-31971", "Windows Server 2012 R2", "1.0.0.0"}:            "",
-	{"CVE-2021-33742", "Windows 8.1 for 32-bit Systems", "1.0.0.0"}:    "",
-	{"CVE-2021-33742", "Windows 8.1 for x64-based Systems", "1.0.0.0"}: "",
-	{"CVE-2021-33742", "Windows Server 2012", "1.0.0.0"}:               "",
-	{"CVE-2021-33742", "Windows Server 2012 R2", "1.0.0.0"}:            "",
-	// 2021-Jul (IE Cumulative, FixedBuild "1.001" is a revision number, not a Windows OS build)
-	{"CVE-2021-34446", "Windows 7 for 32-bit Systems Service Pack 1", "1.001"}:                                         "",
-	{"CVE-2021-34446", "Windows 7 for x64-based Systems Service Pack 1", "1.001"}:                                      "",
-	{"CVE-2021-34446", "Windows 8.1 for 32-bit Systems", "1.001"}:                                                      "",
-	{"CVE-2021-34446", "Windows 8.1 for x64-based Systems", "1.001"}:                                                   "",
-	{"CVE-2021-34446", "Windows Server 2008 R2 for x64-based Systems Service Pack 1", "1.001"}:                         "",
-	{"CVE-2021-34446", "Windows Server 2008 for 32-bit Systems Service Pack 2", "1.001"}:                               "",
-	{"CVE-2021-34446", "Windows Server 2008 for x64-based Systems Service Pack 2", "1.001"}:                            "",
-	{"CVE-2021-34446", "Windows Server 2012", "1.001"}:                                                                 "",
-	{"CVE-2021-34446", "Windows Server 2012 R2", "1.001"}:                                                              "",
-	{"CVE-2021-34447", "Windows 7 for 32-bit Systems Service Pack 1", "1.001"}:                                         "",
-	{"CVE-2021-34447", "Windows 7 for x64-based Systems Service Pack 1", "1.001"}:                                      "",
-	{"CVE-2021-34447", "Windows 8.1 for 32-bit Systems", "1.001"}:                                                      "",
-	{"CVE-2021-34447", "Windows 8.1 for x64-based Systems", "1.001"}:                                                   "",
-	{"CVE-2021-34447", "Windows Server 2008 R2 for x64-based Systems Service Pack 1", "1.001"}:                         "",
-	{"CVE-2021-34447", "Windows Server 2008 for 32-bit Systems Service Pack 2", "1.001"}:                               "",
-	{"CVE-2021-34447", "Windows Server 2008 for x64-based Systems Service Pack 2 (Server Core installation)", "1.001"}: "",
-	{"CVE-2021-34447", "Windows Server 2012", "1.001"}:                                                                 "",
-	{"CVE-2021-34447", "Windows Server 2012 R2", "1.001"}:                                                              "",
-	{"CVE-2021-34448", "Windows 7 for 32-bit Systems Service Pack 1", "1.001"}:                                         "",
-	{"CVE-2021-34448", "Windows 7 for x64-based Systems Service Pack 1", "1.001"}:                                      "",
-	{"CVE-2021-34448", "Windows 8.1 for 32-bit Systems", "1.001"}:                                                      "",
-	{"CVE-2021-34448", "Windows 8.1 for x64-based Systems", "1.001"}:                                                   "",
-	{"CVE-2021-34448", "Windows Server 2008 R2 for x64-based Systems Service Pack 1", "1.001"}:                         "",
-	{"CVE-2021-34448", "Windows Server 2012", "1.001"}:                                                                 "",
-	{"CVE-2021-34448", "Windows Server 2012 R2", "1.001"}:                                                              "",
-	{"CVE-2021-34497", "Windows 7 for 32-bit Systems Service Pack 1", "1.001"}:                                         "",
-	{"CVE-2021-34497", "Windows 7 for x64-based Systems Service Pack 1", "1.001"}:                                      "",
-	{"CVE-2021-34497", "Windows 8.1 for 32-bit Systems", "1.001"}:                                                      "",
-	{"CVE-2021-34497", "Windows 8.1 for x64-based Systems", "1.001"}:                                                   "",
-	{"CVE-2021-34497", "Windows Server 2008 R2 for x64-based Systems Service Pack 1", "1.001"}:                         "",
-	{"CVE-2021-34497", "Windows Server 2008 for 32-bit Systems Service Pack 2", "1.001"}:                               "",
-	{"CVE-2021-34497", "Windows Server 2008 for x64-based Systems Service Pack 2", "1.001"}:                            "",
-	{"CVE-2021-34497", "Windows Server 2012", "1.001"}:                                                                 "",
-	{"CVE-2021-34497", "Windows Server 2012 R2", "1.001"}:                                                              "",
-	// 2021-Aug (IE Cumulative, FixedBuild "1.001" is a revision number, not a Windows OS build)
-	{"CVE-2021-34480", "Windows 7 for 32-bit Systems Service Pack 1", "1.001"}:                 "",
-	{"CVE-2021-34480", "Windows 7 for x64-based Systems Service Pack 1", "1.001"}:              "",
-	{"CVE-2021-34480", "Windows 8.1 for 32-bit Systems", "1.001"}:                              "",
-	{"CVE-2021-34480", "Windows 8.1 for x64-based Systems", "1.001"}:                           "",
-	{"CVE-2021-34480", "Windows Server 2008 R2 for x64-based Systems Service Pack 1", "1.001"}: "",
-	{"CVE-2021-34480", "Windows Server 2012", "1.001"}:                                         "",
-	{"CVE-2021-34480", "Windows Server 2012 R2", "1.001"}:                                      "",
-	// 2021-Sep (IE Cumulative, FixedBuild "1.001" is a revision number, not a Windows OS build)
-	{"CVE-2021-40444", "Windows 7 for 32-bit Systems Service Pack 1", "1.001"}:                                            "",
-	{"CVE-2021-40444", "Windows 7 for x64-based Systems Service Pack 1", "1.001"}:                                         "",
-	{"CVE-2021-40444", "Windows 8.1 for 32-bit Systems", "1.001"}:                                                         "",
-	{"CVE-2021-40444", "Windows 8.1 for x64-based Systems", "1.001"}:                                                      "",
-	{"CVE-2021-40444", "Windows Server 2008 R2 for x64-based Systems Service Pack 1", "1.001"}:                            "",
-	{"CVE-2021-40444", "Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)", "1.001"}: "",
-	{"CVE-2021-40444", "Windows Server 2008 for 32-bit Systems Service Pack 2", "1.001"}:                                  "",
-	{"CVE-2021-40444", "Windows Server 2008 for 32-bit Systems Service Pack 2 (Server Core installation)", "1.001"}:       "",
-	{"CVE-2021-40444", "Windows Server 2008 for x64-based Systems Service Pack 2", "1.001"}:                               "",
-	{"CVE-2021-40444", "Windows Server 2008 for x64-based Systems Service Pack 2 (Server Core installation)", "1.001"}:    "",
-	{"CVE-2021-40444", "Windows Server 2012", "1.001"}:                                                                    "",
-	{"CVE-2021-40444", "Windows Server 2012 (Server Core installation)", "1.001"}:                                         "",
-	{"CVE-2021-40444", "Windows Server 2012 R2", "1.001"}:                                                                 "",
-	{"CVE-2021-40444", "Windows Server 2012 R2 (Server Core installation)", "1.001"}:                                      "",
-	// 2021-Oct (IE Cumulative, FixedBuild "1.001" is a revision number, not a Windows OS build)
-	{"CVE-2021-41342", "Windows 7 for 32-bit Systems Service Pack 1", "1.001"}:                 "",
-	{"CVE-2021-41342", "Windows 7 for x64-based Systems Service Pack 1", "1.001"}:              "",
-	{"CVE-2021-41342", "Windows 8.1 for 32-bit Systems", "1.001"}:                              "",
-	{"CVE-2021-41342", "Windows 8.1 for x64-based Systems", "1.001"}:                           "",
-	{"CVE-2021-41342", "Windows Server 2008 R2 for x64-based Systems Service Pack 1", "1.001"}: "",
-	{"CVE-2021-41342", "Windows Server 2008 for 32-bit Systems Service Pack 2", "1.001"}:       "",
-	{"CVE-2021-41342", "Windows Server 2008 for x64-based Systems Service Pack 2", "1.001"}:    "",
-	{"CVE-2021-41342", "Windows Server 2012", "1.001"}:                                         "",
-	{"CVE-2021-41342", "Windows Server 2012 R2", "1.001"}:                                      "",
-	// 2022-Mar (IE Cumulative, FixedBuild "1.1.0.0" is a revision number, not a Windows OS build)
-	{"CVE-2022-24502", "Windows 7 for 32-bit Systems Service Pack 1", "1.1.0.0"}:                 "",
-	{"CVE-2022-24502", "Windows 7 for x64-based Systems Service Pack 1", "1.1.0.0"}:              "",
-	{"CVE-2022-24502", "Windows 8.1 for 32-bit Systems", "1.1.0.0"}:                              "",
-	{"CVE-2022-24502", "Windows 8.1 for x64-based Systems", "1.1.0.0"}:                           "",
-	{"CVE-2022-24502", "Windows Server 2008 R2 for x64-based Systems Service Pack 1", "1.1.0.0"}: "",
-	{"CVE-2022-24502", "Windows Server 2008 for 32-bit Systems Service Pack 2", "1.1.0.0"}:       "",
-	{"CVE-2022-24502", "Windows Server 2008 for x64-based Systems Service Pack 2", "1.1.0.0"}:    "",
-	{"CVE-2022-24502", "Windows Server 2012", "1.1.0.0"}:                                         "",
-	{"CVE-2022-24502", "Windows Server 2012 R2", "1.1.0.0"}:                                      "",
-	// 2022-Aug (UEFI/Secure Boot firmware, FixedBuild "1.002" is a revision number, not a Windows OS build)
-	{"CVE-2022-34301", "Windows 10 for 32-bit Systems", "1.002"}:    "",
-	{"CVE-2022-34301", "Windows 10 for x64-based Systems", "1.002"}: "",
-	{"CVE-2022-34302", "Windows 10 for 32-bit Systems", "1.002"}:    "",
-	{"CVE-2022-34302", "Windows 10 for x64-based Systems", "1.002"}: "",
-	{"CVE-2022-34303", "Windows 10 for 32-bit Systems", "1.002"}:    "",
-	{"CVE-2022-34303", "Windows 10 for x64-based Systems", "1.002"}: "",
-	// 2023-Feb (IE Cumulative, FixedBuild "1.1.0.0" is a revision number, not a Windows OS build)
-	{"CVE-2023-21805", "Windows Server 2008 R2 for x64-based Systems Service Pack 1", "1.1.0.0"}:                            "",
-	{"CVE-2023-21805", "Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)", "1.1.0.0"}: "",
-	{"CVE-2023-21805", "Windows Server 2008 for 32-bit Systems Service Pack 2", "1.1.0.0"}:                                  "",
-	{"CVE-2023-21805", "Windows Server 2008 for 32-bit Systems Service Pack 2 (Server Core installation)", "1.1.0.0"}:       "",
-	{"CVE-2023-21805", "Windows Server 2008 for x64-based Systems Service Pack 2", "1.1.0.0"}:                               "",
-	{"CVE-2023-21805", "Windows Server 2008 for x64-based Systems Service Pack 2 (Server Core installation)", "1.1.0.0"}:    "",
-	{"CVE-2023-21805", "Windows Server 2012", "1.1.0.0"}:                                                                    "",
-	{"CVE-2023-21805", "Windows Server 2012 (Server Core installation)", "1.1.0.0"}:                                         "",
-	// 2023-May (Windows 11 24H2 x64, FixedBuild "0.0.26200.4652" is a typo for "10.0.26100.4652" — the ARM64 entry has the correct value)
-	{"CVE-2023-24932", "Windows 11 Version 24H2 for x64-based Systems", "0.0.26200.4652"}: "10.0.26100.4652",
-	// 2023-May (IE Cumulative, FixedBuild "1.1.0.0" is a revision number, not a Windows OS build)
-	{"CVE-2023-29324", "Windows Server 2008 R2 for x64-based Systems Service Pack 1", "1.1.0.0"}:                            "",
-	{"CVE-2023-29324", "Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)", "1.1.0.0"}: "",
-	{"CVE-2023-29324", "Windows Server 2008 for 32-bit Systems Service Pack 2", "1.1.0.0"}:                                  "",
-	{"CVE-2023-29324", "Windows Server 2008 for 32-bit Systems Service Pack 2 (Server Core installation)", "1.1.0.0"}:       "",
-	{"CVE-2023-29324", "Windows Server 2008 for x64-based Systems Service Pack 2", "1.1.0.0"}:                               "",
-	{"CVE-2023-29324", "Windows Server 2008 for x64-based Systems Service Pack 2 (Server Core installation)", "1.1.0.0"}:    "",
-	{"CVE-2023-29324", "Windows Server 2012", "1.1.0.0"}:                                                                    "",
-	{"CVE-2023-29324", "Windows Server 2012 (Server Core installation)", "1.1.0.0"}:                                         "",
-	{"CVE-2023-29324", "Windows Server 2012 R2", "1.1.0.0"}:                                                                 "",
-	{"CVE-2023-29324", "Windows Server 2012 R2 (Server Core installation)", "1.1.0.0"}:                                      "",
-	// 2023-Jul (IE Cumulative, FixedBuild "1.001" is a revision number, not a Windows OS build)
-	{"CVE-2023-32046", "Windows Server 2008 R2 for x64-based Systems Service Pack 1", "1.001"}:                            "",
-	{"CVE-2023-32046", "Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)", "1.001"}: "",
-	{"CVE-2023-32046", "Windows Server 2008 for 32-bit Systems Service Pack 2", "1.001"}:                                  "",
-	{"CVE-2023-32046", "Windows Server 2008 for 32-bit Systems Service Pack 2 (Server Core installation)", "1.001"}:       "",
-	{"CVE-2023-32046", "Windows Server 2008 for x64-based Systems Service Pack 2", "1.001"}:                               "",
-	{"CVE-2023-32046", "Windows Server 2008 for x64-based Systems Service Pack 2 (Server Core installation)", "1.001"}:    "",
-	{"CVE-2023-32046", "Windows Server 2012", "1.001"}:                                                                    "",
-	{"CVE-2023-32046", "Windows Server 2012 (Server Core installation)", "1.001"}:                                         "",
-	{"CVE-2023-32046", "Windows Server 2012 R2", "1.001"}:                                                                 "",
-	{"CVE-2023-32046", "Windows Server 2012 R2 (Server Core installation)", "1.001"}:                                      "",
-	{"CVE-2023-35308", "Windows Server 2012 R2", "1.001"}:                                                                 "",
-	{"CVE-2023-35308", "Windows Server 2012 R2 (Server Core installation)", "1.001"}:                                      "",
-	{"CVE-2023-35336", "Windows Server 2012 R2", "1.001"}:                                                                 "",
-	{"CVE-2023-35336", "Windows Server 2012 R2 (Server Core installation)", "1.001"}:                                      "",
-	// 2023-Aug (IE Cumulative, FixedBuild "10.0.0.0" is a revision number, not a Windows OS build)
-	{"CVE-2023-35384", "Windows Server 2012 R2", "10.0.0.0"}:                            "",
-	{"CVE-2023-35384", "Windows Server 2012 R2 (Server Core installation)", "10.0.0.0"}: "",
-	// 2023-Sep (IE Cumulative, FixedBuild "1.001" is a revision number, not a Windows OS build)
-	{"CVE-2023-36805", "Windows Server 2008 R2 for x64-based Systems Service Pack 1", "1.001"}:                            "",
-	{"CVE-2023-36805", "Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)", "1.001"}: "",
-	{"CVE-2023-36805", "Windows Server 2012", "1.001"}:                                                                    "",
-	{"CVE-2023-36805", "Windows Server 2012 (Server Core installation)", "1.001"}:                                         "",
-	{"CVE-2023-36805", "Windows Server 2012 R2", "1.001"}:                                                                 "",
-	{"CVE-2023-36805", "Windows Server 2012 R2 (Server Core installation)", "1.001"}:                                      "",
-	// 2023-Oct (IE Cumulative, FixedBuild "1.001" is a revision number, not a Windows OS build)
-	{"CVE-2023-36436", "Windows Server 2012", "1.001"}:                               "",
-	{"CVE-2023-36436", "Windows Server 2012 (Server Core installation)", "1.001"}:    "",
-	{"CVE-2023-36436", "Windows Server 2012 R2", "1.001"}:                            "",
-	{"CVE-2023-36436", "Windows Server 2012 R2 (Server Core installation)", "1.001"}: "",
-	// 2023-Nov (IE Cumulative, FixedBuild "1.001" is a revision number, not a Windows OS build)
-	{"CVE-2023-36017", "Windows Server 2008 R2 for x64-based Systems Service Pack 1", "1.001"}:                            "",
-	{"CVE-2023-36017", "Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)", "1.001"}: "",
-	{"CVE-2023-36017", "Windows Server 2012", "1.001"}:                                                                    "",
-	{"CVE-2023-36017", "Windows Server 2012 (Server Core installation)", "1.001"}:                                         "",
-	{"CVE-2023-36017", "Windows Server 2012 R2", "1.001"}:                                                                 "",
-	{"CVE-2023-36017", "Windows Server 2012 R2 (Server Core installation)", "1.001"}:                                      "",
-	// 2023-Dec (IE Cumulative, FixedBuild "1.001" is a revision number, not a Windows OS build)
-	{"CVE-2023-35628", "Windows Server 2008 R2 for x64-based Systems Service Pack 1", "1.001"}:                            "",
-	{"CVE-2023-35628", "Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)", "1.001"}: "",
-	{"CVE-2023-35628", "Windows Server 2012", "1.001"}:                                                                    "",
-	{"CVE-2023-35628", "Windows Server 2012 (Server Core installation)", "1.001"}:                                         "",
-	{"CVE-2023-35628", "Windows Server 2012 R2 (Server Core installation)", "1.001"}:                                      "",
-	// 2023-Dec (UEFI/Secure Boot firmware, FixedBuild "1.002" is a revision number, not a Windows OS build)
-	{"CVE-2023-35628", "Windows Server 2012 R2", "1.002"}: "",
-	// 2024-Jan (IE Cumulative, FixedBuild "1.001" is a revision number, not a Windows OS build)
-	{"CVE-2024-20652", "Windows Server 2008 R2 for x64-based Systems Service Pack 1", "1.001"}:                            "",
-	{"CVE-2024-20652", "Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)", "1.001"}: "",
-	{"CVE-2024-20652", "Windows Server 2012", "1.001"}:                                                                    "",
-	{"CVE-2024-20652", "Windows Server 2012 (Server Core installation)", "1.001"}:                                         "",
-	{"CVE-2024-20652", "Windows Server 2012 R2", "1.001"}:                                                                 "",
-	{"CVE-2024-20652", "Windows Server 2012 R2 (Server Core installation)", "1.001"}:                                      "",
-	// 2024-Jul (IE Cumulative, FixedBuild "1.001" is a revision number, not a Windows OS build)
-	{"CVE-2024-38112", "Windows Server 2008 for 32-bit Systems Service Pack 2", "1.001"}:                               "",
-	{"CVE-2024-38112", "Windows Server 2008 for 32-bit Systems Service Pack 2 (Server Core installation)", "1.001"}:    "",
-	{"CVE-2024-38112", "Windows Server 2008 for x64-based Systems Service Pack 2", "1.001"}:                            "",
-	{"CVE-2024-38112", "Windows Server 2008 for x64-based Systems Service Pack 2 (Server Core installation)", "1.001"}: "",
-	{"CVE-2024-38112", "Windows Server 2012 R2", "1.001"}:                                                              "",
-	{"CVE-2024-38112", "Windows Server 2012 R2 (Server Core installation)", "1.001"}:                                   "",
-	// 2024-Aug (IE Cumulative, FixedBuild "1.001" is a revision number, not a Windows OS build)
-	{"CVE-2024-38178", "Windows Server 2012 R2", "1.001"}:                            "",
-	{"CVE-2024-38178", "Windows Server 2012 R2 (Server Core installation)", "1.001"}: "",
-	// 2024-Sep (IE Cumulative, FixedBuild "1.001" is a revision number, not a Windows OS build)
-	{"CVE-2024-30073", "Windows Server 2008 R2 for x64-based Systems Service Pack 1", "1.001"}:                            "",
-	{"CVE-2024-30073", "Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)", "1.001"}: "",
-	{"CVE-2024-30073", "Windows Server 2008 for 32-bit Systems Service Pack 2", "1.001"}:                                  "",
-	{"CVE-2024-30073", "Windows Server 2008 for x64-based Systems Service Pack 2", "1.001"}:                               "",
-	{"CVE-2024-30073", "Windows Server 2012", "1.001"}:                                                                    "",
-	{"CVE-2024-30073", "Windows Server 2012 R2", "1.001"}:                                                                 "",
-	{"CVE-2024-43461", "Windows Server 2008 R2 for x64-based Systems Service Pack 1", "1.001"}:                            "",
-	{"CVE-2024-43461", "Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)", "1.001"}: "",
-	{"CVE-2024-43461", "Windows Server 2012", "1.001"}:                                                                    "",
-	{"CVE-2024-43461", "Windows Server 2012 R2", "1.001"}:                                                                 "",
-	// 2024-Nov (IE Cumulative, FixedBuild "1.001" is a revision number, not a Windows OS build)
-	{"CVE-2024-43451", "Windows Server 2008 R2 for x64-based Systems Service Pack 1", "1.001"}:                            "",
-	{"CVE-2024-43451", "Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)", "1.001"}: "",
-	{"CVE-2024-43451", "Windows Server 2008 for 32-bit Systems Service Pack 2", "1.001"}:                                  "",
-	{"CVE-2024-43451", "Windows Server 2008 for 32-bit Systems Service Pack 2 (Server Core installation)", "1.001"}:       "",
-	{"CVE-2024-43451", "Windows Server 2008 for x64-based Systems Service Pack 2", "1.001"}:                               "",
-	{"CVE-2024-43451", "Windows Server 2008 for x64-based Systems Service Pack 2 (Server Core installation)", "1.001"}:    "",
-	{"CVE-2024-43451", "Windows Server 2012 R2", "1.001"}:                                                                 "",
-	{"CVE-2024-43451", "Windows Server 2012 R2 (Server Core installation)", "1.001"}:                                      "",
-	// 2025-Jan (IE Cumulative, FixedBuild "1.002" is a revision number, not a Windows OS build)
-	{"CVE-2025-21189", "Windows Server 2012 R2", "1.002"}:                            "",
-	{"CVE-2025-21189", "Windows Server 2012 R2 (Server Core installation)", "1.002"}: "",
-	{"CVE-2025-21268", "Windows Server 2012 R2", "1.002"}:                            "",
-	{"CVE-2025-21268", "Windows Server 2012 R2 (Server Core installation)", "1.002"}: "",
-	{"CVE-2025-21269", "Windows Server 2012 R2", "1.002"}:                            "",
-	{"CVE-2025-21269", "Windows Server 2012 R2 (Server Core installation)", "1.002"}: "",
-	{"CVE-2025-21276", "Windows Server 2012 R2", "1.002"}:                            "",
-	{"CVE-2025-21276", "Windows Server 2012 R2 (Server Core installation)", "1.002"}: "",
-	{"CVE-2025-21328", "Windows Server 2012 R2", "1.002"}:                            "",
-	{"CVE-2025-21328", "Windows Server 2012 R2 (Server Core installation)", "1.002"}: "",
-	{"CVE-2025-21329", "Windows Server 2012 R2", "1.002"}:                            "",
-	{"CVE-2025-21329", "Windows Server 2012 R2 (Server Core installation)", "1.002"}: "",
-	{"CVE-2025-21332", "Windows Server 2012 R2", "1.002"}:                            "",
-	{"CVE-2025-21332", "Windows Server 2012 R2 (Server Core installation)", "1.002"}: "",
-	// 2025-Jan (IE Cumulative, FixedBuild "1.003" is a revision number, not a Windows OS build)
-	{"CVE-2025-21189", "Windows Server 2008 R2 for x64-based Systems Service Pack 1", "1.003"}:                            "",
-	{"CVE-2025-21189", "Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)", "1.003"}: "",
-	{"CVE-2025-21189", "Windows Server 2012", "1.003"}:                                                                    "",
-	{"CVE-2025-21189", "Windows Server 2012 (Server Core installation)", "1.003"}:                                         "",
-	{"CVE-2025-21268", "Windows Server 2008 R2 for x64-based Systems Service Pack 1", "1.003"}:                            "",
-	{"CVE-2025-21268", "Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)", "1.003"}: "",
-	{"CVE-2025-21268", "Windows Server 2012", "1.003"}:                                                                    "",
-	{"CVE-2025-21268", "Windows Server 2012 (Server Core installation)", "1.003"}:                                         "",
-	{"CVE-2025-21269", "Windows Server 2008 R2 for x64-based Systems Service Pack 1", "1.003"}:                            "",
-	{"CVE-2025-21269", "Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)", "1.003"}: "",
-	{"CVE-2025-21269", "Windows Server 2012", "1.003"}:                                                                    "",
-	{"CVE-2025-21269", "Windows Server 2012 (Server Core installation)", "1.003"}:                                         "",
-	{"CVE-2025-21276", "Windows Server 2008 R2 for x64-based Systems Service Pack 1", "1.003"}:                            "",
-	{"CVE-2025-21276", "Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)", "1.003"}: "",
-	{"CVE-2025-21276", "Windows Server 2012", "1.003"}:                                                                    "",
-	{"CVE-2025-21276", "Windows Server 2012 (Server Core installation)", "1.003"}:                                         "",
-	{"CVE-2025-21328", "Windows Server 2008 R2 for x64-based Systems Service Pack 1", "1.003"}:                            "",
-	{"CVE-2025-21328", "Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)", "1.003"}: "",
-	{"CVE-2025-21328", "Windows Server 2012", "1.003"}:                                                                    "",
-	{"CVE-2025-21328", "Windows Server 2012 (Server Core installation)", "1.003"}:                                         "",
-	{"CVE-2025-21329", "Windows Server 2008 R2 for x64-based Systems Service Pack 1", "1.003"}:                            "",
-	{"CVE-2025-21329", "Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)", "1.003"}: "",
-	{"CVE-2025-21329", "Windows Server 2012", "1.003"}:                                                                    "",
-	{"CVE-2025-21329", "Windows Server 2012 (Server Core installation)", "1.003"}:                                         "",
-	{"CVE-2025-21332", "Windows Server 2008 R2 for x64-based Systems Service Pack 1", "1.003"}:                            "",
-	{"CVE-2025-21332", "Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)", "1.003"}: "",
-	{"CVE-2025-21332", "Windows Server 2012", "1.003"}:                                                                    "",
-	{"CVE-2025-21332", "Windows Server 2012 (Server Core installation)", "1.003"}:                                         "",
-	// 2025-Jan (IE Cumulative, FixedBuild "1.007" is a revision number, not a Windows OS build)
-	{"CVE-2025-21189", "Windows Server 2008 for 32-bit Systems Service Pack 2", "1.007"}:                               "",
-	{"CVE-2025-21189", "Windows Server 2008 for 32-bit Systems Service Pack 2 (Server Core installation)", "1.007"}:    "",
-	{"CVE-2025-21189", "Windows Server 2008 for x64-based Systems Service Pack 2", "1.007"}:                            "",
-	{"CVE-2025-21189", "Windows Server 2008 for x64-based Systems Service Pack 2 (Server Core installation)", "1.007"}: "",
-	{"CVE-2025-21268", "Windows Server 2008 for 32-bit Systems Service Pack 2", "1.007"}:                               "",
-	{"CVE-2025-21268", "Windows Server 2008 for 32-bit Systems Service Pack 2 (Server Core installation)", "1.007"}:    "",
-	{"CVE-2025-21268", "Windows Server 2008 for x64-based Systems Service Pack 2", "1.007"}:                            "",
-	{"CVE-2025-21268", "Windows Server 2008 for x64-based Systems Service Pack 2 (Server Core installation)", "1.007"}: "",
-	{"CVE-2025-21269", "Windows Server 2008 for 32-bit Systems Service Pack 2", "1.007"}:                               "",
-	{"CVE-2025-21269", "Windows Server 2008 for 32-bit Systems Service Pack 2 (Server Core installation)", "1.007"}:    "",
-	{"CVE-2025-21269", "Windows Server 2008 for x64-based Systems Service Pack 2", "1.007"}:                            "",
-	{"CVE-2025-21269", "Windows Server 2008 for x64-based Systems Service Pack 2 (Server Core installation)", "1.007"}: "",
-	{"CVE-2025-21276", "Windows Server 2008 for 32-bit Systems Service Pack 2", "1.007"}:                               "",
-	{"CVE-2025-21276", "Windows Server 2008 for 32-bit Systems Service Pack 2 (Server Core installation)", "1.007"}:    "",
-	{"CVE-2025-21276", "Windows Server 2008 for x64-based Systems Service Pack 2", "1.007"}:                            "",
-	{"CVE-2025-21276", "Windows Server 2008 for x64-based Systems Service Pack 2 (Server Core installation)", "1.007"}: "",
-	{"CVE-2025-21328", "Windows Server 2008 for 32-bit Systems Service Pack 2", "1.007"}:                               "",
-	{"CVE-2025-21328", "Windows Server 2008 for 32-bit Systems Service Pack 2 (Server Core installation)", "1.007"}:    "",
-	{"CVE-2025-21328", "Windows Server 2008 for x64-based Systems Service Pack 2", "1.007"}:                            "",
-	{"CVE-2025-21328", "Windows Server 2008 for x64-based Systems Service Pack 2 (Server Core installation)", "1.007"}: "",
-	{"CVE-2025-21329", "Windows Server 2008 for 32-bit Systems Service Pack 2", "1.007"}:                               "",
-	{"CVE-2025-21329", "Windows Server 2008 for 32-bit Systems Service Pack 2 (Server Core installation)", "1.007"}:    "",
-	{"CVE-2025-21329", "Windows Server 2008 for x64-based Systems Service Pack 2", "1.007"}:                            "",
-	{"CVE-2025-21329", "Windows Server 2008 for x64-based Systems Service Pack 2 (Server Core installation)", "1.007"}: "",
-	{"CVE-2025-21332", "Windows Server 2008 for 32-bit Systems Service Pack 2", "1.007"}:                               "",
-	{"CVE-2025-21332", "Windows Server 2008 for 32-bit Systems Service Pack 2 (Server Core installation)", "1.007"}:    "",
-	{"CVE-2025-21332", "Windows Server 2008 for x64-based Systems Service Pack 2", "1.007"}:                            "",
-	{"CVE-2025-21332", "Windows Server 2008 for x64-based Systems Service Pack 2 (Server Core installation)", "1.007"}: "",
-	// 2025-Mar (IE Cumulative, FixedBuild "1.000" is a revision number, not a Windows OS build)
-	{"CVE-2025-21247", "Windows Server 2008 R2 for x64-based Systems Service Pack 1", "1.000"}:                            "",
-	{"CVE-2025-21247", "Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)", "1.000"}: "",
-	{"CVE-2025-21247", "Windows Server 2008 for 32-bit Systems Service Pack 2", "1.000"}:                                  "",
-	{"CVE-2025-21247", "Windows Server 2008 for 32-bit Systems Service Pack 2 (Server Core installation)", "1.000"}:       "",
-	{"CVE-2025-21247", "Windows Server 2012 R2", "1.000"}:                                                                 "",
-	{"CVE-2025-21247", "Windows Server 2012 R2 (Server Core installation)", "1.000"}:                                      "",
-	// 2025-Apr (IE Cumulative, FixedBuild "1.000" is a revision number, not a Windows OS build)
-	{"CVE-2025-27737", "Windows Server 2008 R2 for x64-based Systems Service Pack 1", "1.000"}:                            "",
-	{"CVE-2025-27737", "Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)", "1.000"}: "",
-	{"CVE-2025-27737", "Windows Server 2008 for 32-bit Systems Service Pack 2", "1.000"}:                                  "",
-	{"CVE-2025-27737", "Windows Server 2008 for 32-bit Systems Service Pack 2 (Server Core installation)", "1.000"}:       "",
-	{"CVE-2025-27737", "Windows Server 2008 for x64-based Systems Service Pack 2", "1.000"}:                               "",
-	{"CVE-2025-27737", "Windows Server 2008 for x64-based Systems Service Pack 2 (Server Core installation)", "1.000"}:    "",
-	{"CVE-2025-27737", "Windows Server 2012", "1.000"}:                                                                    "",
-	{"CVE-2025-27737", "Windows Server 2012 (Server Core installation)", "1.000"}:                                         "",
-	{"CVE-2025-27737", "Windows Server 2012 R2", "1.000"}:                                                                 "",
-	{"CVE-2025-27737", "Windows Server 2012 R2 (Server Core installation)", "1.000"}:                                      "",
-	// 2025-May (IE Cumulative, FixedBuild "1.003" is a revision number, not a Windows OS build)
-	{"CVE-2025-30397", "Windows Server 2008 R2 for x64-based Systems Service Pack 1", "1.003"}:                            "",
-	{"CVE-2025-30397", "Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)", "1.003"}: "",
-	{"CVE-2025-30397", "Windows Server 2008 for 32-bit Systems Service Pack 2", "1.003"}:                                  "",
-	{"CVE-2025-30397", "Windows Server 2008 for 32-bit Systems Service Pack 2 (Server Core installation)", "1.003"}:       "",
-	{"CVE-2025-30397", "Windows Server 2008 for x64-based Systems Service Pack 2", "1.003"}:                               "",
-	{"CVE-2025-30397", "Windows Server 2008 for x64-based Systems Service Pack 2 (Server Core installation)", "1.003"}:    "",
-	{"CVE-2025-30397", "Windows Server 2012", "1.003"}:                                                                    "",
-	{"CVE-2025-30397", "Windows Server 2012 (Server Core installation)", "1.003"}:                                         "",
-	{"CVE-2025-30397", "Windows Server 2012 R2", "1.003"}:                                                                 "",
-	{"CVE-2025-30397", "Windows Server 2012 R2 (Server Core installation)", "1.003"}:                                      "",
-	// 2025-Jun (IE Cumulative, FixedBuild "1.000" is a revision number, not a Windows OS build)
-	{"CVE-2025-33053", "Windows Server 2012", "1.000"}:                            "",
-	{"CVE-2025-33053", "Windows Server 2012 (Server Core installation)", "1.000"}: "",
-	// 2025-Sep (IE Cumulative, FixedBuild "1.000" is a revision number, not a Windows OS build)
-	{"CVE-2025-54107", "Windows Server 2008 R2 for x64-based Systems Service Pack 1", "1.000"}:                            "",
-	{"CVE-2025-54107", "Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)", "1.000"}: "",
-	{"CVE-2025-54107", "Windows Server 2008 for 32-bit Systems Service Pack 2", "1.000"}:                                  "",
-	{"CVE-2025-54107", "Windows Server 2008 for 32-bit Systems Service Pack 2 (Server Core installation)", "1.000"}:       "",
-	{"CVE-2025-54107", "Windows Server 2008 for x64-based Systems Service Pack 2", "1.000"}:                               "",
-	{"CVE-2025-54107", "Windows Server 2008 for x64-based Systems Service Pack 2 (Server Core installation)", "1.000"}:    "",
-	{"CVE-2025-54107", "Windows Server 2012", "1.000"}:                                                                    "",
-	{"CVE-2025-54107", "Windows Server 2012 (Server Core installation)", "1.000"}:                                         "",
-	{"CVE-2025-54107", "Windows Server 2012 R2", "1.000"}:                                                                 "",
-	{"CVE-2025-54107", "Windows Server 2012 R2 (Server Core installation)", "1.000"}:                                      "",
-	{"CVE-2025-54917", "Windows Server 2008 R2 for x64-based Systems Service Pack 1", "1.000"}:                            "",
-	{"CVE-2025-54917", "Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)", "1.000"}: "",
-	{"CVE-2025-54917", "Windows Server 2008 for 32-bit Systems Service Pack 2", "1.000"}:                                  "",
-	{"CVE-2025-54917", "Windows Server 2008 for 32-bit Systems Service Pack 2 (Server Core installation)", "1.000"}:       "",
-	{"CVE-2025-54917", "Windows Server 2008 for x64-based Systems Service Pack 2", "1.000"}:                               "",
-	{"CVE-2025-54917", "Windows Server 2008 for x64-based Systems Service Pack 2 (Server Core installation)", "1.000"}:    "",
-	{"CVE-2025-54917", "Windows Server 2012", "1.000"}:                                                                    "",
-	{"CVE-2025-54917", "Windows Server 2012 (Server Core installation)", "1.000"}:                                         "",
-	{"CVE-2025-54917", "Windows Server 2012 R2", "1.000"}:                                                                 "",
-	{"CVE-2025-54917", "Windows Server 2012 R2 (Server Core installation)", "1.000"}:                                      "",
-	// 2025-Oct (IE Cumulative, FixedBuild "1.000" is a revision number, not a Windows OS build)
-	{"CVE-2025-58739", "Windows Server 2008 R2 for x64-based Systems Service Pack 1", "1.000"}:                            "",
-	{"CVE-2025-58739", "Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)", "1.000"}: "",
-	{"CVE-2025-58739", "Windows Server 2008 for 32-bit Systems Service Pack 2", "1.000"}:                                  "",
-	{"CVE-2025-58739", "Windows Server 2008 for 32-bit Systems Service Pack 2 (Server Core installation)", "1.000"}:       "",
-	{"CVE-2025-58739", "Windows Server 2008 for x64-based Systems Service Pack 2", "1.000"}:                               "",
-	{"CVE-2025-58739", "Windows Server 2008 for x64-based Systems Service Pack 2 (Server Core installation)", "1.000"}:    "",
-	{"CVE-2025-58739", "Windows Server 2012", "1.000"}:                                                                    "",
-	{"CVE-2025-58739", "Windows Server 2012 (Server Core installation)", "1.000"}:                                         "",
-	{"CVE-2025-58739", "Windows Server 2012 R2", "1.000"}:                                                                 "",
-	{"CVE-2025-58739", "Windows Server 2012 R2 (Server Core installation)", "1.000"}:                                      "",
-	{"CVE-2025-59208", "Windows Server 2008 R2 for x64-based Systems Service Pack 1", "1.000"}:                            "",
-	{"CVE-2025-59208", "Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)", "1.000"}: "",
-	{"CVE-2025-59208", "Windows Server 2008 for 32-bit Systems Service Pack 2", "1.000"}:                                  "",
-	{"CVE-2025-59208", "Windows Server 2008 for 32-bit Systems Service Pack 2 (Server Core installation)", "1.000"}:       "",
-	{"CVE-2025-59208", "Windows Server 2008 for x64-based Systems Service Pack 2", "1.000"}:                               "",
-	{"CVE-2025-59208", "Windows Server 2008 for x64-based Systems Service Pack 2 (Server Core installation)", "1.000"}:    "",
-	{"CVE-2025-59208", "Windows Server 2012", "1.000"}:                                                                    "",
-	{"CVE-2025-59208", "Windows Server 2012 (Server Core installation)", "1.000"}:                                         "",
-	{"CVE-2025-59208", "Windows Server 2012 R2", "1.000"}:                                                                 "",
-	{"CVE-2025-59208", "Windows Server 2012 R2 (Server Core installation)", "1.000"}:                                      "",
-	{"CVE-2025-59295", "Windows Server 2008 R2 for x64-based Systems Service Pack 1", "1.000"}:                            "",
-	{"CVE-2025-59295", "Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)", "1.000"}: "",
-	{"CVE-2025-59295", "Windows Server 2008 for 32-bit Systems Service Pack 2", "1.000"}:                                  "",
-	{"CVE-2025-59295", "Windows Server 2008 for 32-bit Systems Service Pack 2 (Server Core installation)", "1.000"}:       "",
-	{"CVE-2025-59295", "Windows Server 2008 for x64-based Systems Service Pack 2", "1.000"}:                               "",
-	{"CVE-2025-59295", "Windows Server 2008 for x64-based Systems Service Pack 2 (Server Core installation)", "1.000"}:    "",
-	{"CVE-2025-59295", "Windows Server 2012", "1.000"}:                                                                    "",
-	{"CVE-2025-59295", "Windows Server 2012 (Server Core installation)", "1.000"}:                                         "",
-	{"CVE-2025-59295", "Windows Server 2012 R2", "1.000"}:                                                                 "",
-	{"CVE-2025-59295", "Windows Server 2012 R2 (Server Core installation)", "1.000"}:                                      "",
-	// 2026-Mar (IE Cumulative, FixedBuild "1.000" is a revision number, not a Windows OS build)
-	{"CVE-2026-23674", "Windows Server 2012", "1.000"}:                               "",
-	{"CVE-2026-23674", "Windows Server 2012 (Server Core installation)", "1.000"}:    "",
-	{"CVE-2026-23674", "Windows Server 2012 R2", "1.000"}:                            "",
-	{"CVE-2026-23674", "Windows Server 2012 R2 (Server Core installation)", "1.000"}: "",
-	// 2026-Apr (IE Cumulative, FixedBuild "1.000" is a revision number, not a Windows OS build)
-	{"CVE-2026-32077", "Windows Server 2012", "1.000"}:                               "",
-	{"CVE-2026-32077", "Windows Server 2012 (Server Core installation)", "1.000"}:    "",
-	{"CVE-2026-32077", "Windows Server 2012 R2", "1.000"}:                            "",
-	{"CVE-2026-32077", "Windows Server 2012 R2 (Server Core installation)", "1.000"}: "",
-	// 2026-Jun (IE Cumulative, FixedBuild "1.000" is a revision number, not a Windows OS build)
-	{"CVE-2026-45592", "Windows Server 2012 R2", "1.000"}:                            "",
-	{"CVE-2026-45592", "Windows Server 2012 R2 (Server Core installation)", "1.000"}: "",
-	// 2026-Jul (IE Cumulative, FixedBuild "1.000" is a revision number, not a Windows OS build)
-	{"CVE-2026-50480", "Windows Server 2012", "1.000"}:                               "",
-	{"CVE-2026-50480", "Windows Server 2012 (Server Core installation)", "1.000"}:    "",
-	{"CVE-2026-50480", "Windows Server 2012 R2", "1.000"}:                            "",
-	{"CVE-2026-50480", "Windows Server 2012 R2 (Server Core installation)", "1.000"}: "",
-
-	// Windows OS (FixedBuild leaked from a sibling servicing branch: a single Vendor Fix
-	// Remediation grouped products from multiple servicing branches but specified only
-	// one branch's build value; rewrite only the third component of "10.0.X.Y" to the
-	// product's known servicing-branch build major, preserving the per-CVE fourth
-	// component that is shared across branches.)
-	// 2023-Feb (Win11 21H2 (ARM64) tagged 10.0.22621.x; Win11 21H2 (x64) tagged 10.0.22621.x)
-	{"CVE-2023-21684", "Windows 11 Version 21H2 for ARM64-based Systems", "10.0.22621.1574"}: "10.0.22000.1574",
-	{"CVE-2023-21684", "Windows 11 Version 21H2 for x64-based Systems", "10.0.22621.1574"}:   "10.0.22000.1574",
-	{"CVE-2023-21685", "Windows 11 Version 21H2 for ARM64-based Systems", "10.0.22621.1574"}: "10.0.22000.1574",
-	{"CVE-2023-21685", "Windows 11 Version 21H2 for x64-based Systems", "10.0.22621.1574"}:   "10.0.22000.1574",
-	{"CVE-2023-21686", "Windows 11 Version 21H2 for ARM64-based Systems", "10.0.22621.1574"}: "10.0.22000.1574",
-	{"CVE-2023-21686", "Windows 11 Version 21H2 for x64-based Systems", "10.0.22621.1574"}:   "10.0.22000.1574",
-	{"CVE-2023-21687", "Windows 11 Version 21H2 for ARM64-based Systems", "10.0.22621.1574"}: "10.0.22000.1574",
-	{"CVE-2023-21687", "Windows 11 Version 21H2 for x64-based Systems", "10.0.22621.1574"}:   "10.0.22000.1574",
-	{"CVE-2023-21688", "Windows 11 Version 21H2 for ARM64-based Systems", "10.0.22621.1574"}: "10.0.22000.1574",
-	{"CVE-2023-21688", "Windows 11 Version 21H2 for x64-based Systems", "10.0.22621.1574"}:   "10.0.22000.1574",
-	{"CVE-2023-21689", "Windows 11 Version 21H2 for ARM64-based Systems", "10.0.22621.1574"}: "10.0.22000.1574",
-	{"CVE-2023-21689", "Windows 11 Version 21H2 for x64-based Systems", "10.0.22621.1574"}:   "10.0.22000.1574",
-	{"CVE-2023-21690", "Windows 11 Version 21H2 for ARM64-based Systems", "10.0.22621.1574"}: "10.0.22000.1574",
-	{"CVE-2023-21690", "Windows 11 Version 21H2 for x64-based Systems", "10.0.22621.1574"}:   "10.0.22000.1574",
-	{"CVE-2023-21691", "Windows 11 Version 21H2 for ARM64-based Systems", "10.0.22621.1574"}: "10.0.22000.1574",
-	{"CVE-2023-21691", "Windows 11 Version 21H2 for x64-based Systems", "10.0.22621.1574"}:   "10.0.22000.1574",
-	{"CVE-2023-21692", "Windows 11 Version 21H2 for ARM64-based Systems", "10.0.22621.1574"}: "10.0.22000.1574",
-	{"CVE-2023-21692", "Windows 11 Version 21H2 for x64-based Systems", "10.0.22621.1574"}:   "10.0.22000.1574",
-	{"CVE-2023-21693", "Windows 11 Version 21H2 for ARM64-based Systems", "10.0.22621.1574"}: "10.0.22000.1574",
-	{"CVE-2023-21693", "Windows 11 Version 21H2 for x64-based Systems", "10.0.22621.1574"}:   "10.0.22000.1574",
-	{"CVE-2023-21694", "Windows 11 Version 21H2 for ARM64-based Systems", "10.0.22621.1574"}: "10.0.22000.1574",
-	{"CVE-2023-21694", "Windows 11 Version 21H2 for x64-based Systems", "10.0.22621.1574"}:   "10.0.22000.1574",
-	{"CVE-2023-21695", "Windows 11 Version 21H2 for ARM64-based Systems", "10.0.22621.1574"}: "10.0.22000.1574",
-	{"CVE-2023-21695", "Windows 11 Version 21H2 for x64-based Systems", "10.0.22621.1574"}:   "10.0.22000.1574",
-	{"CVE-2023-21700", "Windows 11 Version 21H2 for ARM64-based Systems", "10.0.22621.1574"}: "10.0.22000.1574",
-	{"CVE-2023-21700", "Windows 11 Version 21H2 for x64-based Systems", "10.0.22621.1574"}:   "10.0.22000.1574",
-	{"CVE-2023-21701", "Windows 11 Version 21H2 for ARM64-based Systems", "10.0.22621.1574"}: "10.0.22000.1574",
-	{"CVE-2023-21701", "Windows 11 Version 21H2 for x64-based Systems", "10.0.22621.1574"}:   "10.0.22000.1574",
-	{"CVE-2023-21702", "Windows 11 Version 21H2 for ARM64-based Systems", "10.0.22621.1574"}: "10.0.22000.1574",
-	{"CVE-2023-21702", "Windows 11 Version 21H2 for x64-based Systems", "10.0.22621.1574"}:   "10.0.22000.1574",
-	{"CVE-2023-21797", "Windows 11 Version 21H2 for ARM64-based Systems", "10.0.22621.1574"}: "10.0.22000.1574",
-	{"CVE-2023-21797", "Windows 11 Version 21H2 for x64-based Systems", "10.0.22621.1574"}:   "10.0.22000.1574",
-	{"CVE-2023-21798", "Windows 11 Version 21H2 for ARM64-based Systems", "10.0.22621.1574"}: "10.0.22000.1574",
-	{"CVE-2023-21798", "Windows 11 Version 21H2 for x64-based Systems", "10.0.22621.1574"}:   "10.0.22000.1574",
-	{"CVE-2023-21799", "Windows 11 Version 21H2 for ARM64-based Systems", "10.0.22621.1574"}: "10.0.22000.1574",
-	{"CVE-2023-21799", "Windows 11 Version 21H2 for x64-based Systems", "10.0.22621.1574"}:   "10.0.22000.1574",
-	{"CVE-2023-21801", "Windows 11 Version 21H2 for ARM64-based Systems", "10.0.22621.1574"}: "10.0.22000.1574",
-	{"CVE-2023-21801", "Windows 11 Version 21H2 for x64-based Systems", "10.0.22621.1574"}:   "10.0.22000.1574",
-	{"CVE-2023-21802", "Windows 11 Version 21H2 for ARM64-based Systems", "10.0.22621.1574"}: "10.0.22000.1574",
-	{"CVE-2023-21802", "Windows 11 Version 21H2 for x64-based Systems", "10.0.22621.1574"}:   "10.0.22000.1574",
-	{"CVE-2023-21804", "Windows 11 Version 21H2 for ARM64-based Systems", "10.0.22621.1574"}: "10.0.22000.1574",
-	{"CVE-2023-21804", "Windows 11 Version 21H2 for x64-based Systems", "10.0.22621.1574"}:   "10.0.22000.1574",
-	{"CVE-2023-21805", "Windows 11 Version 21H2 for ARM64-based Systems", "10.0.22621.1574"}: "10.0.22000.1574",
-	{"CVE-2023-21805", "Windows 11 Version 21H2 for x64-based Systems", "10.0.22621.1574"}:   "10.0.22000.1574",
-	{"CVE-2023-21811", "Windows 11 Version 21H2 for ARM64-based Systems", "10.0.22621.1574"}: "10.0.22000.1574",
-	{"CVE-2023-21811", "Windows 11 Version 21H2 for x64-based Systems", "10.0.22621.1574"}:   "10.0.22000.1574",
-	{"CVE-2023-21812", "Windows 11 Version 21H2 for ARM64-based Systems", "10.0.22621.1574"}: "10.0.22000.1574",
-	{"CVE-2023-21812", "Windows 11 Version 21H2 for x64-based Systems", "10.0.22621.1574"}:   "10.0.22000.1574",
-	{"CVE-2023-21813", "Windows 11 Version 21H2 for ARM64-based Systems", "10.0.22621.1574"}: "10.0.22000.1574",
-	{"CVE-2023-21813", "Windows 11 Version 21H2 for x64-based Systems", "10.0.22621.1574"}:   "10.0.22000.1574",
-	{"CVE-2023-21816", "Windows 11 Version 21H2 for ARM64-based Systems", "10.0.22621.1574"}: "10.0.22000.1574",
-	{"CVE-2023-21816", "Windows 11 Version 21H2 for x64-based Systems", "10.0.22621.1574"}:   "10.0.22000.1574",
-	{"CVE-2023-21817", "Windows 11 Version 21H2 for ARM64-based Systems", "10.0.22621.1574"}: "10.0.22000.1574",
-	{"CVE-2023-21817", "Windows 11 Version 21H2 for x64-based Systems", "10.0.22621.1574"}:   "10.0.22000.1574",
-	{"CVE-2023-21818", "Windows 11 Version 21H2 for ARM64-based Systems", "10.0.22621.1574"}: "10.0.22000.1574",
-	{"CVE-2023-21818", "Windows 11 Version 21H2 for x64-based Systems", "10.0.22621.1574"}:   "10.0.22000.1574",
-	{"CVE-2023-21819", "Windows 11 Version 21H2 for ARM64-based Systems", "10.0.22621.1574"}: "10.0.22000.1574",
-	{"CVE-2023-21819", "Windows 11 Version 21H2 for x64-based Systems", "10.0.22621.1574"}:   "10.0.22000.1574",
-	{"CVE-2023-21820", "Windows 11 Version 21H2 for ARM64-based Systems", "10.0.22621.1574"}: "10.0.22000.1574",
-	{"CVE-2023-21820", "Windows 11 Version 21H2 for x64-based Systems", "10.0.22621.1574"}:   "10.0.22000.1574",
-	{"CVE-2023-21822", "Windows 11 Version 21H2 for ARM64-based Systems", "10.0.22621.1574"}: "10.0.22000.1574",
-	{"CVE-2023-21822", "Windows 11 Version 21H2 for x64-based Systems", "10.0.22621.1574"}:   "10.0.22000.1574",
-	{"CVE-2023-21823", "Windows 11 Version 21H2 for ARM64-based Systems", "10.0.22621.1574"}: "10.0.22000.1574",
-	{"CVE-2023-21823", "Windows 11 Version 21H2 for x64-based Systems", "10.0.22621.1574"}:   "10.0.22000.1574",
-	{"CVE-2023-23376", "Windows 11 Version 21H2 for ARM64-based Systems", "10.0.22621.1574"}: "10.0.22000.1574",
-	{"CVE-2023-23376", "Windows 11 Version 21H2 for x64-based Systems", "10.0.22621.1574"}:   "10.0.22000.1574",
-	// 2023-Dec (Win11 23H2 (ARM64) tagged 10.0.22621.x)
-	{"CVE-2023-20588", "Windows 11 Version 23H2 for ARM64-based Systems", "10.0.22621.2861"}: "10.0.22631.2861",
-	{"CVE-2023-21740", "Windows 11 Version 23H2 for ARM64-based Systems", "10.0.22621.2861"}: "10.0.22631.2861",
-	{"CVE-2023-35628", "Windows 11 Version 23H2 for ARM64-based Systems", "10.0.22621.2861"}: "10.0.22631.2861",
-	{"CVE-2023-35630", "Windows 11 Version 23H2 for ARM64-based Systems", "10.0.22621.2861"}: "10.0.22631.2861",
-	{"CVE-2023-35631", "Windows 11 Version 23H2 for ARM64-based Systems", "10.0.22621.2861"}: "10.0.22631.2861",
-	{"CVE-2023-35634", "Windows 11 Version 23H2 for ARM64-based Systems", "10.0.22621.2861"}: "10.0.22631.2861",
-	{"CVE-2023-35635", "Windows 11 Version 23H2 for ARM64-based Systems", "10.0.22621.2861"}: "10.0.22631.2861",
-	{"CVE-2023-35639", "Windows 11 Version 23H2 for ARM64-based Systems", "10.0.22621.2861"}: "10.0.22631.2861",
-	{"CVE-2023-35641", "Windows 11 Version 23H2 for ARM64-based Systems", "10.0.22621.2861"}: "10.0.22631.2861",
-	{"CVE-2023-35642", "Windows 11 Version 23H2 for ARM64-based Systems", "10.0.22621.2861"}: "10.0.22631.2861",
-	{"CVE-2023-35644", "Windows 11 Version 23H2 for ARM64-based Systems", "10.0.22621.2861"}: "10.0.22631.2861",
-	{"CVE-2023-36003", "Windows 11 Version 23H2 for ARM64-based Systems", "10.0.22621.2861"}: "10.0.22631.2861",
-	{"CVE-2023-36004", "Windows 11 Version 23H2 for ARM64-based Systems", "10.0.22621.2861"}: "10.0.22631.2861",
-	{"CVE-2023-36005", "Windows 11 Version 23H2 for ARM64-based Systems", "10.0.22621.2861"}: "10.0.22631.2861",
-	{"CVE-2023-36006", "Windows 11 Version 23H2 for ARM64-based Systems", "10.0.22621.2861"}: "10.0.22631.2861",
-	{"CVE-2023-36011", "Windows 11 Version 23H2 for ARM64-based Systems", "10.0.22621.2861"}: "10.0.22631.2861",
-	{"CVE-2023-36391", "Windows 11 Version 23H2 for ARM64-based Systems", "10.0.22621.2861"}: "10.0.22631.2861",
-	{"CVE-2023-36696", "Windows 11 Version 23H2 for ARM64-based Systems", "10.0.22621.2861"}: "10.0.22631.2861",
-	// 2024-Aug (Win11 21H2 (ARM64) tagged 10.0.19044.x; Win11 21H2 (x64) tagged 10.0.19044.x; Win11 24H2 (x64) tagged 10.0.22621.x)
-	{"CVE-2022-2601", "Windows 11 Version 24H2 for x64-based Systems", "10.0.22621.5189"}:    "10.0.26100.5189",
-	{"CVE-2023-40547", "Windows 11 Version 24H2 for x64-based Systems", "10.0.22621.5189"}:   "10.0.26100.5189",
-	{"CVE-2024-21302", "Windows 11 Version 21H2 for ARM64-based Systems", "10.0.19044.5737"}: "10.0.22000.5737",
-	{"CVE-2024-21302", "Windows 11 Version 21H2 for x64-based Systems", "10.0.19044.5737"}:   "10.0.22000.5737",
-	// 2024-Sep (Win11 23H2 (x64) tagged 10.0.22621.x)
-	{"CVE-2024-43495", "Windows 11 Version 23H2 for x64-based Systems", "10.0.22621.3880"}: "10.0.22631.3880",
-	// 2025-Jun (Win11 23H2 (ARM64) tagged 10.0.22621.x; Win11 23H2 (x64) tagged 10.0.22621.x)
-	{"CVE-2025-47969", "Windows 11 Version 23H2 for ARM64-based Systems", "10.0.22621.5335"}: "10.0.22631.5335",
-	{"CVE-2025-47969", "Windows 11 Version 23H2 for x64-based Systems", "10.0.22621.5335"}:   "10.0.22631.5335",
-	// 2025-Jul (Server 2025 tagged 10.0.26200.x; Server 2025 Core tagged 10.0.26200.x)
-	{"CVE-2025-49735", "Windows Server 2025", "10.0.26200.4349"}:                            "10.0.26100.4349",
-	{"CVE-2025-49735", "Windows Server 2025 (Server Core installation)", "10.0.26200.4349"}: "10.0.26100.4349",
-	// 2025-Aug (Win11 22H2 (ARM64) tagged 10.0.22631.x; Win11 23H2 (x64) tagged 10.0.22621.x)
-	{"CVE-2025-53789", "Windows 11 Version 22H2 for ARM64-based Systems", "10.0.22631.5624"}: "10.0.22621.5624",
-	{"CVE-2025-53789", "Windows 11 Version 23H2 for x64-based Systems", "10.0.22621.5624"}:   "10.0.22631.5624",
-	{"CVE-2025-55230", "Windows 11 Version 23H2 for x64-based Systems", "10.0.22621.5624"}:   "10.0.22631.5624",
-	// 2025-Sep (Win11 22H2 (ARM64) tagged 10.0.22631.x; Win11 22H2 (x64) tagged 10.0.22631.x)
-	{"CVE-2025-59220", "Windows 11 Version 22H2 for ARM64-based Systems", "10.0.22631.5909"}: "10.0.22621.5909",
-	{"CVE-2025-59220", "Windows 11 Version 22H2 for x64-based Systems", "10.0.22631.5909"}:   "10.0.22621.5909",
-	// 2025-Oct (Win11 22H2 (ARM64) tagged 10.0.22631.x; Win11 22H2 (x64) tagged 10.0.22631.x)
-	{"CVE-2025-59289", "Windows 11 Version 22H2 for ARM64-based Systems", "10.0.22631.5909"}: "10.0.22621.5909",
-	{"CVE-2025-59289", "Windows 11 Version 22H2 for x64-based Systems", "10.0.22631.5909"}:   "10.0.22621.5909",
-	{"CVE-2025-59290", "Windows 11 Version 22H2 for ARM64-based Systems", "10.0.22631.5909"}: "10.0.22621.5909",
-	{"CVE-2025-59290", "Windows 11 Version 22H2 for x64-based Systems", "10.0.22631.5909"}:   "10.0.22621.5909",
-	{"CVE-2025-59502", "Windows 11 Version 22H2 for ARM64-based Systems", "10.0.22631.5909"}: "10.0.22621.5909",
-	{"CVE-2025-59502", "Windows 11 Version 22H2 for x64-based Systems", "10.0.22631.5909"}:   "10.0.22621.5909",
-	// 2025-Dec (Win11 25H2 (ARM64) tagged 10.0.26100.x; Win11 25H2 (x64) tagged 10.0.26100.x)
-	{"CVE-2025-54100", "Windows 11 Version 25H2 for ARM64-based Systems", "10.0.26100.7392"}: "10.0.26200.7392",
-	{"CVE-2025-54100", "Windows 11 Version 25H2 for x64-based Systems", "10.0.26100.7392"}:   "10.0.26200.7392",
-	// 2026-Mar (Win11 25H2 (ARM64) tagged 10.0.26100.x)
-	{"CVE-2026-25172", "Windows 11 Version 25H2 for ARM64-based Systems", "10.0.26100.7982"}: "10.0.26200.7982",
-	{"CVE-2026-25173", "Windows 11 Version 25H2 for ARM64-based Systems", "10.0.26100.7982"}: "10.0.26200.7982",
-	{"CVE-2026-26111", "Windows 11 Version 25H2 for ARM64-based Systems", "10.0.26100.7982"}: "10.0.26200.7982",
-	// 2026-Aug (Win11 24H2 (ARM64) hotpatch tagged 10.0.26200.x)
-	{"CVE-2026-62727", "Windows 11 Version 24H2 for ARM64-based Systems", "10.0.26200.9106"}: "10.0.26100.9106",
-}
-
-// missingProductOverride describes a product that Microsoft omitted from a
-// CVRF advisory's ProductTree / ProductStatuses / Remediations, but which is
-// documented elsewhere (e.g. Microsoft Edge Release Notes) to be affected and
-// fixed in the given build. The override synthesises a FixedBuild criterion
-// for the missing product so that detection still fires.
-type missingProductOverride struct {
-	Product    string
-	FixedBuild string
-}
-
-// missingProductOverrides maps a CVE ID to a list of products Microsoft failed
-// to list in CVRF for that advisory. Each entry produces a synthesised
-// FixedBuild criterion as if the product had been listed under ProductStatuses
-// with the given fixed version.
-//
-// Use this mechanism only when the affected product is documented elsewhere
-// (e.g. Edge Release Notes) but is omitted from CVRF's ProductTree /
-// ProductStatuses / Remediations entirely. When the product IS listed but the
-// FixedBuild value is wrong/empty, prefer fixedBuildOverrides above.
-var missingProductOverrides = map[string][]missingProductOverride{
-	// CVE-2023-21796 — Microsoft Edge (Chromium-based) Elevation of Privilege Vulnerability
-	// CVRF lists only "Microsoft Edge (Chromium-based) Extended Stable" (PID 12142,
-	// fixed at 108.0.1462.83); the Stable channel is absent from ProductTree /
-	// ProductStatuses / Remediations entirely, even though the same fix ships in
-	// the Stable channel per Microsoft Edge Stable Release Notes (Jan 12, 2023),
-	// which credit CVE-2023-21796 to 109.0.1518.49.
-	// https://learn.microsoft.com/en-us/deployedge/microsoft-edge-relnotes-security
-	"CVE-2023-21796": {
-		{Product: "Microsoft Edge (Chromium-based)", FixedBuild: "109.0.1518.49"},
-	},
-	// CVE-2026-66323 / CVE-2026-66324 — Microsoft Edge (Chromium-based) Remote Code
-	// Execution / Spoofing Vulnerability (2026-Aug). CVRF lists only the platform
-	// products (Microsoft Edge for Windows/MAC/Linux/Android/iOS) in ProductStatuses /
-	// Remediations, unlike the other Microsoft-CNA Edge CVEs of the same release, while
-	// the Microsoft Edge Stable Release Notes (Aug 27, 2026) credit both to 152.0.4191.53.
-	// https://learn.microsoft.com/en-us/deployedge/microsoft-edge-relnotes-security
-	"CVE-2026-66323": {
-		{Product: "Microsoft Edge (Chromium-based)", FixedBuild: "152.0.4191.53"},
-	},
-	"CVE-2026-66324": {
-		{Product: "Microsoft Edge (Chromium-based)", FixedBuild: "152.0.4191.53"},
-	},
-	// Microsoft Edge (Chromium-based) Extended Stable: CVRF lists only the Stable product, while the
-	// CVE FAQ version table also gives the Extended Stable release. Each value matches the Edge branch
-	// of its major version, and the Edge security release notes where they list the CVE. Exceptions:
-	//   - 2023-Jul: the FAQ has the typo 114.0.1901.183; Extended Stable shipped 114.0.1823.90 (Jul 21, 2023)
-	//   - CVE-2023-4863: the release notes credit 116.0.1938.81 (Sep 12, 2023), the FAQ the later 116.0.1938.98
-	//   - CVE-2024-21388: the release notes credit 120.0.2210.160 (Jan 26, 2024), the FAQ also lists 120.0.2210.167
-	"CVE-2022-3075":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "104.0.1293.81"}},
-	"CVE-2022-3723":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "106.0.1370.61"}},
-	"CVE-2022-3885":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "106.0.1370.72"}},
-	"CVE-2022-3886":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "106.0.1370.72"}},
-	"CVE-2022-3887":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "106.0.1370.72"}},
-	"CVE-2022-3888":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "106.0.1370.72"}},
-	"CVE-2022-3889":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "106.0.1370.72"}},
-	"CVE-2022-3890":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "106.0.1370.72"}},
-	"CVE-2022-4135":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "106.0.1370.86"}},
-	"CVE-2023-1213":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "110.0.1587.69"}},
-	"CVE-2023-1219":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "110.0.1587.69"}},
-	"CVE-2023-1221":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "110.0.1587.69"}},
-	"CVE-2023-1222":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "110.0.1587.69"}},
-	"CVE-2023-1223":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "110.0.1587.69"}},
-	"CVE-2023-1224":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "110.0.1587.69"}},
-	"CVE-2023-1229":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "110.0.1587.69"}},
-	"CVE-2023-1230":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "110.0.1587.69"}},
-	"CVE-2023-1231":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "110.0.1587.69"}},
-	"CVE-2023-1233":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "110.0.1587.69"}},
-	"CVE-2023-1234":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "110.0.1587.69"}},
-	"CVE-2023-1235":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "110.0.1587.69"}},
-	"CVE-2023-1236":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "110.0.1587.69"}},
-	"CVE-2023-1530":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "110.0.1587.78"}},
-	"CVE-2023-1531":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "110.0.1587.78"}},
-	"CVE-2023-1533":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "110.0.1587.78"}},
-	"CVE-2023-2459":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "112.0.1722.71"}},
-	"CVE-2023-2460":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "112.0.1722.71"}},
-	"CVE-2023-2462":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "112.0.1722.71"}},
-	"CVE-2023-2463":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "112.0.1722.71"}},
-	"CVE-2023-2464":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "112.0.1722.71"}},
-	"CVE-2023-2465":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "112.0.1722.71"}},
-	"CVE-2023-2466":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "112.0.1722.71"}},
-	"CVE-2023-2467":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "112.0.1722.71"}},
-	"CVE-2023-2468":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "112.0.1722.71"}},
-	"CVE-2023-3727":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "114.0.1823.90"}},
-	"CVE-2023-3732":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "114.0.1823.90"}},
-	"CVE-2023-3733":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "114.0.1823.90"}},
-	"CVE-2023-3734":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "114.0.1823.90"}},
-	"CVE-2023-3735":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "114.0.1823.90"}},
-	"CVE-2023-3736":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "114.0.1823.90"}},
-	"CVE-2023-3737":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "114.0.1823.90"}},
-	"CVE-2023-3738":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "114.0.1823.90"}},
-	"CVE-2023-3740":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "114.0.1823.90"}},
-	"CVE-2023-4863":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "116.0.1938.81"}},
-	"CVE-2023-5186":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "116.0.1938.98"}},
-	"CVE-2023-5187":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "116.0.1938.98"}},
-	"CVE-2023-5217":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "116.0.1938.98"}},
-	"CVE-2023-6345":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "118.0.2088.122"}},
-	"CVE-2023-6346":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "118.0.2088.122"}},
-	"CVE-2023-6347":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "118.0.2088.122"}},
-	"CVE-2023-6348":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "118.0.2088.122"}},
-	"CVE-2023-6350":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "118.0.2088.122"}},
-	"CVE-2023-6351":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "118.0.2088.122"}},
-	"CVE-2023-29350": {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "112.0.1722.71"}},
-	"CVE-2023-29354": {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "112.0.1722.71"}},
-	"CVE-2023-35392": {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "114.0.1823.90"}},
-	"CVE-2023-36014": {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "118.0.2088.102"}},
-	"CVE-2023-38187": {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "114.0.1823.90"}},
-	"CVE-2024-0804":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "120.0.2210.160"}},
-	"CVE-2024-0805":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "120.0.2210.160"}},
-	"CVE-2024-0806":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "120.0.2210.160"}},
-	"CVE-2024-0807":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "120.0.2210.160"}},
-	"CVE-2024-0808":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "120.0.2210.160"}},
-	"CVE-2024-0809":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "120.0.2210.160"}},
-	"CVE-2024-0810":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "120.0.2210.160"}},
-	"CVE-2024-0811":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "120.0.2210.160"}},
-	"CVE-2024-0812":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "120.0.2210.160"}},
-	"CVE-2024-0813":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "120.0.2210.160"}},
-	"CVE-2024-0814":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "120.0.2210.160"}},
-	"CVE-2024-1059":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "120.0.2210.167"}},
-	"CVE-2024-1060":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "120.0.2210.167"}},
-	"CVE-2024-1077":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "120.0.2210.167"}},
-	"CVE-2024-2400":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "122.0.2365.92"}},
-	"CVE-2024-5830":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "126.0.2592.56"}},
-	"CVE-2024-5831":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "126.0.2592.56"}},
-	"CVE-2024-5832":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "126.0.2592.56"}},
-	"CVE-2024-5833":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "126.0.2592.56"}},
-	"CVE-2024-5834":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "126.0.2592.56"}},
-	"CVE-2024-5835":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "126.0.2592.56"}},
-	"CVE-2024-5836":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "126.0.2592.56"}},
-	"CVE-2024-5837":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "126.0.2592.56"}},
-	"CVE-2024-5838":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "126.0.2592.56"}},
-	"CVE-2024-5839":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "126.0.2592.56"}},
-	"CVE-2024-5840":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "126.0.2592.56"}},
-	"CVE-2024-5841":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "126.0.2592.56"}},
-	"CVE-2024-5842":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "126.0.2592.56"}},
-	"CVE-2024-5843":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "126.0.2592.56"}},
-	"CVE-2024-5844":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "126.0.2592.56"}},
-	"CVE-2024-5845":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "126.0.2592.56"}},
-	"CVE-2024-5846":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "126.0.2592.56"}},
-	"CVE-2024-5847":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "126.0.2592.56"}},
-	"CVE-2024-9120":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "128.0.2739.97"}},
-	"CVE-2024-21326": {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "120.0.2210.160"}},
-	"CVE-2024-21336": {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "120.0.2210.160"}},
-	"CVE-2024-21382": {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "120.0.2210.160"}},
-	"CVE-2024-21383": {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "120.0.2210.160"}},
-	"CVE-2024-21385": {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "120.0.2210.160"}},
-	"CVE-2024-21388": {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "120.0.2210.160"}},
-	"CVE-2024-21399": {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "120.0.2210.167"}},
-	"CVE-2024-30058": {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "126.0.2592.56"}},
-
-	// Microsoft Edge (Chromium-based) Extended Stable, where the CVE FAQ gives a single version but
-	// the Edge security release notes credit the fix to an Extended Stable release as well (date of
-	// that release)
-	"CVE-2023-29345": {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "114.0.1823.37"}},  // Jun 2, 2023
-	"CVE-2023-33143": {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "114.0.1823.37"}},  // Jun 2, 2023
-	"CVE-2023-33145": {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "114.0.1823.51"}},  // Jun 15, 2023
-	"CVE-2023-36887": {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "114.0.1823.82"}},  // Jul 13, 2023
-	"CVE-2023-38157": {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "114.0.1823.106"}}, // Aug 7, 2023
-	"CVE-2023-38158": {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "116.0.1938.54"}},  // Aug 21, 2023
-	"CVE-2023-36787": {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "116.0.1938.54"}},  // Aug 21, 2023
-	"CVE-2024-4761":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "124.0.2478.105"}}, // May 14, 2024
-	"CVE-2024-4947":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "124.0.2478.109"}}, // May 16, 2024
-	"CVE-2024-30056": {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "124.0.2478.109"}}, // May 16, 2024
-	"CVE-2024-5274":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "124.0.2478.127"}}, // May 24, 2024
-	"CVE-2024-38218": {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "126.0.2592.137"}}, // Aug 8, 2024
-	"CVE-2024-38219": {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "126.0.2592.137"}}, // Aug 8, 2024
-	"CVE-2024-38221": {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "128.0.2739.90"}},  // Sep 19, 2024
-	"CVE-2024-43489": {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "128.0.2739.90"}},  // Sep 19, 2024
-	"CVE-2024-43496": {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "128.0.2739.90"}},  // Sep 19, 2024
-	"CVE-2025-21279": {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "132.0.2957.171"}}, // Feb 20, 2025
-	"CVE-2025-21283": {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "132.0.2957.171"}}, // Feb 20, 2025
-	"CVE-2025-21342": {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "132.0.2957.171"}}, // Feb 20, 2025
-	"CVE-2025-21408": {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "132.0.2957.171"}}, // Feb 20, 2025
-	"CVE-2025-5419":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "136.0.3240.115"}}, // Jun 4, 2025
-	"CVE-2026-2441":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "144.0.3719.130"}}, // Feb 17, 2026
-
-	// Microsoft Edge for Android / iOS: CVRF lists only Microsoft Edge (Chromium-based), while the
-	// Edge security release notes also credit the fix to the Android and iOS releases
-	// CVE-2026-40416: 148.0.3967.55 (May 11, 2026)
-	"CVE-2026-40416": {
-		{Product: "Microsoft Edge for Android", FixedBuild: "148.0.3967.55"},
-		{Product: "Microsoft Edge for iOS", FixedBuild: "148.0.3967.55"},
-	},
-	// CVE-2026-41107: 148.0.3967.55 (May 11, 2026)
-	"CVE-2026-41107": {
-		{Product: "Microsoft Edge for Android", FixedBuild: "148.0.3967.55"},
-		{Product: "Microsoft Edge for iOS", FixedBuild: "148.0.3967.55"},
-	},
-	// CVE-2026-42838: 148.0.3967.55 (May 11, 2026)
-	"CVE-2026-42838": {
-		{Product: "Microsoft Edge for Android", FixedBuild: "148.0.3967.55"},
-		{Product: "Microsoft Edge for iOS", FixedBuild: "148.0.3967.55"},
-	},
-	// CVE-2026-45495: 148.0.3967.70 (Android May 21, iOS May 19, 2026)
-	"CVE-2026-45495": {
-		{Product: "Microsoft Edge for Android", FixedBuild: "148.0.3967.70"},
-		{Product: "Microsoft Edge for iOS", FixedBuild: "148.0.3967.70"},
-	},
-	// CVE-2026-72970: 151.0.4129.86 (Aug 17, 2026)
-	"CVE-2026-72970": {
-		{Product: "Microsoft Edge for Android", FixedBuild: "151.0.4129.86"},
-		{Product: "Microsoft Edge for iOS", FixedBuild: "151.0.4129.86"},
-	},
-}
-
 func buildKBCriterion(product, kbID string) *criterionTypes.Criterion {
 	if !isAllDigits(kbID) {
 		return nil
@@ -3445,7 +1899,7 @@ func buildKBCriterion(product, kbID string) *criterionTypes.Criterion {
 // Adding the twin KB as an additional KB criterion lets the supersession
 // chain resolve.
 //
-// The product name is part of the key (parallel to fixedBuildOverrides) so
+// The product name is part of the key (parallel to overrideFixedBuild) so
 // each entry is exact-match and self-validating: no fuzzy/substring matching
 // is performed at lookup time. Entries are generated from observed CVRF
 // (productName, KBID) tuples, normalized via microsoftutil.NormalizeProductName.

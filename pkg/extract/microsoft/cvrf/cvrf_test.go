@@ -1,7 +1,6 @@
 package cvrf_test
 
 import (
-	"fmt"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -9,7 +8,6 @@ import (
 	"github.com/google/go-cmp/cmp"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/microsoft/cvrf"
-	microsoftutil "github.com/MaineK00n/vuls-data-update/pkg/extract/microsoft/util"
 	criteriaTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria"
 	criterionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion"
 	kbcTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/kbcriterion"
@@ -1042,7 +1040,7 @@ func TestBuildFixedBuildCriterion(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := cvrf.BuildFixedBuildCriterion(tt.args.cveID, tt.args.productName, tt.args.rawFixedBuild)
+			got, err := cvrf.BuildOverriddenFixedBuildCriterion(tt.args.cveID, tt.args.productName, tt.args.rawFixedBuild)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("BuildFixedBuildCriterion() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -1256,13 +1254,13 @@ func TestFixedBuildOverrides(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, ok := cvrf.FixedBuildOverrides[tt.key]
+			got, ok := cvrf.FixedBuildOverride(tt.key[0], tt.key[1], tt.key[2])
 			if !ok {
-				t.Errorf("fixedBuildOverrides missing entry %v", tt.key)
+				t.Errorf("cvrfOverrides missing overrideFixedBuild / overrideNoFixedBuild %v", tt.key)
 				return
 			}
 			if diff := cmp.Diff(tt.want, got); diff != "" {
-				t.Errorf("fixedBuildOverrides[%v] mismatch (-want +got):\n%s", tt.key, diff)
+				t.Errorf("cvrfOverrides %v mismatch (-want +got):\n%s", tt.key, diff)
 			}
 		})
 	}
@@ -1407,48 +1405,19 @@ func TestIsKBCriteria(t *testing.T) {
 	}
 }
 
-// TestVendorFixExclusionsKeys guards the entries against typos that would make
-// them silently miss: the product must already be normalized and the KB ID
-// must be the bare number CVRF uses in the remediation Description.
-func TestVendorFixExclusionsKeys(t *testing.T) {
-	for k := range cvrf.VendorFixExclusions {
-		t.Run(fmt.Sprintf("%s %s %s", k[0], k[1], k[2]), func(t *testing.T) {
-			if !strings.HasPrefix(k[0], "CVE-") {
-				t.Errorf("unexpected CVE ID. expected: %q prefix, actual: %q", "CVE-", k[0])
+// TestCVRFOverrides guards the entries against typos that would make them
+// silently miss or do something else (see validate), and against duplicates.
+func TestCVRFOverrides(t *testing.T) {
+	seen := make(map[string]struct{})
+	for _, o := range cvrf.CVRFOverrides {
+		t.Run(o.String(), func(t *testing.T) {
+			if err := o.Validate(); err != nil {
+				t.Error("unexpected error:", err)
 			}
-			if got := microsoftutil.NormalizeProductName(k[1]); got != k[1] {
-				t.Errorf("product name is not normalized. expected: %q, actual: %q", got, k[1])
+			if _, ok := seen[o.String()]; ok {
+				t.Errorf("duplicate override: %s", o)
 			}
-			if cvrf.BuildKBCriterion(k[1], k[2]) == nil {
-				t.Errorf("unexpected KB ID. expected: digits only, actual: %q", k[2])
-			}
-		})
-	}
-}
-
-// TestVendorFixAdditionsEntries guards the entries against values that would
-// silently add nothing: a KB ID given must be the bare number, a fixed build
-// given must yield a criterion, and one of the two must be given. A product
-// CVRF does not list fails the extraction.
-func TestVendorFixAdditionsEntries(t *testing.T) {
-	for k, as := range cvrf.VendorFixAdditions {
-		t.Run(fmt.Sprintf("%s %s", k[0], k[1]), func(t *testing.T) {
-			if !strings.HasPrefix(k[0], "CVE-") {
-				t.Errorf("unexpected CVE ID. expected: %q prefix, actual: %q", "CVE-", k[0])
-			}
-			for _, a := range as {
-				if a.KBID() == "" && a.FixedBuild() == "" {
-					t.Errorf("unexpected addition. expected: a KB ID or a fixed build, actual: neither")
-				}
-				if a.KBID() != "" && cvrf.BuildKBCriterion(k[1], a.KBID()) == nil {
-					t.Errorf("unexpected KB ID. expected: digits only, actual: %q", a.KBID())
-				}
-				if a.FixedBuild() != "" {
-					if c, err := cvrf.BuildFixedBuildCriterion(k[0], microsoftutil.NormalizeProductName(k[1]), a.FixedBuild()); err != nil || c == nil {
-						t.Errorf("unexpected fixed build. expected: a criterion, actual: %v, err: %v", c, err)
-					}
-				}
-			}
+			seen[o.String()] = struct{}{}
 		})
 	}
 }
@@ -1532,53 +1501,58 @@ func TestKBCumulativeTwins(t *testing.T) {
 
 func TestExtract(t *testing.T) {
 	tests := []struct {
-		name     string
-		args     string
-		hasError bool
+		name    string
+		args    string
+		wantErr string
 	}{
 		{
 			name: "happy",
 			args: "./testdata/fixtures",
 		},
 		{
-			name:     "microsoft edge (chromium-based) vendor fix without FixedBuild",
-			args:     "./testdata/fixtures-edge-missing-fixedbuild",
-			hasError: true,
+			name:    "microsoft edge (chromium-based) vendor fix without FixedBuild",
+			args:    "./testdata/fixtures-edge-missing-fixedbuild",
+			wantErr: "no usable FixedBuild for",
 		},
 		{
-			name:     "hotpatch fixed builds from different servicing branches",
-			args:     "./testdata/fixtures-hotpatch-branch-mismatch",
-			hasError: true,
+			name:    "hotpatch fixed builds from different servicing branches",
+			args:    "./testdata/fixtures-hotpatch-branch-mismatch",
+			wantErr: "unexpected servicing branch mix among fixed builds",
 		},
 		{
-			name:     "hotpatch product listing more than two KBs without review",
-			args:     "./testdata/fixtures-hotpatch-unreviewed",
-			hasError: true,
+			name:    "hotpatch product listing more than two KBs without review",
+			args:    "./testdata/fixtures-hotpatch-unreviewed",
+			wantErr: "unexpected number of KBs for",
 		},
 		{
-			name:     "vendorFixExclusions excluding every Vendor Fix of a product",
-			args:     "./testdata/fixtures-hotpatch-all-excluded",
-			hasError: true,
+			name:    "overrideExcludeVendorFix excluding every Vendor Fix of a product",
+			args:    "./testdata/fixtures-hotpatch-all-excluded",
+			wantErr: "expected: at least one Vendor Fix kept, actual: all excluded",
 		},
 		{
-			name:     "hotpatch product with a Vendor Fix without FixedBuild",
-			args:     "./testdata/fixtures-hotpatch-missing-fixedbuild",
-			hasError: true,
+			name:    "hotpatch product with a Vendor Fix without FixedBuild",
+			args:    "./testdata/fixtures-hotpatch-missing-fixedbuild",
+			wantErr: "unexpected Vendor Fix without a usable FixedBuild",
 		},
 		{
-			name:     "hotpatch product with a Vendor Fix without KB ID",
-			args:     "./testdata/fixtures-hotpatch-missing-kb",
-			hasError: true,
+			name:    "hotpatch product with a Vendor Fix without KB ID",
+			args:    "./testdata/fixtures-hotpatch-missing-kb",
+			wantErr: "unexpected Vendor Fix without a numeric KB ID",
 		},
 		{
-			name:     "hotpatch as the only fix, without vendorFixAdditions",
-			args:     "./testdata/fixtures-hotpatch-only-fix",
-			hasError: true,
+			name:    "hotpatch as the only fix, without an overrideAddVendorFix",
+			args:    "./testdata/fixtures-hotpatch-only-fix",
+			wantErr: "expected: a fix other than a hotpatch, actual: hotpatches only",
 		},
 		{
-			name:     "vendorFixAdditions for a product CVRF does not list",
-			args:     "./testdata/fixtures-vendorfix-addition-unlisted",
-			hasError: true,
+			name:    "overrideAddVendorFix for a product CVRF does not list",
+			args:    "./testdata/fixtures-vendorfix-addition-unlisted",
+			wantErr: "expected: a product listed with a Vendor Fix",
+		},
+		{
+			name:    "an override that no longer takes effect, after Microsoft corrected the FixedBuild",
+			args:    "./testdata/fixtures-override-unused",
+			wantErr: "unexpected cvrfOverrides that no longer take effect",
 		},
 	}
 	for _, tt := range tests {
@@ -1586,13 +1560,14 @@ func TestExtract(t *testing.T) {
 			dir := t.TempDir()
 			err := cvrf.Extract(tt.args, cvrf.WithDir(dir))
 			switch {
-			case err != nil && !tt.hasError:
+			case err != nil && tt.wantErr == "":
 				t.Error("unexpected error:", err)
-			case err == nil && tt.hasError:
+			case err == nil && tt.wantErr != "":
 				t.Error("expected error has not occurred")
-			case err != nil && tt.hasError:
-				// error was expected and occurred, test passed
-				return
+			case err != nil && tt.wantErr != "":
+				if !strings.Contains(err.Error(), tt.wantErr) {
+					t.Errorf("unexpected error. expected: %q, actual: %v", tt.wantErr, err)
+				}
 			default:
 				if err := utiltest.Diff(filepath.Join("testdata", "golden"), dir); err != nil {
 					t.Error("unexpected error:", err)
