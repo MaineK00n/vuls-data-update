@@ -879,6 +879,26 @@ func buildDetections(v cvrf.Vulnerability, products map[string]string) (map[ecos
 	conditionsByEcosystem := make(map[ecosystemTypes.Ecosystem][]conditionTypes.Condition)
 	var missingFixedBuilds []string
 
+	// An entry that requires no customer action (e.g. a cloud service CVE,
+	// "This vulnerability has already been fully mitigated by Microsoft. There
+	// is no action for users of this service to take.") has nothing a host can
+	// lack, so it yields no condition. Its products have no Vendor Fix, and the
+	// ProductStatuses fallback below would register each as unfixed for good,
+	// reporting every host with a product of the same name (e.g. the Teams
+	// client for a Teams service CVE). The vulnerability info stays, by tag.
+	required, err := customerActionRequired(v)
+	if err != nil {
+		return nil, nil, errors.Wrapf(err, "customer action required for %s", v.CVE)
+	}
+	if !required {
+		for _, r := range v.Remediations.Remediation {
+			if r.Type == "Vendor Fix" {
+				return nil, nil, errors.Errorf("unexpected Vendor Fix for %s, which requires no customer action. expected: no Vendor Fix, actual: %q for %q, please check the CVE FAQ", v.CVE, r.Description, r.ProductID)
+			}
+		}
+		return conditionsByEcosystem, nil, nil
+	}
+
 	// Track which product IDs are covered by Vendor Fix remediations.
 	coveredProductIDs := make(map[string]struct{})
 
@@ -1096,6 +1116,26 @@ func buildDetections(v cvrf.Vulnerability, products map[string]string) (map[ecos
 	}
 
 	return conditionsByEcosystem, missingFixedBuilds, nil
+}
+
+// customerActionRequired reports the "Customer Action Required" note of the
+// entry. An entry without the note requires customer action, as every entry
+// did before Microsoft added the note.
+func customerActionRequired(v cvrf.Vulnerability) (bool, error) {
+	for _, n := range v.Notes.Note {
+		if n.Title != "Customer Action Required" {
+			continue
+		}
+		switch n.Text {
+		case "Yes":
+			return true, nil
+		case "No":
+			return false, nil
+		default:
+			return false, errors.Errorf("unexpected Customer Action Required note. expected: %q, actual: %q", []string{"Yes", "No"}, n.Text)
+		}
+	}
+	return true, nil
 }
 
 func appendConditions(conditionsByEcosystem map[ecosystemTypes.Ecosystem][]conditionTypes.Condition, tag segmentTypes.DetectionTag, cns []criterionTypes.Criterion) {
@@ -3403,14 +3443,11 @@ var fixedBuildOverrides = map[[3]string]string{
 	// Edge browser products listed in ProductStatuses without any Remediation and
 	// with no fixed build in the CVE FAQ or the Edge security release notes: kept
 	// unfixed
-	//   - CVE-2020-17153, CVE-2021-24100, CVE-2026-62828: Microsoft Edge for Android
-	//     Spoofing / Information Disclosure / Tampering Vulnerability
-	//   - CVE-2026-32208: Microsoft Entra ID Spoofing Vulnerability, a cloud service
-	//     CVE that CVRF lists under Microsoft Edge (Chromium-based)
-	{"CVE-2020-17153", "Microsoft Edge for Android", ""}:      "",
-	{"CVE-2021-24100", "Microsoft Edge for Android", ""}:      "",
-	{"CVE-2026-62828", "Microsoft Edge for Android", ""}:      "",
-	{"CVE-2026-32208", "Microsoft Edge (Chromium-based)", ""}: "",
+	// (CVE-2020-17153, CVE-2021-24100, CVE-2026-62828: Microsoft Edge for Android
+	// Spoofing / Information Disclosure / Tampering Vulnerability)
+	{"CVE-2020-17153", "Microsoft Edge for Android", ""}: "",
+	{"CVE-2021-24100", "Microsoft Edge for Android", ""}: "",
+	{"CVE-2026-62828", "Microsoft Edge for Android", ""}: "",
 	// 2026-Aug (Edge 152, Microsoft-CNA CVEs): FixedBuild "152.0.4191.52" matches no
 	// release; the FAQ version table and the Edge security release notes (Aug 27, 2026)
 	// give 152.0.4191.53, as does CVE-2026-72984's own Chromium-based Vendor Fix.

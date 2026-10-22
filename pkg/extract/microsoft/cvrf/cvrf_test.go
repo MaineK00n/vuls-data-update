@@ -1977,6 +1977,11 @@ func TestExtract(t *testing.T) {
 			args:     "./testdata/fixtures-vendorfix-addition-unlisted",
 			hasError: true,
 		},
+		{
+			name:     "Vendor Fix for an entry that requires no customer action",
+			args:     "./testdata/fixtures-no-customer-action-vendor-fix",
+			hasError: true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
