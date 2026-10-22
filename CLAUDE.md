@@ -7,8 +7,8 @@ CLI tool to **fetch** raw vulnerability data sources, **extract** them to canoni
 ## Build & Test
 
 ```sh
-GOEXPERIMENT=jsonv2 go build ./cmd/vuls-data-update
-GOEXPERIMENT=jsonv2 go test ./...
+go build ./cmd/vuls-data-update
+go test ./...
 ```
 
 ## Architecture
