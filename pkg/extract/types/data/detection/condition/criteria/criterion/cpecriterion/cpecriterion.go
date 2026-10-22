@@ -58,6 +58,11 @@ type CPE string
 //	))
 //	OR any CPEMatches[i] attr-match              // also tried when main CPE is disjoint
 //
+// For a version=NA query, attr-match compares every attribute but the
+// version: a concrete or ranged criterion / entry version is DISJOINT from NA
+// under CPE name matching, but the scan simply has no version to evaluate, so
+// it is accepted at VersionUnconfirmed (see Accept).
+//
 // The CPEMatches loop is consulted both as a fallback after a failed Range
 // evaluation (out-of-range exceptions) AND independently when the main CPE
 // is disjoint from the query (defensive — covers edition-divergence cases
@@ -204,18 +209,19 @@ const (
 	// MatchQualityExact means the criterion accepts the query with sufficient
 	// version evidence: a concrete query version confirmed by equality, range,
 	// or enumeration; a version=* criterion with no range/cpematches (every
-	// version of the product is affected); a version=NA criterion against a
-	// version=NA query (CPE name matching: NA vs NA is EQUAL); OR a query whose
-	// version is ANY — the scan asks for all versions of the product, so any
-	// match is reported with full confidence (respecting the intent of whoever
-	// wrote the query).
+	// version of the product is affected); a version=NA query matched by an NA
+	// (EQUAL) or * (SUPERSET) criterion or cpematches entry, which CPE name
+	// matching defines as a match; OR a query whose version is ANY — the scan
+	// asks for all versions of the product, so any match is reported with full
+	// confidence (respecting the intent of whoever wrote the query).
 	MatchQualityExact
 	// MatchQualityVersionUnconfirmed means the criterion accepts the query on
-	// attribute equality but the query's concrete version cannot be confirmed
-	// affected: the query version is NA against a version-bearing criterion, or
-	// the criterion version is NA matched against a concrete query. (A query
-	// version of ANY, or NA against an NA criterion, is Exact instead — see
-	// MatchQualityExact.)
+	// every non-version attribute but the version cannot be evaluated because
+	// one side has none: the criterion version is NA against a concrete query,
+	// or the query version is NA against a concrete version, a range, or an
+	// enumeration with no NA / * entry. Both are DISJOINT under CPE name
+	// matching and accepted only as a relaxation. (An NA query against an NA /
+	// * criterion or entry is Exact instead — see MatchQualityExact.)
 	MatchQualityVersionUnconfirmed
 )
 
@@ -255,41 +261,31 @@ func (c Criterion) Accept(query Query) (MatchQuality, error) {
 	qv := qWFN.GetString(common.AttributeVersion)
 
 	switch {
+	case qv == "NA":
+		// The scan has no version; its own path covers the main CPE and the
+		// CPEMatches together.
+		return c.acceptNAQuery(qWFN, cWFN)
 	case cv == "NA":
 		// A version=NA criterion fixes the product but not the version: it
-		// matches any scan whose non-version attributes are compatible, and
-		// the quality depends on the query version (see the switch below).
-		// The version-unconfirmed result for a concrete query mirrors
-		// go-cve-dictionary's VendorProductMatch for "-" entries, where NA
-		// often means "all versions" (e.g. linux_kernel:- on a classic
-		// all-versions CVE). The
+		// matches any scan whose non-version attributes are compatible. The
 		// criterion version is neutralised to ANY because go-cpe's IsDisjoint
 		// would otherwise reject a concrete scan version against NA; other
 		// concrete attributes (target_sw, edition, ...) must still agree.
-		cAnyVer := maps.Clone(cWFN)
-		anyVal, err := common.NewLogicalValue("ANY")
+		cAnyVer, err := withAnyVersion(cWFN)
 		if err != nil {
-			return MatchQualityUnknown, errors.Wrap(err, "build ANY logical value")
-		}
-		if err := cAnyVer.Set(common.AttributeVersion, anyVal); err != nil {
 			return MatchQualityUnknown, errors.Wrap(err, "neutralise criterion version")
 		}
 		if overlaps(qWFN, cAnyVer) {
-			switch qv {
-			case "ANY":
-				// query=ANY asks for all versions → Exact.
+			// query=ANY asks for all versions → Exact. A concrete scan
+			// version is DISJOINT from NA under CPE name matching; it is
+			// accepted only as a relaxation mirroring go-cve-dictionary's
+			// VendorProductMatch for "-" entries, where NA often means "all
+			// versions" (e.g. linux_kernel:- on a classic all-versions CVE),
+			// so the version stays unconfirmed.
+			if qv == "ANY" {
 				return MatchQualityExact, nil
-			case "NA":
-				// NA vs NA is EQUAL under CPE name matching: the product
-				// genuinely has no version (e.g. windows_7:-, *_firmware:-),
-				// and the scan says the same, so nothing is left unconfirmed.
-				return MatchQualityExact, nil
-			default:
-				// A concrete scan version is DISJOINT from NA under CPE name
-				// matching; it is accepted only as the "-" = "all versions"
-				// relaxation above, so the version stays unconfirmed.
-				return MatchQualityVersionUnconfirmed, nil
 			}
+			return MatchQualityVersionUnconfirmed, nil
 		}
 		// Non-version attributes disagree; fall through to CPEMatches.
 	case overlaps(qWFN, cWFN):
@@ -303,22 +299,10 @@ func (c Criterion) Accept(query Query) (MatchQuality, error) {
 			return MatchQualityExact, nil
 		case c.Range == nil && len(c.CPEMatches) == 0:
 			// No narrowing → accept on attribute match alone.
-			switch {
-			case cv == "ANY":
-				// version=* with no range/cpematches: every version of the
-				// product is affected.
-				return MatchQualityExact, nil
-			case qv == "NA":
-				return MatchQualityVersionUnconfirmed, nil
-			default:
-				// Concrete query equal to the concrete criterion version (a
-				// differing one would have failed the overlaps check above).
-				return MatchQualityExact, nil
-			}
-		case qv == "NA":
-			// Narrowed criterion, but the query has no version to confirm
-			// against the range / enumeration.
-			return MatchQualityVersionUnconfirmed, nil
+			// version=* (every version of the product is affected) or a
+			// concrete query equal to the concrete criterion version (a
+			// differing one would have failed the overlaps check above).
+			return MatchQualityExact, nil
 		case c.Range != nil:
 			// Concrete query against a range: accept only if in range,
 			// otherwise fall through to CPEMatches.
@@ -374,31 +358,87 @@ func (c Criterion) Accept(query Query) (MatchQuality, error) {
 	// CPEMatches: tried when (a) main CPE matched but neither NA short-circuit
 	// nor Range accepted (out-of-Range exceptions), or (b) main CPE was
 	// disjoint (defensive — covers edition-divergence cases in source data).
-	// The strongest match over all entries wins, so the result does not
-	// depend on entry order.
-	quality := MatchQualityNone
+	// The query version is ANY or concrete here (an NA query takes
+	// acceptNAQuery), and either is confirmed by an overlapping entry.
 	for _, m := range c.CPEMatches {
 		mWFN, err := naming.UnbindFS(string(m))
 		if err != nil {
 			return MatchQualityUnknown, errors.Wrapf(err, "unbind %q to WFN", string(m))
 		}
 		if overlaps(qWFN, mWFN) {
-			// Reached with a version-less query only via the main-CPE-disjoint
-			// path (the matched path returns above). query=ANY (all versions)
-			// and a confirmed concrete query are Exact, and so is query=NA
-			// against an NA entry (EQUAL, as for the main CPE). Any other entry
-			// a query=NA overlaps is version=* (a concrete entry is DISJOINT
-			// from NA), which leaves no version to confirm; keep looking for
-			// an exact entry.
-			if qv == "NA" && mWFN.GetString(common.AttributeVersion) != "NA" {
-				quality = MatchQualityVersionUnconfirmed
-				continue
-			}
 			return MatchQualityExact, nil
 		}
 	}
 
+	return MatchQualityNone, nil
+}
+
+// acceptNAQuery is Accept for a version=NA query: the scan has no version.
+// Only an NA (EQUAL) or * (SUPERSET) version matches it under CPE name
+// matching, and that is Exact. A concrete version, a range, or an enumeration
+// of concrete versions is DISJOINT from NA, yet the scan simply has no version
+// to evaluate against it — the mirror of an NA criterion against a concrete
+// scan — so it is accepted at VersionUnconfirmed when every non-version
+// attribute agrees. Anything else is None.
+func (c Criterion) acceptNAQuery(qWFN, cWFN common.WellFormedName) (MatchQuality, error) {
+	qAnyVer, err := withAnyVersion(qWFN)
+	if err != nil {
+		return MatchQualityUnknown, errors.Wrap(err, "neutralise query version")
+	}
+
+	quality := MatchQualityNone
+	switch {
+	case overlaps(qWFN, cWFN):
+		// The criterion version is NA or *. NA fixes the product but not the
+		// version and ignores narrowing (as for any query); * without
+		// narrowing affects every version.
+		if cWFN.GetString(common.AttributeVersion) == "NA" || (c.Range == nil && len(c.CPEMatches) == 0) {
+			return MatchQualityExact, nil
+		}
+		// A * criterion narrowed by a range / enumeration: the range cannot
+		// be evaluated against no version, but an NA or * entry below can
+		// still match.
+		quality = MatchQualityVersionUnconfirmed
+	case overlaps(qAnyVer, cWFN):
+		// A concrete criterion version against no version.
+		quality = MatchQualityVersionUnconfirmed
+	default:
+		// Non-version attributes disagree; only CPEMatches can still match.
+	}
+
+	// The strongest entry wins, so the result does not depend on entry order
+	// (Sort puts "*" before "-", and before concrete versions).
+	for _, m := range c.CPEMatches {
+		mWFN, err := naming.UnbindFS(string(m))
+		if err != nil {
+			return MatchQualityUnknown, errors.Wrapf(err, "unbind %q to WFN", string(m))
+		}
+		switch {
+		case overlaps(qWFN, mWFN):
+			// An NA or * entry.
+			return MatchQualityExact, nil
+		case overlaps(qAnyVer, mWFN):
+			// A concrete entry against no version.
+			quality = MatchQualityVersionUnconfirmed
+		default:
+		}
+	}
+
 	return quality, nil
+}
+
+// withAnyVersion returns a copy of wfn whose version is ANY, for comparing
+// every attribute but the version.
+func withAnyVersion(wfn common.WellFormedName) (common.WellFormedName, error) {
+	anyVal, err := common.NewLogicalValue("ANY")
+	if err != nil {
+		return nil, errors.Wrap(err, "build ANY logical value")
+	}
+	out := maps.Clone(wfn)
+	if err := out.Set(common.AttributeVersion, anyVal); err != nil {
+		return nil, errors.Wrap(err, "set version")
+	}
+	return out, nil
 }
 
 // panosHotfixUpdate matches a PAN-OS hotfix encoded in the WFN UPDATE
