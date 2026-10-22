@@ -210,8 +210,9 @@ const (
 	// version evidence: a concrete query version confirmed by equality, range,
 	// or enumeration; a version=* criterion with no range/cpematches (every
 	// version of the product is affected); a version=NA query matched by an NA
-	// (EQUAL) or * (SUPERSET) criterion or cpematches entry, which CPE name
-	// matching defines as a match; OR a query whose version is ANY — the scan
+	// criterion, an un-narrowed * criterion, or an NA / * cpematches entry
+	// (EQUAL / SUPERSET, a match under CPE name matching); OR a query whose
+	// version is ANY — the scan
 	// asks for all versions of the product, so any match is reported with full
 	// confidence (respecting the intent of whoever wrote the query).
 	MatchQualityExact
@@ -388,10 +389,9 @@ func (c Criterion) acceptNAQuery(qWFN, cWFN common.WellFormedName) (MatchQuality
 
 	quality := MatchQualityNone
 	switch {
-	case overlaps(qWFN, cWFN):
-		// The criterion version is NA or *. NA fixes the product but not the
-		// version and ignores narrowing (as for any query); * without
-		// narrowing affects every version.
+	case matchesNAVersion(cWFN) && overlaps(qWFN, cWFN):
+		// NA fixes the product but not the version and ignores narrowing (as
+		// for any query); * without narrowing affects every version.
 		if cWFN.GetString(common.AttributeVersion) == "NA" || (c.Range == nil && len(c.CPEMatches) == 0) {
 			return MatchQualityExact, nil
 		}
@@ -400,7 +400,8 @@ func (c Criterion) acceptNAQuery(qWFN, cWFN common.WellFormedName) (MatchQuality
 		// still match.
 		quality = MatchQualityVersionUnconfirmed
 	case overlaps(qAnyVer, cWFN):
-		// A concrete criterion version against no version.
+		// A concrete (or wildcard-pattern) criterion version against no
+		// version.
 		quality = MatchQualityVersionUnconfirmed
 	default:
 		// Non-version attributes disagree; only CPEMatches can still match.
@@ -414,17 +415,25 @@ func (c Criterion) acceptNAQuery(qWFN, cWFN common.WellFormedName) (MatchQuality
 			return MatchQualityUnknown, errors.Wrapf(err, "unbind %q to WFN", string(m))
 		}
 		switch {
-		case overlaps(qWFN, mWFN):
-			// An NA or * entry.
+		case matchesNAVersion(mWFN) && overlaps(qWFN, mWFN):
 			return MatchQualityExact, nil
 		case overlaps(qAnyVer, mWFN):
-			// A concrete entry against no version.
+			// A concrete (or wildcard-pattern) entry against no version.
 			quality = MatchQualityVersionUnconfirmed
 		default:
 		}
 	}
 
 	return quality, nil
+}
+
+// matchesNAVersion reports whether wfn's version matches a version=NA query
+// under CPE name matching: NA (EQUAL) or ANY (SUPERSET). It is checked
+// explicitly because overlaps also lets a wildcard pattern such as "1.*"
+// through (go-cpe reports UNDEFINED for it), and that is DISJOINT from NA.
+func matchesNAVersion(wfn common.WellFormedName) bool {
+	v := wfn.GetString(common.AttributeVersion)
+	return v == "NA" || v == "ANY"
 }
 
 // withAnyVersion returns a copy of wfn whose version is ANY, for comparing
