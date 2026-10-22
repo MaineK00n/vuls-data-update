@@ -145,10 +145,82 @@ func TestCriterion_Accept(t *testing.T) {
 			want: ccTypes.MatchQualityExact,
 		},
 		{
-			// The main CPE is disjoint (target_sw), so only CPEMatches can
-			// match; an NA entry against an NA query is EQUAL, like the main
-			// CPE.
-			name: "cpematches NA entry, query NA, main CPE disjoint -> Exact",
+			// A concrete version is DISJOINT from NA under CPE name matching, but the
+			// scan simply has no version to evaluate: the mirror of an NA criterion
+			// against a concrete scan.
+			name: "concrete criterion, no range, query NA -> VersionUnconfirmed (no version to evaluate)",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:1.0:*:*:*:*:*:*:*",
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:-:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityVersionUnconfirmed,
+		},
+		{
+			name: "concrete criterion, query NA, disjoint target_sw -> None",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:1.0:*:*:*:*:windows:*:*",
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:-:*:*:*:*:linux:*:*"}},
+			want: ccTypes.MatchQualityNone,
+		},
+		{
+			// The NVD cpematch-expanded shape: a version=* criterion narrowed only by
+			// an enumeration. An NA entry matches an NA scan, as the main CPE would.
+			name: "version=* criterion, cpematches NA entry, query NA -> Exact (NA vs NA is EQUAL)",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
+				CPEMatches: []ccTypes.CPE{
+					"cpe:2.3:a:vendor:product:1.0:*:*:*:*:*:*:*",
+					"cpe:2.3:a:vendor:product:-:*:*:*:*:*:*:*",
+				},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:-:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityExact,
+		},
+		{
+			name: "version=* criterion, cpematches * entry, query NA -> Exact (* is a SUPERSET of NA)",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
+				CPEMatches: []ccTypes.CPE{
+					"cpe:2.3:a:vendor:product:1.0:*:*:*:*:*:*:*",
+					"cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
+				},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:-:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityExact,
+		},
+		{
+			name: "version=* criterion, cpematches concrete entries only, query NA -> VersionUnconfirmed",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
+				CPEMatches: []ccTypes.CPE{
+					"cpe:2.3:a:vendor:product:1.0:*:*:*:*:*:*:*",
+					"cpe:2.3:a:vendor:product:2.0:*:*:*:*:*:*:*",
+				},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:-:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityVersionUnconfirmed,
+		},
+		{
+			name: "version=* criterion with range, cpematches NA entry, query NA -> Exact",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
+				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeSEMVER, LessThan: "1.0.0"},
+				CPEMatches: []ccTypes.CPE{"cpe:2.3:a:vendor:product:-:*:*:*:*:*:*:*"},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:-:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityExact,
+		},
+		{
+			// A version=NA query reaches the entries on its own even when the main
+			// CPE is disjoint (here target_sw differs).
+			name: "main CPE disjoint, cpematches NA entry, query NA -> Exact",
 			fields: fields{
 				Vulnerable: true,
 				CPE:        "cpe:2.3:a:vendor:product:-:*:*:*:*:windows:*:*",
@@ -158,42 +230,27 @@ func TestCriterion_Accept(t *testing.T) {
 			want: ccTypes.MatchQualityExact,
 		},
 		{
-			// Sort() puts "*" before "-", so a wildcard entry must not hide a
-			// later NA entry: the strongest match wins in either order.
-			name: "cpematches wildcard then NA entry, query NA, main CPE disjoint -> Exact",
+			name: "main CPE disjoint, cpematches concrete entry, query NA -> VersionUnconfirmed",
 			fields: fields{
 				Vulnerable: true,
-				CPE:        "cpe:2.3:a:vendor:product:-:*:*:*:*:windows:*:*",
-				CPEMatches: []ccTypes.CPE{
-					"cpe:2.3:a:vendor:product:*:*:*:*:*:linux:*:*",
-					"cpe:2.3:a:vendor:product:-:*:*:*:*:linux:*:*",
-				},
-			},
-			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:-:*:*:*:*:linux:*:*"}},
-			want: ccTypes.MatchQualityExact,
-		},
-		{
-			name: "cpematches NA then wildcard entry, query NA, main CPE disjoint -> Exact",
-			fields: fields{
-				Vulnerable: true,
-				CPE:        "cpe:2.3:a:vendor:product:-:*:*:*:*:windows:*:*",
-				CPEMatches: []ccTypes.CPE{
-					"cpe:2.3:a:vendor:product:-:*:*:*:*:linux:*:*",
-					"cpe:2.3:a:vendor:product:*:*:*:*:*:linux:*:*",
-				},
-			},
-			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:-:*:*:*:*:linux:*:*"}},
-			want: ccTypes.MatchQualityExact,
-		},
-		{
-			name: "cpematches wildcard entry only, query NA, main CPE disjoint -> VersionUnconfirmed",
-			fields: fields{
-				Vulnerable: true,
-				CPE:        "cpe:2.3:a:vendor:product:-:*:*:*:*:windows:*:*",
-				CPEMatches: []ccTypes.CPE{"cpe:2.3:a:vendor:product:*:*:*:*:*:linux:*:*"},
+				CPE:        "cpe:2.3:a:vendor:product:1.0:*:*:*:*:windows:*:*",
+				CPEMatches: []ccTypes.CPE{"cpe:2.3:a:vendor:product:1.0:*:*:*:*:linux:*:*"},
 			},
 			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:-:*:*:*:*:linux:*:*"}},
 			want: ccTypes.MatchQualityVersionUnconfirmed,
+		},
+		{
+			name: "main CPE and cpematches entries disjoint beyond the version, query NA -> None",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:1.0:*:*:*:*:windows:*:*",
+				CPEMatches: []ccTypes.CPE{
+					"cpe:2.3:a:vendor:product:-:*:*:*:*:windows:*:*",
+					"cpe:2.3:a:vendor:product:1.0:*:*:*:*:windows:*:*",
+				},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:-:*:*:*:*:linux:*:*"}},
+			want: ccTypes.MatchQualityNone,
 		},
 		{
 			name: "criterion version NA with range (range ignored), query wildcard -> Exact (query=ANY)",
