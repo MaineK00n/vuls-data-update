@@ -1,0 +1,13 @@
+{
+	"kb_id": "2982385",
+	"url": "https://support.microsoft.com/help/2982385",
+	"products": [
+		"Lync Server 2010 update history"
+	],
+	"data_source": {
+		"id": "microsoft-sfb",
+		"raws": [
+			"sfb-server-updates.json"
+		]
+	}
+}
