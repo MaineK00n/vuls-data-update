@@ -1,0 +1,23 @@
+{
+	"kb_id": "5073079",
+	"url": "https://support.microsoft.com/kb/5073079",
+	"products": [
+		"System Center 2025 - Operations Manager"
+	],
+	"superseded_by": [
+		{
+			"kb_id": "5080648"
+		}
+	],
+	"supersedes": [
+		{
+			"kb_id": "5068304"
+		}
+	],
+	"data_source": {
+		"id": "microsoft-scom",
+		"raws": [
+			"SystemCenterDocs/includes/release-build-versions-2025.json"
+		]
+	}
+}
