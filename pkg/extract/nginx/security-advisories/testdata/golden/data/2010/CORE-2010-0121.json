@@ -1,0 +1,101 @@
+{
+	"id": "CORE-2010-0121",
+	"advisories": [
+		{
+			"content": {
+				"id": "CORE-2010-0121",
+				"title": "Vulnerabilities with Windows 8.3 filename pseudonyms",
+				"severity": [
+					{
+						"type": "vendor",
+						"source": "nginx.org",
+						"vendor": "major"
+					}
+				],
+				"references": [
+					{
+						"source": "nginx.org",
+						"url": "http://www.coresecurity.com/content/filename-pseudonyms-vulnerabilities"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe"
+				}
+			]
+		}
+	],
+	"detections": [
+		{
+			"ecosystem": "cpe",
+			"conditions": [
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterias": [
+									{
+										"operator": "OR",
+										"criterions": [
+											{
+												"type": "cpe",
+												"cpe": {
+													"vulnerable": false,
+													"cpe": "cpe:2.3:o:microsoft:windows:-:*:*:*:*:*:*:*"
+												}
+											}
+										]
+									},
+									{
+										"operator": "OR",
+										"criterions": [
+											{
+												"type": "cpe",
+												"cpe": {
+													"vulnerable": true,
+													"cpe": "cpe:2.3:a:f5:nginx:*:*:*:*:*:*:*:*",
+													"range": {
+														"type": "version",
+														"ge": "0.7.52",
+														"lt": "0.7.65"
+													},
+													"fixed": [
+														"0.7.65"
+													]
+												}
+											},
+											{
+												"type": "cpe",
+												"cpe": {
+													"vulnerable": true,
+													"cpe": "cpe:2.3:a:f5:nginx:*:*:*:*:*:*:*:*",
+													"range": {
+														"type": "version",
+														"ge": "0.8.0",
+														"le": "0.8.32"
+													},
+													"fixed": [
+														"0.8.33"
+													]
+												}
+											}
+										]
+									}
+								]
+							}
+						]
+					}
+				}
+			]
+		}
+	],
+	"data_source": {
+		"id": "nginx-security-advisories",
+		"raws": [
+			"fixtures/2010/CORE-2010-0121.json"
+		]
+	}
+}
