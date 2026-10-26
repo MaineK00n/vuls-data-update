@@ -198,6 +198,17 @@ func TestCriterion_Accept(t *testing.T) {
 			want: ccTypes.MatchQualityExact,
 		},
 		{
+			// go-cpe compares attribute values case-insensitively, and the
+			// pattern-vs-pattern fallback must agree with it.
+			name: "criterion and query version both partial wildcards, equal ignoring case -> Exact",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:1.1.1m*:*:*:*:*:*:*:*",
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:1.1.1M*:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityExact,
+		},
+		{
 			// Same handling along the CPEMatches loop.
 			name: "CPEMatches entry partial wildcard covering a concrete query -> Exact",
 			fields: fields{

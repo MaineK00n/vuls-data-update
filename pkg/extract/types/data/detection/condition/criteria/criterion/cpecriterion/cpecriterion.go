@@ -149,7 +149,8 @@ type Query struct {
 // on the criterion side (version "12.*") hits that case; such attributes are
 // re-compared with the roles swapped so the pattern is evaluated against the
 // concrete query value. When both sides are patterns the relation is undefined
-// either way, and only equal patterns count as overlapping.
+// either way, and only equal patterns (compared case-insensitively, as go-cpe
+// compares every attribute value) count as overlapping.
 func overlaps(q, c common.WellFormedName) bool {
 	fwd := matching.CompareWFNs(q, c)
 	var rev map[string]matching.Relation
@@ -160,7 +161,9 @@ func overlaps(q, c common.WellFormedName) bool {
 			}
 			rel = rev[attr]
 			if rel == matching.UNDEFINED {
-				if strings.EqualFold(q.GetString(attr), c.GetString(attr)) {
+				// go-cpe lower-cases both values before comparing (CPE
+				// matching is case-insensitive); do the same here.
+				if strings.ToLower(q.GetString(attr)) == strings.ToLower(c.GetString(attr)) {
 					continue
 				}
 				return false
