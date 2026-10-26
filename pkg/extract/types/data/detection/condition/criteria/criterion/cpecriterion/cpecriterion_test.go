@@ -123,6 +123,192 @@ func TestCriterion_Accept(t *testing.T) {
 			want: ccTypes.MatchQualityExact,
 		},
 		{
+			name: "criterion version NA with range (range ignored), query NA -> Exact (NA vs NA is EQUAL)",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:-:*:*:*:*:*:*:*",
+				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeSEMVER, LessThan: "0.0.2"},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:-:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityExact,
+		},
+		{
+			// Non-version SUBSET/SUPERSET does not demote the NA/NA pair, as
+			// for every other Exact path (e.g. a concrete target_sw against
+			// a wildcard one).
+			name: "criterion version NA with target_sw, query NA with wildcard target_sw -> Exact",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:-:*:*:*:*:windows:*:*",
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:-:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityExact,
+		},
+		{
+			// A concrete version is DISJOINT from NA under CPE name matching, but the
+			// scan simply has no version to evaluate: the mirror of an NA criterion
+			// against a concrete scan.
+			name: "concrete criterion, no range, query NA -> VersionUnconfirmed (no version to evaluate)",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:1.0:*:*:*:*:*:*:*",
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:-:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityVersionUnconfirmed,
+		},
+		{
+			name: "concrete criterion, query NA, disjoint target_sw -> None",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:1.0:*:*:*:*:windows:*:*",
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:-:*:*:*:*:linux:*:*"}},
+			want: ccTypes.MatchQualityNone,
+		},
+		{
+			// The NVD cpematch-expanded shape: a version=* criterion narrowed only by
+			// an enumeration. An NA entry matches an NA scan, as the main CPE would.
+			name: "version=* criterion, cpematches NA entry, query NA -> Exact (NA vs NA is EQUAL)",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
+				CPEMatches: []ccTypes.CPE{
+					"cpe:2.3:a:vendor:product:1.0:*:*:*:*:*:*:*",
+					"cpe:2.3:a:vendor:product:-:*:*:*:*:*:*:*",
+				},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:-:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityExact,
+		},
+		{
+			name: "version=* criterion, cpematches * entry, query NA -> Exact (* is a SUPERSET of NA)",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
+				CPEMatches: []ccTypes.CPE{
+					"cpe:2.3:a:vendor:product:1.0:*:*:*:*:*:*:*",
+					"cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
+				},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:-:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityExact,
+		},
+		{
+			name: "version=* criterion, cpematches concrete entries only, query NA -> VersionUnconfirmed",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
+				CPEMatches: []ccTypes.CPE{
+					"cpe:2.3:a:vendor:product:1.0:*:*:*:*:*:*:*",
+					"cpe:2.3:a:vendor:product:2.0:*:*:*:*:*:*:*",
+				},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:-:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityVersionUnconfirmed,
+		},
+		{
+			name: "version=* criterion with range, cpematches NA entry, query NA -> Exact",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
+				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeSEMVER, LessThan: "1.0.0"},
+				CPEMatches: []ccTypes.CPE{"cpe:2.3:a:vendor:product:-:*:*:*:*:*:*:*"},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:-:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityExact,
+		},
+		{
+			// A version=NA query reaches the entries on its own even when the main
+			// CPE is disjoint (here target_sw differs).
+			name: "main CPE disjoint, cpematches NA entry, query NA -> Exact",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:-:*:*:*:*:windows:*:*",
+				CPEMatches: []ccTypes.CPE{"cpe:2.3:a:vendor:product:-:*:*:*:*:linux:*:*"},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:-:*:*:*:*:linux:*:*"}},
+			want: ccTypes.MatchQualityExact,
+		},
+		{
+			name: "main CPE disjoint, cpematches concrete entry, query NA -> VersionUnconfirmed",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:1.0:*:*:*:*:windows:*:*",
+				CPEMatches: []ccTypes.CPE{"cpe:2.3:a:vendor:product:1.0:*:*:*:*:linux:*:*"},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:-:*:*:*:*:linux:*:*"}},
+			want: ccTypes.MatchQualityVersionUnconfirmed,
+		},
+		{
+			name: "concrete criterion with range, query NA -> VersionUnconfirmed",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:1.0.0:*:*:*:*:*:*:*",
+				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeSEMVER, LessThan: "2.0.0"},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:-:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityVersionUnconfirmed,
+		},
+		{
+			name: "version=* criterion with range, cpematches concrete entries only, query NA -> VersionUnconfirmed",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
+				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeSEMVER, LessThan: "2.0.0"},
+				CPEMatches: []ccTypes.CPE{"cpe:2.3:a:vendor:product:3.0:*:*:*:*:*:*:*"},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:-:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityVersionUnconfirmed,
+		},
+		{
+			// Sort() order: a * entry ahead of an NA entry must not hide it.
+			name: "main CPE disjoint, cpematches * then NA entry, query NA -> Exact",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:1.0:*:*:*:*:windows:*:*",
+				CPEMatches: []ccTypes.CPE{
+					"cpe:2.3:a:vendor:product:*:*:*:*:*:linux:*:*",
+					"cpe:2.3:a:vendor:product:-:*:*:*:*:linux:*:*",
+				},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:-:*:*:*:*:linux:*:*"}},
+			want: ccTypes.MatchQualityExact,
+		},
+		{
+			// A wildcard pattern is neither NA nor *: DISJOINT from NA under
+			// CPE name matching, so it is not an exact match.
+			name: "wildcard-pattern criterion version, query NA -> VersionUnconfirmed",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:1.*:*:*:*:*:*:*:*",
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:-:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityVersionUnconfirmed,
+		},
+		{
+			name: "wildcard-pattern cpematches entry, query NA -> VersionUnconfirmed",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
+				CPEMatches: []ccTypes.CPE{"cpe:2.3:a:vendor:product:1.*:*:*:*:*:*:*:*"},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:-:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityVersionUnconfirmed,
+		},
+		{
+			name: "main CPE and cpematches entries disjoint beyond the version, query NA -> None",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:1.0:*:*:*:*:windows:*:*",
+				CPEMatches: []ccTypes.CPE{
+					"cpe:2.3:a:vendor:product:-:*:*:*:*:windows:*:*",
+					"cpe:2.3:a:vendor:product:1.0:*:*:*:*:windows:*:*",
+				},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:-:*:*:*:*:linux:*:*"}},
+			want: ccTypes.MatchQualityNone,
+		},
+		{
 			name: "criterion version NA with range (range ignored), query wildcard -> Exact (query=ANY)",
 			fields: fields{
 				Vulnerable: true,
@@ -143,6 +329,26 @@ func TestCriterion_Accept(t *testing.T) {
 			},
 			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:9.9.9:*:*:*:*:*:*:*"}},
 			want: ccTypes.MatchQualityVersionUnconfirmed,
+		},
+		{
+			// NA vs NA is EQUAL under CPE name matching: a genuinely
+			// version-less product scanned as such is a confident match.
+			name: "criterion version NA, query version NA -> Exact",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:o:vendor:product_firmware:-:*:*:*:*:*:*:*",
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:o:vendor:product_firmware:-:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityExact,
+		},
+		{
+			name: "criterion version NA, query version NA, disjoint update -> None",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:o:vendor:product:-:sp1:*:*:*:*:*:*",
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:o:vendor:product:-:sp2:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityNone,
 		},
 		{
 			// A version=NA criterion still gates on non-version attributes:
