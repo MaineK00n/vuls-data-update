@@ -162,8 +162,9 @@ func overlaps(q, c common.WellFormedName) bool {
 			rel = rev[attr]
 			if rel == matching.UNDEFINED {
 				// go-cpe lower-cases both values before comparing (CPE
-				// matching is case-insensitive); do the same here.
-				if strings.ToLower(q.GetString(attr)) == strings.ToLower(c.GetString(attr)) {
+				// matching is case-insensitive). WFN values are ASCII, so
+				// EqualFold is the same comparison.
+				if strings.EqualFold(q.GetString(attr), c.GetString(attr)) {
 					continue
 				}
 				return false
