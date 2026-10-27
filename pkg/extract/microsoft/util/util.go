@@ -1,6 +1,7 @@
 package util
 
 import (
+	"regexp"
 	"slices"
 	"strings"
 
@@ -36,11 +37,6 @@ var canonicalProductNames = map[string]string{
 	// unspaced (2022 CU27, 2025 CU9) are listed directly in buildFixedBuildCriterion.
 	"Microsoft SQL Server 2017 for x64-based Systems (CU31)": "Microsoft SQL Server 2017 for x64-based Systems (CU 31)",
 	"Microsoft SQL Server 2019 for x64-based Systems (CU32)": "Microsoft SQL Server 2019 for x64-based Systems (CU 32)",
-	// 2026-Oct re-lists Visual Studio 2019 16.11 under a new product ID without the
-	// "(includes 16.0 - 16.10)" suffix, matching the Visual Studio 2022 / 2026 names.
-	// The suffix only explains that 16.0-16.10 are serviced by moving to 16.11, which
-	// the version range already covers, so fold the old name into the new one.
-	"Microsoft Visual Studio 2019 Version 16.11 (includes 16.0 - 16.10)": "Microsoft Visual Studio 2019 Version 16.11",
 	// 2026-Oct renames the .NET runtime products to ".NET X runtime installed on <OS>".
 	// Earlier months published the runtime under ".NET X installed on <OS>", which
 	// 2026-Oct reuses for products whose FixedBuild is an SDK feature band (e.g.
@@ -91,9 +87,18 @@ var productNameReplacer = strings.NewReplacer(
 	"-Based ", "-based ",
 )
 
+// visualStudioIncludesSuffixRE matches the "(includes <first> - <last>)" suffix
+// of Visual Studio servicing baselines (e.g. "Microsoft Visual Studio 2019
+// Version 16.11 (includes 16.0 - 16.10)"). 2026-Oct dropped it for 16.11,
+// matching the Visual Studio 2022 / 2026 names. It only explains that the earlier
+// minor versions are serviced by moving to this one, which the version range
+// already covers, so it is removed from every Visual Studio name.
+var visualStudioIncludesSuffixRE = regexp.MustCompile(`^(Microsoft Visual Studio 20\d{2} Version \d+(?:\.\d+)*) \(includes [^)]*\)$`)
+
 // NormalizeProductName normalizes whitespace and maps variant product names to a canonical form.
 func NormalizeProductName(s string) string {
 	n := productNameReplacer.Replace(strings.Join(strings.Fields(s), " "))
+	n = visualStudioIncludesSuffixRE.ReplaceAllString(n, "$1")
 	if canonical, ok := canonicalProductNames[n]; ok {
 		return canonical
 	}

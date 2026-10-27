@@ -37,6 +37,21 @@ func TestNormalizeProductName(t *testing.T) {
 			want: "Microsoft SQL Server 2019 for x64-based Systems (CU 32)",
 		},
 		{
+			name: "Visual Studio 2017 15.9 includes suffix removed",
+			args: args{s: "Microsoft Visual Studio 2017 version 15.9 (includes 15.0 - 15.8)"},
+			want: "Microsoft Visual Studio 2017 Version 15.9",
+		},
+		{
+			name: "Visual Studio 2019 16.7 includes suffix with an en dash removed",
+			args: args{s: "Microsoft Visual Studio 2019 version 16.7 (includes 16.0 \u2013 16.6)"},
+			want: "Microsoft Visual Studio 2019 Version 16.7",
+		},
+		{
+			name: "includes suffix on a non-Visual Studio name kept",
+			args: args{s: "Foo 1.0 (includes 0.9)"},
+			want: "Foo 1.0 (includes 0.9)",
+		},
+		{
 			name: "Visual Studio 2019 16.11 with the includes suffix to the 2026-Oct form",
 			args: args{s: "Microsoft Visual Studio 2019 version 16.11 (includes 16.0 - 16.10)"},
 			want: "Microsoft Visual Studio 2019 Version 16.11",
