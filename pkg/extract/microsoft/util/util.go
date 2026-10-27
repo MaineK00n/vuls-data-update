@@ -1,7 +1,6 @@
 package util
 
 import (
-	"regexp"
 	"slices"
 	"strings"
 
@@ -37,6 +36,19 @@ var canonicalProductNames = map[string]string{
 	// unspaced (2022 CU27, 2025 CU9) are listed directly in buildFixedBuildCriterion.
 	"Microsoft SQL Server 2017 for x64-based Systems (CU31)": "Microsoft SQL Server 2017 for x64-based Systems (CU 31)",
 	"Microsoft SQL Server 2019 for x64-based Systems (CU32)": "Microsoft SQL Server 2019 for x64-based Systems (CU 32)",
+	// Visual Studio servicing baselines: 2026-Oct re-lists 2019 16.11 without the
+	// "(includes 16.0 - 16.10)" suffix, matching the Visual Studio 2022 / 2026 names.
+	// The suffix only explains that the earlier minor versions are serviced by moving
+	// to this one, which the version range already covers, so drop it from every
+	// Visual Studio name that has one.
+	"Microsoft Visual Studio 2017 Version 15.9 (includes 15.0 - 15.8)":      "Microsoft Visual Studio 2017 Version 15.9",
+	"Microsoft Visual Studio 2019 Version 16.4 (includes 16.0 - 16.3)":      "Microsoft Visual Studio 2019 Version 16.4",
+	"Microsoft Visual Studio 2019 Version 16.6 (includes 16.0 - 16.5)":      "Microsoft Visual Studio 2019 Version 16.6",
+	"Microsoft Visual Studio 2019 Version 16.7 (includes 16.0 \u2013 16.6)": "Microsoft Visual Studio 2019 Version 16.7",
+	"Microsoft Visual Studio 2019 Version 16.8 (includes 16.0 - 16.7)":      "Microsoft Visual Studio 2019 Version 16.8",
+	"Microsoft Visual Studio 2019 Version 16.9 (includes 16.0 - 16.8)":      "Microsoft Visual Studio 2019 Version 16.9",
+	"Microsoft Visual Studio 2019 Version 16.10 (includes 16.0 - 16.9)":     "Microsoft Visual Studio 2019 Version 16.10",
+	"Microsoft Visual Studio 2019 Version 16.11 (includes 16.0 - 16.10)":    "Microsoft Visual Studio 2019 Version 16.11",
 
 	// Bulletin→CVRF product name unification (legacy products with "Microsoft " prefix)
 	"Microsoft Azure Kubernetes Service":                          "Azure Kubernetes Service",
@@ -70,18 +82,9 @@ var productNameReplacer = strings.NewReplacer(
 	"-Based ", "-based ",
 )
 
-// visualStudioIncludesSuffixRE matches the "(includes <first> - <last>)" suffix
-// of Visual Studio servicing baselines (e.g. "Microsoft Visual Studio 2019
-// Version 16.11 (includes 16.0 - 16.10)"). 2026-Oct dropped it for 16.11,
-// matching the Visual Studio 2022 / 2026 names. It only explains that the earlier
-// minor versions are serviced by moving to this one, which the version range
-// already covers, so it is removed from every Visual Studio name.
-var visualStudioIncludesSuffixRE = regexp.MustCompile(`^(Microsoft Visual Studio 20\d{2} Version \d+(?:\.\d+)*) \(includes [^)]*\)$`)
-
 // NormalizeProductName normalizes whitespace and maps variant product names to a canonical form.
 func NormalizeProductName(s string) string {
 	n := productNameReplacer.Replace(strings.Join(strings.Fields(s), " "))
-	n = visualStudioIncludesSuffixRE.ReplaceAllString(n, "$1")
 	if canonical, ok := canonicalProductNames[n]; ok {
 		return canonical
 	}

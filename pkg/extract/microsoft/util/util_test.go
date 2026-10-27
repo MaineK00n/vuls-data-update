@@ -47,11 +47,6 @@ func TestNormalizeProductName(t *testing.T) {
 			want: "Microsoft Visual Studio 2019 Version 16.7",
 		},
 		{
-			name: "includes suffix on a non-Visual Studio name kept",
-			args: args{s: "Foo 1.0 (includes 0.9)"},
-			want: "Foo 1.0 (includes 0.9)",
-		},
-		{
 			name: "Visual Studio 2019 16.11 with the includes suffix to the 2026-Oct form",
 			args: args{s: "Microsoft Visual Studio 2019 version 16.11 (includes 16.0 - 16.10)"},
 			want: "Microsoft Visual Studio 2019 Version 16.11",
