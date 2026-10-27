@@ -1,6 +1,7 @@
 package releaseinfo_test
 
 import (
+	"os"
 	"path/filepath"
 	"testing"
 	"time"
@@ -125,6 +126,11 @@ func TestExtract(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			dir := t.TempDir()
+			// A run that fails leaves the last good output where it was.
+			sentinel := filepath.Join(dir, "sentinel")
+			if err := os.WriteFile(sentinel, nil, 0666); err != nil {
+				t.Fatalf("write %s: %v", sentinel, err)
+			}
 			err := releaseinfo.Extract(tt.args, releaseinfo.WithDir(dir))
 			switch {
 			case err != nil && !tt.hasError:
@@ -132,6 +138,9 @@ func TestExtract(t *testing.T) {
 			case err == nil && tt.hasError:
 				t.Error("expected error has not occurred")
 			case err != nil && tt.hasError:
+				if _, err := os.Stat(sentinel); err != nil {
+					t.Errorf("unexpected output cleared on error: %v", err)
+				}
 				return
 			default:
 				if err := utiltest.Diff(filepath.Join("testdata", "golden"), dir); err != nil {
