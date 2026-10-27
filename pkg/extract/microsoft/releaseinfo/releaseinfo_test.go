@@ -116,8 +116,9 @@ func TestExtract(t *testing.T) {
 			hasError: true,
 		},
 		{
-			// Every table skipped, here for a renamed KB column, reads as no
-			// updates at all. That is not a dataset to replace the last one with.
+			// Every table of one page skipped, here for a renamed KB column,
+			// reads as no updates from it while the other pages read fine. That
+			// is not a dataset to replace the last one with.
 			name:     "no update read",
 			args:     "./testdata/fixtures/no-update",
 			hasError: true,
@@ -258,6 +259,18 @@ func TestChain(t *testing.T) {
 				releaseinfo.NewUpdate("5000003", 200, time.Date(2026, time.February, 10, 0, 0, 0, 0, time.UTC)).WithType("B", true, false),
 			},
 			want: map[string][]string{},
+		},
+		{
+			name: "two monthly hotpatches of one month are both superseded and neither supersedes the other",
+			us: []releaseinfo.Update{
+				releaseinfo.NewUpdate("5000001", 100, time.Date(2026, time.January, 13, 0, 0, 0, 0, time.UTC)).WithType("B", true, true),
+				releaseinfo.NewUpdate("5000002", 200, time.Date(2026, time.February, 10, 0, 0, 0, 0, time.UTC)).WithType("B", true, false),
+				releaseinfo.NewUpdate("5000003", 300, time.Date(2026, time.March, 10, 0, 0, 0, 0, time.UTC)).WithType("B", true, false),
+				releaseinfo.NewUpdate("5000004", 305, time.Date(2026, time.March, 12, 0, 0, 0, 0, time.UTC)).WithType("B", true, false),
+				releaseinfo.NewUpdate("5000005", 310, time.Date(2026, time.March, 13, 0, 0, 0, 0, time.UTC)).WithType("OOB", true, false),
+				releaseinfo.NewUpdate("5000006", 400, time.Date(2026, time.April, 14, 0, 0, 0, 0, time.UTC)).WithType("B", true, false),
+			},
+			want: map[string][]string{"5000003": {"5000002"}, "5000004": {"5000002"}, "5000005": {"5000002"}, "5000006": {"5000004", "5000003"}},
 		},
 		{
 			// KB4073290 is for x64-based systems and KB4073291 for x86-based ones.
