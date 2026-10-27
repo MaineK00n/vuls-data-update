@@ -37,6 +37,21 @@ func TestNormalizeProductName(t *testing.T) {
 			want: "Microsoft SQL Server 2019 for x64-based Systems (CU 32)",
 		},
 		{
+			name: "Visual Studio 2019 16.11 without the includes suffix (2026-Oct) to the earlier form",
+			args: args{s: "Microsoft Visual Studio 2019 version 16.11"},
+			want: "Microsoft Visual Studio 2019 Version 16.11 (includes 16.0 - 16.10)",
+		},
+		{
+			name: ".NET 8.0 runtime installed on Windows (2026-Oct) to the earlier form",
+			args: args{s: ".NET 8.0 runtime installed on Windows"},
+			want: ".NET 8.0 installed on Windows",
+		},
+		{
+			name: ".NET 11.0 runtime installed on Mac OS (2026-Oct) to the earlier form",
+			args: args{s: ".NET 11.0 runtime installed on Mac OS"},
+			want: ".NET 11.0 installed on Mac OS",
+		},
+		{
 			name: "bare Defender for Endpoint for Windows (2026-Oct) to the Antimalware Platform",
 			args: args{s: "Microsoft Defender for Endpoint for Windows"},
 			want: "Microsoft Defender Antimalware Platform",

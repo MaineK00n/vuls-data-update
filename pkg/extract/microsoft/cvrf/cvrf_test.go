@@ -653,6 +653,57 @@ func TestBuildFixedBuildCriterion(t *testing.T) {
 			},
 		},
 		{
+			name: "Visual Studio 2026 Version 18.11 (2026-Oct)",
+			args: args{
+				cveID:         "CVE-2026-102870",
+				productName:   "Microsoft Visual Studio 2026 Version 18.11",
+				rawFixedBuild: "18.11.2",
+			},
+			want: &criterionTypes.Criterion{
+				Type: criterionTypes.CriterionTypeVersion,
+				Version: &vcTypes.Criterion{
+					Vulnerable: true,
+					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
+					Package: packageTypes.Package{
+						Type:   packageTypes.PackageTypeBinary,
+						Binary: &binaryTypes.Package{Name: "Microsoft Visual Studio 2026 Version 18.11"},
+					},
+					Affected: &affectedTypes.Affected{
+						Type:  affectedrangeTypes.RangeTypeMicrosoftVisualStudio,
+						Range: []affectedrangeTypes.Range{{LessThan: "18.11.2"}},
+						Fixed: []string{"18.11.2"},
+					},
+				},
+			},
+		},
+		{
+			name: "Visual Studio 2026 Version 18.12 Insiders tag skipped (2026-Oct)",
+			args: args{
+				cveID:         "CVE-2026-102870",
+				productName:   "Microsoft Visual Studio 2026 Version 18.12",
+				rawFixedBuild: "18.12 Insiders 3",
+			},
+			want: nil,
+		},
+		{
+			name: ".NET source-build Linux tarballs not detected (2026-Oct)",
+			args: args{
+				cveID:         "CVE-2026-114148",
+				productName:   ".NET source-build Linux tarballs (all archive types)",
+				rawFixedBuild: "10.0.403-servicing.26523.112",
+			},
+			want: nil,
+		},
+		{
+			name: "Insiders tag without a number is not skipped",
+			args: args{
+				cveID:         "CVE-2099-0001",
+				productName:   "Microsoft Visual Studio 2026 Version 18.12",
+				rawFixedBuild: "18.12 Insiders",
+			},
+			wantErr: true,
+		},
+		{
 			name: "SQL Server 2022 CU27 (2026-Oct)",
 			args: args{
 				cveID:         "CVE-2026-65674",

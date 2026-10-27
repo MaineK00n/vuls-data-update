@@ -1337,10 +1337,11 @@ func cleanFixedBuild(rawFixedBuild string) string {
 }
 
 // releaseCandidateTagRE matches a FixedBuild that is exactly a dotted number
-// followed by a release-candidate tag: either " RC<digits>" (e.g. "11.0 RC1")
-// or the semver-style "-rc.<digits>" with an optional build suffix (e.g.
-// "11.0.0-rc.2", "11.0.100-rc.2", "11.0.0-rc.2.26504.105").
-var releaseCandidateTagRE = regexp.MustCompile(`^\d+(\.\d+)+( RC\d+|-rc\.\d+(\.\d+)*)$`)
+// followed by a prerelease tag: either " RC<digits>" (e.g. "11.0 RC1"), the
+// semver-style "-rc.<digits>" with an optional build suffix (e.g.
+// "11.0.0-rc.2", "11.0.100-rc.2", "11.0.0-rc.2.26504.105"), or the Visual
+// Studio Insiders channel " Insiders <digits>" (e.g. "18.12 Insiders 3").
+var releaseCandidateTagRE = regexp.MustCompile(`^\d+(\.\d+)+( RC\d+|-rc\.\d+(\.\d+)*| Insiders \d+)$`)
 
 func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criterionTypes.Criterion, error) {
 	fixedBuild := cleanFixedBuild(rawFixedBuild)
@@ -1366,8 +1367,9 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 	//    "8.0.130, 8.0.424" pairing the fixed .NET SDK feature bands, 2026-Sep)
 	//  - Release-candidate tags of the exact form "<dotted number> RC<digits>" (e.g.
 	//    "11.0 RC1", 2026-Sep) or "<dotted number>-rc.<digits>[.<build>]" (e.g.
-	//    "11.0.0-rc.2", "11.0.0-rc.2.26504.105", 2026-Oct): the fix only exists in a
-	//    prerelease. Other values containing a space or a hyphen are not skipped: on
+	//    "11.0.0-rc.2", "11.0.0-rc.2.26504.105", 2026-Oct), and Visual Studio Insiders
+	//    tags "<dotted number> Insiders <digits>" (e.g. "18.12 Insiders 3", 2026-Oct):
+	//    the fix only exists in a prerelease. Other values containing a space or a hyphen are not skipped: on
 	//    version-compared products they have been recoverable typos (e.g. "96.0 1954.29")
 	//    or servicing builds (e.g. "5.0.6-servicing.21220.11"), which should fail and
 	//    get a fixedBuildOverrides entry
@@ -1789,7 +1791,9 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 			"Microsoft Visual Studio 2026 Version 18.7",
 			"Microsoft Visual Studio 2026 Version 18.8",
 			"Microsoft Visual Studio 2026 Version 18.9",
-			"Microsoft Visual Studio 2026 Version 18.10":
+			"Microsoft Visual Studio 2026 Version 18.10",
+			"Microsoft Visual Studio 2026 Version 18.11",
+			"Microsoft Visual Studio 2026 Version 18.12":
 			if _, err := visualstudioversion.NewVersion(fixedBuild); err != nil {
 				return rangeTypes.RangeTypeUnknown, errors.Wrap(err, "visualstudioversion.NewVersion")
 			}
@@ -1949,6 +1953,7 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 		// doesn't match the category's version parser.
 		case ".NET Education Bundle SDK Install Tool",
 			".NET Install Tool for Extension Authors",
+			".NET source-build Linux tarballs (all archive types)",
 			"Microsoft Edge (Chromium-based) Updater",
 			"Microsoft Office Deployment Tool",
 			"Microsoft Office for Android",
