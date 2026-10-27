@@ -234,10 +234,9 @@ func Extract(args string, opts ...Option) error {
 		return errors.Wrapf(err, "read %s", args)
 	}
 
-	// Three pages that between them have carried every Windows release since
-	// 1507 do not hold no updates. Reading none is every table having been
-	// skipped -- a column renamed, a header restyled -- and writing that out
-	// would replace the dataset with an empty one, with the run green.
+	// Each page read has to hold updates (see read). A raw tree holding no page
+	// at all would still read as none, and writing that out would replace the
+	// dataset with an empty one, with the run green.
 	if len(us) == 0 {
 		return errors.Errorf("no update in %s", filepath.Join(args, "raw"))
 	}
@@ -346,6 +345,13 @@ func read(args string) ([]update, error) {
 		pus, err := parsePage(page, strings.TrimSuffix(rel, ".json"), rel)
 		if err != nil {
 			return errors.Wrapf(err, "parse %s", p)
+		}
+		// Each page has carried releases since its first. One read for none is
+		// every one of its tables skipped -- a column renamed, a header
+		// restyled -- and the other pages reading fine would not show it: the
+		// output would just lose that page's KBs.
+		if len(pus) == 0 {
+			return errors.Errorf("no update in %s", p)
 		}
 		us = append(us, pus...)
 
@@ -716,16 +722,15 @@ type link struct{ older, newer string }
 // chainHotpatch links one hotpatch calendar's line, sorted by revision.
 //
 // A hotpatch does not replace the baseline it installs on top of, and the next
-// baseline restarts the series rather than continuing it, so the monthly
-// hotpatches are linked one to the next between two baselines. An out-of-band
-// one takes the edge its month's monthly hotpatch would -- from the last
-// monthly one of an earlier month since the baseline -- and is superseded by
-// nothing: the monthly hotpatch after it links to the monthly one before it.
+// baseline restarts the series rather than continuing it, so a hotpatch links
+// from the monthly hotpatches of the latest earlier month since the baseline,
+// as servicing has it. An out-of-band one takes the edge its month's monthly
+// hotpatch would and is superseded by nothing: the monthly hotpatch after it
+// links to the monthly ones before it.
 //
-// Unlike servicing, which reads its hotpatches off articles, a monthly hotpatch
-// here links from the one monthly hotpatch before it alone, and the month is not
-// checked: a calendar lists one per month and names each baseline in a row of
-// its own, so there is no second of a month or unmarked quarter to allow for.
+// Unlike servicing, no gap of more than a quarter is looked for: a calendar
+// names each baseline in a row of its own, and a Type it does not know is read
+// as one.
 func chainHotpatch(group []update) []link {
 	month := func(t time.Time) time.Time { return time.Date(t.Year(), t.Month(), 1, 0, 0, 0, 0, time.UTC) }
 
@@ -735,17 +740,25 @@ func chainHotpatch(group []update) []link {
 		switch {
 		case u.baseline:
 			monthly = nil
-		case u.letter == "B":
-			if n := len(monthly); n > 0 {
-				links = append(links, link{older: monthly[n-1].kbID, newer: u.kbID})
-			}
-			monthly = append(monthly, u)
 		default:
+			// Every monthly hotpatch of the latest earlier month, so that two
+			// of one month are both superseded and neither supersedes the other.
+			var latest time.Time
 			for i := len(monthly) - 1; i >= 0; i-- {
-				if month(monthly[i].date).Before(month(u.date)) {
-					links = append(links, link{older: monthly[i].kbID, newer: u.kbID})
+				m := month(monthly[i].date)
+				if !m.Before(month(u.date)) {
+					continue
+				}
+				if latest.IsZero() {
+					latest = m
+				}
+				if !m.Equal(latest) {
 					break
 				}
+				links = append(links, link{older: monthly[i].kbID, newer: u.kbID})
+			}
+			if u.letter == "B" {
+				monthly = append(monthly, u)
 			}
 		}
 	}
