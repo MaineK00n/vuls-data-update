@@ -62,19 +62,9 @@ func TestNormalizeProductName(t *testing.T) {
 			want: "Microsoft Visual Studio 2019 Version 16.11",
 		},
 		{
-			name: ".NET 8.0 installed on Windows to the 2026-Oct runtime name",
+			name: ".NET installed on name is not aliased by name (see cvrf productNameOverrides)",
 			args: args{s: ".NET 8.0 installed on Windows"},
-			want: ".NET 8.0 runtime installed on Windows",
-		},
-		{
-			name: ".NET 11.0 installed on Mac OS to the 2026-Oct runtime name",
-			args: args{s: ".NET 11.0 installed on Mac OS"},
-			want: ".NET 11.0 runtime installed on Mac OS",
-		},
-		{
-			name: ".NET 6.0 keeps its name",
-			args: args{s: ".NET 6.0 installed on Windows"},
-			want: ".NET 6.0 installed on Windows",
+			want: ".NET 8.0 installed on Windows",
 		},
 		{
 			name: "bare Defender for Endpoint for Windows (2026-Oct) to the Antimalware Platform",

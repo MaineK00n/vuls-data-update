@@ -37,23 +37,6 @@ var canonicalProductNames = map[string]string{
 	// unspaced (2022 CU27, 2025 CU9) are listed directly in buildFixedBuildCriterion.
 	"Microsoft SQL Server 2017 for x64-based Systems (CU31)": "Microsoft SQL Server 2017 for x64-based Systems (CU 31)",
 	"Microsoft SQL Server 2019 for x64-based Systems (CU32)": "Microsoft SQL Server 2019 for x64-based Systems (CU 32)",
-	// 2026-Oct renames the .NET runtime products to ".NET X runtime installed on <OS>".
-	// Earlier months published the runtime under ".NET X installed on <OS>", which
-	// 2026-Oct reuses for products whose FixedBuild is an SDK feature band (e.g.
-	// "10.0.403"); buildFixedBuildCriterion skips SDK feature bands on the runtime
-	// name, so folding the old name in never mixes SDK versions into runtime ranges.
-	".NET 8.0 installed on Linux":    ".NET 8.0 runtime installed on Linux",
-	".NET 8.0 installed on Mac OS":   ".NET 8.0 runtime installed on Mac OS",
-	".NET 8.0 installed on Windows":  ".NET 8.0 runtime installed on Windows",
-	".NET 9.0 installed on Linux":    ".NET 9.0 runtime installed on Linux",
-	".NET 9.0 installed on Mac OS":   ".NET 9.0 runtime installed on Mac OS",
-	".NET 9.0 installed on Windows":  ".NET 9.0 runtime installed on Windows",
-	".NET 10.0 installed on Linux":   ".NET 10.0 runtime installed on Linux",
-	".NET 10.0 installed on Mac OS":  ".NET 10.0 runtime installed on Mac OS",
-	".NET 10.0 installed on Windows": ".NET 10.0 runtime installed on Windows",
-	".NET 11.0 installed on Linux":   ".NET 11.0 runtime installed on Linux",
-	".NET 11.0 installed on Mac OS":  ".NET 11.0 runtime installed on Mac OS",
-	".NET 11.0 installed on Windows": ".NET 11.0 runtime installed on Windows",
 
 	// Bulletin→CVRF product name unification (legacy products with "Microsoft " prefix)
 	"Microsoft Azure Kubernetes Service":                          "Azure Kubernetes Service",

@@ -761,13 +761,28 @@ func TestBuildFixedBuildCriterion(t *testing.T) {
 			want: nil,
 		},
 		{
-			name: ".NET 10.0 SDK feature band under the old name skipped (2026-Oct)",
+			name: ".NET 10.0 SDK under the old name (2026-Oct)",
 			args: args{
 				cveID:         "CVE-2026-102870",
-				productName:   microsoftutil.NormalizeProductName(".NET 10.0 installed on Windows"),
+				productName:   ".NET 10.0 installed on Windows",
 				rawFixedBuild: "10.0.403",
 			},
-			want: nil,
+			want: &criterionTypes.Criterion{
+				Type: criterionTypes.CriterionTypeVersion,
+				Version: &vcTypes.Criterion{
+					Vulnerable: true,
+					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
+					Package: packageTypes.Package{
+						Type:   packageTypes.PackageTypeBinary,
+						Binary: &binaryTypes.Package{Name: ".NET 10.0 installed on Windows"},
+					},
+					Affected: &affectedTypes.Affected{
+						Type:  affectedrangeTypes.RangeTypeMicrosoftDotNetCore,
+						Range: []affectedrangeTypes.Range{{LessThan: "10.0.403"}},
+						Fixed: []string{"10.0.403"},
+					},
+				},
+			},
 		},
 		{
 			name: "Insiders tag without a number is not skipped",
@@ -1360,6 +1375,58 @@ func TestBuildKBCriterion(t *testing.T) {
 				t.Errorf("BuildKBCriterion() mismatch (-want +got):\n%s", diff)
 			}
 		})
+	}
+}
+
+func TestNormalizeProductName(t *testing.T) {
+	tests := []struct {
+		name        string
+		cveID       string
+		productName string
+		want        string
+	}{
+		{
+			name:        ".NET runtime under the old name before 2026-Oct",
+			cveID:       "CVE-2026-58649",
+			productName: ".NET 8.0 installed on Windows",
+			want:        ".NET 8.0 runtime installed on Windows",
+		},
+		{
+			name:        ".NET SDK under the old name in 2026-Oct kept",
+			cveID:       "CVE-2026-102870",
+			productName: ".NET 10.0 installed on Windows",
+			want:        ".NET 10.0 installed on Windows",
+		},
+		{
+			name:        ".NET runtime under the 2026-Oct name kept",
+			cveID:       "CVE-2026-105016",
+			productName: ".NET 8.0 runtime installed on Windows",
+			want:        ".NET 8.0 runtime installed on Windows",
+		},
+		{
+			name:        "microsoftutil.NormalizeProductName applied first",
+			cveID:       "CVE-2026-58649",
+			productName: ".NET 8.0  installed on windows",
+			want:        ".NET 8.0 installed on windows",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := cvrf.NormalizeProductName(tt.cveID, tt.productName); got != tt.want {
+				t.Errorf("NormalizeProductName(%q, %q) = %q, want %q", tt.cveID, tt.productName, got, tt.want)
+			}
+		})
+	}
+}
+
+func TestProductNameOverridesKeys(t *testing.T) {
+	for k, v := range cvrf.ProductNameOverrides {
+		if got := microsoftutil.NormalizeProductName(k[1]); got != k[1] {
+			t.Errorf("key %v: product name is not normalized: %q", k, got)
+		}
+		if got := microsoftutil.NormalizeProductName(v); got != v {
+			t.Errorf("key %v: value is not normalized: %q", k, got)
+		}
 	}
 }
 

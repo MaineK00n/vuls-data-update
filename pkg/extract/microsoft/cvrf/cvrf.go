@@ -10,7 +10,6 @@ import (
 	"path/filepath"
 	"regexp"
 	"slices"
-	"strconv"
 	"strings"
 	"time"
 	"unicode"
@@ -873,7 +872,7 @@ func buildDetections(v cvrf.Vulnerability, products map[string]string) (map[ecos
 				coveredProductIDs[pid] = struct{}{}
 
 				tag := segmentTypes.DetectionTag(productName)
-				criterionProductName := microsoftutil.NormalizeProductName(productName)
+				criterionProductName := normalizeProductName(v.CVE, productName)
 
 				fixedBuild, hotpatch := r.FixedBuild, isHotpatchSubType(r.SubType)
 				if o, ok := vendorFixOverrides[[3]string{v.CVE, criterionProductName, r.Description}]; ok {
@@ -949,7 +948,7 @@ func buildDetections(v cvrf.Vulnerability, products map[string]string) (map[ecos
 
 	for _, tag := range tags {
 		if _, ok := excludedTags[tag]; !ok && needsHotpatchReview(fixesByTag[tag]) {
-			if _, ok := hotpatchFixesReviewed[[2]string{v.CVE, microsoftutil.NormalizeProductName(string(tag))}]; !ok {
+			if _, ok := hotpatchFixesReviewed[[2]string{v.CVE, normalizeProductName(v.CVE, string(tag))}]; !ok {
 				// A hotpatch's follow-up update listed side by side with it
 				// gates its fixed build and hides hosts that applied only the
 				// hotpatch (see vendorFixOverrides), so fail like the
@@ -980,7 +979,7 @@ func buildDetections(v cvrf.Vulnerability, products map[string]string) (map[ecos
 		}
 
 		tag := segmentTypes.DetectionTag(productName)
-		criterionProductName := microsoftutil.NormalizeProductName(productName)
+		criterionProductName := normalizeProductName(v.CVE, productName)
 
 		fixedBuildCriterion, err := buildFixedBuildCriterion(v.CVE, criterionProductName, "")
 		if err != nil {
@@ -1017,7 +1016,7 @@ func buildDetections(v cvrf.Vulnerability, products map[string]string) (map[ecos
 			func(c conditionTypes.Condition) bool { return c.Tag == tag }) {
 			continue
 		}
-		criterionProductName := microsoftutil.NormalizeProductName(mp.Product)
+		criterionProductName := normalizeProductName(v.CVE, mp.Product)
 		fixedBuildCriterion, err := buildFixedBuildCriterion(v.CVE, criterionProductName, mp.FixedBuild)
 		if err != nil {
 			return nil, nil, errors.Wrapf(err, "build fixed build criterion for missing product %q", mp.Product)
@@ -1117,7 +1116,7 @@ type vendorFixOverride struct {
 }
 
 // vendorFixOverrides corrects Vendor Fix remediations, keyed by [3]string{CVE
-// ID, product name after microsoftutil.NormalizeProductName, KB ID}.
+// ID, product name after normalizeProductName, KB ID}.
 //
 // CVRF remediations cannot express that one update is a prerequisite of
 // another, so a monthly hotpatch whose CVE is only fixed by a follow-up
@@ -1178,7 +1177,7 @@ var vendorFixOverrides = map[[3]string]vendorFixOverride{
 }
 
 // hotpatchFixesReviewed acknowledges detection tags, keyed by [2]string{CVE
-// ID, product name after microsoftutil.NormalizeProductName} like
+// ID, product name after normalizeProductName} like
 // vendorFixOverrides, that offer a hotpatch and list more than two
 // KBs (see needsHotpatchReview) but were checked against the CVE FAQ and the
 // KB articles and need no vendorFixOverrides entry.
@@ -1345,6 +1344,368 @@ func cleanFixedBuild(rawFixedBuild string) string {
 // Studio Insiders channel " Insiders <digits>" (e.g. "18.12 Insiders 3").
 var releaseCandidateTagRE = regexp.MustCompile(`^\d+(\.\d+)+( RC\d+|-rc\.\d+(\.\d+)*| Insiders \d+)$`)
 
+// normalizeProductName returns the product name that criteria and the override
+// tables below use: microsoftutil.NormalizeProductName, then productNameOverrides
+// for this CVE.
+func normalizeProductName(cveID, productName string) string {
+	n := microsoftutil.NormalizeProductName(productName)
+	if o, ok := productNameOverrides[[2]string{cveID, n}]; ok {
+		return o
+	}
+	return n
+}
+
+// productNameOverrides renames a product within one CVE, keyed by [2]string{CVE
+// ID, product name after microsoftutil.NormalizeProductName}. It is for names
+// whose meaning changed over time, which a name-only alias in
+// microsoftutil.NormalizeProductName cannot express.
+var productNameOverrides = map[[2]string]string{
+	// .NET 8.0-11.0 runtime: up to 2026-Sep CVRF published the runtime as ".NET X
+	// installed on <OS>". 2026-Oct renamed it ".NET X runtime installed on <OS>" and
+	// gave the old name to new products whose FixedBuild is an SDK feature band (e.g.
+	// "10.0.403"). Rename the runtime in the CVEs published before the rename, so
+	// that the runtime keeps one name and the SDK products keep the old one.
+	{"CVE-2024-38229", ".NET 8.0 installed on Linux"}:    ".NET 8.0 runtime installed on Linux",
+	{"CVE-2024-38229", ".NET 8.0 installed on Mac OS"}:   ".NET 8.0 runtime installed on Mac OS",
+	{"CVE-2024-38229", ".NET 8.0 installed on Windows"}:  ".NET 8.0 runtime installed on Windows",
+	{"CVE-2024-43483", ".NET 8.0 installed on Linux"}:    ".NET 8.0 runtime installed on Linux",
+	{"CVE-2024-43483", ".NET 8.0 installed on Mac OS"}:   ".NET 8.0 runtime installed on Mac OS",
+	{"CVE-2024-43483", ".NET 8.0 installed on Windows"}:  ".NET 8.0 runtime installed on Windows",
+	{"CVE-2024-43484", ".NET 8.0 installed on Linux"}:    ".NET 8.0 runtime installed on Linux",
+	{"CVE-2024-43484", ".NET 8.0 installed on Mac OS"}:   ".NET 8.0 runtime installed on Mac OS",
+	{"CVE-2024-43484", ".NET 8.0 installed on Windows"}:  ".NET 8.0 runtime installed on Windows",
+	{"CVE-2024-43485", ".NET 8.0 installed on Linux"}:    ".NET 8.0 runtime installed on Linux",
+	{"CVE-2024-43485", ".NET 8.0 installed on Mac OS"}:   ".NET 8.0 runtime installed on Mac OS",
+	{"CVE-2024-43485", ".NET 8.0 installed on Windows"}:  ".NET 8.0 runtime installed on Windows",
+	{"CVE-2024-43498", ".NET 9.0 installed on Linux"}:    ".NET 9.0 runtime installed on Linux",
+	{"CVE-2024-43498", ".NET 9.0 installed on Mac OS"}:   ".NET 9.0 runtime installed on Mac OS",
+	{"CVE-2024-43498", ".NET 9.0 installed on Windows"}:  ".NET 9.0 runtime installed on Windows",
+	{"CVE-2024-43499", ".NET 9.0 installed on Linux"}:    ".NET 9.0 runtime installed on Linux",
+	{"CVE-2024-43499", ".NET 9.0 installed on Mac OS"}:   ".NET 9.0 runtime installed on Mac OS",
+	{"CVE-2024-43499", ".NET 9.0 installed on Windows"}:  ".NET 9.0 runtime installed on Windows",
+	{"CVE-2025-21171", ".NET 9.0 installed on Linux"}:    ".NET 9.0 runtime installed on Linux",
+	{"CVE-2025-21171", ".NET 9.0 installed on Mac OS"}:   ".NET 9.0 runtime installed on Mac OS",
+	{"CVE-2025-21171", ".NET 9.0 installed on Windows"}:  ".NET 9.0 runtime installed on Windows",
+	{"CVE-2025-21172", ".NET 8.0 installed on Linux"}:    ".NET 8.0 runtime installed on Linux",
+	{"CVE-2025-21172", ".NET 8.0 installed on Mac OS"}:   ".NET 8.0 runtime installed on Mac OS",
+	{"CVE-2025-21172", ".NET 8.0 installed on Windows"}:  ".NET 8.0 runtime installed on Windows",
+	{"CVE-2025-21172", ".NET 9.0 installed on Linux"}:    ".NET 9.0 runtime installed on Linux",
+	{"CVE-2025-21172", ".NET 9.0 installed on Mac OS"}:   ".NET 9.0 runtime installed on Mac OS",
+	{"CVE-2025-21172", ".NET 9.0 installed on Windows"}:  ".NET 9.0 runtime installed on Windows",
+	{"CVE-2025-21173", ".NET 8.0 installed on Linux"}:    ".NET 8.0 runtime installed on Linux",
+	{"CVE-2025-21173", ".NET 9.0 installed on Linux"}:    ".NET 9.0 runtime installed on Linux",
+	{"CVE-2025-21176", ".NET 8.0 installed on Linux"}:    ".NET 8.0 runtime installed on Linux",
+	{"CVE-2025-21176", ".NET 8.0 installed on Mac OS"}:   ".NET 8.0 runtime installed on Mac OS",
+	{"CVE-2025-21176", ".NET 8.0 installed on Windows"}:  ".NET 8.0 runtime installed on Windows",
+	{"CVE-2025-21176", ".NET 9.0 installed on Linux"}:    ".NET 9.0 runtime installed on Linux",
+	{"CVE-2025-21176", ".NET 9.0 installed on Mac OS"}:   ".NET 9.0 runtime installed on Mac OS",
+	{"CVE-2025-21176", ".NET 9.0 installed on Windows"}:  ".NET 9.0 runtime installed on Windows",
+	{"CVE-2025-26646", ".NET 8.0 installed on Linux"}:    ".NET 8.0 runtime installed on Linux",
+	{"CVE-2025-26646", ".NET 8.0 installed on Mac OS"}:   ".NET 8.0 runtime installed on Mac OS",
+	{"CVE-2025-26646", ".NET 8.0 installed on Windows"}:  ".NET 8.0 runtime installed on Windows",
+	{"CVE-2025-26646", ".NET 9.0 installed on Linux"}:    ".NET 9.0 runtime installed on Linux",
+	{"CVE-2025-26646", ".NET 9.0 installed on Mac OS"}:   ".NET 9.0 runtime installed on Mac OS",
+	{"CVE-2025-26646", ".NET 9.0 installed on Windows"}:  ".NET 9.0 runtime installed on Windows",
+	{"CVE-2025-30399", ".NET 8.0 installed on Linux"}:    ".NET 8.0 runtime installed on Linux",
+	{"CVE-2025-30399", ".NET 8.0 installed on Mac OS"}:   ".NET 8.0 runtime installed on Mac OS",
+	{"CVE-2025-30399", ".NET 8.0 installed on Windows"}:  ".NET 8.0 runtime installed on Windows",
+	{"CVE-2025-30399", ".NET 9.0 installed on Linux"}:    ".NET 9.0 runtime installed on Linux",
+	{"CVE-2025-30399", ".NET 9.0 installed on Mac OS"}:   ".NET 9.0 runtime installed on Mac OS",
+	{"CVE-2025-30399", ".NET 9.0 installed on Windows"}:  ".NET 9.0 runtime installed on Windows",
+	{"CVE-2025-55247", ".NET 8.0 installed on Linux"}:    ".NET 8.0 runtime installed on Linux",
+	{"CVE-2025-55247", ".NET 9.0 installed on Linux"}:    ".NET 9.0 runtime installed on Linux",
+	{"CVE-2025-55248", ".NET 8.0 installed on Linux"}:    ".NET 8.0 runtime installed on Linux",
+	{"CVE-2025-55248", ".NET 8.0 installed on Mac OS"}:   ".NET 8.0 runtime installed on Mac OS",
+	{"CVE-2025-55248", ".NET 8.0 installed on Windows"}:  ".NET 8.0 runtime installed on Windows",
+	{"CVE-2025-55248", ".NET 9.0 installed on Linux"}:    ".NET 9.0 runtime installed on Linux",
+	{"CVE-2025-55248", ".NET 9.0 installed on Mac OS"}:   ".NET 9.0 runtime installed on Mac OS",
+	{"CVE-2025-55248", ".NET 9.0 installed on Windows"}:  ".NET 9.0 runtime installed on Windows",
+	{"CVE-2026-21218", ".NET 10.0 installed on Linux"}:   ".NET 10.0 runtime installed on Linux",
+	{"CVE-2026-21218", ".NET 10.0 installed on Mac OS"}:  ".NET 10.0 runtime installed on Mac OS",
+	{"CVE-2026-21218", ".NET 10.0 installed on Windows"}: ".NET 10.0 runtime installed on Windows",
+	{"CVE-2026-21218", ".NET 8.0 installed on Linux"}:    ".NET 8.0 runtime installed on Linux",
+	{"CVE-2026-21218", ".NET 8.0 installed on Mac OS"}:   ".NET 8.0 runtime installed on Mac OS",
+	{"CVE-2026-21218", ".NET 8.0 installed on Windows"}:  ".NET 8.0 runtime installed on Windows",
+	{"CVE-2026-21218", ".NET 9.0 installed on Linux"}:    ".NET 9.0 runtime installed on Linux",
+	{"CVE-2026-21218", ".NET 9.0 installed on Mac OS"}:   ".NET 9.0 runtime installed on Mac OS",
+	{"CVE-2026-21218", ".NET 9.0 installed on Windows"}:  ".NET 9.0 runtime installed on Windows",
+	{"CVE-2026-26127", ".NET 10.0 installed on Linux"}:   ".NET 10.0 runtime installed on Linux",
+	{"CVE-2026-26127", ".NET 10.0 installed on Mac OS"}:  ".NET 10.0 runtime installed on Mac OS",
+	{"CVE-2026-26127", ".NET 10.0 installed on Windows"}: ".NET 10.0 runtime installed on Windows",
+	{"CVE-2026-26127", ".NET 9.0 installed on Linux"}:    ".NET 9.0 runtime installed on Linux",
+	{"CVE-2026-26127", ".NET 9.0 installed on Mac OS"}:   ".NET 9.0 runtime installed on Mac OS",
+	{"CVE-2026-26127", ".NET 9.0 installed on Windows"}:  ".NET 9.0 runtime installed on Windows",
+	{"CVE-2026-26131", ".NET 10.0 installed on Linux"}:   ".NET 10.0 runtime installed on Linux",
+	{"CVE-2026-26171", ".NET 10.0 installed on Linux"}:   ".NET 10.0 runtime installed on Linux",
+	{"CVE-2026-26171", ".NET 10.0 installed on Mac OS"}:  ".NET 10.0 runtime installed on Mac OS",
+	{"CVE-2026-26171", ".NET 8.0 installed on Linux"}:    ".NET 8.0 runtime installed on Linux",
+	{"CVE-2026-26171", ".NET 8.0 installed on Mac OS"}:   ".NET 8.0 runtime installed on Mac OS",
+	{"CVE-2026-26171", ".NET 8.0 installed on Windows"}:  ".NET 8.0 runtime installed on Windows",
+	{"CVE-2026-26171", ".NET 9.0 installed on Linux"}:    ".NET 9.0 runtime installed on Linux",
+	{"CVE-2026-26171", ".NET 9.0 installed on Mac OS"}:   ".NET 9.0 runtime installed on Mac OS",
+	{"CVE-2026-26171", ".NET 9.0 installed on Windows"}:  ".NET 9.0 runtime installed on Windows",
+	{"CVE-2026-32175", ".NET 10.0 installed on Windows"}: ".NET 10.0 runtime installed on Windows",
+	{"CVE-2026-32175", ".NET 8.0 installed on Windows"}:  ".NET 8.0 runtime installed on Windows",
+	{"CVE-2026-32175", ".NET 9.0 installed on Windows"}:  ".NET 9.0 runtime installed on Windows",
+	{"CVE-2026-32177", ".NET 10.0 installed on Windows"}: ".NET 10.0 runtime installed on Windows",
+	{"CVE-2026-32177", ".NET 8.0 installed on Windows"}:  ".NET 8.0 runtime installed on Windows",
+	{"CVE-2026-32177", ".NET 9.0 installed on Windows"}:  ".NET 9.0 runtime installed on Windows",
+	{"CVE-2026-32178", ".NET 10.0 installed on Linux"}:   ".NET 10.0 runtime installed on Linux",
+	{"CVE-2026-32178", ".NET 10.0 installed on Mac OS"}:  ".NET 10.0 runtime installed on Mac OS",
+	{"CVE-2026-32178", ".NET 10.0 installed on Windows"}: ".NET 10.0 runtime installed on Windows",
+	{"CVE-2026-32178", ".NET 8.0 installed on Linux"}:    ".NET 8.0 runtime installed on Linux",
+	{"CVE-2026-32178", ".NET 8.0 installed on Mac OS"}:   ".NET 8.0 runtime installed on Mac OS",
+	{"CVE-2026-32178", ".NET 8.0 installed on Windows"}:  ".NET 8.0 runtime installed on Windows",
+	{"CVE-2026-32178", ".NET 9.0 installed on Linux"}:    ".NET 9.0 runtime installed on Linux",
+	{"CVE-2026-32178", ".NET 9.0 installed on Mac OS"}:   ".NET 9.0 runtime installed on Mac OS",
+	{"CVE-2026-32178", ".NET 9.0 installed on Windows"}:  ".NET 9.0 runtime installed on Windows",
+	{"CVE-2026-32203", ".NET 10.0 installed on Linux"}:   ".NET 10.0 runtime installed on Linux",
+	{"CVE-2026-32203", ".NET 10.0 installed on Mac OS"}:  ".NET 10.0 runtime installed on Mac OS",
+	{"CVE-2026-32203", ".NET 10.0 installed on Windows"}: ".NET 10.0 runtime installed on Windows",
+	{"CVE-2026-32203", ".NET 8.0 installed on Linux"}:    ".NET 8.0 runtime installed on Linux",
+	{"CVE-2026-32203", ".NET 8.0 installed on Mac OS"}:   ".NET 8.0 runtime installed on Mac OS",
+	{"CVE-2026-32203", ".NET 8.0 installed on Windows"}:  ".NET 8.0 runtime installed on Windows",
+	{"CVE-2026-32203", ".NET 9.0 installed on Linux"}:    ".NET 9.0 runtime installed on Linux",
+	{"CVE-2026-32203", ".NET 9.0 installed on Mac OS"}:   ".NET 9.0 runtime installed on Mac OS",
+	{"CVE-2026-32203", ".NET 9.0 installed on Windows"}:  ".NET 9.0 runtime installed on Windows",
+	{"CVE-2026-33116", ".NET 10.0 installed on Linux"}:   ".NET 10.0 runtime installed on Linux",
+	{"CVE-2026-33116", ".NET 10.0 installed on Mac OS"}:  ".NET 10.0 runtime installed on Mac OS",
+	{"CVE-2026-33116", ".NET 8.0 installed on Linux"}:    ".NET 8.0 runtime installed on Linux",
+	{"CVE-2026-33116", ".NET 8.0 installed on Mac OS"}:   ".NET 8.0 runtime installed on Mac OS",
+	{"CVE-2026-33116", ".NET 8.0 installed on Windows"}:  ".NET 8.0 runtime installed on Windows",
+	{"CVE-2026-33116", ".NET 9.0 installed on Linux"}:    ".NET 9.0 runtime installed on Linux",
+	{"CVE-2026-33116", ".NET 9.0 installed on Mac OS"}:   ".NET 9.0 runtime installed on Mac OS",
+	{"CVE-2026-33116", ".NET 9.0 installed on Windows"}:  ".NET 9.0 runtime installed on Windows",
+	{"CVE-2026-35433", ".NET 10.0 installed on Windows"}: ".NET 10.0 runtime installed on Windows",
+	{"CVE-2026-35433", ".NET 8.0 installed on Windows"}:  ".NET 8.0 runtime installed on Windows",
+	{"CVE-2026-35433", ".NET 9.0 installed on Windows"}:  ".NET 9.0 runtime installed on Windows",
+	{"CVE-2026-42899", ".NET 10.0 installed on Linux"}:   ".NET 10.0 runtime installed on Linux",
+	{"CVE-2026-42899", ".NET 10.0 installed on Mac OS"}:  ".NET 10.0 runtime installed on Mac OS",
+	{"CVE-2026-42899", ".NET 10.0 installed on Windows"}: ".NET 10.0 runtime installed on Windows",
+	{"CVE-2026-42899", ".NET 8.0 installed on Linux"}:    ".NET 8.0 runtime installed on Linux",
+	{"CVE-2026-42899", ".NET 8.0 installed on Mac OS"}:   ".NET 8.0 runtime installed on Mac OS",
+	{"CVE-2026-42899", ".NET 8.0 installed on Windows"}:  ".NET 8.0 runtime installed on Windows",
+	{"CVE-2026-42899", ".NET 9.0 installed on Linux"}:    ".NET 9.0 runtime installed on Linux",
+	{"CVE-2026-42899", ".NET 9.0 installed on Mac OS"}:   ".NET 9.0 runtime installed on Mac OS",
+	{"CVE-2026-42899", ".NET 9.0 installed on Windows"}:  ".NET 9.0 runtime installed on Windows",
+	{"CVE-2026-45490", ".NET 10.0 installed on Windows"}: ".NET 10.0 runtime installed on Windows",
+	{"CVE-2026-45490", ".NET 8.0 installed on Windows"}:  ".NET 8.0 runtime installed on Windows",
+	{"CVE-2026-45490", ".NET 9.0 installed on Windows"}:  ".NET 9.0 runtime installed on Windows",
+	{"CVE-2026-45491", ".NET 10.0 installed on Linux"}:   ".NET 10.0 runtime installed on Linux",
+	{"CVE-2026-45491", ".NET 10.0 installed on Mac OS"}:  ".NET 10.0 runtime installed on Mac OS",
+	{"CVE-2026-45491", ".NET 10.0 installed on Windows"}: ".NET 10.0 runtime installed on Windows",
+	{"CVE-2026-45491", ".NET 8.0 installed on Linux"}:    ".NET 8.0 runtime installed on Linux",
+	{"CVE-2026-45491", ".NET 8.0 installed on Mac OS"}:   ".NET 8.0 runtime installed on Mac OS",
+	{"CVE-2026-45491", ".NET 8.0 installed on Windows"}:  ".NET 8.0 runtime installed on Windows",
+	{"CVE-2026-45491", ".NET 9.0 installed on Linux"}:    ".NET 9.0 runtime installed on Linux",
+	{"CVE-2026-45491", ".NET 9.0 installed on Mac OS"}:   ".NET 9.0 runtime installed on Mac OS",
+	{"CVE-2026-45491", ".NET 9.0 installed on Windows"}:  ".NET 9.0 runtime installed on Windows",
+	{"CVE-2026-45591", ".NET 10.0 installed on Linux"}:   ".NET 10.0 runtime installed on Linux",
+	{"CVE-2026-45591", ".NET 10.0 installed on Mac OS"}:  ".NET 10.0 runtime installed on Mac OS",
+	{"CVE-2026-45591", ".NET 10.0 installed on Windows"}: ".NET 10.0 runtime installed on Windows",
+	{"CVE-2026-45591", ".NET 8.0 installed on Linux"}:    ".NET 8.0 runtime installed on Linux",
+	{"CVE-2026-45591", ".NET 8.0 installed on Mac OS"}:   ".NET 8.0 runtime installed on Mac OS",
+	{"CVE-2026-45591", ".NET 8.0 installed on Windows"}:  ".NET 8.0 runtime installed on Windows",
+	{"CVE-2026-45591", ".NET 9.0 installed on Linux"}:    ".NET 9.0 runtime installed on Linux",
+	{"CVE-2026-45591", ".NET 9.0 installed on Mac OS"}:   ".NET 9.0 runtime installed on Mac OS",
+	{"CVE-2026-45591", ".NET 9.0 installed on Windows"}:  ".NET 9.0 runtime installed on Windows",
+	{"CVE-2026-47300", ".NET 10.0 installed on Linux"}:   ".NET 10.0 runtime installed on Linux",
+	{"CVE-2026-47300", ".NET 10.0 installed on Mac OS"}:  ".NET 10.0 runtime installed on Mac OS",
+	{"CVE-2026-47300", ".NET 8.0 installed on Linux"}:    ".NET 8.0 runtime installed on Linux",
+	{"CVE-2026-47300", ".NET 8.0 installed on Mac OS"}:   ".NET 8.0 runtime installed on Mac OS",
+	{"CVE-2026-47300", ".NET 8.0 installed on Windows"}:  ".NET 8.0 runtime installed on Windows",
+	{"CVE-2026-47300", ".NET 9.0 installed on Linux"}:    ".NET 9.0 runtime installed on Linux",
+	{"CVE-2026-47300", ".NET 9.0 installed on Mac OS"}:   ".NET 9.0 runtime installed on Mac OS",
+	{"CVE-2026-47300", ".NET 9.0 installed on Windows"}:  ".NET 9.0 runtime installed on Windows",
+	{"CVE-2026-47302", ".NET 10.0 installed on Linux"}:   ".NET 10.0 runtime installed on Linux",
+	{"CVE-2026-47302", ".NET 10.0 installed on Mac OS"}:  ".NET 10.0 runtime installed on Mac OS",
+	{"CVE-2026-47302", ".NET 10.0 installed on Windows"}: ".NET 10.0 runtime installed on Windows",
+	{"CVE-2026-47302", ".NET 8.0 installed on Linux"}:    ".NET 8.0 runtime installed on Linux",
+	{"CVE-2026-47302", ".NET 8.0 installed on Mac OS"}:   ".NET 8.0 runtime installed on Mac OS",
+	{"CVE-2026-47302", ".NET 8.0 installed on Windows"}:  ".NET 8.0 runtime installed on Windows",
+	{"CVE-2026-47302", ".NET 9.0 installed on Linux"}:    ".NET 9.0 runtime installed on Linux",
+	{"CVE-2026-47302", ".NET 9.0 installed on Mac OS"}:   ".NET 9.0 runtime installed on Mac OS",
+	{"CVE-2026-47302", ".NET 9.0 installed on Windows"}:  ".NET 9.0 runtime installed on Windows",
+	{"CVE-2026-47303", ".NET 10.0 installed on Linux"}:   ".NET 10.0 runtime installed on Linux",
+	{"CVE-2026-47303", ".NET 10.0 installed on Mac OS"}:  ".NET 10.0 runtime installed on Mac OS",
+	{"CVE-2026-47303", ".NET 8.0 installed on Linux"}:    ".NET 8.0 runtime installed on Linux",
+	{"CVE-2026-47303", ".NET 8.0 installed on Mac OS"}:   ".NET 8.0 runtime installed on Mac OS",
+	{"CVE-2026-47303", ".NET 8.0 installed on Windows"}:  ".NET 8.0 runtime installed on Windows",
+	{"CVE-2026-47303", ".NET 9.0 installed on Linux"}:    ".NET 9.0 runtime installed on Linux",
+	{"CVE-2026-47303", ".NET 9.0 installed on Mac OS"}:   ".NET 9.0 runtime installed on Mac OS",
+	{"CVE-2026-47303", ".NET 9.0 installed on Windows"}:  ".NET 9.0 runtime installed on Windows",
+	{"CVE-2026-47304", ".NET 10.0 installed on Linux"}:   ".NET 10.0 runtime installed on Linux",
+	{"CVE-2026-47304", ".NET 10.0 installed on Mac OS"}:  ".NET 10.0 runtime installed on Mac OS",
+	{"CVE-2026-47304", ".NET 8.0 installed on Linux"}:    ".NET 8.0 runtime installed on Linux",
+	{"CVE-2026-47304", ".NET 8.0 installed on Mac OS"}:   ".NET 8.0 runtime installed on Mac OS",
+	{"CVE-2026-47304", ".NET 8.0 installed on Windows"}:  ".NET 8.0 runtime installed on Windows",
+	{"CVE-2026-47304", ".NET 9.0 installed on Linux"}:    ".NET 9.0 runtime installed on Linux",
+	{"CVE-2026-47304", ".NET 9.0 installed on Mac OS"}:   ".NET 9.0 runtime installed on Mac OS",
+	{"CVE-2026-47304", ".NET 9.0 installed on Windows"}:  ".NET 9.0 runtime installed on Windows",
+	{"CVE-2026-50524", ".NET 10.0 installed on Linux"}:   ".NET 10.0 runtime installed on Linux",
+	{"CVE-2026-50524", ".NET 10.0 installed on Mac OS"}:  ".NET 10.0 runtime installed on Mac OS",
+	{"CVE-2026-50524", ".NET 8.0 installed on Linux"}:    ".NET 8.0 runtime installed on Linux",
+	{"CVE-2026-50524", ".NET 8.0 installed on Mac OS"}:   ".NET 8.0 runtime installed on Mac OS",
+	{"CVE-2026-50524", ".NET 8.0 installed on Windows"}:  ".NET 8.0 runtime installed on Windows",
+	{"CVE-2026-50524", ".NET 9.0 installed on Linux"}:    ".NET 9.0 runtime installed on Linux",
+	{"CVE-2026-50524", ".NET 9.0 installed on Mac OS"}:   ".NET 9.0 runtime installed on Mac OS",
+	{"CVE-2026-50524", ".NET 9.0 installed on Windows"}:  ".NET 9.0 runtime installed on Windows",
+	{"CVE-2026-50525", ".NET 10.0 installed on Linux"}:   ".NET 10.0 runtime installed on Linux",
+	{"CVE-2026-50525", ".NET 10.0 installed on Mac OS"}:  ".NET 10.0 runtime installed on Mac OS",
+	{"CVE-2026-50525", ".NET 8.0 installed on Linux"}:    ".NET 8.0 runtime installed on Linux",
+	{"CVE-2026-50525", ".NET 8.0 installed on Mac OS"}:   ".NET 8.0 runtime installed on Mac OS",
+	{"CVE-2026-50525", ".NET 8.0 installed on Windows"}:  ".NET 8.0 runtime installed on Windows",
+	{"CVE-2026-50525", ".NET 9.0 installed on Linux"}:    ".NET 9.0 runtime installed on Linux",
+	{"CVE-2026-50525", ".NET 9.0 installed on Mac OS"}:   ".NET 9.0 runtime installed on Mac OS",
+	{"CVE-2026-50525", ".NET 9.0 installed on Windows"}:  ".NET 9.0 runtime installed on Windows",
+	{"CVE-2026-50526", ".NET 10.0 installed on Linux"}:   ".NET 10.0 runtime installed on Linux",
+	{"CVE-2026-50526", ".NET 10.0 installed on Mac OS"}:  ".NET 10.0 runtime installed on Mac OS",
+	{"CVE-2026-50526", ".NET 8.0 installed on Linux"}:    ".NET 8.0 runtime installed on Linux",
+	{"CVE-2026-50526", ".NET 8.0 installed on Mac OS"}:   ".NET 8.0 runtime installed on Mac OS",
+	{"CVE-2026-50526", ".NET 8.0 installed on Windows"}:  ".NET 8.0 runtime installed on Windows",
+	{"CVE-2026-50526", ".NET 9.0 installed on Linux"}:    ".NET 9.0 runtime installed on Linux",
+	{"CVE-2026-50526", ".NET 9.0 installed on Mac OS"}:   ".NET 9.0 runtime installed on Mac OS",
+	{"CVE-2026-50526", ".NET 9.0 installed on Windows"}:  ".NET 9.0 runtime installed on Windows",
+	{"CVE-2026-50527", ".NET 10.0 installed on Linux"}:   ".NET 10.0 runtime installed on Linux",
+	{"CVE-2026-50527", ".NET 10.0 installed on Mac OS"}:  ".NET 10.0 runtime installed on Mac OS",
+	{"CVE-2026-50527", ".NET 8.0 installed on Linux"}:    ".NET 8.0 runtime installed on Linux",
+	{"CVE-2026-50527", ".NET 8.0 installed on Mac OS"}:   ".NET 8.0 runtime installed on Mac OS",
+	{"CVE-2026-50527", ".NET 8.0 installed on Windows"}:  ".NET 8.0 runtime installed on Windows",
+	{"CVE-2026-50527", ".NET 9.0 installed on Linux"}:    ".NET 9.0 runtime installed on Linux",
+	{"CVE-2026-50527", ".NET 9.0 installed on Mac OS"}:   ".NET 9.0 runtime installed on Mac OS",
+	{"CVE-2026-50527", ".NET 9.0 installed on Windows"}:  ".NET 9.0 runtime installed on Windows",
+	{"CVE-2026-50528", ".NET 10.0 installed on Linux"}:   ".NET 10.0 runtime installed on Linux",
+	{"CVE-2026-50528", ".NET 10.0 installed on Mac OS"}:  ".NET 10.0 runtime installed on Mac OS",
+	{"CVE-2026-50528", ".NET 8.0 installed on Linux"}:    ".NET 8.0 runtime installed on Linux",
+	{"CVE-2026-50528", ".NET 8.0 installed on Mac OS"}:   ".NET 8.0 runtime installed on Mac OS",
+	{"CVE-2026-50528", ".NET 8.0 installed on Windows"}:  ".NET 8.0 runtime installed on Windows",
+	{"CVE-2026-50528", ".NET 9.0 installed on Linux"}:    ".NET 9.0 runtime installed on Linux",
+	{"CVE-2026-50528", ".NET 9.0 installed on Mac OS"}:   ".NET 9.0 runtime installed on Mac OS",
+	{"CVE-2026-50528", ".NET 9.0 installed on Windows"}:  ".NET 9.0 runtime installed on Windows",
+	{"CVE-2026-50646", ".NET 8.0 installed on Windows"}:  ".NET 8.0 runtime installed on Windows",
+	{"CVE-2026-50646", ".NET 9.0 installed on Windows"}:  ".NET 9.0 runtime installed on Windows",
+	{"CVE-2026-50648", ".NET 10.0 installed on Linux"}:   ".NET 10.0 runtime installed on Linux",
+	{"CVE-2026-50648", ".NET 10.0 installed on Mac OS"}:  ".NET 10.0 runtime installed on Mac OS",
+	{"CVE-2026-50648", ".NET 8.0 installed on Linux"}:    ".NET 8.0 runtime installed on Linux",
+	{"CVE-2026-50648", ".NET 8.0 installed on Mac OS"}:   ".NET 8.0 runtime installed on Mac OS",
+	{"CVE-2026-50648", ".NET 8.0 installed on Windows"}:  ".NET 8.0 runtime installed on Windows",
+	{"CVE-2026-50648", ".NET 9.0 installed on Linux"}:    ".NET 9.0 runtime installed on Linux",
+	{"CVE-2026-50648", ".NET 9.0 installed on Mac OS"}:   ".NET 9.0 runtime installed on Mac OS",
+	{"CVE-2026-50648", ".NET 9.0 installed on Windows"}:  ".NET 9.0 runtime installed on Windows",
+	{"CVE-2026-50649", ".NET 8.0 installed on Windows"}:  ".NET 8.0 runtime installed on Windows",
+	{"CVE-2026-50649", ".NET 9.0 installed on Windows"}:  ".NET 9.0 runtime installed on Windows",
+	{"CVE-2026-50650", ".NET 8.0 installed on Windows"}:  ".NET 8.0 runtime installed on Windows",
+	{"CVE-2026-50650", ".NET 9.0 installed on Windows"}:  ".NET 9.0 runtime installed on Windows",
+	{"CVE-2026-50651", ".NET 10.0 installed on Linux"}:   ".NET 10.0 runtime installed on Linux",
+	{"CVE-2026-50651", ".NET 10.0 installed on Mac OS"}:  ".NET 10.0 runtime installed on Mac OS",
+	{"CVE-2026-50651", ".NET 8.0 installed on Linux"}:    ".NET 8.0 runtime installed on Linux",
+	{"CVE-2026-50651", ".NET 8.0 installed on Mac OS"}:   ".NET 8.0 runtime installed on Mac OS",
+	{"CVE-2026-50651", ".NET 8.0 installed on Windows"}:  ".NET 8.0 runtime installed on Windows",
+	{"CVE-2026-50651", ".NET 9.0 installed on Linux"}:    ".NET 9.0 runtime installed on Linux",
+	{"CVE-2026-50651", ".NET 9.0 installed on Mac OS"}:   ".NET 9.0 runtime installed on Mac OS",
+	{"CVE-2026-50651", ".NET 9.0 installed on Windows"}:  ".NET 9.0 runtime installed on Windows",
+	{"CVE-2026-50659", ".NET 10.0 installed on Linux"}:   ".NET 10.0 runtime installed on Linux",
+	{"CVE-2026-50659", ".NET 10.0 installed on Mac OS"}:  ".NET 10.0 runtime installed on Mac OS",
+	{"CVE-2026-50659", ".NET 8.0 installed on Linux"}:    ".NET 8.0 runtime installed on Linux",
+	{"CVE-2026-50659", ".NET 8.0 installed on Mac OS"}:   ".NET 8.0 runtime installed on Mac OS",
+	{"CVE-2026-50659", ".NET 8.0 installed on Windows"}:  ".NET 8.0 runtime installed on Windows",
+	{"CVE-2026-50659", ".NET 9.0 installed on Linux"}:    ".NET 9.0 runtime installed on Linux",
+	{"CVE-2026-50659", ".NET 9.0 installed on Mac OS"}:   ".NET 9.0 runtime installed on Mac OS",
+	{"CVE-2026-50659", ".NET 9.0 installed on Windows"}:  ".NET 9.0 runtime installed on Windows",
+	{"CVE-2026-56170", ".NET 10.0 installed on Linux"}:   ".NET 10.0 runtime installed on Linux",
+	{"CVE-2026-56170", ".NET 10.0 installed on Mac OS"}:  ".NET 10.0 runtime installed on Mac OS",
+	{"CVE-2026-56170", ".NET 8.0 installed on Linux"}:    ".NET 8.0 runtime installed on Linux",
+	{"CVE-2026-56170", ".NET 8.0 installed on Mac OS"}:   ".NET 8.0 runtime installed on Mac OS",
+	{"CVE-2026-56170", ".NET 8.0 installed on Windows"}:  ".NET 8.0 runtime installed on Windows",
+	{"CVE-2026-56170", ".NET 9.0 installed on Linux"}:    ".NET 9.0 runtime installed on Linux",
+	{"CVE-2026-56170", ".NET 9.0 installed on Mac OS"}:   ".NET 9.0 runtime installed on Mac OS",
+	{"CVE-2026-56170", ".NET 9.0 installed on Windows"}:  ".NET 9.0 runtime installed on Windows",
+	{"CVE-2026-57108", ".NET 10.0 installed on Linux"}:   ".NET 10.0 runtime installed on Linux",
+	{"CVE-2026-57108", ".NET 10.0 installed on Mac OS"}:  ".NET 10.0 runtime installed on Mac OS",
+	{"CVE-2026-57108", ".NET 8.0 installed on Linux"}:    ".NET 8.0 runtime installed on Linux",
+	{"CVE-2026-57108", ".NET 8.0 installed on Mac OS"}:   ".NET 8.0 runtime installed on Mac OS",
+	{"CVE-2026-57108", ".NET 8.0 installed on Windows"}:  ".NET 8.0 runtime installed on Windows",
+	{"CVE-2026-57108", ".NET 9.0 installed on Linux"}:    ".NET 9.0 runtime installed on Linux",
+	{"CVE-2026-57108", ".NET 9.0 installed on Mac OS"}:   ".NET 9.0 runtime installed on Mac OS",
+	{"CVE-2026-57108", ".NET 9.0 installed on Windows"}:  ".NET 9.0 runtime installed on Windows",
+	{"CVE-2026-58649", ".NET 10.0 installed on Linux"}:   ".NET 10.0 runtime installed on Linux",
+	{"CVE-2026-58649", ".NET 10.0 installed on Mac OS"}:  ".NET 10.0 runtime installed on Mac OS",
+	{"CVE-2026-58649", ".NET 10.0 installed on Windows"}: ".NET 10.0 runtime installed on Windows",
+	{"CVE-2026-58649", ".NET 11.0 installed on Linux"}:   ".NET 11.0 runtime installed on Linux",
+	{"CVE-2026-58649", ".NET 11.0 installed on Mac OS"}:  ".NET 11.0 runtime installed on Mac OS",
+	{"CVE-2026-58649", ".NET 11.0 installed on Windows"}: ".NET 11.0 runtime installed on Windows",
+	{"CVE-2026-58649", ".NET 8.0 installed on Linux"}:    ".NET 8.0 runtime installed on Linux",
+	{"CVE-2026-58649", ".NET 8.0 installed on Mac OS"}:   ".NET 8.0 runtime installed on Mac OS",
+	{"CVE-2026-58649", ".NET 8.0 installed on Windows"}:  ".NET 8.0 runtime installed on Windows",
+	{"CVE-2026-58649", ".NET 9.0 installed on Linux"}:    ".NET 9.0 runtime installed on Linux",
+	{"CVE-2026-58649", ".NET 9.0 installed on Mac OS"}:   ".NET 9.0 runtime installed on Mac OS",
+	{"CVE-2026-58649", ".NET 9.0 installed on Windows"}:  ".NET 9.0 runtime installed on Windows",
+	{"CVE-2026-62871", ".NET 8.0 installed on Windows"}:  ".NET 8.0 runtime installed on Windows",
+	{"CVE-2026-62871", ".NET 9.0 installed on Windows"}:  ".NET 9.0 runtime installed on Windows",
+	{"CVE-2026-62897", ".NET 10.0 installed on Windows"}: ".NET 10.0 runtime installed on Windows",
+	{"CVE-2026-62897", ".NET 8.0 installed on Windows"}:  ".NET 8.0 runtime installed on Windows",
+	{"CVE-2026-62897", ".NET 9.0 installed on Windows"}:  ".NET 9.0 runtime installed on Windows",
+	{"CVE-2026-62898", ".NET 10.0 installed on Windows"}: ".NET 10.0 runtime installed on Windows",
+	{"CVE-2026-62898", ".NET 8.0 installed on Windows"}:  ".NET 8.0 runtime installed on Windows",
+	{"CVE-2026-62898", ".NET 9.0 installed on Windows"}:  ".NET 9.0 runtime installed on Windows",
+	{"CVE-2026-62899", ".NET 10.0 installed on Linux"}:   ".NET 10.0 runtime installed on Linux",
+	{"CVE-2026-62899", ".NET 10.0 installed on Mac OS"}:  ".NET 10.0 runtime installed on Mac OS",
+	{"CVE-2026-62899", ".NET 8.0 installed on Linux"}:    ".NET 8.0 runtime installed on Linux",
+	{"CVE-2026-62899", ".NET 8.0 installed on Mac OS"}:   ".NET 8.0 runtime installed on Mac OS",
+	{"CVE-2026-62899", ".NET 8.0 installed on Windows"}:  ".NET 8.0 runtime installed on Windows",
+	{"CVE-2026-62899", ".NET 9.0 installed on Linux"}:    ".NET 9.0 runtime installed on Linux",
+	{"CVE-2026-62899", ".NET 9.0 installed on Mac OS"}:   ".NET 9.0 runtime installed on Mac OS",
+	{"CVE-2026-62899", ".NET 9.0 installed on Windows"}:  ".NET 9.0 runtime installed on Windows",
+	{"CVE-2026-62900", ".NET 10.0 installed on Linux"}:   ".NET 10.0 runtime installed on Linux",
+	{"CVE-2026-62900", ".NET 10.0 installed on Mac OS"}:  ".NET 10.0 runtime installed on Mac OS",
+	{"CVE-2026-62900", ".NET 8.0 installed on Linux"}:    ".NET 8.0 runtime installed on Linux",
+	{"CVE-2026-62900", ".NET 8.0 installed on Mac OS"}:   ".NET 8.0 runtime installed on Mac OS",
+	{"CVE-2026-62900", ".NET 8.0 installed on Windows"}:  ".NET 8.0 runtime installed on Windows",
+	{"CVE-2026-62900", ".NET 9.0 installed on Linux"}:    ".NET 9.0 runtime installed on Linux",
+	{"CVE-2026-62900", ".NET 9.0 installed on Mac OS"}:   ".NET 9.0 runtime installed on Mac OS",
+	{"CVE-2026-62900", ".NET 9.0 installed on Windows"}:  ".NET 9.0 runtime installed on Windows",
+	{"CVE-2026-62901", ".NET 10.0 installed on Linux"}:   ".NET 10.0 runtime installed on Linux",
+	{"CVE-2026-62901", ".NET 10.0 installed on Mac OS"}:  ".NET 10.0 runtime installed on Mac OS",
+	{"CVE-2026-62901", ".NET 8.0 installed on Linux"}:    ".NET 8.0 runtime installed on Linux",
+	{"CVE-2026-62901", ".NET 8.0 installed on Mac OS"}:   ".NET 8.0 runtime installed on Mac OS",
+	{"CVE-2026-62901", ".NET 8.0 installed on Windows"}:  ".NET 8.0 runtime installed on Windows",
+	{"CVE-2026-62901", ".NET 9.0 installed on Linux"}:    ".NET 9.0 runtime installed on Linux",
+	{"CVE-2026-62901", ".NET 9.0 installed on Mac OS"}:   ".NET 9.0 runtime installed on Mac OS",
+	{"CVE-2026-62901", ".NET 9.0 installed on Windows"}:  ".NET 9.0 runtime installed on Windows",
+	{"CVE-2026-62902", ".NET 8.0 installed on Windows"}:  ".NET 8.0 runtime installed on Windows",
+	{"CVE-2026-62902", ".NET 9.0 installed on Windows"}:  ".NET 9.0 runtime installed on Windows",
+	{"CVE-2026-62909", ".NET 10.0 installed on Linux"}:   ".NET 10.0 runtime installed on Linux",
+	{"CVE-2026-62909", ".NET 10.0 installed on Mac OS"}:  ".NET 10.0 runtime installed on Mac OS",
+	{"CVE-2026-62909", ".NET 10.0 installed on Windows"}: ".NET 10.0 runtime installed on Windows",
+	{"CVE-2026-62909", ".NET 8.0 installed on Linux"}:    ".NET 8.0 runtime installed on Linux",
+	{"CVE-2026-62909", ".NET 8.0 installed on Mac OS"}:   ".NET 8.0 runtime installed on Mac OS",
+	{"CVE-2026-62909", ".NET 8.0 installed on Windows"}:  ".NET 8.0 runtime installed on Windows",
+	{"CVE-2026-62909", ".NET 9.0 installed on Linux"}:    ".NET 9.0 runtime installed on Linux",
+	{"CVE-2026-62909", ".NET 9.0 installed on Mac OS"}:   ".NET 9.0 runtime installed on Mac OS",
+	{"CVE-2026-62909", ".NET 9.0 installed on Windows"}:  ".NET 9.0 runtime installed on Windows",
+	{"CVE-2026-69304", ".NET 10.0 installed on Windows"}: ".NET 10.0 runtime installed on Windows",
+	{"CVE-2026-69304", ".NET 8.0 installed on Windows"}:  ".NET 8.0 runtime installed on Windows",
+	{"CVE-2026-69304", ".NET 9.0 installed on Windows"}:  ".NET 9.0 runtime installed on Windows",
+	{"CVE-2026-69439", ".NET 10.0 installed on Windows"}: ".NET 10.0 runtime installed on Windows",
+	{"CVE-2026-69439", ".NET 11.0 installed on Windows"}: ".NET 11.0 runtime installed on Windows",
+	{"CVE-2026-69439", ".NET 8.0 installed on Windows"}:  ".NET 8.0 runtime installed on Windows",
+	{"CVE-2026-69439", ".NET 9.0 installed on Windows"}:  ".NET 9.0 runtime installed on Windows",
+	{"CVE-2026-69522", ".NET 10.0 installed on Windows"}: ".NET 10.0 runtime installed on Windows",
+	{"CVE-2026-69522", ".NET 11.0 installed on Windows"}: ".NET 11.0 runtime installed on Windows",
+	{"CVE-2026-69522", ".NET 8.0 installed on Windows"}:  ".NET 8.0 runtime installed on Windows",
+	{"CVE-2026-69522", ".NET 9.0 installed on Windows"}:  ".NET 9.0 runtime installed on Windows",
+	{"CVE-2026-69806", ".NET 10.0 installed on Linux"}:   ".NET 10.0 runtime installed on Linux",
+	{"CVE-2026-69806", ".NET 11.0 installed on Linux"}:   ".NET 11.0 runtime installed on Linux",
+	{"CVE-2026-69806", ".NET 9.0 installed on Linux"}:    ".NET 9.0 runtime installed on Linux",
+	{"CVE-2026-70354", ".NET 10.0 installed on Windows"}: ".NET 10.0 runtime installed on Windows",
+	{"CVE-2026-70354", ".NET 8.0 installed on Windows"}:  ".NET 8.0 runtime installed on Windows",
+	{"CVE-2026-70354", ".NET 9.0 installed on Windows"}:  ".NET 9.0 runtime installed on Windows",
+	{"CVE-2026-71328", ".NET 10.0 installed on Windows"}: ".NET 10.0 runtime installed on Windows",
+	{"CVE-2026-71328", ".NET 11.0 installed on Windows"}: ".NET 11.0 runtime installed on Windows",
+	{"CVE-2026-71328", ".NET 8.0 installed on Windows"}:  ".NET 8.0 runtime installed on Windows",
+	{"CVE-2026-71328", ".NET 9.0 installed on Windows"}:  ".NET 9.0 runtime installed on Windows",
+}
+
 func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criterionTypes.Criterion, error) {
 	fixedBuild := cleanFixedBuild(rawFixedBuild)
 
@@ -1493,36 +1854,34 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 			".NET 6.0 installed on Windows",
 			".NET 7.0",
 			".NET 8.0",
+			".NET 8.0 installed on Linux",
+			".NET 8.0 installed on Mac OS",
+			".NET 8.0 installed on Windows",
+			".NET 8.0 runtime installed on Linux",
+			".NET 8.0 runtime installed on Mac OS",
+			".NET 8.0 runtime installed on Windows",
+			".NET 9.0 installed on Linux",
+			".NET 9.0 installed on Mac OS",
+			".NET 9.0 installed on Windows",
+			".NET 9.0 runtime installed on Linux",
+			".NET 9.0 runtime installed on Mac OS",
+			".NET 9.0 runtime installed on Windows",
+			".NET 10.0 installed on Linux",
+			".NET 10.0 installed on Mac OS",
+			".NET 10.0 installed on Windows",
+			".NET 10.0 runtime installed on Linux",
+			".NET 10.0 runtime installed on Mac OS",
+			".NET 10.0 runtime installed on Windows",
+			".NET 11.0 installed on Linux",
+			".NET 11.0 installed on Mac OS",
+			".NET 11.0 installed on Windows",
+			".NET 11.0 runtime installed on Linux",
+			".NET 11.0 runtime installed on Mac OS",
+			".NET 11.0 runtime installed on Windows",
 			".NET Core 2.1",
 			".NET Core 3.1":
 			if _, err := dotnetcoreversion.NewVersion(fixedBuild); err != nil {
 				return rangeTypes.RangeTypeUnknown, errors.Wrap(err, "dotnetcoreversion.NewVersion")
-			}
-			return rangeTypes.RangeTypeMicrosoftDotNetCore, nil
-
-		// .NET runtime (including the earlier ".NET X installed on <OS>" names, see
-		// microsoftutil.NormalizeProductName). Since 2026-Oct some remediations carry the
-		// fixed SDK feature band instead (e.g. "10.0.402", "8.0.132"), and the old name is
-		// also used for products whose FixedBuild is only an SDK feature band (e.g.
-		// "10.0.403"). A runtime patch number stays below 100, so skip SDK feature bands
-		// rather than compare an installed runtime against an SDK version.
-		case ".NET 8.0 runtime installed on Linux",
-			".NET 8.0 runtime installed on Mac OS",
-			".NET 8.0 runtime installed on Windows",
-			".NET 9.0 runtime installed on Linux",
-			".NET 9.0 runtime installed on Mac OS",
-			".NET 9.0 runtime installed on Windows",
-			".NET 10.0 runtime installed on Linux",
-			".NET 10.0 runtime installed on Mac OS",
-			".NET 10.0 runtime installed on Windows",
-			".NET 11.0 runtime installed on Linux",
-			".NET 11.0 runtime installed on Mac OS",
-			".NET 11.0 runtime installed on Windows":
-			if _, err := dotnetcoreversion.NewVersion(fixedBuild); err != nil {
-				return rangeTypes.RangeTypeUnknown, errors.Wrap(err, "dotnetcoreversion.NewVersion")
-			}
-			if isDotNetSDKFeatureBand(fixedBuild) {
-				return rangeTypes.RangeTypeUnknown, nil
 			}
 			return rangeTypes.RangeTypeMicrosoftDotNetCore, nil
 
@@ -2054,25 +2413,42 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 	}, nil
 }
 
-// isDotNetSDKFeatureBand reports whether a .NET version is an SDK feature band
-// (patch number 100 or above, e.g. "10.0.402") rather than a runtime version.
-func isDotNetSDKFeatureBand(v string) bool {
-	ss := strings.Split(v, ".")
-	if len(ss) < 3 {
-		return false
-	}
-	n, err := strconv.Atoi(ss[2])
-	return err == nil && n >= 100
-}
-
 // fixedBuildOverrides maps (CVE ID, product name, incorrect FixedBuild) to corrected FixedBuild values
 // for known data issues in CVRF.
-// The key is [3]string{CVE ID, product name after microsoftutil.NormalizeProductName, incorrect FixedBuild value after generic cleanup}.
+// The key is [3]string{CVE ID, product name after normalizeProductName, incorrect FixedBuild value after generic cleanup}.
 // An empty value means "intentionally no criterion": the entry acknowledges the upstream data gap
 // and skips criterion generation. For Microsoft Edge (Chromium-based), a Vendor Fix that yields no
 // criterion and has no entry here fails the extraction (see buildDetections), because such CVEs
 // would otherwise become silently undetectable.
 var fixedBuildOverrides = map[[3]string]string{
+	// .NET runtime: 2026-Oct lists the fixed SDK feature band (e.g. "10.0.402") on
+	// the runtime products. The runtime fix, if any, is listed separately; comparing
+	// an installed runtime against an SDK version would report fixed runtimes.
+	{"CVE-2026-70161", ".NET 10.0 runtime installed on Windows", "10.0.402"}: "",
+	{"CVE-2026-70165", ".NET 10.0 runtime installed on Windows", "10.0.402"}: "",
+	{"CVE-2026-70190", ".NET 10.0 runtime installed on Windows", "10.0.113"}: "",
+	{"CVE-2026-96237", ".NET 10.0 runtime installed on Linux", "10.0.113"}:   "",
+	{"CVE-2026-96237", ".NET 10.0 runtime installed on Mac OS", "10.0.113"}:  "",
+	{"CVE-2026-96237", ".NET 10.0 runtime installed on Windows", "10.0.113"}: "",
+	{"CVE-2026-96237", ".NET 8.0 runtime installed on Linux", "8.0.132"}:     "",
+	{"CVE-2026-96237", ".NET 8.0 runtime installed on Mac OS", "8.0.132"}:    "",
+	{"CVE-2026-96237", ".NET 8.0 runtime installed on Windows", "8.0.132"}:   "",
+	{"CVE-2026-96237", ".NET 9.0 runtime installed on Linux", "9.0.319"}:     "",
+	{"CVE-2026-96237", ".NET 9.0 runtime installed on Mac OS", "9.0.319"}:    "",
+	{"CVE-2026-96237", ".NET 9.0 runtime installed on Windows", "9.0.319"}:   "",
+	{"CVE-2026-96238", ".NET 10.0 runtime installed on Linux", "10.0.113"}:   "",
+	{"CVE-2026-96238", ".NET 10.0 runtime installed on Mac OS", "10.0.113"}:  "",
+	{"CVE-2026-96238", ".NET 10.0 runtime installed on Windows", "10.0.113"}: "",
+	{"CVE-2026-96238", ".NET 8.0 runtime installed on Linux", "8.0.426"}:     "",
+	{"CVE-2026-96238", ".NET 8.0 runtime installed on Mac OS", "8.0.426"}:    "",
+	{"CVE-2026-96238", ".NET 8.0 runtime installed on Windows", "8.0.426"}:   "",
+	{"CVE-2026-96238", ".NET 9.0 runtime installed on Linux", "9.0.122"}:     "",
+	{"CVE-2026-96238", ".NET 9.0 runtime installed on Mac OS", "9.0.122"}:    "",
+	{"CVE-2026-96238", ".NET 9.0 runtime installed on Windows", "9.0.122"}:   "",
+	{"CVE-2026-96957", ".NET 10.0 runtime installed on Linux", "10.0.402"}:   "",
+	{"CVE-2026-96957", ".NET 10.0 runtime installed on Mac OS", "10.0.402"}:  "",
+	{"CVE-2026-96957", ".NET 10.0 runtime installed on Windows", "10.0.402"}: "",
+
 	// .NET Core / .NET 5+ (FixedBuild has pre-release suffix that the parser doesn't accept)
 	// 2021-May (FixedBuild "5.0.6-servicing.21220.11" / "3.1.15-servicing.21214.3" has pre-release suffix)
 	{"CVE-2021-31204", ".NET 5.0", "5.0.6-servicing.21220.11"}:      "5.0.6",
@@ -4756,7 +5132,7 @@ func (e extractor) collectKBs(v cvrf.Vulnerability, products map[string]string, 
 				continue
 			}
 
-			criterionProductName := microsoftutil.NormalizeProductName(productName)
+			criterionProductName := normalizeProductName(v.CVE, productName)
 
 			kbID := r.Description
 			if !isAllDigits(kbID) {
