@@ -268,14 +268,14 @@ func (q MatchQuality) String() string {
 // carries). VU is VersionUnconfirmed: the product matched but the version
 // could not be evaluated.
 //
-//	query \ criterion │ NA (-)  │ pattern │ * (no narrowing) │ * + Range             │ * + enum           │ concrete j
-//	──────────────────┼─────────┼─────────┼──────────────────┼───────────────────────┼────────────────────┼──────────────
-//	ANY (*)           │ Exact   │ Exact   │ Exact            │ Exact                 │ Exact              │ Exact
-//	NA (-)            │ Exact   │ VU      │ Exact            │ VU¹                   │ VU¹                │ VU
-//	concrete i        │ VU      │ VU      │ Exact            │ in Range → Exact,     │ entry = i → Exact, │ i = j → Exact,
-//	                  │         │         │                  │ else enum, else None  │ else None          │ else None
-//	pattern m         │ VU      │ VU      │ Exact            │ enum ⊂ m → Exact,     │ entry ⊂ m → Exact, │ j ⊂ m → Exact,
-//	                  │         │         │                  │ else None             │ else None          │ else None
+//	query \ criterion │ NA (-)  │ pattern │ * (no narrowing) │ * + Range                │ * + enum           │ concrete j
+//	──────────────────┼─────────┼─────────┼──────────────────┼──────────────────────────┼────────────────────┼──────────────
+//	ANY (*)           │ Exact   │ Exact   │ Exact            │ Exact                    │ Exact              │ Exact
+//	NA (-)            │ Exact   │ VU      │ Exact            │ VU¹                      │ VU¹                │ VU
+//	concrete i        │ VU      │ VU      │ Exact            │ in Range → Exact,        │ entry = i → Exact, │ i = j → Exact,
+//	                  │         │         │                  │ else try enum, else None │ else None          │ else None
+//	pattern m         │ VU      │ VU      │ Exact            │ entry ⊂ m → Exact,       │ entry ⊂ m → Exact, │ j ⊂ m → Exact,
+//	                  │         │         │                  │ else None                │ else None          │ else None
 //
 //	¹ an NA or * entry in the enumeration lifts it to Exact.
 //
