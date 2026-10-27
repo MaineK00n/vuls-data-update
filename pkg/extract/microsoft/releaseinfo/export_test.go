@@ -31,3 +31,12 @@ func (u update) WithPage(page, url string) Update {
 	u.url = url
 	return u
 }
+
+// WithType files the update under a cadence letter and, for a hotpatch calendar
+// row, says whether it is a baseline.
+func (u update) WithType(letter string, hotpatch, baseline bool) Update {
+	u.letter = letter
+	u.hotpatch = hotpatch
+	u.baseline = baseline
+	return u
+}
