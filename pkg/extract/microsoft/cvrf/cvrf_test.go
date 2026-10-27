@@ -743,24 +743,6 @@ func TestBuildFixedBuildCriterion(t *testing.T) {
 			},
 		},
 		{
-			name: ".NET 10.0 runtime with an SDK feature band skipped (2026-Oct)",
-			args: args{
-				cveID:         "CVE-2026-96957",
-				productName:   ".NET 10.0 runtime installed on Linux",
-				rawFixedBuild: "10.0.402",
-			},
-			want: nil,
-		},
-		{
-			name: ".NET 8.0 runtime with the 1xx SDK feature band skipped (2026-Oct)",
-			args: args{
-				cveID:         "CVE-2026-96237",
-				productName:   ".NET 8.0 runtime installed on Mac OS",
-				rawFixedBuild: "8.0.132",
-			},
-			want: nil,
-		},
-		{
 			name: ".NET 10.0 SDK under the old name (2026-Oct)",
 			args: args{
 				cveID:         "CVE-2026-102870",
@@ -1395,6 +1377,12 @@ func TestNormalizeProductName(t *testing.T) {
 			name:        ".NET SDK under the old name in 2026-Oct kept",
 			cveID:       "CVE-2026-102870",
 			productName: ".NET 10.0 installed on Windows",
+			want:        ".NET 10.0 installed on Windows",
+		},
+		{
+			name:        ".NET SDK listed as the runtime in 2026-Oct",
+			cveID:       "CVE-2026-70161",
+			productName: ".NET 10.0 runtime installed on Windows",
 			want:        ".NET 10.0 installed on Windows",
 		},
 		{
