@@ -122,9 +122,10 @@ var (
 	buildPattern = regexp.MustCompile(`^(\d+)\.(\d+)$`)
 
 	// updateTypePattern reads the cadence letter out of "2026-08 B", "2021-03
-	// OOB" and "2024.08 B *" alike: the month is one token however Microsoft
-	// punctuates it, the letter is the next, and the footnote marker appended to
-	// one row of one hotpatch calendar is not the letter.
+	// OOB", "2024.08 B *" and "2024.08 B*" alike: the month is one token however
+	// Microsoft punctuates it, the letter is the next, and the footnote marker
+	// appended to one row of one hotpatch calendar, with or without a space, is
+	// not the letter.
 	updateTypePattern = regexp.MustCompile(`^\S+ ([A-Z]+)`)
 
 	// buildSuffixPattern is what every release-history label ends with, and the
@@ -216,7 +217,7 @@ func Extract(args string, opts ...Option) error {
 	slog.Info("Extract Microsoft Release Information")
 
 	// The raw tree is read and chained before the output is cleared, so a run
-	// that cannot leaves the last good output where it was.
+	// that cannot do either leaves the last good output where it was.
 	us, err := read(args)
 	if err != nil {
 		return errors.Wrapf(err, "read %s", args)
