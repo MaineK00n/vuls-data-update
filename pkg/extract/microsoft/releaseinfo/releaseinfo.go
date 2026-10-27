@@ -428,7 +428,10 @@ func parsePage(page releaseinfo.Page, name, raw string) ([]update, error) {
 		}
 
 		for _, row := range t.Rows {
-			u, ok := parseRow(t, row, name, raw)
+			u, ok, err := parseRow(t, row, name, raw)
+			if err != nil {
+				return nil, errors.Wrapf(err, "parse row. label: %q", t.Label)
+			}
 			if !ok {
 				continue
 			}
@@ -471,7 +474,7 @@ func parsePage(page releaseinfo.Page, name, raw string) ([]update, error) {
 }
 
 // parseRow reads one row, reporting false for the ones that are not updates.
-func parseRow(t releaseinfo.Table, row []releaseinfo.Cell, name, raw string) (update, bool) {
+func parseRow(t releaseinfo.Table, row []releaseinfo.Cell, name, raw string) (update, bool, error) {
 	cell := func(column string) releaseinfo.Cell {
 		i := slices.Index(t.Header, column)
 		// A row is free to hold a cell more than its header names -- one
@@ -486,25 +489,32 @@ func parseRow(t releaseinfo.Table, row []releaseinfo.Cell, name, raw string) (up
 	if m == nil {
 		// A month the calendar has reached and Microsoft has not shipped yet.
 		slog.Debug("row names no KB", slog.String("path", raw), slog.String("label", t.Label))
-		return update{}, false
+		return update{}, false, nil
 	}
 
+	// The build is the whole order. A row without one cannot be placed, and
+	// every one of the 1,944 rows that names a KB has had it. A release history
+	// loses the one KB to it. A hotpatch calendar would lose more: a baseline
+	// dropped there would chain the hotpatches either side of it into one
+	// quarter, so it fails instead.
+	unreadable := func() (update, bool, error) {
+		if slices.Contains(t.Header, columnHotpatchType) {
+			return update{}, false, errors.Errorf("unexpected build in hotpatch calendar. expected: %q, actual: %q, kb: %s", "<major>.<revision>", cell(columnBuild).Text, m[1])
+		}
+		slog.Warn("unexpected build", slog.String("path", raw), slog.String("label", t.Label), slog.String("kb", m[1]), slog.String("build", cell(columnBuild).Text))
+		return update{}, false, nil
+	}
 	bm := buildPattern.FindStringSubmatch(cell(columnBuild).Text)
 	if bm == nil {
-		// The build is the whole order. A row without one cannot be placed, and
-		// every one of the 1,944 rows that names a KB has had it.
-		slog.Warn("unexpected build", slog.String("path", raw), slog.String("label", t.Label), slog.String("kb", m[1]), slog.String("build", cell(columnBuild).Text))
-		return update{}, false
+		return unreadable()
 	}
 	major, err := strconv.Atoi(bm[1])
 	if err != nil {
-		slog.Warn("unexpected build", slog.String("path", raw), slog.String("kb", m[1]), slog.String("build", cell(columnBuild).Text))
-		return update{}, false
+		return unreadable()
 	}
 	revision, err := strconv.Atoi(bm[2])
 	if err != nil {
-		slog.Warn("unexpected build", slog.String("path", raw), slog.String("kb", m[1]), slog.String("build", cell(columnBuild).Text))
-		return update{}, false
+		return unreadable()
 	}
 
 	// The date is a tiebreaker between two updates of one build, not the order,
@@ -544,7 +554,7 @@ func parseRow(t releaseinfo.Table, row []releaseinfo.Cell, name, raw string) (up
 		date:     date,
 		letter:   letter,
 		raw:      raw,
-	}, true
+	}, true, nil
 }
 
 // isBaseline reads a hotpatch calendar row's Type.
