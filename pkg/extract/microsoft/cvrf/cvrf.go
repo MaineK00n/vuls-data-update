@@ -10,6 +10,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"slices"
+	"strconv"
 	"strings"
 	"time"
 	"unicode"
@@ -1365,6 +1366,8 @@ var productNameOverrides = map[[2]string]string{
 	// gave the old name to new products whose FixedBuild is an SDK feature band (e.g.
 	// "10.0.403"). Rename the runtime in the CVEs published before the rename, so
 	// that the runtime keeps one name and the SDK products keep the old one.
+	// CVE-2026-58649 is left out: its .NET products list only SDK feature bands,
+	// so they already are the SDK.
 	{"CVE-2024-38229", ".NET 8.0 installed on Linux"}:    ".NET 8.0 runtime installed on Linux",
 	{"CVE-2024-38229", ".NET 8.0 installed on Mac OS"}:   ".NET 8.0 runtime installed on Mac OS",
 	{"CVE-2024-38229", ".NET 8.0 installed on Windows"}:  ".NET 8.0 runtime installed on Windows",
@@ -1628,18 +1631,6 @@ var productNameOverrides = map[[2]string]string{
 	{"CVE-2026-57108", ".NET 9.0 installed on Linux"}:    ".NET 9.0 runtime installed on Linux",
 	{"CVE-2026-57108", ".NET 9.0 installed on Mac OS"}:   ".NET 9.0 runtime installed on Mac OS",
 	{"CVE-2026-57108", ".NET 9.0 installed on Windows"}:  ".NET 9.0 runtime installed on Windows",
-	{"CVE-2026-58649", ".NET 10.0 installed on Linux"}:   ".NET 10.0 runtime installed on Linux",
-	{"CVE-2026-58649", ".NET 10.0 installed on Mac OS"}:  ".NET 10.0 runtime installed on Mac OS",
-	{"CVE-2026-58649", ".NET 10.0 installed on Windows"}: ".NET 10.0 runtime installed on Windows",
-	{"CVE-2026-58649", ".NET 11.0 installed on Linux"}:   ".NET 11.0 runtime installed on Linux",
-	{"CVE-2026-58649", ".NET 11.0 installed on Mac OS"}:  ".NET 11.0 runtime installed on Mac OS",
-	{"CVE-2026-58649", ".NET 11.0 installed on Windows"}: ".NET 11.0 runtime installed on Windows",
-	{"CVE-2026-58649", ".NET 8.0 installed on Linux"}:    ".NET 8.0 runtime installed on Linux",
-	{"CVE-2026-58649", ".NET 8.0 installed on Mac OS"}:   ".NET 8.0 runtime installed on Mac OS",
-	{"CVE-2026-58649", ".NET 8.0 installed on Windows"}:  ".NET 8.0 runtime installed on Windows",
-	{"CVE-2026-58649", ".NET 9.0 installed on Linux"}:    ".NET 9.0 runtime installed on Linux",
-	{"CVE-2026-58649", ".NET 9.0 installed on Mac OS"}:   ".NET 9.0 runtime installed on Mac OS",
-	{"CVE-2026-58649", ".NET 9.0 installed on Windows"}:  ".NET 9.0 runtime installed on Windows",
 	{"CVE-2026-62871", ".NET 8.0 installed on Windows"}:  ".NET 8.0 runtime installed on Windows",
 	{"CVE-2026-62871", ".NET 9.0 installed on Windows"}:  ".NET 9.0 runtime installed on Windows",
 	{"CVE-2026-62897", ".NET 10.0 installed on Windows"}: ".NET 10.0 runtime installed on Windows",
@@ -1748,6 +1739,84 @@ var productNameOverrides = map[[2]string]string{
 	{"CVE-2026-96957", ".NET 11.0 runtime installed on Windows"}: ".NET 11.0 installed on Windows",
 }
 
+// dotnetSDKProductNames are the .NET SDK products: 2026-Oct names the runtime
+// ".NET X runtime installed on <OS>" and gives the SDK the earlier runtime name
+// ".NET X installed on <OS>" (see productNameOverrides).
+var dotnetSDKProductNames = map[string]struct{}{
+	".NET 8.0 installed on Linux":    {},
+	".NET 8.0 installed on Mac OS":   {},
+	".NET 8.0 installed on Windows":  {},
+	".NET 9.0 installed on Linux":    {},
+	".NET 9.0 installed on Mac OS":   {},
+	".NET 9.0 installed on Windows":  {},
+	".NET 10.0 installed on Linux":   {},
+	".NET 10.0 installed on Mac OS":  {},
+	".NET 10.0 installed on Windows": {},
+	".NET 11.0 installed on Linux":   {},
+	".NET 11.0 installed on Mac OS":  {},
+	".NET 11.0 installed on Windows": {},
+}
+
+// buildDotNetSDKCriterion builds the criterion of a .NET SDK product. Its FixedBuild
+// lists the fixed version of each affected SDK feature band, comma-separated when
+// more than one (e.g. "8.0.130, 8.0.424": the 1xx band is fixed in 8.0.130 and the
+// 4xx band in 8.0.424). Microsoft lists only the bands a CVE affects (e.g.
+// CVE-2026-70161 lists 10.0.402 although the same release also shipped 10.0.113),
+// so each fixed version only covers its own band: "X.Y.B00 <= v < fixed". A band
+// whose first release is the fix (e.g. "10.0.400") is never affected and gets no
+// range. Prerelease tags (see releaseCandidateTagRE) are skipped.
+func buildDotNetSDKCriterion(productName, fixedBuild string) (*criterionTypes.Criterion, error) {
+	var (
+		ranges []rangeTypes.Range
+		fixed  []string
+	)
+	for f := range strings.SplitSeq(fixedBuild, ",") {
+		f = strings.TrimSpace(f)
+		if releaseCandidateTagRE.MatchString(f) {
+			continue
+		}
+		if _, err := dotnetcoreversion.NewVersion(f); err != nil {
+			return nil, errors.Wrapf(err, "dotnetcoreversion.NewVersion %q", f)
+		}
+		ss := strings.Split(f, ".")
+		if len(ss) != 3 {
+			return nil, errors.Errorf("unexpected .NET SDK version. expected: %q, actual: %q", "<major>.<minor>.<feature band><patch>", f)
+		}
+		patch, err := strconv.Atoi(ss[2])
+		if err != nil {
+			return nil, errors.Wrapf(err, "parse .NET SDK version %q", f)
+		}
+		if patch < 100 {
+			return nil, errors.Errorf("unexpected .NET SDK version. expected: %q, actual: %q", "a feature band of 100 or above", f)
+		}
+
+		fixed = append(fixed, f)
+		if band := fmt.Sprintf("%s.%s.%d00", ss[0], ss[1], patch/100); band != f {
+			ranges = append(ranges, rangeTypes.Range{GreaterEqual: band, LessThan: f})
+		}
+	}
+	if len(ranges) == 0 {
+		return nil, nil
+	}
+
+	return &criterionTypes.Criterion{
+		Type: criterionTypes.CriterionTypeVersion,
+		Version: &vcTypes.Criterion{
+			Vulnerable: true,
+			FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
+			Package: criterionpackageTypes.Package{
+				Type:   criterionpackageTypes.PackageTypeBinary,
+				Binary: &binaryTypes.Package{Name: productName},
+			},
+			Affected: &affectedTypes.Affected{
+				Type:  rangeTypes.RangeTypeMicrosoftDotNetCore,
+				Range: ranges,
+				Fixed: fixed,
+			},
+		},
+	}, nil
+}
+
 func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criterionTypes.Criterion, error) {
 	fixedBuild := cleanFixedBuild(rawFixedBuild)
 
@@ -1760,6 +1829,10 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 		return nil, nil
 	}
 
+	if _, ok := dotnetSDKProductNames[productName]; ok {
+		return buildDotNetSDKCriterion(productName, fixedBuild)
+	}
+
 	// Skip non-version values that appear in raw CVRF FixedBuild fields:
 	//  - Values not starting with a digit: URLs (e.g. "https://aka.ms/..."),
 	//    descriptive text (e.g. "App Build 14.43.49498, Platform Build 14.0.49494"),
@@ -1768,8 +1841,8 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 	//  - Placeholder versions containing "x" (e.g. "15.0.5415.xxxxxx", "5.64.x")
 	//  - Values without dots that are not parseable version numbers (e.g. "25060212643")
 	//  - Semicolon- or comma-separated compound versions (e.g. "3.0.6920.8954; 2.0.50727.8970"
-	//    used by .NET Framework products bundling multiple framework versions, or
-	//    "8.0.130, 8.0.424" pairing the fixed .NET SDK feature bands, 2026-Sep)
+	//    used by .NET Framework products bundling multiple framework versions; .NET SDK
+	//    products split theirs per feature band in buildDotNetSDKCriterion instead)
 	//  - Release-candidate tags of the exact form "<dotted number> RC<digits>" (e.g.
 	//    "11.0 RC1", 2026-Sep) or "<dotted number>-rc.<digits>[.<build>]" (e.g.
 	//    "11.0.0-rc.2", "11.0.0-rc.2.26504.105", 2026-Oct), and Visual Studio Insiders
@@ -1896,27 +1969,15 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 			".NET 6.0 installed on Windows",
 			".NET 7.0",
 			".NET 8.0",
-			".NET 8.0 installed on Linux",
-			".NET 8.0 installed on Mac OS",
-			".NET 8.0 installed on Windows",
 			".NET 8.0 runtime installed on Linux",
 			".NET 8.0 runtime installed on Mac OS",
 			".NET 8.0 runtime installed on Windows",
-			".NET 9.0 installed on Linux",
-			".NET 9.0 installed on Mac OS",
-			".NET 9.0 installed on Windows",
 			".NET 9.0 runtime installed on Linux",
 			".NET 9.0 runtime installed on Mac OS",
 			".NET 9.0 runtime installed on Windows",
-			".NET 10.0 installed on Linux",
-			".NET 10.0 installed on Mac OS",
-			".NET 10.0 installed on Windows",
 			".NET 10.0 runtime installed on Linux",
 			".NET 10.0 runtime installed on Mac OS",
 			".NET 10.0 runtime installed on Windows",
-			".NET 11.0 installed on Linux",
-			".NET 11.0 installed on Mac OS",
-			".NET 11.0 installed on Windows",
 			".NET 11.0 runtime installed on Linux",
 			".NET 11.0 runtime installed on Mac OS",
 			".NET 11.0 runtime installed on Windows",
@@ -2463,6 +2524,24 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 // criterion and has no entry here fails the extraction (see buildDetections), because such CVEs
 // would otherwise become silently undetectable.
 var fixedBuildOverrides = map[[3]string]string{
+	// .NET SDK, CVE-2026-58649 (2026-Sep, published 2026-09-08): CVRF lists the SDKs of
+	// the 2026-08-11 release (8.0.130 / 8.0.424, 9.0.120 / 9.0.317, 10.0.111 / 10.0.400),
+	// but the fix shipped in the 2026-09-08 release. dotnet/core release-notes
+	// {8.0,9.0,10.0}/releases.json lists CVE-2026-58649 in the cve-list of 8.0.31, 9.0.20
+	// and 10.0.12 (2026-09-08) and not in 8.0.30, 9.0.19 and 10.0.11 (2026-08-11), as do
+	// the 8.0.31 release notes. The CVRF itself pairs the same KBs (KB5126104-KB5126106)
+	// with the 2026-09-08 runtimes 8.0.31 / 9.0.20 / 10.0.12 in CVE-2026-69304 and others.
+	// Use the SDKs of the 2026-09-08 release.
+	{"CVE-2026-58649", ".NET 8.0 installed on Linux", "8.0.130, 8.0.424"}:      "8.0.131, 8.0.425",
+	{"CVE-2026-58649", ".NET 8.0 installed on Mac OS", "8.0.130, 8.0.424"}:     "8.0.131, 8.0.425",
+	{"CVE-2026-58649", ".NET 8.0 installed on Windows", "8.0.130, 8.0.424"}:    "8.0.131, 8.0.425",
+	{"CVE-2026-58649", ".NET 9.0 installed on Linux", "9.0.120, 9.0.317"}:      "9.0.121, 9.0.318",
+	{"CVE-2026-58649", ".NET 9.0 installed on Mac OS", "9.0.120, 9.0.317"}:     "9.0.121, 9.0.318",
+	{"CVE-2026-58649", ".NET 9.0 installed on Windows", "9.0.120, 9.0.317"}:    "9.0.121, 9.0.318",
+	{"CVE-2026-58649", ".NET 10.0 installed on Linux", "10.0.111, 10.0.400"}:   "10.0.112, 10.0.401",
+	{"CVE-2026-58649", ".NET 10.0 installed on Mac OS", "10.0.111, 10.0.400"}:  "10.0.112, 10.0.401",
+	{"CVE-2026-58649", ".NET 10.0 installed on Windows", "10.0.111, 10.0.400"}: "10.0.112, 10.0.401",
+
 	// .NET Core / .NET 5+ (FixedBuild has pre-release suffix that the parser doesn't accept)
 	// 2021-May (FixedBuild "5.0.6-servicing.21220.11" / "3.1.15-servicing.21214.3" has pre-release suffix)
 	{"CVE-2021-31204", ".NET 5.0", "5.0.6-servicing.21220.11"}:      "5.0.6",

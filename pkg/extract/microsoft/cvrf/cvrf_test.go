@@ -383,9 +383,9 @@ func TestBuildFixedBuildCriterion(t *testing.T) {
 			},
 		},
 		{
-			name: ".NET 8.0 SDK feature-band pair skipped (CVE-2026-58649)",
+			name: "comma-separated FixedBuild on a non-SDK product skipped",
 			args: args{
-				cveID:         "CVE-2026-58649",
+				cveID:         "CVE-2099-0001",
 				productName:   ".NET 8.0 runtime installed on Windows",
 				rawFixedBuild: "8.0.130, 8.0.424",
 			},
@@ -760,11 +760,101 @@ func TestBuildFixedBuildCriterion(t *testing.T) {
 					},
 					Affected: &affectedTypes.Affected{
 						Type:  affectedrangeTypes.RangeTypeMicrosoftDotNetCore,
-						Range: []affectedrangeTypes.Range{{LessThan: "10.0.403"}},
+						Range: []affectedrangeTypes.Range{{GreaterEqual: "10.0.400", LessThan: "10.0.403"}},
 						Fixed: []string{"10.0.403"},
 					},
 				},
 			},
+		},
+		{
+			name: ".NET SDK feature band pair split per band",
+			args: args{
+				cveID:         "CVE-2099-0001",
+				productName:   ".NET 8.0 installed on Linux",
+				rawFixedBuild: "8.0.130, 8.0.424",
+			},
+			want: &criterionTypes.Criterion{
+				Type: criterionTypes.CriterionTypeVersion,
+				Version: &vcTypes.Criterion{
+					Vulnerable: true,
+					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
+					Package: packageTypes.Package{
+						Type:   packageTypes.PackageTypeBinary,
+						Binary: &binaryTypes.Package{Name: ".NET 8.0 installed on Linux"},
+					},
+					Affected: &affectedTypes.Affected{
+						Type:  affectedrangeTypes.RangeTypeMicrosoftDotNetCore,
+						Range: []affectedrangeTypes.Range{{GreaterEqual: "8.0.100", LessThan: "8.0.130"}, {GreaterEqual: "8.0.400", LessThan: "8.0.424"}},
+						Fixed: []string{"8.0.130", "8.0.424"},
+					},
+				},
+			},
+		},
+		{
+			name: ".NET SDK pair corrected to the 2026-09-08 release (CVE-2026-58649)",
+			args: args{
+				cveID:         "CVE-2026-58649",
+				productName:   ".NET 9.0 installed on Windows",
+				rawFixedBuild: "9.0.120, 9.0.317",
+			},
+			want: &criterionTypes.Criterion{
+				Type: criterionTypes.CriterionTypeVersion,
+				Version: &vcTypes.Criterion{
+					Vulnerable: true,
+					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
+					Package: packageTypes.Package{
+						Type:   packageTypes.PackageTypeBinary,
+						Binary: &binaryTypes.Package{Name: ".NET 9.0 installed on Windows"},
+					},
+					Affected: &affectedTypes.Affected{
+						Type:  affectedrangeTypes.RangeTypeMicrosoftDotNetCore,
+						Range: []affectedrangeTypes.Range{{GreaterEqual: "9.0.100", LessThan: "9.0.121"}, {GreaterEqual: "9.0.300", LessThan: "9.0.318"}},
+						Fixed: []string{"9.0.121", "9.0.318"},
+					},
+				},
+			},
+		},
+		{
+			name: ".NET SDK band fixed from its first release gets no range",
+			args: args{
+				cveID:         "CVE-2099-0001",
+				productName:   ".NET 10.0 installed on Mac OS",
+				rawFixedBuild: "10.0.111, 10.0.400",
+			},
+			want: &criterionTypes.Criterion{
+				Type: criterionTypes.CriterionTypeVersion,
+				Version: &vcTypes.Criterion{
+					Vulnerable: true,
+					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
+					Package: packageTypes.Package{
+						Type:   packageTypes.PackageTypeBinary,
+						Binary: &binaryTypes.Package{Name: ".NET 10.0 installed on Mac OS"},
+					},
+					Affected: &affectedTypes.Affected{
+						Type:  affectedrangeTypes.RangeTypeMicrosoftDotNetCore,
+						Range: []affectedrangeTypes.Range{{GreaterEqual: "10.0.100", LessThan: "10.0.111"}},
+						Fixed: []string{"10.0.111", "10.0.400"},
+					},
+				},
+			},
+		},
+		{
+			name: ".NET SDK prerelease skipped",
+			args: args{
+				cveID:         "CVE-2026-102870",
+				productName:   ".NET 11.0 installed on Linux",
+				rawFixedBuild: "11.0.100-rc.3",
+			},
+			want: nil,
+		},
+		{
+			name: ".NET SDK with a runtime version fails",
+			args: args{
+				cveID:         "CVE-2099-0001",
+				productName:   ".NET 8.0 installed on Windows",
+				rawFixedBuild: "8.0.32",
+			},
+			wantErr: true,
 		},
 		{
 			name: "Insiders tag without a number is not skipped",
@@ -1369,9 +1459,15 @@ func TestNormalizeProductName(t *testing.T) {
 	}{
 		{
 			name:        ".NET runtime under the old name before 2026-Oct",
-			cveID:       "CVE-2026-58649",
+			cveID:       "CVE-2026-69304",
 			productName: ".NET 8.0 installed on Windows",
 			want:        ".NET 8.0 runtime installed on Windows",
+		},
+		{
+			name:        ".NET SDK under the old name in 2026-Sep (CVE-2026-58649) kept",
+			cveID:       "CVE-2026-58649",
+			productName: ".NET 8.0 installed on Windows",
+			want:        ".NET 8.0 installed on Windows",
 		},
 		{
 			name:        ".NET SDK under the old name in 2026-Oct kept",
