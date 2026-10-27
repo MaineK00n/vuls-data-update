@@ -109,6 +109,13 @@ func TestExtract(t *testing.T) {
 			hasError: true,
 		},
 		{
+			// A hotpatch links from those of the month before, so a calendar
+			// row whose date cannot be read cannot be placed.
+			name:     "hotpatch calendar row without its date",
+			args:     "./testdata/fixtures/hotpatch-without-date",
+			hasError: true,
+		},
+		{
 			// July's KB listed again at a build past August's would have it and
 			// August's superseding each other.
 			name:     "KB listed twice on one line",
