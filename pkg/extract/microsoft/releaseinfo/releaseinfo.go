@@ -75,7 +75,10 @@
 //
 // A table has no column for the architecture, so two updates Microsoft shipped
 // side by side for different ones are ordered by their builds and the later
-// made to replace the earlier, which it cannot. parallelUpdates names them.
+// made to replace the earlier, which it cannot. parallelUpdates names them. An
+// update shipped for fewer architectures than the one before it still replaces
+// it on those it ships for, and the next update for all of them reaches the
+// earlier one through it, so that edge is kept.
 //
 // Rows naming no KB are the months a calendar has reached but Microsoft has not
 // shipped yet, and are skipped.
@@ -629,12 +632,21 @@ func chain(us []update) ([]microsoftkbTypes.KB, error) {
 		// place on the line: each replaces the update before them, and the one
 		// after replaces each.
 		var places [][]update
+		placed := make(map[string]int)
 		for _, u := range group {
-			if n := len(places); n > 0 {
-				if g, ok := parallelUpdates[u.kbID]; ok && slices.ContainsFunc(places[n-1], func(p update) bool { return parallelUpdates[p.kbID] == g }) {
-					places[n-1] = append(places[n-1], u)
+			g, ok := parallelUpdates[u.kbID]
+			if ok {
+				if i, seen := placed[g]; seen {
+					// One parallel to it sits further back, with another update
+					// between: chained as served, the two would replace each
+					// other's neighbours as well as the one between.
+					if i != len(places)-1 {
+						return nil, errors.Errorf("unexpected parallel updates. expected: KB%s next to the other updates of %q on one line, actual: another update between. page: %s, build: %d, line: %s", u.kbID, g, u.page, u.major, u.kind())
+					}
+					places[i] = append(places[i], u)
 					continue
 				}
+				placed[g] = len(places)
 			}
 			places = append(places, []update{u})
 		}
@@ -709,6 +721,11 @@ type link struct{ older, newer string }
 // one takes the edge its month's monthly hotpatch would -- from the last
 // monthly one of an earlier month since the baseline -- and is superseded by
 // nothing: the monthly hotpatch after it links to the monthly one before it.
+//
+// Unlike servicing, which reads its hotpatches off articles, a monthly hotpatch
+// here links from the one monthly hotpatch before it alone, and the month is not
+// checked: a calendar lists one per month and names each baseline in a row of
+// its own, so there is no second of a month or unmarked quarter to allow for.
 func chainHotpatch(group []update) []link {
 	month := func(t time.Time) time.Time { return time.Date(t.Year(), t.Month(), 1, 0, 0, 0, 0, time.UTC) }
 
@@ -736,8 +753,13 @@ func chainHotpatch(group []update) []link {
 }
 
 // parallelUpdates groups updates Microsoft shipped side by side for different
-// architectures, which therefore do not replace one another however their
-// builds run. Each is keyed by KB ID, and the KBs of one group share a value.
+// architectures with none in common, which therefore do not replace one another
+// however their builds run. Each is keyed by KB ID, and the KBs of one group
+// share a value. Over the edges on the pages as served on 2026-10-27, checked
+// against the architectures the Update Catalog lists, this pair is the only one
+// sharing no architecture. KB5014697 (x64) and KB5016138 (ARM64), Windows 11
+// 21H2 in June 2022, are a split too, but filed under B and OOB they sit on
+// different lines, each between updates for both, and are left there.
 var parallelUpdates = map[string]string{
 	// Windows 10 Version 1709, January 2018: KB4073290 (16299.194, January
 	// 17th) is for x64-based systems and KB4073291 (16299.201, January 18th)
