@@ -1,37 +1,41 @@
-package cpecriterion
+package cpecriterion_test
 
-import "testing"
+import (
+	"testing"
+
+	ccTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/cpecriterion"
+)
 
 func TestRelatePatterns(t *testing.T) {
 	tests := []struct {
 		name string
 		x, y string
-		want patternRelation
+		want ccTypes.PatternRelation
 	}{
-		{name: "identical", x: `4\.*`, y: `4\.*`, want: patternEqual},
-		{name: "identical up to case", x: `4\.1A*`, y: `4\.1a*`, want: patternEqual},
-		{name: "longer prefix is a subset", x: `4\.1*`, y: `4\.*`, want: patternSubset},
-		{name: "shorter prefix is a superset", x: `4\.*`, y: `4\.1*`, want: patternSuperset},
-		{name: "different prefixes are disjoint", x: `4\.*`, y: `5\.*`, want: patternDisjoint},
-		{name: "prefix and suffix overlap", x: `4\.*`, y: `*\.1`, want: patternOverlap},
-		{name: "prefix and suffix that cannot meet", x: `4\.*`, y: `*\.4\.`, want: patternOverlap},
-		{name: "leading question marks around a core", x: `?a`, y: `*a*`, want: patternSubset},
-		{name: "unbounded lead is not within a bounded one", x: `*a`, y: `?a`, want: patternSuperset},
-		{name: "question marks on opposite sides share only the core", x: `ab?`, y: `?ab`, want: patternOverlap},
-		{name: "question-mark runs are length bounds", x: `???`, y: `*`, want: patternSubset},
-		{name: "longer question-mark run is a superset", x: `????`, y: `???`, want: patternSuperset},
-		{name: "bounded run cannot reach a core", x: `?`, y: `?a`, want: patternOverlap},
-		{name: "cores that meet through the question marks", x: `?b`, y: `a?`, want: patternOverlap},
-		{name: "cores that never line up", x: `?b`, y: `?a`, want: patternDisjoint},
-		{name: "escaped wild card is literal", x: `4\.\**`, y: `4\.1*`, want: patternDisjoint},
-		{name: "escaped wild card against itself", x: `4\.\**`, y: `4\.\*`, want: patternSuperset},
-		{name: "star alone contains everything", x: `*`, y: `4\.*`, want: patternSuperset},
-		{name: "trailing escaped question mark is part of the core", x: `a\?`, y: `a?`, want: patternSubset},
+		{name: "identical", x: `4\.*`, y: `4\.*`, want: ccTypes.PatternEqual},
+		{name: "identical up to case", x: `4\.1A*`, y: `4\.1a*`, want: ccTypes.PatternEqual},
+		{name: "longer prefix is a subset", x: `4\.1*`, y: `4\.*`, want: ccTypes.PatternSubset},
+		{name: "shorter prefix is a superset", x: `4\.*`, y: `4\.1*`, want: ccTypes.PatternSuperset},
+		{name: "different prefixes are disjoint", x: `4\.*`, y: `5\.*`, want: ccTypes.PatternDisjoint},
+		{name: "prefix and suffix overlap", x: `4\.*`, y: `*\.1`, want: ccTypes.PatternOverlap},
+		{name: "prefix and suffix that cannot meet", x: `4\.*`, y: `*\.4\.`, want: ccTypes.PatternOverlap},
+		{name: "leading question marks around a core", x: `?a`, y: `*a*`, want: ccTypes.PatternSubset},
+		{name: "unbounded lead is not within a bounded one", x: `*a`, y: `?a`, want: ccTypes.PatternSuperset},
+		{name: "question marks on opposite sides share only the core", x: `ab?`, y: `?ab`, want: ccTypes.PatternOverlap},
+		{name: "question-mark runs are length bounds", x: `???`, y: `*`, want: ccTypes.PatternSubset},
+		{name: "longer question-mark run is a superset", x: `????`, y: `???`, want: ccTypes.PatternSuperset},
+		{name: "bounded run cannot reach a core", x: `?`, y: `?a`, want: ccTypes.PatternOverlap},
+		{name: "cores that meet through the question marks", x: `?b`, y: `a?`, want: ccTypes.PatternOverlap},
+		{name: "cores that never line up", x: `?b`, y: `?a`, want: ccTypes.PatternDisjoint},
+		{name: "escaped wild card is literal", x: `4\.\**`, y: `4\.1*`, want: ccTypes.PatternDisjoint},
+		{name: "escaped wild card against itself", x: `4\.\**`, y: `4\.\*`, want: ccTypes.PatternSuperset},
+		{name: "star alone contains everything", x: `*`, y: `4\.*`, want: ccTypes.PatternSuperset},
+		{name: "trailing escaped question mark is part of the core", x: `a\?`, y: `a?`, want: ccTypes.PatternSubset},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := relatePatterns(tt.x, tt.y); got != tt.want {
-				t.Errorf("relatePatterns(%q, %q) = %v, want %v", tt.x, tt.y, got, tt.want)
+			if got := ccTypes.RelatePatterns(tt.x, tt.y); got != tt.want {
+				t.Errorf("RelatePatterns(%q, %q) = %v, want %v", tt.x, tt.y, got, tt.want)
 			}
 		})
 	}
@@ -40,20 +44,20 @@ func TestRelatePatterns(t *testing.T) {
 func TestParsePattern(t *testing.T) {
 	tests := []struct {
 		s    string
-		want pattern
+		want ccTypes.Pattern
 	}{
-		{s: `*`, want: pattern{lead: unbounded, trail: 0, core: ""}},
-		{s: `???`, want: pattern{lead: 3, trail: 0, core: ""}},
-		{s: `*4\.1*`, want: pattern{lead: unbounded, trail: unbounded, core: "4.1"}},
-		{s: `??A??`, want: pattern{lead: 2, trail: 2, core: "a"}},
-		{s: `a\?`, want: pattern{lead: 0, trail: 0, core: "a?"}},
-		{s: `a\\?`, want: pattern{lead: 0, trail: 1, core: `a\`}},
-		{s: `4\.\**`, want: pattern{lead: 0, trail: unbounded, core: "4.*"}},
+		{s: `*`, want: ccTypes.Pattern{Lead: ccTypes.Unbounded, Trail: 0, Core: ""}},
+		{s: `???`, want: ccTypes.Pattern{Lead: 3, Trail: 0, Core: ""}},
+		{s: `*4\.1*`, want: ccTypes.Pattern{Lead: ccTypes.Unbounded, Trail: ccTypes.Unbounded, Core: "4.1"}},
+		{s: `??A??`, want: ccTypes.Pattern{Lead: 2, Trail: 2, Core: "a"}},
+		{s: `a\?`, want: ccTypes.Pattern{Lead: 0, Trail: 0, Core: "a?"}},
+		{s: `a\\?`, want: ccTypes.Pattern{Lead: 0, Trail: 1, Core: `a\`}},
+		{s: `4\.\**`, want: ccTypes.Pattern{Lead: 0, Trail: ccTypes.Unbounded, Core: "4.*"}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.s, func(t *testing.T) {
-			if got := parsePattern(tt.s); got != tt.want {
-				t.Errorf("parsePattern(%q) = %+v, want %+v", tt.s, got, tt.want)
+			if got := ccTypes.ParsePattern(tt.s); got != tt.want {
+				t.Errorf("ParsePattern(%q) = %+v, want %+v", tt.s, got, tt.want)
 			}
 		})
 	}
