@@ -116,6 +116,13 @@ func TestExtract(t *testing.T) {
 			hasError: true,
 		},
 		{
+			// A baseline dropped for its build would chain the hotpatches
+			// either side of it into one quarter.
+			name:     "hotpatch calendar row without its build",
+			args:     "./testdata/fixtures/hotpatch-without-build",
+			hasError: true,
+		},
+		{
 			// July's KB listed again at a build past August's would have it and
 			// August's superseding each other.
 			name:     "KB listed twice on one line",
