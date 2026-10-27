@@ -141,13 +141,6 @@ type Query struct {
 	CPE string
 }
 
-// wfnAttributes lists every WFN attribute, the ones name matching compares.
-var wfnAttributes = []string{
-	common.AttributePart, common.AttributeVendor, common.AttributeProduct, common.AttributeVersion,
-	common.AttributeUpdate, common.AttributeEdition, common.AttributeLanguage, common.AttributeSwEdition,
-	common.AttributeTargetSw, common.AttributeTargetHw, common.AttributeOther,
-}
-
 // nameMatch evaluates the query against a criterion (or CPEMatches entry) WFN
 // under CPE name matching alone, the first of the two tables on Accept: None
 // when any attribute is disjoint, otherwise Exact — or VersionUnconfirmed when
@@ -159,7 +152,11 @@ var wfnAttributes = []string{
 // target-side pattern as UNDEFINED.
 func nameMatch(q, c common.WellFormedName) MatchQuality {
 	quality := MatchQualityExact
-	for _, attr := range wfnAttributes {
+	for _, attr := range []string{
+		common.AttributePart, common.AttributeVendor, common.AttributeProduct, common.AttributeVersion,
+		common.AttributeUpdate, common.AttributeEdition, common.AttributeLanguage, common.AttributeSwEdition,
+		common.AttributeTargetSw, common.AttributeTargetHw, common.AttributeOther,
+	} {
 		qv, cv := q.Get(attr), c.Get(attr)
 		switch rel := relateValues(qv, cv); {
 		case rel == patternDisjoint:
