@@ -1,15 +1,12 @@
 package cvrf_test
 
 import (
-	"fmt"
 	"path/filepath"
-	"strings"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/microsoft/cvrf"
-	microsoftutil "github.com/MaineK00n/vuls-data-update/pkg/extract/microsoft/util"
 	criteriaTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria"
 	criterionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion"
 	kbcTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/kbcriterion"
@@ -1325,25 +1322,6 @@ func TestIsKBCriteria(t *testing.T) {
 	}
 }
 
-// TestVendorFixOverridesKeys guards the entries against typos that would make
-// them silently miss: the product must already be normalized and the KB ID
-// must be the bare number CVRF uses in the remediation Description.
-func TestVendorFixOverridesKeys(t *testing.T) {
-	for k := range cvrf.VendorFixOverrides {
-		t.Run(fmt.Sprintf("%s %s %s", k[0], k[1], k[2]), func(t *testing.T) {
-			if !strings.HasPrefix(k[0], "CVE-") {
-				t.Errorf("unexpected CVE ID. expected: %q prefix, actual: %q", "CVE-", k[0])
-			}
-			if got := microsoftutil.NormalizeProductName(k[1]); got != k[1] {
-				t.Errorf("product name is not normalized. expected: %q, actual: %q", got, k[1])
-			}
-			if cvrf.BuildKBCriterion(k[1], k[2]) == nil {
-				t.Errorf("unexpected KB ID. expected: digits only, actual: %q", k[2])
-			}
-		})
-	}
-}
-
 func TestKBCumulativeTwins(t *testing.T) {
 	type args struct {
 		product string
@@ -1447,7 +1425,7 @@ func TestExtract(t *testing.T) {
 			hasError: true,
 		},
 		{
-			name:     "vendorFixOverrides excluding every Vendor Fix of a product",
+			name:     "vendorFixExclusions excluding every Vendor Fix of a product",
 			args:     "./testdata/fixtures-hotpatch-all-excluded",
 			hasError: true,
 		},
@@ -1459,6 +1437,16 @@ func TestExtract(t *testing.T) {
 		{
 			name:     "hotpatch product with a Vendor Fix without KB ID",
 			args:     "./testdata/fixtures-hotpatch-missing-kb",
+			hasError: true,
+		},
+		{
+			name:     "hotpatch as the only fix, without vendorFixAdditions",
+			args:     "./testdata/fixtures-hotpatch-only-fix",
+			hasError: true,
+		},
+		{
+			name:     "vendorFixAdditions for a product CVRF does not list",
+			args:     "./testdata/fixtures-vendorfix-addition-unlisted",
 			hasError: true,
 		},
 	}

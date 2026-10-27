@@ -1,0 +1,20 @@
+{
+	"kb_id": "5011485",
+	"url": "https://support.microsoft.com/help/5011485",
+	"products": [
+		"Microsoft Defender for Endpoint for Windows on Windows 10 Version 1909 for 32-bit Systems",
+		"Microsoft Defender for Endpoint for Windows on Windows 10 Version 1909 for ARM64-based Systems",
+		"Microsoft Defender for Endpoint for Windows on Windows 10 Version 1909 for x64-based Systems"
+	],
+	"supersedes": [
+		{
+			"kb_id": "5010345"
+		}
+	],
+	"data_source": {
+		"id": "microsoft-cvrf",
+		"raws": [
+			"fixtures/2022-Mar/2022/CVE-2022-23278.json"
+		]
+	}
+}
