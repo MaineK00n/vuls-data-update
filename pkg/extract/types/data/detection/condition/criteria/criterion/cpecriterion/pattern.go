@@ -22,7 +22,10 @@ import (
 type patternRelation int
 
 const (
-	patternDisjoint patternRelation = iota
+	// patternUnknown is the zero value: a relation that was never computed.
+	// relatePatterns never returns it.
+	patternUnknown patternRelation = iota
+	patternDisjoint
 	patternEqual
 	// patternSubset: every string of the first pattern is in the second.
 	patternSubset
