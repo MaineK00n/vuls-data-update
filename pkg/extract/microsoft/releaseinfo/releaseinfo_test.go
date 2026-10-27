@@ -238,6 +238,38 @@ func TestChain(t *testing.T) {
 			},
 			want: map[string][]string{"5000003": {"5000001"}},
 		},
+		{
+			name: "an out-of-band hotpatch takes its month's monthly edge and is superseded by nothing, and a baseline restarts the line",
+			us: []releaseinfo.Update{
+				releaseinfo.NewUpdate("5000001", 100, time.Date(2026, time.January, 13, 0, 0, 0, 0, time.UTC)).WithType("B", true, true),
+				releaseinfo.NewUpdate("5000002", 200, time.Date(2026, time.February, 10, 0, 0, 0, 0, time.UTC)).WithType("B", true, false),
+				releaseinfo.NewUpdate("5000003", 300, time.Date(2026, time.March, 10, 0, 0, 0, 0, time.UTC)).WithType("B", true, false),
+				releaseinfo.NewUpdate("5000004", 310, time.Date(2026, time.March, 13, 0, 0, 0, 0, time.UTC)).WithType("OOB", true, false),
+				releaseinfo.NewUpdate("5000005", 400, time.Date(2026, time.April, 14, 0, 0, 0, 0, time.UTC)).WithType("B", true, true),
+				releaseinfo.NewUpdate("5000006", 500, time.Date(2026, time.May, 12, 0, 0, 0, 0, time.UTC)).WithType("B", true, false),
+			},
+			want: map[string][]string{"5000003": {"5000002"}, "5000004": {"5000002"}},
+		},
+		{
+			name: "an out-of-band hotpatch in its baseline's month supersedes nothing, nor is chained into",
+			us: []releaseinfo.Update{
+				releaseinfo.NewUpdate("5000001", 100, time.Date(2026, time.January, 13, 0, 0, 0, 0, time.UTC)).WithType("B", true, true),
+				releaseinfo.NewUpdate("5000002", 110, time.Date(2026, time.January, 17, 0, 0, 0, 0, time.UTC)).WithType("OOB", true, false),
+				releaseinfo.NewUpdate("5000003", 200, time.Date(2026, time.February, 10, 0, 0, 0, 0, time.UTC)).WithType("B", true, false),
+			},
+			want: map[string][]string{},
+		},
+		{
+			// KB4073290 is for x64-based systems and KB4073291 for x86-based ones.
+			name: "updates shipped side by side for different architectures share their place",
+			us: []releaseinfo.Update{
+				releaseinfo.NewUpdate("4051963", 100, day(1)).WithType("D", false, false),
+				releaseinfo.NewUpdate("4073290", 101, day(17)).WithType("OOB", false, false),
+				releaseinfo.NewUpdate("4073291", 102, day(18)).WithType("OOB", false, false),
+				releaseinfo.NewUpdate("4058258", 103, day(31)).WithType("D", false, false),
+			},
+			want: map[string][]string{"4073290": {"4051963"}, "4073291": {"4051963"}, "4058258": {"4073290", "4073291"}},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

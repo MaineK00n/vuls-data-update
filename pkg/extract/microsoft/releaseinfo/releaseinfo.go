@@ -63,11 +63,19 @@
 // series but restarts it, and Microsoft records no such edge, cvrf naming a
 // hotpatch only for the predecessor of a hotpatch of the same quarter. The
 // hotpatch line runs from one hotpatch to the next within a quarter and stops at
-// each baseline, as the servicing extractor chains the same series.
+// each baseline, as the servicing extractor chains the same series. An
+// out-of-band hotpatch takes the edge its month's monthly one would and is
+// superseded by nothing, again as servicing has it: cvrf names the hotpatch
+// before the month's monthly one as its predecessor, and none for the hotpatch
+// after it.
 // Reading it as containment would not even be safe: a hotpatch is not the
 // security content of its month's cumulative update, the November 2022 one
 // having shipped without the fix for CVE-2022-37966 because that fix could not
 // be hotpatched.
+//
+// A table has no column for the architecture, so two updates Microsoft shipped
+// side by side for different ones are ordered by their builds and the later
+// made to replace the earlier, which it cannot. parallelUpdates names them.
 //
 // Rows naming no KB are the months a calendar has reached but Microsoft has not
 // shipped yet, and are skipped.
@@ -422,12 +430,13 @@ func parsePage(page releaseinfo.Page, name, raw string) ([]update, error) {
 			if hotpatch {
 				u.baseline = isBaseline(t, row, raw, u.kbID)
 
-				// The calendars have carried monthly security updates only. An
-				// out-of-band hotpatch would be chained among them by its build,
-				// where pkg/extract/microsoft/servicing leaves one superseded by
-				// nothing, so it is said rather than passed over.
-				if u.letter != "B" {
-					slog.Warn("unexpected update type in hotpatch calendar, update is chained by its build", slog.String("path", raw), slog.String("kb", u.kbID), slog.String("letter", u.letter))
+				// A calendar runs monthly hotpatches, and out-of-band ones
+				// between them. Anything else is chained as out-of-band, where
+				// it supersedes and is superseded by the least.
+				switch u.letter {
+				case "B", "OOB":
+				default:
+					slog.Warn("unexpected update type in hotpatch calendar, update is chained as out-of-band", slog.String("path", raw), slog.String("kb", u.kbID), slog.String("letter", u.letter))
 				}
 
 				// Every hotpatch calendar covers a release whose history is on
@@ -589,7 +598,6 @@ func chain(us []update) ([]microsoftkbTypes.KB, error) {
 		byLine[bl] = append(byLine[bl], u)
 	}
 
-	type link struct{ older, newer string }
 	var links []link
 	for _, group := range byLine {
 		// Two updates do share a revision, where Microsoft has shipped a build
@@ -612,14 +620,30 @@ func chain(us []update) ([]microsoftkbTypes.KB, error) {
 			at[u.kbID] = i
 		}
 
-		for i := 1; i < len(group); i++ {
-			// A hotpatch does not replace the baseline it installs on top of,
-			// and the next baseline restarts the hotpatch series rather than
-			// continuing it.
-			if group[i-1].baseline || group[i].baseline {
-				continue
+		if group[0].hotpatch {
+			links = append(links, chainHotpatch(group)...)
+			continue
+		}
+
+		// Updates shipped side by side for different architectures share one
+		// place on the line: each replaces the update before them, and the one
+		// after replaces each.
+		var places [][]update
+		for _, u := range group {
+			if n := len(places); n > 0 {
+				if g, ok := parallelUpdates[u.kbID]; ok && slices.ContainsFunc(places[n-1], func(p update) bool { return parallelUpdates[p.kbID] == g }) {
+					places[n-1] = append(places[n-1], u)
+					continue
+				}
 			}
-			links = append(links, link{older: group[i-1].kbID, newer: group[i].kbID})
+			places = append(places, []update{u})
+		}
+		for i := 1; i < len(places); i++ {
+			for _, older := range places[i-1] {
+				for _, newer := range places[i] {
+					links = append(links, link{older: older.kbID, newer: newer.kbID})
+				}
+			}
 		}
 	}
 
@@ -671,4 +695,54 @@ func chain(us []update) ([]microsoftkbTypes.KB, error) {
 		out = append(out, *kb)
 	}
 	return out, nil
+}
+
+// link is one supersedence edge, from the update replaced to the one replacing
+// it.
+type link struct{ older, newer string }
+
+// chainHotpatch links one hotpatch calendar's line, sorted by revision.
+//
+// A hotpatch does not replace the baseline it installs on top of, and the next
+// baseline restarts the series rather than continuing it, so the monthly
+// hotpatches are linked one to the next between two baselines. An out-of-band
+// one takes the edge its month's monthly hotpatch would -- from the last
+// monthly one of an earlier month since the baseline -- and is superseded by
+// nothing: the monthly hotpatch after it links to the monthly one before it.
+func chainHotpatch(group []update) []link {
+	month := func(t time.Time) time.Time { return time.Date(t.Year(), t.Month(), 1, 0, 0, 0, 0, time.UTC) }
+
+	var links []link
+	var monthly []update
+	for _, u := range group {
+		switch {
+		case u.baseline:
+			monthly = nil
+		case u.letter == "B":
+			if n := len(monthly); n > 0 {
+				links = append(links, link{older: monthly[n-1].kbID, newer: u.kbID})
+			}
+			monthly = append(monthly, u)
+		default:
+			for i := len(monthly) - 1; i >= 0; i-- {
+				if month(monthly[i].date).Before(month(u.date)) {
+					links = append(links, link{older: monthly[i].kbID, newer: u.kbID})
+					break
+				}
+			}
+		}
+	}
+	return links
+}
+
+// parallelUpdates groups updates Microsoft shipped side by side for different
+// architectures, which therefore do not replace one another however their
+// builds run. Each is keyed by KB ID, and the KBs of one group share a value.
+var parallelUpdates = map[string]string{
+	// Windows 10 Version 1709, January 2018: KB4073290 (16299.194, January
+	// 17th) is for x64-based systems and KB4073291 (16299.201, January 18th)
+	// for x86-based ones, as the Update Catalog lists them; KB4058258
+	// (16299.214) after them is for both.
+	"4073290": "2018-01 1709",
+	"4073291": "2018-01 1709",
 }
