@@ -344,3 +344,15 @@ func TestChainURL(t *testing.T) {
 		t.Errorf("chain(). expected: one KB linked to %q, actual: %+v", "https://support.microsoft.com/help/5000001", kbs)
 	}
 }
+
+// Updates of one parallel group with another between them cannot share a place.
+func TestChainParallelApart(t *testing.T) {
+	day := func(d int) time.Time { return time.Date(2018, time.January, d, 0, 0, 0, 0, time.UTC) }
+	if _, err := releaseinfo.Chain([]releaseinfo.Update{
+		releaseinfo.NewUpdate("4073290", 101, day(17)).WithType("OOB", false, false),
+		releaseinfo.NewUpdate("5000001", 102, day(17)).WithType("OOB", false, false),
+		releaseinfo.NewUpdate("4073291", 103, day(18)).WithType("OOB", false, false),
+	}); err == nil {
+		t.Error("chain(). expected error has not occurred")
+	}
+}
