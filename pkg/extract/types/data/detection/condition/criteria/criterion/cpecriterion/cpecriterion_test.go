@@ -168,11 +168,10 @@ func TestCriterion_Accept(t *testing.T) {
 			want: ccTypes.MatchQualityNone,
 		},
 		{
-			// A pattern in the criterion VERSION is undefined under CPE name
-			// matching with the query as the source (NISTIR 7696 Table 6-2,
-			// target-side wild cards), so it is evaluated with the roles
-			// swapped like any criterion-side pattern: a concrete query it
-			// contains is Exact, one it does not is None.
+			// A pattern in the criterion VERSION is undefined under NISTIR
+			// 7696 Table 6-2 (target-side wild cards) and is related as the
+			// set it denotes, like any criterion-side pattern: a concrete
+			// query it contains is Exact, one it does not is None.
 			name: "criterion version partial wildcard, concrete query it covers -> Exact",
 			fields: fields{
 				Vulnerable: true,
@@ -350,9 +349,9 @@ func TestCriterion_Accept(t *testing.T) {
 			want: ccTypes.MatchQualityExact,
 		},
 		{
-			// A criterion-side pattern on a non-version attribute is evaluated
-			// with the roles swapped (Table 6-2, row 14), so it covers a
-			// concrete query value ...
+			// A criterion-side pattern on a non-version attribute is related
+			// as the set it denotes (Table 6-2, row 14, undefined with the
+			// query as the source), so it covers a concrete query value ...
 			name: "criterion target_sw pattern covering the query target_sw -> Exact",
 			fields: fields{
 				Vulnerable: true,
@@ -363,7 +362,8 @@ func TestCriterion_Accept(t *testing.T) {
 		},
 		{
 			// ... and is DISJOINT from NA (row 16): a pattern never matches
-			// "-". (Before the swap, go-cpe's UNDEFINED let this through.)
+			// "-". (go-cpe's matching reported this pair as UNDEFINED, which
+			// the old overlaps test let through.)
 			name: "criterion target_sw pattern, query target_sw NA -> None",
 			fields: fields{
 				Vulnerable: true,
@@ -787,10 +787,11 @@ func TestCriterion_Accept(t *testing.T) {
 			// go-cpe before knqyf263/go-cpe#9 mis-classified pairs of concrete
 			// values where one trailing numeric segment is a numeric prefix of
 			// the other: IsDisjoint(source "5.15.10", target "5.15.103")
-			// returned false. Accept passes the query as the source, so the
-			// over-match fired for a scanned "5.15.10" against a "5.15.103"
-			// criterion. Pinned in both directions so a go-cpe downgrade cannot
-			// silently bring it back on the main CPE path.
+			// returned false, and Accept once relied on it (with the query as
+			// the source, so the over-match fired for a scanned "5.15.10"
+			// against a "5.15.103" criterion). Name matching no longer goes
+			// through go-cpe's matching package; pinned in both directions so
+			// the comparator never regresses to that behaviour.
 			name: "go-cpe over-match regression: main CPE, query is a numeric prefix of the criterion -> None",
 			fields: fields{
 				Vulnerable: true,

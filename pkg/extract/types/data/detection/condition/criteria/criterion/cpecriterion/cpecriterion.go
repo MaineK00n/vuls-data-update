@@ -9,7 +9,6 @@ import (
 	"strings"
 
 	"github.com/knqyf263/go-cpe/common"
-	"github.com/knqyf263/go-cpe/matching"
 	"github.com/knqyf263/go-cpe/naming"
 	"github.com/pkg/errors"
 
@@ -142,50 +141,36 @@ type Query struct {
 	CPE string
 }
 
+// wfnAttributes lists every WFN attribute, the ones name matching compares.
+var wfnAttributes = []string{
+	common.AttributePart, common.AttributeVendor, common.AttributeProduct, common.AttributeVersion,
+	common.AttributeUpdate, common.AttributeEdition, common.AttributeLanguage, common.AttributeSwEdition,
+	common.AttributeTargetSw, common.AttributeTargetHw, common.AttributeOther,
+}
+
 // nameMatch evaluates the query against a criterion (or CPEMatches entry) WFN
 // under CPE name matching alone, the first of the two tables on Accept: None
 // when any attribute is disjoint, otherwise Exact — or VersionUnconfirmed when
 // both versions are patterns and the query's is not contained in the
-// criterion's. Requires go-cpe at or after knqyf263/go-cpe#9, which fixed the
-// comparison reporting a false overlap for concrete values where one trailing
-// numeric segment is a numeric prefix of the other ("5.15.10" vs "5.15.103").
-//
-// go-cpe evaluates unquoted wild cards on the source side only (NISTIR 7696
-// Table 6-2): an attribute whose TARGET value carries one compares as
-// UNDEFINED. The query is passed as the source, so a pattern on the criterion
-// side (version "4.*", target_sw "windows*") hits that case; such attributes
-// are re-compared with the roles swapped so the pattern is evaluated against
-// the query value. When both sides are patterns the relation is undefined
-// either way and relatePatterns decides from the sets the patterns denote.
+// criterion's. Each attribute is related by relateValues, which implements
+// Table 6-2 and resolves its undefined cells (a pattern on either side) as
+// the relation of the sets the patterns denote; go-cpe's matching package is
+// not used, as it evaluates wild cards on the source side only and reports a
+// target-side pattern as UNDEFINED.
 func nameMatch(q, c common.WellFormedName) MatchQuality {
-	fwd := matching.CompareWFNs(q, c)
-	var rev map[string]matching.Relation
 	quality := MatchQualityExact
-	for attr, rel := range fwd {
-		if rel != matching.UNDEFINED {
-			if rel == matching.DISJOINT {
-				return MatchQualityNone
-			}
-			continue
-		}
-		if rev == nil {
-			rev = matching.CompareWFNs(c, q)
-		}
-		switch rev[attr] {
-		case matching.DISJOINT:
+	for _, attr := range wfnAttributes {
+		qv, cv := q.Get(attr), c.Get(attr)
+		switch rel := relateValues(qv, cv); {
+		case rel == patternDisjoint:
 			return MatchQualityNone
-		case matching.UNDEFINED:
-			switch relatePatterns(q.GetString(attr), c.GetString(attr)) {
-			case patternDisjoint:
-				return MatchQualityNone
-			case patternSuperset, patternOverlap:
-				// The query set is not within the criterion's: for a
-				// non-version attribute any intersection is compatible, for
-				// the version the match is unconfirmed (table 2 on Accept).
-				if attr == common.AttributeVersion {
-					quality = MatchQualityVersionUnconfirmed
-				}
-			}
+		case attr == common.AttributeVersion && (rel == patternSuperset || rel == patternOverlap) && isPattern(qv) && isPattern(cv):
+			// Two version patterns whose query set is not within the
+			// criterion's: some of the versions asked about are affected,
+			// not all (table 2 on Accept). For a non-version attribute any
+			// intersection is compatible, and a query of ANY or a pattern
+			// containing a concrete criterion version stays Exact.
+			quality = MatchQualityVersionUnconfirmed
 		}
 	}
 	return quality
@@ -277,14 +262,13 @@ func (q MatchQuality) String() string {
 //	i (concrete)    │  ⊂  │ ≠  │   = or ≠     │ undefined
 //	m (pattern)     │  ⊂  │ ≠  │   ⊃ or ≠     │ undefined
 //
-// Two CPEs overlap when no attribute compares ≠. An undefined cell (pattern on
-// the target side) is re-evaluated with the roles swapped, so a criterion-side
-// pattern is matched against the query value like any pattern. When both
-// sides are patterns the spec's grammar (wild cards only at the ends of a
-// value) makes the relation of the two sets decidable, and relatePatterns
-// computes it: =, ⊂, ⊃, a partial overlap, or ≠. On a non-version attribute
-// any intersection is compatible; on the version it is graded by the table
-// below.
+// Two CPEs overlap when no attribute compares ≠. relateValues implements the
+// table and resolves its undefined cells: the spec's grammar (wild cards only
+// at the ends of a value) makes every value a set of strings — a concrete
+// value a singleton, ANY every string, a pattern the strings it denotes — so
+// a pattern on either side, or on both, is related as a set: =, ⊂, ⊃, a
+// partial overlap, or ≠. On a non-version attribute any intersection is
+// compatible; on the version it is graded by the table below.
 //
 // # Version evaluation (Vuls-specific; the CPE spec has no ranges)
 //
@@ -341,7 +325,7 @@ func (c Criterion) Accept(query Query) (MatchQuality, error) {
 	case cv == "NA":
 		// A version=NA criterion fixes the product but not the version: it
 		// matches any scan whose non-version attributes are compatible. The
-		// criterion version is neutralised to ANY because go-cpe's comparison
+		// criterion version is neutralised to ANY because name matching
 		// would otherwise reject the scan version against NA; other concrete
 		// attributes (target_sw, edition, ...) must still agree.
 		cAnyVer, err := withAnyVersion(cWFN)
@@ -476,8 +460,8 @@ func (c Criterion) acceptNAQuery(qWFN, cWFN common.WellFormedName) (MatchQuality
 	switch {
 	case overlaps(qWFN, cWFN):
 		// Only an NA (EQUAL) or * (SUPERSET) criterion version overlaps an NA
-		// query; a concrete version is DISJOINT and a pattern, evaluated with
-		// the roles swapped, is DISJOINT too (Table 6-2, row 16). NA fixes
+		// query; a concrete version is DISJOINT and so is a pattern (Table
+		// 6-2, rows 15 and 16). NA fixes
 		// the product but not the version and ignores narrowing (as for any
 		// query); * without narrowing affects every version.
 		if cWFN.GetString(common.AttributeVersion) == "NA" || (c.Range == nil && len(c.CPEMatches) == 0) {

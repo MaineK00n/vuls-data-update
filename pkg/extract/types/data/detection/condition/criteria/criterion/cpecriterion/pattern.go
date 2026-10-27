@@ -3,22 +3,24 @@ package cpecriterion
 import (
 	"strings"
 
-	"github.com/knqyf263/go-cpe/matching"
+	"github.com/knqyf263/go-cpe/common"
 )
 
-// patternRelation is the set relation between two attribute values that both
-// carry unquoted wild cards, a comparison NISTIR 7696 Table 6-2 leaves
-// undefined. It is decidable because NISTIR 7695 §5.3.2 restricts where wild
-// cards may appear: an unquoted "*" only at the beginning and/or end of a
-// value, an unquoted "?" only in a run at the beginning and/or end. Every
+// patternRelation is the set relation between two WFN attribute values: the
+// relations of NISTIR 7696 Table 6-2 (=, ⊂, ⊃, ≠) plus a partial overlap for
+// the cells the table leaves undefined, two values that both carry unquoted
+// wild cards. Those are decidable because NISTIR 7695 §5.3.2 restricts where
+// wild cards may appear: an unquoted "*" only at the beginning and/or end of
+// a value, an unquoted "?" only in a run at the beginning and/or end. Every
 // legal pattern therefore reads
 //
 //	L core R    L, R ∈ { "*", "?"×n (n ≥ 0) }    core: literal, no wild cards
 //
 // and, as "?" matches zero or one character (7696 §6.3), denotes the set of
 // strings l+core+r with 0 ≤ |l| ≤ a and 0 ≤ |r| ≤ b, where a and b are n for
-// a "?" run and unbounded for "*". Two such sets are related by arithmetic on
-// (a, core, b); see pattern.subsetOf and pattern.intersects.
+// a "?" run and unbounded for "*". A concrete value is the pattern with a = b
+// = 0 and ANY is "*", so one comparison of (a, core, b) triples covers the
+// whole table; see pattern.subsetOf and pattern.intersects.
 type patternRelation int
 
 const (
@@ -35,9 +37,52 @@ const (
 	patternOverlap
 )
 
-// relatePatterns returns the relation of x to y, two WFN attribute values
-// (escaped form) that both carry unquoted wild cards. Comparison is
-// case-insensitive (7696 §6.2).
+// relateValues returns the relation of a to b, two WFN attribute values as
+// WellFormedName.Get returns them: a string (concrete or pattern) or a
+// LogicalValue. NA is the only value that is not a set of strings: it equals
+// NA, is within ANY, and is disjoint from everything else (Table 6-2).
+func relateValues(a, b any) patternRelation {
+	la, aLogical := a.(common.LogicalValue)
+	lb, bLogical := b.(common.LogicalValue)
+	switch {
+	case aLogical && la.IsNA():
+		switch {
+		case bLogical && lb.IsNA():
+			return patternEqual
+		case bLogical && lb.IsANY():
+			return patternSubset
+		default:
+			return patternDisjoint
+		}
+	case bLogical && lb.IsNA():
+		if aLogical && la.IsANY() {
+			return patternSuperset
+		}
+		return patternDisjoint
+	default:
+		return relatePatterns(patternString(a), patternString(b))
+	}
+}
+
+// patternString renders a non-NA attribute value as a pattern: ANY is "*",
+// a string is itself.
+func patternString(v any) string {
+	if lv, ok := v.(common.LogicalValue); ok && lv.IsANY() {
+		return "*"
+	}
+	return v.(string)
+}
+
+// isPattern reports whether an attribute value is a string carrying unquoted
+// wild cards (ANY is a logical value, not a pattern).
+func isPattern(v any) bool {
+	s, ok := v.(string)
+	return ok && common.ContainsWildcards(s)
+}
+
+// relatePatterns returns the relation of x to y, two WFN attribute values in
+// escaped string form, either of which may carry unquoted wild cards.
+// Comparison is case-insensitive (7696 §6.2).
 func relatePatterns(x, y string) patternRelation {
 	a, b := parsePattern(x), parsePattern(y)
 	ab, ba := a.subsetOf(b), b.subsetOf(a)
@@ -80,17 +125,27 @@ func parsePattern(s string) pattern {
 			start++
 		}
 	}
-	if start < end && s[end-1] == '*' && matching.IsEvenWildcards(s, end-1) {
+	if start < end && s[end-1] == '*' && unquotedAt(s, end-1) {
 		p.trail = unbounded
 		end--
 	} else {
-		for start < end && s[end-1] == '?' && matching.IsEvenWildcards(s, end-1) {
+		for start < end && s[end-1] == '?' && unquotedAt(s, end-1) {
 			p.trail++
 			end--
 		}
 	}
 	p.core = strings.ToLower(unescapeWFN(s[start:end]))
 	return p
+}
+
+// unquotedAt reports whether the character at s[i] is unquoted: preceded by
+// an even number of backslashes.
+func unquotedAt(s string, i int) bool {
+	n := 0
+	for j := i - 1; j >= 0 && s[j] == '\\'; j-- {
+		n++
+	}
+	return n%2 == 0
 }
 
 // within reports whether every length in [0, n] is within [0, limit]; n or
