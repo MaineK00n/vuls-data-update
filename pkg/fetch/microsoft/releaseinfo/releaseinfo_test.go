@@ -5,7 +5,10 @@ import (
 	"net/http/httptest"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
+
+	"github.com/google/go-cmp/cmp"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/releaseinfo"
 	utiltest "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/test"
@@ -17,9 +20,10 @@ import (
 // windows-10 carries a lifecycle table, which names no KB article column and
 // puts its link on a "Latest update for ESU" cell instead, so a reader keying
 // on "a table with a link in it" would take it for a history. Its 1709 table
-// holds a <strong> inside a cell, which is visited after its own table's start
-// tag and would be read as the 1507 table's label. Both pages also carry a
-// <strong> and a table outside <main>.
+// holds a <strong> inside a cell, as Microsoft serves it; the 1507 table's own
+// label follows it, so that cell decides nothing here, and TestParsePage
+// covers a table without one. Both pages also carry a <strong> and a table
+// outside <main>.
 //
 // The 1507 table is one month written out in full -- A, B, OOB, C and D, then
 // the B of the month after -- which is the whole of what a build line has to be
@@ -124,5 +128,28 @@ func handler(t *testing.T, fixture string, redirect bool) http.HandlerFunc {
 			return
 		}
 		_, _ = w.Write(bs)
+	}
+}
+
+// A <strong> inside a cell is emphasis, not a label. Visited after its own
+// table's start tag, it would otherwise become the label of the next table
+// that carries none of its own.
+func TestParsePage(t *testing.T) {
+	const html = `<html><head><link rel="canonical" href="https://learn.microsoft.com/en-us/windows/release-health/release-information"></head><body><main>
+<strong>Version 1709 (OS build 16299)</strong>
+<table><tr><th>Update type</th><th>KB article</th></tr><tr><td><strong>2018-01 B</strong></td><td>KB4056892</td></tr></table>
+<table><tr><th>Update type</th><th>KB article</th></tr><tr><td>2017-12 B</td><td>KB4054517</td></tr></table>
+</main></body></html>`
+
+	page, err := releaseinfo.ParsePage(strings.NewReader(html))
+	if err != nil {
+		t.Fatalf("parsePage(). unexpected error: %v", err)
+	}
+	labels := make([]string, 0, len(page.Tables))
+	for _, tb := range page.Tables {
+		labels = append(labels, tb.Label)
+	}
+	if diff := cmp.Diff([]string{"Version 1709 (OS build 16299)", "Version 1709 (OS build 16299)"}, labels); diff != "" {
+		t.Errorf("parsePage(). (-expected +got):\n%s", diff)
 	}
 }
