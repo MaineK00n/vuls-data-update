@@ -21,7 +21,7 @@ func NewUpdate(kbID string, revision int, date time.Time) Update {
 		revision: revision,
 		date:     date,
 		letter:   "B",
-		raw:      "raw/windows-11.json",
+		raw:      "windows-11.json",
 	}
 }
 
