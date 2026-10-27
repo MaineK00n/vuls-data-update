@@ -439,6 +439,12 @@ func parsePage(page releaseinfo.Page, name, raw string) ([]update, error) {
 			if hotpatch {
 				u.baseline = isBaseline(t, row, raw, u.kbID)
 
+				// On a hotpatch line the month places an update, not only a
+				// tie: a hotpatch links from those of the month before.
+				if u.date.IsZero() {
+					return nil, errors.Errorf("unexpected availability date in hotpatch calendar. expected: %q, actual: none readable, label: %q, kb: %s", time.DateOnly, t.Label, u.kbID)
+				}
+
 				// A calendar runs monthly hotpatches, and out-of-band ones
 				// between them. Anything else is chained as out-of-band, where
 				// it supersedes and is superseded by the least.
