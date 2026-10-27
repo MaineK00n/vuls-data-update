@@ -365,7 +365,7 @@ func (c Criterion) Accept(query Query) (MatchQuality, error) {
 			// both sides are Exact or VU as graded by nameMatch (a disjoint
 			// pair would have been None above).
 			return nm, nil
-		case common.ContainsWildcards(qv):
+		case hasWildcards(qv):
 			// A pattern query ("12.*") denotes a set of names, which no Range
 			// can evaluate; it is matched by name against the CPEMatches
 			// enumeration below and nothing else.

@@ -241,6 +241,19 @@ func TestCriterion_Accept(t *testing.T) {
 			want: ccTypes.MatchQualityVersionUnconfirmed,
 		},
 		{
+			// A wild card right after an escaped backslash is unquoted (an
+			// even number of backslashes precede it), so both sides are
+			// patterns here and the wider query is VersionUnconfirmed, not
+			// Exact — go-cpe's ContainsWildcards would call both concrete.
+			name: "criterion version pattern after an escaped backslash, wider query pattern -> VersionUnconfirmed",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        `cpe:2.3:a:vendor:product:a\\?:*:*:*:*:*:*:*`,
+			},
+			args: args{query: ccTypes.Query{CPE: `cpe:2.3:a:vendor:product:a\\*:*:*:*:*:*:*:*`}},
+			want: ccTypes.MatchQualityVersionUnconfirmed,
+		},
+		{
 			// ... and disjoint sets are None.
 			name: "criterion version partial wildcard, disjoint query pattern -> None",
 			fields: fields{

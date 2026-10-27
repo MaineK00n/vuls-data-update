@@ -77,7 +77,17 @@ func patternString(v any) string {
 // wild cards (ANY is a logical value, not a pattern).
 func isPattern(v any) bool {
 	s, ok := v.(string)
-	return ok && common.ContainsWildcards(s)
+	return ok && hasWildcards(s)
+}
+
+// hasWildcards reports whether a string attribute value carries unquoted wild
+// cards, by the same quoting rule parsePattern applies: a wild card is quoted
+// by an odd number of preceding backslashes, so "a\\*" (an escaped
+// backslash, then "*") is a pattern. go-cpe's common.ContainsWildcards looks
+// only at the character before the wild card and would call it concrete.
+func hasWildcards(s string) bool {
+	p := parsePattern(s)
+	return p.lead != 0 || p.trail != 0
 }
 
 // relatePatterns returns the relation of x to y, two WFN attribute values in

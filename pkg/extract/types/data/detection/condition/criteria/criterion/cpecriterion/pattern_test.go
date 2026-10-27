@@ -29,6 +29,7 @@ func TestRelatePatterns(t *testing.T) {
 		{name: "cores that never line up", x: `?b`, y: `?a`, want: ccTypes.PatternDisjoint},
 		{name: "escaped wild card is literal", x: `4\.\**`, y: `4\.1*`, want: ccTypes.PatternDisjoint},
 		{name: "escaped wild card against itself", x: `4\.\**`, y: `4\.\*`, want: ccTypes.PatternSuperset},
+		{name: "wild card after an escaped backslash is unquoted", x: `a\\*`, y: `a\\?`, want: ccTypes.PatternSuperset},
 		{name: "star alone contains everything", x: `*`, y: `4\.*`, want: ccTypes.PatternSuperset},
 		{name: "trailing escaped question mark is part of the core", x: `a\?`, y: `a?`, want: ccTypes.PatternSubset},
 	}
