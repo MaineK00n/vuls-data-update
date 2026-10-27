@@ -37,24 +37,27 @@ var canonicalProductNames = map[string]string{
 	"Microsoft SQL Server 2017 for x64-based Systems (CU31)": "Microsoft SQL Server 2017 for x64-based Systems (CU 31)",
 	"Microsoft SQL Server 2019 for x64-based Systems (CU32)": "Microsoft SQL Server 2019 for x64-based Systems (CU 32)",
 	// 2026-Oct re-lists Visual Studio 2019 16.11 under a new product ID without the
-	// "(includes ...)" suffix; it is the same final servicing line earlier months
-	// listed as "(includes 16.0 - 16.10)", so keep one package name.
-	"Microsoft Visual Studio 2019 Version 16.11": "Microsoft Visual Studio 2019 Version 16.11 (includes 16.0 - 16.10)",
-	// 2026-Oct renames the .NET products to "... runtime installed on <OS>" under the
-	// same product IDs (e.g. 12414, 20837) earlier months published as "... installed
-	// on <OS>", so keep one package name.
-	".NET 8.0 runtime installed on Linux":    ".NET 8.0 installed on Linux",
-	".NET 8.0 runtime installed on Mac OS":   ".NET 8.0 installed on Mac OS",
-	".NET 8.0 runtime installed on Windows":  ".NET 8.0 installed on Windows",
-	".NET 9.0 runtime installed on Linux":    ".NET 9.0 installed on Linux",
-	".NET 9.0 runtime installed on Mac OS":   ".NET 9.0 installed on Mac OS",
-	".NET 9.0 runtime installed on Windows":  ".NET 9.0 installed on Windows",
-	".NET 10.0 runtime installed on Linux":   ".NET 10.0 installed on Linux",
-	".NET 10.0 runtime installed on Mac OS":  ".NET 10.0 installed on Mac OS",
-	".NET 10.0 runtime installed on Windows": ".NET 10.0 installed on Windows",
-	".NET 11.0 runtime installed on Linux":   ".NET 11.0 installed on Linux",
-	".NET 11.0 runtime installed on Mac OS":  ".NET 11.0 installed on Mac OS",
-	".NET 11.0 runtime installed on Windows": ".NET 11.0 installed on Windows",
+	// "(includes 16.0 - 16.10)" suffix, matching the Visual Studio 2022 / 2026 names.
+	// The suffix only explains that 16.0-16.10 are serviced by moving to 16.11, which
+	// the version range already covers, so fold the old name into the new one.
+	"Microsoft Visual Studio 2019 Version 16.11 (includes 16.0 - 16.10)": "Microsoft Visual Studio 2019 Version 16.11",
+	// 2026-Oct renames the .NET runtime products to ".NET X runtime installed on <OS>".
+	// Earlier months published the runtime under ".NET X installed on <OS>", which
+	// 2026-Oct reuses for products whose FixedBuild is an SDK feature band (e.g.
+	// "10.0.403"); buildFixedBuildCriterion skips SDK feature bands on the runtime
+	// name, so folding the old name in never mixes SDK versions into runtime ranges.
+	".NET 8.0 installed on Linux":    ".NET 8.0 runtime installed on Linux",
+	".NET 8.0 installed on Mac OS":   ".NET 8.0 runtime installed on Mac OS",
+	".NET 8.0 installed on Windows":  ".NET 8.0 runtime installed on Windows",
+	".NET 9.0 installed on Linux":    ".NET 9.0 runtime installed on Linux",
+	".NET 9.0 installed on Mac OS":   ".NET 9.0 runtime installed on Mac OS",
+	".NET 9.0 installed on Windows":  ".NET 9.0 runtime installed on Windows",
+	".NET 10.0 installed on Linux":   ".NET 10.0 runtime installed on Linux",
+	".NET 10.0 installed on Mac OS":  ".NET 10.0 runtime installed on Mac OS",
+	".NET 10.0 installed on Windows": ".NET 10.0 runtime installed on Windows",
+	".NET 11.0 installed on Linux":   ".NET 11.0 runtime installed on Linux",
+	".NET 11.0 installed on Mac OS":  ".NET 11.0 runtime installed on Mac OS",
+	".NET 11.0 installed on Windows": ".NET 11.0 runtime installed on Windows",
 
 	// Bulletin→CVRF product name unification (legacy products with "Microsoft " prefix)
 	"Microsoft Azure Kubernetes Service":                          "Azure Kubernetes Service",

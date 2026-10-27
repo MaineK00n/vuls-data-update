@@ -10,6 +10,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"slices"
+	"strconv"
 	"strings"
 	"time"
 	"unicode"
@@ -362,6 +363,7 @@ func (e extractor) extract(c cvrf.CVRF) ([]dataTypes.Data, []microsoftkbTypes.KB
 	microsoftutil.DeriveSupersedes(kbs)
 	return datas, kbs, missingFixedBuilds, nil
 }
+
 func collectProducts(pt cvrf.ProductTree) map[string]string {
 	m := make(map[string]string)
 	for _, p := range pt.FullProductName {
@@ -1491,22 +1493,36 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 			".NET 6.0 installed on Windows",
 			".NET 7.0",
 			".NET 8.0",
-			".NET 8.0 installed on Linux",
-			".NET 8.0 installed on Mac OS",
-			".NET 8.0 installed on Windows",
-			".NET 9.0 installed on Linux",
-			".NET 9.0 installed on Mac OS",
-			".NET 9.0 installed on Windows",
-			".NET 10.0 installed on Linux",
-			".NET 10.0 installed on Mac OS",
-			".NET 10.0 installed on Windows",
-			".NET 11.0 installed on Linux",
-			".NET 11.0 installed on Mac OS",
-			".NET 11.0 installed on Windows",
 			".NET Core 2.1",
 			".NET Core 3.1":
 			if _, err := dotnetcoreversion.NewVersion(fixedBuild); err != nil {
 				return rangeTypes.RangeTypeUnknown, errors.Wrap(err, "dotnetcoreversion.NewVersion")
+			}
+			return rangeTypes.RangeTypeMicrosoftDotNetCore, nil
+
+		// .NET runtime (including the earlier ".NET X installed on <OS>" names, see
+		// microsoftutil.NormalizeProductName). Since 2026-Oct some remediations carry the
+		// fixed SDK feature band instead (e.g. "10.0.402", "8.0.132"), and the old name is
+		// also used for products whose FixedBuild is only an SDK feature band (e.g.
+		// "10.0.403"). A runtime patch number stays below 100, so skip SDK feature bands
+		// rather than compare an installed runtime against an SDK version.
+		case ".NET 8.0 runtime installed on Linux",
+			".NET 8.0 runtime installed on Mac OS",
+			".NET 8.0 runtime installed on Windows",
+			".NET 9.0 runtime installed on Linux",
+			".NET 9.0 runtime installed on Mac OS",
+			".NET 9.0 runtime installed on Windows",
+			".NET 10.0 runtime installed on Linux",
+			".NET 10.0 runtime installed on Mac OS",
+			".NET 10.0 runtime installed on Windows",
+			".NET 11.0 runtime installed on Linux",
+			".NET 11.0 runtime installed on Mac OS",
+			".NET 11.0 runtime installed on Windows":
+			if _, err := dotnetcoreversion.NewVersion(fixedBuild); err != nil {
+				return rangeTypes.RangeTypeUnknown, errors.Wrap(err, "dotnetcoreversion.NewVersion")
+			}
+			if isDotNetSDKFeatureBand(fixedBuild) {
+				return rangeTypes.RangeTypeUnknown, nil
 			}
 			return rangeTypes.RangeTypeMicrosoftDotNetCore, nil
 
@@ -1765,7 +1781,7 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 			"Microsoft Visual Studio 2015 Update 3",
 			"Microsoft Visual Studio 2017 Version 15.9 (includes 15.0 - 15.8)",
 			"Microsoft Visual Studio 2019 Version 16.10 (includes 16.0 - 16.9)",
-			"Microsoft Visual Studio 2019 Version 16.11 (includes 16.0 - 16.10)",
+			"Microsoft Visual Studio 2019 Version 16.11",
 			"Microsoft Visual Studio 2019 Version 16.4 (includes 16.0 - 16.3)",
 			"Microsoft Visual Studio 2019 Version 16.7 (includes 16.0 \u2013 16.6)",
 			"Microsoft Visual Studio 2019 Version 16.9 (includes 16.0 - 16.8)",
@@ -2036,6 +2052,17 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 			},
 		},
 	}, nil
+}
+
+// isDotNetSDKFeatureBand reports whether a .NET version is an SDK feature band
+// (patch number 100 or above, e.g. "10.0.402") rather than a runtime version.
+func isDotNetSDKFeatureBand(v string) bool {
+	ss := strings.Split(v, ".")
+	if len(ss) < 3 {
+		return false
+	}
+	n, err := strconv.Atoi(ss[2])
+	return err == nil && n >= 100
 }
 
 // fixedBuildOverrides maps (CVE ID, product name, incorrect FixedBuild) to corrected FixedBuild values
