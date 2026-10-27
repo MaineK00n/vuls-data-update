@@ -1550,6 +1550,11 @@ func TestExtract(t *testing.T) {
 			wantErr: "expected: a product listed with a Vendor Fix",
 		},
 		{
+			name:    "Vendor Fix for an entry that requires no customer action",
+			args:    "./testdata/fixtures-no-customer-action-vendor-fix",
+			wantErr: "which requires no customer action",
+		},
+		{
 			name:    "an override that no longer takes effect, after Microsoft corrected the FixedBuild",
 			args:    "./testdata/fixtures-override-unused",
 			wantErr: "unexpected cvrfOverrides that no longer take effect",
