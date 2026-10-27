@@ -215,8 +215,8 @@ func Extract(args string, opts ...Option) error {
 
 	slog.Info("Extract Microsoft Release Information")
 
-	// The raw tree is read before the output is cleared, so a run that cannot
-	// read it leaves the last good output where it was.
+	// The raw tree is read and chained before the output is cleared, so a run
+	// that cannot leaves the last good output where it was.
 	us, err := read(args)
 	if err != nil {
 		return errors.Wrapf(err, "read %s", args)
@@ -228,6 +228,11 @@ func Extract(args string, opts ...Option) error {
 	// would replace the dataset with an empty one, with the run green.
 	if len(us) == 0 {
 		return errors.Errorf("no update in %s", filepath.Join(args, "raw"))
+	}
+
+	kbs, err := chain(us)
+	if err != nil {
+		return errors.Wrap(err, "chain")
 	}
 
 	if err := util.RemoveAll(options.dir); err != nil {
@@ -260,11 +265,6 @@ func Extract(args string, opts ...Option) error {
 			continue
 		}
 		slog.Warn("a release ran every update on one line", slog.String("release", release), slog.String("line", slices.Collect(maps.Keys(kinds[release]))[0]), slog.Int("count", total))
-	}
-
-	kbs, err := chain(us)
-	if err != nil {
-		return errors.Wrap(err, "chain")
 	}
 
 	for _, kb := range kbs {
@@ -398,7 +398,7 @@ func parsePage(page releaseinfo.Page, name, raw string) ([]update, error) {
 		// The columns an update is read out of. A table missing one of them
 		// cannot be read at all, and saying which is missing is the difference
 		// between a page to go and look at and a source that quietly halved.
-		var missing []string
+		missing := make([]string, 0, 3)
 		for _, c := range []string{columnBuild, columnDate, columnUpdateType} {
 			if !slices.Contains(t.Header, c) {
 				missing = append(missing, c)
@@ -420,6 +420,14 @@ func parsePage(page releaseinfo.Page, name, raw string) ([]update, error) {
 			}
 			if hotpatch {
 				u.baseline = isBaseline(t, row, raw, u.kbID)
+
+				// The calendars have carried monthly security updates only. An
+				// out-of-band hotpatch would be chained among them by its build,
+				// where pkg/extract/microsoft/servicing leaves one superseded by
+				// nothing, so it is said rather than passed over.
+				if u.letter != "B" {
+					slog.Warn("unexpected update type in hotpatch calendar, update is chained by its build", slog.String("path", raw), slog.String("kb", u.kbID), slog.String("letter", u.letter))
+				}
 
 				// Every hotpatch calendar covers a release whose history is on
 				// the same page. One without is that history lost or relabelled,
@@ -626,6 +634,10 @@ func chain(us []update) ([]microsoftkbTypes.KB, error) {
 				},
 			}
 			kbs[u.kbID] = kb
+		}
+		// A KB on two pages may be linked from only one of them.
+		if kb.URL == "" {
+			kb.URL = u.url
 		}
 		if u.release != "" && !slices.Contains(kb.Products, u.release) {
 			kb.Products = append(kb.Products, u.release)

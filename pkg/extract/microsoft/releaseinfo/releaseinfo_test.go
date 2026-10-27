@@ -3,11 +3,13 @@ package releaseinfo_test
 import (
 	"path/filepath"
 	"testing"
+	"time"
 
 	"github.com/google/go-cmp/cmp"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/microsoft/releaseinfo"
 	utiltest "github.com/MaineK00n/vuls-data-update/pkg/extract/util/test"
+	fetchReleaseinfo "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/releaseinfo"
 )
 
 // The fixtures are the tables as fetched, chosen for what decides a chain.
@@ -188,5 +190,116 @@ func TestRelease(t *testing.T) {
 				t.Errorf("release(). (-expected +got):\n%s", diff)
 			}
 		})
+	}
+}
+
+// The pages give every pair of updates sharing a revision a later date to the
+// higher KB number, so the fixtures cannot tell the date deciding from the
+// number falling back behind it. These pairs run the number against the date.
+func TestChain(t *testing.T) {
+	day := func(d int) time.Time { return time.Date(2026, time.January, d, 0, 0, 0, 0, time.UTC) }
+
+	tests := []struct {
+		name string
+		us   []releaseinfo.Update
+		want map[string][]string
+	}{
+		{
+			name: "the later date supersedes at a shared revision, whatever the KB numbers say",
+			us: []releaseinfo.Update{
+				releaseinfo.NewUpdate("5000001", 100, day(8)),
+				releaseinfo.NewUpdate("5000002", 100, day(1)),
+			},
+			want: map[string][]string{"5000001": {"5000002"}},
+		},
+		{
+			name: "the KB number decides only where the date ties as well",
+			us: []releaseinfo.Update{
+				releaseinfo.NewUpdate("5000002", 100, day(1)),
+				releaseinfo.NewUpdate("5000001", 100, day(1)),
+			},
+			want: map[string][]string{"5000002": {"5000001"}},
+		},
+		{
+			name: "a KB listed again at the next build does not supersede itself",
+			us: []releaseinfo.Update{
+				releaseinfo.NewUpdate("5000003", 102, day(15)),
+				releaseinfo.NewUpdate("5000001", 101, day(8)),
+				releaseinfo.NewUpdate("5000001", 100, day(1)),
+			},
+			want: map[string][]string{"5000003": {"5000001"}},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			kbs, err := releaseinfo.Chain(tt.us)
+			if err != nil {
+				t.Fatalf("chain(). unexpected error: %v", err)
+			}
+			got := make(map[string][]string)
+			for _, kb := range kbs {
+				for _, s := range kb.Supersedes {
+					got[kb.KBID] = append(got[kb.KBID], s.KBID)
+				}
+				for _, s := range kb.SupersededBy {
+					if s.KBID == kb.KBID {
+						t.Errorf("chain(). KB%s is superseded by itself", kb.KBID)
+					}
+				}
+			}
+			if diff := cmp.Diff(tt.want, got); diff != "" {
+				t.Errorf("chain(). (-expected +got):\n%s", diff)
+			}
+		})
+	}
+}
+
+// A hotpatch calendar's Type is read as a baseline unless it says Hotpatch:
+// taking a baseline for a hotpatch would join the quarters either side of it.
+func TestIsBaseline(t *testing.T) {
+	tests := []struct {
+		name string
+		typ  string
+		want bool
+	}{
+		{
+			name: "a baseline",
+			typ:  "Baseline (Restart)",
+			want: true,
+		},
+		{
+			name: "a hotpatch",
+			typ:  "Hotpatch",
+			want: false,
+		},
+		{
+			name: "a Type this does not know is read as a baseline",
+			typ:  "Hotpatch (Restart)",
+			want: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			table := fetchReleaseinfo.Table{Header: []string{"Type", "KB article"}}
+			row := []fetchReleaseinfo.Cell{{Text: tt.typ}, {Text: "KB5000001"}}
+			if got := releaseinfo.IsBaseline(table, row, "raw/windows-server.json", "5000001"); got != tt.want {
+				t.Errorf("isBaseline(). expected: %v, actual: %v", tt.want, got)
+			}
+		})
+	}
+}
+
+// A KB on two pages takes its link from whichever page has one.
+func TestChainURL(t *testing.T) {
+	day := time.Date(2026, time.January, 1, 0, 0, 0, 0, time.UTC)
+	kbs, err := releaseinfo.Chain([]releaseinfo.Update{
+		releaseinfo.NewUpdate("5000001", 100, day),
+		releaseinfo.NewUpdate("5000001", 100, day).WithPage("windows-server", "https://support.microsoft.com/help/5000001"),
+	})
+	if err != nil {
+		t.Fatalf("chain(). unexpected error: %v", err)
+	}
+	if len(kbs) != 1 || kbs[0].URL != "https://support.microsoft.com/help/5000001" {
+		t.Errorf("chain(). expected: one KB linked to %q, actual: %+v", "https://support.microsoft.com/help/5000001", kbs)
 	}
 }
