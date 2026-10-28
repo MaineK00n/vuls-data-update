@@ -1,0 +1,14 @@
+{
+	"kb_id": "5126104",
+	"url": "https://support.microsoft.com/help/5126104",
+	"products": [
+		".NET 8.0 runtime installed on Windows",
+		"ASP.NET Core 8.0"
+	],
+	"data_source": {
+		"id": "microsoft-cvrf",
+		"raws": [
+			"fixtures/2026-Sep/2026/CVE-2026-69304.json"
+		]
+	}
+}
