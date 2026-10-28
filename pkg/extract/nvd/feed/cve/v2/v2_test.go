@@ -31,6 +31,20 @@ func TestExtract(t *testing.T) {
 			golden: "./testdata/golden/semver-range",
 		},
 		{
+			// A semver range on a criterion whose product is a wildcard
+			// enumerates concrete products. Those names cannot be packed
+			// against the criterion (packing stores only the attributes
+			// after the product), so they stay in cpe_matches with their
+			// whole names and no cpe_matches_packed is emitted, instead of
+			// the extract failing.
+			name: "semver-range-wildcard-product",
+			args: args{
+				cveDir:      "./testdata/fixtures/semver-range-wildcard-product/vuls-data-raw-nvd-feed-cve-v2",
+				cpematchDir: "./testdata/fixtures/semver-range-wildcard-product/vuls-data-raw-nvd-feed-cpematch-v2",
+			},
+			golden: "./testdata/golden/semver-range-wildcard-product",
+		},
+		{
 			// A range endpoint carrying stray surrounding whitespace
 			// (versionEndIncluding " 5.10.35" in the real CVE-2021-46973). The
 			// endpoint is trimmed before classification, so the range stays

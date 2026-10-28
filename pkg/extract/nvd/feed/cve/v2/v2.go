@@ -484,12 +484,19 @@ func (e extractor) nodeToCriteria(n cveTypes.Node) (criteriaTypes.Criteria, erro
 		var (
 			rangeType  ccRangeTypes.RangeType
 			cpeMatches []ccTypes.CPE
+			packed     *ccTypes.CPEMatchesPacked
 		)
 		if hasRange {
-			var err error
-			cpeMatches, rangeType, err = e.buildCPEMatches(match)
+			ms, covered, rt, err := e.buildCPEMatches(match)
 			if err != nil {
 				return criteriaTypes.Criteria{}, errors.Wrap(err, "build cpe matches")
+			}
+			cpeMatches, rangeType = ms, rt
+			if len(covered) > 0 {
+				packed, err = ccTypes.PackCPEMatches(ccTypes.CPE(match.Criteria), covered)
+				if err != nil {
+					return criteriaTypes.Criteria{}, errors.Wrapf(err, "pack cpe matches. match criteria: %s", match.Criteria)
+				}
 			}
 		}
 
@@ -516,7 +523,8 @@ func (e extractor) nodeToCriteria(n cveTypes.Node) (criteriaTypes.Criteria, erro
 						LessThan:     match.VersionEndExcluding,
 					}
 				}(),
-				CPEMatches: cpeMatches,
+				CPEMatches:       cpeMatches,
+				CPEMatchesPacked: packed,
 			},
 		}
 
@@ -654,7 +662,14 @@ func (e extractor) cpeNamesFromCpematch(matchCriteriaId string) ([]string, error
 //     concrete cpematch entry is added.
 //   - SEMVER range: Range already covers every semver-parseable version
 //     inside it, so only the entries Range misses (non-semver, or the rare
-//     semver version outside the range) are added.
+//     semver version outside the range) are added to the CPEMatches list.
+//     The covered entries are returned separately for the caller to pack
+//     (cpecriterion.CPEMatchesPacked), so that a pattern query, which no
+//     Range can evaluate, can still match them by name. Packing stores an
+//     entry by its attributes after the product, so a covered entry that
+//     does not share the criterion's part, vendor and product (a criterion
+//     with a wildcard product enumerates concrete products) stays in the
+//     CPEMatches list with its whole name, as before.
 //
 // Lookup failures happen when the CVE feed and the cpematch feed have not
 // been snapshotted atomically: a freshly added matchCriteriaId can exist in
@@ -670,7 +685,7 @@ func (e extractor) cpeNamesFromCpematch(matchCriteriaId string) ([]string, error
 //     CPEMatches fallback, so this CVE+match would be silently
 //     undetectable. Refuse to emit a broken criterion — caller fails the
 //     extract and the operator refreshes the cpematch snapshot.
-func (e extractor) buildCPEMatches(match cveTypes.CPEMatch) ([]ccTypes.CPE, ccRangeTypes.RangeType, error) {
+func (e extractor) buildCPEMatches(match cveTypes.CPEMatch) (cpeMatches, covered []ccTypes.CPE, rangeType ccRangeTypes.RangeType, err error) {
 	// One parse of the four endpoints yields both the bounds the per-entry
 	// coverage check reuses and the range type the caller stamps on the
 	// criterion — the whole range classification, done once.
@@ -679,14 +694,14 @@ func (e extractor) buildCPEMatches(match cveTypes.CPEMatch) ([]ccTypes.CPE, ccRa
 	ns, err := e.cpeNamesFromCpematch(match.MatchCriteriaID)
 	if err != nil {
 		if rangeType == ccRangeTypes.RangeTypeUnknown {
-			return nil, rangeType, errors.Wrapf(err, "cpe names from cpematch lookup failed for unknown range. matchCriteriaID: %s, criteria: %s", match.MatchCriteriaID, match.Criteria)
+			return nil, nil, rangeType, errors.Wrapf(err, "cpe names from cpematch lookup failed for unknown range. matchCriteriaID: %s, criteria: %s", match.MatchCriteriaID, match.Criteria)
 		}
 
 		slog.Warn("cpematch lookup failed", "matchCriteriaID", match.MatchCriteriaID, "criteria", match.Criteria, "err", err)
-		return nil, rangeType, nil
+		return nil, nil, rangeType, nil
 	}
 
-	cpeMatches := make([]ccTypes.CPE, 0, len(ns))
+	cpeMatches = make([]ccTypes.CPE, 0, len(ns))
 	for _, n := range ns {
 		wfn, err := naming.UnbindFS(n)
 		if err != nil {
@@ -717,20 +732,22 @@ func (e extractor) buildCPEMatches(match cveTypes.CPEMatch) ([]ccTypes.CPE, ccRa
 		default:
 			ver := unescapeWFN(verRaw)
 
-			// SEMVER range: skip if the entry's version is semver-parseable
-			// and falls inside the range — the Range already covers it.
-			// Non-semver or out-of-range entries need to appear in CPEMatches
-			// (the latter accounts for a tiny fraction of cases — segment-count
-			// or pre-release ordering quirks in NVD data).
-			if rangeType == ccRangeTypes.RangeTypeSEMVER {
+			// SEMVER range: an entry whose version is semver-parseable and
+			// falls inside the range is already covered by the Range; it goes
+			// to the packed set instead of CPEMatches. Non-semver or
+			// out-of-range entries need to appear in CPEMatches (the latter
+			// accounts for a tiny fraction of cases — segment-count or
+			// pre-release ordering quirks in NVD data).
+			if rangeType == ccRangeTypes.RangeTypeSEMVER && ccTypes.Packable(ccTypes.CPE(match.Criteria), ccTypes.CPE(n)) {
 				if sv, err := version.NewSemver(ver); err == nil && versionInBounds(sv, bounds) {
+					covered = append(covered, ccTypes.CPE(n))
 					continue
 				}
 			}
 			cpeMatches = append(cpeMatches, ccTypes.CPE(n))
 		}
 	}
-	return cpeMatches, rangeType, nil
+	return cpeMatches, covered, rangeType, nil
 }
 
 // unescapeWFN removes WFN backslash escaping from attribute values.
