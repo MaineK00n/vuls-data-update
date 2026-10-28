@@ -6,7 +6,7 @@ import (
 	"github.com/knqyf263/go-cpe/common"
 )
 
-// patternRelation is the set relation between two WFN attribute values: the
+// relation is the set relation between two WFN attribute values: the
 // relations of NISTIR 7696 Table 6-2 (=, ⊂, ⊃, ≠) plus a partial overlap for
 // the cells the table leaves undefined, two values that both carry unquoted
 // wild cards. Those are decidable because NISTIR 7695 §5.3.2 restricts where
@@ -21,44 +21,44 @@ import (
 // a "?" run and unbounded for "*". A concrete value is the pattern with a = b
 // = 0 and ANY is "*", so one comparison of (a, core, b) triples covers the
 // whole table; see pattern.subsetOf and pattern.intersects.
-type patternRelation int
+type relation int
 
 const (
-	// patternUnknown is the zero value: a relation that was never computed.
+	// relationUnknown is the zero value: a relation that was never computed.
 	// relatePatterns never returns it.
-	patternUnknown patternRelation = iota
-	patternDisjoint
-	patternEqual
-	// patternSubset: every string of the first pattern is in the second.
-	patternSubset
-	// patternSuperset: every string of the second pattern is in the first.
-	patternSuperset
-	// patternOverlap: the patterns intersect but neither contains the other.
-	patternOverlap
+	relationUnknown relation = iota
+	relationDisjoint
+	relationEqual
+	// relationSubset: every string of the first pattern is in the second.
+	relationSubset
+	// relationSuperset: every string of the second pattern is in the first.
+	relationSuperset
+	// relationOverlap: the patterns intersect but neither contains the other.
+	relationOverlap
 )
 
 // relateValues returns the relation of a to b, two WFN attribute values as
 // WellFormedName.Get returns them: a string (concrete or pattern) or a
 // LogicalValue. NA is the only value that is not a set of strings: it equals
 // NA, is within ANY, and is disjoint from everything else (Table 6-2).
-func relateValues(a, b any) patternRelation {
+func relateValues(a, b any) relation {
 	la, aLogical := a.(common.LogicalValue)
 	lb, bLogical := b.(common.LogicalValue)
 	switch {
 	case aLogical && la.IsNA():
 		switch {
 		case bLogical && lb.IsNA():
-			return patternEqual
+			return relationEqual
 		case bLogical && lb.IsANY():
-			return patternSubset
+			return relationSubset
 		default:
-			return patternDisjoint
+			return relationDisjoint
 		}
 	case bLogical && lb.IsNA():
 		if aLogical && la.IsANY() {
-			return patternSuperset
+			return relationSuperset
 		}
-		return patternDisjoint
+		return relationDisjoint
 	default:
 		return relatePatterns(patternString(a), patternString(b))
 	}
@@ -86,20 +86,20 @@ func hasWildcards(s string) bool {
 // relatePatterns returns the relation of x to y, two WFN attribute values in
 // escaped string form, either of which may carry unquoted wild cards.
 // Comparison is case-insensitive (7696 §6.2).
-func relatePatterns(x, y string) patternRelation {
+func relatePatterns(x, y string) relation {
 	a, b := parsePattern(x), parsePattern(y)
 	ab, ba := a.subsetOf(b), b.subsetOf(a)
 	switch {
 	case ab && ba:
-		return patternEqual
+		return relationEqual
 	case ab:
-		return patternSubset
+		return relationSubset
 	case ba:
-		return patternSuperset
+		return relationSuperset
 	case a.intersects(b):
-		return patternOverlap
+		return relationOverlap
 	default:
-		return patternDisjoint
+		return relationDisjoint
 	}
 }
 

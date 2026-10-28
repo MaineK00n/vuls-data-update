@@ -4,16 +4,16 @@ package cpecriterion
 // package can exercise the pattern-set logic. It is compiled only under
 // `go test`.
 
-// PatternRelation re-exports patternRelation and its values.
-type PatternRelation = patternRelation
+// Relation re-exports relation and its values.
+type Relation = relation
 
 const (
-	PatternUnknown  = patternUnknown
-	PatternDisjoint = patternDisjoint
-	PatternEqual    = patternEqual
-	PatternSubset   = patternSubset
-	PatternSuperset = patternSuperset
-	PatternOverlap  = patternOverlap
+	RelationUnknown  = relationUnknown
+	RelationDisjoint = relationDisjoint
+	RelationEqual    = relationEqual
+	RelationSubset   = relationSubset
+	RelationSuperset = relationSuperset
+	RelationOverlap  = relationOverlap
 )
 
 // Unbounded re-exports unbounded.

@@ -155,7 +155,7 @@ func overlaps(q, c common.WellFormedName) bool {
 		common.AttributeUpdate, common.AttributeEdition, common.AttributeLanguage, common.AttributeSwEdition,
 		common.AttributeTargetSw, common.AttributeTargetHw, common.AttributeOther,
 	} {
-		if relateValues(q.Get(attr), c.Get(attr)) == patternDisjoint {
+		if relateValues(q.Get(attr), c.Get(attr)) == relationDisjoint {
 			return false
 		}
 	}
