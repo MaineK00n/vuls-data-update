@@ -362,6 +362,38 @@ func TestCriterion_Accept(t *testing.T) {
 			want: ccTypes.MatchQualityExact,
 		},
 		{
+			// A version spelled "NA" is a concrete string, not the logical
+			// value "-" (GetString renders both as "NA"): it neither relaxes
+			// to VersionUnconfirmed ...
+			name: "CPEMatches entry whose version is the literal string NA, concrete query -> None",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
+				CPEMatches: []ccTypes.CPE{"cpe:2.3:a:vendor:product:NA:*:*:*:*:*:*:*"},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:1.0:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityNone,
+		},
+		{
+			name: "criterion version is the literal string NA, concrete query -> None",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:NA:*:*:*:*:*:*:*",
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:1.0:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityNone,
+		},
+		{
+			// ... nor is it a version-less query.
+			name: "query version is the literal string NA, concrete criterion -> None",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:1.0:*:*:*:*:*:*:*",
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:NA:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityNone,
+		},
+		{
 			name: "CPEMatches entry partial wildcard, query version ANY -> Exact (query=ANY)",
 			fields: fields{
 				Vulnerable: true,

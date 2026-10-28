@@ -295,15 +295,17 @@ func (c Criterion) Accept(query Query) (MatchQuality, error) {
 		return MatchQualityUnknown, errors.Wrapf(err, "unbind %q to WFN", string(c.CPE))
 	}
 
-	cv := cWFN.GetString(common.AttributeVersion)
+	// The logical values are told apart by type (isNA / isANY): GetString
+	// renders them as "NA" / "ANY", which a concrete version may spell too.
+	qVer := qWFN.Get(common.AttributeVersion)
 	qv := qWFN.GetString(common.AttributeVersion)
 
 	switch {
-	case qv == "NA":
+	case isNA(qVer):
 		// The scan has no version; its own path covers the main CPE and the
 		// CPEMatches together.
 		return c.acceptNAQuery(qWFN, cWFN)
-	case cv == "NA":
+	case isNA(cWFN.Get(common.AttributeVersion)):
 		// A version=NA criterion fixes the product but not the version: it
 		// matches any scan whose non-version attributes are compatible. The
 		// criterion version is neutralised to ANY because name matching
@@ -320,7 +322,7 @@ func (c Criterion) Accept(query Query) (MatchQuality, error) {
 			// VendorProductMatch for "-" entries, where NA often means "all
 			// versions" (e.g. linux_kernel:- on a classic all-versions CVE),
 			// so the version stays unconfirmed.
-			if qv == "ANY" {
+			if isANY(qVer) {
 				return MatchQualityExact, nil
 			}
 			return MatchQualityVersionUnconfirmed, nil
@@ -331,7 +333,7 @@ func (c Criterion) Accept(query Query) (MatchQuality, error) {
 		case !overlaps(qWFN, cWFN):
 			// Main CPE disjoint from the query; only CPEMatches can still
 			// match.
-		case qv == "ANY":
+		case isANY(qVer):
 			// The scan asks for all versions of this product (version=*), so
 			// any accepted criterion is a confident match regardless of how it
 			// narrows versions — respecting the query author's intent.
@@ -417,7 +419,7 @@ func (c Criterion) Accept(query Query) (MatchQuality, error) {
 		if overlaps(qWFN, mWFN) {
 			return MatchQualityExact, nil
 		}
-		if mWFN.GetString(common.AttributeVersion) == "NA" {
+		if isNA(mWFN.Get(common.AttributeVersion)) {
 			mAnyVer, err := withAnyVersion(mWFN)
 			if err != nil {
 				return MatchQualityUnknown, errors.Wrap(err, "neutralise cpe match version")
@@ -452,7 +454,7 @@ func (c Criterion) acceptNAQuery(qWFN, cWFN common.WellFormedName) (MatchQuality
 		// 6-2, rows 15 and 16). NA fixes
 		// the product but not the version and ignores narrowing (as for any
 		// query); * without narrowing affects every version.
-		if cWFN.GetString(common.AttributeVersion) == "NA" || (c.Range == nil && len(c.CPEMatches) == 0) {
+		if isNA(cWFN.Get(common.AttributeVersion)) || (c.Range == nil && len(c.CPEMatches) == 0) {
 			return MatchQualityExact, nil
 		}
 		// A * criterion narrowed by a range / enumeration: the range cannot

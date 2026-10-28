@@ -64,6 +64,20 @@ func relateValues(a, b any) relation {
 	}
 }
 
+// isNA and isANY report whether an attribute value, as WellFormedName.Get
+// returns it, is the logical value NA or ANY. GetString renders those as "NA"
+// and "ANY" too, which a string value may legitimately spell, so the logical
+// values are told apart by type, never by text.
+func isNA(v any) bool {
+	lv, ok := v.(common.LogicalValue)
+	return ok && lv.IsNA()
+}
+
+func isANY(v any) bool {
+	lv, ok := v.(common.LogicalValue)
+	return ok && lv.IsANY()
+}
+
 // patternString renders a non-NA attribute value as a pattern: ANY is "*",
 // a string is itself.
 func patternString(v any) string {
