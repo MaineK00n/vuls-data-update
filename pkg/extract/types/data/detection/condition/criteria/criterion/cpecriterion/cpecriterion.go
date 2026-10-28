@@ -341,24 +341,30 @@ func (c Criterion) Accept(query Query) (MatchQuality, []warningTypes.Warning, er
 		return MatchQualityUnknown, nil, errors.Wrapf(err, "unbind %q to WFN", string(c.CPE))
 	}
 
+	// Exact is the strongest quality: once the main CPE or an entry reaches
+	// it there is nothing left to evaluate, and nothing to warn about.
 	quality, rangeSkipped, err := c.acceptMain(qWFN, cWFN)
 	if err != nil {
 		return MatchQualityUnknown, nil, errors.Wrap(err, "accept main cpe")
 	}
+	if quality == MatchQualityExact {
+		return quality, nil, nil
+	}
 
 	for _, m := range c.CPEMatches {
-		if quality == MatchQualityExact {
-			break
-		}
 		mWFN, err := naming.UnbindFS(string(m))
 		if err != nil {
 			return MatchQualityUnknown, nil, errors.Wrapf(err, "unbind %q to WFN", string(m))
 		}
-		quality = stronger(quality, acceptEntry(qWFN, mWFN))
+		if quality = stronger(quality, acceptEntry(qWFN, mWFN)); quality == MatchQualityExact {
+			return quality, nil, nil
+		}
 	}
 
+	// None or VersionUnconfirmed: a Range skipped for a pattern query is
+	// what could have made the difference.
 	var ws []warningTypes.Warning
-	if rangeSkipped && quality != MatchQualityExact {
+	if rangeSkipped {
 		ws = append(ws, warningTypes.Warning{Kind: warningTypes.KindPatternQueryRange, Cause: query.CPE})
 	}
 	return quality, ws, nil
