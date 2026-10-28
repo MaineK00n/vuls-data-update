@@ -47,6 +47,11 @@ type CPE string
 //     evaluate at all (RangeTypeUnknown / non-parseable versions). Each entry
 //     is a whole name matched on its own; the main CPE is not consulted for
 //     it.
+//   - CPEMatchesPacked: optional compact enumeration of the concrete CPE
+//     strings INSIDE Range, which a concrete query never needs (Range
+//     answers for it) but a pattern query ("12.*") can only match by name.
+//     Its entries are evaluated like CPEMatches entries, for a pattern
+//     query only.
 //
 // Fixed lives at the end as a separate concern (which versions fix the
 // vulnerability), kept off the affected path:
@@ -67,14 +72,15 @@ type CPE string
 //	        OR versions intersect                       // NA = NA, un-narrowed *, concrete / pattern
 //	        OR one version is NA                        // VU: no version to evaluate
 //	    ),
-//	    each CPEMatches[i]: attr-match AND (versions intersect OR one version is NA → VU)
+//	    each CPEMatches[i]: attr-match AND (versions intersect OR one version is NA → VU),
+//	    each CPEMatchesPacked entry, for a pattern query only: as CPEMatches[i]
 //	)
 //
 // Range is consulted only for a concrete query version. A pattern query
-// ("12.*") is evaluated by name against the enumeration alone, so against a
-// criterion that narrows by Range it matches exactly the enumerated names and
-// nothing else; Accept records a warning when that leaves the result below
-// Exact.
+// ("12.*") is evaluated by name against the enumeration alone (CPEMatches
+// and, when present, CPEMatchesPacked), so against a criterion that narrows
+// by Range it matches exactly the enumerated names and nothing else; Accept
+// records a warning when that leaves the result below Exact.
 //
 // Range and CPEMatches are NOT mutually exclusive: both can be populated and
 // their effective predicate is OR'd. This matches the NVD ranged-cpeMatch
@@ -90,7 +96,11 @@ type Criterion struct {
 	CPE        CPE                       `json:"cpe,omitempty"`
 	Range      *rangeTypes.Range         `json:"range,omitempty"`
 	CPEMatches []CPE                     `json:"cpe_matches,omitempty"`
-	Fixed      []string                  `json:"fixed,omitempty"`
+	// CPEMatchesPacked: optional compact enumeration of the concrete CPEs the
+	// Range already covers, consulted only for a query whose version is a
+	// name-matching pattern (see CPEMatchesPacked and Accept)
+	CPEMatchesPacked *CPEMatchesPacked `json:"cpe_matches_packed,omitempty"`
+	Fixed            []string          `json:"fixed,omitempty"`
 }
 
 func (c *Criterion) Sort() {
@@ -136,6 +146,7 @@ func Compare(x, y Criterion) int {
 			}
 		}(),
 		slices.Compare(x.CPEMatches, y.CPEMatches),
+		comparePacked(x.CPEMatchesPacked, y.CPEMatchesPacked),
 		slices.Compare(x.Fixed, y.Fixed),
 	)
 }
@@ -303,8 +314,10 @@ func stronger(a, b MatchQuality) MatchQuality {
 //	                     │         │        │ else None                │ (see below)
 //	* + enumeration only │ Exact   │ VU     │ None                     │ None
 //
-// Each CPEMatches entry, on its own name. An entry is never narrowed, so
-// its table is the first four rows of the main CPE table, repeated:
+// Each CPEMatches entry, on its own name, and, for a pattern query, each
+// entry of the packed enumeration (CPEMatchesPacked, concrete names only).
+// An entry is never narrowed, so its table is the first four rows of the
+// main CPE table, repeated:
 //
 //	entry \ query │ ANY (*) │ NA (-) │ concrete i               │ pattern p
 //	──────────────┼─────────┼────────┼──────────────────────────┼──────────────────────────────
@@ -394,6 +407,28 @@ func (c Criterion) Accept(query Query) (MatchQuality, []warningTypes.Warning, er
 		}
 		if quality = stronger(quality, acceptEntry(qWFN, mWFN)); quality == MatchQualityExact {
 			return quality, nil, nil
+		}
+	}
+
+	// CPEMatchesPacked: the enumeration inside Range, consulted only when the
+	// query version is a name-matching pattern (an unquoted wildcard), which
+	// the Range cannot evaluate. A concrete query is answered by the Range
+	// above, so the packed set is never decoded for it. Packed entries are
+	// concrete names (the extractor packs only versions a Range could
+	// parse), so an overlapping one is Exact.
+	if c.CPEMatchesPacked != nil && hasWildcards(qWFN.GetString(common.AttributeVersion)) {
+		ms, err := c.CPEMatchesPacked.Unpack(c.CPE)
+		if err != nil {
+			return MatchQualityUnknown, nil, errors.Wrap(err, "unpack cpe matches")
+		}
+		for _, m := range ms {
+			mWFN, err := naming.UnbindFS(string(m))
+			if err != nil {
+				return MatchQualityUnknown, nil, errors.Wrapf(err, "unbind %q to WFN", string(m))
+			}
+			if quality = stronger(quality, acceptEntry(qWFN, mWFN)); quality == MatchQualityExact {
+				return quality, nil, nil
+			}
 		}
 	}
 
