@@ -301,12 +301,12 @@ func stronger(a, b MatchQuality) MatchQuality {
 // Each CPEMatches entry, on its own name. An entry is never narrowed, so
 // its table is the first four rows of the main CPE table, repeated:
 //
-//	entry \ query │ ANY (*) │ NA (-) │ concrete i               │ pattern p
-//	──────────────┼─────────┼────────┼──────────────────────────┼──────────────────────────────
-//	NA (-)        │ Exact   │ Exact  │ VU                       │ VU
-//	pattern m     │ Exact   │ VU     │ i ∈ m → Exact, else None │ p ∩ m ≠ ∅ → Exact, else None
-//	concrete j    │ Exact   │ VU     │ i = j → Exact, else None │ j ∈ p → Exact, else None
-//	*             │ Exact   │ Exact  │ Exact                    │ Exact
+//	entry \ query        │ ANY (*) │ NA (-) │ concrete i               │ pattern p
+//	─────────────────────┼─────────┼────────┼──────────────────────────┼──────────────────────────────
+//	NA (-)               │ Exact   │ Exact  │ VU                       │ VU
+//	pattern m            │ Exact   │ VU     │ i ∈ m → Exact, else None │ p ∩ m ≠ ∅ → Exact, else None
+//	concrete j           │ Exact   │ VU     │ i = j → Exact, else None │ j ∈ p → Exact, else None
+//	*                    │ Exact   │ Exact  │ Exact                    │ Exact
 //
 // The last two rows of the main CPE table are a * narrowed by a Range
 // and/or an enumeration. The Range is the version of such a main CPE and is
