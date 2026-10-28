@@ -317,11 +317,30 @@ func stronger(a, b MatchQuality) MatchQuality {
 // version and make the enumeration meaningless), and the entries decide,
 // each by the entry table. So the main CPE row depends on the Range alone:
 // a main CPE with a Range takes the * + Range row whether or not it also
-// has an enumeration, and the entries are then tried in any case. With
-// Range < 2.0 and an NA entry, 1.0 is Exact (the Range), 2.0 is VU (the
-// entry), a pattern query is VU (the entry) and an NA query is Exact (the
-// entry). A Range on a main CPE whose version is not * is ignored; that row
-// applies as it is.
+// has an enumeration, and the entries are then tried in any case. A Range
+// on a main CPE whose version is not * is ignored; that row applies as it
+// is.
+//
+// Worked out for one product, the two tables combine as follows. Rows are
+// criteria (version, Range, enumeration in brackets), columns the query
+// version; E is Exact, VU VersionUnconfirmed, . None, and ! marks a cell
+// that also records the Range-skipped warning. The first eight rows are
+// single cells of the main CPE table; the last four show the combination.
+//
+//	criterion \ query      │ *  │ -  │ 1.0 │ 1.0.1 │ 2.0 │ 1.* │ 1.0.* │ *.0
+//	───────────────────────┼────┼────┼─────┼───────┼─────┼─────┼───────┼─────
+//	*                      │ E  │ E  │ E   │ E     │ E   │ E   │ E     │ E
+//	-                      │ E  │ E  │ VU  │ VU    │ VU  │ VU  │ VU    │ VU
+//	1.0                    │ E  │ VU │ E   │ .     │ .   │ E   │ .     │ E
+//	1.0.1                  │ E  │ VU │ .   │ E     │ .   │ E   │ E     │ .
+//	2.0                    │ E  │ VU │ .   │ .     │ E   │ .   │ .     │ E
+//	1.*                    │ E  │ VU │ E   │ E     │ .   │ E   │ E     │ E
+//	1.0.*                  │ E  │ VU │ .   │ E     │ .   │ E   │ E     │ E
+//	*.0                    │ E  │ VU │ E   │ .     │ E   │ E   │ E     │ E
+//	* + Range < 2.0        │ E  │ VU │ E   │ E     │ .   │ .!  │ .!    │ .!
+//	* + [1.0]              │ E  │ VU │ E   │ .     │ .   │ E   │ .     │ E
+//	* + [-]                │ E  │ E  │ VU  │ VU    │ VU  │ VU  │ VU    │ VU
+//	* + Range < 2.0 + [-]  │ E  │ E  │ E   │ E     │ VU  │ VU! │ VU!   │ VU!
 //
 // Three rules produce the tables:
 //
