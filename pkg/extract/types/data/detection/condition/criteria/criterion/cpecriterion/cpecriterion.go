@@ -141,7 +141,7 @@ type Query struct {
 
 // overlapsExceptVersion reports whether the query and criterion (or
 // CPEMatches entry) WFNs match under CPE name matching on every attribute but
-// the version, the first of the two tables on Accept: each attribute's sets
+// the version, the relation table on Accept: each attribute's sets
 // intersect, so the CPEs can refer to the same product. Each attribute is
 // related by relateValues, which implements Table 6-2 and resolves its
 // undefined cells (a pattern on either side) as the relation of the sets the
@@ -278,45 +278,53 @@ func stronger(a, b MatchQuality) MatchQuality {
 //
 // # Version evaluation (Vuls-specific; the CPE spec has no ranges)
 //
-// Rows are the query version, columns the criterion version. Both tables
-// assume every other attribute intersects; otherwise the cell is None.
-// "narrowed" is a * criterion that carries a Range and/or a CPEMatches
-// enumeration. VU is VersionUnconfirmed: the product matched but there is no
-// version to evaluate.
+// The main CPE and each CPEMatches entry are evaluated separately, on their
+// own names, and the criterion's result is the strongest of them. In both
+// tables the rows are the data side (the version of the main CPE, or of an
+// entry) and the columns the query version; the relation table above has
+// the query on the rows. Both tables assume every other attribute
+// intersects; otherwise the cell is None. VU is VersionUnconfirmed: the
+// product matched but there is no version to evaluate.
 //
 // The main CPE:
 //
-//	query \ criterion │ NA (-) │ pattern m          │ concrete j       │ * not narrowed │ * + Range           │ * + enumeration only
-//	──────────────────┼────────┼────────────────────┼──────────────────┼────────────────┼─────────────────────┼─────────────────────
-//	ANY (*)           │ Exact  │ Exact              │ Exact            │ Exact          │ Exact               │ Exact
-//	NA (-)            │ Exact  │ VU                 │ VU               │ Exact          │ VU                  │ VU
-//	concrete i        │ VU     │ i ∈ m → Exact,     │ i = j → Exact,   │ Exact          │ in Range → Exact,   │ None
-//	                  │        │ else None          │ else None        │                │ else None           │
-//	pattern p         │ VU     │ p ∩ m ≠ ∅ → Exact, │ j ∈ p → Exact,   │ Exact          │ None, with a        │ None
-//	                  │        │ else None          │ else None        │                │ warning (see below) │
+//	main CPE \ query     │ ANY (*) │ NA (-) │ concrete i               │ pattern p
+//	─────────────────────┼─────────┼────────┼──────────────────────────┼──────────────────────────────
+//	NA (-)               │ Exact   │ Exact  │ VU                       │ VU
+//	pattern m            │ Exact   │ VU     │ i ∈ m → Exact, else None │ p ∩ m ≠ ∅ → Exact, else None
+//	concrete j           │ Exact   │ VU     │ i = j → Exact, else None │ j ∈ p → Exact, else None
+//	* not narrowed       │ Exact   │ Exact  │ Exact                    │ Exact
+//	* + Range            │ Exact   │ VU     │ in Range → Exact,        │ None, with a warning
+//	                     │         │        │ else None                │ (see below)
+//	* + enumeration only │ Exact   │ VU     │ None                     │ None
 //
-// Each CPEMatches entry, on its own name:
+// Each CPEMatches entry, on its own name. An entry is never narrowed, so
+// its table is the first four rows of the main CPE table, repeated:
 //
-//	query \ entry │ NA (-) │ pattern m          │ concrete j       │ *
-//	──────────────┼────────┼────────────────────┼──────────────────┼──────
-//	ANY (*)       │ Exact  │ Exact              │ Exact            │ Exact
-//	NA (-)        │ Exact  │ VU                 │ VU               │ Exact
-//	concrete i    │ VU     │ i ∈ m → Exact,     │ i = j → Exact,   │ Exact
-//	              │        │ else None          │ else None        │
-//	pattern p     │ VU     │ p ∩ m ≠ ∅ → Exact, │ j ∈ p → Exact,   │ Exact
-//	              │        │ else None          │ else None        │
+//	entry \ query │ ANY (*) │ NA (-) │ concrete i               │ pattern p
+//	──────────────┼─────────┼────────┼──────────────────────────┼──────────────────────────────
+//	NA (-)        │ Exact   │ Exact  │ VU                       │ VU
+//	pattern m     │ Exact   │ VU     │ i ∈ m → Exact, else None │ p ∩ m ≠ ∅ → Exact, else None
+//	concrete j    │ Exact   │ VU     │ i = j → Exact, else None │ j ∈ p → Exact, else None
+//	*             │ Exact   │ Exact  │ Exact                    │ Exact
 //
-// The criterion's result is the strongest cell over the main CPE and every
-// entry. A * + Range + enumeration criterion is read off both tables: with
+// The last two rows of the main CPE table are a * narrowed by a Range
+// and/or an enumeration. The Range is the version of such a main CPE and is
+// evaluated there, for a concrete query only. An enumeration is not
+// evaluated at the main CPE at all: a * with only an enumeration says
+// nothing about the version by itself (it would otherwise accept every
+// version and make the enumeration meaningless), and the entries decide,
+// each by the entry table. A main CPE with both a Range and an enumeration
+// takes the * + Range row; the entries are then tried in any case, so with
 // Range < 2.0 and an NA entry, 1.0 is Exact (the Range), 2.0 is VU (the
 // entry), a pattern query is VU (the entry) and an NA query is Exact (the
-// entry). A Range on a criterion whose version is not * is ignored; the
-// concrete j column applies.
+// entry). A Range on a main CPE whose version is not * is ignored; that row
+// applies as it is.
 //
 // Three rules produce the tables:
 //
-//  1. Name matching: every attribute's sets must intersect (the first table
-//     on Accept). For the version this means a concrete, pattern or ANY
+//  1. Name matching: every attribute's sets must intersect (the relation
+//     table on Accept). For the version this means a concrete, pattern or ANY
 //     query is Exact against any criterion or entry version it intersects,
 //     including a pattern it only partly overlaps: the query's author chose
 //     the set, and any affected version inside it is reported.
@@ -370,9 +378,9 @@ func (c Criterion) Accept(query Query) (MatchQuality, []warningTypes.Warning, er
 	return quality, ws, nil
 }
 
-// acceptMain evaluates the query against the main CPE: the first table on
-// Accept. rangeSkipped reports that the criterion narrows by a Range which
-// was not consulted because the query version is a pattern.
+// acceptMain evaluates the query against the main CPE: the main CPE table
+// on Accept. rangeSkipped reports that the criterion narrows by a Range
+// which was not consulted because the query version is a pattern.
 func (c Criterion) acceptMain(qWFN, cWFN common.WellFormedName) (quality MatchQuality, rangeSkipped bool, err error) {
 	if !overlapsExceptVersion(qWFN, cWFN) {
 		return MatchQualityNone, false, nil
@@ -433,7 +441,7 @@ func (c Criterion) acceptMain(qWFN, cWFN common.WellFormedName) (quality MatchQu
 }
 
 // acceptEntry evaluates the query against one CPEMatches entry on the
-// entry's own name: the second table on Accept. An entry whose version is NA
+// entry's own name: the entry table on Accept. An entry whose version is NA
 // is treated like an NA criterion (rule 2).
 func acceptEntry(qWFN, mWFN common.WellFormedName) MatchQuality {
 	if !overlapsExceptVersion(qWFN, mWFN) {
