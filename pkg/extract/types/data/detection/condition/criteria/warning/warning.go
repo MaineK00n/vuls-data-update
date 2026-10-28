@@ -45,6 +45,14 @@ const (
 	// absence of endpoints, not any concrete datum, and the range type is
 	// already reachable from the criterion the warning attaches to.
 	KindEmptyRange Kind = "empty-range"
+	// KindPatternQueryRange: the query's version is a name-matching pattern
+	// ("12.*"), which the cpe criterion's Range cannot evaluate; the query
+	// was matched by name against the criterion's enumeration only and did
+	// not reach Exact, so the result could be weaker than the Range would
+	// have given. Cause is the query CPE. Unlike the kinds above it is
+	// recorded by the criterion itself, not carried by an UnevaluableError:
+	// the criterion did evaluate the query, just not all of its data.
+	KindPatternQueryRange Kind = "pattern-query-range"
 )
 
 // Kinds returns every Kind this build knows, in declaration order. The known
@@ -55,6 +63,7 @@ func Kinds() []Kind {
 		KindUnevaluablePackageType,
 		KindUnevaluableRangeType,
 		KindEmptyRange,
+		KindPatternQueryRange,
 	}
 }
 

@@ -5,6 +5,8 @@ import (
 	"testing"
 
 	criterionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion"
+	ccTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/cpecriterion"
+	ccRangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/cpecriterion/range"
 	kbcTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/kbcriterion"
 	necTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/noneexistcriterion"
 	necBinaryPackageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/noneexistcriterion/binary"
@@ -70,6 +72,7 @@ func TestCriterion_Accept(t *testing.T) {
 		Version   *vcTypes.Criterion
 		NoneExist *necTypes.Criterion
 		KB        *kbcTypes.Criterion
+		CPE       *ccTypes.Criterion
 	}
 	type args struct {
 		query criterionTypes.Query
@@ -564,6 +567,40 @@ func TestCriterion_Accept(t *testing.T) {
 				Warnings: []warningTypes.Warning{{Kind: warningTypes.KindUnevaluablePackageType, Cause: "future-package"}},
 			},
 		},
+		{
+			// A warning the cpe criterion records itself (a pattern query
+			// that skipped the Range) surfaces on the result next to the
+			// accepted indexes of the other queries.
+			name: "cpe criterion records the Range skipped for a pattern query",
+			fields: fields{
+				Type: criterionTypes.CriterionTypeCPE,
+				CPE: &ccTypes.Criterion{
+					Vulnerable: true,
+					CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
+					Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeSEMVER, LessThan: "14.23"},
+				},
+			},
+			args: args{
+				query: criterionTypes.Query{CPE: []ccTypes.Query{
+					{CPE: "cpe:2.3:a:vendor:product:12.5:*:*:*:*:*:*:*"},
+					{CPE: "cpe:2.3:a:vendor:product:12.*:*:*:*:*:*:*:*"},
+				}},
+			},
+			want: criterionTypes.FilteredCriterion{
+				Criterion: criterionTypes.Criterion{
+					Type: criterionTypes.CriterionTypeCPE,
+					CPE: &ccTypes.Criterion{
+						Vulnerable: true,
+						CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
+						Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeSEMVER, LessThan: "14.23"},
+					},
+				},
+				Accepts: criterionTypes.AcceptQueries{CPE: criterionTypes.CPEAccepts{Exact: []int{0}}},
+				Warnings: []warningTypes.Warning{
+					{Kind: warningTypes.KindPatternQueryRange, Cause: "cpe:2.3:a:vendor:product:12.*:*:*:*:*:*:*:*"},
+				},
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -572,6 +609,7 @@ func TestCriterion_Accept(t *testing.T) {
 				Version:   tt.fields.Version,
 				NoneExist: tt.fields.NoneExist,
 				KB:        tt.fields.KB,
+				CPE:       tt.fields.CPE,
 			}
 			got, err := c.Accept(tt.args.query, nil)
 			if (err != nil) != tt.wantErr {

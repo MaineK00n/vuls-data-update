@@ -91,7 +91,7 @@ func TestCriterion_Accept_openssh(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := c.Accept(ccTypes.Query{CPE: tt.query})
+			got, _, err := c.Accept(ccTypes.Query{CPE: tt.query})
 			if err != nil {
 				t.Fatal("unexpected error:", err)
 			}
