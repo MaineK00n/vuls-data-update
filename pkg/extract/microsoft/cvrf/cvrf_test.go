@@ -743,9 +743,9 @@ func TestBuildFixedBuildCriterion(t *testing.T) {
 			},
 		},
 		{
-			name: ".NET 10.0 SDK under the old name (2026-Oct)",
+			name: ".NET 10.0 SDK under the old name",
 			args: args{
-				cveID:         "CVE-2026-102870",
+				cveID:         "CVE-2099-0001",
 				productName:   ".NET 10.0 installed on Windows",
 				rawFixedBuild: "10.0.403",
 			},
@@ -791,11 +791,11 @@ func TestBuildFixedBuildCriterion(t *testing.T) {
 			},
 		},
 		{
-			name: ".NET SDK pair corrected to the 2026-09-08 release (CVE-2026-58649)",
+			name: ".NET SDK band left out by CVRF completed (CVE-2026-96238)",
 			args: args{
-				cveID:         "CVE-2026-58649",
+				cveID:         "CVE-2026-96238",
 				productName:   ".NET 9.0 installed on Windows",
-				rawFixedBuild: "9.0.120, 9.0.317",
+				rawFixedBuild: "9.0.122",
 			},
 			want: &criterionTypes.Criterion{
 				Type: criterionTypes.CriterionTypeVersion,
@@ -808,14 +808,14 @@ func TestBuildFixedBuildCriterion(t *testing.T) {
 					},
 					Affected: &affectedTypes.Affected{
 						Type:  affectedrangeTypes.RangeTypeMicrosoftDotNetCore,
-						Range: []affectedrangeTypes.Range{{GreaterEqual: "9.0.100", LessThan: "9.0.121"}, {GreaterEqual: "9.0.300", LessThan: "9.0.318"}},
-						Fixed: []string{"9.0.121", "9.0.318"},
+						Range: []affectedrangeTypes.Range{{GreaterEqual: "9.0.100", LessThan: "9.0.122"}, {GreaterEqual: "9.0.300", LessThan: "9.0.319"}},
+						Fixed: []string{"9.0.122", "9.0.319"},
 					},
 				},
 			},
 		},
 		{
-			name: ".NET SDK band fixed from its first release gets no range",
+			name: ".NET SDK first release of a band fixes the band before it",
 			args: args{
 				cveID:         "CVE-2099-0001",
 				productName:   ".NET 10.0 installed on Mac OS",
@@ -832,7 +832,7 @@ func TestBuildFixedBuildCriterion(t *testing.T) {
 					},
 					Affected: &affectedTypes.Affected{
 						Type:  affectedrangeTypes.RangeTypeMicrosoftDotNetCore,
-						Range: []affectedrangeTypes.Range{{GreaterEqual: "10.0.100", LessThan: "10.0.111"}},
+						Range: []affectedrangeTypes.Range{{GreaterEqual: "10.0.100", LessThan: "10.0.111"}, {GreaterEqual: "10.0.300", LessThan: "10.0.400"}},
 						Fixed: []string{"10.0.111", "10.0.400"},
 					},
 				},
