@@ -392,6 +392,15 @@ func TestBuildFixedBuildCriterion(t *testing.T) {
 			want: nil,
 		},
 		{
+			name: ".NET runtime with an SDK version fails",
+			args: args{
+				cveID:         "CVE-2099-0001",
+				productName:   ".NET 10.0 runtime installed on Windows",
+				rawFixedBuild: "10.0.402",
+			},
+			wantErr: true,
+		},
+		{
 			name: ".NET 11.0 runtime installed on Windows (parseable FixedBuild reaches the new switch entry)",
 			args: args{
 				cveID:         "CVE-2026-58649",

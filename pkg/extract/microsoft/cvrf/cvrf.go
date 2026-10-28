@@ -1960,7 +1960,17 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 			".NET 6.0 installed on Windows",
 			".NET 7.0",
 			".NET 8.0",
-			".NET 8.0 runtime installed on Linux",
+			".NET Core 2.1",
+			".NET Core 3.1":
+			if _, err := dotnetcoreversion.NewVersion(fixedBuild); err != nil {
+				return rangeTypes.RangeTypeUnknown, errors.Wrap(err, "dotnetcoreversion.NewVersion")
+			}
+			return rangeTypes.RangeTypeMicrosoftDotNetCore, nil
+
+		// .NET runtime (2026-Oct names). An SDK feature band here (patch 100 or above, e.g.
+		// "10.0.402") would make every runtime fall below it; such a product is the SDK
+		// and needs a productNameOverrides entry.
+		case ".NET 8.0 runtime installed on Linux",
 			".NET 8.0 runtime installed on Mac OS",
 			".NET 8.0 runtime installed on Windows",
 			".NET 9.0 runtime installed on Linux",
@@ -1971,11 +1981,13 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 			".NET 10.0 runtime installed on Windows",
 			".NET 11.0 runtime installed on Linux",
 			".NET 11.0 runtime installed on Mac OS",
-			".NET 11.0 runtime installed on Windows",
-			".NET Core 2.1",
-			".NET Core 3.1":
-			if _, err := dotnetcoreversion.NewVersion(fixedBuild); err != nil {
+			".NET 11.0 runtime installed on Windows":
+			v, err := dotnetcoreversion.NewVersion(fixedBuild)
+			if err != nil {
 				return rangeTypes.RangeTypeUnknown, errors.Wrap(err, "dotnetcoreversion.NewVersion")
+			}
+			if v.Patch >= 100 {
+				return rangeTypes.RangeTypeUnknown, errors.Errorf("unexpected .NET runtime version. expected: %q, actual: %q", "a patch below 100", fixedBuild)
 			}
 			return rangeTypes.RangeTypeMicrosoftDotNetCore, nil
 
