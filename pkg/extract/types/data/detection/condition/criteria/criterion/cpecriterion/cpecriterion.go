@@ -230,7 +230,7 @@ func (q MatchQuality) String() string {
 // (or a CPEMatches entry) as the target, per Table 6-2 of the spec. String
 // comparison is case-insensitive (§6.2). An unquoted "*" matches zero or more
 // characters and an unquoted "?" zero or one (§6.3), and either may appear only
-// at the beginning and/or end of a value (§5.2).
+// at the beginning and/or end of a value (NISTIR 7695 §5.3.2).
 //
 //	source \ target │ ANY │ NA │ i (concrete) │ m (pattern)
 //	────────────────┼─────┼────┼──────────────┼────────────
@@ -451,9 +451,9 @@ func (c Criterion) acceptNAQuery(qWFN, cWFN common.WellFormedName) (MatchQuality
 	case overlaps(qWFN, cWFN):
 		// Only an NA (EQUAL) or * (SUPERSET) criterion version overlaps an NA
 		// query; a concrete version is DISJOINT and so is a pattern (Table
-		// 6-2, rows 15 and 16). NA fixes
-		// the product but not the version and ignores narrowing (as for any
-		// query); * without narrowing affects every version.
+		// 6-2, rows 15 and 16). NA fixes the product but not the version and
+		// ignores narrowing (as for any query); * without narrowing affects
+		// every version.
 		if isNA(cWFN.Get(common.AttributeVersion)) || (c.Range == nil && len(c.CPEMatches) == 0) {
 			return MatchQualityExact, nil
 		}
