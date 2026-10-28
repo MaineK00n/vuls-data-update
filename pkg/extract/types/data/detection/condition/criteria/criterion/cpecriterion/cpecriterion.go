@@ -26,7 +26,8 @@ type CPE string
 //     versioncriterion.Criterion.FixStatus; tag for downstream consumers
 //     (e.g. reporting), NOT consulted by Accept
 //
-// The affected set is described by the main CPE and an enumeration, which
+// The affected set is described by the main CPE and an enumeration of
+// concrete CPE names (CPEMatches; "entry" below is one of its names), which
 // Accept evaluates independently of each other and combines by taking the
 // stronger result:
 //   - CPE: the criterion's canonical CPE string (wildcards permitted). A
@@ -45,7 +46,7 @@ type CPE string
 //
 // Fixed lives at the end as a separate concern (which versions fix the
 // vulnerability), kept off the affected path:
-//   - Fixed: optional enumeration of fixed-version strings (scoped to the
+//   - Fixed: optional list of fixed-version strings (scoped to the
 //     criterion's CPE — typically extractors partition by product family
 //     so the criterion CPE pins vendor/product and Fixed lists only the
 //     versions). Mirrors versioncriterion/affected.Affected.Fixed exactly.
@@ -301,12 +302,12 @@ func stronger(a, b MatchQuality) MatchQuality {
 // Each CPEMatches entry, on its own name. An entry is never narrowed, so
 // its table is the first four rows of the main CPE table, repeated:
 //
-//	entry \ query        │ ANY (*) │ NA (-) │ concrete i               │ pattern p
-//	─────────────────────┼─────────┼────────┼──────────────────────────┼──────────────────────────────
-//	NA (-)               │ Exact   │ Exact  │ VU                       │ VU
-//	pattern m            │ Exact   │ VU     │ i ∈ m → Exact, else None │ p ∩ m ≠ ∅ → Exact, else None
-//	concrete j           │ Exact   │ VU     │ i = j → Exact, else None │ j ∈ p → Exact, else None
-//	*                    │ Exact   │ Exact  │ Exact                    │ Exact
+//	entry \ query │ ANY (*) │ NA (-) │ concrete i               │ pattern p
+//	──────────────┼─────────┼────────┼──────────────────────────┼──────────────────────────────
+//	NA (-)        │ Exact   │ Exact  │ VU                       │ VU
+//	pattern m     │ Exact   │ VU     │ i ∈ m → Exact, else None │ p ∩ m ≠ ∅ → Exact, else None
+//	concrete j    │ Exact   │ VU     │ i = j → Exact, else None │ j ∈ p → Exact, else None
+//	*             │ Exact   │ Exact  │ Exact                    │ Exact
 //
 // The last two rows of the main CPE table are a * narrowed by a Range
 // and/or an enumeration. The Range is the version of such a main CPE and is
@@ -314,8 +315,9 @@ func stronger(a, b MatchQuality) MatchQuality {
 // evaluated at the main CPE at all: a * with only an enumeration says
 // nothing about the version by itself (it would otherwise accept every
 // version and make the enumeration meaningless), and the entries decide,
-// each by the entry table. A main CPE with both a Range and an enumeration
-// takes the * + Range row; the entries are then tried in any case, so with
+// each by the entry table. So the main CPE row depends on the Range alone:
+// a main CPE with a Range takes the * + Range row whether or not it also
+// has an enumeration, and the entries are then tried in any case. With
 // Range < 2.0 and an NA entry, 1.0 is Exact (the Range), 2.0 is VU (the
 // entry), a pattern query is VU (the entry) and an NA query is Exact (the
 // entry). A Range on a main CPE whose version is not * is ignored; that row
