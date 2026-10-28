@@ -313,6 +313,55 @@ func TestCriterion_Accept(t *testing.T) {
 			want: ccTypes.MatchQualityNone,
 		},
 		{
+			// An NA entry in the enumeration is treated like an NA criterion
+			// (the NA column of the version table): the product matched, the
+			// version cannot be evaluated.
+			name: "CPEMatches NA entry only, concrete query -> VersionUnconfirmed",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
+				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeSEMVER, LessThan: "12.0"},
+				CPEMatches: []ccTypes.CPE{"cpe:2.3:a:vendor:product:-:*:*:*:*:*:*:*"},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:12.3:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityVersionUnconfirmed,
+		},
+		{
+			name: "CPEMatches NA entry only, query pattern -> VersionUnconfirmed",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
+				CPEMatches: []ccTypes.CPE{"cpe:2.3:a:vendor:product:-:*:*:*:*:*:*:*"},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:12.*:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityVersionUnconfirmed,
+		},
+		{
+			name: "CPEMatches NA entry with disjoint target_sw, concrete query -> None",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:linux:*:*",
+				CPEMatches: []ccTypes.CPE{"cpe:2.3:a:vendor:product:-:*:*:*:*:linux:*:*"},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:12.3:*:*:*:*:windows:*:*"}},
+			want: ccTypes.MatchQualityNone,
+		},
+		{
+			// The strongest entry wins regardless of order: the NA entry
+			// yields VersionUnconfirmed, the concrete one Exact.
+			name: "CPEMatches NA entry then concrete entry equal to the query -> Exact",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
+				CPEMatches: []ccTypes.CPE{
+					"cpe:2.3:a:vendor:product:-:*:*:*:*:*:*:*",
+					"cpe:2.3:a:vendor:product:12.3:*:*:*:*:*:*:*",
+				},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:12.3:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityExact,
+		},
+		{
 			name: "CPEMatches entry partial wildcard, query version ANY -> Exact (query=ANY)",
 			fields: fields{
 				Vulnerable: true,

@@ -405,7 +405,10 @@ func (c Criterion) Accept(query Query) (MatchQuality, error) {
 	// edition-divergence cases in source data). The query version is ANY,
 	// concrete or a pattern here (an NA query takes acceptNAQuery), and any of
 	// them is confirmed by an entry it overlaps, evaluated by name matching
-	// like an un-narrowed criterion.
+	// like an un-narrowed criterion. An entry whose version is NA is treated
+	// like an NA criterion (rule 2): VU when the other attributes agree. The
+	// strongest entry wins, so the result does not depend on entry order.
+	quality := MatchQualityNone
 	for _, m := range c.CPEMatches {
 		mWFN, err := naming.UnbindFS(string(m))
 		if err != nil {
@@ -414,9 +417,18 @@ func (c Criterion) Accept(query Query) (MatchQuality, error) {
 		if overlaps(qWFN, mWFN) {
 			return MatchQualityExact, nil
 		}
+		if mWFN.GetString(common.AttributeVersion) == "NA" {
+			mAnyVer, err := withAnyVersion(mWFN)
+			if err != nil {
+				return MatchQualityUnknown, errors.Wrap(err, "neutralise cpe match version")
+			}
+			if overlaps(qWFN, mAnyVer) {
+				quality = MatchQualityVersionUnconfirmed
+			}
+		}
 	}
 
-	return MatchQualityNone, nil
+	return quality, nil
 }
 
 // acceptNAQuery is Accept for a version=NA query: the scan has no version.
