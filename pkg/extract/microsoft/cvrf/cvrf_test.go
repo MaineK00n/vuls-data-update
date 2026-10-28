@@ -839,6 +839,39 @@ func TestBuildFixedBuildCriterion(t *testing.T) {
 			},
 		},
 		{
+			name: ".NET SDK X.Y.100 and X.Y.200 cover no released band",
+			args: args{
+				cveID:         "CVE-2099-0001",
+				productName:   ".NET 11.0 installed on Linux",
+				rawFixedBuild: "11.0.100, 11.0.200",
+			},
+			want: nil,
+		},
+		{
+			name: ".NET SDK X.Y.200 does not retire the 1xx band",
+			args: args{
+				cveID:         "CVE-2099-0001",
+				productName:   ".NET 11.0 installed on Windows",
+				rawFixedBuild: "11.0.105, 11.0.200",
+			},
+			want: &criterionTypes.Criterion{
+				Type: criterionTypes.CriterionTypeVersion,
+				Version: &vcTypes.Criterion{
+					Vulnerable: true,
+					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
+					Package: packageTypes.Package{
+						Type:   packageTypes.PackageTypeBinary,
+						Binary: &binaryTypes.Package{Name: ".NET 11.0 installed on Windows"},
+					},
+					Affected: &affectedTypes.Affected{
+						Type:  affectedrangeTypes.RangeTypeMicrosoftDotNetCore,
+						Range: []affectedrangeTypes.Range{{GreaterEqual: "11.0.100", LessThan: "11.0.105"}},
+						Fixed: []string{"11.0.105"},
+					},
+				},
+			},
+		},
+		{
 			name: ".NET SDK prerelease skipped",
 			args: args{
 				cveID:         "CVE-2026-102870",

@@ -1745,8 +1745,10 @@ var productNameOverrides = map[[2]string]string{
 // < fixed". The first release of a band (e.g. "10.0.400") is the fix of the band
 // before it, which Microsoft retires by moving its users to the next band: "X.Y.(B-1)00
 // <= v < X.Y.B00" (the CVE-2026-58649 advisory lists "10.0.3xx: >= 10.0.300, <=
-// 10.0.399, patched 10.0.400"). CVRF does not always list every affected band (see
-// fixedBuildOverrides). Prerelease tags (see releaseCandidateTagRE) are skipped.
+// 10.0.399, patched 10.0.400"). The 1xx band is serviced alongside the later bands
+// rather than retired, so X.Y.100 and X.Y.200 cover no released band and give no
+// range. CVRF does not always list every affected band (see fixedBuildOverrides).
+// Prerelease tags (see releaseCandidateTagRE) are skipped.
 func buildDotNetSDKCriterion(productName, fixedBuild string) (*criterionTypes.Criterion, error) {
 	n := strings.Count(fixedBuild, ",") + 1
 	ranges := make([]rangeTypes.Range, 0, n)
@@ -1764,12 +1766,13 @@ func buildDotNetSDKCriterion(productName, fixedBuild string) (*criterionTypes.Cr
 			return nil, errors.Errorf("unexpected .NET SDK version. expected: %q, actual: %q", "a feature band of 100 or above", f)
 		}
 
-		fixed = append(fixed, f)
 		switch band := v.Patch / 100; {
 		case v.Patch%100 != 0:
 			ranges = append(ranges, rangeTypes.Range{GreaterEqual: fmt.Sprintf("%d.%d.%d00", v.Major, v.Minor, band), LessThan: f})
-		case band > 1:
+			fixed = append(fixed, f)
+		case band > 2:
 			ranges = append(ranges, rangeTypes.Range{GreaterEqual: fmt.Sprintf("%d.%d.%d00", v.Major, v.Minor, band-1), LessThan: f})
+			fixed = append(fixed, f)
 		}
 	}
 	if len(ranges) == 0 {
