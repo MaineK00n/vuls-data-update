@@ -1739,24 +1739,6 @@ var productNameOverrides = map[[2]string]string{
 	{"CVE-2026-96957", ".NET 11.0 runtime installed on Windows"}: ".NET 11.0 installed on Windows",
 }
 
-// dotnetSDKProductNames are the .NET SDK products: 2026-Oct names the runtime
-// ".NET X runtime installed on <OS>" and gives the SDK the earlier runtime name
-// ".NET X installed on <OS>" (see productNameOverrides).
-var dotnetSDKProductNames = map[string]struct{}{
-	".NET 8.0 installed on Linux":    {},
-	".NET 8.0 installed on Mac OS":   {},
-	".NET 8.0 installed on Windows":  {},
-	".NET 9.0 installed on Linux":    {},
-	".NET 9.0 installed on Mac OS":   {},
-	".NET 9.0 installed on Windows":  {},
-	".NET 10.0 installed on Linux":   {},
-	".NET 10.0 installed on Mac OS":  {},
-	".NET 10.0 installed on Windows": {},
-	".NET 11.0 installed on Linux":   {},
-	".NET 11.0 installed on Mac OS":  {},
-	".NET 11.0 installed on Windows": {},
-}
-
 // buildDotNetSDKCriterion builds the criterion of a .NET SDK product. Its FixedBuild
 // lists the fixed version of each affected SDK feature band, comma-separated when
 // more than one (e.g. "8.0.130, 8.0.424": the 1xx band is fixed in 8.0.130 and the
@@ -1829,7 +1811,14 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 		return nil, nil
 	}
 
-	if _, ok := dotnetSDKProductNames[productName]; ok {
+	// .NET SDK products: 2026-Oct names the runtime ".NET X runtime installed on <OS>"
+	// and gives the SDK the earlier runtime name ".NET X installed on <OS>" (see
+	// productNameOverrides)
+	switch productName {
+	case ".NET 8.0 installed on Linux", ".NET 8.0 installed on Mac OS", ".NET 8.0 installed on Windows",
+		".NET 9.0 installed on Linux", ".NET 9.0 installed on Mac OS", ".NET 9.0 installed on Windows",
+		".NET 10.0 installed on Linux", ".NET 10.0 installed on Mac OS", ".NET 10.0 installed on Windows",
+		".NET 11.0 installed on Linux", ".NET 11.0 installed on Mac OS", ".NET 11.0 installed on Windows":
 		return buildDotNetSDKCriterion(productName, fixedBuild)
 	}
 
