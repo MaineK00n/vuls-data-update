@@ -10,7 +10,6 @@ import (
 	"path/filepath"
 	"regexp"
 	"slices"
-	"strconv"
 	"strings"
 	"time"
 	"unicode"
@@ -1748,32 +1747,24 @@ var productNameOverrides = map[[2]string]string{
 // whose first release is the fix (e.g. "10.0.400") is never affected and gets no
 // range. Prerelease tags (see releaseCandidateTagRE) are skipped.
 func buildDotNetSDKCriterion(productName, fixedBuild string) (*criterionTypes.Criterion, error) {
-	var (
-		ranges []rangeTypes.Range
-		fixed  []string
-	)
+	n := strings.Count(fixedBuild, ",") + 1
+	ranges := make([]rangeTypes.Range, 0, n)
+	fixed := make([]string, 0, n)
 	for f := range strings.SplitSeq(fixedBuild, ",") {
 		f = strings.TrimSpace(f)
 		if releaseCandidateTagRE.MatchString(f) {
 			continue
 		}
-		if _, err := dotnetcoreversion.NewVersion(f); err != nil {
+		v, err := dotnetcoreversion.NewVersion(f)
+		if err != nil {
 			return nil, errors.Wrapf(err, "dotnetcoreversion.NewVersion %q", f)
 		}
-		ss := strings.Split(f, ".")
-		if len(ss) != 3 {
-			return nil, errors.Errorf("unexpected .NET SDK version. expected: %q, actual: %q", "<major>.<minor>.<feature band><patch>", f)
-		}
-		patch, err := strconv.Atoi(ss[2])
-		if err != nil {
-			return nil, errors.Wrapf(err, "parse .NET SDK version %q", f)
-		}
-		if patch < 100 {
+		if v.Patch < 100 {
 			return nil, errors.Errorf("unexpected .NET SDK version. expected: %q, actual: %q", "a feature band of 100 or above", f)
 		}
 
 		fixed = append(fixed, f)
-		if band := fmt.Sprintf("%s.%s.%d00", ss[0], ss[1], patch/100); band != f {
+		if band := fmt.Sprintf("%d.%d.%d00", v.Major, v.Minor, v.Patch/100); band != f {
 			ranges = append(ranges, rangeTypes.Range{GreaterEqual: band, LessThan: f})
 		}
 	}
@@ -1819,7 +1810,11 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 		".NET 9.0 installed on Linux", ".NET 9.0 installed on Mac OS", ".NET 9.0 installed on Windows",
 		".NET 10.0 installed on Linux", ".NET 10.0 installed on Mac OS", ".NET 10.0 installed on Windows",
 		".NET 11.0 installed on Linux", ".NET 11.0 installed on Mac OS", ".NET 11.0 installed on Windows":
-		return buildDotNetSDKCriterion(productName, fixedBuild)
+		c, err := buildDotNetSDKCriterion(productName, fixedBuild)
+		if err != nil {
+			return nil, errors.Wrapf(err, "build .NET SDK criterion for %s (%s)", cveID, productName)
+		}
+		return c, nil
 	}
 
 	// Skip non-version values that appear in raw CVRF FixedBuild fields:
@@ -2234,7 +2229,9 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 			"Microsoft Visual Studio 2019 Version 16.10",
 			"Microsoft Visual Studio 2019 Version 16.11",
 			"Microsoft Visual Studio 2019 Version 16.4",
+			"Microsoft Visual Studio 2019 Version 16.6",
 			"Microsoft Visual Studio 2019 Version 16.7",
+			"Microsoft Visual Studio 2019 Version 16.8",
 			"Microsoft Visual Studio 2019 Version 16.9",
 			"Microsoft Visual Studio 2022 Version 17.0",
 			"Microsoft Visual Studio 2022 Version 17.1",
@@ -3508,7 +3505,7 @@ func buildKBCriterion(product, kbID string) *criterionTypes.Criterion {
 // The product name is part of the key (parallel to fixedBuildOverrides) so
 // each entry is exact-match and self-validating: no fuzzy/substring matching
 // is performed at lookup time. Entries are generated from observed CVRF
-// (productName, KBID) tuples, normalized via microsoftutil.NormalizeProductName.
+// (productName, KBID) tuples, normalized via normalizeProductName.
 var kbCumulativeTwins = map[[2]string]string{
 	// 2017-May (Delta→Cumulative)
 	{"Internet Explorer 11 on Windows 10 Version 1607 for 32-bit Systems", "4019472"}:               "4023680",

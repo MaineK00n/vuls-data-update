@@ -1489,9 +1489,9 @@ func TestNormalizeProductName(t *testing.T) {
 		},
 		{
 			name:        "microsoftutil.NormalizeProductName applied first",
-			cveID:       "CVE-2026-58649",
-			productName: ".NET 8.0  installed on windows",
-			want:        ".NET 8.0 installed on windows",
+			cveID:       "CVE-2026-69304",
+			productName: ".NET 8.0  installed on Windows",
+			want:        ".NET 8.0 runtime installed on Windows",
 		},
 	}
 	for _, tt := range tests {
