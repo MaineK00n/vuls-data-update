@@ -73,13 +73,6 @@ func patternString(v any) string {
 	return v.(string)
 }
 
-// isPattern reports whether an attribute value is a string carrying unquoted
-// wild cards (ANY is a logical value, not a pattern).
-func isPattern(v any) bool {
-	s, ok := v.(string)
-	return ok && hasWildcards(s)
-}
-
 // hasWildcards reports whether a string attribute value carries unquoted wild
 // cards, by the same quoting rule parsePattern applies: a wild card is quoted
 // by an odd number of preceding backslashes, so "a\\*" (an escaped

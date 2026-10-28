@@ -51,7 +51,7 @@ type CPE string
 //
 //	(CPE-attr-match AND (
 //	    c.version is NA                          // product only: VU, or Exact for query=ANY (ignores narrowing)
-//	    OR (Range==nil AND len(CPEMatches)==0)   // no narrowing (a pattern version on both sides may be VU)
+//	    OR (Range==nil AND len(CPEMatches)==0)   // no narrowing
 //	    OR query-version is ANY                  // the scan asks for every version
 //	    OR query-version is NA                   // no version to evaluate: VU
 //	    OR (query-version is concrete AND Range matches)
@@ -141,42 +141,25 @@ type Query struct {
 	CPE string
 }
 
-// nameMatch evaluates the query against a criterion (or CPEMatches entry) WFN
-// under CPE name matching alone, the first of the two tables on Accept: None
-// when any attribute is disjoint, otherwise Exact — or VersionUnconfirmed when
-// both versions are patterns and the query's is not contained in the
-// criterion's. Each attribute is related by relateValues, which implements
-// Table 6-2 and resolves its undefined cells (a pattern on either side) as
-// the relation of the sets the patterns denote; go-cpe's matching package is
-// not used, as it evaluates wild cards on the source side only and reports a
-// target-side pattern as UNDEFINED.
-func nameMatch(q, c common.WellFormedName) MatchQuality {
-	quality := MatchQualityExact
+// overlaps reports whether the query and criterion (or CPEMatches entry) WFNs
+// match under CPE name matching, the first of the two tables on Accept: every
+// attribute's sets intersect, so the CPEs can refer to the same thing. Each
+// attribute is related by relateValues, which implements Table 6-2 and
+// resolves its undefined cells (a pattern on either side) as the relation of
+// the sets the patterns denote; go-cpe's matching package is not used, as it
+// evaluates wild cards on the source side only and reports a target-side
+// pattern as UNDEFINED.
+func overlaps(q, c common.WellFormedName) bool {
 	for _, attr := range []string{
 		common.AttributePart, common.AttributeVendor, common.AttributeProduct, common.AttributeVersion,
 		common.AttributeUpdate, common.AttributeEdition, common.AttributeLanguage, common.AttributeSwEdition,
 		common.AttributeTargetSw, common.AttributeTargetHw, common.AttributeOther,
 	} {
-		qv, cv := q.Get(attr), c.Get(attr)
-		switch rel := relateValues(qv, cv); {
-		case rel == patternDisjoint:
-			return MatchQualityNone
-		case attr == common.AttributeVersion && (rel == patternSuperset || rel == patternOverlap) && isPattern(qv) && isPattern(cv):
-			// Two version patterns whose query set is not within the
-			// criterion's: some of the versions asked about are affected,
-			// not all (table 2 on Accept). For a non-version attribute any
-			// intersection is compatible, and a query of ANY or a pattern
-			// containing a concrete criterion version stays Exact.
-			quality = MatchQualityVersionUnconfirmed
+		if relateValues(q.Get(attr), c.Get(attr)) == patternDisjoint {
+			return false
 		}
 	}
-	return quality
-}
-
-// overlaps reports whether the query and criterion WFNs are non-disjoint —
-// their attribute sets intersect, so the CPEs can refer to the same thing.
-func overlaps(q, c common.WellFormedName) bool {
-	return nameMatch(q, c) != MatchQualityNone
+	return true
 }
 
 // MatchQuality describes how strongly a Criterion matched a Query. It is a
@@ -197,28 +180,25 @@ const (
 	// the query (disjoint attributes, out of range, enumeration miss).
 	MatchQualityNone
 	// MatchQualityExact means the criterion accepts the query with sufficient
-	// version evidence: a concrete query version confirmed by equality, range,
-	// enumeration, or a criterion-side pattern that contains it; a pattern
-	// query version ("12.*") contained in the criterion's pattern, or
-	// containing the criterion version or an enumerated name (the CVE pins
-	// that version, and it is one the query asks about); a version=*
-	// criterion with no range/cpematches (every version of the product is
-	// affected); a version=NA query matched by an NA criterion, an un-narrowed
-	// * criterion, or an NA / * cpematches entry (EQUAL / SUPERSET, a match
-	// under CPE name matching); OR a query whose version is ANY — the scan
-	// asks for all versions of the product, so any match is reported with
-	// full confidence (respecting the intent of whoever wrote the query).
+	// version evidence: the query version (a concrete value, a pattern such
+	// as "12.*", or ANY) intersects the criterion version, an enumerated name,
+	// or — for a concrete query — the Range; a version=NA query matched by an
+	// NA criterion, an un-narrowed * criterion, or an NA / * cpematches entry
+	// (EQUAL / SUPERSET, a match under CPE name matching). A set-valued query
+	// (a pattern or ANY) is Exact as soon as the criterion intersects it: the
+	// query's author chose the set, and any affected version inside it is
+	// reported with full confidence. (For ANY this is deliberately stronger
+	// than go-cve-dictionary, which reported a version-less query at
+	// vendor:product.)
 	MatchQualityExact
 	// MatchQualityVersionUnconfirmed means the criterion accepts the query on
-	// every non-version attribute but the version cannot be confirmed: the
-	// criterion version is NA against a concrete or pattern query; the query
-	// version is NA against a concrete version, a pattern, a range, or an
-	// enumeration with no NA / * entry; or both versions are patterns whose
-	// sets intersect without the query's being contained in the criterion's
-	// (some of the versions the query asks about are affected, not all). The
-	// NA cases are DISJOINT under CPE name matching and accepted only as a
-	// relaxation. (An NA query against an NA / * criterion or entry is Exact
-	// instead — see MatchQualityExact.)
+	// every non-version attribute but the version cannot be confirmed because
+	// one side has none: the criterion version is NA against a concrete or
+	// pattern query, or the query version is NA against a concrete version,
+	// a pattern, a range, or an enumeration with no NA / * entry. Both are
+	// DISJOINT under CPE name matching and accepted only as a relaxation. (An
+	// NA query against an NA / * criterion or entry is Exact instead — see
+	// MatchQualityExact.)
 	MatchQualityVersionUnconfirmed
 )
 
@@ -264,42 +244,46 @@ func (q MatchQuality) String() string {
 // at the ends of a value) makes every value a set of strings — a concrete
 // value a singleton, ANY every string, a pattern the strings it denotes — so
 // a pattern on either side, or on both, is related as a set: =, ⊂, ⊃, a
-// partial overlap, or ≠. On a non-version attribute any intersection is
-// compatible; on the version it is graded by the table below.
+// partial overlap, or ≠. Any intersection is a match on that attribute; the
+// direction of containment does not matter. This holds for the version too,
+// subject to the two Vuls-specific rules below.
 //
 // # Version evaluation (Vuls-specific; the CPE spec has no ranges)
 //
 // Rows are the query version, columns the criterion. "enum" is the CPEMatches
 // enumeration (plus, for a pattern query, any packed enumeration a source
 // carries), each entry being evaluated by the NA / pattern / concrete columns.
-// VU is VersionUnconfirmed: the product matched but the version could not be
-// confirmed.
+// VU is VersionUnconfirmed: the product matched but there is no version to
+// evaluate.
 //
 //	query \ criterion │ NA (-)  │ pattern m             │ * (no narrowing) │ * + Range                │ * + enum          │ concrete j
 //	──────────────────┼─────────┼───────────────────────┼──────────────────┼──────────────────────────┼───────────────────┼───────────────
 //	ANY (*)           │ Exact   │ Exact                 │ Exact            │ Exact                    │ Exact             │ Exact
 //	NA (-)            │ Exact   │ VU                    │ Exact            │ VU¹                      │ VU¹               │ VU
-//	concrete i        │ VU      │ i ∈ m → Exact,        │ Exact            │ in Range → Exact,        │ by entry,         │ i = j → Exact,
-//	                  │         │ else None             │                  │ else try enum, else None │ strongest wins    │ else None
-//	pattern p         │ VU      │ p ⊆ m → Exact,        │ Exact            │ by entry (Range is not   │ by entry,         │ j ∈ p → Exact,
-//	                  │         │ m ⊂ p or partial → VU,│                  │ consulted), else None    │ strongest wins    │ else None
-//	                  │         │ else None             │                  │                          │                   │
+//	concrete i        │ VU      │ i ∈ m → Exact,        │ Exact            │ in Range → Exact,        │ by entry          │ i = j → Exact,
+//	                  │         │ else None             │                  │ else try enum, else None │                   │ else None
+//	pattern p         │ VU      │ p ∩ m ≠ ∅ → Exact,    │ Exact            │ by entry (Range is not   │ by entry          │ j ∈ p → Exact,
+//	                  │         │ else None             │                  │ consulted), else None    │                   │ else None
 //
 //	¹ an NA or * entry in the enumeration lifts it to Exact.
 //
-// Exact rests on one of two grounds: the set of versions the query asks about
-// is contained in the criterion's (criterion *, i = j, i ∈ m, p ⊆ m), or the
-// criterion pins one concrete version that is among those asked about (j ∈ p,
-// an enumerated name ∈ p, and ANY against anything). A query of ANY is Exact
-// against every criterion as the explicit wish to see all versions. VU is an
-// intersection with neither ground (m ⊂ p, a partial overlap) or an NA on
-// either side; None is no intersection.
+// Three rules produce the table:
 //
-// Range is consulted only for a concrete query: a pattern is evaluated by name
-// against the enumeration alone, so a criterion that expresses its affected
-// versions only as a Range matches no pattern. An NA criterion version fixes
-// the product but not the version, so it ignores narrowing and reports VU for
-// every query but ANY. The strongest result across the enumeration wins.
+//  1. Name matching: every attribute's sets must intersect (table above).
+//     For the version this means a concrete, pattern or ANY query is Exact
+//     against any criterion version it intersects, including a criterion
+//     pattern it only partly overlaps: the query's author chose the set, and
+//     any affected version inside it is reported.
+//  2. NA: a version of NA on either side, against a concrete version, a
+//     pattern, or a narrowed *, is VU rather than None — the product matched
+//     but one side has no version to evaluate. NA against NA or an
+//     un-narrowed * is Exact by rule 1.
+//  3. Narrowing (criterion * with a Range and/or enumeration): a concrete
+//     query is accepted by the Range, else by an entry it overlaps; a pattern
+//     query by an entry it overlaps only, the Range never being consulted,
+//     so a criterion that expresses its affected versions only as a Range
+//     matches no pattern; an ANY query ignores narrowing; an NA query is VU
+//     by rule 2 unless an NA / * entry makes it Exact.
 func (c Criterion) Accept(query Query) (MatchQuality, error) {
 	qWFN, err := naming.UnbindFS(query.CPE)
 	if err != nil {
@@ -343,8 +327,8 @@ func (c Criterion) Accept(query Query) (MatchQuality, error) {
 		}
 		// Non-version attributes disagree; fall through to CPEMatches.
 	default:
-		switch nm := nameMatch(qWFN, cWFN); {
-		case nm == MatchQualityNone:
+		switch {
+		case !overlaps(qWFN, cWFN):
 			// Main CPE disjoint from the query; only CPEMatches can still
 			// match.
 		case qv == "ANY":
@@ -358,10 +342,9 @@ func (c Criterion) Accept(query Query) (MatchQuality, error) {
 			// No narrowing → accept on name matching alone: version=* (every
 			// version of the product is affected), a concrete query equal to
 			// the concrete criterion version or contained in a pattern one, a
-			// pattern query containing the criterion version. Patterns on
-			// both sides are Exact or VU as graded by nameMatch (a disjoint
-			// pair would have been None above).
-			return nm, nil
+			// pattern query intersecting the criterion version or pattern (a
+			// disjoint pair would have been None above).
+			return MatchQualityExact, nil
 		case hasWildcards(qv):
 			// A pattern query ("12.*") denotes a set of names, which no Range
 			// can evaluate; it is matched by name against the CPEMatches
@@ -420,24 +403,20 @@ func (c Criterion) Accept(query Query) (MatchQuality, error) {
 	// short-circuit nor Range accepted (out-of-Range exceptions, or a pattern
 	// query), or (b) main CPE was disjoint (defensive — covers
 	// edition-divergence cases in source data). The query version is ANY,
-	// concrete or a pattern here (an NA query takes acceptNAQuery), and each
-	// entry is evaluated by name matching like an un-narrowed criterion. The
-	// strongest entry wins, so the result does not depend on entry order.
-	quality := MatchQualityNone
+	// concrete or a pattern here (an NA query takes acceptNAQuery), and any of
+	// them is confirmed by an entry it overlaps, evaluated by name matching
+	// like an un-narrowed criterion.
 	for _, m := range c.CPEMatches {
 		mWFN, err := naming.UnbindFS(string(m))
 		if err != nil {
 			return MatchQualityUnknown, errors.Wrapf(err, "unbind %q to WFN", string(m))
 		}
-		switch nameMatch(qWFN, mWFN) {
-		case MatchQualityExact:
+		if overlaps(qWFN, mWFN) {
 			return MatchQualityExact, nil
-		case MatchQualityVersionUnconfirmed:
-			quality = MatchQualityVersionUnconfirmed
 		}
 	}
 
-	return quality, nil
+	return MatchQualityNone, nil
 }
 
 // acceptNAQuery is Accept for a version=NA query: the scan has no version.

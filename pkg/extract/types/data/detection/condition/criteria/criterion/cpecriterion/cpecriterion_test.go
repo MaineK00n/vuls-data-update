@@ -200,8 +200,8 @@ func TestCriterion_Accept(t *testing.T) {
 		},
 		{
 			// Patterns on both sides (Table 6-2 row 17, undefined) are related
-			// as the sets they denote: the query set contained in the
-			// criterion set is Exact, ...
+			// as the sets they denote: any intersection is Exact, whichever
+			// side contains the other or neither does, ...
 			name: "criterion version partial wildcard, identical query pattern -> Exact",
 			fields: fields{
 				Vulnerable: true,
@@ -220,38 +220,37 @@ func TestCriterion_Accept(t *testing.T) {
 			want: ccTypes.MatchQualityExact,
 		},
 		{
-			// ... a query set that reaches beyond the criterion set is
-			// VersionUnconfirmed (not every version asked about is affected),
-			// whether it contains the criterion set or only intersects it, ...
-			name: "criterion version partial wildcard, wider query pattern -> VersionUnconfirmed",
+			name: "criterion version partial wildcard, wider query pattern -> Exact",
 			fields: fields{
 				Vulnerable: true,
 				CPE:        "cpe:2.3:a:vendor:product:12.*:*:*:*:*:*:*:*",
 			},
 			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:1*:*:*:*:*:*:*:*"}},
-			want: ccTypes.MatchQualityVersionUnconfirmed,
+			want: ccTypes.MatchQualityExact,
 		},
 		{
-			name: "criterion version partial wildcard, partially overlapping query pattern -> VersionUnconfirmed",
+			name: "criterion version partial wildcard, partially overlapping query pattern -> Exact",
 			fields: fields{
 				Vulnerable: true,
 				CPE:        "cpe:2.3:a:vendor:product:12.*:*:*:*:*:*:*:*",
 			},
 			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:*.3:*:*:*:*:*:*:*"}},
-			want: ccTypes.MatchQualityVersionUnconfirmed,
+			want: ccTypes.MatchQualityExact,
 		},
 		{
 			// A wild card right after an escaped backslash is unquoted (an
-			// even number of backslashes precede it), so both sides are
-			// patterns here and the wider query is VersionUnconfirmed, not
-			// Exact — go-cpe's ContainsWildcards would call both concrete.
-			name: "criterion version pattern after an escaped backslash, wider query pattern -> VersionUnconfirmed",
+			// even number of backslashes precede it), so this query is a
+			// pattern and never reaches the Range, whose unsupported type
+			// would otherwise make Accept fail. go-cpe's ContainsWildcards
+			// would call the query concrete and route it to the Range.
+			name: "pattern query after an escaped backslash skips the Range (unsupported type) -> None",
 			fields: fields{
 				Vulnerable: true,
-				CPE:        `cpe:2.3:a:vendor:product:a\\?:*:*:*:*:*:*:*`,
+				CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
+				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeType("unsupported"), LessThan: "2.0"},
 			},
 			args: args{query: ccTypes.Query{CPE: `cpe:2.3:a:vendor:product:a\\*:*:*:*:*:*:*:*`}},
-			want: ccTypes.MatchQualityVersionUnconfirmed,
+			want: ccTypes.MatchQualityNone,
 		},
 		{
 			// ... and disjoint sets are None.
@@ -294,14 +293,14 @@ func TestCriterion_Accept(t *testing.T) {
 			want: ccTypes.MatchQualityNone,
 		},
 		{
-			name: "CPEMatches entry partial wildcard, wider query pattern -> VersionUnconfirmed",
+			name: "CPEMatches entry partial wildcard, wider query pattern -> Exact",
 			fields: fields{
 				Vulnerable: true,
 				CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
 				CPEMatches: []ccTypes.CPE{"cpe:2.3:a:vendor:product:12.*:*:*:*:*:*:*:*"},
 			},
 			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:1*:*:*:*:*:*:*:*"}},
-			want: ccTypes.MatchQualityVersionUnconfirmed,
+			want: ccTypes.MatchQualityExact,
 		},
 		{
 			name: "CPEMatches entry partial wildcard, disjoint query pattern -> None",
@@ -325,9 +324,9 @@ func TestCriterion_Accept(t *testing.T) {
 			want: ccTypes.MatchQualityExact,
 		},
 		{
-			// The strongest entry wins regardless of order: the pattern entry
-			// narrower than the query pattern yields VersionUnconfirmed, the
-			// concrete one contained in it Exact.
+			// Every entry the query pattern intersects is Exact, a pattern
+			// entry narrower than the query as much as a concrete one inside
+			// it; the enumeration is a union, so the first overlap wins.
 			name: "CPEMatches narrower pattern entry then concrete entry inside the query pattern -> Exact",
 			fields: fields{
 				Vulnerable: true,
