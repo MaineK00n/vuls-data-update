@@ -41,11 +41,12 @@ type CPE string
 //     query version only. A Range is expressed in the same version scheme
 //     as the query's version attribute; an extractor that cannot guarantee
 //     that must not emit the Range.
-//   - CPEMatches: optional list of concrete CPE strings that the criterion
-//     also covers — used for entries that fall OUTSIDE Range (e.g. NVD listed
-//     versions that don't satisfy the bounds) or that Range cannot evaluate
-//     at all (RangeTypeUnknown / non-parseable versions). Each entry is a
-//     whole name matched on its own; the main CPE is not consulted for it.
+//   - CPEMatches: optional list of CPE strings (normally concrete) that the
+//     criterion also covers — used for entries that fall OUTSIDE Range (e.g.
+//     NVD listed versions that don't satisfy the bounds) or that Range cannot
+//     evaluate at all (RangeTypeUnknown / non-parseable versions). Each entry
+//     is a whole name matched on its own; the main CPE is not consulted for
+//     it.
 //
 // Fixed lives at the end as a separate concern (which versions fix the
 // vulnerability), kept off the affected path:
