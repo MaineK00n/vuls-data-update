@@ -23,8 +23,8 @@ import (
 	defendermacversion "github.com/MaineK00n/go-microsoft-version/defender/mac"
 	defendersiversion "github.com/MaineK00n/go-microsoft-version/defender/securityintelligence"
 	defenderwindowsversion "github.com/MaineK00n/go-microsoft-version/defender/windows"
-	dotnetruntimeversion "github.com/MaineK00n/go-microsoft-version/dotnet/core/runtime"
-	dotnetsdkversion "github.com/MaineK00n/go-microsoft-version/dotnet/core/sdk"
+	dotnetcoreruntimeversion "github.com/MaineK00n/go-microsoft-version/dotnet/core/runtime"
+	dotnetcoresdkversion "github.com/MaineK00n/go-microsoft-version/dotnet/core/sdk"
 	edgeversion "github.com/MaineK00n/go-microsoft-version/edge"
 	exchangeversion "github.com/MaineK00n/go-microsoft-version/exchange"
 	officemacversion "github.com/MaineK00n/go-microsoft-version/office/mac"
@@ -1759,9 +1759,9 @@ func buildDotNetSDKCriterion(productName, fixedBuild string) (*criterionTypes.Cr
 		if releaseCandidateTagRE.MatchString(f) {
 			continue
 		}
-		v, err := dotnetsdkversion.NewVersion(f)
+		v, err := dotnetcoresdkversion.NewVersion(f)
 		if err != nil {
-			return nil, errors.Wrapf(err, "dotnetsdkversion.NewVersion %q", f)
+			return nil, errors.Wrapf(err, "dotnetcoresdkversion.NewVersion %q", f)
 		}
 		if v.Prerelease != "" {
 			return nil, errors.Errorf("unexpected .NET SDK version. expected: %q, actual: %q", "a release version or a prerelease tag matched by releaseCandidateTagRE", f)
@@ -1963,9 +1963,9 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 			".NET 8.0",
 			".NET Core 2.1",
 			".NET Core 3.1":
-			v, err := dotnetruntimeversion.NewVersion(fixedBuild)
+			v, err := dotnetcoreruntimeversion.NewVersion(fixedBuild)
 			if err != nil {
-				return rangeTypes.RangeTypeUnknown, errors.Wrap(err, "dotnetruntimeversion.NewVersion")
+				return rangeTypes.RangeTypeUnknown, errors.Wrap(err, "dotnetcoreruntimeversion.NewVersion")
 			}
 			if v.Prerelease != "" {
 				return rangeTypes.RangeTypeUnknown, errors.Errorf("unexpected .NET runtime version. expected: %q, actual: %q", "a release version or a prerelease tag matched by releaseCandidateTagRE", fixedBuild)
@@ -1987,9 +1987,9 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 			".NET 11.0 runtime installed on Linux",
 			".NET 11.0 runtime installed on Mac OS",
 			".NET 11.0 runtime installed on Windows":
-			v, err := dotnetruntimeversion.NewVersion(fixedBuild)
+			v, err := dotnetcoreruntimeversion.NewVersion(fixedBuild)
 			if err != nil {
-				return rangeTypes.RangeTypeUnknown, errors.Wrap(err, "dotnetruntimeversion.NewVersion")
+				return rangeTypes.RangeTypeUnknown, errors.Wrap(err, "dotnetcoreruntimeversion.NewVersion")
 			}
 			if v.Prerelease != "" {
 				return rangeTypes.RangeTypeUnknown, errors.Errorf("unexpected .NET runtime version. expected: %q, actual: %q", "a release version or a prerelease tag matched by releaseCandidateTagRE", fixedBuild)

@@ -16,8 +16,8 @@ import (
 	microsoftdefendermac "github.com/MaineK00n/go-microsoft-version/defender/mac"
 	microsoftdefendersi "github.com/MaineK00n/go-microsoft-version/defender/securityintelligence"
 	microsoftdefenderwindows "github.com/MaineK00n/go-microsoft-version/defender/windows"
-	microsoftdotnetcore "github.com/MaineK00n/go-microsoft-version/dotnet/core/runtime"
-	microsoftdotnetsdk "github.com/MaineK00n/go-microsoft-version/dotnet/core/sdk"
+	microsoftdotnetcoreruntime "github.com/MaineK00n/go-microsoft-version/dotnet/core/runtime"
+	microsoftdotnetcoresdk "github.com/MaineK00n/go-microsoft-version/dotnet/core/sdk"
 	microsoftedge "github.com/MaineK00n/go-microsoft-version/edge"
 	microsoftexchange "github.com/MaineK00n/go-microsoft-version/exchange"
 	microsoftofficemac "github.com/MaineK00n/go-microsoft-version/office/mac"
@@ -460,21 +460,21 @@ func (t RangeType) CompareVersions(family ecosystemTypes.Ecosystem, v1, v2 strin
 		}
 		return va.Compare(vb), nil
 	case RangeTypeMicrosoftDotNetCore:
-		va, err := microsoftdotnetcore.NewVersion(v1)
+		va, err := microsoftdotnetcoreruntime.NewVersion(v1)
 		if err != nil {
 			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
 		}
-		vb, err := microsoftdotnetcore.NewVersion(v2)
+		vb, err := microsoftdotnetcoreruntime.NewVersion(v2)
 		if err != nil {
 			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
 		}
 		return va.Compare(vb), nil
 	case RangeTypeMicrosoftDotNetSDK:
-		va, err := microsoftdotnetsdk.NewVersion(v1)
+		va, err := microsoftdotnetcoresdk.NewVersion(v1)
 		if err != nil {
 			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
 		}
-		vb, err := microsoftdotnetsdk.NewVersion(v2)
+		vb, err := microsoftdotnetcoresdk.NewVersion(v2)
 		if err != nil {
 			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
 		}
