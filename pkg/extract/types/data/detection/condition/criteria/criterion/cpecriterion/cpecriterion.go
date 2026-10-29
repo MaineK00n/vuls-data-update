@@ -2,6 +2,7 @@ package cpecriterion
 
 import (
 	"cmp"
+	stderrors "errors"
 	"fmt"
 	"regexp"
 	"slices"
@@ -166,11 +167,16 @@ type Query struct {
 // UNDEFINED. The version is related by the caller, which also owns the
 // Vuls-specific rules for it (Range, NA).
 func overlapsExceptVersion(q, c common.WellFormedName) bool {
-	for _, attr := range []string{
+	return overlapsOn(q, c, []string{
 		common.AttributePart, common.AttributeVendor, common.AttributeProduct,
 		common.AttributeUpdate, common.AttributeEdition, common.AttributeLanguage, common.AttributeSwEdition,
 		common.AttributeTargetSw, common.AttributeTargetHw, common.AttributeOther,
-	} {
+	})
+}
+
+// overlapsOn reports whether the sets of q and c intersect on each of attrs.
+func overlapsOn(q, c common.WellFormedName, attrs []string) bool {
+	for _, attr := range attrs {
 		if relateValues(q.Get(attr), c.Get(attr)) == relationDisjoint {
 			return false
 		}
@@ -263,10 +269,12 @@ func stronger(a, b MatchQuality) MatchQuality {
 //
 // The warnings are the non-fatal events the evaluation itself records — as
 // opposed to the *warning.UnevaluableError the error channel carries when
-// the data cannot be evaluated at all. Today there is one: a pattern query
+// the data cannot be evaluated at all. Today there are two: a pattern query
 // against a criterion that narrows by Range, when the enumeration did not
 // make the result Exact (warning.KindPatternQueryRange, Cause = the query
-// CPE). It is nil when there is none.
+// CPE), and a CPEMatchesPacked encoding this build does not know, met by a
+// pattern query (warning.KindUnevaluablePackedEncoding, Cause = the
+// encoding). It is nil when there is none.
 //
 // # Name matching (CPE Name Matching, NISTIR 7696)
 //
@@ -415,11 +423,23 @@ func (c Criterion) Accept(query Query) (MatchQuality, []warningTypes.Warning, er
 	// the Range cannot evaluate. A concrete query is answered by the Range
 	// above, so the packed set is never decoded for it. Packed entries are
 	// concrete names (the extractor packs only versions a Range could
-	// parse), so an overlapping one is Exact.
-	if c.CPEMatchesPacked != nil && hasWildcards(qWFN.GetString(common.AttributeVersion)) {
+	// parse), so an overlapping one is Exact. Every packed entry shares the
+	// criterion's part, vendor and product byte for byte (Packable), so a
+	// query disjoint from the criterion there can match none of them and the
+	// set is not decoded; the other attributes may vary between entries. An
+	// encoding this build does not know is recorded as a warning and the
+	// packed entries are skipped, keeping what the main CPE and CPEMatches
+	// gave; malformed data under a known encoding is an error.
+	var ws []warningTypes.Warning
+	if c.CPEMatchesPacked != nil && hasWildcards(qWFN.GetString(common.AttributeVersion)) &&
+		overlapsOn(qWFN, cWFN, []string{common.AttributePart, common.AttributeVendor, common.AttributeProduct}) {
 		ms, err := c.CPEMatchesPacked.Unpack(c.CPE)
 		if err != nil {
-			return MatchQualityUnknown, nil, errors.Wrap(err, "unpack cpe matches")
+			ue, ok := stderrors.AsType[*UnsupportedPackedEncodingError](err)
+			if !ok {
+				return MatchQualityUnknown, nil, errors.Wrap(err, "unpack cpe matches")
+			}
+			ws = append(ws, ue.Warning())
 		}
 		for _, m := range ms {
 			mWFN, err := naming.UnbindFS(string(m))
@@ -434,7 +454,6 @@ func (c Criterion) Accept(query Query) (MatchQuality, []warningTypes.Warning, er
 
 	// None or VersionUnconfirmed: a Range skipped for a pattern query is
 	// what could have made the difference.
-	var ws []warningTypes.Warning
 	if rangeSkipped {
 		ws = append(ws, warningTypes.Warning{Kind: warningTypes.KindPatternQueryRange, Cause: query.CPE})
 	}

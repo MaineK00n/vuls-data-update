@@ -1,6 +1,7 @@
 package cpecriterion_test
 
 import (
+	stderrors "errors"
 	"slices"
 	"strings"
 	"testing"
@@ -177,8 +178,14 @@ func TestCPEMatchesPacked_Unpack_errors(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if _, err := tt.p.Unpack("cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*"); err == nil {
-				t.Error("expected error has not occurred")
+			_, err := tt.p.Unpack("cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*")
+			if err == nil {
+				t.Fatal("expected error has not occurred")
+			}
+			// Only an encoding outside the vocabulary is reported as
+			// unsupported; malformed data under a known one is not.
+			if _, ok := stderrors.AsType[*ccTypes.UnsupportedPackedEncodingError](err); ok != (tt.p.Encoding != ccTypes.PackedEncodingFC) {
+				t.Errorf("UnsupportedPackedEncodingError = %v, want %v (err: %v)", ok, tt.p.Encoding != ccTypes.PackedEncodingFC, err)
 			}
 		})
 	}
