@@ -718,10 +718,15 @@ func (e extractor) buildCPEMatches(match cveTypes.CPEMatch) (cpeMatches, covered
 		//     concrete version, so injecting it would match any scanned CPE
 		//     sharing the vendor and product — a spurious vendor:product-only
 		//     hit. (Not seen in current feed data, but kept as a guard.)
-		//   - NA (`-`): disjoint from every concrete version, so it never
-		//     matches a concrete scan (dead weight); a scan reporting `-` is
-		//     still caught via the query-side NA short-circuit in
-		//     cpecriterion.Accept, so skipping loses no detection.
+		//   - NA (`-`): NVD enumerates the product's NA name under many
+		//     ranged criteria (about 68k of the ranged matchCriteria in the
+		//     2026-10 cpematch feed). Kept as an entry it would make the
+		//     criterion VersionUnconfirmed for every concrete scan outside
+		//     the Range and every pattern scan the enumeration misses (NA
+		//     against a version is VU in cpecriterion.Accept), so each such
+		//     range would also report every other version of the product.
+		//     Skipping it costs a scan reporting `-` only its Exact: the main
+		//     CPE, narrowed by the Range, still makes it VU.
 		// wfn.GetString returns the logical names "ANY"/"NA" for `*`/`-`, so
 		// check the raw value BEFORE unescaping — unescapeWFN strips
 		// backslashes blindly, turning a concrete escaped `\*` or `\-` into a
