@@ -2,19 +2,21 @@ package cpecriterion
 
 import (
 	"cmp"
+	"fmt"
 	"slices"
 	"strings"
 
 	"github.com/pkg/errors"
 
+	warningTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/warning"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/internal/enum"
 )
 
 // PackedEncoding names the text encoding of CPEMatchesPacked.Data. It is a
 // string so that unmarshaling never validates against the known set: data
 // produced by a newer vuls-data-update (carrying an encoding this build does
-// not know) still round-trips losslessly, and Unpack reports it as an error
-// instead of guessing.
+// not know) still round-trips losslessly, and Unpack reports it as an
+// *UnsupportedPackedEncodingError instead of guessing.
 type PackedEncoding string
 
 const (
@@ -168,7 +170,7 @@ func (p *CPEMatchesPacked) Unpack(criterion CPE) ([]CPE, error) {
 		return nil, nil
 	}
 	if p.Encoding != PackedEncodingFC {
-		return nil, errors.Errorf("unexpected packed encoding. expected: %q, actual: %q", PackedEncodings(), p.Encoding)
+		return nil, &UnsupportedPackedEncodingError{Encoding: p.Encoding}
 	}
 	prefix, err := pvpPrefix(string(criterion))
 	if err != nil {
@@ -203,6 +205,25 @@ func (p *CPEMatchesPacked) Unpack(criterion CPE) ([]CPE, error) {
 		prev = e
 	}
 	return ms, nil
+}
+
+// UnsupportedPackedEncodingError is returned by Unpack for an Encoding
+// outside this build's vocabulary: data produced by a newer vuls-data-update
+// read by an older binary, or the zero value (unset — a producer-side bug).
+// Accept records it as a warning and skips the packed entries rather than
+// failing detection; malformed data under a known encoding stays an error.
+type UnsupportedPackedEncodingError struct {
+	Encoding PackedEncoding
+}
+
+func (e *UnsupportedPackedEncodingError) Error() string {
+	return fmt.Sprintf("unexpected packed encoding. expected: %q, actual: %q", PackedEncodings(), e.Encoding)
+}
+
+// Warning implements warning.Warnable: an unevaluable-packed-encoding
+// warning with the offending encoding as the cause.
+func (e *UnsupportedPackedEncodingError) Warning() warningTypes.Warning {
+	return warningTypes.Warning{Kind: warningTypes.KindUnevaluablePackedEncoding, Cause: string(e.Encoding)}
 }
 
 // pvpPrefix returns the "cpe:2.3:<part>:<vendor>:<product>:" prefix of a

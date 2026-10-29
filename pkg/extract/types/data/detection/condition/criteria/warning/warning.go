@@ -53,6 +53,13 @@ const (
 	// recorded by the criterion itself, not carried by an UnevaluableError:
 	// the criterion did evaluate the query, just not all of its data.
 	KindPatternQueryRange Kind = "pattern-query-range"
+	// KindUnevaluablePackedEncoding: the cpe criterion's CPEMatchesPacked
+	// Encoding is outside this build's vocabulary (data from a newer
+	// vuls-data-update). The packed entries were skipped for a pattern
+	// query, which keeps whatever the main CPE and CPEMatches gave it. Cause
+	// is the encoding. Like KindPatternQueryRange it is recorded by the
+	// criterion itself, which did evaluate the query.
+	KindUnevaluablePackedEncoding Kind = "unevaluable-packed-encoding"
 )
 
 // Kinds returns every Kind this build knows, in declaration order. The known
@@ -64,6 +71,7 @@ func Kinds() []Kind {
 		KindUnevaluableRangeType,
 		KindEmptyRange,
 		KindPatternQueryRange,
+		KindUnevaluablePackedEncoding,
 	}
 }
 
