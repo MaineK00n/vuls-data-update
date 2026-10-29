@@ -328,8 +328,8 @@ func stronger(a, b MatchQuality) MatchQuality {
 // version; E is Exact, VU VersionUnconfirmed, . None, and ! marks a cell
 // that also records the Range-skipped warning. The first eight rows are
 // single cells of the main CPE table; the last five show the narrowing and
-// the combination (1.0 + Range reads exactly as * + Range: the Range is the
-// version).
+// the combination (5.0 + Range reads exactly as * + Range: the Range is the
+// version, and the 5.0 that matches no query is never consulted).
 //
 //	criterion \ query      │ *  │ -  │ 1.0 │ 1.0.1 │ 2.0 │ 1.* │ 1.0.* │ *.0
 //	───────────────────────┼────┼────┼─────┼───────┼─────┼─────┼───────┼─────
@@ -342,7 +342,7 @@ func stronger(a, b MatchQuality) MatchQuality {
 //	1.0.*                  │ E  │ VU │ .   │ E     │ .   │ E   │ E     │ E
 //	*.0                    │ E  │ VU │ E   │ .     │ E   │ E   │ E     │ E
 //	* + Range < 2.0        │ E  │ VU │ E   │ E     │ .   │ .!  │ .!    │ .!
-//	1.0 + Range < 2.0      │ E  │ VU │ E   │ E     │ .   │ .!  │ .!    │ .!
+//	5.0 + Range < 2.0      │ E  │ VU │ E   │ E     │ .   │ .!  │ .!    │ .!
 //	* + [1.0]              │ E  │ VU │ E   │ .     │ .   │ E   │ .     │ E
 //	* + [-]                │ E  │ E  │ VU  │ VU    │ VU  │ VU  │ VU    │ VU
 //	* + Range < 2.0 + [-]  │ E  │ E  │ E   │ E     │ VU  │ VU! │ VU!   │ VU!
