@@ -3,9 +3,12 @@ package cpecriterion_test
 import (
 	"testing"
 
+	"github.com/google/go-cmp/cmp"
+
 	ccTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/cpecriterion"
 	ccRangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/cpecriterion/range"
 	fixstatusTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/fixstatus"
+	warningTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/warning"
 )
 
 func TestCriterion_Accept(t *testing.T) {
@@ -21,11 +24,12 @@ func TestCriterion_Accept(t *testing.T) {
 		query ccTypes.Query
 	}
 	tests := []struct {
-		name    string
-		fields  fields
-		args    args
-		want    ccTypes.MatchQuality
-		wantErr bool
+		name         string
+		fields       fields
+		args         args
+		want         ccTypes.MatchQuality
+		wantWarnings []warningTypes.Warning
+		wantErr      bool
 	}{
 		{
 			name: "cpe in semver range -> Exact",
@@ -94,6 +98,447 @@ func TestCriterion_Accept(t *testing.T) {
 			want: ccTypes.MatchQualityExact,
 		},
 		{
+			// A partial wildcard in the query version ("12.*", unquoted "*")
+			// is a legitimate CPE name-matching pattern (NIST IR 7696): it is
+			// a superset of every concrete "12.x", so a concrete criterion it
+			// covers is accepted on attribute match alone.
+			name: "concrete criterion, query version partial wildcard covering it, no range -> Exact",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:12.3:*:*:*:*:*:*:*",
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:12.*:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityExact,
+		},
+		{
+			name: "concrete criterion, query version partial wildcard not covering it, no range -> None",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:13.0:*:*:*:*:*:*:*",
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:12.*:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityNone,
+		},
+		{
+			// The same pattern matching applies along the CPEMatches
+			// enumeration (a non-semver range's concrete list).
+			name: "CPEMatches-only criterion, query version partial wildcard covering an entry -> Exact",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
+				CPEMatches: []ccTypes.CPE{
+					"cpe:2.3:a:vendor:product:12.0:*:*:*:*:*:*:*",
+					"cpe:2.3:a:vendor:product:12.4:*:*:*:*:*:*:*",
+				},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:12.*:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityExact,
+		},
+		{
+			// A Range is consulted only for a concrete query; a pattern query
+			// is evaluated by name against the CPEMatches enumeration alone.
+			name: "range criterion, query version partial wildcard, covered by a CPEMatches entry -> Exact",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
+				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeSEMVER, LessThan: "14.23"},
+				CPEMatches: []ccTypes.CPE{"cpe:2.3:a:vendor:product:12.0:beta1:*:*:*:*:*:*"},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:12.*:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityExact,
+		},
+		{
+			name: "range criterion, query version partial wildcard, no CPEMatches entry covered -> None",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
+				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeSEMVER, LessThan: "14.23"},
+				CPEMatches: []ccTypes.CPE{"cpe:2.3:a:vendor:product:12.0:beta1:*:*:*:*:*:*"},
+			},
+			args:         args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:15.*:*:*:*:*:*:*:*"}},
+			want:         ccTypes.MatchQualityNone,
+			wantWarnings: []warningTypes.Warning{{Kind: warningTypes.KindPatternQueryRange, Cause: "cpe:2.3:a:vendor:product:15.*:*:*:*:*:*:*:*"}},
+		},
+		{
+			// The pattern denotes versions the Range would accept, but a
+			// Range is never evaluated against a pattern: without an
+			// enumerated name there is nothing for the pattern to match, and
+			// the skipped Range is reported.
+			name: "range-only criterion (no CPEMatches), query version partial wildcard inside the range -> None, warning",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
+				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeSEMVER, LessThan: "14.23"},
+			},
+			args:         args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:12.*:*:*:*:*:*:*:*"}},
+			want:         ccTypes.MatchQualityNone,
+			wantWarnings: []warningTypes.Warning{{Kind: warningTypes.KindPatternQueryRange, Cause: "cpe:2.3:a:vendor:product:12.*:*:*:*:*:*:*:*"}},
+		},
+		{
+			// An NA entry lifts a pattern query the Range could not evaluate
+			// to VersionUnconfirmed only; the skipped Range is still reported.
+			name: "range criterion with NA entry, query version partial wildcard -> VersionUnconfirmed, warning",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
+				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeSEMVER, LessThan: "14.23"},
+				CPEMatches: []ccTypes.CPE{"cpe:2.3:a:vendor:product:-:*:*:*:*:*:*:*"},
+			},
+			args:         args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:12.*:*:*:*:*:*:*:*"}},
+			want:         ccTypes.MatchQualityVersionUnconfirmed,
+			wantWarnings: []warningTypes.Warning{{Kind: warningTypes.KindPatternQueryRange, Cause: "cpe:2.3:a:vendor:product:12.*:*:*:*:*:*:*:*"}},
+		},
+		{
+			// The warning is about a Range that could have matched: a
+			// criterion for another product skipped nothing.
+			name: "range criterion, query version partial wildcard, product disjoint -> None, no warning",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
+				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeSEMVER, LessThan: "14.23"},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:other:12.*:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityNone,
+		},
+		{
+			// A pattern in the criterion VERSION is undefined under NISTIR
+			// 7696 Table 6-2 (target-side wild cards) and is related as the
+			// set it denotes, like any criterion-side pattern: a concrete
+			// query it contains is Exact, one it does not is None.
+			name: "criterion version partial wildcard, concrete query it covers -> Exact",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:12.*:*:*:*:*:*:*:*",
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:12.3:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityExact,
+		},
+		{
+			name: "criterion version partial wildcard, concrete query it does not cover -> None",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:12.*:*:*:*:*:*:*:*",
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:13.0:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityNone,
+		},
+		{
+			name: "criterion version partial wildcard, query version ANY -> Exact (query=ANY)",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:12.*:*:*:*:*:*:*:*",
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityExact,
+		},
+		{
+			// Patterns on both sides (Table 6-2 row 17, undefined) are related
+			// as the sets they denote: any intersection is Exact, whichever
+			// side contains the other or neither does, ...
+			name: "criterion version partial wildcard, identical query pattern -> Exact",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:12.*:*:*:*:*:*:*:*",
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:12.*:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityExact,
+		},
+		{
+			name: "criterion version partial wildcard, narrower query pattern -> Exact",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:12.*:*:*:*:*:*:*:*",
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:12.3*:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityExact,
+		},
+		{
+			name: "criterion version partial wildcard, wider query pattern -> Exact",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:12.*:*:*:*:*:*:*:*",
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:1*:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityExact,
+		},
+		{
+			name: "criterion version partial wildcard, partially overlapping query pattern -> Exact",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:12.*:*:*:*:*:*:*:*",
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:*.3:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityExact,
+		},
+		{
+			// A wild card right after an escaped backslash is unquoted (an
+			// even number of backslashes precede it), so this query is a
+			// pattern and never reaches the Range, whose unsupported type
+			// would otherwise make Accept fail. go-cpe's ContainsWildcards
+			// would call the query concrete and route it to the Range.
+			name: "pattern query after an escaped backslash skips the Range (unsupported type) -> None",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
+				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeType("unsupported"), LessThan: "2.0"},
+			},
+			args:         args{query: ccTypes.Query{CPE: `cpe:2.3:a:vendor:product:a\\*:*:*:*:*:*:*:*`}},
+			want:         ccTypes.MatchQualityNone,
+			wantWarnings: []warningTypes.Warning{{Kind: warningTypes.KindPatternQueryRange, Cause: `cpe:2.3:a:vendor:product:a\\*:*:*:*:*:*:*:*`}},
+		},
+		{
+			// ... and disjoint sets are None.
+			name: "criterion version partial wildcard, disjoint query pattern -> None",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:12.*:*:*:*:*:*:*:*",
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:13.*:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityNone,
+		},
+		{
+			name: "criterion version partial wildcard, disjoint target_sw -> None",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:12.*:*:*:*:*:linux:*:*",
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:12.3:*:*:*:*:windows:*:*"}},
+			want: ccTypes.MatchQualityNone,
+		},
+		{
+			// Same handling for a CPEMatches entry whose version is a pattern.
+			name: "CPEMatches entry partial wildcard, concrete query it covers -> Exact",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
+				CPEMatches: []ccTypes.CPE{"cpe:2.3:a:vendor:product:12.*:*:*:*:*:*:*:*"},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:12.3:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityExact,
+		},
+		{
+			name: "CPEMatches entry partial wildcard, concrete query it does not cover -> None",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
+				CPEMatches: []ccTypes.CPE{"cpe:2.3:a:vendor:product:12.*:*:*:*:*:*:*:*"},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:13.0:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityNone,
+		},
+		{
+			name: "CPEMatches entry partial wildcard, wider query pattern -> Exact",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
+				CPEMatches: []ccTypes.CPE{"cpe:2.3:a:vendor:product:12.*:*:*:*:*:*:*:*"},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:1*:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityExact,
+		},
+		{
+			name: "CPEMatches entry partial wildcard, disjoint query pattern -> None",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
+				CPEMatches: []ccTypes.CPE{"cpe:2.3:a:vendor:product:12.*:*:*:*:*:*:*:*"},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:13.*:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityNone,
+		},
+		{
+			// An NA entry in the enumeration is treated like an NA criterion
+			// (the NA column of the version table): the product matched, the
+			// version cannot be evaluated.
+			name: "CPEMatches NA entry only, concrete query -> VersionUnconfirmed",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
+				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeSEMVER, LessThan: "12.0"},
+				CPEMatches: []ccTypes.CPE{"cpe:2.3:a:vendor:product:-:*:*:*:*:*:*:*"},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:12.3:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityVersionUnconfirmed,
+		},
+		{
+			name: "CPEMatches NA entry only, query pattern -> VersionUnconfirmed",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
+				CPEMatches: []ccTypes.CPE{"cpe:2.3:a:vendor:product:-:*:*:*:*:*:*:*"},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:12.*:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityVersionUnconfirmed,
+		},
+		{
+			name: "CPEMatches NA entry with disjoint target_sw, concrete query -> None",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:linux:*:*",
+				CPEMatches: []ccTypes.CPE{"cpe:2.3:a:vendor:product:-:*:*:*:*:linux:*:*"},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:12.3:*:*:*:*:windows:*:*"}},
+			want: ccTypes.MatchQualityNone,
+		},
+		{
+			// The strongest entry wins regardless of order: the NA entry
+			// yields VersionUnconfirmed, the concrete one Exact.
+			name: "CPEMatches NA entry then concrete entry equal to the query -> Exact",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
+				CPEMatches: []ccTypes.CPE{
+					"cpe:2.3:a:vendor:product:-:*:*:*:*:*:*:*",
+					"cpe:2.3:a:vendor:product:12.3:*:*:*:*:*:*:*",
+				},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:12.3:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityExact,
+		},
+		{
+			// A version spelled "NA" is a concrete string, not the logical
+			// value "-" (GetString renders both as "NA"): it neither relaxes
+			// to VersionUnconfirmed ...
+			name: "CPEMatches entry whose version is the literal string NA, concrete query -> None",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
+				CPEMatches: []ccTypes.CPE{"cpe:2.3:a:vendor:product:NA:*:*:*:*:*:*:*"},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:1.0:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityNone,
+		},
+		{
+			name: "criterion version is the literal string NA, concrete query -> None",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:NA:*:*:*:*:*:*:*",
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:1.0:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityNone,
+		},
+		{
+			// ... nor is it a version-less query.
+			name: "query version is the literal string NA, concrete criterion -> None",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:1.0:*:*:*:*:*:*:*",
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:NA:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityNone,
+		},
+		{
+			name: "CPEMatches entry partial wildcard, query version ANY -> Exact (query=ANY)",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
+				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeSEMVER, LessThan: "14.23"},
+				CPEMatches: []ccTypes.CPE{"cpe:2.3:a:vendor:product:12.*:*:*:*:*:*:*:*"},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityExact,
+		},
+		{
+			// Every entry the query pattern intersects is Exact, a pattern
+			// entry narrower than the query as much as a concrete one inside
+			// it; the enumeration is a union, so the first overlap wins.
+			name: "CPEMatches narrower pattern entry then concrete entry inside the query pattern -> Exact",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
+				CPEMatches: []ccTypes.CPE{
+					"cpe:2.3:a:vendor:product:12.3*:*:*:*:*:*:*:*",
+					"cpe:2.3:a:vendor:product:12.4:*:*:*:*:*:*:*",
+				},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:12.*:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityExact,
+		},
+		{
+			// Name matching is case-insensitive (NISTIR 7696 §6.2); the
+			// byte-wise concretelyDisjoint guard that used to reject this is
+			// gone.
+			name: "concrete criterion, concrete query differing only in case -> Exact",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:1.0A:*:*:*:*:*:*:*",
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:1.0a:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityExact,
+		},
+		{
+			name: "concrete criterion, query product differing only in case -> Exact",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:1.0:*:*:*:*:*:*:*",
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:PRODUCT:1.0:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityExact,
+		},
+		{
+			// A criterion-side pattern on a non-version attribute is related
+			// as the set it denotes (Table 6-2, row 14, undefined with the
+			// query as the source), so it covers a concrete query value ...
+			name: "criterion target_sw pattern covering the query target_sw -> Exact",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:1.0:*:*:*:*:windows*:*:*",
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:1.0:*:*:*:*:windows_10:*:*"}},
+			want: ccTypes.MatchQualityExact,
+		},
+		{
+			// ... and is DISJOINT from NA (row 16): a pattern never matches
+			// "-". (go-cpe's matching reported this pair as UNDEFINED, which
+			// the old overlaps test let through.)
+			name: "criterion target_sw pattern, query target_sw NA -> None",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:1.0:*:*:*:*:windows*:*:*",
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:1.0:*:*:*:*:-:*:*"}},
+			want: ccTypes.MatchQualityNone,
+		},
+		{
+			// Patterns on both sides are undefined either way (row 17) and are
+			// related as the sets they denote; on a non-version attribute any
+			// intersection is compatible, so only disjoint patterns are None.
+			name: "criterion and query target_sw both patterns, query within the criterion -> Exact",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:1.0:*:*:*:*:windows*:*:*",
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:1.0:*:*:*:*:windows_1*:*:*"}},
+			want: ccTypes.MatchQualityExact,
+		},
+		{
+			name: "criterion and query target_sw both patterns, identical -> Exact",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:1.0:*:*:*:*:windows*:*:*",
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:1.0:*:*:*:*:windows*:*:*"}},
+			want: ccTypes.MatchQualityExact,
+		},
+		{
+			name: "criterion and query target_sw both patterns, partially overlapping -> Exact",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:1.0:*:*:*:*:windows*:*:*",
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:1.0:*:*:*:*:*_10:*:*"}},
+			want: ccTypes.MatchQualityExact,
+		},
+		{
+			name: "criterion and query target_sw both patterns, disjoint -> None",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:1.0:*:*:*:*:windows*:*:*",
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:1.0:*:*:*:*:linux*:*:*"}},
+			want: ccTypes.MatchQualityNone,
+		},
+		{
 			name: "version=* criterion with range, query version NA -> VersionUnconfirmed",
 			fields: fields{
 				Vulnerable: true,
@@ -114,6 +559,31 @@ func TestCriterion_Accept(t *testing.T) {
 			want: ccTypes.MatchQualityNone,
 		},
 		{
+			// The main CPE and the entries are evaluated independently and
+			// the strongest wins, in both directions: an NA criterion gives
+			// VersionUnconfirmed for a concrete query, but an entry naming
+			// that very version is Exact (the mirror of an NA query matched
+			// by an NA entry, below).
+			name: "criterion version NA with CPEMatches entry equal to the concrete query -> Exact",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:-:*:*:*:*:*:*:*",
+				CPEMatches: []ccTypes.CPE{"cpe:2.3:a:vendor:product:1.0:*:*:*:*:*:*:*"},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:1.0:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityExact,
+		},
+		{
+			name: "criterion version NA with CPEMatches entry different from the concrete query -> VersionUnconfirmed",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:-:*:*:*:*:*:*:*",
+				CPEMatches: []ccTypes.CPE{"cpe:2.3:a:vendor:product:2.0:*:*:*:*:*:*:*"},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:1.0:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityVersionUnconfirmed,
+		},
+		{
 			name: "criterion version NA, query version wildcard -> Exact (query=ANY)",
 			fields: fields{
 				Vulnerable: true,
@@ -123,13 +593,26 @@ func TestCriterion_Accept(t *testing.T) {
 			want: ccTypes.MatchQualityExact,
 		},
 		{
-			name: "criterion version NA with range (range ignored), query NA -> Exact (NA vs NA is EQUAL)",
+			// The Range is the criterion's version, so an NA CPE version next
+			// to it (a placeholder where * was meant) does not make the pair
+			// EQUAL: the scan has no version to evaluate against the Range.
+			name: "criterion version NA with range (the Range is the version), query NA -> VersionUnconfirmed",
 			fields: fields{
 				Vulnerable: true,
 				CPE:        "cpe:2.3:a:vendor:product:-:*:*:*:*:*:*:*",
 				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeSEMVER, LessThan: "0.0.2"},
 			},
 			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:-:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityVersionUnconfirmed,
+		},
+		{
+			name: "criterion version NA with range (the Range is the version), concrete query in range -> Exact",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:-:*:*:*:*:*:*:*",
+				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeSEMVER, LessThan: "0.0.2"},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:0.0.1:*:*:*:*:*:*:*"}},
 			want: ccTypes.MatchQualityExact,
 		},
 		{
@@ -309,7 +792,7 @@ func TestCriterion_Accept(t *testing.T) {
 			want: ccTypes.MatchQualityNone,
 		},
 		{
-			name: "criterion version NA with range (range ignored), query wildcard -> Exact (query=ANY)",
+			name: "criterion version NA with range, query wildcard -> Exact (query=ANY)",
 			fields: fields{
 				Vulnerable: true,
 				CPE:        "cpe:2.3:a:vendor:product:-:*:*:*:*:*:*:*",
@@ -381,7 +864,10 @@ func TestCriterion_Accept(t *testing.T) {
 			want: ccTypes.MatchQualityExact,
 		},
 		{
-			name: "concrete criterion with range, same concrete query out of range -> None",
+			// A Range is the criterion's version whatever the CPE version
+			// says: the finer predicate wins, even when the CPE version
+			// contradicts it (no source emits that shape).
+			name: "concrete criterion with range, same concrete query out of range (the Range is the version) -> None",
 			fields: fields{
 				Vulnerable: true,
 				CPE:        "cpe:2.3:a:vendor:product:3.0.0:*:*:*:*:*:*:*",
@@ -391,7 +877,18 @@ func TestCriterion_Accept(t *testing.T) {
 			want: ccTypes.MatchQualityNone,
 		},
 		{
-			name: "concrete criterion, different concrete query: CPE attr disjoint (Range never consulted) -> None",
+			name: "concrete criterion with range, query version partial wildcard covering it (the Range is the version) -> None, warning",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:1.0.0:*:*:*:*:*:*:*",
+				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeSEMVER, LessThan: "2.0.0"},
+			},
+			args:         args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:1.*:*:*:*:*:*:*:*"}},
+			want:         ccTypes.MatchQualityNone,
+			wantWarnings: []warningTypes.Warning{{Kind: warningTypes.KindPatternQueryRange, Cause: "cpe:2.3:a:vendor:product:1.*:*:*:*:*:*:*:*"}},
+		},
+		{
+			name: "concrete criterion with range, different concrete query out of range -> None",
 			fields: fields{
 				Vulnerable: true,
 				CPE:        "cpe:2.3:a:vendor:product:3.0.0:*:*:*:*:*:*:*",
@@ -466,12 +963,24 @@ func TestCriterion_Accept(t *testing.T) {
 			want: ccTypes.MatchQualityExact,
 		},
 		{
-			// go-cpe matching mis-classifies pairs of concrete values where one
-			// trailing numeric segment is a numeric prefix of the other — e.g.
-			// IsDisjoint("5.15.10", "5.15.103") returns false. The
-			// concretelyDisjoint spot-check rescues the byte-wise truth so
-			// the main CPE path does not falsely match.
-			name: "go-cpe over-match guard: main CPE concrete-vs-concrete substring -> None",
+			// go-cpe before knqyf263/go-cpe#9 mis-classified pairs of concrete
+			// values where one trailing numeric segment is a numeric prefix of
+			// the other: IsDisjoint(source "5.15.10", target "5.15.103")
+			// returned false, and Accept once relied on it (with the query as
+			// the source, so the over-match fired for a scanned "5.15.10"
+			// against a "5.15.103" criterion). Name matching no longer goes
+			// through go-cpe's matching package; pinned in both directions so
+			// the comparator never regresses to that behaviour.
+			name: "go-cpe over-match regression: main CPE, query is a numeric prefix of the criterion -> None",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:o:linux:linux_kernel:5.15.103:*:*:*:*:*:*:*",
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:o:linux:linux_kernel:5.15.10:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityNone,
+		},
+		{
+			name: "go-cpe over-match regression: main CPE, criterion is a numeric prefix of the query -> None",
 			fields: fields{
 				Vulnerable: true,
 				CPE:        "cpe:2.3:o:linux:linux_kernel:5.15.10:*:*:*:*:*:*:*",
@@ -480,9 +989,19 @@ func TestCriterion_Accept(t *testing.T) {
 			want: ccTypes.MatchQualityNone,
 		},
 		{
-			// Same over-match guard applied along the CPEMatches loop — a
-			// cpematch entry "5.15.10" must NOT swallow a "5.15.103" query.
-			name: "go-cpe over-match guard: CPEMatches concrete-vs-concrete substring -> None",
+			// Same regression pinned along the CPEMatches loop, in both
+			// directions.
+			name: "go-cpe over-match regression: CPEMatches, query is a numeric prefix of the entry -> None",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:o:linux:linux_kernel:*:*:*:*:*:*:*:*",
+				CPEMatches: []ccTypes.CPE{"cpe:2.3:o:linux:linux_kernel:5.15.103:*:*:*:*:*:*:*"},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:o:linux:linux_kernel:5.15.10:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityNone,
+		},
+		{
+			name: "go-cpe over-match regression: CPEMatches, entry is a numeric prefix of the query -> None",
 			fields: fields{
 				Vulnerable: true,
 				CPE:        "cpe:2.3:o:linux:linux_kernel:*:*:*:*:*:*:*:*",
@@ -696,6 +1215,136 @@ func TestCriterion_Accept(t *testing.T) {
 			args: args{query: ccTypes.Query{CPE: "cpe:2.3:o:paloaltonetworks:pan-os:10.1.14-h11:h11:*:*:*:*:*:*"}},
 			want: ccTypes.MatchQualityExact,
 		},
+		{
+			// The openssh range type: a portable release must be told apart
+			// from the base release it derives from, on either side of the
+			// query, so that the release carrying a fix is not reported as the
+			// vulnerability it fixes. The Range is the 2025-02-18
+			// VerifyHostKeyDNS advisory: ssh(1) 6.8p1 to 9.9p1 inclusive, fixed
+			// in 9.9p2.
+			//
+			// NVD's form, which is the one that matters: the portable release
+			// is in the update attribute and has to be folded back in.
+			name: "openssh fixed release, portable in update",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:openbsd:openssh:*:*:*:*:*:*:*:*",
+				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeOpenSSH, GreaterEqual: "6.8p1", LessEqual: "9.9p1"},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:openbsd:openssh:9.9:p2:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityNone,
+		},
+		{
+			name: "openssh last affected release, portable in update",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:openbsd:openssh:*:*:*:*:*:*:*:*",
+				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeOpenSSH, GreaterEqual: "6.8p1", LessEqual: "9.9p1"},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:openbsd:openssh:9.9:p1:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityExact,
+		},
+		{
+			// A scanner may instead carry it in the version, where there is nothing
+			// to fold.
+			name: "openssh fixed release, portable in version",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:openbsd:openssh:*:*:*:*:*:*:*:*",
+				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeOpenSSH, GreaterEqual: "6.8p1", LessEqual: "9.9p1"},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:openbsd:openssh:9.9p2:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityNone,
+		},
+		{
+			name: "openssh last affected release, portable in version",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:openbsd:openssh:*:*:*:*:*:*:*:*",
+				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeOpenSSH, GreaterEqual: "6.8p1", LessEqual: "9.9p1"},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:openbsd:openssh:9.9p1:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityExact,
+		},
+		{
+			// The base of the upper bound: 9.9 precedes 9.9p1, so it is in.
+			name: "openssh base of the upper bound",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:openbsd:openssh:*:*:*:*:*:*:*:*",
+				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeOpenSSH, GreaterEqual: "6.8p1", LessEqual: "9.9p1"},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:openbsd:openssh:9.9:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityExact,
+		},
+		{
+			// And the base of the lower bound precedes it, so it is out -- the
+			// advisory names 6.8p1, not 6.8.
+			name: "openssh base of the lower bound",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:openbsd:openssh:*:*:*:*:*:*:*:*",
+				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeOpenSSH, GreaterEqual: "6.8p1", LessEqual: "9.9p1"},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:openbsd:openssh:6.8:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityNone,
+		},
+		{
+			name: "openssh below the range",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:openbsd:openssh:*:*:*:*:*:*:*:*",
+				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeOpenSSH, GreaterEqual: "6.8p1", LessEqual: "9.9p1"},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:openbsd:openssh:6.7:p1:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityNone,
+		},
+		{
+			// Minor segments compare numerically, so 9.10 is later than 9.9p1.
+			name: "openssh above the range",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:openbsd:openssh:*:*:*:*:*:*:*:*",
+				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeOpenSSH, GreaterEqual: "6.8p1", LessEqual: "9.9p1"},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:openbsd:openssh:9.10:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityNone,
+		},
+		{
+			name: "openssh inside the range",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:openbsd:openssh:*:*:*:*:*:*:*:*",
+				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeOpenSSH, GreaterEqual: "6.8p1", LessEqual: "9.9p1"},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:openbsd:openssh:8.4:p1:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityExact,
+		},
+		{
+			name: "openssh another product",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:openbsd:openssh:*:*:*:*:*:*:*:*",
+				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeOpenSSH, GreaterEqual: "6.8p1", LessEqual: "9.9p1"},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:openbsd:opensmtpd:9.9:p1:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityNone,
+		},
+		{
+			// A pattern query takes the same skip-and-warn path as it does
+			// against a semver Range: a range type with its own UPDATE folding
+			// does not change that, and with no enumeration to fall back on
+			// the result is None.
+			name: "openssh pattern query, Range skipped with warning",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:openbsd:openssh:*:*:*:*:*:*:*:*",
+				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeOpenSSH, GreaterEqual: "6.8p1", LessEqual: "9.9p1"},
+			},
+			args:         args{query: ccTypes.Query{CPE: "cpe:2.3:a:openbsd:openssh:9.*:*:*:*:*:*:*:*"}},
+			want:         ccTypes.MatchQualityNone,
+			wantWarnings: []warningTypes.Warning{{Kind: warningTypes.KindPatternQueryRange, Cause: "cpe:2.3:a:openbsd:openssh:9.*:*:*:*:*:*:*:*"}},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -707,13 +1356,16 @@ func TestCriterion_Accept(t *testing.T) {
 				CPEMatches: tt.fields.CPEMatches,
 				Fixed:      tt.fields.Fixed,
 			}
-			got, err := c.Accept(tt.args.query)
+			got, ws, err := c.Accept(tt.args.query)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Accept() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if got != tt.want {
 				t.Errorf("Accept() = %s, want %s", got, tt.want)
+			}
+			if diff := cmp.Diff(tt.wantWarnings, ws); diff != "" {
+				t.Errorf("Accept() warnings (-expected +got):\n%s", diff)
 			}
 		})
 	}

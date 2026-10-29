@@ -3,18 +3,17 @@ package cpecriterion
 import (
 	"cmp"
 	"fmt"
-	"maps"
 	"regexp"
 	"slices"
 	"strings"
 
 	"github.com/knqyf263/go-cpe/common"
-	"github.com/knqyf263/go-cpe/matching"
 	"github.com/knqyf263/go-cpe/naming"
 	"github.com/pkg/errors"
 
 	rangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/cpecriterion/range"
 	fixstatusTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/fixstatus"
+	warningTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/warning"
 )
 
 type CPE string
@@ -27,20 +26,31 @@ type CPE string
 //     versioncriterion.Criterion.FixStatus; tag for downstream consumers
 //     (e.g. reporting), NOT consulted by Accept
 //
-// The affected set is described by three contiguous fields — CPE narrows by
-// WFN attribute equality, Range narrows by version, and CPEMatches enumerates
-// concrete CPEs that fall outside or beyond what Range can express:
-//   - CPE: the criterion's canonical CPE string (wildcards permitted)
-//   - Range: optional version range narrowing the match (comparator selected
-//     by Range.Type — semver / loose version / etc.)
-//   - CPEMatches: optional list of concrete CPE strings that the criterion
-//     also covers — used for entries that fall OUTSIDE Range (e.g. NVD listed
-//     versions that don't satisfy the bounds) or that Range cannot evaluate
-//     at all (RangeTypeUnknown / non-parseable versions)
+// The affected set is described by the main CPE and an enumeration of
+// concrete CPE names (CPEMatches; "entry" below is one of its names), which
+// Accept evaluates independently of each other and combines by taking the
+// stronger result:
+//   - CPE: the criterion's canonical CPE string (wildcards permitted). A
+//     version of * is every version of the product unless a Range or an
+//     enumeration narrows it.
+//   - Range: optional version range (comparator selected by Range.Type —
+//     semver / loose version / etc.). When present it IS the criterion's
+//     version: the CPE version is not consulted, whatever it says (NVD
+//     writes * there; a concrete, pattern or NA version is at best a
+//     coarser restatement of the Range). It is evaluated for a concrete
+//     query version only. A Range is expressed in the same version scheme
+//     as the query's version attribute; an extractor that cannot guarantee
+//     that must not emit the Range.
+//   - CPEMatches: optional list of CPE strings (normally concrete) that the
+//     criterion also covers — used for entries that fall OUTSIDE Range (e.g.
+//     NVD listed versions that don't satisfy the bounds) or that Range cannot
+//     evaluate at all (RangeTypeUnknown / non-parseable versions). Each entry
+//     is a whole name matched on its own; the main CPE is not consulted for
+//     it.
 //
 // Fixed lives at the end as a separate concern (which versions fix the
 // vulnerability), kept off the affected path:
-//   - Fixed: optional enumeration of fixed-version strings (scoped to the
+//   - Fixed: optional list of fixed-version strings (scoped to the
 //     criterion's CPE — typically extractors partition by product family
 //     so the criterion CPE pins vendor/product and Fixed lists only the
 //     versions). Mirrors versioncriterion/affected.Affected.Fixed exactly.
@@ -48,25 +58,23 @@ type CPE string
 //     the fixed set is independent of any affected-range upper bound; NOT
 //     consulted by Accept
 //
-// Detection semantics (see Accept):
+// Detection semantics (see Accept for the full tables):
 //
-//	(CPE-attr-match AND (
-//	    c.version=="NA"                          // NA short-circuit (ignores narrowing)
-//	    OR (Range==nil AND len(CPEMatches)==0)   // no narrowing
-//	    OR query-version is ANY/NA               // no concrete version to compare
-//	    OR Range matches
-//	))
-//	OR any CPEMatches[i] attr-match              // also tried when main CPE is disjoint
+//	strongest of (
+//	    main CPE: attr-match AND (
+//	        query version is ANY                        // the scan asks for every version
+//	        OR version=* narrowed by Range / CPEMatches // concrete query: Range; pattern query: nothing; NA query: VU
+//	        OR versions intersect                       // NA = NA, un-narrowed *, concrete / pattern
+//	        OR one version is NA                        // VU: no version to evaluate
+//	    ),
+//	    each CPEMatches[i]: attr-match AND (versions intersect OR one version is NA → VU)
+//	)
 //
-// For a version=NA query, attr-match compares every attribute but the
-// version: a concrete or ranged criterion / entry version is DISJOINT from NA
-// under CPE name matching, but the scan simply has no version to evaluate, so
-// it is accepted at VersionUnconfirmed (see Accept).
-//
-// The CPEMatches loop is consulted both as a fallback after a failed Range
-// evaluation (out-of-range exceptions) AND independently when the main CPE
-// is disjoint from the query (defensive — covers edition-divergence cases
-// in source data).
+// Range is consulted only for a concrete query version. A pattern query
+// ("12.*") is evaluated by name against the enumeration alone, so against a
+// criterion that narrows by Range it matches exactly the enumerated names and
+// nothing else; Accept records a warning when that leaves the result below
+// Exact.
 //
 // Range and CPEMatches are NOT mutually exclusive: both can be populated and
 // their effective predicate is OR'd. This matches the NVD ranged-cpeMatch
@@ -136,57 +144,27 @@ type Query struct {
 	CPE string
 }
 
-// concretelyDisjoint reports whether two WFNs disagree byte-wise on any
-// concrete (non-ANY/NA) attribute. It exists to work around an upstream
-// go-cpe matching bug: matching.IsDisjoint returns false (and
-// matching.IsSuperset returns true) for two concrete values where the
-// trailing numeric segment of one is a numeric prefix of the other —
-// e.g. version "5.15.10" is reported as a "superset" of "5.15.103",
-// or "5.15" of "5.150". Alphabetic substrings ("linux_kernel" vs
-// "linux_kernel_extra") and dot-boundary segment additions ("5.15" vs
-// "5.15.10") are NOT affected. The bug let exact-match criteria fire
-// on unrelated concrete versions and produced false positives during
-// vuls-compare runs against linux_kernel.
-//
-// Tracked upstream as knqyf263/go-cpe#3 (issue) with a fix proposed in
-// knqyf263/go-cpe#9; this spot-check can be dropped once that fix lands
-// and we bump the dependency.
-//
-// The check runs on every attribute (not just version) for robustness
-// against future go-cpe regressions; wildcard / ANY / NA values fall
-// through unchanged so legitimate broad-criterion matches still hit.
-func concretelyDisjoint(qWFN, cWFN common.WellFormedName) bool {
-	for _, a := range []string{
-		common.AttributePart,
-		common.AttributeVendor,
-		common.AttributeProduct,
-		common.AttributeVersion,
-		common.AttributeUpdate,
-		common.AttributeEdition,
-		common.AttributeLanguage,
-		common.AttributeSwEdition,
-		common.AttributeTargetSw,
-		common.AttributeTargetHw,
-		common.AttributeOther,
+// overlapsExceptVersion reports whether the query and criterion (or
+// CPEMatches entry) WFNs match under CPE name matching on every attribute but
+// the version, the relation table on Accept: each attribute's sets
+// intersect, so the CPEs can refer to the same product. Each attribute is
+// related by relateValues, which implements Table 6-2 and resolves its
+// undefined cells (a pattern on either side) as the relation of the sets the
+// patterns denote; go-cpe's matching package is not used, as it evaluates
+// wild cards on the source side only and reports a target-side pattern as
+// UNDEFINED. The version is related by the caller, which also owns the
+// Vuls-specific rules for it (Range, NA).
+func overlapsExceptVersion(q, c common.WellFormedName) bool {
+	for _, attr := range []string{
+		common.AttributePart, common.AttributeVendor, common.AttributeProduct,
+		common.AttributeUpdate, common.AttributeEdition, common.AttributeLanguage, common.AttributeSwEdition,
+		common.AttributeTargetSw, common.AttributeTargetHw, common.AttributeOther,
 	} {
-		qv := qWFN.GetString(a)
-		cv := cWFN.GetString(a)
-		if qv == "ANY" || qv == "NA" || cv == "ANY" || cv == "NA" {
-			continue
-		}
-		if qv != cv {
-			return true
+		if relateValues(q.Get(attr), c.Get(attr)) == relationDisjoint {
+			return false
 		}
 	}
-	return false
-}
-
-// overlaps reports whether two WFNs are non-disjoint — their attribute sets
-// intersect, so the CPEs can refer to the same thing. It is matching.IsDisjoint
-// negated and corrected with the concretelyDisjoint bug-guard: the basic
-// "these two CPEs match on attributes" test used throughout Accept.
-func overlaps(a, b common.WellFormedName) bool {
-	return !matching.IsDisjoint(a, b) && !concretelyDisjoint(a, b)
+	return true
 }
 
 // MatchQuality describes how strongly a Criterion matched a Query. It is a
@@ -207,22 +185,25 @@ const (
 	// the query (disjoint attributes, out of range, enumeration miss).
 	MatchQualityNone
 	// MatchQualityExact means the criterion accepts the query with sufficient
-	// version evidence: a concrete query version confirmed by equality, range,
-	// or enumeration; a version=* criterion with no range/cpematches (every
-	// version of the product is affected); a version=NA query matched by an NA
-	// criterion, an un-narrowed * criterion, or an NA / * cpematches entry
-	// (EQUAL / SUPERSET, a match under CPE name matching); OR a query whose
-	// version is ANY — the scan
-	// asks for all versions of the product, so any match is reported with full
-	// confidence (respecting the intent of whoever wrote the query).
+	// version evidence: the query version (a concrete value, a pattern such
+	// as "12.*", or ANY) intersects the criterion version, an enumerated name,
+	// or — for a concrete query — the Range; a version=NA query matched by an
+	// NA criterion, an un-narrowed * criterion, or an NA / * cpematches entry
+	// (EQUAL / SUPERSET, a match under CPE name matching). A set-valued query
+	// (a pattern or ANY) is Exact as soon as the criterion intersects it: the
+	// query's author chose the set, and any affected version inside it is
+	// reported with full confidence. (For ANY this is deliberately stronger
+	// than go-cve-dictionary, which reported a version-less query at
+	// vendor:product.)
 	MatchQualityExact
 	// MatchQualityVersionUnconfirmed means the criterion accepts the query on
-	// every non-version attribute but the version cannot be evaluated because
-	// one side has none: the criterion version is NA against a concrete query,
-	// or the query version is NA against a concrete version, a range, or an
-	// enumeration with no NA / * entry. Both are DISJOINT under CPE name
-	// matching and accepted only as a relaxation. (An NA query against an NA /
-	// * criterion or entry is Exact instead — see MatchQualityExact.)
+	// every non-version attribute but the version cannot be confirmed because
+	// one side has none: the criterion (or entry) version is NA against a
+	// concrete or pattern query, or the query version is NA against a
+	// concrete version, a pattern, a range, or an enumeration with no NA / *
+	// entry. Both are DISJOINT under CPE name matching and accepted only as a
+	// relaxation. (An NA query against an NA / * criterion or entry is Exact
+	// instead — see MatchQualityExact.)
 	MatchQualityVersionUnconfirmed
 )
 
@@ -239,215 +220,312 @@ func (q MatchQuality) String() string {
 	}
 }
 
+// stronger returns the stronger of two qualities, ordered None <
+// VersionUnconfirmed < Exact (not the declaration order, which is fixed by
+// the zero value being Unknown). Unknown never reaches it.
+func stronger(a, b MatchQuality) MatchQuality {
+	rank := func(q MatchQuality) int {
+		switch q {
+		case MatchQualityNone:
+			return 1
+		case MatchQualityVersionUnconfirmed:
+			return 2
+		case MatchQualityExact:
+			return 3
+		default:
+			return 0
+		}
+	}
+	if rank(b) > rank(a) {
+		return b
+	}
+	return a
+}
+
 // Accept reports how strongly the criterion matches the query as a
 // MatchQuality (None vs Exact vs VersionUnconfirmed) — the CPE analogue of the
 // other criterion kinds' Accept (e.g. kbcriterion returns two bools); a richer
-// return under the same vocabulary. The branch structure mirrors the
-// affected-set semantics documented on Criterion: attribute match, then NA
-// short-circuit, then narrowing (range / cpematches), with the CPEMatches
-// enumeration tried both as an out-of-range fallback and (defensively) when the
-// main CPE is disjoint.
-func (c Criterion) Accept(query Query) (MatchQuality, error) {
+// return under the same vocabulary. The main CPE and each CPEMatches entry
+// are evaluated separately (acceptMain, acceptEntry) and the strongest result
+// wins, so the result depends neither on entry order nor on the main CPE
+// matching before an entry is tried (edition divergence in source data).
+//
+// The warnings are the non-fatal events the evaluation itself records — as
+// opposed to the *warning.UnevaluableError the error channel carries when
+// the data cannot be evaluated at all. Today there is one: a pattern query
+// against a criterion that narrows by Range, when the enumeration did not
+// make the result Exact (warning.KindPatternQueryRange, Cause = the query
+// CPE). It is nil when there is none.
+//
+// # Name matching (CPE Name Matching, NISTIR 7696)
+//
+// Every attribute is compared with the query as the source and the criterion
+// (or a CPEMatches entry) as the target, per Table 6-2 of the spec. String
+// comparison is case-insensitive (§6.2). An unquoted "*" matches zero or more
+// characters and an unquoted "?" zero or one (§6.3), and either may appear only
+// at the beginning and/or end of a value (NISTIR 7695 §5.3.2).
+//
+//	source \ target │ ANY │ NA │ i (concrete) │ m (pattern)
+//	────────────────┼─────┼────┼──────────────┼────────────
+//	ANY             │  =  │ ⊃  │      ⊃       │ undefined
+//	NA              │  ⊂  │ =  │      ≠       │ undefined
+//	i (concrete)    │  ⊂  │ ≠  │   = or ≠     │ undefined
+//	m (pattern)     │  ⊂  │ ≠  │   ⊃ or ≠     │ undefined
+//
+// Two CPEs overlap when no attribute compares ≠. relateValues implements the
+// table and resolves its undefined cells: the spec's grammar (wild cards only
+// at the ends of a value) makes every value a set of strings — a concrete
+// value a singleton, ANY every string, a pattern the strings it denotes — so
+// a pattern on either side, or on both, is related as a set: =, ⊂, ⊃, a
+// partial overlap, or ≠. Any intersection is a match on that attribute; the
+// direction of containment does not matter. This holds for the version too,
+// subject to the Vuls-specific rules below.
+//
+// # Version evaluation (Vuls-specific; the CPE spec has no ranges)
+//
+// The main CPE and each CPEMatches entry are evaluated separately, on their
+// own names, and the criterion's result is the strongest of them. In both
+// tables the rows are the data side (the version of the main CPE, or of an
+// entry) and the columns the query version; the relation table above has
+// the query on the rows. Both tables assume every other attribute
+// intersects; otherwise the cell is None. VU is VersionUnconfirmed: the
+// product matched but there is no version to evaluate.
+//
+// The main CPE:
+//
+//	main CPE \ query     │ ANY (*) │ NA (-) │ concrete i               │ pattern p
+//	─────────────────────┼─────────┼────────┼──────────────────────────┼──────────────────────────────
+//	NA (-)               │ Exact   │ Exact  │ VU                       │ VU
+//	pattern m            │ Exact   │ VU     │ i ∈ m → Exact, else None │ p ∩ m ≠ ∅ → Exact, else None
+//	concrete j           │ Exact   │ VU     │ i = j → Exact, else None │ j ∈ p → Exact, else None
+//	* not narrowed       │ Exact   │ Exact  │ Exact                    │ Exact
+//	any + Range          │ Exact   │ VU     │ in Range → Exact,        │ None, with a warning
+//	                     │         │        │ else None                │ (see below)
+//	* + enumeration only │ Exact   │ VU     │ None                     │ None
+//
+// Each CPEMatches entry, on its own name. An entry is never narrowed, so
+// its table is the first four rows of the main CPE table, repeated:
+//
+//	entry \ query │ ANY (*) │ NA (-) │ concrete i               │ pattern p
+//	──────────────┼─────────┼────────┼──────────────────────────┼──────────────────────────────
+//	NA (-)        │ Exact   │ Exact  │ VU                       │ VU
+//	pattern m     │ Exact   │ VU     │ i ∈ m → Exact, else None │ p ∩ m ≠ ∅ → Exact, else None
+//	concrete j    │ Exact   │ VU     │ i = j → Exact, else None │ j ∈ p → Exact, else None
+//	*             │ Exact   │ Exact  │ Exact                    │ Exact
+//
+// The last two rows of the main CPE table are a main CPE narrowed by a
+// Range and/or an enumeration. A Range is the version of the main CPE that
+// carries it, whatever the CPE version says, and is evaluated there, for a
+// concrete query only. An enumeration is not evaluated at the main CPE at
+// all: a * with only an enumeration says nothing about the version by
+// itself (it would otherwise accept every version and make the enumeration
+// meaningless), and the entries decide, each by the entry table. So the
+// main CPE row depends on the Range alone: a main CPE with a Range takes
+// the any + Range row whether or not it also has an enumeration, and the
+// entries are then tried in any case.
+//
+// Worked out for one product, the two tables combine as follows. Rows are
+// criteria (version, Range, enumeration in brackets), columns the query
+// version; E is Exact, VU VersionUnconfirmed, . None, and ! marks a cell
+// that also records the Range-skipped warning. The first eight rows are
+// single cells of the main CPE table; the last five show the narrowing and
+// the combination (5.0 + Range reads exactly as * + Range: the Range is the
+// version, and the 5.0 that matches no query is never consulted).
+//
+//	criterion \ query      │ *  │ -  │ 1.0 │ 1.0.1 │ 2.0 │ 1.* │ 1.0.* │ *.0
+//	───────────────────────┼────┼────┼─────┼───────┼─────┼─────┼───────┼─────
+//	*                      │ E  │ E  │ E   │ E     │ E   │ E   │ E     │ E
+//	-                      │ E  │ E  │ VU  │ VU    │ VU  │ VU  │ VU    │ VU
+//	1.0                    │ E  │ VU │ E   │ .     │ .   │ E   │ .     │ E
+//	1.0.1                  │ E  │ VU │ .   │ E     │ .   │ E   │ E     │ .
+//	2.0                    │ E  │ VU │ .   │ .     │ E   │ .   │ .     │ E
+//	1.*                    │ E  │ VU │ E   │ E     │ .   │ E   │ E     │ E
+//	1.0.*                  │ E  │ VU │ .   │ E     │ .   │ E   │ E     │ E
+//	*.0                    │ E  │ VU │ E   │ .     │ E   │ E   │ E     │ E
+//	* + Range < 2.0        │ E  │ VU │ E   │ E     │ .   │ .!  │ .!    │ .!
+//	5.0 + Range < 2.0      │ E  │ VU │ E   │ E     │ .   │ .!  │ .!    │ .!
+//	* + [1.0]              │ E  │ VU │ E   │ .     │ .   │ E   │ .     │ E
+//	* + [-]                │ E  │ E  │ VU  │ VU    │ VU  │ VU  │ VU    │ VU
+//	* + Range < 2.0 + [-]  │ E  │ E  │ E   │ E     │ VU  │ VU! │ VU!   │ VU!
+//
+// Three rules produce the tables:
+//
+//  1. Name matching: every attribute's sets must intersect (the relation
+//     table on Accept). For the version this means a concrete, pattern or ANY
+//     query is Exact against any criterion or entry version it intersects,
+//     including a pattern it only partly overlaps: the query's author chose
+//     the set, and any affected version inside it is reported.
+//  2. NA: a version of NA on either side, against a concrete version, a
+//     pattern, or a narrowed *, is VU rather than None — the product matched
+//     but one side has no version to evaluate. NA against NA or an
+//     un-narrowed * is Exact by rule 1.
+//  3. Narrowing: a criterion with a Range, or a * criterion with an
+//     enumeration, is not accepted by its CPE version. A concrete query is
+//     accepted by the Range; a pattern query by nothing, since no Range can
+//     evaluate a set of names, and the warning records that the Range was
+//     skipped unless an entry made the result Exact anyway; an ANY query
+//     ignores narrowing; an NA query is VU by rule 2. The entries are tried
+//     in every case.
+func (c Criterion) Accept(query Query) (MatchQuality, []warningTypes.Warning, error) {
 	qWFN, err := naming.UnbindFS(query.CPE)
 	if err != nil {
-		return MatchQualityUnknown, errors.Wrapf(err, "unbind %q to WFN", query.CPE)
+		return MatchQualityUnknown, nil, errors.Wrapf(err, "unbind %q to WFN", query.CPE)
 	}
 
 	cWFN, err := naming.UnbindFS(string(c.CPE))
 	if err != nil {
-		return MatchQualityUnknown, errors.Wrapf(err, "unbind %q to WFN", string(c.CPE))
+		return MatchQualityUnknown, nil, errors.Wrapf(err, "unbind %q to WFN", string(c.CPE))
 	}
 
-	cv := cWFN.GetString(common.AttributeVersion)
-	qv := qWFN.GetString(common.AttributeVersion)
+	// Exact is the strongest quality: once the main CPE or an entry reaches
+	// it there is nothing left to evaluate, and nothing to warn about.
+	quality, rangeSkipped, err := c.acceptMain(qWFN, cWFN)
+	if err != nil {
+		return MatchQualityUnknown, nil, errors.Wrap(err, "accept main cpe")
+	}
+	if quality == MatchQualityExact {
+		return quality, nil, nil
+	}
 
-	switch {
-	case qv == "NA":
-		// The scan has no version; its own path covers the main CPE and the
-		// CPEMatches together.
-		return c.acceptNAQuery(qWFN, cWFN)
-	case cv == "NA":
-		// A version=NA criterion fixes the product but not the version: it
-		// matches any scan whose non-version attributes are compatible. The
-		// criterion version is neutralised to ANY because go-cpe's IsDisjoint
-		// would otherwise reject a concrete scan version against NA; other
-		// concrete attributes (target_sw, edition, ...) must still agree.
-		cAnyVer, err := withAnyVersion(cWFN)
+	for _, m := range c.CPEMatches {
+		mWFN, err := naming.UnbindFS(string(m))
 		if err != nil {
-			return MatchQualityUnknown, errors.Wrap(err, "neutralise criterion version")
+			return MatchQualityUnknown, nil, errors.Wrapf(err, "unbind %q to WFN", string(m))
 		}
-		if overlaps(qWFN, cAnyVer) {
-			// query=ANY asks for all versions → Exact. A concrete scan
-			// version is DISJOINT from NA under CPE name matching; it is
-			// accepted only as a relaxation mirroring go-cve-dictionary's
-			// VendorProductMatch for "-" entries, where NA often means "all
-			// versions" (e.g. linux_kernel:- on a classic all-versions CVE),
-			// so the version stays unconfirmed.
-			if qv == "ANY" {
-				return MatchQualityExact, nil
-			}
-			return MatchQualityVersionUnconfirmed, nil
+		if quality = stronger(quality, acceptEntry(qWFN, mWFN)); quality == MatchQualityExact {
+			return quality, nil, nil
 		}
-		// Non-version attributes disagree; fall through to CPEMatches.
-	case overlaps(qWFN, cWFN):
+	}
+
+	// None or VersionUnconfirmed: a Range skipped for a pattern query is
+	// what could have made the difference.
+	var ws []warningTypes.Warning
+	if rangeSkipped {
+		ws = append(ws, warningTypes.Warning{Kind: warningTypes.KindPatternQueryRange, Cause: query.CPE})
+	}
+	return quality, ws, nil
+}
+
+// acceptMain evaluates the query against the main CPE: the main CPE table
+// on Accept. rangeSkipped reports that the criterion narrows by a Range
+// which was not consulted because the query version is a pattern.
+func (c Criterion) acceptMain(qWFN, cWFN common.WellFormedName) (quality MatchQuality, rangeSkipped bool, err error) {
+	if !overlapsExceptVersion(qWFN, cWFN) {
+		return MatchQualityNone, false, nil
+	}
+
+	// The logical values are told apart by type (isNA / isANY): GetString
+	// renders them as "NA" / "ANY", which a concrete version may spell too.
+	qVer, cVer := qWFN.Get(common.AttributeVersion), cWFN.Get(common.AttributeVersion)
+	switch {
+	case isANY(qVer):
+		// The scan asks for all versions of this product (version=*), so
+		// any criterion whose other attributes agree is a confident match
+		// regardless of how it narrows versions — respecting the query
+		// author's intent. (Deliberately stronger than go-cve-dictionary,
+		// which reports a version-less query at vendor:product.)
+		return MatchQualityExact, false, nil
+	case c.Range != nil || (isANY(cVer) && len(c.CPEMatches) > 0):
+		// Narrowed (rule 3): a Range is the criterion's version whatever
+		// the CPE version says, and a * with an enumeration says nothing
+		// about the version by itself.
 		switch {
-		case qv == "ANY":
-			// The scan asks for all versions of this product (version=*), so
-			// any accepted criterion is a confident match regardless of how it
-			// narrows versions — respecting the query author's intent.
-			// (Deliberately stronger than go-cve-dictionary, which reports a
-			// version-less query at vendor:product.)
-			return MatchQualityExact, nil
-		case c.Range == nil && len(c.CPEMatches) == 0:
-			// No narrowing → accept on attribute match alone.
-			// version=* (every version of the product is affected) or a
-			// concrete query equal to the concrete criterion version (a
-			// differing one would have failed the overlaps check above).
-			return MatchQualityExact, nil
-		case c.Range != nil:
-			// Concrete query against a range: accept only if in range,
-			// otherwise fall through to CPEMatches.
-			// WFN attribute values escape every special character with a
-			// backslash ("10\.1\.3\-h1"); unescape so versions containing
-			// any special char (e.g. the hyphen in PAN-OS hotfixes) reach the
-			// comparator intact.
-			qVersion := unescapeWFN(qv)
-			// A PAN-OS query may carry the hotfix in the UPDATE attribute
-			// (NVD/cisco form: version="10.1.14", update="h11") rather than in
-			// the version (snmp2cpe form: "10.1.14-h11"). Fold a hotfix-looking
-			// UPDATE into the version so the pan-os comparator sees the full
-			// release; otherwise the query reads as the base version and
-			// over-matches at hotfix fix boundaries (e.g. accepted by "< 10.1.14-h13"
-			// when the device is actually fixed). Scoped to the pan-os range type
-			// (other range types do not use the UPDATE attribute this way); for
-			// the snmp2cpe form UPDATE is ANY and nothing is folded.
-			//
-			// Normalise to the lowercase "-hN" the comparator requires (it
-			// rejects "-H11"), and only fold when the version is a base release —
-			// if it already carries a hotfix ("10.1.14-h11"), appending the
-			// UPDATE would produce an unparseable "...-h11-h11".
-			if c.Range.Type == rangeTypes.RangeTypePANOS && !strings.Contains(qVersion, "-") {
-				if u := unescapeWFN(qWFN.GetString(common.AttributeUpdate)); panosHotfixUpdate.MatchString(u) {
-					qVersion = fmt.Sprintf("%s-%s", qVersion, strings.ToLower(u))
-				}
-			}
-			// OpenSSH splits the same way, and NVD is the side that splits it:
-			// 9.9p1 is published as version="9.9", update="p1". Unfolded, every
-			// portable release of one base reads as that base, so an advisory
-			// bounded at "<= 9.9p1" would accept the 9.9p2 that fixes it.
-			// Scoped to the openssh range type; a query already carrying the
-			// suffix in the version has UPDATE as ANY and nothing is folded.
-			if c.Range.Type == rangeTypes.RangeTypeOpenSSH && !opensshPortableVersion.MatchString(qVersion) {
-				if u := unescapeWFN(qWFN.GetString(common.AttributeUpdate)); opensshPortableUpdate.MatchString(u) {
-					qVersion = fmt.Sprintf("%s%s", qVersion, strings.ToLower(u))
-				}
-			}
-			isAccepted, err := c.Range.Accept(qVersion)
+		case isNA(qVer):
+			// The scan has no version to evaluate against the narrowing
+			// (rule 2); an NA / * entry can still make it Exact.
+			return MatchQualityVersionUnconfirmed, false, nil
+		case c.Range == nil:
+			// Enumeration only: the entries decide.
+			return MatchQualityNone, false, nil
+		case hasWildcards(qWFN.GetString(common.AttributeVersion)):
+			// A pattern query ("12.*") denotes a set of names, which no
+			// Range can evaluate; the entries decide, and the skipped Range
+			// is reported unless they make the result Exact.
+			return MatchQualityNone, true, nil
+		default:
+			isAccepted, err := c.acceptRange(qWFN)
 			if err != nil {
-				return MatchQualityUnknown, errors.Wrap(err, "range accept")
+				return MatchQualityUnknown, false, errors.Wrap(err, "range accept")
 			}
 			if isAccepted {
-				return MatchQualityExact, nil
+				return MatchQualityExact, false, nil
 			}
-		default:
-			// CPEMatches-only narrowing; fall through to CPEMatches.
+			return MatchQualityNone, false, nil
 		}
+	case relateValues(qVer, cVer) != relationDisjoint:
+		// Name matching decides (rule 1): NA against NA or an un-narrowed *,
+		// a concrete / pattern criterion version the query intersects, an
+		// un-narrowed * against anything.
+		return MatchQualityExact, false, nil
+	case isNA(qVer) || isNA(cVer):
+		// One side has no version (rule 2): a version=NA criterion fixes
+		// the product but not the version (e.g. linux_kernel:- on a classic
+		// all-versions CVE, where go-cve-dictionary reported
+		// VendorProductMatch), or the scan reports none. Accepted as a
+		// relaxation of name matching, the version left unconfirmed.
+		return MatchQualityVersionUnconfirmed, false, nil
 	default:
-		// Main CPE disjoint from the query; only CPEMatches can still match.
+		return MatchQualityNone, false, nil
 	}
-
-	// CPEMatches: tried when (a) main CPE matched but neither NA short-circuit
-	// nor Range accepted (out-of-Range exceptions), or (b) main CPE was
-	// disjoint (defensive — covers edition-divergence cases in source data).
-	// The query version is ANY or concrete here (an NA query takes
-	// acceptNAQuery), and either is confirmed by an overlapping entry.
-	for _, m := range c.CPEMatches {
-		mWFN, err := naming.UnbindFS(string(m))
-		if err != nil {
-			return MatchQualityUnknown, errors.Wrapf(err, "unbind %q to WFN", string(m))
-		}
-		if overlaps(qWFN, mWFN) {
-			return MatchQualityExact, nil
-		}
-	}
-
-	return MatchQualityNone, nil
 }
 
-// acceptNAQuery is Accept for a version=NA query: the scan has no version.
-// Only an NA (EQUAL) or * (SUPERSET) version matches it under CPE name
-// matching, and that is Exact. A concrete version, a range, or an enumeration
-// of concrete versions is DISJOINT from NA, yet the scan simply has no version
-// to evaluate against it — the mirror of an NA criterion against a concrete
-// scan — so it is accepted at VersionUnconfirmed when every non-version
-// attribute agrees. Anything else is None.
-func (c Criterion) acceptNAQuery(qWFN, cWFN common.WellFormedName) (MatchQuality, error) {
-	qAnyVer, err := withAnyVersion(qWFN)
-	if err != nil {
-		return MatchQualityUnknown, errors.Wrap(err, "neutralise query version")
+// acceptEntry evaluates the query against one CPEMatches entry on the
+// entry's own name: the entry table on Accept. An entry whose version is NA
+// is treated like an NA criterion (rule 2).
+func acceptEntry(qWFN, mWFN common.WellFormedName) MatchQuality {
+	if !overlapsExceptVersion(qWFN, mWFN) {
+		return MatchQualityNone
 	}
-
-	quality := MatchQualityNone
+	qVer, mVer := qWFN.Get(common.AttributeVersion), mWFN.Get(common.AttributeVersion)
 	switch {
-	case matchesNAVersion(cWFN) && overlaps(qWFN, cWFN):
-		// NA fixes the product but not the version and ignores narrowing (as
-		// for any query); * without narrowing affects every version.
-		if cWFN.GetString(common.AttributeVersion) == "NA" || (c.Range == nil && len(c.CPEMatches) == 0) {
-			return MatchQualityExact, nil
-		}
-		// A * criterion narrowed by a range / enumeration: the range cannot
-		// be evaluated against no version, but an NA or * entry below can
-		// still match.
-		quality = MatchQualityVersionUnconfirmed
-	case overlaps(qAnyVer, cWFN):
-		// A concrete (or wildcard-pattern) criterion version against no
-		// version.
-		quality = MatchQualityVersionUnconfirmed
+	case relateValues(qVer, mVer) != relationDisjoint:
+		return MatchQualityExact
+	case isNA(qVer) || isNA(mVer):
+		return MatchQualityVersionUnconfirmed
 	default:
-		// Non-version attributes disagree; only CPEMatches can still match.
+		return MatchQualityNone
 	}
-
-	// The strongest entry wins, so the result does not depend on entry order
-	// (Sort puts "*" before "-", and before concrete versions).
-	for _, m := range c.CPEMatches {
-		mWFN, err := naming.UnbindFS(string(m))
-		if err != nil {
-			return MatchQualityUnknown, errors.Wrapf(err, "unbind %q to WFN", string(m))
-		}
-		switch {
-		case matchesNAVersion(mWFN) && overlaps(qWFN, mWFN):
-			return MatchQualityExact, nil
-		case overlaps(qAnyVer, mWFN):
-			// A concrete (or wildcard-pattern) entry against no version.
-			quality = MatchQualityVersionUnconfirmed
-		default:
-		}
-	}
-
-	return quality, nil
 }
 
-// matchesNAVersion reports whether wfn's version matches a version=NA query
-// under CPE name matching: NA (EQUAL) or ANY (SUPERSET). It is checked
-// explicitly because overlaps also lets a wildcard pattern such as "1.*"
-// through (go-cpe reports UNDEFINED for it), and that is DISJOINT from NA.
-func matchesNAVersion(wfn common.WellFormedName) bool {
-	v := wfn.GetString(common.AttributeVersion)
-	return v == "NA" || v == "ANY"
-}
-
-// withAnyVersion returns a copy of wfn whose version is ANY, for comparing
-// every attribute but the version.
-func withAnyVersion(wfn common.WellFormedName) (common.WellFormedName, error) {
-	anyVal, err := common.NewLogicalValue("ANY")
-	if err != nil {
-		return nil, errors.Wrap(err, "build ANY logical value")
+// acceptRange evaluates a concrete query version against the criterion's
+// Range, folding a release suffix the query may carry in its UPDATE
+// attribute into the version where the comparator expects it there.
+func (c Criterion) acceptRange(qWFN common.WellFormedName) (bool, error) {
+	// WFN attribute values escape every special character with a backslash
+	// ("10\.1\.3\-h1"); unescape so versions containing any special char
+	// (e.g. the hyphen in PAN-OS hotfixes) reach the comparator intact.
+	qVersion := unescapeWFN(qWFN.GetString(common.AttributeVersion))
+	// A PAN-OS query may carry the hotfix in the UPDATE attribute
+	// (NVD/cisco form: version="10.1.14", update="h11") rather than in
+	// the version (snmp2cpe form: "10.1.14-h11"). Fold a hotfix-looking
+	// UPDATE into the version so the pan-os comparator sees the full
+	// release; otherwise the query reads as the base version and
+	// over-matches at hotfix fix boundaries (e.g. accepted by "< 10.1.14-h13"
+	// when the device is actually fixed). Scoped to the pan-os range type
+	// (other range types do not use the UPDATE attribute this way); for
+	// the snmp2cpe form UPDATE is ANY and nothing is folded.
+	//
+	// Normalise to the lowercase "-hN" the comparator requires (it
+	// rejects "-H11"), and only fold when the version is a base release —
+	// if it already carries a hotfix ("10.1.14-h11"), appending the
+	// UPDATE would produce an unparseable "...-h11-h11".
+	if c.Range.Type == rangeTypes.RangeTypePANOS && !strings.Contains(qVersion, "-") {
+		if u := unescapeWFN(qWFN.GetString(common.AttributeUpdate)); panosHotfixUpdate.MatchString(u) {
+			qVersion = fmt.Sprintf("%s-%s", qVersion, strings.ToLower(u))
+		}
 	}
-	out := maps.Clone(wfn)
-	if err := out.Set(common.AttributeVersion, anyVal); err != nil {
-		return nil, errors.Wrap(err, "set version")
+	// OpenSSH splits the same way, and NVD is the side that splits it:
+	// 9.9p1 is published as version="9.9", update="p1". Unfolded, every
+	// portable release of one base reads as that base, so an advisory
+	// bounded at "<= 9.9p1" would accept the 9.9p2 that fixes it.
+	// Scoped to the openssh range type; a query already carrying the
+	// suffix in the version has UPDATE as ANY and nothing is folded.
+	if c.Range.Type == rangeTypes.RangeTypeOpenSSH && !opensshPortableVersion.MatchString(qVersion) {
+		if u := unescapeWFN(qWFN.GetString(common.AttributeUpdate)); opensshPortableUpdate.MatchString(u) {
+			qVersion = fmt.Sprintf("%s%s", qVersion, strings.ToLower(u))
+		}
 	}
-	return out, nil
+	return c.Range.Accept(qVersion)
 }
 
 // panosHotfixUpdate matches a PAN-OS hotfix encoded in the WFN UPDATE

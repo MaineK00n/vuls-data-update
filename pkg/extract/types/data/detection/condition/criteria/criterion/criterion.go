@@ -271,7 +271,7 @@ func (c Criterion) Accept(query Query, repositories []string) (FilteredCriterion
 		var accepts CPEAccepts
 		var ws []warningTypes.Warning
 		for i, q := range query.CPE {
-			quality, err := c.CPE.Accept(q)
+			quality, cws, err := c.CPE.Accept(q)
 			if err != nil {
 				if ue, ok := stderrors.AsType[*warningTypes.UnevaluableError](err); ok {
 					if !slices.Contains(ws, ue.Warning) {
@@ -280,6 +280,15 @@ func (c Criterion) Accept(query Query, repositories []string) (FilteredCriterion
 					continue
 				}
 				return FilteredCriterion{}, errors.Wrap(err, "cpe criterion accept")
+			}
+			// The cpe criterion also records warnings of its own, for a query
+			// it did evaluate but not against all of its data (a pattern
+			// query skipping the Range); they join the ones the error
+			// channel carries, deduplicated the same way.
+			for _, w := range cws {
+				if !slices.Contains(ws, w) {
+					ws = append(ws, w)
+				}
 			}
 			switch quality {
 			case ccTypes.MatchQualityNone:
