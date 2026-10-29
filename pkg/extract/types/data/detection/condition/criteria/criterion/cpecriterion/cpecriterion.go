@@ -33,11 +33,14 @@ type CPE string
 //   - CPE: the criterion's canonical CPE string (wildcards permitted). A
 //     version of * is every version of the product unless a Range or an
 //     enumeration narrows it.
-//   - Range: optional version range, the version of a * criterion
-//     (comparator selected by Range.Type — semver / loose version / etc.).
-//     It is evaluated for a concrete query version only. A criterion whose
-//     version is not * leaves nothing for a range to decide, so the Range
-//     is ignored there (no source emits that shape).
+//   - Range: optional version range (comparator selected by Range.Type —
+//     semver / loose version / etc.). When present it IS the criterion's
+//     version: the CPE version is not consulted, whatever it says (NVD
+//     writes * there; a concrete, pattern or NA version is at best a
+//     coarser restatement of the Range). It is evaluated for a concrete
+//     query version only. A Range is expressed in the same version scheme
+//     as the query's version attribute; an extractor that cannot guarantee
+//     that must not emit the Range.
 //   - CPEMatches: optional list of concrete CPE strings that the criterion
 //     also covers — used for entries that fall OUTSIDE Range (e.g. NVD listed
 //     versions that don't satisfy the bounds) or that Range cannot evaluate
@@ -295,7 +298,7 @@ func stronger(a, b MatchQuality) MatchQuality {
 //	pattern m            │ Exact   │ VU     │ i ∈ m → Exact, else None │ p ∩ m ≠ ∅ → Exact, else None
 //	concrete j           │ Exact   │ VU     │ i = j → Exact, else None │ j ∈ p → Exact, else None
 //	* not narrowed       │ Exact   │ Exact  │ Exact                    │ Exact
-//	* + Range            │ Exact   │ VU     │ in Range → Exact,        │ None, with a warning
+//	any + Range          │ Exact   │ VU     │ in Range → Exact,        │ None, with a warning
 //	                     │         │        │ else None                │ (see below)
 //	* + enumeration only │ Exact   │ VU     │ None                     │ None
 //
@@ -309,23 +312,24 @@ func stronger(a, b MatchQuality) MatchQuality {
 //	concrete j    │ Exact   │ VU     │ i = j → Exact, else None │ j ∈ p → Exact, else None
 //	*             │ Exact   │ Exact  │ Exact                    │ Exact
 //
-// The last two rows of the main CPE table are a * narrowed by a Range
-// and/or an enumeration. The Range is the version of such a main CPE and is
-// evaluated there, for a concrete query only. An enumeration is not
-// evaluated at the main CPE at all: a * with only an enumeration says
-// nothing about the version by itself (it would otherwise accept every
-// version and make the enumeration meaningless), and the entries decide,
-// each by the entry table. So the main CPE row depends on the Range alone:
-// a main CPE with a Range takes the * + Range row whether or not it also
-// has an enumeration, and the entries are then tried in any case. A Range
-// on a main CPE whose version is not * is ignored; that row applies as it
-// is.
+// The last two rows of the main CPE table are a main CPE narrowed by a
+// Range and/or an enumeration. A Range is the version of the main CPE that
+// carries it, whatever the CPE version says, and is evaluated there, for a
+// concrete query only. An enumeration is not evaluated at the main CPE at
+// all: a * with only an enumeration says nothing about the version by
+// itself (it would otherwise accept every version and make the enumeration
+// meaningless), and the entries decide, each by the entry table. So the
+// main CPE row depends on the Range alone: a main CPE with a Range takes
+// the any + Range row whether or not it also has an enumeration, and the
+// entries are then tried in any case.
 //
 // Worked out for one product, the two tables combine as follows. Rows are
 // criteria (version, Range, enumeration in brackets), columns the query
 // version; E is Exact, VU VersionUnconfirmed, . None, and ! marks a cell
 // that also records the Range-skipped warning. The first eight rows are
-// single cells of the main CPE table; the last four show the combination.
+// single cells of the main CPE table; the last five show the narrowing and
+// the combination (1.0 + Range reads exactly as * + Range: the Range is the
+// version).
 //
 //	criterion \ query      │ *  │ -  │ 1.0 │ 1.0.1 │ 2.0 │ 1.* │ 1.0.* │ *.0
 //	───────────────────────┼────┼────┼─────┼───────┼─────┼─────┼───────┼─────
@@ -338,6 +342,7 @@ func stronger(a, b MatchQuality) MatchQuality {
 //	1.0.*                  │ E  │ VU │ .   │ E     │ .   │ E   │ E     │ E
 //	*.0                    │ E  │ VU │ E   │ .     │ E   │ E   │ E     │ E
 //	* + Range < 2.0        │ E  │ VU │ E   │ E     │ .   │ .!  │ .!    │ .!
+//	1.0 + Range < 2.0      │ E  │ VU │ E   │ E     │ .   │ .!  │ .!    │ .!
 //	* + [1.0]              │ E  │ VU │ E   │ .     │ .   │ E   │ .     │ E
 //	* + [-]                │ E  │ E  │ VU  │ VU    │ VU  │ VU  │ VU    │ VU
 //	* + Range < 2.0 + [-]  │ E  │ E  │ E   │ E     │ VU  │ VU! │ VU!   │ VU!
@@ -353,12 +358,13 @@ func stronger(a, b MatchQuality) MatchQuality {
 //     pattern, or a narrowed *, is VU rather than None — the product matched
 //     but one side has no version to evaluate. NA against NA or an
 //     un-narrowed * is Exact by rule 1.
-//  3. Narrowing: a * criterion with a Range and/or an enumeration is not
-//     accepted by its version alone. A concrete query is accepted by the
-//     Range; a pattern query by nothing, since no Range can evaluate a set
-//     of names, and the warning records that the Range was skipped unless
-//     an entry made the result Exact anyway; an ANY query ignores narrowing;
-//     an NA query is VU by rule 2. The entries are tried in every case.
+//  3. Narrowing: a criterion with a Range, or a * criterion with an
+//     enumeration, is not accepted by its CPE version. A concrete query is
+//     accepted by the Range; a pattern query by nothing, since no Range can
+//     evaluate a set of names, and the warning records that the Range was
+//     skipped unless an entry made the result Exact anyway; an ANY query
+//     ignores narrowing; an NA query is VU by rule 2. The entries are tried
+//     in every case.
 func (c Criterion) Accept(query Query) (MatchQuality, []warningTypes.Warning, error) {
 	qWFN, err := naming.UnbindFS(query.CPE)
 	if err != nil {
@@ -418,8 +424,10 @@ func (c Criterion) acceptMain(qWFN, cWFN common.WellFormedName) (quality MatchQu
 		// author's intent. (Deliberately stronger than go-cve-dictionary,
 		// which reports a version-less query at vendor:product.)
 		return MatchQualityExact, false, nil
-	case isANY(cVer) && (c.Range != nil || len(c.CPEMatches) > 0):
-		// A narrowed *: the version alone decides nothing (rule 3).
+	case c.Range != nil || (isANY(cVer) && len(c.CPEMatches) > 0):
+		// Narrowed (rule 3): a Range is the criterion's version whatever
+		// the CPE version says, and a * with an enumeration says nothing
+		// about the version by itself.
 		switch {
 		case isNA(qVer):
 			// The scan has no version to evaluate against the narrowing
@@ -446,8 +454,7 @@ func (c Criterion) acceptMain(qWFN, cWFN common.WellFormedName) (quality MatchQu
 	case relateValues(qVer, cVer) != relationDisjoint:
 		// Name matching decides (rule 1): NA against NA or an un-narrowed *,
 		// a concrete / pattern criterion version the query intersects, an
-		// un-narrowed * against anything. A Range on a non-* criterion is
-		// not consulted — the version already is the affected set.
+		// un-narrowed * against anything.
 		return MatchQualityExact, false, nil
 	case isNA(qVer) || isNA(cVer):
 		// One side has no version (rule 2): a version=NA criterion fixes

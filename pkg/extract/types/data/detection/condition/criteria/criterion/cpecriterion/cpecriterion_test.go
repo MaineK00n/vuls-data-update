@@ -593,13 +593,26 @@ func TestCriterion_Accept(t *testing.T) {
 			want: ccTypes.MatchQualityExact,
 		},
 		{
-			name: "criterion version NA with range (range ignored), query NA -> Exact (NA vs NA is EQUAL)",
+			// The Range is the criterion's version, so an NA CPE version next
+			// to it (a placeholder where * was meant) does not make the pair
+			// EQUAL: the scan has no version to evaluate against the Range.
+			name: "criterion version NA with range (the Range is the version), query NA -> VersionUnconfirmed",
 			fields: fields{
 				Vulnerable: true,
 				CPE:        "cpe:2.3:a:vendor:product:-:*:*:*:*:*:*:*",
 				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeSEMVER, LessThan: "0.0.2"},
 			},
 			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:-:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityVersionUnconfirmed,
+		},
+		{
+			name: "criterion version NA with range (the Range is the version), concrete query in range -> Exact",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:-:*:*:*:*:*:*:*",
+				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeSEMVER, LessThan: "0.0.2"},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:0.0.1:*:*:*:*:*:*:*"}},
 			want: ccTypes.MatchQualityExact,
 		},
 		{
@@ -779,7 +792,7 @@ func TestCriterion_Accept(t *testing.T) {
 			want: ccTypes.MatchQualityNone,
 		},
 		{
-			name: "criterion version NA with range (range ignored), query wildcard -> Exact (query=ANY)",
+			name: "criterion version NA with range, query wildcard -> Exact (query=ANY)",
 			fields: fields{
 				Vulnerable: true,
 				CPE:        "cpe:2.3:a:vendor:product:-:*:*:*:*:*:*:*",
@@ -851,30 +864,31 @@ func TestCriterion_Accept(t *testing.T) {
 			want: ccTypes.MatchQualityExact,
 		},
 		{
-			// A Range is the version of a * criterion. On a criterion whose
-			// version is concrete it has nothing left to decide and is ignored,
-			// even when it contradicts the version (no source emits that shape).
-			name: "concrete criterion with range, same concrete query out of range (Range ignored) -> Exact",
+			// A Range is the criterion's version whatever the CPE version
+			// says: the finer predicate wins, even when the CPE version
+			// contradicts it (no source emits that shape).
+			name: "concrete criterion with range, same concrete query out of range (the Range is the version) -> None",
 			fields: fields{
 				Vulnerable: true,
 				CPE:        "cpe:2.3:a:vendor:product:3.0.0:*:*:*:*:*:*:*",
 				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeSEMVER, LessThan: "2.0.0"},
 			},
 			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:3.0.0:*:*:*:*:*:*:*"}},
-			want: ccTypes.MatchQualityExact,
+			want: ccTypes.MatchQualityNone,
 		},
 		{
-			name: "concrete criterion with range, query version partial wildcard covering it (Range ignored) -> Exact, no warning",
+			name: "concrete criterion with range, query version partial wildcard covering it (the Range is the version) -> None, warning",
 			fields: fields{
 				Vulnerable: true,
 				CPE:        "cpe:2.3:a:vendor:product:1.0.0:*:*:*:*:*:*:*",
 				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeSEMVER, LessThan: "2.0.0"},
 			},
-			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:1.*:*:*:*:*:*:*:*"}},
-			want: ccTypes.MatchQualityExact,
+			args:         args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:1.*:*:*:*:*:*:*:*"}},
+			want:         ccTypes.MatchQualityNone,
+			wantWarnings: []warningTypes.Warning{{Kind: warningTypes.KindPatternQueryRange, Cause: "cpe:2.3:a:vendor:product:1.*:*:*:*:*:*:*:*"}},
 		},
 		{
-			name: "concrete criterion, different concrete query: CPE attr disjoint (Range never consulted) -> None",
+			name: "concrete criterion with range, different concrete query out of range -> None",
 			fields: fields{
 				Vulnerable: true,
 				CPE:        "cpe:2.3:a:vendor:product:3.0.0:*:*:*:*:*:*:*",
