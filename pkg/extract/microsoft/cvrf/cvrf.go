@@ -23,7 +23,8 @@ import (
 	defendermacversion "github.com/MaineK00n/go-microsoft-version/defender/mac"
 	defendersiversion "github.com/MaineK00n/go-microsoft-version/defender/securityintelligence"
 	defenderwindowsversion "github.com/MaineK00n/go-microsoft-version/defender/windows"
-	dotnetcoreversion "github.com/MaineK00n/go-microsoft-version/dotnet/core"
+	dotnetruntimeversion "github.com/MaineK00n/go-microsoft-version/dotnet/core/runtime"
+	dotnetsdkversion "github.com/MaineK00n/go-microsoft-version/dotnet/core/sdk"
 	edgeversion "github.com/MaineK00n/go-microsoft-version/edge"
 	exchangeversion "github.com/MaineK00n/go-microsoft-version/exchange"
 	officemacversion "github.com/MaineK00n/go-microsoft-version/office/mac"
@@ -1758,16 +1759,16 @@ func buildDotNetSDKCriterion(productName, fixedBuild string) (*criterionTypes.Cr
 		if releaseCandidateTagRE.MatchString(f) {
 			continue
 		}
-		v, err := dotnetcoreversion.NewVersion(f)
+		v, err := dotnetsdkversion.NewVersion(f)
 		if err != nil {
-			return nil, errors.Wrapf(err, "dotnetcoreversion.NewVersion %q", f)
+			return nil, errors.Wrapf(err, "dotnetsdkversion.NewVersion %q", f)
 		}
-		if v.Patch < 100 {
-			return nil, errors.Errorf("unexpected .NET SDK version. expected: %q, actual: %q", "a feature band of 100 or above", f)
+		if v.Prerelease != "" {
+			return nil, errors.Errorf("unexpected .NET SDK version. expected: %q, actual: %q", "a release version or a prerelease tag matched by releaseCandidateTagRE", f)
 		}
 
-		switch band := v.Patch / 100; {
-		case v.Patch%100 != 0:
+		switch band := v.FeatureBand(); {
+		case v.BandPatch() != 0:
 			ranges = append(ranges, rangeTypes.Range{GreaterEqual: fmt.Sprintf("%d.%d.%d00", v.Major, v.Minor, band), LessThan: f})
 			fixed = append(fixed, f)
 		case band > 2:
@@ -1789,7 +1790,7 @@ func buildDotNetSDKCriterion(productName, fixedBuild string) (*criterionTypes.Cr
 				Binary: &binaryTypes.Package{Name: productName},
 			},
 			Affected: &affectedTypes.Affected{
-				Type:  rangeTypes.RangeTypeMicrosoftDotNetCore,
+				Type:  rangeTypes.RangeTypeMicrosoftDotNetSDK,
 				Range: ranges,
 				Fixed: fixed,
 			},
@@ -1962,8 +1963,12 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 			".NET 8.0",
 			".NET Core 2.1",
 			".NET Core 3.1":
-			if _, err := dotnetcoreversion.NewVersion(fixedBuild); err != nil {
-				return rangeTypes.RangeTypeUnknown, errors.Wrap(err, "dotnetcoreversion.NewVersion")
+			v, err := dotnetruntimeversion.NewVersion(fixedBuild)
+			if err != nil {
+				return rangeTypes.RangeTypeUnknown, errors.Wrap(err, "dotnetruntimeversion.NewVersion")
+			}
+			if v.Prerelease != "" {
+				return rangeTypes.RangeTypeUnknown, errors.Errorf("unexpected .NET runtime version. expected: %q, actual: %q", "a release version or a prerelease tag matched by releaseCandidateTagRE", fixedBuild)
 			}
 			return rangeTypes.RangeTypeMicrosoftDotNetCore, nil
 
@@ -1982,9 +1987,12 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 			".NET 11.0 runtime installed on Linux",
 			".NET 11.0 runtime installed on Mac OS",
 			".NET 11.0 runtime installed on Windows":
-			v, err := dotnetcoreversion.NewVersion(fixedBuild)
+			v, err := dotnetruntimeversion.NewVersion(fixedBuild)
 			if err != nil {
-				return rangeTypes.RangeTypeUnknown, errors.Wrap(err, "dotnetcoreversion.NewVersion")
+				return rangeTypes.RangeTypeUnknown, errors.Wrap(err, "dotnetruntimeversion.NewVersion")
+			}
+			if v.Prerelease != "" {
+				return rangeTypes.RangeTypeUnknown, errors.Errorf("unexpected .NET runtime version. expected: %q, actual: %q", "a release version or a prerelease tag matched by releaseCandidateTagRE", fixedBuild)
 			}
 			if v.Patch >= 100 {
 				return rangeTypes.RangeTypeUnknown, errors.Errorf("unexpected .NET runtime version. expected: %q, actual: %q", "a patch below 100", fixedBuild)

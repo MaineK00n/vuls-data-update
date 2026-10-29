@@ -697,6 +697,60 @@ func TestRangeType_CompareVersions(t *testing.T) {
 			wantErr: true,
 		},
 		{
+			name: "microsoft-dotnet-core prerelease < release",
+			rt:   affectedrangeTypes.RangeTypeMicrosoftDotNetCore,
+			args: args{
+				v1: "11.0.0-rc.2.26504.105",
+				v2: "11.0.0",
+			},
+			want: -1,
+		},
+		{
+			name: "microsoft-dotnet-sdk v1 == v2",
+			rt:   affectedrangeTypes.RangeTypeMicrosoftDotNetSDK,
+			args: args{
+				v1: "10.0.402",
+				v2: "10.0.402",
+			},
+			want: 0,
+		},
+		{
+			name: "microsoft-dotnet-sdk v1 < v2 across feature bands",
+			rt:   affectedrangeTypes.RangeTypeMicrosoftDotNetSDK,
+			args: args{
+				v1: "10.0.399",
+				v2: "10.0.400",
+			},
+			want: -1,
+		},
+		{
+			name: "microsoft-dotnet-sdk v1 > v2",
+			rt:   affectedrangeTypes.RangeTypeMicrosoftDotNetSDK,
+			args: args{
+				v1: "10.0.113",
+				v2: "10.0.112",
+			},
+			want: +1,
+		},
+		{
+			name: "microsoft-dotnet-sdk prerelease < release",
+			rt:   affectedrangeTypes.RangeTypeMicrosoftDotNetSDK,
+			args: args{
+				v1: "11.0.100-rc.3.26522.148",
+				v2: "11.0.100",
+			},
+			want: -1,
+		},
+		{
+			name: "microsoft-dotnet-sdk runtime version is invalid",
+			rt:   affectedrangeTypes.RangeTypeMicrosoftDotNetSDK,
+			args: args{
+				v1: "10.0.13",
+				v2: "10.0.402",
+			},
+			wantErr: true,
+		},
+		{
 			name: "microsoft-edge v1 == v2",
 			rt:   affectedrangeTypes.RangeTypeMicrosoftEdge,
 			args: args{

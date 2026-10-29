@@ -768,7 +768,7 @@ func TestBuildFixedBuildCriterion(t *testing.T) {
 						Binary: &binaryTypes.Package{Name: ".NET 10.0 installed on Windows"},
 					},
 					Affected: &affectedTypes.Affected{
-						Type:  affectedrangeTypes.RangeTypeMicrosoftDotNetCore,
+						Type:  affectedrangeTypes.RangeTypeMicrosoftDotNetSDK,
 						Range: []affectedrangeTypes.Range{{GreaterEqual: "10.0.400", LessThan: "10.0.403"}},
 						Fixed: []string{"10.0.403"},
 					},
@@ -792,7 +792,7 @@ func TestBuildFixedBuildCriterion(t *testing.T) {
 						Binary: &binaryTypes.Package{Name: ".NET 8.0 installed on Linux"},
 					},
 					Affected: &affectedTypes.Affected{
-						Type:  affectedrangeTypes.RangeTypeMicrosoftDotNetCore,
+						Type:  affectedrangeTypes.RangeTypeMicrosoftDotNetSDK,
 						Range: []affectedrangeTypes.Range{{GreaterEqual: "8.0.100", LessThan: "8.0.130"}, {GreaterEqual: "8.0.400", LessThan: "8.0.424"}},
 						Fixed: []string{"8.0.130", "8.0.424"},
 					},
@@ -816,7 +816,7 @@ func TestBuildFixedBuildCriterion(t *testing.T) {
 						Binary: &binaryTypes.Package{Name: ".NET 9.0 installed on Windows"},
 					},
 					Affected: &affectedTypes.Affected{
-						Type:  affectedrangeTypes.RangeTypeMicrosoftDotNetCore,
+						Type:  affectedrangeTypes.RangeTypeMicrosoftDotNetSDK,
 						Range: []affectedrangeTypes.Range{{GreaterEqual: "9.0.100", LessThan: "9.0.122"}, {GreaterEqual: "9.0.300", LessThan: "9.0.319"}},
 						Fixed: []string{"9.0.122", "9.0.319"},
 					},
@@ -840,7 +840,7 @@ func TestBuildFixedBuildCriterion(t *testing.T) {
 						Binary: &binaryTypes.Package{Name: ".NET 10.0 installed on Mac OS"},
 					},
 					Affected: &affectedTypes.Affected{
-						Type:  affectedrangeTypes.RangeTypeMicrosoftDotNetCore,
+						Type:  affectedrangeTypes.RangeTypeMicrosoftDotNetSDK,
 						Range: []affectedrangeTypes.Range{{GreaterEqual: "10.0.100", LessThan: "10.0.111"}, {GreaterEqual: "10.0.300", LessThan: "10.0.400"}},
 						Fixed: []string{"10.0.111", "10.0.400"},
 					},
@@ -873,7 +873,7 @@ func TestBuildFixedBuildCriterion(t *testing.T) {
 						Binary: &binaryTypes.Package{Name: ".NET 11.0 installed on Windows"},
 					},
 					Affected: &affectedTypes.Affected{
-						Type:  affectedrangeTypes.RangeTypeMicrosoftDotNetCore,
+						Type:  affectedrangeTypes.RangeTypeMicrosoftDotNetSDK,
 						Range: []affectedrangeTypes.Range{{GreaterEqual: "11.0.100", LessThan: "11.0.105"}},
 						Fixed: []string{"11.0.105"},
 					},
