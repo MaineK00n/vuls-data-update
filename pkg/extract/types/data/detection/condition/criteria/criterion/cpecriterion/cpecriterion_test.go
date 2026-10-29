@@ -1215,6 +1215,136 @@ func TestCriterion_Accept(t *testing.T) {
 			args: args{query: ccTypes.Query{CPE: "cpe:2.3:o:paloaltonetworks:pan-os:10.1.14-h11:h11:*:*:*:*:*:*"}},
 			want: ccTypes.MatchQualityExact,
 		},
+		{
+			// The openssh range type: a portable release must be told apart
+			// from the base release it derives from, on either side of the
+			// query, so that the release carrying a fix is not reported as the
+			// vulnerability it fixes. The Range is the 2025-02-18
+			// VerifyHostKeyDNS advisory: ssh(1) 6.8p1 to 9.9p1 inclusive, fixed
+			// in 9.9p2.
+			//
+			// NVD's form, which is the one that matters: the portable release
+			// is in the update attribute and has to be folded back in.
+			name: "openssh fixed release, portable in update",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:openbsd:openssh:*:*:*:*:*:*:*:*",
+				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeOpenSSH, GreaterEqual: "6.8p1", LessEqual: "9.9p1"},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:openbsd:openssh:9.9:p2:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityNone,
+		},
+		{
+			name: "openssh last affected release, portable in update",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:openbsd:openssh:*:*:*:*:*:*:*:*",
+				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeOpenSSH, GreaterEqual: "6.8p1", LessEqual: "9.9p1"},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:openbsd:openssh:9.9:p1:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityExact,
+		},
+		{
+			// A scanner may instead carry it in the version, where there is nothing
+			// to fold.
+			name: "openssh fixed release, portable in version",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:openbsd:openssh:*:*:*:*:*:*:*:*",
+				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeOpenSSH, GreaterEqual: "6.8p1", LessEqual: "9.9p1"},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:openbsd:openssh:9.9p2:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityNone,
+		},
+		{
+			name: "openssh last affected release, portable in version",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:openbsd:openssh:*:*:*:*:*:*:*:*",
+				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeOpenSSH, GreaterEqual: "6.8p1", LessEqual: "9.9p1"},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:openbsd:openssh:9.9p1:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityExact,
+		},
+		{
+			// The base of the upper bound: 9.9 precedes 9.9p1, so it is in.
+			name: "openssh base of the upper bound",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:openbsd:openssh:*:*:*:*:*:*:*:*",
+				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeOpenSSH, GreaterEqual: "6.8p1", LessEqual: "9.9p1"},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:openbsd:openssh:9.9:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityExact,
+		},
+		{
+			// And the base of the lower bound precedes it, so it is out -- the
+			// advisory names 6.8p1, not 6.8.
+			name: "openssh base of the lower bound",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:openbsd:openssh:*:*:*:*:*:*:*:*",
+				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeOpenSSH, GreaterEqual: "6.8p1", LessEqual: "9.9p1"},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:openbsd:openssh:6.8:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityNone,
+		},
+		{
+			name: "openssh below the range",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:openbsd:openssh:*:*:*:*:*:*:*:*",
+				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeOpenSSH, GreaterEqual: "6.8p1", LessEqual: "9.9p1"},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:openbsd:openssh:6.7:p1:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityNone,
+		},
+		{
+			// Minor segments compare numerically, so 9.10 is later than 9.9p1.
+			name: "openssh above the range",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:openbsd:openssh:*:*:*:*:*:*:*:*",
+				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeOpenSSH, GreaterEqual: "6.8p1", LessEqual: "9.9p1"},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:openbsd:openssh:9.10:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityNone,
+		},
+		{
+			name: "openssh inside the range",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:openbsd:openssh:*:*:*:*:*:*:*:*",
+				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeOpenSSH, GreaterEqual: "6.8p1", LessEqual: "9.9p1"},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:openbsd:openssh:8.4:p1:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityExact,
+		},
+		{
+			name: "openssh another product",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:openbsd:openssh:*:*:*:*:*:*:*:*",
+				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeOpenSSH, GreaterEqual: "6.8p1", LessEqual: "9.9p1"},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:openbsd:opensmtpd:9.9:p1:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityNone,
+		},
+		{
+			// A pattern query takes the same skip-and-warn path as it does
+			// against a semver Range: a range type with its own UPDATE folding
+			// does not change that, and with no enumeration to fall back on
+			// the result is None.
+			name: "openssh pattern query, Range skipped with warning",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:openbsd:openssh:*:*:*:*:*:*:*:*",
+				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeOpenSSH, GreaterEqual: "6.8p1", LessEqual: "9.9p1"},
+			},
+			args:         args{query: ccTypes.Query{CPE: "cpe:2.3:a:openbsd:openssh:9.*:*:*:*:*:*:*:*"}},
+			want:         ccTypes.MatchQualityNone,
+			wantWarnings: []warningTypes.Warning{{Kind: warningTypes.KindPatternQueryRange, Cause: "cpe:2.3:a:openbsd:openssh:9.*:*:*:*:*:*:*:*"}},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
