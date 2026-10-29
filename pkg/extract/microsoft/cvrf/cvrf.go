@@ -1339,11 +1339,18 @@ func cleanFixedBuild(rawFixedBuild string) string {
 }
 
 // releaseCandidateTagRE matches a FixedBuild that is exactly a dotted number
-// followed by a prerelease tag: either " RC<digits>" (e.g. "11.0 RC1"), the
-// semver-style "-rc.<digits>" with an optional build suffix (e.g.
-// "11.0.0-rc.2", "11.0.100-rc.2", "11.0.0-rc.2.26504.105"), or the Visual
-// Studio Insiders channel " Insiders <digits>" (e.g. "18.12 Insiders 3").
-var releaseCandidateTagRE = regexp.MustCompile(`^\d+(\.\d+)+( RC\d+|-rc\.\d+(\.\d+)*| Insiders \d+)$`)
+// followed by a prerelease tag that names no exact version: either " RC<digits>"
+// (e.g. "11.0 RC1") or the Visual Studio Insiders channel " Insiders <digits>"
+// (e.g. "18.12 Insiders 3"). Semver-style .NET prereleases (e.g. "11.0.0-rc.2")
+// are exact versions and are compared instead (see dotnetPrereleaseRE).
+var releaseCandidateTagRE = regexp.MustCompile(`^\d+(\.\d+)+( RC\d+| Insiders \d+)$`)
+
+// dotnetPrereleaseRE matches the prerelease part of a .NET runtime or SDK FixedBuild
+// that is compared as is: "rc.<digits>" with an optional build suffix (e.g. "rc.2" of
+// "11.0.0-rc.2", "rc.3.26522.148" of "11.0.100-rc.3.26522.148"). Other prerelease
+// parts (e.g. "rc", "rc.2-final", "servicing.21220.11") fail, so that they get a
+// fixedBuildOverrides entry.
+var dotnetPrereleaseRE = regexp.MustCompile(`^rc\.\d+(\.\d+)*$`)
 
 // normalizeProductName returns the product name that criteria and the override
 // tables below use: microsoftutil.NormalizeProductName, then productNameOverrides
@@ -1749,7 +1756,9 @@ var productNameOverrides = map[[2]string]string{
 // 10.0.399, patched 10.0.400"). The 1xx band is serviced alongside the later bands
 // rather than retired, so X.Y.100 and X.Y.200 cover no released band and give no
 // range. CVRF does not always list every affected band (see fixedBuildOverrides).
-// Prerelease tags (see releaseCandidateTagRE) are skipped.
+// A prerelease of X.Y.100 (e.g. "11.0.100-rc.3", see dotnetPrereleaseRE) fixes the
+// prereleases before it, which are all the SDKs of X.Y below it: "v < fixed". A
+// prerelease of any other version fails.
 func buildDotNetSDKCriterion(productName, fixedBuild string) (*criterionTypes.Criterion, error) {
 	n := strings.Count(fixedBuild, ",") + 1
 	ranges := make([]rangeTypes.Range, 0, n)
@@ -1763,11 +1772,17 @@ func buildDotNetSDKCriterion(productName, fixedBuild string) (*criterionTypes.Cr
 		if err != nil {
 			return nil, errors.Wrapf(err, "dotnetcoresdkversion.NewVersion %q", f)
 		}
-		if v.Prerelease != "" {
-			return nil, errors.Errorf("unexpected .NET SDK version. expected: %q, actual: %q", "a release version or a prerelease tag matched by releaseCandidateTagRE", f)
+		if v.Prerelease != "" && !dotnetPrereleaseRE.MatchString(v.Prerelease) {
+			return nil, errors.Errorf("unexpected .NET SDK prerelease. expected: %q, actual: %q", dotnetPrereleaseRE.String(), f)
 		}
 
 		switch band := v.FeatureBand(); {
+		case v.Prerelease != "":
+			if band != 1 || v.BandPatch() != 0 {
+				return nil, errors.Errorf("unexpected .NET SDK prerelease. expected: %q, actual: %q", "a prerelease of X.Y.100", f)
+			}
+			ranges = append(ranges, rangeTypes.Range{LessThan: f})
+			fixed = append(fixed, f)
 		case v.BandPatch() != 0:
 			ranges = append(ranges, rangeTypes.Range{GreaterEqual: fmt.Sprintf("%d.%d.%d00", v.Major, v.Minor, band), LessThan: f})
 			fixed = append(fixed, f)
@@ -1836,10 +1851,11 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 	//    used by .NET Framework products bundling multiple framework versions; .NET SDK
 	//    products split theirs per feature band in buildDotNetSDKCriterion instead)
 	//  - Release-candidate tags of the exact form "<dotted number> RC<digits>" (e.g.
-	//    "11.0 RC1", 2026-Sep) or "<dotted number>-rc.<digits>[.<build>]" (e.g.
-	//    "11.0.0-rc.2", "11.0.0-rc.2.26504.105", 2026-Oct), and Visual Studio Insiders
-	//    tags "<dotted number> Insiders <digits>" (e.g. "18.12 Insiders 3", 2026-Oct):
-	//    the fix only exists in a prerelease. Other values containing a space or a hyphen are not skipped: on
+	//    "11.0 RC1", 2026-Sep) and Visual Studio Insiders tags "<dotted number> Insiders
+	//    <digits>" (e.g. "18.12 Insiders 3", 2026-Oct): the fix only exists in a
+	//    prerelease that the tag does not name as a version. Semver-style .NET
+	//    prereleases (e.g. "11.0.0-rc.2", 2026-Oct) are versions and are compared (see
+	//    dotnetPrereleaseRE). Other values containing a space or a hyphen are not skipped: on
 	//    version-compared products they have been recoverable typos (e.g. "96.0 1954.29")
 	//    or servicing builds (e.g. "5.0.6-servicing.21220.11"), which should fail and
 	//    get a fixedBuildOverrides entry
@@ -1967,8 +1983,8 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 			if err != nil {
 				return rangeTypes.RangeTypeUnknown, errors.Wrap(err, "dotnetcoreruntimeversion.NewVersion")
 			}
-			if v.Prerelease != "" {
-				return rangeTypes.RangeTypeUnknown, errors.Errorf("unexpected .NET runtime version. expected: %q, actual: %q", "a release version or a prerelease tag matched by releaseCandidateTagRE", fixedBuild)
+			if v.Prerelease != "" && !dotnetPrereleaseRE.MatchString(v.Prerelease) {
+				return rangeTypes.RangeTypeUnknown, errors.Errorf("unexpected .NET runtime prerelease. expected: %q, actual: %q", dotnetPrereleaseRE.String(), fixedBuild)
 			}
 			return rangeTypes.RangeTypeMicrosoftDotNetCore, nil
 
@@ -1991,8 +2007,8 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 			if err != nil {
 				return rangeTypes.RangeTypeUnknown, errors.Wrap(err, "dotnetcoreruntimeversion.NewVersion")
 			}
-			if v.Prerelease != "" {
-				return rangeTypes.RangeTypeUnknown, errors.Errorf("unexpected .NET runtime version. expected: %q, actual: %q", "a release version or a prerelease tag matched by releaseCandidateTagRE", fixedBuild)
+			if v.Prerelease != "" && !dotnetPrereleaseRE.MatchString(v.Prerelease) {
+				return rangeTypes.RangeTypeUnknown, errors.Errorf("unexpected .NET runtime prerelease. expected: %q, actual: %q", dotnetPrereleaseRE.String(), fixedBuild)
 			}
 			if v.Patch >= 100 {
 				return rangeTypes.RangeTypeUnknown, errors.Errorf("unexpected .NET runtime version. expected: %q, actual: %q", "a patch below 100", fixedBuild)
