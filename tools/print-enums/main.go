@@ -31,6 +31,7 @@ import (
 
 	criteriaTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria"
 	criterionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion"
+	cpecriterionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/cpecriterion"
 	cpecriterionrangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/cpecriterion/range"
 	necTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/noneexistcriterion"
 	affectedrangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/affected/range"
@@ -50,6 +51,7 @@ func run() error {
 	return stderrors.Join(
 		printEnum("pkg/extract/types/data/detection/condition/criteria", "CriteriaOperatorType", criteriaTypes.CriteriaOperatorTypes()),
 		printEnum("pkg/extract/types/data/detection/condition/criteria/criterion", "CriterionType", criterionTypes.CriterionTypes()),
+		printEnum("pkg/extract/types/data/detection/condition/criteria/criterion/cpecriterion", "PackedEncoding", cpecriterionTypes.PackedEncodings()),
 		printEnum("pkg/extract/types/data/detection/condition/criteria/criterion/cpecriterion/range", "RangeType", cpecriterionrangeTypes.RangeTypes()),
 		printEnum("pkg/extract/types/data/detection/condition/criteria/criterion/noneexistcriterion", "PackageType", necTypes.PackageTypes()),
 		printEnum("pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/affected/range", "RangeType", affectedrangeTypes.RangeTypes()),
