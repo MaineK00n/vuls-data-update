@@ -1527,10 +1527,8 @@ func newCmdENISAEUVDList() *cobra.Command {
 		concurrency int
 		wait        time.Duration
 	}{
-		base: base{
-			dir:   filepath.Join(util.CacheDir(), "fetch", "enisa", "euvd", "list"),
-			retry: 5,
-		},
+		dir:         filepath.Join(util.CacheDir(), "fetch", "enisa", "euvd", "list"),
+		retry:       5,
 		concurrency: 2,
 		wait:        1 * time.Second,
 	}
@@ -2652,10 +2650,8 @@ func newCmdMicrosoftServicing() *cobra.Command {
 		concurrency  int
 		wait         time.Duration
 	}{
-		base: base{
-			dir:   filepath.Join(util.CacheDir(), "fetch", "microsoft", "servicing"),
-			retry: 10,
-		},
+		dir:          filepath.Join(util.CacheDir(), "fetch", "microsoft", "servicing"),
+		retry:        10,
 		retryWaitMin: 1 * time.Second,
 		retryWaitMax: 5 * time.Minute,
 		concurrency:  2,
@@ -4937,10 +4933,8 @@ func newCmdRedHatVEXV2() *cobra.Command {
 		concurrency int
 		wait        time.Duration
 	}{
-		base: base{
-			dir:   filepath.Join(util.CacheDir(), "fetch", "redhat", "vex", "v2"),
-			retry: 3,
-		},
+		dir:         filepath.Join(util.CacheDir(), "fetch", "redhat", "vex", "v2"),
+		retry:       3,
 		concurrency: 10,
 		wait:        1 * time.Second,
 	}

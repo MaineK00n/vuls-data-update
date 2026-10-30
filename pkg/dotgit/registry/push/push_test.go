@@ -13,7 +13,6 @@ import (
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
 	"github.com/google/go-containerregistry/pkg/registry"
-	"github.com/opencontainers/image-spec/specs-go"
 	ocispec "github.com/opencontainers/image-spec/specs-go/v1"
 	"github.com/pkg/errors"
 	"oras.land/oras-go/v2"
@@ -44,10 +43,10 @@ func TestPush(t *testing.T) {
 				token:  "gho_xxx",
 			},
 			want: ocispec.Manifest{
-				Versioned:    specs.Versioned{SchemaVersion: 2},
-				MediaType:    ocispec.MediaTypeImageManifest,
-				ArtifactType: "application/vnd.vulsio.vuls-data-db.dotgit+type",
-				Config:       ocispec.DescriptorEmptyJSON,
+				SchemaVersion: 2,
+				MediaType:     ocispec.MediaTypeImageManifest,
+				ArtifactType:  "application/vnd.vulsio.vuls-data-db.dotgit+type",
+				Config:        ocispec.DescriptorEmptyJSON,
 				Layers: []ocispec.Descriptor{
 					{
 						MediaType:   "application/vnd.vulsio.vuls-data-db.dotgit.layer.v1.tar+zstd",
@@ -67,10 +66,10 @@ func TestPush(t *testing.T) {
 				token:  "gho_xxx",
 			},
 			want: ocispec.Manifest{
-				Versioned:    specs.Versioned{SchemaVersion: 2},
-				MediaType:    ocispec.MediaTypeImageManifest,
-				ArtifactType: "application/vnd.vulsio.vuls-data-db.dotgit+type",
-				Config:       ocispec.DescriptorEmptyJSON,
+				SchemaVersion: 2,
+				MediaType:     ocispec.MediaTypeImageManifest,
+				ArtifactType:  "application/vnd.vulsio.vuls-data-db.dotgit+type",
+				Config:        ocispec.DescriptorEmptyJSON,
 				Layers: []ocispec.Descriptor{
 					{
 						MediaType:   "application/vnd.vulsio.vuls-data-db.dotgit.layer.v1.tar+zstd",
@@ -95,10 +94,10 @@ func TestPush(t *testing.T) {
 				opts:   []push.Option{push.WithForce(true)},
 			},
 			want: ocispec.Manifest{
-				Versioned:    specs.Versioned{SchemaVersion: 2},
-				MediaType:    ocispec.MediaTypeImageManifest,
-				ArtifactType: "application/vnd.vulsio.vuls-data-db.dotgit+type",
-				Config:       ocispec.DescriptorEmptyJSON,
+				SchemaVersion: 2,
+				MediaType:     ocispec.MediaTypeImageManifest,
+				ArtifactType:  "application/vnd.vulsio.vuls-data-db.dotgit+type",
+				Config:        ocispec.DescriptorEmptyJSON,
 				Layers: []ocispec.Descriptor{
 					{
 						MediaType:   "application/vnd.vulsio.vuls-data-db.dotgit.layer.v1.tar+zstd",
@@ -120,10 +119,10 @@ func TestPush(t *testing.T) {
 				opts:   []push.Option{push.WithForce(true)},
 			},
 			want: ocispec.Manifest{
-				Versioned:    specs.Versioned{SchemaVersion: 2},
-				MediaType:    ocispec.MediaTypeImageManifest,
-				ArtifactType: "application/vnd.vulsio.vuls-data-db.dotgit+type",
-				Config:       ocispec.DescriptorEmptyJSON,
+				SchemaVersion: 2,
+				MediaType:     ocispec.MediaTypeImageManifest,
+				ArtifactType:  "application/vnd.vulsio.vuls-data-db.dotgit+type",
+				Config:        ocispec.DescriptorEmptyJSON,
 				Layers: []ocispec.Descriptor{
 					{
 						MediaType:   "application/vnd.vulsio.vuls-data-db.dotgit.layer.v1.tar+zstd",

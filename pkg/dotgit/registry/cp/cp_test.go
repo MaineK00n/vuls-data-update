@@ -11,7 +11,6 @@ import (
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
 	"github.com/google/go-containerregistry/pkg/registry"
-	"github.com/opencontainers/image-spec/specs-go"
 	ocispec "github.com/opencontainers/image-spec/specs-go/v1"
 	"oras.land/oras-go/v2/registry/remote"
 
@@ -42,10 +41,10 @@ func TestCopy(t *testing.T) {
 				opts:  []cp.Option{cp.WithForce(false)},
 			},
 			want: ocispec.Manifest{
-				Versioned:    specs.Versioned{SchemaVersion: 2},
-				MediaType:    ocispec.MediaTypeImageManifest,
-				ArtifactType: "application/vnd.vulsio.vuls-data-db.dotgit+type",
-				Config:       ocispec.DescriptorEmptyJSON,
+				SchemaVersion: 2,
+				MediaType:     ocispec.MediaTypeImageManifest,
+				ArtifactType:  "application/vnd.vulsio.vuls-data-db.dotgit+type",
+				Config:        ocispec.DescriptorEmptyJSON,
 				Layers: []ocispec.Descriptor{
 					{
 						MediaType:   "application/vnd.vulsio.vuls-data-db.dotgit.layer.v1.tar+zstd",
@@ -66,10 +65,10 @@ func TestCopy(t *testing.T) {
 				opts:  []cp.Option{cp.WithForce(false)},
 			},
 			want: ocispec.Manifest{
-				Versioned:    specs.Versioned{SchemaVersion: 2},
-				MediaType:    ocispec.MediaTypeImageManifest,
-				ArtifactType: "application/vnd.vulsio.vuls-data-db.dotgit+type",
-				Config:       ocispec.DescriptorEmptyJSON,
+				SchemaVersion: 2,
+				MediaType:     ocispec.MediaTypeImageManifest,
+				ArtifactType:  "application/vnd.vulsio.vuls-data-db.dotgit+type",
+				Config:        ocispec.DescriptorEmptyJSON,
 				Layers: []ocispec.Descriptor{
 					{
 						MediaType:   "application/vnd.vulsio.vuls-data-db.dotgit.layer.v1.tar+zstd",
@@ -90,10 +89,10 @@ func TestCopy(t *testing.T) {
 				opts:  []cp.Option{cp.WithForce(false)},
 			},
 			want: ocispec.Manifest{
-				Versioned:    specs.Versioned{SchemaVersion: 2},
-				MediaType:    ocispec.MediaTypeImageManifest,
-				ArtifactType: "application/vnd.vulsio.vuls-data-db.dotgit+type",
-				Config:       ocispec.DescriptorEmptyJSON,
+				SchemaVersion: 2,
+				MediaType:     ocispec.MediaTypeImageManifest,
+				ArtifactType:  "application/vnd.vulsio.vuls-data-db.dotgit+type",
+				Config:        ocispec.DescriptorEmptyJSON,
 				Layers: []ocispec.Descriptor{
 					{
 						MediaType:   "application/vnd.vulsio.vuls-data-db.dotgit.layer.v1.tar+zstd",
@@ -115,10 +114,10 @@ func TestCopy(t *testing.T) {
 				opts:  []cp.Option{cp.WithForce(true)},
 			},
 			want: ocispec.Manifest{
-				Versioned:    specs.Versioned{SchemaVersion: 2},
-				MediaType:    ocispec.MediaTypeImageManifest,
-				ArtifactType: "application/vnd.vulsio.vuls-data-db.dotgit+type",
-				Config:       ocispec.DescriptorEmptyJSON,
+				SchemaVersion: 2,
+				MediaType:     ocispec.MediaTypeImageManifest,
+				ArtifactType:  "application/vnd.vulsio.vuls-data-db.dotgit+type",
+				Config:        ocispec.DescriptorEmptyJSON,
 				Layers: []ocispec.Descriptor{
 					{
 						MediaType:   "application/vnd.vulsio.vuls-data-db.dotgit.layer.v1.tar+zstd",
