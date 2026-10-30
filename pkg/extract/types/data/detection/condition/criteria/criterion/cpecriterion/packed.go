@@ -3,6 +3,7 @@ package cpecriterion
 import (
 	"cmp"
 	"fmt"
+	"iter"
 	"slices"
 	"strings"
 
@@ -183,35 +184,64 @@ func (p *CPEMatchesPacked) Unpack(criterion CPE) ([]CPE, error) {
 	if err != nil {
 		return nil, errors.Wrapf(err, "pvp prefix of %q", string(criterion))
 	}
-	if p.Data == "" {
-		return []CPE{}, nil
-	}
 
-	var ms []CPE
-	prev := ""
-	for _, item := range splitFS(p.Data, fcSeparator) {
-		if item == "" {
-			return nil, errors.Errorf("empty entry in packed data. data: %q", p.Data)
+	ms := []CPE{}
+	for e, err := range p.reduced() {
+		if err != nil {
+			return nil, err
 		}
-		n := int(item[0]) - fcLengthBase
-		if n < 0 || n > fcLengthMax {
-			return nil, errors.Errorf("unexpected length character. expected: %q..%q, actual: %q", string(rune(fcLengthBase)), string(rune(fcLengthBase+fcLengthMax)), string(item[0]))
-		}
-		if n > len(prev) {
-			return nil, errors.Errorf("shared prefix length exceeds the previous entry. prefix: %d, previous: %q", n, prev)
-		}
-		if splitsEscape(prev, n) {
-			return nil, errors.Errorf("shared prefix ends inside an escape sequence. prefix: %d, previous: %q", n, prev)
-		}
-		e := prev[:n] + item[1:]
-		attrs := splitFS(e, ':')
-		for len(attrs) < 8 {
-			attrs = append(attrs, "*")
-		}
-		ms = append(ms, CPE(prefix+strings.Join(attrs, ":")))
-		prev = e
+		ms = append(ms, fullName(prefix, e))
 	}
 	return ms, nil
+}
+
+// fullName restores the formatted string of an entry from its reduced form
+// and the criterion's "cpe:2.3:part:vendor:product:" prefix.
+func fullName(prefix string, e []byte) CPE {
+	attrs := splitFS(string(e), ':')
+	for len(attrs) < 8 {
+		attrs = append(attrs, "*")
+	}
+	return CPE(prefix + strings.Join(attrs, ":"))
+}
+
+// reduced decodes the front coding, yielding each entry in its reduced form
+// in order, or the error decoding stopped at. Encoding must be
+// PackedEncodingFC; the caller checks. The entries are built in one buffer,
+// each on the shared prefix of the one before, and the yielded slice is
+// that buffer: it is valid during the yield only, and a caller that keeps
+// anything of it copies it (Unpack restores a new string from it; Accept
+// relates it to the query and moves on).
+func (p *CPEMatchesPacked) reduced() iter.Seq2[[]byte, error] {
+	return func(yield func([]byte, error) bool) {
+		if p.Data == "" {
+			return
+		}
+		var prev []byte
+		for item := range splitFSSeq(p.Data, fcSeparator) {
+			if item == "" {
+				yield(nil, errors.Errorf("empty entry in packed data. data: %q", p.Data))
+				return
+			}
+			n := int(item[0]) - fcLengthBase
+			if n < 0 || n > fcLengthMax {
+				yield(nil, errors.Errorf("unexpected length character. expected: %q..%q, actual: %q", string(rune(fcLengthBase)), string(rune(fcLengthBase+fcLengthMax)), string(item[0])))
+				return
+			}
+			if n > len(prev) {
+				yield(nil, errors.Errorf("shared prefix length exceeds the previous entry. prefix: %d, previous: %q", n, prev))
+				return
+			}
+			if splitsEscape(prev, n) {
+				yield(nil, errors.Errorf("shared prefix ends inside an escape sequence. prefix: %d, previous: %q", n, prev))
+				return
+			}
+			prev = append(prev[:n], item[1:]...)
+			if !yield(prev, nil) {
+				return
+			}
+		}
+	}
 }
 
 // UnsupportedPackedEncodingError is returned by Unpack for an Encoding
@@ -246,7 +276,7 @@ func pvpPrefix(fs string) (string, error) {
 // splitsEscape reports whether cutting s after its first n bytes separates a
 // backslash from the character it escapes, i.e. whether s[:n] ends with an
 // escaping (unescaped) backslash.
-func splitsEscape(s string, n int) bool {
+func splitsEscape[S ~string | ~[]byte](s S, n int) bool {
 	escapes := 0
 	for i := n - 1; i >= 0 && s[i] == '\\'; i-- {
 		escapes++
@@ -264,16 +294,24 @@ func splitsEscape(s string, n int) bool {
 // canonical forms escape "(", ")" and "+"). The packed names would then no
 // longer match the source's, nor Packable's byte-for-byte prefix check.
 func splitFS(s string, sep byte) []string {
-	var parts []string
-	start := 0
-	for i := 0; i < len(s); i++ {
-		switch s[i] {
-		case '\\':
-			i++
-		case sep:
-			parts = append(parts, s[start:i])
-			start = i + 1
+	return slices.Collect(splitFSSeq(s, sep))
+}
+
+// splitFSSeq is splitFS as an iterator.
+func splitFSSeq(s string, sep byte) iter.Seq[string] {
+	return func(yield func(string) bool) {
+		start := 0
+		for i := 0; i < len(s); i++ {
+			switch s[i] {
+			case '\\':
+				i++
+			case sep:
+				if !yield(s[start:i]) {
+					return
+				}
+				start = i + 1
+			}
 		}
+		yield(s[start:])
 	}
-	return append(parts, s[start:])
 }

@@ -609,11 +609,24 @@ func TestCriterion_Accept(t *testing.T) {
 				Vulnerable:       true,
 				CPE:              "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
 				Range:            &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeSEMVER, LessThan: "14.23"},
-				CPEMatchesPacked: &ccTypes.CPEMatchesPacked{Encoding: ccTypes.PackedEncodingFC, Data: "012.0|*1"},
+				CPEMatchesPacked: &ccTypes.CPEMatchesPacked{Encoding: ccTypes.PackedEncodingFC, Data: "011.0|*1"},
 			},
 			args:    args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:12.*:*:*:*:*:*:*:*"}},
 			want:    ccTypes.MatchQualityUnknown,
 			wantErr: true,
+		},
+		{
+			// Decoding stops at the first Exact entry, so malformed data
+			// after it is not reached.
+			name: "range criterion, pattern query for the same product, malformed packed after an Exact entry -> Exact",
+			fields: fields{
+				Vulnerable:       true,
+				CPE:              "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
+				Range:            &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeSEMVER, LessThan: "14.23"},
+				CPEMatchesPacked: &ccTypes.CPEMatchesPacked{Encoding: ccTypes.PackedEncodingFC, Data: "012.0|*1"},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:12.*:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityExact,
 		},
 		{
 			// An encoding from a newer vuls-data-update skips the packed
