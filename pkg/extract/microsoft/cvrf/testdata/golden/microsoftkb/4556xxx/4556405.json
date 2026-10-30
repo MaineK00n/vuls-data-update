@@ -1,0 +1,28 @@
+{
+	"kb_id": "4556405",
+	"url": "https://support.microsoft.com/help/4556405",
+	"products": [
+		"Microsoft .NET Framework 3.5 on Windows 8.1 for 32-bit Systems",
+		"Microsoft .NET Framework 3.5 on Windows 8.1 for x64-based Systems",
+		"Microsoft .NET Framework 3.5 on Windows Server 2012 R2",
+		"Microsoft .NET Framework 3.5 on Windows Server 2012 R2 (Server Core installation)",
+		"Microsoft .NET Framework 4.5.2 on Windows 8.1 for 32-bit Systems",
+		"Microsoft .NET Framework 4.5.2 on Windows 8.1 for x64-based Systems",
+		"Microsoft .NET Framework 4.5.2 on Windows Server 2012 R2",
+		"Microsoft .NET Framework 4.5.2 on Windows Server 2012 R2 (Server Core installation)",
+		"Microsoft .NET Framework 4.6/4.6.1/4.6.2/4.7/4.7.1/4.7.2 on Windows 8.1 for 32-bit Systems",
+		"Microsoft .NET Framework 4.6/4.6.1/4.6.2/4.7/4.7.1/4.7.2 on Windows 8.1 for x64-based Systems",
+		"Microsoft .NET Framework 4.6/4.6.1/4.6.2/4.7/4.7.1/4.7.2 on Windows Server 2012 R2",
+		"Microsoft .NET Framework 4.6/4.6.1/4.6.2/4.7/4.7.1/4.7.2 on Windows Server 2012 R2 (Server Core installation)",
+		"Microsoft .NET Framework 4.8 on Windows 8.1 for 32-bit Systems",
+		"Microsoft .NET Framework 4.8 on Windows 8.1 for x64-based Systems",
+		"Microsoft .NET Framework 4.8 on Windows Server 2012 R2",
+		"Microsoft .NET Framework 4.8 on Windows Server 2012 R2 (Server Core installation)"
+	],
+	"data_source": {
+		"id": "microsoft-cvrf",
+		"raws": [
+			"fixtures/2020-May/2020/CVE-2020-1108.json"
+		]
+	}
+}

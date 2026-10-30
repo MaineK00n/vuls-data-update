@@ -1,0 +1,19 @@
+{
+	"kb_id": "4556826",
+	"url": "https://support.microsoft.com/help/4556826",
+	"products": [
+		"Microsoft .NET Framework 3.5 AND 4.6/4.6.1/4.6.2 on Windows 10 for 32-bit Systems",
+		"Microsoft .NET Framework 3.5 AND 4.6/4.6.1/4.6.2 on Windows 10 for x64-based Systems"
+	],
+	"supersedes": [
+		{
+			"kb_id": "4550930"
+		}
+	],
+	"data_source": {
+		"id": "microsoft-cvrf",
+		"raws": [
+			"fixtures/2020-May/2020/CVE-2020-1108.json"
+		]
+	}
+}
