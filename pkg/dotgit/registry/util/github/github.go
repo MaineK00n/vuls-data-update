@@ -27,24 +27,24 @@ var impliedScopes = map[string][]string{
 }
 
 type options struct {
-	baseURL string
+	// httpClient is only ever set by WithHTTPClient, which lives in
+	// export_test.go and is therefore absent from the production build.
+	httpClient *http.Client
 }
 
 type Option interface {
 	apply(*options)
 }
 
-type baseURLOption string
+// Do sends the request with client, or with [http.DefaultClient] when it is
+// nil. Tests pass the client of an httptest.NewTestServer, whose in-memory
+// network routes every request to the test server regardless of host, so the
+// caller keeps using the production API URL.
+func Do(client *http.Client, method, apiurl, token string, fn func(resp *http.Response) error) error {
+	if client == nil {
+		client = http.DefaultClient
+	}
 
-func (u baseURLOption) apply(opts *options) {
-	opts.baseURL = string(u)
-}
-
-func WithBaseURL(url string) Option {
-	return baseURLOption(url)
-}
-
-func Do(method, apiurl, token string, fn func(resp *http.Response) error) error {
 	u, err := url.Parse(apiurl)
 	if err != nil {
 		return errors.Wrap(err, "parse url")
@@ -61,7 +61,7 @@ func Do(method, apiurl, token string, fn func(resp *http.Response) error) error 
 	}
 	req.Header = header
 
-	resp, err := http.DefaultClient.Do(req)
+	resp, err := client.Do(req)
 	if err != nil {
 		return errors.Wrapf(err, "%s: %s", method, u.String())
 	}
@@ -92,9 +92,7 @@ func Do(method, apiurl, token string, fn func(resp *http.Response) error) error 
 //
 // ref. https://docs.github.com/en/packages/learn-github-packages/about-permissions-for-github-packages
 func CheckScopes(token string, required []string, opts ...Option) error {
-	options := &options{
-		baseURL: baseURL,
-	}
+	options := &options{}
 
 	for _, o := range opts {
 		o.apply(options)
@@ -108,7 +106,7 @@ func CheckScopes(token string, required []string, opts ...Option) error {
 		return nil
 	}
 
-	if err := Do(http.MethodGet, fmt.Sprintf("%s/user", options.baseURL), token, func(resp *http.Response) error {
+	if err := Do(options.httpClient, http.MethodGet, fmt.Sprintf("%s/user", baseURL), token, func(resp *http.Response) error {
 		switch resp.StatusCode {
 		case http.StatusOK:
 			var granted []string

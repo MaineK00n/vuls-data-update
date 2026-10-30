@@ -3,9 +3,7 @@ package v2_test
 import (
 	"net/http"
 	"net/http/httptest"
-	"net/url"
 	"path/filepath"
-	"strings"
 	"testing"
 
 	v2 "github.com/MaineK00n/vuls-data-update/pkg/fetch/nvd/feed/cpematch/v2"
@@ -26,18 +24,12 @@ func TestFetch(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				http.ServeFile(w, r, strings.TrimPrefix(r.URL.Path, "/"))
+			ts := httptest.NewTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				http.ServeFile(w, r, tt.testdata)
 			}))
-			defer ts.Close()
-
-			u, err := url.JoinPath(ts.URL, tt.testdata)
-			if err != nil {
-				t.Error("unexpected error:", err)
-			}
 
 			dir := t.TempDir()
-			err = v2.Fetch(v2.WithBaseURL(u), v2.WithDir(dir), v2.WithRetry(0))
+			err := v2.Fetch(v2.WithHTTPClient(ts.Client()), v2.WithDir(dir), v2.WithRetry(0))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)

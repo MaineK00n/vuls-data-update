@@ -3,9 +3,7 @@ package snort_test
 import (
 	"net/http"
 	"net/http/httptest"
-	"net/url"
 	"path/filepath"
-	"strings"
 	"testing"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/snort"
@@ -25,18 +23,12 @@ func TestFetch(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				http.ServeFile(w, r, strings.TrimPrefix(r.URL.Path, "/"))
+			ts := httptest.NewTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				http.ServeFile(w, r, tt.testdata)
 			}))
-			defer ts.Close()
-
-			u, err := url.JoinPath(ts.URL, tt.testdata)
-			if err != nil {
-				t.Error("unexpected error:", err)
-			}
 
 			dir := t.TempDir()
-			err = snort.Fetch(snort.WithBaseURL(u), snort.WithDir(dir), snort.WithRetry(0))
+			err := snort.Fetch(snort.WithHTTPClient(ts.Client()), snort.WithDir(dir), snort.WithRetry(0))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)

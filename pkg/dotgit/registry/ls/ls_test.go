@@ -161,7 +161,7 @@ func TestList(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			ts := httptest.NewTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				switch r.URL.Path {
 				case "/users/vulsio":
 					switch r.Method {
@@ -347,9 +347,9 @@ func TestList(t *testing.T) {
 					http.NotFound(w, r)
 				}
 			}))
-			defer ts.Close()
-
-			got, err := ls.List(tt.args.repositories, tt.args.token, append([]ls.Option{ls.WithbaseURL(ts.URL)}, tt.args.opts...)...)
+			// The in-memory network routes api.github.com to the test server,
+			// so the default production base URL is used.
+			got, err := ls.List(tt.args.repositories, tt.args.token, append([]ls.Option{ls.WithHTTPClient(ts.Client())}, tt.args.opts...)...)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("List() error = %v, wantErr %v", err, tt.wantErr)
 				return

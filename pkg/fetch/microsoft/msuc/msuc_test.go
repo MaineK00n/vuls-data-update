@@ -95,7 +95,7 @@ func TestFetch(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			ts := httptest.NewTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				switch path.Base(r.URL.Path) {
 				case "Search.aspx":
 					bs, err := io.ReadAll(r.Body)
@@ -117,7 +117,6 @@ func TestFetch(t *testing.T) {
 					http.NotFound(w, r)
 				}
 			}))
-			defer ts.Close()
 
 			var logs bytes.Buffer
 			prev := slog.Default()
@@ -125,7 +124,7 @@ func TestFetch(t *testing.T) {
 			t.Cleanup(func() { slog.SetDefault(prev) })
 
 			dir := t.TempDir()
-			err := msuc.Fetch(tt.queries, msuc.WithMSUCURL(ts.URL), msuc.WithDir(dir), msuc.WithRetry(0))
+			err := msuc.Fetch(tt.queries, msuc.WithHTTPClient(ts.Client()), msuc.WithDir(dir), msuc.WithRetry(0))
 
 			if tt.wantErr != "" && (err == nil || !strings.Contains(err.Error(), tt.wantErr)) {
 				t.Errorf("Fetch() error = %v, want it to contain %q", err, tt.wantErr)

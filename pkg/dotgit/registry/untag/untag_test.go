@@ -160,14 +160,13 @@ func TestUntag(t *testing.T) {
 				}
 			}
 
-			ts := httptest.NewTLSServer(http.HandlerFunc(h))
-			defer ts.Close()
+			ts := httptest.NewTestServer(t, http.HandlerFunc(h))
 
 			originalTransport := http.DefaultTransport
 			http.DefaultTransport = ts.Client().Transport
-			defer func() {
+			t.Cleanup(func() {
 				http.DefaultTransport = originalTransport
-			}()
+			})
 
 			for tag, content := range map[string]string{
 				"not-to-be-deleted": "foo",
@@ -196,7 +195,7 @@ func TestUntag(t *testing.T) {
 			manifestPutRefs = nil
 			mu.Unlock()
 
-			err := untag.Untag(tt.args.imageRef, tt.args.token, untag.WithGitHubAPIURL(ts.URL), untag.WithRegistryHost(strings.TrimPrefix(ts.URL, "https://")))
+			err := untag.Untag(tt.args.imageRef, tt.args.token, untag.WithHTTPClient(ts.Client()))
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Untag() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -214,7 +213,7 @@ func TestUntag(t *testing.T) {
 				t.Errorf("Untag() manifest PUT references = %v, want %v", gotManifestPuts, []string{tag})
 			}
 
-			rs, err := ls.List([]ls.Repository{{Type: "orgs", Registry: "ghcr.io", Owner: owner, Package: pack}}, tt.args.token, ls.WithbaseURL(ts.URL))
+			rs, err := ls.List([]ls.Repository{{Type: "orgs", Registry: "ghcr.io", Owner: owner, Package: pack}}, tt.args.token, ls.WithHTTPClient(ts.Client()))
 			if err != nil {
 				t.Errorf("List() error = %v", err)
 				return

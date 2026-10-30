@@ -388,10 +388,8 @@ func newCmdAlmaUpdateinfo() *cobra.Command {
 		concurrency int
 		wait        time.Duration
 	}{
-		base: base{
-			dir:   filepath.Join(util.CacheDir(), "fetch", "alma", "updateinfo"),
-			retry: 3,
-		},
+		dir:         filepath.Join(util.CacheDir(), "fetch", "alma", "updateinfo"),
+		retry:       3,
 		concurrency: 5,
 		wait:        1 * time.Second,
 	}
@@ -614,10 +612,8 @@ func newCmdAppleSecurityReleases() *cobra.Command {
 		concurrency int
 		wait        time.Duration
 	}{
-		base: base{
-			dir:   filepath.Join(util.CacheDir(), "fetch", "apple", "security-releases"),
-			retry: 3,
-		},
+		dir:         filepath.Join(util.CacheDir(), "fetch", "apple", "security-releases"),
+		retry:       3,
 		concurrency: 5,
 		wait:        1 * time.Second,
 	}
@@ -867,10 +863,8 @@ func newCmdCertBundCSAF() *cobra.Command {
 		concurrency int
 		wait        time.Duration
 	}{
-		base: base{
-			dir:   filepath.Join(util.CacheDir(), "fetch", "cert-bund", "csaf"),
-			retry: 3,
-		},
+		dir:         filepath.Join(util.CacheDir(), "fetch", "cert-bund", "csaf"),
+		retry:       3,
 		concurrency: 5,
 		wait:        1 * time.Second,
 	}
@@ -1066,10 +1060,8 @@ func newCmdCiscoCVRF() *cobra.Command {
 		concurrency int
 		wait        time.Duration
 	}{
-		base: base{
-			dir:   filepath.Join(util.CacheDir(), "fetch", "cisco", "cvrf"),
-			retry: 3,
-		},
+		dir:         filepath.Join(util.CacheDir(), "fetch", "cisco", "cvrf"),
+		retry:       3,
 		concurrency: 5,
 		wait:        1 * time.Second,
 	}
@@ -1103,10 +1095,8 @@ func newCmdCiscoCSAF() *cobra.Command {
 		concurrency int
 		wait        time.Duration
 	}{
-		base: base{
-			dir:   filepath.Join(util.CacheDir(), "fetch", "cisco", "csaf"),
-			retry: 3,
-		},
+		dir:         filepath.Join(util.CacheDir(), "fetch", "cisco", "csaf"),
+		retry:       3,
 		concurrency: 5,
 		wait:        1 * time.Second,
 	}
@@ -1437,10 +1427,8 @@ func newCmdEndOfLifeDateAPI() *cobra.Command {
 		concurrency int
 		wait        time.Duration
 	}{
-		base: base{
-			dir:   filepath.Join(util.CacheDir(), "fetch", "endoflife-date", "api"),
-			retry: 3,
-		},
+		dir:         filepath.Join(util.CacheDir(), "fetch", "endoflife-date", "api"),
+		retry:       3,
 		concurrency: 3,
 		wait:        1 * time.Second,
 	}
@@ -1501,10 +1489,8 @@ func newCmdENISAEUVDDetail() *cobra.Command {
 		concurrency int
 		wait        time.Duration
 	}{
-		base: base{
-			dir:   filepath.Join(util.CacheDir(), "fetch", "enisa", "euvd", "detail"),
-			retry: 5,
-		},
+		dir:         filepath.Join(util.CacheDir(), "fetch", "enisa", "euvd", "detail"),
+		retry:       5,
 		concurrency: 2,
 		wait:        1 * time.Second,
 	}
@@ -1605,10 +1591,8 @@ func newCmdEPSS() *cobra.Command {
 		concurrency int
 		wait        time.Duration
 	}{
-		base: base{
-			dir:   filepath.Join(util.CacheDir(), "fetch", "epss"),
-			retry: 3,
-		},
+		dir:         filepath.Join(util.CacheDir(), "fetch", "epss"),
+		retry:       3,
 		concurrency: 4,
 		wait:        1 * time.Second,
 	}
@@ -1804,10 +1788,8 @@ func newCmdFedoraAPI() *cobra.Command {
 		concurrency int
 		wait        time.Duration
 	}{
-		base: base{
-			dir:   filepath.Join(util.CacheDir(), "fetch", "fedora", "api"),
-			retry: 3,
-		},
+		dir:         filepath.Join(util.CacheDir(), "fetch", "fedora", "api"),
+		retry:       3,
 		concurrency: 5,
 		wait:        1 * time.Second,
 	}
@@ -1841,10 +1823,8 @@ func newCmdFedoraUpdateinfo() *cobra.Command {
 		concurrency int
 		wait        time.Duration
 	}{
-		base: base{
-			dir:   filepath.Join(util.CacheDir(), "fetch", "fedora", "updateinfo"),
-			retry: 3,
-		},
+		dir:         filepath.Join(util.CacheDir(), "fetch", "fedora", "updateinfo"),
+		retry:       3,
 		concurrency: 5,
 		wait:        1 * time.Second,
 	}
@@ -1878,10 +1858,8 @@ func newCmdFortinetCSAF() *cobra.Command {
 		concurrency int
 		wait        time.Duration
 	}{
-		base: base{
-			dir:   filepath.Join(util.CacheDir(), "fetch", "fortinet", "csaf"),
-			retry: 3,
-		},
+		dir:         filepath.Join(util.CacheDir(), "fetch", "fortinet", "csaf"),
+		retry:       3,
 		concurrency: 3,
 		wait:        1 * time.Second,
 	}
@@ -1916,10 +1894,8 @@ func newCmdFortinetCVRF() *cobra.Command {
 		concurrency int
 		wait        time.Duration
 	}{
-		base: base{
-			dir:   filepath.Join(util.CacheDir(), "fetch", "fortinet", "cvrf"),
-			retry: 3,
-		},
+		dir:         filepath.Join(util.CacheDir(), "fetch", "fortinet", "cvrf"),
+		retry:       3,
 		concurrency: 4,
 		wait:        1 * time.Second,
 	}
@@ -2571,10 +2547,8 @@ func newCmdMicrosoftCVRF() *cobra.Command {
 		base
 		supplementMonths int
 	}{
-		base: base{
-			dir:   filepath.Join(util.CacheDir(), "fetch", "microsoft", "cvrf"),
-			retry: 3,
-		},
+		dir:              filepath.Join(util.CacheDir(), "fetch", "microsoft", "cvrf"),
+		retry:            3,
 		supplementMonths: 3,
 	}
 
@@ -2606,10 +2580,8 @@ func newCmdMicrosoftCSAF() *cobra.Command {
 		concurrency int
 		wait        time.Duration
 	}{
-		base: base{
-			dir:   filepath.Join(util.CacheDir(), "fetch", "microsoft", "csaf"),
-			retry: 10,
-		},
+		dir:         filepath.Join(util.CacheDir(), "fetch", "microsoft", "csaf"),
+		retry:       10,
 		concurrency: 5,
 		wait:        1 * time.Second,
 	}
@@ -2643,10 +2615,8 @@ func newCmdMicrosoftMSUC() *cobra.Command {
 		concurrency int
 		wait        time.Duration
 	}{
-		base: base{
-			dir:   filepath.Join(util.CacheDir(), "fetch", "microsoft", "msuc"),
-			retry: 3,
-		},
+		dir:         filepath.Join(util.CacheDir(), "fetch", "microsoft", "msuc"),
+		retry:       3,
 		concurrency: 5,
 		wait:        1 * time.Second,
 	}
@@ -2858,10 +2828,8 @@ func newCmdMicrosoftVEX() *cobra.Command {
 		concurrency int
 		wait        time.Duration
 	}{
-		base: base{
-			dir:   filepath.Join(util.CacheDir(), "fetch", "microsoft", "vex"),
-			retry: 10,
-		},
+		dir:         filepath.Join(util.CacheDir(), "fetch", "microsoft", "vex"),
+		retry:       10,
 		concurrency: 5,
 		wait:        1 * time.Second,
 	}
@@ -2894,10 +2862,8 @@ func newCmdMicrosoftWSUSSCN2() *cobra.Command {
 		base
 		concurrency int
 	}{
-		base: base{
-			dir:   filepath.Join(util.CacheDir(), "fetch", "microsoft", "wsusscn2"),
-			retry: 3,
-		},
+		dir:         filepath.Join(util.CacheDir(), "fetch", "microsoft", "wsusscn2"),
+		retry:       3,
 		concurrency: 2,
 	}
 
@@ -3226,10 +3192,8 @@ func newCmdNCSCCSAF() *cobra.Command {
 		concurrency int
 		wait        time.Duration
 	}{
-		base: base{
-			dir:   filepath.Join(util.CacheDir(), "fetch", "ncsc", "csaf"),
-			retry: 3,
-		},
+		dir:         filepath.Join(util.CacheDir(), "fetch", "ncsc", "csaf"),
+		retry:       3,
 		concurrency: 3,
 		wait:        1 * time.Second,
 	}
@@ -3290,10 +3254,8 @@ func newCmdNozomiNetworksCSAF() *cobra.Command {
 		concurrency int
 		wait        time.Duration
 	}{
-		base: base{
-			dir:   filepath.Join(util.CacheDir(), "fetch", "nozominetworks", "csaf"),
-			retry: 3,
-		},
+		dir:         filepath.Join(util.CacheDir(), "fetch", "nozominetworks", "csaf"),
+		retry:       3,
 		concurrency: 3,
 		wait:        1 * time.Second,
 	}
@@ -3575,10 +3537,8 @@ func newCmdNVDAPICVE() *cobra.Command {
 		lastModEndDate   time.Time
 		apiKey           string
 	}{
-		base: base{
-			dir:   filepath.Join(util.CacheDir(), "fetch", "nvd", "api", "cve"),
-			retry: 20,
-		},
+		dir:              filepath.Join(util.CacheDir(), "fetch", "nvd", "api", "cve"),
+		retry:            20,
 		retryWaitMin:     6 * time.Second,
 		retryWaitMax:     30 * time.Second,
 		concurrency:      1,
@@ -3645,10 +3605,8 @@ func newCmdNVDAPICVEHistory() *cobra.Command {
 		changeEndDate   time.Time
 		apiKey          string
 	}{
-		base: base{
-			dir:   filepath.Join(util.CacheDir(), "fetch", "nvd", "api", "cvehistory"),
-			retry: 20,
-		},
+		dir:             filepath.Join(util.CacheDir(), "fetch", "nvd", "api", "cvehistory"),
+		retry:           20,
 		retryWaitMin:    6 * time.Second,
 		retryWaitMax:    30 * time.Second,
 		concurrency:     1,
@@ -3715,10 +3673,8 @@ func newCmdNVDAPICPE() *cobra.Command {
 		lastModEndDate   time.Time
 		apiKey           string
 	}{
-		base: base{
-			dir:   filepath.Join(util.CacheDir(), "fetch", "nvd", "api", "cpe"),
-			retry: 20,
-		},
+		dir:              filepath.Join(util.CacheDir(), "fetch", "nvd", "api", "cpe"),
+		retry:            20,
 		retryWaitMin:     6 * time.Second,
 		retryWaitMax:     30 * time.Second,
 		concurrency:      1,
@@ -3785,10 +3741,8 @@ func newCmdNVDAPICPEMatch() *cobra.Command {
 		lastModEndDate   time.Time
 		apiKey           string
 	}{
-		base: base{
-			dir:   filepath.Join(util.CacheDir(), "fetch", "nvd", "api", "cpematch"),
-			retry: 20,
-		},
+		dir:              filepath.Join(util.CacheDir(), "fetch", "nvd", "api", "cpematch"),
+		retry:            20,
 		retryWaitMin:     6 * time.Second,
 		retryWaitMax:     30 * time.Second,
 		concurrency:      1,
@@ -4039,10 +3993,8 @@ func newCmdOpenEulerCVRF() *cobra.Command {
 		concurrency int
 		wait        time.Duration
 	}{
-		base: base{
-			dir:   filepath.Join(util.CacheDir(), "fetch", "openeuler", "cvrf"),
-			retry: 5,
-		},
+		dir:         filepath.Join(util.CacheDir(), "fetch", "openeuler", "cvrf"),
+		retry:       5,
 		concurrency: 20,
 		wait:        1 * time.Second,
 	}
@@ -4076,10 +4028,8 @@ func newCmdOpenEulerCSAF() *cobra.Command {
 		concurrency int
 		wait        time.Duration
 	}{
-		base: base{
-			dir:   filepath.Join(util.CacheDir(), "fetch", "openeuler", "csaf"),
-			retry: 5,
-		},
+		dir:         filepath.Join(util.CacheDir(), "fetch", "openeuler", "csaf"),
+		retry:       5,
 		concurrency: 20,
 		wait:        1 * time.Second,
 	}
@@ -4113,10 +4063,8 @@ func newCmdOpenEulerOSV() *cobra.Command {
 		concurrency int
 		wait        time.Duration
 	}{
-		base: base{
-			dir:   filepath.Join(util.CacheDir(), "fetch", "openeuler", "osv"),
-			retry: 5,
-		},
+		dir:         filepath.Join(util.CacheDir(), "fetch", "openeuler", "osv"),
+		retry:       5,
 		concurrency: 20,
 		wait:        1 * time.Second,
 	}
@@ -4188,10 +4136,8 @@ func newCmdOpenSSLSecJSON() *cobra.Command {
 		concurrency int
 		wait        time.Duration
 	}{
-		base: base{
-			dir:   filepath.Join(util.CacheDir(), "fetch", "openssl", "secjson"),
-			retry: 3,
-		},
+		dir:         filepath.Join(util.CacheDir(), "fetch", "openssl", "secjson"),
+		retry:       3,
 		concurrency: 5,
 		wait:        1 * time.Second,
 	}
@@ -4279,10 +4225,8 @@ func newCmdOracleOpenStack() *cobra.Command {
 		concurrency int
 		wait        time.Duration
 	}{
-		base: base{
-			dir:   filepath.Join(util.CacheDir(), "fetch", "oracle", "openstack"),
-			retry: 3,
-		},
+		dir:         filepath.Join(util.CacheDir(), "fetch", "oracle", "openstack"),
+		retry:       3,
 		concurrency: 3,
 		wait:        1 * time.Second,
 	}
@@ -4316,10 +4260,8 @@ func newCmdOracleVM() *cobra.Command {
 		concurrency int
 		wait        time.Duration
 	}{
-		base: base{
-			dir:   filepath.Join(util.CacheDir(), "fetch", "oracle", "vm"),
-			retry: 3,
-		},
+		dir:         filepath.Join(util.CacheDir(), "fetch", "oracle", "vm"),
+		retry:       3,
 		concurrency: 3,
 		wait:        1 * time.Second,
 	}
@@ -4380,10 +4322,8 @@ func newCmdOXCSAF() *cobra.Command {
 		concurrency int
 		wait        time.Duration
 	}{
-		base: base{
-			dir:   filepath.Join(util.CacheDir(), "fetch", "ox", "csaf"),
-			retry: 3,
-		},
+		dir:         filepath.Join(util.CacheDir(), "fetch", "ox", "csaf"),
+		retry:       3,
 		concurrency: 3,
 		wait:        1 * time.Second,
 	}
@@ -4444,10 +4384,8 @@ func newCmdPaloAltoJSON() *cobra.Command {
 		concurrency int
 		wait        time.Duration
 	}{
-		base: base{
-			dir:   filepath.Join(util.CacheDir(), "fetch", "paloalto", "json"),
-			retry: 3,
-		},
+		dir:         filepath.Join(util.CacheDir(), "fetch", "paloalto", "json"),
+		retry:       3,
 		concurrency: 5,
 		wait:        1 * time.Second,
 	}
@@ -4481,10 +4419,8 @@ func newCmdPaloAltoCSAF() *cobra.Command {
 		concurrency int
 		wait        time.Duration
 	}{
-		base: base{
-			dir:   filepath.Join(util.CacheDir(), "fetch", "paloalto", "csaf"),
-			retry: 3,
-		},
+		dir:         filepath.Join(util.CacheDir(), "fetch", "paloalto", "csaf"),
+		retry:       3,
 		concurrency: 5,
 		wait:        1 * time.Second,
 	}
@@ -4788,10 +4724,8 @@ func newCmdRedHatCVE() *cobra.Command {
 		concurrency int
 		wait        time.Duration
 	}{
-		base: base{
-			dir:   filepath.Join(util.CacheDir(), "fetch", "redhat", "cve"),
-			retry: 20,
-		},
+		dir:         filepath.Join(util.CacheDir(), "fetch", "redhat", "cve"),
+		retry:       20,
 		concurrency: 15,
 		wait:        1 * time.Second,
 	}
@@ -4825,10 +4759,8 @@ func newCmdRedHatCSAF() *cobra.Command {
 		concurrency int
 		wait        time.Duration
 	}{
-		base: base{
-			dir:   filepath.Join(util.CacheDir(), "fetch", "redhat", "csaf"),
-			retry: 3,
-		},
+		dir:         filepath.Join(util.CacheDir(), "fetch", "redhat", "csaf"),
+		retry:       3,
 		concurrency: 10,
 		wait:        1 * time.Second,
 	}
@@ -4970,10 +4902,8 @@ func newCmdRedHatVEXV1() *cobra.Command {
 		concurrency int
 		wait        time.Duration
 	}{
-		base: base{
-			dir:   filepath.Join(util.CacheDir(), "fetch", "redhat", "vex", "v1"),
-			retry: 3,
-		},
+		dir:         filepath.Join(util.CacheDir(), "fetch", "redhat", "vex", "v1"),
+		retry:       3,
 		concurrency: 10,
 		wait:        1 * time.Second,
 	}
@@ -5124,11 +5054,9 @@ func newCmdRockyErrata() *cobra.Command {
 		base
 		wait time.Duration
 	}{
-		base: base{
-			dir:   filepath.Join(util.CacheDir(), "fetch", "rocky", "errata"),
-			retry: 3,
-		},
-		wait: 1 * time.Second,
+		dir:   filepath.Join(util.CacheDir(), "fetch", "rocky", "errata"),
+		retry: 3,
+		wait:  1 * time.Second,
 	}
 
 	cmd := &cobra.Command{
@@ -5186,10 +5114,8 @@ func newCmdRockyUpdateinfo() *cobra.Command {
 		concurrency int
 		wait        time.Duration
 	}{
-		base: base{
-			dir:   filepath.Join(util.CacheDir(), "fetch", "rocky", "updateinfo"),
-			retry: 3,
-		},
+		dir:         filepath.Join(util.CacheDir(), "fetch", "rocky", "updateinfo"),
+		retry:       3,
 		concurrency: 5,
 		wait:        1 * time.Second,
 	}
@@ -5385,10 +5311,8 @@ func newCmdSICKCSAF() *cobra.Command {
 		concurrency int
 		wait        time.Duration
 	}{
-		base: base{
-			dir:   filepath.Join(util.CacheDir(), "fetch", "sick", "csaf"),
-			retry: 3,
-		},
+		dir:         filepath.Join(util.CacheDir(), "fetch", "sick", "csaf"),
+		retry:       3,
 		concurrency: 2,
 		wait:        1 * time.Second,
 	}
@@ -5422,10 +5346,8 @@ func newCmdSiemensCSAF() *cobra.Command {
 		concurrency int
 		wait        time.Duration
 	}{
-		base: base{
-			dir:   filepath.Join(util.CacheDir(), "fetch", "siemens", "csaf"),
-			retry: 3,
-		},
+		dir:         filepath.Join(util.CacheDir(), "fetch", "siemens", "csaf"),
+		retry:       3,
 		concurrency: 1,
 		wait:        3 * time.Second,
 	}
@@ -5486,10 +5408,8 @@ func newCmdSUSEOVAL() *cobra.Command {
 		concurrency int
 		wait        time.Duration
 	}{
-		base: base{
-			dir:   filepath.Join(util.CacheDir(), "fetch", "suse", "oval"),
-			retry: 3,
-		},
+		dir:         filepath.Join(util.CacheDir(), "fetch", "suse", "oval"),
+		retry:       3,
 		concurrency: 3,
 		wait:        1 * time.Second,
 	}
@@ -5847,10 +5767,8 @@ func newCmdUbuntuCVE() *cobra.Command {
 		concurrency int
 		wait        time.Duration
 	}{
-		base: base{
-			dir:   filepath.Join(util.CacheDir(), "fetch", "ubuntu", "cve"),
-			retry: 10,
-		},
+		dir:         filepath.Join(util.CacheDir(), "fetch", "ubuntu", "cve"),
+		retry:       10,
 		concurrency: 10,
 		wait:        1 * time.Second,
 	}
@@ -5884,10 +5802,8 @@ func newCmdUbuntuNotice() *cobra.Command {
 		concurrency int
 		wait        time.Duration
 	}{
-		base: base{
-			dir:   filepath.Join(util.CacheDir(), "fetch", "ubuntu", "notice"),
-			retry: 10,
-		},
+		dir:         filepath.Join(util.CacheDir(), "fetch", "ubuntu", "notice"),
+		retry:       10,
 		concurrency: 10,
 		wait:        1 * time.Second,
 	}
@@ -5921,10 +5837,8 @@ func newCmdVARIoTExploits() *cobra.Command {
 		concurrency int
 		wait        time.Duration
 	}{
-		base: base{
-			dir:   filepath.Join(util.CacheDir(), "fetch", "variot", "exploits"),
-			retry: 3,
-		},
+		dir:         filepath.Join(util.CacheDir(), "fetch", "variot", "exploits"),
+		retry:       3,
 		concurrency: 5,
 		wait:        1 * time.Second,
 	}
@@ -5958,10 +5872,8 @@ func newCmdVARIoTVulns() *cobra.Command {
 		concurrency int
 		wait        time.Duration
 	}{
-		base: base{
-			dir:   filepath.Join(util.CacheDir(), "fetch", "variot", "vulns"),
-			retry: 3,
-		},
+		dir:         filepath.Join(util.CacheDir(), "fetch", "variot", "vulns"),
+		retry:       3,
 		concurrency: 5,
 		wait:        1 * time.Second,
 	}
