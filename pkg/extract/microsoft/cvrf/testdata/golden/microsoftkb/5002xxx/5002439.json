@@ -1,0 +1,20 @@
+{
+	"kb_id": "5002439",
+	"url": "https://support.microsoft.com/help/5002439",
+	"products": [
+		"Microsoft Office 2013 RT Service Pack 1",
+		"Microsoft Office 2013 Service Pack 1 (32-bit editions)",
+		"Microsoft Office 2013 Service Pack 1 (64-bit editions)"
+	],
+	"superseded_by": [
+		{
+			"kb_id": "5002477"
+		}
+	],
+	"data_source": {
+		"id": "microsoft-cvrf",
+		"raws": [
+			"fixtures/2023-Sep/2023/CVE-2023-36767.json"
+		]
+	}
+}

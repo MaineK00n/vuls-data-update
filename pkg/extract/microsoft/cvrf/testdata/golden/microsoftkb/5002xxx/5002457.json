@@ -1,0 +1,19 @@
+{
+	"kb_id": "5002457",
+	"url": "https://support.microsoft.com/help/5002457",
+	"products": [
+		"Microsoft Office 2016 (32-bit edition)",
+		"Microsoft Office 2016 (64-bit edition)"
+	],
+	"supersedes": [
+		{
+			"kb_id": "5002419"
+		}
+	],
+	"data_source": {
+		"id": "microsoft-cvrf",
+		"raws": [
+			"fixtures/2023-Sep/2023/CVE-2023-36767.json"
+		]
+	}
+}

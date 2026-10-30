@@ -1552,6 +1552,103 @@ func TestFixedBuildOverrides(t *testing.T) {
 	}
 }
 
+func TestBuildUnresolvedCriterion(t *testing.T) {
+	type args struct {
+		cveID         string
+		productName   string
+		rawFixedBuild string
+		description   string
+		url           string
+	}
+	unresolved := func(product, fixed, description, url string) *criterionTypes.Criterion {
+		return &criterionTypes.Criterion{
+			Type: criterionTypes.CriterionTypeVersion,
+			Version: &vcTypes.Criterion{
+				Vulnerable: true,
+				FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
+				Package: packageTypes.Package{
+					Type:   packageTypes.PackageTypeBinary,
+					Binary: &binaryTypes.Package{Name: product},
+				},
+				Affected: &affectedTypes.Affected{
+					Type:       affectedrangeTypes.RangeTypeUnresolved,
+					Unresolved: &affectedTypes.Unresolved{Fixed: fixed, Description: description, URL: url},
+				},
+			},
+		}
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    *criterionTypes.Criterion
+		wantErr bool
+	}{
+		{
+			name: "Office Click-to-Run, FixedBuild is a URL",
+			args: args{cveID: "CVE-2023-36767", productName: "Microsoft Office LTSC 2021 for 64-bit editions", rawFixedBuild: "https://aka.ms/OfficeSecurityReleases", description: "Click to Run"},
+			want: unresolved("Microsoft Office LTSC 2021 for 64-bit editions", "https://aka.ms/OfficeSecurityReleases", "Click to Run", ""),
+		},
+		{
+			name: "Visual Studio Insiders tag",
+			args: args{cveID: "CVE-2026-70197", productName: "Microsoft Visual Studio 2026 Version 18.12", rawFixedBuild: "18.12 Insiders 3", description: "Release Notes", url: "https://learn.microsoft.com/en-us/visualstudio/releases/2026/release-history"},
+			want: unresolved("Microsoft Visual Studio 2026 Version 18.12", "18.12 Insiders 3", "Release Notes", "https://learn.microsoft.com/en-us/visualstudio/releases/2026/release-history"),
+		},
+		{
+			name: ".NET SDK release-candidate tag",
+			args: args{cveID: "CVE-2026-58649", productName: ".NET 11.0 installed on Windows", rawFixedBuild: "11.0 RC1"},
+			want: unresolved(".NET 11.0 installed on Windows", "11.0 RC1", "", ""),
+		},
+		{
+			name: "release notes without a FixedBuild on a version-compared product",
+			args: args{cveID: "CVE-2020-1161", productName: "Microsoft Visual Studio 2017 Version 15.9", description: " Release Notes "},
+			want: unresolved("Microsoft Visual Studio 2017 Version 15.9", "", "Release Notes", ""),
+		},
+		{
+			name: "malformed FixedBuild on a version-compared product",
+			args: args{cveID: "CVE-2025-49731", productName: "Microsoft Teams for Desktop", rawFixedBuild: "25060212643", description: "Release Notes"},
+			want: unresolved("Microsoft Teams for Desktop", "25060212643", "Release Notes", ""),
+		},
+		{
+			name: "unresolvedProducts product with a version that has no range type",
+			args: args{cveID: "CVE-2023-36785", productName: "Microsoft ODBC Driver 17 for SQL Server on Windows", rawFixedBuild: "17.10.5.1", description: "Release Notes"},
+			want: unresolved("Microsoft ODBC Driver 17 for SQL Server on Windows", "17.10.5.1", "Release Notes", ""),
+		},
+		{
+			name: "product that is not detected",
+			args: args{cveID: "CVE-2023-36785", productName: "Microsoft ODBC Driver 17 for SQL Server on Linux", rawFixedBuild: "17.10.5.1", description: "Release Notes"},
+		},
+		{
+			name: "never-detected product of a detection family",
+			args: args{cveID: "CVE-2017-11770", productName: ".NET Core 1.0", description: "Commit"},
+		},
+		{
+			name: ".NET SDK feature band that covers no released band",
+			args: args{cveID: "CVE-2026-00000", productName: ".NET 10.0 installed on Windows", rawFixedBuild: "10.0.100"},
+		},
+		{
+			name: "fixedBuildOverrides entry of \"\" acknowledges the gap",
+			args: args{cveID: "CVE-2026-32077", productName: "Windows Server 2012 R2", rawFixedBuild: "1.000"},
+		},
+		{
+			name:    "unlisted product of a detection family fails",
+			args:    args{cveID: "CVE-2026-00000", productName: "Microsoft Visual Studio 2019 Version 16.12"},
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := cvrf.BuildUnresolvedCriterion(tt.args.cveID, tt.args.productName, tt.args.rawFixedBuild, tt.args.description, tt.args.url)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("buildUnresolvedCriterion() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if diff := cmp.Diff(tt.want, got); diff != "" {
+				t.Errorf("buildUnresolvedCriterion() mismatch (-want +got):\n%s", diff)
+			}
+		})
+	}
+}
+
 func TestBuildKBCriterion(t *testing.T) {
 	type args struct {
 		product string
@@ -1864,6 +1961,11 @@ func TestExtract(t *testing.T) {
 		{
 			name:     "microsoft edge (chromium-based) vendor fix without FixedBuild",
 			args:     "./testdata/fixtures-edge-missing-fixedbuild",
+			hasError: true,
+		},
+		{
+			name:     "unresolved vendor fix beside a KB of the same product",
+			args:     "./testdata/fixtures-unresolved-beside-comparable",
 			hasError: true,
 		},
 		{

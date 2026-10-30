@@ -1,0 +1,15 @@
+{
+	"kb_id": "5133964",
+	"url": "https://support.microsoft.com/help/5133964",
+	"products": [
+		".NET 8.0 installed on Linux",
+		".NET 8.0 installed on Mac OS",
+		".NET 8.0 installed on Windows"
+	],
+	"data_source": {
+		"id": "microsoft-cvrf",
+		"raws": [
+			"fixtures/2026-Oct/2026/CVE-2026-70197.json"
+		]
+	}
+}

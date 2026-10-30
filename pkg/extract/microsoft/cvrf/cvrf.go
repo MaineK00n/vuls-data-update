@@ -851,6 +851,9 @@ func buildDetections(v cvrf.Vulnerability, products map[string]string) (map[ecos
 	var tags []segmentTypes.DetectionTag
 	fixesByTag := make(map[segmentTypes.DetectionTag][]vendorFix)
 	excludedTags := make(map[segmentTypes.DetectionTag]struct{})
+	// Unresolved criteria of the Vendor Fix remediations that yield neither a KB
+	// nor a fixed build criterion (see buildUnresolvedCriterion).
+	unresolvedByTag := make(map[segmentTypes.DetectionTag][]criterionTypes.Criterion)
 
 	for _, r := range v.Remediations.Remediation {
 		switch r.Type {
@@ -866,10 +869,9 @@ func buildDetections(v cvrf.Vulnerability, products map[string]string) (map[ecos
 				}
 
 				// Mark the product as covered so that the ProductStatuses fallback
-				// does not incorrectly register it as unfixed. This must happen
-				// before the nil check below because some Vendor Fix entries
-				// (e.g. "Click to Run") carry neither a KB ID nor a FixedBuild,
-				// yet the product IS fixed via an auto-update channel.
+				// does not register it as unfixed: the product is fixed, even when
+				// the Vendor Fix carries neither a KB ID nor a usable FixedBuild
+				// (e.g. "Click to Run"), which buildUnresolvedCriterion reports.
 				coveredProductIDs[pid] = struct{}{}
 
 				tag := segmentTypes.DetectionTag(productName)
@@ -894,24 +896,37 @@ func buildDetections(v cvrf.Vulnerability, products map[string]string) (map[ecos
 				}
 
 				if kbCriterion == nil && fixedBuildCriterion == nil {
-					// A Vendor Fix that yields no criterion is normally fine (the
-					// product is fixed via an auto-update channel, e.g. Office
-					// Click to Run). For the Microsoft Edge (Chromium-based)
-					// browser however the CVE becomes silently undetectable: the
-					// covered mark above also suppresses the ProductStatuses
-					// unfixed fallback. Require an explicit fixedBuildOverrides
-					// entry ("" to intentionally skip) so that upstream
-					// FixedBuild gaps fail the extraction instead of silently
-					// dropping detections (e.g. the 2026-Jul document shipped
-					// 79 Chromium CVEs without a usable FixedBuild). Limited to
-					// the version-comparable browser products; tool products
-					// such as the Updater are intentionally skipped by
-					// buildFixedBuildCriterion and stay exempt.
+					// The covered mark above suppresses the ProductStatuses
+					// unfixed fallback, so a Vendor Fix that yields no criterion
+					// would leave the CVE silently undetectable on the product.
+					// For the Microsoft Edge (Chromium-based) browser, whose
+					// fixed builds the Edge release notes give, require an
+					// explicit fixedBuildOverrides entry ("" to intentionally
+					// skip) so that upstream FixedBuild gaps fail the
+					// extraction instead of silently dropping detections (e.g.
+					// the 2026-Jul document shipped 79 Chromium CVEs without a
+					// usable FixedBuild). Limited to the version-comparable
+					// browser products; tool products such as the Updater are
+					// not detected and stay exempt.
 					switch criterionProductName {
 					case "Microsoft Edge (Chromium-based)", "Microsoft Edge (Chromium-based) Extended Stable":
 						if _, ok := fixedBuildOverrides[[3]string{v.CVE, criterionProductName, cleanFixedBuild(r.FixedBuild)}]; !ok {
 							missingFixedBuilds = append(missingFixedBuilds, fmt.Sprintf("%s (%s)", v.CVE, criterionProductName))
 						}
+						continue
+					}
+
+					// Other detected products are reported as affected with
+					// their version unconfirmed and the vendor's fix kept as
+					// published.
+					uc, err := buildUnresolvedCriterion(v.CVE, criterionProductName, fixedBuild, r.Description, r.URL)
+					if err != nil {
+						return nil, nil, errors.Wrap(err, "build unresolved criterion")
+					}
+					if uc != nil && !slices.ContainsFunc(unresolvedByTag[tag], func(e criterionTypes.Criterion) bool {
+						return criterionTypes.Compare(e, *uc) == 0
+					}) {
+						unresolvedByTag[tag] = append(unresolvedByTag[tag], *uc)
 					}
 					continue
 				}
@@ -960,6 +975,18 @@ func buildDetections(v cvrf.Vulnerability, products map[string]string) (map[ecos
 		if err := appendVendorFixConditions(conditionsByEcosystem, tag, fixesByTag[tag]); err != nil {
 			return nil, nil, errors.Wrapf(err, "append vendor fix conditions for %s (%s)", v.CVE, tag)
 		}
+	}
+
+	// A product reported only by unresolved criteria is affected with its version
+	// unconfirmed. When another Vendor Fix of the product gives a KB or a fixed
+	// build, the unresolved criteria ORed beside it would report every version of
+	// the product, and dropping them would discard the vendor's fix unseen, so fail
+	// and leave the decision to a fixedBuildOverrides entry.
+	for _, tag := range slices.Sorted(maps.Keys(unresolvedByTag)) {
+		if _, ok := fixesByTag[tag]; ok {
+			return nil, nil, errors.Errorf("unexpected Vendor Fixes for %s (%s). expected: either all comparable or none, actual: a KB or a fixed build beside one without, please add fixedBuildOverrides", v.CVE, tag)
+		}
+		appendConditions(conditionsByEcosystem, tag, unresolvedByTag[tag])
 	}
 
 	// For products listed in ProductStatuses but not covered by any Vendor Fix
@@ -1900,6 +1927,10 @@ func isVersionlessFixedBuild(fixedBuild string) bool {
 // product that looks like one of those families but is not listed fails, so that it
 // gets classified.
 func productRangeType(productName string) (rangeTypes.RangeType, error) {
+	if _, ok := unresolvedProducts[productName]; ok {
+		return rangeTypes.RangeTypeUnknown, nil
+	}
+
 	switch productName {
 	// Microsoft Defender for Endpoint for Android
 	case "Microsoft Defender for Endpoint for Android":
@@ -2415,7 +2446,6 @@ func productRangeType(productName string) (rangeTypes.RangeType, error) {
 		"Microsoft Office for Android",
 		"Microsoft Office for Universal",
 		"Microsoft Office for iOS",
-		"Microsoft Outlook 2016 for Mac",
 		"SQL Server backend for Django",
 		"Teams Panels",
 		"Teams Phones",
@@ -2429,6 +2459,45 @@ func productRangeType(productName string) (rangeTypes.RangeType, error) {
 		"Visual Studio Code Remote - Containers Extension",
 		"Visual Studio Code Remote - SSH Extension",
 		"Visual Studio Code WSL Extension":
+		return rangeTypes.RangeTypeUnknown, nil
+
+	// Products of the families above that are never detected: no CVE gives them a KB
+	// or a fixed build. Their rows carry no FixedBuild (2017-2020 "Release Notes" and
+	// "Commit" rows) and get no criterion, like the other products outside the
+	// detection families. Detecting one means a range type here and
+	// fixedBuildOverrides for its CVEs, or an unresolvedProducts entry.
+	case ".NET Core 1.0",
+		".NET Core 1.1",
+		".NET Core 2.0",
+		".NET Core 2.2",
+		".NET Core 3.0",
+		".NET Core SDK 1.1 on .NET Core 1.0",
+		".NET Core SDK 1.1 on .NET Core 1.1",
+		".NET Core SDK 2.1.500 on .NET Core 2.1",
+		".NET Core SDK 2.2.100 on .NET Core 2.2",
+		".NET Framework 4.7.2 Developer Pack",
+		"Microsoft Teams Admin Center",
+		"Microsoft Visual Studio 2017",
+		"Microsoft Visual Studio 2017 Version 15.0",
+		"Microsoft Visual Studio 2017 Version 15.6.6",
+		"Microsoft Visual Studio 2017 Version 15.7.5",
+		"Microsoft Visual Studio 2017 Version 15.8",
+		"Microsoft Visual Studio 2019 Version 16.0",
+		"Microsoft Visual Studio 2019 Version 16.1",
+		"Microsoft Visual Studio 2019 Version 16.2",
+		"Microsoft Visual Studio 2019 Version 16.3",
+		"Microsoft Visual Studio 2019 Version 16.5",
+		"SQL Server 2017 Reporting Services",
+		"SQL Server 2019 Big Data Clusters",
+		"SQL Server 2019 Reporting Services",
+		"SQL Server Management Studio 18.3",
+		"SQL Server Management Studio 18.3.1",
+		"SQL Server Management Studio 18.6",
+		"Visual Studio Code - Java Extension Pack",
+		"Visual Studio Code - Maven for Java Extension",
+		"Visual Studio Code - npm-script Extension",
+		"Visual Studio Code Language Support for Java Extension",
+		"Visual Studio Code TS-Lint Extension":
 		return rangeTypes.RangeTypeUnknown, nil
 
 	default:
@@ -2463,7 +2532,7 @@ func productRangeType(productName string) (rangeTypes.RangeType, error) {
 			"Windows RT ",
 		} {
 			if strings.HasPrefix(productName, prefix) {
-				return rangeTypes.RangeTypeUnknown, errors.Errorf("unknown product %q (matches prefix %q) not listed in productRangeType, please add it", productName, prefix)
+				return rangeTypes.RangeTypeUnknown, errors.Errorf("unknown product %q (matches prefix %q) not listed in productRangeType, please add it (a range type, the not-detected products, or unresolvedProducts)", productName, prefix)
 			}
 		}
 		return rangeTypes.RangeTypeUnknown, nil
@@ -2580,6 +2649,106 @@ func validateFixedBuild(rt rangeTypes.RangeType, productName, fixedBuild string)
 	return nil
 }
 
+// buildUnresolvedCriterion builds the criterion of a Vendor Fix that yields neither
+// a KB nor a fixed build criterion: a version criterion whose Affected is unresolved
+// (RangeTypeUnresolved), keeping the vendor's fix as published. The product is
+// affected and fixed, but no version range can be derived, so a consumer accepts it
+// whatever its version and reports the version as unconfirmed. It is built for
+//   - a version-compared product (see productRangeType) whose FixedBuild names no
+//     version (see isVersionlessFixedBuild), e.g. Office Click-to-Run's
+//     "https://aka.ms/OfficeSecurityReleases", "Release Notes" rows without a
+//     FixedBuild, or a prerelease tag such as "11.0 RC1" or "18.12 Insiders 3";
+//   - an unresolvedProducts product, whatever its FixedBuild.
+//
+// It gives none for a product that is not detected (RangeTypeUnknown), for a
+// fixedBuildOverrides entry of "" (the gap is acknowledged), and for a .NET SDK
+// feature band that covers no released band (see buildDotNetSDKCriterion).
+func buildUnresolvedCriterion(cveID, productName, rawFixedBuild, description, url string) (*criterionTypes.Criterion, error) {
+	fixed := cleanFixedBuild(rawFixedBuild)
+	fixedBuild := fixed
+	if fb, ok := fixedBuildOverrides[[3]string{cveID, productName, fixed}]; ok {
+		if fb == "" {
+			return nil, nil
+		}
+		fixedBuild = fb
+	}
+
+	if _, ok := unresolvedProducts[productName]; !ok {
+		rt, err := productRangeType(productName)
+		if err != nil {
+			return nil, errors.Wrapf(err, "classify %s (%s)", cveID, productName)
+		}
+		if rt == rangeTypes.RangeTypeUnknown || !isVersionlessFixedBuild(fixedBuild) {
+			return nil, nil
+		}
+	}
+
+	return &criterionTypes.Criterion{
+		Type: criterionTypes.CriterionTypeVersion,
+		Version: &vcTypes.Criterion{
+			Vulnerable: true,
+			FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
+			Package: criterionpackageTypes.Package{
+				Type:   criterionpackageTypes.PackageTypeBinary,
+				Binary: &binaryTypes.Package{Name: productName},
+			},
+			Affected: &affectedTypes.Affected{
+				Type: rangeTypes.RangeTypeUnresolved,
+				Unresolved: &affectedTypes.Unresolved{
+					Fixed:       fixed,
+					Description: strings.TrimSpace(description),
+					URL:         strings.TrimSpace(url),
+				},
+			},
+		},
+	}, nil
+}
+
+// unresolvedProducts lists, by name after normalizeProductName, the products that
+// are detected but have no range type, so that every Vendor Fix of theirs without a
+// KB gives an unresolved criterion (see buildUnresolvedCriterion).
+var unresolvedProducts = map[string]struct{}{
+	// Microsoft 365 Apps / Office Click-to-Run, fixed through update channels whose
+	// builds CVRF does not give (FixedBuild "https://aka.ms/OfficeSecurityReleases",
+	// "Click to Run", or a build of one channel among several)
+	"Microsoft 365 Apps for Enterprise for 32-bit Systems":          {},
+	"Microsoft 365 Apps for Enterprise for 64-bit Systems":          {},
+	"Office 365 ProPlus for 32-bit Systems":                         {},
+	"Office 365 ProPlus for 64-bit Systems":                         {},
+	"Microsoft Office 2010 Click-to-Run (C2R) for 32-bit editions":  {},
+	"Microsoft Office 2010 Click-to-Run (C2R) for 64-bit editions":  {},
+	"Microsoft Office 2016 Click-to-Run (C2R) for 32-bit editions":  {},
+	"Microsoft Office 2016 Click-to-Run (C2R) for 64-bit editions":  {},
+	"Microsoft Outlook 2016 Click-to-Run (C2R) for 32-bit editions": {},
+	"Microsoft Outlook 2016 Click-to-Run (C2R) for 64-bit editions": {},
+
+	// Office 2016 for Mac, detected by KB (2016-2017); its later rows are "Release
+	// Notes" without a FixedBuild
+	"Microsoft Office 2016 for Mac":     {},
+	"Microsoft Excel 2016 for Mac":      {},
+	"Microsoft Outlook 2016 for Mac":    {},
+	"Microsoft PowerPoint 2016 for Mac": {},
+	"Microsoft Word 2016 for Mac":       {},
+
+	// Detected by KB in other CVEs; their versions have no range type
+	"ASP.NET Core 8.0":                                   {},
+	"ASP.NET Core 9.0":                                   {},
+	"ASP.NET Core 10.0":                                  {},
+	"ASP.NET Core 11.0":                                  {},
+	"Azure File Sync v18.0":                              {},
+	"Azure Stack HCI OS 22H2":                            {},
+	"Microsoft Dynamics 365 (on-premises) Version 9.1":   {},
+	"Microsoft Dynamics NAV 2013 R2":                     {},
+	"Microsoft Dynamics NAV 2015":                        {},
+	"Microsoft Dynamics NAV 2018":                        {},
+	"Microsoft ODBC Driver 17 for SQL Server on Windows": {},
+	"Microsoft ODBC Driver 18 for SQL Server on Windows": {},
+	"Microsoft OLE DB Driver 18 for SQL Server":          {},
+	"Microsoft OLE DB Driver 19 for SQL Server":          {},
+	"Windows Admin Center":                               {},
+	"Windows Update Assistant":                           {},
+}
+
 // fixedBuildOverrides maps (CVE ID, product name, incorrect FixedBuild) to corrected FixedBuild values
 // for known data issues in CVRF.
 // The key is [3]string{CVE ID, product name after normalizeProductName, incorrect FixedBuild value after generic cleanup}.
@@ -2667,7 +2836,7 @@ var fixedBuildOverrides = map[[3]string]string{
 	// releases of each channel (2.1.18 and 2.1.19, 3.1.4 and 3.1.5): Microsoft
 	// re-released it in June 2020 "to comprehensively address" it
 	// (dotnet/announcements#157), so the later release is taken. Not listed, and left
-	// without a criterion: CVE-2018-8292 (.NET Core 2.1, "Commit") and
+	// to buildUnresolvedCriterion: CVE-2018-8292 (.NET Core 2.1, "Commit") and
 	// CVE-2020-1108 (.NET 5.0, a preview at the time).
 	{"CVE-2018-8409", ".NET Core 2.1", ""}:  "2.1.4",
 	{"CVE-2018-8416", ".NET Core 2.1", ""}:  "2.1.7",
@@ -2698,7 +2867,7 @@ var fixedBuildOverrides = map[[3]string]string{
 	// list each CVE under "Security Advisories Addressed" of the 15.9.x release that
 	// fixed it. CVE-2020-1108 is listed under 15.9.23 and, re-released "to
 	// comprehensively address" it, 15.9.24, which is taken (likewise 16.4.10 and
-	// 16.6.2 below). Not listed, and left without a criterion: CVE-2020-1161.
+	// 16.6.2 below). Not listed, and left to buildUnresolvedCriterion: CVE-2020-1161.
 	{"CVE-2018-8599", "Microsoft Visual Studio 2017 Version 15.9", ""}:  "15.9.4",
 	{"CVE-2019-0546", "Microsoft Visual Studio 2017 Version 15.9", ""}:  "15.9.5",
 	{"CVE-2019-0613", "Microsoft Visual Studio 2017 Version 15.9", ""}:  "15.9.7",
@@ -2808,7 +2977,7 @@ var fixedBuildOverrides = map[[3]string]string{
 	{"CVE-2020-1416", "Microsoft Visual Studio 2019 Version 16.6", ""}: "16.6.4",
 	// Visual Studio 2019 version 16.7 (includes 16.0 - 16.6), 2020-2021, likewise:
 	// https://learn.microsoft.com/en-us/visualstudio/releases/2019/release-notes-v16.7
-	// Not listed, and left without a criterion: CVE-2020-1597.
+	// Not listed, and left to buildUnresolvedCriterion: CVE-2020-1597.
 	{"CVE-2020-1130", "Microsoft Visual Studio 2019 Version 16.7", ""}:  "16.7.3",
 	{"CVE-2020-1133", "Microsoft Visual Studio 2019 Version 16.7", ""}:  "16.7.3",
 	{"CVE-2020-16856", "Microsoft Visual Studio 2019 Version 16.7", ""}: "16.7.3",

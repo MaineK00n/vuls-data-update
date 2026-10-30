@@ -1,0 +1,18 @@
+{
+	"kb_id": "5029378",
+	"url": "https://support.microsoft.com/help/5029378",
+	"products": [
+		"Microsoft SQL Server 2019 for x64-based Systems (CU 22)"
+	],
+	"supersedes": [
+		{
+			"kb_id": "5021124"
+		}
+	],
+	"data_source": {
+		"id": "microsoft-cvrf",
+		"raws": [
+			"fixtures/2023-Oct/2023/CVE-2023-36785.json"
+		]
+	}
+}
