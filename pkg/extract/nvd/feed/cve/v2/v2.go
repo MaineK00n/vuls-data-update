@@ -685,7 +685,7 @@ func (e extractor) cpeNamesFromCpematch(matchCriteriaId string) ([]string, error
 //     CPEMatches fallback, so this CVE+match would be silently
 //     undetectable. Refuse to emit a broken criterion — caller fails the
 //     extract and the operator refreshes the cpematch snapshot.
-func (e extractor) buildCPEMatches(match cveTypes.CPEMatch) (cpeMatches, covered []ccTypes.CPE, rangeType ccRangeTypes.RangeType, err error) {
+func (e extractor) buildCPEMatches(match cveTypes.CPEMatch) ([]ccTypes.CPE, []ccTypes.CPE, ccRangeTypes.RangeType, error) {
 	// One parse of the four endpoints yields both the bounds the per-entry
 	// coverage check reuses and the range type the caller stamps on the
 	// criterion — the whole range classification, done once.
@@ -701,7 +701,8 @@ func (e extractor) buildCPEMatches(match cveTypes.CPEMatch) (cpeMatches, covered
 		return nil, nil, rangeType, nil
 	}
 
-	cpeMatches = make([]ccTypes.CPE, 0, len(ns))
+	cpeMatches := make([]ccTypes.CPE, 0, len(ns))
+	var covered []ccTypes.CPE
 	for _, n := range ns {
 		wfn, err := naming.UnbindFS(n)
 		if err != nil {
