@@ -4089,9 +4089,15 @@ func newCmdOpenEulerOSV() *cobra.Command {
 }
 
 func newCmdOpenSSHSecurity() *cobra.Command {
-	options := &base{
-		dir:   filepath.Join(util.CacheDir(), "fetch", "openssh", "security"),
-		retry: 3,
+	options := &struct {
+		base
+		concurrency int
+		wait        time.Duration
+	}{
+		dir:         filepath.Join(util.CacheDir(), "fetch", "openssh", "security"),
+		retry:       3,
+		concurrency: 5,
+		wait:        1 * time.Second,
 	}
 
 	cmd := &cobra.Command{
@@ -4107,13 +4113,17 @@ func newCmdOpenSSHSecurity() *cobra.Command {
 			Producing raw/ is a separate, model-driven step run against the stored
 			copies, so raw/ is the one thing this command leaves alone: everything
 			else under the output directory is replaced.
+
+			--concurrency and --wait pace the requests for the CVE records. The NVD
+			queries that find which CVEs are OpenSSH's are always spaced six seconds
+			apart, as NVD asks of a caller without an API key.
 		`),
 		Example: heredoc.Doc(`
 			$ vuls-data-update fetch openssh-security
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := opensshSecurity.Fetch(opensshSecurity.WithDir(options.dir), opensshSecurity.WithRetry(options.retry)); err != nil {
+			if err := opensshSecurity.Fetch(opensshSecurity.WithDir(options.dir), opensshSecurity.WithRetry(options.retry), opensshSecurity.WithConcurrency(options.concurrency), opensshSecurity.WithWait(options.wait)); err != nil {
 				return errors.Wrap(err, "failed to fetch openssh security")
 			}
 			return nil
@@ -4122,6 +4132,8 @@ func newCmdOpenSSHSecurity() *cobra.Command {
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrent http requests")
+	cmd.Flags().DurationVarP(&options.wait, "wait", "", options.wait, "wait duration")
 
 	return cmd
 }

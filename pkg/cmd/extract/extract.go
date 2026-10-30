@@ -1669,8 +1669,12 @@ func newCmdMicrosoftCVRF() *cobra.Command {
 }
 
 func newCmdMicrosoftMSUC() *cobra.Command {
-	options := &base{
-		dir: filepath.Join(util.CacheDir(), "extract", "microsoft", "msuc"),
+	options := &struct {
+		base
+		concurrency int
+	}{
+		dir:         filepath.Join(util.CacheDir(), "extract", "microsoft", "msuc"),
+		concurrency: runtime.NumCPU(),
 	}
 
 	cmd := &cobra.Command{
@@ -1681,7 +1685,7 @@ func newCmdMicrosoftMSUC() *cobra.Command {
 		`),
 		Args: cobra.ExactArgs(1),
 		RunE: func(_ *cobra.Command, args []string) error {
-			if err := microsoftMSUC.Extract(args[0], microsoftMSUC.WithDir(options.dir)); err != nil {
+			if err := microsoftMSUC.Extract(args[0], microsoftMSUC.WithDir(options.dir), microsoftMSUC.WithConcurrency(options.concurrency)); err != nil {
 				return errors.Wrap(err, "failed to extract microsoft msuc")
 			}
 			return nil
@@ -1689,6 +1693,7 @@ func newCmdMicrosoftMSUC() *cobra.Command {
 	}
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
+	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrent workers")
 
 	return cmd
 }
