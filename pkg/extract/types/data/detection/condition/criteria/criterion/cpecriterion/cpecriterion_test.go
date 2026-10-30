@@ -13,12 +13,13 @@ import (
 
 func TestCriterion_Accept(t *testing.T) {
 	type fields struct {
-		Vulnerable bool
-		FixStatus  *fixstatusTypes.FixStatus
-		CPE        ccTypes.CPE
-		Range      *ccRangeTypes.Range
-		CPEMatches []ccTypes.CPE
-		Fixed      []string
+		Vulnerable       bool
+		FixStatus        *fixstatusTypes.FixStatus
+		CPE              ccTypes.CPE
+		Range            *ccRangeTypes.Range
+		CPEMatches       []ccTypes.CPE
+		CPEMatchesPacked *ccTypes.CPEMatchesPacked
+		Fixed            []string
 	}
 	type args struct {
 		query ccTypes.Query
@@ -537,6 +538,123 @@ func TestCriterion_Accept(t *testing.T) {
 			},
 			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:1.0:*:*:*:*:linux*:*:*"}},
 			want: ccTypes.MatchQualityNone,
+		},
+		{
+			// The packed enumeration inside Range is the only place a
+			// pattern query can match a semver-range criterion.
+			name: "range criterion, query version partial wildcard, covered by a packed entry -> Exact, no warning",
+			fields: fields{
+				Vulnerable:       true,
+				CPE:              "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
+				Range:            &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeSEMVER, LessThan: "14.23"},
+				CPEMatchesPacked: mustPack(t, "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*", "cpe:2.3:a:vendor:product:12.0:*:*:*:*:*:*:*", "cpe:2.3:a:vendor:product:12.22:*:*:*:*:*:*:*"),
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:12.*:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityExact,
+		},
+		{
+			name: "range criterion, query version partial wildcard, no packed entry covered -> None, warning",
+			fields: fields{
+				Vulnerable:       true,
+				CPE:              "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
+				Range:            &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeSEMVER, LessThan: "14.23"},
+				CPEMatchesPacked: mustPack(t, "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*", "cpe:2.3:a:vendor:product:12.0:*:*:*:*:*:*:*", "cpe:2.3:a:vendor:product:12.22:*:*:*:*:*:*:*"),
+			},
+			args:         args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:15.*:*:*:*:*:*:*:*"}},
+			want:         ccTypes.MatchQualityNone,
+			wantWarnings: []warningTypes.Warning{{Kind: warningTypes.KindPatternQueryRange, Cause: "cpe:2.3:a:vendor:product:15.*:*:*:*:*:*:*:*"}},
+		},
+		{
+			// A concrete query is answered by the Range: the packed set is
+			// not consulted for it, so a packed entry outside the Range
+			// (inconsistent data) cannot rescue an out-of-range query.
+			name: "range criterion, concrete query out of range but listed in packed -> None",
+			fields: fields{
+				Vulnerable:       true,
+				CPE:              "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
+				Range:            &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeSEMVER, LessThan: "14.23"},
+				CPEMatchesPacked: mustPack(t, "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*", "cpe:2.3:a:vendor:product:15.0:*:*:*:*:*:*:*"),
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:15.0:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityNone,
+		},
+		{
+			name: "range criterion, concrete query in range, packed present -> Exact (by Range)",
+			fields: fields{
+				Vulnerable:       true,
+				CPE:              "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
+				Range:            &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeSEMVER, LessThan: "14.23"},
+				CPEMatchesPacked: mustPack(t, "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*", "cpe:2.3:a:vendor:product:12.0:*:*:*:*:*:*:*"),
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:12.5:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityExact,
+		},
+		{
+			// The packed entries share the criterion's part, vendor and
+			// product, so a query for another product never decodes the set:
+			// data that would fail to decode is not reached.
+			name: "range criterion, pattern query for another product, malformed packed -> None, not decoded",
+			fields: fields{
+				Vulnerable:       true,
+				CPE:              "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
+				Range:            &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeSEMVER, LessThan: "14.23"},
+				CPEMatchesPacked: &ccTypes.CPEMatchesPacked{Encoding: ccTypes.PackedEncodingFC, Data: "012.0|*1"},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:other:12.*:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityNone,
+		},
+		{
+			name: "range criterion, pattern query for the same product, malformed packed -> error",
+			fields: fields{
+				Vulnerable:       true,
+				CPE:              "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
+				Range:            &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeSEMVER, LessThan: "14.23"},
+				CPEMatchesPacked: &ccTypes.CPEMatchesPacked{Encoding: ccTypes.PackedEncodingFC, Data: "012.0|*1"},
+			},
+			args:    args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:12.*:*:*:*:*:*:*:*"}},
+			want:    ccTypes.MatchQualityUnknown,
+			wantErr: true,
+		},
+		{
+			// An encoding from a newer vuls-data-update skips the packed
+			// entries with a warning instead of failing detection, keeping
+			// what the CPEMatches entry gave (NA entry vs pattern -> VU).
+			name: "range criterion, pattern query, unknown packed encoding -> VersionUnconfirmed from CPEMatches, warnings",
+			fields: fields{
+				Vulnerable:       true,
+				CPE:              "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
+				Range:            &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeSEMVER, LessThan: "14.23"},
+				CPEMatches:       []ccTypes.CPE{"cpe:2.3:a:vendor:product:-:*:*:*:*:*:*:*"},
+				CPEMatchesPacked: &ccTypes.CPEMatchesPacked{Encoding: "future-encoding", Data: "012.0"},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:12.*:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityVersionUnconfirmed,
+			wantWarnings: []warningTypes.Warning{
+				{Kind: warningTypes.KindPatternQueryRange, Cause: "cpe:2.3:a:vendor:product:12.*:*:*:*:*:*:*:*"},
+				{Kind: warningTypes.KindUnevaluablePackedEncoding, Cause: "future-encoding"},
+			},
+		},
+		{
+			name: "range criterion, concrete query in range, unknown packed encoding -> Exact (by Range), no warning",
+			fields: fields{
+				Vulnerable:       true,
+				CPE:              "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
+				Range:            &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeSEMVER, LessThan: "14.23"},
+				CPEMatchesPacked: &ccTypes.CPEMatchesPacked{Encoding: "future-encoding", Data: "012.0"},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:12.5:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityExact,
+		},
+		{
+			name: "range criterion, query version partial wildcard, packed entry with update attribute covered -> Exact",
+			fields: fields{
+				Vulnerable:       true,
+				CPE:              "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
+				Range:            &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeSEMVER, LessThan: "14.23"},
+				CPEMatchesPacked: mustPack(t, "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*", "cpe:2.3:a:vendor:product:12.0:beta1:*:*:*:*:*:*"),
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:12.*:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityExact,
 		},
 		{
 			name: "version=* criterion with range, query version NA -> VersionUnconfirmed",
@@ -1349,12 +1467,13 @@ func TestCriterion_Accept(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			c := ccTypes.Criterion{
-				Vulnerable: tt.fields.Vulnerable,
-				FixStatus:  tt.fields.FixStatus,
-				CPE:        tt.fields.CPE,
-				Range:      tt.fields.Range,
-				CPEMatches: tt.fields.CPEMatches,
-				Fixed:      tt.fields.Fixed,
+				Vulnerable:       tt.fields.Vulnerable,
+				FixStatus:        tt.fields.FixStatus,
+				CPE:              tt.fields.CPE,
+				Range:            tt.fields.Range,
+				CPEMatches:       tt.fields.CPEMatches,
+				CPEMatchesPacked: tt.fields.CPEMatchesPacked,
+				Fixed:            tt.fields.Fixed,
 			}
 			got, ws, err := c.Accept(tt.args.query)
 			if (err != nil) != tt.wantErr {
@@ -1369,4 +1488,13 @@ func TestCriterion_Accept(t *testing.T) {
 			}
 		})
 	}
+}
+
+func mustPack(t *testing.T, criterion ccTypes.CPE, matches ...ccTypes.CPE) *ccTypes.CPEMatchesPacked {
+	t.Helper()
+	p, err := ccTypes.PackCPEMatches(criterion, matches)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return p
 }
