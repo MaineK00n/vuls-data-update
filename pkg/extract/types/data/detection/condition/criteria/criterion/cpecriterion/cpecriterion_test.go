@@ -630,8 +630,8 @@ func TestCriterion_Accept(t *testing.T) {
 			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:12.*:*:*:*:*:*:*:*"}},
 			want: ccTypes.MatchQualityVersionUnconfirmed,
 			wantWarnings: []warningTypes.Warning{
-				{Kind: warningTypes.KindUnevaluablePackedEncoding, Cause: "future-encoding"},
 				{Kind: warningTypes.KindPatternQueryRange, Cause: "cpe:2.3:a:vendor:product:12.*:*:*:*:*:*:*:*"},
+				{Kind: warningTypes.KindUnevaluablePackedEncoding, Cause: "future-encoding"},
 			},
 		},
 		{
