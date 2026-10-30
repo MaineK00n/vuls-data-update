@@ -1825,14 +1825,15 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 		return nil, nil
 	}
 
+	rt, err := productRangeType(productName)
+	if err != nil {
+		return nil, errors.Wrapf(err, "unexpected FixedBuild format for %s (%s): %q", cveID, productName, fixedBuild)
+	}
+
 	// .NET SDK products: 2026-Oct names the runtime ".NET X runtime installed on <OS>"
 	// and gives the SDK the earlier runtime name ".NET X installed on <OS>" (see
 	// productNameOverrides)
-	switch productName {
-	case ".NET 8.0 installed on Linux", ".NET 8.0 installed on Mac OS", ".NET 8.0 installed on Windows",
-		".NET 9.0 installed on Linux", ".NET 9.0 installed on Mac OS", ".NET 9.0 installed on Windows",
-		".NET 10.0 installed on Linux", ".NET 10.0 installed on Mac OS", ".NET 10.0 installed on Windows",
-		".NET 11.0 installed on Linux", ".NET 11.0 installed on Mac OS", ".NET 11.0 installed on Windows":
+	if rt == rangeTypes.RangeTypeMicrosoftDotNetCoreSDK {
 		c, err := buildDotNetSDKCriterion(productName, fixedBuild)
 		if err != nil {
 			return nil, errors.Wrapf(err, "build .NET SDK criterion for %s (%s)", cveID, productName)
@@ -1840,691 +1841,11 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 		return c, nil
 	}
 
-	// Skip non-version values that appear in raw CVRF FixedBuild fields:
-	//  - Values not starting with a digit: URLs (e.g. "https://aka.ms/..."),
-	//    descriptive text (e.g. "App Build 14.43.49498, Platform Build 14.0.49494"),
-	//    prefixed versions (e.g. "v1.001", "V1.002", "OMI Version 1.6.8-1"),
-	//    package names (e.g. "regex-1.8.4", "h2-0.3.26"), KB references (e.g. "KB5032921")
-	//  - Placeholder versions containing "x" (e.g. "15.0.5415.xxxxxx", "5.64.x")
-	//  - Values without dots that are not parseable version numbers (e.g. "25060212643")
-	//  - Semicolon- or comma-separated compound versions (e.g. "3.0.6920.8954; 2.0.50727.8970"
-	//    used by .NET Framework products bundling multiple framework versions; .NET SDK
-	//    products split theirs per feature band in buildDotNetSDKCriterion instead)
-	//  - Release-candidate tags of the exact form "<dotted number> RC<digits>" (e.g.
-	//    "11.0 RC1", 2026-Sep) and Visual Studio Insiders tags "<dotted number> Insiders
-	//    <digits>" (e.g. "18.12 Insiders 3", 2026-Oct): the fix only exists in a
-	//    prerelease that the tag does not name as a version. Semver-style .NET
-	//    prereleases (e.g. "11.0.0-rc.2", 2026-Oct) are versions and are compared (see
-	//    dotnetPrereleaseRE). Other values containing a space or a hyphen are not skipped: on
-	//    version-compared products they have been recoverable typos (e.g. "96.0 1954.29")
-	//    or servicing builds (e.g. "5.0.6-servicing.21220.11"), which should fail and
-	//    get a fixedBuildOverrides entry
-	if fixedBuild[0] < '0' || fixedBuild[0] > '9' || strings.Contains(fixedBuild, "x") || !strings.Contains(fixedBuild, ".") || strings.ContainsAny(fixedBuild, ";,") || releaseCandidateTagRE.MatchString(fixedBuild) {
+	if rt == rangeTypes.RangeTypeUnknown || isVersionlessFixedBuild(fixedBuild) {
 		return nil, nil
 	}
-
-	rt, err := func() (rangeTypes.RangeType, error) {
-		switch productName {
-		// Microsoft Defender for Endpoint for Android
-		case "Microsoft Defender for Endpoint for Android":
-			if _, err := defenderandroidversion.NewVersion(fixedBuild); err != nil {
-				return rangeTypes.RangeTypeUnknown, errors.Wrap(err, "defenderandroidversion.NewVersion")
-			}
-			return rangeTypes.RangeTypeMicrosoftDefenderAndroid, nil
-
-		// Microsoft Defender for Endpoint for iOS
-		case "Microsoft Defender for Endpoint for iOS":
-			if _, err := defenderiosversion.NewVersion(fixedBuild); err != nil {
-				return rangeTypes.RangeTypeUnknown, errors.Wrap(err, "defenderiosversion.NewVersion")
-			}
-			return rangeTypes.RangeTypeMicrosoftDefenderIOS, nil
-
-		// Microsoft Defender for IoT
-		case "Microsoft Defender for IoT":
-			if _, err := defenderiotversion.NewVersion(fixedBuild); err != nil {
-				return rangeTypes.RangeTypeUnknown, errors.Wrap(err, "defenderiotversion.NewVersion")
-			}
-			return rangeTypes.RangeTypeMicrosoftDefenderIoT, nil
-
-		// Microsoft Defender for Endpoint for Linux
-		case "Microsoft Defender for Endpoint for Linux":
-			if _, err := defenderlinuxversion.NewVersion(fixedBuild); err != nil {
-				return rangeTypes.RangeTypeUnknown, errors.Wrap(err, "defenderlinuxversion.NewVersion")
-			}
-			return rangeTypes.RangeTypeMicrosoftDefenderLinux, nil
-
-		// Microsoft Defender for Endpoint for Mac
-		case "Microsoft Defender for Endpoint for Mac":
-			if _, err := defendermacversion.NewVersion(fixedBuild); err != nil {
-				return rangeTypes.RangeTypeUnknown, errors.Wrap(err, "defendermacversion.NewVersion")
-			}
-			return rangeTypes.RangeTypeMicrosoftDefenderMac, nil
-
-		// Microsoft Defender Security Intelligence Updates
-		case "Microsoft Defender Security Intelligence Updates":
-			if _, err := defendersiversion.NewVersion(fixedBuild); err != nil {
-				return rangeTypes.RangeTypeUnknown, errors.Wrap(err, "defendersiversion.NewVersion")
-			}
-			return rangeTypes.RangeTypeMicrosoftDefenderSecurityIntelligence, nil
-
-		// Microsoft Defender Antimalware Platform
-		case "Microsoft Defender Antimalware Platform":
-			if _, err := defenderwindowsversion.NewVersion(fixedBuild); err != nil {
-				return rangeTypes.RangeTypeUnknown, errors.Wrap(err, "defenderwindowsversion.NewVersion")
-			}
-			return rangeTypes.RangeTypeMicrosoftDefenderWindows, nil
-
-		// Microsoft Defender for Endpoint for Windows (FixedBuild is the Windows OS build number)
-		case "Microsoft Defender for Endpoint for Windows on Windows 10 Version 1607 for 32-bit Systems",
-			"Microsoft Defender for Endpoint for Windows on Windows 10 Version 1607 for x64-based Systems",
-			"Microsoft Defender for Endpoint for Windows on Windows 10 Version 1809 for 32-bit Systems",
-			"Microsoft Defender for Endpoint for Windows on Windows 10 Version 1809 for ARM64-based Systems",
-			"Microsoft Defender for Endpoint for Windows on Windows 10 Version 1809 for x64-based Systems",
-			"Microsoft Defender for Endpoint for Windows on Windows 10 Version 1909 for 32-bit Systems",
-			"Microsoft Defender for Endpoint for Windows on Windows 10 Version 1909 for ARM64-based Systems",
-			"Microsoft Defender for Endpoint for Windows on Windows 10 Version 1909 for x64-based Systems",
-			"Microsoft Defender for Endpoint for Windows on Windows 10 Version 20H2 for 32-bit Systems",
-			"Microsoft Defender for Endpoint for Windows on Windows 10 Version 20H2 for ARM64-based Systems",
-			"Microsoft Defender for Endpoint for Windows on Windows 10 Version 21H1 for 32-bit Systems",
-			"Microsoft Defender for Endpoint for Windows on Windows 10 Version 21H1 for ARM64-based Systems",
-			"Microsoft Defender for Endpoint for Windows on Windows 10 Version 21H1 for x64-based Systems",
-			"Microsoft Defender for Endpoint for Windows on Windows 10 Version 21H2 for 32-bit Systems",
-			"Microsoft Defender for Endpoint for Windows on Windows 10 Version 21H2 for ARM64-based Systems",
-			"Microsoft Defender for Endpoint for Windows on Windows 10 Version 21H2 for x64-based Systems",
-			"Microsoft Defender for Endpoint for Windows on Windows 10 Version 22H2 for 32-bit Systems",
-			"Microsoft Defender for Endpoint for Windows on Windows 10 Version 22H2 for ARM64-based Systems",
-			"Microsoft Defender for Endpoint for Windows on Windows 10 Version 22H2 for x64-based Systems",
-			"Microsoft Defender for Endpoint for Windows on Windows 10 for 32-bit Systems",
-			"Microsoft Defender for Endpoint for Windows on Windows 10 for x64-based Systems",
-			"Microsoft Defender for Endpoint for Windows on Windows 11 Version 22H2 for ARM64-based Systems",
-			"Microsoft Defender for Endpoint for Windows on Windows 11 Version 22H2 for x64-based Systems",
-			"Microsoft Defender for Endpoint for Windows on Windows 11 Version 23H2 for ARM64-based Systems",
-			"Microsoft Defender for Endpoint for Windows on Windows 11 Version 23H2 for x64-based Systems",
-			"Microsoft Defender for Endpoint for Windows on Windows 11 Version 21H2 for ARM64-based Systems",
-			"Microsoft Defender for Endpoint for Windows on Windows 11 Version 21H2 for x64-based Systems",
-			"Microsoft Defender for Endpoint for Windows on Windows Server 2012",
-			"Microsoft Defender for Endpoint for Windows on Windows Server 2012 (Server Core installation)",
-			"Microsoft Defender for Endpoint for Windows on Windows Server 2012 R2",
-			"Microsoft Defender for Endpoint for Windows on Windows Server 2012 R2 (Server Core installation)",
-			"Microsoft Defender for Endpoint for Windows on Windows Server 2016",
-			"Microsoft Defender for Endpoint for Windows on Windows Server 2016 (Server Core installation)",
-			"Microsoft Defender for Endpoint for Windows on Windows Server 2019",
-			"Microsoft Defender for Endpoint for Windows on Windows Server 2019 (Server Core installation)",
-			"Microsoft Defender for Endpoint for Windows on Windows Server 2022",
-			"Microsoft Defender for Endpoint for Windows on Windows Server 2022 (Server Core installation)",
-			"Microsoft Defender for Endpoint for Windows on Windows Server 2022, 23H2 Edition (Server Core installation)",
-			"Microsoft Defender for Endpoint for Windows on Windows Server, Version 20H2 (Server Core installation)":
-			if _, err := windowsversion.NewVersion(fixedBuild); err != nil {
-				return rangeTypes.RangeTypeUnknown, errors.Wrap(err, "windowsversion.NewVersion")
-			}
-			return rangeTypes.RangeTypeMicrosoftWindows, nil
-
-		// Microsoft Defender for Endpoint EDR sensor (FixedBuild is Windows-style version, e.g. "10.8047.22439")
-		case "Microsoft Defender for Endpoint EDR sensor on Windows Server 2012 R2",
-			"Microsoft Defender for Endpoint EDR sensor on Windows Server 2012 R2 (Server Core installation)",
-			"Microsoft Defender for Endpoint EDR sensor on Windows Server 2016",
-			"Microsoft Defender for Endpoint EDR sensor on Windows Server 2016 (Server Core installation)":
-			if _, err := windowsversion.NewVersion(fixedBuild); err != nil {
-				return rangeTypes.RangeTypeUnknown, errors.Wrap(err, "windowsversion.NewVersion")
-			}
-			return rangeTypes.RangeTypeMicrosoftWindows, nil
-
-		// .NET Core / .NET 5+
-		case ".NET 5.0",
-			".NET 6.0",
-			".NET 6.0 installed on Linux",
-			".NET 6.0 installed on Mac OS",
-			".NET 6.0 installed on Windows",
-			".NET 7.0",
-			".NET 8.0",
-			".NET Core 2.1",
-			".NET Core 3.1":
-			v, err := dotnetcoreruntimeversion.NewVersion(fixedBuild)
-			if err != nil {
-				return rangeTypes.RangeTypeUnknown, errors.Wrap(err, "dotnetcoreruntimeversion.NewVersion")
-			}
-			if v.Prerelease != "" && !dotnetPrereleaseRE.MatchString(v.Prerelease) {
-				return rangeTypes.RangeTypeUnknown, errors.Errorf("unexpected .NET runtime prerelease. expected: %q, actual: %q", dotnetPrereleaseRE.String(), fixedBuild)
-			}
-			return rangeTypes.RangeTypeMicrosoftDotNetCoreRuntime, nil
-
-		// .NET runtime (2026-Oct names). An SDK feature band here (patch 100 or above, e.g.
-		// "10.0.402") would make every runtime fall below it; such a product is the SDK
-		// and needs a productNameOverrides entry.
-		case ".NET 8.0 runtime installed on Linux",
-			".NET 8.0 runtime installed on Mac OS",
-			".NET 8.0 runtime installed on Windows",
-			".NET 9.0 runtime installed on Linux",
-			".NET 9.0 runtime installed on Mac OS",
-			".NET 9.0 runtime installed on Windows",
-			".NET 10.0 runtime installed on Linux",
-			".NET 10.0 runtime installed on Mac OS",
-			".NET 10.0 runtime installed on Windows",
-			".NET 11.0 runtime installed on Linux",
-			".NET 11.0 runtime installed on Mac OS",
-			".NET 11.0 runtime installed on Windows":
-			v, err := dotnetcoreruntimeversion.NewVersion(fixedBuild)
-			if err != nil {
-				return rangeTypes.RangeTypeUnknown, errors.Wrap(err, "dotnetcoreruntimeversion.NewVersion")
-			}
-			if v.Prerelease != "" && !dotnetPrereleaseRE.MatchString(v.Prerelease) {
-				return rangeTypes.RangeTypeUnknown, errors.Errorf("unexpected .NET runtime prerelease. expected: %q, actual: %q", dotnetPrereleaseRE.String(), fixedBuild)
-			}
-			if v.Patch >= 100 {
-				return rangeTypes.RangeTypeUnknown, errors.Errorf("unexpected .NET runtime version. expected: %q, actual: %q", "a patch below 100", fixedBuild)
-			}
-			return rangeTypes.RangeTypeMicrosoftDotNetCoreRuntime, nil
-
-		// Microsoft Edge (Chromium-based)
-		case "Microsoft Edge (Chromium-based)",
-			"Microsoft Edge (Chromium-based) Extended Stable":
-			if _, err := edgeversion.NewVersion(fixedBuild); err != nil {
-				return rangeTypes.RangeTypeUnknown, errors.Wrap(err, "edgeversion.NewVersion")
-			}
-			return rangeTypes.RangeTypeMicrosoftEdge, nil
-
-		// Microsoft Edge (Chromium-based) in IE Mode (FixedBuild is the Windows OS build number)
-		case "Microsoft Edge (Chromium-based) in IE Mode on Windows 10 Version 1809 for 32-bit Systems",
-			"Microsoft Edge (Chromium-based) in IE Mode on Windows 10 Version 1809 for ARM64-based Systems",
-			"Microsoft Edge (Chromium-based) in IE Mode on Windows 10 Version 1809 for x64-based Systems",
-			"Microsoft Edge (Chromium-based) in IE Mode on Windows 10 Version 1909 for 32-bit Systems",
-			"Microsoft Edge (Chromium-based) in IE Mode on Windows 10 Version 1909 for ARM64-based Systems",
-			"Microsoft Edge (Chromium-based) in IE Mode on Windows 10 Version 1909 for x64-based Systems",
-			"Microsoft Edge (Chromium-based) in IE Mode on Windows 10 Version 2004 for 32-bit Systems",
-			"Microsoft Edge (Chromium-based) in IE Mode on Windows 10 Version 2004 for ARM64-based Systems",
-			"Microsoft Edge (Chromium-based) in IE Mode on Windows 10 Version 2004 for x64-based Systems",
-			"Microsoft Edge (Chromium-based) in IE Mode on Windows 10 Version 20H2 for 32-bit Systems",
-			"Microsoft Edge (Chromium-based) in IE Mode on Windows 10 Version 20H2 for ARM64-based Systems",
-			"Microsoft Edge (Chromium-based) in IE Mode on Windows 10 Version 21H1 for 32-bit Systems",
-			"Microsoft Edge (Chromium-based) in IE Mode on Windows 10 Version 21H1 for ARM64-based Systems",
-			"Microsoft Edge (Chromium-based) in IE Mode on Windows 10 Version 21H1 for x64-based Systems",
-			"Microsoft Edge (Chromium-based) in IE Mode on Windows 11 Version 21H2 for ARM64-based Systems",
-			"Microsoft Edge (Chromium-based) in IE Mode on Windows 11 Version 21H2 for x64-based Systems",
-			"Microsoft Edge (Chromium-based) in IE Mode on Windows Server 2019":
-			if _, err := windowsversion.NewVersion(fixedBuild); err != nil {
-				return rangeTypes.RangeTypeUnknown, errors.Wrap(err, "windowsversion.NewVersion")
-			}
-			return rangeTypes.RangeTypeMicrosoftWindows, nil
-
-		// Microsoft Exchange Server
-		case "Microsoft Exchange Server 2010 Service Pack 3",
-			"Microsoft Exchange Server 2013 Cumulative Update 21",
-			"Microsoft Exchange Server 2013 Cumulative Update 22",
-			"Microsoft Exchange Server 2013 Cumulative Update 23",
-			"Microsoft Exchange Server 2013 Service Pack 1",
-			"Microsoft Exchange Server 2016 Cumulative Update 10",
-			"Microsoft Exchange Server 2016 Cumulative Update 11",
-			"Microsoft Exchange Server 2016 Cumulative Update 12",
-			"Microsoft Exchange Server 2016 Cumulative Update 13",
-			"Microsoft Exchange Server 2016 Cumulative Update 14",
-			"Microsoft Exchange Server 2016 Cumulative Update 15",
-			"Microsoft Exchange Server 2016 Cumulative Update 16",
-			"Microsoft Exchange Server 2016 Cumulative Update 17",
-			"Microsoft Exchange Server 2016 Cumulative Update 18",
-			"Microsoft Exchange Server 2016 Cumulative Update 19",
-			"Microsoft Exchange Server 2016 Cumulative Update 20",
-			"Microsoft Exchange Server 2016 Cumulative Update 21",
-			"Microsoft Exchange Server 2016 Cumulative Update 22",
-			"Microsoft Exchange Server 2016 Cumulative Update 23",
-			"Microsoft Exchange Server 2016 Cumulative Update 8",
-			"Microsoft Exchange Server 2016 Cumulative Update 9",
-			"Microsoft Exchange Server 2019",
-			"Microsoft Exchange Server 2019 Cumulative Update 1",
-			"Microsoft Exchange Server 2019 Cumulative Update 10",
-			"Microsoft Exchange Server 2019 Cumulative Update 11",
-			"Microsoft Exchange Server 2019 Cumulative Update 12",
-			"Microsoft Exchange Server 2019 Cumulative Update 13",
-			"Microsoft Exchange Server 2019 Cumulative Update 14",
-			"Microsoft Exchange Server 2019 Cumulative Update 15",
-			"Microsoft Exchange Server 2019 Cumulative Update 2",
-			"Microsoft Exchange Server 2019 Cumulative Update 3",
-			"Microsoft Exchange Server 2019 Cumulative Update 4",
-			"Microsoft Exchange Server 2019 Cumulative Update 5",
-			"Microsoft Exchange Server 2019 Cumulative Update 6",
-			"Microsoft Exchange Server 2019 Cumulative Update 7",
-			"Microsoft Exchange Server 2019 Cumulative Update 8",
-			"Microsoft Exchange Server 2019 Cumulative Update 9",
-			"Microsoft Exchange Server Subscription Edition RTM":
-			if _, err := exchangeversion.NewVersion(fixedBuild); err != nil {
-				return rangeTypes.RangeTypeUnknown, errors.Wrap(err, "exchangeversion.NewVersion")
-			}
-			return rangeTypes.RangeTypeMicrosoftExchange, nil
-
-		// Microsoft Office for Mac
-		case "Microsoft Office 2019 for Mac",
-			"Microsoft Office 365 for Mac",
-			"Microsoft Office for Mac",
-			"Microsoft Office LTSC for Mac 2021",
-			"Microsoft Office LTSC for Mac 2024":
-			if _, err := officemacversion.NewVersion(fixedBuild); err != nil {
-				return rangeTypes.RangeTypeUnknown, errors.Wrap(err, "officemacversion.NewVersion")
-			}
-			return rangeTypes.RangeTypeMicrosoftOfficeMac, nil
-
-		// Microsoft Office for Windows
-		case "Microsoft Excel 2010 Service Pack 2 (32-bit editions)",
-			"Microsoft Excel 2010 Service Pack 2 (64-bit editions)",
-			"Microsoft Excel 2013 RT Service Pack 1",
-			"Microsoft Excel 2013 Service Pack 1 (32-bit editions)",
-			"Microsoft Excel 2013 Service Pack 1 (64-bit editions)",
-			"Microsoft Excel 2016 (32-bit edition)",
-			"Microsoft Excel 2016 (64-bit edition)",
-			"Microsoft Excel 2016 Click-to-Run (C2R) for 32-bit editions",
-			"Microsoft Excel 2016 Click-to-Run (C2R) for 64-bit editions",
-			"Microsoft Office 2010 Service Pack 2 (32-bit editions)",
-			"Microsoft Office 2010 Service Pack 2 (64-bit editions)",
-			"Microsoft Office 2013 Click-to-Run (C2R) for 32-bit editions",
-			"Microsoft Office 2013 Click-to-Run (C2R) for 64-bit editions",
-			"Microsoft Office 2013 RT Service Pack 1",
-			"Microsoft Office 2013 Service Pack 1 (32-bit editions)",
-			"Microsoft Office 2013 Service Pack 1 (64-bit editions)",
-			"Microsoft Office 2016 (32-bit edition)",
-			"Microsoft Office 2016 (64-bit edition)",
-			"Microsoft Office 2019 for 32-bit editions",
-			"Microsoft Office 2019 for 64-bit editions",
-			"Microsoft Office LTSC 2021 for 32-bit editions",
-			"Microsoft Office LTSC 2021 for 64-bit editions",
-			"Microsoft Office LTSC 2024 for 32-bit editions",
-			"Microsoft Office LTSC 2024 for 64-bit editions",
-			"Microsoft Office Web Apps 2013 Service Pack 1",
-			"Microsoft Office Web Apps Server 2013 Service Pack 1",
-			"Microsoft Outlook 2013 (32-bit editions)",
-			"Microsoft Outlook 2013 (64-bit editions)",
-			"Microsoft Outlook 2013 RT Service Pack 1",
-			"Microsoft Outlook 2013 Service Pack 1 (32-bit editions)",
-			"Microsoft Outlook 2013 Service Pack 1 (64-bit editions)",
-			"Microsoft Outlook 2016 (32-bit edition)",
-			"Microsoft Outlook 2016 (64-bit edition)",
-			"Microsoft PowerPoint 2010 Service Pack 2 (32-bit editions)",
-			"Microsoft PowerPoint 2010 Service Pack 2 (64-bit editions)",
-			"Microsoft PowerPoint 2013 RT Service Pack 1",
-			"Microsoft PowerPoint 2013 Service Pack 1 (32-bit editions)",
-			"Microsoft PowerPoint 2013 Service Pack 1 (64-bit editions)",
-			"Microsoft PowerPoint 2016 (32-bit edition)",
-			"Microsoft PowerPoint 2016 (64-bit edition)",
-			"Microsoft Word 2013 RT Service Pack 1",
-			"Microsoft Word 2013 Service Pack 1 (32-bit editions)",
-			"Microsoft Word 2013 Service Pack 1 (64-bit editions)",
-			"Microsoft Word 2016 (32-bit edition)",
-			"Microsoft Word 2016 (64-bit edition)",
-			"Office Online Server":
-			if _, err := officewindowsversion.NewVersion(fixedBuild); err != nil {
-				return rangeTypes.RangeTypeUnknown, errors.Wrap(err, "officewindowsversion.NewVersion")
-			}
-			return rangeTypes.RangeTypeMicrosoftOfficeWindows, nil
-
-		// Microsoft SharePoint
-		case "Microsoft SharePoint Enterprise Server 2013 Service Pack 1",
-			"Microsoft SharePoint Enterprise Server 2016",
-			"Microsoft SharePoint Foundation 2013 Service Pack 1",
-			"Microsoft SharePoint Server 2013 Service Pack 1",
-			"Microsoft SharePoint Server 2016",
-			"Microsoft SharePoint Server 2019",
-			"Microsoft SharePoint Server Subscription Edition",
-			"SharePoint Server Subscription Edition Language Pack":
-			if _, err := sharepointversion.NewVersion(fixedBuild); err != nil {
-				return rangeTypes.RangeTypeUnknown, errors.Wrap(err, "sharepointversion.NewVersion")
-			}
-			return rangeTypes.RangeTypeMicrosoftSharePoint, nil
-
-		// Microsoft SQL Server
-		case "Microsoft SQL Server 2008 R2 for 32-Bit Systems Service Pack 3 (QFE)",
-			"Microsoft SQL Server 2008 R2 for x64-based Systems Service Pack 3 (QFE)",
-			"Microsoft SQL Server 2008 for 32-bit Systems Service Pack 4 (QFE)",
-			"Microsoft SQL Server 2008 for x64-based Systems Service Pack 4 (QFE)",
-			"Microsoft SQL Server 2012 for 32-bit Systems Service Pack 4 (QFE)",
-			"Microsoft SQL Server 2012 for x64-based Systems Service Pack 4 (QFE)",
-			"Microsoft SQL Server 2014 Service Pack 3 for 32-bit Systems (CU 4)",
-			"Microsoft SQL Server 2014 Service Pack 3 for 32-bit Systems (GDR)",
-			"Microsoft SQL Server 2014 Service Pack 3 for x64-based Systems (CU 4)",
-			"Microsoft SQL Server 2014 Service Pack 3 for x64-based Systems (GDR)",
-			"Microsoft SQL Server 2016 for x64-based Systems Service Pack 2 (CU 17)",
-			"Microsoft SQL Server 2016 for x64-based Systems Service Pack 2 (GDR)",
-			"Microsoft SQL Server 2016 for x64-based Systems Service Pack 3 (GDR)",
-			"Microsoft SQL Server 2016 for x64-based Systems Service Pack 3 Azure Connect Feature Pack",
-			"Microsoft SQL Server 2017 for x64-based Systems (CU 29)",
-			"Microsoft SQL Server 2017 for x64-based Systems (CU 31)",
-			"Microsoft SQL Server 2017 for x64-based Systems (GDR)",
-			"Microsoft SQL Server 2019 for x64-based Systems (CU 16)",
-			"Microsoft SQL Server 2019 for x64-based Systems (CU 18)",
-			"Microsoft SQL Server 2019 for x64-based Systems (CU 21)",
-			"Microsoft SQL Server 2019 for x64-based Systems (CU 22)",
-			"Microsoft SQL Server 2019 for x64-based Systems (CU 25)",
-			"Microsoft SQL Server 2019 for x64-based Systems (CU 27)",
-			"Microsoft SQL Server 2019 for x64-based Systems (CU 28)",
-			"Microsoft SQL Server 2019 for x64-based Systems (CU 29)",
-			"Microsoft SQL Server 2019 for x64-based Systems (CU 32)",
-			"Microsoft SQL Server 2019 for x64-based Systems (GDR)",
-			"Microsoft SQL Server 2022 for x64-based Systems (CU 10)",
-			"Microsoft SQL Server 2022 for x64-based Systems (CU 12)",
-			"Microsoft SQL Server 2022 for x64-based Systems (CU 13)",
-			"Microsoft SQL Server 2022 for x64-based Systems (CU 14)",
-			"Microsoft SQL Server 2022 for x64-based Systems (CU 15)",
-			"Microsoft SQL Server 2022 for x64-based Systems (CU 19)",
-			"Microsoft SQL Server 2022 for x64-based Systems (CU 20)",
-			"Microsoft SQL Server 2022 for x64-based Systems (CU 21)",
-			"Microsoft SQL Server 2022 for x64-based Systems (CU 22)",
-			"Microsoft SQL Server 2022 for x64-based Systems (CU 23)",
-			"Microsoft SQL Server 2022 for x64-based Systems (CU 24)",
-			"Microsoft SQL Server 2022 for x64-based Systems (CU 25)",
-			"Microsoft SQL Server 2022 for x64-based Systems (CU 26)",
-			"Microsoft SQL Server 2022 for x64-based Systems (CU 5)",
-			"Microsoft SQL Server 2022 for x64-based Systems (CU 8)",
-			"Microsoft SQL Server 2022 for x64-based Systems (CU27)",
-			"Microsoft SQL Server 2022 for x64-based Systems (GDR)",
-			"Microsoft SQL Server 2025 for x64-based Systems (CU2)",
-			"Microsoft SQL Server 2025 for x64-based Systems (CU3)",
-			"Microsoft SQL Server 2025 for x64-based Systems (CU4)",
-			"Microsoft SQL Server 2025 for x64-based Systems (CU6)",
-			"Microsoft SQL Server 2025 for x64-based Systems (CU8)",
-			"Microsoft SQL Server 2025 for x64-based Systems (CU9)",
-			"Microsoft SQL Server 2025 for x64-based Systems (GDR)",
-			"SQL Server 2019 for Linux Containers",
-			"SQL Server Integration Services for Visual Studio 2019",
-			"SQL Server Integration Services for Visual Studio 2022",
-			"SQL Server Management Studio 20.2",
-			"SQL Server Management Studio 22":
-			if _, err := sqlserverversion.NewVersion(fixedBuild); err != nil {
-				return rangeTypes.RangeTypeUnknown, errors.Wrap(err, "sqlserverversion.NewVersion")
-			}
-			return rangeTypes.RangeTypeMicrosoftSQLServer, nil
-
-		// Microsoft Teams for Android
-		case "Microsoft Teams for Android":
-			if _, err := teamsandroidversion.NewVersion(fixedBuild); err != nil {
-				return rangeTypes.RangeTypeUnknown, errors.Wrap(err, "teamsandroidversion.NewVersion")
-			}
-			return rangeTypes.RangeTypeMicrosoftTeamsAndroid, nil
-
-		// Microsoft Teams (client)
-		case "Microsoft Teams":
-			if _, err := teamsclientversion.NewVersion(fixedBuild); err != nil {
-				return rangeTypes.RangeTypeUnknown, errors.Wrap(err, "teamsclientversion.NewVersion")
-			}
-			return rangeTypes.RangeTypeMicrosoftTeamsClient, nil
-
-		// Microsoft Teams for Desktop
-		case "Microsoft Teams for Desktop":
-			if _, err := teamsdesktopversion.NewVersion(fixedBuild); err != nil {
-				return rangeTypes.RangeTypeUnknown, errors.Wrap(err, "teamsdesktopversion.NewVersion")
-			}
-			return rangeTypes.RangeTypeMicrosoftTeamsDesktop, nil
-
-		// Microsoft Teams for iOS
-		case "Microsoft Teams for iOS":
-			if _, err := teamsiosversion.NewVersion(fixedBuild); err != nil {
-				return rangeTypes.RangeTypeUnknown, errors.Wrap(err, "teamsiosversion.NewVersion")
-			}
-			return rangeTypes.RangeTypeMicrosoftTeamsIOS, nil
-
-		// Microsoft Teams for Mac
-		case "Microsoft Teams for Mac":
-			if _, err := teamsmacversion.NewVersion(fixedBuild); err != nil {
-				return rangeTypes.RangeTypeUnknown, errors.Wrap(err, "teamsmacversion.NewVersion")
-			}
-			return rangeTypes.RangeTypeMicrosoftTeamsMac, nil
-
-		// Microsoft Visual Studio
-		case "Microsoft Visual Studio 2012 Update 5",
-			"Microsoft Visual Studio 2013 Update 5",
-			"Microsoft Visual Studio 2015 Update 3",
-			"Microsoft Visual Studio 2017 Version 15.9",
-			"Microsoft Visual Studio 2019 Version 16.10",
-			"Microsoft Visual Studio 2019 Version 16.11",
-			"Microsoft Visual Studio 2019 Version 16.4",
-			"Microsoft Visual Studio 2019 Version 16.6",
-			"Microsoft Visual Studio 2019 Version 16.7",
-			"Microsoft Visual Studio 2019 Version 16.8",
-			"Microsoft Visual Studio 2019 Version 16.9",
-			"Microsoft Visual Studio 2022 Version 17.0",
-			"Microsoft Visual Studio 2022 Version 17.1",
-			"Microsoft Visual Studio 2022 Version 17.10",
-			"Microsoft Visual Studio 2022 Version 17.11",
-			"Microsoft Visual Studio 2022 Version 17.12",
-			"Microsoft Visual Studio 2022 Version 17.13",
-			"Microsoft Visual Studio 2022 Version 17.14",
-			"Microsoft Visual Studio 2022 Version 17.2",
-			"Microsoft Visual Studio 2022 Version 17.3",
-			"Microsoft Visual Studio 2022 Version 17.4",
-			"Microsoft Visual Studio 2022 Version 17.5",
-			"Microsoft Visual Studio 2022 Version 17.6",
-			"Microsoft Visual Studio 2022 Version 17.7",
-			"Microsoft Visual Studio 2022 Version 17.8",
-			"Microsoft Visual Studio 2022 Version 17.9",
-			"Microsoft Visual Studio 2026 Version 18.3",
-			"Microsoft Visual Studio 2026 Version 18.4",
-			"Microsoft Visual Studio 2026 Version 18.5",
-			"Microsoft Visual Studio 2026 Version 18.6",
-			"Microsoft Visual Studio 2026 Version 18.7",
-			"Microsoft Visual Studio 2026 Version 18.8",
-			"Microsoft Visual Studio 2026 Version 18.9",
-			"Microsoft Visual Studio 2026 Version 18.10",
-			"Microsoft Visual Studio 2026 Version 18.11",
-			"Microsoft Visual Studio 2026 Version 18.12":
-			if _, err := visualstudioversion.NewVersion(fixedBuild); err != nil {
-				return rangeTypes.RangeTypeUnknown, errors.Wrap(err, "visualstudioversion.NewVersion")
-			}
-			return rangeTypes.RangeTypeMicrosoftVisualStudio, nil
-
-		// Visual Studio Code
-		case "Visual Studio Code",
-			"Visual Studio Code for Linux":
-			if _, err := vscodeversion.NewVersion(fixedBuild); err != nil {
-				return rangeTypes.RangeTypeUnknown, errors.Wrap(err, "vscodeversion.NewVersion")
-			}
-			return rangeTypes.RangeTypeMicrosoftVSCode, nil
-
-		// Windows
-		case "Windows 10 for 32-bit Systems",
-			"Windows 10 for x64-based Systems",
-			"Windows 10 HLK Version 20H2",
-			"Windows 10 HLK Version 21H1",
-			"Windows 10 HLK Version 21H2",
-			"Windows 10 HLK Version 22H2",
-			"Windows 10 Version 1511 for 32-bit Systems",
-			"Windows 10 Version 1511 for x64-based Systems",
-			"Windows 10 Version 1607 for 32-bit Systems",
-			"Windows 10 Version 1607 for HoloLens",
-			"Windows 10 Version 1607 for x64-based Systems",
-			"Windows 10 Version 1703 for 32-bit Systems",
-			"Windows 10 Version 1703 for x64-based Systems",
-			"Windows 10 Version 1709 for 32-bit Systems",
-			"Windows 10 Version 1709 for ARM64-based Systems",
-			"Windows 10 Version 1709 for x64-based Systems",
-			"Windows 10 Version 1803 for 32-bit Systems",
-			"Windows 10 Version 1803 for ARM64-based Systems",
-			"Windows 10 Version 1803 for x64-based Systems",
-			"Windows 10 Version 1809 for 32-bit Systems",
-			"Windows 10 Version 1809 for ARM64-based Systems",
-			"Windows 10 Version 1809 for HoloLens",
-			"Windows 10 Version 1809 for x64-based Systems",
-			"Windows 10 Version 1903 for 32-bit Systems",
-			"Windows 10 Version 1903 for ARM64-based Systems",
-			"Windows 10 Version 1903 for HoloLens",
-			"Windows 10 Version 1903 for x64-based Systems",
-			"Windows 10 Version 1909 for 32-bit Systems",
-			"Windows 10 Version 1909 for ARM64-based Systems",
-			"Windows 10 Version 1909 for x64-based Systems",
-			"Windows 10 Version 2004 for 32-bit Systems",
-			"Windows 10 Version 2004 for ARM64-based Systems",
-			"Windows 10 Version 2004 for HoloLens",
-			"Windows 10 Version 2004 for x64-based Systems",
-			"Windows 10 Version 20H2 for 32-bit Systems",
-			"Windows 10 Version 20H2 for ARM64-based Systems",
-			"Windows 10 Version 20H2 for x64-based Systems",
-			"Windows 10 Version 21H1 for 32-bit Systems",
-			"Windows 10 Version 21H1 for ARM64-based Systems",
-			"Windows 10 Version 21H1 for x64-based Systems",
-			"Windows 10 Version 21H2 for 32-bit Systems",
-			"Windows 10 Version 21H2 for ARM64-based Systems",
-			"Windows 10 Version 21H2 for x64-based Systems",
-			"Windows 10 Version 22H2 for 32-bit Systems",
-			"Windows 10 Version 22H2 for ARM64-based Systems",
-			"Windows 10 Version 22H2 for x64-based Systems",
-			"Windows 11 HLK 22H2",
-			"Windows 11 HLK 23H2",
-			"Windows 11 HLK 24H2",
-			"Windows 11 Version 21H2 for ARM64-based Systems",
-			"Windows 11 Version 21H2 for x64-based Systems",
-			"Windows 11 Version 22H2 for ARM64-based Systems",
-			"Windows 11 Version 22H2 for x64-based Systems",
-			"Windows 11 Version 23H2 for ARM64-based Systems",
-			"Windows 11 Version 23H2 for x64-based Systems",
-			"Windows 11 Version 24H2 for ARM64-based Systems",
-			"Windows 11 Version 24H2 for x64-based Systems",
-			"Windows 11 Version 25H2 for ARM64-based Systems",
-			"Windows 11 Version 25H2 for x64-based Systems",
-			"Windows 11 Version 26H1 for ARM64-based Systems",
-			"Windows 11 Version 26H1 for x64-based Systems",
-			"Windows 11 Version 26H2 for ARM64-based Systems",
-			"Windows 11 Version 26H2 for x64-based Systems",
-			"Windows 7 for 32-bit Systems Service Pack 1",
-			"Windows 7 for x64-based Systems Service Pack 1",
-			"Windows 8.1 for 32-bit Systems",
-			"Windows 8.1 for x64-based Systems",
-			"Windows RT 8.1",
-			"Windows Server 2008 for 32-bit Systems (Server Core installation)",
-			"Windows Server 2008 for 32-bit Systems Service Pack 2",
-			"Windows Server 2008 for 32-bit Systems Service Pack 2 (Server Core installation)",
-			"Windows Server 2008 for Itanium-based Systems Service Pack 2",
-			"Windows Server 2008 for x64-based Systems (Server Core installation)",
-			"Windows Server 2008 for x64-based Systems Service Pack 2",
-			"Windows Server 2008 for x64-based Systems Service Pack 2 (Server Core installation)",
-			"Windows Server 2008 R2 for Itanium-based Systems Service Pack 1",
-			"Windows Server 2008 R2 for x64-based Systems Service Pack 1",
-			"Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)",
-			"Windows Server 2012",
-			"Windows Server 2012 (Server Core installation)",
-			"Windows Server 2012 R2",
-			"Windows Server 2012 R2 (Server Core installation)",
-			"Windows Server 2016",
-			"Windows Server 2016 (Server Core installation)",
-			"Windows Server 2019",
-			"Windows Server 2019 (Server Core installation)",
-			"Windows Server 2022",
-			"Windows Server 2022 (Server Core installation)",
-			"Windows Server 2022, 23H2 Edition (Server Core installation)",
-			"Windows Server 2025",
-			"Windows Server 2025 (Server Core installation)",
-			"Windows Server, Version 1909 (Server Core installation)",
-			"Windows Server, Version 1709 (Server Core installation)",
-			"Windows Server, Version 1803 (Server Core installation)",
-			"Windows Server, Version 1903 (Server Core installation)",
-			"Windows Server, Version 2004 (Server Core installation)",
-			"Windows Server, Version 20H2 (Server Core installation)":
-			if _, err := windowsversion.NewVersion(fixedBuild); err != nil {
-				return rangeTypes.RangeTypeUnknown, errors.Wrap(err, "windowsversion.NewVersion")
-			}
-			return rangeTypes.RangeTypeMicrosoftWindows, nil
-
-		// Internet Explorer (FixedBuild is the Windows OS build number, not an IE-specific version)
-		case "Internet Explorer 11 on Windows 10 Version 1607 for 32-bit Systems",
-			"Internet Explorer 11 on Windows 10 Version 1607 for x64-based Systems",
-			"Internet Explorer 11 on Windows 10 Version 1803 for 32-bit Systems",
-			"Internet Explorer 11 on Windows 10 Version 1803 for ARM64-based Systems",
-			"Internet Explorer 11 on Windows 10 Version 1803 for x64-based Systems",
-			"Internet Explorer 11 on Windows 10 Version 1809 for 32-bit Systems",
-			"Internet Explorer 11 on Windows 10 Version 1809 for ARM64-based Systems",
-			"Internet Explorer 11 on Windows 10 Version 1809 for x64-based Systems",
-			"Internet Explorer 11 on Windows 10 Version 1903 for ARM64-based Systems",
-			"Internet Explorer 11 on Windows 10 Version 1903 for x64-based Systems",
-			"Internet Explorer 11 on Windows 10 Version 1909 for 32-bit Systems",
-			"Internet Explorer 11 on Windows 10 Version 1909 for ARM64-based Systems",
-			"Internet Explorer 11 on Windows 10 Version 1909 for x64-based Systems",
-			"Internet Explorer 11 on Windows 10 Version 2004 for 32-bit Systems",
-			"Internet Explorer 11 on Windows 10 Version 2004 for ARM64-based Systems",
-			"Internet Explorer 11 on Windows 10 Version 2004 for x64-based Systems",
-			"Internet Explorer 11 on Windows 10 Version 20H2 for 32-bit Systems",
-			"Internet Explorer 11 on Windows 10 Version 20H2 for ARM64-based Systems",
-			"Internet Explorer 11 on Windows 10 for 32-bit Systems",
-			"Internet Explorer 11 on Windows 10 for x64-based Systems",
-			"Internet Explorer 11 on Windows 7 for 32-bit Systems Service Pack 1",
-			"Internet Explorer 11 on Windows 7 for x64-based Systems Service Pack 1",
-			"Internet Explorer 11 on Windows 8.1 for 32-bit Systems",
-			"Internet Explorer 11 on Windows 8.1 for x64-based Systems",
-			"Internet Explorer 11 on Windows RT 8.1",
-			"Internet Explorer 11 on Windows Server 2008 R2 for x64-based Systems Service Pack 1",
-			"Internet Explorer 11 on Windows Server 2012",
-			"Internet Explorer 11 on Windows Server 2012 R2",
-			"Internet Explorer 11 on Windows Server 2016",
-			"Internet Explorer 11 on Windows Server 2019",
-			"Internet Explorer 9 on Windows Server 2008 for 32-bit Systems Service Pack 2",
-			"Internet Explorer 9 on Windows Server 2008 for x64-based Systems Service Pack 2":
-			if _, err := windowsversion.NewVersion(fixedBuild); err != nil {
-				return rangeTypes.RangeTypeUnknown, errors.Wrap(err, "windowsversion.NewVersion")
-			}
-			return rangeTypes.RangeTypeMicrosoftWindows, nil
-
-		// Products that match detection prefixes but don't need FixedBuild validation.
-		// These are tools, extensions, mobile apps, or products whose FixedBuild format
-		// doesn't match the category's version parser.
-		case ".NET Education Bundle SDK Install Tool",
-			".NET Install Tool for Extension Authors",
-			".NET source-build Linux tarballs (all archive types)",
-			"Microsoft Edge (Chromium-based) Updater",
-			"Microsoft Office Deployment Tool",
-			"Microsoft Office for Android",
-			"Microsoft Office for Universal",
-			"Microsoft Office for iOS",
-			"Microsoft Outlook 2016 for Mac",
-			"SQL Server backend for Django",
-			"Teams Panels",
-			"Teams Phones",
-			"Teams for D365 Guides Hololens",
-			"Teams for D365 Remote Assist HoloLens",
-			"Visual Studio Code - GitHub Pull Requests and Issues Extension",
-			"Visual Studio Code - JS Debug Extension",
-			"Visual Studio Code - Kubernetes Tools",
-			"Visual Studio Code - Live Preview extension",
-			"Visual Studio Code - MSSQL Extension",
-			"Visual Studio Code Remote - Containers Extension",
-			"Visual Studio Code Remote - SSH Extension",
-			"Visual Studio Code WSL Extension":
-			return rangeTypes.RangeTypeUnknown, nil
-
-		default:
-			// Detect new products that likely need validation but aren't explicitly listed above.
-			for _, prefix := range []string{
-				".NET ",
-				"Microsoft Defender ",
-				"Windows Defender ",
-				"Microsoft Edge (Chromium-based)",
-				"Microsoft Exchange Server",
-				"Microsoft Office ",
-				"Office Online Server",
-				"Microsoft Excel 20",
-				"Microsoft Outlook 20",
-				"Microsoft PowerPoint 20",
-				"Microsoft Word 20",
-				"Microsoft SharePoint",
-				"SharePoint ",
-				"Microsoft SQL Server 20",
-				"SQL Server ",
-				"Microsoft Teams ",
-				"Teams ",
-				"Microsoft Visual Studio 20",
-				"Visual Studio Code",
-				"Internet Explorer ",
-				"Windows 7 ",
-				"Windows 8",
-				"Windows 10 ",
-				"Windows 11 ",
-				"Windows Server ",
-				"Windows Server,",
-				"Windows RT ",
-			} {
-				if strings.HasPrefix(productName, prefix) {
-					return rangeTypes.RangeTypeUnknown, errors.Errorf("unknown product %q (matches prefix %q) not listed in buildFixedBuildCriterion, please add it", productName, prefix)
-				}
-			}
-			return rangeTypes.RangeTypeUnknown, nil
-		}
-	}()
-	if err != nil {
+	if err := validateFixedBuild(rt, productName, fixedBuild); err != nil {
 		return nil, errors.Wrapf(err, "unexpected FixedBuild format for %s (%s): %q", cveID, productName, fixedBuild)
-	}
-	if rt == rangeTypes.RangeTypeUnknown {
-		return nil, nil
 	}
 
 	return &criterionTypes.Criterion{
@@ -2543,6 +1864,720 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 			},
 		},
 	}, nil
+}
+
+// isVersionlessFixedBuild reports whether a FixedBuild (after cleanFixedBuild and
+// fixedBuildOverrides) names no version that a range type can compare. These are the
+// non-version values that appear in raw CVRF FixedBuild fields:
+//   - Values not starting with a digit: URLs (e.g. "https://aka.ms/..."),
+//     descriptive text (e.g. "App Build 14.43.49498, Platform Build 14.0.49494"),
+//     prefixed versions (e.g. "v1.001", "V1.002", "OMI Version 1.6.8-1"),
+//     package names (e.g. "regex-1.8.4", "h2-0.3.26"), KB references (e.g. "KB5032921")
+//   - Placeholder versions containing "x" (e.g. "15.0.5415.xxxxxx", "5.64.x")
+//   - Values without dots that are not parseable version numbers (e.g. "25060212643")
+//   - Semicolon- or comma-separated compound versions (e.g. "3.0.6920.8954; 2.0.50727.8970"
+//     used by .NET Framework products bundling multiple framework versions; .NET SDK
+//     products split theirs per feature band in buildDotNetSDKCriterion instead)
+//   - Release-candidate tags of the exact form "<dotted number> RC<digits>" (e.g.
+//     "11.0 RC1", 2026-Sep) and Visual Studio Insiders tags "<dotted number> Insiders
+//     <digits>" (e.g. "18.12 Insiders 3", 2026-Oct): the fix only exists in a
+//     prerelease that the tag does not name as a version. Semver-style .NET
+//     prereleases (e.g. "11.0.0-rc.2", 2026-Oct) are versions and are compared (see
+//     dotnetPrereleaseRE). Other values containing a space or a hyphen are not skipped: on
+//     version-compared products they have been recoverable typos (e.g. "96.0 1954.29")
+//     or servicing builds (e.g. "5.0.6-servicing.21220.11"), which should fail and
+//     get a fixedBuildOverrides entry
+//
+// The empty value is versionless too: CVRF gives no FixedBuild at all (e.g. "Release
+// Notes" or "Click to Run" rows).
+func isVersionlessFixedBuild(fixedBuild string) bool {
+	return fixedBuild == "" || fixedBuild[0] < '0' || fixedBuild[0] > '9' || strings.Contains(fixedBuild, "x") || !strings.Contains(fixedBuild, ".") || strings.ContainsAny(fixedBuild, ";,") || releaseCandidateTagRE.MatchString(fixedBuild)
+}
+
+// productRangeType returns the range type that the FixedBuild of productName is
+// compared with. RangeTypeUnknown means the product is not version-compared: a tool,
+// an extension, a mobile app, or a product outside the detection families below. A
+// product that looks like one of those families but is not listed fails, so that it
+// gets classified.
+func productRangeType(productName string) (rangeTypes.RangeType, error) {
+	switch productName {
+	// Microsoft Defender for Endpoint for Android
+	case "Microsoft Defender for Endpoint for Android":
+		return rangeTypes.RangeTypeMicrosoftDefenderAndroid, nil
+
+	// Microsoft Defender for Endpoint for iOS
+	case "Microsoft Defender for Endpoint for iOS":
+		return rangeTypes.RangeTypeMicrosoftDefenderIOS, nil
+
+	// Microsoft Defender for IoT
+	case "Microsoft Defender for IoT":
+		return rangeTypes.RangeTypeMicrosoftDefenderIoT, nil
+
+	// Microsoft Defender for Endpoint for Linux
+	case "Microsoft Defender for Endpoint for Linux":
+		return rangeTypes.RangeTypeMicrosoftDefenderLinux, nil
+
+	// Microsoft Defender for Endpoint for Mac
+	case "Microsoft Defender for Endpoint for Mac":
+		return rangeTypes.RangeTypeMicrosoftDefenderMac, nil
+
+	// Microsoft Defender Security Intelligence Updates
+	case "Microsoft Defender Security Intelligence Updates":
+		return rangeTypes.RangeTypeMicrosoftDefenderSecurityIntelligence, nil
+
+	// Microsoft Defender Antimalware Platform
+	case "Microsoft Defender Antimalware Platform":
+		return rangeTypes.RangeTypeMicrosoftDefenderWindows, nil
+
+	// Microsoft Defender for Endpoint for Windows (FixedBuild is the Windows OS build number)
+	case "Microsoft Defender for Endpoint for Windows on Windows 10 Version 1607 for 32-bit Systems",
+		"Microsoft Defender for Endpoint for Windows on Windows 10 Version 1607 for x64-based Systems",
+		"Microsoft Defender for Endpoint for Windows on Windows 10 Version 1809 for 32-bit Systems",
+		"Microsoft Defender for Endpoint for Windows on Windows 10 Version 1809 for ARM64-based Systems",
+		"Microsoft Defender for Endpoint for Windows on Windows 10 Version 1809 for x64-based Systems",
+		"Microsoft Defender for Endpoint for Windows on Windows 10 Version 1909 for 32-bit Systems",
+		"Microsoft Defender for Endpoint for Windows on Windows 10 Version 1909 for ARM64-based Systems",
+		"Microsoft Defender for Endpoint for Windows on Windows 10 Version 1909 for x64-based Systems",
+		"Microsoft Defender for Endpoint for Windows on Windows 10 Version 20H2 for 32-bit Systems",
+		"Microsoft Defender for Endpoint for Windows on Windows 10 Version 20H2 for ARM64-based Systems",
+		"Microsoft Defender for Endpoint for Windows on Windows 10 Version 21H1 for 32-bit Systems",
+		"Microsoft Defender for Endpoint for Windows on Windows 10 Version 21H1 for ARM64-based Systems",
+		"Microsoft Defender for Endpoint for Windows on Windows 10 Version 21H1 for x64-based Systems",
+		"Microsoft Defender for Endpoint for Windows on Windows 10 Version 21H2 for 32-bit Systems",
+		"Microsoft Defender for Endpoint for Windows on Windows 10 Version 21H2 for ARM64-based Systems",
+		"Microsoft Defender for Endpoint for Windows on Windows 10 Version 21H2 for x64-based Systems",
+		"Microsoft Defender for Endpoint for Windows on Windows 10 Version 22H2 for 32-bit Systems",
+		"Microsoft Defender for Endpoint for Windows on Windows 10 Version 22H2 for ARM64-based Systems",
+		"Microsoft Defender for Endpoint for Windows on Windows 10 Version 22H2 for x64-based Systems",
+		"Microsoft Defender for Endpoint for Windows on Windows 10 for 32-bit Systems",
+		"Microsoft Defender for Endpoint for Windows on Windows 10 for x64-based Systems",
+		"Microsoft Defender for Endpoint for Windows on Windows 11 Version 22H2 for ARM64-based Systems",
+		"Microsoft Defender for Endpoint for Windows on Windows 11 Version 22H2 for x64-based Systems",
+		"Microsoft Defender for Endpoint for Windows on Windows 11 Version 23H2 for ARM64-based Systems",
+		"Microsoft Defender for Endpoint for Windows on Windows 11 Version 23H2 for x64-based Systems",
+		"Microsoft Defender for Endpoint for Windows on Windows 11 Version 21H2 for ARM64-based Systems",
+		"Microsoft Defender for Endpoint for Windows on Windows 11 Version 21H2 for x64-based Systems",
+		"Microsoft Defender for Endpoint for Windows on Windows Server 2012",
+		"Microsoft Defender for Endpoint for Windows on Windows Server 2012 (Server Core installation)",
+		"Microsoft Defender for Endpoint for Windows on Windows Server 2012 R2",
+		"Microsoft Defender for Endpoint for Windows on Windows Server 2012 R2 (Server Core installation)",
+		"Microsoft Defender for Endpoint for Windows on Windows Server 2016",
+		"Microsoft Defender for Endpoint for Windows on Windows Server 2016 (Server Core installation)",
+		"Microsoft Defender for Endpoint for Windows on Windows Server 2019",
+		"Microsoft Defender for Endpoint for Windows on Windows Server 2019 (Server Core installation)",
+		"Microsoft Defender for Endpoint for Windows on Windows Server 2022",
+		"Microsoft Defender for Endpoint for Windows on Windows Server 2022 (Server Core installation)",
+		"Microsoft Defender for Endpoint for Windows on Windows Server 2022, 23H2 Edition (Server Core installation)",
+		"Microsoft Defender for Endpoint for Windows on Windows Server, Version 20H2 (Server Core installation)":
+		return rangeTypes.RangeTypeMicrosoftWindows, nil
+
+	// Microsoft Defender for Endpoint EDR sensor (FixedBuild is Windows-style version, e.g. "10.8047.22439")
+	case "Microsoft Defender for Endpoint EDR sensor on Windows Server 2012 R2",
+		"Microsoft Defender for Endpoint EDR sensor on Windows Server 2012 R2 (Server Core installation)",
+		"Microsoft Defender for Endpoint EDR sensor on Windows Server 2016",
+		"Microsoft Defender for Endpoint EDR sensor on Windows Server 2016 (Server Core installation)":
+		return rangeTypes.RangeTypeMicrosoftWindows, nil
+
+	// .NET Core / .NET 5+
+	case ".NET 5.0",
+		".NET 6.0",
+		".NET 6.0 installed on Linux",
+		".NET 6.0 installed on Mac OS",
+		".NET 6.0 installed on Windows",
+		".NET 7.0",
+		".NET 8.0",
+		".NET Core 2.1",
+		".NET Core 3.1":
+		return rangeTypes.RangeTypeMicrosoftDotNetCoreRuntime, nil
+
+	// .NET SDK (2026-Oct names; buildDotNetSDKCriterion parses their FixedBuild)
+	case ".NET 8.0 installed on Linux", ".NET 8.0 installed on Mac OS", ".NET 8.0 installed on Windows",
+		".NET 9.0 installed on Linux", ".NET 9.0 installed on Mac OS", ".NET 9.0 installed on Windows",
+		".NET 10.0 installed on Linux", ".NET 10.0 installed on Mac OS", ".NET 10.0 installed on Windows",
+		".NET 11.0 installed on Linux", ".NET 11.0 installed on Mac OS", ".NET 11.0 installed on Windows":
+		return rangeTypes.RangeTypeMicrosoftDotNetCoreSDK, nil
+
+	// .NET runtime (2026-Oct names, see validateFixedBuild)
+	case ".NET 8.0 runtime installed on Linux",
+		".NET 8.0 runtime installed on Mac OS",
+		".NET 8.0 runtime installed on Windows",
+		".NET 9.0 runtime installed on Linux",
+		".NET 9.0 runtime installed on Mac OS",
+		".NET 9.0 runtime installed on Windows",
+		".NET 10.0 runtime installed on Linux",
+		".NET 10.0 runtime installed on Mac OS",
+		".NET 10.0 runtime installed on Windows",
+		".NET 11.0 runtime installed on Linux",
+		".NET 11.0 runtime installed on Mac OS",
+		".NET 11.0 runtime installed on Windows":
+		return rangeTypes.RangeTypeMicrosoftDotNetCoreRuntime, nil
+
+	// Microsoft Edge (Chromium-based)
+	case "Microsoft Edge (Chromium-based)",
+		"Microsoft Edge (Chromium-based) Extended Stable":
+		return rangeTypes.RangeTypeMicrosoftEdge, nil
+
+	// Microsoft Edge (Chromium-based) in IE Mode (FixedBuild is the Windows OS build number)
+	case "Microsoft Edge (Chromium-based) in IE Mode on Windows 10 Version 1809 for 32-bit Systems",
+		"Microsoft Edge (Chromium-based) in IE Mode on Windows 10 Version 1809 for ARM64-based Systems",
+		"Microsoft Edge (Chromium-based) in IE Mode on Windows 10 Version 1809 for x64-based Systems",
+		"Microsoft Edge (Chromium-based) in IE Mode on Windows 10 Version 1909 for 32-bit Systems",
+		"Microsoft Edge (Chromium-based) in IE Mode on Windows 10 Version 1909 for ARM64-based Systems",
+		"Microsoft Edge (Chromium-based) in IE Mode on Windows 10 Version 1909 for x64-based Systems",
+		"Microsoft Edge (Chromium-based) in IE Mode on Windows 10 Version 2004 for 32-bit Systems",
+		"Microsoft Edge (Chromium-based) in IE Mode on Windows 10 Version 2004 for ARM64-based Systems",
+		"Microsoft Edge (Chromium-based) in IE Mode on Windows 10 Version 2004 for x64-based Systems",
+		"Microsoft Edge (Chromium-based) in IE Mode on Windows 10 Version 20H2 for 32-bit Systems",
+		"Microsoft Edge (Chromium-based) in IE Mode on Windows 10 Version 20H2 for ARM64-based Systems",
+		"Microsoft Edge (Chromium-based) in IE Mode on Windows 10 Version 21H1 for 32-bit Systems",
+		"Microsoft Edge (Chromium-based) in IE Mode on Windows 10 Version 21H1 for ARM64-based Systems",
+		"Microsoft Edge (Chromium-based) in IE Mode on Windows 10 Version 21H1 for x64-based Systems",
+		"Microsoft Edge (Chromium-based) in IE Mode on Windows 11 Version 21H2 for ARM64-based Systems",
+		"Microsoft Edge (Chromium-based) in IE Mode on Windows 11 Version 21H2 for x64-based Systems",
+		"Microsoft Edge (Chromium-based) in IE Mode on Windows Server 2019":
+		return rangeTypes.RangeTypeMicrosoftWindows, nil
+
+	// Microsoft Exchange Server
+	case "Microsoft Exchange Server 2010 Service Pack 3",
+		"Microsoft Exchange Server 2013 Cumulative Update 21",
+		"Microsoft Exchange Server 2013 Cumulative Update 22",
+		"Microsoft Exchange Server 2013 Cumulative Update 23",
+		"Microsoft Exchange Server 2013 Service Pack 1",
+		"Microsoft Exchange Server 2016 Cumulative Update 10",
+		"Microsoft Exchange Server 2016 Cumulative Update 11",
+		"Microsoft Exchange Server 2016 Cumulative Update 12",
+		"Microsoft Exchange Server 2016 Cumulative Update 13",
+		"Microsoft Exchange Server 2016 Cumulative Update 14",
+		"Microsoft Exchange Server 2016 Cumulative Update 15",
+		"Microsoft Exchange Server 2016 Cumulative Update 16",
+		"Microsoft Exchange Server 2016 Cumulative Update 17",
+		"Microsoft Exchange Server 2016 Cumulative Update 18",
+		"Microsoft Exchange Server 2016 Cumulative Update 19",
+		"Microsoft Exchange Server 2016 Cumulative Update 20",
+		"Microsoft Exchange Server 2016 Cumulative Update 21",
+		"Microsoft Exchange Server 2016 Cumulative Update 22",
+		"Microsoft Exchange Server 2016 Cumulative Update 23",
+		"Microsoft Exchange Server 2016 Cumulative Update 8",
+		"Microsoft Exchange Server 2016 Cumulative Update 9",
+		"Microsoft Exchange Server 2019",
+		"Microsoft Exchange Server 2019 Cumulative Update 1",
+		"Microsoft Exchange Server 2019 Cumulative Update 10",
+		"Microsoft Exchange Server 2019 Cumulative Update 11",
+		"Microsoft Exchange Server 2019 Cumulative Update 12",
+		"Microsoft Exchange Server 2019 Cumulative Update 13",
+		"Microsoft Exchange Server 2019 Cumulative Update 14",
+		"Microsoft Exchange Server 2019 Cumulative Update 15",
+		"Microsoft Exchange Server 2019 Cumulative Update 2",
+		"Microsoft Exchange Server 2019 Cumulative Update 3",
+		"Microsoft Exchange Server 2019 Cumulative Update 4",
+		"Microsoft Exchange Server 2019 Cumulative Update 5",
+		"Microsoft Exchange Server 2019 Cumulative Update 6",
+		"Microsoft Exchange Server 2019 Cumulative Update 7",
+		"Microsoft Exchange Server 2019 Cumulative Update 8",
+		"Microsoft Exchange Server 2019 Cumulative Update 9",
+		"Microsoft Exchange Server Subscription Edition RTM":
+		return rangeTypes.RangeTypeMicrosoftExchange, nil
+
+	// Microsoft Office for Mac
+	case "Microsoft Office 2019 for Mac",
+		"Microsoft Office 365 for Mac",
+		"Microsoft Office for Mac",
+		"Microsoft Office LTSC for Mac 2021",
+		"Microsoft Office LTSC for Mac 2024":
+		return rangeTypes.RangeTypeMicrosoftOfficeMac, nil
+
+	// Microsoft Office for Windows
+	case "Microsoft Excel 2010 Service Pack 2 (32-bit editions)",
+		"Microsoft Excel 2010 Service Pack 2 (64-bit editions)",
+		"Microsoft Excel 2013 RT Service Pack 1",
+		"Microsoft Excel 2013 Service Pack 1 (32-bit editions)",
+		"Microsoft Excel 2013 Service Pack 1 (64-bit editions)",
+		"Microsoft Excel 2016 (32-bit edition)",
+		"Microsoft Excel 2016 (64-bit edition)",
+		"Microsoft Excel 2016 Click-to-Run (C2R) for 32-bit editions",
+		"Microsoft Excel 2016 Click-to-Run (C2R) for 64-bit editions",
+		"Microsoft Office 2010 Service Pack 2 (32-bit editions)",
+		"Microsoft Office 2010 Service Pack 2 (64-bit editions)",
+		"Microsoft Office 2013 Click-to-Run (C2R) for 32-bit editions",
+		"Microsoft Office 2013 Click-to-Run (C2R) for 64-bit editions",
+		"Microsoft Office 2013 RT Service Pack 1",
+		"Microsoft Office 2013 Service Pack 1 (32-bit editions)",
+		"Microsoft Office 2013 Service Pack 1 (64-bit editions)",
+		"Microsoft Office 2016 (32-bit edition)",
+		"Microsoft Office 2016 (64-bit edition)",
+		"Microsoft Office 2019 for 32-bit editions",
+		"Microsoft Office 2019 for 64-bit editions",
+		"Microsoft Office LTSC 2021 for 32-bit editions",
+		"Microsoft Office LTSC 2021 for 64-bit editions",
+		"Microsoft Office LTSC 2024 for 32-bit editions",
+		"Microsoft Office LTSC 2024 for 64-bit editions",
+		"Microsoft Office Web Apps 2013 Service Pack 1",
+		"Microsoft Office Web Apps Server 2013 Service Pack 1",
+		"Microsoft Outlook 2013 (32-bit editions)",
+		"Microsoft Outlook 2013 (64-bit editions)",
+		"Microsoft Outlook 2013 RT Service Pack 1",
+		"Microsoft Outlook 2013 Service Pack 1 (32-bit editions)",
+		"Microsoft Outlook 2013 Service Pack 1 (64-bit editions)",
+		"Microsoft Outlook 2016 (32-bit edition)",
+		"Microsoft Outlook 2016 (64-bit edition)",
+		"Microsoft PowerPoint 2010 Service Pack 2 (32-bit editions)",
+		"Microsoft PowerPoint 2010 Service Pack 2 (64-bit editions)",
+		"Microsoft PowerPoint 2013 RT Service Pack 1",
+		"Microsoft PowerPoint 2013 Service Pack 1 (32-bit editions)",
+		"Microsoft PowerPoint 2013 Service Pack 1 (64-bit editions)",
+		"Microsoft PowerPoint 2016 (32-bit edition)",
+		"Microsoft PowerPoint 2016 (64-bit edition)",
+		"Microsoft Word 2013 RT Service Pack 1",
+		"Microsoft Word 2013 Service Pack 1 (32-bit editions)",
+		"Microsoft Word 2013 Service Pack 1 (64-bit editions)",
+		"Microsoft Word 2016 (32-bit edition)",
+		"Microsoft Word 2016 (64-bit edition)",
+		"Office Online Server":
+		return rangeTypes.RangeTypeMicrosoftOfficeWindows, nil
+
+	// Microsoft SharePoint
+	case "Microsoft SharePoint Enterprise Server 2013 Service Pack 1",
+		"Microsoft SharePoint Enterprise Server 2016",
+		"Microsoft SharePoint Foundation 2013 Service Pack 1",
+		"Microsoft SharePoint Server 2013 Service Pack 1",
+		"Microsoft SharePoint Server 2016",
+		"Microsoft SharePoint Server 2019",
+		"Microsoft SharePoint Server Subscription Edition",
+		"SharePoint Server Subscription Edition Language Pack":
+		return rangeTypes.RangeTypeMicrosoftSharePoint, nil
+
+	// Microsoft SQL Server
+	case "Microsoft SQL Server 2008 R2 for 32-Bit Systems Service Pack 3 (QFE)",
+		"Microsoft SQL Server 2008 R2 for x64-based Systems Service Pack 3 (QFE)",
+		"Microsoft SQL Server 2008 for 32-bit Systems Service Pack 4 (QFE)",
+		"Microsoft SQL Server 2008 for x64-based Systems Service Pack 4 (QFE)",
+		"Microsoft SQL Server 2012 for 32-bit Systems Service Pack 4 (QFE)",
+		"Microsoft SQL Server 2012 for x64-based Systems Service Pack 4 (QFE)",
+		"Microsoft SQL Server 2014 Service Pack 3 for 32-bit Systems (CU 4)",
+		"Microsoft SQL Server 2014 Service Pack 3 for 32-bit Systems (GDR)",
+		"Microsoft SQL Server 2014 Service Pack 3 for x64-based Systems (CU 4)",
+		"Microsoft SQL Server 2014 Service Pack 3 for x64-based Systems (GDR)",
+		"Microsoft SQL Server 2016 for x64-based Systems Service Pack 2 (CU 17)",
+		"Microsoft SQL Server 2016 for x64-based Systems Service Pack 2 (GDR)",
+		"Microsoft SQL Server 2016 for x64-based Systems Service Pack 3 (GDR)",
+		"Microsoft SQL Server 2016 for x64-based Systems Service Pack 3 Azure Connect Feature Pack",
+		"Microsoft SQL Server 2017 for x64-based Systems (CU 29)",
+		"Microsoft SQL Server 2017 for x64-based Systems (CU 31)",
+		"Microsoft SQL Server 2017 for x64-based Systems (GDR)",
+		"Microsoft SQL Server 2019 for x64-based Systems (CU 16)",
+		"Microsoft SQL Server 2019 for x64-based Systems (CU 18)",
+		"Microsoft SQL Server 2019 for x64-based Systems (CU 21)",
+		"Microsoft SQL Server 2019 for x64-based Systems (CU 22)",
+		"Microsoft SQL Server 2019 for x64-based Systems (CU 25)",
+		"Microsoft SQL Server 2019 for x64-based Systems (CU 27)",
+		"Microsoft SQL Server 2019 for x64-based Systems (CU 28)",
+		"Microsoft SQL Server 2019 for x64-based Systems (CU 29)",
+		"Microsoft SQL Server 2019 for x64-based Systems (CU 32)",
+		"Microsoft SQL Server 2019 for x64-based Systems (GDR)",
+		"Microsoft SQL Server 2022 for x64-based Systems (CU 10)",
+		"Microsoft SQL Server 2022 for x64-based Systems (CU 12)",
+		"Microsoft SQL Server 2022 for x64-based Systems (CU 13)",
+		"Microsoft SQL Server 2022 for x64-based Systems (CU 14)",
+		"Microsoft SQL Server 2022 for x64-based Systems (CU 15)",
+		"Microsoft SQL Server 2022 for x64-based Systems (CU 19)",
+		"Microsoft SQL Server 2022 for x64-based Systems (CU 20)",
+		"Microsoft SQL Server 2022 for x64-based Systems (CU 21)",
+		"Microsoft SQL Server 2022 for x64-based Systems (CU 22)",
+		"Microsoft SQL Server 2022 for x64-based Systems (CU 23)",
+		"Microsoft SQL Server 2022 for x64-based Systems (CU 24)",
+		"Microsoft SQL Server 2022 for x64-based Systems (CU 25)",
+		"Microsoft SQL Server 2022 for x64-based Systems (CU 26)",
+		"Microsoft SQL Server 2022 for x64-based Systems (CU 5)",
+		"Microsoft SQL Server 2022 for x64-based Systems (CU 8)",
+		"Microsoft SQL Server 2022 for x64-based Systems (CU27)",
+		"Microsoft SQL Server 2022 for x64-based Systems (GDR)",
+		"Microsoft SQL Server 2025 for x64-based Systems (CU2)",
+		"Microsoft SQL Server 2025 for x64-based Systems (CU3)",
+		"Microsoft SQL Server 2025 for x64-based Systems (CU4)",
+		"Microsoft SQL Server 2025 for x64-based Systems (CU6)",
+		"Microsoft SQL Server 2025 for x64-based Systems (CU8)",
+		"Microsoft SQL Server 2025 for x64-based Systems (CU9)",
+		"Microsoft SQL Server 2025 for x64-based Systems (GDR)",
+		"SQL Server 2019 for Linux Containers",
+		"SQL Server Integration Services for Visual Studio 2019",
+		"SQL Server Integration Services for Visual Studio 2022",
+		"SQL Server Management Studio 20.2",
+		"SQL Server Management Studio 22":
+		return rangeTypes.RangeTypeMicrosoftSQLServer, nil
+
+	// Microsoft Teams for Android
+	case "Microsoft Teams for Android":
+		return rangeTypes.RangeTypeMicrosoftTeamsAndroid, nil
+
+	// Microsoft Teams (client)
+	case "Microsoft Teams":
+		return rangeTypes.RangeTypeMicrosoftTeamsClient, nil
+
+	// Microsoft Teams for Desktop
+	case "Microsoft Teams for Desktop":
+		return rangeTypes.RangeTypeMicrosoftTeamsDesktop, nil
+
+	// Microsoft Teams for iOS
+	case "Microsoft Teams for iOS":
+		return rangeTypes.RangeTypeMicrosoftTeamsIOS, nil
+
+	// Microsoft Teams for Mac
+	case "Microsoft Teams for Mac":
+		return rangeTypes.RangeTypeMicrosoftTeamsMac, nil
+
+	// Microsoft Visual Studio
+	case "Microsoft Visual Studio 2012 Update 5",
+		"Microsoft Visual Studio 2013 Update 5",
+		"Microsoft Visual Studio 2015 Update 3",
+		"Microsoft Visual Studio 2017 Version 15.9",
+		"Microsoft Visual Studio 2019 Version 16.10",
+		"Microsoft Visual Studio 2019 Version 16.11",
+		"Microsoft Visual Studio 2019 Version 16.4",
+		"Microsoft Visual Studio 2019 Version 16.6",
+		"Microsoft Visual Studio 2019 Version 16.7",
+		"Microsoft Visual Studio 2019 Version 16.8",
+		"Microsoft Visual Studio 2019 Version 16.9",
+		"Microsoft Visual Studio 2022 Version 17.0",
+		"Microsoft Visual Studio 2022 Version 17.1",
+		"Microsoft Visual Studio 2022 Version 17.10",
+		"Microsoft Visual Studio 2022 Version 17.11",
+		"Microsoft Visual Studio 2022 Version 17.12",
+		"Microsoft Visual Studio 2022 Version 17.13",
+		"Microsoft Visual Studio 2022 Version 17.14",
+		"Microsoft Visual Studio 2022 Version 17.2",
+		"Microsoft Visual Studio 2022 Version 17.3",
+		"Microsoft Visual Studio 2022 Version 17.4",
+		"Microsoft Visual Studio 2022 Version 17.5",
+		"Microsoft Visual Studio 2022 Version 17.6",
+		"Microsoft Visual Studio 2022 Version 17.7",
+		"Microsoft Visual Studio 2022 Version 17.8",
+		"Microsoft Visual Studio 2022 Version 17.9",
+		"Microsoft Visual Studio 2026 Version 18.3",
+		"Microsoft Visual Studio 2026 Version 18.4",
+		"Microsoft Visual Studio 2026 Version 18.5",
+		"Microsoft Visual Studio 2026 Version 18.6",
+		"Microsoft Visual Studio 2026 Version 18.7",
+		"Microsoft Visual Studio 2026 Version 18.8",
+		"Microsoft Visual Studio 2026 Version 18.9",
+		"Microsoft Visual Studio 2026 Version 18.10",
+		"Microsoft Visual Studio 2026 Version 18.11",
+		"Microsoft Visual Studio 2026 Version 18.12":
+		return rangeTypes.RangeTypeMicrosoftVisualStudio, nil
+
+	// Visual Studio Code
+	case "Visual Studio Code",
+		"Visual Studio Code for Linux":
+		return rangeTypes.RangeTypeMicrosoftVSCode, nil
+
+	// Windows
+	case "Windows 10 for 32-bit Systems",
+		"Windows 10 for x64-based Systems",
+		"Windows 10 HLK Version 20H2",
+		"Windows 10 HLK Version 21H1",
+		"Windows 10 HLK Version 21H2",
+		"Windows 10 HLK Version 22H2",
+		"Windows 10 Version 1511 for 32-bit Systems",
+		"Windows 10 Version 1511 for x64-based Systems",
+		"Windows 10 Version 1607 for 32-bit Systems",
+		"Windows 10 Version 1607 for HoloLens",
+		"Windows 10 Version 1607 for x64-based Systems",
+		"Windows 10 Version 1703 for 32-bit Systems",
+		"Windows 10 Version 1703 for x64-based Systems",
+		"Windows 10 Version 1709 for 32-bit Systems",
+		"Windows 10 Version 1709 for ARM64-based Systems",
+		"Windows 10 Version 1709 for x64-based Systems",
+		"Windows 10 Version 1803 for 32-bit Systems",
+		"Windows 10 Version 1803 for ARM64-based Systems",
+		"Windows 10 Version 1803 for x64-based Systems",
+		"Windows 10 Version 1809 for 32-bit Systems",
+		"Windows 10 Version 1809 for ARM64-based Systems",
+		"Windows 10 Version 1809 for HoloLens",
+		"Windows 10 Version 1809 for x64-based Systems",
+		"Windows 10 Version 1903 for 32-bit Systems",
+		"Windows 10 Version 1903 for ARM64-based Systems",
+		"Windows 10 Version 1903 for HoloLens",
+		"Windows 10 Version 1903 for x64-based Systems",
+		"Windows 10 Version 1909 for 32-bit Systems",
+		"Windows 10 Version 1909 for ARM64-based Systems",
+		"Windows 10 Version 1909 for x64-based Systems",
+		"Windows 10 Version 2004 for 32-bit Systems",
+		"Windows 10 Version 2004 for ARM64-based Systems",
+		"Windows 10 Version 2004 for HoloLens",
+		"Windows 10 Version 2004 for x64-based Systems",
+		"Windows 10 Version 20H2 for 32-bit Systems",
+		"Windows 10 Version 20H2 for ARM64-based Systems",
+		"Windows 10 Version 20H2 for x64-based Systems",
+		"Windows 10 Version 21H1 for 32-bit Systems",
+		"Windows 10 Version 21H1 for ARM64-based Systems",
+		"Windows 10 Version 21H1 for x64-based Systems",
+		"Windows 10 Version 21H2 for 32-bit Systems",
+		"Windows 10 Version 21H2 for ARM64-based Systems",
+		"Windows 10 Version 21H2 for x64-based Systems",
+		"Windows 10 Version 22H2 for 32-bit Systems",
+		"Windows 10 Version 22H2 for ARM64-based Systems",
+		"Windows 10 Version 22H2 for x64-based Systems",
+		"Windows 11 HLK 22H2",
+		"Windows 11 HLK 23H2",
+		"Windows 11 HLK 24H2",
+		"Windows 11 Version 21H2 for ARM64-based Systems",
+		"Windows 11 Version 21H2 for x64-based Systems",
+		"Windows 11 Version 22H2 for ARM64-based Systems",
+		"Windows 11 Version 22H2 for x64-based Systems",
+		"Windows 11 Version 23H2 for ARM64-based Systems",
+		"Windows 11 Version 23H2 for x64-based Systems",
+		"Windows 11 Version 24H2 for ARM64-based Systems",
+		"Windows 11 Version 24H2 for x64-based Systems",
+		"Windows 11 Version 25H2 for ARM64-based Systems",
+		"Windows 11 Version 25H2 for x64-based Systems",
+		"Windows 11 Version 26H1 for ARM64-based Systems",
+		"Windows 11 Version 26H1 for x64-based Systems",
+		"Windows 11 Version 26H2 for ARM64-based Systems",
+		"Windows 11 Version 26H2 for x64-based Systems",
+		"Windows 7 for 32-bit Systems Service Pack 1",
+		"Windows 7 for x64-based Systems Service Pack 1",
+		"Windows 8.1 for 32-bit Systems",
+		"Windows 8.1 for x64-based Systems",
+		"Windows RT 8.1",
+		"Windows Server 2008 for 32-bit Systems (Server Core installation)",
+		"Windows Server 2008 for 32-bit Systems Service Pack 2",
+		"Windows Server 2008 for 32-bit Systems Service Pack 2 (Server Core installation)",
+		"Windows Server 2008 for Itanium-based Systems Service Pack 2",
+		"Windows Server 2008 for x64-based Systems (Server Core installation)",
+		"Windows Server 2008 for x64-based Systems Service Pack 2",
+		"Windows Server 2008 for x64-based Systems Service Pack 2 (Server Core installation)",
+		"Windows Server 2008 R2 for Itanium-based Systems Service Pack 1",
+		"Windows Server 2008 R2 for x64-based Systems Service Pack 1",
+		"Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)",
+		"Windows Server 2012",
+		"Windows Server 2012 (Server Core installation)",
+		"Windows Server 2012 R2",
+		"Windows Server 2012 R2 (Server Core installation)",
+		"Windows Server 2016",
+		"Windows Server 2016 (Server Core installation)",
+		"Windows Server 2019",
+		"Windows Server 2019 (Server Core installation)",
+		"Windows Server 2022",
+		"Windows Server 2022 (Server Core installation)",
+		"Windows Server 2022, 23H2 Edition (Server Core installation)",
+		"Windows Server 2025",
+		"Windows Server 2025 (Server Core installation)",
+		"Windows Server, Version 1909 (Server Core installation)",
+		"Windows Server, Version 1709 (Server Core installation)",
+		"Windows Server, Version 1803 (Server Core installation)",
+		"Windows Server, Version 1903 (Server Core installation)",
+		"Windows Server, Version 2004 (Server Core installation)",
+		"Windows Server, Version 20H2 (Server Core installation)":
+		return rangeTypes.RangeTypeMicrosoftWindows, nil
+
+	// Internet Explorer (FixedBuild is the Windows OS build number, not an IE-specific version)
+	case "Internet Explorer 11 on Windows 10 Version 1607 for 32-bit Systems",
+		"Internet Explorer 11 on Windows 10 Version 1607 for x64-based Systems",
+		"Internet Explorer 11 on Windows 10 Version 1803 for 32-bit Systems",
+		"Internet Explorer 11 on Windows 10 Version 1803 for ARM64-based Systems",
+		"Internet Explorer 11 on Windows 10 Version 1803 for x64-based Systems",
+		"Internet Explorer 11 on Windows 10 Version 1809 for 32-bit Systems",
+		"Internet Explorer 11 on Windows 10 Version 1809 for ARM64-based Systems",
+		"Internet Explorer 11 on Windows 10 Version 1809 for x64-based Systems",
+		"Internet Explorer 11 on Windows 10 Version 1903 for ARM64-based Systems",
+		"Internet Explorer 11 on Windows 10 Version 1903 for x64-based Systems",
+		"Internet Explorer 11 on Windows 10 Version 1909 for 32-bit Systems",
+		"Internet Explorer 11 on Windows 10 Version 1909 for ARM64-based Systems",
+		"Internet Explorer 11 on Windows 10 Version 1909 for x64-based Systems",
+		"Internet Explorer 11 on Windows 10 Version 2004 for 32-bit Systems",
+		"Internet Explorer 11 on Windows 10 Version 2004 for ARM64-based Systems",
+		"Internet Explorer 11 on Windows 10 Version 2004 for x64-based Systems",
+		"Internet Explorer 11 on Windows 10 Version 20H2 for 32-bit Systems",
+		"Internet Explorer 11 on Windows 10 Version 20H2 for ARM64-based Systems",
+		"Internet Explorer 11 on Windows 10 for 32-bit Systems",
+		"Internet Explorer 11 on Windows 10 for x64-based Systems",
+		"Internet Explorer 11 on Windows 7 for 32-bit Systems Service Pack 1",
+		"Internet Explorer 11 on Windows 7 for x64-based Systems Service Pack 1",
+		"Internet Explorer 11 on Windows 8.1 for 32-bit Systems",
+		"Internet Explorer 11 on Windows 8.1 for x64-based Systems",
+		"Internet Explorer 11 on Windows RT 8.1",
+		"Internet Explorer 11 on Windows Server 2008 R2 for x64-based Systems Service Pack 1",
+		"Internet Explorer 11 on Windows Server 2012",
+		"Internet Explorer 11 on Windows Server 2012 R2",
+		"Internet Explorer 11 on Windows Server 2016",
+		"Internet Explorer 11 on Windows Server 2019",
+		"Internet Explorer 9 on Windows Server 2008 for 32-bit Systems Service Pack 2",
+		"Internet Explorer 9 on Windows Server 2008 for x64-based Systems Service Pack 2":
+		return rangeTypes.RangeTypeMicrosoftWindows, nil
+
+	// Products that match detection prefixes but don't need FixedBuild validation.
+	// These are tools, extensions, mobile apps, or products whose FixedBuild format
+	// doesn't match the category's version parser.
+	case ".NET Education Bundle SDK Install Tool",
+		".NET Install Tool for Extension Authors",
+		".NET source-build Linux tarballs (all archive types)",
+		"Microsoft Edge (Chromium-based) Updater",
+		"Microsoft Office Deployment Tool",
+		"Microsoft Office for Android",
+		"Microsoft Office for Universal",
+		"Microsoft Office for iOS",
+		"Microsoft Outlook 2016 for Mac",
+		"SQL Server backend for Django",
+		"Teams Panels",
+		"Teams Phones",
+		"Teams for D365 Guides Hololens",
+		"Teams for D365 Remote Assist HoloLens",
+		"Visual Studio Code - GitHub Pull Requests and Issues Extension",
+		"Visual Studio Code - JS Debug Extension",
+		"Visual Studio Code - Kubernetes Tools",
+		"Visual Studio Code - Live Preview extension",
+		"Visual Studio Code - MSSQL Extension",
+		"Visual Studio Code Remote - Containers Extension",
+		"Visual Studio Code Remote - SSH Extension",
+		"Visual Studio Code WSL Extension":
+		return rangeTypes.RangeTypeUnknown, nil
+
+	default:
+		// Detect new products that likely need validation but aren't explicitly listed above.
+		for _, prefix := range []string{
+			".NET ",
+			"Microsoft Defender ",
+			"Windows Defender ",
+			"Microsoft Edge (Chromium-based)",
+			"Microsoft Exchange Server",
+			"Microsoft Office ",
+			"Office Online Server",
+			"Microsoft Excel 20",
+			"Microsoft Outlook 20",
+			"Microsoft PowerPoint 20",
+			"Microsoft Word 20",
+			"Microsoft SharePoint",
+			"SharePoint ",
+			"Microsoft SQL Server 20",
+			"SQL Server ",
+			"Microsoft Teams ",
+			"Teams ",
+			"Microsoft Visual Studio 20",
+			"Visual Studio Code",
+			"Internet Explorer ",
+			"Windows 7 ",
+			"Windows 8",
+			"Windows 10 ",
+			"Windows 11 ",
+			"Windows Server ",
+			"Windows Server,",
+			"Windows RT ",
+		} {
+			if strings.HasPrefix(productName, prefix) {
+				return rangeTypes.RangeTypeUnknown, errors.Errorf("unknown product %q (matches prefix %q) not listed in productRangeType, please add it", productName, prefix)
+			}
+		}
+		return rangeTypes.RangeTypeUnknown, nil
+	}
+}
+
+// validateFixedBuild parses fixedBuild with the comparator of rt, so that a value the
+// range type cannot compare fails the extract instead of reaching the criterion.
+func validateFixedBuild(rt rangeTypes.RangeType, productName, fixedBuild string) error {
+	switch rt {
+	case rangeTypes.RangeTypeMicrosoftDefenderAndroid:
+		if _, err := defenderandroidversion.NewVersion(fixedBuild); err != nil {
+			return errors.Wrap(err, "defenderandroidversion.NewVersion")
+		}
+	case rangeTypes.RangeTypeMicrosoftDefenderIOS:
+		if _, err := defenderiosversion.NewVersion(fixedBuild); err != nil {
+			return errors.Wrap(err, "defenderiosversion.NewVersion")
+		}
+	case rangeTypes.RangeTypeMicrosoftDefenderIoT:
+		if _, err := defenderiotversion.NewVersion(fixedBuild); err != nil {
+			return errors.Wrap(err, "defenderiotversion.NewVersion")
+		}
+	case rangeTypes.RangeTypeMicrosoftDefenderLinux:
+		if _, err := defenderlinuxversion.NewVersion(fixedBuild); err != nil {
+			return errors.Wrap(err, "defenderlinuxversion.NewVersion")
+		}
+	case rangeTypes.RangeTypeMicrosoftDefenderMac:
+		if _, err := defendermacversion.NewVersion(fixedBuild); err != nil {
+			return errors.Wrap(err, "defendermacversion.NewVersion")
+		}
+	case rangeTypes.RangeTypeMicrosoftDefenderSecurityIntelligence:
+		if _, err := defendersiversion.NewVersion(fixedBuild); err != nil {
+			return errors.Wrap(err, "defendersiversion.NewVersion")
+		}
+	case rangeTypes.RangeTypeMicrosoftDefenderWindows:
+		if _, err := defenderwindowsversion.NewVersion(fixedBuild); err != nil {
+			return errors.Wrap(err, "defenderwindowsversion.NewVersion")
+		}
+	case rangeTypes.RangeTypeMicrosoftDotNetCoreRuntime:
+		v, err := dotnetcoreruntimeversion.NewVersion(fixedBuild)
+		if err != nil {
+			return errors.Wrap(err, "dotnetcoreruntimeversion.NewVersion")
+		}
+		if v.Prerelease != "" && !dotnetPrereleaseRE.MatchString(v.Prerelease) {
+			return errors.Errorf("unexpected .NET runtime prerelease. expected: %q, actual: %q", dotnetPrereleaseRE.String(), fixedBuild)
+		}
+		// .NET runtime (2026-Oct names). An SDK feature band here (patch 100 or above,
+		// e.g. "10.0.402") would make every runtime fall below it; such a product is the
+		// SDK and needs a productNameOverrides entry.
+		if strings.Contains(productName, " runtime installed on ") && v.Patch >= 100 {
+			return errors.Errorf("unexpected .NET runtime version. expected: %q, actual: %q", "a patch below 100", fixedBuild)
+		}
+	case rangeTypes.RangeTypeMicrosoftEdge:
+		if _, err := edgeversion.NewVersion(fixedBuild); err != nil {
+			return errors.Wrap(err, "edgeversion.NewVersion")
+		}
+	case rangeTypes.RangeTypeMicrosoftExchange:
+		if _, err := exchangeversion.NewVersion(fixedBuild); err != nil {
+			return errors.Wrap(err, "exchangeversion.NewVersion")
+		}
+	case rangeTypes.RangeTypeMicrosoftOfficeMac:
+		if _, err := officemacversion.NewVersion(fixedBuild); err != nil {
+			return errors.Wrap(err, "officemacversion.NewVersion")
+		}
+	case rangeTypes.RangeTypeMicrosoftOfficeWindows:
+		if _, err := officewindowsversion.NewVersion(fixedBuild); err != nil {
+			return errors.Wrap(err, "officewindowsversion.NewVersion")
+		}
+	case rangeTypes.RangeTypeMicrosoftSharePoint:
+		if _, err := sharepointversion.NewVersion(fixedBuild); err != nil {
+			return errors.Wrap(err, "sharepointversion.NewVersion")
+		}
+	case rangeTypes.RangeTypeMicrosoftSQLServer:
+		if _, err := sqlserverversion.NewVersion(fixedBuild); err != nil {
+			return errors.Wrap(err, "sqlserverversion.NewVersion")
+		}
+	case rangeTypes.RangeTypeMicrosoftTeamsAndroid:
+		if _, err := teamsandroidversion.NewVersion(fixedBuild); err != nil {
+			return errors.Wrap(err, "teamsandroidversion.NewVersion")
+		}
+	case rangeTypes.RangeTypeMicrosoftTeamsClient:
+		if _, err := teamsclientversion.NewVersion(fixedBuild); err != nil {
+			return errors.Wrap(err, "teamsclientversion.NewVersion")
+		}
+	case rangeTypes.RangeTypeMicrosoftTeamsDesktop:
+		if _, err := teamsdesktopversion.NewVersion(fixedBuild); err != nil {
+			return errors.Wrap(err, "teamsdesktopversion.NewVersion")
+		}
+	case rangeTypes.RangeTypeMicrosoftTeamsIOS:
+		if _, err := teamsiosversion.NewVersion(fixedBuild); err != nil {
+			return errors.Wrap(err, "teamsiosversion.NewVersion")
+		}
+	case rangeTypes.RangeTypeMicrosoftTeamsMac:
+		if _, err := teamsmacversion.NewVersion(fixedBuild); err != nil {
+			return errors.Wrap(err, "teamsmacversion.NewVersion")
+		}
+	case rangeTypes.RangeTypeMicrosoftVisualStudio:
+		if _, err := visualstudioversion.NewVersion(fixedBuild); err != nil {
+			return errors.Wrap(err, "visualstudioversion.NewVersion")
+		}
+	case rangeTypes.RangeTypeMicrosoftVSCode:
+		if _, err := vscodeversion.NewVersion(fixedBuild); err != nil {
+			return errors.Wrap(err, "vscodeversion.NewVersion")
+		}
+	case rangeTypes.RangeTypeMicrosoftWindows:
+		if _, err := windowsversion.NewVersion(fixedBuild); err != nil {
+			return errors.Wrap(err, "windowsversion.NewVersion")
+		}
+	default:
+		// The .NET SDK range type is built by buildDotNetSDKCriterion, which parses its
+		// own values.
+		return errors.Errorf("unexpected range type. expected: a range type productRangeType returns for a version-compared FixedBuild, actual: %q", rt)
+	}
+	return nil
 }
 
 // fixedBuildOverrides maps (CVE ID, product name, incorrect FixedBuild) to corrected FixedBuild values

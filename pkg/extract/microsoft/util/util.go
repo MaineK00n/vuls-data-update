@@ -33,7 +33,7 @@ var canonicalProductNames = map[string]string{
 	// 2026-Oct spells the SQL Server 2017 CU31 and 2019 CU32 entries without the
 	// space; they are the same CUs earlier months listed as "(CU 31)" / "(CU 32)"
 	// (2017 since 2023-Feb), so keep one package name. CUs that only ever appeared
-	// unspaced (2022 CU27, 2025 CU9) are listed directly in buildFixedBuildCriterion.
+	// unspaced (2022 CU27, 2025 CU9) are listed directly in productRangeType (pkg/extract/microsoft/cvrf).
 	"Microsoft SQL Server 2017 for x64-based Systems (CU31)": "Microsoft SQL Server 2017 for x64-based Systems (CU 31)",
 	"Microsoft SQL Server 2019 for x64-based Systems (CU32)": "Microsoft SQL Server 2019 for x64-based Systems (CU 32)",
 	// Visual Studio servicing baselines: 2026-Oct re-lists 2019 16.11 without the
