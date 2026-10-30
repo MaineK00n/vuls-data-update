@@ -9,43 +9,43 @@ import (
 
 func TestExtract(t *testing.T) {
 	tests := []struct {
-		name        string
-		fixturePath string
-		goldenPath  string
-		hasError    bool
+		name     string
+		args     string
+		golden   string
+		hasError bool
 	}{
 		{
-			name:        "happy",
-			fixturePath: "./testdata/fixtures/happy",
-			goldenPath:  "./testdata/golden/happy",
+			name:   "happy",
+			args:   "./testdata/fixtures/happy",
+			golden: "./testdata/golden/happy",
 		},
 		{
-			name:        "modularitylabel",
-			fixturePath: "./testdata/fixtures/modularitylabel",
-			goldenPath:  "./testdata/golden/modularitylabel",
+			name:   "modularitylabel",
+			args:   "./testdata/fixtures/modularitylabel",
+			golden: "./testdata/golden/modularitylabel",
 		},
 		// Based on "modularitylabel" case, the regexp pattern of module stream is altered and others are identical
 		{
-			name:        "modularitylabel-stream-reversed",
-			fixturePath: "./testdata/fixtures/modularitylabel-stream-reversed",
-			goldenPath:  "./testdata/golden/modularitylabel-stream-reversed",
+			name:   "modularitylabel-stream-reversed",
+			args:   "./testdata/fixtures/modularitylabel-stream-reversed",
+			golden: "./testdata/golden/modularitylabel-stream-reversed",
 		},
 		{
-			name:        "majormixed",
-			fixturePath: "./testdata/fixtures/majormixed",
-			goldenPath:  "./testdata/golden/majormixed",
+			name:   "majormixed",
+			args:   "./testdata/fixtures/majormixed",
+			golden: "./testdata/golden/majormixed",
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			outputDir := t.TempDir()
+			dir := t.TempDir()
 
-			fixturePath, err := utiltest.QueryUnescapeFileTree(t.TempDir(), tt.fixturePath)
+			fixturePath, err := utiltest.QueryUnescapeFileTree(t.TempDir(), tt.args)
 			if err != nil {
 				t.Fatal("unexpected error:", err)
 			}
 
-			err = linux.Extract(fixturePath, linux.WithDir(outputDir))
+			err = linux.Extract(fixturePath, linux.WithDir(dir))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)
@@ -55,7 +55,7 @@ func TestExtract(t *testing.T) {
 				// error was expected and occurred, test passed
 				return
 			default:
-				if err := utiltest.Diff(tt.goldenPath, outputDir); err != nil {
+				if err := utiltest.Diff(tt.golden, dir); err != nil {
 					t.Error("unexpected error:", err)
 				}
 			}

@@ -62,25 +62,38 @@ Golden tests also use a table-driven (test matrix) pattern with `t.Run`:
 
 ```go
 tests := []struct {
-    name   string
-    args   string
-    golden string
+    name     string
+    args     string
+    golden   string
+    hasError bool
 }{
     {
         name:   "happy",
         args:   "./testdata/fixtures/happy",
         golden: "./testdata/golden/happy",
     },
+    {
+        name:     "broken",
+        args:     "./testdata/fixtures/broken",
+        hasError: true,
+    },
 }
 for _, tt := range tests {
     t.Run(tt.name, func(t *testing.T) {
         dir := t.TempDir()
         err := pkg.Extract(tt.args, pkg.WithDir(dir))
-        // ... error check ...
-        ep, _ := filepath.Abs(tt.golden)
-        gp, _ := filepath.Abs(dir)
-        if err := utiltest.Diff(ep, gp); err != nil {
+        switch {
+        case err != nil && !tt.hasError:
             t.Error("unexpected error:", err)
+        case err == nil && tt.hasError:
+            t.Error("expected error has not occurred")
+        case err != nil && tt.hasError:
+            // error was expected and occurred, test passed
+            return
+        default:
+            if err := utiltest.Diff(tt.golden, dir); err != nil {
+                t.Error("unexpected error:", err)
+            }
         }
     })
 }
@@ -88,6 +101,7 @@ for _, tt := range tests {
 
 - **Single-case**: fixture/golden paths are directly under `testdata/fixtures`, `testdata/golden` (no subdirectories)
 - **Multi-case**: each test case explicitly specifies `testdata/fixtures/<name>/`, `testdata/golden/<name>/` in struct fields
+- **Names**: in fetch and extract alike, the error flag is `hasError` and the expected-error arm reads exactly as above; `wantErr` belongs to the inline unit tests below. An extract test names its fixture `args` and, when multi-case, its golden tree `golden`.
 
 ### Where Used
 

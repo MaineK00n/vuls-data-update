@@ -23,9 +23,9 @@ func TestFetch(t *testing.T) {
 		opts []detail.Option
 	}
 	tests := []struct {
-		name    string
-		args    args
-		wantErr bool
+		name     string
+		args     args
+		hasError bool
 	}{
 		{
 			name: "happy",
@@ -65,11 +65,11 @@ func TestFetch(t *testing.T) {
 			opts := append([]detail.Option{detail.WithHTTPClient(ts.Client()), detail.WithDir(dir)}, tt.args.opts...)
 			err := detail.Fetch(tt.args.r, opts...)
 			switch {
-			case err != nil && !tt.wantErr:
+			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)
-			case err == nil && tt.wantErr:
+			case err == nil && tt.hasError:
 				t.Error("expected error has not occurred")
-			case err != nil && tt.wantErr:
+			case err != nil && tt.hasError:
 				// error was expected and occurred, test passed
 				return
 			default:
