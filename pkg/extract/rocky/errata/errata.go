@@ -176,8 +176,8 @@ func extract(fetched errata.Advisory, raws []string) (dataTypes.Data, error) {
 			if len(nevra) < 3 {
 				return nil, errors.Errorf("unexpected nevra format. expected: %q, actual: %q", "<name>-<epoch>:<version>-<release>.<arch>", p.NEVRA)
 			}
-			ra := strings.Split(nevra[len(nevra)-1], ".")
-			if len(ra) < 2 {
+			release, arch, ok := strings.CutLast(nevra[len(nevra)-1], ".")
+			if !ok {
 				return nil, errors.Errorf("unexpected nevra format. expected: %q, actual: %q", "<name>-<epoch>:<version>-<release>.<arch>", p.NEVRA)
 			}
 
@@ -185,8 +185,7 @@ func extract(fetched errata.Advisory, raws []string) (dataTypes.Data, error) {
 			if p.ModuleName != nil && p.ModuleStream != nil {
 				name = fmt.Sprintf("%s:%s::%s", *p.ModuleName, *p.ModuleStream, name)
 			}
-			evr := fmt.Sprintf("%s-%s", nevra[len(nevra)-2], strings.Join(ra[:len(ra)-1], "."))
-			arch := ra[len(ra)-1]
+			evr := fmt.Sprintf("%s-%s", nevra[len(nevra)-2], release)
 
 			// If it is detected in the source package, it will cause false positives in the binary package of the unaffected arch, so do not add it.
 			if arch == "src" {
