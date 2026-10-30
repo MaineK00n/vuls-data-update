@@ -1852,9 +1852,11 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 		return nil, nil
 	}
 
-	if releaseCandidateTagRE.MatchString(fixedBuild) {
-		return buildPrereleaseTagCriterion(productName, fixedBuild), nil
-	}
+	// A release-candidate or Insiders tag (see releaseCandidateTagRE) is reported as
+	// fixed in the tag on the products that have a range type for it: the .NET runtime
+	// and SDK and Visual Studio. On products without a range type it gives no
+	// criterion, like their versions do, and on the other products it fails to parse.
+	isPrereleaseTag := releaseCandidateTagRE.MatchString(fixedBuild)
 
 	// .NET SDK products: 2026-Oct names the runtime ".NET X runtime installed on <OS>"
 	// and gives the SDK the earlier runtime name ".NET X installed on <OS>" (see
@@ -1864,6 +1866,9 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 		".NET 9.0 installed on Linux", ".NET 9.0 installed on Mac OS", ".NET 9.0 installed on Windows",
 		".NET 10.0 installed on Linux", ".NET 10.0 installed on Mac OS", ".NET 10.0 installed on Windows",
 		".NET 11.0 installed on Linux", ".NET 11.0 installed on Mac OS", ".NET 11.0 installed on Windows":
+		if isPrereleaseTag {
+			return buildPrereleaseTagCriterion(productName, fixedBuild), nil
+		}
 		c, err := buildDotNetSDKCriterion(productName, fixedBuild)
 		if err != nil {
 			return nil, errors.Wrapf(err, "build .NET SDK criterion for %s (%s)", cveID, productName)
@@ -1882,7 +1887,7 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 	//    used by .NET Framework products bundling multiple framework versions; .NET SDK
 	//    products split theirs per feature band in buildDotNetSDKCriterion instead)
 	// Release-candidate and Visual Studio Insiders tags (e.g. "11.0 RC1", "18.12 Insiders
-	// 3") are handled above (see releaseCandidateTagRE) and semver-style .NET
+	// 3") are not skipped (see isPrereleaseTag) and semver-style .NET
 	// prereleases (e.g. "11.0.0-rc.2", 2026-Oct) are compared (see dotnetPrereleaseRE).
 	// Other values containing a space or a hyphen are not skipped: on version-compared
 	// products they have been recoverable typos (e.g. "96.0 1954.29") or servicing
@@ -2008,6 +2013,9 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 			".NET 8.0",
 			".NET Core 2.1",
 			".NET Core 3.1":
+			if isPrereleaseTag {
+				return rangeTypes.RangeTypeMicrosoftDotNetCore, nil
+			}
 			v, err := dotnetcoreruntimeversion.NewVersion(fixedBuild)
 			if err != nil {
 				return rangeTypes.RangeTypeUnknown, errors.Wrap(err, "dotnetcoreruntimeversion.NewVersion")
@@ -2032,6 +2040,9 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 			".NET 11.0 runtime installed on Linux",
 			".NET 11.0 runtime installed on Mac OS",
 			".NET 11.0 runtime installed on Windows":
+			if isPrereleaseTag {
+				return rangeTypes.RangeTypeMicrosoftDotNetCore, nil
+			}
 			v, err := dotnetcoreruntimeversion.NewVersion(fixedBuild)
 			if err != nil {
 				return rangeTypes.RangeTypeUnknown, errors.Wrap(err, "dotnetcoreruntimeversion.NewVersion")
@@ -2330,6 +2341,9 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 			"Microsoft Visual Studio 2026 Version 18.10",
 			"Microsoft Visual Studio 2026 Version 18.11",
 			"Microsoft Visual Studio 2026 Version 18.12":
+			if isPrereleaseTag {
+				return rangeTypes.RangeTypeMicrosoftVisualStudio, nil
+			}
 			if _, err := visualstudioversion.NewVersion(fixedBuild); err != nil {
 				return rangeTypes.RangeTypeUnknown, errors.Wrap(err, "visualstudioversion.NewVersion")
 			}
@@ -2554,6 +2568,9 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 	}
 	if rt == rangeTypes.RangeTypeUnknown {
 		return nil, nil
+	}
+	if isPrereleaseTag {
+		return buildPrereleaseTagCriterion(productName, fixedBuild), nil
 	}
 
 	return &criterionTypes.Criterion{

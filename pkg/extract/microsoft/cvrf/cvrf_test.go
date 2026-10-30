@@ -511,6 +511,24 @@ func TestBuildFixedBuildCriterion(t *testing.T) {
 			},
 		},
 		{
+			name: "prerelease tag on a product without a range type gives no criterion (CVE-2026-69304)",
+			args: args{
+				cveID:         "CVE-2026-69304",
+				productName:   "ASP.NET Core 11.0",
+				rawFixedBuild: "11.0 RC1",
+			},
+			want: nil,
+		},
+		{
+			name: "prerelease tag on another version-compared product fails",
+			args: args{
+				cveID:         "CVE-2099-0001",
+				productName:   "Microsoft Edge (Chromium-based)",
+				rawFixedBuild: "120.0 RC1",
+			},
+			wantErr: true,
+		},
+		{
 			name: ".NET SDK prerelease tag listed beside versions fails",
 			args: args{
 				cveID:         "CVE-2099-0001",
