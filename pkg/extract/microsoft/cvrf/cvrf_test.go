@@ -473,69 +473,13 @@ func TestBuildFixedBuildCriterion(t *testing.T) {
 			},
 		},
 		{
-			name: ".NET 11.0 runtime prerelease tag reported as fixed in the tag (CVE-2026-58649)",
+			name: ".NET 11.0 prerelease tag skipped (CVE-2026-58649)",
 			args: args{
 				cveID:         "CVE-2026-58649",
 				productName:   ".NET 11.0 runtime installed on Windows",
 				rawFixedBuild: "11.0 RC1",
 			},
-			want: &criterionTypes.Criterion{
-				Type: criterionTypes.CriterionTypeVersion,
-				Version: &vcTypes.Criterion{
-					Vulnerable: true,
-					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed, Vendor: "11.0 RC1"},
-					Package: packageTypes.Package{
-						Type:   packageTypes.PackageTypeBinary,
-						Binary: &binaryTypes.Package{Name: ".NET 11.0 runtime installed on Windows"},
-					},
-				},
-			},
-		},
-		{
-			name: ".NET 11.0 SDK prerelease tag reported as fixed in the tag (CVE-2026-58649)",
-			args: args{
-				cveID:         "CVE-2026-58649",
-				productName:   ".NET 11.0 installed on Linux",
-				rawFixedBuild: "11.0 RC1",
-			},
-			want: &criterionTypes.Criterion{
-				Type: criterionTypes.CriterionTypeVersion,
-				Version: &vcTypes.Criterion{
-					Vulnerable: true,
-					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed, Vendor: "11.0 RC1"},
-					Package: packageTypes.Package{
-						Type:   packageTypes.PackageTypeBinary,
-						Binary: &binaryTypes.Package{Name: ".NET 11.0 installed on Linux"},
-					},
-				},
-			},
-		},
-		{
-			name: "prerelease tag on a product without a range type gives no criterion (CVE-2026-69304)",
-			args: args{
-				cveID:         "CVE-2026-69304",
-				productName:   "ASP.NET Core 11.0",
-				rawFixedBuild: "11.0 RC1",
-			},
 			want: nil,
-		},
-		{
-			name: "prerelease tag on another version-compared product fails",
-			args: args{
-				cveID:         "CVE-2099-0001",
-				productName:   "Microsoft Edge (Chromium-based)",
-				rawFixedBuild: "120.0 RC1",
-			},
-			wantErr: true,
-		},
-		{
-			name: ".NET SDK prerelease tag listed beside versions fails",
-			args: args{
-				cveID:         "CVE-2099-0001",
-				productName:   ".NET 11.0 installed on Linux",
-				rawFixedBuild: "11.0.100-rc.2, 11.0 RC1",
-			},
-			wantErr: true,
 		},
 		{
 			name: "RC tag followed by more text is not skipped",
@@ -772,23 +716,13 @@ func TestBuildFixedBuildCriterion(t *testing.T) {
 			},
 		},
 		{
-			name: "Visual Studio 2026 Version 18.12 Insiders tag reported as fixed in the tag (2026-Oct)",
+			name: "Visual Studio 2026 Version 18.12 Insiders tag skipped (2026-Oct)",
 			args: args{
 				cveID:         "CVE-2026-102870",
 				productName:   "Microsoft Visual Studio 2026 Version 18.12",
 				rawFixedBuild: "18.12 Insiders 3",
 			},
-			want: &criterionTypes.Criterion{
-				Type: criterionTypes.CriterionTypeVersion,
-				Version: &vcTypes.Criterion{
-					Vulnerable: true,
-					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed, Vendor: "18.12 Insiders 3"},
-					Package: packageTypes.Package{
-						Type:   packageTypes.PackageTypeBinary,
-						Binary: &binaryTypes.Package{Name: "Microsoft Visual Studio 2026 Version 18.12"},
-					},
-				},
-			},
+			want: nil,
 		},
 		{
 			name: ".NET source-build Linux tarballs not detected (2026-Oct)",

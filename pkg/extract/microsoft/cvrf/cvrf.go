@@ -1341,11 +1341,8 @@ func cleanFixedBuild(rawFixedBuild string) string {
 // releaseCandidateTagRE matches a FixedBuild that is exactly a dotted number
 // followed by a prerelease tag that names no exact version: either " RC<digits>"
 // (e.g. "11.0 RC1") or the Visual Studio Insiders channel " Insiders <digits>"
-// (e.g. "18.12 Insiders 3"). The product is fixed in that prerelease, but there is
-// no version to compare against, so buildFixedBuildCriterion reports every version
-// of the product as fixed in the tag (see buildPrereleaseTagCriterion).
-// Semver-style .NET prereleases (e.g. "11.0.0-rc.2") are exact versions and are
-// compared instead (see dotnetPrereleaseRE).
+// (e.g. "18.12 Insiders 3"). Semver-style .NET prereleases (e.g. "11.0.0-rc.2")
+// are exact versions and are compared instead (see dotnetPrereleaseRE).
 var releaseCandidateTagRE = regexp.MustCompile(`^\d+(\.\d+)+( RC\d+| Insiders \d+)$`)
 
 // dotnetPrereleaseRE matches the prerelease part of a .NET runtime or SDK FixedBuild
@@ -1769,10 +1766,7 @@ func buildDotNetSDKCriterion(productName, fixedBuild string) (*criterionTypes.Cr
 	for f := range strings.SplitSeq(fixedBuild, ",") {
 		f = strings.TrimSpace(f)
 		if releaseCandidateTagRE.MatchString(f) {
-			// A whole FixedBuild of a tag never reaches here (see buildFixedBuildCriterion).
-			// One listed beside versions would either drop the tag's fix or report the
-			// fixed bands too, so it needs a fixedBuildOverrides entry.
-			return nil, errors.Errorf("unexpected .NET SDK FixedBuild. expected: %q, actual: %q, please add fixedBuildOverrides", "versions or a single prerelease tag", fixedBuild)
+			continue
 		}
 		v, err := dotnetcoresdkversion.NewVersion(f)
 		if err != nil {
@@ -1819,27 +1813,6 @@ func buildDotNetSDKCriterion(productName, fixedBuild string) (*criterionTypes.Cr
 	}, nil
 }
 
-// buildPrereleaseTagCriterion builds the criterion of a product fixed in a prerelease
-// that a tag names instead of a version (see releaseCandidateTagRE). Without a
-// version to compare against, every version of the product is reported, as fixed in
-// the tag rather than as unaffected. That includes hosts already on the fix (e.g. the
-// 2026-Oct Visual Studio 2026 version 18.12 rows, "18.12 Insiders 3": 18.12 has no
-// release outside the Insiders channel), until a fixedBuildOverrides entry gives the
-// version.
-func buildPrereleaseTagCriterion(productName, tag string) *criterionTypes.Criterion {
-	return &criterionTypes.Criterion{
-		Type: criterionTypes.CriterionTypeVersion,
-		Version: &vcTypes.Criterion{
-			Vulnerable: true,
-			FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed, Vendor: tag},
-			Package: criterionpackageTypes.Package{
-				Type:   criterionpackageTypes.PackageTypeBinary,
-				Binary: &binaryTypes.Package{Name: productName},
-			},
-		},
-	}
-}
-
 func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criterionTypes.Criterion, error) {
 	fixedBuild := cleanFixedBuild(rawFixedBuild)
 
@@ -1852,12 +1825,6 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 		return nil, nil
 	}
 
-	// A release-candidate or Insiders tag (see releaseCandidateTagRE) is reported as
-	// fixed in the tag on the products that have a range type for it: the .NET runtime
-	// and SDK and Visual Studio. On products without a range type it gives no
-	// criterion, like their versions do, and on the other products it fails to parse.
-	isPrereleaseTag := releaseCandidateTagRE.MatchString(fixedBuild)
-
 	// .NET SDK products: 2026-Oct names the runtime ".NET X runtime installed on <OS>"
 	// and gives the SDK the earlier runtime name ".NET X installed on <OS>" (see
 	// productNameOverrides)
@@ -1866,9 +1833,6 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 		".NET 9.0 installed on Linux", ".NET 9.0 installed on Mac OS", ".NET 9.0 installed on Windows",
 		".NET 10.0 installed on Linux", ".NET 10.0 installed on Mac OS", ".NET 10.0 installed on Windows",
 		".NET 11.0 installed on Linux", ".NET 11.0 installed on Mac OS", ".NET 11.0 installed on Windows":
-		if isPrereleaseTag {
-			return buildPrereleaseTagCriterion(productName, fixedBuild), nil
-		}
 		c, err := buildDotNetSDKCriterion(productName, fixedBuild)
 		if err != nil {
 			return nil, errors.Wrapf(err, "build .NET SDK criterion for %s (%s)", cveID, productName)
@@ -1886,14 +1850,16 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 	//  - Semicolon- or comma-separated compound versions (e.g. "3.0.6920.8954; 2.0.50727.8970"
 	//    used by .NET Framework products bundling multiple framework versions; .NET SDK
 	//    products split theirs per feature band in buildDotNetSDKCriterion instead)
-	// Release-candidate and Visual Studio Insiders tags (e.g. "11.0 RC1", "18.12 Insiders
-	// 3") are not skipped (see isPrereleaseTag) and semver-style .NET
-	// prereleases (e.g. "11.0.0-rc.2", 2026-Oct) are compared (see dotnetPrereleaseRE).
-	// Other values containing a space or a hyphen are not skipped: on version-compared
-	// products they have been recoverable typos (e.g. "96.0 1954.29") or servicing
-	// builds (e.g. "5.0.6-servicing.21220.11"), which should fail and get a
-	// fixedBuildOverrides entry
-	if fixedBuild[0] < '0' || fixedBuild[0] > '9' || strings.Contains(fixedBuild, "x") || !strings.Contains(fixedBuild, ".") || strings.ContainsAny(fixedBuild, ";,") {
+	//  - Release-candidate tags of the exact form "<dotted number> RC<digits>" (e.g.
+	//    "11.0 RC1", 2026-Sep) and Visual Studio Insiders tags "<dotted number> Insiders
+	//    <digits>" (e.g. "18.12 Insiders 3", 2026-Oct): the fix only exists in a
+	//    prerelease that the tag does not name as a version. Semver-style .NET
+	//    prereleases (e.g. "11.0.0-rc.2", 2026-Oct) are versions and are compared (see
+	//    dotnetPrereleaseRE). Other values containing a space or a hyphen are not skipped: on
+	//    version-compared products they have been recoverable typos (e.g. "96.0 1954.29")
+	//    or servicing builds (e.g. "5.0.6-servicing.21220.11"), which should fail and
+	//    get a fixedBuildOverrides entry
+	if fixedBuild[0] < '0' || fixedBuild[0] > '9' || strings.Contains(fixedBuild, "x") || !strings.Contains(fixedBuild, ".") || strings.ContainsAny(fixedBuild, ";,") || releaseCandidateTagRE.MatchString(fixedBuild) {
 		return nil, nil
 	}
 
@@ -2013,9 +1979,6 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 			".NET 8.0",
 			".NET Core 2.1",
 			".NET Core 3.1":
-			if isPrereleaseTag {
-				return rangeTypes.RangeTypeMicrosoftDotNetCore, nil
-			}
 			v, err := dotnetcoreruntimeversion.NewVersion(fixedBuild)
 			if err != nil {
 				return rangeTypes.RangeTypeUnknown, errors.Wrap(err, "dotnetcoreruntimeversion.NewVersion")
@@ -2040,9 +2003,6 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 			".NET 11.0 runtime installed on Linux",
 			".NET 11.0 runtime installed on Mac OS",
 			".NET 11.0 runtime installed on Windows":
-			if isPrereleaseTag {
-				return rangeTypes.RangeTypeMicrosoftDotNetCore, nil
-			}
 			v, err := dotnetcoreruntimeversion.NewVersion(fixedBuild)
 			if err != nil {
 				return rangeTypes.RangeTypeUnknown, errors.Wrap(err, "dotnetcoreruntimeversion.NewVersion")
@@ -2341,9 +2301,6 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 			"Microsoft Visual Studio 2026 Version 18.10",
 			"Microsoft Visual Studio 2026 Version 18.11",
 			"Microsoft Visual Studio 2026 Version 18.12":
-			if isPrereleaseTag {
-				return rangeTypes.RangeTypeMicrosoftVisualStudio, nil
-			}
 			if _, err := visualstudioversion.NewVersion(fixedBuild); err != nil {
 				return rangeTypes.RangeTypeUnknown, errors.Wrap(err, "visualstudioversion.NewVersion")
 			}
@@ -2568,9 +2525,6 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 	}
 	if rt == rangeTypes.RangeTypeUnknown {
 		return nil, nil
-	}
-	if isPrereleaseTag {
-		return buildPrereleaseTagCriterion(productName, fixedBuild), nil
 	}
 
 	return &criterionTypes.Criterion{
