@@ -1,0 +1,28 @@
+{
+	"kb_id": "4556402",
+	"url": "https://support.microsoft.com/help/4556402",
+	"products": [
+		"Microsoft .NET Framework 2.0 Service Pack 2 on Windows Server 2008 for 32-bit Systems Service Pack 2",
+		"Microsoft .NET Framework 2.0 Service Pack 2 on Windows Server 2008 for x64-based Systems Service Pack 2",
+		"Microsoft .NET Framework 3.0 Service Pack 2 on Windows Server 2008 for 32-bit Systems Service Pack 2",
+		"Microsoft .NET Framework 3.0 Service Pack 2 on Windows Server 2008 for x64-based Systems Service Pack 2",
+		"Microsoft .NET Framework 4.5.2 on Windows Server 2008 for 32-bit Systems Service Pack 2",
+		"Microsoft .NET Framework 4.5.2 on Windows Server 2008 for x64-based Systems Service Pack 2",
+		"Microsoft .NET Framework 4.6 on Windows Server 2008 for 32-bit Systems Service Pack 2",
+		"Microsoft .NET Framework 4.6 on Windows Server 2008 for x64-based Systems Service Pack 2"
+	],
+	"supersedes": [
+		{
+			"kb_id": "4533098"
+		},
+		{
+			"kb_id": "4535105"
+		}
+	],
+	"data_source": {
+		"id": "microsoft-cvrf",
+		"raws": [
+			"fixtures/2020-May/2020/CVE-2020-1108.json"
+		]
+	}
+}

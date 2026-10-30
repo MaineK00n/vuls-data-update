@@ -1,0 +1,20 @@
+{
+	"kb_id": "4552929",
+	"url": "https://support.microsoft.com/help/4552929",
+	"products": [
+		"Microsoft .NET Framework 4.8 on Windows 10 Version 1803 for 32-bit Systems",
+		"Microsoft .NET Framework 4.8 on Windows 10 Version 1803 for x64-based Systems",
+		"Microsoft .NET Framework 4.8 on Windows Server, Version 1803 (Server Core installation)"
+	],
+	"supersedes": [
+		{
+			"kb_id": "4537479"
+		}
+	],
+	"data_source": {
+		"id": "microsoft-cvrf",
+		"raws": [
+			"fixtures/2020-May/2020/CVE-2020-1108.json"
+		]
+	}
+}
