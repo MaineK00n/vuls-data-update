@@ -661,8 +661,8 @@ func TestRangeType_CompareVersions(t *testing.T) {
 			wantErr: true,
 		},
 		{
-			name: "microsoft-dotnet-core v1 == v2",
-			rt:   affectedrangeTypes.RangeTypeMicrosoftDotNetCore,
+			name: "microsoft-dotnet-core-runtime v1 == v2",
+			rt:   affectedrangeTypes.RangeTypeMicrosoftDotNetCoreRuntime,
 			args: args{
 				v1: "8.0.2",
 				v2: "8.0.2",
@@ -670,8 +670,8 @@ func TestRangeType_CompareVersions(t *testing.T) {
 			want: 0,
 		},
 		{
-			name: "microsoft-dotnet-core v1 < v2",
-			rt:   affectedrangeTypes.RangeTypeMicrosoftDotNetCore,
+			name: "microsoft-dotnet-core-runtime v1 < v2",
+			rt:   affectedrangeTypes.RangeTypeMicrosoftDotNetCoreRuntime,
 			args: args{
 				v1: "8.0.2",
 				v2: "9.0.13",
@@ -679,8 +679,8 @@ func TestRangeType_CompareVersions(t *testing.T) {
 			want: -1,
 		},
 		{
-			name: "microsoft-dotnet-core v1 > v2",
-			rt:   affectedrangeTypes.RangeTypeMicrosoftDotNetCore,
+			name: "microsoft-dotnet-core-runtime v1 > v2",
+			rt:   affectedrangeTypes.RangeTypeMicrosoftDotNetCoreRuntime,
 			args: args{
 				v1: "9.0.13",
 				v2: "8.0.2",
@@ -688,8 +688,8 @@ func TestRangeType_CompareVersions(t *testing.T) {
 			want: +1,
 		},
 		{
-			name: "microsoft-dotnet-core invalid version",
-			rt:   affectedrangeTypes.RangeTypeMicrosoftDotNetCore,
+			name: "microsoft-dotnet-core-runtime invalid version",
+			rt:   affectedrangeTypes.RangeTypeMicrosoftDotNetCoreRuntime,
 			args: args{
 				v1: "8.0.abc",
 				v2: "8.0.2",
@@ -697,8 +697,8 @@ func TestRangeType_CompareVersions(t *testing.T) {
 			wantErr: true,
 		},
 		{
-			name: "microsoft-dotnet-core prerelease < release",
-			rt:   affectedrangeTypes.RangeTypeMicrosoftDotNetCore,
+			name: "microsoft-dotnet-core-runtime prerelease < release",
+			rt:   affectedrangeTypes.RangeTypeMicrosoftDotNetCoreRuntime,
 			args: args{
 				v1: "11.0.0-rc.2.26504.105",
 				v2: "11.0.0",
@@ -706,8 +706,8 @@ func TestRangeType_CompareVersions(t *testing.T) {
 			want: -1,
 		},
 		{
-			name: "microsoft-dotnet-sdk v1 == v2",
-			rt:   affectedrangeTypes.RangeTypeMicrosoftDotNetSDK,
+			name: "microsoft-dotnet-core-sdk v1 == v2",
+			rt:   affectedrangeTypes.RangeTypeMicrosoftDotNetCoreSDK,
 			args: args{
 				v1: "10.0.402",
 				v2: "10.0.402",
@@ -715,8 +715,8 @@ func TestRangeType_CompareVersions(t *testing.T) {
 			want: 0,
 		},
 		{
-			name: "microsoft-dotnet-sdk v1 < v2 across feature bands",
-			rt:   affectedrangeTypes.RangeTypeMicrosoftDotNetSDK,
+			name: "microsoft-dotnet-core-sdk v1 < v2 across feature bands",
+			rt:   affectedrangeTypes.RangeTypeMicrosoftDotNetCoreSDK,
 			args: args{
 				v1: "10.0.399",
 				v2: "10.0.400",
@@ -724,8 +724,8 @@ func TestRangeType_CompareVersions(t *testing.T) {
 			want: -1,
 		},
 		{
-			name: "microsoft-dotnet-sdk v1 > v2",
-			rt:   affectedrangeTypes.RangeTypeMicrosoftDotNetSDK,
+			name: "microsoft-dotnet-core-sdk v1 > v2",
+			rt:   affectedrangeTypes.RangeTypeMicrosoftDotNetCoreSDK,
 			args: args{
 				v1: "10.0.113",
 				v2: "10.0.112",
@@ -733,8 +733,8 @@ func TestRangeType_CompareVersions(t *testing.T) {
 			want: +1,
 		},
 		{
-			name: "microsoft-dotnet-sdk prerelease < release",
-			rt:   affectedrangeTypes.RangeTypeMicrosoftDotNetSDK,
+			name: "microsoft-dotnet-core-sdk prerelease < release",
+			rt:   affectedrangeTypes.RangeTypeMicrosoftDotNetCoreSDK,
 			args: args{
 				v1: "11.0.100-rc.3.26522.148",
 				v2: "11.0.100",
@@ -742,8 +742,8 @@ func TestRangeType_CompareVersions(t *testing.T) {
 			want: -1,
 		},
 		{
-			name: "microsoft-dotnet-sdk runtime version is invalid",
-			rt:   affectedrangeTypes.RangeTypeMicrosoftDotNetSDK,
+			name: "microsoft-dotnet-core-sdk runtime version is invalid",
+			rt:   affectedrangeTypes.RangeTypeMicrosoftDotNetCoreSDK,
 			args: args{
 				v1: "10.0.13",
 				v2: "10.0.402",
@@ -751,8 +751,8 @@ func TestRangeType_CompareVersions(t *testing.T) {
 			wantErr: true,
 		},
 		{
-			name: "microsoft-dotnet-sdk runtime version is invalid as v2",
-			rt:   affectedrangeTypes.RangeTypeMicrosoftDotNetSDK,
+			name: "microsoft-dotnet-core-sdk runtime version is invalid as v2",
+			rt:   affectedrangeTypes.RangeTypeMicrosoftDotNetCoreSDK,
 			args: args{
 				v1: "10.0.402",
 				v2: "10.0.13",

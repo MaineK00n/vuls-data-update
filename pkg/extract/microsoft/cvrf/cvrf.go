@@ -1805,7 +1805,7 @@ func buildDotNetSDKCriterion(productName, fixedBuild string) (*criterionTypes.Cr
 				Binary: &binaryTypes.Package{Name: productName},
 			},
 			Affected: &affectedTypes.Affected{
-				Type:  rangeTypes.RangeTypeMicrosoftDotNetSDK,
+				Type:  rangeTypes.RangeTypeMicrosoftDotNetCoreSDK,
 				Range: ranges,
 				Fixed: fixed,
 			},
@@ -1986,7 +1986,7 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 			if v.Prerelease != "" && !dotnetPrereleaseRE.MatchString(v.Prerelease) {
 				return rangeTypes.RangeTypeUnknown, errors.Errorf("unexpected .NET runtime prerelease. expected: %q, actual: %q", dotnetPrereleaseRE.String(), fixedBuild)
 			}
-			return rangeTypes.RangeTypeMicrosoftDotNetCore, nil
+			return rangeTypes.RangeTypeMicrosoftDotNetCoreRuntime, nil
 
 		// .NET runtime (2026-Oct names). An SDK feature band here (patch 100 or above, e.g.
 		// "10.0.402") would make every runtime fall below it; such a product is the SDK
@@ -2013,7 +2013,7 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 			if v.Patch >= 100 {
 				return rangeTypes.RangeTypeUnknown, errors.Errorf("unexpected .NET runtime version. expected: %q, actual: %q", "a patch below 100", fixedBuild)
 			}
-			return rangeTypes.RangeTypeMicrosoftDotNetCore, nil
+			return rangeTypes.RangeTypeMicrosoftDotNetCoreRuntime, nil
 
 		// Microsoft Edge (Chromium-based)
 		case "Microsoft Edge (Chromium-based)",

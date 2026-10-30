@@ -78,8 +78,8 @@ const (
 	RangeTypeMicrosoftDefenderMac                  RangeType = "microsoft-defender-mac"
 	RangeTypeMicrosoftDefenderSecurityIntelligence RangeType = "microsoft-defender-security-intelligence"
 	RangeTypeMicrosoftDefenderWindows              RangeType = "microsoft-defender-windows"
-	RangeTypeMicrosoftDotNetCore                   RangeType = "microsoft-dotnet-core"
-	RangeTypeMicrosoftDotNetSDK                    RangeType = "microsoft-dotnet-sdk"
+	RangeTypeMicrosoftDotNetCoreRuntime            RangeType = "microsoft-dotnet-core-runtime"
+	RangeTypeMicrosoftDotNetCoreSDK                RangeType = "microsoft-dotnet-core-sdk"
 	RangeTypeMicrosoftEdge                         RangeType = "microsoft-edge"
 	RangeTypeMicrosoftExchange                     RangeType = "microsoft-exchange"
 	RangeTypeMicrosoftOfficeMac                    RangeType = "microsoft-office-mac"
@@ -126,8 +126,8 @@ func RangeTypes() []RangeType {
 		RangeTypeMicrosoftDefenderMac,
 		RangeTypeMicrosoftDefenderSecurityIntelligence,
 		RangeTypeMicrosoftDefenderWindows,
-		RangeTypeMicrosoftDotNetCore,
-		RangeTypeMicrosoftDotNetSDK,
+		RangeTypeMicrosoftDotNetCoreRuntime,
+		RangeTypeMicrosoftDotNetCoreSDK,
 		RangeTypeMicrosoftEdge,
 		RangeTypeMicrosoftExchange,
 		RangeTypeMicrosoftOfficeMac,
@@ -459,7 +459,7 @@ func (t RangeType) CompareVersions(family ecosystemTypes.Ecosystem, v1, v2 strin
 			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
 		}
 		return va.Compare(vb), nil
-	case RangeTypeMicrosoftDotNetCore:
+	case RangeTypeMicrosoftDotNetCoreRuntime:
 		va, err := microsoftdotnetcoreruntime.NewVersion(v1)
 		if err != nil {
 			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
@@ -469,7 +469,7 @@ func (t RangeType) CompareVersions(family ecosystemTypes.Ecosystem, v1, v2 strin
 			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
 		}
 		return va.Compare(vb), nil
-	case RangeTypeMicrosoftDotNetSDK:
+	case RangeTypeMicrosoftDotNetCoreSDK:
 		va, err := microsoftdotnetcoresdk.NewVersion(v1)
 		if err != nil {
 			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
