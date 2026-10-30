@@ -1,0 +1,21 @@
+{
+	"kb_id": "4550922",
+	"url": "https://support.microsoft.com/help/4550922",
+	"products": [
+		"Microsoft .NET Framework 3.5 AND 4.7.2 on Windows 10 Version 1803 for 32-bit Systems",
+		"Microsoft .NET Framework 3.5 AND 4.7.2 on Windows 10 Version 1803 for ARM64-based Systems",
+		"Microsoft .NET Framework 3.5 AND 4.7.2 on Windows 10 Version 1803 for x64-based Systems",
+		"Microsoft .NET Framework 3.5 AND 4.7.2 on Windows Server, Version 1803 (Server Core installation)"
+	],
+	"superseded_by": [
+		{
+			"kb_id": "4556807"
+		}
+	],
+	"data_source": {
+		"id": "microsoft-cvrf",
+		"raws": [
+			"fixtures/2020-May/2020/CVE-2020-1108.json"
+		]
+	}
+}
