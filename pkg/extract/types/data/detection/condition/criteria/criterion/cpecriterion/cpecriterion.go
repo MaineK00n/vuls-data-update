@@ -433,22 +433,25 @@ func (c Criterion) Accept(query Query) (MatchQuality, []warningTypes.Warning, er
 	var ws []warningTypes.Warning
 	if c.CPEMatchesPacked != nil && hasWildcards(qWFN.GetString(common.AttributeVersion)) &&
 		overlapsOn(qWFN, cWFN, []string{common.AttributePart, common.AttributeVendor, common.AttributeProduct}) {
-		ms, err := c.CPEMatchesPacked.Unpack(c.CPE)
-		if err != nil {
+		switch ms, err := c.CPEMatchesPacked.Unpack(c.CPE); {
+		case err == nil:
+			for _, m := range ms {
+				mWFN, err := naming.UnbindFS(string(m))
+				if err != nil {
+					return MatchQualityUnknown, nil, errors.Wrapf(err, "unbind %q to WFN", string(m))
+				}
+				if quality = stronger(quality, acceptEntry(qWFN, mWFN)); quality == MatchQualityExact {
+					return quality, nil, nil
+				}
+			}
+		default:
 			ue, ok := stderrors.AsType[*UnsupportedPackedEncodingError](err)
 			if !ok {
 				return MatchQualityUnknown, nil, errors.Wrap(err, "unpack cpe matches")
 			}
+			// Fall through to the Range warning below: the query still
+			// skipped the Range, whatever became of the packed set.
 			ws = append(ws, ue.Warning())
-		}
-		for _, m := range ms {
-			mWFN, err := naming.UnbindFS(string(m))
-			if err != nil {
-				return MatchQualityUnknown, nil, errors.Wrapf(err, "unbind %q to WFN", string(m))
-			}
-			if quality = stronger(quality, acceptEntry(qWFN, mWFN)); quality == MatchQualityExact {
-				return quality, nil, nil
-			}
 		}
 	}
 
