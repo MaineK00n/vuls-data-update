@@ -935,6 +935,39 @@ func TestBuildFixedBuildCriterion(t *testing.T) {
 			},
 		},
 		{
+			name: ".NET SDK rc with build suffix covers every SDK of X.Y below it (2026-Oct)",
+			args: args{
+				cveID:         "CVE-2026-70197",
+				productName:   ".NET 11.0 installed on Windows",
+				rawFixedBuild: "11.0.100-rc.3.26522.148",
+			},
+			want: &criterionTypes.Criterion{
+				Type: criterionTypes.CriterionTypeVersion,
+				Version: &vcTypes.Criterion{
+					Vulnerable: true,
+					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
+					Package: packageTypes.Package{
+						Type:   packageTypes.PackageTypeBinary,
+						Binary: &binaryTypes.Package{Name: ".NET 11.0 installed on Windows"},
+					},
+					Affected: &affectedTypes.Affected{
+						Type:  affectedrangeTypes.RangeTypeMicrosoftDotNetSDK,
+						Range: []affectedrangeTypes.Range{{LessThan: "11.0.100-rc.3.26522.148"}},
+						Fixed: []string{"11.0.100-rc.3.26522.148"},
+					},
+				},
+			},
+		},
+		{
+			name: ".NET SDK prerelease tag skipped (CVE-2026-58649)",
+			args: args{
+				cveID:         "CVE-2026-58649",
+				productName:   ".NET 11.0 installed on Linux",
+				rawFixedBuild: "11.0 RC1",
+			},
+			want: nil,
+		},
+		{
 			name: ".NET SDK rc of another band fails",
 			args: args{
 				cveID:         "CVE-2099-0001",

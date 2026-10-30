@@ -1770,7 +1770,7 @@ func buildDotNetSDKCriterion(productName, fixedBuild string) (*criterionTypes.Cr
 		}
 		v, err := dotnetcoresdkversion.NewVersion(f)
 		if err != nil {
-			return nil, errors.Wrapf(err, "dotnetcoresdkversion.NewVersion %q", f)
+			return nil, errors.Wrap(err, "dotnetcoresdkversion.NewVersion")
 		}
 		if v.Prerelease != "" && !dotnetPrereleaseRE.MatchString(v.Prerelease) {
 			return nil, errors.Errorf("unexpected .NET SDK prerelease. expected: %q, actual: %q", dotnetPrereleaseRE.String(), f)

@@ -751,6 +751,15 @@ func TestRangeType_CompareVersions(t *testing.T) {
 			wantErr: true,
 		},
 		{
+			name: "microsoft-dotnet-sdk runtime version is invalid as v2",
+			rt:   affectedrangeTypes.RangeTypeMicrosoftDotNetSDK,
+			args: args{
+				v1: "10.0.402",
+				v2: "10.0.13",
+			},
+			wantErr: true,
+		},
+		{
 			name: "microsoft-edge v1 == v2",
 			rt:   affectedrangeTypes.RangeTypeMicrosoftEdge,
 			args: args{
