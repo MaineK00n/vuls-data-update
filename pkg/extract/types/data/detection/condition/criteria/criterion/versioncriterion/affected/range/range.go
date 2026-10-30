@@ -16,7 +16,8 @@ import (
 	microsoftdefendermac "github.com/MaineK00n/go-microsoft-version/defender/mac"
 	microsoftdefendersi "github.com/MaineK00n/go-microsoft-version/defender/securityintelligence"
 	microsoftdefenderwindows "github.com/MaineK00n/go-microsoft-version/defender/windows"
-	microsoftdotnetcore "github.com/MaineK00n/go-microsoft-version/dotnet/core"
+	microsoftdotnetcoreruntime "github.com/MaineK00n/go-microsoft-version/dotnet/core/runtime"
+	microsoftdotnetcoresdk "github.com/MaineK00n/go-microsoft-version/dotnet/core/sdk"
 	microsoftedge "github.com/MaineK00n/go-microsoft-version/edge"
 	microsoftexchange "github.com/MaineK00n/go-microsoft-version/exchange"
 	microsoftofficemac "github.com/MaineK00n/go-microsoft-version/office/mac"
@@ -77,21 +78,26 @@ const (
 	RangeTypeMicrosoftDefenderMac                  RangeType = "microsoft-defender-mac"
 	RangeTypeMicrosoftDefenderSecurityIntelligence RangeType = "microsoft-defender-security-intelligence"
 	RangeTypeMicrosoftDefenderWindows              RangeType = "microsoft-defender-windows"
-	RangeTypeMicrosoftDotNetCore                   RangeType = "microsoft-dotnet-core"
-	RangeTypeMicrosoftEdge                         RangeType = "microsoft-edge"
-	RangeTypeMicrosoftExchange                     RangeType = "microsoft-exchange"
-	RangeTypeMicrosoftOfficeMac                    RangeType = "microsoft-office-mac"
-	RangeTypeMicrosoftOfficeWindows                RangeType = "microsoft-office-windows"
-	RangeTypeMicrosoftSharePoint                   RangeType = "microsoft-sharepoint"
-	RangeTypeMicrosoftSQLServer                    RangeType = "microsoft-sqlserver"
-	RangeTypeMicrosoftTeamsAndroid                 RangeType = "microsoft-teams-android"
-	RangeTypeMicrosoftTeamsClient                  RangeType = "microsoft-teams-client"
-	RangeTypeMicrosoftTeamsDesktop                 RangeType = "microsoft-teams-desktop"
-	RangeTypeMicrosoftTeamsIOS                     RangeType = "microsoft-teams-ios"
-	RangeTypeMicrosoftTeamsMac                     RangeType = "microsoft-teams-mac"
-	RangeTypeMicrosoftVisualStudio                 RangeType = "microsoft-visualstudio"
-	RangeTypeMicrosoftVSCode                       RangeType = "microsoft-vscode"
-	RangeTypeMicrosoftWindows                      RangeType = "microsoft-windows"
+	// Deprecated: RangeTypeMicrosoftDotNetCore is the .NET runtime type of data extracted
+	// before the runtime and SDK types split. It is kept so that such data still compares
+	// (see RangeTypes); new data uses RangeTypeMicrosoftDotNetCoreRuntime.
+	RangeTypeMicrosoftDotNetCore        RangeType = "microsoft-dotnet-core"
+	RangeTypeMicrosoftDotNetCoreRuntime RangeType = "microsoft-dotnet-core-runtime"
+	RangeTypeMicrosoftDotNetCoreSDK     RangeType = "microsoft-dotnet-core-sdk"
+	RangeTypeMicrosoftEdge              RangeType = "microsoft-edge"
+	RangeTypeMicrosoftExchange          RangeType = "microsoft-exchange"
+	RangeTypeMicrosoftOfficeMac         RangeType = "microsoft-office-mac"
+	RangeTypeMicrosoftOfficeWindows     RangeType = "microsoft-office-windows"
+	RangeTypeMicrosoftSharePoint        RangeType = "microsoft-sharepoint"
+	RangeTypeMicrosoftSQLServer         RangeType = "microsoft-sqlserver"
+	RangeTypeMicrosoftTeamsAndroid      RangeType = "microsoft-teams-android"
+	RangeTypeMicrosoftTeamsClient       RangeType = "microsoft-teams-client"
+	RangeTypeMicrosoftTeamsDesktop      RangeType = "microsoft-teams-desktop"
+	RangeTypeMicrosoftTeamsIOS          RangeType = "microsoft-teams-ios"
+	RangeTypeMicrosoftTeamsMac          RangeType = "microsoft-teams-mac"
+	RangeTypeMicrosoftVisualStudio      RangeType = "microsoft-visualstudio"
+	RangeTypeMicrosoftVSCode            RangeType = "microsoft-vscode"
+	RangeTypeMicrosoftWindows           RangeType = "microsoft-windows"
 
 	RangeTypeUnknown RangeType = "unknown"
 )
@@ -125,6 +131,8 @@ func RangeTypes() []RangeType {
 		RangeTypeMicrosoftDefenderSecurityIntelligence,
 		RangeTypeMicrosoftDefenderWindows,
 		RangeTypeMicrosoftDotNetCore,
+		RangeTypeMicrosoftDotNetCoreRuntime,
+		RangeTypeMicrosoftDotNetCoreSDK,
 		RangeTypeMicrosoftEdge,
 		RangeTypeMicrosoftExchange,
 		RangeTypeMicrosoftOfficeMac,
@@ -456,12 +464,22 @@ func (t RangeType) CompareVersions(family ecosystemTypes.Ecosystem, v1, v2 strin
 			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
 		}
 		return va.Compare(vb), nil
-	case RangeTypeMicrosoftDotNetCore:
-		va, err := microsoftdotnetcore.NewVersion(v1)
+	case RangeTypeMicrosoftDotNetCore, RangeTypeMicrosoftDotNetCoreRuntime:
+		va, err := microsoftdotnetcoreruntime.NewVersion(v1)
 		if err != nil {
 			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
 		}
-		vb, err := microsoftdotnetcore.NewVersion(v2)
+		vb, err := microsoftdotnetcoreruntime.NewVersion(v2)
+		if err != nil {
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
+		}
+		return va.Compare(vb), nil
+	case RangeTypeMicrosoftDotNetCoreSDK:
+		va, err := microsoftdotnetcoresdk.NewVersion(v1)
+		if err != nil {
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
+		}
+		vb, err := microsoftdotnetcoresdk.NewVersion(v2)
 		if err != nil {
 			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
 		}
