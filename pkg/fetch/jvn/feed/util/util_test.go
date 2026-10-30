@@ -94,8 +94,10 @@ func TestCheckRetry(t *testing.T) {
 			ts := httptest.NewTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				http.ServeContent(w, r, "test.txt", time.Now(), bytes.NewReader([]byte("12345")))
 			}))
-			// The fake RoundTripper below answers the request, so the server
-			// only has to provide a reachable address.
+			// Once its errRespCount error responses are spent, the fake
+			// RoundTripper below hands the request to http.DefaultTransport,
+			// which reaches the server only on loopback, not on the in-memory
+			// network that ts.Client() uses.
 			ts.Start()
 
 			c := utilhttp.NewClient(utilhttp.WithClientRetryMax(tt.retry), utilhttp.WithClientRetryWaitMin(10*time.Millisecond), utilhttp.WithClientRetryWaitMax(20*time.Millisecond), utilhttp.WithClientCheckRetry(jvnutil.CheckRetry), utilhttp.WithClientHTTPClient(&http.Client{Transport: &roundTripper{errRespCount: tt.errRespCount, errResponse: tt.errResponse}}))
