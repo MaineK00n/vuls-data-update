@@ -122,7 +122,10 @@ type options struct {
 	retry       int
 	concurrency int
 	wait        time.Duration
-	nvdWait     time.Duration
+
+	// nvdWait is only ever set by WithNVDWait, which lives in export_test.go
+	// and is therefore absent from the production build.
+	nvdWait time.Duration
 
 	// resultsPerPage is only ever set by WithResultsPerPage, which lives in export_test.go
 	// and is therefore absent from the production build.
@@ -155,19 +158,6 @@ func (w waitOption) apply(opts *options) {
 
 func WithWait(wait time.Duration) Option {
 	return waitOption(wait)
-}
-
-type nvdWaitOption time.Duration
-
-func (w nvdWaitOption) apply(opts *options) {
-	opts.nvdWait = time.Duration(w)
-}
-
-// WithNVDWait sets the gap between NVD requests, and the backoff before
-// retrying one. It is separate from WithWait because the two pace different
-// hosts with different limits; see defaultNVDWait.
-func WithNVDWait(wait time.Duration) Option {
-	return nvdWaitOption(wait)
 }
 
 type dirOption string
