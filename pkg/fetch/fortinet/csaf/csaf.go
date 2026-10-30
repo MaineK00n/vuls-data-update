@@ -37,30 +37,14 @@ type options struct {
 	retry       int
 	concurrency int
 	wait        time.Duration
+
+	// httpClient is only ever set by WithHTTPClient, which lives in
+	// export_test.go and is therefore absent from the production build.
+	httpClient *http.Client
 }
 
 type Option interface {
 	apply(*options)
-}
-
-type csafURLOption string
-
-func (u csafURLOption) apply(opts *options) {
-	opts.csafURL = string(u)
-}
-
-func WithCSAFURL(url string) Option {
-	return csafURLOption(url)
-}
-
-type cvrfURLOption string
-
-func (u cvrfURLOption) apply(opts *options) {
-	opts.cvrfURL = string(u)
-}
-
-func WithCVRFURL(url string) Option {
-	return cvrfURLOption(url)
 }
 
 type dirOption string
@@ -158,7 +142,7 @@ func Fetch(args []string, opts ...Option) error {
 func (opts options) fetch(given map[string]string) error {
 	slog.Info("Fetch Fortinet CSAF")
 
-	client := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry))
+	client := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry), utilhttp.WithClientHTTPClient(opts.httpClient))
 
 	bar := progressbar.Default(int64(len(given)))
 	g, _ := errgroup.WithContext(context.TODO())

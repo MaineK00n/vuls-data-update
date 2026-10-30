@@ -3,7 +3,7 @@ package cvrf_test
 import (
 	"net/http"
 	"net/http/httptest"
-	"net/url"
+	"path/filepath"
 	"strings"
 	"testing"
 	"time"
@@ -59,18 +59,16 @@ func TestFetch(t *testing.T) {
 			// The fixtures mirror the real API layout, so no response rewriting
 			// is needed: <baseURL>/updates and <baseURL>/cvrf/<YYYY-Mon> are
 			// served straight off disk, and an absent month yields a 404.
-			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				http.ServeFile(w, r, strings.TrimPrefix(r.URL.Path, "/"))
+			ts := httptest.NewTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				rel, ok := strings.CutPrefix(r.URL.Path, "/cvrf/v3.0/")
+				if !ok {
+					http.NotFound(w, r)
+					return
+				}
+				http.ServeFile(w, r, filepath.Join(tt.args.baseURL, rel))
 			}))
-			defer ts.Close()
-
-			base, err := url.JoinPath(ts.URL, tt.args.baseURL)
-			if err != nil {
-				t.Error("unexpected error:", err)
-			}
-
 			dir := t.TempDir()
-			err = cvrf.Fetch(cvrf.WithBaseURL(base), cvrf.WithDir(dir), cvrf.WithRetry(0), cvrf.WithSupplementMonths(tt.args.supplementMonths))
+			err := cvrf.Fetch(cvrf.WithHTTPClient(ts.Client()), cvrf.WithDir(dir), cvrf.WithRetry(0), cvrf.WithSupplementMonths(tt.args.supplementMonths))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)

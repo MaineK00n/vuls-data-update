@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
-	"net/url"
 	"path"
 	"path/filepath"
 	"strings"
@@ -35,7 +34,7 @@ func TestFetch(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			ts := httptest.NewTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				switch {
 				case strings.HasSuffix(r.URL.Path, "vulncheck-kev"):
 					if s := r.Header.Get("Authorization"); s != "Bearer vulncheck_token" {
@@ -95,15 +94,8 @@ func TestFetch(t *testing.T) {
 					http.ServeFile(w, r, filepath.Join("testdata", "fixtures", tt.name, path.Base(r.URL.Path)))
 				}
 			}))
-			defer ts.Close()
-
-			u, err := url.JoinPath(ts.URL, "vulncheck-kev")
-			if err != nil {
-				t.Error("unexpected error:", err)
-			}
-
 			dir := t.TempDir()
-			err = kev.Fetch(tt.args.apiToken, kev.WithBaseURL(u), kev.WithDir(dir), kev.WithRetry(0))
+			err := kev.Fetch(tt.args.apiToken, kev.WithHTTPClient(ts.Client()), kev.WithDir(dir), kev.WithRetry(0))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)
