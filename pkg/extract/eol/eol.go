@@ -20,11 +20,11 @@ import (
 )
 
 type options struct {
+	dir string
 
 	// eols is only ever set by WithEOL, which lives in export_test.go
 	// and is therefore absent from the production build.
 	eols map[string]map[string]map[string]eolTypes.EOL
-	dir  string
 }
 
 type Option interface {
