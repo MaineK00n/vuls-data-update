@@ -706,6 +706,15 @@ func TestRangeType_CompareVersions(t *testing.T) {
 			want: -1,
 		},
 		{
+			name: "microsoft-dotnet-core (deprecated) still compares as the runtime",
+			rt:   affectedrangeTypes.RangeTypeMicrosoftDotNetCore,
+			args: args{
+				v1: "8.0.30",
+				v2: "8.0.31",
+			},
+			want: -1,
+		},
+		{
 			name: "microsoft-dotnet-core-sdk v1 == v2",
 			rt:   affectedrangeTypes.RangeTypeMicrosoftDotNetCoreSDK,
 			args: args{

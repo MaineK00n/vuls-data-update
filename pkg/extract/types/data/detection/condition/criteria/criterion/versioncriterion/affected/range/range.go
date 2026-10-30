@@ -78,22 +78,26 @@ const (
 	RangeTypeMicrosoftDefenderMac                  RangeType = "microsoft-defender-mac"
 	RangeTypeMicrosoftDefenderSecurityIntelligence RangeType = "microsoft-defender-security-intelligence"
 	RangeTypeMicrosoftDefenderWindows              RangeType = "microsoft-defender-windows"
-	RangeTypeMicrosoftDotNetCoreRuntime            RangeType = "microsoft-dotnet-core-runtime"
-	RangeTypeMicrosoftDotNetCoreSDK                RangeType = "microsoft-dotnet-core-sdk"
-	RangeTypeMicrosoftEdge                         RangeType = "microsoft-edge"
-	RangeTypeMicrosoftExchange                     RangeType = "microsoft-exchange"
-	RangeTypeMicrosoftOfficeMac                    RangeType = "microsoft-office-mac"
-	RangeTypeMicrosoftOfficeWindows                RangeType = "microsoft-office-windows"
-	RangeTypeMicrosoftSharePoint                   RangeType = "microsoft-sharepoint"
-	RangeTypeMicrosoftSQLServer                    RangeType = "microsoft-sqlserver"
-	RangeTypeMicrosoftTeamsAndroid                 RangeType = "microsoft-teams-android"
-	RangeTypeMicrosoftTeamsClient                  RangeType = "microsoft-teams-client"
-	RangeTypeMicrosoftTeamsDesktop                 RangeType = "microsoft-teams-desktop"
-	RangeTypeMicrosoftTeamsIOS                     RangeType = "microsoft-teams-ios"
-	RangeTypeMicrosoftTeamsMac                     RangeType = "microsoft-teams-mac"
-	RangeTypeMicrosoftVisualStudio                 RangeType = "microsoft-visualstudio"
-	RangeTypeMicrosoftVSCode                       RangeType = "microsoft-vscode"
-	RangeTypeMicrosoftWindows                      RangeType = "microsoft-windows"
+	// Deprecated: RangeTypeMicrosoftDotNetCore is the .NET runtime type of data extracted
+	// before the runtime and SDK types split. It is kept so that such data still compares
+	// (see RangeTypes); new data uses RangeTypeMicrosoftDotNetCoreRuntime.
+	RangeTypeMicrosoftDotNetCore        RangeType = "microsoft-dotnet-core"
+	RangeTypeMicrosoftDotNetCoreRuntime RangeType = "microsoft-dotnet-core-runtime"
+	RangeTypeMicrosoftDotNetCoreSDK     RangeType = "microsoft-dotnet-core-sdk"
+	RangeTypeMicrosoftEdge              RangeType = "microsoft-edge"
+	RangeTypeMicrosoftExchange          RangeType = "microsoft-exchange"
+	RangeTypeMicrosoftOfficeMac         RangeType = "microsoft-office-mac"
+	RangeTypeMicrosoftOfficeWindows     RangeType = "microsoft-office-windows"
+	RangeTypeMicrosoftSharePoint        RangeType = "microsoft-sharepoint"
+	RangeTypeMicrosoftSQLServer         RangeType = "microsoft-sqlserver"
+	RangeTypeMicrosoftTeamsAndroid      RangeType = "microsoft-teams-android"
+	RangeTypeMicrosoftTeamsClient       RangeType = "microsoft-teams-client"
+	RangeTypeMicrosoftTeamsDesktop      RangeType = "microsoft-teams-desktop"
+	RangeTypeMicrosoftTeamsIOS          RangeType = "microsoft-teams-ios"
+	RangeTypeMicrosoftTeamsMac          RangeType = "microsoft-teams-mac"
+	RangeTypeMicrosoftVisualStudio      RangeType = "microsoft-visualstudio"
+	RangeTypeMicrosoftVSCode            RangeType = "microsoft-vscode"
+	RangeTypeMicrosoftWindows           RangeType = "microsoft-windows"
 
 	RangeTypeUnknown RangeType = "unknown"
 )
@@ -126,6 +130,7 @@ func RangeTypes() []RangeType {
 		RangeTypeMicrosoftDefenderMac,
 		RangeTypeMicrosoftDefenderSecurityIntelligence,
 		RangeTypeMicrosoftDefenderWindows,
+		RangeTypeMicrosoftDotNetCore,
 		RangeTypeMicrosoftDotNetCoreRuntime,
 		RangeTypeMicrosoftDotNetCoreSDK,
 		RangeTypeMicrosoftEdge,
@@ -459,7 +464,7 @@ func (t RangeType) CompareVersions(family ecosystemTypes.Ecosystem, v1, v2 strin
 			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
 		}
 		return va.Compare(vb), nil
-	case RangeTypeMicrosoftDotNetCoreRuntime:
+	case RangeTypeMicrosoftDotNetCore, RangeTypeMicrosoftDotNetCoreRuntime:
 		va, err := microsoftdotnetcoreruntime.NewVersion(v1)
 		if err != nil {
 			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
