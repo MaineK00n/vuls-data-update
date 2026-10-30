@@ -1,0 +1,23 @@
+{
+	"kb_id": "4537572",
+	"url": "https://support.microsoft.com/help/4537572",
+	"products": [
+		"Microsoft .NET Framework 3.5 AND 4.8 on Windows 10 Version 1903 for 32-bit Systems",
+		"Microsoft .NET Framework 3.5 AND 4.8 on Windows 10 Version 1903 for x64-based Systems",
+		"Microsoft .NET Framework 3.5 AND 4.8 on Windows 10 Version 1909 for 32-bit Systems",
+		"Microsoft .NET Framework 3.5 AND 4.8 on Windows 10 Version 1909 for x64-based Systems",
+		"Microsoft .NET Framework 3.5 AND 4.8 on Windows Server, Version 1903 (Server Core installation)",
+		"Microsoft .NET Framework 3.5 AND 4.8 on Windows Server, Version 1909 (Server Core installation)"
+	],
+	"superseded_by": [
+		{
+			"kb_id": "4552931"
+		}
+	],
+	"data_source": {
+		"id": "microsoft-cvrf",
+		"raws": [
+			"fixtures/2020-May/2020/CVE-2020-1108.json"
+		]
+	}
+}

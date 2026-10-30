@@ -1522,6 +1522,21 @@ func TestFixedBuildOverrides(t *testing.T) {
 			key:  [3]string{"CVE-2026-62727", "Windows 11 Version 24H2 for ARM64-based Systems", "10.0.26200.9106"},
 			want: "10.0.26100.9106",
 		},
+		{
+			name: ".NET Core 2.1 CVE-2020-1108, re-released in 2.1.19 (releases.json cve-list, FixedBuild empty upstream)",
+			key:  [3]string{"CVE-2020-1108", ".NET Core 2.1", ""},
+			want: "2.1.19",
+		},
+		{
+			name: "Visual Studio 2017 15.9 CVE-2018-8599 (15.9 release notes, FixedBuild empty upstream)",
+			key:  [3]string{"CVE-2018-8599", "Microsoft Visual Studio 2017 Version 15.9", ""},
+			want: "15.9.4",
+		},
+		{
+			name: "Visual Studio 2019 16.6 CVE-2020-1147 (16.6 release notes spell it CVE-CVE-2020-1147)",
+			key:  [3]string{"CVE-2020-1147", "Microsoft Visual Studio 2019 Version 16.6", ""},
+			want: "16.6.4",
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
