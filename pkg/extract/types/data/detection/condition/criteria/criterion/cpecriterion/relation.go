@@ -1,9 +1,7 @@
 package cpecriterion
 
 import (
-	"strings"
-
-	"github.com/knqyf263/go-cpe/common"
+	"bytes"
 )
 
 // relation is the set relation between two WFN attribute values: the
@@ -37,71 +35,57 @@ const (
 	relationOverlap
 )
 
-// relateValues returns the relation of a to b, two WFN attribute values as
-// WellFormedName.Get returns them: a string (concrete or pattern) or a
-// LogicalValue. NA is the only value that is not a set of strings: it equals
-// NA, is within ANY, and is disjoint from everything else (Table 6-2).
-func relateValues(a, b any) relation {
-	la, aLogical := a.(common.LogicalValue)
-	lb, bLogical := b.(common.LogicalValue)
+// overlaps reports whether two WFN attribute values, each a string (concrete
+// or pattern) or a logical value, are related other than ≠ in Table 6-2:
+// whether the sets they denote intersect. NA is the only value that is not
+// a set of strings: it equals NA, is within ANY, and is disjoint from
+// everything else. ANY, the pattern "*", meets every set, and two concrete
+// values meet only when equal; the remaining cases are related as patterns.
+func overlaps(a, b *wfnValue) bool {
 	switch {
-	case aLogical && la.IsNA():
-		switch {
-		case bLogical && lb.IsNA():
-			return relationEqual
-		case bLogical && lb.IsANY():
-			return relationSubset
-		default:
-			return relationDisjoint
-		}
-	case bLogical && lb.IsNA():
-		if aLogical && la.IsANY() {
-			return relationSuperset
-		}
-		return relationDisjoint
+	case a.any || b.any:
+		return true
+	case a.na || b.na:
+		return a.na && b.na
+	case a.p.lead == 0 && a.p.trail == 0:
+		return contains(&b.p, a.p.core)
+	case b.p.lead == 0 && b.p.trail == 0:
+		return contains(&a.p, b.p.core)
 	default:
-		return relatePatterns(patternString(a), patternString(b))
+		return relateParsed(a.p, b.p) != relationDisjoint
 	}
 }
 
-// isNA and isANY report whether an attribute value, as WellFormedName.Get
-// returns it, is the logical value NA or ANY. GetString renders those as "NA"
-// and "ANY" too, which a string value may legitimately spell, so the logical
-// values are told apart by type, never by text.
-func isNA(v any) bool {
-	lv, ok := v.(common.LogicalValue)
-	return ok && lv.IsNA()
-}
-
-func isANY(v any) bool {
-	lv, ok := v.(common.LogicalValue)
-	return ok && lv.IsANY()
-}
-
-// patternString renders a non-NA attribute value as a pattern: ANY is "*",
-// a string is itself.
-func patternString(v any) string {
-	if lv, ok := v.(common.LogicalValue); ok && lv.IsANY() {
-		return "*"
+// contains reports whether the concrete value s, a core, is in the set p
+// denotes: whether the pattern of s alone is a subset of p, which for a
+// singleton is also whether the two intersect. The common shapes are
+// answered directly; the rest by pattern.subsetOf.
+func contains(p *pattern, s []byte) bool {
+	switch {
+	case p.lead == 0 && p.trail == 0:
+		return bytes.Equal(s, p.core)
+	case len(p.core) == 0:
+		return pattern{core: s}.subsetOf(*p)
+	case p.lead == 0 && p.trail == unbounded:
+		return bytes.HasPrefix(s, p.core)
+	case p.lead == unbounded && p.trail == 0:
+		return bytes.HasSuffix(s, p.core)
+	case p.lead == unbounded && p.trail == unbounded:
+		return bytes.Contains(s, p.core)
+	default:
+		return pattern{core: s}.subsetOf(*p)
 	}
-	return v.(string)
-}
-
-// hasWildcards reports whether a string attribute value carries unquoted wild
-// cards, by the same quoting rule parsePattern applies: a wild card is quoted
-// by an odd number of preceding backslashes, so "a\\*" (an escaped
-// backslash, then "*") is a pattern. go-cpe's common.ContainsWildcards looks
-// only at the character before the wild card and would call it concrete.
-func hasWildcards(s string) bool {
-	p := parsePattern(s)
-	return p.lead != 0 || p.trail != 0
 }
 
 // relatePatterns returns the relation of x to y, two WFN attribute values in
 // escaped string form, either of which may carry unquoted wild cards.
 // Comparison is case-insensitive (7696 §6.2).
 func relatePatterns(x, y string) relation {
-	a, b := parsePattern(x), parsePattern(y)
+	return relateParsed(parsePattern([]byte(x)), parsePattern([]byte(y)))
+}
+
+// relateParsed is relatePatterns on parsed patterns.
+func relateParsed(a, b pattern) relation {
 	ab, ba := a.subsetOf(b), b.subsetOf(a)
 	switch {
 	case ab && ba:
@@ -121,16 +105,20 @@ func relatePatterns(x, y string) relation {
 const unbounded = -1
 
 // pattern is the (a, core, b) form of a wild-card attribute value: at most
-// lead characters, then core, then at most trail characters.
+// lead characters, then core, then at most trail characters. The core may
+// share memory with the value it was parsed from.
 type pattern struct {
 	lead, trail int
-	core        string // unescaped, lower-cased
+	core        []byte // unescaped, lower-cased
 }
 
 // parsePattern splits a WFN attribute value into its leading wild cards, its
 // literal core and its trailing wild cards. A quoted "\*" or "\?" is literal
-// and belongs to the core.
-func parsePattern(s string) pattern {
+// and belongs to the core: a wild card is quoted by an odd number of
+// preceding backslashes, so "a\\*" (an escaped backslash, then "*") is a
+// pattern. go-cpe's common.ContainsWildcards looks only at the character
+// before the wild card and would call it concrete.
+func parsePattern(s []byte) pattern {
 	var p pattern
 	start, end := 0, len(s)
 	if start < end && s[start] == '*' {
@@ -151,13 +139,24 @@ func parsePattern(s string) pattern {
 			end--
 		}
 	}
-	p.core = strings.ToLower(unescapeWFN(s[start:end]))
+	p.core = lowered(unescapeWFN(s[start:end]))
 	return p
+}
+
+// lowered returns s lower-cased: s itself when that changes nothing (ASCII
+// with no upper-case letter), otherwise a copy.
+func lowered(s []byte) []byte {
+	for _, c := range s {
+		if 'A' <= c && c <= 'Z' || c >= 0x80 {
+			return bytes.ToLower(s)
+		}
+	}
+	return s
 }
 
 // unquotedAt reports whether the character at s[i] is unquoted: preceded by
 // an even number of backslashes.
-func unquotedAt(s string, i int) bool {
+func unquotedAt(s []byte, i int) bool {
 	n := 0
 	for j := i - 1; j >= 0 && s[j] == '\\'; j-- {
 		n++
@@ -191,7 +190,7 @@ func plus(n, k int) int {
 // still fit under b's bounds. Conversely such an i matches every string of a.
 // When b.core is empty, b is every string of length at most b.lead+b.trail.
 func (a pattern) subsetOf(b pattern) bool {
-	if b.core == "" {
+	if len(b.core) == 0 {
 		if b.lead == unbounded || b.trail == unbounded {
 			return true
 		}
@@ -201,7 +200,7 @@ func (a pattern) subsetOf(b pattern) bool {
 		return a.lead+len(a.core)+a.trail <= b.lead+b.trail
 	}
 	for i := 0; i+len(b.core) <= len(a.core); i++ {
-		if a.core[i:i+len(b.core)] != b.core {
+		if !bytes.Equal(a.core[i:i+len(b.core)], b.core) {
 			continue
 		}
 		if within(plus(a.lead, i), b.lead) && within(plus(a.trail, len(a.core)-i-len(b.core)), b.trail) {
@@ -222,7 +221,7 @@ func (a pattern) subsetOf(b pattern) bool {
 func (a pattern) intersects(b pattern) bool {
 	for d := -len(b.core); d <= len(a.core); d++ {
 		lo, hi := max(0, d), min(len(a.core), d+len(b.core))
-		if lo < hi && a.core[lo:hi] != b.core[lo-d:hi-d] {
+		if lo < hi && !bytes.Equal(a.core[lo:hi], b.core[lo-d:hi-d]) {
 			continue
 		}
 		pa := max(0, -d)

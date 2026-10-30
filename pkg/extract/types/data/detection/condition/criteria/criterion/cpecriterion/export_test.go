@@ -29,8 +29,8 @@ type Pattern struct {
 // ParsePattern wraps parsePattern, returning the parsed form as an exported
 // Pattern.
 func ParsePattern(s string) Pattern {
-	p := parsePattern(s)
-	return Pattern{Lead: p.lead, Trail: p.trail, Core: p.core}
+	p := parsePattern([]byte(s))
+	return Pattern{Lead: p.lead, Trail: p.trail, Core: string(p.core)}
 }
 
 // RelatePatterns re-exports relatePatterns.

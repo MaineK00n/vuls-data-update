@@ -2,14 +2,11 @@ package cpecriterion
 
 import (
 	"cmp"
-	stderrors "errors"
 	"fmt"
 	"regexp"
 	"slices"
 	"strings"
 
-	"github.com/knqyf263/go-cpe/common"
-	"github.com/knqyf263/go-cpe/naming"
 	"github.com/pkg/errors"
 
 	rangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/cpecriterion/range"
@@ -160,24 +157,30 @@ type Query struct {
 // CPEMatches entry) WFNs match under CPE name matching on every attribute but
 // the version, the relation table on Accept: each attribute's sets
 // intersect, so the CPEs can refer to the same product. Each attribute is
-// related by relateValues, which implements Table 6-2 and resolves its
+// related by overlaps, which implements Table 6-2 and resolves its
 // undefined cells (a pattern on either side) as the relation of the sets the
 // patterns denote; go-cpe's matching package is not used, as it evaluates
 // wild cards on the source side only and reports a target-side pattern as
 // UNDEFINED. The version is related by the caller, which also owns the
 // Vuls-specific rules for it (Range, NA).
-func overlapsExceptVersion(q, c common.WellFormedName) bool {
-	return overlapsOn(q, c, []string{
-		common.AttributePart, common.AttributeVendor, common.AttributeProduct,
-		common.AttributeUpdate, common.AttributeEdition, common.AttributeLanguage, common.AttributeSwEdition,
-		common.AttributeTargetSw, common.AttributeTargetHw, common.AttributeOther,
-	})
+func overlapsExceptVersion(q, c *wfn) bool {
+	return overlapsOn(q, c, attrsExceptVersion)
 }
 
+// Attribute sets overlapsOn is asked about: every attribute but the version;
+// those after the version, for a packed entry, whose part, vendor and
+// product are the criterion's and already related to the query; and those
+// three.
+var (
+	attrsExceptVersion = []int{attrPart, attrVendor, attrProduct, attrUpdate, attrEdition, attrLanguage, attrSwEdition, attrTargetSw, attrTargetHw, attrOther}
+	attrsAfterVersion  = []int{attrUpdate, attrEdition, attrLanguage, attrSwEdition, attrTargetSw, attrTargetHw, attrOther}
+	attrsPVP           = []int{attrPart, attrVendor, attrProduct}
+)
+
 // overlapsOn reports whether the sets of q and c intersect on each of attrs.
-func overlapsOn(q, c common.WellFormedName, attrs []string) bool {
+func overlapsOn(q, c *wfn, attrs []int) bool {
 	for _, attr := range attrs {
-		if relateValues(q.Get(attr), c.Get(attr)) == relationDisjoint {
+		if !overlaps(&q[attr], &c[attr]) {
 			return false
 		}
 	}
@@ -291,7 +294,7 @@ func stronger(a, b MatchQuality) MatchQuality {
 //	i (concrete)    │  ⊂  │ ≠  │   = or ≠     │ undefined
 //	m (pattern)     │  ⊂  │ ≠  │   ⊃ or ≠     │ undefined
 //
-// Two CPEs overlap when no attribute compares ≠. relateValues implements the
+// Two CPEs overlap when no attribute compares ≠. overlaps implements the
 // table and resolves its undefined cells: the spec's grammar (wild cards only
 // at the ends of a value) makes every value a set of strings — a concrete
 // value a singleton, ANY every string, a pattern the strings it denotes — so
@@ -388,19 +391,19 @@ func stronger(a, b MatchQuality) MatchQuality {
 //     ignores narrowing; an NA query is VU by rule 2. The entries are tried
 //     in every case.
 func (c Criterion) Accept(query Query) (MatchQuality, []warningTypes.Warning, error) {
-	qWFN, err := naming.UnbindFS(query.CPE)
+	qWFN, err := unbindFS(query.CPE)
 	if err != nil {
 		return MatchQualityUnknown, nil, errors.Wrapf(err, "unbind %q to WFN", query.CPE)
 	}
 
-	cWFN, err := naming.UnbindFS(string(c.CPE))
+	cWFN, err := unbindFS(string(c.CPE))
 	if err != nil {
 		return MatchQualityUnknown, nil, errors.Wrapf(err, "unbind %q to WFN", string(c.CPE))
 	}
 
 	// Exact is the strongest quality: once the main CPE or an entry reaches
 	// it there is nothing left to evaluate, and nothing to warn about.
-	quality, rangeSkipped, err := c.acceptMain(qWFN, cWFN)
+	quality, rangeSkipped, err := c.acceptMain(&qWFN, &cWFN)
 	if err != nil {
 		return MatchQualityUnknown, nil, errors.Wrap(err, "accept main cpe")
 	}
@@ -418,11 +421,11 @@ func (c Criterion) Accept(query Query) (MatchQuality, []warningTypes.Warning, er
 	}
 
 	for _, m := range c.CPEMatches {
-		mWFN, err := naming.UnbindFS(string(m))
+		mWFN, err := unbindFS(string(m))
 		if err != nil {
 			return MatchQualityUnknown, nil, errors.Wrapf(err, "unbind %q to WFN", string(m))
 		}
-		if quality = stronger(quality, acceptEntry(qWFN, mWFN)); quality == MatchQualityExact {
+		if quality = stronger(quality, acceptEntry(&qWFN, &mWFN)); quality == MatchQualityExact {
 			return quality, nil, nil
 		}
 	}
@@ -435,26 +438,38 @@ func (c Criterion) Accept(query Query) (MatchQuality, []warningTypes.Warning, er
 	// parse), so an overlapping one is Exact. Every packed entry shares the
 	// criterion's part, vendor and product byte for byte (Packable), so a
 	// query disjoint from the criterion there can match none of them and the
-	// set is not decoded; the other attributes may vary between entries. An
-	// encoding this build does not know is recorded as a warning and the
-	// packed entries are skipped, keeping what the main CPE and CPEMatches
-	// gave; malformed data under a known encoding is an error.
-	if c.CPEMatchesPacked != nil && hasWildcards(qWFN.GetString(common.AttributeVersion)) &&
-		overlapsOn(qWFN, cWFN, []string{common.AttributePart, common.AttributeVendor, common.AttributeProduct}) {
-		ms, err := c.CPEMatchesPacked.Unpack(c.CPE)
-		if err != nil {
-			ue, ok := stderrors.AsType[*UnsupportedPackedEncodingError](err)
-			if !ok {
-				return MatchQualityUnknown, nil, errors.Wrap(err, "unpack cpe matches")
-			}
+	// set is not decoded, and an entry is related to the query on its other
+	// attributes only, which may vary between entries. The entries are
+	// decoded one at a time, straight into a WFN, and decoding stops at the
+	// first Exact one. An encoding this build does not know is recorded as a
+	// warning and the packed entries are skipped, keeping what the main CPE
+	// and CPEMatches gave; malformed data under a known encoding is an error
+	// once decoding reaches it.
+	if c.CPEMatchesPacked != nil && qWFN[attrVersion].hasWildcards() && overlapsOn(&qWFN, &cWFN, attrsPVP) {
+		if c.CPEMatchesPacked.Encoding != PackedEncodingFC {
+			ue := &UnsupportedPackedEncodingError{Encoding: c.CPEMatchesPacked.Encoding}
 			return quality, append(ws, ue.Warning()), nil
 		}
-		for _, m := range ms {
-			mWFN, err := naming.UnbindFS(string(m))
+		prefix, err := pvpPrefix(string(c.CPE))
+		if err != nil {
+			return MatchQualityUnknown, nil, errors.Wrapf(err, "pvp prefix of %q", string(c.CPE))
+		}
+		// A query with ANY on every attribute after the version, as a
+		// scanner's usually is, overlaps every entry there, so only the
+		// version is left to relate.
+		attrs := attrsAfterVersion
+		if allANY(&qWFN, attrs) {
+			attrs = nil
+		}
+		mWFN := packedWFN(&cWFN)
+		for e, err := range c.CPEMatchesPacked.reduced() {
 			if err != nil {
-				return MatchQualityUnknown, nil, errors.Wrapf(err, "unbind %q to WFN", string(m))
+				return MatchQualityUnknown, nil, errors.Wrap(err, "unpack cpe matches")
 			}
-			if quality = stronger(quality, acceptEntry(qWFN, mWFN)); quality == MatchQualityExact {
+			if err := unbindReduced(prefix, e, &mWFN); err != nil {
+				return MatchQualityUnknown, nil, errors.Wrapf(err, "unbind packed entry %q to WFN", e)
+			}
+			if quality = stronger(quality, acceptEntryOn(&qWFN, &mWFN, attrs)); quality == MatchQualityExact {
 				return quality, nil, nil
 			}
 		}
@@ -466,35 +481,33 @@ func (c Criterion) Accept(query Query) (MatchQuality, []warningTypes.Warning, er
 // acceptMain evaluates the query against the main CPE: the main CPE table
 // on Accept. rangeSkipped reports that the criterion narrows by a Range
 // which was not consulted because the query version is a pattern.
-func (c Criterion) acceptMain(qWFN, cWFN common.WellFormedName) (quality MatchQuality, rangeSkipped bool, err error) {
+func (c Criterion) acceptMain(qWFN, cWFN *wfn) (quality MatchQuality, rangeSkipped bool, err error) {
 	if !overlapsExceptVersion(qWFN, cWFN) {
 		return MatchQualityNone, false, nil
 	}
 
-	// The logical values are told apart by type (isNA / isANY): GetString
-	// renders them as "NA" / "ANY", which a concrete version may spell too.
-	qVer, cVer := qWFN.Get(common.AttributeVersion), cWFN.Get(common.AttributeVersion)
+	qVer, cVer := &qWFN[attrVersion], &cWFN[attrVersion]
 	switch {
-	case isANY(qVer):
+	case qVer.any:
 		// The scan asks for all versions of this product (version=*), so
 		// any criterion whose other attributes agree is a confident match
 		// regardless of how it narrows versions — respecting the query
 		// author's intent. (Deliberately stronger than go-cve-dictionary,
 		// which reports a version-less query at vendor:product.)
 		return MatchQualityExact, false, nil
-	case c.Range != nil || (isANY(cVer) && len(c.CPEMatches) > 0):
+	case c.Range != nil || (cVer.any && len(c.CPEMatches) > 0):
 		// Narrowed (rule 3): a Range is the criterion's version whatever
 		// the CPE version says, and a * with an enumeration says nothing
 		// about the version by itself.
 		switch {
-		case isNA(qVer):
+		case qVer.na:
 			// The scan has no version to evaluate against the narrowing
 			// (rule 2); an NA / * entry can still make it Exact.
 			return MatchQualityVersionUnconfirmed, false, nil
 		case c.Range == nil:
 			// Enumeration only: the entries decide.
 			return MatchQualityNone, false, nil
-		case hasWildcards(qWFN.GetString(common.AttributeVersion)):
+		case qVer.hasWildcards():
 			// A pattern query ("12.*") denotes a set of names, which no
 			// Range can evaluate; the entries decide, and the skipped Range
 			// is reported unless they make the result Exact.
@@ -509,12 +522,12 @@ func (c Criterion) acceptMain(qWFN, cWFN common.WellFormedName) (quality MatchQu
 			}
 			return MatchQualityNone, false, nil
 		}
-	case relateValues(qVer, cVer) != relationDisjoint:
+	case overlaps(qVer, cVer):
 		// Name matching decides (rule 1): NA against NA or an un-narrowed *,
 		// a concrete / pattern criterion version the query intersects, an
 		// un-narrowed * against anything.
 		return MatchQualityExact, false, nil
-	case isNA(qVer) || isNA(cVer):
+	case qVer.na || cVer.na:
 		// One side has no version (rule 2): a version=NA criterion fixes
 		// the product but not the version (e.g. linux_kernel:- on a classic
 		// all-versions CVE, where go-cve-dictionary reported
@@ -529,15 +542,28 @@ func (c Criterion) acceptMain(qWFN, cWFN common.WellFormedName) (quality MatchQu
 // acceptEntry evaluates the query against one CPEMatches entry on the
 // entry's own name: the entry table on Accept. An entry whose version is NA
 // is treated like an NA criterion (rule 2).
-func acceptEntry(qWFN, mWFN common.WellFormedName) MatchQuality {
-	if !overlapsExceptVersion(qWFN, mWFN) {
+func acceptEntry(qWFN, mWFN *wfn) MatchQuality {
+	return acceptEntryOn(qWFN, mWFN, attrsExceptVersion)
+}
+
+// acceptEntryOn is acceptEntry with the attributes to relate before the
+// version given: for a packed entry those after the version, its part,
+// vendor and product being the criterion's and related to the query
+// already, or none when the query has ANY on all of them.
+func acceptEntryOn(qWFN, mWFN *wfn, attrs []int) MatchQuality {
+	if !overlapsOn(qWFN, mWFN, attrs) {
 		return MatchQualityNone
 	}
-	qVer, mVer := qWFN.Get(common.AttributeVersion), mWFN.Get(common.AttributeVersion)
+	return acceptVersion(&qWFN[attrVersion], &mWFN[attrVersion])
+}
+
+// acceptVersion relates an entry's version to the query's once every other
+// attribute overlaps.
+func acceptVersion(qVer, mVer *wfnValue) MatchQuality {
 	switch {
-	case relateValues(qVer, mVer) != relationDisjoint:
+	case overlaps(qVer, mVer):
 		return MatchQualityExact
-	case isNA(qVer) || isNA(mVer):
+	case qVer.na || mVer.na:
 		return MatchQualityVersionUnconfirmed
 	default:
 		return MatchQualityNone
@@ -547,11 +573,12 @@ func acceptEntry(qWFN, mWFN common.WellFormedName) MatchQuality {
 // acceptRange evaluates a concrete query version against the criterion's
 // Range, folding a release suffix the query may carry in its UPDATE
 // attribute into the version where the comparator expects it there.
-func (c Criterion) acceptRange(qWFN common.WellFormedName) (bool, error) {
+func (c Criterion) acceptRange(qWFN *wfn) (bool, error) {
 	// WFN attribute values escape every special character with a backslash
-	// ("10\.1\.3\-h1"); unescape so versions containing any special char
-	// (e.g. the hyphen in PAN-OS hotfixes) reach the comparator intact.
-	qVersion := unescapeWFN(qWFN.GetString(common.AttributeVersion))
+	// ("10\.1\.3\-h1"); the unescaped form is used so versions containing
+	// any special char (e.g. the hyphen in PAN-OS hotfixes) reach the
+	// comparator intact.
+	qVersion := string(qWFN[attrVersion].unescaped)
 	// A PAN-OS query may carry the hotfix in the UPDATE attribute
 	// (NVD/cisco form: version="10.1.14", update="h11") rather than in
 	// the version (snmp2cpe form: "10.1.14-h11"). Fold a hotfix-looking
@@ -567,8 +594,8 @@ func (c Criterion) acceptRange(qWFN common.WellFormedName) (bool, error) {
 	// if it already carries a hotfix ("10.1.14-h11"), appending the
 	// UPDATE would produce an unparseable "...-h11-h11".
 	if c.Range.Type == rangeTypes.RangeTypePANOS && !strings.Contains(qVersion, "-") {
-		if u := unescapeWFN(qWFN.GetString(common.AttributeUpdate)); panosHotfixUpdate.MatchString(u) {
-			qVersion = fmt.Sprintf("%s-%s", qVersion, strings.ToLower(u))
+		if u := qWFN[attrUpdate].unescaped; panosHotfixUpdate.Match(u) {
+			qVersion = fmt.Sprintf("%s-%s", qVersion, strings.ToLower(string(u)))
 		}
 	}
 	// OpenSSH splits the same way, and NVD is the side that splits it:
@@ -578,8 +605,8 @@ func (c Criterion) acceptRange(qWFN common.WellFormedName) (bool, error) {
 	// Scoped to the openssh range type; a query already carrying the
 	// suffix in the version has UPDATE as ANY and nothing is folded.
 	if c.Range.Type == rangeTypes.RangeTypeOpenSSH && !opensshPortableVersion.MatchString(qVersion) {
-		if u := unescapeWFN(qWFN.GetString(common.AttributeUpdate)); opensshPortableUpdate.MatchString(u) {
-			qVersion = fmt.Sprintf("%s%s", qVersion, strings.ToLower(u))
+		if u := qWFN[attrUpdate].unescaped; opensshPortableUpdate.Match(u) {
+			qVersion = fmt.Sprintf("%s%s", qVersion, strings.ToLower(string(u)))
 		}
 	}
 	return c.Range.Accept(qVersion)
@@ -606,17 +633,21 @@ var (
 // marker is consumed while the escaped character is preserved, so an escaped
 // backslash ("\\") yields a single literal backslash. A trailing lone
 // backslash is kept as-is.
-func unescapeWFN(s string) string {
-	if !strings.Contains(s, "\\") {
+func unescapeWFN[S ~string | ~[]byte](s S) S {
+	i := 0
+	for i < len(s) && s[i] != '\\' {
+		i++
+	}
+	if i == len(s) {
 		return s
 	}
-	var b strings.Builder
-	b.Grow(len(s))
-	for i := 0; i < len(s); i++ {
+	b := make([]byte, 0, len(s))
+	b = append(b, s[:i]...)
+	for ; i < len(s); i++ {
 		if s[i] == '\\' && i+1 < len(s) {
 			i++
 		}
-		b.WriteByte(s[i])
+		b = append(b, s[i])
 	}
-	return b.String()
+	return S(b)
 }
