@@ -16,9 +16,9 @@ func TestFetch(t *testing.T) {
 		_ []enrichment.Option
 	}
 	tests := []struct {
-		name    string
-		args    args
-		wantErr bool
+		name     string
+		args     args
+		hasError bool
 	}{
 		{
 			name: "happy",
@@ -32,11 +32,11 @@ func TestFetch(t *testing.T) {
 		dir := t.TempDir()
 		err := enrichment.Fetch(enrichment.WithHTTPClient(ts.Client()), enrichment.WithDir(dir), enrichment.WithRetry(0))
 		switch {
-		case err != nil && !tt.wantErr:
+		case err != nil && !tt.hasError:
 			t.Error("unexpected error:", err)
-		case err == nil && tt.wantErr:
+		case err == nil && tt.hasError:
 			t.Error("expected error has not occurred")
-		case err != nil && tt.wantErr:
+		case err != nil && tt.hasError:
 			// error was expected and occurred, test passed
 			return
 		default:
