@@ -3,9 +3,8 @@ package v1_test
 import (
 	"net/http"
 	"net/http/httptest"
-	"net/url"
+	"path"
 	"path/filepath"
-	"strings"
 	"testing"
 
 	v1 "github.com/MaineK00n/vuls-data-update/pkg/fetch/nvd/feed/cve/v1"
@@ -15,37 +14,23 @@ import (
 func TestFetch(t *testing.T) {
 	tests := []struct {
 		name     string
-		testdata []string
+		feeds    []string
 		hasError bool
 	}{
 		{
-			name: "happy path",
-			testdata: []string{
-				"testdata/fixtures/nvdcve-1.1-2002.json.gz",
-				"testdata/fixtures/nvdcve-1.1-2021.json.gz",
-				"testdata/fixtures/nvdcve-1.1-modified.json.gz",
-			},
+			name:  "happy path",
+			feeds: []string{"2002", "2021", "modified"},
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				http.ServeFile(w, r, strings.TrimPrefix(r.URL.Path, "/"))
+			ts := httptest.NewTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				http.ServeFile(w, r, filepath.Join("testdata", "fixtures", path.Base(r.URL.Path)))
 			}))
-			defer ts.Close()
-
-			urls := make([]string, 0, len(tt.testdata))
-			for _, c := range tt.testdata {
-				u, err := url.JoinPath(ts.URL, c)
-				if err != nil {
-					t.Error("unexpected error:", err)
-				}
-				urls = append(urls, u)
-			}
 
 			dir := t.TempDir()
-			err := v1.Fetch(v1.WithBaseURLs(urls), v1.WithDir(dir), v1.WithRetry(0))
+			err := v1.Fetch(v1.WithHTTPClient(ts.Client()), v1.WithFeeds(tt.feeds), v1.WithDir(dir), v1.WithRetry(0))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)

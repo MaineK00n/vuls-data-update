@@ -19,20 +19,14 @@ type options struct {
 	dataURL string
 	dir     string
 	retry   int
+
+	// httpClient is only ever set by WithHTTPClient, which lives in
+	// export_test.go and is therefore absent from the production build.
+	httpClient *http.Client
 }
 
 type Option interface {
 	apply(*options)
-}
-
-type repoURLOption string
-
-func (u repoURLOption) apply(opts *options) {
-	opts.dataURL = string(u)
-}
-
-func WithRepoURL(repoURL string) Option {
-	return repoURLOption(repoURL)
 }
 
 type dirOption string
@@ -71,7 +65,7 @@ func Fetch(opts ...Option) error {
 	}
 
 	slog.Info("Fetch Golang go-vulndb")
-	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.dataURL)
+	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry), utilhttp.WithClientHTTPClient(options.httpClient)).Get(options.dataURL)
 	if err != nil {
 		return errors.Wrap(err, "fetch go-vulndb data")
 	}

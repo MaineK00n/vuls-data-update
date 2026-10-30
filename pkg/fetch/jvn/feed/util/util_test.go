@@ -91,10 +91,14 @@ func TestCheckRetry(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			ts := httptest.NewTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				http.ServeContent(w, r, "test.txt", time.Now(), bytes.NewReader([]byte("12345")))
 			}))
-			defer ts.Close()
+			// Once its errRespCount error responses are spent, the fake
+			// RoundTripper below hands the request to http.DefaultTransport,
+			// which reaches the server only on loopback, not on the in-memory
+			// network that ts.Client() uses.
+			ts.Start()
 
 			c := utilhttp.NewClient(utilhttp.WithClientRetryMax(tt.retry), utilhttp.WithClientRetryWaitMin(10*time.Millisecond), utilhttp.WithClientRetryWaitMax(20*time.Millisecond), utilhttp.WithClientCheckRetry(jvnutil.CheckRetry), utilhttp.WithClientHTTPClient(&http.Client{Transport: &roundTripper{errRespCount: tt.errRespCount, errResponse: tt.errResponse}}))
 			resp, err := c.Get(ts.URL)
@@ -164,8 +168,9 @@ func TestIsAlertURL(t *testing.T) {
 func TestFetchTitle(t *testing.T) {
 	tests := []struct {
 		name string
-		// path is requested against the test server, which serves the file at
-		// that path under testdata/fixtures.
+		// path is requested against the production JPCERT host, which the
+		// in-memory network routes to the test server; the file at that path
+		// under testdata/fixtures is served.
 		path      string
 		want      string
 		wantError bool
@@ -198,12 +203,11 @@ func TestFetchTitle(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			ts := httptest.NewTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				http.ServeFile(w, r, filepath.Join("testdata", "fixtures", strings.TrimPrefix(r.URL.Path, "/")))
 			}))
-			defer ts.Close()
 
-			got, err := jvnutil.FetchTitle(utilhttp.NewClient(utilhttp.WithClientRetryMax(0)), ts.URL+tt.path)
+			got, err := jvnutil.FetchTitle(utilhttp.NewClient(utilhttp.WithClientRetryMax(0), utilhttp.WithClientHTTPClient(ts.Client())), "https://www.jpcert.or.jp"+tt.path)
 			switch {
 			case err != nil && !tt.wantError:
 				t.Fatalf("unexpected error: %s", err)

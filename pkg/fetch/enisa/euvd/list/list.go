@@ -29,20 +29,14 @@ type options struct {
 	retry       int
 	concurrency int
 	wait        time.Duration
+
+	// httpClient is only ever set by WithHTTPClient, which lives in
+	// export_test.go and is therefore absent from the production build.
+	httpClient *http.Client
 }
 
 type Option interface {
 	apply(*options)
-}
-
-type baseURLOption string
-
-func (u baseURLOption) apply(opts *options) {
-	opts.baseURL = string(u)
-}
-
-func WithBaseURL(url string) Option {
-	return baseURLOption(url)
 }
 
 type dirOption string
@@ -111,7 +105,7 @@ func Fetch(opts ...Option) error {
 }
 
 func (opts options) fetch() error {
-	client := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry), utilhttp.WithClientCheckRetry(checkRetry))
+	client := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry), utilhttp.WithClientHTTPClient(opts.httpClient), utilhttp.WithClientCheckRetry(checkRetry))
 
 	u, err := url.Parse(opts.baseURL)
 	if err != nil {
@@ -129,9 +123,7 @@ func (opts options) fetch() error {
 				q.Set("page", fmt.Sprintf("%d", p))
 				// u is shared by every goroutine: setting the query on it lets
 				// another one overwrite the page before this one reads it back.
-				// A shallow copy is enough, as the only pointer in a URL is the
-				// immutable *Userinfo. From Go 1.27 on, u.Clone() says the same.
-				pageURL := *u
+				pageURL := u.Clone()
 				pageURL.RawQuery = q.Encode()
 
 				res, err := func() (response, error) {

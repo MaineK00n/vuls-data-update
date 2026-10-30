@@ -15,7 +15,7 @@ applyTo: "**/*.go"
 ### Test Helpers
 
 `pkg/{fetch,extract}/util/test/test.go` hold the comparison, and are **byte-identical copies** — as `pkg/{fetch,dotgit}/util/test/git/git.go` already are. Change one and change the other; a diff between them is the check.
-- `Diff(goldenDir, gotDir, opts...)` — compares the two trees whole, covering both which files exist and their content, and returns the difference as an error
+- `Diff(goldenDir, gotDir)` — compares the two trees whole, covering both which files exist and their content, and returns the difference as an error
 
 `pkg/extract/util/test/fixture.go` holds what is particular to extraction:
 - `QueryUnescapeFileTree(dir, fixturePath)` — materializes fixtures with URL-escaped filenames into `dir` (pass `t.TempDir()`), returning the path and an error
@@ -58,7 +58,7 @@ default:
 - A case whose expected output is nothing at all simply has no golden directory; `Diff()` reads a missing directory as an empty tree, since git cannot carry an empty one.
 - Golden names are URL-escaped and `Diff()` escapes the output side to match, so no per-package handling is needed.
 - The helpers **return an error rather than taking `*testing.T`**, so the test decides how to report and the helper itself can be tested (`test_test.go` beside each). Local setup helpers inside a test file follow the same rule.
-- `WithReplace(old, new)` rewrites the output side before comparing. It is for the `httptest` server's own URL, which reaches the output and changes on every run — not for papering over a fetcher's non-deterministic output, which is a bug in the fetcher.
+- Nothing is rewritten before comparing. A fetch test aims the fetcher at its test server through the client rather than the URL (see Common Setup Patterns), so the output carries the production URLs golden holds; any other difference is a bug in the fetcher.
 
 ### Writing New Golden Tests
 
@@ -66,25 +66,38 @@ Golden tests also use a table-driven (test matrix) pattern with `t.Run`:
 
 ```go
 tests := []struct {
-    name   string
-    args   string
-    golden string
+    name     string
+    args     string
+    golden   string
+    hasError bool
 }{
     {
         name:   "happy",
         args:   "./testdata/fixtures/happy",
         golden: "./testdata/golden/happy",
     },
+    {
+        name:     "broken",
+        args:     "./testdata/fixtures/broken",
+        hasError: true,
+    },
 }
 for _, tt := range tests {
     t.Run(tt.name, func(t *testing.T) {
         dir := t.TempDir()
         err := pkg.Extract(tt.args, pkg.WithDir(dir))
-        // ... error check ...
-        ep, _ := filepath.Abs(tt.golden)
-        gp, _ := filepath.Abs(dir)
-        if err := utiltest.Diff(ep, gp); err != nil {
+        switch {
+        case err != nil && !tt.hasError:
             t.Error("unexpected error:", err)
+        case err == nil && tt.hasError:
+            t.Error("expected error has not occurred")
+        case err != nil && tt.hasError:
+            // error was expected and occurred, test passed
+            return
+        default:
+            if err := utiltest.Diff(tt.golden, dir); err != nil {
+                t.Error("unexpected error:", err)
+            }
         }
     })
 }
@@ -92,6 +105,7 @@ for _, tt := range tests {
 
 - **Single-case**: fixture/golden paths are directly under `testdata/fixtures`, `testdata/golden` (no subdirectories)
 - **Multi-case**: each test case explicitly specifies `testdata/fixtures/<name>/`, `testdata/golden/<name>/` in struct fields
+- **Names**: in fetch and extract alike, the error flag is `hasError` and the expected-error arm reads exactly as above; `wantErr` belongs to the inline unit tests below. An extract test names its fixture `args` and, when multi-case, its golden tree `golden`.
 
 ### Where Used
 
@@ -133,7 +147,7 @@ func TestFoo(t *testing.T) {
 ### Common Setup Patterns
 
 - **`t.TempDir()`** for file I/O tests
-- **`httptest.NewServer`** for HTTP-dependent tests (fetch packages)
+- **`httptest.NewTestServer`** for HTTP-dependent tests (fetch packages). Its client sends every request to the test server whatever the host, so pass `ts.Client()` through the package's `WithHTTPClient` and leave the production URLs alone. `WithHTTPClient` lives in `export_test.go`, which only the test binary compiles; don't add `With*URL` options for tests to substitute
 - **`type args struct`** to group function parameters in test table
 - **`type fields struct`** to decompose struct-under-test fields
 

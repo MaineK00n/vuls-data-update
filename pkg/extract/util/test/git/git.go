@@ -53,14 +53,12 @@ func Populate(dir, datapath string) (string, error) {
 	}
 
 	repo, err := git.PlainInitWithOptions(filepath.Join(dir, filepath.Base(datapath)), &git.PlainInitOptions{
-		InitOptions: git.InitOptions{
-			DefaultBranch: func() plumbing.ReferenceName {
-				if len(fixtures.Branches) == 0 {
-					return ""
-				}
-				return plumbing.NewBranchReferenceName(fixtures.Branches[0].Name)
-			}(),
-		},
+		DefaultBranch: func() plumbing.ReferenceName {
+			if len(fixtures.Branches) == 0 {
+				return ""
+			}
+			return plumbing.NewBranchReferenceName(fixtures.Branches[0].Name)
+		}(),
 		Bare: false,
 	})
 	if err != nil {

@@ -19,25 +19,35 @@ import (
 
 func TestExtract(t *testing.T) {
 	tests := []struct {
-		name     string
-		args     string
-		hasError bool
+		name        string
+		args        string
+		concurrency int
+		hasError    bool
 	}{
 		{
-			name: "happy",
-			args: "./testdata/fixtures/happy",
+			name:        "happy",
+			args:        "./testdata/fixtures/happy",
+			concurrency: 2,
+		},
+		{
+			// --concurrency 0 is clamped to one worker; with none, the
+			// producer would block on the first path forever.
+			name:        "zero concurrency",
+			args:        "./testdata/fixtures/happy",
+			concurrency: 0,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			dir := t.TempDir()
-			err := msuc.Extract(tt.args, msuc.WithDir(dir), msuc.WithConcurrency(2))
+			err := msuc.Extract(tt.args, msuc.WithDir(dir), msuc.WithConcurrency(tt.concurrency))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)
 			case err == nil && tt.hasError:
 				t.Error("expected error has not occurred")
 			case err != nil && tt.hasError:
+				// error was expected and occurred, test passed
 				return
 			default:
 				if err := utiltest.Diff(filepath.Join("testdata", "golden"), dir); err != nil {

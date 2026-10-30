@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
-	"net/url"
 	"os"
 	"path"
 	"path/filepath"
@@ -21,9 +20,9 @@ func TestFetch(t *testing.T) {
 		opts []list.Option
 	}
 	tests := []struct {
-		name    string
-		args    args
-		wantErr bool
+		name     string
+		args     args
+		hasError bool
 	}{
 		{
 			name: "happy",
@@ -34,7 +33,7 @@ func TestFetch(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			ts := httptest.NewTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				switch path.Base(r.URL.Path) {
 				case "search":
 					http.ServeFile(w, r, filepath.Join("testdata", "fixtures", tt.name, fmt.Sprintf("%s_%s.json", r.URL.Query().Get("page"), r.URL.Query().Get("size"))))
@@ -42,22 +41,15 @@ func TestFetch(t *testing.T) {
 					http.NotFound(w, r)
 				}
 			}))
-			defer ts.Close()
-
-			u, err := url.JoinPath(ts.URL, "api", "search")
-			if err != nil {
-				t.Error("unexpected error:", err)
-			}
-
 			dir := t.TempDir()
-			opts := append([]list.Option{list.WithBaseURL(u), list.WithDir(dir)}, tt.args.opts...)
-			err = list.Fetch(opts...)
+			opts := append([]list.Option{list.WithHTTPClient(ts.Client()), list.WithDir(dir)}, tt.args.opts...)
+			err := list.Fetch(opts...)
 			switch {
-			case err != nil && !tt.wantErr:
+			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)
-			case err == nil && tt.wantErr:
+			case err == nil && tt.hasError:
 				t.Error("expected error has not occurred")
-			case err != nil && tt.wantErr:
+			case err != nil && tt.hasError:
 				// error was expected and occurred, test passed
 				return
 			default:
@@ -82,7 +74,7 @@ func TestFetch_concurrent(t *testing.T) {
 
 	var mu sync.Mutex
 	requested := make(map[int]int)
-	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	ts := httptest.NewTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch path.Base(r.URL.Path) {
 		case "search":
 			p, err := strconv.Atoi(r.URL.Query().Get("page"))
@@ -108,15 +100,9 @@ func TestFetch_concurrent(t *testing.T) {
 			http.NotFound(w, r)
 		}
 	}))
-	defer ts.Close()
-
-	u, err := url.JoinPath(ts.URL, "api", "search")
-	if err != nil {
-		t.Fatal("unexpected error:", err)
-	}
 
 	dir := t.TempDir()
-	if err := list.Fetch(list.WithBaseURL(u), list.WithDir(dir), list.WithConcurrency(5), list.WithWait(0)); err != nil {
+	if err := list.Fetch(list.WithHTTPClient(ts.Client()), list.WithDir(dir), list.WithConcurrency(5), list.WithWait(0)); err != nil {
 		t.Fatal("unexpected error:", err)
 	}
 

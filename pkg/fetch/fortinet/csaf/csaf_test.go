@@ -1,7 +1,6 @@
 package csaf_test
 
 import (
-	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -161,7 +160,7 @@ func TestFetch(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			fixtures := filepath.Join("testdata", "fixtures", tt.name)
 
-			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			ts := httptest.NewTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				name, contentType := func() (string, string) {
 					if rest, ok := strings.CutPrefix(r.URL.Path, "/psirt/cvrf/"); ok {
 						return rest, "application/xml"
@@ -183,8 +182,6 @@ func TestFetch(t *testing.T) {
 				w.Header().Set("Content-Type", contentType)
 				_, _ = w.Write(bs)
 			}))
-			defer ts.Close()
-
 			dir := t.TempDir()
 			if tt.seed != "" {
 				if err := os.CopyFS(dir, os.DirFS(filepath.Join(fixtures, tt.seed))); err != nil {
@@ -192,10 +189,7 @@ func TestFetch(t *testing.T) {
 				}
 			}
 
-			err := csaf.Fetch(tt.args.args,
-				csaf.WithCSAFURL(fmt.Sprintf("%s/fortiguard/psirt/%%s", ts.URL)),
-				csaf.WithCVRFURL(fmt.Sprintf("%s/psirt/cvrf/%%s", ts.URL)),
-				csaf.WithDir(dir), csaf.WithRetry(0), csaf.WithConcurrency(2))
+			err := csaf.Fetch(tt.args.args, csaf.WithHTTPClient(ts.Client()), csaf.WithDir(dir), csaf.WithRetry(0), csaf.WithConcurrency(2))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)

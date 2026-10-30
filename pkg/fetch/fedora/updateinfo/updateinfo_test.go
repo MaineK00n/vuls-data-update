@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/fedora/updateinfo"
@@ -25,13 +26,16 @@ func TestFetch(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				http.ServeFile(w, r, filepath.Join("testdata", "fixtures", tt.name, r.URL.Path))
+			ts := httptest.NewTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				rel, ok := strings.CutPrefix(r.URL.Path, "/pub/")
+				if !ok {
+					http.NotFound(w, r)
+					return
+				}
+				http.ServeFile(w, r, filepath.Join("testdata", "fixtures", tt.name, rel))
 			}))
-			defer ts.Close()
-
 			dir := t.TempDir()
-			opts := append([]updateinfo.Option{updateinfo.WithBaseURL(ts.URL), updateinfo.WithDir(dir), updateinfo.WithWait(0)}, tt.args.opts...)
+			opts := append([]updateinfo.Option{updateinfo.WithHTTPClient(ts.Client()), updateinfo.WithDir(dir), updateinfo.WithWait(0)}, tt.args.opts...)
 			err := updateinfo.Fetch(opts...)
 			switch {
 			case err != nil && !tt.hasError:
