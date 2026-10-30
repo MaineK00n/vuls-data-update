@@ -184,10 +184,16 @@ func (a CPEAccepts) IsZero() bool {
 }
 
 type AcceptQueries struct {
-	Version   []int      `json:"version,omitempty"`
-	NoneExist bool       `json:"none_exist,omitempty"`
-	KB        KB         `json:"kb,omitzero"`
-	CPE       CPEAccepts `json:"cpe,omitzero"`
+	Version []int `json:"version,omitempty"`
+	// VersionUnconfirmed holds the indices of version queries accepted by a
+	// version criterion whose Affected is Unresolved: the package is affected,
+	// but no range was compared, so its version is unconfirmed. Projecting them
+	// (e.g. "affected, fixed per vendor in Unresolved.Fixed") is the
+	// consumer's concern, as with CPEAccepts.VersionUnconfirmed.
+	VersionUnconfirmed []int      `json:"version_unconfirmed,omitempty"`
+	NoneExist          bool       `json:"none_exist,omitempty"`
+	KB                 KB         `json:"kb,omitzero"`
+	CPE                CPEAccepts `json:"cpe,omitzero"`
 }
 
 func (c Criterion) Accept(query Query, repositories []string) (FilteredCriterion, error) {
@@ -200,7 +206,8 @@ func (c Criterion) Accept(query Query, repositories []string) (FilteredCriterion
 			return FilteredCriterion{Criterion: c, Accepts: AcceptQueries{}}, nil
 		}
 
-		var is []int
+		unconfirmed := c.Version.Affected != nil && c.Version.Affected.Unresolved != nil
+		var is, us []int
 		var ws []warningTypes.Warning
 		for i, q := range query.Version {
 			isAccepted, err := c.Version.Accept(q, repositories)
@@ -216,13 +223,17 @@ func (c Criterion) Accept(query Query, repositories []string) (FilteredCriterion
 				}
 				return FilteredCriterion{}, errors.Wrap(err, "version criterion accept")
 			}
-			if isAccepted {
+			switch {
+			case !isAccepted:
+			case unconfirmed:
+				us = append(us, i)
+			default:
 				is = append(is, i)
 			}
 		}
 		return FilteredCriterion{
 			Criterion: c,
-			Accepts:   AcceptQueries{Version: is},
+			Accepts:   AcceptQueries{Version: is, VersionUnconfirmed: us},
 			Warnings:  ws,
 		}, nil
 	case CriterionTypeNoneExist:
@@ -323,7 +334,7 @@ func (c Criterion) Accept(query Query, repositories []string) (FilteredCriterion
 func (fc FilteredCriterion) Affected() (bool, error) {
 	switch fc.Criterion.Type {
 	case CriterionTypeVersion:
-		return len(fc.Accepts.Version) > 0, nil
+		return len(fc.Accepts.Version) > 0 || len(fc.Accepts.VersionUnconfirmed) > 0, nil
 	case CriterionTypeNoneExist:
 		return fc.Accepts.NoneExist, nil
 	case CriterionTypeKB:

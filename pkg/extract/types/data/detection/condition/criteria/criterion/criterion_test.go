@@ -416,6 +416,118 @@ func TestCriterion_Accept(t *testing.T) {
 			},
 		},
 		{
+			// No range could be derived, so an installed package is accepted
+			// whatever its version, and recorded as version-unconfirmed.
+			name: "accept unresolved version as version unconfirmed",
+			fields: fields{
+				Type: criterionTypes.CriterionTypeVersion,
+				Version: &vcTypes.Criterion{
+					Vulnerable: true,
+					FixStatus:  &fixstatusType.FixStatus{Class: fixstatusType.ClassFixed},
+					Package: vcPackageTypes.Package{
+						Type:   vcPackageTypes.PackageTypeBinary,
+						Binary: &vcBinaryPackageTypes.Package{Name: "Microsoft Office 2019 for 64-bit editions"},
+					},
+					Affected: &affectedTypes.Affected{
+						Type:       affectedrangeType.RangeTypeUnresolved,
+						Unresolved: &affectedTypes.Unresolved{Fixed: "https://aka.ms/OfficeSecurityReleases", Description: "Click to Run"},
+					},
+				},
+			},
+			args: args{
+				query: criterionTypes.Query{
+					Version: []vcTypes.Query{
+						{Binary: &vcTypes.QueryBinary{Family: ecosystemTypes.EcosystemTypeMicrosoft, Name: "Windows 11 Version 24H2 for x64-based Systems", Version: "10.0.26100.1"}},
+						{Binary: &vcTypes.QueryBinary{Family: ecosystemTypes.EcosystemTypeMicrosoft, Name: "Microsoft Office 2019 for 64-bit editions", Version: "16.0.10417.20030"}},
+					},
+				},
+			},
+			want: criterionTypes.FilteredCriterion{
+				Criterion: criterionTypes.Criterion{
+					Type: criterionTypes.CriterionTypeVersion,
+					Version: &vcTypes.Criterion{
+						Vulnerable: true,
+						FixStatus:  &fixstatusType.FixStatus{Class: fixstatusType.ClassFixed},
+						Package: vcPackageTypes.Package{
+							Type:   vcPackageTypes.PackageTypeBinary,
+							Binary: &vcBinaryPackageTypes.Package{Name: "Microsoft Office 2019 for 64-bit editions"},
+						},
+						Affected: &affectedTypes.Affected{
+							Type:       affectedrangeType.RangeTypeUnresolved,
+							Unresolved: &affectedTypes.Unresolved{Fixed: "https://aka.ms/OfficeSecurityReleases", Description: "Click to Run"},
+						},
+					},
+				},
+				Accepts: criterionTypes.AcceptQueries{VersionUnconfirmed: []int{1}},
+			},
+		},
+		{
+			name: "not accept unresolved version of another package",
+			fields: fields{
+				Type: criterionTypes.CriterionTypeVersion,
+				Version: &vcTypes.Criterion{
+					Vulnerable: true,
+					FixStatus:  &fixstatusType.FixStatus{Class: fixstatusType.ClassFixed},
+					Package: vcPackageTypes.Package{
+						Type:   vcPackageTypes.PackageTypeBinary,
+						Binary: &vcBinaryPackageTypes.Package{Name: "Microsoft Office 2019 for 64-bit editions"},
+					},
+					Affected: &affectedTypes.Affected{
+						Type:       affectedrangeType.RangeTypeUnresolved,
+						Unresolved: &affectedTypes.Unresolved{Fixed: "https://aka.ms/OfficeSecurityReleases", Description: "Click to Run"},
+					},
+				},
+			},
+			args: args{
+				query: criterionTypes.Query{
+					Version: []vcTypes.Query{
+						{Binary: &vcTypes.QueryBinary{Family: ecosystemTypes.EcosystemTypeMicrosoft, Name: "Microsoft Office 2019 for 32-bit editions", Version: "16.0.10417.20030"}},
+					},
+				},
+			},
+			want: criterionTypes.FilteredCriterion{
+				Criterion: criterionTypes.Criterion{
+					Type: criterionTypes.CriterionTypeVersion,
+					Version: &vcTypes.Criterion{
+						Vulnerable: true,
+						FixStatus:  &fixstatusType.FixStatus{Class: fixstatusType.ClassFixed},
+						Package: vcPackageTypes.Package{
+							Type:   vcPackageTypes.PackageTypeBinary,
+							Binary: &vcBinaryPackageTypes.Package{Name: "Microsoft Office 2019 for 64-bit editions"},
+						},
+						Affected: &affectedTypes.Affected{
+							Type:       affectedrangeType.RangeTypeUnresolved,
+							Unresolved: &affectedTypes.Unresolved{Fixed: "https://aka.ms/OfficeSecurityReleases", Description: "Click to Run"},
+						},
+					},
+				},
+				Accepts: criterionTypes.AcceptQueries{},
+			},
+		},
+		{
+			// Type unresolved without Unresolved is a producer bug: an error,
+			// not a warning.
+			name: "unresolved range type without unresolved is an error",
+			fields: fields{
+				Type: criterionTypes.CriterionTypeVersion,
+				Version: &vcTypes.Criterion{
+					Vulnerable: true,
+					FixStatus:  &fixstatusType.FixStatus{Class: fixstatusType.ClassFixed},
+					Package: vcPackageTypes.Package{
+						Type:   vcPackageTypes.PackageTypeBinary,
+						Binary: &vcBinaryPackageTypes.Package{Name: "name"},
+					},
+					Affected: &affectedTypes.Affected{Type: affectedrangeType.RangeTypeUnresolved},
+				},
+			},
+			args: args{
+				query: criterionTypes.Query{
+					Version: []vcTypes.Query{{Binary: &vcTypes.QueryBinary{Family: ecosystemTypes.EcosystemTypeMicrosoft, Name: "name", Version: "1.0.0"}}},
+				},
+			},
+			wantErr: true,
+		},
+		{
 			// A criterion type this build does not know (data from a newer
 			// vuls-data-update) must accept no queries instead of aborting,
 			// and the skip must be recorded on the result.
@@ -741,6 +853,28 @@ func TestFilteredCriterion_Affected(t *testing.T) {
 				Accepts: criterionTypes.AcceptQueries{KB: criterionTypes.KB{}},
 			},
 			want: false,
+		},
+		{
+			name: "affected version unconfirmed",
+			fields: fields{
+				Criterion: criterionTypes.Criterion{
+					Type: criterionTypes.CriterionTypeVersion,
+					Version: &vcTypes.Criterion{
+						Vulnerable: true,
+						FixStatus:  &fixstatusType.FixStatus{Class: fixstatusType.ClassFixed},
+						Package: vcPackageTypes.Package{
+							Type:   vcPackageTypes.PackageTypeBinary,
+							Binary: &vcBinaryPackageTypes.Package{Name: "Microsoft Office 2019 for 64-bit editions"},
+						},
+						Affected: &affectedTypes.Affected{
+							Type:       affectedrangeType.RangeTypeUnresolved,
+							Unresolved: &affectedTypes.Unresolved{Fixed: "https://aka.ms/OfficeSecurityReleases", Description: "Click to Run"},
+						},
+					},
+				},
+				Accepts: criterionTypes.AcceptQueries{VersionUnconfirmed: []int{0}},
+			},
+			want: true,
 		},
 		{
 			// A criterion type this build does not know (data from a newer

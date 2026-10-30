@@ -42,7 +42,54 @@ func TestCompare(t *testing.T) {
 		args args
 		want int
 	}{
-		// TODO: Add test cases.
+		{
+			name: "equal unresolved",
+			args: args{
+				x: affectedTypes.Affected{Type: affectedrangeTypes.RangeTypeUnresolved, Unresolved: &affectedTypes.Unresolved{Fixed: "a", Description: "d", URL: "u"}},
+				y: affectedTypes.Affected{Type: affectedrangeTypes.RangeTypeUnresolved, Unresolved: &affectedTypes.Unresolved{Fixed: "a", Description: "d", URL: "u"}},
+			},
+			want: 0,
+		},
+		{
+			name: "unset unresolved sorts first",
+			args: args{
+				x: affectedTypes.Affected{Type: affectedrangeTypes.RangeTypeUnresolved},
+				y: affectedTypes.Affected{Type: affectedrangeTypes.RangeTypeUnresolved, Unresolved: &affectedTypes.Unresolved{}},
+			},
+			want: -1,
+		},
+		{
+			name: "unresolved fixed greater",
+			args: args{
+				x: affectedTypes.Affected{Type: affectedrangeTypes.RangeTypeUnresolved, Unresolved: &affectedTypes.Unresolved{Fixed: "b"}},
+				y: affectedTypes.Affected{Type: affectedrangeTypes.RangeTypeUnresolved, Unresolved: &affectedTypes.Unresolved{Fixed: "a", Description: "z"}},
+			},
+			want: +1,
+		},
+		{
+			name: "unresolved description less",
+			args: args{
+				x: affectedTypes.Affected{Type: affectedrangeTypes.RangeTypeUnresolved, Unresolved: &affectedTypes.Unresolved{Fixed: "a", Description: "Click to Run"}},
+				y: affectedTypes.Affected{Type: affectedrangeTypes.RangeTypeUnresolved, Unresolved: &affectedTypes.Unresolved{Fixed: "a", Description: "Release Notes"}},
+			},
+			want: -1,
+		},
+		{
+			name: "unresolved url greater",
+			args: args{
+				x: affectedTypes.Affected{Type: affectedrangeTypes.RangeTypeUnresolved, Unresolved: &affectedTypes.Unresolved{URL: "v"}},
+				y: affectedTypes.Affected{Type: affectedrangeTypes.RangeTypeUnresolved, Unresolved: &affectedTypes.Unresolved{URL: "u"}},
+			},
+			want: +1,
+		},
+		{
+			name: "type decides before unresolved",
+			args: args{
+				x: affectedTypes.Affected{Type: affectedrangeTypes.RangeTypeUnresolved, Unresolved: &affectedTypes.Unresolved{Fixed: "a"}},
+				y: affectedTypes.Affected{Type: affectedrangeTypes.RangeTypeMicrosoftWindows, Range: []affectedrangeTypes.Range{{LessThan: "10.0.1.1"}}},
+			},
+			want: +1,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -55,9 +102,10 @@ func TestCompare(t *testing.T) {
 
 func TestAffected_Accept(t *testing.T) {
 	type fields struct {
-		Type  affectedrangeTypes.RangeType
-		Range []affectedrangeTypes.Range
-		Fixed []string
+		Type       affectedrangeTypes.RangeType
+		Range      []affectedrangeTypes.Range
+		Fixed      []string
+		Unresolved *affectedTypes.Unresolved
 	}
 	type args struct {
 		family ecosystemTypes.Ecosystem
@@ -351,13 +399,75 @@ func TestAffected_Accept(t *testing.T) {
 			args: args{family: ecosystemTypes.Ecosystem("solaris:11.4"), v: "1.0.2k-8.el7"},
 			want: false,
 		},
+		{
+			name: "unresolved accepts any version",
+			fields: fields{
+				Type:       affectedrangeTypes.RangeTypeUnresolved,
+				Unresolved: &affectedTypes.Unresolved{Fixed: "https://aka.ms/OfficeSecurityReleases", Description: "Click to Run"},
+			},
+			args: args{v: "16.0.10417.20030"},
+			want: true,
+		},
+		{
+			name: "unresolved accepts an empty version",
+			fields: fields{
+				Type:       affectedrangeTypes.RangeTypeUnresolved,
+				Unresolved: &affectedTypes.Unresolved{},
+			},
+			args: args{v: ""},
+			want: true,
+		},
+		{
+			name:    "unresolved type without unresolved is an error",
+			fields:  fields{Type: affectedrangeTypes.RangeTypeUnresolved},
+			args:    args{v: "1.0.0"},
+			wantErr: true,
+		},
+		{
+			name: "unresolved with another type is an error",
+			fields: fields{
+				Type:       affectedrangeTypes.RangeTypeMicrosoftVisualStudio,
+				Unresolved: &affectedTypes.Unresolved{Fixed: "18.12 Insiders 3"},
+			},
+			args:    args{v: "18.12.0"},
+			wantErr: true,
+		},
+		{
+			name: "unresolved with a range is an error",
+			fields: fields{
+				Type:       affectedrangeTypes.RangeTypeUnresolved,
+				Range:      []affectedrangeTypes.Range{{LessThan: "1.0.0"}},
+				Unresolved: &affectedTypes.Unresolved{Fixed: "1.0.0"},
+			},
+			args:    args{v: "0.9.0"},
+			wantErr: true,
+		},
+		{
+			name: "unresolved with fixed is an error",
+			fields: fields{
+				Type:       affectedrangeTypes.RangeTypeUnresolved,
+				Fixed:      []string{"1.0.0"},
+				Unresolved: &affectedTypes.Unresolved{Fixed: "1.0.0"},
+			},
+			args:    args{v: "0.9.0"},
+			wantErr: true,
+		},
+		{
+			// What a build without Unresolved sees for such data: the unknown
+			// member is dropped on unmarshal and there is no range to accept.
+			name:   "range type outside the vocabulary and no range: no match (how a build without unresolved sees such data)",
+			fields: fields{Type: affectedrangeTypes.RangeType("unresolved-from-newer-data")},
+			args:   args{v: "1.0.0"},
+			want:   false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := (affectedTypes.Affected{
-				Type:  tt.fields.Type,
-				Range: tt.fields.Range,
-				Fixed: tt.fields.Fixed,
+				Type:       tt.fields.Type,
+				Range:      tt.fields.Range,
+				Fixed:      tt.fields.Fixed,
+				Unresolved: tt.fields.Unresolved,
 			}).Accept(tt.args.family, tt.args.v)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Affected.Accept() error = %v, wantErr %v", err, tt.wantErr)
