@@ -26,6 +26,8 @@ func NewCmdDotGit() *cobra.Command {
 			$ vuls-data-update dotgit ls
 			$ vuls-data-update dotgit status vuls-data-raw-debian-security-tracker-api
 
+			$ vuls-data-update dotgit truncate --dir latest vuls-data-raw-debian-security-tracker-api
+
 			$ vuls-data-update dotgit registry ls
 			$ vuls-data-update dotgit registry status ghcr.io/vulsio/vuls-data-db:vuls-data-raw-debian-security-tracker-api
 			$ vuls-data-update dotgit registry push ghcr.io/vulsio/vuls-data-db:vuls-data-raw-debian-security-tracker-api vuls-data-raw-debian-security-tracker-api.tar.zst
@@ -42,6 +44,7 @@ func NewCmdDotGit() *cobra.Command {
 		newCmdLog(),
 		newCmdLs(),
 		newCmdStatus(),
+		newCmdTruncate(),
 		newCmdRegistry(),
 	)
 
