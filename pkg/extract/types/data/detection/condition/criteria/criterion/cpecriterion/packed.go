@@ -38,7 +38,14 @@ const (
 )
 
 // PackedEncodings returns every PackedEncoding this build knows, in
-// declaration order. The known set must be append-only.
+// declaration order. Consumers (vuls2, vuls0) diff this list against a newer
+// vuls-data-update in CI to detect enum additions that require a dependency
+// bump. Values are never removed or renamed: either would leave already
+// extracted data undecodable by builds that follow. Where a new value is
+// declared does not matter to consumers. The declaration order only fixes the
+// output order of the build that writes the data (Compare); nothing ranks
+// values across builds, so a value's rank need not agree between a build that
+// knows it and one that does not.
 func PackedEncodings() []PackedEncoding {
 	return []PackedEncoding{PackedEncodingFC}
 }
