@@ -257,7 +257,12 @@ func splitsEscape(s string, n int) bool {
 // splitFS splits s on the unescaped occurrences of sep, where a backslash
 // escapes the character after it as in a formatted string, leaving the
 // escaping of each part untouched so that joining the parts back with sep
-// reproduces the input byte for byte.
+// reproduces the input byte for byte. go-cpe is not used here: it only
+// unbinds to a WFN, and binding that back yields the canonical formatted
+// string, which differs from the input wherever the source leaves a
+// character unescaped (NVD writes "12.6(1)_es6" and "rcu_ii+_firmware"; the
+// canonical forms escape "(", ")" and "+"). The packed names would then no
+// longer match the source's, nor Packable's byte-for-byte prefix check.
 func splitFS(s string, sep byte) []string {
 	var parts []string
 	start := 0
