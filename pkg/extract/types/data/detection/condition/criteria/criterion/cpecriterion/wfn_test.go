@@ -1,21 +1,16 @@
-package cpecriterion
+package cpecriterion_test
 
 import (
-	"bytes"
 	"fmt"
 	"testing"
 
 	"github.com/knqyf263/go-cpe/common"
 	"github.com/knqyf263/go-cpe/naming"
+
+	ccTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/cpecriterion"
 )
 
-// equalValue reports whether two values are the same, byte for byte.
-func equalValue(a, b wfnValue) bool {
-	return a.any == b.any && a.na == b.na && bytes.Equal(a.unescaped, b.unescaped) &&
-		a.p.lead == b.p.lead && a.p.trail == b.p.trail && bytes.Equal(a.p.core, b.p.core)
-}
-
-var wfnAttributes = [attrCount]string{
+var wfnAttributes = [ccTypes.AttrCount]string{
 	common.AttributePart, common.AttributeVendor, common.AttributeProduct, common.AttributeVersion,
 	common.AttributeUpdate, common.AttributeEdition, common.AttributeLanguage, common.AttributeSwEdition,
 	common.AttributeTargetSw, common.AttributeTargetHw, common.AttributeOther,
@@ -29,15 +24,17 @@ var wfnAttributes = [attrCount]string{
 // (see unbindFS, and TestUnbindFSQuotedBackslash for what it must give), so
 // the two are only run on it.
 func diffUnbindFS(fs string) error {
-	want, wantErr := func() (w common.WellFormedName, err error) {
+	var want common.WellFormedName
+	var wantErr error
+	func() {
 		defer func() {
 			if r := recover(); r != nil {
-				err = fmt.Errorf("panic: %v", r)
+				wantErr = fmt.Errorf("panic: %v", r)
 			}
 		}()
-		return naming.UnbindFS(fs)
+		want, wantErr = naming.UnbindFS(fs)
 	}()
-	got, gotErr := unbindFS(fs)
+	got, gotErr := ccTypes.UnbindFS(fs)
 	switch {
 	case colonAfterQuotedBackslash(fs):
 		return nil
@@ -49,19 +46,19 @@ func diffUnbindFS(fs string) error {
 		return fmt.Errorf("go-cpe accepts, unbindFS rejects. fs: %q, unbindFS: %v", fs, gotErr)
 	}
 	for i, attr := range wfnAttributes {
-		var w wfnValue
+		var w ccTypes.Value
 		switch v := want.Get(attr).(type) {
 		case common.LogicalValue:
-			w = naValue
+			w = ccTypes.NAValue
 			if v.IsANY() {
-				w = anyValue
+				w = ccTypes.AnyValue
 			}
 		case string:
-			w = wfnValue{unescaped: []byte(unescapeWFN(v)), p: parsePattern([]byte(v))}
+			w = ccTypes.StringValue(v)
 		default:
 			return fmt.Errorf("unexpected go-cpe value type. fs: %q, attribute: %s, value: %#v", fs, attr, v)
 		}
-		if !equalValue(got[i], w) {
+		if got[i] != w {
 			return fmt.Errorf("attribute differs. fs: %q, attribute: %s, go-cpe: %+v, unbindFS: %+v", fs, attr, w, got[i])
 		}
 	}
@@ -132,12 +129,12 @@ func TestUnbindFSQuotedBackslash(t *testing.T) {
 		{
 			name: "vendor ends in a quoted backslash",
 			fs:   `cpe:2.3:a:foo\\:prod:1.0:*:*:*:*:*:*:*`,
-			want: map[int]string{attrVendor: `foo\`, attrProduct: "prod", attrVersion: "1.0"},
+			want: map[int]string{ccTypes.AttrVendor: `foo\`, ccTypes.AttrProduct: "prod", ccTypes.AttrVersion: "1.0"},
 		},
 		{
 			name: "version ends in a quoted backslash",
 			fs:   `cpe:2.3:a:vendor:product:1.0\\:*:*:*:*:*:*:*`,
-			want: map[int]string{attrVersion: `1.0\`, attrUpdate: "ANY"},
+			want: map[int]string{ccTypes.AttrVersion: `1.0\`, ccTypes.AttrUpdate: "ANY"},
 		},
 		{
 			name:    "an extra component is not absorbed",
@@ -147,13 +144,13 @@ func TestUnbindFSQuotedBackslash(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			w, err := unbindFS(tt.fs)
+			w, err := ccTypes.UnbindFS(tt.fs)
 			if (err != nil) != tt.wantErr {
-				t.Fatalf("unbindFS() error = %v, wantErr %v", err, tt.wantErr)
+				t.Fatalf("UnbindFS() error = %v, wantErr %v", err, tt.wantErr)
 			}
 			for a, want := range tt.want {
-				if got := string(w[a].unescaped); got != want {
-					t.Errorf("unbindFS() %s = %q, want %q", wfnAttributes[a], got, want)
+				if got := w[a].Unescaped; got != want {
+					t.Errorf("UnbindFS() %s = %q, want %q", wfnAttributes[a], got, want)
 				}
 			}
 		})
@@ -177,19 +174,19 @@ func FuzzUnbindFS(f *testing.F) {
 // previous entry that set every attribute.
 func diffUnbindReduced(e string) error {
 	const prefix = "cpe:2.3:a:vendor:product:"
-	c, err := unbindFS(prefix + "*:*:*:*:*:*:*:*")
+	c, err := ccTypes.UnbindFS(prefix + "*:*:*:*:*:*:*:*")
 	if err != nil {
 		return err
 	}
-	want, wantErr := unbindFS(string(fullName(prefix, []byte(e))))
+	want, wantErr := ccTypes.UnbindFS(ccTypes.FullName(prefix, e))
 	for _, previous := range []string{"", "1:2:3:4:5:6:7:8"} {
-		got := packedWFN(&c)
+		got := ccTypes.PackedWFN(c)
 		if previous != "" {
-			if err := unbindReduced([]byte(previous), &got); err != nil {
+			if err := ccTypes.UnbindReduced(previous, &got); err != nil {
 				return err
 			}
 		}
-		gotErr := unbindReduced([]byte(e), &got)
+		gotErr := ccTypes.UnbindReduced(e, &got)
 		switch {
 		case wantErr != nil && gotErr != nil:
 			continue
@@ -199,7 +196,7 @@ func diffUnbindReduced(e string) error {
 			return fmt.Errorf("unbindFS accepts, unbindReduced rejects. entry: %q, unbindReduced: %v", e, gotErr)
 		}
 		for i, attr := range wfnAttributes {
-			if !equalValue(got[i], want[i]) {
+			if got[i] != want[i] {
 				return fmt.Errorf("attribute differs. entry: %q, after: %q, attribute: %s, unbindFS: %+v, unbindReduced: %+v", e, previous, attr, want[i], got[i])
 			}
 		}
