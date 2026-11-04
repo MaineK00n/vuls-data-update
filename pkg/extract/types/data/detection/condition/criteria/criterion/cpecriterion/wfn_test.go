@@ -119,14 +119,6 @@ var unbindFSSeeds = []string{
 	"",
 }
 
-func TestUnbindFS(t *testing.T) {
-	for _, fs := range unbindFSSeeds {
-		if err := diffUnbindFS(fs); err != nil {
-			t.Error(err)
-		}
-	}
-}
-
 // TestUnbindFSQuotedBackslash checks the departure from go-cpe: a colon after
 // a quoted backslash separates components, as the grammar has it, so the
 // value before it ends in a literal backslash and no colon is absorbed.
@@ -253,14 +245,6 @@ var unbindReducedSeeds = []string{
 	"1.0\x00",
 	`\-`,
 	`1\.0`,
-}
-
-func TestUnbindReduced(t *testing.T) {
-	for _, e := range unbindReducedSeeds {
-		if err := diffUnbindReduced(e); err != nil {
-			t.Error(err)
-		}
-	}
 }
 
 func FuzzUnbindReduced(f *testing.F) {

@@ -43,14 +43,6 @@ var overlapsSeeds = []string{
 	"バージョン", "1*2",
 }
 
-func TestOverlaps(t *testing.T) {
-	for _, x := range overlapsSeeds {
-		for _, y := range overlapsSeeds {
-			diffOverlaps(t, x, y)
-		}
-	}
-}
-
 func FuzzOverlaps(f *testing.F) {
 	for _, x := range overlapsSeeds {
 		for _, y := range overlapsSeeds {

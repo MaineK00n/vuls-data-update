@@ -66,7 +66,7 @@ var (
 //     rejects the name on its colon count.
 //   - a value ending in a lone backslash is an error; go-cpe panics.
 //
-// TestUnbindFS checks the two against each other outside those cases.
+// FuzzUnbindFS checks the two against each other outside those cases.
 func unbindFS(fs string) (wfn, error) {
 	if err := validateFS(fs); err != nil {
 		return wfn{}, err
