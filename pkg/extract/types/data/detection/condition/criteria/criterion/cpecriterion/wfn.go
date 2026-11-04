@@ -52,15 +52,21 @@ var (
 	naValue  = wfnValue{na: true, unescaped: []byte("NA")}
 )
 
-// unbindFS unbinds a formatted string to a WFN. It accepts and rejects
-// exactly the strings go-cpe's naming.UnbindFS does, and gives each
-// attribute the value that function gives, but in the form the matching
-// here consumes (see wfnValue) and without go-cpe's per-character string
-// building, map and interface boxing, which made unbinding the dominant cost
-// of Accept. The one departure: go-cpe panics on a value ending in a lone
-// backslash, which is an error here. The rules below follow go-cpe's
-// ValidateFS, getCompFS, addQuoting and WellFormedName.Set, quirks
-// included; TestUnbindFS checks the two against each other.
+// unbindFS unbinds a formatted string to a WFN. It accepts the strings
+// go-cpe's naming.UnbindFS accepts and gives each attribute the value that
+// function gives, but in the form the matching here consumes (see wfnValue)
+// and without go-cpe's per-character string building, map and interface
+// boxing, which made unbinding the dominant cost of Accept. The rules below
+// follow go-cpe's ValidateFS, getCompFS, addQuoting and WellFormedName.Set,
+// quirks included, and depart from them where go-cpe falls short of the
+// grammar (NISTIR 7695 §5.3.2 and §6.2.3), in which a backslash always
+// quotes the character after it:
+//   - a colon after a quoted backslash ("\\:") is a component separator;
+//     go-cpe looks only at the byte before a colon, reads it as quoted, and
+//     rejects the name on its colon count.
+//   - a value ending in a lone backslash is an error; go-cpe panics.
+//
+// TestUnbindFS checks the two against each other outside those cases.
 func unbindFS(fs string) (wfn, error) {
 	if err := validateFS(fs); err != nil {
 		return wfn{}, err
@@ -70,17 +76,12 @@ func unbindFS(fs string) (wfn, error) {
 	var w wfn
 	rest := []byte(fs)
 	for a := range 13 {
-		// getCompFS: a field ends at the first colon not preceded by a
-		// backslash; a colon at index 0 counts as none.
 		i := unescapedColonIndex(rest)
 		comp := rest
-		if i != 0 {
-			comp = rest[:i]
-		}
-		if i == 0 {
+		if i < 0 {
 			rest = nil
 		} else {
-			rest = rest[i+1:]
+			comp, rest = rest[:i], rest[i+1:]
 		}
 		if a < 2 {
 			continue
@@ -98,9 +99,9 @@ func unbindFS(fs string) (wfn, error) {
 	return w, nil
 }
 
-// validateFS is go-cpe's ValidateFS: the "cpe:2.3:" prefix in any case, and
-// exactly 12 colons not preceded by a backslash, none followed directly by
-// another colon.
+// validateFS is go-cpe's ValidateFS with the grammar's colon rule: the
+// "cpe:2.3:" prefix in any case, and exactly 12 unquoted colons, none
+// followed directly by another colon.
 func validateFS(fs string) error {
 	const prefix = "cpe:2.3:"
 	if len(fs) < len(prefix) || !strings.EqualFold(fs[:len(prefix)], prefix) {
@@ -108,12 +109,14 @@ func validateFS(fs string) error {
 	}
 	n := 0
 	for i := 0; i < len(fs); i++ {
-		if fs[i] != ':' || (i > 0 && fs[i-1] == '\\') {
-			continue
-		}
-		n++
-		if i < len(fs)-1 && fs[i+1] == ':' {
-			return errors.Errorf("unexpected formatted string. found an empty component: %q", fs)
+		switch fs[i] {
+		case '\\':
+			i++
+		case ':':
+			n++
+			if i < len(fs)-1 && fs[i+1] == ':' {
+				return errors.Errorf("unexpected formatted string. found an empty component: %q", fs)
+			}
 		}
 	}
 	if n != 12 {
@@ -122,15 +125,19 @@ func validateFS(fs string) error {
 	return nil
 }
 
-// unescapedColonIndex is go-cpe's GetUnescapedColonIndex: the index of the
-// first colon not directly preceded by a backslash, or 0 if there is none.
+// unescapedColonIndex is go-cpe's GetUnescapedColonIndex with the grammar's
+// colon rule: the index of the first unquoted colon in s, or -1 if there is
+// none.
 func unescapedColonIndex(s []byte) int {
-	for i := range s {
-		if s[i] == ':' && (i == 0 || s[i-1] != '\\') {
+	for i := 0; i < len(s); i++ {
+		switch s[i] {
+		case '\\':
+			i++
+		case ':':
 			return i
 		}
 	}
-	return 0
+	return -1
 }
 
 // unbindValueFS is go-cpe's unbindValueFS followed by the checks
@@ -217,23 +224,17 @@ func packedWFN(c *wfn) wfn {
 // from packedWFN, or from a previous call, and only the attributes after
 // the product are written, those read from e and the ones e omits reset to
 // ANY. It accepts exactly the entries Unpack followed by unbindFS accepts,
-// with the same values. The full name is prefix (the criterion's
-// "cpe:2.3:part:vendor:product:") and e's attributes joined with ":" and
-// padded to 8, so e must hold at most 8, each a valid value, and none empty
-// but the eighth when it is e's last: go-cpe rejects an empty component by
-// the "::" it makes, which a trailing one does not, and reads it as the
+// with the same values. The full name is the criterion's
+// "cpe:2.3:part:vendor:product:" prefix and e's attributes joined with ":"
+// and padded to 8, so e must hold at most 8, each a valid value, and none
+// empty but the eighth when it is e's last: go-cpe rejects an empty component
+// by the "::" it makes, which a trailing one does not, and reads it as the
 // empty string.
-// go-cpe reads a colon right after a backslash as escaped whichever way the
-// backslash itself is quoted, while PackCPEMatches splits on a backslash
-// escaping the character after it; the two agree unless an attribute ends
-// in a backslash, and such an entry is unbound from its full name, as
-// Unpack would restore it (its part, vendor and product unbind to the
-// criterion's, so m keeps them).
-func unbindReduced(prefix string, e []byte, m *wfn) error {
-	// The attributes are split as splitFS splits them, a backslash escaping
-	// the character after it. (Classifying each attribute in this same scan
-	// rather than in unbindValueFS's was measured slower: the extra
-	// branches per byte cost more than the second pass.)
+func unbindReduced(e []byte, m *wfn) error {
+	// The attributes are split as splitFS and unbindFS split them, a
+	// backslash quoting the character after it. (Classifying each attribute
+	// in this same scan rather than in unbindValueFS's was measured slower:
+	// the extra branches per byte cost more than the second pass.)
 	a, start := attrVersion, 0
 	for i := 0; ; i++ {
 		end := len(e)
@@ -249,14 +250,6 @@ func unbindReduced(prefix string, e []byte, m *wfn) error {
 			}
 		}
 		attr := e[start:end]
-		if len(attr) > 0 && attr[len(attr)-1] == '\\' {
-			full, err := unbindFS(string(fullName(prefix, e)))
-			if err != nil {
-				return err
-			}
-			*m = full
-			return nil
-		}
 		if a == attrCount {
 			return errors.Errorf("unexpected number of attributes after the product. expected: at most 8, actual: more, entry: %q", e)
 		}

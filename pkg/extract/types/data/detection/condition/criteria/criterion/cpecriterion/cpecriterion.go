@@ -450,10 +450,6 @@ func (c Criterion) Accept(query Query) (MatchQuality, []warningTypes.Warning, er
 			ue := &UnsupportedPackedEncodingError{Encoding: c.CPEMatchesPacked.Encoding}
 			return quality, append(ws, ue.Warning()), nil
 		}
-		prefix, err := pvpPrefix(string(c.CPE))
-		if err != nil {
-			return MatchQualityUnknown, nil, errors.Wrapf(err, "pvp prefix of %q", string(c.CPE))
-		}
 		// A query with ANY on every attribute after the version, as a
 		// scanner's usually is, overlaps every entry there, so only the
 		// version is left to relate.
@@ -466,7 +462,7 @@ func (c Criterion) Accept(query Query) (MatchQuality, []warningTypes.Warning, er
 			if err != nil {
 				return MatchQualityUnknown, nil, errors.Wrap(err, "unpack cpe matches")
 			}
-			if err := unbindReduced(prefix, e, &mWFN); err != nil {
+			if err := unbindReduced(e, &mWFN); err != nil {
 				return MatchQualityUnknown, nil, errors.Wrapf(err, "unbind packed entry %q to WFN", e)
 			}
 			if quality = stronger(quality, acceptEntryOn(&qWFN, &mWFN, attrs)); quality == MatchQualityExact {
