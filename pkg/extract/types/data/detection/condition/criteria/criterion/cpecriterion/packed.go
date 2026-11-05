@@ -343,24 +343,16 @@ func endsInEscape[S ~string | ~[]byte](s S) bool {
 // canonical forms escape "(", ")" and "+"). The packed names would then no
 // longer match the source's, nor Packable's byte-for-byte prefix check.
 func splitFS(s string, sep byte) []string {
-	return slices.Collect(splitFSSeq(s, sep))
-}
-
-// splitFSSeq is splitFS as an iterator.
-func splitFSSeq(s string, sep byte) iter.Seq[string] {
-	return func(yield func(string) bool) {
-		start := 0
-		for i := 0; i < len(s); i++ {
-			switch s[i] {
-			case '\\':
-				i++
-			case sep:
-				if !yield(s[start:i]) {
-					return
-				}
-				start = i + 1
-			}
+	var parts []string
+	start := 0
+	for i := 0; i < len(s); i++ {
+		switch s[i] {
+		case '\\':
+			i++
+		case sep:
+			parts = append(parts, s[start:i])
+			start = i + 1
 		}
-		yield(s[start:])
 	}
+	return append(parts, s[start:])
 }
