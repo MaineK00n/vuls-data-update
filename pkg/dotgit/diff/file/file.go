@@ -61,7 +61,7 @@ func Diff(repository, minus, plus string, opts ...Option) (string, error) {
 
 		output, err := util.Git(args...)
 		if err != nil {
-			return "", errors.Wrap(err, "git diff")
+			return "", errors.Wrap(err, "diff")
 		}
 		return string(output), nil
 	}

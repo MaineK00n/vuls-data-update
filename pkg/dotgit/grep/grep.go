@@ -91,7 +91,7 @@ func Grep(repository string, patterns []string, opts ...Option) (string, error) 
 
 		output, err := util.Git(args...)
 		if err != nil {
-			return "", errors.Wrap(err, "git grep")
+			return "", errors.Wrap(err, "grep")
 		}
 		return string(output), nil
 	}

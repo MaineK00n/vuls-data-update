@@ -134,11 +134,11 @@ func Pull(repository string, opts ...Option) error {
 		if options.useNativeGit {
 			if _, err := util.Git("-C", filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference), "show-ref", "--verify", "--quiet", fmt.Sprintf("refs/heads/%s", options.checkout)); err != nil { // tag or commit
 				if _, err := util.Git("-C", filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference), "switch", "--detach", options.checkout); err != nil {
-					return errors.Wrap(err, "git switch")
+					return errors.Wrapf(err, "switch to %s", options.checkout)
 				}
 			} else { // branch
 				if _, err := util.Git("-C", filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference), "switch", options.checkout); err != nil {
-					return errors.Wrap(err, "git switch")
+					return errors.Wrapf(err, "switch to %s", options.checkout)
 				}
 			}
 		} else {
@@ -199,12 +199,12 @@ func Pull(repository string, opts ...Option) error {
 			// back is what the pull is for.
 			bs, err := util.Git("-C", filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference), "ls-files")
 			if err != nil {
-				return errors.Wrap(err, "git ls-files")
+				return errors.Wrap(err, "list files")
 			}
 
 			if len(bs) > 0 {
 				if _, err := util.Git("-C", filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference), "restore", "."); err != nil {
-					return errors.Wrap(err, "git restore")
+					return errors.Wrap(err, "restore worktree")
 				}
 			}
 		} else {

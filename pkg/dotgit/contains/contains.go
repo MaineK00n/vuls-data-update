@@ -37,7 +37,7 @@ func Contains(repository, commit string, opts ...Option) error {
 
 	if options.useNativeGit {
 		if _, err := util.Git("-C", repository, "cat-file", "-e", commit); err != nil {
-			return errors.Wrap(err, "git cat-file")
+			return errors.Wrapf(err, "check %s exists", commit)
 		}
 		return nil
 	}

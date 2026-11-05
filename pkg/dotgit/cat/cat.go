@@ -52,7 +52,7 @@ func Cat(repository, path string, opts ...Option) (string, error) {
 	if options.useNativeGit {
 		output, err := util.Git("-C", repository, "show", fmt.Sprintf("%s:%s", options.treeish, path))
 		if err != nil {
-			return "", errors.Wrap(err, "git show")
+			return "", errors.Wrapf(err, "show %s:%s", options.treeish, path)
 		}
 		return string(output), nil
 	}
