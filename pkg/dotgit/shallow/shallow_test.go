@@ -24,6 +24,9 @@ func TestShallow(t *testing.T) {
 		exists bool
 		// defaultRemoteName sets clone.defaultRemoteName.
 		defaultRemoteName string
+		// parent is the directory the repository is made in, under a
+		// temporary directory.
+		parent string
 	}
 	type want struct {
 		branches map[string]int
@@ -73,6 +76,19 @@ func TestShallow(t *testing.T) {
 			},
 		},
 		{
+			name: "an escape in the path",
+			args: args{
+				depth:  1,
+				origin: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test",
+				parent: "run%20one",
+			},
+			want: want{
+				branches: map[string]int{"main": 1, "nightly": 1},
+				shallow:  []int{2, 3},
+				origin:   "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test",
+			},
+		},
+		{
 			name: "no origin",
 			args: args{
 				depth: 1,
@@ -101,7 +117,7 @@ func TestShallow(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			dir := t.TempDir()
-			src, err := git.Populate(dir, "testdata/fixtures/history")
+			src, err := git.Populate(filepath.Join(dir, tt.args.parent), "testdata/fixtures/history")
 			if err != nil {
 				t.Fatalf("populate. err: %v", err)
 			}
