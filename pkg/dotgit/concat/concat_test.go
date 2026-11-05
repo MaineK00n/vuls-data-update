@@ -248,6 +248,32 @@ func TestConcat(t *testing.T) {
 			},
 		},
 		{
+			name: "main descending through a branch of the input before it",
+			args: args{
+				archives: []archive{
+					{name: "vuls-data-raw-test-archive-5", tip: 2, depth: 1, nightly: 3},
+					{name: "vuls-data-raw-test-archive-6", tip: 4, depth: 2, nightly: 2},
+				},
+			},
+			want: []output{
+				{
+					name:    "vuls-data-raw-test-archive-6",
+					made:    true,
+					inputs:  []string{"vuls-data-raw-test-archive-5", "vuls-data-raw-test-archive-6"},
+					commits: 3,
+					shallow: []int{2},
+					refs: map[string]int{
+						"refs/heads/main":                                4,
+						"refs/heads/nightly":                             2,
+						"refs/tags/vuls-data-raw-test-archive-5/main":    2,
+						"refs/tags/vuls-data-raw-test-archive-5/nightly": 3,
+						"refs/tags/vuls-data-raw-test-archive-6/main":    4,
+						"refs/tags/vuls-data-raw-test-archive-6/nightly": 2,
+					},
+				},
+			},
+		},
+		{
 			name: "an archive of one commit after a newer archive",
 			args: args{
 				archives: []archive{a3, d4},

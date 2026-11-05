@@ -93,8 +93,8 @@ type input struct {
 	refs    map[string]string
 	origin  string
 	shallow []string
-	// parents is the parents each shallow root has in its commit object,
-	// which the input itself may not hold.
+	// parents is the parents of each commit as its commit object names them,
+	// which, for a shallow root, the input itself does not hold.
 	parents map[string][]string
 	commits []string
 	// all is the on-disk size of every object its branches and tags reach.
@@ -260,7 +260,21 @@ func inspect(repository string) (input, error) {
 		return input{}, errors.Wrapf(err, "read %s", shallowPath)
 	}
 
-	parents := make(map[string][]string, len(shallow))
+	bs, err = util.Git("-C", path, "rev-list", "--parents", "--branches", "--tags")
+	if err != nil {
+		return input{}, errors.Wrap(err, "list commits")
+	}
+	parents := make(map[string][]string)
+	for line := range strings.Lines(string(bs)) {
+		fields := strings.Fields(line)
+		if len(fields) == 0 {
+			continue
+		}
+		parents[fields[0]] = fields[1:]
+	}
+	commits := slices.Sorted(maps.Keys(parents))
+
+	// rev-list shows a shallow root without parents.
 	for _, s := range shallow {
 		bs, err := util.Git("-C", path, "cat-file", "commit", s)
 		if err != nil {
@@ -275,13 +289,6 @@ func inspect(repository string) (input, error) {
 		}
 		parents[s] = ps
 	}
-
-	bs, err = util.Git("-C", path, "rev-list", "--branches", "--tags")
-	if err != nil {
-		return input{}, errors.Wrap(err, "list commits")
-	}
-	commits := strings.Fields(string(bs))
-	slices.Sort(commits)
 
 	all, err := util.DiskUsage(path, "--branches", "--tags")
 	if err != nil {
@@ -315,29 +322,49 @@ func inspect(repository string) (input, error) {
 // from a repository of one commit does. Such an archive is its own shallow
 // root, so the roots alone would also let it follow a newer archive; the
 // branch HEAD of each input points to must therefore descend from the commit
-// HEAD of the input before it points to.
+// HEAD of the input before it points to. Descent is traced through the
+// parents of every input so far, as the joined repository will have them,
+// so a shallow root of one input does not hide what another holds.
 func checkChain(inputs []input) error {
-	seen := make(map[string]struct{})
+	parents := make(map[string][]string)
 	for i, in := range inputs {
 		if i > 0 {
-			prev := inputs[i-1]
-			if _, found := slices.BinarySearch(in.commits, prev.refs[prev.head]); !found {
-				return errors.Errorf("%s does not continue from %s: it lacks %s, which %s of %s points to", in.path, prev.path, prev.refs[prev.head], prev.head, prev.path)
-			}
-			if _, err := util.Git("-C", in.path, "merge-base", "--is-ancestor", prev.refs[prev.head], in.refs[in.head]); err != nil {
-				return errors.Wrapf(err, "%s does not continue from %s: %s of %s does not descend from %s, which %s of %s points to", in.path, prev.path, in.head, in.path, prev.refs[prev.head], prev.head, prev.path)
-			}
 			for _, s := range in.shallow {
-				if _, ok := seen[s]; !ok {
+				if _, ok := parents[s]; !ok {
 					return errors.Errorf("%s does not continue from the inputs before it: none of them has its shallow root %s", in.path, s)
 				}
 			}
 		}
-		for _, c := range in.commits {
-			seen[c] = struct{}{}
+		maps.Copy(parents, in.parents)
+		if i > 0 {
+			prev := inputs[i-1]
+			if !descends(parents, in.refs[in.head], prev.refs[prev.head]) {
+				return errors.Errorf("%s does not continue from %s: %s of %s does not descend from %s, which %s of %s points to", in.path, prev.path, in.head, in.path, prev.refs[prev.head], prev.head, prev.path)
+			}
 		}
 	}
 	return nil
+}
+
+// descends reports whether ancestor is commit or one of its ancestors in
+// parents.
+func descends(parents map[string][]string, commit, ancestor string) bool {
+	seen := map[string]struct{}{commit: {}}
+	queue := []string{commit}
+	for len(queue) > 0 {
+		c := queue[0]
+		queue = queue[1:]
+		if c == ancestor {
+			return true
+		}
+		for _, p := range parents[c] {
+			if _, ok := seen[p]; !ok {
+				seen[p] = struct{}{}
+				queue = append(queue, p)
+			}
+		}
+	}
+	return false
 }
 
 func split(inputs []input, maxSize int64) []group {
