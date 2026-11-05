@@ -50,20 +50,14 @@ type options struct {
 	dir              string
 	retry            int
 	supplementMonths int
+
+	// httpClient is only ever set by WithHTTPClient, which lives in
+	// export_test.go and is therefore absent from the production build.
+	httpClient *http.Client
 }
 
 type Option interface {
 	apply(*options)
-}
-
-type baseURLOption string
-
-func (u baseURLOption) apply(opts *options) {
-	opts.baseURL = string(u)
-}
-
-func WithBaseURL(url string) Option {
-	return baseURLOption(url)
 }
 
 type dirOption string
@@ -121,7 +115,7 @@ func Fetch(opts ...Option) error {
 	}
 
 	slog.Info("Fetch Windows CVRF")
-	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(updatesURL)
+	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry), utilhttp.WithClientHTTPClient(options.httpClient)).Get(updatesURL)
 	if err != nil {
 		return errors.Wrap(err, "fetch updates")
 	}
@@ -150,7 +144,7 @@ func Fetch(opts ...Option) error {
 		}
 
 		slog.Info("Fetch Windows CVRF", slog.String("file", u.ID))
-		c, err := fetchCVRF(options.retry, cvrfURL)
+		c, err := fetchCVRF(options, cvrfURL)
 		if err != nil {
 			return errors.Wrapf(err, "fetch %s", cvrfURL)
 		}
@@ -167,8 +161,8 @@ func Fetch(opts ...Option) error {
 	return nil
 }
 
-func fetchCVRF(retry int, cvrfURL string) (*CVRF, error) {
-	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(retry)).Get(cvrfURL)
+func fetchCVRF(options *options, cvrfURL string) (*CVRF, error) {
+	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry), utilhttp.WithClientHTTPClient(options.httpClient)).Get(cvrfURL)
 	if err != nil {
 		return nil, errors.Wrap(err, "fetch cvrf")
 	}
@@ -271,7 +265,7 @@ func supplement(options *options, seen map[string]struct{}) error {
 		}
 
 		slog.Info("Supplement Windows CVRF missing from index", slog.String("month", ym))
-		c, err := fetchCVRF(options.retry, cvrfURL)
+		c, err := fetchCVRF(options, cvrfURL)
 		if err != nil {
 			if errors.Is(err, errNotFound) {
 				slog.Warn("Skip supplement month absent from both index and direct url", slog.String("month", ym))

@@ -15,22 +15,15 @@ import (
 const baseURL = "https://api.github.com"
 
 type options struct {
-	baseURL    string
 	taggedOnly bool
+
+	// httpClient is only ever set from a test: either by this package's own
+	// tests or, through the forwarding below, by the tests of delete and untag.
+	httpClient *http.Client
 }
 
 type Option interface {
 	apply(*options)
-}
-
-type baseURLOption string
-
-func (u baseURLOption) apply(opts *options) {
-	opts.baseURL = string(u)
-}
-
-func WithbaseURL(url string) Option {
-	return baseURLOption(url)
 }
 
 type taggedOnlyOption bool
@@ -87,9 +80,28 @@ type Response struct {
 	HTMLURL   *string `json:"html_url,omitempty"`
 }
 
+type httpClientOption struct {
+	client *http.Client
+}
+
+func (c httpClientOption) apply(opts *options) {
+	opts.httpClient = c.client
+}
+
+// WithHTTPClient replaces the underlying *http.Client. Tests pass the client
+// of an httptest.NewTestServer, whose in-memory network routes every request
+// to the test server regardless of host, so the caller keeps requesting the
+// production API URL.
+//
+// Unlike its counterparts elsewhere this one cannot live in export_test.go:
+// delete and untag call List while serving their own callers and have to
+// forward the client, so the production build of those packages references it.
+func WithHTTPClient(client *http.Client) Option {
+	return httpClientOption{client: client}
+}
+
 func List(repositories []Repository, token string, opts ...Option) ([]Response, error) {
 	options := &options{
-		baseURL:    baseURL,
 		taggedOnly: false,
 	}
 
@@ -102,7 +114,7 @@ func List(repositories []Repository, token string, opts ...Option) ([]Response, 
 		switch repository.Registry {
 		case "ghcr.io":
 			if repository.Type == "" {
-				if err := utilGitHub.Do(http.MethodGet, fmt.Sprintf("%s/users/%s", options.baseURL, repository.Owner), token, func(resp *http.Response) error {
+				if err := utilGitHub.Do(options.httpClient, http.MethodGet, fmt.Sprintf("%s/users/%s", baseURL, repository.Owner), token, func(resp *http.Response) error {
 					switch resp.StatusCode {
 					case http.StatusOK:
 						type users struct {
@@ -129,7 +141,7 @@ func List(repositories []Repository, token string, opts ...Option) ([]Response, 
 				}
 			}
 
-			u, err := url.Parse(options.baseURL)
+			u, err := url.Parse(baseURL)
 			if err != nil {
 				return nil, errors.Wrap(err, "parse url")
 			}
@@ -147,7 +159,7 @@ func List(repositories []Repository, token string, opts ...Option) ([]Response, 
 				u.RawQuery = q.Encode()
 
 				isLastPage := false
-				if err := utilGitHub.Do(http.MethodGet, u.String(), token, func(resp *http.Response) error {
+				if err := utilGitHub.Do(options.httpClient, http.MethodGet, u.String(), token, func(resp *http.Response) error {
 					switch resp.StatusCode {
 					case http.StatusOK:
 						var vs []Version

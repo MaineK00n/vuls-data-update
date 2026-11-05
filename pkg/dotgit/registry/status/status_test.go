@@ -3,13 +3,11 @@ package status_test
 import (
 	"net/http"
 	"net/http/httptest"
-	"net/url"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
 	"github.com/google/go-containerregistry/pkg/registry"
-	"github.com/opencontainers/image-spec/specs-go"
 	ocispec "github.com/opencontainers/image-spec/specs-go/v1"
 	"github.com/pkg/errors"
 	"oras.land/oras-go/v2/registry/remote"
@@ -34,10 +32,10 @@ func TestStatus(t *testing.T) {
 				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test",
 			},
 			want: ocispec.Manifest{
-				Versioned:    specs.Versioned{SchemaVersion: 2},
-				MediaType:    ocispec.MediaTypeImageManifest,
-				ArtifactType: "application/vnd.vulsio.vuls-data-db.dotgit+type",
-				Config:       ocispec.DescriptorEmptyJSON,
+				SchemaVersion: 2,
+				MediaType:     ocispec.MediaTypeImageManifest,
+				ArtifactType:  "application/vnd.vulsio.vuls-data-db.dotgit+type",
+				Config:        ocispec.DescriptorEmptyJSON,
 				Layers: []ocispec.Descriptor{
 					{
 						MediaType:   "application/vnd.vulsio.vuls-data-db.dotgit.layer.v1.tar+zstd",
@@ -52,26 +50,21 @@ func TestStatus(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewTLSServer(registry.New())
-			defer ts.Close()
+			// The in-memory network routes every host, ghcr.io included, to
+			// the test server, so the fixtures keep their production image
+			// references.
+			ts := httptest.NewTestServer(t, registry.New())
 
 			originalTransport := http.DefaultTransport
 			http.DefaultTransport = ts.Client().Transport
-			defer func() {
+			t.Cleanup(func() {
 				http.DefaultTransport = originalTransport
-			}()
-
-			u, err := url.Parse(ts.URL)
-			if err != nil {
-				t.Fatalf("parse url: %v", err)
-			}
+			})
 
 			repo, err := remote.NewRepository(tt.args.repository)
 			if err != nil {
 				t.Fatalf("new repository: %v", err)
 			}
-			repo.Reference.Registry = u.Host
-
 			if err := setup(repo.Reference.String()); err != nil {
 				t.Fatalf("setup(): %v", err)
 			}

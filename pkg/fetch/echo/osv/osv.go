@@ -3,7 +3,7 @@ package osv
 import (
 	"archive/zip"
 	"bytes"
-	"encoding/json"
+	"encoding/json/v2"
 	"fmt"
 	"io"
 	"log/slog"
@@ -24,20 +24,14 @@ type options struct {
 	dataURL string
 	dir     string
 	retry   int
+
+	// httpClient is only ever set by WithHTTPClient, which lives in
+	// export_test.go and is therefore absent from the production build.
+	httpClient *http.Client
 }
 
 type Option interface {
 	apply(*options)
-}
-
-type dataURLOption string
-
-func (u dataURLOption) apply(opts *options) {
-	opts.dataURL = string(u)
-}
-
-func WithDataURL(url string) Option {
-	return dataURLOption(url)
 }
 
 type dirOption string
@@ -76,7 +70,7 @@ func Fetch(opts ...Option) error {
 	}
 
 	slog.Info("Fetch Echo OSV")
-	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.dataURL)
+	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry), utilhttp.WithClientHTTPClient(options.httpClient)).Get(options.dataURL)
 	if err != nil {
 		return errors.Wrap(err, "fetch osv data")
 	}
@@ -110,7 +104,7 @@ func Fetch(opts ...Option) error {
 			defer f.Close()
 
 			var a OSV
-			if err := json.NewDecoder(f).Decode(&a); err != nil {
+			if err := json.UnmarshalRead(f, &a); err != nil {
 				return nil, errors.Wrap(err, "decode json")
 			}
 			return &a, nil

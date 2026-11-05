@@ -5,14 +5,12 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
-	"net/url"
 	"sync"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
 	"github.com/google/go-containerregistry/pkg/registry"
-	"github.com/opencontainers/image-spec/specs-go"
 	ocispec "github.com/opencontainers/image-spec/specs-go/v1"
 	"oras.land/oras-go/v2/registry/remote"
 
@@ -43,10 +41,10 @@ func TestCopy(t *testing.T) {
 				opts:  []cp.Option{cp.WithForce(false)},
 			},
 			want: ocispec.Manifest{
-				Versioned:    specs.Versioned{SchemaVersion: 2},
-				MediaType:    ocispec.MediaTypeImageManifest,
-				ArtifactType: "application/vnd.vulsio.vuls-data-db.dotgit+type",
-				Config:       ocispec.DescriptorEmptyJSON,
+				SchemaVersion: 2,
+				MediaType:     ocispec.MediaTypeImageManifest,
+				ArtifactType:  "application/vnd.vulsio.vuls-data-db.dotgit+type",
+				Config:        ocispec.DescriptorEmptyJSON,
 				Layers: []ocispec.Descriptor{
 					{
 						MediaType:   "application/vnd.vulsio.vuls-data-db.dotgit.layer.v1.tar+zstd",
@@ -67,10 +65,10 @@ func TestCopy(t *testing.T) {
 				opts:  []cp.Option{cp.WithForce(false)},
 			},
 			want: ocispec.Manifest{
-				Versioned:    specs.Versioned{SchemaVersion: 2},
-				MediaType:    ocispec.MediaTypeImageManifest,
-				ArtifactType: "application/vnd.vulsio.vuls-data-db.dotgit+type",
-				Config:       ocispec.DescriptorEmptyJSON,
+				SchemaVersion: 2,
+				MediaType:     ocispec.MediaTypeImageManifest,
+				ArtifactType:  "application/vnd.vulsio.vuls-data-db.dotgit+type",
+				Config:        ocispec.DescriptorEmptyJSON,
 				Layers: []ocispec.Descriptor{
 					{
 						MediaType:   "application/vnd.vulsio.vuls-data-db.dotgit.layer.v1.tar+zstd",
@@ -91,10 +89,10 @@ func TestCopy(t *testing.T) {
 				opts:  []cp.Option{cp.WithForce(false)},
 			},
 			want: ocispec.Manifest{
-				Versioned:    specs.Versioned{SchemaVersion: 2},
-				MediaType:    ocispec.MediaTypeImageManifest,
-				ArtifactType: "application/vnd.vulsio.vuls-data-db.dotgit+type",
-				Config:       ocispec.DescriptorEmptyJSON,
+				SchemaVersion: 2,
+				MediaType:     ocispec.MediaTypeImageManifest,
+				ArtifactType:  "application/vnd.vulsio.vuls-data-db.dotgit+type",
+				Config:        ocispec.DescriptorEmptyJSON,
 				Layers: []ocispec.Descriptor{
 					{
 						MediaType:   "application/vnd.vulsio.vuls-data-db.dotgit.layer.v1.tar+zstd",
@@ -116,10 +114,10 @@ func TestCopy(t *testing.T) {
 				opts:  []cp.Option{cp.WithForce(true)},
 			},
 			want: ocispec.Manifest{
-				Versioned:    specs.Versioned{SchemaVersion: 2},
-				MediaType:    ocispec.MediaTypeImageManifest,
-				ArtifactType: "application/vnd.vulsio.vuls-data-db.dotgit+type",
-				Config:       ocispec.DescriptorEmptyJSON,
+				SchemaVersion: 2,
+				MediaType:     ocispec.MediaTypeImageManifest,
+				ArtifactType:  "application/vnd.vulsio.vuls-data-db.dotgit+type",
+				Config:        ocispec.DescriptorEmptyJSON,
 				Layers: []ocispec.Descriptor{
 					{
 						MediaType:   "application/vnd.vulsio.vuls-data-db.dotgit.layer.v1.tar+zstd",
@@ -135,32 +133,25 @@ func TestCopy(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewTLSServer(registry.New())
-			defer ts.Close()
+			// The in-memory network routes every host, ghcr.io included, to
+			// the test server, so the fixtures keep their production image
+			// references.
+			ts := httptest.NewTestServer(t, registry.New())
 
 			originalTransport := http.DefaultTransport
 			http.DefaultTransport = ts.Client().Transport
-			defer func() {
+			t.Cleanup(func() {
 				http.DefaultTransport = originalTransport
-			}()
-
-			u, err := url.Parse(ts.URL)
-			if err != nil {
-				t.Fatalf("parse url. err: %v", err)
-			}
+			})
 
 			fr, err := remote.NewRepository(tt.args.from)
 			if err != nil {
 				t.Fatalf("new repository: %v", err)
 			}
-			fr.Reference.Registry = u.Host
-
 			tr, err := remote.NewRepository(tt.args.to)
 			if err != nil {
 				t.Fatalf("new repository: %v", err)
 			}
-			tr.Reference.Registry = u.Host
-
 			if err := push.Push(fmt.Sprintf("%s/%s:vuls-data-raw-example", fr.Reference.Registry, fr.Reference.Repository), "testdata/fixtures/vuls-data-raw-example.tar.zst", ""); err != nil {
 				t.Fatalf("push to %s: %v", fmt.Sprintf("%s/%s:vuls-data-raw-example", fr.Reference.Registry, fr.Reference.Repository), err)
 			}
@@ -198,26 +189,22 @@ func TestCopyReference(t *testing.T) {
 		requests int
 	)
 	h := registry.New()
-	ts := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	// The in-memory network routes every host, ghcr.io included, to the test
+	// server, so the references keep their production registry.
+	ts := httptest.NewTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		mu.Lock()
 		requests++
 		mu.Unlock()
 		h.ServeHTTP(w, r)
 	}))
-	defer ts.Close()
 
 	originalTransport := http.DefaultTransport
 	http.DefaultTransport = ts.Client().Transport
-	defer func() {
+	t.Cleanup(func() {
 		http.DefaultTransport = originalTransport
-	}()
+	})
 
-	u, err := url.Parse(ts.URL)
-	if err != nil {
-		t.Fatalf("parse url: %v", err)
-	}
-
-	src := fmt.Sprintf("%s/vulsio/vuls-data-db:vuls-data-raw-example", u.Host)
+	const src = "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-example"
 	if err := push.Push(src, "testdata/fixtures/vuls-data-raw-example.tar.zst", ""); err != nil {
 		t.Fatalf("push to %s: %v", src, err)
 	}
@@ -231,7 +218,7 @@ func TestCopyReference(t *testing.T) {
 		t.Fatalf("resolve %s: %v", src, err)
 	}
 
-	if err := cp.Copy(fmt.Sprintf("%s/vulsio/vuls-data-db@%s", u.Host, desc.Digest), fmt.Sprintf("%s/vulsio/vuls-data-db-backup:vuls-data-raw-example", u.Host), "token"); err != nil {
+	if err := cp.Copy(fmt.Sprintf("ghcr.io/vulsio/vuls-data-db@%s", desc.Digest), "ghcr.io/vulsio/vuls-data-db-backup:vuls-data-raw-example", "token"); err != nil {
 		t.Errorf("Copy() from a digest: %v", err)
 	}
 
@@ -241,7 +228,7 @@ func TestCopyReference(t *testing.T) {
 	requests = 0
 	mu.Unlock()
 
-	if err := cp.Copy(src, fmt.Sprintf("%s/vulsio/vuls-data-db-archive@%s", u.Host, desc.Digest), "token"); err == nil {
+	if err := cp.Copy(src, fmt.Sprintf("ghcr.io/vulsio/vuls-data-db-archive@%s", desc.Digest), "token"); err == nil {
 		t.Error("Copy() to a digest: error = nil, want an error")
 	}
 

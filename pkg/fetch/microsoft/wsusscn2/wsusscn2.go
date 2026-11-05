@@ -7,6 +7,7 @@ import (
 	"io"
 	"io/fs"
 	"log/slog"
+	"net/http"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -29,20 +30,14 @@ type options struct {
 	dir         string
 	retry       int
 	concurrency int
+
+	// httpClient is only ever set by WithHTTPClient, which lives in
+	// export_test.go and is therefore absent from the production build.
+	httpClient *http.Client
 }
 
 type Option interface {
 	apply(*options)
-}
-
-type dataURLOption string
-
-func (u dataURLOption) apply(opts *options) {
-	opts.dataURL = string(u)
-}
-
-func WithDataURL(url string) Option {
-	return dataURLOption(url)
 }
 
 type dirOption string
@@ -111,7 +106,7 @@ func (opts options) fetch() (string, error) {
 		return "", errors.Wrap(err, "make directory")
 	}
 
-	c := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry))
+	c := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry), utilhttp.WithClientHTTPClient(opts.httpClient))
 	resp, err := c.Get(opts.dataURL)
 	if err != nil {
 		return "", errors.Wrapf(err, "http get, url: %s", opts.dataURL)

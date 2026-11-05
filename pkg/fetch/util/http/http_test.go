@@ -9,6 +9,37 @@ import (
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
+func TestNewClient_WithClientHTTPClient(t *testing.T) {
+	supplied := &http.Client{}
+
+	tests := []struct {
+		name   string
+		client *http.Client
+	}{
+		{
+			// production fetchers forward their test-only httpClient field,
+			// which is nil outside tests, so the pooled default has to stay
+			name:   "nil keeps the default",
+			client: nil,
+		},
+		{
+			name:   "supplied client is used",
+			client: supplied,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := utilhttp.NewClient(utilhttp.WithClientHTTPClient(tt.client)).HTTPClient
+			switch {
+			case tt.client == nil && got == nil:
+				t.Error("HTTPClient is nil, want the pooled default")
+			case tt.client != nil && got != tt.client:
+				t.Errorf("HTTPClient = %p, want the supplied client %p", got, tt.client)
+			}
+		})
+	}
+}
+
 func TestClient_PipelineGet(t *testing.T) {
 	tests := []struct {
 		name        string
@@ -45,19 +76,20 @@ func TestClient_PipelineGet(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+			// The in-memory network sends every request to the test server,
+			// whatever its host.
+			ts := httptest.NewTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 				w.WriteHeader(http.StatusOK)
 			}))
-			defer ts.Close()
 
 			urls := make([]string, 0, tt.urls)
 			for range tt.urls {
-				urls = append(urls, ts.URL)
+				urls = append(urls, "https://example.com/")
 			}
 
 			done := make(chan error, 1)
 			go func() {
-				done <- utilhttp.NewClient().PipelineGet(urls, tt.concurrency, 0, true, func(resp *http.Response) error {
+				done <- utilhttp.NewClient(utilhttp.WithClientHTTPClient(ts.Client())).PipelineGet(urls, tt.concurrency, 0, true, func(resp *http.Response) error {
 					defer resp.Body.Close()
 					return nil
 				})

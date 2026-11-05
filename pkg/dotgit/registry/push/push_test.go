@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
-	"net/url"
 	"strings"
 	"sync"
 	"testing"
@@ -14,7 +13,6 @@ import (
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
 	"github.com/google/go-containerregistry/pkg/registry"
-	"github.com/opencontainers/image-spec/specs-go"
 	ocispec "github.com/opencontainers/image-spec/specs-go/v1"
 	"github.com/pkg/errors"
 	"oras.land/oras-go/v2"
@@ -45,10 +43,10 @@ func TestPush(t *testing.T) {
 				token:  "gho_xxx",
 			},
 			want: ocispec.Manifest{
-				Versioned:    specs.Versioned{SchemaVersion: 2},
-				MediaType:    ocispec.MediaTypeImageManifest,
-				ArtifactType: "application/vnd.vulsio.vuls-data-db.dotgit+type",
-				Config:       ocispec.DescriptorEmptyJSON,
+				SchemaVersion: 2,
+				MediaType:     ocispec.MediaTypeImageManifest,
+				ArtifactType:  "application/vnd.vulsio.vuls-data-db.dotgit+type",
+				Config:        ocispec.DescriptorEmptyJSON,
 				Layers: []ocispec.Descriptor{
 					{
 						MediaType:   "application/vnd.vulsio.vuls-data-db.dotgit.layer.v1.tar+zstd",
@@ -68,10 +66,10 @@ func TestPush(t *testing.T) {
 				token:  "gho_xxx",
 			},
 			want: ocispec.Manifest{
-				Versioned:    specs.Versioned{SchemaVersion: 2},
-				MediaType:    ocispec.MediaTypeImageManifest,
-				ArtifactType: "application/vnd.vulsio.vuls-data-db.dotgit+type",
-				Config:       ocispec.DescriptorEmptyJSON,
+				SchemaVersion: 2,
+				MediaType:     ocispec.MediaTypeImageManifest,
+				ArtifactType:  "application/vnd.vulsio.vuls-data-db.dotgit+type",
+				Config:        ocispec.DescriptorEmptyJSON,
 				Layers: []ocispec.Descriptor{
 					{
 						MediaType:   "application/vnd.vulsio.vuls-data-db.dotgit.layer.v1.tar+zstd",
@@ -96,10 +94,10 @@ func TestPush(t *testing.T) {
 				opts:   []push.Option{push.WithForce(true)},
 			},
 			want: ocispec.Manifest{
-				Versioned:    specs.Versioned{SchemaVersion: 2},
-				MediaType:    ocispec.MediaTypeImageManifest,
-				ArtifactType: "application/vnd.vulsio.vuls-data-db.dotgit+type",
-				Config:       ocispec.DescriptorEmptyJSON,
+				SchemaVersion: 2,
+				MediaType:     ocispec.MediaTypeImageManifest,
+				ArtifactType:  "application/vnd.vulsio.vuls-data-db.dotgit+type",
+				Config:        ocispec.DescriptorEmptyJSON,
 				Layers: []ocispec.Descriptor{
 					{
 						MediaType:   "application/vnd.vulsio.vuls-data-db.dotgit.layer.v1.tar+zstd",
@@ -121,10 +119,10 @@ func TestPush(t *testing.T) {
 				opts:   []push.Option{push.WithForce(true)},
 			},
 			want: ocispec.Manifest{
-				Versioned:    specs.Versioned{SchemaVersion: 2},
-				MediaType:    ocispec.MediaTypeImageManifest,
-				ArtifactType: "application/vnd.vulsio.vuls-data-db.dotgit+type",
-				Config:       ocispec.DescriptorEmptyJSON,
+				SchemaVersion: 2,
+				MediaType:     ocispec.MediaTypeImageManifest,
+				ArtifactType:  "application/vnd.vulsio.vuls-data-db.dotgit+type",
+				Config:        ocispec.DescriptorEmptyJSON,
 				Layers: []ocispec.Descriptor{
 					{
 						MediaType:   "application/vnd.vulsio.vuls-data-db.dotgit.layer.v1.tar+zstd",
@@ -139,26 +137,21 @@ func TestPush(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewTLSServer(registry.New())
-			defer ts.Close()
+			// The in-memory network routes every host, ghcr.io included, to
+			// the test server, so the fixtures keep their production image
+			// references.
+			ts := httptest.NewTestServer(t, registry.New())
 
 			originalTransport := http.DefaultTransport
 			http.DefaultTransport = ts.Client().Transport
-			defer func() {
+			t.Cleanup(func() {
 				http.DefaultTransport = originalTransport
-			}()
-
-			u, err := url.Parse(ts.URL)
-			if err != nil {
-				t.Fatalf("parse url: %v", err)
-			}
+			})
 
 			repo, err := remote.NewRepository(tt.args.image)
 			if err != nil {
 				t.Fatalf("new repository: %v", err)
 			}
-			repo.Reference.Registry = u.Host
-
 			if err := setup(fmt.Sprintf("%s/%s", repo.Reference.Registry, repo.Reference.Repository)); err != nil {
 				t.Fatalf("setup(): %v", err)
 			}
@@ -187,7 +180,9 @@ func TestPushManifestUnderTag(t *testing.T) {
 		manifestPutRefs []string
 	)
 	h := registry.New()
-	ts := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	// The in-memory network routes every host, ghcr.io included, to the test
+	// server, so the image keeps its production reference.
+	ts := httptest.NewTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if _, ref, ok := strings.Cut(r.URL.Path, "/manifests/"); ok && r.Method == http.MethodPut {
 			mu.Lock()
 			manifestPutRefs = append(manifestPutRefs, ref)
@@ -195,26 +190,14 @@ func TestPushManifestUnderTag(t *testing.T) {
 		}
 		h.ServeHTTP(w, r)
 	}))
-	defer ts.Close()
 
 	originalTransport := http.DefaultTransport
 	http.DefaultTransport = ts.Client().Transport
-	defer func() {
+	t.Cleanup(func() {
 		http.DefaultTransport = originalTransport
-	}()
+	})
 
-	u, err := url.Parse(ts.URL)
-	if err != nil {
-		t.Fatalf("parse url: %v", err)
-	}
-
-	repo, err := remote.NewRepository(fmt.Sprintf("ghcr.io/vulsio/vuls-data-db:%s", tag))
-	if err != nil {
-		t.Fatalf("new repository: %v", err)
-	}
-	repo.Reference.Registry = u.Host
-
-	if err := push.Push(repo.Reference.String(), "testdata/fixtures/vuls-data-raw-test.tar.zst", "gho_xxx"); err != nil {
+	if err := push.Push(fmt.Sprintf("ghcr.io/vulsio/vuls-data-db:%s", tag), "testdata/fixtures/vuls-data-raw-test.tar.zst", "gho_xxx"); err != nil {
 		t.Fatalf("Push(): %v", err)
 	}
 
@@ -237,29 +220,25 @@ func TestPushNonTagReference(t *testing.T) {
 		requests int
 	)
 	h := registry.New()
-	ts := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	// The in-memory network routes every host, ghcr.io included, to the test
+	// server, so the images keep their production references.
+	ts := httptest.NewTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		mu.Lock()
 		requests++
 		mu.Unlock()
 		h.ServeHTTP(w, r)
 	}))
-	defer ts.Close()
 
 	originalTransport := http.DefaultTransport
 	http.DefaultTransport = ts.Client().Transport
-	defer func() {
+	t.Cleanup(func() {
 		http.DefaultTransport = originalTransport
-	}()
-
-	u, err := url.Parse(ts.URL)
-	if err != nil {
-		t.Fatalf("parse url: %v", err)
-	}
+	})
 
 	for _, image := range []string{
-		fmt.Sprintf("%s/vulsio/vuls-data-db", u.Host),
-		fmt.Sprintf("%s/vulsio/vuls-data-db@%s", u.Host, digest),
-		fmt.Sprintf("%s/vulsio/vuls-data-db:vuls-data-raw-test@%s", u.Host, digest),
+		"ghcr.io/vulsio/vuls-data-db",
+		fmt.Sprintf("ghcr.io/vulsio/vuls-data-db@%s", digest),
+		fmt.Sprintf("ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test@%s", digest),
 	} {
 		if err := push.Push(image, "testdata/fixtures/vuls-data-raw-test.tar.zst", "gho_xxx"); err == nil {
 			t.Errorf("Push(%q) error = nil, want an error", image)

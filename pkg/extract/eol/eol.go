@@ -20,8 +20,11 @@ import (
 )
 
 type options struct {
+	dir string
+
+	// eols is only ever set by WithEOL, which lives in export_test.go
+	// and is therefore absent from the production build.
 	eols map[string]map[string]map[string]eolTypes.EOL
-	dir  string
 }
 
 type Option interface {
@@ -29,16 +32,6 @@ type Option interface {
 }
 
 var defaultEOL = map[string]map[string]map[string]eolTypes.EOL{"os": os}
-
-type eolOption map[string]map[string]map[string]eolTypes.EOL
-
-func (e eolOption) apply(opts *options) {
-	opts.eols = map[string]map[string]map[string]eolTypes.EOL(e)
-}
-
-func WithEOL(eol map[string]map[string]map[string]eolTypes.EOL) Option {
-	return eolOption(eol)
-}
 
 type dirOption string
 

@@ -793,9 +793,7 @@ func newCmdDebianSecurityTrackerSalsa() *cobra.Command {
 		base
 		concurrency int
 	}{
-		base: base{
-			dir: filepath.Join(util.CacheDir(), "extract", "debian", "tracker", "salsa"),
-		},
+		dir:         filepath.Join(util.CacheDir(), "extract", "debian", "tracker", "salsa"),
 		concurrency: runtime.NumCPU(),
 	}
 
@@ -1671,8 +1669,12 @@ func newCmdMicrosoftCVRF() *cobra.Command {
 }
 
 func newCmdMicrosoftMSUC() *cobra.Command {
-	options := &base{
-		dir: filepath.Join(util.CacheDir(), "extract", "microsoft", "msuc"),
+	options := &struct {
+		base
+		concurrency int
+	}{
+		dir:         filepath.Join(util.CacheDir(), "extract", "microsoft", "msuc"),
+		concurrency: runtime.NumCPU(),
 	}
 
 	cmd := &cobra.Command{
@@ -1683,7 +1685,7 @@ func newCmdMicrosoftMSUC() *cobra.Command {
 		`),
 		Args: cobra.ExactArgs(1),
 		RunE: func(_ *cobra.Command, args []string) error {
-			if err := microsoftMSUC.Extract(args[0], microsoftMSUC.WithDir(options.dir)); err != nil {
+			if err := microsoftMSUC.Extract(args[0], microsoftMSUC.WithDir(options.dir), microsoftMSUC.WithConcurrency(options.concurrency)); err != nil {
 				return errors.Wrap(err, "failed to extract microsoft msuc")
 			}
 			return nil
@@ -1691,6 +1693,7 @@ func newCmdMicrosoftMSUC() *cobra.Command {
 	}
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
+	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrent workers")
 
 	return cmd
 }
@@ -2150,9 +2153,7 @@ func newCmdNVDAPICVE() *cobra.Command {
 		base
 		concurrency int
 	}{
-		base: base{
-			dir: filepath.Join(util.CacheDir(), "extract", "nvd", "api", "cve"),
-		},
+		dir:         filepath.Join(util.CacheDir(), "extract", "nvd", "api", "cve"),
 		concurrency: runtime.NumCPU(),
 	}
 
@@ -2282,9 +2283,7 @@ func newCmdNVDFeedCVEv2() *cobra.Command {
 		base
 		concurrency int
 	}{
-		base: base{
-			dir: filepath.Join(util.CacheDir(), "extract", "nvd", "feed", "cve", "v2"),
-		},
+		dir:         filepath.Join(util.CacheDir(), "extract", "nvd", "feed", "cve", "v2"),
 		concurrency: runtime.NumCPU(),
 	}
 
@@ -3039,9 +3038,7 @@ func newCmdSUSEOVAL() *cobra.Command {
 		base
 		concurrency int
 	}{
-		base: base{
-			dir: filepath.Join(util.CacheDir(), "extract", "suse", "oval"),
-		},
+		dir:         filepath.Join(util.CacheDir(), "extract", "suse", "oval"),
 		concurrency: runtime.NumCPU(),
 	}
 
@@ -3346,9 +3343,7 @@ func newCmdVulnCheckNISTNVD2() *cobra.Command {
 		base
 		concurrency int
 	}{
-		base: base{
-			dir: filepath.Join(util.CacheDir(), "extract", "vulncheck", "nist-nvd2"),
-		},
+		dir:         filepath.Join(util.CacheDir(), "extract", "vulncheck", "nist-nvd2"),
 		concurrency: runtime.NumCPU(),
 	}
 

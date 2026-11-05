@@ -3,7 +3,6 @@ package enrichment_test
 import (
 	"net/http"
 	"net/http/httptest"
-	"net/url"
 	"path"
 	"path/filepath"
 	"testing"
@@ -17,9 +16,9 @@ func TestFetch(t *testing.T) {
 		_ []enrichment.Option
 	}
 	tests := []struct {
-		name    string
-		args    args
-		wantErr bool
+		name     string
+		args     args
+		hasError bool
 	}{
 		{
 			name: "happy",
@@ -27,24 +26,17 @@ func TestFetch(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ts := httptest.NewTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			http.ServeFile(w, r, filepath.Join("testdata", "fixtures", tt.name, path.Base(r.URL.Path)))
 		}))
-		defer ts.Close()
-
-		u, err := url.JoinPath(ts.URL, "anchore", "cve-data-enrichment", "archive", "refs", "heads", "main.tar.gz")
-		if err != nil {
-			t.Error("unexpected error:", err)
-		}
-
 		dir := t.TempDir()
-		err = enrichment.Fetch(enrichment.WithDataURL(u), enrichment.WithDir(dir), enrichment.WithRetry(0))
+		err := enrichment.Fetch(enrichment.WithHTTPClient(ts.Client()), enrichment.WithDir(dir), enrichment.WithRetry(0))
 		switch {
-		case err != nil && !tt.wantErr:
+		case err != nil && !tt.hasError:
 			t.Error("unexpected error:", err)
-		case err == nil && tt.wantErr:
+		case err == nil && tt.hasError:
 			t.Error("expected error has not occurred")
-		case err != nil && tt.wantErr:
+		case err != nil && tt.hasError:
 			// error was expected and occurred, test passed
 			return
 		default:

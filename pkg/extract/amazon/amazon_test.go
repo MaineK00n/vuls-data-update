@@ -29,7 +29,7 @@ func TestExtract(t *testing.T) {
 			case err == nil && tt.hasError:
 				t.Error("expected error has not occurred")
 			case err != nil && tt.hasError:
-				// Expected error occurred; nothing more to check.
+				// error was expected and occurred, test passed
 				return
 			default:
 				if err := utiltest.Diff(filepath.Join("testdata", "golden"), dir); err != nil {

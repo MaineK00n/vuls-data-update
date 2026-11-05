@@ -30,12 +30,13 @@ func TestExtract(t *testing.T) {
 
 			err = oval.Extract(fixturePath, oval.WithDir(dir))
 			switch {
+			case err != nil && !tt.hasError:
+				t.Error("unexpected error:", err)
 			case err == nil && tt.hasError:
 				t.Error("expected error has not occurred")
 			case err != nil && tt.hasError:
+				// error was expected and occurred, test passed
 				return
-			case err != nil:
-				t.Error("unexpected error:", err)
 			default:
 				if err := utiltest.Diff(filepath.Join("testdata", "golden"), dir); err != nil {
 					t.Error("unexpected error:", err)

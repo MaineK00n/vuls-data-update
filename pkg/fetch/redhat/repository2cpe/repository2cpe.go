@@ -21,20 +21,14 @@ type options struct {
 	repositoryToCPEURL string
 	dir                string
 	retry              int
+
+	// httpClient is only ever set by WithHTTPClient, which lives in
+	// export_test.go and is therefore absent from the production build.
+	httpClient *http.Client
 }
 
 type Option interface {
 	apply(*options)
-}
-
-type repositoryToCPEURLOption string
-
-func (u repositoryToCPEURLOption) apply(opts *options) {
-	opts.repositoryToCPEURL = string(u)
-}
-
-func WithRepositoryToCPEURL(u string) Option {
-	return repositoryToCPEURLOption(u)
 }
 
 type dirOption string
@@ -73,7 +67,7 @@ func Fetch(opts ...Option) error {
 	}
 
 	slog.Info("Fetch Redhat Repository to CPE")
-	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.repositoryToCPEURL)
+	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry), utilhttp.WithClientHTTPClient(options.httpClient)).Get(options.repositoryToCPEURL)
 	if err != nil {
 		return errors.Wrap(err, "fetch repository to cpe")
 	}

@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
-	"net/url"
 	"os"
 	"path"
 	"path/filepath"
@@ -32,7 +31,7 @@ func serve(name string) http.Handler {
 		// request reaching upwards is answered from inside the fixture
 		// directory or not at all.
 		switch p := path.Clean(r.URL.Path); {
-		case p == "/nvd":
+		case p == "/rest/json/cves/2.0":
 			// A case that pages serves nvd-<startIndex>.json; one that does not
 			// serves the same nvd.json whatever the index.
 			if f := filepath.Join(dir, fmt.Sprintf("nvd-%s.json", r.URL.Query().Get("startIndex"))); fileExists(f) {
@@ -40,7 +39,7 @@ func serve(name string) http.Handler {
 				return
 			}
 			http.ServeFile(w, r, filepath.Join(dir, "nvd.json"))
-		case path.Dir(p) == "/cve":
+		case path.Dir(p) == "/api/cve":
 			http.ServeFile(w, r, filepath.Join(dir, "mitre", fmt.Sprintf("%s.json", path.Base(p))))
 		default:
 			http.ServeFile(w, r, filepath.Join(dir, filepath.FromSlash(p)))
@@ -51,26 +50,6 @@ func serve(name string) http.Handler {
 func fileExists(p string) bool {
 	_, err := os.Stat(p)
 	return err == nil
-}
-
-// urls returns the three endpoint options pointed at ts.
-func urls(t *testing.T, ts *httptest.Server) (string, security.Option, security.Option) {
-	t.Helper()
-
-	page, err := url.JoinPath(ts.URL, pageFilename)
-	if err != nil {
-		t.Fatal("unexpected error:", err)
-	}
-	nvd, err := url.JoinPath(ts.URL, "nvd")
-	if err != nil {
-		t.Fatal("unexpected error:", err)
-	}
-	cve, err := url.JoinPath(ts.URL, "cve")
-	if err != nil {
-		t.Fatal("unexpected error:", err)
-	}
-
-	return page, security.WithNVDURL(nvd), security.WithCVEURL(cve)
 }
 
 func TestFetch(t *testing.T) {
@@ -112,13 +91,9 @@ func TestFetch(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewServer(serve(tt.name))
-			defer ts.Close()
-
-			u, nvd, cve := urls(t, ts)
-
+			ts := httptest.NewTestServer(t, serve(tt.name))
 			dir := t.TempDir()
-			err := security.Fetch(security.WithURL(u), nvd, cve, security.WithDir(dir), security.WithRetry(0), security.WithConcurrency(1), security.WithWait(0), security.WithNVDWait(0))
+			err := security.Fetch(security.WithHTTPClient(ts.Client()), security.WithDir(dir), security.WithRetry(0), security.WithConcurrency(1), security.WithWait(0), security.WithNVDWait(0))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)
@@ -223,13 +198,9 @@ func TestFetch(t *testing.T) {
 // IDs fell off it would simply have no record to be annotated from, with
 // nothing to say any were missed.
 func TestFetch_pagesCVEIDs(t *testing.T) {
-	ts := httptest.NewServer(serve("paged"))
-	defer ts.Close()
-
-	u, nvd, cve := urls(t, ts)
-
+	ts := httptest.NewTestServer(t, serve("paged"))
 	dir := t.TempDir()
-	if err := security.Fetch(security.WithURL(u), nvd, cve, security.WithDir(dir), security.WithRetry(0), security.WithConcurrency(1), security.WithWait(0), security.WithNVDWait(0), security.WithResultsPerPage(2)); err != nil {
+	if err := security.Fetch(security.WithHTTPClient(ts.Client()), security.WithDir(dir), security.WithRetry(0), security.WithConcurrency(1), security.WithWait(0), security.WithNVDWait(0), security.WithResultsPerPage(2)); err != nil {
 		t.Fatal("unexpected error:", err)
 	}
 
@@ -247,11 +218,7 @@ func TestFetch_pagesCVEIDs(t *testing.T) {
 // output directory -- what util.RemoveAll(dir) does elsewhere -- would discard
 // the whole point of the source.
 func TestFetch_keepsRaw(t *testing.T) {
-	ts := httptest.NewServer(serve("happy"))
-	defer ts.Close()
-
-	u, nvd, cve := urls(t, ts)
-
+	ts := httptest.NewTestServer(t, serve("happy"))
 	dir := t.TempDir()
 
 	raw := filepath.Join(dir, "raw", "2025", "OPENSSH-2025-02-18-1.json")
@@ -278,7 +245,7 @@ func TestFetch_keepsRaw(t *testing.T) {
 		}
 	}
 
-	if err := security.Fetch(security.WithURL(u), nvd, cve, security.WithDir(dir), security.WithRetry(0), security.WithConcurrency(1), security.WithWait(0), security.WithNVDWait(0)); err != nil {
+	if err := security.Fetch(security.WithHTTPClient(ts.Client()), security.WithDir(dir), security.WithRetry(0), security.WithConcurrency(1), security.WithWait(0), security.WithNVDWait(0)); err != nil {
 		t.Fatal("unexpected error:", err)
 	}
 

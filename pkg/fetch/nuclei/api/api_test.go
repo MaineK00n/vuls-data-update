@@ -4,7 +4,6 @@ import (
 	"encoding/json/v2"
 	"net/http"
 	"net/http/httptest"
-	"net/url"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -39,7 +38,7 @@ func TestFetch(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			ts := httptest.NewTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				switch r.URL.Path {
 				case "/v1/template/public":
 					switch r.Method {
@@ -147,15 +146,8 @@ func TestFetch(t *testing.T) {
 					http.NotFound(w, r)
 				}
 			}))
-			defer ts.Close()
-
-			u, err := url.JoinPath(ts.URL, "v1/template/")
-			if err != nil {
-				t.Fatal("unexpected error:", err)
-			}
-
 			dir := t.TempDir()
-			err = api.Fetch(tt.args.apikey, api.WithBaseURL(u), api.WithDir(dir), api.WithRetry(0))
+			err := api.Fetch(tt.args.apikey, api.WithHTTPClient(ts.Client()), api.WithDir(dir), api.WithRetry(0))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)
