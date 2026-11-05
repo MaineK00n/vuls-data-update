@@ -152,6 +152,22 @@ func TestConcat(t *testing.T) {
 			},
 		},
 		{
+			name: "dry run over an output made before",
+			args: args{
+				archives: []archive{a1, a2, a3},
+				dryRun:   true,
+				exists:   true,
+			},
+			want: []output{
+				{
+					name:    a3.name,
+					made:    true,
+					inputs:  []string{a1.name, a2.name, a3.name},
+					commits: 5,
+				},
+			},
+		},
+		{
 			name: "split to one archive each",
 			args: args{
 				archives: []archive{a1, a2, a3},
@@ -181,6 +197,28 @@ func TestConcat(t *testing.T) {
 			name: "gap",
 			args: args{
 				archives: []archive{a1, a3},
+			},
+			hasError: true,
+		},
+		{
+			name: "a shallow root older than the inputs before it",
+			args: args{
+				archives: []archive{d4, a2},
+			},
+			hasError: true,
+		},
+		{
+			name: "an archive of one commit after a newer archive",
+			args: args{
+				archives: []archive{a3, d4},
+			},
+			hasError: true,
+		},
+		{
+			name: ".git over the max size",
+			args: args{
+				archives: []archive{a1, a2, a3},
+				maxSize:  4096,
 			},
 			hasError: true,
 		},
@@ -225,6 +263,12 @@ func TestConcat(t *testing.T) {
 			switch {
 			case err != nil && !tt.hasError:
 				t.Errorf("unexpected err: %v", err)
+			case err != nil:
+				if !tt.args.exists {
+					if _, err := os.Stat(filepath.Join(dir, "joined", tt.args.archives[len(tt.args.archives)-1].name)); !errors.Is(err, fs.ErrNotExist) {
+						t.Errorf("output left after the error. stat. err: %v", err)
+					}
+				}
 			case err == nil && tt.hasError:
 				t.Error("expected error has not occurred")
 			case err == nil:
@@ -275,7 +319,7 @@ func TestConcat(t *testing.T) {
 					case !w.made && !errors.Is(err, fs.ErrNotExist):
 						t.Errorf("output %d. expected nothing made, stat. err: %v", i, err)
 					}
-					if !w.made {
+					if !w.made || tt.args.dryRun {
 						continue
 					}
 

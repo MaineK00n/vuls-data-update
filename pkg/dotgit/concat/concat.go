@@ -1,14 +1,12 @@
 package concat
 
 import (
-	"bytes"
 	stderrors "errors"
 	"fmt"
 	"io/fs"
 	"log/slog"
 	"maps"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"slices"
 	"strconv"
@@ -46,10 +44,11 @@ func (m maxSizeOption) apply(opts *options) {
 }
 
 // WithMaxSize splits the inputs, oldest first, into groups whose pack is
-// predicted to stay within size bytes, and fails if a pack comes out larger.
-// The .git directory, and so its tarball, holds more than the pack: the pack
-// index, and the index of HEAD's files, which for 2.9 million files took 446
-// MiB before compression. 0 keeps the inputs in one group.
+// predicted to stay within size bytes, and fails if a .git directory comes
+// out larger. The .git directory holds more than the pack: the pack index,
+// and the index of HEAD's files, which for 2.9 million files took 561 MiB
+// together. Its size is what its tarball stays within, so leave room for
+// those under a registry's limit. 0 keeps the inputs in one group.
 func WithMaxSize(size int64) Option {
 	return maxSizeOption(size)
 }
@@ -83,7 +82,8 @@ type Size struct {
 	Predicted int64 `json:"predicted"`
 	// Pack is the size of the pack made.
 	Pack int64 `json:"pack,omitempty"`
-	// DotGit is the size of the .git directory made.
+	// DotGit is the size of the .git directory made, which WithMaxSize
+	// checks.
 	DotGit int64 `json:"dotgit,omitempty"`
 }
 
@@ -108,7 +108,8 @@ type group []input
 // archive starts from the last commit of the archive before it. Each joined
 // repository keeps the branches of its last input, the tags of every input, a
 // tag "<input name>/<branch>" at every input's branch tips, and the origin URL
-// of its last input. The inputs are left as they are.
+// of its last input. The inputs are left as they are. If a group fails, the
+// repositories made for the groups before it are removed too.
 func Concat(repositories []string, opts ...Option) ([]Output, error) {
 	options := &options{
 		dir:     filepath.Join(util.CacheDir(), "dotgit", "concat"),
@@ -146,16 +147,6 @@ func Concat(repositories []string, opts ...Option) ([]Output, error) {
 			return nil, errors.Wrapf(err, "plan %s", filepath.Base(g[len(g)-1].path))
 		}
 
-		if o.Path != "" {
-			switch _, err := os.Stat(o.Path); {
-			case err == nil:
-				return nil, errors.Errorf("%s already exists", o.Path)
-			case errors.Is(err, fs.ErrNotExist):
-			default:
-				return nil, errors.Wrapf(err, "stat %s", o.Path)
-			}
-		}
-
 		outputs = append(outputs, o)
 	}
 
@@ -163,6 +154,20 @@ func Concat(repositories []string, opts ...Option) ([]Output, error) {
 		return outputs, nil
 	}
 
+	for _, o := range outputs {
+		if o.Path == "" {
+			continue
+		}
+		switch _, err := os.Stat(o.Path); {
+		case err == nil:
+			return nil, errors.Errorf("%s already exists", o.Path)
+		case errors.Is(err, fs.ErrNotExist):
+		default:
+			return nil, errors.Wrapf(err, "stat %s", o.Path)
+		}
+	}
+
+	var made []string
 	for i, g := range groups {
 		if outputs[i].Path == "" {
 			continue
@@ -175,14 +180,17 @@ func Concat(repositories []string, opts ...Option) ([]Output, error) {
 			if err != nil {
 				return 0, 0, errors.Wrap(err, "build")
 			}
-			if options.maxSize > 0 && pack > options.maxSize {
-				return 0, 0, errors.Errorf("unexpected pack size. expected: <= %d, actual: %d", options.maxSize, pack)
+			if options.maxSize > 0 && dotgit > options.maxSize {
+				return 0, 0, errors.Errorf("unexpected .git size. expected: <= %d, actual: %d (pack: %d)", options.maxSize, dotgit, pack)
 			}
 			return pack, dotgit, nil
 		}()
+		made = append(made, outputs[i].Path)
 		if err != nil {
-			if err2 := os.RemoveAll(outputs[i].Path); err2 != nil {
-				err = stderrors.Join(err, errors.Wrapf(err2, "remove %s", outputs[i].Path))
+			for _, p := range made {
+				if err2 := os.RemoveAll(p); err2 != nil {
+					err = stderrors.Join(err, errors.Wrapf(err2, "remove %s", p))
+				}
 			}
 			return nil, errors.Wrapf(err, "concat to %s", outputs[i].Path)
 		}
@@ -199,13 +207,13 @@ func inspect(repository string) (input, error) {
 		return input{}, errors.Wrapf(err, "absolute path of %s", repository)
 	}
 
-	bs, err := git("-C", path, "symbolic-ref", "HEAD")
+	bs, err := util.Git("-C", path, "symbolic-ref", "HEAD")
 	if err != nil {
-		return input{}, errors.Wrap(err, "read HEAD")
+		return input{}, errors.Wrap(err, "read HEAD, which must point to a branch")
 	}
 	head := strings.TrimSpace(string(bs))
 
-	bs, err = git("-C", path, "for-each-ref", "--format=%(refname) %(objectname)", "refs/heads/", "refs/tags/")
+	bs, err = util.Git("-C", path, "for-each-ref", "--format=%(refname) %(objectname)", "refs/heads/", "refs/tags/")
 	if err != nil {
 		return input{}, errors.Wrap(err, "list branches and tags")
 	}
@@ -221,41 +229,42 @@ func inspect(repository string) (input, error) {
 		return input{}, errors.Errorf("HEAD points to %s, which has no commit", head)
 	}
 
-	bs, err = git("-C", path, "config", "--default", "", "--get", "remote.origin.url")
+	bs, err = util.Git("-C", path, "config", "--default", "", "--get", "remote.origin.url")
 	if err != nil {
 		return input{}, errors.Wrap(err, "get origin url")
 	}
 	origin := strings.TrimSpace(string(bs))
 
-	bs, err = git("-C", path, "rev-parse", "--path-format=absolute", "--git-path", "shallow")
+	bs, err = util.Git("-C", path, "rev-parse", "--path-format=absolute", "--git-path", "shallow")
 	if err != nil {
 		return input{}, errors.Wrap(err, "locate shallow file")
 	}
+	shallowPath := strings.TrimSpace(string(bs))
 	var shallow []string
-	switch content, err := os.ReadFile(strings.TrimSpace(string(bs))); {
+	switch content, err := os.ReadFile(shallowPath); {
 	case err == nil:
 		shallow = strings.Fields(string(content))
 		slices.Sort(shallow)
 	case errors.Is(err, fs.ErrNotExist):
 	default:
-		return input{}, errors.Wrapf(err, "read %s", strings.TrimSpace(string(bs)))
+		return input{}, errors.Wrapf(err, "read %s", shallowPath)
 	}
 
-	bs, err = git("-C", path, "rev-list", "--branches", "--tags")
+	bs, err = util.Git("-C", path, "rev-list", "--branches", "--tags")
 	if err != nil {
 		return input{}, errors.Wrap(err, "list commits")
 	}
 	commits := strings.Fields(string(bs))
 	slices.Sort(commits)
 
-	all, err := diskUsage(path, "--branches", "--tags")
+	all, err := util.DiskUsage(path, "--branches", "--tags")
 	if err != nil {
 		return input{}, errors.Wrap(err, "disk usage of all objects")
 	}
 
 	added := all
 	if len(shallow) > 0 {
-		added, err = diskUsage(path, append([]string{"--branches", "--tags", "--not"}, shallow...)...)
+		added, err = util.DiskUsage(path, append([]string{"--branches", "--tags", "--not"}, shallow...)...)
 		if err != nil {
 			return input{}, errors.Wrap(err, "disk usage of objects beyond the shallow roots")
 		}
@@ -273,13 +282,20 @@ func inspect(repository string) (input, error) {
 	}, nil
 }
 
-// checkChain refuses inputs that would leave a gap: a shallow root of an input
-// that no input before it has. An input before it may have that commit as a
-// shallow root too, as an archive made from a repository of one commit does.
+// checkChain refuses inputs that would leave a gap, or that are out of order.
+// A gap is a shallow root of an input that no input before it has. An input
+// before it may have that commit as a shallow root too, as an archive made
+// from a repository of one commit does. Such an archive is its own shallow
+// root, so the roots alone would also let it follow a newer archive; each
+// input must therefore hold the commit HEAD of the input before it points to.
 func checkChain(inputs []input) error {
 	seen := make(map[string]struct{})
 	for i, in := range inputs {
 		if i > 0 {
+			prev := inputs[i-1]
+			if _, found := slices.BinarySearch(in.commits, prev.refs[prev.head]); !found {
+				return errors.Errorf("%s does not continue from %s: it lacks %s, which %s of %s points to", in.path, prev.path, prev.refs[prev.head], prev.head, prev.path)
+			}
 			for _, s := range in.shallow {
 				if _, ok := seen[s]; !ok {
 					return errors.Errorf("%s does not continue from the inputs before it: none of them has its shallow root %s", in.path, s)
@@ -349,7 +365,11 @@ func (g group) output(dir string) (Output, error) {
 }
 
 func (g group) commits() []string {
-	var cs []string
+	n := 0
+	for _, in := range g {
+		n += len(in.commits)
+	}
+	cs := make([]string, 0, n)
 	for _, in := range g {
 		cs = append(cs, in.commits...)
 	}
@@ -383,10 +403,10 @@ func (g group) shallow() []string {
 func (g group) build(o Output) (int64, int64, error) {
 	last := g[len(g)-1]
 
-	if _, err := git("init", "--quiet", o.Path); err != nil {
+	if _, err := util.Git("init", "--quiet", o.Path); err != nil {
 		return 0, 0, errors.Wrap(err, "init")
 	}
-	if _, err := git("-C", o.Path, "symbolic-ref", "HEAD", last.head); err != nil {
+	if _, err := util.Git("-C", o.Path, "symbolic-ref", "HEAD", last.head); err != nil {
 		return 0, 0, errors.Wrapf(err, "point HEAD to %s", last.head)
 	}
 
@@ -394,7 +414,7 @@ func (g group) build(o Output) (int64, int64, error) {
 	alternates := filepath.Join(o.Path, ".git", "objects", "info", "alternates")
 	objects := make([]string, 0, len(g))
 	for _, in := range g {
-		bs, err := git("-C", in.path, "rev-parse", "--path-format=absolute", "--git-path", "objects")
+		bs, err := util.Git("-C", in.path, "rev-parse", "--path-format=absolute", "--git-path", "objects")
 		if err != nil {
 			return 0, 0, errors.Wrapf(err, "locate objects of %s", in.path)
 		}
@@ -412,7 +432,7 @@ func (g group) build(o Output) (int64, int64, error) {
 	for _, name := range slices.Sorted(maps.Keys(refs)) {
 		creates = append(creates, fmt.Sprintf("create %s %s", name, refs[name]))
 	}
-	if err := gitWithStdin(fmt.Sprintf("%s\n", strings.Join(creates, "\n")), "-C", o.Path, "update-ref", "--stdin"); err != nil {
+	if _, err := util.GitWithStdin(strings.NewReader(fmt.Sprintf("%s\n", strings.Join(creates, "\n"))), "-C", o.Path, "update-ref", "--stdin"); err != nil {
 		return 0, 0, errors.Wrap(err, "create refs")
 	}
 
@@ -423,23 +443,23 @@ func (g group) build(o Output) (int64, int64, error) {
 	}
 
 	if last.origin != "" {
-		if _, err := git("-C", o.Path, "remote", "add", "origin", last.origin); err != nil {
+		if _, err := util.Git("-C", o.Path, "remote", "add", "origin", last.origin); err != nil {
 			return 0, 0, errors.Wrapf(err, "add origin %s", last.origin)
 		}
 	}
 
 	// Without -l, repack copies the borrowed objects into a pack of its own.
-	if _, err := git("-C", o.Path, "repack", "-a", "-d", "--quiet"); err != nil {
+	if _, err := util.Git("-C", o.Path, "repack", "-a", "-d", "--quiet"); err != nil {
 		return 0, 0, errors.Wrap(err, "repack")
 	}
 	if err := os.Remove(alternates); err != nil {
 		return 0, 0, errors.Wrapf(err, "remove %s", alternates)
 	}
 
-	if _, err := git("-C", o.Path, "fsck", "--connectivity-only", "--no-dangling", "--no-progress"); err != nil {
+	if _, err := util.Git("-C", o.Path, "fsck", "--connectivity-only", "--no-dangling", "--no-progress"); err != nil {
 		return 0, 0, errors.Wrap(err, "fsck")
 	}
-	bs, err := git("-C", o.Path, "rev-list", "--count", "--branches", "--tags")
+	bs, err := util.Git("-C", o.Path, "rev-list", "--count", "--branches", "--tags")
 	if err != nil {
 		return 0, 0, errors.Wrap(err, "count commits")
 	}
@@ -453,7 +473,7 @@ func (g group) build(o Output) (int64, int64, error) {
 
 	// Without an index, git sees every file as deleted, and pull --restore
 	// has nothing to restore from.
-	if _, err := git("-C", o.Path, "reset", "--quiet"); err != nil {
+	if _, err := util.Git("-C", o.Path, "reset", "--quiet"); err != nil {
 		return 0, 0, errors.Wrap(err, "reset")
 	}
 
@@ -517,40 +537,4 @@ func (g group) refs() (map[string]string, error) {
 	}
 
 	return refs, nil
-}
-
-func diskUsage(dir string, revs ...string) (int64, error) {
-	bs, err := git(append([]string{"-C", dir, "rev-list", "--objects", "--disk-usage"}, revs...)...)
-	if err != nil {
-		return 0, errors.Wrap(err, "rev-list")
-	}
-
-	n, err := strconv.ParseInt(strings.TrimSpace(string(bs)), 10, 64)
-	if err != nil {
-		return 0, errors.Wrapf(err, "parse %q", bs)
-	}
-
-	return n, nil
-}
-
-func git(args ...string) ([]byte, error) {
-	var stderr bytes.Buffer
-	cmd := exec.Command("git", args...)
-	cmd.Stderr = &stderr
-	bs, err := cmd.Output()
-	if err != nil {
-		return nil, errors.Wrapf(err, "exec %q, stderr: %q", cmd.String(), stderr.String())
-	}
-	return bs, nil
-}
-
-func gitWithStdin(stdin string, args ...string) error {
-	var stderr bytes.Buffer
-	cmd := exec.Command("git", args...)
-	cmd.Stdin = strings.NewReader(stdin)
-	cmd.Stderr = &stderr
-	if err := cmd.Run(); err != nil {
-		return errors.Wrapf(err, "exec %q, stderr: %q", cmd.String(), stderr.String())
-	}
-	return nil
 }
