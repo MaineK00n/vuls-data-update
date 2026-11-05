@@ -70,7 +70,7 @@ func Find(repository, expression string, opts ...Option) ([]FileObject, error) {
 	if options.useNativeGit {
 		output, err := util.Git("-C", repository, "ls-tree", "-r", "--format", `{"mode":"%(objectmode)","type":"%(objecttype)","hash":"%(objectname)","size":%(objectsize),"name":"%(path)"}`, options.treeish)
 		if err != nil {
-			return nil, errors.Wrap(err, "git ls-tree")
+			return nil, errors.Wrapf(err, "list tree %s", options.treeish)
 		}
 
 		var fs []FileObject

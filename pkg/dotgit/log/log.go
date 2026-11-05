@@ -117,7 +117,7 @@ func Log(repository string, opts ...Option) (iter.Seq2[string, error], error) {
 
 		output, err := util.Git(args...)
 		if err != nil {
-			return nil, errors.Wrap(err, "git log")
+			return nil, errors.Wrap(err, "log")
 		}
 		return func(yield func(string, error) bool) {
 			var sb strings.Builder
