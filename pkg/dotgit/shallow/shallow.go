@@ -72,12 +72,15 @@ func Shallow(repository string, opts ...Option) (string, error) {
 		return "", errors.Wrapf(err, "absolute path of %s", filepath.Join(options.dir, filepath.Base(src)))
 	}
 
-	switch _, err := os.Stat(dst); {
-	case err == nil:
-		return "", errors.Errorf("%s already exists", dst)
-	case errors.Is(err, fs.ErrNotExist):
-	default:
-		return "", errors.Wrapf(err, "stat %s", dst)
+	// Reserve dst, so that a failure removes only what this call created.
+	if err := os.MkdirAll(filepath.Dir(dst), 0755); err != nil {
+		return "", errors.Wrapf(err, "mkdir %s", filepath.Dir(dst))
+	}
+	if err := os.Mkdir(dst, 0755); err != nil {
+		if errors.Is(err, fs.ErrExist) {
+			return "", errors.Errorf("%s already exists", dst)
+		}
+		return "", errors.Wrapf(err, "mkdir %s", dst)
 	}
 
 	slog.Info("Shallow dotgit", slog.String("src", src), slog.String("dst", dst), slog.Int("depth", options.depth))
@@ -93,14 +96,10 @@ func Shallow(repository string, opts ...Option) (string, error) {
 }
 
 func shallow(src, dst string, depth int) error {
-	if err := os.MkdirAll(filepath.Dir(dst), 0755); err != nil {
-		return errors.Wrapf(err, "mkdir %s", filepath.Dir(dst))
-	}
-
 	// git clone honors --depth only through a URL; given a plain path, it
 	// copies the whole repository. A tag would keep the commit it points to,
 	// and up to depth commits behind it, so tags are left out.
-	if _, err := util.Git("clone", "--quiet", "--depth", strconv.Itoa(depth), "--no-single-branch", "--no-tags", "--no-checkout", fmt.Sprintf("file://%s", src), dst); err != nil {
+	if _, err := util.Git("clone", "--quiet", "--origin", "origin", "--depth", strconv.Itoa(depth), "--no-single-branch", "--no-tags", "--no-checkout", fmt.Sprintf("file://%s", src), dst); err != nil {
 		return errors.Wrap(err, "clone")
 	}
 

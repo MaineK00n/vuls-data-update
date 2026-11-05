@@ -22,6 +22,8 @@ func TestShallow(t *testing.T) {
 		depth  int
 		origin string
 		exists bool
+		// defaultRemoteName sets clone.defaultRemoteName.
+		defaultRemoteName string
 	}
 	type want struct {
 		branches map[string]int
@@ -54,6 +56,19 @@ func TestShallow(t *testing.T) {
 			},
 			want: want{
 				branches: map[string]int{"main": 3, "nightly": 2},
+				origin:   "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test",
+			},
+		},
+		{
+			name: "clone.defaultRemoteName set",
+			args: args{
+				depth:             1,
+				origin:            "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test",
+				defaultRemoteName: "upstream",
+			},
+			want: want{
+				branches: map[string]int{"main": 1, "nightly": 1},
+				shallow:  []int{2, 3},
 				origin:   "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test",
 			},
 		},
@@ -103,6 +118,12 @@ func TestShallow(t *testing.T) {
 				if err := os.MkdirAll(filepath.Join(dir, "shallow", filepath.Base(src)), 0755); err != nil {
 					t.Fatalf("mkdir. err: %v", err)
 				}
+			}
+
+			if tt.args.defaultRemoteName != "" {
+				t.Setenv("GIT_CONFIG_COUNT", "1")
+				t.Setenv("GIT_CONFIG_KEY_0", "clone.defaultRemoteName")
+				t.Setenv("GIT_CONFIG_VALUE_0", tt.args.defaultRemoteName)
 			}
 
 			got, err := shallow.Shallow(src, shallow.WithDir(filepath.Join(dir, "shallow")), shallow.WithDepth(tt.args.depth))
