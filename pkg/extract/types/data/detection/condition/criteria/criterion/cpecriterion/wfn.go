@@ -306,6 +306,10 @@ func allANY(q *wfn, attrs []int) bool {
 func addQuoting(s string) (string, error) {
 	var b strings.Builder
 	b.Grow(2 * len(s))
+	// embedded is go-cpe's flag: the previous unquoted character was not
+	// a "?" (a quoted "\?" counts as not one). It lets a "?" continue a
+	// run or start one after other characters; that still passes a run in
+	// the middle ("a??b"), which validateStringValue rejects afterwards.
 	embedded := false
 	for i := 0; i < len(s); {
 		c := s[i]
