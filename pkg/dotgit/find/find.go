@@ -5,13 +5,14 @@ import (
 	"bytes"
 	"encoding/json/v2"
 	"io"
-	"os/exec"
 	"regexp"
 
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/go-git/go-git/v5/plumbing/object"
 	"github.com/pkg/errors"
+
+	"github.com/MaineK00n/vuls-data-update/pkg/dotgit/util"
 )
 
 type options struct {
@@ -67,10 +68,9 @@ func Find(repository, expression string, opts ...Option) ([]FileObject, error) {
 	}
 
 	if options.useNativeGit {
-		cmd := exec.Command("git", "-C", repository, "ls-tree", "-r", "--format", `{"mode":"%(objectmode)","type":"%(objecttype)","hash":"%(objectname)","size":%(objectsize),"name":"%(path)"}`, options.treeish)
-		output, err := cmd.Output()
+		output, err := util.Git("-C", repository, "ls-tree", "-r", "--format", `{"mode":"%(objectmode)","type":"%(objecttype)","hash":"%(objectname)","size":%(objectsize),"name":"%(path)"}`, options.treeish)
 		if err != nil {
-			return nil, errors.Wrapf(err, "exec %q", cmd.String())
+			return nil, errors.Wrap(err, "git ls-tree")
 		}
 
 		var fs []FileObject
