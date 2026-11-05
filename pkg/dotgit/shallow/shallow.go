@@ -1,13 +1,11 @@
 package shallow
 
 import (
-	"bytes"
 	stderrors "errors"
 	"fmt"
 	"io/fs"
 	"log/slog"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -102,11 +100,11 @@ func shallow(src, dst string, depth int) error {
 	// git clone honors --depth only through a URL; given a plain path, it
 	// copies the whole repository. A tag would keep the commit it points to,
 	// and up to depth commits behind it, so tags are left out.
-	if _, err := git("clone", "--quiet", "--depth", strconv.Itoa(depth), "--no-single-branch", "--no-tags", "--no-checkout", fmt.Sprintf("file://%s", src), dst); err != nil {
+	if _, err := util.Git("clone", "--quiet", "--depth", strconv.Itoa(depth), "--no-single-branch", "--no-tags", "--no-checkout", fmt.Sprintf("file://%s", src), dst); err != nil {
 		return errors.Wrap(err, "clone")
 	}
 
-	bs, err := git("-C", dst, "for-each-ref", "--format=%(refname:lstrip=3)", "refs/remotes/origin/")
+	bs, err := util.Git("-C", dst, "for-each-ref", "--format=%(refname:lstrip=3)", "refs/remotes/origin/")
 	if err != nil {
 		return errors.Wrap(err, "list cloned branches")
 	}
@@ -116,48 +114,36 @@ func shallow(src, dst string, depth int) error {
 			continue
 		}
 
-		if _, err := git("-C", dst, "show-ref", "--verify", "--quiet", fmt.Sprintf("refs/heads/%s", name)); err == nil {
+		if _, err := util.Git("-C", dst, "show-ref", "--verify", "--quiet", fmt.Sprintf("refs/heads/%s", name)); err == nil {
 			continue
 		}
 
-		if _, err := git("-C", dst, "branch", "--quiet", name, fmt.Sprintf("refs/remotes/origin/%s", name)); err != nil {
+		if _, err := util.Git("-C", dst, "branch", "--quiet", name, fmt.Sprintf("refs/remotes/origin/%s", name)); err != nil {
 			return errors.Wrapf(err, "create branch %s", name)
 		}
 	}
 
-	// The clone's origin is the local path it was made from. Carry over the
-	// origin of the repository instead, which vuls-data-db sets to its tag.
-	bs, err = git("-C", src, "config", "--default", "", "--get", "remote.origin.url")
+	// The clone's origin is the local path it was made from, with its
+	// remote-tracking branches and fetch settings. Replace it with the origin
+	// of the repository, which vuls-data-db sets to its tag, as concat does.
+	bs, err = util.Git("-C", src, "config", "--default", "", "--get", "remote.origin.url")
 	if err != nil {
 		return errors.Wrap(err, "get origin url")
 	}
-	switch url := strings.TrimSpace(string(bs)); url {
-	case "":
-		if _, err := git("-C", dst, "remote", "remove", "origin"); err != nil {
-			return errors.Wrap(err, "remove origin")
-		}
-	default:
-		if _, err := git("-C", dst, "remote", "set-url", "origin", url); err != nil {
-			return errors.Wrapf(err, "set origin url to %s", url)
+	if _, err := util.Git("-C", dst, "remote", "remove", "origin"); err != nil {
+		return errors.Wrap(err, "remove origin")
+	}
+	if url := strings.TrimSpace(string(bs)); url != "" {
+		if _, err := util.Git("-C", dst, "remote", "add", "origin", url); err != nil {
+			return errors.Wrapf(err, "add origin %s", url)
 		}
 	}
 
 	// Without an index, git sees every file as deleted, and pull --restore
 	// has nothing to restore from.
-	if _, err := git("-C", dst, "reset", "--quiet"); err != nil {
+	if _, err := util.Git("-C", dst, "reset", "--quiet"); err != nil {
 		return errors.Wrap(err, "reset")
 	}
 
 	return nil
-}
-
-func git(args ...string) ([]byte, error) {
-	var stderr bytes.Buffer
-	cmd := exec.Command("git", args...)
-	cmd.Stderr = &stderr
-	bs, err := cmd.Output()
-	if err != nil {
-		return nil, errors.Wrapf(err, "exec %q, stderr: %q", cmd.String(), stderr.String())
-	}
-	return bs, nil
 }

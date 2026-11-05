@@ -154,6 +154,15 @@ func TestShallow(t *testing.T) {
 					t.Errorf("origin. expected: %q, actual: %q", tt.want.origin, origin)
 				}
 
+				if refs := run(t, "-C", got, "for-each-ref", "refs/remotes/"); refs != "" {
+					t.Errorf("remote-tracking branches. expected: none, actual: %q", refs)
+				}
+				for line := range strings.Lines(run(t, "-C", got, "config", "--local", "--list")) {
+					if strings.HasPrefix(line, "branch.") || strings.HasPrefix(line, "remote.origin.tagopt=") {
+						t.Errorf("config. expected: no clone settings, actual: %q", line)
+					}
+				}
+
 				if files := run(t, "-C", got, "ls-files"); files != "README.md\n" {
 					t.Errorf("index. expected: %q, actual: %q", "README.md\n", files)
 				}
