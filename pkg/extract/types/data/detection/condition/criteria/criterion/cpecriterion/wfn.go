@@ -36,14 +36,14 @@ type wfnValue struct {
 	// produces. "ANY" or "NA" for a logical value, as GetString renders it.
 	unescaped []byte
 	// pattern is the value as a pattern; ANY is the pattern "*". Unset for
-	// NA. Embedded for its name: literals set its fields as promoted ones,
-	// and the code reads them through v.pattern.
+	// NA. Embedded for its name; its fields are set and read as promoted
+	// ones (v.lead), and v.pattern names the pattern as a whole.
 	pattern
 }
 
 // hasWildcards reports whether v is a string carrying unquoted wild cards.
 func (v wfnValue) hasWildcards() bool {
-	return !v.any && !v.na && (v.pattern.lead != 0 || v.pattern.trail != 0)
+	return !v.any && !v.na && (v.lead != 0 || v.trail != 0)
 }
 
 // wfn is a well-formed name as unbindFS produces it.

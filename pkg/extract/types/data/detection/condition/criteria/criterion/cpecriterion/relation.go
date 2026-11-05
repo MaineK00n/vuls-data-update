@@ -48,10 +48,10 @@ func overlaps(a, b *wfnValue) bool {
 		return true
 	case a.na || b.na:
 		return a.na && b.na
-	case a.pattern.lead == 0 && a.pattern.trail == 0:
-		return contains(&b.pattern, a.pattern.core)
-	case b.pattern.lead == 0 && b.pattern.trail == 0:
-		return contains(&a.pattern, b.pattern.core)
+	case a.lead == 0 && a.trail == 0:
+		return contains(&b.pattern, a.core)
+	case b.lead == 0 && b.trail == 0:
+		return contains(&a.pattern, b.core)
 	default:
 		return relateParsed(a.pattern, b.pattern) != relationDisjoint
 	}
