@@ -73,10 +73,12 @@ func unbindFS(fs string) (wfn, error) {
 		return wfn{}, errors.Wrap(err, "validate formatted string")
 	}
 
-	// The values slice this one copy of fs.
+	// The values slice this one copy of fs. The "cpe:2.3:" prefix, which
+	// validateFS checked, carries no attribute; the attributes follow it,
+	// one per unquoted colon.
 	var w wfn
-	rest := []byte(fs)
-	for a := range 13 {
+	rest := []byte(fs[len(fsPrefix):])
+	for a := range attrCount {
 		i := unescapedColonIndex(rest)
 		comp := rest
 		if i < 0 {
@@ -84,28 +86,27 @@ func unbindFS(fs string) (wfn, error) {
 		} else {
 			comp, rest = rest[:i], rest[i+1:]
 		}
-		if a < 2 {
-			continue
-		}
-		if err := unbindValueFS(comp, &w[a-2]); err != nil {
+		if err := unbindValueFS(comp, &w[a]); err != nil {
 			return wfn{}, errors.Wrapf(err, "unbind %q", comp)
 		}
 		// Set checks the part as quoted; "a", "o" and "h" quote to
 		// themselves and nothing else quotes to them, so the field itself
 		// is compared.
-		if a-2 == attrPart && string(comp) != "a" && string(comp) != "o" && string(comp) != "h" {
+		if a == attrPart && string(comp) != "a" && string(comp) != "o" && string(comp) != "h" {
 			return wfn{}, errors.Errorf("unexpected part. expected: %q, actual: %q", []string{"a", "o", "h"}, comp)
 		}
 	}
 	return w, nil
 }
 
+// fsPrefix opens every formatted string, in any case.
+const fsPrefix = "cpe:2.3:"
+
 // validateFS is go-cpe's ValidateFS with the grammar's colon rule: the
 // "cpe:2.3:" prefix in any case, and exactly 12 unquoted colons, none
 // followed directly by another colon.
 func validateFS(fs string) error {
-	const prefix = "cpe:2.3:"
-	if len(fs) < len(prefix) || !strings.EqualFold(fs[:len(prefix)], prefix) {
+	if len(fs) < len(fsPrefix) || !strings.EqualFold(fs[:len(fsPrefix)], fsPrefix) {
 		return errors.Errorf("unexpected formatted string. expected: %q, actual: %q", "cpe:2.3:...", fs)
 	}
 	n := 0
