@@ -240,10 +240,13 @@ func packedWFN(c *wfn) wfn {
 // by the "::" it makes, which a trailing one does not, and reads it as the
 // empty string. Hot path: see the package documentation before changing it.
 func unbindReduced(e []byte, m *wfn) error {
-	// The attributes are split as splitFS and unbindFS split them, a
-	// backslash quoting the character after it. (Classifying each attribute
-	// in this same scan rather than in unbindValueFS's was measured slower:
-	// the extra branches per byte cost more than the second pass.)
+	// The attributes are split on the same rule as splitFS and unbindFS: a
+	// backslash quotes the byte after it.
+	//
+	// Each attribute's bytes are then read a second time by unbindValueFS,
+	// which classifies it; folding that classification into this scan was
+	// measured slower, as the extra branches per byte cost more than the
+	// second, simpler pass.
 	a, start := attrVersion, 0
 	for i := 0; ; i++ {
 		end := len(e)
