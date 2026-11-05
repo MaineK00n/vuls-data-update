@@ -241,6 +241,7 @@ func TestCPEMatchesPacked_Unpack_errors(t *testing.T) {
 		{name: "data without an encoding", p: &ccTypes.CPEMatchesPacked{Data: "010.0.0"}},
 		{name: "empty entry", p: &ccTypes.CPEMatchesPacked{Encoding: ccTypes.PackedEncodingFC, Data: "010.0.0  51"}},
 		{name: "empty reduced entry", p: &ccTypes.CPEMatchesPacked{Encoding: ccTypes.PackedEncodingFC, Data: "0"}},
+		{name: "more than eight attributes", p: &ccTypes.CPEMatchesPacked{Encoding: ccTypes.PackedEncodingFC, Data: "01:2:3:4:5:6:7:8:9"}},
 		{name: "length character below the range", p: &ccTypes.CPEMatchesPacked{Encoding: ccTypes.PackedEncodingFC, Data: "010.0.0 *1"}},
 		{name: "length character above the range", p: &ccTypes.CPEMatchesPacked{Encoding: ccTypes.PackedEncodingFC, Data: "010.0.0 \\1"}},
 		{name: "prefix longer than previous", p: &ccTypes.CPEMatchesPacked{Encoding: ccTypes.PackedEncodingFC, Data: "010.0.0 91"}},

@@ -230,6 +230,9 @@ func (p *CPEMatchesPacked) Unpack(criterion CPE) ([]CPE, error) {
 			return nil, errors.Errorf("empty reduced entry in packed data. data: %q", p.Data)
 		}
 		attrs := splitFS(e, ':')
+		if len(attrs) > 8 {
+			return nil, errors.Errorf("unexpected number of attributes after the product. expected: at most 8, actual: %d, entry: %q", len(attrs), e)
+		}
 		for len(attrs) < 8 {
 			attrs = append(attrs, "*")
 		}
