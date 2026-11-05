@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/fs"
 	"log/slog"
+	"net/url"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -97,9 +98,10 @@ func Shallow(repository string, opts ...Option) (string, error) {
 
 func shallow(src, dst string, depth int) error {
 	// git clone honors --depth only through a URL; given a plain path, it
-	// copies the whole repository. A tag would keep the commit it points to,
-	// and up to depth commits behind it, so tags are left out.
-	if _, err := util.Git("clone", "--quiet", "--origin", "origin", "--depth", strconv.Itoa(depth), "--no-single-branch", "--no-tags", "--no-checkout", fmt.Sprintf("file://%s", src), dst); err != nil {
+	// copies the whole repository. git decodes escapes in the URL, so the
+	// path is escaped. A tag would keep the commit it points to, and up to
+	// depth commits behind it, so tags are left out.
+	if _, err := util.Git("clone", "--quiet", "--origin", "origin", "--depth", strconv.Itoa(depth), "--no-single-branch", "--no-tags", "--no-checkout", (&url.URL{Scheme: "file", Path: src}).String(), dst); err != nil {
 		return errors.Wrap(err, "clone")
 	}
 
