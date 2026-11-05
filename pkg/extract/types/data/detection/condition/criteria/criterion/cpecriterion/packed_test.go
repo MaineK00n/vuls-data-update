@@ -154,6 +154,17 @@ func TestPackCPEMatches(t *testing.T) {
 			},
 		},
 		{
+			// A quoted backslash at the end of the last attribute is a
+			// literal backslash, not an escape left open.
+			name: "last attribute ending in a quoted backslash",
+			args: args{
+				criterion: "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
+				matches:   []ccTypes.CPE{"cpe:2.3:a:vendor:product:1.0:*:*:*:*:*:*:x\\\\"},
+			},
+			wantData:   "01.0:*:*:*:*:*:*:x\\\\",
+			wantUnpack: []ccTypes.CPE{"cpe:2.3:a:vendor:product:1.0:*:*:*:*:*:*:x\\\\"},
+		},
+		{
 			// The version is never dropped, so the reduced form is never
 			// empty and an all-ANY name round-trips.
 			name: "all attributes ANY",
@@ -242,6 +253,7 @@ func TestCPEMatchesPacked_Unpack_errors(t *testing.T) {
 		{name: "empty entry", p: &ccTypes.CPEMatchesPacked{Encoding: ccTypes.PackedEncodingFC, Data: "010.0.0  51"}},
 		{name: "empty reduced entry", p: &ccTypes.CPEMatchesPacked{Encoding: ccTypes.PackedEncodingFC, Data: "0"}},
 		{name: "more than eight attributes", p: &ccTypes.CPEMatchesPacked{Encoding: ccTypes.PackedEncodingFC, Data: "01:2:3:4:5:6:7:8:9"}},
+		{name: "entry ending in an unquoted backslash", p: &ccTypes.CPEMatchesPacked{Encoding: ccTypes.PackedEncodingFC, Data: "01:2:3:4:5:6:7:8\\"}},
 		{name: "length character below the range", p: &ccTypes.CPEMatchesPacked{Encoding: ccTypes.PackedEncodingFC, Data: "010.0.0 *1"}},
 		{name: "length character above the range", p: &ccTypes.CPEMatchesPacked{Encoding: ccTypes.PackedEncodingFC, Data: "010.0.0 \\1"}},
 		{name: "prefix longer than previous", p: &ccTypes.CPEMatchesPacked{Encoding: ccTypes.PackedEncodingFC, Data: "010.0.0 91"}},

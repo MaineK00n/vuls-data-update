@@ -229,6 +229,11 @@ func (p *CPEMatchesPacked) Unpack(criterion CPE) ([]CPE, error) {
 		if e == "" {
 			return nil, errors.Errorf("empty reduced entry in packed data. data: %q", p.Data)
 		}
+		// A backslash quotes the character after it, so an entry cannot end
+		// in an unquoted one; go-cpe panics on a name that does.
+		if endsInEscape(e) {
+			return nil, errors.Errorf("entry ends with an unquoted backslash. entry: %q", e)
+		}
 		attrs := splitFS(e, ':')
 		if len(attrs) > 8 {
 			return nil, errors.Errorf("unexpected number of attributes after the product. expected: at most 8, actual: %d, entry: %q", len(attrs), e)
@@ -269,6 +274,16 @@ func pvpPrefix(fs string) (string, error) {
 		return "", errors.Errorf("unexpected formatted string. expected: %q, actual: %q", "cpe:2.3:<part>:<vendor>:<product>:...", fs)
 	}
 	return strings.Join(attrs[:5], ":") + ":", nil
+}
+
+// endsInEscape reports whether s ends with an unquoted backslash, one that
+// would quote the character after it: an odd run of trailing backslashes.
+func endsInEscape(s string) bool {
+	n := 0
+	for i := len(s) - 1; i >= 0 && s[i] == '\\'; i-- {
+		n++
+	}
+	return n%2 == 1
 }
 
 // splitFS splits s on the unescaped occurrences of sep, where a backslash
