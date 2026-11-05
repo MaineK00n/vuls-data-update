@@ -9,5 +9,4 @@ var (
 	NormalizeProductName     = normalizeProductName
 	ProductNameOverrides     = productNameOverrides
 	KBCumulativeTwins        = kbCumulativeTwins
-	VendorFixOverrides       = vendorFixOverrides
 )

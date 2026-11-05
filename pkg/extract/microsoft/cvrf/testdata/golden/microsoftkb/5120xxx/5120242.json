@@ -13,6 +13,7 @@
 	"data_source": {
 		"id": "microsoft-cvrf",
 		"raws": [
+			"fixtures/2026-Aug/2026/CVE-2026-66799.json",
 			"fixtures/2026-Aug/2026/CVE-2026-6726.json",
 			"fixtures/2026-Aug/2026/CVE-2026-6727.json"
 		]
