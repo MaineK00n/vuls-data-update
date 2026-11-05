@@ -69,15 +69,14 @@ var (
 //
 // FuzzUnbindFS checks the two against each other outside those cases.
 func unbindFS(fs string) (wfn, error) {
-	if err := validateFS(fs); err != nil {
+	attrs, err := attributesFS(fs)
+	if err != nil {
 		return wfn{}, errors.Wrap(err, "validate formatted string")
 	}
 
-	// The values slice this one copy of fs. The "cpe:2.3:" prefix, which
-	// validateFS checked, carries no attribute; the attributes follow it,
-	// one per unquoted colon.
+	// The values slice this one copy of the attributes.
 	var w wfn
-	rest := []byte(fs[len(fsPrefix):])
+	rest := []byte(attrs)
 	for a := range attrCount {
 		i := unescapedColonIndex(rest)
 		comp := rest
@@ -102,29 +101,34 @@ func unbindFS(fs string) (wfn, error) {
 // fsPrefix opens every formatted string, in any case.
 const fsPrefix = "cpe:2.3:"
 
-// validateFS is go-cpe's ValidateFS with the grammar's colon rule: the
-// "cpe:2.3:" prefix in any case, and exactly 12 unquoted colons, none
-// followed directly by another colon.
-func validateFS(fs string) error {
+// attributesFS checks fs as go-cpe's ValidateFS does, with the grammar's
+// colon rule, and returns the part after the "cpe:2.3:" prefix, which holds
+// the attributes: the prefix in any case, then exactly attrCount components
+// separated by unquoted colons, none of them empty but the last.
+func attributesFS(fs string) (string, error) {
 	if len(fs) < len(fsPrefix) || !strings.EqualFold(fs[:len(fsPrefix)], fsPrefix) {
-		return errors.Errorf("unexpected formatted string. expected: %q, actual: %q", "cpe:2.3:...", fs)
+		return "", errors.Errorf("unexpected formatted string. expected: %q, actual: %q", "cpe:2.3:...", fs)
 	}
-	n := 0
-	for i := 0; i < len(fs); i++ {
-		switch fs[i] {
+	attrs := fs[len(fsPrefix):]
+	if strings.HasPrefix(attrs, ":") {
+		return "", errors.Errorf("unexpected formatted string. found an empty component: %q", fs)
+	}
+	n := 1
+	for i := 0; i < len(attrs); i++ {
+		switch attrs[i] {
 		case '\\':
 			i++
 		case ':':
 			n++
-			if i < len(fs)-1 && fs[i+1] == ':' {
-				return errors.Errorf("unexpected formatted string. found an empty component: %q", fs)
+			if i < len(attrs)-1 && attrs[i+1] == ':' {
+				return "", errors.Errorf("unexpected formatted string. found an empty component: %q", fs)
 			}
 		}
 	}
-	if n != 12 {
-		return errors.Errorf("unexpected number of components. expected: %d, actual: %d, formatted string: %q", 12, n, fs)
+	if n != attrCount {
+		return "", errors.Errorf("unexpected number of attributes. expected: %d, actual: %d, formatted string: %q", attrCount, n, fs)
 	}
-	return nil
+	return attrs, nil
 }
 
 // unescapedColonIndex is go-cpe's GetUnescapedColonIndex with the grammar's
