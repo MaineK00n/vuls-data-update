@@ -195,7 +195,7 @@ func PackCPEMatches(criterion CPE, matches []CPE) (*CPEMatchesPacked, error) {
 func (p *CPEMatchesPacked) Unpack(criterion CPE) ([]CPE, error) {
 	ok, err := p.decodable()
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "check packed encoding")
 	}
 	if !ok {
 		return nil, nil
@@ -208,7 +208,7 @@ func (p *CPEMatchesPacked) Unpack(criterion CPE) ([]CPE, error) {
 	ms := []CPE{}
 	for e, err := range p.reduced() {
 		if err != nil {
-			return nil, err
+			return nil, errors.Wrap(err, "decode front coding")
 		}
 		// unbindReduced applies the same two checks on the matching path;
 		// go-cpe panics on a name ending in an unquoted backslash.

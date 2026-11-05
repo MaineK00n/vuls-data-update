@@ -69,7 +69,7 @@ var (
 // FuzzUnbindFS checks the two against each other outside those cases.
 func unbindFS(fs string) (wfn, error) {
 	if err := validateFS(fs); err != nil {
-		return wfn{}, err
+		return wfn{}, errors.Wrap(err, "validate formatted string")
 	}
 
 	// The values slice this one copy of fs.
@@ -173,10 +173,10 @@ func unbindValueFS(s []byte, v *wfnValue) error {
 	// Anything else is quoted as go-cpe quotes it and checked on that.
 	q, err := addQuoting(string(s))
 	if err != nil {
-		return err
+		return errors.Wrap(err, "quote value")
 	}
 	if err := validateStringValue(q); err != nil {
-		return err
+		return errors.Wrap(err, "validate quoted value")
 	}
 	// The pattern and the unescaped form are read off the formatted string
 	// directly: quoting only adds a backslash before a character that is
