@@ -77,25 +77,18 @@ var pages = []struct {
 }
 
 type options struct {
-	baseURL     string
 	dir         string
 	retry       int
 	concurrency int
 	wait        time.Duration
+
+	// httpClient is only ever set by WithHTTPClient, which lives in
+	// export_test.go and is therefore absent from the production build.
+	httpClient *http.Client
 }
 
 type Option interface {
 	apply(*options)
-}
-
-type baseURLOption string
-
-func (u baseURLOption) apply(opts *options) {
-	opts.baseURL = string(u)
-}
-
-func WithBaseURL(url string) Option {
-	return baseURLOption(url)
 }
 
 type dirOption string
@@ -142,7 +135,6 @@ func WithWait(wait time.Duration) Option {
 // they carry under <dir>/raw.
 func Fetch(opts ...Option) error {
 	options := &options{
-		baseURL:     baseURL,
 		dir:         filepath.Join(util.CacheDir(), "fetch", "microsoft", "releaseinfo"),
 		retry:       3,
 		concurrency: 1,
@@ -176,14 +168,14 @@ func Fetch(opts ...Option) error {
 func (opts options) fetch() error {
 	slog.Info("Fetch Microsoft Release Information")
 
-	client := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry))
+	client := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry), utilhttp.WithClientHTTPClient(opts.httpClient))
 
 	names := make(map[string]string, len(pages))
 	us := make([]string, 0, len(pages))
 	for _, p := range pages {
-		u, err := url.JoinPath(opts.baseURL, p.path)
+		u, err := url.JoinPath(baseURL, p.path)
 		if err != nil {
-			return errors.Wrapf(err, "join %s and %s", opts.baseURL, p.path)
+			return errors.Wrapf(err, "join %s and %s", baseURL, p.path)
 		}
 		names[u] = p.name
 		us = append(us, u)
