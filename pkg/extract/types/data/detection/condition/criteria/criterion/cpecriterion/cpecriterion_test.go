@@ -616,6 +616,21 @@ func TestCriterion_Accept(t *testing.T) {
 			wantErr: true,
 		},
 		{
+			// unbindFS takes the scheme case insensitively, as go-cpe does,
+			// but the packed entries are restored under a literal "cpe:2.3:"
+			// prefix (Unpack), and Accept holds the criterion to the same.
+			name: "range criterion, pattern query for the same product, uppercase scheme on the criterion, packed -> error",
+			fields: fields{
+				Vulnerable:       true,
+				CPE:              "CPE:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
+				Range:            &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeSEMVER, LessThan: "14.23"},
+				CPEMatchesPacked: &ccTypes.CPEMatchesPacked{Encoding: ccTypes.PackedEncodingFC, Data: "012.0"},
+			},
+			args:    args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:12.*:*:*:*:*:*:*:*"}},
+			want:    ccTypes.MatchQualityUnknown,
+			wantErr: true,
+		},
+		{
 			// Decoding stops at the first Exact entry, so malformed data
 			// after it is not reached.
 			name: "range criterion, pattern query for the same product, malformed packed after an Exact entry -> Exact",

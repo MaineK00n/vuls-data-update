@@ -458,6 +458,13 @@ func (c Criterion) Accept(query Query) (MatchQuality, []warningTypes.Warning, er
 		if !ok {
 			return quality, ws, nil
 		}
+		// The entries are decoded against the criterion's name as Unpack
+		// restores them, so the criterion is held to the same literal
+		// "cpe:2.3:" prefix as there (unbindFS above took it case
+		// insensitively, as go-cpe does); once per Accept, not per entry.
+		if _, err := pvpPrefix(string(c.CPE)); err != nil {
+			return MatchQualityUnknown, nil, errors.Wrapf(err, "pvp prefix of %q", string(c.CPE))
+		}
 		// A query with ANY on every attribute after the version, as a
 		// scanner's usually is, overlaps every entry there, so only the
 		// version is left to relate.
