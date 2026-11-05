@@ -670,6 +670,47 @@ func TestCriterion_Accept(t *testing.T) {
 			want: ccTypes.MatchQualityExact,
 		},
 		{
+			// A query constrained after the version is related to each
+			// packed entry on those attributes too, which vary between
+			// entries.
+			name: "range criterion, pattern query constrained on target_sw, packed entry sharing it -> Exact",
+			fields: fields{
+				Vulnerable:       true,
+				CPE:              "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
+				Range:            &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeSEMVER, LessThan: "14.23"},
+				CPEMatchesPacked: mustPack(t, "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*", "cpe:2.3:a:vendor:product:12.0:*:*:*:*:*:windows:*", "cpe:2.3:a:vendor:product:12.22:*:*:*:*:*:linux:*"),
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:12.*:*:*:*:*:*:linux:*"}},
+			want: ccTypes.MatchQualityExact,
+		},
+		{
+			name: "range criterion, pattern query constrained on target_sw, no packed entry sharing it -> None, warning",
+			fields: fields{
+				Vulnerable:       true,
+				CPE:              "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
+				Range:            &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeSEMVER, LessThan: "14.23"},
+				CPEMatchesPacked: mustPack(t, "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*", "cpe:2.3:a:vendor:product:12.0:*:*:*:*:*:windows:*", "cpe:2.3:a:vendor:product:12.22:*:*:*:*:*:linux:*"),
+			},
+			args:         args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:12.*:*:*:*:*:*:macos:*"}},
+			want:         ccTypes.MatchQualityNone,
+			wantWarnings: []warningTypes.Warning{{Kind: warningTypes.KindPatternQueryRange, Cause: "cpe:2.3:a:vendor:product:12.*:*:*:*:*:*:macos:*"}},
+		},
+		{
+			// Packed entries are decoded into one WFN in turn; an attribute
+			// the previous entry set and this one omits is ANY again. The
+			// entries decode in reduced-form order ("12.0:beta1" before
+			// "12.22"), so a stale beta1 on the second would make it None.
+			name: "range criterion, pattern query with update, packed entry after one with another update -> Exact (attribute reset)",
+			fields: fields{
+				Vulnerable:       true,
+				CPE:              "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
+				Range:            &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeSEMVER, LessThan: "14.23"},
+				CPEMatchesPacked: mustPack(t, "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*", "cpe:2.3:a:vendor:product:12.0:beta1:*:*:*:*:*:*", "cpe:2.3:a:vendor:product:12.22:*:*:*:*:*:*:*"),
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:12.*:rc1:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityExact,
+		},
+		{
 			name: "version=* criterion with range, query version NA -> VersionUnconfirmed",
 			fields: fields{
 				Vulnerable: true,
