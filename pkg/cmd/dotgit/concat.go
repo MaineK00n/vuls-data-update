@@ -46,7 +46,7 @@ func newCmdConcat() *cobra.Command {
 	}
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "create the joined repositories under the specified directory, each named after its last input")
-	cmd.Flags().Int64VarP(&options.maxSize, "max-size", "", options.maxSize, "split the inputs, oldest first, into groups whose pack is predicted to stay within this many bytes (0: one group); the .git directory also holds the pack index and the index of HEAD's files")
+	cmd.Flags().Int64VarP(&options.maxSize, "max-size", "", options.maxSize, "split the inputs, oldest first, into groups whose pack is predicted to stay within this many bytes, and fail if a .git directory comes out larger (0: one group); leave room for the pack index and the index of HEAD's files")
 	cmd.Flags().BoolVarP(&options.dryRun, "dry-run", "", options.dryRun, "show the groups without joining them")
 
 	return cmd
