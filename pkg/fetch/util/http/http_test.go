@@ -9,6 +9,37 @@ import (
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
+func TestNewClient_WithClientHTTPClient(t *testing.T) {
+	supplied := &http.Client{}
+
+	tests := []struct {
+		name   string
+		client *http.Client
+	}{
+		{
+			// production fetchers forward their test-only httpClient field,
+			// which is nil outside tests, so the pooled default has to stay
+			name:   "nil keeps the default",
+			client: nil,
+		},
+		{
+			name:   "supplied client is used",
+			client: supplied,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := utilhttp.NewClient(utilhttp.WithClientHTTPClient(tt.client)).HTTPClient
+			switch {
+			case tt.client == nil && got == nil:
+				t.Error("HTTPClient is nil, want the pooled default")
+			case tt.client != nil && got != tt.client:
+				t.Errorf("HTTPClient = %p, want the supplied client %p", got, tt.client)
+			}
+		})
+	}
+}
+
 func TestClient_PipelineGet(t *testing.T) {
 	tests := []struct {
 		name        string
