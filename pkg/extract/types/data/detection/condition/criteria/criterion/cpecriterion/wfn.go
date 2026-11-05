@@ -36,7 +36,8 @@ type wfnValue struct {
 	// produces. "ANY" or "NA" for a logical value, as GetString renders it.
 	unescaped []byte
 	// pattern is the value as a pattern; ANY is the pattern "*". Unset for
-	// NA. Embedded for its name; its fields are read as v.pattern.lead.
+	// NA. Embedded for its name: literals set its fields as promoted ones,
+	// and the code reads them through v.pattern.
 	pattern
 }
 
@@ -49,7 +50,7 @@ func (v wfnValue) hasWildcards() bool {
 type wfn [attrCount]wfnValue
 
 var (
-	anyValue = wfnValue{any: true, unescaped: []byte("ANY"), pattern: pattern{lead: unbounded}}
+	anyValue = wfnValue{any: true, unescaped: []byte("ANY"), lead: unbounded}
 	naValue  = wfnValue{na: true, unescaped: []byte("NA")}
 )
 
@@ -212,7 +213,7 @@ func setSimpleValue(v *wfnValue, s []byte, upper bool) {
 	if upper {
 		core = bytes.ToLower(s)
 	}
-	*v = wfnValue{unescaped: s, pattern: pattern{core: core}}
+	*v = wfnValue{unescaped: s, core: core}
 }
 
 // packedWFN returns the WFN unbindReduced fills for the entries packed for
