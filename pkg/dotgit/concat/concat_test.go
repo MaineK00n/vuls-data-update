@@ -39,8 +39,11 @@ func TestConcat(t *testing.T) {
 	type args struct {
 		archives []archive
 		maxSize  int64
-		dryRun   bool
-		exists   bool
+		// maxSizeAtPrediction sets maxSize to the predicted size of the
+		// inputs in one group, which the pack, and so .git, comes out above.
+		maxSizeAtPrediction bool
+		dryRun              bool
+		exists              bool
 	}
 	type output struct {
 		name    string
@@ -217,8 +220,8 @@ func TestConcat(t *testing.T) {
 		{
 			name: ".git over the max size",
 			args: args{
-				archives: []archive{a1, a2, a3},
-				maxSize:  4096,
+				archives:            []archive{a1, a2, a3},
+				maxSizeAtPrediction: true,
 			},
 			hasError: true,
 		},
@@ -259,7 +262,16 @@ func TestConcat(t *testing.T) {
 				}
 			}
 
-			got, err := concat.Concat(repositories, concat.WithDir(filepath.Join(dir, "joined")), concat.WithMaxSize(tt.args.maxSize), concat.WithDryRun(tt.args.dryRun))
+			maxSize := tt.args.maxSize
+			if tt.args.maxSizeAtPrediction {
+				planned, err := concat.Concat(repositories, concat.WithDir(filepath.Join(dir, "joined")), concat.WithDryRun(true))
+				if err != nil {
+					t.Fatalf("plan. err: %v", err)
+				}
+				maxSize = planned[0].Size.Predicted
+			}
+
+			got, err := concat.Concat(repositories, concat.WithDir(filepath.Join(dir, "joined")), concat.WithMaxSize(maxSize), concat.WithDryRun(tt.args.dryRun))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Errorf("unexpected err: %v", err)
