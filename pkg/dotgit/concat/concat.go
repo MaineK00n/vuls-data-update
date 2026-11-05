@@ -93,6 +93,9 @@ type input struct {
 	refs    map[string]string
 	origin  string
 	shallow []string
+	// parents is the parents each shallow root has in its commit object,
+	// which the input itself may not hold.
+	parents map[string][]string
 	commits []string
 	// all is the on-disk size of every object its branches and tags reach.
 	all int64
@@ -108,8 +111,8 @@ type group []input
 // archive starts from the last commit of the archive before it. Each joined
 // repository keeps the branches of its last input, the tags of every input, a
 // tag "<input name>/<branch>" at every input's branch tips, and the origin URL
-// of its last input. The inputs are left as they are. If a group fails, the
-// repositories made for the groups before it are removed too.
+// of its last input. The inputs are left as they are. If a group fails, every
+// repository this run made is removed.
 func Concat(repositories []string, opts ...Option) ([]Output, error) {
 	options := &options{
 		dir:     filepath.Join(util.CacheDir(), "dotgit", "concat"),
@@ -154,20 +157,33 @@ func Concat(repositories []string, opts ...Option) ([]Output, error) {
 		return outputs, nil
 	}
 
+	// Reserve every output before building any, so that a failure removes
+	// only what this run created.
+	var made []string
+	removeMade := func(err error) error {
+		for _, p := range made {
+			if err2 := os.RemoveAll(p); err2 != nil {
+				err = stderrors.Join(err, errors.Wrapf(err2, "remove %s", p))
+			}
+		}
+		return err
+	}
 	for _, o := range outputs {
 		if o.Path == "" {
 			continue
 		}
-		switch _, err := os.Stat(o.Path); {
-		case err == nil:
-			return nil, errors.Errorf("%s already exists", o.Path)
-		case errors.Is(err, fs.ErrNotExist):
-		default:
-			return nil, errors.Wrapf(err, "stat %s", o.Path)
+		if err := os.MkdirAll(filepath.Dir(o.Path), 0755); err != nil {
+			return nil, removeMade(errors.Wrapf(err, "mkdir %s", filepath.Dir(o.Path)))
 		}
+		if err := os.Mkdir(o.Path, 0755); err != nil {
+			if errors.Is(err, fs.ErrExist) {
+				return nil, removeMade(errors.Errorf("%s already exists", o.Path))
+			}
+			return nil, removeMade(errors.Wrapf(err, "mkdir %s", o.Path))
+		}
+		made = append(made, o.Path)
 	}
 
-	var made []string
 	for i, g := range groups {
 		if outputs[i].Path == "" {
 			continue
@@ -185,14 +201,8 @@ func Concat(repositories []string, opts ...Option) ([]Output, error) {
 			}
 			return pack, dotgit, nil
 		}()
-		made = append(made, outputs[i].Path)
 		if err != nil {
-			for _, p := range made {
-				if err2 := os.RemoveAll(p); err2 != nil {
-					err = stderrors.Join(err, errors.Wrapf(err2, "remove %s", p))
-				}
-			}
-			return nil, errors.Wrapf(err, "concat to %s", outputs[i].Path)
+			return nil, removeMade(errors.Wrapf(err, "concat to %s", outputs[i].Path))
 		}
 		outputs[i].Size.Pack = pack
 		outputs[i].Size.DotGit = dotgit
@@ -250,6 +260,22 @@ func inspect(repository string) (input, error) {
 		return input{}, errors.Wrapf(err, "read %s", shallowPath)
 	}
 
+	parents := make(map[string][]string, len(shallow))
+	for _, s := range shallow {
+		bs, err := util.Git("-C", path, "cat-file", "commit", s)
+		if err != nil {
+			return input{}, errors.Wrapf(err, "read shallow root %s", s)
+		}
+		header, _, _ := strings.Cut(string(bs), "\n\n")
+		ps := []string{}
+		for line := range strings.Lines(header) {
+			if p, ok := strings.CutPrefix(strings.TrimSuffix(line, "\n"), "parent "); ok {
+				ps = append(ps, p)
+			}
+		}
+		parents[s] = ps
+	}
+
 	bs, err = util.Git("-C", path, "rev-list", "--branches", "--tags")
 	if err != nil {
 		return input{}, errors.Wrap(err, "list commits")
@@ -276,6 +302,7 @@ func inspect(repository string) (input, error) {
 		refs:    refs,
 		origin:  origin,
 		shallow: shallow,
+		parents: parents,
 		commits: commits,
 		all:     all,
 		added:   added,
@@ -286,8 +313,9 @@ func inspect(repository string) (input, error) {
 // A gap is a shallow root of an input that no input before it has. An input
 // before it may have that commit as a shallow root too, as an archive made
 // from a repository of one commit does. Such an archive is its own shallow
-// root, so the roots alone would also let it follow a newer archive; each
-// input must therefore hold the commit HEAD of the input before it points to.
+// root, so the roots alone would also let it follow a newer archive; the
+// branch HEAD of each input points to must therefore descend from the commit
+// HEAD of the input before it points to.
 func checkChain(inputs []input) error {
 	seen := make(map[string]struct{})
 	for i, in := range inputs {
@@ -295,6 +323,9 @@ func checkChain(inputs []input) error {
 			prev := inputs[i-1]
 			if _, found := slices.BinarySearch(in.commits, prev.refs[prev.head]); !found {
 				return errors.Errorf("%s does not continue from %s: it lacks %s, which %s of %s points to", in.path, prev.path, prev.refs[prev.head], prev.head, prev.path)
+			}
+			if _, err := util.Git("-C", in.path, "merge-base", "--is-ancestor", prev.refs[prev.head], in.refs[in.head]); err != nil {
+				return errors.Wrapf(err, "%s does not continue from %s: %s of %s does not descend from %s, which %s of %s points to", in.path, prev.path, in.head, in.path, prev.refs[prev.head], prev.head, prev.path)
 			}
 			for _, s := range in.shallow {
 				if _, ok := seen[s]; !ok {
@@ -307,14 +338,6 @@ func checkChain(inputs []input) error {
 		}
 	}
 	return nil
-}
-
-// complete is the commits the input holds with their parents.
-func (in input) complete() []string {
-	return slices.DeleteFunc(slices.Clone(in.commits), func(c string) bool {
-		_, found := slices.BinarySearch(in.shallow, c)
-		return found
-	})
 }
 
 func split(inputs []input, maxSize int64) []group {
@@ -377,21 +400,21 @@ func (g group) commits() []string {
 	return slices.Compact(cs)
 }
 
-// shallow is the shallow roots no input of the group holds the history of.
-// Every input's shallow roots taken together would cut the history at the
-// point where each input continues from the one before it.
+// shallow is the shallow roots of the inputs whose parents the group does not
+// all hold. Every input's shallow roots taken together would cut the history
+// at the point where each input continues from the one before it, and where
+// an input marks a commit shallow though it holds its parents, as a clone of
+// depth 1 does for a branch whose tip is the parent of another's.
 func (g group) shallow() []string {
-	held := make(map[string]struct{})
-	for _, in := range g {
-		for _, c := range in.complete() {
-			held[c] = struct{}{}
-		}
-	}
+	commits := g.commits()
 
 	var shallow []string
 	for _, in := range g {
 		for _, s := range in.shallow {
-			if _, ok := held[s]; !ok {
+			if slices.ContainsFunc(in.parents[s], func(p string) bool {
+				_, found := slices.BinarySearch(commits, p)
+				return !found
+			}) {
 				shallow = append(shallow, s)
 			}
 		}
@@ -403,6 +426,7 @@ func (g group) shallow() []string {
 func (g group) build(o Output) (int64, int64, error) {
 	last := g[len(g)-1]
 
+	// o.Path is the empty directory Concat reserved.
 	if _, err := util.Git("init", "--quiet", o.Path); err != nil {
 		return 0, 0, errors.Wrap(err, "init")
 	}

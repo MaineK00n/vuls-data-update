@@ -22,10 +22,16 @@ import (
 // the first commit (at exactly 2, git marks commit 1 shallow), a2 holds 2-4
 // with 2 shallow, d4 only 4 with 4 shallow (an archive of a repository of one
 // commit), and a3 4-5 with 4 shallow.
+//
+// head, if set, moves main back to that commit and leaves a tag
+// "<name>-tip" at tip. nightly, if set, adds a branch nightly of depth 1 at
+// that commit.
 type archive struct {
-	name  string
-	tip   int
-	depth int
+	name    string
+	tip     int
+	depth   int
+	head    int
+	nightly int
 }
 
 var (
@@ -211,6 +217,37 @@ func TestConcat(t *testing.T) {
 			hasError: true,
 		},
 		{
+			name: "main behind the input before it",
+			args: args{
+				archives: []archive{a3, {name: "vuls-data-raw-test-archive-5", tip: 5, depth: 2, head: 4}},
+			},
+			hasError: true,
+		},
+		{
+			name: "a branch tip that is the parent of another's",
+			args: args{
+				archives: []archive{
+					{name: "vuls-data-raw-test-archive-5", tip: 3, depth: 1, nightly: 2},
+					{name: "vuls-data-raw-test-archive-6", tip: 5, depth: 3},
+				},
+			},
+			want: []output{
+				{
+					name:    "vuls-data-raw-test-archive-6",
+					made:    true,
+					inputs:  []string{"vuls-data-raw-test-archive-5", "vuls-data-raw-test-archive-6"},
+					commits: 4,
+					shallow: []int{2},
+					refs: map[string]int{
+						"refs/heads/main": 5,
+						"refs/tags/vuls-data-raw-test-archive-5/main":    3,
+						"refs/tags/vuls-data-raw-test-archive-5/nightly": 2,
+						"refs/tags/vuls-data-raw-test-archive-6/main":    5,
+					},
+				},
+			},
+		},
+		{
 			name: "an archive of one commit after a newer archive",
 			args: args{
 				archives: []archive{a3, d4},
@@ -253,6 +290,15 @@ func TestConcat(t *testing.T) {
 				path := filepath.Join(dir, "archives", a.name)
 				run(t, "clone", "--quiet", "--depth", strconv.Itoa(a.depth), "--single-branch", "--no-tags", "--no-checkout", "--branch", branch, fmt.Sprintf("file://%s", src), path)
 				run(t, "-C", path, "branch", "--move", branch, "main")
+				if a.nightly > 0 {
+					nightly := fmt.Sprintf("tmp-nightly-%s", a.name)
+					run(t, "-C", src, "branch", "--force", nightly, hashes[a.nightly-1])
+					run(t, "-C", path, "fetch", "--quiet", "--depth", "1", "origin", fmt.Sprintf("refs/heads/%s:refs/heads/nightly", nightly))
+				}
+				if a.head > 0 {
+					run(t, "-C", path, "tag", fmt.Sprintf("%s-tip", a.name), "main")
+					run(t, "-C", path, "update-ref", "refs/heads/main", hashes[a.head-1])
+				}
 				run(t, "-C", path, "remote", "set-url", "origin", "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test")
 				repositories = append(repositories, path)
 			}
