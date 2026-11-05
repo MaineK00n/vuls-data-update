@@ -1,0 +1,140 @@
+{
+	"url": "https://learn.microsoft.com/en-us/windows/release-health/windows-server-release-info",
+	"tables": [
+		{
+			"label": "Windows Server 2022 (OS build 20348)",
+			"header": [
+				"Servicing option",
+				"Update type",
+				"Availability date",
+				"Build",
+				"KB article"
+			],
+			"rows": [
+				[
+					{
+						"text": "LTSC"
+					},
+					{
+						"text": "2026-08 B"
+					},
+					{
+						"text": "2026-08-11"
+					},
+					{
+						"text": "26100.33296"
+					},
+					{
+						"text": "KB5120233",
+						"href": "https://support.microsoft.com/help/5120233"
+					}
+				],
+				[
+					{
+						"text": "LTSC"
+					},
+					{
+						"text": "2026-07 B"
+					},
+					{
+						"text": "2026-07-14"
+					},
+					{
+						"text": "26100.33158"
+					},
+					{
+						"text": "KB5099536",
+						"href": "https://support.microsoft.com/help/5099536"
+					}
+				],
+				[
+					{
+						"text": "LTSC"
+					},
+					{
+						"text": "2026-06 B"
+					},
+					{
+						"text": "2026-06-09"
+					},
+					{
+						"text": "26100.32995"
+					},
+					{
+						"text": "KB5094125",
+						"href": "https://support.microsoft.com/help/5094125"
+					}
+				],
+				[
+					{
+						"text": "LTSC"
+					},
+					{
+						"text": "2026-04 OOB"
+					},
+					{
+						"text": "2026-04-19"
+					},
+					{
+						"text": "26100.32698"
+					},
+					{
+						"text": "KB5091157",
+						"href": "https://support.microsoft.com/help/5091157"
+					}
+				],
+				[
+					{
+						"text": "LTSC"
+					},
+					{
+						"text": "2026-01 OOB"
+					},
+					{
+						"text": "2026-01-24"
+					},
+					{
+						"text": "26100.32236"
+					},
+					{
+						"text": "KB5078135",
+						"href": "https://support.microsoft.com/help/5078135"
+					}
+				],
+				[
+					{
+						"text": "LTSC"
+					},
+					{
+						"text": "2025-05 OOB"
+					},
+					{
+						"text": "2025-05-27"
+					},
+					{
+						"text": "26100.4066"
+					},
+					{
+						"text": "KB5061977",
+						"href": "https://support.microsoft.com/topic/may-27-2025-kb5061977-os-build-26100-4066-out-of-band-80725b43-c0a1-48a4-9b82-058efffb6228"
+					}
+				],
+				[
+					{
+						"text": "LTSC"
+					},
+					{
+						"text": "2024-10 A"
+					},
+					{
+						"text": "2024-11-01"
+					},
+					{
+						"text": "26100.1742"
+					},
+					{}
+				]
+			]
+		}
+	]
+}
