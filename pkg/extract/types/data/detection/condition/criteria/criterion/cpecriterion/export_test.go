@@ -72,11 +72,11 @@ type Value struct {
 }
 
 func exportValue(v wfnValue) Value {
-	return Value{Any: v.any, NA: v.na, Unescaped: string(v.unescaped), Pattern: exportPattern(v.p)}
+	return Value{Any: v.any, NA: v.na, Unescaped: string(v.unescaped), Pattern: exportPattern(v.pattern)}
 }
 
 func importValue(v Value) wfnValue {
-	return wfnValue{any: v.Any, na: v.NA, unescaped: []byte(v.Unescaped), p: importPattern(v.Pattern)}
+	return wfnValue{any: v.Any, na: v.NA, unescaped: []byte(v.Unescaped), pattern: importPattern(v.Pattern)}
 }
 
 // AnyValue and NAValue are the Values of the two logical values.
@@ -85,7 +85,7 @@ var AnyValue, NAValue = exportValue(anyValue), exportValue(naValue)
 // StringValue is the Value of a WFN string value in the quoted form go-cpe
 // produces: its unescaped form and its pattern.
 func StringValue(v string) Value {
-	return exportValue(wfnValue{unescaped: unescapeWFN([]byte(v)), p: parsePattern([]byte(v))})
+	return exportValue(wfnValue{unescaped: unescapeWFN([]byte(v)), pattern: parsePattern([]byte(v))})
 }
 
 // WFN mirrors the unexported wfn.

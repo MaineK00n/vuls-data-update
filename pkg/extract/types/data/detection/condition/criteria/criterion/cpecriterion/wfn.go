@@ -35,20 +35,21 @@ type wfnValue struct {
 	// case: what unescapeWFN gives for the value go-cpe's UnbindFS
 	// produces. "ANY" or "NA" for a logical value, as GetString renders it.
 	unescaped []byte
-	// p is the value as a pattern; ANY is the pattern "*". Unset for NA.
-	p pattern
+	// pattern is the value as a pattern; ANY is the pattern "*". Unset for
+	// NA. Embedded for its name; its fields are read as v.pattern.lead.
+	pattern
 }
 
 // hasWildcards reports whether v is a string carrying unquoted wild cards.
 func (v wfnValue) hasWildcards() bool {
-	return !v.any && !v.na && (v.p.lead != 0 || v.p.trail != 0)
+	return !v.any && !v.na && (v.pattern.lead != 0 || v.pattern.trail != 0)
 }
 
 // wfn is a well-formed name as unbindFS produces it.
 type wfn [attrCount]wfnValue
 
 var (
-	anyValue = wfnValue{any: true, unescaped: []byte("ANY"), p: pattern{lead: unbounded}}
+	anyValue = wfnValue{any: true, unescaped: []byte("ANY"), pattern: pattern{lead: unbounded}}
 	naValue  = wfnValue{na: true, unescaped: []byte("NA")}
 )
 
@@ -182,7 +183,7 @@ func unbindValueFS(s []byte, v *wfnValue) error {
 	// directly: quoting only adds a backslash before a character that is
 	// not a wild card, so the wild cards sit at the same ends and unescaping
 	// either form gives the same string.
-	*v = wfnValue{unescaped: unescapeWFN(s), p: parsePattern(s)}
+	*v = wfnValue{unescaped: unescapeWFN(s), pattern: parsePattern(s)}
 	return nil
 }
 
@@ -204,7 +205,7 @@ func setSimpleValue(v *wfnValue, s []byte, upper bool) {
 	if upper {
 		core = bytes.ToLower(s)
 	}
-	*v = wfnValue{unescaped: s, p: pattern{core: core}}
+	*v = wfnValue{unescaped: s, pattern: pattern{core: core}}
 }
 
 // packedWFN returns the WFN unbindReduced fills for the entries packed for
