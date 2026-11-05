@@ -96,6 +96,10 @@
   - It's fine to rebuild fixtures per subtest, use `reflect.DeepEqual` / `go-cmp` on large structs, or re-read golden files, when doing so keeps the test short and obvious.
   - Don't introduce caching, sync.Pool, or shared mutable state in tests just to shave microseconds.
 
+## Hot Paths
+
+- `pkg/extract/types/data/detection/condition/criteria/criterion/cpecriterion` relates a pattern query to every packed CPE entry of a product (tens of millions for chrome and the kernel). The functions on that path are named in the package documentation (`doc.go`) and marked "Hot path" in their doc comments. A change to any of them keeps `TestCriterion_Accept_packedAllocations` passing and comes with a before/after `benchstat` table of `BenchmarkCriterion_Accept_packed` in the PR description, measured on an idle machine with `-count 10 -cpu 1` (the commands are in `doc.go`). Nothing in CI gates the time.
+
 ## When In Doubt
 
 - Follow the [Uber Go Style Guide](https://github.com/uber-go/guide/blob/master/style.md) as a sensible default for questions not covered here (naming, initialization, error wrapping, goroutine hygiene, etc.). Repo-specific rules above still take precedence.

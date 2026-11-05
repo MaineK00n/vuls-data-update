@@ -41,6 +41,7 @@ const (
 // a set of strings: it equals NA, is within ANY, and is disjoint from
 // everything else. ANY, the pattern "*", meets every set, and two concrete
 // values meet only when equal; the remaining cases are related as patterns.
+// Hot path: see the package documentation before changing it.
 func overlaps(a, b *wfnValue) bool {
 	switch {
 	case a.any || b.any:

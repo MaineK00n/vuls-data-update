@@ -143,7 +143,7 @@ func unescapedColonIndex(s []byte) int {
 // unbindValueFS is go-cpe's unbindValueFS followed by the checks
 // WellFormedName.Set applies to a string. The value is written to v in
 // place rather than returned: copying a wfnValue out and in again was a
-// third of the cost of unbinding a packed entry.
+// third of the cost of unbinding a packed entry. Hot path: see the package documentation before changing it.
 func unbindValueFS(s []byte, v *wfnValue) error {
 	switch string(s) {
 	case "*":
@@ -229,7 +229,7 @@ func packedWFN(c *wfn) wfn {
 // and padded to 8, so e must hold at most 8, each a valid value, and none
 // empty but the eighth when it is e's last: go-cpe rejects an empty component
 // by the "::" it makes, which a trailing one does not, and reads it as the
-// empty string.
+// empty string. Hot path: see the package documentation before changing it.
 func unbindReduced(e []byte, m *wfn) error {
 	// The attributes are split as splitFS and unbindFS split them, a
 	// backslash quoting the character after it. (Classifying each attribute

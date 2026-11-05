@@ -240,6 +240,7 @@ func fullName(prefix string, e []byte) CPE {
 // that buffer: it is valid during the yield only, and a caller that keeps
 // anything of it copies it (Unpack restores a new string from it; Accept
 // relates it to the query and moves on).
+// Hot path: see the package documentation before changing it.
 func (p *CPEMatchesPacked) reduced() iter.Seq2[[]byte, error] {
 	return func(yield func([]byte, error) bool) {
 		if p.Data == "" {

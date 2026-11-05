@@ -445,7 +445,7 @@ func (c Criterion) Accept(query Query) (MatchQuality, []warningTypes.Warning, er
 	// first Exact one. An encoding this build does not know is recorded as a
 	// warning and the packed entries are skipped, keeping what the main CPE
 	// and CPEMatches gave; malformed data under a known encoding is an error
-	// once decoding reaches it.
+	// once decoding reaches it. Hot path: see the package documentation before changing it.
 	if c.CPEMatchesPacked != nil && qWFN[attrVersion].hasWildcards() && overlapsOn(&qWFN, &cWFN, attrsPVP) {
 		ok, err := c.CPEMatchesPacked.decodable()
 		if err != nil {
