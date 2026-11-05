@@ -262,6 +262,9 @@ func unbindReduced(e []byte, m *wfn) error {
 		if a == attrCount {
 			return errors.Errorf("unexpected number of attributes after the product. expected: at most 8, actual: more, entry: %q", e)
 		}
+		// An empty attribute makes "::" in the full name, which go-cpe
+		// rejects, unless it is the eighth and e's last: that is the full
+		// name's trailing colon, which go-cpe accepts as an empty value.
 		if len(attr) == 0 && (a != attrOther || end != len(e)) {
 			return errors.Errorf("unexpected formatted string. found an empty component: %q", e)
 		}
