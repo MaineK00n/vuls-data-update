@@ -105,21 +105,22 @@ func comparePacked(x, y *CPEMatchesPacked) int {
 }
 
 // Packable reports whether m can be packed against criterion: whether it
-// shares the criterion's part, vendor and product byte for byte and has
-// exactly eight attributes after them, split as a formatted string is (a
-// backslash quoting the character after it). A criterion whose product is a
-// wildcard, for example, enumerates concrete products that do not share it;
-// a name go-cpe accepts by reading a colon after a quoted backslash ("\\:")
-// as quoted has more than eight. Such an entry belongs in CPEMatches, where
-// the whole name is kept. Packable is the gate the extractor uses;
-// PackCPEMatches rejects the same names, as a backstop.
+// shares the criterion's part, vendor and product byte for byte, has exactly
+// eight attributes after them, split as a formatted string is (a backslash
+// quoting the character after it), and does not end in an unquoted
+// backslash, which quotes nothing. A criterion whose product is a wildcard,
+// for example, enumerates concrete products that do not share it; a name
+// go-cpe accepts by reading a colon after a quoted backslash ("\\:") as
+// quoted has more than eight. Such an entry belongs in CPEMatches, where the
+// whole name is kept. Packable is the gate the extractor uses; PackCPEMatches
+// rejects the same names, as a backstop, and Unpack rejects what they do.
 func Packable(criterion, m CPE) bool {
 	prefix, err := pvpPrefix(string(criterion))
 	if err != nil {
 		return false
 	}
 	rest, ok := strings.CutPrefix(string(m), prefix)
-	return ok && len(splitFS(rest, ':')) == 8
+	return ok && len(splitFS(rest, ':')) == 8 && !endsInEscape(rest)
 }
 
 // PackCPEMatches encodes matches, which must all be Packable against
@@ -148,6 +149,9 @@ func PackCPEMatches(criterion CPE, matches []CPE) (*CPEMatchesPacked, error) {
 		}
 		if strings.IndexByte(rest, fcSeparator) >= 0 {
 			return nil, errors.Errorf("unexpected %q in a formatted string. match: %q", fcSeparator, string(m))
+		}
+		if endsInEscape(rest) {
+			return nil, errors.Errorf("unexpected unquoted backslash at the end of a formatted string. match: %q", string(m))
 		}
 		for len(attrs) > 1 && attrs[len(attrs)-1] == "*" {
 			attrs = attrs[:len(attrs)-1]

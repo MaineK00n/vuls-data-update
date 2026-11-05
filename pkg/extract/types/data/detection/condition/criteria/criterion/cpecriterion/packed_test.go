@@ -299,6 +299,8 @@ func TestPackable(t *testing.T) {
 		{name: "quoted colon", criterion: "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*", m: "cpe:2.3:a:vendor:product:1\\:2:*:*:*:*:*:*:*", want: true},
 		{name: "colon after a quoted backslash", criterion: "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*", m: "cpe:2.3:a:vendor:product:1\\\\:2:*:*:*:*:*:*:*", want: false},
 		{name: "too few attributes", criterion: "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*", m: "cpe:2.3:a:vendor:product:1.0:*:*:*:*:*:*", want: false},
+		{name: "ending in a quoted backslash", criterion: "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*", m: "cpe:2.3:a:vendor:product:1.0:*:*:*:*:*:*:x\\\\", want: true},
+		{name: "ending in an unquoted backslash", criterion: "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*", m: "cpe:2.3:a:vendor:product:1.0:*:*:*:*:*:*:x\\", want: false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
