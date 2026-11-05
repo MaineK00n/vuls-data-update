@@ -230,7 +230,7 @@ func fullName(prefix string, e []byte) CPE {
 	for len(attrs) < 8 {
 		attrs = append(attrs, "*")
 	}
-	return CPE(prefix + strings.Join(attrs, ":"))
+	return CPE(fmt.Sprintf("%s%s", prefix, strings.Join(attrs, ":")))
 }
 
 // reduced decodes the front coding, yielding each entry in its reduced form
@@ -320,7 +320,7 @@ func pvpPrefix(fs string) (string, error) {
 	if len(attrs) != 13 || attrs[0] != "cpe" || attrs[1] != "2.3" {
 		return "", errors.Errorf("unexpected formatted string. expected: %q, actual: %q", "cpe:2.3:<part>:<vendor>:<product>:...", fs)
 	}
-	return strings.Join(attrs[:5], ":") + ":", nil
+	return fmt.Sprintf("%s:", strings.Join(attrs[:5], ":")), nil
 }
 
 // endsInEscape reports whether s ends with an unquoted backslash, one that
