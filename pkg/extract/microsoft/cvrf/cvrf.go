@@ -943,8 +943,8 @@ func buildDetections(v cvrf.Vulnerability, products map[string]string) (map[ecos
 		// covered, so the ProductStatuses fallback skips it as well and the
 		// CVE would become silently undetectable on it, unless each fix was
 		// moved by vendorFixAdditions to another raw product of the same name
-		// after microsoftutil.NormalizeProductName.
-		product := microsoftutil.NormalizeProductName(string(tag))
+		// after normalizeProductName.
+		product := normalizeProductName(v.CVE, string(tag))
 		if !slices.ContainsFunc(excludedTags[tag], func(kbID string) bool {
 			_, ok := addedKBIDs[[2]string{product, kbID}]
 			return !ok
@@ -1259,7 +1259,7 @@ var vendorFixAdditions = map[string][]vendorFixAddition{
 
 // addVendorFixes appends the vendorFixAdditions of a CVE to the fixes of
 // their products, and returns the tags with fixes and the KB IDs added, keyed
-// by [2]string{product name after microsoftutil.NormalizeProductName, KB ID}.
+// by [2]string{product name after normalizeProductName, KB ID}.
 // A product is one CVRF lists with a Vendor Fix, kept or excluded.
 func addVendorFixes(cveID string, tags []segmentTypes.DetectionTag, excludedTags map[segmentTypes.DetectionTag][]string, fixesByTag map[segmentTypes.DetectionTag][]vendorFix) ([]segmentTypes.DetectionTag, map[[2]string]struct{}, error) {
 	addedKBIDs := make(map[[2]string]struct{})
@@ -1274,7 +1274,7 @@ func addVendorFixes(cveID string, tags []segmentTypes.DetectionTag, excludedTags
 			tags = append(tags, tag)
 		}
 
-		product := microsoftutil.NormalizeProductName(a.product)
+		product := normalizeProductName(cveID, a.product)
 		version, err := buildFixedBuildCriterion(cveID, product, a.fixedBuild)
 		if err != nil {
 			return nil, nil, errors.Wrap(err, "build fixed build criterion")
