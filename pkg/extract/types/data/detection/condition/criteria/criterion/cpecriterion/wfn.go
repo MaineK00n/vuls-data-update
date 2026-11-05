@@ -100,9 +100,10 @@ func unbindFS(fs string) (wfn, error) {
 // fsPrefix opens every formatted string, in any case.
 const fsPrefix = "cpe:2.3:"
 
-// attributesFS checks fs as go-cpe's ValidateFS does and returns the part after the "cpe:2.3:" prefix, which holds
-// the attributes: the prefix in any case, then exactly attrCount components
-// separated by unquoted colons, none of them empty but the last.
+// attributesFS checks fs as go-cpe's ValidateFS does and returns the part
+// after the "cpe:2.3:" prefix, which holds the attributes: the prefix in any
+// case, then exactly attrCount components separated by unquoted colons, none
+// of them empty but the last.
 func attributesFS(fs string) (string, error) {
 	if len(fs) < len(fsPrefix) || !strings.EqualFold(fs[:len(fsPrefix)], fsPrefix) {
 		return "", errors.Errorf("unexpected formatted string. expected: %q, actual: %q", "cpe:2.3:...", fs)
