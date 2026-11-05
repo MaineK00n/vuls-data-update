@@ -193,18 +193,12 @@ func PackCPEMatches(criterion CPE, matches []CPE) (*CPEMatchesPacked, error) {
 // as is any other malformed Data under a known encoding. Data is taken to be
 // valid UTF-8, as a string decoded from JSON is.
 func (p *CPEMatchesPacked) Unpack(criterion CPE) ([]CPE, error) {
-	if p == nil {
-		return nil, nil
+	ok, err := p.decodable()
+	if err != nil {
+		return nil, err
 	}
-	switch p.Encoding {
-	case "":
-		if p.Data == "" {
-			return nil, nil
-		}
-		return nil, errors.Errorf("unexpected packed data without an encoding. data: %q", p.Data)
-	case PackedEncodingFC:
-	default:
-		return nil, &UnsupportedPackedEncodingError{Encoding: p.Encoding}
+	if !ok {
+		return nil, nil
 	}
 	prefix, err := pvpPrefix(string(criterion))
 	if err != nil {
@@ -279,6 +273,23 @@ func (p *CPEMatchesPacked) reduced() iter.Seq2[[]byte, error] {
 				return
 			}
 		}
+	}
+}
+
+// decodable reports whether p holds a packed set to decode: false for nil
+// and for the zero value, which hold none; an *UnsupportedPackedEncodingError
+// for an Encoding outside this build's vocabulary; and an error for Data
+// under an empty Encoding.
+func (p *CPEMatchesPacked) decodable() (bool, error) {
+	switch {
+	case p == nil, p.Encoding == "" && p.Data == "":
+		return false, nil
+	case p.Encoding == "":
+		return false, errors.Errorf("unexpected packed data without an encoding. data: %q", p.Data)
+	case p.Encoding != PackedEncodingFC:
+		return false, &UnsupportedPackedEncodingError{Encoding: p.Encoding}
+	default:
+		return true, nil
 	}
 }
 

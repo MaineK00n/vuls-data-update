@@ -2,6 +2,7 @@ package cpecriterion
 
 import (
 	"cmp"
+	stderrors "errors"
 	"fmt"
 	"regexp"
 	"slices"
@@ -446,9 +447,16 @@ func (c Criterion) Accept(query Query) (MatchQuality, []warningTypes.Warning, er
 	// and CPEMatches gave; malformed data under a known encoding is an error
 	// once decoding reaches it.
 	if c.CPEMatchesPacked != nil && qWFN[attrVersion].hasWildcards() && overlapsOn(&qWFN, &cWFN, attrsPVP) {
-		if c.CPEMatchesPacked.Encoding != PackedEncodingFC {
-			ue := &UnsupportedPackedEncodingError{Encoding: c.CPEMatchesPacked.Encoding}
+		ok, err := c.CPEMatchesPacked.decodable()
+		if err != nil {
+			ue, unsupported := stderrors.AsType[*UnsupportedPackedEncodingError](err)
+			if !unsupported {
+				return MatchQualityUnknown, nil, errors.Wrap(err, "unpack cpe matches")
+			}
 			return quality, append(ws, ue.Warning()), nil
+		}
+		if !ok {
+			return quality, ws, nil
 		}
 		// A query with ANY on every attribute after the version, as a
 		// scanner's usually is, overlaps every entry there, so only the
