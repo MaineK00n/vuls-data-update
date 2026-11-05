@@ -2,11 +2,12 @@ package cat
 
 import (
 	"fmt"
-	"os/exec"
 
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/pkg/errors"
+
+	"github.com/MaineK00n/vuls-data-update/pkg/dotgit/util"
 )
 
 type options struct {
@@ -49,10 +50,9 @@ func Cat(repository, path string, opts ...Option) (string, error) {
 	}
 
 	if options.useNativeGit {
-		cmd := exec.Command("git", "-C", repository, "show", fmt.Sprintf("%s:%s", options.treeish, path))
-		output, err := cmd.Output()
+		output, err := util.Git("-C", repository, "show", fmt.Sprintf("%s:%s", options.treeish, path))
 		if err != nil {
-			return "", errors.Wrapf(err, "exec %q", cmd.String())
+			return "", errors.Wrap(err, "git show")
 		}
 		return string(output), nil
 	}
