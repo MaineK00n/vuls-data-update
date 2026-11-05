@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"slices"
 	"strings"
+	"unicode/utf8"
 
 	"github.com/pkg/errors"
 
@@ -23,17 +24,18 @@ const (
 	// PackedEncodingFC: front coding. The reduced entries (see
 	// PackCPEMatches) are sorted and each is written as one character
 	// holding the length of the prefix it shares with the previous entry,
-	// followed by the remainder; entries are joined with "|". The length
+	// followed by the remainder; entries are joined with a space. The length
 	// character is the length plus '0', so "0".."9" read as themselves and
 	// ":".."[" continue to 43, the cap; a longer shared prefix is cut at 43
-	// and the rest is written out. The prefix never ends between a backslash
-	// and the character it escapes, so the remainder always starts a new
-	// character of the formatted string. '"' and '\' never occur as length
-	// characters, so the text needs no escaping in JSON, and a formatted
-	// string never contains an unquoted "|" or any whitespace, so "|" is an
-	// unambiguous separator.
+	// and the rest is written out. The prefix never ends inside a multi-byte
+	// UTF-8 sequence, so the text stays valid UTF-8. '"' and '\' never occur
+	// as length characters, so the text needs no escaping in JSON. A space
+	// is not a character of a WFN attribute value, quoted or not (NISTIR
+	// 7695 §5.3.2 allows letters, digits, "_" and quoted punctuation only),
+	// so it never occurs in a formatted string and is an unambiguous
+	// separator: a name may hold any other byte, "|" included.
 	//
-	//	entries 10.0.0, 10.0.1, 10.0.2  →  "010.0.0|51|52"
+	//	entries 10.0.0, 10.0.1, 10.0.2  →  "010.0.0 51 52"
 	PackedEncodingFC PackedEncoding = "fc"
 )
 
@@ -62,7 +64,7 @@ var packedEncodingVocabulary = enum.NewVocabulary(PackedEncodings())
 const (
 	fcLengthBase = '0'
 	fcLengthMax  = '[' - fcLengthBase // 43; the next character is '\'
-	fcSeparator  = '|'
+	fcSeparator  = ' '
 )
 
 // CPEMatchesPacked holds concrete CPE names the criterion also covers, in a
@@ -103,25 +105,31 @@ func comparePacked(x, y *CPEMatchesPacked) int {
 }
 
 // Packable reports whether m can be packed against criterion: whether it
-// shares the criterion's part, vendor and product byte for byte. A criterion
-// whose product is a wildcard, for example, enumerates concrete products that
-// do not; such an entry belongs in CPEMatches, where the whole name is kept.
+// shares the criterion's part, vendor and product byte for byte and has
+// exactly eight attributes after them, split as a formatted string is (a
+// backslash quoting the character after it). A criterion whose product is a
+// wildcard, for example, enumerates concrete products that do not share it;
+// a name go-cpe accepts by reading a colon after a quoted backslash ("\\:")
+// as quoted has more than eight. Such an entry belongs in CPEMatches, where
+// the whole name is kept. Packable is the gate the extractor uses;
+// PackCPEMatches rejects the same names, as a backstop.
 func Packable(criterion, m CPE) bool {
 	prefix, err := pvpPrefix(string(criterion))
 	if err != nil {
 		return false
 	}
-	return strings.HasPrefix(string(m), prefix)
+	rest, ok := strings.CutPrefix(string(m), prefix)
+	return ok && len(splitFS(rest, ':')) == 8
 }
 
-// PackCPEMatches encodes matches, which must all share criterion's part,
-// vendor and product (see Packable), as PackedEncodingFC. Each entry is
-// reduced to its attributes after the product with the trailing "*"
-// attributes dropped ("cpe:2.3:a:v:p:12.0:beta1:*:*:*:*:*:*" becomes
-// "12.0:beta1"; escaping is left as is), then the reduced strings are sorted,
-// deduplicated and front-coded. An entry that does not share the criterion's
-// part, vendor and product is an error: it belongs in CPEMatches, where the
-// whole name is kept.
+// PackCPEMatches encodes matches, which must all be Packable against
+// criterion, as PackedEncodingFC. Each entry is reduced to its attributes
+// after the product with the trailing "*" attributes after the version
+// dropped ("cpe:2.3:a:v:p:12.0:beta1:*:*:*:*:*:*" becomes "12.0:beta1",
+// "cpe:2.3:a:v:p:*:*:*:*:*:*:*:*" becomes "*"; escaping is left as is), then
+// the reduced strings are sorted, deduplicated and front-coded. An entry
+// that is not Packable is an error, as is one holding the separator, which
+// no formatted string does (see PackedEncodingFC).
 func PackCPEMatches(criterion CPE, matches []CPE) (*CPEMatchesPacked, error) {
 	prefix, err := pvpPrefix(string(criterion))
 	if err != nil {
@@ -138,7 +146,10 @@ func PackCPEMatches(criterion CPE, matches []CPE) (*CPEMatchesPacked, error) {
 		if len(attrs) != 8 {
 			return nil, errors.Errorf("unexpected number of attributes after the product. expected: 8, actual: %d, match: %q", len(attrs), string(m))
 		}
-		for len(attrs) > 0 && attrs[len(attrs)-1] == "*" {
+		if strings.IndexByte(rest, fcSeparator) >= 0 {
+			return nil, errors.Errorf("unexpected %q in a formatted string. match: %q", fcSeparator, string(m))
+		}
+		for len(attrs) > 1 && attrs[len(attrs)-1] == "*" {
 			attrs = attrs[:len(attrs)-1]
 		}
 		entries = append(entries, strings.Join(attrs, ":"))
@@ -153,11 +164,12 @@ func PackCPEMatches(criterion CPE, matches []CPE) (*CPEMatchesPacked, error) {
 		for n < len(e) && n < len(prev) && n < fcLengthMax && e[n] == prev[n] {
 			n++
 		}
-		// Never cut between a backslash and the character it escapes
-		// (whether the entries diverge there or the cap falls there): the
-		// remainder would then start with a bare escaped character, and if
-		// that character is the separator the packed text is ambiguous.
-		if splitsEscape(e, n) {
+		// Never cut inside a multi-byte UTF-8 sequence (whether the entries
+		// diverge there or the cap falls there): the text would then hold
+		// a bare continuation byte and no longer be valid UTF-8. Cutting
+		// between a backslash and the character it quotes is harmless, as
+		// the separator never occurs in a name.
+		for n > 0 && n < len(e) && !utf8.RuneStart(e[n]) {
 			n--
 		}
 		if i > 0 {
@@ -171,12 +183,22 @@ func PackCPEMatches(criterion CPE, matches []CPE) (*CPEMatchesPacked, error) {
 }
 
 // Unpack restores the CPE names packed for criterion by PackCPEMatches. The
-// names come back sorted by their reduced form.
+// names come back sorted by their reduced form. A nil p, or the zero value,
+// holds no packed set and gives nil; a zero Encoding with Data is an error,
+// as is any other malformed Data under a known encoding. Data is taken to be
+// valid UTF-8, as a string decoded from JSON is.
 func (p *CPEMatchesPacked) Unpack(criterion CPE) ([]CPE, error) {
 	if p == nil {
 		return nil, nil
 	}
-	if p.Encoding != PackedEncodingFC {
+	switch p.Encoding {
+	case "":
+		if p.Data == "" {
+			return nil, nil
+		}
+		return nil, errors.Errorf("unexpected packed data without an encoding. data: %q", p.Data)
+	case PackedEncodingFC:
+	default:
 		return nil, &UnsupportedPackedEncodingError{Encoding: p.Encoding}
 	}
 	prefix, err := pvpPrefix(string(criterion))
@@ -189,7 +211,7 @@ func (p *CPEMatchesPacked) Unpack(criterion CPE) ([]CPE, error) {
 
 	var ms []CPE
 	prev := ""
-	for _, item := range splitFS(p.Data, fcSeparator) {
+	for item := range strings.SplitSeq(p.Data, string(fcSeparator)) {
 		if item == "" {
 			return nil, errors.Errorf("empty entry in packed data. data: %q", p.Data)
 		}
@@ -200,10 +222,13 @@ func (p *CPEMatchesPacked) Unpack(criterion CPE) ([]CPE, error) {
 		if n > len(prev) {
 			return nil, errors.Errorf("shared prefix length exceeds the previous entry. prefix: %d, previous: %q", n, prev)
 		}
-		if splitsEscape(prev, n) {
-			return nil, errors.Errorf("shared prefix ends inside an escape sequence. prefix: %d, previous: %q", n, prev)
+		if n < len(prev) && !utf8.RuneStart(prev[n]) {
+			return nil, errors.Errorf("shared prefix ends inside a UTF-8 sequence. prefix: %d, previous: %q", n, prev)
 		}
 		e := prev[:n] + item[1:]
+		if e == "" {
+			return nil, errors.Errorf("empty reduced entry in packed data. data: %q", p.Data)
+		}
 		attrs := splitFS(e, ':')
 		for len(attrs) < 8 {
 			attrs = append(attrs, "*")
@@ -216,9 +241,9 @@ func (p *CPEMatchesPacked) Unpack(criterion CPE) ([]CPE, error) {
 
 // UnsupportedPackedEncodingError is returned by Unpack for an Encoding
 // outside this build's vocabulary: data produced by a newer vuls-data-update
-// read by an older binary, or the zero value (unset — a producer-side bug).
-// Accept records it as a warning and skips the packed entries rather than
-// failing detection; malformed data under a known encoding stays an error.
+// read by an older binary. Accept records it as a warning and skips the
+// packed entries rather than failing detection; malformed data under a known
+// encoding, and Data under an empty Encoding, stay errors.
 type UnsupportedPackedEncodingError struct {
 	Encoding PackedEncoding
 }
@@ -241,17 +266,6 @@ func pvpPrefix(fs string) (string, error) {
 		return "", errors.Errorf("unexpected formatted string. expected: %q, actual: %q", "cpe:2.3:<part>:<vendor>:<product>:...", fs)
 	}
 	return strings.Join(attrs[:5], ":") + ":", nil
-}
-
-// splitsEscape reports whether cutting s after its first n bytes separates a
-// backslash from the character it escapes, i.e. whether s[:n] ends with an
-// escaping (unescaped) backslash.
-func splitsEscape(s string, n int) bool {
-	escapes := 0
-	for i := n - 1; i >= 0 && s[i] == '\\'; i-- {
-		escapes++
-	}
-	return escapes%2 == 1
 }
 
 // splitFS splits s on the unescaped occurrences of sep, where a backslash

@@ -5,6 +5,7 @@ import (
 	"slices"
 	"strings"
 	"testing"
+	"unicode/utf8"
 
 	"github.com/google/go-cmp/cmp"
 
@@ -33,7 +34,7 @@ func TestPackCPEMatches(t *testing.T) {
 					"cpe:2.3:a:google:chrome:10.0.648.204:*:*:*:*:*:*:*",
 				},
 			},
-			wantData: "00.1.38.1|72|010.0.648.204",
+			wantData: "00.1.38.1 72 010.0.648.204",
 			wantUnpack: []ccTypes.CPE{
 				"cpe:2.3:a:google:chrome:0.1.38.1:*:*:*:*:*:*:*",
 				"cpe:2.3:a:google:chrome:0.1.38.2:*:*:*:*:*:*:*",
@@ -55,7 +56,7 @@ func TestPackCPEMatches(t *testing.T) {
 					"cpe:2.3:o:linux:linux_kernel:5.15.10:*:*:*:*:*:*:*",
 				},
 			},
-			wantData: "01.0\\:|1\\|0|04.18.0\\-193.el8|05.15.10|7:*:*:*:*:*:android|4:-|5rc1",
+			wantData: "01.0\\: 1\\|0 04.18.0\\-193.el8 05.15.10 7:*:*:*:*:*:android 4:- 5rc1",
 			wantUnpack: []ccTypes.CPE{
 				"cpe:2.3:o:linux:linux_kernel:1.0\\::*:*:*:*:*:*:*",
 				"cpe:2.3:o:linux:linux_kernel:1\\|0:*:*:*:*:*:*:*",
@@ -77,16 +78,16 @@ func TestPackCPEMatches(t *testing.T) {
 					ccTypes.CPE("cpe:2.3:a:vendor:product:" + strings.Repeat("1.", 25) + "1:*:*:*:*:*:*:*"),
 				},
 			},
-			wantData: "0" + strings.Repeat("1.", 25) + "0|[" + strings.Repeat("1.", 25)[43:] + "1",
+			wantData: "0" + strings.Repeat("1.", 25) + "0 [" + strings.Repeat("1.", 25)[43:] + "1",
 			wantUnpack: []ccTypes.CPE{
 				ccTypes.CPE("cpe:2.3:a:vendor:product:" + strings.Repeat("1.", 25) + "0:*:*:*:*:*:*:*"),
 				ccTypes.CPE("cpe:2.3:a:vendor:product:" + strings.Repeat("1.", 25) + "1:*:*:*:*:*:*:*"),
 			},
 		},
 		{
-			// The entries diverge right after an escaping backslash; the
-			// prefix stops before it so the remainder keeps the escape pair
-			// (an escaped "|" must not surface as a bare separator).
+			// The entries diverge right after a quoting backslash, so the
+			// remainder starts with a bare quoted character; harmless, as
+			// the separator never occurs in a name.
 			name: "entries diverging inside an escape pair",
 			args: args{
 				criterion: "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
@@ -95,15 +96,15 @@ func TestPackCPEMatches(t *testing.T) {
 					"cpe:2.3:a:vendor:product:1.0:build\\-1:*:*:*:*:*:*",
 				},
 			},
-			wantData: "01.0:build\\-1|9\\|1",
+			wantData: "01.0:build\\-1 :|1",
 			wantUnpack: []ccTypes.CPE{
 				"cpe:2.3:a:vendor:product:1.0:build\\-1:*:*:*:*:*:*",
 				"cpe:2.3:a:vendor:product:1.0:build\\|1:*:*:*:*:*:*",
 			},
 		},
 		{
-			// The length cap lands right after an escaping backslash; the
-			// prefix is cut one byte earlier.
+			// The length cap lands right after a quoting backslash; the cut
+			// stays there.
 			name: "length cap falling inside an escape pair",
 			args: args{
 				criterion: "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
@@ -112,11 +113,56 @@ func TestPackCPEMatches(t *testing.T) {
 					ccTypes.CPE("cpe:2.3:a:vendor:product:" + strings.Repeat("1.", 21) + "\\-2:*:*:*:*:*:*:*"),
 				},
 			},
-			wantData: "0" + strings.Repeat("1.", 21) + "\\-1|Z\\-2",
+			wantData: "0" + strings.Repeat("1.", 21) + "\\-1 [-2",
 			wantUnpack: []ccTypes.CPE{
 				ccTypes.CPE("cpe:2.3:a:vendor:product:" + strings.Repeat("1.", 21) + "\\-1:*:*:*:*:*:*:*"),
 				ccTypes.CPE("cpe:2.3:a:vendor:product:" + strings.Repeat("1.", 21) + "\\-2:*:*:*:*:*:*:*"),
 			},
+		},
+		{
+			// A bare "|", which go-cpe accepts (it quotes punctuation on
+			// unbind), is an ordinary byte of a name.
+			name: "unquoted pipe",
+			args: args{
+				criterion: "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
+				matches: []ccTypes.CPE{
+					"cpe:2.3:a:vendor:product:1.0|1b:*:*:*:*:*:*:*",
+					"cpe:2.3:a:vendor:product:1.0:*:*:*:*:*:*:*",
+				},
+			},
+			wantData: "01.0 3|1b",
+			wantUnpack: []ccTypes.CPE{
+				"cpe:2.3:a:vendor:product:1.0:*:*:*:*:*:*:*",
+				"cpe:2.3:a:vendor:product:1.0|1b:*:*:*:*:*:*:*",
+			},
+		},
+		{
+			// The entries diverge inside a multi-byte character; the prefix
+			// stops before it so the text stays valid UTF-8.
+			name: "entries diverging inside a UTF-8 sequence",
+			args: args{
+				criterion: "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
+				matches: []ccTypes.CPE{
+					"cpe:2.3:a:vendor:product:1.0:cafê:*:*:*:*:*:*",
+					"cpe:2.3:a:vendor:product:1.0:café:*:*:*:*:*:*",
+				},
+			},
+			wantData: "01.0:café 7ê",
+			wantUnpack: []ccTypes.CPE{
+				"cpe:2.3:a:vendor:product:1.0:café:*:*:*:*:*:*",
+				"cpe:2.3:a:vendor:product:1.0:cafê:*:*:*:*:*:*",
+			},
+		},
+		{
+			// The version is never dropped, so the reduced form is never
+			// empty and an all-ANY name round-trips.
+			name: "all attributes ANY",
+			args: args{
+				criterion: "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
+				matches:   []ccTypes.CPE{"cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*"},
+			},
+			wantData:   "0*",
+			wantUnpack: []ccTypes.CPE{"cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*"},
 		},
 		{
 			name:       "empty",
@@ -137,6 +183,24 @@ func TestPackCPEMatches(t *testing.T) {
 			args:    args{criterion: "cpe:2.3:a:google:chrome", matches: []ccTypes.CPE{"cpe:2.3:a:google:chrome:1.0:*:*:*:*:*:*:*"}},
 			wantErr: true,
 		},
+		{
+			// go-cpe reads the colon after "\\" as quoted and accepts the
+			// name; split as the grammar has it, it has nine attributes.
+			name: "entry with a colon after a quoted backslash -> error",
+			args: args{
+				criterion: "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
+				matches:   []ccTypes.CPE{"cpe:2.3:a:vendor:product:1\\\\:2:*:*:*:*:*:*:*"},
+			},
+			wantErr: true,
+		},
+		{
+			name: "entry holding the separator -> error",
+			args: args{
+				criterion: "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
+				matches:   []ccTypes.CPE{"cpe:2.3:a:vendor:product:1 0:*:*:*:*:*:*:*"},
+			},
+			wantErr: true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -153,6 +217,9 @@ func TestPackCPEMatches(t *testing.T) {
 			if p.Data != tt.wantData {
 				t.Errorf("Data = %q, want %q", p.Data, tt.wantData)
 			}
+			if !utf8.ValidString(p.Data) {
+				t.Errorf("Data = %q is not valid UTF-8", p.Data)
+			}
 			got, err := p.Unpack(tt.args.criterion)
 			if err != nil {
 				t.Fatalf("Unpack() error = %v", err)
@@ -166,15 +233,18 @@ func TestPackCPEMatches(t *testing.T) {
 
 func TestCPEMatchesPacked_Unpack_errors(t *testing.T) {
 	tests := []struct {
-		name string
-		p    *ccTypes.CPEMatchesPacked
+		name            string
+		p               *ccTypes.CPEMatchesPacked
+		wantUnsupported bool
 	}{
-		{name: "unknown encoding", p: &ccTypes.CPEMatchesPacked{Encoding: "fc+zstd", Data: "010.0.0"}},
-		{name: "empty entry", p: &ccTypes.CPEMatchesPacked{Encoding: ccTypes.PackedEncodingFC, Data: "010.0.0||51"}},
-		{name: "length character below the range", p: &ccTypes.CPEMatchesPacked{Encoding: ccTypes.PackedEncodingFC, Data: "010.0.0|*1"}},
-		{name: "length character above the range", p: &ccTypes.CPEMatchesPacked{Encoding: ccTypes.PackedEncodingFC, Data: "010.0.0|\\1"}},
-		{name: "prefix longer than previous", p: &ccTypes.CPEMatchesPacked{Encoding: ccTypes.PackedEncodingFC, Data: "010.0.0|91"}},
-		{name: "prefix ending inside an escape pair", p: &ccTypes.CPEMatchesPacked{Encoding: ccTypes.PackedEncodingFC, Data: "01.0:build\\-1|:1"}},
+		{name: "unknown encoding", p: &ccTypes.CPEMatchesPacked{Encoding: "fc+zstd", Data: "010.0.0"}, wantUnsupported: true},
+		{name: "data without an encoding", p: &ccTypes.CPEMatchesPacked{Data: "010.0.0"}},
+		{name: "empty entry", p: &ccTypes.CPEMatchesPacked{Encoding: ccTypes.PackedEncodingFC, Data: "010.0.0  51"}},
+		{name: "empty reduced entry", p: &ccTypes.CPEMatchesPacked{Encoding: ccTypes.PackedEncodingFC, Data: "0"}},
+		{name: "length character below the range", p: &ccTypes.CPEMatchesPacked{Encoding: ccTypes.PackedEncodingFC, Data: "010.0.0 *1"}},
+		{name: "length character above the range", p: &ccTypes.CPEMatchesPacked{Encoding: ccTypes.PackedEncodingFC, Data: "010.0.0 \\1"}},
+		{name: "prefix longer than previous", p: &ccTypes.CPEMatchesPacked{Encoding: ccTypes.PackedEncodingFC, Data: "010.0.0 91"}},
+		{name: "prefix ending inside a UTF-8 sequence", p: &ccTypes.CPEMatchesPacked{Encoding: ccTypes.PackedEncodingFC, Data: "01.0:café 8\xaa"}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -183,19 +253,20 @@ func TestCPEMatchesPacked_Unpack_errors(t *testing.T) {
 				t.Fatal("expected error has not occurred")
 			}
 			// Only an encoding outside the vocabulary is reported as
-			// unsupported; malformed data under a known one is not.
-			if _, ok := stderrors.AsType[*ccTypes.UnsupportedPackedEncodingError](err); ok != (tt.p.Encoding != ccTypes.PackedEncodingFC) {
-				t.Errorf("UnsupportedPackedEncodingError = %v, want %v (err: %v)", ok, tt.p.Encoding != ccTypes.PackedEncodingFC, err)
+			// unsupported; malformed data under a known or empty one is not.
+			if _, ok := stderrors.AsType[*ccTypes.UnsupportedPackedEncodingError](err); ok != tt.wantUnsupported {
+				t.Errorf("UnsupportedPackedEncodingError = %v, want %v (err: %v)", ok, tt.wantUnsupported, err)
 			}
 		})
 	}
-	t.Run("nil", func(t *testing.T) {
-		var p *ccTypes.CPEMatchesPacked
-		got, err := p.Unpack("cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*")
-		if err != nil || got != nil {
-			t.Errorf("Unpack() = %v, %v; want nil, nil", got, err)
-		}
-	})
+	for name, p := range map[string]*ccTypes.CPEMatchesPacked{"nil": nil, "zero value": {}} {
+		t.Run(name, func(t *testing.T) {
+			got, err := p.Unpack("cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*")
+			if err != nil || got != nil {
+				t.Errorf("Unpack() = %v, %v; want nil, nil", got, err)
+			}
+		})
+	}
 }
 
 func TestPackable(t *testing.T) {
@@ -209,11 +280,22 @@ func TestPackable(t *testing.T) {
 		{name: "criterion with a wildcard product", criterion: "cpe:2.3:a:vendor:*:*:*:*:*:*:*:*:*", m: "cpe:2.3:a:vendor:product:1.0:*:*:*:*:*:*:*", want: false},
 		{name: "different product", criterion: "cpe:2.3:a:google:chrome:*:*:*:*:*:*:*:*", m: "cpe:2.3:a:google:chrome_os:1.0:*:*:*:*:*:*:*", want: false},
 		{name: "malformed criterion", criterion: "cpe:2.3:a:google:chrome", m: "cpe:2.3:a:google:chrome:1.0:*:*:*:*:*:*:*", want: false},
+		{name: "unquoted pipe", criterion: "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*", m: "cpe:2.3:a:vendor:product:1|b:*:*:*:*:*:*:*", want: true},
+		{name: "non-ASCII", criterion: "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*", m: "cpe:2.3:a:vendor:product:1.0:café:*:*:*:*:*:*", want: true},
+		{name: "all attributes ANY", criterion: "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*", m: "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*", want: true},
+		{name: "quoted colon", criterion: "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*", m: "cpe:2.3:a:vendor:product:1\\:2:*:*:*:*:*:*:*", want: true},
+		{name: "colon after a quoted backslash", criterion: "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*", m: "cpe:2.3:a:vendor:product:1\\\\:2:*:*:*:*:*:*:*", want: false},
+		{name: "too few attributes", criterion: "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*", m: "cpe:2.3:a:vendor:product:1.0:*:*:*:*:*:*", want: false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := ccTypes.Packable(tt.criterion, tt.m); got != tt.want {
 				t.Errorf("Packable() = %v, want %v", got, tt.want)
+			}
+			// Packable is the gate and PackCPEMatches the backstop: they
+			// must agree on every name.
+			if _, err := ccTypes.PackCPEMatches(tt.criterion, []ccTypes.CPE{tt.m}); (err == nil) != tt.want {
+				t.Errorf("PackCPEMatches() error = %v, want %v", err, !tt.want)
 			}
 		})
 	}
