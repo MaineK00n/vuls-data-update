@@ -60,15 +60,13 @@ var (
 // and without go-cpe's per-character string building, map and interface
 // boxing, which made unbinding the dominant cost of Accept. The rules below
 // follow go-cpe's ValidateFS, getCompFS, addQuoting and WellFormedName.Set,
-// quirks included, and depart from them where go-cpe falls short of the
-// grammar (NISTIR 7695 §5.3.2 and §6.2.3), in which a backslash always
-// quotes the character after it:
-//   - a colon after a quoted backslash ("\\:") is a component separator;
-//     go-cpe looks only at the byte before a colon, reads it as quoted, and
-//     rejects the name on its colon count.
-//   - a value ending in a lone backslash is an error; go-cpe panics.
+// quirks included. As in the grammar (NISTIR 7695 §5.3.2 and §6.2.3), a
+// backslash always quotes the character after it: a colon after a quoted
+// backslash ("\\:") is a component separator, and a value ending in a lone
+// backslash is an error. go-cpe follows the same rule since
+// knqyf263/go-cpe#10.
 //
-// FuzzUnbindFS checks the two against each other outside those cases.
+// FuzzUnbindFS checks the two against each other.
 func unbindFS(fs string) (wfn, error) {
 	attrs, err := attributesFS(fs)
 	if err != nil {
@@ -102,8 +100,7 @@ func unbindFS(fs string) (wfn, error) {
 // fsPrefix opens every formatted string, in any case.
 const fsPrefix = "cpe:2.3:"
 
-// attributesFS checks fs as go-cpe's ValidateFS does, with the grammar's
-// colon rule, and returns the part after the "cpe:2.3:" prefix, which holds
+// attributesFS checks fs as go-cpe's ValidateFS does and returns the part after the "cpe:2.3:" prefix, which holds
 // the attributes: the prefix in any case, then exactly attrCount components
 // separated by unquoted colons, none of them empty but the last.
 func attributesFS(fs string) (string, error) {
@@ -134,9 +131,8 @@ func attributesFS(fs string) (string, error) {
 	return attrs, nil
 }
 
-// unescapedColonIndex is go-cpe's GetUnescapedColonIndex with the grammar's
-// colon rule: the index of the first unquoted colon in s, or -1 if there is
-// none.
+// unescapedColonIndex is go-cpe's GetUnescapedColonIndex: the index of the
+// first unquoted colon in s, or -1 if there is none (go-cpe gives 0).
 func unescapedColonIndex(s []byte) int {
 	for i := 0; i < len(s); i++ {
 		switch s[i] {
