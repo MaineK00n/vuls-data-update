@@ -120,6 +120,8 @@ func attributesFS(fs string) (string, error) {
 			i++
 		case ':':
 			n++
+			// A trailing colon leaves the last attribute empty; go-cpe
+			// accepts that and reads it as the empty string, so does this.
 			if i < len(attrs)-1 && attrs[i+1] == ':' {
 				return "", errors.Errorf("unexpected formatted string. found an empty component: %q", fs)
 			}
