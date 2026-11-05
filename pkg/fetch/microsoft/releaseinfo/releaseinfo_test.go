@@ -83,12 +83,11 @@ func TestFetch(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewServer(handler(t, tt.fixture, tt.redirect))
-			defer ts.Close()
+			ts := httptest.NewTestServer(t, handler(t, tt.fixture, tt.redirect))
 
 			dir := t.TempDir()
 			err := releaseinfo.Fetch(
-				releaseinfo.WithBaseURL(ts.URL),
+				releaseinfo.WithHTTPClient(ts.Client()),
 				releaseinfo.WithDir(dir),
 				releaseinfo.WithRetry(0),
 				releaseinfo.WithConcurrency(1),
