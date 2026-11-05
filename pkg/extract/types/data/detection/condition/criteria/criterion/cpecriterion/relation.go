@@ -59,8 +59,12 @@ func overlaps(a, b *wfnValue) bool {
 
 // contains reports whether the concrete value s, a core, is in the set p
 // denotes: whether the pattern of s alone is a subset of p, which for a
-// singleton is also whether the two intersect. The common shapes are
-// answered directly; the rest by pattern.subsetOf.
+// singleton is also whether the two intersect. Every case is, by meaning,
+// pattern{core: s}.subsetOf(*p); the common shapes (a concrete value, a
+// prefix, suffix or infix pattern) are answered by one bytes comparison
+// instead, which is what keeps the packed matching at its per-entry cost
+// (relating every entry through subsetOf measured 1.7x slower). Hot path:
+// see the package documentation before changing it.
 func contains(p *pattern, s []byte) bool {
 	switch {
 	case p.lead == 0 && p.trail == 0:
