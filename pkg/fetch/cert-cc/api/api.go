@@ -104,6 +104,13 @@ func Fetch(opts ...Option) error {
 		o.apply(options)
 	}
 
+	// errgroup gives a zero limit an unbuffered semaphore, so the first Go
+	// call would block forever. Reject it before anything is removed or
+	// requested, as utilhttp's PipelineDo does for its own callers.
+	if options.concurrency == 0 {
+		return errors.Errorf("unexpected concurrency. expected: %s, actual: %d", "a non-zero number", options.concurrency)
+	}
+
 	if err := util.RemoveAll(options.dir); err != nil {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
@@ -114,7 +121,7 @@ func Fetch(opts ...Option) error {
 	slog.Info("Fetch CERT/CC Vulnerability Notes Summary", slog.Int("from", startYear), slog.Int("to", time.Now().Year()))
 	ns, err := options.list(client)
 	if err != nil {
-		return errors.Wrap(err, "list note")
+		return errors.Wrap(err, "list notes")
 	}
 
 	slog.Info("Fetch CERT/CC Vulnerability Notes")
@@ -147,6 +154,7 @@ func (opts options) list(client *utilhttp.Client) ([]listed, error) {
 				return nil, errors.Errorf("unexpected note id format. expected: %q, actual: %q", "VU#<digits>", n)
 			}
 			if _, ok := seen[id]; ok {
+				slog.Warn("duplicate note listing", slog.String("id", fmt.Sprintf("VU#%s", id)), slog.Int("year", y))
 				continue
 			}
 			seen[id] = struct{}{}
@@ -176,6 +184,12 @@ func (opts options) notes(client *utilhttp.Client, ns []listed) error {
 				_ = bar.Add(1)
 			}()
 
+			select {
+			case <-ctx.Done():
+				return ctx.Err()
+			default:
+			}
+
 			v, err := opts.note(client, n.id)
 			if err != nil {
 				if errors.Is(err, errContentNotFound) {
@@ -194,12 +208,7 @@ func (opts options) notes(client *utilhttp.Client, ns []listed) error {
 				return errors.Wrapf(err, "write %s", p)
 			}
 
-			select {
-			case <-ctx.Done():
-				return ctx.Err()
-			default:
-				return nil
-			}
+			return nil
 		})
 	}
 	if err := g.Wait(); err != nil {

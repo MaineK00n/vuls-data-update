@@ -1,7 +1,6 @@
 package api
 
 type summary struct {
-	Count int      `json:"count"`
 	Notes []string `json:"notes"`
 }
 
@@ -89,9 +88,15 @@ type Vul struct {
 	DateUpdated   string `json:"dateupdated,omitempty"`
 }
 
-// Vendor is an element of {id}/vendors/. Notes migrated from the legacy
-// database answer with the vuid ... revision members instead of the
-// note ... statement_date ones.
+// Vendor is an element of {id}/vendors/. The API serves two record shapes,
+// and no response mixes them:
+//   - current records carry note, contact_date, references, dateupdated and
+//     statement_date;
+//   - records of notes migrated from the legacy database carry vuid,
+//     idnumber, vendorrecordid, status, vendorinformation, vendorurls,
+//     datenotified, dateresponded, datelastupdated and revision.
+//
+// vendor, statement and addendum appear in both shapes.
 type Vendor struct {
 	Note          string `json:"note,omitempty"`
 	ContactDate   string `json:"contact_date,omitempty"`
