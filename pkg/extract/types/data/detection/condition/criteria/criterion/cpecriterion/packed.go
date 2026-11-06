@@ -110,12 +110,13 @@ func comparePacked(x, y *CPEMatchesPacked) int {
 // eight attributes after them, split as a formatted string is (a backslash
 // quoting the character after it), and does not end in an unquoted
 // backslash, which quotes nothing. A criterion whose product is a wildcard,
-// for example, enumerates concrete products that do not share it, and a
-// name with a colon after a quoted backslash ("\\:") can have more than
-// eight (go-cpe accepted such names before knqyf263/go-cpe#10). Such an
-// entry belongs in CPEMatches, where the whole name is kept. Packable is the
-// gate the extractor uses; PackCPEMatches rejects the same names, as a
-// backstop, and Unpack rejects what they do.
+// for example, enumerates concrete products that do not share it. Such an
+// entry belongs in CPEMatches, where the whole name is kept. The attribute
+// count is a backstop: a name go-cpe accepts has exactly eight since
+// knqyf263/go-cpe#10 reads a colon after a quoted backslash ("\\:") as a
+// separator, as splitFS does. Packable is the gate the extractor uses;
+// PackCPEMatches rejects the same names, as a backstop, and Unpack rejects
+// what they do.
 func Packable(criterion, m CPE) bool {
 	prefix, err := pvpPrefix(string(criterion))
 	if err != nil {
