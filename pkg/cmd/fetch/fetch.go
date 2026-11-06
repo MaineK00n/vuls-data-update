@@ -29,6 +29,7 @@ import (
 	cargoGHSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/cargo/ghsa"
 	cargoOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/cargo/osv"
 	certBundCSAF "github.com/MaineK00n/vuls-data-update/pkg/fetch/cert-bund/csaf"
+	certCCAPI "github.com/MaineK00n/vuls-data-update/pkg/fetch/cert-cc/api"
 	chainguardOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/chainguard/osv"
 	chainguardSecDB "github.com/MaineK00n/vuls-data-update/pkg/fetch/chainguard/secdb"
 	cisaCOUN7ER "github.com/MaineK00n/vuls-data-update/pkg/fetch/cisa/coun7er"
@@ -230,6 +231,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdBottlerocket(),
 		newCmdCargoGHSA(), newCmdCargoOSV(), newCmdCargoDB(),
 		newCmdCertBundCSAF(),
+		newCmdCERTCCAPI(),
 		newCmdChainguardSecDB(), newCmdChainguardOSV(),
 		newCmdCISACOUN7ER(), newCmdCISACSAF(), newCmdCISAKEV(),
 		newCmdCiscoJSON(), newCmdCiscoCVRF(), newCmdCiscoCSAF(),
@@ -879,6 +881,41 @@ func newCmdCertBundCSAF() *cobra.Command {
 		RunE: func(_ *cobra.Command, _ []string) error {
 			if err := certBundCSAF.Fetch(certBundCSAF.WithDir(options.dir), certBundCSAF.WithRetry(options.retry), certBundCSAF.WithConcurrency(options.concurrency), certBundCSAF.WithWait(options.wait)); err != nil {
 				return errors.Wrap(err, "failed to fetch cert-bund csaf")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrent http requests")
+	cmd.Flags().DurationVarP(&options.wait, "wait", "", options.wait, "wait duration")
+
+	return cmd
+}
+
+func newCmdCERTCCAPI() *cobra.Command {
+	options := &struct {
+		base
+		concurrency int
+		wait        time.Duration
+	}{
+		dir:         filepath.Join(util.CacheDir(), "fetch", "cert-cc", "api"),
+		retry:       3,
+		concurrency: 3,
+		wait:        1 * time.Second,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "cert-cc-api",
+		Short: "Fetch CERT/CC Vulnerability Notes API data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch cert-cc-api
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := certCCAPI.Fetch(certCCAPI.WithDir(options.dir), certCCAPI.WithRetry(options.retry), certCCAPI.WithConcurrency(options.concurrency), certCCAPI.WithWait(options.wait)); err != nil {
+				return errors.Wrap(err, "failed to fetch cert-cc api")
 			}
 			return nil
 		},
