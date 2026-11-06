@@ -1,0 +1,21 @@
+{
+	"kb_id": "4533098",
+	"url": "https://support.microsoft.com/help/4533098",
+	"products": [
+		"Microsoft .NET Framework 4.5.2 on Windows Server 2008 for 32-bit Systems Service Pack 2",
+		"Microsoft .NET Framework 4.5.2 on Windows Server 2008 for x64-based Systems Service Pack 2",
+		"Microsoft .NET Framework 4.6 on Windows Server 2008 for 32-bit Systems Service Pack 2",
+		"Microsoft .NET Framework 4.6 on Windows Server 2008 for x64-based Systems Service Pack 2"
+	],
+	"superseded_by": [
+		{
+			"kb_id": "4556402"
+		}
+	],
+	"data_source": {
+		"id": "microsoft-cvrf",
+		"raws": [
+			"fixtures/2020-May/2020/CVE-2020-1108.json"
+		]
+	}
+}

@@ -1,0 +1,19 @@
+{
+	"kb_id": "4538123",
+	"url": "https://support.microsoft.com/help/4538123",
+	"products": [
+		"Microsoft .NET Framework 4.8 on Windows Server 2012",
+		"Microsoft .NET Framework 4.8 on Windows Server 2012 (Server Core installation)"
+	],
+	"superseded_by": [
+		{
+			"kb_id": "4556400"
+		}
+	],
+	"data_source": {
+		"id": "microsoft-cvrf",
+		"raws": [
+			"fixtures/2020-May/2020/CVE-2020-1108.json"
+		]
+	}
+}
