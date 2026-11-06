@@ -3,6 +3,7 @@ package cpecriterion
 import (
 	"cmp"
 	"fmt"
+	"iter"
 	"slices"
 	"strings"
 	"unicode/utf8"
@@ -192,63 +193,105 @@ func PackCPEMatches(criterion CPE, matches []CPE) (*CPEMatchesPacked, error) {
 // as is any other malformed Data under a known encoding. Data is taken to be
 // valid UTF-8, as a string decoded from JSON is.
 func (p *CPEMatchesPacked) Unpack(criterion CPE) ([]CPE, error) {
-	if p == nil {
-		return nil, nil
+	ok, err := p.decodable()
+	if err != nil {
+		return nil, errors.Wrap(err, "check packed encoding")
 	}
-	switch p.Encoding {
-	case "":
-		if p.Data == "" {
-			return nil, nil
-		}
-		return nil, errors.Errorf("unexpected packed data without an encoding. data: %q", p.Data)
-	case PackedEncodingFC:
-	default:
-		return nil, &UnsupportedPackedEncodingError{Encoding: p.Encoding}
+	if !ok {
+		return nil, nil
 	}
 	prefix, err := pvpPrefix(string(criterion))
 	if err != nil {
 		return nil, errors.Wrapf(err, "pvp prefix of %q", string(criterion))
 	}
-	if p.Data == "" {
-		return []CPE{}, nil
-	}
 
-	var ms []CPE
-	prev := ""
-	for item := range strings.SplitSeq(p.Data, string(fcSeparator)) {
-		if item == "" {
-			return nil, errors.Errorf("empty entry in packed data. data: %q", p.Data)
+	ms := []CPE{}
+	for e, err := range p.reduced() {
+		if err != nil {
+			return nil, errors.Wrap(err, "decode front coding")
 		}
-		n := int(item[0]) - fcLengthBase
-		if n < 0 || n > fcLengthMax {
-			return nil, errors.Errorf("unexpected length character. expected: %q..%q, actual: %q", string(rune(fcLengthBase)), string(rune(fcLengthBase+fcLengthMax)), string(item[0]))
-		}
-		if n > len(prev) {
-			return nil, errors.Errorf("shared prefix length exceeds the previous entry. prefix: %d, previous: %q", n, prev)
-		}
-		if n < len(prev) && !utf8.RuneStart(prev[n]) {
-			return nil, errors.Errorf("shared prefix ends inside a UTF-8 sequence. prefix: %d, previous: %q", n, prev)
-		}
-		e := prev[:n] + item[1:]
-		if e == "" {
-			return nil, errors.Errorf("empty reduced entry in packed data. data: %q", p.Data)
-		}
-		// A backslash quotes the character after it, so an entry cannot end
-		// in an unquoted one; go-cpe panics on a name that does.
+		// unbindReduced applies the same two checks on the matching path;
+		// go-cpe panics on a name ending in an unquoted backslash.
 		if endsInEscape(e) {
 			return nil, errors.Errorf("entry ends with an unquoted backslash. entry: %q", e)
 		}
-		attrs := splitFS(e, ':')
-		if len(attrs) > 8 {
-			return nil, errors.Errorf("unexpected number of attributes after the product. expected: at most 8, actual: %d, entry: %q", len(attrs), e)
+		if n := len(splitFS(string(e), ':')); n > 8 {
+			return nil, errors.Errorf("unexpected number of attributes after the product. expected: at most 8, actual: %d, entry: %q", n, e)
 		}
-		for len(attrs) < 8 {
-			attrs = append(attrs, "*")
-		}
-		ms = append(ms, CPE(prefix+strings.Join(attrs, ":")))
-		prev = e
+		ms = append(ms, fullName(prefix, e))
 	}
 	return ms, nil
+}
+
+// fullName restores the formatted string of an entry from its reduced form
+// and the criterion's "cpe:2.3:part:vendor:product:" prefix.
+func fullName(prefix string, e []byte) CPE {
+	attrs := splitFS(string(e), ':')
+	for len(attrs) < 8 {
+		attrs = append(attrs, "*")
+	}
+	return CPE(fmt.Sprintf("%s%s", prefix, strings.Join(attrs, ":")))
+}
+
+// reduced decodes the front coding, yielding each entry in its reduced form
+// in order, or the error decoding stopped at. Encoding must be
+// PackedEncodingFC; the caller checks. The entries are built in one buffer,
+// each on the shared prefix of the one before, and the yielded slice is
+// that buffer: it is valid during the yield only, and a caller that keeps
+// anything of it copies it (Unpack restores a new string from it; Accept
+// relates it to the query and moves on).
+// Hot path: see the package documentation before changing it.
+func (p *CPEMatchesPacked) reduced() iter.Seq2[[]byte, error] {
+	return func(yield func([]byte, error) bool) {
+		if p.Data == "" {
+			return
+		}
+		var prev []byte
+		for item := range strings.SplitSeq(p.Data, string(fcSeparator)) {
+			if item == "" {
+				yield(nil, errors.Errorf("empty entry in packed data. data: %q", p.Data))
+				return
+			}
+			n := int(item[0]) - fcLengthBase
+			if n < 0 || n > fcLengthMax {
+				yield(nil, errors.Errorf("unexpected length character. expected: %q..%q, actual: %q", string(rune(fcLengthBase)), string(rune(fcLengthBase+fcLengthMax)), string(item[0])))
+				return
+			}
+			if n > len(prev) {
+				yield(nil, errors.Errorf("shared prefix length exceeds the previous entry. prefix: %d, previous: %q", n, prev))
+				return
+			}
+			if n < len(prev) && !utf8.RuneStart(prev[n]) {
+				yield(nil, errors.Errorf("shared prefix ends inside a UTF-8 sequence. prefix: %d, previous: %q", n, prev))
+				return
+			}
+			prev = append(prev[:n], item[1:]...)
+			if len(prev) == 0 {
+				yield(nil, errors.Errorf("empty reduced entry in packed data. data: %q", p.Data))
+				return
+			}
+			if !yield(prev, nil) {
+				return
+			}
+		}
+	}
+}
+
+// decodable reports whether p holds a packed set to decode: false for nil
+// and for the zero value, which hold none; an *UnsupportedPackedEncodingError
+// for an Encoding outside this build's vocabulary; and an error for Data
+// under an empty Encoding.
+func (p *CPEMatchesPacked) decodable() (bool, error) {
+	switch {
+	case p == nil, p.Encoding == "" && p.Data == "":
+		return false, nil
+	case p.Encoding == "":
+		return false, errors.Errorf("unexpected packed data without an encoding. data: %q", p.Data)
+	case p.Encoding != PackedEncodingFC:
+		return false, &UnsupportedPackedEncodingError{Encoding: p.Encoding}
+	default:
+		return true, nil
+	}
 }
 
 // UnsupportedPackedEncodingError is returned by Unpack for an Encoding
@@ -277,12 +320,12 @@ func pvpPrefix(fs string) (string, error) {
 	if len(attrs) != 13 || attrs[0] != "cpe" || attrs[1] != "2.3" {
 		return "", errors.Errorf("unexpected formatted string. expected: %q, actual: %q", "cpe:2.3:<part>:<vendor>:<product>:...", fs)
 	}
-	return strings.Join(attrs[:5], ":") + ":", nil
+	return fmt.Sprintf("%s:", strings.Join(attrs[:5], ":")), nil
 }
 
 // endsInEscape reports whether s ends with an unquoted backslash, one that
 // would quote the character after it: an odd run of trailing backslashes.
-func endsInEscape(s string) bool {
+func endsInEscape[S ~string | ~[]byte](s S) bool {
 	n := 0
 	for i := len(s) - 1; i >= 0 && s[i] == '\\'; i-- {
 		n++
