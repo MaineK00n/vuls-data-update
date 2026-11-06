@@ -18,26 +18,11 @@ var wfnAttributes = [ccTypes.AttrCount]string{
 
 // diffUnbindFS reports how unbindFS departs from go-cpe's naming.UnbindFS on
 // fs: acceptance must agree, and each accepted attribute must carry the
-// logical value, unescaped form and pattern go-cpe's value implies. A panic
-// in go-cpe (a value ending in a lone backslash) counts as a rejection. A
-// string with a colon after a quoted backslash is the intended departure
-// (see unbindFS, and TestUnbindFSQuotedBackslash for what it must give), so
-// the two are only run on it.
+// logical value, unescaped form and pattern go-cpe's value implies.
 func diffUnbindFS(fs string) error {
-	var want common.WellFormedName
-	var wantErr error
-	func() {
-		defer func() {
-			if r := recover(); r != nil {
-				wantErr = fmt.Errorf("panic: %v", r)
-			}
-		}()
-		want, wantErr = naming.UnbindFS(fs)
-	}()
+	want, wantErr := naming.UnbindFS(fs)
 	got, gotErr := ccTypes.UnbindFS(fs)
 	switch {
-	case colonAfterQuotedBackslash(fs):
-		return nil
 	case wantErr != nil && gotErr != nil:
 		return nil
 	case wantErr != nil:
@@ -63,22 +48,6 @@ func diffUnbindFS(fs string) error {
 		}
 	}
 	return nil
-}
-
-// colonAfterQuotedBackslash reports whether fs has an unquoted colon right
-// after a quoted backslash ("\\:"), which go-cpe reads as a quoted colon.
-func colonAfterQuotedBackslash(fs string) bool {
-	for i := 0; i < len(fs); i++ {
-		switch fs[i] {
-		case '\\':
-			i++
-		case ':':
-			if i > 0 && fs[i-1] == '\\' {
-				return true
-			}
-		}
-	}
-	return false
 }
 
 var unbindFSSeeds = []string{
@@ -116,9 +85,11 @@ var unbindFSSeeds = []string{
 	"",
 }
 
-// TestUnbindFSQuotedBackslash checks the departure from go-cpe: a colon after
-// a quoted backslash separates components, as the grammar has it, so the
-// value before it ends in a literal backslash and no colon is absorbed.
+// TestUnbindFSQuotedBackslash checks that a colon after a quoted backslash
+// separates components, as the grammar has it, so the value before it ends
+// in a literal backslash and no colon is absorbed. go-cpe read such a colon
+// as quoted before knqyf263/go-cpe#10; FuzzUnbindFS seeds these strings to
+// check that the two now agree.
 func TestUnbindFSQuotedBackslash(t *testing.T) {
 	tests := []struct {
 		name    string
