@@ -1,0 +1,138 @@
+{
+	"schema_version": "1.9.0",
+	"id": "CLSA-2026-1792824525",
+	"modified": "2026-10-26T09:32:04.927275802Z",
+	"published": "2026-10-24T06:48:56Z",
+	"upstream": [
+		"CVE-2026-111497"
+	],
+	"summary": "Fix CVE(s): CVE-2026-111497",
+	"details": "   * SECURITY UPDATE: Invalid stream not detected during block switch decoding\n     - debian/patches/CVE-2026-111497.patch: return an error code from the\n       literal/command/distance block-switch decoders and abort decoding with\n       BROTLI_DECODER_ERROR_FORMAT_BLOCK_SWITCH in c/dec/decode.c,\n       c/include/brotli/decode.h\n     - CVE-2026-111497",
+	"affected": [
+		{
+			"package": {
+				"ecosystem": "TuxCare:Ubuntu:18.04",
+				"name": "brotli",
+				"purl": "pkg:deb/tuxcare/brotli?distro=ubuntu-18.04"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "1.0.3-1ubuntu1.3+tuxcare.els1"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://github.com/cloudlinux/tuxcare-osv/tree/main/data/els_os/ubuntu18.04els/CLSA-2026-1792824525.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "TuxCare:Ubuntu:18.04",
+				"name": "libbrotli-dev",
+				"purl": "pkg:deb/tuxcare/libbrotli-dev?distro=ubuntu-18.04"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "1.0.3-1ubuntu1.3+tuxcare.els1"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://github.com/cloudlinux/tuxcare-osv/tree/main/data/els_os/ubuntu18.04els/CLSA-2026-1792824525.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "TuxCare:Ubuntu:18.04",
+				"name": "libbrotli1",
+				"purl": "pkg:deb/tuxcare/libbrotli1?distro=ubuntu-18.04"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "1.0.3-1ubuntu1.3+tuxcare.els1"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://github.com/cloudlinux/tuxcare-osv/tree/main/data/els_os/ubuntu18.04els/CLSA-2026-1792824525.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "TuxCare:Ubuntu:18.04",
+				"name": "python-brotli",
+				"purl": "pkg:deb/tuxcare/python-brotli?distro=ubuntu-18.04"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "1.0.3-1ubuntu1.3+tuxcare.els1"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://github.com/cloudlinux/tuxcare-osv/tree/main/data/els_os/ubuntu18.04els/CLSA-2026-1792824525.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "TuxCare:Ubuntu:18.04",
+				"name": "python3-brotli",
+				"purl": "pkg:deb/tuxcare/python3-brotli?distro=ubuntu-18.04"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "1.0.3-1ubuntu1.3+tuxcare.els1"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://github.com/cloudlinux/tuxcare-osv/tree/main/data/els_os/ubuntu18.04els/CLSA-2026-1792824525.json"
+			}
+		}
+	],
+	"references": [
+		{
+			"type": "ADVISORY",
+			"url": "https://errata.tuxcare.com/els_os/ubuntu18.04els/CLSA-2026-1792824525.html"
+		},
+		{
+			"type": "ADVISORY",
+			"url": "https://nvd.nist.gov/vuln/detail/CVE-2026-111497"
+		}
+	]
+}
