@@ -1,0 +1,197 @@
+{
+	"document": {
+		"acknowledgments": [
+			{
+				"names": [
+					"McKade Umbenhower"
+				],
+				"organization": "U.S. Department of Energy CyTRICS –INL"
+			}
+		],
+		"category": "csaf_security_advisory",
+		"csaf_version": "2.0",
+		"distribution": {
+			"text": "Public",
+			"tlp": {
+				"label": "WHITE"
+			}
+		},
+		"lang": "en-US",
+		"notes": [
+			{
+				"category": "general",
+				"text": "We strongly recommend the following industry cybersecurity best practices.\n\nhttps://www.se.com/us/en/download/document/7EN52-0390/\n* Locate control and safety system networks and remote devices behind firewalls and isolate them from the business network.\n* Install physical controls so no unauthorized personnel can access your industrial control and safety systems, components, peripheral equipment, and networks.\n* Place all controllers in locked cabinets and never leave them in the “Program” mode.\n* Never connect programming software to any network other than the network intended for that device.\n* Scan all methods of mobile data exchange with the isolated network such as CDs, USB drives, etc. before use in the terminals or any node connected to these networks.\n* Never allow mobile devices that have connected to any other network besides the intended network to connect to the safety or control networks without proper sanitation.\n* Minimize network exposure for all control system devices and systems and ensure that they are not accessible from the Internet.\n* When remote access is required, use secure methods, such as Virtual Private Networks (VPNs). Recognize that VPNs may have vulnerabilities and should be updated to the most current version available. Also, understand that VPNs are only as secure as the connected devices.\nFor more information refer to the Schneider Electric Recommended Cybersecurity Best Practices document. \n",
+				"title": "General Security Recommendations"
+			},
+			{
+				"category": "general",
+				"text": "This document provides an overview of the identified vulnerability or vulnerabilities and actions required to mitigate. For more details and assistance on how to protect your installation, contact your local Schneider Electric representative or Schneider Electric Industrial Cybersecurity Services: https://www.se.com/ww/en/work/solutions/cybersecurity/. These organizations will be fully aware of this situation and can support you through the process.\nFor further information related to cybersecurity in Schneider Electric’s products, visit the company’s cybersecurity support portal page: https://www.se.com/ww/en/work/support/cybersecurity/overview.jsp",
+				"title": "For More Information"
+			},
+			{
+				"category": "legal_disclaimer",
+				"text": "THIS NOTIFICATION DOCUMENT, THE INFORMATION CONTAINED HEREIN, AND ANY MATERIALS LINKED FROM IT (COLLECTIVELY, THIS “NOTIFICATION”) ARE INTENDED TO HELP PROVIDE AN OVERVIEW OF THE IDENTIFIED SITUATION AND SUGGESTED MITIGATION ACTIONS, REMEDIATION, FIX, AND/OR GENERAL SECURITY RECOMMENDATIONS AND IS PROVIDED ON AN “AS-IS” BASIS WITHOUT WARRANTY OR GUARANTEE OF ANY KIND.  SCHNEIDER ELECTRIC DISCLAIMS ALL WARRANTIES RELATING TO THIS NOTIFICATION, EITHER EXPRESS OR IMPLIED, INCLUDING WARRANTIES OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. SCHNEIDER ELECTRIC MAKES NO WARRANTY THAT THE NOTIFICATION WILL RESOLVE THE IDENTIFIED SITUATION. IN NO EVENT SHALL SCHNEIDER ELECTRIC BE LIABLE FOR ANY DAMAGES OR LOSSES WHATSOEVER IN CONNECTION WITH THIS NOTIFICATION, INCLUDING DIRECT, INDIRECT, INCIDENTAL, CONSEQUENTIAL, LOSS OF BUSINESS PROFITS OR SPECIAL DAMAGES, EVEN IF SCHNEIDER ELECTRIC HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES. YOUR USE OF THIS NOTIFICATION IS AT YOUR OWN RISK, AND YOU ARE SOLELY LIABLE FOR ANY DAMAGES TO YOUR SYSTEMS OR ASSETS OR OTHER LOSSES THAT MAY RESULT FROM YOUR USE OF THIS NOTIFICATION. SCHNEIDER ELECTRIC RESERVES THE RIGHT TO UPDATE OR CHANGE THIS NOTIFICATION AT ANY TIME AND IN ITS SOLE DISCRETION",
+				"title": "LEGAL DISCLAIMER"
+			},
+			{
+				"category": "general",
+				"text": "At Schneider, we believe access to energy and digital is a basic human right. We empower all to do more with less, ensuring Life Is On everywhere, for everyone, at every moment.\n\nWe provide energy and automation digital solutions for efficiency and sustainability. We combine world-leading energy technologies, real-time automation, software and services into integrated solutions for Homes, Buildings, Data Centers, Infrastructure and Industries.\n\nWe are committed to unleash the infinite possibilities of an open, global, innovative community that is passionate with our Meaningful Purpose, Inclusive and Empowered values.\n\nwww.se.com ",
+				"title": "About Schneider Electric"
+			},
+			{
+				"category": "summary",
+				"text": "Schneider Electric is aware of a vulnerability in its PowerLogic ION Setup product.\r\nThe PowerLogic ION Setup product is an engineering tool for configuration and maintenance of PowerLogic metering devices.\r\nFailure to apply the remediations provided below may risk remote code execution, which could result in a compromise of the engineering workstation running the ION Setup software.",
+				"title": "Overview"
+			}
+		],
+		"publisher": {
+			"category": "vendor",
+			"contact_details": "cybersecurity@se.com",
+			"name": "Schneider Electric CPCERT",
+			"namespace": "https://www.se.com/ww/en/work/support/cybersecurity/security-notifications.jsp"
+		},
+		"references": [
+			{
+				"category": "self",
+				"summary": "PowerLogic ION Setup - SEVD-2022-130-01 CSAF Version",
+				"url": "https://download.schneider-electric.com/files?p_Doc_Ref=SEVD-2022-130-01&p_enDocType=Security+and+Safety+Notice&p_File_Name=sevd-2022-130-01.json"
+			},
+			{
+				"category": "self",
+				"summary": "PowerLogic ION Setup - SEVD-2022-130-01 PDF Version",
+				"url": "https://download.schneider-electric.com/files?p_enDocType=Security+and+Safety+Notice&p_File_Name=SEVD-2022-130-01_PowerLogic_ION_Setup_Security_Notification.pdf"
+			},
+			{
+				"category": "external",
+				"summary": "Recommended Cybersecurity Best Practices",
+				"url": "https://www.se.com/us/en/download/document/7EN52-0390/"
+			}
+		],
+		"title": "PowerLogic ION Setup",
+		"tracking": {
+			"current_release_date": "2022-05-10T00:00:00.00Z",
+			"generator": {
+				"date": "2022-05-10T00:00:00.00Z",
+				"engine": {
+					"name": "Schneider Electric CSAF Generator",
+					"version": "1.1"
+				}
+			},
+			"id": "SEVD-2022-130-01",
+			"initial_release_date": "2022-05-10T00:00:00.00Z",
+			"revision_history": [
+				{
+					"date": "2022-05-10T00:00:00.00Z",
+					"number": "1",
+					"summary": "Original Release"
+				}
+			],
+			"status": "final",
+			"version": "1"
+		}
+	},
+	"product_tree": {
+		"branches": [
+			{
+				"branches": [
+					{
+						"branches": [
+							{
+								"category": "product_version_range",
+								"name": "<3.2.22096.01",
+								"product": {
+									"name": "Schneider Electric PowerLogic ION Setup versions prior to 3.2.22096.01",
+									"product_id": "1"
+								}
+							}
+						],
+						"category": "product_name",
+						"name": "PowerLogic ION Setup"
+					},
+					{
+						"branches": [
+							{
+								"category": "product_version",
+								"name": "3.2.22096.01",
+								"product": {
+									"name": "Schneider Electric PowerLogic ION Setup 3.2.22096.01",
+									"product_id": "2"
+								}
+							}
+						],
+						"category": "product_name",
+						"name": "PowerLogic ION Setup"
+					}
+				],
+				"category": "vendor",
+				"name": "Schneider Electric"
+			}
+		]
+	},
+	"vulnerabilities": [
+		{
+			"acknowledgments": [
+				{
+					"names": [
+						"Original Release"
+					]
+				}
+			],
+			"cve": "CVE-2022-30232",
+			"cwe": {
+				"id": "CWE-20",
+				"name": "Improper Input Validation"
+			},
+			"notes": [
+				{
+					"category": "description",
+					"text": "A CWE-20: Improper Input Validation vulnerability exists that could cause potential remote code execution when an attacker is able to intercept and modify a request on the same network or has configuration access to an ION device on the network.",
+					"title": "CVE Description"
+				}
+			],
+			"product_status": {
+				"fixed": [
+					"2"
+				],
+				"known_affected": [
+					"1"
+				]
+			},
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "Version 3.2.22096.01 of PowerLogic ION Setup includes a fix for this vulnerability and is available for download here:\r\nhttps://www.se.com/ww/en/download/document/ION_Setup_Latest_Release/\r\nCustomers should use appropriate patching methodologies when applying these patches to their systems. We strongly recommend the use of back-ups and evaluating the impact of these patches in a Test and Development environment or on an offline infrastructure. Contact Schneider Electric’s Customer Care Center if you need assistance removing a patch.",
+					"product_ids": [
+						"1"
+					],
+					"restart_required": {
+						"category": "none"
+					},
+					"url": "https://www.se.com/ww/en/download/document/ION_Setup_Latest_Release/"
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"attackComplexity": "LOW",
+						"attackVector": "NETWORK",
+						"availabilityImpact": "HIGH",
+						"baseScore": 8,
+						"baseSeverity": "HIGH",
+						"confidentialityImpact": "HIGH",
+						"integrityImpact": "HIGH",
+						"privilegesRequired": "LOW",
+						"scope": "UNCHANGED",
+						"userInteraction": "REQUIRED",
+						"vectorString": "CVSS:3.1/AV:N/AC:L/PR:L/UI:R/S:U/C:H/I:H/A:H",
+						"version": "3.1"
+					},
+					"products": [
+						"1"
+					]
+				}
+			],
+			"title": "CVE-2022-30232"
+		}
+	]
+}
