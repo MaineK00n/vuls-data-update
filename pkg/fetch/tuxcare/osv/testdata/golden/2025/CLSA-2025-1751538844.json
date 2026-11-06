@@ -1,0 +1,65 @@
+{
+	"schema_version": "1.9.0",
+	"id": "CLSA-2025-1751538844",
+	"modified": "2026-06-01T00:32:35.050324495Z",
+	"published": "2025-07-03T10:38:04Z",
+	"upstream": [
+		"CVE-2024-2236"
+	],
+	"summary": "libgcrypt: Fix of CVE-2024-2236",
+	"details": "- Synced to upstream plus ASN.1 patch\n- Tested on AlmaLinux 9.5\n- Fix CVE-2024-2236 (RHEL-34579)",
+	"affected": [
+		{
+			"package": {
+				"ecosystem": "TuxCare:AlmaLinux:9.6",
+				"name": "libgcrypt",
+				"purl": "pkg:rpm/tuxcare/libgcrypt?distro=almalinux-9.6"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "1.10.0-11.el9_2.tuxcare.1"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://github.com/cloudlinux/tuxcare-osv/tree/main/data/els_os/almalinux9.6esu/CLSA-2025-1751538844.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "TuxCare:AlmaLinux:9.6",
+				"name": "libgcrypt-devel",
+				"purl": "pkg:rpm/tuxcare/libgcrypt-devel?distro=almalinux-9.6"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "1.10.0-11.el9_2.tuxcare.1"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://github.com/cloudlinux/tuxcare-osv/tree/main/data/els_os/almalinux9.6esu/CLSA-2025-1751538844.json"
+			}
+		}
+	],
+	"references": [
+		{
+			"type": "ADVISORY",
+			"url": "https://errata.tuxcare.com/els_os/almalinux9.2fips/CLSA-2025-1751538844.html"
+		}
+	]
+}

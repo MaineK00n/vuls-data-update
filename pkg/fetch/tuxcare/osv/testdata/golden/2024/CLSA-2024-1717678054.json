@@ -1,0 +1,111 @@
+{
+	"schema_version": "1.9.0",
+	"id": "CLSA-2024-1717678054",
+	"modified": "2026-06-01T00:32:54.850827033Z",
+	"published": "2024-06-06T13:41:17Z",
+	"upstream": [
+		"CVE-2023-4863"
+	],
+	"summary": "libwebp: Fix of CVE-2023-4863",
+	"details": "- CVE-2023-4863: fix OOB write in BuildHuffmanTable",
+	"affected": [
+		{
+			"package": {
+				"ecosystem": "TuxCare:CentOS-Stream:8",
+				"name": "libwebp",
+				"purl": "pkg:rpm/tuxcare/libwebp?distro=centos-stream-8"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "1.0.0-9.el8.tuxcare.els1"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://github.com/cloudlinux/tuxcare-osv/tree/main/data/els_os/centos-stream8els/CLSA-2024-1717678054.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "TuxCare:CentOS-Stream:8",
+				"name": "libwebp-devel",
+				"purl": "pkg:rpm/tuxcare/libwebp-devel?distro=centos-stream-8"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "1.0.0-9.el8.tuxcare.els1"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://github.com/cloudlinux/tuxcare-osv/tree/main/data/els_os/centos-stream8els/CLSA-2024-1717678054.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "TuxCare:CentOS-Stream:8",
+				"name": "libwebp-java",
+				"purl": "pkg:rpm/tuxcare/libwebp-java?distro=centos-stream-8"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "1.0.0-9.el8.tuxcare.els1"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://github.com/cloudlinux/tuxcare-osv/tree/main/data/els_os/centos-stream8els/CLSA-2024-1717678054.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "TuxCare:CentOS-Stream:8",
+				"name": "libwebp-tools",
+				"purl": "pkg:rpm/tuxcare/libwebp-tools?distro=centos-stream-8"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "1.0.0-9.el8.tuxcare.els1"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://github.com/cloudlinux/tuxcare-osv/tree/main/data/els_os/centos-stream8els/CLSA-2024-1717678054.json"
+			}
+		}
+	],
+	"references": [
+		{
+			"type": "ADVISORY",
+			"url": "https://errata.tuxcare.com/centos8stream-els/CLSA-2024-1717678054.html"
+		}
+	]
+}
