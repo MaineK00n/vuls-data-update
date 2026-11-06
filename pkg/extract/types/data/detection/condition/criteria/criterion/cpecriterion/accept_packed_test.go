@@ -36,10 +36,12 @@ func packedCriterion(tb testing.TB, n int) (ccTypes.Criterion, ccTypes.Query) {
 // packed entry allocates nothing: the allocations of one Accept call do not
 // grow with the number of packed entries. The constant per-call allocations
 // (the WFNs, the warning) are not pinned, and the counts are compared with a
-// slack: under the race detector they vary by one or two between runs
-// (observed in CI), while an allocation per entry would add thousands.
+// slack: under the race detector a call costs 14 or 16 allocations at random,
+// so AllocsPerRun reads one more or less between runs (observed in CI). The
+// slack stays small: an allocation per entry adds thousands, but a slice or
+// buffer re-grown across the 9,900 extra entries adds only 7 to 12.
 func TestCriterion_Accept_packedAllocations(t *testing.T) {
-	const slack = 8
+	const slack = 2
 	allocs := func(n int) float64 {
 		c, q := packedCriterion(t, n)
 		return testing.AllocsPerRun(10, func() {
