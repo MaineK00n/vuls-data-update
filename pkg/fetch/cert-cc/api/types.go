@@ -119,7 +119,14 @@ type Vendor struct {
 	Revision          *int   `json:"revision,omitempty"`
 }
 
-// VendorVul is an element of {id}/vendors/vuls/.
+// VendorVul is an element of {id}/vendors/vuls/. It comes in the same two
+// shapes as Vendor, and no response mixes them:
+//   - current records carry vul, date_added, dateupdated and references;
+//   - records of notes migrated from the legacy database carry vuid,
+//     idnumber, vendorrecordid, vendorinformation, vendorurls, addendum,
+//     datenotified, dateresponded, datelastupdated and revision.
+//
+// vendor, status and statement appear in both shapes.
 type VendorVul struct {
 	Vul         string `json:"vul,omitempty"`
 	Vendor      string `json:"vendor,omitempty"`

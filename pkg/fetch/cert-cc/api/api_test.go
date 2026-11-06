@@ -16,15 +16,27 @@ import (
 
 func TestFetch(t *testing.T) {
 	tests := []struct {
-		name     string
-		hasError bool
+		name        string
+		concurrency int
+		hasError    bool
 	}{
 		{
-			name: "happy",
+			name:        "happy",
+			concurrency: 2,
 		},
 		{
-			name:     "summary-error",
-			hasError: true,
+			name:        "summary-error",
+			concurrency: 2,
+			hasError:    true,
+		},
+		{
+			// errgroup would block on the first note rather than return, so
+			// Fetch has to reject this before making any request. Every
+			// summary is empty here (there is no fixture directory), so
+			// without the guard Fetch would succeed and this case would fail.
+			name:        "zero-concurrency",
+			concurrency: 0,
+			hasError:    true,
 		},
 	}
 	for _, tt := range tests {
@@ -78,7 +90,7 @@ func TestFetch(t *testing.T) {
 			}))
 
 			dir := t.TempDir()
-			err := api.Fetch(api.WithHTTPClient(ts.Client()), api.WithDir(dir), api.WithRetry(0), api.WithConcurrency(2), api.WithWait(0))
+			err := api.Fetch(api.WithHTTPClient(ts.Client()), api.WithDir(dir), api.WithRetry(0), api.WithConcurrency(tt.concurrency), api.WithWait(0))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)
