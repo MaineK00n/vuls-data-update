@@ -1,0 +1,193 @@
+{
+	"note": {
+		"vuid": "VU#971035",
+		"idnumber": "971035",
+		"name": "Simple Certificate Enrollment Protocol (SCEP) does not strongly authenticate certificate requests",
+		"keywords": [
+			"scep",
+			"mdm",
+			"certificate",
+			"cmp",
+			"cms",
+			"ios"
+		],
+		"overview": "### Overview\r\nSimple Certificate Enrollment Protocol (SCEP) does not strongly authenticate certificate requests made by users or devices.\r\n\r\nUpdate (March 19, 2025): Solution section has been updated.\r\n\r\n### Description\r\nIETF Internet-Draft <a href=\"https://tools.ietf.org/html/draft-nourse-scep-23\">draft-nourse-scep-23</a> \"...defines a protocol, Simple Certificate Enrollment Protocol (SCEP), for certificate management and certificate and CRL queries in a closed environment.\" Mobile Device Management (MDM) is <a href=\"https://en.wikipedia.org/wiki/Mobile_device_management\">defined</a> as \"...software that secures, monitors, manages and supports mobile devices deployed across mobile operators, service providers and enterprises. MDM functionality typically includes over-the-air distribution of applications, data and configuration settings for all types of mobile devices, including mobile phones, smartphones, tablet computers, ruggedized mobile computers, mobile printers, mobile POS devices, etc.\" Multiple MDM software packages use SCEP as a method to handle certificate management and certificate CRL queries within an organization.\r\n\r\nWhen a user or a device requests a certificate, the SCEP implementation may require a challenge password. It may be possible for a user or device to take their legitimately acquired SCEP challenge password and use it to obtain a certificate that represents a different user with a higher level of access such as a network administrator, or to obtain a different type of certificate than what was intended. It is also possible for SCEP implementations or system administrators to not require the challenge password, or to share a static password across many users.\r\n\r\n#### Additional Notes\r\n\r\n* SCEP was designed for use \"...in a closed environment\" and is not well suited for MDM and \"bring your own device\" (BYOD) applications where untrusted users and devices are in use.\r\n* Applications that use SCEP take different measures to authenticate users and devices.\r\n* <a href=\"https://tools.ietf.org/html/draft-nourse-scep-23\">draft-nourse-scep-23</a> discourages further use of SCEP:\r\n> The IETF protocol suite currently includes two certificate management protocols with more comprehensive functionality: Certificate Management Protocol (CMP) [RFC4210] and Certificate Management over CMS (CMC) [RFC5272]. Environments that do not require interoperability with SCEP implementations SHOULD use the above-mentioned, PKIX-standard certificate management protocols. In light of the functionality gap between this specification [SCEP] and the two IETF standards track protocols, this specification is being published as Historic. Even when interoperability with the installed base of SCEP implementations is needed, implementers are encouraged to support one of these comprehensive standards track certificate management protocols in addition to the protocol defined in this specification.\r\n\t\r\nAdditional information can be found in [*The Use of the Simple Certificate Enrollment Protocol (SCEP) and Untrusted Devices*](https://www.keyfactor.com/wp-content/uploads/SCEP-and-Untrusted-Devices_CSS.pdf).\r\n\r\n### Impact\r\nAn attacker could elevate their permissions by requesting a certificate of a different, possibly higher privileged user that would allow them to access resources that they would not otherwise be able to access.\r\n\r\n### Solution ###\r\nACME Device Attestation (ACME DA) is a modern replacement for SCEP that uses cryptographic coprocessors (TPM / Secure Enclave) to do hardware-attested, hardware-bound enrollment for Enterprise IT devices. ACME DA addresses the security issues highlighted in this vulnerability note.\r\n\r\nThe vulnerabilities identified here can be mitigated or avoided by transitioning away from SCEP in favor of ACME Device Attestation.\r\n \r\nHere are some resources you may find helpful:\r\n* Smallstep's overview of ACME DA at https://smallstep.com/blog/managed-device-attestation/\r\n* Apple's native support for ACME DA (aka \"Managed Device Attestation\" or \"MDA\"):\r\nhttps://support.apple.com/guide/deployment/managed-device-attestation-dep28afbde6a/web\r\nhttps://developer.apple.com/documentation/devicemanagement/acmecertificate\r\n* The IETF draft specification: https://datatracker.ietf.org/doc/draft-bweeks-acme-device-attest/\r\n\r\n#### Possible Workarounds\r\n* Use Certificate Management Protocol (CMP) or Certificate Management over CMS as a replacement for Simple Certificate Enrollment Protocol (SCEP)\r\n* Manually approve for certificates from unknown sources\r\n* Avoid reusing challenge passwords\r\n* Limit the number of individuals who can request certificates\r\n\r\n### Acknowledgements\r\nThanks to Ted Shorter of Certified Security Solutions for reporting this vulnerability.\r\nThanks to Smallstep Research for providing resources to update possible solutions.\r\n\r\nThis document was written by Michael Orlando and Art Manion. This document was updated by Ben Koo.",
+		"clean_desc": "IETF Internet-Draft draft-nourse-scep-23\"...defines a protocol,Simple Certificate Enrollment Protocol(SCEP),for certificate management and certificate and CRL queries in a closed environment.\"Mobile Device Management(MDM)is defined as\"...software that secures,monitors,manages and supports mobile devices deployed across mobile operators,service providers and enterprises. MDM functionality typically includes over-the-air distribution of applications,data and configuration settings for all types of mobile devices,including mobile phones,smartphones,tablet computers,ruggedized mobile computers,mobile printers,mobile POS devices,etc.\"Multiple MDM software packages use SCEP as a method to handle certificate management and certificate CRL queries within an organization. When a user or a device requests a certificate,the SCEP implementation may require a challenge password. It may be possible for a user or device to take their legitimately acquired SCEP challenge password and use it to obtain a certificate that represents a different user with a higher level of access such as a network administrator,or to obtain a different type of certificate than what was intended. It is also possible for SCEP implementations or system administrators to not require the challenge password,or to share a static password across many users. Additional Notes: SCEP was designed for use\"...in a closed environment\"and is not well suited for MDM and\"bring your own device\"(BYOD)applications where untrusted users and devices are in use. Applications that use SCEP take different measures to authenticate users and devices. draft-nourse-scep-23 discourages further use of SCEP: The IETF protocol suite currently includes two certificate management protocols with more comprehensive functionality:Certificate Management Protocol(CMP)[RFC4210]and Certificate Management over CMS(CMC)[RFC5272]. Environments that do not require interoperability with SCEP implementations SHOULD use the above-mentioned,PKIX-standard certificate management protocols. In light of the functionality gap between this specification[SCEP]and the two IETF standards track protocols,this specification is being published as Historic. Even when interoperability with the installed base of SCEP implementations is needed,implementers are encouraged to support one of these comprehensive standards track certificate management protocols in addition to the protocol defined in this specification. Additional information can be found in Certified Security Solutions,Inc's The Use of the Simple Certificate Enrollment Protocol(SCEP)and Untrusted Devices whitepaper.",
+		"impact": "An attacker could elevate their permissions by requesting a certificate of a different, possibly higher privileged user that would allow them to access resources that they would not otherwise be able to access.",
+		"resolution": "We are currently unaware of a practical solution to this problem.",
+		"workarounds": "Possible Workarounds\nUse Certificate Management Protocol (CMP) or Certificate Management over CMS as a replacement for Simple Certificate Enrollment Protocol (SCEP)\nManually approve for certificates from unknown sources\nAvoid reusing challenge passwords\nLimit the number of individuals who can request certificates",
+		"thanks": "Thanks to Ted Shorter of Certified Security Solutions for reporting this vulnerability.",
+		"author": "This document was written by Michael Orlando and Art Manion.",
+		"public": [
+			"https://tools.ietf.org/html/draft-nourse-scep-23",
+			"https://www.keyfactor.com/scep/",
+			"https://www.keyfactor.com/wp-content/uploads/SCEP-and-Untrusted-Devices_CSS.pdf",
+			"https://en.wikipedia.org/wiki/Mobile_device_management",
+			"https://www.prnewswire.com/news-releases/css-rebrands-as-keyfactor-providing-freedom-for-companies-to-master-every-digital-identity-300741955.html"
+		],
+		"datecreated": "2012-03-28T18:43:15Z",
+		"publicdate": "2012-06-27T00:00:00Z",
+		"datefirstpublished": "2012-06-27T19:02:09Z",
+		"dateupdated": "2025-03-20T21:00:34.717877Z",
+		"revision": 64,
+		"vrda_d1_directreport": "1",
+		"vrda_d1_population": "3",
+		"vrda_d1_impact": "3",
+		"cam_widelyknown": "0",
+		"cam_exploitation": "0",
+		"cam_internetinfrastructure": "0",
+		"cam_population": "0",
+		"cam_impact": "0",
+		"cam_easeofexploitation": "0",
+		"cam_attackeraccessrequired": "0",
+		"cam_scorecurrent": "0",
+		"cam_scorecurrentwidelyknown": "0",
+		"cam_scorecurrentwidelyknownexploited": "0",
+		"cvss_accessvector": "A",
+		"cvss_accesscomplexity": "H",
+		"cvss_confidentialityimpact": "P",
+		"cvss_integrityimpact": "N",
+		"cvss_availabilityimpact": "N",
+		"cvss_remediationlevel": "W",
+		"cvss_reportconfidence": "UC",
+		"cvss_collateraldamagepotential": "L",
+		"cvss_targetdistribution": "L",
+		"cvss_securityrequirementscr": "ND",
+		"cvss_securityrequirementsir": "ND",
+		"cvss_securityrequirementsar": "ND",
+		"cvss_basescore": "1.4",
+		"cvss_basevector": "AV:A/AC:H/Au:S/C:P/I:N/A:N",
+		"cvss_temporalscore": "1",
+		"cvss_environmentalscore": "0.4866377497729",
+		"cvss_environmentalvector": "CDP:L/TD:L/CR:ND/IR:ND/AR:ND",
+		"metric": 0,
+		"vulnote": 9
+	},
+	"vuls": [
+		{
+			"note": "971035",
+			"description": "placeholder",
+			"uid": "VU#971035.0",
+			"case_increment": 0,
+			"date_added": "2020-06-23T19:24:19.742599Z",
+			"dateupdated": "2025-03-20T21:00:34.828827Z"
+		}
+	],
+	"vendors": [
+		{
+			"note": "971035",
+			"vendor": "MobileIron (Inactive)",
+			"dateupdated": "2020-06-29T20:44:13.591041Z"
+		},
+		{
+			"note": "971035",
+			"vendor": "SilverbackMDM",
+			"dateupdated": "2020-06-29T20:44:13.579834Z"
+		},
+		{
+			"note": "971035",
+			"contact_date": "2012-04-12T12:53:15Z",
+			"vendor": "McAfee",
+			"dateupdated": "2020-06-29T20:44:13.568235Z"
+		},
+		{
+			"note": "971035",
+			"contact_date": "2012-04-05T18:12:33Z",
+			"vendor": "Microsoft",
+			"dateupdated": "2020-06-29T20:44:13.555321Z"
+		},
+		{
+			"note": "971035",
+			"contact_date": "2012-04-12T12:53:16Z",
+			"vendor": "Zenprise",
+			"dateupdated": "2020-06-29T20:44:13.544475Z"
+		},
+		{
+			"note": "971035",
+			"vendor": "Asavie Technologies Ltd",
+			"dateupdated": "2020-06-29T20:44:13.533126Z"
+		},
+		{
+			"note": "971035",
+			"contact_date": "2012-04-12T12:53:14Z",
+			"vendor": "Cisco",
+			"dateupdated": "2020-06-29T20:44:13.520342Z"
+		},
+		{
+			"note": "971035",
+			"vendor": "GlobalSign",
+			"dateupdated": "2020-06-29T20:44:13.509350Z"
+		},
+		{
+			"note": "971035",
+			"contact_date": "2012-04-12T12:53:14Z",
+			"vendor": "Apple",
+			"dateupdated": "2020-06-29T20:44:13.497542Z"
+		}
+	],
+	"vendor_vuls": [
+		{
+			"vul": "VU#971035.0",
+			"vendor": "MobileIron (Inactive)",
+			"status": "Not Affected",
+			"date_added": "2020-06-23T19:24:19.870889Z",
+			"dateupdated": "2020-06-23T19:24:19.871083Z"
+		},
+		{
+			"vul": "VU#971035.0",
+			"vendor": "SilverbackMDM",
+			"status": "Not Affected",
+			"date_added": "2020-06-23T19:24:19.858209Z",
+			"dateupdated": "2020-06-23T19:24:19.858402Z"
+		},
+		{
+			"vul": "VU#971035.0",
+			"vendor": "McAfee",
+			"status": "Unknown",
+			"date_added": "2020-06-23T19:24:19.845106Z",
+			"dateupdated": "2020-06-23T19:24:19.845325Z"
+		},
+		{
+			"vul": "VU#971035.0",
+			"vendor": "Microsoft",
+			"status": "Not Affected",
+			"date_added": "2020-06-23T19:24:19.832128Z",
+			"dateupdated": "2020-06-23T19:24:19.832348Z"
+		},
+		{
+			"vul": "VU#971035.0",
+			"vendor": "Zenprise",
+			"status": "Not Affected",
+			"date_added": "2020-06-23T19:24:19.819461Z",
+			"dateupdated": "2020-06-23T19:24:19.819655Z"
+		},
+		{
+			"vul": "VU#971035.0",
+			"vendor": "Asavie Technologies Ltd",
+			"status": "Not Affected",
+			"date_added": "2020-06-23T19:24:19.806972Z",
+			"dateupdated": "2020-06-23T19:24:19.807173Z"
+		},
+		{
+			"vul": "VU#971035.0",
+			"vendor": "Cisco",
+			"status": "Not Affected",
+			"date_added": "2020-06-23T19:24:19.794394Z",
+			"dateupdated": "2020-06-23T19:24:19.794589Z"
+		},
+		{
+			"vul": "VU#971035.0",
+			"vendor": "GlobalSign",
+			"status": "Not Affected",
+			"date_added": "2020-06-23T19:24:19.781560Z",
+			"dateupdated": "2020-06-23T19:24:19.781774Z"
+		},
+		{
+			"vul": "VU#971035.0",
+			"vendor": "Apple",
+			"status": "Not Affected",
+			"date_added": "2020-06-23T19:24:19.766559Z",
+			"dateupdated": "2020-06-23T19:24:19.766790Z"
+		}
+	]
+}
