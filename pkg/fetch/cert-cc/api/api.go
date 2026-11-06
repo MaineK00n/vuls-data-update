@@ -144,7 +144,7 @@ func (opts options) list(client *utilhttp.Client) ([]listed, error) {
 		u := fmt.Sprintf("%s%d/summary/", opts.baseURL, y)
 
 		var s summary
-		if err := get(client, u, &s); err != nil {
+		if err := opts.get(context.Background(), client, u, &s); err != nil {
 			return nil, errors.Wrapf(err, "fetch %s", u)
 		}
 
@@ -160,8 +160,6 @@ func (opts options) list(client *utilhttp.Client) ([]listed, error) {
 			seen[id] = struct{}{}
 			ns = append(ns, listed{year: y, id: id})
 		}
-
-		time.Sleep(opts.wait)
 	}
 	return ns, nil
 }
@@ -190,7 +188,7 @@ func (opts options) notes(client *utilhttp.Client, ns []listed) error {
 			default:
 			}
 
-			v, err := opts.note(client, n.id)
+			v, err := opts.note(ctx, client, n.id)
 			if err != nil {
 				if errors.Is(err, errContentNotFound) {
 					slog.Warn("note may have been withdrawn or made private", slog.String("id", fmt.Sprintf("VU#%s", n.id)), slog.String("err", err.Error()))
@@ -219,7 +217,7 @@ func (opts options) notes(client *utilhttp.Client, ns []listed) error {
 	return nil
 }
 
-func (opts options) note(client *utilhttp.Client, id string) (VulnerabilityNote, error) {
+func (opts options) note(ctx context.Context, client *utilhttp.Client, id string) (VulnerabilityNote, error) {
 	var v VulnerabilityNote
 	for _, e := range []struct {
 		path string
@@ -231,17 +229,29 @@ func (opts options) note(client *utilhttp.Client, id string) (VulnerabilityNote,
 		{path: "vendors/vuls/", v: &v.VendorVuls},
 	} {
 		u := fmt.Sprintf("%s%s/%s", opts.baseURL, id, e.path)
-		if err := get(client, u, e.v); err != nil {
+		if err := opts.get(ctx, client, u, e.v); err != nil {
 			return VulnerabilityNote{}, errors.Wrapf(err, "fetch %s", u)
 		}
-
-		time.Sleep(opts.wait)
 	}
 	return v, nil
 }
 
-func get(client *utilhttp.Client, u string, v any) error {
-	resp, err := client.Get(u)
+func (opts options) get(ctx context.Context, client *utilhttp.Client, u string, v any) error {
+	// Wait after every request, including one that fails or answers with the
+	// error object, but stop waiting once the group is cancelled.
+	defer func() {
+		select {
+		case <-ctx.Done():
+		case <-time.After(opts.wait):
+		}
+	}()
+
+	req, err := utilhttp.NewRequest(http.MethodGet, u)
+	if err != nil {
+		return errors.Wrap(err, "new request")
+	}
+
+	resp, err := client.Do(req.WithContext(ctx))
 	if err != nil {
 		return errors.Wrap(err, "http get")
 	}
