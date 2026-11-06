@@ -123,10 +123,6 @@ func (o options) fetch() error {
 	var us []string
 	scanner := bufio.NewScanner(resp.Body)
 	for scanner.Scan() {
-		if scanner.Text() == "" {
-			continue
-		}
-
 		u, err := url.JoinPath(o.baseURL, scanner.Text())
 		if err != nil {
 			return errors.Wrap(err, "url join")
@@ -150,18 +146,10 @@ func (o options) fetch() error {
 			return errors.Wrap(err, "decode json")
 		}
 
-		// Most documents carry millisecond precision, but a few (e.g. SEVD-2022-130-01) carry only two fractional digits.
-		layouts := []string{"2006-01-02T15:04:05.000Z", "2006-01-02T15:04:05.00Z"}
-		t, err := func() (time.Time, error) {
-			for _, layout := range layouts {
-				if t, err := time.Parse(layout, csaf.Document.Tracking.InitialReleaseDate); err == nil {
-					return t, nil
-				}
-			}
-			return time.Time{}, errors.Errorf("unexpected initial_release_date format. expected: %q, actual: %q", layouts, csaf.Document.Tracking.InitialReleaseDate)
-		}()
+		// No fractional part in the layout: upstream uses both 3 and 2 fractional digits (e.g. SEVD-2022-130-01), and time.Parse accepts either.
+		t, err := time.Parse("2006-01-02T15:04:05Z", csaf.Document.Tracking.InitialReleaseDate)
 		if err != nil {
-			return errors.Wrap(err, "parse initial_release_date")
+			return errors.Wrapf(err, "unexpected initial_release_date format. expected: %q, actual: %q", "2006-01-02T15:04:05Z", csaf.Document.Tracking.InitialReleaseDate)
 		}
 
 		p, err := utilfilepath.Join(o.dir, fmt.Sprintf("%d", t.Year()), fmt.Sprintf("%s.json", csaf.Document.Tracking.ID))

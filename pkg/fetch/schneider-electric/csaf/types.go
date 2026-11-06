@@ -33,7 +33,6 @@ type FullProductName struct {
 			Filename string `json:"filename"`
 		} `json:"hashes,omitempty"`
 		ModelNumbers  []string `json:"model_numbers,omitempty"`
-		ModuleNumbers []string `json:"module_numbers,omitempty"`
 		PURL          string   `json:"purl,omitempty"`
 		SBOMURLs      []string `json:"sbom_urls,omitempty"`
 		SerialNumbers []string `json:"serial_numbers,omitempty"`
