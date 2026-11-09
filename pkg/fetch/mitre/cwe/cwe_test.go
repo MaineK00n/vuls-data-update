@@ -21,6 +21,11 @@ func TestFetch(t *testing.T) {
 			file: "testdata/fixtures/cwec_latest.xml.zip",
 		},
 		{
+			name:     "no categories",
+			file:     "testdata/fixtures/cwec_latest_no_category.xml.zip",
+			hasError: true,
+		},
+		{
 			name:     "404 not found",
 			file:     "",
 			hasError: true,

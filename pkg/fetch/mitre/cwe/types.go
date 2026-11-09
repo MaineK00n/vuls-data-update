@@ -1,8 +1,10 @@
 package cwe
 
+// CWE 5.0 (schema v8.0) renamed Categories>Category to Groupings>Grouping.
+// They are still written as categories, so the raw layout is unchanged.
 type weaknessCatalog struct {
 	Weaknesses         []weakness          `xml:"Weaknesses>Weakness"`
-	Categories         []category          `xml:"Categories>Category"`
+	Categories         []category          `xml:"Groupings>Grouping"`
 	Views              []view              `xml:"Views>View"`
 	ExternalReferences []ExternalReference `xml:"External_References>External_Reference"`
 }

@@ -106,6 +106,18 @@ func Fetch(opts ...Option) error {
 		return errors.Wrap(err, "decode xml")
 	}
 
+	// An empty section means the catalog no longer matches the expected
+	// structure; writing it would delete every file of that kind from the raw
+	// repository.
+	switch {
+	case len(catalog.Weaknesses) == 0:
+		return errors.New("no weaknesses found in CWE catalog")
+	case len(catalog.Categories) == 0:
+		return errors.New("no categories found in CWE catalog")
+	case len(catalog.Views) == 0:
+		return errors.New("no views found in CWE catalog")
+	}
+
 	exRefs := make(map[string]ExternalReference)
 	for _, ref := range catalog.ExternalReferences {
 		exRefs[ref.ReferenceID] = ref
