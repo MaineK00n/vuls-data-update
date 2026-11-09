@@ -65,10 +65,6 @@ func Fetch(opts ...Option) error {
 		o.apply(options)
 	}
 
-	if err := util.RemoveAll(options.dir); err != nil {
-		return errors.Wrapf(err, "remove %s", options.dir)
-	}
-
 	slog.Info("Fetch MITRE Common Weakness Enumeration: CWE")
 	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry), utilhttp.WithClientHTTPClient(options.httpClient)).Get(options.dataURL)
 	if err != nil {
@@ -108,7 +104,8 @@ func Fetch(opts ...Option) error {
 
 	// An empty section means the catalog no longer matches the expected
 	// structure; writing it would delete every file of that kind from the raw
-	// repository.
+	// repository. Check before clearing the output so a rejected catalog leaves
+	// the previous dataset in place.
 	switch {
 	case len(catalog.Weaknesses) == 0:
 		return errors.New("no weaknesses found in CWE catalog")
@@ -116,6 +113,10 @@ func Fetch(opts ...Option) error {
 		return errors.New("no categories found in CWE catalog")
 	case len(catalog.Views) == 0:
 		return errors.New("no views found in CWE catalog")
+	}
+
+	if err := util.RemoveAll(options.dir); err != nil {
+		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
 	exRefs := make(map[string]ExternalReference)
