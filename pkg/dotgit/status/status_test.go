@@ -83,6 +83,44 @@ func TestStatus(t *testing.T) {
 				},
 			},
 		},
+		{
+			// The last 3 of 5 commits, with nightly a commit behind main, and a
+			// tag at a commit off nightly that no branch reaches. disk.all
+			// counts the history and the tagged commit, disk.tips only what
+			// main and nightly point to.
+			name:   "vuls-data-raw-test-history, git",
+			dotgit: "testdata/fixtures/vuls-data-raw-test-history.tar.zst",
+			opts:   []status.Option{status.WithGit(true)},
+			want: status.DotGitStatus{
+				Name: "vuls-data-raw-test-history",
+				Time: time.Now(),
+				Size: struct {
+					Total  int64 "json:\"total\""
+					DotGit int64 "json:\"dotgit\""
+				}{
+					Total:  3598,
+					DotGit: 3598,
+				},
+				Restored: false,
+				Git: &status.Git{
+					Branches: map[string]status.Branch{
+						"main": {
+							Commit:  "c44bf638c45cc9a462e0512fc2fa6f270a8b43ac",
+							Commits: 3,
+						},
+						"nightly": {
+							Commit:  "38e1051040da14c6c755d3847adeb65f1cc9c98c",
+							Commits: 2,
+						},
+					},
+					Shallow: []string{"121cb97c243d9ed2c704cac2f282398ed7046ea9"},
+					Disk: status.Disk{
+						All:  950,
+						Tips: 476,
+					},
+				},
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
