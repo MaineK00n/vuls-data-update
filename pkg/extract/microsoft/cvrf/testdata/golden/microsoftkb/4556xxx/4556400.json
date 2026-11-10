@@ -1,0 +1,28 @@
+{
+	"kb_id": "4556400",
+	"url": "https://support.microsoft.com/help/4556400",
+	"products": [
+		"Microsoft .NET Framework 3.5 on Windows Server 2012",
+		"Microsoft .NET Framework 3.5 on Windows Server 2012 (Server Core installation)",
+		"Microsoft .NET Framework 4.5.2 on Windows Server 2012",
+		"Microsoft .NET Framework 4.5.2 on Windows Server 2012 (Server Core installation)",
+		"Microsoft .NET Framework 4.6/4.6.1/4.6.2/4.7/4.7.1/4.7.2 on Windows Server 2012",
+		"Microsoft .NET Framework 4.6/4.6.1/4.6.2/4.7/4.7.1/4.7.2 on Windows Server 2012 (Server Core installation)",
+		"Microsoft .NET Framework 4.8 on Windows Server 2012",
+		"Microsoft .NET Framework 4.8 on Windows Server 2012 (Server Core installation)"
+	],
+	"supersedes": [
+		{
+			"kb_id": "4538123"
+		},
+		{
+			"kb_id": "4538157"
+		}
+	],
+	"data_source": {
+		"id": "microsoft-cvrf",
+		"raws": [
+			"fixtures/2020-May/2020/CVE-2020-1108.json"
+		]
+	}
+}
