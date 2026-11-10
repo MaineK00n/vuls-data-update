@@ -1,11 +1,11 @@
 package contains
 
 import (
-	"os/exec"
-
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/pkg/errors"
+
+	"github.com/MaineK00n/vuls-data-update/pkg/dotgit/util"
 )
 
 type options struct {
@@ -36,9 +36,8 @@ func Contains(repository, commit string, opts ...Option) error {
 	}
 
 	if options.useNativeGit {
-		cmd := exec.Command("git", "-C", repository, "cat-file", "-e", commit)
-		if err := cmd.Run(); err != nil {
-			return errors.Wrapf(err, "exec %q", cmd.String())
+		if _, err := util.Git("-C", repository, "cat-file", "-e", commit); err != nil {
+			return errors.Wrapf(err, "check %s exists", commit)
 		}
 		return nil
 	}

@@ -2,13 +2,14 @@ package grep
 
 import (
 	"fmt"
-	"os/exec"
 	"regexp"
 	"strings"
 
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/pkg/errors"
+
+	"github.com/MaineK00n/vuls-data-update/pkg/dotgit/util"
 )
 
 type options struct {
@@ -88,10 +89,9 @@ func Grep(repository string, patterns []string, opts ...Option) (string, error) 
 			args = append(args, options.pathspecs...)
 		}
 
-		cmd := exec.Command("git", args...)
-		output, err := cmd.Output()
+		output, err := util.Git(args...)
 		if err != nil {
-			return "", errors.Wrapf(err, "exec %q", cmd.String())
+			return "", errors.Wrap(err, "grep")
 		}
 		return string(output), nil
 	}

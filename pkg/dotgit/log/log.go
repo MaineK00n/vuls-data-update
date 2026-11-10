@@ -5,7 +5,6 @@ import (
 	"bytes"
 	"fmt"
 	"iter"
-	"os/exec"
 	"regexp"
 	"strings"
 	"time"
@@ -15,6 +14,8 @@ import (
 	"github.com/go-git/go-git/v5/plumbing/object"
 	"github.com/go-git/go-git/v5/plumbing/storer"
 	"github.com/pkg/errors"
+
+	"github.com/MaineK00n/vuls-data-update/pkg/dotgit/util"
 )
 
 type options struct {
@@ -114,10 +115,9 @@ func Log(repository string, opts ...Option) (iter.Seq2[string, error], error) {
 			args = append(args, options.pathspecs...)
 		}
 
-		cmd := exec.Command("git", args...)
-		output, err := cmd.Output()
+		output, err := util.Git(args...)
 		if err != nil {
-			return nil, errors.Wrapf(err, "exec %q", cmd.String())
+			return nil, errors.Wrap(err, "log")
 		}
 		return func(yield func(string, error) bool) {
 			var sb strings.Builder

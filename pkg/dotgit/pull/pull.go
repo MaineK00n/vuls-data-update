@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"log/slog"
 	"os"
-	"os/exec"
 	"path/filepath"
 
 	"github.com/go-git/go-git/v5"
@@ -133,16 +132,13 @@ func Pull(repository string, opts ...Option) error {
 
 	if options.checkout != "" {
 		if options.useNativeGit {
-			cmd := exec.Command("git", "-C", filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference), "show-ref", "--verify", "--quiet", fmt.Sprintf("refs/heads/%s", options.checkout))
-			if err := cmd.Run(); err != nil { // tag or commit
-				cmd := exec.Command("git", "-C", filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference), "switch", "--detach", options.checkout)
-				if err := cmd.Run(); err != nil {
-					return errors.Wrapf(err, "exec %q", cmd.String())
+			if _, err := util.Git("-C", filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference), "show-ref", "--verify", "--quiet", fmt.Sprintf("refs/heads/%s", options.checkout)); err != nil { // tag or commit
+				if _, err := util.Git("-C", filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference), "switch", "--detach", options.checkout); err != nil {
+					return errors.Wrapf(err, "switch to %s", options.checkout)
 				}
 			} else { // branch
-				cmd := exec.Command("git", "-C", filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference), "switch", options.checkout)
-				if err := cmd.Run(); err != nil {
-					return errors.Wrapf(err, "exec %q", cmd.String())
+				if _, err := util.Git("-C", filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference), "switch", options.checkout); err != nil {
+					return errors.Wrapf(err, "switch to %s", options.checkout)
 				}
 			}
 		} else {
@@ -201,16 +197,14 @@ func Pull(repository string, opts ...Option) error {
 			// the repository a pull most needs to survive: it is what a fetch
 			// that wrote nothing back leaves behind, and putting the files
 			// back is what the pull is for.
-			cmd := exec.Command("git", "-C", filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference), "ls-files")
-			bs, err := cmd.Output()
+			bs, err := util.Git("-C", filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference), "ls-files")
 			if err != nil {
-				return errors.Wrapf(err, "exec %q", cmd.String())
+				return errors.Wrap(err, "list files")
 			}
 
 			if len(bs) > 0 {
-				cmd := exec.Command("git", "-C", filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference), "restore", ".")
-				if err := cmd.Run(); err != nil {
-					return errors.Wrapf(err, "exec %q", cmd.String())
+				if _, err := util.Git("-C", filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference), "restore", "."); err != nil {
+					return errors.Wrap(err, "restore worktree")
 				}
 			}
 		} else {
