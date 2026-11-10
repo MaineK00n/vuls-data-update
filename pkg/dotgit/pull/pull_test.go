@@ -2,13 +2,16 @@ package pull_test
 
 import (
 	"archive/tar"
+	"bufio"
 	"context"
+	"encoding/json/v2"
 	"fmt"
 	"io"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"path/filepath"
+	"slices"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
@@ -255,6 +258,94 @@ func TestPull(t *testing.T) {
 				})); diff != "" {
 					t.Errorf("Pull(). (-expected +got):\n%s", diff)
 				}
+			}
+		})
+	}
+}
+
+// TestPullCheckoutWorkers checks, from the argv git's trace2 records, that
+// restore asks for a worker per CPU only when the git config does not say how
+// many.
+func TestPullCheckoutWorkers(t *testing.T) {
+	tests := []struct {
+		name    string
+		workers string
+		want    bool
+	}{
+		{
+			name: "unset",
+			want: true,
+		},
+		{
+			name:    "set to 2",
+			workers: "2",
+			want:    false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			ts := httptest.NewTestServer(t, registry.New())
+
+			originalTransport := http.DefaultTransport
+			http.DefaultTransport = ts.Client().Transport
+			t.Cleanup(func() {
+				http.DefaultTransport = originalTransport
+			})
+
+			repo, err := remote.NewRepository("ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test")
+			if err != nil {
+				t.Fatalf("new repository: %v", err)
+			}
+
+			if err := setup(fmt.Sprintf("%s/%s", repo.Reference.Registry, repo.Reference.Repository)); err != nil {
+				t.Fatalf("setup: %v", err)
+			}
+
+			// Keep the global and system config of the machine running the
+			// test out of it.
+			t.Setenv("GIT_CONFIG_GLOBAL", os.DevNull)
+			t.Setenv("GIT_CONFIG_NOSYSTEM", "1")
+			if tt.workers != "" {
+				t.Setenv("GIT_CONFIG_COUNT", "1")
+				t.Setenv("GIT_CONFIG_KEY_0", "checkout.workers")
+				t.Setenv("GIT_CONFIG_VALUE_0", tt.workers)
+			}
+			trace := filepath.Join(t.TempDir(), "trace2.json")
+			t.Setenv("GIT_TRACE2_EVENT", trace)
+
+			if err := pull.Pull(repo.Reference.String(), pull.WithDir(t.TempDir()), pull.WithRestore(true), pull.WithUseNativeGit(true)); err != nil {
+				t.Fatalf("pull. err: %v", err)
+			}
+
+			f, err := os.Open(trace)
+			if err != nil {
+				t.Fatalf("open %s. err: %v", trace, err)
+			}
+			defer f.Close()
+
+			var restores [][]string
+			s := bufio.NewScanner(f)
+			for s.Scan() {
+				var e struct {
+					Event string   `json:"event"`
+					Argv  []string `json:"argv"`
+				}
+				if err := json.Unmarshal(s.Bytes(), &e); err != nil {
+					t.Fatalf("unmarshal %q. err: %v", s.Text(), err)
+				}
+				if e.Event == "start" && slices.Contains(e.Argv, "restore") {
+					restores = append(restores, e.Argv)
+				}
+			}
+			if err := s.Err(); err != nil {
+				t.Fatalf("scan %s. err: %v", trace, err)
+			}
+
+			if len(restores) != 1 {
+				t.Fatalf("restore runs. expected: 1, actual: %q", restores)
+			}
+			if got := slices.Contains(restores[0], "checkout.workers=0"); got != tt.want {
+				t.Errorf("checkout.workers=0 in %q. expected: %t, actual: %t", restores[0], tt.want, got)
 			}
 		})
 	}
