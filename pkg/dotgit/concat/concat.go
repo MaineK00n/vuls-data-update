@@ -81,10 +81,10 @@ type Size struct {
 	// smaller.
 	Predicted int64 `json:"predicted"`
 	// Pack is the size of the pack made.
-	Pack int64 `json:"pack,omitempty"`
+	Pack int64 `json:"pack,omitzero"`
 	// DotGit is the size of the .git directory made, which WithMaxSize
 	// checks.
-	DotGit int64 `json:"dotgit,omitempty"`
+	DotGit int64 `json:"dotgit,omitzero"`
 }
 
 type input struct {
