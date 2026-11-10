@@ -90,6 +90,7 @@ import (
 	microsoftCVRF "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/cvrf"
 	microsoftDeployment "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/deployment"
 	microsoftMSUC "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/msuc"
+	microsoftOfficeC2R "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/officec2r"
 	microsoftProduct "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/product"
 	microsoftServicing "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/servicing"
 	microsoftVEX "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/vex"
@@ -256,7 +257,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdLinuxOSV(),
 		newCmdMageiaOSV(),
 		newCmdMavenGHSA(), newCmdMavenGLSA(), newCmdMavenOSV(),
-		newCmdMicrosoftBulletin(), newCmdMicrosoftCVRF(), newCmdMicrosoftCSAF(), newCmdMicrosoftMSUC(), newCmdMicrosoftServicing(), newCmdMicrosoftAdvisory(), newCmdMicrosoftVulnerability(), newCmdMicrosoftProduct(), newCmdMicrosoftDeployment(), newCmdMicrosoftVEX(), newCmdMicrosoftWSUSSCN2(), newCmdMicrosoftAzureOVAL(),
+		newCmdMicrosoftBulletin(), newCmdMicrosoftCVRF(), newCmdMicrosoftCSAF(), newCmdMicrosoftMSUC(), newCmdMicrosoftOfficeC2R(), newCmdMicrosoftServicing(), newCmdMicrosoftAdvisory(), newCmdMicrosoftVulnerability(), newCmdMicrosoftProduct(), newCmdMicrosoftDeployment(), newCmdMicrosoftVEX(), newCmdMicrosoftWSUSSCN2(), newCmdMicrosoftAzureOVAL(),
 		newCmdMinimOSOSV(), newCmdMinimOSSecDB(),
 		newCmdMitreATTACK(), newCmdMitreCAPEC(), newCmdMitreCVRF(), newCmdMitreCWE(), newCmdMitreEMB3D(), newCmdMitreV4(), newCmdMitreV5(),
 		newCmdMSF(),
@@ -2780,6 +2781,33 @@ func newCmdMicrosoftProduct() *cobra.Command {
 		RunE: func(_ *cobra.Command, _ []string) error {
 			if err := microsoftProduct.Fetch(microsoftProduct.WithDir(options.dir), microsoftProduct.WithRetry(options.retry)); err != nil {
 				return errors.Wrap(err, "failed to fetch microsoft product")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+
+	return cmd
+}
+
+func newCmdMicrosoftOfficeC2R() *cobra.Command {
+	options := &base{
+		dir:   filepath.Join(util.CacheDir(), "fetch", "microsoft", "office-c2r"),
+		retry: 3,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "microsoft-office-c2r",
+		Short: "Fetch Microsoft Office Click-to-Run (Microsoft 365 Apps) security updates release notes data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch microsoft-office-c2r
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := microsoftOfficeC2R.Fetch(microsoftOfficeC2R.WithDir(options.dir), microsoftOfficeC2R.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch microsoft office c2r")
 			}
 			return nil
 		},
