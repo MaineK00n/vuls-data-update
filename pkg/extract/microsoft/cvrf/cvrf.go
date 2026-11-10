@@ -2795,9 +2795,14 @@ var fixedBuildOverrides = map[[3]string]string{
 	{"CVE-2021-1680", "Microsoft Visual Studio 2019 Version 16.0", ""}:  "16.0.22",
 	// Visual Studio 2019 version 16.5, 2020, likewise:
 	// https://learn.microsoft.com/en-us/visualstudio/releases/2019/release-notes-v16.5
+	// CVE-2020-1108 is listed under 16.5.5, but the June 2020 re-release that
+	// comprehensively addresses it shipped no 16.5.x: 16.5 was no longer serviced,
+	// and CVRF's Vendor Fix for it points to the latest release
+	// (http://aka.ms/vs/16/release/latest). The re-release on the next version,
+	// 16.6.2 (release-notes-v16.6), is taken, so every 16.5.x stays affected.
 	{"CVE-2020-0899", "Microsoft Visual Studio 2019 Version 16.5", ""}: "16.5.4",
 	{"CVE-2020-0900", "Microsoft Visual Studio 2019 Version 16.5", ""}: "16.5.4",
-	{"CVE-2020-1108", "Microsoft Visual Studio 2019 Version 16.5", ""}: "16.5.5",
+	{"CVE-2020-1108", "Microsoft Visual Studio 2019 Version 16.5", ""}: "16.6.2",
 	{"CVE-2020-1161", "Microsoft Visual Studio 2019 Version 16.5", ""}: "16.5.5",
 	// Visual Studio 2019 version 16.4 (includes 16.0 - 16.3), 2019-2021, likewise: the
 	// "Security Advisory Notice" of each 16.4.x release in
