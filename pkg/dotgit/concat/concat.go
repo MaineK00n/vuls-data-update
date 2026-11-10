@@ -111,7 +111,9 @@ type group []input
 // archive starts from the last commit of the archive before it. Each joined
 // repository keeps the branches of its last input, the tags of every input, a
 // tag "<input name>/<branch>" at every input's branch tips, and the origin URL
-// of its last input. The inputs are left as they are. If a group fails, every
+// of its last input. A shallow root that is the branch tip of an input before
+// the group, as the tip of the archive it continues from, gets that input's
+// tag too, so the chain can be followed back once the inputs are gone. The inputs are left as they are. If a group fails, every
 // repository this run made is removed.
 func Concat(repositories []string, opts ...Option) ([]Output, error) {
 	options := &options{
@@ -184,7 +186,10 @@ func Concat(repositories []string, opts ...Option) ([]Output, error) {
 		made = append(made, o.Path)
 	}
 
+	start := 0
 	for i, g := range groups {
+		before := inputs[:start]
+		start += len(g)
 		if outputs[i].Path == "" {
 			continue
 		}
@@ -192,7 +197,7 @@ func Concat(repositories []string, opts ...Option) ([]Output, error) {
 		slog.Info("Concat dotgit", slog.String("dst", outputs[i].Path), slog.Int("inputs", len(g)), slog.Int64("predicted", outputs[i].Size.Predicted))
 
 		pack, dotgit, err := func() (int64, int64, error) {
-			pack, dotgit, err := g.build(outputs[i])
+			pack, dotgit, err := g.build(before, outputs[i])
 			if err != nil {
 				return 0, 0, errors.Wrap(err, "build")
 			}
@@ -450,7 +455,8 @@ func (g group) shallow() []string {
 	return slices.Compact(shallow)
 }
 
-func (g group) build(o Output) (int64, int64, error) {
+// build makes o from g. before is the inputs of the run before g.
+func (g group) build(before []input, o Output) (int64, int64, error) {
 	last := g[len(g)-1]
 
 	// o.Path is the empty directory Concat reserved.
@@ -475,7 +481,7 @@ func (g group) build(o Output) (int64, int64, error) {
 		return 0, 0, errors.Wrapf(err, "write %s", alternates)
 	}
 
-	refs, err := g.refs()
+	refs, err := g.refs(before, o.Shallow)
 	if err != nil {
 		return 0, 0, errors.Wrap(err, "collect refs")
 	}
@@ -552,9 +558,10 @@ func (g group) build(o Output) (int64, int64, error) {
 	return pack, dotgit, nil
 }
 
-// refs is the branches of the last input, the tags of every input, and a tag
-// at each input's branch tips.
-func (g group) refs() (map[string]string, error) {
+// refs is the branches of the last input, the tags of every input, a tag at
+// each input's branch tips, and a tag at each shallow root that is the branch
+// tip of an input in before.
+func (g group) refs(before []input, shallow []string) (map[string]string, error) {
 	refs := make(map[string]string)
 	add := func(name, oid string) error {
 		if v, ok := refs[name]; ok && v != oid {
@@ -562,6 +569,16 @@ func (g group) refs() (map[string]string, error) {
 		}
 		refs[name] = oid
 		return nil
+	}
+
+	for _, in := range before {
+		for name, oid := range in.refs {
+			if b, ok := strings.CutPrefix(name, "refs/heads/"); ok && slices.Contains(shallow, oid) {
+				if err := add(fmt.Sprintf("refs/tags/%s/%s", filepath.Base(in.path), b), oid); err != nil {
+					return nil, errors.Wrapf(err, "shallow root of %s", in.path)
+				}
+			}
+		}
 	}
 
 	for _, in := range g {
