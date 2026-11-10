@@ -1,0 +1,93 @@
+{
+	"id": "april-14-2020",
+	"date": "April 14, 2020",
+	"builds": [
+		{
+			"channel": "Monthly Channel",
+			"version": "2003",
+			"build": "12624.20442"
+		},
+		{
+			"channel": "Semi-Annual Channel (Targeted)",
+			"version": "2002",
+			"build": "12527.20442"
+		},
+		{
+			"channel": "Semi-Annual Channel",
+			"version": "1908",
+			"build": "11929.20708"
+		},
+		{
+			"channel": "Semi-Annual Channel",
+			"version": "1902",
+			"build": "11328.20564"
+		},
+		{
+			"channel": "Microsoft 365 Apps on Windows 7",
+			"version": "2002",
+			"build": "12527.20442"
+		}
+	],
+	"sections": [
+		{
+			"name": "Excel",
+			"items": [
+				{
+					"text": "CVE-2020-0906",
+					"links": [
+						{
+							"text": "CVE-2020-0906",
+							"url": "https://portal.msrc.microsoft.com/en-us/security-guidance/advisory/CVE-2020-0906"
+						}
+					]
+				},
+				{
+					"text": "CVE-2020-0979",
+					"links": [
+						{
+							"text": "CVE-2020-0979",
+							"url": "https://portal.msrc.microsoft.com/en-us/security-guidance/advisory/CVE-2020-0979"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Word",
+			"items": [
+				{
+					"text": "CVE-2020-0980",
+					"links": [
+						{
+							"text": "CVE-2020-0980",
+							"url": "https://portal.msrc.microsoft.com/en-us/security-guidance/advisory/CVE-2020-0980"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Office suite",
+			"items": [
+				{
+					"text": "CVE-2020-0760",
+					"links": [
+						{
+							"text": "CVE-2020-0760",
+							"url": "https://portal.msrc.microsoft.com/en-us/security-guidance/advisory/CVE-2020-0760"
+						}
+					]
+				},
+				{
+					"text": "CVE-2020-0991",
+					"links": [
+						{
+							"text": "CVE-2020-0991",
+							"url": "https://portal.msrc.microsoft.com/en-us/security-guidance/advisory/CVE-2020-0991"
+						}
+					]
+				}
+			]
+		}
+	]
+}

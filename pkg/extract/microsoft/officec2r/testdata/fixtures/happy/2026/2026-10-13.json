@@ -1,0 +1,243 @@
+{
+	"id": "october-13-2026",
+	"date": "October 13, 2026",
+	"builds": [
+		{
+			"channel": "Current Channel",
+			"version": "2609",
+			"build": "20430.20182"
+		},
+		{
+			"channel": "Monthly Enterprise Channel",
+			"version": "2609",
+			"build": "20430.20180"
+		},
+		{
+			"channel": "Monthly Enterprise Channel",
+			"version": "2608",
+			"build": "20326.20232"
+		},
+		{
+			"channel": "Monthly Enterprise Channel",
+			"version": "2607",
+			"build": "20228.20276"
+		},
+		{
+			"channel": "Semi-Annual Enterprise Channel (receives Monthly Enterprise Channel builds)",
+			"version": "2609",
+			"build": "20430.20178"
+		},
+		{
+			"channel": "Semi-Annual Enterprise Channel (receives Monthly Enterprise Channel builds)",
+			"version": "2608",
+			"build": "20326.20230"
+		},
+		{
+			"channel": "Semi-Annual Enterprise Channel (receives Monthly Enterprise Channel builds)",
+			"version": "2607",
+			"build": "20228.20274"
+		},
+		{
+			"channel": "Office 2024 Retail",
+			"version": "2609",
+			"build": "20430.20182"
+		},
+		{
+			"channel": "Office 2021 Retail",
+			"version": "2608",
+			"build": "20326.20232"
+		},
+		{
+			"channel": "Office LTSC 2024 Volume Licensed",
+			"version": "2408",
+			"build": "17932.21056"
+		},
+		{
+			"channel": "Office LTSC 2021 Volume Licensed",
+			"version": "2108",
+			"build": "14334.20974"
+		},
+		{
+			"channel": "Office 2019 Volume Licensed",
+			"version": "1808",
+			"build": "10417.20228"
+		}
+	],
+	"sections": [
+		{
+			"name": "Access",
+			"items": [
+				{
+					"text": "CVE-2026-94506",
+					"links": [
+						{
+							"text": "CVE-2026-94506",
+							"url": "https://portal.msrc.microsoft.com/security-guidance/advisory/CVE-2026-94506"
+						}
+					]
+				},
+				{
+					"text": "CVE-2026-102849",
+					"links": [
+						{
+							"text": "CVE-2026-102849",
+							"url": "https://portal.msrc.microsoft.com/security-guidance/advisory/CVE-2026-102849"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Excel",
+			"items": [
+				{
+					"text": "CVE-2026-97003",
+					"links": [
+						{
+							"text": "CVE-2026-97003",
+							"url": "https://portal.msrc.microsoft.com/security-guidance/advisory/CVE-2026-97003"
+						}
+					]
+				},
+				{
+					"text": "CVE-2026-97004",
+					"links": [
+						{
+							"text": "CVE-2026-97004",
+							"url": "https://portal.msrc.microsoft.com/security-guidance/advisory/CVE-2026-97004"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Office suite",
+			"items": [
+				{
+					"text": "CVE-2026-70096",
+					"links": [
+						{
+							"text": "CVE-2026-70096",
+							"url": "https://portal.msrc.microsoft.com/security-guidance/advisory/CVE-2026-70096"
+						}
+					]
+				},
+				{
+					"text": "CVE-2026-70214",
+					"links": [
+						{
+							"text": "CVE-2026-70214",
+							"url": "https://portal.msrc.microsoft.com/security-guidance/advisory/CVE-2026-70214"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "OneNote",
+			"items": [
+				{
+					"text": "CVE-2026-96997",
+					"links": [
+						{
+							"text": "CVE-2026-96997",
+							"url": "https://portal.msrc.microsoft.com/security-guidance/advisory/CVE-2026-96997"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Outlook",
+			"items": [
+				{
+					"text": "CVE-2026-70242",
+					"links": [
+						{
+							"text": "CVE-2026-70242",
+							"url": "https://portal.msrc.microsoft.com/security-guidance/advisory/CVE-2026-70242"
+						}
+					]
+				},
+				{
+					"text": "CVE-2026-70256",
+					"links": [
+						{
+							"text": "CVE-2026-70256",
+							"url": "https://portal.msrc.microsoft.com/security-guidance/advisory/CVE-2026-70256"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "PowerPoint",
+			"items": [
+				{
+					"text": "CVE-2026-70215",
+					"links": [
+						{
+							"text": "CVE-2026-70215",
+							"url": "https://portal.msrc.microsoft.com/security-guidance/advisory/CVE-2026-70215"
+						}
+					]
+				},
+				{
+					"text": "CVE-2026-88178",
+					"links": [
+						{
+							"text": "CVE-2026-88178",
+							"url": "https://portal.msrc.microsoft.com/security-guidance/advisory/CVE-2026-88178"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Visio",
+			"items": [
+				{
+					"text": "CVE-2026-102855",
+					"links": [
+						{
+							"text": "CVE-2026-102855",
+							"url": "https://portal.msrc.microsoft.com/security-guidance/advisory/CVE-2026-102855"
+						}
+					]
+				},
+				{
+					"text": "CVE-2026-102856",
+					"links": [
+						{
+							"text": "CVE-2026-102856",
+							"url": "https://portal.msrc.microsoft.com/security-guidance/advisory/CVE-2026-102856"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Word",
+			"items": [
+				{
+					"text": "CVE-2026-70206",
+					"links": [
+						{
+							"text": "CVE-2026-70206",
+							"url": "https://portal.msrc.microsoft.com/security-guidance/advisory/CVE-2026-70206"
+						}
+					]
+				},
+				{
+					"text": "CVE-2026-70220",
+					"links": [
+						{
+							"text": "CVE-2026-70220",
+							"url": "https://portal.msrc.microsoft.com/security-guidance/advisory/CVE-2026-70220"
+						}
+					]
+				}
+			]
+		}
+	]
+}
