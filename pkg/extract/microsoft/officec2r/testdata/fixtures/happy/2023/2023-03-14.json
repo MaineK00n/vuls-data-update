@@ -1,0 +1,100 @@
+{
+	"id": "march-14-2023",
+	"date": "March 14, 2023",
+	"builds": [
+		{
+			"channel": "Current Channel",
+			"version": "2302",
+			"build": "16130.20306"
+		},
+		{
+			"channel": "Monthly Enterprise Channel",
+			"version": "2301",
+			"build": "16026.20238"
+		},
+		{
+			"channel": "Monthly Enterprise Channel",
+			"version": "2212",
+			"build": "15928.20298"
+		},
+		{
+			"channel": "Semi-Annual Enterprise Channel (Preview)",
+			"version": "2301",
+			"build": "16130.20306"
+		},
+		{
+			"channel": "Semi-Annual Enterprise Channel",
+			"version": "2208",
+			"build": "15601.20578"
+		},
+		{
+			"channel": "Semi-Annual Enterprise Channel",
+			"version": "2202",
+			"build": "14931.20944"
+		},
+		{
+			"channel": "Office 2021 Retail",
+			"version": "2301",
+			"build": "16130.20306"
+		},
+		{
+			"channel": "Office 2019 Retail",
+			"version": "2302",
+			"build": "16130.20306"
+		},
+		{
+			"channel": "Office 2016 Retail",
+			"version": "2302",
+			"build": "16130.20306"
+		},
+		{
+			"channel": "Office LTSC 2021 Volume Licensed",
+			"version": "2108",
+			"build": "14332.20481"
+		},
+		{
+			"channel": "Office 2019 Volume Licensed",
+			"version": "1808",
+			"build": "10396.20023"
+		}
+	],
+	"sections": [
+		{
+			"name": "Excel",
+			"items": [
+				{
+					"text": "CVE-2023-23399",
+					"links": [
+						{
+							"text": "CVE-2023-23399",
+							"url": "https://portal.msrc.microsoft.com/en-us/security-guidance/advisory/CVE-2023-23399"
+						}
+					]
+				},
+				{
+					"text": "CVE-2023-23398",
+					"links": [
+						{
+							"text": "CVE-2023-23398",
+							"url": "https://portal.msrc.microsoft.com/en-us/security-guidance/advisory/CVE-2023-23398"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Outlook",
+			"items": [
+				{
+					"text": "CVE-2023-23397",
+					"links": [
+						{
+							"text": "CVE-2023-23397",
+							"url": "https://portal.msrc.microsoft.com/en-us/security-guidance/advisory/CVE-2023-23397"
+						}
+					]
+				}
+			]
+		}
+	]
+}

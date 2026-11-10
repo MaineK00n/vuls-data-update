@@ -1,0 +1,165 @@
+{
+	"id": "april-08-2025",
+	"date": "April 08, 2025",
+	"builds": [
+		{
+			"channel": "Current Channel",
+			"version": "2503",
+			"build": "18623.20178"
+		},
+		{
+			"channel": "Monthly Enterprise Channel",
+			"version": "2502",
+			"build": "18526.20264"
+		},
+		{
+			"channel": "Monthly Enterprise Channel",
+			"version": "2501",
+			"build": "18429.20216"
+		},
+		{
+			"channel": "Semi-Annual Enterprise Channel (Preview)",
+			"version": "2502",
+			"build": "18526.20264"
+		},
+		{
+			"channel": "Semi-Annual Enterprise Channel",
+			"version": "2408",
+			"build": "17928.20512"
+		},
+		{
+			"channel": "Semi-Annual Enterprise Channel",
+			"version": "2402",
+			"build": "17328.20770"
+		},
+		{
+			"channel": "Office 2024 Retail",
+			"version": "2503",
+			"build": "18623.20178"
+		},
+		{
+			"channel": "Office 2021 Retail",
+			"version": "2503",
+			"build": "18623.20178"
+		},
+		{
+			"channel": "Office 2019 Retail",
+			"version": "2503",
+			"build": "18623.20178"
+		},
+		{
+			"channel": "Office 2016 Retail",
+			"version": "2503",
+			"build": "18623.20178"
+		},
+		{
+			"channel": "Office LTSC 2024 Volume Licensed",
+			"version": "2408",
+			"build": "17932.20328"
+		},
+		{
+			"channel": "Office LTSC 2021 Volume Licensed",
+			"version": "2108",
+			"build": "14332.21017"
+		},
+		{
+			"channel": "Office 2019 Volume Licensed",
+			"version": "1808",
+			"build": "10417.20007"
+		}
+	],
+	"sections": [
+		{
+			"name": "Excel",
+			"items": [
+				{
+					"text": "CVE-2025-27750",
+					"links": [
+						{
+							"text": "CVE-2025-27750",
+							"url": "https://portal.msrc.microsoft.com/en-us/security-guidance/advisory/CVE-2025-27750"
+						}
+					]
+				},
+				{
+					"text": "CVE-2025-26642",
+					"links": [
+						{
+							"text": "CVE-2025-26642",
+							"url": "https://portal.msrc.microsoft.com/en-us/security-guidance/advisory/CVE-2025-26642"
+						}
+					]
+				},
+				{
+					"text": "CVE-2025-27751",
+					"links": [
+						{
+							"text": "CVE-2025-27751",
+							"url": "https://portal.msrc.microsoft.com/en-us/security-guidance/advisory/CVE-2025-27751"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "OneNote",
+			"items": [
+				{
+					"text": "CVE-2025-29822",
+					"links": [
+						{
+							"text": "CVE-2025-29822",
+							"url": "https://portal.msrc.microsoft.com/en-us/security-guidance/advisory/CVE-2025-29822"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Word",
+			"items": [
+				{
+					"text": "CVE-2025-29820",
+					"links": [
+						{
+							"text": "CVE-2025-29820",
+							"url": "https://portal.msrc.microsoft.com/en-us/security-guidance/advisory/CVE-2025-29820"
+						}
+					]
+				},
+				{
+					"text": "CVE-2025-27747",
+					"links": [
+						{
+							"text": "CVE-2025-27747",
+							"url": "https://portal.msrc.microsoft.com/en-us/security-guidance/advisory/CVE-2025-27747"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Office suite",
+			"items": [
+				{
+					"text": "CVE-2025-29792",
+					"links": [
+						{
+							"text": "CVE-2025-29792",
+							"url": "https://portal.msrc.microsoft.com/en-us/security-guidance/advisory/CVE-2025-29792"
+						}
+					]
+				},
+				{
+					"text": "CVE-2025-27745",
+					"links": [
+						{
+							"text": "CVE-2025-27745",
+							"url": "https://portal.msrc.microsoft.com/en-us/security-guidance/advisory/CVE-2025-27745"
+						}
+					]
+				}
+			]
+		}
+	]
+}
