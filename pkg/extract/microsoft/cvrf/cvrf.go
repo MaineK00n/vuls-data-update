@@ -2230,9 +2230,11 @@ func productRangeType(productName string) (rangeTypes.RangeType, error) {
 		"Microsoft Visual Studio 2013 Update 5",
 		"Microsoft Visual Studio 2015 Update 3",
 		"Microsoft Visual Studio 2017 Version 15.9",
+		"Microsoft Visual Studio 2019 Version 16.0",
 		"Microsoft Visual Studio 2019 Version 16.10",
 		"Microsoft Visual Studio 2019 Version 16.11",
 		"Microsoft Visual Studio 2019 Version 16.4",
+		"Microsoft Visual Studio 2019 Version 16.5",
 		"Microsoft Visual Studio 2019 Version 16.6",
 		"Microsoft Visual Studio 2019 Version 16.7",
 		"Microsoft Visual Studio 2019 Version 16.8",
@@ -2697,8 +2699,8 @@ var fixedBuildOverrides = map[[3]string]string{
 	// notes (https://learn.microsoft.com/en-us/visualstudio/releasenotes/vs2017-relnotes)
 	// list each CVE under "Security Advisories Addressed" of the 15.9.x release that
 	// fixed it. CVE-2020-1108 is listed under 15.9.23 and, re-released "to
-	// comprehensively address" it, 15.9.24, which is taken (likewise 16.4.10 and
-	// 16.6.2 below). Not listed, and left without a criterion: CVE-2020-1161.
+	// comprehensively address" it, 15.9.24, which is taken (likewise 16.0.15 and
+	// 16.4.10 below). Not listed, and left without a criterion: CVE-2020-1161.
 	{"CVE-2018-8599", "Microsoft Visual Studio 2017 Version 15.9", ""}:  "15.9.4",
 	{"CVE-2019-0546", "Microsoft Visual Studio 2017 Version 15.9", ""}:  "15.9.5",
 	{"CVE-2019-0613", "Microsoft Visual Studio 2017 Version 15.9", ""}:  "15.9.7",
@@ -2748,6 +2750,55 @@ var fixedBuildOverrides = map[[3]string]string{
 	{"CVE-2021-28313", "Microsoft Visual Studio 2017 Version 15.9", ""}: "15.9.35",
 	{"CVE-2021-28321", "Microsoft Visual Studio 2017 Version 15.9", ""}: "15.9.35",
 	{"CVE-2021-28322", "Microsoft Visual Studio 2017 Version 15.9", ""}: "15.9.35",
+	// Visual Studio 2019 version 16.0, 2019-2021, likewise: the "Security Advisory
+	// Notice" of each 16.0.x release in
+	// https://learn.microsoft.com/en-us/visualstudio/releases/2019/release-notes-v16.0
+	// CVE-2020-1108 is listed under 16.0.14 and, re-released, 16.0.15, which is taken.
+	// Not listed, and left without a criterion: CVE-2020-1161.
+	{"CVE-2019-0727", "Microsoft Visual Studio 2019 Version 16.0", ""}:  "16.0.4",
+	{"CVE-2019-1077", "Microsoft Visual Studio 2019 Version 16.0", ""}:  "16.0.6",
+	{"CVE-2019-1113", "Microsoft Visual Studio 2019 Version 16.0", ""}:  "16.0.6",
+	{"CVE-2019-1211", "Microsoft Visual Studio 2019 Version 16.0", ""}:  "16.0.7",
+	{"CVE-2019-1232", "Microsoft Visual Studio 2019 Version 16.0", ""}:  "16.0.8",
+	{"CVE-2019-1425", "Microsoft Visual Studio 2019 Version 16.0", ""}:  "16.0.9",
+	{"CVE-2019-1349", "Microsoft Visual Studio 2019 Version 16.0", ""}:  "16.0.10",
+	{"CVE-2019-1350", "Microsoft Visual Studio 2019 Version 16.0", ""}:  "16.0.10",
+	{"CVE-2019-1351", "Microsoft Visual Studio 2019 Version 16.0", ""}:  "16.0.10",
+	{"CVE-2019-1352", "Microsoft Visual Studio 2019 Version 16.0", ""}:  "16.0.10",
+	{"CVE-2019-1354", "Microsoft Visual Studio 2019 Version 16.0", ""}:  "16.0.10",
+	{"CVE-2019-1387", "Microsoft Visual Studio 2019 Version 16.0", ""}:  "16.0.10",
+	{"CVE-2019-1486", "Microsoft Visual Studio 2019 Version 16.0", ""}:  "16.0.10",
+	{"CVE-2020-0789", "Microsoft Visual Studio 2019 Version 16.0", ""}:  "16.0.12",
+	{"CVE-2020-0793", "Microsoft Visual Studio 2019 Version 16.0", ""}:  "16.0.12",
+	{"CVE-2020-0810", "Microsoft Visual Studio 2019 Version 16.0", ""}:  "16.0.12",
+	{"CVE-2020-0884", "Microsoft Visual Studio 2019 Version 16.0", ""}:  "16.0.12",
+	{"CVE-2020-0899", "Microsoft Visual Studio 2019 Version 16.0", ""}:  "16.0.13",
+	{"CVE-2020-0900", "Microsoft Visual Studio 2019 Version 16.0", ""}:  "16.0.13",
+	{"CVE-2020-1108", "Microsoft Visual Studio 2019 Version 16.0", ""}:  "16.0.15",
+	{"CVE-2020-1202", "Microsoft Visual Studio 2019 Version 16.0", ""}:  "16.0.15",
+	{"CVE-2020-1203", "Microsoft Visual Studio 2019 Version 16.0", ""}:  "16.0.15",
+	{"CVE-2020-1257", "Microsoft Visual Studio 2019 Version 16.0", ""}:  "16.0.15",
+	{"CVE-2020-1278", "Microsoft Visual Studio 2019 Version 16.0", ""}:  "16.0.15",
+	{"CVE-2020-1293", "Microsoft Visual Studio 2019 Version 16.0", ""}:  "16.0.15",
+	{"CVE-2020-1147", "Microsoft Visual Studio 2019 Version 16.0", ""}:  "16.0.16",
+	{"CVE-2020-1393", "Microsoft Visual Studio 2019 Version 16.0", ""}:  "16.0.16",
+	{"CVE-2020-1416", "Microsoft Visual Studio 2019 Version 16.0", ""}:  "16.0.16",
+	{"CVE-2020-1597", "Microsoft Visual Studio 2019 Version 16.0", ""}:  "16.0.17",
+	{"CVE-2020-1130", "Microsoft Visual Studio 2019 Version 16.0", ""}:  "16.0.18",
+	{"CVE-2020-1133", "Microsoft Visual Studio 2019 Version 16.0", ""}:  "16.0.18",
+	{"CVE-2020-16856", "Microsoft Visual Studio 2019 Version 16.0", ""}: "16.0.18",
+	{"CVE-2020-16874", "Microsoft Visual Studio 2019 Version 16.0", ""}: "16.0.18",
+	{"CVE-2020-17100", "Microsoft Visual Studio 2019 Version 16.0", ""}: "16.0.20",
+	{"CVE-2020-17156", "Microsoft Visual Studio 2019 Version 16.0", ""}: "16.0.21",
+	{"CVE-2020-26870", "Microsoft Visual Studio 2019 Version 16.0", ""}: "16.0.22",
+	{"CVE-2021-1651", "Microsoft Visual Studio 2019 Version 16.0", ""}:  "16.0.22",
+	{"CVE-2021-1680", "Microsoft Visual Studio 2019 Version 16.0", ""}:  "16.0.22",
+	// Visual Studio 2019 version 16.5, 2020, likewise:
+	// https://learn.microsoft.com/en-us/visualstudio/releases/2019/release-notes-v16.5
+	{"CVE-2020-0899", "Microsoft Visual Studio 2019 Version 16.5", ""}: "16.5.4",
+	{"CVE-2020-0900", "Microsoft Visual Studio 2019 Version 16.5", ""}: "16.5.4",
+	{"CVE-2020-1108", "Microsoft Visual Studio 2019 Version 16.5", ""}: "16.5.5",
+	{"CVE-2020-1161", "Microsoft Visual Studio 2019 Version 16.5", ""}: "16.5.5",
 	// Visual Studio 2019 version 16.4 (includes 16.0 - 16.3), 2019-2021, likewise: the
 	// "Security Advisory Notice" of each 16.4.x release in
 	// https://learn.microsoft.com/en-us/visualstudio/releases/2019/release-notes-v16.4

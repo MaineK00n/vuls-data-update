@@ -1537,6 +1537,16 @@ func TestFixedBuildOverrides(t *testing.T) {
 			key:  [3]string{"CVE-2020-1147", "Microsoft Visual Studio 2019 Version 16.6", ""},
 			want: "16.6.4",
 		},
+		{
+			name: "Visual Studio 2019 16.0 CVE-2020-1108, re-released in 16.0.15 (16.0 release notes, FixedBuild empty upstream)",
+			key:  [3]string{"CVE-2020-1108", "Microsoft Visual Studio 2019 Version 16.0", ""},
+			want: "16.0.15",
+		},
+		{
+			name: "Visual Studio 2019 16.5 CVE-2020-1161 (16.5 release notes, FixedBuild empty upstream)",
+			key:  [3]string{"CVE-2020-1161", "Microsoft Visual Studio 2019 Version 16.5", ""},
+			want: "16.5.5",
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
