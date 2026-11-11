@@ -35,7 +35,7 @@ require (
 	github.com/ulikunitz/xz v0.5.17
 	github.com/vulsio/go-fortinet-version v0.0.0-20260629092944-998bd70fcdc5
 	golang.org/x/net v0.58.0
-	golang.org/x/sync v0.24.0
+	golang.org/x/sync v0.25.0
 	gopkg.in/yaml.v3 v3.0.1
 	modernc.org/sqlite v1.62.0
 	oras.land/oras-go/v2 v2.6.2
