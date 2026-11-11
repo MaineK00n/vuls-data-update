@@ -1212,9 +1212,13 @@ var vendorFixAdditions = map[string][]vendorFixAddition{
 	// for Windows on Windows Server 2022 Datacenter: Azure Edition", apart
 	// from the cumulative update KB5011497. Everywhere else CVRF lists a
 	// hotpatch under the same product as its cumulative update, so it is
-	// moved there.
+	// moved there. In March 2022 hotpatch was offered only for the Server
+	// Core installation of Azure Edition (Desktop Experience followed in
+	// July 2023), so every host that took KB5011580 is a Server Core host,
+	// and it goes on the Server Core product too.
 	"CVE-2022-23278": {
 		{product: "Microsoft Defender for Endpoint for Windows on Windows Server 2022", kbID: "5011580", fixedBuild: "10.0.20348.580", hotpatch: true},
+		{product: "Microsoft Defender for Endpoint for Windows on Windows Server 2022 (Server Core installation)", kbID: "5011580", fixedBuild: "10.0.20348.580", hotpatch: true},
 	},
 	// CVE-2023-24898 — Windows SMB Denial of Service Vulnerability. Its FAQ:
 	// "This vulnerability only affects the hotpatch version of Windows Server
