@@ -5786,6 +5786,28 @@ func (e extractor) collectKBs(v cvrf.Vulnerability, products map[string]string, 
 			}
 		}
 	}
+
+	// Register the KBs vendorFixAdditions puts into KB criteria, as for the
+	// twin KBs above, so that each has a record listing the product it is
+	// added to.
+	for _, a := range vendorFixAdditions[v.CVE] {
+		if !isAllDigits(a.kbID) {
+			continue
+		}
+		kb := kbm[a.kbID]
+		if kb.KBID == "" {
+			kb.KBID = a.kbID
+			kb.URL = fmt.Sprintf("https://support.microsoft.com/help/%s", a.kbID)
+			kb.DataSource = sourceTypes.Source{
+				ID:   sourceTypes.MicrosoftCVRF,
+				Raws: e.r.Paths(),
+			}
+		}
+		if product := normalizeProductName(v.CVE, a.product); !slices.Contains(kb.Products, product) {
+			kb.Products = append(kb.Products, product)
+		}
+		kbm[a.kbID] = kb
+	}
 	return nil
 }
 
