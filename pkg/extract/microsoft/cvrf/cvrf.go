@@ -951,7 +951,7 @@ func buildDetections(v cvrf.Vulnerability, products map[string]string) (map[ecos
 		}) {
 			continue
 		}
-		return nil, nil, errors.Errorf("unexpected vendorFixExclusions for %s (%s). expected: at least one Vendor Fix kept, actual: all excluded", v.CVE, tag)
+		return nil, nil, errors.Errorf("unexpected vendorFixExclusions for %s (%s). expected: at least one Vendor Fix kept, or each excluded KB moved by vendorFixAdditions to a product of the same name after normalizeProductName, actual: all excluded", v.CVE, tag)
 	}
 
 	for _, tag := range tags {
@@ -1268,7 +1268,7 @@ func addVendorFixes(cveID string, tags []segmentTypes.DetectionTag, excludedTags
 		_, kept := fixesByTag[tag]
 		_, excluded := excludedTags[tag]
 		if !kept && !excluded {
-			return nil, nil, errors.Errorf("unexpected vendorFixAdditions for %s. expected: a product listed with a Vendor Fix, actual: %q, please add it to missingProductOverrides if CVRF omits it", cveID, a.product)
+			return nil, nil, errors.Errorf("unexpected vendorFixAdditions for %s. expected: a product listed with a Vendor Fix that yields a criterion, actual: %q, please add it to missingProductOverrides if CVRF omits it, or check its Vendor Fix if CVRF lists it without a KB ID or a usable fixed build", cveID, a.product)
 		}
 		if !kept {
 			tags = append(tags, tag)
