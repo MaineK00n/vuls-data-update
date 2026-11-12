@@ -255,7 +255,7 @@ func Extract(args string, opts ...Option) error {
 
 	if len(missingFixedBuilds) > 0 {
 		slices.Sort(missingFixedBuilds)
-		return errors.Errorf("no usable FixedBuild for %q, not listed in fixedBuildOverrides, please add it (map to the fixed build, or to \"\" to intentionally skip)", slices.Compact(missingFixedBuilds))
+		return errors.Errorf("no usable FixedBuild for %q, not listed in fixedBuildOverrides, please add it (map to the fixed build, or to \"\" to intentionally skip a Vendor Fix or to register a product listed without one as unfixed)", slices.Compact(missingFixedBuilds))
 	}
 
 	if err := util.Write(filepath.Join(options.dir, "datasource.json"), datasourceTypes.DataSource{
@@ -937,10 +937,7 @@ func buildDetections(v cvrf.Vulnerability, products map[string]string) (map[ecos
 					// the version-comparable browser products; tool products
 					// such as the Updater are intentionally skipped by
 					// buildFixedBuildCriterion and stay exempt.
-					switch criterionProductName {
-					case "Microsoft Edge (Chromium-based)", "Microsoft Edge (Chromium-based) Extended Stable",
-						"Microsoft Edge for Windows", "Microsoft Edge for MAC", "Microsoft Edge for Linux",
-						"Microsoft Edge for Android", "Microsoft Edge for iOS":
+					if isEdgeBrowserProduct(criterionProductName) {
 						if _, ok := fixedBuildOverrides[[3]string{v.CVE, criterionProductName, cleanFixedBuild(r.FixedBuild)}]; !ok {
 							missingFixedBuilds = append(missingFixedBuilds, fmt.Sprintf("%s (%s)", v.CVE, criterionProductName))
 						}
@@ -1046,6 +1043,20 @@ func buildDetections(v cvrf.Vulnerability, products map[string]string) (map[ecos
 		if fixedBuildCriterion != nil {
 			appendConditions(conditionsByEcosystem, tag, []criterionTypes.Criterion{*fixedBuildCriterion})
 			continue
+		}
+
+		// An Edge browser product listed without a Vendor Fix is fixed in nearly
+		// every case (e.g. CVE-2026-58616/62904/66798 list Chromium-based as Known
+		// Affected and attach the Vendor Fix only to the platform products), and
+		// registering it as unfixed reports every Edge host for good. Fail like the
+		// Vendor Fix guard above unless fixedBuildOverrides has the product with an
+		// empty FixedBuild: mapped to the fixed build, or to "" for a CVE whose
+		// product is known to have no fixed build, which is registered as unfixed.
+		if isEdgeBrowserProduct(criterionProductName) {
+			if _, ok := fixedBuildOverrides[[3]string{v.CVE, criterionProductName, ""}]; !ok {
+				missingFixedBuilds = append(missingFixedBuilds, fmt.Sprintf("%s (%s)", v.CVE, criterionProductName))
+				continue
+			}
 		}
 
 		appendConditions(conditionsByEcosystem, tag, []criterionTypes.Criterion{{
@@ -2052,12 +2063,36 @@ func isVersionlessFixedBuild(fixedBuild string) bool {
 	return fixedBuild == "" || fixedBuild[0] < '0' || fixedBuild[0] > '9' || strings.Contains(fixedBuild, "x") || !strings.Contains(fixedBuild, ".") || strings.ContainsAny(fixedBuild, ";,") || releaseCandidateTagRE.MatchString(fixedBuild)
 }
 
+// isEdgeBrowserProduct reports whether productName is a Microsoft Edge browser
+// product, whose FixedBuild is an Edge version: Microsoft Edge (Chromium-based),
+// its Extended Stable channel, and the platform products (Microsoft Edge for
+// Windows/MAC/Linux, 2026-Aug~, and Microsoft Edge for Android/iOS), which use the
+// same version scheme. The tool products, such as the Updater and IE Mode, are not.
+func isEdgeBrowserProduct(productName string) bool {
+	switch productName {
+	case "Microsoft Edge (Chromium-based)",
+		"Microsoft Edge (Chromium-based) Extended Stable",
+		"Microsoft Edge for Windows",
+		"Microsoft Edge for MAC",
+		"Microsoft Edge for Linux",
+		"Microsoft Edge for Android",
+		"Microsoft Edge for iOS":
+		return true
+	default:
+		return false
+	}
+}
+
 // productRangeType returns the range type that the FixedBuild of productName is
 // compared with. RangeTypeUnknown means the product is not version-compared: a tool,
 // an extension, a mobile app, or a product outside the detection families below. A
 // product that looks like one of those families but is not listed fails, so that it
 // gets classified.
 func productRangeType(productName string) (rangeTypes.RangeType, error) {
+	if isEdgeBrowserProduct(productName) {
+		return rangeTypes.RangeTypeMicrosoftEdge, nil
+	}
+
 	switch productName {
 	// Microsoft Defender for Endpoint for Android
 	case "Microsoft Defender for Endpoint for Android":
@@ -2169,18 +2204,6 @@ func productRangeType(productName string) (rangeTypes.RangeType, error) {
 		".NET 11.0 runtime installed on Mac OS",
 		".NET 11.0 runtime installed on Windows":
 		return rangeTypes.RangeTypeMicrosoftDotNetCoreRuntime, nil
-
-	// Microsoft Edge (Chromium-based)
-	// The platform products (Microsoft Edge for Windows/MAC/Linux, 2026-Aug~, and
-	// Microsoft Edge for Android/iOS) use the same version scheme
-	case "Microsoft Edge (Chromium-based)",
-		"Microsoft Edge (Chromium-based) Extended Stable",
-		"Microsoft Edge for Windows",
-		"Microsoft Edge for MAC",
-		"Microsoft Edge for Linux",
-		"Microsoft Edge for Android",
-		"Microsoft Edge for iOS":
-		return rangeTypes.RangeTypeMicrosoftEdge, nil
 
 	// Microsoft Edge (Chromium-based) in IE Mode (FixedBuild is the Windows OS build number)
 	case "Microsoft Edge (Chromium-based) in IE Mode on Windows 10 Version 1809 for 32-bit Systems",
@@ -3258,6 +3281,11 @@ var fixedBuildOverrides = map[[3]string]string{
 	{"CVE-2021-38021", "Microsoft Edge (Chromium-based)", "96.0 1954.29"}: "96.0.1054.29",
 	{"CVE-2021-38022", "Microsoft Edge (Chromium-based)", "96.0 1954.29"}: "96.0.1054.29",
 	{"CVE-2021-42308", "Microsoft Edge (Chromium-based)", "96.0 1954.29"}: "96.0.1054.29",
+	// CVE-2021-43220 is Microsoft Edge for iOS (CVRF product and title). Its FAQ
+	// version table gives the desktop Stable release; Edge for iOS/Android share the
+	// version scheme and the branch of each major (e.g. CVE-2026-66323: 152.0.4191.53
+	// on Stable, Android and iOS alike), though a mobile patch number can differ by a
+	// few (e.g. CVE-2026-40416: 148.0.3967.54 on Stable, .55 on Android/iOS)
 	{"CVE-2021-43220", "Microsoft Edge for iOS", "96.0 1954.29"}:          "96.0.1054.29",
 	{"CVE-2021-43221", "Microsoft Edge (Chromium-based)", "96.0 1954.29"}: "96.0.1054.29",
 	// 2023-Feb (Edge 109.0.1518.78, FixedBuild has typo "109.0.15.18.78")
@@ -3278,7 +3306,9 @@ var fixedBuildOverrides = map[[3]string]string{
 	{"CVE-2023-1822", "Microsoft Edge (Chromium-based)", "112.0.5615.49/50"}:  "112.0.1722.34",
 	{"CVE-2023-1823", "Microsoft Edge (Chromium-based)", "112.0.5615.49/50"}:  "112.0.1722.34",
 	{"CVE-2023-24935", "Microsoft Edge (Chromium-based)", "112.0.5615.49/50"}: "112.0.1722.34",
-	{"CVE-2023-28301", "Microsoft Edge for Android", "112.0.5615.49/50"}:      "112.0.1722.34",
+	// CVE-2023-28301 is Microsoft Edge for Android in CVRF; its FAQ version table gives
+	// the desktop Stable release (see CVE-2021-43220 above for the mobile versions)
+	{"CVE-2023-28301", "Microsoft Edge for Android", "112.0.5615.49/50"}: "112.0.1722.34",
 	// 2025-May (Edge 136.0.3240.64, FixedBuild has "v" prefix "v136.0.3240.64")
 	{"CVE-2025-4372", "Microsoft Edge (Chromium-based)", "v136.0.3240.64"}: "136.0.3240.64",
 	// 2026-Mar (Edge 145.0.3800.99, FixedBuild "145.3800.99" has only 3 segments instead of 4)
@@ -3370,6 +3400,17 @@ var fixedBuildOverrides = map[[3]string]string{
 	// table gives 150.0.4078.99 (07/24/2026, Chromium 150.0.7871.187), matching
 	// the FixedBuild carried by CVE-2026-57978/57989 in the same document
 	{"CVE-2026-57990", "Microsoft Edge (Chromium-based)", ""}: "150.0.4078.99",
+	// Edge browser products listed in ProductStatuses without any Remediation and
+	// with no fixed build in the CVE FAQ or the Edge security release notes: kept
+	// unfixed
+	//   - CVE-2020-17153, CVE-2021-24100, CVE-2026-62828: Microsoft Edge for Android
+	//     Spoofing / Information Disclosure / Tampering Vulnerability
+	//   - CVE-2026-32208: Microsoft Entra ID Spoofing Vulnerability, a cloud service
+	//     CVE that CVRF lists under Microsoft Edge (Chromium-based)
+	{"CVE-2020-17153", "Microsoft Edge for Android", ""}:      "",
+	{"CVE-2021-24100", "Microsoft Edge for Android", ""}:      "",
+	{"CVE-2026-62828", "Microsoft Edge for Android", ""}:      "",
+	{"CVE-2026-32208", "Microsoft Edge (Chromium-based)", ""}: "",
 	// 2026-Aug (Edge 152, Microsoft-CNA CVEs): FixedBuild "152.0.4191.52" matches no
 	// release; the FAQ version table and the Edge security release notes (Aug 27, 2026)
 	// give 152.0.4191.53, as does CVE-2026-72984's own Chromium-based Vendor Fix.
@@ -4148,6 +4189,11 @@ var missingProductOverrides = map[string][]missingProductOverride{
 	//   - 2023-Jul: the FAQ has the typo 114.0.1901.183; Extended Stable shipped 114.0.1823.90 (Jul 21, 2023)
 	//   - CVE-2023-4863: the release notes credit 116.0.1938.81 (Sep 12, 2023), the FAQ the later 116.0.1938.98
 	//   - CVE-2024-21388: the release notes credit 120.0.2210.160 (Jan 26, 2024), the FAQ also lists 120.0.2210.167
+	//   - CVE-2024-2400 (122.0.2365.92, Mar 14, 2024) and CVE-2024-5830..5847/30058 (126.0.2592.56, Jun 13, 2024):
+	//     the FAQ gives the Stable release for Extended Stable too. Extended Stable was on 120 and 124 then, and
+	//     got no later 120 / 124 build (last 120.0.2210.181 on Feb 20, 124.0.2478.131 on Jun 4, 2024); its next
+	//     builds were 122.0.2365.106 (Mar 21) and 126.0.2592.132 (Aug 1, 2024), per the Edge Stable channel
+	//     release notes archive. An Extended Stable host is thus fixed only from these values on
 	"CVE-2022-3075":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "104.0.1293.81"}},
 	"CVE-2022-3723":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "106.0.1370.61"}},
 	"CVE-2022-3885":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "106.0.1370.72"}},
