@@ -525,6 +525,63 @@ func TestBuildFixedBuildCriterion(t *testing.T) {
 			wantErr: true,
 		},
 		{
+			name: "Edge for Windows (2026-Aug) uses the Edge range type",
+			args: args{
+				cveID:         "CVE-2026-66798",
+				productName:   "Microsoft Edge for Windows",
+				rawFixedBuild: "152.0.4191.52",
+			},
+			want: &criterionTypes.Criterion{
+				Type: criterionTypes.CriterionTypeVersion,
+				Version: &vcTypes.Criterion{
+					Vulnerable: true,
+					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
+					Package: packageTypes.Package{
+						Type:   packageTypes.PackageTypeBinary,
+						Binary: &binaryTypes.Package{Name: "Microsoft Edge for Windows"},
+					},
+					Affected: &affectedTypes.Affected{
+						Type:  affectedrangeTypes.RangeTypeMicrosoftEdge,
+						Range: []affectedrangeTypes.Range{{LessThan: "152.0.4191.53"}},
+						Fixed: []string{"152.0.4191.53"},
+					},
+				},
+			},
+		},
+		{
+			name: "Edge for Android uses the Edge range type",
+			args: args{
+				cveID:         "CVE-2026-0385",
+				productName:   "Microsoft Edge for Android",
+				rawFixedBuild: "146.0.3856.59",
+			},
+			want: &criterionTypes.Criterion{
+				Type: criterionTypes.CriterionTypeVersion,
+				Version: &vcTypes.Criterion{
+					Vulnerable: true,
+					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
+					Package: packageTypes.Package{
+						Type:   packageTypes.PackageTypeBinary,
+						Binary: &binaryTypes.Package{Name: "Microsoft Edge for Android"},
+					},
+					Affected: &affectedTypes.Affected{
+						Type:  affectedrangeTypes.RangeTypeMicrosoftEdge,
+						Range: []affectedrangeTypes.Range{{LessThan: "146.0.3856.59"}},
+						Fixed: []string{"146.0.3856.59"},
+					},
+				},
+			},
+		},
+		{
+			name: "unknown Edge platform product is not skipped",
+			args: args{
+				cveID:         "CVE-2099-0001",
+				productName:   "Microsoft Edge for ChromeOS",
+				rawFixedBuild: "152.0.4191.53",
+			},
+			wantErr: true,
+		},
+		{
 			name: "space typo without an override is not skipped",
 			args: args{
 				cveID:         "CVE-2099-0001",
@@ -1516,6 +1573,31 @@ func TestFixedBuildOverrides(t *testing.T) {
 			want: "150.0.4078.99",
 		},
 		{
+			name: "Edge 2026-Aug Chromium-based Known Affected without Vendor Fix (CVE-2026-66798)",
+			key:  [3]string{"CVE-2026-66798", "Microsoft Edge (Chromium-based)", ""},
+			want: "152.0.4191.53",
+		},
+		{
+			name: "Edge 2026-Aug platform product FixedBuild matching no release (CVE-2026-66798)",
+			key:  [3]string{"CVE-2026-66798", "Microsoft Edge for Windows", "152.0.4191.52"},
+			want: "152.0.4191.53",
+		},
+		{
+			name: "Edge 2021-Nov typo maps to the Edge 96 branch (1054), not 1954",
+			key:  [3]string{"CVE-2021-38005", "Microsoft Edge (Chromium-based)", "96.0 1954.29"},
+			want: "96.0.1054.29",
+		},
+		{
+			name: "Edge Stable FixedBuild carrying the Extended Stable version (CVE-2023-5217)",
+			key:  [3]string{"CVE-2023-5217", "Microsoft Edge (Chromium-based)", "116.0.1938.98"},
+			want: "117.0.2045.47",
+		},
+		{
+			name: "Edge Extended Stable FixedBuild carrying the Chromium version (CVE-2024-2883)",
+			key:  [3]string{"CVE-2024-2883", "Microsoft Edge (Chromium-based) Extended Stable", "122.0.6261.148"},
+			want: "122.0.2365.113",
+		},
+		{
 			name: "Win11 24H2 ARM64 hotpatch tagged 10.0.26200.x (CVE-2026-62727)",
 			key:  [3]string{"CVE-2026-62727", "Windows 11 Version 24H2 for ARM64-based Systems", "10.0.26200.9106"},
 			want: "10.0.26100.9106",
@@ -1853,6 +1935,11 @@ func TestExtract(t *testing.T) {
 		{
 			name:     "microsoft edge (chromium-based) vendor fix without FixedBuild",
 			args:     "./testdata/fixtures-edge-missing-fixedbuild",
+			hasError: true,
+		},
+		{
+			name:     "microsoft edge (chromium-based) listed without a vendor fix",
+			args:     "./testdata/fixtures-edge-fallback-missing-fixedbuild",
 			hasError: true,
 		},
 		{
