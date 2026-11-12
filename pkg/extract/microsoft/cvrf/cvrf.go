@@ -3285,7 +3285,7 @@ var fixedBuildOverrides = map[[3]string]string{
 	// version table gives the desktop Stable release; Edge for iOS/Android share the
 	// version scheme and the branch of each major (e.g. CVE-2026-66323: 152.0.4191.53
 	// on Stable, Android and iOS alike), though a mobile patch number can differ by a
-	// few (e.g. CVE-2026-40416: 148.0.3967.54 on Stable, .55 on Android/iOS)
+	// few (e.g. CVE-2026-42838: 148.0.3967.54 on Stable, .55 on Android/iOS)
 	{"CVE-2021-43220", "Microsoft Edge for iOS", "96.0 1954.29"}:          "96.0.1054.29",
 	{"CVE-2021-43221", "Microsoft Edge (Chromium-based)", "96.0 1954.29"}: "96.0.1054.29",
 	// 2023-Feb (Edge 109.0.1518.78, FixedBuild has typo "109.0.15.18.78")
@@ -4322,16 +4322,14 @@ var missingProductOverrides = map[string][]missingProductOverride{
 	"CVE-2026-2441":  {{Product: "Microsoft Edge (Chromium-based) Extended Stable", FixedBuild: "144.0.3719.130"}}, // Feb 17, 2026
 
 	// Microsoft Edge for Android / iOS: CVRF lists only Microsoft Edge (Chromium-based), while the
-	// Edge security release notes also credit the fix to the Android and iOS releases
-	// CVE-2026-40416: 148.0.3967.55 (May 11, 2026)
+	// Edge security release notes also credit the fix to the Android and/or iOS releases
+	// CVE-2026-40416: 148.0.3967.55 (May 11, 2026), listed only under Android-specific fixes
 	"CVE-2026-40416": {
 		{Product: "Microsoft Edge for Android", FixedBuild: "148.0.3967.55"},
-		{Product: "Microsoft Edge for iOS", FixedBuild: "148.0.3967.55"},
 	},
-	// CVE-2026-41107: 148.0.3967.55 (May 11, 2026)
+	// CVE-2026-41107: 148.0.3967.55 (May 11, 2026), listed only under Android-specific fixes
 	"CVE-2026-41107": {
 		{Product: "Microsoft Edge for Android", FixedBuild: "148.0.3967.55"},
-		{Product: "Microsoft Edge for iOS", FixedBuild: "148.0.3967.55"},
 	},
 	// CVE-2026-42838: 148.0.3967.55 (May 11, 2026)
 	"CVE-2026-42838": {
