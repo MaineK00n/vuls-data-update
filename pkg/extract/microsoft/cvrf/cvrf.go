@@ -886,14 +886,37 @@ func buildDetections(v cvrf.Vulnerability, products map[string]string) (map[ecos
 	// ProductStatuses fallback below would register each as unfixed for good,
 	// reporting every host with a product of the same name (e.g. the Teams
 	// client for a Teams service CVE). The vulnerability info stays, by tag.
+	//
+	// A Vendor Fix of such an entry is accepted only while it yields no
+	// criterion, e.g. CVE-2026-119990 (Azure Open AI) lists a Vendor Fix with
+	// the Description "Release Notes" and the service build
+	// "hyena-infra-build-official/20260923.14". One that names a KB or a
+	// comparable fixed build contradicts the note and fails the extraction.
 	required, err := customerActionRequired(v)
 	if err != nil {
 		return nil, nil, errors.Wrapf(err, "customer action required for %s", v.CVE)
 	}
 	if !required {
 		for _, r := range v.Remediations.Remediation {
-			if r.Type == "Vendor Fix" {
-				return nil, nil, errors.Errorf("unexpected Vendor Fix for %s, which requires no customer action. expected: no Vendor Fix, actual: %q for %q, please check the CVE FAQ", v.CVE, r.Description, r.ProductID)
+			if r.Type != "Vendor Fix" {
+				continue
+			}
+			for _, pid := range r.ProductID {
+				productName, ok := products[pid]
+				if !ok {
+					return nil, nil, errors.Errorf("product ID %q not found in product tree for %s", pid, v.CVE)
+				}
+				if isCBLMarinerOrAzureLinux(productName) {
+					continue
+				}
+				criterionProductName := normalizeProductName(v.CVE, productName)
+				fixedBuildCriterion, err := buildFixedBuildCriterion(v.CVE, criterionProductName, r.FixedBuild)
+				if err != nil {
+					return nil, nil, errors.Wrap(err, "build fixed build criterion")
+				}
+				if buildKBCriterion(criterionProductName, r.Description) != nil || fixedBuildCriterion != nil {
+					return nil, nil, errors.Errorf("unexpected Vendor Fix for %s, which requires no customer action. expected: no KB and no comparable FixedBuild, actual: KB %q, FixedBuild %q for %q, please check the CVE FAQ", v.CVE, r.Description, r.FixedBuild, productName)
+				}
 			}
 		}
 		return conditionsByEcosystem, nil, nil
