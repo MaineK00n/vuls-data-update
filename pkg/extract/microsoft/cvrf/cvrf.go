@@ -368,7 +368,7 @@ func (e extractor) extract(c cvrf.CVRF) ([]dataTypes.Data, []microsoftkbTypes.KB
 
 // productRenames maps (CVE ID, CVRF product name) to the product the advisory
 // actually affects, for advisories that attribute the fix to the wrong product.
-// Unlike productNameOverrides, which renames only the product that criteria
+// Unlike vendorFixProductName, which names only the product that criteria
 // compare, it moves the whole product: vulnerabilities, advisories, detections
 // and KBs all follow the new name.
 var productRenames = map[[2]string]string{
@@ -909,7 +909,7 @@ func buildDetections(v cvrf.Vulnerability, products map[string]string) (map[ecos
 				if isCBLMarinerOrAzureLinux(productName) {
 					continue
 				}
-				criterionProductName := vendorFixProductName(v.CVE, productName, r.FixedBuild)
+				criterionProductName := vendorFixProductName(productName, r.FixedBuild)
 				fixedBuildCriterion, err := buildFixedBuildCriterion(v.CVE, criterionProductName, r.FixedBuild)
 				if err != nil {
 					return nil, nil, errors.Wrap(err, "build fixed build criterion")
@@ -953,7 +953,7 @@ func buildDetections(v cvrf.Vulnerability, products map[string]string) (map[ecos
 				coveredProductIDs[pid] = struct{}{}
 
 				tag := segmentTypes.DetectionTag(productName)
-				criterionProductName := vendorFixProductName(v.CVE, productName, r.FixedBuild)
+				criterionProductName := vendorFixProductName(productName, r.FixedBuild)
 
 				if _, ok := vendorFixExclusions[[3]string{v.CVE, criterionProductName, r.Description}]; ok {
 					excludedTags[tag] = append(excludedTags[tag], r.Description)
@@ -1022,15 +1022,15 @@ func buildDetections(v cvrf.Vulnerability, products map[string]string) (map[ecos
 		// covered, so the ProductStatuses fallback skips it as well and the
 		// CVE would become silently undetectable on it, unless each fix was
 		// moved by vendorFixAdditions to another raw product of the same name
-		// after normalizeProductName.
-		product := normalizeProductName(v.CVE, string(tag))
+		// after microsoftutil.NormalizeProductName.
+		product := microsoftutil.NormalizeProductName(string(tag))
 		if !slices.ContainsFunc(excludedTags[tag], func(kbID string) bool {
 			_, ok := addedKBIDs[[2]string{product, kbID}]
 			return !ok
 		}) {
 			continue
 		}
-		return nil, nil, errors.Errorf("unexpected vendorFixExclusions for %s (%s). expected: at least one Vendor Fix kept, or each excluded KB moved by vendorFixAdditions to a product of the same name after normalizeProductName, actual: all excluded", v.CVE, tag)
+		return nil, nil, errors.Errorf("unexpected vendorFixExclusions for %s (%s). expected: at least one Vendor Fix kept, or each excluded KB moved by vendorFixAdditions to a product of the same name after microsoftutil.NormalizeProductName, actual: all excluded", v.CVE, tag)
 	}
 
 	for _, tag := range tags {
@@ -1045,7 +1045,7 @@ func buildDetections(v cvrf.Vulnerability, products map[string]string) (map[ecos
 
 	for _, tag := range tags {
 		if _, ok := excludedTags[tag]; !ok && needsHotpatchReview(fixesByTag[tag]) {
-			if _, ok := hotpatchFixesReviewed[[2]string{v.CVE, normalizeProductName(v.CVE, string(tag))}]; !ok {
+			if _, ok := hotpatchFixesReviewed[[2]string{v.CVE, microsoftutil.NormalizeProductName(string(tag))}]; !ok {
 				// A hotpatch's follow-up update listed side by side with it
 				// gates its fixed build and hides hosts that applied only the
 				// hotpatch (see vendorFixExclusions), so fail like the
@@ -1076,7 +1076,7 @@ func buildDetections(v cvrf.Vulnerability, products map[string]string) (map[ecos
 		}
 
 		tag := segmentTypes.DetectionTag(productName)
-		criterionProductName := normalizeProductName(v.CVE, productName)
+		criterionProductName := microsoftutil.NormalizeProductName(productName)
 
 		fixedBuildCriterion, err := buildFixedBuildCriterion(v.CVE, criterionProductName, "")
 		if err != nil {
@@ -1127,7 +1127,7 @@ func buildDetections(v cvrf.Vulnerability, products map[string]string) (map[ecos
 			func(c conditionTypes.Condition) bool { return c.Tag == tag }) {
 			continue
 		}
-		criterionProductName := normalizeProductName(v.CVE, mp.Product)
+		criterionProductName := microsoftutil.NormalizeProductName(mp.Product)
 		fixedBuildCriterion, err := buildFixedBuildCriterion(v.CVE, criterionProductName, mp.FixedBuild)
 		if err != nil {
 			return nil, nil, errors.Wrapf(err, "build fixed build criterion for missing product %q", mp.Product)
@@ -1245,7 +1245,7 @@ func isHotpatchSubType(subType string) bool {
 }
 
 // vendorFixExclusions drops Vendor Fix remediations, keyed by [3]string{CVE
-// ID, product name after normalizeProductName, KB ID}.
+// ID, product name after microsoftutil.NormalizeProductName, KB ID}.
 //
 // CVRF remediations cannot express that one update is a prerequisite of
 // another, so a monthly hotpatch whose CVE is only fixed by a follow-up
@@ -1385,7 +1385,7 @@ var vendorFixAdditions = map[string][]vendorFixAddition{
 
 // addVendorFixes appends the vendorFixAdditions of a CVE to the fixes of
 // their products, and returns the tags with fixes and the KB IDs added, keyed
-// by [2]string{product name after normalizeProductName, KB ID}.
+// by [2]string{product name after microsoftutil.NormalizeProductName, KB ID}.
 // A product is one CVRF lists with a Vendor Fix, kept or excluded.
 func addVendorFixes(cveID string, tags []segmentTypes.DetectionTag, excludedTags map[segmentTypes.DetectionTag][]string, fixesByTag map[segmentTypes.DetectionTag][]vendorFix) ([]segmentTypes.DetectionTag, map[[2]string]struct{}, error) {
 	addedKBIDs := make(map[[2]string]struct{})
@@ -1400,7 +1400,7 @@ func addVendorFixes(cveID string, tags []segmentTypes.DetectionTag, excludedTags
 			tags = append(tags, tag)
 		}
 
-		product := normalizeProductName(cveID, a.product)
+		product := microsoftutil.NormalizeProductName(a.product)
 		version, err := buildFixedBuildCriterion(cveID, product, a.fixedBuild)
 		if err != nil {
 			return nil, nil, errors.Wrap(err, "build fixed build criterion")
@@ -1419,7 +1419,7 @@ func addVendorFixes(cveID string, tags []segmentTypes.DetectionTag, excludedTags
 }
 
 // hotpatchFixesReviewed acknowledges detection tags, keyed by [2]string{CVE
-// ID, product name after normalizeProductName} like
+// ID, product name after microsoftutil.NormalizeProductName} like
 // vendorFixExclusions, that offer a hotpatch and list more than two
 // KBs (see needsHotpatchReview) but were checked against the CVE FAQ and the
 // KB articles and need no vendorFixExclusions entry.
@@ -1597,20 +1597,9 @@ var releaseCandidateTagRE = regexp.MustCompile(`^\d+(\.\d+)+( RC\d+| Insiders \d
 // fixedBuildOverrides entry.
 var dotnetPrereleaseRE = regexp.MustCompile(`^(preview|rc)\.\d+(\.\d+)*$`)
 
-// normalizeProductName returns the product name that criteria and the override
-// tables below use: microsoftutil.NormalizeProductName, then productNameOverrides
-// for this CVE.
-func normalizeProductName(cveID, productName string) string {
-	n := microsoftutil.NormalizeProductName(productName)
-	if o, ok := productNameOverrides[[2]string{cveID, n}]; ok {
-		return o
-	}
-	return n
-}
-
 // vendorFixProductName returns the product name that the criterions of one Vendor
-// Fix use: normalizeProductName, then, for a .NET 8.0-11.0 product, the runtime or
-// the SDK name (see dotnetProductNames) that its FixedBuild calls for.
+// Fix use: microsoftutil.NormalizeProductName, then, for a .NET 8.0-11.0 product, the
+// runtime or the SDK name (see dotnetProductNames) that its FixedBuild calls for.
 //
 // The name CVRF gives these products does not tell the runtime from the SDK, and
 // Microsoft has changed it over time, also in documents it revised later. In the
@@ -1623,11 +1612,11 @@ func normalizeProductName(cveID, productName string) string {
 // tells them apart, whichever of the two names CVRF uses:
 //   - one runtime version, patch below 100 (e.g. "10.0.15", "11.0.0-rc.2",
 //     "9.0.0-preview.4.24266.19"): the runtime, ".NET X runtime installed on <OS>"
-//   - no version (e.g. "", "11.0 RC1", a fix listing only a KB): the name CVRF lists,
-//     after normalizeProductName, as nothing else tells. It only shows in the KB
-//     criterion and the KB record, as such a FixedBuild gives no version criterion;
-//     productNameOverrides corrects it for one CVE. The only such fixes so far, the
-//     2026-Sep "11.0 RC1" ones, list no KB either
+//   - no version (e.g. "", "11.0 RC1", a fix listing only a KB): neither the runtime
+//     nor the SDK. The name CVRF lists is kept as is, as nothing else tells. It only
+//     shows in the KB criterion and the KB record, as such a FixedBuild gives no
+//     version criterion. The only such fixes so far, the 2026-Sep "11.0 RC1" ones,
+//     list no KB either
 //   - anything else: the SDK, ".NET X installed on <OS>". An SDK version is a feature
 //     band, patch 100 or above, comma-separated when there are several (e.g.
 //     "10.0.115", "8.0.130, 8.0.424", "11.0.100-rc.2"), and buildDotNetSDKCriterion
@@ -1635,11 +1624,11 @@ func normalizeProductName(cveID, productName string) string {
 //     it gets a fixedBuildOverrides entry instead of being skipped
 //
 // The name is decided from the FixedBuild CVRF lists, before fixedBuildOverrides. For
-// every other product it is normalizeProductName, so the tables keyed by the product
-// name after normalizeProductName (vendorFixExclusions, fixedBuildOverrides) take this
-// name for a Vendor Fix.
-func vendorFixProductName(cveID, productName, rawFixedBuild string) string {
-	n := normalizeProductName(cveID, productName)
+// every other product it is microsoftutil.NormalizeProductName, so the tables keyed by
+// the product name after microsoftutil.NormalizeProductName (vendorFixExclusions,
+// fixedBuildOverrides) take this name for a Vendor Fix.
+func vendorFixProductName(productName, rawFixedBuild string) string {
+	n := microsoftutil.NormalizeProductName(productName)
 	runtime, sdk, ok := dotnetProductNames(n)
 	if !ok {
 		return n
@@ -1691,18 +1680,6 @@ func isDotNetRuntimeFixedBuild(fixedBuild string) bool {
 	v, err := dotnetcoreruntimeversion.NewVersion(fixedBuild)
 	return err == nil && v.Patch < 100
 }
-
-// productNameOverrides renames a product within one CVE, keyed by [2]string{CVE
-// ID, product name after microsoftutil.NormalizeProductName}. It is for names
-// whose meaning changed over time, which a name-only alias in
-// microsoftutil.NormalizeProductName cannot express.
-//
-// It has no entry. vendorFixProductName names the .NET 8.0-11.0 runtime and SDK from
-// the FixedBuild of each Vendor Fix, which made the renames this table held for them
-// redundant. A .NET product whose name the FixedBuild does not decide (a Vendor Fix
-// without a version, or a product listed without a Vendor Fix) keeps the name CVRF
-// lists, so an entry is for one listed under the wrong name.
-var productNameOverrides = map[[2]string]string{}
 
 // buildDotNetSDKCriterion builds the criterion of a .NET SDK product. Its FixedBuild
 // lists the fixed version of each affected SDK feature band, comma-separated when
@@ -2567,7 +2544,7 @@ func validateFixedBuild(rt rangeTypes.RangeType, productName, fixedBuild string)
 
 // fixedBuildOverrides maps (CVE ID, product name, incorrect FixedBuild) to corrected FixedBuild values
 // for known data issues in CVRF.
-// The key is [3]string{CVE ID, product name after normalizeProductName (vendorFixProductName for a Vendor Fix),
+// The key is [3]string{CVE ID, product name after microsoftutil.NormalizeProductName (vendorFixProductName for a Vendor Fix),
 // incorrect FixedBuild value after generic cleanup}.
 // An empty value means "intentionally no criterion": the entry acknowledges the upstream data gap
 // and skips criterion generation. For Microsoft Edge (Chromium-based), a Vendor Fix that yields no
@@ -3410,7 +3387,7 @@ var fixedBuildOverrides = map[[3]string]string{
 	// 2017 version 15.9 (includes 15.0 - 15.8)" carries a Microsoft Teams for Android
 	// FixedBuild and its Google Play URL (CVE-2026-69901's "1416/1.0.0.2026202302"). The
 	// same CVE lists "Microsoft Visual Studio 2017 version 15.9", the same product after
-	// normalizeProductName, with 15.9.84, so this row adds nothing.
+	// microsoftutil.NormalizeProductName, with 15.9.84, so this row adds nothing.
 	{"CVE-2026-111497", "Microsoft Visual Studio 2017 Version 15.9", "1416/1.0.0.2026202302"}: "",
 
 	// Visual Studio Code
@@ -4174,7 +4151,7 @@ func buildKBCriterion(product, kbID string) *criterionTypes.Criterion {
 // The product name is part of the key (parallel to fixedBuildOverrides) so
 // each entry is exact-match and self-validating: no fuzzy/substring matching
 // is performed at lookup time. Entries are generated from observed CVRF
-// (productName, KBID) tuples, normalized via normalizeProductName.
+// (productName, KBID) tuples, normalized via microsoftutil.NormalizeProductName.
 var kbCumulativeTwins = map[[2]string]string{
 	// 2017-May (Delta→Cumulative)
 	{"Internet Explorer 11 on Windows 10 Version 1607 for 32-bit Systems", "4019472"}:               "4023680",
@@ -5880,7 +5857,7 @@ func (e extractor) collectKBs(v cvrf.Vulnerability, products map[string]string, 
 				continue
 			}
 
-			criterionProductName := vendorFixProductName(v.CVE, productName, r.FixedBuild)
+			criterionProductName := vendorFixProductName(productName, r.FixedBuild)
 
 			kbID := r.Description
 			if !isAllDigits(kbID) {
@@ -5976,7 +5953,7 @@ func (e extractor) collectKBs(v cvrf.Vulnerability, products map[string]string, 
 				Raws: e.r.Paths(),
 			}
 		}
-		if product := normalizeProductName(v.CVE, a.product); !slices.Contains(kb.Products, product) {
+		if product := microsoftutil.NormalizeProductName(a.product); !slices.Contains(kb.Products, product) {
 			kb.Products = append(kb.Products, product)
 		}
 		kbm[a.kbID] = kb
