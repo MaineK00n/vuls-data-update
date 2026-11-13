@@ -1,10 +1,10 @@
 {
 	"id": "CWE-1017",
-	"kind": "category",
+	"kind": "grouping",
 	"name": "Lock Computer",
 	"status": "Draft",
 	"description": "Weaknesses in this category are related to the design and architecture of a system's lockout mechanism. Frequently these deal with scenarios that take effect in case of multiple failed attempts to access a given resource. The weaknesses in this category could lead to a degradation of access to system assets if they are not addressed when designing or implementing a secure architecture.",
-	"category": {
+	"grouping": {
 		"members": [
 			{
 				"cweid": "CWE-645",
@@ -47,7 +47,7 @@
 	"data_source": {
 		"id": "mitre-cwe",
 		"raws": [
-			"happy/category/1017.json"
+			"happy/grouping/1017.json"
 		]
 	}
 }

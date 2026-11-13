@@ -1,10 +1,10 @@
 {
 	"id": "CWE-355",
-	"kind": "category",
+	"kind": "grouping",
 	"name": "User Interface Security Issues",
 	"status": "Draft",
 	"description": "Weaknesses in this category are related to or introduced in the User Interface (UI).",
-	"category": {
+	"grouping": {
 		"members": [
 			{
 				"cweid": "CWE-1007",

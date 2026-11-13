@@ -130,17 +130,17 @@ func Fetch(opts ...Option) error {
 	}
 	_ = bar.Close()
 
-	slog.Info("Fetch CWE Category")
-	categories := convertCategories(catalog.Categories, exRefs)
+	slog.Info("Fetch CWE Grouping")
+	groupings := convertGroupings(catalog.Groupings, exRefs)
 
-	bar = progressbar.Default(int64(len(categories)))
-	for _, c := range categories {
-		p, err := utilfilepath.Join(options.dir, "category", fmt.Sprintf("%s.json", c.ID))
+	bar = progressbar.Default(int64(len(groupings)))
+	for _, g := range groupings {
+		p, err := utilfilepath.Join(options.dir, "grouping", fmt.Sprintf("%s.json", g.ID))
 		if err != nil {
 			return errors.Wrap(err, "join")
 		}
 
-		if err := util.Write(p, c); err != nil {
+		if err := util.Write(p, g); err != nil {
 			return errors.Wrapf(err, "write %s", p)
 		}
 
@@ -169,7 +169,7 @@ func Fetch(opts ...Option) error {
 	// An empty output directory means the catalog no longer matches the
 	// structure decoded above. Committing it would delete every file of that
 	// kind from the raw repository, so fail instead.
-	for _, kind := range []string{"weakness", "category", "view"} {
+	for _, kind := range []string{"weakness", "grouping", "view"} {
 		d := filepath.Join(options.dir, kind)
 		es, err := os.ReadDir(d)
 		if err != nil {
@@ -315,11 +315,11 @@ func convertWeaknesses(weaknesses []weakness, exRefs map[string]ExternalReferenc
 	return converted
 }
 
-func convertCategories(categories []category, exRefs map[string]ExternalReference) []Category {
-	converted := make([]Category, 0, len(categories))
-	for _, c := range categories {
-		references := make([]Reference, 0, len(c.References))
-		for _, ref := range c.References {
+func convertGroupings(groupings []grouping, exRefs map[string]ExternalReference) []Grouping {
+	converted := make([]Grouping, 0, len(groupings))
+	for _, g := range groupings {
+		references := make([]Reference, 0, len(g.References))
+		for _, ref := range g.References {
 			exRef, ok := exRefs[ref.ExternalReferenceID]
 			if !ok {
 				slog.Warn("External_Reference not found", slog.String("external_reference_id", ref.ExternalReferenceID))
@@ -331,17 +331,17 @@ func convertCategories(categories []category, exRefs map[string]ExternalReferenc
 			})
 		}
 
-		converted = append(converted, Category{
-			ID:               c.ID,
-			Name:             c.Name,
-			Status:           c.Status,
-			Summary:          c.Summary.String(),
-			ContentHistory:   convertContentHistory(c.ContentHistory),
-			Relationships:    c.Relationships,
+		converted = append(converted, Grouping{
+			ID:               g.ID,
+			Name:             g.Name,
+			Status:           g.Status,
+			Summary:          g.Summary.String(),
+			ContentHistory:   convertContentHistory(g.ContentHistory),
+			Relationships:    g.Relationships,
 			References:       references,
-			Notes:            c.Notes,
-			TaxonomyMappings: c.TaxonomyMappings,
-			MappingNotes:     convertMappingNotes(c.MappingNotes),
+			Notes:            g.Notes,
+			TaxonomyMappings: g.TaxonomyMappings,
+			MappingNotes:     convertMappingNotes(g.MappingNotes),
 		})
 	}
 	return converted

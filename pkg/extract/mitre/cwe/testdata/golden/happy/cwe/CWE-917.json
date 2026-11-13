@@ -22,6 +22,15 @@
 				]
 			}
 		],
+		"rankings": [
+			{
+				"view_id": "CWE-1026",
+				"view_name": "Weaknesses in OWASP Top Ten (2017)",
+				"grouping_id": "CWE-1027",
+				"grouping_name": "OWASP Top Ten 2017 Category A1 - Injection",
+				"rank": 1
+			}
+		],
 		"mapping_notes": {
 			"usage": "Allowed",
 			"rationale": "This CWE entry is at the Base level of abstraction, which is a preferred level of abstraction for mapping to the root causes of vulnerabilities.",
@@ -42,6 +51,8 @@
 	"data_source": {
 		"id": "mitre-cwe",
 		"raws": [
+			"happy/grouping/1027.json",
+			"happy/view/1026.json",
 			"happy/weakness/917.json"
 		]
 	}

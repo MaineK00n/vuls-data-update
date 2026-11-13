@@ -60,11 +60,11 @@ func (o *OneOrMany[T]) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	return nil
 }
 
-// CWE 5.0 (schema v8.0) renamed Categories>Category to Groupings>Grouping.
-// They are still written as categories, so the raw layout is unchanged.
+// CWE 5.0 (schema v8.0) renamed Categories>Category to Groupings>Grouping,
+// with the same content.
 type weaknessCatalog struct {
 	Weaknesses         []weakness          `xml:"Weaknesses>Weakness"`
-	Categories         []category          `xml:"Groupings>Grouping"`
+	Groupings          []grouping          `xml:"Groupings>Grouping"`
 	Views              []view              `xml:"Views>View"`
 	ExternalReferences []ExternalReference `xml:"External_References>External_Reference"`
 }
@@ -143,7 +143,7 @@ type weakness struct {
 	MappingNotes      mappingNotes `xml:"Mapping_Notes"`
 }
 
-type category struct {
+type grouping struct {
 	ID             string         `xml:"ID,attr"`
 	Name           string         `xml:"Name,attr"`
 	Status         string         `xml:"Status,attr"`
@@ -177,7 +177,7 @@ type view struct {
 	MappingNotes mappingNotes `xml:"Mapping_Notes"`
 }
 
-// contentHistory is the ContentHistoryType shared by weaknesses, categories
+// contentHistory is the ContentHistoryType shared by weaknesses, groupings
 // and views. Since schema v8.0 an entry may have several submissions, a
 // submission or contribution several names, and every record the CWE version
 // and release date it first appeared in.
@@ -460,7 +460,7 @@ type Note struct {
 	Text        string `xml:",innerxml" json:"text,omitempty"`
 }
 
-type Category struct {
+type Grouping struct {
 	ID               string            `json:"id,omitempty"`
 	Name             string            `json:"name,omitempty"`
 	Status           string            `json:"status,omitempty"`

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/fs"
 	"log/slog"
+	"os"
 	"path/filepath"
 	"slices"
 	"strconv"
@@ -13,8 +14,8 @@ import (
 	"github.com/pkg/errors"
 
 	cweTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/cwe"
-	categoryTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/cwe/category"
 	dimensionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/cwe/dimension"
+	groupingTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/cwe/grouping"
 	mappingnotesTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/cwe/mappingnotes"
 	reasonTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/cwe/mappingnotes/reason"
 	suggestionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/cwe/mappingnotes/suggestion"
@@ -104,8 +105,8 @@ func Extract(args string, opts ...Option) error {
 		switch kind {
 		case "weakness":
 			return extractWeakness(path, args, options.dir, rankings)
-		case "category":
-			return extractCategory(path, args, options.dir)
+		case "grouping", "category": // raw fetched before the CWE 5.0 rename has its groupings under category/
+			return extractGrouping(path, args, options.dir)
 		case "view":
 			return extractView(path, args, options.dir)
 		default:
@@ -138,11 +139,12 @@ func Extract(args string, opts ...Option) error {
 	return nil
 }
 
-// owaspCategoryRank returns the rank of an OWASP Top Ten "A0N" category from its
-// name (e.g. 3 from "OWASP Top Ten 2021 Category A03:2021 - Injection"). OWASP
-// views only ever contain "A0N" tier categories, so a name not in that form is
-// reported as an error rather than skipped. Both the modern "A03:YYYY" and older
-// "A6 - ..." spellings are handled.
+// owaspCategoryRank returns the rank of an OWASP Top Ten "A0N" category from the
+// name of its grouping (e.g. 3 from "OWASP Top Ten 2021 Category A03:2021 -
+// Injection"); OWASP calls the tiers categories, and CWE 5.0 keeps that word in
+// the names of the groupings that hold them. OWASP views only ever contain "A0N"
+// tier groupings, so a name not in that form is reported as an error rather than
+// skipped. Both the modern "A03:YYYY" and older "A6 - ..." spellings are handled.
 func owaspCategoryRank(name string) (int, error) {
 	before, after, found := strings.Cut(name, " Category A")
 	if !found || !strings.HasPrefix(before, "OWASP Top Ten ") {
@@ -174,10 +176,10 @@ type rankingIndex struct {
 //   - the "CWE Top 25" and "CWE/SANS Top 25" views, whose flat rank and
 //     (HTML-only) score come from the supplemental data; the catalog view
 //     supplies only the list name;
-//   - the OWASP Top Ten views, whose member "A0N" categories carry the rank and
+//   - the OWASP Top Ten views, whose member "A0N" groupings carry the rank and
 //     whose member weaknesses inherit it.
 //
-// The raw path of every view/category actually read is recorded against each
+// The raw path of every view/grouping actually read is recorded against each
 // ranked weakness so the placement's provenance lands in the weakness's Raws.
 func buildRankings(args string) (rankingIndex, error) {
 	idx := rankingIndex{
@@ -223,29 +225,32 @@ func buildRankings(args string) (rankingIndex, error) {
 				}, viewRaw)
 			}
 		case strings.Contains(v.Name, "OWASP Top Ten"):
-			// Members are the "A0N" tier categories; read each on demand for its
+			// Members are the "A0N" tier groupings; read each on demand for its
 			// rank (the A number) and the weaknesses that inherit it.
 			for _, m := range v.Members {
-				categoryPath := filepath.Join(args, "category", fmt.Sprintf("%s.json", m.CWEID))
-				cr := utiljson.NewJSONReader()
-				var c cwe.Category
-				if err := cr.Read(categoryPath, args, &c); err != nil {
-					return errors.Wrapf(err, "read json %s", categoryPath)
-				}
-				rank, err := owaspCategoryRank(c.Name)
+				groupingPath, err := rawGroupingPath(args, m.CWEID)
 				if err != nil {
-					return errors.Wrapf(err, "rank %s", categoryPath)
+					return errors.Wrapf(err, "find grouping %s", m.CWEID)
 				}
-				categoryID := fmt.Sprintf("CWE-%s", c.ID)
-				catRaw := cr.Paths()[0]
-				for _, wm := range c.Relationships {
+				gr := utiljson.NewJSONReader()
+				var g cwe.Grouping
+				if err := gr.Read(groupingPath, args, &g); err != nil {
+					return errors.Wrapf(err, "read json %s", groupingPath)
+				}
+				rank, err := owaspCategoryRank(g.Name)
+				if err != nil {
+					return errors.Wrapf(err, "rank %s", groupingPath)
+				}
+				groupingID := fmt.Sprintf("CWE-%s", g.ID)
+				groupingRaw := gr.Paths()[0]
+				for _, wm := range g.Relationships {
 					add(fmt.Sprintf("CWE-%s", wm.CWEID), rankingTypes.Ranking{
 						ViewID:       viewID,
 						ViewName:     v.Name,
-						CategoryID:   categoryID,
-						CategoryName: c.Name,
+						GroupingID:   groupingID,
+						GroupingName: g.Name,
 						Rank:         rank,
-					}, viewRaw, catRaw)
+					}, viewRaw, groupingRaw)
 				}
 			}
 		}
@@ -254,6 +259,22 @@ func buildRankings(args string) (rankingIndex, error) {
 		return rankingIndex{}, errors.Wrapf(err, "walk %s", filepath.Join(args, "view"))
 	}
 	return idx, nil
+}
+
+// rawGroupingPath returns the raw file of grouping id: grouping/<id>.json, or
+// category/<id>.json in raw fetched before the CWE 5.0 rename.
+func rawGroupingPath(args, id string) (string, error) {
+	for _, dir := range []string{"grouping", "category"} {
+		p := filepath.Join(args, dir, fmt.Sprintf("%s.json", id))
+		switch _, err := os.Stat(p); {
+		case err == nil:
+			return p, nil
+		case errors.Is(err, fs.ErrNotExist):
+		default:
+			return "", errors.Wrapf(err, "stat %s", p)
+		}
+	}
+	return "", errors.Errorf("grouping %s not found in %s", id, args)
 }
 
 func extractWeakness(path, args, outDir string, rankings rankingIndex) error {
@@ -444,24 +465,24 @@ func extractWeakness(path, args, outDir string, rankings rankingIndex) error {
 	return nil
 }
 
-func extractCategory(path, args, outDir string) error {
+func extractGrouping(path, args, outDir string) error {
 	r := utiljson.NewJSONReader()
-	var c cwe.Category
-	if err := r.Read(path, args, &c); err != nil {
+	var g cwe.Grouping
+	if err := r.Read(path, args, &g); err != nil {
 		return errors.Wrapf(err, "read json %s", path)
 	}
 
 	extracted := cweTypes.CWE{
-		ID:          fmt.Sprintf("CWE-%s", c.ID),
-		Kind:        "category",
-		Name:        c.Name,
-		Status:      c.Status,
-		Description: c.Summary,
-		Category: categoryTypes.Category{
-			Members: convertMembers(c.Relationships),
+		ID:          fmt.Sprintf("CWE-%s", g.ID),
+		Kind:        "grouping",
+		Name:        g.Name,
+		Status:      g.Status,
+		Description: g.Summary,
+		Grouping: groupingTypes.Grouping{
+			Members: convertMembers(g.Relationships),
 			TaxonomyMappings: func() []taxonomymappingTypes.TaxonomyMapping {
-				out := make([]taxonomymappingTypes.TaxonomyMapping, 0, len(c.TaxonomyMappings))
-				for _, t := range c.TaxonomyMappings {
+				out := make([]taxonomymappingTypes.TaxonomyMapping, 0, len(g.TaxonomyMappings))
+				for _, t := range g.TaxonomyMappings {
 					out = append(out, taxonomymappingTypes.TaxonomyMapping{
 						TaxonomyName: t.TaxonomyName,
 						EntryID:      t.EntryID,
@@ -471,10 +492,10 @@ func extractCategory(path, args, outDir string) error {
 				}
 				return out
 			}(),
-			Notes:        collectNotes(c.Notes),
-			MappingNotes: convertMappingNotes(c.MappingNotes),
+			Notes:        collectNotes(g.Notes),
+			MappingNotes: convertMappingNotes(g.MappingNotes),
 		},
-		References: extractReferences(c.ID, c.References),
+		References: extractReferences(g.ID, g.References),
 		DataSource: sourceTypes.Source{
 			ID:   sourceTypes.MitreCWE,
 			Raws: r.Paths(),
