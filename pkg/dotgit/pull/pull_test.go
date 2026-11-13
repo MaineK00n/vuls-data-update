@@ -17,8 +17,6 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/go-git/go-git/v5"
-	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
 	"github.com/google/go-containerregistry/pkg/registry"
@@ -28,7 +26,9 @@ import (
 	"oras.land/oras-go/v2"
 	"oras.land/oras-go/v2/registry/remote"
 
+	"github.com/MaineK00n/vuls-data-update/pkg/dotgit/contains"
 	"github.com/MaineK00n/vuls-data-update/pkg/dotgit/pull"
+	"github.com/MaineK00n/vuls-data-update/pkg/dotgit/util"
 )
 
 func TestPull(t *testing.T) {
@@ -476,10 +476,18 @@ func TestPullWithoutGit(t *testing.T) {
 
 // TestNotFound checks which errors of contains notFound takes to say that the
 // target is not in the repository, and which to say that the check could not
-// be made.
+// be made. The errors, and so the exit statuses of git, come from contains on
+// the fixture where they can.
 func TestNotFound(t *testing.T) {
-	exit := func(code int) error {
-		return exec.Command("sh", "-c", fmt.Sprintf("exit %d", code)).Run()
+	f, err := os.Open(filepath.Join("testdata", "fixtures", "vuls-data-raw-test.tar.zst"))
+	if err != nil {
+		t.Fatalf("open fixture. err: %v", err)
+	}
+	defer f.Close()
+
+	dir := filepath.Join(t.TempDir(), "vuls-data-raw-test")
+	if err := util.ExtractDotgitTarZst(f, dir); err != nil {
+		t.Fatalf("extract fixture. err: %v", err)
 	}
 
 	tests := []struct {
@@ -490,50 +498,54 @@ func TestNotFound(t *testing.T) {
 	}{
 		{
 			name:         "no error, native git",
+			err:          contains.Contains(dir, "v0.0.1", contains.WithUseNativeGit(true)),
 			useNativeGit: true,
 		},
 		{
 			name: "no error, go-git",
+			err:  contains.Contains(dir, "v0.0.1", contains.WithUseNativeGit(false)),
 		},
 		{
 			name:         "exit status 1, a hash cat-file -e does not have, native git",
-			err:          errors.Wrap(exit(1), "check 9d3d5d486d4c9414321a2df56f2e007c4c2c8fac exists"),
+			err:          contains.Contains(dir, "9d3d5d486d4c9414321a2df56f2e007c4c2c8fac", contains.WithUseNativeGit(true)),
 			useNativeGit: true,
 			want:         true,
 		},
 		{
 			name:         "exit status 128, a name cat-file -e cannot resolve, native git",
-			err:          errors.Wrap(exit(128), "check v0.0.2 exists"),
+			err:          contains.Contains(dir, "v0.0.2", contains.WithUseNativeGit(true)),
 			useNativeGit: true,
 			want:         true,
 		},
 		{
-			name:         "exit status 129, a usage error, native git",
-			err:          errors.Wrap(exit(129), "check -b exists"),
+			name:         "exit status 129, an option cat-file -e does not know, native git",
+			err:          contains.Contains(dir, "-b", contains.WithUseNativeGit(true)),
 			useNativeGit: true,
 		},
 		{
+			// What os/exec returns when git is not on PATH. TestPullWithoutGit
+			// brings it about through Pull.
 			name:         "git cannot be run, native git",
 			err:          errors.Wrap(&exec.Error{Name: "git", Err: exec.ErrNotFound}, "check 9d3d5d486d4c9414321a2df56f2e007c4c2c8fac exists"),
 			useNativeGit: true,
 		},
 		{
 			name: "reference not found, go-git",
-			err:  errors.Wrap(plumbing.ErrReferenceNotFound, "resolve v0.0.2"),
+			err:  contains.Contains(dir, "v0.0.2", contains.WithUseNativeGit(false)),
 			want: true,
 		},
 		{
-			name: "another error, as for a name the revision parser rejects, go-git",
-			err:  errors.Wrap(errors.New("Revision invalid : reference must be defined once at the beginning"), "resolve v9@9"),
+			name: "a name the revision parser rejects, go-git",
+			err:  contains.Contains(dir, "v9@9", contains.WithUseNativeGit(false)),
 			want: true,
 		},
 		{
 			name: "repository does not exist, go-git",
-			err:  errors.Wrap(git.ErrRepositoryNotExists, "open vuls-data-raw-test"),
+			err:  contains.Contains(t.TempDir(), "v0.0.1", contains.WithUseNativeGit(false)),
 		},
 		{
 			name: "repository cannot be read, go-git",
-			err:  errors.Wrap(&fs.PathError{Op: "open", Path: "vuls-data-raw-test/.git", Err: fs.ErrPermission}, "open vuls-data-raw-test"),
+			err:  errors.Wrap(&fs.PathError{Op: "open", Path: filepath.Join(dir, ".git"), Err: fs.ErrPermission}, "open vuls-data-raw-test"),
 		},
 	}
 	for _, tt := range tests {
