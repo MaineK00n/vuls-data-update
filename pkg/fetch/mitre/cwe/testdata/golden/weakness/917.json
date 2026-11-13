@@ -9,30 +9,48 @@
 		{
 			"reference": "CVE-2021-44228",
 			"description": "Product does not neutralize ${xyz} style expressions, allowing remote code execution. (log4shell vulnerability in log4j)",
-			"link": "https://www.cve.org/CVERecord?id=CVE-2021-44228"
+			"link": "https://www.cve.org/CVERecord?id=CVE-2021-44228",
+			"rationale": [
+				"Influential/Newsworthy"
+			]
 		}
 	],
 	"content_history": {
-		"submission": {
-			"submission_name": "CWE Content Team",
-			"submission_organization": "MITRE",
-			"submission_date": "2013-02-15"
-		},
+		"submission": [
+			{
+				"submission_name": [
+					"CWE Content Team"
+				],
+				"submission_organization": "MITRE",
+				"submission_date": "2013-02-15",
+				"submission_version": "2.4",
+				"submission_release_date": "2013-02-21"
+			}
+		],
 		"modification": [
 			{
 				"modification_name": "CWE Content Team",
 				"modification_organization": "MITRE",
 				"modification_date": "2017-11-08",
+				"modification_version": "3.0",
+				"modification_release_date": "2017-11-08",
 				"modification_comment": "updated References"
 			}
 		]
 	},
 	"alternate_terms": [
 		{
-			"term": "EL Injection"
+			"term": "EL Injection",
+			"role": [
+				"Acronym"
+			]
 		},
 		{
-			"term": "Expression Language Injection"
+			"term": "Expression Language Injection",
+			"role": [
+				"Common-Name",
+				"Attack-Focused"
+			]
 		}
 	],
 	"mapping_notes": {

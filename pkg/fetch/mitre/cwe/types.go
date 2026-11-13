@@ -1,6 +1,12 @@
 package cwe
 
-import "strings"
+import (
+	"encoding/json/jsontext"
+	"encoding/json/v2"
+	"strings"
+
+	"github.com/pkg/errors"
+)
 
 // structuredText decodes an element of the schema's StructuredTextType, whose
 // content is either plain text or XHTML. Decoded into a plain string, such an
@@ -25,6 +31,35 @@ func (t structuredText) String() string {
 	return t.CharData
 }
 
+// OneOrMany is a list that also decodes from a single JSON value. Schema v8.0
+// (CWE 5.0) made a few elements repeatable, and raw files written before they
+// were read as lists hold a single value there; the extractor still reads
+// such files until the next fetch rewrites them.
+type OneOrMany[T any] []T
+
+func (o *OneOrMany[T]) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	switch dec.PeekKind() {
+	case 'n':
+		if _, err := dec.ReadToken(); err != nil {
+			return errors.Wrap(err, "read null")
+		}
+		*o = nil
+	case '[':
+		var l []T
+		if err := json.UnmarshalDecode(dec, &l); err != nil {
+			return errors.Wrap(err, "decode list")
+		}
+		*o = l
+	default:
+		var v T
+		if err := json.UnmarshalDecode(dec, &v); err != nil {
+			return errors.Wrap(err, "decode single value")
+		}
+		*o = OneOrMany[T]{v}
+	}
+	return nil
+}
+
 // CWE 5.0 (schema v8.0) renamed Categories>Category to Groupings>Grouping.
 // They are still written as categories, so the raw layout is unchanged.
 type weaknessCatalog struct {
@@ -45,22 +80,26 @@ type weakness struct {
 	ExtendedDescription struct {
 		Text string `xml:",innerxml"`
 	} `xml:"Extended_Description"`
+	TechnicalNuance     structuredText      `xml:"Technical_Nuance"`
+	Dimensions          []Dimension         `xml:"Dimensions>Dimension"`
 	RelatedWeaknesses   []RelatedWeakness   `xml:"Related_Weaknesses>Related_Weakness"`
-	ApplicablePlatforms ApplicablePlatforms `xml:"Applicable_Platforms"`
+	ApplicablePlatforms applicablePlatforms `xml:"Applicable_Platforms"`
 	BackgroundDetails   []struct {
 		Text string `xml:",innerxml"`
 	} `xml:"Background_Details>Background_Detail"`
 	ModesOfIntroduction []struct {
-		Phase string `xml:"Phase"`
-		Note  []struct {
+		Phase       []string      `xml:"Phase"`
+		CustomPhase []CustomPhase `xml:"Custom_Phase"`
+		Note        []struct {
 			Text string `xml:",innerxml"`
 		} `xml:"Note"`
 	} `xml:"Modes_Of_Introduction>Introduction"`
 	LikelihoodOfExploit  string        `xml:"Likelihood_Of_Exploit"`
 	CommonConsequences   []consequence `xml:"Common_Consequences>Consequence"`
 	PotentialMitigations []struct {
-		MitigationID string   `xml:"Mitigation_ID,attr"`
-		Phase        []string `xml:"Phase"`
+		MitigationID string        `xml:"Mitigation_ID,attr"`
+		Phase        []string      `xml:"Phase"`
+		CustomPhase  []CustomPhase `xml:"Custom_Phase"`
 		Description  []struct {
 			Text string `xml:",innerxml"`
 		} `xml:"Description"`
@@ -74,42 +113,20 @@ type weakness struct {
 		ExternalReferenceID string `xml:"External_Reference_ID,attr" json:"external_reference_id,omitempty"`
 		Section             string `xml:"Section,attr" json:"section,omitempty"`
 	} `xml:"References>Reference"`
-	ContentHistory struct {
-		Submission struct {
-			SubmissionName         string `xml:"Submission_Name"`
-			SubmissionOrganization string `xml:"Submission_Organization"`
-			SubmissionDate         string `xml:"Submission_Date"`
-			SubmissionComment      string `xml:"Submission_Comment"`
-		} `xml:"Submission"`
-		Modification []struct {
-			ModificationName         string `xml:"Modification_Name"`
-			ModificationOrganization string `xml:"Modification_Organization"`
-			ModificationDate         string `xml:"Modification_Date"`
-			ModificationComment      string `xml:"Modification_Comment"`
-			ModificationImportance   string `xml:"Modification_Importance"`
-		} `xml:"Modification"`
-		PreviousEntryName []struct {
-			Text string `xml:",chardata"`
-			Date string `xml:"Date,attr"`
-		} `xml:"Previous_Entry_Name"`
-		Contribution []struct {
-			Type                     string `xml:"Type,attr"`
-			ContributionName         string `xml:"Contribution_Name"`
-			ContributionOrganization string `xml:"Contribution_Organization"`
-			ContributionDate         string `xml:"Contribution_Date"`
-			ContributionComment      string `xml:"Contribution_Comment"`
-		} `xml:"Contribution"`
-	} `xml:"Content_History"`
+	ContentHistory       contentHistory       `xml:"Content_History"`
 	WeaknessOrdinalities []WeaknessOrdinality `xml:"Weakness_Ordinalities>Weakness_Ordinality"`
 	AlternateTerms       []struct {
-		Term        string `xml:"Term"`
+		Term        string   `xml:"Term"`
+		Role        []string `xml:"Role"`
 		Description struct {
 			Text string `xml:",innerxml"`
 		} `xml:"Description"`
 	} `xml:"Alternate_Terms>Alternate_Term"`
 	DetectionMethods []struct {
-		DetectionMethodID string `xml:"Detection_Method_ID,attr"`
-		Method            string `xml:"Method"`
+		DetectionMethodID string        `xml:"Detection_Method_ID,attr"`
+		Method            string        `xml:"Method"`
+		Phase             []string      `xml:"Phase"`
+		CustomPhase       []CustomPhase `xml:"Custom_Phase"`
 		Description       struct {
 			Text string `xml:",innerxml"`
 		} `xml:"Description"`
@@ -131,34 +148,9 @@ type category struct {
 	Name           string         `xml:"Name,attr"`
 	Status         string         `xml:"Status,attr"`
 	Summary        structuredText `xml:"Summary"`
-	ContentHistory struct {
-		Submission struct {
-			SubmissionName         string `xml:"Submission_Name"`
-			SubmissionOrganization string `xml:"Submission_Organization"`
-			SubmissionDate         string `xml:"Submission_Date"`
-			SubmissionComment      string `xml:"Submission_Comment"`
-		} `xml:"Submission"`
-		Modification []struct {
-			ModificationName         string `xml:"Modification_Name"`
-			ModificationOrganization string `xml:"Modification_Organization"`
-			ModificationDate         string `xml:"Modification_Date"`
-			ModificationComment      string `xml:"Modification_Comment"`
-			ModificationImportance   string `xml:"Modification_Importance"`
-		} `xml:"Modification"`
-		PreviousEntryName []struct {
-			Text string `xml:",chardata"`
-			Date string `xml:"Date,attr"`
-		} `xml:"Previous_Entry_Name"`
-		Contribution []struct {
-			Type                     string `xml:"Type,attr"`
-			ContributionName         string `xml:"Contribution_Name"`
-			ContributionOrganization string `xml:"Contribution_Organization"`
-			ContributionDate         string `xml:"Contribution_Date"`
-			ContributionComment      string `xml:"Contribution_Comment"`
-		} `xml:"Contribution"`
-	} `xml:"Content_History"`
-	Relationships []HasMember `xml:"Relationships>Has_Member"`
-	References    []struct {
+	ContentHistory contentHistory `xml:"Content_History"`
+	Relationships  []HasMember    `xml:"Relationships>Has_Member"`
+	References     []struct {
 		ExternalReferenceID string `xml:"External_Reference_ID,attr" json:"external_reference_id,omitempty"`
 		Section             string `xml:"Section,attr" json:"section,omitempty"`
 	} `xml:"References>Reference"`
@@ -176,38 +168,51 @@ type view struct {
 	Audience       []Audience     `xml:"Audience>Stakeholder"`
 	Members        []HasMember    `xml:"Members>Has_Member"`
 	Notes          []Note         `xml:"Notes>Note"`
-	ContentHistory struct {
-		Submission struct {
-			SubmissionName         string `xml:"Submission_Name"`
-			SubmissionOrganization string `xml:"Submission_Organization"`
-			SubmissionDate         string `xml:"Submission_Date"`
-			SubmissionComment      string `xml:"Submission_Comment"`
-		} `xml:"Submission"`
-		Modification []struct {
-			ModificationName         string `xml:"Modification_Name"`
-			ModificationOrganization string `xml:"Modification_Organization"`
-			ModificationDate         string `xml:"Modification_Date"`
-			ModificationComment      string `xml:"Modification_Comment"`
-			ModificationImportance   string `xml:"Modification_Importance"`
-		} `xml:"Modification"`
-		PreviousEntryName []struct {
-			Text string `xml:",chardata"`
-			Date string `xml:"Date,attr"`
-		} `xml:"Previous_Entry_Name"`
-		Contribution []struct {
-			Type                     string `xml:"Type,attr"`
-			ContributionName         string `xml:"Contribution_Name"`
-			ContributionOrganization string `xml:"Contribution_Organization"`
-			ContributionDate         string `xml:"Contribution_Date"`
-			ContributionComment      string `xml:"Contribution_Comment"`
-		} `xml:"Contribution"`
-	} `xml:"Content_History"`
-	References []struct {
+	ContentHistory contentHistory `xml:"Content_History"`
+	References     []struct {
 		ExternalReferenceID string `xml:"External_Reference_ID,attr" json:"external_reference_id,omitempty"`
 		Section             string `xml:"Section,attr" json:"section,omitempty"`
 	} `xml:"References>Reference"`
 	Filter       string       `xml:"Filter"`
 	MappingNotes mappingNotes `xml:"Mapping_Notes"`
+}
+
+// contentHistory is the ContentHistoryType shared by weaknesses, categories
+// and views. Since schema v8.0 an entry may have several submissions, a
+// submission or contribution several names, and every record the CWE version
+// and release date it first appeared in.
+type contentHistory struct {
+	Submission []struct {
+		SubmissionName         []string `xml:"Submission_Name"`
+		SubmissionOrganization string   `xml:"Submission_Organization"`
+		SubmissionDate         string   `xml:"Submission_Date"`
+		SubmissionVersion      string   `xml:"Submission_Version"`
+		SubmissionReleaseDate  string   `xml:"Submission_ReleaseDate"`
+		SubmissionComment      string   `xml:"Submission_Comment"`
+	} `xml:"Submission"`
+	Modification []struct {
+		ModificationName         string `xml:"Modification_Name"`
+		ModificationOrganization string `xml:"Modification_Organization"`
+		ModificationDate         string `xml:"Modification_Date"`
+		ModificationVersion      string `xml:"Modification_Version"`
+		ModificationReleaseDate  string `xml:"Modification_ReleaseDate"`
+		ModificationComment      string `xml:"Modification_Comment"`
+		ModificationImportance   string `xml:"Modification_Importance"`
+	} `xml:"Modification"`
+	PreviousEntryName []struct {
+		Text    string `xml:",chardata"`
+		Date    string `xml:"Date,attr"`
+		Version string `xml:"Version,attr"`
+	} `xml:"Previous_Entry_Name"`
+	Contribution []struct {
+		Type                     string   `xml:"Type,attr"`
+		ContributionName         []string `xml:"Contribution_Name"`
+		ContributionOrganization string   `xml:"Contribution_Organization"`
+		ContributionDate         string   `xml:"Contribution_Date"`
+		ContributionVersion      string   `xml:"Contribution_Version"`
+		ContributionReleaseDate  string   `xml:"Contribution_ReleaseDate"`
+		ContributionComment      string   `xml:"Contribution_Comment"`
+	} `xml:"Contribution"`
 }
 
 type mappingNotes struct {
@@ -223,6 +228,20 @@ type mappingNotes struct {
 	} `xml:"Suggestions>Suggestion"`
 }
 
+type applicablePlatforms struct {
+	Language        []applicablePlatform `xml:"Language"`
+	Technology      []applicablePlatform `xml:"Technology"`
+	OperatingSystem []applicablePlatform `xml:"Operating_System"`
+	Architecture    []applicablePlatform `xml:"Architecture"`
+}
+
+type applicablePlatform struct {
+	Class      string         `xml:"Class,attr"`
+	Prevalence string         `xml:"Prevalence,attr"`
+	Name       string         `xml:"Name,attr"`
+	Note       structuredText `xml:"Note"`
+}
+
 type consequence struct {
 	Scope      []string       `xml:"Scope"`
 	Impact     []string       `xml:"Impact"`
@@ -234,6 +253,7 @@ type observedExample struct {
 	Reference   string         `xml:"Reference"`
 	Description structuredText `xml:"Description"`
 	Link        string         `xml:"Link"`
+	Rationale   []string       `xml:"Rationale"`
 }
 
 type Weakness struct {
@@ -245,6 +265,8 @@ type Weakness struct {
 	Diagram               string                 `json:"diagram,omitempty"`
 	Description           string                 `json:"description,omitempty"`
 	ExtendedDescription   string                 `json:"extended_description,omitempty"`
+	TechnicalNuance       string                 `json:"technical_nuance,omitempty"`
+	Dimensions            []Dimension            `json:"dimensions,omitempty"`
 	RelatedWeaknesses     []RelatedWeakness      `json:"related_weaknesses,omitempty"`
 	ApplicablePlatforms   ApplicablePlatforms    `json:"applicable_platforms,omitzero"`
 	BackgroundDetails     []string               `json:"background_details,omitempty"`
@@ -284,30 +306,47 @@ type Suggestion struct {
 	Comment string `json:"comment,omitempty"`
 }
 
+// Dimension identifies what a CWE entry, or a relationship, is based on
+// (schema v8.0), e.g. Type "Behavior-Type" with "Timing".
+type Dimension struct {
+	Type  string `xml:"Type,attr" json:"type,omitempty"`
+	Value string `xml:",chardata" json:"value,omitempty"`
+}
+
+// CustomPhase is a lifecycle phase of a domain with a lifecycle of its own
+// (schema v8.0), e.g. Domain "AI" with "Training".
+type CustomPhase struct {
+	Domain string `xml:"Domain,attr" json:"domain,omitempty"`
+	Phase  string `xml:",chardata" json:"phase,omitempty"`
+}
+
 type RelatedWeakness struct {
-	Nature  string `xml:"Nature,attr" json:"nature,omitempty"`
-	CWEID   string `xml:"CWE_ID,attr" json:"cweid,omitempty"`
-	ViewID  string `xml:"View_ID,attr" json:"view_id,omitempty"`
-	Ordinal string `xml:"Ordinal,attr" json:"ordinal,omitempty"`
-	ChainID string `xml:"Chain_ID,attr" json:"chain_id,omitempty"`
+	Nature     string      `xml:"Nature,attr" json:"nature,omitempty"`
+	CWEID      string      `xml:"CWE_ID,attr" json:"cweid,omitempty"`
+	ViewID     string      `xml:"View_ID,attr" json:"view_id,omitempty"`
+	Ordinal    string      `xml:"Ordinal,attr" json:"ordinal,omitempty"`
+	ChainID    string      `xml:"Chain_ID,attr" json:"chain_id,omitempty"`
+	Dimensions []Dimension `xml:"Dimensions>Dimension" json:"dimensions,omitempty"`
 }
 
 type ApplicablePlatforms struct {
-	Language        []ApplicablePlatform `xml:"Language" json:"language,omitempty"`
-	Technology      []ApplicablePlatform `xml:"Technology" json:"technology,omitempty"`
-	OperatingSystem []ApplicablePlatform `xml:"Operating_System" json:"operating_system,omitempty"`
-	Architecture    []ApplicablePlatform `xml:"Architecture" json:"architecture,omitempty"`
+	Language        []ApplicablePlatform `json:"language,omitempty"`
+	Technology      []ApplicablePlatform `json:"technology,omitempty"`
+	OperatingSystem []ApplicablePlatform `json:"operating_system,omitempty"`
+	Architecture    []ApplicablePlatform `json:"architecture,omitempty"`
 }
 
 type ApplicablePlatform struct {
-	Class      string `xml:"Class,attr" json:"class,omitempty"`
-	Prevalence string `xml:"Prevalence,attr" json:"prevalence,omitempty"`
-	Name       string `xml:"Name,attr" json:"name,omitempty"`
+	Class      string `json:"class,omitempty"`
+	Prevalence string `json:"prevalence,omitempty"`
+	Name       string `json:"name,omitempty"`
+	Note       string `json:"note,omitempty"`
 }
 
 type ModesOfIntroduction struct {
-	Phase string   `json:"phase,omitempty"`
-	Note  []string `json:"note,omitempty"`
+	Phase       OneOrMany[string] `json:"phase,omitempty"`
+	CustomPhase []CustomPhase     `json:"custom_phase,omitempty"`
+	Note        []string          `json:"note,omitempty"`
 }
 
 type CommonConsequence struct {
@@ -318,12 +357,13 @@ type CommonConsequence struct {
 }
 
 type PotentialMitigation struct {
-	MitigationID       string   `json:"mitigation_id,omitempty"`
-	Phase              []string `json:"phase,omitempty"`
-	Description        []string `json:"description,omitempty"`
-	Effectiveness      string   `json:"effectiveness,omitempty"`
-	EffectivenessNotes string   `json:"effectiveness_notes,omitempty"`
-	Strategy           string   `json:"strategy,omitempty"`
+	MitigationID       string        `json:"mitigation_id,omitempty"`
+	Phase              []string      `json:"phase,omitempty"`
+	CustomPhase        []CustomPhase `json:"custom_phase,omitempty"`
+	Description        []string      `json:"description,omitempty"`
+	Effectiveness      string        `json:"effectiveness,omitempty"`
+	EffectivenessNotes string        `json:"effectiveness_notes,omitempty"`
+	Strategy           string        `json:"strategy,omitempty"`
 }
 
 type DemonstrativeExample struct {
@@ -332,9 +372,10 @@ type DemonstrativeExample struct {
 }
 
 type ObservedExample struct {
-	Reference   string `json:"reference,omitempty"`
-	Description string `json:"description,omitempty"`
-	Link        string `json:"link,omitempty"`
+	Reference   string   `json:"reference,omitempty"`
+	Description string   `json:"description,omitempty"`
+	Link        string   `json:"link,omitempty"`
+	Rationale   []string `json:"rationale,omitempty"`
 }
 
 type Reference struct {
@@ -343,38 +384,45 @@ type Reference struct {
 }
 
 type ContentHistory struct {
-	Submission        Submission          `json:"submission,omitzero"`
-	Modification      []Modification      ` json:"modification,omitempty"`
-	PreviousEntryName []PreviousEntryName ` json:"previous_entry_name,omitempty"`
-	Contribution      []Contribution      `json:"contribution,omitempty"`
+	Submission        OneOrMany[Submission] `json:"submission,omitempty"`
+	Modification      []Modification        `json:"modification,omitempty"`
+	PreviousEntryName []PreviousEntryName   `json:"previous_entry_name,omitempty"`
+	Contribution      []Contribution        `json:"contribution,omitempty"`
 }
 
 type Submission struct {
-	SubmissionName         string `json:"submission_name,omitempty"`
-	SubmissionOrganization string `json:"submission_organization,omitempty"`
-	SubmissionDate         string `json:"submission_date,omitempty"`
-	SubmissionComment      string `json:"submission_comment,omitempty"`
+	SubmissionName         OneOrMany[string] `json:"submission_name,omitempty"`
+	SubmissionOrganization string            `json:"submission_organization,omitempty"`
+	SubmissionDate         string            `json:"submission_date,omitempty"`
+	SubmissionVersion      string            `json:"submission_version,omitempty"`
+	SubmissionReleaseDate  string            `json:"submission_release_date,omitempty"`
+	SubmissionComment      string            `json:"submission_comment,omitempty"`
 }
 
 type Modification struct {
 	ModificationName         string `json:"modification_name,omitempty"`
 	ModificationOrganization string `json:"modification_organization,omitempty"`
 	ModificationDate         string `json:"modification_date,omitempty"`
+	ModificationVersion      string `json:"modification_version,omitempty"`
+	ModificationReleaseDate  string `json:"modification_release_date,omitempty"`
 	ModificationComment      string `json:"modification_comment,omitempty"`
 	ModificationImportance   string `json:"modification_importance,omitempty"`
 }
 
 type PreviousEntryName struct {
-	Text string `json:"text,omitempty"`
-	Date string `json:"date,omitempty"`
+	Text    string `json:"text,omitempty"`
+	Date    string `json:"date,omitempty"`
+	Version string `json:"version,omitempty"`
 }
 
 type Contribution struct {
-	Type                     string `json:"type,omitempty"`
-	ContributionName         string `json:"contribution_name,omitempty"`
-	ContributionOrganization string `json:"contribution_organization,omitempty"`
-	ContributionDate         string `json:"contribution_date,omitempty"`
-	ContributionComment      string `json:"contribution_comment,omitempty"`
+	Type                     string            `json:"type,omitempty"`
+	ContributionName         OneOrMany[string] `json:"contribution_name,omitempty"`
+	ContributionOrganization string            `json:"contribution_organization,omitempty"`
+	ContributionDate         string            `json:"contribution_date,omitempty"`
+	ContributionVersion      string            `json:"contribution_version,omitempty"`
+	ContributionReleaseDate  string            `json:"contribution_release_date,omitempty"`
+	ContributionComment      string            `json:"contribution_comment,omitempty"`
 }
 
 type WeaknessOrdinality struct {
@@ -383,16 +431,19 @@ type WeaknessOrdinality struct {
 }
 
 type AlternateTerm struct {
-	Term        string `json:"term,omitempty"`
-	Description string `json:"description,omitempty"`
+	Term        string   `json:"term,omitempty"`
+	Role        []string `json:"role,omitempty"`
+	Description string   `json:"description,omitempty"`
 }
 
 type DetectionMethods struct {
-	DetectionMethodID  string `json:"detection_method_id,omitempty"`
-	Method             string `json:"method,omitempty"`
-	Description        string `json:"description,omitempty"`
-	Effectiveness      string `json:"effectiveness,omitempty"`
-	EffectivenessNotes string `json:"effectiveness_notes,omitempty"`
+	DetectionMethodID  string        `json:"detection_method_id,omitempty"`
+	Method             string        `json:"method,omitempty"`
+	Phase              []string      `json:"phase,omitempty"`
+	CustomPhase        []CustomPhase `json:"custom_phase,omitempty"`
+	Description        string        `json:"description,omitempty"`
+	Effectiveness      string        `json:"effectiveness,omitempty"`
+	EffectivenessNotes string        `json:"effectiveness_notes,omitempty"`
 }
 
 type TaxonomyMappings struct {
@@ -403,8 +454,10 @@ type TaxonomyMappings struct {
 }
 
 type Note struct {
-	Type string `xml:"Type,attr" json:"type,omitempty"`
-	Text string `xml:",innerxml" json:"text,omitempty"`
+	Type        string `xml:"Type,attr" json:"type,omitempty"`
+	Version     string `xml:"Version,attr" json:"version,omitempty"`
+	ReleaseDate string `xml:"ReleaseDate,attr" json:"release_date,omitempty"`
+	Text        string `xml:",innerxml" json:"text,omitempty"`
 }
 
 type Category struct {
@@ -421,8 +474,9 @@ type Category struct {
 }
 
 type HasMember struct {
-	CWEID  string `xml:"CWE_ID,attr" json:"cweid,omitempty"`
-	ViewID string `xml:"View_ID,attr" json:"view_id,omitempty"`
+	CWEID      string      `xml:"CWE_ID,attr" json:"cweid,omitempty"`
+	ViewID     string      `xml:"View_ID,attr" json:"view_id,omitempty"`
+	Dimensions []Dimension `xml:"Dimensions>Dimension" json:"dimensions,omitempty"`
 }
 
 type TaxonomyMapping struct {
@@ -452,16 +506,26 @@ type Audience struct {
 	Description string `xml:"Description" json:"description,omitempty"`
 }
 
+// ExternalReference is a reference of the catalog. Alt_URL, Alt_URL_Date,
+// Media_Type, Access_Restrictions and Rationale are not in schema v8.0, but
+// CWE 5.0 has them. Alt_URL and Alt_URL_Date pair up like URL and URL_Date.
+// Media_Type and Rationale repeat, and Access_Restrictions is read as a list
+// as well, since nothing states how often it may appear.
 type ExternalReference struct {
-	ReferenceID      string   `xml:"Reference_ID,attr" json:"reference_id,omitempty"`
-	Author           []string `xml:"Author" json:"author,omitempty"`
-	Title            string   `xml:"Title" json:"title,omitempty"`
-	URL              string   `xml:"URL" json:"url,omitempty"`
-	PublicationYear  string   `xml:"Publication_Year" json:"publication_year,omitempty"`
-	PublicationMonth string   `xml:"Publication_Month" json:"publication_month,omitempty"`
-	PublicationDay   string   `xml:"Publication_Day" json:"publication_day,omitempty"`
-	Publication      string   `xml:"Publication" json:"publication,omitempty"`
-	Publisher        string   `xml:"Publisher" json:"publisher,omitempty"`
-	Edition          string   `xml:"Edition" json:"edition,omitempty"`
-	URLDate          string   `xml:"URL_Date" json:"url_date,omitempty"`
+	ReferenceID        string   `xml:"Reference_ID,attr" json:"reference_id,omitempty"`
+	Author             []string `xml:"Author" json:"author,omitempty"`
+	Title              string   `xml:"Title" json:"title,omitempty"`
+	URL                string   `xml:"URL" json:"url,omitempty"`
+	PublicationYear    string   `xml:"Publication_Year" json:"publication_year,omitempty"`
+	PublicationMonth   string   `xml:"Publication_Month" json:"publication_month,omitempty"`
+	PublicationDay     string   `xml:"Publication_Day" json:"publication_day,omitempty"`
+	Publication        string   `xml:"Publication" json:"publication,omitempty"`
+	Publisher          string   `xml:"Publisher" json:"publisher,omitempty"`
+	Edition            string   `xml:"Edition" json:"edition,omitempty"`
+	URLDate            string   `xml:"URL_Date" json:"url_date,omitempty"`
+	AltURL             string   `xml:"Alt_URL" json:"alt_url,omitempty"`
+	AltURLDate         string   `xml:"Alt_URL_Date" json:"alt_url_date,omitempty"`
+	MediaType          []string `xml:"Media_Type" json:"media_type,omitempty"`
+	AccessRestrictions []string `xml:"Access_Restrictions" json:"access_restrictions,omitempty"`
+	Rationale          []string `xml:"Rationale" json:"rationale,omitempty"`
 }

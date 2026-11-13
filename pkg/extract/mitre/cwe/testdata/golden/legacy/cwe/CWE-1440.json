@@ -21,7 +21,7 @@
 	"data_source": {
 		"id": "mitre-cwe",
 		"raws": [
-			"fixtures/category/1440.json"
+			"legacy/category/1440.json"
 		]
 	}
 }

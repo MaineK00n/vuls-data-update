@@ -22,7 +22,7 @@
 	"data_source": {
 		"id": "mitre-cwe",
 		"raws": [
-			"fixtures/view/1344.json"
+			"legacy/view/1344.json"
 		]
 	}
 }

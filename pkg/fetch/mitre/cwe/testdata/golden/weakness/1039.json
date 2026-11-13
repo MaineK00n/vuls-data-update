@@ -5,17 +5,26 @@
 	"structure": "Simple",
 	"status": "Incomplete",
 	"description": "The product uses an automated mechanism such as machine learning to recognize complex data inputs (e.g. image or audio) as a particular concept or category, but it does not properly detect or handle inputs that have been modified or constructed in a way that causes the mechanism to detect a different, incorrect concept.",
+	"technical_nuance": "\n            <xhtml:p>Targeted technologies include, but are not necessarily limited to:</xhtml:p>\n            <xhtml:ul>\n               <xhtml:li>automated speech recognition</xhtml:li>\n               <xhtml:li>automated image recognition</xhtml:li>\n               <xhtml:li>automated cyber defense</xhtml:li>\n               <xhtml:li>chatbots, LLMs, generative AI</xhtml:li>\n            </xhtml:ul>\n         ",
 	"content_history": {
-		"submission": {
-			"submission_name": "CWE Content Team",
-			"submission_organization": "MITRE",
-			"submission_date": "2018-03-12"
-		},
+		"submission": [
+			{
+				"submission_name": [
+					"CWE Content Team"
+				],
+				"submission_organization": "MITRE",
+				"submission_date": "2018-03-12",
+				"submission_version": "3.1",
+				"submission_release_date": "2018-03-29"
+			}
+		],
 		"modification": [
 			{
 				"modification_name": "CWE Content Team",
 				"modification_organization": "MITRE",
 				"modification_date": "2019-06-20",
+				"modification_version": "3.3",
+				"modification_release_date": "2019-06-20",
 				"modification_comment": "updated References"
 			}
 		]
@@ -23,10 +32,22 @@
 	"detection_methods": [
 		{
 			"method": "Dynamic Analysis with Manual Results Interpretation",
+			"phase": [
+				"Testing"
+			],
 			"description": "Use indicators from model performance deviations such as sudden drops in accuracy or unexpected outputs to verify the model."
 		},
 		{
 			"method": "Dynamic Analysis with Manual Results Interpretation",
+			"phase": [
+				"Testing"
+			],
+			"custom_phase": [
+				{
+					"domain": "AI",
+					"phase": "Data Collection"
+				}
+			],
 			"description": "Use indicators from input data collection mechanisms to verify that inputs are statistically within the distribution of the training and test data."
 		},
 		{

@@ -4,16 +4,24 @@
 	"status": "Draft",
 	"summary": "Weaknesses in this category are related to the design and architecture of a system's lockout mechanism. Frequently these deal with scenarios that take effect in case of multiple failed attempts to access a given resource. The weaknesses in this category could lead to a degradation of access to system assets if they are not addressed when designing or implementing a secure architecture.",
 	"content_history": {
-		"submission": {
-			"submission_name": "Joanna C.S. Santos, Mehdi Mirakhorli",
-			"submission_date": "2017-06-22",
-			"submission_comment": "Provided the catalog, Common Architectural Weakness Enumeration (CAWE), and research papers for this view."
-		},
+		"submission": [
+			{
+				"submission_name": [
+					"Joanna C.S. Santos, Mehdi Mirakhorli"
+				],
+				"submission_date": "2017-06-22",
+				"submission_version": "2.12",
+				"submission_release_date": "2017-11-08",
+				"submission_comment": "Provided the catalog, Common Architectural Weakness Enumeration (CAWE), and research papers for this view."
+			}
+		],
 		"modification": [
 			{
 				"modification_name": "CWE Content Team",
 				"modification_organization": "MITRE",
 				"modification_date": "2023-04-27",
+				"modification_version": "4.11",
+				"modification_release_date": "2023-04-27",
 				"modification_comment": "updated Mapping_Notes"
 			}
 		]
@@ -36,7 +44,12 @@
 			"url": "https://ieeexplore.ieee.org/document/7958491",
 			"publication_year": "2017",
 			"publication": "2017 IEEE International Conference on Software Architecture (ICSA)",
-			"url_date": "2026-10-23"
+			"url_date": "2026-10-23",
+			"alt_url": "https://joannacss.com/preprints/icsaw17-preprint.pdf",
+			"alt_url_date": "2026-10-23",
+			"access_restrictions": [
+				"Proprietary-Subscription"
+			]
 		},
 		{
 			"section": "pages 69 - 78",
@@ -52,7 +65,12 @@
 			"url": "https://ieeexplore.ieee.org/document/7930201",
 			"publication_year": "2017",
 			"publication": "2017 IEEE International Conference on Software Architecture (ICSA)",
-			"url_date": "2026-10-23"
+			"url_date": "2026-10-23",
+			"alt_url": "https://joannacss.com/preprints/icsa17-preprint.pdf",
+			"alt_url_date": "2026-10-23",
+			"access_restrictions": [
+				"Proprietary-Subscription"
+			]
 		}
 	],
 	"mapping_notes": {
