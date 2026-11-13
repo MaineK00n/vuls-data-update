@@ -7,6 +7,7 @@ import (
 	"log/slog"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
@@ -137,12 +138,21 @@ func Pull(repository string, opts ...Option) error {
 				if _, err := util.Git("-C", filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference), "switch", "--detach", options.checkout); err != nil {
 					// switch reports a commit that is not in the repository
 					// as "unable to read tree", which reads like corruption,
-					// so ask contains whether that is why it failed, and if
-					// so, say that instead. Asking only after a failure lets
-					// every name switch accepts, such as "-" for the previous
-					// branch, reach it as before.
-					if err := contains.Contains(filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference), options.checkout, contains.WithUseNativeGit(true)); err != nil {
-						return notInRepository(err, repository, options.checkout)
+					// so if contains does not find the target either, say so
+					// in front of the error of switch. Asking only after a
+					// failure lets every name switch accepts reach it as
+					// before. contains reads a name as cat-file -e does, so
+					// it is not asked about a name that switch reads
+					// otherwise: one that begins with "-", the previous
+					// branch or an option, or A...B, the merge base of A and
+					// B. For those, the error of switch is all there is.
+					if !strings.HasPrefix(options.checkout, "-") && !strings.Contains(options.checkout, "...") {
+						if err2 := contains.Contains(filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference), options.checkout, contains.WithUseNativeGit(true)); err2 != nil {
+							// err2 says only that cat-file -e did not find
+							// the target. The error of switch says how the
+							// switch failed, so it is the one kept.
+							return notInRepository(errors.Wrapf(err, "switch to %s", options.checkout), repository, options.checkout)
+						}
 					}
 					return errors.Wrapf(err, "switch to %s", options.checkout)
 				}
@@ -256,12 +266,12 @@ func Pull(repository string, opts ...Option) error {
 	return nil
 }
 
-// notInRepository wraps the error of contains for a checkout target, a tag or
-// a commit, that is not in the dotgit pulled from repository. vuls-data-db
-// keeps only the last commits of a dotgit's history, so a commit pinned before
-// it truncated the history is gone from a repository that is otherwise fine.
-// The error of contains, with git's stderr, stays in the chain in case the
-// check failed for another reason.
+// notInRepository wraps err for a checkout target, a tag or a commit, that
+// contains does not find in the dotgit pulled from repository: the error of
+// switch on the native path, and that of contains on the go-git path, where
+// contains is asked before the checkout. vuls-data-db keeps only the last
+// commits of a dotgit's history, so a commit pinned before it truncated the
+// history is gone from a repository that is otherwise fine.
 func notInRepository(err error, repository, checkout string) error {
 	return errors.Wrapf(err, "%s is not in %s, whose history may have been truncated or rewritten", checkout, repository)
 }
