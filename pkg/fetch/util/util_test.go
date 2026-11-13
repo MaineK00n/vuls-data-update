@@ -151,6 +151,221 @@ func TestRemoveAll(t *testing.T) {
 	}
 }
 
+func TestEnsureWritten(t *testing.T) {
+	type args struct {
+		root string
+		opts []util.EnsureOption
+	}
+	tests := []struct {
+		name string
+		args args
+		// entries are created under root before the call, with their parents;
+		// each is a directory when it ends in "/" and a file otherwise. A case
+		// with no entries leaves root itself uncreated.
+		entries []string
+		wantErr bool
+	}{
+		{
+			name: "happy",
+			args: args{
+				root: "happy",
+			},
+			entries: []string{".git/", ".git/HEAD", "2024/CVE-2024-0001.json"},
+		},
+		{
+			// .git is history, not output: a tree holding only it was left
+			// as RemoveAll found it.
+			name: "only .git",
+			args: args{
+				root: "only-git",
+			},
+			entries: []string{".git/", ".git/HEAD"},
+			wantErr: true,
+		},
+		{
+			name: "root missing",
+			args: args{
+				root: "missing",
+			},
+			wantErr: true,
+		},
+		{
+			// A directory is not a file: unpacking or cloning can leave empty
+			// ones behind without writing anything.
+			name: "empty directories only",
+			args: args{
+				root: "empty-dirs",
+			},
+			entries: []string{"2024/", "2025/nested/"},
+			wantErr: true,
+		},
+		{
+			// What RemoveAll kept is no more output than .git is.
+			name: "kept tree ignored",
+			args: args{
+				root: "ignore-kept",
+				opts: []util.EnsureOption{util.WithIgnore(".git", "raw")},
+			},
+			entries: []string{".git/", ".git/HEAD", "raw/", "raw/advisory.json"},
+			wantErr: true,
+		},
+		{
+			// Nor is a file written whatever the fetch got.
+			name: "readme ignored",
+			args: args{
+				root: "ignore-readme",
+				opts: []util.EnsureOption{util.WithIgnore(".git", "README.md")},
+			},
+			entries: []string{".git/", ".git/HEAD", "README.md"},
+			wantErr: true,
+		},
+		{
+			// As in WithKeep, an ignored name is the entry's own name directly
+			// under root: "rawdata" and a nested "raw" are output.
+			name: "ignore is matched by name directly under root",
+			args: args{
+				root: "ignore-exact",
+				opts: []util.EnsureOption{util.WithIgnore(".git", "raw")},
+			},
+			entries: []string{"raw/", "raw/advisory.json", "rawdata/", "nested/raw/advisory.json"},
+		},
+		{
+			// The option states the whole set, so .git counts unless named.
+			name: "ignore replaces the default",
+			args: args{
+				root: "ignore-replaces",
+				opts: []util.EnsureOption{util.WithIgnore("README.md")},
+			},
+			entries: []string{".git/", ".git/HEAD"},
+		},
+		{
+			name: "required sections written",
+			args: args{
+				root: "required",
+				opts: []util.EnsureOption{util.WithRequire("weakness", "category", "view")},
+			},
+			entries: []string{"weakness/79.json", "category/1027.json", "view/1026.json"},
+		},
+		{
+			// The default check passes on the other sections; only naming the
+			// section catches the one that stopped being written.
+			name: "required section missing",
+			args: args{
+				root: "required-missing",
+				opts: []util.EnsureOption{util.WithRequire("weakness", "category", "view")},
+			},
+			entries: []string{"weakness/79.json", "view/1026.json"},
+			wantErr: true,
+		},
+		{
+			name: "required section empty",
+			args: args{
+				root: "required-empty",
+				opts: []util.EnsureOption{util.WithRequire("weakness", "category", "view")},
+			},
+			entries: []string{"weakness/79.json", "category/", "view/1026.json"},
+			wantErr: true,
+		},
+		{
+			name: "required path nested and a file",
+			args: args{
+				root: "required-nested",
+				opts: []util.EnsureOption{util.WithRequire(filepath.Join("9", "definitions"), "repository-to-cpe.json")},
+			},
+			entries: []string{"9/definitions/definition.json", "repository-to-cpe.json"},
+		},
+		{
+			name: "required path outside root",
+			args: args{
+				root: "required-outside",
+				opts: []util.EnsureOption{util.WithRequire(filepath.Join("..", "outside"))},
+			},
+			entries: []string{"weakness/79.json"},
+			wantErr: true,
+		},
+		{
+			// A run that is one part of a whole can rightly fetch nothing.
+			name: "empty allowed",
+			args: args{
+				root: "allow-empty",
+				opts: []util.EnsureOption{util.WithAllowEmpty(true)},
+			},
+			entries: []string{".git/", ".git/HEAD"},
+		},
+		{
+			name: "empty allowed, root missing",
+			args: args{
+				root: "allow-empty-missing",
+				opts: []util.EnsureOption{util.WithAllowEmpty(true)},
+			},
+		},
+		{
+			// Nothing written passes whatever is required...
+			name: "empty allowed over required sections",
+			args: args{
+				root: "allow-empty-required",
+				opts: []util.EnsureOption{util.WithAllowEmpty(true), util.WithRequire("weakness", "category", "view")},
+			},
+			entries: []string{".git/", ".git/HEAD"},
+		},
+		{
+			// ...but something written is held to them: fetching part of what
+			// should have been fetched is not fetching nothing.
+			name: "empty allowed, required section missing",
+			args: args{
+				root: "allow-empty-partial",
+				opts: []util.EnsureOption{util.WithAllowEmpty(true), util.WithRequire("weakness", "category", "view")},
+			},
+			entries: []string{"weakness/79.json", "view/1026.json"},
+			wantErr: true,
+		},
+		{
+			name: "empty not allowed",
+			args: args{
+				root: "disallow-empty",
+				opts: []util.EnsureOption{util.WithAllowEmpty(false)},
+			},
+			entries: []string{".git/", ".git/HEAD"},
+			wantErr: true,
+		},
+		{
+			// Repeating the option replaces rather than accumulates.
+			name: "last require wins",
+			args: args{
+				root: "required-last",
+				opts: []util.EnsureOption{util.WithRequire("category"), util.WithRequire("weakness")},
+			},
+			entries: []string{"weakness/79.json"},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			d := filepath.Join(t.TempDir(), tt.args.root)
+
+			for _, e := range tt.entries {
+				if name, ok := strings.CutSuffix(e, "/"); ok {
+					if err := os.MkdirAll(filepath.Join(d, name), 0750); err != nil {
+						t.Fatal("unexpected error:", err)
+					}
+					continue
+				}
+				if err := os.MkdirAll(filepath.Dir(filepath.Join(d, e)), 0750); err != nil {
+					t.Fatal("unexpected error:", err)
+				}
+				f, err := os.Create(filepath.Join(d, e))
+				if err != nil {
+					t.Fatal("unexpected error:", err)
+				}
+				f.Close()
+			}
+
+			if err := util.EnsureWritten(d, tt.args.opts...); (err != nil) != tt.wantErr {
+				t.Errorf("EnsureWritten() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
+
 func TestSplit(t *testing.T) {
 	type args struct {
 		str        string

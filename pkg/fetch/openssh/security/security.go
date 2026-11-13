@@ -222,6 +222,12 @@ func Fetch(opts ...Option) error {
 		return errors.Wrap(err, "write skill")
 	}
 
+	// What this fetch gets is written under origin/. The kept raw/, and the
+	// skill written whatever the fetch got, say nothing about it.
+	if err := util.EnsureWritten(options.dir, util.WithRequire("origin")); err != nil {
+		return errors.Wrapf(err, "ensure written %s", options.dir)
+	}
+
 	return nil
 }
 

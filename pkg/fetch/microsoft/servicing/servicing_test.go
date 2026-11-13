@@ -16,10 +16,11 @@ import (
 
 func TestFetch(t *testing.T) {
 	tests := []struct {
-		name     string
-		kbs      []string
-		golden   string
-		hasError bool
+		name       string
+		kbs        []string
+		allowEmpty bool
+		golden     string
+		hasError   bool
 	}{
 		{
 			// Both KBs belong to one series, so the listing is read once however
@@ -93,10 +94,26 @@ func TestFetch(t *testing.T) {
 		},
 		{
 			// Pre-2018 articles stay on /help/<KB>. There is no series to read,
-			// and that is not a failure.
+			// and that is not a failure: the article is skipped, and the run
+			// writes what the KB asked for alongside brings.
 			name:   "non-servicing article is skipped",
-			kbs:    []string{"KB923414"},
-			golden: "non-servicing",
+			kbs:    []string{"KB923414", "KB5101649"},
+			golden: "os-series",
+		},
+		{
+			// Skipping an article is not a failure, but a run that fetched none
+			// of what it was given wrote nothing, and that is.
+			name:     "only a non-servicing article",
+			kbs:      []string{"KB923414"},
+			hasError: true,
+		},
+		{
+			// Unless the run is one shard of several whose results the caller
+			// merges, where a shard of pre-2018 articles stores nothing.
+			name:       "only a non-servicing article, empty allowed",
+			kbs:        []string{"KB923414"},
+			allowEmpty: true,
+			golden:     "non-servicing",
 		},
 		{
 			name:     "no KB",
@@ -115,6 +132,7 @@ func TestFetch(t *testing.T) {
 				servicing.WithRetry(0),
 				servicing.WithConcurrency(2),
 				servicing.WithWait(0),
+				servicing.WithAllowEmpty(tt.allowEmpty),
 			)
 			switch {
 			case err != nil && !tt.hasError:

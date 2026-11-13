@@ -27,6 +27,7 @@ go test ./...
 - **Sort/Compare**: `Sort()` recursively normalizes nested slices; map key ordering is provided by `json.Deterministic(true)` during encoding
 - **Golden tests**: Fixtures in `testdata/fixtures/`, golden output in `testdata/golden/`. Use `pkg/extract/util/test` helpers
 - **Cleanup**: Use `util.RemoveAll(dir)` — preserves `.git`. Pass `util.WithKeep(...)` to state a different keep set; it replaces the default rather than adding to it, so name `.git` to retain it
+- **Output check**: End a fetcher's `Fetch` with `util.EnsureWritten(dir)`, which fails a fetch that wrote nothing. Leave out with `util.WithIgnore(...)` what is there whatever the fetch got (what `RemoveAll` kept, a README), and name the fixed sections the fetcher writes with `util.WithRequire(...)`. `util.WithAllowEmpty` is only for a run that is one part of a merged whole, through an explicit option
 - **Cache**: `util.CacheDir()` defaults to `<os.UserCacheDir()>/vuls-data-update` (with a temp-dir fallback)
 
 ## Rules & Docs

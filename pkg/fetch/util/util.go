@@ -3,6 +3,7 @@ package util
 import (
 	"encoding/json/jsontext"
 	"encoding/json/v2"
+	"io/fs"
 	"maps"
 	"os"
 	"path/filepath"
@@ -163,6 +164,167 @@ func RemoveAll(root string, opts ...RemoveOption) error {
 		}
 	}
 	return nil
+}
+
+type ensureOption struct {
+	ignores    []string
+	requires   []string
+	allowEmpty bool
+}
+
+type EnsureOption interface {
+	apply(*ensureOption)
+}
+
+type ignoreOption []string
+
+func (o ignoreOption) apply(opts *ensureOption) {
+	opts.ignores = o
+}
+
+// WithIgnore sets which entries directly under root EnsureWritten does not
+// count as written, because they are there whatever the fetch got: .git when
+// the option is not given, a tree RemoveAll was told to keep, and a file the
+// fetcher writes before it has fetched anything, such as a README. Like
+// WithKeep, it states the whole set rather than adding to the default, so name
+// .git alongside the rest, and a name matches an entry's own name.
+//
+// The two sets differ. What RemoveAll keeps is ignored here too, but a README
+// is not kept: it is removed and written again by every fetch, and still says
+// nothing about whether that fetch got anything.
+func WithIgnore(names ...string) EnsureOption {
+	return ignoreOption(names)
+}
+
+type requireOption []string
+
+func (o requireOption) apply(opts *ensureOption) {
+	opts.requires = o
+}
+
+// WithRequire names paths, relative to root, under each of which EnsureWritten
+// requires a file. A fetcher whose data falls into fixed sections names them,
+// so that a section it stops writing fails the fetch: one section going
+// missing still leaves the rest of the tree, which is all the default check
+// asks for.
+//
+// A path can be any depth below root ("origin/mitre", or "9/definitions" built
+// from a version the fetch saw), where WithIgnore matches only names directly
+// under root. A directory requires a file anywhere beneath it, and a path that
+// names a file requires that file. A path that is absolute or leaves root is
+// an error. There are no patterns: a fetcher that needs every version to hold
+// a section names each one. Like WithIgnore, the option states the whole set,
+// and passing it again replaces it.
+func WithRequire(paths ...string) EnsureOption {
+	return requireOption(paths)
+}
+
+type allowEmptyOption bool
+
+func (o allowEmptyOption) apply(opts *ensureOption) {
+	opts.allowEmpty = bool(o)
+}
+
+// WithAllowEmpty lets EnsureWritten pass a root the fetch wrote nothing into.
+// Something written is still held to WithRequire: what is allowed is a run
+// that fetched nothing, not one that fetched part of what it should have.
+//
+// A fetch that wrote nothing has failed, so this is never a fetcher's default.
+// It is for a run that is one part of a whole -- one shard of a list whose
+// shards the caller merges and checks together -- where that part can rightly
+// come to nothing.
+func WithAllowEmpty(allow bool) EnsureOption {
+	return allowEmptyOption(allow)
+}
+
+// EnsureWritten returns an error unless the fetch that just ran wrote into
+// root: unless root holds a file outside what WithIgnore names (.git when the
+// option is not given) and, with WithRequire, a file under each path that
+// names.
+//
+// It is the end of a fetch as RemoveAll is the start. RemoveAll empties root
+// but for what it keeps, so whatever else is there afterwards was written by
+// the fetch -- though not all of it was fetched. What was kept, and a file
+// written whatever the fetch got, would pass for output; WithIgnore names them.
+//
+// A fetch that decodes nothing -- because upstream changed the structure the
+// fetcher decodes, say -- otherwise succeeds and leaves root, or a section of
+// it, empty, and committing that deletes every file of it from the repository
+// the tree is distributed as. Only the absence is checked: what each file
+// holds, and whether as many were written as last time, is not.
+func EnsureWritten(root string, opts ...EnsureOption) error {
+	options := &ensureOption{
+		ignores: []string{".git"},
+	}
+
+	for _, o := range opts {
+		o.apply(options)
+	}
+
+	switch ok, err := holdsFile(root, options.ignores); {
+	case err != nil:
+		return errors.Wrapf(err, "check %s", root)
+	case !ok && options.allowEmpty:
+		return nil
+	case !ok:
+		return errors.Errorf("no file written under %s", root)
+	}
+
+	missing := make([]string, 0, len(options.requires))
+	for _, p := range options.requires {
+		if !filepath.IsLocal(p) {
+			return errors.Errorf("unexpected required path. expected: a path under %q, actual: %q", root, p)
+		}
+
+		switch ok, err := holdsFile(filepath.Join(root, p), nil); {
+		case err != nil:
+			return errors.Wrapf(err, "check %s", filepath.Join(root, p))
+		case !ok:
+			missing = append(missing, p)
+		}
+	}
+	if len(missing) > 0 {
+		return errors.Errorf("no file written under %q in %s", missing, root)
+	}
+
+	return nil
+}
+
+// holdsFile reports whether path is a regular file, or a directory with one
+// anywhere beneath it, leaving out the entries directly under path that skips
+// names. A path that does not exist holds nothing, and neither does a tree of
+// empty directories: a fetcher that unpacks an archive or clones a repository
+// can leave those behind without writing anything.
+func holdsFile(path string, skips []string) (bool, error) {
+	root := filepath.Clean(path)
+
+	found := false
+	if err := filepath.WalkDir(root, func(p string, d fs.DirEntry, err error) error {
+		if err != nil {
+			if p == root && errors.Is(err, fs.ErrNotExist) {
+				return fs.SkipAll
+			}
+			return err
+		}
+
+		if filepath.Dir(p) == root && slices.Contains(skips, d.Name()) {
+			if d.IsDir() {
+				return fs.SkipDir
+			}
+			return nil
+		}
+
+		if d.Type().IsRegular() {
+			found = true
+			return fs.SkipAll
+		}
+
+		return nil
+	}); err != nil {
+		return false, errors.Wrapf(err, "walk %s", root)
+	}
+
+	return found, nil
 }
 
 // Split divides the input string by delimiters in order from the front.

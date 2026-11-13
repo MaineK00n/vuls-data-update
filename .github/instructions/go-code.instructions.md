@@ -37,7 +37,7 @@ applyTo: "**/*.go"
 
 ## Adding a New Data Source
 
-1. Implement the fetcher in `pkg/fetch/<domain>/<name>/`
+1. Implement the fetcher in `pkg/fetch/<domain>/<name>/`, its `Fetch` starting with `util.RemoveAll` and ending with `util.EnsureWritten` (see Cleanup Helpers)
 2. Implement the extractor in `pkg/extract/<domain>/<name>/`
 3. Wire `newCmd…()` in both `pkg/cmd/fetch/fetch.go` and `pkg/cmd/extract/extract.go`
 4. Follow the existing pattern shown by `newCmdAlmaErrata()` (default output under `util.CacheDir()`, `--dir/-d` flag)
@@ -87,6 +87,10 @@ applyTo: "**/*.go"
 - Use `util.RemoveAll(dir)` when cleaning output trees — it preserves `.git`
 - Pass `util.WithKeep(...)` when part of the tree is not produced by the step doing the cleaning and cannot be rebuilt by it. It states the whole keep set rather than adding to the default, so name `.git` alongside whatever else is kept: `util.RemoveAll(dir, util.WithKeep(".git", "raw"))`. Names match an entry's own name, not a suffix of the path
 - Prefer that over narrowing the call to a subdirectory. Narrowing spares the rest of the tree from being swept at all, so a file an older version of the step wrote and the current one does not will sit there indefinitely
+- End a fetcher's `Fetch` with `util.EnsureWritten(options.dir)`, the counterpart of `util.RemoveAll`: it fails the fetch unless a file was written, so a fetch that decoded nothing is not committed as the deletion of everything it no longer wrote. Leave out with `util.WithIgnore(...)` what is there whatever the fetch got: what `RemoveAll` keeps, and a file the fetcher writes before fetching anything (a README). Like `WithKeep`, it states the whole set, so name `.git` alongside the rest
+- Name the fixed sections a fetcher writes with `util.WithRequire(...)`, e.g. `util.WithRequire("weakness", "category", "view")`: one section going missing still leaves the rest of the tree, which is all the default check asks for. A file written whatever the fetch got (a README, a skill) satisfies the default check too, so a fetcher that writes one ignores it with `util.WithIgnore` or requires its data paths
+- Every `Fetch` calls it, including one given a list of what to fetch (IDs, dates, releases): skipping part of the list is fine, but a run that fetched none of it wrote nothing and fails. A test of a skip passes something fetchable alongside, so it still shows the skip is not an error
+- `util.WithAllowEmpty(...)` is only for a run that is one part of a whole whose parts are checked together: one shard of a list the caller merges (`--allow-empty` on `fetch fedora-api` and `fetch microsoft-servicing`). It comes from an explicit option, never a fetcher's default, and what is written is still held to `WithRequire`
 - `util.CacheDir()` defaults to `<os.UserCacheDir()>/vuls-data-update` (with a temp-dir fallback if the user cache directory is unavailable)
 
 ## Consistency With Surrounding Code
