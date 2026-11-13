@@ -95,23 +95,12 @@ func TestContains(t *testing.T) {
 	}
 }
 
-// The commits of testdata/fixtures/history, oldest first, and the tree of the
-// first.
-const (
-	commit1 = "a841a4b11e592afb4d574f86c5de63ad95d1567a"
-	commit2 = "321cc453fa66e6d7f6ec5d5bdb64c5767d67fb54"
-	commit3 = "7ff21bf293f2763a9e10872f0debf6726fd125ff"
-	commit4 = "f71e70526a42ab5a02c0db48c0ab002cae190c6a"
-	tree1   = "da97fdaef51513ed29f81a64cea431c351d4532e"
-)
-
 func TestContainsWithBranch(t *testing.T) {
 	// The fixture is commits 1-4 in a line. main is moved back to 3, and other
 	// is at 4, so 4 is only on other. shallow is a clone of depth 2, as
 	// vuls-data-db truncates a dotgit: it has 2-4, and 2 is shallow. Then full
-	// gets an annotated tag of 1, and a branch and a tag named hexNamed, a
-	// hash of no object, at 3.
-	const hexNamed = "89abcdef0123456789abcdef0123456789abcdef"
+	// gets an annotated tag of 1, and a branch and a tag at 3 named like a
+	// hash of no object.
 	dir := t.TempDir()
 	full, err := git.Populate(dir, "testdata/fixtures/history")
 	if err != nil {
@@ -121,26 +110,43 @@ func TestContainsWithBranch(t *testing.T) {
 	if err != nil {
 		t.Fatalf("commit hashes. err: %v", err)
 	}
-	if diff := cmp.Diff([]string{commit1, commit2, commit3, commit4}, hashes); diff != "" {
+	if diff := cmp.Diff([]string{
+		"a841a4b11e592afb4d574f86c5de63ad95d1567a", // commit 1
+		"321cc453fa66e6d7f6ec5d5bdb64c5767d67fb54", // commit 2
+		"7ff21bf293f2763a9e10872f0debf6726fd125ff", // commit 3
+		"f71e70526a42ab5a02c0db48c0ab002cae190c6a", // commit 4
+	}, hashes); diff != "" {
 		t.Fatalf("commit hashes. (-expected +got):\n%s", diff)
 	}
-	if tree := strings.TrimSpace(run(t, "-C", full, "rev-parse", fmt.Sprintf("%s^{tree}", commit1))); tree != tree1 {
-		t.Fatalf("tree of commit 1. expected: %q, actual: %q", tree1, tree)
+	// The tree of commit 1.
+	if tree := strings.TrimSpace(run(t, "-C", full, "rev-parse", "a841a4b11e592afb4d574f86c5de63ad95d1567a^{tree}")); tree != "da97fdaef51513ed29f81a64cea431c351d4532e" {
+		t.Fatalf("tree of commit 1. expected: %q, actual: %q", "da97fdaef51513ed29f81a64cea431c351d4532e", tree)
 	}
-	run(t, "-C", full, "branch", "other", commit4)
-	run(t, "-C", full, "update-ref", "refs/heads/main", commit3)
+	run(t, "-C", full, "branch", "other", "f71e70526a42ab5a02c0db48c0ab002cae190c6a")               // commit 4
+	run(t, "-C", full, "update-ref", "refs/heads/main", "7ff21bf293f2763a9e10872f0debf6726fd125ff") // commit 3
 
 	shallow := filepath.Join(dir, "shallow")
 	run(t, "clone", "--quiet", "--origin", "origin", "--depth", "2", "--no-single-branch", "--no-tags", "--no-checkout", (&url.URL{Scheme: "file", Path: full}).String(), shallow)
 	run(t, "-C", shallow, "branch", "--quiet", "other", "origin/other")
-	if bs, err := os.ReadFile(filepath.Join(shallow, ".git", "shallow")); err != nil || string(bs) != fmt.Sprintf("%s\n", commit2) {
-		t.Fatalf("shallow commits. expected: %q, actual: %q, err: %v", fmt.Sprintf("%s\n", commit2), bs, err)
+	// Commit 2 is the shallow commit.
+	if bs, err := os.ReadFile(filepath.Join(shallow, ".git", "shallow")); err != nil || string(bs) != "321cc453fa66e6d7f6ec5d5bdb64c5767d67fb54\n" {
+		t.Fatalf("shallow commits. expected: %q, actual: %q, err: %v", "321cc453fa66e6d7f6ec5d5bdb64c5767d67fb54\n", bs, err)
 	}
 
-	run(t, "-C", full, "-c", "user.name=test", "-c", "user.email=test@example.com", "-c", "tag.gpgSign=false", "tag", "--annotate", "--message", "v1", "v1", commit1)
-	tag := strings.TrimSpace(run(t, "-C", full, "rev-parse", "refs/tags/v1"))
-	run(t, "-C", full, "update-ref", fmt.Sprintf("refs/heads/%s", hexNamed), commit3)
-	run(t, "-C", full, "update-ref", fmt.Sprintf("refs/tags/%s", hexNamed), commit3)
+	// An annotated tag of commit 1. The tagger and the date are fixed, and the
+	// machine's git config is left out, so the tag has the same hash every
+	// time.
+	cmd := exec.Command("git", "-C", full, "tag", "--annotate", "--message", "v1", "v1", "a841a4b11e592afb4d574f86c5de63ad95d1567a")
+	cmd.Env = append(os.Environ(), fmt.Sprintf("GIT_CONFIG_GLOBAL=%s", os.DevNull), "GIT_CONFIG_NOSYSTEM=1", "GIT_COMMITTER_NAME=GitHub Actions", "GIT_COMMITTER_EMAIL=action@github.com", "GIT_COMMITTER_DATE=2025-01-05T00:00:00Z")
+	if bs, err := cmd.CombinedOutput(); err != nil {
+		t.Fatalf("exec %q. err: %v, output: %q", cmd.String(), err, bs)
+	}
+	if tag := strings.TrimSpace(run(t, "-C", full, "rev-parse", "refs/tags/v1")); tag != "3132226146d484fc47138777803926be1a8ce34a" {
+		t.Fatalf("annotated tag of commit 1. expected: %q, actual: %q", "3132226146d484fc47138777803926be1a8ce34a", tag)
+	}
+	// A branch and a tag at commit 3, named like a hash of no object.
+	run(t, "-C", full, "update-ref", "refs/heads/89abcdef0123456789abcdef0123456789abcdef", "7ff21bf293f2763a9e10872f0debf6726fd125ff")
+	run(t, "-C", full, "update-ref", "refs/tags/89abcdef0123456789abcdef0123456789abcdef", "7ff21bf293f2763a9e10872f0debf6726fd125ff")
 
 	type args struct {
 		// repository is "full", "shallow", or "missing" for a path that does
@@ -158,37 +164,43 @@ func TestContainsWithBranch(t *testing.T) {
 		hasError bool
 	}{
 		{
+			// Commit 3.
 			name: "the tip of the branch",
-			args: args{repository: "full", commit: commit3, branch: "main"},
+			args: args{repository: "full", commit: "7ff21bf293f2763a9e10872f0debf6726fd125ff", branch: "main"},
 		},
 		{
+			// Commit 1.
 			name: "behind the tip of the branch",
-			args: args{repository: "full", commit: commit1, branch: "main"},
+			args: args{repository: "full", commit: "a841a4b11e592afb4d574f86c5de63ad95d1567a", branch: "main"},
 		},
 		{
+			// Commit 2.
 			name: "hash in upper case",
-			args: args{repository: "full", commit: strings.ToUpper(commit2), branch: "main"},
+			args: args{repository: "full", commit: "321CC453FA66E6D7F6EC5D5BDB64C5767D67FB54", branch: "main"},
 		},
 		{
+			// Commit 4.
 			name: "the tip of another branch",
-			args: args{repository: "full", commit: commit4, branch: "other"},
+			args: args{repository: "full", commit: "f71e70526a42ab5a02c0db48c0ab002cae190c6a", branch: "other"},
 		},
 		{
+			// Commit 4.
 			name:     "only on another branch",
-			args:     args{repository: "full", commit: commit4, branch: "main"},
+			args:     args{repository: "full", commit: "f71e70526a42ab5a02c0db48c0ab002cae190c6a", branch: "main"},
 			wantErr:  contains.ErrNotReachable,
 			hasError: true,
 		},
 		{
+			// The tree of commit 1.
 			name:     "a tree, not a commit",
-			args:     args{repository: "full", commit: tree1, branch: "main"},
+			args:     args{repository: "full", commit: "da97fdaef51513ed29f81a64cea431c351d4532e", branch: "main"},
 			wantErr:  contains.ErrCommitNotFound,
 			hasError: true,
 		},
 		{
-			// Peeled, the tag would be commit 1.
+			// The tag v1. Peeled, it would be commit 1.
 			name:     "an annotated tag, not a commit",
-			args:     args{repository: "full", commit: tag, branch: "main"},
+			args:     args{repository: "full", commit: "3132226146d484fc47138777803926be1a8ce34a", branch: "main"},
 			wantErr:  contains.ErrCommitNotFound,
 			hasError: true,
 		},
@@ -201,43 +213,49 @@ func TestContainsWithBranch(t *testing.T) {
 		{
 			// Read as a ref, the hash would be commit 3.
 			name:     "missing commit, with a branch and a tag of its name",
-			args:     args{repository: "full", commit: hexNamed, branch: "main"},
+			args:     args{repository: "full", commit: "89abcdef0123456789abcdef0123456789abcdef", branch: "main"},
 			wantErr:  contains.ErrCommitNotFound,
 			hasError: true,
 		},
 		{
+			// Commit 1, then the first 24 digits of commit 2. Cut to 40 digits,
+			// it would be commit 1.
 			name:     "hash of 64 hex digits in a SHA-1 repository",
-			args:     args{repository: "full", commit: commit1 + commit2[:24], branch: "main"},
+			args:     args{repository: "full", commit: "a841a4b11e592afb4d574f86c5de63ad95d1567a321cc453fa66e6d7f6ec5d5b", branch: "main"},
 			wantErr:  contains.ErrCommitNotFound,
 			hasError: true,
 		},
 		{
+			// Commit 1.
 			name:     "missing branch",
-			args:     args{repository: "full", commit: commit1, branch: "nightly"},
+			args:     args{repository: "full", commit: "a841a4b11e592afb4d574f86c5de63ad95d1567a", branch: "nightly"},
 			wantErr:  contains.ErrBranchNotFound,
 			hasError: true,
 		},
 		{
+			// Commit 1.
 			name:     "full ref name as the branch",
-			args:     args{repository: "full", commit: commit1, branch: "refs/heads/main"},
+			args:     args{repository: "full", commit: "a841a4b11e592afb4d574f86c5de63ad95d1567a", branch: "refs/heads/main"},
 			wantErr:  contains.ErrBranchNotFound,
 			hasError: true,
 		},
 		{
+			// Commit 1.
 			name:     "HEAD as the branch",
-			args:     args{repository: "full", commit: commit1, branch: "HEAD"},
+			args:     args{repository: "full", commit: "a841a4b11e592afb4d574f86c5de63ad95d1567a", branch: "HEAD"},
 			wantErr:  contains.ErrBranchNotFound,
 			hasError: true,
 		},
 		{
-			// Read as a revision, main~1 would be commit 2.
+			// Commit 2. Read as a revision, main~1 would be commit 2.
 			name:     "revision as the branch",
-			args:     args{repository: "full", commit: commit2, branch: "main~1"},
+			args:     args{repository: "full", commit: "321cc453fa66e6d7f6ec5d5bdb64c5767d67fb54", branch: "main~1"},
 			hasError: true,
 		},
 		{
+			// Commit 1.
 			name:     "option as the branch",
-			args:     args{repository: "full", commit: commit1, branch: "--all"},
+			args:     args{repository: "full", commit: "a841a4b11e592afb4d574f86c5de63ad95d1567a", branch: "--all"},
 			hasError: true,
 		},
 		{
@@ -251,13 +269,15 @@ func TestContainsWithBranch(t *testing.T) {
 			hasError: true,
 		},
 		{
+			// Commit 2, abbreviated.
 			name:     "abbreviated hash",
-			args:     args{repository: "full", commit: commit2[:7], branch: "main"},
+			args:     args{repository: "full", commit: "321cc45", branch: "main"},
 			hasError: true,
 		},
 		{
+			// Commit 4.
 			name: "no branch, only on another branch",
-			args: args{repository: "full", commit: commit4},
+			args: args{repository: "full", commit: "f71e70526a42ab5a02c0db48c0ab002cae190c6a"},
 		},
 		{
 			name: "no branch, revision",
@@ -269,24 +289,28 @@ func TestContainsWithBranch(t *testing.T) {
 			hasError: true,
 		},
 		{
+			// Commit 2.
 			name: "shallow, the shallow commit",
-			args: args{repository: "shallow", commit: commit2, branch: "main"},
+			args: args{repository: "shallow", commit: "321cc453fa66e6d7f6ec5d5bdb64c5767d67fb54", branch: "main"},
 		},
 		{
+			// Commit 4.
 			name:     "shallow, only on another branch",
-			args:     args{repository: "shallow", commit: commit4, branch: "main"},
+			args:     args{repository: "shallow", commit: "f71e70526a42ab5a02c0db48c0ab002cae190c6a", branch: "main"},
 			wantErr:  contains.ErrNotReachable,
 			hasError: true,
 		},
 		{
+			// Commit 1.
 			name:     "shallow, truncated",
-			args:     args{repository: "shallow", commit: commit1, branch: "main"},
+			args:     args{repository: "shallow", commit: "a841a4b11e592afb4d574f86c5de63ad95d1567a", branch: "main"},
 			wantErr:  contains.ErrCommitNotFound,
 			hasError: true,
 		},
 		{
+			// Commit 1.
 			name:     "not a repository",
-			args:     args{repository: "missing", commit: commit1, branch: "main"},
+			args:     args{repository: "missing", commit: "a841a4b11e592afb4d574f86c5de63ad95d1567a", branch: "main"},
 			hasError: true,
 		},
 	}
