@@ -1,6 +1,7 @@
 package cvrf
 
 var (
+	AppendConditions         = appendConditions
 	BuildFixedBuildCriterion = buildFixedBuildCriterion
 	BuildKBCriterion         = buildKBCriterion
 	FixedBuildOverrides      = fixedBuildOverrides

@@ -14,8 +14,7 @@
 		"raws": [
 			"fixtures/2026-Nov/2026/CVE-2026-105544.json",
 			"fixtures/2026-Nov/2026/CVE-2026-109475.json",
-			"fixtures/2026-Nov/2026/CVE-2026-114151.json",
-			"fixtures/2026-Nov/2026/CVE-2026-114155.json"
+			"fixtures/2026-Nov/2026/CVE-2026-114151.json"
 		]
 	}
 }
