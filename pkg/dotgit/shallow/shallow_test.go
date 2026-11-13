@@ -4,7 +4,6 @@ import (
 	"errors"
 	"io/fs"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"slices"
 	"strconv"
@@ -14,6 +13,7 @@ import (
 	"github.com/google/go-cmp/cmp"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/dotgit/shallow"
+	"github.com/MaineK00n/vuls-data-update/pkg/dotgit/util"
 	"github.com/MaineK00n/vuls-data-update/pkg/dotgit/util/test/git"
 )
 
@@ -210,10 +210,9 @@ func TestShallow(t *testing.T) {
 
 func run(t *testing.T, args ...string) string {
 	t.Helper()
-	cmd := exec.Command("git", args...)
-	bs, err := cmd.Output()
+	bs, err := util.Git(args...)
 	if err != nil {
-		t.Fatalf("exec %q. err: %v", cmd.String(), err)
+		t.Fatalf("run git. err: %v", err)
 	}
 	return string(bs)
 }
