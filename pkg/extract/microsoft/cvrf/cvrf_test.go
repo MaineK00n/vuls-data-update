@@ -7,7 +7,6 @@ import (
 	"github.com/google/go-cmp/cmp"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/microsoft/cvrf"
-	microsoftutil "github.com/MaineK00n/vuls-data-update/pkg/extract/microsoft/util"
 	criteriaTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria"
 	criterionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion"
 	kbcTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/kbcriterion"
@@ -1391,7 +1390,7 @@ func TestBuildFixedBuildCriterion(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := cvrf.BuildFixedBuildCriterion(tt.args.cveID, tt.args.productName, tt.args.rawFixedBuild)
+			got, err := cvrf.BuildOverriddenFixedBuildCriterion(tt.args.cveID, tt.args.productName, tt.args.rawFixedBuild)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("BuildFixedBuildCriterion() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -1568,16 +1567,6 @@ func TestFixedBuildOverrides(t *testing.T) {
 			want: "150.0.4078.80",
 		},
 		{
-			name: "Edge 2026-Jul null-Remediations shape (CVE-2026-57990, FAQ-backed value)",
-			key:  [3]string{"CVE-2026-57990", "Microsoft Edge (Chromium-based)", ""},
-			want: "150.0.4078.99",
-		},
-		{
-			name: "Edge 2026-Aug Chromium-based Known Affected without Vendor Fix (CVE-2026-66798)",
-			key:  [3]string{"CVE-2026-66798", "Microsoft Edge (Chromium-based)", ""},
-			want: "152.0.4191.53",
-		},
-		{
 			name: "Edge 2026-Aug platform product FixedBuild matching no release (CVE-2026-66798)",
 			key:  [3]string{"CVE-2026-66798", "Microsoft Edge for Windows", "152.0.4191.52"},
 			want: "152.0.4191.53",
@@ -1630,13 +1619,13 @@ func TestFixedBuildOverrides(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, ok := cvrf.FixedBuildOverrides[tt.key]
+			got, ok := cvrf.FixedBuildOverride(tt.key[0], tt.key[1], tt.key[2])
 			if !ok {
-				t.Errorf("fixedBuildOverrides missing entry %v", tt.key)
+				t.Errorf("cvrfOverrides missing overrideFixedBuild / overrideNoFixedBuild %v", tt.key)
 				return
 			}
 			if diff := cmp.Diff(tt.want, got); diff != "" {
-				t.Errorf("fixedBuildOverrides[%v] mismatch (-want +got):\n%s", tt.key, diff)
+				t.Errorf("cvrfOverrides %v mismatch (-want +got):\n%s", tt.key, diff)
 			}
 		})
 	}
@@ -1693,7 +1682,7 @@ func TestBuildKBCriterion(t *testing.T) {
 	}
 }
 
-func TestNormalizeProductName(t *testing.T) {
+func TestCriterionName(t *testing.T) {
 	tests := []struct {
 		name        string
 		cveID       string
@@ -1702,7 +1691,7 @@ func TestNormalizeProductName(t *testing.T) {
 	}{
 		{
 			name:        ".NET runtime under the old name before 2026-Oct",
-			cveID:       "CVE-2026-69304",
+			cveID:       "CVE-2024-38229",
 			productName: ".NET 8.0 installed on Windows",
 			want:        ".NET 8.0 runtime installed on Windows",
 		},
@@ -1731,29 +1720,35 @@ func TestNormalizeProductName(t *testing.T) {
 			want:        ".NET 8.0 runtime installed on Windows",
 		},
 		{
-			name:        "microsoftutil.NormalizeProductName applied first",
-			cveID:       "CVE-2026-69304",
-			productName: ".NET 8.0  installed on Windows",
+			name:        "microsoftutil.NormalizeProductName without an override",
+			cveID:       "CVE-2026-105016",
+			productName: ".NET 8.0  runtime installed on Windows",
 			want:        ".NET 8.0 runtime installed on Windows",
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := cvrf.NormalizeProductName(tt.cveID, tt.productName); got != tt.want {
-				t.Errorf("NormalizeProductName(%q, %q) = %q, want %q", tt.cveID, tt.productName, got, tt.want)
+			if got := cvrf.CriterionName(tt.cveID, tt.productName); got != tt.want {
+				t.Errorf("CriterionName(%q, %q) = %q, want %q", tt.cveID, tt.productName, got, tt.want)
 			}
 		})
 	}
 }
 
-func TestProductNameOverridesKeys(t *testing.T) {
-	for k, v := range cvrf.ProductNameOverrides {
-		if got := microsoftutil.NormalizeProductName(k[1]); got != k[1] {
-			t.Errorf("key %v: product name is not normalized: %q", k, got)
-		}
-		if got := microsoftutil.NormalizeProductName(v); got != v {
-			t.Errorf("key %v: value is not normalized: %q", k, got)
-		}
+// TestCVRFOverrides guards the entries against typos that would make them
+// silently miss or do something else (see validate), and against duplicates.
+func TestCVRFOverrides(t *testing.T) {
+	seen := make(map[string]struct{})
+	for _, o := range cvrf.CVRFOverrides {
+		t.Run(o.String(), func(t *testing.T) {
+			if err := o.Validate(); err != nil {
+				t.Error("unexpected error:", err)
+			}
+			if _, ok := seen[o.String()]; ok {
+				t.Errorf("duplicate override: %s", o)
+			}
+			seen[o.String()] = struct{}{}
+		})
 	}
 }
 
@@ -1953,7 +1948,7 @@ func TestExtract(t *testing.T) {
 			hasError: true,
 		},
 		{
-			name:     "vendorFixExclusions excluding every Vendor Fix of a product",
+			name:     "overrideExcludeVendorFix excluding every Vendor Fix of a product",
 			args:     "./testdata/fixtures-hotpatch-all-excluded",
 			hasError: true,
 		},
@@ -1968,18 +1963,23 @@ func TestExtract(t *testing.T) {
 			hasError: true,
 		},
 		{
-			name:     "hotpatch as the only fix, without vendorFixAdditions",
+			name:     "hotpatch as the only fix, without an overrideAddVendorFix",
 			args:     "./testdata/fixtures-hotpatch-only-fix",
 			hasError: true,
 		},
 		{
-			name:     "vendorFixAdditions for a product CVRF does not list",
+			name:     "overrideAddVendorFix for a product CVRF does not list",
 			args:     "./testdata/fixtures-vendorfix-addition-unlisted",
 			hasError: true,
 		},
 		{
 			name:     "Vendor Fix for an entry that requires no customer action",
 			args:     "./testdata/fixtures-no-customer-action-vendor-fix",
+			hasError: true,
+		},
+		{
+			name:     "an override that no longer takes effect, after Microsoft corrected the FixedBuild",
+			args:     "./testdata/fixtures-override-unused",
 			hasError: true,
 		},
 	}
