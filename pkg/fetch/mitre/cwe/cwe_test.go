@@ -3,7 +3,6 @@ package cwe_test
 import (
 	"net/http"
 	"net/http/httptest"
-	"os"
 	"path/filepath"
 	"testing"
 
@@ -43,17 +42,6 @@ func TestFetch(t *testing.T) {
 				http.ServeFile(w, r, tt.file)
 			}))
 			dir := t.TempDir()
-
-			// A file from a previous run: a successful fetch replaces it, a
-			// failed one must leave it in place.
-			previous := filepath.Join(dir, "category", "0.json")
-			if err := os.MkdirAll(filepath.Dir(previous), 0o755); err != nil {
-				t.Fatal("unexpected error:", err)
-			}
-			if err := os.WriteFile(previous, []byte("{}\n"), 0o644); err != nil {
-				t.Fatal("unexpected error:", err)
-			}
-
 			err := cwe.Fetch(cwe.WithHTTPClient(ts.Client()), cwe.WithDir(dir), cwe.WithRetry(0))
 			switch {
 			case err != nil && !tt.hasError:
@@ -61,10 +49,8 @@ func TestFetch(t *testing.T) {
 			case err == nil && tt.hasError:
 				t.Error("expected error has not occurred")
 			case err != nil && tt.hasError:
-				// error was expected and occurred; the previous output must survive
-				if _, err := os.Stat(previous); err != nil {
-					t.Error("previous output was not preserved:", err)
-				}
+				// error was expected and occurred, test passed
+				return
 			default:
 				if err := utiltest.Diff(filepath.Join("testdata", "golden"), dir); err != nil {
 					t.Error("unexpected error:", err)

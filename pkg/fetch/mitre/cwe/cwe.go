@@ -6,8 +6,10 @@ import (
 	"encoding/xml"
 	"fmt"
 	"io"
+	"io/fs"
 	"log/slog"
 	"net/http"
+	"os"
 	"path/filepath"
 
 	"github.com/pkg/errors"
@@ -65,6 +67,10 @@ func Fetch(opts ...Option) error {
 		o.apply(options)
 	}
 
+	if err := util.RemoveAll(options.dir); err != nil {
+		return errors.Wrapf(err, "remove %s", options.dir)
+	}
+
 	slog.Info("Fetch MITRE Common Weakness Enumeration: CWE")
 	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry), utilhttp.WithClientHTTPClient(options.httpClient)).Get(options.dataURL)
 	if err != nil {
@@ -100,23 +106,6 @@ func Fetch(opts ...Option) error {
 	var catalog weaknessCatalog
 	if err := xml.NewDecoder(f).Decode(&catalog); err != nil {
 		return errors.Wrap(err, "decode xml")
-	}
-
-	// An empty section means the catalog no longer matches the expected
-	// structure; writing it would delete every file of that kind from the raw
-	// repository. Check before clearing the output so a rejected catalog leaves
-	// the previous dataset in place.
-	switch {
-	case len(catalog.Weaknesses) == 0:
-		return errors.New("no weaknesses found in CWE catalog")
-	case len(catalog.Categories) == 0:
-		return errors.New("no categories found in CWE catalog")
-	case len(catalog.Views) == 0:
-		return errors.New("no views found in CWE catalog")
-	}
-
-	if err := util.RemoveAll(options.dir); err != nil {
-		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
 	exRefs := make(map[string]ExternalReference)
@@ -177,6 +166,20 @@ func Fetch(opts ...Option) error {
 		_ = bar.Add(1)
 	}
 	_ = bar.Close()
+
+	// An empty output directory means the catalog no longer matches the
+	// structure decoded above. Committing it would delete every file of that
+	// kind from the raw repository, so fail instead.
+	for _, kind := range []string{"weakness", "category", "view"} {
+		d := filepath.Join(options.dir, kind)
+		es, err := os.ReadDir(d)
+		if err != nil && !errors.Is(err, fs.ErrNotExist) {
+			return errors.Wrapf(err, "read %s", d)
+		}
+		if len(es) == 0 {
+			return errors.Errorf("no %s written to %s", kind, d)
+		}
+	}
 
 	return nil
 }
