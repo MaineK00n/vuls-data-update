@@ -34,7 +34,7 @@ func newCmdContains() *cobra.Command {
 	}
 
 	cmd.Flags().BoolVarP(&options.useNativeGit, "use-native-git", "", options.useNativeGit, "use native git command instead of go-git")
-	cmd.Flags().StringVarP(&options.branch, "branch", "", options.branch, "also check that the commit hash is the tip of the specified branch or an ancestor of it")
+	cmd.Flags().StringVarP(&options.branch, "branch", "", options.branch, "also check that the commit, given as a full hash, is the tip of the specified branch or an ancestor of it")
 
 	return cmd
 }
