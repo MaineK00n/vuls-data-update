@@ -14,7 +14,7 @@
 				"Execute Unauthorized Code or Commands",
 				"Varies by Context"
 			],
-			"note": "\n\t\t\t\t\t"
+			"note": "<xhtml:p>In an agent-oriented setting,\n\t\t\t\t\toutput could be used to cause unpredictable agent\n\t\t\t\t\tinvocation, i.e., to control or influence agents\n\t\t\t\t\tthat might be invoked from the output.  The impact\n\t\t\t\t\tvaries depending on the access that is granted to\n\t\t\t\t\tthe tools, such as creating a database or writing\n\t\t\t\t\tfiles.</xhtml:p>\n\t\t\t\t\t"
 		}
 	],
 	"potential_mitigations": [
@@ -79,6 +79,7 @@
 	"mapping_notes": {
 		"usage": "Discouraged",
 		"rationale": "There is potential for this CWE entry to be modified in the future for further clarification as the research community continues to better understand weaknesses in this domain.",
+		"comments": "<xhtml:p>This CWE entry is only related to \"validation\" of output and might be used mistakenly for other kinds of output-related weaknesses. Careful attention should be paid to whether this CWE should be used for vulnerabilities related to \"prompt injection,\" which is an attack that works against many different weaknesses. See Maintenance Notes and Research Gaps. Analysts should closely investigate the root cause to ensure it is not ultimately due to other well-known weaknesses. The following suggestions are not comprehensive.</xhtml:p>",
 		"reasons": [
 			{
 				"type": "Potential Major Changes"

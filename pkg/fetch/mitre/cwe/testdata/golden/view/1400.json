@@ -3,7 +3,7 @@
 	"name": "Comprehensive Categorization for Software Assurance Trends",
 	"type": "Graph",
 	"status": "Draft",
-	"objective": "\n\t   \n\t   \n\t   \n\t ",
+	"objective": "\n\t   <xhtml:p>This view organizes weaknesses around categories that are of interest to large-scale software assurance research to support the elimination of weaknesses using tactics such as secure language development. It is also intended to help tracking weakness trends in publicly disclosed vulnerability data.  This view is comprehensive in that every weakness must be contained in it, unlike most other views that only use a subset of weaknesses. This view is structured with categories at the top level, with a second level of only weaknesses. Relationships among the weaknesses presented under the research view (CWE-1000) are not shown.</xhtml:p>\n\t   <xhtml:p>Each weakness is added to only one category. All categories are mutually exclusive; that is, no weakness can be a member of more than one category. While weaknesses defy strict categorization along only one characteristic, the forced bucketing into a single category can simplify certain kinds of analysis.</xhtml:p>\n\t   <xhtml:p>Note that the size of each category can vary widely because (1) CWE is not as well fleshed-out in some areas compared to others; (2) abstraction of the CWEs in the grouping might go down to Variant level for some buckets, versus others.</xhtml:p>\n\t ",
 	"audience": [
 		{
 			"type": "Academic Researchers",
