@@ -81,6 +81,30 @@ func TestBuildFixedBuildCriterion(t *testing.T) {
 			},
 		},
 		{
+			name: "SQL Server 2025 CU10 spelled without the parentheses (2026-Nov)",
+			args: args{
+				cveID:         "CVE-2026-116929",
+				productName:   "Microsoft SQL Server 2025 for x64-based Systems CU10",
+				rawFixedBuild: "17.0.5045.3",
+			},
+			want: &criterionTypes.Criterion{
+				Type: criterionTypes.CriterionTypeVersion,
+				Version: &vcTypes.Criterion{
+					Vulnerable: true,
+					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
+					Package: packageTypes.Package{
+						Type:   packageTypes.PackageTypeBinary,
+						Binary: &binaryTypes.Package{Name: "Microsoft SQL Server 2025 for x64-based Systems CU10"},
+					},
+					Affected: &affectedTypes.Affected{
+						Type:  affectedrangeTypes.RangeTypeMicrosoftSQLServer,
+						Range: []affectedrangeTypes.Range{{LessThan: "17.0.5045.3"}},
+						Fixed: []string{"17.0.5045.3"},
+					},
+				},
+			},
+		},
+		{
 			name: "Microsoft Defender Antimalware Platform",
 			args: args{
 				cveID:         "CVE-2026-33825",
@@ -1050,6 +1074,48 @@ func TestBuildFixedBuildCriterion(t *testing.T) {
 			wantErr: true,
 		},
 		{
+			name: ".NET runtime version from the SDK name (2026-Nov, see vendorFixProductName)",
+			args: args{
+				cveID:         "CVE-2026-109475",
+				productName:   ".NET 10.0 runtime installed on Mac OS",
+				rawFixedBuild: "10.0.15",
+			},
+			want: &criterionTypes.Criterion{
+				Type: criterionTypes.CriterionTypeVersion,
+				Version: &vcTypes.Criterion{
+					Vulnerable: true,
+					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
+					Package: packageTypes.Package{
+						Type:   packageTypes.PackageTypeBinary,
+						Binary: &binaryTypes.Package{Name: ".NET 10.0 runtime installed on Mac OS"},
+					},
+					Affected: &affectedTypes.Affected{
+						Type:  affectedrangeTypes.RangeTypeMicrosoftDotNetCoreRuntime,
+						Range: []affectedrangeTypes.Range{{LessThan: "10.0.15"}},
+						Fixed: []string{"10.0.15"},
+					},
+				},
+			},
+		},
+		{
+			name: ".NET runtime preview fix overridden to no criterion (CVE-2026-109478)",
+			args: args{
+				cveID:         "CVE-2026-109478",
+				productName:   ".NET 9.0 runtime installed on Linux",
+				rawFixedBuild: "9.0.0-preview.4.24266.19",
+			},
+			want: nil,
+		},
+		{
+			name: ".NET runtime preview without an override fails",
+			args: args{
+				cveID:         "CVE-2099-0001",
+				productName:   ".NET 9.0 runtime installed on Linux",
+				rawFixedBuild: "9.0.0-preview.4.24266.19",
+			},
+			wantErr: true,
+		},
+		{
 			name: "Insiders tag without a number is not skipped",
 			args: args{
 				cveID:         "CVE-2099-0001",
@@ -1627,6 +1693,26 @@ func TestFixedBuildOverrides(t *testing.T) {
 			key:  [3]string{"CVE-2020-1161", "Microsoft Visual Studio 2019 Version 16.5", ""},
 			want: "16.5.5",
 		},
+		{
+			name: ".NET SDK 10.0.3xx band left out by CVRF completed (CVE-2026-114155)",
+			key:  [3]string{"CVE-2026-114155", ".NET 10.0 installed on Linux", "10.0.404"},
+			want: "10.0.400, 10.0.404",
+		},
+		{
+			name: ".NET 9.0 runtime fixed before 9.0 shipped (CVE-2026-109478, no 9.0 release in releases.json cve-list)",
+			key:  [3]string{"CVE-2026-109478", ".NET 9.0 runtime installed on Windows", "9.0.0-preview.4.24266.19"},
+			want: "",
+		},
+		{
+			name: "Teams for Android 2026-Nov numeric prefix (CVE-2026-116926)",
+			key:  [3]string{"CVE-2026-116926", "Microsoft Teams for Android", "1416/1.0.0.2026202302"},
+			want: "1.0.0.2026202302",
+		},
+		{
+			name: "Visual Studio 2017 15.9 row carrying a Teams for Android FixedBuild (CVE-2026-111497)",
+			key:  [3]string{"CVE-2026-111497", "Microsoft Visual Studio 2017 Version 15.9", "1416/1.0.0.2026202302"},
+			want: "",
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -1741,6 +1827,92 @@ func TestNormalizeProductName(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := cvrf.NormalizeProductName(tt.cveID, tt.productName); got != tt.want {
 				t.Errorf("NormalizeProductName(%q, %q) = %q, want %q", tt.cveID, tt.productName, got, tt.want)
+			}
+		})
+	}
+}
+
+func TestVendorFixProductName(t *testing.T) {
+	type args struct {
+		cveID         string
+		productName   string
+		rawFixedBuild string
+	}
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		{
+			name: ".NET runtime version under the SDK name (2026-Nov) renamed to the runtime",
+			args: args{cveID: "CVE-2026-109475", productName: ".NET 10.0 installed on Mac OS", rawFixedBuild: "10.0.15"},
+			want: ".NET 10.0 runtime installed on Mac OS",
+		},
+		{
+			name: ".NET runtime GA version renamed to the runtime (2026-Nov)",
+			args: args{cveID: "CVE-2026-114151", productName: ".NET 11.0 installed on Windows", rawFixedBuild: "11.0.0"},
+			want: ".NET 11.0 runtime installed on Windows",
+		},
+		{
+			name: ".NET runtime prerelease renamed to the runtime (CVE-2026-109478)",
+			args: args{cveID: "CVE-2026-109478", productName: ".NET 9.0 installed on Linux", rawFixedBuild: "9.0.0-preview.4.24266.19"},
+			want: ".NET 9.0 runtime installed on Linux",
+		},
+		{
+			name: ".NET SDK feature band kept on the SDK in the same product as a runtime fix (CVE-2026-114151)",
+			args: args{cveID: "CVE-2026-114151", productName: ".NET 10.0 installed on Windows", rawFixedBuild: "10.0.115"},
+			want: ".NET 10.0 installed on Windows",
+		},
+		{
+			name: ".NET SDK feature band pair kept on the SDK",
+			args: args{cveID: "CVE-2099-0001", productName: ".NET 8.0 installed on Linux", rawFixedBuild: "8.0.130, 8.0.424"},
+			want: ".NET 8.0 installed on Linux",
+		},
+		{
+			name: ".NET SDK prerelease kept on the SDK (2026-Oct)",
+			args: args{cveID: "CVE-2026-70161", productName: ".NET 11.0 runtime installed on Windows", rawFixedBuild: "11.0.100-rc.2"},
+			want: ".NET 11.0 installed on Windows",
+		},
+		{
+			name: "runtime and SDK versions mixed in one FixedBuild kept on the SDK",
+			args: args{cveID: "CVE-2099-0001", productName: ".NET 10.0 installed on Windows", rawFixedBuild: "10.0.15, 10.0.115"},
+			want: ".NET 10.0 installed on Windows",
+		},
+		{
+			name: "release-candidate tag kept on the SDK",
+			args: args{cveID: "CVE-2099-0001", productName: ".NET 11.0 installed on Linux", rawFixedBuild: "11.0 RC1"},
+			want: ".NET 11.0 installed on Linux",
+		},
+		{
+			name: "no FixedBuild kept on the SDK",
+			args: args{cveID: "CVE-2099-0001", productName: ".NET 10.0 installed on Linux", rawFixedBuild: ""},
+			want: ".NET 10.0 installed on Linux",
+		},
+		{
+			name: "productNameOverrides applied first (before 2026-Oct)",
+			args: args{cveID: "CVE-2026-69304", productName: ".NET 8.0 installed on Windows", rawFixedBuild: "8.0.31"},
+			want: ".NET 8.0 runtime installed on Windows",
+		},
+		{
+			name: ".NET runtime under the 2026-Oct name kept",
+			args: args{cveID: "CVE-2026-105016", productName: ".NET 8.0 runtime installed on Windows", rawFixedBuild: "8.0.32"},
+			want: ".NET 8.0 runtime installed on Windows",
+		},
+		{
+			name: ".NET 6.0 under the old name kept (runtime range type)",
+			args: args{cveID: "CVE-2099-0001", productName: ".NET 6.0 installed on Windows", rawFixedBuild: "6.0.36"},
+			want: ".NET 6.0 installed on Windows",
+		},
+		{
+			name: "not a .NET product",
+			args: args{cveID: "CVE-2099-0001", productName: "Windows Server 2025", rawFixedBuild: "10.0.26100.32860"},
+			want: "Windows Server 2025",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := cvrf.VendorFixProductName(tt.args.cveID, tt.args.productName, tt.args.rawFixedBuild); got != tt.want {
+				t.Errorf("VendorFixProductName(%q, %q, %q) = %q, want %q", tt.args.cveID, tt.args.productName, tt.args.rawFixedBuild, got, tt.want)
 			}
 		})
 	}

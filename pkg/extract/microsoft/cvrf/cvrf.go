@@ -909,7 +909,7 @@ func buildDetections(v cvrf.Vulnerability, products map[string]string) (map[ecos
 				if isCBLMarinerOrAzureLinux(productName) {
 					continue
 				}
-				criterionProductName := normalizeProductName(v.CVE, productName)
+				criterionProductName := vendorFixProductName(v.CVE, productName, r.FixedBuild)
 				fixedBuildCriterion, err := buildFixedBuildCriterion(v.CVE, criterionProductName, r.FixedBuild)
 				if err != nil {
 					return nil, nil, errors.Wrap(err, "build fixed build criterion")
@@ -953,7 +953,7 @@ func buildDetections(v cvrf.Vulnerability, products map[string]string) (map[ecos
 				coveredProductIDs[pid] = struct{}{}
 
 				tag := segmentTypes.DetectionTag(productName)
-				criterionProductName := normalizeProductName(v.CVE, productName)
+				criterionProductName := vendorFixProductName(v.CVE, productName, r.FixedBuild)
 
 				if _, ok := vendorFixExclusions[[3]string{v.CVE, criterionProductName, r.Description}]; ok {
 					excludedTags[tag] = append(excludedTags[tag], r.Description)
@@ -1595,6 +1595,52 @@ func normalizeProductName(cveID, productName string) string {
 	return n
 }
 
+// vendorFixProductName returns the product name that the criterions of one Vendor
+// Fix use: normalizeProductName, then, for a .NET SDK product (the 2026-Oct names
+// ".NET X installed on <OS>", see productRangeType) whose FixedBuild is a .NET
+// runtime version, the runtime name ".NET X runtime installed on <OS>".
+//
+// 2026-Nov went back to publishing the runtime under ".NET X installed on <OS>",
+// the name 2026-Oct gave the SDK, and lists the runtime and the SDK under it even
+// for one product of one CVE (e.g. CVE-2026-114151 lists 10.0.15, 10.0.115 and
+// 10.0.404 as separate Vendor Fixes of ".NET 10.0 installed on Windows"), which a
+// product name alone, and so productNameOverrides, cannot tell apart. The FixedBuild
+// of each Vendor Fix does: an SDK version is a feature band, patch 100 or above
+// (see buildDotNetSDKCriterion), and a runtime version is not.
+//
+// For every other product it is normalizeProductName, so the tables keyed by the
+// product name after normalizeProductName (vendorFixExclusions, fixedBuildOverrides)
+// take this name for a Vendor Fix.
+func vendorFixProductName(cveID, productName, rawFixedBuild string) string {
+	n := normalizeProductName(cveID, productName)
+	if rt, err := productRangeType(n); err != nil || rt != rangeTypes.RangeTypeMicrosoftDotNetCoreSDK {
+		return n
+	}
+	if !isDotNetRuntimeFixedBuild(cleanFixedBuild(rawFixedBuild)) {
+		return n
+	}
+	return strings.Replace(n, " installed on ", " runtime installed on ", 1)
+}
+
+// isDotNetRuntimeFixedBuild reports whether every comma-separated version of a .NET
+// FixedBuild is a runtime version: one that parses as a .NET runtime version with a
+// patch below 100 (e.g. "10.0.15", "11.0.0", "9.0.0-preview.4.24266.19"). One that
+// names an SDK feature band (e.g. "10.0.115"), or no version at all (e.g. "", "11.0
+// RC1"), is not, so the Vendor Fix stays on the SDK product, whose criterion parses it
+// (see buildDotNetSDKCriterion) and fails on a runtime version mixed in.
+func isDotNetRuntimeFixedBuild(fixedBuild string) bool {
+	if fixedBuild == "" {
+		return false
+	}
+	for f := range strings.SplitSeq(fixedBuild, ",") {
+		v, err := dotnetcoreruntimeversion.NewVersion(strings.TrimSpace(f))
+		if err != nil || v.Patch >= 100 {
+			return false
+		}
+	}
+	return true
+}
+
 // productNameOverrides renames a product within one CVE, keyed by [2]string{CVE
 // ID, product name after microsoftutil.NormalizeProductName}. It is for names
 // whose meaning changed over time, which a name-only alias in
@@ -1606,7 +1652,8 @@ var productNameOverrides = map[[2]string]string{
 	// "10.0.403"). Rename the runtime in the CVEs published before the rename, so
 	// that the runtime keeps one name and the SDK products keep the old one.
 	// CVE-2026-58649 is left out: its .NET products list only SDK feature bands,
-	// so they already are the SDK.
+	// so they already are the SDK. 2026-Nov, which lists both under the old name,
+	// is told apart per Vendor Fix by vendorFixProductName instead.
 	{"CVE-2024-38229", ".NET 8.0 installed on Linux"}:    ".NET 8.0 runtime installed on Linux",
 	{"CVE-2024-38229", ".NET 8.0 installed on Mac OS"}:   ".NET 8.0 runtime installed on Mac OS",
 	{"CVE-2024-38229", ".NET 8.0 installed on Windows"}:  ".NET 8.0 runtime installed on Windows",
@@ -2064,7 +2111,7 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 
 	// .NET SDK products: 2026-Oct names the runtime ".NET X runtime installed on <OS>"
 	// and gives the SDK the earlier runtime name ".NET X installed on <OS>" (see
-	// productNameOverrides)
+	// productNameOverrides and vendorFixProductName)
 	if rt == rangeTypes.RangeTypeMicrosoftDotNetCoreSDK {
 		c, err := buildDotNetSDKCriterion(productName, fixedBuild)
 		if err != nil {
@@ -2246,7 +2293,9 @@ func productRangeType(productName string) (rangeTypes.RangeType, error) {
 		".NET Core 3.1":
 		return rangeTypes.RangeTypeMicrosoftDotNetCoreRuntime, nil
 
-	// .NET SDK (2026-Oct names; buildDotNetSDKCriterion parses their FixedBuild)
+	// .NET SDK (2026-Oct names; buildDotNetSDKCriterion parses their FixedBuild). A
+	// Vendor Fix of these with a runtime FixedBuild (2026-Nov) is renamed to the
+	// runtime by vendorFixProductName before it gets here.
 	case ".NET 8.0 installed on Linux", ".NET 8.0 installed on Mac OS", ".NET 8.0 installed on Windows",
 		".NET 9.0 installed on Linux", ".NET 9.0 installed on Mac OS", ".NET 9.0 installed on Windows",
 		".NET 10.0 installed on Linux", ".NET 10.0 installed on Mac OS", ".NET 10.0 installed on Windows",
@@ -2448,6 +2497,7 @@ func productRangeType(productName string) (rangeTypes.RangeType, error) {
 		"Microsoft SQL Server 2025 for x64-based Systems (CU6)",
 		"Microsoft SQL Server 2025 for x64-based Systems (CU8)",
 		"Microsoft SQL Server 2025 for x64-based Systems (CU9)",
+		"Microsoft SQL Server 2025 for x64-based Systems CU10", // 2026-Nov, the only spelling of CU10, without the parentheses
 		"Microsoft SQL Server 2025 for x64-based Systems (GDR)",
 		"SQL Server 2019 for Linux Containers",
 		"SQL Server Integration Services for Visual Studio 2019",
@@ -2836,7 +2886,8 @@ func validateFixedBuild(rt rangeTypes.RangeType, productName, fixedBuild string)
 
 // fixedBuildOverrides maps (CVE ID, product name, incorrect FixedBuild) to corrected FixedBuild values
 // for known data issues in CVRF.
-// The key is [3]string{CVE ID, product name after normalizeProductName, incorrect FixedBuild value after generic cleanup}.
+// The key is [3]string{CVE ID, product name after normalizeProductName (vendorFixProductName for a Vendor Fix),
+// incorrect FixedBuild value after generic cleanup}.
 // An empty value means "intentionally no criterion": the entry acknowledges the upstream data gap
 // and skips criterion generation. For Microsoft Edge (Chromium-based), a Vendor Fix that yields no
 // criterion and has no entry here fails the extraction (see buildDetections), because such CVEs
@@ -2908,6 +2959,22 @@ var fixedBuildOverrides = map[[3]string]string{
 	{"CVE-2026-102870", ".NET 10.0 installed on Linux", "10.0.403"}:   "10.0.114, 10.0.403",
 	{"CVE-2026-102870", ".NET 10.0 installed on Mac OS", "10.0.403"}:  "10.0.114, 10.0.403",
 	{"CVE-2026-102870", ".NET 10.0 installed on Windows", "10.0.403"}: "10.0.114, 10.0.403",
+	// .NET SDK, 2026-Nov: the advisory of CVE-2026-114155 (dotnet/announcements #502)
+	// also lists the 10.0.3xx band (">= 10.0.300, <= 10.0.303", moved to 10.0.404),
+	// which CVRF's 10.0.404 leaves out. "10.0.400" stands for its users moving to
+	// the 4xx band (see buildDotNetSDKCriterion).
+	{"CVE-2026-114155", ".NET 10.0 installed on Linux", "10.0.404"}:  "10.0.400, 10.0.404",
+	{"CVE-2026-114155", ".NET 10.0 installed on Mac OS", "10.0.404"}: "10.0.400, 10.0.404",
+	// .NET 9.0 runtime, CVE-2026-109478 (2026-Nov): CVRF's FixedBuild is the 9.0.0
+	// Preview 4 build "9.0.0-preview.4.24266.19", whose release notes it links, and
+	// the CVE record's .NET 9.0 range (">= 9.0.0, < 9.0.0-preview.4.24266.19") is
+	// empty: the fix landed before 9.0 shipped. dotnet/core release-notes/9.0/releases.json
+	// lists the CVE in the cve-list of no 9.0 release (8.0/releases.json does, in
+	// 8.0.34), so no released 9.0 runtime is affected and no criterion is built, as for
+	// CVE-2020-1108 on .NET 5.0 below.
+	{"CVE-2026-109478", ".NET 9.0 runtime installed on Linux", "9.0.0-preview.4.24266.19"}:   "",
+	{"CVE-2026-109478", ".NET 9.0 runtime installed on Mac OS", "9.0.0-preview.4.24266.19"}:  "",
+	{"CVE-2026-109478", ".NET 9.0 runtime installed on Windows", "9.0.0-preview.4.24266.19"}: "",
 
 	// .NET Core / .NET 5+ (FixedBuild has pre-release suffix that the parser doesn't accept)
 	// 2021-May (FixedBuild "5.0.6-servicing.21220.11" / "3.1.15-servicing.21214.3" has pre-release suffix)
@@ -3653,6 +3720,10 @@ var fixedBuildOverrides = map[[3]string]string{
 	{"CVE-2022-21965", "Microsoft Teams for Android", "1416/1.0.0.2021040701"}: "1.0.0.2021040701",
 	// 2025-Aug (CVE-2025-53783, FixedBuild "1416/..." has numeric prefix)
 	{"CVE-2025-53783", "Microsoft Teams for Android", "1416/1.0.0.2025102802"}: "1.0.0.2025102802",
+	// 2026-Nov (CVE-2026-116926, CVE-2026-122979 and CVE-2026-69901, FixedBuild "1416/..." has numeric prefix)
+	{"CVE-2026-116926", "Microsoft Teams for Android", "1416/1.0.0.2026202302"}: "1.0.0.2026202302",
+	{"CVE-2026-122979", "Microsoft Teams for Android", "1416/1.0.0.2026173602"}: "1.0.0.2026173602",
+	{"CVE-2026-69901", "Microsoft Teams for Android", "1416/1.0.0.2026202302"}:  "1.0.0.2026202302",
 
 	// Teams Panels / Phones (FixedBuild "1449/..." has numeric prefix before slash)
 	// 2025-Aug (CVE-2025-53783, FixedBuild "1449/..." has numeric prefix)
@@ -3670,6 +3741,12 @@ var fixedBuildOverrides = map[[3]string]string{
 	{"CVE-2021-42277", "Microsoft Visual Studio 2015 Update 3", "27550.00"}: "14.0.27550.0",
 	// 2022-Jan (VS 2015 Update 3 14.0.27551.0, FixedBuild "27551.00" missing "14.0." prefix)
 	{"CVE-2022-21871", "Microsoft Visual Studio 2015 Update 3", "27551.00"}: "14.0.27551.0",
+	// 2026-Oct, revised in 2026-Nov (CVE-2026-111497): the row of "Microsoft Visual Studio
+	// 2017 version 15.9 (includes 15.0 - 15.8)" carries a Microsoft Teams for Android
+	// FixedBuild and its Google Play URL (CVE-2026-69901's "1416/1.0.0.2026202302"). The
+	// same CVE lists "Microsoft Visual Studio 2017 version 15.9", the same product after
+	// normalizeProductName, with 15.9.84, so this row adds nothing.
+	{"CVE-2026-111497", "Microsoft Visual Studio 2017 Version 15.9", "1416/1.0.0.2026202302"}: "",
 
 	// Visual Studio Code
 	// 2021-May (VS Code 1.56.0, FixedBuild "1.56" missing ".0" suffix)
@@ -6138,7 +6215,7 @@ func (e extractor) collectKBs(v cvrf.Vulnerability, products map[string]string, 
 				continue
 			}
 
-			criterionProductName := normalizeProductName(v.CVE, productName)
+			criterionProductName := vendorFixProductName(v.CVE, productName, r.FixedBuild)
 
 			kbID := r.Description
 			if !isAllDigits(kbID) {
