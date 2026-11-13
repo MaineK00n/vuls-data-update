@@ -198,6 +198,17 @@ func TestPull(t *testing.T) {
 			wantFiles: map[string]string{"README.md": "# vuls-data-raw-test\n"},
 		},
 		{
+			// A name that switch accepts and cat-file -e does not, as with
+			// "-" for the previous branch: the merge base of main and v0.0.1.
+			name: "vuls-data-raw-test checkout: main...v0.0.1, restore: false, native git",
+			args: args{
+				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test",
+				opts:       []pull.Option{pull.WithCheckout("main...v0.0.1"), pull.WithRestore(false), pull.WithUseNativeGit(true)},
+			},
+			golden:   "testdata/golden/vuls-data-raw-test.tar.zst",
+			wantHead: "9d3d5d486d4c9414321a2df56f2e007c4c2c8fab",
+		},
+		{
 			// A commit pinned before vuls-data-db truncated the history is
 			// no longer in the repository.
 			name: "vuls-data-raw-test checkout: 9d3d5d486d4c9414321a2df56f2e007c4c2c8fac (not in the repository), restore: true, native git",
