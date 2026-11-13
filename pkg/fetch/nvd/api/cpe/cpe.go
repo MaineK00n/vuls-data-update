@@ -275,6 +275,14 @@ func Fetch(opts ...Option) error {
 	}, headerOption); err != nil {
 		return errors.Wrap(err, "pipeline get")
 	}
+
+	// A window fetches only what changed in it, which can rightly be nothing.
+	if options.lastModStartDate == nil && options.lastModEndDate == nil {
+		if err := util.EnsureWritten(options.dir); err != nil {
+			return errors.Wrapf(err, "ensure written %s", options.dir)
+		}
+	}
+
 	return nil
 }
 

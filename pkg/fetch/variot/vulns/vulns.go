@@ -101,6 +101,10 @@ func Fetch(apiToken string, opts ...Option) error {
 		return errors.Wrap(err, "fetch variot vulns")
 	}
 
+	if err := util.EnsureWritten(options.dir); err != nil {
+		return errors.Wrapf(err, "ensure written %s", options.dir)
+	}
+
 	return nil
 }
 

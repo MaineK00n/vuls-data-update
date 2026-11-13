@@ -209,7 +209,8 @@ func Fetch(opts ...Option) error {
 	// to accumulate, including a file an older version of this fetcher wrote
 	// and the current one no longer does. The skill below is one such file, and
 	// is rewritten straight after.
-	if err := util.RemoveAll(options.dir, util.WithKeep(".git", "raw")); err != nil {
+	keep := util.WithKeep(".git", "raw")
+	if err := util.RemoveAll(options.dir, keep); err != nil {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
@@ -220,6 +221,13 @@ func Fetch(opts ...Option) error {
 
 	if err := options.writeSkill(); err != nil {
 		return errors.Wrap(err, "write skill")
+	}
+
+	// The kept raw/ is not this fetch's output, and the skill is written
+	// whatever the fetch got, so neither may pass for it: what the fetch
+	// writes is origin/.
+	if err := util.EnsureWritten(options.dir, keep, util.WithRequire("origin")); err != nil {
+		return errors.Wrapf(err, "ensure written %s", options.dir)
 	}
 
 	return nil

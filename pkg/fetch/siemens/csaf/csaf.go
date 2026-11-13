@@ -101,6 +101,11 @@ func Fetch(opts ...Option) error {
 	if err := options.fetchCSAF(client, us); err != nil {
 		return errors.Wrap(err, "fetch csaf")
 	}
+
+	if err := util.EnsureWritten(options.dir); err != nil {
+		return errors.Wrapf(err, "ensure written %s", options.dir)
+	}
+
 	return nil
 }
 

@@ -165,6 +165,8 @@ func Fetch(ids []string, opts ...Option) error {
 		return errors.Wrap(err, "pipeline get")
 	}
 
+	// No util.EnsureWritten: a run writes only what it is given, and what it is
+	// given can rightly come to nothing.
 	return nil
 }
 
