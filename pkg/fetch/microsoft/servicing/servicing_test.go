@@ -93,10 +93,18 @@ func TestFetch(t *testing.T) {
 		},
 		{
 			// Pre-2018 articles stay on /help/<KB>. There is no series to read,
-			// and that is not a failure.
+			// and that is not a failure: the article is skipped, and the run
+			// writes what the KB asked for alongside brings.
 			name:   "non-servicing article is skipped",
-			kbs:    []string{"KB923414"},
-			golden: "non-servicing",
+			kbs:    []string{"KB923414", "KB5101649"},
+			golden: "os-series",
+		},
+		{
+			// Skipping an article is not a failure, but a run that fetched none
+			// of what it was given wrote nothing, and that is.
+			name:     "only a non-servicing article",
+			kbs:      []string{"KB923414"},
+			hasError: true,
 		},
 		{
 			name:     "no KB",

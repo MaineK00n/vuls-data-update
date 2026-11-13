@@ -85,7 +85,7 @@
 - Prefer that over narrowing the call to a subdirectory. Narrowing spares the rest of the tree from being swept at all, so a file an older version of the step wrote and the current one does not will sit there indefinitely
 - End a fetcher's `Fetch` with `util.EnsureWritten(options.dir)`, the counterpart of `util.RemoveAll`: it fails the fetch unless a file was written outside the keep set, so a fetch that decoded nothing is not committed as the deletion of everything it no longer wrote. Pass it the same `util.WithKeep(...)` as `RemoveAll`
 - Name the fixed sections a fetcher writes with `util.WithRequire(...)`, e.g. `util.WithRequire("weakness", "category", "view")`: one section going missing still leaves the rest of the tree, which is all the default check asks for. A file written whatever the fetch got (a README, a skill) satisfies the default check too, so a fetcher that writes one requires its data paths or writes that file after the check
-- A `Fetch` given a list of what to fetch (IDs, dates, releases) can rightly write nothing; it leaves the check out and says so in a comment
+- Every `Fetch` calls it, including one given a list of what to fetch (IDs, dates, releases): skipping part of the list is fine, but a run that fetched none of it wrote nothing and fails. A test of a skip passes something fetchable alongside, so it still shows the skip is not an error
 - `util.CacheDir()` defaults to `<os.UserCacheDir()>/vuls-data-update` (with a temp-dir fallback if the user cache directory is unavailable)
 
 ## Consistency With Surrounding Code

@@ -20,7 +20,7 @@ applyTo: "**"
 - Regex patterns: check for overly restrictive quantifiers (e.g., `\d{4}` vs `\d{4,}` for IDs that can have 5+ digits)
 - Data source coverage: check for missing variants (e.g., SUSE has both `suse.linux.enterprise.micro` and `suse.linux.micro`)
 - Enum completeness: when matching advisory prefixes (RLSA-, RBSA-, etc.), verify all valid prefixes are handled
-- Fetcher output: `Fetch` ends with `util.EnsureWritten`, given the same `WithKeep` as `util.RemoveAll` and `util.WithRequire` for the fixed sections it writes. A file written whatever the fetch got (a README, a skill) must not be all the check sees. A list-driven `Fetch` that leaves the check out says why in a comment
+- Fetcher output: `Fetch` ends with `util.EnsureWritten`, given the same `WithKeep` as `util.RemoveAll` and `util.WithRequire` for the fixed sections it writes. A file written whatever the fetch got (a README, a skill) must not be all the check sees. A list-driven `Fetch` is no exception
 
 ### Error Handling
 - **Errors must not be swallowed.** Flag any `_ = f()` on a fallible call, or dropped errors with no logging/justification.

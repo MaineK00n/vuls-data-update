@@ -1,0 +1,560 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cvrf:cvrfdoc xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:cvrf-common="http://docs.oasis-open.org/csaf/ns/csaf-cvrf/v1.2/common" xmlns:cvrf="http://docs.oasis-open.org/csaf/ns/csaf-cvrf/v1.2/cvrf">
+    <cvrf:DocumentTitle>Authenticated Heap Overflow in SSL-VPN bookmarks</cvrf:DocumentTitle>
+    <cvrf:DocumentType>Fortinet PSIRT Advisories</cvrf:DocumentType>
+    <cvrf:DocumentPublisher Type="Vendor">
+        <cvrf:ContactDetails>
+            Fortinet PSIRT Contact:
+            Website: https://fortiguard.fortinet.com/faq/psirt-contact
+        </cvrf:ContactDetails>
+     </cvrf:DocumentPublisher>
+    <cvrf:DocumentTracking>
+        <cvrf:Identification>
+            <cvrf:ID>FG-IR-25-756</cvrf:ID>
+        </cvrf:Identification>
+        <cvrf:Status>Final</cvrf:Status>
+        <cvrf:Version>1</cvrf:Version>
+        <cvrf:RevisionHistory>
+            <cvrf:Revision>
+                <cvrf:Number>1</cvrf:Number>
+                <cvrf:Date>2025-10-14T00:00:00</cvrf:Date>
+                <cvrf:Description>Current version</cvrf:Description>
+        </cvrf:Revision>
+       </cvrf:RevisionHistory>
+        <cvrf:InitialReleaseDate>2025-10-14T00:00:00</cvrf:InitialReleaseDate>
+        <cvrf:CurrentReleaseDate>2026-03-04T00:00:00</cvrf:CurrentReleaseDate>
+    </cvrf:DocumentTracking>
+    <cvrf:DocumentNotes>
+        <cvrf:Note Title="Summary" Type="Summary" Ordinal="1">
+            An Heap-based Buffer Overflow vulnerability [CWE-122] in FortiOS, FortiPAM and FortiProxy RDP bookmark connection may allow an authenticated user to execute unauthorized code via crafted requests.
+        </cvrf:Note>
+        <cvrf:Note Title="Description" Type="General" Ordinal="2">
+            None
+        </cvrf:Note>
+        <cvrf:Note Title="Impact" Type="General" Ordinal="3">
+            Execute unauthorized code or commands
+        </cvrf:Note>
+        <cvrf:Note Title="Solutions" Type="General" Ordinal="4">
+            None
+        </cvrf:Note>
+    </cvrf:DocumentNotes>
+    <cvrf:Acknowledgments>
+        <cvrf:Acknowledgment>
+            <cvrf:Description>Fortinet is pleased to thank Vang3lis and Cyth from VARAS@IIE for reporting this vulnerability under responsible disclosure.</cvrf:Description>
+        </cvrf:Acknowledgment>
+    </cvrf:Acknowledgments>
+    <ProductTree>
+        <Branch Name="Fortinet" Type="Vendor">
+            <Branch Name="FortiOS" Type="Product Name">
+                <Branch Name="7.6.2" Type="Product Version">
+                    <FullProductName ProductID="FortiOS-7.6.2">FortiOS 7.6.2</FullProductName>
+                </Branch>
+                <Branch Name="7.6.1" Type="Product Version">
+                    <FullProductName ProductID="FortiOS-7.6.1">FortiOS 7.6.1</FullProductName>
+                </Branch>
+                <Branch Name="7.6.0" Type="Product Version">
+                    <FullProductName ProductID="FortiOS-7.6.0">FortiOS 7.6.0</FullProductName>
+                </Branch>
+                <Branch Name="7.4.7" Type="Product Version">
+                    <FullProductName ProductID="FortiOS-7.4.7">FortiOS 7.4.7</FullProductName>
+                </Branch>
+                <Branch Name="7.4.6" Type="Product Version">
+                    <FullProductName ProductID="FortiOS-7.4.6">FortiOS 7.4.6</FullProductName>
+                </Branch>
+                <Branch Name="7.4.5" Type="Product Version">
+                    <FullProductName ProductID="FortiOS-7.4.5">FortiOS 7.4.5</FullProductName>
+                </Branch>
+                <Branch Name="7.4.4" Type="Product Version">
+                    <FullProductName ProductID="FortiOS-7.4.4">FortiOS 7.4.4</FullProductName>
+                </Branch>
+                <Branch Name="7.4.3" Type="Product Version">
+                    <FullProductName ProductID="FortiOS-7.4.3">FortiOS 7.4.3</FullProductName>
+                </Branch>
+                <Branch Name="7.4.2" Type="Product Version">
+                    <FullProductName ProductID="FortiOS-7.4.2">FortiOS 7.4.2</FullProductName>
+                </Branch>
+                <Branch Name="7.4.1" Type="Product Version">
+                    <FullProductName ProductID="FortiOS-7.4.1">FortiOS 7.4.1</FullProductName>
+                </Branch>
+                <Branch Name="7.4.0" Type="Product Version">
+                    <FullProductName ProductID="FortiOS-7.4.0">FortiOS 7.4.0</FullProductName>
+                </Branch>
+                <Branch Name="7.2.10" Type="Product Version">
+                    <FullProductName ProductID="FortiOS-7.2.10">FortiOS 7.2.10</FullProductName>
+                </Branch>
+                <Branch Name="7.2.9" Type="Product Version">
+                    <FullProductName ProductID="FortiOS-7.2.9">FortiOS 7.2.9</FullProductName>
+                </Branch>
+                <Branch Name="7.2.8" Type="Product Version">
+                    <FullProductName ProductID="FortiOS-7.2.8">FortiOS 7.2.8</FullProductName>
+                </Branch>
+                <Branch Name="7.2.7" Type="Product Version">
+                    <FullProductName ProductID="FortiOS-7.2.7">FortiOS 7.2.7</FullProductName>
+                </Branch>
+                <Branch Name="7.2.6" Type="Product Version">
+                    <FullProductName ProductID="FortiOS-7.2.6">FortiOS 7.2.6</FullProductName>
+                </Branch>
+                <Branch Name="7.2.5" Type="Product Version">
+                    <FullProductName ProductID="FortiOS-7.2.5">FortiOS 7.2.5</FullProductName>
+                </Branch>
+                <Branch Name="7.2.4" Type="Product Version">
+                    <FullProductName ProductID="FortiOS-7.2.4">FortiOS 7.2.4</FullProductName>
+                </Branch>
+                <Branch Name="7.2.3" Type="Product Version">
+                    <FullProductName ProductID="FortiOS-7.2.3">FortiOS 7.2.3</FullProductName>
+                </Branch>
+                <Branch Name="7.2.2" Type="Product Version">
+                    <FullProductName ProductID="FortiOS-7.2.2">FortiOS 7.2.2</FullProductName>
+                </Branch>
+                <Branch Name="7.2.1" Type="Product Version">
+                    <FullProductName ProductID="FortiOS-7.2.1">FortiOS 7.2.1</FullProductName>
+                </Branch>
+                <Branch Name="7.2.0" Type="Product Version">
+                    <FullProductName ProductID="FortiOS-7.2.0">FortiOS 7.2.0</FullProductName>
+                </Branch>
+                <Branch Name="7.0.19" Type="Product Version">
+                    <FullProductName ProductID="FortiOS-7.0.19">FortiOS 7.0.19</FullProductName>
+                </Branch>
+                <Branch Name="7.0.18" Type="Product Version">
+                    <FullProductName ProductID="FortiOS-7.0.18">FortiOS 7.0.18</FullProductName>
+                </Branch>
+                <Branch Name="7.0.17" Type="Product Version">
+                    <FullProductName ProductID="FortiOS-7.0.17">FortiOS 7.0.17</FullProductName>
+                </Branch>
+                <Branch Name="7.0.16" Type="Product Version">
+                    <FullProductName ProductID="FortiOS-7.0.16">FortiOS 7.0.16</FullProductName>
+                </Branch>
+                <Branch Name="7.0.15" Type="Product Version">
+                    <FullProductName ProductID="FortiOS-7.0.15">FortiOS 7.0.15</FullProductName>
+                </Branch>
+                <Branch Name="7.0.14" Type="Product Version">
+                    <FullProductName ProductID="FortiOS-7.0.14">FortiOS 7.0.14</FullProductName>
+                </Branch>
+                <Branch Name="7.0.13" Type="Product Version">
+                    <FullProductName ProductID="FortiOS-7.0.13">FortiOS 7.0.13</FullProductName>
+                </Branch>
+                <Branch Name="7.0.12" Type="Product Version">
+                    <FullProductName ProductID="FortiOS-7.0.12">FortiOS 7.0.12</FullProductName>
+                </Branch>
+                <Branch Name="7.0.11" Type="Product Version">
+                    <FullProductName ProductID="FortiOS-7.0.11">FortiOS 7.0.11</FullProductName>
+                </Branch>
+                <Branch Name="7.0.10" Type="Product Version">
+                    <FullProductName ProductID="FortiOS-7.0.10">FortiOS 7.0.10</FullProductName>
+                </Branch>
+                <Branch Name="7.0.9" Type="Product Version">
+                    <FullProductName ProductID="FortiOS-7.0.9">FortiOS 7.0.9</FullProductName>
+                </Branch>
+                <Branch Name="7.0.8" Type="Product Version">
+                    <FullProductName ProductID="FortiOS-7.0.8">FortiOS 7.0.8</FullProductName>
+                </Branch>
+                <Branch Name="7.0.7" Type="Product Version">
+                    <FullProductName ProductID="FortiOS-7.0.7">FortiOS 7.0.7</FullProductName>
+                </Branch>
+                <Branch Name="7.0.6" Type="Product Version">
+                    <FullProductName ProductID="FortiOS-7.0.6">FortiOS 7.0.6</FullProductName>
+                </Branch>
+                <Branch Name="7.0.5" Type="Product Version">
+                    <FullProductName ProductID="FortiOS-7.0.5">FortiOS 7.0.5</FullProductName>
+                </Branch>
+                <Branch Name="7.0.4" Type="Product Version">
+                    <FullProductName ProductID="FortiOS-7.0.4">FortiOS 7.0.4</FullProductName>
+                </Branch>
+                <Branch Name="7.0.3" Type="Product Version">
+                    <FullProductName ProductID="FortiOS-7.0.3">FortiOS 7.0.3</FullProductName>
+                </Branch>
+                <Branch Name="7.0.2" Type="Product Version">
+                    <FullProductName ProductID="FortiOS-7.0.2">FortiOS 7.0.2</FullProductName>
+                </Branch>
+                <Branch Name="7.0.1" Type="Product Version">
+                    <FullProductName ProductID="FortiOS-7.0.1">FortiOS 7.0.1</FullProductName>
+                </Branch>
+                <Branch Name="7.0.0" Type="Product Version">
+                    <FullProductName ProductID="FortiOS-7.0.0">FortiOS 7.0.0</FullProductName>
+                </Branch>
+                <Branch Name="6.4.16" Type="Product Version">
+                    <FullProductName ProductID="FortiOS-6.4.16">FortiOS 6.4.16</FullProductName>
+                </Branch>
+                <Branch Name="6.4.15" Type="Product Version">
+                    <FullProductName ProductID="FortiOS-6.4.15">FortiOS 6.4.15</FullProductName>
+                </Branch>
+                <Branch Name="6.4.14" Type="Product Version">
+                    <FullProductName ProductID="FortiOS-6.4.14">FortiOS 6.4.14</FullProductName>
+                </Branch>
+                <Branch Name="6.4.13" Type="Product Version">
+                    <FullProductName ProductID="FortiOS-6.4.13">FortiOS 6.4.13</FullProductName>
+                </Branch>
+                <Branch Name="6.4.12" Type="Product Version">
+                    <FullProductName ProductID="FortiOS-6.4.12">FortiOS 6.4.12</FullProductName>
+                </Branch>
+                <Branch Name="6.4.11" Type="Product Version">
+                    <FullProductName ProductID="FortiOS-6.4.11">FortiOS 6.4.11</FullProductName>
+                </Branch>
+                <Branch Name="6.4.10" Type="Product Version">
+                    <FullProductName ProductID="FortiOS-6.4.10">FortiOS 6.4.10</FullProductName>
+                </Branch>
+                <Branch Name="6.4.9" Type="Product Version">
+                    <FullProductName ProductID="FortiOS-6.4.9">FortiOS 6.4.9</FullProductName>
+                </Branch>
+                <Branch Name="6.4.8" Type="Product Version">
+                    <FullProductName ProductID="FortiOS-6.4.8">FortiOS 6.4.8</FullProductName>
+                </Branch>
+                <Branch Name="6.4.7" Type="Product Version">
+                    <FullProductName ProductID="FortiOS-6.4.7">FortiOS 6.4.7</FullProductName>
+                </Branch>
+                <Branch Name="6.4.6" Type="Product Version">
+                    <FullProductName ProductID="FortiOS-6.4.6">FortiOS 6.4.6</FullProductName>
+                </Branch>
+                <Branch Name="6.4.5" Type="Product Version">
+                    <FullProductName ProductID="FortiOS-6.4.5">FortiOS 6.4.5</FullProductName>
+                </Branch>
+                <Branch Name="6.4.4" Type="Product Version">
+                    <FullProductName ProductID="FortiOS-6.4.4">FortiOS 6.4.4</FullProductName>
+                </Branch>
+                <Branch Name="6.4.3" Type="Product Version">
+                    <FullProductName ProductID="FortiOS-6.4.3">FortiOS 6.4.3</FullProductName>
+                </Branch>
+                <Branch Name="6.4.2" Type="Product Version">
+                    <FullProductName ProductID="FortiOS-6.4.2">FortiOS 6.4.2</FullProductName>
+                </Branch>
+                <Branch Name="6.4.1" Type="Product Version">
+                    <FullProductName ProductID="FortiOS-6.4.1">FortiOS 6.4.1</FullProductName>
+                </Branch>
+                <Branch Name="6.4.0" Type="Product Version">
+                    <FullProductName ProductID="FortiOS-6.4.0">FortiOS 6.4.0</FullProductName>
+                </Branch>
+            </Branch>
+            <Branch Name="FortiPAM" Type="Product Name">
+                <Branch Name="1.5.0" Type="Product Version">
+                    <FullProductName ProductID="FortiPAM-1.5.0">FortiPAM 1.5.0</FullProductName>
+                </Branch>
+                <Branch Name="1.4.2" Type="Product Version">
+                    <FullProductName ProductID="FortiPAM-1.4.2">FortiPAM 1.4.2</FullProductName>
+                </Branch>
+                <Branch Name="1.4.1" Type="Product Version">
+                    <FullProductName ProductID="FortiPAM-1.4.1">FortiPAM 1.4.1</FullProductName>
+                </Branch>
+                <Branch Name="1.4.0" Type="Product Version">
+                    <FullProductName ProductID="FortiPAM-1.4.0">FortiPAM 1.4.0</FullProductName>
+                </Branch>
+                <Branch Name="1.3.1" Type="Product Version">
+                    <FullProductName ProductID="FortiPAM-1.3.1">FortiPAM 1.3.1</FullProductName>
+                </Branch>
+                <Branch Name="1.3.0" Type="Product Version">
+                    <FullProductName ProductID="FortiPAM-1.3.0">FortiPAM 1.3.0</FullProductName>
+                </Branch>
+                <Branch Name="1.2.0" Type="Product Version">
+                    <FullProductName ProductID="FortiPAM-1.2.0">FortiPAM 1.2.0</FullProductName>
+                </Branch>
+                <Branch Name="1.1.2" Type="Product Version">
+                    <FullProductName ProductID="FortiPAM-1.1.2">FortiPAM 1.1.2</FullProductName>
+                </Branch>
+                <Branch Name="1.1.1" Type="Product Version">
+                    <FullProductName ProductID="FortiPAM-1.1.1">FortiPAM 1.1.1</FullProductName>
+                </Branch>
+                <Branch Name="1.1.0" Type="Product Version">
+                    <FullProductName ProductID="FortiPAM-1.1.0">FortiPAM 1.1.0</FullProductName>
+                </Branch>
+                <Branch Name="1.0.3" Type="Product Version">
+                    <FullProductName ProductID="FortiPAM-1.0.3">FortiPAM 1.0.3</FullProductName>
+                </Branch>
+                <Branch Name="1.0.2" Type="Product Version">
+                    <FullProductName ProductID="FortiPAM-1.0.2">FortiPAM 1.0.2</FullProductName>
+                </Branch>
+                <Branch Name="1.0.1" Type="Product Version">
+                    <FullProductName ProductID="FortiPAM-1.0.1">FortiPAM 1.0.1</FullProductName>
+                </Branch>
+                <Branch Name="1.0.0" Type="Product Version">
+                    <FullProductName ProductID="FortiPAM-1.0.0">FortiPAM 1.0.0</FullProductName>
+                </Branch>
+            </Branch>
+            <Branch Name="FortiProxy" Type="Product Name">
+                <Branch Name="7.6.2" Type="Product Version">
+                    <FullProductName ProductID="FortiProxy-7.6.2">FortiProxy 7.6.2</FullProductName>
+                </Branch>
+                <Branch Name="7.6.1" Type="Product Version">
+                    <FullProductName ProductID="FortiProxy-7.6.1">FortiProxy 7.6.1</FullProductName>
+                </Branch>
+                <Branch Name="7.6.0" Type="Product Version">
+                    <FullProductName ProductID="FortiProxy-7.6.0">FortiProxy 7.6.0</FullProductName>
+                </Branch>
+                <Branch Name="7.4.3" Type="Product Version">
+                    <FullProductName ProductID="FortiProxy-7.4.3">FortiProxy 7.4.3</FullProductName>
+                </Branch>
+                <Branch Name="7.4.2" Type="Product Version">
+                    <FullProductName ProductID="FortiProxy-7.4.2">FortiProxy 7.4.2</FullProductName>
+                </Branch>
+                <Branch Name="7.4.1" Type="Product Version">
+                    <FullProductName ProductID="FortiProxy-7.4.1">FortiProxy 7.4.1</FullProductName>
+                </Branch>
+                <Branch Name="7.4.0" Type="Product Version">
+                    <FullProductName ProductID="FortiProxy-7.4.0">FortiProxy 7.4.0</FullProductName>
+                </Branch>
+                <Branch Name="7.2.16" Type="Product Version">
+                    <FullProductName ProductID="FortiProxy-7.2.16">FortiProxy 7.2.16</FullProductName>
+                </Branch>
+                <Branch Name="7.2.15" Type="Product Version">
+                    <FullProductName ProductID="FortiProxy-7.2.15">FortiProxy 7.2.15</FullProductName>
+                </Branch>
+                <Branch Name="7.2.14" Type="Product Version">
+                    <FullProductName ProductID="FortiProxy-7.2.14">FortiProxy 7.2.14</FullProductName>
+                </Branch>
+                <Branch Name="7.2.13" Type="Product Version">
+                    <FullProductName ProductID="FortiProxy-7.2.13">FortiProxy 7.2.13</FullProductName>
+                </Branch>
+                <Branch Name="7.2.12" Type="Product Version">
+                    <FullProductName ProductID="FortiProxy-7.2.12">FortiProxy 7.2.12</FullProductName>
+                </Branch>
+                <Branch Name="7.2.11" Type="Product Version">
+                    <FullProductName ProductID="FortiProxy-7.2.11">FortiProxy 7.2.11</FullProductName>
+                </Branch>
+                <Branch Name="7.2.10" Type="Product Version">
+                    <FullProductName ProductID="FortiProxy-7.2.10">FortiProxy 7.2.10</FullProductName>
+                </Branch>
+                <Branch Name="7.2.9" Type="Product Version">
+                    <FullProductName ProductID="FortiProxy-7.2.9">FortiProxy 7.2.9</FullProductName>
+                </Branch>
+                <Branch Name="7.2.8" Type="Product Version">
+                    <FullProductName ProductID="FortiProxy-7.2.8">FortiProxy 7.2.8</FullProductName>
+                </Branch>
+                <Branch Name="7.2.7" Type="Product Version">
+                    <FullProductName ProductID="FortiProxy-7.2.7">FortiProxy 7.2.7</FullProductName>
+                </Branch>
+                <Branch Name="7.2.6" Type="Product Version">
+                    <FullProductName ProductID="FortiProxy-7.2.6">FortiProxy 7.2.6</FullProductName>
+                </Branch>
+                <Branch Name="7.2.5" Type="Product Version">
+                    <FullProductName ProductID="FortiProxy-7.2.5">FortiProxy 7.2.5</FullProductName>
+                </Branch>
+                <Branch Name="7.2.4" Type="Product Version">
+                    <FullProductName ProductID="FortiProxy-7.2.4">FortiProxy 7.2.4</FullProductName>
+                </Branch>
+                <Branch Name="7.2.3" Type="Product Version">
+                    <FullProductName ProductID="FortiProxy-7.2.3">FortiProxy 7.2.3</FullProductName>
+                </Branch>
+                <Branch Name="7.2.2" Type="Product Version">
+                    <FullProductName ProductID="FortiProxy-7.2.2">FortiProxy 7.2.2</FullProductName>
+                </Branch>
+                <Branch Name="7.2.1" Type="Product Version">
+                    <FullProductName ProductID="FortiProxy-7.2.1">FortiProxy 7.2.1</FullProductName>
+                </Branch>
+                <Branch Name="7.2.0" Type="Product Version">
+                    <FullProductName ProductID="FortiProxy-7.2.0">FortiProxy 7.2.0</FullProductName>
+                </Branch>
+                <Branch Name="7.0.23" Type="Product Version">
+                    <FullProductName ProductID="FortiProxy-7.0.23">FortiProxy 7.0.23</FullProductName>
+                </Branch>
+                <Branch Name="7.0.22" Type="Product Version">
+                    <FullProductName ProductID="FortiProxy-7.0.22">FortiProxy 7.0.22</FullProductName>
+                </Branch>
+                <Branch Name="7.0.21" Type="Product Version">
+                    <FullProductName ProductID="FortiProxy-7.0.21">FortiProxy 7.0.21</FullProductName>
+                </Branch>
+                <Branch Name="7.0.20" Type="Product Version">
+                    <FullProductName ProductID="FortiProxy-7.0.20">FortiProxy 7.0.20</FullProductName>
+                </Branch>
+                <Branch Name="7.0.19" Type="Product Version">
+                    <FullProductName ProductID="FortiProxy-7.0.19">FortiProxy 7.0.19</FullProductName>
+                </Branch>
+                <Branch Name="7.0.18" Type="Product Version">
+                    <FullProductName ProductID="FortiProxy-7.0.18">FortiProxy 7.0.18</FullProductName>
+                </Branch>
+                <Branch Name="7.0.17" Type="Product Version">
+                    <FullProductName ProductID="FortiProxy-7.0.17">FortiProxy 7.0.17</FullProductName>
+                </Branch>
+                <Branch Name="7.0.16" Type="Product Version">
+                    <FullProductName ProductID="FortiProxy-7.0.16">FortiProxy 7.0.16</FullProductName>
+                </Branch>
+                <Branch Name="7.0.15" Type="Product Version">
+                    <FullProductName ProductID="FortiProxy-7.0.15">FortiProxy 7.0.15</FullProductName>
+                </Branch>
+                <Branch Name="7.0.14" Type="Product Version">
+                    <FullProductName ProductID="FortiProxy-7.0.14">FortiProxy 7.0.14</FullProductName>
+                </Branch>
+                <Branch Name="7.0.13" Type="Product Version">
+                    <FullProductName ProductID="FortiProxy-7.0.13">FortiProxy 7.0.13</FullProductName>
+                </Branch>
+                <Branch Name="7.0.12" Type="Product Version">
+                    <FullProductName ProductID="FortiProxy-7.0.12">FortiProxy 7.0.12</FullProductName>
+                </Branch>
+                <Branch Name="7.0.11" Type="Product Version">
+                    <FullProductName ProductID="FortiProxy-7.0.11">FortiProxy 7.0.11</FullProductName>
+                </Branch>
+                <Branch Name="7.0.10" Type="Product Version">
+                    <FullProductName ProductID="FortiProxy-7.0.10">FortiProxy 7.0.10</FullProductName>
+                </Branch>
+                <Branch Name="7.0.9" Type="Product Version">
+                    <FullProductName ProductID="FortiProxy-7.0.9">FortiProxy 7.0.9</FullProductName>
+                </Branch>
+                <Branch Name="7.0.8" Type="Product Version">
+                    <FullProductName ProductID="FortiProxy-7.0.8">FortiProxy 7.0.8</FullProductName>
+                </Branch>
+                <Branch Name="7.0.7" Type="Product Version">
+                    <FullProductName ProductID="FortiProxy-7.0.7">FortiProxy 7.0.7</FullProductName>
+                </Branch>
+                <Branch Name="7.0.6" Type="Product Version">
+                    <FullProductName ProductID="FortiProxy-7.0.6">FortiProxy 7.0.6</FullProductName>
+                </Branch>
+                <Branch Name="7.0.5" Type="Product Version">
+                    <FullProductName ProductID="FortiProxy-7.0.5">FortiProxy 7.0.5</FullProductName>
+                </Branch>
+                <Branch Name="7.0.4" Type="Product Version">
+                    <FullProductName ProductID="FortiProxy-7.0.4">FortiProxy 7.0.4</FullProductName>
+                </Branch>
+                <Branch Name="7.0.3" Type="Product Version">
+                    <FullProductName ProductID="FortiProxy-7.0.3">FortiProxy 7.0.3</FullProductName>
+                </Branch>
+                <Branch Name="7.0.2" Type="Product Version">
+                    <FullProductName ProductID="FortiProxy-7.0.2">FortiProxy 7.0.2</FullProductName>
+                </Branch>
+                <Branch Name="7.0.1" Type="Product Version">
+                    <FullProductName ProductID="FortiProxy-7.0.1">FortiProxy 7.0.1</FullProductName>
+                </Branch>
+                <Branch Name="7.0.0" Type="Product Version">
+                    <FullProductName ProductID="FortiProxy-7.0.0">FortiProxy 7.0.0</FullProductName>
+                </Branch>
+            </Branch>
+        </Branch>
+    </ProductTree>
+    <Vulnerability Ordinal="1">
+        <Title>Authenticated Heap Overflow in SSL-VPN bookmarks</Title>
+        <cvrf:CVE>CVE-2025-57740</cvrf:CVE>
+        <ProductStatuses>
+            <Status Type="Known Affected">
+                <ProductID>FortiOS-7.6.2</ProductID>
+                <ProductID>FortiOS-7.6.1</ProductID>
+                <ProductID>FortiOS-7.6.0</ProductID>
+                <ProductID>FortiOS-7.4.7</ProductID>
+                <ProductID>FortiOS-7.4.6</ProductID>
+                <ProductID>FortiOS-7.4.5</ProductID>
+                <ProductID>FortiOS-7.4.4</ProductID>
+                <ProductID>FortiOS-7.4.3</ProductID>
+                <ProductID>FortiOS-7.4.2</ProductID>
+                <ProductID>FortiOS-7.4.1</ProductID>
+                <ProductID>FortiOS-7.4.0</ProductID>
+                <ProductID>FortiOS-7.2.10</ProductID>
+                <ProductID>FortiOS-7.2.9</ProductID>
+                <ProductID>FortiOS-7.2.8</ProductID>
+                <ProductID>FortiOS-7.2.7</ProductID>
+                <ProductID>FortiOS-7.2.6</ProductID>
+                <ProductID>FortiOS-7.2.5</ProductID>
+                <ProductID>FortiOS-7.2.4</ProductID>
+                <ProductID>FortiOS-7.2.3</ProductID>
+                <ProductID>FortiOS-7.2.2</ProductID>
+                <ProductID>FortiOS-7.2.1</ProductID>
+                <ProductID>FortiOS-7.2.0</ProductID>
+                <ProductID>FortiOS-7.0.19</ProductID>
+                <ProductID>FortiOS-7.0.18</ProductID>
+                <ProductID>FortiOS-7.0.17</ProductID>
+                <ProductID>FortiOS-7.0.16</ProductID>
+                <ProductID>FortiOS-7.0.15</ProductID>
+                <ProductID>FortiOS-7.0.14</ProductID>
+                <ProductID>FortiOS-7.0.13</ProductID>
+                <ProductID>FortiOS-7.0.12</ProductID>
+                <ProductID>FortiOS-7.0.11</ProductID>
+                <ProductID>FortiOS-7.0.10</ProductID>
+                <ProductID>FortiOS-7.0.9</ProductID>
+                <ProductID>FortiOS-7.0.8</ProductID>
+                <ProductID>FortiOS-7.0.7</ProductID>
+                <ProductID>FortiOS-7.0.6</ProductID>
+                <ProductID>FortiOS-7.0.5</ProductID>
+                <ProductID>FortiOS-7.0.4</ProductID>
+                <ProductID>FortiOS-7.0.3</ProductID>
+                <ProductID>FortiOS-7.0.2</ProductID>
+                <ProductID>FortiOS-7.0.1</ProductID>
+                <ProductID>FortiOS-7.0.0</ProductID>
+                <ProductID>FortiOS-6.4.16</ProductID>
+                <ProductID>FortiOS-6.4.15</ProductID>
+                <ProductID>FortiOS-6.4.14</ProductID>
+                <ProductID>FortiOS-6.4.13</ProductID>
+                <ProductID>FortiOS-6.4.12</ProductID>
+                <ProductID>FortiOS-6.4.11</ProductID>
+                <ProductID>FortiOS-6.4.10</ProductID>
+                <ProductID>FortiOS-6.4.9</ProductID>
+                <ProductID>FortiOS-6.4.8</ProductID>
+                <ProductID>FortiOS-6.4.7</ProductID>
+                <ProductID>FortiOS-6.4.6</ProductID>
+                <ProductID>FortiOS-6.4.5</ProductID>
+                <ProductID>FortiOS-6.4.4</ProductID>
+                <ProductID>FortiOS-6.4.3</ProductID>
+                <ProductID>FortiOS-6.4.2</ProductID>
+                <ProductID>FortiOS-6.4.1</ProductID>
+                <ProductID>FortiOS-6.4.0</ProductID>
+                <ProductID>FortiPAM-1.5.0</ProductID>
+                <ProductID>FortiPAM-1.4.2</ProductID>
+                <ProductID>FortiPAM-1.4.1</ProductID>
+                <ProductID>FortiPAM-1.4.0</ProductID>
+                <ProductID>FortiPAM-1.3.1</ProductID>
+                <ProductID>FortiPAM-1.3.0</ProductID>
+                <ProductID>FortiPAM-1.2.0</ProductID>
+                <ProductID>FortiPAM-1.1.2</ProductID>
+                <ProductID>FortiPAM-1.1.1</ProductID>
+                <ProductID>FortiPAM-1.1.0</ProductID>
+                <ProductID>FortiPAM-1.0.3</ProductID>
+                <ProductID>FortiPAM-1.0.2</ProductID>
+                <ProductID>FortiPAM-1.0.1</ProductID>
+                <ProductID>FortiPAM-1.0.0</ProductID>
+                <ProductID>FortiProxy-7.6.2</ProductID>
+                <ProductID>FortiProxy-7.6.1</ProductID>
+                <ProductID>FortiProxy-7.6.0</ProductID>
+                <ProductID>FortiProxy-7.4.3</ProductID>
+                <ProductID>FortiProxy-7.4.2</ProductID>
+                <ProductID>FortiProxy-7.4.1</ProductID>
+                <ProductID>FortiProxy-7.4.0</ProductID>
+                <ProductID>FortiProxy-7.2.16</ProductID>
+                <ProductID>FortiProxy-7.2.15</ProductID>
+                <ProductID>FortiProxy-7.2.14</ProductID>
+                <ProductID>FortiProxy-7.2.13</ProductID>
+                <ProductID>FortiProxy-7.2.12</ProductID>
+                <ProductID>FortiProxy-7.2.11</ProductID>
+                <ProductID>FortiProxy-7.2.10</ProductID>
+                <ProductID>FortiProxy-7.2.9</ProductID>
+                <ProductID>FortiProxy-7.2.8</ProductID>
+                <ProductID>FortiProxy-7.2.7</ProductID>
+                <ProductID>FortiProxy-7.2.6</ProductID>
+                <ProductID>FortiProxy-7.2.5</ProductID>
+                <ProductID>FortiProxy-7.2.4</ProductID>
+                <ProductID>FortiProxy-7.2.3</ProductID>
+                <ProductID>FortiProxy-7.2.2</ProductID>
+                <ProductID>FortiProxy-7.2.1</ProductID>
+                <ProductID>FortiProxy-7.2.0</ProductID>
+                <ProductID>FortiProxy-7.0.23</ProductID>
+                <ProductID>FortiProxy-7.0.22</ProductID>
+                <ProductID>FortiProxy-7.0.21</ProductID>
+                <ProductID>FortiProxy-7.0.20</ProductID>
+                <ProductID>FortiProxy-7.0.19</ProductID>
+                <ProductID>FortiProxy-7.0.18</ProductID>
+                <ProductID>FortiProxy-7.0.17</ProductID>
+                <ProductID>FortiProxy-7.0.16</ProductID>
+                <ProductID>FortiProxy-7.0.15</ProductID>
+                <ProductID>FortiProxy-7.0.14</ProductID>
+                <ProductID>FortiProxy-7.0.13</ProductID>
+                <ProductID>FortiProxy-7.0.12</ProductID>
+                <ProductID>FortiProxy-7.0.11</ProductID>
+                <ProductID>FortiProxy-7.0.10</ProductID>
+                <ProductID>FortiProxy-7.0.9</ProductID>
+                <ProductID>FortiProxy-7.0.8</ProductID>
+                <ProductID>FortiProxy-7.0.7</ProductID>
+                <ProductID>FortiProxy-7.0.6</ProductID>
+                <ProductID>FortiProxy-7.0.5</ProductID>
+                <ProductID>FortiProxy-7.0.4</ProductID>
+                <ProductID>FortiProxy-7.0.3</ProductID>
+                <ProductID>FortiProxy-7.0.2</ProductID>
+                <ProductID>FortiProxy-7.0.1</ProductID>
+                <ProductID>FortiProxy-7.0.0</ProductID>
+            </Status>
+        </ProductStatuses>
+        <CVSSScoreSets>
+            <ScoreSetV3>
+                <BaseScoreV3>6.7</BaseScoreV3>
+                <VectorV3>CVSS:3.1/AV:N/AC:H/PR:L/UI:N/S:U/C:H/I:H/A:H/E:P/RL:O/RC:C</VectorV3>
+            </ScoreSetV3>
+        </CVSSScoreSets>
+        <References Type="Self">
+            <Reference>
+                <URL>https://fortiguard.fortinet.com/psirt/FG-IR-25-756</URL>
+                <Description>Authenticated Heap Overflow in SSL-VPN bookmarks</Description>
+            </Reference>Reference>
+        </References>
+    </Vulnerability>
+</cvrf:cvrfdoc>
