@@ -33,7 +33,7 @@
 
 ## Adding a New Data Source
 
-1. Implement the fetcher in `pkg/fetch/<domain>/<name>/`
+1. Implement the fetcher in `pkg/fetch/<domain>/<name>/`, its `Fetch` starting with `util.RemoveAll` and ending with `util.EnsureWritten` (see Cleanup Helpers)
 2. Implement the extractor in `pkg/extract/<domain>/<name>/`
 3. Wire `newCmd…()` in both `pkg/cmd/fetch/fetch.go` and `pkg/cmd/extract/extract.go`
 4. Follow the existing pattern shown by `newCmdAlmaErrata()` (default output under `util.CacheDir()`, `--dir/-d` flag)
@@ -83,6 +83,9 @@
 - Use `util.RemoveAll(dir)` when cleaning output trees — it preserves `.git`
 - Pass `util.WithKeep(...)` when part of the tree is not produced by the step doing the cleaning and cannot be rebuilt by it. It states the whole keep set rather than adding to the default, so name `.git` alongside whatever else is kept: `util.RemoveAll(dir, util.WithKeep(".git", "raw"))`. Names match an entry's own name, not a suffix of the path
 - Prefer that over narrowing the call to a subdirectory. Narrowing spares the rest of the tree from being swept at all, so a file an older version of the step wrote and the current one does not will sit there indefinitely
+- End a fetcher's `Fetch` with `util.EnsureWritten(options.dir)`, the counterpart of `util.RemoveAll`: it fails the fetch unless a file was written outside the keep set, so a fetch that decoded nothing is not committed as the deletion of everything it no longer wrote. Pass it the same `util.WithKeep(...)` as `RemoveAll`
+- Name the fixed sections a fetcher writes with `util.WithRequire(...)`, e.g. `util.WithRequire("weakness", "category", "view")`: one section going missing still leaves the rest of the tree, which is all the default check asks for. A file written whatever the fetch got (a README, a skill) satisfies the default check too, so a fetcher that writes one requires its data paths or writes that file after the check
+- A `Fetch` given a list of what to fetch (IDs, dates, releases) can rightly write nothing; it leaves the check out and says so in a comment
 - `util.CacheDir()` defaults to `<os.UserCacheDir()>/vuls-data-update` (with a temp-dir fallback if the user cache directory is unavailable)
 
 ## Consistency With Surrounding Code
