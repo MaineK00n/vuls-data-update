@@ -404,6 +404,58 @@ func TestToCriterions(t *testing.T) {
 				},
 			}},
 		},
+		// FortiSASE-Sovereign versions with FortiSASE's milestone-letter scheme
+		// (FG-IR-26-227 lists 25.2, 25.3.a, 25.4.a and 26.2.c): its concrete
+		// releases parse as milestones and its trains range like FortiSASE's.
+		{
+			name: "non-numeric Sovereign concrete version baked, not a bound",
+			args: args{
+				productID: "FortiSASE-Sovereign 25.3.a",
+				refMap: map[string]csaf.ProductRef{
+					"FortiSASE-Sovereign 25.3.a": csaf.NewProductRef("FortiSASE-Sovereign", "25.3.a"),
+				},
+			},
+			want: []criterionTypes.Criterion{{
+				Type: criterionTypes.CriterionTypeCPE,
+				CPE: &ccTypes.Criterion{
+					Vulnerable: true,
+					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
+					CPE:        ccTypes.CPE("cpe:2.3:a:fortinet:fortisase-sovereign:25.3.a:*:*:*:*:*:*:*"),
+				},
+			}},
+		},
+		{
+			name: "non-numeric Sovereign train range ok",
+			args: args{
+				productID: "FortiSASE-Sovereign 25.2 all versions",
+				refMap: map[string]csaf.ProductRef{
+					"FortiSASE-Sovereign 25.2 all versions": csaf.NewProductRef("FortiSASE-Sovereign", "25.2 all versions"),
+				},
+			},
+			want: []criterionTypes.Criterion{{
+				Type: criterionTypes.CriterionTypeCPE,
+				CPE: &ccTypes.Criterion{
+					Vulnerable: true,
+					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
+					CPE:        ccTypes.CPE("cpe:2.3:a:fortinet:fortisase-sovereign:*:*:*:*:*:*:*:*"),
+					Range: &ccRangeTypes.Range{
+						Type:         ccRangeTypes.RangeTypeFortinetFortiSASESovereign,
+						GreaterEqual: "25.2",
+						LessThan:     "25.3",
+					},
+				},
+			}},
+		},
+		{
+			name: "non-numeric Sovereign multi-component range rejected",
+			args: args{
+				productID: "FortiSASE-Sovereign >=25.3.0|<=25.3.5",
+				refMap: map[string]csaf.ProductRef{
+					"FortiSASE-Sovereign >=25.3.0|<=25.3.5": csaf.NewProductRef("FortiSASE-Sovereign", ">=25.3.0|<=25.3.5"),
+				},
+			},
+			wantErr: true,
+		},
 		{
 			name: "product in tree but not whitelisted → hard error",
 			args: args{
