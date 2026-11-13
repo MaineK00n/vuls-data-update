@@ -28,6 +28,7 @@ func TestGitEnv(t *testing.T) {
 					"GIT_INDEX_FILE": filepath.Join(other, ".git", "index"),
 				}
 			},
+			wantConfig: "repository",
 		},
 		{
 			name: "GIT_COMMON_DIR and GIT_OBJECT_DIRECTORY of another repository",
@@ -37,6 +38,16 @@ func TestGitEnv(t *testing.T) {
 					"GIT_OBJECT_DIRECTORY": filepath.Join(other, ".git", "objects"),
 				}
 			},
+			wantConfig: "repository",
+		},
+		{
+			name: "GIT_CONFIG at the config file of another repository",
+			env: func(other string) map[string]string {
+				return map[string]string{
+					"GIT_CONFIG": filepath.Join(other, ".git", "config"),
+				}
+			},
+			wantConfig: "repository",
 		},
 		{
 			name: "config through GIT_CONFIG_COUNT",
@@ -62,13 +73,13 @@ func TestGitEnv(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			// Leave out the config of the user, and that which this process
-			// passes on through the environment, so that nothing it turns on,
-			// such as hooks or fsmonitor, writes to the repositories, and
-			// only env sets test.key.
+			// Leave out the config of the user, and the config values this
+			// process would pass on through the environment, so that nothing
+			// they turn on, such as hooks or fsmonitor, writes to the
+			// repositories, and only env overrides test.key.
 			t.Setenv("GIT_CONFIG_GLOBAL", os.DevNull)
 			t.Setenv("GIT_CONFIG_NOSYSTEM", "1")
-			for _, key := range []string{"GIT_CONFIG", "GIT_CONFIG_COUNT", "GIT_CONFIG_PARAMETERS"} {
+			for _, key := range []string{"GIT_CONFIG_COUNT", "GIT_CONFIG_PARAMETERS"} {
 				unsetenv(t, key)
 			}
 
@@ -115,11 +126,13 @@ func TestGitEnv(t *testing.T) {
 }
 
 // initRepository makes a repository at dir with a commit of its own, and
-// returns the commit. Plumbing, unlike git commit, starts no background
-// maintenance that could write to the repository while a test compares it.
+// test.key set to the name of dir, and returns the commit. Plumbing, unlike
+// git commit, starts no background maintenance that could write to the
+// repository while a test compares it.
 func initRepository(t *testing.T, dir string) string {
 	t.Helper()
 	run(t, "init", "--quiet", dir)
+	run(t, "-C", dir, "config", "test.key", filepath.Base(dir))
 	tree := run(t, "-C", dir, "write-tree")
 	commit := run(t, "-C", dir, "-c", "user.name=test", "-c", "user.email=test@example.com", "commit-tree", "-m", filepath.Base(dir), tree)
 	run(t, "-C", dir, "update-ref", "HEAD", commit)

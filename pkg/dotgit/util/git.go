@@ -13,17 +13,20 @@ import (
 )
 
 // repositoryEnv is what `git rev-parse --local-env-vars` lists in git 2.56,
-// less the config variables GIT_CONFIG, GIT_CONFIG_PARAMETERS and
-// GIT_CONFIG_COUNT. These belong to one repository: most say where it, its
-// work tree, index or objects are, and git honors them over -C, which only
-// changes the working directory. git sets some of them for the processes it
-// starts: hooks such as pre-commit get GIT_INDEX_FILE, and in a linked
-// worktree, hooks and the commands of git rebase -x get GIT_DIR. Inherited,
-// they make git act on that repository instead of the one named. The config
-// variables are kept, so that config passed through the environment still
-// applies.
+// less GIT_CONFIG_PARAMETERS and GIT_CONFIG_COUNT: the same split as
+// prepare_other_repo_env in git's run-command.c. These variables belong to
+// one repository. Most say where it, its work tree, index or objects are, or,
+// for GIT_CONFIG, which file git config reads and writes, and git honors them
+// over -C, which only changes the working directory. git sets some of them
+// for the processes it starts: hooks such as pre-commit get GIT_INDEX_FILE,
+// and in a linked worktree, hooks and the commands of git rebase -x get
+// GIT_DIR. Inherited, they make git act on that repository instead of the one
+// named. The two left out carry config values (git -c, and
+// GIT_CONFIG_KEY_<n>/GIT_CONFIG_VALUE_<n>) rather than a location, so they are
+// kept, and config passed through the environment still applies.
 var repositoryEnv = []string{
 	"GIT_ALTERNATE_OBJECT_DIRECTORIES",
+	"GIT_CONFIG",
 	"GIT_OBJECT_DIRECTORY",
 	"GIT_DIR",
 	"GIT_WORK_TREE",
@@ -41,9 +44,10 @@ var repositoryEnv = []string{
 // the command and its stderr.
 //
 // git runs without the variables that tie it to one repository (GIT_DIR,
-// GIT_WORK_TREE, GIT_INDEX_FILE and the like), so it acts on the repository
-// that -C or a path argument names even when this process runs from a git
-// hook or git rebase -x. Config passed through the environment still applies.
+// GIT_WORK_TREE, GIT_INDEX_FILE, GIT_CONFIG and the like), so it acts on the
+// repository that -C or a path argument names even when this process runs
+// from a git hook or git rebase -x. Config values passed through the
+// environment (GIT_CONFIG_COUNT, GIT_CONFIG_PARAMETERS) still apply.
 func Git(args ...string) ([]byte, error) {
 	return GitWithStdin(nil, args...)
 }
