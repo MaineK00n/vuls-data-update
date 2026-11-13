@@ -33,11 +33,17 @@ func TestPull(t *testing.T) {
 		opts       []pull.Option
 	}
 	tests := []struct {
-		name     string
-		args     args
-		golden   string
-		hasError bool
-		wantErr  string
+		name   string
+		args   args
+		golden string
+		// wantHead, if set, is what .git/HEAD of the pulled repository
+		// holds: a commit hash when the checkout detached HEAD.
+		wantHead string
+		// wantFiles, if set, are files of the pulled repository and their
+		// contents.
+		wantFiles map[string]string
+		hasError  bool
+		wantErr   string
 	}{
 		{
 			name: "vuls-data-raw-test restore: false, native git",
@@ -170,20 +176,26 @@ func TestPull(t *testing.T) {
 			golden: "testdata/golden/vuls-data-raw-test-restored.tar.zst",
 		},
 		{
-			name: "vuls-data-raw-test checkout: 9d3d5d486d4c9414321a2df56f2e007c4c2c8fab, restore: true, native git",
+			// A commit behind the branch, as a lock file pins one: the
+			// initial commit has the README.md that main deletes.
+			name: "vuls-data-raw-test-emptied checkout: b9b8cec27035fddf3c7addcf7b76c8dda6be5e76, restore: true, native git",
 			args: args{
-				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test",
-				opts:       []pull.Option{pull.WithCheckout("9d3d5d486d4c9414321a2df56f2e007c4c2c8fab"), pull.WithRestore(true), pull.WithUseNativeGit(true)},
+				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test-emptied",
+				opts:       []pull.Option{pull.WithCheckout("b9b8cec27035fddf3c7addcf7b76c8dda6be5e76"), pull.WithRestore(true), pull.WithUseNativeGit(true)},
 			},
-			golden: "testdata/golden/vuls-data-raw-test-restored.tar.zst",
+			golden:    "testdata/golden/vuls-data-raw-test-emptied-b9b8cec-restored.tar.zst",
+			wantHead:  "b9b8cec27035fddf3c7addcf7b76c8dda6be5e76",
+			wantFiles: map[string]string{"README.md": "# vuls-data-raw-test\n"},
 		},
 		{
-			name: "vuls-data-raw-test checkout: 9d3d5d486d4c9414321a2df56f2e007c4c2c8fab, restore: true, go-git",
+			name: "vuls-data-raw-test-emptied checkout: b9b8cec27035fddf3c7addcf7b76c8dda6be5e76, restore: true, go-git",
 			args: args{
-				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test",
-				opts:       []pull.Option{pull.WithCheckout("9d3d5d486d4c9414321a2df56f2e007c4c2c8fab"), pull.WithRestore(true), pull.WithUseNativeGit(false)},
+				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test-emptied",
+				opts:       []pull.Option{pull.WithCheckout("b9b8cec27035fddf3c7addcf7b76c8dda6be5e76"), pull.WithRestore(true), pull.WithUseNativeGit(false)},
 			},
-			golden: "testdata/golden/vuls-data-raw-test-restored.tar.zst",
+			golden:    "testdata/golden/vuls-data-raw-test-emptied-b9b8cec-restored.tar.zst",
+			wantHead:  "b9b8cec27035fddf3c7addcf7b76c8dda6be5e76",
+			wantFiles: map[string]string{"README.md": "# vuls-data-raw-test\n"},
 		},
 		{
 			// A commit pinned before vuls-data-db truncated the history is
@@ -317,6 +329,24 @@ func TestPull(t *testing.T) {
 					return i < j
 				})); diff != "" {
 					t.Errorf("Pull(). (-expected +got):\n%s", diff)
+				}
+
+				if tt.wantHead != "" {
+					switch bs, err := os.ReadFile(filepath.Join(dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference, ".git", "HEAD")); {
+					case err != nil:
+						t.Errorf("read HEAD. err: %v", err)
+					case strings.TrimSpace(string(bs)) != tt.wantHead:
+						t.Errorf("HEAD. expected: %q, actual: %q", tt.wantHead, strings.TrimSpace(string(bs)))
+					}
+				}
+
+				for name, content := range tt.wantFiles {
+					switch bs, err := os.ReadFile(filepath.Join(dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference, name)); {
+					case err != nil:
+						t.Errorf("read %s. err: %v", name, err)
+					case string(bs) != content:
+						t.Errorf("%s. expected: %q, actual: %q", name, content, string(bs))
+					}
 				}
 			}
 		})
