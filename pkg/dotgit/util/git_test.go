@@ -62,10 +62,15 @@ func TestGitEnv(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			// Leave the user's config out, so that nothing it turns on, such
-			// as hooks or fsmonitor, writes to the repositories.
+			// Leave out the config of the user, and that which this process
+			// passes on through the environment, so that nothing it turns on,
+			// such as hooks or fsmonitor, writes to the repositories, and
+			// only env sets test.key.
 			t.Setenv("GIT_CONFIG_GLOBAL", os.DevNull)
 			t.Setenv("GIT_CONFIG_NOSYSTEM", "1")
+			for _, key := range []string{"GIT_CONFIG", "GIT_CONFIG_COUNT", "GIT_CONFIG_PARAMETERS"} {
+				unsetenv(t, key)
+			}
 
 			dir := t.TempDir()
 			repository := filepath.Join(dir, "repository")
@@ -146,6 +151,15 @@ func snapshot(t *testing.T, dir string) map[string]string {
 		t.Fatalf("walk %s. err: %v", dir, err)
 	}
 	return files
+}
+
+// unsetenv unsets key until the test ends, when t.Setenv puts it back.
+func unsetenv(t *testing.T, key string) {
+	t.Helper()
+	t.Setenv(key, "")
+	if err := os.Unsetenv(key); err != nil {
+		t.Fatalf("unsetenv %s. err: %v", key, err)
+	}
 }
 
 func run(t *testing.T, args ...string) string {
