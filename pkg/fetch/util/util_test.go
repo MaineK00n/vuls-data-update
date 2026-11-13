@@ -265,6 +265,51 @@ func TestEnsureWritten(t *testing.T) {
 			wantErr: true,
 		},
 		{
+			// A run that is one part of a whole can rightly fetch nothing.
+			name: "empty allowed",
+			args: args{
+				root: "allow-empty",
+				opts: []util.EnsureOption{util.WithAllowEmpty(true)},
+			},
+			entries: []string{".git/", ".git/HEAD"},
+		},
+		{
+			name: "empty allowed, root missing",
+			args: args{
+				root: "allow-empty-missing",
+				opts: []util.EnsureOption{util.WithAllowEmpty(true)},
+			},
+		},
+		{
+			// Nothing written passes whatever is required...
+			name: "empty allowed over required sections",
+			args: args{
+				root: "allow-empty-required",
+				opts: []util.EnsureOption{util.WithAllowEmpty(true), util.WithRequire("weakness", "category", "view")},
+			},
+			entries: []string{".git/", ".git/HEAD"},
+		},
+		{
+			// ...but something written is held to them: fetching part of what
+			// should have been fetched is not fetching nothing.
+			name: "empty allowed, required section missing",
+			args: args{
+				root: "allow-empty-partial",
+				opts: []util.EnsureOption{util.WithAllowEmpty(true), util.WithRequire("weakness", "category", "view")},
+			},
+			entries: []string{"weakness/79.json", "view/1026.json"},
+			wantErr: true,
+		},
+		{
+			name: "empty not allowed",
+			args: args{
+				root: "disallow-empty",
+				opts: []util.EnsureOption{util.WithAllowEmpty(false)},
+			},
+			entries: []string{".git/", ".git/HEAD"},
+			wantErr: true,
+		},
+		{
 			// Repeating the option replaces rather than accumulates.
 			name: "last require wins",
 			args: args{

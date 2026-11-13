@@ -16,10 +16,11 @@ import (
 
 func TestFetch(t *testing.T) {
 	tests := []struct {
-		name     string
-		kbs      []string
-		golden   string
-		hasError bool
+		name       string
+		kbs        []string
+		allowEmpty bool
+		golden     string
+		hasError   bool
 	}{
 		{
 			// Both KBs belong to one series, so the listing is read once however
@@ -107,6 +108,14 @@ func TestFetch(t *testing.T) {
 			hasError: true,
 		},
 		{
+			// Unless the run is one shard of several whose results the caller
+			// merges, where a shard of pre-2018 articles stores nothing.
+			name:       "only a non-servicing article, empty allowed",
+			kbs:        []string{"KB923414"},
+			allowEmpty: true,
+			golden:     "non-servicing",
+		},
+		{
 			name:     "no KB",
 			kbs:      nil,
 			hasError: true,
@@ -123,6 +132,7 @@ func TestFetch(t *testing.T) {
 				servicing.WithRetry(0),
 				servicing.WithConcurrency(2),
 				servicing.WithWait(0),
+				servicing.WithAllowEmpty(tt.allowEmpty),
 			)
 			switch {
 			case err != nil && !tt.hasError:

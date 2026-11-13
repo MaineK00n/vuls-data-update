@@ -21,11 +21,28 @@ import (
 
 func TestFetch(t *testing.T) {
 	tests := []struct {
-		name     string
-		hasError bool
+		name       string
+		releases   []string
+		allowEmpty bool
+		hasError   bool
 	}{
 		{
-			name: "happy",
+			name:     "happy",
+			releases: []string{"__current__", "__pending__", "__archived__"},
+		},
+		{
+			// F38C has no security update, so a run over it alone fetches
+			// nothing, and that has failed...
+			name:     "no-updates",
+			releases: []string{"F38C"},
+			hasError: true,
+		},
+		{
+			// ...unless the run is one release of several whose results the
+			// caller merges.
+			name:       "no-updates-allow-empty",
+			releases:   []string{"F38C"},
+			allowEmpty: true,
 		},
 	}
 	for _, tt := range tests {
@@ -268,8 +285,8 @@ func TestFetch(t *testing.T) {
 				}
 			}))
 			dir := t.TempDir()
-			err := api.Fetch([]string{"__current__", "__pending__", "__archived__"},
-				api.WithHTTPClient(ts.Client()), api.WithDir(dir), api.WithRetry(0), api.WithConcurrency(1), api.WithWait(0), api.WithRowsPerPage(2))
+			err := api.Fetch(tt.releases,
+				api.WithHTTPClient(ts.Client()), api.WithDir(dir), api.WithRetry(0), api.WithConcurrency(1), api.WithWait(0), api.WithRowsPerPage(2), api.WithAllowEmpty(tt.allowEmpty))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)
@@ -279,7 +296,7 @@ func TestFetch(t *testing.T) {
 				// error was expected and occurred, test passed
 				return
 			default:
-				if err := utiltest.Diff(filepath.Join("testdata", "golden"), dir); err != nil {
+				if err := utiltest.Diff(filepath.Join("testdata", "golden", tt.name), dir); err != nil {
 					t.Error("unexpected error:", err)
 				}
 			}

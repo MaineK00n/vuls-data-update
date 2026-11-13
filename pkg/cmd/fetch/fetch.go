@@ -1785,6 +1785,7 @@ func newCmdFedoraAPI() *cobra.Command {
 		base
 		concurrency int
 		wait        time.Duration
+		allowEmpty  bool
 	}{
 		dir:         filepath.Join(util.CacheDir(), "fetch", "fedora", "api"),
 		retry:       3,
@@ -1800,7 +1801,7 @@ func newCmdFedoraAPI() *cobra.Command {
 		`),
 		Args: cobra.MinimumNArgs(1),
 		RunE: func(_ *cobra.Command, args []string) error {
-			if err := fedoraAPI.Fetch(args, fedoraAPI.WithDir(options.dir), fedoraAPI.WithRetry(options.retry), fedoraAPI.WithConcurrency(options.concurrency), fedoraAPI.WithWait(options.wait)); err != nil {
+			if err := fedoraAPI.Fetch(args, fedoraAPI.WithDir(options.dir), fedoraAPI.WithRetry(options.retry), fedoraAPI.WithConcurrency(options.concurrency), fedoraAPI.WithWait(options.wait), fedoraAPI.WithAllowEmpty(options.allowEmpty)); err != nil {
 				return errors.Wrap(err, "failed to fetch fedora api")
 			}
 			return nil
@@ -1811,6 +1812,7 @@ func newCmdFedoraAPI() *cobra.Command {
 	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
 	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrent processes")
 	cmd.Flags().DurationVarP(&options.wait, "wait", "", options.wait, "wait duration")
+	cmd.Flags().BoolVarP(&options.allowEmpty, "allow-empty", "", options.allowEmpty, "succeed even when nothing is written, for a run over one release of several whose results are merged")
 
 	return cmd
 }
@@ -2649,6 +2651,7 @@ func newCmdMicrosoftServicing() *cobra.Command {
 		retryWaitMax time.Duration
 		concurrency  int
 		wait         time.Duration
+		allowEmpty   bool
 	}{
 		dir:          filepath.Join(util.CacheDir(), "fetch", "microsoft", "servicing"),
 		retry:        10,
@@ -2693,7 +2696,7 @@ func newCmdMicrosoftServicing() *cobra.Command {
 		`),
 		Args: cobra.MinimumNArgs(1),
 		RunE: func(_ *cobra.Command, args []string) error {
-			if err := microsoftServicing.Fetch(args, microsoftServicing.WithDir(options.dir), microsoftServicing.WithRetry(options.retry), microsoftServicing.WithRetryWaitMin(options.retryWaitMin), microsoftServicing.WithRetryWaitMax(options.retryWaitMax), microsoftServicing.WithConcurrency(options.concurrency), microsoftServicing.WithWait(options.wait)); err != nil {
+			if err := microsoftServicing.Fetch(args, microsoftServicing.WithDir(options.dir), microsoftServicing.WithRetry(options.retry), microsoftServicing.WithRetryWaitMin(options.retryWaitMin), microsoftServicing.WithRetryWaitMax(options.retryWaitMax), microsoftServicing.WithConcurrency(options.concurrency), microsoftServicing.WithWait(options.wait), microsoftServicing.WithAllowEmpty(options.allowEmpty)); err != nil {
 				return errors.Wrap(err, "failed to fetch microsoft servicing")
 			}
 			return nil
@@ -2706,6 +2709,7 @@ func newCmdMicrosoftServicing() *cobra.Command {
 	cmd.Flags().DurationVarP(&options.retryWaitMax, "retry-wait-max", "", options.retryWaitMax, "number of maximum time to retry wait")
 	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrent http requests")
 	cmd.Flags().DurationVarP(&options.wait, "wait", "", options.wait, "wait duration")
+	cmd.Flags().BoolVarP(&options.allowEmpty, "allow-empty", "", options.allowEmpty, "succeed even when nothing is written, for a run over one shard of several KB lists whose results are merged")
 
 	return cmd
 }
