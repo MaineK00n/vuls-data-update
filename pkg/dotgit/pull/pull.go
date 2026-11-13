@@ -134,12 +134,16 @@ func Pull(repository string, opts ...Option) error {
 	if options.checkout != "" {
 		if options.useNativeGit {
 			if _, err := util.Git("-C", filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference), "show-ref", "--verify", "--quiet", fmt.Sprintf("refs/heads/%s", options.checkout)); err != nil { // tag or commit
-				// switch reports a commit that is not in the repository as
-				// "unable to read tree", which reads like corruption.
-				if err := contains.Contains(filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference), options.checkout, contains.WithUseNativeGit(true)); err != nil {
-					return notInRepository(err, repository, options.checkout)
-				}
 				if _, err := util.Git("-C", filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference), "switch", "--detach", options.checkout); err != nil {
+					// switch reports a commit that is not in the repository
+					// as "unable to read tree", which reads like corruption,
+					// so ask contains whether that is why it failed, and if
+					// so, say that instead. Asking only after a failure lets
+					// every name switch accepts, such as "-" for the previous
+					// branch, reach it as before.
+					if err := contains.Contains(filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference), options.checkout, contains.WithUseNativeGit(true)); err != nil {
+						return notInRepository(err, repository, options.checkout)
+					}
 					return errors.Wrapf(err, "switch to %s", options.checkout)
 				}
 			} else { // branch
@@ -175,21 +179,22 @@ func Pull(repository string, opts ...Option) error {
 					return git.CheckoutOptions{Branch: ref.Name(), Keep: true}, nil
 				}
 
-				// A tag or commit, checked as on the native path. Otherwise
-				// a name that resolves to nothing reaches plumbing.NewHash
-				// below: a hash fails as "object not found", and a name such
-				// as v1.0.0 becomes the zero hash, which go-git checks out as
-				// master.
-				if err := contains.Contains(filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference), options.checkout, contains.WithUseNativeGit(false)); err != nil {
-					return git.CheckoutOptions{}, notInRepository(err, repository, options.checkout)
-				}
-
 				ref, err = r.Reference(plumbing.NewTagReferenceName(options.checkout), false)
 				if err != nil && !errors.Is(err, plumbing.ErrReferenceNotFound) {
 					return git.CheckoutOptions{}, errors.Wrapf(err, "get %q as tag", options.checkout)
 				}
 				if err == nil {
 					return git.CheckoutOptions{Hash: ref.Hash(), Keep: true}, nil
+				}
+
+				// Neither a branch nor a tag, so a commit if anything. For a
+				// name that resolves to nothing, plumbing.NewHash below fails
+				// as "object not found", or makes the zero hash, which go-git
+				// checks out as master, so ask contains first. Not before the
+				// tag: go-git does not resolve every tag name, such as one
+				// with an "@".
+				if err := contains.Contains(filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference), options.checkout, contains.WithUseNativeGit(false)); err != nil {
+					return git.CheckoutOptions{}, notInRepository(err, repository, options.checkout)
 				}
 
 				return git.CheckoutOptions{Hash: plumbing.NewHash(options.checkout), Keep: true}, nil
