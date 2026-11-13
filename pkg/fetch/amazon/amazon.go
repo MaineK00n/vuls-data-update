@@ -89,8 +89,7 @@ func Fetch(opts ...Option) error {
 	// The AL2022 repository was removed from cdn.amazonlinux.com in 2026-10, so
 	// the existing 2022/ tree is the last copy and no fetch can rebuild it.
 	// .git is named alongside it because WithKeep states the whole keep set.
-	keep := util.WithKeep(".git", "2022")
-	if err := util.RemoveAll(options.dir, keep); err != nil {
+	if err := util.RemoveAll(options.dir, util.WithKeep(".git", "2022")); err != nil {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
@@ -221,8 +220,9 @@ func Fetch(opts ...Option) error {
 		}
 	}
 
-	// The kept 2022/ is not this fetch's output, so it must not pass for it.
-	if err := util.EnsureWritten(options.dir, keep); err != nil {
+	// A 2022/ that was on disk before the fetch is kept, but this fetch did
+	// not get it, so it must not pass for what the fetch wrote.
+	if err := util.EnsureWritten(options.dir, util.WithIgnore(".git", "2022")); err != nil {
 		return errors.Wrapf(err, "ensure written %s", options.dir)
 	}
 

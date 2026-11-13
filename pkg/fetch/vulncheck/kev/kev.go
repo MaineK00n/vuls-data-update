@@ -73,6 +73,25 @@ func Fetch(apiToken string, opts ...Option) error {
 
 	slog.Info("Fetch VulnCheck KEV")
 
+	if err := os.MkdirAll(options.dir, 0755); err != nil {
+		return errors.Wrapf(err, "mkdir %s", options.dir)
+	}
+	if err := os.WriteFile(filepath.Join(options.dir, "README.md"), []byte(`## Repository of VulnCheck KEV data accumulation
+
+All the data in this repository are fetched from VulnCheck by its API.
+
+- https://docs.vulncheck.com/
+- https://docs.vulncheck.com/api
+- https://docs.vulncheck.com/community/vulncheck-kev/attribution
+
+**CAUTION**
+
+When you use the data in this repository, you *MUST* comply with the terms and conditions of VulnCheck KEV: https://docs.vulncheck.com/community/vulncheck-kev/attribution
+Notably, you must show "prominent attribution" to show the data is from VulnCheck KEV to users.
+`), 0666); err != nil {
+		return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "README.md"))
+	}
+
 	client := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry), utilhttp.WithClientHTTPClient(options.httpClient))
 	u, err := fetchBackupURL(client, options.baseURL, apiToken)
 	if err != nil {
@@ -136,26 +155,10 @@ func Fetch(apiToken string, opts ...Option) error {
 		_ = bar.Close()
 	}
 
-	if err := util.EnsureWritten(options.dir); err != nil {
+	// The README is written whatever the fetch got, so it says nothing about
+	// whether the fetch got anything.
+	if err := util.EnsureWritten(options.dir, util.WithIgnore(".git", "README.md")); err != nil {
 		return errors.Wrapf(err, "ensure written %s", options.dir)
-	}
-
-	// The README is written whatever the fetch got, so it comes after the
-	// check rather than passing for the data the check looks for.
-	if err := os.WriteFile(filepath.Join(options.dir, "README.md"), []byte(`## Repository of VulnCheck KEV data accumulation
-
-All the data in this repository are fetched from VulnCheck by its API.
-
-- https://docs.vulncheck.com/
-- https://docs.vulncheck.com/api
-- https://docs.vulncheck.com/community/vulncheck-kev/attribution
-
-**CAUTION**
-
-When you use the data in this repository, you *MUST* comply with the terms and conditions of VulnCheck KEV: https://docs.vulncheck.com/community/vulncheck-kev/attribution
-Notably, you must show "prominent attribution" to show the data is from VulnCheck KEV to users.
-`), 0666); err != nil {
-		return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "README.md"))
 	}
 
 	return nil
