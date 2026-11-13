@@ -15,6 +15,7 @@ import (
 	"oras.land/oras-go/v2"
 	"oras.land/oras-go/v2/registry/remote"
 
+	"github.com/MaineK00n/vuls-data-update/pkg/dotgit/contains"
 	"github.com/MaineK00n/vuls-data-update/pkg/dotgit/util"
 )
 
@@ -133,6 +134,11 @@ func Pull(repository string, opts ...Option) error {
 	if options.checkout != "" {
 		if options.useNativeGit {
 			if _, err := util.Git("-C", filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference), "show-ref", "--verify", "--quiet", fmt.Sprintf("refs/heads/%s", options.checkout)); err != nil { // tag or commit
+				// switch reports a commit that is not in the repository as
+				// "unable to read tree", which reads like corruption.
+				if err := contains.Contains(filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference), options.checkout, contains.WithUseNativeGit(true)); err != nil {
+					return notInRepository(err, repository, options.checkout)
+				}
 				if _, err := util.Git("-C", filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference), "switch", "--detach", options.checkout); err != nil {
 					return errors.Wrapf(err, "switch to %s", options.checkout)
 				}
@@ -167,6 +173,15 @@ func Pull(repository string, opts ...Option) error {
 				}
 				if err == nil {
 					return git.CheckoutOptions{Branch: ref.Name(), Keep: true}, nil
+				}
+
+				// A tag or commit, checked as on the native path. Otherwise
+				// a name that resolves to nothing reaches plumbing.NewHash
+				// below: a hash fails as "object not found", and a name such
+				// as v1.0.0 becomes the zero hash, which go-git checks out as
+				// master.
+				if err := contains.Contains(filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference), options.checkout, contains.WithUseNativeGit(false)); err != nil {
+					return git.CheckoutOptions{}, notInRepository(err, repository, options.checkout)
 				}
 
 				ref, err = r.Reference(plumbing.NewTagReferenceName(options.checkout), false)
@@ -234,4 +249,14 @@ func Pull(repository string, opts ...Option) error {
 	}
 
 	return nil
+}
+
+// notInRepository wraps the error of contains for a checkout target, a tag or
+// a commit, that is not in the dotgit pulled from repository. vuls-data-db
+// keeps only the last commits of a dotgit's history, so a commit pinned before
+// it truncated the history is gone from a repository that is otherwise fine.
+// The error of contains, with git's stderr, stays in the chain in case the
+// check failed for another reason.
+func notInRepository(err error, repository, checkout string) error {
+	return errors.Wrapf(err, "%s is not in %s, whose history may have been truncated or rewritten", checkout, repository)
 }
