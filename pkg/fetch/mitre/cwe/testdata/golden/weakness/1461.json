@@ -1,0 +1,178 @@
+{
+	"id": "1461",
+	"name": "Hardware Simulation / Synthesis Mismatch",
+	"abstraction": "Base",
+	"structure": "Simple",
+	"status": "Incomplete",
+	"description": "\n\t\tThe hardware design contains structures that are interpreted\n\t\tdifferently during synthesis than during simulation, which\n\t\tcause inconsistencies in security-relevant behavior between\n\t\tthe synthesized implementation and the simulation.\n\t  ",
+	"modes_of_introduction": [
+		{
+			"note": [
+				"\n\t\t\t<xhtml:p>This weakness can be introduced when HDL\n\t\t\tconstructs, assignment ordering, synthesis directives, or\n\t\t\ttool-dependent semantics are used whose simulation\n\t\t\tbehavior may not match synthesis interpretation. These\n\t\t\tconstructs may behave correctly during HDL simulation but\n\t\t\tproduce different security-relevant behavior in the\n\t\t\tsynthesized implementation.</xhtml:p>\n\t\t  "
+			]
+		},
+		{
+			"note": [
+				"\n\t\t\t<xhtml:p>This weakness can be introduced or exposed during\n\t\t\tsynthesis when the synthesis tool applies assumptions,\n\t\t\toptimizations, or transformations to HDL structures that\n\t\t\tcannot be physically implemented exactly as the simulation\n\t\t\tsemantics dictate, or that permit multiple (valid)\n\t\t\thardware implementations. The resulting netlist may behave\n\t\t\tdifferently from the model that was verified during\n\t\t\tsimulation.</xhtml:p>\n\t\t  "
+			]
+		}
+	],
+	"common_consequences": [
+		{
+			"scope": [
+				"Other"
+			],
+			"impact": [
+				"Varies by Context"
+			],
+			"note": "\n\t\t\t\n\t\t  "
+		}
+	],
+	"potential_mitigations": [
+		{
+			"description": [
+				"\n\t\t\t<xhtml:p>Establish and enforce HDL coding and review\n\t\t\tpractices that minimize differences between simulation\n\t\t\tsemantics and synthesis interpretation. Avoid HDL\n\t\t\tconstructs, synthesis directives, and tool-dependent\n\t\t\tbehaviors known to cause simulation/synthesis mismatch,\n\t\t\twith particular attention to security-relevant\n\t\t\tlogic.</xhtml:p>\n\t\t  "
+			],
+			"effectiveness": "High",
+			"effectiveness_notes": "\n\t\t\t\n\t\t  "
+		},
+		{
+			"description": [
+				"\n\t\t\t<xhtml:p>For security-critical logic, preserve intentional\n\t\t\tredundancy that is required for security. Examples may\n\t\t\tinclude redundant logic, triple modular redundancy (TMR)\n\t\t\tstructures, Hamming-distance state encodings, or\n\t\t\tstate-machine recovery logic. Use synthesis constraints,\n\t\t\tpreservation attributes, carefully controlled structural\n\t\t\timplementation, or manual implementation of selected\n\t\t\tcritical blocks to prevent this redundancy from being\n\t\t\tmerged, re-encoded, or optimized away.</xhtml:p>\n\t\t  "
+			],
+			"effectiveness": "High",
+			"effectiveness_notes": "\n\t\t\t\n\t\t  "
+		}
+	],
+	"references": [
+		{
+			"reference_id": "REF-1552",
+			"author": [
+				"Don Mills",
+				"Clifford E. Cummings"
+			],
+			"title": "RTL Coding Styles That Yield Simulation and Synthesis Mismatches",
+			"url": "https://www.researchgate.net/profile/Clifford-Cummings/publication/228554783_RTL_Coding_Styles_That_Yield_Simulation_and_Synthesis_Mismatches/links/54bfe9760cf21674ce9ca726/RTL-Coding-Styles-That-Yield-Simulation-and-Synthesis-Mismatches.pdf",
+			"publication_year": "1999"
+		},
+		{
+			"reference_id": "REF-1553",
+			"author": [
+				"Raghul Saravanan",
+				"Sudipta Paria",
+				"Aritra Dasgupta",
+				"Venkat Nitin Patnala",
+				"Swarup Bhunia",
+				"Sai Manoj P. D."
+			],
+			"title": "SynFuzz: Leveraging Fuzzing of Netlist to Detect Synthesis Bugs",
+			"url": "https://arxiv.org/abs/2504.18812",
+			"publication_year": "2025",
+			"publication_month": "--04",
+			"publication_day": "---26"
+		},
+		{
+			"reference_id": "REF-1554",
+			"author": [
+				"Mike Turpin"
+			],
+			"title": "The Dangers of Living with an X (bugs hidden in your Verilog)",
+			"url": "https://developer.arm.com/documentation/arp0009/a/?lang=en",
+			"publication_year": "2003",
+			"publication_month": "--10",
+			"publication_day": "---14"
+		},
+		{
+			"reference_id": "REF-1555",
+			"author": [
+				"Stuart Sutherland",
+				"Don Mills"
+			],
+			"title": "Standard Gotchas: Subtleties in the Verilog and SystemVerilog Standards That Every Engineer Should Know",
+			"url": "https://sutherland-hdl.com/papers/2006-SNUG-Boston_standard_gotchas_paper.pdf",
+			"publication_year": "2006"
+		},
+		{
+			"reference_id": "REF-1556",
+			"author": [
+				"Flavien Solt",
+				"Kaveh Razavi"
+			],
+			"title": "Lost in Translation: Enabling Confused Deputy Attacks on EDA Software with TransFuzz",
+			"url": "https://www.usenix.org/conference/usenixsecurity25/presentation/solt",
+			"publication_year": "2025",
+			"publication_month": "--08",
+			"url_date": "2026-10-19"
+		},
+		{
+			"reference_id": "REF-1557",
+			"author": [
+				"Don Mills"
+			],
+			"title": "Yet Another Latch and Gotchas Paper",
+			"url": "https://lcdm-eng.com/papers/snug12_Paper_final.pdf",
+			"publication_year": "2012"
+		},
+		{
+			"reference_id": "REF-1558",
+			"author": [
+				"Clifford E. Cummings"
+			],
+			"title": "“full_case parallel_case”, the Evil Twins of Verilog Synthesis",
+			"url": "https://csg.csail.mit.edu/6.375/6_375_2009_www/papers/cummings-case-snug99.pdf",
+			"publication_year": "1999"
+		}
+	],
+	"content_history": {
+		"submission": {
+			"submission_name": "Sudipta Paria",
+			"submission_organization": "University of Florida",
+			"submission_date": "2025-05-20"
+		}
+	},
+	"detection_methods": [
+		{
+			"method": "Automated Static Analysis - Source Code",
+			"description": "\n\t\t\t<xhtml:p>HDL linting, rule-based static analysis, and HDL\n\t\t\tchecker tools can examine source code for structures that\n\t\t\tmay be interpreted differently by simulation and synthesis\n\t\t\ttools. They may identify synthesis-sensitive coding\n\t\t\tpatterns associated with this weakness.</xhtml:p>\n\t\t  ",
+			"effectiveness": "Moderate",
+			"effectiveness_notes": "\n\t\t\t\n\t\t  "
+		},
+		{
+			"method": "Manual Analysis",
+			"description": "\n\t\t\t<xhtml:p>Synthesis warning review can examine synthesis\n\t\t\tlogs and reports for tool messages associated with\n\t\t\tpossible simulation/synthesis mismatch. It may identify\n\t\t\tignored constructs, unsupported HDL semantics, synthesis\n\t\t\tassumptions, or optimizations that could affect\n\t\t\tsecurity-relevant behavior.</xhtml:p>\n\t\t  ",
+			"effectiveness": "Limited",
+			"effectiveness_notes": "\n\t\t\t\n\t\t  "
+		},
+		{
+			"method": "Formal Verification",
+			"description": "\n\t\t\t<xhtml:p>HDL-source-to-netlist formal equivalence checking\n\t\t\tcan examine the simulated model and synthesized netlist\n\t\t\tfor behavioral mismatch associated with this weakness. It\n\t\t\tmay identify non-equivalent outputs, failed\n\t\t\tcompare-points, state-mapping issues, or counterexamples\n\t\t\tunder the checked constraints.</xhtml:p>\n\t\t  ",
+			"effectiveness": "High",
+			"effectiveness_notes": "\n\t\t\t\n\t\t  "
+		},
+		{
+			"method": "Simulation / Emulation",
+			"description": "\n\t\t\t<xhtml:p>Cross-simulation across HDL-source and\n\t\t\tpost-synthesis models can examine both abstraction levels\n\t\t\tfor observable behavioral divergence associated with this\n\t\t\tweakness. It may identify mismatches when\n\t\t\tsecurity-relevant behaviors are explicitly\n\t\t\texercised.</xhtml:p>\n\t\t  ",
+			"effectiveness": "High",
+			"effectiveness_notes": "\n\t\t\t\n\t\t  "
+		},
+		{
+			"method": "Fuzzing",
+			"description": "\n\t\t\t<xhtml:p>Coverage-guided differential fuzzing can examine\n\t\t\tHDL source code and synthesized implementation models for\n\t\t\tbehavioral divergence associated with this weakness. It\n\t\t\tmay identify generated inputs or state conditions that\n\t\t\texpose synthesis-induced mismatches.</xhtml:p>\n\t\t  ",
+			"effectiveness": "High",
+			"effectiveness_notes": "\n\t\t\t\n\t\t  "
+		}
+	],
+	"mapping_notes": {
+		"usage": "Allowed-with-Review",
+		"rationale": "This CWE entry is at the Base level of abstraction, which is a preferred level of abstraction for mapping to the root causes of vulnerabilities.",
+		"comments": "Since this entry is often resultant, there might be\n        other CWEs that are more appropriate as the root cause,\n        although there might be some gaps.  Carefully read both the\n        name and description to ensure that this mapping is an\n        appropriate fit. Do not try to 'force' a mapping to a\n        lower-level Base/Variant simply to comply with this preferred\n        level of abstraction.",
+		"reasons": [
+			{
+				"type": "Frequently-Resultant"
+			},
+			{
+				"type": "Acceptable-Use"
+			}
+		]
+	}
+}
