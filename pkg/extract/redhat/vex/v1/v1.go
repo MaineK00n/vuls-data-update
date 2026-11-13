@@ -545,41 +545,57 @@ func walkProductTree(trackingID string, pt v1.ProductTree, c2r map[string][]stri
 
 			switch len(vs) {
 			case 0:
+				// Red Hat identifies a RHEL major release with either part:
+				// cpe:/o:redhat:enterprise_linux:<major> or
+				// cpe:/a:redhat:enterprise_linux:<major>, and its scanner guidance
+				// says to match both for unfixed products. The legacy vex feed
+				// used the /o form until 2026-11-06, when a regeneration switched
+				// the unfixed RHEL 8/9/10 products to the /a form (e.g.
+				// CVE-2024-11053), so accept both for every major.
 				switch {
-				case strings.HasPrefix(p.cpe, "cpe:/o:redhat:enterprise_linux:2.1"):
+				case strings.HasPrefix(p.cpe, "cpe:/o:redhat:enterprise_linux:2.1"),
+					strings.HasPrefix(p.cpe, "cpe:/a:redhat:enterprise_linux:2.1"):
 					return []string{"2.1"}, nil
 				case strings.HasPrefix(p.cpe, "cpe:/o:redhat:enterprise_linux:3"),
+					strings.HasPrefix(p.cpe, "cpe:/a:redhat:enterprise_linux:3"),
 					strings.HasPrefix(p.cpe, "cpe:/o:redhat:rhel_els:3"),
 					strings.HasPrefix(p.cpe, "cpe:/a:redhat:rhel_extras:3"),
 					strings.HasSuffix(p.cpe, "::el3"):
 					return []string{"3"}, nil
 				case strings.HasPrefix(p.cpe, "cpe:/o:redhat:enterprise_linux:4"),
+					strings.HasPrefix(p.cpe, "cpe:/a:redhat:enterprise_linux:4"),
 					strings.HasPrefix(p.cpe, "cpe:/a:redhat:rhel_extras:4"),
 					strings.HasPrefix(p.cpe, "cpe:/a:redhat:rhel_extras_sap:4"),
 					strings.HasPrefix(p.cpe, "cpe:/a:redhat:rhel_cluster:4"),
 					strings.HasSuffix(p.cpe, ":el4"), strings.HasSuffix(p.cpe, "::el4"):
 					return []string{"4"}, nil
 				case strings.HasPrefix(p.cpe, "cpe:/o:redhat:enterprise_linux:5"),
+					strings.HasPrefix(p.cpe, "cpe:/a:redhat:enterprise_linux:5"),
 					strings.HasPrefix(p.cpe, "cpe:/o:redhat:rhel_eus:5"),
 					strings.HasPrefix(p.cpe, "cpe:/o:redhat:rhel_mission_critical:5"),
 					strings.HasPrefix(p.cpe, "cpe:/a:redhat:rhel_cluster_storage:5"),
 					strings.HasSuffix(p.cpe, "::el5"):
 					return []string{"5"}, nil
 				case strings.HasPrefix(p.cpe, "cpe:/o:redhat:enterprise_linux:6"),
+					strings.HasPrefix(p.cpe, "cpe:/a:redhat:enterprise_linux:6"),
 					strings.HasPrefix(p.cpe, "cpe:/o:redhat:rhel_eus:6"),
 					strings.HasSuffix(p.cpe, "::el6"):
 					return []string{"6"}, nil
 				case strings.HasPrefix(p.cpe, "cpe:/o:redhat:enterprise_linux:7"),
+					strings.HasPrefix(p.cpe, "cpe:/a:redhat:enterprise_linux:7"),
 					strings.HasPrefix(p.cpe, "cpe:/a:redhat:rhel_atomic:7"),
 					strings.HasSuffix(p.cpe, "::el7"):
 					return []string{"7"}, nil
 				case strings.HasPrefix(p.cpe, "cpe:/o:redhat:enterprise_linux:8"),
+					strings.HasPrefix(p.cpe, "cpe:/a:redhat:enterprise_linux:8"),
 					strings.HasSuffix(p.cpe, "::el8"):
 					return []string{"8"}, nil
 				case strings.HasPrefix(p.cpe, "cpe:/o:redhat:enterprise_linux:9"),
+					strings.HasPrefix(p.cpe, "cpe:/a:redhat:enterprise_linux:9"),
 					strings.HasSuffix(p.cpe, "::el9"):
 					return []string{"9"}, nil
 				case strings.HasPrefix(p.cpe, "cpe:/o:redhat:enterprise_linux:10"),
+					strings.HasPrefix(p.cpe, "cpe:/a:redhat:enterprise_linux:10"),
 					strings.HasSuffix(p.cpe, "::el10"):
 					return []string{"10"}, nil
 				default:
@@ -650,6 +666,14 @@ func walkProductTree(trackingID string, pt v1.ProductTree, c2r map[string][]stri
 		}()
 		if err != nil {
 			return nil, errors.Wrapf(err, "%q detect major versions", root)
+		}
+		// A product without a major is dropped from the output. That is
+		// expected for non-RHEL products (e.g. cpe:/a:redhat:satellite:6), but
+		// a RHEL CPE that resolves to no major means the CPE format changed
+		// under us (as on 2026-11-06), so fail loudly instead of silently
+		// losing every product that uses it.
+		if len(majors) == 0 && (strings.HasPrefix(p.cpe, "cpe:/o:redhat:enterprise_linux:") || strings.HasPrefix(p.cpe, "cpe:/a:redhat:enterprise_linux:")) {
+			return nil, errors.Errorf("no major version detected for RHEL CPE. product_id: %q, cpe: %q", root, p.cpe)
 		}
 		for _, v := range majors {
 			p.major = v
