@@ -47,6 +47,17 @@ func TestExtract(t *testing.T) {
 			},
 			hasError: true,
 		},
+		{
+			// A RHEL CPE (cpe:/{o,a}:redhat:enterprise_linux:...) that maps to
+			// no major version means the CPE format changed upstream; it must
+			// fail loudly instead of silently dropping the product.
+			name: "RHEL CPE without a known major errors",
+			args: args{
+				vex:            "./testdata/fixtures/vex_rhel_cpe_no_major_error",
+				repository2cpe: "./testdata/fixtures/repository2cpe",
+			},
+			hasError: true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
