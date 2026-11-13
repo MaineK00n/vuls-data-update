@@ -1,0 +1,120 @@
+{
+	"id": "november-13-2018",
+	"date": "November 13, 2018",
+	"builds": [
+		{
+			"channel": "Monthly Channel",
+			"version": "1810",
+			"build": "11001.20108"
+		},
+		{
+			"channel": "Semi-Annual Channel",
+			"version": "1803",
+			"build": "9126.2315"
+		},
+		{
+			"channel": "Semi-Annual Channel (Targeted)",
+			"version": "1808",
+			"build": "10730.20205"
+		}
+	],
+	"sections": [
+		{
+			"name": "Excel",
+			"items": [
+				{
+					"text": "CVE-2018-8574",
+					"links": [
+						{
+							"text": "CVE-2018-8574",
+							"url": "https://portal.msrc.microsoft.com/en-us/security-guidance/advisory/CVE-2018-8574"
+						}
+					]
+				},
+				{
+					"text": "CVE-2018-8577",
+					"links": [
+						{
+							"text": "CVE-2018-8577",
+							"url": "https://portal.msrc.microsoft.com/en-us/security-guidance/advisory/CVE-2018-8577"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Outlook",
+			"items": [
+				{
+					"text": "CVE-2018-8522",
+					"links": [
+						{
+							"text": "CVE-2018-8522",
+							"url": "https://portal.msrc.microsoft.com/en-us/security-guidance/advisory/CVE-2018-8522"
+						}
+					]
+				},
+				{
+					"text": "CVE-2018-8524",
+					"links": [
+						{
+							"text": "CVE-2018-8524",
+							"url": "https://portal.msrc.microsoft.com/en-us/security-guidance/advisory/CVE-2018-8524"
+						}
+					]
+				},
+				{
+					"text": "CVE-2018-8558",
+					"links": [
+						{
+							"text": "CVE-2018-8558",
+							"url": "https://portal.msrc.microsoft.com/en-us/security-guidance/advisory/CVE-2018-8558"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Project",
+			"items": [
+				{
+					"text": "CVE-2018-8575",
+					"links": [
+						{
+							"text": "CVE-2018-8575",
+							"url": "https://portal.msrc.microsoft.com/en-us/security-guidance/advisory/CVE-2018-8575"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Skype for Business",
+			"items": [
+				{
+					"text": "CVE-2018-8546",
+					"links": [
+						{
+							"text": "CVE-2018-8546",
+							"url": "https://portal.msrc.microsoft.com/en-us/security-guidance/advisory/CVE-2018-8546"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Word",
+			"items": [
+				{
+					"text": "CVE-2018-8573",
+					"links": [
+						{
+							"text": "CVE-2018-8573",
+							"url": "https://portal.msrc.microsoft.com/en-us/security-guidance/advisory/CVE-2018-8573"
+						}
+					]
+				}
+			]
+		}
+	]
+}

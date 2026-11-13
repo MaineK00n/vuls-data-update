@@ -1,0 +1,79 @@
+{
+	"id": "february-12-2019",
+	"date": "February 12, 2019",
+	"builds": [
+		{
+			"channel": "Monthly Channel",
+			"version": "1901",
+			"build": "11231.20174"
+		},
+		{
+			"channel": "Semi-Annual Channel (Targeted)",
+			"version": "1808",
+			"build": "10730.20280"
+		},
+		{
+			"channel": "Semi-Annual Channel",
+			"version": "1808",
+			"build": "10730.20280"
+		},
+		{
+			"channel": "Semi-Annual Channel",
+			"version": "1803",
+			"build": "9126.2356"
+		},
+		{
+			"channel": "Semi-Annual Channel",
+			"version": "1708",
+			"build": "8431.2372"
+		}
+	],
+	"sections": [
+		{
+			"name": "Excel",
+			"items": [
+				{
+					"text": "CVE-2019-0669",
+					"links": [
+						{
+							"text": "CVE-2019-0669",
+							"url": "https://portal.msrc.microsoft.com/en-us/security-guidance/advisory/CVE-2019-0669"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Office suite",
+			"items": [
+				{
+					"text": "CVE-2019-0540",
+					"links": [
+						{
+							"text": "CVE-2019-0540",
+							"url": "https://portal.msrc.microsoft.com/en-us/security-guidance/advisory/CVE-2019-0540"
+						}
+					]
+				},
+				{
+					"text": "CVE-2019-0674",
+					"links": [
+						{
+							"text": "CVE-2019-0674",
+							"url": "https://portal.msrc.microsoft.com/en-us/security-guidance/advisory/CVE-2019-0674"
+						}
+					]
+				},
+				{
+					"text": "CVE-2019-0673",
+					"links": [
+						{
+							"text": "CVE-2019-0673",
+							"url": "https://portal.msrc.microsoft.com/en-us/security-guidance/advisory/CVE-2019-0673"
+						}
+					]
+				}
+			]
+		}
+	]
+}

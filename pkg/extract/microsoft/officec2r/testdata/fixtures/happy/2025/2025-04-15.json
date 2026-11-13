@@ -1,0 +1,27 @@
+{
+	"id": "april-15-2025",
+	"date": "April 15, 2025",
+	"builds": [
+		{
+			"channel": "Monthly Enterprise Channel",
+			"version": "2502",
+			"build": "18526.20286"
+		}
+	],
+	"sections": [
+		{
+			"name": "Excel",
+			"items": [
+				{
+					"text": "CVE-2025-27751",
+					"links": [
+						{
+							"text": "CVE-2025-27751",
+							"url": "https://portal.msrc.microsoft.com/en-us/security-guidance/advisory/CVE-2025-27751"
+						}
+					]
+				}
+			]
+		}
+	]
+}

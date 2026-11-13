@@ -67,6 +67,7 @@ import (
 	microsoftBulletin "github.com/MaineK00n/vuls-data-update/pkg/extract/microsoft/bulletin"
 	microsoftCVRF "github.com/MaineK00n/vuls-data-update/pkg/extract/microsoft/cvrf"
 	microsoftMSUC "github.com/MaineK00n/vuls-data-update/pkg/extract/microsoft/msuc"
+	microsoftOfficeC2R "github.com/MaineK00n/vuls-data-update/pkg/extract/microsoft/officec2r"
 	microsoftServicing "github.com/MaineK00n/vuls-data-update/pkg/extract/microsoft/servicing"
 	microsoftWSUSSCN2 "github.com/MaineK00n/vuls-data-update/pkg/extract/microsoft/wsusscn2"
 	mitreATTACK "github.com/MaineK00n/vuls-data-update/pkg/extract/mitre/attack"
@@ -183,7 +184,7 @@ func NewCmdExtract() *cobra.Command {
 		newCmdJVNFeedDetail(), newCmdJVNFeedProduct(), newCmdJVNFeedRSS(),
 		newCmdLinuxOSV(),
 		newCmdMavenGHSA(), newCmdMavenGLSA(), newCmdMavenOSV(),
-		newCmdMicrosoftBulletin(), newCmdMicrosoftCVRF(), newCmdMicrosoftMSUC(), newCmdMicrosoftServicing(), newCmdMicrosoftWSUSSCN2(),
+		newCmdMicrosoftBulletin(), newCmdMicrosoftCVRF(), newCmdMicrosoftMSUC(), newCmdMicrosoftOfficeC2R(), newCmdMicrosoftServicing(), newCmdMicrosoftWSUSSCN2(),
 		newCmdMitreATTACK(), newCmdMitreCAPEC(), newCmdMitreCVRF(), newCmdMitreCWE(), newCmdMitreV4(), newCmdMitreV5(),
 		newCmdMSF(),
 		newCmdNetBSD(),
@@ -1694,6 +1695,31 @@ func newCmdMicrosoftMSUC() *cobra.Command {
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrent workers")
+
+	return cmd
+}
+
+func newCmdMicrosoftOfficeC2R() *cobra.Command {
+	options := &base{
+		dir: filepath.Join(util.CacheDir(), "extract", "microsoft", "office-c2r"),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "microsoft-office-c2r <Raw Microsoft Office C2R Repository PATH>",
+		Short: "Extract Microsoft Office Click-to-Run (Microsoft 365 Apps) security updates release notes data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update extract microsoft-office-c2r vuls-data-raw-microsoft-office-c2r
+		`),
+		Args: cobra.ExactArgs(1),
+		RunE: func(_ *cobra.Command, args []string) error {
+			if err := microsoftOfficeC2R.Extract(args[0], microsoftOfficeC2R.WithDir(options.dir)); err != nil {
+				return errors.Wrap(err, "failed to extract microsoft office c2r")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
