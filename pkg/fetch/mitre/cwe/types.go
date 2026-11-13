@@ -1,5 +1,30 @@
 package cwe
 
+import "strings"
+
+// structuredText decodes an element of the schema's StructuredTextType, whose
+// content is either plain text or XHTML. Decoded into a plain string, such an
+// element keeps only the character data directly inside it, so an XHTML body
+// is reduced to the whitespace between its tags.
+//
+// Plain text keeps the decoded character data. XHTML is kept as the raw inner
+// XML, the way the ",innerxml" fields (Extended_Description,
+// Background_Detail, ...) keep it. Raw XML has a '<' only where markup opens,
+// since character data escapes it as "&lt;", so a '<' tells the two apart.
+// Taking the raw inner XML of plain text as well would hand out its entities
+// undecoded ("Information &amp; Software").
+type structuredText struct {
+	InnerXML string `xml:",innerxml"`
+	CharData string `xml:",chardata"`
+}
+
+func (t structuredText) String() string {
+	if strings.Contains(t.InnerXML, "<") {
+		return t.InnerXML
+	}
+	return t.CharData
+}
+
 // CWE 5.0 (schema v8.0) renamed Categories>Category to Groupings>Grouping.
 // They are still written as categories, so the raw layout is unchanged.
 type weaknessCatalog struct {
@@ -31,20 +56,20 @@ type weakness struct {
 			Text string `xml:",innerxml"`
 		} `xml:"Note"`
 	} `xml:"Modes_Of_Introduction>Introduction"`
-	LikelihoodOfExploit  string              `xml:"Likelihood_Of_Exploit"`
-	CommonConsequences   []CommonConsequence `xml:"Common_Consequences>Consequence"`
+	LikelihoodOfExploit  string        `xml:"Likelihood_Of_Exploit"`
+	CommonConsequences   []consequence `xml:"Common_Consequences>Consequence"`
 	PotentialMitigations []struct {
 		MitigationID string   `xml:"Mitigation_ID,attr"`
 		Phase        []string `xml:"Phase"`
 		Description  []struct {
 			Text string `xml:",innerxml"`
 		} `xml:"Description"`
-		Effectiveness      string `xml:"Effectiveness"`
-		EffectivenessNotes string `xml:"Effectiveness_Notes"`
-		Strategy           string `xml:"Strategy"`
+		Effectiveness      string         `xml:"Effectiveness"`
+		EffectivenessNotes structuredText `xml:"Effectiveness_Notes"`
+		Strategy           string         `xml:"Strategy"`
 	} `xml:"Potential_Mitigations>Mitigation"`
 	DemonstrativeExamples []DemonstrativeExample `xml:"Demonstrative_Examples>Demonstrative_Example"`
-	ObservedExamples      []ObservedExample      `xml:"Observed_Examples>Observed_Example"`
+	ObservedExamples      []observedExample      `xml:"Observed_Examples>Observed_Example"`
 	References            []struct {
 		ExternalReferenceID string `xml:"External_Reference_ID,attr" json:"external_reference_id,omitempty"`
 		Section             string `xml:"Section,attr" json:"section,omitempty"`
@@ -88,8 +113,8 @@ type weakness struct {
 		Description       struct {
 			Text string `xml:",innerxml"`
 		} `xml:"Description"`
-		Effectiveness      string `xml:"Effectiveness"`
-		EffectivenessNotes string `xml:"Effectiveness_Notes"`
+		Effectiveness      string         `xml:"Effectiveness"`
+		EffectivenessNotes structuredText `xml:"Effectiveness_Notes"`
 	} `xml:"Detection_Methods>Detection_Method"`
 	TaxonomyMappings      []TaxonomyMappings `xml:"Taxonomy_Mappings>Taxonomy_Mapping"`
 	RelatedAttackPatterns []struct {
@@ -102,10 +127,10 @@ type weakness struct {
 }
 
 type category struct {
-	ID             string `xml:"ID,attr"`
-	Name           string `xml:"Name,attr"`
-	Status         string `xml:"Status,attr"`
-	Summary        string `xml:"Summary"`
+	ID             string         `xml:"ID,attr"`
+	Name           string         `xml:"Name,attr"`
+	Status         string         `xml:"Status,attr"`
+	Summary        structuredText `xml:"Summary"`
 	ContentHistory struct {
 		Submission struct {
 			SubmissionName         string `xml:"Submission_Name"`
@@ -143,14 +168,14 @@ type category struct {
 }
 
 type view struct {
-	ID             string      `xml:"ID,attr"`
-	Name           string      `xml:"Name,attr"`
-	Type           string      `xml:"Type,attr"`
-	Status         string      `xml:"Status,attr"`
-	Objective      string      `xml:"Objective"`
-	Audience       []Audience  `xml:"Audience>Stakeholder"`
-	Members        []HasMember `xml:"Members>Has_Member"`
-	Notes          []Note      `xml:"Notes>Note"`
+	ID             string         `xml:"ID,attr"`
+	Name           string         `xml:"Name,attr"`
+	Type           string         `xml:"Type,attr"`
+	Status         string         `xml:"Status,attr"`
+	Objective      structuredText `xml:"Objective"`
+	Audience       []Audience     `xml:"Audience>Stakeholder"`
+	Members        []HasMember    `xml:"Members>Has_Member"`
+	Notes          []Note         `xml:"Notes>Note"`
 	ContentHistory struct {
 		Submission struct {
 			SubmissionName         string `xml:"Submission_Name"`
@@ -186,9 +211,9 @@ type view struct {
 }
 
 type mappingNotes struct {
-	Usage     string `xml:"Usage"`
-	Rationale string `xml:"Rationale"`
-	Comments  string `xml:"Comments"`
+	Usage     string         `xml:"Usage"`
+	Rationale structuredText `xml:"Rationale"`
+	Comments  structuredText `xml:"Comments"`
 	Reasons   []struct {
 		Type string `xml:"Type,attr"`
 	} `xml:"Reasons>Reason"`
@@ -196,6 +221,19 @@ type mappingNotes struct {
 		CWEID   string `xml:"CWE_ID,attr"`
 		Comment string `xml:"Comment,attr"`
 	} `xml:"Suggestions>Suggestion"`
+}
+
+type consequence struct {
+	Scope      []string       `xml:"Scope"`
+	Impact     []string       `xml:"Impact"`
+	Note       structuredText `xml:"Note"`
+	Likelihood string         `xml:"Likelihood"`
+}
+
+type observedExample struct {
+	Reference   string         `xml:"Reference"`
+	Description structuredText `xml:"Description"`
+	Link        string         `xml:"Link"`
 }
 
 type Weakness struct {
@@ -273,10 +311,10 @@ type ModesOfIntroduction struct {
 }
 
 type CommonConsequence struct {
-	Scope      []string `xml:"Scope" json:"scope,omitempty"`
-	Impact     []string `xml:"Impact" json:"impact,omitempty"`
-	Note       string   `xml:"Note" json:"note,omitempty"`
-	Likelihood string   `xml:"Likelihood" json:"likelihood,omitempty"`
+	Scope      []string `json:"scope,omitempty"`
+	Impact     []string `json:"impact,omitempty"`
+	Note       string   `json:"note,omitempty"`
+	Likelihood string   `json:"likelihood,omitempty"`
 }
 
 type PotentialMitigation struct {
@@ -294,9 +332,9 @@ type DemonstrativeExample struct {
 }
 
 type ObservedExample struct {
-	Reference   string `xml:"Reference" json:"reference,omitempty"`
-	Description string `xml:"Description" json:"description,omitempty"`
-	Link        string `xml:"Link" json:"link,omitempty"`
+	Reference   string `json:"reference,omitempty"`
+	Description string `json:"description,omitempty"`
+	Link        string `json:"link,omitempty"`
 }
 
 type Reference struct {

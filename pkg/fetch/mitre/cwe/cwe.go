@@ -202,19 +202,38 @@ func convertWeaknesses(weaknesses []weakness, exRefs map[string]ExternalReferenc
 			modesOfIntroduction = append(modesOfIntroduction, e)
 		}
 
+		commonConsequences := make([]CommonConsequence, 0, len(w.CommonConsequences))
+		for _, c := range w.CommonConsequences {
+			commonConsequences = append(commonConsequences, CommonConsequence{
+				Scope:      c.Scope,
+				Impact:     c.Impact,
+				Note:       c.Note.String(),
+				Likelihood: c.Likelihood,
+			})
+		}
+
 		potentialMitigations := make([]PotentialMitigation, 0, len(w.PotentialMitigations))
 		for _, m := range w.PotentialMitigations {
 			e := PotentialMitigation{
 				MitigationID:       m.MitigationID,
 				Phase:              m.Phase,
 				Effectiveness:      m.Effectiveness,
-				EffectivenessNotes: m.EffectivenessNotes,
+				EffectivenessNotes: m.EffectivenessNotes.String(),
 				Strategy:           m.Strategy,
 			}
 			for _, d := range m.Description {
 				e.Description = append(e.Description, d.Text)
 			}
 			potentialMitigations = append(potentialMitigations, e)
+		}
+
+		observedExamples := make([]ObservedExample, 0, len(w.ObservedExamples))
+		for _, e := range w.ObservedExamples {
+			observedExamples = append(observedExamples, ObservedExample{
+				Reference:   e.Reference,
+				Description: e.Description.String(),
+				Link:        e.Link,
+			})
 		}
 
 		references := make([]Reference, 0, len(w.References))
@@ -278,7 +297,7 @@ func convertWeaknesses(weaknesses []weakness, exRefs map[string]ExternalReferenc
 				Method:             m.Method,
 				Description:        m.Description.Text,
 				Effectiveness:      m.Effectiveness,
-				EffectivenessNotes: m.EffectivenessNotes,
+				EffectivenessNotes: m.EffectivenessNotes.String(),
 			})
 		}
 
@@ -301,10 +320,10 @@ func convertWeaknesses(weaknesses []weakness, exRefs map[string]ExternalReferenc
 			BackgroundDetails:     backgroundDetails,
 			ModesOfIntroduction:   modesOfIntroduction,
 			LikelihoodOfExploit:   w.LikelihoodOfExploit,
-			CommonConsequences:    w.CommonConsequences,
+			CommonConsequences:    commonConsequences,
 			PotentialMitigations:  potentialMitigations,
 			DemonstrativeExamples: w.DemonstrativeExamples,
-			ObservedExamples:      w.ObservedExamples,
+			ObservedExamples:      observedExamples,
 			References:            references,
 			ContentHistory:        contentHistory,
 			WeaknessOrdinalities:  w.WeaknessOrdinalities,
@@ -374,7 +393,7 @@ func convertCategories(categories []category, exRefs map[string]ExternalReferenc
 			ID:               c.ID,
 			Name:             c.Name,
 			Status:           c.Status,
-			Summary:          c.Summary,
+			Summary:          c.Summary.String(),
 			ContentHistory:   contentHistory,
 			Relationships:    c.Relationships,
 			References:       references,
@@ -440,7 +459,7 @@ func convertViews(views []view, exRefs map[string]ExternalReference) []View {
 			Name:           v.Name,
 			Type:           v.Type,
 			Status:         v.Status,
-			Objective:      v.Objective,
+			Objective:      v.Objective.String(),
 			Audience:       v.Audience,
 			Members:        v.Members,
 			Notes:          v.Notes,
@@ -456,8 +475,8 @@ func convertViews(views []view, exRefs map[string]ExternalReference) []View {
 func convertMappingNotes(mn mappingNotes) MappingNotes {
 	return MappingNotes{
 		Usage:     mn.Usage,
-		Rationale: mn.Rationale,
-		Comments:  mn.Comments,
+		Rationale: mn.Rationale.String(),
+		Comments:  mn.Comments.String(),
 		Reasons: func() []Reason {
 			var rs []Reason
 			for _, r := range mn.Reasons {

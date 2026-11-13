@@ -25,7 +25,7 @@
 			"impact": [
 				"Varies by Context"
 			],
-			"note": "\n\t\t\t\n\t\t  "
+			"note": "\n\t\t\t<xhtml:p>The consequences depend on the affected hardware\n\t\t\tbehavior. The synthesized implementation may make\n\t\t\tdifferent control decisions, incorrectly update protected\n\t\t\tstate, expose data, or fail to enforce restrictions that\n\t\t\tappeared to operate correctly during HDL\n\t\t\tsimulation.</xhtml:p>\n\t\t  "
 		}
 	],
 	"potential_mitigations": [
@@ -34,14 +34,14 @@
 				"\n\t\t\t<xhtml:p>Establish and enforce HDL coding and review\n\t\t\tpractices that minimize differences between simulation\n\t\t\tsemantics and synthesis interpretation. Avoid HDL\n\t\t\tconstructs, synthesis directives, and tool-dependent\n\t\t\tbehaviors known to cause simulation/synthesis mismatch,\n\t\t\twith particular attention to security-relevant\n\t\t\tlogic.</xhtml:p>\n\t\t  "
 			],
 			"effectiveness": "High",
-			"effectiveness_notes": "\n\t\t\t\n\t\t  "
+			"effectiveness_notes": "\n\t\t\t<xhtml:p>Avoidance of the patterns of code which can\n\t\t\tresult in these errors removes the opportunity for\n\t\t\terror. However, in some cases (notably state machine\n\t\t\tencodings) this can be very difficult to achieve\n\t\t\tefficiently.</xhtml:p>\n\t\t  "
 		},
 		{
 			"description": [
 				"\n\t\t\t<xhtml:p>For security-critical logic, preserve intentional\n\t\t\tredundancy that is required for security. Examples may\n\t\t\tinclude redundant logic, triple modular redundancy (TMR)\n\t\t\tstructures, Hamming-distance state encodings, or\n\t\t\tstate-machine recovery logic. Use synthesis constraints,\n\t\t\tpreservation attributes, carefully controlled structural\n\t\t\timplementation, or manual implementation of selected\n\t\t\tcritical blocks to prevent this redundancy from being\n\t\t\tmerged, re-encoded, or optimized away.</xhtml:p>\n\t\t  "
 			],
 			"effectiveness": "High",
-			"effectiveness_notes": "\n\t\t\t\n\t\t  "
+			"effectiveness_notes": "\n\t\t\t<xhtml:p>This mitigation removes the structures which\n\t\t\tcause the problem, at the expense of additional design and\n\t\t\tverification effort, and additional risk of inclusion of\n\t\t\tother functional errors.</xhtml:p>\n\t\t  "
 		}
 	],
 	"references": [
@@ -135,31 +135,31 @@
 			"method": "Automated Static Analysis - Source Code",
 			"description": "\n\t\t\t<xhtml:p>HDL linting, rule-based static analysis, and HDL\n\t\t\tchecker tools can examine source code for structures that\n\t\t\tmay be interpreted differently by simulation and synthesis\n\t\t\ttools. They may identify synthesis-sensitive coding\n\t\t\tpatterns associated with this weakness.</xhtml:p>\n\t\t  ",
 			"effectiveness": "Moderate",
-			"effectiveness_notes": "\n\t\t\t\n\t\t  "
+			"effectiveness_notes": "\n\t\t\t<xhtml:p>This method can be useful for detecting potential\n\t\t\tcoding issues, but it may not reveal whether these\n\t\t\tconstructs result in observable behavioral divergence\n\t\t\tafter synthesis. Moreover, a user may suppress or bypass\n\t\t\tthese warnings and still produce the erroneous synthesized\n\t\t\thardware implementation. This method can give false\n\t\t\tpositives.</xhtml:p>\n\t\t  "
 		},
 		{
 			"method": "Manual Analysis",
 			"description": "\n\t\t\t<xhtml:p>Synthesis warning review can examine synthesis\n\t\t\tlogs and reports for tool messages associated with\n\t\t\tpossible simulation/synthesis mismatch. It may identify\n\t\t\tignored constructs, unsupported HDL semantics, synthesis\n\t\t\tassumptions, or optimizations that could affect\n\t\t\tsecurity-relevant behavior.</xhtml:p>\n\t\t  ",
 			"effectiveness": "Limited",
-			"effectiveness_notes": "\n\t\t\t\n\t\t  "
+			"effectiveness_notes": "\n\t\t\t<xhtml:p>Can reveal potential synthesis issues but relies\n\t\t\ton engineers interpreting warnings. Moreover, a user may\n\t\t\tsuppress or bypass these warnings and still produce the\n\t\t\terroneous synthesized hardware implementation.</xhtml:p>\n\t\t  "
 		},
 		{
 			"method": "Formal Verification",
 			"description": "\n\t\t\t<xhtml:p>HDL-source-to-netlist formal equivalence checking\n\t\t\tcan examine the simulated model and synthesized netlist\n\t\t\tfor behavioral mismatch associated with this weakness. It\n\t\t\tmay identify non-equivalent outputs, failed\n\t\t\tcompare-points, state-mapping issues, or counterexamples\n\t\t\tunder the checked constraints.</xhtml:p>\n\t\t  ",
 			"effectiveness": "High",
-			"effectiveness_notes": "\n\t\t\t\n\t\t  "
+			"effectiveness_notes": "\n\t\t\t<xhtml:p>Formal equivalence checking can be effective at\n\t\t\tthe IP level for identifying mismatches between the\n\t\t\tsource-code model and synthesized implementation. However,\n\t\t\teffectiveness may decrease as design complexity grows,\n\t\t\tparticularly at the SoC level, due to state-space\n\t\t\texpansion and difficulty mapping non-equivalent\n\t\t\tpoints. Synthesis optimizations may merge, eliminate, or\n\t\t\trename signals, which can also produce false positives or\n\t\t\trequire additional setup to account for expected\n\t\t\ttransformations.</xhtml:p>\n\t\t  "
 		},
 		{
 			"method": "Simulation / Emulation",
 			"description": "\n\t\t\t<xhtml:p>Cross-simulation across HDL-source and\n\t\t\tpost-synthesis models can examine both abstraction levels\n\t\t\tfor observable behavioral divergence associated with this\n\t\t\tweakness. It may identify mismatches when\n\t\t\tsecurity-relevant behaviors are explicitly\n\t\t\texercised.</xhtml:p>\n\t\t  ",
 			"effectiveness": "High",
-			"effectiveness_notes": "\n\t\t\t\n\t\t  "
+			"effectiveness_notes": "\n\t\t\t<xhtml:p>This method can be useful for detecting\n\t\t\tobservable behavioral mismatches, but it may not exercise\n\t\t\tall execution scenarios and should be combined with other\n\t\t\tdetection methods to improve coverage.</xhtml:p>\n\t\t  "
 		},
 		{
 			"method": "Fuzzing",
 			"description": "\n\t\t\t<xhtml:p>Coverage-guided differential fuzzing can examine\n\t\t\tHDL source code and synthesized implementation models for\n\t\t\tbehavioral divergence associated with this weakness. It\n\t\t\tmay identify generated inputs or state conditions that\n\t\t\texpose synthesis-induced mismatches.</xhtml:p>\n\t\t  ",
 			"effectiveness": "High",
-			"effectiveness_notes": "\n\t\t\t\n\t\t  "
+			"effectiveness_notes": "\n\t\t\t<xhtml:p>This method can be useful for detecting\n\t\t\tpreviously unknown synthesis-induced behavioral mismatches\n\t\t\tby exploring diverse execution paths through\n\t\t\tcoverage-guided input generation. However, it may not\n\t\t\texercise every reachable design state and should be\n\t\t\tcombined with other detection methods to improve\n\t\t\tcoverage.</xhtml:p>\n\t\t  "
 		}
 	],
 	"mapping_notes": {
