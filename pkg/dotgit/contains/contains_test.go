@@ -108,7 +108,10 @@ const (
 func TestContainsWithBranch(t *testing.T) {
 	// The fixture is commits 1-4 in a line. main is moved back to 3, and other
 	// is at 4, so 4 is only on other. shallow is a clone of depth 2, as
-	// vuls-data-db truncates a dotgit: it has 2-4, and 2 is shallow.
+	// vuls-data-db truncates a dotgit: it has 2-4, and 2 is shallow. Then full
+	// gets an annotated tag of 1, and a branch and a tag named hexNamed, a
+	// hash of no object, at 3.
+	const hexNamed = "89abcdef0123456789abcdef0123456789abcdef"
 	dir := t.TempDir()
 	full, err := git.Populate(dir, "testdata/fixtures/history")
 	if err != nil {
@@ -134,6 +137,11 @@ func TestContainsWithBranch(t *testing.T) {
 		t.Fatalf("shallow commits. expected: %q, actual: %q, err: %v", fmt.Sprintf("%s\n", commit2), bs, err)
 	}
 
+	run(t, "-C", full, "-c", "user.name=test", "-c", "user.email=test@example.com", "-c", "tag.gpgSign=false", "tag", "--annotate", "--message", "v1", "v1", commit1)
+	tag := strings.TrimSpace(run(t, "-C", full, "rev-parse", "refs/tags/v1"))
+	run(t, "-C", full, "update-ref", fmt.Sprintf("refs/heads/%s", hexNamed), commit3)
+	run(t, "-C", full, "update-ref", fmt.Sprintf("refs/tags/%s", hexNamed), commit3)
+
 	type args struct {
 		// repository is "full", "shallow", or "missing" for a path that does
 		// not exist.
@@ -158,12 +166,8 @@ func TestContainsWithBranch(t *testing.T) {
 			args: args{repository: "full", commit: commit1, branch: "main"},
 		},
 		{
-			name: "abbreviated hash",
-			args: args{repository: "full", commit: commit2[:7], branch: "main"},
-		},
-		{
-			name: "abbreviated hash in upper case",
-			args: args{repository: "full", commit: strings.ToUpper(commit2[:7]), branch: "main"},
+			name: "hash in upper case",
+			args: args{repository: "full", commit: strings.ToUpper(commit2), branch: "main"},
 		},
 		{
 			name: "the tip of another branch",
@@ -182,8 +186,28 @@ func TestContainsWithBranch(t *testing.T) {
 			hasError: true,
 		},
 		{
+			// Peeled, the tag would be commit 1.
+			name:     "an annotated tag, not a commit",
+			args:     args{repository: "full", commit: tag, branch: "main"},
+			wantErr:  contains.ErrCommitNotFound,
+			hasError: true,
+		},
+		{
 			name:     "missing commit",
 			args:     args{repository: "full", commit: "0123456789abcdef0123456789abcdef01234567", branch: "main"},
+			wantErr:  contains.ErrCommitNotFound,
+			hasError: true,
+		},
+		{
+			// Read as a ref, the hash would be commit 3.
+			name:     "missing commit, with a branch and a tag of its name",
+			args:     args{repository: "full", commit: hexNamed, branch: "main"},
+			wantErr:  contains.ErrCommitNotFound,
+			hasError: true,
+		},
+		{
+			name:     "hash of 64 hex digits in a SHA-1 repository",
+			args:     args{repository: "full", commit: commit1 + commit2[:24], branch: "main"},
 			wantErr:  contains.ErrCommitNotFound,
 			hasError: true,
 		},
@@ -227,8 +251,8 @@ func TestContainsWithBranch(t *testing.T) {
 			hasError: true,
 		},
 		{
-			name:     "hash shorter than 4 hex digits",
-			args:     args{repository: "full", commit: commit2[:3], branch: "main"},
+			name:     "abbreviated hash",
+			args:     args{repository: "full", commit: commit2[:7], branch: "main"},
 			hasError: true,
 		},
 		{
