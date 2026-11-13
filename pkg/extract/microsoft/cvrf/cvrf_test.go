@@ -1943,6 +1943,11 @@ func TestExtract(t *testing.T) {
 			hasError: true,
 		},
 		{
+			name:     "microsoft edge (chromium-based) listed under several ids, none with a vendor fix",
+			args:     "./testdata/fixtures-edge-fallback-duplicate-ids-missing-fixedbuild",
+			hasError: true,
+		},
+		{
 			name:     "hotpatch fixed builds from different servicing branches",
 			args:     "./testdata/fixtures-hotpatch-branch-mismatch",
 			hasError: true,
