@@ -5,6 +5,7 @@ import (
 	"encoding/json/v2"
 	stderrors "errors"
 	"fmt"
+	"io/fs"
 	"log/slog"
 	"os"
 	"os/exec"
@@ -151,7 +152,7 @@ func Pull(repository string, opts ...Option) error {
 					// git cannot be run, the error of switch, which says how
 					// it failed, is returned as it is.
 					if !strings.HasPrefix(options.checkout, "-") && !strings.Contains(options.checkout, "...") {
-						if err2 := contains.Contains(filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference), options.checkout, contains.WithUseNativeGit(true)); notFound(err2) {
+						if err2 := contains.Contains(filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference), options.checkout, contains.WithUseNativeGit(true)); notFound(err2, true) {
 							return notInRepository(errors.Wrapf(err, "switch to %s", options.checkout), repository, options.checkout)
 						}
 					}
@@ -205,7 +206,7 @@ func Pull(repository string, opts ...Option) error {
 				// tag: go-git does not resolve every tag name, such as one
 				// with an "@".
 				if err := contains.Contains(filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference), options.checkout, contains.WithUseNativeGit(false)); err != nil {
-					if notFound(err) {
+					if notFound(err, false) {
 						return git.CheckoutOptions{}, notInRepository(err, repository, options.checkout)
 					}
 					return git.CheckoutOptions{}, errors.Wrapf(err, "get %q as commit", options.checkout)
@@ -281,16 +282,32 @@ func notInRepository(err error, repository, checkout string) error {
 }
 
 // notFound reports whether err, from contains, says that the target is not in
-// the repository, rather than that the check could not be made, as when git
-// cannot be run. git cat-file -e exits with 1 for a hash it does not have, and
+// the repository, rather than that the check could not be made.
+//
+// Native git: git cat-file -e exits with 1 for a hash it does not have, and
 // with 128 for a name it cannot resolve. 128 is also how it ends on other fatal
 // errors, but contains is asked only after switch has failed, and the error of
-// switch, which follows the message, says which. go-git returns
-// plumbing.ErrReferenceNotFound.
-func notFound(err error) bool {
-	if errors.Is(err, plumbing.ErrReferenceNotFound) {
-		return true
+// switch, which follows the message, says which. Without an exit status, git
+// could not be run.
+//
+// go-git: contains is asked only about a name that is neither a branch nor a
+// tag. ResolveRevision answers plumbing.ErrReferenceNotFound for an object it
+// cannot read, too, and its other errors, such as for a name its parser
+// rejects, like one with an "@", or for a commit a name points at that cannot
+// be read, also leave nothing to check out. Only an error from reading the
+// repository itself, git.ErrRepositoryNotExists or an *fs.PathError, says that
+// the check could not be made.
+func notFound(err error, useNativeGit bool) bool {
+	if err == nil {
+		return false
 	}
-	ee, ok := stderrors.AsType[*exec.ExitError](err)
-	return ok && (ee.ExitCode() == 1 || ee.ExitCode() == 128)
+	if useNativeGit {
+		ee, ok := stderrors.AsType[*exec.ExitError](err)
+		return ok && (ee.ExitCode() == 1 || ee.ExitCode() == 128)
+	}
+	if errors.Is(err, git.ErrRepositoryNotExists) {
+		return false
+	}
+	_, ok := stderrors.AsType[*fs.PathError](err)
+	return !ok
 }
