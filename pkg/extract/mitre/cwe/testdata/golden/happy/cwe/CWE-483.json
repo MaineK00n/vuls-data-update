@@ -1,0 +1,33 @@
+{
+	"id": "CWE-483",
+	"kind": "weakness",
+	"name": "Incorrect Block Delimitation",
+	"status": "Draft",
+	"description": "The code does not explicitly delimit a block that is intended to contain 2 or more statements.",
+	"weakness": {
+		"abstraction": "Base",
+		"structure": "Simple",
+		"mapping_notes": {
+			"usage": "Allowed",
+			"rationale": "This CWE entry is at the Base level of abstraction, which is a preferred level of abstraction for mapping to the root causes of vulnerabilities.",
+			"comments": "Carefully read both the name and description to ensure that this mapping is an appropriate fit. Do not try to 'force' a mapping to a lower-level Base/Variant simply to comply with this preferred level of abstraction.",
+			"reasons": [
+				{
+					"type": "Acceptable-Use"
+				}
+			]
+		}
+	},
+	"references": [
+		{
+			"source": "cwe.mitre.org",
+			"url": "https://cwe.mitre.org/data/definitions/483.html"
+		}
+	],
+	"data_source": {
+		"id": "mitre-cwe",
+		"raws": [
+			"happy/weakness/483.json"
+		]
+	}
+}

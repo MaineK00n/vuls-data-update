@@ -1,0 +1,78 @@
+{
+	"id": "215",
+	"name": "Insertion of Sensitive Information Into Debugging Code",
+	"abstraction": "Base",
+	"structure": "Simple",
+	"status": "Draft",
+	"description": "The product inserts sensitive information into debugging code.",
+	"related_weaknesses": [
+		{
+			"nature": "ChildOf",
+			"cweid": "200",
+			"view_id": "1000",
+			"ordinal": "Primary",
+			"dimensions": [
+				{
+					"type": "Behavior-Type",
+					"value": "Insertion"
+				},
+				{
+					"type": "Info-Property",
+					"value": "Sensitive"
+				},
+				{
+					"type": "Info-Type",
+					"value": "Information"
+				},
+				{
+					"type": "Other",
+					"value": "Into Debugging Code"
+				}
+			]
+		}
+	],
+	"modes_of_introduction": [
+		{
+			"phase": [
+				"Implementation",
+				"Build and Compilation",
+				"Distribution"
+			],
+			"note": [
+				"When debugging, it may be necessary to report detailed information to the programmer.  However, if the debugging code is not disabled when the product is operating in a production environment, then this sensitive information may be exposed to attackers."
+			]
+		}
+	],
+	"content_history": {
+		"submission": [
+			{
+				"submission_name": [
+					"PLOVER"
+				],
+				"submission_date": "2006-07-19",
+				"submission_version": "Draft 3",
+				"submission_release_date": "2006-07-19"
+			}
+		],
+		"modification": [
+			{
+				"modification_name": "Sean Eidemiller",
+				"modification_organization": "Cigital",
+				"modification_date": "2008-07-01",
+				"modification_version": "1.0",
+				"modification_release_date": "2008-09-09",
+				"modification_comment": "added/updated demonstrative examples"
+			}
+		]
+	},
+	"mapping_notes": {
+		"usage": "Allowed",
+		"rationale": "This CWE entry is at the Base level of abstraction, which is a preferred level of abstraction for mapping to the root causes of vulnerabilities.",
+		"comments": "Carefully read both the name and description to ensure that this mapping is an appropriate fit. Do not try to 'force' a mapping to a lower-level Base/Variant simply to comply with this preferred level of abstraction.",
+		"reasons": [
+			{
+				"type": "Acceptable-Use"
+			}
+		]
+	}
+}

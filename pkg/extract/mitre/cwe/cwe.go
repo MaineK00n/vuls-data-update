@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/fs"
 	"log/slog"
+	"os"
 	"path/filepath"
 	"slices"
 	"strconv"
@@ -13,7 +14,8 @@ import (
 	"github.com/pkg/errors"
 
 	cweTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/cwe"
-	categoryTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/cwe/category"
+	dimensionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/cwe/dimension"
+	groupingTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/cwe/grouping"
 	mappingnotesTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/cwe/mappingnotes"
 	reasonTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/cwe/mappingnotes/reason"
 	suggestionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/cwe/mappingnotes/suggestion"
@@ -26,6 +28,7 @@ import (
 	alternatetermTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/cwe/weakness/alternateterm"
 	applicableplatformTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/cwe/weakness/applicableplatform"
 	commonconsequenceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/cwe/weakness/commonconsequence"
+	customphaseTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/cwe/weakness/customphase"
 	demonstrativeexampleTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/cwe/weakness/demonstrativeexample"
 	detectionmethodTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/cwe/weakness/detectionmethod"
 	modeofintroductionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/cwe/weakness/modeofintroduction"
@@ -102,8 +105,8 @@ func Extract(args string, opts ...Option) error {
 		switch kind {
 		case "weakness":
 			return extractWeakness(path, args, options.dir, rankings)
-		case "category":
-			return extractCategory(path, args, options.dir)
+		case "grouping", "category": // raw fetched before the CWE 5.0 rename has its groupings under category/
+			return extractGrouping(path, args, options.dir)
 		case "view":
 			return extractView(path, args, options.dir)
 		default:
@@ -136,11 +139,12 @@ func Extract(args string, opts ...Option) error {
 	return nil
 }
 
-// owaspCategoryRank returns the rank of an OWASP Top Ten "A0N" category from its
-// name (e.g. 3 from "OWASP Top Ten 2021 Category A03:2021 - Injection"). OWASP
-// views only ever contain "A0N" tier categories, so a name not in that form is
-// reported as an error rather than skipped. Both the modern "A03:YYYY" and older
-// "A6 - ..." spellings are handled.
+// owaspCategoryRank returns the rank of an OWASP Top Ten "A0N" category from the
+// name of its grouping (e.g. 3 from "OWASP Top Ten 2021 Category A03:2021 -
+// Injection"); OWASP calls the tiers categories, and CWE 5.0 keeps that word in
+// the names of the groupings that hold them. OWASP views only ever contain "A0N"
+// tier groupings, so a name not in that form is reported as an error rather than
+// skipped. Both the modern "A03:YYYY" and older "A6 - ..." spellings are handled.
 func owaspCategoryRank(name string) (int, error) {
 	before, after, found := strings.Cut(name, " Category A")
 	if !found || !strings.HasPrefix(before, "OWASP Top Ten ") {
@@ -172,10 +176,10 @@ type rankingIndex struct {
 //   - the "CWE Top 25" and "CWE/SANS Top 25" views, whose flat rank and
 //     (HTML-only) score come from the supplemental data; the catalog view
 //     supplies only the list name;
-//   - the OWASP Top Ten views, whose member "A0N" categories carry the rank and
+//   - the OWASP Top Ten views, whose member "A0N" groupings carry the rank and
 //     whose member weaknesses inherit it.
 //
-// The raw path of every view/category actually read is recorded against each
+// The raw path of every view/grouping actually read is recorded against each
 // ranked weakness so the placement's provenance lands in the weakness's Raws.
 func buildRankings(args string) (rankingIndex, error) {
 	idx := rankingIndex{
@@ -221,29 +225,32 @@ func buildRankings(args string) (rankingIndex, error) {
 				}, viewRaw)
 			}
 		case strings.Contains(v.Name, "OWASP Top Ten"):
-			// Members are the "A0N" tier categories; read each on demand for its
+			// Members are the "A0N" tier groupings; read each on demand for its
 			// rank (the A number) and the weaknesses that inherit it.
 			for _, m := range v.Members {
-				categoryPath := filepath.Join(args, "category", fmt.Sprintf("%s.json", m.CWEID))
-				cr := utiljson.NewJSONReader()
-				var c cwe.Category
-				if err := cr.Read(categoryPath, args, &c); err != nil {
-					return errors.Wrapf(err, "read json %s", categoryPath)
-				}
-				rank, err := owaspCategoryRank(c.Name)
+				groupingPath, err := rawGroupingPath(args, m.CWEID)
 				if err != nil {
-					return errors.Wrapf(err, "rank %s", categoryPath)
+					return errors.Wrapf(err, "find grouping %s", m.CWEID)
 				}
-				categoryID := fmt.Sprintf("CWE-%s", c.ID)
-				catRaw := cr.Paths()[0]
-				for _, wm := range c.Relationships {
+				gr := utiljson.NewJSONReader()
+				var g cwe.Grouping
+				if err := gr.Read(groupingPath, args, &g); err != nil {
+					return errors.Wrapf(err, "read json %s", groupingPath)
+				}
+				rank, err := owaspCategoryRank(g.Name)
+				if err != nil {
+					return errors.Wrapf(err, "rank %s", groupingPath)
+				}
+				groupingID := fmt.Sprintf("CWE-%s", g.ID)
+				groupingRaw := gr.Paths()[0]
+				for _, wm := range g.Relationships {
 					add(fmt.Sprintf("CWE-%s", wm.CWEID), rankingTypes.Ranking{
 						ViewID:       viewID,
 						ViewName:     v.Name,
-						CategoryID:   categoryID,
-						CategoryName: c.Name,
+						GroupingID:   groupingID,
+						GroupingName: g.Name,
 						Rank:         rank,
-					}, viewRaw, catRaw)
+					}, viewRaw, groupingRaw)
 				}
 			}
 		}
@@ -252,6 +259,22 @@ func buildRankings(args string) (rankingIndex, error) {
 		return rankingIndex{}, errors.Wrapf(err, "walk %s", filepath.Join(args, "view"))
 	}
 	return idx, nil
+}
+
+// rawGroupingPath returns the raw file of grouping id: grouping/<id>.json, or
+// category/<id>.json in raw fetched before the CWE 5.0 rename.
+func rawGroupingPath(args, id string) (string, error) {
+	for _, dir := range []string{"grouping", "category"} {
+		p := filepath.Join(args, dir, fmt.Sprintf("%s.json", id))
+		switch _, err := os.Stat(p); {
+		case err == nil:
+			return p, nil
+		case errors.Is(err, fs.ErrNotExist):
+		default:
+			return "", errors.Wrapf(err, "stat %s", p)
+		}
+	}
+	return "", errors.Errorf("grouping %s not found in %s", id, args)
 }
 
 func extractWeakness(path, args, outDir string, rankings rankingIndex) error {
@@ -274,14 +297,17 @@ func extractWeakness(path, args, outDir string, rankings rankingIndex) error {
 			Structure:           w.Structure,
 			Diagram:             w.Diagram,
 			ExtendedDescription: w.ExtendedDescription,
+			TechnicalNuance:     w.TechnicalNuance,
+			Dimensions:          convertDimensions(w.Dimensions),
 			LikelihoodOfExploit: w.LikelihoodOfExploit,
 			BackgroundDetails:   slices.Clone(w.BackgroundDetails),
 			ModesOfIntroduction: func() []modeofintroductionTypes.ModeOfIntroduction {
 				out := make([]modeofintroductionTypes.ModeOfIntroduction, 0, len(w.ModesOfIntroduction))
 				for _, m := range w.ModesOfIntroduction {
 					out = append(out, modeofintroductionTypes.ModeOfIntroduction{
-						Phase: m.Phase,
-						Notes: slices.Clone(m.Note),
+						Phases:       slices.Clone(m.Phase),
+						CustomPhases: convertCustomPhases(m.CustomPhase),
+						Notes:        slices.Clone(m.Note),
 					})
 				}
 				return out
@@ -302,6 +328,7 @@ func extractWeakness(path, args, outDir string, rankings rankingIndex) error {
 							}
 							return fmt.Sprintf("CWE-%s", rw.ChainID)
 						}(),
+						Dimensions: convertDimensions(rw.Dimensions),
 					})
 				}
 				return out
@@ -328,16 +355,16 @@ func extractWeakness(path, args, outDir string, rankings rankingIndex) error {
 			ApplicablePlatforms: func() []applicableplatformTypes.ApplicablePlatform {
 				out := make([]applicableplatformTypes.ApplicablePlatform, 0, len(w.ApplicablePlatforms.Language)+len(w.ApplicablePlatforms.Technology)+len(w.ApplicablePlatforms.OperatingSystem)+len(w.ApplicablePlatforms.Architecture))
 				for _, p := range w.ApplicablePlatforms.Language {
-					out = append(out, applicableplatformTypes.ApplicablePlatform{Type: "language", Name: p.Name, Class: p.Class, Prevalence: p.Prevalence})
+					out = append(out, applicableplatformTypes.ApplicablePlatform{Type: "language", Name: p.Name, Class: p.Class, Prevalence: p.Prevalence, Note: p.Note})
 				}
 				for _, p := range w.ApplicablePlatforms.Technology {
-					out = append(out, applicableplatformTypes.ApplicablePlatform{Type: "technology", Name: p.Name, Class: p.Class, Prevalence: p.Prevalence})
+					out = append(out, applicableplatformTypes.ApplicablePlatform{Type: "technology", Name: p.Name, Class: p.Class, Prevalence: p.Prevalence, Note: p.Note})
 				}
 				for _, p := range w.ApplicablePlatforms.OperatingSystem {
-					out = append(out, applicableplatformTypes.ApplicablePlatform{Type: "os", Name: p.Name, Class: p.Class, Prevalence: p.Prevalence})
+					out = append(out, applicableplatformTypes.ApplicablePlatform{Type: "os", Name: p.Name, Class: p.Class, Prevalence: p.Prevalence, Note: p.Note})
 				}
 				for _, p := range w.ApplicablePlatforms.Architecture {
-					out = append(out, applicableplatformTypes.ApplicablePlatform{Type: "architecture", Name: p.Name, Class: p.Class, Prevalence: p.Prevalence})
+					out = append(out, applicableplatformTypes.ApplicablePlatform{Type: "architecture", Name: p.Name, Class: p.Class, Prevalence: p.Prevalence, Note: p.Note})
 				}
 				return out
 			}(),
@@ -346,6 +373,7 @@ func extractWeakness(path, args, outDir string, rankings rankingIndex) error {
 				for _, t := range w.AlternateTerms {
 					out = append(out, alternatetermTypes.AlternateTerm{
 						Term:        t.Term,
+						Roles:       slices.Clone(t.Role),
 						Description: t.Description,
 					})
 				}
@@ -369,6 +397,7 @@ func extractWeakness(path, args, outDir string, rankings rankingIndex) error {
 					out = append(out, potentialmitigationTypes.PotentialMitigation{
 						MitigationID:       m.MitigationID,
 						Phases:             slices.Clone(m.Phase),
+						CustomPhases:       convertCustomPhases(m.CustomPhase),
 						Descriptions:       slices.Clone(m.Description),
 						Strategy:           m.Strategy,
 						Effectiveness:      m.Effectiveness,
@@ -393,6 +422,8 @@ func extractWeakness(path, args, outDir string, rankings rankingIndex) error {
 					out = append(out, detectionmethodTypes.DetectionMethod{
 						DetectionMethodID:  m.DetectionMethodID,
 						Method:             m.Method,
+						Phases:             slices.Clone(m.Phase),
+						CustomPhases:       convertCustomPhases(m.CustomPhase),
 						Description:        m.Description,
 						Effectiveness:      m.Effectiveness,
 						EffectivenessNotes: m.EffectivenessNotes,
@@ -434,33 +465,24 @@ func extractWeakness(path, args, outDir string, rankings rankingIndex) error {
 	return nil
 }
 
-func extractCategory(path, args, outDir string) error {
+func extractGrouping(path, args, outDir string) error {
 	r := utiljson.NewJSONReader()
-	var c cwe.Category
-	if err := r.Read(path, args, &c); err != nil {
+	var g cwe.Grouping
+	if err := r.Read(path, args, &g); err != nil {
 		return errors.Wrapf(err, "read json %s", path)
 	}
 
 	extracted := cweTypes.CWE{
-		ID:          fmt.Sprintf("CWE-%s", c.ID),
-		Kind:        "category",
-		Name:        c.Name,
-		Status:      c.Status,
-		Description: c.Summary,
-		Category: categoryTypes.Category{
-			Members: func() []memberTypes.Member {
-				out := make([]memberTypes.Member, 0, len(c.Relationships))
-				for _, m := range c.Relationships {
-					out = append(out, memberTypes.Member{
-						CWEID:  fmt.Sprintf("CWE-%s", m.CWEID),
-						ViewID: fmt.Sprintf("CWE-%s", m.ViewID),
-					})
-				}
-				return out
-			}(),
+		ID:          fmt.Sprintf("CWE-%s", g.ID),
+		Kind:        "grouping",
+		Name:        g.Name,
+		Status:      g.Status,
+		Description: g.Summary,
+		Grouping: groupingTypes.Grouping{
+			Members: convertMembers(g.Relationships),
 			TaxonomyMappings: func() []taxonomymappingTypes.TaxonomyMapping {
-				out := make([]taxonomymappingTypes.TaxonomyMapping, 0, len(c.TaxonomyMappings))
-				for _, t := range c.TaxonomyMappings {
+				out := make([]taxonomymappingTypes.TaxonomyMapping, 0, len(g.TaxonomyMappings))
+				for _, t := range g.TaxonomyMappings {
 					out = append(out, taxonomymappingTypes.TaxonomyMapping{
 						TaxonomyName: t.TaxonomyName,
 						EntryID:      t.EntryID,
@@ -470,10 +492,10 @@ func extractCategory(path, args, outDir string) error {
 				}
 				return out
 			}(),
-			Notes:        collectNotes(c.Notes),
-			MappingNotes: convertMappingNotes(c.MappingNotes),
+			Notes:        collectNotes(g.Notes),
+			MappingNotes: convertMappingNotes(g.MappingNotes),
 		},
-		References: extractReferences(c.ID, c.References),
+		References: extractReferences(g.ID, g.References),
 		DataSource: sourceTypes.Source{
 			ID:   sourceTypes.MitreCWE,
 			Raws: r.Paths(),
@@ -516,16 +538,7 @@ func extractView(path, args, outDir string) error {
 				}
 				return out
 			}(),
-			Members: func() []memberTypes.Member {
-				out := make([]memberTypes.Member, 0, len(v.Members))
-				for _, m := range v.Members {
-					out = append(out, memberTypes.Member{
-						CWEID:  fmt.Sprintf("CWE-%s", m.CWEID),
-						ViewID: fmt.Sprintf("CWE-%s", m.ViewID),
-					})
-				}
-				return out
-			}(),
+			Members:      convertMembers(v.Members),
 			Notes:        collectNotes(v.Notes),
 			MappingNotes: convertMappingNotes(v.MappingNotes),
 		},
@@ -559,13 +572,17 @@ func extractReferences(id string, refs []cwe.Reference) []referenceTypes.Referen
 		URL:    fmt.Sprintf("https://cwe.mitre.org/data/definitions/%s.html", id),
 	})
 	for _, r := range refs {
-		if r.URL == "" {
-			continue
+		// Alt_URL (CWE 5.0) is another copy of the reference, often freely
+		// accessible where URL is not
+		for _, u := range []string{r.URL, r.AltURL} {
+			if u == "" {
+				continue
+			}
+			out = append(out, referenceTypes.Reference{
+				Source: "cwe.mitre.org",
+				URL:    u,
+			})
 		}
-		out = append(out, referenceTypes.Reference{
-			Source: "cwe.mitre.org",
-			URL:    r.URL,
-		})
 	}
 	return out
 }
@@ -574,8 +591,44 @@ func collectNotes(ns []cwe.Note) []noteTypes.Note {
 	out := make([]noteTypes.Note, 0, len(ns))
 	for _, n := range ns {
 		out = append(out, noteTypes.Note{
-			Type: n.Type,
-			Text: n.Text,
+			Type:        n.Type,
+			Text:        n.Text,
+			Version:     n.Version,
+			ReleaseDate: n.ReleaseDate,
+		})
+	}
+	return out
+}
+
+func convertMembers(ms []cwe.HasMember) []memberTypes.Member {
+	out := make([]memberTypes.Member, 0, len(ms))
+	for _, m := range ms {
+		out = append(out, memberTypes.Member{
+			CWEID:      fmt.Sprintf("CWE-%s", m.CWEID),
+			ViewID:     fmt.Sprintf("CWE-%s", m.ViewID),
+			Dimensions: convertDimensions(m.Dimensions),
+		})
+	}
+	return out
+}
+
+func convertDimensions(ds []cwe.Dimension) []dimensionTypes.Dimension {
+	out := make([]dimensionTypes.Dimension, 0, len(ds))
+	for _, d := range ds {
+		out = append(out, dimensionTypes.Dimension{
+			Type:  d.Type,
+			Value: d.Value,
+		})
+	}
+	return out
+}
+
+func convertCustomPhases(ps []cwe.CustomPhase) []customphaseTypes.CustomPhase {
+	out := make([]customphaseTypes.CustomPhase, 0, len(ps))
+	for _, p := range ps {
+		out = append(out, customphaseTypes.CustomPhase{
+			Domain: p.Domain,
+			Phase:  p.Phase,
 		})
 	}
 	return out

@@ -130,17 +130,17 @@ func Fetch(opts ...Option) error {
 	}
 	_ = bar.Close()
 
-	slog.Info("Fetch CWE Category")
-	categories := convertCategories(catalog.Categories, exRefs)
+	slog.Info("Fetch CWE Grouping")
+	groupings := convertGroupings(catalog.Groupings, exRefs)
 
-	bar = progressbar.Default(int64(len(categories)))
-	for _, c := range categories {
-		p, err := utilfilepath.Join(options.dir, "category", fmt.Sprintf("%s.json", c.ID))
+	bar = progressbar.Default(int64(len(groupings)))
+	for _, g := range groupings {
+		p, err := utilfilepath.Join(options.dir, "grouping", fmt.Sprintf("%s.json", g.ID))
 		if err != nil {
 			return errors.Wrap(err, "join")
 		}
 
-		if err := util.Write(p, c); err != nil {
+		if err := util.Write(p, g); err != nil {
 			return errors.Wrapf(err, "write %s", p)
 		}
 
@@ -169,7 +169,7 @@ func Fetch(opts ...Option) error {
 	// An empty output directory means the catalog no longer matches the
 	// structure decoded above. Committing it would delete every file of that
 	// kind from the raw repository, so fail instead.
-	for _, kind := range []string{"weakness", "category", "view"} {
+	for _, kind := range []string{"weakness", "grouping", "view"} {
 		d := filepath.Join(options.dir, kind)
 		es, err := os.ReadDir(d)
 		if err != nil {
@@ -194,7 +194,8 @@ func convertWeaknesses(weaknesses []weakness, exRefs map[string]ExternalReferenc
 		modesOfIntroduction := make([]ModesOfIntroduction, 0, len(w.ModesOfIntroduction))
 		for _, m := range w.ModesOfIntroduction {
 			e := ModesOfIntroduction{
-				Phase: m.Phase,
+				Phase:       m.Phase,
+				CustomPhase: m.CustomPhase,
 			}
 			for _, n := range m.Note {
 				e.Note = append(e.Note, n.Text)
@@ -202,19 +203,40 @@ func convertWeaknesses(weaknesses []weakness, exRefs map[string]ExternalReferenc
 			modesOfIntroduction = append(modesOfIntroduction, e)
 		}
 
+		commonConsequences := make([]CommonConsequence, 0, len(w.CommonConsequences))
+		for _, c := range w.CommonConsequences {
+			commonConsequences = append(commonConsequences, CommonConsequence{
+				Scope:      c.Scope,
+				Impact:     c.Impact,
+				Note:       c.Note.String(),
+				Likelihood: c.Likelihood,
+			})
+		}
+
 		potentialMitigations := make([]PotentialMitigation, 0, len(w.PotentialMitigations))
 		for _, m := range w.PotentialMitigations {
 			e := PotentialMitigation{
 				MitigationID:       m.MitigationID,
 				Phase:              m.Phase,
+				CustomPhase:        m.CustomPhase,
 				Effectiveness:      m.Effectiveness,
-				EffectivenessNotes: m.EffectivenessNotes,
+				EffectivenessNotes: m.EffectivenessNotes.String(),
 				Strategy:           m.Strategy,
 			}
 			for _, d := range m.Description {
 				e.Description = append(e.Description, d.Text)
 			}
 			potentialMitigations = append(potentialMitigations, e)
+		}
+
+		observedExamples := make([]ObservedExample, 0, len(w.ObservedExamples))
+		for _, e := range w.ObservedExamples {
+			observedExamples = append(observedExamples, ObservedExample{
+				Reference:   e.Reference,
+				Description: e.Description.String(),
+				Link:        e.Link,
+				Rationale:   e.Rationale,
+			})
 		}
 
 		references := make([]Reference, 0, len(w.References))
@@ -230,43 +252,11 @@ func convertWeaknesses(weaknesses []weakness, exRefs map[string]ExternalReferenc
 			})
 		}
 
-		contentHistory := ContentHistory{
-			Submission: Submission{
-				SubmissionName:         w.ContentHistory.Submission.SubmissionName,
-				SubmissionOrganization: w.ContentHistory.Submission.SubmissionOrganization,
-				SubmissionDate:         w.ContentHistory.Submission.SubmissionDate,
-				SubmissionComment:      w.ContentHistory.Submission.SubmissionComment,
-			},
-		}
-		for _, m := range w.ContentHistory.Modification {
-			contentHistory.Modification = append(contentHistory.Modification, Modification{
-				ModificationName:         m.ModificationName,
-				ModificationOrganization: m.ModificationOrganization,
-				ModificationDate:         m.ModificationDate,
-				ModificationComment:      m.ModificationComment,
-				ModificationImportance:   m.ModificationImportance,
-			})
-		}
-		for _, n := range w.ContentHistory.PreviousEntryName {
-			contentHistory.PreviousEntryName = append(contentHistory.PreviousEntryName, PreviousEntryName{
-				Text: n.Text,
-				Date: n.Date,
-			})
-		}
-		for _, c := range w.ContentHistory.Contribution {
-			contentHistory.Contribution = append(contentHistory.Contribution, Contribution{
-				Type:                     c.Type,
-				ContributionName:         c.ContributionName,
-				ContributionOrganization: c.ContributionOrganization,
-				ContributionDate:         c.ContributionDate,
-				ContributionComment:      c.ContributionComment,
-			})
-		}
-
 		alternateTerms := make([]AlternateTerm, 0, len(w.AlternateTerms))
 		for _, t := range w.AlternateTerms {
 			alternateTerms = append(alternateTerms, AlternateTerm{
 				Term:        t.Term,
+				Role:        t.Role,
 				Description: t.Description.Text,
 			})
 		}
@@ -276,9 +266,11 @@ func convertWeaknesses(weaknesses []weakness, exRefs map[string]ExternalReferenc
 			detectionMethods = append(detectionMethods, DetectionMethods{
 				DetectionMethodID:  m.DetectionMethodID,
 				Method:             m.Method,
+				Phase:              m.Phase,
+				CustomPhase:        m.CustomPhase,
 				Description:        m.Description.Text,
 				Effectiveness:      m.Effectiveness,
-				EffectivenessNotes: m.EffectivenessNotes,
+				EffectivenessNotes: m.EffectivenessNotes.String(),
 			})
 		}
 
@@ -296,17 +288,19 @@ func convertWeaknesses(weaknesses []weakness, exRefs map[string]ExternalReferenc
 			Diagram:               w.Diagram,
 			Description:           w.Description,
 			ExtendedDescription:   w.ExtendedDescription.Text,
+			TechnicalNuance:       w.TechnicalNuance.String(),
+			Dimensions:            w.Dimensions,
 			RelatedWeaknesses:     w.RelatedWeaknesses,
-			ApplicablePlatforms:   w.ApplicablePlatforms,
+			ApplicablePlatforms:   convertApplicablePlatforms(w.ApplicablePlatforms),
 			BackgroundDetails:     backgroundDetails,
 			ModesOfIntroduction:   modesOfIntroduction,
 			LikelihoodOfExploit:   w.LikelihoodOfExploit,
-			CommonConsequences:    w.CommonConsequences,
+			CommonConsequences:    commonConsequences,
 			PotentialMitigations:  potentialMitigations,
 			DemonstrativeExamples: w.DemonstrativeExamples,
-			ObservedExamples:      w.ObservedExamples,
+			ObservedExamples:      observedExamples,
 			References:            references,
-			ContentHistory:        contentHistory,
+			ContentHistory:        convertContentHistory(w.ContentHistory),
 			WeaknessOrdinalities:  w.WeaknessOrdinalities,
 			AlternateTerms:        alternateTerms,
 			DetectionMethods:      detectionMethods,
@@ -321,44 +315,11 @@ func convertWeaknesses(weaknesses []weakness, exRefs map[string]ExternalReferenc
 	return converted
 }
 
-func convertCategories(categories []category, exRefs map[string]ExternalReference) []Category {
-	converted := make([]Category, 0, len(categories))
-	for _, c := range categories {
-		contentHistory := ContentHistory{
-			Submission: Submission{
-				SubmissionName:         c.ContentHistory.Submission.SubmissionName,
-				SubmissionOrganization: c.ContentHistory.Submission.SubmissionOrganization,
-				SubmissionDate:         c.ContentHistory.Submission.SubmissionDate,
-				SubmissionComment:      c.ContentHistory.Submission.SubmissionComment,
-			},
-		}
-		for _, m := range c.ContentHistory.Modification {
-			contentHistory.Modification = append(contentHistory.Modification, Modification{
-				ModificationName:         m.ModificationName,
-				ModificationOrganization: m.ModificationOrganization,
-				ModificationDate:         m.ModificationDate,
-				ModificationComment:      m.ModificationComment,
-				ModificationImportance:   m.ModificationImportance,
-			})
-		}
-		for _, n := range c.ContentHistory.PreviousEntryName {
-			contentHistory.PreviousEntryName = append(contentHistory.PreviousEntryName, PreviousEntryName{
-				Text: n.Text,
-				Date: n.Date,
-			})
-		}
-		for _, contribution := range c.ContentHistory.Contribution {
-			contentHistory.Contribution = append(contentHistory.Contribution, Contribution{
-				Type:                     contribution.Type,
-				ContributionName:         contribution.ContributionName,
-				ContributionOrganization: contribution.ContributionOrganization,
-				ContributionDate:         contribution.ContributionDate,
-				ContributionComment:      contribution.ContributionComment,
-			})
-		}
-
-		references := make([]Reference, 0, len(c.References))
-		for _, ref := range c.References {
+func convertGroupings(groupings []grouping, exRefs map[string]ExternalReference) []Grouping {
+	converted := make([]Grouping, 0, len(groupings))
+	for _, g := range groupings {
+		references := make([]Reference, 0, len(g.References))
+		for _, ref := range g.References {
 			exRef, ok := exRefs[ref.ExternalReferenceID]
 			if !ok {
 				slog.Warn("External_Reference not found", slog.String("external_reference_id", ref.ExternalReferenceID))
@@ -370,17 +331,17 @@ func convertCategories(categories []category, exRefs map[string]ExternalReferenc
 			})
 		}
 
-		converted = append(converted, Category{
-			ID:               c.ID,
-			Name:             c.Name,
-			Status:           c.Status,
-			Summary:          c.Summary,
-			ContentHistory:   contentHistory,
-			Relationships:    c.Relationships,
+		converted = append(converted, Grouping{
+			ID:               g.ID,
+			Name:             g.Name,
+			Status:           g.Status,
+			Summary:          g.Summary.String(),
+			ContentHistory:   convertContentHistory(g.ContentHistory),
+			Relationships:    g.Relationships,
 			References:       references,
-			Notes:            c.Notes,
-			TaxonomyMappings: c.TaxonomyMappings,
-			MappingNotes:     convertMappingNotes(c.MappingNotes),
+			Notes:            g.Notes,
+			TaxonomyMappings: g.TaxonomyMappings,
+			MappingNotes:     convertMappingNotes(g.MappingNotes),
 		})
 	}
 	return converted
@@ -389,39 +350,6 @@ func convertCategories(categories []category, exRefs map[string]ExternalReferenc
 func convertViews(views []view, exRefs map[string]ExternalReference) []View {
 	converted := make([]View, 0, len(views))
 	for _, v := range views {
-		contentHistory := ContentHistory{
-			Submission: Submission{
-				SubmissionName:         v.ContentHistory.Submission.SubmissionName,
-				SubmissionOrganization: v.ContentHistory.Submission.SubmissionOrganization,
-				SubmissionDate:         v.ContentHistory.Submission.SubmissionDate,
-				SubmissionComment:      v.ContentHistory.Submission.SubmissionComment,
-			},
-		}
-		for _, m := range v.ContentHistory.Modification {
-			contentHistory.Modification = append(contentHistory.Modification, Modification{
-				ModificationName:         m.ModificationName,
-				ModificationOrganization: m.ModificationOrganization,
-				ModificationDate:         m.ModificationDate,
-				ModificationComment:      m.ModificationComment,
-				ModificationImportance:   m.ModificationImportance,
-			})
-		}
-		for _, n := range v.ContentHistory.PreviousEntryName {
-			contentHistory.PreviousEntryName = append(contentHistory.PreviousEntryName, PreviousEntryName{
-				Text: n.Text,
-				Date: n.Date,
-			})
-		}
-		for _, c := range v.ContentHistory.Contribution {
-			contentHistory.Contribution = append(contentHistory.Contribution, Contribution{
-				Type:                     c.Type,
-				ContributionName:         c.ContributionName,
-				ContributionOrganization: c.ContributionOrganization,
-				ContributionDate:         c.ContributionDate,
-				ContributionComment:      c.ContributionComment,
-			})
-		}
-
 		references := make([]Reference, 0, len(v.References))
 		for _, ref := range v.References {
 			exRef, ok := exRefs[ref.ExternalReferenceID]
@@ -440,11 +368,11 @@ func convertViews(views []view, exRefs map[string]ExternalReference) []View {
 			Name:           v.Name,
 			Type:           v.Type,
 			Status:         v.Status,
-			Objective:      v.Objective,
+			Objective:      v.Objective.String(),
 			Audience:       v.Audience,
 			Members:        v.Members,
 			Notes:          v.Notes,
-			ContentHistory: contentHistory,
+			ContentHistory: convertContentHistory(v.ContentHistory),
 			References:     references,
 			Filter:         v.Filter,
 			MappingNotes:   convertMappingNotes(v.MappingNotes),
@@ -453,11 +381,86 @@ func convertViews(views []view, exRefs map[string]ExternalReference) []View {
 	return converted
 }
 
+func convertContentHistory(ch contentHistory) ContentHistory {
+	converted := ContentHistory{
+		Submission:        make(OneOrMany[Submission], 0, len(ch.Submission)),
+		Modification:      make([]Modification, 0, len(ch.Modification)),
+		PreviousEntryName: make([]PreviousEntryName, 0, len(ch.PreviousEntryName)),
+		Contribution:      make([]Contribution, 0, len(ch.Contribution)),
+	}
+	for _, s := range ch.Submission {
+		converted.Submission = append(converted.Submission, Submission{
+			SubmissionName:         s.SubmissionName,
+			SubmissionOrganization: s.SubmissionOrganization,
+			SubmissionDate:         s.SubmissionDate,
+			SubmissionVersion:      s.SubmissionVersion,
+			SubmissionReleaseDate:  s.SubmissionReleaseDate,
+			SubmissionComment:      s.SubmissionComment,
+		})
+	}
+	for _, m := range ch.Modification {
+		converted.Modification = append(converted.Modification, Modification{
+			ModificationName:         m.ModificationName,
+			ModificationOrganization: m.ModificationOrganization,
+			ModificationDate:         m.ModificationDate,
+			ModificationVersion:      m.ModificationVersion,
+			ModificationReleaseDate:  m.ModificationReleaseDate,
+			ModificationComment:      m.ModificationComment,
+			ModificationImportance:   m.ModificationImportance,
+		})
+	}
+	for _, n := range ch.PreviousEntryName {
+		converted.PreviousEntryName = append(converted.PreviousEntryName, PreviousEntryName{
+			Text:    n.Text,
+			Date:    n.Date,
+			Version: n.Version,
+		})
+	}
+	for _, c := range ch.Contribution {
+		converted.Contribution = append(converted.Contribution, Contribution{
+			Type:                     c.Type,
+			ContributionName:         c.ContributionName,
+			ContributionOrganization: c.ContributionOrganization,
+			ContributionDate:         c.ContributionDate,
+			ContributionVersion:      c.ContributionVersion,
+			ContributionReleaseDate:  c.ContributionReleaseDate,
+			ContributionComment:      c.ContributionComment,
+		})
+	}
+	return converted
+}
+
+func convertApplicablePlatforms(ps applicablePlatforms) ApplicablePlatforms {
+	convert := func(ps []applicablePlatform) []ApplicablePlatform {
+		// nil rather than empty, so that a weakness without platforms keeps
+		// a zero ApplicablePlatforms, which omitzero leaves out
+		if len(ps) == 0 {
+			return nil
+		}
+		converted := make([]ApplicablePlatform, 0, len(ps))
+		for _, p := range ps {
+			converted = append(converted, ApplicablePlatform{
+				Class:      p.Class,
+				Prevalence: p.Prevalence,
+				Name:       p.Name,
+				Note:       p.Note.String(),
+			})
+		}
+		return converted
+	}
+	return ApplicablePlatforms{
+		Language:        convert(ps.Language),
+		Technology:      convert(ps.Technology),
+		OperatingSystem: convert(ps.OperatingSystem),
+		Architecture:    convert(ps.Architecture),
+	}
+}
+
 func convertMappingNotes(mn mappingNotes) MappingNotes {
 	return MappingNotes{
 		Usage:     mn.Usage,
-		Rationale: mn.Rationale,
-		Comments:  mn.Comments,
+		Rationale: mn.Rationale.String(),
+		Comments:  mn.Comments.String(),
 		Reasons: func() []Reason {
 			var rs []Reason
 			for _, r := range mn.Reasons {

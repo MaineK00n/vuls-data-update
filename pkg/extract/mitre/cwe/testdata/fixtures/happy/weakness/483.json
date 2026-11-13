@@ -1,0 +1,65 @@
+{
+	"id": "483",
+	"name": "Incorrect Block Delimitation",
+	"abstraction": "Base",
+	"structure": "Simple",
+	"status": "Draft",
+	"description": "The code does not explicitly delimit a block that is intended to contain 2 or more statements.",
+	"observed_examples": [
+		{
+			"reference": "CVE-2014-1266",
+			"description": "Chain: incorrect \"goto\" in Apple SSL product bypasses certificate validation, allowing Adversary-in-the-Middle (AITM) attack (Apple \"goto fail\" bug). CWE-705 (Incorrect Control Flow Scoping) -> CWE-561 (Dead Code) -> CWE-295 (Improper Certificate Validation) -> CWE-393 (Return of Wrong Status Code) -> CWE-300 (Channel Accessible by Non-Endpoint). The code's whitespace indentation did not reflect the actual control flow (CWE-1114) and did not explicitly delimit the block (CWE-483), which could have made it more difficult for human code auditors to detect the vulnerability.",
+			"link": "https://www.cve.org/CVERecord?id=CVE-2014-1266",
+			"rationale": [
+				"Influential/Newsworthy",
+				"Chain"
+			]
+		}
+	],
+	"content_history": {
+		"submission": [
+			{
+				"submission_name": [
+					"CLASP"
+				],
+				"submission_date": "2006-07-19",
+				"submission_version": "Draft 3",
+				"submission_release_date": "2006-07-19"
+			}
+		],
+		"modification": [
+			{
+				"modification_name": "Eric Dalci",
+				"modification_organization": "Cigital",
+				"modification_date": "2008-07-01",
+				"modification_version": "1.0",
+				"modification_release_date": "2008-09-09",
+				"modification_comment": "updated Time_of_Introduction"
+			}
+		],
+		"contribution": [
+			{
+				"type": "Feedback",
+				"contribution_name": [
+					"Michael Koo",
+					"Paul Black"
+				],
+				"contribution_organization": "NIST",
+				"contribution_date": "2010-04-28",
+				"contribution_version": "1.9",
+				"contribution_release_date": "2010-06-21",
+				"contribution_comment": "Correction to Demonstrative Examples"
+			}
+		]
+	},
+	"mapping_notes": {
+		"usage": "Allowed",
+		"rationale": "This CWE entry is at the Base level of abstraction, which is a preferred level of abstraction for mapping to the root causes of vulnerabilities.",
+		"comments": "Carefully read both the name and description to ensure that this mapping is an appropriate fit. Do not try to 'force' a mapping to a lower-level Base/Variant simply to comply with this preferred level of abstraction.",
+		"reasons": [
+			{
+				"type": "Acceptable-Use"
+			}
+		]
+	}
+}

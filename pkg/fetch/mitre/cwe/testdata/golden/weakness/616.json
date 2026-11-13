@@ -1,0 +1,53 @@
+{
+	"id": "616",
+	"name": "Incomplete Identification of Uploaded File Variables (PHP)",
+	"abstraction": "Variant",
+	"structure": "Simple",
+	"status": "Incomplete",
+	"description": "The PHP application uses an old method for processing uploaded files by referencing the four global variables that are set for each file (e.g. $varname, $varname_size, $varname_name, $varname_type).",
+	"references": [
+		{
+			"reference_id": "REF-502",
+			"author": [
+				"Shaun Clowes"
+			],
+			"title": "A Study in Scarlet - section 5, \"File Upload\"",
+			"rationale": [
+				"Early-Publication",
+				"Influential/Newsworthy"
+			]
+		}
+	],
+	"content_history": {
+		"submission": [
+			{
+				"submission_name": [
+					"PLOVER"
+				],
+				"submission_date": "2007-05-07",
+				"submission_version": "Draft 6",
+				"submission_release_date": "2007-05-07"
+			}
+		],
+		"modification": [
+			{
+				"modification_name": "Eric Dalci",
+				"modification_organization": "Cigital",
+				"modification_date": "2008-07-01",
+				"modification_version": "1.0",
+				"modification_release_date": "2008-09-09",
+				"modification_comment": "updated Time_of_Introduction"
+			}
+		]
+	},
+	"mapping_notes": {
+		"usage": "Allowed",
+		"rationale": "This CWE entry is at the Variant level of abstraction, which is a preferred level of abstraction for mapping to the root causes of vulnerabilities.",
+		"comments": "Carefully read both the name and description to ensure that this mapping is an appropriate fit. Do not try to 'force' a mapping to a lower-level Base/Variant simply to comply with this preferred level of abstraction.",
+		"reasons": [
+			{
+				"type": "Acceptable-Use"
+			}
+		]
+	}
+}

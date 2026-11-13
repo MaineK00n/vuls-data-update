@@ -5,6 +5,7 @@ import (
 	"slices"
 
 	categoryTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/cwe/category"
+	groupingTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/cwe/grouping"
 	viewTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/cwe/view"
 	weaknessTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/cwe/weakness"
 	referenceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/reference"
@@ -12,16 +13,20 @@ import (
 )
 
 // CWE represents an entry from the MITRE CWE catalog keyed by its ID in
-// "CWE-*" form. Kind distinguishes weakness / category / view; kind-specific
+// "CWE-*" form. Kind distinguishes weakness / grouping / view; kind-specific
 // fields live in nested sub-structs.
 type CWE struct {
 	ID          string `json:"id"`
-	Kind        string `json:"kind,omitempty"` // "weakness" | "category" | "view"
+	Kind        string `json:"kind,omitempty"` // "weakness" | "grouping" | "view" ("category" before CWE 5.0)
 	Name        string `json:"name,omitempty"`
 	Status      string `json:"status,omitempty"`
-	Description string `json:"description,omitempty"` // main text (Weakness.Description / Category.Summary / View.Objective)
+	Description string `json:"description,omitempty"` // main text (Weakness.Description / Grouping.Summary / View.Objective)
 
 	Weakness weaknessTypes.Weakness `json:"weakness,omitzero"`
+	Grouping groupingTypes.Grouping `json:"grouping,omitzero"`
+	// Deprecated: CWE 5.0 renamed categories to groupings, which are in
+	// Grouping with Kind "grouping"; Category is only set in data extracted
+	// before that, with Kind "category".
 	Category categoryTypes.Category `json:"category,omitzero"`
 	View     viewTypes.View         `json:"view,omitzero"`
 
@@ -31,6 +36,7 @@ type CWE struct {
 
 func (c *CWE) Sort() {
 	c.Weakness.Sort()
+	c.Grouping.Sort()
 	c.Category.Sort()
 	c.View.Sort()
 	slices.SortFunc(c.References, referenceTypes.Compare)
@@ -45,6 +51,7 @@ func Compare(x, y CWE) int {
 		cmp.Compare(x.Status, y.Status),
 		cmp.Compare(x.Description, y.Description),
 		weaknessTypes.Compare(x.Weakness, y.Weakness),
+		groupingTypes.Compare(x.Grouping, y.Grouping),
 		categoryTypes.Compare(x.Category, y.Category),
 		viewTypes.Compare(x.View, y.View),
 		slices.CompareFunc(x.References, y.References, referenceTypes.Compare),

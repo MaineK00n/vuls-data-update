@@ -1,0 +1,72 @@
+{
+	"id": "CWE-79",
+	"kind": "weakness",
+	"name": "Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')",
+	"status": "Stable",
+	"description": "The product does not neutralize or incorrectly neutralizes user-controllable input before it is placed in output that is used as a web page that is served to other users.",
+	"weakness": {
+		"abstraction": "Base",
+		"structure": "Simple",
+		"diagram": "/data/images/CWE-79-Diagram.png",
+		"rankings": [
+			{
+				"view_id": "CWE-1200",
+				"view_name": "Weaknesses in the 2019 CWE Top 25 Most Dangerous Software Errors",
+				"rank": 2,
+				"score": 45.69
+			},
+			{
+				"view_id": "CWE-1344",
+				"view_name": "Weaknesses in OWASP Top Ten (2021)",
+				"grouping_id": "CWE-1347",
+				"grouping_name": "OWASP Top Ten 2021 Category A03:2021 - Injection",
+				"rank": 3
+			},
+			{
+				"view_id": "CWE-1430",
+				"view_name": "Weaknesses in the 2024 CWE Top 25 Most Dangerous Software Weaknesses",
+				"rank": 1,
+				"score": 56.92
+			},
+			{
+				"view_id": "CWE-1435",
+				"view_name": "Weaknesses in the 2025 CWE Top 25 Most Dangerous Software Weaknesses",
+				"rank": 1,
+				"score": 60.38
+			},
+			{
+				"view_id": "CWE-1450",
+				"view_name": "Weaknesses in OWASP Top Ten RC1 (2025)",
+				"grouping_id": "CWE-1440",
+				"grouping_name": "OWASP Top Ten 2025 Category A05:2025 - Injection",
+				"rank": 5
+			},
+			{
+				"view_id": "CWE-900",
+				"view_name": "Weaknesses in the 2011 CWE/SANS Top 25 Most Dangerous Software Errors",
+				"rank": 4,
+				"score": 77.7
+			}
+		]
+	},
+	"references": [
+		{
+			"source": "cwe.mitre.org",
+			"url": "https://cwe.mitre.org/data/definitions/79.html"
+		}
+	],
+	"data_source": {
+		"id": "mitre-cwe",
+		"raws": [
+			"legacy/category/1347.json",
+			"legacy/category/1440.json",
+			"legacy/view/1200.json",
+			"legacy/view/1344.json",
+			"legacy/view/1430.json",
+			"legacy/view/1435.json",
+			"legacy/view/1450.json",
+			"legacy/view/900.json",
+			"legacy/weakness/79.json"
+		]
+	}
+}
