@@ -1,10 +1,10 @@
 {
 	"id": "CWE-1440",
-	"kind": "category",
+	"kind": "grouping",
 	"name": "OWASP Top Ten 2025 Category A05:2025 - Injection",
 	"status": "Incomplete",
 	"description": "Weaknesses in this category are related to the A05 category in the OWASP Top Ten 2025.",
-	"category": {
+	"grouping": {
 		"members": [
 			{
 				"cweid": "CWE-79",

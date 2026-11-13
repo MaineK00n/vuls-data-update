@@ -18,8 +18,8 @@
 			{
 				"view_id": "CWE-1344",
 				"view_name": "Weaknesses in OWASP Top Ten (2021)",
-				"category_id": "CWE-1347",
-				"category_name": "OWASP Top Ten 2021 Category A03:2021 - Injection",
+				"grouping_id": "CWE-1347",
+				"grouping_name": "OWASP Top Ten 2021 Category A03:2021 - Injection",
 				"rank": 3
 			},
 			{
@@ -37,8 +37,8 @@
 			{
 				"view_id": "CWE-1450",
 				"view_name": "Weaknesses in OWASP Top Ten RC1 (2025)",
-				"category_id": "CWE-1440",
-				"category_name": "OWASP Top Ten 2025 Category A05:2025 - Injection",
+				"grouping_id": "CWE-1440",
+				"grouping_name": "OWASP Top Ten 2025 Category A05:2025 - Injection",
 				"rank": 5
 			},
 			{
