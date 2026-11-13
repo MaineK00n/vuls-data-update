@@ -1167,10 +1167,19 @@ func appendConditions(conditionsByEcosystem map[ecosystemTypes.Ecosystem][]condi
 	for _, cn := range cns {
 		switch cn.Type {
 		case criterionTypes.CriterionTypeKB:
-			// KB criterions go under a nested AND sub-criteria so that
-			// dual-track KBs (Monthly Rollup + Security Only) require ALL
-			// to be unapplied before reporting a vulnerability.
-			kbIdx := slices.IndexFunc(conditions[idx].Criteria.Criterias, isKBCriteria)
+			// KB criterions go under a nested AND sub-criteria per product so
+			// that dual-track KBs (Monthly Rollup + Security Only) require ALL
+			// to be unapplied before reporting a vulnerability. The KBs of
+			// another product under the same tag (the 2026-Nov .NET runtime and
+			// SDK, see vendorFixProductName) get an AND of their own under the
+			// top-level OR: a KB query accepts only the products it is given
+			// (kbcriterion.Query.AcceptProducts), so one AND holding both would
+			// never report a host that has only one of them.
+			kbIdx := slices.IndexFunc(conditions[idx].Criteria.Criterias, func(ca criteriaTypes.Criteria) bool {
+				return isKBCriteria(ca) && !slices.ContainsFunc(ca.Criterions, func(e criterionTypes.Criterion) bool {
+					return e.KB.Product != cn.KB.Product
+				})
+			})
 			if kbIdx == -1 {
 				conditions[idx].Criteria.Criterias = append(conditions[idx].Criteria.Criterias, criteriaTypes.Criteria{
 					Operator: criteriaTypes.CriteriaOperatorTypeAND,
@@ -1210,8 +1219,8 @@ func conditionIndex(conditions []conditionTypes.Condition, tag segmentTypes.Dete
 	return conditions, len(conditions) - 1
 }
 
-// isKBCriteria reports whether ca is the nested AND sub-criteria that holds
-// a condition's KB criterions (see appendConditions). A gated version
+// isKBCriteria reports whether ca is a nested AND sub-criteria that holds a
+// condition's KB criterions, one per product (see appendConditions). A gated version
 // sub-criteria (see appendVendorFixConditions) also is an AND, but it holds a
 // version criterion, so it never matches.
 func isKBCriteria(ca criteriaTypes.Criteria) bool {
@@ -2959,12 +2968,6 @@ var fixedBuildOverrides = map[[3]string]string{
 	{"CVE-2026-102870", ".NET 10.0 installed on Linux", "10.0.403"}:   "10.0.114, 10.0.403",
 	{"CVE-2026-102870", ".NET 10.0 installed on Mac OS", "10.0.403"}:  "10.0.114, 10.0.403",
 	{"CVE-2026-102870", ".NET 10.0 installed on Windows", "10.0.403"}: "10.0.114, 10.0.403",
-	// .NET SDK, 2026-Nov: the advisory of CVE-2026-114155 (dotnet/announcements #502)
-	// also lists the 10.0.3xx band (">= 10.0.300, <= 10.0.303", moved to 10.0.404),
-	// which CVRF's 10.0.404 leaves out. "10.0.400" stands for its users moving to
-	// the 4xx band (see buildDotNetSDKCriterion).
-	{"CVE-2026-114155", ".NET 10.0 installed on Linux", "10.0.404"}:  "10.0.400, 10.0.404",
-	{"CVE-2026-114155", ".NET 10.0 installed on Mac OS", "10.0.404"}: "10.0.400, 10.0.404",
 	// .NET 9.0 runtime, CVE-2026-109478 (2026-Nov): CVRF's FixedBuild is the 9.0.0
 	// Preview 4 build "9.0.0-preview.4.24266.19", whose release notes it links, and
 	// the CVE record's .NET 9.0 range (">= 9.0.0, < 9.0.0-preview.4.24266.19") is

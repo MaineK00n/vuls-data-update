@@ -8,6 +8,7 @@ import (
 
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/microsoft/cvrf"
 	microsoftutil "github.com/MaineK00n/vuls-data-update/pkg/extract/microsoft/util"
+	conditionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition"
 	criteriaTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria"
 	criterionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion"
 	kbcTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/kbcriterion"
@@ -17,6 +18,7 @@ import (
 	fixstatusTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/fixstatus"
 	packageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package"
 	binaryTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package/binary"
+	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment/ecosystem"
 	utiltest "github.com/MaineK00n/vuls-data-update/pkg/extract/util/test"
 )
 
@@ -1694,11 +1696,6 @@ func TestFixedBuildOverrides(t *testing.T) {
 			want: "16.5.5",
 		},
 		{
-			name: ".NET SDK 10.0.3xx band left out by CVRF completed (CVE-2026-114155)",
-			key:  [3]string{"CVE-2026-114155", ".NET 10.0 installed on Linux", "10.0.404"},
-			want: "10.0.400, 10.0.404",
-		},
-		{
 			name: ".NET 9.0 runtime fixed before 9.0 shipped (CVE-2026-109478, no 9.0 release in releases.json cve-list)",
 			key:  [3]string{"CVE-2026-109478", ".NET 9.0 runtime installed on Windows", "9.0.0-preview.4.24266.19"},
 			want: "",
@@ -1947,6 +1944,81 @@ func TestIsHotpatchSubType(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := cvrf.IsHotpatchSubType(tt.subType); got != tt.want {
 				t.Errorf("IsHotpatchSubType(%q) = %v, want %v", tt.subType, got, tt.want)
+			}
+		})
+	}
+}
+
+func TestAppendConditionsKBPerProduct(t *testing.T) {
+	const (
+		tag     = ".NET 10.0 installed on Windows"
+		runtime = ".NET 10.0 runtime installed on Windows"
+		sdk     = ".NET 10.0 installed on Windows"
+	)
+	kb := func(product, kbID string) criterionTypes.Criterion {
+		return criterionTypes.Criterion{Type: criterionTypes.CriterionTypeKB, KB: &kbcTypes.Criterion{Product: product, KBID: kbID}}
+	}
+
+	// CVE-2026-114151: the runtime and the SDK fixes of one product share KB5135241.
+	m := make(map[ecosystemTypes.Ecosystem][]conditionTypes.Condition)
+	cvrf.AppendConditions(m, tag, []criterionTypes.Criterion{kb(runtime, "5135241")})
+	cvrf.AppendConditions(m, tag, []criterionTypes.Criterion{kb(sdk, "5135241")})
+	// another KB of the runtime joins the runtime's AND (dual-track KBs)
+	cvrf.AppendConditions(m, tag, []criterionTypes.Criterion{kb(runtime, "9999999")})
+
+	conditions := m[ecosystemTypes.EcosystemTypeMicrosoft]
+	if len(conditions) != 1 {
+		t.Fatalf("got %d conditions, want 1", len(conditions))
+	}
+	want := criteriaTypes.Criteria{
+		Operator: criteriaTypes.CriteriaOperatorTypeOR,
+		Criterias: []criteriaTypes.Criteria{
+			{Operator: criteriaTypes.CriteriaOperatorTypeAND, Criterions: []criterionTypes.Criterion{kb(runtime, "5135241"), kb(runtime, "9999999")}},
+			{Operator: criteriaTypes.CriteriaOperatorTypeAND, Criterions: []criterionTypes.Criterion{kb(sdk, "5135241")}},
+		},
+	}
+	if diff := cmp.Diff(want, conditions[0].Criteria); diff != "" {
+		t.Errorf("criteria mismatch (-want +got):\n%s", diff)
+	}
+
+	tests := []struct {
+		name  string
+		query kbcTypes.Query
+		want  bool
+	}{
+		{
+			name:  "runtime only, KB unapplied",
+			query: kbcTypes.Query{AcceptProducts: []string{runtime}, UnappliedKBs: []string{"5135241", "9999999"}},
+			want:  true,
+		},
+		{
+			name:  "SDK only, KB unapplied",
+			query: kbcTypes.Query{AcceptProducts: []string{sdk}, UnappliedKBs: []string{"5135241"}},
+			want:  true,
+		},
+		{
+			name:  "runtime only, one of its dual-track KBs applied",
+			query: kbcTypes.Query{AcceptProducts: []string{runtime}, UnappliedKBs: []string{"5135241"}},
+			want:  false,
+		},
+		{
+			name:  "runtime and SDK, KB applied",
+			query: kbcTypes.Query{AcceptProducts: []string{runtime, sdk}},
+			want:  false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			fca, err := conditions[0].Criteria.Accept(criterionTypes.Query{KB: &tt.query}, nil)
+			if err != nil {
+				t.Fatalf("Accept() error = %v", err)
+			}
+			got, err := fca.Affected()
+			if err != nil {
+				t.Fatalf("Affected() error = %v", err)
+			}
+			if got != tt.want {
+				t.Errorf("Affected() = %v, want %v", got, tt.want)
 			}
 		})
 	}
