@@ -100,8 +100,10 @@ func Fetch(r io.Reader, opts ...Option) error {
 		return errors.Wrap(err, "fetch")
 	}
 
-	// No util.EnsureWritten: a run writes only what it is given, and what it is
-	// given can rightly come to nothing.
+	if err := util.EnsureWritten(options.dir); err != nil {
+		return errors.Wrapf(err, "ensure written %s", options.dir)
+	}
+
 	return nil
 }
 
