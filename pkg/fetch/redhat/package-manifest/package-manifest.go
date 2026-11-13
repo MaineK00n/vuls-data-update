@@ -123,6 +123,14 @@ Red Hat, as the licensor of this document, waives the right to enforce, and agre
 			}
 		}
 	}
+
+	// The README is written whatever the fetch got, so the tables are what
+	// must be there: a page whose tables are no longer recognized would
+	// otherwise leave only it.
+	if err := util.EnsureWritten(options.dir, util.WithRequire("package", "module")); err != nil {
+		return errors.Wrapf(err, "ensure written %s", options.dir)
+	}
+
 	return nil
 }
 
