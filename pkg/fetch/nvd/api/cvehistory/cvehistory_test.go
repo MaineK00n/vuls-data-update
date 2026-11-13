@@ -24,19 +24,10 @@ func TestFetch(t *testing.T) {
 		hasError      bool
 	}{
 		{
-			// A full fetch that finds nothing would leave the repository empty.
+			// A fetch that finds nothing has failed.
 			name:          "empty",
 			fixturePrefix: "empty",
 			hasError:      true,
-		},
-		{
-			// A window can rightly hold no change.
-			name: "empty window",
-			args: []cvehistory.Option{
-				cvehistory.WithChangeStartDate(new(time.Date(2024, time.July, 1, 0, 0, 0, 0, time.UTC))),
-				cvehistory.WithChangeEndDate(new(time.Date(2024, time.October, 1, 0, 0, 0, 0, time.UTC))),
-			},
-			fixturePrefix: "empty",
 		},
 		{
 			name:          "1 item",

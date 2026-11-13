@@ -288,8 +288,7 @@ func Fetch(opts ...Option) error {
 		return errors.Wrap(err, "pipeline get")
 	}
 
-	// A window fetches only what changed in it, which can rightly be nothing.
-	if err := util.EnsureWritten(options.dir, util.WithAllowEmpty(options.changeStartDate != nil || options.changeEndDate != nil)); err != nil {
+	if err := util.EnsureWritten(options.dir); err != nil {
 		return errors.Wrapf(err, "ensure written %s", options.dir)
 	}
 
