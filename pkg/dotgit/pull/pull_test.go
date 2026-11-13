@@ -12,6 +12,7 @@ import (
 	"os"
 	"path/filepath"
 	"slices"
+	"strings"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
@@ -36,6 +37,7 @@ func TestPull(t *testing.T) {
 		args     args
 		golden   string
 		hasError bool
+		wantErr  string
 	}{
 		{
 			name: "vuls-data-raw-test restore: false, native git",
@@ -168,6 +170,60 @@ func TestPull(t *testing.T) {
 			golden: "testdata/golden/vuls-data-raw-test-restored.tar.zst",
 		},
 		{
+			name: "vuls-data-raw-test checkout: 9d3d5d486d4c9414321a2df56f2e007c4c2c8fab, restore: true, native git",
+			args: args{
+				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test",
+				opts:       []pull.Option{pull.WithCheckout("9d3d5d486d4c9414321a2df56f2e007c4c2c8fab"), pull.WithRestore(true), pull.WithUseNativeGit(true)},
+			},
+			golden: "testdata/golden/vuls-data-raw-test-restored.tar.zst",
+		},
+		{
+			name: "vuls-data-raw-test checkout: 9d3d5d486d4c9414321a2df56f2e007c4c2c8fab, restore: true, go-git",
+			args: args{
+				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test",
+				opts:       []pull.Option{pull.WithCheckout("9d3d5d486d4c9414321a2df56f2e007c4c2c8fab"), pull.WithRestore(true), pull.WithUseNativeGit(false)},
+			},
+			golden: "testdata/golden/vuls-data-raw-test-restored.tar.zst",
+		},
+		{
+			// A commit pinned before vuls-data-db truncated the history is
+			// no longer in the repository.
+			name: "vuls-data-raw-test checkout: 9d3d5d486d4c9414321a2df56f2e007c4c2c8fac (not in the repository), restore: true, native git",
+			args: args{
+				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test",
+				opts:       []pull.Option{pull.WithCheckout("9d3d5d486d4c9414321a2df56f2e007c4c2c8fac"), pull.WithRestore(true), pull.WithUseNativeGit(true)},
+			},
+			hasError: true,
+			wantErr:  "9d3d5d486d4c9414321a2df56f2e007c4c2c8fac is not in ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test, whose history may have been truncated or rewritten",
+		},
+		{
+			name: "vuls-data-raw-test checkout: 9d3d5d486d4c9414321a2df56f2e007c4c2c8fac (not in the repository), restore: true, go-git",
+			args: args{
+				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test",
+				opts:       []pull.Option{pull.WithCheckout("9d3d5d486d4c9414321a2df56f2e007c4c2c8fac"), pull.WithRestore(true), pull.WithUseNativeGit(false)},
+			},
+			hasError: true,
+			wantErr:  "9d3d5d486d4c9414321a2df56f2e007c4c2c8fac is not in ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test, whose history may have been truncated or rewritten",
+		},
+		{
+			name: "vuls-data-raw-test checkout: v0.0.2 (not in the repository), restore: true, native git",
+			args: args{
+				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test",
+				opts:       []pull.Option{pull.WithCheckout("v0.0.2"), pull.WithRestore(true), pull.WithUseNativeGit(true)},
+			},
+			hasError: true,
+			wantErr:  "v0.0.2 is not in ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test, whose history may have been truncated or rewritten",
+		},
+		{
+			name: "vuls-data-raw-test checkout: v0.0.2 (not in the repository), restore: true, go-git",
+			args: args{
+				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test",
+				opts:       []pull.Option{pull.WithCheckout("v0.0.2"), pull.WithRestore(true), pull.WithUseNativeGit(false)},
+			},
+			hasError: true,
+			wantErr:  "v0.0.2 is not in ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test, whose history may have been truncated or rewritten",
+		},
+		{
 			name: "vuls-data-raw-test-archive-1 restore: false, native git",
 			args: args{
 				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test-archive-1",
@@ -205,6 +261,10 @@ func TestPull(t *testing.T) {
 				t.Errorf("unexpected err: %v", err)
 			case err == nil && tt.hasError:
 				t.Error("expected error has not occurred")
+			case err != nil:
+				if !strings.Contains(err.Error(), tt.wantErr) {
+					t.Errorf("Pull() error does not contain %q, error: %v", tt.wantErr, err)
+				}
 			default:
 				var got []string
 				if err := filepath.WalkDir(filepath.Join(dir, "ghcr.io", "vulsio", "vuls-data-db"), func(path string, d os.DirEntry, err error) error {
