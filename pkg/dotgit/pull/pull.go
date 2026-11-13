@@ -3,9 +3,11 @@ package pull
 import (
 	"context"
 	"encoding/json/v2"
+	stderrors "errors"
 	"fmt"
 	"log/slog"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 
@@ -138,19 +140,18 @@ func Pull(repository string, opts ...Option) error {
 				if _, err := util.Git("-C", filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference), "switch", "--detach", options.checkout); err != nil {
 					// switch reports a commit that is not in the repository
 					// as "unable to read tree", which reads like corruption,
-					// so if contains does not find the target either, say so
-					// in front of the error of switch. Asking only after a
-					// failure lets every name switch accepts reach it as
-					// before. contains reads a name as cat-file -e does, so
-					// it is not asked about a name that switch reads
-					// otherwise: one that begins with "-", the previous
+					// so if contains finds that the target is not there
+					// either, say so in front of the error of switch. Asking
+					// only after a failure lets every name switch accepts
+					// reach it as before. contains reads a name as cat-file
+					// -e does, so it is not asked about a name that switch
+					// reads otherwise: one that begins with "-", the previous
 					// branch or an option, or A...B, the merge base of A and
-					// B. For those, the error of switch is all there is.
+					// B. For those, and when contains cannot tell, as when
+					// git cannot be run, the error of switch, which says how
+					// it failed, is returned as it is.
 					if !strings.HasPrefix(options.checkout, "-") && !strings.Contains(options.checkout, "...") {
-						if err2 := contains.Contains(filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference), options.checkout, contains.WithUseNativeGit(true)); err2 != nil {
-							// err2 says only that cat-file -e did not find
-							// the target. The error of switch says how the
-							// switch failed, so it is the one kept.
+						if err2 := contains.Contains(filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference), options.checkout, contains.WithUseNativeGit(true)); notFound(err2) {
 							return notInRepository(errors.Wrapf(err, "switch to %s", options.checkout), repository, options.checkout)
 						}
 					}
@@ -204,7 +205,10 @@ func Pull(repository string, opts ...Option) error {
 				// tag: go-git does not resolve every tag name, such as one
 				// with an "@".
 				if err := contains.Contains(filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference), options.checkout, contains.WithUseNativeGit(false)); err != nil {
-					return git.CheckoutOptions{}, notInRepository(err, repository, options.checkout)
+					if notFound(err) {
+						return git.CheckoutOptions{}, notInRepository(err, repository, options.checkout)
+					}
+					return git.CheckoutOptions{}, errors.Wrapf(err, "get %q as commit", options.checkout)
 				}
 
 				return git.CheckoutOptions{Hash: plumbing.NewHash(options.checkout), Keep: true}, nil
@@ -274,4 +278,19 @@ func Pull(repository string, opts ...Option) error {
 // history is gone from a repository that is otherwise fine.
 func notInRepository(err error, repository, checkout string) error {
 	return errors.Wrapf(err, "%s is not in %s, whose history may have been truncated or rewritten", checkout, repository)
+}
+
+// notFound reports whether err, from contains, says that the target is not in
+// the repository, rather than that the check could not be made, as when git
+// cannot be run. git cat-file -e exits with 1 for a hash it does not have, and
+// with 128 for a name it cannot resolve. 128 is also how it ends on other fatal
+// errors, but contains is asked only after switch has failed, and the error of
+// switch, which follows the message, says which. go-git returns
+// plumbing.ErrReferenceNotFound.
+func notFound(err error) bool {
+	if errors.Is(err, plumbing.ErrReferenceNotFound) {
+		return true
+	}
+	ee, ok := stderrors.AsType[*exec.ExitError](err)
+	return ok && (ee.ExitCode() == 1 || ee.ExitCode() == 128)
 }
