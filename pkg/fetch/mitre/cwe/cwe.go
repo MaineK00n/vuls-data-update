@@ -8,7 +8,6 @@ import (
 	"io"
 	"log/slog"
 	"net/http"
-	"os"
 	"path/filepath"
 
 	"github.com/pkg/errors"
@@ -166,18 +165,12 @@ func Fetch(opts ...Option) error {
 	}
 	_ = bar.Close()
 
-	// An empty output directory means the catalog no longer matches the
-	// structure decoded above. Committing it would delete every file of that
-	// kind from the raw repository, so fail instead.
-	for _, kind := range []string{"weakness", "category", "view"} {
-		d := filepath.Join(options.dir, kind)
-		es, err := os.ReadDir(d)
-		if err != nil {
-			return errors.Wrapf(err, "read %s", d)
-		}
-		if len(es) == 0 {
-			return errors.Errorf("no %s written to %s", kind, d)
-		}
+	// A section left empty means the catalog no longer matches the structure
+	// decoded above, as when CWE 5.0 renamed Categories to Groupings.
+	// Committing it would delete every file of that kind from the raw
+	// repository, so fail instead.
+	if err := util.EnsureWritten(options.dir, util.WithRequire("weakness", "category", "view")); err != nil {
+		return errors.Wrapf(err, "ensure written %s", options.dir)
 	}
 
 	return nil
