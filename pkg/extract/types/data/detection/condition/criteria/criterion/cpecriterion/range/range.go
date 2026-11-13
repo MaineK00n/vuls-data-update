@@ -61,9 +61,10 @@ const (
 	// versioning scheme later diverges must carry its own type to get its own
 	// comparator without changing how any other product is compared — and adding
 	// a type stays additive (existing products are untouched). Today every
-	// product is purely numeric except the FortiSASE non-numeric scheme (which
-	// Compare gives its own case); the per-product split is what lets that stay
-	// true product-by-product going forward.
+	// product is purely numeric except FortiSASE and FortiSASE-Sovereign, which
+	// share the non-numeric scheme (Compare gives them their own case); the
+	// per-product split is what lets that stay true product-by-product going
+	// forward.
 	RangeTypeFortinetAntivirusEngine                             RangeType = "fortinet-antivirus_engine"
 	RangeTypeFortinetAscenLink                                   RangeType = "fortinet-ascenlink"
 	RangeTypeFortinetConnect                                     RangeType = "fortinet-connect"
@@ -126,6 +127,7 @@ const (
 	RangeTypeFortinetFortiSandboxCloud                           RangeType = "fortinet-fortisandbox_cloud"
 	RangeTypeFortinetFortiSandboxPaaS                            RangeType = "fortinet-fortisandbox_paas"
 	RangeTypeFortinetFortiSASE                                   RangeType = "fortinet-fortisase"
+	RangeTypeFortinetFortiSASESovereign                          RangeType = "fortinet-fortisase-sovereign"
 	RangeTypeFortinetFortiSDNConnector                           RangeType = "fortinet-fortisdnconnector"
 	RangeTypeFortinetFortiSIEM                                   RangeType = "fortinet-fortisiem"
 	RangeTypeFortinetFortiSIEMCloud                              RangeType = "fortinet-fortisiem_cloud"
@@ -233,6 +235,7 @@ func RangeTypes() []RangeType {
 		RangeTypeFortinetFortiSandboxCloud,
 		RangeTypeFortinetFortiSandboxPaaS,
 		RangeTypeFortinetFortiSASE,
+		RangeTypeFortinetFortiSASESovereign,
 		RangeTypeFortinetFortiSDNConnector,
 		RangeTypeFortinetFortiSIEM,
 		RangeTypeFortinetFortiSIEMCloud,
@@ -370,10 +373,11 @@ var ErrRangeTypeUnknown = errors.New("unknown range type")
 // in *CompareError as well — every error this function raises classifies as
 // *CompareError, so Accept can always degrade it to a safe non-match.
 //
-// Fortinet per-product types dispatch to go-fortinet-version: FortiSASE uses
-// the non-numeric (milestone-letter) scheme; every other Fortinet product uses
-// the numeric scheme. The numeric comparator refuses to order a letter
-// component, so a numeric product safely never matches a non-numeric version.
+// Fortinet per-product types dispatch to go-fortinet-version: FortiSASE and
+// FortiSASE-Sovereign use the non-numeric (milestone-letter) scheme; every
+// other Fortinet product uses the numeric scheme. The numeric comparator
+// refuses to order a letter component, so a numeric product safely never
+// matches a non-numeric version.
 func (t RangeType) CompareVersions(v1, v2 string) (int, error) {
 	switch t {
 	case RangeTypeSEMVER:
@@ -440,8 +444,10 @@ func (t RangeType) CompareVersions(v1, v2 string) (int, error) {
 			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
 		}
 		return va.Compare(vb), nil
-	case RangeTypeFortinetFortiSASE:
-		// FortiSASE uses the non-numeric (milestone-letter) version scheme.
+	case RangeTypeFortinetFortiSASE, RangeTypeFortinetFortiSASESovereign:
+		// FortiSASE and FortiSASE-Sovereign use the non-numeric
+		// (milestone-letter) version scheme (e.g. 25.3.a, with a bare 25.2
+		// below its 25.2.a).
 		// NewVersion rejecting a wrong-scheme/malformed version and Compare's
 		// ErrIncomparable both surface as *CompareError, so Range.Accept treats
 		// them as a safe non-match.

@@ -145,6 +145,7 @@ var nameToProduct = map[string]productInfo{
 	"FortiProxy":                           {cna: []string{"cpe:2.3:a:fortinet:fortiproxy:*:*:*:*:*:*:*:*"}, nvd: []string{"cpe:2.3:o:fortinet:fortiproxy:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiProxy},
 	"FortiRecorder":                        {cna: []string{"cpe:2.3:a:fortinet:fortirecorder:*:*:*:*:*:*:*:*"}, nvd: []string{"cpe:2.3:o:fortinet:fortirecorder:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiRecorder},
 	"FortiSASE":                            {cna: []string{"cpe:2.3:a:fortinet:fortisase:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiSASE},
+	"FortiSASE-Sovereign":                  {cna: []string{"cpe:2.3:a:fortinet:fortisase-sovereign:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiSASESovereign},
 	"FortiSDNConnector":                    {cna: []string{"cpe:2.3:a:fortinet:fortisdnconnector:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiSDNConnector},
 	"FortiSIEM":                            {cna: []string{"cpe:2.3:a:fortinet:fortisiem:*:*:*:*:*:*:*:*"}, nvd: []string{"cpe:2.3:o:fortinet:fortisiem:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiSIEM},
 	"FortiSIEM Cloud":                      {cna: []string{"cpe:2.3:a:fortinet:fortisiemcloud:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiSIEMCloud},

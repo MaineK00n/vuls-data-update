@@ -708,7 +708,7 @@ func toCriterions(productID string, refMap map[string]productRef) ([]criterionTy
 			// multi-component numeric bound would line a numeric component up with
 			// such a version's letter — the comparator's undefined numeric-vs-
 			// alphabetic case — so reject it here.
-			if rt == ccRangeTypes.RangeTypeFortinetFortiSASE && strings.Count(b, ".") >= 2 {
+			if nonNumericVersioned(rt) && strings.Count(b, ".") >= 2 {
 				return nil, errors.Errorf("product %q is non-numeric-versioned and must use a train range (bound dot<=1), got bound %q (expr %q)", productID, b, ref.versionExp)
 			}
 		}
@@ -749,10 +749,11 @@ func toCriterions(productID string, refMap map[string]productRef) ([]criterionTy
 		// which would bake a version no scanner reports — a silent detection
 		// false-negative. Defer "is this a real version" to the same parser the
 		// detector uses: a numeric product must parse under the numeric scheme,
-		// a non-numeric-versioned product (FortiSASE) under the milestone scheme
-		// (which also accepts a single letter component, "25.2.a").
-		switch rt {
-		case ccRangeTypes.RangeTypeFortinetFortiSASE:
+		// a non-numeric-versioned product (FortiSASE, FortiSASE-Sovereign) under
+		// the milestone scheme (which also accepts a single letter component,
+		// "25.2.a").
+		switch {
+		case nonNumericVersioned(rt):
 			if _, err := nonnumericVersion.NewVersion(bakeVersion); err != nil {
 				return nil, errors.Wrapf(err, "unexpected concrete version %q for %q (expr %q)", bakeVersion, productID, ref.versionExp)
 			}
@@ -790,6 +791,21 @@ func toCriterions(productID string, refMap map[string]productRef) ([]criterionTy
 		})
 	}
 	return cns, nil
+}
+
+// nonNumericVersioned reports whether products of range type rt version their
+// releases with Fortinet's non-numeric (milestone-letter) scheme ("25.2.a"),
+// the range types cpecriterion/range CompareVersions serves with the
+// non-numeric comparator. Both checks toCriterions makes for such a product
+// (train-granular bounds, milestone parsing of a concrete version) ask here,
+// so the two cannot disagree on which products they cover.
+func nonNumericVersioned(rt ccRangeTypes.RangeType) bool {
+	switch rt {
+	case ccRangeTypes.RangeTypeFortinetFortiSASE, ccRangeTypes.RangeTypeFortinetFortiSASESovereign:
+		return true
+	default:
+		return false
+	}
 }
 
 // resolveVersion interprets a CSAF Fortinet version expression for the named

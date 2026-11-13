@@ -295,6 +295,12 @@ func TestRangeType_CompareVersions(t *testing.T) {
 		{name: "fortinet: letter patch after letter (25.1.a < 25.1.a.2)", t: ccRangeTypes.RangeTypeFortinetFortiSASE, v1: "25.1.a", v2: "25.1.a.2", want: -1},
 		{name: "fortinet: numeric letter-patch ordering (25.1.a.2 < 25.1.a.10)", t: ccRangeTypes.RangeTypeFortinetFortiSASE, v1: "25.1.a.2", v2: "25.1.a.10", want: -1},
 		{name: "fortinet: nested non-numeric above bare train (25.1.a.2 > 25.1)", t: ccRangeTypes.RangeTypeFortinetFortiSASE, v1: "25.1.a.2", v2: "25.1", want: 1},
+		// FortiSASE-Sovereign shares the milestone-letter scheme (FG-IR-26-227
+		// lists 25.2, 25.3.a, 25.4.a and 26.2.c).
+		{name: "fortinet: sovereign bare train below its non-numeric build (25.2 < 25.2.a)", t: ccRangeTypes.RangeTypeFortinetFortiSASESovereign, v1: "25.2", v2: "25.2.a", want: -1},
+		{name: "fortinet: sovereign non-numeric below next train's build (25.3.a < 25.4.a)", t: ccRangeTypes.RangeTypeFortinetFortiSASESovereign, v1: "25.3.a", v2: "25.4.a", want: -1},
+		{name: "fortinet: sovereign non-numeric across years (25.4.a < 26.2.c)", t: ccRangeTypes.RangeTypeFortinetFortiSASESovereign, v1: "25.4.a", v2: "26.2.c", want: -1},
+		{name: "fortinet: sovereign numeric build vs non-numeric milestone → CompareError (25.3.1 vs 25.3.a)", t: ccRangeTypes.RangeTypeFortinetFortiSASESovereign, v1: "25.3.1", v2: "25.3.a", wantErr: true},
 		{name: "fortinet: pure-numeric trailing zero stays equal (7.2.0 == 7.2)", t: ccRangeTypes.RangeTypeFortinetFortiOS, v1: "7.2.0", v2: "7.2", want: 0},
 		// A numeric build vs an alphabetic milestone at the same position is
 		// undefined across Fortinet's two schemes → incomparable (swallowed).
