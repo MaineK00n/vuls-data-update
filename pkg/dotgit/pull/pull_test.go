@@ -7,14 +7,18 @@ import (
 	"encoding/json/v2"
 	"fmt"
 	"io"
+	"io/fs"
 	"net/http"
 	"net/http/httptest"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"slices"
 	"strings"
 	"testing"
 
+	"github.com/go-git/go-git/v5"
+	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
 	"github.com/google/go-containerregistry/pkg/registry"
@@ -303,15 +307,24 @@ func TestPull(t *testing.T) {
 			wantErr:  "switch to main...v0.0.2: ",
 		},
 		{
-			// Neither a branch nor a tag, and a name go-git's revision parser
-			// rejects: contains cannot tell whether it is there.
-			name: "vuls-data-raw-test checkout: v9@9 (not a tag), restore: false, go-git",
+			// A valid tag name that is not there, and that go-git's revision
+			// parser rejects.
+			name: "vuls-data-raw-test checkout: v9@9 (not in the repository), restore: false, native git",
+			args: args{
+				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test",
+				opts:       []pull.Option{pull.WithCheckout("v9@9"), pull.WithRestore(false), pull.WithUseNativeGit(true)},
+			},
+			hasError: true,
+			wantErr:  "v9@9 is not in ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test, whose history may have been truncated or rewritten: switch to v9@9: ",
+		},
+		{
+			name: "vuls-data-raw-test checkout: v9@9 (not in the repository), restore: false, go-git",
 			args: args{
 				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test",
 				opts:       []pull.Option{pull.WithCheckout("v9@9"), pull.WithRestore(false), pull.WithUseNativeGit(false)},
 			},
 			hasError: true,
-			wantErr:  `get checkout options: get "v9@9" as commit: `,
+			wantErr:  "get checkout options: v9@9 is not in ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test, whose history may have been truncated or rewritten: ",
 		},
 		{
 			name: "vuls-data-raw-test-archive-1 restore: false, native git",
@@ -458,6 +471,77 @@ func TestPullWithoutGit(t *testing.T) {
 	err = pull.Pull(repo.Reference.String(), pull.WithDir(t.TempDir()), pull.WithCheckout("9d3d5d486d4c9414321a2df56f2e007c4c2c8fac"), pull.WithUseNativeGit(true))
 	if want := "switch to 9d3d5d486d4c9414321a2df56f2e007c4c2c8fac: "; err == nil || !strings.HasPrefix(err.Error(), want) {
 		t.Errorf("Pull() error does not begin with %q, error: %v", want, err)
+	}
+}
+
+// TestNotFound checks which errors of contains notFound takes to say that the
+// target is not in the repository, and which to say that the check could not
+// be made.
+func TestNotFound(t *testing.T) {
+	exit := func(code int) error {
+		return exec.Command("sh", "-c", fmt.Sprintf("exit %d", code)).Run()
+	}
+
+	tests := []struct {
+		name         string
+		err          error
+		useNativeGit bool
+		want         bool
+	}{
+		{
+			name:         "no error, native git",
+			useNativeGit: true,
+		},
+		{
+			name: "no error, go-git",
+		},
+		{
+			name:         "exit status 1, a hash cat-file -e does not have, native git",
+			err:          errors.Wrap(exit(1), "check 9d3d5d486d4c9414321a2df56f2e007c4c2c8fac exists"),
+			useNativeGit: true,
+			want:         true,
+		},
+		{
+			name:         "exit status 128, a name cat-file -e cannot resolve, native git",
+			err:          errors.Wrap(exit(128), "check v0.0.2 exists"),
+			useNativeGit: true,
+			want:         true,
+		},
+		{
+			name:         "exit status 129, a usage error, native git",
+			err:          errors.Wrap(exit(129), "check -b exists"),
+			useNativeGit: true,
+		},
+		{
+			name:         "git cannot be run, native git",
+			err:          errors.Wrap(&exec.Error{Name: "git", Err: exec.ErrNotFound}, "check 9d3d5d486d4c9414321a2df56f2e007c4c2c8fac exists"),
+			useNativeGit: true,
+		},
+		{
+			name: "reference not found, go-git",
+			err:  errors.Wrap(plumbing.ErrReferenceNotFound, "resolve v0.0.2"),
+			want: true,
+		},
+		{
+			name: "another error, as for a name the revision parser rejects, go-git",
+			err:  errors.Wrap(errors.New("Revision invalid : reference must be defined once at the beginning"), "resolve v9@9"),
+			want: true,
+		},
+		{
+			name: "repository does not exist, go-git",
+			err:  errors.Wrap(git.ErrRepositoryNotExists, "open vuls-data-raw-test"),
+		},
+		{
+			name: "repository cannot be read, go-git",
+			err:  errors.Wrap(&fs.PathError{Op: "open", Path: "vuls-data-raw-test/.git", Err: fs.ErrPermission}, "open vuls-data-raw-test"),
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := pull.NotFound(tt.err, tt.useNativeGit); got != tt.want {
+				t.Errorf("NotFound(%v, %t). expected: %t, actual: %t", tt.err, tt.useNativeGit, tt.want, got)
+			}
+		})
 	}
 }
 
