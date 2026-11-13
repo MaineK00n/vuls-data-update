@@ -7,11 +7,23 @@
 	"description": "\n\t\tThe hardware design contains structures that are interpreted\n\t\tdifferently during synthesis than during simulation, which\n\t\tcause inconsistencies in security-relevant behavior between\n\t\tthe synthesized implementation and the simulation.\n\t  ",
 	"modes_of_introduction": [
 		{
+			"custom_phase": [
+				{
+					"domain": "Hardware",
+					"phase": "Implementation & Physical Design"
+				}
+			],
 			"note": [
 				"\n\t\t\t<xhtml:p>This weakness can be introduced when HDL\n\t\t\tconstructs, assignment ordering, synthesis directives, or\n\t\t\ttool-dependent semantics are used whose simulation\n\t\t\tbehavior may not match synthesis interpretation. These\n\t\t\tconstructs may behave correctly during HDL simulation but\n\t\t\tproduce different security-relevant behavior in the\n\t\t\tsynthesized implementation.</xhtml:p>\n\t\t  "
 			]
 		},
 		{
+			"custom_phase": [
+				{
+					"domain": "Hardware",
+					"phase": "Implementation & Physical Design"
+				}
+			],
 			"note": [
 				"\n\t\t\t<xhtml:p>This weakness can be introduced or exposed during\n\t\t\tsynthesis when the synthesis tool applies assumptions,\n\t\t\toptimizations, or transformations to HDL structures that\n\t\t\tcannot be physically implemented exactly as the simulation\n\t\t\tsemantics dictate, or that permit multiple (valid)\n\t\t\thardware implementations. The resulting netlist may behave\n\t\t\tdifferently from the model that was verified during\n\t\t\tsimulation.</xhtml:p>\n\t\t  "
 			]
@@ -30,6 +42,12 @@
 	],
 	"potential_mitigations": [
 		{
+			"custom_phase": [
+				{
+					"domain": "Hardware",
+					"phase": "Implementation & Physical Design"
+				}
+			],
 			"description": [
 				"\n\t\t\t<xhtml:p>Establish and enforce HDL coding and review\n\t\t\tpractices that minimize differences between simulation\n\t\t\tsemantics and synthesis interpretation. Avoid HDL\n\t\t\tconstructs, synthesis directives, and tool-dependent\n\t\t\tbehaviors known to cause simulation/synthesis mismatch,\n\t\t\twith particular attention to security-relevant\n\t\t\tlogic.</xhtml:p>\n\t\t  "
 			],
@@ -37,6 +55,12 @@
 			"effectiveness_notes": "\n\t\t\t<xhtml:p>Avoidance of the patterns of code which can\n\t\t\tresult in these errors removes the opportunity for\n\t\t\terror. However, in some cases (notably state machine\n\t\t\tencodings) this can be very difficult to achieve\n\t\t\tefficiently.</xhtml:p>\n\t\t  "
 		},
 		{
+			"custom_phase": [
+				{
+					"domain": "Hardware",
+					"phase": "Implementation & Physical Design"
+				}
+			],
 			"description": [
 				"\n\t\t\t<xhtml:p>For security-critical logic, preserve intentional\n\t\t\tredundancy that is required for security. Examples may\n\t\t\tinclude redundant logic, triple modular redundancy (TMR)\n\t\t\tstructures, Hamming-distance state encodings, or\n\t\t\tstate-machine recovery logic. Use synthesis constraints,\n\t\t\tpreservation attributes, carefully controlled structural\n\t\t\timplementation, or manual implementation of selected\n\t\t\tcritical blocks to prevent this redundancy from being\n\t\t\tmerged, re-encoded, or optimized away.</xhtml:p>\n\t\t  "
 			],
@@ -102,7 +126,11 @@
 			"url": "https://www.usenix.org/conference/usenixsecurity25/presentation/solt",
 			"publication_year": "2025",
 			"publication_month": "--08",
-			"url_date": "2026-10-19"
+			"url_date": "2026-10-19",
+			"media_type": [
+				"Common-Proprietary-Text",
+				"Video"
+			]
 		},
 		{
 			"reference_id": "REF-1557",
@@ -124,11 +152,26 @@
 		}
 	],
 	"content_history": {
-		"submission": {
-			"submission_name": "Sudipta Paria",
-			"submission_organization": "University of Florida",
-			"submission_date": "2025-05-20"
-		}
+		"submission": [
+			{
+				"submission_name": [
+					"Raghul Saravanan"
+				],
+				"submission_organization": "George Mason University",
+				"submission_date": "2025-05-20",
+				"submission_version": "5.0",
+				"submission_release_date": "2026-10-28"
+			},
+			{
+				"submission_name": [
+					"Sudipta Paria"
+				],
+				"submission_organization": "University of Florida",
+				"submission_date": "2025-05-20",
+				"submission_version": "5.0",
+				"submission_release_date": "2026-10-28"
+			}
+		]
 	},
 	"detection_methods": [
 		{

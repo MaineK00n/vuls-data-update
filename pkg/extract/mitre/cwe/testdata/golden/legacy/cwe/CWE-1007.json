@@ -12,13 +12,17 @@
 		"likelihood_of_exploit": "Medium",
 		"modes_of_introduction": [
 			{
-				"phase": "Architecture and Design",
+				"phases": [
+					"Architecture and Design"
+				],
 				"notes": [
 					"This weakness may occur when characters from various character sets are allowed to be interchanged within a URL, username, email address, etc. without any notification to the user or underlying system being used."
 				]
 			},
 			{
-				"phase": "Implementation"
+				"phases": [
+					"Implementation"
+				]
 			}
 		],
 		"related_weaknesses": [
@@ -125,7 +129,7 @@
 	"data_source": {
 		"id": "mitre-cwe",
 		"raws": [
-			"fixtures/weakness/1007.json"
+			"legacy/weakness/1007.json"
 		]
 	}
 }

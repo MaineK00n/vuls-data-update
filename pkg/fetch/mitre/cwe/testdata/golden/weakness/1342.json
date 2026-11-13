@@ -6,16 +6,25 @@
 	"status": "Incomplete",
 	"description": "The processor does not properly clear microarchitectural state after incorrect microcode assists or speculative execution, resulting in transient execution.",
 	"content_history": {
-		"submission": {
-			"submission_name": "Alric Althoff",
-			"submission_organization": "Cycuity (originally submitted as Tortuga Logic)",
-			"submission_date": "2021-09-22"
-		},
+		"submission": [
+			{
+				"submission_name": [
+					"Anders Nordstrom",
+					"Alric Althoff"
+				],
+				"submission_organization": "Cycuity (originally submitted as Tortuga Logic)",
+				"submission_date": "2021-09-22",
+				"submission_version": "4.6",
+				"submission_release_date": "2021-10-28"
+			}
+		],
 		"modification": [
 			{
 				"modification_name": "CWE Content Team",
 				"modification_organization": "MITRE",
 				"modification_date": "2022-10-13",
+				"modification_version": "4.9",
+				"modification_release_date": "2022-10-13",
 				"modification_comment": "updated Demonstrative_Examples, Maintenance_Notes, Related_Attack_Patterns"
 			}
 		]

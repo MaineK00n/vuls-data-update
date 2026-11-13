@@ -4,6 +4,7 @@ import (
 	"cmp"
 	"slices"
 
+	dimensionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/cwe/dimension"
 	mappingnotesTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/cwe/mappingnotes"
 	noteTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/cwe/note"
 	taxonomymappingTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/cwe/taxonomymapping"
@@ -24,6 +25,8 @@ type Weakness struct {
 	Structure             string                                           `json:"structure,omitempty"`
 	Diagram               string                                           `json:"diagram,omitempty"`
 	ExtendedDescription   string                                           `json:"extended_description,omitempty"`
+	TechnicalNuance       string                                           `json:"technical_nuance,omitempty"` // CWE 5.0
+	Dimensions            []dimensionTypes.Dimension                       `json:"dimensions,omitempty"`       // CWE 5.0
 	LikelihoodOfExploit   string                                           `json:"likelihood_of_exploit,omitempty"`
 	BackgroundDetails     []string                                         `json:"background_details,omitempty"`
 	ModesOfIntroduction   []modeofintroductionTypes.ModeOfIntroduction     `json:"modes_of_introduction,omitempty"`
@@ -53,9 +56,16 @@ func (w *Weakness) Sort() {
 		(&w.ModesOfIntroduction[i]).Sort()
 	}
 	slices.SortFunc(w.ModesOfIntroduction, modeofintroductionTypes.Compare)
+	slices.SortFunc(w.Dimensions, dimensionTypes.Compare)
+	for i := range w.RelatedWeaknesses {
+		(&w.RelatedWeaknesses[i]).Sort()
+	}
 	slices.SortFunc(w.RelatedWeaknesses, relatedweaknessTypes.Compare)
 	slices.SortFunc(w.WeaknessOrdinalities, weaknessordinalityTypes.Compare)
 	slices.SortFunc(w.ApplicablePlatforms, applicableplatformTypes.Compare)
+	for i := range w.AlternateTerms {
+		(&w.AlternateTerms[i]).Sort()
+	}
 	slices.SortFunc(w.AlternateTerms, alternatetermTypes.Compare)
 	for i := range w.CommonConsequences {
 		(&w.CommonConsequences[i]).Sort()
@@ -66,6 +76,9 @@ func (w *Weakness) Sort() {
 	}
 	slices.SortFunc(w.PotentialMitigations, potentialmitigationTypes.Compare)
 	slices.SortFunc(w.DemonstrativeExamples, demonstrativeexampleTypes.Compare)
+	for i := range w.DetectionMethods {
+		(&w.DetectionMethods[i]).Sort()
+	}
 	slices.SortFunc(w.DetectionMethods, detectionmethodTypes.Compare)
 	slices.SortFunc(w.TaxonomyMappings, taxonomymappingTypes.Compare)
 	slices.SortFunc(w.Notes, noteTypes.Compare)
@@ -79,6 +92,8 @@ func Compare(x, y Weakness) int {
 		cmp.Compare(x.Structure, y.Structure),
 		cmp.Compare(x.Diagram, y.Diagram),
 		cmp.Compare(x.ExtendedDescription, y.ExtendedDescription),
+		cmp.Compare(x.TechnicalNuance, y.TechnicalNuance),
+		slices.CompareFunc(x.Dimensions, y.Dimensions, dimensionTypes.Compare),
 		cmp.Compare(x.LikelihoodOfExploit, y.LikelihoodOfExploit),
 		slices.Compare(x.BackgroundDetails, y.BackgroundDetails),
 		slices.CompareFunc(x.ModesOfIntroduction, y.ModesOfIntroduction, modeofintroductionTypes.Compare),

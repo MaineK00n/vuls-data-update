@@ -11,19 +11,31 @@
 			"author": [
 				"Shaun Clowes"
 			],
-			"title": "A Study in Scarlet - section 5, \"File Upload\""
+			"title": "A Study in Scarlet - section 5, \"File Upload\"",
+			"rationale": [
+				"Early-Publication",
+				"Influential/Newsworthy"
+			]
 		}
 	],
 	"content_history": {
-		"submission": {
-			"submission_name": "PLOVER",
-			"submission_date": "2007-05-07"
-		},
+		"submission": [
+			{
+				"submission_name": [
+					"PLOVER"
+				],
+				"submission_date": "2007-05-07",
+				"submission_version": "Draft 6",
+				"submission_release_date": "2007-05-07"
+			}
+		],
 		"modification": [
 			{
 				"modification_name": "Eric Dalci",
 				"modification_organization": "Cigital",
 				"modification_date": "2008-07-01",
+				"modification_version": "1.0",
+				"modification_release_date": "2008-09-09",
 				"modification_comment": "updated Time_of_Introduction"
 			}
 		]

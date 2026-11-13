@@ -1,9 +1,57 @@
 package cwe
 
 import (
+	"encoding/json/v2"
 	"encoding/xml"
 	"testing"
+
+	"github.com/google/go-cmp/cmp"
 )
+
+func TestOneOrMany_UnmarshalJSONFrom(t *testing.T) {
+	tests := []struct {
+		name    string
+		json    string
+		want    ContentHistory
+		wantErr bool
+	}{
+		{
+			name: "lists",
+			json: `{"submission":[{"submission_name":["Alice","Bob"]},{"submission_name":["Carol"]}]}`,
+			want: ContentHistory{Submission: OneOrMany[Submission]{{SubmissionName: OneOrMany[string]{"Alice", "Bob"}}, {SubmissionName: OneOrMany[string]{"Carol"}}}},
+		},
+		{
+			name: "single values written before schema v8.0 support",
+			json: `{"submission":{"submission_name":"Alice","submission_date":"2006-07-19"}}`,
+			want: ContentHistory{Submission: OneOrMany[Submission]{{SubmissionName: OneOrMany[string]{"Alice"}, SubmissionDate: "2006-07-19"}}},
+		},
+		{
+			name: "null",
+			json: `{"submission":null}`,
+			want: ContentHistory{},
+		},
+		{
+			name:    "wrong type",
+			json:    `{"submission":[{"submission_name":1}]}`,
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var got ContentHistory
+			err := json.Unmarshal([]byte(tt.json), &got)
+			if (err != nil) != tt.wantErr {
+				t.Fatalf("Unmarshal() error = %v, wantErr %v", err, tt.wantErr)
+			}
+			if err != nil {
+				return
+			}
+			if diff := cmp.Diff(tt.want, got); diff != "" {
+				t.Errorf("(-expected +got):\n%s", diff)
+			}
+		})
+	}
+}
 
 func TestStructuredText_String(t *testing.T) {
 	tests := []struct {

@@ -71,20 +71,30 @@
 		},
 		{
 			"type": "Maintenance",
+			"version": "5.0",
+			"release_date": "2026-10-28",
 			"text": "\n\t\t\t   This view was originally created in 2017, but the CAWE\n\t\t\t   project ended, and this view was not actively\n\t\t\t   maintained afterward."
 		}
 	],
 	"content_history": {
-		"submission": {
-			"submission_name": "Joanna C.S. Santos, Mehdi Mirakhorli",
-			"submission_date": "2017-06-22",
-			"submission_comment": "Provided the catalog, Common Architectural Weakness Enumeration (CAWE), and research papers for this view."
-		},
+		"submission": [
+			{
+				"submission_name": [
+					"Joanna C.S. Santos, Mehdi Mirakhorli"
+				],
+				"submission_date": "2017-06-22",
+				"submission_version": "2.12",
+				"submission_release_date": "2017-11-08",
+				"submission_comment": "Provided the catalog, Common Architectural Weakness Enumeration (CAWE), and research papers for this view."
+			}
+		],
 		"modification": [
 			{
 				"modification_name": "CWE Content Team",
 				"modification_organization": "MITRE",
 				"modification_date": "2018-03-27",
+				"modification_version": "3.1",
+				"modification_release_date": "2018-03-27",
 				"modification_comment": "updated Description, Other_Notes, View_Audience"
 			}
 		]
@@ -101,7 +111,12 @@
 			"url": "https://ieeexplore.ieee.org/document/7958491",
 			"publication_year": "2017",
 			"publication": "2017 IEEE International Conference on Software Architecture (ICSA)",
-			"url_date": "2026-10-23"
+			"url_date": "2026-10-23",
+			"alt_url": "https://joannacss.com/preprints/icsaw17-preprint.pdf",
+			"alt_url_date": "2026-10-23",
+			"access_restrictions": [
+				"Proprietary-Subscription"
+			]
 		},
 		{
 			"section": "pages 69 - 78",
@@ -117,7 +132,12 @@
 			"url": "https://ieeexplore.ieee.org/document/7930201",
 			"publication_year": "2017",
 			"publication": "2017 IEEE International Conference on Software Architecture (ICSA)",
-			"url_date": "2026-10-23"
+			"url_date": "2026-10-23",
+			"alt_url": "https://joannacss.com/preprints/icsa17-preprint.pdf",
+			"alt_url_date": "2026-10-23",
+			"access_restrictions": [
+				"Proprietary-Subscription"
+			]
 		}
 	],
 	"mapping_notes": {

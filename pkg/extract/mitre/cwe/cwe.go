@@ -14,6 +14,7 @@ import (
 
 	cweTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/cwe"
 	categoryTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/cwe/category"
+	dimensionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/cwe/dimension"
 	mappingnotesTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/cwe/mappingnotes"
 	reasonTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/cwe/mappingnotes/reason"
 	suggestionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/cwe/mappingnotes/suggestion"
@@ -26,6 +27,7 @@ import (
 	alternatetermTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/cwe/weakness/alternateterm"
 	applicableplatformTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/cwe/weakness/applicableplatform"
 	commonconsequenceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/cwe/weakness/commonconsequence"
+	customphaseTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/cwe/weakness/customphase"
 	demonstrativeexampleTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/cwe/weakness/demonstrativeexample"
 	detectionmethodTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/cwe/weakness/detectionmethod"
 	modeofintroductionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/cwe/weakness/modeofintroduction"
@@ -274,14 +276,17 @@ func extractWeakness(path, args, outDir string, rankings rankingIndex) error {
 			Structure:           w.Structure,
 			Diagram:             w.Diagram,
 			ExtendedDescription: w.ExtendedDescription,
+			TechnicalNuance:     w.TechnicalNuance,
+			Dimensions:          convertDimensions(w.Dimensions),
 			LikelihoodOfExploit: w.LikelihoodOfExploit,
 			BackgroundDetails:   slices.Clone(w.BackgroundDetails),
 			ModesOfIntroduction: func() []modeofintroductionTypes.ModeOfIntroduction {
 				out := make([]modeofintroductionTypes.ModeOfIntroduction, 0, len(w.ModesOfIntroduction))
 				for _, m := range w.ModesOfIntroduction {
 					out = append(out, modeofintroductionTypes.ModeOfIntroduction{
-						Phase: m.Phase,
-						Notes: slices.Clone(m.Note),
+						Phases:       slices.Clone(m.Phase),
+						CustomPhases: convertCustomPhases(m.CustomPhase),
+						Notes:        slices.Clone(m.Note),
 					})
 				}
 				return out
@@ -302,6 +307,7 @@ func extractWeakness(path, args, outDir string, rankings rankingIndex) error {
 							}
 							return fmt.Sprintf("CWE-%s", rw.ChainID)
 						}(),
+						Dimensions: convertDimensions(rw.Dimensions),
 					})
 				}
 				return out
@@ -328,16 +334,16 @@ func extractWeakness(path, args, outDir string, rankings rankingIndex) error {
 			ApplicablePlatforms: func() []applicableplatformTypes.ApplicablePlatform {
 				out := make([]applicableplatformTypes.ApplicablePlatform, 0, len(w.ApplicablePlatforms.Language)+len(w.ApplicablePlatforms.Technology)+len(w.ApplicablePlatforms.OperatingSystem)+len(w.ApplicablePlatforms.Architecture))
 				for _, p := range w.ApplicablePlatforms.Language {
-					out = append(out, applicableplatformTypes.ApplicablePlatform{Type: "language", Name: p.Name, Class: p.Class, Prevalence: p.Prevalence})
+					out = append(out, applicableplatformTypes.ApplicablePlatform{Type: "language", Name: p.Name, Class: p.Class, Prevalence: p.Prevalence, Note: p.Note})
 				}
 				for _, p := range w.ApplicablePlatforms.Technology {
-					out = append(out, applicableplatformTypes.ApplicablePlatform{Type: "technology", Name: p.Name, Class: p.Class, Prevalence: p.Prevalence})
+					out = append(out, applicableplatformTypes.ApplicablePlatform{Type: "technology", Name: p.Name, Class: p.Class, Prevalence: p.Prevalence, Note: p.Note})
 				}
 				for _, p := range w.ApplicablePlatforms.OperatingSystem {
-					out = append(out, applicableplatformTypes.ApplicablePlatform{Type: "os", Name: p.Name, Class: p.Class, Prevalence: p.Prevalence})
+					out = append(out, applicableplatformTypes.ApplicablePlatform{Type: "os", Name: p.Name, Class: p.Class, Prevalence: p.Prevalence, Note: p.Note})
 				}
 				for _, p := range w.ApplicablePlatforms.Architecture {
-					out = append(out, applicableplatformTypes.ApplicablePlatform{Type: "architecture", Name: p.Name, Class: p.Class, Prevalence: p.Prevalence})
+					out = append(out, applicableplatformTypes.ApplicablePlatform{Type: "architecture", Name: p.Name, Class: p.Class, Prevalence: p.Prevalence, Note: p.Note})
 				}
 				return out
 			}(),
@@ -346,6 +352,7 @@ func extractWeakness(path, args, outDir string, rankings rankingIndex) error {
 				for _, t := range w.AlternateTerms {
 					out = append(out, alternatetermTypes.AlternateTerm{
 						Term:        t.Term,
+						Roles:       slices.Clone(t.Role),
 						Description: t.Description,
 					})
 				}
@@ -369,6 +376,7 @@ func extractWeakness(path, args, outDir string, rankings rankingIndex) error {
 					out = append(out, potentialmitigationTypes.PotentialMitigation{
 						MitigationID:       m.MitigationID,
 						Phases:             slices.Clone(m.Phase),
+						CustomPhases:       convertCustomPhases(m.CustomPhase),
 						Descriptions:       slices.Clone(m.Description),
 						Strategy:           m.Strategy,
 						Effectiveness:      m.Effectiveness,
@@ -393,6 +401,8 @@ func extractWeakness(path, args, outDir string, rankings rankingIndex) error {
 					out = append(out, detectionmethodTypes.DetectionMethod{
 						DetectionMethodID:  m.DetectionMethodID,
 						Method:             m.Method,
+						Phases:             slices.Clone(m.Phase),
+						CustomPhases:       convertCustomPhases(m.CustomPhase),
 						Description:        m.Description,
 						Effectiveness:      m.Effectiveness,
 						EffectivenessNotes: m.EffectivenessNotes,
@@ -448,16 +458,7 @@ func extractCategory(path, args, outDir string) error {
 		Status:      c.Status,
 		Description: c.Summary,
 		Category: categoryTypes.Category{
-			Members: func() []memberTypes.Member {
-				out := make([]memberTypes.Member, 0, len(c.Relationships))
-				for _, m := range c.Relationships {
-					out = append(out, memberTypes.Member{
-						CWEID:  fmt.Sprintf("CWE-%s", m.CWEID),
-						ViewID: fmt.Sprintf("CWE-%s", m.ViewID),
-					})
-				}
-				return out
-			}(),
+			Members: convertMembers(c.Relationships),
 			TaxonomyMappings: func() []taxonomymappingTypes.TaxonomyMapping {
 				out := make([]taxonomymappingTypes.TaxonomyMapping, 0, len(c.TaxonomyMappings))
 				for _, t := range c.TaxonomyMappings {
@@ -516,16 +517,7 @@ func extractView(path, args, outDir string) error {
 				}
 				return out
 			}(),
-			Members: func() []memberTypes.Member {
-				out := make([]memberTypes.Member, 0, len(v.Members))
-				for _, m := range v.Members {
-					out = append(out, memberTypes.Member{
-						CWEID:  fmt.Sprintf("CWE-%s", m.CWEID),
-						ViewID: fmt.Sprintf("CWE-%s", m.ViewID),
-					})
-				}
-				return out
-			}(),
+			Members:      convertMembers(v.Members),
 			Notes:        collectNotes(v.Notes),
 			MappingNotes: convertMappingNotes(v.MappingNotes),
 		},
@@ -559,13 +551,17 @@ func extractReferences(id string, refs []cwe.Reference) []referenceTypes.Referen
 		URL:    fmt.Sprintf("https://cwe.mitre.org/data/definitions/%s.html", id),
 	})
 	for _, r := range refs {
-		if r.URL == "" {
-			continue
+		// Alt_URL (CWE 5.0) is another copy of the reference, often freely
+		// accessible where URL is not
+		for _, u := range []string{r.URL, r.AltURL} {
+			if u == "" {
+				continue
+			}
+			out = append(out, referenceTypes.Reference{
+				Source: "cwe.mitre.org",
+				URL:    u,
+			})
 		}
-		out = append(out, referenceTypes.Reference{
-			Source: "cwe.mitre.org",
-			URL:    r.URL,
-		})
 	}
 	return out
 }
@@ -574,8 +570,44 @@ func collectNotes(ns []cwe.Note) []noteTypes.Note {
 	out := make([]noteTypes.Note, 0, len(ns))
 	for _, n := range ns {
 		out = append(out, noteTypes.Note{
-			Type: n.Type,
-			Text: n.Text,
+			Type:        n.Type,
+			Text:        n.Text,
+			Version:     n.Version,
+			ReleaseDate: n.ReleaseDate,
+		})
+	}
+	return out
+}
+
+func convertMembers(ms []cwe.HasMember) []memberTypes.Member {
+	out := make([]memberTypes.Member, 0, len(ms))
+	for _, m := range ms {
+		out = append(out, memberTypes.Member{
+			CWEID:      fmt.Sprintf("CWE-%s", m.CWEID),
+			ViewID:     fmt.Sprintf("CWE-%s", m.ViewID),
+			Dimensions: convertDimensions(m.Dimensions),
+		})
+	}
+	return out
+}
+
+func convertDimensions(ds []cwe.Dimension) []dimensionTypes.Dimension {
+	out := make([]dimensionTypes.Dimension, 0, len(ds))
+	for _, d := range ds {
+		out = append(out, dimensionTypes.Dimension{
+			Type:  d.Type,
+			Value: d.Value,
+		})
+	}
+	return out
+}
+
+func convertCustomPhases(ps []cwe.CustomPhase) []customphaseTypes.CustomPhase {
+	out := make([]customphaseTypes.CustomPhase, 0, len(ps))
+	for _, p := range ps {
+		out = append(out, customphaseTypes.CustomPhase{
+			Domain: p.Domain,
+			Phase:  p.Phase,
 		})
 	}
 	return out

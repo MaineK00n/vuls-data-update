@@ -107,16 +107,24 @@
 		}
 	],
 	"content_history": {
-		"submission": {
-			"submission_name": "CWE Content Team",
-			"submission_organization": "MITRE",
-			"submission_date": "2023-04-25"
-		},
+		"submission": [
+			{
+				"submission_name": [
+					"CWE Content Team"
+				],
+				"submission_organization": "MITRE",
+				"submission_date": "2023-04-25",
+				"submission_version": "4.11",
+				"submission_release_date": "2023-04-23"
+			}
+		],
 		"modification": [
 			{
 				"modification_name": "CWE Content Team",
 				"modification_organization": "MITRE",
 				"modification_date": "2023-06-29",
+				"modification_version": "4.12",
+				"modification_release_date": "2023-06-29",
 				"modification_comment": "updated Mapping_Notes"
 			}
 		]

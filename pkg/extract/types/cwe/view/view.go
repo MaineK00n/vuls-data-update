@@ -20,6 +20,9 @@ type View struct {
 
 func (v *View) Sort() {
 	slices.SortFunc(v.Audience, audienceTypes.Compare)
+	for i := range v.Members {
+		(&v.Members[i]).Sort()
+	}
 	slices.SortFunc(v.Members, memberTypes.Compare)
 	slices.SortFunc(v.Notes, noteTypes.Compare)
 	v.MappingNotes.Sort()

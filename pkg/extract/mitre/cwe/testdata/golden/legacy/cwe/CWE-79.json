@@ -58,15 +58,15 @@
 	"data_source": {
 		"id": "mitre-cwe",
 		"raws": [
-			"fixtures/category/1347.json",
-			"fixtures/category/1440.json",
-			"fixtures/view/1200.json",
-			"fixtures/view/1344.json",
-			"fixtures/view/1430.json",
-			"fixtures/view/1435.json",
-			"fixtures/view/1450.json",
-			"fixtures/view/900.json",
-			"fixtures/weakness/79.json"
+			"legacy/category/1347.json",
+			"legacy/category/1440.json",
+			"legacy/view/1200.json",
+			"legacy/view/1344.json",
+			"legacy/view/1430.json",
+			"legacy/view/1435.json",
+			"legacy/view/1450.json",
+			"legacy/view/900.json",
+			"legacy/weakness/79.json"
 		]
 	}
 }

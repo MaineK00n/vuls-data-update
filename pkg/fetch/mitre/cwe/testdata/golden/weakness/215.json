@@ -10,27 +10,57 @@
 			"nature": "ChildOf",
 			"cweid": "200",
 			"view_id": "1000",
-			"ordinal": "Primary"
+			"ordinal": "Primary",
+			"dimensions": [
+				{
+					"type": "Behavior-Type",
+					"value": "Insertion"
+				},
+				{
+					"type": "Info-Property",
+					"value": "Sensitive"
+				},
+				{
+					"type": "Info-Type",
+					"value": "Information"
+				},
+				{
+					"type": "Other",
+					"value": "Into Debugging Code"
+				}
+			]
 		}
 	],
 	"modes_of_introduction": [
 		{
-			"phase": "Distribution",
+			"phase": [
+				"Implementation",
+				"Build and Compilation",
+				"Distribution"
+			],
 			"note": [
 				"When debugging, it may be necessary to report detailed information to the programmer.  However, if the debugging code is not disabled when the product is operating in a production environment, then this sensitive information may be exposed to attackers."
 			]
 		}
 	],
 	"content_history": {
-		"submission": {
-			"submission_name": "PLOVER",
-			"submission_date": "2006-07-19"
-		},
+		"submission": [
+			{
+				"submission_name": [
+					"PLOVER"
+				],
+				"submission_date": "2006-07-19",
+				"submission_version": "Draft 3",
+				"submission_release_date": "2006-07-19"
+			}
+		],
 		"modification": [
 			{
 				"modification_name": "Sean Eidemiller",
 				"modification_organization": "Cigital",
 				"modification_date": "2008-07-01",
+				"modification_version": "1.0",
+				"modification_release_date": "2008-09-09",
 				"modification_comment": "added/updated demonstrative examples"
 			}
 		]

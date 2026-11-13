@@ -5,6 +5,20 @@
 	"structure": "Simple",
 	"status": "Incomplete",
 	"description": "The wrong \"handler\" is assigned to process an object or request.",
+	"dimensions": [
+		{
+			"type": "Behavior-Type",
+			"value": "Deployment"
+		},
+		{
+			"type": "Code-Type",
+			"value": "Handler"
+		},
+		{
+			"type": "Code-Property",
+			"value": "Wrong"
+		}
+	],
 	"applicable_platforms": {
 		"language": [
 			{
@@ -19,20 +33,29 @@
 			},
 			{
 				"class": "Web Based",
-				"prevalence": "Often"
+				"prevalence": "Often",
+				"note": "Web servers and web applications can make the\n\t      wrong decisions for which handler to deploy for incoming\n\t      requests."
 			}
 		]
 	},
 	"content_history": {
-		"submission": {
-			"submission_name": "PLOVER",
-			"submission_date": "2006-07-19"
-		},
+		"submission": [
+			{
+				"submission_name": [
+					"PLOVER"
+				],
+				"submission_date": "2006-07-19",
+				"submission_version": "Draft 3",
+				"submission_release_date": "2006-07-19"
+			}
+		],
 		"modification": [
 			{
 				"modification_name": "Eric Dalci",
 				"modification_organization": "Cigital",
 				"modification_date": "2008-07-01",
+				"modification_version": "1.0",
+				"modification_release_date": "2008-09-09",
 				"modification_comment": "updated Potential_Mitigations, Time_of_Introduction"
 			}
 		]
