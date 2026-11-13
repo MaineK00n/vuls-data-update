@@ -303,6 +303,17 @@ func TestPull(t *testing.T) {
 			wantErr:  "switch to main...v0.0.2: ",
 		},
 		{
+			// Neither a branch nor a tag, and a name go-git's revision parser
+			// rejects: contains cannot tell whether it is there.
+			name: "vuls-data-raw-test checkout: v9@9 (not a tag), restore: false, go-git",
+			args: args{
+				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test",
+				opts:       []pull.Option{pull.WithCheckout("v9@9"), pull.WithRestore(false), pull.WithUseNativeGit(false)},
+			},
+			hasError: true,
+			wantErr:  `get checkout options: get "v9@9" as commit: `,
+		},
+		{
 			name: "vuls-data-raw-test-archive-1 restore: false, native git",
 			args: args{
 				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test-archive-1",
@@ -417,6 +428,36 @@ func TestPull(t *testing.T) {
 				}
 			}
 		})
+	}
+}
+
+// TestPullWithoutGit checks that a target native git cannot be run to check
+// out is not reported as not in the repository: contains cannot tell, so the
+// error of switch is returned as it is.
+func TestPullWithoutGit(t *testing.T) {
+	ts := httptest.NewTestServer(t, registry.New())
+
+	originalTransport := http.DefaultTransport
+	http.DefaultTransport = ts.Client().Transport
+	t.Cleanup(func() {
+		http.DefaultTransport = originalTransport
+	})
+
+	repo, err := remote.NewRepository("ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test")
+	if err != nil {
+		t.Fatalf("new repository: %v", err)
+	}
+
+	if err := setup(fmt.Sprintf("%s/%s", repo.Reference.Registry, repo.Reference.Repository)); err != nil {
+		t.Fatalf("setup: %v", err)
+	}
+
+	// The pull itself needs no git, only the checkout.
+	t.Setenv("PATH", t.TempDir())
+
+	err = pull.Pull(repo.Reference.String(), pull.WithDir(t.TempDir()), pull.WithCheckout("9d3d5d486d4c9414321a2df56f2e007c4c2c8fac"), pull.WithUseNativeGit(true))
+	if want := "switch to 9d3d5d486d4c9414321a2df56f2e007c4c2c8fac: "; err == nil || !strings.HasPrefix(err.Error(), want) {
+		t.Errorf("Pull() error does not begin with %q, error: %v", want, err)
 	}
 }
 
