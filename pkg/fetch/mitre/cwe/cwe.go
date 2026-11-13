@@ -6,7 +6,6 @@ import (
 	"encoding/xml"
 	"fmt"
 	"io"
-	"io/fs"
 	"log/slog"
 	"net/http"
 	"os"
@@ -173,7 +172,7 @@ func Fetch(opts ...Option) error {
 	for _, kind := range []string{"weakness", "category", "view"} {
 		d := filepath.Join(options.dir, kind)
 		es, err := os.ReadDir(d)
-		if err != nil && !errors.Is(err, fs.ErrNotExist) {
+		if err != nil {
 			return errors.Wrapf(err, "read %s", d)
 		}
 		if len(es) == 0 {
