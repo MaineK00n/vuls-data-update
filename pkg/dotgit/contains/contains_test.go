@@ -249,6 +249,14 @@ func TestContainsWithBranch(t *testing.T) {
 			msg:      "check refs/heads/nightly exists: branch not found",
 		},
 		{
+			// Neither exists. The commit is looked up first.
+			name:     "missing commit and missing branch",
+			args:     args{repository: "full", commit: "0123456789abcdef0123456789abcdef01234567", branch: "nightly"},
+			wantErr:  contains.ErrCommitNotFound,
+			hasError: true,
+			msg:      "resolve 0123456789abcdef0123456789abcdef01234567 (the history may have been truncated or rewritten): commit not found",
+		},
+		{
 			// Commit 1. Read as a revision, refs/heads/foo-1-gf71e7052 is describe
 			// output for commit 4, which contains commit 1.
 			name:     "missing branch named like describe output",
