@@ -90,6 +90,11 @@ func TestIsExactVersion(t *testing.T) {
 		{name: "FortiSandbox Cloud: three components is exact", args: args{name: "FortiSandbox Cloud", ver: "5.0.4"}, want: true},
 		{name: "FortiSandbox PaaS: year-based two components is a train", args: args{name: "FortiSandbox PaaS", ver: "23.4"}, want: false},
 		{name: "FortiSandbox PaaS: build-suffixed release is exact", args: args{name: "FortiSandbox PaaS", ver: "23.4.4350"}, want: true},
+		// FortiSASE-Sovereign follows FortiSASE's milestone-letter scheme: a
+		// lettered release is exact, and a bare "25.2" (as FG-IR-26-227 lists
+		// it next to 25.3.a, 25.4.a and 26.2.c) is the train below 25.2.a.
+		{name: "FortiSASE-Sovereign: letter component is exact", args: args{name: "FortiSASE-Sovereign", ver: "25.3.a"}, want: true},
+		{name: "FortiSASE-Sovereign: two components is a train", args: args{name: "FortiSASE-Sovereign", ver: "25.2"}, want: false},
 		// Unknown product falls back to the three-component rule.
 		{name: "unknown product: two components is a train", args: args{name: "FortiNonexistent", ver: "1.2"}, want: false},
 		{name: "unknown product: three components is exact", args: args{name: "FortiNonexistent", ver: "1.2.3"}, want: true},
@@ -117,6 +122,7 @@ func TestTrainRange(t *testing.T) {
 		{name: "two-component train", args: args{name: "FortiOS", train: "7.0"}, want: ccRangeTypes.Range{GreaterEqual: "7.0", LessThan: "7.1"}},
 		{name: "bare major train", args: args{name: "FortiOS", train: "7"}, want: ccRangeTypes.Range{GreaterEqual: "7", LessThan: "8"}},
 		{name: "year-based bare major train", args: args{name: "FortiSandbox Cloud", train: "24"}, want: ccRangeTypes.Range{GreaterEqual: "24", LessThan: "25"}},
+		{name: "milestone-letter product two-component train", args: args{name: "FortiSASE-Sovereign", train: "25.2"}, want: ccRangeTypes.Range{GreaterEqual: "25.2", LessThan: "25.3"}},
 		// Unknown product falls back to the three-component rule; also
 		// exercises the multi-digit last-component increment.
 		{name: "unknown product multi-digit last component", args: args{name: "FortiNonexistent", train: "6.253"}, want: ccRangeTypes.Range{GreaterEqual: "6.253", LessThan: "6.254"}},
@@ -169,6 +175,11 @@ func TestResolve(t *testing.T) {
 		// No Fortinet CVE record gives FortiSIEM Cloud a CPE yet, nor does NVD:
 		// the CNA's naming rule, and "a" for a service.
 		{name: "FortiSIEM Cloud", wantCPEs: []string{"cpe:2.3:a:fortinet:fortisiemcloud:*:*:*:*:*:*:*:*"}, wantRange: ccRangeTypes.RangeTypeFortinetFortiSIEMCloud, wantOK: true},
+		// Neither do the CVE records of the FG-IR-26-227/228/234/247/251
+		// advisories that first list FortiSASE-Sovereign (they name only
+		// FortiManager, FortiAnalyzer and their Cloud services), nor NVD: the
+		// CNA's naming rule, "a" as for FortiSASE, and its own range type.
+		{name: "FortiSASE-Sovereign", wantCPEs: []string{"cpe:2.3:a:fortinet:fortisase-sovereign:*:*:*:*:*:*:*:*"}, wantRange: ccRangeTypes.RangeTypeFortinetFortiSASESovereign, wantOK: true},
 		{name: "Nonexistent Product", wantOK: false},
 	}
 	for _, tt := range tests {

@@ -1,0 +1,1386 @@
+{
+	"document_title": "Improper control of generation of code in GUI",
+	"document_type": "Fortinet PSIRT Advisories",
+	"documentpublisher": {
+		"type": "Vendor",
+		"contact_details": "\n            Fortinet PSIRT Contact:\n            Website: https://fortiguard.fortinet.com/faq/psirt-contact\n        "
+	},
+	"documenttracking": {
+		"identification": {
+			"id": "FG-IR-26-227"
+		},
+		"status": "Final",
+		"version": "1",
+		"revisionhistory": {
+			"revision": {
+				"number": "1",
+				"date": "2026-11-10T00:00:00",
+				"description": "Initial publication"
+			}
+		},
+		"initial_release_date": "2026-11-10T00:00:00",
+		"current_release_date": "2026-11-10T00:00:00"
+	},
+	"documentnotes": {
+		"note": [
+			{
+				"text": "\n            An Improper Control of Generation of Code ('Code Injection') vulnerability [CWE-94] and a Buffer Copy without Checking Size of Input ('Classic Buffer Overflow') vulnerability [CWE-120] in FortiManager, FortiAnalyzer, FortiManager Cloud, and FortiAnalyzer Cloud may allow a remote authenticated attacker to execute unauthorized code or commands via crafted HTTP requests.\n        ",
+				"title": "Summary",
+				"type": "Summary",
+				"ordinal": "1"
+			},
+			{
+				"text": "\n            None\n        ",
+				"title": "Description",
+				"type": "General",
+				"ordinal": "2"
+			},
+			{
+				"text": "\n            Execute unauthorized code or commands\n        ",
+				"title": "Impact",
+				"type": "General",
+				"ordinal": "3"
+			},
+			{
+				"text": "\n            None\n        ",
+				"title": "Solutions",
+				"type": "General",
+				"ordinal": "4"
+			}
+		]
+	},
+	"acknowledgments": {
+		"acknowledgment": [
+			{
+				"description": "Internally discovered and reported by Loic Pantano of the Fortinet Product Security team with the use of the frontier AI model: Claude Mythos."
+			}
+		]
+	},
+	"vulnerability": {
+		"ordinal": "1",
+		"title": "Improper control of generation of code in GUI",
+		"references": {
+			"type": "Self",
+			"reference": [
+				{
+					"url": "https://fortiguard.fortinet.com/psirt/FG-IR-26-227",
+					"description": "Improper control of generation of code in GUI"
+				}
+			]
+		},
+		"cve": [
+			"CVE-2026-126182"
+		],
+		"product_statuses": {
+			"status": {
+				"type": "Known Affected",
+				"product_id": [
+					"FortiAnalyzer-8.0.1",
+					"FortiAnalyzer-8.0.0",
+					"FortiAnalyzer-7.6.7",
+					"FortiAnalyzer-7.6.6",
+					"FortiAnalyzer-7.6.5",
+					"FortiAnalyzer-7.6.4",
+					"FortiAnalyzer-7.6.3",
+					"FortiAnalyzer-7.6.2",
+					"FortiAnalyzer-7.6.1",
+					"FortiAnalyzer-7.6.0",
+					"FortiAnalyzer-7.4.11",
+					"FortiAnalyzer-7.4.10",
+					"FortiAnalyzer-7.4.9",
+					"FortiAnalyzer-7.4.8",
+					"FortiAnalyzer-7.4.7",
+					"FortiAnalyzer-7.4.6",
+					"FortiAnalyzer-7.4.5",
+					"FortiAnalyzer-7.4.4",
+					"FortiAnalyzer-7.4.3",
+					"FortiAnalyzer-7.4.2",
+					"FortiAnalyzer-7.4.1",
+					"FortiAnalyzer-7.4.0",
+					"FortiAnalyzer-7.2.12",
+					"FortiAnalyzer-7.2.11",
+					"FortiAnalyzer-7.2.10",
+					"FortiAnalyzer-7.2.9",
+					"FortiAnalyzer-7.2.8",
+					"FortiAnalyzer-7.2.7",
+					"FortiAnalyzer-7.2.6",
+					"FortiAnalyzer-7.2.5",
+					"FortiAnalyzer-7.2.4",
+					"FortiAnalyzer-7.2.3",
+					"FortiAnalyzer-7.2.2",
+					"FortiAnalyzer-7.2.1",
+					"FortiAnalyzer-7.2.0",
+					"FortiAnalyzer Cloud-8.0.1",
+					"FortiAnalyzer Cloud-8.0.0",
+					"FortiAnalyzer Cloud-7.6.7",
+					"FortiAnalyzer Cloud-7.6.6",
+					"FortiAnalyzer Cloud-7.6.5",
+					"FortiAnalyzer Cloud-7.6.4",
+					"FortiAnalyzer Cloud-7.6.3",
+					"FortiAnalyzer Cloud-7.6.2",
+					"FortiAnalyzer Cloud-7.6.1",
+					"FortiAnalyzer Cloud-7.6.0",
+					"FortiAnalyzer Cloud-7.4.11",
+					"FortiAnalyzer Cloud-7.4.10",
+					"FortiAnalyzer Cloud-7.4.9",
+					"FortiAnalyzer Cloud-7.4.8",
+					"FortiAnalyzer Cloud-7.4.7",
+					"FortiAnalyzer Cloud-7.4.6",
+					"FortiAnalyzer Cloud-7.4.5",
+					"FortiAnalyzer Cloud-7.4.4",
+					"FortiAnalyzer Cloud-7.4.3",
+					"FortiAnalyzer Cloud-7.4.2",
+					"FortiAnalyzer Cloud-7.4.1",
+					"FortiAnalyzer Cloud-7.2.12",
+					"FortiAnalyzer Cloud-7.2.11",
+					"FortiAnalyzer Cloud-7.2.10",
+					"FortiAnalyzer Cloud-7.2.9",
+					"FortiAnalyzer Cloud-7.2.8",
+					"FortiAnalyzer Cloud-7.2.7",
+					"FortiAnalyzer Cloud-7.2.6",
+					"FortiAnalyzer Cloud-7.2.5",
+					"FortiAnalyzer Cloud-7.2.4",
+					"FortiAnalyzer Cloud-7.2.3",
+					"FortiAnalyzer Cloud-7.2.2",
+					"FortiAnalyzer Cloud-7.2.1",
+					"FortiManager-8.0.1",
+					"FortiManager-8.0.0",
+					"FortiManager-7.6.7",
+					"FortiManager-7.6.6",
+					"FortiManager-7.6.5",
+					"FortiManager-7.6.4",
+					"FortiManager-7.6.3",
+					"FortiManager-7.6.2",
+					"FortiManager-7.6.1",
+					"FortiManager-7.6.0",
+					"FortiManager-7.4.11",
+					"FortiManager-7.4.10",
+					"FortiManager-7.4.9",
+					"FortiManager-7.4.8",
+					"FortiManager-7.4.7",
+					"FortiManager-7.4.6",
+					"FortiManager-7.4.5",
+					"FortiManager-7.4.4",
+					"FortiManager-7.4.3",
+					"FortiManager-7.4.2",
+					"FortiManager-7.4.1",
+					"FortiManager-7.4.0",
+					"FortiManager-7.2.12",
+					"FortiManager-7.2.11",
+					"FortiManager-7.2.10",
+					"FortiManager-7.2.9",
+					"FortiManager-7.2.8",
+					"FortiManager-7.2.7",
+					"FortiManager-7.2.6",
+					"FortiManager-7.2.5",
+					"FortiManager-7.2.4",
+					"FortiManager-7.2.3",
+					"FortiManager-7.2.2",
+					"FortiManager-7.2.1",
+					"FortiManager-7.2.0",
+					"FortiManager Cloud-8.0.1",
+					"FortiManager Cloud-8.0.0",
+					"FortiManager Cloud-7.6.7",
+					"FortiManager Cloud-7.6.6",
+					"FortiManager Cloud-7.6.5",
+					"FortiManager Cloud-7.6.4",
+					"FortiManager Cloud-7.6.3",
+					"FortiManager Cloud-7.6.2",
+					"FortiManager Cloud-7.6.1",
+					"FortiManager Cloud-7.6.0",
+					"FortiManager Cloud-7.4.11",
+					"FortiManager Cloud-7.4.10",
+					"FortiManager Cloud-7.4.9",
+					"FortiManager Cloud-7.4.8",
+					"FortiManager Cloud-7.4.7",
+					"FortiManager Cloud-7.4.6",
+					"FortiManager Cloud-7.4.5",
+					"FortiManager Cloud-7.4.4",
+					"FortiManager Cloud-7.4.3",
+					"FortiManager Cloud-7.4.2",
+					"FortiManager Cloud-7.4.1",
+					"FortiManager Cloud-7.2.12",
+					"FortiManager Cloud-7.2.11",
+					"FortiManager Cloud-7.2.10",
+					"FortiManager Cloud-7.2.9",
+					"FortiManager Cloud-7.2.8",
+					"FortiManager Cloud-7.2.7",
+					"FortiManager Cloud-7.2.6",
+					"FortiManager Cloud-7.2.5",
+					"FortiManager Cloud-7.2.4",
+					"FortiManager Cloud-7.2.3",
+					"FortiManager Cloud-7.2.2",
+					"FortiManager Cloud-7.2.1",
+					"FortiSASE-Sovereign-26.2.c",
+					"FortiSASE-Sovereign-25.4.a",
+					"FortiSASE-Sovereign-25.3.a",
+					"FortiSASE-Sovereign-25.2"
+				]
+			}
+		},
+		"cvss_scoresets": {
+			"scoreset_v3": {
+				"base_score_v3": "7.2",
+				"vector_v3": "CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:U/C:H/I:H/A:H/E:U/RL:U/RC:R"
+			}
+		}
+	},
+	"product_tree": {
+		"branch": {
+			"name": "Fortinet",
+			"type": "Vendor",
+			"branch": [
+				{
+					"name": "FortiAnalyzer",
+					"type": "Product Name",
+					"branch": [
+						{
+							"name": "8.0.1",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiAnalyzer 8.0.1",
+								"product_id": "FortiAnalyzer-8.0.1"
+							}
+						},
+						{
+							"name": "8.0.0",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiAnalyzer 8.0.0",
+								"product_id": "FortiAnalyzer-8.0.0"
+							}
+						},
+						{
+							"name": "7.6.7",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiAnalyzer 7.6.7",
+								"product_id": "FortiAnalyzer-7.6.7"
+							}
+						},
+						{
+							"name": "7.6.6",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiAnalyzer 7.6.6",
+								"product_id": "FortiAnalyzer-7.6.6"
+							}
+						},
+						{
+							"name": "7.6.5",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiAnalyzer 7.6.5",
+								"product_id": "FortiAnalyzer-7.6.5"
+							}
+						},
+						{
+							"name": "7.6.4",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiAnalyzer 7.6.4",
+								"product_id": "FortiAnalyzer-7.6.4"
+							}
+						},
+						{
+							"name": "7.6.3",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiAnalyzer 7.6.3",
+								"product_id": "FortiAnalyzer-7.6.3"
+							}
+						},
+						{
+							"name": "7.6.2",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiAnalyzer 7.6.2",
+								"product_id": "FortiAnalyzer-7.6.2"
+							}
+						},
+						{
+							"name": "7.6.1",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiAnalyzer 7.6.1",
+								"product_id": "FortiAnalyzer-7.6.1"
+							}
+						},
+						{
+							"name": "7.6.0",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiAnalyzer 7.6.0",
+								"product_id": "FortiAnalyzer-7.6.0"
+							}
+						},
+						{
+							"name": "7.4.11",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiAnalyzer 7.4.11",
+								"product_id": "FortiAnalyzer-7.4.11"
+							}
+						},
+						{
+							"name": "7.4.10",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiAnalyzer 7.4.10",
+								"product_id": "FortiAnalyzer-7.4.10"
+							}
+						},
+						{
+							"name": "7.4.9",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiAnalyzer 7.4.9",
+								"product_id": "FortiAnalyzer-7.4.9"
+							}
+						},
+						{
+							"name": "7.4.8",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiAnalyzer 7.4.8",
+								"product_id": "FortiAnalyzer-7.4.8"
+							}
+						},
+						{
+							"name": "7.4.7",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiAnalyzer 7.4.7",
+								"product_id": "FortiAnalyzer-7.4.7"
+							}
+						},
+						{
+							"name": "7.4.6",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiAnalyzer 7.4.6",
+								"product_id": "FortiAnalyzer-7.4.6"
+							}
+						},
+						{
+							"name": "7.4.5",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiAnalyzer 7.4.5",
+								"product_id": "FortiAnalyzer-7.4.5"
+							}
+						},
+						{
+							"name": "7.4.4",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiAnalyzer 7.4.4",
+								"product_id": "FortiAnalyzer-7.4.4"
+							}
+						},
+						{
+							"name": "7.4.3",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiAnalyzer 7.4.3",
+								"product_id": "FortiAnalyzer-7.4.3"
+							}
+						},
+						{
+							"name": "7.4.2",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiAnalyzer 7.4.2",
+								"product_id": "FortiAnalyzer-7.4.2"
+							}
+						},
+						{
+							"name": "7.4.1",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiAnalyzer 7.4.1",
+								"product_id": "FortiAnalyzer-7.4.1"
+							}
+						},
+						{
+							"name": "7.4.0",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiAnalyzer 7.4.0",
+								"product_id": "FortiAnalyzer-7.4.0"
+							}
+						},
+						{
+							"name": "7.2.12",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiAnalyzer 7.2.12",
+								"product_id": "FortiAnalyzer-7.2.12"
+							}
+						},
+						{
+							"name": "7.2.11",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiAnalyzer 7.2.11",
+								"product_id": "FortiAnalyzer-7.2.11"
+							}
+						},
+						{
+							"name": "7.2.10",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiAnalyzer 7.2.10",
+								"product_id": "FortiAnalyzer-7.2.10"
+							}
+						},
+						{
+							"name": "7.2.9",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiAnalyzer 7.2.9",
+								"product_id": "FortiAnalyzer-7.2.9"
+							}
+						},
+						{
+							"name": "7.2.8",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiAnalyzer 7.2.8",
+								"product_id": "FortiAnalyzer-7.2.8"
+							}
+						},
+						{
+							"name": "7.2.7",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiAnalyzer 7.2.7",
+								"product_id": "FortiAnalyzer-7.2.7"
+							}
+						},
+						{
+							"name": "7.2.6",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiAnalyzer 7.2.6",
+								"product_id": "FortiAnalyzer-7.2.6"
+							}
+						},
+						{
+							"name": "7.2.5",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiAnalyzer 7.2.5",
+								"product_id": "FortiAnalyzer-7.2.5"
+							}
+						},
+						{
+							"name": "7.2.4",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiAnalyzer 7.2.4",
+								"product_id": "FortiAnalyzer-7.2.4"
+							}
+						},
+						{
+							"name": "7.2.3",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiAnalyzer 7.2.3",
+								"product_id": "FortiAnalyzer-7.2.3"
+							}
+						},
+						{
+							"name": "7.2.2",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiAnalyzer 7.2.2",
+								"product_id": "FortiAnalyzer-7.2.2"
+							}
+						},
+						{
+							"name": "7.2.1",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiAnalyzer 7.2.1",
+								"product_id": "FortiAnalyzer-7.2.1"
+							}
+						},
+						{
+							"name": "7.2.0",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiAnalyzer 7.2.0",
+								"product_id": "FortiAnalyzer-7.2.0"
+							}
+						}
+					]
+				},
+				{
+					"name": "FortiAnalyzer Cloud",
+					"type": "Product Name",
+					"branch": [
+						{
+							"name": "8.0.1",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiAnalyzer Cloud 8.0.1",
+								"product_id": "FortiAnalyzer Cloud-8.0.1"
+							}
+						},
+						{
+							"name": "8.0.0",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiAnalyzer Cloud 8.0.0",
+								"product_id": "FortiAnalyzer Cloud-8.0.0"
+							}
+						},
+						{
+							"name": "7.6.7",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiAnalyzer Cloud 7.6.7",
+								"product_id": "FortiAnalyzer Cloud-7.6.7"
+							}
+						},
+						{
+							"name": "7.6.6",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiAnalyzer Cloud 7.6.6",
+								"product_id": "FortiAnalyzer Cloud-7.6.6"
+							}
+						},
+						{
+							"name": "7.6.5",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiAnalyzer Cloud 7.6.5",
+								"product_id": "FortiAnalyzer Cloud-7.6.5"
+							}
+						},
+						{
+							"name": "7.6.4",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiAnalyzer Cloud 7.6.4",
+								"product_id": "FortiAnalyzer Cloud-7.6.4"
+							}
+						},
+						{
+							"name": "7.6.3",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiAnalyzer Cloud 7.6.3",
+								"product_id": "FortiAnalyzer Cloud-7.6.3"
+							}
+						},
+						{
+							"name": "7.6.2",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiAnalyzer Cloud 7.6.2",
+								"product_id": "FortiAnalyzer Cloud-7.6.2"
+							}
+						},
+						{
+							"name": "7.6.1",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiAnalyzer Cloud 7.6.1",
+								"product_id": "FortiAnalyzer Cloud-7.6.1"
+							}
+						},
+						{
+							"name": "7.6.0",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiAnalyzer Cloud 7.6.0",
+								"product_id": "FortiAnalyzer Cloud-7.6.0"
+							}
+						},
+						{
+							"name": "7.4.11",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiAnalyzer Cloud 7.4.11",
+								"product_id": "FortiAnalyzer Cloud-7.4.11"
+							}
+						},
+						{
+							"name": "7.4.10",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiAnalyzer Cloud 7.4.10",
+								"product_id": "FortiAnalyzer Cloud-7.4.10"
+							}
+						},
+						{
+							"name": "7.4.9",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiAnalyzer Cloud 7.4.9",
+								"product_id": "FortiAnalyzer Cloud-7.4.9"
+							}
+						},
+						{
+							"name": "7.4.8",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiAnalyzer Cloud 7.4.8",
+								"product_id": "FortiAnalyzer Cloud-7.4.8"
+							}
+						},
+						{
+							"name": "7.4.7",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiAnalyzer Cloud 7.4.7",
+								"product_id": "FortiAnalyzer Cloud-7.4.7"
+							}
+						},
+						{
+							"name": "7.4.6",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiAnalyzer Cloud 7.4.6",
+								"product_id": "FortiAnalyzer Cloud-7.4.6"
+							}
+						},
+						{
+							"name": "7.4.5",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiAnalyzer Cloud 7.4.5",
+								"product_id": "FortiAnalyzer Cloud-7.4.5"
+							}
+						},
+						{
+							"name": "7.4.4",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiAnalyzer Cloud 7.4.4",
+								"product_id": "FortiAnalyzer Cloud-7.4.4"
+							}
+						},
+						{
+							"name": "7.4.3",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiAnalyzer Cloud 7.4.3",
+								"product_id": "FortiAnalyzer Cloud-7.4.3"
+							}
+						},
+						{
+							"name": "7.4.2",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiAnalyzer Cloud 7.4.2",
+								"product_id": "FortiAnalyzer Cloud-7.4.2"
+							}
+						},
+						{
+							"name": "7.4.1",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiAnalyzer Cloud 7.4.1",
+								"product_id": "FortiAnalyzer Cloud-7.4.1"
+							}
+						},
+						{
+							"name": "7.2.12",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiAnalyzer Cloud 7.2.12",
+								"product_id": "FortiAnalyzer Cloud-7.2.12"
+							}
+						},
+						{
+							"name": "7.2.11",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiAnalyzer Cloud 7.2.11",
+								"product_id": "FortiAnalyzer Cloud-7.2.11"
+							}
+						},
+						{
+							"name": "7.2.10",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiAnalyzer Cloud 7.2.10",
+								"product_id": "FortiAnalyzer Cloud-7.2.10"
+							}
+						},
+						{
+							"name": "7.2.9",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiAnalyzer Cloud 7.2.9",
+								"product_id": "FortiAnalyzer Cloud-7.2.9"
+							}
+						},
+						{
+							"name": "7.2.8",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiAnalyzer Cloud 7.2.8",
+								"product_id": "FortiAnalyzer Cloud-7.2.8"
+							}
+						},
+						{
+							"name": "7.2.7",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiAnalyzer Cloud 7.2.7",
+								"product_id": "FortiAnalyzer Cloud-7.2.7"
+							}
+						},
+						{
+							"name": "7.2.6",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiAnalyzer Cloud 7.2.6",
+								"product_id": "FortiAnalyzer Cloud-7.2.6"
+							}
+						},
+						{
+							"name": "7.2.5",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiAnalyzer Cloud 7.2.5",
+								"product_id": "FortiAnalyzer Cloud-7.2.5"
+							}
+						},
+						{
+							"name": "7.2.4",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiAnalyzer Cloud 7.2.4",
+								"product_id": "FortiAnalyzer Cloud-7.2.4"
+							}
+						},
+						{
+							"name": "7.2.3",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiAnalyzer Cloud 7.2.3",
+								"product_id": "FortiAnalyzer Cloud-7.2.3"
+							}
+						},
+						{
+							"name": "7.2.2",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiAnalyzer Cloud 7.2.2",
+								"product_id": "FortiAnalyzer Cloud-7.2.2"
+							}
+						},
+						{
+							"name": "7.2.1",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiAnalyzer Cloud 7.2.1",
+								"product_id": "FortiAnalyzer Cloud-7.2.1"
+							}
+						}
+					]
+				},
+				{
+					"name": "FortiManager",
+					"type": "Product Name",
+					"branch": [
+						{
+							"name": "8.0.1",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiManager 8.0.1",
+								"product_id": "FortiManager-8.0.1"
+							}
+						},
+						{
+							"name": "8.0.0",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiManager 8.0.0",
+								"product_id": "FortiManager-8.0.0"
+							}
+						},
+						{
+							"name": "7.6.7",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiManager 7.6.7",
+								"product_id": "FortiManager-7.6.7"
+							}
+						},
+						{
+							"name": "7.6.6",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiManager 7.6.6",
+								"product_id": "FortiManager-7.6.6"
+							}
+						},
+						{
+							"name": "7.6.5",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiManager 7.6.5",
+								"product_id": "FortiManager-7.6.5"
+							}
+						},
+						{
+							"name": "7.6.4",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiManager 7.6.4",
+								"product_id": "FortiManager-7.6.4"
+							}
+						},
+						{
+							"name": "7.6.3",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiManager 7.6.3",
+								"product_id": "FortiManager-7.6.3"
+							}
+						},
+						{
+							"name": "7.6.2",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiManager 7.6.2",
+								"product_id": "FortiManager-7.6.2"
+							}
+						},
+						{
+							"name": "7.6.1",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiManager 7.6.1",
+								"product_id": "FortiManager-7.6.1"
+							}
+						},
+						{
+							"name": "7.6.0",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiManager 7.6.0",
+								"product_id": "FortiManager-7.6.0"
+							}
+						},
+						{
+							"name": "7.4.11",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiManager 7.4.11",
+								"product_id": "FortiManager-7.4.11"
+							}
+						},
+						{
+							"name": "7.4.10",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiManager 7.4.10",
+								"product_id": "FortiManager-7.4.10"
+							}
+						},
+						{
+							"name": "7.4.9",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiManager 7.4.9",
+								"product_id": "FortiManager-7.4.9"
+							}
+						},
+						{
+							"name": "7.4.8",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiManager 7.4.8",
+								"product_id": "FortiManager-7.4.8"
+							}
+						},
+						{
+							"name": "7.4.7",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiManager 7.4.7",
+								"product_id": "FortiManager-7.4.7"
+							}
+						},
+						{
+							"name": "7.4.6",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiManager 7.4.6",
+								"product_id": "FortiManager-7.4.6"
+							}
+						},
+						{
+							"name": "7.4.5",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiManager 7.4.5",
+								"product_id": "FortiManager-7.4.5"
+							}
+						},
+						{
+							"name": "7.4.4",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiManager 7.4.4",
+								"product_id": "FortiManager-7.4.4"
+							}
+						},
+						{
+							"name": "7.4.3",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiManager 7.4.3",
+								"product_id": "FortiManager-7.4.3"
+							}
+						},
+						{
+							"name": "7.4.2",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiManager 7.4.2",
+								"product_id": "FortiManager-7.4.2"
+							}
+						},
+						{
+							"name": "7.4.1",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiManager 7.4.1",
+								"product_id": "FortiManager-7.4.1"
+							}
+						},
+						{
+							"name": "7.4.0",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiManager 7.4.0",
+								"product_id": "FortiManager-7.4.0"
+							}
+						},
+						{
+							"name": "7.2.12",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiManager 7.2.12",
+								"product_id": "FortiManager-7.2.12"
+							}
+						},
+						{
+							"name": "7.2.11",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiManager 7.2.11",
+								"product_id": "FortiManager-7.2.11"
+							}
+						},
+						{
+							"name": "7.2.10",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiManager 7.2.10",
+								"product_id": "FortiManager-7.2.10"
+							}
+						},
+						{
+							"name": "7.2.9",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiManager 7.2.9",
+								"product_id": "FortiManager-7.2.9"
+							}
+						},
+						{
+							"name": "7.2.8",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiManager 7.2.8",
+								"product_id": "FortiManager-7.2.8"
+							}
+						},
+						{
+							"name": "7.2.7",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiManager 7.2.7",
+								"product_id": "FortiManager-7.2.7"
+							}
+						},
+						{
+							"name": "7.2.6",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiManager 7.2.6",
+								"product_id": "FortiManager-7.2.6"
+							}
+						},
+						{
+							"name": "7.2.5",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiManager 7.2.5",
+								"product_id": "FortiManager-7.2.5"
+							}
+						},
+						{
+							"name": "7.2.4",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiManager 7.2.4",
+								"product_id": "FortiManager-7.2.4"
+							}
+						},
+						{
+							"name": "7.2.3",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiManager 7.2.3",
+								"product_id": "FortiManager-7.2.3"
+							}
+						},
+						{
+							"name": "7.2.2",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiManager 7.2.2",
+								"product_id": "FortiManager-7.2.2"
+							}
+						},
+						{
+							"name": "7.2.1",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiManager 7.2.1",
+								"product_id": "FortiManager-7.2.1"
+							}
+						},
+						{
+							"name": "7.2.0",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiManager 7.2.0",
+								"product_id": "FortiManager-7.2.0"
+							}
+						}
+					]
+				},
+				{
+					"name": "FortiManager Cloud",
+					"type": "Product Name",
+					"branch": [
+						{
+							"name": "8.0.1",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiManager Cloud 8.0.1",
+								"product_id": "FortiManager Cloud-8.0.1"
+							}
+						},
+						{
+							"name": "8.0.0",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiManager Cloud 8.0.0",
+								"product_id": "FortiManager Cloud-8.0.0"
+							}
+						},
+						{
+							"name": "7.6.7",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiManager Cloud 7.6.7",
+								"product_id": "FortiManager Cloud-7.6.7"
+							}
+						},
+						{
+							"name": "7.6.6",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiManager Cloud 7.6.6",
+								"product_id": "FortiManager Cloud-7.6.6"
+							}
+						},
+						{
+							"name": "7.6.5",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiManager Cloud 7.6.5",
+								"product_id": "FortiManager Cloud-7.6.5"
+							}
+						},
+						{
+							"name": "7.6.4",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiManager Cloud 7.6.4",
+								"product_id": "FortiManager Cloud-7.6.4"
+							}
+						},
+						{
+							"name": "7.6.3",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiManager Cloud 7.6.3",
+								"product_id": "FortiManager Cloud-7.6.3"
+							}
+						},
+						{
+							"name": "7.6.2",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiManager Cloud 7.6.2",
+								"product_id": "FortiManager Cloud-7.6.2"
+							}
+						},
+						{
+							"name": "7.6.1",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiManager Cloud 7.6.1",
+								"product_id": "FortiManager Cloud-7.6.1"
+							}
+						},
+						{
+							"name": "7.6.0",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiManager Cloud 7.6.0",
+								"product_id": "FortiManager Cloud-7.6.0"
+							}
+						},
+						{
+							"name": "7.4.11",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiManager Cloud 7.4.11",
+								"product_id": "FortiManager Cloud-7.4.11"
+							}
+						},
+						{
+							"name": "7.4.10",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiManager Cloud 7.4.10",
+								"product_id": "FortiManager Cloud-7.4.10"
+							}
+						},
+						{
+							"name": "7.4.9",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiManager Cloud 7.4.9",
+								"product_id": "FortiManager Cloud-7.4.9"
+							}
+						},
+						{
+							"name": "7.4.8",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiManager Cloud 7.4.8",
+								"product_id": "FortiManager Cloud-7.4.8"
+							}
+						},
+						{
+							"name": "7.4.7",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiManager Cloud 7.4.7",
+								"product_id": "FortiManager Cloud-7.4.7"
+							}
+						},
+						{
+							"name": "7.4.6",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiManager Cloud 7.4.6",
+								"product_id": "FortiManager Cloud-7.4.6"
+							}
+						},
+						{
+							"name": "7.4.5",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiManager Cloud 7.4.5",
+								"product_id": "FortiManager Cloud-7.4.5"
+							}
+						},
+						{
+							"name": "7.4.4",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiManager Cloud 7.4.4",
+								"product_id": "FortiManager Cloud-7.4.4"
+							}
+						},
+						{
+							"name": "7.4.3",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiManager Cloud 7.4.3",
+								"product_id": "FortiManager Cloud-7.4.3"
+							}
+						},
+						{
+							"name": "7.4.2",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiManager Cloud 7.4.2",
+								"product_id": "FortiManager Cloud-7.4.2"
+							}
+						},
+						{
+							"name": "7.4.1",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiManager Cloud 7.4.1",
+								"product_id": "FortiManager Cloud-7.4.1"
+							}
+						},
+						{
+							"name": "7.2.12",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiManager Cloud 7.2.12",
+								"product_id": "FortiManager Cloud-7.2.12"
+							}
+						},
+						{
+							"name": "7.2.11",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiManager Cloud 7.2.11",
+								"product_id": "FortiManager Cloud-7.2.11"
+							}
+						},
+						{
+							"name": "7.2.10",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiManager Cloud 7.2.10",
+								"product_id": "FortiManager Cloud-7.2.10"
+							}
+						},
+						{
+							"name": "7.2.9",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiManager Cloud 7.2.9",
+								"product_id": "FortiManager Cloud-7.2.9"
+							}
+						},
+						{
+							"name": "7.2.8",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiManager Cloud 7.2.8",
+								"product_id": "FortiManager Cloud-7.2.8"
+							}
+						},
+						{
+							"name": "7.2.7",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiManager Cloud 7.2.7",
+								"product_id": "FortiManager Cloud-7.2.7"
+							}
+						},
+						{
+							"name": "7.2.6",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiManager Cloud 7.2.6",
+								"product_id": "FortiManager Cloud-7.2.6"
+							}
+						},
+						{
+							"name": "7.2.5",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiManager Cloud 7.2.5",
+								"product_id": "FortiManager Cloud-7.2.5"
+							}
+						},
+						{
+							"name": "7.2.4",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiManager Cloud 7.2.4",
+								"product_id": "FortiManager Cloud-7.2.4"
+							}
+						},
+						{
+							"name": "7.2.3",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiManager Cloud 7.2.3",
+								"product_id": "FortiManager Cloud-7.2.3"
+							}
+						},
+						{
+							"name": "7.2.2",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiManager Cloud 7.2.2",
+								"product_id": "FortiManager Cloud-7.2.2"
+							}
+						},
+						{
+							"name": "7.2.1",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiManager Cloud 7.2.1",
+								"product_id": "FortiManager Cloud-7.2.1"
+							}
+						}
+					]
+				},
+				{
+					"name": "FortiSASE-Sovereign",
+					"type": "Product Name",
+					"branch": [
+						{
+							"name": "26.2.c",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiSASE-Sovereign 26.2.c",
+								"product_id": "FortiSASE-Sovereign-26.2.c"
+							}
+						},
+						{
+							"name": "25.4.a",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiSASE-Sovereign 25.4.a",
+								"product_id": "FortiSASE-Sovereign-25.4.a"
+							}
+						},
+						{
+							"name": "25.3.a",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiSASE-Sovereign 25.3.a",
+								"product_id": "FortiSASE-Sovereign-25.3.a"
+							}
+						},
+						{
+							"name": "25.2",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiSASE-Sovereign 25.2",
+								"product_id": "FortiSASE-Sovereign-25.2"
+							}
+						}
+					]
+				}
+			]
+		}
+	}
+}
