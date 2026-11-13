@@ -210,6 +210,37 @@ func TestPull(t *testing.T) {
 			wantHead: "9d3d5d486d4c9414321a2df56f2e007c4c2c8fab",
 		},
 		{
+			// A valid tag name that go-git's revision parser rejects, which
+			// is why go-git asks contains only after the tag lookup.
+			name: "vuls-data-raw-test-at-tag checkout: v1@2, restore: false, native git",
+			args: args{
+				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test-at-tag",
+				opts:       []pull.Option{pull.WithCheckout("v1@2"), pull.WithRestore(false), pull.WithUseNativeGit(true)},
+			},
+			golden:   "testdata/golden/vuls-data-raw-test-at-tag.tar.zst",
+			wantHead: "9d3d5d486d4c9414321a2df56f2e007c4c2c8fab",
+		},
+		{
+			name: "vuls-data-raw-test-at-tag checkout: v1@2, restore: false, go-git",
+			args: args{
+				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test-at-tag",
+				opts:       []pull.Option{pull.WithCheckout("v1@2"), pull.WithRestore(false), pull.WithUseNativeGit(false)},
+			},
+			golden:   "testdata/golden/vuls-data-raw-test-at-tag.tar.zst",
+			wantHead: "9d3d5d486d4c9414321a2df56f2e007c4c2c8fab",
+		},
+		{
+			// A target that is there but is not a commit: contains finds it,
+			// so the error of switch is returned as it is.
+			name: "vuls-data-raw-test checkout: v0.0.1^{tree}, restore: false, native git",
+			args: args{
+				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test",
+				opts:       []pull.Option{pull.WithCheckout("v0.0.1^{tree}"), pull.WithRestore(false), pull.WithUseNativeGit(true)},
+			},
+			hasError: true,
+			wantErr:  "switch to v0.0.1^{tree}: ",
+		},
+		{
 			// A commit pinned before vuls-data-db truncated the history is
 			// no longer in the repository.
 			name: "vuls-data-raw-test checkout: 9d3d5d486d4c9414321a2df56f2e007c4c2c8fac (not in the repository), restore: true, native git",
@@ -496,6 +527,9 @@ func setup(url string) error {
 		// vuls-data-raw-test with a master branch, which go-git checks out
 		// for the zero hash.
 		{fixture: "vuls-data-raw-test-master", tags: []string{"vuls-data-raw-test-master"}},
+		// vuls-data-raw-test with a tag, v1@2, whose name go-git's revision
+		// parser rejects.
+		{fixture: "vuls-data-raw-test-at-tag", tags: []string{"vuls-data-raw-test-at-tag"}},
 	} {
 		bs, err := os.ReadFile(filepath.Join("testdata", "fixtures", fmt.Sprintf("%s.tar.zst", f.fixture)))
 		if err != nil {
