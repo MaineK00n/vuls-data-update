@@ -1,0 +1,288 @@
+{
+  "document": {
+    "category": "csaf_security_advisory",
+    "csaf_version": "2.0",
+    "publisher": {
+      "category": "vendor",
+      "name": "Schneider Electric CPCERT",
+      "namespace": "https://www.se.com/ww/en/work/support/cybersecurity/security-notifications.jsp",
+      "contact_details": "cpcert@se.com"
+    },
+    "title": "APC Easy UPS On-Line Software",
+    "tracking": {
+      "current_release_date": "2020-08-11T00:00:00.000Z",
+      "id": "SEVD-2020-224-04",
+      "initial_release_date": "2020-08-11T00:00:00.000Z",
+      "status": "final",
+      "version": "1.0.0",
+      "generator": {
+        "date": "2020-08-11T00:00:00.000Z",
+        "engine": {
+          "version": "1.2",
+          "name": "Schneider Electric CSAF Generator"
+        }
+      },
+      "revision_history": [
+        {
+          "date": "2020-08-11T00:00:00.000Z",
+          "number": "1.0.0",
+          "summary": "Original Release"
+        }
+      ]
+    },
+    "references": [
+      {
+        "summary": "APC Easy UPS On-Line Software - SEVD-2020-224-04 PDF Version",
+        "url": "https://download.schneider-electric.com/files?p_Doc_Ref=SEVD-2020-224-04&p_enDocType=Security+and+Safety+Notice&p_File_Name=SEVD-2020-224-04_APC_Easy_UPS_On-Line_Software_Security_Notification.pdf",
+        "category": "self"
+      },
+      {
+        "summary": "APC Easy UPS On-Line Software - SEVD-2020-224-04 CSAF Version",
+        "url": "https://download.schneider-electric.com/files?p_Doc_Ref=SEVD-2020-224-04&p_enDocType=Security+and+Safety+Notice&p_File_Name=sevd-2020-224-04.json",
+        "category": "self"
+      },
+      {
+        "summary": "Recommended Cybersecurity Best Practices",
+        "url": "https://www.se.com/us/en/download/document/7EN52-0390/",
+        "category": "external"
+      }
+    ],
+    "lang": "en-US",
+    "distribution": {
+      "text": "Public",
+      "tlp": {
+        "label": "WHITE"
+      }
+    },
+    "notes": [
+      {
+        "category": "general",
+        "text": "We strongly recommend the following industry cybersecurity best practices.\n\nhttps://www.se.com/us/en/download/document/7EN52-0390/\n* Locate control and safety system networks and remote devices behind firewalls and isolate them from the business network.\n* Install physical controls so no unauthorized personnel can access your industrial control and safety systems, components, peripheral equipment, and networks.\n* Place all controllers in locked cabinets and never leave them in the “Program” mode.\n* Never connect programming software to any network other than the network intended for that device.\n* Scan all methods of mobile data exchange with the isolated network such as CDs, USB drives, etc. before use in the terminals or any node connected to these networks.\n* Never allow mobile devices that have connected to any other network besides the intended network to connect to the safety or control networks without proper sanitation.\n* Minimize network exposure for all control system devices and systems and ensure that they are not accessible from the Internet.\n* When remote access is required, use secure methods, such as Virtual Private Networks (VPNs). Recognize that VPNs may have vulnerabilities and should be updated to the most current version available. Also, understand that VPNs are only as secure as the connected devices.\nFor more information refer to the Schneider Electric Recommended Cybersecurity Best Practices document. \n",
+        "title": "General Security Recommendations"
+      },
+      {
+        "category": "general",
+        "text": "This document provides an overview of the identified vulnerability or vulnerabilities and actions required to mitigate. For more details and assistance on how to protect your installation, contact your local Schneider Electric representative or Schneider Electric Industrial Cybersecurity Services: https://www.se.com/ww/en/work/solutions/cybersecurity/. These organizations will be fully aware of this situation and can support you through the process.\nFor further information related to cybersecurity in Schneider Electric’s products, visit the company’s cybersecurity support portal page: https://www.se.com/ww/en/work/support/cybersecurity/overview.jsp",
+        "title": "For More Information"
+      },
+      {
+        "category": "legal_disclaimer",
+        "text": "THIS NOTIFICATION DOCUMENT, THE INFORMATION CONTAINED HEREIN, AND ANY MATERIALS LINKED FROM IT (COLLECTIVELY, THIS “NOTIFICATION”) ARE INTENDED TO HELP PROVIDE AN OVERVIEW OF THE IDENTIFIED SITUATION AND SUGGESTED MITIGATION ACTIONS, REMEDIATION, FIX, AND/OR GENERAL SECURITY RECOMMENDATIONS AND IS PROVIDED ON AN “AS-IS” BASIS WITHOUT WARRANTY OR GUARANTEE OF ANY KIND.  SCHNEIDER ELECTRIC DISCLAIMS ALL WARRANTIES RELATING TO THIS NOTIFICATION, EITHER EXPRESS OR IMPLIED, INCLUDING WARRANTIES OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. SCHNEIDER ELECTRIC MAKES NO WARRANTY THAT THE NOTIFICATION WILL RESOLVE THE IDENTIFIED SITUATION. IN NO EVENT SHALL SCHNEIDER ELECTRIC BE LIABLE FOR ANY DAMAGES OR LOSSES WHATSOEVER IN CONNECTION WITH THIS NOTIFICATION, INCLUDING DIRECT, INDIRECT, INCIDENTAL, CONSEQUENTIAL, LOSS OF BUSINESS PROFITS OR SPECIAL DAMAGES, EVEN IF SCHNEIDER ELECTRIC HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES. YOUR USE OF THIS NOTIFICATION IS AT YOUR OWN RISK, AND YOU ARE SOLELY LIABLE FOR ANY DAMAGES TO YOUR SYSTEMS OR ASSETS OR OTHER LOSSES THAT MAY RESULT FROM YOUR USE OF THIS NOTIFICATION. SCHNEIDER ELECTRIC RESERVES THE RIGHT TO UPDATE OR CHANGE THIS NOTIFICATION AT ANY TIME AND IN ITS SOLE DISCRETION",
+        "title": "LEGAL DISCLAIMER"
+      },
+      {
+        "category": "general",
+        "text": "At Schneider, we believe access to energy and digital is a basic human right. We empower all to do more with less, ensuring Life Is On everywhere, for everyone, at every moment.\n\nWe provide energy and automation digital solutions for efficiency and sustainability. We combine world-leading energy technologies, real-time automation, software and services into integrated solutions for Homes, Buildings, Data Centers, Infrastructure and Industries.\n\nWe are committed to unleash the infinite possibilities of an open, global, innovative community that is passionate with our Meaningful Purpose, Inclusive and Empowered values.\n\nwww.se.com ",
+        "title": "About Schneider Electric"
+      },
+      {
+        "category": "summary",
+        "text": "Schneider Electric is aware of multiple vulnerabilities in the APC Easy UPS On-Line Software, \r\nwhich may lead to the uploading of executable files to non-specified directories by an \r\nunauthorized user.",
+        "title": "Overview"
+      }
+    ]
+  },
+  "product_tree": {
+    "branches": [
+      {
+        "category": "vendor",
+        "name": "Schneider Electric",
+        "branches": [
+          {
+            "category": "product_name",
+            "name": "APC Easy UPS On-Line Software",
+            "branches": [
+              {
+                "category": "product_version_range",
+                "name": "<=2.0",
+                "product": {
+                  "product_id": "1",
+                  "name": "Schneider Electric APC Easy UPS On-Line Software V2.0 and earlier",
+                  "product_identification_helper": {
+                    "model_numbers": [
+                      "SFAPV9601"
+                    ]
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "category": "product_name",
+            "name": "APC Easy UPS On-Line Software",
+            "branches": [
+              {
+                "category": "product_version",
+                "name": "2.1",
+                "product": {
+                  "product_id": "2",
+                  "name": "Schneider Electric APC Easy UPS On-Line Software V2.1"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "vulnerabilities": [
+    {
+      "title": "CVE-2020-7521",
+      "notes": [
+        {
+          "category": "description",
+          "text": "A CWE-22: Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')\r\nvulnerability exists when accessing a vulnerable method of `FileUploadServlet` which may lead \r\nto uploading executable files to non-specified directories.",
+          "title": "CVE Description"
+        }
+      ],
+      "cve": "CVE-2020-7521",
+      "cwe": {
+        "id": "CWE-22",
+        "name": "Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')"
+      },
+      "acknowledgments": [
+        {
+          "names": [
+            "rgod"
+          ],
+          "organization": "TrendMicro's Zero Day Initiative"
+        }
+      ],
+      "product_status": {
+        "known_affected": [
+          "1"
+        ],
+        "fixed": [
+          "2"
+        ]
+      },
+      "scores": [
+        {
+          "products": [
+            "1"
+          ],
+          "cvss_v3": {
+            "version": "3.0",
+            "vectorString": "CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+            "baseScore": 9.8,
+            "baseSeverity": "CRITICAL",
+            "attackVector": "NETWORK",
+            "attackComplexity": "LOW",
+            "privilegesRequired": "NONE",
+            "userInteraction": "NONE",
+            "scope": "UNCHANGED",
+            "confidentialityImpact": "HIGH",
+            "integrityImpact": "HIGH",
+            "availabilityImpact": "HIGH",
+            "temporalScore": 9.8,
+            "temporalSeverity": "CRITICAL",
+            "environmentalScore": 9.8,
+            "environmentalSeverity": "CRITICAL"
+          }
+        }
+      ],
+      "remediations": [
+        {
+          "category": "vendor_fix",
+          "details": "The vulnerabilities are fixed in V2.1 which is available for download below: \r\nhttps://www.se.com/ww/en/product/SFAPV9601/apc-easy-ups-online-software/",
+          "product_ids": [
+            "1"
+          ],
+          "url": "https://www.se.com/ww/en/product/SFAPV9601/apc-easy-ups-online-software/",
+          "restart_required": {
+            "category": "none"
+          }
+        },
+        {
+          "category": "mitigation",
+          "details": "The following workarounds and mitigations can be applied by customers to reduce the risk:\r\n• Utilize application whitelisting software.\r\n• Utilize firewall rules to limit network access to only those intended to connect. \r\n• Update to V2.1 as soon as possible. Reboot if required at the end of the software \r\ninstallation.",
+          "product_ids": [
+            "1"
+          ],
+          "restart_required": {
+            "category": "system"
+          }
+        }
+      ]
+    },
+    {
+      "title": "CVE-2020-7522",
+      "notes": [
+        {
+          "category": "description",
+          "text": "A CWE-22 Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')\r\nvulnerability occurs when accessing a vulnerable method of `SoundUploadServlet` which may \r\nlead to uploading executable files to non-specified directories.",
+          "title": "CVE Description"
+        }
+      ],
+      "cve": "CVE-2020-7522",
+      "cwe": {
+        "id": "CWE-22",
+        "name": "Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')"
+      },
+      "acknowledgments": [
+        {
+          "names": [
+            "rgod"
+          ],
+          "organization": "TrendMicro's Zero Day Initiative"
+        }
+      ],
+      "product_status": {
+        "known_affected": [
+          "1"
+        ],
+        "fixed": [
+          "2"
+        ]
+      },
+      "scores": [
+        {
+          "products": [
+            "1"
+          ],
+          "cvss_v3": {
+            "version": "3.0",
+            "vectorString": "CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+            "baseScore": 9.8,
+            "baseSeverity": "CRITICAL",
+            "attackVector": "NETWORK",
+            "attackComplexity": "LOW",
+            "privilegesRequired": "NONE",
+            "userInteraction": "NONE",
+            "scope": "UNCHANGED",
+            "confidentialityImpact": "HIGH",
+            "integrityImpact": "HIGH",
+            "availabilityImpact": "HIGH",
+            "temporalScore": 9.8,
+            "temporalSeverity": "CRITICAL",
+            "environmentalScore": 9.8,
+            "environmentalSeverity": "CRITICAL"
+          }
+        }
+      ],
+      "remediations": [
+        {
+          "category": "vendor_fix",
+          "details": "The vulnerabilities are fixed in V2.1 which is available for download below: \r\nhttps://www.se.com/ww/en/product/SFAPV9601/apc-easy-ups-online-software/",
+          "product_ids": [
+            "1"
+          ],
+          "url": "https://www.se.com/ww/en/product/SFAPV9601/apc-easy-ups-online-software/",
+          "restart_required": {
+            "category": "none"
+          }
+        },
+        {
+          "category": "mitigation",
+          "details": "The following workarounds and mitigations can be applied by customers to reduce the risk:\r\n• Utilize application whitelisting software.\r\n• Utilize firewall rules to limit network access to only those intended to connect. \r\n• Update to V2.1 as soon as possible. Reboot if required at the end of the software \r\ninstallation.",
+          "product_ids": [
+            "1"
+          ],
+          "restart_required": {
+            "category": "system"
+          }
+        }
+      ]
+    }
+  ]
+}
