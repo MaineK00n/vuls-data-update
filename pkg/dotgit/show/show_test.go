@@ -12,45 +12,7 @@ import (
 	"github.com/MaineK00n/vuls-data-update/pkg/dotgit/util"
 )
 
-const (
-	emptyTree = "4b825dc642cb6eb9a060e54bf8d69288fbee4904"
-
-	// signedHash is the hash of signed, a commit signed with a throwaway GPG
-	// key whose private key was discarded. Its author and committer record
-	// different UTC offsets: 2023-11-15 07:13:20 +0900 and 2023-11-14
-	// 18:13:20 -0500.
-	signedHash = "c32990db8f97b8b588b4a432b934aff4fc769b50"
-	signed     = "tree " + emptyTree + "\n" +
-		"author A U Thor <author@example.com> 1700000000 +0900\n" +
-		"committer C O Mitter <committer@example.com> 1700003600 -0500\n" +
-		"gpgsig -----BEGIN PGP SIGNATURE-----\n" +
-		" \n" +
-		" iHUEABYIAB0WIQT22NdP9H1bhlr8AK2M4oN6XBQ0sQUCavaJIAAKCRCM4oN6XBQ0\n" +
-		" sTGMAP4xcz798waEk+09jeXKyf6/0RhE54nTIINkdN3fXXFYAgD/XtfQdNDQseSp\n" +
-		" DnTbFUUEW32UqtNnWti17H8WY6Uorg4=\n" +
-		" =XfPt\n" +
-		" -----END PGP SIGNATURE-----\n" +
-		"\n" +
-		"signed\n"
-
-	// tagHash is the hash of tag, an annotated tag v1 of signed.
-	tagHash = "25056faa691ea5ce742c3504f31042d055750f71"
-	tag     = "object " + signedHash + "\n" +
-		"type commit\n" +
-		"tag v1\n" +
-		"tagger T Agger <tagger@example.com> 1700007200 +0000\n" +
-		"\n" +
-		"v1\n"
-)
-
 func TestShow(t *testing.T) {
-	// The times of signed, as the same instants in UTC.
-	want := show.Commit{
-		Hash:          signedHash,
-		AuthorTime:    time.Date(2023, time.November, 14, 22, 13, 20, 0, time.UTC),
-		CommitterTime: time.Date(2023, time.November, 14, 23, 13, 20, 0, time.UTC),
-	}
-
 	type args struct {
 		revision string
 		opts     []show.Option
@@ -64,18 +26,26 @@ func TestShow(t *testing.T) {
 		{
 			name: "full hash, native git",
 			args: args{
-				revision: signedHash,
+				revision: "c32990db8f97b8b588b4a432b934aff4fc769b50", // the signed commit
 				opts:     []show.Option{show.WithUseNativeGit(true)},
 			},
-			want: want,
+			want: show.Commit{
+				Hash:          "c32990db8f97b8b588b4a432b934aff4fc769b50",
+				AuthorTime:    time.Date(2023, time.November, 14, 22, 13, 20, 0, time.UTC), // the commit's 2023-11-15 07:13:20 +0900, in UTC
+				CommitterTime: time.Date(2023, time.November, 14, 23, 13, 20, 0, time.UTC), // the commit's 2023-11-14 18:13:20 -0500, in UTC
+			},
 		},
 		{
 			name: "full hash, go-git",
 			args: args{
-				revision: signedHash,
+				revision: "c32990db8f97b8b588b4a432b934aff4fc769b50", // the signed commit
 				opts:     []show.Option{show.WithUseNativeGit(false)},
 			},
-			want: want,
+			want: show.Commit{
+				Hash:          "c32990db8f97b8b588b4a432b934aff4fc769b50",
+				AuthorTime:    time.Date(2023, time.November, 14, 22, 13, 20, 0, time.UTC), // the commit's 2023-11-15 07:13:20 +0900, in UTC
+				CommitterTime: time.Date(2023, time.November, 14, 23, 13, 20, 0, time.UTC), // the commit's 2023-11-14 18:13:20 -0500, in UTC
+			},
 		},
 		{
 			name: "branch, native git",
@@ -83,7 +53,11 @@ func TestShow(t *testing.T) {
 				revision: "main",
 				opts:     []show.Option{show.WithUseNativeGit(true)},
 			},
-			want: want,
+			want: show.Commit{
+				Hash:          "c32990db8f97b8b588b4a432b934aff4fc769b50",
+				AuthorTime:    time.Date(2023, time.November, 14, 22, 13, 20, 0, time.UTC), // the commit's 2023-11-15 07:13:20 +0900, in UTC
+				CommitterTime: time.Date(2023, time.November, 14, 23, 13, 20, 0, time.UTC), // the commit's 2023-11-14 18:13:20 -0500, in UTC
+			},
 		},
 		{
 			name: "branch, go-git",
@@ -91,7 +65,11 @@ func TestShow(t *testing.T) {
 				revision: "main",
 				opts:     []show.Option{show.WithUseNativeGit(false)},
 			},
-			want: want,
+			want: show.Commit{
+				Hash:          "c32990db8f97b8b588b4a432b934aff4fc769b50",
+				AuthorTime:    time.Date(2023, time.November, 14, 22, 13, 20, 0, time.UTC), // the commit's 2023-11-15 07:13:20 +0900, in UTC
+				CommitterTime: time.Date(2023, time.November, 14, 23, 13, 20, 0, time.UTC), // the commit's 2023-11-14 18:13:20 -0500, in UTC
+			},
 		},
 		{
 			// The commit, not the tag object, whose header git show would
@@ -101,7 +79,11 @@ func TestShow(t *testing.T) {
 				revision: "v1",
 				opts:     []show.Option{show.WithUseNativeGit(true)},
 			},
-			want: want,
+			want: show.Commit{
+				Hash:          "c32990db8f97b8b588b4a432b934aff4fc769b50",
+				AuthorTime:    time.Date(2023, time.November, 14, 22, 13, 20, 0, time.UTC), // the commit's 2023-11-15 07:13:20 +0900, in UTC
+				CommitterTime: time.Date(2023, time.November, 14, 23, 13, 20, 0, time.UTC), // the commit's 2023-11-14 18:13:20 -0500, in UTC
+			},
 		},
 		{
 			name: "annotated tag, go-git",
@@ -109,7 +91,11 @@ func TestShow(t *testing.T) {
 				revision: "v1",
 				opts:     []show.Option{show.WithUseNativeGit(false)},
 			},
-			want: want,
+			want: show.Commit{
+				Hash:          "c32990db8f97b8b588b4a432b934aff4fc769b50",
+				AuthorTime:    time.Date(2023, time.November, 14, 22, 13, 20, 0, time.UTC), // the commit's 2023-11-15 07:13:20 +0900, in UTC
+				CommitterTime: time.Date(2023, time.November, 14, 23, 13, 20, 0, time.UTC), // the commit's 2023-11-14 18:13:20 -0500, in UTC
+			},
 		},
 		{
 			name: "missing revision, native git",
@@ -130,18 +116,18 @@ func TestShow(t *testing.T) {
 		{
 			name: "tree, native git",
 			args: args{
-				revision: emptyTree,
+				revision: "4b825dc642cb6eb9a060e54bf8d69288fbee4904", // the empty tree the commit points to
 				opts:     []show.Option{show.WithUseNativeGit(true)},
 			},
-			wantErr: `"` + emptyTree + `" does not name a commit`,
+			wantErr: `"4b825dc642cb6eb9a060e54bf8d69288fbee4904" does not name a commit`,
 		},
 		{
 			name: "tree, go-git",
 			args: args{
-				revision: emptyTree,
+				revision: "4b825dc642cb6eb9a060e54bf8d69288fbee4904", // the empty tree the commit points to
 				opts:     []show.Option{show.WithUseNativeGit(false)},
 			},
-			wantErr: `"` + emptyTree + `" does not name a commit`,
+			wantErr: `"4b825dc642cb6eb9a060e54bf8d69288fbee4904" does not name a commit`,
 		},
 		{
 			// rev-parse prints both ends of a range, and exits 1 only with
@@ -154,6 +140,7 @@ func TestShow(t *testing.T) {
 			wantErr: `"v1..main" does not name a commit`,
 		},
 		{
+			// go-git's revision parser rejects "..".
 			name: "range, go-git",
 			args: args{
 				revision: "v1..main",
@@ -204,9 +191,10 @@ func TestShow(t *testing.T) {
 	}
 }
 
-// newRepository makes a repository whose main is signed and whose tag v1 is
-// tag. Its config sets log.showSignature=true, with which git show prints
-// the signature check of signed before the output of --format.
+// newRepository makes a repository whose main is a signed commit and whose
+// tag v1 is an annotated tag of it. Its config sets log.showSignature=true,
+// with which git show prints the signature check of the commit before the
+// output of --format.
 func newRepository(t *testing.T) string {
 	t.Helper()
 
@@ -218,16 +206,49 @@ func newRepository(t *testing.T) string {
 		content string
 		hash    string
 	}{
-		{typ: "tree", content: "", hash: emptyTree},
-		{typ: "commit", content: signed, hash: signedHash},
-		{typ: "tag", content: tag, hash: tagHash},
+		{
+			// The empty tree.
+			typ:     "tree",
+			content: "",
+			hash:    "4b825dc642cb6eb9a060e54bf8d69288fbee4904",
+		},
+		{
+			// A commit signed with a throwaway GPG key whose private key was
+			// discarded. Its author and committer record different UTC
+			// offsets.
+			typ: "commit",
+			content: "tree 4b825dc642cb6eb9a060e54bf8d69288fbee4904\n" +
+				"author A U Thor <author@example.com> 1700000000 +0900\n" + // 2023-11-15 07:13:20 +0900
+				"committer C O Mitter <committer@example.com> 1700003600 -0500\n" + // 2023-11-14 18:13:20 -0500
+				"gpgsig -----BEGIN PGP SIGNATURE-----\n" +
+				" \n" +
+				" iHUEABYIAB0WIQT22NdP9H1bhlr8AK2M4oN6XBQ0sQUCavaJIAAKCRCM4oN6XBQ0\n" +
+				" sTGMAP4xcz798waEk+09jeXKyf6/0RhE54nTIINkdN3fXXFYAgD/XtfQdNDQseSp\n" +
+				" DnTbFUUEW32UqtNnWti17H8WY6Uorg4=\n" +
+				" =XfPt\n" +
+				" -----END PGP SIGNATURE-----\n" +
+				"\n" +
+				"signed\n",
+			hash: "c32990db8f97b8b588b4a432b934aff4fc769b50",
+		},
+		{
+			// An annotated tag v1 of the commit.
+			typ: "tag",
+			content: "object c32990db8f97b8b588b4a432b934aff4fc769b50\n" +
+				"type commit\n" +
+				"tag v1\n" +
+				"tagger T Agger <tagger@example.com> 1700007200 +0000\n" +
+				"\n" +
+				"v1\n",
+			hash: "25056faa691ea5ce742c3504f31042d055750f71",
+		},
 	} {
 		if got := git(t, o.content, "-C", dir, "hash-object", "-t", o.typ, "-w", "--stdin"); got != o.hash {
 			t.Fatalf("hash-object -t %s. expected: %s, actual: %s", o.typ, o.hash, got)
 		}
 	}
-	git(t, "", "-C", dir, "update-ref", "refs/heads/main", signedHash)
-	git(t, "", "-C", dir, "update-ref", "refs/tags/v1", tagHash)
+	git(t, "", "-C", dir, "update-ref", "refs/heads/main", "c32990db8f97b8b588b4a432b934aff4fc769b50")
+	git(t, "", "-C", dir, "update-ref", "refs/tags/v1", "25056faa691ea5ce742c3504f31042d055750f71")
 
 	return dir
 }
