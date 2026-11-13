@@ -229,22 +229,25 @@ func TestPull(t *testing.T) {
 			wantErr:  "9d3d5d486d4c9414321a2df56f2e007c4c2c8fac is not in ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test, whose history may have been truncated or rewritten",
 		},
 		{
-			name: "vuls-data-raw-test checkout: v0.0.2 (not in the repository), restore: true, native git",
+			// go-git checks out the zero hash, which plumbing.NewHash makes
+			// of v0.0.2, as master. Unless contains is asked before the
+			// checkout, the pull succeeds on master.
+			name: "vuls-data-raw-test-master checkout: v0.0.2 (not in the repository), restore: true, native git",
 			args: args{
-				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test",
+				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test-master",
 				opts:       []pull.Option{pull.WithCheckout("v0.0.2"), pull.WithRestore(true), pull.WithUseNativeGit(true)},
 			},
 			hasError: true,
-			wantErr:  "v0.0.2 is not in ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test, whose history may have been truncated or rewritten",
+			wantErr:  "v0.0.2 is not in ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test-master, whose history may have been truncated or rewritten",
 		},
 		{
-			name: "vuls-data-raw-test checkout: v0.0.2 (not in the repository), restore: true, go-git",
+			name: "vuls-data-raw-test-master checkout: v0.0.2 (not in the repository), restore: true, go-git",
 			args: args{
-				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test",
+				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test-master",
 				opts:       []pull.Option{pull.WithCheckout("v0.0.2"), pull.WithRestore(true), pull.WithUseNativeGit(false)},
 			},
 			hasError: true,
-			wantErr:  "v0.0.2 is not in ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test, whose history may have been truncated or rewritten",
+			wantErr:  "v0.0.2 is not in ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test-master, whose history may have been truncated or rewritten",
 		},
 		{
 			name: "vuls-data-raw-test-archive-1 restore: false, native git",
@@ -468,6 +471,9 @@ func setup(url string) error {
 		// A repository whose HEAD deletes every file, which is the state a
 		// fetch that wrote nothing back leaves behind.
 		{fixture: "vuls-data-raw-test-emptied", tags: []string{"vuls-data-raw-test-emptied"}},
+		// vuls-data-raw-test with a master branch, which go-git checks out
+		// for the zero hash.
+		{fixture: "vuls-data-raw-test-master", tags: []string{"vuls-data-raw-test-master"}},
 	} {
 		bs, err := os.ReadFile(filepath.Join("testdata", "fixtures", fmt.Sprintf("%s.tar.zst", f.fixture)))
 		if err != nil {
