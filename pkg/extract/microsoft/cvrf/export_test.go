@@ -8,5 +8,6 @@ var (
 	IsKBCriteria             = isKBCriteria
 	NormalizeProductName     = normalizeProductName
 	ProductNameOverrides     = productNameOverrides
+	VendorFixProductName     = vendorFixProductName
 	KBCumulativeTwins        = kbCumulativeTwins
 )
