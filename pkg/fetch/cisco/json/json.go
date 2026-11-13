@@ -129,6 +129,10 @@ func Fetch(id, secret string, opts ...Option) error {
 	}
 	_ = bar.Close()
 
+	if err := util.EnsureWritten(options.dir); err != nil {
+		return errors.Wrapf(err, "ensure written %s", options.dir)
+	}
+
 	return nil
 }
 

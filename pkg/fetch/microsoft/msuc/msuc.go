@@ -152,6 +152,8 @@ func Fetch(queries []string, opts ...Option) error {
 	// this fetcher exists to stop making.
 	slog.Info("Fetched updates", slog.Int("count", len(uidmap)-len(unavailable)))
 
+	// No util.EnsureWritten: a run writes only what it is given, and what it is
+	// given can rightly come to nothing.
 	return nil
 }
 

@@ -24,7 +24,18 @@ func TestFetch(t *testing.T) {
 		hasError      bool
 	}{
 		{
+			// A full fetch that finds nothing would leave the repository empty.
 			name:          "empty",
+			fixturePrefix: "empty",
+			hasError:      true,
+		},
+		{
+			// A window can rightly hold no change.
+			name: "empty window",
+			args: []cve.Option{
+				cve.WithLastModStartDate(new(time.Date(2023, time.November, 10, 04, 0, 0, 0, time.UTC))),
+				cve.WithLastModEndDate(new(time.Date(2023, time.November, 10, 07, 0, 0, 0, time.UTC))),
+			},
 			fixturePrefix: "empty",
 		},
 		{
