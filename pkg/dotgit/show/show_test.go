@@ -215,31 +215,34 @@ func newRepository(t *testing.T) string {
 		{
 			// A commit signed with a throwaway GPG key whose private key was
 			// discarded. Its author and committer record different UTC
-			// offsets.
+			// offsets: 2023-11-15 07:13:20 +0900 and 2023-11-14 18:13:20
+			// -0500. The line after gpgsig is a single space.
 			typ: "commit",
-			content: "tree 4b825dc642cb6eb9a060e54bf8d69288fbee4904\n" +
-				"author A U Thor <author@example.com> 1700000000 +0900\n" + // 2023-11-15 07:13:20 +0900
-				"committer C O Mitter <committer@example.com> 1700003600 -0500\n" + // 2023-11-14 18:13:20 -0500
-				"gpgsig -----BEGIN PGP SIGNATURE-----\n" +
-				" \n" +
-				" iHUEABYIAB0WIQT22NdP9H1bhlr8AK2M4oN6XBQ0sQUCavaJIAAKCRCM4oN6XBQ0\n" +
-				" sTGMAP4xcz798waEk+09jeXKyf6/0RhE54nTIINkdN3fXXFYAgD/XtfQdNDQseSp\n" +
-				" DnTbFUUEW32UqtNnWti17H8WY6Uorg4=\n" +
-				" =XfPt\n" +
-				" -----END PGP SIGNATURE-----\n" +
-				"\n" +
-				"signed\n",
+			content: `tree 4b825dc642cb6eb9a060e54bf8d69288fbee4904
+author A U Thor <author@example.com> 1700000000 +0900
+committer C O Mitter <committer@example.com> 1700003600 -0500
+gpgsig -----BEGIN PGP SIGNATURE-----
+ 
+ iHUEABYIAB0WIQT22NdP9H1bhlr8AK2M4oN6XBQ0sQUCavaJIAAKCRCM4oN6XBQ0
+ sTGMAP4xcz798waEk+09jeXKyf6/0RhE54nTIINkdN3fXXFYAgD/XtfQdNDQseSp
+ DnTbFUUEW32UqtNnWti17H8WY6Uorg4=
+ =XfPt
+ -----END PGP SIGNATURE-----
+
+signed
+`,
 			hash: "c32990db8f97b8b588b4a432b934aff4fc769b50",
 		},
 		{
 			// An annotated tag v1 of the commit.
 			typ: "tag",
-			content: "object c32990db8f97b8b588b4a432b934aff4fc769b50\n" +
-				"type commit\n" +
-				"tag v1\n" +
-				"tagger T Agger <tagger@example.com> 1700007200 +0000\n" +
-				"\n" +
-				"v1\n",
+			content: `object c32990db8f97b8b588b4a432b934aff4fc769b50
+type commit
+tag v1
+tagger T Agger <tagger@example.com> 1700007200 +0000
+
+v1
+`,
 			hash: "25056faa691ea5ce742c3504f31042d055750f71",
 		},
 	} {
