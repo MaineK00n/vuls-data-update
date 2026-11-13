@@ -43,7 +43,8 @@ func TestPull(t *testing.T) {
 		// contents.
 		wantFiles map[string]string
 		hasError  bool
-		wantErr   string
+		// wantErr is how the error begins.
+		wantErr string
 	}{
 		{
 			name: "vuls-data-raw-test restore: false, native git",
@@ -217,7 +218,7 @@ func TestPull(t *testing.T) {
 				opts:       []pull.Option{pull.WithCheckout("9d3d5d486d4c9414321a2df56f2e007c4c2c8fac"), pull.WithRestore(true), pull.WithUseNativeGit(true)},
 			},
 			hasError: true,
-			wantErr:  "9d3d5d486d4c9414321a2df56f2e007c4c2c8fac is not in ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test, whose history may have been truncated or rewritten",
+			wantErr:  "9d3d5d486d4c9414321a2df56f2e007c4c2c8fac is not in ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test, whose history may have been truncated or rewritten: switch to 9d3d5d486d4c9414321a2df56f2e007c4c2c8fac: ",
 		},
 		{
 			name: "vuls-data-raw-test checkout: 9d3d5d486d4c9414321a2df56f2e007c4c2c8fac (not in the repository), restore: true, go-git",
@@ -226,7 +227,7 @@ func TestPull(t *testing.T) {
 				opts:       []pull.Option{pull.WithCheckout("9d3d5d486d4c9414321a2df56f2e007c4c2c8fac"), pull.WithRestore(true), pull.WithUseNativeGit(false)},
 			},
 			hasError: true,
-			wantErr:  "9d3d5d486d4c9414321a2df56f2e007c4c2c8fac is not in ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test, whose history may have been truncated or rewritten",
+			wantErr:  "get checkout options: 9d3d5d486d4c9414321a2df56f2e007c4c2c8fac is not in ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test, whose history may have been truncated or rewritten: ",
 		},
 		{
 			// go-git checks out the zero hash, which plumbing.NewHash makes
@@ -238,7 +239,7 @@ func TestPull(t *testing.T) {
 				opts:       []pull.Option{pull.WithCheckout("v0.0.2"), pull.WithRestore(true), pull.WithUseNativeGit(true)},
 			},
 			hasError: true,
-			wantErr:  "v0.0.2 is not in ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test-master, whose history may have been truncated or rewritten",
+			wantErr:  "v0.0.2 is not in ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test-master, whose history may have been truncated or rewritten: switch to v0.0.2: ",
 		},
 		{
 			name: "vuls-data-raw-test-master checkout: v0.0.2 (not in the repository), restore: true, go-git",
@@ -247,7 +248,28 @@ func TestPull(t *testing.T) {
 				opts:       []pull.Option{pull.WithCheckout("v0.0.2"), pull.WithRestore(true), pull.WithUseNativeGit(false)},
 			},
 			hasError: true,
-			wantErr:  "v0.0.2 is not in ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test-master, whose history may have been truncated or rewritten",
+			wantErr:  "get checkout options: v0.0.2 is not in ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test-master, whose history may have been truncated or rewritten: ",
+		},
+		{
+			// contains reads a name as cat-file -e does, so it cannot tell
+			// whether the target of a name that switch reads otherwise is
+			// there, and the error of switch is returned as it is.
+			name: "vuls-data-raw-test checkout: - (no previous branch), restore: false, native git",
+			args: args{
+				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test",
+				opts:       []pull.Option{pull.WithCheckout("-"), pull.WithRestore(false), pull.WithUseNativeGit(true)},
+			},
+			hasError: true,
+			wantErr:  "switch to -: ",
+		},
+		{
+			name: "vuls-data-raw-test checkout: main...v0.0.2 (no v0.0.2), restore: false, native git",
+			args: args{
+				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test",
+				opts:       []pull.Option{pull.WithCheckout("main...v0.0.2"), pull.WithRestore(false), pull.WithUseNativeGit(true)},
+			},
+			hasError: true,
+			wantErr:  "switch to main...v0.0.2: ",
 		},
 		{
 			name: "vuls-data-raw-test-archive-1 restore: false, native git",
@@ -288,8 +310,8 @@ func TestPull(t *testing.T) {
 			case err == nil && tt.hasError:
 				t.Error("expected error has not occurred")
 			case err != nil:
-				if !strings.Contains(err.Error(), tt.wantErr) {
-					t.Errorf("Pull() error does not contain %q, error: %v", tt.wantErr, err)
+				if !strings.HasPrefix(err.Error(), tt.wantErr) {
+					t.Errorf("Pull() error does not begin with %q, error: %v", tt.wantErr, err)
 				}
 			default:
 				var got []string
