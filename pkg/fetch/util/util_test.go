@@ -201,23 +201,42 @@ func TestEnsureWritten(t *testing.T) {
 		},
 		{
 			// What RemoveAll kept is no more output than .git is.
-			name: "kept entries are not output",
+			name: "kept tree ignored",
 			args: args{
-				root: "kept",
-				opts: []util.EnsureOption{util.WithKeep(".git", "raw")},
+				root: "ignore-kept",
+				opts: []util.EnsureOption{util.WithIgnore(".git", "raw")},
 			},
 			entries: []string{".git/", ".git/HEAD", "raw/", "raw/advisory.json"},
 			wantErr: true,
 		},
 		{
-			// As in RemoveAll, a kept name is the entry's own name directly
-			// under root: "rawdata" and a nested "raw" are output.
-			name: "keep is matched by name directly under root",
+			// Nor is a file written whatever the fetch got.
+			name: "readme ignored",
 			args: args{
-				root: "kept-exact",
-				opts: []util.EnsureOption{util.WithKeep(".git", "raw")},
+				root: "ignore-readme",
+				opts: []util.EnsureOption{util.WithIgnore(".git", "README.md")},
+			},
+			entries: []string{".git/", ".git/HEAD", "README.md"},
+			wantErr: true,
+		},
+		{
+			// As in WithKeep, an ignored name is the entry's own name directly
+			// under root: "rawdata" and a nested "raw" are output.
+			name: "ignore is matched by name directly under root",
+			args: args{
+				root: "ignore-exact",
+				opts: []util.EnsureOption{util.WithIgnore(".git", "raw")},
 			},
 			entries: []string{"raw/", "raw/advisory.json", "rawdata/", "nested/raw/advisory.json"},
+		},
+		{
+			// The option states the whole set, so .git counts unless named.
+			name: "ignore replaces the default",
+			args: args{
+				root: "ignore-replaces",
+				opts: []util.EnsureOption{util.WithIgnore("README.md")},
+			},
+			entries: []string{".git/", ".git/HEAD"},
 		},
 		{
 			name: "required sections written",

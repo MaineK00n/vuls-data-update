@@ -104,28 +104,16 @@ type RemoveOption interface {
 	apply(*removeOption)
 }
 
-// KeepOption is what WithKeep returns. It configures RemoveAll and
-// EnsureWritten alike, so that a fetcher names what it keeps once and the two
-// agree on it.
-type KeepOption interface {
-	RemoveOption
-	EnsureOption
-}
-
 type keepOption []string
 
 func (o keepOption) apply(opts *removeOption) {
 	opts.keeps = o
 }
 
-func (o keepOption) applyEnsure(opts *ensureOption) {
-	opts.keeps = o
-}
-
-// WithKeep sets which entries directly under root RemoveAll leaves alone, and
-// so which ones EnsureWritten leaves out of what a fetch wrote. It states the
-// whole set rather than adding to the default, so that every set is reachable
-// -- including the empty one, which is how a tree is emptied completely:
+// WithKeep sets which entries directly under root RemoveAll leaves alone. It
+// states the whole set rather than adding to the default, so that every set is
+// reachable -- including the empty one, which is how a tree is emptied
+// completely:
 //
 //	RemoveAll(dir)                            // .git
 //	RemoveAll(dir, WithKeep(".git", "raw"))   // .git and raw
@@ -145,7 +133,7 @@ func (o keepOption) applyEnsure(opts *ensureOption) {
 //
 // Names are matched against the entry's own name, so WithKeep("raw") keeps
 // "raw" and not "rawdata".
-func WithKeep(names ...string) KeepOption {
+func WithKeep(names ...string) RemoveOption {
 	return keepOption(names)
 }
 
@@ -179,18 +167,38 @@ func RemoveAll(root string, opts ...RemoveOption) error {
 }
 
 type ensureOption struct {
-	keeps      []string
+	ignores    []string
 	requires   []string
 	allowEmpty bool
 }
 
 type EnsureOption interface {
-	applyEnsure(*ensureOption)
+	apply(*ensureOption)
+}
+
+type ignoreOption []string
+
+func (o ignoreOption) apply(opts *ensureOption) {
+	opts.ignores = o
+}
+
+// WithIgnore sets which entries directly under root EnsureWritten does not
+// count as written, because they are there whatever the fetch got: .git when
+// the option is not given, a tree RemoveAll was told to keep, and a file the
+// fetcher writes before it has fetched anything, such as a README. Like
+// WithKeep, it states the whole set rather than adding to the default, so name
+// .git alongside the rest, and a name matches an entry's own name.
+//
+// The two sets differ. What RemoveAll keeps is ignored here too, but a README
+// is not kept: it is removed and written again by every fetch, and still says
+// nothing about whether that fetch got anything.
+func WithIgnore(names ...string) EnsureOption {
+	return ignoreOption(names)
 }
 
 type requireOption []string
 
-func (o requireOption) applyEnsure(opts *ensureOption) {
+func (o requireOption) apply(opts *ensureOption) {
 	opts.requires = o
 }
 
@@ -198,15 +206,22 @@ func (o requireOption) applyEnsure(opts *ensureOption) {
 // requires a file. A fetcher whose data falls into fixed sections names them,
 // so that a section it stops writing fails the fetch: one section going
 // missing still leaves the rest of the tree, which is all the default check
-// asks for. A path that names a file requires that file. Like WithKeep, the
-// option states the whole set, and passing it again replaces it.
+// asks for.
+//
+// A path can be any depth below root ("origin/mitre", or "9/definitions" built
+// from a version the fetch saw), where WithIgnore matches only names directly
+// under root. A directory requires a file anywhere beneath it, and a path that
+// names a file requires that file. A path that is absolute or leaves root is
+// an error. There are no patterns: a fetcher that needs every version to hold
+// a section names each one. Like WithIgnore, the option states the whole set,
+// and passing it again replaces it.
 func WithRequire(paths ...string) EnsureOption {
 	return requireOption(paths)
 }
 
 type allowEmptyOption bool
 
-func (o allowEmptyOption) applyEnsure(opts *ensureOption) {
+func (o allowEmptyOption) apply(opts *ensureOption) {
 	opts.allowEmpty = bool(o)
 }
 
@@ -215,21 +230,22 @@ func (o allowEmptyOption) applyEnsure(opts *ensureOption) {
 // that fetched nothing, not one that fetched part of what it should have.
 //
 // A fetch that wrote nothing has failed, so this is never a fetcher's default.
-// It is for a run that is one part of a whole -- a window of changes, or one
-// shard of a list whose shards the caller merges and checks together -- where
-// that part can rightly come to nothing.
+// It is for a run that is one part of a whole -- one shard of a list whose
+// shards the caller merges and checks together -- where that part can rightly
+// come to nothing.
 func WithAllowEmpty(allow bool) EnsureOption {
 	return allowEmptyOption(allow)
 }
 
 // EnsureWritten returns an error unless the fetch that just ran wrote into
-// root: unless root holds a file outside what WithKeep names (.git when the
+// root: unless root holds a file outside what WithIgnore names (.git when the
 // option is not given) and, with WithRequire, a file under each path that
 // names.
 //
 // It is the end of a fetch as RemoveAll is the start. RemoveAll empties root
-// but for what it keeps, so whatever else is there afterwards is what the
-// fetch wrote; pass both the same WithKeep, or what was kept passes for output.
+// but for what it keeps, so whatever else is there afterwards was written by
+// the fetch -- though not all of it was fetched. What was kept, and a file
+// written whatever the fetch got, would pass for output; WithIgnore names them.
 //
 // A fetch that decodes nothing -- because upstream changed the structure the
 // fetcher decodes, say -- otherwise succeeds and leaves root, or a section of
@@ -238,14 +254,14 @@ func WithAllowEmpty(allow bool) EnsureOption {
 // holds, and whether as many were written as last time, is not.
 func EnsureWritten(root string, opts ...EnsureOption) error {
 	options := &ensureOption{
-		keeps: []string{".git"},
+		ignores: []string{".git"},
 	}
 
 	for _, o := range opts {
-		o.applyEnsure(options)
+		o.apply(options)
 	}
 
-	switch ok, err := holdsFile(root, options.keeps); {
+	switch ok, err := holdsFile(root, options.ignores); {
 	case err != nil:
 		return errors.Wrapf(err, "check %s", root)
 	case !ok && options.allowEmpty:
