@@ -99,8 +99,8 @@ func TestContainsWithBranch(t *testing.T) {
 	// The fixture is commits 1-4 in a line. main is moved back to 3, and other
 	// is at 4, so 4 is only on other. shallow is a clone of depth 2, as
 	// vuls-data-db truncates a dotgit: it has 2-4, and 2 is shallow. Then full
-	// gets an annotated tag of 1, and a branch and a tag at 3 named like a
-	// hash of no object.
+	// gets an annotated tag of 1, a branch and a tag at 3 named like a hash of
+	// no object, and a tag at 4 named like the full ref name of a branch.
 	dir := t.TempDir()
 	full, err := git.Populate(dir, "testdata/fixtures/history")
 	if err != nil {
@@ -147,6 +147,9 @@ func TestContainsWithBranch(t *testing.T) {
 	// A branch and a tag at commit 3, named like a hash of no object.
 	run(t, "-C", full, "update-ref", "refs/heads/89abcdef0123456789abcdef0123456789abcdef", "7ff21bf293f2763a9e10872f0debf6726fd125ff")
 	run(t, "-C", full, "update-ref", "refs/tags/89abcdef0123456789abcdef0123456789abcdef", "7ff21bf293f2763a9e10872f0debf6726fd125ff")
+	// A tag at commit 4 named refs/heads/release, the full ref name of a
+	// branch that does not exist.
+	run(t, "-C", full, "update-ref", "refs/tags/refs/heads/release", "f71e70526a42ab5a02c0db48c0ab002cae190c6a")
 
 	type args struct {
 		// repository is "full", "shallow", or "missing" for a path that does
@@ -162,6 +165,11 @@ func TestContainsWithBranch(t *testing.T) {
 		// means it wraps none of them.
 		wantErr  error
 		hasError bool
+		// msg, if set, is the message of the error, on both paths.
+		msg string
+		// exitError is whether, on native git, the error holds the
+		// *exec.ExitError of the git that failed.
+		exitError bool
 	}{
 		{
 			// Commit 3.
@@ -189,41 +197,48 @@ func TestContainsWithBranch(t *testing.T) {
 			args:     args{repository: "full", commit: "f71e70526a42ab5a02c0db48c0ab002cae190c6a", branch: "main"},
 			wantErr:  contains.ErrNotReachable,
 			hasError: true,
+			msg:      "check f71e70526a42ab5a02c0db48c0ab002cae190c6a is reachable from refs/heads/main: commit not reachable from branch",
 		},
 		{
-			// The tree of commit 1.
+			// The tree of commit 1. Neither rev-parse nor ResolveRevision tells
+			// it from a missing object.
 			name:     "a tree, not a commit",
 			args:     args{repository: "full", commit: "da97fdaef51513ed29f81a64cea431c351d4532e", branch: "main"},
 			wantErr:  contains.ErrCommitNotFound,
 			hasError: true,
+			msg:      "resolve da97fdaef51513ed29f81a64cea431c351d4532e (the history may have been truncated or rewritten): commit not found",
 		},
 		{
-			// The tag v1. Peeled, it would be commit 1.
+			// The tag v1, which resolves to commit 1.
 			name:     "an annotated tag, not a commit",
 			args:     args{repository: "full", commit: "3132226146d484fc47138777803926be1a8ce34a", branch: "main"},
 			wantErr:  contains.ErrCommitNotFound,
 			hasError: true,
+			msg:      "3132226146d484fc47138777803926be1a8ce34a resolves to commit a841a4b11e592afb4d574f86c5de63ad95d1567a, but is not a commit's own full hash (e.g. an annotated tag's hash, an abbreviation or a ref name): commit not found",
 		},
 		{
 			name:     "missing commit",
 			args:     args{repository: "full", commit: "0123456789abcdef0123456789abcdef01234567", branch: "main"},
 			wantErr:  contains.ErrCommitNotFound,
 			hasError: true,
+			msg:      "resolve 0123456789abcdef0123456789abcdef01234567 (the history may have been truncated or rewritten): commit not found",
 		},
 		{
-			// Read as a ref, the hash would be commit 3.
+			// native git reads the hash as the missing object. go-git falls back
+			// to the branch of that name, at commit 3, whose hash is not the
+			// one given. So the messages differ.
 			name:     "missing commit, with a branch and a tag of its name",
 			args:     args{repository: "full", commit: "89abcdef0123456789abcdef0123456789abcdef", branch: "main"},
 			wantErr:  contains.ErrCommitNotFound,
 			hasError: true,
 		},
 		{
-			// Commit 1, then the first 24 digits of commit 2. Cut to 40 digits,
-			// it would be commit 1.
+			// Commit 1, then the first 24 digits of commit 2.
 			name:     "hash of 64 hex digits in a SHA-1 repository",
 			args:     args{repository: "full", commit: "a841a4b11e592afb4d574f86c5de63ad95d1567a321cc453fa66e6d7f6ec5d5b", branch: "main"},
 			wantErr:  contains.ErrCommitNotFound,
 			hasError: true,
+			msg:      "resolve a841a4b11e592afb4d574f86c5de63ad95d1567a321cc453fa66e6d7f6ec5d5b (the history may have been truncated or rewritten): commit not found",
 		},
 		{
 			// Commit 1.
@@ -231,6 +246,25 @@ func TestContainsWithBranch(t *testing.T) {
 			args:     args{repository: "full", commit: "a841a4b11e592afb4d574f86c5de63ad95d1567a", branch: "nightly"},
 			wantErr:  contains.ErrBranchNotFound,
 			hasError: true,
+			msg:      "check refs/heads/nightly exists: branch not found",
+		},
+		{
+			// Commit 1. Read as a revision, refs/heads/foo-1-gf71e7052 is describe
+			// output for commit 4, which contains commit 1.
+			name:     "missing branch named like describe output",
+			args:     args{repository: "full", commit: "a841a4b11e592afb4d574f86c5de63ad95d1567a", branch: "foo-1-gf71e7052"},
+			wantErr:  contains.ErrBranchNotFound,
+			hasError: true,
+			msg:      "check refs/heads/foo-1-gf71e7052 exists: branch not found",
+		},
+		{
+			// Commit 1. Read as a revision, refs/heads/release is the tag of that
+			// name, at commit 4, which contains commit 1.
+			name:     "missing branch, with a tag named refs/heads/<branch>",
+			args:     args{repository: "full", commit: "a841a4b11e592afb4d574f86c5de63ad95d1567a", branch: "release"},
+			wantErr:  contains.ErrBranchNotFound,
+			hasError: true,
+			msg:      "check refs/heads/release exists: branch not found",
 		},
 		{
 			// Commit 1.
@@ -238,6 +272,7 @@ func TestContainsWithBranch(t *testing.T) {
 			args:     args{repository: "full", commit: "a841a4b11e592afb4d574f86c5de63ad95d1567a", branch: "refs/heads/main"},
 			wantErr:  contains.ErrBranchNotFound,
 			hasError: true,
+			msg:      "check refs/heads/refs/heads/main exists: branch not found",
 		},
 		{
 			// Commit 1.
@@ -245,34 +280,44 @@ func TestContainsWithBranch(t *testing.T) {
 			args:     args{repository: "full", commit: "a841a4b11e592afb4d574f86c5de63ad95d1567a", branch: "HEAD"},
 			wantErr:  contains.ErrBranchNotFound,
 			hasError: true,
+			msg:      "check refs/heads/HEAD exists: branch not found",
 		},
 		{
 			// Commit 2. Read as a revision, main~1 would be commit 2.
 			name:     "revision as the branch",
 			args:     args{repository: "full", commit: "321cc453fa66e6d7f6ec5d5bdb64c5767d67fb54", branch: "main~1"},
 			hasError: true,
+			msg:      `validate branch "main~1": invalid reference name`,
 		},
 		{
 			// Commit 1.
 			name:     "option as the branch",
 			args:     args{repository: "full", commit: "a841a4b11e592afb4d574f86c5de63ad95d1567a", branch: "--all"},
 			hasError: true,
+			msg:      `validate branch "--all": invalid reference name`,
 		},
 		{
+			// main~1 is commit 2.
 			name:     "revision as the commit",
 			args:     args{repository: "full", commit: "main~1", branch: "main"},
+			wantErr:  contains.ErrCommitNotFound,
 			hasError: true,
+			msg:      "main~1 resolves to commit 321cc453fa66e6d7f6ec5d5bdb64c5767d67fb54, but is not a commit's own full hash (e.g. an annotated tag's hash, an abbreviation or a ref name): commit not found",
 		},
 		{
 			name:     "option as the commit",
 			args:     args{repository: "full", commit: "--all", branch: "main"},
+			wantErr:  contains.ErrCommitNotFound,
 			hasError: true,
+			msg:      "resolve --all (the history may have been truncated or rewritten): commit not found",
 		},
 		{
 			// Commit 2, abbreviated.
 			name:     "abbreviated hash",
 			args:     args{repository: "full", commit: "321cc45", branch: "main"},
+			wantErr:  contains.ErrCommitNotFound,
 			hasError: true,
+			msg:      "321cc45 resolves to commit 321cc453fa66e6d7f6ec5d5bdb64c5767d67fb54, but is not a commit's own full hash (e.g. an annotated tag's hash, an abbreviation or a ref name): commit not found",
 		},
 		{
 			// Commit 4.
@@ -284,9 +329,17 @@ func TestContainsWithBranch(t *testing.T) {
 			args: args{repository: "full", commit: "main~1"},
 		},
 		{
-			name:     "no branch, missing commit",
-			args:     args{repository: "full", commit: "0123456789abcdef0123456789abcdef01234567"},
-			hasError: true,
+			// The tree of commit 1: without a branch, any name of an object
+			// counts.
+			name: "no branch, tree name",
+			args: args{repository: "full", commit: "a841a4b11e592afb4d574f86c5de63ad95d1567a^{tree}"},
+		},
+		{
+			// Callers tell a missing commit by the exit status of native git.
+			name:      "no branch, missing commit",
+			args:      args{repository: "full", commit: "0123456789abcdef0123456789abcdef01234567"},
+			hasError:  true,
+			exitError: true,
 		},
 		{
 			// Commit 2.
@@ -299,6 +352,7 @@ func TestContainsWithBranch(t *testing.T) {
 			args:     args{repository: "shallow", commit: "f71e70526a42ab5a02c0db48c0ab002cae190c6a", branch: "main"},
 			wantErr:  contains.ErrNotReachable,
 			hasError: true,
+			msg:      "check f71e70526a42ab5a02c0db48c0ab002cae190c6a is reachable from refs/heads/main: commit not reachable from branch",
 		},
 		{
 			// Commit 1.
@@ -306,6 +360,7 @@ func TestContainsWithBranch(t *testing.T) {
 			args:     args{repository: "shallow", commit: "a841a4b11e592afb4d574f86c5de63ad95d1567a", branch: "main"},
 			wantErr:  contains.ErrCommitNotFound,
 			hasError: true,
+			msg:      "resolve a841a4b11e592afb4d574f86c5de63ad95d1567a (the history may have been truncated or rewritten): commit not found",
 		},
 		{
 			// Commit 1.
@@ -338,6 +393,12 @@ func TestContainsWithBranch(t *testing.T) {
 						if got, want := errors.Is(err, sentinel), sentinel == tt.wantErr; got != want {
 							t.Errorf("errors.Is(err, %q). expected: %t, actual: %t, err: %v", sentinel, want, got, err)
 						}
+					}
+					if tt.msg != "" && err.Error() != tt.msg {
+						t.Errorf("message. expected: %q, actual: %q", tt.msg, err.Error())
+					}
+					if _, ok := errors.AsType[*exec.ExitError](err); native && tt.exitError && !ok {
+						t.Errorf("errors.AsType[*exec.ExitError](err). expected: true, actual: false, err: %v", err)
 					}
 				}
 			})

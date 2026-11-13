@@ -3,15 +3,14 @@ package contains
 import (
 	stderrors "errors"
 	"fmt"
+	"io"
 	"os/exec"
-	"regexp"
 	"slices"
 	"strings"
 
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/go-git/go-git/v5/plumbing/object"
-	"github.com/go-git/go-git/v5/plumbing/storer"
 	"github.com/pkg/errors"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/dotgit/util"
@@ -23,22 +22,15 @@ var (
 	ErrBranchNotFound = errors.New("branch not found")
 
 	// ErrCommitNotFound is the cause of the error Contains returns with
-	// WithBranch when the commit is not a commit in the repository. A commit
-	// that used to be there can be gone: vuls-data-db keeps only the last
-	// commits of a dotgit.
-	ErrCommitNotFound = errors.New("commit not found, the history may have been truncated or rewritten")
+	// WithBranch when commit is not the full hash of a commit in the
+	// repository.
+	ErrCommitNotFound = errors.New("commit not found")
 
 	// ErrNotReachable is the cause of the error Contains returns with
-	// WithBranch when the commit exists, but is neither the tip of the branch
-	// nor an ancestor of it.
+	// WithBranch when the commit is neither the tip of the branch nor an
+	// ancestor of it.
 	ErrNotReachable = errors.New("commit not reachable from branch")
 )
-
-// reCommitHash matches the commit Contains takes with WithBranch: a full
-// hash, of 40 hex digits (SHA-1) or 64 (SHA-256). An abbreviation is not
-// taken: git resolves it as a ref first if one has that name, and it can name
-// more than one commit.
-var reCommitHash = regexp.MustCompile(`^(?:[0-9a-fA-F]{40}|[0-9a-fA-F]{64})$`)
 
 type options struct {
 	useNativeGit bool
@@ -65,9 +57,9 @@ func (b branchOption) apply(opts *options) {
 	opts.branch = string(b)
 }
 
-// WithBranch makes Contains check that the commit, given as a full hash, is
-// on branch, a branch name such as "main". An empty branch, the default,
-// checks only that the object exists.
+// WithBranch makes Contains also check that the commit, given as its full
+// hash, is on branch, a branch name such as "main". An empty branch, the
+// default, checks only that the object exists.
 func WithBranch(branch string) Option {
 	return branchOption(branch)
 }
@@ -78,16 +70,16 @@ func WithBranch(branch string) Option {
 // the object exists.
 //
 // With WithBranch, Contains checks, in this order, that
-//  1. the branch exists: refs/heads/<branch>, matched exactly;
-//  2. commit, a full hash, names a commit object in repository;
+//  1. commit resolves to a commit, and is that commit's own full hash, in
+//     either case: not an abbreviation, a ref name, or an annotated tag's hash;
+//  2. the branch refs/heads/<branch> exists, matched exactly;
 //  3. the commit is the tip of the branch or an ancestor of it.
 //
-// The error of the first check that fails wraps ErrBranchNotFound,
-// ErrCommitNotFound or ErrNotReachable. Neither branch nor commit is read as
-// a revision, such as main~1, or as an option, and commit is looked up only
-// as an object, never as a ref: a branch that is not a valid branch name, or
-// a commit that is not a full hash, is an error that wraps none of them. So
-// is a failure to run a check, which holds git's stderr.
+// The error of the first check that fails wraps ErrCommitNotFound,
+// ErrBranchNotFound or ErrNotReachable. A branch that is not a valid branch
+// name, which could read as a revision in refs/heads/<branch>, is an error
+// that wraps none of them. So is a failure to run a check, which holds git's
+// stderr.
 func Contains(repository, commit string, opts ...Option) error {
 	options := &options{
 		useNativeGit: true,
@@ -102,95 +94,80 @@ func Contains(repository, commit string, opts ...Option) error {
 		if err := plumbing.NewBranchReferenceName(options.branch).Validate(); err != nil {
 			return errors.Wrapf(err, "validate branch %q", options.branch)
 		}
-		if !reCommitHash.MatchString(commit) {
-			return errors.Errorf("unexpected commit. expected: %q, actual: %q", "a full commit hash of 40 or 64 hex digits", commit)
-		}
-		// git and go-git take hex digits in either case. rev-parse prints
-		// them in lowercase, and the native check compares that with commit.
-		commit = strings.ToLower(commit)
-
-		if options.useNativeGit {
-			return containsOnBranchNativeGit(repository, commit, options.branch)
-		}
-		return containsOnBranchGoGit(repository, commit, options.branch)
 	}
 
 	if options.useNativeGit {
+		return containsNativeGit(repository, commit, options.branch)
+	}
+	return containsGoGit(repository, commit, options.branch)
+}
+
+func containsNativeGit(repository, commit, branch string) error {
+	if branch == "" {
 		if _, err := util.Git("-C", repository, "cat-file", "-e", commit); err != nil {
 			return errors.Wrapf(err, "check %s exists", commit)
 		}
 		return nil
 	}
 
-	r, err := git.PlainOpen(repository)
+	// rev-parse --verify --quiet exits 1 when the name does not resolve to a
+	// commit: missing, or an object of another type. ^{commit} makes it read
+	// the object; given a full hash alone, it prints the hash without looking
+	// the object up.
+	bs, err := util.Git("-C", repository, "rev-parse", "--verify", "--quiet", "--end-of-options", fmt.Sprintf("%s^{commit}", commit))
 	if err != nil {
-		return errors.Wrapf(err, "open %s", repository)
-	}
-
-	if _, err := r.ResolveRevision(plumbing.Revision(commit)); err != nil {
+		if exitedWith(err, 1) {
+			return errors.Wrapf(ErrCommitNotFound, "resolve %s (the history may have been truncated or rewritten)", commit)
+		}
 		return errors.Wrapf(err, "resolve %s", commit)
 	}
+	hash := strings.TrimSpace(string(bs))
+	if err := checkFullHash(commit, hash); err != nil {
+		return err
+	}
 
-	return nil
-}
-
-func containsOnBranchNativeGit(repository, commit, branch string) error {
+	// for-each-ref matches ref names, and lists the ref only if it contains
+	// the commit. merge-base --is-ancestor <hash> refs/heads/<branch> would
+	// read a missing branch as a revision: a tag named refs/heads/<branch>,
+	// or a name like describe output (x-1-g<hash>) as that commit.
 	ref := fmt.Sprintf("refs/heads/%s", branch)
+	bs, err = util.Git("-C", repository, "for-each-ref", "--contains", hash, "--format=%(refname)", ref)
+	if err != nil {
+		return errors.Wrapf(err, "check %s is reachable from %s", commit, ref)
+	}
+	if slices.Contains(strings.Fields(string(bs)), ref) {
+		return nil
+	}
 
-	// show-ref --verify looks up exactly the full ref name it is given: no
-	// other ref, and no revision. With --quiet, it exits 1 when the ref does
-	// not exist; without, it exits 128, as for a broken repository, so the
-	// hash is read once the ref is known to exist.
+	// The branch is missing, or does not contain the commit. show-ref
+	// --verify --quiet exits 1 when the ref does not exist.
 	if _, err := util.Git("-C", repository, "show-ref", "--verify", "--quiet", ref); err != nil {
 		if exitedWith(err, 1) {
 			return errors.Wrapf(ErrBranchNotFound, "check %s exists", ref)
 		}
 		return errors.Wrapf(err, "check %s exists", ref)
 	}
-	bs, err := util.Git("-C", repository, "show-ref", "--verify", "--hash", ref)
-	if err != nil {
-		return errors.Wrapf(err, "resolve %s", ref)
-	}
-	tip := strings.TrimSpace(string(bs))
-
-	// rev-parse --verify --quiet exits 1 when the name does not resolve to a
-	// commit: missing, or an object of another type. ^{commit} makes it read
-	// the object; given a full hash alone, it prints the hash without looking
-	// the object up. cat-file -e is not used: with ^{commit}, it exits 128 for
-	// a missing object, as for a broken repository.
-	//
-	// A full hash of the repository's object format names that object even if
-	// a ref has the same name. What rev-parse prints must still be commit
-	// itself: ^{commit} peels an annotated tag to its commit, and a hash of
-	// the other format, which is no object name here, is read as a ref name.
-	bs, err = util.Git("-C", repository, "rev-parse", "--verify", "--quiet", "--end-of-options", fmt.Sprintf("%s^{commit}", commit))
-	if err != nil {
-		if exitedWith(err, 1) {
-			return errors.Wrapf(ErrCommitNotFound, "check %s exists", commit)
-		}
-		return errors.Wrapf(err, "check %s exists", commit)
-	}
-	if hash := strings.TrimSpace(string(bs)); hash != commit {
-		return errors.Wrapf(ErrCommitNotFound, "check %s exists: resolved to %s", commit, hash)
-	}
-
-	// merge-base --is-ancestor exits 0 when the first commit is the second or
-	// an ancestor of it, 1 when it is not, and 128 on an error. It stops at
-	// the shallow commits of a shallow repository.
-	if _, err := util.Git("-C", repository, "merge-base", "--is-ancestor", commit, tip); err != nil {
-		if exitedWith(err, 1) {
-			return errors.Wrapf(ErrNotReachable, "check %s is reachable from %s", commit, ref)
-		}
-		return errors.Wrapf(err, "check %s is reachable from %s", commit, ref)
-	}
-
-	return nil
+	return errors.Wrapf(ErrNotReachable, "check %s is reachable from %s", commit, ref)
 }
 
-func containsOnBranchGoGit(repository, commit, branch string) error {
+func containsGoGit(repository, commit, branch string) error {
 	r, err := git.PlainOpen(repository)
 	if err != nil {
 		return errors.Wrapf(err, "open %s", repository)
+	}
+
+	h, err := r.ResolveRevision(plumbing.Revision(commit))
+	if err != nil {
+		if branch != "" && errors.Is(err, plumbing.ErrReferenceNotFound) {
+			return errors.Wrapf(ErrCommitNotFound, "resolve %s (the history may have been truncated or rewritten)", commit)
+		}
+		return errors.Wrapf(err, "resolve %s", commit)
+	}
+	if branch == "" {
+		return nil
+	}
+	if err := checkFullHash(commit, h.String()); err != nil {
+		return err
 	}
 
 	ref := plumbing.NewBranchReferenceName(branch)
@@ -206,50 +183,36 @@ func containsOnBranchGoGit(repository, commit, branch string) error {
 		return errors.Wrapf(err, "resolve %s", ref)
 	}
 
-	// ResolveRevision is not used: it falls back to a ref that has the name
-	// of a missing hash, and peels an annotated tag. CommitObject looks the
-	// hash up only as an object, and reports a missing one, or one of
-	// another type, as ErrObjectNotFound. go-git reads SHA-1 repositories
-	// only, where a 64-digit hash cannot name an object.
-	if !plumbing.IsHash(commit) {
-		return errors.Wrapf(ErrCommitNotFound, "check %s exists", commit)
-	}
-	target, err := r.CommitObject(plumbing.NewHash(commit))
-	if err != nil {
-		if errors.Is(err, plumbing.ErrObjectNotFound) {
-			return errors.Wrapf(ErrCommitNotFound, "check %s exists", commit)
-		}
-		return errors.Wrapf(err, "check %s exists", commit)
-	}
-
 	// (*object.Commit).IsAncestor reads every parent, so it fails on a
 	// shallow repository, such as a dotgit vuls-data-db has truncated, where
 	// the parents of the shallow commits are missing. Stop at those commits,
-	// as git does.
+	// as git does. The walk yields only the commit, if it is reachable.
 	shallow, err := r.Storer.Shallow()
 	if err != nil {
 		return errors.Wrap(err, "read shallow commits")
 	}
-	isLimit := object.CommitFilter(func(c *object.Commit) bool {
-		return slices.Contains(shallow, c.Hash)
-	})
-	iter := object.NewFilterCommitIter(tip, nil, &isLimit)
+	isCommit := object.CommitFilter(func(c *object.Commit) bool { return c.Hash == *h })
+	isShallow := object.CommitFilter(func(c *object.Commit) bool { return slices.Contains(shallow, c.Hash) })
+	iter := object.NewFilterCommitIter(tip, &isCommit, &isShallow)
 	defer iter.Close()
 
-	var reachable bool
-	if err := iter.ForEach(func(c *object.Commit) error {
-		if c.Hash == target.Hash {
-			reachable = true
-			return storer.ErrStop
-		}
-		return nil
-	}); err != nil {
-		return errors.Wrapf(err, "check %s is reachable from %s", commit, ref)
-	}
-	if !reachable {
+	switch _, err := iter.Next(); {
+	case errors.Is(err, io.EOF):
 		return errors.Wrapf(ErrNotReachable, "check %s is reachable from %s", commit, ref)
+	case err != nil:
+		return errors.Wrapf(err, "check %s is reachable from %s", commit, ref)
+	default:
+		return nil
 	}
+}
 
+// checkFullHash checks that commit, which resolved to the commit hash, is
+// that commit's own full hash. Resolving peels an annotated tag, and takes an
+// abbreviation, a ref name, or in go-git, a ref named like a missing hash.
+func checkFullHash(commit, hash string) error {
+	if !strings.EqualFold(commit, hash) {
+		return errors.Wrapf(ErrCommitNotFound, "%s resolves to commit %s, but is not a commit's own full hash (e.g. an annotated tag's hash, an abbreviation or a ref name)", commit, hash)
+	}
 	return nil
 }
 
