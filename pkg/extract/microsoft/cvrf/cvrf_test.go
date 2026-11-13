@@ -959,11 +959,35 @@ func TestBuildFixedBuildCriterion(t *testing.T) {
 			},
 		},
 		{
-			name: ".NET SDK X.Y.100 and X.Y.200 cover no released band",
+			name: ".NET SDK X.Y.100 fixes the prereleases of X.Y, X.Y.200 covers no released band",
 			args: args{
 				cveID:         "CVE-2099-0001",
 				productName:   ".NET 11.0 installed on Linux",
 				rawFixedBuild: "11.0.100, 11.0.200",
+			},
+			want: &criterionTypes.Criterion{
+				Type: criterionTypes.CriterionTypeVersion,
+				Version: &vcTypes.Criterion{
+					Vulnerable: true,
+					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
+					Package: packageTypes.Package{
+						Type:   packageTypes.PackageTypeBinary,
+						Binary: &binaryTypes.Package{Name: ".NET 11.0 installed on Linux"},
+					},
+					Affected: &affectedTypes.Affected{
+						Type:  affectedrangeTypes.RangeTypeMicrosoftDotNetCoreSDK,
+						Range: []affectedrangeTypes.Range{{LessThan: "11.0.100"}},
+						Fixed: []string{"11.0.100"},
+					},
+				},
+			},
+		},
+		{
+			name: ".NET SDK X.Y.200 covers no released band",
+			args: args{
+				cveID:         "CVE-2099-0001",
+				productName:   ".NET 11.0 installed on Linux",
+				rawFixedBuild: "11.0.200",
 			},
 			want: nil,
 		},
@@ -1072,6 +1096,15 @@ func TestBuildFixedBuildCriterion(t *testing.T) {
 				cveID:         "CVE-2099-0001",
 				productName:   ".NET 8.0 installed on Windows",
 				rawFixedBuild: "8.0.32",
+			},
+			wantErr: true,
+		},
+		{
+			name: ".NET runtime version list under the SDK name fails (not renamed by vendorFixProductName)",
+			args: args{
+				cveID:         "CVE-2099-0001",
+				productName:   ".NET 10.0 installed on Windows",
+				rawFixedBuild: "10.0.15, 10.0.16",
 			},
 			wantErr: true,
 		},
@@ -1876,6 +1909,11 @@ func TestVendorFixProductName(t *testing.T) {
 			want: ".NET 10.0 installed on Windows",
 		},
 		{
+			name: "several runtime versions in one FixedBuild kept on the SDK, whose criterion fails on them",
+			args: args{cveID: "CVE-2099-0001", productName: ".NET 10.0 installed on Windows", rawFixedBuild: "10.0.15, 10.0.16"},
+			want: ".NET 10.0 installed on Windows",
+		},
+		{
 			name: "release-candidate tag kept on the SDK",
 			args: args{cveID: "CVE-2099-0001", productName: ".NET 11.0 installed on Linux", rawFixedBuild: "11.0 RC1"},
 			want: ".NET 11.0 installed on Linux",
@@ -1944,6 +1982,40 @@ func TestIsHotpatchSubType(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := cvrf.IsHotpatchSubType(tt.subType); got != tt.want {
 				t.Errorf("IsHotpatchSubType(%q) = %v, want %v", tt.subType, got, tt.want)
+			}
+		})
+	}
+}
+
+func TestDotNetSDKFirstReleaseAccept(t *testing.T) {
+	// CVE-2026-114151: CVRF fixes the .NET 11.0 SDK in 11.0.100, and the advisory
+	// (dotnet/announcements#522) lists "11.0.100-preview.1 <= SDK < 11.0.100".
+	const product = ".NET 11.0 installed on Windows"
+	c, err := cvrf.BuildFixedBuildCriterion("CVE-2026-114151", product, "11.0.100")
+	if err != nil {
+		t.Fatalf("BuildFixedBuildCriterion() error = %v", err)
+	}
+	if c == nil || c.Version == nil {
+		t.Fatalf("BuildFixedBuildCriterion() = %v, want a version criterion", c)
+	}
+
+	tests := []struct {
+		version string
+		want    bool
+	}{
+		{version: "11.0.100-preview.1.26104.118", want: true},
+		{version: "11.0.100-rc.3.26522.148", want: true},
+		{version: "11.0.100", want: false},
+		{version: "11.0.101", want: false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.version, func(t *testing.T) {
+			got, err := c.Version.Accept(vcTypes.Query{Binary: &vcTypes.QueryBinary{Family: ecosystemTypes.EcosystemTypeMicrosoft, Name: product, Version: tt.version}}, nil)
+			if err != nil {
+				t.Fatalf("Accept() error = %v", err)
+			}
+			if got != tt.want {
+				t.Errorf("Accept(%q) = %v, want %v", tt.version, got, tt.want)
 			}
 		})
 	}

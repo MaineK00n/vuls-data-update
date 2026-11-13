@@ -1631,23 +1631,19 @@ func vendorFixProductName(cveID, productName, rawFixedBuild string) string {
 	return strings.Replace(n, " installed on ", " runtime installed on ", 1)
 }
 
-// isDotNetRuntimeFixedBuild reports whether every comma-separated version of a .NET
-// FixedBuild is a runtime version: one that parses as a .NET runtime version with a
-// patch below 100 (e.g. "10.0.15", "11.0.0", "9.0.0-preview.4.24266.19"). One that
-// names an SDK feature band (e.g. "10.0.115"), or no version at all (e.g. "", "11.0
-// RC1"), is not, so the Vendor Fix stays on the SDK product, whose criterion parses it
-// (see buildDotNetSDKCriterion) and fails on a runtime version mixed in.
+// isDotNetRuntimeFixedBuild reports whether a .NET FixedBuild is one runtime version:
+// one that parses as a .NET runtime version with a patch below 100 (e.g. "10.0.15",
+// "11.0.0", "9.0.0-preview.4.24266.19"). One that names an SDK feature band (e.g.
+// "10.0.115"), no version at all (e.g. "", "11.0 RC1"), or several versions (e.g.
+// "10.0.15, 10.0.115"; a runtime criterion compares one version, see
+// isVersionlessFixedBuild) is not, so the Vendor Fix stays on the SDK product, whose
+// criterion parses it (see buildDotNetSDKCriterion) and fails on a runtime version.
 func isDotNetRuntimeFixedBuild(fixedBuild string) bool {
-	if fixedBuild == "" {
+	if fixedBuild == "" || strings.Contains(fixedBuild, ",") {
 		return false
 	}
-	for f := range strings.SplitSeq(fixedBuild, ",") {
-		v, err := dotnetcoreruntimeversion.NewVersion(strings.TrimSpace(f))
-		if err != nil || v.Patch >= 100 {
-			return false
-		}
-	}
-	return true
+	v, err := dotnetcoreruntimeversion.NewVersion(fixedBuild)
+	return err == nil && v.Patch < 100
 }
 
 // productNameOverrides renames a product within one CVE, keyed by [2]string{CVE
@@ -2042,11 +2038,13 @@ var productNameOverrides = map[[2]string]string{
 // before it, which Microsoft retires by moving its users to the next band: "X.Y.(B-1)00
 // <= v < X.Y.B00" (the CVE-2026-58649 advisory lists "10.0.3xx: >= 10.0.300, <=
 // 10.0.399, patched 10.0.400"). The 1xx band is serviced alongside the later bands
-// rather than retired, so X.Y.100 and X.Y.200 cover no released band and give no
-// range. CVRF does not always list every affected band (see fixedBuildOverrides).
-// A prerelease of X.Y.100 (e.g. "11.0.100-rc.3", see dotnetPrereleaseRE) fixes the
-// prereleases before it, which are all the SDKs of X.Y below it: "v < fixed". A
-// prerelease of any other version fails.
+// rather than retired, so X.Y.200 covers no released band and gives no range. CVRF
+// does not always list every affected band (see fixedBuildOverrides).
+// X.Y.100, the first release of X.Y, or a prerelease of it (e.g. "11.0.100-rc.3", see
+// dotnetPrereleaseRE) fixes the prereleases before it, which are all the SDKs of X.Y
+// below it: "v < fixed" (e.g. the CVE-2026-114151 advisory lists "11.0.100-preview.1
+// <= SDK < 11.0.100" as affected, fixed in 11.0.100). A prerelease of any other version
+// fails.
 func buildDotNetSDKCriterion(productName, fixedBuild string) (*criterionTypes.Criterion, error) {
 	n := strings.Count(fixedBuild, ",") + 1
 	ranges := make([]rangeTypes.Range, 0, n)
@@ -2065,10 +2063,9 @@ func buildDotNetSDKCriterion(productName, fixedBuild string) (*criterionTypes.Cr
 		}
 
 		switch band := v.FeatureBand(); {
-		case v.Prerelease != "":
-			if band != 1 || v.BandPatch() != 0 {
-				return nil, errors.Errorf("unexpected .NET SDK prerelease. expected: %q, actual: %q", "a prerelease of X.Y.100", f)
-			}
+		case v.Prerelease != "" && (band != 1 || v.BandPatch() != 0):
+			return nil, errors.Errorf("unexpected .NET SDK prerelease. expected: %q, actual: %q", "a prerelease of X.Y.100", f)
+		case band == 1 && v.BandPatch() == 0:
 			ranges = append(ranges, rangeTypes.Range{LessThan: f})
 			fixed = append(fixed, f)
 		case v.BandPatch() != 0:
