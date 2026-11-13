@@ -1,0 +1,20 @@
+{
+	"kb_id": "5135242",
+	"url": "https://support.microsoft.com/help/5135242",
+	"products": [
+		".NET 9.0 installed on Linux",
+		".NET 9.0 installed on Mac OS",
+		".NET 9.0 installed on Windows",
+		".NET 9.0 runtime installed on Linux",
+		".NET 9.0 runtime installed on Mac OS",
+		".NET 9.0 runtime installed on Windows"
+	],
+	"data_source": {
+		"id": "microsoft-cvrf",
+		"raws": [
+			"fixtures/2026-Nov/2026/CVE-2026-105544.json",
+			"fixtures/2026-Nov/2026/CVE-2026-109475.json",
+			"fixtures/2026-Nov/2026/CVE-2026-114151.json"
+		]
+	}
+}
