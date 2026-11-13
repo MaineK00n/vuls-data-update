@@ -22,6 +22,7 @@ func NewCmdDotGit() *cobra.Command {
 			$ vuls-data-update dotgit diff tree --pathspec bookworm/2025/CVE-2025-0001.json vuls-data-raw-debian-security-tracker-api 729c12ba5ff2dafacaf26b9311d8dcbea1d98bd3 main
 
 			$ vuls-data-update dotgit log vuls-data-raw-debian-security-tracker-api
+			$ vuls-data-update dotgit show vuls-data-raw-debian-security-tracker-api main
 
 			$ vuls-data-update dotgit ls
 			$ vuls-data-update dotgit status vuls-data-raw-debian-security-tracker-api
@@ -42,7 +43,7 @@ func NewCmdDotGit() *cobra.Command {
 		newCmdPull(), newCmdCompress(),
 		newCmdContains(), newCmdFind(), newCmdGrep(),
 		newCmdCat(), newCmdDiff(),
-		newCmdLog(),
+		newCmdLog(), newCmdShow(),
 		newCmdLs(),
 		newCmdStatus(),
 		newCmdShallow(), newCmdConcat(),
