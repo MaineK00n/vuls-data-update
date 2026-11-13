@@ -179,8 +179,9 @@ func RemoveAll(root string, opts ...RemoveOption) error {
 }
 
 type ensureOption struct {
-	keeps    []string
-	requires []string
+	keeps      []string
+	requires   []string
+	allowEmpty bool
 }
 
 type EnsureOption interface {
@@ -201,6 +202,24 @@ func (o requireOption) applyEnsure(opts *ensureOption) {
 // option states the whole set, and passing it again replaces it.
 func WithRequire(paths ...string) EnsureOption {
 	return requireOption(paths)
+}
+
+type allowEmptyOption bool
+
+func (o allowEmptyOption) applyEnsure(opts *ensureOption) {
+	opts.allowEmpty = bool(o)
+}
+
+// WithAllowEmpty lets EnsureWritten pass a root the fetch wrote nothing into.
+// Something written is still held to WithRequire: what is allowed is a run
+// that fetched nothing, not one that fetched part of what it should have.
+//
+// A fetch that wrote nothing has failed, so this is never a fetcher's default.
+// It is for a run that is one part of a whole -- a window of changes, or one
+// shard of a list whose shards the caller merges and checks together -- where
+// that part can rightly come to nothing.
+func WithAllowEmpty(allow bool) EnsureOption {
+	return allowEmptyOption(allow)
 }
 
 // EnsureWritten returns an error unless the fetch that just ran wrote into
@@ -229,6 +248,8 @@ func EnsureWritten(root string, opts ...EnsureOption) error {
 	switch ok, err := holdsFile(root, options.keeps); {
 	case err != nil:
 		return errors.Wrapf(err, "check %s", root)
+	case !ok && options.allowEmpty:
+		return nil
 	case !ok:
 		return errors.Errorf("no file written under %s", root)
 	}
