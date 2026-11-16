@@ -407,6 +407,31 @@ func TestToCriterions(t *testing.T) {
 			}},
 		},
 		{
+			// FG-IR-26-268, 269 and 270 list "25.1.a all versions": a milestone
+			// read as the X.Y train it sits in, the granularity FortiSASE's
+			// bounds keep.
+			name: "non-numeric product milestone all versions → its train range",
+			args: args{
+				productID: "FortiSASE 25.1.a all versions",
+				refMap: map[string]csaf.ProductRef{
+					"FortiSASE 25.1.a all versions": csaf.NewProductRef("FortiSASE", "25.1.a all versions"),
+				},
+			},
+			want: []criterionTypes.Criterion{{
+				Type: criterionTypes.CriterionTypeCPE,
+				CPE: &ccTypes.Criterion{
+					Vulnerable: true,
+					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
+					CPE:        ccTypes.CPE("cpe:2.3:a:fortinet:fortisase:*:*:*:*:*:*:*:*"),
+					Range: &ccRangeTypes.Range{
+						Type:         ccRangeTypes.RangeTypeFortinetFortiSASE,
+						GreaterEqual: "25.1",
+						LessThan:     "25.2",
+					},
+				},
+			}},
+		},
+		{
 			name: "non-numeric product whole-product ok",
 			args: args{
 				productID: "FortiSASE all versions",
@@ -483,6 +508,30 @@ func TestToCriterions(t *testing.T) {
 			}},
 		},
 		{
+			// The milestone train is read for every non-numeric-versioned
+			// product, not FortiSASE alone.
+			name: "non-numeric Sovereign milestone all versions → its train range",
+			args: args{
+				productID: "FortiSASE-Sovereign 25.3.a all versions",
+				refMap: map[string]csaf.ProductRef{
+					"FortiSASE-Sovereign 25.3.a all versions": csaf.NewProductRef("FortiSASE-Sovereign", "25.3.a all versions"),
+				},
+			},
+			want: []criterionTypes.Criterion{{
+				Type: criterionTypes.CriterionTypeCPE,
+				CPE: &ccTypes.Criterion{
+					Vulnerable: true,
+					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
+					CPE:        ccTypes.CPE("cpe:2.3:a:fortinet:fortisase-sovereign:*:*:*:*:*:*:*:*"),
+					Range: &ccRangeTypes.Range{
+						Type:         ccRangeTypes.RangeTypeFortinetFortiSASESovereign,
+						GreaterEqual: "25.3",
+						LessThan:     "25.4",
+					},
+				},
+			}},
+		},
+		{
 			name: "non-numeric Sovereign multi-component range rejected",
 			args: args{
 				productID: "FortiSASE-Sovereign >=25.3.0|<=25.3.5",
@@ -510,6 +559,60 @@ func TestToCriterions(t *testing.T) {
 				productID: "FortiOS FortiClient iOS all versions",
 				refMap: map[string]csaf.ProductRef{
 					"FortiOS FortiClient iOS all versions": csaf.NewProductRef("FortiOS", "FortiClient iOS all versions"),
+				},
+			},
+			wantErr: true,
+		},
+		{
+			// Nor for a non-numeric-versioned product, whose milestone trains
+			// are read.
+			name: "non-numeric product leaked product name all versions → hard error",
+			args: args{
+				productID: "FortiSASE FortiClient iOS all versions",
+				refMap: map[string]csaf.ProductRef{
+					"FortiSASE FortiClient iOS all versions": csaf.NewProductRef("FortiSASE", "FortiClient iOS all versions"),
+				},
+			},
+			wantErr: true,
+		},
+		{
+			// A milestone train is read only for a non-numeric-versioned product.
+			name: "numeric product milestone all versions → hard error",
+			args: args{
+				productID: "FortiOS 7.4.a all versions",
+				refMap: map[string]csaf.ProductRef{
+					"FortiOS 7.4.a all versions": csaf.NewProductRef("FortiOS", "7.4.a all versions"),
+				},
+			},
+			wantErr: true,
+		},
+		{
+			// Only a numeric X.Y and one milestone letter reads as a train.
+			name: "non-numeric product milestone patch all versions → hard error",
+			args: args{
+				productID: "FortiSASE 25.1.a.2 all versions",
+				refMap: map[string]csaf.ProductRef{
+					"FortiSASE 25.1.a.2 all versions": csaf.NewProductRef("FortiSASE", "25.1.a.2 all versions"),
+				},
+			},
+			wantErr: true,
+		},
+		{
+			name: "non-numeric product multi-letter milestone all versions → hard error",
+			args: args{
+				productID: "FortiSASE 25.1.ab all versions",
+				refMap: map[string]csaf.ProductRef{
+					"FortiSASE 25.1.ab all versions": csaf.NewProductRef("FortiSASE", "25.1.ab all versions"),
+				},
+			},
+			wantErr: true,
+		},
+		{
+			name: "non-numeric product milestone of a bare major all versions → hard error",
+			args: args{
+				productID: "FortiSASE 25.a all versions",
+				refMap: map[string]csaf.ProductRef{
+					"FortiSASE 25.a all versions": csaf.NewProductRef("FortiSASE", "25.a all versions"),
 				},
 			},
 			wantErr: true,
