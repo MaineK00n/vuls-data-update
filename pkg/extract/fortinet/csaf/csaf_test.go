@@ -465,6 +465,25 @@ func TestToCriterions(t *testing.T) {
 				},
 			}},
 		},
+		{
+			// FG-IR-26-268, 269 and 270 list "26.3.1_a", which the milestone
+			// scheme does not parse: baked as written, as CVRF has it.
+			name: "non-numeric product letter-suffixed release baked as written",
+			args: args{
+				productID: "FortiSASE 26.3.1_a",
+				refMap: map[string]csaf.ProductRef{
+					"FortiSASE 26.3.1_a": csaf.NewProductRef("FortiSASE", "26.3.1_a"),
+				},
+			},
+			want: []criterionTypes.Criterion{{
+				Type: criterionTypes.CriterionTypeCPE,
+				CPE: &ccTypes.Criterion{
+					Vulnerable: true,
+					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
+					CPE:        ccTypes.CPE("cpe:2.3:a:fortinet:fortisase:26.3.1_a:*:*:*:*:*:*:*"),
+				},
+			}},
+		},
 		// FortiSASE-Sovereign versions with FortiSASE's milestone-letter scheme
 		// (FG-IR-26-227 lists 25.2, 25.3.a, 25.4.a and 26.2.c): its concrete
 		// releases parse as milestones and its trains range like FortiSASE's.
@@ -755,6 +774,58 @@ func TestToCriterions(t *testing.T) {
 				productID: "FortiSASE 25.1.a10",
 				refMap: map[string]csaf.ProductRef{
 					"FortiSASE 25.1.a10": csaf.NewProductRef("FortiSASE", "25.1.a10"),
+				},
+			},
+			wantErr: true,
+		},
+		{
+			// A letter-suffixed release is baked only for a non-numeric-versioned
+			// product, and only as a numeric X.Y.Z, "_" and one letter.
+			name: "numeric product letter-suffixed release rejected",
+			args: args{
+				productID: "FortiOS 7.4.1_a",
+				refMap: map[string]csaf.ProductRef{
+					"FortiOS 7.4.1_a": csaf.NewProductRef("FortiOS", "7.4.1_a"),
+				},
+			},
+			wantErr: true,
+		},
+		{
+			name: "non-numeric product multi-letter suffix rejected",
+			args: args{
+				productID: "FortiSASE 26.3.1_ab",
+				refMap: map[string]csaf.ProductRef{
+					"FortiSASE 26.3.1_ab": csaf.NewProductRef("FortiSASE", "26.3.1_ab"),
+				},
+			},
+			wantErr: true,
+		},
+		{
+			name: "non-numeric product numeric suffix rejected",
+			args: args{
+				productID: "FortiSASE 26.3.1_1",
+				refMap: map[string]csaf.ProductRef{
+					"FortiSASE 26.3.1_1": csaf.NewProductRef("FortiSASE", "26.3.1_1"),
+				},
+			},
+			wantErr: true,
+		},
+		{
+			name: "non-numeric product suffix on a milestone rejected",
+			args: args{
+				productID: "FortiSASE 25.1.a_b",
+				refMap: map[string]csaf.ProductRef{
+					"FortiSASE 25.1.a_b": csaf.NewProductRef("FortiSASE", "25.1.a_b"),
+				},
+			},
+			wantErr: true,
+		},
+		{
+			name: "non-numeric product suffix on a four-component release rejected",
+			args: args{
+				productID: "FortiSASE 26.3.1.2_a",
+				refMap: map[string]csaf.ProductRef{
+					"FortiSASE 26.3.1.2_a": csaf.NewProductRef("FortiSASE", "26.3.1.2_a"),
 				},
 			},
 			wantErr: true,
