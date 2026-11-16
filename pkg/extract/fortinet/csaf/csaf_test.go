@@ -184,29 +184,47 @@ func TestToCriterions(t *testing.T) {
 					"FortiClientMac >=7.0.0|<=7.0.5": csaf.NewProductRef("FortiClientMac", ">=7.0.0|<=7.0.5"),
 				},
 			},
-			want: func() []criterionTypes.Criterion {
-				var cns []criterionTypes.Criterion
-				for _, cpe := range []string{
-					"cpe:2.3:a:fortinet:forticlientmac:*:*:*:*:*:*:*:*",
-					"cpe:2.3:a:fortinet:forticlient:*:*:*:*:*:macos:*:*",
-					"cpe:2.3:a:fortinet:forticlient:*:*:*:*:*:mac_os_x:*:*",
-				} {
-					cns = append(cns, criterionTypes.Criterion{
-						Type: criterionTypes.CriterionTypeCPE,
-						CPE: &ccTypes.Criterion{
-							Vulnerable: true,
-							FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
-							CPE:        ccTypes.CPE(cpe),
-							Range: &ccRangeTypes.Range{
-								Type:         ccRangeTypes.RangeTypeFortinetFortiClient,
-								GreaterEqual: "7.0.0",
-								LessEqual:    "7.0.5",
-							},
+			want: []criterionTypes.Criterion{
+				{
+					Type: criterionTypes.CriterionTypeCPE,
+					CPE: &ccTypes.Criterion{
+						Vulnerable: true,
+						FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
+						CPE:        ccTypes.CPE("cpe:2.3:a:fortinet:forticlientmac:*:*:*:*:*:*:*:*"),
+						Range: &ccRangeTypes.Range{
+							Type:         ccRangeTypes.RangeTypeFortinetFortiClient,
+							GreaterEqual: "7.0.0",
+							LessEqual:    "7.0.5",
 						},
-					})
-				}
-				return cns
-			}(),
+					},
+				},
+				{
+					Type: criterionTypes.CriterionTypeCPE,
+					CPE: &ccTypes.Criterion{
+						Vulnerable: true,
+						FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
+						CPE:        ccTypes.CPE("cpe:2.3:a:fortinet:forticlient:*:*:*:*:*:macos:*:*"),
+						Range: &ccRangeTypes.Range{
+							Type:         ccRangeTypes.RangeTypeFortinetFortiClient,
+							GreaterEqual: "7.0.0",
+							LessEqual:    "7.0.5",
+						},
+					},
+				},
+				{
+					Type: criterionTypes.CriterionTypeCPE,
+					CPE: &ccTypes.Criterion{
+						Vulnerable: true,
+						FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
+						CPE:        ccTypes.CPE("cpe:2.3:a:fortinet:forticlient:*:*:*:*:*:mac_os_x:*:*"),
+						Range: &ccRangeTypes.Range{
+							Type:         ccRangeTypes.RangeTypeFortinetFortiClient,
+							GreaterEqual: "7.0.0",
+							LessEqual:    "7.0.5",
+						},
+					},
+				},
+			},
 		},
 		{
 			// A baked version lands in every CPE.
