@@ -860,7 +860,12 @@ func resolveVersion(productName, exp string) (*ccRangeTypes.Range, string, error
 		// first value with the second; either way the emitted range is not the
 		// one written, so reject it rather than pick a bound.
 		seen := make(map[string]bool, 2)
-		for part := range strings.SplitSeq(exp, "|") {
+		// Fortinet joins the two bounds with "|" (">=7.0.0|<=7.0.5"), and in
+		// FG-IR-26-205, 212 and 264 with " and " (">= 7.6.0 and <= 7.6.6"), so
+		// both separate bounds alike and every check below holds for either.
+		// " and " separates only here, between bounds: "7.0.6 and above" took
+		// the case above.
+		for part := range strings.SplitSeq(strings.ReplaceAll(exp, " and ", "|"), "|") {
 			part = strings.TrimSpace(part)
 			var bound *string
 			var op, side string

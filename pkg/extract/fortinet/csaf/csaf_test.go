@@ -259,6 +259,40 @@ func TestToCriterions(t *testing.T) {
 			}},
 		},
 		{
+			// FG-IR-26-205, 212 and 264 join the bounds with " and ", a space
+			// after the operator too: a range like the "|" one, not a version to
+			// bake, in every CPE of the product.
+			name: "bounds joined with and → range, wildcard cpe",
+			args: args{
+				productID: "FortiMail >= 7.6.0 and <= 7.6.6",
+				refMap: map[string]csaf.ProductRef{
+					"FortiMail >= 7.6.0 and <= 7.6.6": csaf.NewProductRef("FortiMail", ">= 7.6.0 and <= 7.6.6"),
+				},
+			},
+			want: func() []criterionTypes.Criterion {
+				var cns []criterionTypes.Criterion
+				for _, cpe := range []string{
+					"cpe:2.3:a:fortinet:fortimail:*:*:*:*:*:*:*:*",
+					"cpe:2.3:o:fortinet:fortimail:*:*:*:*:*:*:*:*",
+				} {
+					cns = append(cns, criterionTypes.Criterion{
+						Type: criterionTypes.CriterionTypeCPE,
+						CPE: &ccTypes.Criterion{
+							Vulnerable: true,
+							FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
+							CPE:        ccTypes.CPE(cpe),
+							Range: &ccRangeTypes.Range{
+								Type:         ccRangeTypes.RangeTypeFortinetFortiMail,
+								GreaterEqual: "7.6.0",
+								LessEqual:    "7.6.6",
+							},
+						},
+					})
+				}
+				return cns
+			}(),
+		},
+		{
 			name: "whole product (all versions)",
 			args: args{
 				productID: "FortiOS all versions",
@@ -328,6 +362,8 @@ func TestToCriterions(t *testing.T) {
 			}},
 		},
 		{
+			// "and above" is read before any bound, so its " and " never
+			// separates bounds.
 			name: "numeric and above ok (numeric product)",
 			args: args{
 				productID: "FortiOS 7.0.0 and above",
@@ -707,6 +743,70 @@ func TestToCriterions(t *testing.T) {
 				productID: "FortiOS >=7.2.0|<7.2.5|<=7.2.3",
 				refMap: map[string]csaf.ProductRef{
 					"FortiOS >=7.2.0|<7.2.5|<=7.2.3": csaf.NewProductRef("FortiOS", ">=7.2.0|<7.2.5|<=7.2.3"),
+				},
+			},
+			wantErr: true,
+		},
+		// Bounds joined with " and " are held to the same checks as "|" ones.
+		{
+			name: "two lower bounds joined with and rejected",
+			args: args{
+				productID: "FortiMail >= 7.6.0 and >= 7.6.2",
+				refMap: map[string]csaf.ProductRef{
+					"FortiMail >= 7.6.0 and >= 7.6.2": csaf.NewProductRef("FortiMail", ">= 7.6.0 and >= 7.6.2"),
+				},
+			},
+			wantErr: true,
+		},
+		{
+			name: "empty bound joined with and rejected",
+			args: args{
+				productID: "FortiMail >= 7.6.0 and <=",
+				refMap: map[string]csaf.ProductRef{
+					"FortiMail >= 7.6.0 and <=": csaf.NewProductRef("FortiMail", ">= 7.6.0 and <="),
+				},
+			},
+			wantErr: true,
+		},
+		{
+			name: "reversed range joined with and rejected",
+			args: args{
+				productID: "FortiMail >= 7.6.6 and <= 7.6.0",
+				refMap: map[string]csaf.ProductRef{
+					"FortiMail >= 7.6.6 and <= 7.6.0": csaf.NewProductRef("FortiMail", ">= 7.6.6 and <= 7.6.0"),
+				},
+			},
+			wantErr: true,
+		},
+		{
+			name: "bare version joined with and rejected",
+			args: args{
+				productID: "FortiMail >= 7.6.0 and 7.6.6",
+				refMap: map[string]csaf.ProductRef{
+					"FortiMail >= 7.6.0 and 7.6.6": csaf.NewProductRef("FortiMail", ">= 7.6.0 and 7.6.6"),
+				},
+			},
+			wantErr: true,
+		},
+		{
+			// Mixing the two separators adds a third bound, so a side repeats.
+			name: "and mixed with pipe rejected",
+			args: args{
+				productID: "FortiMail >=7.6.0|<=7.6.6 and <7.6.3",
+				refMap: map[string]csaf.ProductRef{
+					"FortiMail >=7.6.0|<=7.6.6 and <7.6.3": csaf.NewProductRef("FortiMail", ">=7.6.0|<=7.6.6 and <7.6.3"),
+				},
+			},
+			wantErr: true,
+		},
+		{
+			// " and " separates only between bounds: one with no space around
+			// it is part of a bound, which then does not parse.
+			name: "and without spaces rejected",
+			args: args{
+				productID: "FortiMail >=7.6.0and<=7.6.6",
+				refMap: map[string]csaf.ProductRef{
+					"FortiMail >=7.6.0and<=7.6.6": csaf.NewProductRef("FortiMail", ">=7.6.0and<=7.6.6"),
 				},
 			},
 			wantErr: true,
