@@ -754,6 +754,15 @@ func toCriterions(productID string, refMap map[string]productRef) ([]criterionTy
 		// the milestone scheme (which also accepts a single letter component,
 		// "25.2.a").
 		switch {
+		case nonNumericVersioned(rt) && letterSuffixedReleasePattern.MatchString(bakeVersion):
+			// A release with an underscore-joined letter suffix, which the
+			// milestone scheme does not parse ("1_a" is neither a number nor a
+			// letter): FG-IR-26-268, 269 and 270 list FortiSASE "26.3.1_a"
+			// beside 26.3.1, as their CVRF enumerates it beside 26.2.1_a. It
+			// is baked as written, as the CVRF extractor bakes it, since a
+			// baked version is matched by CPE name and never reaches the
+			// comparator. Only this exact shape passes; any other still fails
+			// the parse below.
 		case nonNumericVersioned(rt):
 			if _, err := nonnumericVersion.NewVersion(bakeVersion); err != nil {
 				return nil, errors.Wrapf(err, "unexpected concrete version %q for %q (expr %q)", bakeVersion, productID, ref.versionExp)
@@ -798,6 +807,11 @@ func toCriterions(productID string, refMap map[string]productRef) ([]criterionTy
 // named as a train ("25.1.a" of "25.1.a all versions"): a numeric X.Y, which
 // it captures, and one milestone letter.
 var milestoneTrainPattern = regexp.MustCompile(`^(\d+\.\d+)\.[a-z]$`)
+
+// letterSuffixedReleasePattern is a release of a non-numeric-versioned
+// product with an underscore-joined letter suffix ("26.3.1_a"): a numeric
+// X.Y.Z, "_" and one lowercase letter.
+var letterSuffixedReleasePattern = regexp.MustCompile(`^\d+\.\d+\.\d+_[a-z]$`)
 
 // nonNumericVersioned reports whether products of range type rt version their
 // releases with Fortinet's non-numeric (milestone-letter) scheme ("25.2.a"),

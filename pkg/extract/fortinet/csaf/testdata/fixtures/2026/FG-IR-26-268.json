@@ -1,0 +1,360 @@
+{
+	"document": {
+		"acknowledgments": [
+			{
+				"summary": "Internally discovered and reported by Loic Pantano of the Fortinet Product Security team with the use of the frontier AI model: Claude Mythos."
+			}
+		],
+		"category": "Fortinet PSIRT Advisories",
+		"csaf_version": "2.0",
+		"publisher": {
+			"category": "vendor",
+			"contact_details": "https://fortiguard.fortinet.com/faq/psirt-contact",
+			"issuing_authority": "Fortinet PSIRT",
+			"name": "Fortinet PSIRT",
+			"namespace": "https://fortiguard.fortinet.com/psirt"
+		},
+		"title": "Numeric truncation error",
+		"tracking": {
+			"current_release_date": "2026-11-10T00:00:00",
+			"id": "FG-IR-26-268",
+			"initial_release_date": "2026-11-10T00:00:00",
+			"revision_history": [
+				{
+					"date": "2026-11-10T00:00:00",
+					"number": "1",
+					"summary": "Initial Publication"
+				}
+			],
+			"status": "final",
+			"version": "0"
+		}
+	},
+	"product_tree": {
+		"branches": [
+			{
+				"branches": [
+					{
+						"branches": [
+							{
+								"category": "product_version_range",
+								"name": "FortiOS/>=8.0.0|<=8.0.1",
+								"product": {
+									"name": "FortiOS",
+									"product_id": "FortiOS >=8.0.0|<=8.0.1"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiOS/>=7.6.0|<=7.6.7",
+								"product": {
+									"name": "FortiOS",
+									"product_id": "FortiOS >=7.6.0|<=7.6.7"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiOS/>=7.4.0|<=7.4.12",
+								"product": {
+									"name": "FortiOS",
+									"product_id": "FortiOS >=7.4.0|<=7.4.12"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiOS/>=7.2.0|<=7.2.13",
+								"product": {
+									"name": "FortiOS",
+									"product_id": "FortiOS >=7.2.0|<=7.2.13"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiOS"
+					},
+					{
+						"branches": [
+							{
+								"category": "product_version",
+								"name": "FortiSASE/26.3.1",
+								"product": {
+									"name": "FortiSASE",
+									"product_id": "FortiSASE 26.3.1"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "FortiSASE/26.3.1_a",
+								"product": {
+									"name": "FortiSASE",
+									"product_id": "FortiSASE 26.3.1_a"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiSASE/26.2 all versions",
+								"product": {
+									"name": "FortiSASE",
+									"product_id": "FortiSASE 26.2 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiSASE/26.1 all versions",
+								"product": {
+									"name": "FortiSASE",
+									"product_id": "FortiSASE 26.1 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiSASE/25.4 all versions",
+								"product": {
+									"name": "FortiSASE",
+									"product_id": "FortiSASE 25.4 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiSASE/25.3 all versions",
+								"product": {
+									"name": "FortiSASE",
+									"product_id": "FortiSASE 25.3 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiSASE/25.2 all versions",
+								"product": {
+									"name": "FortiSASE",
+									"product_id": "FortiSASE 25.2 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiSASE/25.1.a all versions",
+								"product": {
+									"name": "FortiSASE",
+									"product_id": "FortiSASE 25.1.a all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiSASE/25.1 all versions",
+								"product": {
+									"name": "FortiSASE",
+									"product_id": "FortiSASE 25.1 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiSASE/ 24.4 all versions",
+								"product": {
+									"name": "FortiSASE",
+									"product_id": "FortiSASE/ 24.4 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiSASE/ 24.3 all versions",
+								"product": {
+									"name": "FortiSASE",
+									"product_id": "FortiSASE/ 24.3 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiSASE/ 24.1 all versions",
+								"product": {
+									"name": "FortiSASE",
+									"product_id": "FortiSASE/ 24.1 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiSASE/ 23.4 all versions",
+								"product": {
+									"name": "FortiSASE",
+									"product_id": "FortiSASE/ 23.4 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiSASE/ 23.3 all versions",
+								"product": {
+									"name": "FortiSASE",
+									"product_id": "FortiSASE/ 23.3 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiSASE/ 23.2 all versions",
+								"product": {
+									"name": "FortiSASE",
+									"product_id": "FortiSASE/ 23.2 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiSASE/ 23.1 all versions",
+								"product": {
+									"name": "FortiSASE",
+									"product_id": "FortiSASE/ 23.1 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiSASE/ 22.4 all versions",
+								"product": {
+									"name": "FortiSASE",
+									"product_id": "FortiSASE/ 22.4 all versions"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiSASE"
+					}
+				],
+				"category": "vendor",
+				"name": "Fortinet PSIRT"
+			}
+		]
+	},
+	"vulnerabilities": [
+		{
+			"cve": "CVE-2026-126254",
+			"cwe": {
+				"id": "CWE-197",
+				"name": "Numeric Truncation Error"
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "Numeric Truncation Error in Multiple Product\n\n",
+					"title": "Summary"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiOS >=8.0.0|<=8.0.1",
+					"FortiOS >=7.6.0|<=7.6.7",
+					"FortiOS >=7.4.0|<=7.4.12",
+					"FortiOS >=7.2.0|<=7.2.13"
+				],
+				"known_not_affected": [
+					"FortiOS-8.0.2",
+					"FortiOS-7.6.8",
+					"FortiOS-7.4.13",
+					"FortiOS-7.2.14"
+				]
+			},
+			"references": [
+				{
+					"summary": "A Numeric Truncation Error vulnerability [cwe-197] in FortiOS and FortiSASE bgp daemon may allow a configured ibgp neighbor to send malicious/malformed attributes to all connected routers via a specially crafted request",
+					"url": "https://fortiguard.fortinet.com/psirt/FG-IR-26-268"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiOS 8.0: Upgrade to 8.0.2 or above\nFortiOS 7.6: Upgrade to 7.6.8 or above\nFortiOS 7.4: Upgrade to 7.4.13 or above\nFortiOS 7.2: Upgrade to 7.2.14 or above",
+					"product_ids": [
+						"FortiOS"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 9.6,
+						"baseSeverity": "CRITICAL",
+						"vectorString": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:C/C:N/I:H/A:H/E:F/RL:O/RC:C",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiOS"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Denial of service"
+				}
+			],
+			"title": "FortiOS - CRITICAL - FG-IR-26-268"
+		},
+		{
+			"cve": "CVE-2026-126254",
+			"cwe": {
+				"id": "CWE-197",
+				"name": "Numeric Truncation Error"
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "Numeric Truncation Error in Multiple Product\n\n",
+					"title": "Summary"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiSASE 26.3.1",
+					"FortiSASE 26.3.1_a",
+					"FortiSASE 26.2 all versions",
+					"FortiSASE 26.1 all versions",
+					"FortiSASE 25.4 all versions",
+					"FortiSASE 25.3 all versions",
+					"FortiSASE 25.2 all versions",
+					"FortiSASE 25.1.a all versions",
+					"FortiSASE 25.1 all versions"
+				],
+				"known_not_affected": [
+					"FortiSASE/ 24.4 all versions",
+					"FortiSASE/ 24.3 all versions",
+					"FortiSASE/ 24.1 all versions",
+					"FortiSASE/ 23.4 all versions",
+					"FortiSASE/ 23.3 all versions",
+					"FortiSASE/ 23.2 all versions",
+					"FortiSASE/ 23.1 all versions",
+					"FortiSASE/ 22.4 all versions"
+				]
+			},
+			"references": [
+				{
+					"summary": "A Numeric Truncation Error vulnerability [cwe-197] in FortiOS and FortiSASE bgp daemon may allow a configured ibgp neighbor to send malicious/malformed attributes to all connected routers via a specially crafted request",
+					"url": "https://fortiguard.fortinet.com/psirt/FG-IR-26-268"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiSASE 26.3: Fortinet remediated this issue in 26.3.2 and hence customers do not need to perform any action.\nFortiSASE 26.3: Fortinet remediated this issue in 26.3.2 and hence customers do not need to perform any action.\nFortiSASE 26.2: Migrate to a fixed release\nFortiSASE 26.1: Migrate to a fixed release\nFortiSASE 25.4: Migrate to a fixed release\nFortiSASE 25.3: Migrate to a fixed release\nFortiSASE 25.2: Migrate to a fixed release\nFortiSASE 25.1.a: Migrate to a fixed release\nFortiSASE 25.1: Migrate to a fixed release\nFortiSASE 24.4: Not Applicable\nFortiSASE 24.3: Not Applicable\nFortiSASE 24.1: Not Applicable\nFortiSASE 23.4: Not Applicable\nFortiSASE 23.3: Not Applicable\nFortiSASE 23.2: Not Applicable\nFortiSASE 23.1: Not Applicable\nFortiSASE 22.4: Not Applicable",
+					"product_ids": [
+						"FortiSASE"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 9.6,
+						"baseSeverity": "CRITICAL",
+						"vectorString": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:C/C:N/I:H/A:H/E:F/RL:O/RC:C",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiSASE"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Denial of service"
+				}
+			],
+			"title": "FortiSASE - CRITICAL - FG-IR-26-268"
+		}
+	]
+}
