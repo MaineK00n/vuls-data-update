@@ -7,6 +7,7 @@ import (
 	"io/fs"
 	"log/slog"
 	"path/filepath"
+	"regexp"
 	"slices"
 	"strings"
 	"time"
@@ -675,7 +676,7 @@ func toCriterions(productID string, refMap map[string]productRef) ([]criterionTy
 		return nil, errors.Errorf("unknown fortinet product %q (%q; add it to internal/product)", ref.productName, productID)
 	}
 
-	r, bakeVersion, err := resolveVersion(ref.productName, ref.versionExp)
+	r, bakeVersion, err := resolveVersion(ref.productName, rt, ref.versionExp)
 	if err != nil {
 		return nil, errors.Wrapf(err, "resolve version for %q", productID)
 	}
@@ -793,12 +794,18 @@ func toCriterions(productID string, refMap map[string]productRef) ([]criterionTy
 	return cns, nil
 }
 
+// milestoneTrainPattern is a milestone of a non-numeric-versioned product
+// named as a train ("25.1.a" of "25.1.a all versions"): a numeric X.Y, which
+// it captures, and one milestone letter.
+var milestoneTrainPattern = regexp.MustCompile(`^(\d+\.\d+)\.[a-z]$`)
+
 // nonNumericVersioned reports whether products of range type rt version their
 // releases with Fortinet's non-numeric (milestone-letter) scheme ("25.2.a"),
 // the range types cpecriterion/range CompareVersions serves with the
-// non-numeric comparator. Both checks toCriterions makes for such a product
-// (train-granular bounds, milestone parsing of a concrete version) ask here,
-// so the two cannot disagree on which products they cover.
+// non-numeric comparator. Every check toCriterions and resolveVersion make
+// for such a product (train-granular bounds, milestone parsing of a concrete
+// version, a milestone read as its train) asks here, so they cannot disagree
+// on which products they cover.
 func nonNumericVersioned(rt ccRangeTypes.RangeType) bool {
 	switch rt {
 	case ccRangeTypes.RangeTypeFortinetFortiSASE, ccRangeTypes.RangeTypeFortinetFortiSASESovereign:
@@ -821,8 +828,11 @@ func nonNumericVersioned(rt ccRangeTypes.RangeType) bool {
 // covers an empty/"all versions" expression. A non-numeric "<x> all versions"
 // (e.g. a product name leaked into the version, "FortiClient iOS all
 // versions") is not silently widened to whole product — it hard-errors, since
-// it never legitimately appears in a listed product's version.
-func resolveVersion(productName, exp string) (*ccRangeTypes.Range, string, error) {
+// it never legitimately appears in a listed product's version. The one
+// non-numeric prefix read is a milestone of a non-numeric-versioned product
+// (rt, see nonNumericVersioned), "25.1.a all versions", which reads as its
+// X.Y train.
+func resolveVersion(productName string, rt ccRangeTypes.RangeType, exp string) (*ccRangeTypes.Range, string, error) {
 	switch {
 	case exp == "" || exp == "all versions":
 		return nil, "", nil
@@ -834,6 +844,18 @@ func resolveVersion(productName, exp string) (*ccRangeTypes.Range, string, error
 		// hard-error rather than silently widen to the whole product (which
 		// would mask the leak).
 		train := strings.TrimSpace(strings.TrimSuffix(exp, "all versions"))
+		// Except a milestone of a non-numeric-versioned product: FG-IR-26-268,
+		// 269 and 270 list FortiSASE "25.1.a all versions". Its bounds must stay
+		// train-granular (see toCriterions), so it reads as the X.Y train it
+		// sits in, 25.1. That over-covers the train's bare release and its other
+		// milestones (25.1, 25.1.b, 25.1.c), which "25.1.a all versions" does
+		// not name; each of those advisories lists "25.1 all versions" as well,
+		// so their detection is unchanged. Only a numeric X.Y and one milestone
+		// letter reads so: "25.1.a.2 all versions" or a numeric-versioned
+		// product's "7.4.a all versions" still hard-errors below.
+		if m := milestoneTrainPattern.FindStringSubmatch(train); m != nil && nonNumericVersioned(rt) {
+			train = m[1]
+		}
 		if _, err := numericVersion.NewVersion(train); err != nil {
 			return nil, "", errors.Wrapf(err, "unexpected non-numeric train %q in %q", train, exp)
 		}
