@@ -269,28 +269,34 @@ func TestToCriterions(t *testing.T) {
 					"FortiMail >= 7.6.0 and <= 7.6.6": csaf.NewProductRef("FortiMail", ">= 7.6.0 and <= 7.6.6"),
 				},
 			},
-			want: func() []criterionTypes.Criterion {
-				var cns []criterionTypes.Criterion
-				for _, cpe := range []string{
-					"cpe:2.3:a:fortinet:fortimail:*:*:*:*:*:*:*:*",
-					"cpe:2.3:o:fortinet:fortimail:*:*:*:*:*:*:*:*",
-				} {
-					cns = append(cns, criterionTypes.Criterion{
-						Type: criterionTypes.CriterionTypeCPE,
-						CPE: &ccTypes.Criterion{
-							Vulnerable: true,
-							FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
-							CPE:        ccTypes.CPE(cpe),
-							Range: &ccRangeTypes.Range{
-								Type:         ccRangeTypes.RangeTypeFortinetFortiMail,
-								GreaterEqual: "7.6.0",
-								LessEqual:    "7.6.6",
-							},
+			want: []criterionTypes.Criterion{
+				{
+					Type: criterionTypes.CriterionTypeCPE,
+					CPE: &ccTypes.Criterion{
+						Vulnerable: true,
+						FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
+						CPE:        ccTypes.CPE("cpe:2.3:a:fortinet:fortimail:*:*:*:*:*:*:*:*"),
+						Range: &ccRangeTypes.Range{
+							Type:         ccRangeTypes.RangeTypeFortinetFortiMail,
+							GreaterEqual: "7.6.0",
+							LessEqual:    "7.6.6",
 						},
-					})
-				}
-				return cns
-			}(),
+					},
+				},
+				{
+					Type: criterionTypes.CriterionTypeCPE,
+					CPE: &ccTypes.Criterion{
+						Vulnerable: true,
+						FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
+						CPE:        ccTypes.CPE("cpe:2.3:o:fortinet:fortimail:*:*:*:*:*:*:*:*"),
+						Range: &ccRangeTypes.Range{
+							Type:         ccRangeTypes.RangeTypeFortinetFortiMail,
+							GreaterEqual: "7.6.0",
+							LessEqual:    "7.6.6",
+						},
+					},
+				},
+			},
 		},
 		{
 			name: "whole product (all versions)",
