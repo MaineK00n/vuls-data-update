@@ -166,6 +166,10 @@ func TestResolve(t *testing.T) {
 		// both the current and the older one.
 		{name: "FortiClientWindows", wantCPEs: []string{"cpe:2.3:a:fortinet:forticlientwindows:*:*:*:*:*:*:*:*", "cpe:2.3:a:fortinet:forticlient:*:*:*:*:*:windows:*:*"}, wantRange: ccRangeTypes.RangeTypeFortinetFortiClient, wantOK: true},
 		{name: "FortiClientMac", wantCPEs: []string{"cpe:2.3:a:fortinet:forticlientmac:*:*:*:*:*:*:*:*", "cpe:2.3:a:fortinet:forticlient:*:*:*:*:*:macos:*:*", "cpe:2.3:a:fortinet:forticlient:*:*:*:*:*:mac_os_x:*:*"}, wantRange: ccRangeTypes.RangeTypeFortinetFortiClient, wantOK: true},
+		// CVE-2026-121529, the only record naming FortiClientWindowsPAM, gives it
+		// its own CPE, and NVD has none: the CNA CPE alone, with the FortiClient
+		// range type its releases follow.
+		{name: "FortiClientWindowsPAM", wantCPEs: []string{"cpe:2.3:a:fortinet:forticlientwindowspam:*:*:*:*:*:*:*:*"}, wantRange: ccRangeTypes.RangeTypeFortinetFortiClient, wantOK: true},
 		// Fortinet's records name FortiSOAR apart from its PaaS and on-premise
 		// deployments, which NVD folds into FortiSOAR.
 		{name: "FortiSOAR", wantCPEs: []string{"cpe:2.3:a:fortinet:fortisoar:*:*:*:*:*:*:*:*"}, wantRange: ccRangeTypes.RangeTypeFortinetFortiSOAR, wantOK: true},
