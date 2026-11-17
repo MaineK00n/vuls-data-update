@@ -549,9 +549,10 @@ func walkProductTree(trackingID string, pt v1.ProductTree, c2r map[string][]stri
 				// cpe:/o:redhat:enterprise_linux:<major> or
 				// cpe:/a:redhat:enterprise_linux:<major>, and its scanner guidance
 				// says to match both for unfixed products. The legacy vex feed
-				// used the /o form until 2026-11-06, when a regeneration switched
-				// the unfixed RHEL 8/9/10 products to the /a form (e.g.
-				// CVE-2024-11053), so accept both for every major.
+				// used the /o form until a regeneration, started on 2026-11-04
+				// and done in bulk on 2026-11-06, switched the unfixed RHEL
+				// 8/9/10 products to the /a form (e.g. CVE-2024-11053), so
+				// accept both for every major.
 				switch {
 				case strings.HasPrefix(p.cpe, "cpe:/o:redhat:enterprise_linux:2.1"),
 					strings.HasPrefix(p.cpe, "cpe:/a:redhat:enterprise_linux:2.1"):
@@ -670,7 +671,7 @@ func walkProductTree(trackingID string, pt v1.ProductTree, c2r map[string][]stri
 		// A product without a major is dropped from the output. That is
 		// expected for non-RHEL products (e.g. cpe:/a:redhat:satellite:6), but
 		// a RHEL CPE that resolves to no major means the CPE format changed
-		// under us (as on 2026-11-06), so fail loudly instead of silently
+		// under us (as from 2026-11-04 on), so fail loudly instead of silently
 		// losing every product that uses it.
 		if len(majors) == 0 && (strings.HasPrefix(p.cpe, "cpe:/o:redhat:enterprise_linux:") || strings.HasPrefix(p.cpe, "cpe:/a:redhat:enterprise_linux:")) {
 			return nil, errors.Errorf("no major version detected for RHEL CPE. product_id: %q, cpe: %q", root, p.cpe)
