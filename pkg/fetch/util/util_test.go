@@ -163,6 +163,9 @@ func TestEnsureWritten(t *testing.T) {
 		// each is a directory when it ends in "/" and a file otherwise. A case
 		// with no entries leaves root itself uncreated.
 		entries []string
+		// link makes root a symbolic link to the directory the entries are
+		// created in, as a --dir given as a link is.
+		link    bool
 		wantErr bool
 	}{
 		{
@@ -171,6 +174,25 @@ func TestEnsureWritten(t *testing.T) {
 				root: "happy",
 			},
 			entries: []string{".git/", ".git/HEAD", "2024/CVE-2024-0001.json"},
+		},
+		{
+			// RemoveAll and util.Write go through a root that is a link, so the
+			// check has to see the tree it points at too.
+			name: "root is a symbolic link",
+			args: args{
+				root: "link",
+				opts: []util.EnsureOption{util.WithRequire("2024")},
+			},
+			entries: []string{".git/", ".git/HEAD", "2024/CVE-2024-0001.json"},
+			link:    true,
+		},
+		{
+			name: "root is a symbolic link to nothing",
+			args: args{
+				root: "dangling",
+			},
+			link:    true,
+			wantErr: true,
 		},
 		{
 			// .git is history, not output: a tree holding only it was left
@@ -341,6 +363,13 @@ func TestEnsureWritten(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			d := filepath.Join(t.TempDir(), tt.args.root)
+			root := d
+			if tt.link {
+				root = filepath.Join(t.TempDir(), "link")
+				if err := os.Symlink(d, root); err != nil {
+					t.Fatal("unexpected error:", err)
+				}
+			}
 
 			for _, e := range tt.entries {
 				if name, ok := strings.CutSuffix(e, "/"); ok {
@@ -359,7 +388,7 @@ func TestEnsureWritten(t *testing.T) {
 				f.Close()
 			}
 
-			if err := util.EnsureWritten(d, tt.args.opts...); (err != nil) != tt.wantErr {
+			if err := util.EnsureWritten(root, tt.args.opts...); (err != nil) != tt.wantErr {
 				t.Errorf("EnsureWritten() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})

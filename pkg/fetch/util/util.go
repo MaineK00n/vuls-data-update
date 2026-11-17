@@ -295,15 +295,22 @@ func EnsureWritten(root string, opts ...EnsureOption) error {
 // names. A path that does not exist holds nothing, and neither does a tree of
 // empty directories: a fetcher that unpacks an archive or clones a repository
 // can leave those behind without writing anything.
+//
+// path itself may be a symbolic link, as a --dir can be: RemoveAll and Write
+// go through one, so the check follows it too. WalkDir would not, not even at
+// its root, so it is resolved first. Links below it are not followed.
 func holdsFile(path string, skips []string) (bool, error) {
-	root := filepath.Clean(path)
+	root, err := filepath.EvalSymlinks(path)
+	if err != nil {
+		if errors.Is(err, fs.ErrNotExist) {
+			return false, nil
+		}
+		return false, errors.Wrapf(err, "resolve %s", path)
+	}
 
 	found := false
 	if err := filepath.WalkDir(root, func(p string, d fs.DirEntry, err error) error {
 		if err != nil {
-			if p == root && errors.Is(err, fs.ErrNotExist) {
-				return fs.SkipAll
-			}
 			return err
 		}
 
