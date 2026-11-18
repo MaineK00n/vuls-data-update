@@ -199,11 +199,12 @@ func extract(fetched kev.Vulnerability, raws []string) (dataTypes.Data, error) {
 					Product:       fetched.Product,
 					Notes:         sanitize(fetched.Notes),
 					ENISA: &enisaTypes.ENISA{
-						DateReported:           dateReported,
-						PatchedSince:           sanitize(fetched.PatchedSince),
-						OriginSource:           sanitize(fetched.OriginSource),
-						ExploitationType:       strings.Join(exploitationTypes, ", "),
-						ThreatActorsExploiting: strings.Join(threatActors, ", "),
+						DateReported: dateReported,
+						PatchedSince: sanitize(fetched.PatchedSince),
+						OriginSource: sanitize(fetched.OriginSource),
+						// The deprecated fields stay filled for consumers that have not moved to the slices yet.
+						ExploitationType:       strings.Join(exploitationTypes, ", "), //nolint:staticcheck // SA1019: intentionally kept filled
+						ThreatActorsExploiting: strings.Join(threatActors, ", "),      //nolint:staticcheck // SA1019: intentionally kept filled
 						ExploitationTypes:      exploitationTypes,
 						ThreatActors:           threatActors,
 					},
