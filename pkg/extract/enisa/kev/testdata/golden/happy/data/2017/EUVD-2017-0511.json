@@ -1,0 +1,38 @@
+{
+	"id": "EUVD-2017-0511",
+	"advisories": [
+		{
+			"content": {
+				"id": "EUVD-2017-0511",
+				"kev": {
+					"vendor_project": "Microsoft",
+					"product": "Windows (SMBv1)",
+					"enisa": {
+						"date_reported": "2025-01-23T00:00:00Z",
+						"patched_since": "2017/03/14",
+						"origin_source": "CNW",
+						"exploitation_type": "ransomware",
+						"exploitation_types": [
+							"ransomware"
+						]
+					}
+				}
+			}
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-2017-0144",
+				"title": "EternalBlue",
+				"description": "The SMBv1 server in multiple Microsoft Windows SMBv1 allows remote attackers to execute arbitrary code via crafted packets."
+			}
+		}
+	],
+	"data_source": {
+		"id": "enisa-kev",
+		"raws": [
+			"happy/2017/CVE-2017-0144.json"
+		]
+	}
+}

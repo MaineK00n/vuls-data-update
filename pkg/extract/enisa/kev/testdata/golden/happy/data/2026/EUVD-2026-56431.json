@@ -1,0 +1,45 @@
+{
+	"id": "EUVD-2026-56431",
+	"advisories": [
+		{
+			"content": {
+				"id": "EUVD-2026-56431",
+				"kev": {
+					"vendor_project": "Microsoft",
+					"product": "Microsoft SharePoint Server 2019, Microsoft SharePoint Enterprise Server 2016, Microsoft SharePoint Server Subscription Edition",
+					"notes": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-65660",
+					"enisa": {
+						"date_reported": "2026-09-25T00:00:00Z",
+						"origin_source": "CSIRT-IE",
+						"exploitation_type": "unknown",
+						"exploitation_types": [
+							"unknown"
+						]
+					}
+				}
+			}
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-2026-65660",
+				"description": "Improper control of generation of code ('code injection') in Microsoft Office SharePoint allows an authorized attacker to execute code over a user network",
+				"cwe": [
+					{
+						"source": "enisa.europa.eu/kev",
+						"cwe": [
+							"CWE-94"
+						]
+					}
+				]
+			}
+		}
+	],
+	"data_source": {
+		"id": "enisa-kev",
+		"raws": [
+			"happy/2026/CVE-2026-65660.json"
+		]
+	}
+}

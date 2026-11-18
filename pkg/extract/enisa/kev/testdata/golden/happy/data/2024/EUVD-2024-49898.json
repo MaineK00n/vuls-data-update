@@ -1,0 +1,37 @@
+{
+	"id": "EUVD-2024-49898",
+	"advisories": [
+		{
+			"content": {
+				"id": "EUVD-2024-49898",
+				"kev": {
+					"vendor_project": "Ivanti",
+					"product": "Cloud Services Appliance (CSA)",
+					"enisa": {
+						"date_reported": "2025-01-17T00:00:00Z",
+						"patched_since": "2024/10/08",
+						"origin_source": "CNW",
+						"exploitation_type": "unknown",
+						"exploitation_types": [
+							"unknown"
+						]
+					}
+				}
+			}
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-2024-9380",
+				"description": "OS command injection vulnerability in the admin web console of Ivanti CSA before version 5.0.2 allows a remote authenticated attacker with admin privileges to obtain remote code execution."
+			}
+		}
+	],
+	"data_source": {
+		"id": "enisa-kev",
+		"raws": [
+			"happy/2024/CVE-2024-9380.json"
+		]
+	}
+}

@@ -1,0 +1,45 @@
+{
+	"id": "EUVD-2026-87958",
+	"advisories": [
+		{
+			"content": {
+				"id": "EUVD-2026-87958",
+				"kev": {
+					"vendor_project": "Citrix",
+					"product": "NetScaler ADC, NetScaler Gateway",
+					"notes": "https://support.citrix.com/support-home/kbsearch/article?articleNumber=CTX697096",
+					"enisa": {
+						"date_reported": "2026-09-27T00:00:00Z",
+						"origin_source": "CNW",
+						"exploitation_type": "unknown",
+						"exploitation_types": [
+							"unknown"
+						]
+					}
+				}
+			}
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-2026-88771",
+				"description": "A remote code execution vulnerability exists due to improper input validation, which can allow an unauthenticated attacker to execute arbitrary commands",
+				"cwe": [
+					{
+						"source": "enisa.europa.eu/kev",
+						"cwe": [
+							"CWE-20"
+						]
+					}
+				]
+			}
+		}
+	],
+	"data_source": {
+		"id": "enisa-kev",
+		"raws": [
+			"happy/2026/CVE-2026-88771.json"
+		]
+	}
+}

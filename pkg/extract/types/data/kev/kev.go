@@ -26,6 +26,9 @@ func (k *KEV) Sort() {
 	if k.VulnCheck != nil {
 		k.VulnCheck.Sort()
 	}
+	if k.ENISA != nil {
+		k.ENISA.Sort()
+	}
 }
 
 func Compare(x, y KEV) int {

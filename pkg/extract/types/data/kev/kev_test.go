@@ -45,6 +45,21 @@ func TestSort(t *testing.T) {
 			},
 		},
 		{
+			name: "sorts ENISA sub-fields",
+			input: kevTypes.KEV{
+				ENISA: &enisaTypes.ENISA{
+					ExploitationTypes: []string{"ransomware", "APT"},
+					ThreatActors:      []string{"UNC6586", "UNC1151"},
+				},
+			},
+			want: kevTypes.KEV{
+				ENISA: &enisaTypes.ENISA{
+					ExploitationTypes: []string{"APT", "ransomware"},
+					ThreatActors:      []string{"UNC1151", "UNC6586"},
+				},
+			},
+		},
+		{
 			name:  "nil VulnCheck",
 			input: kevTypes.KEV{VendorProject: "Apple"},
 			want:  kevTypes.KEV{VendorProject: "Apple"},
