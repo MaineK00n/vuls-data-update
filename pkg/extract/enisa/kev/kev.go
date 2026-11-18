@@ -187,9 +187,6 @@ func extract(fetched kev.Vulnerability, raws []string) (dataTypes.Data, error) {
 		return dataTypes.Data{}, errors.Errorf("unexpected dateReported format. expected: %q, actual: %q", "2006/01/02", fetched.DateReported)
 	}
 
-	exploitationTypes := slices.Sorted(slices.Values(fetched.ExploitationType))
-	threatActors := slices.Sorted(slices.Values(fetched.ThreatActorsExploiting))
-
 	return dataTypes.Data{
 		ID: dataTypes.RootID(fetched.EUVDID),
 		Advisories: []advisoryTypes.Advisory{{
@@ -204,10 +201,10 @@ func extract(fetched kev.Vulnerability, raws []string) (dataTypes.Data, error) {
 						PatchedSince: sanitize(fetched.PatchedSince),
 						OriginSource: sanitize(fetched.OriginSource),
 						// The deprecated fields stay filled for consumers that have not moved to the slices yet.
-						ExploitationType:       strings.Join(exploitationTypes, ", "), //nolint:staticcheck // SA1019: intentionally kept filled
-						ThreatActorsExploiting: strings.Join(threatActors, ", "),      //nolint:staticcheck // SA1019: intentionally kept filled
-						ExploitationTypes:      exploitationTypes,
-						ThreatActors:           threatActors,
+						ExploitationType:       strings.Join(fetched.ExploitationType, ", "),       //nolint:staticcheck // SA1019: intentionally kept filled
+						ThreatActorsExploiting: strings.Join(fetched.ThreatActorsExploiting, ", "), //nolint:staticcheck // SA1019: intentionally kept filled
+						ExploitationTypes:      fetched.ExploitationType,
+						ThreatActors:           fetched.ThreatActorsExploiting,
 					},
 				},
 			},

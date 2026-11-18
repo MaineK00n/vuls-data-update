@@ -12,8 +12,8 @@
 						"date_reported": "2026-07-31T00:00:00Z",
 						"patched_since": "2022/06/02",
 						"origin_source": "CNW",
-						"exploitation_type": "APT, cybercrime",
-						"threat_actors_exploiting": "Example Group, UNC6586",
+						"exploitation_type": "cybercrime, APT",
+						"threat_actors_exploiting": "UNC6586, Example Group",
 						"exploitation_types": [
 							"APT",
 							"cybercrime"
