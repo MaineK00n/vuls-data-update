@@ -27,6 +27,7 @@ import (
 	utilfilepath "github.com/MaineK00n/vuls-data-update/pkg/extract/util/filepath"
 	utilgit "github.com/MaineK00n/vuls-data-update/pkg/extract/util/git"
 	utiljson "github.com/MaineK00n/vuls-data-update/pkg/extract/util/json"
+	utiltime "github.com/MaineK00n/vuls-data-update/pkg/extract/util/time"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/enisa/kev"
 )
 
@@ -181,9 +182,9 @@ func sanitize(s string) string {
 }
 
 func extract(fetched kev.Vulnerability, raws []string) (dataTypes.Data, error) {
-	dateReported, err := time.Parse("2006/01/02", fetched.DateReported)
-	if err != nil {
-		return dataTypes.Data{}, errors.Errorf("unexpected dateReported format. expected: %q, actual: %q", "yyyy/mm/dd", fetched.DateReported)
+	dateReported := utiltime.Parse([]string{"2006/01/02"}, fetched.DateReported)
+	if dateReported == nil {
+		return dataTypes.Data{}, errors.Errorf("unexpected dateReported format. expected: %q, actual: %q", "2006/01/02", fetched.DateReported)
 	}
 
 	exploitationTypes := slices.Sorted(slices.Values(fetched.ExploitationType))
@@ -199,7 +200,7 @@ func extract(fetched kev.Vulnerability, raws []string) (dataTypes.Data, error) {
 					Product:       fetched.Product,
 					Notes:         sanitize(fetched.Notes),
 					ENISA: &enisaTypes.ENISA{
-						DateReported: dateReported,
+						DateReported: *dateReported,
 						PatchedSince: sanitize(fetched.PatchedSince),
 						OriginSource: sanitize(fetched.OriginSource),
 						// The deprecated fields stay filled for consumers that have not moved to the slices yet.
