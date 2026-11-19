@@ -80,6 +80,13 @@ func WithBranch(branch string) Option {
 // name, which could read as a revision in refs/heads/<branch>, is an error
 // that wraps none of them. So is a failure to run a check, which holds git's
 // stderr.
+//
+// A commit that a truncated history no longer has fails check 1, and the
+// error says that the history may have been truncated or rewritten. In a
+// shallow repository, a commit beyond the shallow commits where the history
+// of the branch stops can still be there through another branch. It fails
+// check 3, and the error says that the commit may be beyond the shallow
+// boundary.
 func Contains(repository, commit string, opts ...Option) error {
 	options := &options{
 		useNativeGit: true,
@@ -129,13 +136,15 @@ func containsNativeGit(repository, commit, branch string) error {
 	// for-each-ref matches ref names, and lists the ref only if it contains
 	// the commit. merge-base --is-ancestor <hash> refs/heads/<branch> would
 	// read a missing branch as a revision: a tag named refs/heads/<branch>,
-	// or a name like describe output (x-1-g<hash>) as that commit.
+	// or a name like describe output (x-1-g<hash>) as that commit. The output
+	// is split on newlines only, as a ref name can hold a Unicode space such
+	// as U+00A0, which strings.Fields would split on.
 	ref := fmt.Sprintf("refs/heads/%s", branch)
 	bs, err = util.Git("-C", repository, "for-each-ref", "--contains", hash, "--format=%(refname)", ref)
 	if err != nil {
 		return errors.Wrapf(err, "check %s is reachable from %s", commit, ref)
 	}
-	if slices.Contains(strings.Fields(string(bs)), ref) {
+	if slices.Contains(strings.Split(string(bs), "\n"), ref) {
 		return nil
 	}
 
@@ -147,7 +156,12 @@ func containsNativeGit(repository, commit, branch string) error {
 		}
 		return errors.Wrapf(err, "check %s exists", ref)
 	}
-	return errors.Wrapf(ErrNotReachable, "check %s is reachable from %s", commit, ref)
+
+	bs, err = util.Git("-C", repository, "rev-parse", "--is-shallow-repository")
+	if err != nil {
+		return errors.Wrapf(err, "check %s is shallow", repository)
+	}
+	return notReachable(commit, ref, strings.TrimSpace(string(bs)) == "true")
 }
 
 func containsGoGit(repository, commit, branch string) error {
@@ -198,12 +212,23 @@ func containsGoGit(repository, commit, branch string) error {
 
 	switch _, err := iter.Next(); {
 	case errors.Is(err, io.EOF):
-		return errors.Wrapf(ErrNotReachable, "check %s is reachable from %s", commit, ref)
+		return notReachable(commit, ref.String(), len(shallow) > 0)
 	case err != nil:
 		return errors.Wrapf(err, "check %s is reachable from %s", commit, ref)
 	default:
 		return nil
 	}
+}
+
+// notReachable returns the error for a commit that ref does not reach. In a
+// shallow repository, the history of the branch stops at its shallow commits,
+// and a commit beyond them can still be there through another branch, so the
+// message says that the commit may be beyond the shallow boundary.
+func notReachable(commit, ref string, shallow bool) error {
+	if shallow {
+		return errors.Wrapf(ErrNotReachable, "check %s is reachable from %s (the repository is shallow, so the commit may be beyond its shallow boundary)", commit, ref)
+	}
+	return errors.Wrapf(ErrNotReachable, "check %s is reachable from %s", commit, ref)
 }
 
 // checkFullHash checks that commit, which resolved to the commit hash, is

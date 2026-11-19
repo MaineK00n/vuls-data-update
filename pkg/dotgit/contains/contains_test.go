@@ -100,7 +100,10 @@ func TestContainsWithBranch(t *testing.T) {
 	// is at 4, so 4 is only on other. shallow is a clone of depth 2, as
 	// vuls-data-db truncates a dotgit: it has 2-4, and 2 is shallow. Then full
 	// gets an annotated tag of 1, a branch and a tag at 3 named like a hash of
-	// no object, and a tag at 4 named like the full ref name of a branch.
+	// no object, a tag at 4 named like the full ref name of a branch, a branch
+	// at 3 whose name has a no-break space, and a branch old at 1.
+	// shallow-old is a clone of depth 2 made after that: old keeps 1 in it,
+	// but the history of main still stops at 2, which is shallow.
 	dir := t.TempDir()
 	full, err := git.Populate(dir, "testdata/fixtures/history")
 	if err != nil {
@@ -150,10 +153,25 @@ func TestContainsWithBranch(t *testing.T) {
 	// A tag at commit 4 named refs/heads/release, the full ref name of a
 	// branch that does not exist.
 	run(t, "-C", full, "update-ref", "refs/tags/refs/heads/release", "f71e70526a42ab5a02c0db48c0ab002cae190c6a")
+	// A branch at commit 3 whose name has a no-break space (U+00A0), which
+	// git allows in a ref name.
+	run(t, "-C", full, "branch", "a b", "7ff21bf293f2763a9e10872f0debf6726fd125ff")
+	// A branch old at commit 1, and a clone of depth 2 that keeps commit 1
+	// through it.
+	run(t, "-C", full, "branch", "old", "a841a4b11e592afb4d574f86c5de63ad95d1567a")
+	shallowOld := filepath.Join(dir, "shallow-old")
+	run(t, "clone", "--quiet", "--origin", "origin", "--depth", "2", "--no-single-branch", "--no-tags", "--no-checkout", (&url.URL{Scheme: "file", Path: full}).String(), shallowOld)
+	// Commit 2 is the shallow commit, although the clone has commit 1.
+	if bs, err := os.ReadFile(filepath.Join(shallowOld, ".git", "shallow")); err != nil || string(bs) != "321cc453fa66e6d7f6ec5d5bdb64c5767d67fb54\n" {
+		t.Fatalf("shallow commits. expected: %q, actual: %q, err: %v", "321cc453fa66e6d7f6ec5d5bdb64c5767d67fb54\n", bs, err)
+	}
+	if typ := strings.TrimSpace(run(t, "-C", shallowOld, "cat-file", "-t", "a841a4b11e592afb4d574f86c5de63ad95d1567a")); typ != "commit" {
+		t.Fatalf("commit 1 in shallow-old. expected: %q, actual: %q", "commit", typ)
+	}
 
 	type args struct {
-		// repository is "full", "shallow", or "missing" for a path that does
-		// not exist.
+		// repository is "full", "shallow", "shallow-old", or "missing" for a
+		// path that does not exist.
 		repository string
 		commit     string
 		branch     string
@@ -190,6 +208,12 @@ func TestContainsWithBranch(t *testing.T) {
 			// Commit 4.
 			name: "the tip of another branch",
 			args: args{repository: "full", commit: "f71e70526a42ab5a02c0db48c0ab002cae190c6a", branch: "other"},
+		},
+		{
+			// Commit 1, on the branch at commit 3 whose name has a no-break
+			// space.
+			name: "branch name with a no-break space",
+			args: args{repository: "full", commit: "a841a4b11e592afb4d574f86c5de63ad95d1567a", branch: "a b"},
 		},
 		{
 			// Commit 4.
@@ -355,12 +379,22 @@ func TestContainsWithBranch(t *testing.T) {
 			args: args{repository: "shallow", commit: "321cc453fa66e6d7f6ec5d5bdb64c5767d67fb54", branch: "main"},
 		},
 		{
-			// Commit 4.
+			// Commit 4. In a shallow repository, the message cannot tell this
+			// from the case below.
 			name:     "shallow, only on another branch",
 			args:     args{repository: "shallow", commit: "f71e70526a42ab5a02c0db48c0ab002cae190c6a", branch: "main"},
 			wantErr:  contains.ErrNotReachable,
 			hasError: true,
-			msg:      "check f71e70526a42ab5a02c0db48c0ab002cae190c6a is reachable from refs/heads/main: commit not reachable from branch",
+			msg:      "check f71e70526a42ab5a02c0db48c0ab002cae190c6a is reachable from refs/heads/main (the repository is shallow, so the commit may be beyond its shallow boundary): commit not reachable from branch",
+		},
+		{
+			// Commit 1, an ancestor of main in full, is kept through old, but
+			// the history of main stops at commit 2.
+			name:     "shallow, beyond the shallow commit, kept through another branch",
+			args:     args{repository: "shallow-old", commit: "a841a4b11e592afb4d574f86c5de63ad95d1567a", branch: "main"},
+			wantErr:  contains.ErrNotReachable,
+			hasError: true,
+			msg:      "check a841a4b11e592afb4d574f86c5de63ad95d1567a is reachable from refs/heads/main (the repository is shallow, so the commit may be beyond its shallow boundary): commit not reachable from branch",
 		},
 		{
 			// Commit 1.
@@ -385,9 +419,10 @@ func TestContainsWithBranch(t *testing.T) {
 			}
 			t.Run(name, func(t *testing.T) {
 				repository := map[string]string{
-					"full":    full,
-					"shallow": shallow,
-					"missing": filepath.Join(dir, "missing"),
+					"full":        full,
+					"shallow":     shallow,
+					"shallow-old": shallowOld,
+					"missing":     filepath.Join(dir, "missing"),
 				}[tt.args.repository]
 
 				err := contains.Contains(repository, tt.args.commit, contains.WithBranch(tt.args.branch), contains.WithUseNativeGit(native))
