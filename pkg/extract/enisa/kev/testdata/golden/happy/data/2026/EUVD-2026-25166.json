@@ -8,6 +8,7 @@
 					"vendor_project": "paperclipai",
 					"product": "@paperclipai/server, paperclip",
 					"notes": "https://github.com/paperclipai/paperclip/security/advisories/GHSA-68qg-g8mg-6pr7",
+					"date_added": "2026-08-18T00:00:00Z",
 					"enisa": {
 						"date_reported": "2026-08-17T00:00:00Z",
 						"patched_since": "2026/04/22",
