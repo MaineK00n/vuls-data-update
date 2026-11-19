@@ -3,6 +3,7 @@
 package product
 
 import (
+	"regexp"
 	"slices"
 	"strconv"
 	"strings"
@@ -102,6 +103,47 @@ func ValidateVersion(rt ccRangeTypes.RangeType, ver string) error {
 		return errors.Wrapf(err, "parse %q under the numeric scheme", ver)
 	}
 	return nil
+}
+
+// respellings maps a misspelling Fortinet's advisories give a release of a
+// non-numeric-versioned product to the spelling its release notes give it,
+// each written for the one shape it was seen in. The release notes join
+// every component with a dot (the FortiSASE 7.4 Release Notes: "26.3.1.a",
+// "25.4.b.1"), which is what the non-numeric comparator parses and how a
+// scanner reports the release; the advisories' spellings parse under no
+// scheme.
+var respellings = []struct {
+	pattern *regexp.Regexp
+	repl    string
+}{
+	// A hotfix of a numeric release, its letter joined by "_": "26.3.1_a" for
+	// 26.3.1.a (the CVRF of FG-IR-26-267 to 270, also 26.2.1_a; the CSAF of
+	// FG-IR-26-267 to 269).
+	{pattern: regexp.MustCompile(`^(\d+\.\d+\.\d+)_([a-z])$`), repl: "$1.$2"},
+	// A maintenance release of a milestone, its number joined to the letter:
+	// "24.4.b1" for 24.4.b.1 (the CVRF of FG-IR-26-154 and 270). One digit,
+	// as every such number in the release notes has (25.1.a.1 to 25.4.c.1);
+	// a longer run ("25.1.a10") is not read.
+	{pattern: regexp.MustCompile(`^(\d+\.\d+\.[a-z])(\d)$`), repl: "$1.$2"},
+}
+
+// NormalizeVersion returns ver, a concrete release of the named product as an
+// advisory spells it, in the spelling of Fortinet's release notes (see
+// respellings), the one the product's comparator parses and a scanner
+// reports. Only a non-numeric-versioned product's releases are respelled.
+// Any other ver is returned as given, for the caller to validate
+// (ValidateVersion), so a misspelling not seen before fails the extract
+// rather than being guessed at.
+func NormalizeVersion(name, ver string) string {
+	if !NonNumericVersioned(nameToProduct[strings.TrimSpace(name)].rangeType) {
+		return ver
+	}
+	for _, r := range respellings {
+		if r.pattern.MatchString(ver) {
+			return r.pattern.ReplaceAllString(ver, r.repl)
+		}
+	}
+	return ver
 }
 
 // TrainRange builds a range spanning an entire release train of the named

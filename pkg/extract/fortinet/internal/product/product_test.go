@@ -162,6 +162,43 @@ func TestValidateVersion(t *testing.T) {
 	}
 }
 
+func TestNormalizeVersion(t *testing.T) {
+	type args struct {
+		name string
+		ver  string
+	}
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		// The misspellings of FortiSASE releases the advisories carry, as the
+		// release notes spell those releases.
+		{name: "underscore-joined hotfix", args: args{name: "FortiSASE", ver: "26.3.1_a"}, want: "26.3.1.a"},
+		{name: "maintenance number joined to its milestone", args: args{name: "FortiSASE", ver: "24.4.b1"}, want: "24.4.b.1"},
+		// FortiSASE-Sovereign follows the same scheme.
+		{name: "Sovereign underscore-joined hotfix", args: args{name: "FortiSASE-Sovereign", ver: "26.2.1_a"}, want: "26.2.1.a"},
+		// Releases already spelled as the release notes spell them.
+		{name: "milestone", args: args{name: "FortiSASE", ver: "25.2.a"}, want: "25.2.a"},
+		{name: "maintenance release of a milestone", args: args{name: "FortiSASE", ver: "25.1.a.2"}, want: "25.1.a.2"},
+		{name: "hotfix", args: args{name: "FortiSASE", ver: "26.3.1.a"}, want: "26.3.1.a"},
+		// Any other shape is left for the caller's validation to reject.
+		{name: "underscore-joined letter after a four-component release", args: args{name: "FortiSASE", ver: "26.3.1.2_a"}, want: "26.3.1.2_a"},
+		{name: "underscore-joined letters", args: args{name: "FortiSASE", ver: "26.3.1_ab"}, want: "26.3.1_ab"},
+		{name: "two-digit number joined to a milestone", args: args{name: "FortiSASE", ver: "25.1.a10"}, want: "25.1.a10"},
+		// A numeric-versioned product's versions are never respelled.
+		{name: "numeric product underscore-joined letter", args: args{name: "FortiOS", ver: "7.4.1_a"}, want: "7.4.1_a"},
+		{name: "unknown product", args: args{name: "FortiNonexistent", ver: "26.3.1_a"}, want: "26.3.1_a"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := product.NormalizeVersion(tt.args.name, tt.args.ver); got != tt.want {
+				t.Errorf("NormalizeVersion(%q, %q) = %q, want %q", tt.args.name, tt.args.ver, got, tt.want)
+			}
+		})
+	}
+}
+
 func TestTrainRange(t *testing.T) {
 	type args struct {
 		name  string
