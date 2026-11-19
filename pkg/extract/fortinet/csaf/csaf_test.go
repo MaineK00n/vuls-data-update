@@ -490,9 +490,9 @@ func TestToCriterions(t *testing.T) {
 			}},
 		},
 		{
-			// FG-IR-26-268, 269 and 270 list "26.3.1_a", which the milestone
-			// scheme does not parse: baked as written, as CVRF has it.
-			name: "non-numeric product letter-suffixed release baked as written",
+			// FG-IR-26-268 and 269 list "26.3.1_a", which the milestone scheme
+			// does not parse: baked as the release notes spell it, 26.3.1.a.
+			name: "non-numeric product underscore-joined hotfix respelled",
 			args: args{
 				productID: "FortiSASE 26.3.1_a",
 				refMap: map[string]csaf.ProductRef{
@@ -504,7 +504,26 @@ func TestToCriterions(t *testing.T) {
 				CPE: &ccTypes.Criterion{
 					Vulnerable: true,
 					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
-					CPE:        ccTypes.CPE("cpe:2.3:a:fortinet:fortisase:26.3.1_a:*:*:*:*:*:*:*"),
+					CPE:        ccTypes.CPE("cpe:2.3:a:fortinet:fortisase:26.3.1.a:*:*:*:*:*:*:*"),
+				},
+			}},
+		},
+		{
+			// The CVRF of FG-IR-26-154 and 270 lists "24.4.b1": baked as the
+			// release notes spell it, 24.4.b.1.
+			name: "non-numeric product maintenance number joined to its milestone respelled",
+			args: args{
+				productID: "FortiSASE 24.4.b1",
+				refMap: map[string]csaf.ProductRef{
+					"FortiSASE 24.4.b1": csaf.NewProductRef("FortiSASE", "24.4.b1"),
+				},
+			},
+			want: []criterionTypes.Criterion{{
+				Type: criterionTypes.CriterionTypeCPE,
+				CPE: &ccTypes.Criterion{
+					Vulnerable: true,
+					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
+					CPE:        ccTypes.CPE("cpe:2.3:a:fortinet:fortisase:24.4.b.1:*:*:*:*:*:*:*"),
 				},
 			}},
 		},
@@ -803,8 +822,8 @@ func TestToCriterions(t *testing.T) {
 			wantErr: true,
 		},
 		{
-			// A letter-suffixed release is baked only for a non-numeric-versioned
-			// product, and only as a numeric X.Y.Z, "_" and one letter.
+			// An underscore-joined letter is respelled only for a
+			// non-numeric-versioned product, and only after a numeric X.Y.Z.
 			name: "numeric product letter-suffixed release rejected",
 			args: args{
 				productID: "FortiOS 7.4.1_a",

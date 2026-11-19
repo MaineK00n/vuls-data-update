@@ -751,21 +751,11 @@ func toCriterions(productID string, refMap map[string]productRef) ([]criterionTy
 		// detector uses (product.ValidateVersion): a numeric product must parse
 		// under the numeric scheme, a non-numeric-versioned product (FortiSASE,
 		// FortiSASE-Sovereign) under the milestone scheme (which also accepts a
-		// single letter component, "25.2.a").
-		switch {
-		case product.NonNumericVersioned(rt) && letterSuffixedReleasePattern.MatchString(bakeVersion):
-			// A release with an underscore-joined letter suffix, which the
-			// milestone scheme does not parse ("1_a" is neither a number nor a
-			// letter): FG-IR-26-268, 269 and 270 list FortiSASE "26.3.1_a"
-			// beside 26.3.1, as their CVRF enumerates it beside 26.2.1_a. It
-			// is baked as written, as the CVRF extractor bakes it, since a
-			// baked version is matched by CPE name and never reaches the
-			// comparator. Only this exact shape passes; any other still fails
-			// the parse below.
-		default:
-			if err := product.ValidateVersion(rt, bakeVersion); err != nil {
-				return nil, errors.Wrapf(err, "unexpected concrete version %q for %q (expr %q)", bakeVersion, productID, ref.versionExp)
-			}
+		// single letter component, "25.2.a"). resolveVersion has already
+		// respelled the misspellings Fortinet is known to give such a product's
+		// releases (product.NormalizeVersion), so any other fails here.
+		if err := product.ValidateVersion(rt, bakeVersion); err != nil {
+			return nil, errors.Wrapf(err, "unexpected concrete version %q for %q (expr %q)", bakeVersion, productID, ref.versionExp)
 		}
 		for i, cpe := range cpes {
 			baked, err := product.BakeVersion(cpe, bakeVersion)
@@ -803,11 +793,6 @@ func toCriterions(productID string, refMap map[string]productRef) ([]criterionTy
 // it captures, and one milestone letter.
 var milestoneTrainPattern = regexp.MustCompile(`^(\d+\.\d+)\.[a-z]$`)
 
-// letterSuffixedReleasePattern is a release of a non-numeric-versioned
-// product with an underscore-joined letter suffix ("26.3.1_a"): a numeric
-// X.Y.Z, "_" and one lowercase letter.
-var letterSuffixedReleasePattern = regexp.MustCompile(`^\d+\.\d+\.\d+_[a-z]$`)
-
 // resolveVersion interprets a CSAF Fortinet version expression for the named
 // product and returns exactly one of three outcomes, so the caller never has
 // to guess:
@@ -817,13 +802,15 @@ var letterSuffixedReleasePattern = regexp.MustCompile(`^\d+\.\d+\.\d+_[a-z]$`)
 //
 // The product name decides the exact-vs-train split for a bare version token
 // (product.IsExactVersion): "7.166" is a concrete IPS Engine build to bake,
-// but "7.4" is a FortiOS train to range-over. The whole-product outcome
-// covers an empty/"all versions" expression. A non-numeric "<x> all versions"
-// (e.g. a product name leaked into the version, "FortiClient iOS all
-// versions") is not silently widened to whole product — it hard-errors, since
-// it never legitimately appears in a listed product's version. The one
-// non-numeric prefix read is a milestone of a non-numeric-versioned product
-// (rt, see product.NonNumericVersioned), "25.1.a all versions", which reads as its
+// but "7.4" is a FortiOS train to range-over. A concrete version is returned
+// as Fortinet's release notes spell it (product.NormalizeVersion): FortiSASE
+// "26.3.1_a" as 26.3.1.a. The whole-product outcome covers an empty/"all
+// versions" expression. A non-numeric "<x> all versions" (e.g. a product
+// name leaked into the version, "FortiClient iOS all versions") is not
+// silently widened to whole product — it hard-errors, since it never
+// legitimately appears in a listed product's version. The one non-numeric
+// prefix read is a milestone of a non-numeric-versioned product (rt, see
+// product.NonNumericVersioned), "25.1.a all versions", which reads as its
 // X.Y train.
 func resolveVersion(productName string, rt ccRangeTypes.RangeType, exp string) (*ccRangeTypes.Range, string, error) {
 	switch {
@@ -918,8 +905,9 @@ func resolveVersion(productName string, rt ccRangeTypes.RangeType, exp string) (
 		}
 		return &r, "", nil
 	default:
-		// Concrete version → bake into the CPE.
-		return nil, exp, nil
+		// Concrete version → bake into the CPE, spelled as the release notes
+		// spell it.
+		return nil, product.NormalizeVersion(productName, exp), nil
 	}
 }
 
