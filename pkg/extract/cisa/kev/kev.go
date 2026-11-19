@@ -5,7 +5,6 @@ import (
 	"io/fs"
 	"log/slog"
 	"path/filepath"
-	"time"
 
 	"github.com/pkg/errors"
 
@@ -79,7 +78,10 @@ func Extract(args string, opts ...Option) error {
 			return errors.Wrapf(err, "read json %s", path)
 		}
 
-		extracted := extract(fetched, r.Paths())
+		extracted, err := extract(fetched, r.Paths())
+		if err != nil {
+			return errors.Wrapf(err, "extract %s", path)
+		}
 
 		splitted, err := util.Split(fetched.CveID, "-", "-")
 		if err != nil {
@@ -124,7 +126,17 @@ func Extract(args string, opts ...Option) error {
 	return nil
 }
 
-func extract(fetched kev.Vulnerability, raws []string) dataTypes.Data {
+func extract(fetched kev.Vulnerability, raws []string) (dataTypes.Data, error) {
+	// Both dates are required in the CISA KEV schema.
+	dateAdded := utiltime.Parse([]string{"2006-01-02"}, fetched.DateAdded)
+	if dateAdded == nil {
+		return dataTypes.Data{}, errors.Errorf("unexpected dateAdded format. expected: %q, actual: %q", "2006-01-02", fetched.DateAdded)
+	}
+	dueDate := utiltime.Parse([]string{"2006-01-02"}, fetched.DueDate)
+	if dueDate == nil {
+		return dataTypes.Data{}, errors.Errorf("unexpected dueDate format. expected: %q, actual: %q", "2006-01-02", fetched.DueDate)
+	}
+
 	return dataTypes.Data{
 		ID: dataTypes.RootID(fetched.CveID),
 		Vulnerabilities: []vulnerabilityTypes.Vulnerability{{
@@ -148,18 +160,8 @@ func extract(fetched kev.Vulnerability, raws []string) dataTypes.Data {
 					KnownRansomwareCampaignUse: fetched.KnownRansomwareCampaignUse,
 					ForensicTriage:             fetched.ForensicTriage,
 					Notes:                      fetched.Notes,
-					DateAdded: func() time.Time {
-						if t := utiltime.Parse([]string{"2006-01-02"}, fetched.DateAdded); t != nil {
-							return *t
-						}
-						return time.Time{}
-					}(),
-					DueDate: func() time.Time {
-						if t := utiltime.Parse([]string{"2006-01-02"}, fetched.DueDate); t != nil {
-							return *t
-						}
-						return time.Time{}
-					}(),
+					DateAdded:                  *dateAdded,
+					DueDate:                    *dueDate,
 				},
 			},
 		}},
@@ -167,5 +169,5 @@ func extract(fetched kev.Vulnerability, raws []string) dataTypes.Data {
 			ID:   sourceTypes.CISAKEV,
 			Raws: raws,
 		},
-	}
+	}, nil
 }
