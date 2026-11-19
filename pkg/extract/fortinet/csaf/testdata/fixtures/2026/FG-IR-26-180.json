@@ -1,0 +1,184 @@
+{
+	"document": {
+		"acknowledgments": [
+			{
+				"summary": "Internally discovered and reported by Gwendal Guégniaud of Fortinet Product Security team."
+			}
+		],
+		"category": "Fortinet PSIRT Advisories",
+		"csaf_version": "2.0",
+		"publisher": {
+			"category": "vendor",
+			"contact_details": "https://fortiguard.fortinet.com/faq/psirt-contact",
+			"issuing_authority": "Fortinet PSIRT",
+			"name": "Fortinet PSIRT",
+			"namespace": "https://fortiguard.fortinet.com/psirt"
+		},
+		"title": "Arbitrary file write in grpc phQueryMaster",
+		"tracking": {
+			"current_release_date": "2026-10-13T00:00:00",
+			"id": "FG-IR-26-180",
+			"initial_release_date": "2026-10-13T00:00:00",
+			"revision_history": [
+				{
+					"date": "2026-10-13T00:00:00",
+					"number": "1",
+					"summary": "Initial Publication"
+				}
+			],
+			"status": "final",
+			"version": "0"
+		}
+	},
+	"product_tree": {
+		"branches": [
+			{
+				"branches": [
+					{
+						"branches": [
+							{
+								"category": "product_version_range",
+								"name": "FortiSIEM/ 7.6 all versions",
+								"product": {
+									"name": "FortiSIEM",
+									"product_id": "FortiSIEM/ 7.6 all versions"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "FortiSIEM/7.5.0",
+								"product": {
+									"name": "FortiSIEM",
+									"product_id": "FortiSIEM 7.5.0"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiSIEM/7.4 all versions",
+								"product": {
+									"name": "FortiSIEM",
+									"product_id": "FortiSIEM 7.4 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiSIEM/7.3 all versions",
+								"product": {
+									"name": "FortiSIEM",
+									"product_id": "FortiSIEM 7.3 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiSIEM/7.2 all versions",
+								"product": {
+									"name": "FortiSIEM",
+									"product_id": "FortiSIEM 7.2 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiSIEM/7.1 all versions",
+								"product": {
+									"name": "FortiSIEM",
+									"product_id": "FortiSIEM 7.1 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiSIEM/7.0 all versions",
+								"product": {
+									"name": "FortiSIEM",
+									"product_id": "FortiSIEM 7.0 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiSIEM/ 6.X all versions",
+								"product": {
+									"name": "FortiSIEM",
+									"product_id": "FortiSIEM/ 6.X all versions"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiSIEM"
+					}
+				],
+				"category": "vendor",
+				"name": "Fortinet PSIRT"
+			}
+		]
+	},
+	"vulnerabilities": [
+		{
+			"cve": "CVE-2026-106173",
+			"cwe": {
+				"id": "CWE-22",
+				"name": "Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')"
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "Arbitrary file write into phQueryMaster daemon\n\n",
+					"title": "Summary"
+				},
+				{
+					"category": "general",
+					"text": "Workaround :\n- Restricting access on tcp port 27918 prevents the issue.\n\nFortiSIEM Cloud is NOT affected by this vulnerability.",
+					"title": "Additional info"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiSIEM 7.5.0",
+					"FortiSIEM 7.4 all versions",
+					"FortiSIEM 7.3 all versions",
+					"FortiSIEM 7.2 all versions",
+					"FortiSIEM 7.1 all versions",
+					"FortiSIEM 7.0 all versions"
+				],
+				"known_not_affected": [
+					"FortiSIEM/ 7.6 all versions",
+					"FortiSIEM-7.5.1",
+					"FortiSIEM/ 6.X all versions"
+				]
+			},
+			"references": [
+				{
+					"summary": "An Improper limitation of a pathname to a restricted directory ('path traversal') [CWE-22] in FortiSIEM may allow an unauthenticated attacker to execute unauthorized code or commands via specially crafted packets.",
+					"url": "https://fortiguard.fortinet.com/psirt/FG-IR-26-180"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiSIEM 7.6: Not Applicable\nFortiSIEM 7.5: Upgrade to 7.5.1 or above\nFortiSIEM 7.4: Migrate to a fixed release\nFortiSIEM 7.3: Migrate to a fixed release\nFortiSIEM 7.2: Migrate to a fixed release\nFortiSIEM 7.1: Migrate to a fixed release\nFortiSIEM 7.0: Migrate to a fixed release\nFortiSIEM 6.X: Not Applicable",
+					"product_ids": [
+						"FortiSIEM"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 9.4,
+						"baseSeverity": "CRITICAL",
+						"vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H/E:H/RL:O/RC:C",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiSIEM"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Execute unauthorized code or commands"
+				}
+			],
+			"title": "FortiSIEM - CRITICAL - FG-IR-26-180"
+		}
+	]
+}
