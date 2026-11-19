@@ -49,6 +49,10 @@ func TestPull(t *testing.T) {
 		hasError  bool
 		// wantErr is how the error begins.
 		wantErr string
+		// wantErrHas, if set, is a part of the error after wantErr: on
+		// native git, the switch command that failed and the start of what
+		// git said.
+		wantErrHas string
 	}{
 		{
 			name: "vuls-data-raw-test restore: false, native git",
@@ -241,8 +245,9 @@ func TestPull(t *testing.T) {
 				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test",
 				opts:       []pull.Option{pull.WithCheckout("v0.0.1^{tree}"), pull.WithRestore(false), pull.WithUseNativeGit(true)},
 			},
-			hasError: true,
-			wantErr:  "switch to v0.0.1^{tree}: ",
+			hasError:   true,
+			wantErr:    "switch to v0.0.1^{tree}: ",
+			wantErrHas: `switch --detach v0.0.1^{tree}", stderr: "fatal: `,
 		},
 		{
 			// A commit pinned before vuls-data-db truncated the history is
@@ -252,8 +257,9 @@ func TestPull(t *testing.T) {
 				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test",
 				opts:       []pull.Option{pull.WithCheckout("9d3d5d486d4c9414321a2df56f2e007c4c2c8fac"), pull.WithRestore(true), pull.WithUseNativeGit(true)},
 			},
-			hasError: true,
-			wantErr:  "9d3d5d486d4c9414321a2df56f2e007c4c2c8fac is not in ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test, whose history may have been truncated or rewritten: switch to 9d3d5d486d4c9414321a2df56f2e007c4c2c8fac: ",
+			hasError:   true,
+			wantErr:    "9d3d5d486d4c9414321a2df56f2e007c4c2c8fac is not in ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test, whose history may have been truncated or rewritten: switch to 9d3d5d486d4c9414321a2df56f2e007c4c2c8fac: ",
+			wantErrHas: `switch --detach 9d3d5d486d4c9414321a2df56f2e007c4c2c8fac", stderr: "fatal: `,
 		},
 		{
 			name: "vuls-data-raw-test checkout: 9d3d5d486d4c9414321a2df56f2e007c4c2c8fac (not in the repository), restore: true, go-git",
@@ -273,8 +279,9 @@ func TestPull(t *testing.T) {
 				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test-master",
 				opts:       []pull.Option{pull.WithCheckout("v0.0.2"), pull.WithRestore(true), pull.WithUseNativeGit(true)},
 			},
-			hasError: true,
-			wantErr:  "v0.0.2 is not in ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test-master, whose history may have been truncated or rewritten: switch to v0.0.2: ",
+			hasError:   true,
+			wantErr:    "v0.0.2 is not in ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test-master, whose history may have been truncated or rewritten: switch to v0.0.2: ",
+			wantErrHas: `switch --detach v0.0.2", stderr: "fatal: `,
 		},
 		{
 			name: "vuls-data-raw-test-master checkout: v0.0.2 (not in the repository), restore: true, go-git",
@@ -294,8 +301,9 @@ func TestPull(t *testing.T) {
 				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test",
 				opts:       []pull.Option{pull.WithCheckout("-"), pull.WithRestore(false), pull.WithUseNativeGit(true)},
 			},
-			hasError: true,
-			wantErr:  "switch to -: ",
+			hasError:   true,
+			wantErr:    "switch to -: ",
+			wantErrHas: `switch --detach -", stderr: "fatal: `,
 		},
 		{
 			name: "vuls-data-raw-test checkout: main...v0.0.2 (no v0.0.2), restore: false, native git",
@@ -303,8 +311,9 @@ func TestPull(t *testing.T) {
 				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test",
 				opts:       []pull.Option{pull.WithCheckout("main...v0.0.2"), pull.WithRestore(false), pull.WithUseNativeGit(true)},
 			},
-			hasError: true,
-			wantErr:  "switch to main...v0.0.2: ",
+			hasError:   true,
+			wantErr:    "switch to main...v0.0.2: ",
+			wantErrHas: `switch --detach main...v0.0.2", stderr: "fatal: `,
 		},
 		{
 			// A valid tag name that is not there, and that go-git's revision
@@ -314,8 +323,9 @@ func TestPull(t *testing.T) {
 				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test",
 				opts:       []pull.Option{pull.WithCheckout("v9@9"), pull.WithRestore(false), pull.WithUseNativeGit(true)},
 			},
-			hasError: true,
-			wantErr:  "v9@9 is not in ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test, whose history may have been truncated or rewritten: switch to v9@9: ",
+			hasError:   true,
+			wantErr:    "v9@9 is not in ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test, whose history may have been truncated or rewritten: switch to v9@9: ",
+			wantErrHas: `switch --detach v9@9", stderr: "fatal: `,
 		},
 		{
 			name: "vuls-data-raw-test checkout: v9@9 (not in the repository), restore: false, go-git",
@@ -367,6 +377,9 @@ func TestPull(t *testing.T) {
 			case err != nil:
 				if !strings.HasPrefix(err.Error(), tt.wantErr) {
 					t.Errorf("Pull() error does not begin with %q, error: %v", tt.wantErr, err)
+				}
+				if !strings.Contains(err.Error(), tt.wantErrHas) {
+					t.Errorf("Pull() error does not hold %q, error: %v", tt.wantErrHas, err)
 				}
 			default:
 				var got []string
