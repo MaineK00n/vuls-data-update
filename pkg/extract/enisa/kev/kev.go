@@ -179,6 +179,16 @@ func extract(fetched kev.Vulnerability, raws []string) (dataTypes.Data, error) {
 		return dataTypes.Data{}, errors.Errorf("unexpected dateReported format. expected: %q, actual: %q", "2006/01/02", fetched.DateReported)
 	}
 
+	// Unlike dateReported, dateAdded is optional in the schema.
+	var dateAdded time.Time
+	if fetched.DateAdded != "" {
+		t := utiltime.Parse([]string{"2006/01/02"}, fetched.DateAdded)
+		if t == nil {
+			return dataTypes.Data{}, errors.Errorf("unexpected dateAdded format. expected: %q, actual: %q", "2006/01/02", fetched.DateAdded)
+		}
+		dateAdded = *t
+	}
+
 	return dataTypes.Data{
 		ID: dataTypes.RootID(fetched.EUVDID),
 		Advisories: []advisoryTypes.Advisory{{
@@ -188,6 +198,7 @@ func extract(fetched kev.Vulnerability, raws []string) (dataTypes.Data, error) {
 					VendorProject: fetched.VendorProject,
 					Product:       fetched.Product,
 					Notes:         sanitize(fetched.Notes),
+					DateAdded:     dateAdded,
 					ENISA: &enisaTypes.ENISA{
 						DateReported: *dateReported,
 						PatchedSince: sanitize(fetched.PatchedSince),
