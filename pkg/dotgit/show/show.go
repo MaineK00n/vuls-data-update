@@ -45,12 +45,15 @@ type Commit struct {
 
 // Show returns the commit that revision names in repository. An annotated tag
 // names the commit it points to. A revision that does not name exactly one
-// commit, such as a missing one, is an error.
+// commit, such as a missing one, is an error, except for the parts of it that
+// the go-git path skips.
 //
 // Native git reads the times through raw placeholders (%at, %ct) with
 // --no-show-signature, so git config such as log.showSignature cannot add
-// text to what it parses. The go-git path resolves revision with go-git,
-// which knows fewer revision forms than git.
+// text to what it parses. The go-git path resolves revision with go-git's
+// ResolveRevision, which knows fewer revision forms than git and skips some
+// parts it does not apply: for main^{tree}, main:<path> or main@{1}, it
+// returns main's commit, where native git returns an error.
 func Show(repository, revision string, opts ...Option) (Commit, error) {
 	options := &options{
 		useNativeGit: true,
@@ -62,16 +65,28 @@ func Show(repository, revision string, opts ...Option) (Commit, error) {
 
 	if options.useNativeGit {
 		// --verify takes exactly one object name, so a range is an error.
-		// ^{commit} peels an annotated tag to its commit and fails for a tree
-		// or a blob. --end-of-options keeps a revision starting with "-" from
-		// being read as an option. With --quiet, a name that does not resolve
-		// exits 1, while other failures, such as no repository, exit 128.
-		bs, err := util.Git("-C", repository, "rev-parse", "--verify", "--quiet", "--end-of-options", fmt.Sprintf("%s^{commit}", revision))
+		// --end-of-options keeps a revision starting with "-" from being read
+		// as an option. With --quiet, a name that does not resolve exits 1,
+		// while other failures, such as no repository, exit 128.
+		bs, err := util.Git("-C", repository, "rev-parse", "--verify", "--quiet", "--end-of-options", revision)
 		if err != nil {
 			if ee, ok := stderrors.AsType[*exec.ExitError](err); ok && ee.ExitCode() == 1 {
 				return Commit{}, errors.Wrapf(err, "%q does not name a commit", revision)
 			}
 			return Commit{}, errors.Wrapf(err, "resolve %s", revision)
+		}
+		object := strings.TrimSpace(string(bs))
+
+		// ^{commit} peels an annotated tag to its commit, and fails for a tree
+		// or a blob, and for a full hash of no object, which the call above
+		// prints without looking it up. It is not appended to revision in that
+		// call, because in :/<text> git reads it as part of the text.
+		bs, err = util.Git("-C", repository, "rev-parse", "--verify", "--quiet", fmt.Sprintf("%s^{commit}", object))
+		if err != nil {
+			if ee, ok := stderrors.AsType[*exec.ExitError](err); ok && ee.ExitCode() == 1 {
+				return Commit{}, errors.Wrapf(err, "%q does not name a commit", revision)
+			}
+			return Commit{}, errors.Wrapf(err, "peel %s", object)
 		}
 		hash := strings.TrimSpace(string(bs))
 
@@ -107,7 +122,10 @@ func Show(repository, revision string, opts ...Option) (Commit, error) {
 
 	hash, err := r.ResolveRevision(plumbing.Revision(revision))
 	if err != nil {
-		if errors.Is(err, plumbing.ErrReferenceNotFound) {
+		// ResolveRevision returns ErrObjectNotFound for a parent that is not
+		// in the repository, such as that of the shallow commit of a shallow
+		// clone, where native git exits 1 too.
+		if errors.Is(err, plumbing.ErrReferenceNotFound) || errors.Is(err, plumbing.ErrObjectNotFound) {
 			return Commit{}, errors.Wrapf(err, "%q does not name a commit", revision)
 		}
 		return Commit{}, errors.Wrapf(err, "resolve %s", revision)
