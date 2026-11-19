@@ -16,7 +16,7 @@ import (
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
-const dataURL = "https://raw.githubusercontent.com/enisaeu/CNW/refs/heads/main/advisories/eukev/eukev.json"
+const dataURL = "https://raw.githubusercontent.com/enisaeu/CNW/refs/heads/main/eukev/eukev.json"
 
 type options struct {
 	dataURL string

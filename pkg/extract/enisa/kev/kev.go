@@ -5,6 +5,7 @@ import (
 	"io/fs"
 	"log/slog"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/pkg/errors"
@@ -60,6 +61,7 @@ func Extract(args string, opts ...Option) error {
 	}
 
 	slog.Info("Extract ENISA Known Exploited Vulnerabilities")
+	seen := make(map[string]string) // EUVD ID -> CVE ID
 	if err := filepath.WalkDir(args, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
@@ -82,7 +84,12 @@ func Extract(args string, opts ...Option) error {
 			return errors.Wrapf(err, "read json %s", path)
 		}
 
-		extracted := extract(fetched, r.Paths())
+		if fix, ok := euvdIDFixes[fetched.CVEID]; ok {
+			if fetched.EUVDID != fix.wrong {
+				return errors.Errorf("unexpected EUVD ID of %s. expected: %q, actual: %q; the EUVD ID fix is stale", fetched.CVEID, fix.wrong, fetched.EUVDID)
+			}
+			fetched.EUVDID = fix.correct
+		}
 
 		splitted, err := util.Split(fetched.EUVDID, "-", "-")
 		if err != nil {
@@ -91,6 +98,19 @@ func Extract(args string, opts ...Option) error {
 		if _, err := time.Parse("2006", splitted[1]); err != nil {
 			return errors.Errorf("unexpected EUVD ID format. expected: %q, actual: %q", "EUVD-yyyy-\\d{4,}", fetched.EUVDID)
 		}
+
+		// One file is written per EUVD ID, so an EUVD ID shared by several CVEs
+		// would silently keep only one of them.
+		if cveID, ok := seen[fetched.EUVDID]; ok {
+			return errors.Errorf("unexpected duplicate EUVD ID. %s is assigned to both %s and %s", fetched.EUVDID, cveID, fetched.CVEID)
+		}
+		seen[fetched.EUVDID] = fetched.CVEID
+
+		extracted, err := extract(fetched, r.Paths())
+		if err != nil {
+			return errors.Wrapf(err, "extract %s", path)
+		}
+
 		p, err := utilfilepath.Join(options.dir, "data", splitted[1], fmt.Sprintf("%s.json", extracted.ID))
 		if err != nil {
 			return errors.Wrap(err, "join")
@@ -130,6 +150,22 @@ func Extract(args string, opts ...Option) error {
 	return nil
 }
 
+type euvdIDFix struct {
+	wrong   string
+	correct string
+}
+
+// euvdIDFixes corrects EUVD IDs that upstream eukev.json assigns to the wrong
+// CVE, keyed by CVE ID. An entry whose CVE carries any EUVD ID other than the
+// wrong one is an error, so that a fix is removed once upstream is corrected
+// and an unexpected upstream change is not silently passed through.
+var euvdIDFixes = map[string]euvdIDFix{
+	// EUVD-2026-56431 belongs to CVE-2026-65660, but upstream also assigns it
+	// to these CVEs: https://github.com/enisaeu/CNW/issues/66
+	"CVE-2026-88771": {wrong: "EUVD-2026-56431", correct: "EUVD-2026-87958"},
+	"CVE-2026-88772": {wrong: "EUVD-2026-56431", correct: "EUVD-2026-87959"},
+}
+
 func sanitize(s string) string {
 	if s == "-" {
 		return ""
@@ -137,7 +173,12 @@ func sanitize(s string) string {
 	return s
 }
 
-func extract(fetched kev.Vulnerability, raws []string) dataTypes.Data {
+func extract(fetched kev.Vulnerability, raws []string) (dataTypes.Data, error) {
+	dateReported := utiltime.Parse([]string{"2006/01/02"}, fetched.DateReported)
+	if dateReported == nil {
+		return dataTypes.Data{}, errors.Errorf("unexpected dateReported format. expected: %q, actual: %q", "2006/01/02", fetched.DateReported)
+	}
+
 	return dataTypes.Data{
 		ID: dataTypes.RootID(fetched.EUVDID),
 		Advisories: []advisoryTypes.Advisory{{
@@ -147,24 +188,16 @@ func extract(fetched kev.Vulnerability, raws []string) dataTypes.Data {
 					VendorProject: fetched.VendorProject,
 					Product:       fetched.Product,
 					Notes:         sanitize(fetched.Notes),
-					ENISA: func() *enisaTypes.ENISA {
-						e := enisaTypes.ENISA{
-							DateReported: func() time.Time {
-								if t := utiltime.Parse([]string{"02/01/06"}, fetched.DateReported); t != nil {
-									return *t
-								}
-								return time.Time{}
-							}(),
-							PatchedSince:           sanitize(fetched.PatchedSince),
-							OriginSource:           sanitize(fetched.OriginSource),
-							ExploitationType:       sanitize(fetched.ExploitationType),
-							ThreatActorsExploiting: sanitize(fetched.ThreatActorsExploiting),
-						}
-						if (e == enisaTypes.ENISA{}) {
-							return nil
-						}
-						return &e
-					}(),
+					ENISA: &enisaTypes.ENISA{
+						DateReported: *dateReported,
+						PatchedSince: sanitize(fetched.PatchedSince),
+						OriginSource: sanitize(fetched.OriginSource),
+						// The deprecated fields stay filled for consumers that have not moved to the slices yet.
+						ExploitationType:       strings.Join(fetched.ExploitationType, ", "),       //nolint:staticcheck // SA1019: intentionally kept filled
+						ThreatActorsExploiting: strings.Join(fetched.ThreatActorsExploiting, ", "), //nolint:staticcheck // SA1019: intentionally kept filled
+						ExploitationTypes:      fetched.ExploitationType,
+						ThreatActors:           fetched.ThreatActorsExploiting,
+					},
 				},
 			},
 		}},
@@ -178,12 +211,12 @@ func extract(fetched kev.Vulnerability, raws []string) dataTypes.Data {
 					Title:       sanitize(fetched.VulnerabilityName),
 					Description: sanitize(fetched.ShortDescription),
 					CWE: func() []cweTypes.CWE {
-						if sanitize(fetched.CWEs) == "" {
+						if len(fetched.CWEs) == 0 {
 							return nil
 						}
 						return []cweTypes.CWE{{
 							Source: "enisa.europa.eu/kev",
-							CWE:    []string{sanitize(fetched.CWEs)},
+							CWE:    fetched.CWEs,
 						}}
 					}(),
 				},
@@ -193,5 +226,5 @@ func extract(fetched kev.Vulnerability, raws []string) dataTypes.Data {
 			ID:   sourceTypes.ENISAKEV,
 			Raws: raws,
 		},
-	}
+	}, nil
 }

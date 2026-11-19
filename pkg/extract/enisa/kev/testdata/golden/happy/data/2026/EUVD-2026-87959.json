@@ -1,0 +1,45 @@
+{
+	"id": "EUVD-2026-87959",
+	"advisories": [
+		{
+			"content": {
+				"id": "EUVD-2026-87959",
+				"kev": {
+					"vendor_project": "Citrix",
+					"product": "NetScaler ADC, NetScaler Gateway",
+					"notes": "https://support.citrix.com/support-home/kbsearch/article?articleNumber=CTX697096",
+					"enisa": {
+						"date_reported": "2026-09-27T00:00:00Z",
+						"origin_source": "CNW",
+						"exploitation_type": "unknown",
+						"exploitation_types": [
+							"unknown"
+						]
+					}
+				}
+			}
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-2026-88772",
+				"description": "Memory overflow vulnerability leading to Remote Code Execution or Denial of Service",
+				"cwe": [
+					{
+						"source": "enisa.europa.eu/kev",
+						"cwe": [
+							"CWE-119"
+						]
+					}
+				]
+			}
+		}
+	],
+	"data_source": {
+		"id": "enisa-kev",
+		"raws": [
+			"happy/2026/CVE-2026-88772.json"
+		]
+	}
+}

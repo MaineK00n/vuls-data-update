@@ -1,17 +1,68 @@
 [
   {
+    "cveID": "CVE-2017-0144",
+    "euvdID": "EUVD-2017-0511",
+    "vendorProject": "Microsoft",
+    "product": "Windows (SMBv1)",
+    "vulnerabilityName": "EternalBlue",
+    "dateReported": "2025/01/23",
+    "patchedSince": "2017/03/14",
+    "originSource": "CNW",
+    "shortDescription": "The SMBv1 server in multiple Microsoft Windows SMBv1 allows remote attackers to execute arbitrary code via crafted packets.",
+    "exploitationType": [
+      "ransomware"
+    ]
+  },
+  {
+    "cveID": "CVE-2022-26134",
+    "euvdID": "EUVD-2022-30701",
+    "vendorProject": "Atlassian",
+    "product": "Confluence Server, Confluence Data Center",
+    "dateReported": "2026/07/31",
+    "patchedSince": "2022/06/02",
+    "originSource": "CNW",
+    "shortDescription": "OGNL injection vulnerability allows an unauthenticated attacker to execute arbitrary code on an instance.",
+    "exploitationType": [
+      "APT"
+    ],
+    "threatActorsExploiting": [
+      "UNC6586"
+    ],
+    "cwes": [
+      "CWE-917"
+    ],
+    "notes": "https://socradar.io/blog/snowlight-government-chinese-campaign/"
+  },
+  {
     "cveID": "CVE-2024-9380",
     "euvdID": "EUVD-2024-49898",
     "vendorProject": "Ivanti",
-    "product": "CSA (Cloud Services Appliance)",
-    "vulnerabilityName": "-",
-    "dateReported": "17/01/25",
-    "patchedSince": "tbc",
-    "originSource": "cnw",
-    "shortDescription": "-",
-    "exploitationType": "-",
-    "threatActorsExploiting": "-",
-    "cwes": "-",
-    "notes": "-"
+    "product": "Cloud Services Appliance (CSA)",
+    "dateReported": "2025/01/17",
+    "patchedSince": "2024/10/08",
+    "originSource": "CNW",
+    "shortDescription": "OS command injection vulnerability in the admin web console of Ivanti CSA before version 5.0.2 allows a remote authenticated attacker with admin privileges to obtain remote code execution.",
+    "exploitationType": [
+      "unknown"
+    ]
+  },
+  {
+    "cveID": "CVE-2026-41679",
+    "euvdID": "EUVD-2026-25166",
+    "vendorProject": "paperclipai",
+    "product": "@paperclipai/server, paperclip",
+    "dateReported": "2026/08/17",
+    "patchedSince": "2026/04/22",
+    "originSource": "CNW",
+    "shortDescription": "An unauthenticated attacker can achieve full remote code execution on any network-accessible Paperclip instance running in authenticated mode with default configuration.",
+    "exploitationType": [
+      "unknown"
+    ],
+    "cwes": [
+      "CWE-287",
+      "CWE-862",
+      "CWE-1188"
+    ],
+    "notes": "https://github.com/paperclipai/paperclip/security/advisories/GHSA-68qg-g8mg-6pr7"
   }
 ]

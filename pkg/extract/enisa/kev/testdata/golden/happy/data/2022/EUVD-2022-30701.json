@@ -1,0 +1,52 @@
+{
+	"id": "EUVD-2022-30701",
+	"advisories": [
+		{
+			"content": {
+				"id": "EUVD-2022-30701",
+				"kev": {
+					"vendor_project": "Atlassian",
+					"product": "Confluence Server, Confluence Data Center",
+					"notes": "https://socradar.io/blog/snowlight-government-chinese-campaign/",
+					"enisa": {
+						"date_reported": "2026-07-31T00:00:00Z",
+						"patched_since": "2022/06/02",
+						"origin_source": "CNW",
+						"exploitation_type": "cybercrime, APT",
+						"threat_actors_exploiting": "UNC6586, Example Group",
+						"exploitation_types": [
+							"APT",
+							"cybercrime"
+						],
+						"threat_actors": [
+							"Example Group",
+							"UNC6586"
+						]
+					}
+				}
+			}
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-2022-26134",
+				"description": "OGNL injection vulnerability allows an unauthenticated attacker to execute arbitrary code on an instance.",
+				"cwe": [
+					{
+						"source": "enisa.europa.eu/kev",
+						"cwe": [
+							"CWE-917"
+						]
+					}
+				]
+			}
+		}
+	],
+	"data_source": {
+		"id": "enisa-kev",
+		"raws": [
+			"happy/2022/CVE-2022-26134.json"
+		]
+	}
+}

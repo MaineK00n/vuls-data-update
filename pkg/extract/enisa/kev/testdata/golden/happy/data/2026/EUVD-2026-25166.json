@@ -1,0 +1,48 @@
+{
+	"id": "EUVD-2026-25166",
+	"advisories": [
+		{
+			"content": {
+				"id": "EUVD-2026-25166",
+				"kev": {
+					"vendor_project": "paperclipai",
+					"product": "@paperclipai/server, paperclip",
+					"notes": "https://github.com/paperclipai/paperclip/security/advisories/GHSA-68qg-g8mg-6pr7",
+					"enisa": {
+						"date_reported": "2026-08-17T00:00:00Z",
+						"patched_since": "2026/04/22",
+						"origin_source": "CNW",
+						"exploitation_type": "unknown",
+						"exploitation_types": [
+							"unknown"
+						]
+					}
+				}
+			}
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-2026-41679",
+				"description": "An unauthenticated attacker can achieve full remote code execution on any network-accessible Paperclip instance running in authenticated mode with default configuration.",
+				"cwe": [
+					{
+						"source": "enisa.europa.eu/kev",
+						"cwe": [
+							"CWE-1188",
+							"CWE-287",
+							"CWE-862"
+						]
+					}
+				]
+			}
+		}
+	],
+	"data_source": {
+		"id": "enisa-kev",
+		"raws": [
+			"happy/2026/CVE-2026-41679.json"
+		]
+	}
+}
