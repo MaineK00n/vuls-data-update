@@ -10,6 +10,8 @@ import (
 	"github.com/knqyf263/go-cpe/common"
 	"github.com/knqyf263/go-cpe/naming"
 	"github.com/pkg/errors"
+	nonnumericVersion "github.com/vulsio/go-fortinet-version/nonnumeric"
+	numericVersion "github.com/vulsio/go-fortinet-version/numeric"
 
 	ccRangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/cpecriterion/range"
 )
@@ -63,6 +65,43 @@ func IsExactVersion(name, ver string) bool {
 		return strings.Count(ver, ".") >= 1
 	}
 	return strings.Count(ver, ".") >= 2
+}
+
+// NonNumericVersioned reports whether products of range type rt version their
+// releases with Fortinet's non-numeric (milestone-letter) scheme ("25.2.a"),
+// the range types cpecriterion/range CompareVersions serves with the
+// non-numeric comparator. Every check the extractors make for such a product
+// (train-granular bounds, a milestone read as its train, the scheme a
+// concrete version must parse under) asks here, so they cannot disagree on
+// which products they cover.
+func NonNumericVersioned(rt ccRangeTypes.RangeType) bool {
+	switch rt {
+	case ccRangeTypes.RangeTypeFortinetFortiSASE, ccRangeTypes.RangeTypeFortinetFortiSASESovereign:
+		return true
+	default:
+		return false
+	}
+}
+
+// ValidateVersion returns an error unless ver, a concrete version to bake
+// into a CPE of range type rt, parses under the scheme the detector compares
+// that range type's versions with: the non-numeric (milestone-letter) one for
+// a NonNumericVersioned range type ("25.2.a"), Fortinet's numeric one for any
+// other. BakeVersion accepts many CPE-legal shapes no scanner reports
+// ("7.0.x", "v7.0.0", "7..0"); one baked would be a criterion nothing
+// matches, a silent detection false negative, so the extractors bake only a
+// version that passes.
+func ValidateVersion(rt ccRangeTypes.RangeType, ver string) error {
+	if NonNumericVersioned(rt) {
+		if _, err := nonnumericVersion.NewVersion(ver); err != nil {
+			return errors.Wrapf(err, "parse %q under the non-numeric scheme", ver)
+		}
+		return nil
+	}
+	if _, err := numericVersion.NewVersion(ver); err != nil {
+		return errors.Wrapf(err, "parse %q under the numeric scheme", ver)
+	}
+	return nil
 }
 
 // TrainRange builds a range spanning an entire release train of the named
