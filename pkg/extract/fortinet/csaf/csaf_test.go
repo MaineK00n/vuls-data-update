@@ -386,6 +386,67 @@ func TestToCriterions(t *testing.T) {
 			}},
 		},
 		{
+			// FG-IR-26-180 lists FortiSIEM "6.X all versions": a train with a
+			// wildcard last component reads as the train the wildcard spans.
+			name: "wildcard train all versions → its train range",
+			args: args{
+				productID: "FortiSIEM/ 6.X all versions",
+				refMap: map[string]csaf.ProductRef{
+					"FortiSIEM/ 6.X all versions": csaf.NewProductRef("FortiSIEM", "6.X all versions"),
+				},
+			},
+			want: []criterionTypes.Criterion{
+				{
+					Type: criterionTypes.CriterionTypeCPE,
+					CPE: &ccTypes.Criterion{
+						Vulnerable: true,
+						FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
+						CPE:        ccTypes.CPE("cpe:2.3:a:fortinet:fortisiem:*:*:*:*:*:*:*:*"),
+						Range: &ccRangeTypes.Range{
+							Type:         ccRangeTypes.RangeTypeFortinetFortiSIEM,
+							GreaterEqual: "6",
+							LessThan:     "7",
+						},
+					},
+				},
+				{
+					Type: criterionTypes.CriterionTypeCPE,
+					CPE: &ccTypes.Criterion{
+						Vulnerable: true,
+						FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
+						CPE:        ccTypes.CPE("cpe:2.3:o:fortinet:fortisiem:*:*:*:*:*:*:*:*"),
+						Range: &ccRangeTypes.Range{
+							Type:         ccRangeTypes.RangeTypeFortinetFortiSIEM,
+							GreaterEqual: "6",
+							LessThan:     "7",
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "two-component wildcard train all versions → its train range",
+			args: args{
+				productID: "FortiOS 7.0.x all versions",
+				refMap: map[string]csaf.ProductRef{
+					"FortiOS 7.0.x all versions": csaf.NewProductRef("FortiOS", "7.0.x all versions"),
+				},
+			},
+			want: []criterionTypes.Criterion{{
+				Type: criterionTypes.CriterionTypeCPE,
+				CPE: &ccTypes.Criterion{
+					Vulnerable: true,
+					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
+					CPE:        ccTypes.CPE("cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*"),
+					Range: &ccRangeTypes.Range{
+						Type:         ccRangeTypes.RangeTypeFortinetFortiOS,
+						GreaterEqual: "7.0",
+						LessThan:     "7.1",
+					},
+				},
+			}},
+		},
+		{
 			// "and above" is read before any bound, so its " and " never
 			// separates bounds.
 			name: "numeric and above ok (numeric product)",
@@ -633,6 +694,27 @@ func TestToCriterions(t *testing.T) {
 				productID: "FortiSASE FortiClient iOS all versions",
 				refMap: map[string]csaf.ProductRef{
 					"FortiSASE FortiClient iOS all versions": csaf.NewProductRef("FortiSASE", "FortiClient iOS all versions"),
+				},
+			},
+			wantErr: true,
+		},
+		{
+			// A wildcard spans a train, not the releases of a concrete one.
+			name: "wildcard after a concrete release all versions → hard error",
+			args: args{
+				productID: "FortiOS 7.0.1.X all versions",
+				refMap: map[string]csaf.ProductRef{
+					"FortiOS 7.0.1.X all versions": csaf.NewProductRef("FortiOS", "7.0.1.X all versions"),
+				},
+			},
+			wantErr: true,
+		},
+		{
+			name: "bare wildcard all versions → hard error",
+			args: args{
+				productID: "FortiOS X all versions",
+				refMap: map[string]csaf.ProductRef{
+					"FortiOS X all versions": csaf.NewProductRef("FortiOS", "X all versions"),
 				},
 			},
 			wantErr: true,

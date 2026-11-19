@@ -793,6 +793,10 @@ func toCriterions(productID string, refMap map[string]productRef) ([]criterionTy
 // it captures, and one milestone letter.
 var milestoneTrainPattern = regexp.MustCompile(`^(\d+\.\d+)\.[a-z]$`)
 
+// wildcardTrainPattern is a train with a wildcard last component ("6.X" of
+// "6.X all versions"): a numeric train, which it captures, and "X" or "x".
+var wildcardTrainPattern = regexp.MustCompile(`^(\d+(?:\.\d+)*)\.[xX]$`)
+
 // resolveVersion interprets a CSAF Fortinet version expression for the named
 // product and returns exactly one of three outcomes, so the caller never has
 // to guess:
@@ -808,10 +812,11 @@ var milestoneTrainPattern = regexp.MustCompile(`^(\d+\.\d+)\.[a-z]$`)
 // versions" expression. A non-numeric "<x> all versions" (e.g. a product
 // name leaked into the version, "FortiClient iOS all versions") is not
 // silently widened to whole product — it hard-errors, since it never
-// legitimately appears in a listed product's version. The one non-numeric
-// prefix read is a milestone of a non-numeric-versioned product (rt, see
-// product.NonNumericVersioned), "25.1.a all versions", which reads as its
-// X.Y train.
+// legitimately appears in a listed product's version. The non-numeric
+// prefixes read are a numeric train with a wildcard last component, "6.X all
+// versions", which reads as that train, and a milestone of a
+// non-numeric-versioned product (rt, see product.NonNumericVersioned),
+// "25.1.a all versions", which reads as its X.Y train.
 func resolveVersion(productName string, rt ccRangeTypes.RangeType, exp string) (*ccRangeTypes.Range, string, error) {
 	switch {
 	case exp == "" || exp == "all versions":
@@ -824,6 +829,15 @@ func resolveVersion(productName string, rt ccRangeTypes.RangeType, exp string) (
 		// hard-error rather than silently widen to the whole product (which
 		// would mask the leak).
 		train := strings.TrimSpace(strings.TrimSuffix(exp, "all versions"))
+		// Except a numeric train with a wildcard last component: FG-IR-26-180
+		// lists FortiSIEM "6.X all versions" as not affected, its vendor_fix
+		// reading "FortiSIEM 6.X: Not Applicable" beside the 7.x trains, so
+		// every 6.x release. It reads as the train the wildcard spans, 6. A
+		// wildcard after a concrete release ("7.0.1.X all versions") still
+		// hard-errors in TrainRange.
+		if m := wildcardTrainPattern.FindStringSubmatch(train); m != nil {
+			train = m[1]
+		}
 		// Except a milestone of a non-numeric-versioned product: FG-IR-26-268,
 		// 269 and 270 list FortiSASE "25.1.a all versions". Its bounds must stay
 		// train-granular (see toCriterions), so it reads as the X.Y train it
