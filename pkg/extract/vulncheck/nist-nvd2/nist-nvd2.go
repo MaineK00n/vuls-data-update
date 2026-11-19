@@ -281,8 +281,15 @@ func (e extractor) buildData(fetched nistnvd2Types.CVE) (dataTypes.Data, error) 
 		// Accumulate the present groups directly into the root OR criteria.
 		criteria := criteriaTypes.Criteria{Operator: criteriaTypes.CriteriaOperatorTypeOR}
 
+		// Known malformed upstream CPEs are dropped once, up front, so group 1
+		// and the coverage that trims group 2 both see the same configurations.
+		configs, err := skipKnownInvalidCPEs(fetched.ID, fetched.VCConfigurations)
+		if err != nil {
+			return nil, errors.Wrap(err, "skip known invalid cpes")
+		}
+
 		// Group 1: vcConfigurations applicability tree (CPE + version Range).
-		cc, err := vcConfigurationsCriteria(fetched.VCConfigurations)
+		cc, err := vcConfigurationsCriteria(configs)
 		if err != nil {
 			return nil, errors.Wrap(err, "vcConfigurations criteria")
 		}
@@ -292,7 +299,7 @@ func (e extractor) buildData(fetched nistnvd2Types.CVE) (dataTypes.Data, error) 
 
 		// What group 1 already detects, per product — used to drop the
 		// redundant vcVulnerableCPEs from group 2.
-		coverage, err := buildConfigCoverage(fetched.VCConfigurations)
+		coverage, err := buildConfigCoverage(configs)
 		if err != nil {
 			return nil, errors.Wrap(err, "build config coverage")
 		}
@@ -497,6 +504,63 @@ func parseVulnerableCPEs(names []string) ([]vulnCPE, error) {
 	return cpes, nil
 }
 
+// knownInvalidCPEs lists, per CVE ID, the vcConfigurations cpeMatch criteria
+// that the feed is known to carry as invalid CPE 2.3 formatted strings. Each is
+// skipped (and logged) instead of failing the whole extraction; any other
+// invalid CPE is still a hard error.
+//
+// The entries are matched exactly on both the CVE ID and the CPE string, and
+// are not repaired (e.g. a space rewritten to "_"): upstream data is not
+// guessed at.
+var knownInvalidCPEs = map[string][]string{
+	// The product carries a raw space, which CPE 2.3 does not allow even
+	// escaped; the well-formed sibling in the same node is
+	// windows_10_adk_version_2004.
+	"CVE-2024-29187": {
+		"cpe:2.3:o:microsoft:windows_10_adk_version 1607:*:*:*:*:*:*:*:*",
+		"cpe:2.3:o:microsoft:windows_10_adk_version 1809:*:*:*:*:*:*:*:*",
+	},
+}
+
+// skipKnownInvalidCPEs removes the knownInvalidCPEs of id from configs. A skip
+// is only allowed where it does not change what the remaining configuration
+// means: the cpeMatch must sit in an OR node that keeps at least one other
+// member. Inside an AND node, dropping a conjunct would widen the node into an
+// over-broad detection, and an emptied node would become an empty criteria, so
+// both are errors.
+func skipKnownInvalidCPEs(id string, configs []nistnvd2Types.Config) ([]nistnvd2Types.Config, error) {
+	known, ok := knownInvalidCPEs[id]
+	if !ok {
+		return configs, nil
+	}
+
+	cs := make([]nistnvd2Types.Config, 0, len(configs))
+	for _, conf := range configs {
+		ns := make([]nistnvd2Types.Node, 0, len(conf.Nodes))
+		for _, n := range conf.Nodes {
+			ms := make([]nistnvd2Types.CPEMatch, 0, len(n.CPEMatch))
+			for _, m := range n.CPEMatch {
+				if !slices.Contains(known, m.Criteria) {
+					ms = append(ms, m)
+					continue
+				}
+				if n.Operator == "AND" {
+					return nil, errors.Errorf("unexpected node operator for a known invalid CPE. expected: %q, actual: %q, CPE: %s", []string{"OR", ""}, n.Operator, m.Criteria)
+				}
+				slog.Warn("skip known invalid CPE", "id", id, "criteria", m.Criteria)
+			}
+			if len(ms) == 0 && len(n.CPEMatch) > 0 {
+				return nil, errors.Errorf("unexpected node made empty by skipping known invalid CPEs. CPEs: %q", known)
+			}
+			n.CPEMatch = ms
+			ns = append(ns, n)
+		}
+		conf.Nodes = ns
+		cs = append(cs, conf)
+	}
+	return cs, nil
+}
+
 // pvpKey returns the part:vendor:product key used to group vcVulnerableCPEs by
 // product.
 func pvpKey(wfn common.WellFormedName) string {
@@ -626,7 +690,8 @@ func (r semverRange) covers(v *version.Version) bool {
 // criteria by part:vendor:product so vulnerableCPECriteria can drop the
 // vcVulnerableCPEs the configuration already detects as vulnerable. Only
 // semver-evaluable ranges contribute (an unknown range cannot decide membership,
-// so its product's enumerations are kept). The cpeMatch CPEs were already
+// so its product's enumerations are kept). configs are the ones group 1 was
+// built from, after skipKnownInvalidCPEs, and their cpeMatch CPEs were already
 // validated by configurationToCriteria.
 func buildConfigCoverage(configs []nistnvd2Types.Config) (map[string]productCoverage, error) {
 	cov := make(map[string]productCoverage)
