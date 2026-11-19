@@ -320,7 +320,10 @@ func buildProductMap(fetched cvrfTypes.CVRF) map[string]productVersion {
 //
 // It hard-errors when a product_id is absent from the tree or the product is
 // not whitelisted — a new Fortinet product or a resolver bug must fail the
-// extract, not silently drop coverage.
+// extract, not silently drop coverage — and when a concrete version, once
+// respelled (productpkg.NormalizeVersion), does not parse under the product's
+// scheme (productpkg.ValidateVersion), so a new misspelling fails the extract
+// rather than bake a CPE that matches nothing.
 func knownAffectedCriteria(productIDs []string, prodMap map[string]productVersion) (criteriaTypes.Criteria, error) {
 	type product struct {
 		cpes     []string
@@ -334,7 +337,7 @@ func knownAffectedCriteria(productIDs []string, prodMap map[string]productVersio
 			return criteriaTypes.Criteria{}, errors.Errorf("known affected %q not found in product tree", pid)
 		}
 
-		cpes, _, ok := productpkg.Resolve(pv.productName)
+		cpes, rt, ok := productpkg.Resolve(pv.productName)
 		if !ok {
 			return criteriaTypes.Criteria{}, errors.Errorf("unknown fortinet product %q (whitelist miss; add it to internal/product)", pv.productName)
 		}
@@ -353,6 +356,12 @@ func knownAffectedCriteria(productIDs []string, prodMap map[string]productVersio
 			// productpkg.IsExactVersion): "7.166" is an exact IPS Engine build but
 			// "7.4" is a FortiOS train.
 			continue
+		}
+		// A version the product's comparator does not parse is no release a
+		// scanner reports, so its CPE would match nothing, a silent detection
+		// false negative: fail instead, as the CSAF extractor does.
+		if err := productpkg.ValidateVersion(rt, ver); err != nil {
+			return criteriaTypes.Criteria{}, errors.Wrapf(err, "unexpected concrete version %q of known affected %q", ver, pid)
 		}
 
 		p, ok := products[pv.productName]
