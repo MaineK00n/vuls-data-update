@@ -17,6 +17,8 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/go-git/go-git/v5"
+	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
 	"github.com/google/go-containerregistry/pkg/registry"
@@ -268,11 +270,11 @@ func TestPull(t *testing.T) {
 				opts:       []pull.Option{pull.WithCheckout("9d3d5d486d4c9414321a2df56f2e007c4c2c8fac"), pull.WithRestore(true), pull.WithUseNativeGit(false)},
 			},
 			hasError: true,
-			wantErr:  "get checkout options: 9d3d5d486d4c9414321a2df56f2e007c4c2c8fac is not in ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test, whose history may have been truncated or rewritten: ",
+			wantErr:  "get checkout options: 9d3d5d486d4c9414321a2df56f2e007c4c2c8fac is not in ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test, whose history may have been truncated or rewritten: resolve 9d3d5d486d4c9414321a2df56f2e007c4c2c8fac: reference not found",
 		},
 		{
 			// go-git checks out the zero hash, which plumbing.NewHash makes
-			// of v0.0.2, as master. Unless contains is asked before the
+			// of v0.0.2, as master. Unless the target is resolved before the
 			// checkout, the pull succeeds on master.
 			name: "vuls-data-raw-test-master checkout: v0.0.2 (not in the repository), restore: true, native git",
 			args: args{
@@ -290,7 +292,7 @@ func TestPull(t *testing.T) {
 				opts:       []pull.Option{pull.WithCheckout("v0.0.2"), pull.WithRestore(true), pull.WithUseNativeGit(false)},
 			},
 			hasError: true,
-			wantErr:  "get checkout options: v0.0.2 is not in ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test-master, whose history may have been truncated or rewritten: ",
+			wantErr:  "get checkout options: v0.0.2 is not in ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test-master, whose history may have been truncated or rewritten: resolve v0.0.2: reference not found",
 		},
 		{
 			// contains reads a name as cat-file -e does, so it cannot tell
@@ -334,7 +336,7 @@ func TestPull(t *testing.T) {
 				opts:       []pull.Option{pull.WithCheckout("v9@9"), pull.WithRestore(false), pull.WithUseNativeGit(false)},
 			},
 			hasError: true,
-			wantErr:  "get checkout options: v9@9 is not in ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test, whose history may have been truncated or rewritten: ",
+			wantErr:  "get checkout options: v9@9 is not in ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test, whose history may have been truncated or rewritten: resolve v9@9: ",
 		},
 		{
 			name: "vuls-data-raw-test-archive-1 restore: false, native git",
@@ -487,10 +489,10 @@ func TestPullWithoutGit(t *testing.T) {
 	}
 }
 
-// TestNotFound checks which errors of contains notFound takes to say that the
-// target is not in the repository, and which to say that the check could not
-// be made. The errors, and so the exit statuses of git, come from contains on
-// the fixture where they can.
+// TestNotFound checks which errors notFound takes to say that the target is not
+// in the repository, and which to say that the check could not be made. The
+// errors, and so the exit statuses of git, come where they can from what Pull
+// asks on the fixture: contains on native git, and ResolveRevision on go-git.
 func TestNotFound(t *testing.T) {
 	f, err := os.Open(filepath.Join("testdata", "fixtures", "vuls-data-raw-test.tar.zst"))
 	if err != nil {
@@ -501,6 +503,16 @@ func TestNotFound(t *testing.T) {
 	dir := filepath.Join(t.TempDir(), "vuls-data-raw-test")
 	if err := util.ExtractDotgitTarZst(f, dir); err != nil {
 		t.Fatalf("extract fixture. err: %v", err)
+	}
+
+	r, err := git.PlainOpen(dir)
+	if err != nil {
+		t.Fatalf("open %s. err: %v", dir, err)
+	}
+	// resolve asks what Pull asks on go-git, and wraps the error as Pull does.
+	resolve := func(revision string) error {
+		_, err := r.ResolveRevision(plumbing.Revision(revision))
+		return errors.Wrapf(err, "resolve %s", revision)
 	}
 
 	tests := []struct {
@@ -516,7 +528,7 @@ func TestNotFound(t *testing.T) {
 		},
 		{
 			name: "no error, go-git",
-			err:  contains.Contains(dir, "v0.0.1", contains.WithUseNativeGit(false)),
+			err:  resolve("v0.0.1"),
 		},
 		{
 			name:         "exit status 1, a hash cat-file -e does not have, native git",
@@ -544,21 +556,19 @@ func TestNotFound(t *testing.T) {
 		},
 		{
 			name: "reference not found, go-git",
-			err:  contains.Contains(dir, "v0.0.2", contains.WithUseNativeGit(false)),
+			err:  resolve("v0.0.2"),
 			want: true,
 		},
 		{
 			name: "a name the revision parser rejects, go-git",
-			err:  contains.Contains(dir, "v9@9", contains.WithUseNativeGit(false)),
+			err:  resolve("v9@9"),
 			want: true,
 		},
 		{
-			name: "repository does not exist, go-git",
-			err:  contains.Contains(t.TempDir(), "v0.0.1", contains.WithUseNativeGit(false)),
-		},
-		{
-			name: "repository cannot be read, go-git",
-			err:  errors.Wrap(&fs.PathError{Op: "open", Path: filepath.Join(dir, ".git"), Err: fs.ErrPermission}, "open vuls-data-raw-test"),
+			// What ResolveRevision returns when a file it reads cannot be
+			// read, such as the loose object of the parent for main~1.
+			name: "a file of the repository cannot be read, go-git",
+			err:  errors.Wrap(&fs.PathError{Op: "open", Path: filepath.Join(dir, ".git", "objects", "0f", "1e2d3c4b5a69788796a5b4c3d2e1f00f1e2d3c"), Err: fs.ErrPermission}, "resolve main~1"),
 		},
 	}
 	for _, tt := range tests {

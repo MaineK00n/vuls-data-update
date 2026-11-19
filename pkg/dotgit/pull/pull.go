@@ -202,10 +202,13 @@ func Pull(repository string, opts ...Option) error {
 				// Neither a branch nor a tag, so a commit if anything. For a
 				// name that resolves to nothing, plumbing.NewHash below fails
 				// as "object not found", or makes the zero hash, which go-git
-				// checks out as master, so ask contains first. Not before the
-				// tag: go-git does not resolve every tag name, such as one
-				// with an "@".
-				if err := contains.Contains(filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference), options.checkout, contains.WithUseNativeGit(false)); err != nil {
+				// checks out as master, so resolve it first, as contains does
+				// on go-git, but in the repository opened above: contains
+				// would open it again and load every pack index a second
+				// time. Not before the tag: go-git does not resolve every tag
+				// name, such as one with an "@".
+				if _, err := r.ResolveRevision(plumbing.Revision(options.checkout)); err != nil {
+					err = errors.Wrapf(err, "resolve %s", options.checkout)
 					if notFound(err, false) {
 						return git.CheckoutOptions{}, notInRepository(err, repository, options.checkout)
 					}
@@ -271,18 +274,19 @@ func Pull(repository string, opts ...Option) error {
 	return nil
 }
 
-// notInRepository wraps err for a checkout target, a tag or a commit, that
-// contains does not find in the dotgit pulled from repository: the error of
-// switch on the native path, and that of contains on the go-git path, where
-// contains is asked before the checkout. vuls-data-db keeps only the last
+// notInRepository wraps err for a checkout target, a tag or a commit, that is
+// not in the dotgit pulled from repository: the error of switch on the native
+// path, and that of ResolveRevision on the go-git path, where the target is
+// resolved before the checkout. vuls-data-db keeps only the last
 // commits of a dotgit's history, so a commit pinned before it truncated the
 // history is gone from a repository that is otherwise fine.
 func notInRepository(err error, repository, checkout string) error {
 	return errors.Wrapf(err, "%s is not in %s, whose history may have been truncated or rewritten", checkout, repository)
 }
 
-// notFound reports whether err, from contains, says that the target is not in
-// the repository, rather than that the check could not be made.
+// notFound reports whether err says that the target is not in the repository,
+// rather than that the check could not be made. err is from contains on native
+// git, and from ResolveRevision on go-git.
 //
 // Native git: git cat-file -e exits with 1 for a hash it does not have, and
 // with 128 for a name it cannot resolve. 128 is also how it ends on other fatal
@@ -290,13 +294,13 @@ func notInRepository(err error, repository, checkout string) error {
 // switch, which follows the message, says which. Without an exit status, git
 // could not be run.
 //
-// go-git: contains is asked only about a name that is neither a branch nor a
-// tag. ResolveRevision answers plumbing.ErrReferenceNotFound for an object it
-// cannot read, too, and its other errors, such as for a name its parser
-// rejects, like one with an "@", or for a commit a name points at that cannot
-// be read, also leave nothing to check out. Only an error from reading the
-// repository itself, git.ErrRepositoryNotExists or an *fs.PathError, says that
-// the check could not be made.
+// go-git: ResolveRevision is asked only about a name that is neither a branch
+// nor a tag, in the repository Pull has already opened. It answers
+// plumbing.ErrReferenceNotFound for an object it cannot read, too, and its
+// other errors, such as for a name its parser rejects, like one with an "@",
+// or for a commit a name points at that cannot be read, also leave nothing to
+// check out. Only an *fs.PathError, from a file of the repository that cannot
+// be read, says that the check could not be made.
 func notFound(err error, useNativeGit bool) bool {
 	if err == nil {
 		return false
@@ -304,9 +308,6 @@ func notFound(err error, useNativeGit bool) bool {
 	if useNativeGit {
 		ee, ok := stderrors.AsType[*exec.ExitError](err)
 		return ok && (ee.ExitCode() == 1 || ee.ExitCode() == 128)
-	}
-	if errors.Is(err, git.ErrRepositoryNotExists) {
-		return false
 	}
 	_, ok := stderrors.AsType[*fs.PathError](err)
 	return !ok
