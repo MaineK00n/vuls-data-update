@@ -5,7 +5,6 @@ import (
 	"strings"
 
 	"github.com/go-git/go-git/v5"
-	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/go-git/go-git/v5/plumbing/format/diff"
 	"github.com/go-git/go-git/v5/plumbing/object"
 	"github.com/pkg/errors"
@@ -112,7 +111,7 @@ func Diff(repository, minus, plus string, opts ...Option) (string, error) {
 }
 
 func getChangeEntry(repository *git.Repository, path, treeish string) (object.ChangeEntry, error) {
-	hash, err := repository.ResolveRevision(plumbing.Revision(treeish))
+	hash, err := util.ResolveRevision(repository, treeish)
 	if err != nil {
 		return object.ChangeEntry{}, errors.Wrapf(err, "resolve %s", treeish)
 	}

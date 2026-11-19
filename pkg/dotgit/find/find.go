@@ -8,7 +8,6 @@ import (
 	"regexp"
 
 	"github.com/go-git/go-git/v5"
-	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/go-git/go-git/v5/plumbing/object"
 	"github.com/pkg/errors"
 
@@ -96,7 +95,7 @@ func Find(repository, expression string, opts ...Option) ([]FileObject, error) {
 		return nil, errors.Wrapf(err, "open %s", repository)
 	}
 
-	hash, err := r.ResolveRevision(plumbing.Revision(options.treeish))
+	hash, err := util.ResolveRevision(r, options.treeish)
 	if err != nil {
 		return nil, errors.Wrapf(err, "resolve %s", options.treeish)
 	}

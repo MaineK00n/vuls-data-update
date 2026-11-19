@@ -45,18 +45,16 @@ type Commit struct {
 
 // Show returns the commit that revision names in repository. An annotated tag
 // names the commit it points to. A revision that does not name exactly one
-// commit, such as a missing one, is an error, except for the parts of it that
-// the go-git path skips.
+// commit, such as a missing one, is an error.
 //
 // Native git reads the times through raw placeholders (%at, %ct) with
 // --no-show-signature, so git config such as log.showSignature cannot add
-// text to what it parses. The go-git path resolves revision with go-git's
-// ResolveRevision, which knows fewer revision forms than git and skips some
-// parts it does not apply: for main^{tree}, main:<path> or main@{1}, it
-// returns main's commit. For the first two, which name a tree and a blob,
-// native git returns an error. For main@{1}, it returns the commit main
-// pointed to before, if main's reflog has one, so the two paths may return
-// different commits.
+// text to what it parses. The go-git path resolves revision with
+// util.ResolveRevision, which knows fewer revision forms than git: it refuses
+// a revision with a part that go-git would skip or read otherwise, such as
+// main^{tree}, main:<path> or main@{1}, with an error that wraps
+// util.ErrUnsupportedRevision, whether or not native git returns a commit for
+// it.
 func Show(repository, revision string, opts ...Option) (Commit, error) {
 	options := &options{
 		useNativeGit: true,
@@ -123,11 +121,13 @@ func Show(repository, revision string, opts ...Option) (Commit, error) {
 		return Commit{}, errors.Wrapf(err, "open %s", repository)
 	}
 
-	hash, err := r.ResolveRevision(plumbing.Revision(revision))
+	hash, err := util.ResolveRevision(r, revision)
 	if err != nil {
-		// ResolveRevision returns ErrObjectNotFound for a parent that is not
-		// in the repository, such as that of the shallow commit of a shallow
-		// clone, where native git exits 1 too.
+		// go-git returns ErrObjectNotFound for a parent that is not in the
+		// repository, such as that of the shallow commit of a shallow clone,
+		// where native git exits 1 too. A refusal, which wraps
+		// util.ErrUnsupportedRevision, is neither: the revision may name a
+		// commit that only native git resolves.
 		if errors.Is(err, plumbing.ErrReferenceNotFound) || errors.Is(err, plumbing.ErrObjectNotFound) {
 			return Commit{}, errors.Wrapf(err, "%q does not name a commit", revision)
 		}

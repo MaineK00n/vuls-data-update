@@ -2,7 +2,6 @@ package contains
 
 import (
 	"github.com/go-git/go-git/v5"
-	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/pkg/errors"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/dotgit/util"
@@ -47,7 +46,7 @@ func Contains(repository, commit string, opts ...Option) error {
 		return errors.Wrapf(err, "open %s", repository)
 	}
 
-	if _, err := r.ResolveRevision(plumbing.Revision(commit)); err != nil {
+	if _, err := util.ResolveRevision(r, commit); err != nil {
 		return errors.Wrapf(err, "resolve %s", commit)
 	}
 

@@ -118,13 +118,74 @@ func TestShow(t *testing.T) {
 			},
 		},
 		{
-			// go-git does not know :/<text>.
+			// go-git skips :/<text>, and util.ResolveRevision refuses it.
 			name: "commit message search, go-git",
 			args: args{
 				revision: ":/signed",
 				opts:     []show.Option{show.WithUseNativeGit(false)},
 			},
-			wantErr: `":/signed" does not name a commit`,
+			wantErr: `resolve :/signed: go-git does not support ":/signed" in ":/signed", use native git: unsupported revision`,
+		},
+		{
+			// ^{/<text>} names the youngest commit reachable from main whose
+			// message matches.
+			name: "commit message search from a branch, native git",
+			args: args{
+				revision: "main^{/signed}",
+				opts:     []show.Option{show.WithUseNativeGit(true)},
+			},
+			want: show.Commit{
+				Hash:          "c32990db8f97b8b588b4a432b934aff4fc769b50",
+				AuthorTime:    time.Date(2023, time.November, 14, 22, 13, 20, 0, time.UTC), // the commit's 2023-11-15 07:13:20 +0900, in UTC
+				CommitterTime: time.Date(2023, time.November, 14, 23, 13, 20, 0, time.UTC), // the commit's 2023-11-14 18:13:20 -0500, in UTC
+			},
+		},
+		{
+			name: "commit message search from a branch, go-git",
+			args: args{
+				revision: "main^{/signed}",
+				opts:     []show.Option{show.WithUseNativeGit(false)},
+			},
+			want: show.Commit{
+				Hash:          "c32990db8f97b8b588b4a432b934aff4fc769b50",
+				AuthorTime:    time.Date(2023, time.November, 14, 22, 13, 20, 0, time.UTC), // the commit's 2023-11-15 07:13:20 +0900, in UTC
+				CommitterTime: time.Date(2023, time.November, 14, 23, 13, 20, 0, time.UTC), // the commit's 2023-11-14 18:13:20 -0500, in UTC
+			},
+		},
+		{
+			name: "tree of a branch, native git",
+			args: args{
+				revision: "main^{tree}",
+				opts:     []show.Option{show.WithUseNativeGit(true)},
+			},
+			wantErr: `"main^{tree}" does not name a commit`,
+		},
+		{
+			// go-git skips ^{tree}, and would return main's commit.
+			name: "tree of a branch, go-git",
+			args: args{
+				revision: "main^{tree}",
+				opts:     []show.Option{show.WithUseNativeGit(false)},
+			},
+			wantErr: `resolve main^{tree}: go-git does not support "^{tree}" in "main^{tree}", use native git: unsupported revision`,
+		},
+		{
+			// main: names the top tree of main.
+			name: "path in a branch, native git",
+			args: args{
+				revision: "main:",
+				opts:     []show.Option{show.WithUseNativeGit(true)},
+			},
+			wantErr: `"main:" does not name a commit`,
+		},
+		{
+			// go-git skips :<path>, and would return main's commit.
+			name: "path in a branch, go-git",
+			args: args{
+				revision: "main:",
+				opts:     []show.Option{show.WithUseNativeGit(false)},
+			},
+			wantErr: `resolve main:: go-git does not support ":" in "main:", use native git: unsupported revision`,
 		},
 		{
 			name: "missing revision, native git",

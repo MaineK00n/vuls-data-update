@@ -5,7 +5,6 @@ import (
 	"regexp"
 
 	"github.com/go-git/go-git/v5"
-	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/go-git/go-git/v5/plumbing/format/diff"
 	"github.com/go-git/go-git/v5/plumbing/object"
 	"github.com/pkg/errors"
@@ -97,7 +96,7 @@ func Diff(repository, minus, plus string, opts ...Option) (string, error) {
 	}
 
 	f := func(treeish string) (*object.Tree, error) {
-		hash, err := r.ResolveRevision(plumbing.Revision(treeish))
+		hash, err := util.ResolveRevision(r, treeish)
 		if err != nil {
 			return nil, errors.Wrapf(err, "resolve %q", treeish)
 		}

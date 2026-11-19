@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/go-git/go-git/v5"
-	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/pkg/errors"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/dotgit/util"
@@ -62,7 +61,7 @@ func Cat(repository, path string, opts ...Option) (string, error) {
 		return "", errors.Wrapf(err, "open %s", repository)
 	}
 
-	hash, err := r.ResolveRevision(plumbing.Revision(options.treeish))
+	hash, err := util.ResolveRevision(r, options.treeish)
 	if err != nil {
 		return "", errors.Wrapf(err, "resolve %s", options.treeish)
 	}
