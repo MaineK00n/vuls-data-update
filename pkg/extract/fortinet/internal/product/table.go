@@ -103,7 +103,11 @@ var nameToProduct = map[string]productInfo{
 	// The FortiClient platform variants (Windows/Mac/Linux/iOS/Android) each
 	// take the CPE Fortinet gives the platform and NVD's for it, and share one
 	// range type, as do the other platform or deployment variants below
-	// (FortiToken Mobile, FortiSOAR PaaS/on-premise).
+	// (FortiToken Mobile, FortiSOAR PaaS/on-premise). FortiClientWindowsPAM
+	// shares that range type too, since its releases follow FortiClientWindows'
+	// (FG-IR-26-194 lists both at 7.2.0-7.2.14 and 7.4.0-7.4.7, fixed in 7.2.15
+	// and 7.4.8). It takes the CPE CVE-2026-121529 gives it and no NVD one: NVD
+	// has none for it, and this table published none before.
 	"FortiClientAndroid":                   {cna: []string{"cpe:2.3:a:fortinet:forticlientandroid:*:*:*:*:*:*:*:*"}, nvd: []string{"cpe:2.3:a:fortinet:forticlient:*:*:*:*:*:android:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiClient},
 	"FortiClientEMS":                       {cna: []string{"cpe:2.3:a:fortinet:forticlientems:*:*:*:*:*:*:*:*"}, nvd: []string{"cpe:2.3:a:fortinet:forticlient_enterprise_management_server:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiClientEnterpriseManagementServer},
 	"FortiClientEMS Cloud":                 {cna: []string{"cpe:2.3:a:fortinet:forticlientemscloud:*:*:*:*:*:*:*:*"}, nvd: []string{"cpe:2.3:a:fortinet:forticlient_enterprise_management_server_cloud:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiClientEnterpriseManagementServerCloud},
@@ -111,6 +115,7 @@ var nameToProduct = map[string]productInfo{
 	"FortiClientMac":                       {cna: []string{"cpe:2.3:a:fortinet:forticlientmac:*:*:*:*:*:*:*:*"}, nvd: []string{"cpe:2.3:a:fortinet:forticlient:*:*:*:*:*:macos:*:*", "cpe:2.3:a:fortinet:forticlient:*:*:*:*:*:mac_os_x:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiClient},
 	"FortiClientSSLVPN":                    {cna: []string{"cpe:2.3:a:fortinet:forticlientsslvpn:*:*:*:*:*:*:*:*"}, nvd: []string{"cpe:2.3:a:fortinet:forticlient_ssl_vpn:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiClientSSLVPN},
 	"FortiClientWindows":                   {cna: []string{"cpe:2.3:a:fortinet:forticlientwindows:*:*:*:*:*:*:*:*"}, nvd: []string{"cpe:2.3:a:fortinet:forticlient:*:*:*:*:*:windows:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiClient},
+	"FortiClientWindowsPAM":                {cna: []string{"cpe:2.3:a:fortinet:forticlientwindowspam:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiClient},
 	"FortiClientiOS":                       {cna: []string{"cpe:2.3:a:fortinet:forticlientios:*:*:*:*:*:*:*:*"}, nvd: []string{"cpe:2.3:a:fortinet:forticlient:*:*:*:*:*:iphone_os:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiClient},
 	"FortiCloud":                           {cna: []string{"cpe:2.3:a:fortinet:forticloud:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiCloud},
 	"FortiConverter":                       {cna: []string{"cpe:2.3:a:fortinet:forticonverter:*:*:*:*:*:*:*:*"}, rangeType: ccRangeTypes.RangeTypeFortinetFortiConverter},

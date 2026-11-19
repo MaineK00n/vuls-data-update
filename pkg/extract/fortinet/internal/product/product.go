@@ -3,6 +3,7 @@
 package product
 
 import (
+	"regexp"
 	"slices"
 	"strconv"
 	"strings"
@@ -10,6 +11,8 @@ import (
 	"github.com/knqyf263/go-cpe/common"
 	"github.com/knqyf263/go-cpe/naming"
 	"github.com/pkg/errors"
+	nonnumericVersion "github.com/vulsio/go-fortinet-version/nonnumeric"
+	numericVersion "github.com/vulsio/go-fortinet-version/numeric"
 
 	ccRangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/cpecriterion/range"
 )
@@ -63,6 +66,84 @@ func IsExactVersion(name, ver string) bool {
 		return strings.Count(ver, ".") >= 1
 	}
 	return strings.Count(ver, ".") >= 2
+}
+
+// NonNumericVersioned reports whether products of range type rt version their
+// releases with Fortinet's non-numeric (milestone-letter) scheme ("25.2.a"),
+// the range types cpecriterion/range CompareVersions serves with the
+// non-numeric comparator. Every check the extractors make for such a product
+// (train-granular bounds, a milestone read as its train, the scheme a
+// concrete version must parse under) asks here, so they cannot disagree on
+// which products they cover.
+func NonNumericVersioned(rt ccRangeTypes.RangeType) bool {
+	switch rt {
+	case ccRangeTypes.RangeTypeFortinetFortiSASE, ccRangeTypes.RangeTypeFortinetFortiSASESovereign:
+		return true
+	default:
+		return false
+	}
+}
+
+// ValidateVersion returns an error unless ver, a concrete version to bake
+// into a CPE of range type rt, parses under the scheme the detector compares
+// that range type's versions with: the non-numeric (milestone-letter) one for
+// a NonNumericVersioned range type ("25.2.a"), Fortinet's numeric one for any
+// other. BakeVersion accepts many CPE-legal shapes no scanner reports
+// ("7.0.x", "v7.0.0", "7..0"); one baked would be a criterion nothing
+// matches, a silent detection false negative, so the extractors bake only a
+// version that passes.
+func ValidateVersion(rt ccRangeTypes.RangeType, ver string) error {
+	if NonNumericVersioned(rt) {
+		if _, err := nonnumericVersion.NewVersion(ver); err != nil {
+			return errors.Wrapf(err, "parse %q under the non-numeric scheme", ver)
+		}
+		return nil
+	}
+	if _, err := numericVersion.NewVersion(ver); err != nil {
+		return errors.Wrapf(err, "parse %q under the numeric scheme", ver)
+	}
+	return nil
+}
+
+// respellings maps a misspelling Fortinet's advisories give a release of a
+// non-numeric-versioned product to the spelling its release notes give it,
+// each written for the one shape it was seen in. The release notes join
+// every component with a dot (the FortiSASE 7.4 Release Notes: "26.3.1.a",
+// "25.4.b.1"), which is what the non-numeric comparator parses and how a
+// scanner reports the release; the advisories' spellings parse under no
+// scheme.
+var respellings = []struct {
+	pattern *regexp.Regexp
+	repl    string
+}{
+	// A hotfix of a numeric release, its letter joined by "_": "26.3.1_a" for
+	// 26.3.1.a (the CVRF of FG-IR-26-267 to 270, also 26.2.1_a; the CSAF of
+	// FG-IR-26-267 to 269).
+	{pattern: regexp.MustCompile(`^(\d+\.\d+\.\d+)_([a-z])$`), repl: "$1.$2"},
+	// A maintenance release of a milestone, its number joined to the letter:
+	// "24.4.b1" for 24.4.b.1 (the CVRF of FG-IR-26-154 and 270). One digit,
+	// as every such number in the release notes has (25.1.a.1 to 25.4.c.1);
+	// a longer run ("25.1.a10") is not read.
+	{pattern: regexp.MustCompile(`^(\d+\.\d+\.[a-z])(\d)$`), repl: "$1.$2"},
+}
+
+// NormalizeVersion returns ver, a concrete release of the named product as an
+// advisory spells it, in the spelling of Fortinet's release notes (see
+// respellings), the one the product's comparator parses and a scanner
+// reports. Only a non-numeric-versioned product's releases are respelled.
+// Any other ver is returned as given, for the caller to validate
+// (ValidateVersion), so a misspelling not seen before fails the extract
+// rather than being guessed at.
+func NormalizeVersion(name, ver string) string {
+	if !NonNumericVersioned(nameToProduct[strings.TrimSpace(name)].rangeType) {
+		return ver
+	}
+	for _, r := range respellings {
+		if r.pattern.MatchString(ver) {
+			return r.pattern.ReplaceAllString(ver, r.repl)
+		}
+	}
+	return ver
 }
 
 // TrainRange builds a range spanning an entire release train of the named

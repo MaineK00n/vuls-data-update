@@ -1,0 +1,329 @@
+{
+	"document": {
+		"acknowledgments": [
+			{
+				"summary": "Fortinet is pleased to thank Kevin Joensen from Baldur Security for reporting this vulnerability under responsible disclosure."
+			}
+		],
+		"category": "Fortinet PSIRT Advisories",
+		"csaf_version": "2.0",
+		"publisher": {
+			"category": "vendor",
+			"contact_details": "https://fortiguard.fortinet.com/faq/psirt-contact",
+			"issuing_authority": "Fortinet PSIRT",
+			"name": "Fortinet PSIRT",
+			"namespace": "https://fortiguard.fortinet.com/psirt"
+		},
+		"title": "Origin validation error in local API endpoint",
+		"tracking": {
+			"current_release_date": "2026-11-12T00:00:00",
+			"id": "FG-IR-26-194",
+			"initial_release_date": "2026-11-10T00:00:00",
+			"revision_history": [
+				{
+					"date": "2026-11-10T00:00:00",
+					"number": "1",
+					"summary": "Initial Publication"
+				}
+			],
+			"status": "final",
+			"version": "0"
+		}
+	},
+	"product_tree": {
+		"branches": [
+			{
+				"branches": [
+					{
+						"branches": [
+							{
+								"category": "product_version_range",
+								"name": "FortiClientMac/ 8.0 all versions",
+								"product": {
+									"name": "FortiClientMac",
+									"product_id": "FortiClientMac/ 8.0 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiClientMac/>=7.4.0|<=7.4.7",
+								"product": {
+									"name": "FortiClientMac",
+									"product_id": "FortiClientMac >=7.4.0|<=7.4.7"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiClientMac/ 7.2 all versions",
+								"product": {
+									"name": "FortiClientMac",
+									"product_id": "FortiClientMac/ 7.2 all versions"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiClientMac"
+					},
+					{
+						"branches": [
+							{
+								"category": "product_version_range",
+								"name": "FortiClientWindows/ 8.0 all versions",
+								"product": {
+									"name": "FortiClientWindows",
+									"product_id": "FortiClientWindows/ 8.0 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiClientWindows/>=7.4.0|<=7.4.7",
+								"product": {
+									"name": "FortiClientWindows",
+									"product_id": "FortiClientWindows >=7.4.0|<=7.4.7"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiClientWindows/>=7.2.0|<=7.2.14",
+								"product": {
+									"name": "FortiClientWindows",
+									"product_id": "FortiClientWindows >=7.2.0|<=7.2.14"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiClientWindows"
+					},
+					{
+						"branches": [
+							{
+								"category": "product_version_range",
+								"name": "FortiClientWindowsPAM/ 8.0 all versions",
+								"product": {
+									"name": "FortiClientWindowsPAM",
+									"product_id": "FortiClientWindowsPAM/ 8.0 all versions"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiClientWindowsPAM/>=7.4.0|<=7.4.7",
+								"product": {
+									"name": "FortiClientWindowsPAM",
+									"product_id": "FortiClientWindowsPAM >=7.4.0|<=7.4.7"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiClientWindowsPAM/>=7.2.0|<=7.2.14",
+								"product": {
+									"name": "FortiClientWindowsPAM",
+									"product_id": "FortiClientWindowsPAM >=7.2.0|<=7.2.14"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiClientWindowsPAM"
+					}
+				],
+				"category": "vendor",
+				"name": "Fortinet PSIRT"
+			}
+		]
+	},
+	"vulnerabilities": [
+		{
+			"cve": "CVE-2026-121529",
+			"cwe": {
+				"id": "CWE-346",
+				"name": "Origin Validation Error"
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "origin validation issue in FortiClient driver\n\n",
+					"title": "Summary"
+				},
+				{
+					"category": "general",
+					"text": "FortiClient Free VPN is not impacted. \nFortiClient Standalone Mobility Agent is not impacted.",
+					"title": "Additional info"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiClientMac >=7.4.0|<=7.4.7"
+				],
+				"known_not_affected": [
+					"FortiClientMac/ 8.0 all versions",
+					"FortiClientMac-7.4.8",
+					"FortiClientMac/ 7.2 all versions"
+				]
+			},
+			"references": [
+				{
+					"summary": "An origin validation error vulnerability [CWE-346] in FortiClient Mac, FortiClient Windows, and FortiClient Windows PAM may allow an unauthorized remote attacker to execute unauthorized code or commands. Successful exploitation requires interaction with the victim. ",
+					"url": "https://fortiguard.fortinet.com/psirt/FG-IR-26-194"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiClientMac 8.0: Not Applicable\nFortiClientMac 7.4: Upgrade to 7.4.8 or above\nFortiClientMac 7.2: Not Applicable",
+					"product_ids": [
+						"FortiClientMac"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 9.1,
+						"baseSeverity": "CRITICAL",
+						"vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:H/I:H/A:H/E:P/RL:O/RC:C",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiClientMac"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Escalation of privilege"
+				}
+			],
+			"title": "FortiClientMac - CRITICAL - FG-IR-26-194"
+		},
+		{
+			"cve": "CVE-2026-121529",
+			"cwe": {
+				"id": "CWE-346",
+				"name": "Origin Validation Error"
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "origin validation issue in FortiClient driver\n\n",
+					"title": "Summary"
+				},
+				{
+					"category": "general",
+					"text": "FortiClient Free VPN is not impacted. \nFortiClient Standalone Mobility Agent is not impacted.",
+					"title": "Additional info"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiClientWindows >=7.4.0|<=7.4.7",
+					"FortiClientWindows >=7.2.0|<=7.2.14"
+				],
+				"known_not_affected": [
+					"FortiClientWindows/ 8.0 all versions",
+					"FortiClientWindows-7.4.8",
+					"FortiClientWindows-7.2.15"
+				]
+			},
+			"references": [
+				{
+					"summary": "An origin validation error vulnerability [CWE-346] in FortiClient Mac, FortiClient Windows, and FortiClient Windows PAM may allow an unauthorized remote attacker to execute unauthorized code or commands. Successful exploitation requires interaction with the victim. ",
+					"url": "https://fortiguard.fortinet.com/psirt/FG-IR-26-194"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiClientWindows 8.0: Not Applicable\nFortiClientWindows 7.4: Upgrade to 7.4.8 or above\nFortiClientWindows 7.2: Upgrade to 7.2.15 or above",
+					"product_ids": [
+						"FortiClientWindows"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 9.1,
+						"baseSeverity": "CRITICAL",
+						"vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:H/I:H/A:H/E:P/RL:O/RC:C",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiClientWindows"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Escalation of privilege"
+				}
+			],
+			"title": "FortiClientWindows - CRITICAL - FG-IR-26-194"
+		},
+		{
+			"cve": "CVE-2026-121529",
+			"cwe": {
+				"id": "CWE-346",
+				"name": "Origin Validation Error"
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "origin validation issue in FortiClient driver\n\n",
+					"title": "Summary"
+				},
+				{
+					"category": "general",
+					"text": "FortiClient Free VPN is not impacted. \nFortiClient Standalone Mobility Agent is not impacted.",
+					"title": "Additional info"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiClientWindowsPAM >=7.4.0|<=7.4.7",
+					"FortiClientWindowsPAM >=7.2.0|<=7.2.14"
+				],
+				"known_not_affected": [
+					"FortiClientWindowsPAM/ 8.0 all versions",
+					"FortiClientWindowsPAM-7.4.8",
+					"FortiClientWindowsPAM-7.2.15"
+				]
+			},
+			"references": [
+				{
+					"summary": "An origin validation error vulnerability [CWE-346] in FortiClient Mac, FortiClient Windows, and FortiClient Windows PAM may allow an unauthorized remote attacker to execute unauthorized code or commands. Successful exploitation requires interaction with the victim. ",
+					"url": "https://fortiguard.fortinet.com/psirt/FG-IR-26-194"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiClientWindowsPAM 8.0: Not Applicable\nFortiClientWindowsPAM 7.4: Upgrade to 7.4.8 or above\nFortiClientWindowsPAM 7.2: Upgrade to 7.2.15 or above",
+					"product_ids": [
+						"FortiClientWindowsPAM"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 9.1,
+						"baseSeverity": "CRITICAL",
+						"vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:H/I:H/A:H/E:P/RL:O/RC:C",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiClientWindowsPAM"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Escalation of privilege"
+				}
+			],
+			"title": "FortiClientWindowsPAM - CRITICAL - FG-IR-26-194"
+		}
+	]
+}

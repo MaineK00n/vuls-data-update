@@ -184,29 +184,47 @@ func TestToCriterions(t *testing.T) {
 					"FortiClientMac >=7.0.0|<=7.0.5": csaf.NewProductRef("FortiClientMac", ">=7.0.0|<=7.0.5"),
 				},
 			},
-			want: func() []criterionTypes.Criterion {
-				var cns []criterionTypes.Criterion
-				for _, cpe := range []string{
-					"cpe:2.3:a:fortinet:forticlientmac:*:*:*:*:*:*:*:*",
-					"cpe:2.3:a:fortinet:forticlient:*:*:*:*:*:macos:*:*",
-					"cpe:2.3:a:fortinet:forticlient:*:*:*:*:*:mac_os_x:*:*",
-				} {
-					cns = append(cns, criterionTypes.Criterion{
-						Type: criterionTypes.CriterionTypeCPE,
-						CPE: &ccTypes.Criterion{
-							Vulnerable: true,
-							FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
-							CPE:        ccTypes.CPE(cpe),
-							Range: &ccRangeTypes.Range{
-								Type:         ccRangeTypes.RangeTypeFortinetFortiClient,
-								GreaterEqual: "7.0.0",
-								LessEqual:    "7.0.5",
-							},
+			want: []criterionTypes.Criterion{
+				{
+					Type: criterionTypes.CriterionTypeCPE,
+					CPE: &ccTypes.Criterion{
+						Vulnerable: true,
+						FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
+						CPE:        ccTypes.CPE("cpe:2.3:a:fortinet:forticlientmac:*:*:*:*:*:*:*:*"),
+						Range: &ccRangeTypes.Range{
+							Type:         ccRangeTypes.RangeTypeFortinetFortiClient,
+							GreaterEqual: "7.0.0",
+							LessEqual:    "7.0.5",
 						},
-					})
-				}
-				return cns
-			}(),
+					},
+				},
+				{
+					Type: criterionTypes.CriterionTypeCPE,
+					CPE: &ccTypes.Criterion{
+						Vulnerable: true,
+						FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
+						CPE:        ccTypes.CPE("cpe:2.3:a:fortinet:forticlient:*:*:*:*:*:macos:*:*"),
+						Range: &ccRangeTypes.Range{
+							Type:         ccRangeTypes.RangeTypeFortinetFortiClient,
+							GreaterEqual: "7.0.0",
+							LessEqual:    "7.0.5",
+						},
+					},
+				},
+				{
+					Type: criterionTypes.CriterionTypeCPE,
+					CPE: &ccTypes.Criterion{
+						Vulnerable: true,
+						FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
+						CPE:        ccTypes.CPE("cpe:2.3:a:fortinet:forticlient:*:*:*:*:*:mac_os_x:*:*"),
+						Range: &ccRangeTypes.Range{
+							Type:         ccRangeTypes.RangeTypeFortinetFortiClient,
+							GreaterEqual: "7.0.0",
+							LessEqual:    "7.0.5",
+						},
+					},
+				},
+			},
 		},
 		{
 			// A baked version lands in every CPE.
@@ -257,6 +275,46 @@ func TestToCriterions(t *testing.T) {
 					},
 				},
 			}},
+		},
+		{
+			// FG-IR-26-205, 212 and 264 join the bounds with " and ", a space
+			// after the operator too: a range like the "|" one, not a version to
+			// bake, in every CPE of the product.
+			name: "bounds joined with and → range, wildcard cpe",
+			args: args{
+				productID: "FortiMail >= 7.6.0 and <= 7.6.6",
+				refMap: map[string]csaf.ProductRef{
+					"FortiMail >= 7.6.0 and <= 7.6.6": csaf.NewProductRef("FortiMail", ">= 7.6.0 and <= 7.6.6"),
+				},
+			},
+			want: []criterionTypes.Criterion{
+				{
+					Type: criterionTypes.CriterionTypeCPE,
+					CPE: &ccTypes.Criterion{
+						Vulnerable: true,
+						FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
+						CPE:        ccTypes.CPE("cpe:2.3:a:fortinet:fortimail:*:*:*:*:*:*:*:*"),
+						Range: &ccRangeTypes.Range{
+							Type:         ccRangeTypes.RangeTypeFortinetFortiMail,
+							GreaterEqual: "7.6.0",
+							LessEqual:    "7.6.6",
+						},
+					},
+				},
+				{
+					Type: criterionTypes.CriterionTypeCPE,
+					CPE: &ccTypes.Criterion{
+						Vulnerable: true,
+						FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
+						CPE:        ccTypes.CPE("cpe:2.3:o:fortinet:fortimail:*:*:*:*:*:*:*:*"),
+						Range: &ccRangeTypes.Range{
+							Type:         ccRangeTypes.RangeTypeFortinetFortiMail,
+							GreaterEqual: "7.6.0",
+							LessEqual:    "7.6.6",
+						},
+					},
+				},
+			},
 		},
 		{
 			name: "whole product (all versions)",
@@ -328,6 +386,69 @@ func TestToCriterions(t *testing.T) {
 			}},
 		},
 		{
+			// FG-IR-26-180 lists FortiSIEM "6.X all versions": a train with a
+			// wildcard last component reads as the train the wildcard spans.
+			name: "wildcard train all versions → its train range",
+			args: args{
+				productID: "FortiSIEM/ 6.X all versions",
+				refMap: map[string]csaf.ProductRef{
+					"FortiSIEM/ 6.X all versions": csaf.NewProductRef("FortiSIEM", "6.X all versions"),
+				},
+			},
+			want: []criterionTypes.Criterion{
+				{
+					Type: criterionTypes.CriterionTypeCPE,
+					CPE: &ccTypes.Criterion{
+						Vulnerable: true,
+						FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
+						CPE:        ccTypes.CPE("cpe:2.3:a:fortinet:fortisiem:*:*:*:*:*:*:*:*"),
+						Range: &ccRangeTypes.Range{
+							Type:         ccRangeTypes.RangeTypeFortinetFortiSIEM,
+							GreaterEqual: "6",
+							LessThan:     "7",
+						},
+					},
+				},
+				{
+					Type: criterionTypes.CriterionTypeCPE,
+					CPE: &ccTypes.Criterion{
+						Vulnerable: true,
+						FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
+						CPE:        ccTypes.CPE("cpe:2.3:o:fortinet:fortisiem:*:*:*:*:*:*:*:*"),
+						Range: &ccRangeTypes.Range{
+							Type:         ccRangeTypes.RangeTypeFortinetFortiSIEM,
+							GreaterEqual: "6",
+							LessThan:     "7",
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "two-component wildcard train all versions → its train range",
+			args: args{
+				productID: "FortiOS 7.0.x all versions",
+				refMap: map[string]csaf.ProductRef{
+					"FortiOS 7.0.x all versions": csaf.NewProductRef("FortiOS", "7.0.x all versions"),
+				},
+			},
+			want: []criterionTypes.Criterion{{
+				Type: criterionTypes.CriterionTypeCPE,
+				CPE: &ccTypes.Criterion{
+					Vulnerable: true,
+					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
+					CPE:        ccTypes.CPE("cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*"),
+					Range: &ccRangeTypes.Range{
+						Type:         ccRangeTypes.RangeTypeFortinetFortiOS,
+						GreaterEqual: "7.0",
+						LessThan:     "7.1",
+					},
+				},
+			}},
+		},
+		{
+			// "and above" is read before any bound, so its " and " never
+			// separates bounds.
 			name: "numeric and above ok (numeric product)",
 			args: args{
 				productID: "FortiOS 7.0.0 and above",
@@ -371,6 +492,31 @@ func TestToCriterions(t *testing.T) {
 			}},
 		},
 		{
+			// FG-IR-26-268, 269 and 270 list "25.1.a all versions": a milestone
+			// read as the X.Y train it sits in, the granularity FortiSASE's
+			// bounds keep.
+			name: "non-numeric product milestone all versions → its train range",
+			args: args{
+				productID: "FortiSASE 25.1.a all versions",
+				refMap: map[string]csaf.ProductRef{
+					"FortiSASE 25.1.a all versions": csaf.NewProductRef("FortiSASE", "25.1.a all versions"),
+				},
+			},
+			want: []criterionTypes.Criterion{{
+				Type: criterionTypes.CriterionTypeCPE,
+				CPE: &ccTypes.Criterion{
+					Vulnerable: true,
+					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
+					CPE:        ccTypes.CPE("cpe:2.3:a:fortinet:fortisase:*:*:*:*:*:*:*:*"),
+					Range: &ccRangeTypes.Range{
+						Type:         ccRangeTypes.RangeTypeFortinetFortiSASE,
+						GreaterEqual: "25.1",
+						LessThan:     "25.2",
+					},
+				},
+			}},
+		},
+		{
 			name: "non-numeric product whole-product ok",
 			args: args{
 				productID: "FortiSASE all versions",
@@ -401,6 +547,44 @@ func TestToCriterions(t *testing.T) {
 					Vulnerable: true,
 					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
 					CPE:        ccTypes.CPE("cpe:2.3:a:fortinet:fortisase:25.2.a:*:*:*:*:*:*:*"),
+				},
+			}},
+		},
+		{
+			// FG-IR-26-268 and 269 list "26.3.1_a", which the milestone scheme
+			// does not parse: baked as the release notes spell it, 26.3.1.a.
+			name: "non-numeric product underscore-joined hotfix respelled",
+			args: args{
+				productID: "FortiSASE 26.3.1_a",
+				refMap: map[string]csaf.ProductRef{
+					"FortiSASE 26.3.1_a": csaf.NewProductRef("FortiSASE", "26.3.1_a"),
+				},
+			},
+			want: []criterionTypes.Criterion{{
+				Type: criterionTypes.CriterionTypeCPE,
+				CPE: &ccTypes.Criterion{
+					Vulnerable: true,
+					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
+					CPE:        ccTypes.CPE("cpe:2.3:a:fortinet:fortisase:26.3.1.a:*:*:*:*:*:*:*"),
+				},
+			}},
+		},
+		{
+			// The CVRF of FG-IR-26-154 and 270 lists "24.4.b1": baked as the
+			// release notes spell it, 24.4.b.1.
+			name: "non-numeric product maintenance number joined to its milestone respelled",
+			args: args{
+				productID: "FortiSASE 24.4.b1",
+				refMap: map[string]csaf.ProductRef{
+					"FortiSASE 24.4.b1": csaf.NewProductRef("FortiSASE", "24.4.b1"),
+				},
+			},
+			want: []criterionTypes.Criterion{{
+				Type: criterionTypes.CriterionTypeCPE,
+				CPE: &ccTypes.Criterion{
+					Vulnerable: true,
+					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
+					CPE:        ccTypes.CPE("cpe:2.3:a:fortinet:fortisase:24.4.b.1:*:*:*:*:*:*:*"),
 				},
 			}},
 		},
@@ -447,6 +631,30 @@ func TestToCriterions(t *testing.T) {
 			}},
 		},
 		{
+			// The milestone train is read for every non-numeric-versioned
+			// product, not FortiSASE alone.
+			name: "non-numeric Sovereign milestone all versions → its train range",
+			args: args{
+				productID: "FortiSASE-Sovereign 25.3.a all versions",
+				refMap: map[string]csaf.ProductRef{
+					"FortiSASE-Sovereign 25.3.a all versions": csaf.NewProductRef("FortiSASE-Sovereign", "25.3.a all versions"),
+				},
+			},
+			want: []criterionTypes.Criterion{{
+				Type: criterionTypes.CriterionTypeCPE,
+				CPE: &ccTypes.Criterion{
+					Vulnerable: true,
+					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
+					CPE:        ccTypes.CPE("cpe:2.3:a:fortinet:fortisase-sovereign:*:*:*:*:*:*:*:*"),
+					Range: &ccRangeTypes.Range{
+						Type:         ccRangeTypes.RangeTypeFortinetFortiSASESovereign,
+						GreaterEqual: "25.3",
+						LessThan:     "25.4",
+					},
+				},
+			}},
+		},
+		{
 			name: "non-numeric Sovereign multi-component range rejected",
 			args: args{
 				productID: "FortiSASE-Sovereign >=25.3.0|<=25.3.5",
@@ -474,6 +682,81 @@ func TestToCriterions(t *testing.T) {
 				productID: "FortiOS FortiClient iOS all versions",
 				refMap: map[string]csaf.ProductRef{
 					"FortiOS FortiClient iOS all versions": csaf.NewProductRef("FortiOS", "FortiClient iOS all versions"),
+				},
+			},
+			wantErr: true,
+		},
+		{
+			// Nor for a non-numeric-versioned product, whose milestone trains
+			// are read.
+			name: "non-numeric product leaked product name all versions → hard error",
+			args: args{
+				productID: "FortiSASE FortiClient iOS all versions",
+				refMap: map[string]csaf.ProductRef{
+					"FortiSASE FortiClient iOS all versions": csaf.NewProductRef("FortiSASE", "FortiClient iOS all versions"),
+				},
+			},
+			wantErr: true,
+		},
+		{
+			// A wildcard spans a train, not the releases of a concrete one.
+			name: "wildcard after a concrete release all versions → hard error",
+			args: args{
+				productID: "FortiOS 7.0.1.X all versions",
+				refMap: map[string]csaf.ProductRef{
+					"FortiOS 7.0.1.X all versions": csaf.NewProductRef("FortiOS", "7.0.1.X all versions"),
+				},
+			},
+			wantErr: true,
+		},
+		{
+			name: "bare wildcard all versions → hard error",
+			args: args{
+				productID: "FortiOS X all versions",
+				refMap: map[string]csaf.ProductRef{
+					"FortiOS X all versions": csaf.NewProductRef("FortiOS", "X all versions"),
+				},
+			},
+			wantErr: true,
+		},
+		{
+			// A milestone train is read only for a non-numeric-versioned product.
+			name: "numeric product milestone all versions → hard error",
+			args: args{
+				productID: "FortiOS 7.4.a all versions",
+				refMap: map[string]csaf.ProductRef{
+					"FortiOS 7.4.a all versions": csaf.NewProductRef("FortiOS", "7.4.a all versions"),
+				},
+			},
+			wantErr: true,
+		},
+		{
+			// Only a numeric X.Y and one milestone letter reads as a train.
+			name: "non-numeric product milestone patch all versions → hard error",
+			args: args{
+				productID: "FortiSASE 25.1.a.2 all versions",
+				refMap: map[string]csaf.ProductRef{
+					"FortiSASE 25.1.a.2 all versions": csaf.NewProductRef("FortiSASE", "25.1.a.2 all versions"),
+				},
+			},
+			wantErr: true,
+		},
+		{
+			name: "non-numeric product multi-letter milestone all versions → hard error",
+			args: args{
+				productID: "FortiSASE 25.1.ab all versions",
+				refMap: map[string]csaf.ProductRef{
+					"FortiSASE 25.1.ab all versions": csaf.NewProductRef("FortiSASE", "25.1.ab all versions"),
+				},
+			},
+			wantErr: true,
+		},
+		{
+			name: "non-numeric product milestone of a bare major all versions → hard error",
+			args: args{
+				productID: "FortiSASE 25.a all versions",
+				refMap: map[string]csaf.ProductRef{
+					"FortiSASE 25.a all versions": csaf.NewProductRef("FortiSASE", "25.a all versions"),
 				},
 			},
 			wantErr: true,
@@ -621,6 +904,58 @@ func TestToCriterions(t *testing.T) {
 			wantErr: true,
 		},
 		{
+			// An underscore-joined letter is respelled only for a
+			// non-numeric-versioned product, and only after a numeric X.Y.Z.
+			name: "numeric product letter-suffixed release rejected",
+			args: args{
+				productID: "FortiOS 7.4.1_a",
+				refMap: map[string]csaf.ProductRef{
+					"FortiOS 7.4.1_a": csaf.NewProductRef("FortiOS", "7.4.1_a"),
+				},
+			},
+			wantErr: true,
+		},
+		{
+			name: "non-numeric product multi-letter suffix rejected",
+			args: args{
+				productID: "FortiSASE 26.3.1_ab",
+				refMap: map[string]csaf.ProductRef{
+					"FortiSASE 26.3.1_ab": csaf.NewProductRef("FortiSASE", "26.3.1_ab"),
+				},
+			},
+			wantErr: true,
+		},
+		{
+			name: "non-numeric product numeric suffix rejected",
+			args: args{
+				productID: "FortiSASE 26.3.1_1",
+				refMap: map[string]csaf.ProductRef{
+					"FortiSASE 26.3.1_1": csaf.NewProductRef("FortiSASE", "26.3.1_1"),
+				},
+			},
+			wantErr: true,
+		},
+		{
+			name: "non-numeric product suffix on a milestone rejected",
+			args: args{
+				productID: "FortiSASE 25.1.a_b",
+				refMap: map[string]csaf.ProductRef{
+					"FortiSASE 25.1.a_b": csaf.NewProductRef("FortiSASE", "25.1.a_b"),
+				},
+			},
+			wantErr: true,
+		},
+		{
+			name: "non-numeric product suffix on a four-component release rejected",
+			args: args{
+				productID: "FortiSASE 26.3.1.2_a",
+				refMap: map[string]csaf.ProductRef{
+					"FortiSASE 26.3.1.2_a": csaf.NewProductRef("FortiSASE", "26.3.1.2_a"),
+				},
+			},
+			wantErr: true,
+		},
+		{
 			// A lower bound above the upper bound can never match; reject it
 			// instead of emitting a criterion that is silently dead.
 			name: "reversed range rejected",
@@ -707,6 +1042,70 @@ func TestToCriterions(t *testing.T) {
 				productID: "FortiOS >=7.2.0|<7.2.5|<=7.2.3",
 				refMap: map[string]csaf.ProductRef{
 					"FortiOS >=7.2.0|<7.2.5|<=7.2.3": csaf.NewProductRef("FortiOS", ">=7.2.0|<7.2.5|<=7.2.3"),
+				},
+			},
+			wantErr: true,
+		},
+		// Bounds joined with " and " are held to the same checks as "|" ones.
+		{
+			name: "two lower bounds joined with and rejected",
+			args: args{
+				productID: "FortiMail >= 7.6.0 and >= 7.6.2",
+				refMap: map[string]csaf.ProductRef{
+					"FortiMail >= 7.6.0 and >= 7.6.2": csaf.NewProductRef("FortiMail", ">= 7.6.0 and >= 7.6.2"),
+				},
+			},
+			wantErr: true,
+		},
+		{
+			name: "empty bound joined with and rejected",
+			args: args{
+				productID: "FortiMail >= 7.6.0 and <=",
+				refMap: map[string]csaf.ProductRef{
+					"FortiMail >= 7.6.0 and <=": csaf.NewProductRef("FortiMail", ">= 7.6.0 and <="),
+				},
+			},
+			wantErr: true,
+		},
+		{
+			name: "reversed range joined with and rejected",
+			args: args{
+				productID: "FortiMail >= 7.6.6 and <= 7.6.0",
+				refMap: map[string]csaf.ProductRef{
+					"FortiMail >= 7.6.6 and <= 7.6.0": csaf.NewProductRef("FortiMail", ">= 7.6.6 and <= 7.6.0"),
+				},
+			},
+			wantErr: true,
+		},
+		{
+			name: "bare version joined with and rejected",
+			args: args{
+				productID: "FortiMail >= 7.6.0 and 7.6.6",
+				refMap: map[string]csaf.ProductRef{
+					"FortiMail >= 7.6.0 and 7.6.6": csaf.NewProductRef("FortiMail", ">= 7.6.0 and 7.6.6"),
+				},
+			},
+			wantErr: true,
+		},
+		{
+			// Mixing the two separators adds a third bound, so a side repeats.
+			name: "and mixed with pipe rejected",
+			args: args{
+				productID: "FortiMail >=7.6.0|<=7.6.6 and <7.6.3",
+				refMap: map[string]csaf.ProductRef{
+					"FortiMail >=7.6.0|<=7.6.6 and <7.6.3": csaf.NewProductRef("FortiMail", ">=7.6.0|<=7.6.6 and <7.6.3"),
+				},
+			},
+			wantErr: true,
+		},
+		{
+			// " and " separates only between bounds: one with no space around
+			// it is part of a bound, which then does not parse.
+			name: "and without spaces rejected",
+			args: args{
+				productID: "FortiMail >=7.6.0and<=7.6.6",
+				refMap: map[string]csaf.ProductRef{
+					"FortiMail >=7.6.0and<=7.6.6": csaf.NewProductRef("FortiMail", ">=7.6.0and<=7.6.6"),
 				},
 			},
 			wantErr: true,

@@ -89,6 +89,100 @@ func TestKnownAffectedCriteriaWhitelist(t *testing.T) {
 	}
 }
 
+// A concrete version is baked as Fortinet's release notes spell it: the
+// misspellings the advisories give FortiSASE releases are respelled, since a
+// baked version is matched by CPE name.
+func TestKnownAffectedCriteria(t *testing.T) {
+	tests := []struct {
+		name       string
+		productIDs []string
+		prodMap    map[string]cvrf.ProductVersion
+		want       criteriaTypes.Criteria
+		wantErr    bool
+	}{
+		{
+			name:       "FortiSASE misspellings respelled",
+			productIDs: []string{"FortiSASE-26.3.1_a", "FortiSASE-24.4.b1", "FortiSASE-25.2.a"},
+			prodMap: map[string]cvrf.ProductVersion{
+				"FortiSASE-26.3.1_a": cvrf.NewProductVersion("FortiSASE", "26.3.1_a"),
+				"FortiSASE-24.4.b1":  cvrf.NewProductVersion("FortiSASE", "24.4.b1"),
+				"FortiSASE-25.2.a":   cvrf.NewProductVersion("FortiSASE", "25.2.a"),
+			},
+			want: criteriaTypes.Criteria{
+				Operator: criteriaTypes.CriteriaOperatorTypeOR,
+				Criterions: []criterionTypes.Criterion{{
+					Type: criterionTypes.CriterionTypeCPE,
+					CPE: &ccTypes.Criterion{
+						Vulnerable: true,
+						FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
+						CPE:        "cpe:2.3:a:fortinet:fortisase:*:*:*:*:*:*:*:*",
+						CPEMatches: []ccTypes.CPE{
+							"cpe:2.3:a:fortinet:fortisase:26.3.1.a:*:*:*:*:*:*:*",
+							"cpe:2.3:a:fortinet:fortisase:24.4.b.1:*:*:*:*:*:*:*",
+							"cpe:2.3:a:fortinet:fortisase:25.2.a:*:*:*:*:*:*:*",
+						},
+					},
+				}},
+			},
+		},
+		{
+			// Respelled, a misspelled release is the release listed beside it.
+			name:       "release listed in both spellings baked once",
+			productIDs: []string{"FortiSASE-26.3.1_a", "FortiSASE-26.3.1.a"},
+			prodMap: map[string]cvrf.ProductVersion{
+				"FortiSASE-26.3.1_a": cvrf.NewProductVersion("FortiSASE", "26.3.1_a"),
+				"FortiSASE-26.3.1.a": cvrf.NewProductVersion("FortiSASE", "26.3.1.a"),
+			},
+			want: criteriaTypes.Criteria{
+				Operator: criteriaTypes.CriteriaOperatorTypeOR,
+				Criterions: []criterionTypes.Criterion{{
+					Type: criterionTypes.CriterionTypeCPE,
+					CPE: &ccTypes.Criterion{
+						Vulnerable: true,
+						FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
+						CPE:        "cpe:2.3:a:fortinet:fortisase:*:*:*:*:*:*:*:*",
+						CPEMatches: []ccTypes.CPE{
+							"cpe:2.3:a:fortinet:fortisase:26.3.1.a:*:*:*:*:*:*:*",
+						},
+					},
+				}},
+			},
+		},
+		{
+			// A misspelling not seen before is not guessed at: it parses under
+			// no scheme, so the extract fails.
+			name:       "FortiSASE version its comparator cannot parse → error",
+			productIDs: []string{"FortiSASE-25.1.a10"},
+			prodMap: map[string]cvrf.ProductVersion{
+				"FortiSASE-25.1.a10": cvrf.NewProductVersion("FortiSASE", "25.1.a10"),
+			},
+			wantErr: true,
+		},
+		{
+			name:       "FortiOS version its comparator cannot parse → error",
+			productIDs: []string{"FortiOS-7.0.x"},
+			prodMap: map[string]cvrf.ProductVersion{
+				"FortiOS-7.0.x": cvrf.NewProductVersion("FortiOS", "7.0.x"),
+			},
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := cvrf.KnownAffectedCriteria(tt.productIDs, tt.prodMap)
+			if (err != nil) != tt.wantErr {
+				t.Fatalf("KnownAffectedCriteria(%q) error = %v, wantErr %v", tt.productIDs, err, tt.wantErr)
+			}
+			if tt.wantErr {
+				return
+			}
+			if diff := cmp.Diff(tt.want, got); diff != "" {
+				t.Errorf("KnownAffectedCriteria(%q) (-want +got):\n%s", tt.productIDs, diff)
+			}
+		})
+	}
+}
+
 // The only product-status type observed across the corpus is "Known
 // Affected", and it must list products (resolvable in the product tree). An
 // empty type falls back to the supplement table — content-only when the
