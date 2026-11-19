@@ -220,8 +220,50 @@ func TestPull(t *testing.T) {
 			wantHead: "9d3d5d486d4c9414321a2df56f2e007c4c2c8fab",
 		},
 		{
+			name: "vuls-data-raw-test checkout: main...v0.0.1, restore: false, go-git",
+			args: args{
+				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test",
+				opts:       []pull.Option{pull.WithCheckout("main...v0.0.1"), pull.WithRestore(false), pull.WithUseNativeGit(false)},
+			},
+			hasError: true,
+			wantErr:  `get checkout options: go-git checks out a commit only by its full hash, not by the expression "main...v0.0.1", use native git`,
+		},
+		{
+			// @ alone is HEAD, so it is an expression, though it is shorter
+			// than four characters.
+			name: "vuls-data-raw-test checkout: @, restore: false, go-git",
+			args: args{
+				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test",
+				opts:       []pull.Option{pull.WithCheckout("@"), pull.WithRestore(false), pull.WithUseNativeGit(false)},
+			},
+			hasError: true,
+			wantErr:  `get checkout options: go-git checks out a commit only by its full hash, not by the expression "@", use native git`,
+		},
+		{
+			// An expression that names a commit, which native git checks out.
+			name: "vuls-data-raw-test checkout: v0.0.1^{commit}, restore: false, native git",
+			args: args{
+				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test",
+				opts:       []pull.Option{pull.WithCheckout("v0.0.1^{commit}"), pull.WithRestore(false), pull.WithUseNativeGit(true)},
+			},
+			golden:   "testdata/golden/vuls-data-raw-test.tar.zst",
+			wantHead: "9d3d5d486d4c9414321a2df56f2e007c4c2c8fab",
+		},
+		{
+			// go-git checks out the zero hash, which plumbing.NewHash makes
+			// of an expression, as master. Unless the expression is refused,
+			// the pull succeeds on master.
+			name: "vuls-data-raw-test-master checkout: v0.0.1^{commit}, restore: false, go-git",
+			args: args{
+				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test-master",
+				opts:       []pull.Option{pull.WithCheckout("v0.0.1^{commit}"), pull.WithRestore(false), pull.WithUseNativeGit(false)},
+			},
+			hasError: true,
+			wantErr:  `get checkout options: go-git checks out a commit only by its full hash, not by the expression "v0.0.1^{commit}", use native git`,
+		},
+		{
 			// A valid tag name that go-git's revision parser rejects, which
-			// is why go-git asks contains only after the tag lookup.
+			// is why go-git resolves a target only after the tag lookup.
 			name: "vuls-data-raw-test-at-tag checkout: v1@2, restore: false, native git",
 			args: args{
 				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test-at-tag",
@@ -337,6 +379,41 @@ func TestPull(t *testing.T) {
 			},
 			hasError: true,
 			wantErr:  "get checkout options: v9@9 is not in ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test, whose history may have been truncated or rewritten: resolve v9@9: ",
+		},
+		{
+			// git reads no name shorter than four characters as an
+			// abbreviated hash, though 9d3 begins the hash of the commit.
+			name: "vuls-data-raw-test checkout: 9d3 (not in the repository), restore: false, native git",
+			args: args{
+				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test",
+				opts:       []pull.Option{pull.WithCheckout("9d3"), pull.WithRestore(false), pull.WithUseNativeGit(true)},
+			},
+			hasError:   true,
+			wantErr:    "9d3 is not in ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test, whose history may have been truncated or rewritten: switch to 9d3: ",
+			wantErrHas: `switch --detach 9d3", stderr: "fatal: `,
+		},
+		{
+			// ResolveRevision reads 9d3 as an abbreviated hash. If it is
+			// asked, the checkout fails on the hash that plumbing.NewHash
+			// pads with zeros.
+			name: "vuls-data-raw-test checkout: 9d3 (not in the repository), restore: false, go-git",
+			args: args{
+				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test",
+				opts:       []pull.Option{pull.WithCheckout("9d3"), pull.WithRestore(false), pull.WithUseNativeGit(false)},
+			},
+			hasError: true,
+			wantErr:  `get checkout options: 9d3 is not in ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test, whose history may have been truncated or rewritten: get "9d3" as branch or tag: reference not found`,
+		},
+		{
+			// For a name of one character, ResolveRevision would read the
+			// hash of every object of the repository.
+			name: "vuls-data-raw-test checkout: g (not in the repository), restore: false, go-git",
+			args: args{
+				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test",
+				opts:       []pull.Option{pull.WithCheckout("g"), pull.WithRestore(false), pull.WithUseNativeGit(false)},
+			},
+			hasError: true,
+			wantErr:  `get checkout options: g is not in ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test, whose history may have been truncated or rewritten: get "g" as branch or tag: reference not found`,
 		},
 		{
 			name: "vuls-data-raw-test-archive-1 restore: false, native git",

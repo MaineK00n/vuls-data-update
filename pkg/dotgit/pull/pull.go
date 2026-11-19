@@ -199,14 +199,34 @@ func Pull(repository string, opts ...Option) error {
 					return git.CheckoutOptions{Hash: ref.Hash(), Keep: true}, nil
 				}
 
-				// Neither a branch nor a tag, so a commit if anything. For a
-				// name that resolves to nothing, plumbing.NewHash below fails
-				// as "object not found", or makes the zero hash, which go-git
-				// checks out as master, so resolve it first, as contains does
-				// on go-git, but in the repository opened above: contains
-				// would open it again and load every pack index a second
-				// time. Not before the tag: go-git does not resolve every tag
-				// name, such as one with an "@".
+				// Neither a branch nor a tag, so a commit if anything, which
+				// go-git checks out only by its full hash: plumbing.NewHash
+				// below pads an abbreviated hash with zeros, and makes the
+				// zero hash of any other name, which go-git checks out as
+				// master. So an expression, which native git checks out, is
+				// refused: a name can hold none of "~", "^", ":", "@{" or
+				// "..", nor be "@", which is HEAD.
+				if strings.ContainsAny(options.checkout, "~^:") || strings.Contains(options.checkout, "@{") || strings.Contains(options.checkout, "..") || options.checkout == "@" {
+					return git.CheckoutOptions{}, errors.Errorf("go-git checks out a commit only by its full hash, not by the expression %q, use native git", options.checkout)
+				}
+
+				// git reads no name shorter than four characters as an
+				// abbreviated hash, so such a name, which is neither a branch
+				// nor a tag, is not there. ResolveRevision would read it as
+				// one, and look it up in the hash of every object of the
+				// repository for one character, and of every packed object
+				// for two or three.
+				if len(options.checkout) < 4 {
+					return git.CheckoutOptions{}, notInRepository(errors.Wrapf(plumbing.ErrReferenceNotFound, "get %q as branch or tag", options.checkout), repository, options.checkout)
+				}
+
+				// For any other name that resolves to nothing,
+				// plumbing.NewHash below fails as "object not found", or makes
+				// the zero hash, so resolve it first, as contains does on
+				// go-git, but in the repository opened above: contains would
+				// open it again and load every pack index a second time. Not
+				// before the tag: go-git does not resolve every tag name, such
+				// as one with an "@".
 				if _, err := r.ResolveRevision(plumbing.Revision(options.checkout)); err != nil {
 					err = errors.Wrapf(err, "resolve %s", options.checkout)
 					if notFound(err, false) {
