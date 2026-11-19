@@ -13,7 +13,6 @@ import (
 	"time"
 
 	"github.com/pkg/errors"
-	nonnumericVersion "github.com/vulsio/go-fortinet-version/nonnumeric"
 	numericVersion "github.com/vulsio/go-fortinet-version/numeric"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/fortinet/internal/fortinet"
@@ -709,7 +708,7 @@ func toCriterions(productID string, refMap map[string]productRef) ([]criterionTy
 			// multi-component numeric bound would line a numeric component up with
 			// such a version's letter — the comparator's undefined numeric-vs-
 			// alphabetic case — so reject it here.
-			if nonNumericVersioned(rt) && strings.Count(b, ".") >= 2 {
+			if product.NonNumericVersioned(rt) && strings.Count(b, ".") >= 2 {
 				return nil, errors.Errorf("product %q is non-numeric-versioned and must use a train range (bound dot<=1), got bound %q (expr %q)", productID, b, ref.versionExp)
 			}
 		}
@@ -749,12 +748,12 @@ func toCriterions(productID string, refMap map[string]productRef) ([]criterionTy
 		// CPE-legal-but-bogus shapes ("7.0.x", "v7.0.0", "7..0", "7.0.0|7.2.1"),
 		// which would bake a version no scanner reports — a silent detection
 		// false-negative. Defer "is this a real version" to the same parser the
-		// detector uses: a numeric product must parse under the numeric scheme,
-		// a non-numeric-versioned product (FortiSASE, FortiSASE-Sovereign) under
-		// the milestone scheme (which also accepts a single letter component,
-		// "25.2.a").
+		// detector uses (product.ValidateVersion): a numeric product must parse
+		// under the numeric scheme, a non-numeric-versioned product (FortiSASE,
+		// FortiSASE-Sovereign) under the milestone scheme (which also accepts a
+		// single letter component, "25.2.a").
 		switch {
-		case nonNumericVersioned(rt) && letterSuffixedReleasePattern.MatchString(bakeVersion):
+		case product.NonNumericVersioned(rt) && letterSuffixedReleasePattern.MatchString(bakeVersion):
 			// A release with an underscore-joined letter suffix, which the
 			// milestone scheme does not parse ("1_a" is neither a number nor a
 			// letter): FG-IR-26-268, 269 and 270 list FortiSASE "26.3.1_a"
@@ -763,12 +762,8 @@ func toCriterions(productID string, refMap map[string]productRef) ([]criterionTy
 			// baked version is matched by CPE name and never reaches the
 			// comparator. Only this exact shape passes; any other still fails
 			// the parse below.
-		case nonNumericVersioned(rt):
-			if _, err := nonnumericVersion.NewVersion(bakeVersion); err != nil {
-				return nil, errors.Wrapf(err, "unexpected concrete version %q for %q (expr %q)", bakeVersion, productID, ref.versionExp)
-			}
 		default:
-			if _, err := numericVersion.NewVersion(bakeVersion); err != nil {
+			if err := product.ValidateVersion(rt, bakeVersion); err != nil {
 				return nil, errors.Wrapf(err, "unexpected concrete version %q for %q (expr %q)", bakeVersion, productID, ref.versionExp)
 			}
 		}
@@ -813,22 +808,6 @@ var milestoneTrainPattern = regexp.MustCompile(`^(\d+\.\d+)\.[a-z]$`)
 // X.Y.Z, "_" and one lowercase letter.
 var letterSuffixedReleasePattern = regexp.MustCompile(`^\d+\.\d+\.\d+_[a-z]$`)
 
-// nonNumericVersioned reports whether products of range type rt version their
-// releases with Fortinet's non-numeric (milestone-letter) scheme ("25.2.a"),
-// the range types cpecriterion/range CompareVersions serves with the
-// non-numeric comparator. Every check toCriterions and resolveVersion make
-// for such a product (train-granular bounds, milestone parsing of a concrete
-// version, a milestone read as its train) asks here, so they cannot disagree
-// on which products they cover.
-func nonNumericVersioned(rt ccRangeTypes.RangeType) bool {
-	switch rt {
-	case ccRangeTypes.RangeTypeFortinetFortiSASE, ccRangeTypes.RangeTypeFortinetFortiSASESovereign:
-		return true
-	default:
-		return false
-	}
-}
-
 // resolveVersion interprets a CSAF Fortinet version expression for the named
 // product and returns exactly one of three outcomes, so the caller never has
 // to guess:
@@ -844,7 +823,7 @@ func nonNumericVersioned(rt ccRangeTypes.RangeType) bool {
 // versions") is not silently widened to whole product — it hard-errors, since
 // it never legitimately appears in a listed product's version. The one
 // non-numeric prefix read is a milestone of a non-numeric-versioned product
-// (rt, see nonNumericVersioned), "25.1.a all versions", which reads as its
+// (rt, see product.NonNumericVersioned), "25.1.a all versions", which reads as its
 // X.Y train.
 func resolveVersion(productName string, rt ccRangeTypes.RangeType, exp string) (*ccRangeTypes.Range, string, error) {
 	switch {
@@ -867,7 +846,7 @@ func resolveVersion(productName string, rt ccRangeTypes.RangeType, exp string) (
 		// so their detection is unchanged. Only a numeric X.Y and one milestone
 		// letter reads so: "25.1.a.2 all versions" or a numeric-versioned
 		// product's "7.4.a all versions" still hard-errors below.
-		if m := milestoneTrainPattern.FindStringSubmatch(train); m != nil && nonNumericVersioned(rt) {
+		if m := milestoneTrainPattern.FindStringSubmatch(train); m != nil && product.NonNumericVersioned(rt) {
 			train = m[1]
 		}
 		if _, err := numericVersion.NewVersion(train); err != nil {

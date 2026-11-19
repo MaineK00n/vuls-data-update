@@ -108,6 +108,60 @@ func TestIsExactVersion(t *testing.T) {
 	}
 }
 
+func TestNonNumericVersioned(t *testing.T) {
+	tests := []struct {
+		name string
+		rt   ccRangeTypes.RangeType
+		want bool
+	}{
+		{name: "FortiSASE", rt: ccRangeTypes.RangeTypeFortinetFortiSASE, want: true},
+		{name: "FortiSASE-Sovereign", rt: ccRangeTypes.RangeTypeFortinetFortiSASESovereign, want: true},
+		{name: "FortiOS", rt: ccRangeTypes.RangeTypeFortinetFortiOS, want: false},
+		{name: "unknown range type", rt: ccRangeTypes.RangeTypeUnknown, want: false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := product.NonNumericVersioned(tt.rt); got != tt.want {
+				t.Errorf("NonNumericVersioned(%q) = %v, want %v", tt.rt, got, tt.want)
+			}
+		})
+	}
+}
+
+func TestValidateVersion(t *testing.T) {
+	type args struct {
+		rt  ccRangeTypes.RangeType
+		ver string
+	}
+	tests := []struct {
+		name    string
+		args    args
+		wantErr bool
+	}{
+		// The non-numeric scheme: numbers and single lowercase letters.
+		{name: "non-numeric: milestone", args: args{rt: ccRangeTypes.RangeTypeFortinetFortiSASE, ver: "25.2.a"}},
+		{name: "non-numeric: maintenance release of a milestone", args: args{rt: ccRangeTypes.RangeTypeFortinetFortiSASE, ver: "25.1.a.2"}},
+		{name: "non-numeric: numeric release", args: args{rt: ccRangeTypes.RangeTypeFortinetFortiSASE, ver: "26.3.1"}},
+		{name: "non-numeric: hotfix of a numeric release", args: args{rt: ccRangeTypes.RangeTypeFortinetFortiSASE, ver: "26.3.1.a"}},
+		{name: "non-numeric: Sovereign milestone", args: args{rt: ccRangeTypes.RangeTypeFortinetFortiSASESovereign, ver: "26.2.c"}},
+		{name: "non-numeric: underscore-joined letter", args: args{rt: ccRangeTypes.RangeTypeFortinetFortiSASE, ver: "26.3.1_a"}, wantErr: true},
+		{name: "non-numeric: letter joined to a number", args: args{rt: ccRangeTypes.RangeTypeFortinetFortiSASE, ver: "24.4.b1"}, wantErr: true},
+		{name: "non-numeric: multi-letter component", args: args{rt: ccRangeTypes.RangeTypeFortinetFortiSASE, ver: "25.2.alpha"}, wantErr: true},
+		// The numeric scheme: numbers only.
+		{name: "numeric: release", args: args{rt: ccRangeTypes.RangeTypeFortinetFortiOS, ver: "7.4.3"}},
+		{name: "numeric: milestone", args: args{rt: ccRangeTypes.RangeTypeFortinetFortiOS, ver: "25.2.a"}, wantErr: true},
+		{name: "numeric: wildcard component", args: args{rt: ccRangeTypes.RangeTypeFortinetFortiOS, ver: "7.0.x"}, wantErr: true},
+		{name: "numeric: leading v", args: args{rt: ccRangeTypes.RangeTypeFortinetFortiOS, ver: "v7.0.0"}, wantErr: true},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if err := product.ValidateVersion(tt.args.rt, tt.args.ver); (err != nil) != tt.wantErr {
+				t.Errorf("ValidateVersion(%q, %q) error = %v, wantErr %v", tt.args.rt, tt.args.ver, err, tt.wantErr)
+			}
+		})
+	}
+}
+
 func TestTrainRange(t *testing.T) {
 	type args struct {
 		name  string
