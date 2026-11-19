@@ -127,12 +127,44 @@ func TestExtract(t *testing.T) {
 		},
 		{
 			// A cpeMatch whose criteria is not a CPE 2.3 formatted string is
-			// a hard error rather than a skipped criterion — silently
-			// dropping it would weaken the enclosing configuration into an
-			// over-broad detection. Does not occur in the real feed.
-			name:     "invalid-cpe",
-			args:     "./testdata/fixtures/invalid-cpe/vuls-data-raw-vulncheck-nist-nvd2",
-			hasError: true,
+			// logged and pruned instead of failing the extraction. It is the
+			// only member of its OR node, so the node and then the
+			// configuration become false and are dropped; with no
+			// vcVulnerableCPEs either, no detection and no segment are
+			// emitted, while the vulnerability content is kept.
+			name:   "invalid-cpe",
+			args:   "./testdata/fixtures/invalid-cpe/vuls-data-raw-vulncheck-nist-nvd2",
+			golden: "./testdata/golden/invalid-cpe",
+		},
+		{
+			// Real feed entry (CVE-2024-29187) whose OR node carries two CPEs
+			// with a raw space in the product ("windows_10_adk_version 1607",
+			// "windows_10_adk_version 1809"), which CPE 2.3 does not allow
+			// even escaped. Only those two criterions are pruned; the other
+			// thirteen of the node are emitted unchanged. The product is not
+			// rewritten (e.g. space to underscore) — upstream data is not
+			// guessed at.
+			name:   "invalid-cpe-whitespace",
+			args:   "./testdata/fixtures/invalid-cpe-whitespace/vuls-data-raw-vulncheck-nist-nvd2",
+			golden: "./testdata/golden/invalid-cpe-whitespace",
+		},
+		{
+			// An invalid CPE is treated as false and propagated through the
+			// AND/OR structure, so pruning only ever narrows a detection:
+			//   - an AND configuration whose platform node holds only an
+			//     invalid CPE is dropped whole, rather than left as a bare
+			//     app-only (over-broad) configuration;
+			//   - an AND node with an invalid conjunct is false, leaving its
+			//     OR configuration empty, which is dropped too;
+			//   - in an OR node only the invalid member is removed.
+			// Coverage is built from the pruned configurations, so the
+			// vcVulnerableCPEs entry inside the dropped AND configuration's
+			// range stays in group 2, while the one inside the surviving
+			// range is dropped as covered. An invalid vcVulnerableCPEs entry
+			// is skipped.
+			name:   "invalid-cpe-propagation",
+			args:   "./testdata/fixtures/invalid-cpe-propagation/vuls-data-raw-vulncheck-nist-nvd2",
+			golden: "./testdata/golden/invalid-cpe-propagation",
 		},
 		{
 			// The first segment is not a valid year ("CVE-2024/../../x-0001"
