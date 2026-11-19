@@ -148,6 +148,24 @@ func TestKnownAffectedCriteria(t *testing.T) {
 				}},
 			},
 		},
+		{
+			// A misspelling not seen before is not guessed at: it parses under
+			// no scheme, so the extract fails.
+			name:       "FortiSASE version its comparator cannot parse → error",
+			productIDs: []string{"FortiSASE-25.1.a10"},
+			prodMap: map[string]cvrf.ProductVersion{
+				"FortiSASE-25.1.a10": cvrf.NewProductVersion("FortiSASE", "25.1.a10"),
+			},
+			wantErr: true,
+		},
+		{
+			name:       "FortiOS version its comparator cannot parse → error",
+			productIDs: []string{"FortiOS-7.0.x"},
+			prodMap: map[string]cvrf.ProductVersion{
+				"FortiOS-7.0.x": cvrf.NewProductVersion("FortiOS", "7.0.x"),
+			},
+			wantErr: true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
