@@ -29,6 +29,11 @@ func TestExtract(t *testing.T) {
 			args:     "./testdata/fixtures/invalid-date",
 			hasError: true,
 		},
+		{
+			name:     "stale EUVD ID fix",
+			args:     "./testdata/fixtures/stale-fix",
+			hasError: true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

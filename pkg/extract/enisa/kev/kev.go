@@ -4,9 +4,7 @@ import (
 	"fmt"
 	"io/fs"
 	"log/slog"
-	"maps"
 	"path/filepath"
-	"slices"
 	"strings"
 	"time"
 
@@ -63,7 +61,6 @@ func Extract(args string, opts ...Option) error {
 	}
 
 	slog.Info("Extract ENISA Known Exploited Vulnerabilities")
-	applied := make(map[string]struct{})
 	seen := make(map[string]string) // EUVD ID -> CVE ID
 	if err := filepath.WalkDir(args, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
@@ -87,9 +84,11 @@ func Extract(args string, opts ...Option) error {
 			return errors.Wrapf(err, "read json %s", path)
 		}
 
-		if fix, ok := euvdIDFixes[fetched.CVEID]; ok && fetched.EUVDID == fix.wrong {
+		if fix, ok := euvdIDFixes[fetched.CVEID]; ok {
+			if fetched.EUVDID != fix.wrong {
+				return errors.Errorf("unexpected EUVD ID of %s. expected: %q, actual: %q; the EUVD ID fix is stale", fetched.CVEID, fix.wrong, fetched.EUVDID)
+			}
 			fetched.EUVDID = fix.correct
-			applied[fetched.CVEID] = struct{}{}
 		}
 
 		splitted, err := util.Split(fetched.EUVDID, "-", "-")
@@ -126,13 +125,6 @@ func Extract(args string, opts ...Option) error {
 		return errors.Wrapf(err, "walk %s", args)
 	}
 
-	for _, cveID := range slices.Sorted(maps.Keys(euvdIDFixes)) {
-		if _, ok := applied[cveID]; !ok {
-			fix := euvdIDFixes[cveID]
-			slog.Warn("EUVD ID fix was not applied. remove it if upstream has been corrected", slog.String("cve", cveID), slog.String("wrong", fix.wrong), slog.String("correct", fix.correct))
-		}
-	}
-
 	if err := util.Write(filepath.Join(options.dir, "datasource.json"), datasourceTypes.DataSource{
 		ID:   sourceTypes.ENISAKEV,
 		Name: new("ENISA Known Exploited Vulnerabilities"),
@@ -164,9 +156,9 @@ type euvdIDFix struct {
 }
 
 // euvdIDFixes corrects EUVD IDs that upstream eukev.json assigns to the wrong
-// CVE, keyed by CVE ID. A fix applies only while upstream still carries the
-// wrong ID, and a fix that was not applied is reported so that it can be
-// removed once upstream is corrected.
+// CVE, keyed by CVE ID. An entry whose CVE carries any EUVD ID other than the
+// wrong one is an error, so that a fix is removed once upstream is corrected
+// and an unexpected upstream change is not silently passed through.
 var euvdIDFixes = map[string]euvdIDFix{
 	// EUVD-2026-56431 belongs to CVE-2026-65660, but upstream also assigns it
 	// to these CVEs: https://github.com/enisaeu/CNW/issues/66
