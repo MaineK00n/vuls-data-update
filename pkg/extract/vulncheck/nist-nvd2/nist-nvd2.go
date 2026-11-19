@@ -281,9 +281,12 @@ func (e extractor) buildData(fetched nistnvd2Types.CVE) (dataTypes.Data, error) 
 		// Accumulate the present groups directly into the root OR criteria.
 		criteria := criteriaTypes.Criteria{Operator: criteriaTypes.CriteriaOperatorTypeOR}
 
-		// Invalid CPEs are pruned once, up front, so group 1 and the coverage
-		// that trims group 2 both see the same configurations.
-		configs := pruneInvalidCPEs(fetched.ID, fetched.VCConfigurations)
+		// Known malformed upstream CPEs are dropped once, up front, so group 1
+		// and the coverage that trims group 2 both see the same configurations.
+		configs, err := skipKnownInvalidCPEs(fetched.ID, fetched.VCConfigurations)
+		if err != nil {
+			return nil, errors.Wrap(err, "skip known invalid cpes")
+		}
 
 		// Group 1: vcConfigurations applicability tree (CPE + version Range).
 		cc, err := vcConfigurationsCriteria(configs)
@@ -302,7 +305,10 @@ func (e extractor) buildData(fetched nistnvd2Types.CVE) (dataTypes.Data, error) 
 		}
 
 		// Group 2: vcVulnerableCPEs not already covered by group 1.
-		vulnCPEs := parseVulnerableCPEs(fetched.ID, fetched.VCVulnerableCPEs)
+		vulnCPEs, err := parseVulnerableCPEs(fetched.VCVulnerableCPEs)
+		if err != nil {
+			return nil, errors.Wrap(err, "parse vcVulnerableCPEs")
+		}
 		vc, err := vulnerableCPECriteria(vulnCPEs, coverage)
 		if err != nil {
 			return nil, errors.Wrap(err, "vulnerable cpe criteria")
@@ -483,97 +489,76 @@ type vulnCPE struct {
 	wfn  common.WellFormedName
 }
 
-// parseVulnerableCPEs parses vcVulnerableCPEs once per CVE. An entry that is
-// not a valid CPE 2.3 formatted string is logged and skipped: the list is a
-// flat OR, so dropping one entry only narrows the detection and never widens
-// it.
-func parseVulnerableCPEs(id string, names []string) []vulnCPE {
+// parseVulnerableCPEs parses vcVulnerableCPEs once per CVE. An entry
+// that is not a valid CPE 2.3 formatted string is an error: it does not
+// occur in the current feed, so encountering one signals unexpected data.
+func parseVulnerableCPEs(names []string) ([]vulnCPE, error) {
 	cpes := make([]vulnCPE, 0, len(names))
 	for _, n := range names {
 		wfn, err := naming.UnbindFS(n)
 		if err != nil {
-			slog.Warn("invalid CPE in vcVulnerableCPEs; skipping", "id", id, "cpe", n, "err", err)
-			continue
+			return nil, errors.Wrapf(err, "invalid format. CPE: %s", n)
 		}
 		cpes = append(cpes, vulnCPE{name: n, wfn: wfn})
 	}
-	return cpes
+	return cpes, nil
 }
 
-// pruneInvalidCPEs removes the cpeMatch entries of configs whose criteria is
-// not a valid CPE 2.3 formatted string (e.g. a product with a raw space,
-// "windows_10_adk_version 1607"), logging each one, instead of failing the
-// whole extraction over a single malformed upstream entry.
+// knownInvalidCPEs lists, per CVE ID, the vcConfigurations cpeMatch criteria
+// that the feed is known to carry as invalid CPE 2.3 formatted strings. Each is
+// skipped (and logged) instead of failing the whole extraction; any other
+// invalid CPE is still a hard error.
 //
-// An invalid CPE can never match a scanned CPE, so it is treated as false and
-// propagated through the AND/OR structure rather than simply dropped: dropping
-// a conjunct of an AND would widen it into an over-broad detection.
-//   - OR: the false member is removed; an OR left with no members is false.
-//   - AND: one false member makes the whole AND false.
-//
-// A false configuration is removed. The result is therefore only ever
-// narrower than the source, never broader. A configuration carrying negate=true
-// or an unexpected operator is left as-is, so configurationToCriteria still
-// rejects it.
-func pruneInvalidCPEs(id string, configs []nistnvd2Types.Config) []nistnvd2Types.Config {
-	pruned := make([]nistnvd2Types.Config, 0, len(configs))
-	for _, conf := range configs {
-		if !prunable(conf) {
-			pruned = append(pruned, conf)
-			continue
-		}
+// The entries are matched exactly on both the CVE ID and the CPE string, and
+// are not repaired (e.g. a space rewritten to "_"): upstream data is not
+// guessed at.
+var knownInvalidCPEs = map[string][]string{
+	// The product carries a raw space, which CPE 2.3 does not allow even
+	// escaped; the well-formed sibling in the same node is
+	// windows_10_adk_version_2004.
+	"CVE-2024-29187": {
+		"cpe:2.3:o:microsoft:windows_10_adk_version 1607:*:*:*:*:*:*:*:*",
+		"cpe:2.3:o:microsoft:windows_10_adk_version 1809:*:*:*:*:*:*:*:*",
+	},
+}
 
-		nodes := make([]nistnvd2Types.Node, 0, len(conf.Nodes))
-		configFalse := false
+// skipKnownInvalidCPEs removes the knownInvalidCPEs of id from configs. A skip
+// is only allowed where it does not change what the remaining configuration
+// means: the cpeMatch must sit in an OR node that keeps at least one other
+// member. Inside an AND node, dropping a conjunct would widen the node into an
+// over-broad detection, and an emptied node would become an empty criteria, so
+// both are errors.
+func skipKnownInvalidCPEs(id string, configs []nistnvd2Types.Config) ([]nistnvd2Types.Config, error) {
+	known, ok := knownInvalidCPEs[id]
+	if !ok {
+		return configs, nil
+	}
+
+	cs := make([]nistnvd2Types.Config, 0, len(configs))
+	for _, conf := range configs {
+		ns := make([]nistnvd2Types.Node, 0, len(conf.Nodes))
 		for _, n := range conf.Nodes {
-			matches := make([]nistnvd2Types.CPEMatch, 0, len(n.CPEMatch))
+			ms := make([]nistnvd2Types.CPEMatch, 0, len(n.CPEMatch))
 			for _, m := range n.CPEMatch {
-				if _, err := naming.UnbindFS(m.Criteria); err != nil {
-					slog.Warn("invalid CPE in vcConfigurations; skipping", "id", id, "criteria", m.Criteria, "err", err)
+				if !slices.Contains(known, m.Criteria) {
+					ms = append(ms, m)
 					continue
 				}
-				matches = append(matches, m)
-			}
-
-			switch {
-			case len(matches) == len(n.CPEMatch):
-				// Nothing pruned: the node stays as the source has it.
-			case n.Operator == "AND", len(matches) == 0:
-				// The node is false: an AND lost a member, or an OR lost all.
-				if conf.Operator == "AND" {
-					configFalse = true
+				if n.Operator == "AND" {
+					return nil, errors.Errorf("unexpected node operator for a known invalid CPE. expected: %q, actual: %q, CPE: %s", []string{"OR", ""}, n.Operator, m.Criteria)
 				}
-				continue
+				slog.Warn("skip known invalid CPE", "id", id, "criteria", m.Criteria)
 			}
-			n.CPEMatch = matches
-			nodes = append(nodes, n)
+			if len(ms) == 0 && len(n.CPEMatch) > 0 {
+				return nil, errors.Errorf("unexpected node made empty by skipping known invalid CPEs. CPEs: %q", known)
+			}
+			n.CPEMatch = ms
+			ns = append(ns, n)
 		}
-
-		// An AND configuration with a false node is false, as is an OR
-		// configuration whose nodes have all been pruned away. A
-		// configuration that was empty in the source is left as it was.
-		if configFalse || (len(nodes) == 0 && len(conf.Nodes) > 0) {
-			continue
-		}
-		conf.Nodes = nodes
-		pruned = append(pruned, conf)
+		conf.Nodes = ns
+		cs = append(cs, conf)
 	}
-	return pruned
-}
-
-// prunable reports whether pruneInvalidCPEs can safely reason about conf:
-// every operator is one configurationToCriteria and nodeToCriteria accept and
-// nothing is negated.
-func prunable(conf nistnvd2Types.Config) bool {
-	if conf.Negate || !slices.Contains([]string{"AND", "OR", ""}, conf.Operator) {
-		return false
-	}
-	for _, n := range conf.Nodes {
-		if n.Negate || !slices.Contains([]string{"AND", "OR", ""}, n.Operator) {
-			return false
-		}
-	}
-	return true
+	return cs, nil
 }
 
 // pvpKey returns the part:vendor:product key used to group vcVulnerableCPEs by
@@ -706,9 +691,8 @@ func (r semverRange) covers(v *version.Version) bool {
 // vcVulnerableCPEs the configuration already detects as vulnerable. Only
 // semver-evaluable ranges contribute (an unknown range cannot decide membership,
 // so its product's enumerations are kept). configs are the ones group 1 was
-// built from, after pruneInvalidCPEs, so a configuration group 1 no longer
-// emits cannot suppress a vcVulnerableCPEs entry; their cpeMatch CPEs were
-// already validated by configurationToCriteria.
+// built from, after skipKnownInvalidCPEs, and their cpeMatch CPEs were already
+// validated by configurationToCriteria.
 func buildConfigCoverage(configs []nistnvd2Types.Config) (map[string]productCoverage, error) {
 	cov := make(map[string]productCoverage)
 	for _, conf := range configs {
