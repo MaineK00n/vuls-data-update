@@ -154,6 +154,14 @@ func TestExtract(t *testing.T) {
 			hasError: true,
 		},
 		{
+			// The same entry with the OR node holding only the two listed
+			// CPEs: skipping them would leave an empty criteria, so it is an
+			// error.
+			name:     "known-invalid-cpe-empty-node",
+			args:     "./testdata/fixtures/known-invalid-cpe-empty-node/vuls-data-raw-vulncheck-nist-nvd2",
+			hasError: true,
+		},
+		{
 			// The same CPEs under a CVE ID that is not in knownInvalidCPEs
 			// (CVE-2024-29188): a skip requires both the ID and the CPE
 			// string to match, so this is still an error.
