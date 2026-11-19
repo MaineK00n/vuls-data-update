@@ -30,6 +30,11 @@ func TestExtract(t *testing.T) {
 			hasError: true,
 		},
 		{
+			name:     "invalid dateAdded",
+			args:     "./testdata/fixtures/invalid-date-added",
+			hasError: true,
+		},
+		{
 			name:     "stale EUVD ID fix",
 			args:     "./testdata/fixtures/stale-fix",
 			hasError: true,
