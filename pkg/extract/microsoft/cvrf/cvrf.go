@@ -924,6 +924,9 @@ func buildDetections(v cvrf.Vulnerability, products map[string]string) (map[ecos
 
 	// Track which product IDs are covered by Vendor Fix remediations.
 	coveredProductIDs := make(map[string]struct{})
+	// Track their names too: a Vendor Fix of one ID also covers the other IDs
+	// of the same name (see the ProductStatuses fallback below).
+	coveredProductNames := make(map[string]struct{})
 
 	// Vendor Fix criteria are collected per detection tag first and emitted
 	// after all remediations are seen, because a tag offering a hotpatch
@@ -951,6 +954,7 @@ func buildDetections(v cvrf.Vulnerability, products map[string]string) (map[ecos
 				// (e.g. "Click to Run") carry neither a KB ID nor a FixedBuild,
 				// yet the product IS fixed via an auto-update channel.
 				coveredProductIDs[pid] = struct{}{}
+				coveredProductNames[productName] = struct{}{}
 
 				tag := segmentTypes.DetectionTag(productName)
 				criterionProductName := normalizeProductName(v.CVE, productName)
@@ -1072,6 +1076,27 @@ func buildDetections(v cvrf.Vulnerability, products map[string]string) (map[ecos
 		}
 
 		if isCBLMarinerOrAzureLinux(productName) {
+			continue
+		}
+
+		// CVRF may list one product under several IDs of the same name and
+		// spread its records across them: since their 2026-10-29 revision, the
+		// 2026-Sep Chromium CVEs (CVE-2026-87429..87658) list Microsoft Edge
+		// (Chromium-based) as 11655 with the Vendor Fix and as 21955 with only
+		// the Severity. Criteria and detection tags are built per name, so the
+		// Vendor Fix covers every ID of the name, for every product, not only
+		// Edge. Otherwise the other IDs would add an unfixed criterion beside
+		// the fixed one under the same tag, and every host with the product
+		// would be reported (for an Edge browser product, the check below
+		// fails instead).
+		//
+		// This comes before the fixedBuildOverrides lookup, as the
+		// coveredProductIDs check does: a product with a Vendor Fix is
+		// corrected by the key of that Vendor Fix's FixedBuild. Its {cve,
+		// product, ""} key, if any, is read by a Vendor Fix without a
+		// FixedBuild, where "" skips the fix instead of registering the
+		// product as unfixed.
+		if _, ok := coveredProductNames[productName]; ok {
 			continue
 		}
 
