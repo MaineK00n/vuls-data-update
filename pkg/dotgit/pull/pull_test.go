@@ -7,12 +7,15 @@ import (
 	"encoding/json/v2"
 	"fmt"
 	"io"
+	"maps"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"path/filepath"
 	"slices"
+	"strings"
 	"testing"
+	"time"
 
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
@@ -397,4 +400,171 @@ func setup(url string) error {
 	}
 
 	return nil
+}
+
+// TestPull_retry breaks the download of the layer off after half of the blob,
+// as the storage behind ghcr.io now and then does, and checks that Pull starts
+// the download over.
+func TestPull_retry(t *testing.T) {
+	tests := []struct {
+		name string
+		// breaks is how many downloads of the layer break off before one goes
+		// through.
+		breaks int
+		// corrupt answers the whole layer, but with zeros for its bytes, which
+		// fails the extraction with no download breaking off.
+		corrupt       bool
+		wantDownloads int
+		golden        string
+		hasError      bool
+	}{
+		{
+			name:          "broken off once",
+			breaks:        1,
+			wantDownloads: 2,
+			golden:        "testdata/golden/vuls-data-raw-test.tar.zst",
+		},
+		{
+			name:          "broken off every time",
+			breaks:        100,
+			wantDownloads: 4,
+			hasError:      true,
+		},
+		{
+			name:          "corrupt, which a retry does not change",
+			corrupt:       true,
+			wantDownloads: 1,
+			hasError:      true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			reg := registry.New()
+			armed := false
+			downloads := 0
+			ts := httptest.NewTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				if !armed || r.Method != http.MethodGet || !strings.Contains(r.URL.Path, "/blobs/") {
+					reg.ServeHTTP(w, r)
+					return
+				}
+
+				downloads++
+				if !tt.corrupt && downloads > tt.breaks {
+					reg.ServeHTTP(w, r)
+					return
+				}
+
+				rec := httptest.NewRecorder()
+				reg.ServeHTTP(rec, r)
+				maps.Copy(w.Header(), rec.Header())
+				w.WriteHeader(rec.Code)
+				if tt.corrupt {
+					if _, err := w.Write(make([]byte, rec.Body.Len())); err != nil {
+						t.Errorf("write body: %v", err)
+					}
+					return
+				}
+				if _, err := w.Write(rec.Body.Bytes()[:rec.Body.Len()/2]); err != nil {
+					t.Errorf("write body: %v", err)
+				}
+				if err := http.NewResponseController(w).Flush(); err != nil {
+					t.Errorf("flush: %v", err)
+				}
+				panic(http.ErrAbortHandler)
+			}))
+
+			originalTransport := http.DefaultTransport
+			http.DefaultTransport = ts.Client().Transport
+			t.Cleanup(func() {
+				http.DefaultTransport = originalTransport
+			})
+
+			repo, err := remote.NewRepository("ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test")
+			if err != nil {
+				t.Fatalf("new repository: %v", err)
+			}
+
+			if err := setup(fmt.Sprintf("%s/%s", repo.Reference.Registry, repo.Reference.Repository)); err != nil {
+				t.Fatalf("setup: %v", err)
+			}
+			armed = true
+
+			dir := t.TempDir()
+			err = pull.Pull(repo.Reference.String(), pull.WithDir(dir), pull.WithRetryWait(time.Millisecond))
+			if downloads != tt.wantDownloads {
+				t.Errorf("Pull() downloaded the layer %d times, want %d", downloads, tt.wantDownloads)
+			}
+			switch {
+			case err != nil && !tt.hasError:
+				t.Errorf("unexpected err: %v", err)
+			case err == nil && tt.hasError:
+				t.Error("expected error has not occurred")
+			case err != nil && tt.hasError:
+				// error was expected and occurred, test passed
+				return
+			default:
+				got, err := treeNames(filepath.Join(dir, "ghcr.io", "vulsio", "vuls-data-db"))
+				if err != nil {
+					t.Fatalf("list %s: %v", dir, err)
+				}
+				want, err := goldenNames(tt.golden)
+				if err != nil {
+					t.Fatalf("list %s: %v", tt.golden, err)
+				}
+				if diff := cmp.Diff(want, got, cmpopts.SortSlices(func(i, j string) bool { return i < j })); diff != "" {
+					t.Errorf("Pull(). (-expected +got):\n%s", diff)
+				}
+			}
+		})
+	}
+}
+
+// treeNames lists the paths under dir, relative to it.
+func treeNames(dir string) ([]string, error) {
+	var names []string
+	if err := filepath.WalkDir(dir, func(path string, _ os.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		p, err := filepath.Rel(dir, path)
+		if err != nil {
+			return err
+		}
+		if p != "." {
+			names = append(names, p)
+		}
+		return nil
+	}); err != nil {
+		return nil, errors.Wrapf(err, "walk %s", dir)
+	}
+	return names, nil
+}
+
+// goldenNames lists the entries of the golden tar.zst.
+func goldenNames(golden string) ([]string, error) {
+	f, err := os.Open(golden)
+	if err != nil {
+		return nil, errors.Wrapf(err, "open %s", golden)
+	}
+	defer f.Close()
+
+	r, err := zstd.NewReader(f)
+	if err != nil {
+		return nil, errors.Wrap(err, "new zstd reader")
+	}
+	defer r.Close()
+
+	var names []string
+	tr := tar.NewReader(r)
+	for {
+		hdr, err := tr.Next()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			return nil, errors.Wrap(err, "next tar reader")
+		}
+		names = append(names, filepath.Clean(hdr.Name))
+	}
+	return names, nil
 }
