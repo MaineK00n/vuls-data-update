@@ -197,18 +197,25 @@ func newCmdRegistryDelete() *cobra.Command {
 	}
 
 	cmd := &cobra.Command{
-		Use:   "delete <image>",
+		Use:   "delete <image>...",
 		Short: "Delete registry dotgit images",
+		Long: heredoc.Doc(`
+			Delete registry dotgit images.
+
+			The versions of a package are listed once for all the images given, so delete many images in one call rather than one call per image.
+			An image that fails to be deleted does not stop the others, and the command fails at the end if any did.
+		`),
 		Example: heredoc.Doc(`
 			$ vuls-data-update dotgit registry delete ghcr.io/vulsio/vuls-data-db@sha256:5b71484ba9f1565f7ed5cd3aa34b027c44e1773a6e418328ea38a05f9b459f23
+			$ vuls-data-update dotgit registry delete ghcr.io/vulsio/vuls-data-db@sha256:5b71484ba9f1565f7ed5cd3aa34b027c44e1773a6e418328ea38a05f9b459f23 ghcr.io/vulsio/vuls-data-db@sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb
 		`),
-		Args: cobra.ExactArgs(1),
+		Args: cobra.MinimumNArgs(1),
 		RunE: func(_ *cobra.Command, args []string) error {
-			if err := checkTokenScopes(options.token, []string{args[0]}, utilGitHub.ScopeReadPackages, utilGitHub.ScopeDeletePackages); err != nil {
+			if err := checkTokenScopes(options.token, args, utilGitHub.ScopeReadPackages, utilGitHub.ScopeDeletePackages); err != nil {
 				return errors.Wrap(err, "failed to check GitHub token scopes")
 			}
 
-			if err := delete.Delete(args[0], options.token, delete.WithForce(options.force)); err != nil {
+			if err := delete.Delete(args, options.token, delete.WithForce(options.force)); err != nil {
 				return errors.Wrap(err, "failed to delete registry dotgit image")
 			}
 			return nil

@@ -11,45 +11,154 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/google/go-cmp/cmp"
+
 	"github.com/MaineK00n/vuls-data-update/pkg/dotgit/registry/delete"
 	"github.com/MaineK00n/vuls-data-update/pkg/dotgit/registry/ls"
 )
 
+const (
+	tagged    = "sha256:6413c62920ab027e680d7adf44bec195e9f2ec7a299140ff9a5d2193a626b673"
+	untagged  = "sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb"
+	untagged2 = "sha256:29c88e701ac502d431e318a82b327d73f220b82714852b6942bcaffbb4e573aa"
+	missing   = "sha256:0000000000000000000000000000000000000000000000000000000000000000"
+)
+
 func TestDelete(t *testing.T) {
 	type args struct {
-		image string
-		token string
-		opts  []delete.Option
+		images []string
+		token  string
+		opts   []delete.Option
 	}
 	tests := []struct {
-		name    string
-		args    args
-		wantErr bool
+		name string
+		args args
+		// afterList changes the versions once the first listing has been
+		// answered, as another client does while Delete works through the
+		// images.
+		afterList func(vs []ls.Version) []ls.Version
+		// deleteNotFound makes the DELETE of these ids answer 404 without
+		// deleting, as it is answered when the version went in between the
+		// read and the delete.
+		deleteNotFound []int
+		wantErr        bool
+		// wantRemaining are the digests left in the registry.
+		wantRemaining []string
 	}{
 		{
 			name: "untagged",
 			args: args{
-				image: "ghcr.io/vulsio/vuls-data-db@sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb",
-				token: "token",
+				images: []string{fmt.Sprintf("ghcr.io/vulsio/vuls-data-db@%s", untagged)},
+				token:  "token",
 			},
-			wantErr: false,
+			wantRemaining: []string{tagged, untagged2},
 		},
 		{
 			name: "tagged",
 			args: args{
-				image: "ghcr.io/vulsio/vuls-data-db@sha256:6413c62920ab027e680d7adf44bec195e9f2ec7a299140ff9a5d2193a626b673",
-				token: "token",
+				images: []string{fmt.Sprintf("ghcr.io/vulsio/vuls-data-db@%s", tagged)},
+				token:  "token",
 			},
-			wantErr: true,
+			wantErr:       true,
+			wantRemaining: []string{tagged, untagged, untagged2},
 		},
 		{
 			name: "tagged, but force",
 			args: args{
-				image: "ghcr.io/vulsio/vuls-data-db@sha256:6413c62920ab027e680d7adf44bec195e9f2ec7a299140ff9a5d2193a626b673",
-				token: "token",
-				opts:  []delete.Option{delete.WithForce(true)},
+				images: []string{fmt.Sprintf("ghcr.io/vulsio/vuls-data-db@%s", tagged)},
+				token:  "token",
+				opts:   []delete.Option{delete.WithForce(true)},
 			},
-			wantErr: false,
+			wantRemaining: []string{untagged, untagged2},
+		},
+		{
+			name: "several",
+			args: args{
+				images: []string{fmt.Sprintf("ghcr.io/vulsio/vuls-data-db@%s", untagged), fmt.Sprintf("ghcr.io/vulsio/vuls-data-db@%s", untagged2)},
+				token:  "token",
+			},
+			wantRemaining: []string{tagged},
+		},
+		{
+			name: "several, one of them tagged",
+			args: args{
+				images: []string{fmt.Sprintf("ghcr.io/vulsio/vuls-data-db@%s", untagged), fmt.Sprintf("ghcr.io/vulsio/vuls-data-db@%s", tagged), fmt.Sprintf("ghcr.io/vulsio/vuls-data-db@%s", untagged2)},
+				token:  "token",
+			},
+			wantErr:       true,
+			wantRemaining: []string{tagged},
+		},
+		{
+			name: "several, one of them not found",
+			args: args{
+				images: []string{fmt.Sprintf("ghcr.io/vulsio/vuls-data-db@%s", missing), fmt.Sprintf("ghcr.io/vulsio/vuls-data-db@%s", untagged)},
+				token:  "token",
+			},
+			wantErr:       true,
+			wantRemaining: []string{tagged, untagged2},
+		},
+		{
+			name: "tagged after the listing",
+			args: args{
+				images: []string{fmt.Sprintf("ghcr.io/vulsio/vuls-data-db@%s", untagged), fmt.Sprintf("ghcr.io/vulsio/vuls-data-db@%s", untagged2)},
+				token:  "token",
+			},
+			afterList: func(vs []ls.Version) []ls.Version {
+				for i := range vs {
+					if vs[i].Name == untagged2 {
+						vs[i].Metadata.Container.Tags = []string{"vuls-data-raw-test"}
+					}
+				}
+				return vs
+			},
+			wantErr:       true,
+			wantRemaining: []string{tagged, untagged2},
+		},
+		{
+			name: "deleted by another client after the listing",
+			args: args{
+				images: []string{fmt.Sprintf("ghcr.io/vulsio/vuls-data-db@%s", untagged), fmt.Sprintf("ghcr.io/vulsio/vuls-data-db@%s", untagged2)},
+				token:  "token",
+			},
+			afterList: func(vs []ls.Version) []ls.Version {
+				return slices.DeleteFunc(vs, func(v ls.Version) bool { return v.Name == untagged2 })
+			},
+			wantRemaining: []string{tagged},
+		},
+		{
+			name: "the delete answers 404",
+			args: args{
+				images: []string{fmt.Sprintf("ghcr.io/vulsio/vuls-data-db@%s", untagged)},
+				token:  "token",
+			},
+			deleteNotFound: []int{460898773},
+			wantRemaining:  []string{tagged, untagged, untagged2},
+		},
+		{
+			name: "the same digest twice",
+			args: args{
+				images: []string{fmt.Sprintf("ghcr.io/vulsio/vuls-data-db@%s", untagged), fmt.Sprintf("ghcr.io/vulsio/vuls-data-db@%s", untagged)},
+				token:  "token",
+			},
+			wantRemaining: []string{tagged, untagged2},
+		},
+		{
+			name: "no digest",
+			args: args{
+				images: []string{"ghcr.io/vulsio/vuls-data-db"},
+				token:  "token",
+			},
+			wantErr:       true,
+			wantRemaining: []string{tagged, untagged, untagged2},
+		},
+		{
+			name: "not ghcr.io",
+			args: args{
+				images: []string{fmt.Sprintf("ghcr.io/vulsio/vuls-data-db@%s", untagged), fmt.Sprintf("docker.io/vulsio/vuls-data-db@%s", untagged2)},
+				token:  "token",
+			},
+			wantErr:       true,
+			wantRemaining: []string{tagged, untagged, untagged2},
 		},
 	}
 	for _, tt := range tests {
@@ -57,7 +166,7 @@ func TestDelete(t *testing.T) {
 			vs := []ls.Version{
 				{
 					ID:             460898921,
-					Name:           "sha256:6413c62920ab027e680d7adf44bec195e9f2ec7a299140ff9a5d2193a626b673",
+					Name:           tagged,
 					URL:            "https://api.github.com/orgs/vulsio/packages/container/vuls-data-db/versions/460898921",
 					PackageHTMLURL: "https://github.com/orgs/vulsio/packages/container/package/vuls-data-db",
 					CreatedAt:      "2025-07-14T13:05:30Z",
@@ -72,7 +181,7 @@ func TestDelete(t *testing.T) {
 				},
 				{
 					ID:             460898773,
-					Name:           "sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb",
+					Name:           untagged,
 					URL:            "https://api.github.com/orgs/vulsio/packages/container/vuls-data-db/versions/460898773",
 					PackageHTMLURL: "https://github.com/orgs/vulsio/packages/container/package/vuls-data-db",
 					CreatedAt:      "2025-07-14T13:05:21Z",
@@ -83,8 +192,24 @@ func TestDelete(t *testing.T) {
 						Container:   &ls.Container{},
 					},
 				},
+				{
+					ID:             460033049,
+					Name:           untagged2,
+					URL:            "https://api.github.com/orgs/vulsio/packages/container/vuls-data-db/versions/460033049",
+					PackageHTMLURL: "https://github.com/orgs/vulsio/packages/container/package/vuls-data-db",
+					CreatedAt:      "2025-07-12T06:34:54Z",
+					UpdatedAt:      "2025-07-12T06:34:54Z",
+					HTMLURL:        new("https://github.com/orgs/vulsio/packages/container/vuls-data-db/460033049"),
+					Metadata: &ls.Metadata{
+						PackageType: "container",
+						Container:   &ls.Container{},
+					},
+				},
 			}
 
+			// listings counts the listings Delete starts, which is the
+			// requests of their first page.
+			var listings int
 			ts := httptest.NewTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				switch r.URL.Path {
 				case "/users/vulsio":
@@ -160,29 +285,44 @@ func TestDelete(t *testing.T) {
 						}()); err != nil {
 							http.Error(w, fmt.Sprintf("unexpected error: %v", err), http.StatusInternalServerError)
 						}
+
+						if page == 1 {
+							listings++
+							if listings == 1 && tt.afterList != nil {
+								vs = tt.afterList(vs)
+							}
+						}
 					default:
 						http.Error(w, "Bad Request", http.StatusBadRequest)
 					}
-				case "/orgs/vulsio/packages/container/vuls-data-db/versions/460898773",
-					"/orgs/vulsio/packages/container/vuls-data-db/versions/460898921":
+				case "/orgs/vulsio/packages/container/vuls-data-db/versions/460898921",
+					"/orgs/vulsio/packages/container/vuls-data-db/versions/460898773",
+					"/orgs/vulsio/packages/container/vuls-data-db/versions/460033049":
+					id, err := strconv.Atoi(path.Base(r.URL.Path))
+					if err != nil {
+						http.Error(w, fmt.Sprintf("unexpected error: %v", err), http.StatusInternalServerError)
+						return
+					}
+					i := slices.IndexFunc(vs, func(v ls.Version) bool { return v.ID == id })
+
 					switch r.Method {
-					case http.MethodDelete:
-						id, err := strconv.Atoi(path.Base(r.URL.Path))
-						if err != nil {
-							http.Error(w, fmt.Sprintf("unexpected error: %v", err), http.StatusInternalServerError)
-							return
-						}
-						// As GHCR does, answer 404 for a version that is
-						// already gone, so that deleting one twice fails here
-						// the way it fails in production.
-						before := len(vs)
-						vs = slices.DeleteFunc(vs, func(v ls.Version) bool {
-							return v.ID == id
-						})
-						if len(vs) == before {
+					case http.MethodGet:
+						if i == -1 {
 							http.NotFound(w, r)
 							return
 						}
+						w.WriteHeader(http.StatusOK)
+						if err := json.MarshalWrite(w, vs[i]); err != nil {
+							http.Error(w, fmt.Sprintf("unexpected error: %v", err), http.StatusInternalServerError)
+						}
+					case http.MethodDelete:
+						// As GHCR does, answer 404 for a version that is
+						// already gone.
+						if i == -1 || slices.Contains(tt.deleteNotFound, id) {
+							http.NotFound(w, r)
+							return
+						}
+						vs = slices.Delete(vs, i, i+1)
 						w.WriteHeader(http.StatusNoContent)
 					default:
 						http.Error(w, "Bad Request", http.StatusBadRequest)
@@ -193,20 +333,23 @@ func TestDelete(t *testing.T) {
 			}))
 			// The in-memory network routes api.github.com to the test server,
 			// so the default production base URL is used.
-			if err := delete.Delete(tt.args.image, tt.args.token, append(tt.args.opts, delete.WithHTTPClient(ts.Client()))...); (err != nil) != tt.wantErr {
+			if err := delete.Delete(tt.args.images, tt.args.token, append(tt.args.opts, delete.WithHTTPClient(ts.Client()))...); (err != nil) != tt.wantErr {
 				t.Errorf("Delete() error = %v, wantErr %v", err, tt.wantErr)
 			}
 
-			rs, err := ls.List([]ls.Repository{{Type: "orgs", Registry: "ghcr.io", Owner: "vulsio", Package: "vuls-data-db"}}, tt.args.token, ls.WithHTTPClient(ts.Client()))
-			if err != nil {
-				t.Errorf("List() error = %v", err)
+			// The versions of a package are listed once, however many of its
+			// images are deleted, unless an image is refused before anything
+			// is sent.
+			if listings > 1 {
+				t.Errorf("Delete() listed the versions %d times, want at most once", listings)
 			}
 
-			// Delete removes the digest exactly when it returns nil: it has one
-			// version to delete and reports whatever the registry answered.
-			wantDeleted := !tt.wantErr
-			if slices.ContainsFunc(rs, func(r ls.Response) bool { return strings.HasSuffix(tt.args.image, r.Digest) }) == wantDeleted {
-				t.Errorf("Delete() deleted the version with digest %q = %t, want %t, remaining versions: %+v", tt.args.image, !wantDeleted, wantDeleted, rs)
+			remaining := make([]string, 0, len(vs))
+			for _, v := range vs {
+				remaining = append(remaining, v.Name)
+			}
+			if diff := cmp.Diff(tt.wantRemaining, remaining); diff != "" {
+				t.Errorf("Delete() remaining digests. (-expected +got):\n%s", diff)
 			}
 		})
 	}
