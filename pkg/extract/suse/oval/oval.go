@@ -777,6 +777,8 @@ func (e extractor) translateVersionCriterion(oc oval.Criterion, t oval.RpminfoTe
 			return translated{}, errors.Errorf("unexpected operation. test: %s, expected: %q, actual: %q", oc.TestRef, "equals", s.Version.Operation)
 		}
 
+		ranges := []affectedrangeTypes.Range{{Equal: s.Version.Text}}
+
 		switch e.osname {
 		case "suse.linux.enterprise.server":
 			if o.Name == "sled-release" {
@@ -785,6 +787,17 @@ func (e extractor) translateVersionCriterion(oc oval.Criterion, t oval.RpminfoTe
 		case "suse.linux.enterprise.desktop":
 			if o.Name == "sles-release" {
 				return translated{neverSatisfied: true}, nil
+			}
+		case "opensuse.leap":
+			// Leap-release of openSUSE Leap 16.0 exists as both "16.0" (GA) and "16.0+leap". The update build has
+			// a lower release number than the GA build, so "+leap" was added to its version to make it sort higher
+			// (bsc#1238724). A system has one or the other depending on whether it has taken the update.
+			// SUSE OVAL names only one of them at a time (it switched from "16.0" to "16.0+leap" in November 2026),
+			// and rpm-version-only does not treat the two as equal, so a system with the other one is never detected.
+			// Accept both, whichever one the OVAL names. Leap 16.1 ships Leap-release only as "16.1", so it is not
+			// affected.
+			if e.version == "16.0" && o.Name == "Leap-release" && (s.Version.Text == "16.0" || s.Version.Text == "16.0+leap") {
+				ranges = []affectedrangeTypes.Range{{Equal: "16.0"}, {Equal: "16.0+leap"}}
 			}
 		default:
 		}
@@ -801,12 +814,8 @@ func (e extractor) translateVersionCriterion(oc oval.Criterion, t oval.RpminfoTe
 						},
 					},
 					Affected: &affectedTypes.Affected{
-						Type: affectedrangeTypes.RangeTypeRPMVersionOnly,
-						Range: []affectedrangeTypes.Range{
-							{
-								Equal: s.Version.Text,
-							},
-						},
+						Type:  affectedrangeTypes.RangeTypeRPMVersionOnly,
+						Range: ranges,
 					},
 				},
 			},
