@@ -160,7 +160,7 @@ func Log(repository string, opts ...Option) (iter.Seq2[string, error], error) {
 			return ref.Hash(), nil
 		}
 
-		hash, err := r.ResolveRevision(plumbing.Revision(options.from))
+		hash, err := util.ResolveRevision(r, options.from)
 		if err != nil {
 			return plumbing.ZeroHash, errors.Wrapf(err, "resolve %s", options.from)
 		}
