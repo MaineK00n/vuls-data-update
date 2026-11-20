@@ -1,0 +1,102 @@
+{
+	"id": "1026",
+	"name": "Weaknesses in OWASP Top Ten (2017)",
+	"type": "Graph",
+	"status": "Incomplete",
+	"objective": "CWE nodes in this view (graph) are associated with the OWASP Top Ten, as released in 2017.",
+	"audience": [
+		{
+			"type": "Software Developers",
+			"description": "This view outlines the most important issues as identified by the OWASP Top Ten (2017 version), providing a good starting point for web application developers who want to code more securely."
+		},
+		{
+			"type": "Product Customers",
+			"description": "This view outlines the most important issues as identified by the OWASP Top Ten (2017 version), providing product customers with a way of asking their software development teams to follow minimum expectations for secure code."
+		},
+		{
+			"type": "Educators",
+			"description": "Since the OWASP Top Ten covers the most frequently encountered issues, this view can be used by educators as training material for students."
+		}
+	],
+	"members": [
+		{
+			"cweid": "1027",
+			"view_id": "1026"
+		}
+	],
+	"notes": [
+		{
+			"type": "Relationship",
+			"text": "The relationships in this view have been pulled directly from the 2017 OWASP Top 10 document, either from the explicit mapping section, or from weakness types alluded to in the written sections."
+		}
+	],
+	"content_history": {
+		"submission": [
+			{
+				"submission_name": [
+					"CWE Content Team"
+				],
+				"submission_organization": "MITRE",
+				"submission_date": "2018-01-22",
+				"submission_version": "3.1",
+				"submission_release_date": "2018-03-29"
+			}
+		],
+		"modification": [
+			{
+				"modification_name": "CWE Content Team",
+				"modification_organization": "MITRE",
+				"modification_date": "2017-11-08",
+				"modification_version": "3.0",
+				"modification_release_date": "2017-11-08",
+				"modification_comment": "updated References"
+			},
+			{
+				"modification_name": "CWE Content Team",
+				"modification_organization": "MITRE",
+				"modification_date": "2020-02-24",
+				"modification_version": "4.0",
+				"modification_release_date": "2020-02-24",
+				"modification_comment": "updated References, View_Audience"
+			},
+			{
+				"modification_name": "CWE Content Team",
+				"modification_organization": "MITRE",
+				"modification_date": "2023-06-29",
+				"modification_version": "4.12",
+				"modification_release_date": "2023-06-29",
+				"modification_comment": "updated Mapping_Notes"
+			},
+			{
+				"modification_name": "CWE Content Team",
+				"modification_organization": "MITRE",
+				"modification_date": "2025-09-09",
+				"modification_version": "4.18",
+				"modification_release_date": "2025-09-09",
+				"modification_comment": "updated References"
+			}
+		]
+	},
+	"references": [
+		{
+			"reference_id": "REF-957",
+			"title": "Top 10 2017",
+			"url": "https://github.com/OWASP/Top10/blob/master/2017/OWASP%20Top%2010-2017%20(en).pdf",
+			"publication_year": "2017",
+			"publication_month": "--04",
+			"publication_day": "---12",
+			"publisher": "OWASP",
+			"url_date": "2025-08-04"
+		}
+	],
+	"mapping_notes": {
+		"usage": "Prohibited",
+		"rationale": "This entry is a View. Views are not weaknesses and therefore inappropriate to describe the root causes of vulnerabilities.",
+		"comments": "Use this View or other Views to search and navigate for the appropriate weakness.",
+		"reasons": [
+			{
+				"type": "View"
+			}
+		]
+	}
+}
