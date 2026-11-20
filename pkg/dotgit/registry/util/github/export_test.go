@@ -1,6 +1,9 @@
 package github
 
-import "net/http"
+import (
+	"net/http"
+	"time"
+)
 
 // WithHTTPClient replaces the *http.Client CheckScopes calls the GitHub API
 // with. Tests pass the client of an httptest.NewTestServer, whose in-memory
@@ -19,4 +22,13 @@ type httpClientOption struct {
 
 func (c httpClientOption) apply(opts *options) {
 	opts.httpClient = c.client
+}
+
+// ShortenRetryWaits makes every wait of Do between retries, a rate limit that
+// does not say how long to wait included, wait instead, and returns what puts
+// the waits back. A test passes it to t.Cleanup.
+func ShortenRetryWaits(wait time.Duration) func() {
+	saved := policy
+	policy.waitMin, policy.waitMax, policy.rateLimitWait = wait, wait, wait
+	return func() { policy = saved }
 }
