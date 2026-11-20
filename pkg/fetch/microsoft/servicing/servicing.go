@@ -103,6 +103,7 @@ type options struct {
 	retryWaitMax time.Duration
 	concurrency  int
 	wait         time.Duration
+	allowEmpty   bool
 
 	// httpClient is only ever set by WithHTTPClient, which lives in
 	// export_test.go and is therefore absent from the production build.
@@ -171,6 +172,20 @@ func (w waitOption) apply(opts *options) {
 
 func WithWait(wait time.Duration) Option {
 	return waitOption(wait)
+}
+
+type allowEmptyOption bool
+
+func (a allowEmptyOption) apply(opts *options) {
+	opts.allowEmpty = bool(a)
+}
+
+// WithAllowEmpty lets a run that wrote nothing succeed. It is for a run
+// over one shard of several KB lists whose results are merged: every KB of a
+// shard can resolve outside /servicing/, as pre-2018 articles do. A run that
+// fetched nothing has otherwise failed.
+func WithAllowEmpty(allow bool) Option {
+	return allowEmptyOption(allow)
 }
 
 // retryPolicy adds 403 to what the client already retries on.
@@ -291,6 +306,10 @@ func Fetch(kbs []string, opts ...Option) error {
 
 	if err := options.convert(); err != nil {
 		return errors.Wrap(err, "convert")
+	}
+
+	if err := util.EnsureWritten(options.dir, util.WithAllowEmpty(options.allowEmpty)); err != nil {
+		return errors.Wrapf(err, "ensure written %s", options.dir)
 	}
 
 	return nil
@@ -522,8 +541,9 @@ func (opts options) convert() error {
 		if !errors.Is(err, fs.ErrNotExist) {
 			return errors.Wrapf(err, "stat %s", root)
 		}
-		// Every KB resolved to something outside /servicing/. There is nothing
-		// to convert, and that is not a failure of the run.
+		// Every KB resolved to something outside /servicing/, so there is
+		// nothing to convert. Whether storing nothing fails the run is decided
+		// at the end of Fetch, by util.EnsureWritten.
 		slog.Warn("no servicing article stored", slog.String("dir", root))
 		return nil
 	}

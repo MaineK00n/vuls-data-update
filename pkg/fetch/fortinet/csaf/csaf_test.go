@@ -38,9 +38,11 @@ func TestFetch(t *testing.T) {
 			// The fetch sweeps the output directory before it writes, so an
 			// advisory that resolves to nothing leaves nothing behind -- not even
 			// what was there before. Putting the rest back is the caller's job.
+			// FG-IR-21-173 is fetched alongside, as a run that writes nothing at
+			// all fails.
 			name: "sweep",
 			args: args{
-				args: []string{"FG-IR-24-437"},
+				args: []string{"FG-IR-24-437", "FG-IR-21-173"},
 			},
 			seed: "seed",
 		},
@@ -86,11 +88,21 @@ func TestFetch(t *testing.T) {
 		{
 			// No CSAF answers to any name the title yields -- the advisory
 			// carries none, or its CSAF has been renamed. Neither is an error;
-			// the advisory is skipped and the caller keeps what it holds.
+			// the advisory is skipped and the caller keeps what it holds, while
+			// the advisory fetched alongside is written.
 			name: "not-found",
+			args: args{
+				args: []string{"FG-IR-24-437", "FG-IR-25-756"},
+			},
+		},
+		{
+			// Skipping an advisory is not an error, but a run that fetched none
+			// of what it was given wrote nothing, and that is.
+			name: "nothing-fetched",
 			args: args{
 				args: []string{"FG-IR-24-437"},
 			},
+			hasError: true,
 		},
 		{
 			// Fortinet encodes its titles twice in XML, so one level of entities
@@ -122,10 +134,11 @@ func TestFetch(t *testing.T) {
 		},
 		{
 			// Fortinet answers 422 for an ID it will not route, which the nine
-			// FG-IR-0yy-nnn advisories are. They are real, so they are skipped.
+			// FG-IR-0yy-nnn advisories are. They are real, so they are skipped,
+			// and the advisory fetched alongside is still written.
 			name: "unprocessable-cvrf",
 			args: args{
-				args: []string{"FG-IR-012-001"},
+				args: []string{"FG-IR-012-001", "FG-IR-25-756"},
 			},
 			status: map[string]int{"FG-IR-012-001": http.StatusUnprocessableEntity},
 		},
@@ -150,9 +163,11 @@ func TestFetch(t *testing.T) {
 			// Every other advisory leaves that name alone. It is keyed on the
 			// title alone and titles repeat, so a file answering to it belongs to
 			// whichever advisory holds it -- here, another one entirely.
+			// FG-IR-21-173, the one listed, is fetched alongside, as a run that
+			// writes nothing at all fails.
 			name: "title-only-unlisted",
 			args: args{
-				args: []string{"FG-IR-25-756"},
+				args: []string{"FG-IR-25-756", "FG-IR-21-173"},
 			},
 		},
 	}

@@ -220,6 +220,12 @@ func Fetch(opts ...Option) error {
 		}
 	}
 
+	// A 2022/ that was on disk before the fetch is kept, but this fetch did
+	// not get it, so it must not pass for what the fetch wrote.
+	if err := util.EnsureWritten(options.dir, util.WithIgnore(".git", "2022")); err != nil {
+		return errors.Wrapf(err, "ensure written %s", options.dir)
+	}
+
 	return nil
 }
 

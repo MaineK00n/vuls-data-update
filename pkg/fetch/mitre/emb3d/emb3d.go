@@ -82,6 +82,10 @@ func Fetch(opts ...Option) error {
 		return errors.Wrap(err, "fetch properties")
 	}
 
+	if err := util.EnsureWritten(options.dir); err != nil {
+		return errors.Wrapf(err, "ensure written %s", options.dir)
+	}
+
 	return nil
 }
 

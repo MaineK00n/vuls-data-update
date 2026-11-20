@@ -87,5 +87,9 @@ func Fetch(opts ...Option) error {
 		return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "repository-to-cpe.json"))
 	}
 
+	if err := util.EnsureWritten(options.dir); err != nil {
+		return errors.Wrapf(err, "ensure written %s", options.dir)
+	}
+
 	return nil
 }
