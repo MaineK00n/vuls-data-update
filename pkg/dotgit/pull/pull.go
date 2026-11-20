@@ -199,35 +199,46 @@ func Pull(repository string, opts ...Option) error {
 					return git.CheckoutOptions{Hash: ref.Hash(), Keep: true}, nil
 				}
 
-				// Neither a branch nor a tag, so a commit if anything, which
-				// go-git checks out only by its full hash: plumbing.NewHash
-				// below pads an abbreviated hash with zeros, and makes the
-				// zero hash of any other name, which go-git checks out as
-				// master. So an expression, which native git checks out, is
-				// refused: a name can hold none of "~", "^", ":", "@{" or
-				// "..", nor be "@", which is HEAD.
+				// Neither a branch nor a tag. go-git checks out the commit that
+				// ResolveRevision finds for the name, which for a full hash, or
+				// for a ref such as refs/heads/main, is the one native git
+				// checks out. plumbing.NewHash of the name would pad an
+				// abbreviated hash with zeros, and make the zero hash of any
+				// other name but a full hash, which go-git checks out as
+				// master.
+				//
+				// A name for which ResolveRevision may find another commit is
+				// refused. One is an expression, as ResolveRevision skips parts
+				// of some, such as ^{tree}: a name can hold none of "~", "^",
+				// ":", "@{" or "..", nor be "@", which is HEAD.
 				if strings.ContainsAny(options.checkout, "~^:") || strings.Contains(options.checkout, "@{") || strings.Contains(options.checkout, "..") || options.checkout == "@" {
-					return git.CheckoutOptions{}, errors.Errorf("go-git checks out a commit only by its full hash, not by the expression %q, use native git", options.checkout)
+					return git.CheckoutOptions{}, errors.Errorf("go-git checks out no expression, such as %q, use native git", options.checkout)
 				}
 
-				// git reads no name shorter than four characters as an
-				// abbreviated hash, so such a name, which is neither a branch
-				// nor a tag, is not there. ResolveRevision would read it as
-				// one, and look it up in the hash of every object of the
-				// repository for one character, and of every packed object
-				// for two or three.
-				if len(options.checkout) < 4 {
+				// Another is an abbreviated hash: of the commits it matches,
+				// ResolveRevision finds the first, where native git refuses one
+				// that matches more than one. To find them, it goes through the
+				// hash of every packed object.
+				if abbreviated(options.checkout) {
+					return git.CheckoutOptions{}, errors.Errorf("go-git checks out no abbreviated hash, such as %q, use native git", options.checkout)
+				}
+
+				// ResolveRevision also reads a name as an abbreviated hash when
+				// its first even number of characters are hex, such as 9d3 or
+				// 0000g, and for a name of one character, of which they are
+				// none, goes through the hash of every object. git reads no such
+				// name as one, so it is not there, as it is neither a branch nor
+				// a tag.
+				if !plumbing.IsHash(options.checkout) && isHex(options.checkout[:len(options.checkout)&^1]) {
 					return git.CheckoutOptions{}, notInRepository(errors.Wrapf(plumbing.ErrReferenceNotFound, "get %q as branch or tag", options.checkout), repository, options.checkout)
 				}
 
-				// For any other name that resolves to nothing,
-				// plumbing.NewHash below fails as "object not found", or makes
-				// the zero hash, so resolve it first, as contains does on
-				// go-git, but in the repository opened above: contains would
-				// open it again and load every pack index a second time. Not
-				// before the tag: go-git does not resolve every tag name, such
-				// as one with an "@".
-				if _, err := r.ResolveRevision(plumbing.Revision(options.checkout)); err != nil {
+				// Resolve in the repository opened above, not through contains,
+				// which would open it again and load every pack index a second
+				// time. Not before the tag: go-git does not resolve every tag
+				// name, such as one with an "@".
+				h, err := r.ResolveRevision(plumbing.Revision(options.checkout))
+				if err != nil {
 					err = errors.Wrapf(err, "resolve %s", options.checkout)
 					if notFound(err, false) {
 						return git.CheckoutOptions{}, notInRepository(err, repository, options.checkout)
@@ -235,7 +246,7 @@ func Pull(repository string, opts ...Option) error {
 					return git.CheckoutOptions{}, errors.Wrapf(err, "get %q as commit", options.checkout)
 				}
 
-				return git.CheckoutOptions{Hash: plumbing.NewHash(options.checkout), Keep: true}, nil
+				return git.CheckoutOptions{Hash: *h, Keep: true}, nil
 			}()
 			if err != nil {
 				return errors.Wrap(err, "get checkout options")
@@ -296,8 +307,9 @@ func Pull(repository string, opts ...Option) error {
 
 // notInRepository wraps err for a checkout target, a tag or a commit, that is
 // not in the dotgit pulled from repository: the error of switch on the native
-// path, and that of ResolveRevision on the go-git path, where the target is
-// resolved before the checkout. vuls-data-db keeps only the last
+// path, and on the go-git path, where the target is looked up before the
+// checkout, that of ResolveRevision or, for a name it is not asked about, that
+// of the branch and tag lookups. vuls-data-db keeps only the last
 // commits of a dotgit's history, so a commit pinned before it truncated the
 // history is gone from a repository that is otherwise fine.
 func notInRepository(err error, repository, checkout string) error {
@@ -331,4 +343,20 @@ func notFound(err error, useNativeGit bool) bool {
 	}
 	_, ok := stderrors.AsType[*fs.PathError](err)
 	return !ok
+}
+
+// abbreviated reports whether git reads name as an abbreviated hash: a name of
+// four to thirty-nine hex characters, or four or more of them after the last
+// "-g" of a name, as in v1.0-2-g9d3d5d4, which git describe writes.
+func abbreviated(name string) bool {
+	if len(name) >= 4 && len(name) < 40 && isHex(name) {
+		return true
+	}
+	i := strings.LastIndex(name, "-g")
+	return i >= 0 && len(name)-(i+2) >= 4 && isHex(name[i+2:])
+}
+
+// isHex reports whether s holds nothing but hex digits, which "" does.
+func isHex(s string) bool {
+	return strings.TrimLeft(s, "0123456789abcdefABCDEF") == ""
 }
