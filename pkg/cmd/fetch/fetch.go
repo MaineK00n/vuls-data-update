@@ -167,6 +167,7 @@ import (
 	rubygemsGHSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/rubygems/ghsa"
 	rubygemsGLSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/rubygems/glsa"
 	rubygemsOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/rubygems/osv"
+	schneiderElectricCSAF "github.com/MaineK00n/vuls-data-update/pkg/fetch/schneider-electric/csaf"
 	sealOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/seal/osv"
 	sickCSAF "github.com/MaineK00n/vuls-data-update/pkg/fetch/sick/csaf"
 	siemensCSAF "github.com/MaineK00n/vuls-data-update/pkg/fetch/siemens/csaf"
@@ -284,6 +285,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdRockyErrata(), newCmdRockyOSV(), newCmdRockyUpdateinfo(),
 		newCmdRootio(),
 		newCmdRubygemsGHSA(), newCmdRubygemsGLSA(), newCmdRubygemsOSV(), newCmdRubygemsDB(),
+		newCmdSchneiderElectricCSAF(),
 		newCmdSealOSV(),
 		newCmdSICKCSAF(),
 		newCmdSiemensCSAF(),
@@ -5280,6 +5282,41 @@ func newCmdRubygemsOSV() *cobra.Command {
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+
+	return cmd
+}
+
+func newCmdSchneiderElectricCSAF() *cobra.Command {
+	options := &struct {
+		base
+		concurrency int
+		wait        time.Duration
+	}{
+		dir:         filepath.Join(util.CacheDir(), "fetch", "schneider-electric", "csaf"),
+		retry:       3,
+		concurrency: 3,
+		wait:        1 * time.Second,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "schneider-electric-csaf",
+		Short: "Fetch Schneider Electric CSAF data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch schneider-electric-csaf
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := schneiderElectricCSAF.Fetch(schneiderElectricCSAF.WithDir(options.dir), schneiderElectricCSAF.WithRetry(options.retry), schneiderElectricCSAF.WithConcurrency(options.concurrency), schneiderElectricCSAF.WithWait(options.wait)); err != nil {
+				return errors.Wrap(err, "failed to fetch schneider electric csaf")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrent http requests")
+	cmd.Flags().DurationVarP(&options.wait, "wait", "", options.wait, "wait duration")
 
 	return cmd
 }
