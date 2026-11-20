@@ -89,6 +89,7 @@ const (
 	MicrosoftCVRF              SourceID = "microsoft-cvrf"
 	MicrosoftDeployment        SourceID = "microsoft-deployment"
 	MicrosoftMSUC              SourceID = "microsoft-msuc"
+	MicrosoftOfficeC2R         SourceID = "microsoft-office-c2r"
 	MicrosoftProduct           SourceID = "microsoft-product"
 	MicrosoftServicing         SourceID = "microsoft-servicing"
 	MicrosoftVulnerability     SourceID = "microsoft-vulnerability"

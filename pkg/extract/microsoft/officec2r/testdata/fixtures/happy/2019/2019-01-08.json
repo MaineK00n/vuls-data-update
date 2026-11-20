@@ -1,0 +1,93 @@
+{
+	"id": "january-8-2019",
+	"date": "January 8, 2019",
+	"builds": [
+		{
+			"channel": "Monthly Channel",
+			"version": "1812",
+			"build": "11126.20196"
+		},
+		{
+			"channel": "Semi-Annual Targeted Channel",
+			"version": "1808",
+			"build": "10730.20264"
+		},
+		{
+			"channel": "Semi-Annual Channel",
+			"version": "1808",
+			"build": "10730.20264"
+		},
+		{
+			"channel": "Semi-Annual Channel",
+			"version": "1803",
+			"build": "9126.2351"
+		},
+		{
+			"channel": "Semi-Annual Channel",
+			"version": "1708",
+			"build": "8431.2366"
+		}
+	],
+	"sections": [
+		{
+			"name": "Outlook",
+			"items": [
+				{
+					"text": "CVE-2019-0559",
+					"links": [
+						{
+							"text": "CVE-2019-0559",
+							"url": "https://portal.msrc.microsoft.com/en-us/security-guidance/advisory/CVE-2019-0559"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Word: Security updates",
+			"items": [
+				{
+					"text": "CVE-2019-0561",
+					"links": [
+						{
+							"text": "CVE-2019-0561",
+							"url": "https://portal.msrc.microsoft.com/en-us/security-guidance/advisory/CVE-2019-0561"
+						}
+					]
+				},
+				{
+					"text": "CVE-2019-0585",
+					"links": [
+						{
+							"text": "CVE-2019-0585",
+							"url": "https://portal.msrc.microsoft.com/en-us/security-guidance/advisory/CVE-2019-0585"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Office suite: Security updates",
+			"items": [
+				{
+					"text": "CVE-2019-0541",
+					"links": [
+						{
+							"text": "CVE-2019-0541",
+							"url": "https://portal.msrc.microsoft.com/en-us/security-guidance/advisory/CVE-2019-0541"
+						}
+					]
+				},
+				{
+					"text": "CVE-2019-0560",
+					"links": [
+						{
+							"text": "CVE-2019-0560",
+							"url": "https://portal.msrc.microsoft.com/en-us/security-guidance/advisory/CVE-2019-0560"
+						}
+					]
+				}
+			]
+		}
+	]
+}
