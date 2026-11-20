@@ -179,6 +179,7 @@ import (
 	suseOVAL "github.com/MaineK00n/vuls-data-update/pkg/fetch/suse/oval"
 	swiftGHSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/swift/ghsa"
 	swiftOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/swift/osv"
+	tuxcareOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/tuxcare/osv"
 	ubuntuCVE "github.com/MaineK00n/vuls-data-update/pkg/fetch/ubuntu/cve"
 	ubuntuNotice "github.com/MaineK00n/vuls-data-update/pkg/fetch/ubuntu/notice"
 	ubuntuOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/ubuntu/osv"
@@ -290,6 +291,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdSnort(),
 		newCmdSUSEOVAL(), newCmdSUSECVRF(), newCmdSUSECVRFCVE(), newCmdSUSECSAF(), newCmdSUSECSAFVEX(), newCmdSUSEOSV(),
 		newCmdSwiftGHSA(), newCmdSwiftOSV(),
+		newCmdTuxCareOSV(),
 		newCmdUbuntuOVAL(), newCmdUbuntuCVETracker(), newCmdUbuntuUSNDB(), newCmdUbuntuOSV(), newCmdUbuntuVEX(), newCmdUbuntuCVE(), newCmdUbuntuNotice(),
 		newCmdVARIoTExploits(), newCmdVARIoTVulns(),
 		newCmdVSCodeOSV(),
@@ -5621,6 +5623,33 @@ func newCmdSwiftOSV() *cobra.Command {
 		RunE: func(_ *cobra.Command, _ []string) error {
 			if err := swiftOSV.Fetch(swiftOSV.WithDir(options.dir), swiftOSV.WithRetry(options.retry)); err != nil {
 				return errors.Wrap(err, "failed to fetch swift osv")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+
+	return cmd
+}
+
+func newCmdTuxCareOSV() *cobra.Command {
+	options := &base{
+		dir:   filepath.Join(util.CacheDir(), "fetch", "tuxcare", "osv"),
+		retry: 3,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "tuxcare-osv",
+		Short: "Fetch TuxCare OSV data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch tuxcare-osv
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := tuxcareOSV.Fetch(tuxcareOSV.WithDir(options.dir), tuxcareOSV.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch tuxcare osv")
 			}
 			return nil
 		},

@@ -1,0 +1,38 @@
+{
+	"schema_version": "1.9.0",
+	"id": "CLSA-2025-1754872136",
+	"modified": "2026-10-26T13:21:31Z",
+	"published": "2026-08-04T14:52:20Z",
+	"withdrawn": "2026-10-15T17:45:50Z",
+	"upstream": [
+		"CVE-2025-11226",
+		"CVE-2026-1225"
+	],
+	"summary": "TuxCare security update for org.springframework.data:spring-data-r2dbc (2 CVEs)",
+	"details": "TuxCare rebuilt org.springframework.data:spring-data-r2dbc to address 2 CVEs. Fixed in 1.5.18-tuxcare.1.",
+	"affected": [
+		{
+			"package": {
+				"ecosystem": "TuxCare:Maven",
+				"name": "org.springframework.data:spring-data-r2dbc",
+				"purl": "pkg:maven/org.springframework.data/spring-data-r2dbc"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "1.5.18-tuxcare.1"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://github.com/cloudlinux/tuxcare-osv/tree/main/data/els_lang/maven/CLSA-2025-1754872136.json"
+			}
+		}
+	]
+}
