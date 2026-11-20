@@ -263,7 +263,7 @@ func TestPull(t *testing.T) {
 		},
 		{
 			// A valid tag name that go-git's revision parser rejects, which
-			// is why go-git resolves a target only after the tag lookup.
+			// is why go-git looks a target up as a ref without the parser.
 			name: "vuls-data-raw-test-at-tag checkout: v1@2, restore: false, native git",
 			args: args{
 				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test-at-tag",
@@ -334,7 +334,7 @@ func TestPull(t *testing.T) {
 				opts:       []pull.Option{pull.WithCheckout("v0.0.2"), pull.WithRestore(true), pull.WithUseNativeGit(false)},
 			},
 			hasError: true,
-			wantErr:  "get checkout options: v0.0.2 is not in ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test-master, whose history may have been truncated or rewritten: resolve v0.0.2: reference not found",
+			wantErr:  `get checkout options: v0.0.2 is not in ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test-master, whose history may have been truncated or rewritten: get "v0.0.2" as ref: reference not found`,
 		},
 		{
 			// contains reads a name as cat-file -e does, so it cannot tell
@@ -378,7 +378,7 @@ func TestPull(t *testing.T) {
 				opts:       []pull.Option{pull.WithCheckout("v9@9"), pull.WithRestore(false), pull.WithUseNativeGit(false)},
 			},
 			hasError: true,
-			wantErr:  "get checkout options: v9@9 is not in ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test, whose history may have been truncated or rewritten: resolve v9@9: ",
+			wantErr:  `get checkout options: v9@9 is not in ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test, whose history may have been truncated or rewritten: get "v9@9" as ref: reference not found`,
 		},
 		{
 			// git reads no name shorter than four characters as an
@@ -401,7 +401,7 @@ func TestPull(t *testing.T) {
 				opts:       []pull.Option{pull.WithCheckout("9d3"), pull.WithRestore(false), pull.WithUseNativeGit(false)},
 			},
 			hasError: true,
-			wantErr:  `get checkout options: 9d3 is not in ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test, whose history may have been truncated or rewritten: get "9d3" as branch or tag: reference not found`,
+			wantErr:  `get checkout options: 9d3 is not in ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test, whose history may have been truncated or rewritten: get "9d3" as ref: reference not found`,
 		},
 		{
 			// For a name of one character, ResolveRevision would read the
@@ -412,7 +412,7 @@ func TestPull(t *testing.T) {
 				opts:       []pull.Option{pull.WithCheckout("g"), pull.WithRestore(false), pull.WithUseNativeGit(false)},
 			},
 			hasError: true,
-			wantErr:  `get checkout options: g is not in ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test, whose history may have been truncated or rewritten: get "g" as branch or tag: reference not found`,
+			wantErr:  `get checkout options: g is not in ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test, whose history may have been truncated or rewritten: get "g" as ref: reference not found`,
 		},
 		{
 			// ResolveRevision reads the 0000 in front of the g as an
@@ -425,7 +425,90 @@ func TestPull(t *testing.T) {
 				opts:       []pull.Option{pull.WithCheckout("0000g"), pull.WithRestore(false), pull.WithUseNativeGit(false)},
 			},
 			hasError: true,
-			wantErr:  `get checkout options: 0000g is not in ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test, whose history may have been truncated or rewritten: get "0000g" as branch or tag: reference not found`,
+			wantErr:  `get checkout options: 0000g is not in ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test, whose history may have been truncated or rewritten: get "0000g" as ref: reference not found`,
+		},
+		{
+			// A ref of one character, which git looks up under refs/, though
+			// a name of one character that no ref has is not there.
+			name: "vuls-data-raw-test-refs checkout: g, restore: false, native git",
+			args: args{
+				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test-refs",
+				opts:       []pull.Option{pull.WithCheckout("g"), pull.WithRestore(false), pull.WithUseNativeGit(true)},
+			},
+			golden:   "testdata/golden/vuls-data-raw-test-refs.tar.zst",
+			wantHead: "9d3d5d486d4c9414321a2df56f2e007c4c2c8fab",
+		},
+		{
+			name: "vuls-data-raw-test-refs checkout: g, restore: false, go-git",
+			args: args{
+				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test-refs",
+				opts:       []pull.Option{pull.WithCheckout("g"), pull.WithRestore(false), pull.WithUseNativeGit(false)},
+			},
+			golden:   "testdata/golden/vuls-data-raw-test-refs.tar.zst",
+			wantHead: "9d3d5d486d4c9414321a2df56f2e007c4c2c8fab",
+		},
+		{
+			// A ref whose name ends as what git describe writes. git looks
+			// a name up as a ref before it reads it as one.
+			name: "vuls-data-raw-test-refs checkout: refs/heads/release-gdead, restore: false, native git",
+			args: args{
+				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test-refs",
+				opts:       []pull.Option{pull.WithCheckout("refs/heads/release-gdead"), pull.WithRestore(false), pull.WithUseNativeGit(true)},
+			},
+			golden:   "testdata/golden/vuls-data-raw-test-refs.tar.zst",
+			wantHead: "9d3d5d486d4c9414321a2df56f2e007c4c2c8fab",
+		},
+		{
+			name: "vuls-data-raw-test-refs checkout: refs/heads/release-gdead, restore: false, go-git",
+			args: args{
+				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test-refs",
+				opts:       []pull.Option{pull.WithCheckout("refs/heads/release-gdead"), pull.WithRestore(false), pull.WithUseNativeGit(false)},
+			},
+			golden:   "testdata/golden/vuls-data-raw-test-refs.tar.zst",
+			wantHead: "9d3d5d486d4c9414321a2df56f2e007c4c2c8fab",
+		},
+		{
+			// The full name of the tag v1@2, which go-git's revision parser
+			// rejects.
+			name: "vuls-data-raw-test-at-tag checkout: refs/tags/v1@2, restore: false, native git",
+			args: args{
+				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test-at-tag",
+				opts:       []pull.Option{pull.WithCheckout("refs/tags/v1@2"), pull.WithRestore(false), pull.WithUseNativeGit(true)},
+			},
+			golden:   "testdata/golden/vuls-data-raw-test-at-tag.tar.zst",
+			wantHead: "9d3d5d486d4c9414321a2df56f2e007c4c2c8fab",
+		},
+		{
+			name: "vuls-data-raw-test-at-tag checkout: refs/tags/v1@2, restore: false, go-git",
+			args: args{
+				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test-at-tag",
+				opts:       []pull.Option{pull.WithCheckout("refs/tags/v1@2"), pull.WithRestore(false), pull.WithUseNativeGit(false)},
+			},
+			golden:   "testdata/golden/vuls-data-raw-test-at-tag.tar.zst",
+			wantHead: "9d3d5d486d4c9414321a2df56f2e007c4c2c8fab",
+		},
+		{
+			// A file of the repository, which git does not read as a ref.
+			name: "vuls-data-raw-test-master checkout: COMMIT_EDITMSG (not in the repository), restore: false, native git",
+			args: args{
+				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test-master",
+				opts:       []pull.Option{pull.WithCheckout("COMMIT_EDITMSG"), pull.WithRestore(false), pull.WithUseNativeGit(true)},
+			},
+			hasError:   true,
+			wantErr:    "COMMIT_EDITMSG is not in ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test-master, whose history may have been truncated or rewritten: switch to COMMIT_EDITMSG: ",
+			wantErrHas: `switch --detach COMMIT_EDITMSG", stderr: "fatal: `,
+		},
+		{
+			// go-git reads it as a ref of the zero hash, which it checks out
+			// as master. Unless what the ref points to is resolved to a
+			// commit, the pull succeeds on master.
+			name: "vuls-data-raw-test-master checkout: COMMIT_EDITMSG (not in the repository), restore: false, go-git",
+			args: args{
+				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test-master",
+				opts:       []pull.Option{pull.WithCheckout("COMMIT_EDITMSG"), pull.WithRestore(false), pull.WithUseNativeGit(false)},
+			},
+			hasError: true,
+			wantErr:  `get checkout options: COMMIT_EDITMSG is not in ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test-master, whose history may have been truncated or rewritten: get "COMMIT_EDITMSG" as ref: reference not found`,
 		},
 		{
 			// A ref that is neither a branch nor a tag, which native git
@@ -695,7 +778,7 @@ func TestNotFound(t *testing.T) {
 		},
 		{
 			name: "no error, go-git",
-			err:  resolve("v0.0.1"),
+			err:  resolve("9d3d5d486d4c9414321a2df56f2e007c4c2c8fab"),
 		},
 		{
 			name:         "exit status 1, a hash cat-file -e does not have, native git",
@@ -723,19 +806,21 @@ func TestNotFound(t *testing.T) {
 		},
 		{
 			name: "reference not found, go-git",
-			err:  resolve("v0.0.2"),
+			err:  resolve("9d3d5d486d4c9414321a2df56f2e007c4c2c8fac"),
 			want: true,
 		},
 		{
-			name: "a name the revision parser rejects, go-git",
-			err:  resolve("v9@9"),
+			// What ResolveRevision returns for a tag whose commit is not in
+			// the repository, such as one cut off with the history.
+			name: "a tag whose commit is not there, go-git",
+			err:  errors.Wrap(plumbing.ErrObjectNotFound, "resolve 1e2d3c4b5a69788796a5b4c3d2e1f00f1e2d3c0f"),
 			want: true,
 		},
 		{
 			// What ResolveRevision returns when a file it reads cannot be
-			// read, such as the loose object of the parent for main~1.
+			// read, such as the loose object of the commit a tag points to.
 			name: "a file of the repository cannot be read, go-git",
-			err:  errors.Wrap(&fs.PathError{Op: "open", Path: filepath.Join(dir, ".git", "objects", "0f", "1e2d3c4b5a69788796a5b4c3d2e1f00f1e2d3c"), Err: fs.ErrPermission}, "resolve main~1"),
+			err:  errors.Wrap(&fs.PathError{Op: "open", Path: filepath.Join(dir, ".git", "objects", "0f", "1e2d3c4b5a69788796a5b4c3d2e1f00f1e2d3c"), Err: fs.ErrPermission}, "resolve 1e2d3c4b5a69788796a5b4c3d2e1f00f1e2d3c0f"),
 		},
 	}
 	for _, tt := range tests {
@@ -857,6 +942,10 @@ func setup(url string) error {
 		// vuls-data-raw-test with a tag, v1@2, whose name go-git's revision
 		// parser rejects.
 		{fixture: "vuls-data-raw-test-at-tag", tags: []string{"vuls-data-raw-test-at-tag"}},
+		// vuls-data-raw-test with a branch, release-gdead, whose name ends
+		// as what git describe writes, and a ref of one character outside
+		// refs/heads and refs/tags, refs/g.
+		{fixture: "vuls-data-raw-test-refs", tags: []string{"vuls-data-raw-test-refs"}},
 	} {
 		bs, err := os.ReadFile(filepath.Join("testdata", "fixtures", fmt.Sprintf("%s.tar.zst", f.fixture)))
 		if err != nil {
