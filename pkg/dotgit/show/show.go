@@ -53,7 +53,10 @@ type Commit struct {
 // text to what it parses. The go-git path resolves revision with go-git's
 // ResolveRevision, which knows fewer revision forms than git and skips some
 // parts it does not apply: for main^{tree}, main:<path> or main@{1}, it
-// returns main's commit, where native git returns an error.
+// returns main's commit. For the first two, which name a tree and a blob,
+// native git returns an error. For main@{1}, it returns the commit main
+// pointed to before, if main's reflog has one, so the two paths may return
+// different commits.
 func Show(repository, revision string, opts ...Option) (Commit, error) {
 	options := &options{
 		useNativeGit: true,
