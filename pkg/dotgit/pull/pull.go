@@ -5,7 +5,6 @@ import (
 	"encoding/json/v2"
 	stderrors "errors"
 	"fmt"
-	"io/fs"
 	"log/slog"
 	"os"
 	"os/exec"
@@ -14,6 +13,7 @@ import (
 
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
+	"github.com/go-git/go-git/v5/plumbing/object"
 	"github.com/go-git/go-git/v5/plumbing/storer"
 	ocispec "github.com/opencontainers/image-spec/specs-go/v1"
 	"github.com/pkg/errors"
@@ -192,59 +192,57 @@ func Pull(repository string, opts ...Option) error {
 					return git.CheckoutOptions{Branch: ref.Name(), Keep: true}, nil
 				}
 
-				ref, err = r.Reference(plumbing.NewTagReferenceName(options.checkout), false)
-				if err != nil && !errors.Is(err, plumbing.ErrReferenceNotFound) {
-					return git.CheckoutOptions{}, errors.Wrapf(err, "get %q as tag", options.checkout)
-				}
-				if err == nil {
-					return git.CheckoutOptions{Hash: ref.Hash(), Keep: true}, nil
+				// Not a branch. go-git checks out the commit that the target
+				// names, found as native git finds it, and not
+				// plumbing.NewHash of the name, which makes the zero hash of
+				// any name but a full hash, and go-git checks out the zero hash
+				// as master.
+				//
+				// git takes a full hash as the object it names before any ref,
+				// so that a ref of the same name, such as refs/<hash>, cannot
+				// stand in for a pinned commit.
+				if plumbing.IsHash(options.checkout) {
+					return commit(r, plumbing.NewHash(options.checkout), repository, options.checkout)
 				}
 
-				// Neither a branch nor a tag. Native git looks a name up as a
-				// ref before anything else, by git's rules: as it is, such as
-				// refs/heads/main or ORIG_HEAD, under refs/, such as heads/main
-				// or g for refs/g, and as a remote-tracking branch. So does
-				// go-git here, so that no ref is refused or reported missing
-				// for what its name looks like, such as
-				// refs/heads/release-gdead, and outside go-git's revision
-				// parser, which rejects a ref such as refs/tags/v1@2. go-git
-				// reads a name as it is only if it is under refs/ or made of
-				// upper case letters and "_".
-				//
-				// go-git checks out the commit found, not plumbing.NewHash of
-				// the name, which makes the zero hash of any name but a full
-				// hash, and go-git checks out the zero hash as master.
+				// Then the first ref that git's rules find: the name as it is,
+				// such as refs/heads/main, under refs/, such as heads/main or
+				// g for refs/g, under refs/tags/ and refs/heads/, and as a
+				// remote-tracking branch. The ref found is the target, even if
+				// it names no commit, as in git. So no ref is refused or
+				// reported missing for what its name looks like, such as
+				// refs/heads/release-gdead, and go-git's revision parser, which
+				// rejects a ref such as refs/tags/v1@2, is not asked.
 				for _, rule := range plumbing.RefRevParseRules {
-					name := plumbing.ReferenceName(fmt.Sprintf(rule, options.checkout))
-					if !name.IsSafe() {
+					name := fmt.Sprintf(rule, options.checkout)
+					if !strings.HasPrefix(name, "refs/") {
+						// git also reads a file of the repository outside refs/,
+						// such as ORIG_HEAD, as a ref if it holds a hash or a
+						// ref, and go-git reads the hex that one such as
+						// COMMIT_EDITMSG begins with as a hash, whatever follows.
+						if !filepath.IsLocal(name) {
+							continue
+						}
+						if fi, err := os.Stat(filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference, ".git", name)); err == nil && fi.Mode().IsRegular() {
+							return git.CheckoutOptions{}, errors.Errorf("go-git does not read %q, a file of the repository outside refs/, as git does, use native git", options.checkout)
+						}
 						continue
 					}
-					ref, err := storer.ResolveReference(r.Storer, name)
+					ref, err := storer.ResolveReference(r.Storer, plumbing.ReferenceName(name))
 					if errors.Is(err, plumbing.ErrReferenceNotFound) {
 						continue
 					}
 					if err != nil {
 						return git.CheckoutOptions{}, errors.Wrapf(err, "get %q as ref", name)
 					}
-					// The commit the ref points to, through a tag. A file of
-					// the repository that go-git reads as a ref, such as
-					// COMMIT_EDITMSG, points to none, and git does not read it
-					// as a ref, so the next rule is tried.
-					h, err := r.ResolveRevision(plumbing.Revision(ref.Hash().String()))
-					if err != nil {
-						if notFound(err, false) {
-							continue
-						}
-						return git.CheckoutOptions{}, errors.Wrapf(err, "get %q as commit", name)
-					}
-					return git.CheckoutOptions{Hash: *h, Keep: true}, nil
+					return commit(r, ref.Hash(), repository, options.checkout)
 				}
 
-				// No ref has the name. A name for which ResolveRevision may
-				// find another commit than native git is refused. One is an
-				// expression, as ResolveRevision skips parts of some, such as
-				// ^{tree}: a ref name can hold none of "~", "^", ":", "@{" or
-				// "..", nor be "@", which is HEAD.
+				// No ref has the name. A name that git may read as something
+				// else is refused, as go-git does not read it as git does. One
+				// is an expression: a ref name can hold none of "~", "^", ":",
+				// "@{" or "..", nor be "@", which is HEAD. go-git's
+				// ResolveRevision skips parts of some, such as ^{tree}.
 				if strings.ContainsAny(options.checkout, "~^:") || strings.Contains(options.checkout, "@{") || strings.Contains(options.checkout, "..") || options.checkout == "@" {
 					return git.CheckoutOptions{}, errors.Errorf("go-git checks out no expression, such as %q, use native git", options.checkout)
 				}
@@ -257,28 +255,8 @@ func Pull(repository string, opts ...Option) error {
 					return git.CheckoutOptions{}, errors.Errorf("go-git checks out no abbreviated hash, such as %q, use native git", options.checkout)
 				}
 
-				// git reads any other name but a full hash only as a ref, so
-				// it is not there. Not asking ResolveRevision about it also
-				// keeps it from reading one such as 9d3 or 0000g as an
-				// abbreviated hash, which git does not, and from going through
-				// the hash of every packed object to find it.
-				if !plumbing.IsHash(options.checkout) {
-					return git.CheckoutOptions{}, notInRepository(errors.Wrapf(plumbing.ErrReferenceNotFound, "get %q as ref", options.checkout), repository, options.checkout)
-				}
-
-				// A full hash, resolved in the repository opened above, not
-				// through contains, which would open it again and load every
-				// pack index a second time.
-				h, err := r.ResolveRevision(plumbing.Revision(options.checkout))
-				if err != nil {
-					err = errors.Wrapf(err, "resolve %s", options.checkout)
-					if notFound(err, false) {
-						return git.CheckoutOptions{}, notInRepository(err, repository, options.checkout)
-					}
-					return git.CheckoutOptions{}, errors.Wrapf(err, "get %q as commit", options.checkout)
-				}
-
-				return git.CheckoutOptions{Hash: *h, Keep: true}, nil
+				// git reads any other name only as a ref, so it is not there.
+				return git.CheckoutOptions{}, notInRepository(errors.Wrapf(plumbing.ErrReferenceNotFound, "get %q as ref", options.checkout), repository, options.checkout)
 			}()
 			if err != nil {
 				return errors.Wrap(err, "get checkout options")
@@ -340,8 +318,8 @@ func Pull(repository string, opts ...Option) error {
 // notInRepository wraps err for a checkout target, a tag or a commit, that is
 // not in the dotgit pulled from repository: the error of switch on the native
 // path, and on the go-git path, where the target is looked up before the
-// checkout, that of ResolveRevision for a full hash, and for any other name,
-// that it is no ref. vuls-data-db keeps only the last
+// checkout, that the object it names is not there, or for a name that is no
+// ref, that it is no ref. vuls-data-db keeps only the last
 // commits of a dotgit's history, so a commit pinned before it truncated the
 // history is gone from a repository that is otherwise fine.
 func notInRepository(err error, repository, checkout string) error {
@@ -358,13 +336,12 @@ func notInRepository(err error, repository, checkout string) error {
 // switch, which follows the message, says which. Without an exit status, git
 // could not be run.
 //
-// go-git: ResolveRevision is asked only about a full hash, the target's or the
-// one a ref points to, in the repository Pull has already opened. It answers
-// plumbing.ErrReferenceNotFound for an object that is neither a commit nor a
-// tag, or that it cannot read, and its other errors, such as for a tag whose
-// commit is not there, also leave nothing to check out. Only an
-// *fs.PathError, from a file of the repository that cannot be read, says that
-// the check could not be made.
+// go-git: err is from looking up the object that the target names, its full
+// hash or the one its ref points to, in the repository Pull has already
+// opened. plumbing.ErrObjectNotFound says that it is not there, as cat-file -e
+// exiting with 1 does. Any other error, such as an *fs.PathError from a file
+// of the repository that cannot be read, says that the check could not be
+// made.
 func notFound(err error, useNativeGit bool) bool {
 	if err == nil {
 		return false
@@ -373,8 +350,34 @@ func notFound(err error, useNativeGit bool) bool {
 		ee, ok := stderrors.AsType[*exec.ExitError](err)
 		return ok && (ee.ExitCode() == 1 || ee.ExitCode() == 128)
 	}
-	_, ok := stderrors.AsType[*fs.PathError](err)
-	return !ok
+	return errors.Is(err, plumbing.ErrObjectNotFound)
+}
+
+// commit returns the options to check out the commit that hash names, through
+// any tags, as native git takes the target: if there is no such object, the
+// target is not in the repository, and if the object names no commit, as a
+// tree, a blob or a tag of one does, the target is there but is no commit.
+func commit(r *git.Repository, hash plumbing.Hash, repository, checkout string) (git.CheckoutOptions, error) {
+	o, err := r.Object(plumbing.AnyObject, hash)
+	if err != nil {
+		err = errors.Wrapf(err, "get %s", hash)
+		if notFound(err, false) {
+			return git.CheckoutOptions{}, notInRepository(err, repository, checkout)
+		}
+		return git.CheckoutOptions{}, errors.Wrapf(err, "get %q as commit", checkout)
+	}
+	for {
+		switch t := o.(type) {
+		case *object.Commit:
+			return git.CheckoutOptions{Hash: t.Hash, Keep: true}, nil
+		case *object.Tag:
+			if o, err = t.Object(); err != nil {
+				return git.CheckoutOptions{}, errors.Wrapf(err, "get %s, which tag %s points to", t.Target, t.Hash)
+			}
+		default:
+			return git.CheckoutOptions{}, errors.Errorf("%s names a %s, not a commit", checkout, o.Type())
+		}
+	}
 }
 
 // abbreviated reports whether git reads name as an abbreviated hash: a name of
