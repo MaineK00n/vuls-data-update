@@ -6,7 +6,10 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"net/url"
+	"strconv"
+	"strings"
 	"testing"
+	"time"
 
 	"github.com/google/go-cmp/cmp"
 
@@ -109,6 +112,9 @@ func TestDo(t *testing.T) {
 }
 
 func TestCheckScopes(t *testing.T) {
+	// "unexpected response status" answers 500, which Do retries.
+	t.Cleanup(github.ShortenRetryWaits(time.Millisecond))
+
 	type args struct {
 		token    string
 		required []string
@@ -216,6 +222,161 @@ func TestCheckScopes(t *testing.T) {
 
 			if err := github.CheckScopes(tt.args.token, tt.args.required, github.WithHTTPClient(ts.Client())); (err != nil) != tt.wantErr {
 				t.Errorf("CheckScopes() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
+
+func TestDo_retry(t *testing.T) {
+	t.Cleanup(github.ShortenRetryWaits(time.Millisecond))
+
+	type response struct {
+		status int
+		header http.Header
+		body   string
+		// hangUp closes the connection instead of answering.
+		hangUp bool
+	}
+	tests := []struct {
+		name   string
+		method string
+		// responses are answered in turn, and the last one again once they
+		// run out.
+		responses    []response
+		wantRequests int
+		wantErr      bool
+		// wantErrContains is a part of the error that tells what GitHub said.
+		wantErrContains string
+	}{
+		{
+			name:         "5xx, then success",
+			method:       http.MethodGet,
+			responses:    []response{{status: http.StatusBadGateway}, {status: http.StatusOK}},
+			wantRequests: 2,
+		},
+		{
+			name:         "5xx until the retries run out",
+			method:       http.MethodGet,
+			responses:    []response{{status: http.StatusInternalServerError}},
+			wantRequests: 5,
+			wantErr:      true,
+		},
+		{
+			name:         "DELETE, 5xx, then success",
+			method:       http.MethodDelete,
+			responses:    []response{{status: http.StatusBadGateway}, {status: http.StatusNoContent}},
+			wantRequests: 2,
+		},
+		{
+			name:         "connection error, then success",
+			method:       http.MethodGet,
+			responses:    []response{{hangUp: true}, {status: http.StatusOK}},
+			wantRequests: 2,
+		},
+		{
+			name:         "429, then success",
+			method:       http.MethodGet,
+			responses:    []response{{status: http.StatusTooManyRequests}, {status: http.StatusOK}},
+			wantRequests: 2,
+		},
+		{
+			name:         "403 with Retry-After, then success",
+			method:       http.MethodGet,
+			responses:    []response{{status: http.StatusForbidden, header: http.Header{"Retry-After": []string{"0"}}}, {status: http.StatusOK}},
+			wantRequests: 2,
+		},
+		{
+			name:   "403 of the primary rate limit, then success",
+			method: http.MethodGet,
+			responses: []response{
+				{
+					status: http.StatusForbidden,
+					header: http.Header{"X-Ratelimit-Remaining": []string{"0"}, "X-Ratelimit-Reset": []string{strconv.FormatInt(time.Now().Add(-time.Hour).Unix(), 10)}},
+					body:   `{"message":"API rate limit exceeded for installation ID 1."}`,
+				},
+				{status: http.StatusOK},
+			},
+			wantRequests: 2,
+		},
+		{
+			name:   "403 of the secondary rate limit without headers, then success",
+			method: http.MethodGet,
+			responses: []response{
+				{status: http.StatusForbidden, body: `{"message":"You have exceeded a secondary rate limit. Please wait a few minutes before you try again."}`},
+				{status: http.StatusOK},
+			},
+			wantRequests: 2,
+		},
+		{
+			name:            "403 that is not a rate limit",
+			method:          http.MethodGet,
+			responses:       []response{{status: http.StatusForbidden, body: `{"message":"Resource not accessible by integration"}`}},
+			wantRequests:    1,
+			wantErr:         true,
+			wantErrContains: "Resource not accessible by integration",
+		},
+		{
+			name:            "rate limit that asks for a longer wait than the limit",
+			method:          http.MethodGet,
+			responses:       []response{{status: http.StatusForbidden, header: http.Header{"Retry-After": []string{"3600"}}, body: `{"message":"You have exceeded a secondary rate limit."}`}},
+			wantRequests:    1,
+			wantErr:         true,
+			wantErrContains: `retry-after: "3600"`,
+		},
+		{
+			name:         "404",
+			method:       http.MethodDelete,
+			responses:    []response{{status: http.StatusNotFound}},
+			wantRequests: 1,
+			wantErr:      true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var requests int
+			ts := httptest.NewTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				res := tt.responses[min(requests, len(tt.responses)-1)]
+				requests++
+
+				if res.hangUp {
+					conn, _, err := http.NewResponseController(w).Hijack()
+					if err != nil {
+						http.Error(w, err.Error(), http.StatusInternalServerError)
+						return
+					}
+					if err := conn.Close(); err != nil {
+						t.Errorf("close connection: %v", err)
+					}
+					return
+				}
+
+				for k, vs := range res.header {
+					for _, v := range vs {
+						w.Header().Add(k, v)
+					}
+				}
+				w.WriteHeader(res.status)
+				if _, err := w.Write([]byte(res.body)); err != nil {
+					t.Errorf("write body: %v", err)
+				}
+			}))
+
+			err := github.Do(ts.Client(), tt.method, "https://api.github.com/orgs/vulsio/packages/container/vuls-data-db/versions", "token", func(resp *http.Response) error {
+				switch resp.StatusCode {
+				case http.StatusOK, http.StatusNoContent:
+					return nil
+				default:
+					return fmt.Errorf("unexpected response status. expected: %d, actual: %d", []int{http.StatusOK, http.StatusNoContent}, resp.StatusCode)
+				}
+			})
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Do() error = %v, wantErr %v", err, tt.wantErr)
+			}
+			if err != nil && !strings.Contains(err.Error(), tt.wantErrContains) {
+				t.Errorf("Do() error = %v, want it to contain %q", err, tt.wantErrContains)
+			}
+			if requests != tt.wantRequests {
+				t.Errorf("Do() sent %d requests, want %d", requests, tt.wantRequests)
 			}
 		})
 	}
