@@ -165,7 +165,11 @@ func TestEnsureWritten(t *testing.T) {
 		entries []string
 		// link makes root a symbolic link to the directory the entries are
 		// created in, as a --dir given as a link is.
-		link    bool
+		link bool
+		// links are names under root made symbolic links to a directory
+		// outside root, which holds outside, created like entries.
+		links   []string
+		outside []string
 		wantErr bool
 	}{
 		{
@@ -192,6 +196,18 @@ func TestEnsureWritten(t *testing.T) {
 				root: "dangling",
 			},
 			link:    true,
+			wantErr: true,
+		},
+		{
+			// Only root itself is followed. A link below it is not a file the
+			// fetch wrote, whatever it points at.
+			name: "a link under root is not output",
+			args: args{
+				root: "link-below",
+			},
+			entries: []string{".git/", ".git/HEAD"},
+			links:   []string{"2024"},
+			outside: []string{"CVE-2024-0001.json"},
 			wantErr: true,
 		},
 		{
@@ -306,6 +322,32 @@ func TestEnsureWritten(t *testing.T) {
 			wantErr: true,
 		},
 		{
+			// A required section is no exception: a link would let files
+			// outside root stand in for it.
+			name: "required section is a symbolic link",
+			args: args{
+				root: "required-link",
+				opts: []util.EnsureOption{util.WithRequire("origin")},
+			},
+			entries: []string{"weakness/79.json"},
+			links:   []string{"origin"},
+			outside: []string{"advisory.json"},
+			wantErr: true,
+		},
+		{
+			// Nor is a directory on the way to one, which the system follows
+			// even where the last element is not.
+			name: "required path through a linked directory",
+			args: args{
+				root: "required-link-parent",
+				opts: []util.EnsureOption{util.WithRequire(filepath.Join("9", "definitions"))},
+			},
+			entries: []string{"repository-to-cpe.json"},
+			links:   []string{"9"},
+			outside: []string{"definitions/definition.json"},
+			wantErr: true,
+		},
+		{
 			// A run that is one part of a whole can rightly fetch nothing.
 			name: "empty allowed",
 			args: args{
@@ -371,21 +413,32 @@ func TestEnsureWritten(t *testing.T) {
 				}
 			}
 
-			for _, e := range tt.entries {
-				if name, ok := strings.CutSuffix(e, "/"); ok {
-					if err := os.MkdirAll(filepath.Join(d, name), 0750); err != nil {
+			outside := filepath.Join(t.TempDir(), "outside")
+			for _, tree := range []struct {
+				dir     string
+				entries []string
+			}{{dir: d, entries: tt.entries}, {dir: outside, entries: tt.outside}} {
+				for _, e := range tree.entries {
+					if name, ok := strings.CutSuffix(e, "/"); ok {
+						if err := os.MkdirAll(filepath.Join(tree.dir, name), 0750); err != nil {
+							t.Fatal("unexpected error:", err)
+						}
+						continue
+					}
+					if err := os.MkdirAll(filepath.Dir(filepath.Join(tree.dir, e)), 0750); err != nil {
 						t.Fatal("unexpected error:", err)
 					}
-					continue
+					f, err := os.Create(filepath.Join(tree.dir, e))
+					if err != nil {
+						t.Fatal("unexpected error:", err)
+					}
+					f.Close()
 				}
-				if err := os.MkdirAll(filepath.Dir(filepath.Join(d, e)), 0750); err != nil {
+			}
+			for _, l := range tt.links {
+				if err := os.Symlink(outside, filepath.Join(d, l)); err != nil {
 					t.Fatal("unexpected error:", err)
 				}
-				f, err := os.Create(filepath.Join(d, e))
-				if err != nil {
-					t.Fatal("unexpected error:", err)
-				}
-				f.Close()
 			}
 
 			if err := util.EnsureWritten(root, tt.args.opts...); (err != nil) != tt.wantErr {

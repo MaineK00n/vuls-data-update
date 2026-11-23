@@ -211,10 +211,11 @@ func (o requireOption) apply(opts *ensureOption) {
 // A path can be any depth below root ("origin/mitre", or "9/definitions" built
 // from a version the fetch saw), where WithIgnore matches only names directly
 // under root. A directory requires a file anywhere beneath it, and a path that
-// names a file requires that file. A path that is absolute or leaves root is
-// an error. There are no patterns: a fetcher that needs every version to hold
-// a section names each one. Like WithIgnore, the option states the whole set,
-// and passing it again replaces it.
+// names a file requires that file. A path that is a symbolic link, or goes
+// through one, holds nothing, since only root itself is followed. A path that
+// is absolute or leaves root is an error. There are no patterns: a fetcher
+// that needs every version to hold a section names each one. Like WithIgnore,
+// the option states the whole set, and passing it again replaces it.
 func WithRequire(paths ...string) EnsureOption {
 	return requireOption(paths)
 }
@@ -261,7 +262,7 @@ func EnsureWritten(root string, opts ...EnsureOption) error {
 		o.apply(options)
 	}
 
-	switch ok, err := holdsFile(root, options.ignores); {
+	switch ok, err := holdsFile(root, ".", options.ignores); {
 	case err != nil:
 		return errors.Wrapf(err, "check %s", root)
 	case !ok && options.allowEmpty:
@@ -276,7 +277,7 @@ func EnsureWritten(root string, opts ...EnsureOption) error {
 			return errors.Errorf("unexpected required path. expected: a path under %q, actual: %q", root, p)
 		}
 
-		switch ok, err := holdsFile(filepath.Join(root, p), nil); {
+		switch ok, err := holdsFile(root, p, nil); {
 		case err != nil:
 			return errors.Wrapf(err, "check %s", filepath.Join(root, p))
 		case !ok:
@@ -290,31 +291,48 @@ func EnsureWritten(root string, opts ...EnsureOption) error {
 	return nil
 }
 
-// holdsFile reports whether path is a regular file, or a directory with one
-// anywhere beneath it, leaving out the entries directly under path that skips
-// names. A path that does not exist holds nothing, and neither does a tree of
-// empty directories: a fetcher that unpacks an archive or clones a repository
-// can leave those behind without writing anything.
+// holdsFile reports whether rel, a local path under root, is a regular file or
+// a directory with one anywhere beneath it, leaving out the entries directly
+// under it that skips names. A path that does not exist holds nothing, and
+// neither does a tree of empty directories: a fetcher that unpacks an archive
+// or clones a repository can leave those behind without writing anything.
 //
-// path itself may be a symbolic link, as a --dir can be: RemoveAll and Write
+// root itself may be a symbolic link, as a --dir can be: RemoveAll and Write
 // go through one, so the check follows it too. WalkDir would not, not even at
-// its root, so it is resolved first. Links below it are not followed.
-func holdsFile(path string, skips []string) (bool, error) {
-	root, err := filepath.EvalSymlinks(path)
+// its root, so it is resolved first. Nothing below root is followed, in rel or
+// beneath it: a link is not a file the fetch wrote, whatever it points at, so
+// a path that is one, or is reached through one, holds nothing.
+func holdsFile(root, rel string, skips []string) (bool, error) {
+	path, err := filepath.EvalSymlinks(root)
 	if err != nil {
 		if errors.Is(err, fs.ErrNotExist) {
 			return false, nil
 		}
-		return false, errors.Wrapf(err, "resolve %s", path)
+		return false, errors.Wrapf(err, "resolve %s", root)
+	}
+
+	// WalkDir does not follow its root when that is a link, but the system
+	// follows one in every element before it, so each is looked at on the way
+	// down.
+	for name := range strings.SplitSeq(filepath.Clean(rel), string(filepath.Separator)) {
+		path = filepath.Join(path, name)
+		switch fi, err := os.Lstat(path); {
+		case errors.Is(err, fs.ErrNotExist):
+			return false, nil
+		case err != nil:
+			return false, errors.Wrapf(err, "lstat %s", path)
+		case fi.Mode()&fs.ModeSymlink != 0:
+			return false, nil
+		}
 	}
 
 	found := false
-	if err := filepath.WalkDir(root, func(p string, d fs.DirEntry, err error) error {
+	if err := filepath.WalkDir(path, func(p string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
 		}
 
-		if filepath.Dir(p) == root && slices.Contains(skips, d.Name()) {
+		if filepath.Dir(p) == path && slices.Contains(skips, d.Name()) {
 			if d.IsDir() {
 				return fs.SkipDir
 			}
@@ -328,7 +346,7 @@ func holdsFile(path string, skips []string) (bool, error) {
 
 		return nil
 	}); err != nil {
-		return false, errors.Wrapf(err, "walk %s", root)
+		return false, errors.Wrapf(err, "walk %s", path)
 	}
 
 	return found, nil
