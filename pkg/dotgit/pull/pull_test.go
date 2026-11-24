@@ -411,6 +411,9 @@ func TestPull_retry(t *testing.T) {
 		// breaks is how many downloads of the layer break off before one goes
 		// through.
 		breaks int
+		// beforeAnswer breaks the downloads off before the registry answers,
+		// which fails the request rather than the body.
+		beforeAnswer bool
 		// corrupt answers the whole layer, but with zeros for its bytes, which
 		// fails the extraction with no download breaking off.
 		corrupt       bool
@@ -427,6 +430,20 @@ func TestPull_retry(t *testing.T) {
 		{
 			name:          "broken off every time",
 			breaks:        100,
+			wantDownloads: 4,
+			hasError:      true,
+		},
+		{
+			name:          "request broken off once",
+			breaks:        1,
+			beforeAnswer:  true,
+			wantDownloads: 2,
+			golden:        "testdata/golden/vuls-data-raw-test.tar.zst",
+		},
+		{
+			name:          "request broken off every time",
+			breaks:        100,
+			beforeAnswer:  true,
 			wantDownloads: 4,
 			hasError:      true,
 		},
@@ -454,6 +471,10 @@ func TestPull_retry(t *testing.T) {
 					return
 				}
 
+				if tt.beforeAnswer {
+					panic(http.ErrAbortHandler)
+				}
+
 				rec := httptest.NewRecorder()
 				reg.ServeHTTP(rec, r)
 				maps.Copy(w.Header(), rec.Header())
@@ -473,8 +494,18 @@ func TestPull_retry(t *testing.T) {
 				panic(http.ErrAbortHandler)
 			}))
 
+			// A connection of its own for every request, as net/http resends by
+			// itself a request that fails on a reused connection before the
+			// answer, which would take the place of the retry under test.
+			tr, ok := ts.Client().Transport.(*http.Transport)
+			if !ok {
+				t.Fatalf("unexpected transport type. expected: %T, actual: %T", &http.Transport{}, ts.Client().Transport)
+			}
+			tr = tr.Clone()
+			tr.DisableKeepAlives = true
+
 			originalTransport := http.DefaultTransport
-			http.DefaultTransport = ts.Client().Transport
+			http.DefaultTransport = tr
 			t.Cleanup(func() {
 				http.DefaultTransport = originalTransport
 			})
