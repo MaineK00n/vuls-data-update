@@ -378,8 +378,8 @@ func parsePage(page releaseinfo.Page, name, raw string) ([]update, error) {
 	// from the prose, a label naming another build, or a calendar whose Type
 	// column was renamed and so reads as a history would each name KBs after the
 	// wrong release -- the last also chaining its hotpatches across the
-	// baselines between them. So a history's label has to name its build, and its rows have to be of
-	// that build.
+	// baselines between them. So a history's label has to name its build, and
+	// its rows have to be of that build.
 	releases := make(map[int]string)
 	// majors is the build each release history covers, by its index in Tables.
 	majors := make(map[int]int)

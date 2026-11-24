@@ -26,9 +26,13 @@ type Page struct {
 // every one of them and says nothing that tells them apart.
 //
 // It is stored for the release name, which nothing else on the page carries,
-// and for nothing else. The build a table covers is in the Build column of
-// every one of its rows, so a label Microsoft restyles costs the name and not
-// the chain.
+// and extract holds a release history to it: the label has to end in "(OS
+// build <major>)", and every row's Build has to be of that major. The label is
+// the only thing tying a history to its release, and one picked up from
+// elsewhere on the page would file the history's KBs under the wrong release
+// with nothing downstream to notice. So a label Microsoft restyles away from
+// that form fails extraction rather than costing only the name, and is met by
+// changing extract and rerunning it against origin/, as for a changed column.
 type Table struct {
 	Label  string   `json:"label,omitempty"`
 	Header []string `json:"header,omitempty"`
