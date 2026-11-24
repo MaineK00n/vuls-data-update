@@ -1,0 +1,150 @@
+{
+	"document": {
+		"acknowledgments": [
+			{
+				"summary": "Internally discovered and reported by Gwendal Guegniaud of the Fortinet Product Security team with the use of the frontier AI model: Claude Mythos."
+			}
+		],
+		"category": "Fortinet PSIRT Advisories",
+		"csaf_version": "2.0",
+		"publisher": {
+			"category": "vendor",
+			"contact_details": "https://fortiguard.fortinet.com/faq/psirt-contact",
+			"issuing_authority": "Fortinet PSIRT",
+			"name": "Fortinet PSIRT",
+			"namespace": "https://fortiguard.fortinet.com/psirt"
+		},
+		"title": "Improper limitation of a pathname to a restricted directory",
+		"tracking": {
+			"current_release_date": "2026-11-10T00:00:00",
+			"id": "FG-IR-26-205",
+			"initial_release_date": "2026-11-10T00:00:00",
+			"revision_history": [
+				{
+					"date": "2026-11-10T00:00:00",
+					"number": "1",
+					"summary": "Initial Publication"
+				}
+			],
+			"status": "final",
+			"version": "0"
+		}
+	},
+	"product_tree": {
+		"branches": [
+			{
+				"branches": [
+					{
+						"branches": [
+							{
+								"category": "product_version",
+								"name": "FortiMail/>= 8.0.0 and <= 8.0.1",
+								"product": {
+									"name": "FortiMail",
+									"product_id": "FortiMail >= 8.0.0 and <= 8.0.1"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "FortiMail/>= 7.6.0 and <= 7.6.6",
+								"product": {
+									"name": "FortiMail",
+									"product_id": "FortiMail >= 7.6.0 and <= 7.6.6"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "FortiMail/>= 7.4.0 and <= 7.4.8",
+								"product": {
+									"name": "FortiMail",
+									"product_id": "FortiMail >= 7.4.0 and <= 7.4.8"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "FortiMail/7.2 all versions",
+								"product": {
+									"name": "FortiMail",
+									"product_id": "FortiMail 7.2 all versions"
+								}
+							}
+						],
+						"category": "product",
+						"name": "FortiMail"
+					}
+				],
+				"category": "vendor",
+				"name": "Fortinet PSIRT"
+			}
+		]
+	},
+	"vulnerabilities": [
+		{
+			"cve": "CVE-2026-126153",
+			"cwe": {
+				"id": "CWE-22",
+				"name": "Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')"
+			},
+			"notes": [
+				{
+					"category": "summary",
+					"text": "Path Traversal in FortiMail\n\n",
+					"title": "Summary"
+				},
+				{
+					"category": "general",
+					"text": "Please note that Fortinet has remediated this issue on Oct 05, 2026 in FortiMail Cloud by updating all the firmwares to v7.6.7 GA or v8.0.2 GA, hence the FortiMail Cloud customers need not perform any action.",
+					"title": "Additional info"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"FortiMail >= 8.0.0 and <= 8.0.1",
+					"FortiMail >= 7.6.0 and <= 7.6.6",
+					"FortiMail >= 7.4.0 and <= 7.4.8",
+					"FortiMail 7.2 all versions"
+				],
+				"known_not_affected": [
+					"FortiMail-8.0.2",
+					"FortiMail-7.6.7",
+					"FortiMail-7.4.9"
+				]
+			},
+			"references": [
+				{
+					"summary": "An Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal') vulnerability [CWE-22] in FortiMai may allow an unauthenticated attacker to execute unauthorized commands via crafted requests.",
+					"url": "https://fortiguard.fortinet.com/psirt/FG-IR-26-205"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "FortiMail 8.0: Upgrade to 8.0.2 or above\nFortiMail 7.6: Upgrade to 7.6.7 or above\nFortiMail 7.4: Upgrade to 7.4.9 or above\nFortiMail 7.2: Migrate to a fixed release",
+					"product_ids": [
+						"FortiMail"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 7.5,
+						"baseSeverity": "HIGH",
+						"vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:N/E:P/RL:O/RC:C",
+						"version": "3.1"
+					},
+					"products": [
+						"FortiMail"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Execute unauthorized code or commands"
+				}
+			],
+			"title": "FortiMail - HIGH - FG-IR-26-205"
+		}
+	]
+}

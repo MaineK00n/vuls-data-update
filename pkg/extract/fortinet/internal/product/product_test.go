@@ -108,6 +108,97 @@ func TestIsExactVersion(t *testing.T) {
 	}
 }
 
+func TestNonNumericVersioned(t *testing.T) {
+	tests := []struct {
+		name string
+		rt   ccRangeTypes.RangeType
+		want bool
+	}{
+		{name: "FortiSASE", rt: ccRangeTypes.RangeTypeFortinetFortiSASE, want: true},
+		{name: "FortiSASE-Sovereign", rt: ccRangeTypes.RangeTypeFortinetFortiSASESovereign, want: true},
+		{name: "FortiOS", rt: ccRangeTypes.RangeTypeFortinetFortiOS, want: false},
+		{name: "unknown range type", rt: ccRangeTypes.RangeTypeUnknown, want: false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := product.NonNumericVersioned(tt.rt); got != tt.want {
+				t.Errorf("NonNumericVersioned(%q) = %v, want %v", tt.rt, got, tt.want)
+			}
+		})
+	}
+}
+
+func TestValidateVersion(t *testing.T) {
+	type args struct {
+		rt  ccRangeTypes.RangeType
+		ver string
+	}
+	tests := []struct {
+		name    string
+		args    args
+		wantErr bool
+	}{
+		// The non-numeric scheme: numbers and single lowercase letters.
+		{name: "non-numeric: milestone", args: args{rt: ccRangeTypes.RangeTypeFortinetFortiSASE, ver: "25.2.a"}},
+		{name: "non-numeric: maintenance release of a milestone", args: args{rt: ccRangeTypes.RangeTypeFortinetFortiSASE, ver: "25.1.a.2"}},
+		{name: "non-numeric: numeric release", args: args{rt: ccRangeTypes.RangeTypeFortinetFortiSASE, ver: "26.3.1"}},
+		{name: "non-numeric: hotfix of a numeric release", args: args{rt: ccRangeTypes.RangeTypeFortinetFortiSASE, ver: "26.3.1.a"}},
+		{name: "non-numeric: Sovereign milestone", args: args{rt: ccRangeTypes.RangeTypeFortinetFortiSASESovereign, ver: "26.2.c"}},
+		{name: "non-numeric: underscore-joined letter", args: args{rt: ccRangeTypes.RangeTypeFortinetFortiSASE, ver: "26.3.1_a"}, wantErr: true},
+		{name: "non-numeric: letter joined to a number", args: args{rt: ccRangeTypes.RangeTypeFortinetFortiSASE, ver: "24.4.b1"}, wantErr: true},
+		{name: "non-numeric: multi-letter component", args: args{rt: ccRangeTypes.RangeTypeFortinetFortiSASE, ver: "25.2.alpha"}, wantErr: true},
+		// The numeric scheme: numbers only.
+		{name: "numeric: release", args: args{rt: ccRangeTypes.RangeTypeFortinetFortiOS, ver: "7.4.3"}},
+		{name: "numeric: milestone", args: args{rt: ccRangeTypes.RangeTypeFortinetFortiOS, ver: "25.2.a"}, wantErr: true},
+		{name: "numeric: wildcard component", args: args{rt: ccRangeTypes.RangeTypeFortinetFortiOS, ver: "7.0.x"}, wantErr: true},
+		{name: "numeric: leading v", args: args{rt: ccRangeTypes.RangeTypeFortinetFortiOS, ver: "v7.0.0"}, wantErr: true},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if err := product.ValidateVersion(tt.args.rt, tt.args.ver); (err != nil) != tt.wantErr {
+				t.Errorf("ValidateVersion(%q, %q) error = %v, wantErr %v", tt.args.rt, tt.args.ver, err, tt.wantErr)
+			}
+		})
+	}
+}
+
+func TestNormalizeVersion(t *testing.T) {
+	type args struct {
+		rt  ccRangeTypes.RangeType
+		ver string
+	}
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		// The misspellings of FortiSASE releases the advisories carry, as the
+		// release notes spell those releases.
+		{name: "underscore-joined hotfix", args: args{rt: ccRangeTypes.RangeTypeFortinetFortiSASE, ver: "26.3.1_a"}, want: "26.3.1.a"},
+		{name: "maintenance number joined to its milestone", args: args{rt: ccRangeTypes.RangeTypeFortinetFortiSASE, ver: "24.4.b1"}, want: "24.4.b.1"},
+		// FortiSASE-Sovereign follows the same scheme.
+		{name: "Sovereign underscore-joined hotfix", args: args{rt: ccRangeTypes.RangeTypeFortinetFortiSASESovereign, ver: "26.2.1_a"}, want: "26.2.1.a"},
+		// Releases already spelled as the release notes spell them.
+		{name: "milestone", args: args{rt: ccRangeTypes.RangeTypeFortinetFortiSASE, ver: "25.2.a"}, want: "25.2.a"},
+		{name: "maintenance release of a milestone", args: args{rt: ccRangeTypes.RangeTypeFortinetFortiSASE, ver: "25.1.a.2"}, want: "25.1.a.2"},
+		{name: "hotfix", args: args{rt: ccRangeTypes.RangeTypeFortinetFortiSASE, ver: "26.3.1.a"}, want: "26.3.1.a"},
+		// Any other shape is left for the caller's validation to reject.
+		{name: "underscore-joined letter after a four-component release", args: args{rt: ccRangeTypes.RangeTypeFortinetFortiSASE, ver: "26.3.1.2_a"}, want: "26.3.1.2_a"},
+		{name: "underscore-joined letters", args: args{rt: ccRangeTypes.RangeTypeFortinetFortiSASE, ver: "26.3.1_ab"}, want: "26.3.1_ab"},
+		{name: "two-digit number joined to a milestone", args: args{rt: ccRangeTypes.RangeTypeFortinetFortiSASE, ver: "25.1.a10"}, want: "25.1.a10"},
+		// A numeric-versioned range type's versions are never respelled.
+		{name: "numeric range type underscore-joined letter", args: args{rt: ccRangeTypes.RangeTypeFortinetFortiOS, ver: "7.4.1_a"}, want: "7.4.1_a"},
+		{name: "unknown range type", args: args{rt: ccRangeTypes.RangeTypeUnknown, ver: "26.3.1_a"}, want: "26.3.1_a"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := product.NormalizeVersion(tt.args.rt, tt.args.ver); got != tt.want {
+				t.Errorf("NormalizeVersion(%q, %q) = %q, want %q", tt.args.rt, tt.args.ver, got, tt.want)
+			}
+		})
+	}
+}
+
 func TestTrainRange(t *testing.T) {
 	type args struct {
 		name  string
@@ -166,6 +257,10 @@ func TestResolve(t *testing.T) {
 		// both the current and the older one.
 		{name: "FortiClientWindows", wantCPEs: []string{"cpe:2.3:a:fortinet:forticlientwindows:*:*:*:*:*:*:*:*", "cpe:2.3:a:fortinet:forticlient:*:*:*:*:*:windows:*:*"}, wantRange: ccRangeTypes.RangeTypeFortinetFortiClient, wantOK: true},
 		{name: "FortiClientMac", wantCPEs: []string{"cpe:2.3:a:fortinet:forticlientmac:*:*:*:*:*:*:*:*", "cpe:2.3:a:fortinet:forticlient:*:*:*:*:*:macos:*:*", "cpe:2.3:a:fortinet:forticlient:*:*:*:*:*:mac_os_x:*:*"}, wantRange: ccRangeTypes.RangeTypeFortinetFortiClient, wantOK: true},
+		// CVE-2026-121529, the only record naming FortiClientWindowsPAM, gives it
+		// its own CPE, and NVD has none: the CNA CPE alone, with the FortiClient
+		// range type its releases follow.
+		{name: "FortiClientWindowsPAM", wantCPEs: []string{"cpe:2.3:a:fortinet:forticlientwindowspam:*:*:*:*:*:*:*:*"}, wantRange: ccRangeTypes.RangeTypeFortinetFortiClient, wantOK: true},
 		// Fortinet's records name FortiSOAR apart from its PaaS and on-premise
 		// deployments, which NVD folds into FortiSOAR.
 		{name: "FortiSOAR", wantCPEs: []string{"cpe:2.3:a:fortinet:fortisoar:*:*:*:*:*:*:*:*"}, wantRange: ccRangeTypes.RangeTypeFortinetFortiSOAR, wantOK: true},
