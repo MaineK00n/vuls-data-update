@@ -58,6 +58,9 @@ func TestPull(t *testing.T) {
 		// contains.ErrCommitNotFound, as it does for a target that is not in
 		// the repository.
 		wantCommitNotFound bool
+		// wantExitCode, if set, is the exit status of git that the error
+		// wraps: that of switch, whose error stays in the chain.
+		wantExitCode int
 	}{
 		{
 			name: "vuls-data-raw-test restore: false, native git",
@@ -220,9 +223,10 @@ func TestPull(t *testing.T) {
 				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test",
 				opts:       []pull.Option{pull.WithCheckout("v0.0.1^{tree}"), pull.WithRestore(false), pull.WithUseNativeGit(true)},
 			},
-			hasError:   true,
-			wantErr:    "switch to v0.0.1^{tree}: ",
-			wantErrHas: `switch --detach v0.0.1^{tree}", stderr: "fatal: `,
+			hasError:     true,
+			wantErr:      "switch to v0.0.1^{tree}: ",
+			wantErrHas:   `switch --detach v0.0.1^{tree}", stderr: "fatal: `,
+			wantExitCode: 128,
 		},
 		{
 			// A commit pinned before vuls-data-db truncated the history is
@@ -233,8 +237,9 @@ func TestPull(t *testing.T) {
 				opts:       []pull.Option{pull.WithCheckout("9d3d5d486d4c9414321a2df56f2e007c4c2c8fac"), pull.WithRestore(true), pull.WithUseNativeGit(true)},
 			},
 			hasError:           true,
-			wantErr:            "9d3d5d486d4c9414321a2df56f2e007c4c2c8fac is not in ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test, whose history may have been truncated or rewritten: commit not found: switch to 9d3d5d486d4c9414321a2df56f2e007c4c2c8fac: ",
+			wantErr:            "9d3d5d486d4c9414321a2df56f2e007c4c2c8fac is not in ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test, whose history may have been truncated or rewritten: switch to 9d3d5d486d4c9414321a2df56f2e007c4c2c8fac: ",
 			wantErrHas:         `switch --detach 9d3d5d486d4c9414321a2df56f2e007c4c2c8fac", stderr: "fatal: `,
+			wantExitCode:       128,
 			wantCommitNotFound: true,
 		},
 		{
@@ -245,8 +250,9 @@ func TestPull(t *testing.T) {
 				opts:       []pull.Option{pull.WithCheckout("v0.0.2"), pull.WithRestore(true), pull.WithUseNativeGit(true)},
 			},
 			hasError:           true,
-			wantErr:            "v0.0.2 is not in ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test, whose history may have been truncated or rewritten: commit not found: switch to v0.0.2: ",
+			wantErr:            "v0.0.2 is not in ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test, whose history may have been truncated or rewritten: switch to v0.0.2: ",
 			wantErrHas:         `switch --detach v0.0.2", stderr: "fatal: `,
+			wantExitCode:       128,
 			wantCommitNotFound: true,
 		},
 		{
@@ -258,9 +264,10 @@ func TestPull(t *testing.T) {
 				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test",
 				opts:       []pull.Option{pull.WithCheckout("-"), pull.WithRestore(false), pull.WithUseNativeGit(true)},
 			},
-			hasError:   true,
-			wantErr:    "switch to -: ",
-			wantErrHas: `switch --detach -", stderr: "fatal: `,
+			hasError:     true,
+			wantErr:      "switch to -: ",
+			wantErrHas:   `switch --detach -", stderr: "fatal: `,
+			wantExitCode: 128,
 		},
 		{
 			name: "vuls-data-raw-test checkout: main...v0.0.2 (no v0.0.2), restore: false, native git",
@@ -268,9 +275,10 @@ func TestPull(t *testing.T) {
 				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test",
 				opts:       []pull.Option{pull.WithCheckout("main...v0.0.2"), pull.WithRestore(false), pull.WithUseNativeGit(true)},
 			},
-			hasError:   true,
-			wantErr:    "switch to main...v0.0.2: ",
-			wantErrHas: `switch --detach main...v0.0.2", stderr: "fatal: `,
+			hasError:     true,
+			wantErr:      "switch to main...v0.0.2: ",
+			wantErrHas:   `switch --detach main...v0.0.2", stderr: "fatal: `,
+			wantExitCode: 128,
 		},
 		{
 			name: "vuls-data-raw-test-archive-1 restore: false, native git",
@@ -319,6 +327,11 @@ func TestPull(t *testing.T) {
 				}
 				if got := errors.Is(err, contains.ErrCommitNotFound); got != tt.wantCommitNotFound {
 					t.Errorf("errors.Is(Pull() error, contains.ErrCommitNotFound). expected: %t, actual: %t, error: %v", tt.wantCommitNotFound, got, err)
+				}
+				if tt.wantExitCode != 0 {
+					if ee := (*exec.ExitError)(nil); !errors.As(err, &ee) || ee.ExitCode() != tt.wantExitCode {
+						t.Errorf("Pull() error does not wrap the exit status %d of git, error: %v", tt.wantExitCode, err)
+					}
 				}
 			default:
 				var got []string
@@ -397,7 +410,7 @@ func TestPull(t *testing.T) {
 }
 
 // TestPullWithoutGit checks that a target native git cannot be run to check
-// out is not reported as not in the repository: contains cannot tell, so the
+// out is not reported as not in the repository: rev-parse cannot tell, so the
 // error of switch is returned as it is.
 func TestPullWithoutGit(t *testing.T) {
 	ts := httptest.NewTestServer(t, registry.New())
@@ -424,18 +437,58 @@ func TestPullWithoutGit(t *testing.T) {
 	if want := "switch to 9d3d5d486d4c9414321a2df56f2e007c4c2c8fac: "; err == nil || !strings.HasPrefix(err.Error(), want) {
 		t.Errorf("Pull() error does not begin with %q, error: %v", want, err)
 	}
-	// contains could not tell, so the error does not say the commit is not
+	// rev-parse could not tell, so the error does not say the commit is not
 	// there.
 	if errors.Is(err, contains.ErrCommitNotFound) {
 		t.Errorf("Pull() error wraps contains.ErrCommitNotFound, error: %v", err)
 	}
 }
 
-// TestNotFound checks which errors of contains notFound takes to say that the
-// target is not in the repository, and which to say that the check could not
-// be made. The errors, and so the exit statuses of git, come where they can
-// from contains on the fixture.
-func TestNotFound(t *testing.T) {
+// TestPullWithBrokenGit checks that a tag that is there is not reported as
+// not in the repository when git fails on the repository: with a config value
+// it cannot read, as with a repository it does not trust, every git command
+// exits with 128, rev-parse cannot tell, and the error of switch is returned
+// as it is.
+func TestPullWithBrokenGit(t *testing.T) {
+	ts := httptest.NewTestServer(t, registry.New())
+
+	originalTransport := http.DefaultTransport
+	http.DefaultTransport = ts.Client().Transport
+	t.Cleanup(func() {
+		http.DefaultTransport = originalTransport
+	})
+
+	repo, err := remote.NewRepository("ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test")
+	if err != nil {
+		t.Fatalf("new repository: %v", err)
+	}
+
+	if err := setup(fmt.Sprintf("%s/%s", repo.Reference.Registry, repo.Reference.Repository)); err != nil {
+		t.Fatalf("setup: %v", err)
+	}
+
+	// The pull itself needs no git, only the checkout. util.Git keeps config
+	// passed through the environment.
+	t.Setenv("GIT_CONFIG_COUNT", "1")
+	t.Setenv("GIT_CONFIG_KEY_0", "core.bare")
+	t.Setenv("GIT_CONFIG_VALUE_0", "notabool")
+
+	err = pull.Pull(repo.Reference.String(), pull.WithDir(t.TempDir()), pull.WithCheckout("v0.0.1"), pull.WithUseNativeGit(true))
+	if want := "switch to v0.0.1: "; err == nil || !strings.HasPrefix(err.Error(), want) {
+		t.Errorf("Pull() error does not begin with %q, error: %v", want, err)
+	}
+	if want := `stderr: "fatal: bad boolean config value 'notabool' for 'core.bare'`; err == nil || !strings.Contains(err.Error(), want) {
+		t.Errorf("Pull() error does not hold %q, error: %v", want, err)
+	}
+	if errors.Is(err, contains.ErrCommitNotFound) {
+		t.Errorf("Pull() error wraps contains.ErrCommitNotFound, error: %v", err)
+	}
+}
+
+// TestMissing checks which targets missing takes to name nothing in the
+// fixture: only those that git rev-parse says it cannot resolve, and not when
+// git cannot tell.
+func TestMissing(t *testing.T) {
 	f, err := os.Open(filepath.Join("testdata", "fixtures", "vuls-data-raw-test.tar.zst"))
 	if err != nil {
 		t.Fatalf("open fixture. err: %v", err)
@@ -448,41 +501,89 @@ func TestNotFound(t *testing.T) {
 	}
 
 	tests := []struct {
-		name string
-		err  error
+		name   string
+		target string
+		// env is set for the case, to make git fail.
+		env  map[string]string
 		want bool
 	}{
 		{
-			name: "no error",
-			err:  contains.Contains(dir, "v0.0.1", contains.WithUseNativeGit(true)),
+			name:   "a commit",
+			target: "9d3d5d486d4c9414321a2df56f2e007c4c2c8fab",
 		},
 		{
-			name: "exit status 1, a hash cat-file -e does not have",
-			err:  contains.Contains(dir, "9d3d5d486d4c9414321a2df56f2e007c4c2c8fac", contains.WithUseNativeGit(true)),
-			want: true,
+			name:   "a full hash of no object",
+			target: "9d3d5d486d4c9414321a2df56f2e007c4c2c8fac",
+			want:   true,
 		},
 		{
-			name: "exit status 128, a name cat-file -e cannot resolve",
-			err:  contains.Contains(dir, "v0.0.2", contains.WithUseNativeGit(true)),
-			want: true,
+			name:   "a tag",
+			target: "v0.0.1",
 		},
 		{
-			name: "exit status 129, an option cat-file -e does not know",
-			err:  contains.Contains(dir, "-b", contains.WithUseNativeGit(true)),
+			name:   "a tag that is not there",
+			target: "v0.0.2",
+			want:   true,
 		},
 		{
-			// What os/exec returns when git is not on PATH. TestPullWithoutGit
-			// brings it about through Pull.
-			name: "git cannot be run",
-			err:  errors.Wrap(&exec.Error{Name: "git", Err: exec.ErrNotFound}, "check 9d3d5d486d4c9414321a2df56f2e007c4c2c8fac exists"),
+			name:   "a branch that is not there",
+			target: "develop",
+			want:   true,
+		},
+		{
+			// There, though not a commit.
+			name:   "a tree",
+			target: "v0.0.1^{tree}",
+		},
+		{
+			// git exits with 128 on a config value it cannot read, as it
+			// does on a repository it does not trust.
+			name:   "a tag that is not there, with a config value git cannot read",
+			target: "v0.0.2",
+			env:    map[string]string{"GIT_CONFIG_COUNT": "1", "GIT_CONFIG_KEY_0": "core.bare", "GIT_CONFIG_VALUE_0": "notabool"},
+		},
+		{
+			name:   "a tag that is not there, without git",
+			target: "v0.0.2",
+			env:    map[string]string{"PATH": t.TempDir()},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := pull.NotFound(tt.err); got != tt.want {
-				t.Errorf("NotFound(%v). expected: %t, actual: %t", tt.err, tt.want, got)
+			for k, v := range tt.env {
+				t.Setenv(k, v)
+			}
+			if got := pull.Missing(dir, tt.target); got != tt.want {
+				t.Errorf("Missing(%q, %q). expected: %t, actual: %t", dir, tt.target, tt.want, got)
 			}
 		})
+	}
+}
+
+// TestNotInRepository checks that errors.Is takes the error for a target that
+// is not in the repository for contains.ErrCommitNotFound, and that otherwise
+// it is the error of switch it wraps: its message after the one it adds, its
+// chain, its cause for github.com/pkg/errors, and what %+v prints of it, with
+// its stack trace.
+func TestNotInRepository(t *testing.T) {
+	cause := errors.New("exit status 128")
+	switchErr := errors.Wrap(cause, "switch to v0.0.2")
+
+	err := pull.NotInRepository(switchErr, "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test", "v0.0.2")
+	if want := "v0.0.2 is not in ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test, whose history may have been truncated or rewritten: switch to v0.0.2: exit status 128"; err.Error() != want {
+		t.Errorf("Error(). expected: %q, actual: %q", want, err.Error())
+	}
+	if !errors.Is(err, contains.ErrCommitNotFound) {
+		t.Errorf("errors.Is(%v, contains.ErrCommitNotFound) is false", err)
+	}
+	if !errors.Is(err, cause) {
+		t.Errorf("errors.Is(%v, the cause of the error of switch) is false", err)
+	}
+	if errors.Cause(err) != cause {
+		t.Errorf("errors.Cause(%v). expected: the cause of the error of switch, actual: %v", err, errors.Cause(err))
+	}
+	if got, want := fmt.Sprintf("%+v", err), fmt.Sprintf("%+v", switchErr); !strings.Contains(got, want) {
+		t.Errorf("%%+v does not hold %%+v of the error of switch. expected to hold: %q, actual: %q", want, got)
 	}
 }
 
