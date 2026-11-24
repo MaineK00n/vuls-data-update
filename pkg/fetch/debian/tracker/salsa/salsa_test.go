@@ -50,6 +50,9 @@ func TestFetch(t *testing.T) {
 		// drop names, as host and path, a request the server cuts off
 		// without an answer.
 		drop string
+		// notFound names, as host and path, a file the server answers 404
+		// for.
+		notFound string
 		// rewrite maps, as host and path, a file of the mirrors to what the
 		// server makes of it before answering, and, for a Release, before
 		// signing it.
@@ -219,6 +222,16 @@ func TestFetch(t *testing.T) {
 			hasError: true,
 		},
 		{
+			// Without an InRelease or a Release.gpg, sid's Release has no
+			// signature to check, which fails the fetch rather than letting
+			// the Release through unchecked.
+			name:        "Release without a signature",
+			testdata:    "testdata/fixtures/security-tracker-master.tar.gz",
+			noInRelease: true,
+			notFound:    "deb.debian.org/debian/dists/sid/Release.gpg",
+			hasError:    true,
+		},
+		{
 			// A Release signed as it should be, but naming another suite as
 			// its Codename, here sid's naming bookworm, fails the fetch.
 			name:     "Release of another suite",
@@ -297,7 +310,7 @@ func TestFetch(t *testing.T) {
 				case r.Host == "salsa.debian.org":
 					http.ServeFile(w, r, tt.testdata)
 					return
-				case tt.mirrorNotFound, tt.noInRelease && path.Base(r.URL.Path) == "InRelease":
+				case tt.mirrorNotFound, target == tt.notFound, tt.noInRelease && path.Base(r.URL.Path) == "InRelease":
 					http.NotFound(w, r)
 					return
 				}
