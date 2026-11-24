@@ -204,6 +204,7 @@ func newCmdRegistryDelete() *cobra.Command {
 
 			The versions of a package are listed once for all the images given, so delete many images in one call rather than one call per image.
 			An image that fails to be deleted does not stop the others, and the command fails at the end if any did.
+			A GitHub rate limit that persists through the retries stops the command at once, leaving the images not yet deleted for a later run.
 		`),
 		Example: heredoc.Doc(`
 			$ vuls-data-update dotgit registry delete ghcr.io/vulsio/vuls-data-db@sha256:5b71484ba9f1565f7ed5cd3aa34b027c44e1773a6e418328ea38a05f9b459f23

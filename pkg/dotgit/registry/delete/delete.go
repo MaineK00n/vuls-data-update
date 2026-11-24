@@ -52,6 +52,12 @@ func WithForce(force bool) Option {
 // An image that fails to be deleted does not stop the others, nor does a
 // package whose owner or versions cannot be read, which fails its own images.
 // Delete goes on with the rest, and returns the errors of all that failed.
+//
+// A rate limit is the exception. GitHub refuses every request the same way
+// until it lifts, and warns that one that keeps making requests while rate
+// limited may be banned, so Delete stops at the first request that the retries
+// did not get past the limit, and leaves the images it has not got to for a
+// later run.
 func Delete(images []string, token string, opts ...Option) error {
 	options := &options{
 		force: false,
@@ -98,7 +104,11 @@ func Delete(images []string, token string, opts ...Option) error {
 	}
 	owners := make(map[string]lookup)
 
-	var errs []error
+	var (
+		errs        []error
+		rateLimited bool
+	)
+packages:
 	for _, p := range packages {
 		owner, pack, _ := strings.Cut(p, "/")
 
@@ -109,6 +119,10 @@ func Delete(images []string, token string, opts ...Option) error {
 		}
 		if o.err != nil {
 			errs = append(errs, errors.Wrapf(o.err, "delete the images of %s. get the type of %s", p, owner))
+			if errors.Is(o.err, utilGitHub.ErrRateLimited) {
+				rateLimited = true
+				break packages
+			}
 			continue
 		}
 		repoType := o.repoType
@@ -116,6 +130,10 @@ func Delete(images []string, token string, opts ...Option) error {
 		rs, err := ls.List([]ls.Repository{{Type: repoType, Registry: "ghcr.io", Owner: owner, Package: pack}}, token, ls.WithHTTPClient(options.httpClient))
 		if err != nil {
 			errs = append(errs, errors.Wrapf(err, "delete the images of %s. list versions", p))
+			if errors.Is(err, utilGitHub.ErrRateLimited) {
+				rateLimited = true
+				break packages
+			}
 			continue
 		}
 
@@ -142,14 +160,22 @@ func Delete(images []string, token string, opts ...Option) error {
 				return nil
 			}(); err != nil {
 				errs = append(errs, errors.Wrapf(err, "delete %s", t.image))
+				if errors.Is(err, utilGitHub.ErrRateLimited) {
+					rateLimited = true
+					break packages
+				}
 			}
 		}
 	}
 
-	if len(errs) > 0 {
+	switch {
+	case rateLimited:
+		return errors.Wrap(stderrors.Join(errs...), "delete images. stop at a GitHub rate limit, leaving the rest for a later run")
+	case len(errs) > 0:
 		return errors.Wrap(stderrors.Join(errs...), "delete images")
+	default:
+		return nil
 	}
-	return nil
 }
 
 func ownerType(client *http.Client, owner, token string) (string, error) {

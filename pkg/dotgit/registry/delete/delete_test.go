@@ -10,6 +10,7 @@ import (
 	"strconv"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/google/go-cmp/cmp"
 
@@ -40,7 +41,10 @@ func TestDelete(t *testing.T) {
 		deleteGone []int
 		// deleteForbidden makes the DELETE of these ids answer 403.
 		deleteForbidden []int
-		wantErr         bool
+		// deleteRateLimited makes the DELETE of these ids answer the primary
+		// rate limit, which resets later than the API client waits for.
+		deleteRateLimited []int
+		wantErr           bool
 		// wantErrContains are parts of the error.
 		wantErrContains []string
 		// wantRemaining are the digests left in the registry.
@@ -198,6 +202,37 @@ func TestDelete(t *testing.T) {
 			wantRemaining:   []string{"sha256:6413c62920ab027e680d7adf44bec195e9f2ec7a299140ff9a5d2193a626b673", "sha256:29c88e701ac502d431e318a82b327d73f220b82714852b6942bcaffbb4e573aa"},
 		},
 		{
+			name: "a rate limit stops the rest",
+			args: args{
+				images: []string{"ghcr.io/vulsio/vuls-data-db@sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb", "ghcr.io/vulsio/vuls-data-db@sha256:29c88e701ac502d431e318a82b327d73f220b82714852b6942bcaffbb4e573aa"},
+				token:  "token",
+			},
+			deleteRateLimited: []int{460898773},
+			wantErr:           true,
+			wantErrContains:   []string{"stop at a GitHub rate limit", "API rate limit exceeded"},
+			wantRemaining:     []string{"sha256:6413c62920ab027e680d7adf44bec195e9f2ec7a299140ff9a5d2193a626b673", "sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb", "sha256:29c88e701ac502d431e318a82b327d73f220b82714852b6942bcaffbb4e573aa"},
+		},
+		{
+			name: "a rate limit on a listing stops the rest",
+			args: args{
+				images: []string{"ghcr.io/vulsio/vuls-data-db-limited@sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb", "ghcr.io/vulsio/vuls-data-db@sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb"},
+				token:  "token",
+			},
+			wantErr:         true,
+			wantErrContains: []string{"stop at a GitHub rate limit", "delete the images of vulsio/vuls-data-db-limited. list versions"},
+			wantRemaining:   []string{"sha256:6413c62920ab027e680d7adf44bec195e9f2ec7a299140ff9a5d2193a626b673", "sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb", "sha256:29c88e701ac502d431e318a82b327d73f220b82714852b6942bcaffbb4e573aa"},
+		},
+		{
+			name: "a rate limit on the lookup of an owner stops the rest",
+			args: args{
+				images: []string{"ghcr.io/limited/a@sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb", "ghcr.io/vulsio/vuls-data-db@sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb"},
+				token:  "token",
+			},
+			wantErr:         true,
+			wantErrContains: []string{"stop at a GitHub rate limit", "get the type of limited"},
+			wantRemaining:   []string{"sha256:6413c62920ab027e680d7adf44bec195e9f2ec7a299140ff9a5d2193a626b673", "sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb", "sha256:29c88e701ac502d431e318a82b327d73f220b82714852b6942bcaffbb4e573aa"},
+		},
+		{
 			name: "the same digest twice",
 			args: args{
 				images: []string{"ghcr.io/vulsio/vuls-data-db@sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb", "ghcr.io/vulsio/vuls-data-db@sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb"},
@@ -275,11 +310,25 @@ func TestDelete(t *testing.T) {
 			// owner.
 			var listings int
 			lookups := make(map[string]int)
+			// limited tells that a request was answered with a rate limit,
+			// after which Delete sends nothing more.
+			var limited bool
+			rateLimit := func(w http.ResponseWriter) {
+				limited = true
+				w.Header().Set("X-RateLimit-Remaining", "0")
+				w.Header().Set("X-RateLimit-Reset", strconv.FormatInt(time.Now().Add(time.Hour).Unix(), 10))
+				http.Error(w, `{"message":"API rate limit exceeded for installation."}`, http.StatusForbidden)
+			}
 			ts := httptest.NewTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				if limited {
+					t.Errorf("Delete() sent %s %s after a rate limit", r.Method, r.URL.Path)
+				}
 				if owner, ok := strings.CutPrefix(r.URL.Path, "/users/"); ok {
 					lookups[owner]++
 				}
 				switch r.URL.Path {
+				case "/users/limited", "/orgs/vulsio/packages/container/vuls-data-db-limited/versions":
+					rateLimit(w)
 				case "/users/vulsio":
 					switch r.Method {
 					case http.MethodGet:
@@ -387,6 +436,8 @@ func TestDelete(t *testing.T) {
 						switch {
 						case slices.Contains(tt.deleteForbidden, id):
 							http.Error(w, `{"message":"Forbidden"}`, http.StatusForbidden)
+						case slices.Contains(tt.deleteRateLimited, id):
+							rateLimit(w)
 						case i == -1 || slices.Contains(tt.deleteNotFound, id):
 							// As GHCR does, answer 404 for a version that is
 							// already gone.
