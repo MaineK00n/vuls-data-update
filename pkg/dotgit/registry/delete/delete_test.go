@@ -17,13 +17,6 @@ import (
 	"github.com/MaineK00n/vuls-data-update/pkg/dotgit/registry/ls"
 )
 
-const (
-	tagged    = "sha256:6413c62920ab027e680d7adf44bec195e9f2ec7a299140ff9a5d2193a626b673"
-	untagged  = "sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb"
-	untagged2 = "sha256:29c88e701ac502d431e318a82b327d73f220b82714852b6942bcaffbb4e573aa"
-	missing   = "sha256:0000000000000000000000000000000000000000000000000000000000000000"
-)
-
 func TestDelete(t *testing.T) {
 	type args struct {
 		images []string
@@ -56,161 +49,163 @@ func TestDelete(t *testing.T) {
 		{
 			name: "untagged",
 			args: args{
-				images: []string{fmt.Sprintf("ghcr.io/vulsio/vuls-data-db@%s", untagged)},
+				images: []string{"ghcr.io/vulsio/vuls-data-db@sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb"},
 				token:  "token",
 			},
-			wantRemaining: []string{tagged, untagged2},
+			wantRemaining: []string{"sha256:6413c62920ab027e680d7adf44bec195e9f2ec7a299140ff9a5d2193a626b673", "sha256:29c88e701ac502d431e318a82b327d73f220b82714852b6942bcaffbb4e573aa"},
 		},
 		{
 			name: "tagged",
 			args: args{
-				images: []string{fmt.Sprintf("ghcr.io/vulsio/vuls-data-db@%s", tagged)},
+				images: []string{"ghcr.io/vulsio/vuls-data-db@sha256:6413c62920ab027e680d7adf44bec195e9f2ec7a299140ff9a5d2193a626b673"},
 				token:  "token",
 			},
 			wantErr:       true,
-			wantRemaining: []string{tagged, untagged, untagged2},
+			wantRemaining: []string{"sha256:6413c62920ab027e680d7adf44bec195e9f2ec7a299140ff9a5d2193a626b673", "sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb", "sha256:29c88e701ac502d431e318a82b327d73f220b82714852b6942bcaffbb4e573aa"},
 		},
 		{
 			name: "tagged, but force",
 			args: args{
-				images: []string{fmt.Sprintf("ghcr.io/vulsio/vuls-data-db@%s", tagged)},
+				images: []string{"ghcr.io/vulsio/vuls-data-db@sha256:6413c62920ab027e680d7adf44bec195e9f2ec7a299140ff9a5d2193a626b673"},
 				token:  "token",
 				opts:   []delete.Option{delete.WithForce(true)},
 			},
-			wantRemaining: []string{untagged, untagged2},
+			wantRemaining: []string{"sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb", "sha256:29c88e701ac502d431e318a82b327d73f220b82714852b6942bcaffbb4e573aa"},
 		},
 		{
 			name: "several",
 			args: args{
-				images: []string{fmt.Sprintf("ghcr.io/vulsio/vuls-data-db@%s", untagged), fmt.Sprintf("ghcr.io/vulsio/vuls-data-db@%s", untagged2)},
+				images: []string{"ghcr.io/vulsio/vuls-data-db@sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb", "ghcr.io/vulsio/vuls-data-db@sha256:29c88e701ac502d431e318a82b327d73f220b82714852b6942bcaffbb4e573aa"},
 				token:  "token",
 			},
-			wantRemaining: []string{tagged},
+			wantRemaining: []string{"sha256:6413c62920ab027e680d7adf44bec195e9f2ec7a299140ff9a5d2193a626b673"},
 		},
 		{
 			name: "several, one of them tagged",
 			args: args{
-				images: []string{fmt.Sprintf("ghcr.io/vulsio/vuls-data-db@%s", untagged), fmt.Sprintf("ghcr.io/vulsio/vuls-data-db@%s", tagged), fmt.Sprintf("ghcr.io/vulsio/vuls-data-db@%s", untagged2)},
+				images: []string{"ghcr.io/vulsio/vuls-data-db@sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb", "ghcr.io/vulsio/vuls-data-db@sha256:6413c62920ab027e680d7adf44bec195e9f2ec7a299140ff9a5d2193a626b673", "ghcr.io/vulsio/vuls-data-db@sha256:29c88e701ac502d431e318a82b327d73f220b82714852b6942bcaffbb4e573aa"},
 				token:  "token",
 			},
 			wantErr:       true,
-			wantRemaining: []string{tagged},
+			wantRemaining: []string{"sha256:6413c62920ab027e680d7adf44bec195e9f2ec7a299140ff9a5d2193a626b673"},
 		},
 		{
 			name: "several, one of them not found",
 			args: args{
-				images: []string{fmt.Sprintf("ghcr.io/vulsio/vuls-data-db@%s", missing), fmt.Sprintf("ghcr.io/vulsio/vuls-data-db@%s", untagged)},
+				images: []string{"ghcr.io/vulsio/vuls-data-db@sha256:0000000000000000000000000000000000000000000000000000000000000000", "ghcr.io/vulsio/vuls-data-db@sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb"},
 				token:  "token",
 			},
 			wantErr:       true,
-			wantRemaining: []string{tagged, untagged2},
+			wantRemaining: []string{"sha256:6413c62920ab027e680d7adf44bec195e9f2ec7a299140ff9a5d2193a626b673", "sha256:29c88e701ac502d431e318a82b327d73f220b82714852b6942bcaffbb4e573aa"},
 		},
 		{
 			name: "tagged after the listing",
 			args: args{
-				images: []string{fmt.Sprintf("ghcr.io/vulsio/vuls-data-db@%s", untagged), fmt.Sprintf("ghcr.io/vulsio/vuls-data-db@%s", untagged2)},
+				images: []string{"ghcr.io/vulsio/vuls-data-db@sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb", "ghcr.io/vulsio/vuls-data-db@sha256:29c88e701ac502d431e318a82b327d73f220b82714852b6942bcaffbb4e573aa"},
 				token:  "token",
 			},
 			afterList: func(vs []ls.Version) []ls.Version {
 				for i := range vs {
-					if vs[i].Name == untagged2 {
+					if vs[i].Name == "sha256:29c88e701ac502d431e318a82b327d73f220b82714852b6942bcaffbb4e573aa" {
 						vs[i].Metadata.Container.Tags = []string{"vuls-data-raw-test"}
 					}
 				}
 				return vs
 			},
 			wantErr:       true,
-			wantRemaining: []string{tagged, untagged2},
+			wantRemaining: []string{"sha256:6413c62920ab027e680d7adf44bec195e9f2ec7a299140ff9a5d2193a626b673", "sha256:29c88e701ac502d431e318a82b327d73f220b82714852b6942bcaffbb4e573aa"},
 		},
 		{
 			name: "deleted by another client after the listing",
 			args: args{
-				images: []string{fmt.Sprintf("ghcr.io/vulsio/vuls-data-db@%s", untagged), fmt.Sprintf("ghcr.io/vulsio/vuls-data-db@%s", untagged2)},
+				images: []string{"ghcr.io/vulsio/vuls-data-db@sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb", "ghcr.io/vulsio/vuls-data-db@sha256:29c88e701ac502d431e318a82b327d73f220b82714852b6942bcaffbb4e573aa"},
 				token:  "token",
 			},
 			afterList: func(vs []ls.Version) []ls.Version {
-				return slices.DeleteFunc(vs, func(v ls.Version) bool { return v.Name == untagged2 })
+				return slices.DeleteFunc(vs, func(v ls.Version) bool {
+					return v.Name == "sha256:29c88e701ac502d431e318a82b327d73f220b82714852b6942bcaffbb4e573aa"
+				})
 			},
-			wantRemaining: []string{tagged},
+			wantRemaining: []string{"sha256:6413c62920ab027e680d7adf44bec195e9f2ec7a299140ff9a5d2193a626b673"},
 		},
 		{
 			name: "the delete answers 404, and the version is gone",
 			args: args{
-				images: []string{fmt.Sprintf("ghcr.io/vulsio/vuls-data-db@%s", untagged)},
+				images: []string{"ghcr.io/vulsio/vuls-data-db@sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb"},
 				token:  "token",
 			},
 			deleteGone:    []int{460898773},
-			wantRemaining: []string{tagged, untagged2},
+			wantRemaining: []string{"sha256:6413c62920ab027e680d7adf44bec195e9f2ec7a299140ff9a5d2193a626b673", "sha256:29c88e701ac502d431e318a82b327d73f220b82714852b6942bcaffbb4e573aa"},
 		},
 		{
 			name: "the delete answers 404, but the version is still there",
 			args: args{
-				images: []string{fmt.Sprintf("ghcr.io/vulsio/vuls-data-db@%s", untagged)},
+				images: []string{"ghcr.io/vulsio/vuls-data-db@sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb"},
 				token:  "token",
 			},
 			deleteNotFound:  []int{460898773},
 			wantErr:         true,
 			wantErrContains: []string{"yet the version is still there"},
-			wantRemaining:   []string{tagged, untagged, untagged2},
+			wantRemaining:   []string{"sha256:6413c62920ab027e680d7adf44bec195e9f2ec7a299140ff9a5d2193a626b673", "sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb", "sha256:29c88e701ac502d431e318a82b327d73f220b82714852b6942bcaffbb4e573aa"},
 		},
 		{
 			name: "several, the delete of one of them refused",
 			args: args{
-				images: []string{fmt.Sprintf("ghcr.io/vulsio/vuls-data-db@%s", untagged), fmt.Sprintf("ghcr.io/vulsio/vuls-data-db@%s", untagged2)},
+				images: []string{"ghcr.io/vulsio/vuls-data-db@sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb", "ghcr.io/vulsio/vuls-data-db@sha256:29c88e701ac502d431e318a82b327d73f220b82714852b6942bcaffbb4e573aa"},
 				token:  "token",
 			},
 			deleteForbidden: []int{460898773},
 			wantErr:         true,
 			wantErrContains: []string{"failed: 1 of 2", "actual: 403"},
-			wantRemaining:   []string{tagged, untagged},
+			wantRemaining:   []string{"sha256:6413c62920ab027e680d7adf44bec195e9f2ec7a299140ff9a5d2193a626b673", "sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb"},
 		},
 		{
 			name: "the id names another digest by the time it is read",
 			args: args{
-				images: []string{fmt.Sprintf("ghcr.io/vulsio/vuls-data-db@%s", untagged)},
+				images: []string{"ghcr.io/vulsio/vuls-data-db@sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb"},
 				token:  "token",
 			},
 			afterList: func(vs []ls.Version) []ls.Version {
 				for i := range vs {
 					if vs[i].ID == 460898773 {
-						vs[i].Name = missing
+						vs[i].Name = "sha256:0000000000000000000000000000000000000000000000000000000000000000"
 					}
 				}
 				return vs
 			},
 			wantErr:         true,
 			wantErrContains: []string{"unexpected version digest"},
-			wantRemaining:   []string{tagged, missing, untagged2},
+			wantRemaining:   []string{"sha256:6413c62920ab027e680d7adf44bec195e9f2ec7a299140ff9a5d2193a626b673", "sha256:0000000000000000000000000000000000000000000000000000000000000000", "sha256:29c88e701ac502d431e318a82b327d73f220b82714852b6942bcaffbb4e573aa"},
 		},
 		{
 			name: "a package that cannot be listed does not stop the others",
 			args: args{
-				images: []string{fmt.Sprintf("ghcr.io/vulsio/vuls-data-db-backup@%s", untagged), fmt.Sprintf("ghcr.io/vulsio/vuls-data-db@%s", untagged), fmt.Sprintf("ghcr.io/vulsio/vuls-data-db-backup@%s", untagged2), fmt.Sprintf("ghcr.io/vulsio/vuls-data-db@%s", tagged)},
+				images: []string{"ghcr.io/vulsio/vuls-data-db-backup@sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb", "ghcr.io/vulsio/vuls-data-db@sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb", "ghcr.io/vulsio/vuls-data-db-backup@sha256:29c88e701ac502d431e318a82b327d73f220b82714852b6942bcaffbb4e573aa", "ghcr.io/vulsio/vuls-data-db@sha256:6413c62920ab027e680d7adf44bec195e9f2ec7a299140ff9a5d2193a626b673"},
 				token:  "token",
 			},
 			wantErr: true,
 			// Both images of the package that cannot be listed count as
 			// failed.
 			wantErrContains: []string{"failed: 3 of 4", "delete the images of vulsio/vuls-data-db-backup. list versions", "refuse to delete a tagged version"},
-			wantRemaining:   []string{tagged, untagged2},
+			wantRemaining:   []string{"sha256:6413c62920ab027e680d7adf44bec195e9f2ec7a299140ff9a5d2193a626b673", "sha256:29c88e701ac502d431e318a82b327d73f220b82714852b6942bcaffbb4e573aa"},
 		},
 		{
 			name: "an owner that cannot be looked up does not stop the others",
 			args: args{
-				images: []string{fmt.Sprintf("ghcr.io/unknown/a@%s", untagged), fmt.Sprintf("ghcr.io/unknown/b@%s", untagged), fmt.Sprintf("ghcr.io/vulsio/vuls-data-db@%s", untagged)},
+				images: []string{"ghcr.io/unknown/a@sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb", "ghcr.io/unknown/b@sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb", "ghcr.io/vulsio/vuls-data-db@sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb"},
 				token:  "token",
 			},
 			wantErr:         true,
 			wantErrContains: []string{"failed: 2 of 3", "get the type of unknown"},
-			wantRemaining:   []string{tagged, untagged2},
+			wantRemaining:   []string{"sha256:6413c62920ab027e680d7adf44bec195e9f2ec7a299140ff9a5d2193a626b673", "sha256:29c88e701ac502d431e318a82b327d73f220b82714852b6942bcaffbb4e573aa"},
 		},
 		{
 			name: "the same digest twice",
 			args: args{
-				images: []string{fmt.Sprintf("ghcr.io/vulsio/vuls-data-db@%s", untagged), fmt.Sprintf("ghcr.io/vulsio/vuls-data-db@%s", untagged)},
+				images: []string{"ghcr.io/vulsio/vuls-data-db@sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb", "ghcr.io/vulsio/vuls-data-db@sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb"},
 				token:  "token",
 			},
-			wantRemaining: []string{tagged, untagged2},
+			wantRemaining: []string{"sha256:6413c62920ab027e680d7adf44bec195e9f2ec7a299140ff9a5d2193a626b673", "sha256:29c88e701ac502d431e318a82b327d73f220b82714852b6942bcaffbb4e573aa"},
 		},
 		{
 			name: "no digest",
@@ -219,16 +214,16 @@ func TestDelete(t *testing.T) {
 				token:  "token",
 			},
 			wantErr:       true,
-			wantRemaining: []string{tagged, untagged, untagged2},
+			wantRemaining: []string{"sha256:6413c62920ab027e680d7adf44bec195e9f2ec7a299140ff9a5d2193a626b673", "sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb", "sha256:29c88e701ac502d431e318a82b327d73f220b82714852b6942bcaffbb4e573aa"},
 		},
 		{
 			name: "not ghcr.io",
 			args: args{
-				images: []string{fmt.Sprintf("ghcr.io/vulsio/vuls-data-db@%s", untagged), fmt.Sprintf("docker.io/vulsio/vuls-data-db@%s", untagged2)},
+				images: []string{"ghcr.io/vulsio/vuls-data-db@sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb", "docker.io/vulsio/vuls-data-db@sha256:29c88e701ac502d431e318a82b327d73f220b82714852b6942bcaffbb4e573aa"},
 				token:  "token",
 			},
 			wantErr:       true,
-			wantRemaining: []string{tagged, untagged, untagged2},
+			wantRemaining: []string{"sha256:6413c62920ab027e680d7adf44bec195e9f2ec7a299140ff9a5d2193a626b673", "sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb", "sha256:29c88e701ac502d431e318a82b327d73f220b82714852b6942bcaffbb4e573aa"},
 		},
 	}
 	for _, tt := range tests {
@@ -236,7 +231,7 @@ func TestDelete(t *testing.T) {
 			vs := []ls.Version{
 				{
 					ID:             460898921,
-					Name:           tagged,
+					Name:           "sha256:6413c62920ab027e680d7adf44bec195e9f2ec7a299140ff9a5d2193a626b673",
 					URL:            "https://api.github.com/orgs/vulsio/packages/container/vuls-data-db/versions/460898921",
 					PackageHTMLURL: "https://github.com/orgs/vulsio/packages/container/package/vuls-data-db",
 					CreatedAt:      "2025-07-14T13:05:30Z",
@@ -251,7 +246,7 @@ func TestDelete(t *testing.T) {
 				},
 				{
 					ID:             460898773,
-					Name:           untagged,
+					Name:           "sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb",
 					URL:            "https://api.github.com/orgs/vulsio/packages/container/vuls-data-db/versions/460898773",
 					PackageHTMLURL: "https://github.com/orgs/vulsio/packages/container/package/vuls-data-db",
 					CreatedAt:      "2025-07-14T13:05:21Z",
@@ -264,7 +259,7 @@ func TestDelete(t *testing.T) {
 				},
 				{
 					ID:             460033049,
-					Name:           untagged2,
+					Name:           "sha256:29c88e701ac502d431e318a82b327d73f220b82714852b6942bcaffbb4e573aa",
 					URL:            "https://api.github.com/orgs/vulsio/packages/container/vuls-data-db/versions/460033049",
 					PackageHTMLURL: "https://github.com/orgs/vulsio/packages/container/package/vuls-data-db",
 					CreatedAt:      "2025-07-12T06:34:54Z",
