@@ -38,10 +38,18 @@ func TestDelete(t *testing.T) {
 		// images.
 		afterList func(vs []ls.Version) []ls.Version
 		// deleteNotFound makes the DELETE of these ids answer 404 without
-		// deleting, as it is answered when the version went in between the
-		// read and the delete.
+		// deleting, as GitHub may answer a token that can read the version but
+		// not delete it.
 		deleteNotFound []int
-		wantErr        bool
+		// deleteGone makes the DELETE of these ids delete and answer 404, as
+		// an attempt the API client retried after the first went through is
+		// answered.
+		deleteGone []int
+		// deleteForbidden makes the DELETE of these ids answer 403.
+		deleteForbidden []int
+		wantErr         bool
+		// wantErrContains are parts of the error.
+		wantErrContains []string
 		// wantRemaining are the digests left in the registry.
 		wantRemaining []string
 	}{
@@ -126,13 +134,73 @@ func TestDelete(t *testing.T) {
 			wantRemaining: []string{tagged},
 		},
 		{
-			name: "the delete answers 404",
+			name: "the delete answers 404, and the version is gone",
 			args: args{
 				images: []string{fmt.Sprintf("ghcr.io/vulsio/vuls-data-db@%s", untagged)},
 				token:  "token",
 			},
-			deleteNotFound: []int{460898773},
-			wantRemaining:  []string{tagged, untagged, untagged2},
+			deleteGone:    []int{460898773},
+			wantRemaining: []string{tagged, untagged2},
+		},
+		{
+			name: "the delete answers 404, but the version is still there",
+			args: args{
+				images: []string{fmt.Sprintf("ghcr.io/vulsio/vuls-data-db@%s", untagged)},
+				token:  "token",
+			},
+			deleteNotFound:  []int{460898773},
+			wantErr:         true,
+			wantErrContains: []string{"yet the version is still there"},
+			wantRemaining:   []string{tagged, untagged, untagged2},
+		},
+		{
+			name: "several, the delete of one of them refused",
+			args: args{
+				images: []string{fmt.Sprintf("ghcr.io/vulsio/vuls-data-db@%s", untagged), fmt.Sprintf("ghcr.io/vulsio/vuls-data-db@%s", untagged2)},
+				token:  "token",
+			},
+			deleteForbidden: []int{460898773},
+			wantErr:         true,
+			wantErrContains: []string{"failed: 1 of 2", "actual: 403"},
+			wantRemaining:   []string{tagged, untagged},
+		},
+		{
+			name: "the id names another digest by the time it is read",
+			args: args{
+				images: []string{fmt.Sprintf("ghcr.io/vulsio/vuls-data-db@%s", untagged)},
+				token:  "token",
+			},
+			afterList: func(vs []ls.Version) []ls.Version {
+				for i := range vs {
+					if vs[i].ID == 460898773 {
+						vs[i].Name = missing
+					}
+				}
+				return vs
+			},
+			wantErr:         true,
+			wantErrContains: []string{"unexpected version digest"},
+			wantRemaining:   []string{tagged, missing, untagged2},
+		},
+		{
+			name: "a package that cannot be listed does not stop the others",
+			args: args{
+				images: []string{fmt.Sprintf("ghcr.io/vulsio/vuls-data-db-backup@%s", untagged), fmt.Sprintf("ghcr.io/vulsio/vuls-data-db@%s", untagged), fmt.Sprintf("ghcr.io/vulsio/vuls-data-db@%s", tagged)},
+				token:  "token",
+			},
+			wantErr:         true,
+			wantErrContains: []string{"failed: 2 of 3", "list versions of vulsio/vuls-data-db-backup", "refuse to delete a tagged version"},
+			wantRemaining:   []string{tagged, untagged2},
+		},
+		{
+			name: "an owner that cannot be looked up does not stop the others",
+			args: args{
+				images: []string{fmt.Sprintf("ghcr.io/unknown/a@%s", untagged), fmt.Sprintf("ghcr.io/unknown/b@%s", untagged), fmt.Sprintf("ghcr.io/vulsio/vuls-data-db@%s", untagged)},
+				token:  "token",
+			},
+			wantErr:         true,
+			wantErrContains: []string{"failed: 2 of 3", "get the type of unknown"},
+			wantRemaining:   []string{tagged, untagged2},
 		},
 		{
 			name: "the same digest twice",
@@ -208,9 +276,14 @@ func TestDelete(t *testing.T) {
 			}
 
 			// listings counts the listings Delete starts, which is the
-			// requests of their first page.
+			// requests of their first page, and lookups the lookups of each
+			// owner.
 			var listings int
+			lookups := make(map[string]int)
 			ts := httptest.NewTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				if owner, ok := strings.CutPrefix(r.URL.Path, "/users/"); ok {
+					lookups[owner]++
+				}
 				switch r.URL.Path {
 				case "/users/vulsio":
 					switch r.Method {
@@ -316,14 +389,20 @@ func TestDelete(t *testing.T) {
 							http.Error(w, fmt.Sprintf("unexpected error: %v", err), http.StatusInternalServerError)
 						}
 					case http.MethodDelete:
-						// As GHCR does, answer 404 for a version that is
-						// already gone.
-						if i == -1 || slices.Contains(tt.deleteNotFound, id) {
+						switch {
+						case slices.Contains(tt.deleteForbidden, id):
+							http.Error(w, `{"message":"Forbidden"}`, http.StatusForbidden)
+						case i == -1 || slices.Contains(tt.deleteNotFound, id):
+							// As GHCR does, answer 404 for a version that is
+							// already gone.
 							http.NotFound(w, r)
-							return
+						case slices.Contains(tt.deleteGone, id):
+							vs = slices.Delete(vs, i, i+1)
+							http.NotFound(w, r)
+						default:
+							vs = slices.Delete(vs, i, i+1)
+							w.WriteHeader(http.StatusNoContent)
 						}
-						vs = slices.Delete(vs, i, i+1)
-						w.WriteHeader(http.StatusNoContent)
 					default:
 						http.Error(w, "Bad Request", http.StatusBadRequest)
 					}
@@ -333,8 +412,14 @@ func TestDelete(t *testing.T) {
 			}))
 			// The in-memory network routes api.github.com to the test server,
 			// so the default production base URL is used.
-			if err := delete.Delete(tt.args.images, tt.args.token, append(tt.args.opts, delete.WithHTTPClient(ts.Client()))...); (err != nil) != tt.wantErr {
+			err := delete.Delete(tt.args.images, tt.args.token, append(tt.args.opts, delete.WithHTTPClient(ts.Client()))...)
+			if (err != nil) != tt.wantErr {
 				t.Errorf("Delete() error = %v, wantErr %v", err, tt.wantErr)
+			}
+			for _, s := range tt.wantErrContains {
+				if err == nil || !strings.Contains(err.Error(), s) {
+					t.Errorf("Delete() error = %v, want it to contain %q", err, s)
+				}
 			}
 
 			// The versions of a package are listed once, however many of its
@@ -342,6 +427,11 @@ func TestDelete(t *testing.T) {
 			// is sent.
 			if listings > 1 {
 				t.Errorf("Delete() listed the versions %d times, want at most once", listings)
+			}
+			for owner, n := range lookups {
+				if n > 1 {
+					t.Errorf("Delete() looked %s up %d times, want at most once", owner, n)
+				}
 			}
 
 			remaining := make([]string, 0, len(vs))

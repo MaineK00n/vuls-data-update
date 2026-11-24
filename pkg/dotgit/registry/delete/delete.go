@@ -49,8 +49,10 @@ func WithForce(force bool) Option {
 // pages through every version of the package, and taking one per version is
 // what ran the sweeps into GitHub's rate limits.
 //
-// An image that fails to be deleted does not stop the others. Delete goes on
-// with the rest and returns the errors of all that failed.
+// An image that fails to be deleted does not stop the others, nor does a
+// package whose owner or versions cannot be read, which fails its own images.
+// Delete goes on with the rest, logs each failure as it happens, and returns
+// the errors of all that failed.
 func Delete(images []string, token string, opts ...Option) error {
 	options := &options{
 		force: false,
@@ -89,24 +91,42 @@ func Delete(images []string, token string, opts ...Option) error {
 		targets[repo.Reference.Repository] = append(targets[repo.Reference.Repository], target{image: image, digest: repo.Reference.Reference})
 	}
 
-	repoTypes := make(map[string]string)
-	var errs []error
+	// The type of an owner is looked up once, a failed lookup included, which
+	// fails every package of the owner without asking again.
+	type lookup struct {
+		repoType string
+		err      error
+	}
+	owners := make(map[string]lookup)
+
+	var (
+		errs   []error
+		failed int
+	)
 	for _, p := range packages {
 		owner, pack, _ := strings.Cut(p, "/")
 
-		repoType, ok := repoTypes[owner]
+		o, ok := owners[owner]
 		if !ok {
-			typ, err := ownerType(options.httpClient, owner, token)
-			if err != nil {
-				return errors.Wrapf(err, "get the type of %s", owner)
-			}
-			repoTypes[owner] = typ
-			repoType = typ
+			o.repoType, o.err = ownerType(options.httpClient, owner, token)
+			owners[owner] = o
 		}
+		if o.err != nil {
+			err := errors.Wrapf(o.err, "delete the images of %s. get the type of %s", p, owner)
+			slog.Warn("Failed to delete the images of a package, go on with the rest", slog.String("repository", p), slog.Int("images", len(targets[p])), slog.Any("error", err))
+			errs = append(errs, err)
+			failed += len(targets[p])
+			continue
+		}
+		repoType := o.repoType
 
 		rs, err := ls.List([]ls.Repository{{Type: repoType, Registry: "ghcr.io", Owner: owner, Package: pack}}, token, ls.WithHTTPClient(options.httpClient))
 		if err != nil {
-			return errors.Wrapf(err, "list versions of %s", p)
+			err := errors.Wrapf(err, "delete the images of %s. list versions of %s", p, p)
+			slog.Warn("Failed to delete the images of a package, go on with the rest", slog.String("repository", p), slog.Int("images", len(targets[p])), slog.Any("error", err))
+			errs = append(errs, err)
+			failed += len(targets[p])
+			continue
 		}
 
 		// ls reports a version once per tag, and once with an empty name when
@@ -131,13 +151,16 @@ func Delete(images []string, token string, opts ...Option) error {
 				}
 				return nil
 			}(); err != nil {
-				errs = append(errs, errors.Wrapf(err, "delete %s", t.image))
+				err := errors.Wrapf(err, "delete %s", t.image)
+				slog.Warn("Failed to delete an image, go on with the rest", slog.String("image", t.image), slog.Any("error", err))
+				errs = append(errs, err)
+				failed++
 			}
 		}
 	}
 
 	if len(errs) > 0 {
-		return errors.Wrapf(stderrors.Join(errs...), "delete images. failed: %d of %d", len(errs), len(images))
+		return errors.Wrapf(stderrors.Join(errs...), "delete images. failed: %d of %d", failed, len(images))
 	}
 	return nil
 }
@@ -199,55 +222,38 @@ func deleteVersion(client *http.Client, repoType, owner, pack string, id int, di
 
 	repository := fmt.Sprintf("%s/%s", owner, pack)
 
-	gone := false
-	if err := utilGitHub.Do(client, http.MethodGet, u.String(), token, func(resp *http.Response) error {
-		switch resp.StatusCode {
-		case http.StatusOK:
-			var v ls.Version
-			if err := json.UnmarshalRead(resp.Body, &v); err != nil {
-				return errors.Wrap(err, "decode response")
-			}
-			if v.Metadata == nil || v.Metadata.Container == nil {
-				return errors.Errorf("missing container metadata for response: %+v", v)
-			}
-			if v.Name != digest {
-				return errors.Errorf("unexpected version digest. expected: %q, actual: %q", digest, v.Name)
-			}
-
-			if len(v.Metadata.Container.Tags) > 0 {
-				tags := make([]string, 0, len(v.Metadata.Container.Tags))
-				for _, t := range v.Metadata.Container.Tags {
-					tags = append(tags, fmt.Sprintf("ghcr.io/%s:%s", repository, t))
-				}
-				if !force {
-					return errors.Errorf("refuse to delete a tagged version. digest: %q, tags: %q", digest, tags)
-				}
-				slog.Warn("Deleting a tagged version", slog.String("repository", repository), slog.String("reference", digest), slog.Any("tags", tags))
-			}
-			return nil
-		case http.StatusNotFound:
-			gone = true
-			return nil
-		default:
-			return errors.Errorf("unexpected response status. expected: %d, actual: %d", []int{http.StatusOK, http.StatusNotFound}, resp.StatusCode)
-		}
-	}); err != nil {
-		return errors.Wrap(err, "call GitHub API")
+	v, err := getVersion(client, u.String(), token)
+	if err != nil {
+		return errors.Wrap(err, "get version")
 	}
-	if gone {
+	if v == nil {
 		slog.Warn("Skip a version that is already deleted", slog.String("repository", repository), slog.String("reference", digest), slog.Int("id", id))
 		return nil
 	}
+	if v.Metadata == nil || v.Metadata.Container == nil {
+		return errors.Errorf("missing container metadata for response: %+v", *v)
+	}
+	if v.Name != digest {
+		return errors.Errorf("unexpected version digest. expected: %q, actual: %q", digest, v.Name)
+	}
+	if len(v.Metadata.Container.Tags) > 0 {
+		tags := make([]string, 0, len(v.Metadata.Container.Tags))
+		for _, t := range v.Metadata.Container.Tags {
+			tags = append(tags, fmt.Sprintf("ghcr.io/%s:%s", repository, t))
+		}
+		if !force {
+			return errors.Errorf("refuse to delete a tagged version. digest: %q, tags: %q", digest, tags)
+		}
+		slog.Warn("Deleting a tagged version", slog.String("repository", repository), slog.String("reference", digest), slog.Any("tags", tags))
+	}
 
+	found := true
 	if err := utilGitHub.Do(client, http.MethodDelete, u.String(), token, func(resp *http.Response) error {
 		switch resp.StatusCode {
 		case http.StatusNoContent:
-			slog.Info("Deleted", slog.String("repository", repository), slog.String("reference", digest), slog.Int("id", id))
 			return nil
 		case http.StatusNotFound:
-			// Gone between the read above and here, or by an attempt of this
-			// delete that the API client retried after it went through.
-			slog.Warn("Skip a version that is already deleted", slog.String("repository", repository), slog.String("reference", digest), slog.Int("id", id))
+			found = false
 			return nil
 		default:
 			return errors.Errorf("unexpected response status. expected: %d, actual: %d", []int{http.StatusNoContent, http.StatusNotFound}, resp.StatusCode)
@@ -255,6 +261,45 @@ func deleteVersion(client *http.Client, repoType, owner, pack string, id int, di
 	}); err != nil {
 		return errors.Wrap(err, "call GitHub API")
 	}
+	if found {
+		slog.Info("Deleted", slog.String("repository", repository), slog.String("reference", digest), slog.Int("id", id))
+		return nil
+	}
 
+	// 404 is the answer for a version that went between the read above and
+	// here, or by an attempt of this delete that the API client retried after
+	// it went through. GitHub also answers 404 for what a token may read but
+	// not act on, so the version is read again, and only a version that is no
+	// longer there counts as deleted.
+	v, err = getVersion(client, u.String(), token)
+	if err != nil {
+		return errors.Wrap(err, "get version after the delete answered 404")
+	}
+	if v != nil {
+		return errors.Errorf("the delete answered 404, yet the version is still there. digest: %q, id: %d", digest, id)
+	}
+	slog.Warn("Skip a version that is already deleted", slog.String("repository", repository), slog.String("reference", digest), slog.Int("id", id))
 	return nil
+}
+
+// getVersion reads the version at apiurl, or returns nil when there is none.
+func getVersion(client *http.Client, apiurl, token string) (*ls.Version, error) {
+	var v *ls.Version
+	if err := utilGitHub.Do(client, http.MethodGet, apiurl, token, func(resp *http.Response) error {
+		switch resp.StatusCode {
+		case http.StatusOK:
+			v = new(ls.Version)
+			if err := json.UnmarshalRead(resp.Body, v); err != nil {
+				return errors.Wrap(err, "decode response")
+			}
+			return nil
+		case http.StatusNotFound:
+			return nil
+		default:
+			return errors.Errorf("unexpected response status. expected: %d, actual: %d", []int{http.StatusOK, http.StatusNotFound}, resp.StatusCode)
+		}
+	}); err != nil {
+		return nil, errors.Wrap(err, "call GitHub API")
+	}
+	return v, nil
 }
