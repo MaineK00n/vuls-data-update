@@ -171,7 +171,7 @@ MD5Sum:
  d5a83a214642d02c0751467470c2cf6a      120 contrib/source/Release
  d21f06281af5c991a89c59ba39963670   210326 contrib/source/Sources
  c535440dda10474d574a704b8214df62    61188 contrib/source/Sources.gz
- a48160b069d9e26db9cb041ed75f39ac    51300 contrib/source/Sources.xz
+ 27466652377e03557bd87e5300adac87     1172 contrib/source/Sources.xz
  641eb3cd6c91662f4e5597a1bf98649b 503552549 main/Contents-all
  66e68e4b4b86425a69de9d4e361ccaba 32950204 main/Contents-all.gz
  9c8f52de5b76eacc196f5065e702d988 147184815 main/Contents-amd64
@@ -460,7 +460,7 @@ MD5Sum:
  3510bf1be2c4043577b7840fb618cca0      117 main/source/Release
  d3b9181e79e0cdb6530e67e2147c464a 50810483 main/source/Sources
  bda85e3dcf24ec314e6912494e05852a 12731675 main/source/Sources.gz
- dae71e425e1626482875d4794f9d9a59  9487704 main/source/Sources.xz
+ 4741e084fc55a441c2998b730c4af9ce     1280 main/source/Sources.xz
  19aa198a35af71479686b6f8cfd2e1fa   287539 non-free-firmware/Contents-all
  09e1a17d55b0b2fc6885c8911587561f    16882 non-free-firmware/Contents-all.gz
  70a4c48ac32625490956d64e3dc2cb9b    14996 non-free-firmware/Contents-amd64
@@ -621,7 +621,7 @@ MD5Sum:
  1c0bcf945bbd5b74985c9f6f2187e644      130 non-free-firmware/source/Release
  90a0b211b2730b2c56767753db50530c    28918 non-free-firmware/source/Sources
  b82b34e0239ec5612bbb124cdff6ef7a     6758 non-free-firmware/source/Sources.gz
- 4ab1afc93ada1be0c9f976ea84f8a2ab     6160 non-free-firmware/source/Sources.xz
+ c953771022e5fbc61d074a70622a48ce     1016 non-free-firmware/source/Sources.xz
  c7f2b1001cf4bb5e0a16e211af12dcd5 15760634 non-free/Contents-all
  91e1c9563877e51a3bdda6de9f03a765   839090 non-free/Contents-all.gz
  fc68e68f27d822b98d81ae9120c17fa4   982534 non-free/Contents-amd64
@@ -782,7 +782,7 @@ MD5Sum:
  10f9250ad5c01e2e15943bcc2e48c2d4      121 non-free/source/Release
  314c6d1a56b486dfb9b272fa8d43cd6b   345304 non-free/source/Sources
  a6e4e541f24638fde060f304496e1027    94105 non-free/source/Sources.gz
- 7c5737d1f8267d67838b2a7f8ad17c55    77964 non-free/source/Sources.xz
+ 1ac0e4f66d3b276dc8ae67e839a28508      952 non-free/source/Sources.xz
 SHA256:
  d6c9c82f4e61b4662f9ba16b9ebb379c57b4943f8b7813091d1f637325ddfb79  1484322 contrib/Contents-all
  c22d03bdd4c7619e1e39e73b4a7b9dfdf1cc1141ed9b10913fbcac58b3a943d0    98581 contrib/Contents-all.gz
@@ -944,7 +944,7 @@ SHA256:
  0d32069da4f84e3a32747b0559bee5aa4b4c31b8a3523ab3ff3e07c92d248de2      120 contrib/source/Release
  fa460214c2ca3d03adc0c872519738f5e5c5e04a45b4fe520acc9b7fba03d5c8   210326 contrib/source/Sources
  08c9fcf7c074ff24b90c681d7df97d90af0b9f4828acceafcdf6f49a2887902a    61188 contrib/source/Sources.gz
- 562fd42bc97cdf1608635f399fa0d5fa2a97f51ef0981eacbefae1c54bf93204    51300 contrib/source/Sources.xz
+ d4190563d533c2fc4b96b6c93f731ddc89c582e976835275d15e870362b03f43     1172 contrib/source/Sources.xz
  582139a6daaa1bcf787e2d98c5eeae668c230b044b0b0fcda9a961d9e3ae4e29 503552549 main/Contents-all
  5990540167b2101f2fb1b55ca443f20cd03c5a5feedf42d9506dffa3f140bb1d 32950204 main/Contents-all.gz
  6f439138e5256c8321127437df9d0a866495dee3517dcd277796bbe6ab2a214f 147184815 main/Contents-amd64
@@ -1233,7 +1233,7 @@ SHA256:
  92beff6912c43b3a7ad26f07011e613e8ef2a439bef48ad4a19c305e186e1f8c      117 main/source/Release
  ebdd9c29d2e4104ca727dd8676e7a77f2a6176556085bc240ff87995390c1e49 50810483 main/source/Sources
  f193f763915379bd61884b846f9f694c4e70956cda522b4467fa6daf8591fcc6 12731675 main/source/Sources.gz
- 76d0ca991f5cee60901ba40b47dafec9e1afc114f3fa2c4f220e2bbdba28ffe4  9487704 main/source/Sources.xz
+ 9be743cef2cabcd532f37d5c15a85f2993a44d7cb1b0e60f4a2dabb683992811     1280 main/source/Sources.xz
  ababef9ff6aafdc96e5fd9a10023f4b15e6e4cc42a572ca129ebece042bec073   287539 non-free-firmware/Contents-all
  e981c7dee7d826e3adadcf8fe9d04e6c6bdfd4dfbd2a0d51dc590eca5e6da12f    16882 non-free-firmware/Contents-all.gz
  635a94ae57e644c63bf4252f3225c4fcd9d10453a9020245d66440bf7f00f700    14996 non-free-firmware/Contents-amd64
@@ -1394,7 +1394,7 @@ SHA256:
  efb48ae21b9d2925527d98512260dc079582d302f0c01af88d6667e43abe8844      130 non-free-firmware/source/Release
  fb616ea6ba324ac3826876ee130786168d1af7387c291fcfbe9f79b94456c147    28918 non-free-firmware/source/Sources
  fbff4ca3e912f087e1e671c346feb2d328aba693c1c7604c6dae2cb31ce46560     6758 non-free-firmware/source/Sources.gz
- 2ab0cab6a45256d3ef765361dca2a26a2ec33439f04cb8ac58b2376c4f023157     6160 non-free-firmware/source/Sources.xz
+ db68ee867cfba10beb0fed87247960ba81ba96fbfdea168ddaa39af024e15385     1016 non-free-firmware/source/Sources.xz
  8d9bdaf42a9f6fc5d6093a0fdbcd8a44786d41f551274038e1b0824b3c29ee7a 15760634 non-free/Contents-all
  4a0952ce60974129774cc1b34ec613d7030413ebbf96a0555e4a33882a23ef66   839090 non-free/Contents-all.gz
  2aae6e8e79c77716f23fabbfb0e421a2123ab863e25fc052d8babdd1f3ce3493   982534 non-free/Contents-amd64
@@ -1555,7 +1555,7 @@ SHA256:
  71f60152c0fc279de2656f1a390e8222ec3689d6db76ddca0e1dae8933527f91      121 non-free/source/Release
  9edaabdca9f9825aa931cbe433ce9eccdaa7e7f4ed436d78bf14d457583b8c79   345304 non-free/source/Sources
  1c763de5ba584b56aead841bb9a7759c530ce03db80a7df400bfefdab18aaf30    94105 non-free/source/Sources.gz
- 2696be200dcf219bc2f9ffab56d51d4bf973e839e587ccd2cd862aac4ea2405e    77964 non-free/source/Sources.xz
+ b4ce214a1311aeb009a912df6aa880f70aa46a5bfba05813982648d60a82e511      952 non-free/source/Sources.xz
 
 
 

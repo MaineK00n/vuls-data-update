@@ -142,7 +142,7 @@ SHA256:
  1b75472c9705e8e7a2448e94a71007ab2d33f910c9e9c2678cfd1e7b0668e49c      180 contrib/source/Release
  80d425b9a0f0e7df6a196a5e9394ea99ee57bc35a064c3d8ce8b571d6a3fe1d4    15684 contrib/source/Sources
  1d70aaaf1f841828b64005819ffda383183abc889a9ef8288a36318633b21745     7239 contrib/source/Sources.diff/Index
- f12ec67382552c49ee42ae345f6130cdccc97eec64ec101150b050618e0b2caf     3732 contrib/source/Sources.xz
+ 76fabf7de2738458b9115b368acf1e6027d883124353c884c98b5bac5554d66e     1108 contrib/source/Sources.xz
  5b92688e42881f580e6bddd2c1609d36d0bbcff7db1a7ea749488cc4ec67227d 52966858 main/Contents-all
  da58e117176f2e96ec895a51a29160ce0c7dcb08cbbe3412db714cd23e5eb613    63623 main/Contents-all.diff/Index
  102f6034ecfdd702b0866af423e821ba678d1dbe195a702ea7774617d161d1f8  3272536 main/Contents-all.gz
@@ -272,7 +272,7 @@ SHA256:
  9f6a61ab15f537ef199ecfe57b708c161416016d0211f956a5367c710e877208      177 main/source/Release
  a848ab90d0105742d884e6b001c7182cb2627402ae4beb0a1b488b4c62acd43b  1384689 main/source/Sources
  fb72bc1be7edb57800b3056e13e14a40c4a8507761fc9c0d37bfd5063bae2b98    63339 main/source/Sources.diff/Index
- 87c15c0d2c1faf67248e8cc94df313987b96e475dddc03f341f2a48f6a6f8aa4   139484 main/source/Sources.xz
+ adb37397a65e72a092309ba0e3214856af6310ddd550d2898a2a6825821b082f     1112 main/source/Sources.xz
  e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855        0 non-free-firmware/Contents-all
  f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec       20 non-free-firmware/Contents-all.gz
  e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855        0 non-free-firmware/Contents-amd64
@@ -500,4 +500,4 @@ SHA256:
  8b778e2a4e9d90d9d03ef00a3c60c362f32860e0beb3cd7020979f68022b6a9b      181 non-free/source/Release
  5746d78598702cea2a3a07599219702ab6d463cfea76df639908fa4b0fc65e74      818 non-free/source/Sources
  8c11fdc5d319abfb8363556d94ca4370f0960a499f14ea4895627e2be72b2fab     1591 non-free/source/Sources.diff/Index
- 7bec2ce4431a586964463737d7f376896c02f220f6cdfed204587b257c977781      624 non-free/source/Sources.xz
+ 354477b816f61659d26a739aeff42b5d7eea910bf32ca17759bea36ad7bc6640      616 non-free/source/Sources.xz

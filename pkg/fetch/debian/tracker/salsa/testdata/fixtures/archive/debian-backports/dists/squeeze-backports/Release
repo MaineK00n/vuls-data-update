@@ -181,7 +181,7 @@ MD5Sum:
  4ab2c44fd8ea2634a66fd4f4fd5ce7e0      160 contrib/source/Release
  7104a070d10fcb426b866b470cea7d23     7454 contrib/source/Sources
  4ebd93d82a04e6ede6fce2fc93fc1e63     2715 contrib/source/Sources.bz2
- 617644a64d804bc9cf4bf2d6b92f8470     2547 contrib/source/Sources.gz
+ 2e54af815c0a398f6a46b6dee5a4b016     2555 contrib/source/Sources.gz
  34c77369293ecec788e161e0c3031960 28748591 main/Contents-amd64
  d396d4b5418472c64943ceeaf87bf695  1857814 main/Contents-amd64.gz
  d8b017bed2cdc1b6808e354e0609aff2 29150058 main/Contents-armel
@@ -329,7 +329,7 @@ MD5Sum:
  8c412d2e8bccebfa8a31a1182712bb4d      157 main/source/Release
  d918c0946dcaefbb41a192fc37f62817  1117672 main/source/Sources
  c92fef2bdf53e5b1650ef73739650ab0   253113 main/source/Sources.bz2
- 20e514282134ec4a60a62dd42a1e0911   311887 main/source/Sources.gz
+ cd3b738eaa2950421a52b0ad7e2bbdb8     1344 main/source/Sources.gz
  8493ed304737e037de09d6bdc34f4f59   457152 non-free/Contents-amd64
  fc182f310cba1e1146edd077d475687e    49464 non-free/Contents-amd64.gz
  d7ad9168290517a23bd311098a0d0942   222867 non-free/Contents-armel
@@ -477,7 +477,7 @@ MD5Sum:
  adc11adc68d34ac8fffa0c37c1d95e32      161 non-free/source/Release
  2e5710283438c200e8d7a470c9825f00    15975 non-free/source/Sources
  7489517d04cc4fce3f54549bdc420e27     4923 non-free/source/Sources.bz2
- 2cb0b80de9fbc21aa5843b9fb3d5844a     4793 non-free/source/Sources.gz
+ 78ab978d30d78fe8bdcb3edbdffacec2     1142 non-free/source/Sources.gz
 SHA1:
  98678e0b7881fca663869942a397f4bfe4d64fe6 28748591 Contents-amd64
  986a6857e57eb9da99fa2cb1c3e08eac7c322ec3  1857814 Contents-amd64.gz
@@ -650,7 +650,7 @@ SHA1:
  d7560f7b0279c465f647d62ab74ba335ed1a1cc3      160 contrib/source/Release
  642d9813b21b5ca01b7895df150dd7e164a94771     7454 contrib/source/Sources
  f2046029e07a79a42fbc88aeb79e51d739e99557     2715 contrib/source/Sources.bz2
- a594e67407483d3c08efc76ed1f54bab001e396e     2547 contrib/source/Sources.gz
+ 91b9813b4db798f5c79a7fbc15e30efd273ad3f2     2555 contrib/source/Sources.gz
  98678e0b7881fca663869942a397f4bfe4d64fe6 28748591 main/Contents-amd64
  986a6857e57eb9da99fa2cb1c3e08eac7c322ec3  1857814 main/Contents-amd64.gz
  ac691b10b0ef23473fd48990dae0e32897f0bb2a 29150058 main/Contents-armel
@@ -798,7 +798,7 @@ SHA1:
  bcfbe6c882ccce2132d8bfc14c16e518a28ce4f9      157 main/source/Release
  7d0313761245fbda38a3e4c1b0914b992720aecd  1117672 main/source/Sources
  145ea14b4f2826f49000dee9845b20e0814f5650   253113 main/source/Sources.bz2
- 12da8bfdb930893b8fb72f8a05477e3808a414f4   311887 main/source/Sources.gz
+ 6bd5988f2a92989a701fcd6531d82128e062c475     1344 main/source/Sources.gz
  991b39c3c84dab9e3ca152d370b668dad702d1d1   457152 non-free/Contents-amd64
  26a8ed8c7e66bc23af872e57de8e3ff0cac009c6    49464 non-free/Contents-amd64.gz
  217cb69e1f7402e7dcc5a8c11a62bfd4b7b9ffb0   222867 non-free/Contents-armel
@@ -946,7 +946,7 @@ SHA1:
  40a363a2534321ed7a831e0f8977871e2c79842c      161 non-free/source/Release
  e0dd4a5dad9e773755057435c0475eaf15a6f7ce    15975 non-free/source/Sources
  52448b07f066fc67837f2a10e7fc445c5233a547     4923 non-free/source/Sources.bz2
- d52caf88e84b789fc39e8599922b4b982bbcca14     4793 non-free/source/Sources.gz
+ 6d2ed8cfd785d17011d02b62a2af80e3f95d3e12     1142 non-free/source/Sources.gz
 SHA256:
  4105ebc27905b885b8987355ef52f6bca5aad0ef148391d39904526215412ff2 28748591 Contents-amd64
  f78b2ee2581682fe12bdcb376ef1239b5df8448070246dbb59353c4b3876aa0a  1857814 Contents-amd64.gz
@@ -1119,7 +1119,7 @@ SHA256:
  82a7e18c24a2334fe2f4f8930a598a61320ac1334c3ee31b62ce655117ad46bd      160 contrib/source/Release
  90bcb59f1684a37e1be14ee88b489325bf5fa3fd1a4ed951cf709f131e9752c3     7454 contrib/source/Sources
  9d853634c250133b28fd59946c49f7db18d01ed50c2c3020fba756cfc69c3e1d     2715 contrib/source/Sources.bz2
- 3b7e1ad2d94db395922ef94de5732f6194f686cf659020526e861b2760e01714     2547 contrib/source/Sources.gz
+ 8fb817a183f1d3b683e63576fcdf85cb29bd232ac5ac49def1d2e3cb0e95084e     2555 contrib/source/Sources.gz
  4105ebc27905b885b8987355ef52f6bca5aad0ef148391d39904526215412ff2 28748591 main/Contents-amd64
  f78b2ee2581682fe12bdcb376ef1239b5df8448070246dbb59353c4b3876aa0a  1857814 main/Contents-amd64.gz
  d178f60c85896ee76fecc1055322929240e0245eeb342d52fa734d77c6a46f7a 29150058 main/Contents-armel
@@ -1267,7 +1267,7 @@ SHA256:
  ee5a15fd19981a49a4fd19698ef72125ad5ba563fc65c189fec927dcce00418c      157 main/source/Release
  532bce38ae32c98772d6fc577b7d801205fce751e17015a4632843f70f5a8989  1117672 main/source/Sources
  7b30c9bb8f33df42383953d82d8e146c8e0dbe82c81b59775659304239fb06cd   253113 main/source/Sources.bz2
- 44245cb5a5f4ca00f47cd83501489f45caec3e6baf277d2061a8cbcb1bc7d50b   311887 main/source/Sources.gz
+ 86418b8b5b85db2a37501689e1f53b50bb830c76b3b3b23f3a512efb344a86a0     1344 main/source/Sources.gz
  fe266c07965f846dbfc9d0b50d100e487075238e589e1688bbb902d824e1778f   457152 non-free/Contents-amd64
  5437453f6fe0a01c934858b4abd20d3d7caec56291dff04677387c79774ec449    49464 non-free/Contents-amd64.gz
  e9b039e99086ade5cdaf236cada8765a73f85bc6a3e11ee0e28c48b296baefbb   222867 non-free/Contents-armel
@@ -1415,4 +1415,4 @@ SHA256:
  06b97d8e527f217feb1081c46fad0504358102a27002e7c27a618d1ce1557260      161 non-free/source/Release
  031500a6a24ebbd311e5ad0ac6879d8e1218848ed13c869fc89ef2751908ec8d    15975 non-free/source/Sources
  54c022d07f7d27df0e1f693cf39aa10a7d325a675eb81b778c5eabdb872487ba     4923 non-free/source/Sources.bz2
- 4280f1dd5237f3bb4228413ae2bbeed843665abfeffe33fb56c13eab3f227d71     4793 non-free/source/Sources.gz
+ 094def609c1375207af117186916ec0fd844058d51dc9b74197925c406008156     1142 non-free/source/Sources.gz
