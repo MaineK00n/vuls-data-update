@@ -1610,8 +1610,9 @@ var dotnetPrereleaseRE = regexp.MustCompile(`^(preview|rc)\.\d+(\.\d+)*$`)
 // runtime from 2026-Jun to 2026-Oct and the SDK in 2026-Sep and 2026-Oct too (e.g.
 // CVE-2026-58649 lists "8.0.130, 8.0.424" under it). The FixedBuild of each Vendor Fix
 // tells them apart, whichever of the two names CVRF uses:
-//   - one runtime version, patch below 100 (e.g. "10.0.15", "11.0.0-rc.2",
-//     "9.0.0-preview.4.24266.19"): the runtime, ".NET X runtime installed on <OS>"
+//   - one runtime version, which the SDK parser does not take (e.g. "10.0.15",
+//     "11.0.0-rc.2", "9.0.0-preview.4.24266.19"; see isDotNetRuntimeFixedBuild): the
+//     runtime, ".NET X runtime installed on <OS>"
 //   - no version (e.g. "", "11.0 RC1", a fix listing only a KB): neither the runtime
 //     nor the SDK. The name CVRF lists is kept as is, as nothing else tells. It only
 //     shows in the KB criterion and the KB record, as such a FixedBuild gives no
@@ -1674,16 +1675,21 @@ func dotnetProductNames(productName string) (runtime, sdk string, ok bool) {
 }
 
 // isDotNetRuntimeFixedBuild reports whether a .NET FixedBuild is one runtime version:
-// one that parses as a .NET runtime version with a patch below 100 (e.g. "10.0.15",
-// "11.0.0", "9.0.0-preview.4.24266.19"). One that names an SDK feature band (e.g.
-// "10.0.115"), no version at all (e.g. "", "11.0 RC1"), or several versions (e.g.
-// "10.0.15, 10.0.115"; a runtime criterion compares one version) is not.
+// one that parses as a .NET runtime version but not as an SDK version (e.g. "10.0.15",
+// "11.0.0", "9.0.0-preview.4.24266.19"). The runtime parser takes any semantic
+// version, an SDK feature band too, so the SDK parser, which takes only a feature
+// band, tells them apart. One that names an SDK feature band (e.g. "10.0.115"), no
+// version at all (e.g. "", "11.0 RC1"), or several versions (e.g. "10.0.15,
+// 10.0.115"; a runtime criterion compares one version) is not.
 func isDotNetRuntimeFixedBuild(fixedBuild string) bool {
 	if fixedBuild == "" || strings.Contains(fixedBuild, ",") {
 		return false
 	}
-	v, err := dotnetcoreruntimeversion.NewVersion(fixedBuild)
-	return err == nil && v.Patch < 100
+	if _, err := dotnetcoreruntimeversion.NewVersion(fixedBuild); err != nil {
+		return false
+	}
+	_, err := dotnetcoresdkversion.NewVersion(fixedBuild)
+	return err != nil
 }
 
 // buildDotNetSDKCriterion builds the criterion of a .NET SDK product. Its FixedBuild
@@ -2476,12 +2482,14 @@ func validateFixedBuild(rt rangeTypes.RangeType, productName, fixedBuild string)
 			return errors.Errorf("unexpected .NET runtime prerelease. expected: %q, actual: %q", dotnetPrereleaseRE.String(), fixedBuild)
 		}
 		// .NET 8.0-11.0 runtime (".NET X runtime installed on <OS>"). An SDK feature band
-		// here (patch 100 or above, e.g. "10.0.402") would make every runtime fall below
-		// it. vendorFixProductName gives a Vendor Fix with one the SDK name, so it comes
+		// here (e.g. "10.0.402") would make every runtime fall below it.
+		// vendorFixProductName gives a Vendor Fix with one the SDK name, so it comes
 		// from an override on the runtime name (fixedBuildOverrides,
 		// missingProductOverrides), which should be on the SDK name instead.
-		if strings.Contains(productName, " runtime installed on ") && v.Patch >= 100 {
-			return errors.Errorf("unexpected .NET runtime version. expected: %q, actual: %q", "a patch below 100", fixedBuild)
+		if strings.Contains(productName, " runtime installed on ") {
+			if _, err := dotnetcoresdkversion.NewVersion(fixedBuild); err == nil {
+				return errors.Errorf("unexpected .NET runtime version. expected: %q, actual: %q", "a runtime version, not an SDK feature band", fixedBuild)
+			}
 		}
 	case rangeTypes.RangeTypeMicrosoftEdge:
 		if _, err := edgeversion.NewVersion(fixedBuild); err != nil {
