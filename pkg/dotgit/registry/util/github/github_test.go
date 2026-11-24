@@ -319,10 +319,22 @@ func TestDo_retry(t *testing.T) {
 			wantErr:      true,
 		},
 		{
-			name:         "DELETE, 5xx, then success",
+			// A DELETE is retried only with WithBeforeRetry, which
+			// TestDo_beforeRetry covers.
+			name:         "DELETE without a check before the retry, 5xx",
 			method:       http.MethodDelete,
 			responses:    []response{{status: http.StatusBadGateway}, {status: http.StatusNoContent}},
-			wantRequests: 2,
+			wantRequests: 1,
+			wantErr:      true,
+		},
+		{
+			name:            "DELETE without a check before the retry, rate limited",
+			method:          http.MethodDelete,
+			responses:       []response{{status: http.StatusTooManyRequests}, {status: http.StatusNoContent}},
+			wantRequests:    1,
+			wantErr:         true,
+			wantErrContains: "429",
+			wantRateLimited: true,
 		},
 		{
 			name:         "connection error, then success",

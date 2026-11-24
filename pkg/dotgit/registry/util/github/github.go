@@ -85,12 +85,17 @@ var policy = retryPolicy{
 // a connection error and a 5xx response with exponential backoff, and a rate
 // limit and a 503 that says how long to wait after the wait GitHub asks for, as
 // long as it is no longer than policy.askedWaitMax. A rate limit that does not
-// say is retried after a wait that grows with each retry. A DELETE is retried
-// as well, as a version id is never reused, but a retry whose first attempt
-// went through is answered 404, which the caller has to take for done. A
-// caller whose request is only to be sent while something holds, such as a
-// DELETE of a version that is to be untagged, checks it again before each
-// retry with WithBeforeRetry, as the retries can wait for minutes.
+// say is retried after a wait that grows with each retry.
+//
+// That holds for a GET as it is. A request that changes something, such as a
+// DELETE, is retried only with WithBeforeRetry, whose check vouches before
+// each retry that the request is still to be sent. The retries can wait for
+// minutes, and what the caller checked before sending it, such as that a
+// version to be deleted carries no tag, may no longer hold by then. Without
+// it, such a request is sent once, and a rate limit still fails it with
+// ErrRateLimited. A version id is never reused, so a DELETE retried that way
+// is safe, but a retry whose first attempt went through is answered 404, which
+// the caller has to take for done.
 //
 // Once the retries run out, fn sees the last response, and the error it returns
 // for a status it does not expect carries what GitHub said about it. A rate
@@ -123,12 +128,21 @@ func Do(client *http.Client, method, apiurl, token string, fn func(resp *http.Re
 	}
 	req.Header = header
 
+	retryMax := policy.max
+	switch method {
+	case http.MethodGet, http.MethodHead:
+	default:
+		if o.beforeRetry == nil {
+			retryMax = 0
+		}
+	}
+
 	r := &retrier{method: method, url: u.String()}
 	c := &retryablehttp.Client{
 		HTTPClient:   client,
 		RetryWaitMin: policy.waitMin,
 		RetryWaitMax: policy.waitMax,
-		RetryMax:     policy.max,
+		RetryMax:     retryMax,
 		CheckRetry:   r.checkRetry,
 		Backoff:      r.backoff,
 		// Hand the last response to fn, which reports a status it does not
