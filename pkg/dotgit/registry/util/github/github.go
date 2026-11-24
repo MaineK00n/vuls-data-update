@@ -87,14 +87,24 @@ var policy = retryPolicy{
 // long as it is no longer than policy.askedWaitMax. A rate limit that does not
 // say is retried after a wait that grows with each retry. A DELETE is retried
 // as well, as a version id is never reused, but a retry whose first attempt
-// went through is answered 404, which the caller has to take for done. Once
-// the retries run out, fn sees the last response, and the error it returns for
-// a status it does not expect carries what GitHub said about it, such as which
-// rate limit was hit. When that response is a rate limit, the error is
-// ErrRateLimited too.
-func Do(client *http.Client, method, apiurl, token string, fn func(resp *http.Response) error) error {
+// went through is answered 404, which the caller has to take for done. A
+// caller whose request is only to be sent while something holds, such as a
+// DELETE of a version that is to be untagged, checks it again before each
+// retry with WithBeforeRetry, as the retries can wait for minutes.
+//
+// Once the retries run out, fn sees the last response, and the error it returns
+// for a status it does not expect carries what GitHub said about it. A rate
+// limit is the exception: Do fails with ErrRateLimited and what GitHub said,
+// such as which rate limit was hit, without handing the response to fn, so
+// that no fn takes it for a 403 that refuses the token.
+func Do(client *http.Client, method, apiurl, token string, fn func(resp *http.Response) error, opts ...DoOption) error {
 	if client == nil {
 		client = http.DefaultClient
+	}
+
+	var o doOptions
+	for _, opt := range opts {
+		opt.apply(&o)
 	}
 
 	u, err := url.Parse(apiurl)
@@ -125,6 +135,15 @@ func Do(client *http.Client, method, apiurl, token string, fn func(resp *http.Re
 		// expect in the words of the caller, rather than closing it.
 		ErrorHandler: retryablehttp.PassthroughErrorHandler,
 	}
+	if o.beforeRetry != nil {
+		// PrepareRetry runs after the wait, right before the retry is sent.
+		c.PrepareRetry = func(*http.Request) error {
+			if err := o.beforeRetry(); err != nil {
+				return errors.Wrap(err, "check before the retry")
+			}
+			return nil
+		}
+	}
 
 	resp, err := c.Do(req)
 	if err != nil {
@@ -135,10 +154,11 @@ func Do(client *http.Client, method, apiurl, token string, fn func(resp *http.Re
 	}
 	defer resp.Body.Close()
 
+	if r.rateLimited {
+		return errors.Wrapf(ErrRateLimited, "%s: %s. %s", method, u.String(), describe(resp))
+	}
+
 	if err := fn(resp); err != nil {
-		if r.rateLimited {
-			err = rateLimitedError{err}
-		}
 		if resp.StatusCode >= http.StatusBadRequest {
 			return errors.Wrapf(err, "process response. %s", describe(resp))
 		}
@@ -158,13 +178,27 @@ func Do(client *http.Client, method, apiurl, token string, fn func(resp *http.Re
 // ref. https://docs.github.com/en/rest/using-the-rest-api/best-practices-for-using-the-rest-api#handle-rate-limit-errors-appropriately
 var ErrRateLimited = errors.New("rate limited")
 
-// rateLimitedError makes the error of fn ErrRateLimited too, keeping its
-// message.
-type rateLimitedError struct{ error }
+// DoOption is an option of Do.
+type DoOption interface {
+	apply(*doOptions)
+}
 
-func (e rateLimitedError) Is(target error) bool { return target == ErrRateLimited }
+type doOptions struct {
+	beforeRetry func() error
+}
 
-func (e rateLimitedError) Unwrap() error { return e.error }
+// WithBeforeRetry has Do call check before each retry of the request, right
+// before it is sent. A check that fails ends the retries, and Do returns its
+// error without sending the request again.
+func WithBeforeRetry(check func() error) DoOption {
+	return beforeRetryOption(check)
+}
+
+type beforeRetryOption func() error
+
+func (f beforeRetryOption) apply(o *doOptions) {
+	o.beforeRetry = f
+}
 
 // retrier decides on the retries of one request. retryablehttp drains the body
 // of a response it retries before it asks for the wait, so checkRetry, which
@@ -375,9 +409,9 @@ func describe(resp *http.Response) string {
 //
 // An installation token, GITHUB_TOKEN in GitHub Actions included, cannot access "GET /user" and gets 403
 // instead, and its permissions for GitHub Packages are granted by the workflow rather than by scopes, so
-// 403 is logged at Info and the check is skipped. Do retries a rate limited request first, and one that is
-// still refused when the retries run out is answered with 403 or 429 too. Any other unexpected status skips
-// the check with a warning.
+// 403 is logged at Info and the check is skipped. A rate limit, which GitHub also answers with 403, is
+// retried by Do, and one that persists through the retries fails the check with ErrRateLimited rather
+// than skipping it. Any other unexpected status skips the check with a warning.
 //
 // Every endpoint returns X-OAuth-Scopes for a personal access token (classic), so a cheaper one such as
 // "GET /rate_limit" would do for reading the scopes. "GET /user" is used because it is the only one that

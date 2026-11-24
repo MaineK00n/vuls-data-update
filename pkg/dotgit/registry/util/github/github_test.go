@@ -5,6 +5,7 @@ import (
 	"encoding/json/v2"
 	"errors"
 	"fmt"
+	"log"
 	"log/slog"
 	"net/http"
 	"net/http/httptest"
@@ -127,7 +128,10 @@ func TestCheckScopes(t *testing.T) {
 		args    args
 		status  int
 		scopes  *string
+		body    string
 		wantErr bool
+		// wantRateLimited tells that the error is github.ErrRateLimited.
+		wantRateLimited bool
 	}{
 		{
 			name: "happy",
@@ -201,6 +205,29 @@ func TestCheckScopes(t *testing.T) {
 			status: http.StatusForbidden,
 		},
 		{
+			// A rate limit is not taken for a token that cannot fetch its
+			// scopes.
+			name: "rate limited",
+			args: args{
+				token:    "token",
+				required: []string{github.ScopeReadPackages},
+			},
+			status:          http.StatusForbidden,
+			body:            `{"message":"You have exceeded a secondary rate limit. Please wait a few minutes before you try again."}`,
+			wantErr:         true,
+			wantRateLimited: true,
+		},
+		{
+			name: "rate limited with 429",
+			args: args{
+				token:    "token",
+				required: []string{github.ScopeReadPackages},
+			},
+			status:          http.StatusTooManyRequests,
+			wantErr:         true,
+			wantRateLimited: true,
+		},
+		{
 			name: "unexpected response status",
 			args: args{
 				token:    "token",
@@ -218,13 +245,20 @@ func TestCheckScopes(t *testing.T) {
 						w.Header().Set("X-OAuth-Scopes", *tt.scopes)
 					}
 					w.WriteHeader(tt.status)
+					if _, err := w.Write([]byte(tt.body)); err != nil {
+						t.Errorf("write body: %v", err)
+					}
 				default:
 					http.NotFound(w, r)
 				}
 			}))
 
-			if err := github.CheckScopes(tt.args.token, tt.args.required, github.WithHTTPClient(ts.Client())); (err != nil) != tt.wantErr {
+			err := github.CheckScopes(tt.args.token, tt.args.required, github.WithHTTPClient(ts.Client()))
+			if (err != nil) != tt.wantErr {
 				t.Errorf("CheckScopes() error = %v, wantErr %v", err, tt.wantErr)
+			}
+			if got := errors.Is(err, github.ErrRateLimited); got != tt.wantRateLimited {
+				t.Errorf("errors.Is(CheckScopes(), ErrRateLimited) = %t, want %t. error: %v", got, tt.wantRateLimited, err)
 			}
 		})
 	}
@@ -233,8 +267,15 @@ func TestCheckScopes(t *testing.T) {
 func TestDo_retry(t *testing.T) {
 	t.Cleanup(github.ShortenRetryWaits(time.Millisecond))
 
-	logger := slog.Default()
-	t.Cleanup(func() { slog.SetDefault(logger) })
+	// slog.SetDefault also points the output of the log package at the
+	// handler, and putting the default logger back leaves it there, so the
+	// output of the log package is put back too.
+	logger, logWriter, logFlags := slog.Default(), log.Writer(), log.Flags()
+	t.Cleanup(func() {
+		slog.SetDefault(logger)
+		log.SetOutput(logWriter)
+		log.SetFlags(logFlags)
+	})
 
 	type response struct {
 		status int
@@ -414,8 +455,8 @@ func TestDo_retry(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			var log bytes.Buffer
-			slog.SetDefault(slog.New(slog.NewTextHandler(&log, nil)))
+			var logged bytes.Buffer
+			slog.SetDefault(slog.New(slog.NewTextHandler(&logged, nil)))
 
 			var requests int
 			ts := httptest.NewTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -463,8 +504,11 @@ func TestDo_retry(t *testing.T) {
 			if got := errors.Is(err, github.ErrRateLimited); got != tt.wantRateLimited {
 				t.Errorf("errors.Is(Do(), ErrRateLimited) = %t, want %t. error: %v", got, tt.wantRateLimited, err)
 			}
-			if !strings.Contains(log.String(), tt.wantLog) {
-				t.Errorf("Do() logged %q, want it to contain %q", log.String(), tt.wantLog)
+			if !strings.Contains(logged.String(), tt.wantLog) {
+				t.Errorf("Do() logged %q, want it to contain %q", logged.String(), tt.wantLog)
+			}
+			if tt.wantRequests == 1 && strings.Contains(logged.String(), "Retry GitHub API request") {
+				t.Errorf("Do() logged %q for a request it did not retry", logged.String())
 			}
 			if requests != tt.wantRequests {
 				t.Errorf("Do() sent %d requests, want %d", requests, tt.wantRequests)
@@ -501,6 +545,112 @@ func TestRateLimitBackoff(t *testing.T) {
 			// Clients refused together do not retry together.
 			if tt.wantMin < tt.wantMax && len(waits) == 1 {
 				t.Errorf("RateLimitBackoff(%d) waited %v every time, want a random part", tt.attemptNum, waits)
+			}
+		})
+	}
+}
+
+func TestDo_beforeRetry(t *testing.T) {
+	t.Cleanup(github.ShortenRetryWaits(time.Millisecond))
+
+	tests := []struct {
+		name string
+		// statuses are answered in turn, and the last one again once they run
+		// out.
+		statuses []int
+		// checkFails makes the check fail from this call on, counted from 1.
+		// 0 never fails it.
+		checkFails   int
+		wantRequests int
+		wantChecks   int
+		wantErr      bool
+		// wantRateLimited tells that the error is github.ErrRateLimited.
+		wantRateLimited bool
+	}{
+		{
+			name:         "no retry, no check",
+			statuses:     []int{http.StatusNoContent},
+			wantRequests: 1,
+		},
+		{
+			name:         "checked before each retry",
+			statuses:     []int{http.StatusBadGateway, http.StatusBadGateway, http.StatusNoContent},
+			wantRequests: 3,
+			wantChecks:   2,
+		},
+		{
+			name:         "a failed check ends the retries",
+			statuses:     []int{http.StatusBadGateway, http.StatusNoContent},
+			checkFails:   1,
+			wantRequests: 1,
+			wantChecks:   1,
+			wantErr:      true,
+		},
+		{
+			name:         "a check that fails later ends the retries there",
+			statuses:     []int{http.StatusBadGateway},
+			checkFails:   2,
+			wantRequests: 2,
+			wantChecks:   2,
+			wantErr:      true,
+		},
+		{
+			// What the check refuses is the reason, not the rate limit that
+			// the retry was waiting for.
+			name:         "a failed check after a rate limit",
+			statuses:     []int{http.StatusTooManyRequests, http.StatusNoContent},
+			checkFails:   1,
+			wantRequests: 1,
+			wantChecks:   1,
+			wantErr:      true,
+		},
+		{
+			name:            "a rate limit through the retries",
+			statuses:        []int{http.StatusTooManyRequests},
+			wantRequests:    5,
+			wantChecks:      4,
+			wantErr:         true,
+			wantRateLimited: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var requests int
+			ts := httptest.NewTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				w.WriteHeader(tt.statuses[min(requests, len(tt.statuses)-1)])
+				requests++
+			}))
+
+			var checks int
+			errRefused := errors.New("refused")
+			err := github.Do(ts.Client(), http.MethodDelete, "https://api.github.com/orgs/vulsio/packages/container/vuls-data-db/versions/1", "token", func(resp *http.Response) error {
+				switch resp.StatusCode {
+				case http.StatusNoContent:
+					return nil
+				default:
+					return fmt.Errorf("unexpected response status. expected: %d, actual: %d", []int{http.StatusNoContent}, resp.StatusCode)
+				}
+			}, github.WithBeforeRetry(func() error {
+				checks++
+				if tt.checkFails > 0 && checks >= tt.checkFails {
+					return errRefused
+				}
+				return nil
+			}))
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Do() error = %v, wantErr %v", err, tt.wantErr)
+			}
+			if tt.checkFails > 0 && !errors.Is(err, errRefused) {
+				t.Errorf("Do() error = %v, want the error of the check", err)
+			}
+			if got := errors.Is(err, github.ErrRateLimited); got != tt.wantRateLimited {
+				t.Errorf("errors.Is(Do(), ErrRateLimited) = %t, want %t. error: %v", got, tt.wantRateLimited, err)
+			}
+			if requests != tt.wantRequests {
+				t.Errorf("Do() sent %d requests, want %d", requests, tt.wantRequests)
+			}
+			if checks != tt.wantChecks {
+				t.Errorf("Do() checked %d times, want %d", checks, tt.wantChecks)
 			}
 		})
 	}

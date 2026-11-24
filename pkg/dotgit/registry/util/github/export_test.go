@@ -27,9 +27,12 @@ func (c httpClientOption) apply(opts *options) {
 // RateLimitBackoff is rateLimitBackoff.
 var RateLimitBackoff = rateLimitBackoff
 
-// ShortenRetryWaits makes every wait of Do between retries, a rate limit that
-// does not say how long to wait included, wait instead, and returns what puts
-// the waits back. A test passes it to t.Cleanup.
+// ShortenRetryWaits makes wait the backoff of Do between the retries of a
+// connection error or a 5xx response, and the first wait for a rate limit that
+// does not say how long to wait, which then doubles with each retry and gets a
+// random part of up to wait on top. It leaves the waits GitHub asks for alone,
+// and returns what puts the waits back. A test passes it to t.Cleanup. wait is
+// to be positive, as the random part is drawn from [0, wait).
 func ShortenRetryWaits(wait time.Duration) func() {
 	saved := policy
 	policy.waitMin, policy.waitMax, policy.rateLimitWait = wait, wait, wait
