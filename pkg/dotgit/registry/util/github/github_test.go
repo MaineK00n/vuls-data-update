@@ -244,7 +244,11 @@ func TestDo_retry(t *testing.T) {
 		// run out.
 		responses    []response
 		wantRequests int
-		wantErr      bool
+		// wantWait is the least time Do takes, which tells that the wait asked
+		// for is waited for. ShortenRetryWaits leaves the waits GitHub asks for
+		// alone.
+		wantWait time.Duration
+		wantErr  bool
 		// wantErrContains is a part of the error that tells what GitHub said.
 		wantErrContains string
 	}{
@@ -282,21 +286,36 @@ func TestDo_retry(t *testing.T) {
 		{
 			name:         "403 with Retry-After, then success",
 			method:       http.MethodGet,
-			responses:    []response{{status: http.StatusForbidden, header: http.Header{"Retry-After": []string{"0"}}}, {status: http.StatusOK}},
+			responses:    []response{{status: http.StatusForbidden, header: http.Header{"Retry-After": []string{"1"}}}, {status: http.StatusOK}},
 			wantRequests: 2,
+			wantWait:     time.Second,
 		},
 		{
 			name:   "403 of the primary rate limit, then success",
 			method: http.MethodGet,
 			responses: []response{
-				{
-					status: http.StatusForbidden,
-					header: http.Header{"X-Ratelimit-Remaining": []string{"0"}, "X-Ratelimit-Reset": []string{strconv.FormatInt(time.Now().Add(-time.Hour).Unix(), 10)}},
-					body:   `{"message":"API rate limit exceeded for installation ID 1."}`,
-				},
+				{status: http.StatusForbidden, header: http.Header{"X-Ratelimit-Remaining": []string{"0"}, "X-Ratelimit-Reset": []string{strconv.FormatInt(time.Now().Add(-time.Hour).Unix(), 10)}}},
 				{status: http.StatusOK},
 			},
 			wantRequests: 2,
+			// The second on top of the reset.
+			wantWait: time.Second,
+		},
+		{
+			name:            "primary rate limit that resets later than the limit",
+			method:          http.MethodGet,
+			responses:       []response{{status: http.StatusForbidden, header: http.Header{"X-Ratelimit-Remaining": []string{"0"}, "X-Ratelimit-Reset": []string{strconv.FormatInt(time.Now().Add(time.Hour).Unix(), 10)}}}},
+			wantRequests:    1,
+			wantErr:         true,
+			wantErrContains: `x-ratelimit-remaining: "0"`,
+		},
+		{
+			name:            "primary rate limit that resets centuries later",
+			method:          http.MethodGet,
+			responses:       []response{{status: http.StatusForbidden, header: http.Header{"X-Ratelimit-Remaining": []string{"0"}, "X-Ratelimit-Reset": []string{"99999999999"}}}},
+			wantRequests:    1,
+			wantErr:         true,
+			wantErrContains: `x-ratelimit-reset: "99999999999"`,
 		},
 		{
 			name:   "403 of the secondary rate limit without headers, then success",
@@ -322,6 +341,37 @@ func TestDo_retry(t *testing.T) {
 			wantRequests:    1,
 			wantErr:         true,
 			wantErrContains: `retry-after: "3600"`,
+		},
+		{
+			name:            "Retry-After too long for a time.Duration",
+			method:          http.MethodGet,
+			responses:       []response{{status: http.StatusTooManyRequests, header: http.Header{"Retry-After": []string{"10000000000"}}}},
+			wantRequests:    1,
+			wantErr:         true,
+			wantErrContains: `retry-after: "10000000000"`,
+		},
+		{
+			name:         "503 with Retry-After, then success",
+			method:       http.MethodGet,
+			responses:    []response{{status: http.StatusServiceUnavailable, header: http.Header{"Retry-After": []string{"1"}}}, {status: http.StatusOK}},
+			wantRequests: 2,
+			wantWait:     time.Second,
+		},
+		{
+			name:            "503 that asks for a longer wait than the limit",
+			method:          http.MethodGet,
+			responses:       []response{{status: http.StatusServiceUnavailable, header: http.Header{"Retry-After": []string{"3600"}}}},
+			wantRequests:    1,
+			wantErr:         true,
+			wantErrContains: `retry-after: "3600"`,
+		},
+		{
+			// An HTTP date is not followed. Were it, the test would wait an
+			// hour.
+			name:         "503 with Retry-After as an HTTP date, then success",
+			method:       http.MethodGet,
+			responses:    []response{{status: http.StatusServiceUnavailable, header: http.Header{"Retry-After": []string{time.Now().Add(time.Hour).UTC().Format(http.TimeFormat)}}}, {status: http.StatusOK}},
+			wantRequests: 2,
 		},
 		{
 			name:         "404",
@@ -361,6 +411,7 @@ func TestDo_retry(t *testing.T) {
 				}
 			}))
 
+			start := time.Now()
 			err := github.Do(ts.Client(), tt.method, "https://api.github.com/orgs/vulsio/packages/container/vuls-data-db/versions", "token", func(resp *http.Response) error {
 				switch resp.StatusCode {
 				case http.StatusOK, http.StatusNoContent:
@@ -377,6 +428,9 @@ func TestDo_retry(t *testing.T) {
 			}
 			if requests != tt.wantRequests {
 				t.Errorf("Do() sent %d requests, want %d", requests, tt.wantRequests)
+			}
+			if elapsed := time.Since(start); elapsed < tt.wantWait {
+				t.Errorf("Do() took %s, want at least %s", elapsed, tt.wantWait)
 			}
 		})
 	}

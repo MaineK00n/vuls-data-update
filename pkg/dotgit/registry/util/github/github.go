@@ -53,20 +53,21 @@ type retryPolicy struct {
 	// rateLimitWait is the wait for a rate limit that does not say how long to
 	// wait. GitHub asks for at least a minute then.
 	rateLimitWait time.Duration
-	// rateLimitWaitMax is the longest wait for a rate limit. A request asked to
-	// wait longer, as one is when the primary rate limit resets most of an hour
-	// later, fails at once rather than holding the caller up that long.
-	rateLimitWaitMax time.Duration
+	// askedWaitMax is the longest wait GitHub may ask for, by a rate limit or
+	// by the Retry-After of a 503. A request asked to wait longer, as one is
+	// when the primary rate limit resets most of an hour later, fails at once
+	// rather than holding the caller up that long.
+	askedWaitMax time.Duration
 }
 
 // policy is a variable only so that the tests of this package can shorten the
 // waits, through export_test.go.
 var policy = retryPolicy{
-	max:              4,
-	waitMin:          1 * time.Second,
-	waitMax:          30 * time.Second,
-	rateLimitWait:    1 * time.Minute,
-	rateLimitWaitMax: 5 * time.Minute,
+	max:           4,
+	waitMin:       1 * time.Second,
+	waitMax:       30 * time.Second,
+	rateLimitWait: 1 * time.Minute,
+	askedWaitMax:  5 * time.Minute,
 }
 
 // Do sends the request with client, or with [http.DefaultClient] when it is
@@ -77,7 +78,8 @@ var policy = retryPolicy{
 //
 // A request that fails for a reason that passes is retried before fn sees it:
 // a connection error and a 5xx response with exponential backoff, and a rate
-// limit after the wait GitHub asks for. A DELETE is retried as well, as a
+// limit and a 503 that says how long to wait after the wait GitHub asks for, as
+// long as it is no longer than policy.askedWaitMax. A DELETE is retried as well, as a
 // version id is never reused, but a retry whose first attempt went through is
 // answered 404, which the caller has to take for done. Once the retries run
 // out, fn sees the last response, and the error it returns for a status it does
@@ -138,7 +140,7 @@ func Do(client *http.Client, method, apiurl, token string, fn func(resp *http.Re
 
 // retrier decides on the retries of one request. retryablehttp drains the body
 // of a response it retries before it asks for the wait, so checkRetry, which
-// still has the body, works the wait of a rate limit out and leaves it to
+// still has the body, works the wait GitHub asks for out and leaves it to
 // backoff.
 type retrier struct {
 	method string
@@ -146,10 +148,9 @@ type retrier struct {
 
 	// reason is why the last attempt failed, for the log.
 	reason string
-	// rateLimited tells that the last attempt hit a rate limit that asks for
-	// rateLimitWait.
-	rateLimited   bool
-	rateLimitWait time.Duration
+	// asked tells that the last response asked for askedWait.
+	asked     bool
+	askedWait time.Duration
 }
 
 // checkRetry retries what retryablehttp.DefaultRetryPolicy does, which is a
@@ -158,57 +159,68 @@ type retrier struct {
 //
 // ref. https://docs.github.com/en/rest/using-the-rest-api/best-practices-for-using-the-rest-api#handle-rate-limit-errors-appropriately
 func (r *retrier) checkRetry(ctx context.Context, resp *http.Response, err error) (bool, error) {
-	r.rateLimited = false
+	r.asked = false
 	switch {
 	case err != nil:
 		r.reason = err.Error()
 	case resp != nil:
 		r.reason = resp.Status
 
-		wait, ok, err := rateLimitWait(resp)
+		wait, ok, err := askedWait(resp)
 		if err != nil {
-			return false, errors.Wrap(err, "check rate limit")
+			return false, errors.Wrap(err, "check the wait asked for")
 		}
 		if ok {
 			if ctx.Err() != nil {
 				return false, ctx.Err()
 			}
-			if wait > policy.rateLimitWaitMax {
+			if wait > policy.askedWaitMax {
 				return false, nil
 			}
-			r.rateLimited, r.rateLimitWait = true, wait
+			r.asked, r.askedWait = true, wait
 			return true, nil
 		}
 	}
 	return retryablehttp.DefaultRetryPolicy(ctx, resp, err)
 }
 
-func (r *retrier) backoff(min, max time.Duration, attemptNum int, resp *http.Response) time.Duration {
-	wait := r.rateLimitWait
-	if !r.rateLimited {
-		wait = retryablehttp.DefaultBackoff(min, max, attemptNum, resp)
+func (r *retrier) backoff(waitMin, waitMax time.Duration, attemptNum int, _ *http.Response) time.Duration {
+	wait := r.askedWait
+	if !r.asked {
+		// Without the response, as DefaultBackoff would otherwise follow the
+		// Retry-After of a 429 or 503 however long it is. askedWait has
+		// already followed what it could of that, within policy.askedWaitMax.
+		wait = retryablehttp.DefaultBackoff(waitMin, waitMax, attemptNum, nil)
 	}
 	slog.Warn("Retry GitHub API request", slog.String("method", r.method), slog.String("url", r.url), slog.String("reason", r.reason), slog.Int("retry", attemptNum+1), slog.Duration("wait", wait))
 	return wait
 }
 
-// rateLimitWait reports whether resp is a rate limit, and how long it asks to
-// wait: Retry-After, else until X-RateLimit-Reset when X-RateLimit-Remaining is
-// 0, else policy.rateLimitWait. 403 also refuses a token that may not do what
-// was asked, as GITHUB_TOKEN may not read GET /user, and that one is told apart
-// by the headers and by the message of the body, which is put back for the
-// caller.
-func rateLimitWait(resp *http.Response) (time.Duration, bool, error) {
+// askedWait reports whether resp asks to be retried after a wait, and how
+// long. A rate limit, answered with 403 or 429, asks for Retry-After, else
+// until X-RateLimit-Reset when X-RateLimit-Remaining is 0, else
+// policy.rateLimitWait. A 503 asks for its Retry-After, if it has one. 403 also
+// refuses a token that may not do what was asked, as GITHUB_TOKEN may not read
+// GET /user, and that one is told apart by the headers and by the message of
+// the body, which is put back for the caller.
+//
+// A wait longer than policy.askedWaitMax is cut to just over it before it
+// becomes a time.Duration, which a value of centuries would overflow into a
+// negative wait, retried at once.
+func askedWait(resp *http.Response) (time.Duration, bool, error) {
 	switch resp.StatusCode {
-	case http.StatusForbidden, http.StatusTooManyRequests:
+	case http.StatusForbidden, http.StatusTooManyRequests, http.StatusServiceUnavailable:
 	default:
 		return 0, false, nil
 	}
 
 	// GitHub sends Retry-After in seconds. A value that is not, such as an
-	// HTTP date, is left for the headers below.
+	// HTTP date, is left for the headers below, and for a 503 to the backoff.
 	if n, err := strconv.Atoi(resp.Header.Get("Retry-After")); err == nil && n >= 0 {
-		return time.Duration(n) * time.Second, true, nil
+		return time.Duration(min(n, int(policy.askedWaitMax/time.Second)+1)) * time.Second, true, nil
+	}
+	if resp.StatusCode == http.StatusServiceUnavailable {
+		return 0, false, nil
 	}
 
 	if resp.Header.Get("X-RateLimit-Remaining") == "0" {
@@ -217,8 +229,9 @@ func rateLimitWait(resp *http.Response) (time.Duration, bool, error) {
 			return policy.rateLimitWait, true, nil
 		}
 		// A second on top of the reset, so that a clock a little behind
-		// GitHub's does not retry before it.
-		return max(time.Until(time.Unix(n, 0)), 0) + time.Second, true, nil
+		// GitHub's does not retry before it, which also puts a wait cut to
+		// policy.askedWaitMax over it.
+		return min(max(time.Until(time.Unix(n, 0)), 0), policy.askedWaitMax) + time.Second, true, nil
 	}
 
 	if resp.StatusCode == http.StatusTooManyRequests {
@@ -280,8 +293,9 @@ func describe(resp *http.Response) string {
 //
 // An installation token, GITHUB_TOKEN in GitHub Actions included, cannot access "GET /user" and gets 403
 // instead, and its permissions for GitHub Packages are granted by the workflow rather than by scopes, so
-// 403 is logged at Info and the check is skipped. A rate limited token is answered with 403 or 429 too,
-// and any other unexpected status skips the check with a warning.
+// 403 is logged at Info and the check is skipped. Do retries a rate limited request first, and one that is
+// still refused when the retries run out is answered with 403 or 429 too. Any other unexpected status skips
+// the check with a warning.
 //
 // Every endpoint returns X-OAuth-Scopes for a personal access token (classic), so a cheaper one such as
 // "GET /rate_limit" would do for reading the scopes. "GET /user" is used because it is the only one that
