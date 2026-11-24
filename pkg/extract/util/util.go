@@ -3,6 +3,7 @@ package util
 import (
 	"encoding/json/jsontext"
 	"encoding/json/v2"
+	"io/fs"
 	"maps"
 	"os"
 	"path/filepath"
@@ -166,16 +167,23 @@ func RemoveAll(root string, opts ...RemoveOption) error {
 		o.apply(options)
 	}
 
-	ds, err := filepath.Glob(filepath.Join(root, "*"))
+	// root is a path, not a pattern. Globbing root/* would empty whatever a
+	// root holding [ or * matched instead, and leave root itself as it was.
+	es, err := os.ReadDir(root)
 	if err != nil {
-		return errors.Wrapf(err, "glob %s", filepath.Join(root, "*"))
+		// A root that does not exist yet, as before a first extract, is empty.
+		if errors.Is(err, fs.ErrNotExist) {
+			return nil
+		}
+		return errors.Wrapf(err, "read dir %s", root)
 	}
-	for _, d := range ds {
-		if slices.Contains(options.keeps, filepath.Base(d)) {
+	for _, e := range es {
+		if slices.Contains(options.keeps, e.Name()) {
 			continue
 		}
-		if err := os.RemoveAll(d); err != nil {
-			return errors.Wrapf(err, "remove %s", d)
+		p := filepath.Join(root, e.Name())
+		if err := os.RemoveAll(p); err != nil {
+			return errors.Wrapf(err, "remove %s", p)
 		}
 	}
 	return nil

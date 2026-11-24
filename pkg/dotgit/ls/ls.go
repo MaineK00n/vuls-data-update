@@ -1,7 +1,10 @@
 package ls
 
 import (
+	"io/fs"
+	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/pkg/errors"
 
@@ -35,9 +38,21 @@ func List(opts ...Option) ([]string, error) {
 		opt.apply(options)
 	}
 
-	ds, err := filepath.Glob(filepath.Join(options.dir, "vuls-data-*"))
+	// The directory is a path, not a pattern. Globbing dir/vuls-data-* would
+	// list whatever a dir holding [ or * matched instead.
+	es, err := os.ReadDir(options.dir)
 	if err != nil {
-		return nil, errors.Wrap(err, "list dotgits")
+		if errors.Is(err, fs.ErrNotExist) {
+			return nil, nil
+		}
+		return nil, errors.Wrapf(err, "read dir %s", options.dir)
+	}
+
+	ds := make([]string, 0, len(es))
+	for _, e := range es {
+		if strings.HasPrefix(e.Name(), "vuls-data-") {
+			ds = append(ds, filepath.Join(options.dir, e.Name()))
+		}
 	}
 
 	return ds, nil

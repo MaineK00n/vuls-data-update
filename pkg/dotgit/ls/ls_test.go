@@ -14,13 +14,33 @@ import (
 
 func TestList(t *testing.T) {
 	tests := []struct {
-		name     string
+		name string
+		// dir is the directory List is given, made under a temporary one, and
+		// the dotgit is extracted into it. siblings are directories made beside
+		// it.
+		dir      string
+		siblings []string
 		dotgit   string
 		want     []string
 		hasError bool
 	}{
 		{
 			name:   "vuls-data-raw-test",
+			dotgit: "testdata/fixtures/vuls-data-raw-test.tar.zst",
+			want:   []string{"vuls-data-raw-test"},
+		},
+		{
+			// dir is a path, not a pattern: dotgit[1] must not list what
+			// dotgit1 holds.
+			name:     "dir holding a character class",
+			dir:      "dotgit[1]",
+			siblings: []string{filepath.Join("dotgit1", "vuls-data-raw-other")},
+			dotgit:   "testdata/fixtures/vuls-data-raw-test.tar.zst",
+			want:     []string{"vuls-data-raw-test"},
+		},
+		{
+			name:   "dir holding an unclosed bracket",
+			dir:    "dotgit[",
 			dotgit: "testdata/fixtures/vuls-data-raw-test.tar.zst",
 			want:   []string{"vuls-data-raw-test"},
 		},
@@ -33,7 +53,14 @@ func TestList(t *testing.T) {
 			}
 			defer f.Close()
 
-			dir := t.TempDir()
+			parent := t.TempDir()
+			for _, s := range tt.siblings {
+				if err := os.MkdirAll(filepath.Join(parent, s), 0750); err != nil {
+					t.Errorf("mkdir %s. err: %v", s, err)
+				}
+			}
+
+			dir := filepath.Join(parent, tt.dir)
 			if err := util.ExtractDotgitTarZst(f, filepath.Join(dir, strings.TrimSuffix(filepath.Base(tt.dotgit), ".tar.zst"))); err != nil {
 				t.Errorf("extract %s. err: %v", tt.dotgit, err)
 			}

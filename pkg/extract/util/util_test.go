@@ -49,8 +49,12 @@ func TestRemoveAll(t *testing.T) {
 		name string
 		args args
 		// entries are created directly under root before the call; each is a
-		// directory when it ends in "/" and a file otherwise.
-		entries []string
+		// directory when it ends in "/" and a file otherwise. siblings are
+		// created beside root the same way, and the call must leave them all.
+		entries  []string
+		siblings []string
+		// missing leaves root uncreated.
+		missing bool
 		want    []string
 		wantErr bool
 	}{
@@ -63,6 +67,41 @@ func TestRemoveAll(t *testing.T) {
 				root: "happy",
 			},
 			entries: []string{".git/", "README.md", "test.json"},
+			want:    []string{".git"},
+		},
+		{
+			// As before a first extract.
+			name: "root that does not exist",
+			args: args{
+				root: "missing",
+			},
+			missing: true,
+		},
+		{
+			// root is a path, not a pattern: out[1] must not reach out1.
+			name: "root holding a character class",
+			args: args{
+				root: "out[1]",
+			},
+			entries:  []string{".git/", "test.json"},
+			siblings: []string{"out1/", "out1/test.json"},
+			want:     []string{".git"},
+		},
+		{
+			name: "root holding a star",
+			args: args{
+				root: "out*",
+			},
+			entries:  []string{".git/", "test.json"},
+			siblings: []string{"out-a/", "out-a/test.json"},
+			want:     []string{".git"},
+		},
+		{
+			name: "root holding an unclosed bracket",
+			args: args{
+				root: "out[",
+			},
+			entries: []string{".git/", "test.json"},
 			want:    []string{".git"},
 		},
 		{
@@ -112,27 +151,45 @@ func TestRemoveAll(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			d := filepath.Join(t.TempDir(), tt.args.root)
-			if err := os.MkdirAll(d, 0750); err != nil {
-				t.Fatal("unexpected error:", err)
-			}
-
-			for _, e := range tt.entries {
-				if name, ok := strings.CutSuffix(e, "/"); ok {
-					if err := os.Mkdir(filepath.Join(d, name), 0750); err != nil {
-						t.Fatal("unexpected error:", err)
-					}
-					continue
-				}
-				f, err := os.Create(filepath.Join(d, e))
-				if err != nil {
+			parent := t.TempDir()
+			d := filepath.Join(parent, tt.args.root)
+			if !tt.missing {
+				if err := os.MkdirAll(d, 0750); err != nil {
 					t.Fatal("unexpected error:", err)
 				}
-				f.Close()
+			}
+
+			for _, tree := range []struct {
+				dir     string
+				entries []string
+			}{{dir: d, entries: tt.entries}, {dir: parent, entries: tt.siblings}} {
+				for _, e := range tree.entries {
+					if name, ok := strings.CutSuffix(e, "/"); ok {
+						if err := os.Mkdir(filepath.Join(tree.dir, name), 0750); err != nil {
+							t.Fatal("unexpected error:", err)
+						}
+						continue
+					}
+					f, err := os.Create(filepath.Join(tree.dir, e))
+					if err != nil {
+						t.Fatal("unexpected error:", err)
+					}
+					f.Close()
+				}
 			}
 
 			if err := util.RemoveAll(d, tt.args.opts...); (err != nil) != tt.wantErr {
 				t.Errorf("RemoveAll() error = %v, wantErr %v", err, tt.wantErr)
+			}
+
+			for _, s := range tt.siblings {
+				if _, err := os.Lstat(filepath.Join(parent, s)); err != nil {
+					t.Errorf("RemoveAll() reached %s beside root. err: %v", s, err)
+				}
+			}
+
+			if tt.missing {
+				return
 			}
 
 			es, err := os.ReadDir(d)
