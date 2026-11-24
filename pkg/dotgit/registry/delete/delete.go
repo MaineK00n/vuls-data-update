@@ -51,8 +51,7 @@ func WithForce(force bool) Option {
 //
 // An image that fails to be deleted does not stop the others, nor does a
 // package whose owner or versions cannot be read, which fails its own images.
-// Delete goes on with the rest, logs each failure as it happens, and returns
-// the errors of all that failed.
+// Delete goes on with the rest, and returns the errors of all that failed.
 func Delete(images []string, token string, opts ...Option) error {
 	options := &options{
 		force: false,
@@ -112,9 +111,7 @@ func Delete(images []string, token string, opts ...Option) error {
 			owners[owner] = o
 		}
 		if o.err != nil {
-			err := errors.Wrapf(o.err, "delete the images of %s. get the type of %s", p, owner)
-			slog.Warn("Failed to delete the images of a package, go on with the rest", slog.String("repository", p), slog.Int("images", len(targets[p])), slog.Any("error", err))
-			errs = append(errs, err)
+			errs = append(errs, errors.Wrapf(o.err, "delete the images of %s. get the type of %s", p, owner))
 			failed += len(targets[p])
 			continue
 		}
@@ -122,9 +119,7 @@ func Delete(images []string, token string, opts ...Option) error {
 
 		rs, err := ls.List([]ls.Repository{{Type: repoType, Registry: "ghcr.io", Owner: owner, Package: pack}}, token, ls.WithHTTPClient(options.httpClient))
 		if err != nil {
-			err = errors.Wrapf(err, "delete the images of %s. list versions", p)
-			slog.Warn("Failed to delete the images of a package, go on with the rest", slog.String("repository", p), slog.Int("images", len(targets[p])), slog.Any("error", err))
-			errs = append(errs, err)
+			errs = append(errs, errors.Wrapf(err, "delete the images of %s. list versions", p))
 			failed += len(targets[p])
 			continue
 		}
@@ -151,9 +146,7 @@ func Delete(images []string, token string, opts ...Option) error {
 				}
 				return nil
 			}(); err != nil {
-				err = errors.Wrapf(err, "delete %s", t.image)
-				slog.Warn("Failed to delete an image, go on with the rest", slog.String("image", t.image), slog.Any("error", err))
-				errs = append(errs, err)
+				errs = append(errs, errors.Wrapf(err, "delete %s", t.image))
 				failed++
 			}
 		}
