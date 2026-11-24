@@ -17,3 +17,16 @@ type httpClientOption struct {
 func (c httpClientOption) apply(opts *options) {
 	opts.httpClient = c.client
 }
+
+// WithSHA1Suites replaces the suites whose Sources are checked against the
+// SHA1 of their Release. Tests name a suite of the fixtures, none of which is
+// among the archived suites the built-in list holds.
+func WithSHA1Suites(suites []string) Option {
+	return sha1SuitesOption(suites)
+}
+
+type sha1SuitesOption []string
+
+func (s sha1SuitesOption) apply(opts *options) {
+	opts.sha1Suites = []string(s)
+}
