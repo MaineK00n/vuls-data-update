@@ -418,14 +418,17 @@ func TestPull_retry(t *testing.T) {
 		// fails the extraction with no download breaking off.
 		corrupt       bool
 		wantDownloads int
-		golden        string
-		hasError      bool
+		// archive is what the pulled tree has to equal, entry for entry and
+		// byte for byte: the layer that was pushed. Nothing is checked out,
+		// so that nothing but the extraction writes the tree.
+		archive  string
+		hasError bool
 	}{
 		{
 			name:          "broken off once",
 			breaks:        1,
 			wantDownloads: 2,
-			golden:        "testdata/golden/vuls-data-raw-test.tar.zst",
+			archive:       "testdata/fixtures/vuls-data-raw-test.tar.zst",
 		},
 		{
 			name:          "broken off every time",
@@ -438,7 +441,7 @@ func TestPull_retry(t *testing.T) {
 			breaks:        1,
 			beforeAnswer:  true,
 			wantDownloads: 2,
-			golden:        "testdata/golden/vuls-data-raw-test.tar.zst",
+			archive:       "testdata/fixtures/vuls-data-raw-test.tar.zst",
 		},
 		{
 			name:          "request broken off every time",
@@ -480,8 +483,10 @@ func TestPull_retry(t *testing.T) {
 				maps.Copy(w.Header(), rec.Header())
 				w.WriteHeader(rec.Code)
 				if tt.corrupt {
+					// The client may hang up partway, as soon as the
+					// decoder sees that the zeros are no archive.
 					if _, err := w.Write(make([]byte, rec.Body.Len())); err != nil {
-						t.Errorf("write body: %v", err)
+						t.Logf("write body: %v", err)
 					}
 					return
 				}
@@ -521,7 +526,7 @@ func TestPull_retry(t *testing.T) {
 			armed = true
 
 			dir := t.TempDir()
-			err = pull.Pull(repo.Reference.String(), pull.WithDir(dir), pull.WithRetryWait(time.Millisecond))
+			err = pull.Pull(repo.Reference.String(), pull.WithDir(dir), pull.WithCheckout(""), pull.WithRetryWait(time.Millisecond))
 			if downloads != tt.wantDownloads {
 				t.Errorf("Pull() downloaded the layer %d times, want %d", downloads, tt.wantDownloads)
 			}
@@ -534,15 +539,15 @@ func TestPull_retry(t *testing.T) {
 				// error was expected and occurred, test passed
 				return
 			default:
-				got, err := treeNames(filepath.Join(dir, "ghcr.io", "vulsio", "vuls-data-db"))
+				got, err := treeEntries(filepath.Join(dir, "ghcr.io", "vulsio", "vuls-data-db"))
 				if err != nil {
-					t.Fatalf("list %s: %v", dir, err)
+					t.Fatalf("read %s: %v", dir, err)
 				}
-				want, err := goldenNames(tt.golden)
+				want, err := archiveEntries(tt.archive)
 				if err != nil {
-					t.Fatalf("list %s: %v", tt.golden, err)
+					t.Fatalf("read %s: %v", tt.archive, err)
 				}
-				if diff := cmp.Diff(want, got, cmpopts.SortSlices(func(i, j string) bool { return i < j })); diff != "" {
+				if diff := cmp.Diff(want, got); diff != "" {
 					t.Errorf("Pull(). (-expected +got):\n%s", diff)
 				}
 			}
@@ -550,10 +555,16 @@ func TestPull_retry(t *testing.T) {
 	}
 }
 
-// treeNames lists the paths under dir, relative to it.
-func treeNames(dir string) ([]string, error) {
-	var names []string
-	if err := filepath.WalkDir(dir, func(path string, _ os.DirEntry, err error) error {
+// entry is a directory, or a regular file and its content.
+type entry struct {
+	Dir     bool
+	Content string
+}
+
+// treeEntries reads the tree under dir, keyed by the path relative to it.
+func treeEntries(dir string) (map[string]entry, error) {
+	es := make(map[string]entry)
+	if err := filepath.WalkDir(dir, func(path string, d os.DirEntry, err error) error {
 		if err != nil {
 			return err
 		}
@@ -561,21 +572,31 @@ func treeNames(dir string) ([]string, error) {
 		if err != nil {
 			return err
 		}
-		if p != "." {
-			names = append(names, p)
+		switch {
+		case p == ".":
+		case d.IsDir():
+			es[p] = entry{Dir: true}
+		case d.Type().IsRegular():
+			bs, err := os.ReadFile(path)
+			if err != nil {
+				return err
+			}
+			es[p] = entry{Content: string(bs)}
+		default:
+			return errors.Errorf("unexpected file type. expected: %q, actual: %q", []string{"directory", "regular file"}, d.Type())
 		}
 		return nil
 	}); err != nil {
 		return nil, errors.Wrapf(err, "walk %s", dir)
 	}
-	return names, nil
+	return es, nil
 }
 
-// goldenNames lists the entries of the golden tar.zst.
-func goldenNames(golden string) ([]string, error) {
-	f, err := os.Open(golden)
+// archiveEntries reads the entries of a tar.zst, keyed by their cleaned name.
+func archiveEntries(archive string) (map[string]entry, error) {
+	f, err := os.Open(archive)
 	if err != nil {
-		return nil, errors.Wrapf(err, "open %s", golden)
+		return nil, errors.Wrapf(err, "open %s", archive)
 	}
 	defer f.Close()
 
@@ -585,7 +606,7 @@ func goldenNames(golden string) ([]string, error) {
 	}
 	defer r.Close()
 
-	var names []string
+	es := make(map[string]entry)
 	tr := tar.NewReader(r)
 	for {
 		hdr, err := tr.Next()
@@ -595,7 +616,18 @@ func goldenNames(golden string) ([]string, error) {
 		if err != nil {
 			return nil, errors.Wrap(err, "next tar reader")
 		}
-		names = append(names, filepath.Clean(hdr.Name))
+		switch hdr.Typeflag {
+		case tar.TypeDir:
+			es[filepath.Clean(hdr.Name)] = entry{Dir: true}
+		case tar.TypeReg:
+			bs, err := io.ReadAll(tr)
+			if err != nil {
+				return nil, errors.Wrapf(err, "read %s", hdr.Name)
+			}
+			es[filepath.Clean(hdr.Name)] = entry{Content: string(bs)}
+		default:
+			return nil, errors.Errorf("unexpected tar entry type. expected: %q, actual: %q", []byte{tar.TypeDir, tar.TypeReg}, hdr.Typeflag)
+		}
 	}
-	return names, nil
+	return es, nil
 }
