@@ -1,0 +1,53 @@
+{
+	"Architecture": [
+		"all"
+	],
+	"Binary": [
+		"fex, fex-utils"
+	],
+	"Build-Depends": [
+		"debhelper (>= 8), po-debconf"
+	],
+	"Checksums-Sha1": [
+		"445b0b22537f7e66badb4a9e5c45a424d3d4a2d9 1160 fex_20121107-1~bpo60+1.dsc c6cffcb4f2add1783af57c1cd6f0a2960f42106f 317486 fex_20121107.orig.tar.gz c30a9f46a18c450cd25eef878af57fb8f42ab7b0 22723 fex_20121107-1~bpo60+1.debian.tar.gz"
+	],
+	"Checksums-Sha256": [
+		"7b230c55f31ce3cbfea763dbd50d9dc2442ead5ff8bf9ab73e3985c027b3ae7b 1160 fex_20121107-1~bpo60+1.dsc 2a80c655f7c34bbe3f9869ec244d4587fcc1b28ba8601957114f5202132160f2 317486 fex_20121107.orig.tar.gz 841ef5eb957dac0bbd215380a470ff927215f6f12fa1ee13e7bab6985afea949 22723 fex_20121107-1~bpo60+1.debian.tar.gz"
+	],
+	"Directory": [
+		"pool/non-free/f/fex"
+	],
+	"Files": [
+		"64eed48a65b0d06d04049b6cfbf16cd9 1160 fex_20121107-1~bpo60+1.dsc 64027444859f8854049178d3979b92df 317486 fex_20121107.orig.tar.gz 584b9587b6619f47e3e1e51d02e9a9b6 22723 fex_20121107-1~bpo60+1.debian.tar.gz"
+	],
+	"Format": [
+		"3.0 (quilt)"
+	],
+	"Homepage": [
+		"http://fex.rus.uni-stuttgart.de/"
+	],
+	"Maintainer": [
+		"Kilian Krause <kilian@debian.org>"
+	],
+	"Package": [
+		"fex"
+	],
+	"Priority": [
+		"source"
+	],
+	"Section": [
+		"non-free/web"
+	],
+	"Standards-Version": [
+		"3.9.3"
+	],
+	"Vcs-Browser": [
+		"http://git.debian.org/?p=collab-maint/fex.git"
+	],
+	"Vcs-Git": [
+		"git://git.debian.org/collab-maint/fex.git"
+	],
+	"Version": [
+		"20121107-1~bpo60+1"
+	]
+}

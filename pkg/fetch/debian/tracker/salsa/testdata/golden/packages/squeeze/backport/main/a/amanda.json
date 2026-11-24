@@ -1,0 +1,50 @@
+{
+	"Architecture": [
+		"any"
+	],
+	"Binary": [
+		"amanda-common, amanda-server, amanda-client"
+	],
+	"Build-Depends": [
+		"debhelper (>= 5), dump, gnuplot, libncurses5-dev, libreadline-dev, libtool, flex, perl, smbclient, bsd-mailx | mailx, lpr, mtx, xfsdump, po-debconf, autotools-dev, libglib2.0-dev, procps, curl, libcurl4-openssl-dev"
+	],
+	"Checksums-Sha1": [
+		"2b59fd224face8981b77b8a6a0ec03506422d8b1 1952 amanda_3.3.1-3~bpo60+1.dsc 22273381f61319e46e1da9d7029ca2b3991eee98 4328574 amanda_3.3.1.orig.tar.gz 4e68d2b8d34f0a0d617d35bf3b27dbd35b9773b8 31707 amanda_3.3.1-3~bpo60+1.debian.tar.gz"
+	],
+	"Checksums-Sha256": [
+		"d8ef882b41f2f1fee0df38475069fca90b548ec516dfe6e856781b24b6592fd5 1952 amanda_3.3.1-3~bpo60+1.dsc 190fcf84b7154494772d7ff6f8225fc165e89b4563437c6358549456f73e7612 4328574 amanda_3.3.1.orig.tar.gz d2f790b81c99b5985d0a17b899ceb6dc8367adb565dc44f56e1791a46125efd3 31707 amanda_3.3.1-3~bpo60+1.debian.tar.gz"
+	],
+	"Directory": [
+		"pool/main/a/amanda"
+	],
+	"Files": [
+		"8618f96d054caea746793c459bbc673b 1952 amanda_3.3.1-3~bpo60+1.dsc dae7631b4abcf7eac874df6e3740e75b 4328574 amanda_3.3.1.orig.tar.gz 2a1cf135e23d8e9d19cfc11b0d7f46a9 31707 amanda_3.3.1-3~bpo60+1.debian.tar.gz"
+	],
+	"Format": [
+		"3.0 (quilt)"
+	],
+	"Maintainer": [
+		"Bdale Garbee <bdale@gag.com>"
+	],
+	"Package": [
+		"amanda"
+	],
+	"Priority": [
+		"source"
+	],
+	"Section": [
+		"utils"
+	],
+	"Standards-Version": [
+		"3.9.3"
+	],
+	"Vcs-Browser": [
+		"http://git.gag.com/?p=debian/amanda"
+	],
+	"Vcs-Git": [
+		"git://git.gag.com/debian/amanda"
+	],
+	"Version": [
+		"1:3.3.1-3~bpo60+1"
+	]
+}

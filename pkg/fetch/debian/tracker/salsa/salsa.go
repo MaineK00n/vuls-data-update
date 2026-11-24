@@ -966,8 +966,26 @@ func fetchCompressedSource(c *utilhttp.Client, sourceURL, compress string) (map[
 	return sources, true, nil
 }
 
+// parseSource reads the stanzas of a Sources file, which a blank line
+// separates. The last needs no blank line after it.
 func parseSource(r io.Reader) (map[string]textproto.MIMEHeader, error) {
 	m := make(map[string]textproto.MIMEHeader)
+
+	// add reads the stanza in buf, which ends with a blank line, into m.
+	add := func(buf *bytes.Buffer) error {
+		header, err := textproto.NewReader(bufio.NewReader(buf)).ReadMIMEHeader()
+		if err != nil {
+			return errors.Wrap(err, "read MIME header")
+		}
+
+		name := header.Get("Package")
+		if name == "" {
+			slog.Warn("Package header not found")
+			return nil
+		}
+		m[name] = header
+		return nil
+	}
 
 	s := bufio.NewScanner(r)
 	buf := new(bytes.Buffer)
@@ -980,23 +998,22 @@ func parseSource(r io.Reader) (map[string]textproto.MIMEHeader, error) {
 			continue
 		}
 
-		r := textproto.NewReader(bufio.NewReader(buf))
-		header, err := r.ReadMIMEHeader()
-		if err != nil {
-			return nil, errors.Wrap(err, "read MIME header")
+		if err := add(buf); err != nil {
+			return nil, err
 		}
-
-		name := header.Get("Package")
-		if name == "" {
-			slog.Warn("Package header not found")
-			continue
-		}
-		m[name] = header
-
 		buf.Reset()
 	}
 	if err := s.Err(); err != nil {
 		return nil, errors.Wrap(err, "scanner encounter error")
+	}
+
+	if buf.Len() > 0 {
+		if _, err := fmt.Fprintln(buf); err != nil {
+			return nil, errors.Wrap(err, "write buffer")
+		}
+		if err := add(buf); err != nil {
+			return nil, err
+		}
 	}
 
 	return m, nil

@@ -1,0 +1,38 @@
+{
+	"Architecture": [
+		"all"
+	],
+	"Binary": [
+		"abuse-sfx"
+	],
+	"Build-Depends-Indep": [
+		"debhelper"
+	],
+	"Directory": [
+		"pool/non-free/a/abuse-sfx"
+	],
+	"Files": [
+		"b63b473c60ca43cc82c41d19210f964b 577 abuse-sfx_2.00-9.dsc 3942a7d39b0d39d118b0d0f0ea0c3c54 690291 abuse-sfx_2.00.orig.tar.gz 0f0b6ffccfc9535628aba904440b981f 2746 abuse-sfx_2.00-9.diff.gz"
+	],
+	"Format": [
+		"1.0"
+	],
+	"Maintainer": [
+		"Sam Hocevar (Debian packages) <sam+deb@zoy.org>"
+	],
+	"Package": [
+		"abuse-sfx"
+	],
+	"Priority": [
+		"optional"
+	],
+	"Section": [
+		"non-free/games"
+	],
+	"Standards-Version": [
+		"3.6.1.1"
+	],
+	"Version": [
+		"2.00-9"
+	]
+}
