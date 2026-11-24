@@ -3,14 +3,18 @@ package salsa_test
 import (
 	"bytes"
 	"fmt"
+	"maps"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"path"
 	"path/filepath"
+	"slices"
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/google/go-cmp/cmp"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/debian/tracker/salsa"
 	utiltest "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/test"
@@ -191,6 +195,71 @@ func TestFetch(t *testing.T) {
 				if err := utiltest.Diff(filepath.Join("testdata", "golden"), dir); err != nil {
 					t.Error("unexpected error:", err)
 				}
+			}
+		})
+	}
+}
+
+func TestParseChecksums(t *testing.T) {
+	type args struct {
+		field string
+		hash  string
+	}
+	tests := []struct {
+		name string
+		args args
+		// want lists the paths the checksums are read for.
+		want    []string
+		wantErr bool
+	}{
+		{
+			name: "SHA256",
+			args: args{
+				field: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 0 main/source/Sources 0040f94d11d0039505328a90b2ff48968db873e9e7967307631bf40ef5679275 32 main/source/Sources.xz",
+				hash:  "SHA256",
+			},
+			want: []string{"main/source/Sources", "main/source/Sources.xz"},
+		},
+		{
+			name: "SHA1",
+			args: args{field: "da39a3ee5e6b4b0d3255bfef95601890afd80709 0 main/source/Sources", hash: "SHA1"},
+			want: []string{"main/source/Sources"},
+		},
+		{
+			name:    "entry without its size",
+			args:    args{field: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 main/source/Sources", hash: "SHA256"},
+			wantErr: true,
+		},
+		{
+			// The digest goes into the by-hash URL.
+			name:    "digest not in hex",
+			args:    args{field: fmt.Sprintf("%s 0 main/source/Sources", strings.Repeat("../", 21)+"x"), hash: "SHA256"},
+			wantErr: true,
+		},
+		{
+			name:    "SHA1 digest as SHA256",
+			args:    args{field: "da39a3ee5e6b4b0d3255bfef95601890afd80709 0 main/source/Sources", hash: "SHA256"},
+			wantErr: true,
+		},
+		{
+			name:    "negative size",
+			args:    args{field: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 -1 main/source/Sources", hash: "SHA256"},
+			wantErr: true,
+		},
+		{
+			name:    "size not a number",
+			args:    args{field: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 0x0 main/source/Sources", hash: "SHA256"},
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := salsa.ParseChecksums(tt.args.field, tt.args.hash)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("ParseChecksums() error = %v, wantErr %v", err, tt.wantErr)
+			}
+			if diff := cmp.Diff(tt.want, slices.Sorted(maps.Keys(got))); diff != "" {
+				t.Errorf("(-expected +got):\n%s", diff)
 			}
 		})
 	}

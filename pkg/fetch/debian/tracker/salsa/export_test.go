@@ -30,3 +30,7 @@ type sha1SuitesOption []string
 func (s sha1SuitesOption) apply(opts *options) {
 	opts.sha1Suites = []string(s)
 }
+
+// ParseChecksums is parseChecksums, for the malformed fields no fixture
+// Release holds.
+var ParseChecksums = parseChecksums
