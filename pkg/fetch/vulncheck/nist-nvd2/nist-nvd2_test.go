@@ -76,7 +76,7 @@ func TestFetch(t *testing.T) {
 								Filename:      "nist-nvd2-1754586143238923080.zip",
 								Sha256:        "6176994fb0e20ea73f02ed9603d5a09a5f0eb0b13caf23767243ad199850611e",
 								DateAdded:     time.Now(),
-								URL:           fmt.Sprintf("http://%s/nist-nvd2-1754586143238923080.zip", r.Host),
+								URL:           fmt.Sprintf("https://%s/nist-nvd2-1754586143238923080.zip", r.Host),
 								URLTTLMinutes: 15,
 								URLExpires:    time.Now(),
 							},

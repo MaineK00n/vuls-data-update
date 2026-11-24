@@ -77,7 +77,7 @@ func TestFetch(t *testing.T) {
 								Sha256:    "91536eafc74ac99bf6da67d17ccddb700aa0b0adc0d932a1569ec8dc57321092",
 								DateAdded: "2024-08-16T10:23:42.402Z",
 								URL: func() string {
-									return fmt.Sprintf("http://%s/testdata/fixtures/vulncheck-kev-1723803822402071515.zip", r.Host)
+									return fmt.Sprintf("https://%s/testdata/fixtures/vulncheck-kev-1723803822402071515.zip", r.Host)
 								}(),
 								URLTTLMinutes: 60,
 								URLExpires:    "2024-08-16T11:23:42.402Z",

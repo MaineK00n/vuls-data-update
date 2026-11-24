@@ -106,27 +106,27 @@ func TestFetch(t *testing.T) {
 							t.Error("unexpected error:", err)
 						}
 					case strings.HasPrefix(r.URL.Path, "/2/core/"):
-						if _, err := fmt.Fprintf(w, "http://%s/2/core/latest/x86_64/5454bdaaf3e2fa8d3aac354bd0b9f21079f8efbfc8b04", r.Host); err != nil {
+						if _, err := fmt.Fprintf(w, "https://%s/2/core/latest/x86_64/5454bdaaf3e2fa8d3aac354bd0b9f21079f8efbfc8b04", r.Host); err != nil {
 							t.Error("unexpected error:", err)
 						}
 					case strings.HasPrefix(r.URL.Path, "/2/extras/emacs"):
-						if _, err := fmt.Fprintf(w, "http://%s/2/extras/emacs/25.3/x86_64/1254dd71e49d635ee063d8842db13fcde9283d5756b7d365860a6985c1c94358", r.Host); err != nil {
+						if _, err := fmt.Fprintf(w, "https://%s/2/extras/emacs/25.3/x86_64/1254dd71e49d635ee063d8842db13fcde9283d5756b7d365860a6985c1c94358", r.Host); err != nil {
 							t.Error("unexpected error:", err)
 						}
 					case strings.HasPrefix(r.URL.Path, "/2/extras/kernel-5.15"):
-						if _, err := fmt.Fprintf(w, "http://%s/2/extras/kernel-5.15/stable/x86_64/3cea6107e9fffdc60f8ca99c7dac421b427d2ea06003cf5eb970344e4c2e18f4", r.Host); err != nil {
+						if _, err := fmt.Fprintf(w, "https://%s/2/extras/kernel-5.15/stable/x86_64/3cea6107e9fffdc60f8ca99c7dac421b427d2ea06003cf5eb970344e4c2e18f4", r.Host); err != nil {
 							t.Error("unexpected error:", err)
 						}
 					case strings.HasPrefix(r.URL.Path, "/al2023/core"):
-						if _, err := fmt.Fprintf(w, "http://%s/al2023/core/guids/b9dbfbda87c463b53ce6de759cc6cb527efa01fc5976bb654b201f294c2d099f/x86_64/", r.Host); err != nil {
+						if _, err := fmt.Fprintf(w, "https://%s/al2023/core/guids/b9dbfbda87c463b53ce6de759cc6cb527efa01fc5976bb654b201f294c2d099f/x86_64/", r.Host); err != nil {
 							t.Error("unexpected error:", err)
 						}
 					case strings.HasPrefix(r.URL.Path, "/al2023/kernel-livepatch"):
-						if _, err := fmt.Fprintf(w, "http://%s/al2023/kernel-livepatch/guids/b9dbfbda87c463b53ce6de759cc6cb527efa01fc5976bb654b201f294c2d099f/x86_64/", r.Host); err != nil {
+						if _, err := fmt.Fprintf(w, "https://%s/al2023/kernel-livepatch/guids/b9dbfbda87c463b53ce6de759cc6cb527efa01fc5976bb654b201f294c2d099f/x86_64/", r.Host); err != nil {
 							t.Error("unexpected error:", err)
 						}
 					case strings.HasPrefix(r.URL.Path, "/al2023/nvidia"):
-						if _, err := fmt.Fprintf(w, "http://%s/al2023/nvidia/guids/b9dbfbda87c463b53ce6de759cc6cb527efa01fc5976bb654b201f294c2d099f/x86_64/", r.Host); err != nil {
+						if _, err := fmt.Fprintf(w, "https://%s/al2023/nvidia/guids/b9dbfbda87c463b53ce6de759cc6cb527efa01fc5976bb654b201f294c2d099f/x86_64/", r.Host); err != nil {
 							t.Error("unexpected error:", err)
 						}
 					}
