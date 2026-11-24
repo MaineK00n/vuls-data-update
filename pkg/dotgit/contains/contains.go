@@ -23,8 +23,8 @@ var (
 
 	// ErrCommitNotFound is the cause of the error Contains returns with
 	// WithBranch when commit is not the full hash of a commit in the
-	// repository. pull.Pull's error wraps it too, when the target of
-	// pull.WithCheckout names nothing in the pulled repository.
+	// repository. errors.Is matches pull.Pull's error with it too, when the
+	// target of pull.WithCheckout names nothing in the pulled repository.
 	ErrCommitNotFound = errors.New("commit not found")
 
 	// ErrNotReachable is the cause of the error Contains returns with

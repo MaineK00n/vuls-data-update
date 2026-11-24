@@ -66,10 +66,10 @@ func (c checkoutOption) apply(opts *options) {
 // WithCheckout sets what Pull checks out after the pull: a branch, a tag or a
 // commit, main by default, or nothing for "". On native git, if checkout names
 // nothing in the pulled dotgit, such as a commit pinned before vuls-data-db
-// truncated the history, the error wraps contains.ErrCommitNotFound. It does
-// not when git cannot tell: for a name that begins with "-" or holds "...",
-// which switch reads otherwise, or when git cannot be run or fails on the
-// repository.
+// truncated the history, errors.Is matches the error with
+// contains.ErrCommitNotFound. It does not when Pull cannot tell: for a name
+// that begins with "-", or holds "..." or ":", or when git cannot be run or
+// fails on the repository.
 func WithCheckout(checkout string) Option {
 	return checkoutOption(checkout)
 }
@@ -162,11 +162,14 @@ func Pull(repository string, opts ...Option) error {
 					// switch accepts reach it as before. rev-parse is not
 					// asked about a name that switch reads otherwise: one
 					// that begins with "-", the previous branch or an option,
-					// or A...B, the merge base of A and B. For those, and
-					// when rev-parse cannot tell, as when git cannot be run
-					// or fails on the repository, the error of switch, which
-					// says how it failed, is returned as it is.
-					if !strings.HasPrefix(options.checkout, "-") && !strings.Contains(options.checkout, "...") && missing(filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference), options.checkout) {
+					// or A...B, the merge base of A and B. Nor is it asked
+					// about one with a ":", which no branch or tag has, as it
+					// would read the ^{object} it is asked with as part of the
+					// path in <rev>:<path>, or of the text in :/<text>. For
+					// those, and when rev-parse cannot tell, as when git
+					// cannot be run or fails on the repository, the error of
+					// switch, which says how it failed, is returned as it is.
+					if !strings.HasPrefix(options.checkout, "-") && !strings.Contains(options.checkout, "...") && !strings.Contains(options.checkout, ":") && missing(filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference), options.checkout) {
 						return notInRepository(errors.Wrapf(err, "switch to %s", options.checkout), repository, options.checkout)
 					}
 					return errors.Wrapf(err, "switch to %s", options.checkout)
@@ -308,7 +311,8 @@ func (e commitNotFound) Format(s fmt.State, verb rune) {
 // --quiet says so by exiting with 1, and ^{object} makes it look a full hash
 // up, which it prints as it is otherwise. It exits with 128 when it cannot
 // tell, as when git does not trust the repository or cannot read its config,
-// and there is no exit status when git cannot be run.
+// and there is no exit status when git cannot be run. target holds no ":",
+// which would make rev-parse read ^{object} as part of a path.
 func missing(dir, target string) bool {
 	_, err := util.Git("-C", dir, "rev-parse", "--verify", "--quiet", "--end-of-options", fmt.Sprintf("%s^{object}", target))
 	ee, ok := stderrors.AsType[*exec.ExitError](err)

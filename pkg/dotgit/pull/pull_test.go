@@ -54,7 +54,7 @@ func TestPull(t *testing.T) {
 		// native git, the switch command that failed and the start of what
 		// git said.
 		wantErrHas string
-		// wantCommitNotFound is whether the error wraps
+		// wantCommitNotFound is whether errors.Is matches the error with
 		// contains.ErrCommitNotFound, as it does for a target that is not in
 		// the repository.
 		wantCommitNotFound bool
@@ -256,9 +256,8 @@ func TestPull(t *testing.T) {
 			wantCommitNotFound: true,
 		},
 		{
-			// contains reads a name as cat-file -e does, so it cannot tell
-			// whether the target of a name that switch reads otherwise is
-			// there, and the error of switch is returned as it is.
+			// rev-parse is not asked about a name that switch reads
+			// otherwise, so the error of switch is returned as it is.
 			name: "vuls-data-raw-test checkout: - (no previous branch), restore: false, native git",
 			args: args{
 				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test",
@@ -278,6 +277,21 @@ func TestPull(t *testing.T) {
 			hasError:     true,
 			wantErr:      "switch to main...v0.0.2: ",
 			wantErrHas:   `switch --detach main...v0.0.2", stderr: "fatal: `,
+			wantExitCode: 128,
+		},
+		{
+			// A blob that is there, which no branch or tag can name. rev-parse
+			// would read the ^{object} it is asked with as part of the path,
+			// and find nothing, so it is not asked, and the error of switch is
+			// returned as it is.
+			name: "vuls-data-raw-test checkout: main:README.md, restore: false, native git",
+			args: args{
+				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test",
+				opts:       []pull.Option{pull.WithCheckout("main:README.md"), pull.WithRestore(false), pull.WithUseNativeGit(true)},
+			},
+			hasError:     true,
+			wantErr:      "switch to main:README.md: ",
+			wantErrHas:   `switch --detach main:README.md", stderr: "fatal: `,
 			wantExitCode: 128,
 		},
 		{
@@ -440,7 +454,7 @@ func TestPullWithoutGit(t *testing.T) {
 	// rev-parse could not tell, so the error does not say the commit is not
 	// there.
 	if errors.Is(err, contains.ErrCommitNotFound) {
-		t.Errorf("Pull() error wraps contains.ErrCommitNotFound, error: %v", err)
+		t.Errorf("errors.Is matches Pull() error with contains.ErrCommitNotFound, error: %v", err)
 	}
 }
 
@@ -481,7 +495,7 @@ func TestPullWithBrokenGit(t *testing.T) {
 		t.Errorf("Pull() error does not hold %q, error: %v", want, err)
 	}
 	if errors.Is(err, contains.ErrCommitNotFound) {
-		t.Errorf("Pull() error wraps contains.ErrCommitNotFound, error: %v", err)
+		t.Errorf("errors.Is matches Pull() error with contains.ErrCommitNotFound, error: %v", err)
 	}
 }
 
