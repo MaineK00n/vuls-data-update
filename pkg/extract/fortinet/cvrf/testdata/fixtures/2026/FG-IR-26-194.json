@@ -1,0 +1,411 @@
+{
+	"document_title": "Origin validation error in local API endpoint",
+	"document_type": "Fortinet PSIRT Advisories",
+	"documentpublisher": {
+		"type": "Vendor",
+		"contact_details": "\n            Fortinet PSIRT Contact:\n            Website: https://fortiguard.fortinet.com/faq/psirt-contact\n        "
+	},
+	"documenttracking": {
+		"identification": {
+			"id": "FG-IR-26-194"
+		},
+		"status": "Final",
+		"version": "1",
+		"revisionhistory": {
+			"revision": {
+				"number": "1",
+				"date": "2026-11-10T00:00:00",
+				"description": "Initial publication"
+			}
+		},
+		"initial_release_date": "2026-11-10T00:00:00",
+		"current_release_date": "2026-11-10T00:00:00"
+	},
+	"documentnotes": {
+		"note": [
+			{
+				"text": "\n            An origin validation error vulnerability [CWE-346] in FortiClient Mac, FortiClient Windows, and FortiClient Windows PAM may allow an unauthorized remote attacker to execute unauthorized code or commands. Successful exploitation requires interaction with the victim.\n        ",
+				"title": "Summary",
+				"type": "Summary",
+				"ordinal": "1"
+			},
+			{
+				"text": "\n            None\n        ",
+				"title": "Description",
+				"type": "General",
+				"ordinal": "2"
+			},
+			{
+				"text": "\n            Escalation of privilege\n        ",
+				"title": "Impact",
+				"type": "General",
+				"ordinal": "3"
+			},
+			{
+				"text": "\n            None\n        ",
+				"title": "Solutions",
+				"type": "General",
+				"ordinal": "4"
+			}
+		]
+	},
+	"acknowledgments": {
+		"acknowledgment": [
+			{
+				"description": "Fortinet is pleased to thank Kevin Joensen from Baldur Security for reporting this vulnerability under responsible disclosure."
+			}
+		]
+	},
+	"vulnerability": {
+		"ordinal": "1",
+		"title": "Origin validation error in local API endpoint",
+		"references": {
+			"type": "Self",
+			"reference": [
+				{
+					"url": "https://fortiguard.fortinet.com/psirt/FG-IR-26-194",
+					"description": "Origin validation error in local API endpoint"
+				}
+			]
+		},
+		"cve": [
+			"CVE-2026-121529"
+		],
+		"product_statuses": {
+			"status": {
+				"type": "Known Affected",
+				"product_id": [
+					"FortiClientMac-7.4.7",
+					"FortiClientMac-7.4.6",
+					"FortiClientMac-7.4.5",
+					"FortiClientMac-7.4.4",
+					"FortiClientMac-7.4.3",
+					"FortiClientMac-7.4.2",
+					"FortiClientMac-7.4.1",
+					"FortiClientMac-7.4.0",
+					"FortiClientWindows-7.4.7",
+					"FortiClientWindows-7.4.6",
+					"FortiClientWindows-7.4.5",
+					"FortiClientWindows-7.4.4",
+					"FortiClientWindows-7.4.3",
+					"FortiClientWindows-7.4.2",
+					"FortiClientWindows-7.4.1",
+					"FortiClientWindows-7.4.0",
+					"FortiClientWindows-7.2.14",
+					"FortiClientWindows-7.2.13",
+					"FortiClientWindows-7.2.12",
+					"FortiClientWindows-7.2.11",
+					"FortiClientWindows-7.2.10",
+					"FortiClientWindows-7.2.9",
+					"FortiClientWindows-7.2.8",
+					"FortiClientWindows-7.2.7",
+					"FortiClientWindows-7.2.6",
+					"FortiClientWindows-7.2.5",
+					"FortiClientWindows-7.2.4",
+					"FortiClientWindows-7.2.3",
+					"FortiClientWindows-7.2.2",
+					"FortiClientWindows-7.2.1",
+					"FortiClientWindows-7.2.0",
+					"FortiClientWindowsPAM-7.4.7",
+					"FortiClientWindowsPAM-7.2.14"
+				]
+			}
+		},
+		"cvss_scoresets": {
+			"scoreset_v3": {
+				"base_score_v3": "9.1",
+				"vector_v3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:H/I:H/A:H/E:P/RL:O/RC:C"
+			}
+		}
+	},
+	"product_tree": {
+		"branch": {
+			"name": "Fortinet",
+			"type": "Vendor",
+			"branch": [
+				{
+					"name": "FortiClientMac",
+					"type": "Product Name",
+					"branch": [
+						{
+							"name": "7.4.7",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiClientMac 7.4.7",
+								"product_id": "FortiClientMac-7.4.7"
+							}
+						},
+						{
+							"name": "7.4.6",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiClientMac 7.4.6",
+								"product_id": "FortiClientMac-7.4.6"
+							}
+						},
+						{
+							"name": "7.4.5",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiClientMac 7.4.5",
+								"product_id": "FortiClientMac-7.4.5"
+							}
+						},
+						{
+							"name": "7.4.4",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiClientMac 7.4.4",
+								"product_id": "FortiClientMac-7.4.4"
+							}
+						},
+						{
+							"name": "7.4.3",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiClientMac 7.4.3",
+								"product_id": "FortiClientMac-7.4.3"
+							}
+						},
+						{
+							"name": "7.4.2",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiClientMac 7.4.2",
+								"product_id": "FortiClientMac-7.4.2"
+							}
+						},
+						{
+							"name": "7.4.1",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiClientMac 7.4.1",
+								"product_id": "FortiClientMac-7.4.1"
+							}
+						},
+						{
+							"name": "7.4.0",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiClientMac 7.4.0",
+								"product_id": "FortiClientMac-7.4.0"
+							}
+						}
+					]
+				},
+				{
+					"name": "FortiClientWindows",
+					"type": "Product Name",
+					"branch": [
+						{
+							"name": "7.4.7",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiClientWindows 7.4.7",
+								"product_id": "FortiClientWindows-7.4.7"
+							}
+						},
+						{
+							"name": "7.4.6",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiClientWindows 7.4.6",
+								"product_id": "FortiClientWindows-7.4.6"
+							}
+						},
+						{
+							"name": "7.4.5",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiClientWindows 7.4.5",
+								"product_id": "FortiClientWindows-7.4.5"
+							}
+						},
+						{
+							"name": "7.4.4",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiClientWindows 7.4.4",
+								"product_id": "FortiClientWindows-7.4.4"
+							}
+						},
+						{
+							"name": "7.4.3",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiClientWindows 7.4.3",
+								"product_id": "FortiClientWindows-7.4.3"
+							}
+						},
+						{
+							"name": "7.4.2",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiClientWindows 7.4.2",
+								"product_id": "FortiClientWindows-7.4.2"
+							}
+						},
+						{
+							"name": "7.4.1",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiClientWindows 7.4.1",
+								"product_id": "FortiClientWindows-7.4.1"
+							}
+						},
+						{
+							"name": "7.4.0",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiClientWindows 7.4.0",
+								"product_id": "FortiClientWindows-7.4.0"
+							}
+						},
+						{
+							"name": "7.2.14",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiClientWindows 7.2.14",
+								"product_id": "FortiClientWindows-7.2.14"
+							}
+						},
+						{
+							"name": "7.2.13",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiClientWindows 7.2.13",
+								"product_id": "FortiClientWindows-7.2.13"
+							}
+						},
+						{
+							"name": "7.2.12",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiClientWindows 7.2.12",
+								"product_id": "FortiClientWindows-7.2.12"
+							}
+						},
+						{
+							"name": "7.2.11",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiClientWindows 7.2.11",
+								"product_id": "FortiClientWindows-7.2.11"
+							}
+						},
+						{
+							"name": "7.2.10",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiClientWindows 7.2.10",
+								"product_id": "FortiClientWindows-7.2.10"
+							}
+						},
+						{
+							"name": "7.2.9",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiClientWindows 7.2.9",
+								"product_id": "FortiClientWindows-7.2.9"
+							}
+						},
+						{
+							"name": "7.2.8",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiClientWindows 7.2.8",
+								"product_id": "FortiClientWindows-7.2.8"
+							}
+						},
+						{
+							"name": "7.2.7",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiClientWindows 7.2.7",
+								"product_id": "FortiClientWindows-7.2.7"
+							}
+						},
+						{
+							"name": "7.2.6",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiClientWindows 7.2.6",
+								"product_id": "FortiClientWindows-7.2.6"
+							}
+						},
+						{
+							"name": "7.2.5",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiClientWindows 7.2.5",
+								"product_id": "FortiClientWindows-7.2.5"
+							}
+						},
+						{
+							"name": "7.2.4",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiClientWindows 7.2.4",
+								"product_id": "FortiClientWindows-7.2.4"
+							}
+						},
+						{
+							"name": "7.2.3",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiClientWindows 7.2.3",
+								"product_id": "FortiClientWindows-7.2.3"
+							}
+						},
+						{
+							"name": "7.2.2",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiClientWindows 7.2.2",
+								"product_id": "FortiClientWindows-7.2.2"
+							}
+						},
+						{
+							"name": "7.2.1",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiClientWindows 7.2.1",
+								"product_id": "FortiClientWindows-7.2.1"
+							}
+						},
+						{
+							"name": "7.2.0",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiClientWindows 7.2.0",
+								"product_id": "FortiClientWindows-7.2.0"
+							}
+						}
+					]
+				},
+				{
+					"name": "FortiClientWindowsPAM",
+					"type": "Product Name",
+					"branch": [
+						{
+							"name": "7.4.7",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiClientWindowsPAM 7.4.7",
+								"product_id": "FortiClientWindowsPAM-7.4.7"
+							}
+						},
+						{
+							"name": "7.2.14",
+							"type": "Product Version",
+							"full_product_name": {
+								"text": "FortiClientWindowsPAM 7.2.14",
+								"product_id": "FortiClientWindowsPAM-7.2.14"
+							}
+						}
+					]
+				}
+			]
+		}
+	}
+}
