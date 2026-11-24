@@ -185,11 +185,13 @@ func TestDelete(t *testing.T) {
 		{
 			name: "a package that cannot be listed does not stop the others",
 			args: args{
-				images: []string{fmt.Sprintf("ghcr.io/vulsio/vuls-data-db-backup@%s", untagged), fmt.Sprintf("ghcr.io/vulsio/vuls-data-db@%s", untagged), fmt.Sprintf("ghcr.io/vulsio/vuls-data-db@%s", tagged)},
+				images: []string{fmt.Sprintf("ghcr.io/vulsio/vuls-data-db-backup@%s", untagged), fmt.Sprintf("ghcr.io/vulsio/vuls-data-db@%s", untagged), fmt.Sprintf("ghcr.io/vulsio/vuls-data-db-backup@%s", untagged2), fmt.Sprintf("ghcr.io/vulsio/vuls-data-db@%s", tagged)},
 				token:  "token",
 			},
-			wantErr:         true,
-			wantErrContains: []string{"failed: 2 of 3", "list versions of vulsio/vuls-data-db-backup", "refuse to delete a tagged version"},
+			wantErr: true,
+			// Both images of the package that cannot be listed count as
+			// failed.
+			wantErrContains: []string{"failed: 3 of 4", "delete the images of vulsio/vuls-data-db-backup. list versions", "refuse to delete a tagged version"},
 			wantRemaining:   []string{tagged, untagged2},
 		},
 		{

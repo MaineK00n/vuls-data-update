@@ -122,7 +122,7 @@ func Delete(images []string, token string, opts ...Option) error {
 
 		rs, err := ls.List([]ls.Repository{{Type: repoType, Registry: "ghcr.io", Owner: owner, Package: pack}}, token, ls.WithHTTPClient(options.httpClient))
 		if err != nil {
-			err := errors.Wrapf(err, "delete the images of %s. list versions of %s", p, p)
+			err = errors.Wrapf(err, "delete the images of %s. list versions", p)
 			slog.Warn("Failed to delete the images of a package, go on with the rest", slog.String("repository", p), slog.Int("images", len(targets[p])), slog.Any("error", err))
 			errs = append(errs, err)
 			failed += len(targets[p])
@@ -151,7 +151,7 @@ func Delete(images []string, token string, opts ...Option) error {
 				}
 				return nil
 			}(); err != nil {
-				err := errors.Wrapf(err, "delete %s", t.image)
+				err = errors.Wrapf(err, "delete %s", t.image)
 				slog.Warn("Failed to delete an image, go on with the rest", slog.String("image", t.image), slog.Any("error", err))
 				errs = append(errs, err)
 				failed++
