@@ -156,7 +156,7 @@ func TestDelete(t *testing.T) {
 			},
 			deleteForbidden: []int{460898773},
 			wantErr:         true,
-			wantErrContains: []string{"failed: 1 of 2", "actual: 403"},
+			wantErrContains: []string{"actual: 403"},
 			wantRemaining:   []string{"sha256:6413c62920ab027e680d7adf44bec195e9f2ec7a299140ff9a5d2193a626b673", "sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb"},
 		},
 		{
@@ -183,10 +183,8 @@ func TestDelete(t *testing.T) {
 				images: []string{"ghcr.io/vulsio/vuls-data-db-backup@sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb", "ghcr.io/vulsio/vuls-data-db@sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb", "ghcr.io/vulsio/vuls-data-db-backup@sha256:29c88e701ac502d431e318a82b327d73f220b82714852b6942bcaffbb4e573aa", "ghcr.io/vulsio/vuls-data-db@sha256:6413c62920ab027e680d7adf44bec195e9f2ec7a299140ff9a5d2193a626b673"},
 				token:  "token",
 			},
-			wantErr: true,
-			// Both images of the package that cannot be listed count as
-			// failed.
-			wantErrContains: []string{"failed: 3 of 4", "delete the images of vulsio/vuls-data-db-backup. list versions", "refuse to delete a tagged version"},
+			wantErr:         true,
+			wantErrContains: []string{"delete the images of vulsio/vuls-data-db-backup. list versions", "refuse to delete a tagged version"},
 			wantRemaining:   []string{"sha256:6413c62920ab027e680d7adf44bec195e9f2ec7a299140ff9a5d2193a626b673", "sha256:29c88e701ac502d431e318a82b327d73f220b82714852b6942bcaffbb4e573aa"},
 		},
 		{
@@ -196,7 +194,7 @@ func TestDelete(t *testing.T) {
 				token:  "token",
 			},
 			wantErr:         true,
-			wantErrContains: []string{"failed: 2 of 3", "get the type of unknown"},
+			wantErrContains: []string{"delete the images of unknown/a. get the type of unknown", "delete the images of unknown/b. get the type of unknown"},
 			wantRemaining:   []string{"sha256:6413c62920ab027e680d7adf44bec195e9f2ec7a299140ff9a5d2193a626b673", "sha256:29c88e701ac502d431e318a82b327d73f220b82714852b6942bcaffbb4e573aa"},
 		},
 		{

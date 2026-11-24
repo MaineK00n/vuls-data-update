@@ -98,10 +98,7 @@ func Delete(images []string, token string, opts ...Option) error {
 	}
 	owners := make(map[string]lookup)
 
-	var (
-		errs   []error
-		failed int
-	)
+	var errs []error
 	for _, p := range packages {
 		owner, pack, _ := strings.Cut(p, "/")
 
@@ -112,7 +109,6 @@ func Delete(images []string, token string, opts ...Option) error {
 		}
 		if o.err != nil {
 			errs = append(errs, errors.Wrapf(o.err, "delete the images of %s. get the type of %s", p, owner))
-			failed += len(targets[p])
 			continue
 		}
 		repoType := o.repoType
@@ -120,7 +116,6 @@ func Delete(images []string, token string, opts ...Option) error {
 		rs, err := ls.List([]ls.Repository{{Type: repoType, Registry: "ghcr.io", Owner: owner, Package: pack}}, token, ls.WithHTTPClient(options.httpClient))
 		if err != nil {
 			errs = append(errs, errors.Wrapf(err, "delete the images of %s. list versions", p))
-			failed += len(targets[p])
 			continue
 		}
 
@@ -147,13 +142,12 @@ func Delete(images []string, token string, opts ...Option) error {
 				return nil
 			}(); err != nil {
 				errs = append(errs, errors.Wrapf(err, "delete %s", t.image))
-				failed++
 			}
 		}
 	}
 
 	if len(errs) > 0 {
-		return errors.Wrapf(stderrors.Join(errs...), "delete images. failed: %d of %d", failed, len(images))
+		return errors.Wrap(stderrors.Join(errs...), "delete images")
 	}
 	return nil
 }
