@@ -1,12 +1,19 @@
 package github_test
 
 import (
+	"bytes"
 	"encoding/json/v2"
+	"errors"
 	"fmt"
+	"log"
+	"log/slog"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
+	"strconv"
+	"strings"
 	"testing"
+	"time"
 
 	"github.com/google/go-cmp/cmp"
 
@@ -109,6 +116,9 @@ func TestDo(t *testing.T) {
 }
 
 func TestCheckScopes(t *testing.T) {
+	// "unexpected response status" answers 500, which Do retries.
+	t.Cleanup(github.ShortenRetryWaits(time.Millisecond))
+
 	type args struct {
 		token    string
 		required []string
@@ -118,7 +128,10 @@ func TestCheckScopes(t *testing.T) {
 		args    args
 		status  int
 		scopes  *string
+		body    string
 		wantErr bool
+		// wantRateLimited tells that the error is github.ErrRateLimited.
+		wantRateLimited bool
 	}{
 		{
 			name: "happy",
@@ -192,6 +205,29 @@ func TestCheckScopes(t *testing.T) {
 			status: http.StatusForbidden,
 		},
 		{
+			// A rate limit is not taken for a token that cannot fetch its
+			// scopes.
+			name: "rate limited",
+			args: args{
+				token:    "token",
+				required: []string{github.ScopeReadPackages},
+			},
+			status:          http.StatusForbidden,
+			body:            `{"message":"You have exceeded a secondary rate limit. Please wait a few minutes before you try again."}`,
+			wantErr:         true,
+			wantRateLimited: true,
+		},
+		{
+			name: "rate limited with 429",
+			args: args{
+				token:    "token",
+				required: []string{github.ScopeReadPackages},
+			},
+			status:          http.StatusTooManyRequests,
+			wantErr:         true,
+			wantRateLimited: true,
+		},
+		{
 			name: "unexpected response status",
 			args: args{
 				token:    "token",
@@ -209,13 +245,424 @@ func TestCheckScopes(t *testing.T) {
 						w.Header().Set("X-OAuth-Scopes", *tt.scopes)
 					}
 					w.WriteHeader(tt.status)
+					if _, err := w.Write([]byte(tt.body)); err != nil {
+						t.Errorf("write body: %v", err)
+					}
 				default:
 					http.NotFound(w, r)
 				}
 			}))
 
-			if err := github.CheckScopes(tt.args.token, tt.args.required, github.WithHTTPClient(ts.Client())); (err != nil) != tt.wantErr {
+			err := github.CheckScopes(tt.args.token, tt.args.required, github.WithHTTPClient(ts.Client()))
+			if (err != nil) != tt.wantErr {
 				t.Errorf("CheckScopes() error = %v, wantErr %v", err, tt.wantErr)
+			}
+			if got := errors.Is(err, github.ErrRateLimited); got != tt.wantRateLimited {
+				t.Errorf("errors.Is(CheckScopes(), ErrRateLimited) = %t, want %t. error: %v", got, tt.wantRateLimited, err)
+			}
+		})
+	}
+}
+
+func TestDo_retry(t *testing.T) {
+	t.Cleanup(github.ShortenRetryWaits(time.Millisecond))
+
+	// slog.SetDefault also points the output of the log package at the
+	// handler, and putting the default logger back leaves it there, so the
+	// output of the log package is put back too.
+	logger, logWriter, logFlags := slog.Default(), log.Writer(), log.Flags()
+	t.Cleanup(func() {
+		slog.SetDefault(logger)
+		log.SetOutput(logWriter)
+		log.SetFlags(logFlags)
+	})
+
+	type response struct {
+		status int
+		header http.Header
+		body   string
+		// hangUp closes the connection instead of answering.
+		hangUp bool
+	}
+	tests := []struct {
+		name   string
+		method string
+		// responses are answered in turn, and the last one again once they
+		// run out.
+		responses    []response
+		wantRequests int
+		// wantWait is the least time Do takes, which tells that the wait asked
+		// for is waited for. ShortenRetryWaits leaves the waits GitHub asks for
+		// alone.
+		wantWait time.Duration
+		wantErr  bool
+		// wantErrContains is a part of the error that tells what GitHub said.
+		wantErrContains string
+		// wantRateLimited tells that the error is github.ErrRateLimited.
+		wantRateLimited bool
+		// wantLog is a part of the log of the retries, which tells why a
+		// request is retried.
+		wantLog string
+	}{
+		{
+			name:         "5xx, then success",
+			method:       http.MethodGet,
+			responses:    []response{{status: http.StatusBadGateway}, {status: http.StatusOK}},
+			wantRequests: 2,
+			wantLog:      `reason="502 Bad Gateway"`,
+		},
+		{
+			name:         "5xx until the retries run out",
+			method:       http.MethodGet,
+			responses:    []response{{status: http.StatusInternalServerError}},
+			wantRequests: 5,
+			wantErr:      true,
+		},
+		{
+			// A DELETE is retried only with WithBeforeRetry, which
+			// TestDo_beforeRetry covers.
+			name:         "DELETE without a check before the retry, 5xx",
+			method:       http.MethodDelete,
+			responses:    []response{{status: http.StatusBadGateway}, {status: http.StatusNoContent}},
+			wantRequests: 1,
+			wantErr:      true,
+		},
+		{
+			name:            "DELETE without a check before the retry, rate limited",
+			method:          http.MethodDelete,
+			responses:       []response{{status: http.StatusTooManyRequests}, {status: http.StatusNoContent}},
+			wantRequests:    1,
+			wantErr:         true,
+			wantErrContains: "429",
+			wantRateLimited: true,
+		},
+		{
+			name:         "connection error, then success",
+			method:       http.MethodGet,
+			responses:    []response{{hangUp: true}, {status: http.StatusOK}},
+			wantRequests: 2,
+		},
+		{
+			name:         "429, then success",
+			method:       http.MethodGet,
+			responses:    []response{{status: http.StatusTooManyRequests}, {status: http.StatusOK}},
+			wantRequests: 2,
+		},
+		{
+			name:         "403 with Retry-After, then success",
+			method:       http.MethodGet,
+			responses:    []response{{status: http.StatusForbidden, header: http.Header{"Retry-After": []string{"1"}}}, {status: http.StatusOK}},
+			wantRequests: 2,
+			wantWait:     time.Second,
+			wantLog:      `reason="403 Forbidden (retry-after: 1)"`,
+		},
+		{
+			name:   "403 of the primary rate limit, then success",
+			method: http.MethodGet,
+			responses: []response{
+				{status: http.StatusForbidden, header: http.Header{"X-Ratelimit-Remaining": []string{"0"}, "X-Ratelimit-Reset": []string{strconv.FormatInt(time.Now().Add(-time.Hour).Unix(), 10)}, "X-Ratelimit-Resource": []string{"core"}}},
+				{status: http.StatusOK},
+			},
+			wantRequests: 2,
+			// The second on top of the reset.
+			wantWait: time.Second,
+			wantLog:  `reason="403 Forbidden (primary rate limit of core, resets in 0s)"`,
+		},
+		{
+			name:            "primary rate limit that resets later than the limit",
+			method:          http.MethodGet,
+			responses:       []response{{status: http.StatusForbidden, header: http.Header{"X-Ratelimit-Remaining": []string{"0"}, "X-Ratelimit-Reset": []string{strconv.FormatInt(time.Now().Add(time.Hour).Unix(), 10)}}}},
+			wantRequests:    1,
+			wantErr:         true,
+			wantErrContains: `x-ratelimit-remaining: "0"`,
+			wantRateLimited: true,
+		},
+		{
+			name:            "primary rate limit that resets centuries later",
+			method:          http.MethodGet,
+			responses:       []response{{status: http.StatusForbidden, header: http.Header{"X-Ratelimit-Remaining": []string{"0"}, "X-Ratelimit-Reset": []string{"99999999999"}}}},
+			wantRequests:    1,
+			wantErr:         true,
+			wantErrContains: `x-ratelimit-reset: "99999999999"`,
+			wantRateLimited: true,
+		},
+		{
+			name:   "403 of the secondary rate limit without headers, then success",
+			method: http.MethodGet,
+			responses: []response{
+				{status: http.StatusForbidden, body: `{"message":"You have exceeded a secondary rate limit. Please wait a few minutes before you try again."}`},
+				{status: http.StatusOK},
+			},
+			wantRequests: 2,
+			wantLog:      `reason="403 Forbidden (secondary rate limit)"`,
+		},
+		{
+			name:         "403 of the secondary rate limit until the retries run out",
+			method:       http.MethodGet,
+			responses:    []response{{status: http.StatusForbidden, body: `{"message":"You have exceeded a secondary rate limit. Please wait a few minutes before you try again."}`}},
+			wantRequests: 5,
+			// The wait doubles with each retry: 1, 2, 4 and 8 ms.
+			wantWait:        15 * time.Millisecond,
+			wantErr:         true,
+			wantErrContains: "secondary rate limit",
+			wantRateLimited: true,
+		},
+		{
+			name:            "403 that is not a rate limit",
+			method:          http.MethodGet,
+			responses:       []response{{status: http.StatusForbidden, body: `{"message":"Resource not accessible by integration"}`}},
+			wantRequests:    1,
+			wantErr:         true,
+			wantErrContains: "Resource not accessible by integration",
+		},
+		{
+			name:            "rate limit that asks for a longer wait than the limit",
+			method:          http.MethodGet,
+			responses:       []response{{status: http.StatusForbidden, header: http.Header{"Retry-After": []string{"3600"}}, body: `{"message":"You have exceeded a secondary rate limit."}`}},
+			wantRequests:    1,
+			wantErr:         true,
+			wantErrContains: `retry-after: "3600"`,
+			wantRateLimited: true,
+		},
+		{
+			name:            "Retry-After too long for a time.Duration",
+			method:          http.MethodGet,
+			responses:       []response{{status: http.StatusTooManyRequests, header: http.Header{"Retry-After": []string{"10000000000"}}}},
+			wantRequests:    1,
+			wantErr:         true,
+			wantErrContains: `retry-after: "10000000000"`,
+			wantRateLimited: true,
+		},
+		{
+			name:         "503 with Retry-After, then success",
+			method:       http.MethodGet,
+			responses:    []response{{status: http.StatusServiceUnavailable, header: http.Header{"Retry-After": []string{"1"}}}, {status: http.StatusOK}},
+			wantRequests: 2,
+			wantWait:     time.Second,
+			wantLog:      `reason="503 Service Unavailable (retry-after: 1)"`,
+		},
+		{
+			name:            "503 that asks for a longer wait than the limit",
+			method:          http.MethodGet,
+			responses:       []response{{status: http.StatusServiceUnavailable, header: http.Header{"Retry-After": []string{"3600"}}}},
+			wantRequests:    1,
+			wantErr:         true,
+			wantErrContains: `retry-after: "3600"`,
+		},
+		{
+			// An HTTP date is not followed. Were it, the test would wait an
+			// hour.
+			name:         "503 with Retry-After as an HTTP date, then success",
+			method:       http.MethodGet,
+			responses:    []response{{status: http.StatusServiceUnavailable, header: http.Header{"Retry-After": []string{time.Now().Add(time.Hour).UTC().Format(http.TimeFormat)}}}, {status: http.StatusOK}},
+			wantRequests: 2,
+		},
+		{
+			name:         "404",
+			method:       http.MethodDelete,
+			responses:    []response{{status: http.StatusNotFound}},
+			wantRequests: 1,
+			wantErr:      true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var logged bytes.Buffer
+			slog.SetDefault(slog.New(slog.NewTextHandler(&logged, nil)))
+
+			var requests int
+			ts := httptest.NewTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				res := tt.responses[min(requests, len(tt.responses)-1)]
+				requests++
+
+				if res.hangUp {
+					conn, _, err := http.NewResponseController(w).Hijack()
+					if err != nil {
+						http.Error(w, err.Error(), http.StatusInternalServerError)
+						return
+					}
+					if err := conn.Close(); err != nil {
+						t.Errorf("close connection: %v", err)
+					}
+					return
+				}
+
+				for k, vs := range res.header {
+					for _, v := range vs {
+						w.Header().Add(k, v)
+					}
+				}
+				w.WriteHeader(res.status)
+				if _, err := w.Write([]byte(res.body)); err != nil {
+					t.Errorf("write body: %v", err)
+				}
+			}))
+
+			start := time.Now()
+			err := github.Do(ts.Client(), tt.method, "https://api.github.com/orgs/vulsio/packages/container/vuls-data-db/versions", "token", func(resp *http.Response) error {
+				switch resp.StatusCode {
+				case http.StatusOK, http.StatusNoContent:
+					return nil
+				default:
+					return fmt.Errorf("unexpected response status. expected: %d, actual: %d", []int{http.StatusOK, http.StatusNoContent}, resp.StatusCode)
+				}
+			})
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Do() error = %v, wantErr %v", err, tt.wantErr)
+			}
+			if err != nil && !strings.Contains(err.Error(), tt.wantErrContains) {
+				t.Errorf("Do() error = %v, want it to contain %q", err, tt.wantErrContains)
+			}
+			if got := errors.Is(err, github.ErrRateLimited); got != tt.wantRateLimited {
+				t.Errorf("errors.Is(Do(), ErrRateLimited) = %t, want %t. error: %v", got, tt.wantRateLimited, err)
+			}
+			if !strings.Contains(logged.String(), tt.wantLog) {
+				t.Errorf("Do() logged %q, want it to contain %q", logged.String(), tt.wantLog)
+			}
+			if tt.wantRequests == 1 && strings.Contains(logged.String(), "Retry GitHub API request") {
+				t.Errorf("Do() logged %q for a request it did not retry", logged.String())
+			}
+			if requests != tt.wantRequests {
+				t.Errorf("Do() sent %d requests, want %d", requests, tt.wantRequests)
+			}
+			if elapsed := time.Since(start); elapsed < tt.wantWait {
+				t.Errorf("Do() took %s, want at least %s", elapsed, tt.wantWait)
+			}
+		})
+	}
+}
+
+func TestRateLimitBackoff(t *testing.T) {
+	tests := []struct {
+		attemptNum int
+		// The wait is in [wantMin, wantMax].
+		wantMin, wantMax time.Duration
+	}{
+		{attemptNum: 0, wantMin: 1 * time.Minute, wantMax: 2*time.Minute - 1},
+		{attemptNum: 1, wantMin: 2 * time.Minute, wantMax: 3*time.Minute - 1},
+		{attemptNum: 2, wantMin: 4 * time.Minute, wantMax: 5 * time.Minute},
+		{attemptNum: 3, wantMin: 5 * time.Minute, wantMax: 5 * time.Minute},
+		{attemptNum: 100, wantMin: 5 * time.Minute, wantMax: 5 * time.Minute},
+	}
+	for _, tt := range tests {
+		t.Run(fmt.Sprintf("retry %d", tt.attemptNum+1), func(t *testing.T) {
+			waits := make(map[time.Duration]struct{})
+			for range 100 {
+				got := github.RateLimitBackoff(tt.attemptNum)
+				if got < tt.wantMin || got > tt.wantMax {
+					t.Fatalf("RateLimitBackoff(%d) = %s, want in [%s, %s]", tt.attemptNum, got, tt.wantMin, tt.wantMax)
+				}
+				waits[got] = struct{}{}
+			}
+			// Clients refused together do not retry together.
+			if tt.wantMin < tt.wantMax && len(waits) == 1 {
+				t.Errorf("RateLimitBackoff(%d) waited %v every time, want a random part", tt.attemptNum, waits)
+			}
+		})
+	}
+}
+
+func TestDo_beforeRetry(t *testing.T) {
+	t.Cleanup(github.ShortenRetryWaits(time.Millisecond))
+
+	tests := []struct {
+		name string
+		// statuses are answered in turn, and the last one again once they run
+		// out.
+		statuses []int
+		// checkFails makes the check fail from this call on, counted from 1.
+		// 0 never fails it.
+		checkFails   int
+		wantRequests int
+		wantChecks   int
+		wantErr      bool
+		// wantRateLimited tells that the error is github.ErrRateLimited.
+		wantRateLimited bool
+	}{
+		{
+			name:         "no retry, no check",
+			statuses:     []int{http.StatusNoContent},
+			wantRequests: 1,
+		},
+		{
+			name:         "checked before each retry",
+			statuses:     []int{http.StatusBadGateway, http.StatusBadGateway, http.StatusNoContent},
+			wantRequests: 3,
+			wantChecks:   2,
+		},
+		{
+			name:         "a failed check ends the retries",
+			statuses:     []int{http.StatusBadGateway, http.StatusNoContent},
+			checkFails:   1,
+			wantRequests: 1,
+			wantChecks:   1,
+			wantErr:      true,
+		},
+		{
+			name:         "a check that fails later ends the retries there",
+			statuses:     []int{http.StatusBadGateway},
+			checkFails:   2,
+			wantRequests: 2,
+			wantChecks:   2,
+			wantErr:      true,
+		},
+		{
+			// What the check refuses is the reason, not the rate limit that
+			// the retry was waiting for.
+			name:         "a failed check after a rate limit",
+			statuses:     []int{http.StatusTooManyRequests, http.StatusNoContent},
+			checkFails:   1,
+			wantRequests: 1,
+			wantChecks:   1,
+			wantErr:      true,
+		},
+		{
+			name:            "a rate limit through the retries",
+			statuses:        []int{http.StatusTooManyRequests},
+			wantRequests:    5,
+			wantChecks:      4,
+			wantErr:         true,
+			wantRateLimited: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var requests int
+			ts := httptest.NewTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				w.WriteHeader(tt.statuses[min(requests, len(tt.statuses)-1)])
+				requests++
+			}))
+
+			var checks int
+			errRefused := errors.New("refused")
+			err := github.Do(ts.Client(), http.MethodDelete, "https://api.github.com/orgs/vulsio/packages/container/vuls-data-db/versions/1", "token", func(resp *http.Response) error {
+				switch resp.StatusCode {
+				case http.StatusNoContent:
+					return nil
+				default:
+					return fmt.Errorf("unexpected response status. expected: %d, actual: %d", []int{http.StatusNoContent}, resp.StatusCode)
+				}
+			}, github.WithBeforeRetry(func() error {
+				checks++
+				if tt.checkFails > 0 && checks >= tt.checkFails {
+					return errRefused
+				}
+				return nil
+			}))
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Do() error = %v, wantErr %v", err, tt.wantErr)
+			}
+			if tt.checkFails > 0 && !errors.Is(err, errRefused) {
+				t.Errorf("Do() error = %v, want the error of the check", err)
+			}
+			if got := errors.Is(err, github.ErrRateLimited); got != tt.wantRateLimited {
+				t.Errorf("errors.Is(Do(), ErrRateLimited) = %t, want %t. error: %v", got, tt.wantRateLimited, err)
+			}
+			if requests != tt.wantRequests {
+				t.Errorf("Do() sent %d requests, want %d", requests, tt.wantRequests)
+			}
+			if checks != tt.wantChecks {
+				t.Errorf("Do() checked %d times, want %d", checks, tt.wantChecks)
 			}
 		})
 	}
