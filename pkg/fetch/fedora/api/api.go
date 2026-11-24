@@ -37,6 +37,7 @@ type options struct {
 	retry       int
 	concurrency int
 	wait        time.Duration
+	allowEmpty  bool
 
 	// rowsPerPage is only ever set by WithRowsPerPage, which lives in export_test.go
 	// and is therefore absent from the production build.
@@ -96,6 +97,20 @@ func (w waitOption) apply(opts *options) {
 
 func WithWait(wait time.Duration) Option {
 	return waitOption(wait)
+}
+
+type allowEmptyOption bool
+
+func (a allowEmptyOption) apply(opts *options) {
+	opts.allowEmpty = bool(a)
+}
+
+// WithAllowEmpty lets a run that wrote nothing succeed. It is for a run
+// over one release of several, as when each release is fetched on its own and
+// the results are merged: a release can have no updates yet. A run that
+// fetched nothing has otherwise failed.
+func WithAllowEmpty(allow bool) Option {
+	return allowEmptyOption(allow)
 }
 
 func Fetch(releases []string, opts ...Option) error {
@@ -186,6 +201,10 @@ func Fetch(releases []string, opts ...Option) error {
 			return errors.Wrap(err, "err in goroutine")
 		}
 		_ = bar.Close()
+	}
+
+	if err := util.EnsureWritten(options.dir, util.WithAllowEmpty(options.allowEmpty)); err != nil {
+		return errors.Wrapf(err, "ensure written %s", options.dir)
 	}
 
 	return nil

@@ -152,6 +152,10 @@ func Fetch(queries []string, opts ...Option) error {
 	// this fetcher exists to stop making.
 	slog.Info("Fetched updates", slog.Int("count", len(uidmap)-len(unavailable)))
 
+	if err := util.EnsureWritten(options.dir); err != nil {
+		return errors.Wrapf(err, "ensure written %s", options.dir)
+	}
+
 	return nil
 }
 

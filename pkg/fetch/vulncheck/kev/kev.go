@@ -155,6 +155,12 @@ Notably, you must show "prominent attribution" to show the data is from VulnChec
 		_ = bar.Close()
 	}
 
+	// The README is written whatever the fetch got, so it says nothing about
+	// whether the fetch got anything.
+	if err := util.EnsureWritten(options.dir, util.WithIgnore(".git", "README.md")); err != nil {
+		return errors.Wrapf(err, "ensure written %s", options.dir)
+	}
+
 	return nil
 }
 

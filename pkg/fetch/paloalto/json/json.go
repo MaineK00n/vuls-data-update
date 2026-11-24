@@ -158,5 +158,9 @@ func Fetch(ids []string, opts ...Option) error {
 		return errors.Wrap(err, "pipeline get")
 	}
 
+	if err := util.EnsureWritten(options.dir); err != nil {
+		return errors.Wrapf(err, "ensure written %s", options.dir)
+	}
+
 	return nil
 }

@@ -24,8 +24,10 @@ func TestFetch(t *testing.T) {
 		hasError      bool
 	}{
 		{
+			// A fetch that finds nothing has failed.
 			name:          "empty",
 			fixturePrefix: "empty",
+			hasError:      true,
 		},
 		{
 			name:          "1 item",
