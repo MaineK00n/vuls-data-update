@@ -921,7 +921,7 @@ func resolveVersion(productName string, rt ccRangeTypes.RangeType, exp string) (
 	default:
 		// Concrete version → bake into the CPE, spelled as the release notes
 		// spell it.
-		return nil, product.NormalizeVersion(productName, exp), nil
+		return nil, product.NormalizeVersion(rt, exp), nil
 	}
 }
 

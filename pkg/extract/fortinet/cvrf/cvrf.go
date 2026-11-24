@@ -348,7 +348,7 @@ func knownAffectedCriteria(productIDs []string, prodMap map[string]productVersio
 		// (productpkg.NormalizeVersion): a baked version is matched by CPE
 		// name, so FortiSASE "26.3.1_a" baked as written would never match the
 		// 26.3.1.a a scanner reports.
-		ver := productpkg.NormalizeVersion(pv.productName, strings.TrimSpace(strings.TrimPrefix(pv.version, pv.productName)))
+		ver := productpkg.NormalizeVersion(rt, strings.TrimSpace(strings.TrimPrefix(pv.version, pv.productName)))
 		if !productpkg.IsExactVersion(pv.productName, ver) {
 			// Coarse trains are dropped by design (rationale in the function
 			// comment above); only exact versions are enumerated. What counts as

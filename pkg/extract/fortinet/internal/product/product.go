@@ -127,15 +127,15 @@ var respellings = []struct {
 	{pattern: regexp.MustCompile(`^(\d+\.\d+\.[a-z])(\d)$`), repl: "$1.$2"},
 }
 
-// NormalizeVersion returns ver, a concrete release of the named product as an
-// advisory spells it, in the spelling of Fortinet's release notes (see
-// respellings), the one the product's comparator parses and a scanner
-// reports. Only a non-numeric-versioned product's releases are respelled.
-// Any other ver is returned as given, for the caller to validate
+// NormalizeVersion returns ver, a concrete release of a product of range type
+// rt as an advisory spells it, in the spelling of Fortinet's release notes
+// (see respellings), the one rt's comparator parses and a scanner reports.
+// Only the releases of a NonNumericVersioned range type are respelled. Any
+// other ver is returned as given, for the caller to validate
 // (ValidateVersion), so a misspelling not seen before fails the extract
 // rather than being guessed at.
-func NormalizeVersion(name, ver string) string {
-	if !NonNumericVersioned(nameToProduct[strings.TrimSpace(name)].rangeType) {
+func NormalizeVersion(rt ccRangeTypes.RangeType, ver string) string {
+	if !NonNumericVersioned(rt) {
 		return ver
 	}
 	for _, r := range respellings {
