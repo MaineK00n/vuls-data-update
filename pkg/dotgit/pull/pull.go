@@ -3,10 +3,13 @@ package pull
 import (
 	"context"
 	"encoding/json/v2"
+	stderrors "errors"
 	"fmt"
 	"log/slog"
 	"os"
+	"os/exec"
 	"path/filepath"
+	"strings"
 
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
@@ -15,6 +18,7 @@ import (
 	"oras.land/oras-go/v2"
 	"oras.land/oras-go/v2/registry/remote"
 
+	"github.com/MaineK00n/vuls-data-update/pkg/dotgit/contains"
 	"github.com/MaineK00n/vuls-data-update/pkg/dotgit/util"
 )
 
@@ -134,6 +138,23 @@ func Pull(repository string, opts ...Option) error {
 		if options.useNativeGit {
 			if _, err := util.Git("-C", filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference), "show-ref", "--verify", "--quiet", fmt.Sprintf("refs/heads/%s", options.checkout)); err != nil { // tag or commit
 				if _, err := util.Git("-C", filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference), "switch", "--detach", options.checkout); err != nil {
+					// switch reports a commit that is not in the repository
+					// as "unable to read tree", which reads like corruption,
+					// so if contains finds that the target is not there
+					// either, say so in front of the error of switch. Asking
+					// only after a failure lets every name switch accepts
+					// reach it as before. contains reads a name as cat-file
+					// -e does, so it is not asked about a name that switch
+					// reads otherwise: one that begins with "-", the previous
+					// branch or an option, or A...B, the merge base of A and
+					// B. For those, and when contains cannot tell, as when
+					// git cannot be run, the error of switch, which says how
+					// it failed, is returned as it is.
+					if !strings.HasPrefix(options.checkout, "-") && !strings.Contains(options.checkout, "...") {
+						if err2 := contains.Contains(filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference), options.checkout, contains.WithUseNativeGit(true)); notFound(err2) {
+							return notInRepository(errors.Wrapf(err, "switch to %s", options.checkout), repository, options.checkout)
+						}
+					}
 					return errors.Wrapf(err, "switch to %s", options.checkout)
 				}
 			} else { // branch
@@ -234,4 +255,24 @@ func Pull(repository string, opts ...Option) error {
 	}
 
 	return nil
+}
+
+// notInRepository wraps err, the error of switch, for a checkout target, a tag
+// or a commit, that is not in the dotgit pulled from repository. vuls-data-db
+// keeps only the last commits of a dotgit's history, so a commit pinned before
+// it truncated the history is gone from a repository that is otherwise fine.
+func notInRepository(err error, repository, checkout string) error {
+	return errors.Wrapf(err, "%s is not in %s, whose history may have been truncated or rewritten", checkout, repository)
+}
+
+// notFound reports whether err, from contains, says that the target is not in
+// the repository, rather than that the check could not be made. git cat-file
+// -e exits with 1 for a hash it does not have, and with 128 for a name it
+// cannot resolve. 128 is also how it ends on other fatal errors, but contains
+// is asked only after switch has failed, and the error of switch, which
+// follows the message, says which. Without an exit status, git could not be
+// run.
+func notFound(err error) bool {
+	ee, ok := stderrors.AsType[*exec.ExitError](err)
+	return ok && (ee.ExitCode() == 1 || ee.ExitCode() == 128)
 }
