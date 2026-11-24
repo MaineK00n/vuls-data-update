@@ -1643,29 +1643,34 @@ func vendorFixProductName(productName, rawFixedBuild string) string {
 	}
 }
 
+// dotnetProductNamePairs lists the {runtime, SDK} names of each .NET 8.0-11.0 product:
+// ".NET X runtime installed on <OS>", which productRangeType maps to the runtime range
+// type, and ".NET X installed on <OS>", which it maps to the SDK range type.
+var dotnetProductNamePairs = [][2]string{
+	{".NET 8.0 runtime installed on Linux", ".NET 8.0 installed on Linux"},
+	{".NET 8.0 runtime installed on Mac OS", ".NET 8.0 installed on Mac OS"},
+	{".NET 8.0 runtime installed on Windows", ".NET 8.0 installed on Windows"},
+	{".NET 9.0 runtime installed on Linux", ".NET 9.0 installed on Linux"},
+	{".NET 9.0 runtime installed on Mac OS", ".NET 9.0 installed on Mac OS"},
+	{".NET 9.0 runtime installed on Windows", ".NET 9.0 installed on Windows"},
+	{".NET 10.0 runtime installed on Linux", ".NET 10.0 installed on Linux"},
+	{".NET 10.0 runtime installed on Mac OS", ".NET 10.0 installed on Mac OS"},
+	{".NET 10.0 runtime installed on Windows", ".NET 10.0 installed on Windows"},
+	{".NET 11.0 runtime installed on Linux", ".NET 11.0 installed on Linux"},
+	{".NET 11.0 runtime installed on Mac OS", ".NET 11.0 installed on Mac OS"},
+	{".NET 11.0 runtime installed on Windows", ".NET 11.0 installed on Windows"},
+}
+
 // dotnetProductNames returns the runtime and the SDK name of a .NET 8.0-11.0 product
-// named either way: ".NET X runtime installed on <OS>", which productRangeType maps to
-// the runtime range type, or ".NET X installed on <OS>", which it maps to the SDK range
-// type. ok is false for any other product, such as ".NET 6.0 installed on <OS>" (the
-// runtime) and ".NET 8.0", or a product productRangeType does not know, which
-// buildFixedBuildCriterion reports.
+// named either way (see dotnetProductNamePairs). ok is false for any other product,
+// such as ".NET 6.0 installed on <OS>" (the runtime) and ".NET 8.0".
 func dotnetProductNames(productName string) (runtime, sdk string, ok bool) {
-	rt, err := productRangeType(productName)
-	if err != nil {
-		return "", "", false
-	}
-	switch rt {
-	case rangeTypes.RangeTypeMicrosoftDotNetCoreSDK:
-		return strings.Replace(productName, " installed on ", " runtime installed on ", 1), productName, true
-	case rangeTypes.RangeTypeMicrosoftDotNetCoreRuntime:
-		dotnet, platform, found := strings.Cut(productName, " runtime installed on ")
-		if !found {
-			return "", "", false
+	for _, p := range dotnetProductNamePairs {
+		if productName == p[0] || productName == p[1] {
+			return p[0], p[1], true
 		}
-		return productName, dotnet + " installed on " + platform, true
-	default:
-		return "", "", false
 	}
+	return "", "", false
 }
 
 // isDotNetRuntimeFixedBuild reports whether a .NET FixedBuild is one runtime version:

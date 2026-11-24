@@ -2019,34 +2019,48 @@ func TestVendorFixProductName(t *testing.T) {
 }
 
 func TestDotNetProductNames(t *testing.T) {
-	for _, version := range []string{"8.0", "9.0", "10.0", "11.0"} {
-		for _, platform := range []string{"Windows", "Linux", "Mac OS"} {
-			runtime := ".NET " + version + " runtime installed on " + platform
-			sdk := ".NET " + version + " installed on " + platform
-			for _, name := range []string{runtime, sdk} {
-				t.Run(name, func(t *testing.T) {
-					gotRuntime, gotSDK, ok := cvrf.DotNetProductNames(name)
-					if !ok || gotRuntime != runtime || gotSDK != sdk {
-						t.Errorf("DotNetProductNames(%q) = (%q, %q, %v), want (%q, %q, true)", name, gotRuntime, gotSDK, ok, runtime, sdk)
-					}
-				})
-			}
-		}
+	tests := []struct {
+		name    string
+		runtime string
+		sdk     string
+		ok      bool
+	}{
+		{name: ".NET 8.0 runtime installed on Windows", runtime: ".NET 8.0 runtime installed on Windows", sdk: ".NET 8.0 installed on Windows", ok: true},
+		{name: ".NET 8.0 installed on Windows", runtime: ".NET 8.0 runtime installed on Windows", sdk: ".NET 8.0 installed on Windows", ok: true},
+		{name: ".NET 10.0 runtime installed on Mac OS", runtime: ".NET 10.0 runtime installed on Mac OS", sdk: ".NET 10.0 installed on Mac OS", ok: true},
+		{name: ".NET 11.0 installed on Linux", runtime: ".NET 11.0 runtime installed on Linux", sdk: ".NET 11.0 installed on Linux", ok: true},
+		{name: ".NET 6.0 installed on Windows"},
+		{name: ".NET 8.0"},
+		{name: ".NET Core 3.1"},
+		{name: ".NET 12.0 installed on Windows"},
+		{name: ".NET 12.0 runtime installed on Windows"},
+		{name: "Windows Server 2025"},
 	}
-
-	for _, name := range []string{
-		".NET 6.0 installed on Windows",
-		".NET 8.0",
-		".NET Core 3.1",
-		".NET 12.0 installed on Windows",
-		".NET 12.0 runtime installed on Windows",
-		"Windows Server 2025",
-	} {
-		t.Run(name, func(t *testing.T) {
-			if gotRuntime, gotSDK, ok := cvrf.DotNetProductNames(name); ok {
-				t.Errorf("DotNetProductNames(%q) = (%q, %q, true), want ok false", name, gotRuntime, gotSDK)
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			runtime, sdk, ok := cvrf.DotNetProductNames(tt.name)
+			if runtime != tt.runtime || sdk != tt.sdk || ok != tt.ok {
+				t.Errorf("DotNetProductNames(%q) = (%q, %q, %v), want (%q, %q, %v)", tt.name, runtime, sdk, ok, tt.runtime, tt.sdk, tt.ok)
 			}
 		})
+	}
+
+	// Every pair must agree with productRangeType, which classifies the same names.
+	for _, p := range cvrf.DotNetProductNamePairs {
+		for name, want := range map[string]affectedrangeTypes.RangeType{
+			p[0]: affectedrangeTypes.RangeTypeMicrosoftDotNetCoreRuntime,
+			p[1]: affectedrangeTypes.RangeTypeMicrosoftDotNetCoreSDK,
+		} {
+			t.Run("range type of "+name, func(t *testing.T) {
+				got, err := cvrf.ProductRangeType(name)
+				if err != nil {
+					t.Fatalf("ProductRangeType(%q) error: %v", name, err)
+				}
+				if got != want {
+					t.Errorf("ProductRangeType(%q) = %q, want %q", name, got, want)
+				}
+			})
+		}
 	}
 }
 
