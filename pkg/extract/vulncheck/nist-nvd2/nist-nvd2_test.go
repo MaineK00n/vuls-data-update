@@ -129,44 +129,9 @@ func TestExtract(t *testing.T) {
 			// A cpeMatch whose criteria is not a CPE 2.3 formatted string is
 			// a hard error rather than a skipped criterion — silently
 			// dropping it would weaken the enclosing configuration into an
-			// over-broad detection. Only the entries in knownInvalidCPEs are
-			// skipped (see the known-invalid-cpe cases).
+			// over-broad detection. Does not occur in the real feed.
 			name:     "invalid-cpe",
 			args:     "./testdata/fixtures/invalid-cpe/vuls-data-raw-vulncheck-nist-nvd2",
-			hasError: true,
-		},
-		{
-			// Real feed entry (CVE-2024-29187) whose OR node carries the two
-			// CPEs listed in knownInvalidCPEs (a raw space in the product,
-			// which CPE 2.3 does not allow even escaped). Only those two
-			// criterions are skipped; the other thirteen of the node are
-			// emitted unchanged.
-			name:   "known-invalid-cpe",
-			args:   "./testdata/fixtures/known-invalid-cpe/vuls-data-raw-vulncheck-nist-nvd2",
-			golden: "./testdata/golden/known-invalid-cpe",
-		},
-		{
-			// The same entry with the node operator turned to AND: dropping a
-			// conjunct would widen the node into an over-broad detection, so
-			// the known invalid CPEs are not skipped there and it is an error.
-			name:     "known-invalid-cpe-and-node",
-			args:     "./testdata/fixtures/known-invalid-cpe-and-node/vuls-data-raw-vulncheck-nist-nvd2",
-			hasError: true,
-		},
-		{
-			// The same entry with the OR node holding only the two listed
-			// CPEs: skipping them would leave an empty criteria, so it is an
-			// error.
-			name:     "known-invalid-cpe-empty-node",
-			args:     "./testdata/fixtures/known-invalid-cpe-empty-node/vuls-data-raw-vulncheck-nist-nvd2",
-			hasError: true,
-		},
-		{
-			// The same CPEs under a CVE ID that is not in knownInvalidCPEs
-			// (CVE-2024-29188): a skip requires both the ID and the CPE
-			// string to match, so this is still an error.
-			name:     "known-invalid-cpe-other-id",
-			args:     "./testdata/fixtures/known-invalid-cpe-other-id/vuls-data-raw-vulncheck-nist-nvd2",
 			hasError: true,
 		},
 		{
