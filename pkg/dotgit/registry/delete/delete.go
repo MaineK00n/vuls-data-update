@@ -217,7 +217,9 @@ func ownerType(client *http.Client, owner, token string) (string, error) {
 // may carry a tag by now. Deleting it takes the tag with it and nothing puts it
 // back. GHCR has no conditional delete, so the tags are read from the version
 // itself right before the delete, which is as close to the delete as they can
-// be read.
+// be read. The API client retries a delete that failed for a reason that
+// passes, after a wait that can last minutes, so they are read again before
+// each retry.
 //
 // A version that is gone by then, deleted by someone else between the listing
 // and here, is what deleting it is for, and is skipped.
@@ -243,21 +245,8 @@ func deleteVersion(client *http.Client, repoType, owner, pack string, id int, di
 		slog.Warn("Skip a version that is already deleted", slog.String("repository", repository), slog.String("reference", digest), slog.Int("id", id))
 		return nil
 	}
-	if v.Metadata == nil || v.Metadata.Container == nil {
-		return errors.Errorf("missing container metadata for response: %+v", *v)
-	}
-	if v.Name != digest {
-		return errors.Errorf("unexpected version digest. expected: %q, actual: %q", digest, v.Name)
-	}
-	if len(v.Metadata.Container.Tags) > 0 {
-		tags := make([]string, 0, len(v.Metadata.Container.Tags))
-		for _, t := range v.Metadata.Container.Tags {
-			tags = append(tags, fmt.Sprintf("ghcr.io/%s:%s", repository, t))
-		}
-		if !force {
-			return errors.Errorf("refuse to delete a tagged version. digest: %q, tags: %q", digest, tags)
-		}
-		slog.Warn("Deleting a tagged version", slog.String("repository", repository), slog.String("reference", digest), slog.Any("tags", tags))
+	if err := checkVersion(*v, repository, digest, force); err != nil {
+		return errors.Wrap(err, "check version")
 	}
 
 	found := true
@@ -271,7 +260,21 @@ func deleteVersion(client *http.Client, repoType, owner, pack string, id int, di
 		default:
 			return errors.Errorf("unexpected response status. expected: %d, actual: %d", []int{http.StatusNoContent, http.StatusNotFound}, resp.StatusCode)
 		}
-	}); err != nil {
+	}, utilGitHub.WithBeforeRetry(func() error {
+		v, err := getVersion(client, u.String(), token)
+		if err != nil {
+			return errors.Wrap(err, "get version")
+		}
+		// A version that is gone by now answers the retry with 404, which
+		// is read again below.
+		if v == nil {
+			return nil
+		}
+		if err := checkVersion(*v, repository, digest, force); err != nil {
+			return errors.Wrap(err, "check version")
+		}
+		return nil
+	})); err != nil {
 		return errors.Wrap(err, "call GitHub API")
 	}
 	if found {
@@ -292,6 +295,28 @@ func deleteVersion(client *http.Client, repoType, owner, pack string, id int, di
 		return errors.Errorf("the delete answered 404, yet the version is still there. digest: %q, id: %d", digest, id)
 	}
 	slog.Warn("Skip a version that is already deleted", slog.String("repository", repository), slog.String("reference", digest), slog.Int("id", id))
+	return nil
+}
+
+// checkVersion refuses to delete v unless it is the version of digest and,
+// unless force is set, carries no tag.
+func checkVersion(v ls.Version, repository, digest string, force bool) error {
+	if v.Metadata == nil || v.Metadata.Container == nil {
+		return errors.Errorf("missing container metadata for response: %+v", v)
+	}
+	if v.Name != digest {
+		return errors.Errorf("unexpected version digest. expected: %q, actual: %q", digest, v.Name)
+	}
+	if len(v.Metadata.Container.Tags) > 0 {
+		tags := make([]string, 0, len(v.Metadata.Container.Tags))
+		for _, t := range v.Metadata.Container.Tags {
+			tags = append(tags, fmt.Sprintf("ghcr.io/%s:%s", repository, t))
+		}
+		if !force {
+			return errors.Errorf("refuse to delete a tagged version. digest: %q, tags: %q", digest, tags)
+		}
+		slog.Warn("Deleting a tagged version", slog.String("repository", repository), slog.String("reference", digest), slog.Any("tags", tags))
+	}
 	return nil
 }
 

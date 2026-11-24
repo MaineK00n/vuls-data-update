@@ -44,7 +44,13 @@ func TestDelete(t *testing.T) {
 		// deleteRateLimited makes the DELETE of these ids answer the primary
 		// rate limit, which resets later than the API client waits for.
 		deleteRateLimited []int
-		wantErr           bool
+		// deleteFailsOnce makes the first DELETE of these ids answer 502
+		// without deleting, which the API client retries. betweenRetries
+		// then changes the versions, as another client does while the API
+		// client waits to retry.
+		deleteFailsOnce []int
+		betweenRetries  func(vs []ls.Version) []ls.Version
+		wantErr         bool
 		// wantErrContains are parts of the error.
 		wantErrContains []string
 		// wantRemaining are the digests left in the registry.
@@ -150,6 +156,47 @@ func TestDelete(t *testing.T) {
 			deleteNotFound:  []int{460898773},
 			wantErr:         true,
 			wantErrContains: []string{"yet the version is still there"},
+			wantRemaining:   []string{"sha256:6413c62920ab027e680d7adf44bec195e9f2ec7a299140ff9a5d2193a626b673", "sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb", "sha256:29c88e701ac502d431e318a82b327d73f220b82714852b6942bcaffbb4e573aa"},
+		},
+		{
+			name: "a failed delete is retried",
+			args: args{
+				images: []string{"ghcr.io/vulsio/vuls-data-db@sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb"},
+				token:  "token",
+			},
+			deleteFailsOnce: []int{460898773},
+			wantRemaining:   []string{"sha256:6413c62920ab027e680d7adf44bec195e9f2ec7a299140ff9a5d2193a626b673", "sha256:29c88e701ac502d431e318a82b327d73f220b82714852b6942bcaffbb4e573aa"},
+		},
+		{
+			// As when the delete went through, yet its answer was lost.
+			name: "gone between a failed delete and its retry",
+			args: args{
+				images: []string{"ghcr.io/vulsio/vuls-data-db@sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb"},
+				token:  "token",
+			},
+			deleteFailsOnce: []int{460898773},
+			betweenRetries: func(vs []ls.Version) []ls.Version {
+				return slices.DeleteFunc(vs, func(v ls.Version) bool { return v.ID == 460898773 })
+			},
+			wantRemaining: []string{"sha256:6413c62920ab027e680d7adf44bec195e9f2ec7a299140ff9a5d2193a626b673", "sha256:29c88e701ac502d431e318a82b327d73f220b82714852b6942bcaffbb4e573aa"},
+		},
+		{
+			name: "tagged between a failed delete and its retry",
+			args: args{
+				images: []string{"ghcr.io/vulsio/vuls-data-db@sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb"},
+				token:  "token",
+			},
+			deleteFailsOnce: []int{460898773},
+			betweenRetries: func(vs []ls.Version) []ls.Version {
+				for i := range vs {
+					if vs[i].ID == 460898773 {
+						vs[i].Metadata.Container.Tags = []string{"vuls-data-raw-test"}
+					}
+				}
+				return vs
+			},
+			wantErr:         true,
+			wantErrContains: []string{"check before the retry", "refuse to delete a tagged version"},
 			wantRemaining:   []string{"sha256:6413c62920ab027e680d7adf44bec195e9f2ec7a299140ff9a5d2193a626b673", "sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb", "sha256:29c88e701ac502d431e318a82b327d73f220b82714852b6942bcaffbb4e573aa"},
 		},
 		{
@@ -313,6 +360,7 @@ func TestDelete(t *testing.T) {
 			// limited tells that a request was answered with a rate limit,
 			// after which Delete sends nothing more.
 			var limited bool
+			failed := make(map[int]bool)
 			rateLimit := func(w http.ResponseWriter) {
 				limited = true
 				w.Header().Set("X-RateLimit-Remaining", "0")
@@ -438,6 +486,12 @@ func TestDelete(t *testing.T) {
 							http.Error(w, `{"message":"Forbidden"}`, http.StatusForbidden)
 						case slices.Contains(tt.deleteRateLimited, id):
 							rateLimit(w)
+						case slices.Contains(tt.deleteFailsOnce, id) && !failed[id]:
+							failed[id] = true
+							if tt.betweenRetries != nil {
+								vs = tt.betweenRetries(vs)
+							}
+							http.Error(w, "Bad Gateway", http.StatusBadGateway)
 						case i == -1 || slices.Contains(tt.deleteNotFound, id):
 							// As GHCR does, answer 404 for a version that is
 							// already gone.
