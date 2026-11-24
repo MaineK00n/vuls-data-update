@@ -28,6 +28,15 @@ func TestFetch(t *testing.T) {
 				filepath: "testdata/fixtures/indexof_valid.html",
 			},
 		},
+		{
+			// The index gave each row's type in a th until 2026-10-22. That
+			// layout still parses, to the same output.
+			name: "type in a th",
+			indexof: indexof{
+				urlpath:  "/oval/",
+				filepath: "testdata/fixtures/indexof_th.html",
+			},
+		},
 	}
 
 	for _, tt := range tests {
