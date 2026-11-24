@@ -5,18 +5,23 @@ import (
 	"encoding/json/v2"
 	stderrors "errors"
 	"fmt"
+	"io"
 	"log/slog"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
+	"sync"
+	"time"
 
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
 	ocispec "github.com/opencontainers/image-spec/specs-go/v1"
 	"github.com/pkg/errors"
 	"oras.land/oras-go/v2"
+	"oras.land/oras-go/v2/errdef"
 	"oras.land/oras-go/v2/registry/remote"
+	"oras.land/oras-go/v2/registry/remote/errcode"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/dotgit/contains"
 	"github.com/MaineK00n/vuls-data-update/pkg/dotgit/util"
@@ -27,7 +32,16 @@ type options struct {
 	checkout     string
 	restore      bool
 	useNativeGit bool
+
+	// retryWait is the wait before the first retry of a layer whose download
+	// broke off, doubled for each one after. It is only ever changed by
+	// WithRetryWait, which lives in export_test.go and is therefore absent from
+	// the production build.
+	retryWait time.Duration
 }
+
+// layerRetryMax is the number of retries of a layer whose download broke off.
+const layerRetryMax = 3
 
 type Option interface {
 	apply(*options)
@@ -79,6 +93,7 @@ func Pull(repository string, opts ...Option) error {
 		checkout:     "main",
 		restore:      false,
 		useNativeGit: true,
+		retryWait:    5 * time.Second,
 	}
 
 	for _, opt := range opts {
@@ -124,14 +139,8 @@ func Pull(repository string, opts ...Option) error {
 		return errors.Errorf("not found digest and filename from layers, actual layers: %#v", manifest.Layers)
 	}
 
-	r, err = repo.Fetch(ctx, *l)
-	if err != nil {
-		return errors.Wrap(err, "fetch content")
-	}
-	defer r.Close()
-
-	if err := util.ExtractDotgitTarZst(r, filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference)); err != nil {
-		return errors.Wrapf(err, "extract to %s", filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference))
+	if err := pullLayer(ctx, repo, *l, filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference), options.retryWait); err != nil {
+		return errors.Wrap(err, "pull layer")
 	}
 
 	if options.checkout != "" {
@@ -275,4 +284,83 @@ func notInRepository(err error, repository, checkout string) error {
 func notFound(err error) bool {
 	ee, ok := stderrors.AsType[*exec.ExitError](err)
 	return ok && (ee.ExitCode() == 1 || ee.ExitCode() == 128)
+}
+
+// pullLayer fetches the layer and extracts it into dir.
+//
+// The layer is read straight into the extraction, so a connection that breaks
+// off in the middle of the blob, as the storage behind ghcr.io now and then
+// does with an HTTP/2 stream error or a connection reset, fails the extraction.
+// The HTTP client of oras retries a request that fails, but not a body it has
+// already handed over, nor a connection that fails for anything but a dial
+// timeout. So a download that breaks off, of the body or of the request, is
+// retried here from an emptied dir. What fails otherwise is not retried, as
+// another download does not change it: an answer of the registry, such as a
+// blob that is not there, and an error of the extraction itself, such as a full
+// disk.
+func pullLayer(ctx context.Context, repo *remote.Repository, desc ocispec.Descriptor, dir string, wait time.Duration) error {
+	for retry := 0; ; retry++ {
+		retryable, err := func() (bool, error) {
+			rc, err := repo.Fetch(ctx, desc)
+			if err != nil {
+				var errResp *errcode.ErrorResponse
+				return !errors.As(err, &errResp) && !errors.Is(err, errdef.ErrNotFound) && ctx.Err() == nil, errors.Wrap(err, "fetch content")
+			}
+			defer rc.Close()
+
+			r := &recordingReader{r: rc}
+			if err := util.ExtractDotgitTarZst(r, dir); err != nil {
+				return r.err() != nil, errors.Wrapf(err, "extract to %s", dir)
+			}
+			return false, nil
+		}()
+		if err == nil {
+			return nil
+		}
+		if !retryable || retry >= layerRetryMax {
+			return err
+		}
+
+		slog.Warn("Retry pulling the dotgit layer whose download broke off", slog.String("repository", repo.Reference.String()), slog.String("digest", desc.Digest.String()), slog.Int("retry", retry+1), slog.Duration("wait", wait), slog.String("err", err.Error()))
+
+		if err := os.RemoveAll(dir); err != nil {
+			return errors.Wrapf(err, "remove %s", dir)
+		}
+
+		select {
+		case <-ctx.Done():
+			return errors.Wrap(ctx.Err(), "wait to retry")
+		case <-time.After(wait):
+		}
+		wait *= 2
+	}
+}
+
+// recordingReader records the first error, io.EOF aside, that reading r
+// returned, which tells a download that broke off apart from an extraction that
+// failed. The zstd decoder reads ahead in a goroutine of its own, hence the
+// lock.
+type recordingReader struct {
+	r io.Reader
+
+	mu      sync.Mutex
+	readErr error
+}
+
+func (r *recordingReader) Read(p []byte) (int, error) {
+	n, err := r.r.Read(p)
+	if err != nil && err != io.EOF {
+		r.mu.Lock()
+		if r.readErr == nil {
+			r.readErr = err
+		}
+		r.mu.Unlock()
+	}
+	return n, err
+}
+
+func (r *recordingReader) err() error {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	return r.readErr
 }

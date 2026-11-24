@@ -7,6 +7,7 @@ import (
 	"encoding/json/v2"
 	"fmt"
 	"io"
+	"maps"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -15,6 +16,7 @@ import (
 	"slices"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
@@ -604,4 +606,234 @@ func setup(url string) error {
 	}
 
 	return nil
+}
+
+// TestPull_retry breaks the download of the layer off after half of the blob,
+// as the storage behind ghcr.io now and then does, and checks that Pull starts
+// the download over.
+func TestPull_retry(t *testing.T) {
+	tests := []struct {
+		name string
+		// breaks is how many downloads of the layer break off before one goes
+		// through.
+		breaks int
+		// beforeAnswer breaks the downloads off before the registry answers,
+		// which fails the request rather than the body.
+		beforeAnswer bool
+		// corrupt answers the whole layer, but with zeros for its bytes, which
+		// fails the extraction with no download breaking off.
+		corrupt       bool
+		wantDownloads int
+		// archive is what the pulled tree has to equal, entry for entry and
+		// byte for byte: the layer that was pushed. Nothing is checked out,
+		// so that nothing but the extraction writes the tree.
+		archive  string
+		hasError bool
+	}{
+		{
+			name:          "broken off once",
+			breaks:        1,
+			wantDownloads: 2,
+			archive:       "testdata/fixtures/vuls-data-raw-test.tar.zst",
+		},
+		{
+			name:          "broken off every time",
+			breaks:        100,
+			wantDownloads: 4,
+			hasError:      true,
+		},
+		{
+			name:          "request broken off once",
+			breaks:        1,
+			beforeAnswer:  true,
+			wantDownloads: 2,
+			archive:       "testdata/fixtures/vuls-data-raw-test.tar.zst",
+		},
+		{
+			name:          "request broken off every time",
+			breaks:        100,
+			beforeAnswer:  true,
+			wantDownloads: 4,
+			hasError:      true,
+		},
+		{
+			name:          "corrupt, which a retry does not change",
+			corrupt:       true,
+			wantDownloads: 1,
+			hasError:      true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			reg := registry.New()
+			armed := false
+			downloads := 0
+			ts := httptest.NewTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				if !armed || r.Method != http.MethodGet || !strings.Contains(r.URL.Path, "/blobs/") {
+					reg.ServeHTTP(w, r)
+					return
+				}
+
+				downloads++
+				if !tt.corrupt && downloads > tt.breaks {
+					reg.ServeHTTP(w, r)
+					return
+				}
+
+				if tt.beforeAnswer {
+					panic(http.ErrAbortHandler)
+				}
+
+				rec := httptest.NewRecorder()
+				reg.ServeHTTP(rec, r)
+				maps.Copy(w.Header(), rec.Header())
+				w.WriteHeader(rec.Code)
+				if tt.corrupt {
+					// The client may hang up partway, as soon as the
+					// decoder sees that the zeros are no archive.
+					if _, err := w.Write(make([]byte, rec.Body.Len())); err != nil {
+						t.Logf("write body: %v", err)
+					}
+					return
+				}
+				if _, err := w.Write(rec.Body.Bytes()[:rec.Body.Len()/2]); err != nil {
+					t.Errorf("write body: %v", err)
+				}
+				if err := http.NewResponseController(w).Flush(); err != nil {
+					t.Errorf("flush: %v", err)
+				}
+				panic(http.ErrAbortHandler)
+			}))
+
+			// A connection of its own for every request, as net/http resends by
+			// itself a request that fails on a reused connection before the
+			// answer, which would take the place of the retry under test.
+			tr, ok := ts.Client().Transport.(*http.Transport)
+			if !ok {
+				t.Fatalf("unexpected transport type. expected: %T, actual: %T", &http.Transport{}, ts.Client().Transport)
+			}
+			tr = tr.Clone()
+			tr.DisableKeepAlives = true
+
+			originalTransport := http.DefaultTransport
+			http.DefaultTransport = tr
+			t.Cleanup(func() {
+				http.DefaultTransport = originalTransport
+			})
+
+			repo, err := remote.NewRepository("ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test")
+			if err != nil {
+				t.Fatalf("new repository: %v", err)
+			}
+
+			if err := setup(fmt.Sprintf("%s/%s", repo.Reference.Registry, repo.Reference.Repository)); err != nil {
+				t.Fatalf("setup: %v", err)
+			}
+			armed = true
+
+			dir := t.TempDir()
+			err = pull.Pull(repo.Reference.String(), pull.WithDir(dir), pull.WithCheckout(""), pull.WithRetryWait(time.Millisecond))
+			if downloads != tt.wantDownloads {
+				t.Errorf("Pull() downloaded the layer %d times, want %d", downloads, tt.wantDownloads)
+			}
+			switch {
+			case err != nil && !tt.hasError:
+				t.Errorf("unexpected err: %v", err)
+			case err == nil && tt.hasError:
+				t.Error("expected error has not occurred")
+			case err != nil && tt.hasError:
+				// error was expected and occurred, test passed
+				return
+			default:
+				got, err := treeEntries(filepath.Join(dir, "ghcr.io", "vulsio", "vuls-data-db"))
+				if err != nil {
+					t.Fatalf("read %s: %v", dir, err)
+				}
+				want, err := archiveEntries(tt.archive)
+				if err != nil {
+					t.Fatalf("read %s: %v", tt.archive, err)
+				}
+				if diff := cmp.Diff(want, got); diff != "" {
+					t.Errorf("Pull(). (-expected +got):\n%s", diff)
+				}
+			}
+		})
+	}
+}
+
+// entry is a directory, or a regular file and its content.
+type entry struct {
+	Dir     bool
+	Content string
+}
+
+// treeEntries reads the tree under dir, keyed by the path relative to it.
+func treeEntries(dir string) (map[string]entry, error) {
+	es := make(map[string]entry)
+	if err := filepath.WalkDir(dir, func(path string, d os.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		p, err := filepath.Rel(dir, path)
+		if err != nil {
+			return err
+		}
+		switch {
+		case p == ".":
+		case d.IsDir():
+			es[p] = entry{Dir: true}
+		case d.Type().IsRegular():
+			bs, err := os.ReadFile(path)
+			if err != nil {
+				return err
+			}
+			es[p] = entry{Content: string(bs)}
+		default:
+			return errors.Errorf("unexpected file type. expected: %q, actual: %q", []string{"directory", "regular file"}, d.Type())
+		}
+		return nil
+	}); err != nil {
+		return nil, errors.Wrapf(err, "walk %s", dir)
+	}
+	return es, nil
+}
+
+// archiveEntries reads the entries of a tar.zst, keyed by their cleaned name.
+func archiveEntries(archive string) (map[string]entry, error) {
+	f, err := os.Open(archive)
+	if err != nil {
+		return nil, errors.Wrapf(err, "open %s", archive)
+	}
+	defer f.Close()
+
+	r, err := zstd.NewReader(f)
+	if err != nil {
+		return nil, errors.Wrap(err, "new zstd reader")
+	}
+	defer r.Close()
+
+	es := make(map[string]entry)
+	tr := tar.NewReader(r)
+	for {
+		hdr, err := tr.Next()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			return nil, errors.Wrap(err, "next tar reader")
+		}
+		switch hdr.Typeflag {
+		case tar.TypeDir:
+			es[filepath.Clean(hdr.Name)] = entry{Dir: true}
+		case tar.TypeReg:
+			bs, err := io.ReadAll(tr)
+			if err != nil {
+				return nil, errors.Wrapf(err, "read %s", hdr.Name)
+			}
+			es[filepath.Clean(hdr.Name)] = entry{Content: string(bs)}
+		default:
+			return nil, errors.Errorf("unexpected tar entry type. expected: %q, actual: %q", []byte{tar.TypeDir, tar.TypeReg}, hdr.Typeflag)
+		}
+	}
+	return es, nil
 }
