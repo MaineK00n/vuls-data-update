@@ -332,7 +332,7 @@ func Fetch(opts ...Option) error {
 		}
 	}
 
-	if err := util.EnsureWritten(options.dir); err != nil {
+	if err := util.EnsureWritten(options.dir, util.WithRequire("packages", "CPE", "CVE", "DLA", "DSA", "DTSA")); err != nil {
 		return errors.Wrapf(err, "ensure written %s", options.dir)
 	}
 
@@ -908,56 +908,62 @@ func parseRelease(rd io.Reader) ([]string, error) {
 
 func fetchSource(c *utilhttp.Client, sourceURL string) (map[string]textproto.MIMEHeader, error) {
 	for _, compress := range []string{"gz", "xz", "bz2"} {
-		resp, err := c.Get(fmt.Sprintf("%s.%s", sourceURL, compress))
-		if err == nil {
-			if resp.StatusCode != http.StatusOK {
-				_, _ = io.Copy(io.Discard, resp.Body)
-				continue
-			}
-			return func() (map[string]textproto.MIMEHeader, error) {
-				switch compress {
-				case "gz":
-					r, err := gzip.NewReader(resp.Body)
-					if err != nil {
-						return nil, errors.Wrap(err, "create gzip reader")
-					}
-					defer r.Close()
-
-					sources, err := parseSource(r)
-					if err != nil {
-						return nil, errors.Wrapf(err, "parse %s.gz", sourceURL)
-					}
-
-					return sources, nil
-				case "xz":
-					r, err := xz.NewReader(resp.Body)
-					if err != nil {
-						return nil, errors.Wrap(err, "create gzip reader")
-					}
-
-					sources, err := parseSource(r)
-					if err != nil {
-						return nil, errors.Wrapf(err, "parse %s.xz", sourceURL)
-					}
-
-					return sources, nil
-				case "bz2":
-					r := bzip2.NewReader(resp.Body)
-
-					sources, err := parseSource(r)
-					if err != nil {
-						return nil, errors.Wrapf(err, "parse %s.bz2", sourceURL)
-					}
-
-					return sources, nil
-				default:
-					return nil, errors.Errorf("unexpected compress format. expected: %q, actual: %s", []string{"gz", "xz", "bz2"}, compress)
-				}
-			}()
+		sources, found, err := fetchCompressedSource(c, sourceURL, compress)
+		if err != nil {
+			return nil, errors.Wrapf(err, "fetch %s source", compress)
+		}
+		if found {
+			return sources, nil
 		}
 	}
 
 	return nil, errors.Errorf("%s.(gz|xz|bz2) not found", sourceURL)
+}
+
+// fetchCompressedSource fetches the Sources file at sourceURL in one
+// compression. A response other than 200 means the mirror does not have that
+// compression, so it reports nothing found for the caller to try the next one;
+// a request that fails is an error, not a compression to skip.
+func fetchCompressedSource(c *utilhttp.Client, sourceURL, compress string) (map[string]textproto.MIMEHeader, bool, error) {
+	u := fmt.Sprintf("%s.%s", sourceURL, compress)
+	resp, err := c.Get(u)
+	if err != nil {
+		return nil, false, errors.Wrapf(err, "get %s", u)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		_, _ = io.Copy(io.Discard, resp.Body)
+		return nil, false, nil
+	}
+
+	var r io.Reader
+	switch compress {
+	case "gz":
+		gr, err := gzip.NewReader(resp.Body)
+		if err != nil {
+			return nil, false, errors.Wrap(err, "create gzip reader")
+		}
+		defer gr.Close()
+		r = gr
+	case "xz":
+		xr, err := xz.NewReader(resp.Body)
+		if err != nil {
+			return nil, false, errors.Wrap(err, "create xz reader")
+		}
+		r = xr
+	case "bz2":
+		r = bzip2.NewReader(resp.Body)
+	default:
+		return nil, false, errors.Errorf("unexpected compress format. expected: %q, actual: %q", []string{"gz", "xz", "bz2"}, compress)
+	}
+
+	sources, err := parseSource(r)
+	if err != nil {
+		return nil, false, errors.Wrapf(err, "parse %s", u)
+	}
+
+	return sources, true, nil
 }
 
 func parseSource(r io.Reader) (map[string]textproto.MIMEHeader, error) {
@@ -988,6 +994,9 @@ func parseSource(r io.Reader) (map[string]textproto.MIMEHeader, error) {
 		m[name] = header
 
 		buf.Reset()
+	}
+	if err := s.Err(); err != nil {
+		return nil, errors.Wrap(err, "scanner encounter error")
 	}
 
 	return m, nil
