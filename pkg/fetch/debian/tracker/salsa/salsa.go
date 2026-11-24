@@ -10,6 +10,7 @@ import (
 	"crypto/md5"
 	"crypto/sha1"
 	"crypto/sha256"
+	_ "embed"
 	"encoding/hex"
 	"encoding/json/v2"
 	"fmt"
@@ -24,7 +25,11 @@ import (
 	"slices"
 	"strconv"
 	"strings"
+	"time"
 
+	"github.com/ProtonMail/go-crypto/openpgp/armor"
+	"github.com/ProtonMail/go-crypto/openpgp/clearsign"
+	openpgp "github.com/ProtonMail/go-crypto/openpgp/v2"
 	"github.com/pkg/errors"
 	"github.com/schollz/progressbar/v3"
 	"github.com/ulikunitz/xz"
@@ -82,6 +87,39 @@ var (
 	// gives no SHA256 but MD5Sum and SHA1 only: the oldest on
 	// archive.debian.org. Their Sources are checked against the SHA1.
 	sha1Suites = []string{"potato", "woody", "woody/updates", "sarge-backports"}
+
+	// pinnedReleases maps the suites, by their path under dists, whose Release
+	// is checked against the SHA256 given here rather than against its
+	// signature: the suites of archive.debian.org up to lenny, signed in ways
+	// go-crypto rejects (v3 signature packets, DSA keys, SHA-1 digests) or
+	// with keys Debian no longer ships. Their Release, dated 2002 to 2012, has
+	// not changed since the suite was archived.
+	pinnedReleases = map[string]string{
+		"potato":          "907ade766e8b97eaf25ec86fc55f3c6e8b3a075f0781f2b98955f5924957762d",
+		"woody":           "92b4fbb707b2cb0c78be02e1495fdc7cb29410bbdc9caf687b099710d0fc26a8",
+		"woody/updates":   "bdf05ae60f497925e7702e62482cf0404166ca0ca138f19fe46c21c01488d07b",
+		"sarge":           "a37d60625ab8ec3d3c36f2893b68f6114d53a422c74722d36cefca283043476b",
+		"sarge/updates":   "0719c963d1333fa33ee500518034954d49ef3a47d2ec059387aff61324c959d2",
+		"sarge-backports": "4b3f707883b625c5225606915a78522ee7bff07e1ff37764c47f3af3bcbf1d4d",
+		"etch":            "9b7225f7f5be9697d5fa3b3141fff54cc4c47d482fc70e544da003f242f8ada7",
+		"etch/updates":    "f57bb099a3d51b09af43be985e6a16ca84a46ce467a5309e4cdc6ef5f5ee3475",
+		"etch-backports":  "e84fe1b3b85954ed44755cf8eb7a6daace7ce261008be9bf0f4fdc8e38dc7257",
+		"lenny":           "91c97659233014f2aa1395bee3ec90ef3d8ac63619215c0b8aeb04f7dd128664",
+		"lenny/updates":   "82efcece8177ca4c5f9cbba82500bc36fe2d38ef8502d9f860d6e61e2286029d",
+		"lenny-backports": "c0e9754135dce02e25bc3f588239307fa398d20243607f20dc52b75e9f0e52a3",
+	}
+
+	// archiveKeyring and removedKeys are debian-archive-keyring.pgp and
+	// debian-archive-removed-keys.pgp of debian-archive-keyring 2025.1: the
+	// archive keys in use, and the retired ones, which signed the Release of
+	// the suites archived since. A Release is signed with the keys of the
+	// last two releases of Debian, so once neither is among these, the fetch
+	// fails until they are taken from a newer debian-archive-keyring.
+	//
+	//go:embed keyring/debian-archive-keyring.pgp
+	archiveKeyring []byte
+	//go:embed keyring/debian-archive-removed-keys.pgp
+	removedKeys []byte
 )
 
 type options struct {
@@ -94,9 +132,13 @@ type options struct {
 	// export_test.go and is therefore absent from the production build.
 	httpClient *http.Client
 
-	// sha1Suites is only ever replaced by WithSHA1Suites, which lives in
-	// export_test.go and is therefore absent from the production build.
-	sha1Suites []string
+	// sha1Suites, pinnedReleases, keyring and now are only ever replaced by
+	// WithSHA1Suites, WithPinnedReleases, WithKeyRing and WithNow, which live
+	// in export_test.go and are therefore absent from the production build.
+	sha1Suites     []string
+	pinnedReleases map[string]string
+	keyring        openpgp.EntityList
+	now            time.Time
 }
 
 type Option interface {
@@ -133,6 +175,11 @@ type Mirror struct {
 }
 
 func Fetch(opts ...Option) error {
+	keyring, err := readKeyRing(archiveKeyring, removedKeys)
+	if err != nil {
+		return errors.Wrap(err, "read keyring")
+	}
+
 	options := &options{
 		dataURL: dataURL,
 		dir:     filepath.Join(util.CacheDir(), "fetch", "debian", "tracker", "salsa"),
@@ -145,7 +192,10 @@ func Fetch(opts ...Option) error {
 			ArchiveSecurity: archiveSecurity,
 			ArchiveBackport: archiveBackport,
 		},
-		sha1Suites: sha1Suites,
+		sha1Suites:     sha1Suites,
+		pinnedReleases: pinnedReleases,
+		keyring:        keyring,
+		now:            time.Now(),
 	}
 
 	for _, o := range opts {
@@ -829,7 +879,7 @@ func (opts *options) fetchSource(codename string, archived bool) (map[string]map
 
 	slog.Info("Fetch Debian stable", slog.String("codename", codename))
 	stableDistURL := fmt.Sprintf("%s/dists/%s", stableURL, codename)
-	rel, err := fetchRelease(client, fmt.Sprintf("%s/Release", stableDistURL), opts.hash(codename))
+	rel, err := opts.fetchRelease(client, stableDistURL, codename, archived)
 	if err != nil {
 		return nil, errors.Wrap(err, "fetch release")
 	}
@@ -853,7 +903,7 @@ func (opts *options) fetchSource(codename string, archived bool) (map[string]map
 	}
 	securityDistURL := fmt.Sprintf("%s/dists/%s", securityURL, securitySuite)
 
-	rel, err = fetchRelease(client, fmt.Sprintf("%s/Release", securityDistURL), opts.hash(securitySuite))
+	rel, err = opts.fetchRelease(client, securityDistURL, securitySuite, archived)
 	if err != nil {
 		return nil, errors.Wrap(err, "fetch release")
 	}
@@ -873,7 +923,7 @@ func (opts *options) fetchSource(codename string, archived bool) (map[string]map
 
 	backportSuite := fmt.Sprintf("%s-backports", codename)
 	backportDistURL := fmt.Sprintf("%s/dists/%s", backportURL, backportSuite)
-	rel, err = fetchRelease(client, fmt.Sprintf("%s/Release", backportDistURL), opts.hash(backportSuite))
+	rel, err = opts.fetchRelease(client, backportDistURL, backportSuite, archived)
 	if err != nil {
 		return nil, errors.Wrap(err, "fetch release")
 	}
@@ -900,6 +950,9 @@ func (opts *options) hash(suite string) string {
 
 // release is what the fetcher reads from the Release file of a suite.
 type release struct {
+	codename string
+	// validUntil is when the Release stops being good, if it says.
+	validUntil    time.Time
 	components    []string
 	acquireByHash bool
 	// hash names the field of the Release that files comes from: SHA256, or
@@ -919,29 +972,172 @@ type checksum struct {
 // that Sources are checked against.
 var digestSizes = map[string]int{"SHA256": sha256.Size, "SHA1": sha1.Size}
 
-// fetchRelease fetches the Release at releaseURL and parses it, taking the
-// checksums from its hash field. A response other than 200 is a suite the
-// mirror does not have, which is skipped: the release returned lists no
-// component.
-func fetchRelease(c *utilhttp.Client, releaseURL, hash string) (release, error) {
-	resp, err := c.Get(releaseURL)
+// fetchRelease fetches the Release of suite, its path under dists, from
+// distURL, checks it as checkedRelease does, and parses it, taking the
+// checksums from the field opts.hash names. The Release must name suite as its
+// Codename and, unless the suite is archived, not be past its Valid-Until. A
+// suite whose Release the mirror does not have is skipped: the release
+// returned lists no component.
+func (opts *options) fetchRelease(c *utilhttp.Client, distURL, suite string, archived bool) (release, error) {
+	bs, found, err := opts.checkedRelease(c, distURL, suite)
 	if err != nil {
-		return release{}, errors.Wrapf(err, "get %s", releaseURL)
+		return release{}, errors.Wrapf(err, "check %s/Release", distURL)
+	}
+	if !found {
+		return release{}, nil
+	}
+
+	rel, err := parseRelease(bytes.NewReader(bs), opts.hash(suite))
+	if err != nil {
+		return release{}, errors.Wrapf(err, "parse %s/Release", distURL)
+	}
+
+	// A security suite up to buster, <codename>/updates, has the codename
+	// alone as its Codename.
+	if codename := strings.TrimSuffix(suite, "/updates"); rel.codename != codename {
+		return release{}, errors.Errorf("unexpected Codename of %s/Release. expected: %q, actual: %q", distURL, codename, rel.codename)
+	}
+	// The Valid-Until of an archived suite passed long ago.
+	if !archived && !rel.validUntil.IsZero() && !opts.now.Before(rel.validUntil) {
+		return release{}, errors.Errorf("unexpected Valid-Until of %s/Release. expected: %s, actual: %q", distURL, fmt.Sprintf("later than %s", opts.now.UTC().Format(time.RFC1123)), rel.validUntil.UTC().Format(time.RFC1123))
+	}
+
+	return rel, nil
+}
+
+// checkedRelease fetches the Release of suite, its path under dists, from
+// distURL and returns its text once checked: against the SHA256
+// opts.pinnedReleases gives for the suite, or else against its signature by a
+// key of opts.keyring, from InRelease where the mirror has it and from
+// Release.gpg where it has only Release. A suite whose Release the mirror does
+// not have is reported as not found.
+func (opts *options) checkedRelease(c *utilhttp.Client, distURL, suite string) ([]byte, bool, error) {
+	if sum, ok := opts.pinnedReleases[suite]; ok {
+		bs, found, err := getRelease(c, distURL)
+		if err != nil || !found {
+			return nil, found, err
+		}
+		if digest := fmt.Sprintf("%x", sha256.Sum256(bs)); digest != sum {
+			return nil, false, errors.Errorf("unexpected SHA256. expected: %q, actual: %q", sum, digest)
+		}
+		return bs, true, nil
+	}
+
+	bs, status, err := get(c, fmt.Sprintf("%s/InRelease", distURL))
+	if err != nil {
+		return nil, false, err
+	}
+	if status == http.StatusOK {
+		text, err := verifyInRelease(opts.keyring, bs)
+		if err != nil {
+			return nil, false, errors.Wrap(err, "verify InRelease")
+		}
+		return text, true, nil
+	}
+
+	bs, found, err := getRelease(c, distURL)
+	if err != nil || !found {
+		return nil, found, err
+	}
+	sigs, status, err := get(c, fmt.Sprintf("%s/Release.gpg", distURL))
+	if err != nil {
+		return nil, false, err
+	}
+	if status != http.StatusOK {
+		return nil, false, errors.Errorf("no signature: no InRelease, and Release.gpg answered with status code %d", status)
+	}
+	if err := verifyRelease(opts.keyring, bs, sigs); err != nil {
+		return nil, false, errors.Wrap(err, "verify Release.gpg")
+	}
+	return bs, true, nil
+}
+
+// getRelease fetches the Release at distURL. A response other than 200 is a
+// suite the mirror does not have, which is reported as not found, with a
+// warning.
+func getRelease(c *utilhttp.Client, distURL string) ([]byte, bool, error) {
+	u := fmt.Sprintf("%s/Release", distURL)
+	bs, status, err := get(c, u)
+	if err != nil {
+		return nil, false, err
+	}
+	if status != http.StatusOK {
+		slog.Warn("fetch error", slog.String("url", u), slog.Any("err", errors.Errorf("error response with status code %d", status)))
+		return nil, false, nil
+	}
+	return bs, true, nil
+}
+
+// get fetches u, returning the status code of the response, and its body if
+// that is 200.
+func get(c *utilhttp.Client, u string) ([]byte, int, error) {
+	resp, err := c.Get(u)
+	if err != nil {
+		return nil, 0, errors.Wrapf(err, "get %s", u)
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		slog.Warn("fetch error", slog.String("url", releaseURL), slog.Any("err", errors.Errorf("error response with status code %d", resp.StatusCode)))
 		_, _ = io.Copy(io.Discard, resp.Body)
-		return release{}, nil
+		return nil, resp.StatusCode, nil
 	}
 
-	rel, err := parseRelease(resp.Body, hash)
+	bs, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return release{}, errors.Wrapf(err, "parse %s", releaseURL)
+		return nil, resp.StatusCode, errors.Wrapf(err, "read %s", u)
 	}
+	return bs, resp.StatusCode, nil
+}
 
-	return rel, nil
+// verifyInRelease checks the signature of the clearsigned InRelease bs against
+// keyring and returns the text it signs, which is all that is read of it.
+func verifyInRelease(keyring openpgp.KeyRing, bs []byte) ([]byte, error) {
+	b, _ := clearsign.Decode(bs)
+	if b == nil {
+		return nil, errors.New("no clearsigned message")
+	}
+	if _, _, err := openpgp.VerifyDetachedSignature(keyring, bytes.NewReader(b.Bytes), b.ArmoredSignature.Body, nil); err != nil {
+		return nil, errors.Wrap(err, "verify signature")
+	}
+	return b.Plaintext, nil
+}
+
+// verifyRelease checks the detached signatures sigs, a Release.gpg, over the
+// Release bs against keyring. A Release.gpg can hold more than one armored
+// block, the stable release key's signature appended to the archive key's, so
+// the signatures of every block are read.
+func verifyRelease(keyring openpgp.KeyRing, bs, sigs []byte) error {
+	const begin = "-----BEGIN PGP SIGNATURE-----"
+
+	blocks := bytes.Split(sigs, []byte(begin))[1:]
+	if len(blocks) == 0 {
+		return errors.New("no armored signature")
+	}
+	rs := make([]io.Reader, 0, len(blocks))
+	for _, blk := range blocks {
+		b, err := armor.Decode(bytes.NewReader(append([]byte(begin), blk...)))
+		if err != nil {
+			return errors.Wrap(err, "decode armor")
+		}
+		rs = append(rs, b.Body)
+	}
+	if _, _, err := openpgp.VerifyDetachedSignature(keyring, bytes.NewReader(bs), io.MultiReader(rs...), nil); err != nil {
+		return errors.Wrap(err, "verify signature")
+	}
+	return nil
+}
+
+// readKeyRing reads binary OpenPGP keyrings into one.
+func readKeyRing(keyrings ...[]byte) (openpgp.EntityList, error) {
+	var el openpgp.EntityList
+	for _, bs := range keyrings {
+		l, err := openpgp.ReadKeyRing(bytes.NewReader(bs))
+		if err != nil {
+			return nil, errors.Wrap(err, "read keyring")
+		}
+		el = append(el, l...)
+	}
+	return el, nil
 }
 
 func parseRelease(rd io.Reader, hash string) (release, error) {
@@ -961,7 +1157,18 @@ func parseRelease(rd io.Reader, hash string) (release, error) {
 		return release{}, errors.Wrapf(err, "parse %s", hash)
 	}
 
+	var validUntil time.Time
+	if v := header.Get("Valid-Until"); v != "" {
+		t, err := time.Parse(time.RFC1123, v)
+		if err != nil {
+			return release{}, errors.Wrap(err, "parse Valid-Until")
+		}
+		validUntil = t
+	}
+
 	return release{
+		codename:      header.Get("Codename"),
+		validUntil:    validUntil,
 		components:    strings.Fields(header.Get("Components")),
 		acquireByHash: header.Get("Acquire-By-Hash") == "yes",
 		hash:          hash,
