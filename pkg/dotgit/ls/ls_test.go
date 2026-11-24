@@ -46,6 +46,14 @@ func TestList(t *testing.T) {
 			want:   []string{"vuls-data-raw-test"},
 		},
 		{
+			// dir is cleaned as filepath.Join cleans it: missing/../dotgit is
+			// dotgit, though missing does not exist.
+			name:   "dir that is not clean",
+			dir:    "missing/../dotgit",
+			dotgit: "testdata/fixtures/vuls-data-raw-test.tar.zst",
+			want:   []string{"vuls-data-raw-test"},
+		},
+		{
 			// Unlike a missing dir, one that cannot be read is an error.
 			name:     "dir that is a file",
 			dir:      "file",

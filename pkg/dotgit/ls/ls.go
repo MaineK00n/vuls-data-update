@@ -1,7 +1,6 @@
 package ls
 
 import (
-	"cmp"
 	"io/fs"
 	"os"
 	"path/filepath"
@@ -40,10 +39,10 @@ func List(opts ...Option) ([]string, error) {
 	}
 
 	// The directory is a path, not a pattern. Globbing dir/vuls-data-* would
-	// list whatever a dir holding [ or * matched instead. os.ReadDir takes an
-	// empty dir for a missing one, where filepath.Join takes it for the
-	// current directory.
-	dir := cmp.Or(options.dir, ".")
+	// list whatever a dir holding [ or * matched instead. It is cleaned, as
+	// filepath.Join cleans it: read as given, "" is missing, and a/../b is
+	// reached through a, which may not exist or may link elsewhere.
+	dir := filepath.Clean(options.dir)
 	es, err := os.ReadDir(dir)
 	if err != nil {
 		if errors.Is(err, fs.ErrNotExist) {

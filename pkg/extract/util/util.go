@@ -1,7 +1,6 @@
 package util
 
 import (
-	"cmp"
 	"encoding/json/jsontext"
 	"encoding/json/v2"
 	"io/fs"
@@ -170,9 +169,10 @@ func RemoveAll(root string, opts ...RemoveOption) error {
 
 	// root is a path, not a pattern. Globbing root/* would empty whatever a
 	// root holding [ or * matched instead, and leave root itself as it was.
-	// os.ReadDir takes an empty root for a missing one, where filepath.Join,
-	// and so every write under root, takes it for the current directory.
-	dir := cmp.Or(root, ".")
+	// It is cleaned, as filepath.Join cleans it for every write under root:
+	// read as given, "" is missing, and a/../b is reached through a, which may
+	// not exist or may link elsewhere.
+	dir := filepath.Clean(root)
 	es, err := os.ReadDir(dir)
 	if err != nil {
 		// A root that does not exist yet, as before a first extract, is empty.

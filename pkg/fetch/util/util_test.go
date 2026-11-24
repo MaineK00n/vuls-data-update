@@ -81,6 +81,16 @@ func TestRemoveAll(t *testing.T) {
 			want:    []string{".git"},
 		},
 		{
+			// root is cleaned as every write under it is: missing/../out is
+			// out, though missing does not exist.
+			name: "root that is not clean",
+			args: args{
+				root: "missing/../out",
+			},
+			entries: []string{".git/", "test.json"},
+			want:    []string{".git"},
+		},
+		{
 			// Unlike a missing root, one that cannot be read is an error, or
 			// the run would go on over a tree that was never emptied.
 			name: "root that is a file",
