@@ -53,7 +53,10 @@ func TestDelete(t *testing.T) {
 		// rateLimitedAfterFailure makes every request after a DELETE of
 		// deleteFailsOnce answer the primary rate limit.
 		rateLimitedAfterFailure bool
-		wantErr                 bool
+		// deleteInterval is the least time between two DELETEs, which the
+		// other cases set to 0 so as not to sleep.
+		deleteInterval time.Duration
+		wantErr        bool
 		// wantErrContains are parts of the error.
 		wantErrContains []string
 		// wantRemaining are the digests left in the registry.
@@ -92,6 +95,15 @@ func TestDelete(t *testing.T) {
 				token:  "token",
 			},
 			wantRemaining: []string{"sha256:6413c62920ab027e680d7adf44bec195e9f2ec7a299140ff9a5d2193a626b673"},
+		},
+		{
+			name: "several, a pause between the deletes",
+			args: args{
+				images: []string{"ghcr.io/vulsio/vuls-data-db@sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb", "ghcr.io/vulsio/vuls-data-db@sha256:29c88e701ac502d431e318a82b327d73f220b82714852b6942bcaffbb4e573aa"},
+				token:  "token",
+			},
+			deleteInterval: 100 * time.Millisecond,
+			wantRemaining:  []string{"sha256:6413c62920ab027e680d7adf44bec195e9f2ec7a299140ff9a5d2193a626b673"},
 		},
 		{
 			name: "several, one of them tagged",
@@ -376,6 +388,8 @@ func TestDelete(t *testing.T) {
 			// after which Delete sends nothing more.
 			var limited bool
 			failed := make(map[int]bool)
+			// deletes are the times the DELETEs came in.
+			var deletes []time.Time
 			rateLimit := func(w http.ResponseWriter) {
 				limited = true
 				w.Header().Set("X-RateLimit-Remaining", "0")
@@ -500,6 +514,7 @@ func TestDelete(t *testing.T) {
 							http.Error(w, fmt.Sprintf("unexpected error: %v", err), http.StatusInternalServerError)
 						}
 					case http.MethodDelete:
+						deletes = append(deletes, time.Now())
 						switch {
 						case slices.Contains(tt.deleteForbidden, id):
 							http.Error(w, `{"message":"Forbidden"}`, http.StatusForbidden)
@@ -531,13 +546,19 @@ func TestDelete(t *testing.T) {
 			}))
 			// The in-memory network routes api.github.com to the test server,
 			// so the default production base URL is used.
-			err := delete.Delete(tt.args.images, tt.args.token, append(tt.args.opts, delete.WithHTTPClient(ts.Client()))...)
+			err := delete.Delete(tt.args.images, tt.args.token, append(tt.args.opts, delete.WithHTTPClient(ts.Client()), delete.WithDeleteInterval(tt.deleteInterval))...)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Delete() error = %v, wantErr %v", err, tt.wantErr)
 			}
 			for _, s := range tt.wantErrContains {
 				if err == nil || !strings.Contains(err.Error(), s) {
 					t.Errorf("Delete() error = %v, want it to contain %q", err, s)
+				}
+			}
+
+			for i := 1; i < len(deletes); i++ {
+				if gap := deletes[i].Sub(deletes[i-1]); gap < tt.deleteInterval {
+					t.Errorf("Delete() sent DELETEs %s apart, want at least %s", gap, tt.deleteInterval)
 				}
 			}
 

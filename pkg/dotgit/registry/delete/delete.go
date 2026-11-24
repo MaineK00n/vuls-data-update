@@ -9,6 +9,7 @@ import (
 	"net/url"
 	"slices"
 	"strings"
+	"time"
 
 	"github.com/pkg/errors"
 	"oras.land/oras-go/v2/registry/remote"
@@ -21,6 +22,18 @@ const githubAPIURL = "https://api.github.com"
 
 type options struct {
 	force bool
+
+	// deleteInterval is the least time from one DELETE to the start of the
+	// next version. GitHub asks a client that makes many mutative requests to
+	// wait at least a second between them, and its secondary rate limit
+	// counts a DELETE as five GETs. Without a listing between them, the
+	// DELETEs of a sweep would otherwise go out back to back, and the
+	// cleanups of several packages share one token. It is only ever changed
+	// by WithDeleteInterval, which lives in export_test.go.
+	//
+	// ref. https://docs.github.com/en/rest/using-the-rest-api/best-practices-for-using-the-rest-api#pause-between-mutative-requests
+	// ref. https://docs.github.com/en/rest/using-the-rest-api/rate-limits-for-the-rest-api#about-secondary-rate-limits
+	deleteInterval time.Duration
 
 	// httpClient is only ever set by WithHTTPClient, which lives in
 	// export_test.go and is therefore absent from the production build.
@@ -60,7 +73,8 @@ func WithForce(force bool) Option {
 // later run.
 func Delete(images []string, token string, opts ...Option) error {
 	options := &options{
-		force: false,
+		force:          false,
+		deleteInterval: time.Second,
 	}
 
 	for _, o := range opts {
@@ -107,6 +121,7 @@ func Delete(images []string, token string, opts ...Option) error {
 	var (
 		errs        []error
 		rateLimited bool
+		pace        = &pacer{interval: options.deleteInterval}
 	)
 packages:
 	for _, p := range packages {
@@ -153,7 +168,7 @@ packages:
 					return errors.Errorf("no matching digest: %q found in %s", t.digest, p)
 				}
 				for _, id := range ids[t.digest] {
-					if err := deleteVersion(options.httpClient, repoType, owner, pack, id, t.digest, token, options.force); err != nil {
+					if err := deleteVersion(options.httpClient, pace, repoType, owner, pack, id, t.digest, token, options.force); err != nil {
 						return errors.Wrapf(err, "delete version %d", id)
 					}
 				}
@@ -223,7 +238,7 @@ func ownerType(client *http.Client, owner, token string) (string, error) {
 //
 // A version that is gone by then, deleted by someone else between the listing
 // and here, is what deleting it is for, and is skipped.
-func deleteVersion(client *http.Client, repoType, owner, pack string, id int, digest, token string, force bool) error {
+func deleteVersion(client *http.Client, pace *pacer, repoType, owner, pack string, id int, digest, token string, force bool) error {
 	u, err := url.Parse(githubAPIURL)
 	if err != nil {
 		return errors.Wrap(err, "parse url")
@@ -236,6 +251,10 @@ func deleteVersion(client *http.Client, repoType, owner, pack string, id int, di
 	}
 
 	repository := fmt.Sprintf("%s/%s", owner, pack)
+
+	// The pause comes before the read rather than between the read and the
+	// delete, which keeps the tags read as close to the delete as before.
+	pace.wait()
 
 	v, err := getVersion(client, u.String(), token)
 	if err != nil {
@@ -250,6 +269,7 @@ func deleteVersion(client *http.Client, repoType, owner, pack string, id int, di
 	}
 
 	found := true
+	defer pace.done()
 	if err := utilGitHub.Do(client, http.MethodDelete, u.String(), token, func(resp *http.Response) error {
 		switch resp.StatusCode {
 		case http.StatusNoContent:
@@ -296,6 +316,23 @@ func deleteVersion(client *http.Client, repoType, owner, pack string, id int, di
 	}
 	slog.Warn("Skip a version that is already deleted", slog.String("repository", repository), slog.String("reference", digest), slog.Int("id", id))
 	return nil
+}
+
+// pacer spaces out the DELETEs of Delete.
+type pacer struct {
+	interval time.Duration
+	last     time.Time
+}
+
+// wait waits until interval has passed since the last delete ended.
+func (p *pacer) wait() {
+	time.Sleep(time.Until(p.last.Add(p.interval)))
+}
+
+// done records that a delete ended, which deleteVersion does once it has sent
+// the DELETE, whatever came of it.
+func (p *pacer) done() {
+	p.last = time.Now()
 }
 
 // checkVersion refuses to delete v unless it is the version of digest and,
