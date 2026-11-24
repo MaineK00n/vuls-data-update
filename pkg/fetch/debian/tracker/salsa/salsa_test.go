@@ -244,6 +244,32 @@ func TestFetch(t *testing.T) {
 			hasError: true,
 		},
 		{
+			// squeeze/updates, squeeze's security suite, has squeeze as its
+			// Codename, as squeeze's stable suite does. A Release with the
+			// stable suite's Label at the security suite's path, standing for
+			// the stable suite's Release served there, fails the fetch.
+			name:     "Release of the stable suite as the security suite",
+			testdata: "testdata/fixtures/security-tracker-master.tar.gz",
+			rewrite: map[string]func([]byte) []byte{
+				"archive.debian.org/debian-security/dists/squeeze/updates/Release": func(bs []byte) []byte {
+					return bytes.Replace(bs, []byte("Label: Debian-Security"), []byte("Label: Debian"), 1)
+				},
+			},
+			hasError: true,
+		},
+		{
+			// So does a Release with the security suite's Label at the stable
+			// suite's path.
+			name:     "Release of the security suite as the stable suite",
+			testdata: "testdata/fixtures/security-tracker-master.tar.gz",
+			rewrite: map[string]func([]byte) []byte{
+				"archive.debian.org/debian/dists/squeeze/Release": func(bs []byte) []byte {
+					return bytes.Replace(bs, []byte("Label: Debian"), []byte("Label: Debian-Security"), 1)
+				},
+			},
+			hasError: true,
+		},
+		{
 			// The Release files of bookworm-security, bookworm-backports and
 			// sid are good until 19 and 20 November 2023, and fail the fetch
 			// once past that.

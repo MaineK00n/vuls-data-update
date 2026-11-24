@@ -951,6 +951,7 @@ func (opts *options) hash(suite string) string {
 // release is what the fetcher reads from the Release file of a suite.
 type release struct {
 	codename string
+	label    string
 	// validUntil is when the Release stops being good, if it says.
 	validUntil    time.Time
 	components    []string
@@ -968,6 +969,10 @@ type checksum struct {
 	digest string
 }
 
+// securityLabel is the Label of the Release of a security suite, and of no
+// other.
+const securityLabel = "Debian-Security"
+
 // digestSizes gives the size in bytes of a digest in each field of a Release
 // that Sources are checked against.
 var digestSizes = map[string]int{"SHA256": sha256.Size, "SHA1": sha1.Size}
@@ -975,9 +980,10 @@ var digestSizes = map[string]int{"SHA256": sha256.Size, "SHA1": sha1.Size}
 // fetchRelease fetches the Release of suite, its path under dists, from
 // distURL, checks it as checkedRelease does, and parses it, taking the
 // checksums from the field opts.hash names. The Release must name suite as its
-// Codename and, unless the suite is archived, not be past its Valid-Until. A
-// suite whose Release the mirror does not have is skipped: the release
-// returned lists no component.
+// Codename, have the Label of a security suite exactly when suite is one, and,
+// unless the suite is archived, not be past its Valid-Until. A suite whose
+// Release the mirror does not have is skipped: the release returned lists no
+// component.
 func (opts *options) fetchRelease(c *utilhttp.Client, distURL, suite string, archived bool) (release, error) {
 	bs, found, err := opts.checkedRelease(c, distURL, suite)
 	if err != nil {
@@ -993,9 +999,17 @@ func (opts *options) fetchRelease(c *utilhttp.Client, distURL, suite string, arc
 	}
 
 	// A security suite up to buster, <codename>/updates, has the codename
-	// alone as its Codename.
+	// alone as its Codename, as the stable suite of the codename has. Its
+	// Label, Debian-Security, as unattended-upgrades tells security updates
+	// by, tells their Release files apart.
 	if codename := strings.TrimSuffix(suite, "/updates"); rel.codename != codename {
 		return release{}, errors.Errorf("unexpected Codename of %s/Release. expected: %q, actual: %q", distURL, codename, rel.codename)
+	}
+	switch security := strings.HasSuffix(suite, "/updates") || strings.HasSuffix(suite, "-security"); {
+	case security && rel.label != securityLabel:
+		return release{}, errors.Errorf("unexpected Label of %s/Release. expected: %q, actual: %q", distURL, securityLabel, rel.label)
+	case !security && rel.label == securityLabel:
+		return release{}, errors.Errorf("unexpected Label of %s/Release. expected: %s, actual: %q", distURL, fmt.Sprintf("other than %q", securityLabel), rel.label)
 	}
 	// The Valid-Until of an archived suite passed long ago.
 	if !archived && !rel.validUntil.IsZero() && !opts.now.Before(rel.validUntil) {
@@ -1168,6 +1182,7 @@ func parseRelease(rd io.Reader, hash string) (release, error) {
 
 	return release{
 		codename:      header.Get("Codename"),
+		label:         header.Get("Label"),
 		validUntil:    validUntil,
 		components:    strings.Fields(header.Get("Components")),
 		acquireByHash: header.Get("Acquire-By-Hash") == "yes",
