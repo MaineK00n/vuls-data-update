@@ -23,9 +23,8 @@ import (
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
-// dataURL is not on download.windowsupdate.com, where Microsoft's
-// documentation points, as that host has no certificate for its name over
-// https. catalog.s.download.windowsupdate.com serves the same file over https.
+// dataURL is where https://go.microsoft.com/fwlink/?LinkID=74689, Microsoft's
+// link to the file, redirects.
 const dataURL = "https://catalog.s.download.windowsupdate.com/microsoftupdate/v6/wsusscan/wsusscn2.cab"
 
 type options struct {
