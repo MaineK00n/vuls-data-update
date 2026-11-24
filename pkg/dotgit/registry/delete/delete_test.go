@@ -50,7 +50,10 @@ func TestDelete(t *testing.T) {
 		// client waits to retry.
 		deleteFailsOnce []int
 		betweenRetries  func(vs []ls.Version) []ls.Version
-		wantErr         bool
+		// rateLimitedAfterFailure makes every request after a DELETE of
+		// deleteFailsOnce answer the primary rate limit.
+		rateLimitedAfterFailure bool
+		wantErr                 bool
 		// wantErrContains are parts of the error.
 		wantErrContains []string
 		// wantRemaining are the digests left in the registry.
@@ -198,6 +201,18 @@ func TestDelete(t *testing.T) {
 			wantErr:         true,
 			wantErrContains: []string{"check before the retry", "refuse to delete a tagged version"},
 			wantRemaining:   []string{"sha256:6413c62920ab027e680d7adf44bec195e9f2ec7a299140ff9a5d2193a626b673", "sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb", "sha256:29c88e701ac502d431e318a82b327d73f220b82714852b6942bcaffbb4e573aa"},
+		},
+		{
+			name: "a rate limit on the check before a retry stops the rest",
+			args: args{
+				images: []string{"ghcr.io/vulsio/vuls-data-db@sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb", "ghcr.io/vulsio/vuls-data-db@sha256:29c88e701ac502d431e318a82b327d73f220b82714852b6942bcaffbb4e573aa"},
+				token:  "token",
+			},
+			deleteFailsOnce:         []int{460898773},
+			rateLimitedAfterFailure: true,
+			wantErr:                 true,
+			wantErrContains:         []string{"stop at a GitHub rate limit", "check before the retry"},
+			wantRemaining:           []string{"sha256:6413c62920ab027e680d7adf44bec195e9f2ec7a299140ff9a5d2193a626b673", "sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb", "sha256:29c88e701ac502d431e318a82b327d73f220b82714852b6942bcaffbb4e573aa"},
 		},
 		{
 			name: "several, the delete of one of them refused",
@@ -373,6 +388,10 @@ func TestDelete(t *testing.T) {
 				}
 				if owner, ok := strings.CutPrefix(r.URL.Path, "/users/"); ok {
 					lookups[owner]++
+				}
+				if tt.rateLimitedAfterFailure && len(failed) > 0 {
+					rateLimit(w)
+					return
 				}
 				switch r.URL.Path {
 				case "/users/limited", "/orgs/vulsio/packages/container/vuls-data-db-limited/versions":
