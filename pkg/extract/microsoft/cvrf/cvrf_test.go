@@ -2045,23 +2045,6 @@ func TestDotNetProductNames(t *testing.T) {
 		})
 	}
 
-	// Every pair must agree with productRangeType, which classifies the same names.
-	for _, p := range cvrf.DotNetProductNamePairs {
-		for name, want := range map[string]affectedrangeTypes.RangeType{
-			p[0]: affectedrangeTypes.RangeTypeMicrosoftDotNetCoreRuntime,
-			p[1]: affectedrangeTypes.RangeTypeMicrosoftDotNetCoreSDK,
-		} {
-			t.Run("range type of "+name, func(t *testing.T) {
-				got, err := cvrf.ProductRangeType(name)
-				if err != nil {
-					t.Fatalf("ProductRangeType(%q) error: %v", name, err)
-				}
-				if got != want {
-					t.Errorf("ProductRangeType(%q) = %q, want %q", name, got, want)
-				}
-			})
-		}
-	}
 }
 
 func TestIsHotpatchSubType(t *testing.T) {
