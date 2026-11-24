@@ -19,13 +19,14 @@ var defaultClient = NewClient()
 type Client retryablehttp.Client
 
 type clientOptions struct {
-	httpClient   *http.Client
-	logger       any
-	retryWaitMin time.Duration
-	retryWaitMax time.Duration
-	retryMax     int
-	checkRetry   retryablehttp.CheckRetry
-	backoff      retryablehttp.Backoff
+	httpClient     *http.Client
+	logger         any
+	retryWaitMin   time.Duration
+	retryWaitMax   time.Duration
+	retryMax       int
+	checkRetry     retryablehttp.CheckRetry
+	backoff        retryablehttp.Backoff
+	allowPlainHTTP bool
 }
 
 type ClientOption interface {
@@ -116,6 +117,23 @@ func WithClientBackoff(f retryablehttp.Backoff) ClientOption {
 	return clientBackoff(f)
 }
 
+type clientAllowPlainHTTP bool
+
+func (a clientAllowPlainHTTP) apply(opts *clientOptions) {
+	opts.allowPlainHTTP = bool(a)
+}
+
+// WithClientAllowPlainHTTP lets the client send requests over plain http,
+// which it otherwise refuses, redirects included. A fetcher checks no
+// signature on what it stores, so it takes as it comes a response anyone on
+// the path can rewrite. The option is for an upstream that serves nothing over
+// https, given at the call that talks to it.
+func WithClientAllowPlainHTTP(allow bool) ClientOption {
+	return clientAllowPlainHTTP(allow)
+}
+
+// NewClient returns a client that retries a failed request and, unless
+// WithClientAllowPlainHTTP says otherwise, refuses to send one over plain http.
 func NewClient(opts ...ClientOption) *Client {
 	options := &clientOptions{
 		httpClient:   cleanhttp.DefaultPooledClient(),
@@ -131,14 +149,73 @@ func NewClient(opts ...ClientOption) *Client {
 		o.apply(options)
 	}
 
+	httpClient, checkRetry := options.httpClient, options.checkRetry
+	if !options.allowPlainHTTP {
+		httpClient, checkRetry = httpsOnly(options.httpClient, options.checkRetry)
+	}
+
 	return &Client{
-		HTTPClient:   options.httpClient,
+		HTTPClient:   httpClient,
 		Logger:       options.logger,
 		RetryWaitMin: options.retryWaitMin,
 		RetryWaitMax: options.retryWaitMax,
 		RetryMax:     options.retryMax,
-		CheckRetry:   options.checkRetry,
+		CheckRetry:   checkRetry,
 		Backoff:      options.backoff,
+	}
+}
+
+// errPlainHTTP is the error of a request a client refuses to send over plain
+// http.
+var errPlainHTTP = errors.New("plain http request refused")
+
+// httpsOnly returns a copy of client that refuses to send a request over plain
+// http, and a retry policy that does not retry the refusal, which every retry
+// would meet again. The copy leaves client itself, which a test may hand to
+// several clients, as it was.
+func httpsOnly(client *http.Client, checkRetry retryablehttp.CheckRetry) (*http.Client, retryablehttp.CheckRetry) {
+	base := client.Transport
+	if base == nil {
+		base = http.DefaultTransport
+	}
+
+	c := *client
+	c.Transport = httpsOnlyTransport{base: base}
+
+	return &c, func(ctx context.Context, resp *http.Response, err error) (bool, error) {
+		if errors.Is(err, errPlainHTTP) {
+			return false, err
+		}
+		return checkRetry(ctx, resp, err)
+	}
+}
+
+// httpsOnlyTransport refuses a request over plain http. An http.Client sends
+// every request through its transport, so a redirect to plain http is refused
+// as well.
+type httpsOnlyTransport struct {
+	base http.RoundTripper
+}
+
+func (t httpsOnlyTransport) RoundTrip(req *http.Request) (*http.Response, error) {
+	if req.URL.Scheme == "http" {
+		// A RoundTripper closes the body even when it fails. Like the
+		// transport of net/http, which does so for a scheme it does not
+		// support, it has the request's own error to return, not Close's.
+		if req.Body != nil {
+			_ = req.Body.Close()
+		}
+		return nil, errPlainHTTP
+	}
+	return t.base.RoundTrip(req)
+}
+
+// CloseIdleConnections passes on to the base transport the call that
+// http.Client.CloseIdleConnections, which retryablehttp makes after a failed
+// request, can only make on a transport that has the method.
+func (t httpsOnlyTransport) CloseIdleConnections() {
+	if c, ok := t.base.(interface{ CloseIdleConnections() }); ok {
+		c.CloseIdleConnections()
 	}
 }
 

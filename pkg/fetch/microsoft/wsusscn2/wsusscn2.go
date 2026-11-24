@@ -110,7 +110,8 @@ func (opts options) fetch() (string, error) {
 		return "", errors.Wrap(err, "make directory")
 	}
 
-	c := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry), utilhttp.WithClientHTTPClient(opts.httpClient))
+	// dataURL is plain http, which the client refuses unless told otherwise.
+	c := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry), utilhttp.WithClientHTTPClient(opts.httpClient), utilhttp.WithClientAllowPlainHTTP(true))
 	resp, err := c.Get(opts.dataURL)
 	if err != nil {
 		return "", errors.Wrapf(err, "http get, url: %s", opts.dataURL)

@@ -1,40 +1,149 @@
 package http_test
 
 import (
+	"errors"
 	"net/http"
 	"net/http/httptest"
+	"strings"
+	"sync/atomic"
 	"testing"
 	"time"
 
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
-func TestNewClient_WithClientHTTPClient(t *testing.T) {
-	supplied := &http.Client{}
+// countingTransport answers every request with 200 and counts them.
+type countingTransport struct {
+	n int
+}
 
+func (c *countingTransport) RoundTrip(req *http.Request) (*http.Response, error) {
+	c.n++
+	return &http.Response{StatusCode: http.StatusOK, Body: http.NoBody, Request: req}, nil
+}
+
+func TestNewClient_WithClientHTTPClient(t *testing.T) {
 	tests := []struct {
-		name   string
-		client *http.Client
+		name     string
+		supplied bool
 	}{
 		{
 			// production fetchers forward their test-only httpClient field,
 			// which is nil outside tests, so the pooled default has to stay
-			name:   "nil keeps the default",
-			client: nil,
+			name: "nil keeps the default",
 		},
 		{
-			name:   "supplied client is used",
-			client: supplied,
+			name:     "supplied client is used",
+			supplied: true,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := utilhttp.NewClient(utilhttp.WithClientHTTPClient(tt.client)).HTTPClient
+			var (
+				client    *http.Client
+				transport countingTransport
+			)
+			if tt.supplied {
+				client = &http.Client{Transport: &transport}
+			}
+
+			c := utilhttp.NewClient(utilhttp.WithClientHTTPClient(client))
+			if c.HTTPClient == nil {
+				t.Fatal("HTTPClient is nil, want a client")
+			}
+			if !tt.supplied {
+				return
+			}
+
+			// The client holds a copy of what it is given, so what shows the
+			// supplied client is used is a request reaching its transport.
+			resp, err := c.Get("https://example.com/")
+			if err != nil {
+				t.Fatal("unexpected error:", err)
+			}
+			defer resp.Body.Close()
+			if transport.n != 1 {
+				t.Errorf("requests through the supplied transport = %d, want 1", transport.n)
+			}
+		})
+	}
+}
+
+func TestNewClient_PlainHTTP(t *testing.T) {
+	tests := []struct {
+		name string
+		url  string
+		opts []utilhttp.ClientOption
+		// reqs is how many requests reach the server.
+		reqs     int64
+		hasError bool
+	}{
+		{
+			name: "https",
+			url:  "https://example.com/",
+			reqs: 1,
+		},
+		{
+			name:     "plain http",
+			url:      "http://example.com/",
+			hasError: true,
+		},
+		{
+			name: "plain http, allowed",
+			url:  "http://example.com/",
+			opts: []utilhttp.ClientOption{utilhttp.WithClientAllowPlainHTTP(true)},
+			reqs: 1,
+		},
+		{
+			// The https request reaches the server, which redirects it to
+			// plain http.
+			name:     "redirect to plain http",
+			url:      "https://example.com/redirect",
+			reqs:     1,
+			hasError: true,
+		},
+		{
+			name: "redirect to plain http, allowed",
+			url:  "https://example.com/redirect",
+			opts: []utilhttp.ClientOption{utilhttp.WithClientAllowPlainHTTP(true)},
+			reqs: 2,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var reqs atomic.Int64
+			// The in-memory network sends http and https requests alike to
+			// the test server, whatever their host.
+			ts := httptest.NewTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				reqs.Add(1)
+				if r.URL.Path == "/redirect" {
+					http.Redirect(w, r, "http://example.com/", http.StatusFound)
+					return
+				}
+				w.WriteHeader(http.StatusOK)
+			}))
+
+			c := utilhttp.NewClient(append([]utilhttp.ClientOption{utilhttp.WithClientHTTPClient(ts.Client()), utilhttp.WithClientRetryMax(3), utilhttp.WithClientRetryWaitMin(time.Millisecond), utilhttp.WithClientRetryWaitMax(time.Millisecond)}, tt.opts...)...)
+			resp, err := c.Get(tt.url)
 			switch {
-			case tt.client == nil && got == nil:
-				t.Error("HTTPClient is nil, want the pooled default")
-			case tt.client != nil && got != tt.client:
-				t.Errorf("HTTPClient = %p, want the supplied client %p", got, tt.client)
+			case err != nil && !tt.hasError:
+				t.Error("unexpected error:", err)
+			case err == nil && tt.hasError:
+				resp.Body.Close()
+				t.Error("expected error has not occurred")
+			case err != nil && tt.hasError:
+				if !errors.Is(err, utilhttp.ErrPlainHTTP) {
+					t.Errorf("error = %v, want a refused plain http request", err)
+				}
+				// Every retry would be refused again, so there is none.
+				if !strings.Contains(err.Error(), "giving up after 1 attempt(s)") {
+					t.Errorf("error = %v, want it given up after the first attempt", err)
+				}
+			default:
+				resp.Body.Close()
+			}
+			if got := reqs.Load(); got != tt.reqs {
+				t.Errorf("requests reaching the server = %d, want %d", got, tt.reqs)
 			}
 		})
 	}

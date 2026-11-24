@@ -100,7 +100,9 @@ func TestCheckRetry(t *testing.T) {
 			// network that ts.Client() uses.
 			ts.Start()
 
-			c := utilhttp.NewClient(utilhttp.WithClientRetryMax(tt.retry), utilhttp.WithClientRetryWaitMin(10*time.Millisecond), utilhttp.WithClientRetryWaitMax(20*time.Millisecond), utilhttp.WithClientCheckRetry(jvnutil.CheckRetry), utilhttp.WithClientHTTPClient(&http.Client{Transport: &roundTripper{errRespCount: tt.errRespCount, errResponse: tt.errResponse}}))
+			// The loopback server speaks plain http, which the client is told
+			// to allow.
+			c := utilhttp.NewClient(utilhttp.WithClientRetryMax(tt.retry), utilhttp.WithClientRetryWaitMin(10*time.Millisecond), utilhttp.WithClientRetryWaitMax(20*time.Millisecond), utilhttp.WithClientCheckRetry(jvnutil.CheckRetry), utilhttp.WithClientAllowPlainHTTP(true), utilhttp.WithClientHTTPClient(&http.Client{Transport: &roundTripper{errRespCount: tt.errRespCount, errResponse: tt.errResponse}}))
 			resp, err := c.Get(ts.URL)
 			if err != nil {
 				if tt.wantError == nil {
