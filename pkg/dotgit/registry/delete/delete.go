@@ -281,6 +281,12 @@ func deleteVersion(client *http.Client, pace *pacer, repoType, owner, pack strin
 			return errors.Errorf("unexpected response status. expected: %d, actual: %d", []int{http.StatusNoContent, http.StatusNotFound}, resp.StatusCode)
 		}
 	}, utilGitHub.WithBeforeRetry(func() error {
+		// The retry is a DELETE too, so it waits for the interval after the
+		// attempt before it, like the next version does. The API client has
+		// waited a second or more by now, but for a Retry-After of 0, so this
+		// waits at most a second longer than needed.
+		time.Sleep(pace.interval)
+
 		v, err := getVersion(client, u.String(), token)
 		if err != nil {
 			return errors.Wrap(err, "get version")

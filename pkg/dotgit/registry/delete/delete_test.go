@@ -50,6 +50,10 @@ func TestDelete(t *testing.T) {
 		// client waits to retry.
 		deleteFailsOnce []int
 		betweenRetries  func(vs []ls.Version) []ls.Version
+		// failRightAway makes the failing DELETE of deleteFailsOnce answer
+		// 429 with Retry-After: 0, which the API client retries at once,
+		// rather than 502.
+		failRightAway bool
 		// rateLimitedAfterFailure makes every request after a DELETE of
 		// deleteFailsOnce answer the primary rate limit.
 		rateLimitedAfterFailure bool
@@ -104,6 +108,17 @@ func TestDelete(t *testing.T) {
 			},
 			deleteInterval: 100 * time.Millisecond,
 			wantRemaining:  []string{"sha256:6413c62920ab027e680d7adf44bec195e9f2ec7a299140ff9a5d2193a626b673"},
+		},
+		{
+			name: "a delete retried at once, still a pause apart",
+			args: args{
+				images: []string{"ghcr.io/vulsio/vuls-data-db@sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb"},
+				token:  "token",
+			},
+			deleteFailsOnce: []int{460898773},
+			failRightAway:   true,
+			deleteInterval:  100 * time.Millisecond,
+			wantRemaining:   []string{"sha256:6413c62920ab027e680d7adf44bec195e9f2ec7a299140ff9a5d2193a626b673", "sha256:29c88e701ac502d431e318a82b327d73f220b82714852b6942bcaffbb4e573aa"},
 		},
 		{
 			name: "several, one of them tagged",
@@ -524,6 +539,11 @@ func TestDelete(t *testing.T) {
 							failed[id] = true
 							if tt.betweenRetries != nil {
 								vs = tt.betweenRetries(vs)
+							}
+							if tt.failRightAway {
+								w.Header().Set("Retry-After", "0")
+								http.Error(w, `{"message":"You have exceeded a secondary rate limit."}`, http.StatusTooManyRequests)
+								return
 							}
 							http.Error(w, "Bad Gateway", http.StatusBadGateway)
 						case i == -1 || slices.Contains(tt.deleteNotFound, id):
