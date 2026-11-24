@@ -273,6 +273,15 @@ func EnsureWritten(root string, opts ...EnsureOption) error {
 		o.apply(options)
 	}
 
+	// A required path outside root is a mistake in the call, not in what the
+	// fetch wrote, so it is an error before the tree is looked at -- even when
+	// nothing was written and that is allowed.
+	for _, p := range options.requires {
+		if !filepath.IsLocal(p) {
+			return errors.Errorf("unexpected required path. expected: a path under %q, actual: %q", root, p)
+		}
+	}
+
 	switch ok, err := holdsFile(root, ".", options.ignores); {
 	case err != nil:
 		return errors.Wrapf(err, "check %s", root)
@@ -284,10 +293,6 @@ func EnsureWritten(root string, opts ...EnsureOption) error {
 
 	missing := make([]string, 0, len(options.requires))
 	for _, p := range options.requires {
-		if !filepath.IsLocal(p) {
-			return errors.Errorf("unexpected required path. expected: a path under %q, actual: %q", root, p)
-		}
-
 		switch ok, err := holdsFile(root, p, nil); {
 		case err != nil:
 			return errors.Wrapf(err, "check %s", filepath.Join(root, p))

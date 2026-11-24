@@ -485,6 +485,17 @@ func TestEnsureWritten(t *testing.T) {
 			wantErr: true,
 		},
 		{
+			// A required path outside root is a mistake in the call, so
+			// allowing nothing written does not let it pass.
+			name: "empty allowed, required path outside root",
+			args: args{
+				root: "allow-empty-outside",
+				opts: []util.EnsureOption{util.WithAllowEmpty(true), util.WithRequire(filepath.Join("..", "outside"))},
+			},
+			entries: []string{".git/", ".git/HEAD"},
+			wantErr: true,
+		},
+		{
 			name: "empty not allowed",
 			args: args{
 				root: "disallow-empty",
