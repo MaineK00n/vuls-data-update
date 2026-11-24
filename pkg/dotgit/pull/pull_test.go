@@ -54,6 +54,10 @@ func TestPull(t *testing.T) {
 		// native git, the switch command that failed and the start of what
 		// git said.
 		wantErrHas string
+		// wantCommitNotFound is whether the error wraps
+		// contains.ErrCommitNotFound, as it does for a target that is not in
+		// the repository.
+		wantCommitNotFound bool
 	}{
 		{
 			name: "vuls-data-raw-test restore: false, native git",
@@ -228,9 +232,10 @@ func TestPull(t *testing.T) {
 				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test",
 				opts:       []pull.Option{pull.WithCheckout("9d3d5d486d4c9414321a2df56f2e007c4c2c8fac"), pull.WithRestore(true), pull.WithUseNativeGit(true)},
 			},
-			hasError:   true,
-			wantErr:    "9d3d5d486d4c9414321a2df56f2e007c4c2c8fac is not in ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test, whose history may have been truncated or rewritten: switch to 9d3d5d486d4c9414321a2df56f2e007c4c2c8fac: ",
-			wantErrHas: `switch --detach 9d3d5d486d4c9414321a2df56f2e007c4c2c8fac", stderr: "fatal: `,
+			hasError:           true,
+			wantErr:            "9d3d5d486d4c9414321a2df56f2e007c4c2c8fac is not in ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test, whose history may have been truncated or rewritten: commit not found: switch to 9d3d5d486d4c9414321a2df56f2e007c4c2c8fac: ",
+			wantErrHas:         `switch --detach 9d3d5d486d4c9414321a2df56f2e007c4c2c8fac", stderr: "fatal: `,
+			wantCommitNotFound: true,
 		},
 		{
 			// A tag that is not in the repository.
@@ -239,9 +244,10 @@ func TestPull(t *testing.T) {
 				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test",
 				opts:       []pull.Option{pull.WithCheckout("v0.0.2"), pull.WithRestore(true), pull.WithUseNativeGit(true)},
 			},
-			hasError:   true,
-			wantErr:    "v0.0.2 is not in ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test, whose history may have been truncated or rewritten: switch to v0.0.2: ",
-			wantErrHas: `switch --detach v0.0.2", stderr: "fatal: `,
+			hasError:           true,
+			wantErr:            "v0.0.2 is not in ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test, whose history may have been truncated or rewritten: commit not found: switch to v0.0.2: ",
+			wantErrHas:         `switch --detach v0.0.2", stderr: "fatal: `,
+			wantCommitNotFound: true,
 		},
 		{
 			// contains reads a name as cat-file -e does, so it cannot tell
@@ -310,6 +316,9 @@ func TestPull(t *testing.T) {
 				}
 				if !strings.Contains(err.Error(), tt.wantErrHas) {
 					t.Errorf("Pull() error does not hold %q, error: %v", tt.wantErrHas, err)
+				}
+				if got := errors.Is(err, contains.ErrCommitNotFound); got != tt.wantCommitNotFound {
+					t.Errorf("errors.Is(Pull() error, contains.ErrCommitNotFound). expected: %t, actual: %t, error: %v", tt.wantCommitNotFound, got, err)
 				}
 			default:
 				var got []string
@@ -414,6 +423,11 @@ func TestPullWithoutGit(t *testing.T) {
 	err = pull.Pull(repo.Reference.String(), pull.WithDir(t.TempDir()), pull.WithCheckout("9d3d5d486d4c9414321a2df56f2e007c4c2c8fac"), pull.WithUseNativeGit(true))
 	if want := "switch to 9d3d5d486d4c9414321a2df56f2e007c4c2c8fac: "; err == nil || !strings.HasPrefix(err.Error(), want) {
 		t.Errorf("Pull() error does not begin with %q, error: %v", want, err)
+	}
+	// contains could not tell, so the error does not say the commit is not
+	// there.
+	if errors.Is(err, contains.ErrCommitNotFound) {
+		t.Errorf("Pull() error wraps contains.ErrCommitNotFound, error: %v", err)
 	}
 }
 

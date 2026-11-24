@@ -63,6 +63,10 @@ func (c checkoutOption) apply(opts *options) {
 	opts.checkout = string(c)
 }
 
+// WithCheckout sets what Pull checks out after the pull: a branch, a tag or a
+// commit, main by default, or nothing for "". On native git, if checkout is not
+// in the pulled dotgit, such as a commit pinned before vuls-data-db truncated
+// the history, the error wraps contains.ErrCommitNotFound.
 func WithCheckout(checkout string) Option {
 	return checkoutOption(checkout)
 }
@@ -267,11 +271,13 @@ func Pull(repository string, opts ...Option) error {
 }
 
 // notInRepository wraps err, the error of switch, for a checkout target, a tag
-// or a commit, that is not in the dotgit pulled from repository. vuls-data-db
-// keeps only the last commits of a dotgit's history, so a commit pinned before
-// it truncated the history is gone from a repository that is otherwise fine.
+// or a commit, that is not in the dotgit pulled from repository. It wraps
+// contains.ErrCommitNotFound too, so that a caller can tell the case with
+// errors.Is, while err keeps what git said. vuls-data-db keeps only the last
+// commits of a dotgit's history, so a commit pinned before it truncated the
+// history is gone from a repository that is otherwise fine.
 func notInRepository(err error, repository, checkout string) error {
-	return errors.Wrapf(err, "%s is not in %s, whose history may have been truncated or rewritten", checkout, repository)
+	return fmt.Errorf("%s is not in %s, whose history may have been truncated or rewritten: %w: %w", checkout, repository, contains.ErrCommitNotFound, err)
 }
 
 // notFound reports whether err, from contains, says that the target is not in
