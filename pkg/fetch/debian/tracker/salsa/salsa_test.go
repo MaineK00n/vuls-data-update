@@ -23,20 +23,33 @@ func TestFetch(t *testing.T) {
 		// drop names, as host and path, a request the server cuts off
 		// without an answer.
 		drop string
-		// truncate names, as host and path, a file of the release mirrors
-		// the server answers with only its first half.
-		truncate string
+		// rewrite maps, as host and path, a file of the release mirrors to
+		// what the server makes of it before answering.
+		rewrite map[string]func([]byte) []byte
 		// mirrorNotFound makes every Debian mirror answer 404.
 		mirrorNotFound bool
 		hasError       bool
 	}{
 		{
+			// bookworm's Sources comes from the copy named by its digest,
+			// sid's from its path, as sid has no such copy, and bookworm's
+			// main is Sources.xz, as the Sources.gz its Release also lists
+			// is not there.
 			name:     "happy path",
 			testdata: "testdata/fixtures/security-tracker-master.tar.gz",
 		},
 		{
-			// bookworm has only Sources.xz, so the Sources.gz request comes
-			// first. Failing, it fails the fetch rather than passing for a
+			// bookworm's Release says its files can be acquired by hash, so
+			// the copy named by the digest is asked for, and its path, cut
+			// off here, never is.
+			name:     "Sources by hash",
+			testdata: "testdata/fixtures/security-tracker-master.tar.gz",
+			drop:     "deb.debian.org/debian/dists/bookworm/main/source/Sources.xz",
+		},
+		{
+			// The bookworm Release lists a Sources.gz the mirror does not
+			// have, which is asked for before the Sources.xz it has. That
+			// request failing fails the fetch rather than passing for a
 			// compression the mirror does not have.
 			name:     "dropped Sources request",
 			testdata: "testdata/fixtures/security-tracker-master.tar.gz",
@@ -44,11 +57,41 @@ func TestFetch(t *testing.T) {
 			hasError: true,
 		},
 		{
-			// Decompressing a cut-off file stops partway through, which fails
-			// the fetch rather than writing the packages read up to there.
+			// Cut off, sid's Sources is shorter than its Release says, which
+			// fails the fetch rather than writing the packages read up to
+			// the cut.
 			name:     "truncated Sources",
 			testdata: "testdata/fixtures/security-tracker-master.tar.gz",
-			truncate: "deb.debian.org/debian/dists/bookworm/main/source/Sources.xz",
+			rewrite: map[string]func([]byte) []byte{
+				"deb.debian.org/debian/dists/sid/main/source/Sources.gz": func(bs []byte) []byte { return bs[:len(bs)/2] },
+			},
+			hasError: true,
+		},
+		{
+			// A different modification time in the gzip header leaves sid's
+			// Sources the size its Release gives, and decompressing as it
+			// did, but not the file the Release describes.
+			name:     "Sources not matching the Release",
+			testdata: "testdata/fixtures/security-tracker-master.tar.gz",
+			rewrite: map[string]func([]byte) []byte{
+				"deb.debian.org/debian/dists/sid/main/source/Sources.gz": func(bs []byte) []byte {
+					bs[4] ^= 0xff
+					return bs
+				},
+			},
+			hasError: true,
+		},
+		{
+			// With no SHA256 to check its Sources against, a suite fails the
+			// fetch rather than being taken unchecked.
+			name:     "Release without SHA256",
+			testdata: "testdata/fixtures/security-tracker-master.tar.gz",
+			rewrite: map[string]func([]byte) []byte{
+				"security.debian.org/debian-security/dists/bookworm-security/Release": func(bs []byte) []byte {
+					before, _, _ := bytes.Cut(bs, []byte("SHA256:\n"))
+					return before
+				},
+			},
 			hasError: true,
 		},
 		{
@@ -78,13 +121,13 @@ func TestFetch(t *testing.T) {
 				switch {
 				case target == tt.drop:
 					panic(http.ErrAbortHandler)
-				case target == tt.truncate:
+				case tt.rewrite[target] != nil:
 					bs, err := os.ReadFile(filepath.Join("testdata", "fixtures", "release", rel))
 					if err != nil {
 						http.Error(w, fmt.Sprintf("Internal Server Error. err: %s", err), http.StatusInternalServerError)
 						return
 					}
-					http.ServeContent(w, r, path.Base(r.URL.Path), time.Time{}, bytes.NewReader(bs[:len(bs)/2]))
+					http.ServeContent(w, r, path.Base(r.URL.Path), time.Time{}, bytes.NewReader(tt.rewrite[target](bs)))
 				case r.Host == "salsa.debian.org":
 					http.ServeFile(w, r, tt.testdata)
 				case tt.mirrorNotFound:
