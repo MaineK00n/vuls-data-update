@@ -273,6 +273,66 @@ func TestRangeType_CompareVersions(t *testing.T) {
 			want: 0,
 		},
 		{
+			name: "oracle v1: UEK R7, v2: UEK R7",
+			rt:   affectedrangeTypes.RangeTypeRPM,
+			args: args{
+				family: ecosystemTypes.EcosystemTypeOracle,
+				v1:     "0:5.15.0-305.176.4.el9uek",
+				v2:     "5.15.0-325.221.6.6.el9uek",
+			},
+			want: -1,
+		},
+		{
+			name: "oracle v1: UEK R8, v2: UEK R7",
+			rt:   affectedrangeTypes.RangeTypeRPM,
+			args: args{
+				family: ecosystemTypes.EcosystemTypeOracle,
+				v1:     "0:6.12.0-102.36.5.2.el9uek",
+				v2:     "5.15.0-325.221.6.6.el9uek",
+			},
+			wantErr: true,
+		},
+		{
+			name: "oracle v1: UEK R6, v2: UEK R7",
+			rt:   affectedrangeTypes.RangeTypeRPM,
+			args: args{
+				family: ecosystemTypes.EcosystemTypeOracle,
+				v1:     "0:5.4.17-2136.361.4.el8uek",
+				v2:     "5.15.0-326.222.4.el8uek",
+			},
+			wantErr: true,
+		},
+		{
+			name: "oracle v1: UEK R4, v2: UEK R5",
+			rt:   affectedrangeTypes.RangeTypeRPM,
+			args: args{
+				family: ecosystemTypes.EcosystemTypeOracle,
+				v1:     "0:4.1.12-124.93.1.el7uek",
+				v2:     "4.14.35-2047.543.3.el7uek",
+			},
+			wantErr: true,
+		},
+		{
+			name: "oracle v1: UEK R1, v2: UEK R2",
+			rt:   affectedrangeTypes.RangeTypeRPM,
+			args: args{
+				family: ecosystemTypes.EcosystemTypeOracle,
+				v1:     "0:2.6.32-400.37.18.el6uek",
+				v2:     "2.6.39-400.330.1.el6uek",
+			},
+			wantErr: true,
+		},
+		{
+			name: "oracle v1: UEK, v2: non UEK",
+			rt:   affectedrangeTypes.RangeTypeRPM,
+			args: args{
+				family: ecosystemTypes.EcosystemTypeOracle,
+				v1:     "0:5.15.0-326.222.4.el8uek",
+				v2:     "4.18.0-553.el8_10",
+			},
+			wantErr: true,
+		},
+		{
 			name: "fedora v1: non modular package, v2: non modular package",
 			rt:   affectedrangeTypes.RangeTypeRPM,
 			args: args{

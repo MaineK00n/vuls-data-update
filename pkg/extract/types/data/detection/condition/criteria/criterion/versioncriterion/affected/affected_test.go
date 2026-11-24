@@ -351,6 +351,33 @@ func TestAffected_Accept(t *testing.T) {
 			args: args{family: ecosystemTypes.Ecosystem("solaris:11.4"), v: "1.0.2k-8.el7"},
 			want: false,
 		},
+		{
+			name: "oracle UEK R7 5.15.0-325.221.6.6.el9uek [< 0:5.15.0-326.222.4.el9uek]",
+			fields: fields{
+				Type:  affectedrangeTypes.RangeTypeRPM,
+				Range: []affectedrangeTypes.Range{{LessThan: "0:5.15.0-326.222.4.el9uek"}},
+			},
+			args: args{family: ecosystemTypes.EcosystemTypeOracle, v: "5.15.0-325.221.6.6.el9uek"},
+			want: true,
+		},
+		{
+			name: "oracle UEK R7 5.15.0-325.221.6.6.el9uek [< 0:6.12.0-102.36.5.2.el9uek]: another UEK series, no match, no error",
+			fields: fields{
+				Type:  affectedrangeTypes.RangeTypeRPM,
+				Range: []affectedrangeTypes.Range{{LessThan: "0:6.12.0-102.36.5.2.el9uek"}},
+			},
+			args: args{family: ecosystemTypes.EcosystemTypeOracle, v: "5.15.0-325.221.6.6.el9uek"},
+			want: false,
+		},
+		{
+			name: "oracle non UEK 4.18.0-553.el8_10 [< 0:5.15.0-326.222.4.el8uek]: UEK and non UEK, no match, no error",
+			fields: fields{
+				Type:  affectedrangeTypes.RangeTypeRPM,
+				Range: []affectedrangeTypes.Range{{LessThan: "0:5.15.0-326.222.4.el8uek"}},
+			},
+			args: args{family: ecosystemTypes.EcosystemTypeOracle, v: "4.18.0-553.el8_10"},
+			want: false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

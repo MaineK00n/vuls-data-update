@@ -307,6 +307,14 @@ func (t RangeType) CompareVersions(family ecosystemTypes.Ecosystem, v1, v2 strin
 			if strings.Contains(v1, ".module+el") != strings.Contains(v2, ".module+el") {
 				return 0, &CompareError{Err: &CannotCompareError{Reason: fmt.Sprintf("non modular package and modular package cannot be compared. v1: %q, v2: %q", v1, v2)}}
 			}
+			uek1, isUEK1 := extractOracleUEKVersion(v1)
+			uek2, isUEK2 := extractOracleUEKVersion(v2)
+			if isUEK1 != isUEK2 {
+				return 0, &CompareError{Err: &CannotCompareError{Reason: fmt.Sprintf("non UEK package and UEK package cannot be compared. v1: %q, v2: %q", v1, v2)}}
+			}
+			if uek1 != uek2 {
+				return 0, &CompareError{Err: &CannotCompareError{Reason: fmt.Sprintf("packages of different UEK series cannot be compared. v1: %q, v2: %q", v1, v2)}}
+			}
 			return rpm.NewVersion(v1).Compare(rpm.NewVersion(v2)), nil
 		case ecosystemTypes.EcosystemTypeFedora:
 			if strings.Contains(v1, ".module_f") != strings.Contains(v2, ".module_f") {
@@ -689,6 +697,24 @@ func extractRedHatMajorVersion(v string) string {
 	}
 
 	return ""
+}
+
+// extractOracleUEKVersion reports whether v is built from the Unbreakable
+// Enterprise Kernel source (its release carries "uek", e.g. "el9uek") and,
+// if so, returns its upstream version part, which names the UEK series.
+// Oracle keeps that part fixed for the whole life of a series (UEK R7 is
+// always "5.15.0", UEK R8 always "6.12.0") and moves updates, including
+// upstream stable merges, into the release. One Oracle Linux major release
+// ships several series at once (e.g. Oracle Linux 7: 3.8.13, 4.1.12,
+// 4.14.35, 5.4.17), and neither the major nor major.minor tells them apart
+// everywhere (4.1.12 vs 4.14.35, 2.6.32 vs 2.6.39), so the whole version
+// part is compared.
+func extractOracleUEKVersion(v string) (string, bool) {
+	rv := rpm.NewVersion(v)
+	if !strings.Contains(rv.Release(), "uek") {
+		return "", false
+	}
+	return rv.Version(), true
 }
 
 func extractOracleKsplice(v string) string {
