@@ -1,6 +1,7 @@
 package util
 
 import (
+	"cmp"
 	"encoding/json/jsontext"
 	"encoding/json/v2"
 	"io/fs"
@@ -153,19 +154,22 @@ func RemoveAll(root string, opts ...RemoveOption) error {
 
 	// root is a path, not a pattern. Globbing root/* would empty whatever a
 	// root holding [ or * matched instead, and leave root itself as it was.
-	es, err := os.ReadDir(root)
+	// os.ReadDir takes an empty root for a missing one, where filepath.Join,
+	// and so every write under root, takes it for the current directory.
+	dir := cmp.Or(root, ".")
+	es, err := os.ReadDir(dir)
 	if err != nil {
 		// A root that does not exist yet, as before a first fetch, is empty.
 		if errors.Is(err, fs.ErrNotExist) {
 			return nil
 		}
-		return errors.Wrapf(err, "read dir %s", root)
+		return errors.Wrapf(err, "read dir %s", dir)
 	}
 	for _, e := range es {
 		if slices.Contains(options.keeps, e.Name()) {
 			continue
 		}
-		p := filepath.Join(root, e.Name())
+		p := filepath.Join(dir, e.Name())
 		if err := os.RemoveAll(p); err != nil {
 			return errors.Wrapf(err, "remove %s", p)
 		}

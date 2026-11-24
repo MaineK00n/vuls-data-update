@@ -48,8 +48,10 @@ func TestRemoveAll(t *testing.T) {
 		// created beside root the same way, and the call must leave them all.
 		entries  []string
 		siblings []string
-		// missing leaves root uncreated.
+		// missing leaves root uncreated, and file creates it as an empty file
+		// rather than a directory.
 		missing bool
+		file    bool
 		want    []string
 		wantErr bool
 	}{
@@ -68,6 +70,25 @@ func TestRemoveAll(t *testing.T) {
 				root: "missing",
 			},
 			missing: true,
+		},
+		{
+			// An empty root is the directory the call is made from.
+			name: "empty root",
+			args: args{
+				root: "",
+			},
+			entries: []string{".git/", "test.json"},
+			want:    []string{".git"},
+		},
+		{
+			// Unlike a missing root, one that cannot be read is an error, or
+			// the run would go on over a tree that was never emptied.
+			name: "root that is a file",
+			args: args{
+				root: "file",
+			},
+			file:    true,
+			wantErr: true,
 		},
 		{
 			// root is a path, not a pattern: out[1] must not reach out1.
@@ -151,9 +172,22 @@ func TestRemoveAll(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			// root is given relative to the directory the call is made from,
+			// as a --dir typed on the command line is.
 			parent := t.TempDir()
+			t.Chdir(parent)
+
 			d := filepath.Join(parent, tt.args.root)
-			if !tt.missing {
+			switch {
+			case tt.missing:
+				// Left uncreated.
+			case tt.file:
+				f, err := os.Create(d)
+				if err != nil {
+					t.Fatal("unexpected error:", err)
+				}
+				f.Close()
+			default:
 				if err := os.MkdirAll(d, 0750); err != nil {
 					t.Fatal("unexpected error:", err)
 				}
@@ -178,7 +212,7 @@ func TestRemoveAll(t *testing.T) {
 				}
 			}
 
-			if err := util.RemoveAll(d, tt.args.opts...); (err != nil) != tt.wantErr {
+			if err := util.RemoveAll(tt.args.root, tt.args.opts...); (err != nil) != tt.wantErr {
 				t.Errorf("RemoveAll() error = %v, wantErr %v", err, tt.wantErr)
 			}
 
@@ -188,7 +222,7 @@ func TestRemoveAll(t *testing.T) {
 				}
 			}
 
-			if tt.missing {
+			if tt.missing || tt.wantErr {
 				return
 			}
 
