@@ -177,7 +177,7 @@ type Mirror struct {
 func Fetch(opts ...Option) error {
 	keyring, err := readKeyRing(archiveKeyring, removedKeys)
 	if err != nil {
-		return errors.Wrap(err, "read keyring")
+		return errors.Wrap(err, "read embedded keyrings")
 	}
 
 	options := &options{
