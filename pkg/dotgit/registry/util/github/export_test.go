@@ -24,6 +24,9 @@ func (c httpClientOption) apply(opts *options) {
 	opts.httpClient = c.client
 }
 
+// RateLimitBackoff is rateLimitBackoff.
+var RateLimitBackoff = rateLimitBackoff
+
 // ShortenRetryWaits makes every wait of Do between retries, a rate limit that
 // does not say how long to wait included, wait instead, and returns what puts
 // the waits back. A test passes it to t.Cleanup.

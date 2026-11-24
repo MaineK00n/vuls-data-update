@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"log/slog"
+	"math/rand/v2"
 	"net/http"
 	"net/url"
 	"slices"
@@ -50,8 +51,12 @@ type retryPolicy struct {
 	// waitMin and waitMax bound the exponential backoff between the retries of
 	// a connection error or a 5xx response.
 	waitMin, waitMax time.Duration
-	// rateLimitWait is the wait for a rate limit that does not say how long to
-	// wait. GitHub asks for at least a minute then.
+	// rateLimitWait is the first wait for a rate limit that does not say how
+	// long to wait, for which GitHub asks for at least a minute, and for one
+	// that persists for a wait that grows with each retry. It doubles with each
+	// retry, up to askedWaitMax, and a random part of up to rateLimitWait on
+	// top keeps clients that were refused in the same second from retrying in
+	// the same second again.
 	rateLimitWait time.Duration
 	// askedWaitMax is the longest wait GitHub may ask for, by a rate limit or
 	// by the Retry-After of a 503. A request asked to wait longer, as one is
@@ -79,12 +84,14 @@ var policy = retryPolicy{
 // A request that fails for a reason that passes is retried before fn sees it:
 // a connection error and a 5xx response with exponential backoff, and a rate
 // limit and a 503 that says how long to wait after the wait GitHub asks for, as
-// long as it is no longer than policy.askedWaitMax. A DELETE is retried as well, as a
-// version id is never reused, but a retry whose first attempt went through is
-// answered 404, which the caller has to take for done. Once the retries run
-// out, fn sees the last response, and the error it returns for a status it does
-// not expect carries what GitHub said about it, such as which rate limit was
-// hit.
+// long as it is no longer than policy.askedWaitMax. A rate limit that does not
+// say is retried after a wait that grows with each retry. A DELETE is retried
+// as well, as a version id is never reused, but a retry whose first attempt
+// went through is answered 404, which the caller has to take for done. Once
+// the retries run out, fn sees the last response, and the error it returns for
+// a status it does not expect carries what GitHub said about it, such as which
+// rate limit was hit. When that response is a rate limit, the error is
+// ErrRateLimited too.
 func Do(client *http.Client, method, apiurl, token string, fn func(resp *http.Response) error) error {
 	if client == nil {
 		client = http.DefaultClient
@@ -129,6 +136,9 @@ func Do(client *http.Client, method, apiurl, token string, fn func(resp *http.Re
 	defer resp.Body.Close()
 
 	if err := fn(resp); err != nil {
+		if r.rateLimited {
+			err = rateLimitedError{err}
+		}
 		if resp.StatusCode >= http.StatusBadRequest {
 			return errors.Wrapf(err, "process response. %s", describe(resp))
 		}
@@ -137,6 +147,24 @@ func Do(client *http.Client, method, apiurl, token string, fn func(resp *http.Re
 
 	return nil
 }
+
+// ErrRateLimited is what the error of Do is, by errors.Is, for a request that
+// GitHub refused for a rate limit and that the retries did not get past, as
+// they ran out or as GitHub asked for a longer wait than policy.askedWaitMax.
+// Every request is refused the same way until the limit lifts, and GitHub warns
+// that one that keeps making requests while rate limited may be banned, so a
+// caller with more requests to make stops there.
+//
+// ref. https://docs.github.com/en/rest/using-the-rest-api/best-practices-for-using-the-rest-api#handle-rate-limit-errors-appropriately
+var ErrRateLimited = errors.New("rate limited")
+
+// rateLimitedError makes the error of fn ErrRateLimited too, keeping its
+// message.
+type rateLimitedError struct{ error }
+
+func (e rateLimitedError) Is(target error) bool { return target == ErrRateLimited }
+
+func (e rateLimitedError) Unwrap() error { return e.error }
 
 // retrier decides on the retries of one request. retryablehttp drains the body
 // of a response it retries before it asks for the wait, so checkRetry, which
@@ -148,9 +176,11 @@ type retrier struct {
 
 	// reason is why the last attempt failed, for the log.
 	reason string
-	// asked tells that the last response asked for askedWait.
-	asked     bool
-	askedWait time.Duration
+	// asked is what the last response asked for, and ok tells that it asked.
+	asked ask
+	ok    bool
+	// rateLimited tells that the last response was a rate limit.
+	rateLimited bool
 }
 
 // checkRetry retries what retryablehttp.DefaultRetryPolicy does, which is a
@@ -159,25 +189,27 @@ type retrier struct {
 //
 // ref. https://docs.github.com/en/rest/using-the-rest-api/best-practices-for-using-the-rest-api#handle-rate-limit-errors-appropriately
 func (r *retrier) checkRetry(ctx context.Context, resp *http.Response, err error) (bool, error) {
-	r.asked = false
+	r.ok, r.rateLimited = false, false
 	switch {
 	case err != nil:
 		r.reason = err.Error()
 	case resp != nil:
 		r.reason = resp.Status
 
-		wait, ok, err := askedWait(resp)
+		a, ok, err := askedWait(resp)
 		if err != nil {
 			return false, errors.Wrap(err, "check the wait asked for")
 		}
 		if ok {
+			r.reason = fmt.Sprintf("%s (%s)", resp.Status, a.why)
+			r.rateLimited = a.rateLimit
 			if ctx.Err() != nil {
 				return false, ctx.Err()
 			}
-			if wait > policy.askedWaitMax {
+			if a.wait > policy.askedWaitMax {
 				return false, nil
 			}
-			r.asked, r.askedWait = true, wait
+			r.asked, r.ok = a, true
 			return true, nil
 		}
 	}
@@ -185,69 +217,119 @@ func (r *retrier) checkRetry(ctx context.Context, resp *http.Response, err error
 }
 
 func (r *retrier) backoff(waitMin, waitMax time.Duration, attemptNum int, _ *http.Response) time.Duration {
-	wait := r.askedWait
-	if !r.asked {
+	var wait time.Duration
+	switch {
+	case !r.ok:
 		// Without the response, as DefaultBackoff would otherwise follow the
 		// Retry-After of a 429 or 503 however long it is. askedWait has
 		// already followed what it could of that, within policy.askedWaitMax.
 		wait = retryablehttp.DefaultBackoff(waitMin, waitMax, attemptNum, nil)
+	case r.asked.unsaid:
+		wait = rateLimitBackoff(attemptNum)
+	default:
+		wait = r.asked.wait
 	}
 	slog.Warn("Retry GitHub API request", slog.String("method", r.method), slog.String("url", r.url), slog.String("reason", r.reason), slog.Int("retry", attemptNum+1), slog.Duration("wait", wait))
 	return wait
 }
 
-// askedWait reports whether resp asks to be retried after a wait, and how
-// long. A rate limit, answered with 403 or 429, asks for Retry-After, else
-// until X-RateLimit-Reset when X-RateLimit-Remaining is 0, else
-// policy.rateLimitWait. A 503 asks for its Retry-After, if it has one. 403 also
-// refuses a token that may not do what was asked, as GITHUB_TOKEN may not read
-// GET /user, and that one is told apart by the headers and by the message of
-// the body, which is put back for the caller.
+// rateLimitBackoff is the wait before retry attemptNum+1 of a rate limit that
+// does not say how long to wait. GitHub asks for a wait that grows with each
+// retry when such a limit persists. The random part keeps clients that were
+// refused in the same second, as concurrent jobs of one repository are, from
+// retrying together. Once a wait reaches policy.askedWaitMax it loses that
+// part, but the clients no longer start it together by then.
+func rateLimitBackoff(attemptNum int) time.Duration {
+	wait := policy.rateLimitWait
+	for range attemptNum {
+		wait = min(2*wait, policy.askedWaitMax)
+	}
+	return min(wait+rand.N(policy.rateLimitWait), policy.askedWaitMax)
+}
+
+// ask is what a response asks of the retry of its request.
+type ask struct {
+	// wait is how long to wait, unless unsaid.
+	wait time.Duration
+	// unsaid tells a rate limit that does not say how long to wait, which is
+	// waited for by rateLimitBackoff.
+	unsaid bool
+	// rateLimit tells a rate limit apart from a 503.
+	rateLimit bool
+	// why is what tells the wait, for the log.
+	why string
+}
+
+// askedWait reports whether resp asks to be retried after a wait, and what it
+// asks. A rate limit, answered with 403 or 429, asks for Retry-After, else
+// until X-RateLimit-Reset when X-RateLimit-Remaining is 0, else does not say.
+// A 503 asks for its Retry-After, if it has one. 403 also refuses a token that
+// may not do what was asked, as GITHUB_TOKEN may not read GET /user, and that
+// one is told apart by the headers and by the message of the body, which is
+// put back for the caller.
 //
 // A wait longer than policy.askedWaitMax is cut to just over it before it
 // becomes a time.Duration, which a value of centuries would overflow into a
 // negative wait, retried at once.
-func askedWait(resp *http.Response) (time.Duration, bool, error) {
+func askedWait(resp *http.Response) (ask, bool, error) {
 	switch resp.StatusCode {
 	case http.StatusForbidden, http.StatusTooManyRequests, http.StatusServiceUnavailable:
 	default:
-		return 0, false, nil
+		return ask{}, false, nil
 	}
+	rateLimit := resp.StatusCode != http.StatusServiceUnavailable
 
 	// GitHub sends Retry-After in seconds. A value that is not, such as an
 	// HTTP date, is left for the headers below, and for a 503 to the backoff.
 	if n, err := strconv.Atoi(resp.Header.Get("Retry-After")); err == nil && n >= 0 {
-		return time.Duration(min(n, int(policy.askedWaitMax/time.Second)+1)) * time.Second, true, nil
+		return ask{
+			wait:      time.Duration(min(n, int(policy.askedWaitMax/time.Second)+1)) * time.Second,
+			rateLimit: rateLimit,
+			why:       fmt.Sprintf("retry-after: %d", n),
+		}, true, nil
 	}
-	if resp.StatusCode == http.StatusServiceUnavailable {
-		return 0, false, nil
+	if !rateLimit {
+		return ask{}, false, nil
 	}
 
 	if resp.Header.Get("X-RateLimit-Remaining") == "0" {
+		why := "primary rate limit"
+		if r := resp.Header.Get("X-RateLimit-Resource"); r != "" {
+			why = fmt.Sprintf("primary rate limit of %s", r)
+		}
 		n, err := strconv.ParseInt(resp.Header.Get("X-RateLimit-Reset"), 10, 64)
 		if err != nil {
-			return policy.rateLimitWait, true, nil
+			return ask{unsaid: true, rateLimit: true, why: why}, true, nil
 		}
+		reset := max(time.Until(time.Unix(n, 0)), 0)
 		// A second on top of the reset, so that a clock a little behind
 		// GitHub's does not retry before it, which also puts a wait cut to
 		// policy.askedWaitMax over it.
-		return min(max(time.Until(time.Unix(n, 0)), 0), policy.askedWaitMax) + time.Second, true, nil
+		return ask{
+			wait:      min(reset, policy.askedWaitMax) + time.Second,
+			rateLimit: true,
+			why:       fmt.Sprintf("%s, resets in %s", why, reset.Round(time.Second)),
+		}, true, nil
 	}
 
 	if resp.StatusCode == http.StatusTooManyRequests {
-		return policy.rateLimitWait, true, nil
+		return ask{unsaid: true, rateLimit: true, why: "rate limit"}, true, nil
 	}
 
 	bs, err := peekBody(resp)
 	if err != nil {
-		return 0, false, errors.Wrap(err, "peek body")
+		return ask{}, false, errors.Wrap(err, "peek body")
 	}
 	// "API rate limit exceeded for ..." for the primary rate limit and "You
 	// have exceeded a secondary rate limit ..." for the secondary one.
-	if bytes.Contains(bytes.ToLower(bs), []byte("rate limit")) {
-		return policy.rateLimitWait, true, nil
+	switch bs = bytes.ToLower(bs); {
+	case bytes.Contains(bs, []byte("secondary rate limit")):
+		return ask{unsaid: true, rateLimit: true, why: "secondary rate limit"}, true, nil
+	case bytes.Contains(bs, []byte("rate limit")):
+		return ask{unsaid: true, rateLimit: true, why: "rate limit"}, true, nil
+	default:
+		return ask{}, false, nil
 	}
-	return 0, false, nil
 }
 
 // peekBody reads the start of the body and puts it back in front of the rest,

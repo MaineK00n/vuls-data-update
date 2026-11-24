@@ -1,8 +1,11 @@
 package github_test
 
 import (
+	"bytes"
 	"encoding/json/v2"
+	"errors"
 	"fmt"
+	"log/slog"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -230,6 +233,9 @@ func TestCheckScopes(t *testing.T) {
 func TestDo_retry(t *testing.T) {
 	t.Cleanup(github.ShortenRetryWaits(time.Millisecond))
 
+	logger := slog.Default()
+	t.Cleanup(func() { slog.SetDefault(logger) })
+
 	type response struct {
 		status int
 		header http.Header
@@ -251,12 +257,18 @@ func TestDo_retry(t *testing.T) {
 		wantErr  bool
 		// wantErrContains is a part of the error that tells what GitHub said.
 		wantErrContains string
+		// wantRateLimited tells that the error is github.ErrRateLimited.
+		wantRateLimited bool
+		// wantLog is a part of the log of the retries, which tells why a
+		// request is retried.
+		wantLog string
 	}{
 		{
 			name:         "5xx, then success",
 			method:       http.MethodGet,
 			responses:    []response{{status: http.StatusBadGateway}, {status: http.StatusOK}},
 			wantRequests: 2,
+			wantLog:      `reason="502 Bad Gateway"`,
 		},
 		{
 			name:         "5xx until the retries run out",
@@ -289,17 +301,19 @@ func TestDo_retry(t *testing.T) {
 			responses:    []response{{status: http.StatusForbidden, header: http.Header{"Retry-After": []string{"1"}}}, {status: http.StatusOK}},
 			wantRequests: 2,
 			wantWait:     time.Second,
+			wantLog:      `reason="403 Forbidden (retry-after: 1)"`,
 		},
 		{
 			name:   "403 of the primary rate limit, then success",
 			method: http.MethodGet,
 			responses: []response{
-				{status: http.StatusForbidden, header: http.Header{"X-Ratelimit-Remaining": []string{"0"}, "X-Ratelimit-Reset": []string{strconv.FormatInt(time.Now().Add(-time.Hour).Unix(), 10)}}},
+				{status: http.StatusForbidden, header: http.Header{"X-Ratelimit-Remaining": []string{"0"}, "X-Ratelimit-Reset": []string{strconv.FormatInt(time.Now().Add(-time.Hour).Unix(), 10)}, "X-Ratelimit-Resource": []string{"core"}}},
 				{status: http.StatusOK},
 			},
 			wantRequests: 2,
 			// The second on top of the reset.
 			wantWait: time.Second,
+			wantLog:  `reason="403 Forbidden (primary rate limit of core, resets in 0s)"`,
 		},
 		{
 			name:            "primary rate limit that resets later than the limit",
@@ -308,6 +322,7 @@ func TestDo_retry(t *testing.T) {
 			wantRequests:    1,
 			wantErr:         true,
 			wantErrContains: `x-ratelimit-remaining: "0"`,
+			wantRateLimited: true,
 		},
 		{
 			name:            "primary rate limit that resets centuries later",
@@ -316,6 +331,7 @@ func TestDo_retry(t *testing.T) {
 			wantRequests:    1,
 			wantErr:         true,
 			wantErrContains: `x-ratelimit-reset: "99999999999"`,
+			wantRateLimited: true,
 		},
 		{
 			name:   "403 of the secondary rate limit without headers, then success",
@@ -325,6 +341,18 @@ func TestDo_retry(t *testing.T) {
 				{status: http.StatusOK},
 			},
 			wantRequests: 2,
+			wantLog:      `reason="403 Forbidden (secondary rate limit)"`,
+		},
+		{
+			name:         "403 of the secondary rate limit until the retries run out",
+			method:       http.MethodGet,
+			responses:    []response{{status: http.StatusForbidden, body: `{"message":"You have exceeded a secondary rate limit. Please wait a few minutes before you try again."}`}},
+			wantRequests: 5,
+			// The wait doubles with each retry: 1, 2, 4 and 8 ms.
+			wantWait:        15 * time.Millisecond,
+			wantErr:         true,
+			wantErrContains: "secondary rate limit",
+			wantRateLimited: true,
 		},
 		{
 			name:            "403 that is not a rate limit",
@@ -341,6 +369,7 @@ func TestDo_retry(t *testing.T) {
 			wantRequests:    1,
 			wantErr:         true,
 			wantErrContains: `retry-after: "3600"`,
+			wantRateLimited: true,
 		},
 		{
 			name:            "Retry-After too long for a time.Duration",
@@ -349,6 +378,7 @@ func TestDo_retry(t *testing.T) {
 			wantRequests:    1,
 			wantErr:         true,
 			wantErrContains: `retry-after: "10000000000"`,
+			wantRateLimited: true,
 		},
 		{
 			name:         "503 with Retry-After, then success",
@@ -356,6 +386,7 @@ func TestDo_retry(t *testing.T) {
 			responses:    []response{{status: http.StatusServiceUnavailable, header: http.Header{"Retry-After": []string{"1"}}}, {status: http.StatusOK}},
 			wantRequests: 2,
 			wantWait:     time.Second,
+			wantLog:      `reason="503 Service Unavailable (retry-after: 1)"`,
 		},
 		{
 			name:            "503 that asks for a longer wait than the limit",
@@ -383,6 +414,9 @@ func TestDo_retry(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			var log bytes.Buffer
+			slog.SetDefault(slog.New(slog.NewTextHandler(&log, nil)))
+
 			var requests int
 			ts := httptest.NewTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				res := tt.responses[min(requests, len(tt.responses)-1)]
@@ -426,11 +460,47 @@ func TestDo_retry(t *testing.T) {
 			if err != nil && !strings.Contains(err.Error(), tt.wantErrContains) {
 				t.Errorf("Do() error = %v, want it to contain %q", err, tt.wantErrContains)
 			}
+			if got := errors.Is(err, github.ErrRateLimited); got != tt.wantRateLimited {
+				t.Errorf("errors.Is(Do(), ErrRateLimited) = %t, want %t. error: %v", got, tt.wantRateLimited, err)
+			}
+			if !strings.Contains(log.String(), tt.wantLog) {
+				t.Errorf("Do() logged %q, want it to contain %q", log.String(), tt.wantLog)
+			}
 			if requests != tt.wantRequests {
 				t.Errorf("Do() sent %d requests, want %d", requests, tt.wantRequests)
 			}
 			if elapsed := time.Since(start); elapsed < tt.wantWait {
 				t.Errorf("Do() took %s, want at least %s", elapsed, tt.wantWait)
+			}
+		})
+	}
+}
+
+func TestRateLimitBackoff(t *testing.T) {
+	tests := []struct {
+		attemptNum int
+		// The wait is in [wantMin, wantMax].
+		wantMin, wantMax time.Duration
+	}{
+		{attemptNum: 0, wantMin: 1 * time.Minute, wantMax: 2*time.Minute - 1},
+		{attemptNum: 1, wantMin: 2 * time.Minute, wantMax: 3*time.Minute - 1},
+		{attemptNum: 2, wantMin: 4 * time.Minute, wantMax: 5 * time.Minute},
+		{attemptNum: 3, wantMin: 5 * time.Minute, wantMax: 5 * time.Minute},
+		{attemptNum: 100, wantMin: 5 * time.Minute, wantMax: 5 * time.Minute},
+	}
+	for _, tt := range tests {
+		t.Run(fmt.Sprintf("retry %d", tt.attemptNum+1), func(t *testing.T) {
+			waits := make(map[time.Duration]struct{})
+			for range 100 {
+				got := github.RateLimitBackoff(tt.attemptNum)
+				if got < tt.wantMin || got > tt.wantMax {
+					t.Fatalf("RateLimitBackoff(%d) = %s, want in [%s, %s]", tt.attemptNum, got, tt.wantMin, tt.wantMax)
+				}
+				waits[got] = struct{}{}
+			}
+			// Clients refused together do not retry together.
+			if tt.wantMin < tt.wantMax && len(waits) == 1 {
+				t.Errorf("RateLimitBackoff(%d) waited %v every time, want a random part", tt.attemptNum, waits)
 			}
 		})
 	}
