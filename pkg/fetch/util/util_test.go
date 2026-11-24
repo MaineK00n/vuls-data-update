@@ -465,7 +465,7 @@ func TestEnsureWritten(t *testing.T) {
 			},
 		},
 		{
-			// Nothing written passes whatever is required...
+			// Nothing written passes whatever sections are required...
 			name: "empty allowed over required sections",
 			args: args{
 				root: "allow-empty-required",

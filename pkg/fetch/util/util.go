@@ -224,9 +224,10 @@ func (o requireOption) apply(opts *ensureOption) {
 // under root. A directory requires a file anywhere beneath it, and a path that
 // names a file requires that file. A path that is a symbolic link, or goes
 // through one, holds nothing, since only root itself is followed. A path that
-// is absolute or leaves root is an error. There are no patterns: a fetcher
-// that needs every version to hold a section names each one. Like WithIgnore,
-// the option states the whole set, and passing it again replaces it.
+// is empty, is absolute or leaves root is an error whatever root holds, even
+// under WithAllowEmpty. There are no patterns: a fetcher that needs every
+// version to hold a section names each one. Like WithIgnore, the option states
+// the whole set, and passing it again replaces it.
 func WithRequire(paths ...string) EnsureOption {
 	return requireOption(paths)
 }
