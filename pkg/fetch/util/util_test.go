@@ -465,7 +465,7 @@ func TestEnsureWritten(t *testing.T) {
 			},
 		},
 		{
-			// Nothing written passes whatever is required...
+			// Nothing written passes whatever sections are required...
 			name: "empty allowed over required sections",
 			args: args{
 				root: "allow-empty-required",
@@ -482,6 +482,17 @@ func TestEnsureWritten(t *testing.T) {
 				opts: []util.EnsureOption{util.WithAllowEmpty(true), util.WithRequire("weakness", "category", "view")},
 			},
 			entries: []string{"weakness/79.json", "view/1026.json"},
+			wantErr: true,
+		},
+		{
+			// A required path outside root is a mistake in the call, so
+			// allowing nothing written does not let it pass.
+			name: "empty allowed, required path outside root",
+			args: args{
+				root: "allow-empty-outside",
+				opts: []util.EnsureOption{util.WithAllowEmpty(true), util.WithRequire(filepath.Join("..", "outside"))},
+			},
+			entries: []string{".git/", ".git/HEAD"},
 			wantErr: true,
 		},
 		{

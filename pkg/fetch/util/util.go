@@ -224,9 +224,10 @@ func (o requireOption) apply(opts *ensureOption) {
 // under root. A directory requires a file anywhere beneath it, and a path that
 // names a file requires that file. A path that is a symbolic link, or goes
 // through one, holds nothing, since only root itself is followed. A path that
-// is absolute or leaves root is an error. There are no patterns: a fetcher
-// that needs every version to hold a section names each one. Like WithIgnore,
-// the option states the whole set, and passing it again replaces it.
+// is empty, is absolute or leaves root is an error whatever root holds, even
+// under WithAllowEmpty. There are no patterns: a fetcher that needs every
+// version to hold a section names each one. Like WithIgnore, the option states
+// the whole set, and passing it again replaces it.
 func WithRequire(paths ...string) EnsureOption {
 	return requireOption(paths)
 }
@@ -273,6 +274,15 @@ func EnsureWritten(root string, opts ...EnsureOption) error {
 		o.apply(options)
 	}
 
+	// A required path outside root is a mistake in the call, not in what the
+	// fetch wrote, so it is an error before the tree is looked at -- even when
+	// nothing was written and that is allowed.
+	for _, p := range options.requires {
+		if !filepath.IsLocal(p) {
+			return errors.Errorf("unexpected required path. expected: a path under %q, actual: %q", root, p)
+		}
+	}
+
 	switch ok, err := holdsFile(root, ".", options.ignores); {
 	case err != nil:
 		return errors.Wrapf(err, "check %s", root)
@@ -284,10 +294,6 @@ func EnsureWritten(root string, opts ...EnsureOption) error {
 
 	missing := make([]string, 0, len(options.requires))
 	for _, p := range options.requires {
-		if !filepath.IsLocal(p) {
-			return errors.Errorf("unexpected required path. expected: a path under %q, actual: %q", root, p)
-		}
-
 		switch ok, err := holdsFile(root, p, nil); {
 		case err != nil:
 			return errors.Wrapf(err, "check %s", filepath.Join(root, p))
