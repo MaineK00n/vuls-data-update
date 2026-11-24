@@ -157,6 +157,16 @@ func Fetch(opts ...Option) error {
 		return errors.Wrap(err, "convert")
 	}
 
+	// Every page is stored and read on every run, so each is required by name:
+	// the other two being there would hide one gone missing.
+	requires := make([]string, 0, 2*len(pages))
+	for _, p := range pages {
+		requires = append(requires, filepath.Join("origin", fmt.Sprintf("%s.html", p.name)), filepath.Join("raw", fmt.Sprintf("%s.json", p.name)))
+	}
+	if err := util.EnsureWritten(options.dir, util.WithRequire(requires...)); err != nil {
+		return errors.Wrapf(err, "ensure written %s", options.dir)
+	}
+
 	return nil
 }
 
