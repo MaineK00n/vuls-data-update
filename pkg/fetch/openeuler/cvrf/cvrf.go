@@ -20,6 +20,22 @@ import (
 
 const baseURL = "https://repo.openeuler.org/security/data/"
 
+// missingFiles lists the files that upstream's index.txt names but that are
+// answered 404 Not Found. Each is skipped. It is a stopgap until upstream
+// publishes the file or drops it from the index: a listed file that is served
+// fails the fetch, so the entry is removed rather than left behind.
+//
+// Every fetch since 2026-11-19 has stopped at a 404 for one of these six, which
+// cvrf/index.txt still named on 2026-11-25.
+var missingFiles = map[string]struct{}{
+	"https://repo.openeuler.org/security/data/cvrf/2026/cvrf-openEuler-SA-2026-4863.xml": {},
+	"https://repo.openeuler.org/security/data/cvrf/2026/cvrf-openEuler-SA-2026-4864.xml": {},
+	"https://repo.openeuler.org/security/data/cvrf/2026/cvrf-openEuler-SA-2026-4865.xml": {},
+	"https://repo.openeuler.org/security/data/cvrf/2026/cvrf-openEuler-SA-2026-4866.xml": {},
+	"https://repo.openeuler.org/security/data/cvrf/2026/cvrf-openEuler-SA-2026-4999.xml": {},
+	"https://repo.openeuler.org/security/data/cvrf/2026/cvrf-openEuler-SA-2026-5000.xml": {},
+}
+
 type options struct {
 	baseURL     string
 	dir         string
@@ -152,6 +168,17 @@ func (o options) fetchCVRF(client *utilhttp.Client, kind string, is []string) er
 
 	if err := client.PipelineGet(us, o.concurrency, o.wait, false, func(resp *http.Response) error {
 		defer resp.Body.Close()
+
+		if _, ok := missingFiles[resp.Request.URL.String()]; ok {
+			switch resp.StatusCode {
+			case http.StatusNotFound:
+				_, _ = io.Copy(io.Discard, resp.Body)
+				return nil
+			case http.StatusOK:
+				_, _ = io.Copy(io.Discard, resp.Body)
+				return errors.Errorf("%s is served now; remove it from missingFiles", resp.Request.URL)
+			}
+		}
 
 		if resp.StatusCode != http.StatusOK {
 			_, _ = io.Copy(io.Discard, resp.Body)
