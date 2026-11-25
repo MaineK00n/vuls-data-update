@@ -443,10 +443,13 @@ func (opts options) walkIndexOf() (ovals, error) {
 				return
 			}
 
-			switch r.Find("th").First().Text() {
+			// A row gives its type, then its release and file name, each in a td.
+			first := r.ChildrenFiltered("td").First()
+			rest := first.NextAllFiltered("td")
+			switch first.Text() {
 			case "CVE":
 				var release string
-				r.Find("td").EachWithBreak(func(itd int, d *goquery.Selection) bool {
+				rest.EachWithBreak(func(itd int, d *goquery.Selection) bool {
 					switch itd {
 					case 0:
 						lhs, rhs, _ := strings.Cut(d.Text(), "/")
@@ -498,7 +501,7 @@ func (opts options) walkIndexOf() (ovals, error) {
 				})
 			case "PKG":
 				var release string
-				r.Find("td").EachWithBreak(func(itd int, d *goquery.Selection) bool {
+				rest.EachWithBreak(func(itd int, d *goquery.Selection) bool {
 					switch itd {
 					case 0:
 						lhs, rhs, _ := strings.Cut(d.Text(), "/")
@@ -550,7 +553,7 @@ func (opts options) walkIndexOf() (ovals, error) {
 				})
 			case "USN":
 				var release string
-				r.Find("td").EachWithBreak(func(itd int, d *goquery.Selection) bool {
+				rest.EachWithBreak(func(itd int, d *goquery.Selection) bool {
 					switch itd {
 					case 0:
 						release = d.Text()
