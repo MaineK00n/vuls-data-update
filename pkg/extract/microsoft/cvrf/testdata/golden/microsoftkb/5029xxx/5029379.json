@@ -1,0 +1,18 @@
+{
+	"kb_id": "5029379",
+	"url": "https://support.microsoft.com/help/5029379",
+	"products": [
+		"Microsoft SQL Server 2022 for x64-based Systems (GDR)"
+	],
+	"supersedes": [
+		{
+			"kb_id": "5021522"
+		}
+	],
+	"data_source": {
+		"id": "microsoft-cvrf",
+		"raws": [
+			"fixtures/2023-Oct/2023/CVE-2023-36785.json"
+		]
+	}
+}

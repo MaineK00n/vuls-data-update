@@ -1,0 +1,18 @@
+{
+	"kb_id": "5029377",
+	"url": "https://support.microsoft.com/help/5029377",
+	"products": [
+		"Microsoft SQL Server 2019 for x64-based Systems (GDR)"
+	],
+	"supersedes": [
+		{
+			"kb_id": "5021125"
+		}
+	],
+	"data_source": {
+		"id": "microsoft-cvrf",
+		"raws": [
+			"fixtures/2023-Oct/2023/CVE-2023-36785.json"
+		]
+	}
+}

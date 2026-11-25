@@ -2,12 +2,14 @@
 	"kb_id": "5130036",
 	"url": "https://support.microsoft.com/help/5130036",
 	"products": [
-		".NET 10.0 installed on Windows"
+		".NET 10.0 installed on Windows",
+		".NET 10.0 runtime installed on Windows"
 	],
 	"data_source": {
 		"id": "microsoft-cvrf",
 		"raws": [
-			"fixtures/2026-Oct/2026/CVE-2026-70161.json"
+			"fixtures/2026-Oct/2026/CVE-2026-70161.json",
+			"fixtures/2026-Oct/2026/CVE-2026-70197.json"
 		]
 	}
 }
