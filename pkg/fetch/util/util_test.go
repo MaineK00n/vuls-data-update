@@ -332,11 +332,12 @@ func TestEnsureWritten(t *testing.T) {
 			wantErr: true,
 		},
 		{
-			// root is cleaned as every write under it is: missing/../out is
-			// out, though missing does not exist.
+			// root is cleaned as every write under it is, for the required
+			// paths too: missing/../out is out, though missing does not exist.
 			name: "root that is not clean",
 			args: args{
 				root: "missing/../out",
+				opts: []util.EnsureOption{util.WithRequire("2024")},
 			},
 			entries: []string{".git/", ".git/HEAD", "2024/CVE-2024-0001.json"},
 		},
@@ -347,6 +348,19 @@ func TestEnsureWritten(t *testing.T) {
 			args: args{
 				root: "link/../out",
 			},
+			through: "link",
+			outside: []string{"link/", "out/2024/CVE-2024-0001.json"},
+			wantErr: true,
+		},
+		{
+			// Resolved as given, link/../out/2024 is outside/out/2024, which
+			// holds a file. Cleaned, it is out/2024, which was not written.
+			name: "required path under a root that is not clean, through a link",
+			args: args{
+				root: "link/../out",
+				opts: []util.EnsureOption{util.WithRequire("2024")},
+			},
+			entries: []string{".git/", ".git/HEAD", "2025/CVE-2025-0001.json"},
 			through: "link",
 			outside: []string{"link/", "out/2024/CVE-2024-0001.json"},
 			wantErr: true,
