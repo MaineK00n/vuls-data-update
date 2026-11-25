@@ -501,7 +501,9 @@ func TestPullWithBrokenGit(t *testing.T) {
 
 // TestMissing checks which targets missing takes to name nothing in the
 // fixture: only those that git rev-parse says it cannot resolve, and not when
-// git cannot tell.
+// git cannot tell. The fixture gets a second commit, whose hash begins with
+// 9d3d as that of its commit does, so that 9d3d is an abbreviated hash that
+// two commits begin with.
 func TestMissing(t *testing.T) {
 	f, err := os.Open(filepath.Join("testdata", "fixtures", "vuls-data-raw-test.tar.zst"))
 	if err != nil {
@@ -512,6 +514,14 @@ func TestMissing(t *testing.T) {
 	dir := filepath.Join(t.TempDir(), "vuls-data-raw-test")
 	if err := util.ExtractDotgitTarZst(f, dir); err != nil {
 		t.Fatalf("extract fixture. err: %v", err)
+	}
+
+	bs, err := util.GitWithStdin(strings.NewReader("tree 403164dbcb94dfb2b004ce50fc619c1351bbd37e\nauthor t <t@example.com> 0 +0000\ncommitter t <t@example.com> 0 +0000\n\nambiguous 132403\n"), "-C", dir, "hash-object", "-t", "commit", "-w", "--stdin")
+	if err != nil {
+		t.Fatalf("write a commit. err: %v", err)
+	}
+	if got, want := string(bs), "9d3d6f888b6e6ad04b25d743994cef71313b26ad\n"; got != want {
+		t.Fatalf("hash of the commit written. expected: %q, actual: %q", want, got)
 	}
 
 	tests := []struct {
@@ -548,6 +558,42 @@ func TestMissing(t *testing.T) {
 			// There, though not a commit.
 			name:   "a tree",
 			target: "v0.0.1^{tree}",
+		},
+		{
+			// rev-parse exits with 1, as it cannot tell which of the two
+			// commits 9d3d names.
+			name:   "an abbreviated hash that two commits begin with",
+			target: "9d3d",
+		},
+		{
+			name:   "an abbreviated hash that two commits begin with, in capitals",
+			target: "9D3D",
+		},
+		{
+			name:   "an abbreviated hash that two commits begin with, followed by ~1",
+			target: "9d3d~1",
+		},
+		{
+			name:   "an abbreviated hash that two commits begin with, followed by ^{tree}",
+			target: "9d3d^{tree}",
+		},
+		{
+			name:   "describe output with an abbreviated hash that two commits begin with",
+			target: "v0.0.1-1-g9d3d",
+		},
+		{
+			// Only the commit of the fixture begins with 9d3d5, and it has
+			// no parent.
+			name:   "the parent of an abbreviated hash that one commit begins with, which has none",
+			target: "9d3d5~1",
+			want:   true,
+		},
+		{
+			// A commit pinned by an abbreviated hash before the history was
+			// truncated.
+			name:   "an abbreviated hash that no object begins with",
+			target: "ffff",
+			want:   true,
 		},
 		{
 			// git exits with 128 on a config value it cannot read, as it

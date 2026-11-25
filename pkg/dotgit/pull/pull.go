@@ -68,8 +68,9 @@ func (c checkoutOption) apply(opts *options) {
 // nothing in the pulled dotgit, such as a commit pinned before vuls-data-db
 // truncated the history, errors.Is matches the error with
 // contains.ErrCommitNotFound. It does not when Pull cannot tell: for a name
-// that begins with "-", or holds "..." or ":", or when git cannot be run or
-// fails on the repository.
+// that begins with "-", or holds "..." or ":", for one with an abbreviated
+// hash that more than one object begins with, such as 01d6 or 01d6~1, or when
+// git cannot be run or fails on the repository.
 func WithCheckout(checkout string) Option {
 	return checkoutOption(checkout)
 }
@@ -166,9 +167,11 @@ func Pull(repository string, opts ...Option) error {
 					// about one with a ":", which no branch or tag has, as it
 					// would read the ^{object} it is asked with as part of the
 					// path in <rev>:<path>, or of the text in :/<text>. For
-					// those, and when rev-parse cannot tell, as when git
-					// cannot be run or fails on the repository, the error of
-					// switch, which says how it failed, is returned as it is.
+					// those, and when rev-parse cannot tell, as for an
+					// abbreviated hash that more than one object begins with,
+					// or when git cannot be run or fails on the repository,
+					// the error of switch, which says how it failed, is
+					// returned as it is.
 					if !strings.HasPrefix(options.checkout, "-") && !strings.Contains(options.checkout, "...") && !strings.Contains(options.checkout, ":") && missing(filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference), options.checkout) {
 						return notInRepository(errors.Wrapf(err, "switch to %s", options.checkout), repository, options.checkout)
 					}
@@ -311,12 +314,42 @@ func (e commitNotFound) Format(s fmt.State, verb rune) {
 // --quiet says so by exiting with 1, and ^{object} makes it look a full hash
 // up, which it prints as it is otherwise. It exits with 128 when it cannot
 // tell, as when git does not trust the repository or cannot read its config,
-// and there is no exit status when git cannot be run. target holds no ":",
-// which would make rev-parse read ^{object} as part of a path.
+// and there is no exit status when git cannot be run. It exits with 1 as well
+// for an abbreviated hash that more than one object begins with, so for a
+// target with an abbreviated hash in it, git rev-parse --disambiguate lists
+// the objects that begin with it, and two or more make a target that git
+// cannot tell about. target holds no ":", which would make rev-parse read
+// ^{object} as part of a path.
 func missing(dir, target string) bool {
 	_, err := util.Git("-C", dir, "rev-parse", "--verify", "--quiet", "--end-of-options", fmt.Sprintf("%s^{object}", target))
-	ee, ok := stderrors.AsType[*exec.ExitError](err)
-	return ok && ee.ExitCode() == 1
+	if ee, ok := stderrors.AsType[*exec.ExitError](err); !ok || ee.ExitCode() != 1 {
+		return false
+	}
+
+	abbrev := abbreviation(target)
+	if abbrev == "" {
+		return true
+	}
+	bs, err := util.Git("-C", dir, "rev-parse", fmt.Sprintf("--disambiguate=%s", abbrev))
+	return err == nil && strings.Count(string(bs), "\n") < 2
+}
+
+// abbreviation returns the hash, abbreviated or not, that git can read in
+// target, or "" for none: 4 or more hex digits that make up the revision
+// before the first "~" or "^", or that follow its last "-g", as in describe
+// output such as v1.0-1-g01d6.
+func abbreviation(target string) string {
+	rev := target
+	if i := strings.IndexAny(rev, "~^"); i >= 0 {
+		rev = rev[:i]
+	}
+	if i := strings.LastIndex(rev, "-g"); i >= 0 {
+		rev = rev[i+len("-g"):]
+	}
+	if len(rev) < 4 || strings.Trim(rev, "0123456789abcdefABCDEF") != "" {
+		return ""
+	}
+	return rev
 }
 
 // pullLayer fetches the layer and extracts it into dir.
