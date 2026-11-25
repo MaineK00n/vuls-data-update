@@ -34,7 +34,7 @@ const dataURL = "https://github.com/cisagov/CSAF/archive/refs/heads/develop.tar.
 // OT/white/2026/icsa-26-288-02.json (ICSA-26-288-02) names "organization" twice
 // in its first acknowledgment, "Tokyo University" and then "Science and GMO
 // Flatt Security", so what is written carries only the second, a fragment of
-// the name, until upstream fixes it.
+// the name, until upstream fixes it: https://github.com/cisagov/CSAF/issues/524
 var duplicateNames = map[string]struct{}{
 	filepath.Join("OT", "white", "2026", "icsa-26-288-02.json"): {},
 }
