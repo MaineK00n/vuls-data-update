@@ -94,8 +94,15 @@ type uekRoot struct {
 
 type uekEntry struct {
 	series string
-	fixed  string // the greatest fixed version of the kernel-uek* packages
+	fixed  map[string]string // architecture -> the greatest fixed version of the kernel-uek* packages
 	cves   []vulnerabilityContentTypes.VulnerabilityID
+}
+
+// uekPlan is what one advisory gets for one fallback series in one
+// ecosystem: the CVEs to tag and the architectures to match.
+type uekPlan struct {
+	cves  map[vulnerabilityContentTypes.VulnerabilityID]struct{}
+	archs map[string]struct{}
 }
 
 func newUEKIndex() *uekIndex {
@@ -111,7 +118,7 @@ func (x *uekIndex) add(path string, data dataTypes.Data) error {
 	}
 
 	for _, d := range data.Detections {
-		var e uekEntry
+		e := uekEntry{fixed: make(map[string]string)}
 		for _, cond := range d.Conditions {
 			for _, cn := range cond.Criteria.Criterions {
 				if cn.Type != criterionTypes.CriterionTypeVersion || cn.Version == nil || cn.Version.Package.Binary == nil || cn.Version.Affected == nil || !isUEKKernelPackage(cn.Version.Package.Binary.Name) {
@@ -124,16 +131,19 @@ func (x *uekIndex) add(path string, data dataTypes.Data) error {
 					}
 					switch {
 					case e.series == "":
-						e.series, e.fixed = s, f
+						e.series = s
 					case e.series != s:
 						return errors.Errorf("unexpected UEK series in one advisory. ecosystem: %s, series: %q and %q", d.Ecosystem, e.series, s)
-					case rpm.NewVersion(f).Compare(rpm.NewVersion(e.fixed)) > 0:
-						e.fixed = f
+					}
+					for _, a := range cn.Version.Package.Binary.Architectures {
+						if cur, ok := e.fixed[a]; !ok || rpm.NewVersion(f).Compare(rpm.NewVersion(cur)) > 0 {
+							e.fixed[a] = f
+						}
 					}
 				}
 			}
 		}
-		if e.series == "" {
+		if e.series == "" || len(e.fixed) == 0 {
 			continue
 		}
 
@@ -155,12 +165,22 @@ func (x *uekIndex) add(path string, data dataTypes.Data) error {
 	return nil
 }
 
-// applyFallback adds, per Oracle Linux release and CVE, a fallback condition
-// for every UEK series that has no ELSA for the CVE and is older than the
-// newest series that has one. The condition is put in the advisory with the
-// greatest fixed version for the CVE and carries that version, and only the
-// CVEs it is for get its tag in their segments. A series newer than that
+// applyFallback adds fallback conditions per Oracle Linux release and CVE.
+// For every architecture the CVE's advisories list kernel-uek* packages for,
+// the advisory with the greatest fixed version on it is chosen, and every UEK
+// series that has no ELSA for the CVE and is older than that advisory's
+// series gets, in that advisory, a condition matching its kernel-uek*
+// packages on the architecture with their fixed versions. Choosing per
+// architecture keeps an architecture a newer series dropped (e.g. i686)
+// covered by the advisory that still has it. Only the CVEs a condition is for
+// get its tag in their segments. A series newer than the greatest fixed
 // version needs nothing, since its builds are never less than it.
+//
+// A condition is shared by all the CVEs tagged in its advisory, so an
+// architecture added for one CVE also matches for another whose greatest
+// fixed version on that architecture is in a different advisory; the CVE is
+// then matched by both, which happens only where a newer series dropped an
+// architecture an older one still has.
 func (x *uekIndex) applyFallback() error {
 	series := make(map[ecosystemTypes.Ecosystem]map[string]struct{})
 	byCVE := make(map[ecosystemTypes.Ecosystem]map[vulnerabilityContentTypes.VulnerabilityID][]int)
@@ -177,27 +197,18 @@ func (x *uekIndex) applyFallback() error {
 		}
 	}
 
-	// root index -> ecosystem -> fallback series -> CVEs
-	plans := make(map[int]map[ecosystemTypes.Ecosystem]map[string][]vulnerabilityContentTypes.VulnerabilityID)
+	// root index -> ecosystem -> fallback series -> plan
+	plans := make(map[int]map[ecosystemTypes.Ecosystem]map[string]*uekPlan)
 	raws := make(map[int][]string)
 	for eco, m := range byCVE {
 		for cve, is := range m {
 			has := make(map[string]struct{}, len(is))
-			best := is[0]
 			for _, i := range is {
 				has[x.roots[i].ecosystems[eco].series] = struct{}{}
-				if x.compare(eco, i, best) > 0 {
-					best = i
-				}
 			}
-
-			bestSeries := x.roots[best].ecosystems[eco].series
 			var targets []string
 			for s := range series[eco] {
-				if _, ok := has[s]; ok {
-					continue
-				}
-				if rpm.NewVersion(s).Compare(rpm.NewVersion(bestSeries)) < 0 {
+				if _, ok := has[s]; !ok {
 					targets = append(targets, s)
 				}
 			}
@@ -205,18 +216,41 @@ func (x *uekIndex) applyFallback() error {
 				continue
 			}
 
-			if plans[best] == nil {
-				plans[best] = make(map[ecosystemTypes.Ecosystem]map[string][]vulnerabilityContentTypes.VulnerabilityID)
-			}
-			if plans[best][eco] == nil {
-				plans[best][eco] = make(map[string][]vulnerabilityContentTypes.VulnerabilityID)
-			}
-			for _, t := range targets {
-				plans[best][eco][t] = append(plans[best][eco][t], cve)
-			}
+			best := make(map[string]int) // architecture -> root index
 			for _, i := range is {
-				if i != best {
-					raws[best] = append(raws[best], x.roots[i].raws...)
+				for a := range x.roots[i].ecosystems[eco].fixed {
+					if j, ok := best[a]; !ok || x.compare(eco, a, i, j) > 0 {
+						best[a] = i
+					}
+				}
+			}
+
+			chosen := make(map[int]struct{})
+			for a, i := range best {
+				bs := rpm.NewVersion(x.roots[i].ecosystems[eco].series)
+				for _, t := range targets {
+					if rpm.NewVersion(t).Compare(bs) >= 0 {
+						continue
+					}
+					if plans[i] == nil {
+						plans[i] = make(map[ecosystemTypes.Ecosystem]map[string]*uekPlan)
+					}
+					if plans[i][eco] == nil {
+						plans[i][eco] = make(map[string]*uekPlan)
+					}
+					if plans[i][eco][t] == nil {
+						plans[i][eco][t] = &uekPlan{cves: make(map[vulnerabilityContentTypes.VulnerabilityID]struct{}), archs: make(map[string]struct{})}
+					}
+					plans[i][eco][t].cves[cve] = struct{}{}
+					plans[i][eco][t].archs[a] = struct{}{}
+					chosen[i] = struct{}{}
+				}
+			}
+			for c := range chosen {
+				for _, i := range is {
+					if i != c {
+						raws[c] = append(raws[c], x.roots[i].raws...)
+					}
 				}
 			}
 		}
@@ -230,18 +264,18 @@ func (x *uekIndex) applyFallback() error {
 	return nil
 }
 
-// compare orders two advisories for a CVE in an ecosystem by series, then by
-// fixed version, then by ID.
-func (x *uekIndex) compare(eco ecosystemTypes.Ecosystem, i, j int) int {
+// compare orders two advisories for a CVE on an architecture in an ecosystem
+// by series, then by fixed version, then by ID.
+func (x *uekIndex) compare(eco ecosystemTypes.Ecosystem, arch string, i, j int) int {
 	a, b := x.roots[i].ecosystems[eco], x.roots[j].ecosystems[eco]
 	return cmp.Or(
 		rpm.NewVersion(a.series).Compare(rpm.NewVersion(b.series)),
-		rpm.NewVersion(a.fixed).Compare(rpm.NewVersion(b.fixed)),
+		rpm.NewVersion(a.fixed[arch]).Compare(rpm.NewVersion(b.fixed[arch])),
 		cmp.Compare(x.roots[i].id, x.roots[j].id),
 	)
 }
 
-func (r uekRoot) rewrite(plan map[ecosystemTypes.Ecosystem]map[string][]vulnerabilityContentTypes.VulnerabilityID, raws []string) error {
+func (r uekRoot) rewrite(plan map[ecosystemTypes.Ecosystem]map[string]*uekPlan, raws []string) error {
 	data, err := func() (dataTypes.Data, error) {
 		f, err := os.Open(r.path)
 		if err != nil {
@@ -265,8 +299,8 @@ func (r uekRoot) rewrite(plan map[ecosystemTypes.Ecosystem]map[string][]vulnerab
 			return errors.Errorf("detection not found. ecosystem: %s", eco)
 		}
 
-		for target, cves := range m {
-			cns := r.fallbackCriterions(data.Detections[di].Conditions, r.ecosystems[eco].series, target)
+		for target, p := range m {
+			cns := r.fallbackCriterions(data.Detections[di].Conditions, r.ecosystems[eco].series, target, p.archs)
 			if len(cns) == 0 {
 				return errors.Errorf("no kernel-uek* criterion of series %s found. ecosystem: %s", r.ecosystems[eco].series, eco)
 			}
@@ -282,7 +316,7 @@ func (r uekRoot) rewrite(plan map[ecosystemTypes.Ecosystem]map[string][]vulnerab
 			})
 
 			for vi := range data.Vulnerabilities {
-				if slices.Contains(cves, data.Vulnerabilities[vi].Content.ID) {
+				if _, ok := p.cves[data.Vulnerabilities[vi].Content.ID]; ok {
 					data.Vulnerabilities[vi].Segments = append(data.Vulnerabilities[vi].Segments, seg)
 				}
 			}
@@ -303,9 +337,10 @@ func (r uekRoot) rewrite(plan map[ecosystemTypes.Ecosystem]map[string][]vulnerab
 }
 
 // fallbackCriterions copies the kernel-uek* criterions of series out of the
-// untagged conditions, matching the builds of the target series whatever
-// their release, with the fixed version left as is.
-func (r uekRoot) fallbackCriterions(conds []conditionTypes.Condition, series, target string) []criterionTypes.Criterion {
+// untagged conditions, narrowed to the given architectures,
+// matching the builds of the target series whatever their release, with the
+// fixed version left as is.
+func (r uekRoot) fallbackCriterions(conds []conditionTypes.Condition, series, target string, archs map[string]struct{}) []criterionTypes.Criterion {
 	var cns []criterionTypes.Criterion
 	for _, cond := range conds {
 		if cond.Tag != "" {
@@ -322,9 +357,19 @@ func (r uekRoot) fallbackCriterions(conds []conditionTypes.Condition, series, ta
 				continue
 			}
 
+			var as []string
+			for _, a := range cn.Version.Package.Binary.Architectures {
+				if _, ok := archs[a]; ok {
+					as = append(as, a)
+				}
+			}
+			if len(as) == 0 {
+				continue
+			}
+
 			vc := *cn.Version
 			b := *vc.Package.Binary
-			b.Architectures = slices.Clone(b.Architectures)
+			b.Architectures = as
 			vc.Package.Binary = &b
 			vc.Affected = &affectedTypes.Affected{
 				Type:  rangeTypes.RangeTypeRPMVersionOnly,

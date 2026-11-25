@@ -1,7 +1,7 @@
 {
 	"id": "oval:com.oracle.elsa:tst:202590002008",
 	"version": "501",
-	"comment": "Oracle Linux arch is x86_64",
+	"comment": "Oracle Linux 10 is installed",
 	"check": "at least one",
 	"xmlns": "http://oval.mitre.org/XMLSchema/oval-definitions-5#linux",
 	"object": {

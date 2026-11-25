@@ -3,7 +3,7 @@
 	"id": "oval:com.oracle.elsa:ste:202590002002",
 	"attr_version": "501",
 	"arch": {
-		"text": "x86_64",
+		"text": "aarch64",
 		"operation": "pattern match"
 	}
 }
