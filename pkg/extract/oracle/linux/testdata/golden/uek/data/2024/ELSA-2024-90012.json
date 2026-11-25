@@ -191,10 +191,11 @@
 										}
 									},
 									"affected": {
-										"type": "rpm-version-only",
+										"type": "rpm",
 										"range": [
 											{
-												"eq": "4.1.12"
+												"lt": "0:4.1.12.0-0",
+												"ge": "0:4.1.12-0"
 											}
 										],
 										"fixed": [
@@ -228,10 +229,11 @@
 										}
 									},
 									"affected": {
-										"type": "rpm-version-only",
+										"type": "rpm",
 										"range": [
 											{
-												"eq": "4.14.35"
+												"lt": "0:4.14.35.0-0",
+												"ge": "0:4.14.35-0"
 											}
 										],
 										"fixed": [

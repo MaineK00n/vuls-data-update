@@ -60,6 +60,16 @@ func uekSeries(v string) (string, bool) {
 	return rv.Version(), true
 }
 
+// seriesBounds returns the bounds every build of a UEK series lies in,
+// whatever its release: [<epoch>:<series>-0, <epoch>:<series>.0-0), e.g.
+// [0:5.15.0-0, 0:5.15.0.0-0). rpm compares the version before the release,
+// and of two versions equal in their common components the one with more
+// components is the greater, so 5.15.0-<any release> < 5.15.0.0-0 < 5.15.1,
+// 6.12.0.
+func seriesBounds(epoch int, series string) (lower, upper string) {
+	return fmt.Sprintf("%d:%s-0", epoch, series), fmt.Sprintf("%d:%s.0-0", epoch, series)
+}
+
 // fixedRange returns the affected range for a fixed version. For a UEK build
 // the range starts at the first build of its series, e.g.
 // [0:5.15.0-0, 0:5.15.0-305.176.4.el9uek).
@@ -69,8 +79,9 @@ func fixedRange(fixed string) rangeTypes.Range {
 		return rangeTypes.Range{LessThan: fixed}
 	}
 	rv := rpm.NewVersion(fixed)
+	lower, _ := seriesBounds(rv.Epoch(), s)
 	return rangeTypes.Range{
-		GreaterEqual: fmt.Sprintf("%d:%s-0", rv.Epoch(), s),
+		GreaterEqual: lower,
 		LessThan:     fixed,
 	}
 }
@@ -338,8 +349,9 @@ func (r uekRoot) rewrite(plan map[ecosystemTypes.Ecosystem]map[string]*uekPlan, 
 
 // fallbackCriterions copies the kernel-uek* criterions of series out of the
 // untagged conditions, narrowed to the given architectures,
-// matching the builds of the target series whatever their release, with the
-// fixed version left as is.
+// matching the builds of the target series whatever their release (see
+// seriesBounds), with the fixed version left as is. The range stays of type
+// rpm, the type the fixed version is in.
 func (r uekRoot) fallbackCriterions(conds []conditionTypes.Condition, series, target string, archs map[string]struct{}) []criterionTypes.Criterion {
 	var cns []criterionTypes.Criterion
 	for _, cond := range conds {
@@ -350,10 +362,11 @@ func (r uekRoot) fallbackCriterions(conds []conditionTypes.Condition, series, ta
 			if cn.Type != criterionTypes.CriterionTypeVersion || cn.Version == nil || cn.Version.Package.Binary == nil || cn.Version.Affected == nil || !isUEKKernelPackage(cn.Version.Package.Binary.Name) {
 				continue
 			}
-			if !slices.ContainsFunc(cn.Version.Affected.Fixed, func(f string) bool {
+			fi := slices.IndexFunc(cn.Version.Affected.Fixed, func(f string) bool {
 				s, ok := uekSeries(f)
 				return ok && s == series
-			}) {
+			})
+			if fi < 0 {
 				continue
 			}
 
@@ -371,9 +384,11 @@ func (r uekRoot) fallbackCriterions(conds []conditionTypes.Condition, series, ta
 			b := *vc.Package.Binary
 			b.Architectures = as
 			vc.Package.Binary = &b
+			rv := rpm.NewVersion(cn.Version.Affected.Fixed[fi])
+			lower, upper := seriesBounds(rv.Epoch(), target)
 			vc.Affected = &affectedTypes.Affected{
-				Type:  rangeTypes.RangeTypeRPMVersionOnly,
-				Range: []rangeTypes.Range{{Equal: target}},
+				Type:  rangeTypes.RangeTypeRPM,
+				Range: []rangeTypes.Range{{GreaterEqual: lower, LessThan: upper}},
 				Fixed: slices.Clone(cn.Version.Affected.Fixed),
 			}
 			cns = append(cns, criterionTypes.Criterion{

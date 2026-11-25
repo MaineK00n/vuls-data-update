@@ -174,10 +174,11 @@
 										}
 									},
 									"affected": {
-										"type": "rpm-version-only",
+										"type": "rpm",
 										"range": [
 											{
-												"eq": "5.15.0"
+												"lt": "0:5.15.0.0-0",
+												"ge": "0:5.15.0-0"
 											}
 										],
 										"fixed": [
@@ -203,10 +204,11 @@
 										}
 									},
 									"affected": {
-										"type": "rpm-version-only",
+										"type": "rpm",
 										"range": [
 											{
-												"eq": "5.15.0"
+												"lt": "0:5.15.0.0-0",
+												"ge": "0:5.15.0-0"
 											}
 										],
 										"fixed": [
