@@ -443,11 +443,9 @@ func (opts options) walkIndexOf() (ovals, error) {
 				return
 			}
 
-			// A row is its type, then its release and file name. The type was
-			// a th until the index made it a td, so a row is read cell by cell,
-			// whichever each cell is.
-			first := r.ChildrenFiltered("th, td").First()
-			rest := first.NextAllFiltered("th, td")
+			// A row gives its type, then its release and file name, each in a td.
+			first := r.ChildrenFiltered("td").First()
+			rest := first.NextAllFiltered("td")
 			switch first.Text() {
 			case "CVE":
 				var release string
