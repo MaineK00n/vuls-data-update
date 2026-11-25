@@ -1,0 +1,13 @@
+{
+	"id": "oval:com.oracle.elsa:tst:202590020005",
+	"version": "501",
+	"comment": "bpftool is earlier than 0:4.18.0-553.40.1.el8_10",
+	"check": "at least one",
+	"xmlns": "http://oval.mitre.org/XMLSchema/oval-definitions-5#linux",
+	"object": {
+		"object_ref": "oval:com.oracle.elsa:obj:202590020003"
+	},
+	"state": {
+		"state_ref": "oval:com.oracle.elsa:ste:202590020005"
+	}
+}
