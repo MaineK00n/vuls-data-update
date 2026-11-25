@@ -279,15 +279,15 @@ func (opts options) crawl(client *utilhttp.Client, uids []string) ([]string, []s
 //
 // So the searches left unanswered are not asked again at once. The fetch goes
 // quiet for searchWaitMin, then asks one of them on its own, and asks the rest
-// only once that one is answered. Each pause is twice the last, up to
-// searchWaitMax, and there are at most searchRetry of them. The log says what
+// only once that one is answered. Each pause is twice the last, none is longer
+// than searchWaitMax, and there are at most searchRetry of them. The log says what
 // each pass and each probe got answered, which is what tells how long the
 // catalog's window is.
 func (opts options) search(client *utilhttp.Client, queries []string) ([]string, error) {
 	slog.Info("Search queries", slog.Int("count", len(queries)))
 
 	var uids, missed, silent []string
-	remaining, wait, retries := queries, opts.searchWaitMin, 0
+	remaining, wait, retries := queries, min(opts.searchWaitMin, opts.searchWaitMax), 0
 	for pass := 0; len(remaining) > 0; pass++ {
 		us, miss, s, err := opts.searchOnce(client, remaining)
 		if err != nil {

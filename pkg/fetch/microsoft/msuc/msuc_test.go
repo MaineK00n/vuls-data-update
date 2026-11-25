@@ -22,7 +22,11 @@ import (
 
 func TestFetch(t *testing.T) {
 	tests := []struct {
-		name    string
+		name string
+		// fixture names the fixture tree, where a case reads another's.
+		fixture string
+		// opts are passed after the test's own, so they override them.
+		opts    []msuc.Option
 		queries []string
 		// unanswered is, by query, how many times its search is answered with
 		// the page shell and nothing in it, as a throttled catalog answers,
@@ -143,6 +147,20 @@ func TestFetch(t *testing.T) {
 			},
 		},
 		{
+			// No pause is longer than searchWaitMax, the first one included,
+			// even where searchWaitMin is set above it.
+			name:         "throttled-wait-max",
+			fixture:      "throttled",
+			opts:         []msuc.Option{msuc.WithSearchWaitMin(4 * time.Millisecond), msuc.WithSearchWaitMax(2 * time.Millisecond)},
+			queries:      []string{"KB5025239"},
+			unanswered:   map[string]int{"KB5025239": 1},
+			wantSearches: map[string]int{"KB5025239": 2},
+			wantLogs: []string{
+				`msg="search queries were not answered; pausing before asking one of them again" unanswered=1 wait=2ms`,
+				`msg="Search probe" query=KB5025239 answered=true`,
+			},
+		},
+		{
 			// One unanswered search is enough, even where others landed: a
 			// throttled run that still finds something would otherwise publish
 			// a result short by however much it was not told about.
@@ -163,6 +181,11 @@ func TestFetch(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			fixture := tt.name
+			if tt.fixture != "" {
+				fixture = tt.fixture
+			}
+
 			var mu sync.Mutex
 			searched := make(map[string]int)
 			ts := httptest.NewTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -179,19 +202,19 @@ func TestFetch(t *testing.T) {
 					searched[q]++
 					mu.Unlock()
 					if n < tt.unanswered[q] {
-						http.ServeFile(w, r, filepath.Join("testdata", "fixtures", tt.name, "Search.aspx", fmt.Sprintf("%s.unanswered", q)))
+						http.ServeFile(w, r, filepath.Join("testdata", "fixtures", fixture, "Search.aspx", fmt.Sprintf("%s.unanswered", q)))
 						return
 					}
-					http.ServeFile(w, r, filepath.Join("testdata", "fixtures", tt.name, "Search.aspx", q))
+					http.ServeFile(w, r, filepath.Join("testdata", "fixtures", fixture, "Search.aspx", q))
 				case "ScopedViewInline.aspx":
 					switch r.URL.Query().Get("updateid") {
 					case "00000000-1519-4df8-85c1-d985be7f49c3":
 						http.Redirect(w, r, "/Thanks.aspx?id=190", http.StatusFound)
 					default:
-						http.ServeFile(w, r, filepath.Join("testdata", "fixtures", tt.name, "ScopedViewInline.aspx", r.URL.Query().Get("updateid")))
+						http.ServeFile(w, r, filepath.Join("testdata", "fixtures", fixture, "ScopedViewInline.aspx", r.URL.Query().Get("updateid")))
 					}
 				case "Thanks.aspx":
-					http.ServeFile(w, r, filepath.Join("testdata", "fixtures", tt.name, "Thanks.aspx", r.URL.Query().Get("id")))
+					http.ServeFile(w, r, filepath.Join("testdata", "fixtures", fixture, "Thanks.aspx", r.URL.Query().Get("id")))
 				default:
 					http.NotFound(w, r)
 				}
@@ -203,7 +226,7 @@ func TestFetch(t *testing.T) {
 			t.Cleanup(func() { slog.SetDefault(prev) })
 
 			dir := t.TempDir()
-			err := msuc.Fetch(tt.queries, msuc.WithHTTPClient(ts.Client()), msuc.WithDir(dir), msuc.WithRetry(0), msuc.WithWait(0), msuc.WithSearchRetry(2), msuc.WithSearchWaitMin(time.Millisecond), msuc.WithSearchWaitMax(time.Second))
+			err := msuc.Fetch(tt.queries, append([]msuc.Option{msuc.WithHTTPClient(ts.Client()), msuc.WithDir(dir), msuc.WithRetry(0), msuc.WithWait(0), msuc.WithSearchRetry(2), msuc.WithSearchWaitMin(time.Millisecond), msuc.WithSearchWaitMax(time.Second)}, tt.opts...)...)
 
 			if tt.wantErr != "" && (err == nil || !strings.Contains(err.Error(), tt.wantErr)) {
 				t.Errorf("Fetch() error = %v, want it to contain %q", err, tt.wantErr)
