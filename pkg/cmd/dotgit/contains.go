@@ -10,11 +10,9 @@ import (
 
 func newCmdContains() *cobra.Command {
 	options := &struct {
-		useNativeGit bool
-		branch       string
+		branch string
 	}{
-		useNativeGit: true,
-		branch:       "",
+		branch: "",
 	}
 
 	cmd := &cobra.Command{
@@ -26,14 +24,13 @@ func newCmdContains() *cobra.Command {
 		`),
 		Args: cobra.ExactArgs(2),
 		RunE: func(_ *cobra.Command, args []string) error {
-			if err := contains.Contains(args[0], args[1], contains.WithUseNativeGit(options.useNativeGit), contains.WithBranch(options.branch)); err != nil {
+			if err := contains.Contains(args[0], args[1], contains.WithBranch(options.branch)); err != nil {
 				return errors.Wrap(err, "failed to dotgit contains")
 			}
 			return nil
 		},
 	}
 
-	cmd.Flags().BoolVarP(&options.useNativeGit, "use-native-git", "", options.useNativeGit, "use native git command instead of go-git")
 	cmd.Flags().StringVarP(&options.branch, "branch", "", options.branch, "also check that the commit, given as a full hash, is the tip of the specified branch or an ancestor of it")
 
 	return cmd

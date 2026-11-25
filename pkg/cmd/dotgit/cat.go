@@ -13,11 +13,9 @@ import (
 
 func newCmdCat() *cobra.Command {
 	options := &struct {
-		useNativeGit bool
-		treeish      string
+		treeish string
 	}{
-		useNativeGit: true,
-		treeish:      "main",
+		treeish: "main",
 	}
 
 	cmd := &cobra.Command{
@@ -28,7 +26,7 @@ func newCmdCat() *cobra.Command {
 		`),
 		Args: cobra.ExactArgs(2),
 		RunE: func(_ *cobra.Command, args []string) error {
-			content, err := cat.Cat(args[0], args[1], cat.WithUseNativeGit(options.useNativeGit), cat.WithTreeish(options.treeish))
+			content, err := cat.Cat(args[0], args[1], cat.WithTreeish(options.treeish))
 			if err != nil {
 				return errors.Wrap(err, "failed to dotgit cat")
 			}
@@ -41,7 +39,6 @@ func newCmdCat() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().BoolVarP(&options.useNativeGit, "use-native-git", "", options.useNativeGit, "use native git command instead of go-git")
 	cmd.Flags().StringVarP(&options.treeish, "treeish", "", options.treeish, "cat file in specified treeish")
 
 	return cmd

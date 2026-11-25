@@ -3,14 +3,10 @@ package contains
 import (
 	stderrors "errors"
 	"fmt"
-	"io"
 	"os/exec"
 	"slices"
 	"strings"
 
-	"github.com/go-git/go-git/v5"
-	"github.com/go-git/go-git/v5/plumbing"
-	"github.com/go-git/go-git/v5/plumbing/object"
 	"github.com/pkg/errors"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/dotgit/util"
@@ -34,22 +30,11 @@ var (
 )
 
 type options struct {
-	useNativeGit bool
-	branch       string
+	branch string
 }
 
 type Option interface {
 	apply(*options)
-}
-
-type useNativeGitOption bool
-
-func (o useNativeGitOption) apply(opts *options) {
-	opts.useNativeGit = bool(o)
-}
-
-func WithUseNativeGit(native bool) Option {
-	return useNativeGitOption(native)
 }
 
 type branchOption string
@@ -90,32 +75,22 @@ func WithBranch(branch string) Option {
 // boundary.
 func Contains(repository, commit string, opts ...Option) error {
 	options := &options{
-		useNativeGit: true,
-		branch:       "",
+		branch: "",
 	}
 
 	for _, opt := range opts {
 		opt.apply(options)
 	}
 
-	if options.branch != "" {
-		if err := plumbing.NewBranchReferenceName(options.branch).Validate(); err != nil {
-			return errors.Wrapf(err, "validate branch %q", options.branch)
-		}
-	}
-
-	if options.useNativeGit {
-		return containsNativeGit(repository, commit, options.branch)
-	}
-	return containsGoGit(repository, commit, options.branch)
-}
-
-func containsNativeGit(repository, commit, branch string) error {
-	if branch == "" {
+	if options.branch == "" {
 		if _, err := util.Git("-C", repository, "cat-file", "-e", commit); err != nil {
 			return errors.Wrapf(err, "check %s exists", commit)
 		}
 		return nil
+	}
+
+	if err := validateBranch(options.branch); err != nil {
+		return errors.Wrapf(err, "validate branch %q", options.branch)
 	}
 
 	// rev-parse --verify --quiet exits 1 when the name does not resolve to a
@@ -140,7 +115,7 @@ func containsNativeGit(repository, commit, branch string) error {
 	// or a name like describe output (x-1-g<hash>) as that commit. The output
 	// is split on newlines only, as a ref name can hold a Unicode space such
 	// as U+00A0, which strings.Fields would split on.
-	ref := fmt.Sprintf("refs/heads/%s", branch)
+	ref := fmt.Sprintf("refs/heads/%s", options.branch)
 	bs, err = util.Git("-C", repository, "for-each-ref", "--contains", hash, "--format=%(refname)", ref)
 	if err != nil {
 		return errors.Wrapf(err, "check %s is reachable from %s", commit, ref)
@@ -165,62 +140,6 @@ func containsNativeGit(repository, commit, branch string) error {
 	return notReachable(commit, ref, strings.TrimSpace(string(bs)) == "true")
 }
 
-func containsGoGit(repository, commit, branch string) error {
-	r, err := git.PlainOpen(repository)
-	if err != nil {
-		return errors.Wrapf(err, "open %s", repository)
-	}
-
-	h, err := r.ResolveRevision(plumbing.Revision(commit))
-	if err != nil {
-		if branch != "" && errors.Is(err, plumbing.ErrReferenceNotFound) {
-			return errors.Wrapf(ErrCommitNotFound, "resolve %s (the history may have been truncated or rewritten)", commit)
-		}
-		return errors.Wrapf(err, "resolve %s", commit)
-	}
-	if branch == "" {
-		return nil
-	}
-	if err := checkFullHash(commit, h.String()); err != nil {
-		return err
-	}
-
-	ref := plumbing.NewBranchReferenceName(branch)
-	resolved, err := r.Reference(ref, true)
-	if err != nil {
-		if errors.Is(err, plumbing.ErrReferenceNotFound) {
-			return errors.Wrapf(ErrBranchNotFound, "check %s exists", ref)
-		}
-		return errors.Wrapf(err, "check %s exists", ref)
-	}
-	tip, err := r.CommitObject(resolved.Hash())
-	if err != nil {
-		return errors.Wrapf(err, "resolve %s", ref)
-	}
-
-	// (*object.Commit).IsAncestor reads every parent, so it fails on a
-	// shallow repository, such as a dotgit vuls-data-db has truncated, where
-	// the parents of the shallow commits are missing. Stop at those commits,
-	// as git does. The walk yields only the commit, if it is reachable.
-	shallow, err := r.Storer.Shallow()
-	if err != nil {
-		return errors.Wrap(err, "read shallow commits")
-	}
-	isCommit := object.CommitFilter(func(c *object.Commit) bool { return c.Hash == *h })
-	isShallow := object.CommitFilter(func(c *object.Commit) bool { return slices.Contains(shallow, c.Hash) })
-	iter := object.NewFilterCommitIter(tip, &isCommit, &isShallow)
-	defer iter.Close()
-
-	switch _, err := iter.Next(); {
-	case errors.Is(err, io.EOF):
-		return notReachable(commit, ref.String(), len(shallow) > 0)
-	case err != nil:
-		return errors.Wrapf(err, "check %s is reachable from %s", commit, ref)
-	default:
-		return nil
-	}
-}
-
 // notReachable returns the error for a commit that ref does not reach. In a
 // shallow repository, the history of the branch stops at its shallow commits,
 // and a commit beyond them can still be there through another branch, so the
@@ -234,10 +153,31 @@ func notReachable(commit, ref string, shallow bool) error {
 
 // checkFullHash checks that commit, which resolved to the commit hash, is
 // that commit's own full hash. Resolving peels an annotated tag, and takes an
-// abbreviation, a ref name, or in go-git, a ref named like a missing hash.
+// abbreviation or a ref name.
 func checkFullHash(commit, hash string) error {
 	if !strings.EqualFold(commit, hash) {
 		return errors.Wrapf(ErrCommitNotFound, "%s resolves to commit %s, but is not a commit's own full hash (e.g. an annotated tag's hash, an abbreviation or a ref name)", commit, hash)
+	}
+	return nil
+}
+
+// errInvalidBranch is the cause of the error validateBranch returns.
+var errInvalidBranch = errors.New("invalid reference name")
+
+// validateBranch checks that branch is a valid branch name: that it does not
+// begin with "-", which git does not take as a branch name, and that
+// refs/heads/<branch> is a valid ref name, which git check-ref-format says is
+// not by exiting with 1. A name that is not, such as main~1, could read as a
+// revision.
+func validateBranch(branch string) error {
+	if strings.HasPrefix(branch, "-") {
+		return errInvalidBranch
+	}
+	if _, err := util.Git("check-ref-format", fmt.Sprintf("refs/heads/%s", branch)); err != nil {
+		if exitedWith(err, 1) {
+			return errInvalidBranch
+		}
+		return errors.Wrap(err, "check ref format")
 	}
 	return nil
 }

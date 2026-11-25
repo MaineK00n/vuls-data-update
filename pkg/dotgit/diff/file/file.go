@@ -1,35 +1,17 @@
 package file
 
 import (
-	"bytes"
-	"strings"
-
-	"github.com/go-git/go-git/v5"
-	"github.com/go-git/go-git/v5/plumbing"
-	"github.com/go-git/go-git/v5/plumbing/format/diff"
-	"github.com/go-git/go-git/v5/plumbing/object"
 	"github.com/pkg/errors"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/dotgit/util"
 )
 
 type options struct {
-	useNativeGit bool
-	color        bool
+	color bool
 }
 
 type Option interface {
 	apply(*options)
-}
-
-type useNativeGitOption bool
-
-func (o useNativeGitOption) apply(opts *options) {
-	opts.useNativeGit = bool(o)
-}
-
-func WithUseNativeGit(native bool) Option {
-	return useNativeGitOption(native)
 }
 
 type colorOption bool
@@ -44,97 +26,22 @@ func WithColor(c bool) Option {
 
 func Diff(repository, minus, plus string, opts ...Option) (string, error) {
 	options := &options{
-		useNativeGit: true,
-		color:        false,
+		color: false,
 	}
 
 	for _, opt := range opts {
 		opt.apply(options)
 	}
 
-	if options.useNativeGit {
-		args := []string{"-C", repository, "diff"}
-		if options.color {
-			args = append(args, "--color")
-		}
-		args = append(args, minus, plus)
-
-		output, err := util.Git(args...)
-		if err != nil {
-			return "", errors.Wrap(err, "diff")
-		}
-		return string(output), nil
-	}
-
-	r, err := git.PlainOpen(repository)
-	if err != nil {
-		return "", errors.Wrapf(err, "open %s", repository)
-	}
-
-	treeish, path, ok := strings.Cut(minus, ":")
-	if !ok {
-		return "", errors.Errorf("unexpected diff minus file format. expected: %q, actual: %q", "<treeish>:<path>", minus)
-	}
-
-	from, err := getChangeEntry(r, path, treeish)
-	if err != nil {
-		return "", errors.Wrapf(err, "get change entry %s:%s", treeish, path)
-	}
-
-	treeish, path, ok = strings.Cut(plus, ":")
-	if !ok {
-		return "", errors.Errorf("unexpected diff plus file format. expected: %q, actual: %q", "<treeish>:<path>", minus)
-	}
-
-	to, err := getChangeEntry(r, path, treeish)
-	if err != nil {
-		return "", errors.Wrapf(err, "get change entry %s:%s", treeish, path)
-	}
-
-	patch, err := (&object.Change{
-		From: from,
-		To:   to,
-	}).Patch()
-	if err != nil {
-		return "", errors.Wrap(err, "get patch")
-	}
-
-	buf := bytes.NewBuffer(nil)
-	ue := diff.NewUnifiedEncoder(buf, diff.DefaultContextLines)
+	args := []string{"-C", repository, "diff"}
 	if options.color {
-		ue.SetColor(diff.NewColorConfig())
+		args = append(args, "--color")
 	}
-	if err := ue.Encode(patch); err != nil {
-		return "", errors.Wrap(err, "encode patch")
-	}
+	args = append(args, minus, plus)
 
-	return buf.String(), nil
-}
-
-func getChangeEntry(repository *git.Repository, path, treeish string) (object.ChangeEntry, error) {
-	hash, err := repository.ResolveRevision(plumbing.Revision(treeish))
+	output, err := util.Git(args...)
 	if err != nil {
-		return object.ChangeEntry{}, errors.Wrapf(err, "resolve %s", treeish)
+		return "", errors.Wrap(err, "diff")
 	}
-
-	commit, err := repository.CommitObject(*hash)
-	if err != nil {
-		return object.ChangeEntry{}, errors.Wrapf(err, "get commit %s", hash)
-	}
-
-	tree, err := commit.Tree()
-	if err != nil {
-		return object.ChangeEntry{}, errors.Wrapf(err, "get tree %s", commit.Hash)
-	}
-
-	entry, err := tree.FindEntry(path)
-	if err != nil {
-		return object.ChangeEntry{}, errors.Wrapf(err, "find entry %s", path)
-	}
-
-	return object.ChangeEntry{
-		Name:      path,
-		Tree:      tree,
-		TreeEntry: *entry,
-	}, nil
+	return string(output), nil
 }

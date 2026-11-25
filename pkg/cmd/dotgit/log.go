@@ -14,17 +14,15 @@ import (
 
 func newCmdLog() *cobra.Command {
 	options := &struct {
-		useNativeGit bool
-		from         string
-		pathspecs    []string
-		since        datetimeType
-		until        datetimeType
+		from      string
+		pathspecs []string
+		since     datetimeType
+		until     datetimeType
 	}{
-		useNativeGit: true,
-		from:         "",
-		pathspecs:    nil,
-		since:        datetimeType{value: nil},
-		until:        datetimeType{value: nil},
+		from:      "",
+		pathspecs: nil,
+		since:     datetimeType{value: nil},
+		until:     datetimeType{value: nil},
 	}
 
 	cmd := &cobra.Command{
@@ -35,7 +33,7 @@ func newCmdLog() *cobra.Command {
 		`),
 		Args: cobra.ExactArgs(1),
 		RunE: func(_ *cobra.Command, args []string) error {
-			iter, err := log.Log(args[0], log.WithUseNativeGit(options.useNativeGit), log.WithFrom(options.from), log.WithPathSpecs(options.pathspecs), log.WithSince(options.since.value), log.WithUntil(options.until.value))
+			iter, err := log.Log(args[0], log.WithFrom(options.from), log.WithPathSpecs(options.pathspecs), log.WithSince(options.since.value), log.WithUntil(options.until.value))
 			if err != nil {
 				return errors.Wrap(err, "failed to dotgit log")
 			}
@@ -54,7 +52,6 @@ func newCmdLog() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().BoolVarP(&options.useNativeGit, "use-native-git", "", options.useNativeGit, "use native git command instead of go-git")
 	cmd.Flags().StringVarP(&options.from, "from", "", options.from, "start from the specified commit hash")
 	cmd.Flags().StringArrayVarP(&options.pathspecs, "pathspec", "p", options.pathspecs, "filter commits by pathspec")
 	cmd.Flags().VarP(&options.since, "since", "", "show commits since the specified date (RFC3339 format)")

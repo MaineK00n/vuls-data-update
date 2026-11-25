@@ -12,12 +12,6 @@ import (
 )
 
 func newCmdShow() *cobra.Command {
-	options := &struct {
-		useNativeGit bool
-	}{
-		useNativeGit: true,
-	}
-
 	cmd := &cobra.Command{
 		Use:   "show <dotgit repository> <revision>",
 		Short: "Show the full hash and the author and committer times (in UTC) of the commit the revision names",
@@ -27,7 +21,7 @@ func newCmdShow() *cobra.Command {
 		`),
 		Args: cobra.ExactArgs(2),
 		RunE: func(_ *cobra.Command, args []string) error {
-			c, err := show.Show(args[0], args[1], show.WithUseNativeGit(options.useNativeGit))
+			c, err := show.Show(args[0], args[1])
 			if err != nil {
 				return errors.Wrap(err, "failed to dotgit show")
 			}
@@ -37,8 +31,6 @@ func newCmdShow() *cobra.Command {
 			return nil
 		},
 	}
-
-	cmd.Flags().BoolVarP(&options.useNativeGit, "use-native-git", "", options.useNativeGit, "use native git command instead of go-git")
 
 	return cmd
 }
