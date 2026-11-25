@@ -19,6 +19,12 @@ func TestFetch(t *testing.T) {
 			name:     "happy",
 			testdata: "testdata/fixtures/happy/windriver-cve-tracker",
 		},
+		{
+			// HarfBuzz::Shaper, a Perl module, puts colons in the package
+			// name, so a status line is split at ": ", not at the first ":".
+			name:     "colon-package",
+			testdata: "testdata/fixtures/colon-package/windriver-cve-tracker",
+		},
 	}
 
 	for _, tt := range tests {
@@ -39,7 +45,7 @@ func TestFetch(t *testing.T) {
 				// error was expected and occurred, test passed
 				return
 			default:
-				if err := utiltest.Diff(filepath.Join("testdata", "golden"), dir); err != nil {
+				if err := utiltest.Diff(filepath.Join("testdata", "golden", tt.name), dir); err != nil {
 					t.Error("unexpected error:", err)
 				}
 			}

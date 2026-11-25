@@ -218,7 +218,9 @@ func parse(r io.Reader) (Vulnerability, error) {
 				case strings.HasPrefix(line, " upstream:"):
 					vuln.UpstreamLinks[name] = append(vuln.UpstreamLinks[name], strings.TrimSpace(strings.TrimPrefix(line, " upstream:")))
 				default:
-					lhs, rhs, ok := strings.Cut(line, ":")
+					// ": " and not ":", since a package can be named with colons, as
+					// HarfBuzz::Shaper is.
+					lhs, rhs, ok := strings.Cut(line, ": ")
 					if !ok {
 						return Vulnerability{}, errors.Errorf("unexpected package status format. expected: %q, actual: %q", "<release>_<package>: <status> (<note>)", line)
 					}
