@@ -398,7 +398,7 @@ func extract(rs []release) ([]dataTypes.Data, error) {
 				order = append(order, id)
 				listings[id] = nil
 			}
-			for _, f := range slices.Sorted(maps.Keys(families)) {
+			for f := range families {
 				j := slices.IndexFunc(listings[id], func(l listing) bool { return l.family == f })
 				if j < 0 {
 					listings[id] = append(listings[id], listing{family: f})

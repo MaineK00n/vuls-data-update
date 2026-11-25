@@ -1,7 +1,6 @@
 package officec2r_test
 
 import (
-	"path/filepath"
 	"testing"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/microsoft/officec2r"
@@ -71,7 +70,7 @@ func TestExtract(t *testing.T) {
 				// error was expected and occurred, test passed
 				return
 			default:
-				if err := utiltest.Diff(filepath.Join(tt.golden), dir); err != nil {
+				if err := utiltest.Diff(tt.golden, dir); err != nil {
 					t.Error("unexpected error:", err)
 				}
 			}
