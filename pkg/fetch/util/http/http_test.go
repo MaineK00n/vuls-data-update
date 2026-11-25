@@ -1,8 +1,11 @@
 package http_test
 
 import (
+	"io"
 	"net/http"
 	"net/http/httptest"
+	"strconv"
+	"sync/atomic"
 	"testing"
 	"time"
 
@@ -105,6 +108,90 @@ func TestClient_PipelineGet(t *testing.T) {
 				}
 			case <-time.After(10 * time.Second):
 				t.Fatal("PipelineGet() did not return")
+			}
+		})
+	}
+}
+
+func TestNewClient_WithClientBufferBody(t *testing.T) {
+	const body = `{"updates":[{"alias":"FEDORA-2026-c3ea7d7b0e"}]}`
+
+	tests := []struct {
+		name   string
+		buffer bool
+		// cut is how many responses are cut off partway through the body
+		// before one is sent whole.
+		cut          int
+		want         string
+		wantRequests int
+		hasError     bool
+	}{
+		{
+			// The body is read within the retry loop, so a cut one is asked
+			// for again, for as many retries as the client has.
+			name:         "buffered",
+			buffer:       true,
+			cut:          2,
+			want:         body,
+			wantRequests: 3,
+		},
+		{
+			name:         "buffered, retries run out",
+			buffer:       true,
+			cut:          3,
+			wantRequests: 3,
+			hasError:     true,
+		},
+		{
+			// Without it, the response is returned once its header is in, and
+			// the cut fails whatever reads the body, with no retry.
+			name:         "not buffered",
+			cut:          1,
+			wantRequests: 1,
+			hasError:     true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var requests atomic.Int64
+			ts := httptest.NewTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+				w.Header().Set("Content-Length", strconv.Itoa(len(body)))
+				if requests.Add(1) > int64(tt.cut) {
+					_, _ = io.WriteString(w, body)
+					return
+				}
+				// Half of the body, and then the connection is gone.
+				_, _ = io.WriteString(w, body[:len(body)/2])
+				_ = http.NewResponseController(w).Flush()
+				panic(http.ErrAbortHandler)
+			}))
+
+			hc := ts.Client()
+			transport := hc.Transport
+			client := utilhttp.NewClient(utilhttp.WithClientHTTPClient(hc), utilhttp.WithClientRetryMax(2), utilhttp.WithClientRetryWaitMin(time.Millisecond), utilhttp.WithClientRetryWaitMax(time.Millisecond), utilhttp.WithClientBufferBody(tt.buffer))
+			if hc.Transport != transport {
+				t.Error("NewClient() changed the Transport of the client passed in")
+			}
+
+			got, err := func() (string, error) {
+				resp, err := client.Get("https://example.com/updates")
+				if err != nil {
+					return "", err
+				}
+				defer resp.Body.Close()
+				bs, err := io.ReadAll(resp.Body)
+				return string(bs), err
+			}()
+			switch {
+			case err != nil && !tt.hasError:
+				t.Error("unexpected error:", err)
+			case err == nil && tt.hasError:
+				t.Error("expected error has not occurred")
+			case err == nil && got != tt.want:
+				t.Errorf("body = %q, want %q", got, tt.want)
+			}
+			if n := requests.Load(); n != int64(tt.wantRequests) {
+				t.Errorf("requests = %d, want %d", n, tt.wantRequests)
 			}
 		})
 	}
