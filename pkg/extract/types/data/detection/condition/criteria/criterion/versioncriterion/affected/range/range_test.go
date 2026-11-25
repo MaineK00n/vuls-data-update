@@ -1283,6 +1283,15 @@ func TestRangeType_CompareVersions(t *testing.T) {
 			wantErr: true,
 		},
 		{
+			name: "unresolved type has no comparator",
+			rt:   affectedrangeTypes.RangeTypeUnresolved,
+			args: args{
+				v1: "1.0.0",
+				v2: "2.0.0",
+			},
+			wantErr: true,
+		},
+		{
 			// The zero value (unset) is outside the vocabulary — a
 			// producer-side bug — so like a newer-data value it classifies
 			// as *UnsupportedRangeTypeError; only the declared "unknown"
