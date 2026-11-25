@@ -1,0 +1,720 @@
+{
+	"id": "ALSA-2026:90010",
+	"advisories": [
+		{
+			"content": {
+				"id": "ALSA-2026:90010",
+				"title": "Important: kernel security update",
+				"description": "The kernel packages contain the Linux kernel, the core of any Linux operating system.\n\nSecurity Fix(es):\n\n* kernel: synthetic issue (CVE-2026-0001)\n* kernel: synthetic issue (CVE-2026-0002)\n* kernel: synthetic issue (CVE-2026-0003)\n* kernel: synthetic issue (CVE-2026-0004)",
+				"severity": [
+					{
+						"type": "vendor",
+						"source": "errata.almalinux.org",
+						"vendor": "Important"
+					}
+				],
+				"references": [
+					{
+						"source": "errata.almalinux.org",
+						"url": "https://access.redhat.com/errata/RHSA-2026:90010"
+					},
+					{
+						"source": "errata.almalinux.org",
+						"url": "https://access.redhat.com/security/cve/CVE-2026-0001"
+					},
+					{
+						"source": "errata.almalinux.org",
+						"url": "https://access.redhat.com/security/cve/CVE-2026-0002"
+					},
+					{
+						"source": "errata.almalinux.org",
+						"url": "https://access.redhat.com/security/cve/CVE-2026-0003"
+					},
+					{
+						"source": "errata.almalinux.org",
+						"url": "https://access.redhat.com/security/cve/CVE-2026-0004"
+					},
+					{
+						"source": "errata.almalinux.org",
+						"url": "https://errata.almalinux.org/9/ALSA-2026-90010.html"
+					}
+				],
+				"published": "2026-11-11T00:00:00Z",
+				"modified": "2026-11-12T00:00:00Z"
+			},
+			"segments": [
+				{
+					"ecosystem": "alma:9"
+				},
+				{
+					"ecosystem": "alma:9",
+					"tag": "kernel-fixed-in-older-minor:611.54.1.el9_7,687.59.1.el9_8"
+				},
+				{
+					"ecosystem": "alma:9",
+					"tag": "kernel-fixed-in-older-minor:687.59.1.el9_8#1"
+				},
+				{
+					"ecosystem": "alma:9",
+					"tag": "kernel-fixed-in-older-minor:687.59.1.el9_8#2"
+				}
+			]
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-2026-0001",
+				"references": [
+					{
+						"source": "errata.almalinux.org",
+						"url": "https://access.redhat.com/security/cve/CVE-2026-0001"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "alma:9",
+					"tag": "kernel-fixed-in-older-minor:687.59.1.el9_8#1"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2026-0002",
+				"references": [
+					{
+						"source": "errata.almalinux.org",
+						"url": "https://access.redhat.com/security/cve/CVE-2026-0002"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "alma:9"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2026-0003",
+				"references": [
+					{
+						"source": "errata.almalinux.org",
+						"url": "https://access.redhat.com/security/cve/CVE-2026-0003"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "alma:9",
+					"tag": "kernel-fixed-in-older-minor:611.54.1.el9_7,687.59.1.el9_8"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2026-0004",
+				"references": [
+					{
+						"source": "errata.almalinux.org",
+						"url": "https://access.redhat.com/security/cve/CVE-2026-0004"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "alma:9",
+					"tag": "kernel-fixed-in-older-minor:687.59.1.el9_8#2"
+				}
+			]
+		}
+	],
+	"detections": [
+		{
+			"ecosystem": "alma:9",
+			"conditions": [
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "bpftool",
+											"architectures": [
+												"aarch64",
+												"x86_64"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:7.6.0-741.22.1.el9_9"
+											}
+										],
+										"fixed": [
+											"0:7.6.0-741.22.1.el9_9"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "kernel",
+											"architectures": [
+												"aarch64",
+												"x86_64"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:5.14.0-741.22.1.el9_9"
+											}
+										],
+										"fixed": [
+											"0:5.14.0-741.22.1.el9_9"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "kernel-doc",
+											"architectures": [
+												"noarch"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:5.14.0-741.22.1.el9_9"
+											}
+										],
+										"fixed": [
+											"0:5.14.0-741.22.1.el9_9"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "linux-firmware",
+											"architectures": [
+												"noarch"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:20261101-150.el9_9"
+											}
+										],
+										"fixed": [
+											"0:20261101-150.el9_9"
+										]
+									}
+								}
+							}
+						]
+					}
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "bpftool",
+											"architectures": [
+												"aarch64",
+												"x86_64"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:7.4.0-611.54.1.el9_7"
+											},
+											{
+												"lt": "0:7.5.0-687.59.1.el9_8",
+												"ge": "0:7.4.0-612"
+											},
+											{
+												"lt": "0:7.6.0-741.22.1.el9_9",
+												"ge": "0:7.5.0-688"
+											}
+										],
+										"fixed": [
+											"0:7.6.0-741.22.1.el9_9"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "kernel",
+											"architectures": [
+												"aarch64",
+												"x86_64"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:5.14.0-611.54.1.el9_7"
+											},
+											{
+												"lt": "0:5.14.0-687.59.1.el9_8",
+												"ge": "0:5.14.0-612"
+											},
+											{
+												"lt": "0:5.14.0-741.22.1.el9_9",
+												"ge": "0:5.14.0-688"
+											}
+										],
+										"fixed": [
+											"0:5.14.0-741.22.1.el9_9"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "kernel-doc",
+											"architectures": [
+												"noarch"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:5.14.0-611.54.1.el9_7"
+											},
+											{
+												"lt": "0:5.14.0-687.59.1.el9_8",
+												"ge": "0:5.14.0-612"
+											},
+											{
+												"lt": "0:5.14.0-741.22.1.el9_9",
+												"ge": "0:5.14.0-688"
+											}
+										],
+										"fixed": [
+											"0:5.14.0-741.22.1.el9_9"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "linux-firmware",
+											"architectures": [
+												"noarch"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:20261101-150.el9_9"
+											}
+										],
+										"fixed": [
+											"0:20261101-150.el9_9"
+										]
+									}
+								}
+							}
+						]
+					},
+					"tag": "kernel-fixed-in-older-minor:611.54.1.el9_7,687.59.1.el9_8"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "bpftool",
+											"architectures": [
+												"aarch64",
+												"x86_64"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:7.5.0-687.59.1.el9_8"
+											},
+											{
+												"lt": "0:7.6.0-741.22.1.el9_9",
+												"ge": "0:7.5.0-688"
+											}
+										],
+										"fixed": [
+											"0:7.6.0-741.22.1.el9_9"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "kernel",
+											"architectures": [
+												"aarch64",
+												"x86_64"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:5.14.0-687.59.1.el9_8"
+											},
+											{
+												"lt": "0:5.14.0-741.22.1.el9_9",
+												"ge": "0:5.14.0-688"
+											}
+										],
+										"fixed": [
+											"0:5.14.0-741.22.1.el9_9"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "kernel-doc",
+											"architectures": [
+												"noarch"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:5.14.0-687.59.1.el9_8"
+											},
+											{
+												"lt": "0:5.14.0-741.22.1.el9_9",
+												"ge": "0:5.14.0-688"
+											}
+										],
+										"fixed": [
+											"0:5.14.0-741.22.1.el9_9"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "linux-firmware",
+											"architectures": [
+												"noarch"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:20261101-150.el9_9"
+											}
+										],
+										"fixed": [
+											"0:20261101-150.el9_9"
+										]
+									}
+								}
+							}
+						]
+					},
+					"tag": "kernel-fixed-in-older-minor:687.59.1.el9_8#1"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "bpftool",
+											"architectures": [
+												"aarch64",
+												"x86_64"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:7.6.0-741.22.1.el9_9"
+											}
+										],
+										"fixed": [
+											"0:7.6.0-741.22.1.el9_9"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "kernel",
+											"architectures": [
+												"aarch64"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:5.14.0-741.22.1.el9_9"
+											}
+										],
+										"fixed": [
+											"0:5.14.0-741.22.1.el9_9"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "kernel",
+											"architectures": [
+												"x86_64"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:5.14.0-687.59.1.el9_8"
+											},
+											{
+												"lt": "0:5.14.0-741.22.1.el9_9",
+												"ge": "0:5.14.0-688"
+											}
+										],
+										"fixed": [
+											"0:5.14.0-741.22.1.el9_9"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "kernel-doc",
+											"architectures": [
+												"noarch"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:5.14.0-741.22.1.el9_9"
+											}
+										],
+										"fixed": [
+											"0:5.14.0-741.22.1.el9_9"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "linux-firmware",
+											"architectures": [
+												"noarch"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:20261101-150.el9_9"
+											}
+										],
+										"fixed": [
+											"0:20261101-150.el9_9"
+										]
+									}
+								}
+							}
+						]
+					},
+					"tag": "kernel-fixed-in-older-minor:687.59.1.el9_8#2"
+				}
+			]
+		}
+	],
+	"data_source": {
+		"id": "alma-errata",
+		"raws": [
+			"kernel/9/ALSA/2026/ALSA-2026:90007.json",
+			"kernel/9/ALSA/2026/ALSA-2026:90008.json",
+			"kernel/9/ALSA/2026/ALSA-2026:90009.json",
+			"kernel/9/ALSA/2026/ALSA-2026:90010.json"
+		]
+	}
+}

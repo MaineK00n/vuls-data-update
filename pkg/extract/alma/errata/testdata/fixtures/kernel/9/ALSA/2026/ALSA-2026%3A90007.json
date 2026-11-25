@@ -1,0 +1,84 @@
+{
+	"description": "The kernel packages contain the Linux kernel, the core of any Linux operating system.\n\nSecurity Fix(es):\n\n* kernel: synthetic issue (CVE-2026-0003)",
+	"id": "ALSA-2026:90007",
+	"issued_date": 1785000000,
+	"modules": [],
+	"packages": [
+		{
+			"arch": "aarch64",
+			"checksum": "1038fc69131360819a5745fad46186fe2b307f209b1e377ba1c380bb02dc18be",
+			"checksum_type": "sha256",
+			"epoch": "0",
+			"filename": "bpftool-7.4.0-611.54.1.el9_7.aarch64.rpm",
+			"name": "bpftool",
+			"reboot_suggested": 0,
+			"release": "611.54.1.el9_7",
+			"src": "kernel-5.14.0-611.54.1.el9_7.src.rpm",
+			"version": "7.4.0"
+		},
+		{
+			"arch": "x86_64",
+			"checksum": "1aec6f7f9be1f88fec4057d85308ea056d2449686d87b337402cd0c7c11d91d9",
+			"checksum_type": "sha256",
+			"epoch": "0",
+			"filename": "bpftool-7.4.0-611.54.1.el9_7.x86_64.rpm",
+			"name": "bpftool",
+			"reboot_suggested": 0,
+			"release": "611.54.1.el9_7",
+			"src": "kernel-5.14.0-611.54.1.el9_7.src.rpm",
+			"version": "7.4.0"
+		},
+		{
+			"arch": "aarch64",
+			"checksum": "9399ce63b9b7bb25b4e47c3ce2a9859ee0555718dbdbbdbda12a4d7873902aab",
+			"checksum_type": "sha256",
+			"epoch": "0",
+			"filename": "kernel-5.14.0-611.54.1.el9_7.aarch64.rpm",
+			"name": "kernel",
+			"reboot_suggested": 0,
+			"release": "611.54.1.el9_7",
+			"src": "kernel-5.14.0-611.54.1.el9_7.src.rpm",
+			"version": "5.14.0"
+		},
+		{
+			"arch": "x86_64",
+			"checksum": "23bc0c6d5c2cee5e5c8933b7c414f1482242f340fabf2303540a494e2542cb06",
+			"checksum_type": "sha256",
+			"epoch": "0",
+			"filename": "kernel-5.14.0-611.54.1.el9_7.x86_64.rpm",
+			"name": "kernel",
+			"reboot_suggested": 0,
+			"release": "611.54.1.el9_7",
+			"src": "kernel-5.14.0-611.54.1.el9_7.src.rpm",
+			"version": "5.14.0"
+		},
+		{
+			"arch": "noarch",
+			"checksum": "43ca03030f943964f674405402cc55a3009e47ce8ecd55cfc3b207ff76702133",
+			"checksum_type": "sha256",
+			"epoch": "0",
+			"filename": "kernel-doc-5.14.0-611.54.1.el9_7.noarch.rpm",
+			"name": "kernel-doc",
+			"reboot_suggested": 0,
+			"release": "611.54.1.el9_7",
+			"src": "kernel-5.14.0-611.54.1.el9_7.src.rpm",
+			"version": "5.14.0"
+		}
+	],
+	"references": [
+		{
+			"href": "https://access.redhat.com/errata/RHSA-2026:90007",
+			"id": "RHSA-2026:90007",
+			"type": "rhsa"
+		},
+		{
+			"href": "https://access.redhat.com/security/cve/CVE-2026-0003",
+			"id": "CVE-2026-0003",
+			"type": "cve"
+		}
+	],
+	"severity": "Important",
+	"title": "Important: kernel security update",
+	"type": "security",
+	"updated_date": 1785086400
+}

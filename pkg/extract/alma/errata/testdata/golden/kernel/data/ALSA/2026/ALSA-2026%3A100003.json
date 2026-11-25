@@ -1,0 +1,296 @@
+{
+	"id": "ALSA-2026:100003",
+	"advisories": [
+		{
+			"content": {
+				"id": "ALSA-2026:100003",
+				"title": "Important: kernel security update",
+				"description": "The kernel packages contain the Linux kernel, the core of any Linux operating system.\n\nSecurity Fix(es):\n\n* kernel: synthetic issue (CVE-2026-1001)\n* kernel: synthetic issue (CVE-2026-1002)",
+				"severity": [
+					{
+						"type": "vendor",
+						"source": "errata.almalinux.org",
+						"vendor": "Important"
+					}
+				],
+				"references": [
+					{
+						"source": "errata.almalinux.org",
+						"url": "https://access.redhat.com/errata/RHSA-2026:100003"
+					},
+					{
+						"source": "errata.almalinux.org",
+						"url": "https://access.redhat.com/security/cve/CVE-2026-1001"
+					},
+					{
+						"source": "errata.almalinux.org",
+						"url": "https://access.redhat.com/security/cve/CVE-2026-1002"
+					},
+					{
+						"source": "errata.almalinux.org",
+						"url": "https://errata.almalinux.org/10/ALSA-2026-100003.html"
+					}
+				],
+				"published": "2026-11-10T00:00:00Z",
+				"modified": "2026-11-11T00:00:00Z"
+			},
+			"segments": [
+				{
+					"ecosystem": "alma:10"
+				},
+				{
+					"ecosystem": "alma:10",
+					"tag": "kernel-fixed-in-older-minor:211.54.1.el10_2"
+				}
+			]
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-2026-1001",
+				"references": [
+					{
+						"source": "errata.almalinux.org",
+						"url": "https://access.redhat.com/security/cve/CVE-2026-1001"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "alma:10",
+					"tag": "kernel-fixed-in-older-minor:211.54.1.el10_2"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2026-1002",
+				"references": [
+					{
+						"source": "errata.almalinux.org",
+						"url": "https://access.redhat.com/security/cve/CVE-2026-1002"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "alma:10"
+				}
+			]
+		}
+	],
+	"detections": [
+		{
+			"ecosystem": "alma:10",
+			"conditions": [
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "kernel",
+											"architectures": [
+												"aarch64",
+												"x86_64"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:6.12.0-264.17.1.el10_3"
+											}
+										],
+										"fixed": [
+											"0:6.12.0-264.17.1.el10_3"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "kernel-abi-stablelists",
+											"architectures": [
+												"noarch"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:6.12.0-264.17.1.el10_3"
+											}
+										],
+										"fixed": [
+											"0:6.12.0-264.17.1.el10_3"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "kernel-doc",
+											"architectures": [
+												"noarch"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:6.12.0-264.17.1.el10_3"
+											}
+										],
+										"fixed": [
+											"0:6.12.0-264.17.1.el10_3"
+										]
+									}
+								}
+							}
+						]
+					}
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "kernel",
+											"architectures": [
+												"aarch64",
+												"x86_64"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:6.12.0-264.17.1.el10_3"
+											}
+										],
+										"fixed": [
+											"0:6.12.0-264.17.1.el10_3"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "kernel-abi-stablelists",
+											"architectures": [
+												"noarch"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:6.12.0-211.54.1.el10_2"
+											},
+											{
+												"lt": "0:6.12.0-264.17.1.el10_3",
+												"ge": "0:6.12.0-212"
+											}
+										],
+										"fixed": [
+											"0:6.12.0-264.17.1.el10_3"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "kernel-doc",
+											"architectures": [
+												"noarch"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:6.12.0-211.54.1.el10_2"
+											},
+											{
+												"lt": "0:6.12.0-264.17.1.el10_3",
+												"ge": "0:6.12.0-212"
+											}
+										],
+										"fixed": [
+											"0:6.12.0-264.17.1.el10_3"
+										]
+									}
+								}
+							}
+						]
+					},
+					"tag": "kernel-fixed-in-older-minor:211.54.1.el10_2"
+				}
+			]
+		}
+	],
+	"data_source": {
+		"id": "alma-errata",
+		"raws": [
+			"kernel/10/ALSA/2026/ALSA-2026:100002.json",
+			"kernel/10/ALSA/2026/ALSA-2026:100003.json"
+		]
+	}
+}

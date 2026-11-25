@@ -1,0 +1,111 @@
+{
+	"description": "The kernel packages contain the Linux kernel, the core of any Linux operating system.\n\nSecurity Fix(es):\n\n* kernel: synthetic issue (CVE-2026-0001)\n* kernel: synthetic issue (CVE-2026-0002)\n* kernel: synthetic issue (CVE-2026-0003)\n* kernel: synthetic issue (CVE-2026-0004)",
+	"id": "ALSA-2026:90010",
+	"issued_date": 1794355200,
+	"modules": [],
+	"packages": [
+		{
+			"arch": "aarch64",
+			"checksum": "ede9ee7efa8ae8085144e5a7737d75ecca3cac005a7d1153a864608eb6484085",
+			"checksum_type": "sha256",
+			"epoch": "0",
+			"filename": "bpftool-7.6.0-741.22.1.el9_9.aarch64.rpm",
+			"name": "bpftool",
+			"reboot_suggested": 0,
+			"release": "741.22.1.el9_9",
+			"src": "kernel-5.14.0-741.22.1.el9_9.src.rpm",
+			"version": "7.6.0"
+		},
+		{
+			"arch": "x86_64",
+			"checksum": "a452c04a3aac1706682134ca9d4f4430db380e7266d8cda033d1e6ec804ce131",
+			"checksum_type": "sha256",
+			"epoch": "0",
+			"filename": "bpftool-7.6.0-741.22.1.el9_9.x86_64.rpm",
+			"name": "bpftool",
+			"reboot_suggested": 0,
+			"release": "741.22.1.el9_9",
+			"src": "kernel-5.14.0-741.22.1.el9_9.src.rpm",
+			"version": "7.6.0"
+		},
+		{
+			"arch": "aarch64",
+			"checksum": "e304156985c8d9b7a026db1687a59d4ab4a0beebe9ef836b6d0817a8c5b60232",
+			"checksum_type": "sha256",
+			"epoch": "0",
+			"filename": "kernel-5.14.0-741.22.1.el9_9.aarch64.rpm",
+			"name": "kernel",
+			"reboot_suggested": 0,
+			"release": "741.22.1.el9_9",
+			"src": "kernel-5.14.0-741.22.1.el9_9.src.rpm",
+			"version": "5.14.0"
+		},
+		{
+			"arch": "x86_64",
+			"checksum": "e55bcf0b6e806df01cdd0ce468ea045fc17d35110abfe708f3b300f1ebc51142",
+			"checksum_type": "sha256",
+			"epoch": "0",
+			"filename": "kernel-5.14.0-741.22.1.el9_9.x86_64.rpm",
+			"name": "kernel",
+			"reboot_suggested": 0,
+			"release": "741.22.1.el9_9",
+			"src": "kernel-5.14.0-741.22.1.el9_9.src.rpm",
+			"version": "5.14.0"
+		},
+		{
+			"arch": "noarch",
+			"checksum": "11eeff4c7b456d8256f46f56b27717f4fc155c5cea2c4a62baaaef1b11f894f4",
+			"checksum_type": "sha256",
+			"epoch": "0",
+			"filename": "kernel-doc-5.14.0-741.22.1.el9_9.noarch.rpm",
+			"name": "kernel-doc",
+			"reboot_suggested": 0,
+			"release": "741.22.1.el9_9",
+			"src": "kernel-5.14.0-741.22.1.el9_9.src.rpm",
+			"version": "5.14.0"
+		},
+		{
+			"arch": "noarch",
+			"checksum": "a4627154b75a8f854e5cbc44f6e66cfa248b3503da7f32bafa2f1334aeff78de",
+			"checksum_type": "sha256",
+			"epoch": "0",
+			"filename": "linux-firmware-20261101-150.el9_9.noarch.rpm",
+			"name": "linux-firmware",
+			"reboot_suggested": 0,
+			"release": "150.el9_9",
+			"src": "linux-firmware-20261101-150.el9_9.src.rpm",
+			"version": "20261101"
+		}
+	],
+	"references": [
+		{
+			"href": "https://access.redhat.com/errata/RHSA-2026:90010",
+			"id": "RHSA-2026:90010",
+			"type": "rhsa"
+		},
+		{
+			"href": "https://access.redhat.com/security/cve/CVE-2026-0001",
+			"id": "CVE-2026-0001",
+			"type": "cve"
+		},
+		{
+			"href": "https://access.redhat.com/security/cve/CVE-2026-0002",
+			"id": "CVE-2026-0002",
+			"type": "cve"
+		},
+		{
+			"href": "https://access.redhat.com/security/cve/CVE-2026-0003",
+			"id": "CVE-2026-0003",
+			"type": "cve"
+		},
+		{
+			"href": "https://access.redhat.com/security/cve/CVE-2026-0004",
+			"id": "CVE-2026-0004",
+			"type": "cve"
+		}
+	],
+	"severity": "Important",
+	"title": "Important: kernel security update",
+	"type": "security",
+	"updated_date": 1794441600
+}

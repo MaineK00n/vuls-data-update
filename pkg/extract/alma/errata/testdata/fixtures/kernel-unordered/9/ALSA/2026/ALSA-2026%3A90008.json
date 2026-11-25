@@ -1,0 +1,48 @@
+{
+	"description": "The kernel packages contain the Linux kernel, the core of any Linux operating system.\n\nSecurity Fix(es):\n\n* kernel: synthetic issue (CVE-2026-0001)",
+	"id": "ALSA-2026:90008",
+	"issued_date": 1790000000,
+	"modules": [],
+	"packages": [
+		{
+			"arch": "x86_64",
+			"checksum": "e01590ee9c937b402ea2368321a3d23a0c585430432d886336bb5434eebd4feb",
+			"checksum_type": "sha256",
+			"epoch": "0",
+			"filename": "bpftool-7.5.0-687.59.1.el9_8.x86_64.rpm",
+			"name": "bpftool",
+			"reboot_suggested": 0,
+			"release": "687.59.1.el9_8",
+			"src": "kernel-5.14.0-687.59.1.el9_8.src.rpm",
+			"version": "7.5.0"
+		},
+		{
+			"arch": "x86_64",
+			"checksum": "4c2abf8e7e873e2796afaa438061b3c530ed843b2965e82a8c79ad22fda56166",
+			"checksum_type": "sha256",
+			"epoch": "0",
+			"filename": "kernel-5.14.0-687.59.1.el9_8.x86_64.rpm",
+			"name": "kernel",
+			"reboot_suggested": 0,
+			"release": "687.59.1.el9_8",
+			"src": "kernel-5.14.0-687.59.1.el9_8.src.rpm",
+			"version": "5.14.0"
+		}
+	],
+	"references": [
+		{
+			"href": "https://access.redhat.com/errata/RHSA-2026:90008",
+			"id": "RHSA-2026:90008",
+			"type": "rhsa"
+		},
+		{
+			"href": "https://access.redhat.com/security/cve/CVE-2026-0001",
+			"id": "CVE-2026-0001",
+			"type": "cve"
+		}
+	],
+	"severity": "Important",
+	"title": "Important: kernel security update",
+	"type": "security",
+	"updated_date": 1790086400
+}
