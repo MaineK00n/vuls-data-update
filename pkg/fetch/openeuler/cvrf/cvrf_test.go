@@ -32,9 +32,10 @@ func TestFetch(t *testing.T) {
 			hasError: true,
 		},
 		{
-			// A 404 for a file that is not listed fails the fetch as before.
+			// A 404 for a file that is not listed fails the fetch as before:
+			// in the pipeline, not in reading index.txt, which fails alike.
 			name:     "missing-files-unlisted",
-			wantErr:  "error response with status code 404",
+			wantErr:  "fetch cvrf: pipeline get",
 			hasError: true,
 		},
 	}
