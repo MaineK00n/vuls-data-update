@@ -300,7 +300,7 @@ func (opts options) advisories(client *utilhttp.Client, release string) ([]Advis
 
 	resp, err := client.Do(req)
 	if err != nil {
-		return nil, errors.Wrapf(err, "fetch %s", fmt.Sprintf(opts.dataURL.Advisory, release, 1))
+		return nil, errors.Wrapf(err, "fetch %s", fmt.Sprintf(opts.dataURL.Advisory, release, 1, 1))
 	}
 	defer resp.Body.Close()
 

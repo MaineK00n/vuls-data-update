@@ -67,16 +67,16 @@ func TestFetch(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			var mu sync.Mutex
-			cut := make(map[string]bool, len(tt.cut))
+			cut := make(map[string]*cutWriter, len(tt.cut))
 			for _, p := range tt.cut {
-				cut[p] = true
+				cut[p] = nil
 			}
 			ts := httptest.NewTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				mu.Lock()
-				for p, ok := range cut {
-					if ok && strings.HasPrefix(r.URL.Path, p) {
-						cut[p] = false
-						w = &cutWriter{ResponseWriter: w, left: 16}
+				for p, cw := range cut {
+					if cw == nil && strings.HasPrefix(r.URL.Path, p) {
+						cut[p] = &cutWriter{ResponseWriter: w, left: 16}
+						w = cut[p]
 					}
 				}
 				mu.Unlock()
@@ -320,6 +320,13 @@ func TestFetch(t *testing.T) {
 			dir := t.TempDir()
 			err := api.Fetch(tt.releases,
 				api.WithHTTPClient(ts.Client()), api.WithDir(dir), api.WithRetry(tt.retry), api.WithConcurrency(1), api.WithWait(0), api.WithRowsPerPage(2), api.WithAllowEmpty(tt.allowEmpty))
+			mu.Lock()
+			for p, cw := range cut {
+				if cw == nil || !cw.cut {
+					t.Errorf("no response under %s was cut off", p)
+				}
+			}
+			mu.Unlock()
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)
@@ -338,10 +345,11 @@ func TestFetch(t *testing.T) {
 }
 
 // cutWriter sends the first left bytes of a body and then drops the connection,
-// as a reset partway through a response does.
+// as a reset partway through a response does. cut says whether it did.
 type cutWriter struct {
 	http.ResponseWriter
 	left int
+	cut  bool
 }
 
 func (w *cutWriter) Write(p []byte) (int, error) {
@@ -351,5 +359,6 @@ func (w *cutWriter) Write(p []byte) (int, error) {
 	}
 	_, _ = w.ResponseWriter.Write(p[:w.left])
 	_ = http.NewResponseController(w.ResponseWriter).Flush()
+	w.cut = true
 	panic(http.ErrAbortHandler)
 }

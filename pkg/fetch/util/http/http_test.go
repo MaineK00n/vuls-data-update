@@ -196,3 +196,25 @@ func TestNewClient_WithClientBufferBody(t *testing.T) {
 		})
 	}
 }
+
+// closeIdleCounter is a transport that counts the calls to its
+// CloseIdleConnections.
+type closeIdleCounter struct {
+	http.RoundTripper
+	calls int
+}
+
+func (c *closeIdleCounter) CloseIdleConnections() {
+	c.calls++
+}
+
+func TestNewClient_WithClientBufferBody_CloseIdleConnections(t *testing.T) {
+	// The client closes idle connections when it gives up on a request, and
+	// http.Client passes the call only to a transport that has the method.
+	inner := &closeIdleCounter{RoundTripper: http.DefaultTransport}
+	client := utilhttp.NewClient(utilhttp.WithClientHTTPClient(&http.Client{Transport: inner}), utilhttp.WithClientBufferBody(true))
+	client.HTTPClient.CloseIdleConnections()
+	if inner.calls != 1 {
+		t.Errorf("CloseIdleConnections calls on the inner transport = %d, want 1", inner.calls)
+	}
+}
