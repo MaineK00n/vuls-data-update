@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"slices"
 	"strings"
 	"time"
 
@@ -18,6 +19,39 @@ import (
 )
 
 const defaultRepoURL = "https://distro.windriver.com/git/windriver-cve-tracker.git"
+
+// templateLines are lines upstream never filled in. They name no release,
+// package or status, so they are skipped in the files templateFiles lists.
+var templateLines = []string{
+	"{recipe_rcpl}_{package}: {status}",
+	"{package}_{vendor_pr}: {status_vendor_pr}",
+}
+
+// templateFiles lists the files that carry templateLines in their Patches_
+// sections: 17 under active/ at upstream commit 0acad29a2 (2026-11-23), with
+// 148 such lines between them. It is a stopgap until upstream fills them in: a
+// listed file without such a line fails the fetch, so its entry is removed
+// rather than left behind, and such a line in a file that is not listed fails
+// as any unknown status does.
+var templateFiles = map[string]struct{}{
+	"CVE-2002-0640":  {},
+	"CVE-2002-1592":  {},
+	"CVE-2003-0693":  {},
+	"CVE-2005-3590":  {},
+	"CVE-2005-4808":  {},
+	"CVE-2006-5331":  {},
+	"CVE-2006-7254":  {},
+	"CVE-2006-20001": {},
+	"CVE-2007-1804":  {},
+	"CVE-2007-1864":  {},
+	"CVE-2007-6761":  {},
+	"CVE-2009-5147":  {},
+	"CVE-2009-5155":  {},
+	"CVE-2010-2496":  {},
+	"CVE-2010-5312":  {},
+	"CVE-2010-5321":  {},
+	"CVE-2010-5332":  {},
+}
 
 type options struct {
 	dir   string
@@ -98,9 +132,13 @@ func Fetch(opts ...Option) error {
 			}
 			defer f.Close()
 
-			v, err := parse(f)
+			_, templated := templateFiles[base]
+			v, skipped, err := parse(f, templated)
 			if err != nil {
 				return errors.Wrapf(err, "parse %s", path)
+			}
+			if templated && !skipped {
+				return errors.Errorf("%s has no line of templateLines any more; remove it from templateFiles", path)
 			}
 
 			splitted, err := util.Split(v.Candidate, "-", "-")
@@ -133,12 +171,13 @@ func Fetch(opts ...Option) error {
 	return nil
 }
 
-func parse(r io.Reader) (Vulnerability, error) {
+func parse(r io.Reader, skipTemplate bool) (Vulnerability, bool, error) {
 	vuln := Vulnerability{}
+	skipped := false
 
 	bs, err := io.ReadAll(r)
 	if err != nil {
-		return Vulnerability{}, errors.Wrap(err, "read all")
+		return Vulnerability{}, false, errors.Wrap(err, "read all")
 	}
 
 	lines := strings.Split(string(bs), "\n")
@@ -217,21 +256,23 @@ func parse(r io.Reader) (Vulnerability, error) {
 				switch {
 				case strings.HasPrefix(line, " upstream:"):
 					vuln.UpstreamLinks[name] = append(vuln.UpstreamLinks[name], strings.TrimSpace(strings.TrimPrefix(line, " upstream:")))
+				case skipTemplate && slices.Contains(templateLines, line):
+					skipped = true
 				default:
 					// ": " and not ":", since a package can be named with colons, as
 					// HarfBuzz::Shaper is.
 					lhs, rhs, ok := strings.Cut(line, ": ")
 					if !ok {
-						return Vulnerability{}, errors.Errorf("unexpected package status format. expected: %q, actual: %q", "<release>_<package>: <status> (<note>)", line)
+						return Vulnerability{}, false, errors.Errorf("unexpected package status format. expected: %q, actual: %q", "<release>_<package>: <status> (<note>)", line)
 					}
 
 					r, n, ok := strings.Cut(lhs, "_")
 					if !ok {
-						return Vulnerability{}, errors.Errorf("unexpected package release format. expected: %q, actual: %q", "<release>_<package>", line)
+						return Vulnerability{}, false, errors.Errorf("unexpected package release format. expected: %q, actual: %q", "<release>_<package>", line)
 					}
 					// Only the section's own package has a map to write into.
 					if Package(n) != name {
-						return Vulnerability{}, errors.Errorf("unexpected package. expected: %q, actual: %q", name, n)
+						return Vulnerability{}, false, errors.Errorf("unexpected package. expected: %q, actual: %q", name, n)
 					}
 
 					status, note, _ := strings.Cut(strings.TrimSpace(rhs), " ")
@@ -242,14 +283,14 @@ func parse(r io.Reader) (Vulnerability, error) {
 							Note:   strings.TrimPrefix(strings.TrimSuffix(note, ")"), "("),
 						}
 					default:
-						return Vulnerability{}, errors.Errorf("unexpected package status. expected: %q, actual: %q", []string{"released", "needed", "ignored", "DNE", "not-affected", "needs-triage", "deferred", "pending"}, status)
+						return Vulnerability{}, false, errors.Errorf("unexpected package status. expected: %q, actual: %q", []string{"released", "needed", "ignored", "DNE", "not-affected", "needs-triage", "deferred", "pending"}, status)
 					}
 				}
 			}
 		default:
-			return Vulnerability{}, errors.Errorf("unexpected line format. expected: %q, actual: %q", []string{"CRD:...", "Candidate:...", "PublicDate:...", "References:...", "ReleaseVersions:...", "Description:...", "WindRiver-Description:...", "Notes:...", "Bugs:...", "Priority:...", "Patches_<package>:..."}, line)
+			return Vulnerability{}, false, errors.Errorf("unexpected line format. expected: %q, actual: %q", []string{"CRD:...", "Candidate:...", "PublicDate:...", "References:...", "ReleaseVersions:...", "Description:...", "WindRiver-Description:...", "Notes:...", "Bugs:...", "Priority:...", "Patches_<package>:..."}, line)
 		}
 	}
 
-	return vuln, nil
+	return vuln, skipped, nil
 }
