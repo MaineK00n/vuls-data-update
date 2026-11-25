@@ -10,6 +10,9 @@ import (
 	"strconv"
 	"strings"
 	"testing"
+	"time"
+
+	"github.com/google/go-cmp/cmp"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/dotgit/registry/delete"
 	"github.com/MaineK00n/vuls-data-update/pkg/dotgit/registry/ls"
@@ -17,39 +20,332 @@ import (
 
 func TestDelete(t *testing.T) {
 	type args struct {
-		image string
-		token string
-		opts  []delete.Option
+		images []string
+		token  string
+		opts   []delete.Option
 	}
 	tests := []struct {
-		name    string
-		args    args
-		wantErr bool
+		name string
+		args args
+		// afterList changes the versions once the first listing has been
+		// answered, as another client does while Delete works through the
+		// images.
+		afterList func(vs []ls.Version) []ls.Version
+		// deleteNotFound makes the DELETE of these ids answer 404 without
+		// deleting, as GitHub may answer a token that can read the version but
+		// not delete it.
+		deleteNotFound []int
+		// deleteGone makes the DELETE of these ids delete and answer 404, as
+		// an attempt the API client retried after the first went through is
+		// answered.
+		deleteGone []int
+		// deleteForbidden makes the DELETE of these ids answer 403.
+		deleteForbidden []int
+		// deleteRateLimited makes the DELETE of these ids answer the primary
+		// rate limit, which resets later than the API client waits for.
+		deleteRateLimited []int
+		// deleteFailsOnce makes the first DELETE of these ids answer 502
+		// without deleting, which the API client retries. betweenRetries
+		// then changes the versions, as another client does while the API
+		// client waits to retry.
+		deleteFailsOnce []int
+		betweenRetries  func(vs []ls.Version) []ls.Version
+		// failRightAway makes the failing DELETE of deleteFailsOnce answer
+		// 429 with Retry-After: 0, which the API client retries at once,
+		// rather than 502.
+		failRightAway bool
+		// rateLimitedAfterFailure makes every request after a DELETE of
+		// deleteFailsOnce answer the primary rate limit.
+		rateLimitedAfterFailure bool
+		// deleteInterval is the least time between two DELETEs, which the
+		// other cases set to 0 so as not to sleep.
+		deleteInterval time.Duration
+		wantErr        bool
+		// wantErrContains are parts of the error.
+		wantErrContains []string
+		// wantRemaining are the digests left in the registry.
+		wantRemaining []string
 	}{
 		{
 			name: "untagged",
 			args: args{
-				image: "ghcr.io/vulsio/vuls-data-db@sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb",
-				token: "token",
+				images: []string{"ghcr.io/vulsio/vuls-data-db@sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb"},
+				token:  "token",
 			},
-			wantErr: false,
+			wantRemaining: []string{"sha256:6413c62920ab027e680d7adf44bec195e9f2ec7a299140ff9a5d2193a626b673", "sha256:29c88e701ac502d431e318a82b327d73f220b82714852b6942bcaffbb4e573aa"},
 		},
 		{
 			name: "tagged",
 			args: args{
-				image: "ghcr.io/vulsio/vuls-data-db@sha256:6413c62920ab027e680d7adf44bec195e9f2ec7a299140ff9a5d2193a626b673",
-				token: "token",
+				images: []string{"ghcr.io/vulsio/vuls-data-db@sha256:6413c62920ab027e680d7adf44bec195e9f2ec7a299140ff9a5d2193a626b673"},
+				token:  "token",
 			},
-			wantErr: true,
+			wantErr:       true,
+			wantRemaining: []string{"sha256:6413c62920ab027e680d7adf44bec195e9f2ec7a299140ff9a5d2193a626b673", "sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb", "sha256:29c88e701ac502d431e318a82b327d73f220b82714852b6942bcaffbb4e573aa"},
 		},
 		{
 			name: "tagged, but force",
 			args: args{
-				image: "ghcr.io/vulsio/vuls-data-db@sha256:6413c62920ab027e680d7adf44bec195e9f2ec7a299140ff9a5d2193a626b673",
-				token: "token",
-				opts:  []delete.Option{delete.WithForce(true)},
+				images: []string{"ghcr.io/vulsio/vuls-data-db@sha256:6413c62920ab027e680d7adf44bec195e9f2ec7a299140ff9a5d2193a626b673"},
+				token:  "token",
+				opts:   []delete.Option{delete.WithForce(true)},
 			},
-			wantErr: false,
+			wantRemaining: []string{"sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb", "sha256:29c88e701ac502d431e318a82b327d73f220b82714852b6942bcaffbb4e573aa"},
+		},
+		{
+			name: "several",
+			args: args{
+				images: []string{"ghcr.io/vulsio/vuls-data-db@sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb", "ghcr.io/vulsio/vuls-data-db@sha256:29c88e701ac502d431e318a82b327d73f220b82714852b6942bcaffbb4e573aa"},
+				token:  "token",
+			},
+			wantRemaining: []string{"sha256:6413c62920ab027e680d7adf44bec195e9f2ec7a299140ff9a5d2193a626b673"},
+		},
+		{
+			name: "several, a pause between the deletes",
+			args: args{
+				images: []string{"ghcr.io/vulsio/vuls-data-db@sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb", "ghcr.io/vulsio/vuls-data-db@sha256:29c88e701ac502d431e318a82b327d73f220b82714852b6942bcaffbb4e573aa"},
+				token:  "token",
+			},
+			deleteInterval: 100 * time.Millisecond,
+			wantRemaining:  []string{"sha256:6413c62920ab027e680d7adf44bec195e9f2ec7a299140ff9a5d2193a626b673"},
+		},
+		{
+			name: "a delete retried at once, still a pause apart",
+			args: args{
+				images: []string{"ghcr.io/vulsio/vuls-data-db@sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb"},
+				token:  "token",
+			},
+			deleteFailsOnce: []int{460898773},
+			failRightAway:   true,
+			deleteInterval:  100 * time.Millisecond,
+			wantRemaining:   []string{"sha256:6413c62920ab027e680d7adf44bec195e9f2ec7a299140ff9a5d2193a626b673", "sha256:29c88e701ac502d431e318a82b327d73f220b82714852b6942bcaffbb4e573aa"},
+		},
+		{
+			name: "several, one of them tagged",
+			args: args{
+				images: []string{"ghcr.io/vulsio/vuls-data-db@sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb", "ghcr.io/vulsio/vuls-data-db@sha256:6413c62920ab027e680d7adf44bec195e9f2ec7a299140ff9a5d2193a626b673", "ghcr.io/vulsio/vuls-data-db@sha256:29c88e701ac502d431e318a82b327d73f220b82714852b6942bcaffbb4e573aa"},
+				token:  "token",
+			},
+			wantErr:       true,
+			wantRemaining: []string{"sha256:6413c62920ab027e680d7adf44bec195e9f2ec7a299140ff9a5d2193a626b673"},
+		},
+		{
+			name: "several, one of them not found",
+			args: args{
+				images: []string{"ghcr.io/vulsio/vuls-data-db@sha256:0000000000000000000000000000000000000000000000000000000000000000", "ghcr.io/vulsio/vuls-data-db@sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb"},
+				token:  "token",
+			},
+			wantErr:       true,
+			wantRemaining: []string{"sha256:6413c62920ab027e680d7adf44bec195e9f2ec7a299140ff9a5d2193a626b673", "sha256:29c88e701ac502d431e318a82b327d73f220b82714852b6942bcaffbb4e573aa"},
+		},
+		{
+			name: "tagged after the listing",
+			args: args{
+				images: []string{"ghcr.io/vulsio/vuls-data-db@sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb", "ghcr.io/vulsio/vuls-data-db@sha256:29c88e701ac502d431e318a82b327d73f220b82714852b6942bcaffbb4e573aa"},
+				token:  "token",
+			},
+			afterList: func(vs []ls.Version) []ls.Version {
+				for i := range vs {
+					if vs[i].Name == "sha256:29c88e701ac502d431e318a82b327d73f220b82714852b6942bcaffbb4e573aa" {
+						vs[i].Metadata.Container.Tags = []string{"vuls-data-raw-test"}
+					}
+				}
+				return vs
+			},
+			wantErr:       true,
+			wantRemaining: []string{"sha256:6413c62920ab027e680d7adf44bec195e9f2ec7a299140ff9a5d2193a626b673", "sha256:29c88e701ac502d431e318a82b327d73f220b82714852b6942bcaffbb4e573aa"},
+		},
+		{
+			name: "deleted by another client after the listing",
+			args: args{
+				images: []string{"ghcr.io/vulsio/vuls-data-db@sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb", "ghcr.io/vulsio/vuls-data-db@sha256:29c88e701ac502d431e318a82b327d73f220b82714852b6942bcaffbb4e573aa"},
+				token:  "token",
+			},
+			afterList: func(vs []ls.Version) []ls.Version {
+				return slices.DeleteFunc(vs, func(v ls.Version) bool {
+					return v.Name == "sha256:29c88e701ac502d431e318a82b327d73f220b82714852b6942bcaffbb4e573aa"
+				})
+			},
+			wantRemaining: []string{"sha256:6413c62920ab027e680d7adf44bec195e9f2ec7a299140ff9a5d2193a626b673"},
+		},
+		{
+			name: "the delete answers 404, and the version is gone",
+			args: args{
+				images: []string{"ghcr.io/vulsio/vuls-data-db@sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb"},
+				token:  "token",
+			},
+			deleteGone:    []int{460898773},
+			wantRemaining: []string{"sha256:6413c62920ab027e680d7adf44bec195e9f2ec7a299140ff9a5d2193a626b673", "sha256:29c88e701ac502d431e318a82b327d73f220b82714852b6942bcaffbb4e573aa"},
+		},
+		{
+			name: "the delete answers 404, but the version is still there",
+			args: args{
+				images: []string{"ghcr.io/vulsio/vuls-data-db@sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb"},
+				token:  "token",
+			},
+			deleteNotFound:  []int{460898773},
+			wantErr:         true,
+			wantErrContains: []string{"yet the version is still there"},
+			wantRemaining:   []string{"sha256:6413c62920ab027e680d7adf44bec195e9f2ec7a299140ff9a5d2193a626b673", "sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb", "sha256:29c88e701ac502d431e318a82b327d73f220b82714852b6942bcaffbb4e573aa"},
+		},
+		{
+			name: "a failed delete is retried",
+			args: args{
+				images: []string{"ghcr.io/vulsio/vuls-data-db@sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb"},
+				token:  "token",
+			},
+			deleteFailsOnce: []int{460898773},
+			wantRemaining:   []string{"sha256:6413c62920ab027e680d7adf44bec195e9f2ec7a299140ff9a5d2193a626b673", "sha256:29c88e701ac502d431e318a82b327d73f220b82714852b6942bcaffbb4e573aa"},
+		},
+		{
+			// As when the delete went through, yet its answer was lost.
+			name: "gone between a failed delete and its retry",
+			args: args{
+				images: []string{"ghcr.io/vulsio/vuls-data-db@sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb"},
+				token:  "token",
+			},
+			deleteFailsOnce: []int{460898773},
+			betweenRetries: func(vs []ls.Version) []ls.Version {
+				return slices.DeleteFunc(vs, func(v ls.Version) bool { return v.ID == 460898773 })
+			},
+			wantRemaining: []string{"sha256:6413c62920ab027e680d7adf44bec195e9f2ec7a299140ff9a5d2193a626b673", "sha256:29c88e701ac502d431e318a82b327d73f220b82714852b6942bcaffbb4e573aa"},
+		},
+		{
+			name: "tagged between a failed delete and its retry",
+			args: args{
+				images: []string{"ghcr.io/vulsio/vuls-data-db@sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb"},
+				token:  "token",
+			},
+			deleteFailsOnce: []int{460898773},
+			betweenRetries: func(vs []ls.Version) []ls.Version {
+				for i := range vs {
+					if vs[i].ID == 460898773 {
+						vs[i].Metadata.Container.Tags = []string{"vuls-data-raw-test"}
+					}
+				}
+				return vs
+			},
+			wantErr:         true,
+			wantErrContains: []string{"check before the retry", "refuse to delete a tagged version"},
+			wantRemaining:   []string{"sha256:6413c62920ab027e680d7adf44bec195e9f2ec7a299140ff9a5d2193a626b673", "sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb", "sha256:29c88e701ac502d431e318a82b327d73f220b82714852b6942bcaffbb4e573aa"},
+		},
+		{
+			name: "a rate limit on the check before a retry stops the rest",
+			args: args{
+				images: []string{"ghcr.io/vulsio/vuls-data-db@sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb", "ghcr.io/vulsio/vuls-data-db@sha256:29c88e701ac502d431e318a82b327d73f220b82714852b6942bcaffbb4e573aa"},
+				token:  "token",
+			},
+			deleteFailsOnce:         []int{460898773},
+			rateLimitedAfterFailure: true,
+			wantErr:                 true,
+			wantErrContains:         []string{"stop at a GitHub rate limit", "check before the retry"},
+			wantRemaining:           []string{"sha256:6413c62920ab027e680d7adf44bec195e9f2ec7a299140ff9a5d2193a626b673", "sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb", "sha256:29c88e701ac502d431e318a82b327d73f220b82714852b6942bcaffbb4e573aa"},
+		},
+		{
+			name: "several, the delete of one of them refused",
+			args: args{
+				images: []string{"ghcr.io/vulsio/vuls-data-db@sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb", "ghcr.io/vulsio/vuls-data-db@sha256:29c88e701ac502d431e318a82b327d73f220b82714852b6942bcaffbb4e573aa"},
+				token:  "token",
+			},
+			deleteForbidden: []int{460898773},
+			wantErr:         true,
+			wantErrContains: []string{"actual: 403"},
+			wantRemaining:   []string{"sha256:6413c62920ab027e680d7adf44bec195e9f2ec7a299140ff9a5d2193a626b673", "sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb"},
+		},
+		{
+			name: "the id names another digest by the time it is read",
+			args: args{
+				images: []string{"ghcr.io/vulsio/vuls-data-db@sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb"},
+				token:  "token",
+			},
+			afterList: func(vs []ls.Version) []ls.Version {
+				for i := range vs {
+					if vs[i].ID == 460898773 {
+						vs[i].Name = "sha256:0000000000000000000000000000000000000000000000000000000000000000"
+					}
+				}
+				return vs
+			},
+			wantErr:         true,
+			wantErrContains: []string{"unexpected version digest"},
+			wantRemaining:   []string{"sha256:6413c62920ab027e680d7adf44bec195e9f2ec7a299140ff9a5d2193a626b673", "sha256:0000000000000000000000000000000000000000000000000000000000000000", "sha256:29c88e701ac502d431e318a82b327d73f220b82714852b6942bcaffbb4e573aa"},
+		},
+		{
+			name: "a package that cannot be listed does not stop the others",
+			args: args{
+				images: []string{"ghcr.io/vulsio/vuls-data-db-backup@sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb", "ghcr.io/vulsio/vuls-data-db@sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb", "ghcr.io/vulsio/vuls-data-db-backup@sha256:29c88e701ac502d431e318a82b327d73f220b82714852b6942bcaffbb4e573aa", "ghcr.io/vulsio/vuls-data-db@sha256:6413c62920ab027e680d7adf44bec195e9f2ec7a299140ff9a5d2193a626b673"},
+				token:  "token",
+			},
+			wantErr:         true,
+			wantErrContains: []string{"delete the images of vulsio/vuls-data-db-backup. list versions", "refuse to delete a tagged version"},
+			wantRemaining:   []string{"sha256:6413c62920ab027e680d7adf44bec195e9f2ec7a299140ff9a5d2193a626b673", "sha256:29c88e701ac502d431e318a82b327d73f220b82714852b6942bcaffbb4e573aa"},
+		},
+		{
+			name: "an owner that cannot be looked up does not stop the others",
+			args: args{
+				images: []string{"ghcr.io/unknown/a@sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb", "ghcr.io/unknown/b@sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb", "ghcr.io/vulsio/vuls-data-db@sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb"},
+				token:  "token",
+			},
+			wantErr:         true,
+			wantErrContains: []string{"delete the images of unknown/a. get the type of unknown", "delete the images of unknown/b. get the type of unknown"},
+			wantRemaining:   []string{"sha256:6413c62920ab027e680d7adf44bec195e9f2ec7a299140ff9a5d2193a626b673", "sha256:29c88e701ac502d431e318a82b327d73f220b82714852b6942bcaffbb4e573aa"},
+		},
+		{
+			name: "a rate limit stops the rest",
+			args: args{
+				images: []string{"ghcr.io/vulsio/vuls-data-db@sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb", "ghcr.io/vulsio/vuls-data-db@sha256:29c88e701ac502d431e318a82b327d73f220b82714852b6942bcaffbb4e573aa"},
+				token:  "token",
+			},
+			deleteRateLimited: []int{460898773},
+			wantErr:           true,
+			wantErrContains:   []string{"stop at a GitHub rate limit", "API rate limit exceeded"},
+			wantRemaining:     []string{"sha256:6413c62920ab027e680d7adf44bec195e9f2ec7a299140ff9a5d2193a626b673", "sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb", "sha256:29c88e701ac502d431e318a82b327d73f220b82714852b6942bcaffbb4e573aa"},
+		},
+		{
+			name: "a rate limit on a listing stops the rest",
+			args: args{
+				images: []string{"ghcr.io/vulsio/vuls-data-db-limited@sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb", "ghcr.io/vulsio/vuls-data-db@sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb"},
+				token:  "token",
+			},
+			wantErr:         true,
+			wantErrContains: []string{"stop at a GitHub rate limit", "delete the images of vulsio/vuls-data-db-limited. list versions"},
+			wantRemaining:   []string{"sha256:6413c62920ab027e680d7adf44bec195e9f2ec7a299140ff9a5d2193a626b673", "sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb", "sha256:29c88e701ac502d431e318a82b327d73f220b82714852b6942bcaffbb4e573aa"},
+		},
+		{
+			name: "a rate limit on the lookup of an owner stops the rest",
+			args: args{
+				images: []string{"ghcr.io/limited/a@sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb", "ghcr.io/vulsio/vuls-data-db@sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb"},
+				token:  "token",
+			},
+			wantErr:         true,
+			wantErrContains: []string{"stop at a GitHub rate limit", "get the type of limited"},
+			wantRemaining:   []string{"sha256:6413c62920ab027e680d7adf44bec195e9f2ec7a299140ff9a5d2193a626b673", "sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb", "sha256:29c88e701ac502d431e318a82b327d73f220b82714852b6942bcaffbb4e573aa"},
+		},
+		{
+			name: "the same digest twice",
+			args: args{
+				images: []string{"ghcr.io/vulsio/vuls-data-db@sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb", "ghcr.io/vulsio/vuls-data-db@sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb"},
+				token:  "token",
+			},
+			wantRemaining: []string{"sha256:6413c62920ab027e680d7adf44bec195e9f2ec7a299140ff9a5d2193a626b673", "sha256:29c88e701ac502d431e318a82b327d73f220b82714852b6942bcaffbb4e573aa"},
+		},
+		{
+			name: "no digest",
+			args: args{
+				images: []string{"ghcr.io/vulsio/vuls-data-db"},
+				token:  "token",
+			},
+			wantErr:       true,
+			wantRemaining: []string{"sha256:6413c62920ab027e680d7adf44bec195e9f2ec7a299140ff9a5d2193a626b673", "sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb", "sha256:29c88e701ac502d431e318a82b327d73f220b82714852b6942bcaffbb4e573aa"},
+		},
+		{
+			name: "not ghcr.io",
+			args: args{
+				images: []string{"ghcr.io/vulsio/vuls-data-db@sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb", "docker.io/vulsio/vuls-data-db@sha256:29c88e701ac502d431e318a82b327d73f220b82714852b6942bcaffbb4e573aa"},
+				token:  "token",
+			},
+			wantErr:       true,
+			wantRemaining: []string{"sha256:6413c62920ab027e680d7adf44bec195e9f2ec7a299140ff9a5d2193a626b673", "sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb", "sha256:29c88e701ac502d431e318a82b327d73f220b82714852b6942bcaffbb4e573aa"},
 		},
 	}
 	for _, tt := range tests {
@@ -83,10 +379,52 @@ func TestDelete(t *testing.T) {
 						Container:   &ls.Container{},
 					},
 				},
+				{
+					ID:             460033049,
+					Name:           "sha256:29c88e701ac502d431e318a82b327d73f220b82714852b6942bcaffbb4e573aa",
+					URL:            "https://api.github.com/orgs/vulsio/packages/container/vuls-data-db/versions/460033049",
+					PackageHTMLURL: "https://github.com/orgs/vulsio/packages/container/package/vuls-data-db",
+					CreatedAt:      "2025-07-12T06:34:54Z",
+					UpdatedAt:      "2025-07-12T06:34:54Z",
+					HTMLURL:        new("https://github.com/orgs/vulsio/packages/container/vuls-data-db/460033049"),
+					Metadata: &ls.Metadata{
+						PackageType: "container",
+						Container:   &ls.Container{},
+					},
+				},
 			}
 
+			// listings counts the listings Delete starts, which is the
+			// requests of their first page, and lookups the lookups of each
+			// owner.
+			var listings int
+			lookups := make(map[string]int)
+			// limited tells that a request was answered with a rate limit,
+			// after which Delete sends nothing more.
+			var limited bool
+			failed := make(map[int]bool)
+			// deletes are the times the DELETEs came in.
+			var deletes []time.Time
+			rateLimit := func(w http.ResponseWriter) {
+				limited = true
+				w.Header().Set("X-RateLimit-Remaining", "0")
+				w.Header().Set("X-RateLimit-Reset", strconv.FormatInt(time.Now().Add(time.Hour).Unix(), 10))
+				http.Error(w, `{"message":"API rate limit exceeded for installation."}`, http.StatusForbidden)
+			}
 			ts := httptest.NewTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				if limited {
+					t.Errorf("Delete() sent %s %s after a rate limit", r.Method, r.URL.Path)
+				}
+				if owner, ok := strings.CutPrefix(r.URL.Path, "/users/"); ok {
+					lookups[owner]++
+				}
+				if tt.rateLimitedAfterFailure && len(failed) > 0 {
+					rateLimit(w)
+					return
+				}
 				switch r.URL.Path {
+				case "/users/limited", "/orgs/vulsio/packages/container/vuls-data-db-limited/versions":
+					rateLimit(w)
 				case "/users/vulsio":
 					switch r.Method {
 					case http.MethodGet:
@@ -160,30 +498,65 @@ func TestDelete(t *testing.T) {
 						}()); err != nil {
 							http.Error(w, fmt.Sprintf("unexpected error: %v", err), http.StatusInternalServerError)
 						}
+
+						if page == 1 {
+							listings++
+							if listings == 1 && tt.afterList != nil {
+								vs = tt.afterList(vs)
+							}
+						}
 					default:
 						http.Error(w, "Bad Request", http.StatusBadRequest)
 					}
-				case "/orgs/vulsio/packages/container/vuls-data-db/versions/460898773",
-					"/orgs/vulsio/packages/container/vuls-data-db/versions/460898921":
+				case "/orgs/vulsio/packages/container/vuls-data-db/versions/460898921",
+					"/orgs/vulsio/packages/container/vuls-data-db/versions/460898773",
+					"/orgs/vulsio/packages/container/vuls-data-db/versions/460033049":
+					id, err := strconv.Atoi(path.Base(r.URL.Path))
+					if err != nil {
+						http.Error(w, fmt.Sprintf("unexpected error: %v", err), http.StatusInternalServerError)
+						return
+					}
+					i := slices.IndexFunc(vs, func(v ls.Version) bool { return v.ID == id })
+
 					switch r.Method {
-					case http.MethodDelete:
-						id, err := strconv.Atoi(path.Base(r.URL.Path))
-						if err != nil {
-							http.Error(w, fmt.Sprintf("unexpected error: %v", err), http.StatusInternalServerError)
-							return
-						}
-						// As GHCR does, answer 404 for a version that is
-						// already gone, so that deleting one twice fails here
-						// the way it fails in production.
-						before := len(vs)
-						vs = slices.DeleteFunc(vs, func(v ls.Version) bool {
-							return v.ID == id
-						})
-						if len(vs) == before {
+					case http.MethodGet:
+						if i == -1 {
 							http.NotFound(w, r)
 							return
 						}
-						w.WriteHeader(http.StatusNoContent)
+						w.WriteHeader(http.StatusOK)
+						if err := json.MarshalWrite(w, vs[i]); err != nil {
+							http.Error(w, fmt.Sprintf("unexpected error: %v", err), http.StatusInternalServerError)
+						}
+					case http.MethodDelete:
+						deletes = append(deletes, time.Now())
+						switch {
+						case slices.Contains(tt.deleteForbidden, id):
+							http.Error(w, `{"message":"Forbidden"}`, http.StatusForbidden)
+						case slices.Contains(tt.deleteRateLimited, id):
+							rateLimit(w)
+						case slices.Contains(tt.deleteFailsOnce, id) && !failed[id]:
+							failed[id] = true
+							if tt.betweenRetries != nil {
+								vs = tt.betweenRetries(vs)
+							}
+							if tt.failRightAway {
+								w.Header().Set("Retry-After", "0")
+								http.Error(w, `{"message":"You have exceeded a secondary rate limit."}`, http.StatusTooManyRequests)
+								return
+							}
+							http.Error(w, "Bad Gateway", http.StatusBadGateway)
+						case i == -1 || slices.Contains(tt.deleteNotFound, id):
+							// As GHCR does, answer 404 for a version that is
+							// already gone.
+							http.NotFound(w, r)
+						case slices.Contains(tt.deleteGone, id):
+							vs = slices.Delete(vs, i, i+1)
+							http.NotFound(w, r)
+						default:
+							vs = slices.Delete(vs, i, i+1)
+							w.WriteHeader(http.StatusNoContent)
+						}
 					default:
 						http.Error(w, "Bad Request", http.StatusBadRequest)
 					}
@@ -193,20 +566,40 @@ func TestDelete(t *testing.T) {
 			}))
 			// The in-memory network routes api.github.com to the test server,
 			// so the default production base URL is used.
-			if err := delete.Delete(tt.args.image, tt.args.token, append(tt.args.opts, delete.WithHTTPClient(ts.Client()))...); (err != nil) != tt.wantErr {
+			err := delete.Delete(tt.args.images, tt.args.token, append(tt.args.opts, delete.WithHTTPClient(ts.Client()), delete.WithDeleteInterval(tt.deleteInterval))...)
+			if (err != nil) != tt.wantErr {
 				t.Errorf("Delete() error = %v, wantErr %v", err, tt.wantErr)
 			}
-
-			rs, err := ls.List([]ls.Repository{{Type: "orgs", Registry: "ghcr.io", Owner: "vulsio", Package: "vuls-data-db"}}, tt.args.token, ls.WithHTTPClient(ts.Client()))
-			if err != nil {
-				t.Errorf("List() error = %v", err)
+			for _, s := range tt.wantErrContains {
+				if err == nil || !strings.Contains(err.Error(), s) {
+					t.Errorf("Delete() error = %v, want it to contain %q", err, s)
+				}
 			}
 
-			// Delete removes the digest exactly when it returns nil: it has one
-			// version to delete and reports whatever the registry answered.
-			wantDeleted := !tt.wantErr
-			if slices.ContainsFunc(rs, func(r ls.Response) bool { return strings.HasSuffix(tt.args.image, r.Digest) }) == wantDeleted {
-				t.Errorf("Delete() deleted the version with digest %q = %t, want %t, remaining versions: %+v", tt.args.image, !wantDeleted, wantDeleted, rs)
+			for i := 1; i < len(deletes); i++ {
+				if gap := deletes[i].Sub(deletes[i-1]); gap < tt.deleteInterval {
+					t.Errorf("Delete() sent DELETEs %s apart, want at least %s", gap, tt.deleteInterval)
+				}
+			}
+
+			// The versions of a package are listed once, however many of its
+			// images are deleted, unless an image is refused before anything
+			// is sent.
+			if listings > 1 {
+				t.Errorf("Delete() listed the versions %d times, want at most once", listings)
+			}
+			for owner, n := range lookups {
+				if n > 1 {
+					t.Errorf("Delete() looked %s up %d times, want at most once", owner, n)
+				}
+			}
+
+			remaining := make([]string, 0, len(vs))
+			for _, v := range vs {
+				remaining = append(remaining, v.Name)
+			}
+			if diff := cmp.Diff(tt.wantRemaining, remaining); diff != "" {
+				t.Errorf("Delete() remaining digests. (-expected +got):\n%s", diff)
 			}
 		})
 	}
