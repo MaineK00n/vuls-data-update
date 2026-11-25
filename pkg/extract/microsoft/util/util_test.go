@@ -57,7 +57,7 @@ func TestNormalizeProductName(t *testing.T) {
 			want: "Microsoft Visual Studio 2019 Version 16.11",
 		},
 		{
-			name: ".NET installed on name is not aliased by name (see cvrf productNameOverrides)",
+			name: ".NET installed on name is not aliased by name (see cvrf vendorFixProductName)",
 			args: args{s: ".NET 8.0 installed on Windows"},
 			want: ".NET 8.0 installed on Windows",
 		},
