@@ -24,6 +24,9 @@ func TestExtract(t *testing.T) {
 		// 9.2 -> 9.4 with 9.3 absent, the kernel-rt source package of 8.8 ->
 		// 8.10, the stripped 10.2 -> 10.3). ALSA-2026:90004 and
 		// ALSA-2026:90010 are under 8 too, where they get no holes.
+		// CVE-2026-0005 and CVE-2026-0007 are each fixed twice in 9.8, the
+		// greater fix walked first and last respectively, and the holes in
+		// ALSA-2026:90014 (9.9) start at the greater one.
 		{
 			name:   "kernel",
 			args:   "./testdata/fixtures/kernel",
