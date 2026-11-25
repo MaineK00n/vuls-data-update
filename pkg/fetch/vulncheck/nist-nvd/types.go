@@ -18,15 +18,6 @@ type backupResponse struct {
 	} `json:"data"`
 }
 
-type doc struct {
-	CVEDataType         string    `json:"CVE_data_type"`
-	CVEDataFormat       string    `json:"CVE_data_format"`
-	CVEDataVersion      string    `json:"CVE_data_version"`
-	CVEDataNumberOfCVEs string    `json:"CVE_data_numberOfCVEs"`
-	CVEDataTimestamp    string    `json:"CVE_data_timestamp"`
-	CVEItems            []CVEItem `json:"CVE_Items"`
-}
-
 type CVEItem struct {
 	Cve              CVE            `json:"cve,omitzero"`
 	Configurations   Configurations `json:"configurations,omitzero"`

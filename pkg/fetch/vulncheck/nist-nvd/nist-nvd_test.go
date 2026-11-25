@@ -3,7 +3,9 @@ package nistnvd_test
 import (
 	"bytes"
 	"encoding/json/v2"
+	"errors"
 	"fmt"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"path"
@@ -11,6 +13,8 @@ import (
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/google/go-cmp/cmp"
 
 	utiltest "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/test"
 	nistnvd "github.com/MaineK00n/vuls-data-update/pkg/fetch/vulncheck/nist-nvd"
@@ -107,5 +111,129 @@ func TestFetch(t *testing.T) {
 				}
 			}
 		})
+	}
+}
+
+func TestCVEItems(t *testing.T) {
+	tests := []struct {
+		name    string
+		feed    string
+		want    []string
+		wantErr bool
+	}{
+		{
+			name: "members around CVE_Items",
+			feed: `{"CVE_data_type":"CVE","CVE_Items":[{"cve":{"CVE_data_meta":{"ID":"CVE-2025-0001","ASSIGNER":"a"}}},{"cve":{"CVE_data_meta":{"ID":"CVE-2025-0002","ASSIGNER":"a"}}}],"CVE_data_timestamp":"2025-08-07T00:00Z"}`,
+			want: []string{"CVE-2025-0001", "CVE-2025-0002"},
+		},
+		{
+			name: "empty CVE_Items",
+			feed: `{"CVE_data_type":"CVE","CVE_Items":[]}`,
+		},
+		{
+			name: "null CVE_Items",
+			feed: `{"CVE_data_type":"CVE","CVE_Items":null}`,
+		},
+		{
+			name: "no CVE_Items",
+			feed: `{"CVE_data_type":"CVE"}`,
+		},
+		{
+			name:    "not an object",
+			feed:    `[]`,
+			wantErr: true,
+		},
+		{
+			name:    "CVE_Items not an array",
+			feed:    `{"CVE_Items":{}}`,
+			wantErr: true,
+		},
+		{
+			name:    "an item that does not decode",
+			feed:    `{"CVE_Items":[{"cve":{"CVE_data_meta":{"ID":"CVE-2025-0001","ASSIGNER":"a"}}},{"cve":1}]}`,
+			want:    []string{"CVE-2025-0001"},
+			wantErr: true,
+		},
+		{
+			name:    "cut off",
+			feed:    `{"CVE_Items":[{"cve":{"CVE_data_meta":{"ID":"CVE-2025-0001","ASSIGNER":"a"}}},`,
+			want:    []string{"CVE-2025-0001"},
+			wantErr: true,
+		},
+		{
+			name:    "data after the feed",
+			feed:    `{"CVE_Items":[]} {}`,
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var (
+				got []string
+				err error
+			)
+			for v, e := range nistnvd.CVEItems(strings.NewReader(tt.feed)) {
+				if e != nil {
+					err = e
+					break
+				}
+				got = append(got, v.Cve.CVEDataMeta.ID)
+			}
+			if (err != nil) != tt.wantErr {
+				t.Errorf("CVEItems() error = %v, wantErr %v", err, tt.wantErr)
+			}
+			if diff := cmp.Diff(tt.want, got); diff != "" {
+				t.Errorf("(-expected +got):\n%s", diff)
+			}
+		})
+	}
+}
+
+// TestCVEItems_streaming checks that an item is yielded as soon as it is read,
+// before the rest of the feed has even been written, which is what keeps a
+// feed of gigabytes out of memory.
+func TestCVEItems_streaming(t *testing.T) {
+	pr, pw := io.Pipe()
+	yielded := make(chan struct{})
+	go func() {
+		if _, err := io.WriteString(pw, `{"CVE_Items":[{"cve":{"CVE_data_meta":{"ID":"CVE-2025-0001","ASSIGNER":"a"}}},`); err != nil {
+			pw.CloseWithError(err)
+			return
+		}
+		select {
+		case <-yielded:
+		case <-time.After(10 * time.Second):
+			pw.CloseWithError(errors.New("no item was yielded before the rest of the feed was written"))
+			return
+		}
+		_, err := io.WriteString(pw, `{"cve":{"CVE_data_meta":{"ID":"CVE-2025-0002","ASSIGNER":"a"}}}]}`)
+		pw.CloseWithError(err)
+	}()
+
+	var got []string
+	for v, err := range nistnvd.CVEItems(pr) {
+		if err != nil {
+			t.Fatal("unexpected error:", err)
+		}
+		if len(got) == 0 {
+			close(yielded)
+		}
+		got = append(got, v.Cve.CVEDataMeta.ID)
+	}
+	if diff := cmp.Diff([]string{"CVE-2025-0001", "CVE-2025-0002"}, got); diff != "" {
+		t.Errorf("(-expected +got):\n%s", diff)
+	}
+}
+
+// TestCVEItems_break checks that a loop may stop before the feed ends.
+func TestCVEItems_break(t *testing.T) {
+	for v, err := range nistnvd.CVEItems(strings.NewReader(`{"CVE_Items":[{"cve":{"CVE_data_meta":{"ID":"CVE-2025-0001","ASSIGNER":"a"}}},{"cve":{"CVE_data_meta":{"ID":"CVE-2025-0002","ASSIGNER":"a"}}}]}`)) {
+		if err != nil {
+			t.Fatal("unexpected error:", err)
+		}
+		if v.Cve.CVEDataMeta.ID != "CVE-2025-0001" {
+			t.Errorf("unexpected first item. expected: %q, actual: %q", "CVE-2025-0001", v.Cve.CVEDataMeta.ID)
+		}
+		break
 	}
 }
