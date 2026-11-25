@@ -981,9 +981,8 @@ func buildDetections(v cvrf.Vulnerability, products map[string]string) (map[ecos
 					if err != nil {
 						return nil, nil, errors.Wrap(err, "build unresolved criterion")
 					}
-					if uc != nil && !slices.ContainsFunc(unresolvedByTag[tag], func(e criterionTypes.Criterion) bool {
-						return criterionTypes.Compare(e, *uc) == 0
-					}) {
+					if uc != nil {
+						// appendConditions drops the duplicates
 						unresolvedByTag[tag] = append(unresolvedByTag[tag], *uc)
 					}
 					continue
@@ -1710,9 +1709,9 @@ var dotnetPrereleaseRE = regexp.MustCompile(`^(preview|rc)\.\d+(\.\d+)*$`)
 //     takes ".NET X installed on <OS>" for the SDK and ".NET X runtime installed on
 //     <OS>" for the runtime, whichever the document meant (e.g. a KB-only fix under
 //     ".NET 8.0 installed on Linux" in a CVE before 2026-Jun, the runtime then, would
-//     go to the SDK). It only shows in the KB criterion and the KB record, as such a
-//     FixedBuild gives no version criterion. The only such fixes so far, the 2026-Sep
-//     "11.0 RC1" ones, list no KB either
+//     go to the SDK). It shows in the KB criterion, the KB record and the unresolved
+//     criterion, as such a FixedBuild gives no comparable version criterion. The only
+//     such fixes so far, the 2026-Sep "11.0 RC1" ones, list no KB
 //   - anything else: the SDK, ".NET X installed on <OS>". An SDK version is a feature
 //     band, patch 100 or above, comma-separated when there are several (e.g.
 //     "10.0.115", "8.0.130, 8.0.424", "11.0.100-rc.2"), and buildDotNetSDKCriterion
@@ -2883,7 +2882,7 @@ var fixedBuildOverrides = map[[3]string]string{
 	// Notice" of each 16.0.x release in
 	// https://learn.microsoft.com/en-us/visualstudio/releases/2019/release-notes-v16.0
 	// CVE-2020-1108 is listed under 16.0.14 and, re-released, 16.0.15, which is taken.
-	// Not listed, and left without a criterion: CVE-2020-1161.
+	// Not listed, and left to buildUnresolvedCriterion: CVE-2020-1161.
 	{"CVE-2019-0727", "Microsoft Visual Studio 2019 Version 16.0", ""}:  "16.0.4",
 	{"CVE-2019-1077", "Microsoft Visual Studio 2019 Version 16.0", ""}:  "16.0.6",
 	{"CVE-2019-1113", "Microsoft Visual Studio 2019 Version 16.0", ""}:  "16.0.6",

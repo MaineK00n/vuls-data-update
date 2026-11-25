@@ -1891,7 +1891,7 @@ func TestBuildUnresolvedCriterion(t *testing.T) {
 		},
 		{
 			name: ".NET SDK feature band that covers no released band",
-			args: args{cveID: "CVE-2026-00000", productName: ".NET 10.0 installed on Windows", rawFixedBuild: "10.0.100"},
+			args: args{cveID: "CVE-2026-00000", productName: ".NET 10.0 installed on Windows", rawFixedBuild: "10.0.200"},
 		},
 		{
 			name: "fixedBuildOverrides entry of \"\" acknowledges the gap",
