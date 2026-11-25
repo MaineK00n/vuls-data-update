@@ -1,0 +1,36 @@
+{
+	"description": "The kernel packages contain the Linux kernel, the core of any Linux operating system.\n\nSecurity Fix(es):\n\n* kernel: synthetic issue (CVE-2026-0006)",
+	"id": "ALSA-2026:90004",
+	"issued_date": 1767312000,
+	"modules": [],
+	"packages": [
+		{
+			"arch": "x86_64",
+			"checksum": "cb7fe943276ead80702ac64aa9ce58c0654fdc34455bcde996d5e55a74bfde9d",
+			"checksum_type": "sha256",
+			"epoch": "0",
+			"filename": "kernel-4.18.0-553.80.1.el8_10.x86_64.rpm",
+			"name": "kernel",
+			"reboot_suggested": 0,
+			"release": "553.80.1.el8_10",
+			"src": "kernel-4.18.0-553.80.1.el8_10.src.rpm",
+			"version": "4.18.0"
+		}
+	],
+	"references": [
+		{
+			"href": "https://access.redhat.com/errata/RHSA-2026:90004",
+			"id": "RHSA-2026:90004",
+			"type": "rhsa"
+		},
+		{
+			"href": "https://access.redhat.com/security/cve/CVE-2026-0006",
+			"id": "CVE-2026-0006",
+			"type": "cve"
+		}
+	],
+	"severity": "Important",
+	"title": "Important: kernel security update",
+	"type": "security",
+	"updated_date": 1767398400
+}

@@ -5,6 +5,45 @@
 			"content": {
 				"id": "ALSA-2026:90010",
 				"title": "Important: kernel security update",
+				"description": "The kernel packages contain the Linux kernel, the core of any Linux operating system.\n\nSecurity Fix(es):\n\n* kernel: synthetic issue (CVE-2026-0001)\n* kernel: synthetic issue (CVE-2026-0002)",
+				"severity": [
+					{
+						"type": "vendor",
+						"source": "errata.almalinux.org",
+						"vendor": "Important"
+					}
+				],
+				"references": [
+					{
+						"source": "errata.almalinux.org",
+						"url": "https://access.redhat.com/errata/RHSA-2026:90010"
+					},
+					{
+						"source": "errata.almalinux.org",
+						"url": "https://access.redhat.com/security/cve/CVE-2026-0001"
+					},
+					{
+						"source": "errata.almalinux.org",
+						"url": "https://access.redhat.com/security/cve/CVE-2026-0002"
+					},
+					{
+						"source": "errata.almalinux.org",
+						"url": "https://errata.almalinux.org/8/ALSA-2026-90010.html"
+					}
+				],
+				"published": "2026-11-11T00:00:00Z",
+				"modified": "2026-11-12T00:00:00Z"
+			},
+			"segments": [
+				{
+					"ecosystem": "alma:8"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "ALSA-2026:90010",
+				"title": "Important: kernel security update",
 				"description": "The kernel packages contain the Linux kernel, the core of any Linux operating system.\n\nSecurity Fix(es):\n\n* kernel: synthetic issue (CVE-2026-0001)\n* kernel: synthetic issue (CVE-2026-0002)\n* kernel: synthetic issue (CVE-2026-0003)\n* kernel: synthetic issue (CVE-2026-0004)",
 				"severity": [
 					{
@@ -74,6 +113,9 @@
 			},
 			"segments": [
 				{
+					"ecosystem": "alma:8"
+				},
+				{
 					"ecosystem": "alma:9",
 					"tag": "kernel-fixed-in-older-minor:687.59.1.el9_8#1"
 				}
@@ -90,6 +132,9 @@
 				]
 			},
 			"segments": [
+				{
+					"ecosystem": "alma:8"
+				},
 				{
 					"ecosystem": "alma:9"
 				}
@@ -131,6 +176,47 @@
 		}
 	],
 	"detections": [
+		{
+			"ecosystem": "alma:8",
+			"conditions": [
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "kernel",
+											"architectures": [
+												"x86_64"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:4.18.0-553.81.1.el8_10"
+											}
+										],
+										"fixed": [
+											"0:4.18.0-553.81.1.el8_10"
+										]
+									}
+								}
+							}
+						]
+					}
+				}
+			]
+		},
 		{
 			"ecosystem": "alma:9",
 			"conditions": [
@@ -711,6 +797,7 @@
 	"data_source": {
 		"id": "alma-errata",
 		"raws": [
+			"kernel/8/ALSA/2026/ALSA-2026:90010.json",
 			"kernel/9/ALSA/2026/ALSA-2026:90007.json",
 			"kernel/9/ALSA/2026/ALSA-2026:90008.json",
 			"kernel/9/ALSA/2026/ALSA-2026:90009.json",

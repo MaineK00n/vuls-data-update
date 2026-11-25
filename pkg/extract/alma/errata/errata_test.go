@@ -22,7 +22,8 @@ func TestExtract(t *testing.T) {
 		// Synthetic kernel advisories: CVEs listed again by a newer minor's
 		// advisory after being fixed by an older minor's (9.7, 9.8 -> 9.9,
 		// 9.2 -> 9.4 with 9.3 absent, the kernel-rt source package of 8.8 ->
-		// 8.10, the stripped 10.2 -> 10.3).
+		// 8.10, the stripped 10.2 -> 10.3). ALSA-2026:90004 and
+		// ALSA-2026:90010 are under 8 too, where they get no holes.
 		{
 			name:   "kernel",
 			args:   "./testdata/fixtures/kernel",

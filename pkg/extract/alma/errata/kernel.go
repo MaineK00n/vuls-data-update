@@ -222,7 +222,7 @@ func minorOf(release string) (int, bool) {
 
 // excludeFixedOlderMinors takes the builds of older minors that have their own
 // minor's fix out of the advisories written (see the comment at the top).
-func (x kernelIndex) excludeFixedOlderMinors() error {
+func (x *kernelIndex) excludeFixedOlderMinors() error {
 	type ownKey struct {
 		ecosystem ecosystemTypes.Ecosystem
 		cve       vulnerabilityContentTypes.VulnerabilityID
@@ -329,7 +329,7 @@ func checkHoles(fixed string, holes []hole) error {
 	vs = append(vs, fixed)
 	for i := 1; i < len(vs); i++ {
 		if rpm.NewVersion(vs[i-1]).Compare(rpm.NewVersion(vs[i])) >= 0 {
-			return errors.Errorf("unexpected order of versions. expected: %q < %q", vs[i-1], vs[i])
+			return errors.Errorf("unexpected order of versions. expected: %q, actual: %q", "strictly ascending", vs)
 		}
 	}
 	return nil
