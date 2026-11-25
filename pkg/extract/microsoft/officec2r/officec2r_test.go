@@ -17,17 +17,19 @@ import (
 //   - 2020-04-14 / 2020-05-12: the last entry under the "Office 365 ProPlus"
 //     name and the first under "Microsoft 365 Apps for Enterprise".
 //   - 2021-08-10 / 2021-08-17: CVE-2021-34478 listed again a week later
-//     ("Fix was updated for this CVE"); the first listing decides.
+//     ("Fix was updated for this CVE"); the later listing decides the branch
+//     it lists again, and both entries are raws and references.
 //   - 2022-08-09: a Monthly Enterprise Channel build rolled back and released
 //     again; the lower revision of the branch is the bound.
 //   - 2023-03-14: the page labels build 16130 "Version 2301" on two lines and
 //     "Version 2302" on the others; branches are keyed by build.
 //   - 2024-12-10: ADV240002, an advisory rather than a CVE.
 //   - 2025-04-08 / 2025-04-15: CVE-2025-27751 listed again in a
-//     single-channel out-of-band entry; the first listing decides.
+//     single-channel out-of-band entry; the later listing decides the branch
+//     it lists again, the first one the others.
 //   - 2026-10-13: the volume-licensed bands of Office 2019, LTSC 2021 and
-//     LTSC 2024 beside the retail branches of the same families, and Office
-//     2019 with no retail line left.
+//     LTSC 2024, from 16.0.0.0, beside the retail branches of the same
+//     families, and Office 2019 with no retail line left.
 func TestExtract(t *testing.T) {
 	tests := []struct {
 		name     string

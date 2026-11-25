@@ -4,15 +4,20 @@
 // points at the release notes), so microsoft-cvrf emits no criterion for them
 // and this data source carries their detection instead.
 //
-// For every CVE (or ADV) the page lists, each product family takes the first
-// release entry (oldest) that lists the ID and has a build line for the
-// family. Every build branch the entry lists for the family becomes a range
+// For every CVE (or ADV) the page lists, each product family takes the
+// release entries that list the ID and have a build line for the family. Every
+// build branch they list for the family becomes a range
 // [16.0.<branch>.0, 16.0.<branch>.<revision>), the revision being the lowest
-// one the entry lists for that branch across the family's channels, so that a
-// host on any fixed build of the branch is not flagged. Volume-licensed lines
-// keep one version (1808, 2108, 2408) while their build number moves on every
-// month, so they form one band per channel and version instead, starting at
-// the lowest build the page ever lists for it.
+// one an entry lists for that branch across the family's channels, so that a
+// host on any fixed build of the branch is not flagged. When several entries
+// list the ID, the latest one listing a branch decides its revision: the page
+// lists an ID again when the fix was redone (e.g. CVE-2021-34478 "Fix was
+// updated for this CVE", CVE-2025-27751 in an out-of-band entry), and the
+// earlier build then does not fix it. Volume-licensed lines keep one version
+// (1808, 2108, 2408) while their build number moves on every month, so they
+// form one band [16.0.0.0, 16.0.<branch>.<revision>) per channel and version
+// instead: their builds are far below the retail branches of the family, and
+// a retail branch inside the band fails the extraction.
 //
 // The page does not say which products a CVE affects: an entry lists every
 // line released that month. A product family is therefore emitted for a CVE
@@ -374,27 +379,14 @@ func extract(rs []release) ([]dataTypes.Data, error) {
 		}
 	}
 
-	// floors holds the lowest build branch the page ever lists for a
-	// volume-licensed channel and version: the start of its band.
-	floors := make(map[vlKey]int)
-	for _, r := range rs {
-		for _, b := range r.builds {
-			if !b.line.volumeLicensed {
-				continue
-			}
-			k := vlKey{channel: b.channel, version: b.version}
-			if f, ok := floors[k]; !ok || b.branch < f {
-				floors[k] = b.branch
-			}
-		}
-	}
-
-	type usage struct {
-		release *release
-		family  family
+	// listings holds, per ID and family, the entries listing the ID that have
+	// a build line of the family, oldest first.
+	type listing struct {
+		family   family
+		releases []*release
 	}
 	var order []string
-	used := make(map[string][]usage)
+	listings := make(map[string][]listing)
 	for i := range rs {
 		r := &rs[i]
 		families := make(map[family]struct{})
@@ -402,15 +394,17 @@ func extract(rs []release) ([]dataTypes.Data, error) {
 			families[b.line.family] = struct{}{}
 		}
 		for _, id := range r.ids {
-			if _, ok := used[id]; !ok {
+			if _, ok := listings[id]; !ok {
 				order = append(order, id)
-				used[id] = nil
+				listings[id] = nil
 			}
 			for _, f := range slices.Sorted(maps.Keys(families)) {
-				if slices.ContainsFunc(used[id], func(u usage) bool { return u.family == f }) {
-					continue
+				j := slices.IndexFunc(listings[id], func(l listing) bool { return l.family == f })
+				if j < 0 {
+					listings[id] = append(listings[id], listing{family: f})
+					j = len(listings[id]) - 1
 				}
-				used[id] = append(used[id], usage{release: r, family: f})
+				listings[id][j].releases = append(listings[id][j].releases, r)
 			}
 		}
 	}
@@ -426,12 +420,14 @@ func extract(rs []release) ([]dataTypes.Data, error) {
 				URL:    fmt.Sprintf("https://msrc.microsoft.com/update-guide/vulnerability/%s", id),
 			}}
 		)
-		for _, u := range used[id] {
-			cn, err := buildCriterion(u.release.builds, u.family, floors)
+		for _, l := range listings[id] {
+			cn, err := buildCriterion(l.releases, l.family)
 			if err != nil {
-				return nil, errors.Wrapf(err, "build criterion of %s for %s in %q", id, u.family, u.release.id)
+				return nil, errors.Wrapf(err, "build criterion of %s for %s", id, l.family)
 			}
-			for _, p := range products(u.family, u.release.date) {
+			// The first entry names the products: no ID is listed both before
+			// and after the "Office 365 ProPlus" rename.
+			for _, p := range products(l.family, l.releases[0].date) {
 				c := cn
 				c.Version = new(*cn.Version)
 				c.Version.Affected = &affectedTypes.Affected{
@@ -449,12 +445,14 @@ func extract(rs []release) ([]dataTypes.Data, error) {
 				})
 				segments = append(segments, segmentTypes.Segment{Ecosystem: ecosystemTypes.EcosystemTypeMicrosoft, Tag: segmentTypes.DetectionTag(p)})
 			}
-			if !slices.Contains(raws, u.release.raw) {
-				raws = append(raws, u.release.raw)
-			}
-			ref := referenceTypes.Reference{Source: "learn.microsoft.com", URL: fmt.Sprintf("%s#%s", releaseNotesURL, u.release.id)}
-			if !slices.Contains(refs, ref) {
-				refs = append(refs, ref)
+			for _, r := range l.releases {
+				if !slices.Contains(raws, r.raw) {
+					raws = append(raws, r.raw)
+				}
+				ref := referenceTypes.Reference{Source: "learn.microsoft.com", URL: fmt.Sprintf("%s#%s", releaseNotesURL, r.id)}
+				if !slices.Contains(refs, ref) {
+					refs = append(refs, ref)
+				}
 			}
 		}
 
@@ -496,35 +494,43 @@ func extract(rs []release) ([]dataTypes.Data, error) {
 }
 
 // buildCriterion builds the fixed-build criterion of one family from the build
-// lines of one release entry. The binary package name is left for the caller.
-func buildCriterion(builds []build, f family, floors map[vlKey]int) (criterionTypes.Criterion, error) {
+// lines of the release entries listing an ID, oldest first. Within an entry a
+// branch takes its lowest revision; across entries the latest entry listing a
+// branch (or a volume-licensed channel and version) decides it. The binary
+// package name is left for the caller.
+func buildCriterion(rs []*release, f family) (criterionTypes.Criterion, error) {
 	type band struct {
-		floor    int
 		branch   int
 		revision int
 	}
-	branches := make(map[int]int) // retail / Microsoft 365 Apps branch -> lowest revision
+	branches := make(map[int]int) // retail / Microsoft 365 Apps branch -> revision
 	bands := make(map[vlKey]band)
-	for _, b := range builds {
-		if b.line.family != f {
-			continue
-		}
-		if !b.line.volumeLicensed {
-			if r, ok := branches[b.branch]; !ok || b.revision < r {
-				branches[b.branch] = b.revision
+	for _, r := range rs {
+		rBranches := make(map[int]int)
+		rBands := make(map[vlKey]band)
+		for _, b := range r.builds {
+			if b.line.family != f {
+				continue
 			}
-			continue
-		}
-		k := vlKey{channel: b.channel, version: b.version}
-		if v, ok := bands[k]; ok {
-			if v.branch != b.branch {
-				return criterionTypes.Criterion{}, errors.Errorf("unexpected volume licensed builds. expected: one branch per channel and version, actual: %d and %d for %s %s", v.branch, b.branch, b.channel, b.version)
+			if !b.line.volumeLicensed {
+				if v, ok := rBranches[b.branch]; !ok || b.revision < v {
+					rBranches[b.branch] = b.revision
+				}
+				continue
 			}
-			v.revision = min(v.revision, b.revision)
-			bands[k] = v
-			continue
+			k := vlKey{channel: b.channel, version: b.version}
+			if v, ok := rBands[k]; ok {
+				if v.branch != b.branch {
+					return criterionTypes.Criterion{}, errors.Errorf("unexpected volume licensed builds in %q. expected: one branch per channel and version, actual: %d and %d for %s %s", r.id, v.branch, b.branch, b.channel, b.version)
+				}
+				v.revision = min(v.revision, b.revision)
+				rBands[k] = v
+				continue
+			}
+			rBands[k] = band{branch: b.branch, revision: b.revision}
 		}
-		bands[k] = band{floor: floors[k], branch: b.branch, revision: b.revision}
+		maps.Copy(branches, rBranches)
+		maps.Copy(bands, rBands)
 	}
 	if len(branches) == 0 && len(bands) == 0 {
 		return criterionTypes.Criterion{}, errors.New("no build line")
@@ -534,8 +540,8 @@ func buildCriterion(builds []build, f family, floors map[vlKey]int) (criterionTy
 		ranges []rangeTypes.Range
 		fixed  []string
 	)
-	add := func(lower, branch, revision int) error {
-		ge, lt := fmt.Sprintf("16.0.%d.0", lower), fmt.Sprintf("16.0.%d.%d", branch, revision)
+	add := func(ge string, branch, revision int) error {
+		lt := fmt.Sprintf("16.0.%d.%d", branch, revision)
 		for _, v := range []string{ge, lt} {
 			if _, err := officewindowsversion.NewVersion(v); err != nil {
 				return errors.Wrapf(err, "officewindowsversion.NewVersion(%q)", v)
@@ -546,7 +552,7 @@ func buildCriterion(builds []build, f family, floors map[vlKey]int) (criterionTy
 		return nil
 	}
 	for _, branch := range slices.Sorted(maps.Keys(branches)) {
-		if err := add(branch, branch, branches[branch]); err != nil {
+		if err := add(fmt.Sprintf("16.0.%d.0", branch), branch, branches[branch]); err != nil {
 			return criterionTypes.Criterion{}, errors.Wrap(err, "add branch range")
 		}
 	}
@@ -556,11 +562,11 @@ func buildCriterion(builds []build, f family, floors map[vlKey]int) (criterionTy
 		v := bands[k]
 		// A retail branch inside the band would be compared against both ranges.
 		for branch := range branches {
-			if v.floor <= branch && branch <= v.branch {
-				return criterionTypes.Criterion{}, errors.Errorf("unexpected overlap. branch %d lies in the %s %s band [%d, %d]", branch, k.channel, k.version, v.floor, v.branch)
+			if branch <= v.branch {
+				return criterionTypes.Criterion{}, errors.Errorf("unexpected overlap. branch %d lies in the %s %s band [0, %d]", branch, k.channel, k.version, v.branch)
 			}
 		}
-		if err := add(v.floor, v.branch, v.revision); err != nil {
+		if err := add("16.0.0.0", v.branch, v.revision); err != nil {
 			return criterionTypes.Criterion{}, errors.Wrap(err, "add volume licensed range")
 		}
 	}
