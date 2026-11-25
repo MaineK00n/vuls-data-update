@@ -25,20 +25,11 @@ func TestCat(t *testing.T) {
 		hasError bool
 	}{
 		{
-			name: "README.md, native git",
+			name: "README.md",
 			args: args{
 				repository: "testdata/fixtures/vuls-data-raw-test.tar.zst",
 				path:       "README.md",
-				opts:       []cat.Option{cat.WithUseNativeGit(true), cat.WithTreeish("main")},
-			},
-			want: "# vuls-data-raw-test\n",
-		},
-		{
-			name: "README.md, go-git",
-			args: args{
-				repository: "testdata/fixtures/vuls-data-raw-test.tar.zst",
-				path:       "README.md",
-				opts:       []cat.Option{cat.WithUseNativeGit(false), cat.WithTreeish("main")},
+				opts:       []cat.Option{cat.WithTreeish("main")},
 			},
 			want: "# vuls-data-raw-test\n",
 		},
@@ -47,7 +38,7 @@ func TestCat(t *testing.T) {
 			args: args{
 				repository: "testdata/fixtures/vuls-data-raw-test.tar.zst",
 				path:       "README",
-				opts:       []cat.Option{cat.WithUseNativeGit(true), cat.WithTreeish("main")},
+				opts:       []cat.Option{cat.WithTreeish("main")},
 			},
 			hasError: true,
 		},

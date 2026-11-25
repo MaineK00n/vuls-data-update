@@ -25,11 +25,11 @@ func TestFind(t *testing.T) {
 		hasError bool
 	}{
 		{
-			name: ".*\\.md, native git",
+			name: ".*\\.md, treeish: main",
 			args: args{
 				repository: "testdata/fixtures/vuls-data-raw-test.tar.zst",
 				expression: ".*\\.md",
-				opts:       []find.Option{find.WithUseNativeGit(true), find.WithTreeish("main")},
+				opts:       []find.Option{find.WithTreeish("main")},
 			},
 			want: []find.FileObject{
 				{
@@ -42,28 +42,11 @@ func TestFind(t *testing.T) {
 			},
 		},
 		{
-			name: ".*\\.md, go-git",
+			name: ".*\\.md, treeish: 9d3d5d486d4c9414321a2df56f2e007c4c2c8fab",
 			args: args{
 				repository: "testdata/fixtures/vuls-data-raw-test.tar.zst",
 				expression: ".*\\.md",
-				opts:       []find.Option{find.WithUseNativeGit(false), find.WithTreeish("main")},
-			},
-			want: []find.FileObject{
-				{
-					Name: "README.md",
-					Mode: "0100644",
-					Type: "blob",
-					Hash: "46df57e1de336181a027385cf5ce993bba78db3a",
-					Size: 21,
-				},
-			},
-		},
-		{
-			name: ".*\\.md, native git",
-			args: args{
-				repository: "testdata/fixtures/vuls-data-raw-test.tar.zst",
-				expression: ".*\\.md",
-				opts:       []find.Option{find.WithUseNativeGit(true), find.WithTreeish("9d3d5d486d4c9414321a2df56f2e007c4c2c8fab")},
+				opts:       []find.Option{find.WithTreeish("9d3d5d486d4c9414321a2df56f2e007c4c2c8fab")},
 			},
 			want: []find.FileObject{
 				{
@@ -76,37 +59,11 @@ func TestFind(t *testing.T) {
 			},
 		},
 		{
-			name: ".*\\.md, go-git",
-			args: args{
-				repository: "testdata/fixtures/vuls-data-raw-test.tar.zst",
-				expression: ".*\\.md",
-				opts:       []find.Option{find.WithUseNativeGit(false), find.WithTreeish("9d3d5d486d4c9414321a2df56f2e007c4c2c8fab")},
-			},
-			want: []find.FileObject{
-				{
-					Name: "README.md",
-					Mode: "0100644",
-					Type: "blob",
-					Hash: "46df57e1de336181a027385cf5ce993bba78db3a",
-					Size: 21,
-				},
-			},
-		},
-		{
-			name: ".*\\.json, native git",
+			name: ".*\\.json, treeish: main",
 			args: args{
 				repository: "testdata/fixtures/vuls-data-raw-test.tar.zst",
 				expression: ".*\\.json",
-				opts:       []find.Option{find.WithUseNativeGit(true), find.WithTreeish("main")},
-			},
-			want: nil,
-		},
-		{
-			name: ".*\\.json, go-git",
-			args: args{
-				repository: "testdata/fixtures/vuls-data-raw-test.tar.zst",
-				expression: ".*\\.json",
-				opts:       []find.Option{find.WithUseNativeGit(false), find.WithTreeish("main")},
+				opts:       []find.Option{find.WithTreeish("main")},
 			},
 			want: nil,
 		},

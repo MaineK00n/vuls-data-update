@@ -13,12 +13,10 @@ import (
 
 func newCmdGrep() *cobra.Command {
 	options := &struct {
-		useNativeGit     bool
 		treeish          string
 		pathspecs        []string
 		filesWithMatches bool
 	}{
-		useNativeGit:     true,
 		treeish:          "main",
 		pathspecs:        nil,
 		filesWithMatches: false,
@@ -33,7 +31,7 @@ func newCmdGrep() *cobra.Command {
 		`),
 		Args: cobra.MinimumNArgs(2),
 		RunE: func(_ *cobra.Command, args []string) error {
-			r, err := grep.Grep(args[0], args[1:], grep.WithUseNativeGit(options.useNativeGit), grep.WithTreeish(options.treeish), grep.WithPathSpecs(options.pathspecs), grep.WithFilesWithMatches(options.filesWithMatches))
+			r, err := grep.Grep(args[0], args[1:], grep.WithTreeish(options.treeish), grep.WithPathSpecs(options.pathspecs), grep.WithFilesWithMatches(options.filesWithMatches))
 			if err != nil {
 				return errors.Wrap(err, "failed to dotgit grep")
 			}
@@ -46,7 +44,6 @@ func newCmdGrep() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().BoolVarP(&options.useNativeGit, "use-native-git", "", options.useNativeGit, "use native git command instead of go-git")
 	cmd.Flags().StringVarP(&options.treeish, "treeish", "", options.treeish, "grep in specified treeish")
 	cmd.Flags().StringArrayVarP(&options.pathspecs, "pathspec", "p", options.pathspecs, "grep in specified pathspec")
 	cmd.Flags().BoolVarP(&options.filesWithMatches, "files-with-matches", "l", options.filesWithMatches, "Instead of showing every matched line, show only the names of files that contain matches")

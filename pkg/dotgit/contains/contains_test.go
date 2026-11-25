@@ -21,7 +21,6 @@ func TestContains(t *testing.T) {
 	type args struct {
 		repository string
 		commit     string
-		opts       []contains.Option
 	}
 	tests := []struct {
 		name    string
@@ -29,44 +28,24 @@ func TestContains(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name: "contains full commit hash, native git",
+			name: "contains full commit hash",
 			args: args{
 				repository: "testdata/fixtures/vuls-data-raw-test.tar.zst",
 				commit:     "9d3d5d486d4c9414321a2df56f2e007c4c2c8fab",
-				opts:       []contains.Option{contains.WithUseNativeGit(true)},
 			},
 		},
 		{
-			name: "contains short commit hash, native git",
+			name: "contains short commit hash",
 			args: args{
 				repository: "testdata/fixtures/vuls-data-raw-test.tar.zst",
 				commit:     "9d3d5d48",
-				opts:       []contains.Option{contains.WithUseNativeGit(true)},
 			},
 		},
 		{
-			name: "contains short commit hash, go-git",
-			args: args{
-				repository: "testdata/fixtures/vuls-data-raw-test.tar.zst",
-				commit:     "9d3d5d48",
-				opts:       []contains.Option{contains.WithUseNativeGit(false)},
-			},
-		},
-		{
-			name: "not contains commit hash, native git",
+			name: "not contains commit hash",
 			args: args{
 				repository: "testdata/fixtures/vuls-data-raw-test.tar.zst",
 				commit:     "9d3d5d486d4c9414321a2df56f2e007c4c2c8fac",
-				opts:       []contains.Option{contains.WithUseNativeGit(true)},
-			},
-			wantErr: true,
-		},
-		{
-			name: "not contains commit hash, go-git",
-			args: args{
-				repository: "testdata/fixtures/vuls-data-raw-test.tar.zst",
-				commit:     "9d3d5d486d4c9414321a2df56f2e007c4c2c8fac",
-				opts:       []contains.Option{contains.WithUseNativeGit(false)},
 			},
 			wantErr: true,
 		},
@@ -84,7 +63,7 @@ func TestContains(t *testing.T) {
 				t.Errorf("extract %s. err: %v", tt.args.repository, err)
 			}
 
-			err = contains.Contains(filepath.Join(dir, strings.TrimSuffix(filepath.Base(tt.args.repository), ".tar.zst")), tt.args.commit, tt.args.opts...)
+			err = contains.Contains(filepath.Join(dir, strings.TrimSuffix(filepath.Base(tt.args.repository), ".tar.zst")), tt.args.commit)
 			switch {
 			case err != nil && !tt.wantErr:
 				t.Errorf("unexpected err: %v", err)
@@ -103,7 +82,8 @@ func TestContainsWithBranch(t *testing.T) {
 	// no object, a tag at 4 named like the full ref name of a branch, a branch
 	// at 3 whose name has a no-break space, and a branch old at 1.
 	// shallow-old is a clone of depth 2 made after that: old keeps 1 in it,
-	// but the history of main still stops at 2, which is shallow.
+	// but the history of main still stops at 2, which is shallow. Last, full
+	// gets a branch named @ at 1.
 	dir := t.TempDir()
 	full, err := git.Populate(dir, "testdata/fixtures/history")
 	if err != nil {
@@ -168,6 +148,8 @@ func TestContainsWithBranch(t *testing.T) {
 	if typ := strings.TrimSpace(run(t, "-C", shallowOld, "cat-file", "-t", "a841a4b11e592afb4d574f86c5de63ad95d1567a")); typ != "commit" {
 		t.Fatalf("commit 1 in shallow-old. expected: %q, actual: %q", "commit", typ)
 	}
+	// A branch at commit 1 named @, which git takes as a branch name.
+	run(t, "-C", full, "update-ref", "refs/heads/@", "a841a4b11e592afb4d574f86c5de63ad95d1567a")
 
 	type args struct {
 		// repository is "full", "shallow", "shallow-old", or "missing" for a
@@ -183,10 +165,10 @@ func TestContainsWithBranch(t *testing.T) {
 		// means it wraps none of them.
 		wantErr  error
 		hasError bool
-		// msg, if set, is the message of the error, on both paths.
+		// msg, if set, is the message of the error.
 		msg string
-		// exitError is whether, on native git, the error holds the
-		// *exec.ExitError of the git that failed.
+		// exitError is whether the error holds the *exec.ExitError of the git
+		// that failed.
 		exitError bool
 	}{
 		{
@@ -216,6 +198,11 @@ func TestContainsWithBranch(t *testing.T) {
 			args: args{repository: "full", commit: "a841a4b11e592afb4d574f86c5de63ad95d1567a", branch: "a b"},
 		},
 		{
+			// Commit 1, the tip of the branch named @.
+			name: "branch named @",
+			args: args{repository: "full", commit: "a841a4b11e592afb4d574f86c5de63ad95d1567a", branch: "@"},
+		},
+		{
 			// Commit 4.
 			name:     "only on another branch",
 			args:     args{repository: "full", commit: "f71e70526a42ab5a02c0db48c0ab002cae190c6a", branch: "main"},
@@ -224,8 +211,8 @@ func TestContainsWithBranch(t *testing.T) {
 			msg:      "check f71e70526a42ab5a02c0db48c0ab002cae190c6a is reachable from refs/heads/main: commit not reachable from branch",
 		},
 		{
-			// The tree of commit 1. Neither rev-parse nor ResolveRevision tells
-			// it from a missing object.
+			// The tree of commit 1. rev-parse does not tell it from a missing
+			// object.
 			name:     "a tree, not a commit",
 			args:     args{repository: "full", commit: "da97fdaef51513ed29f81a64cea431c351d4532e", branch: "main"},
 			wantErr:  contains.ErrCommitNotFound,
@@ -248,13 +235,13 @@ func TestContainsWithBranch(t *testing.T) {
 			msg:      "resolve 0123456789abcdef0123456789abcdef01234567 (the history may have been truncated or rewritten): commit not found",
 		},
 		{
-			// native git reads the hash as the missing object. go-git falls back
-			// to the branch of that name, at commit 3, whose hash is not the
-			// one given. So the messages differ.
+			// git reads the hash as the missing object, not as the branch or
+			// the tag of that name, at commit 3.
 			name:     "missing commit, with a branch and a tag of its name",
 			args:     args{repository: "full", commit: "89abcdef0123456789abcdef0123456789abcdef", branch: "main"},
 			wantErr:  contains.ErrCommitNotFound,
 			hasError: true,
+			msg:      "resolve 89abcdef0123456789abcdef0123456789abcdef (the history may have been truncated or rewritten): commit not found",
 		},
 		{
 			// Commit 1, then the first 24 digits of commit 2.
@@ -315,6 +302,14 @@ func TestContainsWithBranch(t *testing.T) {
 			msg:      "check refs/heads/HEAD exists: branch not found",
 		},
 		{
+			// Commit 1. Like @, a/@ is a valid branch name.
+			name:     "missing branch with a component named @",
+			args:     args{repository: "full", commit: "a841a4b11e592afb4d574f86c5de63ad95d1567a", branch: "a/@"},
+			wantErr:  contains.ErrBranchNotFound,
+			hasError: true,
+			msg:      "check refs/heads/a/@ exists: branch not found",
+		},
+		{
 			// Commit 2. Read as a revision, main~1 would be commit 2.
 			name:     "revision as the branch",
 			args:     args{repository: "full", commit: "321cc453fa66e6d7f6ec5d5bdb64c5767d67fb54", branch: "main~1"},
@@ -327,6 +322,13 @@ func TestContainsWithBranch(t *testing.T) {
 			args:     args{repository: "full", commit: "a841a4b11e592afb4d574f86c5de63ad95d1567a", branch: "--all"},
 			hasError: true,
 			msg:      `validate branch "--all": invalid reference name`,
+		},
+		{
+			// Commit 1. exec cannot pass a NUL to git.
+			name:     "NUL in the branch",
+			args:     args{repository: "full", commit: "a841a4b11e592afb4d574f86c5de63ad95d1567a", branch: "ma\x00in"},
+			hasError: true,
+			msg:      `validate branch "ma\x00in": invalid reference name`,
 		},
 		{
 			// main~1 is commit 2.
@@ -367,7 +369,7 @@ func TestContainsWithBranch(t *testing.T) {
 			args: args{repository: "full", commit: "a841a4b11e592afb4d574f86c5de63ad95d1567a^{tree}"},
 		},
 		{
-			// Callers tell a missing commit by the exit status of native git.
+			// Callers tell a missing commit by the exit status of git.
 			name:      "no branch, missing commit",
 			args:      args{repository: "full", commit: "0123456789abcdef0123456789abcdef01234567"},
 			hasError:  true,
@@ -412,39 +414,52 @@ func TestContainsWithBranch(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		for _, native := range []bool{true, false} {
-			name := fmt.Sprintf("%s, go-git", tt.name)
-			if native {
-				name = fmt.Sprintf("%s, native git", tt.name)
-			}
-			t.Run(name, func(t *testing.T) {
-				repository := map[string]string{
-					"full":        full,
-					"shallow":     shallow,
-					"shallow-old": shallowOld,
-					"missing":     filepath.Join(dir, "missing"),
-				}[tt.args.repository]
+		t.Run(tt.name, func(t *testing.T) {
+			repository := map[string]string{
+				"full":        full,
+				"shallow":     shallow,
+				"shallow-old": shallowOld,
+				"missing":     filepath.Join(dir, "missing"),
+			}[tt.args.repository]
 
-				err := contains.Contains(repository, tt.args.commit, contains.WithBranch(tt.args.branch), contains.WithUseNativeGit(native))
-				switch {
-				case err != nil && !tt.hasError:
-					t.Errorf("unexpected err: %v", err)
-				case err == nil && tt.hasError:
-					t.Error("expected error has not occurred")
-				case err != nil:
-					for _, sentinel := range []error{contains.ErrBranchNotFound, contains.ErrCommitNotFound, contains.ErrNotReachable} {
-						if got, want := errors.Is(err, sentinel), sentinel == tt.wantErr; got != want {
-							t.Errorf("errors.Is(err, %q). expected: %t, actual: %t, err: %v", sentinel, want, got, err)
-						}
-					}
-					if tt.msg != "" && err.Error() != tt.msg {
-						t.Errorf("message. expected: %q, actual: %q", tt.msg, err.Error())
-					}
-					if _, ok := errors.AsType[*exec.ExitError](err); native && tt.exitError && !ok {
-						t.Errorf("errors.AsType[*exec.ExitError](err). expected: true, actual: false, err: %v", err)
+			err := contains.Contains(repository, tt.args.commit, contains.WithBranch(tt.args.branch))
+			switch {
+			case err != nil && !tt.hasError:
+				t.Errorf("unexpected err: %v", err)
+			case err == nil && tt.hasError:
+				t.Error("expected error has not occurred")
+			case err != nil:
+				for _, sentinel := range []error{contains.ErrBranchNotFound, contains.ErrCommitNotFound, contains.ErrNotReachable} {
+					if got, want := errors.Is(err, sentinel), sentinel == tt.wantErr; got != want {
+						t.Errorf("errors.Is(err, %q). expected: %t, actual: %t, err: %v", sentinel, want, got, err)
 					}
 				}
-			})
+				if tt.msg != "" && err.Error() != tt.msg {
+					t.Errorf("message. expected: %q, actual: %q", tt.msg, err.Error())
+				}
+				if _, ok := errors.AsType[*exec.ExitError](err); tt.exitError && !ok {
+					t.Errorf("errors.AsType[*exec.ExitError](err). expected: true, actual: false, err: %v", err)
+				}
+			}
+		})
+	}
+}
+
+// TestContainsWithBranchWithoutGit checks that a branch is not reported as
+// invalid when git cannot be run to validate it.
+func TestContainsWithBranchWithoutGit(t *testing.T) {
+	t.Setenv("PATH", t.TempDir())
+
+	err := contains.Contains(t.TempDir(), "a841a4b11e592afb4d574f86c5de63ad95d1567a", contains.WithBranch("main"))
+	if want := `validate branch "main": check ref format: `; err == nil || !strings.HasPrefix(err.Error(), want) {
+		t.Errorf("Contains() error does not begin with %q, error: %v", want, err)
+	}
+	if !errors.Is(err, exec.ErrNotFound) {
+		t.Errorf("errors.Is(err, exec.ErrNotFound). expected: true, actual: false, err: %v", err)
+	}
+	for _, sentinel := range []error{contains.ErrBranchNotFound, contains.ErrCommitNotFound, contains.ErrNotReachable} {
+		if errors.Is(err, sentinel) {
+			t.Errorf("errors.Is(err, %q). expected: false, actual: true, err: %v", sentinel, err)
 		}
 	}
 }

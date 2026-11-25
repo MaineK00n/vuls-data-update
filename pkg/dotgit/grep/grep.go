@@ -1,19 +1,12 @@
 package grep
 
 import (
-	"fmt"
-	"regexp"
-	"strings"
-
-	"github.com/go-git/go-git/v5"
-	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/pkg/errors"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/dotgit/util"
 )
 
 type options struct {
-	useNativeGit     bool
 	treeish          string
 	pathspecs        []string
 	filesWithMatches bool
@@ -21,16 +14,6 @@ type options struct {
 
 type Option interface {
 	apply(*options)
-}
-
-type useNativeGitOption bool
-
-func (o useNativeGitOption) apply(opts *options) {
-	opts.useNativeGit = bool(o)
-}
-
-func WithUseNativeGit(native bool) Option {
-	return useNativeGitOption(native)
 }
 
 type treeishOption string
@@ -65,7 +48,6 @@ func WithFilesWithMatches(filesWithMatches bool) Option {
 
 func Grep(repository string, patterns []string, opts ...Option) (string, error) {
 	options := &options{
-		useNativeGit:     true,
 		treeish:          "main",
 		pathspecs:        nil,
 		filesWithMatches: false,
@@ -75,71 +57,22 @@ func Grep(repository string, patterns []string, opts ...Option) (string, error) 
 		opt.apply(options)
 	}
 
-	if options.useNativeGit {
-		args := []string{"-C", repository, "grep", "--line-number"}
-		if options.filesWithMatches {
-			args = append(args, "--files-with-matches")
-		}
-		for _, pattern := range patterns {
-			args = append(args, "-e", pattern)
-		}
-		args = append(args, options.treeish)
-		if len(options.pathspecs) > 0 {
-			args = append(args, "--")
-			args = append(args, options.pathspecs...)
-		}
-
-		output, err := util.Git(args...)
-		if err != nil {
-			return "", errors.Wrap(err, "grep")
-		}
-		return string(output), nil
+	args := []string{"-C", repository, "grep", "--line-number"}
+	if options.filesWithMatches {
+		args = append(args, "--files-with-matches")
 	}
-
-	r, err := git.PlainOpen(repository)
-	if err != nil {
-		return "", errors.Wrapf(err, "open %s", repository)
-	}
-
-	hash, err := r.ResolveRevision(plumbing.Revision(options.treeish))
-	if err != nil {
-		return "", errors.Wrapf(err, "resolve %s", options.treeish)
-	}
-
-	rePatterns := make([]*regexp.Regexp, 0, len(patterns))
 	for _, pattern := range patterns {
-		re, err := regexp.Compile(pattern)
-		if err != nil {
-			return "", errors.Wrapf(err, "compile %q", pattern)
-		}
-		rePatterns = append(rePatterns, re)
+		args = append(args, "-e", pattern)
+	}
+	args = append(args, options.treeish)
+	if len(options.pathspecs) > 0 {
+		args = append(args, "--")
+		args = append(args, options.pathspecs...)
 	}
 
-	rePathSpecs := make([]*regexp.Regexp, 0, len(options.pathspecs))
-	for _, pathspec := range options.pathspecs {
-		re, err := regexp.Compile(pathspec)
-		if err != nil {
-			return "", errors.Wrapf(err, "compile %q", pathspec)
-		}
-		rePathSpecs = append(rePathSpecs, re)
-	}
-
-	rs, err := r.Grep(&git.GrepOptions{
-		CommitHash: *hash,
-		Patterns:   rePatterns,
-		PathSpecs:  rePathSpecs,
-	})
+	output, err := util.Git(args...)
 	if err != nil {
 		return "", errors.Wrap(err, "grep")
 	}
-
-	var sb strings.Builder
-	for _, r := range rs {
-		if options.filesWithMatches {
-			fmt.Fprintf(&sb, "%s:%s\n", r.TreeName, r.FileName)
-		} else {
-			fmt.Fprintf(&sb, "%s\n", r.String())
-		}
-	}
-	return sb.String(), nil
+	return string(output), nil
 }

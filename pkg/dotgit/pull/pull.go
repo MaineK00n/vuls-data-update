@@ -14,8 +14,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/go-git/go-git/v5"
-	"github.com/go-git/go-git/v5/plumbing"
 	ocispec "github.com/opencontainers/image-spec/specs-go/v1"
 	"github.com/pkg/errors"
 	"oras.land/oras-go/v2"
@@ -28,10 +26,9 @@ import (
 )
 
 type options struct {
-	dir          string
-	checkout     string
-	restore      bool
-	useNativeGit bool
+	dir      string
+	checkout string
+	restore  bool
 
 	// retryWait is the wait before the first retry of a layer whose download
 	// broke off, doubled for each one after. It is only ever changed by
@@ -64,13 +61,13 @@ func (c checkoutOption) apply(opts *options) {
 }
 
 // WithCheckout sets what Pull checks out after the pull: a branch, a tag or a
-// commit, main by default, or nothing for "". On native git, if checkout names
-// nothing in the pulled dotgit, such as a commit pinned before vuls-data-db
-// truncated the history, errors.Is matches the error with
-// contains.ErrCommitNotFound. It does not when Pull cannot tell: for a name
-// that begins with "-", or holds "..." or ":", for one with an abbreviated
-// hash that more than one object begins with, such as 01d6 or 01d6~1, or when
-// git cannot be run or fails on the repository.
+// commit, main by default, or nothing for "". If checkout names nothing in the
+// pulled dotgit, such as a commit pinned before vuls-data-db truncated the
+// history, errors.Is matches the error with contains.ErrCommitNotFound. It
+// does not when Pull cannot tell: for a name that begins with "-", or holds
+// "..." or ":", for one with an abbreviated hash that more than one object
+// begins with, such as 01d6 or 01d6~1, or when git cannot be run or fails on
+// the repository.
 func WithCheckout(checkout string) Option {
 	return checkoutOption(checkout)
 }
@@ -85,23 +82,12 @@ func WithRestore(restore bool) Option {
 	return restoreOption(restore)
 }
 
-type useNativeGitOption bool
-
-func (o useNativeGitOption) apply(opts *options) {
-	opts.useNativeGit = bool(o)
-}
-
-func WithUseNativeGit(native bool) Option {
-	return useNativeGitOption(native)
-}
-
 func Pull(repository string, opts ...Option) error {
 	options := &options{
-		dir:          filepath.Join(util.CacheDir(), "dotgit"),
-		checkout:     "main",
-		restore:      false,
-		useNativeGit: true,
-		retryWait:    5 * time.Second,
+		dir:       filepath.Join(util.CacheDir(), "dotgit"),
+		checkout:  "main",
+		restore:   false,
+		retryWait: 5 * time.Second,
 	}
 
 	for _, opt := range opts {
@@ -152,124 +138,61 @@ func Pull(repository string, opts ...Option) error {
 	}
 
 	if options.checkout != "" {
-		if options.useNativeGit {
-			if _, err := util.Git("-C", filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference), "show-ref", "--verify", "--quiet", fmt.Sprintf("refs/heads/%s", options.checkout)); err != nil { // tag or commit
-				if _, err := util.Git("-C", filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference), "switch", "--detach", options.checkout); err != nil {
-					// switch reports a commit that is not in the repository
-					// as "unable to read tree", which reads like corruption,
-					// so if rev-parse finds that the target names nothing in
-					// the repository either, say so in front of the error of
-					// switch. Asking only after a failure lets every name
-					// switch accepts reach it as before. rev-parse is not
-					// asked about a name that switch reads otherwise: one
-					// that begins with "-", the previous branch or an option,
-					// or A...B, the merge base of A and B. Nor is it asked
-					// about one with a ":", which no branch or tag has, as it
-					// would read the ^{object} it is asked with as part of the
-					// path in <rev>:<path>, or of the text in :/<text>. For
-					// those, and when rev-parse cannot tell, as for an
-					// abbreviated hash that more than one object begins with,
-					// or when git cannot be run or fails on the repository,
-					// the error of switch, which says how it failed, is
-					// returned as it is.
-					if !strings.HasPrefix(options.checkout, "-") && !strings.Contains(options.checkout, "...") && !strings.Contains(options.checkout, ":") && missing(filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference), options.checkout) {
-						return notInRepository(errors.Wrapf(err, "switch to %s", options.checkout), repository, options.checkout)
-					}
-					return errors.Wrapf(err, "switch to %s", options.checkout)
+		if _, err := util.Git("-C", filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference), "show-ref", "--verify", "--quiet", fmt.Sprintf("refs/heads/%s", options.checkout)); err != nil { // tag or commit
+			if _, err := util.Git("-C", filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference), "switch", "--detach", options.checkout); err != nil {
+				// switch reports a commit that is not in the repository
+				// as "unable to read tree", which reads like corruption,
+				// so if rev-parse finds that the target names nothing in
+				// the repository either, say so in front of the error of
+				// switch. Asking only after a failure lets every name
+				// switch accepts reach it as before. rev-parse is not
+				// asked about a name that switch reads otherwise: one
+				// that begins with "-", the previous branch or an option,
+				// or A...B, the merge base of A and B. Nor is it asked
+				// about one with a ":", which no branch or tag has, as it
+				// would read the ^{object} it is asked with as part of the
+				// path in <rev>:<path>, or of the text in :/<text>. For
+				// those, and when rev-parse cannot tell, as for an
+				// abbreviated hash that more than one object begins with,
+				// or when git cannot be run or fails on the repository,
+				// the error of switch, which says how it failed, is
+				// returned as it is.
+				if !strings.HasPrefix(options.checkout, "-") && !strings.Contains(options.checkout, "...") && !strings.Contains(options.checkout, ":") && missing(filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference), options.checkout) {
+					return notInRepository(errors.Wrapf(err, "switch to %s", options.checkout), repository, options.checkout)
 				}
-			} else { // branch
-				if _, err := util.Git("-C", filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference), "switch", options.checkout); err != nil {
-					return errors.Wrapf(err, "switch to %s", options.checkout)
-				}
+				return errors.Wrapf(err, "switch to %s", options.checkout)
 			}
-		} else {
-			r, err := git.PlainOpen(filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference))
-			if err != nil {
-				return errors.Wrapf(err, "open %s", filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference))
-			}
-
-			w, err := r.Worktree()
-			if err != nil {
-				return errors.Wrapf(err, "git worktree %s", filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference))
-			}
-
-			o, err := func() (git.CheckoutOptions, error) {
-				if options.checkout == "HEAD" {
-					ref, err := r.Head()
-					if err != nil {
-						return git.CheckoutOptions{}, errors.Wrap(err, "get HEAD")
-					}
-					return git.CheckoutOptions{Hash: ref.Hash(), Keep: true}, nil
-				}
-
-				ref, err := r.Reference(plumbing.NewBranchReferenceName(options.checkout), false)
-				if err != nil && !errors.Is(err, plumbing.ErrReferenceNotFound) {
-					return git.CheckoutOptions{}, errors.Wrapf(err, "get %q as branch", options.checkout)
-				}
-				if err == nil {
-					return git.CheckoutOptions{Branch: ref.Name(), Keep: true}, nil
-				}
-
-				ref, err = r.Reference(plumbing.NewTagReferenceName(options.checkout), false)
-				if err != nil && !errors.Is(err, plumbing.ErrReferenceNotFound) {
-					return git.CheckoutOptions{}, errors.Wrapf(err, "get %q as tag", options.checkout)
-				}
-				if err == nil {
-					return git.CheckoutOptions{Hash: ref.Hash(), Keep: true}, nil
-				}
-
-				return git.CheckoutOptions{Hash: plumbing.NewHash(options.checkout), Keep: true}, nil
-			}()
-			if err != nil {
-				return errors.Wrap(err, "get checkout options")
-			}
-
-			if err := w.Checkout(&o); err != nil {
-				return errors.Wrapf(err, "checkout %s", options.checkout)
+		} else { // branch
+			if _, err := util.Git("-C", filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference), "switch", options.checkout); err != nil {
+				return errors.Wrapf(err, "switch to %s", options.checkout)
 			}
 		}
 	}
 
 	if options.restore {
-		if options.useNativeGit {
-			// A repository whose every file has been deleted has nothing to
-			// restore, and "git restore ." reads a pathspec that matches
-			// nothing as fatal. Nothing to do is not a failure, and this is
-			// the repository a pull most needs to survive: it is what a fetch
-			// that wrote nothing back leaves behind, and putting the files
-			// back is what the pull is for.
-			bs, err := util.Git("-C", filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference), "ls-files")
-			if err != nil {
-				return errors.Wrap(err, "list files")
-			}
+		// A repository whose every file has been deleted has nothing to
+		// restore, and "git restore ." reads a pathspec that matches
+		// nothing as fatal. Nothing to do is not a failure, and this is
+		// the repository a pull most needs to survive: it is what a fetch
+		// that wrote nothing back leaves behind, and putting the files
+		// back is what the pull is for.
+		bs, err := util.Git("-C", filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference), "ls-files")
+		if err != nil {
+			return errors.Wrap(err, "list files")
+		}
 
-			if len(bs) > 0 {
-				// git writes the files one at a time by default. Unless the
-				// git config says how many, use a worker per CPU (git 2.32 or
-				// later). config --get fails when checkout.workers is unset,
-				// or when the config cannot be read, which restore will then
-				// report itself.
-				args := []string{"-C", filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference)}
-				if _, err := util.Git("-C", filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference), "config", "--get", "checkout.workers"); err != nil {
-					args = append(args, "-c", "checkout.workers=0")
-				}
-				if _, err := util.Git(append(args, "restore", ".")...); err != nil {
-					return errors.Wrap(err, "restore worktree")
-				}
+		if len(bs) > 0 {
+			// git writes the files one at a time by default. Unless the
+			// git config says how many, use a worker per CPU (git 2.32 or
+			// later). config --get fails when checkout.workers is unset,
+			// or when the config cannot be read, which restore will then
+			// report itself.
+			args := []string{"-C", filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference)}
+			if _, err := util.Git("-C", filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference), "config", "--get", "checkout.workers"); err != nil {
+				args = append(args, "-c", "checkout.workers=0")
 			}
-		} else {
-			r, err := git.PlainOpen(filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference))
-			if err != nil {
-				return errors.Wrapf(err, "open %s", filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference))
-			}
-
-			w, err := r.Worktree()
-			if err != nil {
-				return errors.Wrapf(err, "git worktree %s", filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference))
-			}
-
-			if err := w.Reset(&git.ResetOptions{Mode: git.HardReset}); err != nil {
-				return errors.Wrapf(err, "reset %s", filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference))
+			if _, err := util.Git(append(args, "restore", ".")...); err != nil {
+				return errors.Wrap(err, "restore worktree")
 			}
 		}
 	}

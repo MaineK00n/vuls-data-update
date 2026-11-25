@@ -25,36 +25,22 @@ func TestGrep(t *testing.T) {
 		hasError bool
 	}{
 		{
-			name: "pattern: vuls-data-raw-test, native git",
+			name: "pattern: vuls-data-raw-test",
 			args: args{
 				repository: "testdata/fixtures/vuls-data-raw-test.tar.zst",
 				patterns:   []string{"vuls-data-raw-test"},
 				opts: []grep.Option{
-					grep.WithUseNativeGit(true),
 					grep.WithTreeish("9d3d5d486d4c9414321a2df56f2e007c4c2c8fab"),
 				},
 			},
 			want: "9d3d5d486d4c9414321a2df56f2e007c4c2c8fab:README.md:1:# vuls-data-raw-test\n",
 		},
 		{
-			name: "pattern: vuls-data-raw-test, go-git",
+			name: "pattern: vuls-data-raw-test, --files-with-matches",
 			args: args{
 				repository: "testdata/fixtures/vuls-data-raw-test.tar.zst",
 				patterns:   []string{"vuls-data-raw-test"},
 				opts: []grep.Option{
-					grep.WithUseNativeGit(false),
-					grep.WithTreeish("9d3d5d486d4c9414321a2df56f2e007c4c2c8fab"),
-				},
-			},
-			want: "9d3d5d486d4c9414321a2df56f2e007c4c2c8fab:README.md:1:# vuls-data-raw-test\n",
-		},
-		{
-			name: "pattern: vuls-data-raw-test, --files-with-matches, native git",
-			args: args{
-				repository: "testdata/fixtures/vuls-data-raw-test.tar.zst",
-				patterns:   []string{"vuls-data-raw-test"},
-				opts: []grep.Option{
-					grep.WithUseNativeGit(true),
 					grep.WithTreeish("9d3d5d486d4c9414321a2df56f2e007c4c2c8fab"),
 					grep.WithFilesWithMatches(true),
 				},
@@ -62,67 +48,27 @@ func TestGrep(t *testing.T) {
 			want: "9d3d5d486d4c9414321a2df56f2e007c4c2c8fab:README.md\n",
 		},
 		{
-			name: "pattern: vuls-data-raw-test, --files-with-matches, go-git",
-			args: args{
-				repository: "testdata/fixtures/vuls-data-raw-test.tar.zst",
-				patterns:   []string{"vuls-data-raw-test"},
-				opts: []grep.Option{
-					grep.WithUseNativeGit(false),
-					grep.WithTreeish("9d3d5d486d4c9414321a2df56f2e007c4c2c8fab"),
-					grep.WithFilesWithMatches(true),
-				},
-			},
-			want: "9d3d5d486d4c9414321a2df56f2e007c4c2c8fab:README.md\n",
-		},
-		{
-			name: "pattern: vuls-data-.*, native git",
+			name: "pattern: vuls-data-.*",
 			args: args{
 				repository: "testdata/fixtures/vuls-data-raw-test.tar.zst",
 				patterns:   []string{"vuls-data-.*"},
 				opts: []grep.Option{
-					grep.WithUseNativeGit(true),
 					grep.WithTreeish("9d3d5d486d4c9414321a2df56f2e007c4c2c8fab"),
 				},
 			},
 			want: "9d3d5d486d4c9414321a2df56f2e007c4c2c8fab:README.md:1:# vuls-data-raw-test\n",
 		},
 		{
-			name: "pattern: vuls-data-.*, go-git",
+			name: "pattern: vuls-data-.*; pathspec: *.md",
 			args: args{
 				repository: "testdata/fixtures/vuls-data-raw-test.tar.zst",
 				patterns:   []string{"vuls-data-.*"},
 				opts: []grep.Option{
-					grep.WithUseNativeGit(false),
-					grep.WithTreeish("9d3d5d486d4c9414321a2df56f2e007c4c2c8fab"),
-				},
-			},
-			want: "9d3d5d486d4c9414321a2df56f2e007c4c2c8fab:README.md:1:# vuls-data-raw-test\n",
-		},
-		{
-			name: "pattern: vuls-data-.*; pathspec: *.md, native git",
-			args: args{
-				repository: "testdata/fixtures/vuls-data-raw-test.tar.zst",
-				patterns:   []string{"vuls-data-.*"},
-				opts: []grep.Option{
-					grep.WithUseNativeGit(true),
 					grep.WithTreeish("main"),
 					grep.WithPathSpecs([]string{"*.md"}),
 				},
 			},
 			want: "main:README.md:1:# vuls-data-raw-test\n",
-		},
-		{
-			name: "pattern: vuls-data-.*; pathspec: .*.md, go-git",
-			args: args{
-				repository: "testdata/fixtures/vuls-data-raw-test.tar.zst",
-				patterns:   []string{"vuls-data-.*"},
-				opts: []grep.Option{
-					grep.WithUseNativeGit(false),
-					grep.WithTreeish("main"),
-					grep.WithPathSpecs([]string{".*.md"}),
-				},
-			},
-			want: "9d3d5d486d4c9414321a2df56f2e007c4c2c8fab:README.md:1:# vuls-data-raw-test\n",
 		},
 	}
 	for _, tt := range tests {

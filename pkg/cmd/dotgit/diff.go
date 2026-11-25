@@ -30,11 +30,9 @@ func newCmdDiff() *cobra.Command {
 
 func newCmdDiffFile() *cobra.Command {
 	options := &struct {
-		useNativeGit bool
-		color        bool
+		color bool
 	}{
-		useNativeGit: true,
-		color:        false,
+		color: false,
 	}
 
 	cmd := &cobra.Command{
@@ -45,7 +43,7 @@ func newCmdDiffFile() *cobra.Command {
 		`),
 		Args: cobra.ExactArgs(3),
 		RunE: func(_ *cobra.Command, args []string) error {
-			content, err := file.Diff(args[0], args[1], args[2], file.WithUseNativeGit(options.useNativeGit), file.WithColor(options.color))
+			content, err := file.Diff(args[0], args[1], args[2], file.WithColor(options.color))
 			if err != nil {
 				return errors.Wrap(err, "failed to dotgit diff file")
 			}
@@ -60,7 +58,6 @@ func newCmdDiffFile() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().BoolVarP(&options.useNativeGit, "use-native-git", "", options.useNativeGit, "use native git command instead of go-git")
 	cmd.Flags().BoolVarP(&options.color, "color", "", options.color, "color the diff")
 
 	return cmd
@@ -68,13 +65,11 @@ func newCmdDiffFile() *cobra.Command {
 
 func newCmdDiffTree() *cobra.Command {
 	options := &struct {
-		useNativeGit bool
-		color        bool
-		pathspecs    []string
+		color     bool
+		pathspecs []string
 	}{
-		useNativeGit: true,
-		color:        false,
-		pathspecs:    nil,
+		color:     false,
+		pathspecs: nil,
 	}
 
 	cmd := &cobra.Command{
@@ -86,7 +81,7 @@ func newCmdDiffTree() *cobra.Command {
 		`),
 		Args: cobra.ExactArgs(3),
 		RunE: func(_ *cobra.Command, args []string) error {
-			content, err := tree.Diff(args[0], args[1], args[2], tree.WithUseNativeGit(options.useNativeGit), tree.WithColor(options.color), tree.WithPathSpecs(options.pathspecs))
+			content, err := tree.Diff(args[0], args[1], args[2], tree.WithColor(options.color), tree.WithPathSpecs(options.pathspecs))
 			if err != nil {
 				return errors.Wrap(err, "failed to dotgit diff tree")
 			}
@@ -101,7 +96,6 @@ func newCmdDiffTree() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().BoolVarP(&options.useNativeGit, "use-native-git", "", options.useNativeGit, "use native git command instead of go-git")
 	cmd.Flags().BoolVarP(&options.color, "color", "", options.color, "color the diff")
 	cmd.Flags().StringArrayVarP(&options.pathspecs, "pathspec", "p", options.pathspecs, "grep in specified pathspec")
 

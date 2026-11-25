@@ -50,9 +50,8 @@ func TestPull(t *testing.T) {
 		hasError  bool
 		// wantErr is how the error begins.
 		wantErr string
-		// wantErrHas, if set, is a part of the error after wantErr: on
-		// native git, the switch command that failed and the start of what
-		// git said.
+		// wantErrHas, if set, is a part of the error after wantErr: the
+		// switch command that failed and the start of what git said.
 		wantErrHas string
 		// wantCommitNotFound is whether errors.Is matches the error with
 		// contains.ErrCommitNotFound, as it does for a target that is not in
@@ -63,142 +62,78 @@ func TestPull(t *testing.T) {
 		wantExitCode int
 	}{
 		{
-			name: "vuls-data-raw-test restore: false, native git",
+			name: "vuls-data-raw-test restore: false",
 			args: args{
 				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test",
-				opts:       []pull.Option{pull.WithRestore(false), pull.WithUseNativeGit(true)},
+				opts:       []pull.Option{pull.WithRestore(false)},
 			},
 			golden: "testdata/golden/vuls-data-raw-test.tar.zst",
 		},
 		{
-			name: "vuls-data-raw-test restore: false, go-git",
+			name: "vuls-data-raw-test checkout: main, restore: false",
 			args: args{
 				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test",
-				opts:       []pull.Option{pull.WithRestore(false), pull.WithUseNativeGit(false)},
+				opts:       []pull.Option{pull.WithCheckout("main"), pull.WithRestore(false)},
 			},
 			golden: "testdata/golden/vuls-data-raw-test.tar.zst",
 		},
 		{
-			name: "vuls-data-raw-test checkout: main, restore: false, native git",
+			name: "vuls-data-raw-test checkout: HEAD, restore: false",
 			args: args{
 				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test",
-				opts:       []pull.Option{pull.WithCheckout("main"), pull.WithRestore(false), pull.WithUseNativeGit(true)},
+				opts:       []pull.Option{pull.WithCheckout("HEAD"), pull.WithRestore(false)},
 			},
 			golden: "testdata/golden/vuls-data-raw-test.tar.zst",
 		},
 		{
-			name: "vuls-data-raw-test checkout: HEAD, restore: false, native git",
+			name: "vuls-data-raw-test checkout: v0.0.1, restore: false",
 			args: args{
 				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test",
-				opts:       []pull.Option{pull.WithCheckout("HEAD"), pull.WithRestore(false), pull.WithUseNativeGit(true)},
+				opts:       []pull.Option{pull.WithCheckout("v0.0.1"), pull.WithRestore(false)},
 			},
 			golden: "testdata/golden/vuls-data-raw-test.tar.zst",
 		},
 		{
-			name: "vuls-data-raw-test checkout: v0.0.1, restore: false, native git",
+			name: "vuls-data-raw-test checkout: 9d3d5d486d4c9414321a2df56f2e007c4c2c8fab, restore: false",
 			args: args{
 				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test",
-				opts:       []pull.Option{pull.WithCheckout("v0.0.1"), pull.WithRestore(false), pull.WithUseNativeGit(true)},
+				opts:       []pull.Option{pull.WithCheckout("9d3d5d486d4c9414321a2df56f2e007c4c2c8fab"), pull.WithRestore(false)},
 			},
 			golden: "testdata/golden/vuls-data-raw-test.tar.zst",
 		},
 		{
-			name: "vuls-data-raw-test checkout: 9d3d5d486d4c9414321a2df56f2e007c4c2c8fab, restore: false, native git",
+			name: "vuls-data-raw-test restore: true",
 			args: args{
 				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test",
-				opts:       []pull.Option{pull.WithCheckout("9d3d5d486d4c9414321a2df56f2e007c4c2c8fab"), pull.WithRestore(false), pull.WithUseNativeGit(true)},
-			},
-			golden: "testdata/golden/vuls-data-raw-test.tar.zst",
-		},
-		{
-			name: "vuls-data-raw-test checkout: main, restore: false, go-git",
-			args: args{
-				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test",
-				opts:       []pull.Option{pull.WithCheckout("main"), pull.WithRestore(false), pull.WithUseNativeGit(false)},
-			},
-			golden: "testdata/golden/vuls-data-raw-test.tar.zst",
-		},
-		{
-			name: "vuls-data-raw-test checkout: HEAD, restore: false, go-git",
-			args: args{
-				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test",
-				opts:       []pull.Option{pull.WithCheckout("HEAD"), pull.WithRestore(false), pull.WithUseNativeGit(false)},
-			},
-			golden: "testdata/golden/vuls-data-raw-test.tar.zst",
-		},
-		{
-			name: "vuls-data-raw-test checkout: v0.0.1, restore: false, go-git",
-			args: args{
-				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test",
-				opts:       []pull.Option{pull.WithCheckout("v0.0.1"), pull.WithRestore(false), pull.WithUseNativeGit(false)},
-			},
-			golden: "testdata/golden/vuls-data-raw-test.tar.zst",
-		},
-		{
-			name: "vuls-data-raw-test checkout: 9d3d5d486d4c9414321a2df56f2e007c4c2c8fab, restore: false, go-git",
-			args: args{
-				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test",
-				opts:       []pull.Option{pull.WithCheckout("9d3d5d486d4c9414321a2df56f2e007c4c2c8fab"), pull.WithRestore(false), pull.WithUseNativeGit(false)},
-			},
-			golden: "testdata/golden/vuls-data-raw-test.tar.zst",
-		},
-		{
-			name: "vuls-data-raw-test restore: true, native git",
-			args: args{
-				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test",
-				opts:       []pull.Option{pull.WithRestore(true), pull.WithUseNativeGit(true)},
+				opts:       []pull.Option{pull.WithRestore(true)},
 			},
 			golden: "testdata/golden/vuls-data-raw-test-restored.tar.zst",
 		},
 		{
-			name: "vuls-data-raw-test restore: true, go-git",
+			name: "vuls-data-raw-test checkout: main, restore: true",
 			args: args{
 				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test",
-				opts:       []pull.Option{pull.WithRestore(true), pull.WithUseNativeGit(false)},
-			},
-			golden: "testdata/golden/vuls-data-raw-test-restored.tar.zst",
-		},
-		{
-			name: "vuls-data-raw-test checkout: main, restore: true, native git",
-			args: args{
-				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test",
-				opts:       []pull.Option{pull.WithCheckout("main"), pull.WithRestore(true), pull.WithUseNativeGit(true)},
+				opts:       []pull.Option{pull.WithCheckout("main"), pull.WithRestore(true)},
 			},
 			golden: "testdata/golden/vuls-data-raw-test-restored.tar.zst",
 		},
 		{
 			// A fetch that writes nothing back leaves every file deleted, and
 			// the pull that would put them back has to survive that state.
-			name: "vuls-data-raw-test-emptied restore: true, native git",
+			name: "vuls-data-raw-test-emptied restore: true",
 			args: args{
 				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test-emptied",
-				opts:       []pull.Option{pull.WithRestore(true), pull.WithUseNativeGit(true)},
+				opts:       []pull.Option{pull.WithRestore(true)},
 			},
 			golden: "testdata/golden/vuls-data-raw-test-emptied.tar.zst",
-		},
-		{
-			name: "vuls-data-raw-test-emptied restore: true, go-git",
-			args: args{
-				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test-emptied",
-				opts:       []pull.Option{pull.WithRestore(true), pull.WithUseNativeGit(false)},
-			},
-			golden: "testdata/golden/vuls-data-raw-test-emptied.tar.zst",
-		},
-		{
-			name: "vuls-data-raw-test checkout: main, restore: true, go-git",
-			args: args{
-				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test",
-				opts:       []pull.Option{pull.WithCheckout("main"), pull.WithRestore(true), pull.WithUseNativeGit(false)},
-			},
-			golden: "testdata/golden/vuls-data-raw-test-restored.tar.zst",
 		},
 		{
 			// A commit behind the branch, as a lock file pins one: the
 			// initial commit has the README.md that main deletes.
-			name: "vuls-data-raw-test-emptied checkout: b9b8cec27035fddf3c7addcf7b76c8dda6be5e76, restore: true, native git",
+			name: "vuls-data-raw-test-emptied checkout: b9b8cec27035fddf3c7addcf7b76c8dda6be5e76, restore: true",
 			args: args{
 				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test-emptied",
-				opts:       []pull.Option{pull.WithCheckout("b9b8cec27035fddf3c7addcf7b76c8dda6be5e76"), pull.WithRestore(true), pull.WithUseNativeGit(true)},
+				opts:       []pull.Option{pull.WithCheckout("b9b8cec27035fddf3c7addcf7b76c8dda6be5e76"), pull.WithRestore(true)},
 			},
 			golden:    "testdata/golden/vuls-data-raw-test-emptied-b9b8cec-restored.tar.zst",
 			wantHead:  "b9b8cec27035fddf3c7addcf7b76c8dda6be5e76",
@@ -207,10 +142,10 @@ func TestPull(t *testing.T) {
 		{
 			// A name that switch accepts and cat-file -e does not, as with
 			// "-" for the previous branch: the merge base of main and v0.0.1.
-			name: "vuls-data-raw-test checkout: main...v0.0.1, restore: false, native git",
+			name: "vuls-data-raw-test checkout: main...v0.0.1, restore: false",
 			args: args{
 				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test",
-				opts:       []pull.Option{pull.WithCheckout("main...v0.0.1"), pull.WithRestore(false), pull.WithUseNativeGit(true)},
+				opts:       []pull.Option{pull.WithCheckout("main...v0.0.1"), pull.WithRestore(false)},
 			},
 			golden:   "testdata/golden/vuls-data-raw-test.tar.zst",
 			wantHead: "9d3d5d486d4c9414321a2df56f2e007c4c2c8fab",
@@ -218,10 +153,10 @@ func TestPull(t *testing.T) {
 		{
 			// A target that is there but is not a commit: contains finds it,
 			// so the error of switch is returned as it is.
-			name: "vuls-data-raw-test checkout: v0.0.1^{tree}, restore: false, native git",
+			name: "vuls-data-raw-test checkout: v0.0.1^{tree}, restore: false",
 			args: args{
 				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test",
-				opts:       []pull.Option{pull.WithCheckout("v0.0.1^{tree}"), pull.WithRestore(false), pull.WithUseNativeGit(true)},
+				opts:       []pull.Option{pull.WithCheckout("v0.0.1^{tree}"), pull.WithRestore(false)},
 			},
 			hasError:     true,
 			wantErr:      "switch to v0.0.1^{tree}: ",
@@ -231,10 +166,10 @@ func TestPull(t *testing.T) {
 		{
 			// A commit pinned before vuls-data-db truncated the history is
 			// no longer in the repository.
-			name: "vuls-data-raw-test checkout: 9d3d5d486d4c9414321a2df56f2e007c4c2c8fac (not in the repository), restore: true, native git",
+			name: "vuls-data-raw-test checkout: 9d3d5d486d4c9414321a2df56f2e007c4c2c8fac (not in the repository), restore: true",
 			args: args{
 				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test",
-				opts:       []pull.Option{pull.WithCheckout("9d3d5d486d4c9414321a2df56f2e007c4c2c8fac"), pull.WithRestore(true), pull.WithUseNativeGit(true)},
+				opts:       []pull.Option{pull.WithCheckout("9d3d5d486d4c9414321a2df56f2e007c4c2c8fac"), pull.WithRestore(true)},
 			},
 			hasError:           true,
 			wantErr:            "9d3d5d486d4c9414321a2df56f2e007c4c2c8fac is not in ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test, whose history may have been truncated or rewritten: switch to 9d3d5d486d4c9414321a2df56f2e007c4c2c8fac: ",
@@ -244,10 +179,10 @@ func TestPull(t *testing.T) {
 		},
 		{
 			// A tag that is not in the repository.
-			name: "vuls-data-raw-test checkout: v0.0.2 (not in the repository), restore: true, native git",
+			name: "vuls-data-raw-test checkout: v0.0.2 (not in the repository), restore: true",
 			args: args{
 				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test",
-				opts:       []pull.Option{pull.WithCheckout("v0.0.2"), pull.WithRestore(true), pull.WithUseNativeGit(true)},
+				opts:       []pull.Option{pull.WithCheckout("v0.0.2"), pull.WithRestore(true)},
 			},
 			hasError:           true,
 			wantErr:            "v0.0.2 is not in ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test, whose history may have been truncated or rewritten: switch to v0.0.2: ",
@@ -258,10 +193,10 @@ func TestPull(t *testing.T) {
 		{
 			// rev-parse is not asked about a name that switch reads
 			// otherwise, so the error of switch is returned as it is.
-			name: "vuls-data-raw-test checkout: - (no previous branch), restore: false, native git",
+			name: "vuls-data-raw-test checkout: - (no previous branch), restore: false",
 			args: args{
 				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test",
-				opts:       []pull.Option{pull.WithCheckout("-"), pull.WithRestore(false), pull.WithUseNativeGit(true)},
+				opts:       []pull.Option{pull.WithCheckout("-"), pull.WithRestore(false)},
 			},
 			hasError:     true,
 			wantErr:      "switch to -: ",
@@ -269,10 +204,10 @@ func TestPull(t *testing.T) {
 			wantExitCode: 128,
 		},
 		{
-			name: "vuls-data-raw-test checkout: main...v0.0.2 (no v0.0.2), restore: false, native git",
+			name: "vuls-data-raw-test checkout: main...v0.0.2 (no v0.0.2), restore: false",
 			args: args{
 				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test",
-				opts:       []pull.Option{pull.WithCheckout("main...v0.0.2"), pull.WithRestore(false), pull.WithUseNativeGit(true)},
+				opts:       []pull.Option{pull.WithCheckout("main...v0.0.2"), pull.WithRestore(false)},
 			},
 			hasError:     true,
 			wantErr:      "switch to main...v0.0.2: ",
@@ -284,10 +219,10 @@ func TestPull(t *testing.T) {
 			// would read the ^{object} it is asked with as part of the path,
 			// and find nothing, so it is not asked, and the error of switch is
 			// returned as it is.
-			name: "vuls-data-raw-test checkout: main:README.md, restore: false, native git",
+			name: "vuls-data-raw-test checkout: main:README.md, restore: false",
 			args: args{
 				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test",
-				opts:       []pull.Option{pull.WithCheckout("main:README.md"), pull.WithRestore(false), pull.WithUseNativeGit(true)},
+				opts:       []pull.Option{pull.WithCheckout("main:README.md"), pull.WithRestore(false)},
 			},
 			hasError:     true,
 			wantErr:      "switch to main:README.md: ",
@@ -295,10 +230,10 @@ func TestPull(t *testing.T) {
 			wantExitCode: 128,
 		},
 		{
-			name: "vuls-data-raw-test-archive-1 restore: false, native git",
+			name: "vuls-data-raw-test-archive-1 restore: false",
 			args: args{
 				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test-archive-1",
-				opts:       []pull.Option{pull.WithRestore(false), pull.WithUseNativeGit(true)},
+				opts:       []pull.Option{pull.WithRestore(false)},
 			},
 			golden: "testdata/golden/vuls-data-raw-test-archive-1.tar.zst",
 		},
@@ -423,9 +358,9 @@ func TestPull(t *testing.T) {
 	}
 }
 
-// TestPullWithoutGit checks that a target native git cannot be run to check
-// out is not reported as not in the repository: rev-parse cannot tell, so the
-// error of switch is returned as it is.
+// TestPullWithoutGit checks that a target git cannot be run to check out is
+// not reported as not in the repository: rev-parse cannot tell, so the error
+// of switch is returned as it is.
 func TestPullWithoutGit(t *testing.T) {
 	ts := httptest.NewTestServer(t, registry.New())
 
@@ -447,7 +382,7 @@ func TestPullWithoutGit(t *testing.T) {
 	// The pull itself needs no git, only the checkout.
 	t.Setenv("PATH", t.TempDir())
 
-	err = pull.Pull(repo.Reference.String(), pull.WithDir(t.TempDir()), pull.WithCheckout("9d3d5d486d4c9414321a2df56f2e007c4c2c8fac"), pull.WithUseNativeGit(true))
+	err = pull.Pull(repo.Reference.String(), pull.WithDir(t.TempDir()), pull.WithCheckout("9d3d5d486d4c9414321a2df56f2e007c4c2c8fac"))
 	if want := "switch to 9d3d5d486d4c9414321a2df56f2e007c4c2c8fac: "; err == nil || !strings.HasPrefix(err.Error(), want) {
 		t.Errorf("Pull() error does not begin with %q, error: %v", want, err)
 	}
@@ -487,7 +422,7 @@ func TestPullWithBrokenGit(t *testing.T) {
 	t.Setenv("GIT_CONFIG_KEY_0", "core.bare")
 	t.Setenv("GIT_CONFIG_VALUE_0", "notabool")
 
-	err = pull.Pull(repo.Reference.String(), pull.WithDir(t.TempDir()), pull.WithCheckout("v0.0.1"), pull.WithUseNativeGit(true))
+	err = pull.Pull(repo.Reference.String(), pull.WithDir(t.TempDir()), pull.WithCheckout("v0.0.1"))
 	if want := "switch to v0.0.1: "; err == nil || !strings.HasPrefix(err.Error(), want) {
 		t.Errorf("Pull() error does not begin with %q, error: %v", want, err)
 	}
@@ -697,7 +632,7 @@ func TestPullCheckoutWorkers(t *testing.T) {
 			trace := filepath.Join(t.TempDir(), "trace2.json")
 			t.Setenv("GIT_TRACE2_EVENT", trace)
 
-			if err := pull.Pull(repo.Reference.String(), pull.WithDir(t.TempDir()), pull.WithRestore(true), pull.WithUseNativeGit(true)); err != nil {
+			if err := pull.Pull(repo.Reference.String(), pull.WithDir(t.TempDir()), pull.WithRestore(true)); err != nil {
 				t.Fatalf("pull. err: %v", err)
 			}
 

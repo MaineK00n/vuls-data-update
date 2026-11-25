@@ -20,7 +20,6 @@ func TestShow(t *testing.T) {
 		// newRepository.
 		shallow  bool
 		revision string
-		opts     []show.Option
 	}
 	tests := []struct {
 		name    string
@@ -29,10 +28,9 @@ func TestShow(t *testing.T) {
 		wantErr string
 	}{
 		{
-			name: "full hash, native git",
+			name: "full hash",
 			args: args{
 				revision: "c32990db8f97b8b588b4a432b934aff4fc769b50", // the signed commit
-				opts:     []show.Option{show.WithUseNativeGit(true)},
 			},
 			want: show.Commit{
 				Hash:          "c32990db8f97b8b588b4a432b934aff4fc769b50",
@@ -41,34 +39,9 @@ func TestShow(t *testing.T) {
 			},
 		},
 		{
-			name: "full hash, go-git",
-			args: args{
-				revision: "c32990db8f97b8b588b4a432b934aff4fc769b50", // the signed commit
-				opts:     []show.Option{show.WithUseNativeGit(false)},
-			},
-			want: show.Commit{
-				Hash:          "c32990db8f97b8b588b4a432b934aff4fc769b50",
-				AuthorTime:    time.Date(2023, time.November, 14, 22, 13, 20, 0, time.UTC), // the commit's 2023-11-15 07:13:20 +0900, in UTC
-				CommitterTime: time.Date(2023, time.November, 14, 23, 13, 20, 0, time.UTC), // the commit's 2023-11-14 18:13:20 -0500, in UTC
-			},
-		},
-		{
-			name: "branch, native git",
+			name: "branch",
 			args: args{
 				revision: "main",
-				opts:     []show.Option{show.WithUseNativeGit(true)},
-			},
-			want: show.Commit{
-				Hash:          "c32990db8f97b8b588b4a432b934aff4fc769b50",
-				AuthorTime:    time.Date(2023, time.November, 14, 22, 13, 20, 0, time.UTC), // the commit's 2023-11-15 07:13:20 +0900, in UTC
-				CommitterTime: time.Date(2023, time.November, 14, 23, 13, 20, 0, time.UTC), // the commit's 2023-11-14 18:13:20 -0500, in UTC
-			},
-		},
-		{
-			name: "branch, go-git",
-			args: args{
-				revision: "main",
-				opts:     []show.Option{show.WithUseNativeGit(false)},
 			},
 			want: show.Commit{
 				Hash:          "c32990db8f97b8b588b4a432b934aff4fc769b50",
@@ -79,22 +52,9 @@ func TestShow(t *testing.T) {
 		{
 			// The commit, not the tag object, whose header git show would
 			// print before the commit.
-			name: "annotated tag, native git",
+			name: "annotated tag",
 			args: args{
 				revision: "v1",
-				opts:     []show.Option{show.WithUseNativeGit(true)},
-			},
-			want: show.Commit{
-				Hash:          "c32990db8f97b8b588b4a432b934aff4fc769b50",
-				AuthorTime:    time.Date(2023, time.November, 14, 22, 13, 20, 0, time.UTC), // the commit's 2023-11-15 07:13:20 +0900, in UTC
-				CommitterTime: time.Date(2023, time.November, 14, 23, 13, 20, 0, time.UTC), // the commit's 2023-11-14 18:13:20 -0500, in UTC
-			},
-		},
-		{
-			name: "annotated tag, go-git",
-			args: args{
-				revision: "v1",
-				opts:     []show.Option{show.WithUseNativeGit(false)},
 			},
 			want: show.Commit{
 				Hash:          "c32990db8f97b8b588b4a432b934aff4fc769b50",
@@ -106,10 +66,9 @@ func TestShow(t *testing.T) {
 			// :/<text> names the youngest commit whose message matches. git
 			// reads what follows it as part of the text, so the commit is not
 			// peeled by appending ^{commit}.
-			name: "commit message search, native git",
+			name: "commit message search",
 			args: args{
 				revision: ":/signed",
-				opts:     []show.Option{show.WithUseNativeGit(true)},
 			},
 			want: show.Commit{
 				Hash:          "c32990db8f97b8b588b4a432b934aff4fc769b50",
@@ -118,104 +77,43 @@ func TestShow(t *testing.T) {
 			},
 		},
 		{
-			// go-git does not know :/<text>.
-			name: "commit message search, go-git",
-			args: args{
-				revision: ":/signed",
-				opts:     []show.Option{show.WithUseNativeGit(false)},
-			},
-			wantErr: `":/signed" does not name a commit`,
-		},
-		{
-			name: "missing revision, native git",
+			name: "missing revision",
 			args: args{
 				revision: "missing",
-				opts:     []show.Option{show.WithUseNativeGit(true)},
 			},
 			wantErr: `"missing" does not name a commit`,
 		},
 		{
-			name: "missing revision, go-git",
-			args: args{
-				revision: "missing",
-				opts:     []show.Option{show.WithUseNativeGit(false)},
-			},
-			wantErr: `"missing" does not name a commit`,
-		},
-		{
-			name: "tree, native git",
+			name: "tree",
 			args: args{
 				revision: "4b825dc642cb6eb9a060e54bf8d69288fbee4904", // the empty tree the commit points to
-				opts:     []show.Option{show.WithUseNativeGit(true)},
-			},
-			wantErr: `"4b825dc642cb6eb9a060e54bf8d69288fbee4904" does not name a commit`,
-		},
-		{
-			name: "tree, go-git",
-			args: args{
-				revision: "4b825dc642cb6eb9a060e54bf8d69288fbee4904", // the empty tree the commit points to
-				opts:     []show.Option{show.WithUseNativeGit(false)},
 			},
 			wantErr: `"4b825dc642cb6eb9a060e54bf8d69288fbee4904" does not name a commit`,
 		},
 		{
 			// rev-parse prints both ends of a range, and exits 1 only with
 			// --verify.
-			name: "range, native git",
+			name: "range",
 			args: args{
 				revision: "v1..main",
-				opts:     []show.Option{show.WithUseNativeGit(true)},
 			},
 			wantErr: `"v1..main" does not name a commit`,
 		},
 		{
-			// go-git's revision parser rejects "..".
-			name: "range, go-git",
-			args: args{
-				revision: "v1..main",
-				opts:     []show.Option{show.WithUseNativeGit(false)},
-			},
-			wantErr: "resolve v1..main",
-		},
-		{
 			// Without --end-of-options, rev-parse reads this as its own
 			// --abbrev-ref option, with a mode it does not know, and exits 128.
-			name: "option-like revision, native git",
+			name: "option-like revision",
 			args: args{
 				revision: "--abbrev-ref=unknown",
-				opts:     []show.Option{show.WithUseNativeGit(true)},
-			},
-			wantErr: `"--abbrev-ref=unknown" does not name a commit`,
-		},
-		{
-			name: "option-like revision, go-git",
-			args: args{
-				revision: "--abbrev-ref=unknown",
-				opts:     []show.Option{show.WithUseNativeGit(false)},
 			},
 			wantErr: `"--abbrev-ref=unknown" does not name a commit`,
 		},
 		{
 			// main of the shallow clone.
-			name: "shallow commit, native git",
+			name: "shallow commit",
 			args: args{
 				shallow:  true,
 				revision: "72dab9e35fe49df9a92e8f12014b9f226114c9d4",
-				opts:     []show.Option{show.WithUseNativeGit(true)},
-			},
-			want: show.Commit{
-				Hash:          "72dab9e35fe49df9a92e8f12014b9f226114c9d4",
-				AuthorTime:    time.Date(2023, time.November, 15, 22, 13, 20, 0, time.UTC),
-				CommitterTime: time.Date(2023, time.November, 15, 23, 13, 20, 0, time.UTC),
-			},
-		},
-		{
-			// main of the shallow clone.
-			name: "shallow commit, go-git",
-			args: args{
-				shallow:  true,
-				revision: "72dab9e35fe49df9a92e8f12014b9f226114c9d4",
-				opts:     []show.Option{show.WithUseNativeGit(false)},
 			},
 			want: show.Commit{
 				Hash:          "72dab9e35fe49df9a92e8f12014b9f226114c9d4",
@@ -225,44 +123,20 @@ func TestShow(t *testing.T) {
 		},
 		{
 			// The clone does not have the parent of its shallow commit.
-			name: "parent of the shallow commit, native git",
+			name: "parent of the shallow commit",
 			args: args{
 				shallow:  true,
 				revision: "main~1",
-				opts:     []show.Option{show.WithUseNativeGit(true)},
-			},
-			wantErr: `"main~1" does not name a commit`,
-		},
-		{
-			// go-git reads the parent's hash from the shallow commit, and
-			// fails to read the parent with ErrObjectNotFound.
-			name: "parent of the shallow commit, go-git",
-			args: args{
-				shallow:  true,
-				revision: "main~1",
-				opts:     []show.Option{show.WithUseNativeGit(false)},
 			},
 			wantErr: `"main~1" does not name a commit`,
 		},
 		{
 			// A commit pinned by its full hash before the history was
 			// truncated.
-			name: "parent of the shallow commit by hash, native git",
+			name: "parent of the shallow commit by hash",
 			args: args{
 				shallow:  true,
 				revision: "14398cbfc59d80dc0da5a1d0e6d816da30418880",
-				opts:     []show.Option{show.WithUseNativeGit(true)},
-			},
-			wantErr: `"14398cbfc59d80dc0da5a1d0e6d816da30418880" does not name a commit`,
-		},
-		{
-			// A commit pinned by its full hash before the history was
-			// truncated.
-			name: "parent of the shallow commit by hash, go-git",
-			args: args{
-				shallow:  true,
-				revision: "14398cbfc59d80dc0da5a1d0e6d816da30418880",
-				opts:     []show.Option{show.WithUseNativeGit(false)},
 			},
 			wantErr: `"14398cbfc59d80dc0da5a1d0e6d816da30418880" does not name a commit`,
 		},
@@ -273,7 +147,7 @@ func TestShow(t *testing.T) {
 			if tt.args.shallow {
 				repository = newShallowRepository
 			}
-			got, err := show.Show(repository(t), tt.args.revision, tt.args.opts...)
+			got, err := show.Show(repository(t), tt.args.revision)
 			switch {
 			case err != nil && tt.wantErr == "":
 				t.Errorf("unexpected err: %v", err)
