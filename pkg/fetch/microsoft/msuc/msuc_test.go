@@ -83,6 +83,19 @@ func TestFetch(t *testing.T) {
 			hasError: true,
 		},
 		{
+			// A probe can be answered with a no-result, and that seed is named
+			// as a miss like one a pass finds nothing for.
+			name:         "throttled-no-result",
+			queries:      []string{"KB5025239", "KB5040427"},
+			unanswered:   map[string]int{"KB5040427": 1},
+			wantSearches: map[string]int{"KB5025239": 1, "KB5040427": 2},
+			wantLogs: []string{
+				`msg="Search probe" query=KB5040427 answered=true`,
+				"queries=KB5040427",
+				"no_result=1 unanswered=0 update_ids=2 retries=1",
+			},
+		},
+		{
 			// Neither result rows nor a no-result message: the catalog never
 			// really answered, which is what a throttled search looks like.
 			// Still unanswered once the retries run out, it has to fail rather
