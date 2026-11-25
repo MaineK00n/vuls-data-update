@@ -229,11 +229,15 @@ func parse(r io.Reader) (Vulnerability, error) {
 					if !ok {
 						return Vulnerability{}, errors.Errorf("unexpected package release format. expected: %q, actual: %q", "<release>_<package>", line)
 					}
+					// Only the section's own package has a map to write into.
+					if Package(n) != name {
+						return Vulnerability{}, errors.Errorf("unexpected package. expected: %q, actual: %q", name, n)
+					}
 
 					status, note, _ := strings.Cut(strings.TrimSpace(rhs), " ")
 					switch status {
 					case "released", "needed", "ignored", "DNE", "not-affected", "needs-triage", "deferred", "pending":
-						vuln.Patches[Package(n)][Release(r)] = Status{
+						vuln.Patches[name][Release(r)] = Status{
 							Status: status,
 							Note:   strings.TrimPrefix(strings.TrimSuffix(note, ")"), "("),
 						}
