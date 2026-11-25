@@ -63,6 +63,14 @@ func (c checkoutOption) apply(opts *options) {
 	opts.checkout = string(c)
 }
 
+// WithCheckout sets what Pull checks out after the pull: a branch, a tag or a
+// commit, main by default, or nothing for "". On native git, if checkout names
+// nothing in the pulled dotgit, such as a commit pinned before vuls-data-db
+// truncated the history, errors.Is matches the error with
+// contains.ErrCommitNotFound. It does not when Pull cannot tell: for a name
+// that begins with "-", or holds "..." or ":", for one with an abbreviated
+// hash that more than one object begins with, such as 01d6 or 01d6~1, or when
+// git cannot be run or fails on the repository.
 func WithCheckout(checkout string) Option {
 	return checkoutOption(checkout)
 }
@@ -149,20 +157,23 @@ func Pull(repository string, opts ...Option) error {
 				if _, err := util.Git("-C", filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference), "switch", "--detach", options.checkout); err != nil {
 					// switch reports a commit that is not in the repository
 					// as "unable to read tree", which reads like corruption,
-					// so if contains finds that the target is not there
-					// either, say so in front of the error of switch. Asking
-					// only after a failure lets every name switch accepts
-					// reach it as before. contains reads a name as cat-file
-					// -e does, so it is not asked about a name that switch
-					// reads otherwise: one that begins with "-", the previous
-					// branch or an option, or A...B, the merge base of A and
-					// B. For those, and when contains cannot tell, as when
-					// git cannot be run, the error of switch, which says how
-					// it failed, is returned as it is.
-					if !strings.HasPrefix(options.checkout, "-") && !strings.Contains(options.checkout, "...") {
-						if err2 := contains.Contains(filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference), options.checkout, contains.WithUseNativeGit(true)); notFound(err2) {
-							return notInRepository(errors.Wrapf(err, "switch to %s", options.checkout), repository, options.checkout)
-						}
+					// so if rev-parse finds that the target names nothing in
+					// the repository either, say so in front of the error of
+					// switch. Asking only after a failure lets every name
+					// switch accepts reach it as before. rev-parse is not
+					// asked about a name that switch reads otherwise: one
+					// that begins with "-", the previous branch or an option,
+					// or A...B, the merge base of A and B. Nor is it asked
+					// about one with a ":", which no branch or tag has, as it
+					// would read the ^{object} it is asked with as part of the
+					// path in <rev>:<path>, or of the text in :/<text>. For
+					// those, and when rev-parse cannot tell, as for an
+					// abbreviated hash that more than one object begins with,
+					// or when git cannot be run or fails on the repository,
+					// the error of switch, which says how it failed, is
+					// returned as it is.
+					if !strings.HasPrefix(options.checkout, "-") && !strings.Contains(options.checkout, "...") && !strings.Contains(options.checkout, ":") && missing(filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference), options.checkout) {
+						return notInRepository(errors.Wrapf(err, "switch to %s", options.checkout), repository, options.checkout)
 					}
 					return errors.Wrapf(err, "switch to %s", options.checkout)
 				}
@@ -266,24 +277,79 @@ func Pull(repository string, opts ...Option) error {
 	return nil
 }
 
-// notInRepository wraps err, the error of switch, for a checkout target, a tag
-// or a commit, that is not in the dotgit pulled from repository. vuls-data-db
-// keeps only the last commits of a dotgit's history, so a commit pinned before
-// it truncated the history is gone from a repository that is otherwise fine.
+// notInRepository wraps err, the error of switch, for a checkout target that
+// is not in the dotgit pulled from repository: a commit, or a branch or a tag
+// that is not there. vuls-data-db keeps only the last commits of a dotgit's
+// history, so a commit pinned before it truncated the history is gone from a
+// repository that is otherwise fine. errors.Is takes the error for
+// contains.ErrCommitNotFound, so that a caller can tell the case.
 func notInRepository(err error, repository, checkout string) error {
-	return errors.Wrapf(err, "%s is not in %s, whose history may have been truncated or rewritten", checkout, repository)
+	return errors.Wrapf(commitNotFound{err: err}, "%s is not in %s, whose history may have been truncated or rewritten", checkout, repository)
 }
 
-// notFound reports whether err, from contains, says that the target is not in
-// the repository, rather than that the check could not be made. git cat-file
-// -e exits with 1 for a hash it does not have, and with 128 for a name it
-// cannot resolve. 128 is also how it ends on other fatal errors, but contains
-// is asked only after switch has failed, and the error of switch, which
-// follows the message, says which. Without an exit status, git could not be
-// run.
-func notFound(err error) bool {
-	ee, ok := stderrors.AsType[*exec.ExitError](err)
-	return ok && (ee.ExitCode() == 1 || ee.ExitCode() == 128)
+// commitNotFound is err, for errors.Is to take as contains.ErrCommitNotFound.
+// Its message, its chain, its cause for github.com/pkg/errors and what %+v
+// prints of it are those of err, so that what git said, and where the error
+// was wrapped, stay as they are.
+type commitNotFound struct {
+	err error
+}
+
+func (e commitNotFound) Error() string { return e.err.Error() }
+
+func (e commitNotFound) Unwrap() error { return e.err }
+
+func (e commitNotFound) Cause() error { return e.err }
+
+func (e commitNotFound) Is(target error) bool { return target == contains.ErrCommitNotFound }
+
+// Format prints err as fmt would print it with verb. A fmt.Formatter has no
+// error to return, so the one of writing to s is dropped.
+func (e commitNotFound) Format(s fmt.State, verb rune) {
+	_, _ = fmt.Fprintf(s, fmt.FormatString(s, verb), e.err)
+}
+
+// missing reports whether target names nothing in the repository at dir: no
+// object for a full hash, and nothing for a name. git rev-parse --verify
+// --quiet says so by exiting with 1, and ^{object} makes it look a full hash
+// up, which it prints as it is otherwise. It exits with 128 when it cannot
+// tell, as when git does not trust the repository or cannot read its config,
+// and there is no exit status when git cannot be run. It exits with 1 as well
+// for an abbreviated hash that more than one object begins with, so for a
+// target with an abbreviated hash in it, git rev-parse --disambiguate lists
+// the objects that begin with it, and two or more make a target that git
+// cannot tell about. target holds no ":", which would make rev-parse read
+// ^{object} as part of a path.
+func missing(dir, target string) bool {
+	_, err := util.Git("-C", dir, "rev-parse", "--verify", "--quiet", "--end-of-options", fmt.Sprintf("%s^{object}", target))
+	if ee, ok := stderrors.AsType[*exec.ExitError](err); !ok || ee.ExitCode() != 1 {
+		return false
+	}
+
+	abbrev := abbreviation(target)
+	if abbrev == "" {
+		return true
+	}
+	bs, err := util.Git("-C", dir, "rev-parse", fmt.Sprintf("--disambiguate=%s", abbrev))
+	return err == nil && strings.Count(string(bs), "\n") < 2
+}
+
+// abbreviation returns the hash, abbreviated or not, that git can read in
+// target, or "" for none: 4 or more hex digits that make up the revision
+// before the first "~" or "^", or that follow its last "-g", as in describe
+// output such as v1.0-1-g01d6.
+func abbreviation(target string) string {
+	rev := target
+	if i := strings.IndexAny(rev, "~^"); i >= 0 {
+		rev = rev[:i]
+	}
+	if i := strings.LastIndex(rev, "-g"); i >= 0 {
+		rev = rev[i+len("-g"):]
+	}
+	if len(rev) < 4 || strings.Trim(rev, "0123456789abcdefABCDEF") != "" {
+		return ""
+	}
+	return rev
 }
 
 // pullLayer fetches the layer and extracts it into dir.
