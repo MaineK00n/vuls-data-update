@@ -158,6 +158,12 @@ func TestClient_PipelineGet_error(t *testing.T) {
 			if err == nil || !strings.HasPrefix(err.Error(), tt.wantErr) {
 				t.Errorf("PipelineGet() error = %v, want it to start with %q", err, tt.wantErr)
 			}
+			// Neither the password nor the cookie reaches any part of the message.
+			for _, s := range []string{"password", "secret"} {
+				if err != nil && strings.Contains(err.Error(), s) {
+					t.Errorf("PipelineGet() error = %v, want it not to contain %q", err, s)
+				}
+			}
 		})
 	}
 }

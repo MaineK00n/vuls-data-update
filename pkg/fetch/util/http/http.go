@@ -297,9 +297,10 @@ func (c *Client) PipelineDo(reqs []*retryablehttp.Request, concurrency int, wait
 				_ = bar.Add(1)
 			}()
 
-			// A failed request is traced by its URL. Do's error already names
-			// it, but a continuation's error, such as an unexpected status or
-			// a body that does not decode, does not.
+			// A failed request is traced by the URL it asked for, before any
+			// redirect. Do's error already names it, but a continuation's error,
+			// such as an unexpected status or a body that does not decode, does
+			// not.
 			resp, err := c.Do(req)
 			if err != nil {
 				return errors.Wrap(err, "do")
