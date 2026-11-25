@@ -38,7 +38,7 @@
 				},
 				{
 					"ecosystem": "oracle:9",
-					"tag": "kernel-uek-fallback:5.15.0"
+					"tag": "kernel-uek-split:ELSA-2025-90001"
 				}
 			]
 		}
@@ -59,7 +59,8 @@
 					"ecosystem": "oracle:10"
 				},
 				{
-					"ecosystem": "oracle:9"
+					"ecosystem": "oracle:9",
+					"tag": "kernel-uek-split:ELSA-2025-90001"
 				}
 			]
 		},
@@ -79,10 +80,6 @@
 				},
 				{
 					"ecosystem": "oracle:9"
-				},
-				{
-					"ecosystem": "oracle:9",
-					"tag": "kernel-uek-fallback:5.15.0"
 				}
 			]
 		}
@@ -116,8 +113,7 @@
 										"type": "rpm",
 										"range": [
 											{
-												"lt": "0:6.12.0-102.36.5.2.el10uek",
-												"ge": "0:6.12.0-0"
+												"lt": "0:6.12.0-102.36.5.2.el10uek"
 											}
 										],
 										"fixed": [
@@ -147,8 +143,7 @@
 										"type": "rpm",
 										"range": [
 											{
-												"lt": "0:6.12.0-102.36.5.2.el10uek",
-												"ge": "0:6.12.0-0"
+												"lt": "0:6.12.0-102.36.5.2.el10uek"
 											}
 										],
 										"fixed": [
@@ -190,8 +185,7 @@
 										"type": "rpm",
 										"range": [
 											{
-												"lt": "0:6.12.0-102.36.5.2.el9uek",
-												"ge": "0:6.12.0-0"
+												"lt": "0:6.12.0-102.36.5.2.el9uek"
 											}
 										],
 										"fixed": [
@@ -221,8 +215,7 @@
 										"type": "rpm",
 										"range": [
 											{
-												"lt": "0:6.12.0-102.36.5.2.el9uek",
-												"ge": "0:6.12.0-0"
+												"lt": "0:6.12.0-102.36.5.2.el9uek"
 											}
 										],
 										"fixed": [
@@ -258,8 +251,40 @@
 										"type": "rpm",
 										"range": [
 											{
-												"lt": "0:5.15.0.0-0",
-												"ge": "0:5.15.0-0"
+												"lt": "0:6.12.0-102.36.5.2.el9uek"
+											}
+										],
+										"fixed": [
+											"0:6.12.0-102.36.5.2.el9uek"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "kernel-uek",
+											"architectures": [
+												"x86_64"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:5.15.0-0"
+											},
+											{
+												"lt": "0:6.12.0-102.36.5.2.el9uek",
+												"ge": "0:5.15.0.0-0"
 											}
 										],
 										"fixed": [
@@ -288,8 +313,40 @@
 										"type": "rpm",
 										"range": [
 											{
-												"lt": "0:5.15.0.0-0",
-												"ge": "0:5.15.0-0"
+												"lt": "0:6.12.0-102.36.5.2.el9uek"
+											}
+										],
+										"fixed": [
+											"0:6.12.0-102.36.5.2.el9uek"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "kernel-uek-core",
+											"architectures": [
+												"x86_64"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:5.15.0-0"
+											},
+											{
+												"lt": "0:6.12.0-102.36.5.2.el9uek",
+												"ge": "0:5.15.0.0-0"
 											}
 										],
 										"fixed": [
@@ -300,7 +357,7 @@
 							}
 						]
 					},
-					"tag": "kernel-uek-fallback:5.15.0"
+					"tag": "kernel-uek-split:ELSA-2025-90001"
 				}
 			]
 		}
@@ -308,14 +365,27 @@
 	"data_source": {
 		"id": "oracle",
 		"raws": [
+			"uek/definitions/oval:com.oracle.elsa:def:202590001.json",
 			"uek/definitions/oval:com.oracle.elsa:def:202590002.json",
-			"uek/definitions/oval:com.oracle.elsa:def:202590003.json",
+			"uek/objects/rpminfo_object/oval:com.oracle.elsa:obj:202590001001.json",
+			"uek/objects/rpminfo_object/oval:com.oracle.elsa:obj:202590001002.json",
+			"uek/objects/rpminfo_object/oval:com.oracle.elsa:obj:202590001003.json",
+			"uek/objects/rpminfo_object/oval:com.oracle.elsa:obj:202590001004.json",
 			"uek/objects/rpminfo_object/oval:com.oracle.elsa:obj:202590002001.json",
 			"uek/objects/rpminfo_object/oval:com.oracle.elsa:obj:202590002002.json",
 			"uek/objects/rpminfo_object/oval:com.oracle.elsa:obj:202590002003.json",
-			"uek/objects/rpminfo_object/oval:com.oracle.elsa:obj:202590003001.json",
-			"uek/objects/rpminfo_object/oval:com.oracle.elsa:obj:202590003002.json",
-			"uek/objects/rpminfo_object/oval:com.oracle.elsa:obj:202590003003.json",
+			"uek/states/rpminfo_state/oval:com.oracle.elsa:ste:202590001001.json",
+			"uek/states/rpminfo_state/oval:com.oracle.elsa:ste:202590001002.json",
+			"uek/states/rpminfo_state/oval:com.oracle.elsa:ste:202590001003.json",
+			"uek/states/rpminfo_state/oval:com.oracle.elsa:ste:202590001004.json",
+			"uek/states/rpminfo_state/oval:com.oracle.elsa:ste:202590001005.json",
+			"uek/states/rpminfo_state/oval:com.oracle.elsa:ste:202590001006.json",
+			"uek/states/rpminfo_state/oval:com.oracle.elsa:ste:202590001007.json",
+			"uek/states/rpminfo_state/oval:com.oracle.elsa:ste:202590001008.json",
+			"uek/states/rpminfo_state/oval:com.oracle.elsa:ste:202590001009.json",
+			"uek/states/rpminfo_state/oval:com.oracle.elsa:ste:202590001010.json",
+			"uek/states/rpminfo_state/oval:com.oracle.elsa:ste:202590001011.json",
+			"uek/states/rpminfo_state/oval:com.oracle.elsa:ste:202590001012.json",
 			"uek/states/rpminfo_state/oval:com.oracle.elsa:ste:202590002001.json",
 			"uek/states/rpminfo_state/oval:com.oracle.elsa:ste:202590002002.json",
 			"uek/states/rpminfo_state/oval:com.oracle.elsa:ste:202590002003.json",
@@ -328,11 +398,22 @@
 			"uek/states/rpminfo_state/oval:com.oracle.elsa:ste:202590002010.json",
 			"uek/states/rpminfo_state/oval:com.oracle.elsa:ste:202590002011.json",
 			"uek/states/rpminfo_state/oval:com.oracle.elsa:ste:202590002012.json",
-			"uek/states/rpminfo_state/oval:com.oracle.elsa:ste:202590003001.json",
-			"uek/states/rpminfo_state/oval:com.oracle.elsa:ste:202590003002.json",
-			"uek/states/rpminfo_state/oval:com.oracle.elsa:ste:202590003003.json",
-			"uek/states/rpminfo_state/oval:com.oracle.elsa:ste:202590003004.json",
-			"uek/states/rpminfo_state/oval:com.oracle.elsa:ste:202590003005.json",
+			"uek/tests/rpminfo_test/oval:com.oracle.elsa:tst:202590001001.json",
+			"uek/tests/rpminfo_test/oval:com.oracle.elsa:tst:202590001002.json",
+			"uek/tests/rpminfo_test/oval:com.oracle.elsa:tst:202590001003.json",
+			"uek/tests/rpminfo_test/oval:com.oracle.elsa:tst:202590001004.json",
+			"uek/tests/rpminfo_test/oval:com.oracle.elsa:tst:202590001005.json",
+			"uek/tests/rpminfo_test/oval:com.oracle.elsa:tst:202590001006.json",
+			"uek/tests/rpminfo_test/oval:com.oracle.elsa:tst:202590001007.json",
+			"uek/tests/rpminfo_test/oval:com.oracle.elsa:tst:202590001008.json",
+			"uek/tests/rpminfo_test/oval:com.oracle.elsa:tst:202590001009.json",
+			"uek/tests/rpminfo_test/oval:com.oracle.elsa:tst:202590001010.json",
+			"uek/tests/rpminfo_test/oval:com.oracle.elsa:tst:202590001011.json",
+			"uek/tests/rpminfo_test/oval:com.oracle.elsa:tst:202590001012.json",
+			"uek/tests/rpminfo_test/oval:com.oracle.elsa:tst:202590001013.json",
+			"uek/tests/rpminfo_test/oval:com.oracle.elsa:tst:202590001014.json",
+			"uek/tests/rpminfo_test/oval:com.oracle.elsa:tst:202590001015.json",
+			"uek/tests/rpminfo_test/oval:com.oracle.elsa:tst:202590001016.json",
 			"uek/tests/rpminfo_test/oval:com.oracle.elsa:tst:202590002001.json",
 			"uek/tests/rpminfo_test/oval:com.oracle.elsa:tst:202590002002.json",
 			"uek/tests/rpminfo_test/oval:com.oracle.elsa:tst:202590002003.json",
@@ -346,13 +427,7 @@
 			"uek/tests/rpminfo_test/oval:com.oracle.elsa:tst:202590002011.json",
 			"uek/tests/rpminfo_test/oval:com.oracle.elsa:tst:202590002012.json",
 			"uek/tests/rpminfo_test/oval:com.oracle.elsa:tst:202590002013.json",
-			"uek/tests/rpminfo_test/oval:com.oracle.elsa:tst:202590002014.json",
-			"uek/tests/rpminfo_test/oval:com.oracle.elsa:tst:202590003001.json",
-			"uek/tests/rpminfo_test/oval:com.oracle.elsa:tst:202590003002.json",
-			"uek/tests/rpminfo_test/oval:com.oracle.elsa:tst:202590003003.json",
-			"uek/tests/rpminfo_test/oval:com.oracle.elsa:tst:202590003004.json",
-			"uek/tests/rpminfo_test/oval:com.oracle.elsa:tst:202590003005.json",
-			"uek/tests/rpminfo_test/oval:com.oracle.elsa:tst:202590003006.json"
+			"uek/tests/rpminfo_test/oval:com.oracle.elsa:tst:202590002014.json"
 		]
 	}
 }

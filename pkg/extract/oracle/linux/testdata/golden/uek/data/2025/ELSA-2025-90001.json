@@ -34,10 +34,6 @@
 					"ecosystem": "oracle:8"
 				},
 				{
-					"ecosystem": "oracle:8",
-					"tag": "kernel-uek-fallback:5.4.17"
-				},
-				{
 					"ecosystem": "oracle:9"
 				}
 			]
@@ -59,10 +55,6 @@
 					"ecosystem": "oracle:8"
 				},
 				{
-					"ecosystem": "oracle:8",
-					"tag": "kernel-uek-fallback:5.4.17"
-				},
-				{
 					"ecosystem": "oracle:9"
 				}
 			]
@@ -80,10 +72,6 @@
 			"segments": [
 				{
 					"ecosystem": "oracle:8"
-				},
-				{
-					"ecosystem": "oracle:8",
-					"tag": "kernel-uek-fallback:5.4.17"
 				},
 				{
 					"ecosystem": "oracle:9"
@@ -149,8 +137,7 @@
 										"type": "rpm",
 										"range": [
 											{
-												"lt": "0:5.15.0-305.176.4.el8uek",
-												"ge": "0:5.15.0-0"
+												"lt": "0:5.15.0-305.176.4.el8uek"
 											}
 										],
 										"fixed": [
@@ -179,8 +166,7 @@
 										"type": "rpm",
 										"range": [
 											{
-												"lt": "0:5.15.0-305.176.4.el8uek",
-												"ge": "0:5.15.0-0"
+												"lt": "0:5.15.0-305.176.4.el8uek"
 											}
 										],
 										"fixed": [
@@ -191,74 +177,6 @@
 							}
 						]
 					}
-				},
-				{
-					"criteria": {
-						"operator": "OR",
-						"criterions": [
-							{
-								"type": "version",
-								"version": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "fixed"
-									},
-									"package": {
-										"type": "binary",
-										"binary": {
-											"name": "kernel-uek",
-											"architectures": [
-												"x86_64"
-											]
-										}
-									},
-									"affected": {
-										"type": "rpm",
-										"range": [
-											{
-												"lt": "0:5.4.17.0-0",
-												"ge": "0:5.4.17-0"
-											}
-										],
-										"fixed": [
-											"0:5.15.0-305.176.4.el8uek"
-										]
-									}
-								}
-							},
-							{
-								"type": "version",
-								"version": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "fixed"
-									},
-									"package": {
-										"type": "binary",
-										"binary": {
-											"name": "kernel-uek-core",
-											"architectures": [
-												"x86_64"
-											]
-										}
-									},
-									"affected": {
-										"type": "rpm",
-										"range": [
-											{
-												"lt": "0:5.4.17.0-0",
-												"ge": "0:5.4.17-0"
-											}
-										],
-										"fixed": [
-											"0:5.15.0-305.176.4.el8uek"
-										]
-									}
-								}
-							}
-						]
-					},
-					"tag": "kernel-uek-fallback:5.4.17"
 				}
 			]
 		},
@@ -319,8 +237,7 @@
 										"type": "rpm",
 										"range": [
 											{
-												"lt": "0:5.15.0-305.176.4.el9uek",
-												"ge": "0:5.15.0-0"
+												"lt": "0:5.15.0-305.176.4.el9uek"
 											}
 										],
 										"fixed": [
@@ -349,8 +266,7 @@
 										"type": "rpm",
 										"range": [
 											{
-												"lt": "0:5.15.0-305.176.4.el9uek",
-												"ge": "0:5.15.0-0"
+												"lt": "0:5.15.0-305.176.4.el9uek"
 											}
 										],
 										"fixed": [

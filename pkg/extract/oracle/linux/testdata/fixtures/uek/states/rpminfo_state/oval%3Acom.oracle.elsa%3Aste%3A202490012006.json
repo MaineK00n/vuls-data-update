@@ -2,8 +2,9 @@
 	"xmlns": "http://oval.mitre.org/XMLSchema/oval-definitions-5#linux",
 	"id": "oval:com.oracle.elsa:ste:202490012006",
 	"attr_version": "501",
-	"version": {
-		"text": "^8",
-		"operation": "pattern match"
+	"evr": {
+		"text": "0:5.4.17-2136.340.1.el7uek",
+		"datatype": "evr_string",
+		"operation": "less than"
 	}
 }

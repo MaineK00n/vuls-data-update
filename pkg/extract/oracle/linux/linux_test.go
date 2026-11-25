@@ -37,7 +37,8 @@ func TestExtract(t *testing.T) {
 		},
 		// Synthetic UEK advisories (IDs and CVEs other than CVE-2024-53103 are made up):
 		//   ELSA-2024-90010 R4 4.1.12 (OL7), ELSA-2024-90011 R5 4.14.35 (OL7, with perf),
-		//   ELSA-2024-90012 R6 5.4.17 (OL7, OL8), ELSA-2025-90001 R7 5.15.0 (OL8, OL9, with bpftool),
+		//   ELSA-2024-90012 R6 5.4.17 (OL7 with kernel-uek-container and perf, OL8),
+		//   ELSA-2025-90001 R7 5.15.0 (OL8, OL9, with bpftool),
 		//   ELSA-2025-90002 and ELSA-2025-90003 R8 6.12.0 (OL9, OL10 / OL9), ELSA-2025-90020 RHCK (OL8)
 		{
 			name:   "uek",

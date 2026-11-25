@@ -142,8 +142,8 @@ func Extract(inputDir string, opts ...Option) error {
 		return errors.Wrapf(err, "walk %s", inputDir)
 	}
 
-	if err := uek.applyFallback(); err != nil {
-		return errors.Wrap(err, "apply UEK fallback")
+	if err := uek.applySplit(); err != nil {
+		return errors.Wrap(err, "split UEK conditions")
 	}
 
 	if err := util.Write(filepath.Join(options.dir, "datasource.json"), datasourceTypes.DataSource{
@@ -351,7 +351,7 @@ func (e extractor) collectPackages(criteria linux.Criteria) ([]detectionTypes.De
 				},
 				Affected: &affectedTypes.Affected{
 					Type:  rangeTypes.RangeTypeRPM,
-					Range: []rangeTypes.Range{fixedRange(p.fixedVersion)},
+					Range: []rangeTypes.Range{fixedRange(p.name, p.fixedVersion)},
 					Fixed: []string{p.fixedVersion},
 				},
 			},

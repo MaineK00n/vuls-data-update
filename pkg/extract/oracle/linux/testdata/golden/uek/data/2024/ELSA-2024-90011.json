@@ -27,7 +27,8 @@
 			},
 			"segments": [
 				{
-					"ecosystem": "oracle:7"
+					"ecosystem": "oracle:7",
+					"tag": "kernel-uek-split:ELSA-2024-90010"
 				}
 			]
 		}
@@ -45,7 +46,8 @@
 			},
 			"segments": [
 				{
-					"ecosystem": "oracle:7"
+					"ecosystem": "oracle:7",
+					"tag": "kernel-uek-split:ELSA-2024-90010"
 				}
 			]
 		}
@@ -78,8 +80,11 @@
 										"type": "rpm",
 										"range": [
 											{
+												"lt": "0:4.1.12-0"
+											},
+											{
 												"lt": "0:4.14.35-2047.540.1.el7uek",
-												"ge": "0:4.14.35-0"
+												"ge": "0:4.1.12.0-0"
 											}
 										],
 										"fixed": [
@@ -119,7 +124,8 @@
 								}
 							}
 						]
-					}
+					},
+					"tag": "kernel-uek-split:ELSA-2024-90010"
 				}
 			]
 		}
@@ -127,15 +133,26 @@
 	"data_source": {
 		"id": "oracle",
 		"raws": [
+			"uek/definitions/oval:com.oracle.elsa:def:202490010.json",
 			"uek/definitions/oval:com.oracle.elsa:def:202490011.json",
+			"uek/objects/rpminfo_object/oval:com.oracle.elsa:obj:202490010001.json",
+			"uek/objects/rpminfo_object/oval:com.oracle.elsa:obj:202490010002.json",
 			"uek/objects/rpminfo_object/oval:com.oracle.elsa:obj:202490011001.json",
 			"uek/objects/rpminfo_object/oval:com.oracle.elsa:obj:202490011002.json",
 			"uek/objects/rpminfo_object/oval:com.oracle.elsa:obj:202490011003.json",
+			"uek/states/rpminfo_state/oval:com.oracle.elsa:ste:202490010001.json",
+			"uek/states/rpminfo_state/oval:com.oracle.elsa:ste:202490010002.json",
+			"uek/states/rpminfo_state/oval:com.oracle.elsa:ste:202490010003.json",
+			"uek/states/rpminfo_state/oval:com.oracle.elsa:ste:202490010004.json",
 			"uek/states/rpminfo_state/oval:com.oracle.elsa:ste:202490011001.json",
 			"uek/states/rpminfo_state/oval:com.oracle.elsa:ste:202490011002.json",
 			"uek/states/rpminfo_state/oval:com.oracle.elsa:ste:202490011003.json",
 			"uek/states/rpminfo_state/oval:com.oracle.elsa:ste:202490011004.json",
 			"uek/states/rpminfo_state/oval:com.oracle.elsa:ste:202490011005.json",
+			"uek/tests/rpminfo_test/oval:com.oracle.elsa:tst:202490010001.json",
+			"uek/tests/rpminfo_test/oval:com.oracle.elsa:tst:202490010002.json",
+			"uek/tests/rpminfo_test/oval:com.oracle.elsa:tst:202490010003.json",
+			"uek/tests/rpminfo_test/oval:com.oracle.elsa:tst:202490010004.json",
 			"uek/tests/rpminfo_test/oval:com.oracle.elsa:tst:202490011001.json",
 			"uek/tests/rpminfo_test/oval:com.oracle.elsa:tst:202490011002.json",
 			"uek/tests/rpminfo_test/oval:com.oracle.elsa:tst:202490011003.json",

@@ -1,7 +1,7 @@
 {
 	"id": "oval:com.oracle.elsa:tst:202490012005",
 	"version": "501",
-	"comment": "perf is earlier than 0:5.4.17-2136.340.1.el7uek",
+	"comment": "kernel-uek-container is earlier than 0:5.4.17-2136.340.1.el7",
 	"check": "at least one",
 	"xmlns": "http://oval.mitre.org/XMLSchema/oval-definitions-5#linux",
 	"object": {

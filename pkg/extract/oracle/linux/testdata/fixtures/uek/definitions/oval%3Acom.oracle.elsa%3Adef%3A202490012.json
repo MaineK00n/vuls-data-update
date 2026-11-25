@@ -80,10 +80,23 @@
 												"criterions": [
 													{
 														"test_ref": "oval:com.oracle.elsa:tst:202490012005",
-														"comment": "perf is earlier than 0:5.4.17-2136.340.1.el7uek"
+														"comment": "kernel-uek-container is earlier than 0:5.4.17-2136.340.1.el7"
 													},
 													{
 														"test_ref": "oval:com.oracle.elsa:tst:202490012006",
+														"comment": "kernel-uek-container is signed with the Oracle Linux 7 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.oracle.elsa:tst:202490012007",
+														"comment": "perf is earlier than 0:5.4.17-2136.340.1.el7uek"
+													},
+													{
+														"test_ref": "oval:com.oracle.elsa:tst:202490012008",
 														"comment": "perf is signed with the Oracle Linux 7 key"
 													}
 												]
@@ -124,11 +137,11 @@
 												"operator": "AND",
 												"criterions": [
 													{
-														"test_ref": "oval:com.oracle.elsa:tst:202490012009",
+														"test_ref": "oval:com.oracle.elsa:tst:202490012011",
 														"comment": "kernel-uek is earlier than 0:5.4.17-2136.340.1.el8uek"
 													},
 													{
-														"test_ref": "oval:com.oracle.elsa:tst:202490012010",
+														"test_ref": "oval:com.oracle.elsa:tst:202490012012",
 														"comment": "kernel-uek is signed with the Oracle Linux 8 key"
 													}
 												]
@@ -138,7 +151,7 @@
 								],
 								"criterions": [
 									{
-										"test_ref": "oval:com.oracle.elsa:tst:202490012008",
+										"test_ref": "oval:com.oracle.elsa:tst:202490012010",
 										"comment": "Oracle Linux arch is x86_64"
 									}
 								]
@@ -148,7 +161,7 @@
 				],
 				"criterions": [
 					{
-						"test_ref": "oval:com.oracle.elsa:tst:202490012007",
+						"test_ref": "oval:com.oracle.elsa:tst:202490012009",
 						"comment": "Oracle Linux 8 is installed"
 					}
 				]
