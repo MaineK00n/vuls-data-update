@@ -159,6 +159,15 @@ func parse(r io.Reader) ([]Release, error) {
 		paragraph bool // the current entry already has its paragraph
 		list      bool // the current section already has its list
 	)
+	// listed fails when the last section of the current entry has no list yet,
+	// at the h2 or h3 that ends it and at the end of the content.
+	listed := func() error {
+		if len(rs) == 0 || len(rs[len(rs)-1].Sections) == 0 || list {
+			return nil
+		}
+		cur := rs[len(rs)-1]
+		return errors.Errorf("unexpected h3 %q in %q. expected: ul after h3", cur.Sections[len(cur.Sections)-1].Name, cur.Date)
+	}
 	for n := range content.Nodes[0].ChildNodes() {
 		switch n.Type {
 		case html.ElementNode:
@@ -172,6 +181,9 @@ func parse(r io.Reader) ([]Release, error) {
 		}
 
 		if n.DataAtom == atom.H2 {
+			if err := listed(); err != nil {
+				return nil, err
+			}
 			id := attr(n, "id")
 			date := collapse(text(n))
 			if id == "" || date == "" {
@@ -201,6 +213,9 @@ func parse(r io.Reader) ([]Release, error) {
 			if !paragraph {
 				return nil, errors.Errorf("unexpected h3 in %q. expected: p before h3", cur.Date)
 			}
+			if err := listed(); err != nil {
+				return nil, err
+			}
 			name := collapse(text(n))
 			if name == "" {
 				return nil, errors.Errorf("unexpected empty h3 in %q", cur.Date)
@@ -224,6 +239,9 @@ func parse(r io.Reader) ([]Release, error) {
 
 	if len(rs) == 0 {
 		return nil, errors.New("no release entry (h2) found in div.content")
+	}
+	if err := listed(); err != nil {
+		return nil, err
 	}
 	for _, r := range rs {
 		if len(r.Builds) == 0 && r.Description == "" {

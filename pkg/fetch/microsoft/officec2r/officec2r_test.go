@@ -30,6 +30,10 @@ func TestFetch(t *testing.T) {
 			name:     "unexpected-date",
 			hasError: true,
 		},
+		{
+			name:     "unexpected-h3-without-ul",
+			hasError: true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
