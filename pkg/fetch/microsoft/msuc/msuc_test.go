@@ -2,6 +2,7 @@ package msuc_test
 
 import (
 	"bytes"
+	"fmt"
 	"io"
 	"log/slog"
 	"net/http"
@@ -9,7 +10,9 @@ import (
 	"path"
 	"path/filepath"
 	"strings"
+	"sync"
 	"testing"
+	"time"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/msuc"
 	utiltest "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/test"
@@ -17,11 +20,15 @@ import (
 
 func TestFetch(t *testing.T) {
 	tests := []struct {
-		name     string
-		queries  []string
-		wantLogs []string
-		wantErr  string
-		hasError bool
+		name    string
+		queries []string
+		// unanswered is how many times each search is answered with the page
+		// shell and nothing in it, as a throttled catalog answers, before it
+		// is answered from its fixture.
+		unanswered int
+		wantLogs   []string
+		wantErr    string
+		hasError   bool
 	}{
 		{
 			name:    "happy",
@@ -72,13 +79,29 @@ func TestFetch(t *testing.T) {
 		},
 		{
 			// Neither result rows nor a no-result message: the catalog never
-			// really answered, which is what a throttled search looks like. It
-			// has to fail rather than yield an empty result that would be
-			// published over the last good one.
+			// really answered, which is what a throttled search looks like.
+			// Still unanswered once the retries run out, it has to fail rather
+			// than yield an empty result that would be published over the last
+			// good one.
 			name:     "unanswered",
 			queries:  []string{"KB5025239"},
-			wantErr:  "neither results nor a no-result message",
+			wantErr:  "neither results nor a no-result message, after 2 retries",
 			hasError: true,
+		},
+		{
+			// The catalog stops answering a client that has spent its quota of
+			// searches, and answers again once it has gone quiet. The searches
+			// left unanswered are asked again after a pause, each pause twice
+			// the last, and the fetch comes out as whole as if they had been
+			// answered the first time.
+			name:       "throttled",
+			queries:    []string{"KB5025239"},
+			unanswered: 2,
+			wantLogs: []string{
+				`msg="search queries were not answered; asking again after a pause" answered=0 unanswered=1 wait=1ms`,
+				`msg="search queries were not answered; asking again after a pause" answered=0 unanswered=1 wait=2ms`,
+				"unanswered=0 update_ids=2 retries=2",
+			},
 		},
 		{
 			// One unanswered search is enough, even where others landed: a
@@ -86,8 +109,13 @@ func TestFetch(t *testing.T) {
 			// a result short by however much it was not told about.
 			name:    "partial-unanswered",
 			queries: []string{"KB5025239", "KB0000000"},
-			// Which queries went unanswered is what a retry is decided on.
-			wantLogs: []string{"queries=KB0000000"},
+			// Which queries went unanswered is what a retry is decided on, and
+			// only those are asked again.
+			wantLogs: []string{
+				"answered=1 unanswered=1 wait=1ms",
+				"answered=0 unanswered=1 wait=2ms",
+				"queries=KB0000000",
+			},
 			wantErr:  "neither results nor a no-result message",
 			hasError: true,
 		},
@@ -95,6 +123,8 @@ func TestFetch(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			var mu sync.Mutex
+			searched := make(map[string]int)
 			ts := httptest.NewTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				switch path.Base(r.URL.Path) {
 				case "Search.aspx":
@@ -103,7 +133,16 @@ func TestFetch(t *testing.T) {
 						http.Error(w, err.Error(), http.StatusInternalServerError)
 						return
 					}
-					http.ServeFile(w, r, filepath.Join("testdata", "fixtures", tt.name, "Search.aspx", strings.TrimPrefix(string(bs), "q=")))
+					q := strings.TrimPrefix(string(bs), "q=")
+					mu.Lock()
+					n := searched[q]
+					searched[q]++
+					mu.Unlock()
+					if n < tt.unanswered {
+						http.ServeFile(w, r, filepath.Join("testdata", "fixtures", tt.name, "Search.aspx", fmt.Sprintf("%s.unanswered", q)))
+						return
+					}
+					http.ServeFile(w, r, filepath.Join("testdata", "fixtures", tt.name, "Search.aspx", q))
 				case "ScopedViewInline.aspx":
 					switch r.URL.Query().Get("updateid") {
 					case "00000000-1519-4df8-85c1-d985be7f49c3":
@@ -124,7 +163,7 @@ func TestFetch(t *testing.T) {
 			t.Cleanup(func() { slog.SetDefault(prev) })
 
 			dir := t.TempDir()
-			err := msuc.Fetch(tt.queries, msuc.WithHTTPClient(ts.Client()), msuc.WithDir(dir), msuc.WithRetry(0))
+			err := msuc.Fetch(tt.queries, msuc.WithHTTPClient(ts.Client()), msuc.WithDir(dir), msuc.WithRetry(0), msuc.WithWait(0), msuc.WithSearchRetry(2), msuc.WithSearchWait(time.Millisecond))
 
 			if tt.wantErr != "" && (err == nil || !strings.Contains(err.Error(), tt.wantErr)) {
 				t.Errorf("Fetch() error = %v, want it to contain %q", err, tt.wantErr)

@@ -32,6 +32,8 @@ type options struct {
 	retry       int
 	concurrency int
 	wait        time.Duration
+	searchRetry int
+	searchWait  time.Duration
 
 	// httpClient is only ever set by WithHTTPClient, which lives in
 	// export_test.go and is therefore absent from the production build.
@@ -82,6 +84,30 @@ func WithWait(wait time.Duration) Option {
 	return waitOption(wait)
 }
 
+type searchRetryOption int
+
+func (r searchRetryOption) apply(opts *options) {
+	opts.searchRetry = int(r)
+}
+
+// WithSearchRetry sets how many more times the searches the catalog did not
+// answer are asked again before the fetch fails.
+func WithSearchRetry(retry int) Option {
+	return searchRetryOption(retry)
+}
+
+type searchWaitOption time.Duration
+
+func (w searchWaitOption) apply(opts *options) {
+	opts.searchWait = time.Duration(w)
+}
+
+// WithSearchWait sets how long the fetch stays quiet before it first asks the
+// unanswered searches again. Each later pause is twice the one before.
+func WithSearchWait(wait time.Duration) Option {
+	return searchWaitOption(wait)
+}
+
 func Fetch(queries []string, opts ...Option) error {
 	options := &options{
 		msucURL:     msucURL,
@@ -89,6 +115,8 @@ func Fetch(queries []string, opts ...Option) error {
 		retry:       3,
 		concurrency: 5,
 		wait:        1 * time.Second,
+		searchRetry: 6,
+		searchWait:  30 * time.Second,
 	}
 
 	for _, o := range opts {
@@ -226,9 +254,74 @@ func (opts options) crawl(client *utilhttp.Client, uids []string) ([]string, []s
 	return slices.Concat(drain(nextChan)...), drain(unavailableChan), nil
 }
 
+// search asks the catalog for the update IDs of the queries.
+//
+// The catalog answers a client only so many searches over a window, and a
+// client that keeps asking keeps that quota spent. Since late October 2026
+// every leg of vuls-data-db's matrix asking more than about 200 has had about
+// 200 answered -- 200 of 300, 212 of 489 -- where on 2026-10-15 a leg had all
+// 392 of its searches answered. Going quiet is what clears such a quota on
+// support.microsoft.com (see the servicing fetcher), so the searches left
+// unanswered are asked again after a pause of searchWait, each pause twice the
+// one before, up to searchRetry times. The log says how many each pass got
+// answered, which is what tells how long the catalog's window is.
 func (opts options) search(client *utilhttp.Client, queries []string) ([]string, error) {
 	slog.Info("Search queries", slog.Int("count", len(queries)))
 
+	var uids, missed, silent []string
+	remaining, wait, retries := queries, opts.searchWait, 0
+	for {
+		us, miss, s, err := opts.searchOnce(client, remaining)
+		if err != nil {
+			return nil, errors.Wrapf(err, "search, retry %d", retries)
+		}
+		uids, missed, silent = append(uids, us...), append(missed, miss...), s
+
+		if len(silent) == 0 || retries >= opts.searchRetry {
+			break
+		}
+
+		slog.Warn("search queries were not answered; asking again after a pause", slog.Int("answered", len(remaining)-len(silent)), slog.Int("unanswered", len(silent)), slog.Duration("wait", wait))
+		time.Sleep(wait)
+		remaining, wait, retries = silent, 2*wait, retries+1
+	}
+	uids = util.Unique(uids)
+
+	slog.Info("Search results", slog.Int("queries", len(queries)), slog.Int("no_result", len(missed)), slog.Int("unanswered", len(silent)), slog.Int("update_ids", len(uids)), slog.Int("retries", retries))
+
+	// Failing here is what keeps the caller from publishing a silently short
+	// result over the last good one. Name the queries as well as counting them:
+	// whether the catalog stopped answering across the board or only for some
+	// of them is what a retry is decided on, and both are bounded by the seed
+	// list, so neither list runs away.
+	if len(silent) > 0 {
+		slog.Warn("search queries were not answered", slog.Int("count", len(silent)), slog.String("queries", joinSorted(silent)))
+		return nil, errors.Errorf("%d of %d search queries were answered with neither results nor a no-result message, after %d retries; the catalog is likely throttling", len(silent), len(queries), retries)
+	}
+
+	// Updates get expired out of the catalog, so a query finding nothing is
+	// normal on its own -- across three of the seed lists vuls-data-db fetches
+	// with, 0.00, 0.10 and 0.40 of the seeds miss that way. Naming the ones
+	// that missed, rather than only counting them, is what lets a seed list be
+	// pruned: these are the seeds the catalog has nothing left for.
+	if len(missed) > 0 {
+		slog.Warn("search queries found nothing", slog.Int("count", len(missed)), slog.String("queries", joinSorted(missed)))
+	}
+
+	// Finding nothing anywhere, though, is a seed list that has stopped
+	// describing anything the catalog still holds, and handing back an empty
+	// result would let the caller publish it over the last good one.
+	if len(queries) > 0 && len(uids) == 0 {
+		return nil, errors.Errorf("all %d search queries found nothing", len(queries))
+	}
+
+	return uids, nil
+}
+
+// searchOnce asks the catalog each query once, and sorts what comes back into
+// the update IDs found, the queries the catalog holds nothing for, and the
+// queries it did not answer.
+func (opts options) searchOnce(client *utilhttp.Client, queries []string) ([]string, []string, []string, error) {
 	header := make(http.Header)
 	header.Add("Content-Type", "application/x-www-form-urlencoded")
 
@@ -236,7 +329,7 @@ func (opts options) search(client *utilhttp.Client, queries []string) ([]string,
 	for _, query := range queries {
 		req, err := utilhttp.NewRequest(http.MethodPost, fmt.Sprintf("%s/Search.aspx", opts.msucURL), utilhttp.WithRequestHeader(header), utilhttp.WithRequestBody([]byte(url.Values{"q": []string{query}}.Encode())))
 		if err != nil {
-			return nil, errors.Wrap(err, "new request")
+			return nil, nil, nil, errors.Wrap(err, "new request")
 		}
 		reqs = append(reqs, req)
 	}
@@ -281,45 +374,13 @@ func (opts options) search(client *utilhttp.Client, queries []string) ([]string,
 
 		return nil
 	}); err != nil {
-		return nil, errors.Wrap(err, "pipeline do")
+		return nil, nil, nil, errors.Wrap(err, "pipeline do")
 	}
 	close(uidChan)
 	close(missChan)
 	close(silentChan)
 
-	uids := util.Unique(slices.Concat(drain(uidChan)...))
-
-	missed, silent := drain(missChan), drain(silentChan)
-
-	slog.Info("Search results", slog.Int("queries", len(queries)), slog.Int("no_result", len(missed)), slog.Int("unanswered", len(silent)), slog.Int("update_ids", len(uids)))
-
-	// Failing here is what keeps the caller from publishing a silently short
-	// result over the last good one. Name the queries as well as counting them:
-	// whether the catalog stopped answering across the board or only for some
-	// of them is what a retry is decided on, and both are bounded by the seed
-	// list, so neither list runs away.
-	if len(silent) > 0 {
-		slog.Warn("search queries were not answered", slog.Int("count", len(silent)), slog.String("queries", joinSorted(silent)))
-		return nil, errors.Errorf("%d of %d search queries were answered with neither results nor a no-result message; the catalog is likely throttling", len(silent), len(queries))
-	}
-
-	// Updates get expired out of the catalog, so a query finding nothing is
-	// normal on its own -- across three of the seed lists vuls-data-db fetches
-	// with, 0.00, 0.10 and 0.40 of the seeds miss that way. Naming the ones
-	// that missed, rather than only counting them, is what lets a seed list be
-	// pruned: these are the seeds the catalog has nothing left for.
-	if len(missed) > 0 {
-		slog.Warn("search queries found nothing", slog.Int("count", len(missed)), slog.String("queries", joinSorted(missed)))
-	}
-
-	// Finding nothing anywhere, though, is a seed list that has stopped
-	// describing anything the catalog still holds, and handing back an empty
-	// result would let the caller publish it over the last good one.
-	if len(queries) > 0 && len(uids) == 0 {
-		return nil, errors.Errorf("all %d search queries found nothing", len(queries))
-	}
-
-	return uids, nil
+	return slices.Concat(drain(uidChan)...), drain(missChan), drain(silentChan), nil
 }
 
 // searchResults reads the update IDs a search response lists and, where it

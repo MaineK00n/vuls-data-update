@@ -2614,11 +2614,15 @@ func newCmdMicrosoftMSUC() *cobra.Command {
 		base
 		concurrency int
 		wait        time.Duration
+		searchRetry int
+		searchWait  time.Duration
 	}{
 		dir:         filepath.Join(util.CacheDir(), "fetch", "microsoft", "msuc"),
 		retry:       3,
 		concurrency: 5,
 		wait:        1 * time.Second,
+		searchRetry: 6,
+		searchWait:  30 * time.Second,
 	}
 
 	cmd := &cobra.Command{
@@ -2629,7 +2633,7 @@ func newCmdMicrosoftMSUC() *cobra.Command {
 		`),
 		Args: cobra.MinimumNArgs(1),
 		RunE: func(_ *cobra.Command, args []string) error {
-			if err := microsoftMSUC.Fetch(args, microsoftMSUC.WithDir(options.dir), microsoftMSUC.WithRetry(options.retry), microsoftMSUC.WithConcurrency(options.concurrency), microsoftMSUC.WithWait(options.wait)); err != nil {
+			if err := microsoftMSUC.Fetch(args, microsoftMSUC.WithDir(options.dir), microsoftMSUC.WithRetry(options.retry), microsoftMSUC.WithConcurrency(options.concurrency), microsoftMSUC.WithWait(options.wait), microsoftMSUC.WithSearchRetry(options.searchRetry), microsoftMSUC.WithSearchWait(options.searchWait)); err != nil {
 				return errors.Wrap(err, "failed to fetch microsoft msuc")
 			}
 			return nil
@@ -2640,6 +2644,8 @@ func newCmdMicrosoftMSUC() *cobra.Command {
 	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
 	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrent http requests")
 	cmd.Flags().DurationVarP(&options.wait, "wait", "", options.wait, "wait duration")
+	cmd.Flags().IntVarP(&options.searchRetry, "search-retry", "", options.searchRetry, "number of times to ask again the searches the catalog did not answer")
+	cmd.Flags().DurationVarP(&options.searchWait, "search-wait", "", options.searchWait, "pause before first asking the unanswered searches again, doubled for each later pause")
 
 	return cmd
 }
