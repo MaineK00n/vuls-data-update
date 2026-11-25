@@ -113,18 +113,18 @@ Notably, you must show "prominent attribution" to show the data is from VulnChec
 	defer os.RemoveAll(tempDir)
 
 	zipPath := filepath.Join(tempDir, "nist-nvd.zip")
-	f, err := os.Create(zipPath)
+	backup, err := os.Create(zipPath)
 	if err != nil {
 		return errors.Wrapf(err, "create %s", zipPath)
 	}
-	defer f.Close()
+	defer backup.Close()
 
-	n, err := io.Copy(f, resp.Body)
+	n, err := io.Copy(backup, resp.Body)
 	if err != nil {
 		return errors.Wrapf(err, "write %s", zipPath)
 	}
 
-	r, err := zip.NewReader(f, n)
+	r, err := zip.NewReader(backup, n)
 	if err != nil {
 		return errors.Wrap(err, "create zip reader")
 	}
