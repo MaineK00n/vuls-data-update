@@ -1613,11 +1613,14 @@ var dotnetPrereleaseRE = regexp.MustCompile(`^(preview|rc)\.\d+(\.\d+)*$`)
 //   - one runtime version, which the SDK parser does not take (e.g. "10.0.15",
 //     "11.0.0-rc.2", "9.0.0-preview.4.24266.19"; see isDotNetRuntimeFixedBuild): the
 //     runtime, ".NET X runtime installed on <OS>"
-//   - no version (e.g. "", "11.0 RC1", a fix listing only a KB): neither the runtime
-//     nor the SDK. The name CVRF lists is kept as is, as nothing else tells. It only
-//     shows in the KB criterion and the KB record, as such a FixedBuild gives no
-//     version criterion. The only such fixes so far, the 2026-Sep "11.0 RC1" ones,
-//     list no KB either
+//   - no version (e.g. "", "11.0 RC1", a fix listing only a KB): the name CVRF lists
+//     is kept as is, as nothing else tells, so that name decides it: productRangeType
+//     takes ".NET X installed on <OS>" for the SDK and ".NET X runtime installed on
+//     <OS>" for the runtime, whichever the document meant (e.g. a KB-only fix under
+//     ".NET 8.0 installed on Linux" in a CVE before 2026-Jun, the runtime then, would
+//     go to the SDK). It only shows in the KB criterion and the KB record, as such a
+//     FixedBuild gives no version criterion. The only such fixes so far, the 2026-Sep
+//     "11.0 RC1" ones, list no KB either
 //   - anything else: the SDK, ".NET X installed on <OS>". An SDK version is a feature
 //     band, patch 100 or above, comma-separated when there are several (e.g.
 //     "10.0.115", "8.0.130, 8.0.424", "11.0.100-rc.2"), and buildDotNetSDKCriterion
