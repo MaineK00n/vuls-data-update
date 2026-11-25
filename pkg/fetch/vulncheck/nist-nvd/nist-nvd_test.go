@@ -161,6 +161,32 @@ func TestCVEItems(t *testing.T) {
 			wantErr: true,
 		},
 		{
+			name:    "cut off in a member before CVE_Items",
+			feed:    `{"CVE_data_type":"CV`,
+			wantErr: true,
+		},
+		{
+			name:    "a member before CVE_Items that is not JSON",
+			feed:    `{"CVE_data_type":tru,"CVE_Items":[]}`,
+			wantErr: true,
+		},
+		{
+			name:    "cut off in a member after CVE_Items",
+			feed:    `{"CVE_Items":[{"cve":{"CVE_data_meta":{"ID":"CVE-2025-0001","ASSIGNER":"a"}}}],"CVE_data_timestamp":"2025`,
+			want:    []string{"CVE-2025-0001"},
+			wantErr: true,
+		},
+		{
+			name:    "CVE_Items twice",
+			feed:    `{"CVE_Items":[],"CVE_Items":[]}`,
+			wantErr: true,
+		},
+		{
+			name:    "null feed",
+			feed:    `null`,
+			wantErr: true,
+		},
+		{
 			name:    "data after the feed",
 			feed:    `{"CVE_Items":[]} {}`,
 			wantErr: true,

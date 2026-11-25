@@ -195,17 +195,20 @@ func cveItems(r io.Reader) iter.Seq2[CVEItem, error] {
 			return
 		}
 		for d.PeekKind() != '}' {
-			name, err := d.ReadToken()
+			tok, err := d.ReadToken()
 			if err != nil {
 				yield(CVEItem{}, errors.Wrap(err, "read member name"))
 				return
 			}
+			// A token is void after the next call on d, so the name is taken
+			// out of it first.
+			name := tok.String()
 
 			// A feed that decoded into a struct took a null CVE_Items as
 			// none, so it is still none.
-			if name.String() != "CVE_Items" || d.PeekKind() == 'n' {
+			if name != "CVE_Items" || d.PeekKind() == 'n' {
 				if err := d.SkipValue(); err != nil {
-					yield(CVEItem{}, errors.Wrapf(err, "skip %s", name.String()))
+					yield(CVEItem{}, errors.Wrapf(err, "skip %s", name))
 					return
 				}
 				continue
