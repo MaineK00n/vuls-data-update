@@ -32,7 +32,7 @@ var templateLines = []string{
 // 148 such lines between them. It is a stopgap until upstream fills them in: a
 // listed file without such a line fails the fetch, so its entry is removed
 // rather than left behind, and such a line in a file that is not listed fails
-// as any unknown status does. A listed file that upstream deletes goes
+// as any malformed status line does. A listed file that upstream deletes goes
 // unnoticed; its entry then skips nothing.
 var templateFiles = map[string]struct{}{
 	"CVE-2002-0640":  {},
