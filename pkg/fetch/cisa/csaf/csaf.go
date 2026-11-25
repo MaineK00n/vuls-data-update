@@ -26,13 +26,15 @@ const dataURL = "https://github.com/cisagov/CSAF/archive/refs/heads/develop.tar.
 
 // duplicateNames lists the advisories upstream publishes with an object member
 // named twice, which encoding/json/v2 rejects. Each is read again with duplicate
-// names allowed, which keeps the last of them. It is a stopgap until upstream
-// fixes the file: a listed file that reads without it fails the fetch, so the
-// entry is removed rather than left behind.
+// names allowed: a repeated string keeps its last value, and a repeated object
+// is merged. It is a stopgap until upstream fixes the file: a listed file that
+// reads without it fails the fetch, so the entry is removed rather than left
+// behind.
 //
 // OT/white/2026/icsa-26-288-02.json (ICSA-26-288-02) names "organization" twice
 // in its first acknowledgment, "Tokyo University" and then "Science and GMO
-// Flatt Security".
+// Flatt Security", so what is written carries only the second, a fragment of
+// the name, until upstream fixes it.
 var duplicateNames = map[string]struct{}{
 	filepath.Join("OT", "white", "2026", "icsa-26-288-02.json"): {},
 }
