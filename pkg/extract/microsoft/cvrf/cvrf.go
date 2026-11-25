@@ -2679,7 +2679,9 @@ func buildUnresolvedCriterion(cveID, productName, rawFixedBuild, description, ur
 		}
 	}
 
-	return newUnresolvedCriterion(productName, fixed, description, url), nil
+	// The FixedBuild as CVRF publishes it: cleanFixedBuild serves the override
+	// lookup and the classification above only.
+	return newUnresolvedCriterion(productName, rawFixedBuild, description, url), nil
 }
 
 // newUnresolvedCriterion returns a version criterion whose Affected is unresolved
@@ -2700,7 +2702,7 @@ func newUnresolvedCriterion(productName, fixed, description, url string) *criter
 			Affected: &affectedTypes.Affected{
 				Type: rangeTypes.RangeTypeUnresolved,
 				Unresolved: &affectedTypes.Unresolved{
-					Fixed:       fixed,
+					Fixed:       strings.TrimSpace(fixed),
 					Description: strings.TrimSpace(description),
 					URL:         strings.TrimSpace(url),
 				},

@@ -1865,6 +1865,11 @@ func TestBuildUnresolvedCriterion(t *testing.T) {
 			want: unresolved(".NET 11.0 installed on Windows", "11.0 RC1", "", ""),
 		},
 		{
+			name: "FixedBuild kept as published, not as cleaned",
+			args: args{cveID: "CVE-2026-58649", productName: ".NET 11.0 installed on Windows", rawFixedBuild: " Fixed Version 11.0 RC1. "},
+			want: unresolved(".NET 11.0 installed on Windows", "Fixed Version 11.0 RC1.", "", ""),
+		},
+		{
 			name: "release notes without a FixedBuild on a version-compared product",
 			args: args{cveID: "CVE-2020-1161", productName: "Microsoft Visual Studio 2017 Version 15.9", description: " Release Notes "},
 			want: unresolved("Microsoft Visual Studio 2017 Version 15.9", "", "Release Notes", ""),
