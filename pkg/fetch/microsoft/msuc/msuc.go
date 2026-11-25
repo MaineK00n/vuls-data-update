@@ -27,13 +27,14 @@ const msucURL = "https://www.catalog.update.microsoft.com"
 var spaceless = strings.NewReplacer(" ", "", "\n", "")
 
 type options struct {
-	msucURL     string
-	dir         string
-	retry       int
-	concurrency int
-	wait        time.Duration
-	searchRetry int
-	searchWait  time.Duration
+	msucURL       string
+	dir           string
+	retry         int
+	concurrency   int
+	wait          time.Duration
+	searchRetry   int
+	searchWaitMin time.Duration
+	searchWaitMax time.Duration
 
 	// httpClient is only ever set by WithHTTPClient, which lives in
 	// export_test.go and is therefore absent from the production build.
@@ -96,27 +97,40 @@ func WithSearchRetry(retry int) Option {
 	return searchRetryOption(retry)
 }
 
-type searchWaitOption time.Duration
+type searchWaitMinOption time.Duration
 
-func (w searchWaitOption) apply(opts *options) {
-	opts.searchWait = time.Duration(w)
+func (w searchWaitMinOption) apply(opts *options) {
+	opts.searchWaitMin = time.Duration(w)
 }
 
-// WithSearchWait sets how long the fetch stays quiet before it first asks the
-// unanswered searches again. Each later pause is twice the one before.
-func WithSearchWait(wait time.Duration) Option {
-	return searchWaitOption(wait)
+// WithSearchWaitMin sets how long the fetch stays quiet before it first asks an
+// unanswered search again. Each later pause is twice the one before.
+func WithSearchWaitMin(wait time.Duration) Option {
+	return searchWaitMinOption(wait)
+}
+
+type searchWaitMaxOption time.Duration
+
+func (w searchWaitMaxOption) apply(opts *options) {
+	opts.searchWaitMax = time.Duration(w)
+}
+
+// WithSearchWaitMax sets the longest pause before an unanswered search is asked
+// again.
+func WithSearchWaitMax(wait time.Duration) Option {
+	return searchWaitMaxOption(wait)
 }
 
 func Fetch(queries []string, opts ...Option) error {
 	options := &options{
-		msucURL:     msucURL,
-		dir:         filepath.Join(util.CacheDir(), "fetch", "microsoft", "msuc"),
-		retry:       3,
-		concurrency: 5,
-		wait:        1 * time.Second,
-		searchRetry: 6,
-		searchWait:  30 * time.Second,
+		msucURL:       msucURL,
+		dir:           filepath.Join(util.CacheDir(), "fetch", "microsoft", "msuc"),
+		retry:         3,
+		concurrency:   5,
+		wait:          1 * time.Second,
+		searchRetry:   6,
+		searchWaitMin: 30 * time.Second,
+		searchWaitMax: 16 * time.Minute,
 	}
 
 	for _, o := range opts {
@@ -256,34 +270,46 @@ func (opts options) crawl(client *utilhttp.Client, uids []string) ([]string, []s
 
 // search asks the catalog for the update IDs of the queries.
 //
-// The catalog answers a client only so many searches over a window, and a
-// client that keeps asking keeps that quota spent. Since late October 2026
-// every leg of vuls-data-db's matrix asking more than about 200 has had about
-// 200 answered -- 200 of 300, 212 of 489 -- where on 2026-10-15 a leg had all
-// 392 of its searches answered. Going quiet is what clears such a quota on
-// support.microsoft.com (see the servicing fetcher), so the searches left
-// unanswered are asked again after a pause of searchWait, each pause twice the
-// one before, up to searchRetry times. The log says how many each pass got
-// answered, which is what tells how long the catalog's window is.
+// Since late October 2026 the catalog has answered a leg of vuls-data-db's
+// matrix about 200 searches and then none, whatever it asked -- 200 of 300, 212
+// of 489 -- where on 2026-10-15 a leg had all 392 of its searches answered. It
+// reads as a quota over a window, and a client that keeps asking keeps such a
+// quota spent; on support.microsoft.com, going quiet is what clears it (see the
+// servicing fetcher).
+//
+// So the searches left unanswered are not asked again at once. The fetch goes
+// quiet for searchWaitMin, then asks one of them on its own, and asks the rest
+// only once that one is answered. Each pause is twice the last, up to
+// searchWaitMax, and there are at most searchRetry of them. The log says what
+// each pass and each probe got answered, which is what tells how long the
+// catalog's window is.
 func (opts options) search(client *utilhttp.Client, queries []string) ([]string, error) {
 	slog.Info("Search queries", slog.Int("count", len(queries)))
 
 	var uids, missed, silent []string
-	remaining, wait, retries := queries, opts.searchWait, 0
-	for {
+	remaining, wait, retries := queries, opts.searchWaitMin, 0
+	for pass := 0; len(remaining) > 0; pass++ {
 		us, miss, s, err := opts.searchOnce(client, remaining)
 		if err != nil {
-			return nil, errors.Wrapf(err, "search, retry %d", retries)
+			return nil, errors.Wrapf(err, "search once, pass %d", pass)
 		}
-		uids, missed, silent = append(uids, us...), append(missed, miss...), s
+		slog.Info("Search pass", slog.Int("pass", pass), slog.Int("asked", len(remaining)), slog.Int("unanswered", len(s)))
+		uids, missed, silent, remaining = append(uids, us...), append(missed, miss...), s, nil
 
-		if len(silent) == 0 || retries >= opts.searchRetry {
-			break
+		for len(silent) > 0 && retries < opts.searchRetry {
+			slog.Warn("search queries were not answered; pausing before asking one of them again", slog.Int("unanswered", len(silent)), slog.Duration("wait", wait))
+			time.Sleep(wait)
+			wait, retries = min(2*wait, opts.searchWaitMax), retries+1
+
+			us, miss, s, err := opts.searchOnce(client, silent[:1])
+			if err != nil {
+				return nil, errors.Wrapf(err, "search once, retry %d", retries)
+			}
+			slog.Info("Search probe", slog.String("query", silent[0]), slog.Bool("answered", len(s) == 0))
+			if len(s) == 0 {
+				uids, missed, remaining, silent = append(uids, us...), append(missed, miss...), silent[1:], nil
+			}
 		}
-
-		slog.Warn("search queries were not answered; asking again after a pause", slog.Int("answered", len(remaining)-len(silent)), slog.Int("unanswered", len(silent)), slog.Duration("wait", wait))
-		time.Sleep(wait)
-		remaining, wait, retries = silent, 2*wait, retries+1
 	}
 	uids = util.Unique(uids)
 

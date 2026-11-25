@@ -14,6 +14,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/google/go-cmp/cmp"
+
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/msuc"
 	utiltest "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/test"
 )
@@ -22,13 +24,16 @@ func TestFetch(t *testing.T) {
 	tests := []struct {
 		name    string
 		queries []string
-		// unanswered is how many times each search is answered with the page
-		// shell and nothing in it, as a throttled catalog answers, before it
-		// is answered from its fixture.
-		unanswered int
-		wantLogs   []string
-		wantErr    string
-		hasError   bool
+		// unanswered is, by query, how many times its search is answered with
+		// the page shell and nothing in it, as a throttled catalog answers,
+		// before it is answered from its fixture.
+		unanswered map[string]int
+		// wantSearches is, by query, how many times its search should have
+		// been asked, where the case says.
+		wantSearches map[string]int
+		wantLogs     []string
+		wantErr      string
+		hasError     bool
 	}{
 		{
 			name:    "happy",
@@ -90,17 +95,38 @@ func TestFetch(t *testing.T) {
 		},
 		{
 			// The catalog stops answering a client that has spent its quota of
-			// searches, and answers again once it has gone quiet. The searches
-			// left unanswered are asked again after a pause, each pause twice
-			// the last, and the fetch comes out as whole as if they had been
-			// answered the first time.
-			name:       "throttled",
-			queries:    []string{"KB5025239"},
-			unanswered: 2,
+			// searches, and answers again once it has gone quiet. After each
+			// pause, twice the last, one unanswered search is asked on its own,
+			// and the fetch comes out as whole as if it had been answered the
+			// first time.
+			name:         "throttled",
+			queries:      []string{"KB5025239"},
+			unanswered:   map[string]int{"KB5025239": 2},
+			wantSearches: map[string]int{"KB5025239": 3},
 			wantLogs: []string{
-				`msg="search queries were not answered; asking again after a pause" answered=0 unanswered=1 wait=1ms`,
-				`msg="search queries were not answered; asking again after a pause" answered=0 unanswered=1 wait=2ms`,
+				`msg="Search pass" pass=0 asked=1 unanswered=1`,
+				`msg="search queries were not answered; pausing before asking one of them again" unanswered=1 wait=1ms`,
+				`msg="Search probe" query=KB5025239 answered=false`,
+				`msg="search queries were not answered; pausing before asking one of them again" unanswered=1 wait=2ms`,
+				`msg="Search probe" query=KB5025239 answered=true`,
 				"unanswered=0 update_ids=2 retries=2",
+			},
+		},
+		{
+			// What each pass gets is kept: here a result, a no-result and two
+			// searches answered only later. Once the probe is answered, the
+			// rest are asked again together, and the crawl starts from the
+			// update IDs of every pass.
+			name:       "throttled-mixed",
+			queries:    []string{"KB5025239", "KB5040427", "KB0000001", "KB0000002"},
+			unanswered: map[string]int{"KB0000001": 1, "KB0000002": 1},
+			// One of the two is asked again alone, and the other only after.
+			wantSearches: map[string]int{"KB5025239": 1, "KB5040427": 1, "KB0000001": 2, "KB0000002": 2},
+			wantLogs: []string{
+				`msg="Search pass" pass=0 asked=4 unanswered=2`,
+				`msg="Search pass" pass=1 asked=1 unanswered=0`,
+				"queries=KB5040427",
+				"no_result=1 unanswered=0 update_ids=4 retries=1",
 			},
 		},
 		{
@@ -111,9 +137,10 @@ func TestFetch(t *testing.T) {
 			queries: []string{"KB5025239", "KB0000000"},
 			// Which queries went unanswered is what a retry is decided on, and
 			// only those are asked again.
+			wantSearches: map[string]int{"KB5025239": 1, "KB0000000": 3},
 			wantLogs: []string{
-				"answered=1 unanswered=1 wait=1ms",
-				"answered=0 unanswered=1 wait=2ms",
+				`msg="Search pass" pass=0 asked=2 unanswered=1`,
+				`msg="Search probe" query=KB0000000 answered=false`,
 				"queries=KB0000000",
 			},
 			wantErr:  "neither results nor a no-result message",
@@ -138,7 +165,7 @@ func TestFetch(t *testing.T) {
 					n := searched[q]
 					searched[q]++
 					mu.Unlock()
-					if n < tt.unanswered {
+					if n < tt.unanswered[q] {
 						http.ServeFile(w, r, filepath.Join("testdata", "fixtures", tt.name, "Search.aspx", fmt.Sprintf("%s.unanswered", q)))
 						return
 					}
@@ -163,10 +190,19 @@ func TestFetch(t *testing.T) {
 			t.Cleanup(func() { slog.SetDefault(prev) })
 
 			dir := t.TempDir()
-			err := msuc.Fetch(tt.queries, msuc.WithHTTPClient(ts.Client()), msuc.WithDir(dir), msuc.WithRetry(0), msuc.WithWait(0), msuc.WithSearchRetry(2), msuc.WithSearchWait(time.Millisecond))
+			err := msuc.Fetch(tt.queries, msuc.WithHTTPClient(ts.Client()), msuc.WithDir(dir), msuc.WithRetry(0), msuc.WithWait(0), msuc.WithSearchRetry(2), msuc.WithSearchWaitMin(time.Millisecond), msuc.WithSearchWaitMax(time.Second))
 
 			if tt.wantErr != "" && (err == nil || !strings.Contains(err.Error(), tt.wantErr)) {
 				t.Errorf("Fetch() error = %v, want it to contain %q", err, tt.wantErr)
+			}
+
+			if tt.wantSearches != nil {
+				mu.Lock()
+				diff := cmp.Diff(tt.wantSearches, searched)
+				mu.Unlock()
+				if diff != "" {
+					t.Errorf("searches by query (-expected +got):\n%s", diff)
+				}
 			}
 
 			for _, want := range tt.wantLogs {
