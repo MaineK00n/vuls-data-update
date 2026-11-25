@@ -161,16 +161,18 @@ func checkFullHash(commit, hash string) error {
 	return nil
 }
 
-// errInvalidBranch is the cause of the error validateBranch returns.
+// errInvalidBranch is the cause of the error validateBranch returns for a
+// name that is not a valid branch name.
 var errInvalidBranch = errors.New("invalid reference name")
 
-// validateBranch checks that branch is a valid branch name: that it does not
-// begin with "-", which git does not take as a branch name, and that
-// refs/heads/<branch> is a valid ref name, which git check-ref-format says is
-// not by exiting with 1. A name that is not, such as main~1, could read as a
-// revision.
+// validateBranch checks that branch is a valid branch name. git does not take
+// a name that begins with "-" as a branch name, and git check-ref-format exits
+// with 1 when refs/heads/<branch> is not a valid ref name. A name that is not,
+// such as main~1, could read as a revision. A name with a NUL is not valid
+// either, as it holds a control character, but exec cannot pass it to git, so
+// it is rejected before git runs.
 func validateBranch(branch string) error {
-	if strings.HasPrefix(branch, "-") {
+	if strings.HasPrefix(branch, "-") || strings.ContainsRune(branch, 0) {
 		return errInvalidBranch
 	}
 	if _, err := util.Git("check-ref-format", fmt.Sprintf("refs/heads/%s", branch)); err != nil {

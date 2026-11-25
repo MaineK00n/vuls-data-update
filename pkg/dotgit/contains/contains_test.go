@@ -82,7 +82,8 @@ func TestContainsWithBranch(t *testing.T) {
 	// no object, a tag at 4 named like the full ref name of a branch, a branch
 	// at 3 whose name has a no-break space, and a branch old at 1.
 	// shallow-old is a clone of depth 2 made after that: old keeps 1 in it,
-	// but the history of main still stops at 2, which is shallow.
+	// but the history of main still stops at 2, which is shallow. Last, full
+	// gets a branch named @ at 1.
 	dir := t.TempDir()
 	full, err := git.Populate(dir, "testdata/fixtures/history")
 	if err != nil {
@@ -147,6 +148,8 @@ func TestContainsWithBranch(t *testing.T) {
 	if typ := strings.TrimSpace(run(t, "-C", shallowOld, "cat-file", "-t", "a841a4b11e592afb4d574f86c5de63ad95d1567a")); typ != "commit" {
 		t.Fatalf("commit 1 in shallow-old. expected: %q, actual: %q", "commit", typ)
 	}
+	// A branch at commit 1 named @, which git takes as a branch name.
+	run(t, "-C", full, "update-ref", "refs/heads/@", "a841a4b11e592afb4d574f86c5de63ad95d1567a")
 
 	type args struct {
 		// repository is "full", "shallow", "shallow-old", or "missing" for a
@@ -193,6 +196,11 @@ func TestContainsWithBranch(t *testing.T) {
 			// space.
 			name: "branch name with a no-break space",
 			args: args{repository: "full", commit: "a841a4b11e592afb4d574f86c5de63ad95d1567a", branch: "a b"},
+		},
+		{
+			// Commit 1, the tip of the branch named @.
+			name: "branch named @",
+			args: args{repository: "full", commit: "a841a4b11e592afb4d574f86c5de63ad95d1567a", branch: "@"},
 		},
 		{
 			// Commit 4.
@@ -294,6 +302,14 @@ func TestContainsWithBranch(t *testing.T) {
 			msg:      "check refs/heads/HEAD exists: branch not found",
 		},
 		{
+			// Commit 1. Like @, a/@ is a valid branch name.
+			name:     "missing branch with a component named @",
+			args:     args{repository: "full", commit: "a841a4b11e592afb4d574f86c5de63ad95d1567a", branch: "a/@"},
+			wantErr:  contains.ErrBranchNotFound,
+			hasError: true,
+			msg:      "check refs/heads/a/@ exists: branch not found",
+		},
+		{
 			// Commit 2. Read as a revision, main~1 would be commit 2.
 			name:     "revision as the branch",
 			args:     args{repository: "full", commit: "321cc453fa66e6d7f6ec5d5bdb64c5767d67fb54", branch: "main~1"},
@@ -306,6 +322,13 @@ func TestContainsWithBranch(t *testing.T) {
 			args:     args{repository: "full", commit: "a841a4b11e592afb4d574f86c5de63ad95d1567a", branch: "--all"},
 			hasError: true,
 			msg:      `validate branch "--all": invalid reference name`,
+		},
+		{
+			// Commit 1. exec cannot pass a NUL to git.
+			name:     "NUL in the branch",
+			args:     args{repository: "full", commit: "a841a4b11e592afb4d574f86c5de63ad95d1567a", branch: "ma\x00in"},
+			hasError: true,
+			msg:      `validate branch "ma\x00in": invalid reference name`,
 		},
 		{
 			// main~1 is commit 2.
@@ -419,6 +442,25 @@ func TestContainsWithBranch(t *testing.T) {
 				}
 			}
 		})
+	}
+}
+
+// TestContainsWithBranchWithoutGit checks that a branch is not reported as
+// invalid when git cannot be run to validate it.
+func TestContainsWithBranchWithoutGit(t *testing.T) {
+	t.Setenv("PATH", t.TempDir())
+
+	err := contains.Contains(t.TempDir(), "a841a4b11e592afb4d574f86c5de63ad95d1567a", contains.WithBranch("main"))
+	if want := `validate branch "main": check ref format: `; err == nil || !strings.HasPrefix(err.Error(), want) {
+		t.Errorf("Contains() error does not begin with %q, error: %v", want, err)
+	}
+	if !errors.Is(err, exec.ErrNotFound) {
+		t.Errorf("errors.Is(err, exec.ErrNotFound). expected: true, actual: false, err: %v", err)
+	}
+	for _, sentinel := range []error{contains.ErrBranchNotFound, contains.ErrCommitNotFound, contains.ErrNotReachable} {
+		if errors.Is(err, sentinel) {
+			t.Errorf("errors.Is(err, %q). expected: false, actual: true, err: %v", sentinel, err)
+		}
 	}
 }
 
