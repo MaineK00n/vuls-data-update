@@ -133,14 +133,24 @@ func Fetch(opts ...Option) error {
 	return nil
 }
 
+// checkRetry reads the archive whole before the response is handed on, and asks
+// for it again where it does not read whole: a body cut off partway, an archive
+// that ends partway through (as one still being written upstream, or one cut
+// off on the way), and an XML file in it that ends partway through.
 func checkRetry(ctx context.Context, resp *http.Response, err error) (bool, error) {
 	if shouldRetry, err := retryablehttp.ErrorPropagatedRetryPolicy(ctx, resp, err); shouldRetry {
 		return shouldRetry, errors.Wrap(err, "retry policy")
 	}
 
+	// Any other status is for Fetch to report. Its body is no archive, and an
+	// empty one would read as an archive that ends partway through.
+	if resp.StatusCode != http.StatusOK {
+		return false, nil
+	}
+
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return false, errors.Wrap(err, "read all response body")
+		return true, errors.Wrap(err, "read all response body")
 	}
 
 	tr := tar.NewReader(bzip2.NewReader(bytes.NewReader(body)))
@@ -150,6 +160,9 @@ func checkRetry(ctx context.Context, resp *http.Response, err error) (bool, erro
 			break
 		}
 		if err != nil {
+			if errors.Is(err, io.ErrUnexpectedEOF) {
+				return true, errors.Wrap(err, "next tar reader")
+			}
 			return false, errors.Wrap(err, "next tar reader")
 		}
 
@@ -159,6 +172,9 @@ func checkRetry(ctx context.Context, resp *http.Response, err error) (bool, erro
 
 		bs, err := io.ReadAll(tr)
 		if err != nil {
+			if errors.Is(err, io.ErrUnexpectedEOF) {
+				return true, errors.Wrap(err, "read all tar reader")
+			}
 			return false, errors.Wrap(err, "read all tar reader")
 		}
 
