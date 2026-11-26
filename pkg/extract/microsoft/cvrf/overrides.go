@@ -80,26 +80,27 @@ type cvrfOverride struct {
 }
 
 func (o cvrfOverride) String() string {
-	s := fmt.Sprintf("%s %s", o.cve, o.kind)
+	var sb strings.Builder
+	fmt.Fprintf(&sb, "%s %s", o.cve, o.kind)
 	if o.product != "" {
-		s += fmt.Sprintf(" product %q", o.product)
+		fmt.Fprintf(&sb, " product %q", o.product)
 	}
 	switch o.kind {
 	case overrideRenameProduct:
-		s += fmt.Sprintf(" to %q", o.renameTo)
+		fmt.Fprintf(&sb, " to %q", o.renameTo)
 	case overrideAddProduct:
-		s += fmt.Sprintf(" fixed build %q", o.fixedBuild)
+		fmt.Fprintf(&sb, " fixed build %q", o.fixedBuild)
 	case overrideFixedBuild:
-		s += fmt.Sprintf(" from %q to %q", o.from, o.fixedBuild)
+		fmt.Fprintf(&sb, " from %q to %q", o.from, o.fixedBuild)
 	case overrideNoFixedBuild:
-		s += fmt.Sprintf(" from %q", o.from)
+		fmt.Fprintf(&sb, " from %q", o.from)
 	case overrideExcludeVendorFix:
-		s += fmt.Sprintf(" KB %q", o.kbID)
+		fmt.Fprintf(&sb, " KB %q", o.kbID)
 	case overrideAddVendorFix:
-		s += fmt.Sprintf(" KB %q fixed build %q hotpatch %t", o.kbID, o.fixedBuild, o.hotpatch)
+		fmt.Fprintf(&sb, " KB %q fixed build %q hotpatch %t", o.kbID, o.fixedBuild, o.hotpatch)
 	default:
 	}
-	return s
+	return sb.String()
 }
 
 // validate checks that o carries the fields its kind needs and no other, so
