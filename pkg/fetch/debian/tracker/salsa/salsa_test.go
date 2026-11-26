@@ -538,10 +538,10 @@ func TestParseDeb822(t *testing.T) {
 			want: []map[string]string{{"Package": "hello", "Description": ""}},
 		},
 		{
-			// Empty lines, which may hold spaces and tabs, separate
-			// paragraphs, however many there are.
+			// Empty lines separate paragraphs, however many there are, and
+			// between paragraphs a line of only spaces and tabs is one.
 			name: "separators",
-			args: "\nPackage: hello\n \t\n\n\nPackage: bye\n\n",
+			args: "\nPackage: hello\n\n \t\n\nPackage: bye\n\n",
 			want: []map[string]string{{"Package": "hello"}, {"Package": "bye"}},
 		},
 		{
@@ -571,6 +571,13 @@ func TestParseDeb822(t *testing.T) {
 		{
 			name:    "continuation line after an empty line",
 			args:    "Package: hello\n\n hello\n",
+			wantErr: true,
+		},
+		{
+			// Taken for an empty line, it would cut the paragraph in two, the
+			// second without a Package.
+			name:    "line of spaces and tabs inside a paragraph",
+			args:    "Package: hello\n \t\nVersion: 2.10-3\n",
 			wantErr: true,
 		},
 		{

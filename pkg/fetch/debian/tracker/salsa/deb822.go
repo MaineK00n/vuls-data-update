@@ -29,12 +29,14 @@ func (p paragraph) field(name string) (string, bool) {
 }
 
 // parseDeb822 reads the paragraphs of a deb822 file. Paragraphs are separated by
-// empty lines, which may hold spaces and tabs, and the last needs none after
-// it. A field is a line of its name, a colon and its value, followed by its
-// continuation lines, which start with a space or a tab. Anything else is an
-// error: a line that is none of these, a name with characters deb822 does not
-// allow, a name the paragraph already has, and a comment, which only the
-// debian/control of a source package may hold.
+// empty lines, and the last needs none after it. A field is a line of its name,
+// a colon and its value, followed by its continuation lines, which start with a
+// space or a tab. Anything else is an error: a line that is none of these, a
+// name with characters deb822 does not allow, a name the paragraph already has,
+// a comment, which only the debian/control of a source package may hold, and a
+// line of only spaces and tabs inside a paragraph, which deb822 allows neither
+// in a value nor between fields. Between paragraphs, such a line is taken for
+// the empty line it looks like, as deb822 lets a parser take it.
 func parseDeb822(r io.Reader) ([]paragraph, error) {
 	var (
 		ps []paragraph
@@ -64,8 +66,12 @@ func parseDeb822(r io.Reader) ([]paragraph, error) {
 		line = strings.TrimSuffix(line, "\n")
 
 		switch {
-		case strings.Trim(line, " \t") == "":
+		case line == "":
 			end()
+		case strings.Trim(line, " \t") == "":
+			if p != nil {
+				return nil, errors.Errorf("unexpected line %d. expected: %s, actual: %q", n, "a field, a continuation line or an empty line", line)
+			}
 		case line[0] == ' ' || line[0] == '\t':
 			if p == nil {
 				return nil, errors.Errorf("unexpected line %d. expected: %s, actual: %q", n, "a continuation line after a field", line)
