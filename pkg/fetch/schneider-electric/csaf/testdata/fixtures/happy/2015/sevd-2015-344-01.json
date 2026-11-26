@@ -1,0 +1,697 @@
+{
+  "document": {
+    "category": "csaf_security_advisory",
+    "csaf_version": "2.0",
+    "publisher": {
+      "category": "vendor",
+      "name": "Schneider Electric CPCERT",
+      "namespace": "https://www.se.com/ww/en/work/support/cybersecurity/security-notifications.jsp",
+      "contact_details": "cpcert@se.com"
+    },
+    "title": "GoAhead Web Server vulnerability",
+    "tracking": {
+      "current_release_date": "2020-06-09T00:00:00.000Z",
+      "id": "SEVD-2015-344-01",
+      "initial_release_date": "2015-12-15T00:00:00.000Z",
+      "status": "final",
+      "version": "2.0.0",
+      "generator": {
+        "date": "2024-12-03T05:10:51.790Z",
+        "engine": {
+          "version": "1.2",
+          "name": "Schneider Electric CSAF Generator"
+        }
+      },
+      "revision_history": [
+        {
+          "date": "2015-12-15T00:00:00.000Z",
+          "number": "1.0.0",
+          "summary": "Original Release"
+        },
+        {
+          "date": "2020-06-09T00:00:00.000Z",
+          "number": "2.0.0",
+          "summary": "Updated overview and remediation section (pages 1-3)"
+        }
+      ]
+    },
+    "references": [
+      {
+        "summary": "GoAhead Web Server vulnerability - SEVD-2015-344-01 PDF Version",
+        "url": "https://download.schneider-electric.com/files?p_Doc_Ref=SEVD-2015-344-01&p_enDocType=Security+and+Safety+Notice&p_File_Name=SEVD%202015-344-01_GoAhead_Web_ServerV2.0.pdf",
+        "category": "self"
+      },
+      {
+        "summary": "GoAhead Web Server vulnerability - SEVD-2015-344-01 CSAF Version",
+        "url": "https://download.schneider-electric.com/files?p_Doc_Ref=SEVD-2015-344-01&p_enDocType=Security+and+Safety+Notice&p_File_Name=sevd-2015-344-01.json",
+        "category": "self"
+      },
+      {
+        "summary": "Recommended Cybersecurity Best Practices",
+        "url": "https://www.se.com/us/en/download/document/7EN52-0390/",
+        "category": "external"
+      }
+    ],
+    "lang": "en-US",
+    "distribution": {
+      "text": "Public",
+      "tlp": {
+        "label": "WHITE"
+      }
+    },
+    "notes": [
+      {
+        "category": "general",
+        "text": "We strongly recommend the following industry cybersecurity best practices.\n\nhttps://www.se.com/us/en/download/document/7EN52-0390/\n* Locate control and safety system networks and remote devices behind firewalls and isolate them from the business network.\n* Install physical controls so no unauthorized personnel can access your industrial control and safety systems, components, peripheral equipment, and networks.\n* Place all controllers in locked cabinets and never leave them in the “Program” mode.\n* Never connect programming software to any network other than the network intended for that device.\n* Scan all methods of mobile data exchange with the isolated network such as CDs, USB drives, etc. before use in the terminals or any node connected to these networks.\n* Never allow mobile devices that have connected to any other network besides the intended network to connect to the safety or control networks without proper sanitation.\n* Minimize network exposure for all control system devices and systems and ensure that they are not accessible from the Internet.\n* When remote access is required, use secure methods, such as Virtual Private Networks (VPNs). Recognize that VPNs may have vulnerabilities and should be updated to the most current version available. Also, understand that VPNs are only as secure as the connected devices.\nFor more information refer to the Schneider Electric Recommended Cybersecurity Best Practices document. \n",
+        "title": "General Security Recommendations"
+      },
+      {
+        "category": "general",
+        "text": "This document provides an overview of the identified vulnerability or vulnerabilities and actions required to mitigate. For more details and assistance on how to protect your installation, contact your local Schneider Electric representative or Schneider Electric Industrial Cybersecurity Services: https://www.se.com/ww/en/work/solutions/cybersecurity/. These organizations will be fully aware of this situation and can support you through the process.\nFor further information related to cybersecurity in Schneider Electric’s products, visit the company’s cybersecurity support portal page: https://www.se.com/ww/en/work/support/cybersecurity/overview.jsp",
+        "title": "For More Information"
+      },
+      {
+        "category": "legal_disclaimer",
+        "text": "THIS NOTIFICATION DOCUMENT, THE INFORMATION CONTAINED HEREIN, AND ANY MATERIALS LINKED FROM IT (COLLECTIVELY, THIS “NOTIFICATION”) ARE INTENDED TO HELP PROVIDE AN OVERVIEW OF THE IDENTIFIED SITUATION AND SUGGESTED MITIGATION ACTIONS, REMEDIATION, FIX, AND/OR GENERAL SECURITY RECOMMENDATIONS AND IS PROVIDED ON AN “AS-IS” BASIS WITHOUT WARRANTY OR GUARANTEE OF ANY KIND.  SCHNEIDER ELECTRIC DISCLAIMS ALL WARRANTIES RELATING TO THIS NOTIFICATION, EITHER EXPRESS OR IMPLIED, INCLUDING WARRANTIES OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. SCHNEIDER ELECTRIC MAKES NO WARRANTY THAT THE NOTIFICATION WILL RESOLVE THE IDENTIFIED SITUATION. IN NO EVENT SHALL SCHNEIDER ELECTRIC BE LIABLE FOR ANY DAMAGES OR LOSSES WHATSOEVER IN CONNECTION WITH THIS NOTIFICATION, INCLUDING DIRECT, INDIRECT, INCIDENTAL, CONSEQUENTIAL, LOSS OF BUSINESS PROFITS OR SPECIAL DAMAGES, EVEN IF SCHNEIDER ELECTRIC HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES. YOUR USE OF THIS NOTIFICATION IS AT YOUR OWN RISK, AND YOU ARE SOLELY LIABLE FOR ANY DAMAGES TO YOUR SYSTEMS OR ASSETS OR OTHER LOSSES THAT MAY RESULT FROM YOUR USE OF THIS NOTIFICATION. SCHNEIDER ELECTRIC RESERVES THE RIGHT TO UPDATE OR CHANGE THIS NOTIFICATION AT ANY TIME AND IN ITS SOLE DISCRETION",
+        "title": "LEGAL DISCLAIMER"
+      },
+      {
+        "category": "general",
+        "text": "At Schneider, we believe access to energy and digital is a basic human right. We empower all to do more with less, ensuring Life Is On everywhere, for everyone, at every moment.\n\nWe provide energy and automation digital solutions for efficiency and sustainability. We combine world-leading energy technologies, real-time automation, software and services into integrated solutions for Homes, Buildings, Data Centers, Infrastructure and Industries.\n\nWe are committed to unleash the infinite possibilities of an open, global, innovative community that is passionate with our Meaningful Purpose, Inclusive and Empowered values.\n\nwww.se.com ",
+        "title": "About Schneider Electric"
+      },
+      {
+        "category": "summary",
+        "text": "Schneider Electric is aware of a proof of concept exploit available for this vulnerability. It is \r\nimperative that customers upgrade the firmware for the affected products.",
+        "title": "Overview"
+      }
+    ]
+  },
+  "product_tree": {
+    "branches": [
+      {
+        "category": "vendor",
+        "name": "Schneider Electric",
+        "branches": [
+          {
+            "category": "product_name",
+            "name": "BMXNOC0401",
+            "branches": [
+              {
+                "category": "product_version_range",
+                "name": "<v2.09",
+                "product": {
+                  "product_id": "1",
+                  "name": "Schneider Electric BMXNOC0401 prior to v2.09"
+                }
+              }
+            ]
+          },
+          {
+            "category": "product_name",
+            "name": "BMXNOE0100",
+            "branches": [
+              {
+                "category": "product_version_range",
+                "name": "<v3.10",
+                "product": {
+                  "product_id": "2",
+                  "name": "Schneider Electric BMXNOE0100 prior to v3.10"
+                }
+              }
+            ]
+          },
+          {
+            "category": "product_name",
+            "name": "BMXNOE0100H",
+            "branches": [
+              {
+                "category": "product_version_range",
+                "name": "<v3.10",
+                "product": {
+                  "product_id": "3",
+                  "name": "Schneider Electric BMXNOE0100H prior to v3.10"
+                }
+              }
+            ]
+          },
+          {
+            "category": "product_name",
+            "name": "BMXNOE0110",
+            "branches": [
+              {
+                "category": "product_version_range",
+                "name": "<v6.30",
+                "product": {
+                  "product_id": "4",
+                  "name": "Schneider Electric BMXNOE0110 prior to v6.30"
+                }
+              }
+            ]
+          },
+          {
+            "category": "product_name",
+            "name": "BMXNOE0110H",
+            "branches": [
+              {
+                "category": "product_version_range",
+                "name": "<v6.30",
+                "product": {
+                  "product_id": "5",
+                  "name": "Schneider Electric BMXNOE0110H prior to v6.30"
+                }
+              }
+            ]
+          },
+          {
+            "category": "product_name",
+            "name": "BMXNOR0200",
+            "branches": [
+              {
+                "category": "product_version_range",
+                "name": "<v1.70",
+                "product": {
+                  "product_id": "6",
+                  "name": "Schneider Electric BMXNOR0200 prior to v1.70"
+                }
+              }
+            ]
+          },
+          {
+            "category": "product_name",
+            "name": "BMXNOR0200H",
+            "branches": [
+              {
+                "category": "product_version_range",
+                "name": "<v1.70",
+                "product": {
+                  "product_id": "7",
+                  "name": "Schneider Electric BMXNOR0200H prior to v1.70"
+                }
+              }
+            ]
+          },
+          {
+            "category": "product_name",
+            "name": "BMXP342020",
+            "branches": [
+              {
+                "category": "product_version_range",
+                "name": "<v2.80",
+                "product": {
+                  "product_id": "8",
+                  "name": "Schneider Electric BMXP342020 prior to v2.80"
+                }
+              }
+            ]
+          },
+          {
+            "category": "product_name",
+            "name": "BMXP342020H",
+            "branches": [
+              {
+                "category": "product_version_range",
+                "name": "<v2.80",
+                "product": {
+                  "product_id": "9",
+                  "name": "Schneider Electric BMXP342020H prior to v2.80"
+                }
+              }
+            ]
+          },
+          {
+            "category": "product_name",
+            "name": "BMXP342030",
+            "branches": [
+              {
+                "category": "product_version_range",
+                "name": "<v2.80",
+                "product": {
+                  "product_id": "10",
+                  "name": "Schneider Electric BMXP342030 prior to v2.80"
+                }
+              }
+            ]
+          },
+          {
+            "category": "product_name",
+            "name": "BMXP3420302",
+            "branches": [
+              {
+                "category": "product_version_range",
+                "name": "<v2.80",
+                "product": {
+                  "product_id": "11",
+                  "name": "Schneider Electric BMXP3420302 prior to v2.80"
+                }
+              }
+            ]
+          },
+          {
+            "category": "product_name",
+            "name": "BMXP3420302H",
+            "branches": [
+              {
+                "category": "product_version_range",
+                "name": "<v2.80",
+                "product": {
+                  "product_id": "12",
+                  "name": "Schneider Electric BMXP3420302H prior to v2.80"
+                }
+              }
+            ]
+          },
+          {
+            "category": "product_name",
+            "name": "BMXPRA0100",
+            "branches": [
+              {
+                "category": "product_version_range",
+                "name": "<v2.80",
+                "product": {
+                  "product_id": "13",
+                  "name": "Schneider Electric BMXPRA0100 prior to v2.80"
+                }
+              }
+            ]
+          },
+          {
+            "category": "product_name",
+            "name": "BMXNOC0401",
+            "branches": [
+              {
+                "category": "product_version",
+                "name": "v2.09",
+                "product": {
+                  "product_id": "14",
+                  "name": "Schneider Electric BMXNOC0401 v2.09"
+                }
+              }
+            ]
+          },
+          {
+            "category": "product_name",
+            "name": "BMXNOE0100",
+            "branches": [
+              {
+                "category": "product_version",
+                "name": "v3.10)",
+                "product": {
+                  "product_id": "15",
+                  "name": "Schneider Electric BMXNOE0100 v3.10"
+                }
+              }
+            ]
+          },
+          {
+            "category": "product_name",
+            "name": "BMXNOE0100H",
+            "branches": [
+              {
+                "category": "product_version",
+                "name": "v3.10",
+                "product": {
+                  "product_id": "16",
+                  "name": "Schneider Electric BMXNOE0100H v3.10"
+                }
+              }
+            ]
+          },
+          {
+            "category": "product_name",
+            "name": "BMXNOE0110 ",
+            "branches": [
+              {
+                "category": "product_version",
+                "name": "v6.30",
+                "product": {
+                  "product_id": "17",
+                  "name": "Schneider Electric BMXNOE0110  v6.30"
+                }
+              }
+            ]
+          },
+          {
+            "category": "product_name",
+            "name": "BMXNOE0110H",
+            "branches": [
+              {
+                "category": "product_version",
+                "name": "v6.30",
+                "product": {
+                  "product_id": "18",
+                  "name": "Schneider Electric BMXNOE0110H v6.30"
+                }
+              }
+            ]
+          },
+          {
+            "category": "product_name",
+            "name": "BMXNOR0200",
+            "branches": [
+              {
+                "category": "product_version",
+                "name": "v1.70",
+                "product": {
+                  "product_id": "19",
+                  "name": "Schneider Electric BMXNOR0200 v1.70"
+                }
+              }
+            ]
+          },
+          {
+            "category": "product_name",
+            "name": "BMXNOR0200H",
+            "branches": [
+              {
+                "category": "product_version",
+                "name": "v1.70",
+                "product": {
+                  "product_id": "20",
+                  "name": "Schneider Electric BMXNOR0200H v1.70"
+                }
+              }
+            ]
+          },
+          {
+            "category": "product_name",
+            "name": "BMXP342020",
+            "branches": [
+              {
+                "category": "product_version",
+                "name": "v2.80",
+                "product": {
+                  "product_id": "21",
+                  "name": "Schneider Electric BMXP342020 v2.80"
+                }
+              }
+            ]
+          },
+          {
+            "category": "product_name",
+            "name": "BMXP342020H",
+            "branches": [
+              {
+                "category": "product_version",
+                "name": "v2.80",
+                "product": {
+                  "product_id": "22",
+                  "name": "Schneider Electric BMXP342020H v2.80"
+                }
+              }
+            ]
+          },
+          {
+            "category": "product_name",
+            "name": "BMXP342030",
+            "branches": [
+              {
+                "category": "product_version",
+                "name": "v2.80",
+                "product": {
+                  "product_id": "23",
+                  "name": "Schneider Electric BMXP342030 v2.80"
+                }
+              }
+            ]
+          },
+          {
+            "category": "product_name",
+            "name": "BMXP3420302",
+            "branches": [
+              {
+                "category": "product_version",
+                "name": "v2.80",
+                "product": {
+                  "product_id": "24",
+                  "name": "Schneider Electric BMXP3420302 v2.80"
+                }
+              }
+            ]
+          },
+          {
+            "category": "product_name",
+            "name": "BMXP3420302H",
+            "branches": [
+              {
+                "category": "product_version",
+                "name": "v2.80",
+                "product": {
+                  "product_id": "25",
+                  "name": "Schneider Electric BMXP3420302H v2.80"
+                }
+              }
+            ]
+          },
+          {
+            "category": "product_name",
+            "name": "BMXPRA0100",
+            "branches": [
+              {
+                "category": "product_version",
+                "name": "v2.80",
+                "product": {
+                  "product_id": "26",
+                  "name": "Schneider Electric BMXPRA0100 v2.80"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "vulnerabilities": [
+    {
+      "title": "CVE-2015-7937",
+      "notes": [
+        {
+          "category": "description",
+          "text": "Stack-based buffer overflow in the GoAhead Web Server on Schneider Electric Modicon M340 \r\nPLC BMXNOx and BMXPx devices allows remote attackers to execute arbitrary code.",
+          "title": "CVE Description"
+        }
+      ],
+      "cve": "CVE-2015-7937",
+      "acknowledgments": [
+        {
+          "names": [
+            "CyberX"
+          ]
+        }
+      ],
+      "product_status": {
+        "known_affected": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7",
+          "8",
+          "9",
+          "10",
+          "11",
+          "12",
+          "13"
+        ],
+        "fixed": [
+          "14",
+          "15",
+          "16",
+          "17",
+          "18",
+          "19",
+          "20",
+          "21",
+          "22",
+          "23",
+          "24",
+          "25",
+          "26"
+        ]
+      },
+      "scores": [
+        {
+          "products": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11",
+            "12",
+            "13"
+          ],
+          "cvss_v3": {
+            "version": "3.0",
+            "vectorString": "CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+            "baseScore": 7.5,
+            "baseSeverity": "HIGH",
+            "attackVector": "NETWORK",
+            "attackComplexity": "LOW",
+            "privilegesRequired": "NONE",
+            "userInteraction": "NONE",
+            "scope": "UNCHANGED",
+            "confidentialityImpact": "NONE",
+            "integrityImpact": "NONE",
+            "availabilityImpact": "HIGH",
+            "temporalScore": 7.5,
+            "temporalSeverity": "HIGH",
+            "environmentalScore": 7.5,
+            "environmentalSeverity": "HIGH"
+          }
+        }
+      ],
+      "remediations": [
+        {
+          "category": "vendor_fix",
+          "details": "https://www.se.com/ww/en/product/BMXNOC0401/ethernet-module-m340---4-x-rj45-10-100/#pdp-software",
+          "product_ids": [
+            "1"
+          ],
+          "url": "https://www.se.com/ww/en/product/BMXNOC0401/ethernet-module-m340---4-x-rj45-10-100/#pdp-software",
+          "restart_required": {
+            "category": "none"
+          }
+        },
+        {
+          "category": "vendor_fix",
+          "details": "https://www.se.com/ww/en/product/BMXNOE0100/ethernet-module-m340---flash-memory-card---1-x-rj45-10-100/#pdp-software",
+          "product_ids": [
+            "2"
+          ],
+          "url": "https://www.se.com/ww/en/product/BMXNOE0100/ethernet-module-m340---flash-memory-card---1-x-rj45-10-100/#pdp-software",
+          "restart_required": {
+            "category": "none"
+          }
+        },
+        {
+          "category": "vendor_fix",
+          "details": "https://www.se.com/ww/en/product/BMXNOE0100/ethernet-module-m340---flash-memory-card---1-x-rj45-10-100/#pdp-software",
+          "product_ids": [
+            "3"
+          ],
+          "url": "https://www.se.com/ww/en/product/BMXNOE0100/ethernet-module-m340---flash-memory-card---1-x-rj45-10-100/#pdp-software",
+          "restart_required": {
+            "category": "none"
+          }
+        },
+        {
+          "category": "vendor_fix",
+          "details": "https://www.se.com/ww/en/product/BMXNOE0110/ethernet-module-m340---flash-memory-card---internal-ram-16-mb---1-x-rj45-10-100/#pdp-software",
+          "product_ids": [
+            "4"
+          ],
+          "url": "https://www.se.com/ww/en/product/BMXNOE0110/ethernet-module-m340---flash-memory-card---internal-ram-16-mb---1-x-rj45-10-100/#pdp-software",
+          "restart_required": {
+            "category": "none"
+          }
+        },
+        {
+          "category": "vendor_fix",
+          "details": "https://www.se.com/ww/en/product/BMXNOE0110/ethernet-module-m340---flash-memory-card---internal-ram-16-mb---1-x-rj45-10-100/#pdp-software",
+          "product_ids": [
+            "5"
+          ],
+          "url": "https://www.se.com/ww/en/product/BMXNOE0110/ethernet-module-m340---flash-memory-card---internal-ram-16-mb---1-x-rj45-10-100/#pdp-software",
+          "restart_required": {
+            "category": "none"
+          }
+        },
+        {
+          "category": "vendor_fix",
+          "details": "https://www.se.com/ww/en/product/BMXNOR0200H/ethernet---serial-rtu-module---2-x-rj45/#pdp-software",
+          "product_ids": [
+            "6"
+          ],
+          "url": "https://www.se.com/ww/en/product/BMXNOR0200H/ethernet---serial-rtu-module---2-x-rj45/#pdp-software",
+          "restart_required": {
+            "category": "none"
+          }
+        },
+        {
+          "category": "vendor_fix",
+          "details": "https://www.se.com/ww/en/product/BMXNOR0200H/ethernet---serial-rtu-module---2-x-rj45/#pdp-software",
+          "product_ids": [
+            "7"
+          ],
+          "url": "https://www.se.com/ww/en/product/BMXNOR0200H/ethernet---serial-rtu-module---2-x-rj45/#pdp-software",
+          "restart_required": {
+            "category": "none"
+          }
+        },
+        {
+          "category": "vendor_fix",
+          "details": "https://www.se.com/us/en/product/BMXP342020/processor-module-m340%2C-max-1024-discrete-and-256-analog-i-o%2C-modbus%2C-ethernet/#pdp-software",
+          "product_ids": [
+            "8"
+          ],
+          "url": "https://www.se.com/us/en/product/BMXP342020/processor-module-m340%2C-max-1024-discrete-and-256-analog-i-o%2C-modbus%2C-ethernet/#pdp-software",
+          "restart_required": {
+            "category": "none"
+          }
+        },
+        {
+          "category": "vendor_fix",
+          "details": "https://www.se.com/us/en/product/BMXP342020/processor-module-m340%2C-max-1024-discrete-and-256-analog-i-o%2C-modbus%2C-ethernet/#pdp-software",
+          "product_ids": [
+            "9"
+          ],
+          "url": "https://www.se.com/us/en/product/BMXP342020/processor-module-m340%2C-max-1024-discrete-and-256-analog-i-o%2C-modbus%2C-ethernet/#pdp-software",
+          "restart_required": {
+            "category": "none"
+          }
+        },
+        {
+          "category": "mitigation",
+          "details": "This model has reached its end of life inn 2009. Please apply \r\nthe mitigations below. Contact your local technical support for \r\nmore information. \r\nCustomers are advised that the webserver is disabled by default. Because web services are \r\nonly necessary for specific maintenance, configuration, or monitoring activities, it is advised to \r\ndisable web services all together during times when the services are not needed. Customers \r\nare also advised to:\r\n• Configure access control lists to restrict web server access to authorized IP addresses.\r\n• Protect access to Modicon products with network, industrial, and application firewalls.",
+          "product_ids": [
+            "10"
+          ],
+          "restart_required": {
+            "category": "none"
+          }
+        },
+        {
+          "category": "mitigation",
+          "details": "https://www.se.com/us/en/product/BMXP3420302/processor-module-m340---max-1024-discrete-%2B-256-analog-i-o---canopen/#pdp-software",
+          "product_ids": [
+            "11"
+          ],
+          "url": "https://www.se.com/us/en/product/BMXP3420302/processor-module-m340---max-1024-discrete-%2B-256-analog-i-o---canopen/#pdp-software",
+          "restart_required": {
+            "category": "none"
+          }
+        },
+        {
+          "category": "mitigation",
+          "details": "https://www.se.com/us/en/product/BMXP3420302/processor-module-m340---max-1024-discrete-%2B-256-analog-i-o---canopen/#pdp-software",
+          "product_ids": [
+            "12"
+          ],
+          "url": "https://www.se.com/us/en/product/BMXP3420302/processor-module-m340---max-1024-discrete-%2B-256-analog-i-o---canopen/#pdp-software",
+          "restart_required": {
+            "category": "none"
+          }
+        },
+        {
+          "category": "mitigation",
+          "details": "https://www.se.com/au/en/product/BMXPRA0100/modicon-x80-peripheral-remote-io-adaptor-module/#pdp-software",
+          "product_ids": [
+            "13"
+          ],
+          "url": "https://www.se.com/au/en/product/BMXPRA0100/modicon-x80-peripheral-remote-io-adaptor-module/#pdp-software",
+          "restart_required": {
+            "category": "none"
+          }
+        }
+      ]
+    }
+  ]
+}
