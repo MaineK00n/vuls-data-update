@@ -98,7 +98,9 @@ func Fetch(opts ...Option) error {
 		advs := make(map[string][]Update)
 		switch v {
 		case "1":
-			us, err := options.fetch(options.mirrorURLs[v].Core)
+			// The Amazon Linux 1 mirror list is plain http, and so are the
+			// mirrors it names.
+			us, err := options.fetch(options.mirrorURLs[v].Core, utilhttp.WithClientAllowPlainHTTP(true))
 			if err != nil {
 				return errors.Wrapf(err, "fetch %s", options.mirrorURLs[v].Core)
 			}
@@ -229,8 +231,12 @@ func Fetch(opts ...Option) error {
 	return nil
 }
 
-func (opts options) fetch(mirror string) ([]Update, error) {
-	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry), utilhttp.WithClientHTTPClient(opts.httpClient)).Get(mirror)
+// fetch reads the updates of the repository whose mirror list is at mirror,
+// with one client, given clientOpts, for the list and the mirrors it names.
+func (opts options) fetch(mirror string, clientOpts ...utilhttp.ClientOption) ([]Update, error) {
+	client := utilhttp.NewClient(append([]utilhttp.ClientOption{utilhttp.WithClientRetryMax(opts.retry), utilhttp.WithClientHTTPClient(opts.httpClient)}, clientOpts...)...)
+
+	resp, err := client.Get(mirror)
 	if err != nil {
 		return nil, errors.Wrap(err, "fetch mirror list")
 	}
@@ -256,7 +262,7 @@ func (opts options) fetch(mirror string) ([]Update, error) {
 		if err != nil {
 			return nil, errors.Wrap(err, "join url path")
 		}
-		uinfoPath, err := opts.fetchUpdateInfoPath(u)
+		uinfoPath, err := fetchUpdateInfoPath(client, u)
 		if err != nil {
 			if strings.Contains(mirror, "/extras/") && errors.Is(err, ErrNoUpdateInfo) {
 				return nil, nil
@@ -268,7 +274,7 @@ func (opts options) fetch(mirror string) ([]Update, error) {
 		if err != nil {
 			return nil, errors.Wrap(err, "join url path")
 		}
-		us, err := opts.fetchUpdateInfo(u)
+		us, err := fetchUpdateInfo(client, u)
 		if err != nil {
 			return nil, errors.Wrap(err, "fetch updateinfo")
 		}
@@ -279,8 +285,8 @@ func (opts options) fetch(mirror string) ([]Update, error) {
 
 var ErrNoUpdateInfo = errors.New("no updateinfo field")
 
-func (opts options) fetchUpdateInfoPath(repomdURL string) (string, error) {
-	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry), utilhttp.WithClientHTTPClient(opts.httpClient)).Get(repomdURL)
+func fetchUpdateInfoPath(client *utilhttp.Client, repomdURL string) (string, error) {
+	resp, err := client.Get(repomdURL)
 	if err != nil {
 		return "", errors.Wrap(err, "fetch repomd")
 	}
@@ -309,8 +315,8 @@ func (opts options) fetchUpdateInfoPath(repomdURL string) (string, error) {
 	return updateInfoPath, nil
 }
 
-func (opts options) fetchUpdateInfo(updateinfoURL string) ([]Update, error) {
-	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry), utilhttp.WithClientHTTPClient(opts.httpClient)).Get(updateinfoURL)
+func fetchUpdateInfo(client *utilhttp.Client, updateinfoURL string) ([]Update, error) {
+	resp, err := client.Get(updateinfoURL)
 	if err != nil {
 		return nil, errors.Wrap(err, "fetch updateinfo")
 	}

@@ -70,7 +70,8 @@ func Fetch(opts ...Option) error {
 	}
 
 	slog.Info("Fetch Seal OSV")
-	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry), utilhttp.WithClientHTTPClient(options.httpClient)).Get(options.dataURL)
+	// dataURL is plain http, which the client refuses unless told otherwise.
+	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry), utilhttp.WithClientHTTPClient(options.httpClient), utilhttp.WithClientAllowPlainHTTP(true)).Get(options.dataURL)
 	if err != nil {
 		return errors.Wrap(err, "fetch osv data")
 	}

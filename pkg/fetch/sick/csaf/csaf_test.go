@@ -1,16 +1,11 @@
 package csaf_test
 
 import (
-	"fmt"
-	"io"
 	"net/http"
 	"net/http/httptest"
-	"os"
 	"path"
 	"path/filepath"
-	"strings"
 	"testing"
-	"time"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/sick/csaf"
 	utiltest "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/test"
@@ -28,25 +23,7 @@ func TestFetch(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ts := httptest.NewTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				switch path.Base(r.URL.Path) {
-				case "csaf-feed-tlp-white.json":
-					f, err := os.Open(filepath.Join("testdata", "fixtures", tt.name, path.Base(r.URL.Path)))
-					if err != nil {
-						http.NotFound(w, r)
-					}
-					defer f.Close()
-
-					bs, err := io.ReadAll(f)
-					if err != nil {
-						http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-					}
-
-					s := strings.ReplaceAll(string(bs), "https://www.sick.com", fmt.Sprintf("http://%s", r.Host))
-
-					http.ServeContent(w, r, "ssa-feed-tlp-white.json", time.Now(), strings.NewReader(s))
-				default:
-					http.ServeFile(w, r, filepath.Join("testdata", "fixtures", tt.name, path.Base(r.URL.Path)))
-				}
+				http.ServeFile(w, r, filepath.Join("testdata", "fixtures", tt.name, path.Base(r.URL.Path)))
 			}))
 			dir := t.TempDir()
 			err := csaf.Fetch(csaf.WithHTTPClient(ts.Client()), csaf.WithDir(dir), csaf.WithRetry(1))
