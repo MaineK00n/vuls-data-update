@@ -31,6 +31,13 @@ func TestExtract(t *testing.T) {
 			args:     "./testdata/fixtures/pre-5.0-phase",
 			hasError: true,
 		},
+		{
+			// raw written before CWE 5.0 support has a single submission, with a
+			// single name, per content history
+			name:     "pre-5.0 submission",
+			args:     "./testdata/fixtures/pre-5.0-submission",
+			hasError: true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
