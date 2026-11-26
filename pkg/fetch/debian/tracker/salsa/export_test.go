@@ -44,6 +44,10 @@ var ParseChecksums = parseChecksums
 // fixture holds.
 var ParseDeb822 = parseDeb822
 
+// ParseSource is parseSource, for the sources with more than one paragraph no
+// fixture Sources holds.
+var ParseSource = parseSource
+
 // WithPinnedReleases replaces the suites whose Release is checked against a
 // SHA256 rather than against its signature. Tests pin a suite of the
 // fixtures, none of which is among the archived suites the built-in table
