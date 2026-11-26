@@ -1,53 +1,19 @@
 {
-	"Architecture": [
-		"all"
-	],
-	"Binary": [
-		"atmel-firmware"
-	],
-	"Build-Depends": [
-		"debhelper, debhelper-compat (= 13), dpkg-dev (>= 1.16.1~)"
-	],
-	"Checksums-Sha256": [
-		"88f724926d08177f2d156cf105ad8592cb16d22904309549555ffabe482ffc28 1970 atmel-firmware_1.3-7.dsc daa9b32233ade0dc254168c65a2970aa9b7e9b104595029e7387169064ced5ce 469934 atmel-firmware_1.3.orig.tar.gz bd1b0f0c9ca8ff520796030c9dc8383ec7419186c8f3f36350093264e960ae5e 3824 atmel-firmware_1.3-7.debian.tar.xz"
-	],
-	"Directory": [
-		"pool/non-free-firmware/a/atmel-firmware"
-	],
-	"Files": [
-		"4947f901449a4837e966bc60c8770627 1970 atmel-firmware_1.3-7.dsc 77cb6f8fb9c79241a6892069b38c5081 469934 atmel-firmware_1.3.orig.tar.gz c68dd93e40fde2fff2dfbfe5dc04bd75 3824 atmel-firmware_1.3-7.debian.tar.xz"
-	],
-	"Format": [
-		"3.0 (quilt)"
-	],
-	"Homepage": [
-		"https://thekelleys.org.uk/atmel/"
-	],
-	"Maintainer": [
-		"Ryan Finnie <ryan@finnie.org>"
-	],
-	"Package": [
-		"atmel-firmware"
-	],
-	"Package-List": [
-		"atmel-firmware deb non-free-firmware/kernel optional arch=all"
-	],
-	"Priority": [
-		"optional"
-	],
-	"Section": [
-		"non-free-firmware/misc"
-	],
-	"Standards-Version": [
-		"4.6.0"
-	],
-	"Vcs-Browser": [
-		"https://salsa.debian.org/rfinnie/atmel-firmware-pkg-debian"
-	],
-	"Vcs-Git": [
-		"https://salsa.debian.org/rfinnie/atmel-firmware-pkg-debian.git"
-	],
-	"Version": [
-		"1.3-7"
-	]
+	"Architecture": "all",
+	"Binary": "atmel-firmware",
+	"Build-Depends": "debhelper, debhelper-compat (= 13), dpkg-dev (>= 1.16.1~)",
+	"Checksums-Sha256": "\n 88f724926d08177f2d156cf105ad8592cb16d22904309549555ffabe482ffc28 1970 atmel-firmware_1.3-7.dsc\n daa9b32233ade0dc254168c65a2970aa9b7e9b104595029e7387169064ced5ce 469934 atmel-firmware_1.3.orig.tar.gz\n bd1b0f0c9ca8ff520796030c9dc8383ec7419186c8f3f36350093264e960ae5e 3824 atmel-firmware_1.3-7.debian.tar.xz",
+	"Directory": "pool/non-free-firmware/a/atmel-firmware",
+	"Files": "\n 4947f901449a4837e966bc60c8770627 1970 atmel-firmware_1.3-7.dsc\n 77cb6f8fb9c79241a6892069b38c5081 469934 atmel-firmware_1.3.orig.tar.gz\n c68dd93e40fde2fff2dfbfe5dc04bd75 3824 atmel-firmware_1.3-7.debian.tar.xz",
+	"Format": "3.0 (quilt)",
+	"Homepage": "https://thekelleys.org.uk/atmel/",
+	"Maintainer": "Ryan Finnie <ryan@finnie.org>",
+	"Package": "atmel-firmware",
+	"Package-List": "\n atmel-firmware deb non-free-firmware/kernel optional arch=all",
+	"Priority": "optional",
+	"Section": "non-free-firmware/misc",
+	"Standards-Version": "4.6.0",
+	"Vcs-Browser": "https://salsa.debian.org/rfinnie/atmel-firmware-pkg-debian",
+	"Vcs-Git": "https://salsa.debian.org/rfinnie/atmel-firmware-pkg-debian.git",
+	"Version": "1.3-7"
 }
