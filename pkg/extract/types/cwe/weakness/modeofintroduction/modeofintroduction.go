@@ -8,9 +8,6 @@ import (
 )
 
 type ModeOfIntroduction struct {
-	// Deprecated: an introduction may name several phases since CWE 5.0, so
-	// they are in Phases; Phase is only set in data extracted before that.
-	Phase        string                         `json:"phase,omitempty"`
 	Phases       []string                       `json:"phases,omitempty"`
 	CustomPhases []customphaseTypes.CustomPhase `json:"custom_phases,omitempty"`
 	Notes        []string                       `json:"notes,omitempty"`
@@ -24,7 +21,6 @@ func (m *ModeOfIntroduction) Sort() {
 
 func Compare(x, y ModeOfIntroduction) int {
 	return cmp.Or(
-		cmp.Compare(x.Phase, y.Phase),
 		slices.Compare(x.Phases, y.Phases),
 		slices.CompareFunc(x.CustomPhases, y.CustomPhases, customphaseTypes.Compare),
 		slices.Compare(x.Notes, y.Notes),
