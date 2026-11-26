@@ -29,6 +29,7 @@ import (
 	"github.com/ProtonMail/go-crypto/openpgp/armor"
 	"github.com/ProtonMail/go-crypto/openpgp/clearsign"
 	openpgp "github.com/ProtonMail/go-crypto/openpgp/v2"
+	deb "github.com/knqyf263/go-deb-version"
 	"github.com/pkg/errors"
 	"github.com/schollz/progressbar/v3"
 	"github.com/ulikunitz/xz"
@@ -1346,11 +1347,12 @@ func parseCompressedSource(bs []byte, compress string) (map[string]paragraph, er
 
 // parseSource reads the paragraphs of a Sources file, a deb822 file, by the
 // source package each describes, which its Package field names. A source can
-// have more than one paragraph: older or newer versions kept only for the
-// Built-Using of other packages, marked Extra-Source-Only, besides the version
-// the suite has, and in an archived suite more than one version of that. Of
-// these, the last paragraph not marked Extra-Source-Only is taken, and the last
-// paragraph only for a source all of whose paragraphs are.
+// have more than one paragraph: versions kept only for the Built-Using of other
+// packages, marked Extra-Source-Only, beside the versions the suite has, of
+// which there can be more than one too. The paragraph taken is the one of the
+// newest version not marked Extra-Source-Only, or, for a source all of whose
+// paragraphs are marked, the newest of them. The last is not always the newest:
+// some suites of archive.debian.org list a newer version before an older one.
 func parseSource(r io.Reader) (map[string]paragraph, error) {
 	ps, err := parseDeb822(r)
 	if err != nil {
@@ -1364,12 +1366,38 @@ func parseSource(r io.Reader) (map[string]paragraph, error) {
 			slog.Warn("Package field not found")
 			continue
 		}
-		if q, ok := m[name]; !ok || extraSourceOnly(q) || !extraSourceOnly(p) {
+		if q, ok := m[name]; !ok || prefer(p, q) {
 			m[name] = p
 		}
 	}
 
 	return m, nil
+}
+
+// prefer reports whether p, a paragraph of a Sources, is to be taken over q, an
+// earlier paragraph of the same source: one not marked Extra-Source-Only over
+// one that is, and otherwise the newer version. If either version does not
+// parse, as some of the oldest suites have versions not starting with a digit,
+// p is taken, being the later.
+func prefer(p, q paragraph) bool {
+	if pe, qe := extraSourceOnly(p), extraSourceOnly(q); pe != qe {
+		return qe
+	}
+
+	name, _ := p.field("Package")
+	pv, _ := p.field("Version")
+	qv, _ := q.field("Version")
+	a, err := deb.NewVersion(pv)
+	if err != nil {
+		slog.Warn("parse version", slog.String("package", name), slog.String("version", pv), slog.Any("err", err))
+		return true
+	}
+	b, err := deb.NewVersion(qv)
+	if err != nil {
+		slog.Warn("parse version", slog.String("package", name), slog.String("version", qv), slog.Any("err", err))
+		return true
+	}
+	return !a.LessThan(b)
 }
 
 // extraSourceOnly reports whether the Sources paragraph p is of a source kept in

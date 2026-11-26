@@ -534,15 +534,50 @@ func TestParseSource(t *testing.T) {
 			want: map[string]string{"glibc": "2.24-11+deb9u3"},
 		},
 		{
-			// An archived suite can have more than one version the suite had.
 			name: "regular paragraphs only",
 			args: "Package: thunderbird\nVersion: 1:91.13.0-1~deb11u1\n\nPackage: thunderbird\nVersion: 1:115.12.0-1~deb11u1\n",
 			want: map[string]string{"thunderbird": "1:115.12.0-1~deb11u1"},
 		},
 		{
+			// lenny's opie: the newer version comes first.
+			name: "regular paragraphs, the newest first",
+			args: "Package: opie\nVersion: 2.32-10.2+lenny2\n\nPackage: opie\nVersion: 2.32-10.2\n",
+			want: map[string]string{"opie": "2.32-10.2+lenny2"},
+		},
+		{
+			// lenny-backports' collectd: the versions in the order of their
+			// text, not of the versions.
+			name: "regular paragraphs in the order of their text",
+			args: "Package: collectd\nVersion: 4.10.1-1+squeeze1~bpo50+1\n\nPackage: collectd\nVersion: 4.6.3-1~bpo50+1\n\nPackage: collectd\nVersion: 4.9.1-2~bpo50+2\n",
+			want: map[string]string{"collectd": "4.10.1-1+squeeze1~bpo50+1"},
+		},
+		{
 			name: "Extra-Source-Only paragraphs only",
 			args: "Package: zlib\nVersion: 1:1.2.11.dfsg-2\nExtra-Source-Only: yes\n\nPackage: zlib\nVersion: 1:1.2.11.dfsg-2+deb11u2\nExtra-Source-Only: yes\n",
 			want: map[string]string{"zlib": "1:1.2.11.dfsg-2+deb11u2"},
+		},
+		{
+			name: "Extra-Source-Only paragraphs only, the newest first",
+			args: "Package: zlib\nVersion: 1:1.2.11.dfsg-2+deb11u2\nExtra-Source-Only: yes\n\nPackage: zlib\nVersion: 1:1.2.11.dfsg-2\nExtra-Source-Only: yes\n",
+			want: map[string]string{"zlib": "1:1.2.11.dfsg-2+deb11u2"},
+		},
+		{
+			// Only yes marks a paragraph.
+			name: "Extra-Source-Only other than yes",
+			args: "Package: hello\nVersion: 2.10-2\n\nPackage: hello\nVersion: 2.10-3\nExtra-Source-Only: no\n",
+			want: map[string]string{"hello": "2.10-3"},
+		},
+		{
+			// cnews has versions that do not start with a digit, which do not
+			// parse, so the later paragraph is taken.
+			name: "versions that do not parse",
+			args: "Package: cnews\nVersion: cr.g7-40.4\n\nPackage: cnews\nVersion: cr.g7-40.1\n",
+			want: map[string]string{"cnews": "cr.g7-40.1"},
+		},
+		{
+			name: "earlier version that does not parse",
+			args: "Package: cnews\nVersion: cr.g7-40.4\n\nPackage: cnews\nVersion: 1.0-1\n",
+			want: map[string]string{"cnews": "1.0-1"},
 		},
 		{
 			name: "paragraph without a Package",
