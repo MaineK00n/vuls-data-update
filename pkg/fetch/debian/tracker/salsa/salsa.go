@@ -18,7 +18,6 @@ import (
 	"log/slog"
 	"maps"
 	"net/http"
-	"net/textproto"
 	"path"
 	"path/filepath"
 	"regexp"
@@ -859,11 +858,11 @@ func parseConfig(r io.Reader) (archives []string, releases []string, err error) 
 	return archives, releases, nil
 }
 
-func (opts *options) fetchSource(codename string, archived bool) (map[string]map[string]map[string]textproto.MIMEHeader, error) {
-	m := map[string]map[string]map[string]textproto.MIMEHeader{
-		"stable":   make(map[string]map[string]textproto.MIMEHeader),
-		"security": make(map[string]map[string]textproto.MIMEHeader),
-		"backport": make(map[string]map[string]textproto.MIMEHeader),
+func (opts *options) fetchSource(codename string, archived bool) (map[string]map[string]map[string]paragraph, error) {
+	m := map[string]map[string]map[string]paragraph{
+		"stable":   make(map[string]map[string]paragraph),
+		"security": make(map[string]map[string]paragraph),
+		"backport": make(map[string]map[string]paragraph),
 	}
 
 	stableURL := opts.mirror.ReleaseStable
@@ -1154,25 +1153,26 @@ func readKeyRing(keyrings ...[]byte) (openpgp.EntityList, error) {
 	return el, nil
 }
 
+// parseRelease reads a Release, a deb822 file of one paragraph, taking the
+// checksums from its field hash.
 func parseRelease(rd io.Reader, hash string) (release, error) {
-	bs, err := io.ReadAll(rd)
+	ps, err := parseDeb822(rd)
 	if err != nil {
-		return release{}, errors.Wrap(err, "read all response body")
+		return release{}, errors.Wrap(err, "parse deb822")
 	}
-
-	r := textproto.NewReader(bufio.NewReader(strings.NewReader(fmt.Sprintf("%s\n\n", strings.TrimRight(string(bs), "\n")))))
-	header, err := r.ReadMIMEHeader()
-	if err != nil {
-		return release{}, errors.Wrap(err, "read MIME header")
+	if len(ps) != 1 {
+		return release{}, errors.Errorf("unexpected number of paragraphs. expected: %d, actual: %d", 1, len(ps))
 	}
+	p := ps[0]
 
-	sums, err := parseChecksums(header.Get(hash), hash)
+	field, _ := p.field(hash)
+	sums, err := parseChecksums(field, hash)
 	if err != nil {
 		return release{}, errors.Wrapf(err, "parse %s", hash)
 	}
 
 	var validUntil time.Time
-	if v := header.Get("Valid-Until"); v != "" {
+	if v, _ := p.field("Valid-Until"); v != "" {
 		t, err := time.Parse(time.RFC1123, v)
 		if err != nil {
 			return release{}, errors.Wrap(err, "parse Valid-Until")
@@ -1180,28 +1180,37 @@ func parseRelease(rd io.Reader, hash string) (release, error) {
 		validUntil = t
 	}
 
+	codename, _ := p.field("Codename")
+	label, _ := p.field("Label")
+	components, _ := p.field("Components")
+	acquireByHash, _ := p.field("Acquire-By-Hash")
+
 	return release{
-		codename:      header.Get("Codename"),
-		label:         header.Get("Label"),
+		codename:      codename,
+		label:         label,
 		validUntil:    validUntil,
-		components:    strings.Fields(header.Get("Components")),
-		acquireByHash: header.Get("Acquire-By-Hash") == "yes",
+		components:    strings.Fields(components),
+		acquireByHash: acquireByHash == "yes",
 		hash:          hash,
 		files:         sums,
 	}, nil
 }
 
-// parseChecksums reads the hash field of a Release, such as SHA256, one line
-// per file of a digest, a size and a path, which textproto has folded into one
-// line.
+// parseChecksums reads the value of the field hash of a Release, such as
+// SHA256: a multiline field whose first line is empty, and each line after it
+// a file's digest, size and path.
 func parseChecksums(field, hash string) (map[string]checksum, error) {
-	fields := strings.Fields(field)
-	if len(fields)%3 != 0 {
-		return nil, errors.Errorf("unexpected number of fields. expected: %s, actual: %d", "a multiple of 3", len(fields))
+	lines := strings.Split(field, "\n")
+	if lines[0] != "" {
+		return nil, errors.Errorf("unexpected first line. expected: %q, actual: %q", "", lines[0])
 	}
 
-	m := make(map[string]checksum, len(fields)/3)
-	for entry := range slices.Chunk(fields, 3) {
+	m := make(map[string]checksum, len(lines)-1)
+	for _, line := range lines[1:] {
+		entry := strings.Fields(line)
+		if len(entry) != 3 {
+			return nil, errors.Errorf("unexpected line. expected: %s, actual: %q", "<digest> <size> <path>", line)
+		}
 		digest, size, p := strings.ToLower(entry[0]), entry[1], entry[2]
 		if bs, err := hex.DecodeString(digest); err != nil || len(bs) != digestSizes[hash] {
 			return nil, errors.Errorf("unexpected %s of %s. expected: %s, actual: %q", hash, p, fmt.Sprintf("%d hex digits", 2*digestSizes[hash]), digest)
@@ -1222,7 +1231,7 @@ func parseChecksums(field, hash string) (map[string]checksum, error) {
 // by hash, the copy named by the digest is asked for first: it cannot be an
 // older or newer file than the one rel describes, as the plain path can while
 // the mirror is being updated.
-func fetchSource(c *utilhttp.Client, distURL string, rel release, section string) (map[string]textproto.MIMEHeader, error) {
+func fetchSource(c *utilhttp.Client, distURL string, rel release, section string) (map[string]paragraph, error) {
 	var listed bool
 	for _, compress := range []string{"gz", "xz", "bz2"} {
 		p := fmt.Sprintf("%s/source/Sources.%s", path.Base(section), compress)
@@ -1305,7 +1314,7 @@ func fetchFile(c *utilhttp.Client, u, hash string, sum checksum) ([]byte, bool, 
 	return bs, true, nil
 }
 
-func parseCompressedSource(bs []byte, compress string) (map[string]textproto.MIMEHeader, error) {
+func parseCompressedSource(bs []byte, compress string) (map[string]paragraph, error) {
 	var r io.Reader
 	switch compress {
 	case "gz":
@@ -1335,54 +1344,22 @@ func parseCompressedSource(bs []byte, compress string) (map[string]textproto.MIM
 	return sources, nil
 }
 
-// parseSource reads the stanzas of a Sources file, which a blank line
-// separates. The last needs no blank line after it.
-func parseSource(r io.Reader) (map[string]textproto.MIMEHeader, error) {
-	m := make(map[string]textproto.MIMEHeader)
-
-	// add reads the stanza in buf, which ends with a blank line, into m.
-	add := func(buf *bytes.Buffer) error {
-		header, err := textproto.NewReader(bufio.NewReader(buf)).ReadMIMEHeader()
-		if err != nil {
-			return errors.Wrap(err, "read MIME header")
-		}
-
-		name := header.Get("Package")
-		if name == "" {
-			slog.Warn("Package header not found")
-			return nil
-		}
-		m[name] = header
-		return nil
+// parseSource reads the paragraphs of a Sources file, a deb822 file, by the
+// source package each describes, which its Package field names.
+func parseSource(r io.Reader) (map[string]paragraph, error) {
+	ps, err := parseDeb822(r)
+	if err != nil {
+		return nil, errors.Wrap(err, "parse deb822")
 	}
 
-	s := bufio.NewScanner(r)
-	buf := new(bytes.Buffer)
-	for s.Scan() {
-		line := s.Text()
-		if _, err := fmt.Fprintf(buf, "%s\n", line); err != nil {
-			return nil, errors.Wrap(err, "write buffer")
-		}
-		if line != "" {
+	m := make(map[string]paragraph, len(ps))
+	for _, p := range ps {
+		name, _ := p.field("Package")
+		if name == "" {
+			slog.Warn("Package field not found")
 			continue
 		}
-
-		if err := add(buf); err != nil {
-			return nil, err
-		}
-		buf.Reset()
-	}
-	if err := s.Err(); err != nil {
-		return nil, errors.Wrap(err, "scanner encounter error")
-	}
-
-	if buf.Len() > 0 {
-		if _, err := fmt.Fprintln(buf); err != nil {
-			return nil, errors.Wrap(err, "write buffer")
-		}
-		if err := add(buf); err != nil {
-			return nil, err
-		}
+		m[name] = p
 	}
 
 	return m, nil

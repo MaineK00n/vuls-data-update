@@ -270,6 +270,30 @@ func TestFetch(t *testing.T) {
 			hasError: true,
 		},
 		{
+			// deb822 field names are not case-sensitive, so sid's Release with
+			// its Codename and Components spelled in other cases names the same
+			// suite and components.
+			name:     "Release with field names in other cases",
+			testdata: "testdata/fixtures/security-tracker-master.tar.gz",
+			rewrite: map[string]func([]byte) []byte{
+				"deb.debian.org/debian/dists/sid/Release": func(bs []byte) []byte {
+					return []byte(strings.NewReplacer("Codename: sid", "codename: sid", "Components:", "COMPONENTS:").Replace(string(bs)))
+				},
+			},
+		},
+		{
+			// A Release is one paragraph. sid's followed by another, naming
+			// another suite, fails the fetch rather than being read as either.
+			name:     "Release followed by another paragraph",
+			testdata: "testdata/fixtures/security-tracker-master.tar.gz",
+			rewrite: map[string]func([]byte) []byte{
+				"deb.debian.org/debian/dists/sid/Release": func(bs []byte) []byte {
+					return append(bs, "\nCodename: bookworm\n"...)
+				},
+			},
+			hasError: true,
+		},
+		{
 			// The Release files of bookworm-security, bookworm-backports and
 			// sid are good until 19 and 20 November 2023, and fail the fetch
 			// once past that.
@@ -401,40 +425,63 @@ func TestParseChecksums(t *testing.T) {
 		{
 			name: "SHA256",
 			args: args{
-				field: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 0 main/source/Sources 0040f94d11d0039505328a90b2ff48968db873e9e7967307631bf40ef5679275 32 main/source/Sources.xz",
+				field: "\n e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 0 main/source/Sources\n 0040f94d11d0039505328a90b2ff48968db873e9e7967307631bf40ef5679275 32 main/source/Sources.xz",
 				hash:  "SHA256",
 			},
 			want: []string{"main/source/Sources", "main/source/Sources.xz"},
 		},
 		{
 			name: "SHA1",
-			args: args{field: "da39a3ee5e6b4b0d3255bfef95601890afd80709 0 main/source/Sources", hash: "SHA1"},
+			args: args{field: "\n da39a3ee5e6b4b0d3255bfef95601890afd80709 0 main/source/Sources", hash: "SHA1"},
 			want: []string{"main/source/Sources"},
 		},
 		{
+			// A Release without the field gives no checksums, so its Sources
+			// fail the fetch for want of one.
+			name: "no field",
+			args: args{field: "", hash: "SHA256"},
+		},
+		{
+			name:    "entry on the first line",
+			args:    args{field: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 0 main/source/Sources", hash: "SHA256"},
+			wantErr: true,
+		},
+		{
 			name:    "entry without its size",
-			args:    args{field: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 main/source/Sources", hash: "SHA256"},
+			args:    args{field: "\n e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 main/source/Sources", hash: "SHA256"},
+			wantErr: true,
+		},
+		{
+			// Each line is an entry, so one cut over two lines is not read as
+			// one, though its fields add up to an entry's.
+			name:    "entry over two lines",
+			args:    args{field: "\n e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 0\n main/source/Sources", hash: "SHA256"},
+			wantErr: true,
+		},
+		{
+			name:    "entry with a field too many",
+			args:    args{field: "\n e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 0 main/source/Sources main/source/Sources.gz", hash: "SHA256"},
 			wantErr: true,
 		},
 		{
 			// The digest goes into the by-hash URL.
 			name:    "digest not in hex",
-			args:    args{field: fmt.Sprintf("%s 0 main/source/Sources", strings.Repeat("../", 21)+"x"), hash: "SHA256"},
+			args:    args{field: fmt.Sprintf("\n %s 0 main/source/Sources", strings.Repeat("../", 21)+"x"), hash: "SHA256"},
 			wantErr: true,
 		},
 		{
 			name:    "SHA1 digest as SHA256",
-			args:    args{field: "da39a3ee5e6b4b0d3255bfef95601890afd80709 0 main/source/Sources", hash: "SHA256"},
+			args:    args{field: "\n da39a3ee5e6b4b0d3255bfef95601890afd80709 0 main/source/Sources", hash: "SHA256"},
 			wantErr: true,
 		},
 		{
 			name:    "negative size",
-			args:    args{field: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 -1 main/source/Sources", hash: "SHA256"},
+			args:    args{field: "\n e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 -1 main/source/Sources", hash: "SHA256"},
 			wantErr: true,
 		},
 		{
 			name:    "size not a number",
-			args:    args{field: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 0x0 main/source/Sources", hash: "SHA256"},
+			args:    args{field: "\n e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 0x0 main/source/Sources", hash: "SHA256"},
 			wantErr: true,
 		},
 	}
@@ -445,6 +492,143 @@ func TestParseChecksums(t *testing.T) {
 				t.Errorf("ParseChecksums() error = %v, wantErr %v", err, tt.wantErr)
 			}
 			if diff := cmp.Diff(tt.want, slices.Sorted(maps.Keys(got))); diff != "" {
+				t.Errorf("(-expected +got):\n%s", diff)
+			}
+		})
+	}
+}
+
+func TestParseDeb822(t *testing.T) {
+	tests := []struct {
+		name    string
+		args    string
+		want    []map[string]string
+		wantErr bool
+	}{
+		{
+			name: "paragraphs",
+			args: "Package: hello\nVersion: 2.10-3\n\nPackage: bye\nVersion: 1.0-1\n",
+			want: []map[string]string{{"Package": "hello", "Version": "2.10-3"}, {"Package": "bye", "Version": "1.0-1"}},
+		},
+		{
+			name: "last paragraph without a newline",
+			args: "Package: hello\n\nPackage: bye",
+			want: []map[string]string{{"Package": "hello"}, {"Package": "bye"}},
+		},
+		{
+			// The first line of a multiline field is empty, and each of the
+			// others a file.
+			name: "multiline field",
+			args: "Package: hello\nFiles:\n 3d6b1e3a9b9e1c1e1e5e3c5f5d5e5f50 1563 hello_2.10-3.dsc\n 6cd0ffea3884a4e79330338dcc2987d6 725946 hello_2.10.orig.tar.gz\n",
+			want: []map[string]string{{"Package": "hello", "Files": "\n 3d6b1e3a9b9e1c1e1e5e3c5f5d5e5f50 1563 hello_2.10-3.dsc\n 6cd0ffea3884a4e79330338dcc2987d6 725946 hello_2.10.orig.tar.gz"}},
+		},
+		{
+			name: "folded field continued after a tab",
+			args: "Build-Depends: debhelper-compat (= 13),\n\tgettext\n",
+			want: []map[string]string{{"Build-Depends": "debhelper-compat (= 13),\n\tgettext"}},
+		},
+		{
+			name: "spaces and tabs around a value",
+			args: "Package: \t hello \t\n",
+			want: []map[string]string{{"Package": "hello"}},
+		},
+		{
+			name: "empty value",
+			args: "Package: hello\nDescription:\n",
+			want: []map[string]string{{"Package": "hello", "Description": ""}},
+		},
+		{
+			// Empty lines separate paragraphs, however many there are, and
+			// between paragraphs a line of only spaces and tabs is one.
+			name: "separators",
+			args: "\nPackage: hello\n\n \t\n\nPackage: bye\n\n",
+			want: []map[string]string{{"Package": "hello"}, {"Package": "bye"}},
+		},
+		{
+			name: "field names as the file spells them",
+			args: "package: hello\nVCS-Git: https://salsa.debian.org/debian/hello.git\n",
+			want: []map[string]string{{"package": "hello", "VCS-Git": "https://salsa.debian.org/debian/hello.git"}},
+		},
+		{
+			name: "line over 64 KiB",
+			args: fmt.Sprintf("Package: hello\nBinary: %s\n", strings.Repeat("x", 1<<17)),
+			want: []map[string]string{{"Package": "hello", "Binary": strings.Repeat("x", 1<<17)}},
+		},
+		{
+			name: "empty file",
+			args: "",
+		},
+		{
+			name:    "line without a colon",
+			args:    "Package: hello\nVersion\n",
+			wantErr: true,
+		},
+		{
+			name:    "continuation line before a field",
+			args:    " hello\nPackage: hello\n",
+			wantErr: true,
+		},
+		{
+			name:    "continuation line after an empty line",
+			args:    "Package: hello\n\n hello\n",
+			wantErr: true,
+		},
+		{
+			// Taken for an empty line, it would cut the paragraph in two, the
+			// second without a Package.
+			name:    "line of spaces and tabs inside a paragraph",
+			args:    "Package: hello\n \t\nVersion: 2.10-3\n",
+			wantErr: true,
+		},
+		{
+			name:    "field twice in a paragraph",
+			args:    "Package: hello\nPackage: bye\n",
+			wantErr: true,
+		},
+		{
+			name:    "field twice in a paragraph, in other cases",
+			args:    "Package: hello\npackage: bye\n",
+			wantErr: true,
+		},
+		{
+			// A comment, here a field commented out, is only for the
+			// debian/control of a source package.
+			name:    "comment",
+			args:    "#Vcs-Git: https://salsa.debian.org/debian/hello.git\nPackage: hello\n",
+			wantErr: true,
+		},
+		{
+			name:    "field name starting with a hyphen",
+			args:    "-Package: hello\n",
+			wantErr: true,
+		},
+		{
+			name:    "field name with a space",
+			args:    "Package Name: hello\n",
+			wantErr: true,
+		},
+		{
+			name:    "field name outside US-ASCII",
+			args:    "Packäge: hello\n",
+			wantErr: true,
+		},
+		{
+			name:    "empty field name",
+			args:    ": hello\n",
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			ps, err := salsa.ParseDeb822(strings.NewReader(tt.args))
+			if (err != nil) != tt.wantErr {
+				t.Errorf("ParseDeb822() error = %v, wantErr %v", err, tt.wantErr)
+			}
+			var got []map[string]string
+			for _, p := range ps {
+				got = append(got, p)
+			}
+			if diff := cmp.Diff(tt.want, got); diff != "" {
 				t.Errorf("(-expected +got):\n%s", diff)
 			}
 		})

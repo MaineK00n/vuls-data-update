@@ -1,56 +1,20 @@
 {
-	"Architecture": [
-		"all"
-	],
-	"Autobuild": [
-		"yes"
-	],
-	"Binary": [
-		"album-data"
-	],
-	"Build-Depends": [
-		"debhelper (>= 9)"
-	],
-	"Checksums-Sha256": [
-		"9ef40dbcfc1a7041f6e3d63147d22d8f871c73443a03e397246b788a32e667b0 1907 album-data_4.05-7.2.dsc d527891f2c93acd06610f59227f1d81a0818efddcaab478dbfa2d9b69ca530a5 6467641 album-data_4.05.orig.tar.gz 3167c595d34326f029b0e891e62c7ab594364eb68eb2247d4be005f536ed350d 16164 album-data_4.05-7.2.debian.tar.xz"
-	],
-	"Directory": [
-		"pool/non-free/a/album-data"
-	],
-	"Files": [
-		"2f4c100e537546f9aaace30b5c8a59ff 1907 album-data_4.05-7.2.dsc 5bbd0e09c444ff12c9be477f3f6bafef 6467641 album-data_4.05.orig.tar.gz df4e20ddd76d8d8e2e50f38e41b55c4a 16164 album-data_4.05-7.2.debian.tar.xz"
-	],
-	"Format": [
-		"3.0 (quilt)"
-	],
-	"Homepage": [
-		"http://marginalhacks.com/Hacks/album"
-	],
-	"Maintainer": [
-		"Salvo 'LtWorf' Tomaselli <tiposchi@tiscali.it>"
-	],
-	"Package": [
-		"album-data"
-	],
-	"Package-List": [
-		"album-data deb non-free/web extra arch=all"
-	],
-	"Priority": [
-		"source"
-	],
-	"Section": [
-		"non-free/web"
-	],
-	"Standards-Version": [
-		"3.9.7"
-	],
-	"Vcs-Browser": [
-		"https://anonscm.debian.org/cgit/collab-maint/album-data.git"
-	],
-	"Vcs-Git": [
-		"https://anonscm.debian.org/git/collab-maint/album.data.git"
-	],
-	"Version": [
-		"4.05-7.2"
-	]
+	"Architecture": "all",
+	"Autobuild": "yes",
+	"Binary": "album-data",
+	"Build-Depends": "debhelper (>= 9)",
+	"Checksums-Sha256": "\n 9ef40dbcfc1a7041f6e3d63147d22d8f871c73443a03e397246b788a32e667b0 1907 album-data_4.05-7.2.dsc\n d527891f2c93acd06610f59227f1d81a0818efddcaab478dbfa2d9b69ca530a5 6467641 album-data_4.05.orig.tar.gz\n 3167c595d34326f029b0e891e62c7ab594364eb68eb2247d4be005f536ed350d 16164 album-data_4.05-7.2.debian.tar.xz",
+	"Directory": "pool/non-free/a/album-data",
+	"Files": "\n 2f4c100e537546f9aaace30b5c8a59ff 1907 album-data_4.05-7.2.dsc\n 5bbd0e09c444ff12c9be477f3f6bafef 6467641 album-data_4.05.orig.tar.gz\n df4e20ddd76d8d8e2e50f38e41b55c4a 16164 album-data_4.05-7.2.debian.tar.xz",
+	"Format": "3.0 (quilt)",
+	"Homepage": "http://marginalhacks.com/Hacks/album",
+	"Maintainer": "Salvo 'LtWorf' Tomaselli <tiposchi@tiscali.it>",
+	"Package": "album-data",
+	"Package-List": "\n album-data deb non-free/web extra arch=all",
+	"Priority": "source",
+	"Section": "non-free/web",
+	"Standards-Version": "3.9.7",
+	"Vcs-Browser": "https://anonscm.debian.org/cgit/collab-maint/album-data.git",
+	"Vcs-Git": "https://anonscm.debian.org/git/collab-maint/album.data.git",
+	"Version": "4.05-7.2"
 }
