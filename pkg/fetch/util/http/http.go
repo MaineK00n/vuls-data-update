@@ -2,9 +2,10 @@ package http
 
 import (
 	"bytes"
-	"context"
+	stderrors "errors"
 	"io"
 	"net/http"
+	"sync"
 	"time"
 
 	cleanhttp "github.com/hashicorp/go-cleanhttp"
@@ -263,6 +264,18 @@ func (c *Client) Do(req *retryablehttp.Request) (*http.Response, error) {
 	return resp, nil
 }
 
+// maxPipelineErrors is how many failed requests PipelineDo's error names. A
+// failed request does not stop the others, so the error can name every one,
+// and that is what shows all of a source's broken files in one run. But a
+// source that is down for the whole run fails thousands of requests the same
+// way, so past this many the rest are only counted, and not kept.
+const maxPipelineErrors = 20
+
+// PipelineDo makes the requests, at most concurrency of them at a time (a
+// negative concurrency means no limit), and hands each response to cont. A
+// request that fails, or whose continuation fails, does not stop the others.
+// Once all are done, the error counts the ones that failed and wraps the first
+// maxPipelineErrors of them, so errors.Is and errors.As see only those.
 func (c *Client) PipelineDo(reqs []*retryablehttp.Request, concurrency int, wait time.Duration, noProgress bool, cont func(resp *http.Response) error) error {
 	// errgroup reads a negative limit as "no limit" and a positive one as
 	// the limit itself, but gives zero an unbuffered semaphore, so the
@@ -288,7 +301,27 @@ func (c *Client) PipelineDo(reqs []*retryablehttp.Request, concurrency int, wait
 		return progressbar.Default(int64(len(reqs)))
 	}()
 
-	g, ctx := errgroup.WithContext(context.Background())
+	// A failed request is traced by the URL it asked for, before any
+	// redirect. Do's error already names it, but a continuation's error,
+	// such as an unexpected status or a body that does not decode, does
+	// not.
+	do := func(req *retryablehttp.Request) error {
+		resp, err := c.Do(req)
+		if err != nil {
+			return errors.Wrap(err, "do")
+		}
+		if err := cont(resp); err != nil {
+			return errors.Wrapf(err, "continuation, url: %s", req.URL.Redacted())
+		}
+		return nil
+	}
+
+	var (
+		mu     sync.Mutex
+		failed int
+		errs   []error // the first maxPipelineErrors failures
+	)
+	var g errgroup.Group
 	g.SetLimit(concurrency)
 	for req := range reqChan {
 		g.Go(func() error {
@@ -297,27 +330,26 @@ func (c *Client) PipelineDo(reqs []*retryablehttp.Request, concurrency int, wait
 				_ = bar.Add(1)
 			}()
 
-			// A failed request is traced by the URL it asked for, before any
-			// redirect. Do's error already names it, but a continuation's error,
-			// such as an unexpected status or a body that does not decode, does
-			// not.
-			resp, err := c.Do(req)
-			if err != nil {
-				return errors.Wrap(err, "do")
+			if err := do(req); err != nil {
+				mu.Lock()
+				defer mu.Unlock()
+				failed++
+				if len(errs) < maxPipelineErrors {
+					errs = append(errs, err)
+				}
+				return err
 			}
-			if err := cont(resp); err != nil {
-				return errors.Wrapf(err, "continuation, url: %s", req.URL.Redacted())
-			}
-			select {
-			case <-ctx.Done():
-				return ctx.Err()
-			default:
-				return nil
-			}
+			return nil
 		})
 	}
+	// Wait returns only the first failure. But a Group without a context
+	// runs every request whatever the others do, so by now every failure is
+	// counted, and the first of them are in errs.
 	if err := g.Wait(); err != nil {
-		return errors.Wrap(err, "err in goroutine")
+		if failed > len(errs) {
+			return errors.Wrapf(stderrors.Join(errs...), "%d of %d requests failed (first %d shown)", failed, len(reqs), len(errs))
+		}
+		return errors.Wrapf(stderrors.Join(errs...), "%d of %d requests failed", failed, len(reqs))
 	}
 
 	_ = bar.Close()
