@@ -1,0 +1,22 @@
+{
+	"major": "10",
+	"type": "package",
+	"reference": "CodeReadyLinuxBuilder-repository",
+	"packages": [
+		{
+			"package": "389-ds-base-bdb",
+			"license": "GPL-3.0-or-later WITH GPL-3.0-389-ds-base-exception AND (Apache-2.0 OR Apache-2.0 WITH LLVM-exception OR MIT) AND (Apache-2.0 OR LGPL-2.1-or-later OR MIT) AND (Apache-2.0 OR MIT) AND (MIT OR Apache-2.0) AND Unicode-3.0 AND (MIT OR Unlicense) AND Apache-2.0 AND MIT AND MPL-2.0 AND Zlib",
+			"minor_release_version": "10.0"
+		},
+		{
+			"package": "389-ds-base-devel",
+			"license": "GPL-3.0-or-later WITH GPL-3.0-389-ds-base-exception AND (Apache-2.0 OR Apache-2.0 WITH LLVM-exception OR MIT) AND (Apache-2.0 OR LGPL-2.1-or-later OR MIT) AND (Apache-2.0 OR MIT) AND (MIT OR Apache-2.0) AND Unicode-3.0 AND (MIT OR Unlicense) AND Apache-2.0 AND MIT AND MPL-2.0 AND Zlib",
+			"minor_release_version": "10.0"
+		},
+		{
+			"package": "accel-config-devel",
+			"license": "LGPL-2.1-only",
+			"minor_release_version": "10.0"
+		}
+	]
+}
