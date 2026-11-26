@@ -5033,20 +5033,34 @@ func newCmdRedHatAppstreamLifecycle() *cobra.Command {
 }
 
 func newCmdRedHatPackageManifest() *cobra.Command {
-	options := &base{
-		dir:   filepath.Join(util.CacheDir(), "fetch", "redhat", "package-manifest"),
-		retry: 3,
+	options := &struct {
+		dir string
+	}{
+		dir: filepath.Join(util.CacheDir(), "fetch", "redhat", "package-manifest"),
 	}
 
 	cmd := &cobra.Command{
-		Use:   "redhat-package-manifest",
+		Use:   "redhat-package-manifest <pages dir>",
 		Short: "Fetch RedHat Enterprise Linux Package Manifest tables",
+		Long: heredoc.Doc(`
+			Fetch the tables of the RHEL package manifests from pages saved from
+			docs.redhat.com by hand. The site answers 403 to a client it does not take
+			for a browser, and its robots.txt disallows the single-page manifests.
+
+			<pages dir> holds a directory for each major release, and each page at the
+			path of its URL under
+			https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/
+			with ".html" added, e.g.
+
+			  <pages dir>/9/html-single/package_manifest/index.html
+			  <pages dir>/10/plan-baseos.html
+		`),
 		Example: heredoc.Doc(`
-            $ vuls-data-update fetch redhat-package-manifest 9 10
-        `),
-		Args: cobra.MinimumNArgs(1),
+			$ vuls-data-update fetch redhat-package-manifest pages
+		`),
+		Args: cobra.ExactArgs(1),
 		RunE: func(_ *cobra.Command, args []string) error {
-			if err := redhatPackageManifest.Fetch(args, redhatPackageManifest.WithDir(options.dir), redhatPackageManifest.WithRetry(options.retry)); err != nil {
+			if err := redhatPackageManifest.Fetch(args[0], redhatPackageManifest.WithDir(options.dir)); err != nil {
 				return errors.Wrap(err, "failed to fetch redhat package manifest")
 			}
 			return nil
@@ -5054,7 +5068,6 @@ func newCmdRedHatPackageManifest() *cobra.Command {
 	}
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
-	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
 
 	return cmd
 }

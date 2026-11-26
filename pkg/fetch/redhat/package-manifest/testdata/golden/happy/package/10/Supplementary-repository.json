@@ -1,0 +1,22 @@
+{
+	"major": "10",
+	"type": "package",
+	"reference": "Supplementary-repository",
+	"packages": [
+		{
+			"package": "cublasmp",
+			"license": "NVIDIA Proprietary",
+			"minor_release_version": "10.1"
+		},
+		{
+			"package": "cublasmp-cuda-12",
+			"license": "NVIDIA Proprietary",
+			"minor_release_version": "10.1"
+		},
+		{
+			"package": "cublasmp-cuda-13",
+			"license": "NVIDIA Proprietary",
+			"minor_release_version": "10.1"
+		}
+	]
+}

@@ -4,7 +4,12 @@ All the data in this repository are fetched from following pages by Red Hat, Inc
 
 - https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/8/html-single/package_manifest/index
 - https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/html-single/package_manifest/index
-- https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10/html-single/package_manifest/index
+- https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10/plan-appstream
+- https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10/plan-baseos
+- https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10/plan-crb
+- https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10/plan-extensions
+- https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10/plan-high_availability
+- https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10/plan-supplementary
 
 ### Copyright and License notice
 

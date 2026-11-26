@@ -1,0 +1,22 @@
+{
+	"major": "10",
+	"type": "package",
+	"reference": "Extensions-repository",
+	"packages": [
+		{
+			"package": "amdsmi",
+			"license": "NCSA AND MIT AND BSD-3-Clause",
+			"minor_release_version": "10.1"
+		},
+		{
+			"package": "amdsmi-devel",
+			"license": "NCSA AND MIT AND BSD-3-Clause",
+			"minor_release_version": "10.1"
+		},
+		{
+			"package": "fmt",
+			"license": "MIT",
+			"minor_release_version": "10.1"
+		}
+	]
+}
