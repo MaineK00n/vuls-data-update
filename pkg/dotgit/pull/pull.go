@@ -63,7 +63,9 @@ func (c checkoutOption) apply(opts *options) {
 // WithCheckout sets what Pull checks out after the pull: a branch, a tag or a
 // commit, main by default, or nothing for "". A full hash is checked out as
 // the commit it names, as contains and show read it, even where a branch has
-// it as its name. If checkout names nothing in the pulled dotgit, such as a
+// it as its name. A branch whose name has the hex digits of the other kind of
+// hash, such as 64 in a repository of SHA-1 hashes, is checked out at its
+// commit, detached. If checkout names nothing in the pulled dotgit, such as a
 // commit pinned before vuls-data-db truncated the history, errors.Is matches
 // the error with contains.ErrCommitNotFound. It does not when Pull cannot
 // tell: for a name that begins with "-", or holds "..." or ":", for one with

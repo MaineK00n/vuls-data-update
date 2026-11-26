@@ -452,9 +452,10 @@ func TestPullFullHashBranch(t *testing.T) {
 	// In vuls-data-raw-test-emptied, the initial commit b9b8cec has a
 	// README.md, and main, 0ff3d67, deletes it. The image adds branches named
 	// after full hashes: those of b9b8cec, of no object and of the tree of
-	// b9b8cec, at main, and that of 0ff3d67 in capitals, at b9b8cec. No two
-	// names differ only in case, so that each branch has a ref file of its own
-	// on a file system that does not tell case apart.
+	// b9b8cec, at main, and that of 0ff3d67 in capitals, at b9b8cec. It also
+	// adds a branch named with 64 hex digits, as long as a SHA-256 hash, at
+	// b9b8cec. No two names differ only in case, so that each branch has a ref
+	// file of its own on a file system that does not tell case apart.
 	f, err := os.Open(filepath.Join("testdata", "fixtures", "vuls-data-raw-test-emptied.tar.zst"))
 	if err != nil {
 		t.Fatalf("open fixture. err: %v", err)
@@ -473,6 +474,7 @@ func TestPullFullHashBranch(t *testing.T) {
 		{name: "9d3d5d486d4c9414321a2df56f2e007c4c2c8fac", start: "main"},
 		{name: "403164dbcb94dfb2b004ce50fc619c1351bbd37e", start: "main"},
 		{name: "0FF3D67C0064A0BB00A0DC35F9441758A3B4149E", start: "main~1"},
+		{name: "6a1e6b9f2c3d4e5f60718293a4b5c6d7e8f90a1b2c3d4e5f60718293a4b5c6d7", start: "main~1"},
 	} {
 		if _, err := util.Git("-C", src, "branch", b.name, b.start); err != nil {
 			t.Fatalf("create branch %s at %s. err: %v", b.name, b.start, err)
@@ -534,6 +536,17 @@ func TestPullFullHashBranch(t *testing.T) {
 				opts:       []pull.Option{pull.WithCheckout("0FF3D67C0064A0BB00A0DC35F9441758A3B4149E"), pull.WithRestore(true)},
 			},
 			wantHead: "0ff3d67c0064a0bb00a0dc35f9441758a3b4149e",
+		},
+		{
+			// The fixture has SHA-1 hashes, so rev-parse reads 64 hex digits
+			// as the branch, whose commit is checked out, detached.
+			name: "64 hex digits that a branch at b9b8cec has as its name",
+			args: args{
+				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test-hash-branches",
+				opts:       []pull.Option{pull.WithCheckout("6a1e6b9f2c3d4e5f60718293a4b5c6d7e8f90a1b2c3d4e5f60718293a4b5c6d7"), pull.WithRestore(true)},
+			},
+			wantHead:  "b9b8cec27035fddf3c7addcf7b76c8dda6be5e76",
+			wantFiles: map[string]string{"README.md": "# vuls-data-raw-test\n"},
 		},
 		{
 			// As a commit pinned before vuls-data-db truncated the history.
