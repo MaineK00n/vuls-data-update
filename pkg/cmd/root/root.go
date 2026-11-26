@@ -7,6 +7,7 @@ import (
 	dotgitCmd "github.com/MaineK00n/vuls-data-update/pkg/cmd/dotgit"
 	extractCmd "github.com/MaineK00n/vuls-data-update/pkg/cmd/extract"
 	fetchCmd "github.com/MaineK00n/vuls-data-update/pkg/cmd/fetch"
+	versionCmd "github.com/MaineK00n/vuls-data-update/pkg/cmd/version"
 )
 
 func NewCmdRoot() *cobra.Command {
@@ -23,7 +24,7 @@ func NewCmdRoot() *cobra.Command {
 		`),
 	}
 
-	cmd.AddCommand(fetchCmd.NewCmdFetch(), extractCmd.NewCmdExtract(), dotgitCmd.NewCmdDotGit())
+	cmd.AddCommand(fetchCmd.NewCmdFetch(), extractCmd.NewCmdExtract(), dotgitCmd.NewCmdDotGit(), versionCmd.NewCmdVersion())
 
 	return cmd
 }

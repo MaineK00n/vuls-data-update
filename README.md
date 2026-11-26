@@ -18,11 +18,11 @@ $ vuls-data-update dotgit pull ghcr.io/vulsio/vuls-data-db:vuls-data-raw-debian-
 
 Available Commands:
   completion  Generate the autocompletion script for the specified shell
-  diff        Show diff information
   dotgit      Operate vuls-data-* dotgit
   extract     Extract data source
   fetch       Fetch data source
   help        Help about any command
+  version     Print the version
 
 Flags:
   -h, --help   help for vuls-data-update
