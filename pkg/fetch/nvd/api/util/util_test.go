@@ -143,10 +143,11 @@ func TestCheckRetry(t *testing.T) {
 			// network that ts.Client() uses.
 			ts.Start()
 
-			// The client is made as the fetchers make theirs: CheckRetry
-			// leaves a body to WithClientBufferBody.
+			// The client is made as the fetchers make theirs, so a body cut
+			// off partway is caught by NewClient's buffering, which CheckRetry
+			// leaves it to.
 			rt := &roundTripper{errRespCount: tt.errRespCount, errResponse: tt.errResponse}
-			c := utilhttp.NewClient(utilhttp.WithClientRetryMax(tt.retry), utilhttp.WithClientRetryWaitMin(10*time.Millisecond), utilhttp.WithClientRetryWaitMax(20*time.Millisecond), utilhttp.WithClientCheckRetry(nvdutil.CheckRetry), utilhttp.WithClientBufferBody(true), utilhttp.WithClientHTTPClient(&http.Client{Transport: rt}))
+			c := nvdutil.NewClient(utilhttp.WithClientRetryMax(tt.retry), utilhttp.WithClientRetryWaitMin(10*time.Millisecond), utilhttp.WithClientRetryWaitMax(20*time.Millisecond), utilhttp.WithClientHTTPClient(&http.Client{Transport: rt}))
 			resp, err := c.Get(ts.URL)
 			if err != nil {
 				if tt.wantErrorMsg == "" {
