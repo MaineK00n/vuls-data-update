@@ -27,6 +27,7 @@ import (
 	"oras.land/oras-go/v2"
 	"oras.land/oras-go/v2/registry/remote"
 
+	"github.com/MaineK00n/vuls-data-update/pkg/dotgit/compress"
 	"github.com/MaineK00n/vuls-data-update/pkg/dotgit/contains"
 	"github.com/MaineK00n/vuls-data-update/pkg/dotgit/pull"
 	"github.com/MaineK00n/vuls-data-update/pkg/dotgit/util"
@@ -434,6 +435,198 @@ func TestPullWithBrokenGit(t *testing.T) {
 	}
 }
 
+// TestPullFullHashBranch checks that a full hash that a branch has as its name
+// is checked out as rev-parse, and so contains and show, read it: as the object
+// it names. A lock pins a commit by its full hash, and checking out the branch,
+// which git warns that only a mistake makes, would put the tree of another
+// commit under that hash.
+func TestPullFullHashBranch(t *testing.T) {
+	ts := httptest.NewTestServer(t, registry.New())
+
+	originalTransport := http.DefaultTransport
+	http.DefaultTransport = ts.Client().Transport
+	t.Cleanup(func() {
+		http.DefaultTransport = originalTransport
+	})
+
+	// In vuls-data-raw-test-emptied, the initial commit b9b8cec has a
+	// README.md, and main, 0ff3d67, deletes it. The image adds branches named
+	// after full hashes: those of b9b8cec, of no object and of the tree of
+	// b9b8cec, at main, and that of 0ff3d67 in capitals, at b9b8cec. It also
+	// adds a branch named with 64 hex digits, as long as a SHA-256 hash, at
+	// b9b8cec. No two names differ only in case, so that each branch has a ref
+	// file of its own on a file system that does not tell case apart.
+	f, err := os.Open(filepath.Join("testdata", "fixtures", "vuls-data-raw-test-emptied.tar.zst"))
+	if err != nil {
+		t.Fatalf("open fixture. err: %v", err)
+	}
+	defer f.Close()
+
+	src := filepath.Join(t.TempDir(), "vuls-data-raw-test-hash-branches")
+	if err := util.ExtractDotgitTarZst(f, src); err != nil {
+		t.Fatalf("extract fixture. err: %v", err)
+	}
+	for _, b := range []struct {
+		name  string
+		start string
+	}{
+		{name: "b9b8cec27035fddf3c7addcf7b76c8dda6be5e76", start: "main"},
+		{name: "9d3d5d486d4c9414321a2df56f2e007c4c2c8fac", start: "main"},
+		{name: "403164dbcb94dfb2b004ce50fc619c1351bbd37e", start: "main"},
+		{name: "0FF3D67C0064A0BB00A0DC35F9441758A3B4149E", start: "main~1"},
+		{name: "6a1e6b9f2c3d4e5f60718293a4b5c6d7e8f90a1b2c3d4e5f60718293a4b5c6d7", start: "main~1"},
+	} {
+		if _, err := util.Git("-C", src, "branch", b.name, b.start); err != nil {
+			t.Fatalf("create branch %s at %s. err: %v", b.name, b.start, err)
+		}
+	}
+
+	dotgit := filepath.Join(t.TempDir(), "vuls-data-raw-test-hash-branches.tar.zst")
+	if err := compress.Compress(src, dotgit); err != nil {
+		t.Fatalf("compress %s. err: %v", src, err)
+	}
+
+	repo, err := remote.NewRepository("ghcr.io/vulsio/vuls-data-db")
+	if err != nil {
+		t.Fatalf("new repository: %v", err)
+	}
+	if err := push(t.Context(), repo, dotgit, "vuls-data-raw-test-hash-branches"); err != nil {
+		t.Fatalf("push %s. err: %v", dotgit, err)
+	}
+
+	type args struct {
+		repository string
+		opts       []pull.Option
+	}
+	tests := []struct {
+		name string
+		args args
+		// wantHead, if set, is what .git/HEAD of the pulled repository holds.
+		wantHead string
+		// wantFiles, if set, are files of the pulled repository and their
+		// contents.
+		wantFiles map[string]string
+		hasError  bool
+		// wantErr is how the error begins.
+		wantErr string
+		// wantErrHas is a part of the error after wantErr: the switch command
+		// that failed.
+		wantErrHas string
+		// wantCommitNotFound is whether errors.Is matches the error with
+		// contains.ErrCommitNotFound.
+		wantCommitNotFound bool
+		// wantExitCode, if set, is the exit status of git that the error
+		// wraps: that of switch.
+		wantExitCode int
+	}{
+		{
+			// The branch would check out main, which deletes the README.md.
+			name: "a commit that a branch at main has as its name",
+			args: args{
+				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test-hash-branches",
+				opts:       []pull.Option{pull.WithCheckout("b9b8cec27035fddf3c7addcf7b76c8dda6be5e76"), pull.WithRestore(true)},
+			},
+			wantHead:  "b9b8cec27035fddf3c7addcf7b76c8dda6be5e76",
+			wantFiles: map[string]string{"README.md": "# vuls-data-raw-test\n"},
+		},
+		{
+			name: "a commit in capitals that a branch at b9b8cec has as its name",
+			args: args{
+				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test-hash-branches",
+				opts:       []pull.Option{pull.WithCheckout("0FF3D67C0064A0BB00A0DC35F9441758A3B4149E"), pull.WithRestore(true)},
+			},
+			wantHead: "0ff3d67c0064a0bb00a0dc35f9441758a3b4149e",
+		},
+		{
+			// The fixture has SHA-1 hashes, so rev-parse reads 64 hex digits
+			// as the branch, whose commit is checked out, detached.
+			name: "64 hex digits that a branch at b9b8cec has as its name",
+			args: args{
+				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test-hash-branches",
+				opts:       []pull.Option{pull.WithCheckout("6a1e6b9f2c3d4e5f60718293a4b5c6d7e8f90a1b2c3d4e5f60718293a4b5c6d7"), pull.WithRestore(true)},
+			},
+			wantHead:  "b9b8cec27035fddf3c7addcf7b76c8dda6be5e76",
+			wantFiles: map[string]string{"README.md": "# vuls-data-raw-test\n"},
+		},
+		{
+			// As a commit pinned before vuls-data-db truncated the history.
+			name: "a hash of no object that a branch at main has as its name",
+			args: args{
+				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test-hash-branches",
+				opts:       []pull.Option{pull.WithCheckout("9d3d5d486d4c9414321a2df56f2e007c4c2c8fac"), pull.WithRestore(true)},
+			},
+			hasError:           true,
+			wantErr:            "9d3d5d486d4c9414321a2df56f2e007c4c2c8fac is not in ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test-hash-branches, whose history may have been truncated or rewritten: switch to 9d3d5d486d4c9414321a2df56f2e007c4c2c8fac: ",
+			wantErrHas:         `switch --detach 9d3d5d486d4c9414321a2df56f2e007c4c2c8fac^{commit}", stderr: "`,
+			wantCommitNotFound: true,
+			wantExitCode:       128,
+		},
+		{
+			// There, though not a commit, so the error of switch is returned
+			// as it is.
+			name: "a hash of a tree that a branch at main has as its name",
+			args: args{
+				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test-hash-branches",
+				opts:       []pull.Option{pull.WithCheckout("403164dbcb94dfb2b004ce50fc619c1351bbd37e"), pull.WithRestore(true)},
+			},
+			hasError:     true,
+			wantErr:      "switch to 403164dbcb94dfb2b004ce50fc619c1351bbd37e: ",
+			wantErrHas:   `switch --detach 403164dbcb94dfb2b004ce50fc619c1351bbd37e^{commit}", stderr: "`,
+			wantExitCode: 128,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			repo, err := remote.NewRepository(tt.args.repository)
+			if err != nil {
+				t.Fatalf("new repository: %v", err)
+			}
+
+			dir := t.TempDir()
+			err = pull.Pull(repo.Reference.String(), append([]pull.Option{pull.WithDir(dir)}, tt.args.opts...)...)
+			switch {
+			case err != nil && !tt.hasError:
+				t.Errorf("unexpected err: %v", err)
+			case err == nil && tt.hasError:
+				t.Error("expected error has not occurred")
+			case err != nil:
+				if !strings.HasPrefix(err.Error(), tt.wantErr) {
+					t.Errorf("Pull() error does not begin with %q, error: %v", tt.wantErr, err)
+				}
+				if !strings.Contains(err.Error(), tt.wantErrHas) {
+					t.Errorf("Pull() error does not hold %q, error: %v", tt.wantErrHas, err)
+				}
+				if got := errors.Is(err, contains.ErrCommitNotFound); got != tt.wantCommitNotFound {
+					t.Errorf("errors.Is(Pull() error, contains.ErrCommitNotFound). expected: %t, actual: %t, error: %v", tt.wantCommitNotFound, got, err)
+				}
+				if tt.wantExitCode != 0 {
+					if ee := (*exec.ExitError)(nil); !errors.As(err, &ee) || ee.ExitCode() != tt.wantExitCode {
+						t.Errorf("Pull() error does not wrap the exit status %d of git, error: %v", tt.wantExitCode, err)
+					}
+				}
+			default:
+				if tt.wantHead != "" {
+					switch bs, err := os.ReadFile(filepath.Join(dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference, ".git", "HEAD")); {
+					case err != nil:
+						t.Errorf("read HEAD. err: %v", err)
+					case strings.TrimSpace(string(bs)) != tt.wantHead:
+						t.Errorf("HEAD. expected: %q, actual: %q", tt.wantHead, strings.TrimSpace(string(bs)))
+					}
+				}
+
+				for name, content := range tt.wantFiles {
+					switch bs, err := os.ReadFile(filepath.Join(dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference, name)); {
+					case err != nil:
+						t.Errorf("read %s. err: %v", name, err)
+					case string(bs) != content:
+						t.Errorf("%s. expected: %q, actual: %q", name, content, string(bs))
+					}
+				}
+			}
+		})
+	}
+}
+
 // TestMissing checks which targets missing takes to name nothing in the
 // fixture: only those that git rev-parse says it cannot resolve, and not when
 // git cannot tell. The fixture gets a second commit, whose hash begins with
@@ -550,6 +743,67 @@ func TestMissing(t *testing.T) {
 			}
 			if got := pull.Missing(dir, tt.target); got != tt.want {
 				t.Errorf("Missing(%q, %q). expected: %t, actual: %t", dir, tt.target, tt.want, got)
+			}
+		})
+	}
+}
+
+// TestFullHash checks which names fullHash takes to have the hex digits of a
+// full hash: 40 or 64, in either case.
+func TestFullHash(t *testing.T) {
+	tests := []struct {
+		name string
+		arg  string
+		want bool
+	}{
+		{
+			name: "40 hex digits",
+			arg:  "b9b8cec27035fddf3c7addcf7b76c8dda6be5e76",
+			want: true,
+		},
+		{
+			name: "40 hex digits in capitals",
+			arg:  "B9B8CEC27035FDDF3C7ADDCF7B76C8DDA6BE5E76",
+			want: true,
+		},
+		{
+			name: "64 hex digits",
+			arg:  "6a1e6b9f2c3d4e5f60718293a4b5c6d7e8f90a1b2c3d4e5f60718293a4b5c6d7",
+			want: true,
+		},
+		{
+			name: "39 hex digits",
+			arg:  "b9b8cec27035fddf3c7addcf7b76c8dda6be5e7",
+		},
+		{
+			name: "41 hex digits",
+			arg:  "b9b8cec27035fddf3c7addcf7b76c8dda6be5e760",
+		},
+		{
+			name: "63 hex digits",
+			arg:  "6a1e6b9f2c3d4e5f60718293a4b5c6d7e8f90a1b2c3d4e5f60718293a4b5c6d",
+		},
+		{
+			name: "65 hex digits",
+			arg:  "6a1e6b9f2c3d4e5f60718293a4b5c6d7e8f90a1b2c3d4e5f60718293a4b5c6d70",
+		},
+		{
+			name: "40 characters, one of them not a hex digit",
+			arg:  "b9b8cec27035fddf3c7addcf7b76c8dda6be5e7g",
+		},
+		{
+			name: "a full hash followed by ~1",
+			arg:  "b9b8cec27035fddf3c7addcf7b76c8dda6be5e76~1",
+		},
+		{
+			name: "empty",
+			arg:  "",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := pull.FullHash(tt.arg); got != tt.want {
+				t.Errorf("FullHash(%q). expected: %t, actual: %t", tt.arg, tt.want, got)
 			}
 		})
 	}
@@ -687,31 +941,41 @@ func setup(url string) error {
 		// fetch that wrote nothing back leaves behind.
 		{fixture: "vuls-data-raw-test-emptied", tags: []string{"vuls-data-raw-test-emptied"}},
 	} {
-		bs, err := os.ReadFile(filepath.Join("testdata", "fixtures", fmt.Sprintf("%s.tar.zst", f.fixture)))
-		if err != nil {
-			return errors.Wrapf(err, "read %q", filepath.Join("testdata", "fixtures", fmt.Sprintf("%s.tar.zst", f.fixture)))
+		if err := push(ctx, repo, filepath.Join("testdata", "fixtures", fmt.Sprintf("%s.tar.zst", f.fixture)), f.tags...); err != nil {
+			return errors.Wrapf(err, "push %s", f.fixture)
 		}
+	}
 
-		layerDescriptor, err := oras.PushBytes(ctx, repo, "application/vnd.vulsio.vuls-data-db.dotgit.layer.v1.tar+zstd", []byte(bs))
-		if err != nil {
-			return errors.Wrap(err, "push dotgit layer")
-		}
-		if layerDescriptor.Annotations == nil {
-			layerDescriptor.Annotations = make(map[string]string)
-		}
-		if _, ok := layerDescriptor.Annotations[ocispec.AnnotationTitle]; !ok {
-			layerDescriptor.Annotations[ocispec.AnnotationTitle] = fmt.Sprintf("%s.tar.zst", f.fixture)
-		}
+	return nil
+}
 
-		desc, err := oras.PackManifest(ctx, repo, oras.PackManifestVersion1_1, "application/vnd.vulsio.vuls-data-db.dotgit+type", oras.PackManifestOptions{Layers: []ocispec.Descriptor{layerDescriptor}})
-		if err != nil {
-			return errors.Wrap(err, "pack manifest")
-		}
+// push pushes the dotgit at path to repo, as vuls-data-db publishes one, and
+// tags it with tags.
+func push(ctx context.Context, repo *remote.Repository, path string, tags ...string) error {
+	bs, err := os.ReadFile(path)
+	if err != nil {
+		return errors.Wrapf(err, "read %q", path)
+	}
 
-		for _, tag := range f.tags {
-			if err := repo.Tag(ctx, desc, tag); err != nil {
-				return errors.Wrapf(err, "tagged %q for %+v", tag, desc)
-			}
+	layerDescriptor, err := oras.PushBytes(ctx, repo, "application/vnd.vulsio.vuls-data-db.dotgit.layer.v1.tar+zstd", bs)
+	if err != nil {
+		return errors.Wrap(err, "push dotgit layer")
+	}
+	if layerDescriptor.Annotations == nil {
+		layerDescriptor.Annotations = make(map[string]string)
+	}
+	if _, ok := layerDescriptor.Annotations[ocispec.AnnotationTitle]; !ok {
+		layerDescriptor.Annotations[ocispec.AnnotationTitle] = filepath.Base(path)
+	}
+
+	desc, err := oras.PackManifest(ctx, repo, oras.PackManifestVersion1_1, "application/vnd.vulsio.vuls-data-db.dotgit+type", oras.PackManifestOptions{Layers: []ocispec.Descriptor{layerDescriptor}})
+	if err != nil {
+		return errors.Wrap(err, "pack manifest")
+	}
+
+	for _, tag := range tags {
+		if err := repo.Tag(ctx, desc, tag); err != nil {
+			return errors.Wrapf(err, "tagged %q for %+v", tag, desc)
 		}
 	}
 

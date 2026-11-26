@@ -61,13 +61,16 @@ func (c checkoutOption) apply(opts *options) {
 }
 
 // WithCheckout sets what Pull checks out after the pull: a branch, a tag or a
-// commit, main by default, or nothing for "". If checkout names nothing in the
-// pulled dotgit, such as a commit pinned before vuls-data-db truncated the
-// history, errors.Is matches the error with contains.ErrCommitNotFound. It
-// does not when Pull cannot tell: for a name that begins with "-", or holds
-// "..." or ":", for one with an abbreviated hash that more than one object
-// begins with, such as 01d6 or 01d6~1, or when git cannot be run or fails on
-// the repository.
+// commit, main by default, or nothing for "". A full hash is checked out as
+// the commit it names, as contains and show read it, even where a branch has
+// it as its name. A branch whose name has the hex digits of the other kind of
+// hash, such as 64 in a repository of SHA-1 hashes, is checked out at its
+// commit, detached. If checkout names nothing in the pulled dotgit, such as a
+// commit pinned before vuls-data-db truncated the history, errors.Is matches
+// the error with contains.ErrCommitNotFound. It does not when Pull cannot
+// tell: for a name that begins with "-", or holds "..." or ":", for one with
+// an abbreviated hash that more than one object begins with, such as 01d6 or
+// 01d6~1, or when git cannot be run or fails on the repository.
 func WithCheckout(checkout string) Option {
 	return checkoutOption(checkout)
 }
@@ -138,8 +141,21 @@ func Pull(repository string, opts ...Option) error {
 	}
 
 	if options.checkout != "" {
-		if _, err := util.Git("-C", filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference), "show-ref", "--verify", "--quiet", fmt.Sprintf("refs/heads/%s", options.checkout)); err != nil { // tag or commit
-			if _, err := util.Git("-C", filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference), "switch", "--detach", options.checkout); err != nil {
+		if _, err := util.Git("-C", filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference), "show-ref", "--verify", "--quiet", fmt.Sprintf("refs/heads/%s", options.checkout)); err != nil || fullHash(options.checkout) { // tag, commit or full hash
+			// rev-parse, and so contains and show, read a full hash as the
+			// object it names, even where a branch has it as its name: git
+			// ignores such a branch there, and warns that it may have been
+			// made by mistake. switch takes a name for a branch first, even
+			// with --detach, so it would check the branch out instead. No
+			// branch name holds a "^", so switch reads <hash>^{commit} as
+			// rev-parse does. For a name of the other length, as 40 hex
+			// digits in a repository of SHA-256 hashes, rev-parse reads the
+			// branch, whose commit is then checked out, detached.
+			rev := options.checkout
+			if err == nil {
+				rev = fmt.Sprintf("%s^{commit}", options.checkout)
+			}
+			if _, err := util.Git("-C", filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference), "switch", "--detach", rev); err != nil {
 				// switch reports a commit that is not in the repository
 				// as "unable to read tree", which reads like corruption,
 				// so if rev-parse finds that the target names nothing in
@@ -273,6 +289,12 @@ func abbreviation(target string) string {
 		return ""
 	}
 	return rev
+}
+
+// fullHash reports whether name has the hex digits of a full hash, in either
+// case: 40, as a SHA-1 hash has, or 64, as a SHA-256 hash has.
+func fullHash(name string) bool {
+	return (len(name) == 40 || len(name) == 64) && strings.Trim(name, "0123456789abcdefABCDEF") == ""
 }
 
 // pullLayer fetches the layer and extracts it into dir.
