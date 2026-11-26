@@ -14,6 +14,7 @@ func TestFetch(t *testing.T) {
 	tests := []struct {
 		name     string
 		dir      string // the tree the run starts in, as the last run left it
+		origin   string // the pages origin/ starts with, copied into dir
 		saved    string // a directory of saved pages, every one given to the run
 		golden   string
 		wantErr  string
@@ -31,10 +32,13 @@ func TestFetch(t *testing.T) {
 			golden: filepath.Join("testdata", "golden", "happy"),
 		},
 		{
-			// A run given no page reads the pages origin/ kept, and writes
-			// the tree the last run wrote.
+			// A run given no page reads the pages origin/ kept, as the job in
+			// vuls-data-db does on the pages restored there, and rebuilds the
+			// rest of the tree: a table no page holds any more goes, and the
+			// README is written again.
 			name:   "reread",
-			dir:    filepath.Join("testdata", "golden", "happy"),
+			dir:    filepath.Join("testdata", "fixtures", "reread"),
+			origin: filepath.Join("testdata", "golden", "happy", "origin"),
 			golden: filepath.Join("testdata", "golden", "happy"),
 		},
 		{
@@ -73,6 +77,12 @@ func TestFetch(t *testing.T) {
 			hasError: true,
 		},
 		{
+			name:     "saved-two-articles",
+			saved:    filepath.Join("testdata", "fixtures", "saved-two-articles"),
+			wantErr:  "unexpected article element",
+			hasError: true,
+		},
+		{
 			// The page that introduces RHEL 10's repository pages holds no
 			// table of its own.
 			name:     "saved-no-table",
@@ -92,7 +102,7 @@ func TestFetch(t *testing.T) {
 			// cut refuses such a page, but origin/ can be changed by hand.
 			name:     "no-table",
 			dir:      filepath.Join("testdata", "fixtures", "no-table"),
-			wantErr:  "no table found. page:",
+			wantErr:  "page: 10/plan-repositories.html: no table found",
 			hasError: true,
 		},
 		{
@@ -136,6 +146,11 @@ func TestFetch(t *testing.T) {
 					t.Fatalf("copy %s: %v", tt.dir, err)
 				}
 			}
+			if tt.origin != "" {
+				if err := os.CopyFS(filepath.Join(dir, "origin"), os.DirFS(tt.origin)); err != nil {
+					t.Fatalf("copy %s: %v", tt.origin, err)
+				}
+			}
 			var saved []string
 			if tt.saved != "" {
 				ms, err := filepath.Glob(filepath.Join(tt.saved, "*.html"))
@@ -161,6 +176,48 @@ func TestFetch(t *testing.T) {
 				if err := utiltest.Diff(tt.golden, dir); err != nil {
 					t.Error("unexpected error:", err)
 				}
+			}
+		})
+	}
+}
+
+// TestFetch_failedRun checks that a run that fails on a page given leaves the
+// tree as it was, the pages origin/ kept included.
+func TestFetch_failedRun(t *testing.T) {
+	tests := []struct {
+		name    string
+		wantErr string
+	}{
+		{
+			// A page that cut takes, with a table the fetch does not know.
+			name:    "bad-header",
+			wantErr: "unexpected first header",
+		},
+		{
+			// A page under a new name that holds a table a page kept holds.
+			name:    "duplicate",
+			wantErr: "duplicate table",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			golden := filepath.Join("testdata", "golden", "happy")
+			dir := t.TempDir()
+			if err := os.CopyFS(dir, os.DirFS(golden)); err != nil {
+				t.Fatalf("copy %s: %v", golden, err)
+			}
+			saved, err := filepath.Glob(filepath.Join("testdata", "fixtures", "failed-run", tt.name, "*.html"))
+			if err != nil {
+				t.Fatalf("glob: %v", err)
+			}
+
+			err = packageManifest.Fetch(saved, packageManifest.WithDir(dir))
+			if err == nil || !strings.Contains(err.Error(), tt.wantErr) {
+				t.Errorf("Fetch() error = %v, want it to contain %q", err, tt.wantErr)
+			}
+			if err := utiltest.Diff(golden, dir); err != nil {
+				t.Error("unexpected error:", err)
 			}
 		})
 	}

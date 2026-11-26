@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/fs"
 	"log/slog"
+	"maps"
 	"net/url"
 	"os"
 	"path/filepath"
@@ -71,14 +72,8 @@ func Fetch(saved []string, opts ...Option) error {
 		o.apply(options)
 	}
 
-	// Every saved page is read before any is stored, so that one that is not
-	// a page of the manifest leaves the tree as it was.
-	type cutPage struct {
-		name    string // relative to origin/, e.g. 10/plan-baseos.html
-		article []byte
-	}
-	cuts := make([]cutPage, 0, len(saved))
-	from := make(map[string]string, len(saved)) // the page stored -> the file it is saved as
+	given := make(map[string][]byte, len(saved)) // the name a page is stored under in origin/ -> the page, cut down
+	from := make(map[string]string, len(saved))  // the name a page is stored under in origin/ -> the file it is saved as
 	for _, s := range saved {
 		name, article, err := cut(s)
 		if err != nil {
@@ -87,32 +82,64 @@ func Fetch(saved []string, opts ...Option) error {
 		if prev, ok := from[name]; ok {
 			return errors.Errorf("duplicate page. %s and %s are both %s", prev, s, name)
 		}
-		from[name] = s
-		cuts = append(cuts, cutPage{name: name, article: article})
+		given[name], from[name] = article, s
 	}
 
 	origin := filepath.Join(options.dir, "origin")
-	for _, c := range cuts {
-		slog.Info("Store RHEL Package Manifest page", slog.String("page", c.name), slog.String("from", from[c.name]))
+	pages, err := listPages(origin, slices.Collect(maps.Keys(given)))
+	if err != nil {
+		return errors.Wrapf(err, "list pages in %s", origin)
+	}
 
-		p, err := utilfilepath.Join(origin, c.name)
+	// Every table is read before anything is written, so that a run that
+	// fails, on a page given or on one stored, leaves the tree as it was: a
+	// page given is not stored unless the whole of origin/ reads with it.
+	var tables []table
+	written := make(map[string]string) // the file a table is written to -> the page it is read from
+	for _, p := range pages {
+		slog.Info("Read RHEL Package Manifest", slog.String("version", p.major), slog.String("page", p.path))
+
+		bs, ok := given[p.path]
+		if !ok {
+			bs, err = os.ReadFile(filepath.Join(origin, filepath.FromSlash(p.path)))
+			if err != nil {
+				return errors.Wrapf(err, "read %s", filepath.Join(origin, filepath.FromSlash(p.path)))
+			}
+		}
+
+		ts, err := readPage(p.major, bs)
 		if err != nil {
-			return errors.Wrap(err, "join")
+			return errors.Wrapf(err, "read RHEL %s package manifest. page: %s", p.major, p.path)
 		}
-		if err := os.MkdirAll(filepath.Dir(p), 0755); err != nil {
-			return errors.Wrapf(err, "mkdir %s", filepath.Dir(p))
-		}
-		if err := os.WriteFile(p, c.article, 0666); err != nil {
-			return errors.Wrapf(err, "write %s", p)
+		for _, t := range ts {
+			// A second table of the same name would be written over the
+			// first, as when a release's manifest moves to new pages and the
+			// old page is kept.
+			if prev, ok := written[t.name]; ok {
+				return errors.Errorf("duplicate table. %s is in both %s and %s", t.name, prev, p.path)
+			}
+			written[t.name] = p.path
+			tables = append(tables, t)
 		}
 	}
 
-	// The pages are listed before the output is cleaned, so that origin/
-	// holding anything but pages fails with the output of the last run still
-	// in place.
-	pages, err := findPages(origin)
-	if err != nil {
-		return errors.Wrapf(err, "find pages in %s", origin)
+	for _, p := range pages {
+		article, ok := given[p.path]
+		if !ok {
+			continue
+		}
+		slog.Info("Store RHEL Package Manifest page", slog.String("page", p.path), slog.String("from", from[p.path]))
+
+		path, err := utilfilepath.Join(origin, filepath.FromSlash(p.path))
+		if err != nil {
+			return errors.Wrap(err, "join")
+		}
+		if err := os.MkdirAll(filepath.Dir(path), 0755); err != nil {
+			return errors.Wrapf(err, "mkdir %s", filepath.Dir(path))
+		}
+		if err := os.WriteFile(path, article, 0666); err != nil {
+			return errors.Wrapf(err, "write %s", path)
+		}
 	}
 
 	// origin/ is the input, which no fetch can rebuild, so it is kept with
@@ -122,63 +149,17 @@ func Fetch(saved []string, opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	if err := os.MkdirAll(options.dir, 0755); err != nil {
-		return errors.Wrapf(err, "mkdir %s", options.dir)
-	}
 	if err := os.WriteFile(filepath.Join(options.dir, "README.md"), readme(pages), 0666); err != nil {
 		return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "README.md"))
 	}
 
-	written := make(map[string]string) // the file a table is written to -> the page it is read from
-	for _, p := range pages {
-		slog.Info("Read RHEL Package Manifest", slog.String("version", p.major), slog.String("page", p.path))
-
-		doc, err := func() (*goquery.Document, error) {
-			f, err := os.Open(filepath.Join(origin, p.path))
-			if err != nil {
-				return nil, errors.Wrapf(err, "open %s", filepath.Join(origin, p.path))
-			}
-			defer f.Close()
-
-			doc, err := goquery.NewDocumentFromReader(f)
-			if err != nil {
-				return nil, errors.Wrap(err, "parse html")
-			}
-
-			return doc, nil
-		}()
+	for _, t := range tables {
+		path, err := utilfilepath.Join(options.dir, t.name)
 		if err != nil {
-			return errors.Wrapf(err, "read RHEL %s package manifest. page: %s", p.major, p.path)
+			return errors.Wrap(err, "join")
 		}
-
-		// A page kept for its tables that holds none is not a page of the
-		// manifest. cut refuses one, but origin/ can be changed by hand.
-		tables := doc.Find("table")
-		if tables.Length() == 0 {
-			return errors.Errorf("no table found. page: %s", p.path)
-		}
-
-		for idx, s := range tables.EachIter() {
-			name, t, err := readTable(p.major, s)
-			if err != nil {
-				return errors.Wrapf(err, "read table. major: %s, page: %s, index: %d", p.major, p.path, idx)
-			}
-
-			// A second table of the same name would be written over the
-			// first, as when a release's manifest moves to new pages and the
-			// old page is kept.
-			if prev, ok := written[name]; ok {
-				return errors.Errorf("duplicate table. %s is in both %s and %s", name, prev, p.path)
-			}
-			written[name] = p.path
-
-			path, err := utilfilepath.Join(options.dir, name)
-			if err != nil {
-				return errors.Wrap(err, "join")
-			}
-			if err := util.Write(path, t); err != nil {
-				return errors.Wrapf(err, "write %s", path)
-			}
+		if err := util.Write(path, t.value); err != nil {
+			return errors.Wrapf(err, "write %s", path)
 		}
 	}
 
@@ -235,7 +216,31 @@ func cut(path string) (string, []byte, error) {
 
 type page struct {
 	major string
-	path  string // relative to origin/, e.g. 10/plan-baseos.html
+	path  string // relative to origin/, slash-separated, e.g. 10/plan-baseos.html
+}
+
+// listPages lists the pages stored in origin/, and those to be stored there
+// under the names given, over a page of the same name.
+func listPages(origin string, given []string) ([]page, error) {
+	pages, err := findPages(origin)
+	if err != nil {
+		// No page has been stored yet, and the pages given are the first.
+		if !errors.Is(err, fs.ErrNotExist) || len(given) == 0 {
+			return nil, errors.Wrapf(err, "find pages in %s", origin)
+		}
+		pages = nil
+	}
+
+	for _, name := range given {
+		if slices.ContainsFunc(pages, func(p page) bool { return p.path == name }) {
+			continue
+		}
+		major, _, _ := strings.Cut(name, "/")
+		pages = append(pages, page{major: major, path: name})
+	}
+	slices.SortFunc(pages, comparePages)
+
+	return pages, nil
 }
 
 // findPages lists every .html file in each directory of dir, as a page of the
@@ -248,21 +253,13 @@ func findPages(dir string) ([]page, error) {
 		return nil, errors.Wrapf(err, "read %s", dir)
 	}
 
-	majors := make([]string, 0, len(es))
+	var pages []page
 	for _, e := range es {
 		if !e.IsDir() {
 			return nil, errors.Errorf("unexpected entry. expected: %s, actual: %q", "a directory for a major release", filepath.Join(dir, e.Name()))
 		}
-		majors = append(majors, e.Name())
-	}
-	// 8, 9, 10 rather than 10, 8, 9: of two numbers, the longer is greater.
-	slices.SortFunc(majors, func(a, b string) int {
-		return cmp.Or(cmp.Compare(len(a), len(b)), strings.Compare(a, b))
-	})
 
-	var pages []page
-	for _, major := range majors {
-		if err := filepath.WalkDir(filepath.Join(dir, major), func(path string, d fs.DirEntry, err error) error {
+		if err := filepath.WalkDir(filepath.Join(dir, e.Name()), func(path string, d fs.DirEntry, err error) error {
 			if err != nil {
 				return err
 			}
@@ -277,15 +274,59 @@ func findPages(dir string) ([]page, error) {
 			if err != nil {
 				return errors.Wrapf(err, "rel %s", path)
 			}
-			pages = append(pages, page{major: major, path: rel})
+			pages = append(pages, page{major: e.Name(), path: filepath.ToSlash(rel)})
 
 			return nil
 		}); err != nil {
-			return nil, errors.Wrapf(err, "walk %s", filepath.Join(dir, major))
+			return nil, errors.Wrapf(err, "walk %s", filepath.Join(dir, e.Name()))
 		}
 	}
+	slices.SortFunc(pages, comparePages)
 
 	return pages, nil
+}
+
+// comparePages orders pages by release, 8, 9, 10 rather than 10, 8, 9 (of two
+// numbers, the longer is greater), then as a walk of origin/ visits them.
+func comparePages(a, b page) int {
+	return cmp.Or(
+		cmp.Compare(len(a.major), len(b.major)),
+		strings.Compare(a.major, b.major),
+		slices.Compare(strings.Split(a.path, "/"), strings.Split(b.path, "/")),
+	)
+}
+
+// table is a table read from a page: the name of the file it is written to,
+// relative to the output directory, and what is written there.
+type table struct {
+	name  string
+	value any
+}
+
+// readPage reads the tables of a page of the given major release.
+func readPage(major string, bs []byte) ([]table, error) {
+	doc, err := goquery.NewDocumentFromReader(bytes.NewReader(bs))
+	if err != nil {
+		return nil, errors.Wrap(err, "parse html")
+	}
+
+	// A page kept for its tables that holds none is not a page of the
+	// manifest. cut refuses one, but origin/ can be changed by hand.
+	ss := doc.Find("table")
+	if ss.Length() == 0 {
+		return nil, errors.New("no table found")
+	}
+
+	tables := make([]table, 0, ss.Length())
+	for idx, s := range ss.EachIter() {
+		name, value, err := readTable(major, s)
+		if err != nil {
+			return nil, errors.Wrapf(err, "read table. index: %d", idx)
+		}
+		tables = append(tables, table{name: name, value: value})
+	}
+
+	return tables, nil
 }
 
 func readme(pages []page) []byte {
