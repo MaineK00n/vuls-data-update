@@ -498,6 +498,83 @@ func TestParseChecksums(t *testing.T) {
 	}
 }
 
+func TestParseSource(t *testing.T) {
+	tests := []struct {
+		name string
+		args string
+		// want maps each source to the Version of the paragraph taken for it.
+		want    map[string]string
+		wantErr bool
+	}{
+		{
+			name: "a paragraph per source",
+			args: "Package: hello\nVersion: 2.10-3\n\nPackage: bye\nVersion: 1.0-1\n",
+			want: map[string]string{"hello": "2.10-3", "bye": "1.0-1"},
+		},
+		{
+			// stretch's runc: the newer version after the one stretch has is
+			// kept only for the Built-Using of other packages.
+			name: "Extra-Source-Only after the regular paragraph",
+			args: "Package: runc\nVersion: 0.1.1+dfsg1-2+deb9u1\n\nPackage: runc\nVersion: 1.0.0~rc2+git20161109.131.5137186-2\nExtra-Source-Only: yes\n",
+			want: map[string]string{"runc": "0.1.1+dfsg1-2+deb9u1"},
+		},
+		{
+			name: "Extra-Source-Only before the regular paragraph",
+			args: "Package: gnutls28\nVersion: 3.7.1-5+deb11u3\nExtra-Source-Only: yes\n\nPackage: gnutls28\nVersion: 3.7.1-5+deb11u5\n",
+			want: map[string]string{"gnutls28": "3.7.1-5+deb11u5"},
+		},
+		{
+			name: "Extra-Source-Only between regular paragraphs",
+			args: "Package: linux\nVersion: 5.10.218-1\n\nPackage: linux\nVersion: 5.10.220-1\nExtra-Source-Only: yes\n\nPackage: linux\nVersion: 5.10.223-1\n",
+			want: map[string]string{"linux": "5.10.223-1"},
+		},
+		{
+			name: "regular paragraph between Extra-Source-Only ones",
+			args: "Package: glibc\nVersion: 2.24-11+deb9u1\nExtra-Source-Only: yes\n\nPackage: glibc\nVersion: 2.24-11+deb9u3\n\nPackage: glibc\nVersion: 2.24-11+deb9u4\nExtra-Source-Only: yes\n",
+			want: map[string]string{"glibc": "2.24-11+deb9u3"},
+		},
+		{
+			// An archived suite can have more than one version the suite had.
+			name: "regular paragraphs only",
+			args: "Package: thunderbird\nVersion: 1:91.13.0-1~deb11u1\n\nPackage: thunderbird\nVersion: 1:115.12.0-1~deb11u1\n",
+			want: map[string]string{"thunderbird": "1:115.12.0-1~deb11u1"},
+		},
+		{
+			name: "Extra-Source-Only paragraphs only",
+			args: "Package: zlib\nVersion: 1:1.2.11.dfsg-2\nExtra-Source-Only: yes\n\nPackage: zlib\nVersion: 1:1.2.11.dfsg-2+deb11u2\nExtra-Source-Only: yes\n",
+			want: map[string]string{"zlib": "1:1.2.11.dfsg-2+deb11u2"},
+		},
+		{
+			name: "paragraph without a Package",
+			args: "Version: 1.0-1\n\nPackage: hello\nVersion: 2.10-3\n",
+			want: map[string]string{"hello": "2.10-3"},
+		},
+		{
+			name:    "malformed paragraph",
+			args:    "Package: hello\nPackage: bye\n",
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			sources, err := salsa.ParseSource(strings.NewReader(tt.args))
+			if (err != nil) != tt.wantErr {
+				t.Errorf("ParseSource() error = %v, wantErr %v", err, tt.wantErr)
+			}
+			if err != nil {
+				return
+			}
+			got := make(map[string]string, len(sources))
+			for name, p := range sources {
+				got[name] = p["Version"]
+			}
+			if diff := cmp.Diff(tt.want, got); diff != "" {
+				t.Errorf("(-expected +got):\n%s", diff)
+			}
+		})
+	}
+}
+
 func TestParseDeb822(t *testing.T) {
 	tests := []struct {
 		name    string

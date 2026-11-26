@@ -1345,7 +1345,12 @@ func parseCompressedSource(bs []byte, compress string) (map[string]paragraph, er
 }
 
 // parseSource reads the paragraphs of a Sources file, a deb822 file, by the
-// source package each describes, which its Package field names.
+// source package each describes, which its Package field names. A source can
+// have more than one paragraph: older or newer versions kept only for the
+// Built-Using of other packages, marked Extra-Source-Only, besides the version
+// the suite has, and in an archived suite more than one version of that. Of
+// these, the last paragraph not marked Extra-Source-Only is taken, and the last
+// paragraph only for a source all of whose paragraphs are.
 func parseSource(r io.Reader) (map[string]paragraph, error) {
 	ps, err := parseDeb822(r)
 	if err != nil {
@@ -1359,8 +1364,17 @@ func parseSource(r io.Reader) (map[string]paragraph, error) {
 			slog.Warn("Package field not found")
 			continue
 		}
-		m[name] = p
+		if q, ok := m[name]; !ok || extraSourceOnly(q) || !extraSourceOnly(p) {
+			m[name] = p
+		}
 	}
 
 	return m, nil
+}
+
+// extraSourceOnly reports whether the Sources paragraph p is of a source kept in
+// the suite only for the Built-Using of other packages.
+func extraSourceOnly(p paragraph) bool {
+	v, _ := p.field("Extra-Source-Only")
+	return v == "yes"
 }
