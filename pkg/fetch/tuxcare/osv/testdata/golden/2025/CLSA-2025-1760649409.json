@@ -1,0 +1,157 @@
+{
+	"schema_version": "1.9.0",
+	"id": "CLSA-2025-1760649409",
+	"modified": "2026-06-04T10:03:34.707879Z",
+	"published": "2025-10-24T15:08:14Z",
+	"upstream": [
+		"CVE-2025-6965"
+	],
+	"summary": "Fix CVE(s): CVE-2025-6965",
+	"details": "   * SECURITY UPDATE: excessive aggregate terms potentially leading to memory\n     corruption\n     - debian/patches/CVE-2025-6965.patch: fix a potential memory corruption if the number\n       of aggregate terms in a query exceeds the maximum number of columns\n     - CVE-2025-6965",
+	"affected": [
+		{
+			"package": {
+				"ecosystem": "TuxCare:Debian:10",
+				"name": "lemon",
+				"purl": "pkg:deb/tuxcare/lemon?distro=debian-10"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "3.31.1-4ubuntu0.7+tuxcare.els1"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://github.com/cloudlinux/tuxcare-osv/tree/main/data/els_os/debian10els/CLSA-2025-1760649409.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "TuxCare:Debian:10",
+				"name": "libsqlite3-0",
+				"purl": "pkg:deb/tuxcare/libsqlite3-0?distro=debian-10"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "3.31.1-4ubuntu0.7+tuxcare.els1"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://github.com/cloudlinux/tuxcare-osv/tree/main/data/els_os/debian10els/CLSA-2025-1760649409.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "TuxCare:Debian:10",
+				"name": "libsqlite3-dev",
+				"purl": "pkg:deb/tuxcare/libsqlite3-dev?distro=debian-10"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "3.31.1-4ubuntu0.7+tuxcare.els1"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://github.com/cloudlinux/tuxcare-osv/tree/main/data/els_os/debian10els/CLSA-2025-1760649409.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "TuxCare:Debian:10",
+				"name": "libsqlite3-tcl",
+				"purl": "pkg:deb/tuxcare/libsqlite3-tcl?distro=debian-10"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "3.31.1-4ubuntu0.7+tuxcare.els1"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://github.com/cloudlinux/tuxcare-osv/tree/main/data/els_os/debian10els/CLSA-2025-1760649409.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "TuxCare:Debian:10",
+				"name": "sqlite3",
+				"purl": "pkg:deb/tuxcare/sqlite3?distro=debian-10"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "3.31.1-4ubuntu0.7+tuxcare.els1"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://github.com/cloudlinux/tuxcare-osv/tree/main/data/els_os/debian10els/CLSA-2025-1760649409.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "TuxCare:Debian:10",
+				"name": "sqlite3-doc",
+				"purl": "pkg:deb/tuxcare/sqlite3-doc?distro=debian-10"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "3.31.1-4ubuntu0.7+tuxcare.els1"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://github.com/cloudlinux/tuxcare-osv/tree/main/data/els_os/debian10els/CLSA-2025-1760649409.json"
+			}
+		}
+	],
+	"references": [
+		{
+			"type": "ADVISORY",
+			"url": "https://errata.tuxcare.com/els_os/debian10els/CLSA-2025-1760649409.html"
+		}
+	]
+}
