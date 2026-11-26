@@ -36,6 +36,27 @@ func TestFetch(t *testing.T) {
 			wantErr:  `unexpected package. expected: "go", actual: "golang"`,
 			hasError: true,
 		},
+		{
+			// CVE-2002-0640 is listed in templateFiles: upstream left template
+			// lines in its Patches_ sections unfilled, and they are skipped.
+			name:     "template-lines",
+			testdata: "testdata/fixtures/template-lines/windriver-cve-tracker",
+		},
+		{
+			// Once upstream fills them in, the entry has to go.
+			name:     "template-lines-stale",
+			testdata: "testdata/fixtures/template-lines-stale/windriver-cve-tracker",
+			wantErr:  "remove it from templateFiles",
+			hasError: true,
+		},
+		{
+			// A file not listed is held to the status line checks, and the
+			// template line names no package of its section.
+			name:     "template-lines-unlisted",
+			testdata: "testdata/fixtures/template-lines-unlisted/windriver-cve-tracker",
+			wantErr:  `unexpected package. expected: "openssh", actual: "rcpl}_{package}"`,
+			hasError: true,
+		},
 	}
 
 	for _, tt := range tests {
