@@ -1,4 +1,9 @@
 {
 	"id": "microsoft-wsusscn2",
-	"name": "Microsoft WSUSSCN2"
+	"name": "Microsoft WSUSSCN2",
+	"extracted": {
+		"builds": [
+			"vuls-data-update (devel)"
+		]
+	}
 }

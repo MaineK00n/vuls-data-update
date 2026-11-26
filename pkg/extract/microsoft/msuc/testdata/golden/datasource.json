@@ -1,4 +1,9 @@
 {
 	"id": "microsoft-msuc",
-	"name": "Microsoft Update Catalog"
+	"name": "Microsoft Update Catalog",
+	"extracted": {
+		"builds": [
+			"vuls-data-update (devel)"
+		]
+	}
 }

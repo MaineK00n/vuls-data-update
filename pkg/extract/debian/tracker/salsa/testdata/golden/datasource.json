@@ -1,4 +1,9 @@
 {
 	"id": "debian-security-tracker-salsa",
-	"name": "Debian Security Tracker Salsa"
+	"name": "Debian Security Tracker Salsa",
+	"extracted": {
+		"builds": [
+			"vuls-data-update (devel)"
+		]
+	}
 }

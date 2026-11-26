@@ -1,4 +1,9 @@
 {
 	"id": "epss",
-	"name": "EPSS: Exploit Prediction Scoring System"
+	"name": "EPSS: Exploit Prediction Scoring System",
+	"extracted": {
+		"builds": [
+			"vuls-data-update (devel)"
+		]
+	}
 }

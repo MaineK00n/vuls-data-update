@@ -1,4 +1,9 @@
 {
 	"id": "alma-errata",
-	"name": "AlmaLinux Errata"
+	"name": "AlmaLinux Errata",
+	"extracted": {
+		"builds": [
+			"vuls-data-update (devel)"
+		]
+	}
 }

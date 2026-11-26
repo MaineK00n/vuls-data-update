@@ -1,4 +1,9 @@
 {
 	"id": "amazon",
-	"name": "Amazon Linux Security Center"
+	"name": "Amazon Linux Security Center",
+	"extracted": {
+		"builds": [
+			"vuls-data-update (devel)"
+		]
+	}
 }

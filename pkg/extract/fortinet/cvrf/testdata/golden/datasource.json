@@ -1,4 +1,9 @@
 {
 	"id": "fortinet-cvrf",
-	"name": "Fortinet PSIRT Advisories (CVRF)"
+	"name": "Fortinet PSIRT Advisories (CVRF)",
+	"extracted": {
+		"builds": [
+			"vuls-data-update (devel)"
+		]
+	}
 }

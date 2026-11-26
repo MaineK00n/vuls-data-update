@@ -1,4 +1,9 @@
 {
 	"id": "nuclei-repository",
-	"name": "Nuclei Templates Repository"
+	"name": "Nuclei Templates Repository",
+	"extracted": {
+		"builds": [
+			"vuls-data-update (devel)"
+		]
+	}
 }

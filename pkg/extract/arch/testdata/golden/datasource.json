@@ -1,4 +1,9 @@
 {
 	"id": "arch",
-	"name": "Arch Linux Vulnerability Group"
+	"name": "Arch Linux Vulnerability Group",
+	"extracted": {
+		"builds": [
+			"vuls-data-update (devel)"
+		]
+	}
 }

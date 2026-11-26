@@ -1,4 +1,9 @@
 {
 	"id": "vulncheck-kev",
-	"name": "VulnCheck Known Exploited Vulnerabilities"
+	"name": "VulnCheck Known Exploited Vulnerabilities",
+	"extracted": {
+		"builds": [
+			"vuls-data-update (devel)"
+		]
+	}
 }

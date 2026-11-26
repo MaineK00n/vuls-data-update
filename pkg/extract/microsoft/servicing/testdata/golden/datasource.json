@@ -1,4 +1,9 @@
 {
 	"id": "microsoft-servicing",
-	"name": "Microsoft Servicing Articles"
+	"name": "Microsoft Servicing Articles",
+	"extracted": {
+		"builds": [
+			"vuls-data-update (devel)"
+		]
+	}
 }

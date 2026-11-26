@@ -1,4 +1,9 @@
 {
 	"id": "metasploit",
-	"name": "Metasploit Framework"
+	"name": "Metasploit Framework",
+	"extracted": {
+		"builds": [
+			"vuls-data-update (devel)"
+		]
+	}
 }

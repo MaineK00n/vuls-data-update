@@ -1,4 +1,9 @@
 {
 	"id": "apple-security-releases",
-	"name": "Apple Security Releases"
+	"name": "Apple Security Releases",
+	"extracted": {
+		"builds": [
+			"vuls-data-update (devel)"
+		]
+	}
 }

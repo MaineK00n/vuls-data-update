@@ -1,4 +1,9 @@
 {
 	"id": "nvd-api-cve",
-	"name": "NVD API CVE"
+	"name": "NVD API CVE",
+	"extracted": {
+		"builds": [
+			"vuls-data-update (devel)"
+		]
+	}
 }

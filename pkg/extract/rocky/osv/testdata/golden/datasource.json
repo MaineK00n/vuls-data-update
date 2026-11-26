@@ -1,4 +1,9 @@
 {
 	"id": "rocky-osv",
-	"name": "Rocky Linux OSV"
+	"name": "Rocky Linux OSV",
+	"extracted": {
+		"builds": [
+			"vuls-data-update (devel)"
+		]
+	}
 }

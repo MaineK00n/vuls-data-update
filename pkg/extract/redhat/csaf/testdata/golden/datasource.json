@@ -1,4 +1,9 @@
 {
 	"id": "redhat-csaf",
-	"name": "RedHat Enterprise Linux CSAF"
+	"name": "RedHat Enterprise Linux CSAF",
+	"extracted": {
+		"builds": [
+			"vuls-data-update (devel)"
+		]
+	}
 }

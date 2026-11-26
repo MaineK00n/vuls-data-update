@@ -1,4 +1,9 @@
 {
 	"id": "mitre-cve-v5",
-	"name": "MITRE CVE v5"
+	"name": "MITRE CVE v5",
+	"extracted": {
+		"builds": [
+			"vuls-data-update (devel)"
+		]
+	}
 }

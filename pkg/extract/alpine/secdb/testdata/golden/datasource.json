@@ -1,4 +1,9 @@
 {
 	"id": "alpine-secdb",
-	"name": "Alpine Linux Security Fixes Database"
+	"name": "Alpine Linux Security Fixes Database",
+	"extracted": {
+		"builds": [
+			"vuls-data-update (devel)"
+		]
+	}
 }

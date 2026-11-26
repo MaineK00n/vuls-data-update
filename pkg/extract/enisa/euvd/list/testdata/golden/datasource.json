@@ -1,4 +1,9 @@
 {
 	"id": "enisa-euvd-list",
-	"name": "European Union Vulnerability Database (EUVD) List"
+	"name": "European Union Vulnerability Database (EUVD) List",
+	"extracted": {
+		"builds": [
+			"vuls-data-update (devel)"
+		]
+	}
 }

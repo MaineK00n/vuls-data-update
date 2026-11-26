@@ -1,4 +1,9 @@
 {
 	"id": "mitre-cwe",
-	"name": "MITRE Common Weakness Enumeration (CWE)"
+	"name": "MITRE Common Weakness Enumeration (CWE)",
+	"extracted": {
+		"builds": [
+			"vuls-data-update (devel)"
+		]
+	}
 }

@@ -1,4 +1,9 @@
 {
 	"id": "redhat-cve",
-	"name": "RedHat Security Data API"
+	"name": "RedHat Security Data API",
+	"extracted": {
+		"builds": [
+			"vuls-data-update (devel)"
+		]
+	}
 }

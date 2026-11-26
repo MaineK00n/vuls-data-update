@@ -1,4 +1,9 @@
 {
 	"id": "suse-oval",
-	"name": "SUSE OVAL"
+	"name": "SUSE OVAL",
+	"extracted": {
+		"builds": [
+			"vuls-data-update (devel)"
+		]
+	}
 }

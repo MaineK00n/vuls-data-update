@@ -1,4 +1,9 @@
 {
 	"id": "fedora-api",
-	"name": "Fedora Update System"
+	"name": "Fedora Update System",
+	"extracted": {
+		"builds": [
+			"vuls-data-update (devel)"
+		]
+	}
 }

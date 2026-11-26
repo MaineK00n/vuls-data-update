@@ -1,4 +1,9 @@
 {
 	"id": "redhat-ovalv2",
-	"name": "RedHat Enterprise Linux OVALv2"
+	"name": "RedHat Enterprise Linux OVALv2",
+	"extracted": {
+		"builds": [
+			"vuls-data-update (devel)"
+		]
+	}
 }

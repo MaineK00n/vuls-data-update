@@ -1,4 +1,9 @@
 {
 	"id": "ubuntu-cve-tracker",
-	"name": "Ubuntu CVE Tracker"
+	"name": "Ubuntu CVE Tracker",
+	"extracted": {
+		"builds": [
+			"vuls-data-update (devel)"
+		]
+	}
 }

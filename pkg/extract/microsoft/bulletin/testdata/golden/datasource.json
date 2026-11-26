@@ -1,4 +1,9 @@
 {
 	"id": "microsoft-bulletin",
-	"name": "Microsoft Security Bulletin"
+	"name": "Microsoft Security Bulletin",
+	"extracted": {
+		"builds": [
+			"vuls-data-update (devel)"
+		]
+	}
 }
