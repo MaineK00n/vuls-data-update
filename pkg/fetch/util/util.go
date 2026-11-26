@@ -283,7 +283,11 @@ func EnsureWritten(root string, opts ...EnsureOption) error {
 		}
 	}
 
-	switch ok, err := holdsFile(root, ".", options.ignores); {
+	// root is cleaned, as filepath.Join cleans it for every write under root:
+	// resolved as given, a/../b is reached through a, which may not exist or
+	// may link elsewhere.
+	dir := filepath.Clean(root)
+	switch ok, err := holdsFile(dir, ".", options.ignores); {
 	case err != nil:
 		return errors.Wrapf(err, "check %s", root)
 	case !ok && options.allowEmpty:
@@ -294,7 +298,7 @@ func EnsureWritten(root string, opts ...EnsureOption) error {
 
 	missing := make([]string, 0, len(options.requires))
 	for _, p := range options.requires {
-		switch ok, err := holdsFile(root, p, nil); {
+		switch ok, err := holdsFile(dir, p, nil); {
 		case err != nil:
 			return errors.Wrapf(err, "check %s", filepath.Join(root, p))
 		case !ok:

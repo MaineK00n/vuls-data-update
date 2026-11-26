@@ -271,6 +271,9 @@ func TestEnsureWritten(t *testing.T) {
 		// outside root, which holds outside, created like entries.
 		links   []string
 		outside []string
+		// through is made a symbolic link beside root, to the directory of the
+		// same name in outside, for a root that reaches outside through it.
+		through string
 		wantErr bool
 	}{
 		{
@@ -326,6 +329,40 @@ func TestEnsureWritten(t *testing.T) {
 			args: args{
 				root: "missing",
 			},
+			wantErr: true,
+		},
+		{
+			// root is cleaned as every write under it is, for the required
+			// paths too: missing/../out is out, though missing does not exist.
+			name: "root that is not clean",
+			args: args{
+				root: "missing/../out",
+				opts: []util.EnsureOption{util.WithRequire("2024")},
+			},
+			entries: []string{".git/", ".git/HEAD", "2024/CVE-2024-0001.json"},
+		},
+		{
+			// Resolved as given, link/../out is outside/out, which holds a
+			// file. Cleaned, it is out, where nothing was written.
+			name: "root that is not clean, through a link",
+			args: args{
+				root: "link/../out",
+			},
+			through: "link",
+			outside: []string{"link/", "out/2024/CVE-2024-0001.json"},
+			wantErr: true,
+		},
+		{
+			// Resolved as given, link/../out/2024 is outside/out/2024, which
+			// holds a file. Cleaned, it is out/2024, which was not written.
+			name: "required path under a root that is not clean, through a link",
+			args: args{
+				root: "link/../out",
+				opts: []util.EnsureOption{util.WithRequire("2024")},
+			},
+			entries: []string{".git/", ".git/HEAD", "2025/CVE-2025-0001.json"},
+			through: "link",
+			outside: []string{"link/", "out/2024/CVE-2024-0001.json"},
 			wantErr: true,
 		},
 		{
@@ -516,8 +553,13 @@ func TestEnsureWritten(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			d := filepath.Join(t.TempDir(), tt.args.root)
-			root := d
+			// root is given relative to the directory the call is made from,
+			// as a --dir typed on the command line is.
+			parent := t.TempDir()
+			t.Chdir(parent)
+
+			d := filepath.Join(parent, tt.args.root)
+			root := tt.args.root
 			if tt.link {
 				root = filepath.Join(t.TempDir(), "link")
 				if err := os.Symlink(d, root); err != nil {
@@ -549,6 +591,11 @@ func TestEnsureWritten(t *testing.T) {
 			}
 			for _, l := range tt.links {
 				if err := os.Symlink(outside, filepath.Join(d, l)); err != nil {
+					t.Fatal("unexpected error:", err)
+				}
+			}
+			if tt.through != "" {
+				if err := os.Symlink(filepath.Join(outside, tt.through), filepath.Join(parent, tt.through)); err != nil {
 					t.Fatal("unexpected error:", err)
 				}
 			}
