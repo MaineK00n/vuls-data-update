@@ -43,11 +43,11 @@ func WithDir(dir string) Option {
 //
 // docs.redhat.com answers 403 to a client it does not take for a browser, and
 // its robots.txt disallows the single-page manifests of RHEL 8 and 9, so the
-// pages are saved by hand rather than fetched. pagesDir holds a directory for
-// each major release, and each page at the path of its URL under baseURL with
-// ".html" added: RHEL 8 and 9 publish the manifest as one page,
-// <major>/html-single/package_manifest/index, and RHEL 10 as a page for each
-// repository, such as 10/plan-baseos.
+// pages are saved by hand rather than fetched. pagesDir holds nothing but a
+// directory for each major release, and each page at the path of its URL
+// under baseURL with ".html" added: RHEL 8 and 9 publish the manifest as one
+// page, <major>/html-single/package_manifest/index, and RHEL 10 as a page for
+// each repository, such as 10/plan-baseos.
 func Fetch(pagesDir string, opts ...Option) error {
 	options := &options{
 		dir: filepath.Join(util.CacheDir(), "fetch", "redhat", "package-manifest"),
@@ -57,13 +57,15 @@ func Fetch(pagesDir string, opts ...Option) error {
 		o.apply(options)
 	}
 
-	if err := util.RemoveAll(options.dir); err != nil {
-		return errors.Wrapf(err, "remove %s", options.dir)
-	}
-
+	// The pages are listed first, so that a wrong pagesDir fails with the
+	// output of the last run still in place.
 	pages, err := findPages(pagesDir)
 	if err != nil {
 		return errors.Wrapf(err, "find pages in %s", pagesDir)
+	}
+
+	if err := util.RemoveAll(options.dir); err != nil {
+		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
 	if err := os.MkdirAll(options.dir, 0755); err != nil {
@@ -143,7 +145,9 @@ type page struct {
 }
 
 // findPages lists every .html file in each directory of dir, as a page of the
-// major release the directory is named for.
+// major release the directory is named for. Anything else there fails: a page
+// put anywhere else, or saved under another name, would not be read, and its
+// tables would be missing without a word.
 func findPages(dir string) ([]page, error) {
 	es, err := os.ReadDir(dir)
 	if err != nil {
@@ -152,9 +156,10 @@ func findPages(dir string) ([]page, error) {
 
 	majors := make([]string, 0, len(es))
 	for _, e := range es {
-		if e.IsDir() {
-			majors = append(majors, e.Name())
+		if !e.IsDir() {
+			return nil, errors.Errorf("unexpected entry. expected: %s, actual: %q", "a directory for a major release", filepath.Join(dir, e.Name()))
 		}
+		majors = append(majors, e.Name())
 	}
 	// 8, 9, 10 rather than 10, 8, 9: of two numbers, the longer is greater.
 	slices.SortFunc(majors, func(a, b string) int {
@@ -167,8 +172,11 @@ func findPages(dir string) ([]page, error) {
 			if err != nil {
 				return err
 			}
-			if d.IsDir() || filepath.Ext(path) != ".html" {
+			if d.IsDir() {
 				return nil
+			}
+			if !d.Type().IsRegular() || filepath.Ext(path) != ".html" {
+				return errors.Errorf("unexpected entry. expected: %s, actual: %q", "a page, as a .html file", path)
 			}
 
 			rel, err := filepath.Rel(dir, path)
@@ -212,6 +220,11 @@ func readTable(major string, s *goquery.Selection) (string, any, error) {
 	ref, err := findReference(s)
 	if err != nil {
 		return "", nil, errors.Wrap(err, "find reference")
+	}
+	// The reference names the file the table is written to, in the
+	// directory of its release.
+	if ref == "" || strings.ContainsAny(ref, `/\`) {
+		return "", nil, errors.Errorf("unexpected reference. expected: %s, actual: %q", "an id with no path separator", ref)
 	}
 
 	var headers []string
@@ -321,9 +334,6 @@ func findReference(s *goquery.Selection) (string, error) {
 			if i := strings.LastIndex(ref, "__"); i >= 0 {
 				ref = ref[i+len("__"):]
 			}
-			if ref == "" {
-				return "", errors.Errorf("unexpected header cell id. expected: %q, actual: %q", "<topic>[__<section>]__entry__<n>", id)
-			}
 			return ref, nil
 		}
 	}
@@ -353,5 +363,12 @@ func findReference(s *goquery.Selection) (string, error) {
 		return "", errors.Errorf("no anchor found. title: %+v", title)
 	}
 
-	return strings.TrimPrefix(href, "#"), nil
+	// Only the fragment names the part: a saved page may write the anchor
+	// out as a URL.
+	_, ref, ok := strings.Cut(href, "#")
+	if !ok {
+		return "", errors.Errorf("unexpected anchor. expected: %s, actual: %q", "a link to a fragment", href)
+	}
+
+	return ref, nil
 }

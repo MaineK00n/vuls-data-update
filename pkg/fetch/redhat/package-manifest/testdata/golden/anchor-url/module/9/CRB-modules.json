@@ -1,0 +1,19 @@
+{
+	"major": "9",
+	"type": "module",
+	"reference": "CRB-modules",
+	"modules": [
+		{
+			"module": "swig",
+			"stream": "4.1",
+			"compatibility_level": "4",
+			"packages": [
+				"swig",
+				"swig-debuginfo",
+				"swig-debugsource",
+				"swig-doc",
+				"swig-gdb"
+			]
+		}
+	]
+}

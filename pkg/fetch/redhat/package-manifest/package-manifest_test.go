@@ -23,6 +23,11 @@ func TestFetch(t *testing.T) {
 			name: "happy",
 		},
 		{
+			// A saved page may write the anchors of RHEL 9's titles out as
+			// URLs, and the tables are named by their fragments all the same.
+			name: "anchor-url",
+		},
+		{
 			// The page that introduces RHEL 10's repository pages holds no
 			// table of its own.
 			name:     "no-table",
@@ -34,6 +39,26 @@ func TestFetch(t *testing.T) {
 			// single page kept: both hold the table of BaseOS.
 			name:     "duplicate",
 			wantErr:  "duplicate table",
+			hasError: true,
+		},
+		{
+			// RHEL 10's BaseOS page, saved beside the directories of the
+			// releases rather than in 10/, would not be read.
+			name:     "misplaced",
+			wantErr:  "expected: a directory for a major release",
+			hasError: true,
+		},
+		{
+			// RHEL 10's BaseOS page, saved as .htm, would not be read.
+			name:     "not-html",
+			wantErr:  "expected: a page, as a .html file",
+			hasError: true,
+		},
+		{
+			// A reference names a file in the directory of its release, and
+			// one with a path in it would name another.
+			name:     "reference-path",
+			wantErr:  "unexpected reference",
 			hasError: true,
 		},
 	}

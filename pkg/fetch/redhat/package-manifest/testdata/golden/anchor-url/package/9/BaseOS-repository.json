@@ -1,0 +1,43 @@
+{
+	"major": "9",
+	"type": "package",
+	"reference": "BaseOS-repository",
+	"packages": [
+		{
+			"package": "accel-config",
+			"license": "GPL-2.0-only",
+			"compatibility_level": "4",
+			"minor_release_version": "9.0"
+		},
+		{
+			"package": "accel-config-libs",
+			"license": "LGPL-2.1-only",
+			"compatibility_level": "4",
+			"minor_release_version": "9.0"
+		},
+		{
+			"package": "acl",
+			"license": "GPLv2+",
+			"compatibility_level": "2",
+			"minor_release_version": "9.0"
+		},
+		{
+			"package": "acpica-tools",
+			"license": "GPLv2",
+			"compatibility_level": "2",
+			"minor_release_version": "9.0"
+		},
+		{
+			"package": "adcli",
+			"license": "LGPLv2+",
+			"compatibility_level": "2",
+			"minor_release_version": "9.0"
+		},
+		{
+			"package": "ca-certificates",
+			"license": "MIT AND GPL-2.0-or-later",
+			"compatibility_level": "Not Applicable",
+			"minor_release_version": "9.0"
+		}
+	]
+}

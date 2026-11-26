@@ -5047,13 +5047,17 @@ func newCmdRedHatPackageManifest() *cobra.Command {
 			docs.redhat.com by hand. The site answers 403 to a client it does not take
 			for a browser, and its robots.txt disallows the single-page manifests.
 
-			<pages dir> holds a directory for each major release, and each page at the
-			path of its URL under
+			<pages dir> holds nothing but a directory for each major release, and each
+			page at the path of its URL under
 			https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/
 			with ".html" added, e.g.
 
 			  <pages dir>/9/html-single/package_manifest/index.html
 			  <pages dir>/10/plan-baseos.html
+
+			Every page there is read, and the fetch fails on anything else in
+			<pages dir>, or on a page with no table, such as the page that lists
+			RHEL 10's repository pages.
 		`),
 		Example: heredoc.Doc(`
 			$ vuls-data-update fetch redhat-package-manifest pages
