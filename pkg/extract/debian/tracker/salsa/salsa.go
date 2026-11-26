@@ -1155,20 +1155,21 @@ func (e extractor) readAdvisory(path string) (advisoryContentTypes.Content, []fe
 	}
 }
 
+// readPackage reads the Version of the Sources paragraph at path, whose fields
+// the fetcher writes by their names as the Sources file spells them, deb822
+// field names not being case-sensitive.
 func (e extractor) readPackage(path string) (string, error) {
-	var p map[string][]string
+	var p map[string]string
 	if err := e.r.Read(path, e.baseDir, &p); err != nil {
 		return "", errors.Wrap(err, "read")
 	}
 
-	vs, ok := p["Version"]
-	if !ok {
-		return "", errors.New("Version field not found")
+	for k, v := range p {
+		if strings.EqualFold(k, "Version") {
+			return v, nil
+		}
 	}
-	if len(vs) != 1 {
-		return "", errors.Errorf("unexpected number of Version field. expected: %d, actual: %d", 1, len(vs))
-	}
-	return vs[0], nil
+	return "", errors.New("Version field not found")
 }
 
 func maxPackageAnnotation(cves []packageAnnotation, advs map[string][]packageAnnotation) packageAnnotation {
