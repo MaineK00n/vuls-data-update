@@ -1,0 +1,29 @@
+{
+	"id": "1430",
+	"name": "Weaknesses in the 2024 CWE Top 25 Most Dangerous Software Weaknesses",
+	"type": "Graph",
+	"status": "Draft",
+	"objective": "CWE entries in this view are listed in the 2024 CWE Top 25 Most Dangerous Software Weaknesses.",
+	"members": [
+		{
+			"cweid": "79",
+			"view_id": "1430"
+		},
+		{
+			"cweid": "787",
+			"view_id": "1430"
+		},
+		{
+			"cweid": "89",
+			"view_id": "1430"
+		},
+		{
+			"cweid": "352",
+			"view_id": "1430"
+		},
+		{
+			"cweid": "22",
+			"view_id": "1430"
+		}
+	]
+}

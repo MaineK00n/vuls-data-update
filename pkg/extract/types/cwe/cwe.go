@@ -4,7 +4,6 @@ import (
 	"cmp"
 	"slices"
 
-	categoryTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/cwe/category"
 	groupingTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/cwe/grouping"
 	viewTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/cwe/view"
 	weaknessTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/cwe/weakness"
@@ -17,17 +16,13 @@ import (
 // fields live in nested sub-structs.
 type CWE struct {
 	ID          string `json:"id"`
-	Kind        string `json:"kind,omitempty"` // "weakness" | "grouping" | "view" ("category" before CWE 5.0)
+	Kind        string `json:"kind,omitempty"` // "weakness" | "grouping" | "view"
 	Name        string `json:"name,omitempty"`
 	Status      string `json:"status,omitempty"`
 	Description string `json:"description,omitempty"` // main text (Weakness.Description / Grouping.Summary / View.Objective)
 
 	Weakness weaknessTypes.Weakness `json:"weakness,omitzero"`
 	Grouping groupingTypes.Grouping `json:"grouping,omitzero"`
-	// Deprecated: CWE 5.0 renamed categories to groupings, which are in
-	// Grouping with Kind "grouping"; Category is only set in data extracted
-	// before that, with Kind "category".
-	Category categoryTypes.Category `json:"category,omitzero"`
 	View     viewTypes.View         `json:"view,omitzero"`
 
 	References []referenceTypes.Reference `json:"references,omitempty"`
@@ -37,7 +32,6 @@ type CWE struct {
 func (c *CWE) Sort() {
 	c.Weakness.Sort()
 	c.Grouping.Sort()
-	c.Category.Sort()
 	c.View.Sort()
 	slices.SortFunc(c.References, referenceTypes.Compare)
 	c.DataSource.Sort()
@@ -52,7 +46,6 @@ func Compare(x, y CWE) int {
 		cmp.Compare(x.Description, y.Description),
 		weaknessTypes.Compare(x.Weakness, y.Weakness),
 		groupingTypes.Compare(x.Grouping, y.Grouping),
-		categoryTypes.Compare(x.Category, y.Category),
 		viewTypes.Compare(x.View, y.View),
 		slices.CompareFunc(x.References, y.References, referenceTypes.Compare),
 		sourceTypes.Compare(x.DataSource, y.DataSource),

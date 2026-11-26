@@ -1,0 +1,13 @@
+{
+	"id": "1344",
+	"name": "Weaknesses in OWASP Top Ten (2021)",
+	"type": "Graph",
+	"status": "Incomplete",
+	"objective": "CWE entries in this view (graph) are associated with the OWASP Top Ten, as released in 2021.",
+	"members": [
+		{
+			"cweid": "1347",
+			"view_id": "1344"
+		}
+	]
+}

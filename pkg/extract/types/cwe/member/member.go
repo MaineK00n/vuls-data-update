@@ -7,8 +7,7 @@ import (
 	dimensionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/cwe/dimension"
 )
 
-// Member represents a CWE that is a member of a Grouping (Category before
-// CWE 5.0) or a View.
+// Member represents a CWE that is a member of a Grouping or a View.
 type Member struct {
 	CWEID      string                     `json:"cweid"`
 	ViewID     string                     `json:"view_id,omitempty"`

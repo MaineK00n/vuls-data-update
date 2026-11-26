@@ -1,0 +1,124 @@
+{
+	"id": "355",
+	"name": "User Interface Security Issues",
+	"status": "Draft",
+	"summary": "Weaknesses in this category are related to or introduced in the User Interface (UI).",
+	"content_history": {
+		"submission": [
+			{
+				"submission_name": [
+					"PLOVER"
+				],
+				"submission_date": "2006-07-19",
+				"submission_version": "Draft 3",
+				"submission_release_date": "2006-07-19"
+			}
+		],
+		"modification": [
+			{
+				"modification_name": "CWE Content Team",
+				"modification_organization": "MITRE",
+				"modification_date": "2008-09-08",
+				"modification_version": "1.0",
+				"modification_release_date": "2008-09-09",
+				"modification_comment": "updated Relationships, Taxonomy_Mappings"
+			},
+			{
+				"modification_name": "CWE Content Team",
+				"modification_organization": "MITRE",
+				"modification_date": "2017-01-19",
+				"modification_version": "2.10",
+				"modification_release_date": "2017-01-19",
+				"modification_comment": "updated Applicable_Platforms, Relationships"
+			},
+			{
+				"modification_name": "CWE Content Team",
+				"modification_organization": "MITRE",
+				"modification_date": "2020-02-24",
+				"modification_version": "4.0",
+				"modification_release_date": "2020-02-24",
+				"modification_comment": "updated Relationships"
+			},
+			{
+				"modification_name": "CWE Content Team",
+				"modification_organization": "MITRE",
+				"modification_date": "2023-04-27",
+				"modification_version": "4.11",
+				"modification_release_date": "2023-04-27",
+				"modification_comment": "updated Mapping_Notes, Relationships"
+			},
+			{
+				"modification_name": "CWE Content Team",
+				"modification_organization": "MITRE",
+				"modification_date": "2023-06-29",
+				"modification_version": "4.12",
+				"modification_release_date": "2023-06-29",
+				"modification_comment": "updated Mapping_Notes"
+			},
+			{
+				"modification_name": "CWE Content Team",
+				"modification_organization": "MITRE",
+				"modification_date": "2026-10-28",
+				"modification_version": "5.0",
+				"modification_release_date": "2026-10-28",
+				"modification_comment": "updated Mapping_Notes, Type"
+			}
+		]
+	},
+	"relationships": [
+		{
+			"cweid": "356",
+			"view_id": "699"
+		},
+		{
+			"cweid": "357",
+			"view_id": "699"
+		},
+		{
+			"cweid": "447",
+			"view_id": "699"
+		},
+		{
+			"cweid": "448",
+			"view_id": "699"
+		},
+		{
+			"cweid": "449",
+			"view_id": "699"
+		},
+		{
+			"cweid": "549",
+			"view_id": "699"
+		},
+		{
+			"cweid": "1007",
+			"view_id": "699"
+		},
+		{
+			"cweid": "1021",
+			"view_id": "699"
+		}
+	],
+	"notes": [
+		{
+			"type": "Research Gap",
+			"text": "User interface errors that are relevant to security have not been studied at a high level."
+		}
+	],
+	"taxonomy_mappings": [
+		{
+			"taxonomy_name": "PLOVER",
+			"entry_name": "(UI) User Interface Errors"
+		}
+	],
+	"mapping_notes": {
+		"usage": "Prohibited",
+		"rationale": "This entry is a Grouping. Using groupings for mapping has been discouraged since 2019. They are informal organizational groupings of weaknesses that can help CWE users with data aggregation, navigation, and browsing. However, they are not weaknesses in themselves.",
+		"comments": "See member weaknesses of this category.",
+		"reasons": [
+			{
+				"type": "Grouping"
+			}
+		]
+	}
+}

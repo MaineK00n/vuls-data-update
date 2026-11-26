@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"io/fs"
 	"log/slog"
-	"os"
 	"path/filepath"
 	"slices"
 	"strconv"
@@ -105,7 +104,7 @@ func Extract(args string, opts ...Option) error {
 		switch kind {
 		case "weakness":
 			return extractWeakness(path, args, options.dir, rankings)
-		case "grouping", "category": // raw fetched before the CWE 5.0 rename has its groupings under category/
+		case "grouping":
 			return extractGrouping(path, args, options.dir)
 		case "view":
 			return extractView(path, args, options.dir)
@@ -228,10 +227,7 @@ func buildRankings(args string) (rankingIndex, error) {
 			// Members are the "A0N" tier groupings; read each on demand for its
 			// rank (the A number) and the weaknesses that inherit it.
 			for _, m := range v.Members {
-				groupingPath, err := rawGroupingPath(args, m.CWEID)
-				if err != nil {
-					return errors.Wrapf(err, "find grouping %s", m.CWEID)
-				}
+				groupingPath := filepath.Join(args, "grouping", fmt.Sprintf("%s.json", m.CWEID))
 				gr := utiljson.NewJSONReader()
 				var g cwe.Grouping
 				if err := gr.Read(groupingPath, args, &g); err != nil {
@@ -259,22 +255,6 @@ func buildRankings(args string) (rankingIndex, error) {
 		return rankingIndex{}, errors.Wrapf(err, "walk %s", filepath.Join(args, "view"))
 	}
 	return idx, nil
-}
-
-// rawGroupingPath returns the raw file of grouping id: grouping/<id>.json, or
-// category/<id>.json in raw fetched before the CWE 5.0 rename.
-func rawGroupingPath(args, id string) (string, error) {
-	for _, dir := range []string{"grouping", "category"} {
-		p := filepath.Join(args, dir, fmt.Sprintf("%s.json", id))
-		switch _, err := os.Stat(p); {
-		case err == nil:
-			return p, nil
-		case errors.Is(err, fs.ErrNotExist):
-		default:
-			return "", errors.Wrapf(err, "stat %s", p)
-		}
-	}
-	return "", errors.Errorf("grouping %s not found in %s", id, args)
 }
 
 func extractWeakness(path, args, outDir string, rankings rankingIndex) error {

@@ -20,11 +20,23 @@ func TestExtract(t *testing.T) {
 			golden: "./testdata/golden/happy",
 		},
 		{
-			// raw written before CWE 5.0 support: an introduction has a single
-			// phase, a content history a single submission
-			name:   "legacy",
-			args:   "./testdata/fixtures/legacy",
-			golden: "./testdata/golden/legacy",
+			// raw written before CWE 5.0 support has its groupings under category/
+			name:     "pre-5.0 category",
+			args:     "./testdata/fixtures/pre-5.0-category",
+			hasError: true,
+		},
+		{
+			// raw written before CWE 5.0 support has a single phase per introduction
+			name:     "pre-5.0 phase",
+			args:     "./testdata/fixtures/pre-5.0-phase",
+			hasError: true,
+		},
+		{
+			// raw written before CWE 5.0 support has a single submission, with a
+			// single name, per content history
+			name:     "pre-5.0 submission",
+			args:     "./testdata/fixtures/pre-5.0-submission",
+			hasError: true,
 		},
 	}
 	for _, tt := range tests {

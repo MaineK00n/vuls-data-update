@@ -1,0 +1,153 @@
+{
+	"id": "1008",
+	"name": "Architectural Concepts",
+	"type": "Graph",
+	"status": "Obsolete",
+	"objective": "This view organizes weaknesses according to common architectural security tactics, as proposed in 2017 as part of an academic \"Common Architectural Weakness Enumeration (CAWE)\" project. The view was intended to assist architects in identifying potential mistakes that can be made when designing software.",
+	"audience": [
+		{
+			"type": "Software Developers",
+			"description": "Architects that are part of a software development team may find this view useful as the weaknesses are organized by known security tactics, aiding the architect in embedding security throughout the design process instead of discovering weaknesses after the software has been built."
+		},
+		{
+			"type": "Educators",
+			"description": "Educators may use this view as reference material when discussing security by design or architectural weaknesses, and the types of mistakes that can be made."
+		}
+	],
+	"members": [
+		{
+			"cweid": "1009",
+			"view_id": "1008"
+		},
+		{
+			"cweid": "1010",
+			"view_id": "1008"
+		},
+		{
+			"cweid": "1011",
+			"view_id": "1008"
+		},
+		{
+			"cweid": "1012",
+			"view_id": "1008"
+		},
+		{
+			"cweid": "1013",
+			"view_id": "1008"
+		},
+		{
+			"cweid": "1014",
+			"view_id": "1008"
+		},
+		{
+			"cweid": "1015",
+			"view_id": "1008"
+		},
+		{
+			"cweid": "1016",
+			"view_id": "1008"
+		},
+		{
+			"cweid": "1017",
+			"view_id": "1008"
+		},
+		{
+			"cweid": "1018",
+			"view_id": "1008"
+		},
+		{
+			"cweid": "1019",
+			"view_id": "1008"
+		},
+		{
+			"cweid": "1020",
+			"view_id": "1008"
+		}
+	],
+	"notes": [
+		{
+			"type": "Other",
+			"text": "\n\t\t\t <xhtml:p>The top level categories in this view represent the individual tactics that are part of a secure-by-design approach to software development. The weaknesses that are members of each category contain information about how each is introduced relative to the software's architecture.</xhtml:p>\n\t\t\t <xhtml:p>Three different modes of introduction are used:</xhtml:p>\n\t\t\t <xhtml:ul>\n\t\t\t   <xhtml:li>Omission - caused by missing a security tactic when it is necessary.</xhtml:li>\n\t\t\t   <xhtml:li>Commission - refers to incorrect choice of tactics which could result in undesirable consequences.</xhtml:li>\n\t\t\t   <xhtml:li>Realization - appropriate security tactics are adopted but are incorrectly implemented.</xhtml:li>\n\t\t\t </xhtml:ul>\n\t\t\t "
+		},
+		{
+			"type": "Maintenance",
+			"version": "5.0",
+			"release_date": "2026-10-28",
+			"text": "\n\t\t\t   This view was originally created in 2017, but the CAWE\n\t\t\t   project ended, and this view was not actively\n\t\t\t   maintained afterward."
+		}
+	],
+	"content_history": {
+		"submission": [
+			{
+				"submission_name": [
+					"Joanna C.S. Santos, Mehdi Mirakhorli"
+				],
+				"submission_date": "2017-06-22",
+				"submission_version": "2.12",
+				"submission_release_date": "2017-11-08",
+				"submission_comment": "Provided the catalog, Common Architectural Weakness Enumeration (CAWE), and research papers for this view."
+			}
+		],
+		"modification": [
+			{
+				"modification_name": "CWE Content Team",
+				"modification_organization": "MITRE",
+				"modification_date": "2018-03-27",
+				"modification_version": "3.1",
+				"modification_release_date": "2018-03-27",
+				"modification_comment": "updated Description, Other_Notes, View_Audience"
+			}
+		]
+	},
+	"references": [
+		{
+			"reference_id": "REF-9",
+			"author": [
+				"Santos, J. C. S.",
+				"Tarrit, K.",
+				"Mirakhorli, M."
+			],
+			"title": "A Catalog of Security Architecture Weaknesses.",
+			"url": "https://ieeexplore.ieee.org/document/7958491",
+			"publication_year": "2017",
+			"publication": "2017 IEEE International Conference on Software Architecture (ICSA)",
+			"url_date": "2026-10-23",
+			"alt_url": "https://joannacss.com/preprints/icsaw17-preprint.pdf",
+			"alt_url_date": "2026-10-23",
+			"access_restrictions": [
+				"Proprietary-Subscription"
+			]
+		},
+		{
+			"section": "pages 69 - 78",
+			"reference_id": "REF-10",
+			"author": [
+				"Santos, J. C. S.",
+				"Peruma, A.",
+				"Mirakhorli, M.",
+				"Galster, M.",
+				"Sejfia, A."
+			],
+			"title": "Understanding Software Vulnerabilities Related to Architectural Security Tactics: An Empirical Investigation of Chromium, PHP and Thunderbird.",
+			"url": "https://ieeexplore.ieee.org/document/7930201",
+			"publication_year": "2017",
+			"publication": "2017 IEEE International Conference on Software Architecture (ICSA)",
+			"url_date": "2026-10-23",
+			"alt_url": "https://joannacss.com/preprints/icsa17-preprint.pdf",
+			"alt_url_date": "2026-10-23",
+			"access_restrictions": [
+				"Proprietary-Subscription"
+			]
+		}
+	],
+	"mapping_notes": {
+		"usage": "Prohibited",
+		"rationale": "This entry is a View. Views are not weaknesses and therefore inappropriate to describe the root causes of vulnerabilities.",
+		"comments": "Use this View or other Views to search and navigate for the appropriate weakness.",
+		"reasons": [
+			{
+				"type": "View"
+			}
+		]
+	}
+}
