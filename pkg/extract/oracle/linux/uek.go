@@ -91,15 +91,6 @@ func isUEKKernelCriterion(cn criterionTypes.Criterion) bool {
 	return cn.Type == criterionTypes.CriterionTypeVersion && cn.Version != nil && cn.Version.Package.Binary != nil && cn.Version.Affected != nil && isUEKKernelPackage(cn.Version.Package.Binary.Name)
 }
 
-// architectures returns as, or one empty architecture standing for any when
-// as is empty.
-func architectures(as []string) []string {
-	if len(as) == 0 {
-		return []string{""}
-	}
-	return as
-}
-
 // uekIndex keeps what the split needs of the advisories already written, so
 // that only the ones to change are read back.
 type uekIndex struct {
@@ -151,6 +142,12 @@ func (x *uekIndex) add(path string, data dataTypes.Data) error {
 				if !isUEKKernelCriterion(cn) {
 					continue
 				}
+				// The split is decided per package and architecture, and every
+				// kernel-uek* criterion of Oracle Linux OVAL names its architectures.
+				// A definition without an architecture test gives [""].
+				if as := cn.Version.Package.Binary.Architectures; len(as) == 0 || slices.Contains(as, "") {
+					return errors.Errorf("unexpected architectures of %s. ecosystem: %s, expected: %q, actual: %q", cn.Version.Package.Binary.Name, d.Ecosystem, "non-empty architectures", as)
+				}
 				for _, f := range cn.Version.Affected.Fixed {
 					rv := rpm.NewVersion(f)
 					switch s := rv.Version(); {
@@ -159,7 +156,7 @@ func (x *uekIndex) add(path string, data dataTypes.Data) error {
 					case e.series != s:
 						return errors.Errorf("unexpected UEK series in one advisory. ecosystem: %s, series: %q and %q", d.Ecosystem, e.series, s)
 					}
-					for _, a := range architectures(cn.Version.Package.Binary.Architectures) {
+					for _, a := range cn.Version.Package.Binary.Architectures {
 						p := uekPackage{name: cn.Version.Package.Binary.Name, arch: a}
 						if cur, ok := e.fixed[p]; !ok || rv.Compare(rpm.NewVersion(cur)) < 0 {
 							e.fixed[p] = f
@@ -386,7 +383,7 @@ func splitCriterions(cns []criterionTypes.Criterion, excluded map[uekPackage]map
 			archs  [][]string
 			ranges [][]rangeTypes.Range
 		)
-		for _, arch := range architectures(cn.Version.Package.Binary.Architectures) {
+		for _, arch := range cn.Version.Package.Binary.Architectures {
 			rs := splitRange(fixed, excluded[uekPackage{name: cn.Version.Package.Binary.Name, arch: arch}])
 			if gi := slices.IndexFunc(ranges, func(r []rangeTypes.Range) bool { return slices.Equal(r, rs) }); gi >= 0 {
 				archs[gi] = append(archs[gi], arch)
@@ -399,7 +396,7 @@ func splitCriterions(cns []criterionTypes.Criterion, excluded map[uekPackage]map
 		for gi, as := range archs {
 			vc := *cn.Version
 			b := *vc.Package.Binary
-			b.Architectures = slices.DeleteFunc(as, func(s string) bool { return s == "" })
+			b.Architectures = as
 			vc.Package.Binary = &b
 			vc.Affected = &affectedTypes.Affected{
 				Type:  a.Type,

@@ -45,6 +45,12 @@ func TestExtract(t *testing.T) {
 			args:   "./testdata/fixtures/uek",
 			golden: "./testdata/golden/uek",
 		},
+		// Based on ELSA-2024-90010 of the "uek" case, without the architecture test
+		{
+			name:     "uek-noarch",
+			args:     "./testdata/fixtures/uek-noarch",
+			hasError: true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
