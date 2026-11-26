@@ -79,10 +79,13 @@ func GetExtractedRepository(path string) *repositoryTypes.Repository {
 const buildTrailer = "Vuls-Data-Update"
 
 // builds reads the builds of vuls-data-update a commit message names, as
-// "vuls-data-update <version>", in the order it names them. Like git, it reads
-// trailers from the last paragraph after the subject, and only when every line
-// of it is a trailer or the continuation of one; a message without trailers,
-// as every commit before vuls-data-db named its builds is, names none.
+// "vuls-data-update <version>", in the order it names them. It reads trailers
+// from the last paragraph after the subject, and only when every line of it is
+// a trailer or the continuation of one, which is how git reads the messages
+// vuls-data-db writes; a message without trailers, as every commit before
+// vuls-data-db named its builds is, names none. It does not follow git into a
+// hand-written message's corners: a paragraph only partly of trailers, comment
+// lines, URL lines, or a value that starts on a continuation line.
 func builds(message string) []string {
 	lines := strings.Split(message, "\n")
 
