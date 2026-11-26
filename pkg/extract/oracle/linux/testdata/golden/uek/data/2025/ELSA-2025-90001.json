@@ -99,6 +99,35 @@
 										"binary": {
 											"name": "bpftool",
 											"architectures": [
+												"aarch64"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:5.15.0-305.176.4.el8uek"
+											}
+										],
+										"fixed": [
+											"0:5.15.0-305.176.4.el8uek"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "bpftool",
+											"architectures": [
 												"x86_64"
 											]
 										}
@@ -129,6 +158,7 @@
 										"binary": {
 											"name": "kernel-uek",
 											"architectures": [
+												"aarch64",
 												"x86_64"
 											]
 										}
@@ -158,6 +188,7 @@
 										"binary": {
 											"name": "kernel-uek-core",
 											"architectures": [
+												"aarch64",
 												"x86_64"
 											]
 										}
@@ -207,8 +238,7 @@
 										"type": "rpm",
 										"range": [
 											{
-												"lt": "0:5.15.0-305.176.4.el9uek",
-												"ge": "0:5.15.0-0"
+												"lt": "0:5.15.0-305.176.4.el9uek"
 											}
 										],
 										"fixed": [
@@ -301,6 +331,7 @@
 			"uek/states/rpminfo_state/oval:com.oracle.elsa:ste:202590001010.json",
 			"uek/states/rpminfo_state/oval:com.oracle.elsa:ste:202590001011.json",
 			"uek/states/rpminfo_state/oval:com.oracle.elsa:ste:202590001012.json",
+			"uek/states/rpminfo_state/oval:com.oracle.elsa:ste:202590001017.json",
 			"uek/tests/rpminfo_test/oval:com.oracle.elsa:tst:202590001001.json",
 			"uek/tests/rpminfo_test/oval:com.oracle.elsa:tst:202590001002.json",
 			"uek/tests/rpminfo_test/oval:com.oracle.elsa:tst:202590001003.json",
@@ -316,7 +347,8 @@
 			"uek/tests/rpminfo_test/oval:com.oracle.elsa:tst:202590001013.json",
 			"uek/tests/rpminfo_test/oval:com.oracle.elsa:tst:202590001014.json",
 			"uek/tests/rpminfo_test/oval:com.oracle.elsa:tst:202590001015.json",
-			"uek/tests/rpminfo_test/oval:com.oracle.elsa:tst:202590001016.json"
+			"uek/tests/rpminfo_test/oval:com.oracle.elsa:tst:202590001016.json",
+			"uek/tests/rpminfo_test/oval:com.oracle.elsa:tst:202590001017.json"
 		]
 	}
 }

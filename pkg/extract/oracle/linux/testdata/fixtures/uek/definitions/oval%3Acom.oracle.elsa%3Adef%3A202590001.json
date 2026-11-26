@@ -110,6 +110,61 @@
 										"comment": "Oracle Linux arch is x86_64"
 									}
 								]
+							},
+							{
+								"operator": "AND",
+								"criterias": [
+									{
+										"operator": "OR",
+										"criterias": [
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.oracle.elsa:tst:202590001003",
+														"comment": "kernel-uek is earlier than 0:5.15.0-305.176.4.el8uek"
+													},
+													{
+														"test_ref": "oval:com.oracle.elsa:tst:202590001004",
+														"comment": "kernel-uek is signed with the Oracle Linux 8 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.oracle.elsa:tst:202590001005",
+														"comment": "kernel-uek-core is earlier than 0:5.15.0-305.176.4.el8uek"
+													},
+													{
+														"test_ref": "oval:com.oracle.elsa:tst:202590001006",
+														"comment": "kernel-uek-core is signed with the Oracle Linux 8 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.oracle.elsa:tst:202590001007",
+														"comment": "bpftool is earlier than 0:5.15.0-305.176.4.el8uek"
+													},
+													{
+														"test_ref": "oval:com.oracle.elsa:tst:202590001008",
+														"comment": "bpftool is signed with the Oracle Linux 8 key"
+													}
+												]
+											}
+										]
+									}
+								],
+								"criterions": [
+									{
+										"test_ref": "oval:com.oracle.elsa:tst:202590001017",
+										"comment": "Oracle Linux arch is aarch64"
+									}
+								]
 							}
 						]
 					}
