@@ -1,5 +1,12 @@
 package csaf
 
+import (
+	"encoding/json/jsontext"
+	"encoding/json/v2"
+
+	"github.com/pkg/errors"
+)
+
 type CSAF struct {
 	Document        Document        `json:"document"`
 	ProductTree     ProductTree     `json:"product_tree"`
@@ -56,6 +63,109 @@ type Note struct {
 type ProductGroupID string
 
 type ProductID string
+
+// ProductIDs is a list of product IDs, or the reference upstream writes in
+// place of one.
+//
+// openEuler's generator writes a list it has already written once as
+// {"$ref": "$.vulnerabilities[0].product_status.fixed"}, as fastjson's circular
+// reference detection does, where CSAF has an array: remediations[].product_ids
+// and scores[].products refer to product_status.fixed. Ref keeps such a
+// reference as it is written, with IDs empty, so the raw data reads as upstream
+// does. It is not resolved, since product_status.fixed can refer to itself, and
+// the fixed products are then not listed anywhere. For example,
+// https://repo.openeuler.org/security/data/csaf/cve/2018/csaf-openeuler-cve-2018-13440.json
+// refers to the list it holds, and
+// https://repo.openeuler.org/security/data/csaf/cve/2026/csaf-openeuler-cve-2026-8092.json
+// to itself.
+//
+// It is a stopgap until upstream writes every list out: a fetch in which no
+// document holds a reference fails, so Ref is removed rather than left behind.
+type ProductIDs struct {
+	IDs []ProductID
+	Ref string
+}
+
+// UnmarshalJSONFrom reads an array of product IDs, or an object whose only
+// member is "$ref", a string that is not empty. Anything else fails.
+func (p *ProductIDs) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	if dec.PeekKind() == '{' {
+		var ref struct {
+			Ref string `json:"$ref"`
+		}
+		if err := json.UnmarshalDecode(dec, &ref, json.RejectUnknownMembers(true)); err != nil {
+			return errors.Wrap(err, "unmarshal $ref")
+		}
+		if ref.Ref == "" {
+			return errors.Errorf("unexpected $ref. expected: %q, actual: %q", "<JSONPath>", ref.Ref)
+		}
+		*p = ProductIDs{Ref: ref.Ref}
+		return nil
+	}
+
+	var ids []ProductID
+	if err := json.UnmarshalDecode(dec, &ids); err != nil {
+		return errors.Wrap(err, "unmarshal product ids")
+	}
+	*p = ProductIDs{IDs: ids}
+	return nil
+}
+
+// MarshalJSONTo writes p as it was read: {"$ref": ...} if Ref is set, and the
+// array of IDs otherwise.
+func (p ProductIDs) MarshalJSONTo(enc *jsontext.Encoder) error {
+	if p.Ref != "" {
+		if err := json.MarshalEncode(enc, struct {
+			Ref string `json:"$ref"`
+		}{Ref: p.Ref}); err != nil {
+			return errors.Wrap(err, "marshal $ref")
+		}
+		return nil
+	}
+
+	if err := json.MarshalEncode(enc, p.IDs); err != nil {
+		return errors.Wrap(err, "marshal product ids")
+	}
+	return nil
+}
+
+// hasRef reports whether c writes any of its product ID lists as a reference.
+func (c CSAF) hasRef() bool {
+	for _, g := range c.ProductTree.ProductGroups {
+		if g.ProductIDs.Ref != "" {
+			return true
+		}
+	}
+	for _, v := range c.Vulnerabilities {
+		s := v.ProductStatus
+		for _, ids := range []ProductIDs{s.FirstAffected, s.FirstFixed, s.Fixed, s.KnownAffected, s.KnownNotAffected, s.LastAffected, s.Recommended, s.UnderInvestigation} {
+			if ids.Ref != "" {
+				return true
+			}
+		}
+		for _, f := range v.Flags {
+			if f.ProductIDs.Ref != "" {
+				return true
+			}
+		}
+		for _, r := range v.Remediations {
+			if r.ProductIDs.Ref != "" {
+				return true
+			}
+		}
+		for _, sc := range v.Scores {
+			if sc.Products.Ref != "" {
+				return true
+			}
+		}
+		for _, t := range v.Threats {
+			if t.ProductIDs.Ref != "" {
+				return true
+			}
+		}
+	}
+	return false
+}
 
 type Reference struct {
 	Category string `json:"category,omitempty"` // enum: external, self
@@ -120,7 +230,7 @@ type ProductTree struct {
 	FullProductNames []FullProductName `json:"full_product_names,omitempty"`
 	ProductGroups    []struct {
 		GroupID    ProductGroupID `json:"group_id"`
-		ProductIDs []ProductID    `json:"product_ids"`
+		ProductIDs ProductIDs     `json:"product_ids"`
 		Summary    string         `json:"summary,omitempty"`
 	} `json:"product_groups,omitempty"`
 	Relationships []Relationship `json:"relationships,omitempty"`
@@ -145,7 +255,7 @@ type Vulnerability struct {
 		Date       string           `json:"date,omitempty"`
 		GroupIDs   []ProductGroupID `json:"group_ids,omitempty"`
 		Label      string           `json:"label"` // enum: component_not_present, inline_mitigations_already_exist, vulnerable_code_cannot_be_controlled_by_adversary, vulnerable_code_not_in_execute_path, vulnerable_code_not_present
-		ProductIDs []ProductID      `json:"product_ids,omitempty"`
+		ProductIDs ProductIDs       `json:"product_ids,omitempty"`
 	} `json:"flags,omitempty"`
 	IDs []struct {
 		SystemName string `json:"system_name"`
@@ -159,14 +269,14 @@ type Vulnerability struct {
 	} `json:"involvements,omitempty"`
 	Notes         []Note `json:"notes,omitempty"`
 	ProductStatus struct {
-		FirstAffected      []ProductID `json:"first_affected,omitempty"`
-		FirstFixed         []ProductID `json:"first_fixed,omitempty"`
-		Fixed              []ProductID `json:"fixed,omitempty"`
-		KnownAffected      []ProductID `json:"known_affected,omitempty"`
-		KnownNotAffected   []ProductID `json:"known_not_affected,omitempty"`
-		LastAffected       []ProductID `json:"last_affected,omitempty"`
-		Recommended        []ProductID `json:"recommended,omitempty"`
-		UnderInvestigation []ProductID `json:"under_investigation,omitempty"`
+		FirstAffected      ProductIDs `json:"first_affected,omitempty"`
+		FirstFixed         ProductIDs `json:"first_fixed,omitempty"`
+		Fixed              ProductIDs `json:"fixed,omitempty"`
+		KnownAffected      ProductIDs `json:"known_affected,omitempty"`
+		KnownNotAffected   ProductIDs `json:"known_not_affected,omitempty"`
+		LastAffected       ProductIDs `json:"last_affected,omitempty"`
+		Recommended        ProductIDs `json:"recommended,omitempty"`
+		UnderInvestigation ProductIDs `json:"under_investigation,omitempty"`
 	} `json:"product_status,omitzero"`
 	References []struct {
 		Category string `json:"category,omitempty"`
@@ -180,7 +290,7 @@ type Vulnerability struct {
 		Details         string           `json:"details"`
 		Entitlements    []string         `json:"entitlements,omitempty"`
 		GroupIDs        []ProductGroupID `json:"group_ids,omitempty"`
-		ProductIDs      []ProductID      `json:"product_ids,omitempty"`
+		ProductIDs      ProductIDs       `json:"product_ids,omitempty"`
 		RestartRequired *struct {
 			Category string `json:"category"` // enum: connected, dependencies, machine, none, parent, service, system, vulnerable_component, zone
 			Details  string `json:"details,omitempty"`
@@ -213,14 +323,14 @@ type Vulnerability struct {
 			VectorString          string  `json:"vectorString"`
 			Version               string  `json:"version"`
 		} `json:"cvss_v3,omitempty"`
-		Products []ProductID `json:"products"`
+		Products ProductIDs `json:"products"`
 	} `json:"scores,omitempty"`
 	Threats []struct {
 		Category   string           `json:"category"` // enum: exploit_status, impact, target_set
 		Date       string           `json:"date,omitempty"`
 		Details    string           `json:"details"`
 		GroupIDs   []ProductGroupID `json:"group_ids,omitempty"`
-		ProductIDs []ProductID      `json:"product_ids,omitempty"`
+		ProductIDs ProductIDs       `json:"product_ids,omitempty"`
 	} `json:"threats,omitempty"`
 	Title string `json:"title,omitempty"`
 }
