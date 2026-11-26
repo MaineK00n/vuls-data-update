@@ -180,29 +180,34 @@ func TestClient_PipelineGet_errors(t *testing.T) {
 	}
 
 	tests := []struct {
-		name       string
-		urls       []string
-		fail       []string
-		wantPrefix string
-		wantNamed  int
+		name        string
+		urls        []string
+		fail        []string
+		concurrency int
+		wantPrefix  string
+		wantNamed   int
 	}{
 		{
 			// A failed request does not stop the others, so the error names
-			// every one that failed, and none that did not.
-			name:       "every failure is named",
-			urls:       urls(3),
-			fail:       []string{"https://example.com/0.json", "https://example.com/2.json"},
-			wantPrefix: "2 of 3 requests failed: ",
-			wantNamed:  2,
+			// every one that failed, and none that did not. One at a time,
+			// the request after the first failure is made only if a failure
+			// stops nothing.
+			name:        "every failure is named",
+			urls:        urls(3),
+			fail:        []string{"https://example.com/0.json", "https://example.com/2.json"},
+			concurrency: 1,
+			wantPrefix:  "2 of 3 requests failed: ",
+			wantNamed:   2,
 		},
 		{
 			// A source that is down fails every request the same way, so
 			// past the limit the rest are only counted.
-			name:       "past the limit, the rest are only counted",
-			urls:       urls(25),
-			fail:       urls(25),
-			wantPrefix: "25 of 25 requests failed (first 20 shown): ",
-			wantNamed:  20,
+			name:        "past the limit, the rest are only counted",
+			urls:        urls(25),
+			fail:        urls(25),
+			concurrency: 4,
+			wantPrefix:  "25 of 25 requests failed (first 20 shown): ",
+			wantNamed:   20,
 		},
 	}
 	for _, tt := range tests {
@@ -215,7 +220,7 @@ func TestClient_PipelineGet_errors(t *testing.T) {
 				w.WriteHeader(http.StatusOK)
 			}))
 
-			err := utilhttp.NewClient(utilhttp.WithClientHTTPClient(ts.Client()), utilhttp.WithClientRetryMax(0)).PipelineGet(tt.urls, 4, 0, true, func(resp *http.Response) error {
+			err := utilhttp.NewClient(utilhttp.WithClientHTTPClient(ts.Client()), utilhttp.WithClientRetryMax(0)).PipelineGet(tt.urls, tt.concurrency, 0, true, func(resp *http.Response) error {
 				defer resp.Body.Close()
 				if resp.StatusCode != http.StatusOK {
 					return errors.Errorf("error response with status code %d", resp.StatusCode)

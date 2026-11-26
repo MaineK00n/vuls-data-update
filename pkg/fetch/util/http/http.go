@@ -268,14 +268,14 @@ func (c *Client) Do(req *retryablehttp.Request) (*http.Response, error) {
 // failed request does not stop the others, so the error can name every one,
 // and that is what shows all of a source's broken files in one run. But a
 // source that is down for the whole run fails thousands of requests the same
-// way, so past this many the rest are only counted.
+// way, so past this many the rest are only counted, and not kept.
 const maxPipelineErrors = 20
 
 // PipelineDo makes the requests, at most concurrency of them at a time (a
 // negative concurrency means no limit), and hands each response to cont. A
 // request that fails, or whose continuation fails, does not stop the others.
-// Once all are done, the error counts the ones that failed and names up to
-// maxPipelineErrors of them.
+// Once all are done, the error counts the ones that failed and wraps the first
+// maxPipelineErrors of them, so errors.Is and errors.As see only those.
 func (c *Client) PipelineDo(reqs []*retryablehttp.Request, concurrency int, wait time.Duration, noProgress bool, cont func(resp *http.Response) error) error {
 	// errgroup reads a negative limit as "no limit" and a positive one as
 	// the limit itself, but gives zero an unbuffered semaphore, so the
@@ -317,8 +317,9 @@ func (c *Client) PipelineDo(reqs []*retryablehttp.Request, concurrency int, wait
 	}
 
 	var (
-		mu   sync.Mutex
-		errs []error
+		mu     sync.Mutex
+		failed int
+		errs   []error // the first maxPipelineErrors failures
 	)
 	var g errgroup.Group
 	g.SetLimit(concurrency)
@@ -332,20 +333,23 @@ func (c *Client) PipelineDo(reqs []*retryablehttp.Request, concurrency int, wait
 			if err := do(req); err != nil {
 				mu.Lock()
 				defer mu.Unlock()
-				errs = append(errs, err)
+				failed++
+				if len(errs) < maxPipelineErrors {
+					errs = append(errs, err)
+				}
 				return err
 			}
 			return nil
 		})
 	}
 	// Wait returns only the first failure. But a Group without a context
-	// runs every request whatever the others do, so by now errs holds every
-	// failure.
+	// runs every request whatever the others do, so by now every failure is
+	// counted, and the first of them are in errs.
 	if err := g.Wait(); err != nil {
-		if len(errs) > maxPipelineErrors {
-			return errors.Wrapf(stderrors.Join(errs[:maxPipelineErrors]...), "%d of %d requests failed (first %d shown)", len(errs), len(reqs), maxPipelineErrors)
+		if failed > len(errs) {
+			return errors.Wrapf(stderrors.Join(errs...), "%d of %d requests failed (first %d shown)", failed, len(reqs), len(errs))
 		}
-		return errors.Wrapf(stderrors.Join(errs...), "%d of %d requests failed", len(errs), len(reqs))
+		return errors.Wrapf(stderrors.Join(errs...), "%d of %d requests failed", failed, len(reqs))
 	}
 
 	_ = bar.Close()
