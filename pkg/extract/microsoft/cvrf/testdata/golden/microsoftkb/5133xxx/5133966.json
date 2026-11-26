@@ -1,0 +1,15 @@
+{
+	"kb_id": "5133966",
+	"url": "https://support.microsoft.com/help/5133966",
+	"products": [
+		".NET 10.0 installed on Linux",
+		".NET 10.0 installed on Mac OS",
+		".NET 10.0 installed on Windows"
+	],
+	"data_source": {
+		"id": "microsoft-cvrf",
+		"raws": [
+			"fixtures/2026-Oct/2026/CVE-2026-70197.json"
+		]
+	}
+}

@@ -16,6 +16,26 @@ type Affected struct {
 	Type  rangeTypes.RangeType `json:"type,omitempty"`
 	Range []rangeTypes.Range   `json:"range,omitempty"`
 	Fixed []string             `json:"fixed,omitempty"`
+	// Published is set, with Type RangeTypeUnconverted and no Range or Fixed,
+	// when the vendor lists the package for the vulnerability but the extractor
+	// could not convert its fix into a range: the vendor names the fix only as a
+	// link, a release tag, a version without a comparator, or not at all. It
+	// records what the vendor published, for a reader of the data; detection does
+	// not evaluate it (see Accept).
+	Published *Published `json:"published,omitempty"`
+}
+
+// Published is the vendor's statement of the fix, as published. None of its
+// fields is a version that can be compared.
+type Published struct {
+	// Fixed is the fixed release as the vendor names it, e.g.
+	// "https://aka.ms/OfficeSecurityReleases", "11.0 RC1", "17.10.5.1".
+	Fixed string `json:"fixed,omitempty"`
+	// Description is the vendor's description of the fix, e.g. "Click to Run",
+	// "Release Notes".
+	Description string `json:"description,omitempty"`
+	// URL is the vendor's link for the fix.
+	URL string `json:"url,omitempty"`
 }
 
 func (a *Affected) Sort() {
@@ -28,10 +48,36 @@ func Compare(x, y Affected) int {
 		x.Type.Compare(y.Type),
 		slices.CompareFunc(x.Range, y.Range, rangeTypes.Compare),
 		slices.Compare(x.Fixed, y.Fixed),
+		func() int {
+			switch {
+			case x.Published == nil && y.Published == nil:
+				return 0
+			case x.Published == nil && y.Published != nil:
+				return -1
+			case x.Published != nil && y.Published == nil:
+				return +1
+			default:
+				return cmp.Or(
+					cmp.Compare(x.Published.Fixed, y.Published.Fixed),
+					cmp.Compare(x.Published.Description, y.Published.Description),
+					cmp.Compare(x.Published.URL, y.Published.URL),
+				)
+			}
+		}(),
 	)
 }
 
+// Accept reports whether version v of the package is affected. An Affected of
+// Type RangeTypeUnconverted accepts no version and is not evaluated: it is a
+// record of a fix the extractor could not convert (see Published), not a
+// detection rule, so neither its Published nor any Range beside it is read.
+// Published under another Type is ignored as well, and the Range is evaluated as
+// usual.
 func (a Affected) Accept(family ecosystemTypes.Ecosystem, v string) (bool, error) {
+	if a.Type == rangeTypes.RangeTypeUnconverted {
+		return false, nil
+	}
+
 	for _, r := range a.Range {
 		// A Range element with no endpoints expresses nothing — malformed
 		// data (no extractor produces one; schema validation is the hard

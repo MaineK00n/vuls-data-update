@@ -42,7 +42,54 @@ func TestCompare(t *testing.T) {
 		args args
 		want int
 	}{
-		// TODO: Add test cases.
+		{
+			name: "equal unconverted",
+			args: args{
+				x: affectedTypes.Affected{Type: affectedrangeTypes.RangeTypeUnconverted, Published: &affectedTypes.Published{Fixed: "a", Description: "d", URL: "u"}},
+				y: affectedTypes.Affected{Type: affectedrangeTypes.RangeTypeUnconverted, Published: &affectedTypes.Published{Fixed: "a", Description: "d", URL: "u"}},
+			},
+			want: 0,
+		},
+		{
+			name: "unset unconverted sorts first",
+			args: args{
+				x: affectedTypes.Affected{Type: affectedrangeTypes.RangeTypeUnconverted},
+				y: affectedTypes.Affected{Type: affectedrangeTypes.RangeTypeUnconverted, Published: &affectedTypes.Published{}},
+			},
+			want: -1,
+		},
+		{
+			name: "unconverted fixed greater",
+			args: args{
+				x: affectedTypes.Affected{Type: affectedrangeTypes.RangeTypeUnconverted, Published: &affectedTypes.Published{Fixed: "b"}},
+				y: affectedTypes.Affected{Type: affectedrangeTypes.RangeTypeUnconverted, Published: &affectedTypes.Published{Fixed: "a", Description: "z"}},
+			},
+			want: +1,
+		},
+		{
+			name: "unconverted description less",
+			args: args{
+				x: affectedTypes.Affected{Type: affectedrangeTypes.RangeTypeUnconverted, Published: &affectedTypes.Published{Fixed: "a", Description: "Click to Run"}},
+				y: affectedTypes.Affected{Type: affectedrangeTypes.RangeTypeUnconverted, Published: &affectedTypes.Published{Fixed: "a", Description: "Release Notes"}},
+			},
+			want: -1,
+		},
+		{
+			name: "unconverted url greater",
+			args: args{
+				x: affectedTypes.Affected{Type: affectedrangeTypes.RangeTypeUnconverted, Published: &affectedTypes.Published{URL: "v"}},
+				y: affectedTypes.Affected{Type: affectedrangeTypes.RangeTypeUnconverted, Published: &affectedTypes.Published{URL: "u"}},
+			},
+			want: +1,
+		},
+		{
+			name: "type decides before unconverted",
+			args: args{
+				x: affectedTypes.Affected{Type: affectedrangeTypes.RangeTypeUnconverted, Published: &affectedTypes.Published{Fixed: "a"}},
+				y: affectedTypes.Affected{Type: affectedrangeTypes.RangeTypeMicrosoftWindows, Range: []affectedrangeTypes.Range{{LessThan: "10.0.1.1"}}},
+			},
+			want: +1,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -55,9 +102,10 @@ func TestCompare(t *testing.T) {
 
 func TestAffected_Accept(t *testing.T) {
 	type fields struct {
-		Type  affectedrangeTypes.RangeType
-		Range []affectedrangeTypes.Range
-		Fixed []string
+		Type      affectedrangeTypes.RangeType
+		Range     []affectedrangeTypes.Range
+		Fixed     []string
+		Published *affectedTypes.Published
 	}
 	type args struct {
 		family ecosystemTypes.Ecosystem
@@ -351,13 +399,77 @@ func TestAffected_Accept(t *testing.T) {
 			args: args{family: ecosystemTypes.Ecosystem("solaris:11.4"), v: "1.0.2k-8.el7"},
 			want: false,
 		},
+		{
+			name: "unconverted accepts no version",
+			fields: fields{
+				Type:      affectedrangeTypes.RangeTypeUnconverted,
+				Published: &affectedTypes.Published{Fixed: "https://aka.ms/OfficeSecurityReleases", Description: "Click to Run"},
+			},
+			args: args{v: "16.0.10417.20030"},
+			want: false,
+		},
+		{
+			name: "unconverted accepts no empty version",
+			fields: fields{
+				Type:      affectedrangeTypes.RangeTypeUnconverted,
+				Published: &affectedTypes.Published{},
+			},
+			args: args{v: ""},
+			want: false,
+		},
+		{
+			// Not evaluated: what an unconverted Affected holds is not read.
+			name:   "unconverted type without published: no match",
+			fields: fields{Type: affectedrangeTypes.RangeTypeUnconverted},
+			args:   args{v: "1.0.0"},
+			want:   false,
+		},
+		{
+			name: "unconverted type with a range: the range is not evaluated",
+			fields: fields{
+				Type:      affectedrangeTypes.RangeTypeUnconverted,
+				Range:     []affectedrangeTypes.Range{{LessThan: "1.0.0"}},
+				Published: &affectedTypes.Published{Fixed: "1.0.0"},
+			},
+			args: args{v: "0.9.0"},
+			want: false,
+		},
+		{
+			name: "unconverted type with fixed: no match",
+			fields: fields{
+				Type:      affectedrangeTypes.RangeTypeUnconverted,
+				Fixed:     []string{"1.0.0"},
+				Published: &affectedTypes.Published{Fixed: "1.0.0"},
+			},
+			args: args{v: "0.9.0"},
+			want: false,
+		},
+		{
+			name: "published under another type is ignored and the range evaluated",
+			fields: fields{
+				Type:      affectedrangeTypes.RangeTypeSEMVER,
+				Range:     []affectedrangeTypes.Range{{LessThan: "1.0.0"}},
+				Published: &affectedTypes.Published{Fixed: "1.0.0"},
+			},
+			args: args{v: "0.9.0"},
+			want: true,
+		},
+		{
+			// What a build without Published sees for such data: the unknown
+			// member is dropped on unmarshal and there is no range to accept.
+			name:   "range type outside the vocabulary and no range: no match (how a build without unconverted sees such data)",
+			fields: fields{Type: affectedrangeTypes.RangeType("unconverted-from-newer-data")},
+			args:   args{v: "1.0.0"},
+			want:   false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := (affectedTypes.Affected{
-				Type:  tt.fields.Type,
-				Range: tt.fields.Range,
-				Fixed: tt.fields.Fixed,
+				Type:      tt.fields.Type,
+				Range:     tt.fields.Range,
+				Fixed:     tt.fields.Fixed,
+				Published: tt.fields.Published,
 			}).Accept(tt.args.family, tt.args.v)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Affected.Accept() error = %v, wantErr %v", err, tt.wantErr)

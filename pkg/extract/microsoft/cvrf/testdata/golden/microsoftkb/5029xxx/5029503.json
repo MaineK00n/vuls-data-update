@@ -1,0 +1,13 @@
+{
+	"kb_id": "5029503",
+	"url": "https://support.microsoft.com/help/5029503",
+	"products": [
+		"Microsoft SQL Server 2022 for x64-based Systems (CU 8)"
+	],
+	"data_source": {
+		"id": "microsoft-cvrf",
+		"raws": [
+			"fixtures/2023-Oct/2023/CVE-2023-36785.json"
+		]
+	}
+}

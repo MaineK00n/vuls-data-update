@@ -416,6 +416,52 @@ func TestCriterion_Accept(t *testing.T) {
 			},
 		},
 		{
+			// An unconverted criterion records the vendor's fix and takes no
+			// part in detection: the package of the same name is not accepted.
+			name: "not accept unconverted version",
+			fields: fields{
+				Type: criterionTypes.CriterionTypeVersion,
+				Version: &vcTypes.Criterion{
+					Vulnerable: true,
+					FixStatus:  &fixstatusType.FixStatus{Class: fixstatusType.ClassFixed},
+					Package: vcPackageTypes.Package{
+						Type:   vcPackageTypes.PackageTypeBinary,
+						Binary: &vcBinaryPackageTypes.Package{Name: "Microsoft Office 2019 for 64-bit editions"},
+					},
+					Affected: &affectedTypes.Affected{
+						Type:      affectedrangeType.RangeTypeUnconverted,
+						Published: &affectedTypes.Published{Fixed: "https://aka.ms/OfficeSecurityReleases", Description: "Click to Run"},
+					},
+				},
+			},
+			args: args{
+				query: criterionTypes.Query{
+					Version: []vcTypes.Query{
+						{Binary: &vcTypes.QueryBinary{Family: ecosystemTypes.EcosystemTypeMicrosoft, Name: "Windows 11 Version 24H2 for x64-based Systems", Version: "10.0.26100.1"}},
+						{Binary: &vcTypes.QueryBinary{Family: ecosystemTypes.EcosystemTypeMicrosoft, Name: "Microsoft Office 2019 for 64-bit editions", Version: "16.0.10417.20030"}},
+					},
+				},
+			},
+			want: criterionTypes.FilteredCriterion{
+				Criterion: criterionTypes.Criterion{
+					Type: criterionTypes.CriterionTypeVersion,
+					Version: &vcTypes.Criterion{
+						Vulnerable: true,
+						FixStatus:  &fixstatusType.FixStatus{Class: fixstatusType.ClassFixed},
+						Package: vcPackageTypes.Package{
+							Type:   vcPackageTypes.PackageTypeBinary,
+							Binary: &vcBinaryPackageTypes.Package{Name: "Microsoft Office 2019 for 64-bit editions"},
+						},
+						Affected: &affectedTypes.Affected{
+							Type:      affectedrangeType.RangeTypeUnconverted,
+							Published: &affectedTypes.Published{Fixed: "https://aka.ms/OfficeSecurityReleases", Description: "Click to Run"},
+						},
+					},
+				},
+				Accepts: criterionTypes.AcceptQueries{},
+			},
+		},
+		{
 			// A criterion type this build does not know (data from a newer
 			// vuls-data-update) must accept no queries instead of aborting,
 			// and the skip must be recorded on the result.
