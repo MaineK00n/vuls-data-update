@@ -305,23 +305,45 @@ func applyOverrides(v cvrf.Vulnerability, products map[string]string, u *overrid
 					// A Mitigation or Workaround without ProductID applies to
 					// every product of the entry. Pin it to the products CVRF
 					// lists, as it does not cover one Microsoft did not list.
+					// With none listed, it covers nothing.
 					for ri, r := range rs {
 						if len(r.ProductID) == 0 && (r.Type == "Mitigation" || r.Type == "Workaround") {
+							if len(o.v.ProductStatuses.Status.ProductID) == 0 {
+								rs[ri].Description = ""
+								continue
+							}
 							rs[ri].ProductID = slices.Clone(o.v.ProductStatuses.Status.ProductID)
 						}
 					}
 					pinned = true
 				}
+				if o.v.ProductStatuses.Status.Type == "" {
+					// CVRF lists no product at all.
+					o.v.ProductStatuses.Status.Type = "Known Affected"
+				}
 				pid := fmt.Sprintf("override:%s", ov.product)
 				o.products[pid] = ov.product
 				o.v.ProductStatuses.Status.ProductID = append(o.v.ProductStatuses.Status.ProductID, pid)
+				u.use(i)
+				if func() bool {
+					for _, r := range rs {
+						if r.Type == "Vendor Fix" && slices.ContainsFunc(r.ProductID, func(pid string) bool { return o.products[pid] == ov.product }) {
+							return true
+						}
+					}
+					return false
+				}() {
+					// CVRF lists the product with a Vendor Fix but not in
+					// ProductStatuses: the product is added for its
+					// vulnerability, and its fix is left to CVRF's.
+					continue
+				}
 				rs = appendZero(rs)
 				rs[len(rs)-1].Type = "Vendor Fix"
 				rs[len(rs)-1].ProductID = []string{pid}
 				rs[len(rs)-1].FixedBuild = ov.fixedBuild
 				noFixedBuild = append(noFixedBuild, false)
 				listedFixedBuilds = append(listedFixedBuilds, "")
-				u.use(i)
 			case overrideFixedBuild, overrideNoFixedBuild:
 				fixedBuild := ov.fixedBuild
 				if kind == overrideNoFixedBuild {

@@ -1,7 +1,6 @@
 package cvrf_test
 
 import (
-	"path/filepath"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
@@ -2369,11 +2368,23 @@ func TestExtract(t *testing.T) {
 	tests := []struct {
 		name     string
 		args     string
+		golden   string
 		hasError bool
 	}{
 		{
-			name: "happy",
-			args: "./testdata/fixtures",
+			name:   "happy",
+			args:   "./testdata/fixtures",
+			golden: "./testdata/golden",
+		},
+		{
+			name:   "overrideAddProduct for an entry that lists no product, with a Mitigation without ProductID",
+			args:   "./testdata/fixtures-override-addproduct-no-products",
+			golden: "./testdata/golden-override-addproduct-no-products",
+		},
+		{
+			name:   "overrideAddProduct for a product CVRF lists with a Vendor Fix but not in ProductStatuses",
+			args:   "./testdata/fixtures-override-addproduct-vendorfix-unlisted",
+			golden: "./testdata/golden-override-addproduct-vendorfix-unlisted",
 		},
 		{
 			name:     "microsoft edge (chromium-based) vendor fix without FixedBuild",
@@ -2449,7 +2460,7 @@ func TestExtract(t *testing.T) {
 				// error was expected and occurred, test passed
 				return
 			default:
-				if err := utiltest.Diff(filepath.Join("testdata", "golden"), dir); err != nil {
+				if err := utiltest.Diff(tt.golden, dir); err != nil {
 					t.Error("unexpected error:", err)
 				}
 			}
