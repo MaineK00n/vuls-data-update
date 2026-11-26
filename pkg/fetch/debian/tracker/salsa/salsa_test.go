@@ -25,6 +25,14 @@ func TestFetch(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ts := httptest.NewTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				// Every source is fetched over https, which the in-memory network
+				// serves over TLS, so a request without TLS comes from a plain http URL.
+				if r.TLS == nil {
+					t.Errorf("unexpected plain http request: http://%s%s", r.Host, r.URL.RequestURI())
+					http.Error(w, "Client sent an HTTP request to an HTTPS server.", http.StatusBadRequest)
+					return
+				}
+
 				// The in-memory network routes every mirror host here, so the
 				// fixtures are keyed by the production host and path.
 				rel := filepath.FromSlash(strings.TrimPrefix(r.URL.Path, "/"))

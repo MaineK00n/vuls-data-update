@@ -66,12 +66,12 @@ var (
 		"undetermined",
 	}
 
-	releaseStable   = "http://deb.debian.org/debian"
-	releaseSecurity = "http://security.debian.org/debian-security"
-	releaseBackport = "http://deb.debian.org/debian"
-	archiveStable   = "http://archive.debian.org/debian"
-	archiveSecurity = "http://archive.debian.org/debian-security"
-	archiveBackport = "http://archive.debian.org/debian-backports"
+	releaseStable   = "https://deb.debian.org/debian"
+	releaseSecurity = "https://security.debian.org/debian-security"
+	releaseBackport = "https://deb.debian.org/debian"
+	archiveStable   = "https://archive.debian.org/debian"
+	archiveSecurity = "https://archive.debian.org/debian-security"
+	archiveBackport = "https://archive.debian.org/debian-backports"
 	codenames       = []string{"hamm", "slink", "potato", "woody", "sarge", "etch", "lenny", "squeeze", "wheezy", "jessie", "stretch", "buster", "bullseye", "bookworm", "trixie", "forky", "sid"}
 )
 
