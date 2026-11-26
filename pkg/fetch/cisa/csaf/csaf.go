@@ -4,6 +4,7 @@ import (
 	"archive/tar"
 	"bufio"
 	"compress/gzip"
+	"encoding/json/jsontext"
 	"encoding/json/v2"
 	"fmt"
 	"io"
@@ -22,6 +23,21 @@ import (
 )
 
 const dataURL = "https://github.com/cisagov/CSAF/archive/refs/heads/develop.tar.gz"
+
+// duplicateNames lists the advisories upstream publishes with an object member
+// named twice, which encoding/json/v2 rejects. Each is read again with duplicate
+// names allowed: a repeated string keeps its last value, and a repeated object
+// is merged. It is a stopgap until upstream fixes the file: a listed file that
+// reads without it fails the fetch, so the entry is removed rather than left
+// behind.
+//
+// OT/white/2026/icsa-26-288-02.json (ICSA-26-288-02) names "organization" twice
+// in its first acknowledgment, "Tokyo University" and then "Science and GMO
+// Flatt Security", so what is written carries only the second, a fragment of
+// the name, until upstream fixes it: https://github.com/cisagov/CSAF/issues/524
+var duplicateNames = map[string]struct{}{
+	filepath.Join("OT", "white", "2026", "icsa-26-288-02.json"): {},
+}
 
 type options struct {
 	dataURL string
@@ -162,7 +178,20 @@ func Fetch(opts ...Option) error {
 					defer f.Close()
 
 					var advisory CSAF
-					if err := json.UnmarshalRead(f, &advisory); err != nil {
+					err = json.UnmarshalRead(f, &advisory)
+					if _, ok := duplicateNames[filepath.Join(p, scanner.Text())]; ok {
+						switch {
+						case err == nil:
+							return CSAF{}, errors.New("decoded without allowing duplicate names; remove it from duplicateNames")
+						case errors.Is(err, jsontext.ErrDuplicateName):
+							if _, err := f.Seek(0, io.SeekStart); err != nil {
+								return CSAF{}, errors.Wrap(err, "seek")
+							}
+							advisory = CSAF{}
+							err = json.UnmarshalRead(f, &advisory, jsontext.AllowDuplicateNames(true))
+						}
+					}
+					if err != nil {
 						return CSAF{}, errors.Wrap(err, "decode json")
 					}
 
