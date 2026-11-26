@@ -1,0 +1,18 @@
+{
+	"kb_id": "5121573",
+	"url": "https://support.microsoft.com/help/5121573",
+	"products": [
+		"Exchange Server SE"
+	],
+	"supersedes": [
+		{
+			"kb_id": "5103212"
+		}
+	],
+	"data_source": {
+		"id": "microsoft-exchange",
+		"raws": [
+			"build-numbers-and-release-dates.json"
+		]
+	}
+}

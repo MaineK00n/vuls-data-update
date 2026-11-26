@@ -1,0 +1,18 @@
+{
+	"kb_id": "5121575",
+	"url": "https://support.microsoft.com/help/5121575",
+	"products": [
+		"Exchange Server 2019"
+	],
+	"supersedes": [
+		{
+			"kb_id": "5103214"
+		}
+	],
+	"data_source": {
+		"id": "microsoft-exchange",
+		"raws": [
+			"build-numbers-and-release-dates.json"
+		]
+	}
+}
