@@ -1,0 +1,13 @@
+{
+	"kb_id": "5065372",
+	"url": "https://support.microsoft.com/help/5065372",
+	"products": [
+		"Skype for Business Server Subscription Edition (SE) update history"
+	],
+	"data_source": {
+		"id": "microsoft-sfb",
+		"raws": [
+			"sfb-server-updates.json"
+		]
+	}
+}
