@@ -80,7 +80,8 @@ type ProductID string
 // to itself.
 //
 // It is a stopgap until upstream writes every list out: a fetch in which no
-// document holds a reference fails, so Ref is removed rather than left behind.
+// document holds a reference fails, so ProductIDs is removed rather than left
+// behind.
 type ProductIDs struct {
 	IDs []ProductID
 	Ref string

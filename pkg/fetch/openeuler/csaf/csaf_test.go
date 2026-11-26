@@ -25,9 +25,16 @@ func TestFetch(t *testing.T) {
 			name: "happy",
 		},
 		{
-			// Once no document holds a reference, ProductIDs.Ref has to go.
+			// Once no document holds a reference, ProductIDs has to go.
 			name:     "stale",
-			wantErr:  "remove Ref from ProductIDs",
+			wantErr:  "remove ProductIDs, hasRef and this check",
+			hasError: true,
+		},
+		{
+			// A run that read no document holds no reference either, but it
+			// fails as empty, not as stale.
+			name:     "empty",
+			wantErr:  "no file written",
 			hasError: true,
 		},
 	}

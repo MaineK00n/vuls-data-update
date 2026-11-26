@@ -1,7 +1,9 @@
 package csaf_test
 
 import (
+	"encoding/json/jsontext"
 	"encoding/json/v2"
+	stderrors "errors"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
@@ -11,10 +13,11 @@ import (
 
 func TestProductIDs_UnmarshalJSONFrom(t *testing.T) {
 	tests := []struct {
-		name    string
-		args    string
-		want    csaf.ProductIDs
-		wantErr bool
+		name     string
+		args     string
+		want     csaf.ProductIDs
+		wantJSON string // what is written back, if not args
+		wantErr  bool
 	}{
 		{
 			name: "array",
@@ -25,6 +28,14 @@ func TestProductIDs_UnmarshalJSONFrom(t *testing.T) {
 			name: "empty array",
 			args: `[]`,
 			want: csaf.ProductIDs{IDs: []csaf.ProductID{}},
+		},
+		{
+			// null reads as no list, which is written as [], as a nil
+			// []ProductID is.
+			name:     "null",
+			args:     `null`,
+			want:     csaf.ProductIDs{},
+			wantJSON: `[]`,
 		},
 		{
 			name: "reference",
@@ -72,12 +83,16 @@ func TestProductIDs_UnmarshalJSONFrom(t *testing.T) {
 			}
 
 			// What is read is written back as it was.
+			want := tt.args
+			if tt.wantJSON != "" {
+				want = tt.wantJSON
+			}
 			bs, err := json.Marshal(got)
 			if err != nil {
 				t.Fatalf("Marshal() error = %v", err)
 			}
-			if string(bs) != tt.args {
-				t.Errorf("Marshal() = %s, want %s", bs, tt.args)
+			if string(bs) != want {
+				t.Errorf("Marshal() = %s, want %s", bs, want)
 			}
 		})
 	}
@@ -125,6 +140,35 @@ func TestProductIDs_MarshalJSONTo(t *testing.T) {
 			}
 			if string(got) != tt.want {
 				t.Errorf("Marshal() = %s, want %s", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestProductIDs_UnmarshalJSONFrom_syntacticError(t *testing.T) {
+	// Fetch skips a document that is not valid JSON, which it tells apart by
+	// a *jsontext.SyntacticError, so one inside a list must still read as one.
+	tests := []struct {
+		name string
+		args string
+	}{
+		{
+			name: "array",
+			args: `{"product_ids":["openEuler-22.03-LTS-SP4:python-pyasn1-0.4.8-4.oe2203sp4.src",]}`,
+		},
+		{
+			name: "reference",
+			args: `{"product_ids":{"$ref":"$.vulnerabilities[0].product_status.fixed",}}`,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var v struct {
+				ProductIDs csaf.ProductIDs `json:"product_ids"`
+			}
+			err := json.Unmarshal([]byte(tt.args), &v)
+			if _, ok := stderrors.AsType[*jsontext.SyntacticError](err); !ok {
+				t.Errorf("Unmarshal() error = %v, want a *jsontext.SyntacticError", err)
 			}
 		})
 	}
