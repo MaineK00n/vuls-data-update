@@ -5040,31 +5040,34 @@ func newCmdRedHatPackageManifest() *cobra.Command {
 	}
 
 	cmd := &cobra.Command{
-		Use:   "redhat-package-manifest <pages dir>",
+		Use:   "redhat-package-manifest [<saved page>...]",
 		Short: "Fetch RedHat Enterprise Linux Package Manifest tables",
 		Long: heredoc.Doc(`
-			Fetch the tables of the RHEL package manifests from pages saved from
-			docs.redhat.com by hand. The site answers 403 to a client it does not take
-			for a browser, and its robots.txt disallows the single-page manifests.
+			Fetch the tables of the RHEL package manifests from the pages kept in
+			<dir>/origin, after storing there the saved pages given.
 
-			<pages dir> holds nothing but a directory for each major release, and each
-			page at the path of its URL under
+			docs.redhat.com answers 403 to a client it does not take for a browser,
+			and its robots.txt disallows the single-page manifests, so the pages are
+			saved from a browser by hand. A page given is stored cut down to its
+			<article> element, at the path of its URL (its canonical link) under
 			https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/
 			with ".html" added, e.g.
 
-			  <pages dir>/9/html-single/package_manifest/index.html
-			  <pages dir>/10/plan-baseos.html
+			  <dir>/origin/9/html-single/package_manifest/index.html
+			  <dir>/origin/10/plan-baseos.html
 
-			Every page there is read, and the fetch fails on anything else in
-			<pages dir>, or on a page with no table, such as the page that lists
-			RHEL 10's repository pages.
+			origin/ is kept from one run to the next, and the rest of <dir> is
+			rebuilt from it. The fetch fails on a page given that is not a page of
+			the manifest, on anything in origin/ but such pages, and on a page with
+			no table, such as the one that lists RHEL 10's repository pages.
 		`),
 		Example: heredoc.Doc(`
-			$ vuls-data-update fetch redhat-package-manifest pages
+			$ vuls-data-update fetch redhat-package-manifest ~/Downloads/plan-baseos.html
+			$ vuls-data-update fetch redhat-package-manifest
 		`),
-		Args: cobra.ExactArgs(1),
+		Args: cobra.ArbitraryArgs,
 		RunE: func(_ *cobra.Command, args []string) error {
-			if err := redhatPackageManifest.Fetch(args[0], redhatPackageManifest.WithDir(options.dir)); err != nil {
+			if err := redhatPackageManifest.Fetch(args, redhatPackageManifest.WithDir(options.dir)); err != nil {
 				return errors.Wrap(err, "failed to fetch redhat package manifest")
 			}
 			return nil
