@@ -181,42 +181,58 @@ func TestFetch(t *testing.T) {
 	}
 }
 
-// TestFetch_failedRun checks that a run that fails on a page given leaves the
-// tree as it was, the pages origin/ kept included.
+// TestFetch_failedRun checks that a run that fails leaves the tree as it was,
+// the pages origin/ kept included.
 func TestFetch_failedRun(t *testing.T) {
 	tests := []struct {
 		name    string
+		dir     string // the tree the run starts in
+		saved   string // a directory of saved pages, every one given to the run
 		wantErr string
 	}{
 		{
 			// A page that cut takes, with a table the fetch does not know.
 			name:    "bad-header",
+			dir:     filepath.Join("testdata", "golden", "happy"),
+			saved:   filepath.Join("testdata", "fixtures", "failed-run", "bad-header"),
 			wantErr: "unexpected first header",
 		},
 		{
 			// A page under a new name that holds a table a page kept holds.
 			name:    "duplicate",
+			dir:     filepath.Join("testdata", "golden", "happy"),
+			saved:   filepath.Join("testdata", "fixtures", "failed-run", "duplicate"),
 			wantErr: "duplicate table",
+		},
+		{
+			// The pages kept hold no module table any more, which
+			// EnsureWritten would only find with the tree cleaned.
+			name:    "no-module",
+			dir:     filepath.Join("testdata", "fixtures", "failed-run", "no-module"),
+			wantErr: "unexpected tables",
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			golden := filepath.Join("testdata", "golden", "happy")
 			dir := t.TempDir()
-			if err := os.CopyFS(dir, os.DirFS(golden)); err != nil {
-				t.Fatalf("copy %s: %v", golden, err)
+			if err := os.CopyFS(dir, os.DirFS(tt.dir)); err != nil {
+				t.Fatalf("copy %s: %v", tt.dir, err)
 			}
-			saved, err := filepath.Glob(filepath.Join("testdata", "fixtures", "failed-run", tt.name, "*.html"))
-			if err != nil {
-				t.Fatalf("glob: %v", err)
+			var saved []string
+			if tt.saved != "" {
+				ms, err := filepath.Glob(filepath.Join(tt.saved, "*.html"))
+				if err != nil {
+					t.Fatalf("glob %s: %v", tt.saved, err)
+				}
+				saved = ms
 			}
 
-			err = packageManifest.Fetch(saved, packageManifest.WithDir(dir))
+			err := packageManifest.Fetch(saved, packageManifest.WithDir(dir))
 			if err == nil || !strings.Contains(err.Error(), tt.wantErr) {
 				t.Errorf("Fetch() error = %v, want it to contain %q", err, tt.wantErr)
 			}
-			if err := utiltest.Diff(golden, dir); err != nil {
+			if err := utiltest.Diff(tt.dir, dir); err != nil {
 				t.Error("unexpected error:", err)
 			}
 		})

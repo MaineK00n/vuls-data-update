@@ -123,6 +123,22 @@ func Fetch(saved []string, opts ...Option) error {
 		}
 	}
 
+	// EnsureWritten below requires both kinds of table. A run without one is
+	// failed here too, before anything is written, so that it also leaves the
+	// tree as it was.
+	var npackage, nmodule int
+	for _, t := range tables {
+		switch t.value.(type) {
+		case PackageTable:
+			npackage++
+		case ModuleTable:
+			nmodule++
+		}
+	}
+	if npackage == 0 || nmodule == 0 {
+		return errors.Errorf("unexpected tables. expected: %s, actual: %d package and %d module tables", "a package and a module table at least", npackage, nmodule)
+	}
+
 	for _, p := range pages {
 		article, ok := given[p.path]
 		if !ok {
