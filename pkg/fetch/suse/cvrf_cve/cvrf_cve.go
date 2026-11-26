@@ -142,6 +142,12 @@ func checkRetry(ctx context.Context, resp *http.Response, err error) (bool, erro
 		return shouldRetry, errors.Wrap(err, "retry policy")
 	}
 
+	// Any other status is for Fetch to report. Its body is no archive, and an
+	// empty one would read as an archive that ends partway through.
+	if resp.StatusCode != http.StatusOK {
+		return false, nil
+	}
+
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return true, errors.Wrap(err, "read all response body")
