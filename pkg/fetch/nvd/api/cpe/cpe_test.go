@@ -3,6 +3,7 @@ package cpe_test
 import (
 	"bytes"
 	"encoding/json/v2"
+	"errors"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -21,7 +22,9 @@ func TestFetch(t *testing.T) {
 		name          string
 		args          []cpe.Option
 		fixturePrefix string
-		hasError      bool
+		// cut has the body of the first response fail partway.
+		cut      bool
+		hasError bool
 	}{
 		{
 			// A fetch that finds nothing has failed.
@@ -40,6 +43,14 @@ func TestFetch(t *testing.T) {
 		{
 			name:          "Multiple pages",
 			fixturePrefix: "3_pages",
+		},
+		{
+			// The API now and then cuts a body off partway with an HTTP/2
+			// stream error. The first response is cut off here, is asked for
+			// again, and the fetch comes out as if it had not been.
+			name:          "Body cut off partway",
+			fixturePrefix: "3_pages",
+			cut:           true,
 		},
 		{
 			// The totalResults is 7 initially, but increases to 8 after 2nd page.
@@ -138,8 +149,17 @@ func TestFetch(t *testing.T) {
 					http.ServeFile(w, r, filepath.Join("testdata", "fixtures", tt.fixturePrefix, fmt.Sprintf("%s-%s.json", startIndex, resultsPerPage)))
 				}
 			}))
+			hc, retry := ts.Client(), 0
+			var cut *utiltest.CutBody
+			if tt.cut {
+				cut = &utiltest.CutBody{Next: hc.Transport, After: 16, Err: errors.New("stream error: stream ID 1; INTERNAL_ERROR; received from peer")}
+				hc, retry = &http.Client{Transport: cut}, 1
+			}
 			dir := t.TempDir()
-			err := cpe.Fetch(append(tt.args, cpe.WithHTTPClient(ts.Client()), cpe.WithDir(dir), cpe.WithRetry(0), cpe.WithConcurrency(3), cpe.WithWait(0), cpe.WithResultsPerPage(3))...)
+			err := cpe.Fetch(append(tt.args, cpe.WithHTTPClient(hc), cpe.WithDir(dir), cpe.WithRetry(retry), cpe.WithRetryWaitMin(time.Millisecond), cpe.WithRetryWaitMax(time.Millisecond), cpe.WithConcurrency(3), cpe.WithWait(0), cpe.WithResultsPerPage(3))...)
+			if cut != nil && !cut.Cut() {
+				t.Error("no response was cut off")
+			}
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)
