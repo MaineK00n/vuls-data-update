@@ -17,5 +17,5 @@
 	"Uploaders": "Ondřej Nový <onovy@debian.org>,",
 	"Vcs-Browser": "https://salsa.debian.org/python-team/packages/flask",
 	"Vcs-Git": "https://salsa.debian.org/python-team/packages/flask.git",
-	"Version": "1.1.2-2+deb11u1"
+	"version": "1.1.2-2+deb11u1"
 }
