@@ -76,6 +76,21 @@ func TestFormat(t *testing.T) {
 					Deps: []*debug.Module{{
 						Path:    "github.com/MaineK00n/vuls-data-update",
 						Version: "v0.0.0-20260303093643-b8a08531c5a9",
+						Replace: &debug.Module{Path: "../vuls-data-update", Version: "(devel)"},
+					}},
+				},
+				ok: true,
+			},
+			want: "vuls-data-update (devel)",
+		},
+		{
+			name: "replacement with no version at all",
+			args: args{
+				info: &debug.BuildInfo{
+					Main: debug.Module{Path: "github.com/MaineK00n/vuls2", Version: "(devel)"},
+					Deps: []*debug.Module{{
+						Path:    "github.com/MaineK00n/vuls-data-update",
+						Version: "v0.0.0-20260303093643-b8a08531c5a9",
 						Replace: &debug.Module{Path: "../vuls-data-update"},
 					}},
 				},
