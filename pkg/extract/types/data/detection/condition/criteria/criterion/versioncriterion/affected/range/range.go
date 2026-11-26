@@ -101,9 +101,10 @@ const (
 
 	RangeTypeUnknown RangeType = "unknown"
 
-	// RangeTypeUnresolved marks an affected package whose vendor names a fix that no
-	// range can be derived from (see affected.Unresolved). It has no comparator.
-	RangeTypeUnresolved RangeType = "unresolved"
+	// RangeTypeUnconverted marks an affected package whose fix the extractor could
+	// not convert into a range; affected.Published keeps what the vendor published.
+	// It has no comparator, and detection does not evaluate it.
+	RangeTypeUnconverted RangeType = "unconverted"
 )
 
 // RangeTypes returns every RangeType this build knows, in declaration order.
@@ -152,7 +153,7 @@ func RangeTypes() []RangeType {
 		RangeTypeMicrosoftVSCode,
 		RangeTypeMicrosoftWindows,
 		RangeTypeUnknown,
-		RangeTypeUnresolved,
+		RangeTypeUnconverted,
 	}
 }
 
@@ -241,10 +242,10 @@ func (e *UnsupportedRangeTypeError) Warning() warningTypes.Warning {
 
 var ErrRangeTypeUnknown = errors.New("unknown range type")
 
-// ErrRangeTypeUnresolved is what CompareVersions answers for RangeTypeUnresolved:
+// ErrRangeTypeUnconverted is what CompareVersions answers for RangeTypeUnconverted:
 // the type has no versions to compare. affected.Affected never compares one (it
 // accepts no version of the package), so reaching it is a caller's mistake.
-var ErrRangeTypeUnresolved = errors.New("unresolved range type has no comparator")
+var ErrRangeTypeUnconverted = errors.New("unconverted range type has no comparator")
 
 // CompareVersions returns an integer comparing v1 and v2 under the
 // comparator selected by t: negative for v1 < v2, zero for equal, positive
@@ -638,8 +639,8 @@ func (t RangeType) CompareVersions(family ecosystemTypes.Ecosystem, v1, v2 strin
 		// The declared "unknown" vocabulary value is normal data (e.g. NVD
 		// emits it for ranges it cannot express); it quietly cannot evaluate.
 		return 0, &CompareError{Err: ErrRangeTypeUnknown}
-	case RangeTypeUnresolved:
-		return 0, &CompareError{Err: ErrRangeTypeUnresolved}
+	case RangeTypeUnconverted:
+		return 0, &CompareError{Err: ErrRangeTypeUnconverted}
 	default:
 		// Everything outside the vocabulary — the zero value (unset, a
 		// producer-side bug) or a value this build does not know (data from

@@ -1818,7 +1818,7 @@ func TestFixedBuildOverrides(t *testing.T) {
 	}
 }
 
-func TestBuildUnresolvedCriterion(t *testing.T) {
+func TestBuildUnconvertedCriterion(t *testing.T) {
 	type args struct {
 		cveID         string
 		productName   string
@@ -1826,7 +1826,7 @@ func TestBuildUnresolvedCriterion(t *testing.T) {
 		description   string
 		url           string
 	}
-	unresolved := func(product, fixed, description, url string) *criterionTypes.Criterion {
+	unconverted := func(product, fixed, description, url string) *criterionTypes.Criterion {
 		return &criterionTypes.Criterion{
 			Type: criterionTypes.CriterionTypeVersion,
 			Version: &vcTypes.Criterion{
@@ -1837,8 +1837,8 @@ func TestBuildUnresolvedCriterion(t *testing.T) {
 					Binary: &binaryTypes.Package{Name: product},
 				},
 				Affected: &affectedTypes.Affected{
-					Type:       affectedrangeTypes.RangeTypeUnresolved,
-					Unresolved: &affectedTypes.Unresolved{Fixed: fixed, Description: description, URL: url},
+					Type:      affectedrangeTypes.RangeTypeUnconverted,
+					Published: &affectedTypes.Published{Fixed: fixed, Description: description, URL: url},
 				},
 			},
 		}
@@ -1852,47 +1852,47 @@ func TestBuildUnresolvedCriterion(t *testing.T) {
 		{
 			name: "Office Click-to-Run, FixedBuild is a URL",
 			args: args{cveID: "CVE-2023-36767", productName: "Microsoft Office LTSC 2021 for 64-bit editions", rawFixedBuild: "https://aka.ms/OfficeSecurityReleases", description: "Click to Run"},
-			want: unresolved("Microsoft Office LTSC 2021 for 64-bit editions", "https://aka.ms/OfficeSecurityReleases", "Click to Run", ""),
+			want: unconverted("Microsoft Office LTSC 2021 for 64-bit editions", "https://aka.ms/OfficeSecurityReleases", "Click to Run", ""),
 		},
 		{
 			name: "Visual Studio Insiders tag",
 			args: args{cveID: "CVE-2026-70197", productName: "Microsoft Visual Studio 2026 Version 18.12", rawFixedBuild: "18.12 Insiders 3", description: "Release Notes", url: "https://learn.microsoft.com/en-us/visualstudio/releases/2026/release-history"},
-			want: unresolved("Microsoft Visual Studio 2026 Version 18.12", "18.12 Insiders 3", "Release Notes", "https://learn.microsoft.com/en-us/visualstudio/releases/2026/release-history"),
+			want: unconverted("Microsoft Visual Studio 2026 Version 18.12", "18.12 Insiders 3", "Release Notes", "https://learn.microsoft.com/en-us/visualstudio/releases/2026/release-history"),
 		},
 		{
 			name: ".NET SDK release-candidate tag",
 			args: args{cveID: "CVE-2026-58649", productName: ".NET 11.0 installed on Windows", rawFixedBuild: "11.0 RC1"},
-			want: unresolved(".NET 11.0 installed on Windows", "11.0 RC1", "", ""),
+			want: unconverted(".NET 11.0 installed on Windows", "11.0 RC1", "", ""),
 		},
 		{
 			name: "FixedBuild kept as published, not as cleaned",
 			args: args{cveID: "CVE-2026-58649", productName: ".NET 11.0 installed on Windows", rawFixedBuild: " Fixed Version 11.0 RC1. "},
-			want: unresolved(".NET 11.0 installed on Windows", "Fixed Version 11.0 RC1.", "", ""),
+			want: unconverted(".NET 11.0 installed on Windows", "Fixed Version 11.0 RC1.", "", ""),
 		},
 		{
 			name: "release notes without a FixedBuild on a version-compared product",
 			args: args{cveID: "CVE-2020-1161", productName: "Microsoft Visual Studio 2017 Version 15.9", description: " Release Notes "},
-			want: unresolved("Microsoft Visual Studio 2017 Version 15.9", "", "Release Notes", ""),
+			want: unconverted("Microsoft Visual Studio 2017 Version 15.9", "", "Release Notes", ""),
 		},
 		{
 			name: "malformed FixedBuild on a version-compared product",
 			args: args{cveID: "CVE-2025-49731", productName: "Microsoft Teams for Desktop", rawFixedBuild: "25060212643", description: "Release Notes"},
-			want: unresolved("Microsoft Teams for Desktop", "25060212643", "Release Notes", ""),
+			want: unconverted("Microsoft Teams for Desktop", "25060212643", "Release Notes", ""),
 		},
 		{
 			name: "product detected by KB elsewhere, with a version that has no range type",
 			args: args{cveID: "CVE-2023-36785", productName: "Microsoft ODBC Driver 17 for SQL Server on Windows", rawFixedBuild: "17.10.5.1", description: "Release Notes"},
-			want: unresolved("Microsoft ODBC Driver 17 for SQL Server on Windows", "17.10.5.1", "Release Notes", ""),
+			want: unconverted("Microsoft ODBC Driver 17 for SQL Server on Windows", "17.10.5.1", "Release Notes", ""),
 		},
 		{
 			name: "product without a range type",
 			args: args{cveID: "CVE-2023-36785", productName: "Microsoft ODBC Driver 17 for SQL Server on Linux", rawFixedBuild: "17.10.5.1", description: "Release Notes"},
-			want: unresolved("Microsoft ODBC Driver 17 for SQL Server on Linux", "17.10.5.1", "Release Notes", ""),
+			want: unconverted("Microsoft ODBC Driver 17 for SQL Server on Linux", "17.10.5.1", "Release Notes", ""),
 		},
 		{
 			name: "commit row without a FixedBuild",
 			args: args{cveID: "CVE-2017-11770", productName: ".NET Core 1.0", description: "Commit", url: "https://github.com/dotnet/corefx/commit/x"},
-			want: unresolved(".NET Core 1.0", "", "Commit", "https://github.com/dotnet/corefx/commit/x"),
+			want: unconverted(".NET Core 1.0", "", "Commit", "https://github.com/dotnet/corefx/commit/x"),
 		},
 		{
 			name: ".NET SDK feature band that covers no released band",
@@ -1910,13 +1910,13 @@ func TestBuildUnresolvedCriterion(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := cvrf.BuildUnresolvedCriterion(tt.args.cveID, tt.args.productName, tt.args.rawFixedBuild, tt.args.description, tt.args.url)
+			got, err := cvrf.BuildUnconvertedCriterion(tt.args.cveID, tt.args.productName, tt.args.rawFixedBuild, tt.args.description, tt.args.url)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("buildUnresolvedCriterion() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("buildUnconvertedCriterion() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if diff := cmp.Diff(tt.want, got); diff != "" {
-				t.Errorf("buildUnresolvedCriterion() mismatch (-want +got):\n%s", diff)
+				t.Errorf("buildUnconvertedCriterion() mismatch (-want +got):\n%s", diff)
 			}
 		})
 	}

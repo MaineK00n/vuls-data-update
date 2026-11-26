@@ -16,17 +16,18 @@ type Affected struct {
 	Type  rangeTypes.RangeType `json:"type,omitempty"`
 	Range []rangeTypes.Range   `json:"range,omitempty"`
 	Fixed []string             `json:"fixed,omitempty"`
-	// Unresolved is set, with Type RangeTypeUnresolved and no Range or Fixed, when
-	// the vendor lists the package for the vulnerability but no range can be
-	// derived from its fix: the vendor names the fix only as a link, a release
-	// tag, a version without a comparator, or not at all. It records the fix as
-	// published and accepts no version (see Accept).
-	Unresolved *Unresolved `json:"unresolved,omitempty"`
+	// Published is set, with Type RangeTypeUnconverted and no Range or Fixed,
+	// when the vendor lists the package for the vulnerability but the extractor
+	// could not convert its fix into a range: the vendor names the fix only as a
+	// link, a release tag, a version without a comparator, or not at all. It
+	// records what the vendor published, for a reader of the data; detection does
+	// not evaluate it (see Accept).
+	Published *Published `json:"published,omitempty"`
 }
 
-// Unresolved is the vendor's statement of the fix, as published. None of its
+// Published is the vendor's statement of the fix, as published. None of its
 // fields is a version that can be compared.
-type Unresolved struct {
+type Published struct {
 	// Fixed is the fixed release as the vendor names it, e.g.
 	// "https://aka.ms/OfficeSecurityReleases", "11.0 RC1", "17.10.5.1".
 	Fixed string `json:"fixed,omitempty"`
@@ -49,35 +50,31 @@ func Compare(x, y Affected) int {
 		slices.Compare(x.Fixed, y.Fixed),
 		func() int {
 			switch {
-			case x.Unresolved == nil && y.Unresolved == nil:
+			case x.Published == nil && y.Published == nil:
 				return 0
-			case x.Unresolved == nil && y.Unresolved != nil:
+			case x.Published == nil && y.Published != nil:
 				return -1
-			case x.Unresolved != nil && y.Unresolved == nil:
+			case x.Published != nil && y.Published == nil:
 				return +1
 			default:
 				return cmp.Or(
-					cmp.Compare(x.Unresolved.Fixed, y.Unresolved.Fixed),
-					cmp.Compare(x.Unresolved.Description, y.Unresolved.Description),
-					cmp.Compare(x.Unresolved.URL, y.Unresolved.URL),
+					cmp.Compare(x.Published.Fixed, y.Published.Fixed),
+					cmp.Compare(x.Published.Description, y.Published.Description),
+					cmp.Compare(x.Published.URL, y.Published.URL),
 				)
 			}
 		}(),
 	)
 }
 
-// Accept reports whether version v of the package is affected. An Unresolved
-// Affected accepts no version: it records that the vendor names a fix no range
-// could be derived from, for a reader of the data to find, and takes no part in
-// detection. Type RangeTypeUnresolved and Unresolved come together, and
-// Unresolved comes without Range or Fixed; anything else is a producer bug and
-// an error.
+// Accept reports whether version v of the package is affected. An Affected of
+// Type RangeTypeUnconverted accepts no version and is not evaluated: it is a
+// record of a fix the extractor could not convert (see Published), not a
+// detection rule, so neither its Published nor any Range beside it is read.
+// Published under another Type is ignored as well, and the Range is evaluated as
+// usual.
 func (a Affected) Accept(family ecosystemTypes.Ecosystem, v string) (bool, error) {
-	ok, err := a.IsUnresolved()
-	if err != nil {
-		return false, errors.Wrap(err, "is unresolved")
-	}
-	if ok {
+	if a.Type == rangeTypes.RangeTypeUnconverted {
 		return false, nil
 	}
 
@@ -175,20 +172,4 @@ func (a Affected) Accept(family ecosystemTypes.Ecosystem, v string) (bool, error
 		return true, nil
 	}
 	return false, nil
-}
-
-// IsUnresolved reports whether a is the Affected of a package known affected
-// whose range could not be derived (see Unresolved). It is an error when Type
-// and Unresolved disagree, or when Unresolved comes with a Range or Fixed.
-func (a Affected) IsUnresolved() (bool, error) {
-	switch {
-	case a.Type == rangeTypes.RangeTypeUnresolved && a.Unresolved == nil:
-		return false, errors.Errorf("unexpected affected. expected: %q with unresolved set, actual: unresolved unset", rangeTypes.RangeTypeUnresolved)
-	case a.Type != rangeTypes.RangeTypeUnresolved && a.Unresolved != nil:
-		return false, errors.Errorf("unexpected affected type with unresolved set. expected: %q, actual: %q", rangeTypes.RangeTypeUnresolved, a.Type)
-	case a.Unresolved != nil && (len(a.Range) > 0 || len(a.Fixed) > 0):
-		return false, errors.Errorf("unexpected range or fixed with unresolved set. expected: none, actual: range %v, fixed %q", a.Range, a.Fixed)
-	default:
-		return a.Unresolved != nil, nil
-	}
 }

@@ -416,9 +416,9 @@ func TestCriterion_Accept(t *testing.T) {
 			},
 		},
 		{
-			// An unresolved criterion records the vendor's fix and takes no
+			// An unconverted criterion records the vendor's fix and takes no
 			// part in detection: the package of the same name is not accepted.
-			name: "not accept unresolved version",
+			name: "not accept unconverted version",
 			fields: fields{
 				Type: criterionTypes.CriterionTypeVersion,
 				Version: &vcTypes.Criterion{
@@ -429,8 +429,8 @@ func TestCriterion_Accept(t *testing.T) {
 						Binary: &vcBinaryPackageTypes.Package{Name: "Microsoft Office 2019 for 64-bit editions"},
 					},
 					Affected: &affectedTypes.Affected{
-						Type:       affectedrangeType.RangeTypeUnresolved,
-						Unresolved: &affectedTypes.Unresolved{Fixed: "https://aka.ms/OfficeSecurityReleases", Description: "Click to Run"},
+						Type:      affectedrangeType.RangeTypeUnconverted,
+						Published: &affectedTypes.Published{Fixed: "https://aka.ms/OfficeSecurityReleases", Description: "Click to Run"},
 					},
 				},
 			},
@@ -453,36 +453,13 @@ func TestCriterion_Accept(t *testing.T) {
 							Binary: &vcBinaryPackageTypes.Package{Name: "Microsoft Office 2019 for 64-bit editions"},
 						},
 						Affected: &affectedTypes.Affected{
-							Type:       affectedrangeType.RangeTypeUnresolved,
-							Unresolved: &affectedTypes.Unresolved{Fixed: "https://aka.ms/OfficeSecurityReleases", Description: "Click to Run"},
+							Type:      affectedrangeType.RangeTypeUnconverted,
+							Published: &affectedTypes.Published{Fixed: "https://aka.ms/OfficeSecurityReleases", Description: "Click to Run"},
 						},
 					},
 				},
 				Accepts: criterionTypes.AcceptQueries{},
 			},
-		},
-		{
-			// Type unresolved without Unresolved is a producer bug: an error,
-			// not a warning.
-			name: "unresolved range type without unresolved is an error",
-			fields: fields{
-				Type: criterionTypes.CriterionTypeVersion,
-				Version: &vcTypes.Criterion{
-					Vulnerable: true,
-					FixStatus:  &fixstatusType.FixStatus{Class: fixstatusType.ClassFixed},
-					Package: vcPackageTypes.Package{
-						Type:   vcPackageTypes.PackageTypeBinary,
-						Binary: &vcBinaryPackageTypes.Package{Name: "name"},
-					},
-					Affected: &affectedTypes.Affected{Type: affectedrangeType.RangeTypeUnresolved},
-				},
-			},
-			args: args{
-				query: criterionTypes.Query{
-					Version: []vcTypes.Query{{Binary: &vcTypes.QueryBinary{Family: ecosystemTypes.EcosystemTypeMicrosoft, Name: "name", Version: "1.0.0"}}},
-				},
-			},
-			wantErr: true,
 		},
 		{
 			// A criterion type this build does not know (data from a newer

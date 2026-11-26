@@ -885,7 +885,7 @@ func buildDetections(v cvrf.Vulnerability, products map[string]string) (map[ecos
 	// lack. Its products mostly have no Vendor Fix, and the ProductStatuses
 	// fallback below would register each as unfixed for good, reporting every
 	// host with a product of the same name (e.g. the Teams client for a Teams
-	// service CVE). Each product gets an unresolved criterion instead, which
+	// service CVE). Each product gets an unconverted criterion instead, which
 	// detects nothing: the fix of a Vendor Fix as published, or, for a product
 	// without one, the note itself (see noCustomerActionDescription).
 	//
@@ -917,9 +917,9 @@ func buildDetections(v cvrf.Vulnerability, products map[string]string) (map[ecos
 	var tags []segmentTypes.DetectionTag
 	fixesByTag := make(map[segmentTypes.DetectionTag][]vendorFix)
 	excludedTags := make(map[segmentTypes.DetectionTag][]string)
-	// Unresolved criteria of the Vendor Fix remediations that yield neither a KB
-	// nor a fixed build criterion (see buildUnresolvedCriterion).
-	unresolvedByTag := make(map[segmentTypes.DetectionTag][]criterionTypes.Criterion)
+	// Unconverted criteria of the Vendor Fix remediations that yield neither a KB
+	// nor a fixed build criterion (see buildUnconvertedCriterion).
+	unconvertedByTag := make(map[segmentTypes.DetectionTag][]criterionTypes.Criterion)
 
 	for _, r := range v.Remediations.Remediation {
 		switch r.Type {
@@ -937,7 +937,7 @@ func buildDetections(v cvrf.Vulnerability, products map[string]string) (map[ecos
 				// Mark the product as covered so that the ProductStatuses fallback
 				// does not register it as unfixed: the product is fixed, even when
 				// the Vendor Fix carries neither a KB ID nor a usable FixedBuild
-				// (e.g. "Click to Run"), which buildUnresolvedCriterion records.
+				// (e.g. "Click to Run"), which buildUnconvertedCriterion records.
 				coveredProductIDs[pid] = struct{}{}
 				coveredProductNames[productName] = struct{}{}
 
@@ -976,14 +976,14 @@ func buildDetections(v cvrf.Vulnerability, products map[string]string) (map[ecos
 					}
 
 					// For the other products, the fix is kept as published in
-					// an unresolved criterion.
-					uc, err := buildUnresolvedCriterion(v.CVE, criterionProductName, r.FixedBuild, r.Description, r.URL)
+					// an unconverted criterion.
+					uc, err := buildUnconvertedCriterion(v.CVE, criterionProductName, r.FixedBuild, r.Description, r.URL)
 					if err != nil {
-						return nil, nil, errors.Wrap(err, "build unresolved criterion")
+						return nil, nil, errors.Wrap(err, "build unconverted criterion")
 					}
 					if uc != nil {
 						// appendConditions drops the duplicates
-						unresolvedByTag[tag] = append(unresolvedByTag[tag], *uc)
+						unconvertedByTag[tag] = append(unconvertedByTag[tag], *uc)
 					}
 					continue
 				}
@@ -1058,11 +1058,11 @@ func buildDetections(v cvrf.Vulnerability, products map[string]string) (map[ecos
 		}
 	}
 
-	// Unresolved criteria accept no version, so they go beside the KB and fixed
+	// Unconverted criteria accept no version, so they go beside the KB and fixed
 	// build criteria of the same product, if any, without changing what is
 	// detected.
-	for _, tag := range slices.Sorted(maps.Keys(unresolvedByTag)) {
-		appendConditions(conditionsByEcosystem, tag, unresolvedByTag[tag])
+	for _, tag := range slices.Sorted(maps.Keys(unconvertedByTag)) {
+		appendConditions(conditionsByEcosystem, tag, unconvertedByTag[tag])
 	}
 
 	// For products listed in ProductStatuses but not covered by any Vendor Fix
@@ -1169,13 +1169,13 @@ func buildDetections(v cvrf.Vulnerability, products map[string]string) (map[ecos
 	return conditionsByEcosystem, missingFixedBuilds, nil
 }
 
-// noCustomerActionDescription is the Unresolved description of a product of an
+// noCustomerActionDescription is the Published.Description of a product of an
 // entry that requires no customer action and lists no Vendor Fix for it: the
 // entry's "Customer Action Required" note, as CVRF gives it.
 const noCustomerActionDescription = "Customer Action Required: No"
 
 // appendNoCustomerActionConditions appends the conditions of an entry that requires
-// no customer action (see buildDetections): an unresolved criterion per product,
+// no customer action (see buildDetections): an unconverted criterion per product,
 // from its Vendor Fixes, or from noCustomerActionDescription for a product listed
 // only in ProductStatuses. A Vendor Fix that yields a KB or a comparable fixed
 // build contradicts the note and is an error.
@@ -1203,9 +1203,9 @@ func appendNoCustomerActionConditions(conditionsByEcosystem map[ecosystemTypes.E
 			if buildKBCriterion(criterionProductName, r.Description) != nil || fixedBuildCriterion != nil {
 				return errors.Errorf("unexpected Vendor Fix. expected: no KB and no comparable FixedBuild, actual: KB %q, FixedBuild %q for %q, please check the CVE FAQ", r.Description, r.FixedBuild, productName)
 			}
-			uc, err := buildUnresolvedCriterion(v.CVE, criterionProductName, r.FixedBuild, r.Description, r.URL)
+			uc, err := buildUnconvertedCriterion(v.CVE, criterionProductName, r.FixedBuild, r.Description, r.URL)
 			if err != nil {
-				return errors.Wrap(err, "build unresolved criterion")
+				return errors.Wrap(err, "build unconverted criterion")
 			}
 			if uc != nil {
 				appendConditions(conditionsByEcosystem, segmentTypes.DetectionTag(productName), []criterionTypes.Criterion{*uc})
@@ -1226,7 +1226,7 @@ func appendNoCustomerActionConditions(conditionsByEcosystem map[ecosystemTypes.E
 		if _, ok := coveredProductNames[productName]; ok {
 			continue
 		}
-		appendConditions(conditionsByEcosystem, segmentTypes.DetectionTag(productName), []criterionTypes.Criterion{*newUnresolvedCriterion(microsoftutil.NormalizeProductName(productName), "", noCustomerActionDescription, "")})
+		appendConditions(conditionsByEcosystem, segmentTypes.DetectionTag(productName), []criterionTypes.Criterion{*newUnconvertedCriterion(microsoftutil.NormalizeProductName(productName), "", noCustomerActionDescription, "")})
 	}
 
 	return nil
@@ -1709,7 +1709,7 @@ var dotnetPrereleaseRE = regexp.MustCompile(`^(preview|rc)\.\d+(\.\d+)*$`)
 //     takes ".NET X installed on <OS>" for the SDK and ".NET X runtime installed on
 //     <OS>" for the runtime, whichever the document meant (e.g. a KB-only fix under
 //     ".NET 8.0 installed on Linux" in a CVE before 2026-Jun, the runtime then, would
-//     go to the SDK). It shows in the KB criterion, the KB record and the unresolved
+//     go to the SDK). It shows in the KB criterion, the KB record and the unconverted
 //     criterion, as such a FixedBuild gives no comparable version criterion. The only
 //     such fixes so far, the 2026-Sep "11.0 RC1" ones, list no KB
 //   - anything else: the SDK, ".NET X installed on <OS>". An SDK version is a feature
@@ -2648,8 +2648,8 @@ func validateFixedBuild(rt rangeTypes.RangeType, productName, fixedBuild string)
 	return nil
 }
 
-// buildUnresolvedCriterion builds the criterion of a Vendor Fix that yields neither
-// a KB nor a fixed build criterion (see newUnresolvedCriterion), whatever the
+// buildUnconvertedCriterion builds the criterion of a Vendor Fix that yields neither
+// a KB nor a fixed build criterion (see newUnconvertedCriterion), whatever the
 // product: a version-compared one whose FixedBuild names no version (see
 // isVersionlessFixedBuild), e.g. Office Click-to-Run's
 // "https://aka.ms/OfficeSecurityReleases", "Release Notes" rows without a
@@ -2659,7 +2659,7 @@ func validateFixedBuild(rt rangeTypes.RangeType, productName, fixedBuild string)
 // It gives none for a fixedBuildOverrides entry of "" (the FixedBuild is known
 // wrong, e.g. "1.000" for Windows Server 2012 R2), and for a .NET SDK feature band
 // that covers no released band (see buildDotNetSDKCriterion).
-func buildUnresolvedCriterion(cveID, productName, rawFixedBuild, description, url string) (*criterionTypes.Criterion, error) {
+func buildUnconvertedCriterion(cveID, productName, rawFixedBuild, description, url string) (*criterionTypes.Criterion, error) {
 	fixed := cleanFixedBuild(rawFixedBuild)
 	fixedBuild := fixed
 	if fb, ok := fixedBuildOverrides[[3]string{cveID, productName, fixed}]; ok {
@@ -2681,15 +2681,15 @@ func buildUnresolvedCriterion(cveID, productName, rawFixedBuild, description, ur
 
 	// The FixedBuild as CVRF publishes it: cleanFixedBuild serves the override
 	// lookup and the classification above only.
-	return newUnresolvedCriterion(productName, rawFixedBuild, description, url), nil
+	return newUnconvertedCriterion(productName, rawFixedBuild, description, url), nil
 }
 
-// newUnresolvedCriterion returns a version criterion whose Affected is unresolved
-// (RangeTypeUnresolved): CVRF lists the product for the CVE, but gives nothing a
+// newUnconvertedCriterion returns a version criterion whose Affected is unconverted
+// (RangeTypeUnconverted): CVRF lists the product for the CVE, but gives nothing a
 // version range can be derived from. It keeps what CVRF gives as published, so that
 // a reader of the data finds what was not converted, and takes no part in detection
-// (an unresolved Affected accepts no version).
-func newUnresolvedCriterion(productName, fixed, description, url string) *criterionTypes.Criterion {
+// (an unconverted Affected accepts no version).
+func newUnconvertedCriterion(productName, fixed, description, url string) *criterionTypes.Criterion {
 	return &criterionTypes.Criterion{
 		Type: criterionTypes.CriterionTypeVersion,
 		Version: &vcTypes.Criterion{
@@ -2700,8 +2700,8 @@ func newUnresolvedCriterion(productName, fixed, description, url string) *criter
 				Binary: &binaryTypes.Package{Name: productName},
 			},
 			Affected: &affectedTypes.Affected{
-				Type: rangeTypes.RangeTypeUnresolved,
-				Unresolved: &affectedTypes.Unresolved{
+				Type: rangeTypes.RangeTypeUnconverted,
+				Published: &affectedTypes.Published{
 					Fixed:       strings.TrimSpace(fixed),
 					Description: strings.TrimSpace(description),
 					URL:         strings.TrimSpace(url),
@@ -2799,7 +2799,7 @@ var fixedBuildOverrides = map[[3]string]string{
 	// releases of each channel (2.1.18 and 2.1.19, 3.1.4 and 3.1.5): Microsoft
 	// re-released it in June 2020 "to comprehensively address" it
 	// (dotnet/announcements#157), so the later release is taken. Not listed, and left
-	// to buildUnresolvedCriterion: CVE-2018-8292 (.NET Core 2.1, "Commit") and
+	// to buildUnconvertedCriterion: CVE-2018-8292 (.NET Core 2.1, "Commit") and
 	// CVE-2020-1108 (.NET 5.0, a preview at the time).
 	{"CVE-2018-8409", ".NET Core 2.1", ""}:  "2.1.4",
 	{"CVE-2018-8416", ".NET Core 2.1", ""}:  "2.1.7",
@@ -2830,7 +2830,7 @@ var fixedBuildOverrides = map[[3]string]string{
 	// list each CVE under "Security Advisories Addressed" of the 15.9.x release that
 	// fixed it. CVE-2020-1108 is listed under 15.9.23 and, re-released "to
 	// comprehensively address" it, 15.9.24, which is taken (likewise 16.0.15 and
-	// 16.4.10 below). Not listed, and left to buildUnresolvedCriterion: CVE-2020-1161.
+	// 16.4.10 below). Not listed, and left to buildUnconvertedCriterion: CVE-2020-1161.
 	{"CVE-2018-8599", "Microsoft Visual Studio 2017 Version 15.9", ""}:  "15.9.4",
 	{"CVE-2019-0546", "Microsoft Visual Studio 2017 Version 15.9", ""}:  "15.9.5",
 	{"CVE-2019-0613", "Microsoft Visual Studio 2017 Version 15.9", ""}:  "15.9.7",
@@ -2884,7 +2884,7 @@ var fixedBuildOverrides = map[[3]string]string{
 	// Notice" of each 16.0.x release in
 	// https://learn.microsoft.com/en-us/visualstudio/releases/2019/release-notes-v16.0
 	// CVE-2020-1108 is listed under 16.0.14 and, re-released, 16.0.15, which is taken.
-	// Not listed, and left to buildUnresolvedCriterion: CVE-2020-1161.
+	// Not listed, and left to buildUnconvertedCriterion: CVE-2020-1161.
 	{"CVE-2019-0727", "Microsoft Visual Studio 2019 Version 16.0", ""}:  "16.0.4",
 	{"CVE-2019-1077", "Microsoft Visual Studio 2019 Version 16.0", ""}:  "16.0.6",
 	{"CVE-2019-1113", "Microsoft Visual Studio 2019 Version 16.0", ""}:  "16.0.6",
@@ -2994,7 +2994,7 @@ var fixedBuildOverrides = map[[3]string]string{
 	{"CVE-2020-1416", "Microsoft Visual Studio 2019 Version 16.6", ""}: "16.6.4",
 	// Visual Studio 2019 version 16.7 (includes 16.0 - 16.6), 2020-2021, likewise:
 	// https://learn.microsoft.com/en-us/visualstudio/releases/2019/release-notes-v16.7
-	// Not listed, and left to buildUnresolvedCriterion: CVE-2020-1597.
+	// Not listed, and left to buildUnconvertedCriterion: CVE-2020-1597.
 	{"CVE-2020-1130", "Microsoft Visual Studio 2019 Version 16.7", ""}:  "16.7.3",
 	{"CVE-2020-1133", "Microsoft Visual Studio 2019 Version 16.7", ""}:  "16.7.3",
 	{"CVE-2020-16856", "Microsoft Visual Studio 2019 Version 16.7", ""}: "16.7.3",

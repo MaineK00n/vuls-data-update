@@ -1283,8 +1283,8 @@ func TestRangeType_CompareVersions(t *testing.T) {
 			wantErr: true,
 		},
 		{
-			name: "unresolved type has no comparator",
-			rt:   affectedrangeTypes.RangeTypeUnresolved,
+			name: "unconverted type has no comparator",
+			rt:   affectedrangeTypes.RangeTypeUnconverted,
 			args: args{
 				v1: "1.0.0",
 				v2: "2.0.0",
