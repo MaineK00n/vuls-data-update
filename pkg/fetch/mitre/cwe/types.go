@@ -1,12 +1,6 @@
 package cwe
 
-import (
-	"encoding/json/jsontext"
-	"encoding/json/v2"
-	"strings"
-
-	"github.com/pkg/errors"
-)
+import "strings"
 
 // structuredText decodes an element of the schema's StructuredTextType, whose
 // content is either plain text or XHTML. Decoded into a plain string, such an
@@ -29,35 +23,6 @@ func (t structuredText) String() string {
 		return t.InnerXML
 	}
 	return t.CharData
-}
-
-// OneOrMany is a list that also decodes from a single JSON value. Schema v8.0
-// (CWE 5.0) made a few elements repeatable, and raw files written before they
-// were read as lists hold a single value there; the extractor still reads
-// such files until the next fetch rewrites them.
-type OneOrMany[T any] []T
-
-func (o *OneOrMany[T]) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	switch dec.PeekKind() {
-	case 'n':
-		if _, err := dec.ReadToken(); err != nil {
-			return errors.Wrap(err, "read null")
-		}
-		*o = nil
-	case '[':
-		var l []T
-		if err := json.UnmarshalDecode(dec, &l); err != nil {
-			return errors.Wrap(err, "decode list")
-		}
-		*o = l
-	default:
-		var v T
-		if err := json.UnmarshalDecode(dec, &v); err != nil {
-			return errors.Wrap(err, "decode single value")
-		}
-		*o = OneOrMany[T]{v}
-	}
-	return nil
 }
 
 // CWE 5.0 (schema v8.0) renamed Categories>Category to Groupings>Grouping,
@@ -344,9 +309,9 @@ type ApplicablePlatform struct {
 }
 
 type ModesOfIntroduction struct {
-	Phase       OneOrMany[string] `json:"phase,omitempty"`
-	CustomPhase []CustomPhase     `json:"custom_phase,omitempty"`
-	Note        []string          `json:"note,omitempty"`
+	Phase       []string      `json:"phase,omitempty"`
+	CustomPhase []CustomPhase `json:"custom_phase,omitempty"`
+	Note        []string      `json:"note,omitempty"`
 }
 
 type CommonConsequence struct {
@@ -384,19 +349,19 @@ type Reference struct {
 }
 
 type ContentHistory struct {
-	Submission        OneOrMany[Submission] `json:"submission,omitempty"`
-	Modification      []Modification        `json:"modification,omitempty"`
-	PreviousEntryName []PreviousEntryName   `json:"previous_entry_name,omitempty"`
-	Contribution      []Contribution        `json:"contribution,omitempty"`
+	Submission        []Submission        `json:"submission,omitempty"`
+	Modification      []Modification      `json:"modification,omitempty"`
+	PreviousEntryName []PreviousEntryName `json:"previous_entry_name,omitempty"`
+	Contribution      []Contribution      `json:"contribution,omitempty"`
 }
 
 type Submission struct {
-	SubmissionName         OneOrMany[string] `json:"submission_name,omitempty"`
-	SubmissionOrganization string            `json:"submission_organization,omitempty"`
-	SubmissionDate         string            `json:"submission_date,omitempty"`
-	SubmissionVersion      string            `json:"submission_version,omitempty"`
-	SubmissionReleaseDate  string            `json:"submission_release_date,omitempty"`
-	SubmissionComment      string            `json:"submission_comment,omitempty"`
+	SubmissionName         []string `json:"submission_name,omitempty"`
+	SubmissionOrganization string   `json:"submission_organization,omitempty"`
+	SubmissionDate         string   `json:"submission_date,omitempty"`
+	SubmissionVersion      string   `json:"submission_version,omitempty"`
+	SubmissionReleaseDate  string   `json:"submission_release_date,omitempty"`
+	SubmissionComment      string   `json:"submission_comment,omitempty"`
 }
 
 type Modification struct {
@@ -416,13 +381,13 @@ type PreviousEntryName struct {
 }
 
 type Contribution struct {
-	Type                     string            `json:"type,omitempty"`
-	ContributionName         OneOrMany[string] `json:"contribution_name,omitempty"`
-	ContributionOrganization string            `json:"contribution_organization,omitempty"`
-	ContributionDate         string            `json:"contribution_date,omitempty"`
-	ContributionVersion      string            `json:"contribution_version,omitempty"`
-	ContributionReleaseDate  string            `json:"contribution_release_date,omitempty"`
-	ContributionComment      string            `json:"contribution_comment,omitempty"`
+	Type                     string   `json:"type,omitempty"`
+	ContributionName         []string `json:"contribution_name,omitempty"`
+	ContributionOrganization string   `json:"contribution_organization,omitempty"`
+	ContributionDate         string   `json:"contribution_date,omitempty"`
+	ContributionVersion      string   `json:"contribution_version,omitempty"`
+	ContributionReleaseDate  string   `json:"contribution_release_date,omitempty"`
+	ContributionComment      string   `json:"contribution_comment,omitempty"`
 }
 
 type WeaknessOrdinality struct {

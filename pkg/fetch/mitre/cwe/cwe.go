@@ -376,7 +376,7 @@ func convertViews(views []view, exRefs map[string]ExternalReference) []View {
 
 func convertContentHistory(ch contentHistory) ContentHistory {
 	converted := ContentHistory{
-		Submission:        make(OneOrMany[Submission], 0, len(ch.Submission)),
+		Submission:        make([]Submission, 0, len(ch.Submission)),
 		Modification:      make([]Modification, 0, len(ch.Modification)),
 		PreviousEntryName: make([]PreviousEntryName, 0, len(ch.PreviousEntryName)),
 		Contribution:      make([]Contribution, 0, len(ch.Contribution)),
