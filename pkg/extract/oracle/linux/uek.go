@@ -55,16 +55,6 @@ import (
 // follow, e.g. "kernel-uek-split:ELSA-2024-12868".
 const uekSplitTagPrefix = "kernel-uek-split:"
 
-// uekSeries returns the version part of v, which names the UEK series, when
-// v is a UEK build (its release carries "uek", e.g. "el9uek").
-func uekSeries(v string) (string, bool) {
-	rv := rpm.NewVersion(v)
-	if !strings.Contains(rv.Release(), "uek") {
-		return "", false
-	}
-	return rv.Version(), true
-}
-
 // seriesBounds returns the bounds every build of a UEK series lies in,
 // whatever its release: [<epoch>:<series>-0, <epoch>:<series>.0-0), e.g.
 // [0:5.15.0-0, 0:5.15.0.0-0). rpm compares the version before the release,
@@ -76,20 +66,17 @@ func seriesBounds(epoch int, series string) (lower, upper string) {
 }
 
 // fixedRange returns the affected range for a fixed version of a package.
-// For a name RHCK also ships, built from a UEK series, the range starts at
-// the first build of the series, e.g. bpftool
+// For a name RHCK also ships, whose fixed version is a UEK build (its release
+// carries "uek", e.g. "el9uek"), the range starts at the first build of the
+// UEK series, which the version part names, e.g. bpftool
 // [0:5.15.0-0, 0:5.15.0-305.176.4.el9uek). kernel-uek* is never built from
 // RHCK, and its conflict between series is left to uekIndex.applySplit.
 func fixedRange(name, fixed string) rangeTypes.Range {
-	if isUEKKernelPackage(name) {
-		return rangeTypes.Range{LessThan: fixed}
-	}
-	s, ok := uekSeries(fixed)
-	if !ok {
-		return rangeTypes.Range{LessThan: fixed}
-	}
 	rv := rpm.NewVersion(fixed)
-	lower, _ := seriesBounds(rv.Epoch(), s)
+	if isUEKKernelPackage(name) || !strings.Contains(rv.Release(), "uek") {
+		return rangeTypes.Range{LessThan: fixed}
+	}
+	lower, _ := seriesBounds(rv.Epoch(), rv.Version())
 	return rangeTypes.Range{
 		GreaterEqual: lower,
 		LessThan:     fixed,
