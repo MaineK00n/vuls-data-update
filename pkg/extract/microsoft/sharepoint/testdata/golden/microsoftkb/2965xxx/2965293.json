@@ -1,0 +1,22 @@
+{
+	"kb_id": "2965293",
+	"products": [
+		"SharePoint Foundation 2010"
+	],
+	"superseded_by": [
+		{
+			"kb_id": "4504709"
+		}
+	],
+	"supersedes": [
+		{
+			"kb_id": "2687453"
+		}
+	],
+	"data_source": {
+		"id": "microsoft-sharepoint",
+		"raws": [
+			"sharepoint-updates.json"
+		]
+	}
+}
