@@ -2,7 +2,6 @@ package nistnvd2
 
 import (
 	"archive/zip"
-	"bytes"
 	"compress/gzip"
 	"encoding/json/v2"
 	"fmt"
@@ -105,12 +104,26 @@ Notably, you must show "prominent attribution" to show the data is from VulnChec
 	}
 	defer resp.Body.Close()
 
-	bs, err := io.ReadAll(resp.Body)
+	// The backup runs to gigabytes, so it goes to disk rather than to memory.
+	tempDir, err := os.MkdirTemp("", "vuls-data-update")
 	if err != nil {
-		return errors.Wrap(err, "read all response body")
+		return errors.Wrapf(err, "mkdir %s", tempDir)
+	}
+	defer os.RemoveAll(tempDir)
+
+	zipPath := filepath.Join(tempDir, "nist-nvd2.zip")
+	backup, err := os.Create(zipPath)
+	if err != nil {
+		return errors.Wrapf(err, "create %s", zipPath)
+	}
+	defer backup.Close()
+
+	n, err := io.Copy(backup, resp.Body)
+	if err != nil {
+		return errors.Wrapf(err, "write %s", zipPath)
 	}
 
-	r, err := zip.NewReader(bytes.NewReader(bs), int64(len(bs)))
+	r, err := zip.NewReader(backup, n)
 	if err != nil {
 		return errors.Wrap(err, "create zip reader")
 	}

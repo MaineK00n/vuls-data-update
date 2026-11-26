@@ -17,3 +17,6 @@ type httpClientOption struct {
 func (c httpClientOption) apply(opts *options) {
 	opts.httpClient = c.client
 }
+
+// CVEItems is cveItems, for the tests.
+var CVEItems = cveItems

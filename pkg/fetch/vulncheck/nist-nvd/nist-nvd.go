@@ -2,10 +2,11 @@ package nistnvd
 
 import (
 	"archive/zip"
-	"bytes"
+	"encoding/json/jsontext"
 	"encoding/json/v2"
 	"fmt"
 	"io"
+	"iter"
 	"log/slog"
 	"net/http"
 	"os"
@@ -104,12 +105,26 @@ Notably, you must show "prominent attribution" to show the data is from VulnChec
 	}
 	defer resp.Body.Close()
 
-	bs, err := io.ReadAll(resp.Body)
+	// The backup runs to gigabytes, so it goes to disk rather than to memory.
+	tempDir, err := os.MkdirTemp("", "vuls-data-update")
 	if err != nil {
-		return errors.Wrap(err, "read all response body")
+		return errors.Wrapf(err, "mkdir %s", tempDir)
+	}
+	defer os.RemoveAll(tempDir)
+
+	zipPath := filepath.Join(tempDir, "nist-nvd.zip")
+	backup, err := os.Create(zipPath)
+	if err != nil {
+		return errors.Wrapf(err, "create %s", zipPath)
+	}
+	defer backup.Close()
+
+	n, err := io.Copy(backup, resp.Body)
+	if err != nil {
+		return errors.Wrapf(err, "write %s", zipPath)
 	}
 
-	r, err := zip.NewReader(bytes.NewReader(bs), int64(len(bs)))
+	r, err := zip.NewReader(backup, n)
 	if err != nil {
 		return errors.Wrap(err, "create zip reader")
 	}
@@ -123,40 +138,38 @@ Notably, you must show "prominent attribution" to show the data is from VulnChec
 			continue
 		}
 
-		feed, err := func() (doc, error) {
+		if err := func() error {
 			f, err := zf.Open()
 			if err != nil {
-				return doc{}, errors.Wrapf(err, "open %s", zf.Name)
+				return errors.Wrapf(err, "open %s", zf.Name)
 			}
 			defer f.Close()
 
-			var feed doc
-			if err := json.UnmarshalRead(f, &feed); err != nil {
-				return doc{}, errors.Wrap(err, "decode json")
+			for v, err := range cveItems(f) {
+				if err != nil {
+					return errors.Wrap(err, "decode json")
+				}
+
+				splitted, err := util.Split(v.Cve.CVEDataMeta.ID, "-", "-")
+				if err != nil {
+					return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", v.Cve.CVEDataMeta.ID)
+				}
+				if _, err := time.Parse("2006", splitted[1]); err != nil {
+					return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", v.Cve.CVEDataMeta.ID)
+				}
+
+				p, err := utilfilepath.Join(options.dir, splitted[1], fmt.Sprintf("%s.json", v.Cve.CVEDataMeta.ID))
+				if err != nil {
+					return errors.Wrap(err, "join")
+				}
+
+				if err := util.Write(p, v); err != nil {
+					return errors.Wrapf(err, "write %s", p)
+				}
 			}
-			return feed, nil
-		}()
-		if err != nil {
+			return nil
+		}(); err != nil {
 			return errors.Wrapf(err, "read %s", zf.Name)
-		}
-
-		for _, v := range feed.CVEItems {
-			splitted, err := util.Split(v.Cve.CVEDataMeta.ID, "-", "-")
-			if err != nil {
-				return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", v.Cve.CVEDataMeta.ID)
-			}
-			if _, err := time.Parse("2006", splitted[1]); err != nil {
-				return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", v.Cve.CVEDataMeta.ID)
-			}
-
-			p, err := utilfilepath.Join(options.dir, splitted[1], fmt.Sprintf("%s.json", v.Cve.CVEDataMeta.ID))
-			if err != nil {
-				return errors.Wrap(err, "join")
-			}
-
-			if err := util.Write(p, v); err != nil {
-				return errors.Wrapf(err, "write %s", p)
-			}
 		}
 	}
 
@@ -166,6 +179,84 @@ Notably, you must show "prominent attribution" to show the data is from VulnChec
 		return errors.Wrapf(err, "ensure written %s", options.dir)
 	}
 
+	return nil
+}
+
+// cveItems yields the CVE_Items of the NVD 1.1 feed in r one at a time, and
+// skips the other members of the feed. A yearly feed, with its CPE names
+// expanded, decodes to gigabytes, so decoding a whole one at once can take
+// more memory than the runner has.
+func cveItems(r io.Reader) iter.Seq2[CVEItem, error] {
+	return func(yield func(CVEItem, error) bool) {
+		d := jsontext.NewDecoder(r)
+
+		if err := readDelim(d, '{'); err != nil {
+			yield(CVEItem{}, err)
+			return
+		}
+		for d.PeekKind() != '}' {
+			tok, err := d.ReadToken()
+			if err != nil {
+				yield(CVEItem{}, errors.Wrap(err, "read member name"))
+				return
+			}
+			// A token is void after the next call on d, so the name is taken
+			// out of it first.
+			name := tok.String()
+
+			// A feed that decoded into a struct took a null CVE_Items as
+			// none, so it is still none.
+			if name != "CVE_Items" || d.PeekKind() == 'n' {
+				if err := d.SkipValue(); err != nil {
+					yield(CVEItem{}, errors.Wrapf(err, "skip %s", name))
+					return
+				}
+				continue
+			}
+
+			if err := readDelim(d, '['); err != nil {
+				yield(CVEItem{}, errors.Wrap(err, "read CVE_Items"))
+				return
+			}
+			for d.PeekKind() != ']' {
+				var item CVEItem
+				if err := json.UnmarshalDecode(d, &item); err != nil {
+					yield(CVEItem{}, errors.Wrap(err, "decode CVE item"))
+					return
+				}
+				if !yield(item, nil) {
+					return
+				}
+			}
+			if err := readDelim(d, ']'); err != nil {
+				yield(CVEItem{}, errors.Wrap(err, "read CVE_Items"))
+				return
+			}
+		}
+		if err := readDelim(d, '}'); err != nil {
+			yield(CVEItem{}, err)
+			return
+		}
+
+		switch _, err := d.ReadToken(); {
+		case errors.Is(err, io.EOF):
+		case err != nil:
+			yield(CVEItem{}, errors.Wrap(err, "read after the feed"))
+		default:
+			yield(CVEItem{}, errors.New("unexpected data after the feed"))
+		}
+	}
+}
+
+// readDelim reads the next token of d and fails unless it is want.
+func readDelim(d *jsontext.Decoder, want jsontext.Kind) error {
+	tok, err := d.ReadToken()
+	if err != nil {
+		return errors.Wrapf(err, "read %q", want)
+	}
+	if tok.Kind() != want {
+		return errors.Errorf("unexpected JSON token. expected: %q, actual: %q", want, tok.Kind())
+	}
 	return nil
 }
 
