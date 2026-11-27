@@ -163,13 +163,16 @@ type euvdIDFix struct {
 // silently passed through.
 var euvdIDFixes = map[string]euvdIDFix{
 	// EUVD-2023-54802 belongs to CVE-2023-4966, but upstream also assigns it
-	// to this CVE, which the EUVD API lists as EUVD-2023-45783.
+	// to this CVE, which the EUVD API lists as EUVD-2023-45783:
+	// https://github.com/enisaeu/CNW/issues/68
 	"CVE-2023-41266": {wrong: "EUVD-2023-54802", correct: "EUVD-2023-45783"},
 	// EUVD-2024-38578 belongs to CVE-2024-40711, but upstream also assigns it
-	// to this CVE, which the EUVD API lists as EUVD-2024-37356.
+	// to this CVE, which the EUVD API lists as EUVD-2024-37356:
+	// https://github.com/enisaeu/CNW/issues/68
 	"CVE-2024-38475": {wrong: "EUVD-2024-38578", correct: "EUVD-2024-37356"},
 	// EUVD-2025-2009839 does not exist: it is EUVD-2025-200983, which the EUVD
-	// API lists for this CVE, with a digit appended.
+	// API lists for this CVE, with a digit appended:
+	// https://github.com/enisaeu/CNW/issues/68
 	"CVE-2025-55182": {wrong: "EUVD-2025-2009839", correct: "EUVD-2025-200983"},
 }
 
