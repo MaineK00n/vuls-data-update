@@ -25,6 +25,16 @@ func TestExtract(t *testing.T) {
 				repository2cpe: "./testdata/fixtures/repository2cpe",
 			},
 		},
+		{
+			// A RHEL CPE (cpe:/{o,a}:redhat:enterprise_linux:...) that maps to
+			// no major fails the extraction instead of dropping the product.
+			name: "RHEL CPE without a known major errors",
+			args: args{
+				csaf:           "./testdata/fixtures/csaf_rhel_cpe_no_major_error",
+				repository2cpe: "./testdata/fixtures/repository2cpe",
+			},
+			hasError: true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

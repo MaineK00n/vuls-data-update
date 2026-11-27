@@ -590,6 +590,14 @@ func walkProductTree(pt csaf.ProductTree, c2r map[string][]string) (map[csaf.Pro
 		if err != nil {
 			return nil, errors.Wrapf(err, "%q detect major versions", root)
 		}
+		// A product without a major is dropped from the output. That is
+		// expected for non-RHEL products (e.g. cpe:/a:redhat:satellite:6), but
+		// a RHEL CPE that resolves to no major means the CPE format changed,
+		// so fail loudly instead of silently losing every product that uses
+		// it (as vex/v1 does).
+		if len(majors) == 0 && (strings.HasPrefix(p.cpe, "cpe:/o:redhat:enterprise_linux:") || strings.HasPrefix(p.cpe, "cpe:/a:redhat:enterprise_linux:")) {
+			return nil, errors.Errorf("no major version detected for RHEL CPE. product_id: %q, cpe: %q", root, p.cpe)
+		}
 		for _, v := range majors {
 			p.major = v
 			pm[root] = append(pm[root], *p)
