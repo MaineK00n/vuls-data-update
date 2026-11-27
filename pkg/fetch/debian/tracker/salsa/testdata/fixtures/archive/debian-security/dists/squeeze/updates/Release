@@ -107,7 +107,7 @@ MD5Sum:
  bdfd11a6526e3c0795e6d1b0640b6028      115 contrib/source/Release
  d41d8cd98f00b204e9800998ecf8427e        0 contrib/source/Sources
  4059d198768f9f8dc9372dc1c54bc3c3       14 contrib/source/Sources.bz2
- 4a4dd3598707603b3f76a2378a4504aa       20 contrib/source/Sources.gz
+ 2ff132bf5eae82c79394b0a7e8453453       28 contrib/source/Sources.gz
  454fe6d79d4de10154f9dd8de617a58d   765779 main/binary-all/Packages
  bff0b620c7948679c924c442a1fa1471   126914 main/binary-all/Packages.bz2
  a8548f18e9230bfe1c01073aeefa1973   159118 main/binary-all/Packages.gz
@@ -207,7 +207,7 @@ MD5Sum:
  f8bb45b48258bac8fea3b5e27ef75fac      112 main/source/Release
  f2b20a83e85c8ea917492ea75553802d   551698 main/source/Sources
  a84113a718e9cd9c965e7de8b1072f48   139284 main/source/Sources.bz2
- ab98023c9f4daf83811b18d1de3ac1b8   172520 main/source/Sources.gz
+ 8ae2644b1acd7f8fecef99e8ecfb76bb     1242 main/source/Sources.gz
  d41d8cd98f00b204e9800998ecf8427e        0 non-free/binary-all/Packages
  4059d198768f9f8dc9372dc1c54bc3c3       14 non-free/binary-all/Packages.bz2
  4a4dd3598707603b3f76a2378a4504aa       20 non-free/binary-all/Packages.gz
@@ -307,7 +307,7 @@ MD5Sum:
  96fccd613b077c4feefc990c98926ec0      116 non-free/source/Release
  d41d8cd98f00b204e9800998ecf8427e        0 non-free/source/Sources
  4059d198768f9f8dc9372dc1c54bc3c3       14 non-free/source/Sources.bz2
- 4a4dd3598707603b3f76a2378a4504aa       20 non-free/source/Sources.gz
+ 5029bc59dba80c88a27f6596e2fde5a5       28 non-free/source/Sources.gz
 SHA1:
  8b99dea8ca647c917513391f3c3d4d38994e702a     1017 contrib/binary-all/Packages
  d507dc8c7982c5b0611140069ec3275323dc8e36      681 contrib/binary-all/Packages.bz2
@@ -408,7 +408,7 @@ SHA1:
  bf1a643286eba6bf7289b1ca64119b280e0d0ee0      115 contrib/source/Release
  da39a3ee5e6b4b0d3255bfef95601890afd80709        0 contrib/source/Sources
  64a543afbb5f4bf728636bdcbbe7a2ed0804adc2       14 contrib/source/Sources.bz2
- a0fddd5458378c1bf3c10dd2f5c060d1347741ed       20 contrib/source/Sources.gz
+ 609efbd08ea2da5196a1b94029018a942a9c550f       28 contrib/source/Sources.gz
  b552afbb74cb733001467a7694ec3666c4258df4   765779 main/binary-all/Packages
  57936fa3eea737be50dced5f04120e8f2ed59c71   126914 main/binary-all/Packages.bz2
  47f5edab16d6906136f3a8c39c9e26e74044b1b4   159118 main/binary-all/Packages.gz
@@ -508,7 +508,7 @@ SHA1:
  5477c0586ad7828f27af4c6793cc0d8237e00e79      112 main/source/Release
  be4e6f117b93c7462132d98ff96d0f91cb156a67   551698 main/source/Sources
  969b3dfd4bb7cf92ec214c07aabe5234c0fb2880   139284 main/source/Sources.bz2
- 27d4e651fadf2b117a0f29e13d60d5df95a0d600   172520 main/source/Sources.gz
+ a675e1a60b1fb4ef8fa5d02ab2aefaaa870d6e02     1242 main/source/Sources.gz
  da39a3ee5e6b4b0d3255bfef95601890afd80709        0 non-free/binary-all/Packages
  64a543afbb5f4bf728636bdcbbe7a2ed0804adc2       14 non-free/binary-all/Packages.bz2
  a0fddd5458378c1bf3c10dd2f5c060d1347741ed       20 non-free/binary-all/Packages.gz
@@ -608,7 +608,7 @@ SHA1:
  121d8e8556165b5347e8ca6dd38e145a52ddc9ec      116 non-free/source/Release
  da39a3ee5e6b4b0d3255bfef95601890afd80709        0 non-free/source/Sources
  64a543afbb5f4bf728636bdcbbe7a2ed0804adc2       14 non-free/source/Sources.bz2
- a0fddd5458378c1bf3c10dd2f5c060d1347741ed       20 non-free/source/Sources.gz
+ 290920449ee5cfca6ba4c0542fff551bd2036444       28 non-free/source/Sources.gz
 SHA256:
  3f91e451897c1bb69553332203940a0f0624557a40c7ed9a3e4f28dc5e70c446     1017 contrib/binary-all/Packages
  e2785873a6292b9ad95c5caa903ab4c56d0ddb6b13a195207af669cba2ed5582      681 contrib/binary-all/Packages.bz2
@@ -709,7 +709,7 @@ SHA256:
  be35014a37c7d015aceea42dba0e69c206be689fe6255458d97284d835d386c0      115 contrib/source/Release
  e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855        0 contrib/source/Sources
  d3dda84eb03b9738d118eb2be78e246106900493c0ae07819ad60815134a8058       14 contrib/source/Sources.bz2
- f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec       20 contrib/source/Sources.gz
+ 87e1ab2441619b0d431a25236ae46cbb2204907ad72b21e163a92ee6bf73cdc7       28 contrib/source/Sources.gz
  ea014ce756da60bb7ebb3bbf2f101ed7d904a300a4dcbbd1eb0b1a1f5c0927ea   765779 main/binary-all/Packages
  6d33e31a567f9e3baf5cd7fe66cd7340b4f46fe7f7d55c98c0dad3c3ce2bcd4e   126914 main/binary-all/Packages.bz2
  468ea0c6a54d13d965a950846f28ebeabcb650aeecb0b619edb13f3a98e1ce5f   159118 main/binary-all/Packages.gz
@@ -809,7 +809,7 @@ SHA256:
  2c0eb2ce2ad8fde007176d68cfb537a28dbde811cc3d35ccb7cbee0deae65e6e      112 main/source/Release
  1513adb88e9b55d35c07f4ba8fd9c8f9f630c5c5bc36a994f01323b2195e447f   551698 main/source/Sources
  dc8178221095bd91ef69be010237b3b0718274cddbfe7260526c1c3ba4cfcbfe   139284 main/source/Sources.bz2
- 11c25de4c0854775e8d6b8d5f92c09c3577ab3f76e4af0ba71be3b94a3df4140   172520 main/source/Sources.gz
+ a740b87408db7b7f87ff86f5744b15110f9374848b1855e7a622e3d5de615d35     1242 main/source/Sources.gz
  e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855        0 non-free/binary-all/Packages
  d3dda84eb03b9738d118eb2be78e246106900493c0ae07819ad60815134a8058       14 non-free/binary-all/Packages.bz2
  f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec       20 non-free/binary-all/Packages.gz
@@ -909,5 +909,5 @@ SHA256:
  97cdce6be76dfbd537b166cf148539456e138160eb80db656599fd56ac3aafda      116 non-free/source/Release
  e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855        0 non-free/source/Sources
  d3dda84eb03b9738d118eb2be78e246106900493c0ae07819ad60815134a8058       14 non-free/source/Sources.bz2
- f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec       20 non-free/source/Sources.gz
+ 98474950a86d2ac5b7c4cb3b503416aa6536cf4dd66357bd513dae329caf156b       28 non-free/source/Sources.gz
 

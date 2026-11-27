@@ -112,7 +112,7 @@ SHA256:
  63343411218416f717d3a2fd4769661ec24a2c8463af7c0b0e9197a96a620fbc      372 contrib/i18n/Translation-en.xz
  735e8bd4b338c081c2f85f379991204ee9d496d12a88fa2e1bb0497b4381250c      144 contrib/source/Release
  6f610ea87d1829f77b29f4e5dd48fb0c69919d91723861f54ab5aca1d52d9bac     1433 contrib/source/Sources
- 507c9c73fcd333e0e8917be5f41aa3796d33deb36711f32970a62afd6cea8247      852 contrib/source/Sources.xz
+ 27d5f42295de44dd359ca5bcc1351885ecd606862996eedab042ad60e4703bed      844 contrib/source/Sources.xz
  e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855        0 main/Contents-amd64
  f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec       20 main/Contents-amd64.gz
  e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855        0 main/Contents-arm64
@@ -215,7 +215,7 @@ SHA256:
  a2ab07ee6579f74af7b49b62bbe6a8afb7dffa19d4d5ae18b1107b211d11e935    57236 main/i18n/Translation-en.xz
  3dde587ee919e132e0b33ecee143fc36edbefa170ab94a23a3f1153a4b7e307e      141 main/source/Release
  f178dd90388588eadc59198a344f0ca71151a71025c19df8312b9588bfabf330   824507 main/source/Sources
- 1dc447cfcca8782dbe17e5a19d0420cacf0737c8455910da53dc81ec48ec6089    59148 main/source/Sources.xz
+ 779e80695954b6ae80c71129cb85a66b9180cd0126eb1e4787a694ae76623f8f     1520 main/source/Sources.xz
  e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855        0 non-free-firmware/Contents-amd64
  f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec       20 non-free-firmware/Contents-amd64.gz
  e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855        0 non-free-firmware/Contents-arm64
@@ -318,7 +318,7 @@ SHA256:
  3d28888ac6797c8d90d49d57c7ce850d7bc7146233264a47037f6f364df58c53      472 non-free-firmware/i18n/Translation-en.xz
  b629044526882c53342fd1ac2ace259640e394e13a6dcc881fade801e401035d      154 non-free-firmware/source/Release
  0ab7f030f93791ca4ae13190b13ea629259d80129b3231f64bde030cd3f45d04     1839 non-free-firmware/source/Sources
- db3630a52b1c142f36d94e9b0913d48ffca0352d91ef2178db6c3cbb73e2acb2      792 non-free-firmware/source/Sources.xz
+ baa85a2968bcee4b7792e923643770330c9715a06d267b17c73b04f181766ae8      784 non-free-firmware/source/Sources.xz
  e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855        0 non-free/Contents-amd64
  f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec       20 non-free/Contents-amd64.gz
  e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855        0 non-free/Contents-arm64

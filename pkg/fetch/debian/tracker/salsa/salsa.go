@@ -8,6 +8,9 @@ import (
 	"compress/bzip2"
 	"compress/gzip"
 	"crypto/md5"
+	"crypto/sha1"
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json/v2"
 	"fmt"
 	"io"
@@ -15,6 +18,7 @@ import (
 	"maps"
 	"net/http"
 	"net/textproto"
+	"path"
 	"path/filepath"
 	"regexp"
 	"slices"
@@ -73,6 +77,11 @@ var (
 	archiveSecurity = "https://archive.debian.org/debian-security"
 	archiveBackport = "https://archive.debian.org/debian-backports"
 	codenames       = []string{"hamm", "slink", "potato", "woody", "sarge", "etch", "lenny", "squeeze", "wheezy", "jessie", "stretch", "buster", "bullseye", "bookworm", "trixie", "forky", "sid"}
+
+	// sha1Suites lists the suites, by their path under dists, whose Release
+	// gives no SHA256 but MD5Sum and SHA1 only: the oldest on
+	// archive.debian.org. Their Sources are checked against the SHA1.
+	sha1Suites = []string{"potato", "woody", "woody/updates", "sarge-backports"}
 )
 
 type options struct {
@@ -84,6 +93,10 @@ type options struct {
 	// httpClient is only ever set by WithHTTPClient, which lives in
 	// export_test.go and is therefore absent from the production build.
 	httpClient *http.Client
+
+	// sha1Suites is only ever replaced by WithSHA1Suites, which lives in
+	// export_test.go and is therefore absent from the production build.
+	sha1Suites []string
 }
 
 type Option interface {
@@ -132,6 +145,7 @@ func Fetch(opts ...Option) error {
 			ArchiveSecurity: archiveSecurity,
 			ArchiveBackport: archiveBackport,
 		},
+		sha1Suites: sha1Suites,
 	}
 
 	for _, o := range opts {
@@ -814,12 +828,13 @@ func (opts *options) fetchSource(codename string, archived bool) (map[string]map
 	client := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry), utilhttp.WithClientHTTPClient(opts.httpClient))
 
 	slog.Info("Fetch Debian stable", slog.String("codename", codename))
-	sections, err := fetchRelease(client, fmt.Sprintf("%s/dists/%s/Release", stableURL, codename))
+	stableDistURL := fmt.Sprintf("%s/dists/%s", stableURL, codename)
+	rel, err := fetchRelease(client, fmt.Sprintf("%s/Release", stableDistURL), opts.hash(codename))
 	if err != nil {
 		return nil, errors.Wrap(err, "fetch release")
 	}
-	for _, section := range sections {
-		sources, err := fetchSource(client, fmt.Sprintf("%s/dists/%s/%s/source/Sources", stableURL, codename, section))
+	for _, section := range rel.components {
+		sources, err := fetchSource(client, stableDistURL, rel, section)
 		if err != nil {
 			return nil, errors.Wrap(err, "fetch source")
 		}
@@ -832,17 +847,18 @@ func (opts *options) fetchSource(codename string, archived bool) (map[string]map
 	}
 
 	slog.Info("Fetch Debian security", slog.String("codename", codename))
-	securityDistURL := fmt.Sprintf("%s/dists/%s/updates", securityURL, codename)
+	securitySuite := fmt.Sprintf("%s/updates", codename)
 	if slices.Index(codenames, codename) == -1 || slices.Index(codenames, codename) > slices.Index(codenames, "buster") {
-		securityDistURL = fmt.Sprintf("%s/dists/%s-security", securityURL, codename)
+		securitySuite = fmt.Sprintf("%s-security", codename)
 	}
+	securityDistURL := fmt.Sprintf("%s/dists/%s", securityURL, securitySuite)
 
-	sections, err = fetchRelease(client, fmt.Sprintf("%s/Release", securityDistURL))
+	rel, err = fetchRelease(client, fmt.Sprintf("%s/Release", securityDistURL), opts.hash(securitySuite))
 	if err != nil {
 		return nil, errors.Wrap(err, "fetch release")
 	}
-	for _, section := range sections {
-		sources, err := fetchSource(client, fmt.Sprintf("%s/%s/source/Sources", securityDistURL, filepath.Base(section)))
+	for _, section := range rel.components {
+		sources, err := fetchSource(client, securityDistURL, rel, section)
 		if err != nil {
 			return nil, errors.Wrap(err, "fetch source")
 		}
@@ -855,12 +871,14 @@ func (opts *options) fetchSource(codename string, archived bool) (map[string]map
 		backportURL = stableURL
 	}
 
-	sections, err = fetchRelease(client, fmt.Sprintf("%s/dists/%s-backports/Release", backportURL, codename))
+	backportSuite := fmt.Sprintf("%s-backports", codename)
+	backportDistURL := fmt.Sprintf("%s/dists/%s", backportURL, backportSuite)
+	rel, err = fetchRelease(client, fmt.Sprintf("%s/Release", backportDistURL), opts.hash(backportSuite))
 	if err != nil {
 		return nil, errors.Wrap(err, "fetch release")
 	}
-	for _, section := range sections {
-		sources, err := fetchSource(client, fmt.Sprintf("%s/dists/%s-backports/%s/source/Sources", backportURL, codename, section))
+	for _, section := range rel.components {
+		sources, err := fetchSource(client, backportDistURL, rel, section)
 		if err != nil {
 			return nil, errors.Wrap(err, "fetch source")
 		}
@@ -871,64 +889,164 @@ func (opts *options) fetchSource(codename string, archived bool) (map[string]map
 	return m, nil
 }
 
-func fetchRelease(c *utilhttp.Client, releaseURL string) ([]string, error) {
+// hash names the field of the Release of suite, a path under dists, that the
+// Sources of the suite are checked against.
+func (opts *options) hash(suite string) string {
+	if slices.Contains(opts.sha1Suites, suite) {
+		return "SHA1"
+	}
+	return "SHA256"
+}
+
+// release is what the fetcher reads from the Release file of a suite.
+type release struct {
+	components    []string
+	acquireByHash bool
+	// hash names the field of the Release that files comes from: SHA256, or
+	// SHA1 for a suite of sha1Suites.
+	hash string
+	// files maps the path of a file, relative to the directory of the
+	// Release, to the size and digest the Release gives for it.
+	files map[string]checksum
+}
+
+type checksum struct {
+	size   int64
+	digest string
+}
+
+// digestSizes gives the size in bytes of a digest in each field of a Release
+// that Sources are checked against.
+var digestSizes = map[string]int{"SHA256": sha256.Size, "SHA1": sha1.Size}
+
+// fetchRelease fetches the Release at releaseURL and parses it, taking the
+// checksums from its hash field. A response other than 200 is a suite the
+// mirror does not have, which is skipped: the release returned lists no
+// component.
+func fetchRelease(c *utilhttp.Client, releaseURL, hash string) (release, error) {
 	resp, err := c.Get(releaseURL)
 	if err != nil {
-		return nil, errors.Wrapf(err, "get %s", releaseURL)
+		return release{}, errors.Wrapf(err, "get %s", releaseURL)
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		slog.Warn("fetch error", slog.String("url", releaseURL), slog.Any("err", errors.Errorf("error response with status code %d", resp.StatusCode)))
 		_, _ = io.Copy(io.Discard, resp.Body)
-		return nil, nil
+		return release{}, nil
 	}
 
-	sections, err := parseRelease(resp.Body)
+	rel, err := parseRelease(resp.Body, hash)
 	if err != nil {
-		return nil, errors.Wrapf(err, "parse %s", releaseURL)
+		return release{}, errors.Wrapf(err, "parse %s", releaseURL)
 	}
 
-	return sections, nil
+	return rel, nil
 }
 
-func parseRelease(rd io.Reader) ([]string, error) {
+func parseRelease(rd io.Reader, hash string) (release, error) {
 	bs, err := io.ReadAll(rd)
 	if err != nil {
-		return nil, errors.Wrap(err, "read all response body")
+		return release{}, errors.Wrap(err, "read all response body")
 	}
 
 	r := textproto.NewReader(bufio.NewReader(strings.NewReader(fmt.Sprintf("%s\n\n", strings.TrimRight(string(bs), "\n")))))
 	header, err := r.ReadMIMEHeader()
 	if err != nil {
-		return nil, errors.Wrap(err, "read MIME header")
+		return release{}, errors.Wrap(err, "read MIME header")
 	}
-	return strings.Fields(header.Get("Components")), nil
+
+	sums, err := parseChecksums(header.Get(hash), hash)
+	if err != nil {
+		return release{}, errors.Wrapf(err, "parse %s", hash)
+	}
+
+	return release{
+		components:    strings.Fields(header.Get("Components")),
+		acquireByHash: header.Get("Acquire-By-Hash") == "yes",
+		hash:          hash,
+		files:         sums,
+	}, nil
 }
 
-func fetchSource(c *utilhttp.Client, sourceURL string) (map[string]textproto.MIMEHeader, error) {
-	for _, compress := range []string{"gz", "xz", "bz2"} {
-		sources, found, err := fetchCompressedSource(c, sourceURL, compress)
-		if err != nil {
-			return nil, errors.Wrapf(err, "fetch %s source", compress)
+// parseChecksums reads the hash field of a Release, such as SHA256, one line
+// per file of a digest, a size and a path, which textproto has folded into one
+// line.
+func parseChecksums(field, hash string) (map[string]checksum, error) {
+	fields := strings.Fields(field)
+	if len(fields)%3 != 0 {
+		return nil, errors.Errorf("unexpected number of fields. expected: %s, actual: %d", "a multiple of 3", len(fields))
+	}
+
+	m := make(map[string]checksum, len(fields)/3)
+	for entry := range slices.Chunk(fields, 3) {
+		digest, size, p := strings.ToLower(entry[0]), entry[1], entry[2]
+		if bs, err := hex.DecodeString(digest); err != nil || len(bs) != digestSizes[hash] {
+			return nil, errors.Errorf("unexpected %s of %s. expected: %s, actual: %q", hash, p, fmt.Sprintf("%d hex digits", 2*digestSizes[hash]), digest)
 		}
-		if found {
+		n, err := strconv.ParseInt(size, 10, 64)
+		if err != nil || n < 0 {
+			return nil, errors.Errorf("unexpected size of %s. expected: %s, actual: %q", p, "a non-negative integer", size)
+		}
+		m[p] = checksum{size: n, digest: digest}
+	}
+
+	return m, nil
+}
+
+// fetchSource fetches the Sources of section in the suite at distURL, in the
+// first compression rel lists that the mirror serves, and parses it once it
+// has the size and digest rel gives. Where rel says the suite can be acquired
+// by hash, the copy named by the digest is asked for first: it cannot be an
+// older or newer file than the one rel describes, as the plain path can while
+// the mirror is being updated.
+func fetchSource(c *utilhttp.Client, distURL string, rel release, section string) (map[string]textproto.MIMEHeader, error) {
+	var listed bool
+	for _, compress := range []string{"gz", "xz", "bz2"} {
+		p := fmt.Sprintf("%s/source/Sources.%s", path.Base(section), compress)
+		sum, ok := rel.files[p]
+		if !ok {
+			continue
+		}
+		listed = true
+
+		urls := make([]string, 0, 2)
+		if rel.acquireByHash {
+			urls = append(urls, fmt.Sprintf("%s/%s/by-hash/%s/%s", distURL, path.Dir(p), rel.hash, sum.digest))
+		}
+		urls = append(urls, fmt.Sprintf("%s/%s", distURL, p))
+
+		for _, u := range urls {
+			bs, found, err := fetchFile(c, u, rel.hash, sum)
+			if err != nil {
+				return nil, errors.Wrapf(err, "fetch %s", u)
+			}
+			if !found {
+				continue
+			}
+
+			sources, err := parseCompressedSource(bs, compress)
+			if err != nil {
+				return nil, errors.Wrapf(err, "parse %s", u)
+			}
 			return sources, nil
 		}
 	}
 
-	return nil, errors.Errorf("%s.(gz|xz|bz2) not found", sourceURL)
+	if !listed {
+		return nil, errors.Errorf("no %s of %s/source/Sources.(gz|xz|bz2) in %s/Release", rel.hash, path.Base(section), distURL)
+	}
+	return nil, errors.Errorf("%s/%s/source/Sources.(gz|xz|bz2) not found", distURL, path.Base(section))
 }
 
-// fetchCompressedSource fetches the Sources file at sourceURL in one
-// compression. A response other than 200 means the mirror does not have that
-// compression, so it reports nothing found for the caller to try the next one;
-// a request that fails is an error, not a compression to skip.
-func fetchCompressedSource(c *utilhttp.Client, sourceURL, compress string) (map[string]textproto.MIMEHeader, bool, error) {
-	u := fmt.Sprintf("%s.%s", sourceURL, compress)
+// fetchFile fetches u and returns it if it has the size of sum and its digest
+// by hash. A response other than 200 means the mirror does not have the file
+// there, so it reports nothing found for the caller to try elsewhere; a
+// request that fails, or a file that does not match sum, is an error.
+func fetchFile(c *utilhttp.Client, u, hash string, sum checksum) ([]byte, bool, error) {
 	resp, err := c.Get(u)
 	if err != nil {
-		return nil, false, errors.Wrapf(err, "get %s", u)
+		return nil, false, errors.Wrap(err, "get")
 	}
 	defer resp.Body.Close()
 
@@ -937,33 +1055,62 @@ func fetchCompressedSource(c *utilhttp.Client, sourceURL, compress string) (map[
 		return nil, false, nil
 	}
 
+	// Reading one byte past the size sum gives tells a longer file, and goes
+	// no further into it.
+	bs, err := io.ReadAll(io.LimitReader(resp.Body, sum.size+1))
+	if err != nil {
+		return nil, false, errors.Wrap(err, "read body")
+	}
+	switch n := int64(len(bs)); {
+	case n > sum.size:
+		return nil, false, errors.Errorf("unexpected size. expected: %d, actual: more than %d", sum.size, sum.size)
+	case n < sum.size:
+		return nil, false, errors.Errorf("unexpected size. expected: %d, actual: %d", sum.size, n)
+	}
+	var digest string
+	switch hash {
+	case "SHA256":
+		digest = fmt.Sprintf("%x", sha256.Sum256(bs))
+	case "SHA1":
+		digest = fmt.Sprintf("%x", sha1.Sum(bs))
+	default:
+		return nil, false, errors.Errorf("unexpected hash. expected: %q, actual: %q", []string{"SHA256", "SHA1"}, hash)
+	}
+	if digest != sum.digest {
+		return nil, false, errors.Errorf("unexpected %s. expected: %q, actual: %q", hash, sum.digest, digest)
+	}
+
+	return bs, true, nil
+}
+
+func parseCompressedSource(bs []byte, compress string) (map[string]textproto.MIMEHeader, error) {
 	var r io.Reader
 	switch compress {
 	case "gz":
-		gr, err := gzip.NewReader(resp.Body)
+		gr, err := gzip.NewReader(bytes.NewReader(bs))
 		if err != nil {
-			return nil, false, errors.Wrap(err, "create gzip reader")
+			return nil, errors.Wrap(err, "create gzip reader")
 		}
 		defer gr.Close()
 		r = gr
 	case "xz":
-		xr, err := xz.NewReader(resp.Body)
+		xr, err := xz.NewReader(bytes.NewReader(bs))
 		if err != nil {
-			return nil, false, errors.Wrap(err, "create xz reader")
+			return nil, errors.Wrap(err, "create xz reader")
 		}
 		r = xr
 	case "bz2":
-		r = bzip2.NewReader(resp.Body)
+		r = bzip2.NewReader(bytes.NewReader(bs))
 	default:
-		return nil, false, errors.Errorf("unexpected compress format. expected: %q, actual: %q", []string{"gz", "xz", "bz2"}, compress)
+		return nil, errors.Errorf("unexpected compress format. expected: %q, actual: %q", []string{"gz", "xz", "bz2"}, compress)
 	}
 
 	sources, err := parseSource(r)
 	if err != nil {
-		return nil, false, errors.Wrapf(err, "parse %s", u)
+		return nil, errors.Wrap(err, "parse source")
 	}
 
-	return sources, true, nil
+	return sources, nil
 }
 
 // parseSource reads the stanzas of a Sources file, which a blank line
