@@ -4,6 +4,7 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"strconv"
 	"sync/atomic"
 	"testing"
@@ -216,5 +217,108 @@ func TestNewClient_WithClientBufferBody_CloseIdleConnections(t *testing.T) {
 	client.HTTPClient.CloseIdleConnections()
 	if inner.calls != 1 {
 		t.Errorf("CloseIdleConnections calls on the inner transport = %d, want 1", inner.calls)
+	}
+}
+
+func TestNewClient_WithClientSpoolBody(t *testing.T) {
+	const body = `{"vulnerabilities":[{"cve":{"id":"CVE-2026-0001"}}]}`
+
+	tests := []struct {
+		name string
+		// cut is how many responses are cut off partway through the body
+		// before one is sent whole.
+		cut int
+		// unavailable answers the first responses with a 503 instead.
+		unavailable  bool
+		want         string
+		wantRequests int
+		hasError     bool
+	}{
+		{
+			// The body is written to a file within the retry loop, so a cut
+			// one is asked for again, as with WithClientBufferBody.
+			name:         "spooled",
+			cut:          2,
+			want:         body,
+			wantRequests: 3,
+		},
+		{
+			name:         "spooled, retries run out",
+			cut:          3,
+			wantRequests: 3,
+			hasError:     true,
+		},
+		{
+			// A 503 is spooled too, and its file goes when retryablehttp
+			// closes the body of a response it retries.
+			name:         "503, then whole",
+			cut:          2,
+			unavailable:  true,
+			want:         body,
+			wantRequests: 3,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			// The files go to TMPDIR, which is watched for what is left.
+			tmp := t.TempDir()
+			t.Setenv("TMPDIR", tmp)
+			files := func() int {
+				es, err := os.ReadDir(tmp)
+				if err != nil {
+					t.Fatal("unexpected error:", err)
+				}
+				return len(es)
+			}
+
+			var requests atomic.Int64
+			ts := httptest.NewTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+				if requests.Add(1) > int64(tt.cut) {
+					w.Header().Set("Content-Length", strconv.Itoa(len(body)))
+					_, _ = io.WriteString(w, body)
+					return
+				}
+				if tt.unavailable {
+					http.Error(w, "Service Unavailable", http.StatusServiceUnavailable)
+					return
+				}
+				// Half of the body, and then the connection is gone.
+				w.Header().Set("Content-Length", strconv.Itoa(len(body)))
+				_, _ = io.WriteString(w, body[:len(body)/2])
+				_ = http.NewResponseController(w).Flush()
+				panic(http.ErrAbortHandler)
+			}))
+
+			client := utilhttp.NewClient(utilhttp.WithClientHTTPClient(ts.Client()), utilhttp.WithClientRetryMax(2), utilhttp.WithClientRetryWaitMin(time.Millisecond), utilhttp.WithClientRetryWaitMax(time.Millisecond), utilhttp.WithClientSpoolBody(true))
+
+			got, err := func() (string, error) {
+				resp, err := client.Get("https://example.com/feed.json.gz")
+				if err != nil {
+					return "", err
+				}
+				defer resp.Body.Close()
+				// The cut bodies' files are gone, and the whole one's is
+				// there until the body is closed.
+				if n := files(); n != 1 {
+					t.Errorf("files while the body is open = %d, want 1", n)
+				}
+				bs, err := io.ReadAll(resp.Body)
+				return string(bs), err
+			}()
+			switch {
+			case err != nil && !tt.hasError:
+				t.Error("unexpected error:", err)
+			case err == nil && tt.hasError:
+				t.Error("expected error has not occurred")
+			case err == nil && got != tt.want:
+				t.Errorf("body = %q, want %q", got, tt.want)
+			}
+			if n := requests.Load(); n != int64(tt.wantRequests) {
+				t.Errorf("requests = %d, want %d", n, tt.wantRequests)
+			}
+			if n := files(); n != 0 {
+				t.Errorf("files left = %d, want 0", n)
+			}
+		})
 	}
 }

@@ -127,7 +127,7 @@ func Fetch(opts ...Option) error {
 }
 
 func (opts options) fetch(feedURL string) ([]CVE, error) {
-	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry), utilhttp.WithClientHTTPClient(opts.httpClient)).Get(feedURL)
+	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry), utilhttp.WithClientHTTPClient(opts.httpClient), utilhttp.WithClientSpoolBody(true)).Get(feedURL)
 	if err != nil {
 		return nil, errors.Wrap(err, "fetch nvd cve feed")
 	}

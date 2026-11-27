@@ -1,6 +1,7 @@
 package v2_test
 
 import (
+	"errors"
 	"net/http"
 	"net/http/httptest"
 	"path/filepath"
@@ -14,11 +15,21 @@ func TestFetch(t *testing.T) {
 	tests := []struct {
 		name     string
 		testdata string
+		// cut has the body of the first response fail partway.
+		cut      bool
 		hasError bool
 	}{
 		{
 			name:     "happy path",
 			testdata: "testdata/fixtures/nvdcpe-2.0.tar.gz",
+		},
+		{
+			// NVD now and then cuts a feed off partway with an HTTP/2 stream
+			// error. The feed is cut off here, is asked for again, and the
+			// fetch comes out as if it had not been.
+			name:     "body cut off partway",
+			testdata: "testdata/fixtures/nvdcpe-2.0.tar.gz",
+			cut:      true,
 		},
 	}
 
@@ -28,8 +39,17 @@ func TestFetch(t *testing.T) {
 				http.ServeFile(w, r, tt.testdata)
 			}))
 
+			hc, retry := ts.Client(), 0
+			var cut *utiltest.CutBody
+			if tt.cut {
+				cut = &utiltest.CutBody{Next: hc.Transport, After: 16, Err: errors.New("stream error: stream ID 1; INTERNAL_ERROR; received from peer")}
+				hc, retry = &http.Client{Transport: cut}, 1
+			}
 			dir := t.TempDir()
-			err := v2.Fetch(v2.WithHTTPClient(ts.Client()), v2.WithDir(dir), v2.WithRetry(0))
+			err := v2.Fetch(v2.WithHTTPClient(hc), v2.WithDir(dir), v2.WithRetry(retry))
+			if cut != nil && !cut.Cut() {
+				t.Error("no response was cut off")
+			}
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)

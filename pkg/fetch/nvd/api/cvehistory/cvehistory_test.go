@@ -3,6 +3,7 @@ package cvehistory_test
 import (
 	"bytes"
 	"encoding/json/v2"
+	"errors"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -21,7 +22,9 @@ func TestFetch(t *testing.T) {
 		name          string
 		args          []cvehistory.Option
 		fixturePrefix string
-		hasError      bool
+		// cut has the body of the first response fail partway.
+		cut      bool
+		hasError bool
 	}{
 		{
 			// A fetch that finds nothing has failed.
@@ -46,6 +49,14 @@ func TestFetch(t *testing.T) {
 			// Change events of a CVE are spread over the pages.
 			name:          "Multiple pages",
 			fixturePrefix: "3_pages",
+		},
+		{
+			// The API now and then cuts a body off partway with an HTTP/2
+			// stream error. The first response is cut off here, is asked for
+			// again, and the fetch comes out as if it had not been.
+			name:          "Body cut off partway",
+			fixturePrefix: "3_pages",
+			cut:           true,
 		},
 		{
 			// The totalResults is 7 initially, but increases to 8 after 2nd page.
@@ -159,8 +170,17 @@ func TestFetch(t *testing.T) {
 					http.ServeFile(w, r, filepath.Join("testdata", "fixtures", tt.fixturePrefix, fmt.Sprintf("%s-%s.json", startIndex, resultsPerPage)))
 				}
 			}))
+			hc, retry := ts.Client(), 0
+			var cut *utiltest.CutBody
+			if tt.cut {
+				cut = &utiltest.CutBody{Next: hc.Transport, After: 16, Err: errors.New("stream error: stream ID 1; INTERNAL_ERROR; received from peer")}
+				hc, retry = &http.Client{Transport: cut}, 1
+			}
 			dir := t.TempDir()
-			err := cvehistory.Fetch(append(tt.args, cvehistory.WithHTTPClient(ts.Client()), cvehistory.WithDir(dir), cvehistory.WithRetry(0), cvehistory.WithConcurrency(3), cvehistory.WithWait(0), cvehistory.WithResultsPerPage(3))...)
+			err := cvehistory.Fetch(append(tt.args, cvehistory.WithHTTPClient(hc), cvehistory.WithDir(dir), cvehistory.WithRetry(retry), cvehistory.WithRetryWaitMin(time.Millisecond), cvehistory.WithRetryWaitMax(time.Millisecond), cvehistory.WithConcurrency(3), cvehistory.WithWait(0), cvehistory.WithResultsPerPage(3))...)
+			if cut != nil && !cut.Cut() {
+				t.Error("no response was cut off")
+			}
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)

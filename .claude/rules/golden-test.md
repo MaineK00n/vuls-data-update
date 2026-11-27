@@ -16,6 +16,9 @@
 `pkg/extract/util/test/fixture.go` holds what is particular to extraction:
 - `QueryUnescapeFileTree(dir, fixturePath)` — materializes fixtures with URL-escaped filenames into `dir` (pass `t.TempDir()`), returning the path and an error
 
+`pkg/fetch/util/test/transport.go` holds what is particular to fetching:
+- `CutBody` — a transport to put under a fetcher's client: the first body it hands on fails with a given error after a given number of bytes, as an HTTP/2 stream reset partway through a body does, and `Cut()` says whether it did. A test with it shows that a body cut off partway is asked for again
+
 ### URL-Escaped Filenames
 
 Golden filenames may be URL-escaped (e.g., `%2F` for `/`). This is intentional for filesystem compatibility. Always use `QueryUnescapeFileTree()` when materializing fixtures. On the golden side the escaping is a storage detail, so the comparison brings the output into golden's domain — `escapeNames()` in each helper is the single place that knows the convention.

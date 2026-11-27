@@ -75,15 +75,27 @@ func TestCheckRetry(t *testing.T) {
 			wantReqCount: 2,
 		},
 		{
-			name:         "1st: 200 OK, but Read() return not unexpected EOF",
+			// The API has also cut bodies off with an HTTP/2 stream error,
+			// which is not an unexpected EOF.
+			name:         "1st: 200 OK, but Read() return a stream error, 2nd: 200 OK, No error",
 			retry:        1,
 			errRespCount: 1,
 			errResponse: &http.Response{
 				StatusCode: http.StatusOK,
-				Body:       io.NopCloser(&errorReader{readError: errors.New("should not retry")}),
+				Body:       io.NopCloser(&errorReader{readError: errors.New("stream error: stream ID 1; INTERNAL_ERROR; received from peer")}),
 			},
-			wantReqCount: 1,
-			wantErrorMsg: "should not retry",
+			wantReqCount: 2,
+		},
+		{
+			name:         "1st, 2nd: 200 OK, but Read() return a stream error",
+			retry:        1,
+			errRespCount: 2,
+			errResponse: &http.Response{
+				StatusCode: http.StatusOK,
+				Body:       io.NopCloser(&errorReader{readError: errors.New("stream error: stream ID 1; INTERNAL_ERROR; received from peer")}),
+			},
+			wantReqCount: 2,
+			wantErrorMsg: "stream error: stream ID 1; INTERNAL_ERROR; received from peer",
 		},
 		{
 			name:         "1st: 403 Forbidden",
@@ -131,7 +143,11 @@ func TestCheckRetry(t *testing.T) {
 			// network that ts.Client() uses.
 			ts.Start()
 
-			c := utilhttp.NewClient(utilhttp.WithClientRetryMax(tt.retry), utilhttp.WithClientRetryWaitMin(10*time.Millisecond), utilhttp.WithClientRetryWaitMax(20*time.Millisecond), utilhttp.WithClientCheckRetry(nvdutil.CheckRetry), utilhttp.WithClientHTTPClient(&http.Client{Transport: &roundTripper{errRespCount: tt.errRespCount, errResponse: tt.errResponse}}))
+			// The client is made as the fetchers make theirs, so a body cut
+			// off partway is caught by NewClient's buffering, which CheckRetry
+			// leaves it to.
+			rt := &roundTripper{errRespCount: tt.errRespCount, errResponse: tt.errResponse}
+			c := nvdutil.NewClient(utilhttp.WithClientRetryMax(tt.retry), utilhttp.WithClientRetryWaitMin(10*time.Millisecond), utilhttp.WithClientRetryWaitMax(20*time.Millisecond), utilhttp.WithClientHTTPClient(&http.Client{Transport: rt}))
 			resp, err := c.Get(ts.URL)
 			if err != nil {
 				if tt.wantErrorMsg == "" {
@@ -155,10 +171,6 @@ func TestCheckRetry(t *testing.T) {
 				}
 			}
 
-			rt, ok := c.HTTPClient.Transport.(*roundTripper)
-			if !ok {
-				t.Fatal("set unexpected round tripper")
-			}
 			if rt.reqCount != tt.wantReqCount {
 				t.Errorf("request count, got: %d, want: %d", rt.reqCount, tt.wantReqCount)
 			}

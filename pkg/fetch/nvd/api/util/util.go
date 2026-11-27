@@ -1,20 +1,35 @@
 package util
 
 import (
-	"bytes"
 	"context"
-	"io"
 	"math"
 	"net/http"
 	"net/url"
+	"slices"
 	"strconv"
 	"strings"
 	"time"
 
 	"github.com/hashicorp/go-retryablehttp"
 	"github.com/pkg/errors"
+
+	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
+// NewClient makes a client of the NVD API with opts. CheckRetry decides what is
+// retried, Backoff how long to wait first, and each body is read whole within
+// its request (WithClientBufferBody), so that a body the API cuts off partway,
+// which it now and then does, is asked for again: CheckRetry leaves the body
+// to that.
+func NewClient(opts ...utilhttp.ClientOption) *utilhttp.Client {
+	return utilhttp.NewClient(slices.Concat(opts, []utilhttp.ClientOption{utilhttp.WithClientCheckRetry(CheckRetry), utilhttp.WithClientBackoff(Backoff), utilhttp.WithClientBufferBody(true)})...)
+}
+
+// CheckRetry retries what retryablehttp's ErrorPropagatedRetryPolicy retries,
+// and a 408, and fails on any status but 200. It leaves the body alone: a
+// client from NewClient reads it within the request, so a body cut off partway
+// fails the request itself, and the policy retries that as it does any error
+// of a request.
 func CheckRetry(ctx context.Context, resp *http.Response, err error) (bool, error) {
 	if shouldRetry, err := retryablehttp.ErrorPropagatedRetryPolicy(ctx, resp, err); shouldRetry {
 		return shouldRetry, errors.Wrap(err, "retry policy")
@@ -22,19 +37,6 @@ func CheckRetry(ctx context.Context, resp *http.Response, err error) (bool, erro
 
 	switch resp.StatusCode {
 	case http.StatusOK:
-		// NVD API rarely fails to send whole response body and results in unexpected EOF.
-		// Read whole body in advance, to let retryablehttp retry in case of errors.
-		body, err := io.ReadAll(resp.Body)
-		if err != nil {
-			if errors.Is(err, io.ErrUnexpectedEOF) {
-				return true, errors.Wrap(err, "read all response body")
-			}
-			return false, errors.Wrap(err, "read all response body")
-		}
-
-		_ = resp.Body.Close()
-		resp.Body = io.NopCloser(bytes.NewBuffer(body))
-
 		return false, nil
 	case http.StatusRequestTimeout: // NVD JSON API returns 408 infreqently.
 		return true, errors.Errorf("unexpected HTTP status %s", resp.Status)
