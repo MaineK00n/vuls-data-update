@@ -3,8 +3,11 @@ package http_test
 import (
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 	"time"
+
+	"github.com/pkg/errors"
 
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
@@ -105,6 +108,61 @@ func TestClient_PipelineGet(t *testing.T) {
 				}
 			case <-time.After(10 * time.Second):
 				t.Fatal("PipelineGet() did not return")
+			}
+		})
+	}
+}
+
+func TestClient_PipelineGet_error(t *testing.T) {
+	tests := []struct {
+		name    string
+		url     string
+		status  int
+		wantErr string
+	}{
+		{
+			// The URL is what a failed request is traced by. Nothing of the
+			// response is part of the message: not its headers, which carry
+			// a cookie here, and not its pointers.
+			name:    "continuation",
+			url:     "https://example.com/2026/advisory.json",
+			status:  http.StatusNotFound,
+			wantErr: "err in goroutine: continuation, url: https://example.com/2026/advisory.json: error response with status code 404",
+		},
+		{
+			name:    "continuation, password in the URL",
+			url:     "https://user:password@example.com/2026/advisory.json",
+			status:  http.StatusNotFound,
+			wantErr: "err in goroutine: continuation, url: https://user:xxxxx@example.com/2026/advisory.json: error response with status code 404",
+		},
+		{
+			// The request itself failed, so the continuation is never called,
+			// and it is Do that names the URL.
+			name:    "do, password in the URL",
+			url:     "https://user:password@example.com/2026/advisory.json",
+			status:  http.StatusInternalServerError,
+			wantErr: "err in goroutine: do: http request, url: https://user:xxxxx@example.com/2026/advisory.json: ",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			ts := httptest.NewTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+				http.SetCookie(w, &http.Cookie{Name: "session", Value: "secret"})
+				w.WriteHeader(tt.status)
+			}))
+
+			err := utilhttp.NewClient(utilhttp.WithClientHTTPClient(ts.Client()), utilhttp.WithClientRetryMax(0)).PipelineGet([]string{tt.url}, 1, 0, true, func(resp *http.Response) error {
+				defer resp.Body.Close()
+				return errors.Errorf("error response with status code %d", resp.StatusCode)
+			})
+			if err == nil || !strings.HasPrefix(err.Error(), tt.wantErr) {
+				t.Errorf("PipelineGet() error = %v, want it to start with %q", err, tt.wantErr)
+			}
+			// Neither the password nor the cookie reaches any part of the message.
+			for _, s := range []string{"password", "secret"} {
+				if err != nil && strings.Contains(err.Error(), s) {
+					t.Errorf("PipelineGet() error = %v, want it not to contain %q", err, s)
+				}
 			}
 		})
 	}

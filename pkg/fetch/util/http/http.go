@@ -257,7 +257,7 @@ func (c *Client) POST(url string, opts ...RequestOption) (*http.Response, error)
 func (c *Client) Do(req *retryablehttp.Request) (*http.Response, error) {
 	resp, err := (*retryablehttp.Client)(c).Do(req)
 	if err != nil {
-		return nil, errors.Wrapf(err, "http request, url: %s", req.URL.String())
+		return nil, errors.Wrapf(err, "http request, url: %s", req.URL.Redacted())
 	}
 
 	return resp, nil
@@ -297,12 +297,16 @@ func (c *Client) PipelineDo(reqs []*retryablehttp.Request, concurrency int, wait
 				_ = bar.Add(1)
 			}()
 
+			// A failed request is traced by the URL it asked for, before any
+			// redirect. Do's error already names it, but a continuation's error,
+			// such as an unexpected status or a body that does not decode, does
+			// not.
 			resp, err := c.Do(req)
 			if err != nil {
-				return errors.Wrapf(err, "do %#v", req)
+				return errors.Wrap(err, "do")
 			}
 			if err := cont(resp); err != nil {
-				return errors.Wrapf(err, "continuation %#v", resp)
+				return errors.Wrapf(err, "continuation, url: %s", req.URL.Redacted())
 			}
 			select {
 			case <-ctx.Done():
