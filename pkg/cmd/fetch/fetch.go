@@ -2613,13 +2613,19 @@ func newCmdMicrosoftCSAF() *cobra.Command {
 func newCmdMicrosoftMSUC() *cobra.Command {
 	options := &struct {
 		base
-		concurrency int
-		wait        time.Duration
+		concurrency   int
+		wait          time.Duration
+		searchRetry   int
+		searchWaitMin time.Duration
+		searchWaitMax time.Duration
 	}{
-		dir:         filepath.Join(util.CacheDir(), "fetch", "microsoft", "msuc"),
-		retry:       3,
-		concurrency: 5,
-		wait:        1 * time.Second,
+		dir:           filepath.Join(util.CacheDir(), "fetch", "microsoft", "msuc"),
+		retry:         3,
+		concurrency:   5,
+		wait:          1 * time.Second,
+		searchRetry:   6,
+		searchWaitMin: 30 * time.Second,
+		searchWaitMax: 16 * time.Minute,
 	}
 
 	cmd := &cobra.Command{
@@ -2630,7 +2636,7 @@ func newCmdMicrosoftMSUC() *cobra.Command {
 		`),
 		Args: cobra.MinimumNArgs(1),
 		RunE: func(_ *cobra.Command, args []string) error {
-			if err := microsoftMSUC.Fetch(args, microsoftMSUC.WithDir(options.dir), microsoftMSUC.WithRetry(options.retry), microsoftMSUC.WithConcurrency(options.concurrency), microsoftMSUC.WithWait(options.wait)); err != nil {
+			if err := microsoftMSUC.Fetch(args, microsoftMSUC.WithDir(options.dir), microsoftMSUC.WithRetry(options.retry), microsoftMSUC.WithConcurrency(options.concurrency), microsoftMSUC.WithWait(options.wait), microsoftMSUC.WithSearchRetry(options.searchRetry), microsoftMSUC.WithSearchWaitMin(options.searchWaitMin), microsoftMSUC.WithSearchWaitMax(options.searchWaitMax)); err != nil {
 				return errors.Wrap(err, "failed to fetch microsoft msuc")
 			}
 			return nil
@@ -2641,6 +2647,9 @@ func newCmdMicrosoftMSUC() *cobra.Command {
 	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
 	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrent http requests")
 	cmd.Flags().DurationVarP(&options.wait, "wait", "", options.wait, "wait duration")
+	cmd.Flags().IntVarP(&options.searchRetry, "search-retry", "", options.searchRetry, "number of pauses before an unanswered search is asked again, after which the fetch fails")
+	cmd.Flags().DurationVarP(&options.searchWaitMin, "search-wait-min", "", options.searchWaitMin, "first pause before an unanswered search is asked again, doubled for each later pause")
+	cmd.Flags().DurationVarP(&options.searchWaitMax, "search-wait-max", "", options.searchWaitMax, "longest pause before an unanswered search is asked again")
 
 	return cmd
 }

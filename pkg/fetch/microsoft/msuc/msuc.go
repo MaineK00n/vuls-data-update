@@ -27,11 +27,14 @@ const msucURL = "https://www.catalog.update.microsoft.com"
 var spaceless = strings.NewReplacer(" ", "", "\n", "")
 
 type options struct {
-	msucURL     string
-	dir         string
-	retry       int
-	concurrency int
-	wait        time.Duration
+	msucURL       string
+	dir           string
+	retry         int
+	concurrency   int
+	wait          time.Duration
+	searchRetry   int
+	searchWaitMin time.Duration
+	searchWaitMax time.Duration
 
 	// httpClient is only ever set by WithHTTPClient, which lives in
 	// export_test.go and is therefore absent from the production build.
@@ -82,13 +85,52 @@ func WithWait(wait time.Duration) Option {
 	return waitOption(wait)
 }
 
+type searchRetryOption int
+
+func (r searchRetryOption) apply(opts *options) {
+	opts.searchRetry = int(r)
+}
+
+// WithSearchRetry sets how many more times the searches the catalog did not
+// answer are asked again before the fetch fails.
+func WithSearchRetry(retry int) Option {
+	return searchRetryOption(retry)
+}
+
+type searchWaitMinOption time.Duration
+
+func (w searchWaitMinOption) apply(opts *options) {
+	opts.searchWaitMin = time.Duration(w)
+}
+
+// WithSearchWaitMin sets how long the fetch stays quiet before it first asks an
+// unanswered search again. Each later pause is twice the one before.
+func WithSearchWaitMin(wait time.Duration) Option {
+	return searchWaitMinOption(wait)
+}
+
+type searchWaitMaxOption time.Duration
+
+func (w searchWaitMaxOption) apply(opts *options) {
+	opts.searchWaitMax = time.Duration(w)
+}
+
+// WithSearchWaitMax sets the longest pause before an unanswered search is asked
+// again.
+func WithSearchWaitMax(wait time.Duration) Option {
+	return searchWaitMaxOption(wait)
+}
+
 func Fetch(queries []string, opts ...Option) error {
 	options := &options{
-		msucURL:     msucURL,
-		dir:         filepath.Join(util.CacheDir(), "fetch", "microsoft", "msuc"),
-		retry:       3,
-		concurrency: 5,
-		wait:        1 * time.Second,
+		msucURL:       msucURL,
+		dir:           filepath.Join(util.CacheDir(), "fetch", "microsoft", "msuc"),
+		retry:         3,
+		concurrency:   5,
+		wait:          1 * time.Second,
+		searchRetry:   6,
+		searchWaitMin: 30 * time.Second,
+		searchWaitMax: 16 * time.Minute,
 	}
 
 	for _, o := range opts {
@@ -226,9 +268,86 @@ func (opts options) crawl(client *utilhttp.Client, uids []string) ([]string, []s
 	return slices.Concat(drain(nextChan)...), drain(unavailableChan), nil
 }
 
+// search asks the catalog for the update IDs of the queries.
+//
+// Since late October 2026 the catalog has answered a leg of vuls-data-db's
+// matrix about 200 searches and then none, whatever it asked -- 200 of 300, 212
+// of 489 -- where on 2026-10-15 a leg had all 392 of its searches answered. It
+// reads as a quota over a window, and a client that keeps asking keeps such a
+// quota spent; on support.microsoft.com, going quiet is what clears it (see the
+// servicing fetcher).
+//
+// So the searches left unanswered are not asked again at once. The fetch goes
+// quiet for searchWaitMin, then asks one of them on its own, and asks the rest
+// only once that one is answered. Each pause is twice the last, none is longer
+// than searchWaitMax, and there are at most searchRetry of them. The log says what
+// each pass and each probe got answered, which is what tells how long the
+// catalog's window is.
 func (opts options) search(client *utilhttp.Client, queries []string) ([]string, error) {
 	slog.Info("Search queries", slog.Int("count", len(queries)))
 
+	var uids, missed, silent []string
+	remaining, wait, retries := queries, min(opts.searchWaitMin, opts.searchWaitMax), 0
+	for pass := 0; len(remaining) > 0; pass++ {
+		us, miss, s, err := opts.searchOnce(client, remaining)
+		if err != nil {
+			return nil, errors.Wrapf(err, "search once, pass %d", pass)
+		}
+		slog.Info("Search pass", slog.Int("pass", pass), slog.Int("asked", len(remaining)), slog.Int("unanswered", len(s)))
+		uids, missed, silent, remaining = append(uids, us...), append(missed, miss...), s, nil
+
+		for len(silent) > 0 && retries < opts.searchRetry {
+			slog.Warn("search queries were not answered; pausing before asking one of them again", slog.Int("unanswered", len(silent)), slog.Duration("wait", wait))
+			time.Sleep(wait)
+			wait, retries = min(2*wait, opts.searchWaitMax), retries+1
+
+			us, miss, s, err := opts.searchOnce(client, silent[:1])
+			if err != nil {
+				return nil, errors.Wrapf(err, "search once, retry %d", retries)
+			}
+			slog.Info("Search probe", slog.String("query", silent[0]), slog.Bool("answered", len(s) == 0))
+			if len(s) == 0 {
+				uids, missed, remaining, silent = append(uids, us...), append(missed, miss...), silent[1:], nil
+			}
+		}
+	}
+	uids = util.Unique(uids)
+
+	slog.Info("Search results", slog.Int("queries", len(queries)), slog.Int("no_result", len(missed)), slog.Int("unanswered", len(silent)), slog.Int("update_ids", len(uids)), slog.Int("retries", retries))
+
+	// Failing here is what keeps the caller from publishing a silently short
+	// result over the last good one. Name the queries as well as counting them:
+	// whether the catalog stopped answering across the board or only for some
+	// of them is what a retry is decided on, and both are bounded by the seed
+	// list, so neither list runs away.
+	if len(silent) > 0 {
+		slog.Warn("search queries were not answered", slog.Int("count", len(silent)), slog.String("queries", joinSorted(silent)))
+		return nil, errors.Errorf("%d of %d search queries were answered with neither results nor a no-result message, after %d retries; the catalog is likely throttling", len(silent), len(queries), retries)
+	}
+
+	// Updates get expired out of the catalog, so a query finding nothing is
+	// normal on its own -- across three of the seed lists vuls-data-db fetches
+	// with, 0.00, 0.10 and 0.40 of the seeds miss that way. Naming the ones
+	// that missed, rather than only counting them, is what lets a seed list be
+	// pruned: these are the seeds the catalog has nothing left for.
+	if len(missed) > 0 {
+		slog.Warn("search queries found nothing", slog.Int("count", len(missed)), slog.String("queries", joinSorted(missed)))
+	}
+
+	// Finding nothing anywhere, though, is a seed list that has stopped
+	// describing anything the catalog still holds, and handing back an empty
+	// result would let the caller publish it over the last good one.
+	if len(queries) > 0 && len(uids) == 0 {
+		return nil, errors.Errorf("all %d search queries found nothing", len(queries))
+	}
+
+	return uids, nil
+}
+
+// searchOnce asks the catalog each query once, and sorts what comes back into
+// the update IDs found, the queries the catalog holds nothing for, and the
+// queries it did not answer.
+func (opts options) searchOnce(client *utilhttp.Client, queries []string) ([]string, []string, []string, error) {
 	header := make(http.Header)
 	header.Add("Content-Type", "application/x-www-form-urlencoded")
 
@@ -236,7 +355,7 @@ func (opts options) search(client *utilhttp.Client, queries []string) ([]string,
 	for _, query := range queries {
 		req, err := utilhttp.NewRequest(http.MethodPost, fmt.Sprintf("%s/Search.aspx", opts.msucURL), utilhttp.WithRequestHeader(header), utilhttp.WithRequestBody([]byte(url.Values{"q": []string{query}}.Encode())))
 		if err != nil {
-			return nil, errors.Wrap(err, "new request")
+			return nil, nil, nil, errors.Wrap(err, "new request")
 		}
 		reqs = append(reqs, req)
 	}
@@ -281,45 +400,13 @@ func (opts options) search(client *utilhttp.Client, queries []string) ([]string,
 
 		return nil
 	}); err != nil {
-		return nil, errors.Wrap(err, "pipeline do")
+		return nil, nil, nil, errors.Wrap(err, "pipeline do")
 	}
 	close(uidChan)
 	close(missChan)
 	close(silentChan)
 
-	uids := util.Unique(slices.Concat(drain(uidChan)...))
-
-	missed, silent := drain(missChan), drain(silentChan)
-
-	slog.Info("Search results", slog.Int("queries", len(queries)), slog.Int("no_result", len(missed)), slog.Int("unanswered", len(silent)), slog.Int("update_ids", len(uids)))
-
-	// Failing here is what keeps the caller from publishing a silently short
-	// result over the last good one. Name the queries as well as counting them:
-	// whether the catalog stopped answering across the board or only for some
-	// of them is what a retry is decided on, and both are bounded by the seed
-	// list, so neither list runs away.
-	if len(silent) > 0 {
-		slog.Warn("search queries were not answered", slog.Int("count", len(silent)), slog.String("queries", joinSorted(silent)))
-		return nil, errors.Errorf("%d of %d search queries were answered with neither results nor a no-result message; the catalog is likely throttling", len(silent), len(queries))
-	}
-
-	// Updates get expired out of the catalog, so a query finding nothing is
-	// normal on its own -- across three of the seed lists vuls-data-db fetches
-	// with, 0.00, 0.10 and 0.40 of the seeds miss that way. Naming the ones
-	// that missed, rather than only counting them, is what lets a seed list be
-	// pruned: these are the seeds the catalog has nothing left for.
-	if len(missed) > 0 {
-		slog.Warn("search queries found nothing", slog.Int("count", len(missed)), slog.String("queries", joinSorted(missed)))
-	}
-
-	// Finding nothing anywhere, though, is a seed list that has stopped
-	// describing anything the catalog still holds, and handing back an empty
-	// result would let the caller publish it over the last good one.
-	if len(queries) > 0 && len(uids) == 0 {
-		return nil, errors.Errorf("all %d search queries found nothing", len(queries))
-	}
-
-	return uids, nil
+	return slices.Concat(drain(uidChan)...), drain(missChan), drain(silentChan), nil
 }
 
 // searchResults reads the update IDs a search response lists and, where it
