@@ -1,0 +1,50 @@
+{
+	"Architecture": [
+		"any-i386 any-amd64 alpha arm64 armel armhf ia64 mipsel mips64el ppc64el riscv64 sh4 all"
+	],
+	"Binary": [
+		"openrct2, openrct2-data"
+	],
+	"Build-Depends": [
+		"debhelper-compat (= 13), cmake, pkg-config, libssl-dev, libcurl4-openssl-dev, libfontconfig-dev, libbenchmark-dev, duktape-dev, libzip-dev, libicu-dev, libsdl2-dev, libsdl2-ttf-dev, libspeexdsp-dev, nlohmann-json3-dev, libgzstream-dev, libflac-dev, libvorbis-dev"
+	],
+	"Checksums-Sha256": [
+		"f6076f36960364240edb0da01c86f6eee11fa177385453e31a8d17d9ab1d160a 2378 openrct2_0.4.5+ds-1~bpo12+1.dsc 2614d23e1b9af0f7528f8a60b1be14369c486eba46ffa0882609cc66aa4a9eaa 11993936 openrct2_0.4.5+ds.orig.tar.xz 0d3205ab48f6f981349e5f445ca357aaf98e772b1da88ede2cdd3c9dc573e234 12132 openrct2_0.4.5+ds-1~bpo12+1.debian.tar.xz"
+	],
+	"Directory": [
+		"pool/contrib/o/openrct2"
+	],
+	"Format": [
+		"3.0 (quilt)"
+	],
+	"Homepage": [
+		"https://openrct2.io/"
+	],
+	"Maintainer": [
+		"Mathias Gibbens <gibmat@debian.org>"
+	],
+	"Package": [
+		"openrct2"
+	],
+	"Package-List": [
+		"openrct2 deb contrib/games optional arch=any-i386,any-amd64,alpha,arm64,armel,armhf,ia64,mipsel,mips64el,ppc64el,riscv64,sh4,x32 openrct2-data deb contrib/games optional arch=all"
+	],
+	"Priority": [
+		"optional"
+	],
+	"Section": [
+		"contrib/misc"
+	],
+	"Standards-Version": [
+		"4.6.2"
+	],
+	"Vcs-Browser": [
+		"https://salsa.debian.org/gibmat/openrct2"
+	],
+	"Vcs-Git": [
+		"https://salsa.debian.org/gibmat/openrct2.git"
+	],
+	"Version": [
+		"0.4.5+ds-1~bpo12+1"
+	]
+}

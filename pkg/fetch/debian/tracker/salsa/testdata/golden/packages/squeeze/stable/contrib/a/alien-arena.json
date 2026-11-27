@@ -1,0 +1,56 @@
+{
+	"Architecture": [
+		"any"
+	],
+	"Binary": [
+		"alien-arena, alien-arena-server, alien-arena-common"
+	],
+	"Build-Depends": [
+		"debhelper (>= 5), sharutils, dos2unix, libglu1-mesa-dev | libglu-dev, libgl1-mesa-dev | libgl-dev, libjpeg62-dev | libjpeg-dev, libpng12-dev | libpng-dev, libxxf86vm-dev, libxxf86dga-dev, libxext-dev, libx11-dev, libcurl4-gnutls-dev | libcurl3-gnutls-dev, libopenal-dev, libvorbis-dev"
+	],
+	"Checksums-Sha1": [
+		"ce7fe76f1e4494b6aafa44d9a5138aad4000f584 1620 alien-arena_7.40-2.dsc 53a9fff64b3f9513cd58d644cf02cb95adad270d 800706 alien-arena_7.40.orig.tar.gz 598bb49305b161c520d619d33858762a9476c464 86439 alien-arena_7.40-2.debian.tar.gz"
+	],
+	"Checksums-Sha256": [
+		"7b1c2895e9f6e59c3468ed45b5d3c3581c3f7124a7a9b2909b7a1c8ff4f62bd2 1620 alien-arena_7.40-2.dsc 27658c24e09df011a90fd914ee4ea4f726f0fbc60bcc2a6e6b997d5ddacc8467 800706 alien-arena_7.40.orig.tar.gz 216a096c6e51a11dd5575c58f3d50d7d877210937041433113305597629830a2 86439 alien-arena_7.40-2.debian.tar.gz"
+	],
+	"Directory": [
+		"pool/contrib/a/alien-arena"
+	],
+	"Files": [
+		"0215c32476a57ebd51701acc3c791708 1620 alien-arena_7.40-2.dsc aa27deddfd665a892df4d7a584a7ca04 800706 alien-arena_7.40.orig.tar.gz af0d65197f0fd2c3a537d24d2f581ab9 86439 alien-arena_7.40-2.debian.tar.gz"
+	],
+	"Format": [
+		"3.0 (quilt)"
+	],
+	"Homepage": [
+		"http://red.planetarena.org"
+	],
+	"Maintainer": [
+		"Debian Games Team <pkg-games-devel@lists.alioth.debian.org>"
+	],
+	"Package": [
+		"alien-arena"
+	],
+	"Priority": [
+		"extra"
+	],
+	"Section": [
+		"contrib/games"
+	],
+	"Standards-Version": [
+		"3.9.1"
+	],
+	"Uploaders": [
+		"Michael Gilbert <michael.s.gilbert@gmail.com>, Barry deFreese <bddebian@comcast.net>"
+	],
+	"Vcs-Browser": [
+		"http://svn.debian.org/wsvn/pkg-games/packages/trunk/alien-arena/?op=log"
+	],
+	"Vcs-Svn": [
+		"svn://svn.debian.org/svn/pkg-games/packages/trunk/alien-arena/"
+	],
+	"Version": [
+		"7.40-2"
+	]
+}

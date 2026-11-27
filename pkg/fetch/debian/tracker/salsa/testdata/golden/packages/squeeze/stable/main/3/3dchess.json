@@ -1,0 +1,53 @@
+{
+	"Architecture": [
+		"any"
+	],
+	"Binary": [
+		"3dchess"
+	],
+	"Build-Depends": [
+		"debhelper (>= 5), xaw3dg-dev, libx11-dev, libxpm-dev, libxt-dev, x11proto-core-dev, libxaw7-dev, dpatch"
+	],
+	"Checksums-Sha1": [
+		"b122aeffc94fe0d7d388ab269e0a2055198efa0a 1253 3dchess_0.8.1-16.dsc c5b42109c0de2155a8e64e9eee8ab7661df90d76 46371 3dchess_0.8.1.orig.tar.gz 02616c413c189debfb7b437d5084220d2a721cd9 6362 3dchess_0.8.1-16.diff.gz"
+	],
+	"Checksums-Sha256": [
+		"e2a99e81b80389149f383423423bc50da015e94acf82a902053ce85405db44a5 1253 3dchess_0.8.1-16.dsc 6fb21bb39aecb7f45e354648917a78db12d1046eee529d748b89d2240ee10148 46371 3dchess_0.8.1.orig.tar.gz 748b79e28f471aca2e0a36ea1819972ee06913f166bf30b64b4876b0b0b8ffaa 6362 3dchess_0.8.1-16.diff.gz"
+	],
+	"Directory": [
+		"pool/main/3/3dchess"
+	],
+	"Files": [
+		"056200be68465689170f50cc1a410a77 1253 3dchess_0.8.1-16.dsc 5390c60953446e541d9455d9c4e38ca1 46371 3dchess_0.8.1.orig.tar.gz 4ad845c0726c7772d4451a0b804eaeaf 6362 3dchess_0.8.1-16.diff.gz"
+	],
+	"Format": [
+		"1.0"
+	],
+	"Maintainer": [
+		"Debian Games Team <pkg-games-devel@lists.alioth.debian.org>"
+	],
+	"Package": [
+		"3dchess"
+	],
+	"Priority": [
+		"optional"
+	],
+	"Section": [
+		"games"
+	],
+	"Standards-Version": [
+		"3.8.0"
+	],
+	"Uploaders": [
+		"Barry deFreese <bdefreese@debian.org>"
+	],
+	"Vcs-Browser": [
+		"http://svn.debian.org/wsvn/pkg-games/packages/trunk/3dchess/?op=log"
+	],
+	"Vcs-Svn": [
+		"svn://svn.debian.org/svn/pkg-games/packages/trunk/3dchess/"
+	],
+	"Version": [
+		"0.8.1-16"
+	]
+}

@@ -1,0 +1,56 @@
+{
+	"Architecture": [
+		"linux-any"
+	],
+	"Binary": [
+		"acpid, kacpimon"
+	],
+	"Build-Depends": [
+		"debhelper (>= 5)"
+	],
+	"Checksums-Sha1": [
+		"8c20e29915f7cc8db3212d82ef792156102b891c 1235 acpid_2.0.7-1squeeze3.dsc e4ec7b318eac545d5b65a4de6a5d0f8dfe273e97 73467 acpid_2.0.7.orig.tar.gz 6a47b7d5537dee81fdb0b5c9236b9a0ed2da9a3f 18648 acpid_2.0.7-1squeeze3.diff.gz"
+	],
+	"Checksums-Sha256": [
+		"9275577eba3abf2375090ccb006656e1e2ab8f8bdf759ab36f0b4d38e5a056d8 1235 acpid_2.0.7-1squeeze3.dsc a4c5e674176cd32d8d2547c7d0d13ad8c84045c96f5c430da2a82d099f98e09d 73467 acpid_2.0.7.orig.tar.gz fbf16a62470d1d38e46810aa102016b3e1291682d78ca2f8fe6518bb5aebb2fb 18648 acpid_2.0.7-1squeeze3.diff.gz"
+	],
+	"Directory": [
+		"pool/updates/main/a/acpid"
+	],
+	"Files": [
+		"a63899070200af24b7e2f2c06d85eb46 1235 acpid_2.0.7-1squeeze3.dsc 84832448304e0b19c8cf566fe5b64be0 73467 acpid_2.0.7.orig.tar.gz bf240611563b9eb7091745c76c7c3f28 18648 acpid_2.0.7-1squeeze3.diff.gz"
+	],
+	"Format": [
+		"1.0"
+	],
+	"Homepage": [
+		"http://acpid.sourceforge.net/"
+	],
+	"Maintainer": [
+		"Debian Acpi Team <pkg-acpi-devel@lists.alioth.debian.org>"
+	],
+	"Package": [
+		"acpid"
+	],
+	"Priority": [
+		"source"
+	],
+	"Section": [
+		"admin"
+	],
+	"Standards-Version": [
+		"3.9.1"
+	],
+	"Uploaders": [
+		"Michael Meskes <meskes@debian.org>,           Loic Minier <lool@dooz.org>"
+	],
+	"Vcs-Browser": [
+		"http://git.debian.org/?p=pkg-acpi/acpid.git"
+	],
+	"Vcs-Git": [
+		"git://git.debian.org/git/pkg-acpi/acpid.git"
+	],
+	"Version": [
+		"1:2.0.7-1squeeze3"
+	]
+}
