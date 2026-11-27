@@ -155,10 +155,12 @@ type euvdIDFix struct {
 	correct string
 }
 
-// euvdIDFixes corrects EUVD IDs that upstream eukev.json assigns to the wrong
-// CVE, keyed by CVE ID. An entry whose CVE carries any EUVD ID other than the
-// wrong one is an error, so that a fix is removed once upstream is corrected
-// and an unexpected upstream change is not silently passed through.
+// euvdIDFixes corrects EUVD IDs that upstream eukev.json gets wrong, keyed by
+// CVE ID: one that belongs to another CVE, or one that does not exist. The
+// correct ones are what the EUVD API lists for the CVE. An entry whose CVE
+// carries any EUVD ID other than the wrong one is an error, so that a fix is
+// removed once upstream is corrected and an unexpected upstream change is not
+// silently passed through.
 var euvdIDFixes = map[string]euvdIDFix{
 	// EUVD-2023-54802 belongs to CVE-2023-4966, but upstream also assigns it
 	// to this CVE, which the EUVD API lists as EUVD-2023-45783.
@@ -166,6 +168,9 @@ var euvdIDFixes = map[string]euvdIDFix{
 	// EUVD-2024-38578 belongs to CVE-2024-40711, but upstream also assigns it
 	// to this CVE, which the EUVD API lists as EUVD-2024-37356.
 	"CVE-2024-38475": {wrong: "EUVD-2024-38578", correct: "EUVD-2024-37356"},
+	// EUVD-2025-2009839 does not exist: it is EUVD-2025-200983, which the EUVD
+	// API lists for this CVE, with a digit appended.
+	"CVE-2025-55182": {wrong: "EUVD-2025-2009839", correct: "EUVD-2025-200983"},
 }
 
 func sanitize(s string) string {

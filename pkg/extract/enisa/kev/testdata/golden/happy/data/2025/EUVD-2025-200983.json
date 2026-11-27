@@ -1,0 +1,38 @@
+{
+	"id": "EUVD-2025-200983",
+	"advisories": [
+		{
+			"content": {
+				"id": "EUVD-2025-200983",
+				"kev": {
+					"vendor_project": "Meta",
+					"product": "React Server Components",
+					"notes": "https://react.dev/blog/2025/12/03/critical-security-vulnerability-in-react-server-components#update-instructions",
+					"enisa": {
+						"date_reported": "2026-04-08T00:00:00Z",
+						"patched_since": "2025/12/03",
+						"origin_source": "CNW",
+						"exploitation_type": "APT",
+						"exploitation_types": [
+							"APT"
+						]
+					}
+				}
+			}
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-2025-55182",
+				"description": "Flaw in how React decodes payloads sent to React Server Function endpoints enabled unauthenticated remote code execution. Apps supporting React Server Components may still be vulnerable even if not implementing any React Server Function endpoints."
+			}
+		}
+	],
+	"data_source": {
+		"id": "enisa-kev",
+		"raws": [
+			"happy/2025/CVE-2025-55182.json"
+		]
+	}
+}
