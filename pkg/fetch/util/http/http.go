@@ -144,10 +144,10 @@ func (s clientSpoolBody) apply(opts *clientOptions) {
 }
 
 // WithClientSpoolBody is WithClientBufferBody with each body written to a
-// temporary file rather than held in memory, for responses that run to hundreds
-// of megabytes, such as a whole feed. The response is handed on with the file
-// as its body, and closing the body removes the file. With both options set,
-// bodies go to files.
+// temporary file in os.TempDir (so TMPDIR applies) rather than held in memory,
+// for responses that run to hundreds of megabytes, such as a whole feed. The
+// response is handed on with the file as its body, and closing the body removes
+// the file. With both options set, bodies go to files.
 func WithClientSpoolBody(spool bool) ClientOption {
 	return clientSpoolBody(spool)
 }
@@ -239,7 +239,7 @@ func spoolBody(r io.Reader) (io.ReadCloser, error) {
 	body := &tempFileBody{File: f}
 
 	if _, err := io.Copy(f, r); err != nil {
-		return nil, stderrors.Join(errors.Wrap(err, "read response body"), body.Close())
+		return nil, stderrors.Join(errors.Wrapf(err, "copy response body to %s", f.Name()), body.Close())
 	}
 	if _, err := f.Seek(0, io.SeekStart); err != nil {
 		return nil, stderrors.Join(errors.Wrapf(err, "seek %s", f.Name()), body.Close())

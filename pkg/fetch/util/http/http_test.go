@@ -227,7 +227,9 @@ func TestNewClient_WithClientSpoolBody(t *testing.T) {
 		name string
 		// cut is how many responses are cut off partway through the body
 		// before one is sent whole.
-		cut          int
+		cut int
+		// unavailable answers the first responses with a 503 instead.
+		unavailable  bool
 		want         string
 		wantRequests int
 		hasError     bool
@@ -246,6 +248,15 @@ func TestNewClient_WithClientSpoolBody(t *testing.T) {
 			wantRequests: 3,
 			hasError:     true,
 		},
+		{
+			// A 503 is spooled too, and its file goes when retryablehttp
+			// closes the body of a response it retries.
+			name:         "503, then whole",
+			cut:          2,
+			unavailable:  true,
+			want:         body,
+			wantRequests: 3,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -262,12 +273,17 @@ func TestNewClient_WithClientSpoolBody(t *testing.T) {
 
 			var requests atomic.Int64
 			ts := httptest.NewTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
-				w.Header().Set("Content-Length", strconv.Itoa(len(body)))
 				if requests.Add(1) > int64(tt.cut) {
+					w.Header().Set("Content-Length", strconv.Itoa(len(body)))
 					_, _ = io.WriteString(w, body)
 					return
 				}
+				if tt.unavailable {
+					http.Error(w, "Service Unavailable", http.StatusServiceUnavailable)
+					return
+				}
 				// Half of the body, and then the connection is gone.
+				w.Header().Set("Content-Length", strconv.Itoa(len(body)))
 				_, _ = io.WriteString(w, body[:len(body)/2])
 				_ = http.NewResponseController(w).Flush()
 				panic(http.ErrAbortHandler)
