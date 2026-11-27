@@ -136,7 +136,10 @@ func Fetch(releases []string, opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	client := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry), utilhttp.WithClientHTTPClient(options.httpClient))
+	// Bodhi and Koji now and then reset a connection partway through a response
+	// body. Every body here is small enough to be read whole first, which has
+	// such a cut retried like a request that got no response.
+	client := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry), utilhttp.WithClientHTTPClient(options.httpClient), utilhttp.WithClientBufferBody(true))
 	extracted, err := options.releases(client, releases)
 	if err != nil {
 		return errors.Wrap(err, "extract release")
@@ -297,7 +300,7 @@ func (opts options) advisories(client *utilhttp.Client, release string) ([]Advis
 
 	resp, err := client.Do(req)
 	if err != nil {
-		return nil, errors.Wrapf(err, "fetch %s", fmt.Sprintf(opts.dataURL.Advisory, release, 1))
+		return nil, errors.Wrapf(err, "fetch %s", fmt.Sprintf(opts.dataURL.Advisory, release, 1, 1))
 	}
 	defer resp.Body.Close()
 
@@ -424,7 +427,7 @@ func (opts options) advisory(client *utilhttp.Client, advisory *Advisory) error 
 	for i, build := range advisory.Builds {
 		pkgs, mod, err := opts.packages(client, build)
 		if err != nil {
-			return errors.Wrap(err, "fetch packages")
+			return errors.Wrapf(err, "fetch packages of %s", build.NVR)
 		}
 		advisory.Builds[i].Package = pkgs
 		advisory.Builds[i].Module = mod
@@ -433,7 +436,7 @@ func (opts options) advisory(client *utilhttp.Client, advisory *Advisory) error 
 	for i, bug := range advisory.Bugs {
 		b, err := opts.bugzilla(client, fmt.Sprintf(opts.dataURL.Bugzilla, fmt.Sprintf("%d", bug.BugID)))
 		if err != nil {
-			return errors.Wrap(err, "fetch bugzilla")
+			return errors.Wrapf(err, "fetch bugzilla %d", bug.BugID)
 		}
 		advisory.Bugs[i].Bugzilla = *b
 	}
@@ -508,7 +511,7 @@ func findBuildID(client *utilhttp.Client, url, nvr string) (int, error) {
 
 	resp, err := client.Do(req)
 	if err != nil {
-		return 0, errors.Wrapf(err, "fetch %#v", req)
+		return 0, errors.Wrapf(err, "fetch %s", url)
 	}
 	defer resp.Body.Close()
 
@@ -547,7 +550,7 @@ func getBuild(client *utilhttp.Client, url string, nvr string) (build, error) {
 
 	resp, err := client.Do(req)
 	if err != nil {
-		return build{}, errors.Wrapf(err, "fetch %#v", req)
+		return build{}, errors.Wrapf(err, "fetch %s", url)
 	}
 	defer resp.Body.Close()
 
@@ -586,7 +589,7 @@ func listArchives(client *utilhttp.Client, url string, buildID int) ([]archive, 
 
 	resp, err := client.Do(req)
 	if err != nil {
-		return nil, errors.Wrapf(err, "fetch %#v", req)
+		return nil, errors.Wrapf(err, "fetch %s", url)
 	}
 	defer resp.Body.Close()
 
@@ -625,7 +628,7 @@ func listRPMs(client *utilhttp.Client, url string, buildID, imageID *int) ([]Pac
 
 	resp, err := client.Do(req)
 	if err != nil {
-		return nil, errors.Wrapf(err, "fetch %#v", req)
+		return nil, errors.Wrapf(err, "fetch %s", url)
 	}
 	defer resp.Body.Close()
 
@@ -711,7 +714,7 @@ func (opts options) bugzilla(client *utilhttp.Client, url string) (*Bugzilla, er
 	for _, blocked := range b.Bug.Blocked {
 		bb, err := opts.bugzilla(client, fmt.Sprintf(opts.dataURL.Bugzilla, blocked))
 		if err != nil {
-			return nil, errors.Wrap(err, "fetch bugzilla")
+			return nil, errors.Wrapf(err, "fetch bugzilla %s", blocked)
 		}
 		bug.Blocked = append(bug.Blocked, *bb)
 	}

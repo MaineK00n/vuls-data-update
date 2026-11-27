@@ -2,6 +2,7 @@ package api_test
 
 import (
 	"bytes"
+	"cmp"
 	"encoding/json/v2"
 	"encoding/xml"
 	"fmt"
@@ -12,6 +13,7 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"sync"
 	"testing"
 	"time"
 
@@ -24,11 +26,28 @@ func TestFetch(t *testing.T) {
 		name       string
 		releases   []string
 		allowEmpty bool
-		hasError   bool
+		// cut lists path prefixes whose first response is cut off partway
+		// through its body.
+		cut   []string
+		retry int
+		// golden names the golden tree, where a case writes what another does.
+		golden   string
+		hasError bool
 	}{
 		{
 			name:     "happy",
 			releases: []string{"__current__", "__pending__", "__archived__"},
+		},
+		{
+			// Bodhi and Koji now and then reset a connection partway through
+			// a body. The first page of updates and the first answer of Koji
+			// are cut off here, each is asked for again, and the fetch comes
+			// out as if neither had been cut.
+			name:     "cut-body",
+			releases: []string{"__current__", "__pending__", "__archived__"},
+			cut:      []string{"/updates", "/kojihub"},
+			retry:    1,
+			golden:   "happy",
 		},
 		{
 			// F38C has no security update, so a run over it alone fetches
@@ -47,7 +66,21 @@ func TestFetch(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			var mu sync.Mutex
+			cut := make(map[string]*cutWriter, len(tt.cut))
+			for _, p := range tt.cut {
+				cut[p] = nil
+			}
 			ts := httptest.NewTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				mu.Lock()
+				for p, cw := range cut {
+					if cw == nil && strings.HasPrefix(r.URL.Path, p) {
+						cut[p] = &cutWriter{ResponseWriter: w, left: 16}
+						w = cut[p]
+					}
+				}
+				mu.Unlock()
+
 				switch {
 				case strings.HasPrefix(r.URL.Path, "/releases"):
 					type releasePage struct {
@@ -286,7 +319,14 @@ func TestFetch(t *testing.T) {
 			}))
 			dir := t.TempDir()
 			err := api.Fetch(tt.releases,
-				api.WithHTTPClient(ts.Client()), api.WithDir(dir), api.WithRetry(0), api.WithConcurrency(1), api.WithWait(0), api.WithRowsPerPage(2), api.WithAllowEmpty(tt.allowEmpty))
+				api.WithHTTPClient(ts.Client()), api.WithDir(dir), api.WithRetry(tt.retry), api.WithConcurrency(1), api.WithWait(0), api.WithRowsPerPage(2), api.WithAllowEmpty(tt.allowEmpty))
+			mu.Lock()
+			for p, cw := range cut {
+				if cw == nil || !cw.cut {
+					t.Errorf("no response under %s was cut off", p)
+				}
+			}
+			mu.Unlock()
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)
@@ -296,10 +336,29 @@ func TestFetch(t *testing.T) {
 				// error was expected and occurred, test passed
 				return
 			default:
-				if err := utiltest.Diff(filepath.Join("testdata", "golden", tt.name), dir); err != nil {
+				if err := utiltest.Diff(filepath.Join("testdata", "golden", cmp.Or(tt.golden, tt.name)), dir); err != nil {
 					t.Error("unexpected error:", err)
 				}
 			}
 		})
 	}
+}
+
+// cutWriter sends the first left bytes of a body and then drops the connection,
+// as a reset partway through a response does. cut says whether it did.
+type cutWriter struct {
+	http.ResponseWriter
+	left int
+	cut  bool
+}
+
+func (w *cutWriter) Write(p []byte) (int, error) {
+	if len(p) <= w.left {
+		w.left -= len(p)
+		return w.ResponseWriter.Write(p)
+	}
+	_, _ = w.ResponseWriter.Write(p[:w.left])
+	_ = http.NewResponseController(w.ResponseWriter).Flush()
+	w.cut = true
+	panic(http.ErrAbortHandler)
 }

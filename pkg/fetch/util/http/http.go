@@ -26,6 +26,7 @@ type clientOptions struct {
 	retryMax     int
 	checkRetry   retryablehttp.CheckRetry
 	backoff      retryablehttp.Backoff
+	bufferBody   bool
 }
 
 type ClientOption interface {
@@ -116,6 +117,22 @@ func WithClientBackoff(f retryablehttp.Backoff) ClientOption {
 	return clientBackoff(f)
 }
 
+type clientBufferBody bool
+
+func (b clientBufferBody) apply(opts *clientOptions) {
+	opts.bufferBody = bool(b)
+}
+
+// WithClientBufferBody has the client read each response body whole before it
+// returns the response. A body cut off partway, as by a connection reset, then
+// fails the request within the retry loop and is asked for again, where it
+// would otherwise fail whatever reads the body. Each body is held in memory, and
+// a response streamed or upgraded is not handed on until it ends, so it is for
+// clients whose responses are documents of modest size.
+func WithClientBufferBody(buffer bool) ClientOption {
+	return clientBufferBody(buffer)
+}
+
 func NewClient(opts ...ClientOption) *Client {
 	options := &clientOptions{
 		httpClient:   cleanhttp.DefaultPooledClient(),
@@ -131,14 +148,62 @@ func NewClient(opts ...ClientOption) *Client {
 		o.apply(options)
 	}
 
+	httpClient := options.httpClient
+	if options.bufferBody {
+		// A copy, so that a client the caller passed in is left as it was.
+		c := *options.httpClient
+		c.Transport = bufferBodyTransport{next: c.Transport}
+		httpClient = &c
+	}
+
 	return &Client{
-		HTTPClient:   options.httpClient,
+		HTTPClient:   httpClient,
 		Logger:       options.logger,
 		RetryWaitMin: options.retryWaitMin,
 		RetryWaitMax: options.retryWaitMax,
 		RetryMax:     options.retryMax,
 		CheckRetry:   options.checkRetry,
 		Backoff:      options.backoff,
+	}
+}
+
+// bufferBodyTransport reads each response body whole within the round trip, so
+// that an error in reading it is an error of the round trip, which the client
+// retries.
+type bufferBodyTransport struct {
+	next http.RoundTripper
+}
+
+func (t bufferBodyTransport) transport() http.RoundTripper {
+	if t.next == nil {
+		return http.DefaultTransport
+	}
+	return t.next
+}
+
+func (t bufferBodyTransport) RoundTrip(req *http.Request) (*http.Response, error) {
+	resp, err := t.transport().RoundTrip(req)
+	if err != nil {
+		// As it is: the retry policy tells some errors apart by their type,
+		// such as a certificate that does not verify, which is not retried.
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	bs, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, errors.Wrap(err, "read response body")
+	}
+	resp.Body = io.NopCloser(bytes.NewReader(bs))
+
+	return resp, nil
+}
+
+// CloseIdleConnections passes the call on, as http.Client only makes it on a
+// transport that has the method. The client makes it when it gives up.
+func (t bufferBodyTransport) CloseIdleConnections() {
+	if c, ok := t.transport().(interface{ CloseIdleConnections() }); ok {
+		c.CloseIdleConnections()
 	}
 }
 
