@@ -258,7 +258,7 @@ type tempFileBody struct {
 
 func (b *tempFileBody) Close() error {
 	b.once.Do(func() {
-		b.err = stderrors.Join(b.File.Close(), os.Remove(b.File.Name()))
+		b.err = stderrors.Join(b.File.Close(), os.Remove(b.Name()))
 	})
 	return b.err
 }
