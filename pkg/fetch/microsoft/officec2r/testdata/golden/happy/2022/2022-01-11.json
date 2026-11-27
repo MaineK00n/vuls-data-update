@@ -1,0 +1,105 @@
+{
+	"id": "january-11-2022",
+	"date": "January 11, 2022",
+	"builds": [
+		{
+			"channel": "Current Channel",
+			"version": "2112",
+			"build": "14729.20248"
+		},
+		{
+			"channel": "Monthly Enterprise Channel",
+			"version": "2111",
+			"build": "14701.20290"
+		},
+		{
+			"channel": "Monthly Enterprise Channel",
+			"version": "2110",
+			"build": "14527.20364"
+		},
+		{
+			"channel": "Semi-Annual Enterprise Channel (Preview)",
+			"version": "2108",
+			"build": "14326.20738"
+		},
+		{
+			"channel": "Semi-Annual Enterprise Channel",
+			"version": "2108",
+			"build": "14326.20738"
+		},
+		{
+			"channel": "Semi-Annual Enterprise Channel",
+			"version": "2102",
+			"build": "13801.21106"
+		},
+		{
+			"channel": "Semi-Annual Enterprise Channel",
+			"version": "2008",
+			"build": "13127.21856"
+		},
+		{
+			"channel": "Microsoft 365 Apps on Windows 7",
+			"version": "2002",
+			"build": "12527.22086"
+		},
+		{
+			"channel": "Office 2021 Retail",
+			"version": "2112",
+			"build": "14729.20248"
+		},
+		{
+			"channel": "Office 2019 Retail",
+			"version": "2112",
+			"build": "14729.20248"
+		},
+		{
+			"channel": "Office 2016 Retail",
+			"version": "2112",
+			"build": "14729.20248"
+		},
+		{
+			"channel": "Office LTSC 2021 Volume Licensed",
+			"version": "2108",
+			"build": "14332.20216"
+		},
+		{
+			"channel": "Office 2019 Volume Licensed",
+			"version": "1808",
+			"build": "10382.20034"
+		}
+	],
+	"sections": [
+		{
+			"name": "Office suite",
+			"items": [
+				{
+					"text": "CVE-2022-21840",
+					"links": [
+						{
+							"text": "CVE-2022-21840",
+							"url": "https://portal.msrc.microsoft.com/en-us/security-guidance/advisory/CVE-2022-21840"
+						}
+					]
+				},
+				{
+					"text": "CVE-2022-21841",
+					"links": [
+						{
+							"text": "CVE-2022-21841",
+							"url": "https://portal.msrc.microsoft.com/en-us/security-guidance/advisory/CVE-2022-21841"
+						}
+					]
+				},
+				{
+					"text": "The updates this month also provide defense-in-depth security enhancements for Excel. For more information, see Microsoft Excel Security Enhancements in the January 2022 Update.",
+					"links": [
+						{
+							"text": "Microsoft Excel Security Enhancements in the January 2022 Update",
+							"url": "https://support.microsoft.com/topic/6c925c6f-e5a0-4698-860d-2d75e70e970a"
+						}
+					]
+				}
+			]
+		}
+	]
+}

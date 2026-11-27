@@ -1,0 +1,91 @@
+{
+	"id": "august-10-2021",
+	"date": "August 10, 2021",
+	"builds": [
+		{
+			"channel": "Current Channel",
+			"version": "2107",
+			"build": "14228.20250"
+		},
+		{
+			"channel": "Monthly Enterprise Channel",
+			"version": "2106",
+			"build": "14131.20360"
+		},
+		{
+			"channel": "Monthly Enterprise Channel",
+			"version": "2105",
+			"build": "14026.20352"
+		},
+		{
+			"channel": "Semi-Annual Enterprise Channel (Preview)",
+			"version": "2102",
+			"build": "13801.20864"
+		},
+		{
+			"channel": "Semi-Annual Enterprise Channel",
+			"version": "2102",
+			"build": "13801.20864"
+		},
+		{
+			"channel": "Semi-Annual Enterprise Channel",
+			"version": "2008",
+			"build": "13127.21736"
+		},
+		{
+			"channel": "Semi-Annual Enterprise Channel",
+			"version": "2002",
+			"build": "12527.22017"
+		},
+		{
+			"channel": "Microsoft 365 Apps on Windows 7",
+			"version": "2002",
+			"build": "12527.22017"
+		},
+		{
+			"channel": "Office 2019 Retail",
+			"version": "2107",
+			"build": "14228.20250"
+		},
+		{
+			"channel": "Office 2016 Retail",
+			"version": "2107",
+			"build": "14228.20250"
+		},
+		{
+			"channel": "Office 2019 Volume Licensed",
+			"version": "1808",
+			"build": "10377.20023"
+		}
+	],
+	"sections": [
+		{
+			"name": "Word",
+			"items": [
+				{
+					"text": "CVE-2021-36941",
+					"links": [
+						{
+							"text": "CVE-2021-36941",
+							"url": "https://portal.msrc.microsoft.com/en-us/security-guidance/advisory/CVE-2021-36941"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Office suite",
+			"items": [
+				{
+					"text": "CVE-2021-34478",
+					"links": [
+						{
+							"text": "CVE-2021-34478",
+							"url": "https://portal.msrc.microsoft.com/en-us/security-guidance/advisory/CVE-2021-34478"
+						}
+					]
+				}
+			]
+		}
+	]
+}

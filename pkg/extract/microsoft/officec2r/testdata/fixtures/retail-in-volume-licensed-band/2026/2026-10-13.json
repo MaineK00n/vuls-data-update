@@ -1,0 +1,32 @@
+{
+	"id": "october-13-2026",
+	"date": "October 13, 2026",
+	"builds": [
+		{
+			"channel": "Office 2019 Retail",
+			"version": "2609",
+			"build": "10417.20300"
+		},
+		{
+			"channel": "Office 2019 Volume Licensed",
+			"version": "1808",
+			"build": "10417.20228"
+		}
+	],
+	"sections": [
+		{
+			"name": "Word",
+			"items": [
+				{
+					"text": "CVE-2026-70206",
+					"links": [
+						{
+							"text": "CVE-2026-70206",
+							"url": "https://portal.msrc.microsoft.com/security-guidance/advisory/CVE-2026-70206"
+						}
+					]
+				}
+			]
+		}
+	]
+}

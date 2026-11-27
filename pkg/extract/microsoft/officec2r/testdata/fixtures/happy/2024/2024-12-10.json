@@ -1,0 +1,138 @@
+{
+	"id": "december-10-2024",
+	"date": "December 10, 2024",
+	"builds": [
+		{
+			"channel": "Current Channel",
+			"version": "2411",
+			"build": "18227.20162"
+		},
+		{
+			"channel": "Monthly Enterprise Channel",
+			"version": "2410",
+			"build": "18129.20200"
+		},
+		{
+			"channel": "Monthly Enterprise Channel",
+			"version": "2409",
+			"build": "18025.20242"
+		},
+		{
+			"channel": "Semi-Annual Enterprise Channel (Preview)",
+			"version": "2408",
+			"build": "17928.20336"
+		},
+		{
+			"channel": "Semi-Annual Enterprise Channel",
+			"version": "2402",
+			"build": "17328.20670"
+		},
+		{
+			"channel": "Semi-Annual Enterprise Channel",
+			"version": "2308",
+			"build": "16731.20998"
+		},
+		{
+			"channel": "Office 2024 Retail",
+			"version": "2411",
+			"build": "18227.20162"
+		},
+		{
+			"channel": "Office 2021 Retail",
+			"version": "2411",
+			"build": "18227.20162"
+		},
+		{
+			"channel": "Office 2019 Retail",
+			"version": "2411",
+			"build": "18227.20162"
+		},
+		{
+			"channel": "Office 2016 Retail",
+			"version": "2411",
+			"build": "18227.20162"
+		},
+		{
+			"channel": "Office LTSC 2024 Volume Licensed",
+			"version": "2408",
+			"build": "17932.20190"
+		},
+		{
+			"channel": "Office LTSC 2021 Volume Licensed",
+			"version": "2108",
+			"build": "14332.20828"
+		},
+		{
+			"channel": "Office 2019 Volume Licensed",
+			"version": "1808",
+			"build": "10416.20027"
+		}
+	],
+	"sections": [
+		{
+			"name": "Access",
+			"items": [
+				{
+					"text": "CVE-2024-49142",
+					"links": [
+						{
+							"text": "CVE-2024-49142",
+							"url": "https://portal.msrc.microsoft.com/en-us/security-guidance/advisory/CVE-2024-49142"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Excel",
+			"items": [
+				{
+					"text": "CVE-2024-49069",
+					"links": [
+						{
+							"text": "CVE-2024-49069",
+							"url": "https://portal.msrc.microsoft.com/en-us/security-guidance/advisory/CVE-2024-49069"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Project",
+			"items": [
+				{
+					"text": "ADV240002",
+					"links": [
+						{
+							"text": "ADV240002",
+							"url": "https://portal.msrc.microsoft.com/en-us/security-guidance/advisory/ADV240002"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Office suite",
+			"items": [
+				{
+					"text": "CVE-2024-49065",
+					"links": [
+						{
+							"text": "CVE-2024-49065",
+							"url": "https://portal.msrc.microsoft.com/en-us/security-guidance/advisory/CVE-2024-49065"
+						}
+					]
+				},
+				{
+					"text": "CVE-2024-49059",
+					"links": [
+						{
+							"text": "CVE-2024-49059",
+							"url": "https://portal.msrc.microsoft.com/en-us/security-guidance/advisory/CVE-2024-49059"
+						}
+					]
+				}
+			]
+		}
+	]
+}
