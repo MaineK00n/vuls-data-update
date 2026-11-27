@@ -1,0 +1,145 @@
+{
+	"id": "ELSA-2025-90021",
+	"advisories": [
+		{
+			"content": {
+				"id": "ELSA-2025-90021",
+				"title": "ELSA-2025-90021:  kernel security update (IMPORTANT)",
+				"description": "[5.14.0-503.26.1]\n- synthetic fixture for UEK series handling",
+				"severity": [
+					{
+						"type": "vendor",
+						"source": "linux.oracle.com/security",
+						"vendor": "IMPORTANT"
+					}
+				],
+				"references": [
+					{
+						"source": "linux.oracle.com/security",
+						"url": "https://linux.oracle.com/cve/CVE-2024-53103.html"
+					},
+					{
+						"source": "linux.oracle.com/security",
+						"url": "https://linux.oracle.com/errata/ELSA-2025-90021.html"
+					}
+				],
+				"published": "2025-02-01T00:00:00Z"
+			},
+			"segments": [
+				{
+					"ecosystem": "oracle:9"
+				}
+			]
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-2024-53103",
+				"references": [
+					{
+						"source": "linux.oracle.com/security",
+						"url": "https://linux.oracle.com/cve/CVE-2024-53103.html"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "oracle:9"
+				}
+			]
+		}
+	],
+	"detections": [
+		{
+			"ecosystem": "oracle:9",
+			"conditions": [
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "bpftool",
+											"architectures": [
+												"x86_64"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:5.14.0-503.26.1.el9_5"
+											}
+										],
+										"fixed": [
+											"0:5.14.0-503.26.1.el9_5"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "kernel",
+											"architectures": [
+												"x86_64"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:5.14.0-503.26.1.el9_5"
+											}
+										],
+										"fixed": [
+											"0:5.14.0-503.26.1.el9_5"
+										]
+									}
+								}
+							}
+						]
+					}
+				}
+			]
+		}
+	],
+	"data_source": {
+		"id": "oracle",
+		"raws": [
+			"uek/definitions/oval:com.oracle.elsa:def:202590021.json",
+			"uek/objects/rpminfo_object/oval:com.oracle.elsa:obj:202590021001.json",
+			"uek/objects/rpminfo_object/oval:com.oracle.elsa:obj:202590021002.json",
+			"uek/objects/rpminfo_object/oval:com.oracle.elsa:obj:202590021003.json",
+			"uek/states/rpminfo_state/oval:com.oracle.elsa:ste:202590021001.json",
+			"uek/states/rpminfo_state/oval:com.oracle.elsa:ste:202590021002.json",
+			"uek/states/rpminfo_state/oval:com.oracle.elsa:ste:202590021003.json",
+			"uek/states/rpminfo_state/oval:com.oracle.elsa:ste:202590021004.json",
+			"uek/states/rpminfo_state/oval:com.oracle.elsa:ste:202590021005.json",
+			"uek/tests/rpminfo_test/oval:com.oracle.elsa:tst:202590021001.json",
+			"uek/tests/rpminfo_test/oval:com.oracle.elsa:tst:202590021002.json",
+			"uek/tests/rpminfo_test/oval:com.oracle.elsa:tst:202590021003.json",
+			"uek/tests/rpminfo_test/oval:com.oracle.elsa:tst:202590021004.json",
+			"uek/tests/rpminfo_test/oval:com.oracle.elsa:tst:202590021005.json",
+			"uek/tests/rpminfo_test/oval:com.oracle.elsa:tst:202590021006.json"
+		]
+	}
+}

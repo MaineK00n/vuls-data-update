@@ -1,0 +1,13 @@
+{
+	"id": "oval:com.oracle.elsa:tst:202590022004",
+	"version": "501",
+	"comment": "kernel is signed with the Oracle Linux 9 key",
+	"check": "at least one",
+	"xmlns": "http://oval.mitre.org/XMLSchema/oval-definitions-5#linux",
+	"object": {
+		"object_ref": "oval:com.oracle.elsa:obj:202590022002"
+	},
+	"state": {
+		"state_ref": "oval:com.oracle.elsa:ste:202590022003"
+	}
+}

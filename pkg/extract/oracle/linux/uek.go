@@ -62,9 +62,11 @@ import (
 //     [ >= 0:4.18.0.0-0, < 0:5.15.0-305.176.4.el8uek ). A version part above
 //     the series is above the UEK fix already. One equal to the series
 //     cannot be told from the UEK builds by its version part, so it is
-//     compared, as is a version part no RHCK fix lists. Where RHCK ships the
-//     name on other architectures only, e.g. perf on Oracle Linux 7, which
-//     UEK ships for aarch64 and RHCK for x86_64, nothing is left out.
+//     compared, as is a version part no RHCK fix lists; one equal to an
+//     older UEK series of the name leaves that series out for every CVE.
+//     Where RHCK ships the name on other architectures only, e.g. perf on
+//     Oracle Linux 7, which UEK ships for aarch64 and RHCK for x86_64,
+//     nothing is left out.
 
 // uekSplitTagPrefix prefixes the detection tag of a split condition. The IDs
 // of the older series' advisories whose series the condition leaves out
@@ -145,8 +147,8 @@ func newUEKIndex() *uekIndex {
 }
 
 func (x *uekIndex) add(path string, data dataTypes.Data) error {
-	// The split and the RHCK exclusion rewrite the file once per advisory, so a second
-	// definition with the same ID would be rewritten over the first.
+	// The split and the RHCK exclusion rewrite the file once per advisory, so
+	// a second definition with the same ID would be rewritten over the first.
 	if _, ok := x.paths[path]; ok {
 		return errors.Errorf("unexpected definitions of %s. expected: %q, actual: %q", data.ID, "one definition", "two or more")
 	}
@@ -182,8 +184,8 @@ func (x *uekIndex) add(path string, data dataTypes.Data) error {
 					}
 					continue
 				}
-				// The split and the RHCK exclusion are decided per package and architecture,
-				// and every UEK criterion of Oracle Linux OVAL names its
+				// The split and the RHCK exclusion are decided per package and
+				// architecture, and every UEK criterion of Oracle Linux OVAL names its
 				// architectures. A definition without an architecture test gives [""].
 				if as := cn.Version.Package.Binary.Architectures; len(as) == 0 || slices.Contains(as, "") {
 					return errors.Errorf("unexpected architectures of %s. ecosystem: %s, expected: %q, actual: %q", cn.Version.Package.Binary.Name, d.Ecosystem, "non-empty architectures", as)
@@ -246,11 +248,10 @@ func (x *uekIndex) rhckSeries(eco ecosystemTypes.Ecosystem, p uekPackage, fixed 
 // apply gives, per Oracle Linux release, every advisory a split condition for
 // the CVEs an older UEK series also fixed, and leaves out the RHCK builds of
 // the names RHCK also ships (see rhckSeries) in every condition. The UEK
-// criterions of a split
-// condition match below the fixed version as before, except the builds of
-// each older series that has its own fix for the CVE on the package and
-// architecture, e.g. for a 6.12.0 fix of a CVE 5.15.0 also fixed:
-// [ < 0:5.15.0-0 ] or [ >= 0:5.15.0.0-0, < 0:6.12.0-102.36.5.2.el9uek ).
+// criterions of a split condition match below the fixed version as before,
+// except the builds of each older series that has its own fix for the CVE on
+// the package and architecture, e.g. for a 6.12.0 fix of a CVE 5.15.0 also
+// fixed: [ < 0:5.15.0-0 ] or [ >= 0:5.15.0.0-0, < 0:6.12.0-102.36.5.2.el9uek ).
 // A build of the older series below its own fix is matched by the older
 // series' own advisory, which carries the same package and architecture, so
 // the fixed version reported for it is its own series'.
@@ -419,7 +420,7 @@ func (x *uekIndex) rewrite(r uekRoot, splits map[ecosystemTypes.Ecosystem]map[se
 		// The untagged condition leaves out the RHCK builds alone.
 		cns, err := x.criterions(eco, base.Criteria.Criterions, nil)
 		if err != nil {
-			return errors.Wrapf(err, "untagged criterions. ecosystem: %s", eco)
+			return errors.Wrapf(err, "rewrite untagged criterions. ecosystem: %s", eco)
 		}
 		data.Detections[di].Conditions[ci].Criteria.Criterions = cns
 

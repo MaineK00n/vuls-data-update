@@ -102,6 +102,36 @@
 									"package": {
 										"type": "binary",
 										"binary": {
+											"name": "bpftool",
+											"architectures": [
+												"aarch64",
+												"x86_64"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:6.12.0-102.36.5.2.el10uek"
+											}
+										],
+										"fixed": [
+											"0:6.12.0-102.36.5.2.el10uek"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
 											"name": "kernel-uek",
 											"architectures": [
 												"aarch64",
@@ -174,6 +204,68 @@
 									"package": {
 										"type": "binary",
 										"binary": {
+											"name": "bpftool",
+											"architectures": [
+												"aarch64"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:6.12.0-102.36.5.2.el9uek"
+											}
+										],
+										"fixed": [
+											"0:6.12.0-102.36.5.2.el9uek"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "bpftool",
+											"architectures": [
+												"x86_64"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:5.14.0-0"
+											},
+											{
+												"lt": "0:6.12.0-102.36.5.2.el9uek",
+												"ge": "0:5.14.0.0-0"
+											}
+										],
+										"fixed": [
+											"0:6.12.0-102.36.5.2.el9uek"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
 											"name": "kernel-uek",
 											"architectures": [
 												"aarch64",
@@ -231,6 +323,72 @@
 					"criteria": {
 						"operator": "OR",
 						"criterions": [
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "bpftool",
+											"architectures": [
+												"aarch64"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:6.12.0-102.36.5.2.el9uek"
+											}
+										],
+										"fixed": [
+											"0:6.12.0-102.36.5.2.el9uek"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "bpftool",
+											"architectures": [
+												"x86_64"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:5.14.0-0"
+											},
+											{
+												"lt": "0:5.15.0-0",
+												"ge": "0:5.14.0.0-0"
+											},
+											{
+												"lt": "0:6.12.0-102.36.5.2.el9uek",
+												"ge": "0:5.15.0.0-0"
+											}
+										],
+										"fixed": [
+											"0:6.12.0-102.36.5.2.el9uek"
+										]
+									}
+								}
+							},
 							{
 								"type": "version",
 								"version": {
@@ -374,6 +532,7 @@
 			"uek/objects/rpminfo_object/oval:com.oracle.elsa:obj:202590002001.json",
 			"uek/objects/rpminfo_object/oval:com.oracle.elsa:obj:202590002002.json",
 			"uek/objects/rpminfo_object/oval:com.oracle.elsa:obj:202590002003.json",
+			"uek/objects/rpminfo_object/oval:com.oracle.elsa:obj:202590002004.json",
 			"uek/states/rpminfo_state/oval:com.oracle.elsa:ste:202590001001.json",
 			"uek/states/rpminfo_state/oval:com.oracle.elsa:ste:202590001002.json",
 			"uek/states/rpminfo_state/oval:com.oracle.elsa:ste:202590001003.json",
@@ -399,6 +558,8 @@
 			"uek/states/rpminfo_state/oval:com.oracle.elsa:ste:202590002010.json",
 			"uek/states/rpminfo_state/oval:com.oracle.elsa:ste:202590002011.json",
 			"uek/states/rpminfo_state/oval:com.oracle.elsa:ste:202590002012.json",
+			"uek/states/rpminfo_state/oval:com.oracle.elsa:ste:202590002013.json",
+			"uek/states/rpminfo_state/oval:com.oracle.elsa:ste:202590002014.json",
 			"uek/tests/rpminfo_test/oval:com.oracle.elsa:tst:202590001001.json",
 			"uek/tests/rpminfo_test/oval:com.oracle.elsa:tst:202590001002.json",
 			"uek/tests/rpminfo_test/oval:com.oracle.elsa:tst:202590001003.json",
@@ -429,7 +590,11 @@
 			"uek/tests/rpminfo_test/oval:com.oracle.elsa:tst:202590002011.json",
 			"uek/tests/rpminfo_test/oval:com.oracle.elsa:tst:202590002012.json",
 			"uek/tests/rpminfo_test/oval:com.oracle.elsa:tst:202590002013.json",
-			"uek/tests/rpminfo_test/oval:com.oracle.elsa:tst:202590002014.json"
+			"uek/tests/rpminfo_test/oval:com.oracle.elsa:tst:202590002014.json",
+			"uek/tests/rpminfo_test/oval:com.oracle.elsa:tst:202590002015.json",
+			"uek/tests/rpminfo_test/oval:com.oracle.elsa:tst:202590002016.json",
+			"uek/tests/rpminfo_test/oval:com.oracle.elsa:tst:202590002017.json",
+			"uek/tests/rpminfo_test/oval:com.oracle.elsa:tst:202590002018.json"
 		]
 	}
 }

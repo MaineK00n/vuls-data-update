@@ -1,0 +1,103 @@
+{
+	"id": "oval:com.oracle.elsa:def:202590021",
+	"version": "501",
+	"class": "patch",
+	"metadata": {
+		"title": "\nELSA-2025-90021:  kernel security update (IMPORTANT)\n",
+		"affected": {
+			"family": "unix",
+			"platform": [
+				"Oracle Linux 9"
+			]
+		},
+		"reference": [
+			{
+				"source": "elsa",
+				"ref_id": "ELSA-2025-90021",
+				"ref_url": "https://linux.oracle.com/errata/ELSA-2025-90021.html"
+			},
+			{
+				"source": "CVE",
+				"ref_id": "CVE-2024-53103",
+				"ref_url": "https://linux.oracle.com/cve/CVE-2024-53103.html"
+			}
+		],
+		"description": "\n[5.14.0-503.26.1]\n- synthetic fixture for UEK series handling\n",
+		"advisory": {
+			"severity": "IMPORTANT",
+			"rights": "Copyright 2025 Oracle, Inc.",
+			"issued": {
+				"date": "2025-02-01"
+			},
+			"cve": [
+				{
+					"text": "CVE-2024-53103",
+					"href": "https://linux.oracle.com/cve/CVE-2024-53103.html"
+				}
+			]
+		}
+	},
+	"criteria": {
+		"operator": "OR",
+		"criterias": [
+			{
+				"operator": "AND",
+				"criterias": [
+					{
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterias": [
+									{
+										"operator": "OR",
+										"criterias": [
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.oracle.elsa:tst:202590021003",
+														"comment": "kernel is earlier than 0:5.14.0-503.26.1.el9_5"
+													},
+													{
+														"test_ref": "oval:com.oracle.elsa:tst:202590021004",
+														"comment": "kernel is signed with the Oracle Linux 9 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.oracle.elsa:tst:202590021005",
+														"comment": "bpftool is earlier than 0:5.14.0-503.26.1.el9_5"
+													},
+													{
+														"test_ref": "oval:com.oracle.elsa:tst:202590021006",
+														"comment": "bpftool is signed with the Oracle Linux 9 key"
+													}
+												]
+											}
+										]
+									}
+								],
+								"criterions": [
+									{
+										"test_ref": "oval:com.oracle.elsa:tst:202590021002",
+										"comment": "Oracle Linux arch is x86_64"
+									}
+								]
+							}
+						]
+					}
+				],
+				"criterions": [
+					{
+						"test_ref": "oval:com.oracle.elsa:tst:202590021001",
+						"comment": "Oracle Linux 9 is installed"
+					}
+				]
+			}
+		]
+	}
+}
