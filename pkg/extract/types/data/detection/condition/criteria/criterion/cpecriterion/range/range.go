@@ -11,6 +11,7 @@ import (
 	nonnumericVersion "github.com/vulsio/go-fortinet-version/nonnumeric"
 	numericVersion "github.com/vulsio/go-fortinet-version/numeric"
 
+	affectedTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/affected"
 	warningTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/warning"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/internal/enum"
 	appleVersion "github.com/MaineK00n/vuls-data-update/pkg/extract/types/internal/version/apple"
@@ -153,6 +154,12 @@ const (
 	RangeTypeFortinetMeru                                        RangeType = "fortinet-meru"
 
 	RangeTypeUnknown RangeType = "unknown"
+
+	// RangeTypeUnconverted marks a product whose affected versions or fix the
+	// extractor could not convert into a range; Range.Published keeps what the
+	// vendor published. It has no comparator, and detection does not evaluate
+	// it (see Criterion.Accept).
+	RangeTypeUnconverted RangeType = "unconverted"
 )
 
 // RangeTypes returns every RangeType this build knows, in declaration order.
@@ -260,6 +267,7 @@ func RangeTypes() []RangeType {
 		RangeTypeFortinetFortiWLM,
 		RangeTypeFortinetMeru,
 		RangeTypeUnknown,
+		RangeTypeUnconverted,
 	}
 }
 
@@ -291,6 +299,12 @@ type Range struct {
 	GreaterThan  string    `json:"gt,omitempty"`
 	LessEqual    string    `json:"le,omitempty"`
 	LessThan     string    `json:"lt,omitempty"`
+	// Published is set, with Type RangeTypeUnconverted and no bounds, when the
+	// vendor lists the product for the vulnerability but the extractor could not
+	// convert its affected versions or fix into a range. It records what the
+	// vendor published, for a reader of the data; detection does not evaluate it.
+	// It is the same record as versioncriterion's affected.Published.
+	Published *affectedTypes.Published `json:"published,omitempty"`
 }
 
 func Compare(x, y Range) int {
@@ -300,6 +314,7 @@ func Compare(x, y Range) int {
 		cmp.Compare(x.GreaterThan, y.GreaterThan),
 		cmp.Compare(x.LessEqual, y.LessEqual),
 		cmp.Compare(x.LessThan, y.LessThan),
+		affectedTypes.ComparePublished(x.Published, y.Published),
 	)
 }
 
@@ -358,6 +373,12 @@ func (e *UnsupportedRangeTypeError) Warning() warningTypes.Warning {
 // ErrRangeTypeUnknown is wrapped in a CompareError when CompareVersions is
 // called with a Type that cannot evaluate any version.
 var ErrRangeTypeUnknown = errors.New("unknown range type")
+
+// ErrRangeTypeUnconverted is what CompareVersions answers for
+// RangeTypeUnconverted: the type has no versions to compare. Criterion.Accept
+// never compares one (it accepts no query for such a criterion), so reaching it
+// is a caller's mistake.
+var ErrRangeTypeUnconverted = errors.New("unconverted range type has no comparator")
 
 // CompareVersions returns an integer comparing v1 and v2 under the comparator
 // selected by t (semantics match hashicorp version.Version.Compare):
@@ -576,6 +597,8 @@ func (t RangeType) CompareVersions(v1, v2 string) (int, error) {
 		// The declared "unknown" vocabulary value is normal data; it quietly
 		// cannot evaluate.
 		return 0, &CompareError{Err: ErrRangeTypeUnknown}
+	case RangeTypeUnconverted:
+		return 0, &CompareError{Err: ErrRangeTypeUnconverted}
 	default:
 		// Everything outside the vocabulary — the zero value (unset, a
 		// producer-side bug) or a value this build does not know (data from
