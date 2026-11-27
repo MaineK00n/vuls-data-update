@@ -304,7 +304,7 @@ func TestBuilds(t *testing.T) {
 		{
 			name: "line of no-break spaces is not blank",
 			args: args{
-				message: "update\n\nfetched by hand\n \nVuls-Data-Update: v0.0.0-20261126020019-9f06544f77cb\n",
+				message: "update\n\nfetched by hand\n\u00a0\nVuls-Data-Update: v0.0.0-20261126020019-9f06544f77cb\n",
 			},
 		},
 		{

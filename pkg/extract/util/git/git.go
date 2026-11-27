@@ -90,8 +90,9 @@ const gitSpace = " \t\n\r"
 // every commit before vuls-data-db named its builds is, names none. Where a
 // hand-written message parts it from git, it reads less than git, never more:
 // nothing from a paragraph only partly of trailers, as git reads one with a
-// Signed-off-by among other lines, or from one with a comment line, and not a
-// value that starts on a continuation line.
+// Signed-off-by among other lines, nor where comment lines, which git skips,
+// sit in or after the trailers, and not a value that starts on a continuation
+// line.
 func builds(message string) []string {
 	lines := strings.Split(message, "\n")
 	blank := func(l string) bool { return strings.Trim(l, gitSpace) == "" }
