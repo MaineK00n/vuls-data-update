@@ -395,6 +395,34 @@
 										"cpe:2.3:o:cisco:ios_xr:7.9.2:*:*:*:*:*:*:*"
 									]
 								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"cpe": "cpe:2.3:o:cisco:ios_xr:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "unconverted",
+										"published": {
+											"description": "Cisco IOS XR Software 5.1.1.K9SEC",
+											"url": "https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-hardening-iosxr-qg64NcM"
+										}
+									}
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"cpe": "cpe:2.3:o:cisco:ios_xr:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "unconverted",
+										"published": {
+											"description": "Cisco IOS XR Software 6.0.2.01",
+											"url": "https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-hardening-iosxr-qg64NcM"
+										}
+									}
+								}
 							}
 						]
 					}
