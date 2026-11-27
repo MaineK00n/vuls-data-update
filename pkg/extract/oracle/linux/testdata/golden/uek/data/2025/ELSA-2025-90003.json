@@ -1,0 +1,202 @@
+{
+	"id": "ELSA-2025-90003",
+	"advisories": [
+		{
+			"content": {
+				"id": "ELSA-2025-90003",
+				"title": "ELSA-2025-90003:  Unbreakable Enterprise kernel security update (IMPORTANT)",
+				"description": "[6.12.0-200.70.1]\n- synthetic fixture for UEK series handling",
+				"severity": [
+					{
+						"type": "vendor",
+						"source": "linux.oracle.com/security",
+						"vendor": "IMPORTANT"
+					}
+				],
+				"references": [
+					{
+						"source": "linux.oracle.com/security",
+						"url": "https://linux.oracle.com/cve/CVE-2025-0001.html"
+					},
+					{
+						"source": "linux.oracle.com/security",
+						"url": "https://linux.oracle.com/cve/CVE-2025-0002.html"
+					},
+					{
+						"source": "linux.oracle.com/security",
+						"url": "https://linux.oracle.com/errata/ELSA-2025-90003.html"
+					}
+				],
+				"published": "2025-09-01T00:00:00Z"
+			},
+			"segments": [
+				{
+					"ecosystem": "oracle:9"
+				}
+			]
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-2025-0001",
+				"references": [
+					{
+						"source": "linux.oracle.com/security",
+						"url": "https://linux.oracle.com/cve/CVE-2025-0001.html"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "oracle:9"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2025-0002",
+				"references": [
+					{
+						"source": "linux.oracle.com/security",
+						"url": "https://linux.oracle.com/cve/CVE-2025-0002.html"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "oracle:9"
+				}
+			]
+		}
+	],
+	"detections": [
+		{
+			"ecosystem": "oracle:9",
+			"conditions": [
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "bpftool",
+											"architectures": [
+												"x86_64"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:5.14.0-0"
+											},
+											{
+												"lt": "0:6.12.0-200.70.1.el9uek",
+												"ge": "0:5.14.0.0-0"
+											}
+										],
+										"fixed": [
+											"0:6.12.0-200.70.1.el9uek"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "kernel-uek",
+											"architectures": [
+												"x86_64"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:6.12.0-200.70.1.el9uek"
+											}
+										],
+										"fixed": [
+											"0:6.12.0-200.70.1.el9uek"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "kernel-uek-core",
+											"architectures": [
+												"x86_64"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:6.12.0-200.70.1.el9uek"
+											}
+										],
+										"fixed": [
+											"0:6.12.0-200.70.1.el9uek"
+										]
+									}
+								}
+							}
+						]
+					}
+				}
+			]
+		}
+	],
+	"data_source": {
+		"id": "oracle",
+		"raws": [
+			"uek/definitions/oval:com.oracle.elsa:def:202590003.json",
+			"uek/objects/rpminfo_object/oval:com.oracle.elsa:obj:202590003001.json",
+			"uek/objects/rpminfo_object/oval:com.oracle.elsa:obj:202590003002.json",
+			"uek/objects/rpminfo_object/oval:com.oracle.elsa:obj:202590003003.json",
+			"uek/objects/rpminfo_object/oval:com.oracle.elsa:obj:202590003004.json",
+			"uek/states/rpminfo_state/oval:com.oracle.elsa:ste:202590003001.json",
+			"uek/states/rpminfo_state/oval:com.oracle.elsa:ste:202590003002.json",
+			"uek/states/rpminfo_state/oval:com.oracle.elsa:ste:202590003003.json",
+			"uek/states/rpminfo_state/oval:com.oracle.elsa:ste:202590003004.json",
+			"uek/states/rpminfo_state/oval:com.oracle.elsa:ste:202590003005.json",
+			"uek/states/rpminfo_state/oval:com.oracle.elsa:ste:202590003006.json",
+			"uek/tests/rpminfo_test/oval:com.oracle.elsa:tst:202590003001.json",
+			"uek/tests/rpminfo_test/oval:com.oracle.elsa:tst:202590003002.json",
+			"uek/tests/rpminfo_test/oval:com.oracle.elsa:tst:202590003003.json",
+			"uek/tests/rpminfo_test/oval:com.oracle.elsa:tst:202590003004.json",
+			"uek/tests/rpminfo_test/oval:com.oracle.elsa:tst:202590003005.json",
+			"uek/tests/rpminfo_test/oval:com.oracle.elsa:tst:202590003006.json",
+			"uek/tests/rpminfo_test/oval:com.oracle.elsa:tst:202590003007.json",
+			"uek/tests/rpminfo_test/oval:com.oracle.elsa:tst:202590003008.json"
+		]
+	}
+}

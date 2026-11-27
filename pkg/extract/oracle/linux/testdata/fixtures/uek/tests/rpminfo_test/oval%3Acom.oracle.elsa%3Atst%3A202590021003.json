@@ -1,0 +1,13 @@
+{
+	"id": "oval:com.oracle.elsa:tst:202590021003",
+	"version": "501",
+	"comment": "kernel is earlier than 0:5.14.0-503.26.1.el9_5",
+	"check": "at least one",
+	"xmlns": "http://oval.mitre.org/XMLSchema/oval-definitions-5#linux",
+	"object": {
+		"object_ref": "oval:com.oracle.elsa:obj:202590021002"
+	},
+	"state": {
+		"state_ref": "oval:com.oracle.elsa:ste:202590021004"
+	}
+}

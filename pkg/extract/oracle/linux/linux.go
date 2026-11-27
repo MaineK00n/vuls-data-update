@@ -85,6 +85,8 @@ func Extract(inputDir string, opts ...Option) error {
 
 	slog.Info("Extract Oracle Linux")
 
+	uek := newUEKIndex()
+
 	if err := filepath.WalkDir(filepath.Join(inputDir, "definitions"), func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
@@ -128,12 +130,20 @@ func Extract(inputDir string, opts ...Option) error {
 				return errors.Wrapf(err, "write %s", p)
 			}
 
+			if err := uek.add(p, data); err != nil {
+				return errors.Wrapf(err, "index UEK packages of %s", data.ID)
+			}
+
 			return nil
 		default:
 			return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "(ELSA|ELBA|ELEA)-<year>-<ID>", data.ID)
 		}
 	}); err != nil {
 		return errors.Wrapf(err, "walk %s", inputDir)
+	}
+
+	if err := uek.apply(); err != nil {
+		return errors.Wrap(err, "rewrite UEK conditions")
 	}
 
 	if err := util.Write(filepath.Join(options.dir, "datasource.json"), datasourceTypes.DataSource{

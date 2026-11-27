@@ -1,0 +1,307 @@
+{
+	"id": "oval:com.oracle.elsa:def:202590002",
+	"version": "501",
+	"class": "patch",
+	"metadata": {
+		"title": "\nELSA-2025-90002:  Unbreakable Enterprise kernel security update (IMPORTANT)\n",
+		"affected": {
+			"family": "unix",
+			"platform": [
+				"Oracle Linux 9",
+				"Oracle Linux 10"
+			]
+		},
+		"reference": [
+			{
+				"source": "elsa",
+				"ref_id": "ELSA-2025-90002",
+				"ref_url": "https://linux.oracle.com/errata/ELSA-2025-90002.html"
+			},
+			{
+				"source": "CVE",
+				"ref_id": "CVE-2024-53103",
+				"ref_url": "https://linux.oracle.com/cve/CVE-2024-53103.html"
+			},
+			{
+				"source": "CVE",
+				"ref_id": "CVE-2025-0001",
+				"ref_url": "https://linux.oracle.com/cve/CVE-2025-0001.html"
+			}
+		],
+		"description": "\n[6.12.0-102.36.5.2]\n- synthetic fixture for UEK series handling\n",
+		"advisory": {
+			"severity": "IMPORTANT",
+			"rights": "Copyright 2025 Oracle, Inc.",
+			"issued": {
+				"date": "2025-06-01"
+			},
+			"cve": [
+				{
+					"text": "CVE-2024-53103",
+					"href": "https://linux.oracle.com/cve/CVE-2024-53103.html"
+				},
+				{
+					"text": "CVE-2025-0001",
+					"href": "https://linux.oracle.com/cve/CVE-2025-0001.html"
+				}
+			]
+		}
+	},
+	"criteria": {
+		"operator": "OR",
+		"criterias": [
+			{
+				"operator": "AND",
+				"criterias": [
+					{
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterias": [
+									{
+										"operator": "OR",
+										"criterias": [
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.oracle.elsa:tst:202590002004",
+														"comment": "kernel-uek is earlier than 0:6.12.0-102.36.5.2.el9uek"
+													},
+													{
+														"test_ref": "oval:com.oracle.elsa:tst:202590002005",
+														"comment": "kernel-uek is signed with the Oracle Linux 9 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.oracle.elsa:tst:202590002006",
+														"comment": "kernel-uek-core is earlier than 0:6.12.0-102.36.5.2.el9uek"
+													},
+													{
+														"test_ref": "oval:com.oracle.elsa:tst:202590002007",
+														"comment": "kernel-uek-core is signed with the Oracle Linux 9 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.oracle.elsa:tst:202590002008",
+														"comment": "bpftool is earlier than 0:6.12.0-102.36.5.2.el9uek"
+													},
+													{
+														"test_ref": "oval:com.oracle.elsa:tst:202590002009",
+														"comment": "bpftool is signed with the Oracle Linux 9 key"
+													}
+												]
+											}
+										]
+									}
+								],
+								"criterions": [
+									{
+										"test_ref": "oval:com.oracle.elsa:tst:202590002002",
+										"comment": "Oracle Linux arch is aarch64"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterias": [
+									{
+										"operator": "OR",
+										"criterias": [
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.oracle.elsa:tst:202590002004",
+														"comment": "kernel-uek is earlier than 0:6.12.0-102.36.5.2.el9uek"
+													},
+													{
+														"test_ref": "oval:com.oracle.elsa:tst:202590002005",
+														"comment": "kernel-uek is signed with the Oracle Linux 9 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.oracle.elsa:tst:202590002006",
+														"comment": "kernel-uek-core is earlier than 0:6.12.0-102.36.5.2.el9uek"
+													},
+													{
+														"test_ref": "oval:com.oracle.elsa:tst:202590002007",
+														"comment": "kernel-uek-core is signed with the Oracle Linux 9 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.oracle.elsa:tst:202590002008",
+														"comment": "bpftool is earlier than 0:6.12.0-102.36.5.2.el9uek"
+													},
+													{
+														"test_ref": "oval:com.oracle.elsa:tst:202590002009",
+														"comment": "bpftool is signed with the Oracle Linux 9 key"
+													}
+												]
+											}
+										]
+									}
+								],
+								"criterions": [
+									{
+										"test_ref": "oval:com.oracle.elsa:tst:202590002003",
+										"comment": "Oracle Linux arch is x86_64"
+									}
+								]
+							}
+						]
+					}
+				],
+				"criterions": [
+					{
+						"test_ref": "oval:com.oracle.elsa:tst:202590002001",
+						"comment": "Oracle Linux 9 is installed"
+					}
+				]
+			},
+			{
+				"operator": "AND",
+				"criterias": [
+					{
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterias": [
+									{
+										"operator": "OR",
+										"criterias": [
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.oracle.elsa:tst:202590002013",
+														"comment": "kernel-uek is earlier than 0:6.12.0-102.36.5.2.el10uek"
+													},
+													{
+														"test_ref": "oval:com.oracle.elsa:tst:202590002014",
+														"comment": "kernel-uek is signed with the Oracle Linux 10 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.oracle.elsa:tst:202590002015",
+														"comment": "kernel-uek-core is earlier than 0:6.12.0-102.36.5.2.el10uek"
+													},
+													{
+														"test_ref": "oval:com.oracle.elsa:tst:202590002016",
+														"comment": "kernel-uek-core is signed with the Oracle Linux 10 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.oracle.elsa:tst:202590002017",
+														"comment": "bpftool is earlier than 0:6.12.0-102.36.5.2.el10uek"
+													},
+													{
+														"test_ref": "oval:com.oracle.elsa:tst:202590002018",
+														"comment": "bpftool is signed with the Oracle Linux 10 key"
+													}
+												]
+											}
+										]
+									}
+								],
+								"criterions": [
+									{
+										"test_ref": "oval:com.oracle.elsa:tst:202590002011",
+										"comment": "Oracle Linux arch is aarch64"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterias": [
+									{
+										"operator": "OR",
+										"criterias": [
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.oracle.elsa:tst:202590002013",
+														"comment": "kernel-uek is earlier than 0:6.12.0-102.36.5.2.el10uek"
+													},
+													{
+														"test_ref": "oval:com.oracle.elsa:tst:202590002014",
+														"comment": "kernel-uek is signed with the Oracle Linux 10 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.oracle.elsa:tst:202590002015",
+														"comment": "kernel-uek-core is earlier than 0:6.12.0-102.36.5.2.el10uek"
+													},
+													{
+														"test_ref": "oval:com.oracle.elsa:tst:202590002016",
+														"comment": "kernel-uek-core is signed with the Oracle Linux 10 key"
+													}
+												]
+											},
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.oracle.elsa:tst:202590002017",
+														"comment": "bpftool is earlier than 0:6.12.0-102.36.5.2.el10uek"
+													},
+													{
+														"test_ref": "oval:com.oracle.elsa:tst:202590002018",
+														"comment": "bpftool is signed with the Oracle Linux 10 key"
+													}
+												]
+											}
+										]
+									}
+								],
+								"criterions": [
+									{
+										"test_ref": "oval:com.oracle.elsa:tst:202590002012",
+										"comment": "Oracle Linux arch is x86_64"
+									}
+								]
+							}
+						]
+					}
+				],
+				"criterions": [
+					{
+						"test_ref": "oval:com.oracle.elsa:tst:202590002010",
+						"comment": "Oracle Linux 10 is installed"
+					}
+				]
+			}
+		]
+	}
+}
