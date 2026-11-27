@@ -26,6 +26,11 @@
 				"source": "CVE",
 				"ref_id": "CVE-2025-0004",
 				"ref_url": "https://linux.oracle.com/cve/CVE-2025-0004.html"
+			},
+			{
+				"source": "CVE",
+				"ref_id": "CVE-2024-0002",
+				"ref_url": "https://linux.oracle.com/cve/CVE-2024-0002.html"
 			}
 		],
 		"description": "\n[5.15.0-305.176.4]\n- synthetic fixture for UEK series handling\n",
@@ -36,6 +41,10 @@
 				"date": "2025-01-10"
 			},
 			"cve": [
+				{
+					"text": "CVE-2024-0002",
+					"href": "https://linux.oracle.com/cve/CVE-2024-0002.html"
+				},
 				{
 					"text": "CVE-2024-53103",
 					"href": "https://linux.oracle.com/cve/CVE-2024-53103.html"

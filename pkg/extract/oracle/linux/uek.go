@@ -40,8 +40,10 @@ import (
 // is reported as an error. The Red Hat compatible kernel (RHCK) ships some
 // of these names too.
 //
-// Every UEK package is matched below its fixed version, and two conflicts
-// are resolved once every advisory has been read, by uekIndex.apply:
+// Every UEK package is matched below its fixed version, leaving out the
+// builds of other series, all of a series at once (see seriesBounds). Two
+// conflicts are resolved this way once every advisory has been read, by
+// uekIndex.apply:
 //
 //   - Between series, per CVE: a build of one series is compared with the
 //     fix of a newer series for every CVE both list, even when its own
@@ -52,15 +54,17 @@ import (
 //     own keeps matching the newer fix: Oracle Linux OVAL only carries fixed
 //     versions, so a missing fix cannot tell "not affected" from "not
 //     fixed", and over-detection is preferred to missing the CVE.
-//   - Between RHCK and UEK, per package and architecture: where a build
-//     other than UEK (RHCK) of a UEK build's name is fixed on the same
-//     release and architecture, the criterion of the UEK build starts at the
-//     first build of its series, e.g. bpftool on Oracle Linux 8 and 9
-//     [0:5.15.0-0, 0:5.15.0-305.176.4.el9uek), so that an RHCK build is not
-//     compared with a UEK fix. The bound leaves out every older series for
-//     every CVE, so such a package takes no part in the split. Elsewhere,
-//     e.g. perf on Oracle Linux 7, which UEK ships for aarch64 and RHCK for
-//     x86_64, the package is split as kernel-uek* is.
+//   - Between RHCK and UEK, per package and architecture, for every CVE: a
+//     build other than UEK (RHCK) of a UEK build's name is compared with the
+//     UEK fix. Every UEK criterion leaves out the version parts of the RHCK
+//     fixes of its name on the same release and architecture that lie below
+//     its series, e.g. bpftool on Oracle Linux 8 [ < 0:4.18.0-0 ] or
+//     [ >= 0:4.18.0.0-0, < 0:5.15.0-305.176.4.el8uek ). A version part above
+//     the series is above the UEK fix already. One equal to the series
+//     cannot be told from the UEK builds by its version part, so it is
+//     compared, as is a version part no RHCK fix lists. Where RHCK ships the
+//     name on other architectures only, e.g. perf on Oracle Linux 7, which
+//     UEK ships for aarch64 and RHCK for x86_64, nothing is left out.
 
 // uekSplitTagPrefix prefixes the detection tag of a split condition. The IDs
 // of the older series' advisories whose series the condition leaves out
@@ -96,14 +100,15 @@ func isUEKCriterion(cn criterionTypes.Criterion) bool {
 	return isVersionCriterion(cn) && (isUEKKernelPackage(cn.Version.Package.Binary.Name) || slices.ContainsFunc(cn.Version.Affected.Fixed, isUEKBuild))
 }
 
-// uekIndex keeps what the split and the RHCK bound need of the advisories
-// already written, so that only the ones to change are read back.
+// uekIndex keeps what the split and the RHCK exclusion need of the
+// advisories already written, so that only the ones to change are read back.
 type uekIndex struct {
 	roots []uekRoot
 	paths map[string]struct{}
-	// rhck holds, per ecosystem, the packages and architectures a build other
-	// than UEK is fixed on; "" stands for every architecture.
-	rhck map[ecosystemTypes.Ecosystem]map[uekPackage]struct{}
+	// rhck holds, per ecosystem, package and architecture, the version parts
+	// of the fixes of builds other than UEK, each with its epoch; "" stands
+	// for every architecture.
+	rhck map[ecosystemTypes.Ecosystem]map[uekPackage]map[string]int
 }
 
 type uekRoot struct {
@@ -135,12 +140,12 @@ type uekSplit struct {
 func newUEKIndex() *uekIndex {
 	return &uekIndex{
 		paths: make(map[string]struct{}),
-		rhck:  make(map[ecosystemTypes.Ecosystem]map[uekPackage]struct{}),
+		rhck:  make(map[ecosystemTypes.Ecosystem]map[uekPackage]map[string]int),
 	}
 }
 
 func (x *uekIndex) add(path string, data dataTypes.Data) error {
-	// The split and the bound rewrite the file once per advisory, so a second
+	// The split and the RHCK exclusion rewrite the file once per advisory, so a second
 	// definition with the same ID would be rewritten over the first.
 	if _, ok := x.paths[path]; ok {
 		return errors.Errorf("unexpected definitions of %s. expected: %q, actual: %q", data.ID, "one definition", "two or more")
@@ -163,14 +168,21 @@ func (x *uekIndex) add(path string, data dataTypes.Data) error {
 				}
 				if !isUEKCriterion(cn) {
 					if x.rhck[d.Ecosystem] == nil {
-						x.rhck[d.Ecosystem] = make(map[uekPackage]struct{})
+						x.rhck[d.Ecosystem] = make(map[uekPackage]map[string]int)
 					}
 					for _, a := range cn.Version.Package.Binary.Architectures {
-						x.rhck[d.Ecosystem][uekPackage{name: cn.Version.Package.Binary.Name, arch: a}] = struct{}{}
+						p := uekPackage{name: cn.Version.Package.Binary.Name, arch: a}
+						if x.rhck[d.Ecosystem][p] == nil {
+							x.rhck[d.Ecosystem][p] = make(map[string]int)
+						}
+						for _, f := range cn.Version.Affected.Fixed {
+							rv := rpm.NewVersion(f)
+							x.rhck[d.Ecosystem][p][rv.Version()] = rv.Epoch()
+						}
 					}
 					continue
 				}
-				// The split and the bound are decided per package and architecture,
+				// The split and the RHCK exclusion are decided per package and architecture,
 				// and every UEK criterion of Oracle Linux OVAL names its
 				// architectures. A definition without an architecture test gives [""].
 				if as := cn.Version.Package.Binary.Architectures; len(as) == 0 || slices.Contains(as, "") {
@@ -212,25 +224,29 @@ func (x *uekIndex) add(path string, data dataTypes.Data) error {
 	return nil
 }
 
-// bounded reports whether the criterion of a UEK build of p starts at the
-// first build of its series: a build other than UEK (RHCK) of the name is
-// fixed on the same release and architecture. kernel-uek* is never built
-// from RHCK.
-func (x *uekIndex) bounded(eco ecosystemTypes.Ecosystem, p uekPackage) bool {
-	if isUEKKernelPackage(p.name) {
-		return false
+// rhckSeries returns the version parts, each with its epoch, of the fixes of
+// builds other than UEK (RHCK) of p's name on the same release and
+// architecture that lie below the series of the UEK fix fixed.
+func (x *uekIndex) rhckSeries(eco ecosystemTypes.Ecosystem, p uekPackage, fixed string) map[string]int {
+	rv := rpm.NewVersion(fixed)
+	lower, _ := seriesBounds(rv.Epoch(), rv.Version())
+	lv := rpm.NewVersion(lower)
+
+	ss := make(map[string]int)
+	for _, q := range []uekPackage{p, {name: p.name}} {
+		for s, epoch := range x.rhck[eco][q] {
+			if lo, _ := seriesBounds(epoch, s); rpm.NewVersion(lo).Compare(lv) < 0 {
+				ss[s] = epoch
+			}
+		}
 	}
-	m := x.rhck[eco]
-	if _, ok := m[p]; ok {
-		return true
-	}
-	_, ok := m[uekPackage{name: p.name}]
-	return ok
+	return ss
 }
 
 // apply gives, per Oracle Linux release, every advisory a split condition for
-// the CVEs an older UEK series also fixed, and bounds the UEK builds of the
-// names RHCK also ships (see bounded). The UEK criterions of a split
+// the CVEs an older UEK series also fixed, and leaves out the RHCK builds of
+// the names RHCK also ships (see rhckSeries) in every condition. The UEK
+// criterions of a split
 // condition match below the fixed version as before, except the builds of
 // each older series that has its own fix for the CVE on the package and
 // architecture, e.g. for a 6.12.0 fix of a CVE 5.15.0 also fixed:
@@ -289,7 +305,7 @@ func (x *uekIndex) apply() error {
 	}
 
 	for i, r := range x.roots {
-		if len(splits[i]) == 0 && !x.hasBounded(r) {
+		if len(splits[i]) == 0 && !x.hasRHCK(r) {
 			continue
 		}
 		if err := x.rewrite(r, splits[i], raws[i]); err != nil {
@@ -299,10 +315,10 @@ func (x *uekIndex) apply() error {
 	return nil
 }
 
-func (x *uekIndex) hasBounded(r uekRoot) bool {
+func (x *uekIndex) hasRHCK(r uekRoot) bool {
 	for eco, e := range r.ecosystems {
-		for p := range e.fixed {
-			if x.bounded(eco, p) {
+		for p, f := range e.fixed {
+			if len(x.rhckSeries(eco, p, f)) > 0 {
 				return true
 			}
 		}
@@ -314,8 +330,7 @@ func (x *uekIndex) hasBounded(r uekRoot) bool {
 // in an ecosystem, the older series to leave out per package and architecture
 // of i, each with the epoch of its fix, and the advisories they come from: an
 // older series is left out on a package and architecture its own advisories
-// for the CVE carry, unless the package is bounded, which leaves out every
-// older series already.
+// for the CVE carry.
 //
 // The result depends only on the advisories it comes from, since an
 // advisory's packages are the same for all its CVEs: CVEs whose left-out
@@ -331,9 +346,6 @@ func (x *uekIndex) excluded(eco ecosystemTypes.Ecosystem, i int, is []int) (map[
 			continue
 		}
 		for p := range e.fixed {
-			if x.bounded(eco, p) {
-				continue
-			}
 			f, ok := o.fixed[p]
 			if !ok {
 				continue
@@ -404,10 +416,10 @@ func (x *uekIndex) rewrite(r uekRoot, splits map[ecosystemTypes.Ecosystem]map[se
 			}
 		}
 
-		// The untagged condition gets the bound of RHCK alone.
+		// The untagged condition leaves out the RHCK builds alone.
 		cns, err := x.criterions(eco, base.Criteria.Criterions, nil)
 		if err != nil {
-			return errors.Wrapf(err, "bound criterions. ecosystem: %s", eco)
+			return errors.Wrapf(err, "untagged criterions. ecosystem: %s", eco)
 		}
 		data.Detections[di].Conditions[ci].Criteria.Criterions = cns
 
@@ -431,8 +443,8 @@ func (x *uekIndex) rewrite(r uekRoot, splits map[ecosystemTypes.Ecosystem]map[se
 }
 
 // criterions copies cns, giving each UEK criterion its range per
-// architecture: from the first build of its series if bounded, or else below
-// the fixed version leaving out the builds of the older series in excluded.
+// architecture: below the fixed version, leaving out the builds of the older
+// series in excluded and of the RHCK version parts (see rhckSeries).
 // Architectures getting the same range share a criterion. The other
 // criterions are copied as they are.
 func (x *uekIndex) criterions(eco ecosystemTypes.Ecosystem, cns []criterionTypes.Criterion, excluded map[uekPackage]map[string]int) ([]criterionTypes.Criterion, error) {
@@ -455,14 +467,9 @@ func (x *uekIndex) criterions(eco ecosystemTypes.Ecosystem, cns []criterionTypes
 		)
 		for _, arch := range cn.Version.Package.Binary.Architectures {
 			p := uekPackage{name: cn.Version.Package.Binary.Name, arch: arch}
-			rs := func() []rangeTypes.Range {
-				if x.bounded(eco, p) {
-					rv := rpm.NewVersion(fixed)
-					lower, _ := seriesBounds(rv.Epoch(), rv.Version())
-					return []rangeTypes.Range{{GreaterEqual: lower, LessThan: fixed}}
-				}
-				return splitRange(fixed, excluded[p])
-			}()
+			older := x.rhckSeries(eco, p, fixed)
+			maps.Copy(older, excluded[p])
+			rs := splitRange(fixed, older)
 			if gi := slices.IndexFunc(ranges, func(r []rangeTypes.Range) bool { return slices.Equal(r, rs) }); gi >= 0 {
 				archs[gi] = append(archs[gi], arch)
 				continue
@@ -491,7 +498,7 @@ func (x *uekIndex) criterions(eco ecosystemTypes.Ecosystem, cns []criterionTypes
 }
 
 // splitRange returns the range below fixed leaving out every build of each
-// older series (see seriesBounds), e.g.
+// series in older, all below fixed's own (see seriesBounds), e.g.
 // [ < 0:5.15.0-0 ] or [ >= 0:5.15.0.0-0, < 0:6.12.0-102.36.5.2.el9uek ).
 func splitRange(fixed string, older map[string]int) []rangeTypes.Range {
 	ss := slices.SortedFunc(maps.Keys(older), func(a, b string) int {
