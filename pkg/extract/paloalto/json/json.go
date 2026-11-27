@@ -24,6 +24,7 @@ import (
 	criterionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion"
 	ccTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/cpecriterion"
 	ccRangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/cpecriterion/range"
+	affectedTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/affected"
 	segmentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment"
 	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment/ecosystem"
 	referenceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/reference"
@@ -528,10 +529,44 @@ func detections(fetched paloaltoJSON.CVE) ([]detectionTypes.Detection, error) {
 			// Non-PAN-OS products: only the cpes[] enumeration is reliable
 			// enough for detection (versions[] use product-specific version
 			// schemes such as "6.2.8-h2 (6.2.8-c243)"). Same policy as
-			// go-cve-dictionary. Products without cpes[] yield no criterion.
+			// go-cve-dictionary. An affected product without cpes[] gets an
+			// unconverted criterion instead, which records it and takes no
+			// part in detection.
 			cpes, err := validCPEs(fetched.CVEMetadata.CVEID, a.Cpes)
 			if err != nil {
 				return nil, errors.Wrapf(err, "valid cpes for %q", *a.Product)
+			}
+			affected := false
+			for _, v := range a.Versions {
+				if v.Status == "affected" {
+					affected = true
+				}
+			}
+			if len(a.Cpes) == 0 && affected {
+				var fixed []string
+				for _, v := range a.Versions {
+					for _, c := range v.Changes {
+						if c.Status == "unaffected" && !slices.Contains(fixed, strings.TrimSpace(c.At)) {
+							fixed = append(fixed, strings.TrimSpace(c.At))
+						}
+					}
+				}
+				cns = append(cns, criterionTypes.Criterion{
+					Type: criterionTypes.CriterionTypeCPE,
+					CPE: &ccTypes.Criterion{
+						Vulnerable: true,
+						// No CPE is known for the product, so the criterion
+						// names the vendor only; the product is in Published.
+						CPE: vendorCPE,
+						Range: &ccRangeTypes.Range{
+							Type: ccRangeTypes.RangeTypeUnconverted,
+							Published: &affectedTypes.Published{
+								Fixed:       strings.Join(fixed, ", "),
+								Description: strings.TrimSpace(*a.Product),
+							},
+						},
+					},
+				})
 			}
 			for _, c := range cpes {
 				cns = append(cns, criterionTypes.Criterion{
@@ -568,6 +603,10 @@ func detections(fetched paloaltoJSON.CVE) ([]detectionTypes.Detection, error) {
 		}},
 	}}, nil
 }
+
+// vendorCPE is the CPE of an unconverted criterion for a product that has no
+// CPE of its own: Palo Alto Networks, with every other attribute ANY.
+const vendorCPE = ccTypes.CPE("cpe:2.3:*:paloaltonetworks:*:*:*:*:*:*:*:*:*")
 
 // validCPEs filters cpes down to ones that bind as CPE 2.3 formatted strings;
 // an unbindable CPE would make cpecriterion.Accept error at detect time, so it

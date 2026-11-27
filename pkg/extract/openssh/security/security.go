@@ -52,6 +52,7 @@ import (
 	criterionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion"
 	ccTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/cpecriterion"
 	ccRangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/cpecriterion/range"
+	affectedTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/affected"
 	fixstatusTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/fixstatus"
 	segmentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment"
 	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment/ecosystem"
@@ -83,6 +84,10 @@ const source = "openssh.com"
 // way here and another way there would simply never match the same scan. Both
 // would still bind, and nothing would say so.
 const cpeFormat = "cpe:2.3:a:openbsd:openssh:%s:%s:*:*:*:*:*:*"
+
+// noAffectedVersionDescription is the Published.Description of the unconverted
+// criterion an affected entry gets when it names no version.
+const noAffectedVersionDescription = "no affected version stated"
 
 // productCPE fixes the product and leaves the version to the criterion's range.
 var productCPE = ccTypes.CPE(fmt.Sprintf(cpeFormat, "*", "*"))
@@ -399,13 +404,14 @@ func references(fetched security.Advisory) []referenceTypes.Reference {
 
 // detections builds the CPE criteria for one entry.
 //
-// Two kinds of entry produce none. An unaffected one describes a vulnerability
-// that never applied to OpenSSH, so there is nothing to detect -- the record
-// exists to carry that statement, which is the advisory. An affected one that
-// names no version is dropped with a warning rather than emitted unnarrowed:
-// a criterion with neither range nor enumeration accepts every version of
-// OpenSSH there has ever been, which as a detection is a false positive on
-// every host that runs it.
+// An unaffected entry produces none: it describes a vulnerability that never
+// applied to OpenSSH, so there is nothing to detect -- the record exists to
+// carry that statement, which is the advisory. An affected one that names no
+// version is not emitted unnarrowed: a criterion with neither range nor
+// enumeration accepts every version of OpenSSH there has ever been, which as a
+// detection is a false positive on every host that runs it. It gets an
+// unconverted criterion instead, which records that OpenSSH is affected and
+// what fixes it, and takes no part in detection.
 //
 // fixed is passed in rather than read off fetched because it is the folded set
 // -- the releases the entry names together with any an annotation adds. It
@@ -435,8 +441,19 @@ func detections(fetched security.Advisory, fixed []string) ([]detectionTypes.Det
 	})
 
 	if len(cs) == 0 {
-		slog.Warn("no affected version stated, no detection emitted", slog.String("id", fetched.ID))
-		return nil, nil
+		cs = append(cs, criterionTypes.Criterion{
+			Type: criterionTypes.CriterionTypeCPE,
+			CPE: &ccTypes.Criterion{
+				Vulnerable: true,
+				FixStatus:  fixStatus(fixed),
+				CPE:        productCPE,
+				Range: &ccRangeTypes.Range{
+					Type:      ccRangeTypes.RangeTypeUnconverted,
+					Published: &affectedTypes.Published{Description: noAffectedVersionDescription},
+				},
+				Fixed: fixed,
+			},
+		})
 	}
 
 	return []detectionTypes.Detection{{

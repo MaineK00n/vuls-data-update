@@ -7,6 +7,7 @@ import (
 
 	ccTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/cpecriterion"
 	ccRangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/cpecriterion/range"
+	affectedTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/affected"
 	fixstatusTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/fixstatus"
 	warningTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/warning"
 )
@@ -41,6 +42,27 @@ func TestCriterion_Accept(t *testing.T) {
 			},
 			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:0.0.1:*:*:*:*:*:*:*"}},
 			want: ccTypes.MatchQualityExact,
+		},
+		{
+			name: "unconverted range -> None, even for a query the CPE matches",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
+				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeUnconverted, Published: &affectedTypes.Published{Fixed: "6.2.8-h2 (6.2.8-c243)"}},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:6.2.8:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityNone,
+		},
+		{
+			name: "unconverted range -> None for a version=ANY query, CPEMatches not read",
+			fields: fields{
+				Vulnerable: true,
+				CPE:        "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
+				Range:      &ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeUnconverted},
+				CPEMatches: []ccTypes.CPE{"cpe:2.3:a:vendor:product:1.0:*:*:*:*:*:*:*", "not a cpe"},
+			},
+			args: args{query: ccTypes.Query{CPE: "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*"}},
+			want: ccTypes.MatchQualityNone,
 		},
 		{
 			name: "accept with target_sw in pattern, wildcard in query -> Exact",

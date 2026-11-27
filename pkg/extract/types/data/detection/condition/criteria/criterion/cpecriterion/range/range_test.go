@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	ccRangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/cpecriterion/range"
+	affectedTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/affected"
 )
 
 func TestCompare(t *testing.T) {
@@ -29,6 +30,22 @@ func TestCompare(t *testing.T) {
 				y: ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeSEMVER, GreaterEqual: "1.0.0", LessThan: "2.0.0"},
 			},
 			want: 0,
+		},
+		{
+			name: "published nil sorts first",
+			args: args{
+				x: ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeUnconverted},
+				y: ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeUnconverted, Published: &affectedTypes.Published{Fixed: "6.2.8-h2"}},
+			},
+			want: -1,
+		},
+		{
+			name: "published fixed compared",
+			args: args{
+				x: ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeUnconverted, Published: &affectedTypes.Published{Fixed: "6.2.8-h2"}},
+				y: ccRangeTypes.Range{Type: ccRangeTypes.RangeTypeUnconverted, Published: &affectedTypes.Published{Fixed: "6.2.8-h1"}},
+			},
+			want: +1,
 		},
 		{
 			name: "ge smaller wins (lex)",
@@ -339,6 +356,7 @@ func TestRangeType_CompareVersions(t *testing.T) {
 		{name: "pan-os: equal", t: ccRangeTypes.RangeTypePANOS, v1: "10.2.4-h10", v2: "10.2.4-h10", want: 0},
 		{name: "pan-os: 2-segment unparseable → CompareError", t: ccRangeTypes.RangeTypePANOS, v1: "11.2", v2: "11.2.0", wantErr: true},
 		{name: "Unknown → CompareError wrapping ErrRangeTypeUnknown", t: ccRangeTypes.RangeTypeUnknown, v1: "1.0.0", v2: "2.0.0", wantErr: true},
+		{name: "Unconverted → CompareError wrapping ErrRangeTypeUnconverted", t: ccRangeTypes.RangeTypeUnconverted, v1: "1.0.0", v2: "2.0.0", wantErr: true},
 		{name: "unset (zero) RangeType is outside the vocabulary → CompareError wrapping UnsupportedRangeTypeError", t: ccRangeTypes.RangeType(""), v1: "1.0.0", v2: "2.0.0", wantErr: true},
 		{name: "unsupported RangeType (newer data) → CompareError wrapping UnsupportedRangeTypeError", t: ccRangeTypes.RangeType("fortinet-fortifuture"), v1: "1.0.0", v2: "2.0.0", wantErr: true},
 	}

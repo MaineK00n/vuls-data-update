@@ -48,23 +48,27 @@ func Compare(x, y Affected) int {
 		x.Type.Compare(y.Type),
 		slices.CompareFunc(x.Range, y.Range, rangeTypes.Compare),
 		slices.Compare(x.Fixed, y.Fixed),
-		func() int {
-			switch {
-			case x.Published == nil && y.Published == nil:
-				return 0
-			case x.Published == nil && y.Published != nil:
-				return -1
-			case x.Published != nil && y.Published == nil:
-				return +1
-			default:
-				return cmp.Or(
-					cmp.Compare(x.Published.Fixed, y.Published.Fixed),
-					cmp.Compare(x.Published.Description, y.Published.Description),
-					cmp.Compare(x.Published.URL, y.Published.URL),
-				)
-			}
-		}(),
+		ComparePublished(x.Published, y.Published),
 	)
+}
+
+// ComparePublished orders two Published records, nil first. cpecriterion's
+// range.Range carries the same record and orders it with this function.
+func ComparePublished(x, y *Published) int {
+	switch {
+	case x == nil && y == nil:
+		return 0
+	case x == nil && y != nil:
+		return -1
+	case x != nil && y == nil:
+		return +1
+	default:
+		return cmp.Or(
+			cmp.Compare(x.Fixed, y.Fixed),
+			cmp.Compare(x.Description, y.Description),
+			cmp.Compare(x.URL, y.URL),
+		)
+	}
 }
 
 // Accept reports whether version v of the package is affected. An Affected of

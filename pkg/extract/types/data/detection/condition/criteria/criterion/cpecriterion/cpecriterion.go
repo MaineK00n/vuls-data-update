@@ -280,6 +280,10 @@ func stronger(a, b MatchQuality) MatchQuality {
 // pattern query (warning.KindUnevaluablePackedEncoding, Cause = the
 // encoding). It is nil when there is none.
 //
+// A criterion whose Range is of Type RangeTypeUnconverted matches nothing
+// (MatchQualityNone) and is not evaluated further: it records a product the
+// vendor lists but whose versions or fix the extractor could not convert.
+//
 // # Name matching (CPE Name Matching, NISTIR 7696)
 //
 // Every attribute is compared with the query as the source and the criterion
@@ -392,6 +396,13 @@ func stronger(a, b MatchQuality) MatchQuality {
 //     ignores narrowing; an NA query is VU by rule 2. The entries are tried
 //     in every case.
 func (c Criterion) Accept(query Query) (MatchQuality, []warningTypes.Warning, error) {
+	// An unconverted Range is a record of what the vendor published (see
+	// rangeTypes.Range.Published), not a detection rule: the criterion accepts
+	// no query, and neither its CPE nor its CPEMatches is read.
+	if c.Range != nil && c.Range.Type == rangeTypes.RangeTypeUnconverted {
+		return MatchQualityNone, nil, nil
+	}
+
 	qWFN, err := unbindFS(query.CPE)
 	if err != nil {
 		return MatchQualityUnknown, nil, errors.Wrapf(err, "unbind %q to WFN", query.CPE)
