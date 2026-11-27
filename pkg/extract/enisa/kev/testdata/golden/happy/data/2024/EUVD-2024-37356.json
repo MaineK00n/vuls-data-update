@@ -1,0 +1,46 @@
+{
+	"id": "EUVD-2024-37356",
+	"advisories": [
+		{
+			"content": {
+				"id": "EUVD-2024-37356",
+				"kev": {
+					"vendor_project": "Apache Software Foundation",
+					"product": "Apache HTTP Server",
+					"notes": "https://www.acn.gov.it/portale/w/impiego-di-agenti-di-ia-in-campagne-di-compromissione-automatizzate",
+					"enisa": {
+						"date_reported": "2026-11-23T00:00:00Z",
+						"patched_since": "2024/04/04",
+						"origin_source": "CSIRT-ITA",
+						"exploitation_type": "unknown",
+						"exploitation_types": [
+							"unknown"
+						]
+					}
+				}
+			}
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-2024-38475",
+				"description": "Exploitation monitored as part of campaigns utilizing redteam AI frameworks.",
+				"cwe": [
+					{
+						"source": "enisa.europa.eu/kev",
+						"cwe": [
+							"CWE-502"
+						]
+					}
+				]
+			}
+		}
+	],
+	"data_source": {
+		"id": "enisa-kev",
+		"raws": [
+			"happy/2024/CVE-2024-38475.json"
+		]
+	}
+}

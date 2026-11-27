@@ -1,0 +1,46 @@
+{
+	"id": "EUVD-2023-54802",
+	"advisories": [
+		{
+			"content": {
+				"id": "EUVD-2023-54802",
+				"kev": {
+					"vendor_project": "Citrix",
+					"product": "Netscaler ADC, Netscaler Gateway",
+					"notes": "https://www.acn.gov.it/portale/w/impiego-di-agenti-di-ia-in-campagne-di-compromissione-automatizzate",
+					"enisa": {
+						"date_reported": "2026-11-23T00:00:00Z",
+						"patched_since": "2023/10/23",
+						"origin_source": "CSIRT-ITA",
+						"exploitation_type": "unknown",
+						"exploitation_types": [
+							"unknown"
+						]
+					}
+				}
+			}
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-2023-4966",
+				"description": "Exploitation monitored as part of campaigns utilizing redteam AI frameworks.",
+				"cwe": [
+					{
+						"source": "enisa.europa.eu/kev",
+						"cwe": [
+							"CWE-119"
+						]
+					}
+				]
+			}
+		}
+	],
+	"data_source": {
+		"id": "enisa-kev",
+		"raws": [
+			"happy/2023/CVE-2023-4966.json"
+		]
+	}
+}

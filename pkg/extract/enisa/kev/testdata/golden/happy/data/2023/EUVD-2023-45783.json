@@ -1,0 +1,47 @@
+{
+	"id": "EUVD-2023-45783",
+	"advisories": [
+		{
+			"content": {
+				"id": "EUVD-2023-45783",
+				"kev": {
+					"vendor_project": "Qlik",
+					"product": "Qlik Sense Enterprise",
+					"notes": "https://www.acn.gov.it/portale/w/impiego-di-agenti-di-ia-in-campagne-di-compromissione-automatizzate",
+					"enisa": {
+						"date_reported": "2026-11-23T00:00:00Z",
+						"patched_since": "2023/08/29",
+						"origin_source": "CSIRT-ITA",
+						"exploitation_type": "unknown",
+						"exploitation_types": [
+							"unknown"
+						]
+					}
+				}
+			}
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-2023-41266",
+				"description": "Exploitation monitored as part of campaigns utilizing redteam AI frameworks.",
+				"cwe": [
+					{
+						"source": "enisa.europa.eu/kev",
+						"cwe": [
+							"CWE-20",
+							"CWE-22"
+						]
+					}
+				]
+			}
+		}
+	],
+	"data_source": {
+		"id": "enisa-kev",
+		"raws": [
+			"happy/2023/CVE-2023-41266.json"
+		]
+	}
+}
