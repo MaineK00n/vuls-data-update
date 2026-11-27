@@ -56,6 +56,14 @@ func TestExtract(t *testing.T) {
 			args:     "./testdata/fixtures/unexpected-item-text",
 			hasError: true,
 		},
+		{
+			// Office 2019 Retail on branch 10417, the branch the Office 2019
+			// Volume Licensed band ends at: a fixed retail host would still
+			// fall inside the band [16.0.0.0, 16.0.10417.20228).
+			name:     "retail-in-volume-licensed-band",
+			args:     "./testdata/fixtures/retail-in-volume-licensed-band",
+			hasError: true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
