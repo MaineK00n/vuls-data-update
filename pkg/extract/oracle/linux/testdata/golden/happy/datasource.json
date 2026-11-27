@@ -1,4 +1,9 @@
 {
 	"id": "oracle",
-	"name": "Oracle Linux OVAL"
+	"name": "Oracle Linux OVAL",
+	"extracted": {
+		"builds": [
+			"vuls-data-update (devel)"
+		]
+	}
 }

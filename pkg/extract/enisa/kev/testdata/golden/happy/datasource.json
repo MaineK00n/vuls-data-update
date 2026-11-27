@@ -1,4 +1,9 @@
 {
 	"id": "enisa-kev",
-	"name": "ENISA Known Exploited Vulnerabilities"
+	"name": "ENISA Known Exploited Vulnerabilities",
+	"extracted": {
+		"builds": [
+			"vuls-data-update (devel)"
+		]
+	}
 }

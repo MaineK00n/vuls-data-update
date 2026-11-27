@@ -1,4 +1,9 @@
 {
 	"id": "openssh-security",
-	"name": "OpenSSH Security Advisory"
+	"name": "OpenSSH Security Advisory",
+	"extracted": {
+		"builds": [
+			"vuls-data-update (devel)"
+		]
+	}
 }

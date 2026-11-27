@@ -1,4 +1,9 @@
 {
 	"id": "microsoft-cvrf",
-	"name": "Microsoft CVRF"
+	"name": "Microsoft CVRF",
+	"extracted": {
+		"builds": [
+			"vuls-data-update (devel)"
+		]
+	}
 }

@@ -1,4 +1,9 @@
 {
 	"id": "paloalto-json",
-	"name": "Palo Alto Networks Security Advisories JSON"
+	"name": "Palo Alto Networks Security Advisories JSON",
+	"extracted": {
+		"builds": [
+			"vuls-data-update (devel)"
+		]
+	}
 }

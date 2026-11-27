@@ -1,4 +1,9 @@
 {
 	"id": "jvn-feed-detail",
-	"name": "Japan Vulnerability Notes: JVN Feed Detail"
+	"name": "Japan Vulnerability Notes: JVN Feed Detail",
+	"extracted": {
+		"builds": [
+			"vuls-data-update (devel)"
+		]
+	}
 }

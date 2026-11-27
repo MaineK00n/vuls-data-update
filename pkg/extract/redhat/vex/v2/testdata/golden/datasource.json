@@ -1,4 +1,9 @@
 {
 	"id": "redhat-vex-v2",
-	"name": "RedHat Enterprise Linux CSAF VEX v2"
+	"name": "RedHat Enterprise Linux CSAF VEX v2",
+	"extracted": {
+		"builds": [
+			"vuls-data-update (devel)"
+		]
+	}
 }

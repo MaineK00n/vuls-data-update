@@ -1,0 +1,27 @@
+{
+    "branches": [
+        {
+            "name": "main",
+            "remote": "origin"
+        }
+    ],
+    "remotes": [
+        {
+            "name": "origin",
+            "urls": [
+                "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-cisa-kev"
+            ]
+        }
+    ],
+    "commits": [
+        {
+            "path": "data",
+            "msg": "update\n\nGitHub Actions: https://github.com/vulsio/vuls-data-db/actions/runs/45586483783/job/139109288093\n\nVuls-Data-Update: v0.0.0-20261126020019-9f06544f77cb\nGo-Version: go1.27.3\n",
+            "author": {
+                "name": "GitHub Action",
+                "email": "action@github.com",
+                "when": "2026-11-26T03:00:00Z"
+            }
+        }
+    ]
+}

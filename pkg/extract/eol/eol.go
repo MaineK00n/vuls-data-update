@@ -11,7 +11,6 @@ import (
 	"github.com/pkg/errors"
 
 	datasourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/datasource"
-	repositoryTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/datasource/repository"
 	eolTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/eol"
 	sourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/source"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/util"
@@ -96,17 +95,10 @@ func Extract(opts ...Option) error {
 	}
 
 	if err := util.Write(filepath.Join(options.dir, "datasource.json"), datasourceTypes.DataSource{
-		ID:   sourceTypes.EOL,
-		Name: new("End Of Life"),
-		Raw:  nil,
-		Extracted: func() *repositoryTypes.Repository {
-			if u, err := utilgit.GetOrigin(options.dir); err == nil {
-				return &repositoryTypes.Repository{
-					URL: u,
-				}
-			}
-			return nil
-		}(),
+		ID:        sourceTypes.EOL,
+		Name:      new("End Of Life"),
+		Raw:       nil,
+		Extracted: utilgit.GetExtractedRepository(options.dir),
 	}, false); err != nil {
 		return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "datasource.json"))
 	}

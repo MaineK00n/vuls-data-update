@@ -1,4 +1,9 @@
 {
 	"id": "fortinet-csaf",
-	"name": "Fortinet PSIRT Advisories (CSAF)"
+	"name": "Fortinet PSIRT Advisories (CSAF)",
+	"extracted": {
+		"builds": [
+			"vuls-data-update (devel)"
+		]
+	}
 }

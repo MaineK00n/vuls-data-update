@@ -1,4 +1,9 @@
 {
 	"id": "mitre-attack",
-	"name": "MITRE ATT&CK"
+	"name": "MITRE ATT&CK",
+	"extracted": {
+		"builds": [
+			"vuls-data-update (devel)"
+		]
+	}
 }

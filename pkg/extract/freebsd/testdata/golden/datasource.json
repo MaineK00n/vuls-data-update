@@ -1,4 +1,9 @@
 {
 	"id": "freebsd",
-	"name": "FreeBSD VuXML"
+	"name": "FreeBSD VuXML",
+	"extracted": {
+		"builds": [
+			"vuls-data-update (devel)"
+		]
+	}
 }

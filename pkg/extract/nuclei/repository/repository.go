@@ -92,14 +92,7 @@ func Extract(args string, opts ...Option) error {
 			}
 			return []repositoryTypes.Repository{*r}
 		}(),
-		Extracted: func() *repositoryTypes.Repository {
-			if u, err := utilgit.GetOrigin(options.dir); err == nil {
-				return &repositoryTypes.Repository{
-					URL: u,
-				}
-			}
-			return nil
-		}(),
+		Extracted: utilgit.GetExtractedRepository(options.dir),
 	}, false); err != nil {
 		return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "datasource.json"))
 	}

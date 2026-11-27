@@ -1,4 +1,9 @@
 {
 	"id": "cisco-json",
-	"name": "Cisco Security Advisories: openVuln API"
+	"name": "Cisco Security Advisories: openVuln API",
+	"extracted": {
+		"builds": [
+			"vuls-data-update (devel)"
+		]
+	}
 }

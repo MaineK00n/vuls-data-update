@@ -1,4 +1,9 @@
 {
 	"id": "rocky-errata",
-	"name": "Rocky Linux Errata"
+	"name": "Rocky Linux Errata",
+	"extracted": {
+		"builds": [
+			"vuls-data-update (devel)"
+		]
+	}
 }

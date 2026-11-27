@@ -1,4 +1,9 @@
 {
 	"id": "eol",
-	"name": "End Of Life"
+	"name": "End Of Life",
+	"extracted": {
+		"builds": [
+			"vuls-data-update (devel)"
+		]
+	}
 }
