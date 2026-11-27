@@ -171,6 +171,7 @@ func extract(fetched errata.Advisory, raws []string) (dataTypes.Data, error) {
 			evr  string
 		}
 		m := make(map[int]map[nevr][]string)
+		um := make(map[int]map[nevr][]string) // module packages without module info
 		for _, p := range fetched.Packages {
 			nevra := strings.Split(strings.TrimSuffix(p.NEVRA, ".rpm"), "-")
 			if len(nevra) < 3 {
@@ -192,14 +193,6 @@ func extract(fetched errata.Advisory, raws []string) (dataTypes.Data, error) {
 				continue
 			}
 
-			// As stated in the issue, module info may be missing even though the module is a package.
-			// This should be an error, but until it is corrected, it will be processed in the log and no criterion will be generated for that package.
-			// https://github.com/resf/distro-tools/issues/72
-			if strings.Contains(evr, ".module+el") && (p.ModuleName == nil || p.ModuleStream == nil) {
-				slog.Warn("skip generating criterion: module package must have module info", slog.String("name", fetched.Name), slog.String("nevra", p.NEVRA), slog.Any("module_name", p.ModuleName), slog.Any("module_stream", p.ModuleStream))
-				continue
-			}
-
 			// It would be very natural to get the major version from affected_product, but as shown in the issue below, it does not match and cannot be used.
 			// https://github.com/resf/distro-tools/issues/71
 			// v, ok := vm[p.ProductName]
@@ -216,14 +209,35 @@ func extract(fetched errata.Advisory, raws []string) (dataTypes.Data, error) {
 				return nil, errors.Wrapf(err, "unexpected product name format. expected: %q, actual: %q", "Rocky Linux <major>( SIG Cloud) <arch>", p.ProductName)
 			}
 
+			// As stated in the issue, module info may be missing even though the package belongs to a module.
+			// Without the module:stream, the package cannot be told apart from the non-modular one of the same name,
+			// so it gets an unconverted criterion that records the fix but takes no part in detection.
+			// https://github.com/resf/distro-tools/issues/72
+			if strings.Contains(evr, ".module+el") && (p.ModuleName == nil || p.ModuleStream == nil) {
+				if _, ok := um[v]; !ok {
+					um[v] = make(map[nevr][]string)
+				}
+				um[v][nevr{name: name, evr: evr}] = append(um[v][nevr{name: name, evr: evr}], arch)
+				continue
+			}
+
 			if _, ok := m[v]; !ok {
 				m[v] = make(map[nevr][]string)
 			}
 			m[v][nevr{name: name, evr: evr}] = append(m[v][nevr{name: name, evr: evr}], arch)
 		}
 
-		ds := make([]detectionTypes.Detection, 0, len(m))
-		for v, nevram := range m {
+		vs := make(map[int]struct{})
+		for v := range m {
+			vs[v] = struct{}{}
+		}
+		for v := range um {
+			vs[v] = struct{}{}
+		}
+
+		ds := make([]detectionTypes.Detection, 0, len(vs))
+		for v := range vs {
+			nevram := m[v]
 			var cs []criterionTypes.Criterion
 			for nevr, as := range nevram {
 				cs = append(cs, criterionTypes.Criterion{
@@ -242,6 +256,29 @@ func extract(fetched errata.Advisory, raws []string) (dataTypes.Data, error) {
 							Type:  affectedrangeTypes.RangeTypeRPM,
 							Range: []affectedrangeTypes.Range{{LessThan: nevr.evr}},
 							Fixed: []string{nevr.evr},
+						},
+					},
+				})
+			}
+			for nevr, as := range um[v] {
+				cs = append(cs, criterionTypes.Criterion{
+					Type: criterionTypes.CriterionTypeVersion,
+					Version: &vcTypes.Criterion{
+						Vulnerable: true,
+						FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
+						Package: packageTypes.Package{
+							Type: packageTypes.PackageTypeBinary,
+							Binary: &binaryPackageTypes.Package{
+								Name:          nevr.name,
+								Architectures: util.Unique(as),
+							},
+						},
+						Affected: &affectedTypes.Affected{
+							Type: affectedrangeTypes.RangeTypeUnconverted,
+							Published: &affectedTypes.Published{
+								Fixed:       nevr.evr,
+								Description: "module package without module info",
+							},
 						},
 					},
 				})
