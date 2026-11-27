@@ -1,0 +1,142 @@
+{
+	"id": "1400",
+	"name": "Comprehensive Categorization for Software Assurance Trends",
+	"type": "Graph",
+	"status": "Draft",
+	"objective": "\n\t   <xhtml:p>This view organizes weaknesses around categories that are of interest to large-scale software assurance research to support the elimination of weaknesses using tactics such as secure language development. It is also intended to help tracking weakness trends in publicly disclosed vulnerability data.  This view is comprehensive in that every weakness must be contained in it, unlike most other views that only use a subset of weaknesses. This view is structured with categories at the top level, with a second level of only weaknesses. Relationships among the weaknesses presented under the research view (CWE-1000) are not shown.</xhtml:p>\n\t   <xhtml:p>Each weakness is added to only one category. All categories are mutually exclusive; that is, no weakness can be a member of more than one category. While weaknesses defy strict categorization along only one characteristic, the forced bucketing into a single category can simplify certain kinds of analysis.</xhtml:p>\n\t   <xhtml:p>Note that the size of each category can vary widely because (1) CWE is not as well fleshed-out in some areas compared to others; (2) abstraction of the CWEs in the grouping might go down to Variant level for some buckets, versus others.</xhtml:p>\n\t ",
+	"audience": [
+		{
+			"type": "Academic Researchers",
+			"description": "Researchers can use this view to evaluate the breadth and depth of software assurance with respect to mitigating and managing weaknesses before they become vulnerabilities."
+		}
+	],
+	"members": [
+		{
+			"cweid": "1396",
+			"view_id": "1400"
+		},
+		{
+			"cweid": "1397",
+			"view_id": "1400"
+		},
+		{
+			"cweid": "1398",
+			"view_id": "1400"
+		},
+		{
+			"cweid": "1401",
+			"view_id": "1400"
+		},
+		{
+			"cweid": "1402",
+			"view_id": "1400"
+		},
+		{
+			"cweid": "1403",
+			"view_id": "1400"
+		},
+		{
+			"cweid": "1404",
+			"view_id": "1400"
+		},
+		{
+			"cweid": "1405",
+			"view_id": "1400"
+		},
+		{
+			"cweid": "1406",
+			"view_id": "1400"
+		},
+		{
+			"cweid": "1407",
+			"view_id": "1400"
+		},
+		{
+			"cweid": "1408",
+			"view_id": "1400"
+		},
+		{
+			"cweid": "1409",
+			"view_id": "1400"
+		},
+		{
+			"cweid": "1410",
+			"view_id": "1400"
+		},
+		{
+			"cweid": "1411",
+			"view_id": "1400"
+		},
+		{
+			"cweid": "1399",
+			"view_id": "1400"
+		},
+		{
+			"cweid": "1412",
+			"view_id": "1400"
+		},
+		{
+			"cweid": "1413",
+			"view_id": "1400"
+		},
+		{
+			"cweid": "1414",
+			"view_id": "1400"
+		},
+		{
+			"cweid": "1415",
+			"view_id": "1400"
+		},
+		{
+			"cweid": "1416",
+			"view_id": "1400"
+		},
+		{
+			"cweid": "1417",
+			"view_id": "1400"
+		},
+		{
+			"cweid": "1418",
+			"view_id": "1400"
+		}
+	],
+	"notes": [
+		{
+			"type": "Relationship",
+			"text": "This view is different than the software development view (CWE-699) because this view is expected to include all weaknesses regardless of abstraction, while view 699 uses a largely-fixed Base level of abstraction related only to software weaknesses. It is different from the Research view (CWE-1000) because while comprehensive for all weaknesses, the view uses a deep hierarchical structure and excludes categories."
+		}
+	],
+	"content_history": {
+		"submission": [
+			{
+				"submission_name": [
+					"CWE Content Team"
+				],
+				"submission_organization": "MITRE",
+				"submission_date": "2023-04-25",
+				"submission_version": "4.11",
+				"submission_release_date": "2023-04-23"
+			}
+		],
+		"modification": [
+			{
+				"modification_name": "CWE Content Team",
+				"modification_organization": "MITRE",
+				"modification_date": "2023-06-29",
+				"modification_version": "4.12",
+				"modification_release_date": "2023-06-29",
+				"modification_comment": "updated Mapping_Notes"
+			}
+		]
+	},
+	"mapping_notes": {
+		"usage": "Prohibited",
+		"rationale": "This entry is a View. Views are not weaknesses and therefore inappropriate to describe the root causes of vulnerabilities.",
+		"comments": "Use this View or other Views to search and navigate for the appropriate weakness.",
+		"reasons": [
+			{
+				"type": "View"
+			}
+		]
+	}
+}

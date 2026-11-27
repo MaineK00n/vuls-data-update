@@ -1,0 +1,73 @@
+{
+	"id": "CWE-1027",
+	"kind": "grouping",
+	"name": "OWASP Top Ten 2017 Category A1 - Injection",
+	"status": "Incomplete",
+	"description": "Weaknesses in this category are related to the A1 category in the OWASP Top Ten 2017.",
+	"grouping": {
+		"members": [
+			{
+				"cweid": "CWE-564",
+				"view_id": "CWE-1026"
+			},
+			{
+				"cweid": "CWE-77",
+				"view_id": "CWE-1026"
+			},
+			{
+				"cweid": "CWE-78",
+				"view_id": "CWE-1026"
+			},
+			{
+				"cweid": "CWE-88",
+				"view_id": "CWE-1026"
+			},
+			{
+				"cweid": "CWE-89",
+				"view_id": "CWE-1026"
+			},
+			{
+				"cweid": "CWE-90",
+				"view_id": "CWE-1026"
+			},
+			{
+				"cweid": "CWE-91",
+				"view_id": "CWE-1026"
+			},
+			{
+				"cweid": "CWE-917",
+				"view_id": "CWE-1026"
+			},
+			{
+				"cweid": "CWE-943",
+				"view_id": "CWE-1026"
+			}
+		],
+		"mapping_notes": {
+			"usage": "Prohibited",
+			"rationale": "This entry is a Grouping. Using groupings for mapping has been discouraged since 2019. They are informal organizational groupings of weaknesses that can help CWE users with data aggregation, navigation, and browsing. However, they are not weaknesses in themselves.",
+			"comments": "See member weaknesses of this category.",
+			"reasons": [
+				{
+					"type": "Grouping"
+				}
+			]
+		}
+	},
+	"references": [
+		{
+			"source": "cwe.mitre.org",
+			"url": "https://cwe.mitre.org/data/definitions/1027.html"
+		},
+		{
+			"source": "cwe.mitre.org",
+			"url": "https://github.com/OWASP/Top10/blob/master/2017/OWASP%20Top%2010-2017%20(en).pdf"
+		}
+	],
+	"data_source": {
+		"id": "mitre-cwe",
+		"raws": [
+			"happy/grouping/1027.json"
+		]
+	}
+}

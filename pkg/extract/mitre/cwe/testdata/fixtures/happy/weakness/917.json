@@ -1,0 +1,66 @@
+{
+	"id": "917",
+	"name": "Improper Neutralization of Special Elements used in an Expression Language Statement",
+	"abstraction": "Base",
+	"structure": "Simple",
+	"status": "Incomplete",
+	"description": "The product constructs all or part of an expression language (EL) statement in a framework such as a Java Server Page (JSP) using externally-influenced input from an upstream component, but it does not neutralize or incorrectly neutralizes special elements that could modify the intended EL statement before it is executed.",
+	"observed_examples": [
+		{
+			"reference": "CVE-2021-44228",
+			"description": "Product does not neutralize ${xyz} style expressions, allowing remote code execution. (log4shell vulnerability in log4j)",
+			"link": "https://www.cve.org/CVERecord?id=CVE-2021-44228",
+			"rationale": [
+				"Influential/Newsworthy"
+			]
+		}
+	],
+	"content_history": {
+		"submission": [
+			{
+				"submission_name": [
+					"CWE Content Team"
+				],
+				"submission_organization": "MITRE",
+				"submission_date": "2013-02-15",
+				"submission_version": "2.4",
+				"submission_release_date": "2013-02-21"
+			}
+		],
+		"modification": [
+			{
+				"modification_name": "CWE Content Team",
+				"modification_organization": "MITRE",
+				"modification_date": "2017-11-08",
+				"modification_version": "3.0",
+				"modification_release_date": "2017-11-08",
+				"modification_comment": "updated References"
+			}
+		]
+	},
+	"alternate_terms": [
+		{
+			"term": "EL Injection",
+			"role": [
+				"Acronym"
+			]
+		},
+		{
+			"term": "Expression Language Injection",
+			"role": [
+				"Common-Name",
+				"Attack-Focused"
+			]
+		}
+	],
+	"mapping_notes": {
+		"usage": "Allowed",
+		"rationale": "This CWE entry is at the Base level of abstraction, which is a preferred level of abstraction for mapping to the root causes of vulnerabilities.",
+		"comments": "Carefully read both the name and description to ensure that this mapping is an appropriate fit. Do not try to 'force' a mapping to a lower-level Base/Variant simply to comply with this preferred level of abstraction.",
+		"reasons": [
+			{
+				"type": "Acceptable-Use"
+			}
+		]
+	}
+}
