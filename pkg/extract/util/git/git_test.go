@@ -282,6 +282,45 @@ func TestBuilds(t *testing.T) {
 			},
 		},
 		{
+			name: "blank lines before the subject",
+			args: args{
+				message: "\n \t\nupdate\n\nVuls-Data-Update: v0.0.0-20261126020019-9f06544f77cb\n",
+			},
+			want: []string{"vuls-data-update v0.0.0-20261126020019-9f06544f77cb"},
+		},
+		{
+			name: "trailer as the subject after blank lines",
+			args: args{
+				message: "\n\nVuls-Data-Update: v0.0.0-20261126020019-9f06544f77cb\n",
+			},
+		},
+		{
+			name: "CRLF line endings",
+			args: args{
+				message: "update\r\n\r\nVuls-Data-Update: v0.0.0-20261126020019-9f06544f77cb\r\nGo-Version: go1.27.3\r\n",
+			},
+			want: []string{"vuls-data-update v0.0.0-20261126020019-9f06544f77cb"},
+		},
+		{
+			name: "line of no-break spaces is not blank",
+			args: args{
+				message: "update\n\nfetched by hand\n \nVuls-Data-Update: v0.0.0-20261126020019-9f06544f77cb\n",
+			},
+		},
+		{
+			name: "URL line",
+			args: args{
+				message: "update\n\nhttps://github.com/vulsio/vuls-data-db/actions/runs/1/job/2\nVuls-Data-Update: v0.0.0-20261126020019-9f06544f77cb\n",
+			},
+		},
+		{
+			name: "space between a key and a colon followed by //",
+			args: args{
+				message: "update\n\nRef ://example.com/a\nVuls-Data-Update: v0.0.0-20261126020019-9f06544f77cb\n",
+			},
+			want: []string{"vuls-data-update v0.0.0-20261126020019-9f06544f77cb"},
+		},
+		{
 			name: "empty message",
 			args: args{
 				message: "",

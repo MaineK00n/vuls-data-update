@@ -78,26 +78,37 @@ func GetExtractedRepository(path string) *repositoryTypes.Repository {
 //	Vuls-Data-Update: v0.0.0-20261126020019-9f06544f77cb
 const buildTrailer = "Vuls-Data-Update"
 
+// gitSpace is the whitespace git trims and skips. Its isspace() is ASCII and
+// leaves out \v and \f, so to git a line of them, or of U+00A0, is not blank.
+const gitSpace = " \t\n\r"
+
 // builds reads the builds of vuls-data-update a commit message names, as
-// "vuls-data-update <version>", in the order it names them. It reads trailers
-// from the last paragraph after the subject, and only when every line of it is
-// a trailer or the continuation of one, which is how git reads the messages
-// vuls-data-db writes; a message without trailers, as every commit before
-// vuls-data-db named its builds is, names none. It does not follow git into a
-// hand-written message's corners: a paragraph only partly of trailers, comment
-// lines, URL lines, or a value that starts on a continuation line.
+// "vuls-data-update <version>", in the order it names them. Like git, it reads
+// trailers from the last paragraph after the subject, the first paragraph
+// after any blank lines the message opens with, and only when every line of it
+// is a trailer or the continuation of one; a message without trailers, as
+// every commit before vuls-data-db named its builds is, names none. Where a
+// hand-written message parts it from git, it reads less than git, never more:
+// nothing from a paragraph only partly of trailers, as git reads one with a
+// Signed-off-by among other lines, or from one with a comment line, and not a
+// value that starts on a continuation line.
 func builds(message string) []string {
 	lines := strings.Split(message, "\n")
+	blank := func(l string) bool { return strings.Trim(l, gitSpace) == "" }
 
+	first := 0
+	for first < len(lines) && blank(lines[first]) {
+		first++
+	}
 	end := len(lines)
-	for end > 0 && strings.TrimSpace(lines[end-1]) == "" {
+	for end > first && blank(lines[end-1]) {
 		end--
 	}
 	start := end
-	for start > 0 && strings.TrimSpace(lines[start-1]) != "" {
+	for start > first && !blank(lines[start-1]) {
 		start--
 	}
-	if start == 0 {
+	if start == first {
 		return nil
 	}
 
@@ -106,24 +117,32 @@ func builds(message string) []string {
 		last = -1
 	)
 	for i, l := range lines[start:end] {
-		if strings.HasPrefix(l, " ") || strings.HasPrefix(l, "\t") {
+		if strings.TrimLeft(l, gitSpace) != l {
 			if i == 0 {
 				return nil
 			}
 			if last >= 0 {
-				bs[last] = fmt.Sprintf("%s %s", bs[last], strings.TrimSpace(l))
+				bs[last] = fmt.Sprintf("%s %s", bs[last], strings.Trim(l, gitSpace))
 			}
 			continue
 		}
 
 		k, v, ok := strings.Cut(l, ":")
+		if !ok {
+			return nil
+		}
+		// git reads "<token>://..." as a URL, not a trailer, unless
+		// whitespace parts the token from the colon.
+		if isTrailerToken(k) && strings.HasPrefix(v, "//") {
+			return nil
+		}
 		k = strings.TrimRight(k, " \t")
-		if !ok || !isTrailerToken(k) {
+		if !isTrailerToken(k) {
 			return nil
 		}
 		last = -1
 		if strings.EqualFold(k, buildTrailer) {
-			if v = strings.TrimSpace(v); v != "" {
+			if v = strings.Trim(v, gitSpace); v != "" {
 				bs = append(bs, fmt.Sprintf("vuls-data-update %s", v))
 				last = len(bs) - 1
 			}
