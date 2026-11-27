@@ -30,6 +30,8 @@ import (
 	criteriaTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria"
 	criterionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion"
 	ccTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/cpecriterion"
+	ccRangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/cpecriterion/range"
+	affectedTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/affected"
 	segmentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment"
 	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment/ecosystem"
 	referenceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/reference"
@@ -206,6 +208,7 @@ func extract(fetched fetchTypes.Advisory, raws []string) (dataTypes.Data, error)
 	// primary CPE and the concrete versions enumerated in CPEMatches.
 	matchesByBase := make(map[string][]ccTypes.CPE, len(fetched.ProductNames))
 	seen := make(map[string]struct{}, len(fetched.ProductNames))
+	var unconverted []criterionTypes.Criterion
 	for _, p := range fetched.ProductNames {
 		if p == "NA" {
 			continue
@@ -215,6 +218,13 @@ func extract(fetched fetchTypes.Advisory, raws []string) (dataTypes.Data, error)
 			return dataTypes.Data{}, errors.Wrapf(err, "convert product name %q", p)
 		}
 		if concrete == "" {
+			// A product family without a CPE mapping, or a version that
+			// does not parse, gets an unconverted criterion: it records the
+			// product as Cisco names it and takes no part in detection.
+			// A name that carries no product version ("Base") gets none.
+			if c, ok := unconvertedCriterion(p, fetched.PublicationURL); ok {
+				unconverted = append(unconverted, c)
+			}
 			continue
 		}
 		if _, ok := seen[concrete]; ok {
@@ -223,7 +233,12 @@ func extract(fetched fetchTypes.Advisory, raws []string) (dataTypes.Data, error)
 		seen[concrete] = struct{}{}
 		matchesByBase[base] = append(matchesByBase[base], ccTypes.CPE(concrete))
 	}
-	criterions := make([]criterionTypes.Criterion, 0, len(matchesByBase))
+	criterions := make([]criterionTypes.Criterion, 0, len(matchesByBase)+len(unconverted))
+	criterions = append(criterions, unconverted...)
+	slices.SortFunc(criterions, criterionTypes.Compare)
+	criterions = slices.CompactFunc(criterions, func(x, y criterionTypes.Criterion) bool {
+		return criterionTypes.Compare(x, y) == 0
+	})
 	for base, matches := range matchesByBase {
 		criterions = append(criterions, criterionTypes.Criterion{
 			Type: criterionTypes.CriterionTypeCPE,
@@ -573,6 +588,44 @@ var knownUnparseableProductNames = map[string]struct{}{
 // attribute so the exact version binds cleanly into the formatted string. It
 // is immutable and safe for concurrent use, so it is shared across calls.
 var wfnVersionEscaper = strings.NewReplacer(".", "\\.", "-", "\\-", "(", "\\(", ")", "\\)")
+
+// vendorCPE is the CPE of an unconverted criterion for a product family
+// without a CPE mapping: Cisco, with every other attribute ANY.
+const vendorCPE = ccTypes.CPE("cpe:2.3:*:cisco:*:*:*:*:*:*:*:*:*")
+
+// unconvertedCriterion returns the unconverted criterion of a product name that
+// convertProductName gives no concrete CPE for: the family CPE when a
+// productConversions entry matches (its version did not parse), the vendor CPE
+// otherwise, and the product name as published. ok is false for a name that
+// names no product version (a skip of its productConversions entry).
+func unconvertedCriterion(name, url string) (criterionTypes.Criterion, bool) {
+	cpe := vendorCPE
+	for _, c := range productConversions {
+		s, ok := strings.CutPrefix(name, c.prefix)
+		if !ok {
+			continue
+		}
+		if slices.Contains(c.skips, strings.TrimSpace(s)) {
+			return criterionTypes.Criterion{}, false
+		}
+		cpe = ccTypes.CPE(c.cpe)
+		break
+	}
+	return criterionTypes.Criterion{
+		Type: criterionTypes.CriterionTypeCPE,
+		CPE: &ccTypes.Criterion{
+			Vulnerable: true,
+			CPE:        cpe,
+			Range: &ccRangeTypes.Range{
+				Type: ccRangeTypes.RangeTypeUnconverted,
+				Published: &affectedTypes.Published{
+					Description: strings.TrimSpace(name),
+					URL:         url,
+				},
+			},
+		},
+	}, true
+}
 
 // convertProductName converts a Cisco product name to a pair of CPE 2.3
 // formatted strings: base is the product family CPE with a wildcard version

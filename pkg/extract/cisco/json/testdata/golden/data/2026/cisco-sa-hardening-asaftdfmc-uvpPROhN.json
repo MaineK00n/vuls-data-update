@@ -325,6 +325,20 @@
 								"type": "cpe",
 								"cpe": {
 									"vulnerable": true,
+									"cpe": "cpe:2.3:a:cisco:firepower_threat_defense:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "unconverted",
+										"published": {
+											"description": "Cisco Secure Firewall Threat Defense (FTD) Software 6.2.1 Hotfix",
+											"url": "https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-hardening-asaftdfmc-uvpPROhN"
+										}
+									}
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
 									"cpe": "cpe:2.3:a:cisco:secure_firewall_management_center:*:*:*:*:*:*:*:*",
 									"cpe_matches": [
 										"cpe:2.3:a:cisco:secure_firewall_management_center:10.0.0.0:*:*:*:*:*:*:*",

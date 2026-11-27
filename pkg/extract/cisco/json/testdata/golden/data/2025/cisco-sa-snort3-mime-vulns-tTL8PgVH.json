@@ -104,6 +104,34 @@
 								"type": "cpe",
 								"cpe": {
 									"vulnerable": true,
+									"cpe": "cpe:2.3:*:cisco:*:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "unconverted",
+										"published": {
+											"description": "Cisco Cyber Vision",
+											"url": "https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-snort3-mime-vulns-tTL8PgVH"
+										}
+									}
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"cpe": "cpe:2.3:*:cisco:*:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "unconverted",
+										"published": {
+											"description": "Cisco UTD SNORT IPS Engine Software",
+											"url": "https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-snort3-mime-vulns-tTL8PgVH"
+										}
+									}
+								}
+							},
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
 									"cpe": "cpe:2.3:a:cisco:firepower_threat_defense:*:*:*:*:*:*:*:*",
 									"cpe_matches": [
 										"cpe:2.3:a:cisco:firepower_threat_defense:7.3.0.0:*:*:*:*:*:*:*",
