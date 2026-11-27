@@ -72,7 +72,7 @@ func Fetch(opts ...Option) error {
 	}
 
 	slog.Info("Fetch NVD CPE Match Feed 2.0")
-	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry), utilhttp.WithClientHTTPClient(options.httpClient), utilhttp.WithClientBufferBody(true)).Get(options.baseURL)
+	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry), utilhttp.WithClientHTTPClient(options.httpClient), utilhttp.WithClientSpoolBody(true)).Get(options.baseURL)
 	if err != nil {
 		return errors.Wrap(err, "fetch cpe match feed 2.0")
 	}

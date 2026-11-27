@@ -3,8 +3,11 @@ package http
 import (
 	"bytes"
 	"context"
+	stderrors "errors"
 	"io"
 	"net/http"
+	"os"
+	"sync"
 	"time"
 
 	cleanhttp "github.com/hashicorp/go-cleanhttp"
@@ -27,6 +30,7 @@ type clientOptions struct {
 	checkRetry   retryablehttp.CheckRetry
 	backoff      retryablehttp.Backoff
 	bufferBody   bool
+	spoolBody    bool
 }
 
 type ClientOption interface {
@@ -133,6 +137,21 @@ func WithClientBufferBody(buffer bool) ClientOption {
 	return clientBufferBody(buffer)
 }
 
+type clientSpoolBody bool
+
+func (s clientSpoolBody) apply(opts *clientOptions) {
+	opts.spoolBody = bool(s)
+}
+
+// WithClientSpoolBody is WithClientBufferBody with each body written to a
+// temporary file rather than held in memory, for responses that run to hundreds
+// of megabytes, such as a whole feed. The response is handed on with the file
+// as its body, and closing the body removes the file. With both options set,
+// bodies go to files.
+func WithClientSpoolBody(spool bool) ClientOption {
+	return clientSpoolBody(spool)
+}
+
 func NewClient(opts ...ClientOption) *Client {
 	options := &clientOptions{
 		httpClient:   cleanhttp.DefaultPooledClient(),
@@ -149,10 +168,10 @@ func NewClient(opts ...ClientOption) *Client {
 	}
 
 	httpClient := options.httpClient
-	if options.bufferBody {
+	if options.bufferBody || options.spoolBody {
 		// A copy, so that a client the caller passed in is left as it was.
 		c := *options.httpClient
-		c.Transport = bufferBodyTransport{next: c.Transport}
+		c.Transport = bufferBodyTransport{next: c.Transport, spool: options.spoolBody}
 		httpClient = &c
 	}
 
@@ -169,9 +188,10 @@ func NewClient(opts ...ClientOption) *Client {
 
 // bufferBodyTransport reads each response body whole within the round trip, so
 // that an error in reading it is an error of the round trip, which the client
-// retries.
+// retries. It holds the body in memory, or with spool in a temporary file.
 type bufferBodyTransport struct {
-	next http.RoundTripper
+	next  http.RoundTripper
+	spool bool
 }
 
 func (t bufferBodyTransport) transport() http.RoundTripper {
@@ -190,6 +210,15 @@ func (t bufferBodyTransport) RoundTrip(req *http.Request) (*http.Response, error
 	}
 	defer resp.Body.Close()
 
+	if t.spool {
+		body, err := spoolBody(resp.Body)
+		if err != nil {
+			return nil, errors.Wrap(err, "spool response body")
+		}
+		resp.Body = body
+		return resp, nil
+	}
+
 	bs, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, errors.Wrap(err, "read response body")
@@ -197,6 +226,41 @@ func (t bufferBodyTransport) RoundTrip(req *http.Request) (*http.Response, error
 	resp.Body = io.NopCloser(bytes.NewReader(bs))
 
 	return resp, nil
+}
+
+// spoolBody writes r whole to a temporary file, and returns the file, to be
+// read from its start, as a body that removes the file when it is closed. A
+// file it could not fill is removed at once.
+func spoolBody(r io.Reader) (io.ReadCloser, error) {
+	f, err := os.CreateTemp("", "vuls-data-update-body-*")
+	if err != nil {
+		return nil, errors.Wrap(err, "create temp file")
+	}
+	body := &tempFileBody{File: f}
+
+	if _, err := io.Copy(f, r); err != nil {
+		return nil, stderrors.Join(errors.Wrap(err, "read response body"), body.Close())
+	}
+	if _, err := f.Seek(0, io.SeekStart); err != nil {
+		return nil, stderrors.Join(errors.Wrapf(err, "seek %s", f.Name()), body.Close())
+	}
+
+	return body, nil
+}
+
+// tempFileBody is a body read from a temporary file, which Close removes.
+type tempFileBody struct {
+	*os.File
+
+	once sync.Once
+	err  error
+}
+
+func (b *tempFileBody) Close() error {
+	b.once.Do(func() {
+		b.err = stderrors.Join(b.File.Close(), os.Remove(b.File.Name()))
+	})
+	return b.err
 }
 
 // CloseIdleConnections passes the call on, as http.Client only makes it on a
