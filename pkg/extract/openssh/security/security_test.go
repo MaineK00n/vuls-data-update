@@ -20,6 +20,13 @@ func TestExtract(t *testing.T) {
 			golden: "./testdata/golden/happy",
 		},
 		{
+			// An affected entry that names no version gets an unconverted
+			// criterion, which records it without matching every OpenSSH.
+			name:   "no-affected-version",
+			args:   "./testdata/fixtures/no-affected-version",
+			golden: "./testdata/golden/no-affected-version",
+		},
+		{
 			// raw/ is model-produced, so a version that is not one has to stop
 			// the extract rather than pass through as an unmatchable bound.
 			name:     "invalid-version",
