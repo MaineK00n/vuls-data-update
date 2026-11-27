@@ -44,6 +44,34 @@
 			]
 		}
 	],
+	"detections": [
+		{
+			"ecosystem": "cpe",
+			"conditions": [
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "cpe",
+								"cpe": {
+									"vulnerable": true,
+									"cpe": "cpe:2.3:*:paloaltonetworks:*:*:*:*:*:*:*:*:*",
+									"range": {
+										"type": "unconverted",
+										"published": {
+											"fixed": "134.7.4.44",
+											"description": "Prisma Browser"
+										}
+									}
+								}
+							}
+						]
+					}
+				}
+			]
+		}
+	],
 	"data_source": {
 		"id": "paloalto-json",
 		"raws": [
