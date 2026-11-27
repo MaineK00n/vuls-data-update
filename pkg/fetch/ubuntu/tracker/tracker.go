@@ -18,7 +18,7 @@ import (
 	utilfilepath "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/filepath"
 )
 
-const defaultRepoURL = "git://git.launchpad.net/ubuntu-cve-tracker"
+const defaultRepoURL = "https://git.launchpad.net/ubuntu-cve-tracker"
 
 type options struct {
 	dir   string

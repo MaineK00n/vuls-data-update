@@ -18,7 +18,7 @@ import (
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
-const dataURL = "http://vulnfeed.sealsecurity.io/v1/osv/renamed/vulnerabilities.zip"
+const dataURL = "https://vulnfeed.sealsecurity.io/v1/osv/renamed/vulnerabilities.zip"
 
 type options struct {
 	dataURL string
