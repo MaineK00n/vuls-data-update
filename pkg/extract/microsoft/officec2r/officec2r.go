@@ -26,6 +26,7 @@
 package officec2r
 
 import (
+	"cmp"
 	"fmt"
 	"io/fs"
 	"log/slog"
@@ -323,8 +324,8 @@ func parseRelease(r officec2r.Release) (release, error) {
 			var ids []string
 			for _, l := range item.Links {
 				if idRE.MatchString(l.Text) {
-					if !strings.HasSuffix(l.URL, "/"+l.Text) {
-						return release{}, errors.Errorf("unexpected advisory link. expected: URL ending with %q, actual: %q", "/"+l.Text, l.URL)
+					if suffix := fmt.Sprintf("/%s", l.Text); !strings.HasSuffix(l.URL, suffix) {
+						return release{}, errors.Errorf("unexpected advisory link. expected: URL ending with %q, actual: %q", suffix, l.URL)
 					}
 					ids = append(ids, l.Text)
 				}
@@ -557,7 +558,7 @@ func buildCriterion(rs []*release, f family) (criterionTypes.Criterion, error) {
 		}
 	}
 	for _, k := range slices.SortedFunc(maps.Keys(bands), func(a, b vlKey) int {
-		return strings.Compare(a.channel+"\x00"+a.version, b.channel+"\x00"+b.version)
+		return cmp.Or(strings.Compare(a.channel, b.channel), strings.Compare(a.version, b.version))
 	}) {
 		v := bands[k]
 		// A retail branch inside the band would be compared against both ranges.
