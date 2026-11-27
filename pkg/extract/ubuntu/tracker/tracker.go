@@ -387,6 +387,7 @@ func extract(fetched tracker.Advisory, paths []string) (dataTypes.Data, error) {
 				"plucky":   "25.04",
 				"questing": "25.10",
 				"resolute": "26.04",
+				"stonking": "26.10",
 			}
 
 			for s := range strings.SplitSeq(release, "/") {
@@ -398,8 +399,9 @@ func extract(fetched tracker.Advisory, paths []string) (dataTypes.Data, error) {
 			return "", errors.Errorf("unexpected release name. expected: %q, actual: %q", slices.Collect(maps.Keys(rtov)), release)
 		}(rn)
 		if err != nil {
-			slog.Warn("failed to find version from release", slog.Any("err", err))
-			continue
+			// A release missing from rtov (e.g. the next one after resolute)
+			// would otherwise lose every package of that release in silence.
+			return dataTypes.Data{}, errors.Wrapf(err, "find version from release")
 		}
 		if v == "" {
 			continue
