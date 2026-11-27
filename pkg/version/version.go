@@ -15,10 +15,12 @@ const modulePath = "github.com/MaineK00n/vuls-data-update"
 // its packages. A binary installed with `go install ...@<revision>` and one
 // built in a checkout both carry a pseudo-version naming the commit they were
 // built from, the latter suffixed "+dirty" when the checkout had uncommitted
-// changes or untracked files. A build that recorded no version, such as
-// `go run` or a test binary, reads "(devel)", as does a dependency replaced by
-// a directory, and a binary without build info, or without the module, reads
-// "(unknown)".
+// changes or untracked files. A replaced dependency reads the version of its
+// replacement, so one replaced by a fork names a commit of the fork. A build
+// that recorded no version, such as `go run` or a test binary, reads
+// "(devel)", as does a dependency replaced by a directory or used from a
+// go.work workspace, and a binary without build info, or without the module,
+// reads "(unknown)".
 func String() string {
 	info, ok := debug.ReadBuildInfo()
 	return format(info, ok)
