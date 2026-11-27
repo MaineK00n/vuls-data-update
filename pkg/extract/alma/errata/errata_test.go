@@ -1,7 +1,6 @@
 package errata_test
 
 import (
-	"path/filepath"
 	"testing"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/alma/errata"
@@ -12,11 +11,33 @@ func TestExtract(t *testing.T) {
 	tests := []struct {
 		name     string
 		args     string
+		golden   string
 		hasError bool
 	}{
 		{
-			name: "happy",
-			args: "./testdata/fixtures",
+			name:   "happy",
+			args:   "./testdata/fixtures/happy",
+			golden: "./testdata/golden/happy",
+		},
+		// Synthetic kernel advisories: CVEs listed again by a newer minor's
+		// advisory after being fixed by an older minor's (9.7, 9.8 -> 9.9,
+		// 9.2 -> 9.4 with 9.3 absent, the kernel-rt source package of 8.8 ->
+		// 8.10, the stripped 10.2 -> 10.3). ALSA-2026:90004 and
+		// ALSA-2026:90010 are under 8 too, where they get no holes.
+		// CVE-2026-0005 and CVE-2026-0007 are each fixed twice in 9.8, the
+		// greater fix walked first and last respectively, and the holes in
+		// ALSA-2026:90014 (9.9) start at the greater one.
+		{
+			name:   "kernel",
+			args:   "./testdata/fixtures/kernel",
+			golden: "./testdata/golden/kernel",
+		},
+		// bpftool of 9.9 older than bpftool of 9.8: the ranges around 9.8's
+		// fix cannot be ordered.
+		{
+			name:     "kernel-unordered",
+			args:     "./testdata/fixtures/kernel-unordered",
+			hasError: true,
 		},
 	}
 	for _, tt := range tests {
@@ -38,7 +59,7 @@ func TestExtract(t *testing.T) {
 				// error was expected and occurred, test passed
 				return
 			default:
-				if err := utiltest.Diff(filepath.Join("testdata", "golden"), dir); err != nil {
+				if err := utiltest.Diff(tt.golden, dir); err != nil {
 					t.Error("unexpected error:", err)
 				}
 			}

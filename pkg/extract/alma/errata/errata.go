@@ -79,6 +79,7 @@ func Extract(args string, opts ...Option) error {
 	if err != nil {
 		return errors.Wrapf(err, "read dir %s", args)
 	}
+	var kernels kernelIndex
 	for _, ve := range ventries {
 		if !ve.IsDir() || ve.Name() == ".git" {
 			continue
@@ -143,11 +144,17 @@ func Extract(args string, opts ...Option) error {
 					return errors.Wrapf(err, "write %s", p)
 				}
 
+				kernels.add(p, ve.Name(), fetched, r.Paths())
+
 				return nil
 			}); err != nil {
 				return errors.Wrapf(err, "walk %s", args)
 			}
 		}
+	}
+
+	if err := kernels.excludeFixedOlderMinors(); err != nil {
+		return errors.Wrap(err, "exclude kernels of older minors with their own fix")
 	}
 
 	if err := util.Write(filepath.Join(options.dir, "datasource.json"), datasourceTypes.DataSource{

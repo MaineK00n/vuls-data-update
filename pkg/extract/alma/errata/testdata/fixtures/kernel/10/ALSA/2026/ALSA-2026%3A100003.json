@@ -1,0 +1,77 @@
+{
+	"description": "The kernel packages contain the Linux kernel, the core of any Linux operating system.\n\nSecurity Fix(es):\n\n* kernel: synthetic issue (CVE-2026-1001)\n* kernel: synthetic issue (CVE-2026-1002)",
+	"id": "ALSA-2026:100003",
+	"issued_date": 1794268800,
+	"modules": [],
+	"packages": [
+		{
+			"arch": "aarch64",
+			"checksum": "1be19f58e52ef6bcb8e6361173748ee8bab103f2fd965075f314fd45061fc79f",
+			"checksum_type": "sha256",
+			"epoch": "0",
+			"filename": "kernel-6.12.0-264.17.1.el10_3.aarch64.rpm",
+			"name": "kernel",
+			"reboot_suggested": 0,
+			"release": "264.17.1.el10_3",
+			"src": "kernel-6.12.0-264.17.1.el10_3.src.rpm",
+			"version": "6.12.0"
+		},
+		{
+			"arch": "x86_64",
+			"checksum": "c67762d634ba78668457cd1d1e0aa135e8eb3344494c03f70e2bfc7aaa885039",
+			"checksum_type": "sha256",
+			"epoch": "0",
+			"filename": "kernel-6.12.0-264.17.1.el10_3.x86_64.rpm",
+			"name": "kernel",
+			"reboot_suggested": 0,
+			"release": "264.17.1.el10_3",
+			"src": "kernel-6.12.0-264.17.1.el10_3.src.rpm",
+			"version": "6.12.0"
+		},
+		{
+			"arch": "noarch",
+			"checksum": "fabde8d866a03921f1c2acf65f5cb43297553a7aa87ac231bc2fc26bf099988e",
+			"checksum_type": "sha256",
+			"epoch": "0",
+			"filename": "kernel-abi-stablelists-6.12.0-264.17.1.el10_3.noarch.rpm",
+			"name": "kernel-abi-stablelists",
+			"reboot_suggested": 0,
+			"release": "264.17.1.el10_3",
+			"src": "kernel-6.12.0-264.17.1.el10_3.src.rpm",
+			"version": "6.12.0"
+		},
+		{
+			"arch": "noarch",
+			"checksum": "d0c70cf2b35fe8c426152d21f1646c553ba6a5d2b8b80591391765393c5a94d4",
+			"checksum_type": "sha256",
+			"epoch": "0",
+			"filename": "kernel-doc-6.12.0-264.17.1.el10_3.noarch.rpm",
+			"name": "kernel-doc",
+			"reboot_suggested": 0,
+			"release": "264.17.1.el10_3",
+			"src": "kernel-6.12.0-264.17.1.el10_3.src.rpm",
+			"version": "6.12.0"
+		}
+	],
+	"references": [
+		{
+			"href": "https://access.redhat.com/errata/RHSA-2026:100003",
+			"id": "RHSA-2026:100003",
+			"type": "rhsa"
+		},
+		{
+			"href": "https://access.redhat.com/security/cve/CVE-2026-1001",
+			"id": "CVE-2026-1001",
+			"type": "cve"
+		},
+		{
+			"href": "https://access.redhat.com/security/cve/CVE-2026-1002",
+			"id": "CVE-2026-1002",
+			"type": "cve"
+		}
+	],
+	"severity": "Important",
+	"title": "Important: kernel security update",
+	"type": "security",
+	"updated_date": 1794355200
+}

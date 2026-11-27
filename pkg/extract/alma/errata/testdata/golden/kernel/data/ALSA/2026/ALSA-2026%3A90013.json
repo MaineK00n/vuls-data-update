@@ -1,0 +1,107 @@
+{
+	"id": "ALSA-2026:90013",
+	"advisories": [
+		{
+			"content": {
+				"id": "ALSA-2026:90013",
+				"title": "Important: kernel security update",
+				"description": "The kernel packages contain the Linux kernel, the core of any Linux operating system.\n\nSecurity Fix(es):\n\n* kernel: synthetic issue (CVE-2026-0007)",
+				"severity": [
+					{
+						"type": "vendor",
+						"source": "errata.almalinux.org",
+						"vendor": "Important"
+					}
+				],
+				"references": [
+					{
+						"source": "errata.almalinux.org",
+						"url": "https://access.redhat.com/errata/RHSA-2026:90013"
+					},
+					{
+						"source": "errata.almalinux.org",
+						"url": "https://access.redhat.com/security/cve/CVE-2026-0007"
+					},
+					{
+						"source": "errata.almalinux.org",
+						"url": "https://errata.almalinux.org/9/ALSA-2026-90013.html"
+					}
+				],
+				"published": "2026-10-05T04:00:00Z",
+				"modified": "2026-10-06T04:00:00Z"
+			},
+			"segments": [
+				{
+					"ecosystem": "alma:9"
+				}
+			]
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-2026-0007",
+				"references": [
+					{
+						"source": "errata.almalinux.org",
+						"url": "https://access.redhat.com/security/cve/CVE-2026-0007"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "alma:9"
+				}
+			]
+		}
+	],
+	"detections": [
+		{
+			"ecosystem": "alma:9",
+			"conditions": [
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "kernel",
+											"architectures": [
+												"x86_64"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:5.14.0-687.58.1.el9_8"
+											}
+										],
+										"fixed": [
+											"0:5.14.0-687.58.1.el9_8"
+										]
+									}
+								}
+							}
+						]
+					}
+				}
+			]
+		}
+	],
+	"data_source": {
+		"id": "alma-errata",
+		"raws": [
+			"kernel/9/ALSA/2026/ALSA-2026:90013.json"
+		]
+	}
+}

@@ -1,0 +1,53 @@
+{
+	"description": "The kernel packages contain the Linux kernel, the core of any Linux operating system.\n\nSecurity Fix(es):\n\n* kernel: synthetic issue (CVE-2026-0008)\n* kernel: synthetic issue (CVE-2026-0009)",
+	"id": "ALSA-2026:80010",
+	"issued_date": 1790000000,
+	"modules": [],
+	"packages": [
+		{
+			"arch": "x86_64",
+			"checksum": "6b28c013f09af2cb3d6ccb4f630518eb88f5a5e6ef4725e3949caa46868b8d57",
+			"checksum_type": "sha256",
+			"epoch": "0",
+			"filename": "kernel-rt-4.18.0-553.80.1.rt7.421.el8_10.x86_64.rpm",
+			"name": "kernel-rt",
+			"reboot_suggested": 0,
+			"release": "553.80.1.rt7.421.el8_10",
+			"src": "kernel-rt-4.18.0-553.80.1.rt7.421.el8_10.src.rpm",
+			"version": "4.18.0"
+		},
+		{
+			"arch": "x86_64",
+			"checksum": "0558c11ed4bea566547219bea98dacfff53f620cd8381301123928c461b3e5b0",
+			"checksum_type": "sha256",
+			"epoch": "0",
+			"filename": "kernel-rt-core-4.18.0-553.80.1.rt7.421.el8_10.x86_64.rpm",
+			"name": "kernel-rt-core",
+			"reboot_suggested": 0,
+			"release": "553.80.1.rt7.421.el8_10",
+			"src": "kernel-rt-4.18.0-553.80.1.rt7.421.el8_10.src.rpm",
+			"version": "4.18.0"
+		}
+	],
+	"references": [
+		{
+			"href": "https://access.redhat.com/errata/RHSA-2026:80010",
+			"id": "RHSA-2026:80010",
+			"type": "rhsa"
+		},
+		{
+			"href": "https://access.redhat.com/security/cve/CVE-2026-0008",
+			"id": "CVE-2026-0008",
+			"type": "cve"
+		},
+		{
+			"href": "https://access.redhat.com/security/cve/CVE-2026-0009",
+			"id": "CVE-2026-0009",
+			"type": "cve"
+		}
+	],
+	"severity": "Important",
+	"title": "Important: kernel-rt security update",
+	"type": "security",
+	"updated_date": 1790086400
+}
