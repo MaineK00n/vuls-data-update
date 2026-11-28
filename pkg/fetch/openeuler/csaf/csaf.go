@@ -11,6 +11,7 @@ import (
 	"net/http"
 	"net/url"
 	"path/filepath"
+	"sync/atomic"
 	"time"
 
 	"github.com/pkg/errors"
@@ -95,19 +96,32 @@ func Fetch(opts ...Option) error {
 	}
 
 	client := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry), utilhttp.WithClientHTTPClient(options.httpClient))
+	refs := 0
 	for _, kind := range []string{"cve", "advisories"} {
 		slog.Info("Fetch openEuler Security Advisories (CSAF)", slog.String("kind", kind))
 		is, err := options.fetchCSAFIndex(client, kind)
 		if err != nil {
 			return errors.Wrapf(err, "fetch %s index", kind)
 		}
-		if err := options.fetchCSAF(client, kind, is); err != nil {
+		n, err := options.fetchCSAF(client, kind, is)
+		if err != nil {
 			return errors.Wrapf(err, "fetch %s", kind)
 		}
+		refs += n
 	}
 
 	if err := util.EnsureWritten(options.dir); err != nil {
 		return errors.Wrapf(err, "ensure written %s", options.dir)
+	}
+
+	// ProductIDs keeps the references upstream writes in place of product ID
+	// lists, until no document holds one. This comes after EnsureWritten, so a
+	// run that read no document at all fails as empty, not as stale. A run
+	// that read only some of the documents, say from a cut-off index, can
+	// still find none and fail here, so check what was written before
+	// removing anything.
+	if refs == 0 {
+		return errors.New(`no document writes a product ID list as {"$ref": ...} any more; put []ProductID back in place of ProductIDs, and remove ProductIDs, hasRef and this check`)
 	}
 
 	return nil
@@ -142,16 +156,19 @@ func (o options) fetchCSAFIndex(client *utilhttp.Client, kind string) ([]string,
 	return ls, nil
 }
 
-func (o options) fetchCSAF(client *utilhttp.Client, kind string, is []string) error {
+// fetchCSAF fetches the documents is names, and returns how many of them write
+// a product ID list as a reference (see ProductIDs).
+func (o options) fetchCSAF(client *utilhttp.Client, kind string, is []string) (int, error) {
 	us := make([]string, 0, len(is))
 	for _, i := range is {
 		u, err := url.JoinPath(o.baseURL, kind, i)
 		if err != nil {
-			return errors.Wrap(err, "url join")
+			return 0, errors.Wrap(err, "url join")
 		}
 		us = append(us, u)
 	}
 
+	var refs atomic.Int64
 	if err := client.PipelineGet(us, o.concurrency, o.wait, false, func(resp *http.Response) error {
 		defer resp.Body.Close()
 
@@ -172,6 +189,9 @@ func (o options) fetchCSAF(client *utilhttp.Client, kind string, is []string) er
 					return nil
 				}
 				return errors.Wrap(err, "decode json")
+			}
+			if csaf.hasRef() {
+				refs.Add(1)
 			}
 
 			switch kind {
@@ -219,8 +239,8 @@ func (o options) fetchCSAF(client *utilhttp.Client, kind string, is []string) er
 			return errors.Errorf("error response with status code %d", resp.StatusCode)
 		}
 	}); err != nil {
-		return errors.Wrap(err, "pipeline get")
+		return 0, errors.Wrap(err, "pipeline get")
 	}
 
-	return nil
+	return int(refs.Load()), nil
 }
